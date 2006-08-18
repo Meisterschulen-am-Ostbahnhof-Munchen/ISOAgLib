@@ -196,11 +196,11 @@ void ManageMeasureProgLocal_c::assignFromSource( const ManageMeasureProgLocal_c&
         << sizeSlistTWithChunk( sizeof(MeasureProgLocal_c), sui16_MeasureProgLocalTotal )
         << ", Deconstruct-Cnt: " << sui16_deconstructMeasureProgLocalTotal
       #ifndef MASSERT
-        << "\r\n\r\n";
+        << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
       #else
         << ", __mall tot:" << AllocateHeapMalloc
         << ", _mall deal tot: " << DeallocateHeapMalloc
-        << "\r\n";
+        << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
     }
   }
@@ -238,11 +238,11 @@ ManageMeasureProgLocal_c::~ManageMeasureProgLocal_c()
       << sizeSlistTWithChunk( sizeof(MeasureProgLocal_c), sui16_MeasureProgLocalTotal )
       << ", Deconstruct-Cnt: " << sui16_deconstructMeasureProgLocalTotal
     #ifndef MASSERT
-      << "\r\n\r\n";
+      << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
     #else
       << ", __mall tot:" << AllocateHeapMalloc
       << ", _mall deal tot: " << DeallocateHeapMalloc
-      << "\r\n";
+      << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
   }
   #endif
@@ -274,11 +274,11 @@ bool ManageMeasureProgLocal_c::timeEvent( void ){
       << sizeSlistTWithChunk( sizeof(MeasureProgLocal_c), sui16_MeasureProgLocalTotal )
       << ", Deconstruct-Cnt: " << sui16_deconstructMeasureProgLocalTotal
     #ifndef MASSERT
-      << "\r\n\r\n";
+      << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
     #else
       << ", __mall tot:" << AllocateHeapMalloc
       << ", _mall deal tot: " << DeallocateHeapMalloc
-      << "\r\n";
+      << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
   }
   #endif
@@ -344,11 +344,11 @@ bool ManageMeasureProgLocal_c::timeEvent( void ){
                 << sizeSlistTWithChunk( sizeof(MeasureProgLocal_c), sui16_MeasureProgLocalTotal )
                 << ", Deconstruct-Cnt: " << sui16_deconstructMeasureProgLocalTotal
               #ifndef MASSERT
-                << "\r\n\r\n";
+                << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
               #else
                 << ", __mall tot:" << AllocateHeapMalloc
                 << ", _mall deal tot: " << DeallocateHeapMalloc
-                << "\r\n";
+                << INTERNAL_DEBUG_DEVICE_ENDL;
               #endif
             }
             #endif
@@ -405,11 +405,11 @@ void ManageMeasureProgLocal_c::processProg(){
       << sizeSlistTWithChunk( sizeof(MeasureProgLocal_c), sui16_MeasureProgLocalTotal )
       << ", Deconstruct-Cnt: " << sui16_deconstructMeasureProgLocalTotal
     #ifndef MASSERT
-      << "\r\n\r\n";
+      << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
     #else
       << ", __mall tot:" << AllocateHeapMalloc
       << ", _mall deal tot: " << DeallocateHeapMalloc
-      << "\r\n";
+      << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
   }
   #endif
@@ -523,11 +523,11 @@ void ManageMeasureProgLocal_c::insertMeasureprog(uint8_t rui8_type, const DevKey
         << sizeSlistTWithChunk( sizeof(MeasureProgLocal_c), sui16_MeasureProgLocalTotal )
         << ", Deconstruct-Cnt: " << sui16_deconstructMeasureProgLocalTotal
       #ifndef MASSERT
-        << "\r\n\r\n";
+        << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
       #else
         << ", __mall tot:" << AllocateHeapMalloc
         << ", _mall deal tot: " << DeallocateHeapMalloc
-        << "\r\n";
+        << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
     }
     #endif

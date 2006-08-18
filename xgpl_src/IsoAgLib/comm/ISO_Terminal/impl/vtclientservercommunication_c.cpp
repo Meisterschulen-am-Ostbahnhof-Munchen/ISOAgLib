@@ -478,7 +478,7 @@ VtClientServerCommunication_c::timeEventUploadPoolTimeoutCheck()
     if (((uint32_t) HAL::getTime()) > (ui32_uploadTimeout + ui32_uploadTimestamp))
     { // we couldn't store for some reason, but don't care, finalize anyway...
 #ifdef DEBUG
-      INTERNAL_DEBUG_DEVICE << "StoreVersion TimedOut!\n";
+      INTERNAL_DEBUG_DEVICE << "StoreVersion TimedOut!" << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
       finalizeUploading();
     }
@@ -528,7 +528,7 @@ VtClientServerCommunication_c::timeEventPrePoolUpload()
     getCanInstance4Comm() << c_data;      // Command: Get Technical Data --- Parameter: Get Number Of Soft Keys
     pc_vtServerInstance->getVtCapabilities()->lastRequestedSoftkeys = HAL::getTime();
 #ifdef DEBUG
-    INTERNAL_DEBUG_DEVICE << "Requested first property (C2)...\n";
+    INTERNAL_DEBUG_DEVICE << "Requested first property (C2)..." << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
   }
 
@@ -542,7 +542,7 @@ VtClientServerCommunication_c::timeEventPrePoolUpload()
     getCanInstance4Comm() << c_data;      // Command: Get Technical Data --- Parameter: Get Text Font Data
     pc_vtServerInstance->getVtCapabilities()->lastRequestedFont = HAL::getTime();
 #ifdef DEBUG
-    INTERNAL_DEBUG_DEVICE << "Requested fonts (C3)...\n";
+    INTERNAL_DEBUG_DEVICE << "Requested fonts (C3)..." << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
   }
 
@@ -558,7 +558,7 @@ VtClientServerCommunication_c::timeEventPrePoolUpload()
     getCanInstance4Comm() << c_data;      // Command: Get Technical Data --- Parameter: Get Hardware
     pc_vtServerInstance->getVtCapabilities()->lastRequestedHardware = HAL::getTime();
 #ifdef DEBUG
-    INTERNAL_DEBUG_DEVICE << "Requested hardware (C7)...\n";
+    INTERNAL_DEBUG_DEVICE << "Requested hardware (C7)..." << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
   }
 }
@@ -634,7 +634,7 @@ VtClientServerCommunication_c::timeEventPoolUpload()
       ui32_uploadTimeout = DEF_TimeOut_LoadVersion;
       ui32_uploadTimestamp = HAL::getTime();
 #ifdef DEBUG
-      INTERNAL_DEBUG_DEVICE << "Trying Load Version (D1) for Version ["<<pc_versionLabel [0]<< pc_versionLabel [1]<< pc_versionLabel [2]<< pc_versionLabel [3]<< pc_versionLabel [4]<< lang1<< lang2<<"]...\n";
+      INTERNAL_DEBUG_DEVICE << "Trying Load Version (D1) for Version ["<<pc_versionLabel [0]<< pc_versionLabel [1]<< pc_versionLabel [2]<< pc_versionLabel [3]<< pc_versionLabel [4]<< lang1<< lang2<<"]..." << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
 #endif
     }
@@ -668,7 +668,7 @@ VtClientServerCommunication_c::timeEvent(void)
                             << "/" << sizeSlistTWithMalloc (sizeof (SendUpload_c), 1)
                             << ", Chunk-Alloc: "
                             << sizeSlistTWithChunk (sizeof (SendUpload_c), sui16_sendUploadQueueSize)
-                            << "\r\n\r\n";
+                            << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
   }
 #endif
 
@@ -1133,7 +1133,7 @@ VtClientServerCommunication_c::processMsg()
         { // Successfully loaded
           finalizeUploading ();
 #ifdef DEBUG
-          INTERNAL_DEBUG_DEVICE << "Received Load Version Response (D1) without error...\n";
+          INTERNAL_DEBUG_DEVICE << "Received Load Version Response (D1) without error..." << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
         }
         else
@@ -1141,7 +1141,7 @@ VtClientServerCommunication_c::processMsg()
           if (c_data.getUint8Data (5) & (1<<2))
           { // Bit 2: // Insufficient memory available
 #ifdef DEBUG
-            INTERNAL_DEBUG_DEVICE << "Received Load Version Response (D1) with error OutOfMem...\n";
+            INTERNAL_DEBUG_DEVICE << "Received Load Version Response (D1) with error OutOfMem..." << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
             vtOutOfMemory();
           }
@@ -1151,7 +1151,7 @@ VtClientServerCommunication_c::processMsg()
             // Version label not known
             startObjectPoolUploading (UploadPoolTypeCompleteInitially); // Send out pool! send out "Get Technical Data - Get Memory Size", etc. etc.
 #ifdef DEBUG
-            INTERNAL_DEBUG_DEVICE << "Received Load Version Response (D1) with VersionNotFound...\n";
+            INTERNAL_DEBUG_DEVICE << "Received Load Version Response (D1) with VersionNotFound..." << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
           }
         }
@@ -1174,7 +1174,7 @@ VtClientServerCommunication_c::processMsg()
 #ifdef DEBUG
           if (ui8_uploadCommandError != 0)
           { /* error */
-            INTERNAL_DEBUG_DEVICE << ">>> Command " << (uint32_t) ui8_commandParameter<< " failed with error " << (uint32_t) ui8_uploadCommandError << "!\n";
+            INTERNAL_DEBUG_DEVICE << ">>> Command " << (uint32_t) ui8_commandParameter<< " failed with error " << (uint32_t) ui8_uploadCommandError << "!" << INTERNAL_DEBUG_DEVICE_ENDL;
           }
 #endif
           finishUploadCommand(); // finish command no matter if "okay" or "error"...
@@ -1771,7 +1771,7 @@ VtClientServerCommunication_c::queueOrReplace (SendUpload_c& rref_sendUpload, bo
   if (!isVtActive())
   {
 #ifdef DEBUG
-    INTERNAL_DEBUG_DEVICE << "--NOT ENQUEUED - VT IS NOT ACTIVE!--\n";
+    INTERNAL_DEBUG_DEVICE << "--NOT ENQUEUED - VT IS NOT ACTIVE!--" << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
     //  return false;
   }
@@ -1810,7 +1810,7 @@ VtClientServerCommunication_c::queueOrReplace (SendUpload_c& rref_sendUpload, bo
 
             // the rest is not possible by definition, but for being sure :-)
 #ifdef DEBUG
-            INTERNAL_DEBUG_DEVICE << "--INVALID COMMAND! SHOULDN'T HAPPEN!!--\n";
+            INTERNAL_DEBUG_DEVICE << "--INVALID COMMAND! SHOULDN'T HAPPEN!!--" << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
             return false;
           }
@@ -1875,7 +1875,7 @@ VtClientServerCommunication_c::queueOrReplace (SendUpload_c& rref_sendUpload, bo
 #endif
 
 #ifdef DEBUG
-  INTERNAL_DEBUG_DEVICE << q_sendUpload.size() << ".\n";
+  INTERNAL_DEBUG_DEVICE << q_sendUpload.size() << "." << INTERNAL_DEBUG_DEVICE_ENDL;
   //dumpQueue(); /* to see all enqueued cmds after every enqueued cmd */
 #endif
   /** push(...) has no return value */
@@ -1923,7 +1923,7 @@ VtClientServerCommunication_c::dumpQueue()
     }
   }
 #ifdef DEBUG
-  INTERNAL_DEBUG_DEVICE << "\n";
+  INTERNAL_DEBUG_DEVICE << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
 }
 
@@ -1984,10 +1984,12 @@ VtClientServerCommunication_c::checkVtStateChange()
   if (!b_vtAliveOld && b_vtAliveCurrent)
   { /// OFF --> ON  ***  VT has (re-)entered the system
 #ifdef DEBUG
-    INTERNAL_DEBUG_DEVICE << "\n=========================================================================="
-                          << "\n=== VT has entered the system, trying to receive all Properties now... ==="
-                          << "\n=== time: " << HAL::getTime() << " ==="
-                          << "\n==========================================================================\n\n";
+    INTERNAL_DEBUG_DEVICE 
+      << INTERNAL_DEBUG_DEVICE_NEWLINE << "=========================================================================="
+      << INTERNAL_DEBUG_DEVICE_NEWLINE << "=== VT has entered the system, trying to receive all Properties now... ==="
+      << INTERNAL_DEBUG_DEVICE_NEWLINE << "=== time: " << HAL::getTime() << " ==="
+      << INTERNAL_DEBUG_DEVICE_NEWLINE << "==========================================================================" 
+      << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
 
 #endif
     doStart();
@@ -1995,10 +1997,12 @@ VtClientServerCommunication_c::checkVtStateChange()
   else if (b_vtAliveOld && !b_vtAliveCurrent)
   { /// ON -> OFF  ***  Connection to VT lost
 #ifdef DEBUG
-    INTERNAL_DEBUG_DEVICE << "\n=============================================================================="
-                          << "\n=== VT has left the system, clearing queues --> eventEnterSafeState called ==="
-                          << "\n=== time: " << HAL::getTime() << " ==="
-                          << "\n==============================================================================\n\n";
+    INTERNAL_DEBUG_DEVICE 
+      << INTERNAL_DEBUG_DEVICE_NEWLINE << "=============================================================================="
+      << INTERNAL_DEBUG_DEVICE_NEWLINE << "=== VT has left the system, clearing queues --> eventEnterSafeState called ==="
+      << INTERNAL_DEBUG_DEVICE_NEWLINE << "=== time: " << HAL::getTime() << " ==="
+      << INTERNAL_DEBUG_DEVICE_NEWLINE << "==============================================================================" 
+      << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
     doStop();
   }
@@ -2091,7 +2095,7 @@ VtClientServerCommunication_c::finalizeUploading() //bool rb_wasLanguageUpdate)
     c_streamer.i8_objectPoolUploadingLanguage = -2; // -2 indicated that the language-update while pool is up IS IDLE!
     c_streamer.ui16_objectPoolUploadingLanguageCode = 0x0000;
   #ifdef DEBUG
-    INTERNAL_DEBUG_DEVICE << "===> finalizeUploading () with language: "<<(int)c_streamer.i8_objectPoolUploadedLanguage<<" ["<<uint8_t(c_streamer.ui16_objectPoolUploadedLanguageCode>>8) <<uint8_t(c_streamer.ui16_objectPoolUploadedLanguageCode&0xFF)<<"]\n";
+    INTERNAL_DEBUG_DEVICE << "===> finalizeUploading () with language: "<<(int)c_streamer.i8_objectPoolUploadedLanguage<<" ["<<uint8_t(c_streamer.ui16_objectPoolUploadedLanguageCode>>8) <<uint8_t(c_streamer.ui16_objectPoolUploadedLanguageCode&0xFF)<<"]" << INTERNAL_DEBUG_DEVICE_ENDL;
   #endif
     if (en_uploadPoolType == UploadPoolTypeLanguageUpdate)
     {
@@ -2100,7 +2104,7 @@ VtClientServerCommunication_c::finalizeUploading() //bool rb_wasLanguageUpdate)
     else
     {
   #ifdef DEBUG
-      INTERNAL_DEBUG_DEVICE << "Now en_objectPoolState = OPUploadedSuccessfully;\n";
+      INTERNAL_DEBUG_DEVICE << "Now en_objectPoolState = OPUploadedSuccessfully;" << INTERNAL_DEBUG_DEVICE_ENDL;
   #endif
       en_objectPoolState = OPUploadedSuccessfully;
       en_uploadType = UploadIdle;
@@ -2253,7 +2257,7 @@ VtClientServerCommunication_c::finishUploadCommand()
   #endif
 
   #ifdef DEBUG
-  INTERNAL_DEBUG_DEVICE << q_sendUpload.size() << ".\n";
+  INTERNAL_DEBUG_DEVICE << q_sendUpload.size() << "." << INTERNAL_DEBUG_DEVICE_ENDL;
   #endif
 }
 

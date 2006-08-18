@@ -121,7 +121,7 @@ void MeasureProgBase_c::init( ProcDataBase_c *const rpc_processData,
     b_doPrint = false;
     getRs232Instance()
       << "sizeof(MeasureSubprog_c) ==  " << sizeof(MeasureSubprog_c)
-      << " Bytes\r\n";
+      << " Bytes" << INTERNAL_DEBUG_DEVICE_ENDL;
   }
   if ( sui16_MeasureProgBaseTotal > 0 )
   {
@@ -201,7 +201,7 @@ void MeasureProgBase_c::assignFromSource( const MeasureProgBase_c& rrefc_src )
         << "/" << sizeSlistTWithMalloc( sizeof(MeasureSubprog_c), 1 )
         << ", Chunk-Alloc: "
         << sizeSlistTWithChunk( sizeof(MeasureSubprog_c), sui16_MeasureProgBaseTotal )
-        << "\r\n\r\n";
+        << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
     }
   }
   #endif
@@ -264,7 +264,7 @@ MeasureProgBase_c::~MeasureProgBase_c(){
         << "/" << sizeSlistTWithMalloc( sizeof(MeasureSubprog_c), 1 )
         << ", Chunk-Alloc: "
         << sizeSlistTWithChunk( sizeof(MeasureSubprog_c), sui16_MeasureProgBaseTotal )
-        << "\r\n\r\n";
+        << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
     }
     #endif
   }
@@ -338,7 +338,7 @@ bool MeasureProgBase_c::stop(bool /*b_deleteSubProgs*/, Proc_c::type_t /* ren_ty
       << "/" << sizeSlistTWithMalloc( sizeof(MeasureSubprog_c), 1 )
       << ", Chunk-Alloc: "
       << sizeSlistTWithChunk( sizeof(MeasureSubprog_c), sui16_MeasureProgBaseTotal )
-      << "\r\n\r\n";
+      << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
   }
   #endif
   vec_measureSubprog.clear();
@@ -439,7 +439,7 @@ void MeasureProgBase_c::initVal(int32_t ri32_val){
       << "/" << sizeSlistTWithMalloc( sizeof(MeasureSubprog_c), 1 )
       << ", Chunk-Alloc: "
       << sizeSlistTWithChunk( sizeof(MeasureSubprog_c), sui16_MeasureProgBaseTotal )
-      << "\r\n\r\n";
+      << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
   }
   #endif
   i32_val = i32_min = i32_max = i32_integ = ri32_val;
@@ -466,7 +466,7 @@ void MeasureProgBase_c::init(
     b_doPrint = false;
     getRs232Instance()
       << "sizeof(MeasureSubprog_c) ==  " << sizeof(MeasureSubprog_c)
-      << " Bytes\r\n";
+      << " Bytes" << INTERNAL_DEBUG_DEVICE_ENDL;
   }
 
   sui16_MeasureProgBaseTotal -= ( vec_measureSubprog.size() * ( sizeof(MeasureSubprog_c) + 2 * sizeof(MeasureSubprog_c*) ) );
@@ -579,7 +579,7 @@ void MeasureProgBase_c::initVal(float rf_val){
       << "/" << sizeSlistTWithMalloc( sizeof(MeasureSubprog_c), 1 )
       << ", Chunk-Alloc: "
       << sizeSlistTWithChunk( sizeof(MeasureSubprog_c), sui16_MeasureProgBaseTotal )
-      << "\r\n\r\n";
+      << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
   }
   #endif
   f_val = f_min = f_max = f_integ = rf_val;
@@ -609,7 +609,7 @@ bool MeasureProgBase_c::processMsg(){
       << "/" << sizeSlistTWithMalloc( sizeof(MeasureSubprog_c), 1 )
       << ", Chunk-Alloc: "
       << sizeSlistTWithChunk( sizeof(MeasureSubprog_c), sui16_MeasureProgBaseTotal )
-      << "\r\n\r\n";
+      << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
   }
   #endif
   bool b_edited = false;

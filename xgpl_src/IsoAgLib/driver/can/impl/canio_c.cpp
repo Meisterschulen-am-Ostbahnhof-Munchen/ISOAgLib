@@ -202,7 +202,7 @@ CANIO_c::singletonInit()
     firstDefaultInitCallStart = false;
     INTERNAL_DEBUG_DEVICE
         << "Start CANIO_c::init() mit BUS: " << int(rui8_busNumber)
-        << ", Bitrate: " << int(rui16_bitrate) << "\n";
+        << ", Bitrate: " << int(rui16_bitrate) << INTERNAL_DEBUG_DEVICE_ENDL;
   }
   #endif
 
@@ -256,7 +256,7 @@ CANIO_c::singletonInit()
         #else
           << "there were already some FilterBox_c instances, that should be reactivated with fresh initialized CAN"
         #endif
-          << "\n";
+          << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
     }
   }
@@ -269,7 +269,7 @@ CANIO_c::singletonInit()
       INTERNAL_DEBUG_DEVICE
           << "Ende CANIO_c::init() mit Default Werten bei spc_instance == "
           << uint32_t( spc_instance )
-          << "\n";
+          << INTERNAL_DEBUG_DEVICE_ENDL;
     }
     #endif
     return false;
@@ -301,7 +301,7 @@ CANIO_c::singletonInit()
       getLbsErrInstance().registerError( LibErr_c::Range, LibErr_c::Can );
       #ifdef DEBUG
       INTERNAL_DEBUG_DEVICE
-          << "Ende CANIO_c::init() mit falschen Parametern\n";
+          << "Ende CANIO_c::init() mit falschen Parametern" << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
       return false; // exit function with error information
     }
@@ -325,7 +325,7 @@ CANIO_c::singletonInit()
   }
   #ifdef DEBUG
   INTERNAL_DEBUG_DEVICE
-      << "Ende CANIO_c::init()\n";
+      << "Ende CANIO_c::init()" << INTERNAL_DEBUG_DEVICE_ENDL;
   #endif
 
   // even for call of init without parameter the base can init
@@ -367,7 +367,7 @@ void CANIO_c::close( void )
     case HAL_CONFIG_ERR:
       // ignore this type also, as this is only the indication of try to close an already closed channel
       #if defined(DEBUG)
-      INTERNAL_DEBUG_DEVICE << "\r\nBUS " << uint16_t(ui8_busNumber) << " was already closed before close call\r\n";
+      INTERNAL_DEBUG_DEVICE << "\r\nBUS " << uint16_t(ui8_busNumber) << " was already closed before close call" << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
       break;
     default:
@@ -510,7 +510,7 @@ void CANIO_c::sendCanClearbuf(Ident_c::identType_t ren_identType)
   }
   #ifdef DEBUG
   INTERNAL_DEBUG_DEVICE
-   << "CANIO_c::sendCanClearbuf for MsgObjNr: " << uint16_t(ui8_sendObjNr) << "\r\n";
+   << "CANIO_c::sendCanClearbuf for MsgObjNr: " << uint16_t(ui8_sendObjNr) << INTERNAL_DEBUG_DEVICE_ENDL;
   #endif
 
   HAL::can_useMsgobjClear(ui8_busNumber, ui8_sendObjNr);
@@ -651,8 +651,12 @@ FilterBox_c* CANIO_c::insertFilter(__IsoAgLib::CANCustomer_c& rref_customer,
   if (tempFilterBox_c != NULL)
   { //cancustomer does not exits -> insert
     #ifdef DEBUG
-    EXTERNAL_DEBUG_DEVICE << "filterbox mask/filter already exist -> insert cancustomer" << EXTERNAL_DEBUG_DEVICE_ENDL;
-    EXTERNAL_DEBUG_DEVICE << "mask: " << std::hex << c_newMask.ident() << " filter: " << c_newFilter.ident() << std::dec << EXTERNAL_DEBUG_DEVICE_ENDL;
+    INTERNAL_DEBUG_DEVICE << "filterbox mask/filter already exist -> insert cancustomer" << INTERNAL_DEBUG_DEVICE_ENDL;
+    #ifdef SYSTEM_PC
+    INTERNAL_DEBUG_DEVICE << "mask: " << std::hex << c_newMask.ident() << " filter: " << c_newFilter.ident() << std::dec << INTERNAL_DEBUG_DEVICE_ENDL;
+    #else
+    INTERNAL_DEBUG_DEVICE << "mask: " << c_newMask.ident() << " filter: " << c_newFilter.ident() << INTERNAL_DEBUG_DEVICE_ENDL;
+    #endif
     #endif
     tempFilterBox_c->insertCustomer(&rref_customer);
     //do not insert new filterbox because it already exists
@@ -676,9 +680,9 @@ FilterBox_c* CANIO_c::insertFilter(__IsoAgLib::CANCustomer_c& rref_customer,
     //and msgobj number -> this will be done in init call
     arrFilterBox.push_back(c_tempFilterBox);
     #ifdef DEBUG
-    EXTERNAL_DEBUG_DEVICE << "---BEFORE CALL OF INIT---" << EXTERNAL_DEBUG_DEVICE_ENDL;
-    EXTERNAL_DEBUG_DEVICE << "insertFilterBox with bus number: " << static_cast<int>(ui8_busNumber)  << " and FilterBoxNr: " << static_cast<int>(b_oldSize) << EXTERNAL_DEBUG_DEVICE_ENDL;
-    EXTERNAL_DEBUG_DEVICE << "                     mask: " << std::hex << c_newMask.ident() << " filter: " << c_newFilter.ident() << std::dec << EXTERNAL_DEBUG_DEVICE_ENDL;
+    INTERNAL_DEBUG_DEVICE << "---BEFORE CALL OF INIT---" << INTERNAL_DEBUG_DEVICE_ENDL;
+    INTERNAL_DEBUG_DEVICE << "insertFilterBox with bus number: " << static_cast<int>(ui8_busNumber)  << " and FilterBoxNr: " << static_cast<int>(b_oldSize) << INTERNAL_DEBUG_DEVICE_ENDL;
+    INTERNAL_DEBUG_DEVICE << "                     mask: " << std::hex << c_newMask.ident() << " filter: " << c_newFilter.ident() << std::dec << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
     return &arrFilterBox.back();
   }
@@ -700,8 +704,8 @@ FilterBox_c* CANIO_c::insertFilter(__IsoAgLib::CANCustomer_c& rref_customer,
       arrFilterBox[ui8_overwritenFilterBoxIndex].configCan(ui8_busNumber, ui8_overwritenFilterBoxIndex + minReceiveObjNr());
       filterBoxOverwrite = true;
       #ifdef DEBUG
-      EXTERNAL_DEBUG_DEVICE << "overwrite FilterBox[" << ui8_overwritenFilterBoxIndex << "] with busnumber: " << static_cast<int>(ui8_busNumber) << EXTERNAL_DEBUG_DEVICE_ENDL;
-      EXTERNAL_DEBUG_DEVICE << "                    mask: " << std::hex << c_newMask.ident() << " filter: " << c_newFilter.ident() << std::dec << EXTERNAL_DEBUG_DEVICE_ENDL;
+      INTERNAL_DEBUG_DEVICE << "overwrite FilterBox[" << ui8_overwritenFilterBoxIndex << "] with busnumber: " << static_cast<int>(ui8_busNumber) << INTERNAL_DEBUG_DEVICE_ENDL;
+      INTERNAL_DEBUG_DEVICE << "                    mask: " << std::hex << c_newMask.ident() << " filter: " << c_newFilter.ident() << std::dec << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
       break;
     }
@@ -713,8 +717,8 @@ FilterBox_c* CANIO_c::insertFilter(__IsoAgLib::CANCustomer_c& rref_customer,
     // insert temp object in vector arrFilterBox -> can cause badAlloc exception
     uint8_t tempMsgObjNr = minReceiveObjNr() + b_oldSize;
     #ifdef DEBUG
-    EXTERNAL_DEBUG_DEVICE << "insertFilterBox with bus number: " << static_cast<int>(ui8_busNumber)  << " and FilterBoxNr: " << static_cast<int>(b_oldSize) << EXTERNAL_DEBUG_DEVICE_ENDL;
-    EXTERNAL_DEBUG_DEVICE << "                     mask: "  << std::hex << c_newMask.ident() << " filter: " << c_newFilter.ident() << std::dec << EXTERNAL_DEBUG_DEVICE_ENDL;
+    INTERNAL_DEBUG_DEVICE << "insertFilterBox with bus number: " << static_cast<int>(ui8_busNumber)  << " and FilterBoxNr: " << static_cast<int>(b_oldSize) << INTERNAL_DEBUG_DEVICE_ENDL;
+    INTERNAL_DEBUG_DEVICE << "                     mask: "  << std::hex << c_newMask.ident() << " filter: " << c_newFilter.ident() << std::dec << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
     arrFilterBox.push_back(c_tempFilterBox);
     arrFilterBox.back().configCan(ui8_busNumber, tempMsgObjNr);
@@ -856,9 +860,9 @@ bool CANIO_c::deleteFilter(const __IsoAgLib::CANCustomer_c& rref_customer,
     #ifdef MASSERT
       << "\r\n__mall tot:" << AllocateHeapMalloc
       << ", _mall deal tot: " << DeallocateHeapMalloc
-      << "\r\n";
+      << INTERNAL_DEBUG_DEVICE_ENDL;
     #else
-      << "\r\n\r\n";
+      << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
     #endif
 
@@ -931,14 +935,14 @@ int16_t CANIO_c::processMsg(){
       case HAL_RANGE_ERR:
         getLbsErrInstance().registerError( LibErr_c::Range, LibErr_c::Can );
         #ifdef DEBUG
-        INTERNAL_DEBUG_DEVICE << "CAN-Receive Range Err\n";
+        INTERNAL_DEBUG_DEVICE << "CAN-Receive Range Err" << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
         HAL::can_useMsgobjPopFront(ui8_busNumber, i32_ident);
         b_runningCanProcess = false;
         return ui8_processedMsgCnt;
       case HAL_CONFIG_ERR:
         #if defined(DEBUG_CAN_BUFFER_FILLING) || defined(DEBUG)
-        INTERNAL_DEBUG_DEVICE << "\r\nBUS not initialized or wrong BUS nr: " << uint16_t(ui8_busNumber) << "\r\n";
+        INTERNAL_DEBUG_DEVICE << "\r\nBUS not initialized or wrong BUS nr: " << uint16_t(ui8_busNumber) << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
         getLbsErrInstance().registerError( LibErr_c::HwConfig, LibErr_c::Can );
         HAL::can_useMsgobjPopFront(ui8_busNumber, i32_ident);
@@ -946,7 +950,7 @@ int16_t CANIO_c::processMsg(){
         return ui8_processedMsgCnt;
       case HAL_NOACT_ERR:
         #ifdef DEBUG
-        INTERNAL_DEBUG_DEVICE << "CAN-Receive NoAct Err\n";
+        INTERNAL_DEBUG_DEVICE << "CAN-Receive NoAct Err" << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
         // wrong use of MsgObj (not likely) or CAN BUS OFF
         getLbsErrInstance().registerError( LibErr_c::CanOff, LibErr_c::Can );
@@ -968,7 +972,7 @@ int16_t CANIO_c::processMsg(){
           INTERNAL_DEBUG_DEVICE << "\r\nALARM!!!!!! CAN Buffer Overflow at MsgObj: "
             << uint16_t(i32_ident) << " at BUS: " << uint16_t(rui8_busNumber)
             << " with Ident: " << c_filter.ident()
-            << "\r\n";
+            << INTERNAL_DEBUG_DEVICE_ENDL;
         }
         b_detectedOverflow = true;
         #endif
@@ -1086,7 +1090,7 @@ CANIO_c& CANIO_c::operator<<(CANPkg_c& refc_src)
     {  // clear MsgObj CAN queue
       #ifdef DEBUG
       INTERNAL_DEBUG_DEVICE
-       << "CANIO_c::operator<< Blocked BUS Nr: " << uint16_t(ui8_busNumber) << "\r\n";
+       << "CANIO_c::operator<< Blocked BUS Nr: " << uint16_t(ui8_busNumber) << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
 
       HAL::can_useMsgobjClear(ui8_busNumber,ui8_sendObjNr);
@@ -1120,7 +1124,7 @@ CANIO_c& CANIO_c::operator<<(CANPkg_c& refc_src)
       // on init of this object
       // (and is done if timeEvent notices that CAN wasn't configured by init)
       #if defined(DEBUG)
-        INTERNAL_DEBUG_DEVICE << "\r\nBUS " << uint16_t(ui8_busNumber) << " not initialized or MsgObj: " << uint16_t(ui8_sendObjNr) << " no send obj\r\n";
+        INTERNAL_DEBUG_DEVICE << "\r\nBUS " << uint16_t(ui8_busNumber) << " not initialized or MsgObj: " << uint16_t(ui8_sendObjNr) << " no send obj" << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
       getLbsErrInstance().registerError( LibErr_c::HwConfig, LibErr_c::Can );
       break;
@@ -1139,7 +1143,7 @@ CANIO_c& CANIO_c::operator<<(CANPkg_c& refc_src)
     case HAL_WARN_ERR:
       // signal for BUS-WARN problem
       #if defined(DEBUG)
-      INTERNAL_DEBUG_DEVICE << "BUS " << uint16_t(ui8_busNumber) << " in WARN STATE\r\n";
+      INTERNAL_DEBUG_DEVICE << "BUS " << uint16_t(ui8_busNumber) << " in WARN STATE" << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
       getLbsErrInstance().registerError( LibErr_c::CanWarn, LibErr_c::Can );
       break;
@@ -1388,9 +1392,9 @@ void CANIO_c::CheckSetCntMsgObj(){
   #ifdef MASSERT
     << "\r\n__mall tot:" << AllocateHeapMalloc
     << ", _mall deal tot: " << DeallocateHeapMalloc
-    << "\r\n";
+    << INTERNAL_DEBUG_DEVICE_ENDL;
   #else
-    << "\r\n\r\n";
+    << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
   #endif
   #endif
 }
@@ -1521,9 +1525,9 @@ bool CANIO_c::reconfigureMsgObj()
   #ifdef MASSERT
     << "\r\n__mall tot:" << AllocateHeapMalloc
     << ", _mall deal tot: " << DeallocateHeapMalloc
-    << "\r\n";
+    << INTERNAL_DEBUG_DEVICE_ENDL;
   #else
-    << "\r\n\r\n";
+    << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
   #endif
   #endif
 
@@ -1698,7 +1702,7 @@ bool CANIO_c::baseCanInit(uint16_t rui16_bitrate)
   HAL::can_configGlobalClose(ui8_busNumber);
   #ifdef DEBUG
   INTERNAL_DEBUG_DEVICE
-      << "CANIO_c::baseCanInit( " << rui16_bitrate << " ) vor HAL::can_configGlobalInit\n";
+      << "CANIO_c::baseCanInit( " << rui16_bitrate << " ) vor HAL::can_configGlobalInit" << INTERNAL_DEBUG_DEVICE_ENDL;
   #endif
   // init CAN BUS (BIOS function)
   c_maskLastmsg.set(0, DEFAULT_IDENT_TYPE);
@@ -1831,7 +1835,7 @@ bool CANIO_c::stopSendRetryOnErr()
     INTERNAL_DEBUG_DEVICE
      << "CANIO_c::stopSendRetryOnErr() Blocked BUS Nr: " << uint16_t(ui8_busNumber)
      << ", ObjNr: " << minObjNr
-     << "\r\n";
+     << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
     HAL::can_useMsgobjClear(ui8_busNumber, minObjNr);
     b_result = true;
@@ -1845,7 +1849,7 @@ bool CANIO_c::stopSendRetryOnErr()
       #ifdef DEBUG
       INTERNAL_DEBUG_DEVICE
        << "CANIO_c::stopSendRetryOnErr() Blocked BUS Nr: " << uint16_t(ui8_busNumber)
-       << ", ObjNr: " << (minObjNr+1) << "\r\n";
+       << ", ObjNr: " << (minObjNr+1) << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
 
       HAL::can_useMsgobjClear(ui8_busNumber, (minObjNr+1) );
@@ -1867,14 +1871,14 @@ void CANIO_c::doDebug(uint8_t ui8_busNr, uint8_t ui8_sendObjNr)
     INTERNAL_DEBUG_DEVICE << "BITERR VOR HAL::can_useMsgobjSend BUS: "
       << uint16_t(ui8_busNr) << ", sendObjNr: "
       << uint16_t(ui8_sendObjNr)
-      << "\r\n";
+      << INTERNAL_DEBUG_DEVICE_ENDL;
   }
   if ( b_sendproblem )
   {
     INTERNAL_DEBUG_DEVICE << "SENDPROBLEM VOR HAL::can_useMsgobjSend BUS: "
       << uint16_t(ui8_busNr) << ", sendObjNr: "
       << uint16_t(ui8_sendObjNr)
-      << "\r\n";
+      << INTERNAL_DEBUG_DEVICE_ENDL;
 
   }
   if ( b_warnState )
@@ -1882,7 +1886,7 @@ void CANIO_c::doDebug(uint8_t ui8_busNr, uint8_t ui8_sendObjNr)
     INTERNAL_DEBUG_DEVICE << "CAN_WARN VOR HAL::can_useMsgobjSend BUS: "
       << uint16_t(ui8_busNr) << ", sendObjNr: "
       << uint16_t(ui8_sendObjNr)
-      << "\r\n";
+      << INTERNAL_DEBUG_DEVICE_ENDL;
   }
 }
 #endif

@@ -95,6 +95,16 @@
 #include <IsoAgLib/comm/SystemMgmt/impl/systemmgmt_c.h>
 #include <IsoAgLib/driver/can/impl/canio_c.h>
 
+#if defined(DEBUG)
+  #ifdef SYSTEM_PC
+    #include <iostream>
+  #else
+    #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
+  #endif
+  #include <IsoAgLib/util/impl/util_funcs.h>
+#endif
+
+
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
@@ -175,9 +185,10 @@ bool BaseCommon_c::config(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_i
   { // the application is in tractor mode but has no valid devKey
     // IMPORTANT: if we are in tractor mode we MUST have a valid devKey otherwise the configuration makes no sense
     #ifdef DEBUG
-      EXTERNAL_DEBUG_DEVICE << "CONFIG FAILURE. The config function was called with devKey == NULL and\
+      INTERNAL_DEBUG_DEVICE << "CONFIG FAILURE. The config function was called with devKey == NULL and\
                                 IdentModeTractor. Is is not allowed that the devKey ist NULL in combination\
-                                with tractor mode." << "\n";
+                                with tractor mode." 
+                            << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
     #if defined(DEBUG) && defined(SYSTEM_PC)
       abort();

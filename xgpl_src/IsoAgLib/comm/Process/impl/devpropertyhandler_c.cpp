@@ -224,7 +224,7 @@ DevPropertyHandler_c::processMsg()
           en_uploadStep = UploadWaitForUploadInit;
           b_receivedStructureLabel = false;
           #ifdef DEBUG
-          EXTERNAL_DEBUG_DEVICE << "Received NACK for structure label..." << EXTERNAL_DEBUG_DEVICE_ENDL;
+          INTERNAL_DEBUG_DEVICE << "Received NACK for structure label..." << INTERNAL_DEBUG_DEVICE_ENDL;
           #endif
         }
         break;
@@ -234,7 +234,7 @@ DevPropertyHandler_c::processMsg()
           en_uploadStep = UploadWaitForUploadInit;
           b_receivedLocalizationLabel = false;
           #ifdef DEBUG
-            EXTERNAL_DEBUG_DEVICE << "Received NACK for localization label..." << EXTERNAL_DEBUG_DEVICE_ENDL;
+            INTERNAL_DEBUG_DEVICE << "Received NACK for localization label..." << INTERNAL_DEBUG_DEVICE_ENDL;
           #endif
         }
         break;
@@ -251,7 +251,7 @@ DevPropertyHandler_c::processMsg()
       {
         ui8_versionLabel = data().getUint8Data(1);
         #ifdef DEBUG
-          EXTERNAL_DEBUG_DEVICE << "Received version response..." << EXTERNAL_DEBUG_DEVICE_ENDL;
+          INTERNAL_DEBUG_DEVICE << "Received version response..." << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
         startUpload();
       }
@@ -271,8 +271,8 @@ DevPropertyHandler_c::processMsg()
         ui32_uploadTimeout = DEF_TimeOut_NormalCommand;
         en_uploadStep = UploadWaitForLocalizationLabelResponse;
         #ifdef DEBUG
-          EXTERNAL_DEBUG_DEVICE << "Received structure label response..." << EXTERNAL_DEBUG_DEVICE_ENDL;
-          EXTERNAL_DEBUG_DEVICE << "Wait for localization label (in processMsg)..." << EXTERNAL_DEBUG_DEVICE_ENDL;
+          INTERNAL_DEBUG_DEVICE << "Received structure label response..." << INTERNAL_DEBUG_DEVICE_ENDL;
+          INTERNAL_DEBUG_DEVICE << "Wait for localization label (in processMsg)..." << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
       }
       break;
@@ -284,7 +284,7 @@ DevPropertyHandler_c::processMsg()
         b_receivedLocalizationLabel = true;
         en_uploadStep = UploadWaitForUploadInit;
         #ifdef DEBUG
-          EXTERNAL_DEBUG_DEVICE << "Received localization response..." << EXTERNAL_DEBUG_DEVICE_ENDL;
+          INTERNAL_DEBUG_DEVICE << "Received localization response..." << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
       }
       break;
@@ -303,7 +303,7 @@ DevPropertyHandler_c::processMsg()
           outOfMemory();
         }
         #ifdef DEBUG
-          EXTERNAL_DEBUG_DEVICE << "Received response for request OP transfer..." << EXTERNAL_DEBUG_DEVICE_ENDL;
+          INTERNAL_DEBUG_DEVICE << "Received response for request OP transfer..." << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
       }
       break;
@@ -321,8 +321,8 @@ DevPropertyHandler_c::processMsg()
           ui32_uploadTimestamp = HAL::getTime();
           ui32_uploadTimeout = DEF_TimeOut_NormalCommand;
           #ifdef DEBUG
-            EXTERNAL_DEBUG_DEVICE << "Received positive response for OP transfer..." << EXTERNAL_DEBUG_DEVICE_ENDL;
-            EXTERNAL_DEBUG_DEVICE << "OPActivateMsg..." << EXTERNAL_DEBUG_DEVICE_ENDL;
+            INTERNAL_DEBUG_DEVICE << "Received positive response for OP transfer..." << INTERNAL_DEBUG_DEVICE_ENDL;
+            INTERNAL_DEBUG_DEVICE << "OPActivateMsg..." << INTERNAL_DEBUG_DEVICE_ENDL;
           #endif
         }
         else
@@ -330,14 +330,14 @@ DevPropertyHandler_c::processMsg()
           ui8_commandParameter = procCmdPar_OPTransferRespMsg;
           outOfMemory();
           #ifdef DEBUG
-          EXTERNAL_DEBUG_DEVICE << "Received negative response for OP transfer..." << EXTERNAL_DEBUG_DEVICE_ENDL;
+          INTERNAL_DEBUG_DEVICE << "Received negative response for OP transfer..." << INTERNAL_DEBUG_DEVICE_ENDL;
           #endif
         }
       }
       break;
     case procCmdPar_OPActivateRespMsg:
       #ifdef DEBUG
-      EXTERNAL_DEBUG_DEVICE << "Received activate response..." << EXTERNAL_DEBUG_DEVICE_ENDL;
+      INTERNAL_DEBUG_DEVICE << "Received activate response..." << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
       if (en_uploadState == StateUploadPool && en_uploadStep == UploadWaitForOPActivateResponse)
       {
@@ -354,8 +354,8 @@ DevPropertyHandler_c::processMsg()
           en_poolState = OPCannotBeUploaded;
           ui8_commandParameter = procCmdPar_OPActivateRespMsg;
           #if defined(DEBUG) && defined(SYSTEM_PC)
-          EXTERNAL_DEBUG_DEVICE << (uint16_t) data().getUint8Data(1) << EXTERNAL_DEBUG_DEVICE_ENDL;
-          EXTERNAL_DEBUG_DEVICE << "upload failed, activate with error..." << EXTERNAL_DEBUG_DEVICE_ENDL;
+          INTERNAL_DEBUG_DEVICE << (uint16_t) data().getUint8Data(1) << INTERNAL_DEBUG_DEVICE_ENDL;
+          INTERNAL_DEBUG_DEVICE << "upload failed, activate with error..." << INTERNAL_DEBUG_DEVICE_ENDL;
           #endif
         }
       }
@@ -383,8 +383,8 @@ DevPropertyHandler_c::processMsg()
           en_uploadStep = UploadWaitForVersionResponse;
         }
         #ifdef DEBUG
-        EXTERNAL_DEBUG_DEVICE << "Received delete response..." << EXTERNAL_DEBUG_DEVICE_ENDL;
-        EXTERNAL_DEBUG_DEVICE << "Wait for version response (in processMsg)..." << EXTERNAL_DEBUG_DEVICE_ENDL;
+        INTERNAL_DEBUG_DEVICE << "Received delete response..." << INTERNAL_DEBUG_DEVICE_ENDL;
+        INTERNAL_DEBUG_DEVICE << "Wait for version response (in processMsg)..." << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
       }
       break;
@@ -398,7 +398,7 @@ DevPropertyHandler_c::processMsg()
         //no matter if successful or faulty, finish upload command
         finishUploadCommandChangeDesignator();
         #ifdef DEBUG
-        EXTERNAL_DEBUG_DEVICE << "ChangeDesignatorRespMsg..." << EXTERNAL_DEBUG_DEVICE_ENDL;
+        INTERNAL_DEBUG_DEVICE << "ChangeDesignatorRespMsg..." << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
       }
       break;
@@ -482,7 +482,7 @@ DevPropertyHandler_c::timeEvent( void )
       ui32_uploadTimeout = DEF_TimeOut_NormalCommand;
       en_uploadStep = UploadWaitForStructureLabelResponse;
       #ifdef DEBUG
-      EXTERNAL_DEBUG_DEVICE << "Wait for structure label..." << EXTERNAL_DEBUG_DEVICE_ENDL;
+      INTERNAL_DEBUG_DEVICE << "Wait for structure label..." << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
       break;
     case UploadWaitForVersionResponse:
@@ -490,11 +490,11 @@ DevPropertyHandler_c::timeEvent( void )
       {
         /** @todo set versionLabel to a default??? */
         #ifdef DEBUG
-        EXTERNAL_DEBUG_DEVICE << "No version available..." << EXTERNAL_DEBUG_DEVICE_ENDL;
+        INTERNAL_DEBUG_DEVICE << "No version available..." << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
         startUpload();
       }
-      //else std::cout << "still waiting for timeout or response..." << EXTERNAL_DEBUG_DEVICE_ENDL;
+      //else std::cout << "still waiting for timeout or response..." << INTERNAL_DEBUG_DEVICE_ENDL;
       break;
     case UploadWaitForStructureLabelResponse:
       //Timed out???
@@ -503,7 +503,7 @@ DevPropertyHandler_c::timeEvent( void )
         b_receivedStructureLabel = false;
         en_uploadStep = UploadWaitForUploadInit;
         #ifdef DEBUG
-        EXTERNAL_DEBUG_DEVICE << "Wait for structure label timed out, go to wait for upload init..." << EXTERNAL_DEBUG_DEVICE_ENDL;
+        INTERNAL_DEBUG_DEVICE << "Wait for structure label timed out, go to wait for upload init..." << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
       }
       break;
@@ -514,7 +514,7 @@ DevPropertyHandler_c::timeEvent( void )
         b_receivedLocalizationLabel = false;
         en_uploadStep = UploadWaitForUploadInit;
         #ifdef DEBUG
-        EXTERNAL_DEBUG_DEVICE << "Wait for localization label timed out, go to wait for upload init..." << EXTERNAL_DEBUG_DEVICE_ENDL;
+        INTERNAL_DEBUG_DEVICE << "Wait for localization label timed out, go to wait for upload init..." << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
       }
       break;
@@ -526,14 +526,14 @@ DevPropertyHandler_c::timeEvent( void )
         if (!b_receivedStructureLabel)
         {
           #ifdef DEBUG
-          EXTERNAL_DEBUG_DEVICE << "get pool from taskcontroller or via default..." << EXTERNAL_DEBUG_DEVICE_ENDL;
+          INTERNAL_DEBUG_DEVICE << "get pool from taskcontroller or via default..." << INTERNAL_DEBUG_DEVICE_ENDL;
           #endif
           getPoolForUpload();
         }
         else
         {
           #ifdef DEBUG
-          EXTERNAL_DEBUG_DEVICE << "init upload..." << EXTERNAL_DEBUG_DEVICE_ENDL;
+          INTERNAL_DEBUG_DEVICE << "init upload..." << INTERNAL_DEBUG_DEVICE_ENDL;
           #endif
           initUploading();
         }
@@ -550,7 +550,7 @@ DevPropertyHandler_c::timeEvent( void )
           ui32_uploadTimeout = DEF_TimeOut_NormalCommand;
           en_uploadStep = UploadWaitForDeleteResponse;
           #ifdef DEBUG
-          EXTERNAL_DEBUG_DEVICE << "Wait for delete response..." << EXTERNAL_DEBUG_DEVICE_ENDL;
+          INTERNAL_DEBUG_DEVICE << "Wait for delete response..." << INTERNAL_DEBUG_DEVICE_ENDL;
           #endif
         }
         else
@@ -562,7 +562,7 @@ DevPropertyHandler_c::timeEvent( void )
           ui32_uploadTimeout = DEF_TimeOut_NormalCommand;
           en_uploadStep = UploadWaitForVersionResponse;
           #ifdef DEBUG
-          EXTERNAL_DEBUG_DEVICE << "Wait for version response..." << EXTERNAL_DEBUG_DEVICE_ENDL;
+          INTERNAL_DEBUG_DEVICE << "Wait for version response..." << INTERNAL_DEBUG_DEVICE_ENDL;
           #endif
         }
       }
@@ -576,7 +576,7 @@ DevPropertyHandler_c::timeEvent( void )
         ui32_uploadTimestamp = HAL::getTime();
         ui32_uploadTimeout = DEF_WaitFor_Reupload;
         #ifdef DEBUG
-        EXTERNAL_DEBUG_DEVICE << "Upload timed out when deleting old pool, wait for re-upload..." << EXTERNAL_DEBUG_DEVICE_ENDL;
+        INTERNAL_DEBUG_DEVICE << "Upload timed out when deleting old pool, wait for re-upload..." << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
       }
       break;
@@ -589,14 +589,14 @@ DevPropertyHandler_c::timeEvent( void )
         ui32_uploadTimestamp = HAL::getTime();
         ui32_uploadTimeout = DEF_WaitFor_Reupload;
         #ifdef DEBUG
-        EXTERNAL_DEBUG_DEVICE << "Upload timed out, wait for re-upload..." << EXTERNAL_DEBUG_DEVICE_ENDL;
+        INTERNAL_DEBUG_DEVICE << "Upload timed out, wait for re-upload..." << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
       }
       break;
     case UploadRetryUpload:
       startUpload();
         #ifdef DEBUG
-        EXTERNAL_DEBUG_DEVICE << "UploadRetryUpload..." << EXTERNAL_DEBUG_DEVICE_ENDL;
+        INTERNAL_DEBUG_DEVICE << "UploadRetryUpload..." << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
       break;
     case UploadUploading:
@@ -612,7 +612,7 @@ DevPropertyHandler_c::timeEvent( void )
           ui32_uploadTimestamp = HAL::getTime();
           ui32_uploadTimeout = DEF_WaitFor_Reupload;
           #ifdef DEBUG
-          EXTERNAL_DEBUG_DEVICE << "Upload failed, send aborted..." << EXTERNAL_DEBUG_DEVICE_ENDL;
+          INTERNAL_DEBUG_DEVICE << "Upload failed, send aborted..." << INTERNAL_DEBUG_DEVICE_ENDL;
           #endif
         } break;
         case __IsoAgLib::MultiSend_c::SendSuccess: {
@@ -620,7 +620,7 @@ DevPropertyHandler_c::timeEvent( void )
           ui32_uploadTimestamp = HAL::getTime();
           ui32_uploadTimeout = DEF_TimeOut_EndOfDevicePool;
           #ifdef DEBUG
-          EXTERNAL_DEBUG_DEVICE << "Upload successful, wait for transfer response..." << EXTERNAL_DEBUG_DEVICE_ENDL;
+          INTERNAL_DEBUG_DEVICE << "Upload successful, wait for transfer response..." << INTERNAL_DEBUG_DEVICE_ENDL;
           #endif
         }
       }
@@ -634,7 +634,7 @@ DevPropertyHandler_c::timeEvent( void )
         ui32_uploadTimestamp = HAL::getTime();
         ui32_uploadTimeout = DEF_WaitFor_Reupload;
         #ifdef DEBUG
-        EXTERNAL_DEBUG_DEVICE << "Upload failed, timeout when waiting for transfer response,wait for re-upload..." << EXTERNAL_DEBUG_DEVICE_ENDL;
+        INTERNAL_DEBUG_DEVICE << "Upload failed, timeout when waiting for transfer response,wait for re-upload..." << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
       }
       break;
@@ -647,7 +647,7 @@ DevPropertyHandler_c::timeEvent( void )
         ui32_uploadTimestamp = HAL::getTime();
         ui32_uploadTimeout = DEF_WaitFor_Reupload;
         #ifdef DEBUG
-        EXTERNAL_DEBUG_DEVICE << "Upload failed when waiting for activating pool, wait for re-upload..." << EXTERNAL_DEBUG_DEVICE_ENDL;
+        INTERNAL_DEBUG_DEVICE << "Upload failed when waiting for activating pool, wait for re-upload..." << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
       }
       break;
@@ -655,7 +655,7 @@ DevPropertyHandler_c::timeEvent( void )
       if (((uint32_t) HAL::getTime()) > (ui32_uploadTimeout + ui32_uploadTimestamp))
       {
         #ifdef DEBUG
-        EXTERNAL_DEBUG_DEVICE << "Upload failed..." << EXTERNAL_DEBUG_DEVICE_ENDL;
+        INTERNAL_DEBUG_DEVICE << "Upload failed..." << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
         switch (ui8_commandParameter)
         {
@@ -875,7 +875,7 @@ DevPropertyHandler_c::initUploading()
         en_poolState = OPSuccessfullyUploaded;
         en_uploadStep = UploadNone;
         #ifdef DEBUG
-        EXTERNAL_DEBUG_DEVICE << "Stop Uploading - Pool already here..." << EXTERNAL_DEBUG_DEVICE_ENDL;
+        INTERNAL_DEBUG_DEVICE << "Stop Uploading - Pool already here..." << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
       }
       else
@@ -983,7 +983,7 @@ DevPropertyHandler_c::startUpload()
   en_uploadState = StateUploadPool;
   en_uploadStep = UploadWaitForRequestOPTransferResponse;
   #ifdef DEBUG
-  EXTERNAL_DEBUG_DEVICE << "Wait for response for request OP transfer..." << EXTERNAL_DEBUG_DEVICE_ENDL;
+  INTERNAL_DEBUG_DEVICE << "Wait for response for request OP transfer..." << INTERNAL_DEBUG_DEVICE_ENDL;
   #endif
 }
 
@@ -997,7 +997,7 @@ DevPropertyHandler_c::outOfMemory()
   en_uploadStep = UploadFailed; // no timeout needed
   en_poolState = OPCannotBeUploaded;
   #ifdef DEBUG
-  EXTERNAL_DEBUG_DEVICE << "upload failed, no retry" << EXTERNAL_DEBUG_DEVICE_ENDL;
+  INTERNAL_DEBUG_DEVICE << "upload failed, no retry" << INTERNAL_DEBUG_DEVICE_ENDL;
   #endif
 }
 

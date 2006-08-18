@@ -288,7 +288,7 @@ bool FilterBox_c::configCan(uint8_t rui8_busNumber, uint8_t rui8_FilterBoxNr)
     case HAL_CONFIG_ERR:
       /* BUS not initialized, undefined msg type, CAN-BIOS memory error */
       #if defined(DEBUG_CAN_BUFFER_FILLING) || defined(DEBUG)
-      INTERNAL_DEBUG_DEVICE << "\r\nALARM Not enough memory for CAN buffer\r\n";
+      INTERNAL_DEBUG_DEVICE << "\r\nALARM Not enough memory for CAN buffer" << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
       getLbsErrInstance().registerError( LibErr_c::HwConfig, LibErr_c::Can );
       break;
@@ -514,7 +514,7 @@ void FilterBox_c::doDebug(uint8_t rui8_busNumber)
       << " at Filterbox Nr: " << uint16_t(ui8_filterBoxNr)
       << " with Filter: " << c_filter.ident()
       << " at BUS: " << uint16_t(rui8_busNumber)
-      << "\r\n";
+      << INTERNAL_DEBUG_DEVICE_ENDL;
   }
   if ( HAL::can_stateMsgobjFreecnt(rui8_busNumber, ui8_filterBoxNr) < ref_minFree )
   { // new MIN detected -> update and print
@@ -523,7 +523,7 @@ void FilterBox_c::doDebug(uint8_t rui8_busNumber)
       << " at Filterbox Nr: " << uint16_t(ui8_filterBoxNr)
       << " with Filter: " << c_filter.ident()
       << " at BUS: " << uint16_t(rui8_busNumber)
-      << "\r\n";
+      << INTERNAL_DEBUG_DEVICE_ENDL;
   }
 }
 #endif

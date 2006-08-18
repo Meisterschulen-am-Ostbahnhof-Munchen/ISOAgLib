@@ -161,7 +161,7 @@ void SendUploadBase_c::set (uint8_t* rpui8_buffer, uint32_t rui32_bufferSize)
   if ( vec_uploadBuffer.capacity() != sui16_lastPrintedBufferCapacity )
   {
     sui16_lastPrintedBufferCapacity = vec_uploadBuffer.capacity();
-    getRs232Instance() << "ISOTerminal_c Buffer-Capa: " << sui16_lastPrintedBufferCapacity << "\r\n";
+    getRs232Instance() << "ISOTerminal_c Buffer-Capa: " << sui16_lastPrintedBufferCapacity << INTERNAL_DEBUG_DEVICE_ENDL;
   }
   #endif
 }
@@ -205,7 +205,7 @@ void SendUploadBase_c::set (uint16_t rui16_objId, const char* rpc_string, uint16
   if ( vec_uploadBuffer.capacity() != sui16_lastPrintedBufferCapacity )
   {
     sui16_lastPrintedBufferCapacity = vec_uploadBuffer.capacity();
-    getRs232Instance() << "ISOTerminal_c Buffer-Capa: " << sui16_lastPrintedBufferCapacity << "\r\n";
+    getRs232Instance() << "ISOTerminal_c Buffer-Capa: " << sui16_lastPrintedBufferCapacity << INTERNAL_DEBUG_DEVICE_ENDL;
   }
   #endif
 }
@@ -489,7 +489,7 @@ MultiSend_c::addSendStream(uint8_t rb_send, uint8_t rb_empf)
 bool MultiSend_c::sendDin(uint8_t rb_send, uint8_t rb_empf, const HUGE_MEM uint8_t* rhpb_data, int32_t ri32_dataSize, uint16_t rui16_msgSize, sendSuccess_t& rrefen_sendSuccessNotify, uint16_t rb_fileCmd, bool rb_abortOnTimeout)
 {
   #if defined( DEBUG )
-  INTERNAL_DEBUG_DEVICE << "MultiSend_c::sendDin with Len " << ri32_dataSize << "\n";
+  INTERNAL_DEBUG_DEVICE << "MultiSend_c::sendDin with Len " << ri32_dataSize << INTERNAL_DEBUG_DEVICE_ENDL";
   #endif
 
   /// first check if new transfer can be started
@@ -696,7 +696,7 @@ MultiSend_c::SendStream_c::timeEvent( uint8_t rui8_pkgCnt, int32_t ri32_time )
 
         if (rui8_pkgCnt == 0)        {
             #if defined( DEBUG )
-            INTERNAL_DEBUG_DEVICE << "MultiSend_c::timeEvent --- pkgCnt == 0;\n";
+            INTERNAL_DEBUG_DEVICE << "MultiSend_c::timeEvent --- pkgCnt == 0;" << INTERNAL_DEBUG_DEVICE_ENDL;
             #endif
         }
         for (ui8_pkgInd = 0; ui8_pkgInd < rui8_pkgCnt; ui8_pkgInd++)
@@ -855,7 +855,7 @@ MultiSend_c::SendStream_c::timeEvent( uint8_t rui8_pkgCnt, int32_t ri32_time )
 
       if (rui8_pkgCnt == 0){
         #if defined( DEBUG )
-        INTERNAL_DEBUG_DEVICE << "MultiSend_c::timeEvent --- pkgCnt == 0;\n";
+        INTERNAL_DEBUG_DEVICE << "MultiSend_c::timeEvent --- pkgCnt == 0;" << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
       }
       for (ui8_pkgInd = 0; ui8_pkgInd < rui8_pkgCnt; ui8_pkgInd++)
@@ -891,7 +891,7 @@ MultiSend_c::SendStream_c::timeEvent( uint8_t rui8_pkgCnt, int32_t ri32_time )
                   // wait for CTS for next part of transfer
                   en_sendState = AwaitCts;
                   #if defined( DEBUG )
-                  INTERNAL_DEBUG_DEVICE << "MultiSend_c::timeEvent --- after Sending now awaiting CTS!\n";
+                  INTERNAL_DEBUG_DEVICE << "MultiSend_c::timeEvent --- after Sending now awaiting CTS!" << INTERNAL_DEBUG_DEVICE_ENDL;
                   #endif
                   break;
                 case Din:
@@ -905,7 +905,7 @@ MultiSend_c::SendStream_c::timeEvent( uint8_t rui8_pkgCnt, int32_t ri32_time )
             if (en_msgType != IsoBroadcast)
             {
               #if defined( DEBUG )
-              INTERNAL_DEBUG_DEVICE << "MultiSend_c::timeEvent --- after complete Sending now awaiting EOMACK!\n";
+              INTERNAL_DEBUG_DEVICE << "MultiSend_c::timeEvent --- after complete Sending now awaiting EOMACK!" << INTERNAL_DEBUG_DEVICE_ENDL;
               #endif
               en_sendState = AwaitEndofmsgack;
             }
@@ -948,7 +948,7 @@ MultiSend_c::timeEvent( void )
 
   if ( Scheduler_c::getAvailableExecTime() == 0 ) {
     #if defined( DEBUG )
-    INTERNAL_DEBUG_DEVICE << "MultiSend_c::timeEvent --- getAvailableExecTime() == 0;\n";
+    INTERNAL_DEBUG_DEVICE << "MultiSend_c::timeEvent --- getAvailableExecTime() == 0;" << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
     return false;
   }
@@ -970,7 +970,7 @@ MultiSend_c::timeEvent( void )
     { // SendStream finished
       pc_iter = list_sendStream.erase (pc_iter);
       #ifdef DEBUG
-      INTERNAL_DEBUG_DEVICE << "Kicked SendStream because it finished!\n";
+      INTERNAL_DEBUG_DEVICE << "Kicked SendStream because it finished!" << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
       b_listShrunk = true;
     }
@@ -1015,7 +1015,7 @@ MultiSend_c::SendStream_c::processMsg()
       i32_DC = read_DC();
       #if defined( DEBUG )
       INTERNAL_DEBUG_DEVICE << "MultiSend_c::processMsg --- CTS received!\nFor Date from DC: " << i32_DC
-        << "\n";
+        << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
       /** @todo WHY WAS THE SEND BUFFER CLEARED AT THIS POSITION??
         // clear send buffer
@@ -1096,7 +1096,7 @@ MultiSend_c::SendStream_c::processMsg()
           }
           // now receiver wants to receive new data
           #if defined( DEBUG )
-          INTERNAL_DEBUG_DEVICE << "Start To Send Next Data Block\n";
+          INTERNAL_DEBUG_DEVICE << "Start To Send Next Data Block" << INTERNAL_DEBUG_DEVICE_ENDL;
           #endif
           en_sendState = SendData;
         } // end request to send
@@ -1106,7 +1106,7 @@ MultiSend_c::SendStream_c::processMsg()
     case eCM_EndofMsgACK:
       if (en_sendState == AwaitEndofmsgack) {
         #if defined( DEBUG )
-        INTERNAL_DEBUG_DEVICE << "MultiSend_c::processMsg --- EOMACK received!\n";
+        INTERNAL_DEBUG_DEVICE << "MultiSend_c::processMsg --- EOMACK received!" << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
         // CHECK HERE IF WE'RE AWAITING AN EOMACK!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         if (en_msgType == Din)
@@ -1141,13 +1141,13 @@ MultiSend_c::SendStream_c::processMsg()
         }
       } else { // not awaiting end of message ack
         #if defined( DEBUG )
-        INTERNAL_DEBUG_DEVICE << "MultiSend_c::processMsg --- EOMACK received without expecting it!\n";
+        INTERNAL_DEBUG_DEVICE << "MultiSend_c::processMsg --- EOMACK received without expecting it!" << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
       }
       break;
     case ConnAbort:
       #if defined( DEBUG )
-      INTERNAL_DEBUG_DEVICE << "MultiSend_c::processMsg --- ConnAbort received!\n";
+      INTERNAL_DEBUG_DEVICE << "MultiSend_c::processMsg --- ConnAbort received!" << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
       *pen_sendSuccessNotify = SendAborted; // will be kicked out after next timeEvent!
       return false; // in case a MultiSend & MultiReceive are running parallel, then this ConnAbort should be for both!
@@ -1268,7 +1268,7 @@ void MultiSend_c::reactOnMonitorListAdd( const DevKey_c& refc_devKey, const ISOI
   #ifdef DEBUG
   INTERNAL_DEBUG_DEVICE << "reactOnMonitorListAdd() handles CLAIM of ISOItem_c for device with DevClass: " << int(refc_devKey.getDevClass())
       << ", Instance: " << int(refc_devKey.getDevClassInst()) << ", and manufacturer ID: " << int(refc_devKey.getConstName().manufCode())
-      << "NOW use SA: " << int(rpc_newItem->nr()) << "\n\n"
+      << "NOW use SA: " << int(rpc_newItem->nr()) << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_NEWLINE
       << INTERNAL_DEBUG_DEVICE_ENDL;
   #endif
   // no resurrection here as we do NOT (yet) save the devKey/isoname to our SendStream_c instances in the list...
@@ -1300,7 +1300,7 @@ void MultiSend_c::reactOnMonitorListRemove( const DevKey_c& refc_devKey, uint8_t
   #ifdef DEBUG
   INTERNAL_DEBUG_DEVICE << "reactOnMonitorListRemove() handles LOSS of ISOItem_c for device with DevClass: " << int(refc_devKey.getDevClass())
       << ", Instance: " << int(refc_devKey.getDevClassInst()) << ", and manufacturer ID: " << int(refc_devKey.getConstName().manufCode())
-      << " and PREVIOUSLY used SA: " << int(rui8_oldSa) << "\n\n"
+      << " and PREVIOUSLY used SA: " << int(rui8_oldSa) << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_NEWLINE
       << INTERNAL_DEBUG_DEVICE_ENDL;
   #endif
   for (std::list<SendStream_c>::iterator pc_iter=list_sendStream.begin(); pc_iter != list_sendStream.end();)

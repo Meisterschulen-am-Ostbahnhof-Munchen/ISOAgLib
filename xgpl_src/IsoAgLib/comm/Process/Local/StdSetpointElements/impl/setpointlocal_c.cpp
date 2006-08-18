@@ -151,7 +151,7 @@ void SetpointLocal_c::init( ProcDataBase_c *const rpc_processData )
   #ifdef DEBUG_HEAP_USEAGE
   getRs232Instance()
     << "sizeof(SetpointRegister_c) = " << sizeof(SetpointRegister_c)
-    << " Bytes\r\n";
+    << " Bytes" << INTERNAL_DEBUG_DEVICE_ENDL;
   #endif
 
 }
@@ -199,7 +199,7 @@ void SetpointLocal_c::assignFromSource( const SetpointLocal_c& rrefc_src )
     sui16_setpointLocalTotal += ( vec_prog().size() * ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) );
 
     getRs232Instance()
-      << "SetLReg T: " << sui16_setpointLocalTotal << ", Node: " << ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) << "\r\n";
+      << "SetLReg T: " << sui16_setpointLocalTotal << ", Node: " << ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) << INTERNAL_DEBUG_DEVICE_ENDL;
   }
   #endif
 
@@ -225,7 +225,7 @@ SetpointLocal_c::~SetpointLocal_c(){
   sui16_setpointLocalTotal -= ( vec_register.size() * ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) );
 
   getRs232Instance()
-  << "SetLReg T: " << sui16_setpointLocalTotal << ", Node: " << ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) << "\r\n";
+  << "SetLReg T: " << sui16_setpointLocalTotal << ", Node: " << ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) << INTERNAL_DEBUG_DEVICE_ENDL;
   #endif
 }
 
@@ -323,7 +323,7 @@ void SetpointLocal_c::acceptNewMaster( bool rb_accept){
           sui16_setpointLocalTotal -= ( 1 * ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) );
 
           getRs232Instance()
-            << "SetLReg T: " << sui16_setpointLocalTotal << ", Node: " << ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) << "\r\n";
+            << "SetLReg T: " << sui16_setpointLocalTotal << ", Node: " << ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) << INTERNAL_DEBUG_DEVICE_ENDL;
           #endif
         }
       }
@@ -362,7 +362,7 @@ void SetpointLocal_c::setMasterMeasurementVal( int32_t ri32_val)
       sui16_setpointLocalTotal += ( 1 * ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) );
 
       getRs232Instance()
-        << "SetLReg T: " << sui16_setpointLocalTotal << ", Node: " << ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) << "\r\n";
+        << "SetLReg T: " << sui16_setpointLocalTotal << ", Node: " << ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) << INTERNAL_DEBUG_DEVICE_ENDL;
     }
     #endif
     pc_master = vec_register.begin();
@@ -593,7 +593,7 @@ bool SetpointLocal_c::timeEvent( void ){
           sui16_setpointLocalTotal -= ( 1 * ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) );
 
           getRs232Instance()
-            << "SetLReg T: " << sui16_setpointLocalTotal << ", Node: " << ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) << "\r\n";
+            << "SetLReg T: " << sui16_setpointLocalTotal << ", Node: " << ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) << INTERNAL_DEBUG_DEVICE_ENDL;
           #endif
           b_repeat = true;
           break; // old was: delete max one item per timeEvent, cause of reordering of list
@@ -618,7 +618,7 @@ bool SetpointLocal_c::timeEvent( void ){
           sui16_setpointLocalTotal -= ( 1 * ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) );
 
           getRs232Instance()
-            << "SetLReg T: " << sui16_setpointLocalTotal << ", Node: " << ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) << "\r\n";
+            << "SetLReg T: " << sui16_setpointLocalTotal << ", Node: " << ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) << INTERNAL_DEBUG_DEVICE_ENDL;
           #endif
           b_repeat = true;
           break; // delete no more entry during this run
@@ -716,7 +716,7 @@ void SetpointLocal_c::processSet(){
         sui16_setpointLocalTotal += ( 1 * ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) );
 
         getRs232Instance()
-          << "SetLReg T: " << sui16_setpointLocalTotal << ", Node: " << ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) << "\r\n";
+          << "SetLReg T: " << sui16_setpointLocalTotal << ", Node: " << ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) << INTERNAL_DEBUG_DEVICE_ENDL;
       }
       #endif
       pc_callerIter = vec_register.begin();
@@ -745,7 +745,7 @@ void SetpointLocal_c::processSet(){
     sui16_setpointLocalTotal -= ( 1 * ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) );
 
     getRs232Instance()
-      << "SetLReg T: " << sui16_setpointLocalTotal << ", Node: " << ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) << "\r\n";
+      << "SetLReg T: " << sui16_setpointLocalTotal << ", Node: " << ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
 
     // prepare general command in process pkg

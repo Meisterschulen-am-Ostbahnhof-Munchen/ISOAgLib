@@ -123,7 +123,7 @@ void LibErr_c::registerError( LibErr_c::LbsLibErrTypes_t rt_errType, LbsLibErrLo
     st_lastDebugErrType = rt_errType;
     st_lastDebugErrLocation = rt_errLocation;
     INTERNAL_DEBUG_DEVICE
-      << "registerError( " << rt_errType << ", " << rt_errLocation << " )\r\n";
+      << "registerError( " << rt_errType << ", " << rt_errLocation << " )" << INTERNAL_DEBUG_DEVICE_ENDL;
   }
 #endif
 

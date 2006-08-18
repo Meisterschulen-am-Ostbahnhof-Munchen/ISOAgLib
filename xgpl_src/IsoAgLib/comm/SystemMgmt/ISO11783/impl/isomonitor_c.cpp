@@ -296,7 +296,7 @@ bool ISOMonitor_c::timeEvent( void ){
             << "/" << sizeSlistTWithMalloc( sizeof(ISOItem_c), 1 )
             << ", Chunk-Alloc: "
             << sizeSlistTWithChunk( sizeof(ISOItem_c), sui16_isoItemTotal )
-            << "\r\n\r\n";
+            << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
           #endif
           pc_iter = vec_isoMember.erase(pc_iterDelete); // erase returns iterator to next element after the erased one
         }
@@ -586,7 +586,7 @@ ISOItem_c* ISOMonitor_c::insertIsoMember(const DevKey_c& rc_devKey,
       << "/" << sizeSlistTWithMalloc( sizeof(ISOItem_c), 1 )
       << ", Chunk-Alloc: "
       << sizeSlistTWithChunk( sizeof(ISOItem_c), sui16_isoItemTotal )
-      << "\r\n\r\n";
+      << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
   }
   vec_isoMember.sort(); // resort the list
@@ -752,7 +752,7 @@ bool ISOMonitor_c::deleteIsoMemberDevKey(const DevKey_c& rc_devKey)
       << "/" << sizeSlistTWithMalloc( sizeof(ISOItem_c), 1 )
       << ", Chunk-Alloc: "
       << sizeSlistTWithChunk( sizeof(ISOItem_c), sui16_isoItemTotal )
-      << "\r\n\r\n";
+      << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
     pc_isoMemberCache = vec_isoMember.begin();
     return true;
@@ -941,7 +941,7 @@ bool ISOMonitor_c::sendRequestForClaimedAddress( bool rb_force )
   if (b_sendOwnSa)
   {
     #ifdef DEBUG
-    EXTERNAL_DEBUG_DEVICE << "Send checking SA request (sendRequestForClaimedAddress())" << EXTERNAL_DEBUG_DEVICE_ENDL;
+    INTERNAL_DEBUG_DEVICE << "Send checking SA request (sendRequestForClaimedAddress())" << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
     const uint8_t cui8_localCnt = getSystemMgmtInstance4Comm().localIsoMemberCnt();
     for ( uint8_t ui8_ind = 0; ui8_ind < cui8_localCnt; ui8_ind++ )

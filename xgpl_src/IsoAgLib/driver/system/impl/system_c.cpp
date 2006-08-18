@@ -138,7 +138,7 @@ bool System_c::init( bool rb_forceReinit, IsoAgLib::SystemPowerdownStrategy_t rt
     {
 		#ifdef DEBUG
 		INTERNAL_DEBUG_DEVICE
-        << "Fehler bei Systemstart: " << ci_err << "\r\n";
+        << "Fehler bei Systemstart: " << ci_err << INTERNAL_DEBUG_DEVICE_ENDL;
 		#endif
       getLbsErrInstance().registerError( LibErr_c::SystemOpen, LibErr_c::HwSystem ); // something is still wrong
       b_result = false;

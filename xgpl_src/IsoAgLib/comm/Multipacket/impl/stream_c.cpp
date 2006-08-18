@@ -215,7 +215,7 @@ Stream_c::handleDataPacket (const Flexible8ByteString_c* rpu_data)
   // expecting data at all?
   if (t_awaitStep != AwaitData) {
     #ifdef DEBUG
-      INTERNAL_DEBUG_DEVICE << "t_awaitStep != AwaitData! --- t_awaitStep ==" << t_awaitStep << " \n";
+      INTERNAL_DEBUG_DEVICE << "t_awaitStep != AwaitData! --- t_awaitStep ==" << t_awaitStep << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
     return false;
   }

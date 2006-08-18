@@ -1000,10 +1000,12 @@
     #include "stdio.h"
     #define INTERNAL_DEBUG_DEVICE std::cout
   	#define INTERNAL_DEBUG_DEVICE_ENDL std::endl
+  	#define INTERNAL_DEBUG_DEVICE_NEWLINE "\n"
     #define INTERNAL_DEBUG_FLUSH fflush(0);
   #else
     #define INTERNAL_DEBUG_DEVICE __IsoAgLib::getRs232Instance()
   	#define INTERNAL_DEBUG_DEVICE_ENDL "\n"
+  	#define INTERNAL_DEBUG_DEVICE_NEWLINE "\n"
     #define INTERNAL_DEBUG_FLUSH
   #endif
 #endif
@@ -1014,10 +1016,12 @@
     #include <fstream>
     #define EXTERNAL_DEBUG_DEVICE std::cout
   	#define EXTERNAL_DEBUG_DEVICE_ENDL std::endl
+  	#define EXTERNAL_DEBUG_DEVICE_NEWLINE "\n"
     #define EXTERNAL_DEBUG_FLUSH fflush(0);
   #else
     #define EXTERNAL_DEBUG_DEVICE IsoAgLib::getIrs232Instance()
   	#define EXTERNAL_DEBUG_DEVICE_ENDL "\n"
+  	#define EXTERNAL_DEBUG_DEVICE_NEWLINE "\n"
     #define EXTERNAL_DEBUG_FLUSH
   #endif
 #endif

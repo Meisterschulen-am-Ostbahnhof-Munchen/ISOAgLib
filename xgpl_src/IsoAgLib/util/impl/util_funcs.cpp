@@ -176,7 +176,7 @@ void littleEndianStream2FloatVar(const void *const pvFrom, float *const pf_to)
       pb_to[3] = pb_from[1];
     } else {
       #ifdef DEBUG
-      EXTERNAL_DEBUG_DEVICE << "BIG PROBLEM: NO KNOWN BYTE ORDER REPRESENTATION OF FLOAT AT THIS TARGET" << EXTERNAL_DEBUG_DEVICE_ENDL;
+      INTERNAL_DEBUG_DEVICE << "BIG PROBLEM: NO KNOWN BYTE ORDER REPRESENTATION OF FLOAT AT THIS TARGET" << INTERNAL_DEBUG_DEVICE_ENDL;
       abort();
       #endif
     }
@@ -243,7 +243,7 @@ void floatVar2LittleEndianStream(const float *const pf_from, void *const pvTo)
       pb_to[3] = pb_from[1];
     } else {
       #ifdef DEBUG
-      EXTERNAL_DEBUG_DEVICE << "BIG PROBLEM: NO KNOWN BYTE ORDER REPRESENTATION OF FLOAT AT THIS TARGET" << EXTERNAL_DEBUG_DEVICE_ENDL;
+      INTERNAL_DEBUG_DEVICE << "BIG PROBLEM: NO KNOWN BYTE ORDER REPRESENTATION OF FLOAT AT THIS TARGET" << INTERNAL_DEBUG_DEVICE_ENDL;
       abort();
       #endif
     }

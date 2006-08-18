@@ -311,7 +311,7 @@ bool Process_c::timeEvent( void ){
       << "/" << sizeof(void*)
       << ", Chunk-Alloc: "
       << sizeVectorTWithChunk( sizeof(void*), c_arrClientC1.capacity() )
-      << "\r\n"
+      << INTERNAL_DEBUG_DEVICE_ENDL
       << c_arrClientC2.size()
       << "(" << c_arrClientC2.capacity()
       << ") x RemoteProcData Pointer: Mal-Alloc: "
@@ -320,11 +320,11 @@ bool Process_c::timeEvent( void ){
       << ", Chunk-Alloc: "
       << sizeVectorTWithChunk( sizeof(uint16_t), c_arrClientC2.capacity() )
       #ifndef MASSERT
-      << "\r\n\r\n";
+      << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
       #else
-      << "\r\n__mall tot:" << AllocateHeapMalloc
+      << INTERNAL_DEBUG_DEVICE_NEWLINE << "__mall tot:" << AllocateHeapMalloc
       << ", _mall deal tot: " << DeallocateHeapMalloc
-      << "\r\n\r\n";
+      << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
   }
   #endif
@@ -427,7 +427,7 @@ if ( ( c_data.identType() == Ident_c::ExtendedIdent ) && (
   if ( ( data().wert() == 0 ) && ( data().inst() == 0 ) ) {
     IsoAgLib::getIrs232Instance()
 
-        << "Process_c::processMsg() mit Alarm ACK\n";
+        << "Process_c::processMsg() mit Alarm ACK" << INTERNAL_DEBUG_DEVICE_ENDL;
   }
   #endif
   #ifdef USE_DIN_9684

@@ -311,7 +311,7 @@ MultiReceive_c::processMsg()
                 notifyError(c_tmpRSI, 101);
                 connAbortTellClientRemoveStream (true /* send connAbort-Msg */, pc_streamFound);
                 #ifdef DEBUG
-                INTERNAL_DEBUG_DEVICE << "\n*** ConnectionAbort due to Already-Running-Stream! (RTS in between) ***" << (int) data().isoSa() << " " << (int)data().isoPs() << "\n";
+                INTERNAL_DEBUG_DEVICE << "\n*** ConnectionAbort due to Already-Running-Stream! (RTS in between) ***" << (int) data().isoSa() << " " << (int)data().isoPs() << INTERNAL_DEBUG_DEVICE_ENDL;
                 #endif
                 return true; // all RTSes are not of interest for MultiSend or other CAN-Customers!
               }
@@ -331,7 +331,7 @@ MultiReceive_c::processMsg()
                 notifyError(c_tmpRSI, 102);
                 sendConnAbort (t_streamType, c_tmpRSI);
                 #ifdef DEBUG
-                INTERNAL_DEBUG_DEVICE << "\n*** ConnectionAbort due to (Wrong Pkg Amount || msgSize < 9) ***\n";
+                INTERNAL_DEBUG_DEVICE << "\n*** ConnectionAbort due to (Wrong Pkg Amount || msgSize < 9) ***" << INTERNAL_DEBUG_DEVICE_ENDL;
                 #endif
                 return true; // all RTSes are not of interest for MultiSend or other CAN-Customers!
               }
@@ -343,7 +343,7 @@ MultiReceive_c::processMsg()
                 notifyError(c_tmpRSI, 115);
                 sendConnAbort (t_streamType, c_tmpRSI);
                 #ifdef DEBUG
-                INTERNAL_DEBUG_DEVICE << "\n*** ConnectionAbort due to PGN requested that the MR-Client has not registered to receive ***\n";
+                INTERNAL_DEBUG_DEVICE << "\n*** ConnectionAbort due to PGN requested that the MR-Client has not registered to receive ***" << INTERNAL_DEBUG_DEVICE_ENDL;
                 #endif
                 return true; // all RTSes are not of interest for MultiSend or other CAN-Customers!
               }
@@ -354,7 +354,7 @@ MultiReceive_c::processMsg()
                 notifyError(c_tmpRSI, 103);
                 sendConnAbort (t_streamType, c_tmpRSI);
                 #ifdef DEBUG
-                INTERNAL_DEBUG_DEVICE << "\n*** ConnectionAbort due to Client Rejecting the stream ***\n";
+                INTERNAL_DEBUG_DEVICE << "\n*** ConnectionAbort due to Client Rejecting the stream ***" << INTERNAL_DEBUG_DEVICE_ENDL;
                 #endif
                 return true; // all RTSes are not of interest for MultiSend or other CAN-Customers!
               }
@@ -409,7 +409,7 @@ MultiReceive_c::processMsg()
                 notifyError(c_tmpRSI, 105);
                 connAbortTellClientRemoveStream (true /* send connAbort-Msg */, pc_streamFound);
                 #ifdef DEBUG
-                INTERNAL_DEBUG_DEVICE << "\n*** ConnectionAbort due to DPO at wrong 't_awaitStep' - was NOT AwaitDpo ***\n";
+                INTERNAL_DEBUG_DEVICE << "\n*** ConnectionAbort due to DPO at wrong 't_awaitStep' - was NOT AwaitDpo ***" << INTERNAL_DEBUG_DEVICE_ENDL;
                 #endif
                 return true; // all DPOs are not of interest for MultiSend or other CAN-Customers!
               }
@@ -430,7 +430,7 @@ MultiReceive_c::processMsg()
               { // we do NOT take BAMs that are NOT directed to the GLOBAL (255) address
                 notifyError(c_tmpRSI, 112);
                 #ifdef DEBUG
-                INTERNAL_DEBUG_DEVICE << "\n*** BAM to NON-GLOBAL address "<< (uint16_t) data().isoPs() <<" ***\n";
+                INTERNAL_DEBUG_DEVICE << "\n*** BAM to NON-GLOBAL address "<< (uint16_t) data().isoPs() <<" ***" << INTERNAL_DEBUG_DEVICE_ENDL;
                 #endif
                 return true; // all BAMs are not of interest for MultiSend or other CAN-Customers!
               }
@@ -448,7 +448,7 @@ MultiReceive_c::processMsg()
                 notifyError(c_tmpRSI, 117);
                 connAbortTellClientRemoveStream (false /* do NOT send ConnAbort msg */, pc_streamFound);
                 #ifdef DEBUG
-                INTERNAL_DEBUG_DEVICE << "\n*** ConnectionAbort due to Already-Running-Stream! (BAM in between) ***\n";
+                INTERNAL_DEBUG_DEVICE << "\n*** ConnectionAbort due to Already-Running-Stream! (BAM in between) ***" << INTERNAL_DEBUG_DEVICE_ENDL;
                 #endif
                 // return true;
                 // ^^^ do NOT return, if the old BAM is "aborted" due to this BAM, try with this BAM now...
@@ -462,7 +462,7 @@ MultiReceive_c::processMsg()
               { // This handles both
                 notifyError(c_tmpRSI, 113);
                 #ifdef DEBUG
-                INTERNAL_DEBUG_DEVICE << "\n*** BAM not taken due to (Wrong Pkg Number || msgSize < 9) ***\n";
+                INTERNAL_DEBUG_DEVICE << "\n*** BAM not taken due to (Wrong Pkg Number || msgSize < 9) ***" << INTERNAL_DEBUG_DEVICE_ENDL;
                 #endif
                 return true; // all RTSes are not of interest for MultiSend or other CAN-Customers!
               }
@@ -517,7 +517,7 @@ MultiReceive_c::processMsg()
 
           default:
             #ifdef DEBUG
-              INTERNAL_DEBUG_DEVICE << "UNKNOWN/INVALID command with (E)TP-PGN: Sending ConnAbort, not passing this on to MultiSend!!\n";
+              INTERNAL_DEBUG_DEVICE << "UNKNOWN/INVALID command with (E)TP-PGN: Sending ConnAbort, not passing this on to MultiSend!!" << INTERNAL_DEBUG_DEVICE_ENDL;
             #endif
             t_streamType = (StreamType_t) ((b_ePgn) ? 0x2:0); // only care for ePgn or not for ConnAbort
             notifyError(c_tmpRSI, 108);
@@ -547,7 +547,7 @@ MultiReceive_c::processMsg()
           if (pc_streamFound == NULL) {
             // There's no stream running for this multi-packet-DATA!, this [DATA] MAY BE for MultiSend, so simply return false!
             #ifdef DEBUG
-            INTERNAL_DEBUG_DEVICE << "\n*** (E)TP.DATA, but no open stream! ignoring that... ***\n";
+            INTERNAL_DEBUG_DEVICE << "\n*** (E)TP.DATA, but no open stream! ignoring that... ***" << INTERNAL_DEBUG_DEVICE_ENDL;
             #endif
             notifyError(c_tmpRSI, 111);
             return false;
@@ -559,12 +559,12 @@ MultiReceive_c::processMsg()
             {
               notifyError(c_tmpRSI, 114);
               #ifdef DEBUG
-              INTERNAL_DEBUG_DEVICE << "\n*** BAM sequence error ***\n";
+              INTERNAL_DEBUG_DEVICE << "\n*** BAM sequence error ***" << INTERNAL_DEBUG_DEVICE_ENDL;
               #endif
             } else {
               notifyError(c_tmpRSI, 109);
               #ifdef DEBUG
-              INTERNAL_DEBUG_DEVICE << "\n*** ConnectionAbort due to (E)TP.DATA, but wrong sequence number, see msg before! ***\n";
+              INTERNAL_DEBUG_DEVICE << "\n*** ConnectionAbort due to (E)TP.DATA, but wrong sequence number, see msg before! ***" << INTERNAL_DEBUG_DEVICE_ENDL;
               #endif
             }
             // \/ will take care of NOT sending out the connAbort/TellingClient if it was a Broadcast!
@@ -617,7 +617,7 @@ MultiReceive_c::processMsg()
         { // else no stream open and wrong packeted number comes in.
           notifyError(c_tmpRSI, 118);
           #ifdef DEBUG
-          INTERNAL_DEBUG_DEVICE << "\n*** FastPacket-Frame "<<(uint16_t)ui8_counterFrame<<", but no open stream! ignoring that... ***\n";
+          INTERNAL_DEBUG_DEVICE << "\n*** FastPacket-Frame "<<(uint16_t)ui8_counterFrame<<", but no open stream! ignoring that... ***" << INTERNAL_DEBUG_DEVICE_ENDL;
           #endif
           return true;
         }
@@ -630,7 +630,7 @@ MultiReceive_c::processMsg()
         //connAbortTellClientRemoveStream (false /* no ConnAbort to GlobalAddress */, pc_streamFound);
         removeStream (pc_streamFound);
         #ifdef DEBUG
-        INTERNAL_DEBUG_DEVICE << "\n*** FastPacket sequence error ***\n";
+        INTERNAL_DEBUG_DEVICE << "\n*** FastPacket sequence error ***" << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
       }
 
@@ -898,7 +898,7 @@ MultiReceive_c::finishStream (DEF_Stream_c_IMPL& rrefc_stream)
   else
   { // destination specific
     #ifdef DEBUG
-      INTERNAL_DEBUG_DEVICE << "\nSending End of Message Acknowledge out!\n";
+      INTERNAL_DEBUG_DEVICE << "\nSending End of Message Acknowledge out!" << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
     sendEndOfMessageAck (&rrefc_stream);
 
@@ -948,7 +948,7 @@ MultiReceive_c::timeEvent( void )
     else if ((refc_stream.getNextComing() == AwaitCtsSend) && (refc_stream.readyToSendCts()))
     { // this case shouldn't happen for BAM / FastPacket
       #ifdef DEBUG
-        INTERNAL_DEBUG_DEVICE << "Processing Burst\n";
+        INTERNAL_DEBUG_DEVICE << "Processing Burst" << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
       // CTS after Burst? -> process last Burst!
       if (refc_stream.getBurstNumber() > 0) { // 0 means that no CTS has been sent, the first incoming burst is nr. 1 !
@@ -956,7 +956,7 @@ MultiReceive_c::timeEvent( void )
         // don't care for result here!
       }
       #ifdef DEBUG
-        INTERNAL_DEBUG_DEVICE << "Send CTS to get first/next burst!\n";
+        INTERNAL_DEBUG_DEVICE << "Send CTS to get first/next burst!" << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
       sendCurrentCts (&refc_stream); // will increase the burstCurrent
     }
@@ -971,7 +971,7 @@ MultiReceive_c::timeEvent( void )
         else
         #endif
           INTERNAL_DEBUG_DEVICE << "\n *** (E)TP-";
-        INTERNAL_DEBUG_DEVICE << "Stream with SA " << (uint16_t) refc_stream.getIdent().getSa() << " timedOut, so sending out 'connAbort'. AwaitStep was " << (uint16_t) refc_stream.getNextComing() << " ***\n";
+        INTERNAL_DEBUG_DEVICE << "Stream with SA " << (uint16_t) refc_stream.getIdent().getSa() << " timedOut, so sending out 'connAbort'. AwaitStep was " << (uint16_t) refc_stream.getNextComing() << " ***" << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
       notifyError(refc_stream.getIdent(), 110);
       connAbortTellClient (/* send Out ConnAbort Msg*/ true, &refc_stream);
@@ -1071,7 +1071,7 @@ MultiReceive_c::sendConnAbort(StreamType_t rt_streamType, IsoAgLib::ReceiveStrea
   c_data.setExtCanPkg8 (scui8_tpPriority, 0, pgn, /* dest: */ rc_rsi.getSa(), /* src: */ rc_rsi.getDa(),
                         0xFF /* decimal: 255 */, 0xFF,0xFF,0xFF,0xFF, MACRO_BYTEORDER_toLoMidHi(rc_rsi.getPgn()));
   #ifdef DEBUG
-  INTERNAL_DEBUG_DEVICE << "Sending out an ConnAbort!\n";
+  INTERNAL_DEBUG_DEVICE << "Sending out an ConnAbort!" << INTERNAL_DEBUG_DEVICE_ENDL;
   #endif
   __IsoAgLib::getCanInstance4Comm() << c_data;
 } // -X2C
@@ -1316,7 +1316,7 @@ MultiReceive_c::reactOnMonitorListAdd( const __IsoAgLib::DevKey_c& refc_devKey, 
 #ifdef DEBUG
   INTERNAL_DEBUG_DEVICE << "reactOnMonitorListAdd() handles CLAIM of ISOItem_c for device with DevClass: " << int(refc_devKey.getDevClass())
       << ", Instance: " << int(refc_devKey.getDevClassInst()) << ", and manufacturer ID: " << int(refc_devKey.getConstName().manufCode())
-      << "NOW use SA: " << int(rpc_newItem->nr()) << "\n\n"
+      << "NOW use SA: " << int(rpc_newItem->nr()) << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_NEWLINE
       << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
   if ( getSystemMgmtInstance4Comm().existLocalMemberDevKey(refc_devKey) )
@@ -1357,7 +1357,7 @@ MultiReceive_c::reactOnMonitorListRemove( const __IsoAgLib::DevKey_c&
 #ifdef DEBUG
   INTERNAL_DEBUG_DEVICE << "reactOnMonitorListRemove() handles LOSS of ISOItem_c for device with DevClass: " << int(refc_devKey.getDevClass())
       << ", Instance: " << int(refc_devKey.getDevClassInst()) << ", and manufacturer ID: " << int(refc_devKey.getConstName().manufCode())
-      << " and PREVIOUSLY used SA: " << int(rui8_oldSa) << "\n\n"
+      << " and PREVIOUSLY used SA: " << int(rui8_oldSa) << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_NEWLINE
       << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
   if ( getSystemMgmtInstance4Comm().existLocalMemberDevKey(refc_devKey) )

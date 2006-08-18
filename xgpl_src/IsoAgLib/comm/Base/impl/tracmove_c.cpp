@@ -281,9 +281,9 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     }
 
     #ifdef USE_RS232_FOR_DEBUG
-    EXTERNAL_DEBUG_DEVICE << "c_tempDevKey: " <<  static_cast<const int>(c_tempDevKey.getDevClass() ) << "\n";
-    EXTERNAL_DEBUG_DEVICE << "senderDevKey: " <<  static_cast<const int>(getSelectedDataSourceDevKey().getDevClass() ) << "\n";
-    EXTERNAL_DEBUG_DEVICE << "PGN:          " << (data().isoPgn() & 0x1FFFF) << "\n";
+    INTERNAL_DEBUG_DEVICE << "c_tempDevKey: " <<  static_cast<const int>(c_tempDevKey.getDevClass() ) << INTERNAL_DEBUG_DEVICE_ENDL;
+    INTERNAL_DEBUG_DEVICE << "senderDevKey: " <<  static_cast<const int>(getSelectedDataSourceDevKey().getDevClass() ) << INTERNAL_DEBUG_DEVICE_ENDL;
+    INTERNAL_DEBUG_DEVICE << "PGN:          " << (data().isoPgn() & 0x1FFFF) << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
 
     const int32_t ci32_now = Scheduler_c::getLastTimeEventTrigger();
@@ -311,7 +311,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
             setDistReal( data().getUint32Data( 2 ) );
             t_directionReal = IsoAgLib::IsoDirectionFlag_t(data().getUint8Data(7) & 0x3 );
             #ifdef USE_RS232_FOR_DEBUG
-            EXTERNAL_DEBUG_DEVICE << "PROCESS GROUND(65097): " <<  static_cast<const int>(c_tempDevKey.getDevClass() ) << "\n";
+            INTERNAL_DEBUG_DEVICE << "PROCESS GROUND(65097): " <<  static_cast<const int>(c_tempDevKey.getDevClass() ) << INTERNAL_DEBUG_DEVICE_ENDL;
             #endif
             uint32_t tempTime = (Scheduler_c::getLastTimeEventTrigger() - ui32_lastUpdateTimeSpeed);
 
@@ -351,7 +351,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
             t_startStopState = IsoAgLib::IsoActiveFlag_t( ( data().getUint8Data(7) >> 4) & 0x3);
             t_directionTheor = IsoAgLib::IsoDirectionFlag_t(data().getUint8Data(7)       & 0x3 );
             #ifdef USE_RS232_FOR_DEBUG
-            EXTERNAL_DEBUG_DEVICE << "PROCESS WHEEL(65096): " <<  static_cast<const int>(c_tempDevKey.getDevClass() ) << "\n";
+            INTERNAL_DEBUG_DEVICE << "PROCESS WHEEL(65096): " <<  static_cast<const int>(c_tempDevKey.getDevClass() ) << INTERNAL_DEBUG_DEVICE_ENDL;
             #endif
             if (t_speedSource <= IsoAgLib::WheelBasedSpeed
                 || ( (Scheduler_c::getLastTimeEventTrigger() - ui32_lastUpdateTimeSpeed) >= TIMEOUT_SENDING_NODE)
@@ -512,8 +512,8 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     data().setLen(8);
 
     #ifdef USE_RS232_FOR_DEBUG
-    EXTERNAL_DEBUG_DEVICE << "getDevKey: " <<  static_cast<const int>(getDevKey()->getDevClass() ) << "\n";
-    EXTERNAL_DEBUG_DEVICE << "SEND TRAC senderDevKey: " <<  static_cast<const int>(getSelectedDataSourceDevKey().getDevClass() ) << "\n";
+    INTERNAL_DEBUG_DEVICE << "getDevKey: " <<  static_cast<const int>(getDevKey()->getDevClass() ) << INTERNAL_DEBUG_DEVICE_ENDL;
+    INTERNAL_DEBUG_DEVICE << "SEND TRAC senderDevKey: " <<  static_cast<const int>(getSelectedDataSourceDevKey().getDevClass() ) << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
 
     setSelectedDataSourceDevKey(*getDevKey());

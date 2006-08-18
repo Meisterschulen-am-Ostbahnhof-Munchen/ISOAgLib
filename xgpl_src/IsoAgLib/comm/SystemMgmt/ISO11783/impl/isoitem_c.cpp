@@ -93,6 +93,15 @@
 #include <IsoAgLib/comm/ISO_Terminal/impl/isoterminal_c.h>
 #endif
 
+#if defined(DEBUG)
+  #ifdef SYSTEM_PC
+    #include <iostream>
+  #else
+    #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
+  #endif
+  #include <IsoAgLib/util/impl/util_funcs.h>
+#endif
+
 
 
 namespace __IsoAgLib {
@@ -508,7 +517,7 @@ bool ISOItem_c::sendSaClaim()
   if ( ! itemState(IState_c::Local) ) return false;
   // now this ISOItem should/can send a SA claim
   #ifdef DEBUG
-  EXTERNAL_DEBUG_DEVICE << "Send SA claim (sendSaClaim())" << EXTERNAL_DEBUG_DEVICE_ENDL;
+  INTERNAL_DEBUG_DEVICE << "Send SA claim (sendSaClaim())" << INTERNAL_DEBUG_DEVICE_ENDL;
   #endif
   ISOSystemPkg_c& c_pkg = getIsoMonitorInstance4Comm().data();
   c_pkg.setIsoPri(6);
@@ -594,3 +603,4 @@ void ISOItem_c::setMaster ( ISOItem_c* rpc_masterItem )
 #endif
 
 } // end of namespace __IsoAgLib
+

@@ -206,7 +206,7 @@ bool MsgObj_c::merge(MsgObj_c& right)
       == HAL_CONFIG_ERR)
     { // BUS not initialized or ID can'tbe chenged
       #if defined(DEBUG_CAN_BUFFER_FILLING) || defined(DEBUG)
-      INTERNAL_DEBUG_DEVICE << "\r\nBUS not initialized or ID can't be changed\r\n";
+      INTERNAL_DEBUG_DEVICE << "\r\nBUS not initialized or ID can't be changed" << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
       getLbsErrInstance().registerError( LibErr_c::HwConfig, LibErr_c::Can );
     }
@@ -278,7 +278,7 @@ bool MsgObj_c::merge(MsgObj_c& right)
       INTERNAL_DEBUG_DEVICE << "New Max Amount " << ref_maxCnt
         << " of FilterBox_c instances per MsgObj_c with ident "
         << int16_t( filter().ident() )
-        << "\r\n";
+        << INTERNAL_DEBUG_DEVICE_ENDL;
     }
   #endif
   setCntFilterBox(cnt_filterBox() + right.cnt_filterBox());
@@ -503,7 +503,7 @@ uint8_t MsgObj_c::processMsg(uint8_t rui8_busNumber, bool rb_forceProcessAll){
         << " at MsgObj: " << uint16_t(msgObjNr())
         << " with Filter: " << c_filter.ident()
         << " at BUS: " << uint16_t(rui8_busNumber)
-        << "\r\n";
+        << INTERNAL_DEBUG_DEVICE_ENDL;
     }
     if ( HAL::can_stateMsgobjFreecnt(rui8_busNumber, msgObjNr()) < ref_minFree )
     { // new MIN detected -> update and print
@@ -512,7 +512,7 @@ uint8_t MsgObj_c::processMsg(uint8_t rui8_busNumber, bool rb_forceProcessAll){
         << " at MsgObj: " << uint16_t(msgObjNr())
         << " with Filter: " << c_filter.ident()
         << " at BUS: " << uint16_t(rui8_busNumber)
-        << "\r\n";
+        << INTERNAL_DEBUG_DEVICE_ENDL;
     }
   #endif
 
@@ -533,20 +533,20 @@ uint8_t MsgObj_c::processMsg(uint8_t rui8_busNumber, bool rb_forceProcessAll){
       case HAL_RANGE_ERR:
         getLbsErrInstance().registerError( LibErr_c::Range, LibErr_c::Can );
         #ifdef DEBUG
-        INTERNAL_DEBUG_DEVICE << "CAN-Receive Range Err\n";
+        INTERNAL_DEBUG_DEVICE << "CAN-Receive Range Err" << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
         HAL::can_useMsgobjPopFront(rui8_busNumber, msgObjNr());
         return (b_count-1);
       case HAL_CONFIG_ERR:
         #if defined(DEBUG_CAN_BUFFER_FILLING) || defined(DEBUG)
-        INTERNAL_DEBUG_DEVICE << "\r\nBUS not initialized or wrong BUS nr: " << uint16_t(rui8_busNumber) << "\r\n";
+        INTERNAL_DEBUG_DEVICE << "\r\nBUS not initialized or wrong BUS nr: " << uint16_t(rui8_busNumber) << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
         getLbsErrInstance().registerError( LibErr_c::HwConfig, LibErr_c::Can );
         HAL::can_useMsgobjPopFront(rui8_busNumber, msgObjNr());
         return (b_count-1);
       case HAL_NOACT_ERR:
         #ifdef DEBUG
-        INTERNAL_DEBUG_DEVICE << "CAN-Receive NoAct Err\n";
+        INTERNAL_DEBUG_DEVICE << "CAN-Receive NoAct Err" << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
         // wrong use of MsgObj (not likely) or CAN BUS OFF
         getLbsErrInstance().registerError( LibErr_c::CanOff, LibErr_c::Can );
@@ -567,7 +567,7 @@ uint8_t MsgObj_c::processMsg(uint8_t rui8_busNumber, bool rb_forceProcessAll){
           INTERNAL_DEBUG_DEVICE << "\r\nALARM!!!!!! CAN Buffer Overflow at MsgObj: "
             << uint16_t(msgObjNr()) << " at BUS: " << uint16_t(rui8_busNumber)
             << " with Ident: " << c_filter.ident()
-            << "\r\n";
+            << INTERNAL_DEBUG_DEVICE_ENDL;
         }
         b_detectedOverflow = true;
         #endif
@@ -676,7 +676,7 @@ bool MsgObj_c::configCan(uint8_t rui8_busNumber, uint8_t rui8_msgNr){
     case HAL_CONFIG_ERR:
       /* BUS not initialized, undefined msg type, CAN-BIOS memory error */
       #if defined(DEBUG_CAN_BUFFER_FILLING) || defined(DEBUG)
-      INTERNAL_DEBUG_DEVICE << "\r\nALARM Not enough memory for CAN buffer\r\n";
+      INTERNAL_DEBUG_DEVICE << "\r\nALARM Not enough memory for CAN buffer" << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
       getLbsErrInstance().registerError( LibErr_c::HwConfig, LibErr_c::Can );
       break;

@@ -218,7 +218,7 @@ bool resolveAddress( AddressResolveResults& addressResolveResults )
       *addressResolveResults.p_devKey = addressResolveResults.pc_monitorItem->devKey();
 
       #ifdef DEBUG_CAN
-        INTERNAL_DEBUG_DEVICE << "Member is known with given address.\n";
+        INTERNAL_DEBUG_DEVICE << "Member is known with given address." << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
       return true;
     }
@@ -227,7 +227,7 @@ bool resolveAddress( AddressResolveResults& addressResolveResults )
   addressResolveResults.pc_monitorItem = NULL;
   addressResolveResults.p_devKey->setUnspecified();
   #ifdef DEBUG_CAN
-    INTERNAL_DEBUG_DEVICE << "Member is not known with given address. Set monitorItem and devKey to NULL/unspecified.\n";
+    INTERNAL_DEBUG_DEVICE << "Member is not known with given address. Set monitorItem and devKey to NULL/unspecified." << INTERNAL_DEBUG_DEVICE_ENDL;
   #endif
   return false;
 }
@@ -242,7 +242,7 @@ bool resolveAddress( AddressResolveResults& addressResolveResults )
 MessageState_t CANPkgExt_c::resolveReceivingInformation()
 {
   #ifdef DEBUG_CAN
-  INTERNAL_DEBUG_DEVICE << "*-*-*-* PROCESS MESSAGE *-*-*-*\n";
+  INTERNAL_DEBUG_DEVICE << "*-*-*-* PROCESS MESSAGE *-*-*-*" << INTERNAL_DEBUG_DEVICE_ENDL;
   #endif
 
 //  *addrResolveResSA.pui8_address = ident() & 0xFF;
@@ -259,7 +259,7 @@ MessageState_t CANPkgExt_c::resolveReceivingInformation()
     // devKey and monitoritem are unspecified
     // we have no explicit address, but PDU2 implies GLOBAL (0xFF)
     #ifdef DEBUG_CAN
-      INTERNAL_DEBUG_DEVICE << "We have PDU2 format -> no destination address.\n";
+      INTERNAL_DEBUG_DEVICE << "We have PDU2 format -> no destination address." << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
     addrResolveResDA.p_devKey->setUnspecified();
     addrResolveResDA.pc_monitorItem = NULL;
@@ -267,13 +267,13 @@ MessageState_t CANPkgExt_c::resolveReceivingInformation()
   else
   { // for receive, the remote item is the sender --> SA is interpreted
     #ifdef DEBUG_CAN
-      INTERNAL_DEBUG_DEVICE << "We have PDU1 format -> destination address.\n";
+      INTERNAL_DEBUG_DEVICE << "We have PDU1 format -> destination address." << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
     messageStateDA = address2IdentLocalDa();
   }
   #ifdef DEBUG_CAN
-    INTERNAL_DEBUG_DEVICE << "Return value is " << (messageStateSA | messageStateDA) << "\n";
-    INTERNAL_DEBUG_DEVICE << "(0) Valid, (1) OnlyNetworkMgmt, (3) Invalid. \n";
+    INTERNAL_DEBUG_DEVICE << "Return value is " << (messageStateSA | messageStateDA) << INTERNAL_DEBUG_DEVICE_ENDL;
+    INTERNAL_DEBUG_DEVICE << "(0) Valid, (1) OnlyNetworkMgmt, (3) Invalid. " << INTERNAL_DEBUG_DEVICE_ENDL;
   #endif
   //only valid if both messageStates are valid
   return static_cast<MessageState_t>(messageStateSA | messageStateDA);
@@ -287,7 +287,7 @@ MessageState_t CANPkgExt_c::address2IdentLocalDa()
 {
   //we are shure that we have PDU1 format and therefore we have a destination address
   #ifdef DEBUG_CAN
-    INTERNAL_DEBUG_DEVICE << "Scope local(DA) with ps-field = " << int(*addrResolveResDA.pui8_address ) << "\n";
+    INTERNAL_DEBUG_DEVICE << "Scope local(DA) with ps-field = " << int(*addrResolveResDA.pui8_address ) << INTERNAL_DEBUG_DEVICE_ENDL;
   #endif
 
   // now try to resolve the address
@@ -298,15 +298,15 @@ MessageState_t CANPkgExt_c::address2IdentLocalDa()
     // OR
     // we received a broadcasted message
     #ifdef DEBUG_CAN
-      INTERNAL_DEBUG_DEVICE << "We reached a VALID state. Either the target is known or address = 0xFF.\n";
-      INTERNAL_DEBUG_DEVICE << "address =  " << int( *addrResolveResDA.pui8_address ) << "\n";
+      INTERNAL_DEBUG_DEVICE << "We reached a VALID state. Either the target is known or address = 0xFF." << INTERNAL_DEBUG_DEVICE_ENDL;
+      INTERNAL_DEBUG_DEVICE << "address =  " << int( *addrResolveResDA.pui8_address ) << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
     return Valid;
   }
   else
   { // the receiver is not known -> don't process this message
     #ifdef DEBUG_CAN
-      INTERNAL_DEBUG_DEVICE << "We reached an INVALID state. Receiver not known.\n";
+      INTERNAL_DEBUG_DEVICE << "We reached an INVALID state. Receiver not known." << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
     return Invalid;
   }
@@ -317,7 +317,7 @@ MessageState_t CANPkgExt_c::address2IdentLocalDa()
 MessageState_t CANPkgExt_c::address2IdentRemoteSa()
 {
   #ifdef DEBUG_CAN
-    INTERNAL_DEBUG_DEVICE << "Scope remote(SA) with sa-field = " << int( *addrResolveResSA.pui8_address ) << "\n";
+    INTERNAL_DEBUG_DEVICE << "Scope remote(SA) with sa-field = " << int( *addrResolveResSA.pui8_address ) << INTERNAL_DEBUG_DEVICE_ENDL;
   #endif
 
   // now try to resolve the address
@@ -331,14 +331,14 @@ MessageState_t CANPkgExt_c::address2IdentRemoteSa()
                 addressResolveResults.pc_monitorItem->affectedConflictCnt( IStateExt_c::Incr, time() );
         */
       #ifdef DEBUG_CAN
-        INTERNAL_DEBUG_DEVICE << "Someone sends with one of our SA's.\n";
+        INTERNAL_DEBUG_DEVICE << "Someone sends with one of our SA's." << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
       return OnlyNetworkMgmt;
     }
     else
     { // everything is fine
       #ifdef DEBUG_CAN
-        INTERNAL_DEBUG_DEVICE << "We reached a valid state.\n";
+        INTERNAL_DEBUG_DEVICE << "We reached a valid state." << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
       return Valid;
     }
@@ -346,21 +346,21 @@ MessageState_t CANPkgExt_c::address2IdentRemoteSa()
   else if ( *addrResolveResSA.pui8_address == 0xFF )
   { // a SA with 0xFF is never allowed
     #ifdef DEBUG_CAN
-      INTERNAL_DEBUG_DEVICE << "We reached an INVALID state with address = 0xFF.\n";
+      INTERNAL_DEBUG_DEVICE << "We reached an INVALID state with address = 0xFF." << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
     return Invalid; // mark as invalid
   }
   else if ( *addrResolveResSA.pui8_address == 0xFE )
   { // each RequestForXY message (not only ReqForAdrClaim) is allowed to be sent with SA == 0xFE
     #ifdef DEBUG_CAN
-      INTERNAL_DEBUG_DEVICE << "We reached a VALID state with address = OxFE.\n";
+      INTERNAL_DEBUG_DEVICE << "We reached a VALID state with address = OxFE." << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
     return Valid;
   }
   else
   { // normal address, which is not yet known to monitor lists (possible during first SA claim)
     #ifdef DEBUG_CAN
-      INTERNAL_DEBUG_DEVICE << "We reached an ONLYNETWORKMGTM state.\n";
+      INTERNAL_DEBUG_DEVICE << "We reached an ONLYNETWORKMGTM state." << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
     return OnlyNetworkMgmt;
   }
@@ -381,8 +381,8 @@ bool CANPkgExt_c::resolveMonitorItem( AddressResolveResults& addressResolveResul
     { // leave CAN-Identifier as is
       // nothing more to be done
       #ifdef DEBUG_CAN
-        INTERNAL_DEBUG_DEVICE << "Leave CAN-Identifier as is. Nothing more to be done.\n";
-        INTERNAL_DEBUG_DEVICE << "MonitorItem == NULL. DevKey unspecified.\n";
+        INTERNAL_DEBUG_DEVICE << "Leave CAN-Identifier as is. Nothing more to be done." << INTERNAL_DEBUG_DEVICE_ENDL;
+        INTERNAL_DEBUG_DEVICE << "MonitorItem == NULL. DevKey unspecified." << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
       return true;
     }
@@ -397,12 +397,12 @@ bool CANPkgExt_c::resolveMonitorItem( AddressResolveResults& addressResolveResul
          )
       {
         #ifdef DEBUG_CAN
-          INTERNAL_DEBUG_DEVICE << "DevKey specified and item does NOT exists in systemmgmt.\n";
+          INTERNAL_DEBUG_DEVICE << "DevKey specified and item does NOT exists in systemmgmt." << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
         return false;
       }
       #ifdef DEBUG_CAN
-        INTERNAL_DEBUG_DEVICE << "DevKey specified and item exists in systemmgmt. Get monitoritem.\n";
+        INTERNAL_DEBUG_DEVICE << "DevKey specified and item exists in systemmgmt. Get monitoritem." << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
 
       #if defined USE_ISO_11783 && !defined USE_DIN_9684
@@ -413,7 +413,7 @@ bool CANPkgExt_c::resolveMonitorItem( AddressResolveResults& addressResolveResul
     }
   }
   #ifdef DEBUG_CAN
-    INTERNAL_DEBUG_DEVICE << "We have a Monitoritem.\n";
+    INTERNAL_DEBUG_DEVICE << "We have a Monitoritem." << INTERNAL_DEBUG_DEVICE_ENDL;
   #endif
   // now: verify if the retrieved item is already claimed or if we are preparing a network mgmt message send
   if (   addressResolveResults.pc_monitorItem->itemState(IState_c::ClaimedAddress)
@@ -423,17 +423,17 @@ bool CANPkgExt_c::resolveMonitorItem( AddressResolveResults& addressResolveResul
     // if address claim and isNetworkMgmt(), sending in AddressClaim state is allowed for network mgmt
     *addressResolveResults.pui8_address = addressResolveResults.pc_monitorItem->nr();
     #ifdef DEBUG_CAN
-      INTERNAL_DEBUG_DEVICE << "ClaimedAddress state: " << addressResolveResults.pc_monitorItem->itemState(IState_c::ClaimedAddress) << "\n";
-      INTERNAL_DEBUG_DEVICE << "AddressClaim state:   " << addressResolveResults.pc_monitorItem->itemState(IState_c::AddressClaim) << "\n";
-      INTERNAL_DEBUG_DEVICE << "isNetworkMgmt() =     " << isNetworkMgmt() << "\n";
-      INTERNAL_DEBUG_DEVICE << "address =             " << int( *addressResolveResults.pui8_address ) << "\n";
+      INTERNAL_DEBUG_DEVICE << "ClaimedAddress state: " << addressResolveResults.pc_monitorItem->itemState(IState_c::ClaimedAddress) << INTERNAL_DEBUG_DEVICE_ENDL;
+      INTERNAL_DEBUG_DEVICE << "AddressClaim state:   " << addressResolveResults.pc_monitorItem->itemState(IState_c::AddressClaim) << INTERNAL_DEBUG_DEVICE_ENDL;
+      INTERNAL_DEBUG_DEVICE << "isNetworkMgmt() =     " << isNetworkMgmt() << INTERNAL_DEBUG_DEVICE_ENDL;
+      INTERNAL_DEBUG_DEVICE << "address =             " << int( *addressResolveResults.pui8_address ) << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
     return true;
   }
   else
   { // sending is not valid
   #ifdef DEBUG_CAN
-    INTERNAL_DEBUG_DEVICE << "ItemState is neither ClaimedAddress nor AddressClaim.\n";
+    INTERNAL_DEBUG_DEVICE << "ItemState is neither ClaimedAddress nor AddressClaim." << INTERNAL_DEBUG_DEVICE_ENDL;
   #endif
     return false;
   }
@@ -449,32 +449,32 @@ bool CANPkgExt_c::resolveMonitorItem( AddressResolveResults& addressResolveResul
 bool CANPkgExt_c::resolveSendingInformation()
 {
   #ifdef DEBUG_CAN
-  INTERNAL_DEBUG_DEVICE << "*-*-*-* SEND MESSAGE *-*-*-*\n";
+  INTERNAL_DEBUG_DEVICE << "*-*-*-* SEND MESSAGE *-*-*-*" << INTERNAL_DEBUG_DEVICE_ENDL;
   #endif
   // handle SA
   if ( !resolveMonitorItem(addrResolveResSA) )
   { // stop any further interpretation, as sending is not valid
     #ifdef DEBUG_CAN
-      INTERNAL_DEBUG_DEVICE << "We reached an INVALID state. SA could not be resolved.\n";
+      INTERNAL_DEBUG_DEVICE << "We reached an INVALID state. SA could not be resolved." << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
     return false;
   }
   else if ( addrResolveResSA.pc_monitorItem != NULL )
   { // resolving was performed
     #ifdef DEBUG_CAN
-      INTERNAL_DEBUG_DEVICE << "SA could be resolved and monitorItem != NULL.\n";
+      INTERNAL_DEBUG_DEVICE << "SA could be resolved and monitorItem != NULL." << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
     if ( !addrResolveResSA.pc_monitorItem->itemState(IState_c::Local ) )
     { // resolved MonitorItem is no local item -> no valid send possible
       #ifdef DEBUG_CAN
-        INTERNAL_DEBUG_DEVICE << "Sending is not possible because item is not known local.\n";
+        INTERNAL_DEBUG_DEVICE << "Sending is not possible because item is not known local." << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
       return false;
     }
   }
   #ifdef DEBUG_CAN
-    INTERNAL_DEBUG_DEVICE << "Sending is possible. Item is known local.\n";
-    INTERNAL_DEBUG_DEVICE << "SA = " << int( *addrResolveResSA.pui8_address ) << "\n";
+    INTERNAL_DEBUG_DEVICE << "Sending is possible. Item is known local." << INTERNAL_DEBUG_DEVICE_ENDL;
+    INTERNAL_DEBUG_DEVICE << "SA = " << int( *addrResolveResSA.pui8_address ) << INTERNAL_DEBUG_DEVICE_ENDL;
   #endif
   // set the SA in the IDENT
   // - when the SA has been directly set by call to setIsoSa(), the requested SA is already
@@ -486,31 +486,31 @@ bool CANPkgExt_c::resolveSendingInformation()
   if ( isoPf() < 0xF0 )
   { // targeted message -> retrieve DA
     #ifdef DEBUG_CAN
-      INTERNAL_DEBUG_DEVICE << "PDU1 format -> existing DA.\n";
+      INTERNAL_DEBUG_DEVICE << "PDU1 format -> existing DA." << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
     if ( !resolveMonitorItem(addrResolveResDA) )
     { // stop any further interpretation, as sending is not valid
       #ifdef DEBUG_CAN
-        INTERNAL_DEBUG_DEVICE << "Sending not valid. DA could not be resolved.\n";
+        INTERNAL_DEBUG_DEVICE << "Sending not valid. DA could not be resolved." << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
       return false;
     }
     else if ( addrResolveResDA.pc_monitorItem != NULL )
     { // resolving was performed
       #ifdef DEBUG_CAN
-        INTERNAL_DEBUG_DEVICE << "Sending valid. DA could be resolved. MonitorItem != NULL.\n";
+        INTERNAL_DEBUG_DEVICE << "Sending valid. DA could be resolved. MonitorItem != NULL." << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
       if ( addrResolveResDA.pc_monitorItem->itemState(IState_c::Local ) )
       { // resolved MonitorItem is no remote item -> no valid send possible
         #ifdef DEBUG_CAN
-          INTERNAL_DEBUG_DEVICE << "Sending is not possible because item is known local.\n";
+          INTERNAL_DEBUG_DEVICE << "Sending is not possible because item is known local." << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
         return false;
       }
     }
     #ifdef DEBUG_CAN
-      INTERNAL_DEBUG_DEVICE << "Sending is possible. Item is known remote.\n";
-      INTERNAL_DEBUG_DEVICE << "DA = " << int( *addrResolveResDA.pui8_address ) << "\n";
+      INTERNAL_DEBUG_DEVICE << "Sending is possible. Item is known remote." << INTERNAL_DEBUG_DEVICE_ENDL;
+      INTERNAL_DEBUG_DEVICE << "DA = " << int( *addrResolveResDA.pui8_address ) << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
   }
   // set the PS in the IDENT
@@ -521,7 +521,7 @@ bool CANPkgExt_c::resolveSendingInformation()
   #ifdef DEBUG_CAN
   else
   {
-    INTERNAL_DEBUG_DEVICE << "PDU2 format -> PS == GroupExtension.\n";
+    INTERNAL_DEBUG_DEVICE << "PDU2 format -> PS == GroupExtension." << INTERNAL_DEBUG_DEVICE_ENDL;
   }
   #endif
   return true;

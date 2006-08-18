@@ -231,7 +231,7 @@ bool Scheduler_c::registerClient( ElementBase_c* pc_client)
       << "/" << sizeof(void*)
       << ", Chunk-Alloc: "
       << sizeVectorTWithChunk( sizeof(void*), c_arrClientC1.capacity() )
-      << "\r\n"
+      << INTERNAL_DEBUG_DEVICE_ENDL
       << sui16_clientTimeTotal
       << "(" << arrExecTime.capacity()
       << ") x Execution Times: Mal-Alloc: "
@@ -242,9 +242,9 @@ bool Scheduler_c::registerClient( ElementBase_c* pc_client)
       #ifdef MASSERT
       << "\r\n__mall tot:" << AllocateHeapMalloc
       << ", _mall deal tot: " << DeallocateHeapMalloc
-      << "\r\n\r\n";
+      << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
       #else
-      << "\r\n\r\n";
+      << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
     #endif
     // bring time array and client array in sync
@@ -288,7 +288,7 @@ void Scheduler_c::unregisterClient( ElementBase_c* pc_client)
       << "/" << sizeof(void*)
       << ", Chunk-Alloc: "
       << sizeVectorTWithChunk( sizeof(void*), c_arrClientC1.capacity() )
-      << "\r\n"
+      << INTERNAL_DEBUG_DEVICE_ENDL
       << sui16_clientTimeTotal
       << "(" << arrExecTime.capacity()
       << ") x Execution Times: Mal-Alloc: "
@@ -299,9 +299,9 @@ void Scheduler_c::unregisterClient( ElementBase_c* pc_client)
       #ifdef MASSERT
       << "\r\n__mall tot:" << AllocateHeapMalloc
       << ", _mall deal tot: " << DeallocateHeapMalloc
-      << "\r\n\r\n";
+      << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
       #else
-      << "\r\n\r\n";
+      << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL";
       #endif
     #endif
 

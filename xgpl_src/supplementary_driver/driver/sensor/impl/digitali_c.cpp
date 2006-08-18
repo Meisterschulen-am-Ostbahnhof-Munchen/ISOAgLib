@@ -202,7 +202,7 @@ void DigitalI_c::init(uint8_t rb_channel, Sensor_c::onoff_t ren_onoff, bool rb_s
     if ( rb_channel < 16 ) ppc_handler[rb_channel] = rpc_handler;
     #ifdef DEBUG
     if ( rpc_handler != NULL )
-     getRs232Instance() << "DigitalI_c::init() zu Channel: " << uint16_t(rb_channel) << " mit IRQ Handler\n";
+     INTERNAL_DEBUG_DEVICE << "DigitalI_c::init() zu Channel: " << uint16_t(rb_channel) << " mit IRQ Handler" << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
   }
 }

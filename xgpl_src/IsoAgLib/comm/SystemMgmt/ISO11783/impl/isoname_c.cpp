@@ -84,6 +84,15 @@
 #include <cstring>
 #include "isoname_c.h"
 
+#if defined(DEBUG)
+  #ifdef SYSTEM_PC
+    #include <iostream>
+  #else
+    #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
+  #endif
+  #include <IsoAgLib/util/impl/util_funcs.h>
+#endif
+
 /* ************************************** */
 /* import some namespaces for easy access */
 /* ************************************** */
@@ -404,7 +413,7 @@ void ISOName_c::setSerNo(uint32_t rui32_serNo)
 */
 int8_t ISOName_c::higherPriThanPar(const Flexible8ByteString_c* rpu_compare) const
 {
-#if defined(DEBUG) && !(SYSTEM_A1)
+#if defined(DEBUG) && !(SYSTEM_A1) && (SYSTEM_PC)
 if ( rpu_compare == NULL )
 { // calling function called this function with wrong parameter
   // - but in production version, we await, that the caller makes sure,
@@ -412,11 +421,11 @@ if ( rpu_compare == NULL )
   // So output suitable debug information in DEBUG mode and trigger than an abort() to get a clear indication on this failure.
   // In real production version, we would have to decide on WHAT to do for this case in such a lowlevel comparison function - what return value, .....
   INTERNAL_DEBUG_DEVICE
-    << "ERRORR!! ISOName_c::higherPriThanPar() was called with parameter == NULL!!" << EXTERNAL_DEBUG_DEVICE_ENDL
+    << "ERRORR!! ISOName_c::higherPriThanPar() was called with parameter == NULL!!" << INTERNAL_DEBUG_DEVICE_ENDL
     << "The this adress was " << (int)this << EXTERNAL_DEBUG_DEVICE_ENDL
     << "The program will be aborted now for explicit detection of this erroneous call. Fix the CALLING function - and not this function,"
     << " as this function makes never sense when called with NULL!!"
-    << EXTERNAL_DEBUG_DEVICE_ENDL;
+    << INTERNAL_DEBUG_DEVICE_ENDL;
   INTERNAL_DEBUG_FLUSH;
   abort();
 }
