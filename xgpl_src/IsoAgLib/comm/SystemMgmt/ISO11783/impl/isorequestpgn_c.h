@@ -178,10 +178,17 @@ public:
   /// only interesting for processMsgRequestPGN implementations to get the exact can-pkg time!
   int32_t getTimeOfLastRequest() { return data().time(); }
 
+  /** Only call sendCannotRespondNow(..) when you're about to respond to a requested PGN */
+  void answerRequestPGNwithCannotRespondNow (uint32_t rui32_pgnToAck) { sendAcknowledgePGN (rui32_pgnToAck, 0x03); } // Control Byte 3 = Cannot Respond
+
 protected: // Protected methods
   /** process system msg
     * @return true -> message (Request for PGN) processed by ISORequestPGN_c; false -> let others process */
   bool processMsg ();
+
+private: // Private methods
+  void sendAcknowledgePGN (uint32_t rui32_pgnToAck, uint8_t rui8_ackType);
+
 
 private: // Private attributes
   /// holds all registered clients with PGN(s)

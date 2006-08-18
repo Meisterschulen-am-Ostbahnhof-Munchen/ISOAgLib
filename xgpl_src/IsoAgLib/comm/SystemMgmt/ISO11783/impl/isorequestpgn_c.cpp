@@ -279,44 +279,54 @@ ISORequestPGN_c::processMsg ()
   {
     /// 1. Distribute to all clients
     bool b_processedByAnyClient = false;
+    uint8_t ui8_sa = data().isoSa();
+    uint8_t ui8_ps = data().isoPs();
     for (STL_NAMESPACE::vector<PGN_s>::iterator regPGN_it = registeredClientsWithPGN.begin();
           regPGN_it != registeredClientsWithPGN.end(); regPGN_it++)
     { // let all local regPGN_it process this request
       if (regPGN_it->ui32_pgn == ui32_reqPgn)
-        b_processedByAnyClient |= regPGN_it->p_handler->processMsgRequestPGN(ui32_reqPgn, data().isoSa(), data().isoPs());
+        b_processedByAnyClient |= regPGN_it->p_handler->processMsgRequestPGN(ui32_reqPgn, ui8_sa, ui8_ps);
     }
 
     /// 2. Check if we have to send a NACK as nobody could answer it
-    if ((data().isoPs() != 0xFF) && !b_processedByAnyClient) // no client could answer the Request PGN, so NACK it!
+    if ((ui8_ps != 0xFF) && !b_processedByAnyClient) // no client could answer the Request PGN, so NACK it!
     {
-      uint32_t ui32_purePgn = ui32_reqPgn;
-      if (((ui32_purePgn >> 8) & 0xFF) < 0xF0)
-      { // destination specific, so clear the destSA field as we want the PURE PGN!
-        ui32_purePgn &= 0x1FF00;
-      }
-
-      data().setIsoPri(6);
-      data().setIsoDp(0);
-      data().setIsoPf(ACKNOWLEDGEMENT_PGN >> 8);
-      const uint8_t cui8_ps = data().isoPs();
-      const uint8_t cui8_sa = data().isoSa();
-      data().setIsoPs(cui8_sa);
-      data().setIsoSa(cui8_ps);
-      // set the first four bytes as uint32_t value, where lowest byte equals to ControlByte
-      data().setUint32Data ((1-1), 0xFFFFFF01UL); // Control Byte = 1, Negative Acknowledgement: NACK
-      // set at lowest byte of second uint32_t value the reserved 0xFF
-      // and place at the higher bytes of this second uint32_t
-      // the ui32_purePgn
-      data().setUint32Data ((5-1), ((ui32_purePgn << 8)|0xFFUL) );
-      data().setLen (8);
-
-      __IsoAgLib::getCanInstance4Comm() << c_data;
+      sendAcknowledgePGN (ui32_reqPgn, 0x01); // Control Byte = 1, Negative Acknowledgement: NACK
     }
   }
   return true;
 //  }
 // since we only insertFilter for REQUEST_PGN_MSG_PGN we don't need further checking
 //  return b_processed; // return if msg was processed by ISORequestPGN_c
+}
+
+
+
+void
+ISORequestPGN_c::sendAcknowledgePGN (uint32_t rui32_pgnToAck, uint8_t rui8_ackType)
+{
+  uint32_t ui32_purePgn = rui32_pgnToAck;
+  if (((ui32_purePgn >> 8) & 0xFF) < 0xF0)
+  { // destination specific, so clear the destSA field as we want the PURE PGN!
+    ui32_purePgn &= 0x1FF00;
+  }
+
+  data().setIsoPri(6);
+  data().setIsoDp(0);
+  data().setIsoPf(ACKNOWLEDGEMENT_PGN >> 8);
+  const uint8_t cui8_ps = data().isoPs();
+  const uint8_t cui8_sa = data().isoSa();
+  data().setIsoPs(cui8_sa);
+  data().setIsoSa(cui8_ps);
+  // set the first four bytes as uint32_t value, where lowest byte equals to ControlByte
+  data().setUint32Data ((1-1), (0xFFFFFF00UL | uint32_t (rui8_ackType)));
+  // set at lowest byte of second uint32_t value the reserved 0xFF
+  // and place at the higher bytes of this second uint32_t
+  // the ui32_purePgn
+  data().setUint32Data ((5-1), ((ui32_purePgn << 8)|0xFFUL) );
+  data().setLen (8);
+
+  __IsoAgLib::getCanInstance4Comm() << c_data;
 }
 
 
