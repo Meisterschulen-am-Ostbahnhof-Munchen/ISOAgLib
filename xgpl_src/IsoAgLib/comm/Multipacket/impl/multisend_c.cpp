@@ -138,9 +138,10 @@ namespace __IsoAgLib {
 
 
 /** This is mostly used for debugging now... */
-SendUploadBase_c::SendUploadBase_c (uint8_t* rpui8_buffer, uint32_t rui32_bufferSize)
+void SendUploadBase_c::set (uint8_t* rpui8_buffer, uint32_t rui32_bufferSize)
 {
   /// Use BUFFER - NOT MultiSendStreamer!
+  vec_uploadBuffer.clear();
   vec_uploadBuffer.reserve (rui32_bufferSize);
 
   uint32_t i=0;
@@ -169,12 +170,13 @@ SendUploadBase_c::SendUploadBase_c (uint8_t* rpui8_buffer, uint32_t rui32_buffer
 /**
   >>StringUpload<< Constructors ( Copy and Reference! )
 */
-SendUploadBase_c::SendUploadBase_c (uint16_t rui16_objId, const char* rpc_string, uint16_t overrideSendLength, uint8_t ui8_cmdByte)
+void SendUploadBase_c::set (uint16_t rui16_objId, const char* rpc_string, uint16_t overrideSendLength, uint8_t ui8_cmdByte)
 {
   // if string is shorter than length, it's okay to send - if it's longer, we'll clip - as client will REJECT THE STRING (FINAL ISO 11783 SAYS: "String Too Long")
   uint16_t strLen = (CNAMESPACE::strlen(rpc_string) < overrideSendLength) ? CNAMESPACE::strlen(rpc_string) : overrideSendLength;
 
   /// Use BUFFER - NOT MultiSendStreamer!
+  vec_uploadBuffer.clear();
   vec_uploadBuffer.reserve (((5+strLen) < 8) ? 8 : (5+strLen)); // DO NOT USED an UploadBuffer < 8 as ECU->VT ALWAYS has 8 BYTES!
 
   vec_uploadBuffer.push_back (ui8_cmdByte ); /* Default of ui8_cmdByte is: Command: Command --- Parameter: Change String Value (TP) */
@@ -213,8 +215,9 @@ SendUploadBase_c::SendUploadBase_c (uint16_t rui16_objId, const char* rpc_string
 /**
   Constructor used for "normal" 8-byte CAN-Pkgs!
 */
-SendUploadBase_c::SendUploadBase_c (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint32_t rui32_timeout)
+void SendUploadBase_c::set (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint32_t rui32_timeout)
 {
+  vec_uploadBuffer.clear();
   vec_uploadBuffer.reserve (8);
 
   vec_uploadBuffer.push_back (byte1);
@@ -236,9 +239,10 @@ SendUploadBase_c::SendUploadBase_c (uint8_t byte1, uint8_t byte2, uint8_t byte3,
   -- Parameter "timeOut" only there as else the signature would be the same compared to 8byte+timeOut constructor!
   -- simply always pass "DEF_TimeOut_ChangeChildPosition"
 */
-SendUploadBase_c::SendUploadBase_c (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint8_t byte9, uint32_t rui32_timeout)
+void SendUploadBase_c::set (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint8_t byte9, uint32_t rui32_timeout)
 {
   /// Use BUFFER - NOT MultiSendStreamer!
+  vec_uploadBuffer.clear();
   vec_uploadBuffer.reserve (9);
 
   vec_uploadBuffer.push_back (byte1);

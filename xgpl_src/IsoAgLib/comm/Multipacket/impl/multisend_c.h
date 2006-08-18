@@ -143,12 +143,23 @@ public:
     StringUpload constructor that initializes all fields of this class (use only for Change String Value TP Commands)
   */
   SendUploadBase_c () : ui8_retryCount(0), ui32_uploadTimeout(0) {};
-  SendUploadBase_c (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint8_t byte9, uint32_t rui32_timeout);
-  SendUploadBase_c (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint32_t rui32_timeout);
-  SendUploadBase_c (uint16_t rui16_objId, const char* rpc_string, uint16_t overrideSendLength, uint8_t ui8_cmdByte = 179 /*is standard case for VT Change String Value (TP)*/);
+  SendUploadBase_c (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint8_t byte9, uint32_t rui32_timeout)
+    {set(byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8, byte9, rui32_timeout);};
+  SendUploadBase_c (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint32_t rui32_timeout)
+    {set(byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8, rui32_timeout);};
+  SendUploadBase_c (uint16_t rui16_objId, const char* rpc_string, uint16_t overrideSendLength, uint8_t ui8_cmdByte = 179 /*is standard case for VT Change String Value (TP)*/)
+    {set(rui16_objId, rpc_string, overrideSendLength, ui8_cmdByte);};
   SendUploadBase_c (const SendUploadBase_c& ref_source);
-  SendUploadBase_c (uint8_t* rpui8_buffer, uint32_t bufferSize);
+  SendUploadBase_c (uint8_t* rpui8_buffer, uint32_t bufferSize)
+    {set(rpui8_buffer, bufferSize);};
   const SendUploadBase_c& operator= (const SendUploadBase_c& ref_source);
+
+
+  void set (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint8_t byte9, uint32_t rui32_timeout);
+  void set (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint32_t rui32_timeout);
+  void set (uint16_t rui16_objId, const char* rpc_string, uint16_t overrideSendLength, uint8_t ui8_cmdByte = 179 /*is standard case for VT Change String Value (TP)*/);
+  void set (uint8_t* rpui8_buffer, uint32_t bufferSize);
+
 
   /// Use either an MultiSendStreamer or a direct ui8-Buffer
   STL_NAMESPACE::vector<uint8_t> vec_uploadBuffer;  // don't use malloc_alloc for uint8_t values - here the 8byte overhead per malloc item are VERY big

@@ -175,7 +175,7 @@ namespace __IsoAgLib {
 
 
 
-SendUpload_c::SendUpload_c (vtObjectString_c* rpc_objectString)
+void SendUpload_c::set (vtObjectString_c* rpc_objectString)
 {
   ppc_vtObjects = NULL;
 
@@ -188,6 +188,33 @@ SendUpload_c::SendUpload_c (vtObjectString_c* rpc_objectString)
 
   ui32_uploadTimeout = DEF_TimeOut_ChangeStringValue;
 }
+
+void SendUpload_c::set (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint8_t byte9, uint32_t rui32_timeout)
+{ SendUploadBase_c::set(byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8, byte9, rui32_timeout);
+  mssObjectString = NULL;
+  ppc_vtObjects = NULL; /// Use BUFFER - NOT MultiSendStreamer!
+  ui16_numObjects = 0;
+};
+void SendUpload_c::set (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint32_t rui32_timeout, IsoAgLib::iVtObject_c** rppc_vtObjects, uint16_t rui16_numObjects)
+{
+  SendUploadBase_c::set( byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8, rui32_timeout );
+  mssObjectString = NULL;  /// Use BUFFER - NOT MultiSendStreamer!
+  ppc_vtObjects = rppc_vtObjects;
+  ui16_numObjects = rui16_numObjects;
+};
+void SendUpload_c::set (uint16_t rui16_objId, const char* rpc_string, uint16_t overrideSendLength, uint8_t ui8_cmdByte)
+{
+  SendUploadBase_c::set( rui16_objId, rpc_string, overrideSendLength, ui8_cmdByte );
+  mssObjectString = NULL;  /// Use BUFFER - NOT MultiSendStreamer!
+  ppc_vtObjects = NULL;
+};
+void SendUpload_c::set (uint8_t* rpui8_buffer, uint32_t bufferSize)
+{
+  SendUploadBase_c::set (rpui8_buffer, bufferSize);
+  mssObjectString = NULL;  /// Use BUFFER - NOT MultiSendStreamer!
+  ppc_vtObjects = NULL;
+};
+
 
 
 /** place next data to send direct into send puffer of pointed
@@ -293,6 +320,11 @@ VtClientServerCommStreamer_c::restoreDataNextStreamPart()
 /** *****************************************************/
 /** ** Vt Client Server Communication Implementation ****/
 /** *****************************************************/
+
+/** static instance to store temporarily before push_back into list */
+SendUpload_c VtClientServerCommunication_c::sc_tempSendUpload;
+
+
 void
 VtClientServerCommunication_c::reactOnAbort (IsoAgLib::iStream_c* /*rpc_stream*/)
 {
@@ -1204,9 +1236,9 @@ VtClientServerCommunication_c::sendCommand (uint8_t byte1, uint8_t byte2, uint8_
   INTERNAL_DEBUG_DEVICE << "Enqueued 9-bytes: " << q_sendUpload.size() << " -> ";
 #endif
 
-  SendUpload_c stringForUpload (byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8, byte9, ui32_timeout);
+  sc_tempSendUpload.set (byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8, byte9, ui32_timeout);
 
-  return queueOrReplace (stringForUpload, b_enableReplaceOfCmd);
+  return queueOrReplace (sc_tempSendUpload, b_enableReplaceOfCmd);
 }
 
 /** @returns true if there was place in the SendUpload-Buffer (should always be the case now) */
@@ -1217,9 +1249,9 @@ VtClientServerCommunication_c::sendCommand (uint8_t byte1, uint8_t byte2, uint8_
   INTERNAL_DEBUG_DEVICE << "Enqueued 8-bytes: " << q_sendUpload.size() << " -> ";
 #endif
 
-  SendUpload_c stringForUpload (byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8, ui32_timeout, rppc_vtObjects, rui16_numObjects);
+  sc_tempSendUpload.set (byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8, ui32_timeout, rppc_vtObjects, rui16_numObjects);
 
-  return queueOrReplace (stringForUpload, b_enableReplaceOfCmd);
+  return queueOrReplace (sc_tempSendUpload, b_enableReplaceOfCmd);
 }
 
 bool
@@ -1229,9 +1261,9 @@ VtClientServerCommunication_c::sendCommandForDEBUG (uint8_t* rpui8_buffer, uint3
   INTERNAL_DEBUG_DEVICE << "Enqueued Debug-TP-bytes: " << q_sendUpload.size() << " -> ";
 #endif
 
-  SendUpload_c stringForUpload (rpui8_buffer, ui32_size);
+  sc_tempSendUpload.set (rpui8_buffer, ui32_size);
 
-  return queueOrReplace (stringForUpload, false);
+  return queueOrReplace (sc_tempSendUpload, false);
 }
 
 bool
@@ -1270,9 +1302,9 @@ VtClientServerCommunication_c::sendCommandChangeStringValue (IsoAgLib::iVtObject
   INTERNAL_DEBUG_DEVICE << "Enqueued string-ref: " << q_sendUpload.size() << " -> ";
 #endif
 
-  SendUpload_c stringForUpload (rpc_object->getID(), rpc_newValue, overrideSendLength);
+  sc_tempSendUpload.set (rpc_object->getID(), rpc_newValue, overrideSendLength);
 
-  return queueOrReplace (stringForUpload, b_enableReplaceOfCmd);
+  return queueOrReplace (sc_tempSendUpload, b_enableReplaceOfCmd);
 }
 
 bool
@@ -1282,9 +1314,9 @@ VtClientServerCommunication_c::sendCommandChangeStringValue (IsoAgLib::iVtObject
   INTERNAL_DEBUG_DEVICE << "Enqueued stringObject-mss: " << q_sendUpload.size() << " -> ";
 #endif
 
-  SendUpload_c stringForUpload (rpc_objectString);
+  sc_tempSendUpload.set (rpc_objectString);
 
-  return queueOrReplace (stringForUpload, b_enableReplaceOfCmd);
+  return queueOrReplace (sc_tempSendUpload, b_enableReplaceOfCmd);
 }
 
 bool
@@ -1569,8 +1601,8 @@ VtClientServerCommunication_c::sendCommandDrawPolygon (IsoAgLib::iVtObject_c* rp
 
     // add all points from the list to the buffer
     uint16_t ui16_index = 4;		/* first 4 bytes are set */
-    for ( uint16_t ui16_currentPoint = 0; 
-          ui16_currentPoint < ui16_numOfPoints; 
+    for ( uint16_t ui16_currentPoint = 0;
+          ui16_currentPoint < ui16_numOfPoints;
           ui16_currentPoint++ )
     {
       uint16_t x = convert_n::castUI( rpc_data[ui16_currentPoint].getX() );
@@ -1583,9 +1615,9 @@ VtClientServerCommunication_c::sendCommandDrawPolygon (IsoAgLib::iVtObject_c* rp
     }
 
     // Send buffer as ISOBUS command.
-    SendUpload_c polygonSendUpload (pui8_buffer, ui16_bufferSize );
+    sc_tempSendUpload.set (pui8_buffer, ui16_bufferSize );
     delete[] pui8_buffer;
-    return queueOrReplace (polygonSendUpload, b_enableReplaceOfCmd);
+    return queueOrReplace (sc_tempSendUpload, b_enableReplaceOfCmd);
   }
 }
 
@@ -1603,10 +1635,10 @@ VtClientServerCommunication_c::sendCommandDrawText (IsoAgLib::iVtObject_c* rpc_o
   for (uint8_t ui8_index = 0; ui8_index < ui8_numOfCharacters; ui8_index++)
     pui8_buffer[6+ui8_index] = rpc_newValue [ui8_index];
 
-  SendUpload_c textSendUpload (pui8_buffer, (6+ui8_numOfCharacters));
+  sc_tempSendUpload.set (pui8_buffer, (6+ui8_numOfCharacters));
   delete[] pui8_buffer;
 
-  return queueOrReplace (textSendUpload, b_enableReplaceOfCmd);
+  return queueOrReplace (sc_tempSendUpload, b_enableReplaceOfCmd);
 }
 
 bool
@@ -1648,8 +1680,8 @@ VtClientServerCommunication_c::sendCommandPanAndZoomViewPort (IsoAgLib::iVtObjec
   pui8_buffer[8] = zoom;
 
   // Send buffer as ISOBUS command.
-  SendUpload_c polygonSendUpload( pui8_buffer, sizeof(pui8_buffer)/sizeof(*pui8_buffer) );
-  return queueOrReplace (polygonSendUpload, b_enableReplaceOfCmd);
+  sc_tempSendUpload.set( pui8_buffer, sizeof(pui8_buffer)/sizeof(*pui8_buffer) );
+  return queueOrReplace (sc_tempSendUpload, b_enableReplaceOfCmd);
 }
 
 //! @todo ChangeViewPortSize and PanAndZoomViewPort both use 15.

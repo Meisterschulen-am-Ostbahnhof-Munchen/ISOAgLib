@@ -117,7 +117,9 @@ class SendUpload_c : public SendUploadBase_c
 {
 public:
   /** StringUpload constructor that initializes all fields of this class (use only for Change String Value TP Commands) */
-  SendUpload_c (vtObjectString_c* rpc_objectString);
+  SendUpload_c() : SendUploadBase_c() {};
+  SendUpload_c (vtObjectString_c* rpc_objectString)
+    {set(rpc_objectString);};
 
   SendUpload_c (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint8_t byte9, uint32_t rui32_timeout)
     : SendUploadBase_c( byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8, byte9, rui32_timeout ), mssObjectString(NULL)  /// Use BUFFER - NOT MultiSendStreamer!
@@ -137,6 +139,14 @@ public:
     , mssObjectString(NULL)  /// Use BUFFER - NOT MultiSendStreamer!
     , ppc_vtObjects (NULL)
     {};
+
+  void set (vtObjectString_c* rpc_objectString);
+  void set (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint8_t byte9, uint32_t rui32_timeout);
+  void set (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint32_t rui32_timeout, IsoAgLib::iVtObject_c** rppc_vtObjects, uint16_t rui16_numObjects);
+  void set (uint16_t rui16_objId, const char* rpc_string, uint16_t overrideSendLength, uint8_t ui8_cmdByte = 179 /*is standard case for VT Change String Value (TP)*/);
+  void set (uint8_t* rpui8_buffer, uint32_t bufferSize);
+
+
 
   SendUpload_c (const SendUpload_c& ref_source)
     : SendUploadBase_c(ref_source)
@@ -434,6 +444,8 @@ private:
   void setObjectPoolUploadingLanguage();
 
 private: // attributes
+  /** static instance to store temporarily before push_back into list */
+  static SendUpload_c sc_tempSendUpload;
   bool b_vtAliveCurrent;
   bool b_checkSameCommand;
 
