@@ -301,7 +301,7 @@ void Scheduler_c::unregisterClient( ElementBase_c* pc_client)
       << ", _mall deal tot: " << DeallocateHeapMalloc
       << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
       #else
-      << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL";
+      << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
     #endif
 

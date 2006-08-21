@@ -489,7 +489,7 @@ MultiSend_c::addSendStream(uint8_t rb_send, uint8_t rb_empf)
 bool MultiSend_c::sendDin(uint8_t rb_send, uint8_t rb_empf, const HUGE_MEM uint8_t* rhpb_data, int32_t ri32_dataSize, uint16_t rui16_msgSize, sendSuccess_t& rrefen_sendSuccessNotify, uint16_t rb_fileCmd, bool rb_abortOnTimeout)
 {
   #if defined( DEBUG )
-  INTERNAL_DEBUG_DEVICE << "MultiSend_c::sendDin with Len " << ri32_dataSize << INTERNAL_DEBUG_DEVICE_ENDL";
+  INTERNAL_DEBUG_DEVICE << "MultiSend_c::sendDin with Len " << ri32_dataSize << INTERNAL_DEBUG_DEVICE_ENDL;
   #endif
 
   /// first check if new transfer can be started
@@ -775,6 +775,9 @@ MultiSend_c::SendStream_c::timeEvent( uint8_t rui8_pkgCnt, int32_t ri32_time )
         case IsoBroadcast:
           if (isDelayEnd(ri32_time))
           {// after delay an ISO broadcast can start send immediately
+            // we have no CTS here where we set the seq.nr, so we do it here!
+            ui32_sequenceNr = 0; // broadcast sequence number always start with 0, so that's okay!
+            b_pkgToSend = getPkgPerMsg();
             en_sendState = SendData;
           }
           break;
