@@ -234,20 +234,21 @@ ISORequestPGN_c::checkIfAlreadyRegistered (ISORequestPGNHandler_c &ref_PGNHandle
 bool
 ISORequestPGN_c::processMsg ()
 {
+  ui8_saFromRequest = data().isoSa();
+  ui8_psFromRequest = data().isoPs();
+
   /// it is not allowed to have source address 0xFF
   /// it needs to be != 0xFF
-  if (data().isoSa() == 0xFF)
+  if (ui8_saFromRequest == 0xFF)
     return true;
 
-  uint32_t ui32_reqPgn;
   // since we only insertFilter for REQUEST_PGN_MSG_PGN we don't need further checking
   //  if ((data().isoPgn() & 0x1FF00) == REQUEST_PGN_MSG_PGN)
   //  { // request for PGN
-  ui32_reqPgn = (
-                (static_cast<uint32_t>(data().operator[](0)))
-              | (static_cast<uint32_t>(data().operator[](1)) << 8)
-              | (static_cast<uint32_t>(data().operator[](2)) << 16)
-              );
+  ui32_reqPgnFromRequest = ( (static_cast<uint32_t>(data().operator[](0)))
+                           | (static_cast<uint32_t>(data().operator[](1)) << 8)
+                           | (static_cast<uint32_t>(data().operator[](2)) << 16)
+                           );
 
   /// in case of ISOItem_c has no address claimed yet it has sa 0xFE
   /// that ISOItem_c is not allowed to send any other REQUEST_PGN_MSG_PGN than ADDRESS_CLAIM_PGN
@@ -257,20 +258,20 @@ ISORequestPGN_c::processMsg ()
   //     else
 
   /// if the ISOItem_c is not in the monitor list, ignore this request
-  if ((data().isoSa() != 0xFE) && (!getIsoMonitorInstance4Comm().existIsoMemberNr (data().isoSa())))
+  if ((ui8_saFromRequest != 0xFE) && (!getIsoMonitorInstance4Comm().existIsoMemberNr (ui8_saFromRequest)))
     return true;
 
   bool b_distributeToClients = false;
   // if isoPs is 255 let all local item answer
-  if (data().isoPs() == 0xFF)
+  if (ui8_psFromRequest == 0xFF)
   {
     b_distributeToClients = true;
   }
   else
   {
-    if (getIsoMonitorInstance4Comm().existIsoMemberNr (data().isoPs()))
+    if (getIsoMonitorInstance4Comm().existIsoMemberNr (ui8_psFromRequest))
     { // check if local
-      if (getIsoMonitorInstance4Comm().isoMemberNr (data().isoPs()).itemState (IState_c::Local))
+      if (getIsoMonitorInstance4Comm().isoMemberNr (ui8_psFromRequest).itemState (IState_c::Local))
         b_distributeToClients = true;
     }
   }
@@ -279,19 +280,17 @@ ISORequestPGN_c::processMsg ()
   {
     /// 1. Distribute to all clients
     bool b_processedByAnyClient = false;
-    uint8_t ui8_sa = data().isoSa();
-    uint8_t ui8_ps = data().isoPs();
     for (STL_NAMESPACE::vector<PGN_s>::iterator regPGN_it = registeredClientsWithPGN.begin();
           regPGN_it != registeredClientsWithPGN.end(); regPGN_it++)
     { // let all local regPGN_it process this request
-      if (regPGN_it->ui32_pgn == ui32_reqPgn)
-        b_processedByAnyClient |= regPGN_it->p_handler->processMsgRequestPGN(ui32_reqPgn, ui8_sa, ui8_ps);
+      if (regPGN_it->ui32_pgn == ui32_reqPgnFromRequest)
+        b_processedByAnyClient |= regPGN_it->p_handler->processMsgRequestPGN(ui32_reqPgnFromRequest, ui8_saFromRequest, ui8_psFromRequest);
     }
 
     /// 2. Check if we have to send a NACK as nobody could answer it
-    if ((ui8_ps != 0xFF) && !b_processedByAnyClient) // no client could answer the Request PGN, so NACK it!
+    if ((ui8_psFromRequest != 0xFF) && !b_processedByAnyClient) // no client could answer the Request PGN, so NACK it!
     {
-      sendAcknowledgePGN (ui32_reqPgn, 0x01); // Control Byte = 1, Negative Acknowledgement: NACK
+      answerRequestPGNwithNACK(); // Control Byte = 1, Negative Acknowledgement: NACK
     }
   }
   return true;
@@ -303,9 +302,9 @@ ISORequestPGN_c::processMsg ()
 
 
 void
-ISORequestPGN_c::sendAcknowledgePGN (uint32_t rui32_pgnToAck, uint8_t rui8_ackType)
+ISORequestPGN_c::sendAcknowledgePGN (uint8_t rui8_ackType)
 {
-  uint32_t ui32_purePgn = rui32_pgnToAck;
+  uint32_t ui32_purePgn = ui32_reqPgnFromRequest;
   if (((ui32_purePgn >> 8) & 0xFF) < 0xF0)
   { // destination specific, so clear the destSA field as we want the PURE PGN!
     ui32_purePgn &= 0x1FF00;
@@ -314,10 +313,8 @@ ISORequestPGN_c::sendAcknowledgePGN (uint32_t rui32_pgnToAck, uint8_t rui8_ackTy
   data().setIsoPri(6);
   data().setIsoDp(0);
   data().setIsoPf(ACKNOWLEDGEMENT_PGN >> 8);
-  const uint8_t cui8_ps = data().isoPs();
-  const uint8_t cui8_sa = data().isoSa();
-  data().setIsoPs(cui8_sa);
-  data().setIsoSa(cui8_ps);
+  data().setIsoPs(ui8_saFromRequest);
+  data().setIsoSa(ui8_psFromRequest);
   // set the first four bytes as uint32_t value, where lowest byte equals to ControlByte
   data().setUint32Data ((1-1), (0xFFFFFF00UL | uint32_t (rui8_ackType)));
   // set at lowest byte of second uint32_t value the reserved 0xFF

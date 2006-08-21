@@ -94,12 +94,12 @@
   #define _autogen_config_header_ <PRJ_USE_AUTOGEN_CONFIG>
   #include _autogen_config_header_
 
-  //#define Stringize(x) #x
-  //#define ExpandAndStringize(x) Stringize(x)
   //#define IncFile ExpandAndStringize(ProjName.h)
 #endif
 /*@}*/
 
+#define Stringize(x) #x
+#define ExpandAndStringize(x) Stringize(x)
 
 /* ******************************************************** */
 /**
@@ -875,6 +875,7 @@
 #define MAINTAIN_POWER_REQUEST_PGN  0x00FE47LU
 #define WHEEL_BASED_SPEED_DIST_PGN  0x00FE48LU
 #define GROUND_BASED_SPEED_DIST_PGN 0x00FE49LU
+#define SOFTWARE_IDENTIFICATION_PGN 0x00FEDALU
 #define TIME_DATE_PGN               0x00FEE6LU
 // PROPRIETARY_B_PGN ranges from 0x00FF00 to 0x00FFFF !
 #define PROPRIETARY_B_PGN           0x00FF00LU

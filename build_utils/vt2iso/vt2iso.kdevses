@@ -6,7 +6,7 @@
    <View0 Type="Source" />
   </Doc0>
   <Doc1 NumberOfViews="1" URL="file:///home/wodokm/Projects/AGCO/VtServer/IsoAgLib/build_utils/vt2iso/src/vt2iso.cpp" >
-   <View0 line="1074" Type="Source" />
+   <View0 Type="Source" />
   </Doc1>
   <Doc2 NumberOfViews="1" URL="file:///home/wodokm/Projects/AGCO/VtServer/IsoAgLib/IsoAgLib_Examples/tutorial/3_Terminal/3_0_VirtualTerminalIso/MaskDefinition/simpleVTIsoPool0_Variables.xml" >
    <View0 Type="Source" />
@@ -21,7 +21,7 @@
    <View0 Type="Source" />
   </Doc5>
   <Doc6 NumberOfViews="1" URL="file:///home/wodokm/Projects/AGCO/VtServer/IsoAgLib/build_utils/vt2iso/src/vt2iso-defines.hpp" >
-   <View0 line="760" Type="Source" />
+   <View0 line="632" Type="Source" />
   </Doc6>
  </DocsAndViews>
  <pluginList>
@@ -32,6 +32,10 @@
    <bookmarks>
     <bookmark url="/home/wodokm/Projects/AGCO/VtServer/IsoAgLib/build_utils/vt2iso/src/vt2iso.cpp" >
      <mark line="1337" />
+    </bookmark>
+    <bookmark url="/home/wodokm/Projects/AGCO/VtServer/IsoAgLib/build_utils/vt2iso/src/vt2iso-defines.hpp" >
+     <mark line="633" />
+     <mark line="98" />
     </bookmark>
    </bookmarks>
   </kdevbookmarks>

@@ -179,7 +179,8 @@ public:
   int32_t getTimeOfLastRequest() { return data().time(); }
 
   /** Only call sendCannotRespondNow(..) when you're about to respond to a requested PGN */
-  void answerRequestPGNwithCannotRespondNow (uint32_t rui32_pgnToAck) { sendAcknowledgePGN (rui32_pgnToAck, 0x03); } // Control Byte 3 = Cannot Respond
+  void answerRequestPGNwithNACK()             { sendAcknowledgePGN (0x01); } // Control Byte 3 = NOT Acknowledge
+  void answerRequestPGNwithCannotRespondNow() { sendAcknowledgePGN (0x03); } // Control Byte 3 = Cannot Respond
 
 protected: // Protected methods
   /** process system msg
@@ -187,7 +188,15 @@ protected: // Protected methods
   bool processMsg ();
 
 private: // Private methods
-  void sendAcknowledgePGN (uint32_t rui32_pgnToAck, uint8_t rui8_ackType);
+  /** constructor for ISORequestPGN_c */
+  ISORequestPGN_c (void);
+
+  /** initialize directly after the singleton instance is created.
+      this is called from singleton.h and should NOT be called from the user again.
+      users please use init(...) instead. */
+  void singletonInit ();
+
+  void sendAcknowledgePGN (uint8_t rui8_ackType);
 
 
 private: // Private attributes
@@ -199,13 +208,11 @@ private: // Private attributes
   /** temp data where received and to be sent data is put */
   CANPkgExt_c c_data;
 
-  /** constructor for ISORequestPGN_c */
-  ISORequestPGN_c (void);
-  /** initialize directly after the singleton instance is created.
-      this is called from singleton.h and should NOT be called from the user again.
-      users please use init(...) instead. */
-  void singletonInit ();
+  uint8_t  ui8_saFromRequest;
+  uint8_t  ui8_psFromRequest;
+  uint32_t ui32_reqPgnFromRequest;
 };
+
 #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
   /** C-style function, to get access to the unique ISORequestPGN_c singleton instance
       if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS */
