@@ -527,8 +527,9 @@ void ProcIdent_c::getDDIType(uint16_t rui16_DDI, GeneralCommand_c::ValueGroup_t 
 {
   // check if given DDI is proprietary
   if (rui16_DDI > 0xDFFF)
-  {
-    ref_ddiType = GeneralCommand_c::noValue; // 0xDFFF is Request Default Process Data
+  { // 0xDFFF is Request Default Process Data
+    // proprietary DDIs are exact per default
+    ref_ddiType = GeneralCommand_c::exactValue;
     return;
   }
 
