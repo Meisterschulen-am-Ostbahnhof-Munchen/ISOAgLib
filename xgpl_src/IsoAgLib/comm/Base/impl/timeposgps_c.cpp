@@ -1046,6 +1046,7 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
     uint8_t b_sa = getIsoMonitorInstance4Comm().isoMemberDevKey(*pc_devKeyGps, true).nr();
     data().setIdentType(Ident_c::ExtendedIdent);
     data().setIsoPri(3);
+    data().setLen(8);
     data().setIsoSa(b_sa);
 
     data().setIsoPgn(NMEA_GPS_POSITON_RAPID_UPDATE_PGN);
@@ -1218,6 +1219,7 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
     data().setDevKeyForSA( rc_devKey );
     data().setIdentType(Ident_c::ExtendedIdent);
     data().setIsoPri(6);
+    data().setLen(8);
 
     if ( ( getSelectedDataSourceDevKey() == rc_devKey ) )
     { // this item (identified by DEV_KEY is configured to send

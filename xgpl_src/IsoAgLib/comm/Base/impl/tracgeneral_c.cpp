@@ -631,6 +631,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     data().setDevKeyForSA( *getDevKey() );
     data().setIdentType(Ident_c::ExtendedIdent);
     data().setIsoPri(3);
+    data().setLen(8);
 
     setSelectedDataSourceDevKey( *getDevKey() );
     CANIO_c& c_can = getCanInstance4Comm();
@@ -666,7 +667,6 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     data().setUint8Data(4, (i16_frontDraft >> 8) );
     data().setUint8Data(5, 0xFF );
     data().setUint16Data(6, 0xFFFF );
-    data().setLen(8);
     // CANIO_c::operator<< retreives the information with the help of CANPkg_c::getData
     // then it sends the data
     c_can << data();
@@ -704,7 +704,6 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     data().setUint8Data(4, i16_rearDraft >> 8);
     data().setUint8Data(5, 0xFF );
     data().setUint16Data(6, 0xFFFF );
-    data().setLen(8);
 
     // CANIO_c::operator<< retreives the information with the help of CANPkg_c::getData
     // then it sends the data
@@ -734,6 +733,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
       data().setDevKeyForSA( *getDevKey() );
       data().setIdentType(Ident_c::ExtendedIdent);
       data().setIsoPri(6);
+      data().setLen(8);
 
       setSelectedDataSourceDevKey( *getDevKey() );
       CANIO_c& c_can = getCanInstance4Comm();
@@ -751,7 +751,6 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
       //Bytes 7,8: reserved
       data().setUint8Data(6, p8ui8_languageVt[6] | (p8ui8_languageVt[7] << 8));
       data().setUint8Data(7, 0xFF);
-      data().setLen(8);
 
       c_can << data();
     }
