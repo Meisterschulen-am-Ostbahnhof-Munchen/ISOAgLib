@@ -521,7 +521,7 @@ private:
   TimePosGPS_c()
               #ifdef USE_ISO_11783
                 : c_sendGpsDevKey(),
-                  pc_devKeyGps(),
+                  pc_devKeyGps(NULL),
                   t_identModeGps( IsoAgLib::IdentModeImplement )
               #endif
 {}
