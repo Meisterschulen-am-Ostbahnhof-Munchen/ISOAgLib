@@ -75,8 +75,8 @@ PLATFORM = LINUX
 COMPILER = g++
 GCC = yes
 GXX = yes
-CXXFLAGS =  -g  -Wall -DAPP_NO_THREADS -DXML_USE_NO_THREADS -DSYSTEM_PC -I../../xgpl_src
-CFLAGS =  -g  -Wall -DAPP_NO_THREADS -DXML_USE_NO_THREADS -DSYSTEM_PC -I../../xgpl_src
+CXXFLAGS =  -g  -Wall -DAPP_NO_THREADS -DXML_USE_NO_THREADS -DSYSTEM_PC -DOPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN -I../../xgpl_src
+CFLAGS =    -g  -Wall -DAPP_NO_THREADS -DXML_USE_NO_THREADS -DSYSTEM_PC -DOPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN -I../../xgpl_src
 LDFLAGS =
 THREADS = none
 EXTRA_LIBS =
@@ -89,7 +89,7 @@ APP_NAME=proc2iso
 
 OUTDIR= bin/obj
 EXEC=	bin
-OBJS=	${OUTDIR}/proc2iso.o ${OUTDIR}/isoname_c.o
+OBJS=	${OUTDIR}/proc2iso.o ${OUTDIR}/isoname_c.o ${OUTDIR}/util_funcs.o ${OUTDIR}/liberr_c.o
 myLIBRARY_NAMES = ${LIBRARY_NAMES} -lpthread
 
 ## OS390BATCH
@@ -113,6 +113,12 @@ $(OUTDIR)/proc2iso.o:: src/proc2iso.cpp
 
 $(OUTDIR)/isoname_c.o:: ../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.cpp
 	${CC} ${INCLUDES} ${CMP} -o $(OUTDIR)/isoname_c.o ../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.cpp
+
+${OUTDIR}/util_funcs.o:: ../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
+	${CC} ${INCLUDES} ${CMP} -o $(OUTDIR)/util_funcs.o ../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
+
+${OUTDIR}/liberr_c.o:: ../../xgpl_src/IsoAgLib/util/liberr_c.cpp
+	${CC} ${INCLUDES} ${CMP} -o $(OUTDIR)/liberr_c.o ../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 
 clean::
 	rm -f ${OBJS} ${EXEC}/${APP_NAME}
