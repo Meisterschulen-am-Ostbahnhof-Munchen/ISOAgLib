@@ -98,6 +98,7 @@ namespace __IsoAgLib {
 //! @param:destMemory:
 //! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
 //! @param sourceOffset:
+//! @todo GC: Not data mask scaling (done by client) supported for graphics context.
 int16_t
 vtObjectGraphicsContext_c::stream(uint8_t* destMemory, uint16_t maxBytes, objRange_t sourceOffset)
 {

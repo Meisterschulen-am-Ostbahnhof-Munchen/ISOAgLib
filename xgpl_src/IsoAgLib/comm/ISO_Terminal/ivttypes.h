@@ -83,9 +83,9 @@
 #ifndef IVTTYPES_H
 #define IVTTYPES_H
 
-
 #include <IsoAgLib/typedef.h>
-
+#include <stdlib.h>       // using abs()
+#include <algorithm>     // using min() max()
 
 #define BUTTON_HAS_BEEN_UNLATCHED 0
 #define BUTTON_HAS_BEEN_PRESSED 1
@@ -196,8 +196,17 @@ class iVtPoint_c {
     int16_t getY( void ) const { return y; }
     void setX( int16_t i_x ) { x = i_x; }
     void setY( int16_t i_y ) { y = i_y; }
-    iVtPoint_c& operator+=( iVtPoint_c a ) { x += a.x; y += a.y; return *this; }
-    iVtPoint_c& operator-=( iVtPoint_c a ) { x -= a.x; y -= a.y; return *this; }
+
+    //! Add another points coordinates to this point.
+    iVtPoint_c& operator+=( const iVtPoint_c& a ) { x += a.x; y += a.y; return *this; }
+    //! Subtract another points coordinates from this point.
+    iVtPoint_c& operator-=( const iVtPoint_c& a ) { x -= a.x; y -= a.y; return *this; }
+    //! Scale points coordinates by integer factor.
+    iVtPoint_c& operator*=( int a ) { x *= a; y *= a; return *this; }
+    //! Divide points coordinates by integer divisor.
+    iVtPoint_c& operator/=( int a ) { x /= a; y /= a; return *this; }
+    //! Absolute value of this points coordinates.
+    iVtPoint_c abs( void ) const { return iVtPoint_c( int16_t(::abs(int(x))), int16_t(::abs(int(y))) ); }
 
     //! Don't use: This is just a workaround for problems using the VT server MACRO_processChangeAttributeAID
     int16_t& setX( void ) { return x; }
@@ -208,10 +217,22 @@ class iVtPoint_c {
     int16_t y;
 };
 
-inline iVtPoint_c operator+( iVtPoint_c a, iVtPoint_c b ) { iVtPoint_c r(a); return r += b; }
-inline iVtPoint_c operator-( iVtPoint_c a, iVtPoint_c b ) { iVtPoint_c r(a); return r -= b; }
+inline iVtPoint_c operator+( const iVtPoint_c& a, const iVtPoint_c& b ) {
+  iVtPoint_c r(a); return r += b;
+}
+inline iVtPoint_c operator-( const iVtPoint_c& a, const iVtPoint_c& b ) {
+  iVtPoint_c r(a); return r -= b;
+}
+inline iVtPoint_c operator*( const iVtPoint_c& a, int b ) { iVtPoint_c r(a); return r *= b; }
+inline iVtPoint_c operator/( const iVtPoint_c& a, int b ) { iVtPoint_c r(a); return r /= b; }
+inline iVtPoint_c abs( const iVtPoint_c& a ) { return a.abs(); }
+inline iVtPoint_c min( const iVtPoint_c& a, const iVtPoint_c& b ) { 
+  return iVtPoint_c( CNAMESPACE::min(a.getX(),b.getX()), CNAMESPACE::min(a.getY(),b.getY()) );
+}
+inline iVtPoint_c max( const iVtPoint_c& a, const iVtPoint_c& b ) {
+  return iVtPoint_c( CNAMESPACE::max(a.getX(),b.getX()), CNAMESPACE::max(a.getY(),b.getY()) );
+}
 
 } // namespace IsoAgLib
 
 #endif // IVTTYPES_H
-

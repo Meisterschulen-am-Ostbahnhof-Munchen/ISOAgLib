@@ -59,7 +59,6 @@ namespace IsoAgLib {
 //!  Stereotype: Klasse
 class iVtObjectGraphicsContext_c : public __IsoAgLib::vtObjectGraphicsContext_c
 {
-
 public:
   //  Operation: init
   //! @param vtObjectGraphicsContextSROM
@@ -218,11 +217,11 @@ public:
 
   //! Draws the given text using the font attribute object (Sub-Command ID 12).
   //! Any flashing bits in the Font style of the font attribute object are ignored.
-  //! If opaque, the background colour attribute is used.
+  //! If opaque (type == 1), the background colour attribute is used.
   //! The graphics cursor is moved to the bottom right corner of the extent of the text.
-  //! @param type
-  //! @param cnt
-  //! @param rpc_string
+  //! @param type Type of text background drawing (0 == opaque, 1 == transparent).
+  //! @param cnt Number of characters to be drawn
+  //! @param rpc_string Pointer to character array to be drawn
   //! @param b_updateObject
   //! @param b_enableReplaceOfCmd
   void drawText(uint8_t type, uint8_t cnt, const char* rpc_string,
@@ -346,3 +345,4 @@ public:
 } // namespace IsoAgLib
 
 #endif // IVTOBJECTGRAPHICSCONTEXT_C_H
+
