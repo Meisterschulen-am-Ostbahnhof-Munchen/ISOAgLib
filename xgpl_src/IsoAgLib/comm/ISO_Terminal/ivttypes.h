@@ -206,7 +206,7 @@ class iVtPoint_c {
     //! Divide points coordinates by integer divisor.
     iVtPoint_c& operator/=( int a ) { x /= a; y /= a; return *this; }
     //! Absolute value of this points coordinates.
-    iVtPoint_c abs( void ) const { return iVtPoint_c( int16_t(::abs(int(x))), int16_t(::abs(int(y))) ); }
+    iVtPoint_c abs( void ) const { return iVtPoint_c( abs(x), abs(y) ); }
 
     //! Don't use: This is just a workaround for problems using the VT server MACRO_processChangeAttributeAID
     int16_t& setX( void ) { return x; }
@@ -215,6 +215,9 @@ class iVtPoint_c {
   protected:
     int16_t x;
     int16_t y;
+  private:
+    //! Due to problems using the tasking compiler let's add our own abs().
+    static int16_t abs( int16_t i ) { return (i<0) ? -i : i; }
 };
 
 inline iVtPoint_c operator+( const iVtPoint_c& a, const iVtPoint_c& b ) {
