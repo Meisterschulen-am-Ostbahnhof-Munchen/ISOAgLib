@@ -348,7 +348,6 @@ void iObjectPool_simpleVTIsoPool_c::eventNumericValue ( uint16_t objId, uint8_t 
   }
 }
 
-static int xy=0;
 
 #ifdef USERPOOLUPDATE_TEST
   static const unsigned int scui_newLogoWidth=16;
@@ -359,6 +358,7 @@ static int xy=0;
 // incoming key-events
 void iObjectPool_simpleVTIsoPool_c::eventKeyCode ( uint8_t keyActivationCode, uint16_t /*objId*/, uint16_t /*objIdMask*/, uint8_t keyCode, bool /*wasButton*/ )
 {
+  static int xy=0;
 /* just for your information! - defines are to be found in the "ivttypes.h" include!
   #define BUTTON_HAS_BEEN_UNLATCHED 0
   #define BUTTON_HAS_BEEN_PRESSED 1
@@ -462,6 +462,9 @@ void iObjectPool_simpleVTIsoPool_c::eventObjectPoolUploadedSuccessfully (bool rb
     /// when it was switched on update to some "Wait while updating language..:" screen!
     #ifdef DEBUG
     std::cout << "-->eventObjectPoolUploadedSuccessfully: LANGUAGE UPDATE TO Index "<<int(ri8_languageIndex)<<". User tried to select ["<<uint8_t(rui16_languageCode>>8)<<uint8_t(rui16_languageCode&0xFF)<<"] <--\n";
+    #else
+    rui16_languageCode = rui16_languageCode;  // Just prevent from warning
+    ri8_languageIndex = ri8_languageIndex;    // Just prevent from warning
     #endif
   }
   else
