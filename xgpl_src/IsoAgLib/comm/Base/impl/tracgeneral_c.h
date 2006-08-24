@@ -391,7 +391,7 @@ private:
                    :i32_lastFuel(0),
                     t_identModeStateFuel(IsoAgLib::IdentModeImplement),
                     c_sendFuelDevKey(),
-                    pc_devKeyFuel()
+                    pc_devKeyFuel(NULL)
                   #endif
   {};
   #ifdef USE_DIN_9684
