@@ -878,10 +878,9 @@ char auxFunctionTypeTable [maxAuxFunctionTypes] [stringLength+1] = {
 };
 
 
-#define maxGCOptions 4
+#define maxGCOptions 2
 char GCOptionsTable [maxGCOptions] [stringLength+1] = {
-  "opaque",
   "transparent",
-  "usefgandbgcolourfordraw",
   "uselinefontfillcolourfordraw"
 };
+
