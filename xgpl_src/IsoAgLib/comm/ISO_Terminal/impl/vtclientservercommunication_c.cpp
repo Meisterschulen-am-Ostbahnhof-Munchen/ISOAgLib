@@ -123,7 +123,10 @@
   static uint16_t sui16_maxSendUploadQueueSize = 0;
 #endif
 
-static const uint8_t scpui8_cmdCompareTable[(0xB4-0x92)+1] = {
+static const uint8_t scui8_cmdCompareTableMin = 0x92;
+static const uint8_t scui8_cmdCompareTableMax = 0xB9;
+
+static const uint8_t scpui8_cmdCompareTable[(scui8_cmdCompareTableMax-scui8_cmdCompareTableMin)+1] = {
 /// (1<<0) means DO NOT OVERRIDE THESE COMMANDS AT ALL
 /* 0x92 */ (1<<0) , //NEVER OVERRIDE THIS COMMAND
 /* 0x93 */ 0 , //invalid command
@@ -159,7 +162,12 @@ static const uint8_t scpui8_cmdCompareTable[(0xB4-0x92)+1] = {
 /* 0xB1 */ (1<<1) | (1<<2) | (1<<3) ,
 /* 0xB2 */ (1<<0) , //NEVER OVERRIDE THIS COMMAND (Delete Object Pool)
 /* 0xB3 */ (1<<1) | (1<<2) ,
-/* 0xB4 */ (1<<1) | (1<<2) | (1<<3) | (1<<4)  // (Change Child Position)
+/* 0xB4 */ (1<<1) | (1<<2) | (1<<3) | (1<<4), // (Change Child Position)
+/* 0xB5 */ 0 , //invalid command
+/* 0xB6 */ 0 , //invalid command
+/* 0xB7 */ 0 , //invalid command
+/* 0xB8 */ 0 , //invalid command
+/* 0xB9 */ (1<<0)  //NEVER OVERRIDE THIS COMMAND (Graphics Context)
 };
 
 
@@ -1070,6 +1078,7 @@ VtClientServerCommunication_c::processMsg()
     case 0xA7: // Command: "Command", parameter "Change Background Colour Response"
     case 0xAF: // Command: "Command", parameter "Change Attribute Response"
     case 0xB0: // Command: "Command", parameter "Change Priority Response"
+    case 0xB9: // Command: "Command", parameter "Graphics Context Command"
       MACRO_setStateDependantOnError (5)
       break;
 
@@ -1802,7 +1811,7 @@ VtClientServerCommunication_c::queueOrReplace (SendUpload_c& rref_sendUpload, bo
         if (i_sendUpload->vec_uploadBuffer[0] == rref_sendUpload.vec_uploadBuffer[0])
         {
           uint8_t ui8_offset = (rref_sendUpload.vec_uploadBuffer[0]);
-          if ( (ui8_offset<0x92) || (ui8_offset > 0xB4))
+          if ( (ui8_offset<scui8_cmdCompareTableMin) || (ui8_offset > scui8_cmdCompareTableMax))
           {
               // only 0x12 is possible, but no need to override, it shouldn't occur anyway!
             if (ui8_offset == 0x12)
@@ -1815,7 +1824,7 @@ VtClientServerCommunication_c::queueOrReplace (SendUpload_c& rref_sendUpload, bo
             return false;
           }
           //get bitmask for the corresponding command
-          uint8_t ui8_bitmask = scpui8_cmdCompareTable [ui8_offset-0x92];
+          uint8_t ui8_bitmask = scpui8_cmdCompareTable [ui8_offset-scui8_cmdCompareTableMin];
           if (!(ui8_bitmask & (1<<0)))
           { // go Check for overwrite...
             for (i=1;i<=7;i++)

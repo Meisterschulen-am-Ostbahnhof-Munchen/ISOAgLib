@@ -124,8 +124,9 @@ public:
 
   //! Stream input of uint16_t
   StreamInput_c& operator>>(uint16_t& ui16_data) {
-    uint8_t ui8[2]; *this >> ui8[0] >> ui8[1];
-    ui16_data = uint16_t(ui8[0]) | (uint16_t(ui8[1])<<8); return *this;
+    uint8_t l,h; *this >> l >> h;
+    ui16_data = (uint16_t(h) << 8) | uint16_t(l);
+    return *this;
   }
 
   //! Stream input of int16_t
