@@ -240,27 +240,30 @@ char attrNameTable [maxAttributeNames] [stringLength+1] = {
 // Table of possible Macro Commands
 
 char ctCommandTable [maxCommandsToCompare] [stringLength+1] = {
-    "command_hide_show_object",
-    "command_enable_disable_object",
-    "command_select_input_object",
-    "command_control_audio_device",
-    "command_set_audio_volume",
-    "command_change_child_location",
-    "command_change_child_position",
-    "command_change_size",
-    "command_change_background_color",
-    "command_change_numeric_value",
-    "command_change_string_value",
-    "command_change_end_point",
-    "command_change_font_attributes",
-    "command_change_line_attributes",
-    "command_change_fill_attributes",
-    "command_change_active_mask",
-    "command_change_soft_key_mask",
-    "command_change_attribute",
-    "command_change_priority",
-    "command_change_list_item"
+    "command_hide_show_object",         // 160
+    "command_enable_disable_object",    // 161
+    "command_select_input_object",      // 162
+    "command_control_audio_device",     // 163
+    "command_set_audio_volume",         // 164
+    "command_change_child_location",    // 165
+    "command_change_size",              // 166
+    "command_change_background_color",  // 167
+    "command_change_numeric_value",     // 168
+    "command_change_end_point",         // 169
+    "command_change_font_attributes",   // 170
+    "command_change_line_attributes",   // 171
+    "command_change_fill_attributes",   // 171
+    "command_change_active_mask",       // 173
+    "command_change_soft_key_mask",     // 174
+    "command_change_attribute",         // 175
+    "command_change_priority",          // 176
+    "command_change_list_item",         // 177
+    " ",                                // 178 "command_delete_object_pool" // is not valid for a macro
+    "command_change_string_value",      // 179
+    "command_change_child_position",    // 180
 };
+
+
 
 
 char colorTable [16] [stringLength+1] = {
@@ -406,7 +409,7 @@ char fillTypeTable [maxFillTypeTable] [stringLength+1] = {
 
 char pictureGraphicOptionsTable [maxPictureGraphicOptionsTable] [stringLength+1] = {
     "transparent",
-    "flashing",
+    "flashing"//    "runlengthencoded"
 };
 
 char pictureGraphicRleTable [maxPictureGraphicRleTable] [stringLength+1] = {
@@ -449,32 +452,32 @@ char priorityAcousticSignalTable [maxPriorityAcousticSignalTable] [stringLength+
 
 //event Table for Macros:
 char eventTable [maxEventTable] [stringLength+1] = {
-    "on_activate",
-    "on_deactivate",
-    "on_show",
-    "on_hide",
-    "on_enable",
-    "on_disable",
-    "on_change_active_mask",
-    "on_change_soft_key_mask",
-    "on_change_attribute",
-    "on_change_background_colour",
-    "on_change_font_attributes",
-    "on_change_line_attributes",
-    "on_change_fill_attributes",
-    "on_change_child_location",
-    "on_change_size",
-    "on_change_value",
-    "on_change_priority",
-    "on_change_end_point",
-    "on_input_field_selection",
-    "on_input_field_deselection",
-    "on_ESC",
-    "on_entry_of_value",
-    "on_entry_of_new_value",
-    "on_key_press",
-    "on_key_release",
-    "on_change_child_position"
+    "on_activate",                     //1
+    "on_deactivate",                   //2
+    "on_show",                         //3
+    "on_hide",                         //4
+    "on_enable",                       //5
+    "on_disable",                      //6
+    "on_change_active_mask",           //7
+    "on_change_soft_key_mask",         //8
+    "on_change_attribute",             //9
+    "on_change_background_colour",     //10
+    "on_change_font_attributes",       //11
+    "on_change_line_attributes",       //12
+    "on_change_fill_attributes",       //13
+    "on_change_child_location",        //14
+    "on_change_size",                  //15
+    "on_change_value",                 //16
+    "on_change_priority",              //17
+    "on_change_end_point",             //18
+    "on_input_field_selection",        //19
+    "on_input_field_deselection",      //20
+    "on_ESC",                          //21
+    "on_entry_of_value",               //22
+    "on_entry_of_new_value",           //23
+    "on_key_press",                    //24
+    "on_key_release",                  //25
+    "on_change_child_position"         //26
 };
 
 char auxFunctionTypeTable [maxAuxFunctionTypes] [stringLength+1] = {
@@ -522,6 +525,7 @@ unsigned int objectIsType (char* lookup_name)
 unsigned int commandIsType (char* lookup_name)
 {
   for (int i=0; i<maxCommandsToCompare; i++) {
+    if ( strlen(ctCommandTable[i]) < 3 ) continue;
     if (0 == strncmp (lookup_name, ctCommandTable [i], stringLength)) {
       return i;
     }
@@ -866,221 +870,309 @@ unsigned int auxfunctiontyptetoi(char *text_auxFunctionType)
 
 //###__XML Extension for VtGuiBuilder BEGIN-### ##########################################################
 
-
-unsigned int getcolorfromstring (char *text_backgrndcol)
+unsigned int getacoustsignfromstring (char *text_acousticsignal)
 {
-  unsigned int l = 0;
-        if (isalpha(text_backgrndcol[0]))
-          l = colortoi(text_backgrndcol);
-        else if (isdigit(text_backgrndcol[0]))
-          l = atoi(text_backgrndcol);
-        else l = 1;
-  return l;
+ unsigned int ui_res=0;
+    if (isalpha(text_acousticsignal[0]))
+        ui_res = (unsigned int) acousticsignaltoi (text_acousticsignal);
+    else if ( isdigit(text_acousticsignal[0]) )
+        ui_res = atoi(text_acousticsignal);
+    else ui_res = 0;
+  return ui_res;
+}
+
+
+unsigned int getarchbargraphoptfromstring (char *text_options)
+{
+ unsigned int ui_res=0;
+    if (isalpha(text_options[0]))
+        ui_res = (unsigned int) archedbargraphoptionstoi (text_options);
+    else if ( isdigit(text_options[0]) )
+        ui_res = atoi(text_options);
+    else ui_res = 0;
+  return ui_res;
+}
+
+
+unsigned int getauxfunctyptefromstring(char *text_auxFuncType)
+{
+ unsigned int ui_res=0;
+    if (isalpha(text_auxFuncType[0]))
+        ui_res = (unsigned int) auxfunctiontyptetoi (text_auxFuncType);
+    else if ( isdigit(text_auxFuncType[0]) )
+        ui_res = atoi(text_auxFuncType);
+    else ui_res = 0;
+  return ui_res;
 }
 
 
 unsigned int getboolfromstring (char *text_boolstr)
 {
-  unsigned int l = 0;
+  unsigned int ui_res = 0;
         if (isalpha(text_boolstr[0]))
-          l = (unsigned int)booltoi(text_boolstr);
+          ui_res = (unsigned int)booltoi(text_boolstr);
         else if (isdigit(text_boolstr[0]))
-          l = atoi(text_boolstr);
-        else l = 1;
-  return l;
+          ui_res = atoi(text_boolstr);
+        else ui_res = 1;
+  return ui_res;
+}
+
+unsigned int getcolordepthfromstring (char* text_colordepth)
+{
+  unsigned int ui_res=0;
+  if (strlen(text_colordepth) > 1) {
+    if (isalpha(text_colordepth[1]))
+        ui_res = (unsigned int) colordepthtoi(text_colordepth);
+  }
+  else {
+    if ( isdigit(text_colordepth[0]) )
+        ui_res = atoi(text_colordepth);
+    else ui_res = 2;
+  }
+  return ui_res;
 }
 
 
-unsigned int gethorizjustifyfromstring (char *text_horizstr)
+unsigned int getcolorfromstring (char *text_backgrndcol)
 {
-  int l;
-    if (isalpha(text_horizstr[0]))
-        l = (unsigned int)horizontaljustificationtoi(text_horizstr);
-    else if (isdigit(text_horizstr[0]))
-        l = atoi(text_horizstr);
-    else l = 1;
-  return l;
-}
+  unsigned int ui_res = 0;
+        if (isalpha(text_backgrndcol[0]))
+          ui_res = colortoi(text_backgrndcol);
+        else if (isdigit(text_backgrndcol[0]))
+          ui_res = atoi(text_backgrndcol);
+        else ui_res = 1;
+      // Get graphic Display Type
+        if ( (IsoTerminalServer_c::getHwGraphicType() == 0) && (ui_res > 1) )  ui_res = (1<<1);
+        if ( (IsoTerminalServer_c::getHwGraphicType() == 1) && (ui_res > 15) ) ui_res = (1<<1); // for ChangeBackgroundColour
 
-
-unsigned int getformatfromstring (char *text_formatstr)
-{
-  int l;
-    if (isalpha(text_formatstr[0]))
-        l = (unsigned int)formattoi(text_formatstr);
-    else if (isdigit(text_formatstr[0]))
-        l = atoi(text_formatstr);
-    else l = 1;
-  return l;
-}
-
-unsigned int getlinesuppresfromstring (char *text_linesupprstr)
-{
-  int l=0;
-    if (isalpha(text_linesupprstr[0]))
-        l = (unsigned int)linesuppressiontoi(text_linesupprstr);
-    else if (isdigit(text_linesupprstr[0]))
-        l = atoi(text_linesupprstr);
-    else l = 0;
-  return l;
+  return ui_res;
 }
 
 
 unsigned int  getellipsetypefromstring (char *text_ellipsetype)
 {
-  int l=0;
+  unsigned int ui_res=0;
     if (isalpha(text_ellipsetype[0]))
-        l = (unsigned int)ellipsetypetoi(text_ellipsetype);
+        ui_res = (unsigned int)ellipsetypetoi(text_ellipsetype);
     else if (isdigit(text_ellipsetype[0]))
-        l = atoi(text_ellipsetype);
-    else l = 0;
-  return l;
+        ui_res = atoi(text_ellipsetype);
+    else ui_res = 0;
+  return ui_res;
 }
-
-unsigned int getpolygontypefromstring (char *text_polygontype)
-{
-  int l=0;
-    if (isalpha(text_polygontype[0]))
-        l = (unsigned int)polygontypetoi(text_polygontype);
-    else if (isdigit(text_polygontype[0]))
-        l = atoi(text_polygontype);
-    else l = 0;
-  return l;
-}
-
-unsigned int getoptionsfromstring (char *text_options)
-{
-  int l=0;
-    if (isalpha(text_options[0]))
-        l = (unsigned int) optionstoi(text_options);
-    else if ( isdigit(text_options[0]) )
-        l = atoi(text_options);
-    else l = 0;
-  return l;
-}
-
-unsigned int getoutnumoptionsfromstring (char *text_options)
-{
-  int l=0;
-    if (isalpha(text_options[0]))
-        l = (unsigned int) outputnumberoptionstoi(text_options);
-    else if ( isdigit(text_options[0]) )
-        l = atoi(text_options);
-    else l = 0;
-  return l;
-}
-
-unsigned int getmeteroptionsfromstring (char *text_options)
-{
-  int l=0;
-    if (isalpha(text_options[0]))
-        l = (unsigned int) meteroptionstoi(text_options);
-    else if ( isdigit(text_options[0]) )
-        l = atoi(text_options);
-    else l = 0;
-  return l;
-}
-
-unsigned int getlinebargraphoptionfromstring (char *text_options)
-{
-  int l=0;
-    if (isalpha(text_options[0]))
-        l = (unsigned int) linearbargraphoptionstoi(text_options);
-    else if ( isdigit(text_options[0]) )
-        l = atoi(text_options);
-    else l = 0;
-  return l;
-}
-
-unsigned int getcolordepthfromstring (char* text_colordepth)
-{
-  int l=0;
-    if (isalpha(text_colordepth[0]))
-        l = (unsigned int) colordepthtoi(text_colordepth);
-    else if ( isdigit(text_colordepth[0]) )
-        l = atoi(text_colordepth);
-    else l = 0;
-  return l;
-}
-
-unsigned int getpicgraphoptionfromstring (char *text_options)
-{
-  int l=0;
-    if (isalpha(text_options[0]))
-        l = (unsigned int) picturegraphicoptionstoi(text_options);
-    else if ( isdigit(text_options[0]) )
-        l = atoi(text_options);
-    else l = 0;
-  return l;
-}
-
-unsigned int getfontsizefromstring (char *text_fontsize)
-{
-  int l=0;
-    if (isalpha(text_fontsize[0]))
-        l = (unsigned int) fontsizetoi(text_fontsize);
-    else if ( isdigit(text_fontsize[0]) )
-        l = atoi(text_fontsize);
-    else l = 0;
-  return l;
-}
-
-unsigned int getfonttypefromstring (char* text_fonttype)
-{
-  int l=0;
-    if (isalpha(text_fonttype[0]))
-        l = (unsigned int) fonttypetoi(text_fonttype);
-    else if ( isdigit(text_fonttype[0]) )
-        l = atoi(text_fonttype);
-    else l = 0;
-  return l;
-}
-
-unsigned int getfontstylefromstring (char *text_fontstyle)
-{
-  int l=0;
-    if (isalpha(text_fontstyle[0]))
-        l = (unsigned int) fontstyletoi(text_fontstyle);
-    else if ( isdigit(text_fontstyle[0]) )
-        l = atoi(text_fontstyle);
-    else l = 0;
-  return l;
-}
-
-unsigned int getfilltypefromstring (char *text_filltype)
-{
- int l=0;
-    if (isalpha(text_filltype[0]))
-        l = (unsigned int) filltypetoi (text_filltype);
-    else if ( isdigit(text_filltype[0]) )
-        l = atoi(text_filltype);
-    else l = 0;
-  return l;
-}
-
-unsigned int getvalidtypefromstring (char *text_validtype)
-{
- int l=0;
-    if (isalpha(text_validtype[0]))
-        l = (unsigned int) validationtypetoi (text_validtype);
-    else if ( isdigit(text_validtype[0]) )
-        l = atoi(text_validtype);
-    else l = 0;
-  return l;
-}
-
 
 
 unsigned int geteventfromstring (char *text_eventName)
 {
- int l=0;
+ unsigned int ui_res=0;
     if (isalpha(text_eventName[0]))
-        l = (unsigned int) eventToi (text_eventName);
+        ui_res = (unsigned int) eventToi (text_eventName);
     else if ( isdigit(text_eventName[0]) )
-        l = atoi(text_eventName);
-    else l = 0;
-  return l;
+        ui_res = atoi(text_eventName);
+    else ui_res = 0;
+  return ui_res;
 }
+
+
+unsigned int getformatfromstring (char *text_formatstr)
+{
+  unsigned int ui_res;
+    if (isalpha(text_formatstr[0]))
+        ui_res = (unsigned int)formattoi(text_formatstr);
+    else if (isdigit(text_formatstr[0]))
+        ui_res = atoi(text_formatstr);
+    else ui_res = 1;
+  return ui_res;
+}
+
+
+unsigned int getfontsizefromstring (char *text_fontsize)
+{
+  unsigned int ui_res=0, cnt;
+  bool found = false;
+  for(cnt=0;  cnt<4 && cnt<strlen(text_fontsize); cnt++) {
+    if (isalpha(text_fontsize[cnt])) {
+        ui_res = (unsigned int) fontsizetoi(text_fontsize);
+        found = true; break;
+    }
+  }
+  if (!found) {
+    if ( isdigit(text_fontsize[0]) )
+        ui_res = atoi(text_fontsize);
+    else ui_res = 0;
+  }
+  return ui_res;
+}
+
+
+unsigned int getfonttypefromstring (char* text_fonttype)
+{
+  unsigned int ui_res=0;
+    if (isalpha(text_fonttype[0]))
+        ui_res = (unsigned int) fonttypetoi(text_fonttype);
+    else if ( isdigit(text_fonttype[0]) )
+        ui_res = atoi(text_fonttype);
+    else ui_res = 0;
+  return ui_res;
+}
+
+
+unsigned int getfontstylefromstring (char *text_fontstyle)
+{
+  unsigned int ui_res=0;
+    if (isalpha(text_fontstyle[0]))
+        ui_res = (unsigned int) fontstyletoi(text_fontstyle);
+    else if ( isdigit(text_fontstyle[0]) )
+        ui_res = atoi(text_fontstyle);
+    else ui_res = 0;
+  return ui_res;
+}
+
+
+unsigned int getfilltypefromstring (char *text_filltype)
+{
+ unsigned int ui_res=0;
+    if (isalpha(text_filltype[0]))
+        ui_res = (unsigned int) filltypetoi (text_filltype);
+    else if ( isdigit(text_filltype[0]) )
+        ui_res = atoi(text_filltype);
+    else ui_res = 0;
+  return ui_res;
+}
+
+
+unsigned int gethorizjustifyfromstring (char *text_horizstr)
+{
+  unsigned int ui_res;
+    if (isalpha(text_horizstr[0]))
+        ui_res = (unsigned int)horizontaljustificationtoi(text_horizstr);
+    else if (isdigit(text_horizstr[0]))
+        ui_res = atoi(text_horizstr);
+    else ui_res = 1;
+  return ui_res;
+}
+
+
+unsigned int getlinebargraphoptionfromstring (char *text_options)
+{
+  unsigned int ui_res=0;
+    if (isalpha(text_options[0]))
+        ui_res = (unsigned int) linearbargraphoptionstoi(text_options);
+    else if ( isdigit(text_options[0]) )
+        ui_res = atoi(text_options);
+    else ui_res = 0;
+  return ui_res;
+}
+
+
+unsigned int getlinedirectfromstring (char *text_linedirect)
+{
+ unsigned int ui_res=0;
+    if (isalpha(text_linedirect[0]))
+        ui_res = (unsigned int) linedirectiontoi(text_linedirect);
+    else if ( isdigit(text_linedirect[0]) )
+        ui_res = atoi(text_linedirect);
+    else ui_res = 0;
+  return ui_res;
+}
+
+
+unsigned int getlinesuppresfromstring (char *text_linesupprstr)
+{
+  unsigned int ui_res=0;
+    if (isalpha(text_linesupprstr[0]))
+        ui_res = (unsigned int)linesuppressiontoi(text_linesupprstr);
+    else if (isdigit(text_linesupprstr[0]))
+        ui_res = atoi(text_linesupprstr);
+    else ui_res = 0;
+  return ui_res;
+}
+
+
+unsigned int getmeteroptionsfromstring (char *text_options)
+{
+  unsigned int ui_res=0;
+    if (isalpha(text_options[0]))
+        ui_res = (unsigned int) meteroptionstoi(text_options);
+    else if ( isdigit(text_options[0]) )
+        ui_res = atoi(text_options);
+    else ui_res = 0;
+  return ui_res;
+}
+
+
+unsigned int getoptionsfromstring (char *text_options)
+{
+  unsigned int ui_res=0;
+    if (isalpha(text_options[0]))
+        ui_res = (unsigned int) optionstoi(text_options);
+    else if ( isdigit(text_options[0]) )
+        ui_res = atoi(text_options);
+    else ui_res = 0;
+  return ui_res;
+}
+
+
+unsigned int getoutnumoptionsfromstring (char *text_options)
+{
+  unsigned int ui_res=0;
+    if (isalpha(text_options[0]))
+        ui_res = (unsigned int) outputnumberoptionstoi(text_options);
+    else if ( isdigit(text_options[0]) )
+        ui_res = atoi(text_options);
+    else ui_res = 0;
+  return ui_res;
+}
+
+
+unsigned int getpolygontypefromstring (char *text_polygontype)
+{
+  unsigned int ui_res=0;
+    if (isalpha(text_polygontype[0]))
+        ui_res = (unsigned int)polygontypetoi(text_polygontype);
+    else if (isdigit(text_polygontype[0]))
+        ui_res = atoi(text_polygontype);
+    else ui_res = 0;
+  return ui_res;
+}
+
+
+unsigned int getpicgraphoptionfromstring (char *text_options)
+{
+  unsigned int ui_res=0;
+    if (isalpha(text_options[0]))
+        ui_res = (unsigned int) picturegraphicoptionstoi(text_options);
+    else if ( isdigit(text_options[0]) )
+        ui_res = atoi(text_options);
+    else ui_res = 0;
+  return ui_res;
+}
+
+
+unsigned int getpriorityfromstring (char *text_priority)
+{
+  unsigned int ui_res=0;
+    if (isalpha(text_priority[0]))
+        ui_res = (unsigned int) prioritytoi(text_priority);
+    else if ( isdigit(text_priority[0]) )
+        ui_res = atoi(text_priority);
+    else ui_res = 0;
+  return ui_res;
+}
+
+
+unsigned int getvalidtypefromstring (char *text_validtype)
+{
+ unsigned int ui_res=0;
+    if (isalpha(text_validtype[0]))
+        ui_res = (unsigned int) validationtypetoi (text_validtype);
+    else if ( isdigit(text_validtype[0]) )
+        ui_res = atoi(text_validtype);
+    else ui_res = 0;
+  return ui_res;
+}
+
+
+
 //###__XML Extension for VtGuiBuilder ###-END ##########################################################
 
 
