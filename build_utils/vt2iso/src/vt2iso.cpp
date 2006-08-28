@@ -3647,17 +3647,17 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
           if (!attrIsGiven [attrFont_attributes])
             fprintf (partFileB, ", NULL");
           else
-            fprintf (partFileB, ", iVtObject%s", attrString [attrFont_attributes]);
+            fprintf (partFileB, ", &iVtObject%s", attrString [attrFont_attributes]);
 
           if (!attrIsGiven [attrLine_attributes])
             fprintf (partFileB, ", NULL");
           else
-            fprintf (partFileB, ", iVtObject%s", attrString [attrLine_attributes]);
+            fprintf (partFileB, ", &iVtObject%s", attrString [attrLine_attributes]);
 
           if (!attrIsGiven [attrFill_attributes])
             fprintf (partFileB, ", NULL");
           else
-            fprintf (partFileB, ", iVtObject%s", attrString [attrFill_attributes]);
+            fprintf (partFileB, ", &iVtObject%s", attrString [attrFill_attributes]);
 
           fprintf (partFileB, ", %d, %d", colordepthtoi (attrString [attrFormat]), gcoptionstoi (attrString [attrOptions]));
 
