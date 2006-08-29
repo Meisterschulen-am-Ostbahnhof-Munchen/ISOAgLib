@@ -113,7 +113,8 @@
 
     <key name='KeyChangeFill' background_colour='white'>
       <outputstring pos_x='0' pos_y='0' width='60' height='32' background_colour='white' font_attributes='FontAttributesSKM6x8'
-                    value='Change to green Fill Attributes' horizontal_justification='middle' options="autowrap"/>
+                    value='Change Fill Attributes and draw to graphics context'
+                    horizontal_justification='middle' options="autowrap"/>
     </key>
 
   </softkeymask>

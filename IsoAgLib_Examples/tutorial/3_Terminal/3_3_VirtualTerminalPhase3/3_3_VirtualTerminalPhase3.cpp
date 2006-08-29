@@ -359,6 +359,7 @@ void iObjectPool_simpleVTIsoPool_c::eventNumericValue ( uint16_t objId, uint8_t 
 void iObjectPool_simpleVTIsoPool_c::eventKeyCode ( uint8_t keyActivationCode, uint16_t /*objId*/, uint16_t /*objIdMask*/, uint8_t keyCode, bool /*wasButton*/ )
 {
   static int xy=0;
+  static int pressChangeFill = 0;
 /* just for your information! - defines are to be found in the "ivttypes.h" include!
   #define BUTTON_HAS_BEEN_UNLATCHED 0
   #define BUTTON_HAS_BEEN_PRESSED 1
@@ -404,9 +405,51 @@ void iObjectPool_simpleVTIsoPool_c::eventKeyCode ( uint8_t keyActivationCode, ui
         iVtObjectcontainerInAllMasks.setChildPosition (&iVtObjectBigLogo, xy, xy);
         break;
 
-      case vtKeyCodeKeyChangeFill:
+      case vtKeyCodeKeyChangeFill: {
+        char* text = "Text";
+        pressChangeFill++;
+	  
+	switch(pressChangeFill) {
+	  case 1:
+            iVtObjectBigGC.setGraphicsCursor( iVtPoint_c( 5,5 ) );
+            iVtObjectBigGC.drawRectangle( iVtPoint_c( 250, 250 ) );
+	    break;
+	  case 2:
+	    iVtObjectBigGC.zoomViewport( -1 );
+	    break;
+	  case 3:
+            iVtObjectBigGC.setGraphicsCursor( iVtPoint_c( 5,5 ) );
+            iVtObjectBigGC.eraseRectangle( iVtPoint_c( 250, 250 ) );
+            iVtObjectBigGC.drawLine( iVtPoint_c( 5, 5 ) );
+            iVtObjectBigGC.setGraphicsCursor( iVtPoint_c( 5, 250 ) );
+            iVtObjectBigGC.drawLine( iVtPoint_c( 250, 5 ) );
+	    break;
+	  case 4:
+	    iVtObjectBigGC.panAndZoomViewport( iVtPoint_c( -50, -50 ), -2 );
+            iVtObjectBigGC.setGraphicsCursor( iVtPoint_c( 5,5 ) );
+            {
+              iVtPoint_c pc_point[4];
+              pc_point[0] = iVtPoint_c( 45, 45 );
+              pc_point[1] = iVtPoint_c( 45,  5 );
+              pc_point[2] = iVtPoint_c(  5, 45 );
+              pc_point[3] = iVtPoint_c(  5,  5 );
+              iVtObjectBigGC.drawPolygon( sizeof(pc_point)/sizeof(*pc_point), pc_point );
+            }
+	    break;
+	  case 6:
+            iVtObjectBigGC.setGraphicsCursor( iVtPoint_c( 5,5 ) );
+            iVtObjectBigGC.drawText( 1, strlen(text), text );
+            iVtObjectBigGC.drawLine( iVtPoint_c( 0, 64 ) );
+          break;
+	}
+
         iVtObjectdPolygon.setFillAttributes(&iVtObjectFillAttributes);
-        break;
+
+	if (0 == pressChangeFill%2)
+          iVtObjectFillAttributes.setFillColour( 9 );
+	else
+          iVtObjectFillAttributes.setFillColour( 6 );
+      } break;
 
       case vtKeyCodeKeyMove:
         valSpeed += valAccel;
