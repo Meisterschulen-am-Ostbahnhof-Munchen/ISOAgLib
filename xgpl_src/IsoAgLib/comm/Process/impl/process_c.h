@@ -101,6 +101,7 @@
 #include "processpkg_c.h"
 #ifdef USE_ISO_11783
   #include "devpropertyhandler_c.h"
+  #include <IsoAgLib/comm/Process/impl/processwsmtaskmsghandler_c.h>
 #endif
 
 #if defined(SYSTEM_PC) && !defined(SYSTEM_PC_VC) && __GNUC__ >= 3
@@ -446,6 +447,11 @@ public:
     */
   void unregisterRemoteProcessData( ProcDataRemoteBase_c* pc_remoteClient);
 
+#ifdef USE_ISO_11783
+  void registerWsmTaskMsgHandler(ProcessWsmTaskMsgHandler_c* rpc_processWsmTaskMsgHandler)
+  { pc_processWsmTaskMsgHandler = rpc_processWsmTaskMsgHandler; }
+#endif
+
   /**
     delete FilterBox_c for receive from remote devKey if needed
     (important to delete old Filter Boxes after deletion of
@@ -628,6 +634,8 @@ private: // Private attributes
 #ifdef USE_ISO_11783
   const DevKey_c* pc_tcDevKey;
   uint8_t ui8_lastTcStatus;
+
+  ProcessWsmTaskMsgHandler_c* pc_processWsmTaskMsgHandler;
 #endif
 
 };

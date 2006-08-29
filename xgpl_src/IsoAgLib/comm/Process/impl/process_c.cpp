@@ -163,6 +163,7 @@ void Process_c::init()
     #endif
   pc_tcDevKey = NULL;
   ui8_lastTcStatus = 0;
+  pc_processWsmTaskMsgHandler = NULL;
   #endif
   c_data.setSingletonKey( getSingletonVecKey() );
 
@@ -1463,9 +1464,10 @@ bool Process_c::processTcStatusMsg(uint8_t ui8_tcStatus, const DevKey_c& refc_de
   return TRUE;
 }
 
-bool Process_c::processWorkingSetTaskMsg(uint8_t /* ui8_tcStatus */, const DevKey_c& /* refc_devKey */)
+bool Process_c::processWorkingSetTaskMsg(uint8_t ui8_tcStatus, const DevKey_c& refc_devKey)
 {
-  // @todo react on received working set task msg
+  if (pc_processWsmTaskMsgHandler)
+    pc_processWsmTaskMsgHandler->processWsmTaskMessage(ui8_tcStatus, refc_devKey);
   return TRUE;
 }
 #endif
