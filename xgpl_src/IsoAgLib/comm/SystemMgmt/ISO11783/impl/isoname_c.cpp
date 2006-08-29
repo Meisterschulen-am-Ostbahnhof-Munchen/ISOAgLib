@@ -97,6 +97,7 @@
 /* import some namespaces for easy access */
 /* ************************************** */
 using __IsoAgLib::ISOName_c;
+using __IsoAgLib::Flexible8ByteString_c;
 
 
 /**
@@ -413,7 +414,7 @@ void ISOName_c::setSerNo(uint32_t rui32_serNo)
 */
 int8_t ISOName_c::higherPriThanPar(const Flexible8ByteString_c* rpu_compare) const
 {
-#if defined(DEBUG) && !(SYSTEM_A1) && (SYSTEM_PC)
+#if defined(DEBUG) && !defined(SYSTEM_A1) && defined(SYSTEM_PC)
 if ( rpu_compare == NULL )
 { // calling function called this function with wrong parameter
   // - but in production version, we await, that the caller makes sure,
