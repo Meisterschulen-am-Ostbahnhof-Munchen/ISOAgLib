@@ -185,6 +185,7 @@ IsoAgLib_Examples/tutorial/3_Terminal/3_3_VirtualTerminalPhase3/MaskDefinition/s
 IsoAgLib_Examples/tutorial/3_Terminal/3_3_VirtualTerminalPhase3/MaskDefinition/simpleVTIsoPool2_Mask2Alarm.xml -text
 IsoAgLib_Examples/tutorial/3_Terminal/3_3_VirtualTerminalPhase3/TutPrjDesc3_3_VirtualTerminalIso.txt -text
 IsoAgLib_Examples/tutorial/3_Terminal/3_3_VirtualTerminalPhase3/config_3_3_VirtualTerminalPhase3.h -text
+IsoAgLib_Examples/tutorial/3_Terminal/3_3_VirtualTerminalPhase3/run.sh -text
 IsoAgLib_Examples/tutorial/3_Terminal/3_3_VirtualTerminalPhase3/version.h -text
 IsoAgLib_Examples/tutorial/4_SupplementaryDriver/4_0_Eeprom/TutPrjDesc4_0_Eeprom.txt -text
 IsoAgLib_Examples/tutorial/4_SupplementaryDriver/4_0_Eeprom/config_4_0_Eeprom.h -text
