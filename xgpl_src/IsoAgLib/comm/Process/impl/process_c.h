@@ -573,7 +573,7 @@ private: // Private methods
 
 #ifdef USE_ISO_11783
   /** checks if a DDI can be added to a group and return ptr to proc data if successfully */
-  ProcDataRemoteBase_c* addDDI2ExistingProcData(uint16_t rui16_DDI, uint16_t rui_deviceElement, const DevKey_c& rc_devKey, GeneralCommand_c::ValueGroup_t& ren_valueGroup, bool refb_isSetpoint);
+  ProcDataRemoteBase_c* addDDI2ExistingProcData(uint16_t rui16_DDI, uint16_t rui_deviceElement, const DevKey_c& rc_devKey, GeneralCommand_c::ValueGroup_t& ren_valueGroup, bool& refb_isSetpoint);
   /** checks if a DDI can be added to a group and if yes then add it! */
   bool checkAndAddMatchingDDI2Group(uint16_t rui16_DDI, uint16_t rui_deviceElement, const DevKey_c& rc_devKey);
   /** adds a proprietary DDI to a group */
@@ -629,7 +629,7 @@ private: // Private attributes
   const DevKey_c* pc_tcDevKey;
   uint8_t ui8_lastTcStatus;
 #endif
- 
+
 };
 
 

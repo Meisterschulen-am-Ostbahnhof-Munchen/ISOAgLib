@@ -1112,7 +1112,7 @@ bool Process_c::updateRemoteCache(
 }
 
 #ifdef USE_ISO_11783
-ProcDataRemoteBase_c* Process_c::addDDI2ExistingProcData(uint16_t rui16_DDI, uint16_t rui_deviceElement, const DevKey_c& rc_devKey, GeneralCommand_c::ValueGroup_t& refen_valueGroup, bool refb_isSetpoint)
+ProcDataRemoteBase_c* Process_c::addDDI2ExistingProcData(uint16_t rui16_DDI, uint16_t rui_deviceElement, const DevKey_c& rc_devKey, GeneralCommand_c::ValueGroup_t& refen_valueGroup, bool& refb_isSetpoint)
 {
   ProcDataRemoteBase_c* pc_remoteProcessData = NULL;
 
@@ -1121,8 +1121,10 @@ ProcDataRemoteBase_c* Process_c::addDDI2ExistingProcData(uint16_t rui16_DDI, uin
         pc_iter++ )
   {
     if ((*pc_iter)->check4GroupMatchExisting(rui16_DDI, rui_deviceElement, rc_devKey))
-      // DDI/elementNr already contained in ProcDataRemoteBase_c
+    { // DDI/elementNr already contained in ProcDataRemoteBase_c
+      (*pc_iter)->getDDIType(rui16_DDI, refen_valueGroup, refb_isSetpoint);
       return *pc_iter;
+    }
   }
 
   // try to find a matching group
@@ -1130,9 +1132,11 @@ ProcDataRemoteBase_c* Process_c::addDDI2ExistingProcData(uint16_t rui16_DDI, uin
   if (pc_remoteProcessData)
   {
     bool b_isSetpoint;
-    pc_remoteProcessData->getDDIType(rui16_DDI, refen_valueGroup, b_isSetpoint);
+    GeneralCommand_c::ValueGroup_t en_valueGroup;
+    pc_remoteProcessData->getDDIType(rui16_DDI, en_valueGroup, b_isSetpoint);
     if (pc_remoteProcessData->add2Group(rui16_DDI))
     {
+      refen_valueGroup = en_valueGroup;
       refb_isSetpoint = b_isSetpoint;
       return pc_remoteProcessData;
     }

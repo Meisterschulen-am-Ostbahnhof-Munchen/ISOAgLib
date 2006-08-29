@@ -530,6 +530,7 @@ void ProcIdent_c::getDDIType(uint16_t rui16_DDI, GeneralCommand_c::ValueGroup_t 
   { // 0xDFFF is Request Default Process Data
     // proprietary DDIs are exact per default
     ref_ddiType = GeneralCommand_c::exactValue;
+    refb_isSetpoint = true;
     return;
   }
 
