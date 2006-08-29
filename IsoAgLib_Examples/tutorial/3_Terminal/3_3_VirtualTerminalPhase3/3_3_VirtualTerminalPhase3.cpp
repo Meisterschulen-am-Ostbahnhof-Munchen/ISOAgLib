@@ -436,7 +436,7 @@ void iObjectPool_simpleVTIsoPool_c::eventKeyCode ( uint8_t keyActivationCode, ui
               iVtObjectBigGC.drawPolygon( sizeof(pc_point)/sizeof(*pc_point), pc_point );
             }
 	    break;
-	  case 6:
+	  case 5:
             iVtObjectBigGC.setGraphicsCursor( iVtPoint_c( 5,5 ) );
             iVtObjectBigGC.drawText( 1, strlen(text), text );
             iVtObjectBigGC.drawLine( iVtPoint_c( 0, 64 ) );
