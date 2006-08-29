@@ -290,6 +290,7 @@ public:
   //! corner of the object that was drawn.  Normal VT Object transparency rules apply
   //! when drawing the VT Object onto the canvas.
   //! Any colours outside of the colours allowed by this Graphics Context Object shall be treated as transparent.
+  //! @todo The object size is not know and thus the cursor is not moved for b_updateObject case.
   //! @param iVtObject Pointer to the VT Object to be drawn
   //! @param b_updateObject
   //! @param b_enableReplaceOfCmd

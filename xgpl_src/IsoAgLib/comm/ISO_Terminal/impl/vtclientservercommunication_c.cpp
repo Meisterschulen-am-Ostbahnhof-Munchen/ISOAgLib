@@ -1617,7 +1617,7 @@ VtClientServerCommunication_c::sendCommandDrawPolygon(
   // Check if valid polgon (at least one point)
   if (0 == ui16_numOfPoints) { return false; }
 
-  // Trivial case (like draw line)
+  // Trivial case (like draw line) without TP.
   if (ui16_numOfPoints == 1) {
     uint16_t x = convert_n::castUI( rpc_data->getX() );
     uint16_t y = convert_n::castUI( rpc_data->getY() );
@@ -1627,41 +1627,51 @@ VtClientServerCommunication_c::sendCommandDrawPolygon(
                         x & 0xFF, x >> 8, y & 0xFF, y >> 8,
                         DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd );
   }
-  else {
-    // send a polygon with more than one point
-    uint16_t ui16_bufferSize = 4+(ui16_numOfPoints*4);
-    uint8_t *pui8_buffer = new uint8_t[ ui16_bufferSize ];
-    pui8_buffer[0] = vtObjectGraphicsContext_c::e_commandID;
-    pui8_buffer[1] = rpc_object->getID() & 0xFF;
-    pui8_buffer[2] = rpc_object->getID() >> 8;
-    pui8_buffer[3] = vtObjectGraphicsContext_c::e_drawPolygonCmdID;
 
-    // add all points from the list to the buffer
-    uint16_t ui16_index = 4;		/* first 4 bytes are set */
-    for ( uint16_t ui16_currentPoint = 0;
-          ui16_currentPoint < ui16_numOfPoints;
-          ui16_currentPoint++ )
-    {
-      uint16_t x = convert_n::castUI( rpc_data[ui16_currentPoint].getX() );
-      pui8_buffer[ui16_index]   = x & 0xFF;
-      pui8_buffer[ui16_index+1] = x >> 8;
-      uint16_t y = convert_n::castUI( rpc_data[ui16_currentPoint].getY() );
-      pui8_buffer[ui16_index+2] = y & 0xFF;
-      pui8_buffer[ui16_index+3] = y >> 8;
-      ui16_index+=4;
-    }
+  // send a polygon with more than one point
+  uint16_t ui16_bufferSize = 4+(ui16_numOfPoints*4);
+  uint8_t *pui8_buffer = new uint8_t[ ui16_bufferSize ];
+  pui8_buffer[0] = vtObjectGraphicsContext_c::e_commandID;
+  pui8_buffer[1] = rpc_object->getID() & 0xFF;
+  pui8_buffer[2] = rpc_object->getID() >> 8;
+  pui8_buffer[3] = vtObjectGraphicsContext_c::e_drawPolygonCmdID;
 
-    // Send buffer as ISOBUS command.
-    sc_tempSendUpload.set (pui8_buffer, ui16_bufferSize );
-    delete[] pui8_buffer;
-    return queueOrReplace (sc_tempSendUpload, b_enableReplaceOfCmd);
+  // add all points from the list to the buffer
+  uint16_t ui16_index = 4;		/* first 4 bytes are set */
+  for ( uint16_t ui16_currentPoint = 0;
+        ui16_currentPoint < ui16_numOfPoints;
+        ui16_currentPoint++ )
+  {
+    uint16_t x = convert_n::castUI( rpc_data[ui16_currentPoint].getX() );
+    pui8_buffer[ui16_index]   = x & 0xFF;
+    pui8_buffer[ui16_index+1] = x >> 8;
+    uint16_t y = convert_n::castUI( rpc_data[ui16_currentPoint].getY() );
+    pui8_buffer[ui16_index+2] = y & 0xFF;
+    pui8_buffer[ui16_index+3] = y >> 8;
+    ui16_index+=4;
   }
+
+  // Send buffer as ISOBUS command.
+  sc_tempSendUpload.set (pui8_buffer, ui16_bufferSize );
+  delete[] pui8_buffer;
+  return queueOrReplace (sc_tempSendUpload, b_enableReplaceOfCmd);
 }
 
 bool
 VtClientServerCommunication_c::sendCommandDrawText(
   IsoAgLib::iVtObject_c* rpc_object, uint8_t ui8_textType, uint8_t ui8_numOfCharacters, const char *rpc_newValue, bool b_enableReplaceOfCmd)
 {
+  // Non TP case
+  if (ui8_numOfCharacters <= 2) {
+    uint8_t a = (ui8_numOfCharacters >= 1) ? rpc_newValue[0] : 0xFF;
+    uint8_t b = (ui8_numOfCharacters >= 2) ? rpc_newValue[1] : 0xFF;
+    return sendCommand( vtObjectGraphicsContext_c::e_commandID,
+                        rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
+                        vtObjectGraphicsContext_c::e_drawTextCmdID,
+                        ui8_textType, ui8_numOfCharacters, a, b,
+                        DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd );
+  }
+
   uint8_t *pui8_buffer = new uint8_t[6+ui8_numOfCharacters];
   pui8_buffer[0] = vtObjectGraphicsContext_c::e_commandID;
   pui8_buffer[1] = rpc_object->getID() & 0xFF;

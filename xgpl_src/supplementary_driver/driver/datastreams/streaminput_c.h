@@ -115,7 +115,7 @@ public:
   // For convenience some transparent interface extensions.
 
   //! Read one byte
-  uint8_t get() { uint8_t byte; *this >> byte; return byte; };
+  uint8_t get( void ) { uint8_t byte; *this >> byte; return byte; };
 
   //! Stream input of int8_t
   StreamInput_c& operator>>(int8_t& i8_data) {
@@ -141,6 +141,18 @@ public:
     c_point = IsoAgLib::iVtPoint_c(x,y); return *this;
   }
 
+#if defined(_BASIC_STRING_H)
+  //! Read string up to given size or up to eof() if less.
+  void get( std::string& c_str, int i_size ) {
+    for (;(i_size > 0) && (!eof());--i_size) c_str.push_back( get() );
+  }
+
+  //! Read string up to eof
+  void get( std::string& c_str ) {
+    while (!eof()) c_str.push_back( get() );
+  }
+#endif
 };
 
 #endif // STREAMINPUT_C_H
+

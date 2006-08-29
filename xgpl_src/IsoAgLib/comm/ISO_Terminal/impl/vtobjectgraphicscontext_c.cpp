@@ -334,10 +334,20 @@ vtObjectGraphicsContext_c::drawText( uint8_t type, uint8_t cnt, const char* rpc_
                                      bool b_updateObject, bool b_enableReplaceOfCmd)
 {
   if (b_updateObject) {
-    /** @todo set the cursor to the bottom right corner of the last character */
+    uint16_t ui16_widthHeight = get_vtObjectGraphicsContext_a()->fontAttributes->getScaledWidthHeight();
+    uint16_t ui16_totalHeight = ui16_widthHeight & 0xFF;
+    uint16_t ui16_totalWidth = uint16_t(ui16_widthHeight >> 8) * uint16_t(cnt);
+
+    int16_t i16_x = get_vtObjectGraphicsContext_a()->cursorX - 1 + ui16_totalWidth;
+    int16_t i16_y = get_vtObjectGraphicsContext_a()->cursorY - 1 + ui16_totalHeight;
+
+    saveSignedValue16 (MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), cursorX),
+      sizeof(iVtObjectGraphicsContext_s), i16_x );
+    saveSignedValue16 (MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), cursorY),
+      sizeof(iVtObjectGraphicsContext_s), i16_y );
   }
 
-  getIsoTerminalInstance4Comm().getClientByID(s_properties.clientId).sendCommandDrawText (
+  getIsoTerminalInstance4Comm().getClientByID(s_properties.clientId).sendCommandDrawText(
               this, type, cnt, rpc_string, b_enableReplaceOfCmd);
 }
 
@@ -388,8 +398,8 @@ vtObjectGraphicsContext_c::panAndZoomViewport( const IsoAgLib::iVtPoint_c& rc_po
       sizeof(iVtObjectGraphicsContext_s), newValue);
   }
 
-  getIsoTerminalInstance4Comm().getClientByID(s_properties.clientId).sendCommandPanViewport(
-              this, rc_point, b_enableReplaceOfCmd);
+  getIsoTerminalInstance4Comm().getClientByID(s_properties.clientId).sendCommandPanAndZoomViewport(
+              this, rc_point, newValue, b_enableReplaceOfCmd);
 }
 
 void
@@ -412,7 +422,17 @@ vtObjectGraphicsContext_c::drawVtObject( const iVtObject_c* const newVtObject,
                                          bool b_updateObject, bool b_enableReplaceOfCmd)
 {
   if (b_updateObject) {
-    /** @todo set the cursor to the bottom right corner of drawn object */
+    //! @todo The object size is not know and thus the cursor is not moved for b_updateObject case.
+    uint16_t ui16_totalHeight = 1;
+    uint16_t ui16_totalWidth = 1;
+
+    int16_t i16_x = get_vtObjectGraphicsContext_a()->cursorX - 1 + ui16_totalWidth;
+    int16_t i16_y = get_vtObjectGraphicsContext_a()->cursorY - 1 + ui16_totalHeight;
+
+    saveSignedValue16 (MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), cursorX),
+      sizeof(iVtObjectGraphicsContext_s), i16_x );
+    saveSignedValue16 (MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), cursorY),
+      sizeof(iVtObjectGraphicsContext_s), i16_y );
   }
 
   getIsoTerminalInstance4Comm().getClientByID(s_properties.clientId).sendCommandDrawVtObject(
