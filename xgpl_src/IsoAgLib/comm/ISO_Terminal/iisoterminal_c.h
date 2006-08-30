@@ -96,6 +96,9 @@ public:
   __IsoAgLib::VtClientServerCommunication_c* getClientPtrByID (uint8_t ui8_clientIndex)
   { return ISOTerminal_c::getClientPtrByID (ui8_clientIndex); }
 
+  bool isAnyVtAvailable()
+  { return ISOTerminal_c::isAnyVtAvailable(); }
+
 // the following define should be globally defined in the project settings...
 #ifdef FAKE_VT_PROPERTIES
   void fakeVtProperties (uint16_t rui16_dimension, uint16_t rui16_skWidth, uint16_t rui16_skHeight, uint8_t rui16_colorDepth, uint16_t rui16_fontSizes)

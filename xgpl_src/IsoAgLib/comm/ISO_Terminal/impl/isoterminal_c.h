@@ -152,6 +152,8 @@ public:
 
   VtClientServerCommunication_c* getClientPtrByID (uint8_t ui8_clientIndex) { return (vec_vtClientServerComm.size() > 0) ? vec_vtClientServerComm[ui8_clientIndex] : NULL; }
 
+  bool isAnyVtAvailable() { return l_vtServerInst.size()>0; }
+
 
   /** for now allow multiple uploads
   bool getFlagForPoolUpload(const VtClientServerCommunication_c* pc_vtCSC);
