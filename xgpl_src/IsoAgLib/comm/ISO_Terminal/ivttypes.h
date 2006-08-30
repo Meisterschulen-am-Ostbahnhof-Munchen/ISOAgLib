@@ -207,6 +207,8 @@ class iVtPoint_c {
     iVtPoint_c& operator/=( int a ) { x /= a; y /= a; return *this; }
     //! Absolute value of this points coordinates.
     iVtPoint_c abs( void ) const { return iVtPoint_c( abs(x), abs(y) ); }
+    //! Equal operator used for external binary operator==
+    bool equal(const iVtPoint_c& p) const { return ((x == p.x) && (y == p.y)); }
 
     //! Don't use: This is just a workaround for problems using the VT server MACRO_processChangeAttributeAID
     int16_t& setX( void ) { return x; }
@@ -220,6 +222,7 @@ class iVtPoint_c {
     static int16_t abs( int16_t i ) { return (i<0) ? -i : i; }
 };
 
+inline bool operator==(const iVtPoint_c& a, const iVtPoint_c& b) { return a.equal(b); }
 inline iVtPoint_c operator+( const iVtPoint_c& a, const iVtPoint_c& b ) {
   iVtPoint_c r(a); return r += b;
 }
@@ -239,3 +242,4 @@ inline iVtPoint_c max( const iVtPoint_c& a, const iVtPoint_c& b ) {
 } // namespace IsoAgLib
 
 #endif // IVTTYPES_H
+
