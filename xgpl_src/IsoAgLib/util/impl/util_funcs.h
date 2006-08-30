@@ -339,10 +339,19 @@ class Flexible4ByteString_c {
   Flexible4ByteString_c( const uint8_t* rpui8_srcStream = NULL );
   /** set this object from a optionally odd addressed string */
   void setDataFromString( const uint8_t* rpui8_srcStream, uint8_t rui8_len = 4 )
+  #ifndef SYSTEM_A2
   { if (rpui8_srcStream != NULL ) CNAMESPACE::memcpy(uint8, rpui8_srcStream, rui8_len );};
+  #else
+  { if (rpui8_srcStream != NULL ) memcpy(uint8, rpui8_srcStream, rui8_len );};
+ #endif
+
   /** copy contents of this object to a optionally odd addressed string */
   void getDataToString( uint8_t* pui8_targetStream, uint8_t rui8_len = 4 ) const
-  { if (pui8_targetStream != NULL ) CNAMESPACE::memcpy( pui8_targetStream, uint8, rui8_len );};
+  #ifndef SYSTEM_A2
+    { if (pui8_targetStream != NULL ) CNAMESPACE::memcpy( pui8_targetStream, uint8, rui8_len );};
+  #else
+    { if (pui8_targetStream != NULL ) memcpy( pui8_targetStream, uint8, rui8_len );};
+  #endif
 
   /** set this object from a optionally odd addressed string */
   void setDataFromString( uint8_t rui8_offset, const uint8_t* rpui8_srcStream, uint8_t rui8_len = 4 );
@@ -587,10 +596,19 @@ class Flexible8ByteString_c {
   Flexible8ByteString_c( const uint8_t* rpui8_srcStream = NULL );
   /** set this object from a optionally odd addressed string */
   void setDataFromString( const uint8_t* rpui8_srcStream, uint8_t rui8_len = 8 )
+  #ifndef SYSTEM_A2
   { if (rpui8_srcStream != NULL ) CNAMESPACE::memcpy(uint8, rpui8_srcStream, rui8_len );};
+  #else
+  { if (rpui8_srcStream != NULL ) memcpy(uint8, rpui8_srcStream, rui8_len );};
+  #endif
+
   /** copy contents of this object to a optionally odd addressed string */
   void getDataToString( uint8_t* pui8_srcStream, uint8_t rui8_len = 8 ) const
+  #ifndef SYSTEM_A2
   { if (pui8_srcStream != NULL ) CNAMESPACE::memcpy( pui8_srcStream, uint8, rui8_len );};
+  #else
+  { if (pui8_srcStream != NULL ) memcpy( pui8_srcStream, uint8, rui8_len );};
+  #endif
   /** set this object from a optionally odd addressed string */
   void setDataFromString( uint8_t rui8_offset, const uint8_t* rpui8_srcStream, uint8_t rui8_len = 8 );
   /** copy contents of this object to a optionally odd addressed string */
