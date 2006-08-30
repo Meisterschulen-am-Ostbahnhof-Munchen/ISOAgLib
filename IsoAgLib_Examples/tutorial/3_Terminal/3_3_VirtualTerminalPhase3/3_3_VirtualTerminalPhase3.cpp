@@ -446,21 +446,30 @@ void iObjectPool_simpleVTIsoPool_c::eventKeyCode ( uint8_t keyActivationCode, ui
             iVtObjectBigGC.drawLine( iVtPoint_c( 0, 64 ) );
             break;
 	  case 6:
+            iVtObjectBigGC.panAndZoomViewport( iVtPoint_c( 80, 80 ), -1 );
             iVtObjectBigGC.setGraphicsCursor( iVtPoint_c( 80,80 ) );
-            iVtObjectBigGC.drawVtObject( &iVtObjectBigLogo );
+            iVtObjectBigGC.drawVtObject( &iVtObjectBigLogo );   // drawPictureGraphics
             break;
 	  case 7:
             iVtObjectBigGC.setGraphicsCursor( iVtPoint_c( 100,100 ) );
-            iVtObjectBigGC.drawVtObject( &iVtObjectBigGC );
+            iVtObjectBigGC.drawVtObject( &iVtObjectBigGC );     // drawGraphicsContext
             break;
 	  case 8:
             iVtObjectBigGC.setGraphicsCursor( iVtPoint_c( 120,120 ) );
-            iVtObjectBigGC.drawVtObject( &iVtObjectdMeter );
+            iVtObjectBigGC.drawVtObject( &iVtObjectdMeter );    // drawMeter
             break;
 	  case 9:
-            iVtObjectBigGC.copyViewport2PictureGraphic( &iVtObjectBigLogo );
+            iVtObjectBigGC.setGraphicsCursor( iVtPoint_c( 140,140 ) );
+            iVtObjectBigGC.drawVtObject( &iVtObjectUnnamed10 );    // drawOutputNumber
             break;
 	  case 10:
+            iVtObjectBigGC.setGraphicsCursor( iVtPoint_c( 160,160 ) );
+            iVtObjectBigGC.drawVtObject( &iVtObjectLikeIt );    // drawOutputString
+            break;
+	  case 11:
+            iVtObjectBigGC.copyViewport2PictureGraphic( &iVtObjectBigLogo );
+            break;
+	  case 12:
             iVtObjectBigGC.copyCanvas2PictureGraphic( &iVtObjectBigLogo );
             break;
 	}
