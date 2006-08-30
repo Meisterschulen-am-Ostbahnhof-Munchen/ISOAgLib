@@ -64,7 +64,9 @@
 #ifdef USE_ISO_11783
   #include "idevpropertyhandler_c.h"
 #endif
-
+#ifdef USE_PROC_REMOTE_SIMPLE_SETPOINT
+  #include "Remote/SimpleSetpoint/iprocdataremotesimplesetpoint_c.h"
+#endif
 // Begin Namespace IsoAgLib::iProcess_c
 namespace IsoAgLib {
 
@@ -329,7 +331,6 @@ public:
   iProcDataRemoteSimpleMeasureSetpointCombined_c* addDDI2ExistingProcData(uint16_t rui16_DDI, uint16_t rui_deviceElement, const iDevKey_c& rc_devKey, GeneralCommand_c::ValueGroup_t& ren_valueGroup, bool refb_isSetpoint)
   { return static_cast<iProcDataRemoteSimpleMeasureSetpointCombined_c*>(Process_c::addDDI2ExistingProcData(rui16_DDI, rui_deviceElement, rc_devKey, ren_valueGroup, refb_isSetpoint));};
 #endif
-
   /** checks if a DDI can be added to a group and if yes then add it! */
   bool checkAndAddMatchingDDI2Group(uint16_t rui16_DDI, uint16_t rui_deviceElement, const iDevKey_c& rc_devKey)
   { return Process_c::checkAndAddMatchingDDI2Group(rui16_DDI, rui_deviceElement, rc_devKey);};

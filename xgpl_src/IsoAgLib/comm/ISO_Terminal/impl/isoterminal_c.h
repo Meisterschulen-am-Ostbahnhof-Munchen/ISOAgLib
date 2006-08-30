@@ -94,6 +94,7 @@
 #include <IsoAgLib/comm/ISO_Terminal/iisoterminalobjectpool_c.h>
 #include <IsoAgLib/comm/SystemMgmt/impl/identitem_c.h>
 #include "vtserverinstance_c.h"
+#include "vtclientservercommunication_c.h"
 
 #include <list>
 

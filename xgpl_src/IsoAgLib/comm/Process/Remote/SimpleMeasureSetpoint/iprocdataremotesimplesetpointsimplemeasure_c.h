@@ -107,6 +107,11 @@ namespace IsoAgLib {
 class iProcDataRemoteSimpleSetpointSimpleMeasure_c : private __IsoAgLib::ProcDataRemoteSimpleSetpointSimpleMeasure_c {
 private:
   friend class EventSource_c;
+
+  // iProcess_c::addDDI2ExistingProcData() does a static_cast __IsoAgLib::ProcDataRemote_c => iProcDataRemote_c
+  // => access is needed
+  friend class iProcess_c;
+
 public:
 
   /**

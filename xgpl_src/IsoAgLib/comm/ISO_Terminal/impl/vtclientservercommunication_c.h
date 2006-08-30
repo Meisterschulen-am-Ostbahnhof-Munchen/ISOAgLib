@@ -320,7 +320,7 @@ public:
   uint8_t  getUserClippedColor (uint8_t colorValue, IsoAgLib::iVtObject_c* obj, IsoAgLib::e_vtColour whichColour);
 
   IdentItem_c& getIdentItem()           { return refc_wsMasterIdentItem; }
-  VtServerInstance_c& getVtServerInst() { return *pc_vtServerInstance;}
+  VtServerInstance_c& getVtServerInst() { return *pc_vtServerInstance;} // @todo Does this make sense? pc_ may be NULL!
   VtServerInstance_c* getVtServerInstPtr() { return pc_vtServerInstance;}
 
   void notifyOnNewVtServerInstance  (VtServerInstance_c& ref_newVtServerInst);
@@ -417,6 +417,8 @@ public:
   void enableSameCommandCheck() { b_checkSameCommand = true; }
   void disableSameCommandCheck() { b_checkSameCommand = false; }
 
+  bool isVtActive();
+
 private:
   friend class ISOTerminal_c;
   /** private constructor which prevents direct instantiation in user application
@@ -428,7 +430,6 @@ private:
   void doStop();
 
   void checkVtStateChange();
-  bool isVtActive();
 
   /** sends "Get Memory" to start uploading process... */
   void startObjectPoolUploading (uploadPoolType_t ren_uploadPoolType, IsoAgLib::iVtObject_c** rppc_listOfUserPoolUpdateObjects=NULL, uint16_t rui16_numOfUserPoolUpdateObjects=0);

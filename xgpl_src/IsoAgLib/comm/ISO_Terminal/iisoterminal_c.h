@@ -90,6 +90,12 @@ public:
   bool deregisterIsoObjectPool (iIdentItem_c* rpc_wsMasterIdentItem)
   { return ISOTerminal_c::deregisterIsoObjectPool (*rpc_wsMasterIdentItem); }
 
+  __IsoAgLib::VtClientServerCommunication_c& getClientByID (uint8_t ui8_clientIndex)
+  { return ISOTerminal_c::getClientByID (ui8_clientIndex); }
+
+  __IsoAgLib::VtClientServerCommunication_c* getClientPtrByID (uint8_t ui8_clientIndex)
+  { return ISOTerminal_c::getClientPtrByID (ui8_clientIndex); }
+
 // the following define should be globally defined in the project settings...
 #ifdef FAKE_VT_PROPERTIES
   void fakeVtProperties (uint16_t rui16_dimension, uint16_t rui16_skWidth, uint16_t rui16_skHeight, uint8_t rui16_colorDepth, uint16_t rui16_fontSizes)

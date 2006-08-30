@@ -93,8 +93,16 @@
 #include "../../StdSetpointElements/impl/setpointremote_c.h"
 #include "../../StdMeasureElements/impl/measureprogremote_c.h"
 
+// forward declarations for friend declarations below...
 // needed for iProcess_c::addDDI2ExistingProcData()
-namespace IsoAgLib { class iProcDataRemote_c;}
+namespace IsoAgLib
+{
+  class iProcDataRemote_c;
+  class iProcDataRemoteSimpleMeasure_c;
+  class iProcDataRemoteSimpleSetpoint_c;
+  class iProcDataRemoteSimpleMeasureSetpoint_c;
+  class iProcDataRemoteSimpleMeasureSetpointCombined_c;
+}
 
 // Begin Namespace IsoAgLib
 namespace __IsoAgLib {
@@ -341,6 +349,10 @@ private: // Private attributes
   // iProcess_c::addDDI2ExistingProcData() does a static_cast __IsoAgLib::ProcDataRemote_c => iProcDataRemote_c
   // => access is needed
   friend class IsoAgLib::iProcDataRemote_c;
+  friend class IsoAgLib::iProcDataRemoteSimpleMeasure_c;
+  friend class IsoAgLib::iProcDataRemoteSimpleSetpoint_c;
+  friend class IsoAgLib::iProcDataRemoteSimpleMeasureSetpoint_c;
+  friend class IsoAgLib::iProcDataRemoteSimpleMeasureSetpointCombined_c;
 
 };
 
