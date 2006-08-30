@@ -421,6 +421,10 @@ void iObjectPool_simpleVTIsoPool_c::eventKeyCode ( uint8_t keyActivationCode, ui
             iVtObjectBigGC.setGraphicsCursor( iVtPoint_c( 5,5 ) );
             iVtObjectBigGC.eraseRectangle( iVtPoint_c( 250, 250 ) );
             iVtObjectBigGC.drawLine( iVtPoint_c( 5, 5 ) );
+
+            iVtObjectBigGC.setGraphicsCursor( iVtPoint_c( 100,50 ) );
+            iVtObjectBigGC.drawClosedEllipse( iVtPoint_c( 130, 90 ) );
+
             iVtObjectBigGC.setGraphicsCursor( iVtPoint_c( 5, 250 ) );
             iVtObjectBigGC.drawLine( iVtPoint_c( 250, 5 ) );
 	    break;
@@ -440,7 +444,25 @@ void iObjectPool_simpleVTIsoPool_c::eventKeyCode ( uint8_t keyActivationCode, ui
             iVtObjectBigGC.setGraphicsCursor( iVtPoint_c( 5,5 ) );
             iVtObjectBigGC.drawText( 1, strlen(text), text );
             iVtObjectBigGC.drawLine( iVtPoint_c( 0, 64 ) );
-          break;
+            break;
+	  case 6:
+            iVtObjectBigGC.setGraphicsCursor( iVtPoint_c( 80,80 ) );
+            iVtObjectBigGC.drawVtObject( &iVtObjectBigLogo );
+            break;
+	  case 7:
+            iVtObjectBigGC.setGraphicsCursor( iVtPoint_c( 100,100 ) );
+            iVtObjectBigGC.drawVtObject( &iVtObjectBigGC );
+            break;
+	  case 8:
+            iVtObjectBigGC.setGraphicsCursor( iVtPoint_c( 120,120 ) );
+            iVtObjectBigGC.drawVtObject( &iVtObjectdMeter );
+            break;
+	  case 9:
+            iVtObjectBigGC.copyViewport2PictureGraphic( &iVtObjectBigLogo );
+            break;
+	  case 10:
+            iVtObjectBigGC.copyCanvas2PictureGraphic( &iVtObjectBigLogo );
+            break;
 	}
 
         iVtObjectdPolygon.setFillAttributes(&iVtObjectFillAttributes);

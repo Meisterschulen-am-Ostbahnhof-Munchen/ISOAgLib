@@ -97,7 +97,7 @@
     </picturegraphic>
     <!-- first try of a graphics context 
          Options: transparent , uselinefontfillcolourfordraw
-    -->
+      -->
     <graphicscontext name='BigGC'
                      viewport_width='128' viewport_height='128'
 		     viewport_x='0' viewport_y='0'
