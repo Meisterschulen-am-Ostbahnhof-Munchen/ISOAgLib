@@ -23,7 +23,7 @@ extern "C"
 
 #include <IsoAgLib/hal/system.h>
 
-
+							    
 
 #include <stdio.h>
 #include <time.h>
@@ -243,6 +243,7 @@ if (bBusNumber==0)
 	//FALSE shall match  MSGTYPE_STANDARD(0), TRUE should match MSGTYPE_EXTENDED(1)
 	if (ptSend->bXtd) CanToSend.ident=ptSend->dwId | 0xE0000000;;
     CanToSend.size 		= ptSend->bDlc;
+	CanToSend.RTR	    =0; //Iso bus does not use RTR at all
 	for (int i=0;i<ptSend->bDlc;i++)
 			 CanToSend.data[i]=ptSend->abData[i];
     xmit_can1_msg(&CanToSend);
@@ -252,7 +253,8 @@ if (bBusNumber==0)
      sCAN2 CanToSend;
  	if (ptSend->bXtd) CanToSend.ident=ptSend->dwId | 0xE0000000;;
     CanToSend.size 		= ptSend->bDlc;
-	for (int i=0;i<ptSend->bDlc;i++)
+	CanToSend.RTR	    =0; //Iso bus does not use RTR at all
+ 	for (int i=0;i<ptSend->bDlc;i++)
 			 CanToSend.data[i]=ptSend->abData[i];
     xmit_can2_msg(&CanToSend);
  
@@ -300,6 +302,8 @@ int16_t getCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tReceive * ptReceive )
 //      0 if no msg received
 //A2 support two channels, channel 0 and channel 1
 /////////////////////////////////////////////////////////////////////////
+//#define VERFIY_CAN_RECEIVE_MESSAGE
+
 int ca_GetData (can_recv_data* receivedata)
 {
   for( int channel=0; channel<cui32_maxCanBusCnt; channel++ )
@@ -310,8 +314,7 @@ int ca_GetData (can_recv_data* receivedata)
 	    if(channel==0) //BW, 4/17/06, magic number, STANDALONE_TERMINAl use channel 0
 		{
 		    sCAN1			can1;
-			rx_can1_msg(&can1);			  //
-			
+		  	rx_can1_msg(&can1);			  //
 			if ((can1.size == 0)) 
 				{
 			        return 0;
@@ -355,13 +358,15 @@ if ((receivedata->msg.i32_ident & 0xff) == 0x1C)
 			                receivedata->msg.pb_data[i] = can1.data[i];
 
 //Brian Wei, 06-23-06, test whether can receiving all the can messages
-
+#ifdef VERFIY_CAN_RECEIVE_MESSAGE
 int tmpCANid = can1.ident & 0xFFFF;
-//if	(tmpCANid == 0xF81C) 
+if	(tmpCANid == 0xF81C) 
 {
+	can1.RTR=0;
 	can1.ident=(0x1FFF1122)| 0xE0000000;
-	xmit_can1_msg(&can1);
+		xmit_can1_msg(&can1);
 }
+#endif
  
 
 					return 1;
@@ -408,6 +413,17 @@ if ((receivedata->msg.i32_ident & 0xff) == 0x1C)
 				    receivedata->msg.i32_time = get_time(); //Not exact the time when the msg arrive A2, however,
 	 	            for( int i=0; i<receivedata->msg.b_dlc; i++ )
 			                receivedata->msg.pb_data[i] = can2.data[i];
+#ifdef VERFIY_CAN_RECEIVE_MESSAGE
+int tmpCANid = can2.ident & 0xFFFF;
+if	(tmpCANid == 0xF81C) 
+{
+	can2.RTR=0;
+	can2.ident=(0x1FFF1122)| 0xE0000000;
+	xmit_can2_msg(&can2);
+}
+#endif
+
+
 					return 1;
 	            }
 		  }
