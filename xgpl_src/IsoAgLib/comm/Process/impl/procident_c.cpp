@@ -534,7 +534,7 @@ void ProcIdent_c::getDDIType(uint16_t rui16_DDI, GeneralCommand_c::ValueGroup_t 
     return;
   }
 
-  if (rui16_DDI == 0x8E)
+  if ((rui16_DDI == 0x8E) || (rui16_DDI == 0x8D))
   {
     ref_ddiType = GeneralCommand_c::exactValue;
     refb_isSetpoint = true;
