@@ -335,6 +335,10 @@ public:
   bool checkAndAddMatchingDDI2Group(uint16_t rui16_DDI, uint16_t rui_deviceElement, const iDevKey_c& rc_devKey)
   { return Process_c::checkAndAddMatchingDDI2Group(rui16_DDI, rui_deviceElement, rc_devKey);};
 
+  /** checks this DDI already exists in one ProcDataRemoteBase_c instance */
+  bool check4DDIExisting(uint16_t rui16_DDI, uint16_t rui_deviceElement, const iDevKey_c& rc_devKey)
+  { return Process_c::check4DDIExisting(rui16_DDI, rui_deviceElement, rc_devKey);};
+
   bool addProprietaryDDI2Group(uint16_t rui16_DDI, uint16_t rui_deviceElement, bool b_isSetpoint, GeneralCommand_c::ValueGroup_t ddiType, const iDevKey_c& rc_devKey)
   { return Process_c::addProprietaryDDI2Group(rui16_DDI, rui_deviceElement, b_isSetpoint, ddiType, rc_devKey);};
 

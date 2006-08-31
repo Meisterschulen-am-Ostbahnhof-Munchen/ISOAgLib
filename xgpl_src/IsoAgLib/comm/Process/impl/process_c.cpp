@@ -1178,6 +1178,19 @@ ProcDataRemoteBase_c* Process_c::check4DDIGroupMatch(uint16_t rui16_DDI, uint16_
   return NULL;
 }
 
+bool Process_c::check4DDIExisting(uint16_t rui16_DDI, uint16_t rui_deviceElement, const DevKey_c& rc_devKey)
+{
+  for ( cacheTypeC2_t pc_iter = c_arrClientC2.begin(); //list of remote process data
+        ( pc_iter != c_arrClientC2.end() );
+        pc_iter++ )
+  {
+    if ((*pc_iter)->check4GroupMatchExisting(rui16_DDI, rui_deviceElement, rc_devKey))
+      return TRUE;
+  }// for
+
+  return FALSE;
+}
+
 ProcDataRemoteBase_c* Process_c::check4ProprietaryDDIGroupMatch(uint16_t rui_deviceElement, const DevKey_c &rc_devKey)
 {
   for ( cacheTypeC2_t pc_iter = c_arrClientC2.begin(); //list of remote process data

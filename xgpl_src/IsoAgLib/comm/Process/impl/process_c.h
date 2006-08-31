@@ -586,6 +586,8 @@ private: // Private methods
   bool addProprietaryDDI2Group(uint16_t rui16_DDI, uint16_t rui_deviceElement, bool b_isSetpoint, GeneralCommand_c::ValueGroup_t ddiType, const DevKey_c &rc_devKey);
   /** checks if several DDI's can be summed up in groups */
   ProcDataRemoteBase_c* check4DDIGroupMatch(uint16_t rui16_DDI, uint16_t rui_deviceElement, const DevKey_c& rc_devKey);
+  /** checks this DDI already exists in one ProcDataRemoteBase_c instance */
+  bool check4DDIExisting(uint16_t rui16_DDI, uint16_t rui_deviceElement, const DevKey_c& rc_devKey);
   /** checks if proprietary DDI's can be summed up in groups */
   ProcDataRemoteBase_c* check4ProprietaryDDIGroupMatch(uint16_t rui_deviceElement, const DevKey_c& rc_devKey);
 #endif
