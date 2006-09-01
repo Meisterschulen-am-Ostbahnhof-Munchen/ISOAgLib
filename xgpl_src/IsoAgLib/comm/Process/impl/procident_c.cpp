@@ -438,8 +438,8 @@ bool ProcIdent_c::check4GroupMatch(uint16_t rui16_DDI, uint16_t rui16_element, c
 bool ProcIdent_c::check4GroupMatchExisting(uint16_t rui16_DDI, uint16_t rui16_element, const DevKey_c& rc_devKey)
 {
   bool b_foundPair = false;
-  // first check if DevClass is the same like ownerDevKey's DevClass
-  if (rc_devKey.getDevClass() != data.c_ownerDevKey.getDevClass()) return b_foundPair;
+  // check if rc_devKey is the same like ownerDevKey
+  if (rc_devKey != data.c_ownerDevKey) return b_foundPair;
 
   if (rui16_element != element()) return b_foundPair;
 
