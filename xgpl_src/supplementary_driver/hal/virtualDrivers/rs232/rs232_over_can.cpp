@@ -114,7 +114,7 @@ int16_t put_rs232NChar(const uint8_t *bpWrite,uint16_t wNumber, uint8_t rui8_cha
 			IsoAgLib::iCANPkg_c c_sendData;
 			c_sendData.setIdent( RS232_over_can_CANID+rui8_channel, __IsoAgLib::Ident_c::StandardIdent );
       const uint8_t cui8_len = (numLeft < 8 ? numLeft : 8);
-      c_sendData.setDataString( &bpWrite[wNumber-numLeft], cui8_len );
+      c_sendData.c_data.setDataFromString( &bpWrite[wNumber-numLeft], cui8_len );
 			numLeft -= cui8_len;
 
 		  c_can << c_sendData;
