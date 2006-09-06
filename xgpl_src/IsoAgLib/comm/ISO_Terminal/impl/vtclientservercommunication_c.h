@@ -309,6 +309,9 @@ public:
   /** function that handles incoming language pgn */
   void notifyOnVtsLanguagePgn();
 
+  /** function that handles incoming language pgn */
+  void notifyOnVtStatusMessage() { c_streamer.pc_pool-> eventVtStatusMsg(); }
+
   virtual bool processMsg();
 
   virtual CANPkgExt_c& dataBase() { return c_data; };

@@ -323,6 +323,18 @@ ISOTerminal_c::processMsg()
         if (data().getUint8Data (0) == 0xFE) // Command: "Status", Parameter: "VT Status Message"
         {
           lit_vtServerInst->setLatestVtStatusData();
+
+          // iterate through all registered VtClientServerCommunication and notify their pools with "eventVtStatusMsg"
+          for (ui8_index = 0; ui8_index < vec_vtClientServerComm.size(); ui8_index++)
+          {
+            if (vec_vtClientServerComm[ui8_index])
+            {
+              if (vec_vtClientServerComm[ui8_index]->getVtServerInstPtr() == &(*lit_vtServerInst))
+              { // this vtClientServerComm is connected to this VT, so notify the objectpool!!
+                vec_vtClientServerComm[ui8_index]->notifyOnVtStatusMessage();
+              }
+            }
+          }
           return true; // VT Status Message is NOT of interest for anyone else!
         }
         else
