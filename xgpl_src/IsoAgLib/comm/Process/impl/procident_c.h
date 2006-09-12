@@ -240,6 +240,7 @@ public:
 
   /** check if this ProcIdent_c has the given DDI as element */
   bool hasDDI( uint16_t rui16_checkDDI ) const;
+  bool hasType(bool rb_isSetpoint, GeneralCommand_c::ValueGroup_t t_ddiType) const;
 
   /**
     deliver value DDI (only possible if only one elementDDI in list)

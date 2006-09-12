@@ -359,6 +359,17 @@ bool ProcIdent_c::hasDDI( uint16_t rui16_checkDDI ) const
   else return true;
 }
 
+bool ProcIdent_c::hasType(bool rb_isSetpoint, GeneralCommand_c::ValueGroup_t t_ddiType) const
+{
+  std::list<IsoAgLib::ElementDDI_s>::const_iterator iter = NULL;
+  for (iter = data.l_elementDDI.begin(); iter != data.l_elementDDI.end(); iter++)
+    if ((iter->en_valueGroup == t_ddiType) && (iter->b_isSetpoint == rb_isSetpoint))
+      break;
+
+  if (iter == data.l_elementDDI.end()) return false;
+  else return true;
+}
+
 #endif
 
 
@@ -614,6 +625,7 @@ bool ProcIdent_c::hasDDIType (uint16_t rui16_DDI, GeneralCommand_c::ValueGroup_t
 
   return (t_retDDIType == t_ddiType);
 }
+
 
 
 void ProcIdent_c::setElementDDI(const IsoAgLib::ElementDDI_s* ps_elementDDI)
