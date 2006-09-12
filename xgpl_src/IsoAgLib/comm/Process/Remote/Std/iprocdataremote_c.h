@@ -402,6 +402,7 @@ public:
 #ifdef USE_ISO_11783
   /** check if this ProcIdent_c has the given DDI as element */
   bool hasDDI (uint16_t rui16_checkDDI) const { return ProcIdent_c::hasDDI( rui16_checkDDI );}
+  bool hasType(bool rb_isSetpoint, GeneralCommand_c::ValueGroup_t t_ddiType) const { return ProcIdent_c::hasType(rb_isSetpoint, t_ddiType); }
   /**
     deliver elementDDI list
     @return std::list<ElementDDI_s>
