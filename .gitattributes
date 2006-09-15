@@ -1255,14 +1255,11 @@ compiler_projects/kdevelop_qmake/tractor/tractor.pro -text
 compiler_projects/projectGeneration/EDE.part1.pjt -text
 compiler_projects/projectGeneration/EDE.part2.pjt -text
 compiler_projects/projectGeneration/conf_0_0_AddressClaimIso -text
-compiler_projects/projectGeneration/conf_0_1_AddressClaimDin -text
 compiler_projects/projectGeneration/conf_0_2_AddressClaimFlexible -text
 compiler_projects/projectGeneration/conf_0_3_LookupIso -text
 compiler_projects/projectGeneration/conf_0_4_LookupDin -text
 compiler_projects/projectGeneration/conf_1_0_ReadIso -text
-compiler_projects/projectGeneration/conf_1_1_ReadDin -text
 compiler_projects/projectGeneration/conf_1_2_WriteIso -text
-compiler_projects/projectGeneration/conf_1_3_WriteDin -text
 compiler_projects/projectGeneration/conf_1_4_WriteFlexibleIso -text
 compiler_projects/projectGeneration/conf_1_5_WriteFlexibleDin -text
 compiler_projects/projectGeneration/conf_2_0_LocalReadDataStdIso -text
@@ -1277,7 +1274,6 @@ compiler_projects/projectGeneration/conf_2_7_RemoteReadDataStdIso -text
 compiler_projects/projectGeneration/conf_2_8_RemoteReadDataSimpleMeasureIso -text
 compiler_projects/projectGeneration/conf_2_9_RemoteWriteSetpointStdIso -text
 compiler_projects/projectGeneration/conf_3_0_VirtualTerminalIso -text
-compiler_projects/projectGeneration/conf_3_1_LBSTerminalDin -text
 compiler_projects/projectGeneration/conf_3_2_VirtualTerminalMultiIso -text
 compiler_projects/projectGeneration/conf_3_3_VirtualTerminalPhase3 -text
 compiler_projects/projectGeneration/conf_4_0_Eeprom -text
