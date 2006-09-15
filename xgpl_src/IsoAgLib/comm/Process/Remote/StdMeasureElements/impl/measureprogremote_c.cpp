@@ -437,7 +437,7 @@ void MeasureProgRemote_c::setValFromPkg(){
 #endif
 
     // get the int32_t data val; let it convert, if needed
-    int32_t i32_new_val = processData().pkgDataLong();
+    const int32_t i32_new_val = c_pkg.dataLong();
 
     switch (c_pkg.c_generalCommand.getValueGroup())
     {
@@ -467,7 +467,7 @@ void MeasureProgRemote_c::setValFromPkg(){
 
     // call handler function if handler class is registered
     if ( processDataConst().getProcessDataChangeHandler() != NULL )
-      processDataConst().getProcessDataChangeHandler()->processMeasurementUpdate( pprocessData(), masterMeasurementVal(), c_pkg.memberSend().devKey(), b_change );
+      processDataConst().getProcessDataChangeHandler()->processMeasurementUpdate( pprocessData(), i32_new_val, c_pkg.memberSend().devKey(), b_change );
 
 #ifdef USE_FLOAT_DATA_TYPE
   }
@@ -503,7 +503,7 @@ void MeasureProgRemote_c::setValFromPkg(){
 
     // call handler function if handler class is registered
     if ( processDataConst().getProcessDataChangeHandler() != NULL )
-      processDataConst().getProcessDataChangeHandler()->processMeasurementUpdate( pprocessData(), masterValFloat(), c_pkg.memberSend().devKey(), b_change );
+      processDataConst().getProcessDataChangeHandler()->processMeasurementUpdate( pprocessData(), c_pkg.dataFloat(), c_pkg.memberSend().devKey(), b_change );
 
   }
 #endif

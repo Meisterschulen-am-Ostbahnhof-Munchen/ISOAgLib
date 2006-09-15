@@ -437,7 +437,7 @@ void SetpointRemote_c::processRequest() const {
 void SetpointRemote_c::processSet(){
   ProcessPkg_c& c_pkg = getProcessInstance4Comm().data();
   // take raw val
-  int32_t i32_val = c_pkg.dataLong();
+  const int32_t i32_val = c_pkg.dataLong();
   // detect if something was changed, so that the handler shall be called
   bool b_change = false;
 

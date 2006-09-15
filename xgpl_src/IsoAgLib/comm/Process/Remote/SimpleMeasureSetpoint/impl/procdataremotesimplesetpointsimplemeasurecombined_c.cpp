@@ -378,7 +378,7 @@ void ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::processProg(){
     }
     // call handler function if handler class is registered
     if ( getProcessDataChangeHandler() != NULL )
-      getProcessDataChangeHandler()->processMeasurementUpdate( this, masterMeasurementVal(), c_pkg.memberSend().devKey(), b_change );
+      getProcessDataChangeHandler()->processMeasurementUpdate( this, c_pkg.dataLong(), c_pkg.memberSend().devKey(), b_change );
   }
 }
 
