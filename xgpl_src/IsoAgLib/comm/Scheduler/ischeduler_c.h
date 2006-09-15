@@ -73,12 +73,15 @@ namespace IsoAgLib {
 class iScheduler_c : private __IsoAgLib::Scheduler_c {
 public:
   /** initialisation for the central IsoAgLib object */
-  void init( void ) { Scheduler_c::init();};
+  void init( void ) { Scheduler_c::init();}
+
   /** every subsystem of IsoAgLib has explicit function for controlled shutdown
     */
-  void close( void ) { Scheduler_c::close();};
+  void close( void ) { Scheduler_c::close();}
+
   /** simply close communicating clients */
-  void closeCommunication( void ) { Scheduler_c::closeCommunication();};
+  void closeCommunication( void ) { Scheduler_c::closeCommunication();}
+
   /**
     call the timeEvent for CANIO_c and all communication classes (derived from ElementBase_c) which
     registered within iScheduler_c for periodic timeEvent.
@@ -89,13 +92,15 @@ public:
            guaranteed (default -1 -> no execution stop defined)
     @return true -> all planned executions performed
   */
-  bool timeEvent( int32_t ri32_demandedExecEnd = -1) { return Scheduler_c::timeEvent( ri32_demandedExecEnd );};
+  bool timeEvent( int32_t ri32_demandedExecEnd = -1) { return Scheduler_c::timeEvent( ri32_demandedExecEnd );}
+
   /**
     * deliver the average execution time for timeEvent calls -> allows scheduler to
     * refine time schedule within execution
     * @return average execution time in [msec] (off complete performed runs)
     */
-  uint16_t getExecTime( void ) const { return Scheduler_c::getExecTime();};
+  uint16_t getExecTime( void ) const { return Scheduler_c::getExecTime();}
+
   /**
     * if a very imprtant IRQ event forces stop of iScheduler_c::timeEvent AS SOON AS POSSIBLE
     * the IRQ handler can call iScheduler_c::forceExecStop().
@@ -103,7 +108,8 @@ public:
     * is WITHIN execution in the main task. This way, the IsoAgLib is leaved by iScheduler_c::timeEvent()
     * in a guaranteed WELL DEFINED and VALID state.
     */
-  void forceExecStop( void ) {Scheduler_c::forceExecStop();};
+  void forceExecStop( void ) {Scheduler_c::forceExecStop();}
+
  private:
   /** allow getISchedulerInstance() access to shielded base class.
       otherwise __IsoAgLib::getSchedulerInstance() wouldn't be accepted by compiler
@@ -120,10 +126,10 @@ public:
     * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
     */
   inline iScheduler_c& getISchedulerInstance( uint8_t rui8_instance = 0 )
-  { return static_cast<iScheduler_c&>(__IsoAgLib::getSchedulerInstance( rui8_instance ) );};
+  { return static_cast<iScheduler_c&>(__IsoAgLib::getSchedulerInstance( rui8_instance ) );}
 #else
   /** C-style function, to get access to the unique iScheduler_c singleton instance */
-  inline iScheduler_c& getISchedulerInstance( void ) { return static_cast<iScheduler_c&>(__IsoAgLib::getSchedulerInstance() );};
+  inline iScheduler_c& getISchedulerInstance( void ) { return static_cast<iScheduler_c&>(__IsoAgLib::getSchedulerInstance() );}
 
 #endif
 

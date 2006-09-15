@@ -65,7 +65,7 @@
 // Begin Namespace IsoAgLib
 namespace __IsoAgLib {
   /** C-style function, to get access to the unique LibErr_c singleton instance */
-  LibErr_c& getLbsErrInstance( void ) { return IsoAgLib::getLbsErrInstance();};
+  LibErr_c& getLbsErrInstance( void ) { return IsoAgLib::getLbsErrInstance();}
 }
 
 namespace IsoAgLib {
@@ -75,6 +75,7 @@ LibErr_c& getLbsErrInstance( void )
   static LibErr_c& refc_errInstance = LibErr_c::instance();
   return refc_errInstance;
 }
+
 /**
   Initialize the unique error state handler
   @return true -> everything without errors initialised
@@ -88,8 +89,7 @@ bool LibErr_c::init( void )
 
 /** default constructor which sets the error value to noErr */
 LibErr_c::LibErr_c() : errTypeAtLoc() // : ui32_lastErrorTime(0)
-{
-}
+{ }
 
 /** copy constructor which sets the error value to the err value of the source */
 LibErr_c::LibErr_c(const LibErr_c& rrefc_src)

@@ -93,16 +93,10 @@
 namespace __IsoAgLib {
 
 /**
-  initialise this ProcDataRemoteBase_c instance to a well defined initial state
+    initialise this ProcDataRemoteBase_c instance to a well defined initial state
     ISO parameter
     @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
                          (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
-
-    DIN parameter
-    @param rui8_lis optional LIS code of this instance
-    @param rui8_wert optional WERT code of this instance
-    @param rui8_inst optional INST code of this instance
-    @param rui8_zaehlnum optional ZAEHLNUM code of this instance
 
     common parameter
     @param rc_devKey optional DEV_KEY code of this instance
@@ -112,40 +106,21 @@ namespace __IsoAgLib {
     @param rpc_processDataChangeHandler optional pointer to handler class of application
     @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
-void ProcDataRemoteBase_c::init(
-#ifdef USE_ISO_11783
-                                const IsoAgLib::ElementDDI_s* ps_elementDDI,
-                                uint16_t rui16_element,
-#endif
-#ifdef USE_DIN_9684
-                                uint8_t rui8_lis, uint8_t rui8_wert, uint8_t rui8_inst, uint8_t rui8_zaehlnum,
-#endif
-                                const DevKey_c& rc_devKey,
-                                uint8_t rui8_pri, const DevKey_c& rc_ownerDevKey,
-                                const DevKey_c* rpc_commanderDevKey,
-                                IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler,
-                                int ri_singletonVecKey)
+void ProcDataRemoteBase_c::init(  const IsoAgLib::ElementDDI_s* ps_elementDDI, uint16_t rui16_element,
+                                  const DevKey_c& rc_devKey, uint8_t rui8_pri, const DevKey_c& rc_ownerDevKey,
+                                  const DevKey_c* rpc_commanderDevKey,
+                                  IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler,
+                                  int ri_singletonVecKey)
 {
-  ProcDataBase_c::init(
-#ifdef USE_ISO_11783
-                       ps_elementDDI,
-                       rui16_element,
-#endif
-#ifdef USE_DIN_9684
-                       rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
-#endif
+  ProcDataBase_c::init( ps_elementDDI, rui16_element,
+                        rc_devKey, rui8_pri, rc_ownerDevKey, NULL, rpc_processDataChangeHandler);
 
-                       rc_devKey, rui8_pri, rc_ownerDevKey, NULL, rpc_processDataChangeHandler);
   setSingletonKey( ri_singletonVecKey );
   setCommanderDevKey(rpc_commanderDevKey);
 
   // don't register proces data object, as long as it's only created with
   // default values (PRI and LIS must be in all cases different from 0xFF)
-  if ( ( rui8_pri != 0xFF )
-#ifdef USE_DIN_9684
-       &&  ( rui8_lis != 0xFF )
-#endif
-      )
+  if ( ( rui8_pri != 0xFF ) )
   { // now register the pointer to this instance in Process_c
     getProcessInstance4Comm().registerRemoteProcessData( this );
   }
@@ -215,49 +190,16 @@ bool ProcDataRemoteBase_c::timeEvent( void )
   @param rb_var variable number -> send
   @param b_empf refernce to EMPF variable which is only checked for address claim state
   @param b_send refernce to SEND variable which is updated to rb_var
-  @param en_msgProto protocol type to use for the message
-      IState_c::Din or IState_c::Iso (only compiled and used if USE_ISO_11783 is
-      configured) (default: IState_c::Din)
   @return true -> owner of process data registered as active in Monitor-List
 */
-bool ProcDataRemoteBase_c::var2empfSend(uint8_t rui8_pri, uint8_t rb_var, uint8_t &b_empf, uint8_t &b_send
-  #ifdef USE_ISO_11783
-    , IState_c::itemState_t &en_msgProto
-  #endif
-) const
+bool ProcDataRemoteBase_c::var2empfSend(uint8_t rui8_pri, uint8_t rb_var, uint8_t &b_empf, uint8_t &b_send) const
 { // retreive pointer to according SystemMgmt_c class
-  #ifdef USE_ISO_11783
   ISOMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
-  #endif
   bool b_result = false;
   rui8_pri += 0; // do something with rui8_pri so that compiler does not complain
 
-  #ifdef USE_DIN_9684
-  DINMonitor_c& c_din_monitor = getDinMonitorInstance4Comm();
-  // check if owner has claimed address AND var paremeter has claimed address
-  // the address claim check for var was done by caller of this function - 0xFF means not claimed address
-  if (
-      #ifdef USE_ISO_11783
-      ((en_msgProto & IState_c::Din) != 0) &&
-      #endif
-      ( c_din_monitor.existDinMemberNr(rb_var))
-    &&(c_din_monitor.existDinMemberDevKey(ownerDevKey(), true))
-    &&(rb_var != 0xFF)
-     )
-  { // all check was positive -> set b_empf, b_send
-    b_empf = c_din_monitor.dinMemberDevKey(ownerDevKey(), true).nr();
-    b_send = rb_var; // for remote data the var parameter is the sender for sending
-    #ifdef USE_ISO_11783
-    en_msgProto = IState_c::Din;
-    #endif
-    b_result = true;
-  }
-  else
-  #endif
-  #if defined( USE_ISO_11783 )
   // try with ISO 11783
   if (
-      ((en_msgProto & IState_c::Iso) != 0) &&
       (c_isoMonitor.existIsoMemberNr(rb_var ))
     &&(c_isoMonitor.existIsoMemberDevKey(ownerDevKey(), true))
     &&(rb_var != 0xFF)
@@ -265,11 +207,9 @@ bool ProcDataRemoteBase_c::var2empfSend(uint8_t rui8_pri, uint8_t rb_var, uint8_
   { // all check was positive -> set b_empf, b_send
     b_empf = c_isoMonitor.isoMemberDevKey(ownerDevKey(), true).nr();
     b_send = rb_var; // for remote data the var parameter is the sender for senisog
-    en_msgProto = IState_c::Iso;
     b_result = true;
   }
   else
-  #endif // USE_ISO_11783
   { // one of EMPF or SEND not registered as having claimed address in monior-list
     getLbsErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::LbsProcess );
   }

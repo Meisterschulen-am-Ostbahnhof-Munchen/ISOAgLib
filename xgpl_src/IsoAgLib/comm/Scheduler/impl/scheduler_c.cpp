@@ -85,10 +85,7 @@
 #include <IsoAgLib/driver/system/impl/system_c.h>
 #include <IsoAgLib/driver/can/impl/canio_c.h>
 #include <IsoAgLib/util/liberr_c.h>
-
-#if defined(USE_DIN_9684) || defined(USE_ISO_11783)
-  #include <IsoAgLib/comm/SystemMgmt/impl/systemmgmt_c.h>
-#endif
+#include <IsoAgLib/comm/SystemMgmt/impl/systemmgmt_c.h>
 
 
 #if defined(USE_CAN_EEPROM_EDITOR) || defined( USE_RS232_EEPROM_EDITOR )
@@ -126,20 +123,22 @@ namespace __IsoAgLib {
   Scheduler_c& getSchedulerInstance( uint8_t rui8_instance )
   { // if > 1 singleton instance is used, no static reference can be used
     return Scheduler_c::instance( rui8_instance );
-  };
+  }
 #else
   /** C-style function, to get access to the unique Scheduler_c singleton instance */
   Scheduler_c& getSchedulerInstance( void )
   {
      static Scheduler_c& c_lbs = Scheduler_c::instance();
     return c_lbs;
-  };
+  }
 #endif
 
 /** timestamp where last timeEvent was called -> can be used to synchronise distributed timeEvent activities */
 int32_t Scheduler_c::i32_lastTimeEventTime = 0;
+
 /** commanded timestamp, where Scheduler_c::timeEvent MUST return action to caller */
 int32_t Scheduler_c::i32_demandedExecEnd = 0;
+
 /** flag to detect, if other interrupting task forced immediated stop of Scheduler_c::timeEvent() */
 bool Scheduler_c::b_execStopForced = false;
 
@@ -153,21 +152,6 @@ void Scheduler_c::init( void )
   i32_demandedExecEnd = 0;
   i32_lastTimeEventTime = 0;
 
-  #ifdef USE_DIN_9684
-  b_switch2AddressClaim = false;
-  pc_ctlDinMaskupload = NULL;
-  b_din_memberNameReceived = false;
-  #endif
-
-  // reserver enough space for clients to avoid too often reallocation
-  // of the pointer lists
-  #if defined(USE_DIN_9684) && defined(USE_ISO_11783)
-  c_arrClientC1.reserve(12);
-  arrExecTime.reserve(12);
-  #else
-  c_arrClientC1.reserve(11);
-  arrExecTime.reserve(11);
-  #endif
 }
 
 /** simply close communicating clients */
@@ -187,6 +171,8 @@ void Scheduler_c::closeCommunication( void ) {
       (*pc_searchCacheC1)->close();
   }
 }
+
+
 /** every subsystem of IsoAgLib has explicit function for controlled shutdown
   */
 void Scheduler_c::close( void )
@@ -203,6 +189,8 @@ void Scheduler_c::close( void )
   // last but not least close System
   getSystemInstance().close();
 }
+
+
 /** handler function for access to undefined client.
   * the base Singleton calls this function, if it detects an error
   */
@@ -264,6 +252,7 @@ bool Scheduler_c::registerClient( ElementBase_c* pc_client)
   }
   else return false;
 }
+
 
 /** unregister pointer to a already registered client
   * this function is called within destruction of new client instance
@@ -373,30 +362,16 @@ bool Scheduler_c::timeEvent( int32_t ri32_demandedExecEnd )
      i16_canExecTime = 0;
      return false;
   }
-  #if defined(USE_DIN_9684) || defined(USE_ISO_11783)
   // FIRST give the SystemMgmt_c class a chance to do periodic actions
   // like sending alive messages
   getSystemMgmtInstance4Comm().timeEvent();
-  #endif
+
   // process CAN messages
   if ( getCanInstance4Comm().timeEvent() )
   { // all CAN_IO activities ready -> update statistic for CAN_IO
     i16_canExecTime = System_c::getTime() - i32_stepStartTime;
   }
   System_c::triggerWd();
-
-  #ifdef USE_DIN_9684
-  // if names are received -> call additionally DINMaskupload, to create local
-  // process data which are requested by terminal for mask sync
-  if ( ( pc_ctlDinMaskupload != NULL ) && ( b_din_memberNameReceived || b_switch2AddressClaim ) )
-  { // make execution unlimited for this special case
-    #ifdef CONFIG_DEFAULT_MAX_SCHEDULER_TIME_EVENT_TIME
-    i32_demandedExecEnd = i32_stepStartTime + CONFIG_DEFAULT_MAX_SCHEDULER_TIME_EVENT_TIME;
-    #else
-    i32_demandedExecEnd = -1;
-    #endif
-  }
-  #endif
 
   /* call EEEditor Process */
   #if defined(USE_CAN_EEPROM_EDITOR)
@@ -416,19 +391,6 @@ bool Scheduler_c::timeEvent( int32_t ri32_demandedExecEnd )
   }
   #endif
   System_c::triggerWd();
-
-  #ifdef USE_DIN_9684
-  // if names are received -> call additionally DINMaskupload, to create local
-  // process data which are requested by terminal for mask sync
-  if ( ( pc_ctlDinMaskupload != NULL ) && ( b_din_memberNameReceived || b_switch2AddressClaim ) )
-  { // make execution unlimited for this special case
-    #ifdef CONFIG_DEFAULT_MAX_SCHEDULER_TIME_EVENT_TIME
-    i32_demandedExecEnd = i32_stepStartTime + CONFIG_DEFAULT_MAX_SCHEDULER_TIME_EVENT_TIME;
-    #else
-    i32_demandedExecEnd = -1;
-    #endif
-  }
-  #endif
 
   // run timeEvent for each registered clients as long as demanded exec end is not
   // reached
@@ -457,37 +419,6 @@ bool Scheduler_c::timeEvent( int32_t ri32_demandedExecEnd )
     pc_timeEventClientIter++;
     if ( pc_timeEventClientIter == c_arrClientC1.end() ) pc_timeEventClientIter = c_arrClientC1.begin();
   }
-
-  #ifdef USE_DIN_9684
-  System_c::triggerWd();
-  // call aditionally CANIO_c if fresh address claim
-  if ( b_switch2AddressClaim )
-  { // make execution unlimited for this special case
-    #ifdef CONFIG_DEFAULT_MAX_SCHEDULER_TIME_EVENT_TIME
-    i32_demandedExecEnd = i32_stepStartTime + CONFIG_DEFAULT_MAX_SCHEDULER_TIME_EVENT_TIME;
-    #else
-    i32_demandedExecEnd = -1;
-    #endif
-    // call CANIO_c::processMsg to detect immediate reactions of other members on local address claim
-    getCanInstance4Comm().processMsg();
-  }
-  // if names are received -> call additionally DINMaskupload, to create local
-  // process data which are requested by terminal for mask sync
-  if ( ( pc_ctlDinMaskupload != NULL ) && ( b_din_memberNameReceived || b_switch2AddressClaim ) )
-  { // make execution unlimited for this special case
-    #ifdef CONFIG_DEFAULT_MAX_SCHEDULER_TIME_EVENT_TIME
-    i32_demandedExecEnd = i32_stepStartTime + CONFIG_DEFAULT_MAX_SCHEDULER_TIME_EVENT_TIME;
-    #else
-    i32_demandedExecEnd = -1;
-    #endif
-    // DINMaskUpload_c is registered and new names are received
-    pc_ctlDinMaskupload->timeEvent();
-    // clear flag b_din_memberNameReceived
-    b_din_memberNameReceived = false;
-  }
-  // clear b_switch2AddressClaim
-  b_switch2AddressClaim = false;
-  #endif
 
   // check if all tasks are called
   if ( ui8_execCnt == c_arrClientC1.size() )
@@ -526,4 +457,5 @@ bool Scheduler_c::timeEvent( int32_t ri32_demandedExecEnd )
     return false;
   }
 }
+
 } // end of namespace __IsoAgLib

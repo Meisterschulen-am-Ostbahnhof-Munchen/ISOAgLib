@@ -90,7 +90,7 @@
 #include <IsoAgLib/driver/eeprom/impl/eepromio_c.h>
 #endif
 #ifdef USE_ISO_TERMINAL
-#include <IsoAgLib/comm/ISO_Terminal/impl/isoterminal_c.h>
+  #include <IsoAgLib/comm/ISO_Terminal/impl/isoterminal_c.h>
 #endif
 
 #if defined(DEBUG)
@@ -102,13 +102,9 @@
   #include <IsoAgLib/util/impl/util_funcs.h>
 #endif
 
-
-
 namespace __IsoAgLib {
 
-
-/**
-  constructor which can set optional all ident data
+/** constructor which can set optional all ident data
   @param ri32_time creation time of this item instance
   @param rc_devKey DEV_KEY code of this item ((deviceClass << 3) | devClInst )
   @param rui8_nr number of this item
@@ -131,8 +127,6 @@ ISOItem_c::ISOItem_c(int32_t ri32_time, const DevKey_c& rc_devKey, uint8_t rui8_
 
   // just use ri32_time to make compiler happy
   // an ISO11783 item must start with timestamp 0
-  // but as it uses the same parameter signature start as the DIN9684
-  // constructors, the parameter ri32_time must be defined
   if ( ri32_time == 0 ) updateTime( ri32_time );
   else updateTime(0); // state that this item didn't send an adress claim
 
@@ -144,8 +138,7 @@ ISOItem_c::ISOItem_c(int32_t ri32_time, const DevKey_c& rc_devKey, uint8_t rui8_
   }
 }
 
-/**
-  copy constructor for ISOItem
+/** copy constructor for ISOItem
   The copy constructor checks if the source item is
   a master ( i.e. the pc_masterItem pointer points to this )
   -> it doesn't simply copy the pointer, but sets its
@@ -183,8 +176,7 @@ ISOItem_c::ISOItem_c(const ISOItem_c& rrefc_src)
   }
 }
 
-/**
-  assign constructor for ISOItem
+/** assign constructor for ISOItem
   @param rrefc_src source ISOItem_c object
 */
 ISOItem_c& ISOItem_c::operator=(const ISOItem_c& rrefc_src)
@@ -207,9 +199,7 @@ ISOItem_c& ISOItem_c::operator=(const ISOItem_c& rrefc_src)
   return *this;
 }
 
-/**
-  default destructor
-*/
+/** default destructor */
 ISOItem_c::~ISOItem_c()
 {
   if ( itemState(IState_c::ClaimedAddress ) )
@@ -225,26 +215,28 @@ ISOItem_c::~ISOItem_c()
   #endif
 }
 
-/**
-  deliver name
+/** deliver name
   @return pointer to the name uint8_t string (8byte)
 */
-const uint8_t* ISOItem_c::name() const {
+const uint8_t* ISOItem_c::name() const
+{
   return devKey().getConstName().outputString();
 }
-/**
-  check if the name field is empty (no name received)
+
+/** check if the name field is empty (no name received)
   @return true -> no name received
 */
-bool ISOItem_c::isEmptyName() const {
+bool ISOItem_c::isEmptyName() const
+{
   return false;
 }
-/**
-  deliver name as pure ASCII string
+
+/** deliver name as pure ASCII string
   @param pc_name string where ASCII string is inserted
   @param rui8_maxLen max length for name
 */
-void ISOItem_c::getPureAsciiName(int8_t *pc_asciiName, uint8_t rui8_maxLen){
+void ISOItem_c::getPureAsciiName(int8_t *pc_asciiName, uint8_t rui8_maxLen)
+{
   char c_temp[30];
   const uint8_t* pb_src = name();
   CNAMESPACE::sprintf(c_temp, "0x%02x%02x%02x%02x%02x%02x%02x%02x", pb_src[0],pb_src[1],pb_src[2],pb_src[3],
@@ -256,8 +248,7 @@ void ISOItem_c::getPureAsciiName(int8_t *pc_asciiName, uint8_t rui8_maxLen){
   pc_asciiName[ui8_len-1] = '\0';
 }
 
-/**
-  set all element data with one call
+/** set all element data with one call
   @param ri32_time creation time of this item instance
   @param rc_devKey DEV_KEY code of this item ((deviceClass << 3) | devClInst )
   @param rui8_nr number of this item
@@ -271,11 +262,10 @@ void ISOItem_c::set(int32_t ri32_time, const DevKey_c& rc_devKey, uint8_t rui8_n
   MonitorItem_c::set(ri32_time, rc_devKey, rui8_nr, ren_status, ri_singletonVecKey);
   ui16_saEepromAdr = rui16_saEepromAdr;
   readEepromSa();
-};
+}
 
 #if 0
-/**
-  set all element data with one call
+/** set all element data with one call
   @param ri32_time creation time of this item instance
   @param rc_devKey DEV_KEY code of this item ((deviceClass << 3) | devClInst )
   @param rui8_nr number of this item
@@ -306,11 +296,10 @@ void ISOItem_c::set(int32_t ri32_time, DevKey_c rc_devKey, uint8_t rui8_nr,
   c_devKey.setName( &c_isoName );
 }
 #endif
-/**
-  periodically time evented actions:
+
+/** periodically time evented actions:
     * find free SA or check if last SA is available
     * send adress claim
-
   possible errors:
     * dependant error in CANIO_c during send
   @return true -> all planned time event activitie performed
@@ -449,14 +438,13 @@ bool ISOItem_c::timeEvent( void )
   return true;
 }
 
-
-/**
-  process received CAN pkg to update data and react if needed
+/** process received CAN pkg to update data and react if needed
   * update settings for remote members (e.g. change of SA)
   * react on adress claims or request for adress claims for local items
   @return true -> a reaction on the received/processed msg was sent
 */
-bool ISOItem_c::processMsg(){
+bool ISOItem_c::processMsg()
+{
   bool b_result = false;
   ISOSystemPkg_c& c_pkg = getIsoMonitorInstance4Comm().data();
   int32_t i32_pkgTime = c_pkg.time(),
@@ -503,7 +491,7 @@ bool ISOItem_c::processMsg(){
   } // end switch
 
   return b_result;
-};
+}
 
 
 /** send a SA claim message
@@ -531,9 +519,7 @@ bool ISOItem_c::sendSaClaim()
   return true;
 }
 
-/**
-  set eeprom adress and read SA from there
-*/
+/** set eeprom adress and read SA from there */
 void ISOItem_c::readEepromSa()
 {
   if ((ui16_saEepromAdr != 0xFFFF) && (nr() == 0xFE))
@@ -549,9 +535,7 @@ void ISOItem_c::readEepromSa()
   }
 }
 
-/**
-  write actual SA to the given EEPROM adress
-*/
+/** write actual SA to the given EEPROM adress */
 void ISOItem_c::writeEepromSa()
 {
 #ifdef USE_EEPROM_IO
@@ -562,8 +546,8 @@ void ISOItem_c::writeEepromSa()
   }
 #endif
 }
-/**
-  calculate random wait time between 0 and 153msec. from NAME and time
+
+/** calculate random wait time between 0 and 153msec. from NAME and time
   @return wait offset in msec. [0..153]
 */
 uint8_t ISOItem_c::calc_randomWait()
@@ -582,18 +566,14 @@ uint8_t ISOItem_c::calc_randomWait()
   return uint8_t(ui16_result & 0xFF );
 }
 
-
 #ifdef USE_WORKING_SET
-/**
-  returns a pointer to the referenced master ISOItem
-*/
+/** returns a pointer to the referenced master ISOItem */
 ISOItem_c* ISOItem_c::getMaster () const
 {
   return pc_masterItem;
 }
 
-/**
-  attaches to a working set master and become slave hereby
+/** attaches to a working set master and become slave hereby
   if called with NULL the ISOItem loses working-set membership and becomes STANDALONE again!
 */
 void ISOItem_c::setMaster ( ISOItem_c* rpc_masterItem )
@@ -603,4 +583,3 @@ void ISOItem_c::setMaster ( ISOItem_c* rpc_masterItem )
 #endif
 
 } // end of namespace __IsoAgLib
-

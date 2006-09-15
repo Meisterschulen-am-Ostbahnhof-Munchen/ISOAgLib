@@ -136,12 +136,6 @@ public:
     @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
                          (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
 
-    DIN parameter
-    @param rui8_lis optional LIS code of this instance
-    @param rui8_wert optional WERT code of this instance
-    @param rui8_inst optional INST code of this instance
-    @param rui8_zaehlnum optional ZAEHLNUM code of this instance
-
     @param rc_devKey optional DEV_KEY code of Process-Data
     @param rui8_pri PRI code of messages with this process data instance (default 2)
     @param rc_ownerDevKey optional DEV_KEY of the owner
@@ -166,17 +160,8 @@ public:
     @param rpc_processDataChangeHandler optional pointer to handler class of application
     @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
-  iProcDataLocalSimpleMeasure_c(
-#ifdef USE_ISO_11783
-                                const IsoAgLib::ElementDDI_s* ps_elementDDI = NULL,
+  iProcDataLocalSimpleMeasure_c(const IsoAgLib::ElementDDI_s* ps_elementDDI = NULL,
                                 uint16_t rui16_element = 0xFFFF,
-#endif
-#ifdef USE_DIN_9684
-                                uint8_t rui8_lis = 0xFF,
-                                uint8_t rui8_wert = 0,
-                                uint8_t rui8_inst = 0,
-                                uint8_t rui8_zaehlnum = 0xFF,
-#endif
                                 const iDevKey_c& rc_devKey = iDevKey_c::DevKeyInitialProcessData,
                                 uint8_t rui8_pri = 2,
                                 const iDevKey_c& rc_ownerDevKey = iDevKey_c::DevKeyUnspecified,
@@ -186,20 +171,13 @@ public:
 #endif
                                 ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
                                 int ri_singletonVecKey = 0
-  ) : ProcDataLocalSimpleMeasure_c(
-#ifdef USE_ISO_11783
-                                   ps_elementDDI,
-                                   rui16_element,
-#endif
-#ifdef USE_DIN_9684
-                                   rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
-#endif
+  ) : ProcDataLocalSimpleMeasure_c(ps_elementDDI, rui16_element,
                                    rc_devKey, rui8_pri, rc_ownerDevKey, rpc_devKey, rb_cumulativeValue,
 #ifdef USE_EEPROM_IO
                                    rui16_eepromAdr,
 #endif
                                    rpc_processDataChangeHandler,
-                                   ri_singletonVecKey) {};
+                                   ri_singletonVecKey) {}
 
   /**
     initialise this ProcDataLocalSimpleMeasure_c
@@ -211,12 +189,6 @@ public:
     @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
                          (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
 
-    DIN parameter
-    @param rui8_lis optional LIS code of this instance
-    @param rui8_wert optional WERT code of this instance
-    @param rui8_inst optional INST code of this instance
-    @param rui8_zaehlnum optional ZAEHLNUM code of this instance
-
     @param rc_devKey optional DEV_KEY code of Process-Data
     @param rui8_pri PRI code of messages with this process data instance (default 2)
     @param rc_ownerDevKey optional DEV_KEY of the owner
@@ -241,17 +213,8 @@ public:
     @param rpc_processDataChangeHandler optional pointer to handler class of application
     @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
-  void init(
-#ifdef USE_ISO_11783
-            const IsoAgLib::ElementDDI_s* ps_elementDDI,
+  void init(const IsoAgLib::ElementDDI_s* ps_elementDDI,
             uint16_t rui16_element,
-#endif
-#ifdef USE_DIN_9684
-            uint8_t rui8_lis = 0xFF,
-            uint8_t rui8_wert = 0,
-            uint8_t rui8_inst = 0,
-            uint8_t rui8_zaehlnum = 0xFF,
-#endif
             const iDevKey_c& rc_devKey = iDevKey_c::DevKeyInitialProcessData,
             uint8_t rui8_pri = 2,
             const iDevKey_c& rc_ownerDevKey = iDevKey_c::DevKeyUnspecified,
@@ -263,96 +226,99 @@ public:
             ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
             int ri_singletonVecKey = 0
             )
-  {ProcDataLocalSimpleMeasure_c::init(
-#ifdef USE_ISO_11783
-                                      ps_elementDDI,
-                                      rui16_element,
-#endif
-#ifdef USE_DIN_9684
-                                      rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
-#endif
+  {ProcDataLocalSimpleMeasure_c::init(ps_elementDDI, rui16_element,
                                       rc_devKey, rui8_pri, rc_ownerDevKey, rpc_devKey, rb_cumulativeValue,
 #ifdef USE_EEPROM_IO
                                       rui16_eepromAdr,
 #endif
                                       rpc_processDataChangeHandler,
                                       ri_singletonVecKey);
-  };
+  }
 
   /** set the poitner to the handler class
     * @param rpc_processDataChangeHandler pointer to handler class of application
     */
   void setProcessDataChangeHandler( ProcessDataChangeHandler_c *rpc_processDataChangeHandler )
-   { ProcDataLocalSimpleMeasure_c::setProcessDataChangeHandler( rpc_processDataChangeHandler ); } ;
+   { ProcDataLocalSimpleMeasure_c::setProcessDataChangeHandler( rpc_processDataChangeHandler ); }
+
   /** deliver the poitner to the handler class
     * @return pointer to handler class of application (or NULL if not defined by application)
     */
   IsoAgLib::ProcessDataChangeHandler_c* getProcessDataChangeHandler( void ) const
-   { return ProcDataLocalSimpleMeasure_c::getProcessDataChangeHandler(); } ;
+   { return ProcDataLocalSimpleMeasure_c::getProcessDataChangeHandler(); }
 
   /**
     deliver value PRI of messages with this
     process data instance
     @return PRI
   */
-  uint8_t pri() const{return ProcDataLocalSimpleMeasure_c::pri();};
+  uint8_t pri() const{return ProcDataLocalSimpleMeasure_c::pri();}
+
   /**
     set value PRI of messages with this
     process data instance (default value is 2 == target message)
     @param rb_val new PRI value
   */
-  void setPri(uint8_t rb_val){ProcDataLocalSimpleMeasure_c::setPri(rb_val);};
+  void setPri(uint8_t rb_val){ProcDataLocalSimpleMeasure_c::setPri(rb_val);}
+
   /**
     deliver value LIS (list number)
     @return LIS
   */
-  uint8_t lis() const{return ProcDataLocalSimpleMeasure_c::lis();};
+  uint8_t lis() const{return ProcDataLocalSimpleMeasure_c::lis();}
+
   /**
     deliver value DEVCLASS (machine type specific table of process data types)
     @return DEVCLASS
   */
-  uint8_t devClass() const{return ProcDataLocalSimpleMeasure_c::devClass();};
+  uint8_t devClass() const{return ProcDataLocalSimpleMeasure_c::devClass();}
+
   /**
     deliver value DEV_KEY (machine type specific table of process data types)
     use everytime the _device_class_ from the ident part, and take the _instance_ from the owner
     @return DEV_KEY
   */
-  const iDevKey_c& devKey() const {return static_cast<const iDevKey_c&>(ProcDataLocalSimpleMeasure_c::devKey());};
+  const iDevKey_c& devKey() const {return static_cast<const iDevKey_c&>(ProcDataLocalSimpleMeasure_c::devKey());}
+
   /**
     deliver value WERT (row of process data table)
     @return WERT
   */
-  uint8_t wert() const{return ProcDataLocalSimpleMeasure_c::wert();};
+  uint8_t wert() const{return ProcDataLocalSimpleMeasure_c::wert();}
+
   /**
     deliver value INST (column of process data table)
     @return INST
   */
-  uint8_t inst() const{return ProcDataLocalSimpleMeasure_c::inst();};
+  uint8_t inst() const{return ProcDataLocalSimpleMeasure_c::inst();}
+
   /**
     deliver value ZAEHLNUM (0xFF == whole working width; else parts of width)
     @return ZAEHLNUM
   */
-  uint8_t zaehlnum() const{return ProcDataLocalSimpleMeasure_c::zaehlnum();};
+  uint8_t zaehlnum() const{return ProcDataLocalSimpleMeasure_c::zaehlnum();}
+
   /**
     deliver value _instance_ (important if more than one machine with equal _device_class_ are active)
     @return POS
   */
-  uint8_t devClassInst() const{return ProcDataLocalSimpleMeasure_c::devClassInst();};
-#ifdef USE_ISO_11783
+  uint8_t devClassInst() const{return ProcDataLocalSimpleMeasure_c::devClassInst();}
+
   /** check if this ProcIdent_c has the given DDI as element */
-  bool hasDDI( uint16_t rui16_checkDDI ) const { return ProcIdent_c::hasDDI( rui16_checkDDI );};
+  bool hasDDI( uint16_t rui16_checkDDI ) const { return ProcIdent_c::hasDDI( rui16_checkDDI );}
 
   /**
     deliver value DDI (only possible if only one elementDDI in list)
     @return DDI
    */
-  uint16_t DDI() const { return ProcIdent_c::DDI();};
+  uint16_t DDI() const { return ProcIdent_c::DDI();}
+
   /**
   deliver value element (only possible if only one elementDDI in list)
   @return element
    */
-  uint16_t element() const  { return ProcIdent_c::element();};
-#endif
+  uint16_t element() const  { return ProcIdent_c::element();}
+
 
 
   /**
@@ -372,7 +338,8 @@ public:
     @return true -> successful sent
   */
   bool sendMasterSetpointVal( const iDevKey_c& rc_targetDevKey, Proc_c::progType_t ren_progType = Proc_c::Target ) const
-   { return setpointConst().sendMasterSetpointVal( rc_targetDevKey, ren_progType );};
+   { return setpointConst().sendMasterSetpointVal( rc_targetDevKey, ren_progType );}
+
   /**
     send a sub-setpoint (selected by MOD) to a specified target (selected by GPT)
     @param rui8_mod select sub-type of setpoint
@@ -383,13 +350,15 @@ public:
   bool sendSetpointMod( GeneralCommand_c::ValueGroup_t en_valueGroup, const iDevKey_c& rc_targetDevKey, Proc_c::progType_t ren_progType = Proc_c::Target ) const
   {
    return setpointConst().sendSetpointMod( rc_targetDevKey, ren_progType, en_valueGroup, __IsoAgLib::GeneralCommand_c::setValue );
-  };
+  }
+
   #ifdef USE_EEPROM_IO
   /**
     deliver the eeprom adr for the value
     @return configured EEPROM adress
   */
-  uint16_t eepromAdr()const{return ProcDataLocalSimpleMeasure_c::eepromAdr();};
+  uint16_t eepromAdr()const{return ProcDataLocalSimpleMeasure_c::eepromAdr();}
+
   /**
     set the eeprom adr for the value, read in value from EEPROM
 
@@ -398,39 +367,45 @@ public:
     @param rui16_eepromAdr new EEPROM adress
   */
   void setEepromAdr(uint16_t rui16_eepromAdr)
-    {ProcDataLocalSimpleMeasure_c::setEepromAdr(rui16_eepromAdr);};
+    {ProcDataLocalSimpleMeasure_c::setEepromAdr(rui16_eepromAdr);}
   #endif
+
   /**
     deliver the master value (central measure value of this process data;
     can differ from measure vals of measure progs, as these can be reseted
     independent)
     @return actual master value
   */
-  const int32_t& masterMeasurementVal()const{return ProcDataLocalSimpleMeasure_c::masterMeasurementVal();};
+  const int32_t& masterMeasurementVal()const{return ProcDataLocalSimpleMeasure_c::masterMeasurementVal();}
+
   /**
     set the masterMeasurementVal from main application independent from any measure progs
     @param ri32_val new measure value
   */
   void setMasterMeasurementVal(int32_t ri32_val)
-    {ProcDataLocalSimpleMeasure_c::setMasterMeasurementVal(ri32_val);};
+    {ProcDataLocalSimpleMeasure_c::setMasterMeasurementVal(ri32_val);}
+
   /**
     set the masterMeasurementVal from main application independent from any measure progs
     @param ri32_val new measure value
   */
   void setMasterMeasurementVal(int16_t ri16_val)
-    {ProcDataLocalSimpleMeasure_c::setMasterMeasurementVal((int32_t)ri16_val);};
+    {ProcDataLocalSimpleMeasure_c::setMasterMeasurementVal((int32_t)ri16_val);}
+
   /**
     set the masterMeasurementVal from main application independent from any measure progs
     @param ri32_val new measure value
   */
   void setMasterMeasurementVal(uint8_t rb_val)
-    {ProcDataLocalSimpleMeasure_c::setMasterMeasurementVal((int32_t)rb_val);};
+    {ProcDataLocalSimpleMeasure_c::setMasterMeasurementVal((int32_t)rb_val);}
+
   /**
     increment the value -> update the local and the measuring programs values
     @param ri32_val size of increment of master value
   */
   void incrMasterMeasurementVal(int32_t ri32_val)
-    {ProcDataLocalSimpleMeasure_c::incrMasterMeasurementVal(ri32_val);};
+    {ProcDataLocalSimpleMeasure_c::incrMasterMeasurementVal(ri32_val);}
+
 #ifdef USE_FLOAT_DATA_TYPE
   /**
     deliver the master value (central measure value of this process data;
@@ -439,69 +414,74 @@ public:
     @return actual master value
   */
   const float& masterValFloat()const
-    {return ProcDataLocalSimpleMeasure_c::masterValFloat();};
+    {return ProcDataLocalSimpleMeasure_c::masterValFloat();}
+
   /**
     set the masterMeasurementVal from main application independent from any measure progs
     @param rf_val new measure value
   */
   void setMasterMeasurementVal(float rf_val)
-    {ProcDataLocalSimpleMeasure_c::setMasterMeasurementVal(rf_val);};
+    {ProcDataLocalSimpleMeasure_c::setMasterMeasurementVal(rf_val);}
+
   /**
     increment the value -> update the local and the measuring programs values
     @param rf_val size of increment of master value
   */
   void incrMasterMeasurementVal(float rf_val)
-    {ProcDataLocalSimpleMeasure_c::incrMasterMeasurementVal(rf_val);};
+    {ProcDataLocalSimpleMeasure_c::incrMasterMeasurementVal(rf_val);}
 #endif
-
 
   /**
     deliver the central data type of this process data
     @return proc_valType_t: i32_val, ui32_val, float_val, cmdVal
   */
   proc_valType_t valType()const
-    {return ProcDataLocalSimpleMeasure_c::valType();};
+    {return ProcDataLocalSimpleMeasure_c::valType();}
+
   /**
     set the central data type of this process data
     @return proc_valType_t: i32_val, ui32_val, float_val, cmdVal
   */
   void setValType(proc_valType_t ren_procValType)
-    {ProcDataLocalSimpleMeasure_c::setValType(ren_procValType);};
+    {ProcDataLocalSimpleMeasure_c::setValType(ren_procValType);}
 
   /**
     retreive simple master setpoint
     @return actual received setpoint value
   */
   int32_t setpointMasterVal() const
-    { return ProcDataLocalSimpleMeasure_c::setpointConst().setpointMasterVal();};
+    { return ProcDataLocalSimpleMeasure_c::setpointConst().setpointMasterVal();}
+
     #ifdef USE_FLOAT_DATA_TYPE
   /**
     retreive simple master setpoint
     @return actual received setpoint value
   */
   float setpointMasterValFloat() const
-    { return ProcDataLocalSimpleMeasure_c::setpointConst().setpointMasterValFloat();};
+    { return ProcDataLocalSimpleMeasure_c::setpointConst().setpointMasterValFloat();}
     #endif
+
   /**
     set the setpoint value
     @param ri32_val new setpoint value
   */
   void setSetpointMasterVal(int32_t ri32_val)
-    { ProcDataLocalSimpleMeasure_c::setpoint().setSetpointMasterVal(ri32_val);};
+    { ProcDataLocalSimpleMeasure_c::setpoint().setSetpointMasterVal(ri32_val);}
+
   #ifdef USE_FLOAT_DATA_TYPE
   /**
     set the setpoint value as float value
     @param rf_val new setpoint value
   */
   void setSetpointMasterVal(float rf_val)
-    { ProcDataLocalSimpleMeasure_c::setpoint().setSetpointMasterVal(rf_val);};
+    { ProcDataLocalSimpleMeasure_c::setpoint().setSetpointMasterVal(rf_val);}
   #endif
 
   /** deliver reference to setpoint */
   iSetpointLocal_c& setpoint( void )
     { return static_cast<iSetpointLocal_c&>
              (ProcDataLocalSimpleMeasure_c::setpoint());
-    };
+    }
 
 };
 

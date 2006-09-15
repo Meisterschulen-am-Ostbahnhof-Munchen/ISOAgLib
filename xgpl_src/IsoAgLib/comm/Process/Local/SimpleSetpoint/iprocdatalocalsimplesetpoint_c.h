@@ -124,12 +124,6 @@ public:
     @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
                          (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
 
-    DIN parameter
-    @param rui8_lis optional LIS code of this instance
-    @param rui8_wert optional WERT code of this instance
-    @param rui8_inst optional INST code of this instance
-    @param rui8_zaehlnum optional ZAEHLNUM code of this instance
-
     @param rc_devKey optional DEV_KEY code of Process-Data
     @param rui8_pri PRI code of messages with this process data instance (default 2)
     @param rc_ownerDevKey optional DEV_KEY of the owner
@@ -154,19 +148,8 @@ public:
     @param rpc_processDataChangeHandler optional pointer to handler class of application
     @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
-  iProcDataLocalSimpleSetpoint_c(
-#ifdef USE_ISO_11783
-                                 const IsoAgLib::ElementDDI_s* ps_elementDDI = NULL,
-                                 uint16_t rui16_element = 0xFFFF,
-#endif
-#ifdef USE_DIN_9684
-                                 uint8_t rui8_lis = 0xFF,
-                                 uint8_t rui8_wert = 0,
-                                 uint8_t rui8_inst = 0,
-                                 uint8_t rui8_zaehlnum = 0xFF,
-#endif
-                                 const iDevKey_c& rc_devKey = iDevKey_c::DevKeyInitialProcessData,
-                                 uint8_t rui8_pri = 2,
+  iProcDataLocalSimpleSetpoint_c(const IsoAgLib::ElementDDI_s* ps_elementDDI = NULL, uint16_t rui16_element = 0xFFFF,
+                                 const iDevKey_c& rc_devKey = iDevKey_c::DevKeyInitialProcessData, uint8_t rui8_pri = 2,
                                  const iDevKey_c& rc_ownerDevKey = iDevKey_c::DevKeyUnspecified,
                                  const iDevKey_c *rpc_devKey = NULL,
                                  bool rb_cumulativeValue = false,
@@ -175,20 +158,13 @@ public:
 #endif
                                  ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
                                  int ri_singletonVecKey = 0
-  ) : ProcDataLocalSimpleSetpoint_c(
-#ifdef USE_ISO_11783
-                                   ps_elementDDI,
-                                   rui16_element,
-#endif
-#ifdef USE_DIN_9684
-                                   rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
-#endif
-                                   rc_devKey, rui8_pri, rc_ownerDevKey, rpc_devKey, rb_cumulativeValue,
+  ) : ProcDataLocalSimpleSetpoint_c(ps_elementDDI, rui16_element, rc_devKey, rui8_pri,
+                                    rc_ownerDevKey, rpc_devKey, rb_cumulativeValue,
 #ifdef USE_EEPROM_IO
-                                   rui16_eepromAdr,
+                                    rui16_eepromAdr,
 #endif
-                                   rpc_processDataChangeHandler,
-                                   ri_singletonVecKey) {};
+                                    rpc_processDataChangeHandler,
+                                    ri_singletonVecKey) {}
 
   /**
     initialise this ProcDataLocalSimpleSetpoint_c
@@ -200,12 +176,6 @@ public:
     @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
                          (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
 
-    DIN parameter
-    @param rui8_lis optional LIS code of this instance
-    @param rui8_wert optional WERT code of this instance
-    @param rui8_inst optional INST code of this instance
-    @param rui8_zaehlnum optional ZAEHLNUM code of this instance
-
     @param rc_devKey optional DEV_KEY code of Process-Data
     @param rui8_pri PRI code of messages with this process data instance (default 2)
     @param rc_ownerDevKey optional DEV_KEY of the owner
@@ -230,19 +200,8 @@ public:
     @param rpc_processDataChangeHandler optional pointer to handler class of application
     @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
-  void init(
-#ifdef USE_ISO_11783
-            const IsoAgLib::ElementDDI_s* ps_elementDDI,
-            uint16_t rui16_element,
-#endif
-#ifdef USE_DIN_9684
-            uint8_t rui8_lis = 0xFF,
-            uint8_t rui8_wert = 0,
-            uint8_t rui8_inst = 0,
-            uint8_t rui8_zaehlnum = 0xFF,
-#endif
-            const iDevKey_c& rc_devKey = iDevKey_c::DevKeyInitialProcessData,
-            uint8_t rui8_pri = 2,
+  void init(const IsoAgLib::ElementDDI_s* ps_elementDDI, uint16_t rui16_element,
+            const iDevKey_c& rc_devKey = iDevKey_c::DevKeyInitialProcessData, uint8_t rui8_pri = 2,
             const iDevKey_c& rc_ownerDevKey = iDevKey_c::DevKeyUnspecified,
             const iDevKey_c *rpc_devKey = NULL,
             bool rb_cumulativeValue = false,
@@ -252,97 +211,98 @@ public:
             ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
             int ri_singletonVecKey = 0
             )
-  {ProcDataLocalSimpleSetpoint_c::init(
-#ifdef USE_ISO_11783
-                                       ps_elementDDI,
-                                       rui16_element,
-#endif
-#ifdef USE_DIN_9684
-                                       rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
-#endif
+  {ProcDataLocalSimpleSetpoint_c::init(ps_elementDDI, rui16_element,
                                        rc_devKey, rui8_pri, rc_ownerDevKey, rpc_devKey, rb_cumulativeValue,
 #ifdef USE_EEPROM_IO
                                        rui16_eepromAdr,
 #endif
                                        rpc_processDataChangeHandler,
                                        ri_singletonVecKey);
-  };
+  }
 
   /** set the poitner to the handler class
     * @param rpc_processDataChangeHandler pointer to handler class of application
     */
   void setProcessDataChangeHandler( ProcessDataChangeHandler_c *rpc_processDataChangeHandler )
-   { ProcDataLocalSimpleSetpoint_c::setProcessDataChangeHandler( rpc_processDataChangeHandler ); } ;
+   { ProcDataLocalSimpleSetpoint_c::setProcessDataChangeHandler( rpc_processDataChangeHandler ); }
+
   /** deliver the poitner to the handler class
     * @return pointer to handler class of application (or NULL if not defined by application)
     */
   IsoAgLib::ProcessDataChangeHandler_c* getProcessDataChangeHandler( void ) const
-   { return ProcDataLocalSimpleSetpoint_c::getProcessDataChangeHandler(); } ;
+   { return ProcDataLocalSimpleSetpoint_c::getProcessDataChangeHandler(); }
 
   /**
     deliver value PRI of messages with this
     process data instance
     @return PRI
   */
-  uint8_t pri() const{return ProcDataLocalSimpleSetpoint_c::pri();};
+  uint8_t pri() const{return ProcDataLocalSimpleSetpoint_c::pri();}
+
   /**
     set value PRI of messages with this
     process data instance (default value is 2 == target message)
     @param rb_val new PRI value
   */
-  void setPri(uint8_t rb_val){ProcDataLocalSimpleSetpoint_c::setPri(rb_val);};
+  void setPri(uint8_t rb_val){ProcDataLocalSimpleSetpoint_c::setPri(rb_val);}
+
   /**
     deliver value LIS (list number)
     @return LIS
   */
-  uint8_t lis() const{return ProcDataLocalSimpleSetpoint_c::lis();};
+  uint8_t lis() const{return ProcDataLocalSimpleSetpoint_c::lis();}
+
   /**
     deliver value DEVCLASS (machine type specific table of process data types)
     @return DEVCLASS
   */
-  uint8_t devClass() const{return ProcDataLocalSimpleSetpoint_c::devClass();};
+  uint8_t devClass() const{return ProcDataLocalSimpleSetpoint_c::devClass();}
+
   /**
     deliver value DEV_KEY (machine type specific table of process data types)
     use everytime the _device_class_ from the ident part, and take the _instance_ from the owner
     @return DEV_KEY
   */
-  const iDevKey_c& devKey() const {return static_cast<const iDevKey_c&>(ProcDataLocalSimpleSetpoint_c::devKey());};
+  const iDevKey_c& devKey() const {return static_cast<const iDevKey_c&>(ProcDataLocalSimpleSetpoint_c::devKey());}
+
   /**
     deliver value WERT (row of process data table)
     @return WERT
   */
-  uint8_t wert() const{return ProcDataLocalSimpleSetpoint_c::wert();};
+  uint8_t wert() const{return ProcDataLocalSimpleSetpoint_c::wert();}
+
   /**
     deliver value INST (column of process data table)
     @return INST
   */
-  uint8_t inst() const{return ProcDataLocalSimpleSetpoint_c::inst();};
+  uint8_t inst() const{return ProcDataLocalSimpleSetpoint_c::inst();}
+
   /**
     deliver value ZAEHLNUM (0xFF == whole working width; else parts of width)
     @return ZAEHLNUM
   */
-  uint8_t zaehlnum() const{return ProcDataLocalSimpleSetpoint_c::zaehlnum();};
+  uint8_t zaehlnum() const{return ProcDataLocalSimpleSetpoint_c::zaehlnum();}
+
   /**
     deliver value _instance_ (important if more than one machine with equal _device_class_ are active)
     @return POS
   */
-  uint8_t devClassInst() const{return ProcDataLocalSimpleSetpoint_c::devClassInst();};
-#ifdef USE_ISO_11783
+  uint8_t devClassInst() const{return ProcDataLocalSimpleSetpoint_c::devClassInst();}
+
   /** check if this ProcIdent_c has the given DDI as element */
-  bool hasDDI( uint16_t rui16_checkDDI ) const { return ProcIdent_c::hasDDI( rui16_checkDDI );};
+  bool hasDDI( uint16_t rui16_checkDDI ) const { return ProcIdent_c::hasDDI( rui16_checkDDI );}
 
   /**
     deliver value DDI (only possible if only one elementDDI in list)
     @return DDI
    */
-  uint16_t DDI() const { return ProcIdent_c::DDI();};
+  uint16_t DDI() const { return ProcIdent_c::DDI();}
+
   /**
   deliver value element (only possible if only one elementDDI in list)
   @return element
    */
-  uint16_t element() const  { return ProcIdent_c::element();};
-#endif
-
+  uint16_t element() const  { return ProcIdent_c::element();}
 
   /**
     send the base value (the one that is updated via setMasterMeasurementVal() )

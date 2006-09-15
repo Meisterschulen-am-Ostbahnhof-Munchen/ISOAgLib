@@ -84,12 +84,16 @@
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
+
 /** max 8 data bytes defined as union */
 Flexible8ByteString_c CANPkg_c::c_data;
+
 /** receive time of CAN message */
 int32_t CANPkg_c::i32_time = 0;
+
 /** identifier of CAN msg */
 __IsoAgLib::Ident_c CANPkg_c::c_ident;
+
 /** size of data */
 uint8_t CANPkg_c::ui8_len = 0;
 
@@ -171,6 +175,7 @@ void CANPkg_c::setDataFromString(const uint8_t* rpb_data, uint8_t rui8_len)
   ui8_len = (rui8_len<9)?rui8_len:8;
   c_data.setDataFromString( rpb_data, ui8_len);
 }
+
 /**
   set data with size bytes from source array;
   if rui8_len is greater than 8 (max data length of CAN) than max 8 bytes are transfered.

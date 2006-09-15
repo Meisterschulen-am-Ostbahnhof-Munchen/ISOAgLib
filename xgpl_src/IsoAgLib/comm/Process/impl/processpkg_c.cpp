@@ -141,11 +141,12 @@ ProcessPkg_c::~ProcessPkg_c(){
 */
 bool ProcessPkg_c::isSpecCmd(proc_specCmd_t ren_checkCmd)const
 {
+/**TODO2 still relevant*/
   bool b_result = false;
 
 
   const int32_t ci32_test = c_flex4Data.getInt32Data();
-  // DIN: pd = 0 && mod < 4
+
   if (c_generalCommand.getCommand() == GeneralCommand_c::setValue &&
       c_generalCommand.checkIsSetpoint())
   { // setpoint value -> special commands are possible for exact, min, max, default setpopints
@@ -161,7 +162,6 @@ bool ProcessPkg_c::isSpecCmd(proc_specCmd_t ren_checkCmd)const
       }
   }
 
-  // DIN: pd !=0 && mod < 5
   if (c_generalCommand.getCommand() == GeneralCommand_c::setValue &&
       !c_generalCommand.checkIsSetpoint())
   { // measure value: conversion if: actual, min, max, integ, med
@@ -201,7 +201,7 @@ int32_t ProcessPkg_c::dataLong()const{
     case ui32_val:
       i32_result = c_flex4Data.getUint32Data();
       break;
-#if defined(USE_FLOAT_DATA_TYPE) || defined(USE_DIN_GPS)
+#if defined(USE_FLOAT_DATA_TYPE)
     case float_val:
       littleEndianStream2FloatVar(c_flex4Data.uint8, ((float*)(&i32_result)));
       break;
@@ -229,7 +229,7 @@ uint32_t ProcessPkg_c::dataUlong()const{
     case ui32_val:
       ulResult = c_flex4Data.getUint32Data();
       break;
-#if defined(USE_FLOAT_DATA_TYPE) || defined(USE_DIN_GPS)
+#if defined(USE_FLOAT_DATA_TYPE)
     case float_val:
       littleEndianStream2FloatVar(c_flex4Data.uint8, ((float*)(&ulResult)));
       break;
@@ -237,7 +237,7 @@ uint32_t ProcessPkg_c::dataUlong()const{
   }
   return ulResult;
 };
-#if defined(USE_FLOAT_DATA_TYPE) || defined(USE_DIN_GPS)
+#if defined(USE_FLOAT_DATA_TYPE)
 /**
   deliver data value as float; the 4byte data of the message are
   accessed with the type defined by the format flags
@@ -279,29 +279,7 @@ void ProcessPkg_c::setDataRawCmd(int32_t ri32_val, proc_valType_t ren_procValTyp
 {
   c_flex4Data.setInt32Data( ri32_val );
 
-#ifndef USE_ISO_11783  // no need to do this switch case if new ISO part 10 is used. -bac
-  switch (ren_procValType)
-  {
-    case i32_val:
-      set_d(0);
-      bit_data.b_valType = ren_procValType;
-      break;
-    case ui32_val:
-      set_d(0);
-      bit_data.b_valType = ren_procValType;
-      break;
-#if defined(USE_FLOAT_DATA_TYPE) || defined(USE_DIN_GPS)
-    case float_val:
-      set_d(1);
-      bit_data.b_valType = ren_procValType;
-      break;
-#endif
-    case cmdVal: // only to avoid compiler warning
-      break;
-  }
-#else
   bit_data.b_valType = ren_procValType;
-#endif
 }
 
 
@@ -328,7 +306,7 @@ void ProcessPkg_c::setData(int32_t ri32_val, proc_valType_t ren_procValType)
       set_d(0);
       bit_data.b_valType = ren_procValType;
       break;
-#if defined(USE_FLOAT_DATA_TYPE) || defined(USE_DIN_GPS)
+#if defined(USE_FLOAT_DATA_TYPE)
     case float_val:
       floatVar2LittleEndianStream( ((float *const)(&ri32_val)), c_flex4Data.uint8);
       set_d(1);
@@ -361,7 +339,7 @@ void ProcessPkg_c::setData(uint32_t rui32_val, proc_valType_t ren_procValType)
       c_flex4Data.setUint32Data( rui32_val );
       set_d(0);
       break;
-#if defined(USE_FLOAT_DATA_TYPE) || defined(USE_DIN_GPS)
+#if defined(USE_FLOAT_DATA_TYPE)
     case float_val:
       floatVar2LittleEndianStream( ((float *const)(&rui32_val)), c_flex4Data.uint8);
       set_d(1);
@@ -396,7 +374,7 @@ void ProcessPkg_c::setData(proc_specCmd_t ren_procSpecCmd, proc_valType_t ren_pr
       c_flex4Data.setInt32Data( ERROR_VAL_32S );
       break;
   }
-#if defined(USE_FLOAT_DATA_TYPE) || defined(USE_DIN_GPS)
+#if defined(USE_FLOAT_DATA_TYPE)
   if (ren_procValType == float_val)  set_d(1);
   else
 #endif
@@ -405,7 +383,7 @@ void ProcessPkg_c::setData(proc_specCmd_t ren_procSpecCmd, proc_valType_t ren_pr
   bit_data.b_valType = ren_procValType;
 }
 
-#if defined(USE_FLOAT_DATA_TYPE) || defined(USE_DIN_GPS)
+#if defined(USE_FLOAT_DATA_TYPE)
 /**
   set data value as with float value parameter
   and with defined send value type and set data type flag
@@ -450,139 +428,62 @@ void ProcessPkg_c::setData(float rf_val, proc_valType_t ren_procValType)
 */
 void ProcessPkg_c::string2Flags()
 {
-#if defined(USE_ISO_11783) && defined(USE_DIN_9684)
-  if (identType() == Ident_c::StandardIdent)
-#endif
-  {
-#ifdef USE_DIN_9684
+  // New Part 10 code to go here -bac
+  // set pri, empf, send for convenience
+  setPri(2); // signal target message
+  setEmpf(isoPs());
+  setSend(isoSa());
+  setIdentType(Ident_c::ExtendedIdent);
 
-    setPri(((ident() >> 8) & 0xF));
-    setEmpf(((ident() >> 4) & 0xF));
-    setSend(ident() & 0xF);
+  setLis(0); // ISO doesn't support LIS code -> set to default 0
+  /**TODO2 Lis completly removable??*/
+  // bit_data.b_valType = static_cast<proc_valType_t>((CANPkg_c::c_data[0] >> 5) & 0x3);
 
-    setLis(CANPkg_c::c_data[0] >> 5);
-
-    set_d(CANPkg_c::c_data[2] >> 7);
-    #if defined(USE_FLOAT_DATA_TYPE) || defined(USE_DIN_GPS)
-    if (d()==0)
-    #endif
-      bit_data.b_valType = i32_val;
-    #if defined(USE_FLOAT_DATA_TYPE) || defined(USE_DIN_GPS)
-    else bit_data.b_valType = float_val;
-    #endif
-    setDevClass((CANPkg_c::c_data[2] >> 3) & 0xF);
-    setDevClassInst(CANPkg_c::c_data[2] & 0x7);
-
-    DINMonitor_c &c_din_monitor = getDinMonitorInstance4Comm();
-    // now set pc_monitorSend and pc_monitorEmpf
-    if (((pri() == 5) || (pri() == 2)) && (c_din_monitor.existDinMemberNr(empf())))
-    { // DIN targeted process msg with empf as defined DIN member
-      pc_monitorEmpf = static_cast<MonitorItem_c*>(&(c_din_monitor.dinMemberNr(empf())));
-    }
-    else
-    { // either no target process msg or empf no defined member
-      pc_monitorEmpf = NULL;
-    }
-    if (c_din_monitor.existDinMemberNr(send()))
-    { // sender SEND registered as
-      pc_monitorSend = static_cast<MonitorItem_c*>(&(c_din_monitor.dinMemberNr(send())));
-    }
-    else
-    { // send is no defined member
-      pc_monitorSend = NULL;
-    }
-
-    setPd(((CANPkg_c::c_data[0] >> 3) & 0x3));
-    setMod((CANPkg_c::c_data[0] & 0x7));
-
-    setZaehlnum(CANPkg_c::c_data[1]);
-
-    setWert(CANPkg_c::c_data[3] >> 4);
-    setInst((CANPkg_c::c_data[3] & 0xF));
-
-    // some DIN systems place wrong DEVCLASS in data string -> correct DEVCLASS, for all requests to DEVCLASS of receiver
-    // and correct DEVCLASS for all messages from special registered terminal
-    if ( (pc_monitorEmpf != NULL) // receiver must be found in monitor list
-         && (pc_monitorSend != NULL) // sender must be found in monitor list
-         && ( devClass() != 0 ) // Proc is not of special DevKey 0,0 case
-         && ( devClassInst() != 0 ) // Proc is not of special DevKey 0,0 case
-         && ( ( ( pd() & 0x2 ) != 0 ) // first alternative: it's a request
-              ||   ( ( c_specialTermDevKey ==  pc_monitorSend->devKey() ) && (c_specialTermDevKey.isSpecified()) ) // or it's from known special terminal
-              )
-         )
-    { // sender is special case terminal -> change DEV_KEY for data part from terminal DEV_KEY to local of empf
-      setDevClass((pc_monitorEmpf->devKey()).getDevClass());
-      setDevClassInst((pc_monitorEmpf->devKey()).getDevClassInst());
-    }
-#endif //DIN
-
-  }
-
-#if defined(USE_ISO_11783) && defined(USE_DIN_9684)
+  // Not sure if this is needed at this point. May need the GPS portion but not the Float Data Type stuff since this is not really used in Part 10 now. -bac
+  #if defined(USE_FLOAT_DATA_TYPE)
+  if (bit_data.b_valType == float_val) set_d(1);
   else
-#endif
-  {
-#ifdef USE_ISO_11783
+  #endif
+  set_d(0);
 
-    // New Part 10 code to go here -bac
-    // set pri, empf, send for convenience
-    setPri(2); // signal target message
-    setEmpf(isoPs());
-    setSend(isoSa());
-    setIdentType(Ident_c::ExtendedIdent);
+  //Need to replace this call with the getpos from the monitor item. DevKey no longer encapsulated in the message data itself
+  //See new line added below that uses c_isoMonitor. -bac
+  //setDevKey( DevKey_c(((CANPkg_c::c_data[2] >> 4) & 0xF), (CANPkg_c::c_data[2] & 0xF) ) );
 
-    setLis(0); // ISO doesn't support LIS code -> set to default 0
+  ISOMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
 
-    // bit_data.b_valType = static_cast<proc_valType_t>((CANPkg_c::c_data[0] >> 5) & 0x3);
+  // devKey in ProcessPkg_c is no longer used in ISO
+  //setDevKey(c_isoMonitor.isoMemberNr(send()).devKey());  // Get the devClass and pos (Device Class, Device Class Instance -bac
 
-    // Not sure if this is needed at this point. May need the GPS portion but not the Float Data Type stuff since this is not really used in Part 10 now. -bac
-    #if defined(USE_FLOAT_DATA_TYPE) || defined(USE_DIN_GPS)
-    if (bit_data.b_valType == float_val) set_d(1);
-    else
-    #endif
-    set_d(0);
-
-    //Need to replace this call with the getpos from the monitor item. DevKey no longer encapsulated in the message data itself
-    //See new line added below that uses c_isoMonitor. -bac
-    //setDevKey( DevKey_c(((CANPkg_c::c_data[2] >> 4) & 0xF), (CANPkg_c::c_data[2] & 0xF) ) );
-
-    ISOMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
-
-    // devKey in ProcessPkg_c is no longer used in ISO (for DIN the message contains the empf devKey!)
-    //setDevKey(c_isoMonitor.isoMemberNr(send()).devKey());  // Get the devClass and pos (Device Class, Device Class Instance -bac
-
-    // now set pc_monitorSend and pc_monitorEmpf
-    if ((pri() == 2) && (c_isoMonitor.existIsoMemberNr(empf())))
-    { // ISO targeted process msg with empf as defined ISO member
-      pc_monitorEmpf = static_cast<MonitorItem_c*>(&(c_isoMonitor.isoMemberNr(empf())));
-    }
-    else
-    { // either no target process msg or empf no defined member
-      pc_monitorEmpf = NULL;
-    }
-    if (c_isoMonitor.existIsoMemberNr(send()))
-    { // sender SEND registered as
-      pc_monitorSend = static_cast<MonitorItem_c*>(&(c_isoMonitor.isoMemberNr(send())));
-    }
-    else
-    { // send is no defined member
-      pc_monitorSend = NULL;
-    }
-
-    set_Cmd(CANPkg_c::c_data[0] & 0xf);
-    uint16_t element = 0;
-     element = uint16_t(CANPkg_c::c_data[1]) << 4;
-    element |= ((CANPkg_c::c_data[0] & 0xF0)>>4);
-    set_Element(element);
-
-    uint16_t newDDI = 0;
-    newDDI |= CANPkg_c::c_data[3];
-    newDDI = newDDI << 8;
-    newDDI |= CANPkg_c::c_data[2];
-    set_DDI(newDDI);
-
-#endif  // USE_ISO_11783
+  // now set pc_monitorSend and pc_monitorEmpf
+  if ((pri() == 2) && (c_isoMonitor.existIsoMemberNr(empf())))
+  { // ISO targeted process msg with empf as defined ISO member
+    pc_monitorEmpf = static_cast<MonitorItem_c*>(&(c_isoMonitor.isoMemberNr(empf())));
   }
+  else
+  { // either no target process msg or empf no defined member
+    pc_monitorEmpf = NULL;
+  }
+  if (c_isoMonitor.existIsoMemberNr(send()))
+  { // sender SEND registered as
+    pc_monitorSend = static_cast<MonitorItem_c*>(&(c_isoMonitor.isoMemberNr(send())));
+  }
+  else
+  { // send is no defined member
+    pc_monitorSend = NULL;
+  }
+
+  set_Cmd(CANPkg_c::c_data[0] & 0xf);
+  uint16_t element = 0;
+    element = uint16_t(CANPkg_c::c_data[1]) << 4;
+  element |= ((CANPkg_c::c_data[0] & 0xF0)>>4);
+  set_Element(element);
+
+  uint16_t newDDI = 0;
+  newDDI |= CANPkg_c::c_data[3];
+  newDDI = newDDI << 8;
+  newDDI |= CANPkg_c::c_data[2];
+  set_DDI(newDDI);
 
   c_flex4Data.setFlexible4DataValueInd( 1, CANPkg_c::c_data );
 };
@@ -597,137 +498,38 @@ void ProcessPkg_c::string2Flags()
 */
 void ProcessPkg_c::flags2String()
 {
-
-  if (identType() == Ident_c::StandardIdent)
-  {
-
-#ifdef USE_DIN_9684
-    uint8_t ui8_mod = 0;
-    uint8_t ui8_pd = 0;
-
-    switch (c_generalCommand.getCommand()) {
-      case GeneralCommand_c::requestValue:
-      case GeneralCommand_c::setValue:
-         if (c_generalCommand.checkIsSetpoint()) {
-            // setpoint
-            switch (c_generalCommand.getValueGroup()) {
-               case GeneralCommand_c::exactValue: ui8_mod = 0; break;
-               case GeneralCommand_c::minValue:   ui8_mod = 2; break;
-               case GeneralCommand_c::maxValue:   ui8_mod = 3; break;
-            }
-         } else {
-           // measure
-           ui8_pd |= 1;
-            switch (c_generalCommand.getValueGroup()) {
-               case GeneralCommand_c::exactValue: ui8_mod = 0; break;
-               case GeneralCommand_c::minValue:   ui8_mod = 1; break;
-               case GeneralCommand_c::maxValue:   ui8_mod = 2; break;
-               case GeneralCommand_c::integValue: ui8_mod = 3; break;
-               case GeneralCommand_c::medValue:   ui8_mod = 4; break;
-            }
-         }
-         break;
-
-      case GeneralCommand_c::measurementTimeValue:            ui8_pd = 0; ui8_mod = 4; break;
-      case GeneralCommand_c::measurementDistanceValue:        ui8_pd = 0; ui8_mod = 4; break;
-      case GeneralCommand_c::measurementChangeThresholdValue: ui8_pd = 0; ui8_mod = 4; break;
-
-      case GeneralCommand_c::measurementStart:
-      case GeneralCommand_c::measurementStop:
-      case GeneralCommand_c::measurementReset:
-        ui8_pd = 0; ui8_mod = 6;
-        break;
-      default: ;
-    }
-
-    if (c_generalCommand.checkIsRequest())
-       ui8_pd |= 1 << 1;
-
-    setPd(ui8_pd);
-    setMod(ui8_mod);
-
-    // build ident dependent on PRI
-    if (pri() == 1)
-    { // base process msg
-      setIdent((((pri() & 0x7) << 8) | (2 << 6) |((pd() & 0x3) << 4) | (send() & 0xF)), Ident_c::StandardIdent);
-    }
-    else
-    { // target process msg
-      setIdent((((pri() & 0x7) << 8) |((empf() & 0xF) << 4) | (send() & 0xF)), Ident_c::StandardIdent);
-    }
-    CANPkg_c::c_data.setUint8Data(0, (((lis() & 0x7) << 5) |((pd() & 0x3) << 3) | (mod() & 0x7)));
-
-    // if c_specialTermDevKey != DevKey_c::DevKeyUnspecified dependent on devKey receiver of the DEV_KEY of this data should be changed
-    // to remote devKey
-    CANPkg_c::c_data.setUint8Data(2, ((d() & 0x1) << 7) | ( ( devKey().getDevClass() << 3 ) | ( devKey().getDevClassInst() & 0x7 )));
-    #if 0
-    if ( (c_specialTermDevKey.isSpecified())
-      && (c_specialTermDevKey == getDinMonitorInstance4Comm().dinMemberNr(empf()).devKey())
-      && ( ( (wert() == 0) && (inst() >= 0xC) ) || ( (wert() == 0xF) &&  ( (inst() == 3) || (inst() == 4) ) ) )
-       )
-    { // sender is special case terminal -> change DEV_KEY for data part to terminal DEV_KEY to local from empf
-      CANPkg_c::c_data.setUint8Data(2, (((d() & 0x1) << 7) | ( devKey().getDevClass() << 3 ) | ( devKey().getDevClassInst() & 0x7 )));
-    }
-    else
-    { // standard case
-      CANPkg_c::c_data.setUint8Data(2, (((d() & 0x1) << 7) | ( devKey().getDevClass() << 3 ) | ( devKey().getDevClassInst() & 0x7 )));
-    }
-    #endif
-
-    CANPkg_c::c_data.setUint8Data(1, zaehlnum());
-    CANPkg_c::c_data.setUint8Data(3, ((wert() << 4) | (inst() & 0xF)));
-
-    CANPkg_c::c_data.setFlexible4DataValueInd( 1, c_flex4Data );
-
-    if ((pd() >> 1) == 1)
-    { // request has only 4 bytes
-      setLen(4);
-    }
-    else
-    { // value send with 8 bytes
-      setLen(8);
-    }
-#endif // USE_DIN_9684
+  uint8_t ui8_cmd;
+  switch (c_generalCommand.getCommand()) {
+    case GeneralCommand_c::requestConfiguration:                  ui8_cmd = 0; break;
+    case GeneralCommand_c::configurationResponse:                 ui8_cmd = 1; break;
+    case GeneralCommand_c::requestValue:                          ui8_cmd = 2; break;
+    case GeneralCommand_c::setValue:                              ui8_cmd = 3; break;
+    case GeneralCommand_c::measurementTimeValueStart:             ui8_cmd = 4; break;
+    case GeneralCommand_c::measurementDistanceValueStart:         ui8_cmd = 5; break;
+    case GeneralCommand_c::measurementMinimumThresholdValueStart: ui8_cmd = 6; break;
+    case GeneralCommand_c::measurementMaximumThresholdValueStart: ui8_cmd = 7; break;
+    case GeneralCommand_c::measurementChangeThresholdValueStart:  ui8_cmd = 8; break;
+    case GeneralCommand_c::nack:                                  ui8_cmd = 0xd; break;
+    case GeneralCommand_c::taskControllerStatus:                  ui8_cmd = 0xe; break;
+    case GeneralCommand_c::workingsetMasterMaintenance:           ui8_cmd = 0xf; break;
+    // map reset command to setValue command
+    case GeneralCommand_c::measurementReset:                      ui8_cmd = 3; break;
+    default: ui8_cmd = 0xFF;
   }
-  else
-  {  // code added by Brad Cox to format the message to conform to the latest part 10 Specification. -bac
 
-#ifdef USE_ISO_11783
-    uint8_t ui8_cmd;
-    switch (c_generalCommand.getCommand()) {
-      case GeneralCommand_c::requestConfiguration:                  ui8_cmd = 0; break;
-      case GeneralCommand_c::configurationResponse:                 ui8_cmd = 1; break;
-      case GeneralCommand_c::requestValue:                          ui8_cmd = 2; break;
-      case GeneralCommand_c::setValue:                              ui8_cmd = 3; break;
-      case GeneralCommand_c::measurementTimeValueStart:             ui8_cmd = 4; break;
-      case GeneralCommand_c::measurementDistanceValueStart:         ui8_cmd = 5; break;
-      case GeneralCommand_c::measurementMinimumThresholdValueStart: ui8_cmd = 6; break;
-      case GeneralCommand_c::measurementMaximumThresholdValueStart: ui8_cmd = 7; break;
-      case GeneralCommand_c::measurementChangeThresholdValueStart:  ui8_cmd = 8; break;
-      case GeneralCommand_c::nack:                                  ui8_cmd = 0xd; break;
-      case GeneralCommand_c::taskControllerStatus:                  ui8_cmd = 0xe; break;
-      case GeneralCommand_c::workingsetMasterMaintenance:           ui8_cmd = 0xf; break;
-      // map reset command to setValue command
-      case GeneralCommand_c::measurementReset:                      ui8_cmd = 3; break;
-      default: ui8_cmd = 0xFF;
-    }
+  CANPkg_c::c_data.setUint8Data(0, (ui8_cmd & 0xf) | ( (element() & 0xf) << 4) );
+  CANPkg_c::c_data.setUint8Data(1, element() >> 4 );
+  CANPkg_c::c_data.setUint8Data(2, DDI() & 0x00FF );
+  CANPkg_c::c_data.setUint8Data(3, (DDI()& 0xFF00) >> 8 );
+  // for ISO the ident is directly read and written
 
-    CANPkg_c::c_data.setUint8Data(0, (ui8_cmd & 0xf) | ( (element() & 0xf) << 4) );
-    CANPkg_c::c_data.setUint8Data(1, element() >> 4 );
-    CANPkg_c::c_data.setUint8Data(2, DDI() & 0x00FF );
-    CANPkg_c::c_data.setUint8Data(3, (DDI()& 0xFF00) >> 8 );
-    // for ISO the ident is directly read and written
+  CANPkg_c::c_data.setFlexible4DataValueInd( 1, c_flex4Data );
 
-    CANPkg_c::c_data.setFlexible4DataValueInd( 1, c_flex4Data );
-
-    setLen(8);
-#endif  // USE_ISO_11783
-  }
+  setLen(8);
 };
 
 /**
-  deliver reference to MonitorItem_c of EMPF member (MonitorItem_c is base class for both
-  DINItem_c and ISOItem_c)
+  deliver reference to MonitorItem_c of EMPF member (MonitorItem_c is base class for ISOItem_c)
   (check with existMemberEmpf before access to not defined item)
 
   @return reference to MonitorItem_c of member which is addressed by EMPF
@@ -748,8 +550,7 @@ MonitorItem_c& ProcessPkg_c::memberEmpf() const
   }
 }
 /**
-  deliver reference to MonitorItem_c of SEND member (MonitorItem_c is base class for both
-  DINItem_c and ISOItem_c)
+  deliver reference to MonitorItem_c of SEND member (MonitorItem_c is base class for ISOItem_c)
   (check with existMemberSend before access to not defined item)
 
   @return reference to MonitorItem_c of member which is addressed by SEND
@@ -783,140 +584,9 @@ void ProcessPkg_c::useTermDevKeyForLocalProc(const DevKey_c& rc_devKey, const De
 }
 
 /**
-  extract data from DIN commands and save it to member class
-*/
-#ifdef USE_DIN_9684
-bool ProcessPkg_c::resolveCommandTypeForDIN()
-{
-  bool b_isSetpoint = false;
-  bool b_isRequest = false;
-  GeneralCommand_c::ValueGroup_t en_valueGroup = GeneralCommand_c::noValue;
-  GeneralCommand_c::CommandType_t en_command = GeneralCommand_c::noCommand;
-
-  if ( identType() == Ident_c::StandardIdent)
-  {
-    // DIN command
-    // make first decision: requestValue / setValue
-    en_command = ( pd() & 0x2 ) ? GeneralCommand_c::requestValue : GeneralCommand_c::setValue;
-
-    if (((pd() & 0x1) == 0) && (mod() < 4))
-    {
-      // pd {00, 10} with mod {000,001,010} are setpoint messages
-      b_isSetpoint = true;
-
-      switch (mod())
-      {
-        case 0x0:
-          en_valueGroup = GeneralCommand_c::exactValue;
-          break;
-        case 0x2:
-          en_valueGroup = GeneralCommand_c::minValue;
-          break;
-        case 0x3:
-          en_valueGroup = GeneralCommand_c::maxValue;
-          break;
-      }
-    }
-
-    if (((pd() & 0x1) == 1) && (mod() < 5))
-    {
-      // measure
-
-      switch (mod()) {
-        case 0x0:
-          en_valueGroup = GeneralCommand_c::exactValue;
-          break;
-        case 0x1:
-          en_valueGroup = GeneralCommand_c::minValue;
-          break;
-        case 0x2:
-          en_valueGroup = GeneralCommand_c::maxValue;
-          break;
-        case 0x3:
-          en_valueGroup = GeneralCommand_c::integValue;
-          break;
-        case 0x4:
-          en_valueGroup = GeneralCommand_c::medValue;
-          break;
-      }
-    }
-
-    if (pd() == 0)
-    {
-      // measure prog commands
-      if (mod() == 4)
-      {
-        if (dataLong() >= 0)
-          en_command = GeneralCommand_c::measurementDistanceValue;
-        else
-          en_command = GeneralCommand_c::measurementTimeValue;
-      }
-      if (mod() == 5)
-      {
-        en_command = GeneralCommand_c::noCommand;
-        if (dataLong() > 0)
-          en_command = GeneralCommand_c::measurementChangeThresholdValue;
-      }
-      if (mod() == 6) {
-        en_command = GeneralCommand_c::noCommand;
-        if ( (dataLong() & 0xF) == 0)
-          en_command = GeneralCommand_c::measurementStop;
-        if ( ((dataLong() & 0xF) > 0) && ((dataLong() & 0xF) < 7) )
-          en_command = GeneralCommand_c::measurementStart;
-        if ( (dataLong() & 0xF) == 0x8)
-          en_command = GeneralCommand_c::measurementReset;
-
-        // use en_valueGroup minValue/maxValue to transmit information how to start measure prog (DoVal, DoMin, DoMax)
-        uint8_t b_cmd = data(0);
-        switch (b_cmd >> 4)
-        {
-          case Proc_c::DoMin:
-            en_valueGroup = GeneralCommand_c::minValue;
-            break;
-          case Proc_c::DoMax:
-            en_valueGroup = GeneralCommand_c::maxValue;
-            break;
-          default:
-            ;
-        }
-      }
-    }
-
-    if (existMemberEmpf() && (devClass() == memberEmpf().devKey().getDevClass()))
-    {
-       // we are local
-       // from MeasureProgLocal_c::processMsg and ProcDataLocalBase_c::processProg())
-       if ((pd() == 1) && (dataRawCmdLong() == 0) )
-       {
-          // write - accept only write actions to local data only if this is reset try
-          // (not standard conformant, but practised)
-          // setValue command for measure value is treated as reset (DIN: new values are 0, ISO: new value is value from message
-          en_command = GeneralCommand_c::setValue;
-      }
-    }
-
-    if (pd() & 0x2)
-    {
-      // pd {10, 11} are requests
-      b_isRequest = true;
-    }
-  }
-
-  if (en_command != GeneralCommand_c::noCommand)
-  {
-    c_generalCommand.setValues(b_isSetpoint, b_isRequest, en_valueGroup, en_command);
-    return true;
-  }
-  else return false;
-};
-#endif
-
-
-/**
-  extract data from DIN/ISO commands and save it to member class
+  extract data from ISO commands and save it to member class
   @param refl_elementDDI
 */
-#ifdef USE_ISO_11783
 bool ProcessPkg_c::resolveCommandTypeForISO(const IsoAgLib::ElementDDI_s& refl_elementDDI)
 {
   bool b_isSetpoint = false;
@@ -980,6 +650,5 @@ bool ProcessPkg_c::resolveCommandTypeForISO(const IsoAgLib::ElementDDI_s& refl_e
   }
   else return false;
 }
-#endif
 
 } // end of namespace __IsoAgLib

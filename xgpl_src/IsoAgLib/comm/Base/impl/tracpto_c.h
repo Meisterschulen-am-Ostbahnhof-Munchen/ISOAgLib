@@ -88,9 +88,7 @@
 #define TRACPTO_C_H
 
 #include <IsoAgLib/comm/Base/impl/basecommon_c.h>
-#ifdef USE_ISO_11783
-  #include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgnhandler_c.h>
-#endif
+#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgnhandler_c.h>
 
 namespace __IsoAgLib { // Begin Namespace __IsoAgLib
 
@@ -108,7 +106,6 @@ typedef struct
   int32_t i32_lastPto;
   /** pto [1/8RPM] */
   uint16_t ui16_pto8DigitPerRpm;
-  #ifdef USE_ISO_11783
   /** measured value of the set point of the rotational speed of the power take-off (PTO) output shaft [1/8RPM] */
   uint16_t ui16_ptoSetPoint8DigitPerRpm;
   /** PTO engaged */
@@ -125,7 +122,6 @@ typedef struct
   IsoAgLib::IsoReqFlag_t t_ptoEconomyModeReqStatus : 2;
   /** present limit status of pto shaft speed */
   IsoAgLib::IsoLimitFlag_t t_ptoShaftSpeedLimitStatus : 3;
-  #endif
 } PtoData_t;
 
   class TracPTO_c;
@@ -139,15 +135,13 @@ typedef struct
     */
 
   class TracPTO_c : public SingletonTracPto_c
-              #ifdef USE_ISO_11783
                   , public ISORequestPGNHandler_c
-              #endif
   {
   public:// Public methods
     /* ********************************************* */
     /** \name Management Functions for class TracPTO_c  */
     /*@{*/
-    /** check if filter boxes shall be created - create only ISO or DIN filters based
+    /** check if filter boxes shall be created - create only filters based
         on active local idents which has already claimed an address
         --> avoid to much Filter Boxes
       */
@@ -163,14 +157,6 @@ typedef struct
 
     /** destructor for Base_c which has nothing to do */
     virtual ~TracPTO_c() { BaseCommon_c::close();};
-
-    #ifdef USE_DIN_9684
-    /** helper function to do the parsing of the flag data of a
-     * received DIN9684 base message with Pto,Hitch,Engine information */
-    void dinParsePtoFlags(const CANPkgExt_c& rrefc_pkg);
-    /** helper function to set the Hitch and Engine flags of a DIN base data message */
-    void dinSetPtoFlags(CANPkgExt_c& rrefc_pkg);
-    #endif
     /*@}*/
 
     /* ******************************************* */
@@ -183,10 +169,9 @@ typedef struct
     void setPtoRear(const uint16_t rui16_val)
     {
       t_ptoRear.ui16_pto8DigitPerRpm = ( rui16_val * 8 );
-      #ifdef USE_ISO_11783
+
       if ( rui16_val == 0 ) setPtoRearEngaged( IsoAgLib::IsoInactive );
-      else                 setPtoRearEngaged( IsoAgLib::IsoActive );
-      #endif
+      else                  setPtoRearEngaged( IsoAgLib::IsoActive );
     };
     /** set front PTO
         @param ri16_val value to store as the speed of the front PTO [1RPM]
@@ -194,10 +179,9 @@ typedef struct
     void setPtoFront(const uint16_t rui16_val)
     {
       t_ptoFront.ui16_pto8DigitPerRpm = ( rui16_val * 8 );
-      #ifdef USE_ISO_11783
+
       if ( rui16_val == 0 ) setPtoFrontEngaged( IsoAgLib::IsoInactive );
       else                  setPtoFrontEngaged( IsoAgLib::IsoActive );
-      #endif
     };
 
     /** set rear PTO with unit [1/8RPM] so that the full resolution of ISOBUS messages can be used with integer arithmetic
@@ -206,10 +190,9 @@ typedef struct
     void setPtoRear8DigitPerRpm(const uint16_t rui16_val8DigitPerRpm)
     {
       t_ptoRear.ui16_pto8DigitPerRpm = rui16_val8DigitPerRpm;
-      #ifdef USE_ISO_11783
+
       if ( rui16_val8DigitPerRpm == 0 ) setPtoRearEngaged( IsoAgLib::IsoInactive );
       else                              setPtoRearEngaged( IsoAgLib::IsoActive );
-      #endif
     };
     /** set front PTO with unit [1/8RPM] so that the full resolution of ISOBUS messages can be used with integer arithmetic
     @param ri16_val8DigitPerRpm value to store as the speed of the front PTO [1/8RPM]
@@ -217,13 +200,11 @@ typedef struct
     void setPtoFront8DigitPerRpm(const uint16_t rui16_val8DigitPerRpm)
     {
       t_ptoFront.ui16_pto8DigitPerRpm = rui16_val8DigitPerRpm;
-      #ifdef USE_ISO_11783
+
       if ( rui16_val8DigitPerRpm == 0 ) setPtoFrontEngaged( IsoAgLib::IsoInactive );
       else                              setPtoFrontEngaged( IsoAgLib::IsoActive );
-      #endif
     };
 
-    #ifdef USE_ISO_11783
     bool processMsgRequestPGN (uint32_t rui32_pgn, uint8_t rui8_sa, uint8_t rui8_da);
     /** force a request for pgn for front pto state */
     bool sendRequestUpdateFront();
@@ -234,7 +215,7 @@ typedef struct
         @see  TracCert_c::processMsgRequestPGN
         @see  CANIO_c::operator<<
       */
-    void isoSendMessage(SendPtoData_t t_sendptodata);
+    void sendMessage(SendPtoData_t t_sendptodata);
     /** set explicit information whether front PTO is engaged
       * @param rt_val IsoActive -> PTO is engaged
       */
@@ -315,7 +296,6 @@ typedef struct
         @param rt_val  status to set
       */
     void setRearPtoShaftSpeedLimitStatus(IsoAgLib::IsoLimitFlag_t rt_val) {t_ptoRear.t_ptoShaftSpeedLimitStatus = rt_val;}
-    #endif
     /*@}*/
 
     /* ****************************************************** */
@@ -340,8 +320,6 @@ typedef struct
      */
     uint16_t ptoFront8DigitPerRpm() const { return ( t_ptoFront.ui16_pto8DigitPerRpm);};
 
-
-    #ifdef USE_ISO_11783
     /** deliver explicit information whether front PTO is engaged
       * @return IsoActive -> PTO is engaged
       */
@@ -414,7 +392,6 @@ typedef struct
         @return  present limit status
       */
     IsoAgLib::IsoLimitFlag_t rearPtoShaftSpeedLimitStatus() const {return t_ptoRear.t_ptoShaftSpeedLimitStatus;}
-    #endif
     /*@}*/
 
   private:
@@ -425,30 +402,22 @@ typedef struct
       set the configuration for send/receive for base msg type 1,2
       and calendar
       NEVER instantiate a variable of type TracPTO_c within application
-      only access TracPTO_c via getTracPTOInstance() or getTracPTOInstance( int riLbsBusNr ) in case more than one ISO11783 or DIN9684 BUS is used for IsoAgLib
+      only access TracPTO_c via getTracPTOInstance() or getTracPTOInstance( int riLbsBusNr ) in case more than one BUS is used for IsoAgLib
     */
     TracPTO_c() {};
 
-    #ifdef USE_DIN_9684
-    /** send a DIN9684 base information PGN.
-    * this is only called when sending ident is configured and it has already claimed an address
-    */
-    virtual bool dinTimeEventTracMode( );
-    /** process a DIN9684 base information PGN */
-    virtual bool dinProcessMsg();
-    #endif
-    #if defined(USE_ISO_11783)
     /** send a ISO11783 base information PGN.
       * this is only called when sending ident is configured and it has already claimed an address
         @pre  function is only called in tractor mode
         @see  BaseCommon_c::timeEvent()
       */
-    virtual bool isoTimeEventTracMode( );
+    virtual bool timeEventTracMode( );
+
     /** Detect stop of PTO update from tractor -> indication for stopped PTO */
-    virtual bool isoTimeEventImplMode();
+    virtual bool timeEventImplMode();
+
     /** process a ISO11783 base information PGN */
-    virtual bool isoProcessMsg();
-    #endif
+    bool processMsg();
 
   private:
     // Private attributes

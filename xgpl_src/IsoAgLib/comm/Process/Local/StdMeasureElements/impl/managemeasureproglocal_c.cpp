@@ -292,14 +292,11 @@ bool ManageMeasureProgLocal_c::timeEvent( void ){
   else if ( cui16_size == 1)
   { // only one measure prog -> set it to undefined prog type if devKey inactive
     pc_callerDevKey = &(vec_prog().begin()->devKey());
-    if ((!vec_prog().begin()->checkProgType(Proc_c::UndefinedProg))
-      &&((!c_lbsSystem.existMemberDevKey(*pc_callerDevKey, true))
-      ||(
-          (c_lbsSystem.memberDevKey(*pc_callerDevKey, true).lastedTime() > 3000)
-        &&(c_lbsSystem.memberDevKey(*pc_callerDevKey, true).itemState(IState_c::Din))
-        )
-        )
-      )
+    if ( ( !vec_prog().begin()->checkProgType(Proc_c::UndefinedProg))
+        && (   ( !c_lbsSystem.existMemberDevKey(*pc_callerDevKey, true))
+            || ( c_lbsSystem.memberDevKey(*pc_callerDevKey, true).lastedTime() > 3000 )
+           )
+       )
     { // progType of first and only element is not default undefined
       // --> devKey should be an active member, but is inactie > 3sec
       // stop all programs and set prog type to default
@@ -315,12 +312,9 @@ bool ManageMeasureProgLocal_c::timeEvent( void ){
       for (Vec_MeasureProgLocal::iterator pc_iter = vec_prog().begin();
           pc_iter != vec_prog().end(); pc_iter++)
       { // check if this item has inactive devKey
-        if ((!c_lbsSystem.existMemberDevKey(pc_iter->devKey(), true))
-          ||(
-            (c_lbsSystem.memberDevKey(pc_iter->devKey(), true).lastedTime() > 3000)
-          &&(c_lbsSystem.memberDevKey(pc_iter->devKey(), true).itemState(IState_c::Din))
-            )
-          )
+        if (  ( !c_lbsSystem.existMemberDevKey(pc_iter->devKey(), true) )
+            ||( c_lbsSystem.memberDevKey(pc_iter->devKey(), true).lastedTime() > 3000 )
+           )
         { // item isn't active any more -> stop entries and erase it
           pc_iter->stop();
           // erase only if array size > 1
@@ -623,7 +617,6 @@ bool ManageMeasureProgLocal_c::updateProgCache(uint8_t rui8_type, const DevKey_c
   return b_result;
 }
 
-#ifdef USE_ISO_11783
 /**
   allow local client to actively start a measurement program
   (to react on a incoming "start" command for default data logging)
@@ -634,17 +627,17 @@ bool ManageMeasureProgLocal_c::updateProgCache(uint8_t rui8_type, const DevKey_c
   @return true -> rpc_receiverDevice is set
 */
 bool ManageMeasureProgLocal_c::startDataLogging(Proc_c::type_t ren_type /* Proc_c::TimeProp, Proc_c::DistProp, ... */,
-                                                Proc_c::progType_t ren_progType, 
+                                                Proc_c::progType_t ren_progType,
                                                 int32_t ri32_increment, const DevKey_c* rpc_receiverDevice )
 {
   if ( !rpc_receiverDevice )
     return FALSE;
-      
+
   // create new item if none found
   updateProgCache(ren_progType, *rpc_receiverDevice, true);
 
   pc_progCache->setDevKey(*rpc_receiverDevice);
-    
+
   if (Proc_c::TimeProp == ren_type)
     pc_progCache->addSubprog(ren_type, CNAMESPACE::labs(ri32_increment));
   else
@@ -670,7 +663,5 @@ void ManageMeasureProgLocal_c::stopRunningMeasurement(const DevKey_c& refc_devKe
     }
   }
 }
-
-#endif
 
 } // end of namespace __IsoAgLib

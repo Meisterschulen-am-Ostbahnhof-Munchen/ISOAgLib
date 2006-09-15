@@ -80,54 +80,60 @@ class iMonitorItem_c  : __IsoAgLib::MonitorItem_c {
     deliver the DEV_KEY code of this item
     @return DEV_KEY code
   */
-  const iDevKey_c& devKey()const{return static_cast<const iDevKey_c&>(MonitorItem_c::devKey());};
+  const iDevKey_c& devKey()const{return static_cast<const iDevKey_c&>(MonitorItem_c::devKey());}
+
   /**
     deliver the DEVCLASS code alone (derived from devKey)
     @return DEVCLASS code
   */
-  uint8_t devClass()const{return MonitorItem_c::devClass();};
+  uint8_t devClass()const{return MonitorItem_c::devClass();}
+
   /**
     deliver the device class inst code alone (derived from devKey)
     @return device class inst code
   */
-  uint8_t devClassInst()const{return MonitorItem_c::devClassInst();};
+  uint8_t devClassInst()const{return MonitorItem_c::devClassInst();}
+
   /**
     deliver the number/adress of this item
     @return number
   */
-  uint8_t nr()const{return MonitorItem_c::nr();};
+  uint8_t nr()const{return MonitorItem_c::nr();}
 
   /**
     deliver name
     @return pointer to the name uint8_t string (7byte)
   */
-  const uint8_t* name() const {return MonitorItem_c::name();};
+  const uint8_t* name() const {return MonitorItem_c::name();}
+
   /**
     check if the name field is empty (no name received)
     @return true -> no name received
   */
-  bool isEmptyName() const {return MonitorItem_c::isEmptyName();};
+  bool isEmptyName() const {return MonitorItem_c::isEmptyName();}
+
   /**
     deliver name as pure ASCII string
     @param pc_name string where ASCII string is inserted
     @param rui8_maxLen max length for name
   */
   void getPureAsciiName(int8_t *pc_asciiName, uint8_t rui8_maxLen)
-    {MonitorItem_c::getPureAsciiName(pc_asciiName, rui8_maxLen);};
+    {MonitorItem_c::getPureAsciiName(pc_asciiName, rui8_maxLen);}
+
   /**
     check if specific state is set
     @param ren_itemState state information to check
     @return true -> the given state is set
   */
   bool itemState(itemState_t ren_itemState) const
-    {return MonitorItem_c::itemState(ren_itemState);};
+    {return MonitorItem_c::itemState(ren_itemState);}
 
   /**
     deliver the state information
     @return state information of type itemState_t (with state informations coded by OR in enum)
   */
   const itemState_t itemState() const
-    {return MonitorItem_c::itemState();};
+    {return MonitorItem_c::itemState();}
 
   /**
     set the state of a local memberItem and send optional the new state, if
@@ -137,14 +143,14 @@ class iMonitorItem_c  : __IsoAgLib::MonitorItem_c {
     @return resulting state
   */
   itemState_t setItemState(itemState_t ren_itemState, bool rb_sendState = false)
-    {return MonitorItem_c::setItemState(ren_itemState, rb_sendState);};
+    {return MonitorItem_c::setItemState(ren_itemState, rb_sendState);}
+
   /**
   deliver the timestamp of the last update as int32_t [msec]
   @return last update [msec]
    */
-  int32_t lastTime() const {return BaseItem_c::lastTime();};
+  int32_t lastTime() const {return BaseItem_c::lastTime();}
 };
-
 
 }
 #endif

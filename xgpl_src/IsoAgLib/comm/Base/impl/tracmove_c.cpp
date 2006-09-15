@@ -130,13 +130,11 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     if ( !BaseCommon_c::config(rpc_devKey, rt_identMode) ) return false;
 
     // set distance value to 0
-    ui32_lastDistReal = ui32_lastDistTheor = 0;
     ui32_distReal = ui32_distTheor = 0;
 
     // set the member msg value vars to NO_VAL codes
     i32_speedReal = i32_speedTheor = NO_VAL_16;
 
-    #ifdef USE_ISO_11783
     t_operatorDirectionReversed = IsoAgLib::IsoNotAvailableReversed;
     t_startStopState = IsoAgLib::IsoNotAvailable;
 
@@ -150,11 +148,11 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     t_distDirecSource = IsoAgLib::NoDistDirec;
     ui32_lastUpdateTimeSpeed = 3000;
     ui32_lastUpdateTimeDistDirec = 3000;
-    #endif
+
     return true;
   };
 
-  /** check if filter boxes shall be created - create only ISO or DIN filters based
+  /** check if filter boxes shall be created - create only filters based
       on active local idents which has already claimed an address
       --> avoid to much Filter Boxes
     */
@@ -162,18 +160,10 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
   {
     SystemMgmt_c& c_systemMgmt = getSystemMgmtInstance4Comm();
     CANIO_c &c_can = getCanInstance4Comm();
-    #ifdef USE_DIN_9684
-    if ( ( !checkDinFilterCreated() ) && (c_systemMgmt.existActiveLocalDinMember() ) )
-    { // check if needed receive filters for DIN are active
-      setDinFilterCreated();
-      // filter for base data 1
-      c_can.insertFilter(*this, (0x7F << 4),(0x14 << 4), true);
-    }
-    #endif
-    #ifdef USE_ISO_11783
-    if ( ( !checkIsoFilterCreated() ) && ( c_systemMgmt.existActiveLocalIsoMember() ) )
+
+    if ( ( !checkFilterCreated() ) && ( c_systemMgmt.existActiveLocalIsoMember() ) )
     { // check if needed receive filters for ISO are active
-      setIsoFilterCreated();
+      setFilterCreated();
       // create FilterBox_c for PGN GROUND_BASED_SPEED_DIST_PGN, PF 254 - mask for DP, PF and PS
       // mask: (0x1FFFF << 8) filter: (GROUND_BASED_SPEED_DIST_PGN << 8)
       c_can.insertFilter(*this, (static_cast<MASK_TYPE>(0x1FFFF) << 8),
@@ -187,88 +177,12 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
       c_can.insertFilter(*this, (static_cast<MASK_TYPE>(0x1FFFF) << 8),
                         (static_cast<MASK_TYPE>(SELECTED_SPEED_MESSAGE) << 8), true, Ident_c::ExtendedIdent);
     }
-    #endif
   }
 
-  #ifdef USE_DIN_9684
-  /** send a DIN9684 moving information PGN
-    * this is only called when sending ident is configured and it has already claimed an address
-    */
-  bool TracMove_c::dinTimeEventTracMode()
-  {
-    CANIO_c& c_can = getCanInstance4Comm();
-    // retreive the actual dynamic sender no of the member with the registered devKey
-    uint8_t b_send = getDinMonitorInstance4Comm().dinMemberDevKey(*getDevKey(), true).nr();
-
-    if ( lastedTimeSinceUpdate() >= 100)
-    { // send actual moving data
-      setSelectedDataSourceDevKey( *getDevKey() );
-      data().setIdent((0x14<<4 | b_send), __IsoAgLib::Ident_c::StandardIdent );
-      data().setUint16Data(0, i32_speedReal);
-      data().setUint16Data(2, i32_speedTheor);
-      data().setUint16Data(4, ui32_distReal);
-      data().setUint16Data(6, ui32_distTheor);
-      data().setLen(8);
-
-      // CANIO_c::operator<< retreives the information with the help of CANPkg_c::getData
-      // then it sends the data
-      c_can << data();
-
-      // update time
-      setUpdateTime( Scheduler_c::getLastTimeEventTrigger() );
-    }
-    if (Scheduler_c::getAvailableExecTime() == 0) return false;
-
-    return true;
-  }
-
-  /** process a DIN9684 moving information PGN */
-  bool TracMove_c::dinProcessMsg()
-  { // a DIN9684 moving information msg received
-    // store the devKey of the sender of moving data
-    if (! getDinMonitorInstance4Comm().existDinMemberNr(data().dinSa()))
-    { // the sender is not known -> ignore and block interpretation by other classes
-      return true;
-    }
-    // the corresponding sender entry exist in the monitor list
-    DevKey_c c_tempDevKey = getDinMonitorInstance4Comm().dinMemberNr(data().dinSa()).devKey();
-
-    // interprete data accordingto BABO
-    switch (dataBabo())
-    {
-      case 4: //speed, dist
-        // only take values, if i am not the regular sender
-        // and if actual sender isn't in conflict to previous sender
-        if ( checkParseReceived( c_tempDevKey ) )
-        { // sender is allowed to send
-          // real speed
-          setSpeedReal(data().getUint16Data( 0 ));
-          // theor speed
-          setSpeedTheor(data().getUint16Data( 2 ));
-          // real dist -> react on 16bit int16_t overflow
-          setOverflowSecure(ui32_distReal, ui32_lastDistReal, data().getUint16Data( 4 ));
-          // theor dist -> react on 16bit int16_t overflow
-          setOverflowSecure(ui32_distTheor, ui32_lastDistTheor, data().getUint16Data( 6 ));
-
-          setSelectedDataSourceDevKey(c_tempDevKey);
-          setUpdateTime( Scheduler_c::getLastTimeEventTrigger() );
-        }
-        else
-        { // there is a sender conflict
-          getLbsErrInstance().registerError( LibErr_c::LbsBaseSenderConflict, LibErr_c::LbsBase );
-          return false;
-        }
-        break;
-    } // end switch
-    return true;
-  }
-  #endif
-
-  #ifdef USE_ISO_11783
   /**
     process a ISO11783 moving information PGN
   */
-  bool TracMove_c::isoProcessMsg()
+  bool TracMove_c::processMsg()
   {
     #if defined(USE_BASE) || defined(USE_TRACTOR_GENERAL)
     TracGeneral_c& c_tracgeneral = getTracGeneralInstance();
@@ -482,11 +396,11 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
       @pre  function is only called in tractor mode
       @see  BaseCommon_c::timeEvent()
     */
-  bool TracMove_c::isoTimeEventTracMode( )
+  bool TracMove_c::timeEventTracMode( )
   {
     if ( lastedTimeSinceUpdate()  >= 100 )
     { // it's time to send moving information
-      isoSendMovingTracMode();
+      sendMovingTracMode();
     }
     if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
 
@@ -494,10 +408,10 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
   }
 
   /** send moving data with ground&theor speed&dist
-      @pre  function is only called in tractor mode and only from isoTimeEventTracMode
+      @pre  function is only called in tractor mode and only from timeEventTracMode
       @see  CANIO_c::operator<<
     */
-  void TracMove_c::isoSendMovingTracMode( )
+  void TracMove_c::sendMovingTracMode( )
   { // there is no need to check for address claim because this is already done in the timeEvent
     // function of base class BaseCommon_c
 
@@ -584,120 +498,5 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     // update time
     setUpdateTime( Scheduler_c::getLastTimeEventTrigger() );
   }
-  #endif
 
-  #ifdef USE_DIN_9684
-  /** update distance values ; react on int16_t overflow
-      @param reflVal to be updated value as int32_t variable
-      @param refiVal to be updated value as 16bit int16_t variable
-      @param rrefiNewVal new value given as reference to 16bit int
-    */
-  void TracMove_c::setOverflowSecure(uint32_t& reflVal, uint16_t& refiVal, const uint16_t& rrefiNewVal)
-  {
-    // definition area [0..i32_maxVal] with overflow
-    // 10000 of Fendt; 32767 of DIN
-    const int32_t i32_maxDefFendt = 10000,
-                  i32_maxDefDin = 32767;
-    int32_t i32_newValFendt = reflVal,
-            i32_newValDin = reflVal;
-    int16_t i16_diff = rrefiNewVal - refiVal;
-
-    // check if there was an overflow = diff is greater than half of def area (per sign side)
-    #ifdef SYSTEM_PC_VC
-    if ((labs(i16_diff) > i32_maxDefFendt/2) || (labs(i16_diff) > i32_maxDefDin/2))
-    { // one of the overflow checks triggers
-      if (labs(i16_diff) > i32_maxDefFendt/2)
-    #else
-    if ((CNAMESPACE::labs(i16_diff) > i32_maxDefFendt/2) || (CNAMESPACE::labs(i16_diff) > i32_maxDefDin/2))
-    { // one of the overflow checks triggers
-      if (CNAMESPACE::labs(i16_diff) > i32_maxDefFendt/2)
-    #endif
-      { // the old wrong fendt limit triggers
-        if (rrefiNewVal > refiVal)
-        { // dist decreased lower than 0 -> lower underflow
-          i32_newValFendt -= refiVal; // max reducable before underflow
-          i32_newValFendt -= (i32_maxDefFendt - rrefiNewVal); // decreased after underflow (jump to int16 max pos val)
-        }
-        else
-        { // dist increased upper than 0x7FFF -> overflow
-          i32_newValFendt += (i32_maxDefFendt - refiVal); // max decrease before overflow
-          i32_newValFendt += rrefiNewVal; // decreased after overflow
-        }
-      }
-      #ifdef SYSTEM_PC_VC
-      if (labs(i16_diff) > i32_maxDefDin/2)
-      #else
-      if (CNAMESPACE::labs(i16_diff) > i32_maxDefDin/2)
-      #endif
-    { // the correct DIN limit triggers
-        if (rrefiNewVal > refiVal)
-        { // dist decreased lower than 0 -> lower underflow
-          i32_newValDin -= refiVal; // max reducable before underflow
-          i32_newValDin -= (i32_maxDefDin - rrefiNewVal); // decreased after underflow (jump to int16 max pos val)
-        }
-        else
-        { // dist increased upper than 0x7FFF -> overflow
-          i32_newValDin += (i32_maxDefDin - refiVal); // max decrease before overflow
-          i32_newValDin += rrefiNewVal; // decreased after overflow
-        }
-      }
-      // check, which new value should be used -> take the value which mean less distance to old val
-      if (CNAMESPACE::labs(i32_newValFendt - reflVal) < CNAMESPACE::labs(i32_newValDin - reflVal))
-      {
-        reflVal = i32_newValFendt;
-      }
-      else
-      {
-        reflVal = i32_newValDin;
-      }
-    }
-    else
-    { // there's no overflow -> easy increment reflVal
-      reflVal += i16_diff;
-    }
-    // store the given int16 val as last int16 val in refiVal
-    refiVal = rrefiNewVal;
-  };
-  #endif
-
-  /** set the real (radar measured) driven distance with int32_t val
-      @param rreflVal value to store as real radar measured distance
-    */
-  void TracMove_c::setDistReal(const uint32_t& rreflVal)
-  {
-    ui32_distReal = rreflVal;
-    // set the int32_t value regarding the overflow counting
-    ui32_lastDistReal = long2int(rreflVal);
-  };
-
-  /** set the theoretical (gear calculated) driven distance with int32_t val
-      @param rreflVal value to store as theoretical (gear calculated) driven distance
-    */
-  void TracMove_c::setDistTheor(const uint32_t& rreflVal)
-  {
-    ui32_distTheor = rreflVal;
-
-    // set the int32_t value regarding the overflow counting
-    ui32_lastDistTheor = long2int(rreflVal);
-  };
-
-  /** get int16_t overflowed val from long
-      @param rreflVal value as int32_t (32bit) variable
-      @return 16bit int16_t calculated with counting overflow from 32767 to (-32766)
-    */
-  uint32_t TracMove_c::long2int(const uint32_t& rreflVal)
-  {
-    uint32_t ui32_mod;
-    // Version mit [0..10000] und Uberlauf a la Fendt Vario
-    //uint32_t ui32_mod =  rreflVal % 10000;
-    #ifdef USE_DIN_9684
-    // Version mit [0..32767] und Uberlauf a la Scheduler_c DIN 9684
-    ui32_mod =  rreflVal % 32767;
-    #endif
-    #ifdef USE_ISO_11783
-    // Version mit [0..4211082] und Uberlauf a la Scheduler_c ISO 11783
-    ui32_mod =  rreflVal % 4211081;
-    #endif
-    return ui32_mod;
-  };
 } // End Namespace __IsoAglib

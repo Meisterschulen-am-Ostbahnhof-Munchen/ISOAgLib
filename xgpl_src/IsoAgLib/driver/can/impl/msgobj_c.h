@@ -81,7 +81,6 @@
  *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
-
 #ifndef MSG_OBJ_H
 #define MSG_OBJ_H
 
@@ -99,16 +98,13 @@
 #include "filterbox_c.h"
 #include "ident_c.h"
 
-
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
 /* *************************************** */
 /* ********* class definition ************ */
 /* *************************************** */
-
-/**
-  Each instances of this class handles one hardware CAN message object.
+/** Each instances of this class handles one hardware CAN message object.
   While configuring the amount of instances can be higher than the dedicated.
   But before running the CAN system, the amount has to be shrinked by
   merging the instances with the smallest difference in filter bits.
@@ -125,13 +121,10 @@ private:
   typedef STL_NAMESPACE::slist<FilterBox_c>::iterator FilterRef;
 	#endif
 public:
-  /**
-    default constructor for MsgObj_c which only init all member values defined start state
-  */
+  /** default constructor for MsgObj_c which only init all member values defined start state */
   MsgObj_c();
 
-  /**
-    copy constructor for this class, which gets data from another MsgObj_c instance
+  /** copy constructor for this class, which gets data from another MsgObj_c instance
     @param rrefc_src source MsgObj_c instance which should be cloned by this instance
   */
   MsgObj_c(const MsgObj_c& rrefc_src);
@@ -142,9 +135,7 @@ public:
   //+++++++++++++++++++++++++++++++++++
   // help functions for work on MsgObj_c
   //+++++++++++++++++++++++++++++++++++
-
-  /**
-    merge two msgObj instances rrefc_left and rrefc_right and tell with rb_extendedType
+  /** merge two msgObj instances rrefc_left and rrefc_right and tell with rb_extendedType
     if 11bit or 29 bit identifiers are used
     (uses BIOS function)
 
@@ -158,71 +149,56 @@ public:
   */
   bool merge(MsgObj_c& rrefc_right);
 
-  /**
-    close the t_data of this instance and close hardware CAN Msg Obj if it's open
-
+  /** close the t_data of this instance and close hardware CAN Msg Obj if it's open
     possible errors:
         * Err_c::range wrong BUS or MsgObj number stored in this instance
   */
   void close();
-  /**
-    close the correlated CAN object
-    (uses BIOS function)
 
+  /** close the correlated CAN object (uses BIOS function)
     possible errors:
         * Err_c::range wrong BUS or MsgObj number stored in this instance
   */
   void closeCan();
-  /**
-    test if a CAN msg object is open for this instance
+
+  /** test if a CAN msg object is open for this instance
     -> if the close function must be called in destructor
     @return true -> open
   */
-  bool isOpen()const{return (bit_data.isOpen > 0)?true:false;};
+  bool isOpen()const{return (bit_data.isOpen > 0)?true:false;}
 
   //+++++++++++++++++++++++++++++++++++
   // functions for configuring MsgObj_c
   //+++++++++++++++++++++++++++++++++++
-
-  /**
-    checks wether the filter of the given MsgObj_c is the same
+  /** checks wether the filter of the given MsgObj_c is the same
     @param rrefc_other reference to MsgObj_c whoose filter should be compared with local filter
     @return true -> other MsgObj_c has same filter
   */
   inline bool operator==(const MsgObj_c& rrefc_other)const
-    {return (rrefc_other.filter() == c_filter);};
+    {return (rrefc_other.filter() == c_filter);}
 
-  /**
-    set t_filter of this MsgObj_c
+  /** set t_filter of this MsgObj_c
     @param rrefc_val filter to set for this MsgObj_c
   */
-  inline void setFilter(const Ident_c& rrefc_val){c_filter = rrefc_val;};
+  inline void setFilter(const Ident_c& rrefc_val){c_filter = rrefc_val;}
 
-  /**
-    get the t_filter of this MsgObj_c
+  /** get the t_filter of this MsgObj_c
     @return filter of this MsgObj_c instance
   */
-  inline const Ident_c& filter() const {return c_filter;};
+  inline const Ident_c& filter() const {return c_filter;}
 
-	/**
-    get the common filter part of all merged
-		FilterBox instances
+  /** get the common filter part of all merged FilterBox instances
     @return common filter of all FilterBoxes in this MsgObj_c instance
   */
   void commonFilterAfterMerge( Ident_c& rrefc_globalMask ) const;
 
-  /**
-    check if actual filter with specific filter type are equal to
-    given combination
+  /** check if actual filter with specific filter type are equal to given combination
     @param rrefc_filter compared filter setting
   */
   bool equalFilter(const Ident_c& rrefc_filter) const
-    {return (rrefc_filter == c_filter)?true:false;};
+    {return (rrefc_filter == c_filter)?true:false;}
 
-  /**
-    configures the CAN hardware of given Msg Object
-    (uses BIOS function)
-
+  /** configures the CAN hardware of given Msg Object (uses BIOS function)
     possible errors:
         * Err_c::hwConfig used CAN BUS wasn't configured properly
         * Err_c::range given BUS or MsgObj number not in allowed area
@@ -237,11 +213,8 @@ public:
   //+++++++++++++++++++++++++++++++++++++++
   // manage what to do with received t_data
   //+++++++++++++++++++++++++++++++++++++++
-
-  /**
-    insert pointer to FilterBox_c which receive
+  /** insert pointer to FilterBox_c which receive
     CAN messages by this msgObj and reports success with true
-
     possible errors:
         * Err_c::can_overflow to many references to FilterBox_c instances for this MsgObj_c
     @param rrefc_box reference to FilterBox_c which should be inserted as possible processing instance of msg received by this instance
@@ -249,17 +222,15 @@ public:
   */
   bool insertFilterBox(FilterRef rrefc_box);
 
-  /**
-    delete pointer to a FilterBox_c and move following pointers one position forward
-
+  /** delete pointer to a FilterBox_c and move following pointers one position forward
     possible errors:
         * Err_c::elNonexistant to be deleted FilterBox_c reference not registered for this MsgObj_c
     @param rrefc_box reference to FilterBox_c which should be deleted from reference array
     @return true -> given FilterBox_c was deleted from local reference array
   */
   bool deleteFilterBox(FilterRef rrefc_box);
-  /**
-    deliver count of contained FilterBox_c pointers
+
+  /** deliver count of contained FilterBox_c pointers
     @return count of references to FilterBox_c instances
   */
   uint8_t cnt_filterBox()const
@@ -269,19 +240,16 @@ public:
     #else
     return arrPfilterBox.size();
     #endif
-  };
+  }
 
 #if 0
-  /**
-    delivers amount of insertable arrPfilterBox pointers
+  /** delivers amount of insertable arrPfilterBox pointers
     @return amount of references to FilterBox_c which could be inserted into/handled by this MsgObj_c
   */
-  uint8_t getFilterBoxCapacity(){
-    return (FILTER_BOX_PER_MSG_OBJ - cnt_filterBox());
-  };
+  uint8_t getFilterBoxCapacity() { return (FILTER_BOX_PER_MSG_OBJ - cnt_filterBox()); }
 #endif
-  /**
-    start processing a received CAN msg
+
+  /** start processing a received CAN msg
     (called by interrupt function)  (uses BIOS function)
 
       * Err_c::hwConfig MsgObj wans't configured properly
@@ -320,14 +288,17 @@ public:
 	void lock( bool rb_lock = true );
 
 	/** check if this given MsgObj_c is locked */
-	bool isLocked() const { return bit_data.isLocked;};
+	bool isLocked() const { return bit_data.isLocked;}
+
 private:
   // Private attributes
   /** array of pointer to appointed arrPfilterBox instances */
   std::vector<FilterRef> arrPfilterBox;
+
 //  FilterRef arrPfilterBox[FILTER_BOX_PER_MSG_OBJ];
   /** Ident_c filter for this msgObj */
   Ident_c c_filter;
+
   /** msgObjNr */
   struct {
 	  uint16_t ui8_msgObjNr  : 7;
@@ -341,44 +312,39 @@ private:
 private:
 // Private methods
   #if 0
-  /**
-    set counter for appointed arrPfilterBox instances
+  /** set counter for appointed arrPfilterBox instances
     @param rb_val wanted counter for appointed arrPfilterBox instances
   */
-  void setCntFilterBox(uint8_t rb_val)
-    {bit_data.cnt_filterBox = rb_val;};
+  void setCntFilterBox(uint8_t rb_val) { bit_data.cnt_filterBox = rb_val; }
   #endif
-  /**
-    set if a CAN msg object is open for this instance
+
+  /** set if a CAN msg object is open for this instance
     -> if the close function must be called in destructor
     @param rb_state wanted state
   */
-  void setIsOpen(bool rb_state){bit_data.isOpen = (rb_state)?1:0;};
+  void setIsOpen(bool rb_state){bit_data.isOpen = (rb_state)?1:0;}
 
-  /**
-    deliver Bus Number of this MsgObj_c
+  /** deliver Bus Number of this MsgObj_c
     @return bus number
   */
-  uint8_t busNumber()const{return bit_data.busNumber;};
-  /**
-    set Bus Number of this MsgObj_c
+  uint8_t busNumber()const{return bit_data.busNumber;}
+
+  /** set Bus Number of this MsgObj_c
     @param rb_val wanted bus number
   */
-  void setBusNumber(uint8_t rb_val){bit_data.busNumber = (rb_val<8)?rb_val:0;};
+  void setBusNumber(uint8_t rb_val){bit_data.busNumber = (rb_val<8)?rb_val:0;}
 
-  /**
-    deliver msgObj number for BIOS interaction
+  /** deliver msgObj number for BIOS interaction
     @return msgObj number
   */
-  uint8_t msgObjNr()const{return bit_data.ui8_msgObjNr;};
-  /**
-    set msgObj number for BIOS interaction
+  uint8_t msgObjNr()const{return bit_data.ui8_msgObjNr;}
+
+  /** set msgObj number for BIOS interaction
     @param rb_val wanted msgObj number
   */
-  void setMsgObjNr(uint8_t rb_val){bit_data.ui8_msgObjNr = rb_val;};
+  void setMsgObjNr(uint8_t rb_val){bit_data.ui8_msgObjNr = rb_val;}
 
-  /**
-    verify given BUS number and MsgObj number, if they are within allowed
+  /** verify given BUS number and MsgObj number, if they are within allowed
     limits (defined in isoaglib_config.h)
     if called withoutparameter values (default -1) the actual configured are
     checked -> if these are incorrect Err_c::range is set

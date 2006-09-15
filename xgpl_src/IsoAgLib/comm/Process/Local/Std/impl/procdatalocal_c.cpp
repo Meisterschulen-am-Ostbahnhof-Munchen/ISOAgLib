@@ -131,12 +131,6 @@ namespace __IsoAgLib {
   @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
                        (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
 
-  DIN parameter
-  @param rui8_lis optional LIS code of this instance
-  @param rui8_wert optional WERT code of this instance
-  @param rui8_inst optional INST code of this instance
-  @param rui8_zaehlnum optional ZAEHLNUM code of this instance
-
   @param rc_devKey optional DEV_KEY code of Process-Data
   @param rui8_pri PRI code of messages with this process data instance (default 2)
   @param rc_ownerDevKey optional DEV_KEY of the owner
@@ -161,32 +155,17 @@ namespace __IsoAgLib {
   @param rpc_processDataChangeHandler optional pointer to handler class of application
   @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
-ProcDataLocal_c::ProcDataLocal_c(
-#ifdef USE_ISO_11783
-                  const IsoAgLib::ElementDDI_s* ps_elementDDI,
-                  uint16_t rui16_element,
-#endif
-#ifdef USE_DIN_9684
-                  uint8_t rui8_lis, uint8_t rui8_wert, uint8_t rui8_inst, uint8_t rui8_zaehlnum,
-#endif
-                  const DevKey_c& rc_devKey, uint8_t rui8_pri, const DevKey_c& rc_ownerDevKey,
-                  const DevKey_c *rpc_devKey, bool rb_cumulativeValue,
+ProcDataLocal_c::ProcDataLocal_c( const IsoAgLib::ElementDDI_s* ps_elementDDI, uint16_t rui16_element,
+                                  const DevKey_c& rc_devKey, uint8_t rui8_pri, const DevKey_c& rc_ownerDevKey,
+                                  const DevKey_c *rpc_devKey, bool rb_cumulativeValue,
 #ifdef USE_EEPROM_IO
                   uint16_t rui16_eepromAdr,
 #endif
                   IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler,
                   int ri_singletonVecKey
                   )
-    : ProcDataLocalBase_c(
-#ifdef USE_ISO_11783
-                          ps_elementDDI,
-                          rui16_element,
-#endif
-#ifdef USE_DIN_9684
-                          rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
-#endif
-                          rc_devKey, rui8_pri, rc_ownerDevKey, rpc_devKey,
-                          rb_cumulativeValue,
+    : ProcDataLocalBase_c( ps_elementDDI, rui16_element,
+                          rc_devKey, rui8_pri, rc_ownerDevKey, rpc_devKey, rb_cumulativeValue,
 #ifdef USE_EEPROM_IO
                           rui16_eepromAdr,
 #endif
@@ -205,12 +184,6 @@ ProcDataLocal_c::ProcDataLocal_c(
   ISO parameter
   @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
                        (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
-
-  DIN parameter
-  @param rui8_lis optional LIS code of this instance
-  @param rui8_wert optional WERT code of this instance
-  @param rui8_inst optional INST code of this instance
-  @param rui8_zaehlnum optional ZAEHLNUM code of this instance
 
   @param rc_devKey optional DEV_KEY code of Process-Data
   @param rui8_pri PRI code of messages with this process data instance (default 2)
@@ -236,16 +209,9 @@ ProcDataLocal_c::ProcDataLocal_c(
   @param rpc_processDataChangeHandler optional pointer to handler class of application
   @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
-void ProcDataLocal_c::init(
-#ifdef USE_ISO_11783
-                           const IsoAgLib::ElementDDI_s* ps_elementDDI,
-                           uint16_t rui16_element,
-#endif
-#ifdef USE_DIN_9684
-                           uint8_t rui8_lis, uint8_t rui8_wert, uint8_t rui8_inst, uint8_t rui8_zaehlnum,
-#endif
-                           const DevKey_c& rc_devKey, uint8_t rui8_pri, const DevKey_c& rc_ownerDevKey,
-                           const DevKey_c *rpc_devKey, bool rb_cumulativeValue,
+void ProcDataLocal_c::init( const IsoAgLib::ElementDDI_s* ps_elementDDI, uint16_t rui16_element,
+                            const DevKey_c& rc_devKey, uint8_t rui8_pri, const DevKey_c& rc_ownerDevKey,
+                            const DevKey_c *rpc_devKey, bool rb_cumulativeValue,
 #ifdef USE_EEPROM_IO
                            uint16_t rui16_eepromAdr,
 #endif
@@ -253,14 +219,7 @@ void ProcDataLocal_c::init(
                            int ri_singletonVecKey
                            )
 {
-  ProcDataLocalBase_c::init(
-#ifdef USE_ISO_11783
-                            ps_elementDDI,
-                            rui16_element,
-#endif
-#ifdef USE_DIN_9684
-                            rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
-#endif
+  ProcDataLocalBase_c::init( ps_elementDDI, rui16_element,
                             rc_devKey, rui8_pri, rc_ownerDevKey, rpc_devKey, rb_cumulativeValue,
 #ifdef USE_EEPROM_IO
                             rui16_eepromAdr,
@@ -376,14 +335,9 @@ void ProcDataLocal_c::processSetpoint(){
     case GeneralCommand_c::setValue:
     case GeneralCommand_c::requestValue:
       c_setpoint.processMsg();
-#ifdef USE_DIN_9684
-      // call base class processMsg to detect if this is a setpoint cmd
-      // to reset the measurement value
-      ProcDataLocalBase_c::processSetpoint();
-#endif
       break;
     default:
-      // process measurement commands even if this DDI is defined as a setpoint 
+      // process measurement commands even if this DDI is defined as a setpoint
       c_measureprog.processProg();
   }
 }
@@ -393,7 +347,6 @@ void ProcDataLocal_c::processProg(){
   c_measureprog.processProg();
 }
 
-#ifdef USE_ISO_11783
 /**
   allow local client to actively start a measurement program
   (to react on a incoming "start" command for default data logging)
@@ -427,9 +380,6 @@ void ProcDataLocal_c::stopRunningMeasurement(const DevKey_c& refc_devKey)
 {
   c_measureprog.stopRunningMeasurement(refc_devKey);
 }
-
-
-#endif
 
 
 } // end of namespace __IsoAgLib

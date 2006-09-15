@@ -137,6 +137,8 @@ typedef std::vector<SaClaimHandler_c*>::const_iterator SaClaimHandlerVectorConst
 
 class ISOMonitor_c;
 typedef SINGLETON_DERIVED(ISOMonitor_c, ElementBase_c) SingletonISOMonitor_c;
+// NEU SINGLETON TYPEDEF, wenn ISOMonitor auch IdentItem_c liste verwalten soll
+// typedef SINGLETON_DERIVED1(ISOMonitor_c, ElementBase_c, IdentItem_c, DevKey_c) SingletonISOMonitor_c;
 /**
   this object manages a monitor list of all
   ISO members including inserting and administration of local own members.

@@ -128,15 +128,19 @@ private:
   : ProcessElementBase_c( rpc_processData )
   { init( rpc_processData );};
   virtual ~ManageMeasureProgLocal_c();
+
   /**
     initialise this ManageMeasureProgLocal_c instance to a well defined initial state
     @param rpc_processData optional pointer to containing ProcessData instance
   */
   void init( ProcDataBase_c *const rpc_processData = NULL );
+
   /** copy constructor */
   ManageMeasureProgLocal_c( const ManageMeasureProgLocal_c& rrefc_src );
+
   /** assignment operator */
   const ManageMeasureProgLocal_c& operator=( const ManageMeasureProgLocal_c& rrefc_src );
+
   /**
     perform periodic actions
     delete all running measure programs of members which are >3sec inactive;
@@ -144,8 +148,10 @@ private:
     @return true -> all planned executions performed
   */
   bool timeEvent( void );
+
   /** process a measure prog message for local process data */
   void processProg();
+
   /**
     check if specific measureprog exist
     @param rui8_pri PRI code of searched measure program
@@ -153,7 +159,7 @@ private:
     @return true -> found item
   */
   bool existProg(uint8_t rui8_pri, const DevKey_c& rc_devKey)
-      {return updateProgCache(rui8_pri, rc_devKey, false);};
+      {return updateProgCache(rui8_pri, rc_devKey, false);}
 
   /**
     search for suiting measureprog, if not found AND if rb_doCreate == true
@@ -166,18 +172,21 @@ private:
     @param rb_doCreated true -> create suitable measure program if not found
   */
   MeasureProgLocal_c& prog(uint8_t rui8_pri, const DevKey_c& rc_devKey, bool rb_doCreate);
+
   /** initialise value for all registered Measure Progs */
   void initGlobalVal( int32_t ri32_val );
+
   /** set value for all registered Measure Progs */
   void setGlobalVal( int32_t ri32_val );
+
   #ifdef USE_FLOAT_DATA_TYPE
   /** initialise value for all registered Measure Progs */
   void initGlobalVal( float rf_val );
+
   /** set value for all registered Measure Progs */
   void setGlobalVal( float rf_val );
   #endif // USE_FLOAT_DATA_TYPE
 
-#ifdef USE_ISO_11783
   /**
     allow local client to actively start a measurement program
     (to react on a incoming "start" command for default data logging)
@@ -195,7 +204,7 @@ private:
     @param refc_devKey
   */
   void stopRunningMeasurement(const DevKey_c& refc_devKey);
-#endif
+
 
  protected:
   friend class ProcDataLocal_c;

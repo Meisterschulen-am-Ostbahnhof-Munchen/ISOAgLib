@@ -91,16 +91,7 @@
 #include <IsoAgLib/util/impl/singleton.h>
 //#include <IsoAgLib/driver/can/impl/ident_c.h>
 
-#ifdef USE_DIN_GPS
-  #include "gps_c.h"
-#endif
-#ifdef USE_DIN_9684
-  #include <IsoAgLib/comm/SystemMgmt/DIN9684/impl/dinitem_c.h>
-#endif
-
-#ifdef USE_ISO_11783
-  #include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.h>
-#endif
+#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.h>
 
 #ifdef DEBUG
   #include <supplementary_driver/driver/rs232/irs232io_c.h>
@@ -141,7 +132,7 @@ namespace __IsoAgLib {
   };
 #endif
 
-#if defined(USE_ISO_11783) && defined(USE_PROC_DATA_DESCRIPTION_POOL)
+#if defined(USE_PROC_DATA_DESCRIPTION_POOL)
   DevPropertyHandler_c& Process_c::getDevPropertyHandlerInstance( void )
   {
     return c_devPropertyHandler;
@@ -155,7 +146,6 @@ void Process_c::init()
   // first register in Scheduler_c
   getSchedulerInstance4Comm().registerClient( this );
   i32_lastFilterBoxTime = 0;
-  #if defined(USE_ISO_11783)
   b_needCallOfCheckCreateRemoteReceiveFilter = false;
   __IsoAgLib::getIsoMonitorInstance4Comm().registerSaClaimHandler( this );
     #ifdef USE_PROC_DATA_DESCRIPTION_POOL
@@ -164,7 +154,6 @@ void Process_c::init()
   pc_tcDevKey = NULL;
   ui8_lastTcStatus = 0;
   pc_processWsmTaskMsgHandler = NULL;
-  #endif
   c_data.setSingletonKey( getSingletonVecKey() );
 
   // receive PROCESS_DATA_PGN messages which are addressed to GLOBAL
@@ -257,7 +246,6 @@ bool Process_c::timeEvent( void ){
   if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
   int32_t i32_time = Scheduler_c::getLastTimeEventTrigger();
 
-#ifdef USE_ISO_11783
   if ( l_filtersToDeleteISO.size() > 0)
   {
     for (std::slist<uint32_t>::const_iterator iter = l_filtersToDeleteISO.begin();
@@ -275,24 +263,8 @@ bool Process_c::timeEvent( void ){
     b_needCallOfCheckCreateRemoteReceiveFilter = false;
     checkCreateRemoteReceiveFilter();
   }
-#endif
 
-#ifdef USE_DIN_9684
-  if ( l_filtersToDeleteDIN.size() > 0)
-  {
-    for (std::slist<uint32_t>::const_iterator iter = l_filtersToDeleteDIN.begin();
-         iter != l_filtersToDeleteDIN.end();
-         iter++)
-    {
-      if (getCanInstance4Comm().existFilter( *this, 0x70F, *iter))
-        // corresponding FilterBox_c exist -> delete it
-        getCanInstance4Comm().deleteFilter( *this, 0x70F, *iter);
-    }
-    l_filtersToDeleteDIN.clear();
-  }
-#endif
-
-#if defined(USE_ISO_11783) && defined(USE_PROC_DATA_DESCRIPTION_POOL)
+#if defined(USE_PROC_DATA_DESCRIPTION_POOL)
   //call DevPropertyHandler_c timeEvent
   c_devPropertyHandler.timeEvent();
 #endif
@@ -350,15 +322,6 @@ bool Process_c::timeEvent( void ){
   // filters for targeted or partner process data should be created
   if ((i32_time - i32_lastFilterBoxTime) > 1000)  {
     i32_lastFilterBoxTime = i32_time;
-
-    // create local Base-Proc Filter in case DIN member is active
-    #ifdef USE_DIN_9684
-    if ( getSystemMgmtInstance4Comm().existActiveLocalDinMember() )
-    { // filter for base process data
-    if (!getCanInstance4Comm().existFilter( *this, (uint16_t)(0x7C << 4),(uint16_t)(0x18 << 4) ))
-      getCanInstance4Comm().insertFilter( *this, (uint16_t)(0x7C << 4),(uint16_t)(0x18 << 4), true);
-    }
-    #endif
   }
   // the other list elements doesn't need periodic actions
   return b_result;
@@ -375,7 +338,7 @@ bool Process_c::timeEvent( void ){
 */
 bool Process_c::processMsg(){
 
-#if defined(USE_ISO_11783) && defined(USE_PROC_DATA_DESCRIPTION_POOL)
+#if defined(USE_PROC_DATA_DESCRIPTION_POOL)
 // first check if this is a device property message -> then DevPropertyHandler_c should process this msg
 if ( ( c_data.identType() == Ident_c::ExtendedIdent ) && (
      ( ( c_data[0] & 0xF ) < 2 ) || ( c_data[0] == 0xD ) || ( c_data[0] > 0xF ) ) )
@@ -384,7 +347,6 @@ if ( ( c_data.identType() == Ident_c::ExtendedIdent ) && (
 }
 #endif
 
-#ifdef USE_ISO_11783
   // process TC status message (for local instances)
   if ( ( c_data.identType() == Ident_c::ExtendedIdent ) && (c_data[0] == 0xE))
   {
@@ -405,154 +367,29 @@ if ( ( c_data.identType() == Ident_c::ExtendedIdent ) && (
     processWorkingSetTaskMsg(c_data.dataRawCmdLong(), data().memberSend().devKey());
     return TRUE;
   }
-#endif
 
-
-#if defined(USE_DIN_GPS)
-  // check if this is a message from a service
-  if (
-      ( (data().pri() == 3) && (data().send() == 3) && (data().lis() == 0) && (data().devClass() == 0) && (data().empf() == 0xF)  )
-    ||( (data().pri() == 5) && (data().lis() == 3) && (data().wert() == 5) && (data().devClass() <= 1) )
-     )
-  { // messages from a GPS service are processed by GPS_c::processMsg
-    return getGpsInstance4Comm().processMsg();
-  }
-#endif
-
-#ifdef USE_DIN_9684
-  uint8_t ui8_devClassInstData = 0xFF;
-#endif
   bool b_result = false;
 
-  #if defined(DEBUG) && defined(USE_DIN_9684)
-  if ( ( data().wert() == 0 ) && ( data().inst() == 0 ) ) {
-    IsoAgLib::getIrs232Instance()
-
-        << "Process_c::processMsg() mit Alarm ACK" << INTERNAL_DEBUG_DEVICE_ENDL;
-  }
-  #endif
-  #ifdef USE_DIN_9684
-  // try to aquire exact DEV_KEY code for the suitable Process Data Item
-  // -> check for DEVCLASSINST of the owner of the handled Process Data
-  if ((data().pri() == 0x2) || (data().pri() == 0x5))
-  { // target and partner process data
-    bool b_sendOwner = false,
-         b_empfOwner = false;
-    // first check if both SEND and EMPF are valid according Monitor-List
-    if (!(data().existMemberSend())
-      ||!(data().existMemberEmpf())
-       )
-    { // msg not valid as one of SEND or EMPF isn't registered with claimed address
-      // not really an error - just this received messages is of no interest
-      // getLbsErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::LbsProcess );
-      return false; // exit function
-    }
-    if (data().devClass() == ((data().memberSend()).devKey().getDevClass()) )
-    { // the devClass of the sender is equivalent to the devClass of the data
-      b_sendOwner = true;
-    }
-    if (data().devClass() == ((data().memberEmpf()).devKey().getDevClass()) )
-    { // the devClass of the receiver is equivalent to the devClass of the data
-      b_empfOwner = true;
-    }
-    if (b_sendOwner == b_empfOwner)
-    { // both could be or could be not the owner of the data -> use dev class inst of the msg
-      if (!getSystemMgmtInstance4Comm().existMemberDevKey( data().devKey() ) )
-      { // no member with msg devClass/pos exist -> ignore pos for search
-        ui8_devClassInstData = 0XFF;
-      }
-      else
-      {
-        ui8_devClassInstData = data().devClassInst();
-      }
-    }
-    else
-    { // only one could be the owner -> use its pos
-      ui8_devClassInstData = (b_sendOwner)? ((data().memberSend()).devKey().getDevClassInst())
-                                 : ((data().memberEmpf()).devKey().getDevClassInst());
-    }
-  }// if target msg
-  else if (data().identType() == Ident_c::StandardIdent)
-  { // for base msg the first try must be the devClass/pos of msg
-    // first check if SEND is valid according Monitor-List
-    if (!(data().existMemberSend()))
-    { // msg not valid as SEND isn't registered with claimed address
-      // not really an error - just this received messages is of no interest
-      // getLbsErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::LbsProcess );
-      return false; // exit function
-    }
-    b_result = true;
-    DINMonitor_c& c_din_monitor = getDinMonitorInstance4Comm();
-    // - only if no member with this combination exist, try pos of sender
-    if (!c_din_monitor.existDinMemberDevKey( data().devKey() ) )
-    { // no member with get/pos of msg exist -> try devClass/pos of sender, if sender.devClass is equiv to msg.devClass
-      if (data().devClass() == (c_din_monitor.dinMemberNr(data().send()).devKey().getDevClass()) )
-      { // the devClass of the sender is equivalent to the devClass of the data
-        ui8_devClassInstData = ((data().memberSend()).devKey().getDevClassInst());
-      }
-      else
-      { // ignore pos for searching process data item
-        ui8_devClassInstData = 0xFF;
-      }
-    } // if devClass/pos of msg does not exist as member
-    else
-    { // use devClass/pos of msg
-      ui8_devClassInstData = data().devClassInst();
-    }
-  }
-  #endif
-
   // decide which devClass to use for matching
-  // ISO and DIN message: use devClass from corresponding monitor item for checks
+  // ISO message: use devClass from corresponding monitor item for checks
   const uint8_t ui8_devClassReceiver = data().memberEmpf().devKey().getDevClass();
   // ISO only message: check for sender devClass (only in remote)
   const uint8_t ui8_devClassSender = data().memberSend().devKey().getDevClass();
 
   // now ui8_devClassInstData is the best guess for searching the appropriate prcess data item
   // check first for local Process Data
-  if (existProcDataLocal(
-#ifdef USE_ISO_11783
-                         data().DDI(), data().element(),
-#endif
-#ifdef USE_DIN_9684
-                         data().devClass(), ui8_devClassInstData, data().lis(), data().wert(), data().inst(), data().zaehlnum(),
-#endif
-                         ui8_devClassReceiver)
+  if (existProcDataLocal( data().DDI(), data().element(), ui8_devClassReceiver)
      )
   { // there exists an appropriate process data item -> let the item process the msg
-    procDataLocal(
-#ifdef USE_ISO_11783
-                  data().DDI(), data().element(),
-#endif
-#ifdef USE_DIN_9684
-                  data().devClass(), ui8_devClassInstData, data().lis(), data().wert(), data().inst(), data().zaehlnum(),
-#endif
-                  ui8_devClassReceiver
-                  ).processMsg();
+    procDataLocal( data().DDI(), data().element(), ui8_devClassReceiver ).processMsg();
     b_result = true;
   }
 
   // now check for remote Process Data
-  if (existProcDataRemote(
-#ifdef USE_ISO_11783
-                          data().DDI(), data().element(), ui8_devClassSender,
-#endif
-#ifdef USE_DIN_9684
-                          data().devClass(), ui8_devClassInstData, data().lis(), data().wert(), data().inst(), data().zaehlnum(),
-#endif
-                          ui8_devClassReceiver
-                          )
+  if (existProcDataRemote( data().DDI(), data().element(), ui8_devClassSender, ui8_devClassReceiver )
       )
   { // there exists an appropriate process data item -> let the item process the msg
-    procDataRemote(
-#ifdef USE_ISO_11783
-                   data().DDI(), data().element(), ui8_devClassSender,
-#endif
-#ifdef USE_DIN_9684
-                   data().devClass(), ui8_devClassInstData, data().lis(), data().wert(), data().inst(), data().zaehlnum(),
-#endif
-                   ui8_devClassReceiver
-                   ).processMsg();
+    procDataRemote( data().DDI(), data().element(), ui8_devClassSender, ui8_devClassReceiver ).processMsg();
     b_result = true;
   }
 
@@ -565,41 +402,12 @@ if ( ( c_data.identType() == Ident_c::ExtendedIdent ) && (
   @param rui16_DDI
   @param rui16_element
 
-  DIN parameter
-  @param rui8_dataDevClass DEVCLASS of process data as specified in DIN process data message
-  @param rui8_devClassInst optional device class inst code of searched local Process Data instance
-                (only important if more DEVCLASS type members are active)
-  @param rui8_lis LIS code of searched local Process Data instance
-  @param rui8_wert WERT code of searched local Process Data instance
-  @param rui8_inst INST code of searched local Process Data instance
-  @param rui8_zaehlnum ZAEHLNUM  code of searched local Process Data instance
-
   @param rui8_devClassReceiver DEVCLASS code of searched local Process Data instance
   @return true -> suitable instance found
 */
-bool Process_c::existProcDataLocal(
-#ifdef USE_ISO_11783
-                                   uint16_t rui16_DDI,
-                                   uint16_t rui16_element,
-#endif
-#ifdef USE_DIN_9684
-                                   uint8_t rui8_dataDevClass,
-                                   uint8_t rui8_devClassInst,
-                                   uint8_t rui8_lis,
-                                   uint8_t rui8_wert,
-                                   uint8_t rui8_inst,
-                                   uint8_t rui8_zaehlnum,
-#endif
-                                   uint8_t rui8_devClassReceiver)
+bool Process_c::existProcDataLocal( uint16_t rui16_DDI, uint16_t rui16_element, uint8_t rui8_devClassReceiver)
 {
-  return updateLocalCache(
-#ifdef USE_ISO_11783
-                          rui16_DDI, rui16_element,
-#endif
-#ifdef USE_DIN_9684
-                          rui8_dataDevClass, rui8_devClassInst, rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
-#endif
-                          rui8_devClassReceiver);
+  return updateLocalCache( rui16_DDI, rui16_element, rui8_devClassReceiver);
 }
 
   /**
@@ -608,43 +416,15 @@ bool Process_c::existProcDataLocal(
     @param rui16_DDI
     @param rui16_element
 
-    DIN parameter
-    @param rui8_dataDevClass DEVCLASS of process data as specified in DIN process data message
-    @param rui8_devClassInst optional device class inst code of searched local Process Data instance
-                  (only important if more DEVCLASS type members are active)
-    @param rui8_lis LIS code of searched local Process Data instance
-    @param rui8_wert WERT code of searched local Process Data instance
-    @param rui8_inst INST code of searched local Process Data instance
-    @param rui8_zaehlnum ZAEHLNUM  code of searched local Process Data instance
-
     common parameter
+    @param rui8_devClassSender devClass of the sender (used for check against ownerDevKey().getDevClass())
     @param rui8_devClassReceiver DEVCLASS code of searched local Process Data instance
     @return true -> suitable instance found
   */
-bool Process_c::existProcDataRemote(
-#ifdef USE_ISO_11783
-                           uint16_t rui16_DDI,
-                           uint16_t rui16_element,
-                           uint8_t rui8_devClassSender,
-#endif
-#ifdef USE_DIN_9684
-                           uint8_t rui8_dataDevClass,
-                           uint8_t rui8_devClassInst,
-                           uint8_t rui8_lis,
-                           uint8_t rui8_wert,
-                           uint8_t rui8_inst,
-                           uint8_t rui8_zaehlnum,
-#endif
-                           uint8_t rui8_devClassReceiver)
+bool Process_c::existProcDataRemote( uint16_t rui16_DDI, uint16_t rui16_element,
+                           uint8_t rui8_devClassSender, uint8_t rui8_devClassReceiver)
 {
- return updateRemoteCache(
-#ifdef USE_ISO_11783
-                          rui16_DDI, rui16_element, rui8_devClassSender,
-#endif
-#ifdef USE_DIN_9684
-                          rui8_dataDevClass, rui8_devClassInst, rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
-#endif
-                          rui8_devClassReceiver);
+ return updateRemoteCache( rui16_DDI, rui16_element, rui8_devClassSender, rui8_devClassReceiver);
 
 }
 
@@ -659,41 +439,12 @@ bool Process_c::existProcDataRemote(
   @param rui16_DDI
   @param rui16_element
 
-  DIN parameter
-  @param rui8_dataDevClass DEVCLASS of process data as specified in DIN process data message
-  @param rui8_devClassInst optional device class inst code of searched local Process Data instance
-                (only important if more DEVCLASS type members are active)
-  @param rui8_lis LIS code of searched local Process Data instance
-  @param rui8_wert WERT code of searched local Process Data instance
-  @param rui8_inst INST code of searched local Process Data instance
-  @param rui8_zaehlnum ZAEHLNUM  code of searched local Process Data instance
-
   @param rui8_devClassReceiver DEVCLASS code of searched local Process Data instance
   @return reference to searched/created ProcDataLocal_c instance
 */
-ProcDataLocalBase_c& Process_c::procDataLocal(
-#ifdef USE_ISO_11783
-                                     uint16_t rui16_DDI,
-                                     uint16_t rui16_element,
-#endif
-#ifdef USE_DIN_9684
-                                     uint8_t rui8_dataDevClass,
-                                     uint8_t rui8_devClassInst,
-                                     uint8_t rui8_lis,
-                                     uint8_t rui8_wert,
-                                     uint8_t rui8_inst,
-                                     uint8_t rui8_zaehlnum,
-#endif
-                                     uint8_t rui8_devClassReceiver)
+ProcDataLocalBase_c& Process_c::procDataLocal( uint16_t rui16_DDI, uint16_t rui16_element, uint8_t rui8_devClassReceiver)
 {
-  bool b_found = updateLocalCache(
-#ifdef USE_ISO_11783
-                                  rui16_DDI, rui16_element,
-#endif
-#ifdef USE_DIN_9684
-                                  rui8_dataDevClass, rui8_devClassInst, rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
-#endif
-                                  rui8_devClassReceiver);
+  bool b_found = updateLocalCache( rui16_DDI, rui16_element, rui8_devClassReceiver);
   if (!b_found)
   { // not found and no creation wanted -> error
     getLbsErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::LbsProcess );
@@ -712,44 +463,16 @@ ProcDataLocalBase_c& Process_c::procDataLocal(
     @param rui16_DDI
     @param rui16_element
 
-    DIN parameter
-    @param rui8_dataDevClass DEVCLASS of process data as specified in DIN process data message
-    @param rui8_devClassInst optional device class inst code of searched local Process Data instance
-                  (only important if more DEVCLASS type members are active)
-    @param rui8_lis LIS code of searched local Process Data instance
-    @param rui8_wert WERT code of searched local10,64 Process Data instance
-    @param rui8_inst INST code of searched local Process Data instance
-    @param rui8_zaehlnum ZAEHLNUM  code of searched local Process Data instance
-
     common parameter
+    @param rui8_devClassSender devClass of the sender (used for check against ownerDevKey().getDevClass())
     @param rui8_devClassReceiver DEVCLASS code of searched local Process Data instance
     @return reference to searched/created ProcDataRemoteBase_c instance
     @exception badAlloc
   */
-ProcDataRemoteBase_c& Process_c::procDataRemote(
-#ifdef USE_ISO_11783
-                                                uint16_t rui16_DDI,
-                                                uint16_t rui16_element,
-                                                uint8_t rui8_devClassSender,
-#endif
-#ifdef USE_DIN_9684
-                                                uint8_t rui8_dataDevClass,
-                                                uint8_t rui8_devClassInst,
-                                                uint8_t rui8_lis,
-                                                uint8_t rui8_wert,
-                                                uint8_t rui8_inst,
-                                                uint8_t rui8_zaehlnum,
-#endif
-                                                uint8_t rui8_devClassReceiver)
+ProcDataRemoteBase_c& Process_c::procDataRemote( uint16_t rui16_DDI, uint16_t rui16_element,
+                                                uint8_t rui8_devClassSender, uint8_t rui8_devClassReceiver)
 {
-  bool b_found = updateRemoteCache(
-#ifdef USE_ISO_11783
-                                   rui16_DDI, rui16_element, rui8_devClassSender,
-#endif
-#ifdef USE_DIN_9684
-                                   rui8_dataDevClass, rui8_devClassInst, rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
-#endif
-                                   rui8_devClassReceiver);
+  bool b_found = updateRemoteCache(rui16_DDI, rui16_element, rui8_devClassSender, rui8_devClassReceiver);
 
   if (!b_found)
   { // not found and no creation wanted -> error
@@ -758,6 +481,7 @@ ProcDataRemoteBase_c& Process_c::procDataRemote(
   return **pc_searchCacheC2;
 }
 
+
 /**
   delivers count of local process data entries with similar ident
   (which differs only in _instance_ of owner)
@@ -765,28 +489,11 @@ ProcDataRemoteBase_c& Process_c::procDataRemote(
   @param rui16_DDI
   @param rui16_element
 
-  DIN parameter
-  @param rui8_lis LIS code of searched local Process Data instance
-  @param rui8_wert WERT code of searched local Process Data instance
-  @param rui8_inst INST code of searched local Process Data instance
-  @param rui8_zaehlnum ZAEHLNUM  code of searched local Process Data instance
-
   common parameter
   @param rui8_devClass DEVCLASS code of searched local Process Data instance
   @return count of similar local process data entries
 */
-uint8_t Process_c::procDataLocalCnt(
-#ifdef USE_ISO_11783
-                                    uint16_t rui16_DDI,
-                                    uint16_t rui16_element,
-#endif
-#ifdef USE_DIN_9684
-                                    uint8_t rui8_lis,
-                                    uint8_t rui8_wert,
-                                    uint8_t rui8_inst,
-                                    uint8_t rui8_zaehlnum,
-#endif
-                                    uint8_t rui8_devClass)
+uint8_t Process_c::procDataLocalCnt( uint16_t rui16_DDI, uint16_t rui16_element, uint8_t rui8_devClass)
 {
   uint8_t ui8_cnt=0;
 
@@ -794,32 +501,13 @@ uint8_t Process_c::procDataLocalCnt(
        ( pc_iter != c_arrClientC1.end() );
        pc_iter++ )
   { // search for all local items which match the searched identity
-
-#if defined(USE_ISO_11783) && defined(USE_DIN_9684)
-    if (data().identType() == Ident_c::StandardIdent) {
-      // DIN
-      if ((*pc_iter)->matchDIN(rui8_devClass, rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum, 0xFF))
-        ui8_cnt++;
-    } else {
-      // ISO
-      // don't check sender devClass => 0xFF
-      if ((*pc_iter)->matchISO(rui8_devClass, 0xFF, rui16_DDI, rui16_element))
-        ui8_cnt++;
-    }
-#else
-  #ifdef USE_ISO_11783
     // don't check sender devClass => 0xFF
     if ((*pc_iter)->matchISO(rui8_devClass, 0xFF, rui16_DDI, rui16_element))
       ui8_cnt++;
-  #endif
-  #ifdef USE_DIN_9684
-    if ((*pc_iter)->matchDIN(rui8_devClass, rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum, 0xFF))
-      ui8_cnt++;
-  #endif
-#endif
   }
   return ui8_cnt;
 }
+
 
 /**
   delivers count of remote process data entries with similar ident
@@ -829,62 +517,25 @@ uint8_t Process_c::procDataLocalCnt(
   @param rui16_element
   @param rui8_devClassSender devClass of the sender (used for check against ownerDevKey().getDevClass())
 
-  DIN parameter
-  @param rui8_lis LIS code of searched local Process Data instance
-  @param rui8_wert WERT code of searched local Process Data instance
-  @param rui8_inst INST code of searched local Process Data instance
-  @param rui8_zaehlnum ZAEHLNUM  code of searched local Process Data instance
-
   common parameter
   @param rui8_devClass DEVCLASS code of searched local Process Data instance
   @return count of similar remote process data entries
 */
-uint8_t Process_c::procDataRemoteCnt(
-#ifdef USE_ISO_11783
-                                     uint16_t rui16_DDI,
-                                     uint16_t rui16_element,
-                                     uint8_t rui8_devClassSender,
-#endif
-#ifdef USE_DIN_9684
-                                     uint8_t rui8_lis,
-                                     uint8_t rui8_wert,
-                                     uint8_t rui8_inst,
-                                     uint8_t rui8_zaehlnum,
-#endif
-                                     uint8_t rui8_devClass)
+uint8_t Process_c::procDataRemoteCnt( uint16_t rui16_DDI, uint16_t rui16_element,
+                                     uint8_t rui8_devClassSender, uint8_t rui8_devClass)
 {
-
-
   uint8_t ui8_cnt=0;
 
   for ( cacheTypeC2_t pc_iter = c_arrClientC2.begin();
        ( pc_iter != c_arrClientC2.end() );
        pc_iter++ )
   { // search for all local items which match the searched identity
-#if defined(USE_ISO_11783) && defined(USE_DIN_9684)
-    if (data().identType() == Ident_c::StandardIdent) {
-      // DIN
-      if ((*pc_iter)->matchDIN(rui8_devClass, rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum, 0xFF))
-        ui8_cnt++;
-    } else {
-      // ISO
-      if ((*pc_iter)->matchISO(rui8_devClass, rui8_devClassSender, rui16_DDI, rui16_element))
-        ui8_cnt++;
-    }
-#else
-  #ifdef USE_ISO_11783
     if ((*pc_iter)->matchISO(rui8_devClass, rui8_devClassSender, rui16_DDI, rui16_element))
       ui8_cnt++;
-  #endif
-  #ifdef USE_DIN_9684
-    if ((*pc_iter)->matchDIN(rui8_devClass, rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum, 0xFF))
-      ui8_cnt++;
-  #endif
-#endif
-
   }
   return ui8_cnt;
 }
+
 
 /**
   update the cache with search for according ProcDataLocal_c item
@@ -892,31 +543,9 @@ uint8_t Process_c::procDataRemoteCnt(
   @param rui16_DDI
   @param rui16_element
 
-  DIN parameter
-  @param rui8_dataDevClass DEVCLASS of process data as specified in DIN process data message
-  @param rui8_devClassInst optional device class inst code of searched local Process Data instance
-                (only important if more DEVCLASS type members are active)
-  @param rui8_lis LIS code of searched local Process Data instance
-  @param rui8_wert WERT code of searched local Process Data instance
-  @param rui8_inst INST code of searched local Process Data instance
-  @param rui8_zaehlnum ZAEHLNUM  code of searched local Process Data instance
-
   @param rui8_devClassReceiver DEVCLASS code of created local Process Data instance
 */
-bool Process_c::updateLocalCache(
-#ifdef USE_ISO_11783
-                                 uint16_t rui16_DDI,
-                                 uint16_t rui16_element,
-#endif
-#ifdef USE_DIN_9684
-                                 uint8_t rui8_dataDevClass,
-                                 uint8_t rui8_devClassInst,
-                                 uint8_t rui8_lis,
-                                 uint8_t rui8_wert,
-                                 uint8_t rui8_inst,
-                                 uint8_t rui8_zaehlnum,
-#endif
-                                 uint8_t rui8_devClassReceiver)
+bool Process_c::updateLocalCache( uint16_t rui16_DDI, uint16_t rui16_element, uint8_t rui8_devClassReceiver)
 {
   bool b_foundLazy = false;
 
@@ -924,25 +553,8 @@ bool Process_c::updateLocalCache(
   {
     if ( pc_searchCacheC1 != c_arrClientC1.end() )
     {
-
-#if defined(USE_ISO_11783) && defined(USE_DIN_9684)
-      if (data().identType() == Ident_c::StandardIdent) {
-        // DIN
-        if ((*pc_searchCacheC1)->matchDIN(rui8_dataDevClass, rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum, rui8_devClassInst)) return true;
-      } else {
-        // ISO
-        // don't check sender devClass => 0xFF
-        if ((*pc_searchCacheC1)->matchISO(rui8_devClassReceiver, 0xFF, rui16_DDI, rui16_element)) return true;
-      }
-#else
-  #ifdef USE_ISO_11783
       // don't check sender devClass => 0xFF
       if ((*pc_searchCacheC1)->matchISO(rui8_devClassReceiver, 0xFF, rui16_DDI, rui16_element)) return true;
-  #endif
-  #ifdef USE_DIN_9684
-      if ((*pc_searchCacheC1)->matchDIN(rui8_dataDevClass, rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum, rui8_devClassInst)) return true;
-  #endif
-#endif
     }
     //old cache doesn't match any more -> search new
     for ( cacheTypeC1_t pc_iter = c_arrClientC1.begin();
@@ -952,49 +564,15 @@ bool Process_c::updateLocalCache(
 
       bool b_matched = false;
 
-#if defined(USE_ISO_11783) && defined(USE_DIN_9684)
-      if (data().identType() == Ident_c::StandardIdent) {
-        // DIN
-        if ((*pc_iter)->matchDIN(rui8_dataDevClass, rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum, 0xFF))
-          b_matched = true;
-      } else {
-        // ISO
-        // don't check sender devClass => 0xFF
-        if ((*pc_iter)->matchISO(rui8_devClassReceiver, 0xFF, rui16_DDI, rui16_element))
-          b_matched = true;
-      }
-#else
-  #ifdef USE_ISO_11783
       // don't check sender devClass => 0xFF
       if ((*pc_iter)->matchISO(rui8_devClassReceiver, 0xFF, rui16_DDI, rui16_element))
         b_matched = true;
-  #endif
-  #ifdef USE_DIN_9684
-      if ((*pc_iter)->matchDIN(rui8_dataDevClass, rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum, 0xFF))
-        b_matched = true;
-  #endif
-#endif
 
       if (b_matched)
       { // matches at least lazy
-        #ifdef USE_DIN_9684
-        if ((*pc_iter)->devClassInst() == rui8_devClassInst)
-        { //exact match
-          b_foundLazy = true;
-          pc_searchCacheC1 = pc_iter;
-          // stop search
-          break;
-        } // exact match
-        else if (b_foundLazy == false)
-        { // no other lazy match before this was found
-          b_foundLazy = true;
-          pc_searchCacheC1 = pc_iter;
-        } //first lazy match for this search
-        #else
         // for ISO - no exact compare including _instance_ is possible, as this is not transfered in data message
         b_foundLazy = true;
         pc_searchCacheC1 = pc_iter;
-        #endif
       } // check lazy match
     }// for
   }
@@ -1002,62 +580,26 @@ bool Process_c::updateLocalCache(
   return b_foundLazy;
 }
 
+
   /**
     update the cache with search for according ProcDataRemoteBase_c item
     ISO parameter
     @param rui16_DDI
     @param rui16_element
 
-    DIN parameter
-    @param rui8_dataDevClass DEVCLASS of process data as specified in DIN process data message
-    @param rui8_devClassInst optional device class inst code of searched local Process Data instance
-                  (only important if more DEVCLASS type members are active)
-    @param rui8_lis LIS code of searched local Process Data instance
-    @param rui8_wert WERT code of searched local Process Data instance
-    @param rui8_inst INST code of searched local Process Data instance
-    @param rui8_zaehlnum ZAEHLNUM  code of searched local Process Data instance
-
     common parameter
+    @param rui8_devClassSender devClass of the sender (used for check against ownerDevKey().getDevClass())
     @param rui8_devClassReceiver DEVCLASS code of searched local Process Data instance
   */
-bool Process_c::updateRemoteCache(
-#ifdef USE_ISO_11783
-                         uint16_t rui16_DDI,
-                         uint16_t rui16_element,
-                         uint8_t rui8_devClassSender,
-#endif
-#ifdef USE_DIN_9684
-                         uint8_t rui8_dataDevClass,
-                         uint8_t rui8_devClassInst,
-                         uint8_t rui8_lis,
-                         uint8_t rui8_wert,
-                         uint8_t rui8_inst,
-                         uint8_t rui8_zaehlnum,
-#endif
-                         uint8_t rui8_devClassReceiver)
+bool Process_c::updateRemoteCache( uint16_t rui16_DDI, uint16_t rui16_element,
+                                   uint8_t rui8_devClassSender, uint8_t rui8_devClassReceiver)
 {
   bool b_foundLazy = false;
   if (!c_arrClientC2.empty())
   {
     if ( pc_searchCacheC2 != c_arrClientC2.end() )
     {
-#if defined(USE_ISO_11783) && defined(USE_DIN_9684)
-      if (data().identType() == Ident_c::StandardIdent) {
-        // DIN
-        if ((*pc_searchCacheC2)->matchDIN(rui8_dataDevClass, rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum, rui8_devClassInst)) return true;
-      } else {
-        // ISO
-        if ((*pc_searchCacheC2)->matchISO(rui8_devClassReceiver, rui8_devClassSender, rui16_DDI, rui16_element)) return true;
-      }
-#else
-  #ifdef USE_ISO_11783
       if ((*pc_searchCacheC2)->matchISO(rui8_devClassReceiver, rui8_devClassSender, rui16_DDI, rui16_element)) return true;
-  #endif
-  #ifdef USE_DIN_9684
-      if ((*pc_searchCacheC2)->matchDIN(rui8_dataDevClass, rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum, rui8_devClassInst)) return true;
-  #endif
-#endif
-
     }
     //old cache doesn't match any more -> search new
     for ( cacheTypeC2_t pc_iter = c_arrClientC2.begin(); //list of remote process data
@@ -1066,53 +608,20 @@ bool Process_c::updateRemoteCache(
     { // check for lazy match with INSTANCE == 0xFF (==joker)
       bool b_matched = false;
 
-#if defined(USE_ISO_11783) && defined(USE_DIN_9684)
-      if (data().identType() == Ident_c::StandardIdent) {
-        // DIN
-        if ((*pc_iter)->matchDIN(rui8_dataDevClass, rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum, 0xFF))
-          b_matched = true;
-      } else {
-        // ISO
-        if ((*pc_iter)->matchISO(rui8_devClassReceiver, rui8_devClassSender, rui16_DDI, rui16_element))
-          b_matched = true;
-      }
-#else
-  #ifdef USE_ISO_11783
       if ((*pc_iter)->matchISO(rui8_devClassReceiver, rui8_devClassSender, rui16_DDI, rui16_element))
         b_matched = true;
-  #endif
-  #ifdef USE_DIN_9684
-      if ((*pc_iter)->matchDIN(rui8_dataDevClass, rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum, 0xFF))
-        b_matched = true;
-  #endif
-#endif
 
       if (b_matched)
       { // matches at least lazy
-        #ifdef USE_DIN_9684
-        if ((*pc_iter)->devClassInst() == rui8_devClassInst)
-        { //exact match
-          b_foundLazy = true;
-          pc_searchCacheC2 = pc_iter;
-          // stop search
-          break;
-        } // exact match
-        else if (b_foundLazy == false)
-        { // no other lazy match before this was found
-          b_foundLazy = true;
-          pc_searchCacheC2 = pc_iter;
-        } //first lazy match for this search
-        #else
         b_foundLazy = true;
         pc_searchCacheC2 = pc_iter;
-        #endif
       } // check lazy match
     }// for
   }
   return b_foundLazy;
 }
 
-#ifdef USE_ISO_11783
+
 ProcDataRemoteBase_c* Process_c::addDDI2ExistingProcData(uint16_t rui16_DDI, uint16_t rui_deviceElement, const DevKey_c& rc_devKey, GeneralCommand_c::ValueGroup_t& refen_valueGroup, bool& refb_isSetpoint)
 {
   ProcDataRemoteBase_c* pc_remoteProcessData = NULL;
@@ -1143,7 +652,7 @@ ProcDataRemoteBase_c* Process_c::addDDI2ExistingProcData(uint16_t rui16_DDI, uin
     }
   }
   return NULL;
-};
+}
 
 bool Process_c::checkAndAddMatchingDDI2Group(uint16_t rui16_DDI, uint16_t rui_deviceElement, const DevKey_c& rc_devKey)
 {
@@ -1152,7 +661,7 @@ bool Process_c::checkAndAddMatchingDDI2Group(uint16_t rui16_DDI, uint16_t rui_de
   if (NULL == pc_remoteProcessData) return false;
 
   return pc_remoteProcessData->add2Group(rui16_DDI);
-};
+}
 
 
 bool Process_c::addProprietaryDDI2Group(uint16_t rui16_DDI, uint16_t rui_deviceElement, bool b_isSetpoint, GeneralCommand_c::ValueGroup_t ddiType, const DevKey_c &rc_devKey)
@@ -1162,7 +671,7 @@ bool Process_c::addProprietaryDDI2Group(uint16_t rui16_DDI, uint16_t rui_deviceE
   if (NULL == pc_remoteProcessData) return false;
 
   return pc_remoteProcessData->addProprietary2Group(rui16_DDI, b_isSetpoint, ddiType);
-};
+}
 
 
 ProcDataRemoteBase_c* Process_c::check4DDIGroupMatch(uint16_t rui16_DDI, uint16_t rui_deviceElement, const DevKey_c& rc_devKey)
@@ -1202,8 +711,7 @@ ProcDataRemoteBase_c* Process_c::check4ProprietaryDDIGroupMatch(uint16_t rui_dev
   }// for
 
   return NULL;
-};
-#endif
+}
 
 /**
   delete FilterBox_c for receive from remote devKey if needed
@@ -1213,11 +721,7 @@ ProcDataRemoteBase_c* Process_c::check4ProprietaryDDIGroupMatch(uint16_t rui_dev
   @param rui8_pri PRI code of messages with this process data instance (default 2)
   @return true -> member exist and Filter Box deleted
 */
-bool Process_c::deleteRemoteFilter(const DevKey_c& rc_ownerDevKey, uint8_t
-  #ifdef USE_DIN_9684
-  rui8_pri
-  #endif
-  )
+bool Process_c::deleteRemoteFilter(const DevKey_c& rc_ownerDevKey, uint8_t)
 {
   bool b_result = false,
        b_found = false;
@@ -1232,19 +736,6 @@ bool Process_c::deleteRemoteFilter(const DevKey_c& rc_ownerDevKey, uint8_t
   if (b_found)
   { // remote proc data has given onwerDevKey
     // -> delete according FilterBox
-    #ifdef USE_DIN_9684
-    if (getDinMonitorInstance4Comm().existDinMemberDevKey(rc_ownerDevKey, true))
-    { // remote owner exist and has claimed address -> check if corresponding FilterBox_c exist
-      uint8_t ui8_recNr = getDinMonitorInstance4Comm().dinMemberDevKey(rc_ownerDevKey, true).nr();
-      ui32_filter = (ui8_recNr | (rui8_pri << 8));
-      if (getCanInstance4Comm().existFilter( *this, 0x70F, ui32_filter))
-      { // corresponding FilterBox_c exist -> delete it
-        getCanInstance4Comm().deleteFilter( *this, 0x70F, ui32_filter);
-        b_result = true;
-      }
-    } // owner exist with claimed address in memberMonitor
-    #endif
-    #ifdef USE_ISO_11783
     if (getIsoMonitorInstance4Comm().existIsoMemberDevKey(rc_ownerDevKey, true))
     { // remote owner exist and has claimed address -> check if corresponding FilterBox_c exist
       uint8_t ui8_recNr = getIsoMonitorInstance4Comm().isoMemberDevKey(rc_ownerDevKey, true).nr();
@@ -1255,7 +746,6 @@ bool Process_c::deleteRemoteFilter(const DevKey_c& rc_ownerDevKey, uint8_t
         b_result = true;
       }
     } // owner exist with claimed address in isoMonitor
-    #endif
   } // not other remote proc data with ownerDevKey found
   // only reconfigure if new FilterBox_c created -> signalled by b_result == true
 
@@ -1272,31 +762,11 @@ bool Process_c::deleteRemoteFilter(const DevKey_c& rc_ownerDevKey, uint8_t
   @param rui8_pri PRI code of messages with this process data instance (default 2)
   @return true -> member exist and Filter Box created
  */
-bool Process_c::createRemoteFilter(const DevKey_c& rc_ownerDevKey, uint8_t
-#ifdef USE_DIN_9684
-  rui8_pri
-#endif
-                                  )
+bool Process_c::createRemoteFilter(const DevKey_c& rc_ownerDevKey, uint8_t)
 {
   bool b_result = false;
   MASK_TYPE t_filter;
-  #ifdef USE_DIN_9684
-  if (getDinMonitorInstance4Comm().existDinMemberDevKey(rc_ownerDevKey, true))
-  { // remote owner exist and has claimed address -> check if suitable FilterBox_c exist
-    const uint8_t ui8_recNr = getDinMonitorInstance4Comm().dinMemberDevKey(rc_ownerDevKey, true).nr();
-    t_filter = (ui8_recNr | (rui8_pri << 8));
-    #ifdef USE_ISO_11783
-    if (!getCanInstance4Comm().existFilter( *this, 0x70F, t_filter, Ident_c::StandardIdent))
-    #else
-    if (!getCanInstance4Comm().existFilter( *this, 0x70F, t_filter))
-    #endif
-    { // no suitable FilterBox_c exist -> create it
-      getCanInstance4Comm().insertFilter( *this, 0x70F, t_filter, false);
-      b_result = true;
-    }
-  }
-  #endif
-  #ifdef USE_ISO_11783
+
   if (getIsoMonitorInstance4Comm().existIsoMemberDevKey(rc_ownerDevKey, true))
   { // remote owner exist and has claimed address -> check if suitable FilterBox_c exist
     const uint8_t ui8_recNr = getIsoMonitorInstance4Comm().isoMemberDevKey(rc_ownerDevKey, true).nr();
@@ -1308,7 +778,6 @@ bool Process_c::createRemoteFilter(const DevKey_c& rc_ownerDevKey, uint8_t
       b_result = true;
     }
   }
-  #endif
   // only reconfigure if new FilterBox_c created -> signalled by b_result == true
   if (b_result)
   {
@@ -1317,6 +786,7 @@ bool Process_c::createRemoteFilter(const DevKey_c& rc_ownerDevKey, uint8_t
 
   return b_result;
 }
+
 
 /**
   * check if any remote process data needs a new receive filter
@@ -1346,7 +816,8 @@ bool Process_c::checkCreateRemoteReceiveFilter()
   }
   return b_result;
 }
-#if defined(USE_ISO_11783)
+
+
 /** this function is called by ISOMonitor_c when a new CLAIMED ISOItem_c is registered.
   * @param refc_devKey const reference to the item which ISOItem_c state is changed
   * @param rpc_newItem pointer to the currently corresponding ISOItem_c
@@ -1369,6 +840,7 @@ void Process_c::reactOnMonitorListAdd( const DevKey_c& refc_devKey, const ISOIte
   }
 }
 
+
 /** this function is called by ISOMonitor_c when a device looses its ISOItem_c.
   * @param refc_devKey const reference to the item which ISOItem_c state is changed
   * @param rui8_oldSa previously used SA which is NOW LOST -> clients which were connected to this item can react explicitly
@@ -1390,18 +862,19 @@ void Process_c::reactOnMonitorListRemove( const DevKey_c& refc_devKey, uint8_t r
     deleteRemoteFilter(refc_devKey);
   }
 }
-#endif
+
+
 /** register pointer to a new remote process data instance
   * this function is called within construction of new remote process data instance
   */
 bool Process_c::registerRemoteProcessData( ProcDataRemoteBase_c* pc_remoteClient)
 {
   const bool cb_result = registerC2( pc_remoteClient );
-#ifdef USE_ISO_11783
   b_needCallOfCheckCreateRemoteReceiveFilter = true;
-#endif
+
   return cb_result;
 }
+
 
 /** unregister pointer to a already registered remote process data instance
   * this function is called within destruction of remote process data instance
@@ -1428,16 +901,6 @@ void Process_c::unregisterRemoteProcessData( ProcDataRemoteBase_c* pc_remoteClie
 
   if ( !b_otherRemoteWithSameOwner )
   { // delete the remote filter that was created to receive messages from that owner
-    #ifdef USE_DIN_9684
-    if (getDinMonitorInstance4Comm().existDinMemberDevKey(c_toBeDeletedOwnerDevKey, true))
-    { // remote owner exist and has claimed address -> check if corresponding FilterBox_c exist
-      uint8_t ui8_recNr = getDinMonitorInstance4Comm().dinMemberDevKey(c_toBeDeletedOwnerDevKey, true).nr();
-      ui32_filter = (ui8_recNr | (pc_remoteClient->pri() << 8));
-      // delete corresponding FilterBox_c in timeEvent() to avoid problems when called in procdata cestructor
-      l_filtersToDeleteDIN.push_front(ui32_filter);
-    } // owner exist with claimed address in memberMonitor
-    #endif
-    #ifdef USE_ISO_11783
     if (getIsoMonitorInstance4Comm().existIsoMemberDevKey(c_toBeDeletedOwnerDevKey, true))
     { // remote owner exist and has claimed address -> check if corresponding FilterBox_c exist
       uint8_t ui8_recNr = getIsoMonitorInstance4Comm().isoMemberDevKey(c_toBeDeletedOwnerDevKey, true).nr();
@@ -1445,12 +908,10 @@ void Process_c::unregisterRemoteProcessData( ProcDataRemoteBase_c* pc_remoteClie
       // delete corresponding FilterBox_c in timeEvent() to avoid problems when called in procdata cestructor
       l_filtersToDeleteISO.push_front(ui32_filter);
     } // owner exist with claimed address in isoMonitor
-    #endif
   }
 
-};
+}
 
-#ifdef USE_ISO_11783
 /**
   process TC status messages:
   - task status suspended: stop running measurement (started by default data logging)
@@ -1477,12 +938,12 @@ bool Process_c::processTcStatusMsg(uint8_t ui8_tcStatus, const DevKey_c& refc_de
   return TRUE;
 }
 
+
 bool Process_c::processWorkingSetTaskMsg(uint8_t ui8_tcStatus, const DevKey_c& refc_devKey)
 {
   if (pc_processWsmTaskMsgHandler)
     pc_processWsmTaskMsgHandler->processWsmTaskMessage(ui8_tcStatus, refc_devKey);
   return TRUE;
 }
-#endif
 
 } // end of namespace __IsoAgLib

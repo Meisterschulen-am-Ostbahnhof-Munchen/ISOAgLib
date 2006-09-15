@@ -93,10 +93,8 @@
 #include <IsoAgLib/util/impl/devkey_c.h>
 #include <IsoAgLib/util/impl/singleton.h>
 #include "generalcommand_c.h"
-#ifdef USE_ISO_11783
-  #include "../elementddi_s.h"
-  #include <list>
-#endif
+#include "../elementddi_s.h"
+#include <list>
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
@@ -115,11 +113,6 @@ public:
     @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, isSetpoint and ValueGroup
                          (array is terminated by ElementDDI_s.ddi == 0xFFFF)
     @param ui16_element device element number
-    DIN parameter
-    @param rui8_lis optional LIS code of Process-Data
-    @param rui8_wert optional WERT code of Process-Data
-    @param rui8_inst optional INST code of Process-Data
-    @param rui8_zaehlnum optional ZAEHLNUM  code of Process-Data
 
     common parameter
     @param rc_devKey optional DEV_KEY code of Process-Data
@@ -132,16 +125,8 @@ public:
             as corresponding device is registered as having claimed address in monitor table list)
   */
   ProcIdent_c(
-#ifdef USE_ISO_11783
               const IsoAgLib::ElementDDI_s* ps_elementDDI = NULL,
               uint16_t ui16_element = 0xFFFF,
-#endif
-#ifdef USE_DIN_9684
-              uint8_t rui8_lis = 0,
-              uint8_t rui8_wert = 0,
-              uint8_t rui8_inst = 0,
-              uint8_t rui8_zaehlnum = 0xFF,
-#endif
               const DevKey_c& rc_devKey = DevKey_c::DevKeyInitialProcessData,
               uint8_t rui8_pri = 2,
               const DevKey_c& rc_ownerDevKey = DevKey_c::DevKeyUnspecified,
@@ -157,11 +142,6 @@ public:
     @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, isSetpoint and ValueGroup
                          (array is terminated by ElementDDI_s.ddi == 0xFFFF)
     @param ui16_element device element number
-    DIN parameter
-    @param rui8_lis LIS code of Process-Data
-    @param rui8_wert WERT code of Process-Data
-    @param rui8_inst INST code of Process-Data
-    @param rui8_zaehlnum ZAEHLNUM  code of Process-Data
 
     common parameter
     @param rc_devKey DEV_KEY code of Process-Data
@@ -174,16 +154,8 @@ public:
             as corresponding device is registered as having claimed address in monitor table list)
   */
   void init(
-#ifdef USE_ISO_11783
             const IsoAgLib::ElementDDI_s* ps_elementDDI,
             uint16_t ui16_element,
-#endif
-#ifdef USE_DIN_9684
-            uint8_t rui8_lis,
-            uint8_t rui8_wert,
-            uint8_t rui8_inst,
-            uint8_t rui8_zaehlnum,
-#endif
             const DevKey_c& rc_devKey,
             uint8_t rui8_pri = 2,
             const DevKey_c& rc_ownerDevKey = DevKey_c::DevKeyUnspecified,
@@ -231,12 +203,11 @@ public:
 
   // member variable access
 
-#ifdef USE_ISO_11783
   /**
      deliver list of ElementDDI_s
      @return std::list<IsoAgLib::ElementDDI_s>
   */
-  const std::list<IsoAgLib::ElementDDI_s>& elementDDI()const {return data.l_elementDDI;};
+  const std::list<IsoAgLib::ElementDDI_s>& elementDDI()const {return data.l_elementDDI;}
 
   /** check if this ProcIdent_c has the given DDI as element */
   bool hasDDI( uint16_t rui16_checkDDI ) const;
@@ -251,33 +222,34 @@ public:
       return data.l_elementDDI.begin()->ui16_DDI;
     else
       return 0;
-  };
+  }
+
   /**
     deliver value element (only possible if only one elementDDI in list)
     @return element
   */
-  uint16_t element() const{ return data.ui16_element; };
-
-#endif
-
+  uint16_t element() const{ return data.ui16_element; }
 
   /**
     deliver value PRI of messages with this
     process data instance
     @return PRI
   */
-  uint8_t pri() const{return data.ui8_pri;};
+  uint8_t pri() const{return data.ui8_pri;}
+
   /**
     deliver value LIS (list number)
     @return LIS
   */
-  uint8_t lis() const{return data.ui8_lis;};
+  uint8_t lis() const{return data.ui8_lis;}
+
   /**
     deliver value DEVCLASS (machine type specific table of process data types)
     everytime deliver the identity DEVCLASS (and NOT the possibly differing DEVCLASS of the owner)
     @return DEVCLASS
   */
-  uint8_t devClass() const{return data.c_devKey.getDevClass();};
+  uint8_t devClass() const{return data.c_devKey.getDevClass();}
+
   /**
     deliver value DEV_KEY (machine type specific table of process data types)
     use everytime the _device_class_ from the ident part, and take the _instance_ from the owner.
@@ -285,45 +257,40 @@ public:
     stored value
     @return DEV_KEY
   */
-  const DevKey_c& devKey() const
-  #ifdef USE_DIN_9684
-  {if( ( data.c_devKey.getDevClass() == 0 ) &&  ( data.c_devKey.getDevClassInst() == 0 ) )
-               return   data.c_devKey;
-          else
-          {c_temp.set(data.c_devKey.getDevClass(),ownerDevKey().getDevClassInst() ); return c_temp;}};
-  #else
-  {return ownerDevKey();};
-  #endif
+  const DevKey_c& devKey() const {return ownerDevKey();}
+
   /**
     deliver value WERT (row of process data table)
     @return WERT
   */
-  uint8_t wert() const{return data.ui8_wert;};
+  uint8_t wert() const{return data.ui8_wert;}
+
   /**
     deliver value INST (column of process data table)
     @return INST
   */
-  uint8_t inst() const{return data.ui8_inst;};
+  uint8_t inst() const{return data.ui8_inst;}
+
   /**
     deliver value ZAEHLNUM (0xFF == whole working width; else parts of width)
     @return ZAEHLNUM
   */
-  uint8_t zaehlnum() const{return data.ui8_zaehlnum;};
+  uint8_t zaehlnum() const{return data.ui8_zaehlnum;}
+
   /**
     deliver value _instance_ (important if more than one machine with equal _device_class_ are active)
     deliver the device class instance of the owner, as this _instance_ is sometimes updated after the creation of this
     process data instance.
     @return POS
   */
-  uint8_t devClassInst() const{return ownerDevKey().getDevClassInst();};
+  uint8_t devClassInst() const{return ownerDevKey().getDevClassInst();}
+
   /**
     deliver the owner devKey (retrieved from pointed devKey value, if valid pointer)
     @return actual DEV_KEY of owner
   */
   const DevKey_c& ownerDevKey() const
-    { return ((pc_ownerDevKey != 0)?(*pc_ownerDevKey):(data.c_ownerDevKey));};
-
-#ifdef USE_ISO_11783
+    { return ((pc_ownerDevKey != 0)?(*pc_ownerDevKey):(data.c_ownerDevKey));}
 
   /**
     set DDI, value group and setpoint/measure type of process msg
@@ -339,61 +306,70 @@ public:
 
   /** set device element number
     * @param  rui16_element */
-  void setElementNumber(uint16_t rui16_element) { data.ui16_element = rui16_element; };
-#endif
+  void setElementNumber(uint16_t rui16_element) { data.ui16_element = rui16_element; }
 
   /**
     set value PRI of messages with this
     process data instance
     @param rui8_val new PRI value
   */
-  void setPri(uint8_t rui8_val){data.ui8_pri = rui8_val;};
+  void setPri(uint8_t rui8_val){data.ui8_pri = rui8_val;}
+
   /**
     set value LIS (list number)
     @param rui8_val new LIS value
   */
-  void setLis(uint8_t rui8_val){data.ui8_lis = rui8_val;};
+  void setLis(uint8_t rui8_val){data.ui8_lis = rui8_val;}
+
   /**
     set value DEVCLASS (machine type specific table of process data types)
     @param rui8_val new DEVCLASS val
   */
-  void setDevClass(uint8_t rui8_val){data.c_devKey.setDevClass(rui8_val);};
+  void setDevClass(uint8_t rui8_val){data.c_devKey.setDevClass(rui8_val);}
+
   /**
     set value DEV_KEY (machine type specific table of process data types)
     @param rc_val new DEV_KEY val
   */
-  void setDevKey(const DevKey_c& rc_val){data.c_devKey = rc_val;};
+  void setDevKey(const DevKey_c& rc_val){data.c_devKey = rc_val;}
+
   /**
     set value WERT (row of process data table)
     @param rui8_val new WERT val
   */
-  void setWert(uint8_t rui8_val){data.ui8_wert = rui8_val;};
+  void setWert(uint8_t rui8_val){data.ui8_wert = rui8_val;}
+
   /**
     set value INST (column of process data table)
     @param rui8_val new INST val
   */
-  void setInst(uint8_t rui8_val){data.ui8_inst = rui8_val;};
+  void setInst(uint8_t rui8_val){data.ui8_inst = rui8_val;}
+
   /**
     set value ZAEHLNUM (0xFF == whole working width; else parts of width)
     @param rui8_val new ZAEHLNUM val
   */
-  void setZaehlnum(uint8_t rui8_zaehlnum){data.ui8_zaehlnum = rui8_zaehlnum;};
+  void setZaehlnum(uint8_t rui8_zaehlnum){data.ui8_zaehlnum = rui8_zaehlnum;}
+
   /**
     set value _instance_ (important if more than one machine with equal _device_class_ are active)
     set also the _instance_ of the owner as the owner _instance_ shall be always the most actual value
     @param rui8_val new device class inst val
   */
-  void setDevClassInst(uint8_t rui8_val){data.c_devKey.setDevClassInst(rui8_val); data.c_ownerDevKey.setDevClassInst(rui8_val);};
+  void setDevClassInst(uint8_t rui8_val){data.c_devKey.setDevClassInst(rui8_val); data.c_ownerDevKey.setDevClassInst(rui8_val);}
+
   /**
     set the owner devKey
     @param rc_val new DEV_KEY of owner
   */
-  void setOwnerDevKey(const DevKey_c& rc_val){data.c_ownerDevKey = rc_val;};
+  void setOwnerDevKey(const DevKey_c& rc_val){data.c_ownerDevKey = rc_val;}
+
   /**
     set the DEVCLASS of the owner
     @param rui8_val new DEVCLASS of owner
   */
-  void setOwnerDevClass(uint8_t rui8_val){data.c_ownerDevKey.setDevClass(rui8_val);};
+  void setOwnerDevClass(uint8_t rui8_val){data.c_ownerDevKey.setDevClass(rui8_val);}
+
   /**
     set DEVCLASS and _instance_ of owner by giving pointer to owner DEV_KEY
     @param rpc_val pointer to owner DEV_KEY
@@ -410,43 +386,21 @@ public:
     <li>parameter rc_ownerDevKey == ownerDevKey()
     </ul>
 
-
     ISO parameter
     @param rui8_devClassReceiver compared DEVCLASS value
     @param rui8_devClassSender compare this parameter with owner devClass (only for remote, local calls: 0xFF)
     @param rui16_DDI compared DDI value
     @param rui16_element compared element value
 
-    DIN parameter
-    @param rui8_lis compared LIS value
-    @param rui8_wert compared WERT value
-    @param rui8_inst compared INST value
-    @param rui8_zaehlnum compared ZAEHLNUM value (default 0xFF == complete working width)
-
     @return true -> this instance has same Process-Data identity
   */
-#ifdef USE_ISO_11783
   bool matchISO(
              uint8_t rui8_devClassReceiver,
              uint8_t rui8_devClassSender,
              uint16_t rui16_DDI,
              uint16_t rui16_element
              ) const;
-#endif
 
-#ifdef USE_DIN_9684
-  bool matchDIN(
-             uint8_t rui8_devClass,
-             uint8_t rui8_lis,
-             uint8_t rui8_wert,
-             uint8_t rui8_inst,
-             uint8_t rui8_zaehlnum = 0xFF,
-             uint8_t rui8_devClassInst = 0xFF,  // default values from DIN
-             const DevKey_c& rc_ownerDevKey = DevKey_c::DevKeyUnspecified // default values from DIN
-             ) const;
-#endif
-
-#ifdef USE_ISO_11783
   bool check4GroupMatch(uint16_t rui16_DDI, uint16_t rui16_element, const DevKey_c& rc_devKey);
 
   bool check4GroupMatchExisting(uint16_t rui16_DDI, uint16_t rui16_element, const DevKey_c& rc_devKey);
@@ -462,19 +416,11 @@ public:
   static void getDDIType(uint16_t rui16_DDI, GeneralCommand_c::ValueGroup_t &ref_ddiType, bool &refb_isSetpoint);
 
   static bool hasDDIType (uint16_t rui16_DDI, GeneralCommand_c::ValueGroup_t t_ddiType);
-#endif
 
 private: // Private attributes
   /** internal base function for copy constructor and assignement */
   void assignFromSource( const ProcIdent_c& rrefc_src );
 
-  #ifdef USE_DIN_9684
-  /** static instance for all ProcIdent_c objects that is solely used as a temp variable for the function
-    * const DevKey_c& devKey() const
-    * only in DIN 9684 mode
-    */
-  static DevKey_c c_temp;
-  #endif
   /** DEVCLASS code of process data identity */
   const DevKey_c* pc_ownerDevKey; // only defined for own local data, otherwise NULL
   struct _data {
@@ -502,10 +448,8 @@ private: // Private attributes
     /** PRI code of process data messages; mostly 2 */
     uint16_t ui8_pri : 3;
 
-#ifdef USE_ISO_11783
      std::list<IsoAgLib::ElementDDI_s> l_elementDDI;
      uint16_t ui16_element;
-#endif
 
   } data;
 

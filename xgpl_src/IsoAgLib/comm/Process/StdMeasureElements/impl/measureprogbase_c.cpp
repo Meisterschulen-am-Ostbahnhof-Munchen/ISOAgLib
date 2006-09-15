@@ -359,7 +359,7 @@ int32_t MeasureProgBase_c::val(bool rb_sendRequest) const
     getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */,
                                                                 GeneralCommand_c::exactValue,
                                                                 GeneralCommand_c::requestValue);
-    // DIN: pd = 3, mod = 0
+
     processData().sendValDevKey(2, devKey(), int32_t(0));
   }
 
@@ -378,7 +378,7 @@ int32_t MeasureProgBase_c::integ(bool rb_sendRequest) const
     getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */,
                                                                 GeneralCommand_c::integValue,
                                                                 GeneralCommand_c::requestValue);
-    // DIN pd=3, mod=3
+
     processData().sendValDevKey(2, devKey(), int32_t(0));
   }
   return i32_integ;
@@ -397,7 +397,7 @@ int32_t MeasureProgBase_c::min(bool rb_sendRequest) const
     getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */,
                                                                 GeneralCommand_c::minValue,
                                                                 GeneralCommand_c::requestValue);
-    // DIN: pd = 3, mod = 1
+
     processData().sendValDevKey(2, devKey(), int32_t(0));
   }
   return i32_min;
@@ -415,7 +415,7 @@ int32_t MeasureProgBase_c::max(bool rb_sendRequest) const
     getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */,
                                                                 GeneralCommand_c::maxValue,
                                                                 GeneralCommand_c::requestValue);
-    // DIN: pd = 3, mod = 2
+
     processData().sendValDevKey(2, devKey(), int32_t(0));
   }
   return i32_max;
@@ -500,7 +500,7 @@ float MeasureProgBase_c::valFloat(bool rb_sendRequest) const
     getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */,
                                                                 GeneralCommand_c::exactValue,
                                                                 GeneralCommand_c::requestValue);
-    // DIN: pd = 3, mod = 0
+
     processData().sendValDevKey(2, devKey(), int32_t(0));
   }
   return f_val;
@@ -518,7 +518,7 @@ float MeasureProgBase_c::integFloat(bool rb_sendRequest) const
     getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */,
                                                                 GeneralCommand_c::integValue,
                                                                 GeneralCommand_c::requestValue);
-    // DIN pd=3, mod=3
+
     processData().sendValDevKey(2, devKey(), int32_t(0));
   }
   return f_integ;
@@ -537,7 +537,7 @@ float MeasureProgBase_c::minFloat(bool rb_sendRequest) const
     getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */,
                                                                 GeneralCommand_c::minValue,
                                                                 GeneralCommand_c::requestValue);
-    // DIN: pd = 3, mod = 1
+
     processData().sendValDevKey(2, devKey(), int32_t(0));
   }
   return f_min;
@@ -555,7 +555,7 @@ float MeasureProgBase_c::maxFloat(bool rb_sendRequest) const
     getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */,
                                                                 GeneralCommand_c::maxValue,
                                                                 GeneralCommand_c::requestValue);
-    // DIN: pd = 3, mod = 2
+
     processData().sendValDevKey(2, devKey(), int32_t(0));
   }
   return f_max;
@@ -616,13 +616,12 @@ bool MeasureProgBase_c::processMsg(){
 
   if (en_command == GeneralCommand_c::setValue)
     // setValue command indicates receiving of a measure value
-    //    => handle this in measure prog remote => return false
-    // or a reset (ISO and DIN)
-    //    => handle this in measure prog local => return false
+    // => handle this in measure prog remote => return false
+    // or a reset
+    // => handle this in measure prog local => return false
     return false;
 
 // Not sure why this has problems, but it does. So, don't run it with ISO_TASK_CONTROLLER! -bac
-//#ifndef USE_ISO_11783
   // check if PD==0 -> SET increment message
   if (!c_pkg.c_generalCommand.checkIsRequest())
   { // mark that msg already edited
@@ -630,7 +629,7 @@ bool MeasureProgBase_c::processMsg(){
 
     // set en_doSend (for ISO)
     GeneralCommand_c::ValueGroup_t en_valueGroup = c_pkg.c_generalCommand.getValueGroup();
-          
+
     Proc_c::doSend_t en_doSend = Proc_c::DoVal;  //default send data mode
     if (c_pkg.c_generalCommand.checkIsSetpoint())
       en_doSend = Proc_c::DoValForExactSetpoint; // measurement for exact value setpoint
@@ -651,11 +650,7 @@ bool MeasureProgBase_c::processMsg(){
     }
 
     // programm controlling command
-    // mod=4 || mod=5
-    if (en_command == GeneralCommand_c::measurementDistanceValue ||
-        en_command == GeneralCommand_c::measurementTimeValue ||
-        en_command == GeneralCommand_c::measurementChangeThresholdValue ||
-        // ISO
+    if (// ISO
         en_command == GeneralCommand_c::measurementDistanceValueStart ||
         en_command == GeneralCommand_c::measurementTimeValueStart ||
         en_command == GeneralCommand_c::measurementChangeThresholdValueStart ||
@@ -667,16 +662,8 @@ bool MeasureProgBase_c::processMsg(){
 
     uint8_t b_cmd = c_pkg.data(0);
 
-    // DIN mod=6
-    if (en_command == GeneralCommand_c::measurementStart)
-    { // start command
-      start(static_cast<Proc_c::progType_t>(c_pkg.pri()),
-            static_cast<Proc_c::type_t>(b_cmd & 0x7),
-            static_cast<Proc_c::doSend_t>((b_cmd >> 4) & 0x7));
-    }
-
     if (en_command == GeneralCommand_c::measurementReset)
-    { // reset command (DIN only, ISO reset: setValue command)
+    { // reset command (ISO reset: setValue command)
        reset(b_cmd);
        // call handler function if handler class is registered
        if ( processData().getProcessDataChangeHandler() != NULL )
@@ -908,19 +895,15 @@ void MeasureProgBase_c::processIncrementMsg(Proc_c::doSend_t ren_doSend){
   // get the int32_t data val without conversion
   int32_t i32_val = c_pkg.dataRawCmdLong();
 
-  // mod = 4 || mod == 5
-  if (c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::measurementTimeValue ||
-      c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::measurementTimeValueStart)
+  if ( c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::measurementTimeValueStart)
     // time proportional
     addSubprog(Proc_c::TimeProp, CNAMESPACE::labs(i32_val), ren_doSend);
 
-  if (c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::measurementDistanceValue ||
-      c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::measurementDistanceValueStart)
+  if ( c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::measurementDistanceValueStart)
     // distance proportional
     addSubprog(Proc_c::DistProp, i32_val, ren_doSend);
 
-  if (c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::measurementChangeThresholdValue ||
-      c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::measurementChangeThresholdValueStart)
+  if (c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::measurementChangeThresholdValueStart)
     // change threshold proportional
     // @todo: was DistProp ?
     addSubprog(Proc_c::OnChange, i32_val, ren_doSend);

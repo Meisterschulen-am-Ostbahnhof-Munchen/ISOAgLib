@@ -90,18 +90,7 @@
 /* *************************************** */
 #include <IsoAgLib/typedef.h>
 #include <IsoAgLib/util/impl/singleton.h>
-#ifdef USE_DIN_9684
-  #include "../DIN9684/impl/dinsystempkg_c.h"
-  #include "../DIN9684/impl/dinmonitor_c.h"
-  #include "../DIN9684/impl/dinservicemonitor_c.h"
-
-  #ifndef EXCLUDE_RARE_DIN_SYSTEM_CMD
-    #include "../DIN9684/impl/dinstopmanager_c.h"
-  #endif
-#endif
-#ifdef USE_ISO_11783
-  #include "../ISO11783/impl/isomonitor_c.h"
-#endif
+#include "../ISO11783/impl/isomonitor_c.h"
 
 #include "identitem_c.h"
 #include "monitoritem_c.h"
@@ -114,7 +103,7 @@ typedef SINGLETON_DERIVED_CLIENT1(SystemMgmt_c, ElementBase_c, IdentItem_c, DevK
 /**
   Central IsoAgLib system management object, which provides information retrieval
   from devices independen of their protocol type. This is achieved by requesting
-  both monitor lists in DINMonitor and ISOMontir ( if activated in protocol ).
+  both monitor lists in ISOMonitor ( if activated in protocol ).
   As long as the protocol type of the searched member is known and is constant, the
   corresponding monitor list should be accessed instead of this global interface class.
   *@author Dipl.-Inform. Achim Spangler
@@ -136,6 +125,7 @@ public:
       * dependant error on memory error in CANIO_c during insert of new FilterBox_c entry
   */
   void init();
+
   /** every subsystem of IsoAgLib has explicit function for controlled shutdown
     */
   void close( void );
@@ -147,490 +137,283 @@ public:
   bool timeEvent( void );
 
   /* ********************************************************** */
-  /** \name Search and access of local + remote  DIN + ISO
+  /** \name Search and access of local + remote + ISO
     * Search for monitor list entries for local and remote
-    * DIN and / or ISO. Search keys are DEV_KEY and source
-    * number.                                                   */
+    * ISO. Search keys are DEV_KEY and source number.                                                   */
   /* ********************************************************** */
   /*\@{*/
 
   /**
-    deliver amount of DIN and ISO members in monitor lists which optional (!!)
+    deliver amount of ISO members in monitor lists which optional (!!)
     match the condition of address claim state
     @param rb_forceClaimedAddress true -> only members with claimed address are used
           (optional, default false)
-    @return amount of DIN members with claimed address
+    @return amount of members with claimed address
   */
   uint8_t memberCnt(bool rb_forceClaimedAddress = false)
-    {return memberDevClassCnt(0xFF, rb_forceClaimedAddress);};
-  /**
-    deliver the n'th DIN and/or ISO member in monitor list which optional (!!)
-    match the condition of address claim state
-    check first with memberCnt if enough members are registered
-    in the Monitor-List's
-    @see memberCnt
-
-    possible errors:
-      * Err_c::range there exist less than rui8_ind members with claimed address
-    @param rui8_ind position of the wanted member in the
-                 sublist of members (first item has rui8_ind == 0 !!)
-                 with the wanted property
-    @param rb_forceClaimedAddress true -> only members with claimed address are used
-          (optional, default false)
-    @param ren_searchOrder define search order
-      (IState_c::DinOnly or IState_c::IsoOnly or IState_c::DinIso or IState_c::IsoDin)
-      (this parameter is only used if USE_ISO_11783 is defined, default check first din then iso)
-    @return reference to searched element
-  */
-  MonitorItem_c& memberInd(uint8_t rui8_ind, bool rb_forceClaimedAddress = false
-  #if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
-  , IState_c::protoOrder_t ren_protoOrder = IState_c::DinIso
-  #endif
-  ){return *((MonitorItem_c*)&memberDevClassInd(0xFF, rui8_ind, rb_forceClaimedAddress
-  #if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
-  , ren_protoOrder
-  #endif
-  ));};
+    {return memberDevClassCnt(0xFF, rb_forceClaimedAddress);}
 
   /**
-    deliver the count of members in the DIN and/or ISO Monitor-Lists
+      deliver the n'th ISO member in monitor list which optional (!!)
+      match the condition of address claim state
+      check first with memberCnt if enough members are registered
+      in the Monitor-List's
+      @see memberCnt
+
+      possible errors:
+        * Err_c::range there exist less than rui8_ind members with claimed address
+
+      @param rui8_ind               position of the wanted member in the
+                                    sublist of members (first item has rui8_ind == 0 !!)
+                                    with the wanted property
+      @param rb_forceClaimedAddress true -> only members with claimed address are used
+                                    (optional, default false)
+      @return reference to searched element
+    */
+  MonitorItem_c& memberInd(uint8_t rui8_ind, bool rb_forceClaimedAddress = false)
+  { return *( (MonitorItem_c*)&memberDevClassInd(0xFF, rui8_ind, rb_forceClaimedAddress) ); }
+
+  /**
+    deliver the count of members in the ISO Monitor-Lists
     with given DEVCLASS (variable POS)
     which optional (!!) match the condition of address claim state
-    @param rui8_devClass searched DEVCLASS code
+    @param rui8_devClass          searched DEVCLASS code
     @param rb_forceClaimedAddress true -> only members with claimed address are used
-          (optional, default false)
+                                  (optional, default false)
     @return count of members in Monitor-List with DEVCLASS == rui8_devClass
   */
   #if ( ! defined( PRT_INSTANCE_CNT ) ) || ( PRT_INSTANCE_CNT < 2 )
   static
   #endif
   uint8_t memberDevClassCnt(uint8_t rui8_devClass, bool rb_forceClaimedAddress = false);
-  /**
-    deliver one of the members with specific DEVCLASS  in the DIN and/or ISO lists
-    which optional (!!) match the condition of address claim state
-    check first with memberDevClassCnt if enough members with wanted DEVCLASS and
-    optional (!!) property are registered in Monitor-List
-    @see memberDevClassCnt
 
-    possible errors:
-      * Err_c::range there exist less than rui8_ind members with DEVCLASS rui8_devClass
-   @param rui8_devClass searched DEVCLASS
-   @param rui8_ind position of the wanted member in the
-                 sublist of member with given DEVCLASS (first item has rui8_ind == 0 !!)
-   @param rb_forceClaimedAddress true -> only members with claimed address are used
-         (optional, default false)
-   @param ren_searchOrder define search order
-    (IState_c::DinOnly or IState_c::IsoOnly or IState_c::DinIso or IState_c::IsoDin)
-    (this parameter is only used if USE_ISO_11783 is defined, default check first din then iso)
-   @return reference to searched element
-  */
+  /**
+      deliver one of the members with specific DEVCLASS  in the ISO lists
+      which optional (!!) match the condition of address claim state
+      check first with memberDevClassCnt if enough members with wanted DEVCLASS and
+      optional (!!) property are registered in Monitor-List
+      @see memberDevClassCnt
+
+      possible errors:
+        * Err_c::range there exist less than rui8_ind members with DEVCLASS rui8_devClass
+
+      @param rui8_devClass          searched DEVCLASS
+      @param rui8_ind               position of the wanted member in the
+                                    sublist of member with given DEVCLASS (first item has rui8_ind == 0 !!)
+      @param rb_forceClaimedAddress true -> only members with claimed address are used
+                                    (optional, default false)
+      @return reference to searched element
+    */
   #if ( ! defined( PRT_INSTANCE_CNT ) ) || ( PRT_INSTANCE_CNT < 2 )
   static
   #endif
-  MonitorItem_c& memberDevClassInd(uint8_t rui8_devClass, uint8_t rui8_ind, bool rb_forceClaimedAddress = false
-    #if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
-    , IState_c::protoOrder_t ren_protoOrder = IState_c::DinIso
-    #endif
-    );
+  MonitorItem_c& memberDevClassInd( uint8_t rui8_devClass, uint8_t rui8_ind, bool rb_forceClaimedAddress = false );
 
   /**
-    check for member with given member no
-      which optional (!!) match the condition of address claim state;
-    search MemberMonitor and ISOMonitor in order defined by ren_searchOrder
-    @param rui8_nr member no to search for
-    @param rb_forceClaimedAddress true -> only members with claimed address are used
-          (optional, default false)
-    @param ren_searchOrder define search order
-      (IState_c::DinOnly or IState_c::IsoOnly or IState_c::DinIso or IState_c::IsoDin)
-      (this parameter is only used if USE_ISO_11783 is defined, default check first din then iso)
-    @return true -> one of the devices in the searched Monitor lists has the wanted member no
-  */
+      check for member with given member no which optional (!!) match the condition of address claim state;
+      @param rui8_nr  member no to search for
+      @return true -> one of the devices in the searched Monitor lists has the wanted member no
+    */
   #if ( ! defined( PRT_INSTANCE_CNT ) ) || ( PRT_INSTANCE_CNT < 2 )
   static
   #endif
-  bool existMemberNr(uint8_t rui8_nr
-    #if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
-    , IState_c::protoOrder_t ren_protoOrder = IState_c::DinIso
-    #endif
-  );
+  bool existMemberNr(uint8_t rui8_nr);
+
   /**
-    check for member with given member devKey
-      which optional (!!) match the condition of address claim state;
-    search MemberMonitor and ISOMonitor in order defined by ren_searchOrder
-    @param rc_devKey member devKey to search for
-    @param rb_forceClaimedAddress true -> only members with claimed address are used
-          (optional, default false)
-    @param ren_searchOrder define search order
-      (IState_c::DinOnly or IState_c::IsoOnly or IState_c::DinIso or IState_c::IsoDin)
-      (this parameter is only used if USE_ISO_11783 is defined, default check first din then iso)
-    @return true -> one of the devices in the searched Monitor lists has the wanted member devKey
-  */
+      check for member with given member devKey which optional (!!) match the condition of address claim state;
+      @param rc_devKey              member devKey to search for
+      @param rb_forceClaimedAddress true -> only members with claimed address are used
+                                    (optional, default false)
+      @return true -> one of the devices in the searched Monitor lists has the wanted member devKey
+    */
   #if ( ! defined( PRT_INSTANCE_CNT ) ) || ( PRT_INSTANCE_CNT < 2 )
   static
   #endif
-  bool existMemberDevKey(const DevKey_c& rc_devKey, bool rb_forceClaimedAddress = false
-    #if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
-    , IState_c::protoOrder_t ren_protoOrder = IState_c::DinIso
-    #endif
-  );
+  bool existMemberDevKey( const DevKey_c& rc_devKey, bool rb_forceClaimedAddress = false );
 
   /**
-    deliver member with given member no;
-    search MemberMonitor and ISOMonitor in order defined by ren_searchOrder
-    (check with existMemberNr before access to not defined item)
+      deliver member with given member no;
+      search MemberMonitor and ISOMonitor in order defined by ren_searchOrder
+      (check with existMemberNr before access to not defined item)
 
-    possible errors:
-      * Err_c::elNonexistent on failed search
+      possible errors:
+        * Err_c::elNonexistent on failed search
 
-    @param rui8_nr member no to search for
-    @param ren_searchOrder define search order
-      (IState_c::DinOnly or IState_c::IsoOnly or IState_c::DinIso or IState_c::IsoDin)
-      (this parameter is only used if USE_ISO_11783 is defined, default check first din then iso)
-    @return reference to iMonitorItem_c with wanted number
-    @exception containerElementNonexistant
-  */
+      @param rui8_nr member no to search for
+      @return reference to iMonitorItem_c with wanted number
+      @exception containerElementNonexistant
+    */
   #if ( ! defined( PRT_INSTANCE_CNT ) ) || ( PRT_INSTANCE_CNT < 2 )
   static
   #endif
-  MonitorItem_c& memberNr(uint8_t rui8_nr
-    #if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
-    , IState_c::protoOrder_t ren_protoOrder = IState_c::DinIso
-    #endif
-  );
+  MonitorItem_c& memberNr( uint8_t rui8_nr );
+
   /**
-    check for member with given member devKey;
-    search MemberMonitor and ISOMonitor in order defined by ren_searchOrder
-    (check with existMemberDevKey before access to not defined item)
+      check for member with given member devKey;
+      search MemberMonitor and ISOMonitor in order defined by ren_searchOrder
+      (check with existMemberDevKey before access to not defined item)
 
-    possible errors:
-      * Err_c::elNonexistent on failed search
+      possible errors:
+        * Err_c::elNonexistent on failed search
 
-    @param rc_devKey member devKey to search for
-    @param ren_searchOrder define search order
-      (IState_c::DinOnly or IState_c::IsoOnly or IState_c::DinIso or IState_c::IsoDin)
-      (this parameter is only used if USE_ISO_11783 is defined, default check first din then iso)
-    @return reference to iMonitorItem_c with wanted number
-    @exception containerElementNonexistant
-  */
+      @param rc_devKey               member devKey to search fot
+      @param rb_forceClaimedAddress  true -> only members with claimed address are used
+                                    (optional, default false)
+      @return reference to iMonitorItem_c with wanted number
+      @exception containerElementNonexistant
+    */
   #if ( ! defined( PRT_INSTANCE_CNT ) ) || ( PRT_INSTANCE_CNT < 2 )
   static
   #endif
-  MonitorItem_c& memberDevKey(const DevKey_c& rc_devKey, bool rb_forceClaimedAddress = false
-    #if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
-    , IState_c::protoOrder_t ren_protoOrder = IState_c::DinIso
-    #endif
-  );
+  MonitorItem_c& memberDevKey( const DevKey_c& rc_devKey, bool rb_forceClaimedAddress = false );
 
   /**
-    check if member is in one of the member lists for DIN or ISO with wanted DEV_KEY,
-    adapt instance if member with claimed address with other device class inst exist
-    @param refc_devKey DEV_KEY to search (-> it's updated if member with claimed address with other dev class inst is found)
-    @param ren_searchOrder define search order
-      (IState_c::DinOnly or IState_c::IsoOnly or IState_c::DinIso or IState_c::IsoDin)
-      (this parameter is only used if USE_ISO_11783 is defined, default check first din then iso)
-    @return true -> member with claimed address with given DEVCLASS found (and refc_devKey has now its DEV_KEY)
-  */
+      check if member is in one of the member lists for ISO with wanted DEV_KEY,
+      adapt instance if member with claimed address with other device class inst exist
+      @param refc_devKey DEV_KEY to search (-> it's updated if member with claimed address with other dev class inst is found)
+      @return true -> member with claimed address with given DEVCLASS found (and refc_devKey has now its DEV_KEY)
+    */
   #if ( ! defined( PRT_INSTANCE_CNT ) ) || ( PRT_INSTANCE_CNT < 2 )
   static
   #endif
-  bool devClass2devKeyClaimedAddress(DevKey_c &refc_devKey
-  #if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
-  , IState_c::protoOrder_t ren_protoOrder = IState_c::DinIso
-  #endif
-  );
+  bool devClass2devKeyClaimedAddress( DevKey_c &refc_devKey );
   /*\@}*/
 
   /* ********************************************************** */
   /** \name Search and access local devices
-    * Search monitor list selective for local DIN and/or ISO
-    *  devices provide access to the according list items.      */
+    * Search monitor list selective for local ISO
+    * devices provide access to the according list items.       */
   /* ********************************************************** */
   /*\@{*/
 
 
   /**
-    deliver the amount of local members which matches the searched proto types
-      (proto type only cheked if USE_ISO_11783 is defined)
-    @param ren_protoTypes select which active local member types should be checked
-      (IState_c::DinOnly or IState_c::IsoOnly or IState_c::DinIso)
-      (this parameter is only used if USE_ISO_11783 is defined, default check both)
-    @return amount of registered local members with wanted type
-  */
-  uint8_t localMemberCnt(
-    #if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
-    IState_c::protoOrder_t ren_protoOrder = IState_c::DinIso
-    #endif
-  );
-  /**
-    deliver pointer to local member of wanted type by index
-    @see localMemberCnt
-    @param rui8_ind index of wanted member (first item == 0)
-    @param ren_protoTypes select which active local member types should be checked
-      (IState_c::DinOnly or IState_c::IsoOnly or IState_c::DinIso)
-      (this parameter is only used if USE_ISO_11783 is defined, default check both)
-    @return pointer to wanted local member (NULL if no suitable MonitorItem_c found)
-      (MonitorItem_c is bas class of both ISOItem_c or DINItem_c which serves
-       adress, devKey, itemState)
-  */
-  MonitorItem_c& localMemberInd(uint8_t rui8_ind
-    #if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
-    , IState_c::protoOrder_t ren_protoOrder = IState_c::DinIso
-    #endif
-  );
+      deliver the amount of local members which matches the searched proto types
+      @return amount of registered local members with wanted type
+    */
+  uint8_t localMemberCnt();
 
+  /**
+      deliver pointer to local member of wanted type by index
+      @see localMemberCnt
+      @param rui8_ind index of wanted member (first item == 0)
+      @return pointer to wanted local member (NULL if no suitable MonitorItem_c found)
+        (MonitorItem_c is base class of ISOItem_c which serves address, devKey, itemState)
+    */
+  MonitorItem_c& localMemberInd( uint8_t rui8_ind );
 
-  #ifdef USE_DIN_9684
   /**
-    deliver the amount of local DIN members
-    @return amount of registered local din members
-  */
-  uint8_t localDinMemberCnt()
-    {return localMemberCnt(
-      #if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
-      IState_c::DinOnly
-      #endif
-      );};
-  /**
-    deliver pointer to local din member by index
-    @see localDinMemberCnt
-    @param rui8_ind index of wanted member (first item == 0)
-    @return pointer to wanted local din member (NULL if no suitable DINItem_c found)
-  */
-  DINItem_c& localDinMemberInd(uint8_t rui8_ind)
-    {return static_cast<DINItem_c&>(localMemberInd(rui8_ind
-      #if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
-      , IState_c::DinOnly
-      #endif
-      ));};
-  #endif
-  #ifdef USE_ISO_11783
-  /**
-    deliver the amount of local ISO members
-    @return amount of registered local ISO members
-  */
+      deliver the amount of local ISO members
+      @return amount of registered local ISO members
+    */
   uint8_t localIsoMemberCnt()
-    {return localMemberCnt(
-      #if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
-      IState_c::IsoOnly
-      #endif
-      );};
+    {return localMemberCnt( );}
+
   /**
-    deliver pointer to local ISO member by index
-    @see localIsoMemberCnt
-    @param rui8_ind index of wanted member (first item == 0)
-    @return pointer to wanted local ISO member (NULL if no suitable ISOItem_c found)
-  */
+      deliver pointer to local ISO member by index
+      @see localIsoMemberCnt
+      @param rui8_ind index of wanted member (first item == 0)
+      @return pointer to wanted local ISO member (NULL if no suitable ISOItem_c found)
+    */
   ISOItem_c& localIsoMemberInd(uint8_t rui8_ind)
-    {return static_cast<ISOItem_c&>(localMemberInd(rui8_ind
-    #if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
-    , IState_c::IsoOnly
-    #endif
-    ));};
-
-  #endif
-
+    { return static_cast<ISOItem_c&>( localMemberInd( rui8_ind ) ); }
 
   /**
-    check if one of the own local members is active with claimed address at ISO11783 or DIN9684
-    @param ren_protoTypes select which active local member types should be checked
-      (IState_c::DinOnly or IState_c::IsoOnly or IState_c::DinIso)
-      (this parameter is only used if USE_ISO_11783 is defined, default check both)
-    @return true -> at least one of the own din identities is active with claimed address at ISO11783 or DIN9684
-    @see SystemMgmt_c::getActiveLocalMember
-  */
-  bool existActiveLocalMember(
-    #if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
-    IState_c::protoOrder_t ren_protoOrder = IState_c::DinIso
-    #endif
-    );
+      check if one of the own local members is active with claimed address at ISO11783
+      @return true -> at least one of the own iso identities is active with claimed address at ISO11783
+      @see SystemMgmt_c::getActiveLocalMember
+    */
+  bool existActiveLocalMember();
+
   /**
-    delivers reference to the first active local member;
-    send of ISO11783 or DIN9684 system msg demands telling a sender ident member no
-    -> using the number of the first active member serves as default (f.e. for requesting other member names)
-    can throw an preconditionViolation error, if none of the own identities is active/claimed address yet
+      delivers reference to the first active local member;
+      send of ISO11783 system msg demands telling a sender ident member no
+      -> using the number of the first active member serves as default (f.e. for requesting other member names)
+      can throw an preconditionViolation error, if none of the own identities is active/claimed address yet
 
-    possible errors:
-      * Err_c::lbsSysNoActiveLocalMember on missing own active ident
-    @param ren_protoTypes select which active local member types should be checked
-      (IState_c::DinOnly or IState_c::IsoOnly or IState_c::DinIso)
-      (this parameter is only used if USE_ISO_11783 is defined, default check both)
-    @return reference to the MonitorItem_c of the first active local member
-      (MonitorItem_c is bas class of both ISOItem_c or DINItem_c which serves
-       adress, devKey, itemState)
-     @exception preconditionViolation
-  */
-  MonitorItem_c& getActiveLocalMember(
-    #if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
-    IState_c::protoOrder_t ren_protoOrder = IState_c::DinIso
-    #endif
-    );
+      possible errors:
+        * Err_c::lbsSysNoActiveLocalMember on missing own active ident
 
+      @return reference to the MonitorItem_c of the first active local member
+        (MonitorItem_c is baes class of ISOItem_c which serves
+        adress, devKey, itemState)
+      @exception preconditionViolation
+    */
+  MonitorItem_c& getActiveLocalMember();
 
-  #ifdef USE_DIN_9684
   /**
-    check if one of the own local DIN members is active with claimed address at ISO11783 or DIN9684;
-    this variant is replaced during compile time by direct call to existActiveLocalMember,
-    so tha no runtime overhead is caused;
-    this allows consistent naming with other DIN member oriented functions
-    @return true -> at least one of the own din identities is active with claimed address at ISO11783 or DIN9684
-    @see SystemMgmt_c::getActiveLocalDinMember
-  */
-  bool existActiveLocalDinMember()
-    {return existActiveLocalMember(
-    #if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
-    IState_c::DinOnly
-    #endif
-      );};
-  /**
-    delivers reference to the first active local DIN member;
-    send of ISO11783 or DIN9684 system msg demands telling a sender ident member no
-    -> using the number of the first active member serves as default (f.e. for requesting other member names)
-    can throw an preconditionViolation error, if none of the own identities is active/claimed address yet
-
-    possible errors:
-      * Err_c::lbsSysNoActiveLocalMember on missing own active ident
-    @return reference to the DINItem_c of the first active local member
-     @exception preconditionViolation
-  */
-  DINItem_c& getActiveLocalDinMember()
-    {return static_cast<DINItem_c&>(getActiveLocalMember(
-      #if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
-      IState_c::DinOnly
-      #endif
-      ));};
-
-  #endif
-  #ifdef USE_ISO_11783
-  /**
-    check if one of the own local ISO members is active with claimed address at ISO11783 or DIN9684;
-    this variant is replaced during compile time by direct call to existActiveLocalMember,
-    so tha no runtime overhead is caused;
-    this allows consistent naming with other ISO member oriented functions
-    @return true -> at least one of the own iso identities is active with claimed address at ISO11783 or DIN9684
-    @see SystemMgmt_c::getActiveLocalIsoMember
-  */
+      check if one of the own local ISO members is active with claimed address at ISO11783;
+      this variant is replaced during compile time by direct call to existActiveLocalMember,
+      so tha no runtime overhead is caused;
+      this allows consistent naming with other ISO member oriented functions
+      @return true -> at least one of the own iso identities is active with claimed address at ISO11783
+      @see SystemMgmt_c::getActiveLocalIsoMember
+    */
   bool existActiveLocalIsoMember()
-    {return existActiveLocalMember(
-      #if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
-      IState_c::IsoOnly
-      #endif
-      );};
-  /**
-    delivers reference to the first active local ISO member;
-    -> using the number of the first active member serves as default
-    can throw an preconditionViolation error, if none of the own ISO identities is active/claimed address yet
+    {return existActiveLocalMember();}
 
-    possible errors:
-      * Err_c::lbsSysNoActiveLocalMember on missing own active ident
-    @return reference to the DINItem_c of the first active local member
-     @exception preconditionViolation
-  */
+  /**
+      delivers reference to the first active local ISO member;
+      -> using the number of the first active member serves as default
+      can throw an preconditionViolation error, if none of the own ISO identities is active/claimed address yet
+
+      possible errors:
+        * Err_c::lbsSysNoActiveLocalMember on missing own active ident
+
+      @return reference to the IsoItem_c of the first active local member
+      @exception preconditionViolation
+    */
   ISOItem_c& getActiveLocalIsoMember()
-    {return static_cast<ISOItem_c&>(getActiveLocalMember(
-      #if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
-      IState_c::IsoOnly
-      #endif
-      ));};
-
-  #endif
-
+    {return static_cast<ISOItem_c&>(getActiveLocalMember());}
 
   /**
-    check for own ident with given member no
-    @param rui8_nr member no to search for
-    @param ren_protoTypes select which active local member types should be checked
-      (IState_c::DinOnly or IState_c::IsoOnly or IState_c::DinIso)
-      (this parameter is only used if USE_ISO_11783 is defined, default check both)
-    @return true -> one of the own identities has the wanted member no
-  */
-  bool existLocalMemberNr(uint8_t rui8_nr
-    #if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
-    , IState_c::protoOrder_t ren_protoOrder = IState_c::DinIso
-    #endif
-  );
-  /**
-    check for own ident with given DEV_KEY
-    @param rc_devKey DEV_KEY to search for
-    @param ren_protoTypes select which active local member types should be checked
-      (IState_c::DinOnly or IState_c::IsoOnly or IState_c::DinIso)
-      (this parameter is only used if USE_ISO_11783 is defined, default check both)
-    @return true -> one of the own identities has the wanted DEV_KEY
-  */
-  bool existLocalMemberDevKey(const DevKey_c& rc_devKey, bool rb_forceClaimedAddress = false
-    #if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
-    , IState_c::protoOrder_t ren_protoOrder = IState_c::DinIso
-    #endif
-  );
+      check for own ident with given member no
+      @param rui8_nr member no to search for
+      @return true -> one of the own identities has the wanted member no
+    */
+  bool existLocalMemberNr(uint8_t rui8_nr);
 
-  #ifdef USE_DIN_9684
   /**
-    check for own din ident with given member no;
-    this variant of existLocalMemberNr is replaced during compile time by a direct
-    call to existLocalMemberNr, so that no runtime overhead is caused;
-    allows consistent naming with other DIN member functions
-    @param rui8_nr member no to search for
-    @return true -> one of the own din identities has the wanted member no
-  */
-  bool existLocalDinMemberNr(uint8_t rui8_nr)
-    {return existLocalMemberNr(rui8_nr
-      #if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
-      , IState_c::DinOnly
-      #endif
-      );};
+      check for own ident with given DEV_KEY
+      @param rc_devKey              DEV_KEY to search for
+      @param rb_forceClaimedAddress true -> only members with claimed address are used
+                                    (optional, default false)
+      @return true -> one of the own identities has the wanted DEV_KEY
+    */
+  bool existLocalMemberDevKey(const DevKey_c& rc_devKey, bool rb_forceClaimedAddress = false);
+
   /**
-    check for own din ident with given DEV_KEY;
-    this variant of existLocalMemberNr is replaced during compile time by a direct
-    call to existLocalMemberNr, so that no runtime overhead is caused;
-    allows consistent naming with other DIN member functions
-    @param rc_devKey DEV_KEY to search for
-    @return true -> one of the own din identities has the wanted DEV_KEY
-  */
-  bool existLocalDinMemberDevKey(const DevKey_c& rc_devKey, bool rb_forceClaimedAddress = false)
-    {return existLocalMemberDevKey(rc_devKey, rb_forceClaimedAddress
-      #if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
-      , IState_c::DinOnly
-      #endif
-      );};
-  #endif
-  #ifdef USE_ISO_11783
-  /**
-    check for own iso ident with given member no;
-    this variant of existLocalMemberNr is replaced during compile time by a direct
-    call to existLocalMemberNr, so that no runtime overhead is caused;
-    allows consistent naming with other ISO member functions
-    @param rui8_nr member no to search for
-    @return true -> one of the own din identities has the wanted member no
-  */
+      check for own iso ident with given member no;
+      this variant of existLocalMemberNr is replaced during compile time by a direct
+      call to existLocalMemberNr, so that no runtime overhead is caused;
+      allows consistent naming with other ISO member functions
+      @param rui8_nr member no to search for
+      @return true -> one of the own identities has the wanted member no
+    */
   bool existLocalIsoMemberNr(uint8_t rui8_nr)
-    {return existLocalMemberNr(rui8_nr
-      #if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
-      , IState_c::IsoOnly
-      #endif
-      );};
-  /**
-    check for own din ident with given DEV_KEY;
-    this variant of existLocalMemberNr is replaced during compile time by a direct
-    call to existLocalMemberNr, so that no runtime overhead is caused;
-    allows consistent naming with other ISO member functions
-    @param rc_devKey DEV_KEY to search for
-    @return true -> one of the own iso identities has the wanted DEV_KEY
-  */
-  bool existLocalIsoMemberDevKey(const DevKey_c& rc_devKey, bool rb_forceClaimedAddress = false)
-    {return existLocalMemberDevKey(rc_devKey, rb_forceClaimedAddress
-    #if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
-    , IState_c::IsoOnly
-    #endif
-    );};
-  #endif
+    {return existLocalMemberNr(rui8_nr);}
 
+  /**
+      check for own din ident with given DEV_KEY;
+      this variant of existLocalMemberNr is replaced during compile time by a direct
+      call to existLocalMemberNr, so that no runtime overhead is caused;
+      allows consistent naming with other ISO member functions
+      @param rc_devKey              DEV_KEY to search for
+      @param rb_forceClaimedAddress true -> only members with claimed address are used
+                                    (optional, default false)
+      @return true -> one of the own iso identities has the wanted DEV_KEY
+    */
+  bool existLocalIsoMemberDevKey(const DevKey_c& rc_devKey, bool rb_forceClaimedAddress = false)
+    {return existLocalMemberDevKey(rc_devKey, rb_forceClaimedAddress);}
   /*\@}*/
 
   /**
-   * reset the Addres Claim state by:
-   * + reset IdentItem::IStat_c to IState_c::PreAddressClaim
-   * + remove pointed ISOItem_c and DINItem_c nodes and the respective pointer
-   * @return true -> there was an item with given DevKey_c that has been resetted to IState_c::PreAddressClaim
-   */
+    * reset the Addres Claim state by:
+    * + reset IdentItem::IStat_c to IState_c::PreAddressClaim
+    * + remove pointed ISOItem_c nodes and the respective pointer
+    * @param rc_devKey  DEV_KEY
+    * @return true -> there was an item with given DevKey_c that has been resetted to IState_c::PreAddressClaim
+    */
   bool restartAddressClaim( const DevKey_c& rrefc_devKey );
 
 
@@ -639,21 +422,25 @@ private:
   /** register pointer to a new client
     * this function is called within construction of new client instance
     */
-  bool registerClient( IdentItem_c* pc_client) { return registerC1( pc_client );};
+  bool registerClient( IdentItem_c* pc_client) { return registerC1( pc_client );}
+
   /** register pointer to a new client
     * this function is called within construction of new client instance
     */
-  void unregisterClient( IdentItem_c* pc_client) { pc_activeLocalMember = NULL; unregisterC1( pc_client );};
+  void unregisterClient( IdentItem_c* pc_client) { pc_activeLocalMember = NULL; unregisterC1( pc_client );}
+
   /** handler function for access to undefined client.
     * the base Singleton calls this function, if it detects an error
     */
-  void registerAccessFlt( void ) {getLbsErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::LbsSystem );};
+  void registerAccessFlt( void ) {getLbsErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::LbsSystem );}
+
 
   friend class SINGLETON_DERIVED(SystemMgmt_c,ElementBase_c);
   /** private constructor which prevents direct instantiation in user application
     * NEVER define instance of SystemMgmt_c within application
     */
   SystemMgmt_c();
+
   /**
     initialize directly after the singleton instance is created.
     this is called from singleton.h and should NOT be called from the user again.

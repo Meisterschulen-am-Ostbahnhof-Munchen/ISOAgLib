@@ -8,6 +8,9 @@
     <primarylanguage>C++</primarylanguage>
     <ignoreparts>
       <part>kdevrbdebugger</part>
+      <part>kdevctags2</part>
+      <part>kdevdoxygen</part>
+      <part>kdevdistpart</part>
     </ignoreparts>
     <projectdirectory>.</projectdirectory>
     <absoluteprojectpath>false</absoluteprojectpath>

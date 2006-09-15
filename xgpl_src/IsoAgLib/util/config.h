@@ -90,7 +90,7 @@ union processDataVal
   int32_t, uint32_t, float
 */
 enum proc_valType_t {i32_val = 0, ui32_val = 2, cmdVal = 3
-#if defined(USE_FLOAT_DATA_TYPE) || defined(USE_DIN_GPS)
+#if defined(USE_FLOAT_DATA_TYPE)
   , float_val = 1
 #endif
   };

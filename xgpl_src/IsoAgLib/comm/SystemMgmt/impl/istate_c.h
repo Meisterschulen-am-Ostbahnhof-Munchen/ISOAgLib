@@ -103,8 +103,9 @@ public:
   /* *************************************** */
   /** enum type for state of a monitor list item */
   enum itemState_t { IstateNull = 0x0,
-         // states for distinguishing of DIN and ISO Members
-         Din = 0x1, Iso = 0x2,
+         // states for ISO Members
+//          Din = 0x1, -> this flag is disused because we just only use ISO 11783 Standard
+         Iso = 0x2,
          // only one states of following Line possible
          Off = 0x4, Standby = 0xC, Active = 0x8,
          // only one states of following Line possible
@@ -115,7 +116,7 @@ public:
          AffectedConflict = 0x400,
          Error = 0x800,
          Member = 0x1000,  ///< This identifies a normal member
-         Service = 0x2000, ///< This flag identifies DIN 9684 services (could be used for ISO also ???)
+         Service = 0x2000, ///< This flag could be used for ISO services
          Local = 0x4000,   ///< This flag identifies local items
          PossiblyOffline = 0x8000 ///< This flag indicates, that the node missed to anwer at least one AdrClaim request -> upon next miss it should be deleted from monitor list
   };
@@ -126,13 +127,14 @@ public:
     only if an IState_c itemState and a searched proto protoOrder_t
     are fIffing for at least one protocol type
   */
-  enum protoOrder_t { DinOnly = 0x1, IsoOnly = 0x2, DinIso = 0x13, IsoDin = 0x23 };
+//  enum protoOrder_t { DinOnly = 0x1, IsoOnly = 0x2, DinIso = 0x13, IsoDin = 0x23 };
 
   /**
     constructor of IState_c which can set the state to given initial value
     @param ren_itemState optional wanted state information (default Active value)
   */
   IState_c(itemState_t ren_itemState = Active, int ri_singletonVecKey = 0);
+
   /**
     constructor of IState_c which can set the state to given initial value
     @param ren_itemState optional wanted state information (default <empty> value)
@@ -167,7 +169,7 @@ public:
     @return true -> the given state is set
   */
   bool itemState(itemState_t ren_itemState) const
-    {return ((en_itemState & ren_itemState) == ren_itemState)?true:false;};
+    {return ((en_itemState & ren_itemState) == ren_itemState)?true:false;}
 
   /**
   check if specific state is partially set
@@ -175,28 +177,29 @@ public:
   @return true -> one of the given combined states is set
    */
   bool itemStatePartialMatch(itemState_t ren_itemState) const
-  {return ((en_itemState & ren_itemState) != 0)?true:false;};
+  {return ((en_itemState & ren_itemState) != 0)?true:false;}
 
   /**
     deliver the state information
     @return state information of type itemState_t (with state informations coded by OR in enum)
   */
   const itemState_t itemState() const
-    {return en_itemState;};
+    {return en_itemState;}
 
   /**
     clear whole state or some specific flags
     @param ren_itemState optional flags to clear (default clear all)
   */
   void clearItemState(itemState_t ren_itemState = itemState_t(~IstateNull))
-    {en_itemState = itemState_t(en_itemState & ~ren_itemState);};
+    {en_itemState = itemState_t(en_itemState & ~ren_itemState);}
+
   /**
     check if an IState_c matches the searched protocols defined by protoOrder_t
     @param ren_searchedProto
     @return true -> at least one of the searched proto (DIN or ISO) is set for this item
   */
-  bool matchSearchedProto(protoOrder_t ren_searchedProto) const
-    {return (((uint8_t)en_itemState & (uint8_t)ren_searchedProto & 0x3) != 0)?true:false;};
+//  bool matchSearchedProto(protoOrder_t ren_searchedProto) const
+//     {return (((uint8_t)en_itemState & (uint8_t)ren_searchedProto & 0x3) != 0)?true:false;}
 
 private:
   /** state of this monitor item */
@@ -242,7 +245,7 @@ public:
     retreive the counter of false alive msgs
     @return actual false alive cnt
   */
-  uint8_t falseAliveCnt() const {return counter.b_falseAliveCnt;};
+  uint8_t falseAliveCnt() const {return counter.b_falseAliveCnt;}
 
   /**
     set the counter of false alive msgs
@@ -255,7 +258,7 @@ public:
     retreive the counter of caused conflicts
     @return actual count of caused conflict
   */
-  uint8_t causedConflictCnt() const {return counter.b_causedConflictCnt;};
+  uint8_t causedConflictCnt() const {return counter.b_causedConflictCnt;}
 
   /**
     set the counter of false alive msgs
@@ -268,7 +271,7 @@ public:
     retreive the counter of Affected conflicts
     @return actual count of Affected conflict
   */
-  uint8_t affectedConflictCnt() const {return counter.b_affectedConflictCnt;};
+  uint8_t affectedConflictCnt() const {return counter.b_affectedConflictCnt;}
 
   /**
     set the counter of false alive msgs

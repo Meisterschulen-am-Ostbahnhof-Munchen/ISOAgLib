@@ -7,7 +7,7 @@
 
 
  \section PrjSpec4_0_Eeprom__pc_linux__linux_server_client__rte List of configuration settings for 4_0_Eeprom with CAN Driver linux_server_client and RS232 Driver rte
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/
  Use the file conf_4_0_Eeprom in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_4_0_Eeprom
@@ -164,8 +164,6 @@ RS232_INSTANCE_CNT=1
 # unset or set to 0 if not wanted
 PRJ_ISO11783=1
 # PRJ_ISO_TERMINAL=0
-# PRJ_DIN9684=0
-# PRJ_DIN_TERMINAL=0
 
 # select stream receive strategy:
 # chunk (default): use list of chunks where each receive burst is stored in one chunk -> usefull when on-the-fly parsing is used
@@ -179,7 +177,7 @@ PRJ_ISO11783=1
 # if only special BASE data should be used select one or more of the following parts
 # PRJ_BASE=0
 
-# only incorporate parts from BASE that provide tractor hitch and DIN9684-engine RPM information
+# only incorporate parts from BASE that provide tractor hitch and RPM information
 # PRJ_TRACTOR_GENERAL=0
 
 # only incorporate parts from BASE that provide tractor moving (distance, speed, direction, ...) information
@@ -219,12 +217,6 @@ PRJ_ISO11783=1
 
 # activate globally the use of process data
 # PRJ_PROCESS=0
-
-# for DIN 9684 the process data system can be used
-# to decode GPS information from Fieldstar or LBS+ extension
-# ( if this and DIN9684 is activated, but PRJ_PROCESS is not
-#   then the value of PRJ_PROCESS is overwritten with 1 to activate it )
-# PRJ_FIELDSTAR_GPS=0
 
 # decide if local process data are wanted
 # PROC_LOCAL=0
@@ -467,7 +459,7 @@ PRJ_RS232=1
 
 
  \section PrjSpec4_0_Eeprom__pc_linux__linux_server_client__simulating List of configuration settings for 4_0_Eeprom with CAN Driver linux_server_client and RS232 Driver simulating
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/
  Use the file conf_4_0_Eeprom in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_4_0_Eeprom
@@ -624,8 +616,6 @@ RS232_INSTANCE_CNT=1
 # unset or set to 0 if not wanted
 PRJ_ISO11783=1
 # PRJ_ISO_TERMINAL=0
-# PRJ_DIN9684=0
-# PRJ_DIN_TERMINAL=0
 
 # select stream receive strategy:
 # chunk (default): use list of chunks where each receive burst is stored in one chunk -> usefull when on-the-fly parsing is used
@@ -639,7 +629,7 @@ PRJ_ISO11783=1
 # if only special BASE data should be used select one or more of the following parts
 # PRJ_BASE=0
 
-# only incorporate parts from BASE that provide tractor hitch and DIN9684-engine RPM information
+# only incorporate parts from BASE that provide tractor hitch and RPM information
 # PRJ_TRACTOR_GENERAL=0
 
 # only incorporate parts from BASE that provide tractor moving (distance, speed, direction, ...) information
@@ -679,12 +669,6 @@ PRJ_ISO11783=1
 
 # activate globally the use of process data
 # PRJ_PROCESS=0
-
-# for DIN 9684 the process data system can be used
-# to decode GPS information from Fieldstar or LBS+ extension
-# ( if this and DIN9684 is activated, but PRJ_PROCESS is not
-#   then the value of PRJ_PROCESS is overwritten with 1 to activate it )
-# PRJ_FIELDSTAR_GPS=0
 
 # decide if local process data are wanted
 # PROC_LOCAL=0
@@ -927,7 +911,7 @@ PRJ_RS232=1
 
 
  \section PrjSpec4_0_Eeprom__pc_linux__linux_server_client__sys List of configuration settings for 4_0_Eeprom with CAN Driver linux_server_client and RS232 Driver sys
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/
  Use the file conf_4_0_Eeprom in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_4_0_Eeprom
@@ -1084,8 +1068,6 @@ RS232_INSTANCE_CNT=1
 # unset or set to 0 if not wanted
 PRJ_ISO11783=1
 # PRJ_ISO_TERMINAL=0
-# PRJ_DIN9684=0
-# PRJ_DIN_TERMINAL=0
 
 # select stream receive strategy:
 # chunk (default): use list of chunks where each receive burst is stored in one chunk -> usefull when on-the-fly parsing is used
@@ -1099,7 +1081,7 @@ PRJ_ISO11783=1
 # if only special BASE data should be used select one or more of the following parts
 # PRJ_BASE=0
 
-# only incorporate parts from BASE that provide tractor hitch and DIN9684-engine RPM information
+# only incorporate parts from BASE that provide tractor hitch and RPM information
 # PRJ_TRACTOR_GENERAL=0
 
 # only incorporate parts from BASE that provide tractor moving (distance, speed, direction, ...) information
@@ -1139,12 +1121,6 @@ PRJ_ISO11783=1
 
 # activate globally the use of process data
 # PRJ_PROCESS=0
-
-# for DIN 9684 the process data system can be used
-# to decode GPS information from Fieldstar or LBS+ extension
-# ( if this and DIN9684 is activated, but PRJ_PROCESS is not
-#   then the value of PRJ_PROCESS is overwritten with 1 to activate it )
-# PRJ_FIELDSTAR_GPS=0
 
 # decide if local process data are wanted
 # PROC_LOCAL=0
@@ -1387,7 +1363,7 @@ PRJ_RS232=1
 
 
  \section PrjSpec4_0_Eeprom__pc_linux__rte__rte List of configuration settings for 4_0_Eeprom with CAN Driver rte and RS232 Driver rte
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/
  Use the file conf_4_0_Eeprom in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_4_0_Eeprom
@@ -1544,8 +1520,6 @@ RS232_INSTANCE_CNT=1
 # unset or set to 0 if not wanted
 PRJ_ISO11783=1
 # PRJ_ISO_TERMINAL=0
-# PRJ_DIN9684=0
-# PRJ_DIN_TERMINAL=0
 
 # select stream receive strategy:
 # chunk (default): use list of chunks where each receive burst is stored in one chunk -> usefull when on-the-fly parsing is used
@@ -1559,7 +1533,7 @@ PRJ_ISO11783=1
 # if only special BASE data should be used select one or more of the following parts
 # PRJ_BASE=0
 
-# only incorporate parts from BASE that provide tractor hitch and DIN9684-engine RPM information
+# only incorporate parts from BASE that provide tractor hitch and RPM information
 # PRJ_TRACTOR_GENERAL=0
 
 # only incorporate parts from BASE that provide tractor moving (distance, speed, direction, ...) information
@@ -1599,12 +1573,6 @@ PRJ_ISO11783=1
 
 # activate globally the use of process data
 # PRJ_PROCESS=0
-
-# for DIN 9684 the process data system can be used
-# to decode GPS information from Fieldstar or LBS+ extension
-# ( if this and DIN9684 is activated, but PRJ_PROCESS is not
-#   then the value of PRJ_PROCESS is overwritten with 1 to activate it )
-# PRJ_FIELDSTAR_GPS=0
 
 # decide if local process data are wanted
 # PROC_LOCAL=0
@@ -1847,7 +1815,7 @@ PRJ_RS232=1
 
 
  \section PrjSpec4_0_Eeprom__pc_linux__rte__simulating List of configuration settings for 4_0_Eeprom with CAN Driver rte and RS232 Driver simulating
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/
  Use the file conf_4_0_Eeprom in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_4_0_Eeprom
@@ -2004,8 +1972,6 @@ RS232_INSTANCE_CNT=1
 # unset or set to 0 if not wanted
 PRJ_ISO11783=1
 # PRJ_ISO_TERMINAL=0
-# PRJ_DIN9684=0
-# PRJ_DIN_TERMINAL=0
 
 # select stream receive strategy:
 # chunk (default): use list of chunks where each receive burst is stored in one chunk -> usefull when on-the-fly parsing is used
@@ -2019,7 +1985,7 @@ PRJ_ISO11783=1
 # if only special BASE data should be used select one or more of the following parts
 # PRJ_BASE=0
 
-# only incorporate parts from BASE that provide tractor hitch and DIN9684-engine RPM information
+# only incorporate parts from BASE that provide tractor hitch and RPM information
 # PRJ_TRACTOR_GENERAL=0
 
 # only incorporate parts from BASE that provide tractor moving (distance, speed, direction, ...) information
@@ -2059,12 +2025,6 @@ PRJ_ISO11783=1
 
 # activate globally the use of process data
 # PRJ_PROCESS=0
-
-# for DIN 9684 the process data system can be used
-# to decode GPS information from Fieldstar or LBS+ extension
-# ( if this and DIN9684 is activated, but PRJ_PROCESS is not
-#   then the value of PRJ_PROCESS is overwritten with 1 to activate it )
-# PRJ_FIELDSTAR_GPS=0
 
 # decide if local process data are wanted
 # PROC_LOCAL=0
@@ -2307,7 +2267,7 @@ PRJ_RS232=1
 
 
  \section PrjSpec4_0_Eeprom__pc_linux__rte__sys List of configuration settings for 4_0_Eeprom with CAN Driver rte and RS232 Driver sys
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/
  Use the file conf_4_0_Eeprom in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_4_0_Eeprom
@@ -2464,8 +2424,6 @@ RS232_INSTANCE_CNT=1
 # unset or set to 0 if not wanted
 PRJ_ISO11783=1
 # PRJ_ISO_TERMINAL=0
-# PRJ_DIN9684=0
-# PRJ_DIN_TERMINAL=0
 
 # select stream receive strategy:
 # chunk (default): use list of chunks where each receive burst is stored in one chunk -> usefull when on-the-fly parsing is used
@@ -2479,7 +2437,7 @@ PRJ_ISO11783=1
 # if only special BASE data should be used select one or more of the following parts
 # PRJ_BASE=0
 
-# only incorporate parts from BASE that provide tractor hitch and DIN9684-engine RPM information
+# only incorporate parts from BASE that provide tractor hitch and RPM information
 # PRJ_TRACTOR_GENERAL=0
 
 # only incorporate parts from BASE that provide tractor moving (distance, speed, direction, ...) information
@@ -2519,12 +2477,6 @@ PRJ_ISO11783=1
 
 # activate globally the use of process data
 # PRJ_PROCESS=0
-
-# for DIN 9684 the process data system can be used
-# to decode GPS information from Fieldstar or LBS+ extension
-# ( if this and DIN9684 is activated, but PRJ_PROCESS is not
-#   then the value of PRJ_PROCESS is overwritten with 1 to activate it )
-# PRJ_FIELDSTAR_GPS=0
 
 # decide if local process data are wanted
 # PROC_LOCAL=0
@@ -2767,7 +2719,7 @@ PRJ_RS232=1
 
 
  \section PrjSpec4_0_Eeprom__pc_linux__simulating__rte List of configuration settings for 4_0_Eeprom with CAN Driver simulating and RS232 Driver rte
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/
  Use the file conf_4_0_Eeprom in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_4_0_Eeprom
@@ -2924,8 +2876,6 @@ RS232_INSTANCE_CNT=1
 # unset or set to 0 if not wanted
 PRJ_ISO11783=1
 # PRJ_ISO_TERMINAL=0
-# PRJ_DIN9684=0
-# PRJ_DIN_TERMINAL=0
 
 # select stream receive strategy:
 # chunk (default): use list of chunks where each receive burst is stored in one chunk -> usefull when on-the-fly parsing is used
@@ -2939,7 +2889,7 @@ PRJ_ISO11783=1
 # if only special BASE data should be used select one or more of the following parts
 # PRJ_BASE=0
 
-# only incorporate parts from BASE that provide tractor hitch and DIN9684-engine RPM information
+# only incorporate parts from BASE that provide tractor hitch and RPM information
 # PRJ_TRACTOR_GENERAL=0
 
 # only incorporate parts from BASE that provide tractor moving (distance, speed, direction, ...) information
@@ -2979,12 +2929,6 @@ PRJ_ISO11783=1
 
 # activate globally the use of process data
 # PRJ_PROCESS=0
-
-# for DIN 9684 the process data system can be used
-# to decode GPS information from Fieldstar or LBS+ extension
-# ( if this and DIN9684 is activated, but PRJ_PROCESS is not
-#   then the value of PRJ_PROCESS is overwritten with 1 to activate it )
-# PRJ_FIELDSTAR_GPS=0
 
 # decide if local process data are wanted
 # PROC_LOCAL=0
@@ -3227,7 +3171,7 @@ PRJ_RS232=1
 
 
  \section PrjSpec4_0_Eeprom__pc_linux__simulating__simulating List of configuration settings for 4_0_Eeprom with CAN Driver simulating and RS232 Driver simulating
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/
  Use the file conf_4_0_Eeprom in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_4_0_Eeprom
@@ -3384,8 +3328,6 @@ RS232_INSTANCE_CNT=1
 # unset or set to 0 if not wanted
 PRJ_ISO11783=1
 # PRJ_ISO_TERMINAL=0
-# PRJ_DIN9684=0
-# PRJ_DIN_TERMINAL=0
 
 # select stream receive strategy:
 # chunk (default): use list of chunks where each receive burst is stored in one chunk -> usefull when on-the-fly parsing is used
@@ -3399,7 +3341,7 @@ PRJ_ISO11783=1
 # if only special BASE data should be used select one or more of the following parts
 # PRJ_BASE=0
 
-# only incorporate parts from BASE that provide tractor hitch and DIN9684-engine RPM information
+# only incorporate parts from BASE that provide tractor hitch and RPM information
 # PRJ_TRACTOR_GENERAL=0
 
 # only incorporate parts from BASE that provide tractor moving (distance, speed, direction, ...) information
@@ -3439,12 +3381,6 @@ PRJ_ISO11783=1
 
 # activate globally the use of process data
 # PRJ_PROCESS=0
-
-# for DIN 9684 the process data system can be used
-# to decode GPS information from Fieldstar or LBS+ extension
-# ( if this and DIN9684 is activated, but PRJ_PROCESS is not
-#   then the value of PRJ_PROCESS is overwritten with 1 to activate it )
-# PRJ_FIELDSTAR_GPS=0
 
 # decide if local process data are wanted
 # PROC_LOCAL=0
@@ -3687,7 +3623,7 @@ PRJ_RS232=1
 
 
  \section PrjSpec4_0_Eeprom__pc_linux__simulating__sys List of configuration settings for 4_0_Eeprom with CAN Driver simulating and RS232 Driver sys
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/
  Use the file conf_4_0_Eeprom in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_4_0_Eeprom
@@ -3844,8 +3780,6 @@ RS232_INSTANCE_CNT=1
 # unset or set to 0 if not wanted
 PRJ_ISO11783=1
 # PRJ_ISO_TERMINAL=0
-# PRJ_DIN9684=0
-# PRJ_DIN_TERMINAL=0
 
 # select stream receive strategy:
 # chunk (default): use list of chunks where each receive burst is stored in one chunk -> usefull when on-the-fly parsing is used
@@ -3859,7 +3793,7 @@ PRJ_ISO11783=1
 # if only special BASE data should be used select one or more of the following parts
 # PRJ_BASE=0
 
-# only incorporate parts from BASE that provide tractor hitch and DIN9684-engine RPM information
+# only incorporate parts from BASE that provide tractor hitch and RPM information
 # PRJ_TRACTOR_GENERAL=0
 
 # only incorporate parts from BASE that provide tractor moving (distance, speed, direction, ...) information
@@ -3899,12 +3833,6 @@ PRJ_ISO11783=1
 
 # activate globally the use of process data
 # PRJ_PROCESS=0
-
-# for DIN 9684 the process data system can be used
-# to decode GPS information from Fieldstar or LBS+ extension
-# ( if this and DIN9684 is activated, but PRJ_PROCESS is not
-#   then the value of PRJ_PROCESS is overwritten with 1 to activate it )
-# PRJ_FIELDSTAR_GPS=0
 
 # decide if local process data are wanted
 # PROC_LOCAL=0
@@ -4150,7 +4078,7 @@ PRJ_RS232=1
 
 
  \section PrjConfig4_0_Eeprom List of configuration settings for 4_0_Eeprom
- This is only a copy with doxygen ready comment blocks from the original file ../../../IsoAgLib_Examples/tutorial/4_SupplementaryDriver//4_0_Eeprom/config_4_0_Eeprom.h 
+ This is only a copy with doxygen ready comment blocks from the original file ../../../IsoAgLib_Examples/tutorial/4_SupplementaryDriver//4_0_Eeprom/config_4_0_Eeprom.h
  This header is included by <IsoAgLib/xgpl_src/Application_Config/isoaglib_config.h> based on the
  project define #define PRJ_USE_AUTOGEN_CONFIG config_4_0_Eeprom.h ( Important: place the directory of the application source files in the include search path )
 
@@ -4158,7 +4086,7 @@ PRJ_RS232=1
 \code
 // File: config_4_0_Eeprom.h
 // IMPORTANT: Never change the first block of this header manually!!!
-//            All manual changes are overwritten by the next call of "update_makefile.sh conf_4_0_Eeprom" 
+//            All manual changes are overwritten by the next call of "update_makefile.sh conf_4_0_Eeprom"
 //            Perform changes direct in the feature and project setup file conf_4_0_Eeprom
 //  ALLOWED ADAPTATION: Move the to be adapted defines from the middle block to the end after
 //                      the line START_INDIVIDUAL_PROJECT_CONFIG and remove the comment indication there.
@@ -4168,15 +4096,15 @@ PRJ_RS232=1
 
 // include an external file for definition of pool and firmware versions
 #include "version.h"
-#define CAN_BUS_CNT 1 
+#define CAN_BUS_CNT 1
 
-#define CAN_BUS_USED 0 
+#define CAN_BUS_USED 0
 
-#define CAN_INSTANCE_CNT 1 
+#define CAN_INSTANCE_CNT 1
 
-#define PRT_INSTANCE_CNT 1 
+#define PRT_INSTANCE_CNT 1
 
-#define RS232_INSTANCE_CNT 1 
+#define RS232_INSTANCE_CNT 1
 
 // Decide if the CPU stores number variables in BIG or LITTLE endian byte order in memory.
 // Most CPU will use LITTLE ENDIAN. Only some types of ARM, mostly 68k and PowerPC CPU types will use big endian.
@@ -4201,17 +4129,17 @@ PRJ_RS232=1
 #ifndef NO
   #define NO 0
 #endif
-#ifndef USE_PROCESS_YN 
-	#define USE_PROCESS_YN NO 
+#ifndef USE_PROCESS_YN
+	#define USE_PROCESS_YN NO
 #endif
-#ifndef USE_EEPROM_IO 
-	#define USE_EEPROM_IO 
+#ifndef USE_EEPROM_IO
+	#define USE_EEPROM_IO
 #endif
-#ifndef USE_DATASTREAMS_IO_YN 
-	#define USE_DATASTREAMS_IO_YN NO 
+#ifndef USE_DATASTREAMS_IO_YN
+	#define USE_DATASTREAMS_IO_YN NO
 #endif
-#ifndef USE_ISO_11783 
-	#define USE_ISO_11783 
+#ifndef USE_ISO_11783
+	#define USE_ISO_11783
 #endif
 
 // The following configuration values can be overwritten.

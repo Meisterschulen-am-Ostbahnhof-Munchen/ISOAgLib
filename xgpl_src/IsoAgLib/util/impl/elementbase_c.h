@@ -119,17 +119,22 @@ class ElementBase_c : public CANCustomer_c {
     * @return true -> all planned activities performed in available time
     */
   virtual bool timeEvent( void ) = 0;
+
   /** this function is used by IsoAgLib components
     * to close all their ressources.
     * this enables a coordinated shutdown by Scheduler_c
     */
   virtual void close( void ) = 0;
+
   /** clear b_alreadyClosed so that close() can be called one time */
-  void clearAlreadyClosed( void ) { b_alreadyClosed = false; } ;
+  void clearAlreadyClosed( void ) { b_alreadyClosed = false; }
+
   /** set b_alreadyClosed so that close() can't be called another time */
-  void setAlreadyClosed( void ) { b_alreadyClosed = true; } ;
+  void setAlreadyClosed( void ) { b_alreadyClosed = true; }
+
   /** check b_alreadyClosed to decide if close() can be called */
-  bool checkAlreadyClosed( void ) const { return b_alreadyClosed; } ;
+  bool checkAlreadyClosed( void ) const { return b_alreadyClosed; }
+
  private:
    /** store already called close() after last call of init() */
    bool b_alreadyClosed;

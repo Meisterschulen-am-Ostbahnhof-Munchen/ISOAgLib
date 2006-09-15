@@ -9,14 +9,14 @@
   /** the macro SINGLETON allows to define classes independent from the value
     * of PRT_INSTANCE_CNT, so that the compiler selects the appropriate base class during
     * compile time
-    * this variant is used by the compiler, if more than one ISO11783 or DIN9684 BUSes have to be managed by
+    * this variant is used by the compiler, if more than one BUSes have to be managed by
     * the IsoAgLib
     */
   #define SINGLETON( CLASS ) SingletonVec<CLASS,PRT_INSTANCE_CNT>
   /** the macro SINGLETON_DERIVED allows to define classes independent from the value
     * of PRT_INSTANCE_CNT, so that the compiler selects the appropriate base class during
     * compile time
-    * this variant is used by the compiler, if more than one ISO11783 or DIN9684 BUSes have to be managed by
+    * this variant is used by the compiler, if more than one BUSes have to be managed by
     * the IsoAgLib
     * Difference to SINGLETON is the fact, that this version allows to derive the singleton pattern using class from
     * another class. This is important to avoid multiple inheritance.
@@ -28,7 +28,7 @@
     * during execution of constructor, whereas the unregister function has to be called during
     * execution of destructor. This macro allows to define specific classes independent from
     * the value of PRT_INSTANCE_CNT. With the help of the macro autoInstance(), the interaction of
-    * instances of different classes which belongs to the same ISO11783 or DIN9684 BUS can be defined independent
+    * instances of different classes which belongs to the same BUS can be defined independent
     * from PRT_INSTANCE_CNT
     */
   #define SINGLETON_CLIENT1( CLASS, CLIENT1, KEY1 ) SingletonVecCont1<CLASS,PRT_INSTANCE_CNT,CLIENT1,KEY1>
@@ -37,7 +37,7 @@
     * during execution of constructor, whereas the unregister function has to be called during
     * execution of destructor. This macro allows to define specific classes independent from
     * the value of PRT_INSTANCE_CNT. With the help of the macro autoInstance(), the interaction of
-    * instances of different classes which belongs to the same ISO11783 or DIN9684 BUS can be defined independent
+    * instances of different classes which belongs to the same BUS can be defined independent
     * from PRT_INSTANCE_CNT
     * Difference to SINGLETON_CLIENT1 is the fact, that this version allows to derive the singleton pattern using class from
     * another class. This is important to avoid multiple inheritance.
@@ -49,7 +49,7 @@
     * during execution of constructor, whereas the unregister function has to be called during
     * execution of destructor. This macro allows to define specific classes independent from
     * the value of PRT_INSTANCE_CNT. With the help of the macro autoInstance(), the interaction of
-    * instances of different classes which belongs to the same ISO11783 or DIN9684 BUS can be defined independent
+    * instances of different classes which belongs to the same BUS can be defined independent
     * from PRT_INSTANCE_CNT
     */
   #define SINGLETON_CLIENT2( CLASS, CLIENT1, KEY1, CLIENT2, KEY2 ) \
@@ -59,7 +59,7 @@
     * during execution of constructor, whereas the unregister function has to be called during
     * execution of destructor. This macro allows to define specific classes independent from
     * the value of PRT_INSTANCE_CNT. With the help of the macro autoInstance(), the interaction of
-    * instances of different classes which belongs to the same ISO11783 or DIN9684 BUS can be defined independent
+    * instances of different classes which belongs to the same BUS can be defined independent
     * from PRT_INSTANCE_CNT
     * Difference to SINGLETON_CLIENT2 is the fact, that this version allows to derive the singleton pattern using class from
     * another class. This is important to avoid multiple inheritance.
@@ -72,7 +72,7 @@
     * during execution of constructor, whereas the unregister function has to be called during
     * execution of destructor. This macro allows to define specific classes independent from
     * the value of PRT_INSTANCE_CNT. With the help of the macro autoInstance(), the interaction of
-    * instances of different classes which belongs to the same ISO11783 or DIN9684 BUS can be defined independent
+    * instances of different classes which belongs to the same BUS can be defined independent
     * from PRT_INSTANCE_CNT
     */
   #define SINGLETON_CLIENT3( CLASS, CLIENT1, KEY1, CLIENT2, KEY2, CLIENT3, KEY3 ) \
@@ -82,7 +82,7 @@
     * during execution of constructor, whereas the unregister function has to be called during
     * execution of destructor. This macro allows to define specific classes independent from
     * the value of PRT_INSTANCE_CNT. With the help of the macro autoInstance(), the interaction of
-    * instances of different classes which belongs to the same ISO11783 or DIN9684 BUS can be defined independent
+    * instances of different classes which belongs to the same BUS can be defined independent
     * from PRT_INSTANCE_CNT
     * Difference to SINGLETON_CLIENT3 is the fact, that this version allows to derive the singleton pattern using class from
     * another class. This is important to avoid multiple inheritance.
@@ -91,7 +91,7 @@
     SingletonDerivedVecCont3<CLASS,BASE,PRT_INSTANCE_CNT,CLIENT1,KEY1,CLIENT2,KEY2,CLIENT3,KEY3>
 
   /** the macro autoInstance() uses the class  value singletonVecKey
-    * to get a corresponding class instance, which is delegated to the same ISO11783 or DIN9684 BUS
+    * to get a corresponding class instance, which is delegated to the same BUS
     */
   #define autoInstance()                   instance( ClientBase::getSingletonVecKey() )
   #define SINGLETON_PARENT_CONSTRUCTOR     ClientBase( ri_singletonVecKey ),
@@ -143,14 +143,14 @@
   /** the macro SINGLETON allows to define classes independent from the value
     * of PRT_INSTANCE_CNT, so that the compiler selects the appropriate base class during
     * compile time
-    * this variant is used by the compiler, if only one ISO11783 or DIN9684 BUS (common case) has to be managed by
+    * this variant is used by the compiler, if only one BUS (common case) has to be managed by
     * the IsoAgLib, so that the additional overhead of SingletonVec is avoided
     */
   #define SINGLETON( CLASS ) Singleton<CLASS>
   /** the macro SINGLETON_DERIVED allows to define classes independent from the value
     * of PRT_INSTANCE_CNT, so that the compiler selects the appropriate base class during
     * compile time
-    * this variant is used by the compiler, if only one ISO11783 or DIN9684 BUS (common case) has to be managed by
+    * this variant is used by the compiler, if only one BUS (common case) has to be managed by
     * the IsoAgLib, so that the additional overhead of SingletonVec is avoided
     * Difference to SINGLETON is the fact, that this version allows to derive the singleton pattern using class from
     * another class. This is important to avoid multiple inheritance.
@@ -162,7 +162,7 @@
     * during execution of constructor, whereas the unregister function has to be called during
     * execution of destructor. This macro allows to define specific classes independent from
     * the value of PRT_INSTANCE_CNT. With the help of the macro autoInstance(), the interaction of
-    * instances of different classes which belongs to the same ISO11783 or DIN9684 BUS can be defined independent
+    * instances of different classes which belongs to the same BUS can be defined independent
     * from PRT_INSTANCE_CNT
     */
   #define SINGLETON_CLIENT1( CLASS, CLIENT1, KEY1 ) SingletonCont1<CLASS,CLIENT1,KEY1>
@@ -171,7 +171,7 @@
     * during execution of constructor, whereas the unregister function has to be called during
     * execution of destructor. This macro allows to define specific classes independent from
     * the value of PRT_INSTANCE_CNT. With the help of the macro autoInstance(), the interaction of
-    * instances of different classes which belongs to the same ISO11783 or DIN9684 BUS can be defined independent
+    * instances of different classes which belongs to the same BUS can be defined independent
     * from PRT_INSTANCE_CNT
     */
   #define SINGLETON_DERIVED_CLIENT1( CLASS, BASE, CLIENT1, KEY1 ) SingletonDerivedCont1<CLASS,BASE,CLIENT1,KEY1>
@@ -181,7 +181,7 @@
     * during execution of constructor, whereas the unregister function has to be called during
     * execution of destructor. This macro allows to define specific classes independent from
     * the value of PRT_INSTANCE_CNT. With the help of the macro autoInstance(), the interaction of
-    * instances of different classes which belongs to the same ISO11783 or DIN9684 BUS can be defined independent
+    * instances of different classes which belongs to the same BUS can be defined independent
     * from PRT_INSTANCE_CNT
     */
   #define SINGLETON_CLIENT2( CLASS, CLIENT1, KEY1, CLIENT2, KEY2 ) SingletonCont2<CLASS,CLIENT1,KEY1,CLIENT2,KEY2>
@@ -190,7 +190,7 @@
     * during execution of constructor, whereas the unregister function has to be called during
     * execution of destructor. This macro allows to define specific classes independent from
     * the value of PRT_INSTANCE_CNT. With the help of the macro autoInstance(), the interaction of
-    * instances of different classes which belongs to the same ISO11783 or DIN9684 BUS can be defined independent
+    * instances of different classes which belongs to the same BUS can be defined independent
     * from PRT_INSTANCE_CNT
     */
   #define SINGLETON_DERIVED_CLIENT2( CLASS, BASE, CLIENT1, KEY1, CLIENT2, KEY2 ) \
@@ -201,7 +201,7 @@
     * during execution of constructor, whereas the unregister function has to be called during
     * execution of destructor. This macro allows to define specific classes independent from
     * the value of PRT_INSTANCE_CNT. With the help of the macro autoInstance(), the interaction of
-    * instances of different classes which belongs to the same ISO11783 or DIN9684 BUS can be defined independent
+    * instances of different classes which belongs to the same BUS can be defined independent
     * from PRT_INSTANCE_CNT
     */
   #define SINGLETON_DERIVED_CLIENT3( CLASS, CLIENT1, KEY1, CLIENT2, KEY2, CLIENT3, KEY3 ) \
@@ -211,13 +211,13 @@
     * during execution of constructor, whereas the unregister function has to be called during
     * execution of destructor. This macro allows to define specific classes independent from
     * the value of PRT_INSTANCE_CNT. With the help of the macro autoInstance(), the interaction of
-    * instances of different classes which belongs to the same ISO11783 or DIN9684 BUS can be defined independent
+    * instances of different classes which belongs to the same BUS can be defined independent
     * from PRT_INSTANCE_CNT
     */
   #define SINGLETON_CLIENT3( CLASS, BASE, CLIENT1, KEY1, CLIENT2, KEY2, CLIENT3, KEY3 ) \
     SingletonDerivedCont3< CLASS,BASE,CLIENT1,KEY1,CLIENT2,KEY2,CLIENT3,KEY3>
 
-  /** the macro autoInstance() is simply replaced by instance() in cases where only one ISO11783 or DIN9684 BUS is managed
+  /** the macro autoInstance() is simply replaced by instance() in cases where only one BUS is managed
     * as the more usual case is only one BUS, this solution creates no unneeded overhead
     */
   #define autoInstance()                      instance()
@@ -254,9 +254,9 @@
     */
   class ClientBase {
    public:
-    /** the constructor accepts an attribute, which is ignored in cases where only one ISO11783 or DIN9684 BUS
-      * is managed. The variant of ClientBase for more than one ISO11783 or DIN9684 BUS uses this parameter
-      * to store the dedicated ISO11783 or DIN9684 BUS for later accesses by autoInstance()
+    /** the constructor accepts an attribute, which is ignored in cases where only one BUS
+      * is managed. The variant of ClientBase for more than one BUS uses this parameter
+      * to store the dedicated BUS for later accesses by autoInstance()
       */
     ClientBase( int /* ri_singletonVecKey is intentionally unused for one-instance version of Singleton */ = 0 ) {};
     ClientBase( const ClientBase& /* refc_src is intentionally unused for one-instance version of Singleton */ ) { };

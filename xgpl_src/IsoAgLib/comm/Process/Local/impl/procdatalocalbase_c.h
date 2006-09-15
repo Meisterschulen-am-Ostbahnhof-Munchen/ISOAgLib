@@ -145,12 +145,6 @@ class ProcDataLocalBase_c : public ProcDataBase_c
     @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
                          (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
 
-    DIN parameter
-    @param rui8_lis optional LIS code of this instance
-    @param rui8_wert optional WERT code of this instance
-    @param rui8_inst optional INST code of this instance
-    @param rui8_zaehlnum optional ZAEHLNUM code of this instance
-
     @param rc_devKey optional DEV_KEY code of Process-Data
     @param rui8_pri PRI code of messages with this process data instance (default 2)
     @param rc_ownerDevKey optional DEV_KEY of the owner
@@ -175,17 +169,7 @@ class ProcDataLocalBase_c : public ProcDataBase_c
     @param rpc_processDataChangeHandler optional pointer to handler class of application
     @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
-  ProcDataLocalBase_c(
-#ifdef USE_ISO_11783
-                       const IsoAgLib::ElementDDI_s* ps_elementDDI = NULL,
-                       uint16_t ui16_element = 0xFFFF,
-#endif
-#ifdef USE_DIN_9684
-                       uint8_t rui8_lis = 0xFF,
-                       uint8_t rui8_wert = 0,
-                       uint8_t rui8_inst = 0,
-                       uint8_t rui8_zaehlnum = 0xFF,
-#endif
+  ProcDataLocalBase_c( const IsoAgLib::ElementDDI_s* ps_elementDDI = NULL, uint16_t ui16_element = 0xFFFF,
                        const DevKey_c& rc_devKey = DevKey_c::DevKeyInitialProcessData,
                        uint8_t rui8_pri = 2,
                        const DevKey_c& rc_ownerDevKey = DevKey_c::DevKeyUnspecified,
@@ -197,26 +181,11 @@ class ProcDataLocalBase_c : public ProcDataBase_c
                        , IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL
                        , int ri_singletonVecKey = 0
                        )
-    : ProcDataBase_c(
-#ifdef USE_ISO_11783
-                     ps_elementDDI,
-                     ui16_element,
-#endif
-#ifdef USE_DIN_9684
-                     rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
-#endif
-                     rc_devKey, rui8_pri, rc_ownerDevKey, rpc_devKey, rpc_processDataChangeHandler, ri_singletonVecKey
+    : ProcDataBase_c( ps_elementDDI, ui16_element,
+                      rc_devKey, rui8_pri, rc_ownerDevKey, rpc_devKey, rpc_processDataChangeHandler, ri_singletonVecKey
                      )
 
-    {init(
-#ifdef USE_ISO_11783
-          ps_elementDDI,
-          ui16_element,
-#endif
-#ifdef USE_DIN_9684
-          rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
-#endif
-          rc_devKey, rui8_pri, rc_ownerDevKey, rpc_devKey, rb_cumulativeValue
+    {init( ps_elementDDI, ui16_element, rc_devKey, rui8_pri, rc_ownerDevKey, rpc_devKey, rb_cumulativeValue
       #ifdef USE_EEPROM_IO
           , rui16_eepromAdr
       #endif // USE_EEPROM_IO
@@ -232,12 +201,6 @@ class ProcDataLocalBase_c : public ProcDataBase_c
     @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
                          (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
 
-    DIN parameter
-    @param rui8_lis optional LIS code of this instance
-    @param rui8_wert optional WERT code of this instance
-    @param rui8_inst optional INST code of this instance
-    @param rui8_zaehlnum optional ZAEHLNUM code of this instance
-
     @param rc_devKey optional DEV_KEY code of Process-Data
     @param rui8_pri PRI code of messages with this process data instance (default 2)
     @param rc_ownerDevKey optional DEV_KEY of the owner
@@ -262,17 +225,7 @@ class ProcDataLocalBase_c : public ProcDataBase_c
     @param rpc_processDataChangeHandler optional pointer to handler class of application
     @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
-  void init(
-#ifdef USE_ISO_11783
-            const IsoAgLib::ElementDDI_s* ps_elementDDI,
-            uint16_t rui16_element,
-#endif
-#ifdef USE_DIN_9684
-            uint8_t rui8_lis = 0xFF,
-            uint8_t rui8_wert = 0,
-            uint8_t rui8_inst = 0,
-            uint8_t rui8_zaehlnum = 0xFF,
-#endif
+  void init(const IsoAgLib::ElementDDI_s* ps_elementDDI, uint16_t rui16_element,
             const DevKey_c& rc_devKey = DevKey_c::DevKeyInitialProcessData,
             uint8_t rui8_pri = 2,
             const DevKey_c& rc_ownerDevKey = DevKey_c::DevKeyUnspecified,
@@ -298,7 +251,8 @@ class ProcDataLocalBase_c : public ProcDataBase_c
     deliver the eeprom adr for the value
     @return configured EEPROM adress
   */
-  uint16_t eepromAdr()const{return ui16_eepromAdr;};
+  uint16_t eepromAdr()const{return ui16_eepromAdr;}
+
   /**
     set the eeprom adr for the value, read in value from EEPROM
 
@@ -308,23 +262,27 @@ class ProcDataLocalBase_c : public ProcDataBase_c
   */
   virtual void setEepromAdr(uint16_t rui16_eepromAdr);
   #endif
+
   /**
     deliver the master value (central measure value of this process data;
     can differ from measure vals of measure progs, as these can be reseted
     independent)
     @return actual master value
   */
-  const int32_t& masterMeasurementVal()const{return i32_masterVal;};
+  const int32_t& masterMeasurementVal()const{return i32_masterVal;}
+
   /**
     set the masterMeasurementVal from main application independent from any measure progs
     @param ri32_val new measure value
   */
   virtual void setMasterMeasurementVal(int32_t ri32_val);
+
   /**
     increment the value -> update the local and the measuring programs values
     @param ri32_val size of increment of master value
   */
   virtual void incrMasterMeasurementVal(int32_t ri32_val);
+
 #ifdef USE_FLOAT_DATA_TYPE
   /**
     deliver the master value (central measure value of this process data;
@@ -332,18 +290,21 @@ class ProcDataLocalBase_c : public ProcDataBase_c
     independent) as float
     @return actual master value
   */
-  const float& masterValFloat()const{return f_masterVal;};
+  const float& masterValFloat()const{return f_masterVal;}
+
   /**
     set the masterMeasurementVal from main application independent from any measure progs
     @param rf_val new measure value
   */
   virtual void setMasterMeasurementVal(float rf_val);
+
   /**
     increment the value -> update the local and the measuring programs values
     @param rf_val size of increment of master value
   */
   virtual void incrMasterMeasurementVal(float rf_val);
 #endif
+
   /**
     perform periodic actions
     task for ProcDataLocal_c::timeEvent is to store the actual
@@ -351,6 +312,7 @@ class ProcDataLocalBase_c : public ProcDataBase_c
     @return true -> all planned executions performed
   */
   virtual bool timeEvent( void );
+
   /**
     send a min-information (selected by MOD) to a specified target (selected by DEVKEY)
     @param rc_targetDevKey DevKey of target
@@ -364,74 +326,86 @@ class ProcDataLocalBase_c : public ProcDataBase_c
     (used for accessing setpoint values from measure progs)
     @return true -> setpoint master exists
   */
-  virtual bool setpointExistMaster() const { return false;};
+  virtual bool setpointExistMaster() const { return false;}
+
   /**
     (used for accessing setpoint values from measure progs)
     @return exact value of master setpoint
   */
-  virtual int32_t setpointExactValue() const { return 0;};
+  virtual int32_t setpointExactValue() const { return 0;}
+
   /**
     (used for accessing setpoint values from measure progs)
     @return default value of master setpoint
   */
-  virtual int32_t setpointDefaultValue() const { return 0;};
+  virtual int32_t setpointDefaultValue() const { return 0;}
+
   /**
     (used for accessing setpoint values from measure progs)
     @return min value of master setpoint
   */
-  virtual int32_t setpointMinValue() const { return 0;};
+  virtual int32_t setpointMinValue() const { return 0;}
+
   /**
     (used for accessing setpoint values from measure progs)
     @return max value of master setpoint
   */
-  virtual int32_t setpointMaxValue() const { return 0;};
+  virtual int32_t setpointMaxValue() const { return 0;}
 
-#ifdef USE_ISO_11783
   /**
     stop all measurement progs in all local process instances, started with given devKey
     (not used for simple measurement)
     @param refc_devKey
   */
   virtual void stopRunningMeasurement(const DevKey_c& /* refc_devKey */) {};
-#endif
+
 
  protected:
   /** processing of a setpoint message.
       this base class variant checks only, if a setpoint cmd was recieved
-      which wants to reset a measurement value (this is wrongly used by some
-      DIN 9684 implementations)
+      which wants to reset a measurement value
   */
   virtual void processSetpoint();
+
   /** process a measure prog message for local process data.
       this variant is only used for simple measurement progam management.
       derived classes with more flexible management (including measurement programs)
       use their own overloaded version.
   */
   virtual void processProg();
+
  private:
+
   friend class ManageMeasureProgLocal_c; /**< allow access to eepromVal() and resetEeprom() */
+
   friend class ProcDataLocal_c; /**< allow access to eepromVal() and resetEeprom() */
+
   friend class ProcDataLocalSimpleSetpoint_c; /**< allow access to eepromVal() and resetEeprom() */
+
   /** base function for assignment of element vars for copy constructor and operator= */
   void assignFromSource( const ProcDataLocalBase_c& rrefc_src );
+
 #ifdef USE_EEPROM_IO
   /**
     deliver the eeprom value
     @return actual EEPROM value
   */
-  const int32_t& eepromVal()const{return i32_eepromVal;};
+  const int32_t& eepromVal()const{return i32_eepromVal;}
+
   #ifdef USE_FLOAT_DATA_TYPE
   /**
     deliver the eeprom value
     @return actual EEPROM value
   */
-  const float& eepromValFloat()const{return f_eepromVal;};
+  const float& eepromValFloat()const{return f_eepromVal;}
   #endif
+
   /**
     set the eeprom value
     @param ri32_val new EEPROM value
   */
-  void setEepromVal(int32_t ri32_val){i32_eepromVal = ri32_val;};
+  void setEepromVal(int32_t ri32_val){i32_eepromVal = ri32_val;}
+
   /**
     called from MeasureProg item -> if this item is first in list
     reset eeprom val
@@ -442,6 +416,7 @@ class ProcDataLocalBase_c : public ProcDataBase_c
   */
   void resetEeprom( void );
 #endif
+
   /**
     virtual function which check dependent on remote/local
     if send action with given var parameter and address claim state of owner is
@@ -453,16 +428,10 @@ class ProcDataLocalBase_c : public ProcDataBase_c
     @param rb_var variable number -> empf
     @param b_empf refernce to EMPF variable which is updated to rb_var
     @param b_send refernce to SEND variable which is only check for address claim state
-    @param en_msgProto protocol type to use for the message
-        IState_c::Din or IState_c::Iso (only compiled and used if USE_ISO_11783 is
-        configured) (default: IState_c::Din)
     @return true -> owner of process data registered as active in Monitor-List
   */
-  virtual bool var2empfSend(uint8_t rui8_pri, uint8_t rb_var, uint8_t &b_empf, uint8_t &b_send
-  #ifdef USE_ISO_11783
-    , IState_c::itemState_t &en_msgProto
-  #endif
-    ) const;
+  virtual bool var2empfSend(uint8_t rui8_pri, uint8_t rb_var, uint8_t &b_empf, uint8_t &b_send) const;
+
  private:
    /** allow explicit MeasureProgLocal_c the access to private elements */
   friend class MeasureProgLocal_c;
@@ -475,6 +444,7 @@ class ProcDataLocalBase_c : public ProcDataBase_c
     int32_t i32_masterVal;
     float f_masterVal;
   };
+
   #ifdef USE_EEPROM_IO
     /** the eeprom value can differ from main programm value
       (if value from eeprom has been restored, if value has been
@@ -488,9 +458,12 @@ class ProcDataLocalBase_c : public ProcDataBase_c
       float f_eepromVal;
     };
   #endif
+
 #else
+
   /** store the master value of the main programm */
   int32_t i32_masterVal;
+
   #ifdef USE_EEPROM_IO
     /** the eeprom value can differ from main programm value
       (if value from eeprom has been restored, if value has been
@@ -498,7 +471,9 @@ class ProcDataLocalBase_c : public ProcDataBase_c
       set disregarding any reset commands from remote */
     int32_t i32_eepromVal;
   #endif
+
 #endif
+
 #ifdef USE_EEPROM_IO
   /** last time, where automatic value store was performed */
   int32_t i32_lastEepromStore;
@@ -506,6 +481,7 @@ class ProcDataLocalBase_c : public ProcDataBase_c
     information should be stored permanent */
   uint16_t ui16_eepromAdr;
 #endif
+
   /** register if this data is a cumulative type like distance, time, area */
   bool b_cumulativeValue;
 };

@@ -343,19 +343,10 @@ int main()
   // if DEV_KEY conflicts forces change of device class instance, the
   // IsoAgLib can change the c_myDevKey val through the pointer to c_myDevKey
   // ISO
-#ifdef USE_ISO_11783
   IsoAgLib::iIdentItem_c c_myIdent( &c_myDevKey,
     b_selfConf, ui8_indGroup, b_func, ui16_manufCode,
     ui32_serNo, b_wantedSa, 0xFFFF, b_funcInst, b_ecuInst);
-#endif
 
-  //  DIN:
-#if defined(USE_DIN_9684) && !defined(USE_ISO_11783)
-  uint8_t c_myName[] = "Hi-Me";
-  IsoAgLib::iIdentItem_c c_myIdent( &myDevKey, c_myName, IsoAgLib::IState_c::DinOnly);
-#endif
-
-#if defined(USE_ISO_11783)
   const ElementDDI_s s_WorkStateElementDDI[2] =
   {
     // DDI 141
@@ -372,18 +363,12 @@ int main()
     // termination entry
     {0xFFFF, false, GeneralCommand_c::noValue}
   };
-#endif
 
 #ifdef USE_PROC_HANDLER
   // workstate of MiniVegN (LIS=0, DEVCLASS=2, WERT=1, INST=0)
   arr_procData[cui8_indexWorkState].init(
-  #if defined(USE_ISO_11783)
                                          s_WorkStateElementDDI,
                                          0,
-  #endif
-  #if defined(USE_DIN_9684)
-                                         0, 0x1, 0x0, 0xFF,
-  #endif
                                          c_remoteDeviceType, 2, c_remoteDeviceType, &c_myDevKey,
   #ifdef USE_EEPROM_IO
                                          0xFFFF,
@@ -392,13 +377,8 @@ int main()
 
   // WERT == 5 -> device specific material flow information (mostly 5/0 -> distributed/harvested amount per area )
   arr_procData[cui8_indexApplicationRate].init(
-  #if defined(USE_ISO_11783)
                                                s_ApplicationRateElementDDI,
                                                0,
-  #endif
-  #if defined(USE_DIN_9684)
-                                               0, 0x5, 0x0, 0xFF,
-  #endif
                                                c_remoteDeviceType, 2, c_remoteDeviceType, &c_myDevKey,
   #ifdef USE_EEPROM_IO
                                                0xFFFF,
@@ -408,13 +388,8 @@ int main()
 #else
   // workstate of MiniVegN (LIS=0, DEVCLASS=2, WERT=1, INST=0)
   IsoAgLib::iProcDataRemote_c c_workState(
-  #if defined(USE_ISO_11783)
                                          s_WorkStateElementDDI,
                                          0,
-  #endif
-  #if defined(USE_DIN_9684)
-                                         0, 0x1, 0x0, 0xFF,
-  #endif
                                          c_remoteDeviceType, 2, c_remoteDeviceType, &c_myDevKey
   #ifdef USE_EEPROM_IO
                                          ,0xFFFF
@@ -423,13 +398,8 @@ int main()
 
   // WERT == 5 -> device specific material flow information (mostly 5/0 -> distributed/harvested amount per area )
   IsoAgLib::iProcDataRemote_c c_applicationRate(
-  #if defined(USE_ISO_11783)
                                                 s_ApplicationRateElementDDI,
                                                 0,
-  #endif
-  #if defined(USE_DIN_9684)
-                                                0, 0x5, 0x0, 0xFF,
-  #endif
                                                 c_remoteDeviceType, 2, c_remoteDeviceType, &c_myDevKey
   #ifdef USE_EEPROM_IO
                                                 ,0xFFFF

@@ -60,7 +60,7 @@
 namespace IsoAgLib {
 
 inline int32_t mul1Div1Mul2Div2(int32_t ri32_mul_1, int32_t ri32_div_1, int32_t ri32_mul_2, int32_t ri32_div_2)
-{ return __IsoAgLib::mul1Div1Mul2Div2(ri32_mul_1, ri32_div_1, ri32_mul_2, ri32_div_2);};
+{ return __IsoAgLib::mul1Div1Mul2Div2(ri32_mul_1, ri32_div_1, ri32_mul_2, ri32_div_2);}
 
 /**
   copy 4 uint8_t data string into pointer to float value;
@@ -70,7 +70,8 @@ inline int32_t mul1Div1Mul2Div2(int32_t ri32_mul_1, int32_t ri32_div_1, int32_t 
   @param pvFrom source data string
   @param pf_to target float value
 */
-inline void littleEndianStream2FloatVar(const void *const pvFrom, float *const pf_to) { __IsoAgLib::littleEndianStream2FloatVar( pvFrom, pf_to ); };
+inline void littleEndianStream2FloatVar(const void *const pvFrom, float *const pf_to) { __IsoAgLib::littleEndianStream2FloatVar( pvFrom, pf_to ); }
+
 /**
   copy float value to 4 uint8_t data string into pointer;
   use e.g. to access uint8_t memory representation of
@@ -79,7 +80,7 @@ inline void littleEndianStream2FloatVar(const void *const pvFrom, float *const p
   @param pf_from source float value
   @param pvTo target data string
 */
-inline void floatVar2LittleEndianStream(const float *const pf_from, void *const pvTo) { __IsoAgLib::floatVar2LittleEndianStream( pf_from, pvTo );};
+inline void floatVar2LittleEndianStream(const float *const pf_from, void *const pvTo) { __IsoAgLib::floatVar2LittleEndianStream( pf_from, pvTo );}
 
 
 /** calculate the total allocated HEAP for:
@@ -92,7 +93,8 @@ inline void floatVar2LittleEndianStream(const float *const pf_from, void *const 
   @return amount of corresponding byte in heap
 */
 inline uint16_t sizeSlistTWithMalloc( uint16_t rui16_sizeT, uint16_t rui16_cnt = 1 )
-  { return __IsoAgLib::sizeSlistTWithMalloc( rui16_sizeT, rui16_cnt );};
+  { return __IsoAgLib::sizeSlistTWithMalloc( rui16_sizeT, rui16_cnt );}
+
 /** calculate the total allocated HEAP for:
   - list<T> with given size of T
   - add the overhead per node for list<T> ( TWO pointer to next and prev item )
@@ -103,7 +105,8 @@ inline uint16_t sizeSlistTWithMalloc( uint16_t rui16_sizeT, uint16_t rui16_cnt =
   @return amount of corresponding byte in heap
 */
 inline uint16_t sizeListTWithMalloc( uint16_t rui16_sizeT, uint16_t rui16_cnt = 1 )
-  { return __IsoAgLib::sizeListTWithMalloc( rui16_sizeT, rui16_cnt );};
+  { return __IsoAgLib::sizeListTWithMalloc( rui16_sizeT, rui16_cnt );}
+
 /** calculate the total allocated HEAP for:
   - vector<T> with given size of T
   - add the overhead for malloc_alloc Allocator which calls malloc for each vector instance ( HEAP block pointer )
@@ -113,7 +116,8 @@ inline uint16_t sizeListTWithMalloc( uint16_t rui16_sizeT, uint16_t rui16_cnt = 
   @return amount of corresponding byte in heap
 */
 inline uint16_t sizeVectorTWithMalloc( uint16_t rui16_sizeT, uint16_t rui16_capacity )
-  { return __IsoAgLib::sizeVectorTWithMalloc( rui16_sizeT, rui16_capacity );};
+  { return __IsoAgLib::sizeVectorTWithMalloc( rui16_sizeT, rui16_capacity );}
+
 /** calculate the total allocated HEAP for:
   - slist<T> with given size of T
   - add the overhead per node for slist<T> ( pointer to next item )
@@ -125,7 +129,8 @@ inline uint16_t sizeVectorTWithMalloc( uint16_t rui16_sizeT, uint16_t rui16_capa
   @return amount of corresponding byte in heap
 */
 inline uint16_t sizeSlistTWithChunk( uint16_t rui16_sizeT, uint16_t rui16_cnt = 1 )
-  { return __IsoAgLib::sizeSlistTWithChunk( rui16_sizeT, rui16_cnt );};
+  { return __IsoAgLib::sizeSlistTWithChunk( rui16_sizeT, rui16_cnt );}
+
 /** calculate the total allocated HEAP for:
   - list<T> with given size of T
   - add the overhead per node for slist<T> ( pointers to next+prev item )
@@ -137,7 +142,8 @@ inline uint16_t sizeSlistTWithChunk( uint16_t rui16_sizeT, uint16_t rui16_cnt = 
   @return amount of corresponding byte in heap
 */
 inline uint16_t sizeListTWithChunk( uint16_t rui16_sizeT, uint16_t rui16_cnt = 1 )
-  { return __IsoAgLib::sizeListTWithChunk( rui16_sizeT, rui16_cnt );};
+  { return __IsoAgLib::sizeListTWithChunk( rui16_sizeT, rui16_cnt );}
+
 /** calculate the total allocated HEAP for:
   - vector<T> with given size of T
   - add the overhead for malloc_alloc Allocator which calls malloc for each vector instance ( HEAP block pointer )
@@ -147,7 +153,7 @@ inline uint16_t sizeListTWithChunk( uint16_t rui16_sizeT, uint16_t rui16_cnt = 1
   @return amount of corresponding byte in heap
 */
 inline uint16_t sizeVectorTWithChunk( uint16_t rui16_sizeT, uint16_t rui16_capacity )
-  { return __IsoAgLib::sizeVectorTWithChunk( rui16_sizeT, rui16_capacity );};
+  { return __IsoAgLib::sizeVectorTWithChunk( rui16_sizeT, rui16_capacity );}
 
 #ifdef USE_DATASTREAMS_IO
 /** convert receive multistream into an unsigned variable */
@@ -178,48 +184,53 @@ template<class T> bool convertIstream( StreamInput_c& refc_stream, T& ref_result
 
 /** convert receive multistream into an unsigned variable */
 inline uint8_t convertIstreamUi8( StreamInput_c& refc_stream )
-{ return refc_stream.get(); };
+{ return refc_stream.get(); }
+
 /** convert receive multistream into an unsigned variable */
 inline int8_t convertIstreamI8( StreamInput_c& refc_stream )
-{ return (int8_t)refc_stream.get(); };
+{ return (int8_t)refc_stream.get(); }
+
 /** convert receive multistream into an unsigned variable */
 inline uint16_t convertIstreamUi16( StreamInput_c& refc_stream )
-{ return __IsoAgLib::convertIstreamUi16( refc_stream ); };
+{ return __IsoAgLib::convertIstreamUi16( refc_stream ); }
+
 /** convert receive multistream into an unsigned variable */
 inline int16_t convertIstreamI16( StreamInput_c& refc_stream )
-{ return __IsoAgLib::convertIstreamI16( refc_stream ); };
+{ return __IsoAgLib::convertIstreamI16( refc_stream ); }
+
 /** convert receive multistream into an unsigned variable */
 inline uint32_t convertIstreamUi32( StreamInput_c& refc_stream )
-{ return __IsoAgLib::convertIstreamUi32( refc_stream ); };
+{ return __IsoAgLib::convertIstreamUi32( refc_stream ); }
+
 /** convert receive multistream into an unsigned variable */
 inline int32_t convertIstreamI32( StreamInput_c& refc_stream )
-{ return __IsoAgLib::convertIstreamI32( refc_stream ); };
+{ return __IsoAgLib::convertIstreamI32( refc_stream ); }
 
 #endif
 
 /** convert big endian textual number representation into little endian uint8_t string of specified size */
 inline void bigEndianHexNumberText2CanString( const char* rc_src, uint8_t* pui8_target, unsigned int size )
-{ __IsoAgLib::bigEndianHexNumberText2CanString( rc_src, pui8_target, size );};
+{ __IsoAgLib::bigEndianHexNumberText2CanString( rc_src, pui8_target, size );}
 
 /** convert big endian textual unsigned int 8Bit number representation into little endian uint8_t string */
 inline void bigEndianHexNumberText2CanStringUint8( const char* rc_src, uint8_t* pui8_target )
-{ __IsoAgLib::bigEndianHexNumberText2CanStringUint8( rc_src, pui8_target );};
+{ __IsoAgLib::bigEndianHexNumberText2CanStringUint8( rc_src, pui8_target );}
 
 /** convert big endian textual unsigned int 16Bit number representation into little endian uint8_t string of specified size */
 inline void bigEndianHexNumberText2CanStringUint16( const char* rc_src, uint8_t* pui8_target )
-{ __IsoAgLib::bigEndianHexNumberText2CanStringUint16( rc_src, pui8_target );};
+{ __IsoAgLib::bigEndianHexNumberText2CanStringUint16( rc_src, pui8_target );}
 
 /** convert big endian textual unsigned int 32Bit number representation into little endian uint8_t string of specified size */
 inline void bigEndianHexNumberText2CanStringUint32( const char* rc_src, uint8_t* pui8_target )
-{ __IsoAgLib::bigEndianHexNumberText2CanStringUint32( rc_src, pui8_target );};
+{ __IsoAgLib::bigEndianHexNumberText2CanStringUint32( rc_src, pui8_target );}
 
 /** convert big endian textual unsigned int 64Bit number representation into little endian uint8_t string of specified size */
 inline void bigEndianHexNumberText2CanStringUint64( const char* rc_src, uint8_t* pui8_target )
-{ __IsoAgLib::bigEndianHexNumberText2CanStringUint64( rc_src, pui8_target );};
+{ __IsoAgLib::bigEndianHexNumberText2CanStringUint64( rc_src, pui8_target );}
 
 /** convert big endian textual unsigned int up to 16Bit number representation into little endian uint8_t string of specified size */
 inline void bigEndianDecNumberText2CanStringUint( const char* rc_src, uint8_t* pui8_target )
-{ __IsoAgLib::bigEndianDecNumberText2CanStringUint( rc_src, pui8_target );};
+{ __IsoAgLib::bigEndianDecNumberText2CanStringUint( rc_src, pui8_target );}
 
 
 #ifdef USE_VT_UNICODE_SUPPORT

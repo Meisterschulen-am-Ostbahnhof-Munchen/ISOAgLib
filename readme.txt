@@ -111,7 +111,7 @@ The ISO<i><sub>AgLib</sub></i> is designed to provide the following main feature
 - narrow hardware adaptation afford to small set of files with hardware adaptation layer
 - greatest part of ISO<i><sub>AgLib</sub></i> source code can be used without any changes for different platforms
 - enable project specific feature selection, source code maintenance and extension by strict modular design
-- facilitate development of application for both DIN 9684 and ISO 11783
+- facilitate development of application for ISO 11783
 - orientate design according to requirements of networks with more then two devices
 
 \section IndexMemoryUsage Information on Memory Resource Requirements
@@ -126,13 +126,12 @@ memory as possible. Thus the current ISO<i><sub>AgLib</sub></i> uses HEAP only f
 		<b>this HEAP usage takes only place, if process data are used</b>
 	- lists of measurement programs per local process data ( only for  IsoAgLib::ProcDataLocal_c or IsoAgLib::ProcDataLocalSimpleSetpoint_c instances )
 	- lists for automatic CAN filter management
-	- list of entries in monitor lists ( IsoAgLib::ISOItem_c, IsoAgLib::DINItem_c , IsoAgLib::DINServiceItem - each type only if the corresponding protocol is used )
+	- list of entries in monitor list ( IsoAgLib::ISOItem_c )
 	- vector for global lookup of sensor or actor I/O instances with one <b>pointer</b> per instance ( <b> only present if the corresponding I/O feaure is used </b> )
-	- list for synchronisation data of LBS+ Terminal Mask Upload ( <b>only needed if DIN 9684 with LBS+ Terminal is used</b> )
 
 \subsection IndexHeapDerive Derive Needed HEAPSIZE
 The HEAP allocation strategy results in the need of <b>11 KByte</b> HEAPSIZE for the complete <b>MiniVeg N</b> system, which provides
-57 process data for remote access ( e.g. Varioterminal ), handles several internal CAN nodes, connects to DIN 9684 and ISO 11783 BUSes with the corresponding
+57 process data for remote access ( e.g. Varioterminal ), handles several internal CAN nodes, connects to ISO 11783 BUSes with the corresponding
 terminal types and is able to directly control fertilizer spreaders which are accessible by process data.<br>
 <b>===>></b> Probability for need of more than 20 - 30 KByte is really low for other production systems<br>
 
@@ -178,7 +177,6 @@ The following table present some exact numbers for the needed HEAP memory, so th
 <tr><td>Scheduler Entry</td><td>12 x scheduled items -> 56</td><td>160</td><td>104</td><td>Vector of pointers to 12 scheduled part tasks</td></tr>
 <tr><td>Scheduled Times</td><td>12 x scheduled items -> 32</td><td>80</td><td>48</td><td>Vector of uint16_t execution times of scheduled part tasks</td></tr>
 
-<tr><td>DIN 9684 Monitor List Entry ( IsoAgLib::DINItem_c )</td><td>10 x 42 DIN -> 420</td><td>1360</td><td>940</td><td>Calculated for 10 ECU nodes on monitored BUS</td></tr>
 <tr><td>ISO 11783 Monitor List Entry ( IsoAgLib::ISOItem_c )</td><td>10 x 52 ISO -> 520</td><td>1768</td><td>1248</td><td>Calculated for 10 ECU nodes on monitored BUS</td></tr>
 
 <tr><td>CAN Filter IsoAgLib::MsgObj_c</td><td>10 x 82 -> 820</td><td>2960</td><td>2140</td><td>Depends on used protocol parts -> CAN idents to receive</td></tr>
@@ -190,11 +188,8 @@ The following table present some exact numbers for the needed HEAP memory, so th
 	<td>Only if 10 remote process data instances are used</td></tr>
 <tr><td>MeasureProgLocal_c</td><td>10 x 76 -> 760</td><td>2720</td><td>1960</td><td>Only if 10 measure programs are active - one default instance per used IsoAgLib::ProcDataLocal_c or IsoAgLib::ProcDataLocalSimpleSetpoint_c instance</td></tr>
 
-<tr><td>DIN LBS+ Mask Synchronisation data</td><td>13 x 66 -> 858</td><td>2320</td><td>1462</td><td>Only if a LBS+ mask project shall be used.</td></tr>
 <tr><td>ISO Buffer of IsoAgLib::SendCommand_c</td><td> (only chunk allocation) </td><td>1284 ( chunk of 80 commands )</td><td>--</td><td>For buffer of IsoAgLib::SendCommand_c the malloc alloc is for most conditions not more efficient in HEAP use.</td></tr>
 <tr><td>ISO Buffer of IsoAgLib::SendUpload_c</td><td>2 x 32 -> 64</td><td>888</td><td>824</td><td>For buffer of IsoAgLib::SendUpload_c the malloc alloc is for most conditions more efficient in HEAP use.</td></tr>
-
-<tr><td><b>SUM DIN 9684</b></td><td><b>3322</b></td><td><b>10736</b></td><td><b>7414</b></td><td>real numbers depend heavily on used features and targeted network configuration</td></tr>
 
 <tr><td><b>SUM ISO 11783</b></td><td><b>3912</b></td><td><b>10996</b></td><td><b>7084</b></td><td>real numbers depend heavily on used features and targeted network configuration</td></tr>
 </table>
@@ -301,17 +296,16 @@ The layered structure is described by the following diagram:
 		subgraph cluster_Communication {
 			style="filled";
 			label="Communication";
-			bottomlabel="Communication Services for ISO 11783\nand/or DIN 9684";
+			bottomlabel="Communication Services for ISO 11783";
 			bgcolor=grey;
 			color="grey";
 			rank=same;
-			multi_msg		[label="Data Stream\nneeded for ISO or DIN Terminal", color="cyan4", URL="\ref MultiMsgPage",width=1.75 ];
-			din_term		[label="LBS+ Terminal\ncomplete optional", color="white", URL="\ref DinTerminalPage",width=1.75 ];
+			multi_msg		[label="Data Stream\nneeded for ISO Terminal", color="cyan4", URL="\ref MultiMsgPage",width=1.75 ];
 			iso_term		[label="ISO Virtual\ncomplete optional", color="white", URL="\ref XMLspec",width=1.75 ];
 			process			[label="Process Data\noptional", color="white", URL="\ref ProcDataPage",width=1.75 ];
 			system_mgmt	[label="System Management\npartly obligatory", color="cyan", URL="\ref SystemMgmtPage",width=1.75 ];
 			base				[label="Base Data\ncomplete optional", color="white", URL="\ref BaseDataPage",width=1.75 ];
-			comm_doc		[label="Communication Services for ISO 11783\nand/or DIN 9684",URL="\ref CommOverPage",width=3.5];
+			comm_doc		[label="Communication Services for ISO 11783",URL="\ref CommOverPage",width=3.5];
 		}
 
 		subgraph cluster_DriverExtensions {
@@ -378,14 +372,12 @@ The layered structure is described by the following diagram:
 		process -> eeprom_drv [ style=invis,weight=2000,len=0.01] ;
 		base -> can_drv [ style=invis,weight=2000,len=0.01] ;
 		iso_term -> rs232_drv [ style=invis,weight=2000,len=0.01] ;
-		din_term -> sensor_drv [ style=invis,weight=2000,len=0.01] ;
 		multi_msg -> actor_drv [ style=invis,weight=2000,len=0.01,headport="e",tailport="e"] ;
 
 		upperRuler:p21 -> system_mgmt [ style=invis,weight=2000,len=0.01] ;
 		upperRuler:p22 -> process [ style=invis,weight=2000,len=0.01] ;
 		upperRuler:p23 -> base [ style=invis,weight=2000,len=0.01] ;
 		upperRuler:p3 -> iso_term [ style=invis,weight=2000,len=0.01] ;
-		upperRuler:p4 -> din_term [ style=invis,weight=2000,len=0.01] ;
 		upperRuler:p5 -> multi_msg [ style=invis,weight=2000,len=0.01,headport="e",tailport="e"] ;
 
 		process			->		eeprom_drv [ style="dotted"];
@@ -394,7 +386,6 @@ The layered structure is described by the following diagram:
 		process			->		can_drv [minlen=1.8,weight=1000];
 		base				->		can_drv [minlen=1.8,weight=1000];
 		iso_term		->		can_drv [minlen=1.8,weight=1000];
-		din_term		->		can_drv [minlen=1.8,weight=1000];
 		multi_msg		->		can_drv [minlen=1.8,weight=1000];
 
 		system_mgmt	->		eeprom_drv [ style="dotted"];
@@ -417,9 +408,7 @@ The layered structure is described by the following diagram:
 The following elements are needed for all projects:
 	- blue nodes in layer "HAL"
 	- yellow nodes in layer "Driver Extensions"
-	- cyan nodes in layer "Communication" ( the subdirectories ISO11783 and DIN9684 are only
-			used for the respective protocol -> in case of single protocol use exclude the DIN or ISO
-			protocol directory from the project. )
+	- cyan nodes in layer "Communication" ( the subdirectory ISO11783 is only used for the respective protocol )
 
 Therefore the minimum footprint of the ISO<i><sub>AgLib</sub></i> in Flash ROM is quite low.
 
@@ -566,7 +555,7 @@ management of such interactions. This list can then help to identify well suppor
 <tr>
 	<td><a href="http://www.fritzmeier.com/engl/frameset_engl.htm?/engl/environment/environment_miniveg.htm">Chlorophyll Sensor <b>MiniVeg N</b></a>
 			which can be used in combination with AGCO Fendt Vario Tractors ( with Varioterminals ) or any tractor with an ISO 11783 virtual terminal.
-			It can control by process data setting each standard conformant DIN 9684 or ISO 11783 fertilizer spreader which enables control by process data
+			It can control by process data setting each standard conformant ISO 11783 fertilizer spreader which enables control by process data
 			( several implements like spreader can be only controlled by the corresponding terminal ). An ISO<i><sub>AgLib</sub></i> powered PROXY is used
 			to provide standard conformant process data control access for spreaders which can be at least controlled with some documented RS232 or CAN connection.
 	</td>
@@ -903,7 +892,6 @@ Look at the <a href="examples.html">Example Page</a> for the available tutorial 
 		- \link SystemMgmtPage Overview on System Management of IsoAgLib ( %i.%e. monitor lists ) \endlink
 		- \link BaseDataPage Overview on Base Data Handling in IsoAgLib \endlink
 		- \link ProcDataPage Overview on Process Data Handling in IsoAgLib \endlink
-		- \link DinTerminalPage Overview on Management of LBS+ Terminal Masks \endlink
 		- \link XMLspec Overveiw on Interaction with ISO 11783 Virtual Terminal \endlink
 	- \link MainHalPage Hardware Abstraction Layer (HAL) for main parts of IsoAgLib \endlink
 	- \link SuppHalPage Hardware Abstraction Layer (HAL) for supplementary parts of IsoAgLib \endlink
@@ -1278,7 +1266,7 @@ The following basic settings can be specified independent from hardware and feat
 		- <i>DEBUG_CAN_BUFFER_FILLING</i> for RS232 output of MAX amount of buffered CAN messages
 		                                  ( important to decide on amount of items in the BIOS/OS CAN receive buffer )
 		- <i>DEBUG_HEAP_USEAGE</i> for RS232 output of amount of bytes which are needed of one
-		                           item in the different types of dynamic lists: IsoAgLib::MsgObj_c , IsoAgLib::FilterBox_c , IsoAgLib::IsoItem_c , IsoAgLib::DinItem_c ,
+		                           item in the different types of dynamic lists: IsoAgLib::MsgObj_c , IsoAgLib::FilterBox_c , IsoAgLib::IsoItem_c ,
 		                           IsoAgLib::MeasureSubprog_c , SetpointRegister ;
 		                           additionally print calculated amount of HEAP memory which is used by the several types of
 		                           dynamic lists ( output on each list change )
@@ -1306,17 +1294,13 @@ The basic hardware setup of your target ( including CAN hardware/driver ) can be
 	                          features of IsoAgLib so that e.g. channel 0 can be used for protocol and channel 1 for internal CAN communication )<br>
 	                          Must be smaller or equal as CAN_BUS_CNT.
 	- <b>PRT_INSTANCE_CNT</b> count of CAN channels where the communication protocol shall be supported - the IsoAgLib can be used as gateway to
-	                          route traffic between the connected CAN interfaces ( or you could support DIN 9684 and ISO 11783 at two seperate
-	                          connectors in parallel time - this is really working in practise )
+	                          route traffic between the connected CAN interfaces
 	- <b>RS232_INSTANCE_CNT</b> defines amount of RS232 instances that are supported in parallel. When the ECU shall communicate on more than one channel, this variable has to be adapted to the channel amount.
 
 \subsubsection ConfCoreComm Core Communication Setup
 Setup of most important communication features:
 	- <b>PRJ_ISO11783</b> selection of ISO 11783 protocol in the project
 	- <b>PRJ_ISO_TERMINAL</b> selection of ISO 11783 Virtual Terminal support ( only available if PRJ_ISO11783 is activated )
-	- <b>PRJ_DIN9684</b> selection of DIN 9684 protocol in the project
-	                     ( both ISO and DIN can be used in a project in parallel - e.g. decide on system init on used protocol )
-	- <b>PRJ_DIN_TERMINAL</b> selection of LBS+ Terminal support ( like Fendt Varioterminal ) ( only available if PRJ_DIN9684 is activated )
 	- <b>PRJ_BASE</b> gather base data like tractor speed, distance, ISO GPS, PTO RPM from BUS and make them available independent of receive time
 	- <b>PRJ_MULTIPACKET_STREAM_CHUNK</b> allows to specify the preferred way of receiving multi message data streams. If chunk (default) mode is active,
 	     the application can perform a parsing on-the-fly of each received burst. This allows to reduce the RAM useage for large
@@ -1326,7 +1310,6 @@ Setup of most important communication features:
 \subsubsection ConProcData Process Data Communication Setup
 Setup of process data support:
 	- <b>PRJ_PROCESS</b> overall activation of process data support
-	- <b>PRJ_FIELDSTAR_GPS</b> activation of DIN 9684 GPS data communication as used by DIN 9684 Fieldstar Terminals
 	- <b>PROC_LOCAL</b> overall activation of local process data - local means that the corresponding ECU measures the data which can be requested by remote ECUs
 		- <b>PROC_LOCAL_STD</b> select standard local process data IsoAgLib::iProcDataLocal_c with measure programs and enhanced management of received setpoints
 		- <b>PROC_LOCAL_SIMPLE_MEASURE</b> select IsoAgLib::iProcDataLocalSimpleMeasure_c for local process data without measure programs to reduce
@@ -1513,7 +1496,7 @@ ISO_AG_LIB_PATH="../.."
 # - DEBUG_CAN_BUFFER_FILLING for RS232 output of MAX amount of buffered CAN messages
 #   ( important to decide on amount of items in the BIOS/OS CAN receive buffer )
 # - DEBUG_HEAP_USEAGE for RS232 output of amount of bytes which are needed of one
-#   item in the different types of dynamic lists: MsgObj_c , FilterBox_c , IsoItem_c , DinItem_c ,
+#   item in the different types of dynamic lists: MsgObj_c , FilterBox_c , IsoItem_c ,
 #   MeasureSubprog_c , SetpointRegister ;
 #   additionally print calculated amount of HEAP memory which is used by the several types of
 #   dynamic lists ( output on each list change )
@@ -1591,8 +1574,6 @@ RS232_INSTANCE_CNT=1
 # unset or set to 0 if not wanted
 PRJ_ISO11783=1
 # PRJ_ISO_TERMINAL=0
-# PRJ_DIN9684=0
-# PRJ_DIN_TERMINAL=0
 
 # select stream receive strategy:
 # chunk (default): use list of chunks where each receive burst is stored in one chunk -> usefull when on-the-fly parsing is used
@@ -1612,12 +1593,6 @@ PRJ_ISO11783=1
 
 # activate globally the use of process data
 # PRJ_PROCESS=0
-
-# for DIN 9684 the process data system can be used
-# to decode GPS information from Fieldstar or LBS+ extension
-# ( if this and DIN9684 is activated, but PRJ_PROCESS is not
-#   then the value of PRJ_PROCESS is overwritten with 1 to activate it )
-# PRJ_FIELDSTAR_GPS=0
 
 # decide if local process data are wanted
 # PROC_LOCAL=0
@@ -1893,7 +1868,7 @@ The ISO<i><sub>AgLib</sub></i> was primarily developed for massive automatic pro
 The main basic design principles of the ISO<i><sub>AgLib</sub></i> are:
 	- use Hardware-Adaptation-Layer to restrict hardware dependent parts, to
     ease adaptation to different ECU types
-	- use hardware independent Communication-Layer, which implements all interaction via ISO11783 or DIN9684/CAN
+	- use hardware independent Communication-Layer, which implements all interaction via ISO11783
 	- very capable and flexible design -&gt; e.g. it can handle received setpoints from a group of
     different senders, so that the main application can decide, which sender to accept
 	- modularized structure to ease source code administration and to enable de/activation of
@@ -1951,7 +1926,7 @@ Therefore the ISO<i><sub>AgLib</sub></i> provides the following services:<br>
 -# each information type (e.g. application rate) is addressed by an unique identifier
    which contains the device type (e.g. spreader), mounting position and location
    in the device specific dictionary so that dynamic source address or protocol
-   type (DIN 9684 or ISO 11783) is irrelevant for the application design<br></td></tr>
+   type (ISO 11783) is irrelevant for the application design<br></td></tr>
 
 <tr><td valign="Top"><b>Control Interaction</b><br></td>
 <td valign="Top">
@@ -1970,7 +1945,7 @@ Therefore the ISO<i><sub>AgLib</sub></i> provides the following services:<br>
 </td></tr></table>
 
 \section InfServiceNetwork Service Network
-The interactions between the devices of a DIN 9684 or ISO 11783 network can be modelled as
+The interactions between the devices of a ISO 11783 network can be modelled as
 the providing and using of construction  independent services. This is illustrated
 with the following diagrams.<br>
 \image html Diagramme/service_network_connection.gif
@@ -2100,7 +2075,7 @@ The ISO<i><sub>AgLib</sub></i> is published as Open Source according to the GPL 
 to use, to analyse and to change the source code, as long as the changes to the ISO<i><sub>AgLib</sub></i> itself are provided
 to the public with the same license conditions. Thus the ISO<i><sub>AgLib</sub></i> could be used by a lot of manufacturers
 without the fear of monopolistic control. This would allow the compatible use of all sophisticated features of
-DIN 9684 and ISO 11783 for their machines. The author <a href="mailto:Achim.Spangler@gmx:de">Achim Spangler</a> who is now working for
+ISO 11783 for its machines. The author <a href="mailto:Achim.Spangler@gmx:de">Achim Spangler</a> who is now working for
 <a href="http://www.osb-ag.de/">OSB AG</a> can arrange service contracts to provide extensions and other service for the ISO<i><sub>AgLib</sub></i>.
 \image html Diagramme/IsoAgLib-further_develop.gif
 

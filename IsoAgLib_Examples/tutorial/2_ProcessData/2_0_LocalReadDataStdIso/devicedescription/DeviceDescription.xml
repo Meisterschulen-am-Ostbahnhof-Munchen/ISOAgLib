@@ -2,11 +2,9 @@
   <deviceelement designator="DeviceElement1" element_type="device" element_number="0" parent_name="Device1">
     <deviceprocessdata designator="WorkState" ddi="0x008D" properties="defaultset" trigger_methods="timeinterval" proc_program_name="workState" cumulative_value="false">
       <deviceprocessdatacombination ddi="0x008D" command_type="exact" is_setpoint="true"/>
-      <devicedinprocessdata lis="0" wert_inst="0x1" />
     </deviceprocessdata>
     <deviceprocessdata designator="Working width" ddi="0x0043" properties="defaultset" trigger_methods="timeinterval" proc_program_name="workWidth" cumulative_value="false">
       <deviceprocessdatacombination ddi="0x0043" command_type="exact" is_setpoint="true"/>
-      <devicedinprocessdata lis="0" wert_inst="0x13" />
     </deviceprocessdata>
   </deviceelement>
   <deviceelement designator="Device2" element_type="device" element_number="2" parent_name="Device1">
@@ -15,7 +13,6 @@
       <deviceprocessdatacombination ddi="0x2" command_type="exact" is_setpoint="false"/>
       <deviceprocessdatacombination ddi="0x3" command_type="default" is_setpoint="true"/>
       <deviceprocessdatacombination ddi="0x4" command_type="min" is_setpoint="true"/>
-      <devicedinprocessdata lis="0" wert_inst="0x5" />
     </deviceprocessdata>
   </deviceelement>
 </device>

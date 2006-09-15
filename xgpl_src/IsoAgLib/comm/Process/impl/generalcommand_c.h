@@ -1,5 +1,5 @@
 /***************************************************************************
-                          generalcommand_c.h - extracts general data from DIN/ISO 
+                          generalcommand_c.h - extracts general data from ISO
                                                process messages
                              -------------------
     begin                : Fri Apr 07 2000
@@ -50,37 +50,37 @@
  * this file might be covered by the GNU General Public License.           *
  *                                                                         *
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
- * the main author Achim Spangler by a.spangler@osb-ag:de                  * 
- ***************************************************************************/ 
+ * the main author Achim Spangler by a.spangler@osb-ag:de                  *
+ ***************************************************************************/
 
  /**************************************************************************
- *                                                                         * 
- *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   * 
- * Each software module, which accesses directly elements of this file,    * 
- * is considered to be an extension of IsoAgLib and is thus covered by the * 
- * GPL license. Applications must use only the interface definition out-   * 
- * side :impl: subdirectories. Never access direct elements of __IsoAgLib  * 
- * and __HAL namespaces from applications which shouldnt be affected by    * 
- * the license. Only access their interface counterparts in the IsoAgLib   * 
- * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- * 
- * ion really needs access to a part of an internal namespace, so that the * 
- * interface might be extended if your request is accepted.                * 
- *                                                                         * 
- * Definition of direct access:                                            * 
- * - Instantiation of a variable with a datatype from internal namespace   * 
- * - Call of a (member-) function                                          * 
- * Allowed is:                                                             * 
- * - Instatiation of a variable with a datatype from interface namespace,  * 
- *   even if this is derived from a base class inside an internal namespace* 
- * - Call of member functions which are defined in the interface class     * 
- *   definition ( header )                                                 * 
- *                                                                         * 
- * Pairing of internal and interface classes:                              * 
- * - Internal implementation in an :impl: subdirectory                     * 
- * - Interface in the parent directory of the corresponding internal class * 
- * - Interface class name IsoAgLib::iFoo_c maps to the internal class      * 
- *   __IsoAgLib::Foo_c                                                     * 
- *                                                                         * 
+ *                                                                         *
+ *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   *
+ * Each software module, which accesses directly elements of this file,    *
+ * is considered to be an extension of IsoAgLib and is thus covered by the *
+ * GPL license. Applications must use only the interface definition out-   *
+ * side :impl: subdirectories. Never access direct elements of __IsoAgLib  *
+ * and __HAL namespaces from applications which shouldnt be affected by    *
+ * the license. Only access their interface counterparts in the IsoAgLib   *
+ * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- *
+ * ion really needs access to a part of an internal namespace, so that the *
+ * interface might be extended if your request is accepted.                *
+ *                                                                         *
+ * Definition of direct access:                                            *
+ * - Instantiation of a variable with a datatype from internal namespace   *
+ * - Call of a (member-) function                                          *
+ * Allowed is:                                                             *
+ * - Instatiation of a variable with a datatype from interface namespace,  *
+ *   even if this is derived from a base class inside an internal namespace*
+ * - Call of member functions which are defined in the interface class     *
+ *   definition ( header )                                                 *
+ *                                                                         *
+ * Pairing of internal and interface classes:                              *
+ * - Internal implementation in an :impl: subdirectory                     *
+ * - Interface in the parent directory of the corresponding internal class *
+ * - Interface class name IsoAgLib::iFoo_c maps to the internal class      *
+ *   __IsoAgLib::Foo_c                                                     *
+ *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 #ifndef GENERAL_COMMAND_H
@@ -95,11 +95,11 @@
 namespace __IsoAgLib {
 
 /**
-  extracts general command data from DIN and ISO process messages
+  extracts general command data from ISO process messages
   @author Dipl.-Inform. Achim Spangler
 */
 class GeneralCommand_c {
-public: 
+public:
 
   /** enum for specification of defined setpoint types */
   enum ValueGroup_t { noValue = 0, exactValue = 1, minValue = 2, maxValue = 4, defaultValue = 8,
@@ -107,7 +107,7 @@ public:
 
   /** enum for general commands */
   enum CommandType_t {
-    noCommand                             = 0, 
+    noCommand                             = 0,
     requestConfiguration                  = 0x01,
     configurationResponse                 = 0x02,
     setValue                              = 0x03,
@@ -116,15 +116,9 @@ public:
     workingsetMasterMaintenance           = 0x06,
     nack                                  = 0x09,
     measurementStop                       = 0x07,
-    
+
     // measurement commands: command & 0x10 != 0
-    // DIN measurement
     measurementReset                      = 0x10,
-    measurementTimeValue                  = 0x11,
-    measurementDistanceValue              = 0x12,
-    measurementChangeThresholdValue       = 0x13,
-    measurementStart                      = 0x14,
-    
     // ISO measurement
     measurementTimeValueStart             = 0x15,
     measurementDistanceValueStart         = 0x16,
@@ -152,7 +146,7 @@ public:
   /** set values, called in ProcessPkg_c::resolveCommand() */
   void setValues(bool b_isSetpoint, bool b_isRequest, ValueGroup_t en_valueGroup,
                  CommandType_t en_command);
-  
+
 private:
 
   bool b_isSetpoint;

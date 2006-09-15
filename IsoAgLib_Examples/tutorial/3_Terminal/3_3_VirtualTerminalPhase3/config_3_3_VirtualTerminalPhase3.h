@@ -1,6 +1,6 @@
 // File: config_3_3_VirtualTerminalPhase3.h
 // IMPORTANT: Never change the first block of this header manually!!!
-//            All manual changes are overwritten by the next call of "update_makefile.sh conf_3_3_VirtualTerminalPhase3" 
+//            All manual changes are overwritten by the next call of "update_makefile.sh conf_3_3_VirtualTerminalPhase3"
 //            Perform changes direct in the feature and project setup file conf_3_3_VirtualTerminalPhase3
 //  ALLOWED ADAPTATION: Move the to be adapted defines from the middle block to the end after
 //                      the line START_INDIVIDUAL_PROJECT_CONFIG and remove the comment indication there.
@@ -10,15 +10,15 @@
 
 // include an external file for definition of pool and firmware versions
 #include "version.h"
-#define CAN_BUS_CNT 1 
+#define CAN_BUS_CNT 1
 
-#define CAN_BUS_USED 0 
+#define CAN_BUS_USED 0
 
-#define CAN_INSTANCE_CNT 1 
+#define CAN_INSTANCE_CNT 1
 
-#define PRT_INSTANCE_CNT 1 
+#define PRT_INSTANCE_CNT 1
 
-#define RS232_INSTANCE_CNT 1 
+#define RS232_INSTANCE_CNT 1
 
 // Decide if the CPU stores number variables in BIG or LITTLE endian byte order in memory.
 // Most CPU will use LITTLE ENDIAN. Only some types of ARM, mostly 68k and PowerPC CPU types will use big endian.
@@ -45,26 +45,26 @@
 #ifndef NO
   #define NO 0
 #endif
-#ifndef USE_PROCESS_YN 
-	#define USE_PROCESS_YN NO 
+#ifndef USE_PROCESS_YN
+	#define USE_PROCESS_YN NO
 #endif
-#ifndef USE_EEPROM_IO 
-	#define USE_EEPROM_IO 
+#ifndef USE_EEPROM_IO
+	#define USE_EEPROM_IO
 #endif
-#ifndef USE_DATASTREAMS_IO 
-	#define USE_DATASTREAMS_IO 
+#ifndef USE_DATASTREAMS_IO
+	#define USE_DATASTREAMS_IO
 #endif
-#ifndef USE_ISO_11783 
-	#define USE_ISO_11783 
+#ifndef USE_ISO_TERMINAL
+	#define USE_ISO_TERMINAL
 #endif
-#ifndef USE_ISO_TERMINAL 
-	#define USE_ISO_TERMINAL 
+#ifndef USE_ISO_11783
+  #define USE_ISO_11783
 #endif
-#ifndef DEF_Stream_IMPL   
-	#define DEF_Stream_IMPL   StreamChunk   
+#ifndef DEF_Stream_IMPL
+	#define DEF_Stream_IMPL   StreamChunk
 #endif
-#ifndef DEF_Stream_c_IMPL 
-	#define DEF_Stream_c_IMPL StreamChunk_c 
+#ifndef DEF_Stream_c_IMPL
+	#define DEF_Stream_c_IMPL StreamChunk_c
 #endif
 
 // The following configuration values can be overwritten.

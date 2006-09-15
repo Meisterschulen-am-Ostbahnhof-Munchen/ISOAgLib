@@ -99,6 +99,8 @@ class MonitorItem_c;
 
 /** values which indicates the state of an address */
 typedef enum { Valid = 0, OnlyNetworkMgmt = 1, Invalid = 3 } MessageState_t;
+
+
 /** structure which will be filled when an address is resolved */
 typedef struct
 { // IMPORTANT:
@@ -114,28 +116,32 @@ typedef struct
   uint8_t* pui8_address;
 } AddressResolveResults;
 
+
+
 typedef enum
 {
   local  = 0,
   remote = 1
 } Scope;
 
+
 /** extended version of CANPkg_c which overwrites the
     assign and getData functions
     with call for data flag converting functions
   *@author Dipl.-Inform. Achim Spangler
   */
-
-class CANPkgExt_c : public CANPkg_c  {
-private:
+class CANPkgExt_c : public CANPkg_c
+{
+ private:
   CANPkgExt_c( const CANPkgExt_c&);           //!< prevent copy constructor use: do not code this method
   CANPkgExt_c& operator=(const CANPkgExt_c&); //!< prevent copy operator use: do not code this method
-protected:
-public:
+ public:
   /** default constructor, which has nothing to do */
   CANPkgExt_c( int ri_singletonVecKey = 0 );
+
   /** virtual default destructor, which has nothing to do */
   virtual ~CANPkgExt_c();
+
   /**
     ==> REACTIVATE if some NON-STATIC member vars will be added!
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -154,72 +160,82 @@ public:
     @param rb_pos position of dellivered uint8_t [0..7]
     @return uint8_t balue in CAN data string at pos rb_pos
   */
-  uint8_t operator[](uint8_t rui8_pos) const {return c_data[rui8_pos];};
+  uint8_t operator[](uint8_t rui8_pos) const {return c_data[rui8_pos];}
+
   /**
     set an uint8_t value at specified position in string
     @param rui8_pos position [0..7]
     @param rui8_val uint8_t value to set
   */
   void setUint8Data( uint8_t rui8_pos, uint8_t rui8_val)
-    { c_data.setUint8Data(rui8_pos, rui8_val);};
+    { c_data.setUint8Data(rui8_pos, rui8_val);}
+
   /**
     set an uint16_t value at specified position in string
     @param rui8_devClassInst position [0..6]
     @param rui16_val uint16_t value to set
   */
   void setUint16Data( uint8_t rui8_pos, uint16_t rui16_val)
-    { c_data.setUint16Data(rui8_pos, rui16_val);};
+    { c_data.setUint16Data(rui8_pos, rui16_val);}
+
   /**
     set an int16_t value at specified position in string
     @param rui8_devClassInst position [0..6]
     @param ri16_val int16_t value to set
   */
   void setInt16Data( uint8_t rui8_pos, int16_t ri16_val)
-    { c_data.setInt16Data(rui8_pos, ri16_val);};
+    { c_data.setInt16Data(rui8_pos, ri16_val);}
+
   /**
     set an uint32_t value at specified position in string
     @param rui8_devClassInst position [0..4]
     @param rui32_val uint32_t value to set
   */
   void setUint32Data( uint8_t rui8_pos, uint32_t rui32_val)
-    { c_data.setUint32Data(rui8_pos, rui32_val);};
+    { c_data.setUint32Data(rui8_pos, rui32_val);}
+
   /**
     set an int32_t value at specified position in string
     @param rui8_devClassInst position [0..4]
     @param ri32_val int32_t value to set
   */
   void setInt32Data( uint8_t rui8_pos, int32_t ri32_val)
-    { c_data.setInt32Data(rui8_pos, ri32_val);};
+    { c_data.setInt32Data(rui8_pos, ri32_val);}
+
   /**
     simply deliver a uint8_t from a specific position with
     @param rb_pos position of dellivered uint8_t [0..7]
     @return uint8_t balue in CAN data string at pos rb_pos
   */
-  uint8_t getUint8Data(uint8_t rui8_pos) const {return c_data.getUint8Data(rui8_pos);};
+  uint8_t getUint8Data(uint8_t rui8_pos) const {return c_data.getUint8Data(rui8_pos);}
+
   /**
     simply deliver a uint16_t from a specific starting position with
     @param rb_pos position of dellivered uint16_t [0..6]
     @return uint16_t balue in CAN data string at pos (rb_pos, rb_pos+1) read Low/High order
   */
-  uint16_t getUint16Data(uint8_t rui8_pos) const {return c_data.getUint16Data(rui8_pos);};
+  uint16_t getUint16Data(uint8_t rui8_pos) const {return c_data.getUint16Data(rui8_pos);}
+
   /**
     simply deliver a int16_t from a specific starting position with
     @param rb_pos position of dellivered int16_t [0..6]
     @return int16_t balue in CAN data string at pos (rb_pos, rb_pos+1) read Low/High order
   */
-  int16_t getInt16Data(uint8_t rui8_pos) const {return c_data.getInt16Data(rui8_pos);};
+  int16_t getInt16Data(uint8_t rui8_pos) const {return c_data.getInt16Data(rui8_pos);}
+
   /**
     simply deliver a uint32_t from a specific starting position with
     @param rb_pos position of dellivered uint32_t [0..4]
     @return uint32_t balue in CAN data string at pos (rb_pos, rb_pos+1) read Low/High order
   */
-  uint32_t getUint32Data(uint8_t rui8_pos) const {return c_data.getUint32Data(rui8_pos);};
+  uint32_t getUint32Data(uint8_t rui8_pos) const {return c_data.getUint32Data(rui8_pos);}
+
   /**
     simply deliver a int32_t from a specific starting position with
     @param rb_pos position of dellivered int32_t [0..4]
     @return int32_t balue in CAN data string at pos (rb_pos, rb_pos+1) read Low/High order
   */
-  int32_t getInt32Data(uint8_t rui8_pos) const {return c_data.getInt32Data(rui8_pos);};
+  int32_t getInt32Data(uint8_t rui8_pos) const {return c_data.getInt32Data(rui8_pos);}
 
   /**
     put data into given reference to BIOS related data structure with data, len
@@ -231,73 +247,78 @@ public:
   virtual void getData(uint32_t& reft_ident, uint8_t& refui8_identType,
                        uint8_t& refb_dlcTarget, uint8_t* pb_dataTarget);
 
-  virtual bool isNetworkMgmt() const { return false; } ;
-  #ifdef USE_DIN_9684
-    /**
-    deliver sender nr
-    @return SEND code of base msg (bit 8-11 in identifier)
-  */
-  uint8_t dinSa() const {return (ident(0) & 0xF);};
-  #endif
+  /** is the currently handled message a network management message
+      @return  true -> message is a network management message
+     */
+  virtual bool isNetworkMgmt() const { return false; }
 
-  #ifdef USE_ISO_11783
   // begin of block with ISO 11783 CAN formating functions
   /**
     get the value of the ISO11783 ident field SA
     @return source adress
   */
   uint8_t isoSa() const;
+
   /**
     get the value of the ISO11783 ident field PGN
     @return parameter group number
   */
-  uint32_t isoPgn() const {return ( ( ( (uint32_t)ident() >> 8) & 0x1FF00 ) | isoPs() );};
+  uint32_t isoPgn() const {return ( ( ( (uint32_t)ident() >> 8) & 0x1FF00 ) | isoPs() );}
+
   /**
     get the value of the ISO11783 ident field DP
     @return data page
   */
-  uint8_t isoDp() const {return (ident(3) & 0x1);};
+  uint8_t isoDp() const {return (ident(3) & 0x1);}
+
   /**
     get the value of the ISO11783 ident field PF
     @return PDU Format
   */
-  uint8_t isoPf() const {return ident(2);};
+  uint8_t isoPf() const {return ident(2);}
+
   /**
     get the value of the ISO11783 ident field PS
     @return PDU Specific
   */
   uint8_t isoPs() const;
+
   /**
     get the value of the ISO11783 ident field PRI
     @return priority
   */
-  uint8_t isoPri() const {return (ident(3) >> 2);};
+  uint8_t isoPri() const {return (ident(3) >> 2);}
 
   /**
     set the value of the ISO11783 ident field SA
     @return source adress
   */
   void setIsoSa(uint8_t rui8_val);
+
   /**
     set the value of the ISO11783 ident field PGN
     @return parameter group number
   */
   void setIsoPgn(uint32_t rui32_val);
+
   /**
     set the value of the ISO11783 ident field DP
     @return data page
   */
-  void setIsoDp(uint8_t rui8_val){setIdent( ((ident(3)& 0x1E) | (rui8_val & 1)), 3, Ident_c::ExtendedIdent);};
+  void setIsoDp(uint8_t rui8_val) {setIdent( ((ident(3)& 0x1E) | (rui8_val & 1)), 3, Ident_c::ExtendedIdent);}
+
   /**
     set the value of the ISO11783 ident field PF
     @return PDU Format
   */
-  void setIsoPf(uint8_t rui8_val){setIdent(rui8_val, 2, Ident_c::ExtendedIdent); };
+  void setIsoPf(uint8_t rui8_val) {setIdent(rui8_val, 2, Ident_c::ExtendedIdent); }
+
   /**
     set the value of the ISO11783 ident field PS
     @return PDU Specific
   */
   void setIsoPs(uint8_t rui8_val);
+
   /**
     set the value of the ISO11783 ident field PRI
     @return priority
@@ -347,6 +368,7 @@ public:
     setLen (8);
     b_runFlag2String = false;
   }
+
   /** check if source and destination address are valid
       @see     FilterBox_c::processMsg()
       @pre     we want to process a message
@@ -364,34 +386,35 @@ public:
                OnlyNetworkMgmt -> one or both addresses are only useable for network management
     */
   bool resolveSendingInformation();
+
   /** set the monitoritem for resolve SA
       @param pc_monitorItem  needed monitoritem
     */
   void setMonitorItemForSA( const MonitorItem_c* pc_monitorItem );
+
   /** set the devKey for resolve SA
       @param p_devKey        needed devKey
     */
   void setDevKeyForSA( const DevKey_c& p_devKey );
+
   /** set the monitoritem for resolve SA
       @param pc_monitorItem  needed monitoritem
     */
   void setMonitorItemForDA( const MonitorItem_c* pc_monitorItem );
+
   /** set the devKey for resolve SA
       @param p_devKey        needed devKey
     */
   void setDevKeyForDA( const DevKey_c& p_devKey );
 
-
   #ifdef ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL
     /** this virtual function can be used to detect CAnCustomer_c derived CAN message handlers, which
         want to send/receive proprietary messages on a CANIO_c instance, which is used to transport
-        standardized protocol ISO 11783 or DIN 9684.
+        standardized protocol ISO 11783.
         Any proprietary derived CAN message handler should overload this function to return true in this function.
     */
-    virtual bool isProprietaryMessageOnStandardizedCan() const { return false;};
+    virtual bool isProprietaryMessageOnStandardizedCan() const { return false;}
   #endif // end of ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL
-  // end of block with ISO 11783 specific functions
-  #endif
 
   /**
     abstract function to transform the string data into flag values
@@ -404,28 +427,29 @@ public:
 
 private:
 // Private methods
-  #ifdef USE_ISO_11783
   /** report if the combination of address and scope is valid in context of message processing
       @return  true -> address, scope combination is valid
     */
   MessageState_t address2IdentRemoteSa();
+
   /** report if the combination of address and scope is valid in context of message processing
       @return  true -> address, scope combination is valid
     */
   MessageState_t address2IdentLocalDa();
+
   /** set address in context of sending a message
       @param  addressResolveResults  source or destination address
       @param  scope                  local or remote
       @return  true -> monitoritem_c, devKey_c is a valid combination
     */
   MessageState_t setAddress(AddressResolveResults& addressResolveResults, Scope scope);
+
   /** resolve a given monitoritem and get address if possible
       @param  addressResolveResults  address to resolve
       @return true -> monitoritem could be resolved
               false -> nothing more to be done
     */
   bool resolveMonitorItem( AddressResolveResults& addressResolveResults );
-  #endif
 
   /**
     abstract transform flag values to data string
@@ -446,6 +470,7 @@ private:
 
   /** variable which holds the results for a resolved source address */
   AddressResolveResults addrResolveResSA;
+
   /** variable which holds the results for a resolved destination address */
   AddressResolveResults addrResolveResDA;
 };

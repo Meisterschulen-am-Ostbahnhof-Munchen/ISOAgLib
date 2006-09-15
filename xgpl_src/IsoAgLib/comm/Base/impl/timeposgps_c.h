@@ -90,19 +90,18 @@
 
 #include <ctime>
 #include <IsoAgLib/comm/Base/impl/basecommon_c.h>
-#ifdef USE_ISO_11783
-  #include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgnhandler_c.h>
-#endif
+#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgnhandler_c.h>
 
-#if defined(NMEA_2000_FAST_PACKET) && defined(USE_ISO_11783)
+#if defined(NMEA_2000_FAST_PACKET)
 #include <IsoAgLib/comm/Multipacket/imultisendstreamer_c.h>
 #include <IsoAgLib/comm/Multipacket/multireceiveclient_c.h>
 #include <IsoAgLib/comm/Multipacket/impl/multisend_c.h>
 #endif
+
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
-#if defined(NMEA_2000_FAST_PACKET) && defined(USE_ISO_11783)
+#if defined(NMEA_2000_FAST_PACKET)
 
 class MultiSendPkg_c;
 class Nmea2000SendStreamer_c : public IsoAgLib::iMultiSendStreamer_c
@@ -144,7 +143,7 @@ class Nmea2000SendStreamer_c : public IsoAgLib::iMultiSendStreamer_c
     uint16_t ui16_currentSendPosition;
     uint16_t ui16_storedSendPosition;
 };
-#endif // END of NMEA_2000_FAST_PACKET and USE_ISO_11783
+#endif // END of NMEA_2000_FAST_PACKET
 
 class TimePosGPS_c;
 typedef SINGLETON_DERIVED(TimePosGPS_c,BaseCommon_c) SingletonTimePosGps_c;
@@ -158,14 +157,12 @@ typedef SINGLETON_DERIVED(TimePosGPS_c,BaseCommon_c) SingletonTimePosGps_c;
   */
 
 class TimePosGPS_c : public SingletonTimePosGps_c
-#ifdef USE_ISO_11783
-        , public ISORequestPGNHandler_c
-#endif
-#if defined(NMEA_2000_FAST_PACKET) && defined(USE_ISO_11783)
-    , public IsoAgLib::MultiReceiveClient_c
-#endif // END of NMEA_2000_FAST_PACKET and USE_ISO_11783
+                   , public ISORequestPGNHandler_c
+              #if defined(NMEA_2000_FAST_PACKET)
+                   , public IsoAgLib::MultiReceiveClient_c
+              #endif // END of NMEA_2000_FAST_PACKET
 {
-public:
+ public:
   // Public methods
   /* ********************************************* */
   /** \name Management Functions for class TimePosGPS_c  */
@@ -182,7 +179,7 @@ public:
     */
   bool timeEvent(  );
 
-  /** check if filter boxes shall be created - create only ISO or DIN filters based
+  /** check if filter boxes shall be created - create only filters based
       on active local idents which has already claimed an address
       --> avoid to much Filter Boxes
     */
@@ -208,7 +205,6 @@ public:
   /** destructor for Base_c which has nothing to do */
   virtual ~TimePosGPS_c() { BaseCommon_c::close();};
 
-  #ifdef USE_ISO_11783
   bool processMsgRequestPGN (uint32_t rui32_pgn, uint8_t rui8_sa, uint8_t rui8_da);
   /** force a request for pgn for time/date information */
   bool sendRequestUpdateTimeDate();
@@ -229,7 +225,7 @@ public:
     @see CANPkgExt_c::getData
     @see CANIO_c::operator<<
     */
-  void isoSendCalendar(const DevKey_c& rpc_devKey);
+  void sendCalendar(const DevKey_c& rpc_devKey);
 
   /** Retrieve the last update time of the specified information type*/
   int32_t lastedTimeSinceUpdateGps() const;
@@ -239,7 +235,6 @@ public:
   DevKey_c& getSenderDevKeyGps() {return c_sendGpsDevKey;};
   /** return a sender which sends commands as a tractor */
   const DevKey_c& getSenderDevKeyGpsConst() const {return c_sendGpsDevKey;};
-  #endif // END of USE_ISO_11783
 
   /* ********************************************* */
   /** \name MultiReceive functions for TimePosGPS_c  */
@@ -448,18 +443,22 @@ public:
   /** deliver raw GPS Longitude [degree] with scaling 10.0e-7 */
   int32_t getGpsLongitudeDegree10Minus7( void ) const { return i32_longitudeDegree10Minus7; };
 
-  #if defined(USE_FLOAT_DATA_TYPE) || defined(USE_DIN_GPS)
+  #if defined(USE_FLOAT_DATA_TYPE)
   /** check if an NMEA2000 position signal was received */
   bool isPositionReceived() const;
+
   /** deliver Minute GPS Latitude */
-  float getGpsLatitudeMinute( void ) const { return ( i32_latitudeDegree10Minus7 * 6.0e-4  ); };
+  float getGpsLatitudeMinute( void ) const { return ( i32_latitudeDegree10Minus7 * 6.0e-4  ); }
+
   /** deliver Minute GPS Longitude */
-  float getGpsLongitudeMinute( void ) const { return ( i32_longitudeDegree10Minus7 * 6.0e-4 ); };
+  float getGpsLongitudeMinute( void ) const { return ( i32_longitudeDegree10Minus7 * 6.0e-4 ); }
+
   /** deliver Degree GPS Latitude */
-  float getGpsLatitudeDegree( void ) const { return ( float(i32_latitudeDegree10Minus7) * 1.0e-7  ); };
+  float getGpsLatitudeDegree( void ) const { return ( float(i32_latitudeDegree10Minus7) * 1.0e-7  ); }
+
   /** deliver Degree GPS Longitude */
-  float getGpsLongitudeDegree( void ) const { return ( float(i32_longitudeDegree10Minus7) * 1.0e-7 ); };
-  #endif // END of USE_FLOAT_DATA_TYPE and USE_DIN_GPS
+  float getGpsLongitudeDegree( void ) const { return ( float(i32_longitudeDegree10Minus7) * 1.0e-7 ); }
+  #endif // END of USE_FLOAT_DATA_TYPE
 
   #ifdef NMEA_2000_FAST_PACKET
   /** get the GPS UTC hour value
@@ -498,16 +497,17 @@ public:
   int16_t pdop10Minus2() const { return i16_pdop;};
   #endif // END NMEA_2000_FAST_PACKET
 
-#if defined(USE_ISO_11783) && defined (NMEA_2000_FAST_PACKET)
+#if defined (NMEA_2000_FAST_PACKET)
   /** deliver age of last gps-update in milliseconds */
   uint16_t getGpsUpdateAge( void ) const
   { if ( i32_lastIsoPositionStream > i32_lastIsoPositionSimple) return (System_c::getTime() - i32_lastIsoPositionStream);
-    else                                                        return (System_c::getTime() - i32_lastIsoPositionSimple);};
-#elif defined(USE_ISO_11783)
-      /** deliver age of last gps-update in milliseconds */
+    else                                                        return (System_c::getTime() - i32_lastIsoPositionSimple);}
+#else
+  /** deliver age of last gps-update in milliseconds */
   uint16_t getGpsUpdateAge( void ) const
-  { return (System_c::getTime() - i32_lastIsoPositionSimple);};
+  { return (System_c::getTime() - i32_lastIsoPositionSimple);}
 #endif
+
 private:
   // Private methods
   friend class SINGLETON_DERIVED(TimePosGPS_c,BaseCommon_c);
@@ -516,15 +516,12 @@ private:
     set the configuration for send/receive for base msg type NMEA 2000 GPS
     and calendar
     NEVER instantiate a variable of type TimePosGPS_c within application
-    only access TimePosGPS_c via getTimePosGpsInstance() or getTimePosGpsInstance( int riLbsBusNr ) in case more than one ISO11783 or DIN9684 BUS is used for IsoAgLib
+    only access TimePosGPS_c via getTimePosGpsInstance() or getTimePosGpsInstance( int riLbsBusNr ) in case more than one BUS is used for IsoAgLib
     */
-  TimePosGPS_c()
-              #ifdef USE_ISO_11783
-                : c_sendGpsDevKey(),
+  TimePosGPS_c(): c_sendGpsDevKey(),
                   pc_devKeyGps(NULL),
                   t_identModeGps( IsoAgLib::IdentModeImplement )
-              #endif
-{}
+  {}
   /** deliver time between now and last calendar set in [msec]
     @return msec since last calendar set
     */
@@ -532,29 +529,18 @@ private:
 
   const struct CNAMESPACE::tm* Utc2LocalTime();
 
-  #ifdef USE_DIN_9684
-  /** send a DIN9684 base information PGN.
-   * this is only called when sending ident is configured and it has already claimed an address
-   */
-  virtual bool dinTimeEventTracMode( );
-
-  /** process a DIN9684 base information PGN */
-  virtual bool dinProcessMsg();
-  #endif // END of USE_DIN_9684
-
-  #if defined(USE_ISO_11783)
   /** send a ISO11783 base information PGN.
     * this is only called when sending ident is configured and it has already claimed an address
       @pre  function is only called in tractor mode
       @see  BaseCommon_c::timeEvent()
     */
-  virtual bool isoTimeEventTracMode();
+  virtual bool timeEventTracMode();
 
   /** send position rapid update message */
-  void isoSendPositionRapidUpdate( void );
+  void sendPositionRapidUpdate( void );
 
   /** process a ISO11783 base information PGN */
-  virtual bool isoProcessMsg();
+  bool processMsg();
 
   #if defined(NMEA_2000_FAST_PACKET)
   /** send position as detailed stream */
@@ -570,7 +556,6 @@ private:
 
   virtual void reactOnAbort(IsoAgLib::iStream_c* rpc_stream);
   #endif // END NMEA_2000_FAST_PACKET
-  #endif // END USE_ISO_11783
 
 private:
   // Private attributes
@@ -604,15 +589,7 @@ private:
   /** raw GPS longitude [degree]; Long_Min < 0 --> West */
   int32_t i32_longitudeDegree10Minus7;
 
-  #ifdef USE_ISO_11783
   /// General
-  #ifdef NMEA_2000_FAST_PACKET
-  /** last time of ISO GPS msg [msec] */
-  int32_t i32_lastIsoPositionStream;
-  /** last time of ISO GPS msg [msec] */
-  int32_t i32_lastIsoDirectionStream;
-  #endif // END of NMEA_2000_FAST_PACKET
-
   /** last time of ISO GPS msg [msec] */
   int32_t i32_lastIsoPositionSimple;
 
@@ -624,6 +601,12 @@ private:
     uint16_t second : 6;
     uint16_t msec   : 10;
   } bit_gpsTime;
+
+  /** last time of ISO GPS msg [msec] */
+  int32_t i32_lastIsoPositionStream;
+
+  /** last time of ISO GPS msg [msec] */
+  int32_t i32_lastIsoDirectionStream;
 
   /** GPS altitude - [cm] */
   uint32_t ui32_altitudeCm;
@@ -675,7 +658,6 @@ private:
     */
   const DevKey_c* pc_devKeyGps;
   IsoAgLib::IdentMode_t  t_identModeGps;
-  #endif // END of USE_ISO_11783
 };
 
 #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )

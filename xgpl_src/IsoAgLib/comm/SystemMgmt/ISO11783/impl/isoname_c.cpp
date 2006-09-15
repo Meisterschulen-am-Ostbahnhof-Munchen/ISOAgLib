@@ -99,30 +99,26 @@
 using __IsoAgLib::ISOName_c;
 using __IsoAgLib::Flexible8ByteString_c;
 
-
-/**
-  constructor which can read in initial data from uint8_t string
+/** constructor which can read in initial data from uint8_t string
   @param rpb_src 64bit input data string
 */
 ISOName_c::ISOName_c(const uint8_t* rpb_src)
 : u_data(rpb_src)
 { // simply copy 8byte string
 }
-/**
-  constructor which can read in initial data from uint8_t string
-  @param rpb_src 64bit input data string
+
+/** constructor which can read in initial data from uint8_t string
+  @param rpu_src  64bit input data string
 */
 ISOName_c::ISOName_c(const Flexible8ByteString_c* rpu_src)
 : u_data(*rpu_src)
 {}
 
-/**
-  constructor which format data string from series of input flags
+/** constructor which format data string from series of input flags
   @param rb_selfConf true -> indicate sefl configuring ECU
   @param rui8_indGroup industry group of device (2 for agriculture)
-  @param rui8_devClass device class of ECU (equivalent to DEVCLASS in DIN)
-  @param rui8_devClassInst instance number of ECU with same devClass
-        in the network (comparable to POS in DIN9684)
+  @param rui8_devClass device class of ECU
+  @param rui8_devClassInst instance number of ECU with same devClass in the network
   @param rb_func function of the ECU (usual 25 for network interconnect)
   @param rui16_manufCode code of manufactor (11bit)
   @param rui32_serNo serial no of specific device (21bit)
@@ -137,16 +133,16 @@ ISOName_c::ISOName_c(bool rb_selfConf, uint8_t rui8_indGroup, uint8_t rui8_devCl
   set(rb_selfConf, rui8_indGroup, rui8_devClass, rui8_devClassInst, rb_func, rui16_manufCode, rui32_serNo,
       rb_funcInst, rb_ecuInst);
 }
-/**
-  copy constructor for ISOName
+
+/** copy constructor for ISOName
   @param rrefc_src source ISOName_c instance
 */
 ISOName_c::ISOName_c(const ISOName_c& rrefc_src)
 : u_data( rrefc_src.u_data )
 { // simply copy data string
 }
-/**
-  assign constructor for ISOName
+
+/** assign constructor for ISOName
   @param rrefc_src source ISOName_c object
 */
 const ISOName_c& ISOName_c::operator=(const ISOName_c& rrefc_src)
@@ -154,20 +150,15 @@ const ISOName_c& ISOName_c::operator=(const ISOName_c& rrefc_src)
   u_data = rrefc_src.u_data;
   return rrefc_src;
 }
-/**
-  default destructor
-*/
-ISOName_c::~ISOName_c()
-{ // do nothing
-}
 
-/**
-  set data string with all flags with one call
+/** default destructor */
+ISOName_c::~ISOName_c() {}
+
+/** set data string with all flags with one call
   @param rb_selfConf true -> indicate sefl configuring ECU
   @param rui8_indGroup industry group of device (2 for agriculture)
-  @param rui8_devClass device class of ECU (equivalent to DEVCLASS in DIN)
-  @param rui8_devClassInst instance number of ECU with same devClass
-        in the network (comparable to POS in DIN9684)
+  @param rui8_devClass device class of ECU
+  @param rui8_devClassInst instance number of ECU with same devClass in the network
   @param rb_func function of the ECU (usual 25 for network interconnect)
   @param rui16_manufCode code of manufactor (11bit)
   @param rui32_serNo serial no of specific device (21bit)
@@ -189,7 +180,6 @@ void ISOName_c::set(bool rb_selfConf, uint8_t rui8_indGroup, uint8_t rui8_devCla
   setFuncInst(rb_funcInst);
   setEcuInst(rb_ecuInst);
 }
-
 
 ISOName_c::ecuType_t ISOName_c::getEcuType() const
 {
@@ -220,9 +210,7 @@ ISOName_c::ecuType_t ISOName_c::getEcuType() const
   return ecuTypeANYOTHER;
 }
 
-
-/**
-  get self config mode
+/** get self config mode
   @return self configuration adress state
 */
 uint8_t ISOName_c::selfConf() const
@@ -230,8 +218,7 @@ uint8_t ISOName_c::selfConf() const
   return ( u_data[7] >> 7);
 }
 
-/**
-  get industry group code
+/** get industry group code
   @return industry group of device
 */
 uint8_t ISOName_c::indGroup() const
@@ -239,8 +226,7 @@ uint8_t ISOName_c::indGroup() const
   return ((u_data[7] >> 4) & 0x7) ;
 }
 
-/**
-  get device class instance number
+/** get device class instance number
   @return:device class instance number
 */
 uint8_t ISOName_c::devClassInst() const
@@ -248,8 +234,7 @@ uint8_t ISOName_c::devClassInst() const
   return (u_data[7] & 0xF);
 }
 
-/**
-  get device class code
+/** get device class code
   @return:device class
 */
 uint8_t ISOName_c::devClass() const
@@ -257,8 +242,7 @@ uint8_t ISOName_c::devClass() const
   return (u_data[6] >> 1);
 }
 
-/**
-  get function code
+/** get function code
   @return function code
 */
 uint8_t ISOName_c::func() const
@@ -266,8 +250,7 @@ uint8_t ISOName_c::func() const
   return u_data[5];
 }
 
-/**
-  get function instance code
+/** get function instance code
   @return function instance code
 */
 uint8_t ISOName_c::funcInst() const
@@ -275,8 +258,7 @@ uint8_t ISOName_c::funcInst() const
   return (u_data[4] >> 3);
 }
 
-/**
-  get ECU instance code
+/** get ECU instance code
   @return ECU instance code
 */
 uint8_t ISOName_c::ecuInst() const
@@ -284,8 +266,7 @@ uint8_t ISOName_c::ecuInst() const
   return (u_data[4] & 0x7);
 }
 
-/**
-  get manufactor code
+/** get manufactor code
   @return manufactor code
 */
 uint16_t ISOName_c::manufCode() const
@@ -293,9 +274,7 @@ uint16_t ISOName_c::manufCode() const
   return ((u_data[3] << 3) | (u_data[2] >> 5));
 }
 
-
-/**
-  get serial number
+/** get serial number
   @return serial number
 */
 uint32_t ISOName_c::serNo() const
@@ -303,17 +282,15 @@ uint32_t ISOName_c::serNo() const
   return ((static_cast<uint32_t>(u_data[2] & 0x1F) << 16) | (static_cast<uint32_t>(u_data[1]) << 8) | u_data[0]);
 }
 
-
-/**
-  set the NAME data from 8 uint8_t string
+/** set the NAME data from 8 uint8_t string
   @param rpb_src pointer to 8byte source string
 */
 void ISOName_c::inputString(const uint8_t* rpb_src)
 {
   if (NULL != rpb_src) u_data.setDataFromString( rpb_src );
 }
-/**
-  set the NAME data from 8 uint8_t string
+
+/** set the NAME data from 8 uint8_t string
   @param rpb_src pointer to 8byte source string
 */
 void ISOName_c::inputUnion(const Flexible8ByteString_c* rpu_src)
@@ -323,34 +300,32 @@ void ISOName_c::inputUnion(const Flexible8ByteString_c* rpu_src)
   u_data = *rpu_src;
 }
 
-/**
-  set self config mode
+/** set self config mode
   @param rb_selfConf true -> indicate sefl configuring ECU
 */
 void ISOName_c::setSelfConf(bool rb_selfConf)
 {
   u_data.setUint8Data( 7, ((u_data[7] & 0x7F) | (rb_selfConf << 7)) );
 }
-/**
-  set industry group code
+
+/** set industry group code
   @param rui8_indGroup industry group of device (2 for agriculture)
 */
 void ISOName_c::setIndGroup(uint8_t rui8_indGroup)
 {
   u_data.setUint8Data( 7, ((u_data[7] & 0x8F) | ((rui8_indGroup & 0x7) << 4)) );
 }
-/**
-  set device class instance number
-  @param rui8_devClassInst instance number of ECU with same devClass
-        in the network (comparable to POS in DIN9684)
+
+/** set device class instance number
+  @param rui8_devClassInst instance number of ECU with same devClass in the network
 */
 void ISOName_c::setDevClassInst(uint8_t rui8_devClassInst)
 {
   u_data.setUint8Data( 7, ((u_data[7] & 0xF0) | (rui8_devClassInst)) );
 }
-/**
-  set device class code
-  @param rui8_devClass device class of ECU (equivalent to DEVCLASS in DIN)
+
+/** set device class code
+  @param rui8_devClass device class of ECU
 */
 void ISOName_c::setDevClass(uint8_t rui8_devClass)
 {
@@ -359,16 +334,16 @@ void ISOName_c::setDevClass(uint8_t rui8_devClass)
   pb_data[6] = ((pb_data[6] & 0x1) | (rui8_devClass << 1));
 */
 }
-/**
-  set function code
+
+/** set function code
   @param rb_func function of the ECU (usual 25 for network interconnect)
 */
 void ISOName_c::setFunc(uint8_t rb_func)
 {
   u_data.setUint8Data( 5, rb_func );
 }
-/**
-  set function instance code
+
+/** set function instance code
   @param rb_funcInst instance number of ECU with same function and device class
       (default 0 - normally)
 */
@@ -376,8 +351,8 @@ void ISOName_c::setFuncInst(uint8_t rb_funcInst)
 {
   u_data.setUint8Data( 4, ((u_data[4] & 0x7) | (rb_funcInst << 3)) );
 }
-/**
-  set ECU instance code
+
+/** set ECU instance code
   @param rb_funcInst instance number of ECU with same function, device class and function instance
       (default 0 - normally)
 */
@@ -385,8 +360,8 @@ void ISOName_c::setEcuInst(uint8_t rb_ecuInst)
 {
   u_data.setUint8Data( 4, ((u_data[4] & 0xF8) | (rb_ecuInst & 0x7)) );
 }
-/**
-  set manufactor code
+
+/** set manufactor code
   @param rui16_manufCode code of manufactor (11bit)
 */
 void ISOName_c::setManufCode(uint16_t rui16_manufCode)
@@ -395,8 +370,7 @@ void ISOName_c::setManufCode(uint16_t rui16_manufCode)
   u_data.setUint8Data( 2, ((u_data[2] & 0x1F) | ((rui16_manufCode & 0x7) << 5)) );
 }
 
-/**
-  set serial number (Identity Number)
+/** set serial number (Identity Number)
   @param rui32_serNo serial no of specific device (21bit)
 */
 void ISOName_c::setSerNo(uint32_t rui32_serNo)
@@ -405,9 +379,7 @@ void ISOName_c::setSerNo(uint32_t rui32_serNo)
   u_data.setUint8Data( 2, ( (u_data[2] & 0xE0) | ((rui32_serNo >> 16) & 0x1F) ) );
 }
 
-
-/**
-  check if this NAME has higher prio
+/** check if this NAME has higher prio
   than the given NAME 8-uint8_t string
   @param rpb_compare
   @return 0 == equal; -1 == this has lower prio than par; +1 == this item has higher prio than par
@@ -415,21 +387,21 @@ void ISOName_c::setSerNo(uint32_t rui32_serNo)
 int8_t ISOName_c::higherPriThanPar(const Flexible8ByteString_c* rpu_compare) const
 {
 #if defined(DEBUG) && !defined(SYSTEM_A1) && defined(SYSTEM_PC)
-if ( rpu_compare == NULL )
-{ // calling function called this function with wrong parameter
-  // - but in production version, we await, that the caller makes sure,
-  //  that the parameters are correct.
-  // So output suitable debug information in DEBUG mode and trigger than an abort() to get a clear indication on this failure.
-  // In real production version, we would have to decide on WHAT to do for this case in such a lowlevel comparison function - what return value, .....
-  INTERNAL_DEBUG_DEVICE
-    << "ERRORR!! ISOName_c::higherPriThanPar() was called with parameter == NULL!!" << INTERNAL_DEBUG_DEVICE_ENDL
-    << "The this adress was " << (int)this << EXTERNAL_DEBUG_DEVICE_ENDL
-    << "The program will be aborted now for explicit detection of this erroneous call. Fix the CALLING function - and not this function,"
-    << " as this function makes never sense when called with NULL!!"
-    << INTERNAL_DEBUG_DEVICE_ENDL;
-  INTERNAL_DEBUG_FLUSH;
-  abort();
-}
+  if ( rpu_compare == NULL )
+  { // calling function called this function with wrong parameter
+    // - but in production version, we await, that the caller makes sure,
+    //  that the parameters are correct.
+    // So output suitable debug information in DEBUG mode and trigger than an abort() to get a clear indication on this failure.
+    // In real production version, we would have to decide on WHAT to do for this case in such a lowlevel comparison function - what return value, .....
+    INTERNAL_DEBUG_DEVICE
+      << "ERRORR!! ISOName_c::higherPriThanPar() was called with parameter == NULL!!" << INTERNAL_DEBUG_DEVICE_ENDL
+      << "The this adress was " << (int)this << EXTERNAL_DEBUG_DEVICE_ENDL
+      << "The program will be aborted now for explicit detection of this erroneous call. Fix the CALLING function - and not this function,"
+      << " as this function makes never sense when called with NULL!!"
+      << INTERNAL_DEBUG_DEVICE_ENDL;
+    INTERNAL_DEBUG_FLUSH;
+    abort();
+  }
 #endif
 
   // if one of the both comparison parameters have 0xFF in the byte 0..5, then only compare

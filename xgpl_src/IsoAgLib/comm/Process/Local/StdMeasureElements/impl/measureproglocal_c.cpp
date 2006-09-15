@@ -209,14 +209,14 @@ bool MeasureProgLocal_c::start(Proc_c::progType_t ren_progType, Proc_c::type_t r
   MeasureProgBase_c::start(ren_progType, ren_type, ren_doSend);
   i32_lastMasterVal = ri32_masterVal;
   bool b_sendVal = TRUE;
-  
+
   // start the given subprog items
   for (Vec_MeasureSubprogIterator pc_iter = vec_measureSubprog.begin(); pc_iter != vec_measureSubprog.end(); pc_iter++)
   {
     if (pc_iter->doSend() != ren_doSend)
       //MeasureSubprog_c not matching!
       continue;
-      
+
     switch (pc_iter->type() & ren_type)
     {
       case Proc_c::TimeProp:
@@ -305,7 +305,7 @@ bool MeasureProgLocal_c::start(Proc_c::progType_t ren_progType, Proc_c::type_t r
     if (pc_iter->doSend() != ren_doSend)
       //MeasureSubprog_c not matching!
       continue;
-    
+
     switch (pc_iter->type() & ren_type)
     {
       case Proc_c::TimeProp:
@@ -400,9 +400,8 @@ bool MeasureProgLocal_c::stop(bool /* b_deleteSubProgs */, Proc_c::type_t ren_ty
   {
     b_sendResult = sendRegisteredVals();
   }
-  
+
   if (Proc_c::NullType == ren_type)
-    // DIN: call base function
     MeasureProgBase_c::stop();
   else
   { // ISO: clear only the appropriate MeasureSubprog from the sub prog list
@@ -417,7 +416,7 @@ bool MeasureProgLocal_c::stop(bool /* b_deleteSubProgs */, Proc_c::type_t ren_ty
     }
   }
 
-  // cleanup corresponding threshold info         
+  // cleanup corresponding threshold info
   if ((Proc_c::MaximumThreshold & ren_type) || (Proc_c::MinimumThreshold & ren_type))
   { // search corresponding threshold info
     for (List_ThresholdInfoIterator ps_iterThreshold = l_thresholdInfo.begin(); ps_iterThreshold != l_thresholdInfo.end();)
@@ -475,7 +474,7 @@ int32_t MeasureProgLocal_c::setpointValMod(GeneralCommand_c::ValueGroup_t en_val
   int32_t i32_value = 0;
   ProcDataLocalBase_c* pc_procdata = pprocessData();
   if (pc_procdata->setpointExistMaster())
-  {    
+  {
     switch (en_valueGroup)
     {
       case GeneralCommand_c::exactValue:
@@ -516,20 +515,17 @@ bool MeasureProgLocal_c::processMsg(){
     ProcessPkg_c& c_pkg = getProcessInstance4Comm().data();
 
     // the message was a value message -> evaluate it here
-    // ISO: set value command, DIN: i32_val == 0
     if ( c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::setValue)
     { // write - accept only write actions to local data only if this is reset try
-      // ISO: value in message contains reset value (DIN: value = 0 is already checked in ProcessPgk::resolveCommandType() => command setValue)
+      // ISO: value in message contains reset value
       int32_t i32_val = c_pkg.dataRawCmdLong();
       resetValMod(c_pkg.c_generalCommand.getValueGroup(), i32_val);
 
-      #ifdef USE_ISO_11783
       if (Proc_c::defaultDataLoggingDDI == c_pkg.DDI())
       { // setValue command for default data logging DDI stops measurement (same as TC task status "suspended")
         getProcessInstance4Comm().processTcStatusMsg(0, c_pkg.memberSend().devKey(), TRUE /* rb_skipLastTcStatus */);
       }
-      #endif
-      
+
       // resetted val is automatically sent
       b_result = true;
       // call handler function if handler class is registered
@@ -540,12 +536,11 @@ bool MeasureProgLocal_c::processMsg(){
     { // read -> answer wanted value
       sendValMod( c_pkg.c_generalCommand.getValueGroup(), c_pkg.memberSend().devKey(), Proc_c::progType_t(c_pkg.pri()));
 
-#ifdef USE_ISO_11783
       if ((Proc_c::defaultDataLoggingDDI == c_pkg.DDI()) &&
           (processDataConst().getProcessDataChangeHandler() != NULL ))
         // call handler function if handler class is registered
         processDataConst().getProcessDataChangeHandler()->processDefaultLoggingStart( pprocessData(), processData().pkgDataLong(), c_pkg.memberSend().devKey());
-#endif
+
 
       b_result = true;
     } // read
@@ -645,7 +640,7 @@ void MeasureProgLocal_c::setVal(int32_t ri32_val){
       case Proc_c::NullType: break; // just to make compiler happy
       default: ;
     } // switch
-  
+
     // if b_triggeredIncrement == true the registered values should be sent
     if (b_triggeredIncrement)
     { // send the registered values
@@ -752,7 +747,7 @@ void MeasureProgLocal_c::setVal(float rf_val){
       case Proc_c::NullType: break; // just to make compiler happy
       default: ;
     } // switch
-  
+
     // if b_triggeredIncrement == true the registered values should be sent
     if (b_triggeredIncrement)
     { // send the registered values
@@ -781,9 +776,8 @@ void MeasureProgLocal_c::setVal(float rf_val){
 bool MeasureProgLocal_c::sendRegisteredVals(Proc_c::doSend_t ren_doSend){
   bool b_success = false;
 
-#ifdef USE_ISO_11783
   GeneralCommand_c::ValueGroup_t en_valueGroup;
-    
+
   switch (ren_doSend)
   {
     case Proc_c::DoValForDefaultSetpoint: en_valueGroup = GeneralCommand_c::defaultValue; break;
@@ -800,37 +794,6 @@ bool MeasureProgLocal_c::sendRegisteredVals(Proc_c::doSend_t ren_doSend){
   // normal measurement (no measurement on setpoint DDI)
   if (Proc_c::DoVal == ren_doSend)
     b_success = (sendValMod( GeneralCommand_c::exactValue, devKey(), en_progType))?true : b_success;
-  
-#elif defined(USE_DIN_9684)
-  
-  if (checkDoSend(Proc_c::DoVal))
-  {
-    // call send function
-    b_success = (sendValMod( GeneralCommand_c::exactValue, devKey(), en_progType))?true : b_success;
-  }
-  if (checkDoSend(Proc_c::DoMin))
-  {
-    // call send function
-    b_success = (sendValMod( GeneralCommand_c::minValue, devKey(), en_progType))?true : b_success;
-  }
-  if (checkDoSend(Proc_c::DoMax))
-  {
-    // call send function
-    b_success = (sendValMod( GeneralCommand_c::maxValue, devKey(), en_progType))?true : b_success;
-  }
-
-  if (checkDoSend(Proc_c::DoInteg))
-  {
-    // call send function
-    b_success = (sendValMod( GeneralCommand_c::integValue, devKey(), en_progType))?true : b_success;
-
-  }
-  if (checkDoSend(Proc_c::DoMed))
-  {
-    // call send function
-    b_success = (sendValMod( GeneralCommand_c::medValue, devKey(), en_progType))?true : b_success;
-  }
-#endif
 
   return b_success;
 }
@@ -880,18 +843,16 @@ bool MeasureProgLocal_c::resetVal(int32_t ri32_val){
   if (processData().valType() != float_val)
   {
 #endif
-    // allow reset with value (ISO only, DIN: ri32_val=0)
+    // allow reset with value (ISO only)
     //i32_val = 0;
     i32_val = ri32_val;
 
-    // DIN: pd=1, mod=0
     b_sendSuccess = processData().sendValDevKey(ui8_pri, c_devKey, val());
 #ifdef USE_FLOAT_DATA_TYPE
   }
   else
   {
     f_val = 0;
-    // DIN: pd=1, mod=0
     b_sendSuccess = processData().sendValDevKey(ui8_pri, c_devKey, valFloat());
   }
 #endif
@@ -922,7 +883,6 @@ bool MeasureProgLocal_c::resetInteg(){
   getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false, /* isRequest */
                                                               GeneralCommand_c::integValue, GeneralCommand_c::setValue);
 
-  // DIN: pd=1, mod=3
 #ifdef USE_FLOAT_DATA_TYPE
   if (processData().valType() != float_val)
   {
@@ -956,7 +916,6 @@ bool MeasureProgLocal_c::resetMed(){
   // prepare general command in process pkg
   getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false, /* isRequest */
                                                               GeneralCommand_c::medValue, GeneralCommand_c::setValue);
-  //DIN pd=1, mod=4
 #ifdef USE_FLOAT_DATA_TYPE
   if (processData().valType() != float_val)
   {
@@ -994,14 +953,12 @@ bool MeasureProgLocal_c::resetMin(){
   {
 #endif
   i32_min = 0;
-  // DIN: pd=1, mod=1
   return processData().sendValDevKey(ui8_pri, c_devKey, min());
 #ifdef USE_FLOAT_DATA_TYPE
   }
   else
   {
     f_min = 0;
-    // DIN: pd=1, mod=1
     return processData().sendValDevKey(ui8_pri, c_devKey, minFloat());
   }
 #endif
@@ -1029,14 +986,12 @@ bool MeasureProgLocal_c::resetMax(){
   {
 #endif
   i32_max = 0;
-  // DIN: pd=1, mod=2
   return processData().sendValDevKey(ui8_pri, c_devKey, max());
 #ifdef USE_FLOAT_DATA_TYPE
   }
   else
   {
     f_max = 0;
-    // DIN: pd=1, mod=2
     return processData().sendValDevKey(ui8_pri, c_devKey, maxFloat());
   }
 #endif
@@ -1090,7 +1045,7 @@ bool MeasureProgLocal_c::timeEvent( void )
     // if b_triggeredIncrement == true the registered values should be sent
     // if needed an old unsuccessfull send try is redone (deactivated!)
     if (b_triggeredIncrement)
-    { 
+    {
       if (!minMaxLimitsPassed(pc_iter->doSend()))
       {
         // omit this value send
@@ -1102,7 +1057,7 @@ bool MeasureProgLocal_c::timeEvent( void )
       if (sendRegisteredVals(pc_iter->doSend())) b_triggeredIncrement = false;
     }
   }
-  
+
   return true;
 }
 
@@ -1112,9 +1067,9 @@ bool MeasureProgLocal_c::minMaxLimitsPassed(Proc_c::doSend_t ren_doSend) const
   bool b_checkMax = FALSE;
   int32_t i32_maxVal = 0;
   int32_t i32_minVal = 0;
-  
+
   for (List_ThresholdInfoConstIterator ps_iterThreshold = l_thresholdInfo.begin(); ps_iterThreshold != l_thresholdInfo.end(); ps_iterThreshold++)
-  { 
+  {
     if (ps_iterThreshold->en_doSend == ren_doSend)
     {
       switch (ps_iterThreshold->en_type)
@@ -1128,7 +1083,7 @@ bool MeasureProgLocal_c::minMaxLimitsPassed(Proc_c::doSend_t ren_doSend) const
 
   if ( b_checkMin && b_checkMax && (i32_maxVal < i32_minVal) && ((i32_maxVal >= val()) || (i32_minVal <= val())) )
     return TRUE;
-      
+
   if ( (b_checkMin && i32_minVal > val() ) ||
        (b_checkMax && i32_maxVal < val() ) )
     return FALSE;

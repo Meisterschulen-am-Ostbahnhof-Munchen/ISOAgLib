@@ -93,8 +93,7 @@
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
-/**
-  handle the 64bit ISO11783 NAME field
+/** handle the 64bit ISO11783 NAME field
   with input/output from/to 8byte string
   and specific read/write access to single
   flags
@@ -103,24 +102,21 @@ namespace __IsoAgLib {
 class ISOName_c {
 private:
 public:
-  /**
-    constructor which can read in initial data from uint8_t string
+  /** constructor which can read in initial data from uint8_t string
     @param rpb_src 64bit input data string
   */
   ISOName_c(const uint8_t* rpb_src = NULL);
-  /**
-    constructor which can read in initial data from uint8_t string
+
+  /** constructor which can read in initial data from uint8_t string
     @param rpb_src 64bit input data string
   */
   ISOName_c(const Flexible8ByteString_c* rpu_src);
 
-  /**
-    constructor which format data string from series of input flags
+  /** constructor which format data string from series of input flags
     @param rb_selfConf true -> indicate sefl configuring ECU
     @param rui8_indGroup industry group of device (2 for agriculture)
-    @param rui8_devClass device class of ECU (equivalent to DEVCLASS in DIN)
-    @param rui8_devClassInst instance number of ECU with same devClass
-          in the network (comparable to POS in DIN9684)
+    @param rui8_devClass device class of ECU
+    @param rui8_devClassInst instance number of ECU with same devClass in the network
     @param rb_func function of the ECU (usual 25 for network interconnect)
     @param rui16_manufCode code of manufactor (11bit)
     @param rui32_serNo serial no of specific device (21bit)
@@ -131,28 +127,24 @@ public:
   */
   ISOName_c(bool rb_selfConf, uint8_t rui8_indGroup, uint8_t rui8_devClass, uint8_t rui8_devClassInst,
         uint8_t rb_func, uint16_t rui16_manufCode, uint32_t rui32_serNo, uint8_t rb_funcInst = 0, uint8_t rb_ecuInst = 0);
-  /**
-    copy constructor for ISOName
+  /** copy constructor for ISOName
     @param rrefc_src source ISOName_c instance
   */
   ISOName_c(const ISOName_c& rrefc_src);
-  /**
-    assign constructor for ISOName
+
+  /** assign constructor for ISOName
     @param rrefc_src source ISOName_c object
   */
   const ISOName_c& operator=(const ISOName_c& rrefc_src);
-  /**
-    default destructor
-  */
+
+  /** default destructor */
   ~ISOName_c();
 
-  /**
-    set data string with all flags with one call
+  /** set data string with all flags with one call
     @param rb_selfConf true -> indicate sefl configuring ECU
     @param rui8_indGroup industry group of device (2 for agriculture)
-    @param rui8_devClass device class of ECU (equivalent to DEVCLASS in DIN)
-    @param rui8_devClassInst instance number of ECU with same devClass
-          in the network (comparable to POS in DIN9684)
+    @param rui8_devClass device class of ECU
+    @param rui8_devClassInst instance number of ECU with same devClass in the network
     @param rb_func function of the ECU (usual 25 for network interconnect)
     @param rui16_manufCode code of manufactor (11bit)
     @param rui32_serNo serial no of specific device (21bit)
@@ -175,157 +167,144 @@ public:
     ecuTypeNavigation
   };
 
-  /**
-    deliver type of ECU: Tractor, VT, Navigation, etc.
-  */
+  /** deliver type of ECU: Tractor, VT, Navigation, etc. */
   ecuType_t getEcuType() const;
 
 
-  /**
-    deliver the data NAME string as pointer to 8byte string
+  /** deliver the data NAME string as pointer to 8byte string
     @return const pointer to 8 uint8_t string with NAME
   */
-  const uint8_t* outputString() const{return u_data.getUint8DataConstPointer();};
-  /**
-    deliver the data NAME string as pointer to 8byte string
+  const uint8_t* outputString() const{return u_data.getUint8DataConstPointer();}
+
+  /** deliver the data NAME string as pointer to 8byte string
     @return const pointer to 8 uint8_t string with NAME
   */
-  const Flexible8ByteString_c* outputUnion() const{return &u_data;};
+  const Flexible8ByteString_c* outputUnion() const{return &u_data;}
 
-
-  /**
-    get self config mode
+  /** get self config mode
     @return self configuration adress state
   */
   uint8_t selfConf() const;
-  /**
-    get industry group code
+
+  /** get industry group code
     @return industry group of device
   */
   uint8_t indGroup() const;
-  /**
-    get device class instance number
+
+  /** get device class instance number
     @return:device class instance number
   */
   uint8_t devClassInst() const;
-  /**
-    get device class code
+
+  /** get device class code
     @return:device class
   */
   uint8_t devClass() const;
-  /**
-    get function code
+
+  /** get function code
     @return function code
   */
   uint8_t func() const;
-  /**
-    get function instance code
+
+  /** get function instance code
     @return function instance code
   */
   uint8_t funcInst() const;
-  /**
-    get ECU instance code
+
+  /** get ECU instance code
     @return ECU instance code
   */
   uint8_t ecuInst() const;
-  /**
-    get manufactor code
+
+  /** get manufactor code
     @return manufactor code
   */
   uint16_t manufCode() const;
 
-  /**
-    get serial number
+  /** get serial number
     @return serial number
   */
   uint32_t serNo() const;
 
-  /**
-    set the NAME data from 8 uint8_t string
+  /** set the NAME data from 8 uint8_t string
     @param rpb_src pointer to 8byte source string
   */
   void inputString(const uint8_t* rpb_src);
-  /**
-    set the NAME data from 8 uint8_t string
+
+  /** set the NAME data from 8 uint8_t string
     @param rpb_src pointer to 8byte source string
   */
   void inputUnion(const Flexible8ByteString_c* rpu_src);
 
-
-  /**
-    set self config mode
+  /** set self config mode
     @param rb_selfConf true -> indicate sefl configuring ECU
   */
   void setSelfConf(bool rb_selfConf);
-  /**
-    set industry group code
+
+  /** set industry group code
     @param rui8_indGroup industry group of device (2 for agriculture)
   */
   void setIndGroup(uint8_t rui8_indGroup);
-  /**
-    set device class instance number
-    @param rui8_devClassInst instance number of ECU with same devClass
-          in the network (comparable to POS in DIN9684)
+
+  /** set device class instance number
+    @param rui8_devClassInst instance number of ECU with same devClass in the network
   */
   void setDevClassInst(uint8_t rui8_devClassInst);
-  /**
-    set device class code
-    @param rui8_devClass device class of ECU (equivalent to DEVCLASS in DIN)
+
+  /** set device class code
+    @param rui8_devClass device class of ECU
   */
   void setDevClass(uint8_t rui8_devClass);
-  /**
-    set function code
+
+  /** set function code
     @param rb_func function of the ECU (usual 25 for network interconnect)
   */
   void setFunc(uint8_t rb_func);
-  /**
-    set function instance code
+
+  /** set function instance code
     @param rb_funcInst instance number of ECU with same function and device class
         (default 0 - normally)
   */
   void setFuncInst(uint8_t rb_funcInst);
-  /**
-    set ECU instance code
+
+  /** set ECU instance code
     @param rb_funcInst instance number of ECU with same function, device class and function instance
         (default 0 - normally)
   */
   void setEcuInst(uint8_t rb_ecuInst);
-  /**
-    set manufactor code
+
+  /** set manufactor code
     @param rui16_manufCode code of manufactor (11bit)
   */
   void setManufCode(uint16_t rui16_manufCode);
 
-  /**
-    set serial number (Identity Number)
+  /** set serial number (Identity Number)
     @param rui32_serNo serial no of specific device (21bit)
   */
   void setSerNo(uint32_t rui32_serNo);
 
-  /**
-    check if this NAME has higher prio
+  /** check if this NAME has higher prio
     than the given NAME 8-uint8_t string
     @param rpb_compare
     @return 0 == equal; -1 == this has lower prio than par; +1 == this item has higher prio than par
   */
   int8_t higherPriThanPar(const Flexible8ByteString_c* rpu_compare) const;
+
   /** compare two ISOName_c values with operator== */
   bool operator==( const ISOName_c& refc_right ) const
-    { return (higherPriThanPar( refc_right.outputUnion() ) == 0)?true:false;};
+    { return (higherPriThanPar( refc_right.outputUnion() ) == 0)?true:false;}
+
   /** compare two ISOName_c values with operator!= */
   bool operator!=( const ISOName_c& refc_right ) const
-    { return (higherPriThanPar( refc_right.outputUnion() ) != 0)?true:false;};
+    { return (higherPriThanPar( refc_right.outputUnion() ) != 0)?true:false;}
+
   /** compare ISOName_c value and Flexible8ByteString_c with operator!= */
   bool operator!=( const Flexible8ByteString_c& rrefc_right ) const
-    { return (higherPriThanPar( &rrefc_right ) != 0)?true:false;};
+    { return (higherPriThanPar( &rrefc_right ) != 0)?true:false;}
+
   /** compare two ISOName_c values with operator< */
   bool operator<( const ISOName_c& refc_right ) const
-    { return (higherPriThanPar( refc_right.outputUnion() ) == -1)?true:false;};
-protected:
-// Protected Methods
-
-private: // private methods
-
+    { return (higherPriThanPar( refc_right.outputUnion() ) == -1)?true:false;}
 
 private:
   /** ISO 8-uint8_t NAME field */

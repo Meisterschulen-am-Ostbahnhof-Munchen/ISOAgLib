@@ -218,7 +218,7 @@
 #ifdef USE_TRACTOR_AUX
  #define TEST_TRACAUX
 #endif
-#ifdef USE_BASE_TRACPTO
+#ifdef USE_TRACTOR_PTO
  #define TEST_TRACPTO
  #define TEST_TRACPTOSETPOINT
 #endif
@@ -737,8 +737,8 @@ else
         #ifdef TEST_TRACGUIDANCE
         //TRACTOR GUIDANCE CLASS TEST FUNCTIONALITY
         EXTERNAL_DEBUG_DEVICE << "\t+++++++++ Guidance KLASSE +++++++++\n";
-        EXTERNAL_DEBUG_DEVICE << "curvature command:             " << getITracGuidanceInstance().curvatureCmd() << "\n";
-        EXTERNAL_DEBUG_DEVICE << "request reset command status:  " << IsoSteerFlag( getITracGuidanceInstance().curvatureCmdStatus() ) << "\n";
+//         EXTERNAL_DEBUG_DEVICE << "curvature command:             " << getITracGuidanceInstance().curvatureCmd() << "\n";
+//         EXTERNAL_DEBUG_DEVICE << "request reset command status:  " << IsoSteerFlag( getITracGuidanceInstance().curvatureCmdStatus() ) << "\n";
 
         estCurvature += 2;
         getITracGuidanceInstance().setEstCurvature(estCurvature);

@@ -7,7 +7,7 @@
 
 
  \section PrjSpec1_2_WriteIso__pc_linux__linux_server_client__rte List of configuration settings for 1_2_WriteIso with CAN Driver linux_server_client and RS232 Driver rte
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/
  Use the file conf_1_2_WriteIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_1_2_WriteIso
@@ -157,8 +157,6 @@ RS232_INSTANCE_CNT=1
 # unset or set to 0 if not wanted
 PRJ_ISO11783=1
 # PRJ_ISO_TERMINAL=0
-# PRJ_DIN9684=0
-# PRJ_DIN_TERMINAL=0
 
 # select stream receive strategy:
 # chunk (default): use list of chunks where each receive burst is stored in one chunk -> usefull when on-the-fly parsing is used
@@ -172,7 +170,7 @@ PRJ_ISO11783=1
 # if only special BASE data should be used select one or more of the following parts
 PRJ_BASE=1
 
-# only incorporate parts from BASE that provide tractor hitch and DIN9684-engine RPM information
+# only incorporate parts from BASE that provide tractor hitch and RPM information
 # PRJ_TRACTOR_GENERAL=0
 
 # only incorporate parts from BASE that provide tractor moving (distance, speed, direction, ...) information
@@ -212,12 +210,6 @@ PRJ_BASE=1
 
 # activate globally the use of process data
 # PRJ_PROCESS=0
-
-# for DIN 9684 the process data system can be used
-# to decode GPS information from Fieldstar or LBS+ extension
-# ( if this and DIN9684 is activated, but PRJ_PROCESS is not
-#   then the value of PRJ_PROCESS is overwritten with 1 to activate it )
-# PRJ_FIELDSTAR_GPS=0
 
 # decide if local process data are wanted
 # PROC_LOCAL=0
@@ -457,7 +449,7 @@ PRJ_BASE=1
 
 
  \section PrjSpec1_2_WriteIso__pc_linux__linux_server_client__simulating List of configuration settings for 1_2_WriteIso with CAN Driver linux_server_client and RS232 Driver simulating
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/
  Use the file conf_1_2_WriteIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_1_2_WriteIso
@@ -607,8 +599,6 @@ RS232_INSTANCE_CNT=1
 # unset or set to 0 if not wanted
 PRJ_ISO11783=1
 # PRJ_ISO_TERMINAL=0
-# PRJ_DIN9684=0
-# PRJ_DIN_TERMINAL=0
 
 # select stream receive strategy:
 # chunk (default): use list of chunks where each receive burst is stored in one chunk -> usefull when on-the-fly parsing is used
@@ -622,7 +612,7 @@ PRJ_ISO11783=1
 # if only special BASE data should be used select one or more of the following parts
 PRJ_BASE=1
 
-# only incorporate parts from BASE that provide tractor hitch and DIN9684-engine RPM information
+# only incorporate parts from BASE that provide tractor hitch and RPM information
 # PRJ_TRACTOR_GENERAL=0
 
 # only incorporate parts from BASE that provide tractor moving (distance, speed, direction, ...) information
@@ -662,12 +652,6 @@ PRJ_BASE=1
 
 # activate globally the use of process data
 # PRJ_PROCESS=0
-
-# for DIN 9684 the process data system can be used
-# to decode GPS information from Fieldstar or LBS+ extension
-# ( if this and DIN9684 is activated, but PRJ_PROCESS is not
-#   then the value of PRJ_PROCESS is overwritten with 1 to activate it )
-# PRJ_FIELDSTAR_GPS=0
 
 # decide if local process data are wanted
 # PROC_LOCAL=0
@@ -907,7 +891,7 @@ PRJ_BASE=1
 
 
  \section PrjSpec1_2_WriteIso__pc_linux__linux_server_client__sys List of configuration settings for 1_2_WriteIso with CAN Driver linux_server_client and RS232 Driver sys
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/
  Use the file conf_1_2_WriteIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_1_2_WriteIso
@@ -1057,8 +1041,6 @@ RS232_INSTANCE_CNT=1
 # unset or set to 0 if not wanted
 PRJ_ISO11783=1
 # PRJ_ISO_TERMINAL=0
-# PRJ_DIN9684=0
-# PRJ_DIN_TERMINAL=0
 
 # select stream receive strategy:
 # chunk (default): use list of chunks where each receive burst is stored in one chunk -> usefull when on-the-fly parsing is used
@@ -1072,7 +1054,7 @@ PRJ_ISO11783=1
 # if only special BASE data should be used select one or more of the following parts
 PRJ_BASE=1
 
-# only incorporate parts from BASE that provide tractor hitch and DIN9684-engine RPM information
+# only incorporate parts from BASE that provide tractor hitch and RPM information
 # PRJ_TRACTOR_GENERAL=0
 
 # only incorporate parts from BASE that provide tractor moving (distance, speed, direction, ...) information
@@ -1112,12 +1094,6 @@ PRJ_BASE=1
 
 # activate globally the use of process data
 # PRJ_PROCESS=0
-
-# for DIN 9684 the process data system can be used
-# to decode GPS information from Fieldstar or LBS+ extension
-# ( if this and DIN9684 is activated, but PRJ_PROCESS is not
-#   then the value of PRJ_PROCESS is overwritten with 1 to activate it )
-# PRJ_FIELDSTAR_GPS=0
 
 # decide if local process data are wanted
 # PROC_LOCAL=0
@@ -1357,7 +1333,7 @@ PRJ_BASE=1
 
 
  \section PrjSpec1_2_WriteIso__pc_linux__rte__rte List of configuration settings for 1_2_WriteIso with CAN Driver rte and RS232 Driver rte
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/
  Use the file conf_1_2_WriteIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_1_2_WriteIso
@@ -1507,8 +1483,6 @@ RS232_INSTANCE_CNT=1
 # unset or set to 0 if not wanted
 PRJ_ISO11783=1
 # PRJ_ISO_TERMINAL=0
-# PRJ_DIN9684=0
-# PRJ_DIN_TERMINAL=0
 
 # select stream receive strategy:
 # chunk (default): use list of chunks where each receive burst is stored in one chunk -> usefull when on-the-fly parsing is used
@@ -1522,7 +1496,7 @@ PRJ_ISO11783=1
 # if only special BASE data should be used select one or more of the following parts
 PRJ_BASE=1
 
-# only incorporate parts from BASE that provide tractor hitch and DIN9684-engine RPM information
+# only incorporate parts from BASE that provide tractor hitch and RPM information
 # PRJ_TRACTOR_GENERAL=0
 
 # only incorporate parts from BASE that provide tractor moving (distance, speed, direction, ...) information
@@ -1562,12 +1536,6 @@ PRJ_BASE=1
 
 # activate globally the use of process data
 # PRJ_PROCESS=0
-
-# for DIN 9684 the process data system can be used
-# to decode GPS information from Fieldstar or LBS+ extension
-# ( if this and DIN9684 is activated, but PRJ_PROCESS is not
-#   then the value of PRJ_PROCESS is overwritten with 1 to activate it )
-# PRJ_FIELDSTAR_GPS=0
 
 # decide if local process data are wanted
 # PROC_LOCAL=0
@@ -1807,7 +1775,7 @@ PRJ_BASE=1
 
 
  \section PrjSpec1_2_WriteIso__pc_linux__rte__simulating List of configuration settings for 1_2_WriteIso with CAN Driver rte and RS232 Driver simulating
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/
  Use the file conf_1_2_WriteIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_1_2_WriteIso
@@ -1957,8 +1925,6 @@ RS232_INSTANCE_CNT=1
 # unset or set to 0 if not wanted
 PRJ_ISO11783=1
 # PRJ_ISO_TERMINAL=0
-# PRJ_DIN9684=0
-# PRJ_DIN_TERMINAL=0
 
 # select stream receive strategy:
 # chunk (default): use list of chunks where each receive burst is stored in one chunk -> usefull when on-the-fly parsing is used
@@ -1972,7 +1938,7 @@ PRJ_ISO11783=1
 # if only special BASE data should be used select one or more of the following parts
 PRJ_BASE=1
 
-# only incorporate parts from BASE that provide tractor hitch and DIN9684-engine RPM information
+# only incorporate parts from BASE that provide tractor hitch and RPM information
 # PRJ_TRACTOR_GENERAL=0
 
 # only incorporate parts from BASE that provide tractor moving (distance, speed, direction, ...) information
@@ -2012,12 +1978,6 @@ PRJ_BASE=1
 
 # activate globally the use of process data
 # PRJ_PROCESS=0
-
-# for DIN 9684 the process data system can be used
-# to decode GPS information from Fieldstar or LBS+ extension
-# ( if this and DIN9684 is activated, but PRJ_PROCESS is not
-#   then the value of PRJ_PROCESS is overwritten with 1 to activate it )
-# PRJ_FIELDSTAR_GPS=0
 
 # decide if local process data are wanted
 # PROC_LOCAL=0
@@ -2257,7 +2217,7 @@ PRJ_BASE=1
 
 
  \section PrjSpec1_2_WriteIso__pc_linux__rte__sys List of configuration settings for 1_2_WriteIso with CAN Driver rte and RS232 Driver sys
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/
  Use the file conf_1_2_WriteIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_1_2_WriteIso
@@ -2407,8 +2367,6 @@ RS232_INSTANCE_CNT=1
 # unset or set to 0 if not wanted
 PRJ_ISO11783=1
 # PRJ_ISO_TERMINAL=0
-# PRJ_DIN9684=0
-# PRJ_DIN_TERMINAL=0
 
 # select stream receive strategy:
 # chunk (default): use list of chunks where each receive burst is stored in one chunk -> usefull when on-the-fly parsing is used
@@ -2422,7 +2380,7 @@ PRJ_ISO11783=1
 # if only special BASE data should be used select one or more of the following parts
 PRJ_BASE=1
 
-# only incorporate parts from BASE that provide tractor hitch and DIN9684-engine RPM information
+# only incorporate parts from BASE that provide tractor hitch and RPM information
 # PRJ_TRACTOR_GENERAL=0
 
 # only incorporate parts from BASE that provide tractor moving (distance, speed, direction, ...) information
@@ -2462,12 +2420,6 @@ PRJ_BASE=1
 
 # activate globally the use of process data
 # PRJ_PROCESS=0
-
-# for DIN 9684 the process data system can be used
-# to decode GPS information from Fieldstar or LBS+ extension
-# ( if this and DIN9684 is activated, but PRJ_PROCESS is not
-#   then the value of PRJ_PROCESS is overwritten with 1 to activate it )
-# PRJ_FIELDSTAR_GPS=0
 
 # decide if local process data are wanted
 # PROC_LOCAL=0
@@ -2707,7 +2659,7 @@ PRJ_BASE=1
 
 
  \section PrjSpec1_2_WriteIso__pc_linux__simulating__rte List of configuration settings for 1_2_WriteIso with CAN Driver simulating and RS232 Driver rte
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/
  Use the file conf_1_2_WriteIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_1_2_WriteIso
@@ -2857,8 +2809,6 @@ RS232_INSTANCE_CNT=1
 # unset or set to 0 if not wanted
 PRJ_ISO11783=1
 # PRJ_ISO_TERMINAL=0
-# PRJ_DIN9684=0
-# PRJ_DIN_TERMINAL=0
 
 # select stream receive strategy:
 # chunk (default): use list of chunks where each receive burst is stored in one chunk -> usefull when on-the-fly parsing is used
@@ -2872,7 +2822,7 @@ PRJ_ISO11783=1
 # if only special BASE data should be used select one or more of the following parts
 PRJ_BASE=1
 
-# only incorporate parts from BASE that provide tractor hitch and DIN9684-engine RPM information
+# only incorporate parts from BASE that provide tractor hitch and RPM information
 # PRJ_TRACTOR_GENERAL=0
 
 # only incorporate parts from BASE that provide tractor moving (distance, speed, direction, ...) information
@@ -2912,12 +2862,6 @@ PRJ_BASE=1
 
 # activate globally the use of process data
 # PRJ_PROCESS=0
-
-# for DIN 9684 the process data system can be used
-# to decode GPS information from Fieldstar or LBS+ extension
-# ( if this and DIN9684 is activated, but PRJ_PROCESS is not
-#   then the value of PRJ_PROCESS is overwritten with 1 to activate it )
-# PRJ_FIELDSTAR_GPS=0
 
 # decide if local process data are wanted
 # PROC_LOCAL=0
@@ -3157,7 +3101,7 @@ PRJ_BASE=1
 
 
  \section PrjSpec1_2_WriteIso__pc_linux__simulating__simulating List of configuration settings for 1_2_WriteIso with CAN Driver simulating and RS232 Driver simulating
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/
  Use the file conf_1_2_WriteIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_1_2_WriteIso
@@ -3307,8 +3251,6 @@ RS232_INSTANCE_CNT=1
 # unset or set to 0 if not wanted
 PRJ_ISO11783=1
 # PRJ_ISO_TERMINAL=0
-# PRJ_DIN9684=0
-# PRJ_DIN_TERMINAL=0
 
 # select stream receive strategy:
 # chunk (default): use list of chunks where each receive burst is stored in one chunk -> usefull when on-the-fly parsing is used
@@ -3322,7 +3264,7 @@ PRJ_ISO11783=1
 # if only special BASE data should be used select one or more of the following parts
 PRJ_BASE=1
 
-# only incorporate parts from BASE that provide tractor hitch and DIN9684-engine RPM information
+# only incorporate parts from BASE that provide tractor hitch and RPM information
 # PRJ_TRACTOR_GENERAL=0
 
 # only incorporate parts from BASE that provide tractor moving (distance, speed, direction, ...) information
@@ -3362,12 +3304,6 @@ PRJ_BASE=1
 
 # activate globally the use of process data
 # PRJ_PROCESS=0
-
-# for DIN 9684 the process data system can be used
-# to decode GPS information from Fieldstar or LBS+ extension
-# ( if this and DIN9684 is activated, but PRJ_PROCESS is not
-#   then the value of PRJ_PROCESS is overwritten with 1 to activate it )
-# PRJ_FIELDSTAR_GPS=0
 
 # decide if local process data are wanted
 # PROC_LOCAL=0
@@ -3607,7 +3543,7 @@ PRJ_BASE=1
 
 
  \section PrjSpec1_2_WriteIso__pc_linux__simulating__sys List of configuration settings for 1_2_WriteIso with CAN Driver simulating and RS232 Driver sys
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/
  Use the file conf_1_2_WriteIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_1_2_WriteIso
@@ -3757,8 +3693,6 @@ RS232_INSTANCE_CNT=1
 # unset or set to 0 if not wanted
 PRJ_ISO11783=1
 # PRJ_ISO_TERMINAL=0
-# PRJ_DIN9684=0
-# PRJ_DIN_TERMINAL=0
 
 # select stream receive strategy:
 # chunk (default): use list of chunks where each receive burst is stored in one chunk -> usefull when on-the-fly parsing is used
@@ -3772,7 +3706,7 @@ PRJ_ISO11783=1
 # if only special BASE data should be used select one or more of the following parts
 PRJ_BASE=1
 
-# only incorporate parts from BASE that provide tractor hitch and DIN9684-engine RPM information
+# only incorporate parts from BASE that provide tractor hitch and RPM information
 # PRJ_TRACTOR_GENERAL=0
 
 # only incorporate parts from BASE that provide tractor moving (distance, speed, direction, ...) information
@@ -3812,12 +3746,6 @@ PRJ_BASE=1
 
 # activate globally the use of process data
 # PRJ_PROCESS=0
-
-# for DIN 9684 the process data system can be used
-# to decode GPS information from Fieldstar or LBS+ extension
-# ( if this and DIN9684 is activated, but PRJ_PROCESS is not
-#   then the value of PRJ_PROCESS is overwritten with 1 to activate it )
-# PRJ_FIELDSTAR_GPS=0
 
 # decide if local process data are wanted
 # PROC_LOCAL=0
@@ -4060,7 +3988,7 @@ PRJ_BASE=1
 
 
  \section PrjConfig1_2_WriteIso List of configuration settings for 1_2_WriteIso
- This is only a copy with doxygen ready comment blocks from the original file ../../../IsoAgLib_Examples/tutorial/1_BaseData/1_2_WriteIso/config_1_2_WriteIso.h 
+ This is only a copy with doxygen ready comment blocks from the original file ../../../IsoAgLib_Examples/tutorial/1_BaseData/1_2_WriteIso/config_1_2_WriteIso.h
  This header is included by <IsoAgLib/xgpl_src/Application_Config/isoaglib_config.h> based on the
  project define #define PRJ_USE_AUTOGEN_CONFIG config_1_2_WriteIso.h ( Important: place the directory of the application source files in the include search path )
 
@@ -4068,7 +3996,7 @@ PRJ_BASE=1
 \code
 // File: config_1_2_WriteIso.h
 // IMPORTANT: Never change the first block of this header manually!!!
-//            All manual changes are overwritten by the next call of "update_makefile.sh conf_1_2_WriteIso" 
+//            All manual changes are overwritten by the next call of "update_makefile.sh conf_1_2_WriteIso"
 //            Perform changes direct in the feature and project setup file conf_1_2_WriteIso
 //  ALLOWED ADAPTATION: Move the to be adapted defines from the middle block to the end after
 //                      the line START_INDIVIDUAL_PROJECT_CONFIG and remove the comment indication there.
@@ -4078,15 +4006,15 @@ PRJ_BASE=1
 
 // include an external file for definition of pool and firmware versions
 #include "version.h"
-#define CAN_BUS_CNT 1 
+#define CAN_BUS_CNT 1
 
-#define CAN_BUS_USED 0 
+#define CAN_BUS_USED 0
 
-#define CAN_INSTANCE_CNT 1 
+#define CAN_INSTANCE_CNT 1
 
-#define PRT_INSTANCE_CNT 1 
+#define PRT_INSTANCE_CNT 1
 
-#define RS232_INSTANCE_CNT 1 
+#define RS232_INSTANCE_CNT 1
 
 // Decide if the CPU stores number variables in BIG or LITTLE endian byte order in memory.
 // Most CPU will use LITTLE ENDIAN. Only some types of ARM, mostly 68k and PowerPC CPU types will use big endian.
@@ -4098,32 +4026,32 @@ PRJ_BASE=1
 
 // #define CONFIG_DO_NOT_START_RELAIS_ON_STARTUP
 
-#ifndef USE_BASE 
-	#define USE_BASE 
+#ifndef USE_BASE
+	#define USE_BASE
 #endif
-#ifndef USE_TRACTOR_GENERAL 
-	#define USE_TRACTOR_GENERAL 
+#ifndef USE_TRACTOR_GENERAL
+	#define USE_TRACTOR_GENERAL
 #endif
-#ifndef USE_TRACTOR_MOVE 
-	#define USE_TRACTOR_MOVE 
+#ifndef USE_TRACTOR_MOVE
+	#define USE_TRACTOR_MOVE
 #endif
-#ifndef USE_TRACTOR_PTO 
-	#define USE_TRACTOR_PTO 
+#ifndef USE_TRACTOR_PTO
+	#define USE_TRACTOR_PTO
 #endif
-#ifndef USE_TRACTOR_LIGHT 
-	#define USE_TRACTOR_LIGHT 
+#ifndef USE_TRACTOR_LIGHT
+	#define USE_TRACTOR_LIGHT
 #endif
-#ifndef USE_TRACTOR_AUX 
-	#define USE_TRACTOR_AUX 
+#ifndef USE_TRACTOR_AUX
+	#define USE_TRACTOR_AUX
 #endif
-#ifndef USE_TRACTOR_GUIDANCE 
-	#define USE_TRACTOR_GUIDANCE 
+#ifndef USE_TRACTOR_GUIDANCE
+	#define USE_TRACTOR_GUIDANCE
 #endif
-#ifndef USE_TRACTOR_CERTIFICATION 
-	#define USE_TRACTOR_CERTIFICATION 
+#ifndef USE_TRACTOR_CERTIFICATION
+	#define USE_TRACTOR_CERTIFICATION
 #endif
-#ifndef USE_TIME_GPS 
-	#define USE_TIME_GPS 
+#ifndef USE_TIME_GPS
+	#define USE_TIME_GPS
 #endif
 // Decide if HEAP allocation strategy shall reduce size about 5K to 10K in favour of speed
 // Strong Advice: Don't activate this, as long your target has not too tight memory restrictions
@@ -4138,17 +4066,17 @@ PRJ_BASE=1
 #ifndef NO
   #define NO 0
 #endif
-#ifndef USE_PROCESS_YN 
-	#define USE_PROCESS_YN NO 
+#ifndef USE_PROCESS_YN
+	#define USE_PROCESS_YN NO
 #endif
-#ifndef USE_EEPROM_IO_YN 
-	#define USE_EEPROM_IO_YN NO 
+#ifndef USE_EEPROM_IO_YN
+	#define USE_EEPROM_IO_YN NO
 #endif
-#ifndef USE_DATASTREAMS_IO 
-	#define USE_DATASTREAMS_IO 
+#ifndef USE_DATASTREAMS_IO
+	#define USE_DATASTREAMS_IO
 #endif
-#ifndef USE_ISO_11783 
-	#define USE_ISO_11783 
+#ifndef USE_ISO_11783
+	#define USE_ISO_11783
 #endif
 
 // The following configuration values can be overwritten.

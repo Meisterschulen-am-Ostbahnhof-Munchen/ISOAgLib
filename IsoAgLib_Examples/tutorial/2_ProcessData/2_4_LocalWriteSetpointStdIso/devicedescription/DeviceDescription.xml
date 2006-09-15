@@ -2,18 +2,15 @@
   <deviceelement designator="DeviceElement1" element_type="device" element_number="0" parent_name="Device1">
     <deviceprocessdata designator="On Off" ddi="0x008D" properties="defaultset" trigger_methods="timeinterval" proc_program_name="workState" cumulative_value="false">
       <deviceprocessdatacombination ddi="0x008D" command_type="exact" is_setpoint="true" />
-      <devicedinprocessdata lis="0" wert_inst="0x1" />
     </deviceprocessdata>
     <deviceprocessdata designator="Application Rate" ddi="0x0007" properties="defaultset" trigger_methods="timeinterval" proc_program_name="applicationRate" cumulative_value="false">
       <deviceprocessdatacombination ddi="0x0001" command_type="exact" is_setpoint="true" />
       <deviceprocessdatacombination ddi="0x0002" command_type="exact" is_setpoint="false" />
       <deviceprocessdatacombination ddi="0x0003" command_type="default" is_setpoint="true" />
       <deviceprocessdatacombination ddi="0x0004" command_type="min" is_setpoint="true" />
-      <devicedinprocessdata lis="0" wert_inst="0x5" />
     </deviceprocessdata>
     <deviceprocessdata designator="default data logging DDI" ddi="0xDFFF" properties="defaultset" trigger_methods="timeinterval" proc_program_name="defaultLogging" cumulative_value="false">
       <deviceprocessdatacombination ddi="0xDFFF" command_type="exact" is_setpoint="false" />
-      <devicedinprocessdata lis="0" wert_inst="0x1" />
     </deviceprocessdata>
   </deviceelement>
 </device>

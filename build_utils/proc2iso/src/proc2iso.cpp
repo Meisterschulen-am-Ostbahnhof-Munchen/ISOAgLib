@@ -769,8 +769,6 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
       clean_exit (-1);
     }
 
-    if (objType != otDeviceDinProcessData)
-    {
       getAttributesFromNode(node, objType);
 
       // set all non-set attributes to default values
@@ -822,8 +820,6 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
         objChildObjects = 0;
         for (child = node->getFirstChild(); child != 0; child=child->getNextSibling())
         {   // if NOT Macro insert as normal object!
-          if (objectIsType(XMLString::transcode(child->getNodeName())) != otDeviceDinProcessData)
-          {
             if (child->getNodeType() == DOMNode::ELEMENT_NODE)
             {
               // get NAME attributes out of child
@@ -866,10 +862,8 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
               vecstr_childID.push_back(objChildID);
               objChildObjects++;
             }
-          }
         }
       }
-    }
 
     // ###########################################
     // ### Print out inidivual object stuff... ###
@@ -1173,7 +1167,6 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
         vecstr_constructor[5] = vecstr_attrString[attrProcProgVarName].c_str();
         vecstr_constructor[6] = vecstr_attrString[attrDdi].c_str();
 
-        bool b_DinDPD = false;
         // process DeviceProcessDataCombination childs
         for (child = node->getFirstChild(); child != 0; child=child->getNextSibling())
         {
@@ -1251,18 +1244,6 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
             vecstr_dataForCombination.push_back(vecstr_attrString[attrCommand_type].c_str());
           }
 
-          if (objectIsType(XMLString::transcode(child->getNodeName())) == otDeviceDinProcessData)
-          {
-            getAttributesFromNode(child, otDeviceDinProcessData);
-
-            defaultAttributes ();
-            b_DinDPD = TRUE;
-            //this objecttype is only needed for creating the processdata-constructor
-            if (!attrIsGiven [attrWert_inst])
-            {
-              clean_exit (-1, "YOU NEED TO SPECIFY THE wert_inst= ATTRIBUTE FOR THE <devicedinprocessdata> OBJECT! STOPPING PARSER! bye.\n\n");
-            }
-          }
         }
 
         if (b_dpdCombination)
@@ -1271,20 +1252,19 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
           uint8_t ui8_amount = vecstr_dataForCombination.size();
           ui8_amount = (ui8_amount-2) / 3;
           // output to header-file
-          fprintf(partFileB, "#if defined(USE_ISO_11783)\nstatic const uint16_t scui16_%sElementNumber = %i;\n", vecstr_dataForCombination[1].c_str(), stringtonumber(vecstr_dataForCombination[0].c_str(), 0, -1));
+          fprintf(partFileB, "static const uint16_t scui16_%sElementNumber = %i;\n", vecstr_dataForCombination[1].c_str(), stringtonumber(vecstr_dataForCombination[0].c_str(), 0, -1));
           fprintf(partFileB, "const IsoAgLib::ElementDDI_s s_%sElementDDI[] =\n{\n", vecstr_dataForCombination[1].c_str());
           uint8_t index=0;
           for (; index<ui8_amount; index++)
           {
             fprintf(partFileB, "\t{%s, %s, IsoAgLib::GeneralCommand_c::%sValue},\n", vecstr_dataForCombination[2+3*index].c_str(), vecstr_dataForCombination[3+3*index].c_str(), vecstr_dataForCombination[4+3*index].c_str());
           }
-          fprintf(partFileB, "\t// termination entry\n\t{0xFFFF, false, IsoAgLib::GeneralCommand_c::noValue}\n};\n#endif\n\n");
+          fprintf(partFileB, "\t// termination entry\n\t{0xFFFF, false, IsoAgLib::GeneralCommand_c::noValue}\n};\n\n");
           for (index=0; index<ui8_amount*3; index++)
             vecstr_dataForCombination.pop_back();
         }
 
         fprintf(partFileB, "IsoAgLib::iProcDataLocal%s_c c_%s(", vecstr_constructor[3].c_str(), vecstr_constructor[5].c_str());
-        fprintf(partFileB, "\n#ifdef USE_ISO_11783\n");
         if (b_dpdCombination)
           fprintf(partFileB, "s_%sElementDDI,\nscui16_%sElementNumber, ", vecstr_constructor[5].c_str(), vecstr_dataForCombination[1].c_str());
         else
@@ -1292,17 +1272,6 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
 
         b_dpdCombination = FALSE;
 
-        fprintf(partFileB, "\n#endif\n");
-        fprintf(partFileB, "#ifdef USE_DIN_9684\n");
-
-        if (b_DinDPD)
-          fprintf(partFileB, "0x%x, 0x%x, 0x%x, 0x%x, ", atoi(vecstr_attrString[attrLis].c_str()),
-                  (stringtonumber(vecstr_attrString[attrWert_inst].c_str(), 0, -1) & 0x0F), ((stringtonumber(vecstr_attrString[attrWert_inst].c_str(), 0, -1) >> 4) & 0xF),
-                  stringtonumber(vecstr_attrString[attrZaehl_num].c_str(), 0, -1));
-        else
-          fprintf(partFileB, "0x0, 0x0, 0x0, 0x0, ");
-
-        fprintf(partFileB, "\n#endif\n");
         fprintf(partFileB, "%sDevKey, 0x%x, %sDevKey, &%sDevKey, %s",
                 vecstr_constructor[0].c_str(), atoi(vecstr_constructor[1].c_str()), vecstr_constructor[0].c_str(),
                 vecstr_constructor[0].c_str(), vecstr_constructor[4].c_str());
@@ -1367,7 +1336,6 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
         buffer.str("");
         break;
 
-      case otDeviceDinProcessData:
       case otDeviceProcessDataCombination:
         break;
 

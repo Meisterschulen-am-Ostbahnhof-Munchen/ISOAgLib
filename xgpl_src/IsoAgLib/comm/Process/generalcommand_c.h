@@ -1,5 +1,5 @@
 /***************************************************************************
-                          generalcommand_c.h - extracts general data from DIN/ISO 
+                          generalcommand_c.h - extracts general data from ISO
                                                process messages
                              -------------------
     begin                : Fri Apr 07 2000

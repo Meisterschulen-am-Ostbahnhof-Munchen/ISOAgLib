@@ -141,8 +141,7 @@ typedef CAN_SINGLETON(CANIO_c) SingletonCANIO_c;
 */
 class CANIO_c : public SingletonCANIO_c {
  public: // changed from protected to work with the access from MsgObj_c
-  /**
-    define dynamic array of MsgObj_c instances for each hardware
+  /** define dynamic array of MsgObj_c instances for each hardware
     MsgObj_c one object instances in array
   */
   #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
@@ -151,8 +150,7 @@ class CANIO_c : public SingletonCANIO_c {
     #else
     typedef STL_NAMESPACE::slist<MsgObj_c> ArrMsgObj;
     #endif
-    /**
-      define dynamic array of FilterBox_c instances;
+    /** define dynamic array of FilterBox_c instances;
       if a __IsoAgLib::CANCustomer_c creates one FilterBox_c definitions,
       one object instance is inserted in array
     */
@@ -163,63 +161,61 @@ class CANIO_c : public SingletonCANIO_c {
     #endif
    #else
    typedef STL_NAMESPACE::vector<FilterBox_c> ArrFilterBox;
-   #endif //SYSTEM_WITH_ENHANCED_CAN_HAL
+ #endif //SYSTEM_WITH_ENHANCED_CAN_HAL
 
  public:
 
-  /**
-    Initialize the CAN hardware, and instantiate one msg object for
-     sending of messages. Do configuration for BUS number, sending bitrate,
-    CAN ident length, minx/max hardware/BIOS Msg Obj numbers by parameters;
-    called by specified constructor or external functions;
-    wrong BUS and msg obj numbers are rejected and cause set of Err_c:range
+  /** Initialize the CAN hardware, and instantiate one msg object for
+      sending of messages. Do configuration for BUS number, sending bitrate,
+      CAN ident length, minx/max hardware/BIOS Msg Obj numbers by parameters;
+      called by specified constructor or external functions;
+      wrong BUS and msg obj numbers are rejected and cause set of Err_c:range
 
-    If even the rui8_busNumber parameter has the default value 0xFF,
-    then the configuration settings of a previous init call are not
-    changed. In this case, the CAN BUS is only reset with the old settings.
-    This is enabled by the default value 0xFF for rui8_busNumber, which is
-    changed to CONFIG_CAN_DEFAULT_BUS_NUMBER for the first call of init() after the constructor.
-    In all other cases, the special value 0xFF is indicator for empty parameter list.
+      If even the rui8_busNumber parameter has the default value 0xFF,
+      then the configuration settings of a previous init call are not
+      changed. In this case, the CAN BUS is only reset with the old settings.
+      This is enabled by the default value 0xFF for rui8_busNumber, which is
+      changed to CONFIG_CAN_DEFAULT_BUS_NUMBER for the first call of init() after the constructor.
+      In all other cases, the special value 0xFF is indicator for empty parameter list.
 
-    possible errors:
-        * Err_c::range on undefined BUS,  msgOb_nr or sendPufferSize,
-        * Err_c::hwConfig on uninitialized BUS, undef. msgType or CAN-BIOS mem-err,
-        * Err_c::busy on already used sending Msg-Obj
-    @param rui8_busNumber optional number of the CAN bus
-    @param rui16_bitrate optional bitrate (default by define in isoaglib_config.h)
-    @param Ident_c::identType_t optional length of the ident
-      (S (11bit), E (29bit), B
-      (send both standard and extended ident msg)
-      (default by define in isoaglib_config.h)
-    @param rui8_minObjNr optional minimum number for hardware CAN
-           message object (important for sharing CAN controller with
-         other tasks) (default by define in isoaglib_config.h)
-    @param rui8_maxObjNr optional maximum number for hardware CAN
-           message object (default by define in isoaglib_config.h)
-    @return true -> correct initialisation without errors
-    @see HAL::init_can
-    @see HAL::tCanObjConfig
-    @see HAL::configCanObj
-    @see Ident_c::t_identType
-  */
+      possible errors:
+          * Err_c::range on undefined BUS,  msgOb_nr or sendPufferSize,
+          * Err_c::hwConfig on uninitialized BUS, undef. msgType or CAN-BIOS mem-err,
+          * Err_c::busy on already used sending Msg-Obj
+
+      @param rui8_busNumber       optional number of the CAN bus
+      @param rui16_bitrate        optional bitrate (default by define in isoaglib_config.h)
+      @param Ident_c::identType_t optional length of the ident (S (11bit), E (29bit), B
+                                  (send both standard and extended ident msg)
+                                  (default by define in isoaglib_config.h)
+      @param rui8_minObjNr        optional minimum number for hardware CAN
+                                  message object (important for sharing CAN controller with
+                                  other tasks) (default by define in isoaglib_config.h)
+      @param rui8_maxObjNr        optional maximum number for hardware CAN
+                                  message object (default by define in isoaglib_config.h)
+      @return                     true -> correct initialisation without errors
+      @see    HAL::init_can
+      @see    HAL::tCanObjConfig
+      @see    HAL::configCanObj
+      @see    Ident_c::t_identType
+    */
 bool init(uint8_t rui8_busNumber, uint16_t rui16_bitrate,
                    Ident_c::identType_t ren_identType, uint8_t rui8_minObjNr
                    ,  uint8_t rui8_maxObjNr
                   );
+
   /** check if this CANIO_c instance is configured so that it can be used to send */
-  bool isReady2Send() const { return ( ui8_busNumber != 0xFF )?true:false;};
-  /** every subsystem of IsoAgLib has explicit function for controlled shutdown
-    */
+  bool isReady2Send() const { return ( ui8_busNumber != 0xFF )?true:false;}
+
+  /** every subsystem of IsoAgLib has explicit function for controlled shutdown */
   void close( void );
 
-  /**
-    destructor of CANIO_c calls BIOS function for closing hardware CAN controller
+  /** destructor of CANIO_c calls BIOS function for closing hardware CAN controller
     @see HAL::closeCan
   */
-  ~CANIO_c(){close();};
+  ~CANIO_c(){close();}
 
-  /**
-    periodically called function which does
+  /** periodically called function which does
     periodically needed actions; f.e. trigger watch
     dog and start processing of received messages
     @return true -> time events was performed
@@ -227,9 +223,9 @@ bool init(uint8_t rui8_busNumber, uint16_t rui16_bitrate,
   bool timeEvent( void );
 
   /** provide BUS number */
-  uint8_t getBusNumber( void ) const { return ui8_busNumber;};
-  /**
-    deliver actual BUS load in baud
+  uint8_t getBusNumber( void ) const { return ui8_busNumber;}
+
+  /** deliver actual BUS load in baud
     @return baudrate in [kbaud] on used CAN BUS
   */
   uint16_t getBusLoad() const;
@@ -238,31 +234,27 @@ bool init(uint8_t rui8_busNumber, uint16_t rui16_bitrate,
    *  @return true -> there are CAN messages waiting for process. else: return due to timeout
    */
   static bool waitUntilCanReceiveOrTimeout( uint16_t rui16_timeoutInterval )
-  { return HAL::can_waitUntilCanReceiveOrTimeout( rui16_timeoutInterval );};
+  { return HAL::can_waitUntilCanReceiveOrTimeout( rui16_timeoutInterval );}
 
-
-  /**
-    set the minimum delay in msec. between two sent CAN messages
+  /** set the minimum delay in msec. between two sent CAN messages
     @param rui16_minDelay minimum time between two CAN messages [msec.]
   */
   void setSendpause(uint16_t rui16_minDelay) const;
 
-  /**
-    deliver the numbers which can be placed at the moment in the send puffer
+  /** deliver the numbers which can be placed at the moment in the send puffer
     @param ren_identType type of searched ident: standard 11bit or extended 29bit
       (default DEFAULT_IDENT_TYPE set in isoaglib_config.h)
     @return number of msgs which fit into send buffer
   */
   uint8_t sendCanFreecnt(Ident_c::identType_t ren_identType = DEFAULT_IDENT_TYPE);
-  /**
-    clear the send buffer
+
+  /** clear the send buffer
     @param ren_identType type of searched ident: standard 11bit or extended 29bit
       (default DEFAULT_IDENT_TYPE set in isoaglib_config.h)
   */
   void sendCanClearbuf(Ident_c::identType_t ren_identType = DEFAULT_IDENT_TYPE);
 
-  /**
-    test if a FilterBox_c definition already exist
+  /** test if a FilterBox_c definition already exist
     (version expecial for standard ident, chosen at compile time)
     @param rref_customer reference to the processing class ( the same filter setting can be registered by different consuming classes )
     @param rui32_mask individual mask for this filter box
@@ -276,8 +268,8 @@ bool init(uint8_t rui8_busNumber, uint16_t rui16_bitrate,
     uint16_t rui16_mask, uint16_t rui16_filter,
     Ident_c::identType_t ren_identType = DEFAULT_IDENT_TYPE,
     ArrFilterBox::iterator* rpc_iter = NULL);
-  /**
-    test if a FilterBox_c definition already exist
+
+  /** test if a FilterBox_c definition already exist
     (version expecial for extended ident, chosen at compile time)
     @param rref_customer reference to the processing class ( the same filter setting can be registered by different consuming classes )
     @param rui32_mask individual mask for this filter box
@@ -291,8 +283,8 @@ bool init(uint8_t rui8_busNumber, uint16_t rui16_bitrate,
       uint32_t rui32_mask, uint32_t rui32_filter,
       Ident_c::identType_t ren_identType = DEFAULT_IDENT_TYPE,
       ArrFilterBox::iterator* rpc_iter = NULL);
-  /**
-    test if a FilterBox_c definition already exist
+
+  /** test if a FilterBox_c definition already exist
     (version with comper items as Ident_c class instances, chosen by compiler)
     @param rref_customer reference to the processing class ( the same filter setting can be registered by different consuming classes )
     @param rc_compMask individual mask for this filter box
@@ -304,8 +296,7 @@ bool init(uint8_t rui8_busNumber, uint16_t rui16_bitrate,
       const Ident_c& rc_compMask, const Ident_c& rc_compFilter,
       ArrFilterBox::iterator* rpc_iter = NULL);
 
-  /**
-    create a Filter Box with specified rui32_mask/rui32_filter
+  /** create a Filter Box with specified rui32_mask/rui32_filter
     on ui8_busNr of object; reconfig HW CAN MsgObj_c only if
     rb_reconfigImmediate == true -> useful for
     avoiding unneeded reconfiguration during
@@ -341,13 +332,10 @@ bool init(uint8_t rui8_busNumber, uint16_t rui16_bitrate,
                             const Ident_c::identType_t rt_identType,
                             uint32_t rt_connectedMask, uint32_t rt_connectedFilter, const Ident_c::identType_t rt_connectedIdentType);
 
-  /**
-    reconfigure the MsgObj after insert/delete of FilterBox
-  */
+  /** reconfigure the MsgObj after insert/delete of FilterBox */
   bool reconfigureMsgObj();
 
-  /**
-    verify given BUS number and MsgObj number, if they are correct
+  /** verify given BUS number and MsgObj number, if they are correct
     (mostly used by MsgObj_c to verify itself)
     @param rui8_busNr number of the BUS
     @param rui8_msgobjNr number of the MsgObj
@@ -355,8 +343,7 @@ bool init(uint8_t rui8_busNumber, uint16_t rui16_bitrate,
   */
   bool verifyBusMsgobjNr(uint8_t rui8_busNr, uint8_t rui8_msgobjNr);
 
-/**
-    helper function to search all FilterBoxes for matching
+/** helper function to search all FilterBoxes for matching
     instance which maps to received CAN messages
     ( needed if the coordinated FilterBoxes don't match,
       especially important to process messages from global
@@ -367,8 +354,7 @@ bool init(uint8_t rui8_busNumber, uint16_t rui16_bitrate,
   */
   bool canMsg2FilterBox( uint32_t rui32_ident, Ident_c::identType_t rt_type, ArrFilterBox::iterator& rref_arrFilterBoxIter, bool rb_start );
 
-  /**
-    delete a FilerBox definition
+  /** delete a FilerBox definition
     @param rref_customer reference to the processing class ( the same filter setting can be registered by different consuming classes )
     @param rui32_mask individual mask for this filter box
     @param rui32_filter individual filter
@@ -380,8 +366,7 @@ bool init(uint8_t rui8_busNumber, uint16_t rui16_bitrate,
       MASK_TYPE rui32_mask, MASK_TYPE rui32_filter,
       const Ident_c::identType_t rt_identType = DEFAULT_IDENT_TYPE);
 
-  /**
-    initiate processing of all received msg
+  /** initiate processing of all received msg
     check all active MsgObj_c for received CAN msg and
     initiate their processing
     @return <0 --> not enough time to process all messages.
@@ -389,84 +374,83 @@ bool init(uint8_t rui8_busNumber, uint16_t rui16_bitrate,
            >0  --> all messages are processed, number of messages
   */
   int16_t processMsg();
+
   /** deliver count of CAN messages which were processed during last timeEvent() / processMsg() call
     * this helps Scheduler_c to decide about needed double retrigger of CANIO_c::processMsg()
     * at high CAN BUS load (important to avoid overflow of CAN buffers in HAL
     */
-  uint8_t getProcessedMsgCnt( void ) const { return ui8_processedMsgCnt;};
+  uint8_t getProcessedMsgCnt( void ) const { return ui8_processedMsgCnt;}
 
-  /**
-    function for sending data out of CANPkg_c (uses BIOS function)
-    if send puffer is full a local loop waits till puffer has enough space
-    (every 100ms the watchdog is triggered, to avoid watchdog reset)
+  /** function for sending data out of CANPkg_c (uses BIOS function)
+      if send puffer is full a local loop waits till puffer has enough space
+      (every 100ms the watchdog is triggered, to avoid watchdog reset)
 
-    possible errors:
-        * Err_c::hwConfig on wrong configured CAN obj,
-          not init BUS or no configured send obj
-        * Err_c::range on undef BUS or BIOS send obj nr
-        * Err_c::can_warn on physical CAN-BUS problems
-        * Err_c::can_off on physical CAN-BUS off state
-    @see CANPkg
-    @see HAL::sendCanMsg
-    @param rrefc_src CANPkg_c which holds the to be sent data
-    @return reference to this CANIO_c instance ==>
-          needed by commands like "c_can_io << pkg_1 << pkg_2 ... << pkg_n;"
-  */
+      possible errors:
+          * Err_c::hwConfig on wrong configured CAN obj,
+            not init BUS or no configured send obj
+          * Err_c::range on undef BUS or BIOS send obj nr
+          * Err_c::can_warn on physical CAN-BUS problems
+          * Err_c::can_off on physical CAN-BUS off state
+      @see CANPkg
+      @see HAL::sendCanMsg
+      @param rrefc_src CANPkg_c which holds the to be sent data
+      @return reference to this CANIO_c instance ==>
+            needed by commands like "c_can_io << pkg_1 << pkg_2 ... << pkg_n;"
+    */
   CANIO_c& operator<<(CANPkg_c& rrefc_src);
-  #ifdef USE_ISO_11783
-  /**
-    function for sending data out of CANPkgExt_c (uses BIOS function)
-    if send puffer is full a local loop waits till puffer has enough space
-    (every 100ms the watchdog is triggered, to avoid watchdog reset)
 
-    possible errors:
-        * Err_c::hwConfig on wrong configured CAN obj, not init BUS or no configured send obj
-        * Err_c::range on undef BUS or BIOS send obj nr
-        * Err_c::can_warn on physical CAN-BUS problems
-        * Err_c::can_off on physical CAN-BUS off state
-    @param rrefc_src CANPkgExt_c which holds the to be sent data
-    @return reference to this CANIOExt_c instance ==> needed by commands like "c_can_io << pkg_1 << pkg_2 ... << pkg_n;"
-  */
+  /** function for sending data out of CANPkgExt_c (uses BIOS function)
+      if send puffer is full a local loop waits till puffer has enough space
+      (every 100ms the watchdog is triggered, to avoid watchdog reset)
+
+      possible errors:
+          * Err_c::hwConfig on wrong configured CAN obj, not init BUS or no configured send obj
+          * Err_c::range on undef BUS or BIOS send obj nr
+          * Err_c::can_warn on physical CAN-BUS problems
+          * Err_c::can_off on physical CAN-BUS off state
+      @param rrefc_src CANPkgExt_c which holds the to be sent data
+      @return reference to this CANIOExt_c instance ==> needed by commands like "c_can_io << pkg_1 << pkg_2 ... << pkg_n;"
+    */
   CANIO_c& operator<<(CANPkgExt_c& refc_src);
-  #endif
-  /**
-    check for can send conflict error and stop send retry on error
-    (thus avoid BUS OFF)
-    @return true -> there was send error and send retry stopped
-  */
+
+  /** check for can send conflict error and stop send retry on error
+      (thus avoid BUS OFF)
+      @return true -> there was send error and send retry stopped
+    */
   bool stopSendRetryOnErr();
 
  protected: // Protected methods
 #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
-  /**
-    evaluate common bits of all defined filterBox
-    instances and set it in mask -> build up global mask
-  */
+  /** evaluate common bits of all defined filterBox
+     instances and set it in mask -> build up global mask
+   */
   void getCommonFilterMask();
+
   /** correct global masks after merge based on merged IDs of all
       resulting MsgObj_c instances
-  */
+    */
   void getCommonFilterMaskAfterMerge();
-  /**
-    build unique MsgObj_c's based on given
-    global mask (different FilterBox_c def's can result in one
-    MsgObj_c if differences are hidden by global mask), return count of obj
 
-    possible errors:
-        * Err_c::badAlloc on not enough memory for created MsgObj_c instances
-    @see MsgObj
-    @see FilterBox
-  */
+  /** build unique MsgObj_c's based on given
+      global mask (different FilterBox_c def's can result in one
+      MsgObj_c if differences are hidden by global mask), return count of obj
+
+      possible errors:
+          * Err_c::badAlloc on not enough memory for created MsgObj_c instances
+      @see MsgObj
+      @see FilterBox
+    */
   int16_t FilterBox2MsgObj();
-  /**
-    checks if count of preconfigured msgObj
-    is allowed; shrink by merging the objects
-    with smallest Bit distance
-    -> all existing MsgObj_c instances can be
-       configured in hardware after execution
-    @see MsgObj
-  */
+
+  /** checks if count of preconfigured msgObj
+      is allowed; shrink by merging the objects
+      with smallest Bit distance
+      -> all existing MsgObj_c instances can be
+        configured in hardware after execution
+      @see MsgObj
+    */
   void CheckSetCntMsgObj();
+
 #endif //SYSTEM_WITH_ENHANCED_CAN_HAL
 
  private: // private methods
@@ -475,158 +459,169 @@ bool init(uint8_t rui8_busNumber, uint16_t rui16_bitrate,
     * NEVER define instance of CANIO_c within application
     * (set ui8_busNumber to 0xFF so that init() detects first call after constructor)
     */
-  CANIO_c( void ) : arrFilterBox() { };
-  /**
-    initialize directly after the singleton instance is created.
-    this is called from singleton.h and should NOT be called from the user again.
-    users please use init(...) instead.
-  */
+  CANIO_c( void ) : arrFilterBox() {}
+
+  /** initialize directly after the singleton instance is created.
+      this is called from singleton.h and should NOT be called from the user again.
+      users please use init(...) instead.
+    */
   void singletonInit();
-  /**
-    deliver min msg obj nr
-    @return min msg obj nr
-  */
-  uint8_t minHALMsgObjNr()const{return ui8_min_msgObjLimit;};
-  /**
-    set min msg obj nr
-    @param rb_limit wanted min msg obj nr
-  */
+
+  /** deliver min msg obj nr
+      @return min msg obj nr
+    */
+  uint8_t minHALMsgObjNr()const{return ui8_min_msgObjLimit;}
+
+  /** set min msg obj nr
+      @param rb_limit wanted min msg obj nr
+    */
   void setMinHALMsgObjNr(uint8_t rb_limit){ui8_min_msgObjLimit = rb_limit;}
+
   /** search for a FilterBox with given mask and filter
       @param  rt_mask    filterBox mask
       @param  rt_filter  filterBox filter
       @return            located FilterBox or NULL if not exist
     */
   FilterBox_c* getFilterBox(Ident_c& rt_mask, Ident_c& rt_filter) const;
+
 #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
-  /**
-    deliver max msg obj nr
-    @return max msg obj nr
-  */
-  uint8_t maxHALMsgObjNr()const{return ui8_maxMsgObjLimit;};
-  /**
-    set max msg obj nr
-    @param rb_limit wanted max msg obj nr
-  */
+  /** deliver max msg obj nr
+      @return max msg obj nr
+    */
+  uint8_t maxHALMsgObjNr()const{return ui8_maxMsgObjLimit;}
+
+  /** set max msg obj nr
+      @param rb_limit wanted max msg obj nr
+    */
   void setMaxHALMsgObjNr(uint8_t rb_limit){ui8_maxMsgObjLimit = rb_limit;}
-  /**
-    call the needed HAL function for setting the new global masks,
-    without invalidating already open send and last msg obj.
-  */
+
+  /** call the needed HAL function for setting the new global masks,
+      without invalidating already open send and last msg obj.
+    */
   bool registerChangedGlobalMasks(void);
 #endif
+
   /** get offset for received messages
       @return offset for received messages
     */
   uint8_t updateMinReceiveObjNr();
+
   /** get offset for received messages
       @return offset for received messages
     */
-  uint8_t minReceiveObjNr() const {return ui8_minReceiveObjNr;};
-  /**
-    switch CAN bitrate (possible during runtime
-    with automatic reconfiguring of CAN MsgObj)
-    @param rui16_newSpeed
-  */
+  uint8_t minReceiveObjNr() const {return ui8_minReceiveObjNr;}
+
+  /** switch CAN bitrate (possible during runtime
+      with automatic reconfiguring of CAN MsgObj)
+      @param rui16_newSpeed
+    */
   bool setBitrate(uint16_t rui16_newSpeed, bool rb_force = false);
-  /**
-    perform bas init for CAN with set of speed and init of send object(s)
-    @param rui16_bitrate wanted CAN bitrate
-  */
+
+  /** perform base init for CAN with set of speed and init of send object(s)
+      @param rui16_bitrate wanted CAN bitrate
+    */
   bool baseCanInit(uint16_t rui16_bitrate);
+
 #ifdef DEBUG
-void doDebug(uint8_t ui8_busNr, uint8_t ui8_sendObjNr);
+  void doDebug(uint8_t ui8_busNr, uint8_t ui8_sendObjNr);
 #endif
 
 // Private attributes
 #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
-  /**
-    dynamic array of MsgObj_c which manages each one a
-    hardware CAN object
-    @see MsgObj
-  */
+  /** dynamic array of MsgObj_c which manages each one a
+      hardware CAN object
+      @see MsgObj
+    */
   ArrMsgObj arrMsgObj;
-  /**
-    temp MsgObj_c for inserting of new msgObj instances
-    @see MsgObj
-  */
+
+  /** temp MsgObj_c for inserting of new msgObj instances
+      @see MsgObj
+    */
   MsgObj_c c_tempObj;
-  /**
-    MsgObj_c for last hardware CAN message object where all CAN messages are
-    stored which don't match t one of the active CAN MsgObj_c ( typical number 15 )
-    @see MsgObj
-  */
+
+  /** MsgObj_c for last hardware CAN message object where all CAN messages are
+      stored which don't match t one of the active CAN MsgObj_c ( typical number 15 )
+      @see MsgObj
+    */
   MsgObj_c c_lastMsgObj;
 #endif
-  /**
-    dynamic array of FilterBox_c instances which
-    represents the demanded filter boxes
-    @see FilterBox
-  */
+
+  /** dynamic array of FilterBox_c instances which
+      represents the demanded filter boxes
+      @see FilterBox
+    */
   ArrFilterBox arrFilterBox;
-  /**
-    temp filer box to avoid new/delete for each insert of a filterBox
-    @see FilterBox
-  */
+
+  /** temp filer box to avoid new/delete for each insert of a filterBox
+      @see FilterBox
+    */
   FilterBox_c c_tempFilterBox;
 
   /** begin of an CAN error period */
   int32_t i32_canErrStart;
+
   /** time of last detected CAN error */
   int32_t i32_canErrEnd;
+
   /**  timestamp of last CAN BUS integrity check  */
   int32_t i32_lastCanCheck;
 
   /** CAN ui16_bitrate (in kBit/s) */
   uint16_t ui16_bitrate;
 
+
+
   /** global mask with standard 11bit type */
   Ident_c c_maskStd;
+
   /** global mask with extended 29bit type */
   Ident_c c_maskExt;
+
   /** global last msg mask */
   Ident_c c_maskLastmsg;
 
 
-  /**
-    identifier type  CANIO_c::S, CANIO_c::extendendIdent
-    or CANIO_c::B (CANIO_c should send both standard and extended ident msg
-    --> two send obj are created)
-  */
+  /** identifier type  CANIO_c::S, CANIO_c::extendendIdent
+      or CANIO_c::B (CANIO_c should send both standard and extended ident msg
+      --> two send obj are created)
+    */
   Ident_c::identType_t en_identType;
-  /**
-    BUS Number for systems with more than one BUS
-    (for each BUS one  CANIO_c instance)
-  */
+
+  /** BUS Number for systems with more than one BUS
+      (for each BUS one  CANIO_c instance)
+    */
   uint8_t ui8_busNumber;
-  /**
-    min limit of allowed msgObj numbers for this CANIO_c instance
-    (important for multithreading environments where different
-     Processes must share one BUS)
-  */
+
+  /** min limit of allowed msgObj numbers for this CANIO_c instance
+      (important for multithreading environments where different
+      Processes must share one BUS)
+    */
   uint8_t ui8_min_msgObjLimit;
+
   /** minimal obj nr that can be used for a receive msg obj which is dependent of identType_t */
   uint8_t ui8_minReceiveObjNr;
+
 #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
-  /**
-    max limit of allowed msgObj numbers for this CANIO_c instance
-    (important for multithreading environments where different
-     Processes must share one BUS)
-  */
+  /** max limit of allowed msgObj numbers for this CANIO_c instance
+      (important for multithreading environments where different
+      Processes must share one BUS)
+    */
   uint8_t ui8_maxMsgObjLimit;
 #endif
+
   /** count of CAN messages which were processed during last timeEvent() / processMsg() call
     * this helps Scheduler_c to decide about needed double retrigger of CANIO_c::processMsg()
     * at high CAN BUS load (important to avoid overflow of CAN buffers in HAL
     */
   uint8_t ui8_processedMsgCnt;
+
   /** flag to avoid loop of CAN message processing, when timeEvent() is called during previous
    *  timeEvent triggered CAN processing -> when this flag is TRUE, no further processing is performed
    */
   bool b_runningCanProcess;
-  #if ( ( defined( USE_ISO_11783 ) ) \
-     && ( defined( USE_DIN_9684 ) || ( CAN_INSTANCE_CNT > PRT_INSTANCE_CNT ) || defined (ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL) ) )
-  /** we have either compiled for DIN and ISO, OR there is at least one internal / proprietary CAN channel */
+
+#if ((defined( USE_ISO_11783)) && ((CAN_INSTANCE_CNT > PRT_INSTANCE_CNT) || defined (ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL)))
+  /** we have either compiled for ISO, OR there is at least one internal / proprietary CAN channel */
   bool b_canChannelCouldSendIso;
   #endif
 };
@@ -637,10 +632,9 @@ void doDebug(uint8_t ui8_busNr, uint8_t ui8_sendObjNr);
     */
   CANIO_c& getCanInstance( uint8_t rui8_instance = 0 );
 #else
-  /** C-style function, to get access to the unique DINMonitor_c singleton instance */
+  /** C-style function, to get access to the unique CANIO_c singleton instance */
   CANIO_c& getCanInstance( void );
 #endif
 };
-
 
 #endif

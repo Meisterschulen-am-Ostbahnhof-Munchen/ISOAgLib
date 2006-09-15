@@ -47,10 +47,9 @@
 #define otDeviceElement                (1)
 #define otDeviceProcessData            (2)
 #define otDeviceProperty               (3)
-#define otDeviceDinProcessData         (4)
-#define otDeviceProcessDataCombination (5)
-#define otDeviceValuePresentation      (6)
-#define maxObjectTypes                 (7) // +++ MAX +++ //object will not be inserted if (objType >= maxObjectTypes)
+#define otDeviceProcessDataCombination (4)
+#define otDeviceValuePresentation      (5)
+#define maxObjectTypes                 (6) // +++ MAX +++ //object will not be inserted if (objType >= maxObjectTypes)
 
 
 // Object May Be
@@ -58,9 +57,8 @@
 #define ombDeviceElement                (uint64_t(1)<<1)
 #define ombDeviceProcessData            (uint64_t(1)<<2)
 #define ombDeviceProperty               (uint64_t(1)<<3)
-#define ombDeviceDinProcessData         (uint64_t(1)<<4)
-#define ombDeviceProcessDataCombination (uint64_t(1)<<5)
-#define ombDeviceValuePresentation      (uint64_t(1)<<6)
+#define ombDeviceProcessDataCombination (uint64_t(1)<<4)
+#define ombDeviceValuePresentation      (uint64_t(1)<<5)
 
 // Attributes
 #define attrDesignator (0)
@@ -112,7 +110,6 @@ char otCompTable [maxObjectTypesToCompare] [stringLength+1] = {
     "deviceelement",
     "deviceprocessdata",
     "deviceproperty",
-    "devicedinprocessdata",
     "deviceprocessdatacombination",
     "devicevaluepresentation"
 };
@@ -120,9 +117,8 @@ char otCompTable [maxObjectTypesToCompare] [stringLength+1] = {
 uint64_t omcTypeTable [maxObjectTypesToCompare] = {
     /* "device", */                       ombDeviceElement | ombDeviceValuePresentation,
     /* "deviceelement" */                 ombDeviceProcessData | ombDeviceProperty,
-    /* "deviceprocessdata" */             ombDeviceDinProcessData | ombDeviceProcessDataCombination,
+    /* "deviceprocessdata" */             ombDeviceProcessDataCombination,
     /* "deviceproperty" */                0,
-    /* "devicedinprocessdata" */          0,
     /* "deviceprocessdatacombination" */  0,
     /* "devicevaluepresentation" */       0
 };
@@ -132,7 +128,6 @@ char otClassnameTable [maxObjectTypes] [stringLength+1] = {
     "DeviceElement",
     "DeviceProcessData",
     "DeviceProperty",
-    "DeviceDinProcessData",
     "DeviceProcessDataCombination",
     "DeviceValuePresentation"
 };

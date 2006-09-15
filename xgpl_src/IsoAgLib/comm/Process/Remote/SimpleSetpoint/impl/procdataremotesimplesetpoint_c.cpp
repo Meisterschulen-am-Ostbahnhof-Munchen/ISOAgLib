@@ -101,12 +101,6 @@ namespace __IsoAgLib {
   @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
                        (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
 
-  DIN parameter
-  @param rui8_lis optional LIS code of this instance
-  @param rui8_wert optional WERT code of this instance
-  @param rui8_inst optional INST code of this instance
-  @param rui8_zaehlnum optional ZAEHLNUM code of this instance
-
   @param rc_devKey optional DEV_KEY code of this instance
   @param rui8_pri PRI code of messages with this process data instance (default 2)
   @param rc_ownerDevKey optional DEV_KEY of the owner
@@ -114,31 +108,15 @@ namespace __IsoAgLib {
   @param rpc_processDataChangeHandler optional pointer to handler class of application
   @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
-ProcDataRemoteSimpleSetpoint_c::ProcDataRemoteSimpleSetpoint_c(
-#ifdef USE_ISO_11783
-                                                               const IsoAgLib::ElementDDI_s* ps_elementDDI,
+ProcDataRemoteSimpleSetpoint_c::ProcDataRemoteSimpleSetpoint_c(const IsoAgLib::ElementDDI_s* ps_elementDDI,
                                                                uint16_t rui16_element,
-#endif
-#ifdef USE_DIN_9684
-                                                               uint8_t rui8_lis,
-                                                               uint8_t rui8_wert,
-                                                               uint8_t rui8_inst,
-                                                               uint8_t rui8_zaehlnum,
-#endif
                                                                const DevKey_c& rc_devKey,
                                                                uint8_t rui8_pri,
                                                                const DevKey_c& rc_ownerDevKey,
                                                                const DevKey_c* rpc_commanderDevKey,
                                                                IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler,
                                                                int ri_singletonVecKey)
-  : ProcDataRemoteBase_c(
-#ifdef USE_ISO_11783
-                         ps_elementDDI,
-                         rui16_element,
-#endif
-#ifdef USE_DIN_9684
-                         rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
-#endif
+  : ProcDataRemoteBase_c(ps_elementDDI, rui16_element,
                          rc_devKey, rui8_pri, rc_ownerDevKey, rpc_commanderDevKey,
                          rpc_processDataChangeHandler, ri_singletonVecKey)
   , c_setpoint(this)
@@ -152,12 +130,6 @@ ProcDataRemoteSimpleSetpoint_c::ProcDataRemoteSimpleSetpoint_c(
   @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
                        (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
 
-  DIN parameter
-  @param rui8_lis optional LIS code of this instance
-  @param rui8_wert optional WERT code of this instance
-  @param rui8_inst optional INST code of this instance
-  @param rui8_zaehlnum optional ZAEHLNUM code of this instance
-
   @param rc_devKey optional DEV_KEY code of this instance
   @param rui8_pri PRI code of messages with this process data instance (default 2)
   @param rc_ownerDevKey optional DEV_KEY of the owner
@@ -165,32 +137,14 @@ ProcDataRemoteSimpleSetpoint_c::ProcDataRemoteSimpleSetpoint_c(
   @param rpc_processDataChangeHandler optional pointer to handler class of application
   @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
-void ProcDataRemoteSimpleSetpoint_c::init(
-#ifdef USE_ISO_11783
-                                          const IsoAgLib::ElementDDI_s* ps_elementDDI,
-                                          uint16_t rui16_element,
-#endif
-#ifdef USE_DIN_9684
-                                          uint8_t rui8_lis,
-                                          uint8_t rui8_wert,
-                                          uint8_t rui8_inst,
-                                          uint8_t rui8_zaehlnum,
-#endif
-                                          const DevKey_c& rc_devKey,
-                                          uint8_t rui8_pri,
+void ProcDataRemoteSimpleSetpoint_c::init(const IsoAgLib::ElementDDI_s* ps_elementDDI, uint16_t rui16_element,
+                                          const DevKey_c& rc_devKey, uint8_t rui8_pri,
                                           const DevKey_c& rc_ownerDevKey,
                                           const DevKey_c* rpc_commanderDevKey,
                                           IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler,
                                           int ri_singletonVecKey)
 {
-  ProcDataRemoteBase_c::init(
-#ifdef USE_ISO_11783
-                             ps_elementDDI,
-                             rui16_element,
-#endif
-#ifdef USE_DIN_9684
-                             rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
-#endif
+  ProcDataRemoteBase_c::init(ps_elementDDI, rui16_element,
                              rc_devKey, rui8_pri, rc_ownerDevKey, rpc_commanderDevKey,
                              rpc_processDataChangeHandler, ri_singletonVecKey);
   c_setpoint.init( this );

@@ -89,17 +89,13 @@
 
 #include <IsoAgLib/driver/can/impl/canio_c.h>
 #include <IsoAgLib/comm/SystemMgmt/impl/systemmgmt_c.h>
-#ifdef USE_ISO_11783
-  // IsoAgLib_Extension
-  #include <IsoAgLib/comm/Multipacket/impl/multireceive_c.h>
-  #include <IsoAgLib/comm/Multipacket/istream_c.h>
-  #include <IsoAgLib/comm/Multipacket/impl/multisendpkg_c.h>
-  #include <IsoAgLib/util/iutil_funcs.h>
-#endif
+// IsoAgLib_Extension
+#include <IsoAgLib/comm/Multipacket/impl/multireceive_c.h>
+#include <IsoAgLib/comm/Multipacket/istream_c.h>
+#include <IsoAgLib/comm/Multipacket/impl/multisendpkg_c.h>
+#include <IsoAgLib/util/iutil_funcs.h>
 #include <IsoAgLib/comm/Base/itracmove_c.h>
-#if defined USE_ISO_11783
 #include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.h>
-#endif
 
 
 using namespace std;
@@ -157,7 +153,7 @@ namespace __IsoAgLib {
   uint8_t bcd2dec(uint8_t rb_bcd);
   uint8_t dec2bcd(uint8_t rb_dec);
 
-  #if defined(NMEA_2000_FAST_PACKET) && defined(USE_ISO_11783)
+  #if defined(NMEA_2000_FAST_PACKET)
   /** place next data to send direct into send buffer of pointed
     stream send package - MultiSend_c will send this
     buffer afterwards
@@ -207,7 +203,7 @@ namespace __IsoAgLib {
   {
     return *(vec_data.begin());
   }
-  #endif // END of NMEA_2000_FAST_PACKET && USE_ISO_11783
+  #endif // END of NMEA_2000_FAST_PACKET
 
   /** functions with actions, which must be performed periodically
       -> called periodically by Scheduler_c
@@ -238,7 +234,6 @@ namespace __IsoAgLib {
       bit_calendar.year = bit_calendar.hour = bit_calendar.minute = bit_calendar.second = 0;
       bit_calendar.month = bit_calendar.day = 1;
     }
-    #ifdef USE_ISO_11783
     if ( checkModeGps(IsoAgLib::IdentModeImplement)
       #ifdef NMEA_2000_FAST_PACKET
       && ( ( ci32_now - i32_lastIsoPositionStream  ) >= TIMEOUT_SENDING_NODE  )
@@ -256,40 +251,27 @@ namespace __IsoAgLib {
       ui32_altitudeCm = 0;
       #endif
     }
-    #endif
 
     if ( getDevKey() != NULL )
     { // there is at least something configured to send
-      #ifdef USE_ISO_11783
       if (getIsoMonitorInstance4Comm().existIsoMemberDevKey(*getDevKey(), true))
       { // stored base information sending ISO member has claimed address
-        if ( checkMode(IsoAgLib::IdentModeTractor) ) isoTimeEventTracMode();
+        if ( checkMode(IsoAgLib::IdentModeTractor) ) timeEventTracMode();
       }
-      #endif
-      #if defined(USE_ISO_11783) && defined(USE_DIN_9684)
       if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
-      #endif
-      #ifdef USE_DIN_9684
-      if (getDinMonitorInstance4Comm().existDinMemberDevKey(*getDevKey(), true))
-      { // stored base information sending DIN member has claimed address
-        if (checkMode(IsoAgLib::IdentModeTractor)) dinTimeEventTracMode();
-      }
-      #endif
     }
-    #ifdef USE_ISO_11783
     if ( pc_devKeyGps != NULL )
     { // there is at least something configured to send
 
       if (getIsoMonitorInstance4Comm().existIsoMemberDevKey(*pc_devKeyGps, true))
       { // stored base information sending ISO member has claimed address
-        if (checkModeGps(IsoAgLib::IdentModeTractor) ) isoTimeEventTracMode();
+        if (checkModeGps(IsoAgLib::IdentModeTractor) ) timeEventTracMode();
       }
     }
-    #endif
     return true;
   }
 
-  /** check if filter boxes shall be created - create only ISO or DIN filters based
+  /** check if filter boxes shall be created - create only filters based
       on active local idents which has already claimed an address
       --> avoid to much Filter Boxes
     */
@@ -297,19 +279,10 @@ namespace __IsoAgLib {
   {
     SystemMgmt_c& c_systemMgmt = getSystemMgmtInstance4Comm();
     CANIO_c &c_can = getCanInstance4Comm();
-    #ifdef USE_DIN_9684
-    if ( ( !checkDinFilterCreated() ) && (c_systemMgmt.existActiveLocalDinMember() ) )
-    { // check if needed receive filters for DIN are active
-      setDinFilterCreated();
-      // filter for lower priority base data fuel consumption & base data data calendar
-      c_can.insertFilter(*this, (0x7F << 4),(0x1F << 4), true);
-    }
-    #endif
 
-    #ifdef USE_ISO_11783
-    if ( ( ! checkIsoFilterCreated() ) && ( c_systemMgmt.existActiveLocalIsoMember() ) )
+    if ( ( ! checkFilterCreated() ) && ( c_systemMgmt.existActiveLocalIsoMember() ) )
     { // check if needed receive filters for ISO are active
-      setIsoFilterCreated();
+      setFilterCreated();
 
       // create FilterBox_c for PGN TIME_DATE_PGN, PF 254 - mask for DP, PF and PS
       // mask: (0x1FFFF << 8) filter: (TIME_DATE_PGN << 8)
@@ -325,44 +298,36 @@ namespace __IsoAgLib {
 
       // *************************************************************************************************
     }
-    #endif
   }
 
-/** initialise element which can't be done during construct;
-    above all create the needed FilterBox_c instances
-    possible errors:
-      * dependant error in CANIO_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
-    @param rpc_devKey optional pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
-    @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
-  */
-void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_identMode)
-{
-  BaseCommon_c::init( rpc_devKey, rt_identMode );
+  /** initialise element which can't be done during construct;
+      above all create the needed FilterBox_c instances
+      possible errors:
+        * dependant error in CANIO_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
+      @param rpc_devKey optional pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
+      @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
+    */
+  void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_identMode)
+  {
+    BaseCommon_c::init( rpc_devKey, rt_identMode );
 
-  #if !defined(USE_ISO_11783)
-  // if NOT iso, init here (as there's no configGps(...)
-  i32_latitudeDegree10Minus7 = i32_longitudeDegree10Minus7 = 0x7FFFFFFF;
-  #endif
+    pc_devKeyGps = NULL;
+    // set the GPS mode always to non-sending
+    configGps( NULL, IsoAgLib::IdentModeImplement );
 
-  #if defined(USE_ISO_11783)
-  pc_devKeyGps = NULL;
-  // set the GPS mode always to non-sending
-  configGps( NULL, IsoAgLib::IdentModeImplement );
-  #endif
+    // 01.01.1970 00:00:00
+    struct tm t_testTime = {0, 0, 0, 1, 0, 70, 0 , 0 ,-1
+                            #if defined(__USE_BSD) || defined(__GNU_LIBRARY__) || defined(__GLIBC__) || defined(__GLIBC_MINOR__)
+                            , 0, NULL
+                            #endif
+                          };
 
-  // 01.01.1970 00:00:00
-  struct tm t_testTime = {0, 0, 0, 1, 0, 70, 0 , 0 ,-1
-                          #if defined(__USE_BSD) || defined(__GNU_LIBRARY__) || defined(__GLIBC__) || defined(__GLIBC_MINOR__)
-                          , 0, NULL
-                          #endif
-                         };
-
-  t_tzOffset = - mktime(&t_testTime);
-  if (1 == t_tzOffset)
-  { // mktime returned -1 => error
-    t_tzOffset = 0;
+    t_tzOffset = - mktime(&t_testTime);
+    if (1 == t_tzOffset)
+    { // mktime returned -1 => error
+      t_tzOffset = 0;
+    }
   }
-}
 
   /** config the TimePosGPS_c object after init -> set pointer to devKey and
       config send/receive of different base msg types
@@ -372,15 +337,13 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
     */
   bool TimePosGPS_c::config(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_identMode)
   {
-    #ifdef USE_ISO_11783
     //store old mode to decide to register or unregister to request for pgn
     IsoAgLib::IdentMode_t t_oldMode = getMode();
-    #endif
+
     //call config for handling which is base data independent
     //if something went wrong leave function before something is configured
     if ( !BaseCommon_c::config(rpc_devKey, rt_identMode) ) return false;
 
-    #ifdef USE_ISO_11783
     if (t_oldMode == IsoAgLib::IdentModeImplement && rt_identMode == IsoAgLib::IdentModeTractor)
     {  // a change from Implement mode to Tractor mode occured
       // create FilterBox_c for REQUEST_PGN_MSG_PGN, TIME_DATE_PGN
@@ -392,7 +355,6 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
       // unregister from request for pgn, because in implement mode no request should be answered
       getIsoRequestPgnInstance4Comm().unregisterPGN (*this, TIME_DATE_PGN);
     }
-    #endif
 
     // set the member base msg value vars to NO_VAL codes
     bit_calendar.year = 0;
@@ -412,7 +374,6 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
     return true;
   };
 
-#if defined(USE_ISO_11783)
   /** force a request for pgn for time/date information */
   bool TimePosGPS_c::sendRequestUpdateTimeDate()
   {
@@ -421,7 +382,7 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
     else
       return false;
   }
-   /** config the Base_c object after init -> set pointer to devKey and
+  /** config the Base_c object after init -> set pointer to devKey and
       config send/receive of different base msg types
       @param rpc_devKey pointer to the DEV_KEY variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
       @param rb_implementMode implement mode (true) or tractor mode (false)!!!
@@ -506,7 +467,6 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
     return i32_lastIsoPositionSimple;
     #endif
   }
-#endif
 
   #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
   /** C-style function, to get access to the unique Base_c singleton instance
@@ -525,107 +485,9 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
   };
   #endif
 
-  #ifdef USE_DIN_9684
-  /** send a DIN9684 base information PGN
-  * this is only called when sending ident is configured and it has already claimed an address
-  */
-  bool TimePosGPS_c::dinTimeEventTracMode( )
-  {
-    CANIO_c& c_can = getCanInstance4Comm();
-    const int32_t ci32_now = Scheduler_c::getLastTimeEventTrigger();
-    // retreive the actual dynamic sender no of the member with the registered devKey
-    uint8_t b_send = getDinMonitorInstance4Comm().dinMemberDevKey(*getDevKey(), true).nr();
 
-    if ( ( ( lastedTimeSinceUpdate()) >= 1000)
-      && checkMode(IsoAgLib::IdentModeTractor)                )
-    { // send actual calendar data
-      setSelectedDataSourceDevKey( *getDevKey() );
-      data().setIdent((0x1F << 4 | b_send), __IsoAgLib::Ident_c::StandardIdent );
-      data().setUint8Data(0, ( dec2bcd(yearLocal() / 100)) );
-      data().setUint8Data(1, ( dec2bcd(yearLocal() % 100)) );
-      data().setUint8Data(2, dec2bcd(monthLocal()) );
-      data().setUint8Data(3, dec2bcd(dayLocal()) );
-      data().setUint8Data(4, dec2bcd(hourLocal()) );
-      data().setUint8Data(5, dec2bcd(minuteLocal()) );
-      data().setUint8Data(6, dec2bcd(second()) );
-
-      data().setLen(7);
-      // CANIO_c::operator<< retreives the information with the help of CANPkg_c::getData
-      // then it sends the data
-      c_can << data();
-
-      // update time
-      setUpdateTime(ci32_now);
-    }
-    return true;
-  }
-
-  /** process a DIN9684 base information PGN */
-  bool TimePosGPS_c::dinProcessMsg()
-  { // a DIN9684 base information msg received
-    // store the devKey of the sender of base data
-    const int32_t ci32_now = Scheduler_c::getLastTimeEventTrigger();
-    if (! getDinMonitorInstance4Comm().existDinMemberNr(data().dinSa()))
-    { // the sender is not known -> ignore and block interpretation by other classes
-      return true;
-    }
-    // the corresponding sender entry exist in the monitor list
-    DevKey_c c_tempDevKey = getDinMonitorInstance4Comm().dinMemberNr(data().dinSa()).devKey();
-
-    // interprete data according to BABO
-    if (dataBabo() == 0xF) {
-      // calendar
-      // only take values, if i am not the regular sender
-      // and if actual sender isn't in conflict to previous sender
-      if ( checkParseReceived( c_tempDevKey ) )
-      { // sender is allowed to send
-        // only store date with valid year ( != 0 ) or if last received
-        // year is also 0
-        if ( ( data().getUint8Data(0) != 0 ) || ( data().getUint8Data(1) != 0 ) || ( yearUtc() == 0 ) )
-        { // store new calendar setting
-          #ifdef USE_ISO_11783
-          if ( checkModeGps(IsoAgLib::IdentModeImplement)
-            && ( c_sendGpsDevKey.isUnspecified()                    ) )
-          #endif
-          { // neither this item nor another item is sending GPS data -> this is the best time source
-            setCalendarLocal(
-              bcd2dec(data().getUint8Data(0) ) * 100 + bcd2dec(data().getUint8Data(1)),
-              bcd2dec(data().getUint8Data(2)), bcd2dec(data().getUint8Data(3)),
-              bcd2dec(data().getUint8Data(4)), bcd2dec(data().getUint8Data(5)),
-              bcd2dec(data().getUint8Data(6))
-            );
-          }
-          #ifdef USE_ISO_11783
-          else
-          { // only fetch the date, as this information might not be defined by GPS
-            setDateLocal(bcd2dec(data().getUint8Data(0)) * 100 + bcd2dec(data().getUint8Data(1)),
-              bcd2dec(data().getUint8Data(2)), bcd2dec(data().getUint8Data(3)));
-          }
-          #endif
-        }
-        // only handle this data source as reference data source, if year is valid
-        // ( i.e. year != 0 )
-        if ( ( data().getUint8Data(0) != 0 ) || ( data().getUint8Data(1) != 0 ) )
-        { // set last time
-          setUpdateTime(ci32_now);
-          setSelectedDataSourceDevKey( c_tempDevKey );
-        }
-      }
-      else
-      { // there is a sender conflict
-        getLbsErrInstance().registerError( LibErr_c::LbsBaseSenderConflict, LibErr_c::LbsBase );
-        return false;
-      }
-    }
-    return true;
-  }
-  #endif
-
-  #ifdef USE_ISO_11783
-  /**
-    process a ISO11783 base information PGN
-  */
-  bool TimePosGPS_c::isoProcessMsg()
+  /** process a ISO11783 base information PGN */
+  bool TimePosGPS_c::processMsg()
   {
     DevKey_c c_tempDevKey( DevKey_c::DevKeyUnspecified );
     const int32_t ci32_now = Scheduler_c::getLastTimeEventTrigger();
@@ -691,7 +553,6 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
     return true;
   }
 
-
   bool TimePosGPS_c::processMsgRequestPGN (uint32_t rui32_pgn, uint8_t rui8_sa, uint8_t rui8_da)
   {
     // check if we are allowed to send a request for pgn
@@ -700,12 +561,11 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
     // call TimePosGPS_c function to send time/date
     // isoSendCalendar checks if this item (identified by DEV_KEY)
     // is configured to send time/date
-    isoSendCalendar(*getDevKey());
+    sendCalendar(*getDevKey());
     return true;
   };
 
-
-  #if defined(USE_FLOAT_DATA_TYPE) || defined(USE_DIN_GPS)
+  #if defined(USE_FLOAT_DATA_TYPE)
   /** check if an NMEA2000 position signal was received */
   bool TimePosGPS_c::isPositionReceived() const
   {
@@ -723,14 +583,14 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
       return true;
     }
   }
-  #endif // END of USE_FLOAT_DATA_TYPE || USE_DIN_GPS
+  #endif // END of USE_FLOAT_DATA_TYPE
 
   #ifdef NMEA_2000_FAST_PACKET
   /** set the GPS time in UTC timezone.
-   *  When no remote system is sending the 11783-7 PGN with date & time, the new UTC time is also set with
-   *  setTimeUtc().
-   *  In case another system is sending TIME_DATE_PGN, this time could be out-of-sync with GPS time.
-   *  To avoid a jumping back and forth Non-GPS UTC time, those two UTC time sources are then not to be synced.
+  *  When no remote system is sending the 11783-7 PGN with date & time, the new UTC time is also set with
+  *  setTimeUtc().
+  *  In case another system is sending TIME_DATE_PGN, this time could be out-of-sync with GPS time.
+  *  To avoid a jumping back and forth Non-GPS UTC time, those two UTC time sources are then not to be synced.
   */
   void TimePosGPS_c::setTimeUtcGps(uint8_t rb_hour, uint8_t rb_minute, uint8_t rb_second, uint16_t rui16_msec )
   {
@@ -744,12 +604,12 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
     }
   }
   /** set the calendar hour value
-   *  When no remote system is sending the 11783-7 PGN with date & time, the new UTC time is also set with
-   *  setTimeUtc().
-   *  In case another system is sending TIME_DATE_PGN, this time could be out-of-sync with GPS time.
-   *  To avoid a jumping back and forth Non-GPS UTC time, those two UTC time sources are then not to be synced.
-   *  @param rb_hour actual calendar hour value
-   */
+  *  When no remote system is sending the 11783-7 PGN with date & time, the new UTC time is also set with
+  *  setTimeUtc().
+  *  In case another system is sending TIME_DATE_PGN, this time could be out-of-sync with GPS time.
+  *  To avoid a jumping back and forth Non-GPS UTC time, those two UTC time sources are then not to be synced.
+  *  @param rb_hour actual calendar hour value
+  */
   void TimePosGPS_c::setHourUtcGps(uint8_t rb_hour)
   {
     bit_gpsTime.hour = rb_hour;
@@ -759,12 +619,12 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
     }
   }
   /** set the calendar minute value
-   *  When no remote system is sending the 11783-7 PGN with date & time, the new UTC time is also set with
-   *  setTimeUtc().
-   *  In case another system is sending TIME_DATE_PGN, this time could be out-of-sync with GPS time.
-   *  To avoid a jumping back and forth Non-GPS UTC time, those two UTC time sources are then not to be synced.
-   *  @param rb_minute actual calendar minute value
-   */
+  *  When no remote system is sending the 11783-7 PGN with date & time, the new UTC time is also set with
+  *  setTimeUtc().
+  *  In case another system is sending TIME_DATE_PGN, this time could be out-of-sync with GPS time.
+  *  To avoid a jumping back and forth Non-GPS UTC time, those two UTC time sources are then not to be synced.
+  *  @param rb_minute actual calendar minute value
+  */
   void TimePosGPS_c::setMinuteUtcGps(uint8_t rb_minute)
   {
     bit_gpsTime.minute = rb_minute;
@@ -774,12 +634,12 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
     }
   }
   /** set the calendar second value
-   *  When no remote system is sending the 11783-7 PGN with date & time, the new UTC time is also set with
-   *  setTimeUtc().
-   *  In case another system is sending TIME_DATE_PGN, this time could be out-of-sync with GPS time.
-   *  To avoid a jumping back and forth Non-GPS UTC time, those two UTC time sources are then not to be synced.
-   *  @param rb_second actual calendar second value
-   */
+  *  When no remote system is sending the 11783-7 PGN with date & time, the new UTC time is also set with
+  *  setTimeUtc().
+  *  In case another system is sending TIME_DATE_PGN, this time could be out-of-sync with GPS time.
+  *  To avoid a jumping back and forth Non-GPS UTC time, those two UTC time sources are then not to be synced.
+  *  @param rb_second actual calendar second value
+  */
   void TimePosGPS_c::setSecondUtcGps(uint8_t rb_second)
   {
     bit_gpsTime.second = rb_second;
@@ -789,12 +649,12 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
     }
   }
   /** set the calendar millisecond value
-   *  When no remote system is sending the 11783-7 PGN with date & time, the new UTC time is also set with
-   *  setTimeUtc().
-   *  In case another system is sending TIME_DATE_PGN, this time could be out-of-sync with GPS time.
-   *  To avoid a jumping back and forth Non-GPS UTC time, those two UTC time sources are then not to be synced.
-   *  @param rb_millisecond actual calendar second value
-   */
+  *  When no remote system is sending the 11783-7 PGN with date & time, the new UTC time is also set with
+  *  setTimeUtc().
+  *  In case another system is sending TIME_DATE_PGN, this time could be out-of-sync with GPS time.
+  *  To avoid a jumping back and forth Non-GPS UTC time, those two UTC time sources are then not to be synced.
+  *  @param rb_millisecond actual calendar second value
+  */
   void TimePosGPS_c::setMillisecondUtcGps(uint16_t rui16_millisecond)
   {
     bit_gpsTime.msec = rui16_millisecond;
@@ -1000,7 +860,7 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
       @pre  function is only called in tractor mode
       @see  BaseCommon_c::timeEvent()
     */
-  bool TimePosGPS_c::isoTimeEventTracMode()
+  bool TimePosGPS_c::timeEventTracMode()
   {
     const int32_t ci32_now = Scheduler_c::getLastTimeEventTrigger();
 
@@ -1009,7 +869,7 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
     { // getDevKey() must be != NULL, because we are in tractor mode
       // send actual calendar data
       setSelectedDataSourceDevKey(*getDevKey());
-      isoSendCalendar(*getDevKey());
+      sendCalendar(*getDevKey());
     }
 
     if ( checkModeGps(IsoAgLib::IdentModeTractor) )
@@ -1017,7 +877,7 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
       if ( ( ci32_now - i32_lastIsoPositionSimple ) >= 100 )
       {
         if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
-        isoSendPositionRapidUpdate();
+        sendPositionRapidUpdate();
       }
 
       #ifdef NMEA_2000_FAST_PACKET
@@ -1040,7 +900,7 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
   }
 
   /** send position rapid update message */
-  void TimePosGPS_c::isoSendPositionRapidUpdate( void )
+  void TimePosGPS_c::sendPositionRapidUpdate( void )
   {
     // retreive the actual dynamic sender no of the member with the registered devKey
     uint8_t b_sa = getIsoMonitorInstance4Comm().isoMemberDevKey(*pc_devKeyGps, true).nr();
@@ -1201,7 +1061,7 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
       ui8_positionSequenceID++;
     }
   }
-  #endif // END OF NMEA_2000_FAST_PACKET IN USE_ISO_11783
+  #endif // END OF NMEA_2000_FAST_PACKET
 
   /** send ISO11783 calendar PGN
       @param rc_devKey DEV_KEY code off calling item which wants to send
@@ -1212,7 +1072,7 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
       @see CANPkgExt_c::getData
       @see CANIO_c::operator<<
     */
-  void TimePosGPS_c::isoSendCalendar(const DevKey_c& rc_devKey)
+  void TimePosGPS_c::sendCalendar(const DevKey_c& rc_devKey)
   {
     if (!getIsoMonitorInstance4Comm().existIsoMemberDevKey(rc_devKey, true)) return;
 
@@ -1254,7 +1114,6 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
       setUpdateTime(Scheduler_c::getLastTimeEventTrigger() );
     }
   }
-  #endif // END OF USE_ISO_11783
 
   /**
   translate BCD to normal value
@@ -1318,10 +1177,10 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
     i32_lastCalendarSet = System_c::getTime();
     t_cachedLocalSeconds1970AtLastSet = 0;
     struct ::tm testTime = { rb_second, int(rb_minute)-int(bit_calendar.timezoneMinuteOffset), (int(rb_hour)-(int(bit_calendar.timezoneHourOffsetMinus24)-24)),
-                             rb_day,(rb_month-1),(ri16_year-1900),0,0,-1
-                             #if defined(__USE_BSD) || defined(__GNU_LIBRARY__) || defined(__GLIBC__) || defined(__GLIBC_MINOR__)
-                             , 0, NULL
-                             #endif
+                            rb_day,(rb_month-1),(ri16_year-1900),0,0,-1
+                            #if defined(__USE_BSD) || defined(__GNU_LIBRARY__) || defined(__GLIBC__) || defined(__GLIBC_MINOR__)
+                            , 0, NULL
+                            #endif
                             };
     // argument of mktime is interpreted as local time (system time zone influence!)
     const time_t middle = mktime( &testTime );
@@ -1345,11 +1204,11 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
 
     // @todo: calender time consists of UTC time and local date?
     struct ::tm testTime = { bit_calendar.second, bit_calendar.minute, bit_calendar.hour,
-                             rb_day,(rb_month-1),(ri16_year-1900),0,0,-1
-                             #if defined(__USE_BSD) || defined(__GNU_LIBRARY__) || defined(__GLIBC__) || defined(__GLIBC_MINOR__)
-                             , 0, NULL
-                             #endif
-                           };
+                            rb_day,(rb_month-1),(ri16_year-1900),0,0,-1
+                            #if defined(__USE_BSD) || defined(__GNU_LIBRARY__) || defined(__GLIBC__) || defined(__GLIBC_MINOR__)
+                            , 0, NULL
+                            #endif
+                          };
 
     const time_t middle = mktime( &testTime );
     const struct ::tm* normalizedTime = localtime( &middle );
@@ -1376,13 +1235,13 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
     t_cachedLocalSeconds1970AtLastSet = 0;
 
     struct ::tm testTime = { rb_second, int(rb_minute)-int(bit_calendar.timezoneMinuteOffset), (int(rb_hour)-(int(bit_calendar.timezoneHourOffsetMinus24)-24)),
-                             bit_calendar.day,(bit_calendar.month-1),
-                             (bit_calendar.year == 0) ? 70 : (bit_calendar.year-1900), // in case bit_calendar.year is not yet set: use 1970
-                             0,0,-1
-                             #if defined(__USE_BSD) || defined(__GNU_LIBRARY__) || defined(__GLIBC__) || defined(__GLIBC_MINOR__)
-                             , 0, NULL
-                             #endif
-                           };
+                            bit_calendar.day,(bit_calendar.month-1),
+                            (bit_calendar.year == 0) ? 70 : (bit_calendar.year-1900), // in case bit_calendar.year is not yet set: use 1970
+                            0,0,-1
+                            #if defined(__USE_BSD) || defined(__GNU_LIBRARY__) || defined(__GLIBC__) || defined(__GLIBC_MINOR__)
+                            , 0, NULL
+                            #endif
+                          };
 
     // argument of mktime is interpreted as local time (system time zone influence!)
     const time_t middle = mktime( &testTime );
@@ -1415,8 +1274,8 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
     }
 
     const time_t t_secondsSince1970Local = t_cachedLocalSeconds1970AtLastSet + calendarSetAge()/1000
-                                           + (bit_calendar.timezoneHourOffsetMinus24 - 24) * 60 * 60  // negative offsets => increased local time
-                                           + bit_calendar.timezoneMinuteOffset * 60;
+                                          + (bit_calendar.timezoneHourOffsetMinus24 - 24) * 60 * 60  // negative offsets => increased local time
+                                          + bit_calendar.timezoneMinuteOffset * 60;
 
     // compensate system time zone setting: call localtime() and not gmtime()
     return localtime( &t_secondsSince1970Local );
@@ -1504,11 +1363,11 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
     { // recalculate seconds from bit_calendar struct
       // compensate system time zone setting (part 1)
       struct tm testTime = { bit_calendar.second, bit_calendar.minute, bit_calendar.hour,
-                             bit_calendar.day, bit_calendar.month-1,
-                             (bit_calendar.year == 0) ? 70 : (bit_calendar.year-1900), // in case bit_calendar.year is not yet set: use 1970
-                             0,0,-1
-                             #if defined(__USE_BSD) || defined(__GNU_LIBRARY__) || defined(__GLIBC__) || defined(__GLIBC_MINOR__)
-                             , 0, NULL
+                            bit_calendar.day, bit_calendar.month-1,
+                            (bit_calendar.year == 0) ? 70 : (bit_calendar.year-1900), // in case bit_calendar.year is not yet set: use 1970
+                            0,0,-1
+                            #if defined(__USE_BSD) || defined(__GNU_LIBRARY__) || defined(__GLIBC__) || defined(__GLIBC_MINOR__)
+                            , 0, NULL
                                   #endif
                             };
       t_cachedLocalSeconds1970AtLastSet = mktime( &testTime );

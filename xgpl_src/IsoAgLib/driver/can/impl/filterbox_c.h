@@ -85,7 +85,6 @@
 #ifndef FILTER_BOX_H
 #define FILTER_BOX_H
 
-
 /* *************************************** */
 /* ********** include headers ************ */
 /* *************************************** */
@@ -102,9 +101,7 @@ namespace __IsoAgLib {
 /* *************************************** */
 /* ********* class definition ************ */
 /* *************************************** */
-
-/**
-  Virtual Msg Box where special Filter and Mask can be defined.
+/** Virtual Msg Box where special Filter and Mask can be defined.
   CANIO_c handles free amount of instances of this class.
   Every MsgObj_c has 1 to m appointed instances of this class.
   Each FilterBox_c has exact one CANCustomer_c, which is sored on creation
@@ -122,16 +119,14 @@ typedef enum
 
 class FilterBox_c {
 public:
-  /**
-    default constructor without parameter values for creating an instance
+  /** default constructor without parameter values for creating an instance
     with default start state (init variables)
 
      @exception badAlloc
   */
   FilterBox_c();
 
-  /**
-    constructor with parameter values setting specific start state with
+  /** constructor with parameter values setting specific start state with
     setting pointer to the root CANIO_c and to the according CANCustomer
     instance; even define specific mask and filter setting
 
@@ -146,8 +141,7 @@ public:
               MASK_TYPE rt_mask, MASK_TYPE rt_filter,
               Ident_c::identType_t ren_identType = Ident_c::StandardIdent, FilterBox_c* rpc_filterBox = NULL);
 
-  /**
-    copy constructor which uses data of another FilterBox_c instance
+  /** copy constructor which uses data of another FilterBox_c instance
     @param rrefc_src reference to the source FilterBox_c instance for copying
      @exception badAlloc
   */
@@ -156,8 +150,7 @@ public:
   /** destructor of this FilterBox_c instance */
   ~FilterBox_c();
 
-  /**
-    copy values of rrefc_src FilterBox_c object to this instance
+  /** copy values of rrefc_src FilterBox_c object to this instance
     possible errors:
         * Err_c::badAlloc on not enough memory for copying puffed CAN msg from source
 
@@ -170,8 +163,9 @@ public:
   void clearData();
 
   #ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
-  /**   close the BIOS filterbox object of this instance and close hardware CAN filterbox object */
+  /** close the BIOS filterbox object of this instance and close hardware CAN filterbox object */
   void closeHAL();
+
   /** check if this filterBox_c instance is really in use
       @return true -> filterBox is not in use
   */
@@ -181,8 +175,8 @@ public:
       @param pc_cancustomer  new can customer
     */
   void insertCustomer(CANCustomer_c* pc_cancustomer) {vec_customer.push_back(pc_cancustomer);}
-  /**
-    configures the CAN hardware of given FilterBox (uses BIOS function with EXTENDED_HAL)
+
+  /** configures the CAN hardware of given FilterBox (uses BIOS function with EXTENDED_HAL)
 
     possible errors:
         * hwConfig used CAN BUS wans't configured properly
@@ -199,8 +193,7 @@ public:
   /* ******* filter/mask managing ********** */
   /* *************************************** */
 
-  /**
-    set the mask (t_mask) and filter (t_filter) of this FilterBox
+  /** set the mask (t_mask) and filter (t_filter) of this FilterBox
     @param rpc_customer pointer to the CANCustomer_c instance, which creates this FilterBox_c instance
     @param rt_mask mask for this Filer_Box (MASK_TYPE defined in isoaglib_config.h)
     @param rt_filter filter for this Filer_Box (MASK_TYPE defined in isoaglib_config.h)
@@ -209,22 +202,20 @@ public:
   void set(const Ident_c& rrefc_mask, const Ident_c& rrefc_filter,
            CANCustomer_c *pc_customer = NULL, FilterBox_c* rpc_filterBox = NULL);
 
-  /**
-    check if ID from a CAN msg matches this FilterBox
+  /** check if ID from a CAN msg matches this FilterBox
     @param rt_ident CAN ident of received msg
     @return true -> CAN ident fits to local filter/mask definition
   */
   inline bool matchMsgId(MASK_TYPE rt_ident, Ident_c::identType_t rt_type )
   { return ( (c_mask.masked(rt_ident) == c_mask.masked(c_filter)) && (rt_type == identType()) );}
 
-  /**
-    checks, if FilterBox_c definition given by rc_mask and rc_filter is the same
+  /** checks, if FilterBox_c definition given by rc_mask and rc_filter is the same
     @param rc_mask mask to use for comparison
     @param rc_filter filter to use for comparison
     @return true -> given mask and filter are same as the local defs
   */
   bool equalFilterMask(const Ident_c& rc_mask, const Ident_c& rc_filter) const
-    {return ((c_mask == rc_mask) && (c_filter == rc_filter));};
+    {return ((c_mask == rc_mask) && (c_filter == rc_filter));}
 
   /** checks, if Filter_Box_c has already stored given customer
       @param rref_customer  customer to compare
@@ -237,38 +228,35 @@ public:
       @return                true -> no more cancustomers exist, whole filterbox can be deleted
     */
   bool deleteFilter(const __IsoAgLib::CANCustomer_c& rref_customer);
-  /**
-    deliver the type of the FilterBox_c ident
-  */
-  Ident_c::identType_t identType() const {return c_filter.identType();};
-  /**
-    deliver const reference to mask Ident
+
+  /** deliver the type of the FilterBox_c ident */
+  Ident_c::identType_t identType() const {return c_filter.identType();}
+
+  /** deliver const reference to mask Ident
     @return const reference to mask Ident_c instance
   */
-  const Ident_c& mask() const {return c_mask;};
-  /**
-    deliver const reference to additionalMask Ident
+  const Ident_c& mask() const {return c_mask;}
+
+  /** deliver const reference to additionalMask Ident
     @return const reference to additionalMask Ident_c instance
   */
-  const Ident_c& additionalMask() const {return c_additionalMask;};
-  /**
-    deliver const reference to filter Ident
+  const Ident_c& additionalMask() const {return c_additionalMask;}
+
+  /** deliver const reference to filter Ident
     @return const reference to filter Ident_c instance
   */
-  const Ident_c& filter() const {return c_filter;};
+  const Ident_c& filter() const {return c_filter;}
 
   #ifdef DEBUG_CAN_BUFFER_FILLING
   /** some debug messages */
   void FilterBox_c::doDebug(uint8_t rui8_busNumber);
   #endif
 
-
   /* ************************************************** */
   /* ***** insert/get/process puffered CANPkg_c ******** */
   /* ************************************************** */
 
-  /**
-    control the processing of a received message
+  /** control the processing of a received message
     (MsgObj_c::processMsg inserted data directly in CANCustomer
      -> FilterBox_c::processMsg() initiates conversion of CAN string
         to data flags and starts processing in CANCustomer_c)
@@ -278,23 +266,29 @@ public:
     @return true -> FilterBox_c was able to inform registered CANCustomer
   */
   bool processMsg();
+
 private:
 // Private attributes
   /** c_filter for this FilterBox_c insance */
   Ident_c c_filter;
+
   /** c_mask for this FilterBox_c instance */
   Ident_c c_mask;
+
   /** c_additionalMask for this FilterBox_c insance (used for intentionally merging objects to one MsgObj! */
   Ident_c c_additionalMask;
+
   /**vector of pointer to pc_customer CANCustomer_c which works with the received CAN data */
   std::vector<CANCustomer_c*> vec_customer;
+
   /** number of message object */
   uint8_t ui8_filterBoxNr; //use like ui8_msgObjNr from msgobj_c class
+
   /** BUS Number for systems with more than one BUS */
   uint8_t ui8_busNumber;
-  #if ( ( defined( USE_ISO_11783 ) ) \
-      && ( defined( USE_DIN_9684 ) || ( CAN_INSTANCE_CNT > PRT_INSTANCE_CNT ) || defined(ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL) ) )
-  /** we have either compiled for DIN and ISO, OR there is at least one internal / proprietary CAN channel */
+
+#if ((defined(USE_ISO_11783)) && ((CAN_INSTANCE_CNT > PRT_INSTANCE_CNT) || defined(ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL)))
+  /** we have either compiled for ISO, OR there is at least one internal / proprietary CAN channel */
   bool b_performIsobusResolve;
   #endif
 };

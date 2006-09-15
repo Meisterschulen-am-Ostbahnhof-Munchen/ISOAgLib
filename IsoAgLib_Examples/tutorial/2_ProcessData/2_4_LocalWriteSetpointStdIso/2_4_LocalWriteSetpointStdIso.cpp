@@ -316,9 +316,8 @@ bool MyProcDataHandler_c::processSetpointSet(IsoAgLib::EventSource_c rc_src, int
     return false; // indicate that this information is not again handled - just ignored
   }
 
-#ifdef USE_ISO_11783
   std::cout << "processSetpointSet called for DDI " << rc_src.makeIProcDataLocal()->getDDIfromCANPkg() << std::endl;
-#endif
+
   // use helper function to get automatically casted pointer to used process data type
   uint16_t ui16_index = rc_src.makeIProcDataLocal() - arr_procData;
   switch ( ui16_index )
@@ -361,7 +360,6 @@ bool MyProcDataHandler_c::processSetpointSet(IsoAgLib::EventSource_c rc_src, int
 MyProcDataHandler_c c_mySetpointHandler;
 #endif
 
-
 int main()
 { // init CAN channel with 250kBaud at channel 0 ( count starts with 0 )
   IsoAgLib::getIcanInstance().init( 0, 250 );
@@ -369,25 +367,11 @@ int main()
   /// register pool of the device description
   bool b_registerSuccess = IsoAgLib::getIProcessInstance().getDevPropertyHandlerInstance().registerDevicePool(&c_myIdent, deviceDescription_de, ui32_arrayLength_de, true);
 
-  // start address claim of the local member "IMI"
-  // if DEV_KEY conflicts forces change of device class instance, the
-  // IsoAgLib can change the myDevKey val through the pointer to myDevKey
-  //  DIN:
-#if defined(USE_DIN_9684) && !defined(USE_ISO_11783)
-  uint8_t c_myName[] = "Hi-You";
-  IsoAgLib::iIdentItem_c c_myIdent( &myDeviceDevKey, c_myName, IsoAgLib::IState_c::DinOnly);
-#endif
-
 #ifdef USE_PROC_HANDLER
   // workstate of MiniVegN (LIS=0, DEVCLASS=2, WERT=1, INST=0)
   arr_procData[cui8_indexWorkState].init(
-  #if defined(USE_ISO_11783)
                                          s_workStateElementDDI,
-                                         ui16_workStateElementNumber,
-  #endif
-  #if defined(USE_DIN_9684)
-                                         0, 0x1, 0x0, 0xFF,
-  #endif
+                                         scui16_workStateElementNumber,
                                          myDeviceDevKey, 2, myDeviceDevKey, &myDeviceDevKey, true,
   #ifdef USE_EEPROM_IO
                                          0xFFFF,
@@ -396,13 +380,8 @@ int main()
 
   // WERT == 5 -> device specific material flow information (mostly 5/0 -> distributed/harvested amount per area )
   arr_procData[cui8_indexApplicationRate].init(
-  #if defined(USE_ISO_11783)
                                                s_applicationRateElementDDI,
-                                               ui16_applicationRateElementNumber,
-  #endif
-  #if defined(USE_DIN_9684)
-                                               0, 0x5, 0x0, 0xFF,
-  #endif
+                                               scui16_applicationRateElementNumber,
                                                myDeviceDevKey, 2, myDeviceDevKey, &myDeviceDevKey, true,
   #ifdef USE_EEPROM_IO
                                                0xFFFF,

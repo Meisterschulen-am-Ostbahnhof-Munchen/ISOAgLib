@@ -120,7 +120,8 @@ void BaseItem_c::set(int32_t ri32_time, int ri_singletonVecKey)
 {
   if (ri32_time >= 0) i32_lastTime = ri32_time;
   ClientBase::setSingletonKey(ri_singletonVecKey);
-};
+}
+
 /**
   set pointer to containing Scheduler_c instance and update timestamp of object
   @param ri32_time optional timestamp to set as update time
@@ -132,7 +133,7 @@ void BaseItem_c::set(int32_t ri32_time, IState_c::itemState_t rb_status, int ri_
   set(  ri32_time,ri_singletonVecKey);
   // force clear of old item state
   setItemState( rb_status, true );
-};
+}
 
 /** operator= which defines src as const to avoid
 compile warnings with the automatic generated version */
@@ -150,7 +151,7 @@ BaseItem_c& BaseItem_c::operator=(const BaseItem_c& src){
 */
 int32_t BaseItem_c::lastedTime( void ) const {
   return ( Scheduler_c::getLastTimeEventTrigger() - i32_lastTime );
-};
+}
 
 /**
   check if given time intervall is lasted
@@ -159,7 +160,7 @@ int32_t BaseItem_c::lastedTime( void ) const {
 */
 bool BaseItem_c::checkTime(uint16_t rui16_timeInterval) const  {
   return ( lastedTime() >= rui16_timeInterval )?true:false;
-};
+}
 
 /**
   check if given time intervall is lasted;
@@ -188,6 +189,6 @@ bool BaseItem_c::checkUpdateTime(uint16_t rui16_timeInterval) {
   else {
     return false;
   }
-};
+}
 
 } // end of namespace __IsoAgLib

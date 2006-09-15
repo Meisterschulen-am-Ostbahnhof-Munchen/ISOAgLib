@@ -135,12 +135,6 @@ namespace __IsoAgLib {
   @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
                        (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
 
-  DIN parameter
-  @param rui8_lis optional LIS code of this instance
-  @param rui8_wert optional WERT code of this instance
-  @param rui8_inst optional INST code of this instance
-  @param rui8_zaehlnum optional ZAEHLNUM code of this instance
-
   @param rc_devKey optional DEV_KEY code of Process-Data
   @param rui8_pri PRI code of messages with this process data instance (default 2)
   @param rc_ownerDevKey optional DEV_KEY of the owner
@@ -165,14 +159,7 @@ namespace __IsoAgLib {
   @param rpc_processDataChangeHandler optional pointer to handler class of application
   @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
-void ProcDataLocalBase_c::init(
-#ifdef USE_ISO_11783
-                               const IsoAgLib::ElementDDI_s* ps_elementDDI,
-                               uint16_t rui16_element,
-#endif
-#ifdef USE_DIN_9684
-                               uint8_t rui8_lis, uint8_t rui8_wert, uint8_t rui8_inst, uint8_t rui8_zaehlnum,
-#endif
+void ProcDataLocalBase_c::init(const IsoAgLib::ElementDDI_s* ps_elementDDI, uint16_t rui16_element,
                                const DevKey_c& rc_devKey, uint8_t rui8_pri, const DevKey_c& rc_ownerDevKey,
                                const DevKey_c *rpc_devKey, bool rb_cumulativeValue,
 #ifdef USE_EEPROM_IO
@@ -182,16 +169,8 @@ void ProcDataLocalBase_c::init(
                                int ri_singletonVecKey
                                )
 {
-  ProcDataBase_c::init(
-#ifdef USE_ISO_11783
-                       ps_elementDDI,
-                       rui16_element,
-#endif
-#ifdef USE_DIN_9684
-                       rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
-#endif
-                       rc_devKey, rui8_pri, rc_ownerDevKey, rpc_devKey,
-                       rpc_processDataChangeHandler, ri_singletonVecKey);
+  ProcDataBase_c::init( ps_elementDDI, rui16_element, rc_devKey, rui8_pri, rc_ownerDevKey, rpc_devKey,
+                        rpc_processDataChangeHandler, ri_singletonVecKey);
 
   b_cumulativeValue = rb_cumulativeValue;
 #ifdef USE_EEPROM_IO
@@ -202,11 +181,7 @@ void ProcDataLocalBase_c::init(
 
   // don't register proces data object, as long as it's only created with
   // default values (PRI and LIS must be in all cases different from 0xFF)
-  if ( ( rui8_pri != 0xFF )
-#ifdef USE_DIN_9684
-       && ( rui8_lis != 0xFF )
-#endif
-      )
+  if ( ( rui8_pri != 0xFF ) )
   { // now register the pointer to this instance in Process_c
    getProcessInstance4Comm().registerLocalProcessData( this );
   }
@@ -361,8 +336,8 @@ void ProcDataLocalBase_c::incrMasterMeasurementVal(float rf_val){
   #endif // USE_EEPROM_IO
   f_masterVal += rf_val;
 }
-
 #endif // USE_FLOAT_DATA_TYPE
+
 
 /**
   perform periodic actions
@@ -406,7 +381,7 @@ bool ProcDataLocalBase_c::sendMasterMeasurementVal( const DevKey_c& rc_targetDev
     getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false, /* isRequest */
                                                                 GeneralCommand_c::exactValue,
                                                                 GeneralCommand_c::setValue);
-    // DIN: pd=1, mod=0
+
     #if defined(USE_EEPROM_IO) && defined(USE_FLOAT_DATA_TYPE)
     if (valType() == i32_val) return sendValDevKey(ren_progType, rc_targetDevKey, eepromVal());
     else return sendValDevKey(ren_progType, rc_targetDevKey, eepromValFloat());
@@ -420,6 +395,7 @@ bool ProcDataLocalBase_c::sendMasterMeasurementVal( const DevKey_c& rc_targetDev
     #endif
 }
 
+
 /** process a measure prog message for local process data.
     this variant is only used for simple measurement progam management.
     derived classes with more flexible management (including measurement programs)
@@ -428,7 +404,6 @@ bool ProcDataLocalBase_c::sendMasterMeasurementVal( const DevKey_c& rc_targetDev
 void ProcDataLocalBase_c::processProg(){
   ProcessPkg_c& c_pkg = getProcessInstance4Comm().data();
   // handle for simple measurement value
-  // DIN: pd=3, mod=0
   if (c_pkg.c_generalCommand.checkIsRequest() &&
       // c_pkg.c_generalCommand.checkIsMeasure() &&  /* already checked before, we are in processProg() ! */
       c_pkg.c_generalCommand.getValueGroup() == GeneralCommand_c::exactValue)
@@ -436,7 +411,7 @@ void ProcDataLocalBase_c::processProg(){
     sendMasterMeasurementVal( c_pkg.memberSend().devKey(), Proc_c::progType_t(c_pkg.pri()) );
   }
   else
-  { // DIN: PD == 0 and 1 only accepted for reset cmd (pd==1 && mod==0 || pd==0 and mod==6
+  {
     if (c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::measurementReset)
     { // measurement reset cmd
       #ifdef USE_EEPROM_IO
@@ -453,10 +428,10 @@ void ProcDataLocalBase_c::processProg(){
   }
 }
 
+
 /** processing of a setpoint message.
     this base class variant checks only, if a setpoint cmd was recieved
-    which wants to reset a measurement value (this is wrongly used by some
-    DIN 9684 implementations)
+    which wants to reset a measurement value
 */
 void ProcDataLocalBase_c::processSetpoint()
 {
@@ -468,6 +443,7 @@ void ProcDataLocalBase_c::processSetpoint()
   }
   #endif
 }
+
 
 #ifdef USE_EEPROM_IO
 /**
@@ -510,51 +486,15 @@ void ProcDataLocalBase_c::resetEeprom( void ){
   @param rb_var variable number -> empf
   @param b_empf refernce to EMPF variable which is updated to rb_var
   @param b_send refernce to SEND variable which is only check for address claim state
-  @param en_msgProto protocol type to use for the message
-      IState_c::Din or IState_c::Iso (only compiled and used if USE_ISO_11783 is
-      configured) (default: IState_c::Din)
   @return true -> owner of process data registered as active in Monitor-List
 */
-bool ProcDataLocalBase_c::var2empfSend(uint8_t rui8_pri, uint8_t rb_var, uint8_t &b_empf, uint8_t &b_send
-  #ifdef USE_ISO_11783
-    , IState_c::itemState_t &en_msgProto
-  #endif // USE_ISO_11783
-) const
+bool ProcDataLocalBase_c::var2empfSend(uint8_t rui8_pri, uint8_t rb_var, uint8_t &b_empf, uint8_t &b_send) const
 { // retreive pointer to according SystemMgmt_c class
   bool b_result = false;
-  #ifdef USE_ISO_11783
-  uint8_t b_msgProto = static_cast<uint8_t>(en_msgProto);
-  ISOMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
-  #endif // USE_ISO_11783
 
-  #ifdef USE_DIN_9684
-  DINMonitor_c& c_din_monitor = getDinMonitorInstance4Comm();
-  // check if owner has claimed address AND (var paremeter has claimed address for target messages)
-  // the address claim check for var was done by caller of this function - 0xFF means not claimed address
+  ISOMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
+
   if (
-  #ifdef USE_ISO_11783
-      ((b_msgProto & (uint8_t)IState_c::Din) != 0) &&
-  #endif // USE_ISO_11783
-      (c_din_monitor.existDinMemberNr(rb_var))
-    &&(c_din_monitor.existDinMemberDevKey(ownerDevKey(), true))
-    &&( (rb_var != 0xFF)
-      ||(rui8_pri == 1)
-      )
-     )
-  { // all check was positive -> set b_empf, b_send
-    b_empf = rb_var; // for locel data the var parameter is the receiver for sending
-    b_send = c_din_monitor.dinMemberDevKey(ownerDevKey(), true).nr();
-    #ifdef USE_ISO_11783
-    en_msgProto = IState_c::Din;
-    #endif // USE_ISO_11783
-    b_result = true;
-  }
-  else
-  #endif
-  #if defined( USE_ISO_11783 )
-  // try with ISO 11783
-  if (
-        ((b_msgProto & (uint8_t)IState_c::Iso) != 0) &&
         ( c_isoMonitor.existIsoMemberNr(rb_var))
       &&(c_isoMonitor.existIsoMemberDevKey(ownerDevKey(), true))
       &&( (rb_var != 0xFF)
@@ -564,11 +504,9 @@ bool ProcDataLocalBase_c::var2empfSend(uint8_t rui8_pri, uint8_t rb_var, uint8_t
   { // all check was positive -> set b_empf, b_send
     b_empf = rb_var; // for locel data the var parameter is the receiver for senisog
     b_send = c_isoMonitor.isoMemberDevKey(ownerDevKey(), true).nr();
-    en_msgProto = IState_c::Iso;
     b_result = true;
   }
   else
-  #endif // USE_ISO_11783
   { // one of EMPF or SEND not registered as having claimed address in monior-list
     getLbsErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::LbsProcess );
   }

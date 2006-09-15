@@ -88,9 +88,7 @@
 #define TRACGENERAL_C_H
 
 #include <IsoAgLib/comm/Base/impl/basecommon_c.h>
-#if defined USE_ISO_11783
 #include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgnhandler_c.h>
-#endif
 
 #include <ctime>
 
@@ -117,9 +115,7 @@ typedef SINGLETON_DERIVED (TracGeneral_c, BaseCommon_c) SingletonTracGeneral_c;
     per IsoAgLib instance (if only one IsoAgLib instance is defined in application config, no overhead is produced).
   */
 class TracGeneral_c : public SingletonTracGeneral_c
-                    #if defined USE_ISO_11783
                     , public ISORequestPGNHandler_c
-                    #endif
 {
 public: // Public methods
   /* ********************************************* */
@@ -143,18 +139,7 @@ public: // Public methods
     */
   bool config(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_identMode);
 
-  /** functions with actions, which must be performed periodically
-      -> called periodically by Scheduler_c
-      ==> sends general base msg if configured in the needed rates
-      possible errors:
-        * dependant error in CANIO_c on CAN send problems
-      @see CANPkg_c::getData
-      @see CANPkgExt_c::getData
-      @see CANIO_c::operator<<
-      @return true -> all planned activities performed in allowed time
-    */
-  bool timeEvent();
-  /** check if filter boxes shall be created - create only ISO or DIN filters based
+  /** check if filter boxes shall be created - create only filters based
       on active local idents which has already claimed an address
       --> avoid to much Filter Boxes
     */
@@ -163,27 +148,11 @@ public: // Public methods
   /** destructor for TracGeneral_c which has nothing to do */
   virtual ~TracGeneral_c() { BaseCommon_c::close();};
 
-  #if defined USE_ISO_11783
   bool processMsgRequestPGN (uint32_t rui32_pgn, uint8_t rui8_sa, uint8_t rui8_da);
+
   /** force a request for pgn for language information */
   bool sendRequestUpdateLanguage();
-  #endif
 
-  #ifdef USE_DIN_9684
-  /** helper function to do the parsing of the flag data of a
-   * received DIN9684 base message with Pto,Hitch,Engine information */
-  void dinParseHitchEngineFlags(const CANPkgExt_c& rrefc_pkg);
-  /** helper function to set the Hitch and Engine flags of a DIN general base data message */
-  void dinSetHitchEngineFlags(CANPkgExt_c& rrefc_pkg);
-
-  /** config the TracGeneral_c object after init -> set pointer to devKey and
-      config send/receive of different general base msg types
-      @param rpc_devKey pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
-      @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
-      @return true -> configuration was successfull
-   */
-  bool configFuel(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_identMode);
-  #endif
   /*@}*/
 
   /* ******************************************* */
@@ -194,81 +163,70 @@ public: // Public methods
   @param rb_val uint8_t value to store as position of rear hitch [%]
    */
   void setHitchRear(uint8_t rb_val)
-  { b_hitchRear = rb_val;};
+  { b_hitchRear = rb_val;}
+
   /**
   set front hitch
   @param rb_val uint8_t value to store as position of front hitch [%]
    */
   void setHitchFront(uint8_t rb_val)
-  { b_hitchFront = rb_val;};
+  { b_hitchFront = rb_val;}
 
-  #ifdef USE_DIN_9684
-  /**
-  set engine speed
-  @param ri16_val value to store as engine rpm value
-   */
-  void setEngine(int16_t ri16_val){i16_engine = ri16_val;}
-  /** deliver rear left draft */
-  void setRearLeftDraft( int16_t ri16_val ) { i16_rearLeftDraft = ri16_val;}
-  /** deliver rear right draft */
-  void setRearRightDraft( int16_t ri16_val ) { i16_rearRightDraft = ri16_val;}
-  /** deliver rear total draft Newton */
-  void setRearDraftNewton( int16_t ri16_val ) { i16_rearDraftNewton = ri16_val;}
-  /** deliver rear total draft Percent */
-  void setRearDraftNominal( uint8_t rui8_val ) { ui8_rearDraftNominal = rui8_val;}
-  /** deliver fuel consumption L/h */
-  void setFuelRate( int16_t ri16_val ) { i16_fuelRate = ri16_val;}
-  /** deliver fuel temperature °C */
-  void setFuelTemperature( uint8_t rui8_val ) { ui8_fuelTemperature = rui8_val;}
-  #endif
-
-  #ifdef USE_ISO_11783
   /** set front hitch draft
     * @return front hitch draft [-320.000N;322.550N]; 1N/bit
     */
-  void setHitchFrontDraft(int32_t ri32_val) { i16_frontDraft = ((ri32_val + 320000) / 10);};
+  void setHitchFrontDraft(int32_t ri32_val) { i16_frontDraft = ((ri32_val + 320000) / 10);}
+
   /** set rear hitch draft
     * @return rear hitch draft [-320.000N;322.550N]; 1N/bit
     */
   void setHitchRearDraft(int32_t ri32_val) { i16_rearDraft = ((ri32_val + 320000) / 10);}
+
   /** set front hitch nominal link force
     * @return front nominal link force [-100%;100%]; 1 promille per bit
     */
   void setHitchFrontLowerLinkForce(int16_t ri16_val) { ui8_frontLinkForce = ((ri16_val + 1000) / 8);}
+
   /** set rear hitch nominal link force
     * @return rear nominal link force [-100%;100%]; 1 promille per bit
     */
   void setHitchRearLowerLinkForce(int16_t ri16_val) { ui8_rearLinkForce = ((ri16_val + 1000) / 8);}
+
   /**
     * set the ISO key switch state of the tractor
     * @param rt_val IsoActive -> key switch ON
     */
   void setKeySwitch(IsoAgLib::IsoActiveFlag_t rt_val) { t_keySwitch = rt_val; }
+
   /** set the maximum power time of the tractor in [min]
     * @return maximum power time of the tractor in [min]
     */
   void setMaxPowerTime(uint8_t rui8_val) { ui8_maxPowerTime = rui8_val;}
+
   /** set state of implement in transport state
     * @param rt_val state of implement in transport state
     */
   void setMaintainPowerForImplInTransport(IsoAgLib::IsoImplTransportFlag_t rt_val) { implState.inTransport = rt_val; }
+
   /** set state of implement in park state
     * @param rt_val state of implement in park state
     */
   void setMaintainPowerForImplInPark(IsoAgLib::IsoImplParkFlag_t rt_val) { implState.inPark = rt_val;}
+
   /** set state of implement in work
     * @param rt_val state of implement in work state
     */
   void setMaintainPowerForImplInWork(IsoAgLib::IsoImplWorkFlag_t rt_val) { implState.inWork = rt_val;}
+
   /** set present limit status of the front hitch position
       @param rt_val  limit status of the front hitch position
     */
   void setFrontHitchPosLimitStatus(const IsoAgLib::IsoLimitFlag_t rt_val) {t_frontHitchPosLimitStatus = rt_val;}
+
   /** set present limit status of the rear hitch position
       @param rt_val  limit status of the rear hitch position
     */
   void setRearHitchPosLimitStatus(const IsoAgLib::IsoLimitFlag_t rt_val) {t_rearHitchPosLimitStatus = rt_val;}
-  #endif
   /*@}*/
 
   /* ****************************************************** */
@@ -277,81 +235,72 @@ public: // Public methods
   /** get rear hitch
       @return actual position of rear hitch [%]
     */
-  uint8_t hitchRear() const {return b_hitchRear;};
+  uint8_t hitchRear() const {return b_hitchRear;}
+
   /** get front hitch
       @return actual position of front hitch [%]
     */
-  uint8_t hitchFront() const {return b_hitchFront;};
+  uint8_t hitchFront() const {return b_hitchFront;}
 
-  #ifdef USE_DIN_9684
-    /** get engine speed
-      @return actual engine rpm speed value
-    */
-  int16_t engine() const { return i16_engine;};
-  /** deliver rear left draft */
-  int rearLeftDraft() const { return i16_rearLeftDraft;};
-  /** deliver rear right draft */
-  int rearRightDraft() const { return i16_rearRightDraft;};
-  /** deliver rear total draft Newton */
-  int rearDraftNewton() const { return i16_rearDraftNewton;};
-  /** deliver rear total draft Percent */
-  int rearDraftNominal() const { return ui8_rearDraftNominal;};
-  /** deliver fuel consumption L/h */
-  int fuelRate() const { return i16_fuelRate;};
-  /** deliver fuel temperature °C */
-  int fuelTemperature() const { return ui8_fuelTemperature;};
-  /** return if you currently are in implement mode or tractor mode*/
-  bool checkModeFuel(IsoAgLib::IdentMode_t rt_identModeFuel) const {return (t_identModeStateFuel == rt_identModeFuel);}
-  #endif
-
-  #ifdef USE_ISO_11783
   /** deliver front hitch draft
     * @return front hitch draft [-320.000N;322.550N]; 1N/bit
     */
-  int32_t hitchFrontDraft() const { return ((i16_frontDraft * 10) - 320000);};
+  int32_t hitchFrontDraft() const { return ((i16_frontDraft * 10) - 320000);}
+
   /** deliver rear hitch draft
     * @return rear hitch draft [-320.000N;322.550N]; 1N/bit
     */
-  int32_t hitchRearDraft() const { return ((i16_rearDraft * 10) - 320000);};
+  int32_t hitchRearDraft() const { return ((i16_rearDraft * 10) - 320000);}
+
   /** deliver front hitch nominal link force
     * @return front nominal link force [-100%;100%]; 1 promille per bit
     */
-  int16_t hitchFrontLowerLinkForce() const { return ((static_cast<int16_t>(ui8_frontLinkForce) * 8) - 1000);};
+  int16_t hitchFrontLowerLinkForce() const { return ((static_cast<int16_t>(ui8_frontLinkForce) * 8) - 1000);}
+
   /** deliver rear hitch nominal link force
     * @return rear nominal link force [-100%;100%]; 1 promille per bit
     */
-  int16_t hitchRearLowerLinkForce() const { return ((static_cast<int16_t>(ui8_rearLinkForce) * 8) - 1000);};
+  int16_t hitchRearLowerLinkForce() const { return ((static_cast<int16_t>(ui8_rearLinkForce) * 8) - 1000);}
+
   /** deliver the ISO key switch state of the tractor
     * @return IsoActive -> key switch ON
     */
-  IsoAgLib::IsoActiveFlag_t keySwitch() const { return t_keySwitch;};
+  IsoAgLib::IsoActiveFlag_t keySwitch() const { return t_keySwitch;}
+
   /** deliver the maximum power time of the tractor in [min]
     * @return maximum power time of the tractor in [min]
     */
-  uint8_t maxPowerTime() const { return ui8_maxPowerTime;};
+  uint8_t maxPowerTime() const { return ui8_maxPowerTime;}
   /** deliver last receive time of maintain power request
     * @return time in [ms] since system start -> comparable to system time
     */
-  int32_t lastMaintainPowerRequest() const { return ui32_lastMaintainPowerRequest;};
+  int32_t lastMaintainPowerRequest() const { return ui32_lastMaintainPowerRequest;}
+
   /** get present limit status of the front hitch position
       @return  limit status of front hitch position
     */
   IsoAgLib::IsoLimitFlag_t frontHitchPosLimitStatus()const {return t_frontHitchPosLimitStatus;}
+
   /** get present limit status of the rear hitch position
       @return  limit status of rear hitch position
     */
   IsoAgLib::IsoLimitFlag_t rearHitchPosLimitStatus()const {return t_rearHitchPosLimitStatus;}
+
   /** check whether maintenance of ECU power was requested */
   bool maintainEcuPower() const { return b_maintainEcuPower;}
+
   /** check whether maintenance of actuator power was requested */
   bool maintainActuatorPower() const { return b_maintainActuatorPower;}
+
   /** check whether maintenance of power
     * for implement in transport state was requested */
   IsoAgLib::IsoImplTransportFlag_t maintainPowerForImplInTransport() const
   { return IsoAgLib::IsoImplTransportFlag_t(implState.inTransport); }
+
   /** check whether maintenance of power
     * for implement in park state was requested */
   IsoAgLib::IsoImplParkFlag_t maintainPowerForImplInPark() const {return IsoAgLib::IsoImplParkFlag_t(implState.inPark);}
+
   /** check whether maintenance of power
     * for implement in work state was requested */
   IsoAgLib::IsoImplWorkFlag_t maintainPowerForImplInWork() const {return IsoAgLib::IsoImplWorkFlag_t(implState.inWork);}
@@ -366,7 +315,8 @@ public: // Public methods
       @see  TracGeneral_c::processMsgRequestPGN
       @see  CANIO_c::operator<<
     */
-  void isoSendLanguage();
+  void sendLanguage();
+
   /** force maintain power from tractor
       @see  CANIO_c::operator<<
       @param rb_ecuPower true -> maintain ECU power
@@ -374,7 +324,6 @@ public: // Public methods
       @param rt_implState in which state is the implement (transport, park, work)
     */
   void forceMaintainPower( bool rb_ecuPower, bool rb_actuatorPower, IsoAgLib::IsoMaintainPower_t rt_implState);
-  #endif
   /*@}*/
 
 private:
@@ -384,114 +333,89 @@ private:
       set the configuration for send/receive for general base msg
       NEVER instantiate a variable of type TracGeneral_c within application
       only access TracGeneral_c via getTracGeneralInstance() or getTracGeneralInstance( int riLbsBusNr )
-      in case more than one ISO11783 or DIN9684 BUS is used for IsoAgLib
+      in case more than one BUS is used for IsoAgLib
     */
-  TracGeneral_c()
-                  #ifdef USE_DIN_9684
-                   :i32_lastFuel(0),
-                    t_identModeStateFuel(IsoAgLib::IdentModeImplement),
-                    c_sendFuelDevKey(),
-                    pc_devKeyFuel(NULL)
-                  #endif
-  {};
-  #ifdef USE_DIN_9684
-  /** check if a received message should be parsed */
-  bool checkParseReceivedFuel(const DevKey_c& rrefc_currentSender) const;
-  /** send a DIN9684 general base information PGN.
-   * this is only called when sending ident is configured and it has already claimed an address
-   */
-  virtual bool dinTimeEventTracMode();
-  /** process a DIN9684 general base information PGN */
-  virtual bool dinProcessMsg();
-  #endif
+  TracGeneral_c() {};
 
-  #ifdef USE_ISO_11783
   /** send a ISO11783 general base information PGN.
     * this is only called when sending ident is configured and it has already claimed an address
       @pre  function is only called in tractor mode
       @see  BaseCommon_c::timeEvent()
     */
-  virtual bool isoTimeEventTracMode();
+  virtual bool timeEventTracMode();
+
   /** process a ISO11783 general base information PGN */
-  virtual bool isoProcessMsg();
+  bool processMsg();
+
   /** send front hitch and rear hitch data msg
       @see  CANIO_c::operator<<
     */
-  void isoSendMessage();
-  #endif
+  void sendMessage();
 
 private:
   // Private attributes
   /** engine speed */
   int16_t i16_engine;
+
   /** front hitch data */
   uint8_t b_hitchFront;
+
   /** rear hitch data */
   uint8_t b_hitchRear;
 
-  #ifdef USE_DIN_9684
-  /** last time of fuel msg [msec] */
-  int32_t i32_lastFuel;
-  /** send state for fuel */
-  IsoAgLib::IdentMode_t t_identModeStateFuel;
-  /** DevKey_c for fuel sender */
-  DevKey_c c_sendFuelDevKey;
-  const DevKey_c* pc_devKeyFuel;
 
-  /** NEW from AGCO Fendt Vario: rear left draft */
-  int16_t i16_rearLeftDraft;
-  /** NEW from AGCO Fendt Vario: rear right draft */
-  int16_t i16_rearRightDraft;
-  /** NEW from AGCO Fendt Vario: rear total draft Newton */
-  int16_t i16_rearDraftNewton;
-  /** NEW from AGCO Fendt Vario: rear total draft Percent */
-  uint8_t ui8_rearDraftNominal;
-  /** NEW: fuel consumption L/h */
-  int16_t i16_fuelRate;
-  /** NEW from AGCO Fendt Vario: fuel temperature C */
-  uint8_t ui8_fuelTemperature;
-  #endif
-
-  #ifdef USE_ISO_11783
-  /// General
   /** VT language information */
   uint8_t p8ui8_languageVt[8];
+
   /** TECU language information */
   uint8_t p8ui8_languageTecu[8];
+
   /** VT language reception information */
   bool b_languageVtReceived;
+
   /** TECU language reception information */
   bool b_languageTecuReceived;
+
 
   /// General
   /** last time of ISO GPS msg [msec] */
   int32_t i32_lastIsoPositionSimple;
+
   /** key switch state */
   IsoAgLib::IsoActiveFlag_t t_keySwitch;
+
   /** maximum time of tractor power in [min] */
   uint8_t ui8_maxPowerTime;
+
   /** front hitch draft [-320.000;322.550N], res: 10N/bit, offset: -320.000N  */
   int16_t i16_frontDraft;
+
   /** rear hitch draft [-320.000;322.550N], res: 10N/bit, offset: -320.000N  */
   int16_t i16_rearDraft;
+
   /** front nominal lower link force [-100%;100%], res: 0.8%/bit, offset: -100% */
   uint8_t ui8_frontLinkForce;
+
   /** rear nominal lower link force [-100%;100%], res: 0.8%/bit, offset: -100% */
   uint8_t ui8_rearLinkForce;
+
   /** set reported the tractor ECU's present limit status of the front hitch position */
   IsoAgLib::IsoLimitFlag_t t_frontHitchPosLimitStatus;
+
   /** set reported the tractor ECU's present limit status of the rear hitch position */
   IsoAgLib::IsoLimitFlag_t t_rearHitchPosLimitStatus;
 
   /** last time of maintain power request [ms] */
   uint32_t ui32_lastMaintainPowerRequest;
+
   /** state whether maintenance of ECU power was requested */
   bool b_maintainEcuPower;
+
   /** state whether maintenance of actuator power was requested */
   bool b_maintainActuatorPower;
+
   /** indicated state of an implement */
   indicatedStateImpl_t implState;
-  #endif
 };
 
   #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )

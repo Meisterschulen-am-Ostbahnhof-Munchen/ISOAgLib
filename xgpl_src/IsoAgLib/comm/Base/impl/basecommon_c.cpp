@@ -85,12 +85,7 @@
 
 #include <IsoAgLib/util/impl/cancustomer_c.h>
 #include <IsoAgLib/util/impl/canpkg_c.h>
-#ifdef USE_DIN_9684
-  #include <IsoAgLib/comm/SystemMgmt/DIN9684/impl/dinmonitor_c.h>
-#endif
-#ifdef USE_ISO_11783
-  #include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h>
-#endif
+#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h>
 #include "basecommon_c.h"
 #include <IsoAgLib/comm/SystemMgmt/impl/systemmgmt_c.h>
 #include <IsoAgLib/driver/can/impl/canio_c.h>
@@ -151,19 +146,10 @@ void BaseCommon_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
   getSchedulerInstance4Comm().registerClient( this );
   c_data.setSingletonKey( c_data.getSingletonVecKey() );
 
-  #ifdef USE_DIN_9684
   if (checkAlreadyClosed())
   {
-    b_dinFilterCreated = false;
+    b_filterCreated = false;
   }
-  #endif
-
-  #ifdef USE_ISO_11783
-  if (checkAlreadyClosed())
-  {
-    b_isoFilterCreated = false;
-  }
-  #endif
 
   // set configure values with call for config
   config(rpc_devKey, rt_identMode);
@@ -187,7 +173,7 @@ bool BaseCommon_c::config(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_i
     #ifdef DEBUG
       INTERNAL_DEBUG_DEVICE << "CONFIG FAILURE. The config function was called with devKey == NULL and\
                                 IdentModeTractor. Is is not allowed that the devKey ist NULL in combination\
-                                with tractor mode." 
+                                with tractor mode."
                             << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
     #if defined(DEBUG) && defined(SYSTEM_PC)
@@ -226,32 +212,6 @@ bool BaseCommon_c::checkParseReceived(const DevKey_c& rrefc_currentSender) const
           )?true:false;
 }
 
-/** process received moving msg and store updated value for later reading access;
-    called by FilterBox_c::processMsg after receiving a msg
-    possible errors:
-      * LibErr_c::LbsBaseSenderConflict moving msg recevied from different member than before
-    @see FilterBox_c::processMsg
-    @see CANIO_c::processMsg
-    @return true -> message was processed; else the received CAN message will be served to other matching CANCustomer_c
-  */
-bool BaseCommon_c::processMsg()
-{
-  #if defined(USE_ISO_11783) && defined(USE_DIN_9684)
-  if (c_data.identType() == Ident_c::ExtendedIdent)
-  #endif // USE_DIN_9684 && USE_ISO_11783
-  #ifdef USE_ISO_11783
-  { // an ISO11783 base information msg received
-    return isoProcessMsg();
-  }
-  #endif // USE_ISO_11783
-  #if defined(USE_ISO_11783) && defined(USE_DIN_9684)
-  else
-  #endif
-  #ifdef USE_DIN_9684
-  return dinProcessMsg();
-  #endif
-  return false;
-}
 
   /** functions with actions, which must be performed periodically
     -> called periodically by Scheduler_c
@@ -295,38 +255,33 @@ bool BaseCommon_c::timeEvent()
     //    item has already performed its address claim
     // ==> we can directly call sending time event in this case
     bool b_result = true;
-    #ifdef USE_DIN_9684
-    if ( !dinTimeEventTracMode()) b_result = false;
-    #endif
-    #ifdef USE_ISO_11783
-    if ( !isoTimeEventTracMode()) b_result = false;
-    #endif
+    if ( !timeEventTracMode()) b_result = false;
+
     return b_result;
   }
-  #ifdef USE_ISO_11783
   else
   { // we are in implement mode
     // call this function also if devKey == NULL, because some functions do settings which are independent from devKey
-    if ( !isoTimeEventImplMode()) return false;
+    if ( !timeEventImplMode()) return false;
   }
-  #endif
+
   return true;
 }
 
-#ifdef USE_ISO_11783
-/** process a ISO11783 base information PGN */
-bool BaseCommon_c::isoProcessMsg()
-{ return false;}
+
 /** send a ISO11783 base information PGN.
   * this is only called when sending ident is configured and it has already claimed an address
   */
-bool BaseCommon_c::isoTimeEventTracMode()
+bool BaseCommon_c::timeEventTracMode()
 { return true;}
+
+
 /** send a ISO11783 base information PGN.
   * this is only called when sending ident is configured and it has already claimed an address
   */
-bool BaseCommon_c::isoTimeEventImplMode()
+bool BaseCommon_c::timeEventImplMode()
 { return true;}
+
 
 /** send a PGN request */
 bool BaseCommon_c::sendPgnRequest(uint32_t ui32_requestedPGN)
@@ -363,6 +318,8 @@ bool BaseCommon_c::sendPgnRequest(uint32_t ui32_requestedPGN)
   getCanInstance4Comm() << data();
   return true;
 }
+
+
 /** check if preconditions for request for pgn are fullfilled
     @return  true -> the request for pgn can be send
   */
@@ -383,15 +340,5 @@ bool BaseCommon_c::check4ReqForPgn(uint32_t /* rui32_pgn */, uint8_t /*rui8_sa*/
     return false;
   }
 }
-#endif
-
-#ifdef USE_DIN_9684
-/** process a DIN9684 base information PGN */
-bool BaseCommon_c::dinProcessMsg() {return false;}
-/** send a DIN9684 base information PGN
-  * this is only called when sending ident is configured and it has already claimed an address
-  */
-bool BaseCommon_c::dinTimeEventTracMode() {return true;}
-#endif
 
 }// end namespace __IsoAgLib

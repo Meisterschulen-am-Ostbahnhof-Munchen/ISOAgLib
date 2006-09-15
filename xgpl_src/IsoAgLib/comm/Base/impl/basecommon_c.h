@@ -149,16 +149,6 @@ namespace __IsoAgLib
     */
     virtual void checkCreateReceiveFilter() = 0;
 
-     /** process received base msg and store updated value for later reading access;
-      called by FilterBox_c::processMsg after receiving a base msg
-      possible errors:
-        * LibErr_c::LbsBaseSenderConflict base msg recevied from different member than before
-      @see FilterBox_c::processMsg
-      @see CANIO_c::processMsg
-      @return true -> message was processed; else the received CAN message will be served to other matching CANCustomer_c
-    */
-    bool processMsg();
-
     /** functions with actions, which must be performed periodically
         -> called periodically by Scheduler_c
         ==> sends base msg if configured in the needed rates
@@ -171,32 +161,22 @@ namespace __IsoAgLib
       */
     virtual bool timeEvent();
 
-    #ifdef USE_ISO_11783
     /** send a PGN request */
     bool sendPgnRequest(uint32_t ui32_requestedPGN);
     /** check if preconditions for request for pgn are fullfilled
         @return  true -> the request for pgn can be send
       */
     virtual bool check4ReqForPgn(uint32_t rui32_pgn, uint8_t rui8_sa, uint8_t rui8_da);
-    /** process a ISO11783 base information PGN */
-    virtual bool isoProcessMsg();
+
     /** send a ISO11783 base information PGN.
       * this is only called when sending ident is configured and it has already claimed an address
       */
-    virtual bool isoTimeEventTracMode();
+    virtual bool timeEventTracMode();
+
     /** send a ISO11783 base information PGN.
       * this is only called when sending ident is configured and it has already claimed an address
       */
-    virtual bool isoTimeEventImplMode();
-    #endif
-    #ifdef USE_DIN_9684
-    /** process a DIN9684 base information PGN */
-    virtual bool dinProcessMsg();
-    /** send a DIN9684 base information PGN
-      * this is only called when sending ident is configured and it has already claimed an address
-      */
-    virtual bool dinTimeEventTracMode();
-    #endif
+    virtual bool timeEventImplMode();
 
     /** Retrieve the last update time of the specified information type*/
     int32_t lastedTimeSinceUpdate() const { return (System_c::getTime() - i32_lastMsgReceived);}
@@ -208,27 +188,13 @@ namespace __IsoAgLib
 
     /** return if you currently are in implement mode or tractor mode*/
     bool checkMode(IsoAgLib::IdentMode_t rt_identMode) const {return (t_identMode == rt_identMode);}
-    #ifdef USE_ISO_11783
+
     /** check if iso filters have alread been created*/
-    bool checkIsoFilterCreated() const {return b_isoFilterCreated;}
-    /** set b_isoFilterCreated*/
-    void setIsoFilterCreated() {b_isoFilterCreated = true;}
-    /** clear b_isoFilterCreated*/
-    void clearIsoFilterCreated() {b_isoFilterCreated = false;}
-    #endif
-    #ifdef USE_DIN_9684
-      /**
-    deliver type of base msg BABO
-    @return BABO code of base msg (bit 4-7 in identifier)
-    */
-    uint8_t dataBabo()const {return (CANPkg_c::ident(0) >> 4);}
-    /** check if din filters have alread been created*/
-    bool checkDinFilterCreated() const {return b_dinFilterCreated;}
-    /** set b_dinFilterCreated*/
-    void setDinFilterCreated() {b_dinFilterCreated = true;}
-    /** clear b_dinFilterCreated*/
-    void clearDinFilterCreated() {b_dinFilterCreated = false;}
-    #endif
+    bool checkFilterCreated() const {return b_filterCreated;}
+    /** set b_filterCreated*/
+    void setFilterCreated() {b_filterCreated = true;}
+    /** clear b_filterCreated*/
+    void clearFilterCreated() {b_filterCreated = false;}
 
     /** return sender of a msg*/
     const DevKey_c* getDevKey() const {return pc_devKey;}
@@ -255,14 +221,8 @@ namespace __IsoAgLib
     void setDevKey(const DevKey_c* devKey){pc_devKey = devKey;}
     /** can be implement mode or tractor mode*/
     IsoAgLib::IdentMode_t t_identMode;
-    #ifdef USE_DIN_9684
-    /** flag to detect, if receive filters for DIN are created */
-    bool b_dinFilterCreated;
-    #endif
-    #ifdef USE_ISO_11783
     /** flag to detect, if receive filters for ISO are created */
-    bool b_isoFilterCreated;
-    #endif
+    bool b_filterCreated;
 
     /** last time of data msg [msec] */
     int32_t i32_lastMsgReceived;

@@ -49,6 +49,9 @@
 #ifndef USE_PROCESS 
   #define USE_PROCESS 
 #endif
+#ifndef USE_PROC_REMOTE_SIMPLE_MEASURE 
+  #define USE_PROC_REMOTE_SIMPLE_MEASURE 
+#endif
 #ifndef USE_EEPROM_IO_YN 
 	#define USE_EEPROM_IO_YN NO 
 #endif

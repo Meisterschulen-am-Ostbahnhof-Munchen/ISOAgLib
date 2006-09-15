@@ -82,7 +82,6 @@
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 
-
 #include "msgobj_c.h"
 #include "canio_c.h"
 #include <IsoAgLib/comm/Scheduler/impl/scheduler_c.h>
@@ -102,9 +101,7 @@
 /* ************************************** */
 namespace __IsoAgLib {
 
-/**
-  default constructor for MsgObj_c which only init all member values defined start state
-*/
+/** default constructor for MsgObj_c which only init all member values defined start state */
 MsgObj_c::MsgObj_c()
   : arrPfilterBox()
 {
@@ -119,8 +116,7 @@ MsgObj_c::MsgObj_c()
   setIsOpen(false);
 }
 
-/**
-  copy constructor for this class, which gets data from another MsgObj_c instance
+/** copy constructor for this class, which gets data from another MsgObj_c instance
   @param rrefc_src source MsgObj_c instance which should be cloned by this instance
 */
 MsgObj_c::MsgObj_c(const MsgObj_c& src)
@@ -143,7 +139,8 @@ MsgObj_c::MsgObj_c(const MsgObj_c& src)
 }
 
 /** destructor of MsgObj_c instance, which closes the hardware MsgObj_c */
-MsgObj_c::~MsgObj_c(){
+MsgObj_c::~MsgObj_c()
+{
   // check if this instances manges really a running BIOS Msg object
   if ((cnt_filterBox() != 0) || (c_filter.ident() != 0)||(busNumber() != 0)||(msgObjNr() != 0))
   { // one of the values is different from the default setting
@@ -156,8 +153,7 @@ MsgObj_c::~MsgObj_c(){
   }
 }
 
-/**
-  merge two msgObj instances rrefc_left and rrefc_right and tell with rb_extendedType
+/** merge two msgObj instances rrefc_left and rrefc_right and tell with rb_extendedType
   if 11bit or 29 bit identifiers are used
   (uses BIOS function)
 
@@ -287,13 +283,12 @@ bool MsgObj_c::merge(MsgObj_c& right)
   return true;
 }
 
-/**
-  close the BIOS msg object of this instance and close hardware CAN Msg Obj if it's open
-
+/** close the BIOS msg object of this instance and close hardware CAN Msg Obj if it's open
   possible errors:
       * range wrong BUS or MsgObj number stored in this instance
 */
-void MsgObj_c::close(){
+void MsgObj_c::close()
+{
   c_filter.setEmpty(true);
 
   // the member function closeCan checks isOpen() and closes the BIOS object
@@ -308,8 +303,7 @@ void MsgObj_c::close(){
   #endif
 }
 
-/**
-  insert pointer to FilterBox_c which receive
+/** insert pointer to FilterBox_c which receive
   CAN messages by this msgObj and reports success with true
 
   possible errors:
@@ -317,7 +311,8 @@ void MsgObj_c::close(){
   @param rrefc_box reference to FilterBox_c which should be inserted as possible processing instance of msg received by this instance
   @return true -> this reference could be stored in this MsgObj_c (limited amount)
 */
-bool MsgObj_c::insertFilterBox(FilterRef rrefc_box){
+bool MsgObj_c::insertFilterBox(FilterRef rrefc_box)
+{
   for ( int i = 0; i < cnt_filterBox(); i++ )
   {
     #if defined( DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION )
@@ -394,15 +389,14 @@ bool MsgObj_c::insertFilterBox(FilterRef rrefc_box){
   #endif
 }
 
-/**
-  delete pointer to a Filter Box and move following pointers one position forward
-
+/** delete pointer to a Filter Box and move following pointers one position forward
   possible errors:
       * elNonexistent to be deleted FilterBox_c reference not registered for this MsgObj
   @param rrefc_box reference to FilterBox_c which should be deleted from reference array
   @return true -> given FilterBox_c was deleted from local reference array
 */
-bool MsgObj_c::deleteFilterBox(FilterRef rrefc_box){
+bool MsgObj_c::deleteFilterBox(FilterRef rrefc_box)
+{
   bool b_result = false;
   #if 0
   int16_t i = 0;
@@ -446,8 +440,7 @@ bool MsgObj_c::deleteFilterBox(FilterRef rrefc_box){
   return b_result;
 }
 
-/**
-  start processing a received CAN msg
+/** start processing a received CAN msg
   (called by interrupt function) (uses BIOS function)
 
   possible errors:
@@ -464,7 +457,8 @@ bool MsgObj_c::deleteFilterBox(FilterRef rrefc_box){
                             ( this important to process all buffered messages before FilterBoxes are reconfigured )
   @return number of received messages
   */
-uint8_t MsgObj_c::processMsg(uint8_t rui8_busNumber, bool rb_forceProcessAll){
+uint8_t MsgObj_c::processMsg(uint8_t rui8_busNumber, bool rb_forceProcessAll)
+{
   uint8_t b_count = 0;
   int32_t i32_ident;
   bool b_processed = false,
@@ -625,11 +619,7 @@ uint8_t MsgObj_c::processMsg(uint8_t rui8_busNumber, bool rb_forceProcessAll){
   return b_count;
 }
 
-
-
-/**
-  configures the CAN hardware of given Msg Object (uses BIOS function)
-
+/** configures the CAN hardware of given Msg Object (uses BIOS function)
   possible errors:
       * hwConfig used CAN BUS wans't configured properly
       * range given BUS or MsgObj number not in allowed area
@@ -639,7 +629,8 @@ uint8_t MsgObj_c::processMsg(uint8_t rui8_busNumber, bool rb_forceProcessAll){
   @param rui8_msgNr CAN hardware msg number for BIOS interaction
   @return true -> BIOS CAN object without errors configured
 */
-bool MsgObj_c::configCan(uint8_t rui8_busNumber, uint8_t rui8_msgNr){
+bool MsgObj_c::configCan(uint8_t rui8_busNumber, uint8_t rui8_msgNr)
+{
   bool b_result = false;
   if (!verifyBusMsgobjNr(rui8_busNumber, rui8_msgNr))
   { // the given values are not within allowed limits (defined in isoaglib_config.h)
@@ -692,8 +683,7 @@ bool MsgObj_c::configCan(uint8_t rui8_busNumber, uint8_t rui8_msgNr){
   return b_result;
 }
 
-/**
-  verify given BUS number and MsgObj number, if they are within allowed
+/** verify given BUS number and MsgObj number, if they are within allowed
   limits (defined in isoaglib_config.h)
   if called withoutparameter values (default -1) the actual configured are
   checked -> if these are incorrect range is set
@@ -725,8 +715,7 @@ bool MsgObj_c::verifyBusMsgobjNr(int8_t rc_busNr, int8_t rc_msgobjNr)
   }
 }
 
-/**
-  get the common filter part of all merged
+/** get the common filter part of all merged
   FilterBox instances
   @return common filter of all FilterBoxes in this MsgObj_c instance
 */
@@ -747,10 +736,8 @@ void MsgObj_c::commonFilterAfterMerge( Ident_c& rrefc_globalMask ) const
 }
 
 
-/**
-  close the correlated CAN object
+/** close the correlated CAN object
   (uses BIOS function)
-
   possible errors:
       * range wrong BUS or MsgObj number stored in this instance
 */
@@ -765,7 +752,7 @@ void MsgObj_c::closeCan()
     }
     setIsOpen(false);
   }
-};
+}
 
 
 /** lock the corresponding hardware MsgObj to avoid receiving further CAN messages.
@@ -808,4 +795,3 @@ void MsgObj_c::lock( bool rb_lock )
 }
 
 } // end namespace __IsoAgLib
-

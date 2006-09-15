@@ -118,11 +118,13 @@ public:
   */
   MonitorItem_c(int32_t ri32_time = 0, const DevKey_c& rc_devKey = DevKey_c::DevKeyUnspecified, uint8_t rui8_nr = 0xF,
               IState_c::itemState_t rb_status = IState_c::IstateNull, int ri_singletonVecKey = 0);
+
   /**
     copy constructor which takes it initial values from another MonitorItem_c instance
     @param rrefc_monitorItem reference to the source MonitorItem_c instance
   */
   MonitorItem_c(const MonitorItem_c& rrefc_monitorItem);
+
   /** destructor which sets the update timestamp to 0 */
   virtual ~MonitorItem_c();
 
@@ -150,69 +152,80 @@ public:
     set DEV_KEY code of this item
     @param rc_devKey DEV_KEY
   */
-  void setDevKey(const DevKey_c& rc_devKey){c_devKey = rc_devKey;};
+  void setDevKey(const DevKey_c& rc_devKey){c_devKey = rc_devKey;}
+
   /**
     set number of this item
     @param rc_devKey number
   */
-  void setNr(uint8_t rui8_nr){ui8_nr = rui8_nr;};
+  void setNr(uint8_t rui8_nr){ui8_nr = rui8_nr;}
 
   /**
     deliver the DEV_KEY code of this item
     @return DEV_KEY code
   */
-  const DevKey_c& devKey()const{return c_devKey;};
+  const DevKey_c& devKey()const{return c_devKey;}
+
   /**
     deliver the DEVCLASS code alone (derived from devKey)
     @return DEVCLASS code
   */
-  uint8_t devClass()const{return c_devKey.getDevClass();};
+  uint8_t devClass()const{return c_devKey.getDevClass();}
+
   /**
     deliver the device class inst code alone (derived from devKey)
     @return device class inst code
   */
-  uint8_t devClassInst()const{return c_devKey.getDevClassInst();};
+  uint8_t devClassInst()const{return c_devKey.getDevClassInst();}
+
   /**
     deliver the number/adress of this item
     @return number
   */
-  uint8_t nr()const{return ui8_nr;};
+  uint8_t nr()const{return ui8_nr;}
+
   /**
     deliver name
     @return pointer to the name uint8_t string (7byte)
   */
   virtual const uint8_t* name() const = 0;
+
   /**
     check if the name field is empty (no name received)
     @return true -> no name received
   */
   virtual bool isEmptyName() const = 0;
+
   /**
     deliver name as pure ASCII string
     @param pc_name string where ASCII string is inserted
     @param rui8_maxLen max length for name
   */
   virtual void getPureAsciiName(int8_t *pc_asciiName, uint8_t rui8_maxLen) = 0;
+
   /**
     lower comparison with another MonitorItem_c on the rigth (compare the DEV_KEY)
     @param rrefc_right rigth parameter for lower compare
   */
   bool operator<(const MonitorItem_c& rrefc_right) const
-    {return (devKey() < rrefc_right.devKey())?true:false;};
+    {return (devKey() < rrefc_right.devKey())?true:false;}
+
   /**
     lower comparison with DEV_KEY uint8_t on the rigth
     @param rrefc_right rigth parameter for lower compare
   */
-  bool operator<(const DevKey_c& rc_devKey)const{return (devKey() < rc_devKey)?true:false;};
+  bool operator<(const DevKey_c& rc_devKey)const{return (devKey() < rc_devKey)?true:false;}
+
   /**
     lower comparison between left DEV_KEY uint8_t and right MonitorItem
     @param rb_left DEV_KEY uint8_t left parameter
-    @param rrefc_right rigth DINServiceItem_c parameter
+    @param rrefc_right rigth ServiceItem_c parameter
   */
   friend bool operator<(const DevKey_c& rc_left, const MonitorItem_c& rrefc_right);
+
   /**
     lower comparison between left MonitorItem_c and right DEV_KEY uint8_t
-    @param rrefc_left left DINServiceItem_c parameter
+    @param rrefc_left left ServiceItem_c parameter
     @param rb_right DEV_KEY uint8_t right parameter
   */
   friend bool lessThan(const MonitorItem_c& rrefc_left, const DevKey_c& rc_right);
@@ -221,18 +234,21 @@ public:
     equality comparison with DEV_KEY uint8_t on the rigth
     @param rrefc_right rigth parameter for lower compare
   */
-  bool operator==(const DevKey_c& rc_right)const { return (devKey() == rc_right)?true:false;};
+  bool operator==(const DevKey_c& rc_right)const { return (devKey() == rc_right)?true:false;}
+
   /**
     difference comparison with DEV_KEY uint8_t on the rigth
     @param rrefc_right rigth parameter for lower compare
   */
-  bool operator!=(const DevKey_c& rc_right) const{ return (devKey() != rc_right)?true:false;};
+  bool operator!=(const DevKey_c& rc_right) const{ return (devKey() != rc_right)?true:false;}
+
   /**
     compare given number to nr of this item and return result
     @param rui8_nr compared number
     @return true -> given number equal to nr of this item
   */
-  bool equalNr(const uint8_t rui8_nr)const{return (nr() == rui8_nr)?true:false;};
+  bool equalNr(const uint8_t rui8_nr)const{return (nr() == rui8_nr)?true:false;}
+
 protected:
   /** DEV_KEY of element */
   DevKey_c c_devKey;
@@ -244,7 +260,7 @@ private:
 
 /**
   lower comparison between left MonitorItem_c and right DEV_KEY uint8_t
-  @param rrefc_left left DINServiceItem_c parameter
+  @param rrefc_left left ServiceItem_c parameter
   @param rb_right DEV_KEY uint8_t right parameter
 */
 bool lessThan(const MonitorItem_c& rrefc_left, const DevKey_c& rc_right);

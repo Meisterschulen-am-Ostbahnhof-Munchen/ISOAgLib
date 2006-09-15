@@ -239,15 +239,6 @@ int main()
   /// register pool of the device description
   bool b_registerSuccess = IsoAgLib::getIProcessInstance().getDevPropertyHandlerInstance().registerDevicePool(&c_myIdent, deviceDescription_de, ui32_arrayLength_de, true);
 
-  // start address claim of the local member "IMI"
-  // if DEV_KEY conflicts forces change of device class instance, the
-  // IsoAgLib can change the myDevKey val through the pointer to myDevKey
-  //  DIN:
-#if defined(USE_DIN_9684) && !defined(USE_ISO_11783)
-  uint8_t c_myName[] = "Hi-Me";
-  IsoAgLib::iIdentItem_c c_myIdent( &myDeviceDevKey, c_myName, IsoAgLib::IState_c::DinOnly);
-#endif
-
   /** IMPORTANT:
 	  - The following loop could be replaced of any repeating call of
 			IsoAgLib::getISchedulerInstance().timeEvent();

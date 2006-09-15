@@ -201,7 +201,7 @@
  #include <supplementary_driver/driver/rs232/irs232io_c.h>
 #endif
 
-/** set the following defines if to test one or more of the base data*/
+/** set the following defines if to test onforceMaintainPowerforceMaintainPowerforceMaintainPowere or more of the base data*/
 //the defines are set with the update_makefile skript if in the corresponding config_1_0_ReadIso
 //the defines are set. All base data is defined if the USE_BASE define is active
 #ifdef USE_TRACTOR_LIGHT
@@ -220,7 +220,7 @@
 #ifdef USE_TRACTOR_AUX
   #define TEST_TRACAUX
 #endif
-#ifdef USE_BASE_TRACPTO
+#ifdef USE_TRACTOR_PTO
   #define TEST_TRACPTO
   #define TEST_TRACPTOSETPOINT
 #endif
@@ -833,8 +833,8 @@ int main()
       EXTERNAL_DEBUG_DEVICE << "mechanical system logout:       " << getIsoActiveFlag(getITracGuidanceInstance().mechanicalSystemLogout() ) << "\n";
 
       curvatureCmd += 3;
-      getITracGuidanceInstance().setCurvatureCmd(curvatureCmd);
-      getITracGuidanceInstance().setCurvatureCmdStatus(IsoAgLib::IsoIntendedToSteer);
+//       getITracGuidanceInstance().setCurvatureCmd(curvatureCmd);
+//       getITracGuidanceInstance().setCurvatureCmdStatus(IsoAgLib::IsoIntendedToSteer);
       #endif
     }
     #endif

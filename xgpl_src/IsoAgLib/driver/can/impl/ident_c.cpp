@@ -86,8 +86,7 @@
 
 namespace __IsoAgLib
 {
-  /**
-    constructor which can set the values
+  /** constructor which can set the values
     @param rt_ident new ident setting
     @param ren_identType new ident type
         (Ident_c::S for 11bit ident or Ident_c::E for 29bit)
@@ -99,22 +98,19 @@ namespace __IsoAgLib
     data.type = ren_identType;
     data.empty = 0;
   }
-  /**
-    constructor which gets its values from other instance
+
+  /** constructor which gets its values from other instance
     @param rrefc_src source Ident_c instance
   */
   Ident_c::Ident_c(const Ident_c& rrefc_src)
-    {CNAMESPACE::memcpy(this, &rrefc_src, sizeof(Ident_c));};
-  /**
-    destructor which has nothing to do
-  */
+    {CNAMESPACE::memcpy(this, &rrefc_src, sizeof(Ident_c));}
+
+  /** destructor which has nothing to do */
   Ident_c::~Ident_c()
   {
   }
 
-
-  /**
-    compare this ident setting with another
+  /** compare this ident setting with another
     (use memory operation for max speed)
     @param rrefc_src compared ident
     @return true -> referenced ident has same setting and type
@@ -126,8 +122,7 @@ namespace __IsoAgLib
             &&(empty()==rrefc_src.empty()))?true:false;
   }
 
-  /**
-    set this ident
+  /** set this ident
     @param rt_ident new ident setting
     @param ren_identType new ident type
         (Ident_c::S for 11bit ident or Ident_c::E for 29bit)
@@ -139,8 +134,8 @@ namespace __IsoAgLib
     data.type = ren_identType;
     data.empty = 0;
   }
-  /**
-    set this ident with access to single byte
+
+  /** set this ident with access to single byte
     @param rb_val new val for ident at wanted position
     @param rb_pos position in ident, where ident should be placed in
     @param ren_identType new ident type
@@ -163,8 +158,7 @@ namespace __IsoAgLib
     data.empty = 0;
   }
 
-  /**
-    deliver amount of different bits from own ident to compared ident
+  /** deliver amount of different bits from own ident to compared ident
     @param rrefc_ident reference to compared ident
     @return amount of different bits
   */
@@ -176,5 +170,5 @@ namespace __IsoAgLib
       for(MASK_TYPE ui32_new = (ui32_comp & (ui32_comp-1)); ui32_new != ui32_comp;
         ui32_comp=ui32_new, ui32_new &= (ui32_new-1))cnt++;
       return cnt;
-  };
+  }
 }

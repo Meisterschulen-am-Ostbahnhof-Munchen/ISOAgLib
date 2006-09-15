@@ -85,12 +85,10 @@
 #ifndef IDENT_H
 #define IDENT_H
 
-
 #include <IsoAgLib/util/liberr_c.h>
 #include <IsoAgLib/util/config.h>
 #include <IsoAgLib/typedef.h>
 #include <IsoAgLib/hal/can.h>
-
 
 #ifdef SYSTEM_MITRON167
   #undef CNAMESPACE
@@ -100,103 +98,97 @@
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
-/**class for management of CAN ident with
+/** class for management of CAN ident with
   ident type dpendent compare and setting operations
   @see CAN_IO
   @see FilterBox
   @see MSgObj
-  *@author Dipl.-Inform. Achim Spangler
+  @author Dipl.-Inform. Achim Spangler
   */
 class Ident_c {
 public:
-  /**
-    enum type for defining the CAN ident length to S (11Bit)
+  /** enum type for defining the CAN ident length to S (11Bit)
     or extended (29Bit)
   */
   enum identType_t {StandardIdent = 0, ExtendedIdent = 1, BothIdent = 2};
 
-  /**
-    constructor which can set the values
+  /** constructor which can set the values
     @param rt_ident new ident setting
     @param ren_identType new ident type
         (Ident_c::S for 11bit ident or Ident_c::E for 29bit)
         (default: DEFAULT_IDENT_TYPE set in isoaglib_config)
   */
   Ident_c(MASK_TYPE rt_ident = 0, identType_t ren_identType = DEFAULT_IDENT_TYPE);
-  /**
-    constructor which gets its values from other instance
+
+  /** constructor which gets its values from other instance
     @param rrefc_src source Ident_c instance
   */
   Ident_c(const Ident_c& rrefc_src);
-  /**
-    destructor which has nothing to do
-  */
+
+  /** destructor which has nothing to do */
   ~Ident_c();
 
-  /**
-    compare this ident setting with another
+  /** compare this ident setting with another
     (use memory operation for max speed)
     @param rrefc_src compared ident
     @return true -> referenced ident has same setting and type
   */
   bool operator==(const Ident_c& rrefc_src) const;
 
-  /**
-    compare this ident setting with another
+  /** compare this ident setting with another
     (use memory operation for max speed)
     @param rrefc_src compared ident
     @return true -> referenced ident has different setting and type
   */
   bool operator!=(const Ident_c& rrefc_src) const
-    {return (!(operator==(rrefc_src)));};
-  /**
-    compare this ident value and ident type
+    {return (!(operator==(rrefc_src)));}
+
+  /** compare this ident value and ident type
     @param rt_ident compared ident setting
     @param ren_identType type of compared ident
     @return true -> given setting and type are equal
   */
   bool equal(const MASK_TYPE rt_ident, identType_t ren_identType) const
     {return ((t_ident == rt_ident)&&(data.type == ren_identType));}
-  /**
-    deliver ident value masked by given ident
+
+  /** deliver ident value masked by given ident
     @param rt_mask mask value
     @return ident setting masked by rt_mask (only '1' where mask and ident has '1')
   */
   MASK_TYPE masked(MASK_TYPE rt_mask = ~0) const
-    {return (data.type == StandardIdent)?(rt_mask & t_ident & 0x7FF):(rt_mask & t_ident);};
-  /**
-    deliver ident value masked by given ident
+    {return (data.type == StandardIdent)?(rt_mask & t_ident & 0x7FF):(rt_mask & t_ident);}
+
+  /** deliver ident value masked by given ident
     @param rrefc_mask mask value
     @return ident setting masked by rt_mask (only '1' where mask and ident has '1')
   */
   MASK_TYPE masked(const Ident_c& rrefc_mask = ~0) const
     {return (data.type == StandardIdent)
-      ?(rrefc_mask.t_ident & t_ident & 0x7FF):(rrefc_mask.t_ident & t_ident);};
-  /**
-    update the ident with bitwise AND with given ident setting
+      ?(rrefc_mask.t_ident & t_ident & 0x7FF):(rrefc_mask.t_ident & t_ident);}
+
+  /** update the ident with bitwise AND with given ident setting
     @param refc_bitAnd Ident_c variable with ident to bit_AND
   */
   void ident_bitAnd(const Ident_c& refc_bitAnd)
-    {if (refc_bitAnd.data.type == data.type) t_ident &= refc_bitAnd.t_ident;data.empty = 0;};
+    {if (refc_bitAnd.data.type == data.type) t_ident &= refc_bitAnd.t_ident;data.empty = 0;}
 
-  /**
-    deliver amount of different bits from own ident to compared ident
+  /** deliver amount of different bits from own ident to compared ident
     @param rrefc_ident reference to compared ident
     @return amount of different bits
   */
   uint8_t bit_diff(const Ident_c& rrefc_ident) const;
-  /**
-    deliver the ident type
+
+  /** deliver the ident type
     @return Ident_c::S for 11bit ident or Ident_c::E for 29bit
   */
-  identType_t identType() const {return static_cast<identType_t>(data.type);};
-  /**
-    deliver the ident setting
+  identType_t identType() const {return static_cast<identType_t>(data.type);}
+
+  /** deliver the ident setting
     @return ident value
   */
-  MASK_TYPE ident() const {return t_ident;};
-  /**
-    deliver the uint8_t value of ident at wanted position
+  MASK_TYPE ident() const {return t_ident;}
+
+  /** deliver the uint8_t value of ident at wanted position
     (position 0 is least significant position -> nearest to DLC field of
     CAN frame)
     @param rb_pos
@@ -211,7 +203,7 @@ public:
     // this bitshift operation is independent of the big/little endianess of the CPU
     return ((t_ident >> (rb_pos*8)) & 0xFF);
 #endif
-  };
+  }
 
   uint8_t& identRef(uint8_t rb_pos) {
 #if defined( OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN )
@@ -222,27 +214,25 @@ public:
     // this bitshift operation is independent of the big/little endianess of the CPU
     return ((t_ident >> (rb_pos*8)) & 0xFF);
 #endif
-  };
+  }
 
-  /**
-    check if Ident_c is set as empty (needed for MsgObj)
-  */
-  bool empty() const {return (data.empty == 1)?true:false;};
-  /**
-    set the Ident_c to empty state
+  /** check if Ident_c is set as empty (needed for MsgObj) */
+  bool empty() const {return (data.empty == 1)?true:false;}
+
+  /** set the Ident_c to empty state
     @param rb_empty set empty state (default = true)
   */
-  void setEmpty(bool rb_empty = true) {data.empty = (rb_empty)?1:0;};
-  /**
-    set this ident
+  void setEmpty(bool rb_empty = true) {data.empty = (rb_empty)?1:0;}
+
+  /** set this ident
     @param rt_ident new ident setting
     @param ren_identType new ident type
         (Ident_c::S for 11bit ident or Ident_c::E for 29bit)
         (default defined in isoaglib_config.h)
   */
   void set(MASK_TYPE rt_ident = 0, identType_t ren_identType = DEFAULT_IDENT_TYPE);
-  /**
-    set this ident with access to single unsigned char
+
+  /** set this ident with access to single unsigned char
     (position 0 is least significant position -> nearest to DLC field of
     CAN frame)
     @param rb_val new val for ident at wanted position
@@ -252,17 +242,18 @@ public:
         (default defined in isoaglib_config.h)
   */
   void set(uint8_t rb_val = 0, uint8_t rb_pos = 0, identType_t ren_identType = DEFAULT_IDENT_TYPE);
-  /**
-    set type of ident
+
+  /** set type of ident
     @param rt_type type of Ident_c: 11bit Ident_c::S or 29bit Ident_c::E
   */
-  void setIdentType(Ident_c::identType_t rt_type){data.type = rt_type;};
-  /**
-    set this ident according to other Ident
+  void setIdentType(Ident_c::identType_t rt_type){data.type = rt_type;}
+
+  /** set this ident according to other Ident
     @param rrefc_src source Ident_c instance
   */
   const Ident_c& operator=(const Ident_c& rrefc_src)
-    {t_ident = rrefc_src.t_ident; setIdentType( rrefc_src.identType() );setEmpty(rrefc_src.empty());return rrefc_src;};
+    {t_ident = rrefc_src.t_ident; setIdentType( rrefc_src.identType() );setEmpty(rrefc_src.empty());return rrefc_src;}
+
 private:
   union {
     MASK_TYPE t_ident;

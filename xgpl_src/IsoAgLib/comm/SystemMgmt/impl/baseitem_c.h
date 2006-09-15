@@ -113,11 +113,13 @@ public:
     @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
   BaseItem_c( int32_t ri32_time = 0, IState_c::itemState_t rb_status = IState_c::IstateNull, int ri_singletonVecKey = 0);
+
   /**
     copy constructor which takes it initial values from another BaseItem_c instance
     @param rrefc_baseItem reference to the source BaseItem_c instance
   */
   BaseItem_c(const BaseItem_c& rrefc_baseItem);
+
   /** destructor which sets the update timestamp to 0 */
   ~BaseItem_c();
 
@@ -135,6 +137,7 @@ public:
     @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
   void set(int32_t ri32_time = -1, int ri_singletonVecKey = 0);
+
   /**
     set pointer to containing Scheduler_c instance and update timestamp of object
     @param ri32_time optional timestamp to set as update time
@@ -143,7 +146,6 @@ public:
   */
   void set(int32_t ri32_time, IState_c::itemState_t rb_status, int ri_singletonVecKey = 0);
 
-
   /**
     calculates time between now and last set of i32_lastTime;
     if called with time parameter, the difference to this is calculated,
@@ -151,16 +153,19 @@ public:
     @return lasted time between last update and the compare time [msec.]
   */
   int32_t lastedTime( void ) const;
+
   /**
     deliver the timestamp of the last update as int32_t [msec]
     @return last update [msec]
   */
-  int32_t lastTime() const {return i32_lastTime;};
+  int32_t lastTime() const {return i32_lastTime;}
+
   /**
     deliver actual timestamp
     @return actual val of i32_lastTime
   */
-  int32_t actualTimestamp() const {return i32_lastTime;};
+  int32_t actualTimestamp() const {return i32_lastTime;}
+
   /**
     updates i32_lastTime to ri32_time or actual
     system time if no time is given
@@ -169,7 +174,8 @@ public:
   void updateTime( int32_t ri32_time = -1 )
     {if ( ri32_time < 0 ) i32_lastTime = Scheduler_c::getLastTimeEventTrigger();
      else i32_lastTime = ri32_time;
-    };
+    }
+
   /**
     check if given time intervall is lasted
     @param rui16_timeInterval time intervall in msec
@@ -177,6 +183,7 @@ public:
     @return true -> time last timestamp older than intervall
   */
   bool checkTime(uint16_t rui16_timeInterval) const;
+
   /**
     check if given time intervall is lasted;
     if time intervall is lasted - update time
@@ -184,6 +191,7 @@ public:
     @return true -> time last timestamp older than intervall
   */
   bool checkUpdateTime(uint16_t rui16_timeInterval);
+
 protected:
 private:
 // Private methods

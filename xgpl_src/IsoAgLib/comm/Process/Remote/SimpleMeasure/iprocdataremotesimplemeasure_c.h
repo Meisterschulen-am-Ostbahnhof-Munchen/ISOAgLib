@@ -144,11 +144,6 @@ public:
     @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
                          (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
 
-    DIN parameter
-    @param rui8_lis optional LIS code of this instance
-    @param rui8_wert optional WERT code of this instance
-    @param rui8_inst optional INST code of this instance
-    @param rui8_zaehlnum optional ZAEHLNUM code of this instance
 
     @param rc_devKey optional DEV_KEY code of this instance
     @param rui8_pri PRI code of messages with this process data instance (default 2)
@@ -157,30 +152,14 @@ public:
     @param rpc_processDataChangeHandler optional pointer to handler class of application
     @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
-  iProcDataRemoteSimpleMeasure_c(
-#ifdef USE_ISO_11783
-                                  const IsoAgLib::ElementDDI_s* ps_elementDDI = NULL,
+  iProcDataRemoteSimpleMeasure_c( const IsoAgLib::ElementDDI_s* ps_elementDDI = NULL,
                                   uint16_t rui16_element = 0xFFFF,
-#endif
-#ifdef USE_DIN_9684
-                                  uint8_t rui8_lis = 0xFF,
-                                  uint8_t rui8_wert = 0,
-                                  uint8_t rui8_inst = 0,
-                                  uint8_t rui8_zaehlnum = 0xFF,
-#endif
                                   const iDevKey_c& rc_devKey = iDevKey_c::DevKeyInitialProcessData,
                                   uint8_t rui8_pri = 2,
                                   const iDevKey_c& rc_ownerDevKey = iDevKey_c::DevKeyUnspecified,
                                   const iDevKey_c* rpc_commanderDevKey = NULL,
                                   ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL, int ri_singletonVecKey = 0)
-  : ProcDataRemoteSimpleMeasure_c(
-#ifdef USE_ISO_11783
-                                  ps_elementDDI,
-                                  rui16_element,
-#endif
-#ifdef USE_DIN_9684
-                                  rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
-#endif
+  : ProcDataRemoteSimpleMeasure_c(ps_elementDDI, rui16_element,
                                   rc_devKey, rui8_pri, rc_ownerDevKey, rpc_commanderDevKey,
                                   rpc_processDataChangeHandler, ri_singletonVecKey){};
 
@@ -190,12 +169,6 @@ public:
     @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
                          (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
 
-    DIN parameter
-    @param rui8_lis optional LIS code of this instance
-    @param rui8_wert optional WERT code of this instance
-    @param rui8_inst optional INST code of this instance
-    @param rui8_zaehlnum optional ZAEHLNUM code of this instance
-
     @param rc_devKey optional DEV_KEY code of this instance
     @param rui8_pri PRI code of messages with this process data instance (default 2)
     @param rc_ownerDevKey optional DEV_KEY of the owner
@@ -203,116 +176,108 @@ public:
     @param rpc_processDataChangeHandler optional pointer to handler class of application
     @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
-  void init(
-#ifdef USE_ISO_11783
-                                  const IsoAgLib::ElementDDI_s* ps_elementDDI,
-                                  uint16_t rui16_element,
-#endif
-#ifdef USE_DIN_9684
-                                  uint8_t rui8_lis = 0xFF,
-                                  uint8_t rui8_wert = 0,
-                                  uint8_t rui8_inst = 0,
-                                  uint8_t rui8_zaehlnum = 0xFF,
-#endif
-                                  const iDevKey_c& rc_devKey = iDevKey_c::DevKeyInitialProcessData,
-                                  uint8_t rui8_pri = 2,
-                                  const iDevKey_c& rc_ownerDevKey = iDevKey_c::DevKeyUnspecified,
-                                  const iDevKey_c* rpc_commanderDevKey = NULL,
-                                  ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
-                                  int ri_singletonVecKey = 0)
-   {ProcDataRemoteSimpleMeasure_c::init(
-#ifdef USE_ISO_11783
-                                        ps_elementDDI,
-                                        rui16_element,
-#endif
-#ifdef USE_DIN_9684
-                                        rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
-#endif
+  void init(const IsoAgLib::ElementDDI_s* ps_elementDDI, uint16_t rui16_element,
+            const iDevKey_c& rc_devKey = iDevKey_c::DevKeyInitialProcessData,
+            uint8_t rui8_pri = 2,
+            const iDevKey_c& rc_ownerDevKey = iDevKey_c::DevKeyUnspecified,
+            const iDevKey_c* rpc_commanderDevKey = NULL,
+            ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
+            int ri_singletonVecKey = 0)
+
+  {ProcDataRemoteSimpleMeasure_c::init( ps_elementDDI, rui16_element,
                                         rc_devKey, rui8_pri, rc_ownerDevKey, rpc_commanderDevKey,
-                                        rpc_processDataChangeHandler, ri_singletonVecKey);};
+                                        rpc_processDataChangeHandler, ri_singletonVecKey);}
 
   /** set the poitner to the handler class
     * @param rpc_processDataChangeHandler pointer to handler class of application
     */
   void setProcessDataChangeHandler( ProcessDataChangeHandler_c *rpc_processDataChangeHandler )
-   { ProcDataRemoteSimpleMeasure_c::setProcessDataChangeHandler( rpc_processDataChangeHandler ); } ;
+   { ProcDataRemoteSimpleMeasure_c::setProcessDataChangeHandler( rpc_processDataChangeHandler ); }
+
   /** deliver the poitner to the handler class
     * @return pointer to handler class of application (or NULL if not defined by application)
     */
   IsoAgLib::ProcessDataChangeHandler_c* getProcessDataChangeHandler( void ) const
-   { return ProcDataRemoteSimpleMeasure_c::getProcessDataChangeHandler(); } ;
+   { return ProcDataRemoteSimpleMeasure_c::getProcessDataChangeHandler(); }
 
   /**
     deliver value PRI of messages with this
     process data instance
     @return PRI
   */
-  uint8_t pri() const{return ProcDataRemoteSimpleMeasure_c::pri();};
+  uint8_t pri() const{return ProcDataRemoteSimpleMeasure_c::pri();}
+
   /**
     set value PRI of messages with this
     process data instance (default value is 2 == target message)
     @param rb_val new PRI value
   */
-  void setPri(uint8_t rb_val){ProcDataRemoteSimpleMeasure_c::setPri(rb_val);};
+  void setPri(uint8_t rb_val){ProcDataRemoteSimpleMeasure_c::setPri(rb_val);}
+
   /**
     deliver value LIS (list number)
     @return LIS
   */
-  uint8_t lis() const{return ProcDataRemoteSimpleMeasure_c::lis();};
+  uint8_t lis() const{return ProcDataRemoteSimpleMeasure_c::lis();}
+
   /**
     deliver value DEVCLASS (machine type specific table of process data types)
     @return DEVCLASS
   */
-  uint8_t devClass() const{return ProcDataRemoteSimpleMeasure_c::devClass();};
+  uint8_t devClass() const{return ProcDataRemoteSimpleMeasure_c::devClass();}
+
   /**
     deliver value WERT (row of process data table)
     @return WERT
   */
-  uint8_t wert() const{return ProcDataRemoteSimpleMeasure_c::wert();};
+  uint8_t wert() const{return ProcDataRemoteSimpleMeasure_c::wert();}
+
   /**
     deliver value INST (column of process data table)
     @return INST
   */
-  uint8_t inst() const{return ProcDataRemoteSimpleMeasure_c::inst();};
+  uint8_t inst() const{return ProcDataRemoteSimpleMeasure_c::inst();}
+
   /**
     deliver value ZAEHLNUM (0xFF == whole working width; else parts of width)
     @return ZAEHLNUM
   */
-  uint8_t zaehlnum() const{return ProcDataRemoteSimpleMeasure_c::zaehlnum();};
+  uint8_t zaehlnum() const{return ProcDataRemoteSimpleMeasure_c::zaehlnum();}
+
   /**
     deliver value _instance_ (important if more than one machine with equal _device_class_ are active)
     @return POS
   */
-  uint8_t devClassInst() const{return ProcDataRemoteSimpleMeasure_c::devClassInst();};
-#ifdef USE_ISO_11783
+  uint8_t devClassInst() const{return ProcDataRemoteSimpleMeasure_c::devClassInst();}
+
   /** check if this ProcIdent_c has the given DDI as element */
-  bool hasDDI( uint16_t rui16_checkDDI ) const { return ProcIdent_c::hasDDI( rui16_checkDDI );};
+  bool hasDDI( uint16_t rui16_checkDDI ) const { return ProcIdent_c::hasDDI( rui16_checkDDI );}
 
   /**
     deliver value DDI (only possible if only one elementDDI in list)
     @return DDI
    */
-  uint16_t DDI() const { return ProcIdent_c::DDI();};
+  uint16_t DDI() const { return ProcIdent_c::DDI();}
+
   /**
   deliver value element (only possible if only one elementDDI in list)
   @return element
    */
-  uint16_t element() const  { return ProcIdent_c::element();};
+  uint16_t element() const  { return ProcIdent_c::element();}
+
   /**
     deliver DDI from last received can pkg
     @return DDI
   */
-  uint16_t getDDIfromCANPkg() const { return ProcDataBase_c::getDDIfromCANPkg();};
-  
-#endif
-
+  uint16_t getDDIfromCANPkg() const { return ProcDataBase_c::getDDIfromCANPkg();}
 
   /**
     deliver a reference to the setpoint object
     @return reference to member object with setpoint informations
   */
   iSetpointRemote_c& setpoint()
-    {return static_cast<iSetpointRemote_c&>(ProcDataRemoteSimpleMeasure_c::setpoint());};
+    {return static_cast<iSetpointRemote_c&>(ProcDataRemoteSimpleMeasure_c::setpoint());}
+
   /* ******************************************** *
    * some convenience functions for master        *
    * setpoint access with NOT simple setpoint      *
@@ -323,13 +288,15 @@ public:
     @return setpoint value as long
   */
   int32_t setpointMasterVal(bool rb_sendRequest = false)
-    {return ProcDataRemoteSimpleMeasure_c::setpointMasterVal(rb_sendRequest);};
+    {return ProcDataRemoteSimpleMeasure_c::setpointMasterVal(rb_sendRequest);}
+
   /**
     send a setpoint cmd with given exact setpoint
     @param ri32_val commanded setpoint value as long
   */
   void setSetpointMasterVal(int32_t ri32_val)
-    {ProcDataRemoteSimpleMeasure_c::setSetpointMasterVal(ri32_val);};
+    {ProcDataRemoteSimpleMeasure_c::setSetpointMasterVal(ri32_val);}
+
   #ifdef USE_FLOAT_DATA_TYPE
   /**
     deliver the actual master setpoint
@@ -337,31 +304,36 @@ public:
     @return setpoint value as float
   */
   float setpointMasterValFloat(bool rb_sendRequest = false)
-    {return ProcDataRemoteSimpleMeasure_c::setpointMasterValFloat(rb_sendRequest);};
+    {return ProcDataRemoteSimpleMeasure_c::setpointMasterValFloat(rb_sendRequest);}
+
   /**
     send a setpoint cmd with given exact setpoint
     @param rf_val commanded setpoint value as float
   */
   void setSetpointMasterVal(float rf_val)
-    {ProcDataRemoteSimpleMeasure_c::setSetpointMasterVal(rf_val);};
+    {ProcDataRemoteSimpleMeasure_c::setSetpointMasterVal(rf_val);}
+
   #endif
+
   /**
     deliver actual measurement value as long
     @param rb_sendRequest true -> request for new value is sent (optional, default false)
   */
   int32_t masterMeasurementVal(bool rb_sendRequest = false)
-    {return ProcDataRemoteSimpleMeasure_c::masterMeasurementVal(rb_sendRequest);};
+    {return ProcDataRemoteSimpleMeasure_c::masterMeasurementVal(rb_sendRequest);}
+
   /**
     send reset cmd for the measurement value
   */
-  void resetMasterVal(){ProcDataRemoteSimpleMeasure_c::resetMasterVal();};
+  void resetMasterVal(){ProcDataRemoteSimpleMeasure_c::resetMasterVal();}
+
   #ifdef USE_FLOAT_DATA_TYPE
   /**
     deliver actual measurement value as float
     @param rb_sendRequest true -> request for new value is sent (optional, default false)
   */
   float masterValFloat(bool rb_sendRequest = false)
-    {return ProcDataRemoteSimpleMeasure_c::masterValFloat(rb_sendRequest);};
+    {return ProcDataRemoteSimpleMeasure_c::masterValFloat(rb_sendRequest);}
   #endif
 
   /**
@@ -376,19 +348,19 @@ public:
   */
   void setCommanderDevKey(const __IsoAgLib::DevKey_c* rpc_devKey){ProcDataRemoteSimpleMeasure_c::setCommanderDevKey(rpc_devKey);};
 
-
   /**
     deliver the central data type of this process data
     @return proc_valType_t: i32_val, ui32_val, float_val, cmdVal
   */
   proc_valType_t valType()const
-    {return ProcDataRemoteSimpleMeasure_c::valType();};
+    {return ProcDataRemoteSimpleMeasure_c::valType();}
+
   /**
     set the central data type of this process data
     @return proc_valType_t: i32_val, ui32_val, float_val, cmdVal
   */
   void setValType(proc_valType_t ren_procValType)
-    {ProcDataRemoteSimpleMeasure_c::setValType(ren_procValType);};
+    {ProcDataRemoteSimpleMeasure_c::setValType(ren_procValType);}
 
 };
 

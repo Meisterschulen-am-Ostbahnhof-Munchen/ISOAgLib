@@ -195,12 +195,6 @@ public:
     @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
                          (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
 
-    DIN parameter
-    @param rui8_lis optional LIS code of this instance
-    @param rui8_wert optional WERT code of this instance
-    @param rui8_inst optional INST code of this instance
-    @param rui8_zaehlnum optional ZAEHLNUM code of this instance
-
     @param rc_devKey optional DEV_KEY code of Process-Data
     @param rui8_pri PRI code of messages with this process data instance (default 2)
     @param rc_ownerDevKey optional DEV_KEY of the owner
@@ -225,17 +219,8 @@ public:
     @param rpc_processDataChangeHandler optional pointer to handler class of application
     @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
-  ProcDataLocal_c(
-#ifdef USE_ISO_11783
-                  const IsoAgLib::ElementDDI_s* ps_elementDDI = NULL,
+  ProcDataLocal_c(const IsoAgLib::ElementDDI_s* ps_elementDDI = NULL,
                   uint16_t rui16_element = 0xFFFF,
-#endif
-#ifdef USE_DIN_9684
-                  uint8_t rui8_lis = 0xFF,
-                  uint8_t rui8_wert = 0,
-                  uint8_t rui8_inst = 0,
-                  uint8_t rui8_zaehlnum = 0xFF,
-#endif
                   const DevKey_c& rc_devKey = DevKey_c::DevKeyInitialProcessData,
                   uint8_t rui8_pri = 2,
                   const DevKey_c& rc_ownerDevKey = DevKey_c::DevKeyUnspecified,
@@ -257,12 +242,6 @@ public:
     @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
                          (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
 
-    DIN parameter
-    @param rui8_lis optional LIS code of this instance
-    @param rui8_wert optional WERT code of this instance
-    @param rui8_inst optional INST code of this instance
-    @param rui8_zaehlnum optional ZAEHLNUM code of this instance
-
     @param rc_devKey optional DEV_KEY code of Process-Data
     @param rui8_pri PRI code of messages with this process data instance (default 2)
     @param rc_ownerDevKey optional DEV_KEY of the owner
@@ -287,17 +266,8 @@ public:
     @param rpc_processDataChangeHandler optional pointer to handler class of application
     @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
-  void init(
-#ifdef USE_ISO_11783
-            const IsoAgLib::ElementDDI_s* ps_elementDDI = NULL,
+  void init(const IsoAgLib::ElementDDI_s* ps_elementDDI = NULL,
             uint16_t rui16_element = 0xFFFF,
-#endif
-#ifdef USE_DIN_9684
-            uint8_t rui8_lis = 0xFF,
-            uint8_t rui8_wert = 0,
-            uint8_t rui8_inst = 0,
-            uint8_t rui8_zaehlnum = 0xFF,
-#endif
             const DevKey_c& rc_devKey = DevKey_c::DevKeyInitialProcessData,
             uint8_t rui8_pri = 2,
             const DevKey_c& rc_ownerDevKey = DevKey_c::DevKeyUnspecified,
@@ -310,12 +280,14 @@ public:
             int ri_singletonVecKey = 0
             );
 
-
   /** default destructor which has nothing to do */
   ~ProcDataLocal_c();
+
   /** deliver a reference to the setpoint management class */
-  SetpointLocal_c& setpoint( void ) { return c_setpoint; };
-  const SetpointLocal_c& setpointConst( void ) const { return c_setpoint; };
+  SetpointLocal_c& setpoint( void ) { return c_setpoint; }
+
+  const SetpointLocal_c& setpointConst( void ) const { return c_setpoint; }
+
   /**
     check if specific measureprog exist
     @param rui8_pri PRI code of searched measure program
@@ -349,28 +321,33 @@ public:
   */
   virtual void setEepromAdr(uint16_t rui16_eepromAdr);
   #endif
+
   /**
     set the masterMeasurementVal from main application independent from any measure progs
     @param ri32_val new measure value
   */
   virtual void setMasterMeasurementVal(int32_t ri32_val);
+
   /**
     increment the value -> update the local and the measuring programs values
     @param ri32_val size of increment of master value
   */
   virtual void incrMasterMeasurementVal(int32_t ri32_val);
+
 #ifdef USE_FLOAT_DATA_TYPE
   /**
     set the masterMeasurementVal from main application independent from any measure progs
     @param rf_val new measure value
   */
   virtual void setMasterMeasurementVal(float rf_val);
+
   /**
     increment the value -> update the local and the measuring programs values
     @param rf_val size of increment of master value
   */
   virtual void incrMasterMeasurementVal(float rf_val);
 #endif
+
   /**
     perform periodic actions
     delete all running measure programs of members which are >3sec inactive;
@@ -384,29 +361,32 @@ public:
     (used for accessing setpoint values from measure progs)
     @return true -> setpoint master exists
   */
-  virtual bool setpointExistMaster() const { return setpointConst().existMaster();};
+  virtual bool setpointExistMaster() const { return setpointConst().existMaster();}
+
   /**
     (used for accessing setpoint values from measure progs)
     @return exact value of master setpoint
   */
-  virtual int32_t setpointExactValue() const { return setpointConst().masterConst().exact();};
+  virtual int32_t setpointExactValue() const { return setpointConst().masterConst().exact();}
+
   /**
     (used for accessing setpoint values from measure progs)
     @return default value of master setpoint
   */
-  virtual int32_t setpointDefaultValue() const { return setpointConst().masterConst().getDefault();};
+  virtual int32_t setpointDefaultValue() const { return setpointConst().masterConst().getDefault();}
+
   /**
     (used for accessing setpoint values from measure progs)
     @return min value of master setpoint
   */
-  virtual int32_t setpointMinValue() const { return setpointConst().masterConst().min();};
+  virtual int32_t setpointMinValue() const { return setpointConst().masterConst().min();}
+
   /**
     (used for accessing setpoint values from measure progs)
     @return max value of master setpoint
   */
-  virtual int32_t setpointMaxValue() const { return setpointConst().masterConst().max();};
+  virtual int32_t setpointMaxValue() const { return setpointConst().masterConst().max();}
 
-#ifdef USE_ISO_11783
   /**
     allow local client to actively start a measurement program
     (to react on a incoming "start" command for default data logging)
@@ -417,12 +397,12 @@ public:
   */
   bool startDataLogging(Proc_c::type_t ren_type /* Proc_c::TimeProp, Proc_c::DistProp, ... */,
                         int32_t ri32_increment, const DevKey_c* rpc_receiverDevice = NULL );
+
   /**
     stop all measurement progs in all local process instances, started with given devKey
     @param refc_devKey
   */
   virtual void stopRunningMeasurement(const DevKey_c& refc_devKey);
-#endif
 
 private: // Private methods
 #ifdef USE_EEPROM_IO
@@ -439,13 +419,18 @@ private: // Private methods
 
   /** processing of a setpoint message */
   virtual void processSetpoint();
+
   /** process a measure prog message for local process data */
   virtual void processProg();
+
   /** deliver reference to ManageMeasureProgLocal_c */
-  ManageMeasureProgLocal_c& getManageProg( void ) { return c_measureprog;};
+  ManageMeasureProgLocal_c& getManageProg( void ) { return c_measureprog;}
+
  private:
+
   /** flaxible management of measure progs */
   ManageMeasureProgLocal_c c_measureprog;
+
   /** flaxible management of setpoint */
   SetpointLocal_c c_setpoint;
 };

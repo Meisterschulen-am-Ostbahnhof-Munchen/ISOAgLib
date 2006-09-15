@@ -133,7 +133,7 @@ int32_t SimpleManageMeasureProgRemote_c::masterMeasurementVal(bool rb_sendReques
     getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */,
                                                                 GeneralCommand_c::exactValue,
                                                                 GeneralCommand_c::requestValue);
-    // DIN: pd=3, mod=0
+
     c_base.sendValDevKey(c_base.pri(), c_base.commanderDevKey(), 0);
   }
   return i32_masterVal;
@@ -148,21 +148,18 @@ void SimpleManageMeasureProgRemote_c::resetMasterVal()
   getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false /* isRequest */,
                                                               GeneralCommand_c::exactValue,
                                                               GeneralCommand_c::setValue);
-  // DIN: pd=1, mod=0
   c_base.sendValDevKey(c_base.pri(), c_base.commanderDevKey(), 0);
-  
+
   // prepare general command in process pkg
   getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false /* isRequest */,
                                                               GeneralCommand_c::exactValue,
                                                               GeneralCommand_c::measurementReset);
-  // DIN: pd=0, mod=6
   c_base.sendValDevKey(c_base.pri(), c_base.commanderDevKey(), 0x8);
   #ifdef RESET_MEASUREMENT_WITH_ZERO_EXACT_SETPOINT
     // prepare general command in process pkg
     getProcessInstance4Comm().data().c_generalCommand.setValues(true /* isSetpoint */, false /* isRequest */,
                                                                 GeneralCommand_c::exactValue,
                                                                 GeneralCommand_c::setValue);
-    // DIN: pd=0, mod=0
     c_base.sendValDevKey(c_base.pri(), c_base.commanderDevKey(), 0);
   #endif
 }
@@ -181,7 +178,7 @@ float SimpleManageMeasureProgRemote_c::masterValFloat(bool rb_sendRequest)
     getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */,
                                                                 GeneralCommand_c::exactValue,
                                                                 GeneralCommand_c::requestValue);
-    // DIN: pd=3, mod=0
+
     c_base.sendValDevKey(c_base.pri(), c_base.commanderDevKey(), 0);
   }
   return f_masterVal;
@@ -194,7 +191,6 @@ void SimpleManageMeasureProgRemote_c::processProg()
   ProcessPkg_c& c_pkg = getProcessInstance4Comm().data();
   bool b_change = false;
 
-  //  DIN: pd() == 1, mod() == 0
   if (c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::setValue)
   {
   #ifdef USE_FLOAT_DATA_TYPE

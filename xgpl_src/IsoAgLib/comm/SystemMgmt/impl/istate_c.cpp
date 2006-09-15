@@ -12,7 +12,7 @@
  *                                                                         *
  * This file is part of the "IsoAgLib", an object oriented program library *
  * to serve as a software layer between application specific program and   *
- * protocol details. By proviDing simple function calls for jobs like      *
+ * protocol details. By providing simple function calls for jobs like      *
  * jobs like starting a measuring program for a process data value on a    *
  * the mAin program has not to deal with Single CAN telegram formatting.   *
  * formatting. This way communication problems between ECU's which use     *

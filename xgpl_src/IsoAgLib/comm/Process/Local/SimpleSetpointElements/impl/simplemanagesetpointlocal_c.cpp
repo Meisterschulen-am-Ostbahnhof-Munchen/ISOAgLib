@@ -160,7 +160,7 @@ void SimpleManageSetpointLocal_c::processSetpoint(){
   // for simple setpoint the message is process here
   ProcessPkg_c& c_pkg = getProcessInstance4Comm().data();
   const DevKey_c& cc_senderDevKey = c_pkg.memberSend().devKey();
-  // DIN pd=0
+
   if (c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::setValue)
   { // setpoint set
     bool b_change = false;
@@ -223,7 +223,6 @@ bool SimpleManageSetpointLocal_c::sendSetpointMod(const DevKey_c& rc_targetDevKe
                                                               en_valueGroup, en_command);
   //if ( rui8_mod != 1 ) {
     // not percent
-    // DIN: pd=0, mod=rui8_mod
     #ifdef USE_FLOAT_DATA_TYPE
     if (valType() == float_val)
       return processDataConst().sendValDevKey(ren_progType, rc_targetDevKey, setpointMasterValFloat());

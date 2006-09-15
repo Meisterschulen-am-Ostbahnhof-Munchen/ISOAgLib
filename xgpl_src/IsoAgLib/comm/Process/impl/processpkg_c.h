@@ -94,12 +94,9 @@
 #include <IsoAgLib/util/impl/canpkgext_c.h>
 #include <IsoAgLib/comm/SystemMgmt/impl/systemmgmt_c.h>
 #include "generalcommand_c.h"
-
-#ifdef USE_ISO_11783
-  #include <IsoAgLib/driver/can/impl/ident_c.h>
-  #include "../elementddi_s.h"
-  #include <list>
-#endif
+#include <IsoAgLib/driver/can/impl/ident_c.h>
+#include "../elementddi_s.h"
+#include <list>
 
 namespace __IsoAgLib {
 
@@ -125,79 +122,85 @@ public:
     deliver PRI of process msg (message type)
     @return PRI value of message
   */
-  uint8_t pri()const{return bit_data.ui8_pri;};
+  uint8_t pri()const{return bit_data.ui8_pri;}
+
   /**
     deliver EMPF of process msg (receiving member number)
     @return EMPF value of message
   */
-  uint8_t empf()const{return bit_data.b_empf;};
+  uint8_t empf()const{return bit_data.b_empf;}
+
   /**
     deliver SEND of process msg (sending member number)
     @return SEND value of message
   */
-  uint8_t send()const{return bit_data.b_send;};
+  uint8_t send()const{return bit_data.b_send;}
 
   /**
     deliver LIS of process msg (list number of Process-Data)
     @return LIS value of message
   */
-  uint8_t lis()const{return bit_data.ui8_lis;};
+  uint8_t lis()const{return bit_data.ui8_lis;}
+
   /**
     deliver WERT of process msg (row of Process-Data table)
     @return  value of message
   */
-  uint8_t wert()const{return bit_data.ui8_wert;};
+  uint8_t wert()const{return bit_data.ui8_wert;}
+
   /**
     deliver INST of process msg (column of Process-Data table)
     @return  value of message
   */
-  uint8_t inst()const{return bit_data.ui8_inst;};
+  uint8_t inst()const{return bit_data.ui8_inst;}
 
   /**
     deliver PD of process msg (PD flag for subtype/action of Process-Data)
     @return PD value of message
   */
-  uint8_t pd()const{return bit_data.b_pd;};
+  uint8_t pd()const{return bit_data.b_pd;}
+
   /**
     deliver MOD of process msg (MOD flag for subtype of Process-Data)
     @return MOD value of message
   */
-  uint8_t mod()const{return bit_data.b_mod;};
+  uint8_t mod()const{return bit_data.b_mod;}
+
   /**
     deliver ZAEHLNUM of process msg (specify working width part corresponding to this msg)
     @return ZAEHLNUM value of message
   */
-  uint8_t zaehlnum()const{return bit_data.ui8_zaehlnum;};
+  uint8_t zaehlnum()const{return bit_data.ui8_zaehlnum;}
+
   /**
     deliver D of process msg (0 -> integer; 1 -> float)
     @return D value of message
   */
-  uint8_t d()const{return bit_data.b_d;};
+  uint8_t d()const{return bit_data.b_d;}
 
-#ifdef USE_ISO_11783
    /**
     deliver Cmd of process msg
     @return Command value of message
   */
-  uint8_t cmd()const{return bit_data.ui8_Command;};
+  uint8_t cmd()const{return bit_data.ui8_Command;}
 
   /**
     deliver Element Number of process msg
     @return Element Number value of message
   */
-  uint16_t element()const{return bit_data.ui16_Element;};
+  uint16_t element()const{return bit_data.ui16_Element;}
 
     /**
     deliver DDI of process msg
     @return Data Dictionary Identifier value of message
   */
-  uint16_t DDI()const{return bit_data.ui16_DDI;};
-#endif
+  uint16_t DDI()const{return bit_data.ui16_DDI;}
+
   /**
     deliver the data type of the value in the message
     @return proc_valType_t: i32_val, ui32_val, float_val, cmdVal
   */
-  proc_valType_t valType()const{return static_cast<proc_valType_t>(bit_data.b_valType);};
+  proc_valType_t valType()const{return static_cast<proc_valType_t>(bit_data.b_valType);}
 
   /**
     check if the 4byte value of the message has a special command of type
@@ -207,25 +210,6 @@ public:
   */
   bool isSpecCmd(proc_specCmd_t ren_checkCmd)const;
 
-#ifdef USE_DIN_9684
-  /**
-    deliver _instance_ of process msg (mounting position; important for more active members of same _device_class_)
-    @return _instance_ value of message
-  */
-  uint8_t devClassInst()const{return bit_data.c_devKey.getDevClassInst();};
-  /**
-    deliver DEVCLASS of process msg (machine type specific number of Proces-Data table)
-    @return DEVCLASS value of message
-  */
-  uint8_t devClass()const{return bit_data.c_devKey.getDevClass();};
-  /**
-    deliver devClass and pos as devKey
-    only used for DIN messages, ISO: devKey not in message
-    @return DEV_KEY value of message
-  */
-  const DevKey_c& devKey()const{return bit_data.c_devKey;};
-#endif
-
   /**
     deliver the 4byte data as int32_t val without any conversion
     for cmd's like measurement program increment, meas prog start/stop,
@@ -233,7 +217,8 @@ public:
     (4 uint8_t signed integer defined by int32_t in masterHeader)
     @return data value of message
   */
-  int32_t dataRawCmdLong()const {return c_flex4Data.getInt32Data();};
+  int32_t dataRawCmdLong()const {return c_flex4Data.getInt32Data();}
+
   /**
     deliver data value as int32_t; the 4byte data of the message are
     accessed with the type defined by the format flags
@@ -244,6 +229,7 @@ public:
     @return data value of message
   */
   int32_t dataLong()const;
+
   /**
     deliver data value as uint32_t; the 4byte data of the message are
     accessed with the type defined by the format flags
@@ -254,7 +240,8 @@ public:
     @return data value of message
   */
   uint32_t dataUlong()const;
-#if defined(USE_FLOAT_DATA_TYPE) || defined(USE_DIN_GPS)
+
+#if defined(USE_FLOAT_DATA_TYPE)
   /**
     deliver data value as float; the 4byte data of the message are
     accessed with the type defined by the format flags
@@ -265,36 +252,38 @@ public:
   */
   float dataFloat()const;
 #endif
+
   /**
     deliver data value as single uint8_t from position rb_pos
     @return uint8_t of wanted data position of message
   */
-  uint8_t data(uint8_t rb_pos)const{return c_flex4Data.getUint8Data(rb_pos);};
+  uint8_t data(uint8_t rb_pos)const{return c_flex4Data.getUint8Data(rb_pos);}
 
   /**
     check if SEND member number is valid (e.g. there has claimed address member in
     monitor list registered)
     @return true -> there has claimed address member with number SEND
   */
-  bool existMemberSend() const {return (pc_monitorSend != NULL)?true:false;};
+  bool existMemberSend() const {return (pc_monitorSend != NULL)?true:false;}
+
   /**
     check if EMPF member number is valid (e.g. there has claimed address member in
     monitor list registered)
     @return true -> there has claimed address member with number EMPF
   */
-  bool existMemberEmpf() const {return (pc_monitorEmpf != NULL)?true:false;};
+  bool existMemberEmpf() const {return (pc_monitorEmpf != NULL)?true:false;}
+
   /**
-    deliver reference to MonitorItem_c of EMPF member (MonitorItem_c is base class for both
-    DINItem_c and ISOItem_c)
+    deliver reference to MonitorItem_c of EMPF member (MonitorItem_c is base class for ISOItem_c)
     (check with existMemberEmpf before access to not defined item)
 
     @return reference to MonitorItem_c of member which is addressed by EMPF
      @exception containerElementNonexistant
   */
   MonitorItem_c& memberEmpf()const;
+
   /**
-    deliver reference to MonitorItem_c of SEND member (MonitorItem_c is base class for both
-    DINItem_c and ISOItem_c)
+    deliver reference to MonitorItem_c of SEND member (MonitorItem_c is base class for ISOItem_c)
     (check with existMemberSend before access to not defined item)
 
     @return reference to MonitorItem_c of member which is addressed by SEND
@@ -313,7 +302,8 @@ public:
   void setPri(uint8_t rb_val) {
     bit_data.ui8_pri = rb_val;
     setIdentType(Ident_c::StandardIdent);
-  };
+  }
+
   /**
     set value EMPF of process msg
     @param rb_val new EMPF value for message
@@ -321,7 +311,7 @@ public:
   void setEmpf(uint8_t rb_val) {
     bit_data.b_empf = rb_val;
     setIdentType(Ident_c::StandardIdent);
-  };
+  }
 
   /**
     set value SEND of process msg
@@ -330,83 +320,67 @@ public:
   void setSend(uint8_t rb_val) {
     bit_data.b_send = rb_val;
     setIdentType(Ident_c::StandardIdent);
-  };
+  }
 
   /**
     set value LIS of process msg
     @param rb_val new LIS value for message
   */
-  void setLis(uint8_t rb_val){bit_data.ui8_lis = rb_val;};
+  void setLis(uint8_t rb_val){bit_data.ui8_lis = rb_val;}
+
   /**
     set value WERT of process msg
     @param rb_val new WERT value for message
   */
-  void setWert(uint8_t rb_val){bit_data.ui8_wert = rb_val;};
+  void setWert(uint8_t rb_val){bit_data.ui8_wert = rb_val;}
+
   /**
     set value INST of process msg
     @param rb_val new INST value for message
   */
-  void setInst(uint8_t rb_val){bit_data.ui8_inst = rb_val;};
+  void setInst(uint8_t rb_val){bit_data.ui8_inst = rb_val;}
+
   /**
     set value PD of process msg
     @param rb_val new PD value for message
   */
-  void setPd(uint8_t rb_val){bit_data.b_pd = rb_val;};
+  void setPd(uint8_t rb_val){bit_data.b_pd = rb_val;}
+
   /**
     set value MOD of process msg
     @param rb_val new MOD value for message
   */
-  void setMod(uint8_t rb_val){bit_data.b_mod = rb_val;};
+  void setMod(uint8_t rb_val){bit_data.b_mod = rb_val;}
+
   /**
     set value ZAEHLNUM of process msg
     @param rb_val new ZAEHLNUM value for message
   */
-  void setZaehlnum(uint8_t rb_val){bit_data.ui8_zaehlnum = rb_val;};
+  void setZaehlnum(uint8_t rb_val){bit_data.ui8_zaehlnum = rb_val;}
+
   /**
     set value D of process msg
     @param rb_val new D value for message
   */
-  void set_d(uint8_t rb_val){bit_data.b_d = rb_val;};
-#ifdef USE_ISO_11783
+  void set_d(uint8_t rb_val){bit_data.b_d = rb_val;}
+
    /**
     set command of process msg
     @param rb_cmd command value of process data message
   */
-  void set_Cmd(uint8_t rb_cmd){bit_data.ui8_Command = rb_cmd;};
+  void set_Cmd(uint8_t rb_cmd){bit_data.ui8_Command = rb_cmd;}
 
    /**
     set DDI of process msg
     @param rb_DDI Data dictionary Itendifier
   */
-  void set_DDI(uint16_t rb_DDI){bit_data.ui16_DDI = rb_DDI;};
+  void set_DDI(uint16_t rb_DDI){bit_data.ui16_DDI = rb_DDI;}
 
    /**
     set Element Number of Process Data Message
     @param rb_Element command value of process data message
   */
-  void set_Element(uint16_t rb_Element){bit_data.ui16_Element = rb_Element;};
-
-#endif
-
-
-#ifdef USE_DIN_9684
-  /**
-    set value dev class inst of process msg
-    @param rb_val new device class inst value for message
-  */
-  void setDevClassInst(uint8_t rb_val){bit_data.c_devKey.setDevClassInst(rb_val);};
-  /**
-    set value DEVCLASS of process msg
-    @param rb_val new DEVCLASS value for message
-  */
-  void setDevClass(uint8_t rb_val){bit_data.c_devKey.setDevClass(rb_val);};
-  /**
-    set values devClass and pos from devKey
-    only used for DIN messages, ISO: devKey not in message
-    @param rc_val new DEV_KEY value for message
-  */
-  void setDevKey(const DevKey_c& rc_val){bit_data.c_devKey = rc_val;};
-#endif
+  void set_Element(uint16_t rb_Element){bit_data.ui16_Element = rb_Element;}
 
   /**
     set the 4byte data as int32_t val without any conversion
@@ -417,6 +391,7 @@ public:
     @param ren_procValType data type for message string (default i32_val)
   */
   void setDataRawCmd(int32_t ri32_val, proc_valType_t ren_procValType = i32_val);
+
   /**
     set data value as with int32_t value parameter
     and with defined send value type and set data type flag
@@ -427,6 +402,7 @@ public:
     @param ren_procValType data type for message string (default i32_val)
   */
   void setData(int32_t ri32_val, proc_valType_t ren_procValType = i32_val);
+
   /**
     set data value as with uint32_t value parameter
     and with defined send value type and set data type flag
@@ -437,6 +413,7 @@ public:
     @param ren_procValType data type for message string (default ui32_val)
   */
   void setData(uint32_t ri32_val, proc_valType_t ren_procValType = ui32_val);
+
   /**
     set one of the special commands of type proc_specCmd_t:
     setpointReleaseCmd, setpointErrCmd, noVal_32s, errVal_32s
@@ -445,7 +422,8 @@ public:
     @param ren_procValType data type for message string (default ui32_val)
   */
   void setData(proc_specCmd_t ren_procSpecCmd, proc_valType_t ren_procValType = i32_val);
-#if defined(USE_FLOAT_DATA_TYPE) || defined(USE_DIN_GPS)
+
+#if defined(USE_FLOAT_DATA_TYPE)
   /**
     set data value as with float value parameter
     and with defined send value type and set data type flag
@@ -457,24 +435,19 @@ public:
   */
   void setData(float rf_val, proc_valType_t ren_procValType = float_val);
 #endif
+
   /**
     set value data value as single uint8_t on position rb_pos
     @param rb_pos position of written uint8_t in data string
     @param rb_val uint8_t data value
   */
-  void setData(uint8_t rb_pos, uint8_t rb_val){c_flex4Data.setUint8Data(rb_pos, rb_val);};
+  void setData(uint8_t rb_pos, uint8_t rb_val){c_flex4Data.setUint8Data(rb_pos, rb_val);}
 
   /**
-    extract data from DIN/ISO commands and save it to member class
+    extract data from ISO commands and save it to member class
     @param refl_elementDDI
   */
-#ifdef USE_DIN_9684
-  bool resolveCommandTypeForDIN();
-#endif
-
-#ifdef USE_ISO_11783
   bool resolveCommandTypeForISO(const IsoAgLib::ElementDDI_s& refl_elementDDI);
-#endif
 
   /**
     overloaded virtual function to translate the string data into flag values;
@@ -483,6 +456,7 @@ public:
     @see CANPkgExt_c::operator=
   */
   virtual void string2Flags();
+
   /**
     some LBS+ terminals wants process data interaction for syncronisation of
     terminal mask with DEV_KEY of terminal even for local process data
@@ -508,6 +482,7 @@ private: // Private methods
 
 private: // Private attributes
   Flexible4ByteString_c c_flex4Data;
+
   struct _bit_data {
     /** ZAEHLNUM for data */
     uint16_t ui8_zaehlnum : 8;
@@ -522,10 +497,6 @@ private: // Private attributes
     uint16_t ui8_lis : 3;
     /** PD for data */
     uint16_t b_pd : 2;
-    #ifdef USE_DIN_9684
-    /** DevKey for data */
-    DevKey_c c_devKey;
-    #endif
 
     /** MOD for data */
     uint16_t b_mod : 3;
@@ -539,14 +510,14 @@ private: // Private attributes
     /** decide about used val type: int32_t, uint32_t, float, cmd */
     uint16_t b_valType : 2;
 
-#ifdef USE_ISO_11783
     uint16_t ui8_Command : 4;
     uint16_t ui16_Element : 12;
     uint16_t ui16_DDI : 16;
-#endif
   } bit_data;
+
   /** pointer to monitor list item of sender "SEND" (NULL if not claimed address) */
   MonitorItem_c* pc_monitorSend;
+
   /** pointer to monitor list item of receiver "EMPF" (NULL if not claimed address) */
   MonitorItem_c* pc_monitorEmpf;
   /**
@@ -554,6 +525,7 @@ private: // Private attributes
     data for communication on CAN BUS (default 0xFF for off)
   */
   DevKey_c c_specialTermDevKey;
+
   /**
     some terminal wants to use DEV_KEY of terminal even for local process
     data for communication on CAN BUS (default 0xFF for off)

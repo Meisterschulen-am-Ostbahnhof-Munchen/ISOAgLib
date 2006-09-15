@@ -528,7 +528,7 @@ private: // Private methods
     HIDDEN constructor for a MultiSend_c object instance
     NEVER instantiate a variable of type MultiSend_c within application
     only access MultiSend_c via getMultiSendInstance() or getMultiSendInstance( int riLbsBusNr )
-    in case more than one ISO11783 or DIN9684 BUS is used for IsoAgLib
+    in case more than one ISO11783 is used for IsoAgLib
     */
   MultiSend_c() {};
 

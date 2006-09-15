@@ -1,7 +1,6 @@
 /***************************************************************************
                           devkey_c.h - class DevKey_c combines device class
-                                      ( GETY_POS for DIN 9684 ) and instance
-                                      number ( POS for DIN 9684 )
+                                       and instance number
                              -------------------
     begin                 Sun Feb 23 2003
     copyright            : (C) 2003 - 2004 by Dipl.-Inform. Achim Spangler
@@ -93,196 +92,128 @@
 /* *************************************** */
 #include <IsoAgLib/typedef.h>
 #include <IsoAgLib/comm/SystemMgmt/impl/baseitem_c.h>
-#ifdef USE_ISO_11783
 #include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h>
-#endif
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 /** class DevKey_c combines device class
-  * ( GETY_POS for DIN 9684 ) and instance
-  * number ( POS for DIN 9684 )
-  *@author Dipl.-Inform. Achim Spangler
+    and instance number
+    @author Dipl.-Inform. Achim Spangler
   */
 class DevKey_c {
  public:
-    /** constant for default parameters and initialization, where the device type is not yet spcified.
-        the instantiation of this constant variable is located in the module cancustomer_c.cpp
-      */
-    static const DevKey_c DevKeyUnspecified;
-    /** constant for not yet spcified process data ident -> <device class, device class instance> := <0x0,0xF>
-        the instantiation of this constant variable is located in the module cancustomer_c.cpp
-      */
-    static const DevKey_c DevKeyInitialProcessData;
-    /** default constructor
-      * @param rui16_devClass optional initial DEVCLASS (device type)
-      * @param rui16_pos optional initial device class instance
-      */
-    #ifdef USE_ISO_11783
-    DevKey_c( uint8_t rui8_devClass = 0x7F, uint8_t rui8_pos = 0xF )
-    : c_isoName( true, 2, rui8_devClass, rui8_pos, 0xFF, 0x7FF, 0x1FFFFF, 0x1F, 0x7 ) {};
-    #else
-    DevKey_c( uint16_t rui16_devClass = 0x7F, uint16_t rui16_pos = 0xF )
-    : ui16_data( ( rui16_devClass << 8 ) | ( rui16_pos & 0xF ) ){};
-    #endif
+  /** constant for default parameters and initialization, where the device type is not yet spcified.
+      the instantiation of this constant variable is located in the module cancustomer_c.cpp
+    */
+  static const DevKey_c DevKeyUnspecified;
 
-    #ifdef USE_ISO_11783
-    /** default constructor
-      * @param rui16_devClass optional initial DEVCLASS (device type)
-      * @param rui16_pos optional initial device class instance
-      */
-    DevKey_c(bool rb_selfConf, uint8_t rui8_indGroup, uint8_t rui8_devClass, uint8_t rui8_devClassInst,
-        uint8_t rb_func, uint16_t rui16_manufCode, uint32_t rui32_serNo, uint8_t rb_funcInst = 0, uint8_t rb_ecuInst = 0)
-    : c_isoName( rb_selfConf, rui8_indGroup, rui8_devClass, rui8_devClassInst,
-        rb_func, rui16_manufCode, rui32_serNo, rb_funcInst, rb_ecuInst) {};
-    /** default constructor
-      * @param rui16_devClass optional initial DEVCLASS (device type)
-      * @param rui16_pos optional initial device class instance
-      */
-    DevKey_c( const ISOName_c& rrefc_src )
-    : c_isoName(rrefc_src) {};
-    DevKey_c( const Flexible8ByteString_c* rpc_flexibleDataName ) : c_isoName( rpc_flexibleDataName ) {};
-    #endif
+  /** constant for not yet spcified process data ident -> <device class, device class instance> := <0x0,0xF>
+      the instantiation of this constant variable is located in the module cancustomer_c.cpp
+    */
+  static const DevKey_c DevKeyInitialProcessData;
 
-    /** default constructor
-      * @param rui16_devClass optional initial DEVCLASS (device type)
-      * @param rui16_pos optional initial device class instance
-      */
-    DevKey_c( const DevKey_c& rrefc_src )
-    #ifdef USE_ISO_11783
-    : c_isoName(rrefc_src.c_isoName) {};
-    #else
-    : ui16_data(rrefc_src.ui16_data) {};
-    #endif
+  /** default constructor
+      @param rui8_devClass  optional initial DEVCLASS (device type)
+      @param rui8_pos       optional initial device class instance
+    */
+  DevKey_c( uint8_t rui8_devClass = 0x7F, uint8_t rui8_pos = 0xF )
+  : c_isoName( true, 2, rui8_devClass, rui8_pos, 0xFF, 0x7FF, 0x1FFFFF, 0x1F, 0x7 ) {}
 
+  /** default constructor
+      @param rb_selfConf       true -> indicate sefl configuring ECU
+      @param rui8_indGroup     industry group of device (2 for agriculture)
+      @param rui8_devClass     device class of ECU (equivalent to DEVCLASS in DIN)
+      @param rui8_devClassInst instance number of ECU with same devClass in the network
+      @param rb_func           function of the ECU (usual 25 for network interconnect)
+      @param rui16_manufCode   code of manufactor (11bit)
+      @param rui32_serNo       serial no of specific device (21bit)
+      @param rb_ecuInst        instance number of ECU with same function and device class (default 0 - normally)
+      @param rb_funcInst       instance number of ECU with same function, device class and function instance
+                                (default 0 - normally)
+    */
+  DevKey_c(bool rb_selfConf, uint8_t rui8_indGroup, uint8_t rui8_devClass, uint8_t rui8_devClassInst,
+      uint8_t rb_func, uint16_t rui16_manufCode, uint32_t rui32_serNo, uint8_t rb_funcInst = 0, uint8_t rb_ecuInst = 0)
+  : c_isoName( rb_selfConf, rui8_indGroup, rui8_devClass, rui8_devClassInst,
+      rb_func, rui16_manufCode, rui32_serNo, rb_funcInst, rb_ecuInst) {}
 
-    /** set device class & instance with two seperate parameters */
-    #ifdef USE_ISO_11783
-    void set( uint8_t rui8_devClass, uint8_t rui8_pos )
-      { setDevClass( rui8_devClass); setDevClassInst( rui8_pos ); };
-    #else
-    void set( uint16_t rui16_devClass, uint16_t rui16_pos )
-      { ui16_data = ( ( rui16_devClass << 8 ) | ( rui16_pos & 0xF ) ); };
-    #endif
+  /** default constructor
+      @param rrefc_src source ISOName_c instance
+    */
+  DevKey_c( const ISOName_c& rrefc_src )
+  : c_isoName(rrefc_src) {}
 
-    #ifdef USE_ISO_11783
-    /** set device class & instance with two seperate parameters */
-    void set( const ISOName_c& rrefc_isoName ) { c_isoName = rrefc_isoName;};
-    /** set device class & instance with two seperate parameters */
-    void set( const Flexible8ByteString_c* rpc_flexibleDataName ){ c_isoName.inputUnion(rpc_flexibleDataName);};
-    /** set device class & instance with two seperate parameters */
-    void set( const uint8_t* rpui8_stringDataName ){ c_isoName.inputString(rpui8_stringDataName);};
-    #endif
+  /** constructor which can read in initial data from uint8_t string
+    @param rpc_flexibleDataName  64bit input data string
+  */
+  DevKey_c( const Flexible8ByteString_c* rpc_flexibleDataName ) : c_isoName( rpc_flexibleDataName ) {}
 
-    /** set DEVCLASS (device type ) */
-    #ifdef USE_ISO_11783
-    void setDevClass( uint8_t rui8_devClass )
-      { c_isoName.setDevClass( rui8_devClass );};
-    #else
-    void setDevClass( uint16_t rui16_devClass )
-      { ui16_data = ( ( rui16_devClass << 8 ) | ( ui16_data & 0xF ) );};
-    #endif
-    /** set device class instance */
-    #ifdef USE_ISO_11783
-    void setDevClassInst( uint8_t rui8_pos )
-      { c_isoName.setDevClassInst( rui8_pos );};
-    #else
-    void setDevClassInst( uint16_t rui16_pos )
-      { ui16_data = ( ( ui16_data & 0xFF00 ) | ( rui16_pos & 0xF ) );};
-    #endif
+  /** default constructor
+      @param rrefc_src source DevKey_c instance
+    */
+  DevKey_c( const DevKey_c& rrefc_src ): c_isoName(rrefc_src.c_isoName) {}
 
 
-    /** deliver DEVCLASS (device type ) */
-    uint8_t getDevClass( void ) const
-    #ifdef USE_ISO_11783
-      { return c_isoName.devClass();};
-    #else
-      { return ( ui16_data >> 8 );};
-    #endif
-    /** deliver _instance_ ( device type instance number ) */
-    uint8_t getDevClassInst( void ) const
-    #ifdef USE_ISO_11783
-      { return c_isoName.devClassInst();};
-    #else
-      { return ( ui16_data & 0xF );};
-    #endif
+  /** set device class & instance with two seperate parameters */
+  void set( uint8_t rui8_devClass, uint8_t rui8_pos ) { setDevClass( rui8_devClass); setDevClassInst( rui8_pos ); }
 
-    #ifdef USE_ISO_11783
-    /** provide pointer to second level compare NAME */
-    ISOName_c& getName() { return c_isoName;};
-    /** provide pointer to second level compare NAME */
-    const ISOName_c& getConstName() const { return c_isoName;};
-    #endif
+  /** set device class & instance with two seperate parameters */
+  void set( const ISOName_c& rrefc_isoName ) { c_isoName = rrefc_isoName;}
+
+  /** set device class & instance with two seperate parameters */
+  void set( const Flexible8ByteString_c* rpc_flexibleDataName ){ c_isoName.inputUnion(rpc_flexibleDataName);}
+
+  /** set device class & instance with two seperate parameters */
+  void set( const uint8_t* rpui8_stringDataName ){ c_isoName.inputString(rpui8_stringDataName);}
+
+  /** set DEVCLASS (device type ) */
+  void setDevClass( uint8_t rui8_devClass ) { c_isoName.setDevClass( rui8_devClass );}
+
+  /** set device class instance */
+  void setDevClassInst( uint8_t rui8_pos ) { c_isoName.setDevClassInst( rui8_pos );}
 
 
-    /** assign value from another DevKey_c instance */
-    const DevKey_c& operator=( const DevKey_c& refc_src )
-    #ifdef USE_ISO_11783
-      {c_isoName = refc_src.c_isoName;return refc_src;};
-    #else
-      { ui16_data = refc_src.ui16_data; return *this;};
-    #endif
-    /** compare two DevKey_c values with operator== */
-    bool operator==( const DevKey_c& refc_right ) const
-    #ifdef USE_ISO_11783
-      { return ( c_isoName == refc_right.c_isoName )?true:false;};
-    #else
-      { return ui16_data == refc_right.ui16_data;};
-    #endif
-    /** compare two DevKey_c values with operator!= */
-    bool operator!=( const DevKey_c& refc_right ) const
-    #ifdef USE_ISO_11783
-      { return ( c_isoName != refc_right.c_isoName )?true:false;};
-    #else
-      { return ui16_data != refc_right.ui16_data;};
-    #endif
+  /** deliver DEVCLASS (device type ) */
+  uint8_t getDevClass( void ) const  { return c_isoName.devClass();}
 
-    /** compare two DevKey_c values with operator< */
-    bool operator<( const DevKey_c& refc_right ) const
-    #ifdef USE_ISO_11783
-      { return ( c_isoName < refc_right.c_isoName )?true:false;};
-    #else
-      { return ui16_data < refc_right.ui16_data;};
-    #endif
+  /** deliver _instance_ ( device type instance number ) */
+  uint8_t getDevClassInst( void ) const { return c_isoName.devClassInst();}
 
-    /** set this instance to indicator for unspecified value */
-    void setUnspecified( void )
-    #ifdef USE_ISO_11783
-      { c_isoName.setDevClass( 0x7F ); c_isoName.setDevClassInst( 0xF );};
-    #else
-      { ui16_data = 0x7F0F;};
-    #endif
-    /** check if this instance has specified value (different from default */
-    bool isSpecified( void )   const
-    #ifdef USE_ISO_11783
-      { return ( ( getDevClass() != 0x7F ) || ( getDevClassInst() != 0xF ) )?true:false;};
-    #else
-      { return ( ui16_data != 0x7F0F)?true:false;};
-    #endif
-    bool isUnspecified( void ) const
-    #ifdef USE_ISO_11783
-      { return ( ( getDevClass() == 0x7F ) && ( getDevClassInst() == 0xF ) )?true:false;};
-    #else
-      { return ( ui16_data == 0x7F0F)?true:false;};
-    #endif
-    bool isSpecifiedDevClassInst( void ) const
-    #ifdef USE_ISO_11783
-      { return ( getDevClassInst()  == 0xF  )?true:false;};
-    #else
-      { return ( ( ui16_data & 0xF ) != 0xF )?true:false;};
-    #endif
-    bool isUnspecifiedDevClassInst( void ) const
-    #ifdef USE_ISO_11783
-      { return ( getDevClass() == 0x7F )?true:false;};
-    #else
-      { return ( ( ui16_data & 0x7F00 ) == 0x7F00 )?true:false;};
-    #endif
+  /** provide pointer to second level compare NAME */
+  ISOName_c& getName() { return c_isoName;}
+
+  /** provide pointer to second level compare NAME */
+  const ISOName_c& getConstName() const { return c_isoName;}
+
+
+  /** assign value from another DevKey_c instance */
+  const DevKey_c& operator=( const DevKey_c& refc_src ) {c_isoName = refc_src.c_isoName;return refc_src;}
+
+  /** compare two DevKey_c values with operator== */
+  bool operator==( const DevKey_c& refc_right ) const { return ( c_isoName == refc_right.c_isoName )?true:false;}
+
+  /** compare two DevKey_c values with operator!= */
+  bool operator!=( const DevKey_c& refc_right ) const { return ( c_isoName != refc_right.c_isoName )?true:false;}
+
+  /** compare two DevKey_c values with operator< */
+  bool operator<( const DevKey_c& refc_right ) const { return ( c_isoName < refc_right.c_isoName )?true:false;}
+
+  /** set this instance to indicator for unspecified value */
+  void setUnspecified( void ) { c_isoName.setDevClass( 0x7F ); c_isoName.setDevClassInst( 0xF );}
+
+  /** check if this instance has specified value (different from default) */
+  bool isSpecified( void ) const { return ( ( getDevClass() != 0x7F ) || ( getDevClassInst() != 0xF ) )?true:false;}
+
+  /** check if this instance has unspecified value (match default) */
+  bool isUnspecified( void ) const { return ( ( getDevClass() == 0x7F ) && ( getDevClassInst() == 0xF ) )?true:false;}
+
+  /** check if this instance has specified class instance */
+  bool isSpecifiedDevClassInst( void ) const { return ( getDevClassInst()  == 0xF  )?true:false;}
+
+  /** check if this instance has unspecified class instance */
+  bool isUnspecifiedDevClassInst( void ) const { return ( getDevClass() == 0x7F )?true:false;}
+
  private:
-    #ifdef USE_ISO_11783
     ISOName_c c_isoName;
-    #else
-    uint16_t ui16_data;
-    #endif
 };
 
 } // end namespace __IsoAgLib

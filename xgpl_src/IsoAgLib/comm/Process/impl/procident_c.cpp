@@ -116,25 +116,12 @@
 
 namespace __IsoAgLib {
 
-#ifdef USE_DIN_9684
-/** static instance for all ProcIdent_c objects that is solely used as a temp variable for the function
- * const DevKey_c& devKey() const
- * only in DIN 9684 mode
- */
-DevKey_c ProcIdent_c::c_temp;
-#endif
-
 /**
   constructor which can optional set all member values
     ISO parameter
     @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, isSetpoint and ValueGroup
                          (array is terminated by ElementDDI_s.ddi == 0xFFFF)
     @param ui16_element device element number
-    DIN parameter
-    @param rui8_lis optional LIS code of Process-Data
-    @param rui8_wert optional WERT code of Process-Data
-    @param rui8_inst optional INST code of Process-Data
-    @param rui8_zaehlnum optional ZAEHLNUM  code of Process-Data
 
     common parameter
     @param rc_devKey optional DEV_KEY code of Process-Data
@@ -146,39 +133,12 @@ DevKey_c ProcIdent_c::c_temp;
     @param rpc_ownerDevKey pointer to the optional DEV_KEY var of the owner (for automatic update as soon
             as corresponding device is registered as having claimed address in monitor table list)
   */
-  ProcIdent_c::ProcIdent_c(
-#ifdef USE_ISO_11783
-                           const IsoAgLib::ElementDDI_s* ps_elementDDI,
-                           uint16_t ui16_element,
-#endif
-#ifdef USE_DIN_9684
-                           uint8_t rui8_lis,
-                           uint8_t rui8_wert,
-                           uint8_t rui8_inst,
-                           uint8_t rui8_zaehlnum,
-#endif
-                           const DevKey_c& rc_devKey,
-                           uint8_t rui8_pri,
-                           const DevKey_c& rc_ownerDevKey,
-                           const DevKey_c *rpc_ownerDevKey,
-                           int ri_singletonVecKey)
+  ProcIdent_c::ProcIdent_c( const IsoAgLib::ElementDDI_s* ps_elementDDI, uint16_t ui16_element,
+                            const DevKey_c& rc_devKey, uint8_t rui8_pri, const DevKey_c& rc_ownerDevKey,
+                            const DevKey_c *rpc_ownerDevKey, int ri_singletonVecKey)
   : ClientBase( ri_singletonVecKey )
 {
-  init(
-#ifdef USE_ISO_11783
-            ps_elementDDI,
-            ui16_element,
-#endif
-#ifdef USE_DIN_9684
-            rui8_lis,
-            rui8_wert,
-            rui8_inst,
-            rui8_zaehlnum,
-#endif
-            rc_devKey,
-            rui8_pri,
-            rc_ownerDevKey,
-            rpc_ownerDevKey);
+  init( ps_elementDDI, ui16_element, rc_devKey, rui8_pri, rc_ownerDevKey, rpc_ownerDevKey);
 }
 
 /** copy constructor */
@@ -194,11 +154,6 @@ ProcIdent_c::ProcIdent_c( const ProcIdent_c& rrefc_src )
     @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, isSetpoint and ValueGroup
                          (array is terminated by ElementDDI_s.ddi == 0xFFFF)
     @param ui16_element device element number
-    DIN parameter
-    @param rui8_lis LIS code of Process-Data
-    @param rui8_wert WERT code of Process-Data
-    @param rui8_inst INST code of Process-Data
-    @param rui8_zaehlnum ZAEHLNUM  code of Process-Data
 
     common parameter
     @param rc_devKey DEV_KEY code of Process-Data
@@ -210,32 +165,12 @@ ProcIdent_c::ProcIdent_c( const ProcIdent_c& rrefc_src )
     @param rpc_ownerDevKey pointer to the optional DEV_KEY var of the owner (for automatic update as soon
             as corresponding device is registered as having claimed address in monitor table list)
 */
-void ProcIdent_c::init(
-#ifdef USE_ISO_11783
-            const IsoAgLib::ElementDDI_s* ps_elementDDI,
-            uint16_t ui16_element,
-#endif
-#ifdef USE_DIN_9684
-            uint8_t rui8_lis,
-            uint8_t rui8_wert,
-            uint8_t rui8_inst,
-            uint8_t rui8_zaehlnum,
-#endif
-            const DevKey_c& rc_devKey,
-            uint8_t rui8_pri,
-            const DevKey_c& rc_ownerDevKey,
-            const DevKey_c *rpc_ownerDevKey)
+void ProcIdent_c::init( const IsoAgLib::ElementDDI_s* ps_elementDDI, uint16_t ui16_element,
+                        const DevKey_c& rc_devKey, uint8_t rui8_pri,
+                        const DevKey_c& rc_ownerDevKey, const DevKey_c *rpc_ownerDevKey)
 {
-#ifdef USE_ISO_11783
   setElementDDI(ps_elementDDI);
   setElementNumber(ui16_element);
-#endif
-#ifdef USE_DIN_9684
-  setLis(rui8_lis);
-  setWert(rui8_wert);
-  setInst(rui8_inst);
-  setZaehlnum(rui8_zaehlnum);
-#endif
 
   data.c_devKey = rc_devKey;
   setPri(rui8_pri);
@@ -270,15 +205,8 @@ void ProcIdent_c::assignFromSource( const ProcIdent_c& rrefc_src )
   data.c_devKey = rrefc_src.data.c_devKey;
   data.c_ownerDevKey = rrefc_src.data.c_ownerDevKey;
   pc_ownerDevKey = rrefc_src.pc_ownerDevKey;
-#ifdef USE_ISO_11783
   // elementDDI() returns list reference, setElementDDI() expects pointer to list
   setElementDDI(&(rrefc_src.elementDDI()));
-#endif
-#ifdef USE_DIN_9684
-  setWert(rrefc_src.wert());
-  setInst(rrefc_src.inst());
-  setZaehlnum(rrefc_src.zaehlnum());
-#endif
   setPri(rrefc_src.pri());
 }
 
@@ -296,8 +224,6 @@ void ProcIdent_c::setOwnerDevKey(const DevKey_c* rpc_val)
   data.c_ownerDevKey = *rpc_val;
 }
 
-
-#ifdef USE_ISO_11783
 /**
    check if this item has the same identity as defined by the parameters,
    if rui8_devClassInst is 0xFF a lazy match disregarding pos is done
@@ -370,66 +296,6 @@ bool ProcIdent_c::hasType(bool rb_isSetpoint, GeneralCommand_c::ValueGroup_t t_d
   else return true;
 }
 
-#endif
-
-
-#ifdef USE_DIN_9684
-/**
-   check if this item has the same identity as defined by the parameters,
-   if rui8_devClassInst is 0xFF a lazy match disregarding pos is done
-   (important for matching received process data msg);
-   if INSTANCE is defined (!= 0xFF) then one of the following conditions must be true:<ul>
-   <li>parameter INSTANCE == ident INSTANCE (devClassInst())
-   <li>parameter INSTANCE == owner INSTANCE ( ownerDevKey().getDevClassInst() )
-   <li>parameter rc_ownerDevKey == ownerDevKey()
-   </ul>
-
-   @param rui8_devClass compared DEVCLASS value
-
-   DIN parameter
-   @param rui8_lis compared LIS value
-   @param rui8_wert compared WERT value
-   @param rui8_inst compared INST value
-   @param rui8_zaehlnum compared ZAEHLNUM value (default 0xFF == complete working width)
-
-   @param rui8_devClassInst optional compared POS
-   @param rc_ownerDevKey optional compared DEV_KEY of owner
-   @return true -> this instance has same Process-Data identity
-*/
-bool ProcIdent_c::matchDIN(
-             uint8_t rui8_devClass,
-             uint8_t rui8_lis,
-             uint8_t rui8_wert,
-             uint8_t rui8_inst,
-             uint8_t rui8_zaehlnum ,
-             uint8_t rui8_devClassInst ,
-             const DevKey_c& rc_ownerDevKey
-             ) const
-{
-
-  if (zaehlnum() != rui8_zaehlnum) return false;
-  if (lis() != rui8_lis) return false;
-  if (wert() != rui8_wert) return false;
-  if (inst() != rui8_inst) return false;
-
-  if (devClass() != rui8_devClass) return false;
-
-  // only return false for different pos setting, if rui8_devClassInst != 0xFF -> no lazy match is wanted
-  // one of the _instance_ checks must be true to answer positive match
-  if ( ( rui8_devClassInst != 0xFF )
-    && ( devClassInst() != rui8_devClassInst )
-    && (ownerDevKey().getDevClassInst() != rui8_devClassInst)
-    && (ownerDevKey() != rc_ownerDevKey)) return false;
-
-  // positive match, so call resolveCommandType
-  if (!getProcessInstance4Comm().data().resolveCommandTypeForDIN()) return false;
-  // all previous tests are positive -> answer positive match
-  return true;
-}
-#endif
-
-
-#ifdef USE_ISO_11783
 bool ProcIdent_c::check4GroupMatch(uint16_t rui16_DDI, uint16_t rui16_element, const DevKey_c& rc_devKey)
 {
   bool b_foundPair = false;
@@ -444,7 +310,7 @@ bool ProcIdent_c::check4GroupMatch(uint16_t rui16_DDI, uint16_t rui16_element, c
     if (b_foundPair) break;
   }
   return b_foundPair;
-};
+}
 
 bool ProcIdent_c::check4GroupMatchExisting(uint16_t rui16_DDI, uint16_t rui16_element, const DevKey_c& rc_devKey)
 {
@@ -455,7 +321,7 @@ bool ProcIdent_c::check4GroupMatchExisting(uint16_t rui16_DDI, uint16_t rui16_el
   if (rui16_element != element()) return b_foundPair;
 
   return hasDDI(rui16_DDI);
-};
+}
 
 bool ProcIdent_c::checkProprietary4GroupMatch(uint16_t rui16_element, const DevKey_c& rc_devKey)
 {
@@ -473,7 +339,7 @@ bool ProcIdent_c::checkProprietary4GroupMatch(uint16_t rui16_element, const DevK
     b_foundPair = true;
   }
   return b_foundPair;
-};
+}
 
 
 bool ProcIdent_c::isPair(uint16_t rui16_ElementDDI, uint16_t rui16_DDI)
@@ -498,7 +364,7 @@ bool ProcIdent_c::isPair(uint16_t rui16_ElementDDI, uint16_t rui16_DDI)
   if (((rui16_ElementDDI == 0x8E) && (rui16_DDI == 0x8F)) || ((rui16_ElementDDI == 0x8F) && (rui16_DDI == 0x8E)))
     return true;
   return false;
-};
+}
 
 
 bool ProcIdent_c::add2Group(uint16_t rui16_DDI)
@@ -523,7 +389,7 @@ bool ProcIdent_c::add2Group(uint16_t rui16_DDI)
     }
   }
   return b_foundPair;
-};
+}
 
 
 bool ProcIdent_c::addProprietary2Group(uint16_t rui16_DDI, bool b_isSetpoint, GeneralCommand_c::ValueGroup_t ddiType)
@@ -532,7 +398,7 @@ bool ProcIdent_c::addProprietary2Group(uint16_t rui16_DDI, bool b_isSetpoint, Ge
   data.l_elementDDI.push_back(s_DDIToAdd);
 
   return true;
-};
+}
 
 void ProcIdent_c::getDDIType(uint16_t rui16_DDI, GeneralCommand_c::ValueGroup_t &ref_ddiType, bool &refb_isSetpoint)
 {
@@ -649,8 +515,6 @@ void ProcIdent_c::setElementDDI(const std::list<IsoAgLib::ElementDDI_s>* pl_elem
         data.l_elementDDI.push_back(*iter);
   }
 }
-
-#endif
 
 #if 0
 /**

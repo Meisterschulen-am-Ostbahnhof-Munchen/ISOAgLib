@@ -89,9 +89,7 @@
 #include <IsoAgLib/driver/can/impl/canio_c.h>
 #include "tracpto_c.h"
 #include "tracgeneral_c.h"
-#ifdef USE_ISO_11783
- #include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.h>
-#endif
+#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.h>
 
 using namespace std;
 
@@ -123,10 +121,9 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
    */
   bool TracPTO_c::config(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_identMode)
   {
-    #ifdef USE_ISO_11783
     //store old mode to decide to register or unregister from request for pgn
     IsoAgLib::IdentMode_t t_oldMode = getMode();
-    #endif
+
     //call config for handling which is base data independent
     //if something went wrong leave function before something is configured
     if ( !BaseCommon_c::config(rpc_devKey, rt_identMode) ) return false;
@@ -135,7 +132,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     t_ptoFront.ui16_pto8DigitPerRpm = t_ptoRear.ui16_pto8DigitPerRpm = NO_VAL_16S;
     // set the timestamps to 0
     t_ptoFront.i32_lastPto = t_ptoRear.i32_lastPto = 0;
-    #ifdef USE_ISO_11783
+
     if (   (t_oldMode == IsoAgLib::IdentModeImplement && rt_identMode == IsoAgLib::IdentModeTractor)
         || (t_oldMode == IsoAgLib::IdentModeTractor && rt_identMode == IsoAgLib::IdentModeImplement)
        )
@@ -161,11 +158,11 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     = t_ptoFront.t_ptoModeReqStatus = t_ptoRear.t_ptoModeReqStatus
     = t_ptoFront.t_ptoEconomyModeReqStatus = t_ptoRear.t_ptoEconomyModeReqStatus = IsoAgLib::IsoNotAvailableReq;
     t_ptoFront.t_ptoShaftSpeedLimitStatus = t_ptoRear.t_ptoShaftSpeedLimitStatus = IsoAgLib::IsoNotAvailableLimit;
-    #endif
+
     return true;
   };
 
-  /** check if filter boxes shall be created - create only ISO or DIN filters based
+  /** check if filter boxes shall be created - create only filters based
       on active local idents which has already claimed an address
       --> avoid to much Filter Boxes
     */
@@ -173,19 +170,10 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
   {
     SystemMgmt_c& c_systemMgmt = getSystemMgmtInstance4Comm();
     CANIO_c &c_can = getCanInstance4Comm();
-    #ifdef USE_DIN_9684
-    if ( ( !checkDinFilterCreated() ) && (c_systemMgmt.existActiveLocalDinMember() ) )
-    { // check if needed receive filters for DIN are active
-      setDinFilterCreated();
-      // filter for base data 2
-      c_can.insertFilter(*this, (0x7F << 4),(0x15 << 4), true);
-    }
-    #endif
 
-    #ifdef USE_ISO_11783
-    if ( ( !checkIsoFilterCreated() ) && ( c_systemMgmt.existActiveLocalIsoMember() ) )
+    if ( ( !checkFilterCreated() ) && ( c_systemMgmt.existActiveLocalIsoMember() ) )
     { // check if needed receive filters for ISO are active
-      setIsoFilterCreated();
+      setFilterCreated();
       // create FilterBox_c for PGN FRONT_PTO_STATE_PGN, PF 254 - mask for DP, PF and PS
       // mask: (0x1FFFF << 8) filter: (TIME_DATE_PGN << 8)
       c_can.insertFilter(*this, (static_cast<MASK_TYPE>(0x1FFFF) << 8),
@@ -195,98 +183,8 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
       c_can.insertFilter(*this, (static_cast<MASK_TYPE>(0x1FFFF) << 8),
                         (static_cast<MASK_TYPE>(REAR_PTO_STATE_PGN) << 8), true, Ident_c::ExtendedIdent);
     }
-    #endif
   }
 
-  #ifdef USE_DIN_9684
-  /** send a DIN9684 base information PGN
-    * this is only called when sending ident is configured and it has already claimed an address
-    */
-  bool TracPTO_c::dinTimeEventTracMode( )
-  {
-    CANIO_c& c_can = getCanInstance4Comm();
-    // retreive the actual dynamic sender no of the member with the registered devKey
-    uint8_t b_send = getDinMonitorInstance4Comm().dinMemberDevKey(*getDevKey(), true).nr();
-
-    if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
-
-    if (  ( lastedTimeSinceUpdate()  >= 100 )
-      &&  checkMode(IsoAgLib::IdentModeTractor) )
-    { // send actual base2 data
-      setSelectedDataSourceDevKey( *getDevKey() );
-      data().setIdent((0x15<<4 | b_send), __IsoAgLib::Ident_c::StandardIdent );
-      dinSetPtoFlags( data() );
-      // set other information
-      getTracGeneralInstance4Comm().dinSetHitchEngineFlags( data() );
-      data().setLen(8);
-
-      // CANIO_c::operator<< retreives the information with the help of CANPkg_c::getData
-      // then it sends the data
-      c_can << data();
-
-      // update time
-      setUpdateTime(Scheduler_c::getLastTimeEventTrigger());
-    }
-    if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
-
-    return true;
-  }
-
-  /** process a DIN9684 base information PGN */
-  bool TracPTO_c::dinProcessMsg()
-  { // a DIN9684 base information msg received
-    // store the devKey of the sender of base data
-    if (! getDinMonitorInstance4Comm().existDinMemberNr(data().dinSa()) )
-    { // the sender is not known -> ignore and block interpretation by other classes
-      return true;
-    }
-    // the corresponding sender entry exist in the monitor list
-    const DevKey_c& c_tempDevKey = getDinMonitorInstance4Comm().dinMemberNr(data().dinSa()).devKey();
-
-    // interprete data accordingto BABO
-    if (dataBabo() == 5) {
-      // base data 2: pto, hitch
-      // only take values, if i am not the regular sender
-      // and if actual sender isn't in conflict to previous sender
-      if ( checkParseReceived( c_tempDevKey ) )
-      { // sender is allowed to send
-        dinParsePtoFlags( data() );
-        // parse other information
-        getTracGeneralInstance4Comm().dinParseHitchEngineFlags( data() );
-        setSelectedDataSourceDevKey( c_tempDevKey );
-        setUpdateTime( Scheduler_c::getLastTimeEventTrigger() );
-      }
-      return true;
-    }
-    else
-    {
-      return false;
-    }
-  }
-  /** helper function to do the parsing of the flag data of a
-   * received DIN9684 base message with Pto,Hitch,Engine information */
-  void TracPTO_c::dinParsePtoFlags(const CANPkgExt_c& rrefc_pkg)
-  { // rear pto
-    setPtoRear( rrefc_pkg.getUint16Data(0) );
-    // front pto
-    setPtoFront(rrefc_pkg.getUint16Data(2) );
-
-    // set last time
-    setUpdateTime(Scheduler_c::getLastTimeEventTrigger());
-
-  }
-  /** helper function to set the Hitch and Engine flags of a DIN base data message */
-  void TracPTO_c::dinSetPtoFlags(CANPkgExt_c& rrefc_pkg)
-  {
-    rrefc_pkg.setUint16Data(0, ptoRear() );
-    rrefc_pkg.setUint16Data(2, ptoFront() );
-
-    // set last time
-    setUpdateTime(Scheduler_c::getLastTimeEventTrigger());
-  }
-  #endif
-
-  #ifdef USE_ISO_11783
   bool TracPTO_c::processMsgRequestPGN (uint32_t rui32_pgn, uint8_t rui8_sa, uint8_t rui8_da)
   {
     // check if we are allowed to send a request for pgn
@@ -297,11 +195,11 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     // is configured to send pto information
     if ( rui32_pgn == FRONT_PTO_STATE_PGN  && t_ptoFront.t_ptoEngaged != IsoAgLib::IsoActive)
     {
-      isoSendMessage(sendFrontPto);
+      sendMessage(sendFrontPto);
     }
     if ( rui32_pgn == REAR_PTO_STATE_PGN && t_ptoRear.t_ptoEngaged != IsoAgLib::IsoActive)
     {
-      isoSendMessage(sendRearPto);
+      sendMessage(sendRearPto);
     }
     return true;
   }
@@ -309,7 +207,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
   /**
     process a ISO11783 base information PGN
   */
-  bool TracPTO_c::isoProcessMsg()
+  bool TracPTO_c::processMsg()
   {
     DevKey_c c_tempDevKey( DevKey_c::DevKeyUnspecified );
     // store the devKey of the sender of base data
@@ -367,27 +265,27 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
       @pre  function is only called in tractor mode
       @see  BaseCommon_c::timeEvent()
     */
-  bool TracPTO_c::isoTimeEventTracMode( )
+  bool TracPTO_c::timeEventTracMode( )
   {
     const int32_t ci32_now = Scheduler_c::getLastTimeEventTrigger();
 
     if ( ( (ci32_now - t_ptoFront.i32_lastPto ) >= 100) && ( t_ptoFront.t_ptoEngaged == IsoAgLib::IsoActive ) )
     { // it's time to send tractor PTO information and the FRONT PTO is engaged
-      isoSendMessage(sendFrontPto);
+      sendMessage(sendFrontPto);
     }
 
     if (Scheduler_c::getAvailableExecTime() == 0) return false;
 
     if ( ( (ci32_now - t_ptoRear.i32_lastPto ) >= 100) && ( t_ptoRear.t_ptoEngaged == IsoAgLib::IsoActive ) )
     { // it's time to send tractor PTO information and the REAR PTO is engaged
-      isoSendMessage(sendRearPto);
+      sendMessage(sendRearPto);
     }
 
     return true;
   }
 
   /** Detect stop of PTO update from tractor -> indication for stopped PTO */
-  bool TracPTO_c::isoTimeEventImplMode()
+  bool TracPTO_c::timeEventImplMode()
   {
     const int32_t ci32_now = Scheduler_c::getLastTimeEventTrigger();
     // check for different pto data types whether the previously
@@ -412,7 +310,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
       @see  TracCert_c::processMsgRequestPGN
       @see  CANIO_c::operator<<
     */
-  void TracPTO_c::isoSendMessage(SendPtoData_t t_sendptodata)
+  void TracPTO_c::sendMessage(SendPtoData_t t_sendptodata)
   {
     if ( getDevKey() == NULL ) return;
     if (!getIsoMonitorInstance4Comm().existIsoMemberDevKey(*getDevKey(), true)) return;
@@ -478,6 +376,5 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     else
       return false;
   }
-  #endif
 
 } // End Namespace __IsoAgLib

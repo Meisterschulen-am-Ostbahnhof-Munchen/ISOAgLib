@@ -92,9 +92,7 @@
 /* *************************************** */
 #include <IsoAgLib/typedef.h>
 #include <IsoAgLib/util/config.h>
-#ifdef USE_ISO_11783
-  #include <IsoAgLib/comm/SystemMgmt/impl/istate_c.h>
-#endif
+#include <IsoAgLib/comm/SystemMgmt/impl/istate_c.h>
 #include "procident_c.h"
 #include "processpkg_c.h"
 #include "generalcommand_c.h"
@@ -118,12 +116,16 @@ protected:
 public:
   /** allow explicit SetpointBase_c the access to private elements */
   friend class SetpointBase_c;
+
   /** allow explicit MeasureProgBase_c the access to private elements */
   friend class MeasureProgBase_c;
+
   /** allow explicit MeasureProgRemote_c the access to private elements */
   friend class MeasureProgRemote_c;
+
   /** allow explicit MeasureProgLocal_c the access to private elements */
   friend class MeasureProgLocal_c;
+
   friend class SimpleManageSetpointRemote_c;
   friend class SimpleManageMeasureProgRemote_c;
   friend class SimpleManageSetpointLocal_c;
@@ -135,14 +137,7 @@ public:
     ISO parameters:
     @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
                          (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
-
-    DIN parameters:
-    @param rpc_lbs optional pointer to central Scheduler_c instance
-    @param rui8_lis optional LIS code of this instance
-    @param rc_devKey optional DEV_KEY code of Process-Data
-    @param rui8_wert optional WERT code of this instance
-    @param rui8_inst optional INST code of this instance
-    @param rui8_zaehlnum optional ZAEHLNUM code of this instance
+    @param ui16_element  device element number
 
     common parameters:
     @param rc_devKey optional DEV_KEY code of Process-Data
@@ -152,41 +147,16 @@ public:
     @param rpc_processDataChangeHandler optional pointer to handler class of application
     @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
-  ProcDataBase_c(
-#ifdef USE_ISO_11783
-                 const IsoAgLib::ElementDDI_s* ps_elementDDI = NULL,
-                 uint16_t ui16_element = 0xFFFF,
-#endif
-#ifdef USE_DIN_9684
-                 uint8_t rui8_lis = 0, uint8_t rui8_wert = 0,
-                 uint8_t rui8_inst = 0, uint8_t rui8_zaehlnum = 0xFF,
-#endif
+  ProcDataBase_c( const IsoAgLib::ElementDDI_s* ps_elementDDI = NULL, uint16_t ui16_element = 0xFFFF,
                  const DevKey_c& rc_devKey = DevKey_c::DevKeyInitialProcessData,
                  uint8_t rui8_pri = 2, const DevKey_c& rc_ownerDevKey = DevKey_c::DevKeyUnspecified, const DevKey_c *rpc_devKey = NULL,
                  IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
                  int ri_singletonVecKey = 0)
 
-    : ProcIdent_c(
-#ifdef USE_ISO_11783
-                  ps_elementDDI,
-                  ui16_element,
-#endif
-#ifdef USE_DIN_9684
-                  rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
-#endif
-                  rc_devKey, rui8_pri, rc_ownerDevKey, rpc_devKey, ri_singletonVecKey)
+    : ProcIdent_c( ps_elementDDI, ui16_element, rc_devKey, rui8_pri, rc_ownerDevKey, rpc_devKey, ri_singletonVecKey)
 
-    { init(
-#ifdef USE_ISO_11783
-           ps_elementDDI,
-           ui16_element,
-#endif
-#ifdef USE_DIN_9684
-           rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
-#endif
-           rc_devKey, rui8_pri, rc_ownerDevKey, rpc_devKey,
-           rpc_processDataChangeHandler, ri_singletonVecKey
-          );
+    { init( ps_elementDDI, ui16_element, rc_devKey, rui8_pri, rc_ownerDevKey, rpc_devKey,
+            rpc_processDataChangeHandler, ri_singletonVecKey );
     };
 
 
@@ -195,13 +165,7 @@ public:
     ISO parameters:
     @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
                          (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
-
-    DIN parameters:
-    @param rpc_lbs optional pointer to central Scheduler_c instance
-    @param rui8_lis optional LIS code of this instance
-    @param rui8_wert optional WERT code of this instance
-    @param rui8_inst optional INST code of this instance
-    @param rui8_zaehlnum optional ZAEHLNUM code of this instance
+    @param ui16_element  device element number
 
     common parameters:
     @param rc_devKey optional DEV_KEY code of Process-Data
@@ -211,20 +175,11 @@ public:
     @param rpc_processDataChangeHandler optional pointer to handler class of application
     @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
     */
-  void init(
-#ifdef USE_ISO_11783
-            const IsoAgLib::ElementDDI_s* ps_elementDDI,
-            uint16_t rui16_element,
-#endif
-#ifdef USE_DIN_9684
-            uint8_t rui8_lis = 0, uint8_t rui8_wert = 0,
-            uint8_t rui8_inst = 0, uint8_t rui8_zaehlnum = 0xFF,
-#endif
+  void init( const IsoAgLib::ElementDDI_s* ps_elementDDI, uint16_t rui16_element,
             const DevKey_c& rc_devKey = DevKey_c::DevKeyInitialProcessData,
             uint8_t rui8_pri = 2, const DevKey_c& rc_ownerDevKey = DevKey_c::DevKeyUnspecified, const DevKey_c *rpc_devKey = NULL,
             IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
             int ri_singletonVecKey = 0);
-
 
   /**
     assignment operator for this base object
@@ -232,11 +187,13 @@ public:
     @return reference to source instance for cmd like "prog1 = prog2 = prog3;"
   */
   const ProcDataBase_c& operator=(const ProcDataBase_c& rrefc_src);
+
   /**
     copy constructor for ProcDataBase_c
     @param rrefc_src source instance
   */
   ProcDataBase_c(const ProcDataBase_c& rrefc_src);
+
   /** default destructor which has nothing to do */
   virtual ~ProcDataBase_c();
 
@@ -244,22 +201,24 @@ public:
     * @param rpc_processDataChangeHandler pointer to handler class of application
     */
   void setProcessDataChangeHandler( IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler )
-   { pc_processDataChangeHandler = rpc_processDataChangeHandler; } ;
+   { pc_processDataChangeHandler = rpc_processDataChangeHandler; }
+
   /** deliver the poitner to the handler class
     * @return pointer to handler class of application (or NULL if not defined by application)
     */
-  IsoAgLib::ProcessDataChangeHandler_c* getProcessDataChangeHandler( void ) const { return pc_processDataChangeHandler; } ;
+  IsoAgLib::ProcessDataChangeHandler_c* getProcessDataChangeHandler( void ) const { return pc_processDataChangeHandler; }
 
   /**
     deliver the central data type of this process data
     @return proc_valType_t: i32_val, ui32_val, float_val, cmdVal
   */
-  const proc_valType_t valType()const{return en_procValType;};
+  const proc_valType_t valType()const{return en_procValType;}
+
   /**
     set the central data type of this process data
     @return proc_valType_t: i32_val, ui32_val, float_val, cmdVal
   */
-  void setValType(proc_valType_t ren_procValType){en_procValType = ren_procValType;};
+  void setValType(proc_valType_t ren_procValType){en_procValType = ren_procValType;}
 
   /**
     deliver the pkg data value as int32_t;
@@ -271,7 +230,7 @@ public:
     @return data value as int32_t value (converted if needed)
   */
   int32_t pkgDataLong()const;
-#ifdef USE_ISO_11783
+
   /**
     deliver the pkg data value as uint32_t;
     if pd/mod are one of the to be converted one, return converted;
@@ -282,7 +241,7 @@ public:
     @return data value as uint32_t value (converted if needed)
   */
   uint32_t pkgDataUlong()const;
-#endif
+
 #ifdef USE_FLOAT_DATA_TYPE
   /**
     deliver the pkg data value as float;
@@ -312,22 +271,21 @@ public:
   */
   virtual bool timeEvent( void );
 
-  virtual const DevKey_c& commanderDevKey()const{return DevKey_c::DevKeyUnspecified;};
+  virtual const DevKey_c& commanderDevKey()const{return DevKey_c::DevKeyUnspecified;}
 
-#ifdef USE_ISO_11783
   /**
-    delivers state (DIN/ISO) for given devKey
+    delivers state (ISO) for given devKey
     @param rc_devKey compared DEV_KEY value
     @return IState_c::itemState_t
   */
-  IState_c::itemState_t getIStateForDevKey( const DevKey_c& rc_devKey );
+  /**TODO2 is this function obsolete?*/
+ // IState_c::itemState_t getIStateForDevKey( const DevKey_c& rc_devKey );
 
   /**
     deliver DDI from last received can pkg
     @return DDI
   */
   uint16_t getDDIfromCANPkg( void ) const;
-#endif
 
 protected: // Protected methods
   /**
@@ -351,6 +309,7 @@ protected: // Protected methods
     @return true -> sendIntern set successful EMPF and SEND
   */
   bool sendValDevKey(uint8_t rui8_pri, const DevKey_c& rc_varDevKey, int32_t ri32_val = 0) const;
+
 #ifdef USE_FLOAT_DATA_TYPE
   /**
     send the given float value with variable DEV_KEY rc_varDevKey;
@@ -378,8 +337,10 @@ protected: // Protected methods
 private: // Private methods
   /** base function for assignment of element vars for copy constructor and operator= */
   void assignFromSource( const ProcDataBase_c& rrefc_src );
+
   /** helper function to get reference to process data pkg very quick */
   ProcessPkg_c& getProcessPkg( void ) const;
+
   /**
     resolv SEND|EMPF dependent on DEV_KEY rc_varDevKey
     (local: receiver; remote: sender)
@@ -395,6 +356,7 @@ private: // Private methods
     @return true -> resolvSendDevKey successfully resolved EMPF and SEND
   */
   bool resolvDevKeySetBasicSendFlags(uint8_t rui8_pri, const DevKey_c& rc_varDevKey) const;
+
   /**
     virtual function which check dependent on remote/local
     if send action with given var parameter and address claim state of owner is
@@ -406,31 +368,28 @@ private: // Private methods
     @param rb_var variable number (local: empf; remote: send)
     @param b_empf refernce to EMPF variable which is update dependent on type local/remote
     @param b_send refernce to SEND variable which is update dependent on type local/remote
-    @param en_msgProto protocol type to use for the message
-        IState_c::Din or IState_c::Iso (only compiled and used if USE_ISO_11783 is
-        configured) (default: IState_c::Din)
     @return true -> owner of process data registered as active in Monitor-List
   */
-  virtual bool var2empfSend(uint8_t rui8_pri, uint8_t rb_var, uint8_t &b_empf, uint8_t &b_send
-  #ifdef USE_ISO_11783
-    , IState_c::itemState_t &en_msgProto
-  #endif
-    ) const = 0;
+  virtual bool var2empfSend(uint8_t rui8_pri, uint8_t rb_var, uint8_t &b_empf, uint8_t &b_send) const = 0;
 
   /**
     process a measure prog message
     -> fully dependent on children type local/remote
   */
   virtual void processProg();
+
   /**
     virtual base for processing of a setpoint message
   */
   virtual void processSetpoint();
 
 private: // Private attributes
+
   friend class IsoAgLib::EventSource_c;
+
   /** central data type to use for messages: i32_val, ui32_val, float_val */
   proc_valType_t en_procValType;
+
   /** pointer to applications handler class, with handler functions
       which shall be called on correltating change events.
       (e.g. new received setpoint for local process data
@@ -453,7 +412,8 @@ inline int32_t ProcDataBase_c::pkgDataLong()const
 {
   return getProcessPkg().dataLong();
 }
-#ifdef USE_ISO_11783
+
+
 /**
   deliver the pkg data value as uint32_t;
   if pd/mod are one of the to be converted one, return converted;
@@ -467,7 +427,8 @@ inline uint32_t ProcDataBase_c::pkgDataUlong()const
 {
    return getProcessPkg().dataUlong();
 }
-#endif
+
+
 #ifdef USE_FLOAT_DATA_TYPE
 /**
   deliver the pkg data value as float;

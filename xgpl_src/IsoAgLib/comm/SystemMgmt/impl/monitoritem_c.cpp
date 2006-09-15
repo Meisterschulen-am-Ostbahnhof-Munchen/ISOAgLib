@@ -107,6 +107,7 @@ MonitorItem_c::MonitorItem_c(const MonitorItem_c& rrefc_monitorItem)
 : BaseItem_c(rrefc_monitorItem), c_devKey(rrefc_monitorItem.c_devKey), ui8_nr(rrefc_monitorItem.ui8_nr)
 {}
 
+
 /** destructor which sets the update timestamp to 0 */
 MonitorItem_c::~MonitorItem_c(){
   setNr(0xF);
@@ -114,6 +115,7 @@ MonitorItem_c::~MonitorItem_c(){
 }
 
 /**
+
   set all element data with one call
   @param ri32_time creation time of this item instance
   @param rc_devKey DEV_KEY code of this item
@@ -127,7 +129,8 @@ void MonitorItem_c::set(int32_t ri32_time, const DevKey_c& rc_devKey, uint8_t ru
   BaseItem_c::set( ri32_time, ren_status, ri_singletonVecKey );
   setDevKey(rc_devKey);
   setNr(rui8_nr);
-};
+}
+
 
 /** operator= which defines src as const to avoid
 compile warnings with the automatic generated version */
@@ -141,7 +144,7 @@ MonitorItem_c& MonitorItem_c::operator=(const MonitorItem_c& src){
 /**
   lower comparison between left DEV_KEY uint8_t and right MonitorItem
   @param rb_left DEV_KEY uint8_t left parameter
-  @param rrefc_right rigth DINServiceItem_c parameter
+  @param rrefc_right rigth ServiceItem_c parameter
 */
 bool operator<(const DevKey_c& rc_left, const MonitorItem_c& rrefc_right)
 {
@@ -150,12 +153,13 @@ bool operator<(const DevKey_c& rc_left, const MonitorItem_c& rrefc_right)
 
 /**
   lower comparison between left MonitorItem_c and right DEV_KEY uint8_t
-  @param rrefc_left left DINServiceItem_c parameter
+  @param rrefc_left left ServiceItem_c parameter
   @param rb_right DEV_KEY uint8_t right parameter
 */
 bool lessThan(const MonitorItem_c& rrefc_left, const DevKey_c& rc_right)
 {
   return (rrefc_left.devKey() < rc_right)?true:false;
 }
+
 } // end namespace __IsoAgLib
 

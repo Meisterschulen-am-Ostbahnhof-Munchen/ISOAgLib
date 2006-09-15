@@ -2,12 +2,10 @@
   <deviceelement designator="DeviceElement1" element_type="device" element_number="0" parent_name="Device1">
     <deviceprocessdata designator="On Off" ddi="0x008D" properties="defaultset" trigger_methods="timeinterval" proc_program_name="workState" cumulative_value="false" feature_set="SimpleSetpoint" >
       <deviceprocessdatacombination ddi="0x008D" command_type="exact" is_setpoint="true" />
-      <devicedinprocessdata lis="0" wert_inst="0x1" />
     </deviceprocessdata>
     <deviceprocessdata designator="Application Rate" ddi="0x0001" properties="defaultset" trigger_methods="timeinterval" proc_program_name="applicationRate" cumulative_value="false" feature_set="SimpleSetpoint" >
       <deviceprocessdatacombination ddi="0x0001" command_type="exact" is_setpoint="true" />
       <deviceprocessdatacombination ddi="0x0002" command_type="exact" is_setpoint="false" />
-      <devicedinprocessdata lis="0" wert_inst="0x5" />
     </deviceprocessdata>
   </deviceelement>
 </device>

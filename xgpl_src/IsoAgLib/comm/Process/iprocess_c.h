@@ -61,12 +61,23 @@
 /* *************************************** */
 #include "impl/process_c.h"
 #include "proc_c.h"
-#ifdef USE_ISO_11783
-  #include "idevpropertyhandler_c.h"
+#include "idevpropertyhandler_c.h"
+#ifdef USE_PROC_REMOTE_STD
+  #include "Remote/Std/iprocdataremote_c.h"
 #endif
 #ifdef USE_PROC_REMOTE_SIMPLE_SETPOINT
   #include "Remote/SimpleSetpoint/iprocdataremotesimplesetpoint_c.h"
 #endif
+#ifdef USE_PROC_REMOTE_SIMPLE_MEASURE
+  #include "Remote/SimpleMeasure/iprocdataremotesimplemeasure_c.h"
+#endif
+#ifdef USE_PROC_REMOTE_SIMPLE_MEASURE_SETPOINT
+  #include "Remote/SimpleMeasureSetpoint/iprocdataremotesimplesetpointsimplemeasure_c.h"
+#endif
+#ifdef USE_PROC_REMOTE_SIMPLE_MEASURE_SETPOINT_COMBINED
+  #include "Remote/SimpleMeasureSetpoint/iprocdataremotesimplesetpointsimplemeasurecombined_c.h"
+#endif
+
 // Begin Namespace IsoAgLib::iProcess_c
 namespace IsoAgLib {
 
@@ -108,7 +119,7 @@ public:
   */
   void init( void ) { Process_c::init();};
 
-#if defined(USE_ISO_11783) && defined(USE_PROC_DATA_DESCRIPTION_POOL)
+#if defined(USE_PROC_DATA_DESCRIPTION_POOL)
   iDevPropertyHandler_c& getDevPropertyHandlerInstance( void )
   {return static_cast<iDevPropertyHandler_c&>(Process_c::getDevPropertyHandlerInstance());};
 #endif
@@ -122,7 +133,8 @@ public:
     @param rui16_localProcCapacity
   */
   void localProcDataReserveCnt( uint16_t rui16_localProcCapacity )
-  { Process_c::localProcDataReserveCnt( rui16_localProcCapacity );};
+  { Process_c::localProcDataReserveCnt( rui16_localProcCapacity );}
+
   /**
     if the amount of created remote process data is known, then enough capacity for the
     vector with pointers to all of them can be reserved. Otherwise the vector
@@ -132,101 +144,35 @@ public:
     @param rui16_remoteProcCapacity
   */
   void remoteProcDataReserveCnt( uint16_t rui16_remoteProcCapacity )
-  { Process_c::remoteProcDataReserveCnt( rui16_remoteProcCapacity );};
+  { Process_c::remoteProcDataReserveCnt( rui16_remoteProcCapacity );}
+
   /**
     checks if a suitable iProcessDataLocal_c item exist
     ISO parameter
     @param rui16_DDI
     @param rui16_element
 
-    DIN parameter
-    @param rui8_lis LIS code of searched local Process Data instance
-    @param rui8_wert WERT code of searched local Process Data instance
-    @param rui8_inst INST code of searched local Process Data instance
-    @param rui8_zaehlnum ZAEHLNUM  code of searched local Process Data instance
-
     common parameter
-    @param rui8_devClass DEVCLASS code of searched local Process Data instance
-    @param rui8_devClassInst optional POS
+    @param rui8_devClassReceiver DEVCLASS code of searched local Process Data instance
     @return true -> suitable instance found
   */
-  bool existProcDataLocal(
-#ifdef USE_ISO_11783
-                          uint16_t rui16_DDI,
-                          uint16_t rui16_element,
-#endif
-#ifdef USE_DIN_9684
-                          uint8_t rui8_dataDevClass,
-                          uint8_t rui8_devClassInst,
-                          uint8_t rui8_lis,
-                          uint8_t rui8_wert,
-                          uint8_t rui8_inst,
-                          uint8_t rui8_zaehlnum,
-#endif
-                          uint8_t rui8_devClassReceiver)
-  { return Process_c::existProcDataLocal(
-#ifdef USE_ISO_11783
-                          rui16_DDI,
-                          rui16_element,
-#endif
-#ifdef USE_DIN_9684
-                          rui8_dataDevClass,
-                          rui8_devClassInst,
-                          rui8_lis,
-                          rui8_wert,
-                          rui8_inst,
-                          rui8_zaehlnum,
-#endif
-                          rui8_devClassReceiver
-  );}
+  bool existProcDataLocal( uint16_t rui16_DDI, uint16_t rui16_element, uint8_t rui8_devClassReceiver)
+  { return Process_c::existProcDataLocal(rui16_DDI, rui16_element, rui8_devClassReceiver);}
+
   /**
     checks if a suitable iProcessDataRemote_c item exist
     ISO parameter
     @param rui16_DDI
     @param rui16_element
-
-    DIN parameter
-    @param rui8_lis LIS code of searched local Process Data instance
-    @param rui8_wert WERT code of searched local Process Data instance
-    @param rui8_inst INST code of searched local Process Data instance
-    @param rui8_zaehlnum ZAEHLNUM  code of searched local Process Data instance
+    @param rui8_devClassSender devClass of the sender (used for check against ownerDevKey().getDevClass())
 
     common parameter
-    @param rui8_devClass DEVCLASS code of searched remote Process Data instance
-    @param rui8_devClassInst optional POS
+    @param rui8_devClassReceiver DEVCLASS code of searched local Process Data instance
     @return true -> suitable instance found
   */
-  bool existProcDataRemote(
-#ifdef USE_ISO_11783
-                           uint16_t rui16_DDI,
-                           uint16_t rui16_element,
-                           uint8_t rui8_devClassSender,
-#endif
-#ifdef USE_DIN_9684
-                           uint8_t rui8_dataDevClass,
-                           uint8_t rui8_devClassInst,
-                           uint8_t rui8_lis,
-                           uint8_t rui8_wert,
-                           uint8_t rui8_inst,
-                           uint8_t rui8_zaehlnum,
-#endif
-                           uint8_t rui8_devClassReceiver)
-  { return Process_c::existProcDataRemote(
-#ifdef USE_ISO_11783
-                           rui16_DDI,
-                           rui16_element,
-                           rui8_devClassSender,
-#endif
-#ifdef USE_DIN_9684
-                           rui8_dataDevClass,
-                           rui8_devClassInst,
-                           rui8_lis,
-                           rui8_wert,
-                           rui8_inst,
-                           rui8_zaehlnum,
-#endif
-                           rui8_devClassReceiver
-  );};
+  bool existProcDataRemote( uint16_t rui16_DDI, uint16_t rui16_element,
+                            uint8_t rui8_devClassSender, uint8_t rui8_devClassReceiver)
+  { return Process_c::existProcDataRemote(  rui16_DDI, rui16_element, rui8_devClassSender, rui8_devClassReceiver);}
 
   /**
     delivers count of local process data entries with similar ident
@@ -235,37 +181,12 @@ public:
     @param rui16_DDI
     @param rui16_element
 
-    DIN parameter
-    @param rui8_lis LIS code of searched local Process Data instance
-    @param rui8_wert WERT code of searched local Process Data instance
-    @param rui8_inst INST code of searched local Process Data instance
-    @param rui8_zaehlnum ZAEHLNUM  code of searched local Process Data instance
-
     common parameter
     @param rui8_devClass DEVCLASS code of searched local Process Data instance
     @return count of similar local process data entries
   */
-  uint8_t procDataLocalCnt(
-#ifdef USE_ISO_11783
-                           uint16_t rui16_DDI,
-                           uint16_t rui16_element,
-#endif
-#ifdef USE_DIN_9684
-                           uint8_t rui8_lis,
-                           uint8_t rui8_wert,
-                           uint8_t rui8_inst,
-                           uint8_t rui8_zaehlnum,
-#endif
-                           uint8_t rui8_devClass)
-    {return Process_c::procDataLocalCnt(
-#ifdef USE_ISO_11783
-                                        rui16_DDI, rui16_element,
-#endif
-#ifdef USE_DIN_9684
-                                        rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
-#endif
-                                        rui8_devClass);
-    };
+  uint8_t procDataLocalCnt( uint16_t rui16_DDI, uint16_t rui16_element, uint8_t rui8_devClass)
+  {return Process_c::procDataLocalCnt(rui16_DDI, rui16_element, rui8_devClass);}
 
   /**
     delivers count of remote process data entries with similar ident
@@ -275,76 +196,56 @@ public:
     @param rui16_element
     @param rui8_devClassSender devClass of the sender (used for check against ownerDevKey().getDevClass())
 
-    DIN parameter
-    @param rui8_lis LIS code of searched local Process Data instance
-    @param rui8_wert WERT code of searched local Process Data instance
-    @param rui8_inst INST code of searched local Process Data instance
-    @param rui8_zaehlnum ZAEHLNUM  code of searched local Process Data instance
-
     common parameter
     @param rui8_devClass DEVCLASS code of searched local Process Data instance
     @return count of similar remote process data entries
   */
-  uint8_t procDataRemoteCnt(
-#ifdef USE_ISO_11783
-                            uint16_t rui16_DDI,
-                            uint16_t rui16_element,
-                            uint8_t rui8_devClassSender,
-#endif
-#ifdef USE_DIN_9684
-                            uint8_t rui8_lis,
-                            uint8_t rui8_wert,
-                            uint8_t rui8_inst,
-                            uint8_t rui8_zaehlnum,
-#endif
-                            uint8_t rui8_devClass)
-    {return Process_c::procDataRemoteCnt(
-#ifdef USE_ISO_11783
-                                         rui16_DDI, rui16_element, rui8_devClassSender,
-#endif
-#ifdef USE_DIN_9684
-                                         rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
-#endif
-                                         rui8_devClass);
-    };
+  uint8_t procDataRemoteCnt( uint16_t rui16_DDI,
+                             uint16_t rui16_element,
+                             uint8_t rui8_devClassSender,
+                             uint8_t rui8_devClass)
+  { return Process_c::procDataRemoteCnt( rui16_DDI, rui16_element, rui8_devClassSender, rui8_devClass); }
 
-#ifdef USE_ISO_11783
   // addDDI2ExistingProcData only possible for remote process data project (iProcDataRemote_c has to be defined)
   /** checks if a DDI can be added to a group and return ptr to proc data if successfully */
 #ifdef USE_PROC_REMOTE_STD
   iProcDataRemote_c* addDDI2ExistingProcData(uint16_t rui16_DDI, uint16_t rui_deviceElement, const iDevKey_c& rc_devKey, GeneralCommand_c::ValueGroup_t& ren_valueGroup, bool refb_isSetpoint)
   { return static_cast<iProcDataRemote_c*>(Process_c::addDDI2ExistingProcData(rui16_DDI, rui_deviceElement, rc_devKey, ren_valueGroup, refb_isSetpoint));};
 #endif
+
 #ifdef USE_PROC_REMOTE_SIMPLE_MEASURE
   iProcDataRemoteSimpleMeasure_c* addDDI2ExistingProcData(uint16_t rui16_DDI, uint16_t rui_deviceElement, const iDevKey_c& rc_devKey, GeneralCommand_c::ValueGroup_t& ren_valueGroup, bool refb_isSetpoint)
   { return static_cast<iProcDataRemoteSimpleMeasure_c*>(Process_c::addDDI2ExistingProcData(rui16_DDI, rui_deviceElement, rc_devKey, ren_valueGroup, refb_isSetpoint));};
 #endif
+
 #ifdef USE_PROC_REMOTE_SIMPLE_SETPOINT
   iProcDataRemoteSimpleSetpoint_c* addDDI2ExistingProcData(uint16_t rui16_DDI, uint16_t rui_deviceElement, const iDevKey_c& rc_devKey, GeneralCommand_c::ValueGroup_t& ren_valueGroup, bool refb_isSetpoint)
   { return static_cast<iProcDataRemoteSimpleSetpoint_c*>(Process_c::addDDI2ExistingProcData(rui16_DDI, rui_deviceElement, rc_devKey, ren_valueGroup, refb_isSetpoint));};
 #endif
+
 #ifdef USE_PROC_REMOTE_SIMPLE_MEASURE_SETPOINT
   iProcDataRemoteSimpleMeasureSetpoint_c* addDDI2ExistingProcData(uint16_t rui16_DDI, uint16_t rui_deviceElement, const iDevKey_c& rc_devKey, GeneralCommand_c::ValueGroup_t& ren_valueGroup, bool refb_isSetpoint)
   { return static_cast<iProcDataRemoteSimpleMeasureSetpoint_c*>(Process_c::addDDI2ExistingProcData(rui16_DDI, rui_deviceElement, rc_devKey, ren_valueGroup, refb_isSetpoint));};
 #endif
+
 #ifdef USE_PROC_REMOTE_SIMPLE_MEASURE_SETPOINT_COMBINED
   iProcDataRemoteSimpleMeasureSetpointCombined_c* addDDI2ExistingProcData(uint16_t rui16_DDI, uint16_t rui_deviceElement, const iDevKey_c& rc_devKey, GeneralCommand_c::ValueGroup_t& ren_valueGroup, bool refb_isSetpoint)
   { return static_cast<iProcDataRemoteSimpleMeasureSetpointCombined_c*>(Process_c::addDDI2ExistingProcData(rui16_DDI, rui_deviceElement, rc_devKey, ren_valueGroup, refb_isSetpoint));};
 #endif
+
   /** checks if a DDI can be added to a group and if yes then add it! */
   bool checkAndAddMatchingDDI2Group(uint16_t rui16_DDI, uint16_t rui_deviceElement, const iDevKey_c& rc_devKey)
-  { return Process_c::checkAndAddMatchingDDI2Group(rui16_DDI, rui_deviceElement, rc_devKey);};
+  { return Process_c::checkAndAddMatchingDDI2Group(rui16_DDI, rui_deviceElement, rc_devKey);}
 
   /** checks this DDI already exists in one ProcDataRemoteBase_c instance */
   bool check4DDIExisting(uint16_t rui16_DDI, uint16_t rui_deviceElement, const iDevKey_c& rc_devKey)
-  { return Process_c::check4DDIExisting(rui16_DDI, rui_deviceElement, rc_devKey);};
+  { return Process_c::check4DDIExisting(rui16_DDI, rui_deviceElement, rc_devKey);}
 
   bool addProprietaryDDI2Group(uint16_t rui16_DDI, uint16_t rui_deviceElement, bool b_isSetpoint, GeneralCommand_c::ValueGroup_t ddiType, const iDevKey_c& rc_devKey)
-  { return Process_c::addProprietaryDDI2Group(rui16_DDI, rui_deviceElement, b_isSetpoint, ddiType, rc_devKey);};
+  { return Process_c::addProprietaryDDI2Group(rui16_DDI, rui_deviceElement, b_isSetpoint, ddiType, rc_devKey);}
 
   void registerWsmTaskMsgHandler(__IsoAgLib::ProcessWsmTaskMsgHandler_c* rpc_processWsmTaskMsgHandler)
   { Process_c::registerWsmTaskMsgHandler(rpc_processWsmTaskMsgHandler); }
-#endif
 
  private:
   /** allow getIProcessInstance() access to shielded base class.

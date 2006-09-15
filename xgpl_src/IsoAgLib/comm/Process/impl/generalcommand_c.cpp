@@ -1,5 +1,5 @@
 /***************************************************************************
-                          generalcommand_c.cpp - extracts general data from DIN/ISO 
+                          generalcommand_c.cpp - extracts general data from ISO
                                                process messages
                              -------------------
     begin                : Fri Apr 07 2000
@@ -91,11 +91,11 @@
 namespace __IsoAgLib {
 
 /**
-  constructor 
+  constructor
 */
 GeneralCommand_c::GeneralCommand_c()
   : b_isSetpoint(false), b_isRequest(false),
-    en_valueGroup(noValue), 
+    en_valueGroup(noValue),
     en_command(noCommand)
 {}
 

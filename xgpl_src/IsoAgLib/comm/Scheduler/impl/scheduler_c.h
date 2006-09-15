@@ -111,7 +111,8 @@ public:
   void init( void );
 
   /** destructor for Scheduler_c */
-  ~Scheduler_c() { close();};
+  ~Scheduler_c() { close();}
+
   /** every subsystem of IsoAgLib has explicit function for controlled shutdown
     */
   void close( void );
@@ -129,12 +130,14 @@ public:
     @return true -> all planned executions performed
   */
   bool timeEvent( int32_t ri32_demandedExecEnd = -1);
+
   /**
     * deliver the average execution time for timeEvent calls -> allows scheduler to
     * refine time schedule within execution
     * @return average execution time in [msec] (off complete performed runs)
     */
-  uint16_t getExecTime( void ) const { return i32_averageExecTime;};
+  uint16_t getExecTime( void ) const { return i32_averageExecTime;}
+
   /**
     * if a very imprtant IRQ event forces stop of Scheduler_c::timeEvent AS SOON AS POSSIBLE
     * the IRQ handler can call Scheduler_c::forceExecStop().
@@ -142,15 +145,18 @@ public:
     * is WITHIN execution in the main task. This way, the IsoAgLib is leaved by Scheduler_c::timeEvent()
     * in a guaranteed WELL DEFINED and VALID state.
     */
-  static void forceExecStop( void ) {b_execStopForced = true;i32_demandedExecEnd = 0;};
+  static void forceExecStop( void ) {b_execStopForced = true;i32_demandedExecEnd = 0;}
+
   /**
     * informative function for all IsoAgLib subsystems which are triggered by Scheduler_c::timeEvent to
     * detect, if another task forced immediated stop of timeEvent
     * @return true -> immediate stop is forced
     */
-  static bool isExecStopForced( void ) { return b_execStopForced;};
+  static bool isExecStopForced( void ) { return b_execStopForced;}
+
   /** get last timestamp of Scheduler_c::timeEvent trigger */
-  static int32_t getLastTimeEventTrigger( void ) { return i32_lastTimeEventTime;};
+  static int32_t getLastTimeEventTrigger( void ) { return i32_lastTimeEventTime;}
+
   /** deliver available time for time event
     * @param ri16_awaitedExecTime optional awaited execution time of planned next step
              ==> answer of this function tells, if planned step will fit into time frame
@@ -161,31 +167,17 @@ public:
     * the base Singleton calls this function, if it detects an error
     */
   void registerAccessFlt( void );
+
   /** register pointer to a new client
     * this function is called within construction of new client instance
     */
   bool registerClient( ElementBase_c* pc_client);
+
   /** unregister pointer to a already registered client
     * this function is called within destruction of new client instance
     */
   void unregisterClient( ElementBase_c* pc_client);
 
-  #ifdef USE_DIN_9684
-  /** register new switch2AddressClaim state (called by DINItem_c or ISOItem_c */
-  void registerSwitch2AddressClaim( void ) { b_switch2AddressClaim = true; };
-  /** check for new switch2AddressClaim -> called by Process_c */
-  bool checkSwitch2AddressClaim( void ) const { return b_switch2AddressClaim; };
-  /** clear switch2AddressClaim state, after reaction is performed -> called by Process_c */
-  void clearSwitch2AddressClaim( void ) { b_switch2AddressClaim = false; };
-  /** register pointer to DINMaskupload_c with type ElementBase_c
-      -> no need to know exact type of DINMaskupload_c here
-    */
-  void registerDinMaskuploadInstance( ElementBase_c* rpc_ctlDinMaskupload ) { pc_ctlDinMaskupload = rpc_ctlDinMaskupload;};
-  /** register receive of DIN member name -> important for eventually retrigger of DINMaskupload_c::timeEvent
-      to create suitable local process data, if corresponding terminal member is detected by name
-    */
-  void registerDinMemberNameReceive( void ) { b_din_memberNameReceived = true; };
-  #endif
 private: //Private methods
   friend class SINGLETON( Scheduler_c );
   /** constructor for the central IsoAgLib object */
@@ -202,49 +194,48 @@ private: // Private attributes
 	#ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
   /** vector of execution times for all registered timeEvent clients */
   STL_NAMESPACE::vector<int16_t,STL_NAMESPACE::__malloc_alloc_template<0> > arrExecTime;
+
   /** iterator to continue each timeEvent after end of last timeEvent call
       -> cache in execution time vector
     */
   STL_NAMESPACE::vector<int16_t,STL_NAMESPACE::__malloc_alloc_template<0> >::iterator pc_timeEventTimeIter;
+
   /** iterator to continue each timeEvent after end of last timeEvent call
       -> cache in client vector
     */
   STL_NAMESPACE::vector<ElementBase_c*,STL_NAMESPACE::__malloc_alloc_template<0> >::iterator pc_timeEventClientIter;
 	#else
+
   /** vector of execution times for all registered timeEvent clients */
   STL_NAMESPACE::vector<int16_t> arrExecTime;
+
   /** iterator to continue each timeEvent after end of last timeEvent call
       -> cache in execution time vector
     */
   STL_NAMESPACE::vector<int16_t>::iterator pc_timeEventTimeIter;
+
   /** iterator to continue each timeEvent after end of last timeEvent call
       -> cache in client vector
     */
   STL_NAMESPACE::vector<ElementBase_c*>::iterator pc_timeEventClientIter;
 	#endif
+
+
   /** timestamp where last timeEvent was called -> can be used to synchronise distributed timeEvent activities */
   static int32_t i32_lastTimeEventTime;
+
   /** commanded timestamp, where Scheduler_c::timeEvent MUST return action to caller */
   static int32_t i32_demandedExecEnd;
+
   /** average execution time for Scheduler_c::timeEvent */
   int32_t i32_averageExecTime;
+
   /** execution time of last call of CANIO_c::timeEvent() */
   int16_t i16_canExecTime;
 
   /** flag to detect, if other interrupting task forced immediated stop of Scheduler_c::timeEvent() */
   static bool b_execStopForced;
-  #ifdef USE_DIN_9684
-  /** flag to detect local ident with new claimed address -> it's time for IsoAgLibProces to create specific CAN
-      receive FilterBox'es
-    */
-  bool b_switch2AddressClaim;
-  /** pointer to DINMaskupload_c with type ElementBase_c, to be independent from type definition */
-  ElementBase_c* pc_ctlDinMaskupload;
-  /** flag to detect receive of DIN member name -> call after receive DINMaskupload_c::timeEvent(I) to
-      react on potential name of DIN Terminal
-    */
-  bool b_din_memberNameReceived;
-  #endif
+
 };
 
 #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )

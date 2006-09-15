@@ -68,6 +68,7 @@
 namespace IsoAgLib {
   class LibErr_c;
   typedef SINGLETON( LibErr_c ) SingletonLiberr_c;
+
   /** C-style function, to get access to the unique LibErr_c singleton instance */
   LibErr_c& getLbsErrInstance( void );
 
@@ -142,18 +143,21 @@ public:
   /**
     clear all error information
   */
-  void clear( void ) { clear( AllErrTypes, AllErrLocations ); };
+  void clear( void ) { clear( AllErrTypes, AllErrLocations ); }
+
   /**
     clear specific error information of a special location
     @param rt_errLocation select for which error locations the counter shall be reset
     @param rt_errType select for which error types the counter shall be reset (default reset all counters)
   */
   void clear( LbsLibErrTypes_t rt_errType, LbsLibErrLocations_t rt_errLocation );
+
   /**
     clear all error information of a special type
     @param rt_errType select for which error types the counter shall be reset
   */
   void clear( LbsLibErrTypes_t rt_errType );
+
   /**
     clear all error information of a special location
     @param rt_errLocation select for which error locations the counter shall be reset
@@ -169,6 +173,7 @@ public:
     @return count of registered error types
   */
   uint16_t getErrCnt( LbsLibErrTypes_t rt_errType = AllErrTypes ) const;
+
   /**
     deliver the count of registered errors with a special error location
     @param rt_errLocation location to check for errors
@@ -182,6 +187,7 @@ public:
     @return LbsLibErrTypes_t
   */
   LbsLibErrTypes_t getErrIndType( uint8_t rui8_ind ) const;
+
   /**
     deliver the location of the nth error
     @param rui8_ind index of the requested error ( [0..(ErrCnt-1)] )
@@ -216,6 +222,7 @@ private:
 
   /** default constructor which sets the error value to noErr */
   LibErr_c();
+
   /** copy constructor which sets the error value to the err value of the source */
   LibErr_c(const LibErr_c& rrefc_src);
 
