@@ -3851,9 +3851,26 @@ int main(int argC, char* argV[])
   if (argInd != argC - 1) { usage(); return 1; }
 
 
+    std::basic_string<char> c_unwantedType = ".inc";
+    std::basic_string<char> c_unwantedType2 = ".h";
+    std::basic_string<char> c_unwantedType3 = ".inc-template";
+    std::basic_string<char> c_unwantedType4 = ".iop";
+    std::basic_string<char> c_unwantedType5 = ".txt";
+    std::basic_string<char> c_expectedType = ".xml";
+    std::basic_string<char> c_expectedType2 = ".XML";
+
     // get file list with matching files!
 
     std::basic_string<char> c_fileName( argV [argInd] );
+    // strip the ".xml" away!
+    if ((c_fileName.length()-4) > 4)
+    { // see if the user gave ".xml" !
+      if ( (c_fileName.substr( c_fileName.length()-4 ) == c_expectedType)
+         ||(c_fileName.substr( c_fileName.length()-4 ) == c_expectedType) )
+      { // strip off ".xml"
+        c_fileName.erase (c_fileName.length()-4, 4);
+      }
+    }
     #ifdef WIN32
     int lastDirPos = c_fileName.find_last_of( "\\" );
     std::basic_string<char> c_directory = c_fileName.substr( 0, lastDirPos+1 );
@@ -3864,11 +3881,6 @@ int main(int argC, char* argV[])
     if (c_directory == "") c_directory = "./";
     #endif
     /* globally defined */  c_project = c_fileName.substr( lastDirPos+1 );
-    std::basic_string<char> c_unwantedType = ".inc";
-    std::basic_string<char> c_unwantedType2 = ".h";
-    std::basic_string<char> c_unwantedType3 = ".inc-template";
-    std::basic_string<char> c_unwantedType4 = ".iop";
-    std::basic_string<char> c_unwantedType5 = ".txt";
     std::basic_string<char> c_directoryCompareItem;
     std::cerr << "--> Directory: " << c_directory << std::endl << "--> File:      " << c_project << std::endl;
     strncpy (proName, c_project.c_str(), 1024); proName [1024+1-1] = 0x00;
@@ -3987,7 +3999,7 @@ int main(int argC, char* argV[])
     std::cout << "\n";
 
     // Do INITIALIZATION STUFF
-    init (argV [argInd]);
+    init (c_fileName.c_str());
 
     for (indexXmlFile = 0; indexXmlFile < amountXmlFiles; indexXmlFile++)
     { // loop all xmlFiles!
