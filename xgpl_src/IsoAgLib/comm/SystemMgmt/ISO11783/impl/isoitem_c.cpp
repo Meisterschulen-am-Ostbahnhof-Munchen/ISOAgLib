@@ -114,7 +114,7 @@ namespace __IsoAgLib {
 */
 ISOItem_c::ISOItem_c(int32_t ri32_time, const DevKey_c& rc_devKey, uint8_t rui8_nr, IState_c::itemState_t rb_status,
       uint16_t rui16_saEepromAdr, int ri_singletonVecKey )
-  : MonitorItem_c(0, rc_devKey, rui8_nr, rb_status, ri_singletonVecKey ),
+  : BaseItem_c(0, rb_status, ri_singletonVecKey), c_devKey(rc_devKey), ui8_nr(rui8_nr),
     ui16_saEepromAdr(rui16_saEepromAdr)
 {
   // mark this item as prepare address claim if local
@@ -146,7 +146,8 @@ ISOItem_c::ISOItem_c(int32_t ri32_time, const DevKey_c& rc_devKey, uint8_t rui8_
   @param rrefc_src source ISOItem_c instance
 */
 ISOItem_c::ISOItem_c(const ISOItem_c& rrefc_src)
-  : MonitorItem_c(rrefc_src), ui16_saEepromAdr(rrefc_src.ui16_saEepromAdr)
+  : BaseItem_c(rrefc_src), c_devKey(rrefc_src.c_devKey), ui8_nr(rrefc_src.ui8_nr),
+     ui16_saEepromAdr(rrefc_src.ui16_saEepromAdr)
 {// mark this item as prepare address claim if local
   setItemState(IState_c::itemState_t(IState_c::Member | IState_c::Iso));
 
@@ -181,7 +182,11 @@ ISOItem_c::ISOItem_c(const ISOItem_c& rrefc_src)
 */
 ISOItem_c& ISOItem_c::operator=(const ISOItem_c& rrefc_src)
 {
-  MonitorItem_c::operator=(rrefc_src);
+//   MonitorItem_c::operator=(rrefc_src);
+  BaseItem_c::operator=(rrefc_src);
+  setDevKey(rrefc_src.devKey());
+  setNr(rrefc_src.nr());
+
   setItemState(IState_c::itemState_t(IState_c::Member | IState_c::Iso));
   #ifdef USE_WORKING_SET
   // no need of setting "i8_slavesToClaimAddress" here as it will be set when setting state to ClaimedAddress
@@ -199,9 +204,22 @@ ISOItem_c& ISOItem_c::operator=(const ISOItem_c& rrefc_src)
   return *this;
 }
 
+/**
+  lower comparison between left DEV_KEY uint8_t and right MonitorItem
+  @param rb_left DEV_KEY uint8_t left parameter
+  @param rrefc_right rigth ServiceItem_c parameter
+*/
+bool operator<(const DevKey_c& rc_left, const ISOItem_c& rrefc_right)
+{
+  return (rc_left < rrefc_right.devKey())?true:false;
+}
+
 /** default destructor */
 ISOItem_c::~ISOItem_c()
 {
+  setNr(0xF);
+  c_devKey.setUnspecified();
+
   if ( itemState(IState_c::ClaimedAddress ) )
   { // broadcast to handler classes the event of LOSS of this SA
     getIsoMonitorInstance4Comm().broadcastSaRemove2Clients( devKey(), nr() );
@@ -259,7 +277,11 @@ void ISOItem_c::getPureAsciiName(int8_t *pc_asciiName, uint8_t rui8_maxLen)
 void ISOItem_c::set(int32_t ri32_time, const DevKey_c& rc_devKey, uint8_t rui8_nr,
         itemState_t ren_status, uint16_t rui16_saEepromAdr, int ri_singletonVecKey )
 {
-  MonitorItem_c::set(ri32_time, rc_devKey, rui8_nr, ren_status, ri_singletonVecKey);
+//   MonitorItem_c::set(ri32_time, rc_devKey, rui8_nr, ren_status, ri_singletonVecKey);
+  BaseItem_c::set( ri32_time, ren_status, ri_singletonVecKey );
+  setDevKey(rc_devKey);
+  setNr(rui8_nr);
+
   ui16_saEepromAdr = rui16_saEepromAdr;
   readEepromSa();
 }
@@ -285,7 +307,11 @@ void ISOItem_c::set(int32_t ri32_time, DevKey_c rc_devKey, uint8_t rui8_nr,
         uint32_t rui32_serNo, itemState_t ren_status, uint16_t rui16_saEepromAdr, uint8_t rb_funcInst,
         uint8_t rb_ecuInst, int ri_singletonVecKey )
 {
-  MonitorItem_c::set(ri32_time, rc_devKey, rui8_nr, ren_status, ri_singletonVecKey);
+//   MonitorItem_c::set(ri32_time, rc_devKey, rui8_nr, ren_status, ri_singletonVecKey);
+  BaseItem_c::set( ri32_time, ren_status, ri_singletonVecKey );
+  setDevKey(rc_devKey);
+  setNr(rui8_nr);
+
   c_isoName.set(rb_selfConf, rui8_indGroup, (rc_devKey.getDevClass()), (rc_devKey.getDevClassInst()),
         rb_func, rui16_manufCode, rui32_serNo, rb_funcInst, rb_ecuInst);
   ui16_saEepromAdr = rui16_saEepromAdr;
@@ -581,5 +607,15 @@ void ISOItem_c::setMaster ( ISOItem_c* rpc_masterItem )
   pc_masterItem = rpc_masterItem;
 }
 #endif
+
+/**
+  lower comparison between left ISOItem_c and right DEV_KEY uint8_t
+  @param rrefc_left left ServiceItem_c parameter
+  @param rb_right DEV_KEY uint8_t right parameter
+*/
+bool lessThan(const ISOItem_c& rrefc_left, const DevKey_c& rc_right)
+{
+  return (rrefc_left.devKey() < rc_right)?true:false;
+}
 
 } // end of namespace __IsoAgLib

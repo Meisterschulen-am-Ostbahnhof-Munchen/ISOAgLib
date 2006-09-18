@@ -458,7 +458,7 @@ void ProcessPkg_c::string2Flags()
   // now set pc_monitorSend and pc_monitorEmpf
   if ((pri() == 2) && (c_isoMonitor.existIsoMemberNr(empf())))
   { // ISO targeted process msg with empf as defined ISO member
-    pc_monitorEmpf = static_cast<MonitorItem_c*>(&(c_isoMonitor.isoMemberNr(empf())));
+    pc_monitorEmpf = static_cast<ISOItem_c*>(&(c_isoMonitor.isoMemberNr(empf())));
   }
   else
   { // either no target process msg or empf no defined member
@@ -466,7 +466,7 @@ void ProcessPkg_c::string2Flags()
   }
   if (c_isoMonitor.existIsoMemberNr(send()))
   { // sender SEND registered as
-    pc_monitorSend = static_cast<MonitorItem_c*>(&(c_isoMonitor.isoMemberNr(send())));
+    pc_monitorSend = static_cast<ISOItem_c*>(&(c_isoMonitor.isoMemberNr(send())));
   }
   else
   { // send is no defined member
@@ -529,13 +529,13 @@ void ProcessPkg_c::flags2String()
 };
 
 /**
-  deliver reference to MonitorItem_c of EMPF member (MonitorItem_c is base class for ISOItem_c)
+  deliver reference to ISOItem_c of EMPF member (ISOItem_c is base class for ISOItem_c)
   (check with existMemberEmpf before access to not defined item)
 
-  @return reference to MonitorItem_c of member which is addressed by EMPF
+  @return reference to ISOItem_c of member which is addressed by EMPF
   @exception containerElementNonexistant
 */
-MonitorItem_c& ProcessPkg_c::memberEmpf() const
+ISOItem_c& ProcessPkg_c::memberEmpf() const
 { // check if pc_monitorEmpf is set
   if (pc_monitorEmpf == NULL)
   { // throw exception by constant -> if no exception configured no command is created
@@ -550,13 +550,13 @@ MonitorItem_c& ProcessPkg_c::memberEmpf() const
   }
 }
 /**
-  deliver reference to MonitorItem_c of SEND member (MonitorItem_c is base class for ISOItem_c)
+  deliver reference to ISOItem_c of SEND member (ISOItem_c is base class for ISOItem_c)
   (check with existMemberSend before access to not defined item)
 
-  @return reference to MonitorItem_c of member which is addressed by SEND
+  @return reference to ISOItem_c of member which is addressed by SEND
   @exception containerElementNonexistant
 */
-MonitorItem_c& ProcessPkg_c::memberSend() const
+ISOItem_c& ProcessPkg_c::memberSend() const
 { // check if pc_monitorSend is set
   if (pc_monitorSend == NULL)
   { // throw exception by constant -> if no exception configured no command is created

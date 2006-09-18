@@ -544,7 +544,7 @@ void CANPkgExt_c::setIsoSa(uint8_t rui8_val)
 /** set the structure for resolve results DA
     @param pc_monitorItem  needed monitoritem
   */
-void CANPkgExt_c::setMonitorItemForSA( const MonitorItem_c* pc_monitorItem )
+void CANPkgExt_c::setMonitorItemForSA( const ISOItem_c* pc_monitorItem )
 {
   addrResolveResSA.pc_monitorItem = pc_monitorItem;
   // p_devKey will not be needed -> set to unspecified
@@ -568,7 +568,7 @@ void CANPkgExt_c::setDevKeyForSA( const DevKey_c& p_devKey )
 /** set the structure for resolve results DA
     @param pc_monitorItem  needed monitoritem
   */
-void CANPkgExt_c::setMonitorItemForDA( const MonitorItem_c* pc_monitorItem )
+void CANPkgExt_c::setMonitorItemForDA( const ISOItem_c* pc_monitorItem )
 {
   addrResolveResDA.pc_monitorItem = pc_monitorItem;
   // p_devKey will not be needed -> set to unspecified

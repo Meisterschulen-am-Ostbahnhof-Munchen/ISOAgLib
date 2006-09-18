@@ -274,22 +274,22 @@ public:
   bool existMemberEmpf() const {return (pc_monitorEmpf != NULL)?true:false;}
 
   /**
-    deliver reference to MonitorItem_c of EMPF member (MonitorItem_c is base class for ISOItem_c)
+    deliver reference to ISOItem_c of EMPF member (ISOItem_c is base class for ISOItem_c)
     (check with existMemberEmpf before access to not defined item)
 
-    @return reference to MonitorItem_c of member which is addressed by EMPF
+    @return reference to ISOItem_c of member which is addressed by EMPF
      @exception containerElementNonexistant
   */
-  MonitorItem_c& memberEmpf()const;
+  ISOItem_c& memberEmpf()const;
 
   /**
-    deliver reference to MonitorItem_c of SEND member (MonitorItem_c is base class for ISOItem_c)
+    deliver reference to ISOItem_c of SEND member (ISOItem_c is base class for ISOItem_c)
     (check with existMemberSend before access to not defined item)
 
-    @return reference to MonitorItem_c of member which is addressed by SEND
+    @return reference to ISOItem_c of member which is addressed by SEND
      @exception containerElementNonexistant
   */
-  MonitorItem_c& memberSend()const;
+  ISOItem_c& memberSend()const;
 
 
   /* *********************** */
@@ -516,10 +516,10 @@ private: // Private attributes
   } bit_data;
 
   /** pointer to monitor list item of sender "SEND" (NULL if not claimed address) */
-  MonitorItem_c* pc_monitorSend;
+  ISOItem_c* pc_monitorSend;
 
   /** pointer to monitor list item of receiver "EMPF" (NULL if not claimed address) */
-  MonitorItem_c* pc_monitorEmpf;
+  ISOItem_c* pc_monitorEmpf;
   /**
     some terminal wants to use DEV_KEY of terminal even for local process
     data for communication on CAN BUS (default 0xFF for off)

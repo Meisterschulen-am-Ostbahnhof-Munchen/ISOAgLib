@@ -89,21 +89,22 @@
 /* *************************************** */
 /* ********** include headers ************ */
 /* *************************************** */
-#include "../../impl/monitoritem_c.h"
+// #include "../../impl/monitoritem_c.h"
+#include <IsoAgLib/util/impl/devkey_c.h>
 #include "isoname_c.h"
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 /** item class for ISO 11783 members monitor list to manage
   local (with address claim) and remote (statistic information)
-  systems; utilizes MonitorItem_c for basic MonitorList
+  systems; utilizes BaseItem_c for basic MonitorList
   management and ISOName_c for management of the 64bit NAME field
   @short Item with services needed for ISO11783 monitor lists.
   @author Dipl.-Inform. Achim Spangler
   @see MonitorItem
   @see ISOName
 */
-class ISOItem_c : public MonitorItem_c  {
+class ISOItem_c : public BaseItem_c  {
 private:
   // private typedef alias names
 public:
@@ -134,7 +135,7 @@ public:
   ISOItem_c& operator=(const ISOItem_c& rrefc_src);
 
   /** default destructor */
-  ~ISOItem_c();
+  virtual ~ISOItem_c();
 
   /** deliver the data NAME string as pointer to 8byte string
     @return const pointer to Flexible8ByteString_c union with NAME
@@ -155,11 +156,13 @@ public:
     @return:device class instance number
   */
   uint8_t devClassInst() const {return c_devKey.getConstName().devClassInst();}
+//   uint8_t devClassInst()const{return c_devKey.getDevClassInst();}
 
   /** get device class code
     @return:device class
   */
   uint8_t devClass() const {return c_devKey.getConstName().devClass();}
+//   uint8_t devClass()const{return c_devKey.getDevClass();}
 
   /** get function code
     @return function code
@@ -280,7 +283,8 @@ public:
   /** deliver DEV_KEY code of this item
     @return DEV_KEY
   */
-  const DevKey_c& devKey() const {return MonitorItem_c::devKey();}
+//   const DevKey_c& devKey() const {return MonitorItem_c::devKey();}
+  const DevKey_c& devKey()const{return c_devKey;}
 
   /** deliver name
     @return pointer to the name uint8_t string (7byte)
@@ -343,6 +347,69 @@ public:
                                                            : (itemState(IState_c::ClaimedAddress)); }
 #endif
 
+// FROM MONITORITEM_C
+
+  /**
+    set number of this item
+    @param rc_devKey number
+  */
+  void setNr(uint8_t rui8_nr){ui8_nr = rui8_nr;}
+
+  /**
+    deliver the number/adress of this item
+    @return number
+  */
+  uint8_t nr()const{return ui8_nr;}
+
+  /**
+    lower comparison with another ISOItem_c on the rigth (compare the DEV_KEY)
+    @param rrefc_right rigth parameter for lower compare
+  */
+  bool operator<(const ISOItem_c& rrefc_right) const
+    {return (devKey() < rrefc_right.devKey())?true:false;}
+
+  /**
+    lower comparison with DEV_KEY uint8_t on the rigth
+    @param rrefc_right rigth parameter for lower compare
+  */
+  bool operator<(const DevKey_c& rc_devKey)const{return (devKey() < rc_devKey)?true:false;}
+
+  /**
+    lower comparison between left DEV_KEY uint8_t and right MonitorItem
+    @param rb_left DEV_KEY uint8_t left parameter
+    @param rrefc_right rigth ServiceItem_c parameter
+  */
+  friend bool operator<(const DevKey_c& rc_left, const ISOItem_c& rrefc_right);
+
+  /**
+    lower comparison between left ISOItem_c and right DEV_KEY uint8_t
+    @param rrefc_left left ServiceItem_c parameter
+    @param rb_right DEV_KEY uint8_t right parameter
+  */
+  friend bool lessThan(const ISOItem_c& rrefc_left, const DevKey_c& rc_right);
+
+  /**
+    equality comparison with DEV_KEY uint8_t on the rigth
+    @param rrefc_right rigth parameter for lower compare
+  */
+  bool operator==(const DevKey_c& rc_right)const { return (devKey() == rc_right)?true:false;}
+
+  /**
+    difference comparison with DEV_KEY uint8_t on the rigth
+    @param rrefc_right rigth parameter for lower compare
+  */
+  bool operator!=(const DevKey_c& rc_right) const{ return (devKey() != rc_right)?true:false;}
+
+  /**
+    compare given number to nr of this item and return result
+    @param rui8_nr compared number
+    @return true -> given number equal to nr of this item
+  */
+  bool equalNr(const uint8_t rui8_nr)const{return (nr() == rui8_nr)?true:false;}
+
+
+// !FROM MONITORITEM_C
+
 protected:
 // Protected Methods
 
@@ -374,7 +441,21 @@ private:
     */
   int8_t i8_slavesToClaimAddress;
 #endif
+// FROM MONITORITEM_C
+  /** number of element */
+  uint8_t ui8_nr : 8;
+
+  /** DEV_KEY of element */
+  DevKey_c c_devKey;
+// !FROM MONITORITEM_C
 };
+
+/**
+  lower comparison between left ISOItem_c and right DEV_KEY uint8_t
+  @param rrefc_left left ServiceItem_c parameter
+  @param rb_right DEV_KEY uint8_t right parameter
+*/
+bool lessThan(const ISOItem_c& rrefc_left, const DevKey_c& rc_right);
 
 }
 #endif

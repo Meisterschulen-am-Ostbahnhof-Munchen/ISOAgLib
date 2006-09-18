@@ -95,7 +95,7 @@
 namespace __IsoAgLib {
 
 class DevKey_c;
-class MonitorItem_c;
+class ISOItem_c;
 
 /** values which indicates the state of an address */
 typedef enum { Valid = 0, OnlyNetworkMgmt = 1, Invalid = 3 } MessageState_t;
@@ -109,9 +109,9 @@ typedef struct
   //                          and all other operations just operate on the allocated instance.
   DevKey_c*         p_devKey;
   // IMPORTANT:
-  // in contrast to DevKey_c, the MonitorItem_c _POINTER_ is always set to NULL or to an instance, that
+  // in contrast to DevKey_c, the ISOItem_c _POINTER_ is always set to NULL or to an instance, that
   // is located somewhere else (thus do NEVER NEVER NEVER call new or delete for this entry!!!!!!!!)
-  const MonitorItem_c*  pc_monitorItem;
+  const ISOItem_c*  pc_monitorItem;
   //can be source or destination address
   uint8_t* pui8_address;
 } AddressResolveResults;
@@ -390,7 +390,7 @@ class CANPkgExt_c : public CANPkg_c
   /** set the monitoritem for resolve SA
       @param pc_monitorItem  needed monitoritem
     */
-  void setMonitorItemForSA( const MonitorItem_c* pc_monitorItem );
+  void setMonitorItemForSA( const ISOItem_c* pc_monitorItem );
 
   /** set the devKey for resolve SA
       @param p_devKey        needed devKey
@@ -400,7 +400,7 @@ class CANPkgExt_c : public CANPkg_c
   /** set the monitoritem for resolve SA
       @param pc_monitorItem  needed monitoritem
     */
-  void setMonitorItemForDA( const MonitorItem_c* pc_monitorItem );
+  void setMonitorItemForDA( const ISOItem_c* pc_monitorItem );
 
   /** set the devKey for resolve SA
       @param p_devKey        needed devKey

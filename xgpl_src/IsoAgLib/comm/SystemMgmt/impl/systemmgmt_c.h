@@ -93,7 +93,7 @@
 #include "../ISO11783/impl/isomonitor_c.h"
 
 #include "identitem_c.h"
-#include "monitoritem_c.h"
+#include "../ISO11783/impl/isoitem_c.h"
 
 
 // Begin Namespace __IsoAgLib
@@ -170,8 +170,8 @@ public:
                                     (optional, default false)
       @return reference to searched element
     */
-  MonitorItem_c& memberInd(uint8_t rui8_ind, bool rb_forceClaimedAddress = false)
-  { return *( (MonitorItem_c*)&memberDevClassInd(0xFF, rui8_ind, rb_forceClaimedAddress) ); }
+  ISOItem_c& memberInd(uint8_t rui8_ind, bool rb_forceClaimedAddress = false)
+  { return *( (ISOItem_c*)&memberDevClassInd(0xFF, rui8_ind, rb_forceClaimedAddress) ); }
 
   /**
     deliver the count of members in the ISO Monitor-Lists
@@ -207,7 +207,7 @@ public:
   #if ( ! defined( PRT_INSTANCE_CNT ) ) || ( PRT_INSTANCE_CNT < 2 )
   static
   #endif
-  MonitorItem_c& memberDevClassInd( uint8_t rui8_devClass, uint8_t rui8_ind, bool rb_forceClaimedAddress = false );
+  ISOItem_c& memberDevClassInd( uint8_t rui8_devClass, uint8_t rui8_ind, bool rb_forceClaimedAddress = false );
 
   /**
       check for member with given member no which optional (!!) match the condition of address claim state;
@@ -246,7 +246,7 @@ public:
   #if ( ! defined( PRT_INSTANCE_CNT ) ) || ( PRT_INSTANCE_CNT < 2 )
   static
   #endif
-  MonitorItem_c& memberNr( uint8_t rui8_nr );
+  ISOItem_c& memberNr( uint8_t rui8_nr );
 
   /**
       check for member with given member devKey;
@@ -265,7 +265,7 @@ public:
   #if ( ! defined( PRT_INSTANCE_CNT ) ) || ( PRT_INSTANCE_CNT < 2 )
   static
   #endif
-  MonitorItem_c& memberDevKey( const DevKey_c& rc_devKey, bool rb_forceClaimedAddress = false );
+  ISOItem_c& memberDevKey( const DevKey_c& rc_devKey, bool rb_forceClaimedAddress = false );
 
   /**
       check if member is in one of the member lists for ISO with wanted DEV_KEY,
@@ -297,10 +297,9 @@ public:
       deliver pointer to local member of wanted type by index
       @see localMemberCnt
       @param rui8_ind index of wanted member (first item == 0)
-      @return pointer to wanted local member (NULL if no suitable MonitorItem_c found)
-        (MonitorItem_c is base class of ISOItem_c which serves address, devKey, itemState)
+      @return pointer to wanted local member (NULL if no suitable ISOItem_c found)
     */
-  MonitorItem_c& localMemberInd( uint8_t rui8_ind );
+  ISOItem_c& localMemberInd( uint8_t rui8_ind );
 
   /**
       deliver the amount of local ISO members
@@ -334,12 +333,10 @@ public:
       possible errors:
         * Err_c::lbsSysNoActiveLocalMember on missing own active ident
 
-      @return reference to the MonitorItem_c of the first active local member
-        (MonitorItem_c is baes class of ISOItem_c which serves
-        adress, devKey, itemState)
+      @return reference to the ISOItem_c of the first active local member
       @exception preconditionViolation
     */
-  MonitorItem_c& getActiveLocalMember();
+  ISOItem_c& getActiveLocalMember();
 
   /**
       check if one of the own local ISO members is active with claimed address at ISO11783;
@@ -452,9 +449,9 @@ private:
 
   /**
     Cache pointer to speedup access to first active
-    MonitorItem_c local member after check for existance
+    ISOItem_c local member after check for existance
   */
-  MonitorItem_c* pc_activeLocalMember;
+  ISOItem_c* pc_activeLocalMember;
 };
 #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
   /** C-style function, to get access to the unique SystemMgmt_c singleton instance

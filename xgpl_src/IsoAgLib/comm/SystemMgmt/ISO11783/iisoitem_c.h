@@ -66,7 +66,7 @@ namespace IsoAgLib {
 
 /** item class for ISO 11783 members monitor list to manage
   local (with address claim) and remote (statistic information)
-  systems; utilizes MonitorItem_c for basic MonitorList
+  systems; utilizes ISOItem_c for basic MonitorList
   management and ISOName_c for management of the 64bit NAME field
   @short Item with services needed for ISO11783 monitor lists.
   @author Dipl.-Inform. Achim Spangler

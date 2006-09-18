@@ -232,9 +232,7 @@ public:
       can throw an preconditionViolation error, if none of the own identities is active/claimed address yet
       possible errors:
         * Err_c::lbsSysNoActiveLocalMember on missing own active ident
-      @return reference to the MonitorItem_c of the first active local member
-        (MonitorItem_c is base class of both ISOItem_c which serves
-        address, devKey, itemState)
+      @return reference to the ISOItem_c of the first active local member
       @exception preconditionViolation
     */
   iMonitorItem_c& getActiveLocalMember()

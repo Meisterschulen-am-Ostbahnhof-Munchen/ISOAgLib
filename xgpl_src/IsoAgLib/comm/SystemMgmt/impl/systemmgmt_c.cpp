@@ -261,9 +261,9 @@ uint8_t SystemMgmt_c::memberDevClassCnt(uint8_t rui8_devClass, bool rb_forceClai
                                   (optional, default false)
   @return reference to searched element
   */
-MonitorItem_c& SystemMgmt_c::memberDevClassInd(uint8_t rui8_devClass, uint8_t rui8_ind, bool rb_forceClaimedAddress)
+ISOItem_c& SystemMgmt_c::memberDevClassInd(uint8_t rui8_devClass, uint8_t rui8_ind, bool rb_forceClaimedAddress)
 {
-  return static_cast<MonitorItem_c&>(getIsoMonitorInstance4Comm().isoMemberDevClassInd(rui8_devClass, rui8_ind, rb_forceClaimedAddress));
+  return static_cast<ISOItem_c&>(getIsoMonitorInstance4Comm().isoMemberDevClassInd(rui8_devClass, rui8_ind, rb_forceClaimedAddress));
 }
 
 /**
@@ -302,9 +302,9 @@ bool SystemMgmt_c::existMemberDevKey(const DevKey_c& rc_devKey, bool rb_forceCla
     @return reference to iMonitorItem_c with wanted number
     @exception containerElementNonexistant
   */
-MonitorItem_c& SystemMgmt_c::memberNr(uint8_t rui8_nr)
+ISOItem_c& SystemMgmt_c::memberNr(uint8_t rui8_nr)
 {
-  return static_cast<MonitorItem_c&>(getIsoMonitorInstance4Comm().isoMemberNr(rui8_nr));
+  return static_cast<ISOItem_c&>(getIsoMonitorInstance4Comm().isoMemberNr(rui8_nr));
 }
 
 /**
@@ -320,9 +320,9 @@ MonitorItem_c& SystemMgmt_c::memberNr(uint8_t rui8_nr)
     @return reference to iMonitorItem_c with wanted number
     @exception containerElementNonexistant
   */
-MonitorItem_c& SystemMgmt_c::memberDevKey(const DevKey_c& rc_devKey, bool rb_forceClaimedAddress)
+ISOItem_c& SystemMgmt_c::memberDevKey(const DevKey_c& rc_devKey, bool rb_forceClaimedAddress)
 {
-  return static_cast<MonitorItem_c&>(getIsoMonitorInstance4Comm().isoMemberDevKey(rc_devKey, rb_forceClaimedAddress));
+  return static_cast<ISOItem_c&>(getIsoMonitorInstance4Comm().isoMemberDevKey(rc_devKey, rb_forceClaimedAddress));
 }
 
 
@@ -356,14 +356,12 @@ uint8_t SystemMgmt_c::localMemberCnt()
     deliver reference to local din member by index
     @see localMemberCnt
     @param rui8_ind index of wanted member (first item == 0)
-    @return reference to wanted local member MonitorItem
-      (MonitorItem_c is bas class of both ISOItem_c or DINItem_c which serves
-      adress, devKey, itemState)
+    @return reference to wanted local member ISOItem_c
     @return pointer to wanted local din member (NULL if no suitable DINItem_c found)
   */
-MonitorItem_c& SystemMgmt_c::localMemberInd(uint8_t rui8_ind)
+ISOItem_c& SystemMgmt_c::localMemberInd(uint8_t rui8_ind)
 {
-  MonitorItem_c* pc_result = NULL;
+  ISOItem_c* pc_result = NULL;
   uint8_t b_count = 0;
   for ( pc_searchCacheC1 = c_arrClientC1.begin(); ( pc_searchCacheC1 != c_arrClientC1.end() ); pc_searchCacheC1++ )
   {  // increase reult count if local ident is already registered in MemberList
@@ -395,7 +393,7 @@ bool SystemMgmt_c::existActiveLocalMember()
    || (!pc_activeLocalMember->itemState(IState_c::ClaimedAddress)))
   { // the actual cache pointer isn't correct -> search new one
     const DevKey_c *pc_useDevKey = NULL;
-    MonitorItem_c* pc_monitorItem = NULL;
+    ISOItem_c* pc_monitorItem = NULL;
 
     for ( pc_searchCacheC1 = c_arrClientC1.begin(); ( pc_searchCacheC1 != c_arrClientC1.end() ); pc_searchCacheC1++ )
     {
@@ -438,12 +436,10 @@ bool SystemMgmt_c::existActiveLocalMember()
     possible errors:
       * lbsSysNoActiveLocalMember on missing own active ident
 
-    @return reference to the MonitorItem_c of the first active local member
-      (MonitorItem_c is bas class of both ISOItem_c or DINItem_c which serves
-      adress, devKey, itemState)
+    @return reference to the ISOItem_c of the first active local member
     @exception preconditionViolation
   */
-MonitorItem_c& SystemMgmt_c::getActiveLocalMember()
+ISOItem_c& SystemMgmt_c::getActiveLocalMember()
 {
   if  (existActiveLocalMember() )
   { // return reference to the pointed ident element
