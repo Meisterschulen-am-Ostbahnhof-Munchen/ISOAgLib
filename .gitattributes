@@ -1255,13 +1255,10 @@ compiler_projects/kdevelop_qmake/tractor/tractor.pro -text
 compiler_projects/projectGeneration/EDE.part1.pjt -text
 compiler_projects/projectGeneration/EDE.part2.pjt -text
 compiler_projects/projectGeneration/conf_0_0_AddressClaimIso -text
-compiler_projects/projectGeneration/conf_0_2_AddressClaimFlexible -text
 compiler_projects/projectGeneration/conf_0_3_LookupIso -text
-compiler_projects/projectGeneration/conf_0_4_LookupDin -text
 compiler_projects/projectGeneration/conf_1_0_ReadIso -text
 compiler_projects/projectGeneration/conf_1_2_WriteIso -text
 compiler_projects/projectGeneration/conf_1_4_WriteFlexibleIso -text
-compiler_projects/projectGeneration/conf_1_5_WriteFlexibleDin -text
 compiler_projects/projectGeneration/conf_2_0_LocalReadDataStdIso -text
 compiler_projects/projectGeneration/conf_2_10_RemoteWriteSetpointSimpleSetpointIso -text
 compiler_projects/projectGeneration/conf_2_1_LocalReadDataSimpleMeasureIso -text
