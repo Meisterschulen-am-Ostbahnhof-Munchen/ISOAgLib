@@ -85,7 +85,7 @@
  *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
-#include <IsoAgLib/comm/SystemMgmt/impl/systemmgmt_c.h>
+#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h>
 #include <IsoAgLib/driver/can/impl/canio_c.h>
 #include "tracpto_c.h"
 #include "tracgeneral_c.h"
@@ -168,10 +168,10 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     */
   void TracPTO_c::checkCreateReceiveFilter( )
   {
-    SystemMgmt_c& c_systemMgmt = getSystemMgmtInstance4Comm();
+    ISOMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
     CANIO_c &c_can = getCanInstance4Comm();
 
-    if ( ( !checkFilterCreated() ) && ( c_systemMgmt.existActiveLocalIsoMember() ) )
+    if ( ( !checkFilterCreated() ) && ( c_isoMonitor.existActiveLocalIsoMember() ) )
     { // check if needed receive filters for ISO are active
       setFilterCreated();
       // create FilterBox_c for PGN FRONT_PTO_STATE_PGN, PF 254 - mask for DP, PF and PS

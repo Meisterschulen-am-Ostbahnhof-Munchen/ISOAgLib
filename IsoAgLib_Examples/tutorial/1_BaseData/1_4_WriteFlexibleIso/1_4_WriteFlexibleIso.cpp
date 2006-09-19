@@ -206,7 +206,7 @@
    of the "IsoAgLib" */
 #include <IsoAgLib/comm/Scheduler/ischeduler_c.h>
 #include <IsoAgLib/comm/SystemMgmt/iidentitem_c.h>
-#include <IsoAgLib/comm/SystemMgmt/isystemmgmt_c.h>
+#include <IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h>
 #include <IsoAgLib/comm/Base/itimeposgps_c.h>
 
 // the interface objects of the IsoAgLib are placed in the IsoAgLibAll namespace
@@ -266,7 +266,7 @@ int main()
       ui32_serNo, b_wantedSa, 0xFFFF, b_funcInst, b_ecuInst);
 
   // configure BaseData_c to send nothing on BUS
-  getITimePosGpsInstance().config(&myDevKey, IsoAgLib::BaseDataNothing );
+  getITimePosGpsInstance().config(&myDevKey, IsoAgLib::IdentModeImplement );
 
   // timestamp when local ECU will start to send calendar
   // -> 3000msec after own address claim without any calendar
@@ -307,7 +307,7 @@ int main()
 
     if ( ! b_sendCalendar )
     { // check if local item has already claimed address
-      if (getISystemMgmtInstance().existMemberDevKey(myDevKey, true))
+      if (getIisoMonitorInstance().existIsoMemberDevKey(myDevKey, true))
       { // local item has claimed address
         if ( i32_decideOnCalendar < 0 )
         { // set time for decision
@@ -318,7 +318,7 @@ int main()
                 && ( ! getITimePosGpsInstance().isCalendarReceived() ) )
         { // still no calendar received -> start sending of calendar
           // first set config in BaseData_c
-          getITimePosGpsInstance().config(&myDevKey, BaseDataCalendar );
+          getITimePosGpsInstance().config(&myDevKey, IdentModeImplement );
           b_sendCalendar = true;
         }
       }

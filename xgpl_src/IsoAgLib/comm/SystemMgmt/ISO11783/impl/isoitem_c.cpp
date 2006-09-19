@@ -114,8 +114,7 @@ namespace __IsoAgLib {
 */
 ISOItem_c::ISOItem_c(int32_t ri32_time, const DevKey_c& rc_devKey, uint8_t rui8_nr, IState_c::itemState_t rb_status,
       uint16_t rui16_saEepromAdr, int ri_singletonVecKey )
-  : BaseItem_c(0, rb_status, ri_singletonVecKey), c_devKey(rc_devKey), ui8_nr(rui8_nr),
-    ui16_saEepromAdr(rui16_saEepromAdr)
+  : BaseItem_c(0, rb_status, ri_singletonVecKey), ui16_saEepromAdr(rui16_saEepromAdr), ui8_nr(rui8_nr), c_devKey(rc_devKey)
 {
   // mark this item as prepare address claim if local
   setItemState(IState_c::itemState_t(IState_c::Member | IState_c::Iso));
@@ -146,8 +145,7 @@ ISOItem_c::ISOItem_c(int32_t ri32_time, const DevKey_c& rc_devKey, uint8_t rui8_
   @param rrefc_src source ISOItem_c instance
 */
 ISOItem_c::ISOItem_c(const ISOItem_c& rrefc_src)
-  : BaseItem_c(rrefc_src), c_devKey(rrefc_src.c_devKey), ui8_nr(rrefc_src.ui8_nr),
-     ui16_saEepromAdr(rrefc_src.ui16_saEepromAdr)
+  : BaseItem_c(rrefc_src), ui16_saEepromAdr(rrefc_src.ui16_saEepromAdr), ui8_nr(rrefc_src.ui8_nr), c_devKey(rrefc_src.c_devKey)
 {// mark this item as prepare address claim if local
   setItemState(IState_c::itemState_t(IState_c::Member | IState_c::Iso));
 

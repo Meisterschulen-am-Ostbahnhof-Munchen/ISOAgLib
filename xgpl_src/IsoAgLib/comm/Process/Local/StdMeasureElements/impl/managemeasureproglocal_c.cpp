@@ -255,7 +255,7 @@ ManageMeasureProgLocal_c::~ManageMeasureProgLocal_c()
   @return true -> all planned executions performed
 */
 bool ManageMeasureProgLocal_c::timeEvent( void ){
-  SystemMgmt_c& c_lbsSystem = getSystemMgmtInstance4Comm();
+  ISOMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
 
   if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
   const DevKey_c *pc_callerDevKey;
@@ -293,8 +293,8 @@ bool ManageMeasureProgLocal_c::timeEvent( void ){
   { // only one measure prog -> set it to undefined prog type if devKey inactive
     pc_callerDevKey = &(vec_prog().begin()->devKey());
     if ( ( !vec_prog().begin()->checkProgType(Proc_c::UndefinedProg))
-        && (   ( !c_lbsSystem.existMemberDevKey(*pc_callerDevKey, true))
-            || ( c_lbsSystem.memberDevKey(*pc_callerDevKey, true).lastedTime() > 3000 )
+        && (   ( !c_isoMonitor.existIsoMemberDevKey(*pc_callerDevKey, true))
+            || ( c_isoMonitor.isoMemberDevKey(*pc_callerDevKey, true).lastedTime() > 3000 )
            )
        )
     { // progType of first and only element is not default undefined
@@ -312,8 +312,8 @@ bool ManageMeasureProgLocal_c::timeEvent( void ){
       for (Vec_MeasureProgLocal::iterator pc_iter = vec_prog().begin();
           pc_iter != vec_prog().end(); pc_iter++)
       { // check if this item has inactive devKey
-        if (  ( !c_lbsSystem.existMemberDevKey(pc_iter->devKey(), true) )
-            ||( c_lbsSystem.memberDevKey(pc_iter->devKey(), true).lastedTime() > 3000 )
+        if (  ( !c_isoMonitor.existIsoMemberDevKey(pc_iter->devKey(), true) )
+            ||( c_isoMonitor.isoMemberDevKey(pc_iter->devKey(), true).lastedTime() > 3000 )
            )
         { // item isn't active any more -> stop entries and erase it
           pc_iter->stop();

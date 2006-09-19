@@ -441,13 +441,11 @@ private:
     */
   int8_t i8_slavesToClaimAddress;
 #endif
-// FROM MONITORITEM_C
   /** number of element */
   uint8_t ui8_nr : 8;
 
   /** DEV_KEY of element */
   DevKey_c c_devKey;
-// !FROM MONITORITEM_C
 };
 
 /**

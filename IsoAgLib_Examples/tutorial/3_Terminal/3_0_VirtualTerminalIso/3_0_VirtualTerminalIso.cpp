@@ -209,7 +209,7 @@
    of the "IsoAgLib" */
 #include <IsoAgLib/comm/Scheduler/ischeduler_c.h>
 #include <IsoAgLib/comm/SystemMgmt/iidentitem_c.h>
-#include <IsoAgLib/comm/SystemMgmt/isystemmgmt_c.h>
+#include <IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h>
 #include <supplementary_driver/driver/datastreams/streaminput_c.h>
 #include <iostream>
 
@@ -227,8 +227,6 @@
 // is needed for the documentation generator
 using namespace IsoAgLib;
 
-
-
 iVtObject_c* arrpc_vtObjectsToUpdate[] =
 {
   &iVtObjectValSpeed,
@@ -236,14 +234,9 @@ iVtObject_c* arrpc_vtObjectsToUpdate[] =
   &iVtObjectBigLogo
 };
 
-
-
-
 /******************************/
 /* Example Code following.... */
 /******************************/
-
-
 /**
   hook function that gets called every time a color-value
   has to be adapted to VT's color-depth.
@@ -292,8 +285,7 @@ uint8_t iObjectPool_simpleVTIsoPool_c::convertColour(uint8_t colorValue, uint8_t
                  return 0; /* black - std. drawing colour */
     }
   }
-};
-
+}
 
 // normal program variables (that are also used as source for the vt-display
 static int16_t valSpeed=0, valMiles=0, valAccel=10, color=0, like=0;
@@ -380,7 +372,7 @@ void iObjectPool_simpleVTIsoPool_c::eventKeyCode ( uint8_t keyActivationCode, ui
         {
           std::cout << "Reset pressed. Triggering Pool update."<<std::endl;
 
-          /// We should wait until a previous partial update has finished, as else we would 
+          /// We should wait until a previous partial update has finished, as else we would
           /// modify the buffer while it's being used for the pool update!
 
           // this actually only needs to be done once!!! but I don't care for now...
@@ -510,7 +502,6 @@ void iObjectPool_simpleVTIsoPool_c::eventStringValue (uint16_t /*rui16_objId*/, 
   }
 }
 
-
 void
 iObjectPool_simpleVTIsoPool_c::eventLanguagePgn(const localSettings_s& rrefs_localSettings)
 {
@@ -525,15 +516,11 @@ iObjectPool_simpleVTIsoPool_c::eventLanguagePgn(const localSettings_s& rrefs_loc
   iVtObjectOSlanguage.setValueCopy (languageCode);
 }
 
-
 static iObjectPool_simpleVTIsoPool_c Tutorial_3_0_Pool_c;
-
 
 /********************/
 /* End Example Code */
 /********************/
-
-
 int main()
 { // simply call startImi
 

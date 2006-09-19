@@ -215,8 +215,7 @@
    of the "IsoAgLib" */
 #include <IsoAgLib/comm/Scheduler/ischeduler_c.h>
 #include <IsoAgLib/comm/SystemMgmt/iidentitem_c.h>
-#include <IsoAgLib/comm/SystemMgmt/isystemmgmt_c.h>
-
+#include <IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h>
 
 // the interface objects of the IsoAgLib are placed in the IsoAgLibAll namespace
 // -> include all elements of this area for easy access
@@ -287,7 +286,7 @@ int main()
     // check in main loop for existance of other item
     // ( force that other item has already complete claimed address with true as second parameter )
     static bool b_lastState = false;
-    if (getISystemMgmtInstance().existMemberDevKey(lookupDevKey, true))
+    if (getIisoMonitorInstance().existIsoMemberDevKey(lookupDevKey, true))
     { // fine the other item is active on BUS
       if ( ! b_lastState ) {
         #ifdef USE_RS232_FOR_DEBUG
@@ -308,4 +307,3 @@ int main()
   }
   return 1;
 }
-

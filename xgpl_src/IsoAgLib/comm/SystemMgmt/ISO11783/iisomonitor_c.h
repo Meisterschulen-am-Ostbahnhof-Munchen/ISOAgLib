@@ -63,6 +63,9 @@
 
 // Begin Namespace IsoAgLib
 namespace IsoAgLib {
+
+class iScheduler_c;
+
 /** this object manages a monitor list of all
   ISO members including inserting and administration of local own members.
   @short Manager for members of Scheduler_c (ISOItem_c)
@@ -73,7 +76,7 @@ class iISOMonitor_c : private __IsoAgLib::ISOMonitor_c
 {
 public:
   /** initialisation for ISOMonitor_c which can store optional pointer to central Scheduler_c instance */
-  void init( void ) { ISOMonitor_c::init();}
+  void init( void ) { ISOMonitor_c::init(); }
 
   /** deliver amount of ISO members in monitor list which optional (!!)
     match the condition of address claim state
@@ -81,7 +84,8 @@ public:
           (optional, default false)
     @return amount of ISO members with claimed address
   */
-  uint8_t isoMemberCnt(bool rb_forceClaimedAddress = false) { return ISOMonitor_c::isoMemberCnt(rb_forceClaimedAddress);}
+  uint8_t isoMemberCnt(bool rb_forceClaimedAddress = false)
+  { return ISOMonitor_c::isoMemberCnt(rb_forceClaimedAddress); }
 
   /** deliver the n'th ISO member in monitor list which optional (!!)
     match the condition of address claim state
@@ -98,7 +102,7 @@ public:
     @return reference to searched element
   */
   iISOItem_c& isoMemberInd(uint8_t rui8_ind, bool rb_forceClaimedAddress = false)
-  { return static_cast<iISOItem_c&>(ISOMonitor_c::isoMemberInd( rui8_ind, rb_forceClaimedAddress ));}
+  { return static_cast<iISOItem_c&>(ISOMonitor_c::isoMemberInd( rui8_ind, rb_forceClaimedAddress )); }
 
   /** deliver the count of members in the Monitor-List with given DEVCLASS (variable POS)
     which optional (!!) match the condition of address claim state
@@ -152,7 +156,8 @@ public:
     @param refc_devKey DEV_KEY to search (-> it's updated if member with claimed address with other dev class inst is found)
     @return true -> member with claimed address with given DEVCLASS found (and refc_devKey has now its DEV_KEY)
   */
-  bool isoDevClass2DevKeyClaimedAddress(iDevKey_c &refc_devKey) { return ISOMonitor_c::isoDevClass2DevKeyClaimedAddress( refc_devKey);}
+  bool isoDevClass2DevKeyClaimedAddress(iDevKey_c &refc_devKey)
+  { return ISOMonitor_c::isoDevClass2DevKeyClaimedAddress( refc_devKey);}
 
   /** deliver member item with given devKey
     (check with existIsoMemberDevKey before access to not defined item)
@@ -184,6 +189,23 @@ public:
   */
   iISOItem_c& isoMemberDevKey(const iDevKey_c& rc_devKey, bool *const pb_success, bool rb_forceClaimedAddress = false )
   { return static_cast<iISOItem_c&>(ISOMonitor_c::isoMemberDevKey( rc_devKey, pb_success, rb_forceClaimedAddress ));}
+
+  /** check if one of the own local members is active with claimed address at ISO11783
+    @return true -> at least one of the own identities is active with claimed address at ISO11783
+    @see SystemMgmt_c::getActiveLocalMember
+  */
+  bool existActiveLocalIsoMember() {return ISOMonitor_c::existActiveLocalIsoMember();}
+
+  /** delivers reference to the first active local ISO member;
+    -> using the number of the first active member serves as default
+    can throw an preconditionViolation error, if none of the own ISO identities is active/claimed address yet
+      possible errors:
+    * Err_c::lbsSysNoActiveLocalMember on missing own active ident
+    @return reference to the ISOItem_c of the first active local member
+    @exception preconditionViolation
+  */
+  iISOItem_c& getActiveLocalIsoMember()
+  {return static_cast<iISOItem_c&>(ISOMonitor_c::getActiveLocalIsoMember());}
 
 private:
   /** allow getIisoMonitorInstance() access to shielded base class.

@@ -206,7 +206,7 @@
    of the "IsoAgLib" */
 #include <IsoAgLib/comm/Scheduler/ischeduler_c.h>
 #include <IsoAgLib/comm/SystemMgmt/iidentitem_c.h>
-#include <IsoAgLib/comm/SystemMgmt/isystemmgmt_c.h>
+#include <IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h>
 #include <IsoAgLib/comm/Process/proc_c.h>
 #include <IsoAgLib/comm/Process/Remote/SimpleSetpoint/iprocdataremotesimplesetpoint_c.h>
 
@@ -436,8 +436,8 @@ int main()
     // all time controlled actions of IsoAgLib
     IsoAgLib::getISchedulerInstance().timeEvent();
 
-    if ( ! getISystemMgmtInstance().existMemberDevKey(c_myDevKey, true) ) continue;
-    if ( ! getISystemMgmtInstance().existMemberDevKey(c_remoteDeviceType, true) ) continue;
+    if ( ! getIisoMonitorInstance().existIsoMemberDevKey(c_myDevKey, true) ) continue;
+    if ( ! getIisoMonitorInstance().existIsoMemberDevKey(c_remoteDeviceType, true) ) continue;
     #ifndef USE_PROC_HANDLER
     if ( ( b_waitingRespWorkState ) && ( c_workState.setpointMasterVal( false ) == ui8_mySetpointWorkState ) )
     { // FINE - the current reported setpoint is the same we commanded lastly
@@ -459,8 +459,8 @@ int main()
 /** dummy function which can be called from some other module to control the remote work state */
 void controlRemoteWorkState( bool rb_isWorking )
 {
-  if ( ! getISystemMgmtInstance().existMemberDevKey(c_myDevKey, true) ) return;
-  if ( ! getISystemMgmtInstance().existMemberDevKey(c_remoteDeviceType, true) ) return;
+  if ( ! getIisoMonitorInstance().existIsoMemberDevKey(c_myDevKey, true) ) return;
+  if ( ! getIisoMonitorInstance().existIsoMemberDevKey(c_remoteDeviceType, true) ) return;
 
   if ( rb_isWorking ) ui8_mySetpointWorkState = 100;
   else ui8_mySetpointWorkState = 0;
@@ -475,8 +475,8 @@ void controlRemoteWorkState( bool rb_isWorking )
 /** dummy function which can be called from some other module to control the remote application rate */
 void controlRemoteApplicationRate( int32_t ri32_applicationRate )
 {
-  if ( ! getISystemMgmtInstance().existMemberDevKey(c_myDevKey, true) ) return;
-  if ( ! getISystemMgmtInstance().existMemberDevKey(c_remoteDeviceType, true) ) return;
+  if ( ! getIisoMonitorInstance().existIsoMemberDevKey(c_myDevKey, true) ) return;
+  if ( ! getIisoMonitorInstance().existIsoMemberDevKey(c_remoteDeviceType, true) ) return;
 
   i32_mySetpointApplicationRate = ri32_applicationRate;
   #ifndef USE_PROC_HANDLER

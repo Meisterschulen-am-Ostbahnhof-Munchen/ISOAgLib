@@ -552,7 +552,7 @@ bool SetpointRemote_c::timeEvent( void )
 {
   if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
   const DevKey_c& c_ownerDevKey = processData().ownerDevKey();
-  if ( !getSystemMgmtInstance4Comm().existMemberDevKey( c_ownerDevKey, true) )
+  if ( !getIsoMonitorInstance4Comm().existIsoMemberDevKey( c_ownerDevKey, true) )
   { // remote owner of this process data isn't active any more
     // -> reset all entries
     i32_answeredTime = i32_commandedTime = 0;

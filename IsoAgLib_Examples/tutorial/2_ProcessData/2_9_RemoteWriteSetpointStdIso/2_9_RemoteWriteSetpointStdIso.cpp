@@ -206,7 +206,7 @@
    of the "IsoAgLib" */
 #include <IsoAgLib/comm/Scheduler/ischeduler_c.h>
 #include <IsoAgLib/comm/SystemMgmt/iidentitem_c.h>
-#include <IsoAgLib/comm/SystemMgmt/isystemmgmt_c.h>
+#include <IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h>
 #include <IsoAgLib/comm/Process/proc_c.h>
 #include <IsoAgLib/comm/Process/Remote/Std/iprocdataremote_c.h>
 
@@ -449,8 +449,8 @@ int main()
 
     IsoAgLib::getISchedulerInstance().timeEvent();
 
-    if ( ! getISystemMgmtInstance().existMemberDevKey(c_myDevKey, true) ) continue;
-    if ( ! getISystemMgmtInstance().existMemberDevKey(c_remoteDeviceType, true) ) continue;
+    if ( ! getIisoMonitorInstance().existIsoMemberDevKey(c_myDevKey, true) ) continue;
+    if ( ! getIisoMonitorInstance().existIsoMemberDevKey(c_remoteDeviceType, true) ) continue;
 
     if (!b_done1 && (__HAL::getTime() > 3000)) {
       controlRemoteWorkState(true);
@@ -498,8 +498,8 @@ int main()
 /** dummy function which can be called from some other module to control the remote work state */
 void controlRemoteWorkState( bool rb_isWorking )
 {
-  if ( ! getISystemMgmtInstance().existMemberDevKey(c_myDevKey, true) ) return;
-  if ( ! getISystemMgmtInstance().existMemberDevKey(c_remoteDeviceType, true) ) return;
+  if ( ! getIisoMonitorInstance().existIsoMemberDevKey(c_myDevKey, true) ) return;
+  if ( ! getIisoMonitorInstance().existIsoMemberDevKey(c_remoteDeviceType, true) ) return;
   #ifndef USE_PROC_HANDLER
   b_waitingRespWorkState = true;
   if ( rb_isWorking ) c_workState.setSetpointMasterVal( 100 );
@@ -513,8 +513,8 @@ void controlRemoteWorkState( bool rb_isWorking )
 /** dummy function which can be called from some other module to control the remote application rate */
 void controlRemoteApplicationRate( int32_t ri32_applicationRate )
 {
-  if ( ! getISystemMgmtInstance().existMemberDevKey(c_myDevKey, true) ) return;
-  if ( ! getISystemMgmtInstance().existMemberDevKey(c_remoteDeviceType, true) ) return;
+  if ( ! getIisoMonitorInstance().existIsoMemberDevKey(c_myDevKey, true) ) return;
+  if ( ! getIisoMonitorInstance().existIsoMemberDevKey(c_remoteDeviceType, true) ) return;
   #ifndef USE_PROC_HANDLER
   b_waitingRespApplicationRate = true;
   c_applicationRate.setSetpointMasterVal( ri32_applicationRate );

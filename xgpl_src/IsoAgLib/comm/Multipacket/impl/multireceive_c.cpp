@@ -91,7 +91,6 @@
 #include "../multireceiveclient_c.h"
 
 // IsoAgLib
-#include <IsoAgLib/comm/SystemMgmt/impl/systemmgmt_c.h>
 #include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h>
 #include <IsoAgLib/comm/Scheduler/impl/scheduler_c.h>
 #include <IsoAgLib/driver/can/impl/canio_c.h>
@@ -1319,7 +1318,7 @@ MultiReceive_c::reactOnMonitorListAdd( const __IsoAgLib::DevKey_c& refc_devKey, 
       << "NOW use SA: " << int(rpc_newItem->nr()) << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_NEWLINE
       << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
-  if ( getSystemMgmtInstance4Comm().existLocalMemberDevKey(refc_devKey) )
+  if ( getIsoMonitorInstance4Comm().existLocalIsoMemberDevKey(refc_devKey) )
   { // lcoal ISOItem_c has finished adr claim
     uint32_t ui32_nr = rpc_newItem->nr();
 
@@ -1360,7 +1359,7 @@ MultiReceive_c::reactOnMonitorListRemove( const __IsoAgLib::DevKey_c&
       << " and PREVIOUSLY used SA: " << int(rui8_oldSa) << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_NEWLINE
       << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
-  if ( getSystemMgmtInstance4Comm().existLocalMemberDevKey(refc_devKey) )
+  if ( getIsoMonitorInstance4Comm().existLocalIsoMemberDevKey(refc_devKey) )
   { // lcoal ISOItem_c has lost SA
     uint32_t ui32_nr = rui8_oldSa;
     MACRO_deleteFilterIfExists_mask1FFFF00(ETP_DATA_TRANSFER_PGN,ui32_nr)

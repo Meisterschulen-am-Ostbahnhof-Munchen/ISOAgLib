@@ -107,7 +107,7 @@
 
 #ifdef USE_ISO_11783
 //  #include <IsoAgLib/comm/ISO_Terminal/ivtobjectstring_c.h>
-  #include <IsoAgLib/comm/SystemMgmt/impl/systemmgmt_c.h>
+#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h>
 #endif
 
 #if defined( IOP_OUTPUT ) && defined( SYSTEM_PC )
@@ -1247,7 +1247,7 @@ MultiSend_c::SendStream_c::abortSend()
  */
 void MultiSend_c::reactOnMonitorListAdd( const DevKey_c& refc_devKey, const ISOItem_c* rpc_newItem )
 {
-  if ( getSystemMgmtInstance4Comm().existLocalMemberDevKey(refc_devKey) )
+  if ( getIsoMonitorInstance4Comm().existLocalIsoMemberDevKey(refc_devKey) )
   { // lcoal ISOItem_c has finished adr claim
     bool b_isReconfigNeeded = false;
     uint32_t ui32_nr = rpc_newItem->nr();
@@ -1285,7 +1285,7 @@ void MultiSend_c::reactOnMonitorListAdd( const DevKey_c& refc_devKey, const ISOI
  */
 void MultiSend_c::reactOnMonitorListRemove( const DevKey_c& refc_devKey, uint8_t rui8_oldSa )
 {
-  if ( getSystemMgmtInstance4Comm().existLocalMemberDevKey(refc_devKey) )
+  if ( getIsoMonitorInstance4Comm().existLocalIsoMemberDevKey(refc_devKey) )
   { // lcoal ISOItem_c has lost SA
     uint32_t ui32_nr = rui8_oldSa;
     // only ISO msgs with own SA in PS (destination)

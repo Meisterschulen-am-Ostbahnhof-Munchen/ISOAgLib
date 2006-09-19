@@ -851,7 +851,7 @@ VtClientServerCommunication_c::processMsgAck()
   bool b_ignoreNack = false; // normally DO NOT ignore NACK
   if (getIsoMonitorInstance4Comm().existIsoMemberNr (c_data.isoSa()))
   { // sender exists in isomonitor, so query its Manufacturer Code
-    const uint16_t cui16_manufCode = getIsoMonitorInstance().isoMemberNr (c_data.isoSa()).devKey().getConstName().manufCode();
+    const uint16_t cui16_manufCode = getIsoMonitorInstance4Comm().isoMemberNr (c_data.isoSa()).devKey().getConstName().manufCode();
     if (((cui16_manufCode == 98) /*Mller Elektronik*/ || (cui16_manufCode == 103) /*Agrocom*/) &&
           ((pc_vtServerInstance->getVtCapabilities()->lastReceivedVersion == 0) ||
           (pc_vtServerInstance->getVtCapabilities()->iso11783version < 3)))
@@ -1528,7 +1528,7 @@ VtClientServerCommunication_c::sendCommandSetGCFillAttributes(
 {
   return sendCommand (vtObjectGraphicsContext_c::e_commandID,
                       rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
-                      vtObjectGraphicsContext_c::e_setFillAttributeCmdID, 
+                      vtObjectGraphicsContext_c::e_setFillAttributeCmdID,
                       newFillAttributes->getID() & 0xFF, newFillAttributes->getID() >> 8, 0xFF, 0xFF,
                       DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
 }
@@ -2003,11 +2003,11 @@ VtClientServerCommunication_c::checkVtStateChange()
   if (!b_vtAliveOld && b_vtAliveCurrent)
   { /// OFF --> ON  ***  VT has (re-)entered the system
 #ifdef DEBUG
-    INTERNAL_DEBUG_DEVICE 
+    INTERNAL_DEBUG_DEVICE
       << INTERNAL_DEBUG_DEVICE_NEWLINE << "=========================================================================="
       << INTERNAL_DEBUG_DEVICE_NEWLINE << "=== VT has entered the system, trying to receive all Properties now... ==="
       << INTERNAL_DEBUG_DEVICE_NEWLINE << "=== time: " << HAL::getTime() << " ==="
-      << INTERNAL_DEBUG_DEVICE_NEWLINE << "==========================================================================" 
+      << INTERNAL_DEBUG_DEVICE_NEWLINE << "=========================================================================="
       << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
 
 #endif
@@ -2016,11 +2016,11 @@ VtClientServerCommunication_c::checkVtStateChange()
   else if (b_vtAliveOld && !b_vtAliveCurrent)
   { /// ON -> OFF  ***  Connection to VT lost
 #ifdef DEBUG
-    INTERNAL_DEBUG_DEVICE 
+    INTERNAL_DEBUG_DEVICE
       << INTERNAL_DEBUG_DEVICE_NEWLINE << "=============================================================================="
       << INTERNAL_DEBUG_DEVICE_NEWLINE << "=== VT has left the system, clearing queues --> eventEnterSafeState called ==="
       << INTERNAL_DEBUG_DEVICE_NEWLINE << "=== time: " << HAL::getTime() << " ==="
-      << INTERNAL_DEBUG_DEVICE_NEWLINE << "==============================================================================" 
+      << INTERNAL_DEBUG_DEVICE_NEWLINE << "=============================================================================="
       << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
     doStop();

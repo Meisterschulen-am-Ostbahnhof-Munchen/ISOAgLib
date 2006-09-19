@@ -83,7 +83,6 @@
  ***************************************************************************/
  #include <IsoAgLib/typedef.h>
 #include "identitem_c.h"
-#include "systemmgmt_c.h"
 #include "../ISO11783/impl/isomonitor_c.h"
 
 #ifdef USE_ISO_TERMINAL
@@ -463,8 +462,8 @@ void IdentItem_c::close( void )
 { // delete the corresponding ISOItem_c instances
   // in the respective monitoring lists and set the state to IState_c::PreAddressClaim
   restartAddressClaim();
-  // unregister in SystemMgmt_c
-  getSystemMgmtInstance4Comm().unregisterClient( this );
+  // unregister in ISOMonitor_c
+  getIsoMonitorInstance4Comm().unregisterClient( this );
 }
 
 
@@ -486,7 +485,7 @@ void IdentItem_c::init( DevKey_c* rpc_devKey, const uint8_t* rpb_name, const uin
 {
   BaseItem_c::set( System_c::getTime(), IState_c::Active, ri_singletonVecKey );
   // register in SystemMgmt_c
-  getSystemMgmtInstance4Comm().registerClient( this );
+  getIsoMonitorInstance4Comm().registerClient( this );
 
   if (rpc_devKey == NULL)
   {

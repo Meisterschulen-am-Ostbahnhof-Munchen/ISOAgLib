@@ -204,7 +204,7 @@
    of the "IsoAgLib" */
 #include <IsoAgLib/comm/Scheduler/ischeduler_c.h>
 #include <IsoAgLib/comm/SystemMgmt/iidentitem_c.h>
-#include <IsoAgLib/comm/SystemMgmt/isystemmgmt_c.h>
+#include <IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h>
 #include <IsoAgLib/comm/Process/proc_c.h>
 #include <IsoAgLib/comm/Process/Remote/SimpleMeasure/iprocdataremotesimplemeasure_c.h>
 
@@ -412,8 +412,8 @@ int main()
     // all time controlled actions of IsoAgLib
     IsoAgLib::getISchedulerInstance().timeEvent();
 
-    if ( ! getISystemMgmtInstance().existMemberDevKey(c_myDevKey, true) ) continue;
-    if ( getISystemMgmtInstance().existMemberDevKey(c_remoteDeviceType, true) )
+    if ( ! getIisoMonitorInstance().existIsoMemberDevKey(c_myDevKey, true) ) continue;
+    if ( getIisoMonitorInstance().existIsoMemberDevKey(c_remoteDeviceType, true) )
     { // remote device is active
       if ( ( IsoAgLib::iSystem_c::getTime() - ci32_requestInterval ) >= i32_lastRequestTime )
       { // remote device is active and its time for next one-shot value request

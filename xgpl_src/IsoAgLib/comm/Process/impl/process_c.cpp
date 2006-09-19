@@ -824,7 +824,7 @@ bool Process_c::checkCreateRemoteReceiveFilter()
   */
 void Process_c::reactOnMonitorListAdd( const DevKey_c& refc_devKey, const ISOItem_c* rpc_newItem )
 { // create FilterBoxes for remote ProcessData if needed
-  if ( getSystemMgmtInstance4Comm().existLocalMemberDevKey(refc_devKey) )
+  if ( getIsoMonitorInstance4Comm().existLocalIsoMemberDevKey(refc_devKey) )
   { // lcoal ISOItem_c has finished adr claim
     uint32_t ui32_nr = rpc_newItem->nr();
           // only ISO msgs with own SA in PS (destination)
@@ -847,7 +847,7 @@ void Process_c::reactOnMonitorListAdd( const DevKey_c& refc_devKey, const ISOIte
   */
 void Process_c::reactOnMonitorListRemove( const DevKey_c& refc_devKey, uint8_t rui8_oldSa )
 {
-  if ( getSystemMgmtInstance4Comm().existLocalMemberDevKey(refc_devKey) )
+  if ( getIsoMonitorInstance4Comm().existLocalIsoMemberDevKey(refc_devKey) )
   { // lcoal ISOItem_c has lost SA
     uint32_t ui32_nr = rui8_oldSa;
           // only ISO msgs with own SA in PS (destination)

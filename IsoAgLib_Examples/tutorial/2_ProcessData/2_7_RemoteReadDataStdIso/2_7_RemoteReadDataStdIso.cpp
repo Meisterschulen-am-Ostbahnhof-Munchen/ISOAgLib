@@ -207,7 +207,7 @@
    of the "IsoAgLib" */
 #include <IsoAgLib/comm/Scheduler/ischeduler_c.h>
 #include <IsoAgLib/comm/SystemMgmt/iidentitem_c.h>
-#include <IsoAgLib/comm/SystemMgmt/isystemmgmt_c.h>
+#include <IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h>
 #include <IsoAgLib/comm/Process/proc_c.h>
 #include <IsoAgLib/comm/Process/iprocess_c.h>
 #include <IsoAgLib/comm/Process/Remote/Std/iprocdataremote_c.h>
@@ -461,8 +461,8 @@ int main()
     // all time controlled actions of IsoAgLib
     IsoAgLib::getISchedulerInstance().timeEvent();
 
-    if ( ! getISystemMgmtInstance().existMemberDevKey(c_myDevKey, true) ) continue;
-    if ( ( ! b_runningPrograms ) && ( getISystemMgmtInstance().existMemberDevKey(c_remoteDeviceType, true) ) )
+    if ( ! getIisoMonitorInstance().existIsoMemberDevKey(c_myDevKey, true) ) continue;
+    if ( ( ! b_runningPrograms ) && ( getIisoMonitorInstance().existIsoMemberDevKey(c_remoteDeviceType, true) ) )
     { // remote device is active and no program is running
       b_runningPrograms = true;
       // if that DDI was successfully added it will receive new application rate values
@@ -479,7 +479,7 @@ int main()
       c_applicationRate.prog().start(Proc_c::Target, Proc_c::TimeProp, Proc_c::DoVal);
       #endif
     }
-    else if ( ! getISystemMgmtInstance().existMemberDevKey(c_remoteDeviceType, true) )
+    else if ( ! getIisoMonitorInstance().existIsoMemberDevKey(c_remoteDeviceType, true) )
     { // no more active -> stop
       b_runningPrograms = false;
       #ifdef USE_PROC_HANDLER

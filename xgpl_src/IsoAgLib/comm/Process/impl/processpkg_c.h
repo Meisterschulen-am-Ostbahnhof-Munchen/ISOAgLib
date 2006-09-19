@@ -92,7 +92,7 @@
 #include <IsoAgLib/typedef.h>
 #include <IsoAgLib/util/impl/devkey_c.h>
 #include <IsoAgLib/util/impl/canpkgext_c.h>
-#include <IsoAgLib/comm/SystemMgmt/impl/systemmgmt_c.h>
+#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h>
 #include "generalcommand_c.h"
 #include <IsoAgLib/driver/can/impl/ident_c.h>
 #include "../elementddi_s.h"

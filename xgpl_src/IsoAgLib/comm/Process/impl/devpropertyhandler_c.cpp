@@ -466,7 +466,7 @@ DevPropertyHandler_c::timeEvent( void )
   // ### Do nothing if there's no TC alive ###
   if (!isTcAlive(i32_currentTime)) return true;
 
-  if (! getSystemMgmtInstance4Comm().existActiveLocalIsoMember()) return true;
+  if (! getIsoMonitorInstance4Comm().existActiveLocalIsoMember()) return true;
 
   if ((en_poolState == OPNotRegistered) || (en_poolState == OPCannotBeUploaded)) return true;
 

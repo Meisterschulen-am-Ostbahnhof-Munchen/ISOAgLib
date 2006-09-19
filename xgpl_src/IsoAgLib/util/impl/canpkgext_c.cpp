@@ -83,7 +83,7 @@
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 #include <IsoAgLib/util/impl/devkey_c.h>
-#include <IsoAgLib/comm/SystemMgmt/impl/systemmgmt_c.h>
+#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h>
 #include "canpkgext_c.h"
 
 // Begin Namespace __IsoAgLib

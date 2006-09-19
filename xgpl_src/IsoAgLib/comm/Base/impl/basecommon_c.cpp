@@ -87,7 +87,6 @@
 #include <IsoAgLib/util/impl/canpkg_c.h>
 #include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h>
 #include "basecommon_c.h"
-#include <IsoAgLib/comm/SystemMgmt/impl/systemmgmt_c.h>
 #include <IsoAgLib/driver/can/impl/canio_c.h>
 
 #if defined(DEBUG)
@@ -240,7 +239,7 @@ bool BaseCommon_c::timeEvent()
   }
 
   if ( ( getDevKey() != NULL )
-    && (!getSystemMgmtInstance4Comm().existLocalMemberDevKey(*getDevKey(), true)) )
+    && (!getIsoMonitorInstance4Comm().existLocalIsoMemberDevKey(*getDevKey(), true)) )
   { // local dev key for sending is registrated, but it is not yet fully claimed
     // --> nothing to do
     return true;
@@ -251,7 +250,7 @@ bool BaseCommon_c::timeEvent()
   { // all tractor mode timeEvent() functions have the only target to send messages,
     // now:
     // 1) getDevKey() != NULL
-    // 2) getSystemMgmtInstance4Comm().existLocalMemberDevKey(*getDevKey(), true) indicates, that a corresponding
+    // 2) getIsoMonitorInstance4Comm().existLocalIsoMemberDevKey(*getDevKey(), true) indicates, that a corresponding
     //    item has already performed its address claim
     // ==> we can directly call sending time event in this case
     bool b_result = true;
@@ -291,9 +290,9 @@ bool BaseCommon_c::sendPgnRequest(uint32_t ui32_requestedPGN)
   data().setIsoPgn(REQUEST_PGN_MSG_PGN);
 
   /// if the ISOItem_c is not in the monitor list, ignore this request
-  if ( getSystemMgmtInstance4Comm().existActiveLocalMember() )
+  if ( getIsoMonitorInstance4Comm().existActiveLocalIsoMember() )
   { // use the SA of the already active node
-    data().setMonitorItemForSA( &getSystemMgmtInstance4Comm().getActiveLocalMember() );
+    data().setMonitorItemForSA( &getIsoMonitorInstance4Comm().getActiveLocalIsoMember() );
   }
   else
   { // there exists no local ident which is in claimed state -> we are not allowed to send on ISOBUS

@@ -365,7 +365,7 @@ bool ProcDataLocal_c::startDataLogging(Proc_c::type_t ren_type /* Proc_c::TimePr
   // if still no rpc_receiverDevice => get it from ISO monitor list
   if ( !rpc_receiverDevice )
   {  // get TC dev key (device class 0)
-    const ISOItem_c& c_tcISOItem = getIsoMonitorInstance().isoMemberDevClassInd(0 /* rui8_devClass */, 0 /* rui8_ind */, TRUE /* rb_forceClaimedAddress */);
+    const ISOItem_c& c_tcISOItem = getIsoMonitorInstance4Comm().isoMemberDevClassInd(0 /* rui8_devClass */, 0 /* rui8_ind */, TRUE /* rb_forceClaimedAddress */);
     rpc_receiverDevice = &(c_tcISOItem.devKey());
   }
 

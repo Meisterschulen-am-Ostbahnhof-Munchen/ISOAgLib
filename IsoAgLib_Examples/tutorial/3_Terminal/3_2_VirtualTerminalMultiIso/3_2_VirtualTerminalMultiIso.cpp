@@ -48,7 +48,6 @@
  * along with IsoAgLib; if not, write to the Free Software Foundation,     *
  * Inc., 59 Temple Place, Suite 330, Boston, MA  02111_1307  USA           *
  ***************************************************************************/
-
 // #define DEBUG_RAPID_UPDATE
 // #define DEBUG_TOGGLE_POINTER
 
@@ -91,7 +90,7 @@
  * <li>Overview on global communication functions at \ref CommOverPage
  * </ol>
  *
- * <H1>Howto compile this example</H1>
+ * <H1>How to compile this example</H1>
  * <ol>
  * <li>Call the script update_makefile.sh with the spec file
  *     conf_3_2_VirtualTerminalMultiIso from the directory where the spec file
@@ -208,7 +207,7 @@
    of the "IsoAgLib" */
 #include <IsoAgLib/comm/Scheduler/ischeduler_c.h>
 #include <IsoAgLib/comm/SystemMgmt/iidentitem_c.h>
-#include <IsoAgLib/comm/SystemMgmt/isystemmgmt_c.h>
+#include <IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h>
 #include <supplementary_driver/driver/datastreams/streaminput_c.h>
 #include <IsoAgLib/comm/ISO_Terminal/iisoterminal_c.h>
 #include <iostream>
@@ -224,7 +223,6 @@
 // with this command the text part "IsoAgLib::" can be avoided, which
 // is needed for the documentation generator
 using namespace IsoAgLib;
-
 
 
 /******************************/
@@ -516,7 +514,6 @@ iObjectPool_simpleVTIsoPool_c::eventStringValue (uint16_t /*rui16_objId*/, uint8
   }
 }
 
-
 void
 iObjectPool_simpleVTIsoPool_c::eventLanguagePgn (const localSettings_s& rrefs_localSettings)
 {
@@ -531,7 +528,6 @@ iObjectPool_simpleVTIsoPool_c::eventLanguagePgn (const localSettings_s& rrefs_lo
   iVtObjectOSlanguage.setValueCopy (languageCode);
 }
 
-
 static iObjectPool_simpleVTIsoPool_c Tutorial_3_2_Pool_1_c;
 
 /********************************/
@@ -544,7 +540,6 @@ iObjectPool_simpleVTIsoPool2_c::convertColour(uint8_t colorValue, uint8_t colorD
   return Tutorial_3_2_Pool_1_c.convertColour (colorValue, colorDepth, obj, whichColour);
 }
 
-
 // handle incoming number-inputs from vt
 void
 iObjectPool_simpleVTIsoPool2_c::eventNumericValue (uint16_t /*objId*/, uint8_t /*ui8_value*/, uint32_t /*ui32_value*/)
@@ -552,13 +547,11 @@ iObjectPool_simpleVTIsoPool2_c::eventNumericValue (uint16_t /*objId*/, uint8_t /
 //   switch (objId) {}
 }
 
-
 // incoming key-events
 void
 iObjectPool_simpleVTIsoPool2_c::eventKeyCode (uint8_t /*keyActivationCode*/, uint16_t /*objId*/, uint16_t /*objIdMask*/, uint8_t /*keyCode*/, bool /*wasButton*/)
 {
 }
-
 
 // has to be implemented - remember that if the VT drops out and comes again, the values have to be up2date!!!
 void
@@ -580,7 +573,6 @@ iObjectPool_simpleVTIsoPool2_c::eventObjectPoolUploadedSuccessfully (bool rb_was
   }
 }
 
-
 void iObjectPool_simpleVTIsoPool2_c::eventEnterSafeState()
 {
   // Nothing done here for now. (Commands being sent out to the VT are ignored by IsoTerminalServer_c)
@@ -591,13 +583,11 @@ void iObjectPool_simpleVTIsoPool2_c::eventEnterSafeState()
 #endif
 }
 
-
 void
 iObjectPool_simpleVTIsoPool2_c::eventStringValue (uint16_t /*rui16_objId*/, uint8_t /*rui8_length*/, StreamInput_c &/*refc_streaminput*/, uint8_t /*rui8_unparsedBytes*/, bool /*b_isFirst*/, bool /*b_isLast*/)
 {
 //   if (b_isLast) {}
 }
-
 
 void
 iObjectPool_simpleVTIsoPool2_c::eventLanguagePgn (const localSettings_s& rrefs_localSettings)
@@ -617,7 +607,6 @@ static iObjectPool_simpleVTIsoPool2_c Tutorial_3_2_Pool_2_c;
 /********************/
 /* End Example Code */
 /********************/
-
 
 int main()
 { // simply call startImi

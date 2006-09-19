@@ -602,7 +602,7 @@ bool SetpointLocal_c::timeEvent( void ){
       else if (!b_staticMaster)
       { // pc_iter is master -> check if devKey is valid
         const DevKey_c& c_testDevKey = pc_iter->devKey();
-        if ( ( !getSystemMgmtInstance4Comm().existMemberDevKey( c_testDevKey, true) ) )
+        if ( ( !getIsoMonitorInstance4Comm().existIsoMemberDevKey( c_testDevKey, true) ) )
         { // devKey of caller not in Monitor-List or inactive since >3sec -> delete entry
           vec_register.erase( pc_iter);
           pc_master = vec_register.end(); // register that no acive master defined

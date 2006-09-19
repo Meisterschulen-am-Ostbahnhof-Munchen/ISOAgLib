@@ -542,7 +542,7 @@ ISOItem_c& ProcessPkg_c::memberEmpf() const
     THROW_CONT_EL_NONEXIST
 
     // only dummy to deliver something
-    return getSystemMgmtInstance4Comm().memberNr(empf());
+    return getIsoMonitorInstance4Comm().isoMemberNr(empf());
   }
   else
   { // o.k. -> return item
@@ -563,7 +563,7 @@ ISOItem_c& ProcessPkg_c::memberSend() const
     THROW_CONT_EL_NONEXIST
 
     // only dummy to deliver something
-    return getSystemMgmtInstance4Comm().memberNr(send());
+    return getIsoMonitorInstance4Comm().isoMemberNr(send());
   }
   else
   { // o.k. -> return item

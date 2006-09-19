@@ -88,7 +88,7 @@
 #include "timeposgps_c.h"
 
 #include <IsoAgLib/driver/can/impl/canio_c.h>
-#include <IsoAgLib/comm/SystemMgmt/impl/systemmgmt_c.h>
+#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h>
 // IsoAgLib_Extension
 #include <IsoAgLib/comm/Multipacket/impl/multireceive_c.h>
 #include <IsoAgLib/comm/Multipacket/istream_c.h>
@@ -277,10 +277,10 @@ namespace __IsoAgLib {
     */
   void TimePosGPS_c::checkCreateReceiveFilter( )
   {
-    SystemMgmt_c& c_systemMgmt = getSystemMgmtInstance4Comm();
+    ISOMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
     CANIO_c &c_can = getCanInstance4Comm();
 
-    if ( ( ! checkFilterCreated() ) && ( c_systemMgmt.existActiveLocalIsoMember() ) )
+    if ( ( ! checkFilterCreated() ) && ( c_isoMonitor.existActiveLocalIsoMember() ) )
     { // check if needed receive filters for ISO are active
       setFilterCreated();
 

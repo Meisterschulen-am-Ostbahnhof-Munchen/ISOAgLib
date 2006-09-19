@@ -710,7 +710,7 @@ bool MeasureProgRemote_c::resetMax(){
 */
 bool MeasureProgRemote_c::timeEvent( void )
 {
-  if ( (!getSystemMgmtInstance4Comm().existMemberDevKey(devKey(), true)) && started() )
+  if ( (!getIsoMonitorInstance4Comm().existIsoMemberDevKey(devKey(), true)) && started() )
   { // remote owner of this process data isn't active any more
     // stop measureing subprogs
     stop();
@@ -742,14 +742,14 @@ void MeasureProgRemote_c::receiveForeignMeasurement(bool rb_useForeign)
 */
 bool MeasureProgRemote_c::verifySetRemoteDevKey()
 { // if ownerDevKey is specified, check if it's still valid
-  SystemMgmt_c &c_lbsSystem = getSystemMgmtInstance4Comm();
+  ISOMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
   if ( processData().ownerDevKey().isSpecified()
-    && (c_lbsSystem.existMemberDevKey(processData().ownerDevKey(), true)))
+    && (c_isoMonitor.existIsoMemberDevKey(processData().ownerDevKey(), true)))
     return true; // change nothing and return success
 
   // check if proc data identity is valid and corresponding member has claimed address in monitor list
   if ( processData().devKey().isSpecified()
-    && (c_lbsSystem.existMemberDevKey(processData().devKey(), true)))
+    && (c_isoMonitor.existIsoMemberDevKey(processData().devKey(), true)))
     return true; // change nothing and return success
 
   // if both tests were false look for member with claimed address with DEVCLASS of this process
@@ -759,12 +759,12 @@ bool MeasureProgRemote_c::verifySetRemoteDevKey()
   for (b_tempPos = 0; b_tempPos < 8; b_tempPos++)
   {
     c_tempDevKey.setDevClassInst( b_tempPos );
-    if (getSystemMgmtInstance4Comm().existMemberDevKey(c_tempDevKey))
+    if (getIsoMonitorInstance4Comm().existIsoMemberDevKey(c_tempDevKey))
     {
       processData().setOwnerDevKey(c_tempDevKey); // set actual DEV_KEY, because member is found in list
       processData().setDevClassInst(c_tempDevKey.getDevClassInst());
       // stop further search if this item has already claimed address
-      if (getSystemMgmtInstance4Comm().memberDevKey(c_tempDevKey).itemState(IState_c::ClaimedAddress))
+      if (getIsoMonitorInstance4Comm().isoMemberDevKey(c_tempDevKey).itemState(IState_c::ClaimedAddress))
       { // this item has claimed address -> use it and stop search
         return true; // return from this function with positive result
       }
