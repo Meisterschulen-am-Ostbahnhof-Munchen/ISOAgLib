@@ -376,11 +376,11 @@ bool Scheduler_c::timeEvent( int32_t ri32_demandedExecEnd )
   /* call EEEditor Process */
   #if defined(USE_CAN_EEPROM_EDITOR)
     // check if immediate return is needed
-    if ( ( getAvailableExecTime() == 0 ) && ( ! b_switch2AddressClaim ) ) return false;
+    if ( getAvailableExecTime() == 0 ) return false;
     HAL::ProcessCANEEEditorMsg();
   #elif defined(USE_RS232_EEPROM_EDITOR)
     // check if immediate return is needed
-    if ( ( getAvailableExecTime() == 0 ) && ( ! b_switch2AddressClaim ) ) return false;
+    if ( getAvailableExecTime() == 0 ) return false;
     HAL::ProcessRS232EEEditorMsg();
   #endif
 
