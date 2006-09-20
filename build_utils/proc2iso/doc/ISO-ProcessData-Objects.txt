@@ -44,7 +44,6 @@ A further code example shows how XML-elements have to be nested in the root elem
     <deviceprocessdata designator="On Off" ddi="0x008D" properties="defaultset" trigger_methods="timeinterval" proc_program_name="myOnoff"
                        cumulative_value="false">
       <deviceprocessdatacombination ddi="0x008D" command_type="exact" is_setpoint="true"/>
-      <devicedinprocessdata lis="0" wert_inst="0x1" />
     </deviceprocessdata>
   </deviceelement>
 </device>
@@ -67,9 +66,8 @@ The following table shows which objects may be included into which other.
 <tr><th>  Name of XML-Tag </th> <th> Allowed inclusion of objects of following types
 </th></tr><tr><td>  device                        </td><td> DeviceElement | DeviceValuePresentation</td>
 </td></tr><tr><td>  deviceelement                 </td><td> DeviceProcessData | DeviceProperty
-</td></tr><tr><td>  deviceprocessdata             </td><td> DeviceDinProcessData | DeviceProcessDataCombination
+</td></tr><tr><td>  deviceprocessdata             </td><td> DeviceProcessDataCombination
 </td></tr><tr><td>  deviceproperty                </td><td> none
-</td></tr><tr><td>  devicedinprocessdata          </td><td> none
 </td></tr><tr><td>  deviceprocessdatacombination  </td><td> none
 </td></tr><tr><td>  devicevaluepresentation       </td><td> none
 </td></tr>
@@ -94,9 +92,6 @@ Next table gives an overview of all available attributes with value range.
 <tr><td>device_value_presentation_name</td><td> Is used, if a DeviceValuePresentationObject is referenced. If nothing is referenced leave it out.
         </td></tr>
 <tr><td>property_value</td><td> Signed Integer, -2<sup>31</sup>...(2<sup>31</sup>-1) </td></tr>
-<tr><td>lis</td><td> \ref XMLDIN "Using DIN" </td></tr>
-<tr><td>wert_inst</td><td> \ref XMLDIN "Using DIN" </td></tr>
-<tr><td>zaehl_num</td><td> \ref XMLDIN "Using DIN" </td></tr>
 <tr><td>offset</td><td> Signed Integer, -2<sup>31</sup>...(2<sup>31</sup>-1) </td></tr>
 <tr><td>scale</td><td> Float, 0.000000001...100000000.0</td></tr>
 <tr><td>number_of_decimals</td><td>  Byte, 0...7 </td></tr>
@@ -163,9 +158,6 @@ If an attribute is not required, it means that is will be set to a default value
 <tr><td>  </td><td> ddi </td><td> yes </td></tr>
 <tr><td>  </td><td> property_value </td><td> yes </td></tr>
 <tr><td>  </td><td> device_value_presentation_name </td><td> no </td></tr>
-<tr><td> \anchor XMLDDP devicedinprocessdata </td><td> lis </td><td> no </td></tr>
-<tr><td>  </td><td> wert_inst </td><td> no </td></tr>
-<tr><td>  </td><td> zaehl_num </td><td> no </td></tr>
 <tr><td> \anchor XMLDPC deviceprocessdatacombination </td><td> ddi </td><td> yes </td></tr>
 <tr><td>  </td><td> command_type </td><td> no </td></tr>
 <tr><td>  </td><td> is_setpoint </td><td> yes </td></tr>
@@ -210,25 +202,6 @@ he can decide to chose between the following
 <tr><td> SimpleSetpointSimpleMeasure</td><td> only one value will be measured and set point (the last, although there are more process data
 values) </td></tr>
 </table>
-
-\section XMLDIN Using DIN
-To ensure the support to corresponding DIN standard, there are a further XML-element and some additional attributes which are only used for DIN.
-If they are not given they will be set to default values.
-These values are necessary for the constructor built.
-Have a look at the following codesnippet:
-\code
-<deviceprocessdata designator="Fan Speed" ddi="0xE109" properties="defaultset" trigger_methods="timeinterval" proc_program_name="fanSpeed"
- cumulative_value="false">
-  <devicedinprocessdata lis="0" wert_inst="2" zaehl_num= "0xff"/>
-</deviceprocessdata>
-\endcode
-This XML-element is nested in the <b>deviceprocessdata</b> element.
-<table><tr><th> DIN attributes </th></tr>
-<tr><td> lis </td><td> identifierlist, default: 0 </td></tr>
-<tr><td> wert_inst </td><td> <b>wert</b> stands for the valuegroup and <b>inst</b> for the instance </td></tr>
-<tr><td> zaehl_num </td><td> is comparable with the working width (0xFF is the default and means the whole working width) </td></tr>
-</table>
-For further information to DIN elements see <b>DIN 9684-1</b>.
 
 \section XMLCumulativeValue Cumulative value
 <ul>
