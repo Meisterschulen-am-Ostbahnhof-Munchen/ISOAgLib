@@ -42,40 +42,36 @@
   *
   * @section SchedulerActivityOverview Overview on Scheduled Activities
   * The IsoAgLib is designed to deliver several internal background services, which can be controlled
-  * and stimulated by API function calls. This allows the concentration of the application developer
+  * and stimulated by API function calls. This allows the application developer to concentrate
   * on the specific topics, while all standard activities are realized as automatic as possible.
   *
   * @subsection SchedulerCanProcess Processing of Received CAN Messages
   * All received CAN messages, which should be stored by the target specific HAL implementation in
   * ( circular ) puffers, are interpreted by the __IsoAgLib::CANIO_c::timeEvent() and the internal called
   * __IsoAgLib::CANIO_c::processMsg() function.
-  * After delegating each message to the corresponding communication class, the individual reaction os performed.
-  * - Update of monitor lists for DIN 9684 ( IsoAgLib::iDINMonitor_c ) and/or ISO 11783 ( IsoAgLib::iISOMonitor_c )
-  *   on receive of adress claims, alive messages, etc.
+  * After delegating each message to the corresponding communication class, the individual reaction is performed.
+  * - Update of monitor lists for ISO 11783 ( IsoAgLib::iISOMonitor_c ) on receive of adress claims, alive messages, etc.
   * - Answer request for claimed adress for local ISO 11783 identities
-  * - Answer request for 7-char names for local DIN 9684 identities
-  * - Update data strucutres in IsoAgLib::iBase_c where several important base data are stored
+  * - Update data structures in IsoAgLib::iTimePosGps_c, IsoAgLib::iTracGeneral_c, IsoAgLib::iTracMove_c and IsoAgLib::iTracPto_c
+  *   where several important base data are stored
   * - Update current value for remote process data instances, so that the application can retrieve
   *   them at independent time ( @ref EnhancedUseWithHandlerCall "optionally: value change handler of application can be called " )
   * - Answer process data value requests for local process data ( therefore the measurement value must be
   *   update by application by call of the setMasterVal() member function of the process data instances )
   * - React on command for multi message protocol ( send first data after CTS, update send state on EndofMsgACK
   *   or ConnAbort )
-  * - Start data upload on file upload command for DIN 9684 terminals
   * - Call the registered handlers for ISO 11783 terminal events
   *
-  * @subsection SystemMgmt_cMgmt Periodic Activities for Local Identities and Monitor Lists
-  * Especially the DIN 9684 protocol requires the periodic send of some preparing messages before adress claim
-  * and the contiuous send of alive messages after adress claim. Additionally all dead node entires
-  * are erased from the monitor lists, if they didn't send their alive message for more than three seconds.
-  * Similarly the ISO monitor IsoAgLib::iISOMonitor_c can optionally erase all nodes from the monitor list, which
+  * @subsection SystemMgmt_cMgmt Periodic Activities for Local Identities and the ISO Monitor List
+  * All dead node entires are erased from the monitor lists, if they didn't send their alive message for more than three seconds.
+  * The ISO monitor IsoAgLib::iISOMonitor_c can optionally erase all nodes from the monitor list, which
   * didn't answer the last "request for claimed adress" call within the standard time interval.
   *
   * @subsection Base_c Periodic Send of Base Data
-  * If IsoAgLib::iBase_c was \ref BaseDataConfig "configured to send some base data types" , the timeEvent() call
-  * is used provide the periodic data send.
+  * If IsoAgLib::iTimePosGps_c, IsoAgLib::iTracGeneral_c, IsoAgLib::iTracMove_c and IsoAgLib::iTracPto_c were
+  * \ref BaseDataConfig "configured to send some base data types" , the timeEvent() call is used provide the periodic data send.
   * But as long as the default configuration isn't actively changed after the start of the IsoAgLib, no periodic
-  * action is scheduled for IsoAgLib::iBase_cc_c.
+  * action is scheduled for IsoAgLib::iTimePosGps_c, IsoAgLib::iTracGeneral_c, IsoAgLib::iTracMove_c and IsoAgLib::iTracPto_c.
   *
   * @subsection SchedulerProcess Periodic Send of Process Data
   * If a remote system starts a measurement program, which requires the send of current data
@@ -89,17 +85,6 @@
   * A running data stream upload is feeded by the scheduled timeEvent() calls.
   * On each activation the current send state is evaluated and the possibly needed
   * send of next CAN messages is triggered.
-  *
-  * @subsection SchedulerDinTerminal Select and Activate DIN Terminal Mask Upload
-  * As the IsoAgLib enables the parallel registration of individual binary
-  * mask pools for different "LBS+" terminals ( f.e. old pre ISO 11783 version
-  * of AGCO Fendt Varioterminal ), the library must decide after the complete address claim
-  * of the local DIN 9684 identity and based on the monitor lists, which registered
-  * mask pool must be activated. This activation is realized by the creation of the
-  * process data variables, which are requested by the terminal before starting the upload.
-  * As identical ( corresponding to WERT/INST definition ) process data variables
-  * can use individual values for different terminals, and as the creation of all possible
-  * process data would cause too much RAM overhead, the activation is eprformed selectively.
   *
   * @subsection SchedulerIsoTerminal Spool Attribute Changes
   * The IsoAgLib tries to send the attribute change CAN messages immediately after the corresponding

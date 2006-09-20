@@ -1,8 +1,8 @@
 /** @page MultiMsgPage Send of data streams of more than 8 Data Byte with Multi-Message Protocol
-  * Both the DIN 9684 and the ISO 11783 protocol use the same protocol extension to send data streams
-  * ( units ) of more than 8 Data Bytes, which don't fit into one CAN packet.
+  * The ISO 11783 protocol uses the a protocol extension to send data streams ( units )
+  * of more than 8 Data Bytes, which don't fit into one CAN packet.
   * This is especially important for the interaction with graphic user interfaces - terminals.
-  * Here the complete description of all user interface coponents ( mask pool ) results in
+  * Here the complete description of all user interface components ( mask pool ) results in
   * data streams of several 100 kByte.
   * The IsoAgLib provides simple but capable API functions to send such data streams for each protocol
   * type. The application can check in both cases for the current state of the data upload, so that
@@ -17,7 +17,7 @@
   * In case, this is needed later, this functionality would be integrated in this directory.
   *
   * The upload of multi message data streams is normally not relevant for the application, as only
-  * the DIN_Terminal and ISO_Terminal use this servcice internally.
+  * the ISO_Terminal use this servcice internally.
   *
   * The IsoAgLib places on each call of __IsoAgLib::Scheduler_c::timeEvent() and the succeding call of
   * __IsoAgLib::MultiSend_c::timeEvent() a bunch of CAN messages into the buffer of the CAN driver.
@@ -32,20 +32,6 @@
   * every 40 msec, the function __IsoAgLib::MultiSend_c::timeEvent() will place up to 10 CAN messages into
   * the CAN send puffer for send. This amount is limited by the available free space in the send puffer of the
   * CAN driver.
-  *
-  * @section MultiMsgDinExamle Example for start of DIN Send
-  * \code
-  * uint8_t ui8_sendAdr             = 0x2;
-  * uint8_t ui8_receiveAdr          = 0x0;
-  * const uint8_t *rpui8_pool       = 0x1234;   ///< adress in ROM where pool is stored
-  * const int32_t ri32_dataSize     = 300*1024; ///< example size of 300 kByte
-  * const uint16_t cui16_bytePerMsg = 1024;     ///< amount of bytes per message frame
-  * const uint16_t cui16_fileCmd    = 2;        ///< DIN mask upload corresponding to "LBS+" uses some cmds - see there
-  * const bool cb_abortOnTimeout    = false;    ///< try to resend last message frame, if timeout for MessageAck occurs
-  * if ( IsoAgLib::getIMultiSendInstance().sendDin(ui8_sendAdr, ui8_receiveAdr, rpui8_pool, ri32_dataSize, cui16_bytePerMsg, cui16_fileCmd, cb_abortOnTimeout ) ) {
-  *   // fine - upload will start soon ;-))
-  * }
-  * \endcode
   *
   * @section MultiMsgIsoSimpleExamle Example for start of simple ISO Send
   * \code

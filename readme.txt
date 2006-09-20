@@ -21,7 +21,7 @@ Please have a close look at all HOWTO chapters which are presented in the naviga
 		- Nr. 0 for simple applications which demonstrate management of ECU as device node at the network
 		- Nr. 1 for simple applications which demonstrate usage of base data like tractor speed and distance
 		- Nr. 2 for several levels of applications which demonstrate use of process data value exchange ( measurement data for monitoring and setpoint setting for control )
-		- Nr. 3 for two examples of terminal handling: <b>ISO 11783 virtual terminal</b> and LBS+ style
+		- Nr. 3 for two examples of terminal handling: <b>ISO 11783 virtual terminal</b>
 	- check for modules which you should download to get the features you want at \ref HowtoDownload
 	- check for pointers at documentation overview pages of the core features of ISO<i><sub>AgLib</sub></i> at \ref HowtoLearnIsoAgLib
 	- check for installation instructions of vt2iso , a tool to convert XML mask definition to ROM-eable constant variable definition modules at \ref InstallIsoToolVt2Iso
@@ -30,17 +30,17 @@ Please have a close look at all HOWTO chapters which are presented in the naviga
 		rather complicated job of selecting the needed source files for the wanted features of ISO<i><sub>AgLib</sub></i> )
 
 \subsection IndexFurtherRead Further Documentation
-Please read at least on the long run most of the pages which are direct referenced by the navigation column on this first page.
-The overview pages referenced by \ref HowtoLearnIsoAgLib present several example snipptes for the classes which correspond to the described
+Please read at least on the long run most of the pages which are directly referenced by the navigation column on this first page.
+The overview pages referenced by \ref HowtoLearnIsoAgLib present several example snippets for the classes which correspond to the described
 feature group. The most important classes have also some detailed information on their features and usage.<br>
 <b>Important:</b><br>
 All elements with names without "i" at the beginning and which are grouped to the namespaces __IsoAgLib and __HAL are only interesting for experts who want to learn the internals of ISO<i><sub>AgLib</sub></i>.
 But please be warned, that this stuff seems rather complicated if you are not familiar with object oriented design. You can be assured, that not only the authors of
 the architecture accept the high quality of design. Some parts might look strange at the first sight - but then you will detect that such elements are very helpful
 for reduction of code duplication and ease of code maintenance. One example is the Singleton Pattern, which is used for global, but well defined to core service classes
-like IsoAgLib::ISOTerminal_c . The use of this Template guarantees that event the first access is always performed at a correct initialised instance. Even if the initialisation of a core
+like IsoAgLib::ISOTerminal_c. The use of this template guarantees that event the first access is always performed at a correct initialised instance. Even if the initialisation of a core
 service class depends of the previous initialisation of one or more other classes, the correct order of initialisation is realized.<br>
-Please contact the maintainers <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a> and <a href="mailto:Martin.Wodok@osb-ag:de">Martin Wodok</a> if you don't understand
+Please contact the maintainers <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a> and <a href="mailto:Martin.Wodok@osb-ag:de">Martin Wodok</a> if you do not understand
 some parts, even after reading the presented documentation.
 
 \subsection IndexGettingHelp Getting Help
@@ -86,16 +86,16 @@ The ISO<i><sub>AgLib</sub></i> is designed to provide the following main feature
 - perform all tasks which can be automated in the background so that the application development is simplified
 		and different interpretation of low level communication (like message formatting) is avoided
 - provide <b>complete Open Source toolchain for ISO 11783 development - including virtual terminal</b> <br>
-	Masks are defined with XML notation, which is then converted to ROM-eable variable arrays which are then
+	Masks are defined with XML notation, which is then converted to ROM-enabled variable arrays which are then
 	included in an object module of the project. ISO<i><sub>AgLib</sub></i> provides a simple function call
 	to register the mask pool. ISO<i><sub>AgLib</sub></i> performs then some runtime adaptation to terminal properties
-	( choose useable colour depth of bitmaps, scaling, including handling of cases where
+	( choose usable colour depth of bitmaps, scaling, including handling of cases where
 	layout properties like text alignment should be conserved even if no font of scaled size is available ) and finishes this process
 	by an automatic upload of the adapted pool. Already active pools can be handled with simple access functions for control,
 	and some easy handler functions for reaction on user input.<br>
 	<b>Core target of ISO<i><sub>AgLib</sub></i> Virtual Terminal design:</b><br>
 	- Enable creation of one single mask pool, that fits all terminal configurations
-	- Provide attributes for project specific control of the runtim adaptation
+	- Provide attributes for project specific control of the runtime adaptation
 	- Allow flexible addition of further attributes, if automatic layout control must be optimized for some terminal properties ( e.g. amount of softkeys )
 
 	All these actions are demonstrated in the tutorial example \ref 3_0_VirtualTerminalIso.cpp .<br>
@@ -126,7 +126,7 @@ memory as possible. Thus the current ISO<i><sub>AgLib</sub></i> uses HEAP only f
 		<b>this HEAP usage takes only place, if process data are used</b>
 	- lists of measurement programs per local process data ( only for  IsoAgLib::ProcDataLocal_c or IsoAgLib::ProcDataLocalSimpleSetpoint_c instances )
 	- lists for automatic CAN filter management
-	- list of entries in monitor list ( IsoAgLib::ISOItem_c )
+	- list of entries in ISO monitor list ( IsoAgLib::ISOItem_c )
 	- vector for global lookup of sensor or actor I/O instances with one <b>pointer</b> per instance ( <b> only present if the corresponding I/O feaure is used </b> )
 
 \subsection IndexHeapDerive Derive Needed HEAPSIZE
@@ -729,10 +729,6 @@ parts.
 <tr><td><b>Essential ISO 11783</b> specific parts including virtual terminal support</td>
 	<td>http://www.isoaglib.org/Download/isoArchiv-1.2.0.zip</td>
 	<td>408</td>
-</tr>
-<tr><td><b>Essential DIN 9684</b> specific parts including LBS+ terminal support/upload</td>
-	<td>http://www.isoaglib.org/Download/dinArchiv-1.2.0.zip</td>
-	<td>112</td>
 </tr>
 <tr><td>Data repository class with cached tractor information ( Base Data like tractor speed )</td>
 	<td>http://www.isoaglib.org/Download/baseArchiv-1.2.0.zip</td>
@@ -1901,7 +1897,7 @@ Criteria for the modelling as agents are in the view of the single devices:- nee
 - partial and possibly erroneous information about environment
 - restricted prediction of environment
 - possibility of environment&nbsp;changes which are only partially induced  by own activities
-This matches the following properties of a LBS (DIN 9684 and ISO 11783) network:
+This matches the following properties of an ISO 11783 network:
 - single devices (resp. their ECU) must have the competence and leadership for security relevant tasks
 - controller software for single devices exists in many cases
 - manufacturer of a device knows best, how construction independent information and work services can be realized by a specific machine

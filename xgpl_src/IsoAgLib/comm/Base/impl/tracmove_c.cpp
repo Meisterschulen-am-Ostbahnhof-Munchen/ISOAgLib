@@ -185,7 +185,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
   bool TracMove_c::processMsg()
   {
     #if defined(USE_BASE) || defined(USE_TRACTOR_GENERAL)
-    TracGeneral_c& c_tracgeneral = getTracGeneralInstance();
+    TracGeneral_c& c_tracgeneral = getTracGeneralInstance4Comm();
     #endif
     DevKey_c c_tempDevKey( DevKey_c::DevKeyUnspecified );
     // store the devKey of the sender of base data
@@ -332,7 +332,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
   void TracMove_c::updateSpeed(IsoAgLib::SpeedSource_t t_speedSrc)
   {
     #if ( (defined USE_BASE || defined USE_TIME_GPS) && defined NMEA_2000_FAST_PACKET)
-    TimePosGPS_c& c_timeposgps = getTimePosGpsInstance();
+    TimePosGPS_c& c_timeposgps = getTimePosGpsInstance4Comm();
     #endif
     switch(t_speedSrc)
     {
@@ -416,7 +416,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     // function of base class BaseCommon_c
 
     #if defined(USE_BASE) || defined(USE_TRACTOR_GENERAL)
-    TracGeneral_c& c_tracgeneral = getTracGeneralInstance();
+    TracGeneral_c& c_tracgeneral = getTracGeneralInstance4Comm();
     #endif
     CANIO_c& c_can = getCanInstance4Comm();
 

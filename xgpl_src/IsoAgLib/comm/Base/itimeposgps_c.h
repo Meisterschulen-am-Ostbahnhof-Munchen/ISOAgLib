@@ -411,11 +411,11 @@ public:
     * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
     */
   inline iTimePosGPS_c& getITimePosGpsInstance( uint8_t rui8_instance = 0 )
-  { return static_cast<iTimePosGPS_c&>(__IsoAgLib::getTimePosGpsInstance(rui8_instance));};
+  { return static_cast<iTimePosGPS_c&>(__IsoAgLib::getTimePosGpsInstance(rui8_instance));}
 #else
   /** C-style function, to get access to the unique Base_c singleton instance */
   inline iTimePosGPS_c& getITimePosGpsInstance( void )
-  { return static_cast<iTimePosGPS_c&>(__IsoAgLib::getTimePosGpsInstance());};
+  { return static_cast<iTimePosGPS_c&>(__IsoAgLib::getTimePosGpsInstance());}
 #endif
 
 }

@@ -276,7 +276,7 @@ Stream_c::handleDataPacket (const Flexible8ByteString_c* rpu_data)
     } else {
       // ---CTS--- go for more!
       // Calculate the send delay
-      const int32_t ci32_ctsSendDelay = (__IsoAgLib::getMultiReceiveInstance().getStreamCount() == 1) ? 0 : sci32_ctsSendDelay;
+      const int32_t ci32_ctsSendDelay = (__IsoAgLib::getMultiReceiveInstance4Comm().getStreamCount() == 1) ? 0 : sci32_ctsSendDelay;
       awaitNextStep (AwaitCtsSend, ci32_ctsSendDelay); // no timeOut on own Send-Awaits (this is automatically done in awaitNextStep) - parameter is the send-delay!
     }
     // (A complete / The last) chunk is received, handling will be done after this function returns

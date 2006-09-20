@@ -285,7 +285,7 @@ namespace IsoAgLib {
 
   private:
     /** allow getITracMoveInstance() access to shielded tracgeneral class.
-      otherwise __IsoAgLib::getTracMoveInstance() wouldn't be accepted by compiler
+    otherwise __IsoAgLib::getTracMoveInstance4Comm() wouldn't be accepted by compiler
     */
     #if defined(PRT_INSTANCE_CNT) && (PRT_INSTANCE_CNT > 1)
     friend iTracPTO_c& getITracPtoInstance(uint8_t rui8_instance);

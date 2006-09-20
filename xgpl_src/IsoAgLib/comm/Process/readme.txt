@@ -103,8 +103,6 @@
   *      afford by reduce of measurement data feature set
   *    - only provide measurement values by single shot requests - NO measurement programs.
   *      Also no derivation of MIN, MAX, AVG etc. - just provide single measurement value per request.
-  *      ( can be used in combination with terminals like DIN-Varioterminal of Fendt-AGCO which
-  *        uses only single shot requests for display )
   *    - capable setpoint handling of IsoAgLib::iProcDataLocal_c
   * - \a IsoAgLib::iProcDataLocalSimpleSetpoint_c
   *    - reduce resource ( RAM per instance, ROM if IsoAgLib::iProcDataLocal_c is not used in the project )
@@ -249,36 +247,23 @@
   * </table>
   *
   *
-  * @section ProcDataDinIsoSec Flexible usage for DIN 9684 and ISO 11783
+  * @section ProcDataIsoSec Usage for ISO 11783
   * The IsoAgLib handles Process Data to the greatest part independent from the underlying protocol.
   * This allows to write applications, which concentrate only on the data communication part without
   * the overhead of protocol specific details.
   * This is achieved by the CAN data formating and low-level processing class __IsoAgLib::ProcessPkg_c, which
   * detects dependent on the receiver ( for send of msg ) and/or sender ( for receive of msg )
-  * and its protocol state, which protocol format to use. This is achieved by IsoAgLib::iSystemMgmt_c
+  * and its protocol state, which protocol format to use. This is achieved by IsoAgLib::iISOMonitor_c
   * which provides functions to derive the protocol type of a ECU based on it DevKey == device_type/_instance setting.
   *
-  * @subsection ConvertDataDictionary Conversion between old DIN 9684 Data Dictionary and new ISO 11783 Data Dictionary
-  * It is planned to keep the Data Dictionary unique for both protocol variants, and to implement an internal
-  * mechanism which converts the ident code in and from messages to the right Data Dictionary type.
-  * But as this is a not yet finished work in the ISO 11783 working group, this feature can't be implemented yet.
-  *
-  * @subsection ConvertCommands Conversion between old DIN 9684 PD/MOD commands and ISO 11783 commands
-  * In the hope, that the plans for the new Process Data handling in ISO 11783 are corrected
-  * in a way, that it provides at least the same capability as the old DIN 9684 style PD/MOD commands,
-  * the IsoAgLib is going provide a mechanism for a unique API in this area also. This means, that an
-  * application can simply use the several Process Data commands via the class member methods of the different
-  * Process Data class types without any notice of differences between the old DIN style PD/MOD and new style command field
-  * protocol.
-  *
-  * @subsection ApplicationPrinciple Principles for the Use of Process Data
+  * @subsection ApplicationPrinciple Principles for the use of Process Data
   * In spite to the first design of IsoAgLib ( version <= 0.3.0 ), the single variable instances
   * of data type "Process Data XY" ( with XY from { IsoAgLib::iProcDataLocal_c, IsoAgLib::iProcDataRemote_c,
   * IsoAgLib::iProcDataLocalSimpleMeasure_c, IsoAgLib::iProcDataRemoteSimpleSetpoint_c, ... } )
   * can be placed like a "normal" variable ( %e.g. int, char ) in the program in the variable
   * scope where the process data information shall be accessed. Like "normal" variables,
   * pointers to a process data instance can be distributed round the application.
-  * @subsubsection ImportantDisallowed Important Note to the Use of Process Data Variables
+  * @subsubsection ImportantDisallowed Important Note to the use of Process Data Variables
   * <b>Never</b> assign a value from one process data instance to another and <b>never</b>
   * use a process data type as function parameter.\n
   * <b>Instead:</b> Provide access to functions or different sub-programs by <b>POINTER</b> to a Process Data
@@ -291,21 +276,18 @@
   * // declare extern example function ( dummy )
   * extern void doSomething( IsoAgLib::iProcDataLocal_c *pc_localProc );
   * // set device type of local ECU: fertilizer
-  * IsoAgLib::DevKey_c myGtp( 5, 0 );
+  * IsoAgLib::DevKey c_myDevKey( 5, 0 );
   * // initialise variable upon construction/definition
-  * // local process data for "on/off mechanical" [0/0x64] of fertilizer spreader (LIS=0, GETY=5, WERT=1, INST=0)
-  * // with full working width (ZAEHLNUM 0xFF), POS, GETY_POS of local data (can vary from previously given GETY and POS),
-  * // the pointer to myGtp helps automatic update of GETY_POS, mark this value as NOT cumulated (default)
-  * // load/store value in EEPROM at adress 0x1234
-  * IsoAgLib::iProcDataLocal_c c_myWorkState( 0, myGtp, 0x1, 0x0, 0xFF, 2, myGtp, &myGtp, false, 0x1234 );
+  * // local process data for "on/off mechanical" [0/0x64] of fertilizer spreader
+  * // creation of process data instance
+  * iProcDataLocal_c c_myWorkState ( 0, myDevKey, 0x1, 0x0, 0xFF, 3, c_myDevKey, &c_myDevKey, false, 0x1234 );
   * // set measurement data to working == 0x64
   * c_myWorkState.setMasterVal( 0x64 );
   *
   * // alternate: initialise process data variable after definition
-  * // "working width" [mm] of fertilizer spreader (LIS=0, GETY=5, WERT=3, INST=1), store/load data at EEPROM adress 0x1238
-  * // use PRI = 2 ( target process data for DIN )
+  * // "working width" [mm] of fertilizer spreader, store/load data at EEPROM adress 0x1238
   * IsoAgLib::iProcDataLocal_c c_myWorkWidth;
-  * c_myWorkWidth.init( 0, myGtp, 0x3, 0x1, 0xFF, 2, myGtp, &myGtp, false, 0x1238 );
+  * c_myWorkWidth.init( 0, c_myDevKey, 0x3, 0x1, 0xFF, 3, c_myDevKey, &c_myDevKey, false, 0x1238 );
   *
   * // call function doSomething -> give pointer to variable c_myWorkState -> transfer simple adress via stack
   * doSomething( &c_myWorkState );
@@ -322,10 +304,9 @@
   * ( %i.e. register measure programs and handle send of data, ... ).
   * \code
   * // define device type of remote ECU ( from which we want measurement data )
-  * IsoAgLib::DevKey_c remoteGtp( 1, 0 );
+  * IsoAgLib::DevKey_c remoteDevKey( 1, 0 );
   * // define remote process data to gather information of remote work state
-  * // use PRI = 2 ( target process data for DIN )
-  * IsoAgLib::iProcDataRemote_c c_remoteWorkState( 0, myGtp, 0x1, 0x0, 0xFF, 2, remoteGtp, &myGtp);
+   * IsoAgLib::iProcDataRemote_c c_remoteWorkState( 0, myDevKey, 0x1, 0x0, 0xFF, 3, remoteGtp, &myDevKey);
   * // trigger value update every 1000 msec.
   * c_remoteWorkState.prog().addSubprog(Proc_c::TimeProp, 1000);
   * // start measure program: trigger send of current measure value ( and not MIN/MAX/AVG/ etc. )
@@ -338,6 +319,7 @@
   * }
   *
   * \endcode
+  *
   * @subsubsection EnhancedUseWithHandlerCall Enhanced Use of Process Data with call of Handler functions on Several Events
   * If an application has to immediately react on received setpoint or measurement update, it is needlessly time consuming
   * to poll always for the awaited event. The IsoAgLib provides a mechanism to define a handler which can then be
@@ -360,7 +342,7 @@
   * // implement the handler function, which is called on each received setpoint
   * bool MyProcessDataHandler_c::processSetpointSet( EventSource_c rc_src, int32_t ri32_val, IsoAgLib::DevKey_c rc_callerDevKey, bool rb_changed ) {
   * { // %e.g. check for device type of commanding ECU
-  *   if ( rc_callerDevKey.getGety() == 0x1 ) {
+  *   if ( rc_callerDevKey.getDevClass() == 0x1 ) {
   *     // reaction on setpoints sent by device type 1
   *   }
   *   else if ( abs( ri32_val - currentVal ) < 10 )
@@ -373,6 +355,6 @@
   * // define local process data, which uses the handler
   * IsoAgLib::iProcDataLocalSimpleSetpoint_c c_myFertilizerAmount;
   * // init process data with pointer to handler, which shall be called upon setpoint receive
-  * c_myFertilizerAmount.init( 0, myGtp, 5, 0, 0xFF, 2, myGtp, &myGtp, false, 0x123A, &c_setpointHandler );
+  * c_myFertilizerAmount.init( 0, myDevKey, 5, 0, 0xFF, 3, myDevKey, &myDevKey, false, 0x123A, &c_setpointHandler );
   * \endcode
   */

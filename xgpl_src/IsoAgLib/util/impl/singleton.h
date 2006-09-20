@@ -114,8 +114,6 @@
   #define getMultiSendInstance4Comm()      getMultiSendInstance( getSingletonVecKey() )
   #define getIsoTerminalInstance4Comm()    getIsoTerminalInstance( getSingletonVecKey() )
   #define getMultiReceiveInstance4Comm()   getMultiReceiveInstance( getSingletonVecKey() )
-  #define getGpsInstance4Comm()            getGpsInstance( getSingletonVecKey() )
-  #define getTimePosGpsInstance4Comm()     getTimePosGpsInstance( getSingletonVecKey() )
   #define getIsoRequestPgnInstance4Comm()  getIsoRequestPgnInstance(getSingletonVecKey())
 
   /** the class ClientBase delivers the base information, to concat client class instances
@@ -237,8 +235,6 @@
   #define getMultiSendInstance4Comm()         getMultiSendInstance()
   #define getIsoTerminalInstance4Comm()       getIsoTerminalInstance()
   #define getMultiReceiveInstance4Comm()      getMultiReceiveInstance()
-  #define getGpsInstance4Comm()               getGpsInstance()
-  #define getTimePosGpsInstance4Comm()        getTimePosGpsInstance()
   #define getIsoRequestPgnInstance4Comm()     getIsoRequestPgnInstance()
   /** the class ClientBase delivers the base information, to concat client class instances
     * with the corresponding server class instance. This is realized by the single

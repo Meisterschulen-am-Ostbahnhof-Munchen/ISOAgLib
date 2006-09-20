@@ -4,7 +4,7 @@
 	*
 	* @section ServiceDependency Dependencies of Protocol Services
 	* Most of the protocol features can be selected independent from other functions for
-	* a specific project. The depdendencies are described in the following overview diagram, which also
+	* a specific project. The dependencies are described in the following overview diagram, which also
 	* shows the distribution of services on the different subdirectories.
   \dot
   digraph CommServDepend {
@@ -45,23 +45,15 @@
 	* @section CommOverLbs Overview on Scheduler
 	* <b>Detailed Description:</b> \ref SchedulerPage
 	* The class Scheduler_c works as a central scheduler and data coordinator for all IsoAgLib components.
-	* The application has motly only contanct to the main scheduling function IsoAgLib::iScheduler_c::timeEvent
+	* The application has mostly only contact to the main scheduling function IsoAgLib::iScheduler_c::timeEvent
 	* which is responsible to dedicate periodically execution time to all components with the
 	* guarantee to return at the requested time.
-	*
-	* @section CommOverLbsSystem Overview on System Management
-	* <b>Detailed Description:</b> \ref SystemMgmtPage
-	* The class IsoAgLib::iSystemMgmt_c has a list of all local identities, where an address claim is performed at the
-	* System-Startup and which must send responses on several network management requests.
-	* Additionally IsoAgLib::iSystemMgmt_c provides functions to search for a network node corresponding to its
-	* DevKey_c ( device type ) or its address. Thereby the ISO 11783 monitor lists is
-	* searched - as far as the individual protocol is activated/compiled for the project.
 	*
 	* @subsection CommOverIsoSystem Overview on ISO 11783 Monitor List
 	* <b>Detailed Description:</b> \ref SystemMgmtAnnIso
 	* The class IsoAgLib::iISOMonitor_c has a monitor list of all ISO 11783 network nodes.
-	* It's mostly used by the application to search for a device by its device type - and to get its SA.
-	* It's also used internally to claim address and manage local ISO 11783 identities ( \ref IsoAgLib::iISOItem_c ).
+	* It is mostly used by the application to search for a device by its device type - and to get its SA.
+	* It is also used internally to claim address and manage local ISO 11783 identities ( \ref IsoAgLib::iISOItem_c ).
 	* If EEPROM store and reload ( \ref USE_EEPROM_IO_YN ) is activated and compiled in the project, a
 	* dynamic aquired SA is automatically stred and reloaded at specified EEPROM address - as suggested by the standard.
 	*

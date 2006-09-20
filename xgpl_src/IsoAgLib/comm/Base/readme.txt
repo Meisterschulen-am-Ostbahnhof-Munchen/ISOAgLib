@@ -8,36 +8,37 @@
   * Thus the afford for implementation of the correct send intervals
   * is completely taken away from application to the ISO<i><sub>AgLib</sub></i>.
   *
-  * @section BaseDataTypeList Overview on the handled PGN data
-	* @subsection BaseDataBothTypes DIN 9684 and ISO 11783 Information
-  * The ISO<i><sub>AgLib</sub></i> provides the following information <b>both for
-  * DIN 9684 and ISO 11783</b>:
-  * - real and gear based driving speed of tractor
-  * - real and gear based driving distance of tractor
-  * - front and rear hitch position
-  * - front and rear PTO RPM
-  * - tractor engine RPM
-  * - year/month/day hour/minute/second from calendar setting
-  * - check if at least one calendar data string was received
-  *
-	* @subsection BaseDataIsoType Exclusive ISO 11783 Information
+  * @section BaseDataTypeList Overview on the handled PGN data for ISO 11783
   * As the ISO 11783 specifies a lot of information types
-  * which can be periodically sent, the ISO<i><sub>AgLib</sub></i> provides just
-  * a part of this list. But this can easily extended on request:
-  * - draft force on front and rear hitch
-  * - lower link force of front and rear hitch
-  * - activation state of front and rear PTO
-  * - activation state of 100 n/min feature of front and rear PTO
-  * - activation state of economy mode in front and rear PTO
-  * - key switch state tractor
-  * - maximum power time of tractor [min]
-  * - last receive time of maintain power request
-  * - check for request of maintenance for:
-  *    - ECU power
-  *    - actuator power
-  *    - implement in transport state
-  *    - implement in park state
-  *    - implement in work
+  * which can be periodically sent, the ISO<i><sub>AgLib</sub></i> has the following
+  * classes:
+  * - TimePosGps_c:
+  *   - year/month/day hour/minute/second from calendar setting
+  *   - check if at least one calendar data string was received
+  * - TracGeneral_c:
+  *   - key switch state tractor
+  *   - maximum power time of tractor [min]
+  *   - last receive time of maintain power request
+  *   - check for request of maintenance for:
+  *     - ECU power
+  *     - actuator power
+  *     - implement in transport state
+  *     - implement in park state
+  *     - implement in work
+  *   - draft force on front and rear hitch
+  *   - lower link force of front and rear hitch
+  *
+  * - TracMove_c:
+  *   - front and rear hitch position
+  *   - real and gear based driving speed of tractor
+  *   - real and gear based driving distance of tractor
+  *
+  * - TracPto_c:
+  *   - front and rear PTO RPM
+  *   - tractor engine RPM
+  *   - activation state of front and rear PTO
+  *   - activation state of 100 n/min feature of front and rear PTO
+  *   - activation state of economy mode in front and rear PTO
   *
   * Some exemplary data requests are presented below.
   * All information can be read independent from the send time on the
@@ -45,24 +46,23 @@
   * and is not forced to read and interprete when received.
   * \code
   * /// read real ( radar based ) speed of tractor
-  * int16_t i16_realSpeed = IsoAgLib::getIBaseInstance().speedReal();
+  * int16_t i16_realSpeed = IsoAgLib::getITracMoveInstance().speedReal();
   * /// read driving distance which was measured based on gear/wheel
-  * int16_t i16_distTheor = IsoAgLib::getIBaseInstance().distTheor();
+  * int16_t i16_distTheor = IsoAgLib::getITracMoveInstance().distTheor();
   * /// read front PTO ( power shaft ) RPM
-  * int16_t i16_frontPto = IsoAgLib::getIBaseInstance().ptoFront();
+  * int16_t i16_frontPto = IsoAgLib::getITracPtoInstance().ptoFront();
   * /// read the state of the rear hitch
-  * uint8_t ui8_rearHitch = IsoAgLib::getIBaseInstance().hitchRear();
+  * uint8_t ui8_rearHitch = IsoAgLib::getITracGeneralInstance().hitchRear();
   * // check if since system start at least one calendat msg was received
-  * if ( IsoAgLib::getIBaseInstance().isCalendarReceived() ) {
+  * if ( IsoAgLib::getITimePosGpsInstance().isCalendarReceived() ) {
   *   /// read hour
-  *   uint8_t ui8_hour = IsoAgLib::getIBaseInstance().hour();
+  *   uint8_t ui8_hour = IsoAgLib::getITimePosGpsInstance().hourLocal();
   * }
-  * /// only for ISO 11783 system: read front hitch draft
-  * int32_t i32_frontHitchDraft = IsoAgLib::getIBaseInstance().hitchFrontDraft();
+  * int32_t i32_frontHitchDraft = IsoAgLib::getITracGeneralInstance().hitchFrontDraft();
   * /// check if front PTO is engaged
-  * if ( IsoAgLib::getIBaseInstance().ptoFrontEngaged() == IsoActive ) {
+  * if ( IsoAgLib::getITracPtoInstance().ptoFrontEngaged() == IsoActive ) {
   *    /// read 1000-Mode flag
-  *    iIsoActiveFlag_t t_active100Mode = IsoAgLib::getIBaseInstance().ptoFront1000();
+  *    iIsoActiveFlag_t t_active100Mode = IsoAgLib::getITracPtoInstance().ptoFront1000();
   * }
   * \endcode
   *
@@ -72,22 +72,22 @@
   *
   * \code
   * /// check for key switch state to request suitable maintenance
-  * if ( IsoAgLib::getIBaseInstance().keySwitch() == IsoInactive ) {
+  * if ( IsoAgLib::getITracGeneralInstance().keySwitch() == IsoInactive ) {
   *   /// force ECU power maintenance for implement in work state
-  *   IsoAgLib::getIBaseInstance().forceMaintainPower( true, false, IsoInactive, IsoInactive, IsoActive );
+  *   IsoAgLib::getITracGeneralInstance().forceMaintainPower( true, false, IsoInactive, IsoInactive, IsoActive );
   * }
   * /// later check for resulting maintenance mode state indiceted by tractor
-  * uint8_t ui8_powerMaintenanceTimeMinute = IsoAgLib::getIBaseInstance().maxPowerTime();
-  * bool b_maintainEcuPower = IsoAgLib::getIBaseInstance().maintainEcuPower();
+  * uint8_t ui8_powerMaintenanceTimeMinute = IsoAgLib::getITracGeneralInstance().maxPowerTime();
+  * bool b_maintainEcuPower = IsoAgLib::getITracGeneralInstance().maintainEcuPower();
   * /// release power request later
-  * IsoAgLib::getIBaseInstance().forceMaintainPower( false, false, IsoInactive, IsoInactive, IsoInactive );
+  * IsoAgLib::getITracGeneralInstance().forceMaintainPower( false, false, IsoInactive, IsoInactive, IsoInactive );
   * \endcode
   *
   * @section BaseDataConfig Configure active send or read only mode
   * The application can configure the send mode in the following groups:
-  * - base information type 1: real and gear based speed and distance
-  * - base information type 2: front and rear PTO, engine RPM, front and rear hitch state
-  * - calendar data ( ISO<i><sub>AgLib</sub></i> increments the time after first time setting independent from further data update of application )
+  * - base information type 1: real and gear based speed and distance ( TracMove_c )
+  * - base information type 2: front and rear PTO, engine RPM, front and rear hitch state ( TracPto_c, TracGeneral_c )
+  * - calendar data ( ISO<i><sub>AgLib</sub></i> increments the time after first time setting independent from further data update of application; TimePosGps_c )
   *
   * The base information group 2 includes in case of an ISO 11783 system all additional information like draft force.
   * The default state for all groups is read only, so that a system that likes to send some base data types,
@@ -96,10 +96,10 @@
   * \code
   * /// check for device type of calendar sender -> start sending if sender is a dummy calendar sender
   * const DevKey_c cc_dummyCalendarSender( 1, 0 );
-  * if ( IsoAgLib::getIBaseInstance().senderGtp( BaseDataCalendar ) == cc_dummyCalendarSender ) {
-  *   // start sending as this ECU has better calendar informaiton source
+  * if ( IsoAgLib::getITimePosGpsInstance().getSenderDevKeyGps() == cc_dummyCalendarSender ) {
+  *   // start sending as this ECU has better calendar information source
   *   // but stay for Grp1 and Grp2 in receive-only mode
-  *   IsoAgLib::getIBaseInstance().config( pc_myGtp, false, false, true );
+  *   IsoAgLib::getITimePosGpsInstance().config( pc_myGtp, false, false, true );
   * }
   * \endcode
   *
@@ -113,11 +113,11 @@
   * \code
   * /// set real driving speed from variable which has to be updated from
   * /// sensor elsewhere
-  * IsoAgLib::getIBaseInstance().setSpeedReal( i16_realSensorSpeed );
+  * IsoAgLib::getITracMoveInstance().setSpeedReal( i16_realSensorSpeed );
   * /// set the real driven distance
   * /// ( IsoAgLib is responsible to calculate the overflow correct )
-  * IsoAgLib::getIBaseInstance().setDistReal( i32_realDistanceMm );
+  * IsoAgLib::getITracMoveInstance().setDistReal( i32_realDistanceMm );
   * /// set rear PTO speed
-  * IsoAgLib::getIBaseInstance().setPtoRear( i16_rearPtoRpm );
+  * IsoAgLib::getITracPtoInstance().setPtoRear( i16_rearPtoRpm );
   * \endcode
   */

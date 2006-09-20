@@ -44,11 +44,10 @@
   * variable of type DevKey_c which defines the device type
   * of the own device. This way the IsoAgLib can adapt the
   * device instance number, if the initial device instance number
-  * is already used, so that an alternaticve free number has to be chosen.
-  * This change is written directly in the pointed variabls, so that
+  * is already used, so that an alternative free number has to be chosen.
+  * This change is written directly in the pointed variables, so that
   * the application has always direct access to the active device type and -instance
   * setting on the BUS.
-  *
   *
   * @subsection SystemMgmtAnnIso Start ISO 11783 AddressClaim
   * You can claim an address for a member with the following code lines:
@@ -112,26 +111,23 @@
   *   // I'm online ;-))
   * }
   * \endcode
+  *
   * @subsection SystemMgmtLaterSelection Select Protocol on AddressClaim
   * The IsoAgLib allows you to delay the decision on the protocol to use
   * to the time of address claim. This can be useful if the implement shall
-  * start as DIN or ISO system dependent on state of digital input.
+  * start as ISO system dependent on state of digital input or at a special event.
   * \code
   * #include \<xgpl_src/IsoAgLib/comm/SystemMgmt/iidentitem_c.h\>
   * // define device type := 2, device instance := 0
   * IsoAgLib::DevKey_c c_myType( 2, 0 );
   * // simply define instance of variable wihtout initialisation for specific value
   * IsoAgLib::iIdentItem_c c_isoItemLaterDecide;
-  * bool b_startDin = false;
+  * bool b_start false;
   * // perform other init and read arguments for protocol select
-  * if ( b_startDin )
-  * { // start DIN only
-  *   // define 7-char DIN name
-  *   char c_myName[] = "Hi-You";
-  *   c_isoItemLaterDecide.start( &c_myType, c_myName );
-  * }
-  * else
-  * { // start ISO only
+  * // now address claim should be started
+  * b_start = true;
+  * if ( b_start )
+  * { // start ISO
   *   bool     b_selfConf = true;
   *   uint8_t  ui8_indGroup = 2,
   *            ui8_func = 25,
@@ -150,15 +146,14 @@
   * }
   * \endcode
   *
-  * @section SystemMgmtInform Retrieve Information from Monitor List
-  * @subsection SystemMgmtIsoInfo Retrieve Device Information from ISO 11783 List only
-  * The global accessbile instance of IsoAgLib::iISOMonitor_c is best suited,
+  * @section SystemMgmtInform Retrieve Information from ISO 11783 List
+  * The global accessible instance of IsoAgLib::iISOMonitor_c is best suited,
   * if exclusive ISO 11783 devices shall be reported on a request.
   * \code
   * #include \<xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h\>
   * // retrieve amount of ISO members with claimed address of specific device type
   * const uint8_t cui8_myPrefferedDeviceType = 2;
-  * const uint8_t cui8_isoActiveGetyCnt = IsoAgLib::getIisoMonitorInstance().isoMemberGetyCnt( cui8_searchDeviceType, true );
+  * const uint8_t cui8_isoActiveMemberCnt = IsoAgLib::getIisoMonitorInstance().isoMemberCnt( cui8_searchDeviceType, true );
   * // check if some other device uses my device type
   * bool b_myDeviceTypeFree = ( cui8_isoActiveGetyCnt == 0)?true:false;
   * uint8_t ui8_lowestFreeFuncInst = 0;
@@ -166,34 +161,12 @@
   * // -> loop through active ISO members of my device type
   * for ( uint8_t ui8_ind = 0; ui8_ind < cui8_isoActiveGetyCnt; ui8_ind++ ) {
   *   // access item with claimed address at position ui8_ind
-  *   if ( IsoAgLib::getIisoMonitorInstance().isoMemberGetyInd( cui8_searchDeviceType, ui8_ind, true ).funcInst() >= ui8_lowestFreeFuncInst )
+  *   if ( IsoAgLib::getIisoMonitorInstance().isoMemberInd( cui8_searchDeviceType, ui8_ind, true ).funcInst() >= ui8_lowestFreeFuncInst )
   *   { // set my func inst to one greater
-  *     ui8_lowestFreeFuncInst = IsoAgLib::getIisoMonitorInstance().isoMemberGetyInd( cui8_searchDeviceType, ui8_ind, true ).funcInst() + 1;
+  *     ui8_lowestFreeFuncInst = IsoAgLib::getIisoMonitorInstance().isoMemberInd( cui8_searchDeviceType, ui8_ind, true ).funcInst() + 1;
   *   }
   * }
   * // now ui8_lowestFreeFuncInst has free function instance value
-  * \endcode
-  *
-  * @subsection SystemMgmtBothInfo Retrieve Device Information from Both Protocols
-  * Especially if the own ECU can start as DIN or ISO device, some checks for
-  * other device types are only sensible, if not the wrong protocol is checked.
-  * Therefore the IsoAgLib provides access to the common attributes ( e.g. device
-  * type / -instance ) without specification of protocol.
-  * \code
-  * #include \<xgpl_src/IsoAgLib/comm/SystemMgmt/isystem_c.h\>
-  * // retrieve amount of members with claimed address of specific device type
-  * const uint8_t cui8_interestingDeviceType = 3;
-  * const uint8_t cui8_activeItems = IsoAgLib::getISystemInstance().memberGetyCnt( cui8_interestingDeviceType, true );
-  * // find lowest adress
-  * uint8_t ui8_lowestNumber = 0;
-  * for ( uint8_t ui8_ind = 0; ui8_ind < cui8_activeItems; ui8_ind++ ) {
-  *   // access item with claimed address at position ui8_ind
-  *   if ( IsoAgLib::getISystemInstance().memberGetyInd( cui8_interestingDeviceType, ui8_ind, true ).nr() >= ui8_lowestNumber )
-  *   { // set ui8_lowestNumber to one greater
-  *     ui8_lowestNumber = IsoAgLib::getISystemInstance().memberGetyInd( cui8_interestingDeviceType, ui8_ind, true ).nr() + 1;
-  *   }
-  * }
-  * // now ui8_lowestNumber has the lowest free adress number
   * \endcode
   *
   */
