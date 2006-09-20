@@ -106,11 +106,9 @@ GENERATE_FILES_ROOT_DIR=`pwd`
 # + REL_APP_PATH ( specify path to application of this project - error message if not given; use relative path!! )
 # + APP_NAME ( optionally select single CC file for the main app - otherwise the whole given path is interpreted as part of this project )
 #
-# + PRJ_ISO11783=1|PRJ_DIN9684=1 ( select ISO 11783 and/or DIN 9684, default to only ISO 11783 )
 # + PRJ_ISO_TERMINAL ( specify if ISO virtual terminal is wanted; default 0; only possible if PRJ_ISO11783=1 -> error message if not )
-# + PRJ_DIN_TERMINAL ( specify if DIN LBS+ terminal is wanted; default 0; only possible if PRJ_DIN9684=1 -> error message if not )
 # + PRJ_BASE ( specify if Base data - main tractor information as PGN or LBS Base message - is wanted; default 0 )
-# + PRJ_TRACTOR_GENERAL (only incorporate parts from BASE that provide tractor hitch and DIN9684-engine RPM information)
+# + PRJ_TRACTOR_GENERAL (only incorporate parts from BASE that provide tractor hitch and RPM information)
 # + PRJ_TRACTOR_MOVE (only incorporate parts from BASE that provide tractor distance and speed information)
 # + PRJ_TRACTOR_PTO (only incorporate parts from BASE that provide tractor PTO information)
 # + PRJ_TRACTOR_LIGHT (only incorporate parts from BASE that provide tractor lighting information)
@@ -119,7 +117,6 @@ GENERATE_FILES_ROOT_DIR=`pwd`
 # + PRJ_TRACTOR_CERTIFICATION (only incorporate parts from BASE that provide tractor certification information)
 # + PRJ_TIME_GPS (only incorporate parts from BASE that provide time and GPS information)
 # + PRJ_PROCESS ( specify if process data should be used ; default 0 )
-#   - PRJ_FIELDSTAR_GPS ( specify if process data based decode of Fieldstar or LBS+ GPS data is wanted; default 0 )
 #   - PROC_LOCAL ( specify if local process data shall be used; must be activated for all types of local process data; default 0 )
 #     o PROC_LOCAL_STD ( specify if full featured local process data shall be used; default 0 )
 #     o PROC_LOCAL_SIMPLE_MEASURE ( specify if local process data with restricted measurement feature set shall be used; default 0 )
@@ -222,17 +219,9 @@ if [ "A$CAN_BUS_CNT" = "A" ] ; then
   	APP_NAME=""
   fi
 
-
-  if [ "A$PRJ_DIN9684" = "A" ] ; then
-  	PRJ_DIN9684=0
-		PRJ_DIN_TERMINAL=0
-  fi
   if [ "A$PRJ_ISO11783" = "A" ] ; then
   	PRJ_ISO11783=0
 		PRJ_ISO_TERMINAL=0
-  fi
-  if [ "A$PRJ_DIN_TERMINAL" = "A" ] ; then
-		PRJ_DIN_TERMINAL=0
   fi
   if [ "A$PRJ_ISO_TERMINAL" = "A" ] ; then
 		PRJ_ISO_TERMINAL=0
@@ -241,27 +230,10 @@ if [ "A$CAN_BUS_CNT" = "A" ] ; then
 		PRJ_ISO_TERMINAL_SERVER=0
   fi
 
-  if test $PRJ_DIN9684 -lt 1 -a $PRJ_ISO11783 -lt 1 ; then
-  	echo "Warning!! Selected PRJ_ISO11783 as none of PRJ_DIN9684 and PRJ_ISO11783 was activated!"
-    PRJ_ISO11783=1
-  fi
-
   if test $PRJ_ISO11783 -lt 1 -a $PRJ_ISO_TERMINAL -gt 0 ; then
   	echo "Warning overwrite setting of PRJ_ISO_TERMINAL == $PRJ_ISO_TERMINAL as ISO11783 is not activated"
     echo "Set PRJ_ISO11783 to 1 if you want ISO 11783 virtual terminal"
     PRJ_ISO_TERMINAL=0
-  fi
-  if test $PRJ_DIN9684 -lt 1 -a $PRJ_DIN_TERMINAL -gt 0 ; then
-  	echo "Warning overwrite setting of PRJ_DIN_TERMINAL == $PRJ_DIN_TERMINAL as DIN9684 is not activated"
-    echo "Set PRJ_DIN9684 to 1 if you want DIN 9684 LBS+ terminal"
-    PRJ_DIN_TERMINAL=0
-  fi
-
-	if [ $PRJ_DIN_TERMINAL -gt 0 ] ; then
-		# ProcDataLocalSimpleSetpointSimpleMeasure_c is needed
-		PRJ_PROCESS=1
-		PROC_LOCAL=1
-		PROC_LOCAL_SIMPLE_MEASURE_SETPOINT=1
   fi
 
 	if [ "A$PRJ_RS232_OVER_CAN" = "A" ] ; then
@@ -313,7 +285,6 @@ if [ "A$CAN_BUS_CNT" = "A" ] ; then
   	PRJ_TRACTOR_CERTIFICATION=0
   fi
 
-	# deactivate all BASE sub-features that are not supported in DIN
 	# and also deactivate the features that are only available with the extension directories
 	EXT_BASE_SRC="$ISO_AG_LIB_PATH/xgpl_src/IsoAgLib/comm/Base/ext"
 
@@ -334,11 +305,6 @@ if [ "A$CAN_BUS_CNT" = "A" ] ; then
   fi
   if [ "A$PRJ_FIELDSTAR_GPS" = "A" ] ; then
   	PRJ_FIELDSTAR_GPS=0
-  fi
-  if test $PRJ_FIELDSTAR_GPS -gt 0 -a $PRJ_DIN9684 -gt 0 -a $PRJ_PROCESS -lt 1 ; then
-  	echo "Warning! DIN 9684 ( PRJ_DIN9684 ) and GPS ( PRJ_FIELDSTAR_GPS ) is activated, but PROCESS ( PRJ_PROCESS ) not"
-    echo "--> PRJ_PROCESS is overwritten with 1 to activate it"
-    PRJ_PROCESS=1
   fi
 
   if [ "A$PROC_LOCAL" = "A" ] ; then
@@ -534,13 +500,9 @@ function create_filelist( )
 			;;
 	esac
 
-	# make sure that for DIN9684 projects both PTO and general are incorporated, as
-	# both information is sent with same message
-	if [ $PRJ_DIN9684 -gt 0 ] ; then
-		if test $PRJ_TRACTOR_GENERAL -gt 0 -o $PRJ_TRACTOR_PTO -gt 0 ; then
-			PRJ_TRACTOR_GENERAL=1
-			PRJ_TRACTOR_PTO=1
-		fi
+	if test $PRJ_TRACTOR_GENERAL -gt 0 -o $PRJ_TRACTOR_PTO -gt 0 ; then
+	  PRJ_TRACTOR_GENERAL=1
+	  PRJ_TRACTOR_PTO=1
 	fi
 
   COMM_FEATURES=" -path '*/IsoAgLib/typedef.h' -o -path '*/hal/"$HAL_PATH"/typedef.h' -o -name 'isoaglib_config.h' -o -path '*/hal/config.h'"
@@ -562,7 +524,6 @@ function create_filelist( )
   fi
   if [ $PRJ_TRACTOR_MOVE -gt 0 ] ; then
 		if [ $PRJ_ISO11783 -lt 1 ] ; then
-			# only DIN
 	    COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -name '*tracmove_c.*' \)"
 		else
 			# allow tracmove_c.h and tracmovesetpoint_c.h
@@ -573,7 +534,6 @@ function create_filelist( )
   fi
   if [ $PRJ_TRACTOR_PTO -gt 0 ] ; then
 		if [ $PRJ_ISO11783 -lt 1 ] ; then
-			# only DIN
 	    COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -name '*tracpto_c.*' \)"
 		else
 			# allow tracpto_c.h and tracptosetpoint_c.h
@@ -621,10 +581,6 @@ function create_filelist( )
 	    COMM_FEATURES="$COMM_FEATURES -o -path '*/driver/datastreams/volatilememory_c.cpp'"
 		fi
   fi
-  if [ $PRJ_DIN_TERMINAL -gt 0 ] ; then
-    COMM_FEATURES="$COMM_FEATURES -o -path '*/DIN_Terminal/*'"
-    PRJ_MULTIPACKET=1
-  fi
   if test $PRJ_MULTIPACKET -gt 0 -o $PROC_LOCAL -gt 0   ; then
   	PRJ_MULTIPACKET=1
   	if [ $PRJ_ISO11783 -gt 0 ] ; then
@@ -635,7 +591,6 @@ function create_filelist( )
 				COMM_FEATURES="$COMM_FEATURES -o -path '*/Multipacket/impl/streamlinear_c.*'"
 			fi
 		else
-		# for pure DIN9684 - just incorporate multiSEND
 			COMM_FEATURES="$COMM_FEATURES -o -path '*/Multipacket/i*multisend*'"
 		fi
   fi
@@ -762,9 +717,7 @@ function create_filelist( )
 		touch "$FILELIST_QMAKE"
 	fi
   # find central elements
-	if [ $PRJ_DIN9684 -lt 1 ] ; then
-		EXCLUDE_FROM_SYSTEM_MGMT="-a -not -path '*/DIN9684/*'"
-	elif [ $PRJ_ISO11783 -lt 1 ] ; then
+  if [ $PRJ_ISO11783 -lt 1 ] ; then
 		EXCLUDE_FROM_SYSTEM_MGMT="-a -not -path '*/ISO11783/*'"
 	else
 		EXCLUDE_FROM_SYSTEM_MGMT=""
@@ -1019,7 +972,7 @@ function create_autogen_project_config()
   echo "// Decide if the CPU stores number variables in BIG or LITTLE endian byte order in memory." >> $CONFIG_NAME
   echo "// Most CPU will use LITTLE ENDIAN. Only some types of ARM, mostly 68k and PowerPC CPU types will use big endian." >> $CONFIG_NAME
   echo "// Please check the manual of your targret cpu. This setting is used to activate some quick number conversion algorithms," >> $CONFIG_NAME
-  echo "// which provide quick conversion from number variable to CAN strings ( which are always little endian in ISO and DIN ) - and other way." >> $CONFIG_NAME
+  echo "// which provide quick conversion from number variable to CAN strings ( which are always little endian in ISO ) - and other way." >> $CONFIG_NAME
 	if [ $USE_LITTLE_ENDIAN_CPU -gt 0 ] ; then
 		echo -e "#define OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN$ENDLINE" >> $CONFIG_NAME
 	else
@@ -1167,19 +1120,9 @@ function create_autogen_project_config()
 			echo "with ISO_TERMINAL_SERVER!"
     fi
   fi
-  if [ $PRJ_DIN9684 -gt 0 ] ; then
-		echo -e "#ifndef USE_DIN_9684 $ENDLINE\t#define USE_DIN_9684 $ENDLINE#endif" >> $CONFIG_NAME
-  	if [ $PRJ_DIN_TERMINAL -gt 0 ] ; then
-			echo -e "#ifndef USE_DIN_TERMINAL $ENDLINE\t#define USE_DIN_TERMINAL $ENDLINE#endif" >> $CONFIG_NAME
-    fi
-  fi
 
 	if [ $PRJ_SEND_DEBUG -gt 0 ] ; then
 		echo -e "#ifndef DEBUG $ENDLINE\t#define DEBUG $ENDLINE#endif" >> $CONFIG_NAME
-	fi
-
-	if [ $PRJ_FIELDSTAR_GPS -gt 0 ] ; then
-		echo -e "#ifndef USE_DIN_GPS $ENDLINE\t#define USE_DIN_GPS $ENDLINE#endif" >> $CONFIG_NAME
 	fi
 
 	# write overwriteable parts of isoaglib_config.h

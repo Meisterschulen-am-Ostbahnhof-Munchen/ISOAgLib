@@ -145,8 +145,6 @@ RS232_INSTANCE_CNT=2
 # unset or set to 0 if not wanted
 PRJ_ISO11783=1
 # PRJ_ISO_TERMINAL=0
-# PRJ_DIN9684=0
-# PRJ_DIN_TERMINAL=0
 
 # select stream receive strategy:
 # chunk (default): use list of chunks where each receive burst is stored in one chunk -> usefull when on-the-fly parsing is used
@@ -160,7 +158,7 @@ PRJ_ISO11783=1
 # if only special BASE data should be used select one or more of the following parts
 PRJ_BASE=1
 
-# only incorporate parts from BASE that provide tractor hitch and DIN9684-engine RPM information
+# only incorporate parts from BASE that provide tractor hitch and RPM information
 # PRJ_TRACTOR_GENERAL=0
 
 # only incorporate parts from BASE that provide tractor moving (distance, speed, direction, ...) information
@@ -200,12 +198,6 @@ PRJ_BASE=1
 
 # activate globally the use of process data
 # PRJ_PROCESS=0
-
-# for DIN 9684 the process data system can be used
-# to decode GPS information from Fieldstar or LBS+ extension
-# ( if this and DIN9684 is activated, but PRJ_PROCESS is not
-#   then the value of PRJ_PROCESS is overwritten with 1 to activate it )
-# PRJ_FIELDSTAR_GPS=0
 
 # decide if local process data are wanted
 # PROC_LOCAL=0
