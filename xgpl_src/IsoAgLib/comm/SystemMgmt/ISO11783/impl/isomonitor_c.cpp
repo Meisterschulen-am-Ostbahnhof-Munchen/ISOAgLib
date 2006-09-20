@@ -90,32 +90,6 @@
 #include <IsoAgLib/driver/system/impl/system_c.h>
 
 #ifdef USE_PROCESS
-#include <IsoAgLib/comm/Process/impl/process_c.h>
-#endif
-#ifdef USE_TRACTOR_GENERAL
-#include <IsoAgLib/comm/Base/impl/tracgeneral_c.h>
-#endif
-#ifdef USE_TRACTOR_MOVE
-#include <IsoAgLib/comm/Base/impl/tracmove_c.h>
-#endif
-#ifdef USE_TRACTOR_PTO
-#include <IsoAgLib/comm/Base/impl/tracpto_c.h>
-#endif
-#ifdef USE_TRACTOR_LIGHT
-#include <IsoAgLib/comm/Base/ext/impl/traclight_c.h>
-#endif
-#ifdef USE_TRACTOR_AUX
-#include <IsoAgLib/comm/Base/ext/impl/tracaux_c.h>
-#endif
-#ifdef USE_TIME_GPS
-#include <IsoAgLib/comm/Base/impl/timeposgps_c.h>
-#endif
-#ifdef DEF_Stream_IMPL
-#include <IsoAgLib/comm/Multipacket/impl/multireceive_c.h>
-#include <IsoAgLib/comm/Multipacket/impl/multisend_c.h>
-#endif
-
-#ifdef USE_PROCESS
   #include <IsoAgLib/comm/Process/impl/process_c.h>
 #endif
 
@@ -174,35 +148,8 @@ ISOMonitor_c::singletonInit()
 {
   setAlreadyClosed(); // so init() will init ;-) (but only once!)
   init();
-
-  // NOW INIT ONCE the core singleton classes that correspond to the compile time
-  // configured features of the IsoAgLib
-#ifdef USE_PROCESS
-  getProcessInstance4Comm().init();
-#endif
-#ifdef USE_TRACTOR_GENERAL
-  getTracGeneralInstance4Comm().init(NULL, IsoAgLib::IdentModeImplement);
-#endif
-#ifdef USE_TRACTOR_MOVE
-  getTracMoveInstance4Comm().init( NULL, IsoAgLib::IdentModeImplement );
-#endif
-#ifdef USE_TRACTOR_PTO
-  getTracPtoInstance4Comm().init( NULL, IsoAgLib::IdentModeImplement );
-#endif
-#ifdef USE_TRACTOR_LIGHT
-  getTracLightInstance4Comm().init(NULL, IsoAgLib::IdentModeImplement);
-#endif
-#ifdef USE_TRACTOR_AUX
-  getTracAuxInstance4Comm().init(NULL, IsoAgLib::IdentModeImplement);
-#endif
-#ifdef USE_TIME_GPS
-  getTimePosGpsInstance4Comm().init(NULL, IsoAgLib::IdentModeImplement);
-#endif
-#ifdef DEF_Stream_IMPL
-  getMultiReceiveInstance4Comm().init();
-  getMultiSendInstance4Comm().init();
-#endif
 }
+
 
 /** initialisation for ISOMonitor_c which can store optional pointer to central Scheduler_c instance */
 void ISOMonitor_c::init( void )

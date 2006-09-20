@@ -208,7 +208,7 @@ ISOTerminal_c::close()
   and all initialization stuff has been done (Get VT Capabilities, Memory, etc.)
  */
 bool
-ISOTerminal_c::registerIsoObjectPool (IdentItem_c& refc_identItem, IsoAgLib::iIsoTerminalObjectPool_c& rpc_pool, char* rpc_versionLabel)
+ISOTerminal_c::registerIsoObjectPool (IdentItem_c& refc_identItem, IsoAgLib::iIsoTerminalObjectPool_c& rrefc_pool, char* rpc_versionLabel)
 {
   uint8_t ui8_index = 0;
   // add new instance of VtClientServerCommunication
@@ -228,7 +228,7 @@ ISOTerminal_c::registerIsoObjectPool (IdentItem_c& refc_identItem, IsoAgLib::iIs
     }
   }
   // create new instance
-  VtClientServerCommunication_c* pc_vtCSC = new VtClientServerCommunication_c (refc_identItem, *this, rpc_pool, rpc_versionLabel, ui8_index);
+  VtClientServerCommunication_c* pc_vtCSC = new VtClientServerCommunication_c (refc_identItem, *this, rrefc_pool, rpc_versionLabel, ui8_index);
 
   // add new instance to vector
   if (ui8_index < vec_vtClientServerComm.size())

@@ -73,14 +73,16 @@ namespace IsoAgLib {
 class iScheduler_c : private __IsoAgLib::Scheduler_c {
 public:
   /** initialisation for the central IsoAgLib object */
-  void init( void ) { Scheduler_c::init();}
+  void init() { Scheduler_c::init(); }
 
   /** every subsystem of IsoAgLib has explicit function for controlled shutdown
     */
-  void close( void ) { Scheduler_c::close();}
+  void close() { Scheduler_c::close(); }
 
   /** simply close communicating clients */
-  void closeCommunication( void ) { Scheduler_c::closeCommunication();}
+  void closeCommunication() { Scheduler_c::closeCommunication(); }
+
+  void startSystem() { Scheduler_c::startSystem(); }
 
   /**
     call the timeEvent for CANIO_c and all communication classes (derived from ElementBase_c) which

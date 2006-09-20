@@ -104,20 +104,24 @@ namespace __IsoAgLib {
   @author Dipl.-Inform. Achim Spangler
   @short central manager object for all hardware independent IsoAgLib objects.
 */
-class Scheduler_c : public SINGLETON_CLIENT1( Scheduler_c, ElementBase_c, uint8_t ) {
+class Scheduler_c;
+typedef SINGLETON_CLIENT1 (Scheduler_c, ElementBase_c, uint8_t) SingletonScheduler_c;
+class Scheduler_c : public SingletonScheduler_c {
 public:
 
   /** initialisation for the central IsoAgLib object */
-  void init( void );
+  void init();
 
   /** destructor for Scheduler_c */
-  ~Scheduler_c() { close();}
+  ~Scheduler_c() { close(); }
 
   /** every subsystem of IsoAgLib has explicit function for controlled shutdown
     */
-  void close( void );
+  void close();
   /** simply close communicating clients */
-  void closeCommunication( void );
+  void closeCommunication();
+
+  void startSystem();
 
   /**
     call the timeEvent for CANIO_c and all communication classes (derived from ElementBase_c) which
@@ -129,7 +133,7 @@ public:
            guaranteed (default -1 -> no execution stop defined)
     @return true -> all planned executions performed
   */
-  bool timeEvent( int32_t ri32_demandedExecEnd = -1);
+  bool timeEvent (int32_t ri32_demandedExecEnd = -1);
 
   /**
     * deliver the average execution time for timeEvent calls -> allows scheduler to
@@ -181,7 +185,7 @@ public:
 private: //Private methods
   friend class SINGLETON( Scheduler_c );
   /** constructor for the central IsoAgLib object */
-  Scheduler_c() {};
+  Scheduler_c() : b_systemStarted (false) {};
 
   /**
     initialize directly after the singleton instance is created.
@@ -191,7 +195,7 @@ private: //Private methods
   void singletonInit() { init(); };
 
 private: // Private attributes
-	#ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
+  #ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
   /** vector of execution times for all registered timeEvent clients */
   STL_NAMESPACE::vector<int16_t,STL_NAMESPACE::__malloc_alloc_template<0> > arrExecTime;
 
@@ -204,7 +208,7 @@ private: // Private attributes
       -> cache in client vector
     */
   STL_NAMESPACE::vector<ElementBase_c*,STL_NAMESPACE::__malloc_alloc_template<0> >::iterator pc_timeEventClientIter;
-	#else
+  #else
 
   /** vector of execution times for all registered timeEvent clients */
   STL_NAMESPACE::vector<int16_t> arrExecTime;
@@ -218,7 +222,7 @@ private: // Private attributes
       -> cache in client vector
     */
   STL_NAMESPACE::vector<ElementBase_c*>::iterator pc_timeEventClientIter;
-	#endif
+  #endif
 
 
   /** timestamp where last timeEvent was called -> can be used to synchronise distributed timeEvent activities */
@@ -232,6 +236,9 @@ private: // Private attributes
 
   /** execution time of last call of CANIO_c::timeEvent() */
   int16_t i16_canExecTime;
+
+  /** was system started already? */
+  bool b_systemStarted;
 
   /** flag to detect, if other interrupting task forced immediated stop of Scheduler_c::timeEvent() */
   static bool b_execStopForced;

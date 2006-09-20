@@ -81,7 +81,7 @@
  *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
- #include <IsoAgLib/typedef.h>
+#include <IsoAgLib/typedef.h>
 #include "identitem_c.h"
 #include "../ISO11783/impl/isomonitor_c.h"
 
@@ -120,6 +120,8 @@ IdentItem_c::IdentItem_c(DevKey_c* rpc_devKey, const uint8_t* rpb_name
   if ( rpc_devKey == NULL )
   {
     pc_devKey = NULL;
+    // Anyway do start up the complete system if not yet done
+    getSchedulerInstance4Comm().startSystem();
   }
   else
   { // enough information for address claim is present
@@ -451,7 +453,8 @@ void IdentItem_c::restartAddressClaim()
 
 
 /** default destructor which has nothing to do */
-IdentItem_c::~IdentItem_c(){
+IdentItem_c::~IdentItem_c()
+{
   close();
 }
 
@@ -484,8 +487,11 @@ void IdentItem_c::init( DevKey_c* rpc_devKey, const uint8_t* rpb_name, const uin
   )
 {
   BaseItem_c::set( System_c::getTime(), IState_c::Active, ri_singletonVecKey );
-  // register in SystemMgmt_c
-  getIsoMonitorInstance4Comm().registerClient( this );
+
+  // do start up the complete system if not yet done
+  getSchedulerInstance4Comm().startSystem();
+
+  getIsoMonitorInstance4Comm().registerClient (this);
 
   if (rpc_devKey == NULL)
   {

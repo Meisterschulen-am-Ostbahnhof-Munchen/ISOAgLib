@@ -87,6 +87,34 @@
 #include <IsoAgLib/util/liberr_c.h>
 #include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h>
 
+#ifdef USE_PROCESS
+  #include <IsoAgLib/comm/Process/impl/process_c.h>
+#endif
+#ifdef USE_TRACTOR_GENERAL
+  #include <IsoAgLib/comm/Base/impl/tracgeneral_c.h>
+#endif
+#ifdef USE_TRACTOR_MOVE
+  #include <IsoAgLib/comm/Base/impl/tracmove_c.h>
+#endif
+#ifdef USE_TRACTOR_PTO
+  #include <IsoAgLib/comm/Base/impl/tracpto_c.h>
+#endif
+#ifdef USE_TRACTOR_LIGHT
+  #include <IsoAgLib/comm/Base/ext/impl/traclight_c.h>
+#endif
+#ifdef USE_TRACTOR_AUX
+  #include <IsoAgLib/comm/Base/ext/impl/tracaux_c.h>
+#endif
+#ifdef USE_TIME_GPS
+  #include <IsoAgLib/comm/Base/impl/timeposgps_c.h>
+#endif
+#ifdef USE_ISO_TERMINAL
+  #include <IsoAgLib/comm/ISO_Terminal/impl/isoterminal_c.h>
+#endif
+#ifdef DEF_Stream_IMPL
+  #include <IsoAgLib/comm/Multipacket/impl/multireceive_c.h>
+  #include <IsoAgLib/comm/Multipacket/impl/multisend_c.h>
+#endif
 
 #if defined(USE_CAN_EEPROM_EDITOR) || defined( USE_RS232_EEPROM_EDITOR )
   #include <IsoAgLib/hal/eeprom.h>
@@ -188,6 +216,45 @@ void Scheduler_c::close( void )
   #endif
   // last but not least close System
   getSystemInstance().close();
+}
+
+
+void Scheduler_c::startSystem()
+{
+  if (!b_systemStarted)
+  {
+    b_systemStarted = true;
+    // NOW INIT ONCE the core singleton classes that correspond to the compile time
+    // configured features of the IsoAgLib
+#ifdef USE_PROCESS
+    getProcessInstance4Comm().init();
+#endif
+#ifdef USE_TRACTOR_GENERAL
+    getTracGeneralInstance4Comm().init(NULL, IsoAgLib::IdentModeImplement);
+#endif
+#ifdef USE_TRACTOR_MOVE
+    getTracMoveInstance4Comm().init( NULL, IsoAgLib::IdentModeImplement );
+#endif
+#ifdef USE_TRACTOR_PTO
+    getTracPtoInstance4Comm().init( NULL, IsoAgLib::IdentModeImplement );
+#endif
+#ifdef USE_TRACTOR_LIGHT
+    getTracLightInstance4Comm().init(NULL, IsoAgLib::IdentModeImplement);
+#endif
+#ifdef USE_TRACTOR_AUX
+    getTracAuxInstance4Comm().init(NULL, IsoAgLib::IdentModeImplement);
+#endif
+#ifdef USE_TIME_GPS
+    getTimePosGpsInstance4Comm().init(NULL, IsoAgLib::IdentModeImplement);
+#endif
+#ifdef USE_ISO_TERMINAL
+    getIsoTerminalInstance().init();
+#endif
+#ifdef DEF_Stream_IMPL
+    getMultiReceiveInstance4Comm().init();
+    getMultiSendInstance4Comm().init();
+#endif
+  }
 }
 
 

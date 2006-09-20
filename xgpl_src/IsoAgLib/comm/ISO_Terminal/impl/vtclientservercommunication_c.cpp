@@ -280,7 +280,7 @@ VtClientServerCommStreamer_c::resetDataNextStreamPart()
       const int8_t ci8_realUploadingLanguage = (i8_objectPoolUploadingLanguage < 0) ? 0 : i8_objectPoolUploadingLanguage;
       ui8_streamOffset = ci8_realUploadingLanguage + 1; // skip general pool
     }
-    pc_iterObjects = pc_pool->getIVtObjects()[ui8_streamOffset];
+    pc_iterObjects = refc_pool.getIVtObjects()[ui8_streamOffset];
   }
   ui32_objectStreamPosition = 0;
   uploadBufferPosition = 0;
@@ -288,7 +288,7 @@ VtClientServerCommStreamer_c::resetDataNextStreamPart()
   uploadBuffer [0] = 0x11; // Upload Object Pool!
 
   // ! ui32_streamSize is constant and is initialized in "StartObjectPoolUploading"
-  // ! pc_pool         is constant and is initialized in "StartObjectPoolUploading"
+  // ! refc_pool       is constant and is initialized in "StartObjectPoolUploading"
 
   // following should not be needed to be reset, as this set by "saveDataNextStreamPart"
   // ? ui32_objectStreamPositionStored
@@ -337,8 +337,7 @@ SendUpload_c VtClientServerCommunication_c::sc_tempSendUpload;
 void
 VtClientServerCommunication_c::reactOnAbort (IsoAgLib::iStream_c* /*rpc_stream*/)
 {
-  if (c_streamer.pc_pool != NULL)
-    c_streamer.pc_pool->eventStringValueAbort();
+  c_streamer.refc_pool.eventStringValueAbort();
 }
 
 
@@ -372,8 +371,7 @@ VtClientServerCommunication_c::processPartStreamDataChunk (IsoAgLib::iStream_c* 
       return false;
     }
   }
-  if (c_streamer.pc_pool != NULL)
-    c_streamer.pc_pool->eventStringValue (ui16_inputStringId, ui8_inputStringLength, *rpc_stream, rpc_stream->getNotParsedSize(), rb_isFirstChunk, rb_isLastChunk);
+  c_streamer.refc_pool.eventStringValue (ui16_inputStringId, ui8_inputStringLength, *rpc_stream, rpc_stream->getNotParsedSize(), rb_isFirstChunk, rb_isLastChunk);
 
   return false;
 }
@@ -382,39 +380,41 @@ VtClientServerCommunication_c::processPartStreamDataChunk (IsoAgLib::iStream_c* 
 /** default constructor, which can optional set the pointer to the containing
   Scheduler_c object instance
  */
-VtClientServerCommunication_c::VtClientServerCommunication_c (IdentItem_c& ref_wsMasterIdentItem, ISOTerminal_c &ref_isoTerminal, IsoAgLib::iIsoTerminalObjectPool_c& refc_pool, char* rpc_versionLabel, uint8_t ui8_clientId)
+VtClientServerCommunication_c::VtClientServerCommunication_c (IdentItem_c& ref_wsMasterIdentItem, ISOTerminal_c &ref_isoTerminal, IsoAgLib::iIsoTerminalObjectPool_c& rrefc_pool, char* rpc_versionLabel, uint8_t ui8_clientId)
   : b_vtAliveCurrent (false) // so we detect the rising edge when the VT gets connected!
   , b_checkSameCommand (true)
   , refc_wsMasterIdentItem (ref_wsMasterIdentItem)
   , refc_isoTerminal (ref_isoTerminal)
+  , c_streamer (rrefc_pool)
 {
   pc_vtServerInstance = NULL;
-  pc_versionLabel = NULL;
   i8_vtLanguage = -1;
-  c_streamer.pc_pool = &refc_pool;
   b_receiveFilterCreated = false;
 
   // the generated initAllObjectsOnce() has to ensure to be idempotent! (vt2iso-generated source does this!)
-  c_streamer.pc_pool->initAllObjectsOnce (SINGLETON_VEC_KEY_PARAMETER_VAR);
+  c_streamer.refc_pool.initAllObjectsOnce (SINGLETON_VEC_KEY_PARAMETER_VAR);
   // now let all clients know which client they belong to
   if (ui8_clientId > 0) // the iVtObjects are initialised with 0 as default index
   {
-    for (uint8_t ui8_objIndex = 0; ui8_objIndex < c_streamer.pc_pool->getNumObjects(); ui8_objIndex++)
-      c_streamer.pc_pool->getIVtObjects()[0][ui8_objIndex]->setClientID (ui8_clientId);
-    for (uint8_t ui8_objLangIndex = 0; ui8_objLangIndex < c_streamer.pc_pool->getNumLang(); ui8_objLangIndex++)
-      for (uint8_t ui8_objIndex = 0; ui8_objIndex < c_streamer.pc_pool->getNumObjectsLang(); ui8_objIndex++)
-        c_streamer.pc_pool->getIVtObjects()[ui8_objLangIndex+1][ui8_objIndex]->setClientID (ui8_clientId);
+    for (uint8_t ui8_objIndex = 0; ui8_objIndex < c_streamer.refc_pool.getNumObjects(); ui8_objIndex++)
+      c_streamer.refc_pool.getIVtObjects()[0][ui8_objIndex]->setClientID (ui8_clientId);
+    for (uint8_t ui8_objLangIndex = 0; ui8_objLangIndex < c_streamer.refc_pool.getNumLang(); ui8_objLangIndex++)
+      for (uint8_t ui8_objIndex = 0; ui8_objIndex < c_streamer.refc_pool.getNumObjectsLang(); ui8_objIndex++)
+        c_streamer.refc_pool.getIVtObjects()[ui8_objLangIndex+1][ui8_objIndex]->setClientID (ui8_clientId);
   }
 
-  if (rpc_versionLabel != NULL)
+  if (rpc_versionLabel)
   {
-    pc_versionLabel = new (char [7+1]);
     uint32_t len = CNAMESPACE::strlen (rpc_versionLabel);
     if (len > 7) len=7;
     unsigned int i=0;
-    for (; i<len; i++) pc_versionLabel [i] = rpc_versionLabel [i];
-    for (; i<7; i++) pc_versionLabel [i] = 0x20; // ASCII: Space
-    pc_versionLabel[i] = 0x00; // terminate with a 0x00 although not needed...
+    for (; i<len; i++) p7c_versionLabel [i] = rpc_versionLabel [i];
+    for (; i<7; i++) p7c_versionLabel [i] = ' '; // ASCII: Space
+    b_usingVersionLabel = true;
+  }
+  else
+  {
+    b_usingVersionLabel = false;
   }
 
   en_objectPoolState = OPInitial;      // try to upload until state == UploadedSuccessfully || CannotBeUploaded
@@ -429,24 +429,8 @@ VtClientServerCommunication_c::VtClientServerCommunication_c (IdentItem_c& ref_w
  */
 VtClientServerCommunication_c::~VtClientServerCommunication_c()
 {
-  /*** MultiReceive De-Registration ***/
   __IsoAgLib::getMultiReceiveInstance4Comm().deregisterClient (this);
-
   __IsoAgLib::getCanInstance4Comm().deleteFilter (*this, (0x1FFFF00UL), (static_cast<MASK_TYPE>(VT_TO_ECU_PGN) << 8), Ident_c::ExtendedIdent);
-
-    // Stop all activities!
-  /** @todo: has anything to be done here? can there still be activities running that would interfere when pc_pool == NULL then?
-   * I think all has been done now to prevent any problems, so it should do! ... */
-  // Deregister Pool and Name, IdentItem stays...
-  c_streamer.pc_pool = NULL;
-  en_objectPoolState = OPInitial;
-  /** @todo finish Upload-stuff: a) in case of Upload Pool and b) in case of Upload Command */
-  en_uploadType = UploadIdle;
-  if (pc_versionLabel != NULL)
-  {
-    delete (pc_versionLabel);
-    pc_versionLabel = NULL;
-  }
 }
 
 
@@ -502,7 +486,7 @@ VtClientServerCommunication_c::timeEventUploadPoolTimeoutCheck()
       case __IsoAgLib::MultiSend_c::SendAborted:
       { // aborted sending
         /// re-send the current stream!
-        getMultiSendInstance4Comm().sendIsoTarget (refc_wsMasterIdentItem.getIsoItem()->nr(), pc_vtServerInstance->getVtSourceAddress(), &c_streamer, ECU_TO_VT_PGN, en_sendSuccess);
+        getMultiSendInstance4Comm().sendIsoTarget (refc_wsMasterIdentItem.devKey(), pc_vtServerInstance->getIsoName(), &c_streamer, ECU_TO_VT_PGN, en_sendSuccess);
       } break;
       case __IsoAgLib::MultiSend_c::SendSuccess:
       { // see what part we just finished
@@ -511,7 +495,7 @@ VtClientServerCommunication_c::timeEventUploadPoolTimeoutCheck()
           c_streamer.ui32_streamSize = 0; // indicate completion of GENERAL upload!
           if (c_streamer.ui32_streamSizeLang > 0)
           { // start LANGUAGE part upload!
-            getMultiSendInstance4Comm().sendIsoTarget (refc_wsMasterIdentItem.getIsoItem()->nr(), pc_vtServerInstance->getVtSourceAddress(), &c_streamer, ECU_TO_VT_PGN, en_sendSuccess);
+            getMultiSendInstance4Comm().sendIsoTarget (refc_wsMasterIdentItem.devKey(), pc_vtServerInstance->getIsoName(), &c_streamer, ECU_TO_VT_PGN, en_sendSuccess);
             break; // we're uploading, do not indicate pool completion ;)
           }
         } // else we just finished streaming the LANGUAGE part, so upload is finished now!
@@ -593,7 +577,7 @@ VtClientServerCommunication_c::timeEventPoolUpload()
     // Added this preprocessor so loading of object pools can be prevented for development purposes
 #ifdef NO_LOAD_VERSION
 #else
-    if (pc_versionLabel != NULL)
+    if (b_usingVersionLabel)
     {
 #ifdef GET_VERSIONS
       // this is for test purposes only!
@@ -619,8 +603,8 @@ VtClientServerCommunication_c::timeEventPoolUpload()
       }
       else
       {
-        lang1 = pc_versionLabel [5];
-        lang2 = pc_versionLabel [6];
+        lang1 = p7c_versionLabel [5];
+        lang2 = p7c_versionLabel [6];
       }
 
       // Try to "Non Volatile Memory - Load Version" first!
@@ -630,7 +614,7 @@ VtClientServerCommunication_c::timeEventPoolUpload()
 #else
                             209,
 #endif
-                            pc_versionLabel [0], pc_versionLabel [1], pc_versionLabel [2], pc_versionLabel [3], pc_versionLabel [4], lang1, lang2);
+                            p7c_versionLabel [0], p7c_versionLabel [1], p7c_versionLabel [2], p7c_versionLabel [3], p7c_versionLabel [4], lang1, lang2);
       getCanInstance4Comm() << c_data;     // Command: Non Volatile Memory --- Parameter: Load Version
                                             //(Command: Non Volatile Memory --- Parameter: Delete Version - just a quick hack!)
 #ifdef LOESCHE_POOL
@@ -642,7 +626,7 @@ VtClientServerCommunication_c::timeEventPoolUpload()
       ui32_uploadTimeout = DEF_TimeOut_LoadVersion;
       ui32_uploadTimestamp = HAL::getTime();
 #ifdef DEBUG
-      INTERNAL_DEBUG_DEVICE << "Trying Load Version (D1) for Version ["<<pc_versionLabel [0]<< pc_versionLabel [1]<< pc_versionLabel [2]<< pc_versionLabel [3]<< pc_versionLabel [4]<< lang1<< lang2<<"]..." << INTERNAL_DEBUG_DEVICE_ENDL;
+      INTERNAL_DEBUG_DEVICE << "Trying Load Version (D1) for Version ["<<p7c_versionLabel [0]<< p7c_versionLabel [1]<< p7c_versionLabel [2]<< p7c_versionLabel [3]<< p7c_versionLabel [4]<< lang1<< lang2<<"]..." << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
 #endif
     }
@@ -766,10 +750,9 @@ VtClientServerCommunication_c::timeEvent(void)
        && (i8_vtLanguage != c_streamer.i8_objectPoolUploadedLanguage))
   { // update languages on the fly
     setObjectPoolUploadingLanguage();
-      /// NOTIFY THE APPLICATION so it can enqueue some commands that are processed BEFORE the update is done
-      /// e.g. switch to a "Wait while changing language..." datamask.
-    if (c_streamer.pc_pool != NULL)
-      c_streamer.pc_pool->eventPrepareForLanguageChange (c_streamer.i8_objectPoolUploadingLanguage, c_streamer.ui16_objectPoolUploadingLanguageCode);
+    /// NOTIFY THE APPLICATION so it can enqueue some commands that are processed BEFORE the update is done
+    /// e.g. switch to a "Wait while changing language..." datamask.
+    c_streamer.refc_pool.eventPrepareForLanguageChange (c_streamer.i8_objectPoolUploadingLanguage, c_streamer.ui16_objectPoolUploadingLanguageCode);
 
     sendCommandUpdateLanguagePool();
     // we keep (c_streamer.i8_objectPoolUploadingLanguage != -2), so a change in between doesn't care and won't happen!!
@@ -900,19 +883,19 @@ VtClientServerCommunication_c::notifyOnVtsLanguagePgn()
 {
   i8_vtLanguage = -1; // indicate that VT's language is not supported by this WS, so the default language should be used
 
-  if ((c_streamer.pc_pool != NULL) && pc_vtServerInstance)
+  if (pc_vtServerInstance)
   {
-    const uint8_t cui8_languages = c_streamer.pc_pool->getWorkingSetObject().get_vtObjectWorkingSet_a()->numberOfLanguagesToFollow;
+    const uint8_t cui8_languages = c_streamer.refc_pool.getWorkingSetObject().get_vtObjectWorkingSet_a()->numberOfLanguagesToFollow;
     for (int i=0; i<cui8_languages; i++)
     {
-      const uint8_t* lang = c_streamer.pc_pool->getWorkingSetObject().get_vtObjectWorkingSet_a()->languagesToFollow[i].language;
+      const uint8_t* lang = c_streamer.refc_pool.getWorkingSetObject().get_vtObjectWorkingSet_a()->languagesToFollow[i].language;
       if (pc_vtServerInstance->getLocalSettings()->languageCode == ((lang[0] << 8) | lang[1]))
       {
         i8_vtLanguage = i; // yes, VT's language is directly supported by this workingset
         break;
       }
     }
-    c_streamer.pc_pool->eventLanguagePgn (*pc_vtServerInstance->getLocalSettings());
+    c_streamer.refc_pool.eventLanguagePgn (*pc_vtServerInstance->getLocalSettings());
   }
 }
 
@@ -947,40 +930,28 @@ VtClientServerCommunication_c::processMsg()
     /*** ### VT Initiated Messages ### ***/
     case 0x00: // Command: "Control Element Function", parameter "Soft Key"
     case 0x01: // Command: "Control Element Function", parameter "Button"
-      if (c_streamer.pc_pool)
-      {
-        c_streamer.pc_pool->eventKeyCode (c_data.getUint8Data (1) /* key activation code (pressed, released, held) */,
-                                          c_data.getUint8Data (2) | (c_data.getUint8Data (3) << 8) /* objID of key object */,
-                                          c_data.getUint8Data (4) | (c_data.getUint8Data (5) << 8) /* objID of visible mask */,
-                                          c_data.getUint8Data (6) /* key code */,
-                                          c_data.getUint8Data (0) /* 0 for sk, 1 for button -- matches wasButton? boolean */ );
-      }
+      c_streamer.refc_pool.eventKeyCode (c_data.getUint8Data (1) /* key activation code (pressed, released, held) */,
+                                         c_data.getUint8Data (2) | (c_data.getUint8Data (3) << 8) /* objID of key object */,
+                                         c_data.getUint8Data (4) | (c_data.getUint8Data (5) << 8) /* objID of visible mask */,
+                                         c_data.getUint8Data (6) /* key code */,
+                                         c_data.getUint8Data (0) /* 0 for sk, 1 for button -- matches wasButton? boolean */ );
       break;
     case 0x02: // Command: "Control Element Function", parameter "Pointing Event"
-      if (c_streamer.pc_pool)
-      {
-        c_streamer.pc_pool->eventPointingEvent (c_data.getUint8Data (1) | (c_data.getUint8Data (2) << 8) /* X position in pixels */,
-                                                c_data.getUint8Data (3) | (c_data.getUint8Data (4) << 8) /* Y position in pixels */);
-      }
+      c_streamer.refc_pool.eventPointingEvent (c_data.getUint8Data (1) | (c_data.getUint8Data (2) << 8) /* X position in pixels */,
+                                              c_data.getUint8Data (3) | (c_data.getUint8Data (4) << 8) /* Y position in pixels */);
       break;
     case 0x05: // Command: "Control Element Function", parameter "VT Change Numeric Value"
-      if (c_streamer.pc_pool)
-      {
-        c_streamer.pc_pool->eventNumericValue (uint16_t(c_data.getUint8Data (1)) | (uint16_t(c_data.getUint8Data (2)) << 8) /* objID */,
-                                               c_data.getUint8Data (4) /* 1 byte value */,
-                                               uint32_t(c_data.getUint8Data (4)) | (uint32_t(c_data.getUint8Data (5)) << 8) | (uint32_t(c_data.getUint8Data (6)) << 16)| (uint32_t(c_data.getUint8Data (7)) << 24) /* 4 byte value */);
-      }
+      c_streamer.refc_pool.eventNumericValue (uint16_t(c_data.getUint8Data (1)) | (uint16_t(c_data.getUint8Data (2)) << 8) /* objID */,
+                                              c_data.getUint8Data (4) /* 1 byte value */,
+                                              uint32_t(c_data.getUint8Data (4)) | (uint32_t(c_data.getUint8Data (5)) << 8) | (uint32_t(c_data.getUint8Data (6)) << 16)| (uint32_t(c_data.getUint8Data (7)) << 24) /* 4 byte value */);
       break;
     case 0x08:  // Command: "Control Element Function", parameter "VT Input String Value"
-      if (c_streamer.pc_pool)
+      if (c_data.getUint8Data (3) <= 4) //within a 8 byte long cmd can be only a 4 char long string
       {
-        if (c_data.getUint8Data (3) <= 4) //within a 8 byte long cmd can be only a 4 char long string
-        {
-          VolatileMemory_c c_vmString (c_data.getUint8DataConstPointer(4));
-          c_streamer.pc_pool->eventStringValue (uint16_t(c_data.getUint8Data (1)) | (uint16_t(c_data.getUint8Data (2)) << 8) /* objID */,
-                                                c_data.getUint8Data (3) /* total number of bytes */, c_vmString,
-                                                c_data.getUint8Data (3) /* total number of bytes */, true, true);
-        }
+        VolatileMemory_c c_vmString (c_data.getUint8DataConstPointer(4));
+        c_streamer.refc_pool.eventStringValue (uint16_t(c_data.getUint8Data (1)) | (uint16_t(c_data.getUint8Data (2)) << 8) /* objID */,
+                                               c_data.getUint8Data (3) /* total number of bytes */, c_vmString,
+                                               c_data.getUint8Data (3) /* total number of bytes */, true, true);
       }
       break;
 
@@ -993,7 +964,7 @@ VtClientServerCommunication_c::processMsg()
         { /// NO Error with UPLOADING pool
 // Added this preprocessor so storing of object pools can be prevented for development purposes
 #ifndef NO_STORE_VERSION
-          if (pc_versionLabel != NULL)
+          if (b_usingVersionLabel)
           { // Store Version and finalize after "Store Version Response"
             char lang1, lang2;
             if (c_streamer.ui16_objectPoolUploadingLanguageCode != 0x0000)
@@ -1003,11 +974,11 @@ VtClientServerCommunication_c::processMsg()
             }
             else
             {
-              lang1 = pc_versionLabel [5];
-              lang2 = pc_versionLabel [6];
+              lang1 = p7c_versionLabel [5];
+              lang2 = p7c_versionLabel [6];
             }
             c_data.setExtCanPkg8 (7, 0, ECU_TO_VT_PGN>>8, pc_vtServerInstance->getVtSourceAddress(), refc_wsMasterIdentItem.getIsoItem()->nr(),
-                                  208 /* D0 */, pc_versionLabel [0], pc_versionLabel [1], pc_versionLabel [2], pc_versionLabel [3], pc_versionLabel [4], lang1, lang2);
+                                  208 /* D0 */, p7c_versionLabel [0], p7c_versionLabel [1], p7c_versionLabel [2], p7c_versionLabel [3], p7c_versionLabel [4], lang1, lang2);
             getCanInstance4Comm() << c_data;     // Command: Non Volatile Memory --- Parameter: Store Version
 
                       // Now wait for response
@@ -1102,7 +1073,7 @@ VtClientServerCommunication_c::processMsg()
         if (c_data.getUint8Data (2) == 0)
         { // start uploading, there MAY BE enough memory
           en_uploadPoolState = UploadPoolUploading;
-          getMultiSendInstance4Comm().sendIsoTarget (refc_wsMasterIdentItem.getIsoItem()->nr(), pc_vtServerInstance->getVtSourceAddress(), &c_streamer, ECU_TO_VT_PGN, en_sendSuccess);
+          getMultiSendInstance4Comm().sendIsoTarget (refc_wsMasterIdentItem.devKey(), pc_vtServerInstance->getIsoName(), &c_streamer, ECU_TO_VT_PGN, en_sendSuccess);
         }
         else
           vtOutOfMemory();
@@ -1179,7 +1150,7 @@ VtClientServerCommunication_c::processMsg()
         { /* okay, right response for our current command! */
           ui8_uploadCommandError = c_data.getUint8Data (ui8_errByte-1);
           /// Inform user on success/error of this command
-          if (c_streamer.pc_pool) c_streamer.pc_pool->eventCommandResponse (ui8_uploadCommandError, c_data.getUint8DataConstPointer()); // pass "ui8_uploadCommandError" in case it's only important if it's an error or not. get Cmd and all databytes from "c_data.name()"
+          c_streamer.refc_pool.eventCommandResponse (ui8_uploadCommandError, c_data.getUint8DataConstPointer()); // pass "ui8_uploadCommandError" in case it's only important if it's an error or not. get Cmd and all databytes from "c_data.name()"
 #ifdef DEBUG
           if (ui8_uploadCommandError != 0)
           { /* error */
@@ -1213,7 +1184,7 @@ VtClientServerCommunication_c::getUserClippedColor (uint8_t colorValue, IsoAgLib
   {
     uint8_t colorDepth = pc_vtServerInstance->getVtCapabilities()->hwGraphicType;
     if (((colorDepth == 0) && (colorValue > 1)) || ((colorDepth == 1) && (colorValue > 16)))
-      return c_streamer.pc_pool->convertColour (colorValue, colorDepth, obj, whichColour);
+      return c_streamer.refc_pool.convertColour (colorValue, colorDepth, obj, whichColour);
   }
   return colorValue;
 }
@@ -1983,14 +1954,14 @@ VtClientServerCommunication_c::doStop()
   /// if any upload is in progress, abort it
   if (pc_vtServerInstance) // no Vt Alives anymore but Vt still announced
   {
-    getMultiSendInstance4Comm().abortSend(refc_wsMasterIdentItem.getIsoItem()->nr(), pc_vtServerInstance->getVtSourceAddress());
+    getMultiSendInstance4Comm().abortSend (refc_wsMasterIdentItem.devKey(), pc_vtServerInstance->getIsoName());
   }
   else
   {
     // vt's not announced
     // that case should be handles by the multisend itself
   }
-  c_streamer.pc_pool->eventEnterSafeState();
+  c_streamer.refc_pool.eventEnterSafeState();
 }
 
 
@@ -2062,16 +2033,16 @@ VtClientServerCommunication_c::startObjectPoolUploading (uploadPoolType_t ren_up
     // *CONDITIONALLY* Calculate GENERAL Part size (always init size to 0 above!)
     if (ren_uploadPoolType == UploadPoolTypeCompleteInitially) // was "if (!rb_onlyLanguageStream)"
     {
-      for (uint32_t curObject=0; curObject < c_streamer.pc_pool->getNumObjects(); curObject++)
-        c_streamer.ui32_streamSize += ((vtObject_c*)c_streamer.pc_pool->getIVtObjects()[0][curObject])->fitTerminal ();
+      for (uint32_t curObject=0; curObject < c_streamer.refc_pool.getNumObjects(); curObject++)
+        c_streamer.ui32_streamSize += ((vtObject_c*)c_streamer.refc_pool.getIVtObjects()[0][curObject])->fitTerminal ();
     }
 
     // *ALWAYS* Calculate LANGUAGE Part size (if objectpool has multilanguage!)
-    if (c_streamer.pc_pool->getWorkingSetObject().get_vtObjectWorkingSet_a()->numberOfLanguagesToFollow > 0) // supporting multilanguage.
+    if (c_streamer.refc_pool.getWorkingSetObject().get_vtObjectWorkingSet_a()->numberOfLanguagesToFollow > 0) // supporting multilanguage.
     { // only if the objectpool has 2 or more languages, it makes sense to add the language code to the version-name
       const int8_t ci8_realUploadingLanguage = (c_streamer.i8_objectPoolUploadingLanguage < 0) ? 0 : c_streamer.i8_objectPoolUploadingLanguage;
-      for (uint32_t curObject=0; curObject < c_streamer.pc_pool->getNumObjectsLang(); curObject++)
-        c_streamer.ui32_streamSizeLang += ((vtObject_c*)c_streamer.pc_pool->getIVtObjects()[ci8_realUploadingLanguage+1][curObject])->fitTerminal ();
+      for (uint32_t curObject=0; curObject < c_streamer.refc_pool.getNumObjectsLang(); curObject++)
+        c_streamer.ui32_streamSizeLang += ((vtObject_c*)c_streamer.refc_pool.getIVtObjects()[ci8_realUploadingLanguage+1][curObject])->fitTerminal ();
     } // else: no LANGUAGE SPECIFIC objectpool, so keep this at 0 to indicate this!
 
     if (ren_uploadPoolType == UploadPoolTypeCompleteInitially) // was "if (!rb_onlyLanguageStream)"
@@ -2128,10 +2099,7 @@ VtClientServerCommunication_c::finalizeUploading() //bool rb_wasLanguageUpdate)
       en_objectPoolState = OPUploadedSuccessfully;
       en_uploadType = UploadIdle;
     }
-    if (c_streamer.pc_pool != NULL)
-    { // there should always a pc_pool, else "finalizeUploading" wouldn't be called!
-      c_streamer.pc_pool->eventObjectPoolUploadedSuccessfully ((en_uploadPoolType == UploadPoolTypeLanguageUpdate), c_streamer.i8_objectPoolUploadedLanguage, c_streamer.ui16_objectPoolUploadedLanguageCode);
-    }
+    c_streamer.refc_pool.eventObjectPoolUploadedSuccessfully ((en_uploadPoolType == UploadPoolTypeLanguageUpdate), c_streamer.i8_objectPoolUploadedLanguage, c_streamer.ui16_objectPoolUploadedLanguageCode);
   }
   /// @todo for now we allow parallel uploads
   ///refc_isoTerminal.resetFlagForPoolUpload (this);
@@ -2189,7 +2157,7 @@ VtClientServerCommunication_c::startUploadCommand()
       }
       if (c_streamer.ui32_streamSizeLang > 0)
       { // start LANGUAGE/USER part upload!
-        return getMultiSendInstance4Comm().sendIsoTarget (refc_wsMasterIdentItem.getIsoItem()->nr(), pc_vtServerInstance->getVtSourceAddress(), &c_streamer, ECU_TO_VT_PGN, en_sendSuccess);
+        return getMultiSendInstance4Comm().sendIsoTarget (refc_wsMasterIdentItem.devKey(), pc_vtServerInstance->getIsoName(), &c_streamer, ECU_TO_VT_PGN, en_sendSuccess);
       }
       else
       { // shouldn't happen, but catch case anyway!
@@ -2235,8 +2203,8 @@ VtClientServerCommunication_c::startUploadCommand()
     // Save first byte for Response-Checking!
     ui8_commandParameter = actSend->vec_uploadBuffer [0]; // Save first byte for Response-Checking!
 
-    return getMultiSendInstance4Comm().sendIsoTarget (refc_wsMasterIdentItem.getIsoItem()->nr(),
-                                                      pc_vtServerInstance->getVtSourceAddress(),
+    return getMultiSendInstance4Comm().sendIsoTarget (refc_wsMasterIdentItem.devKey(),
+                                                      pc_vtServerInstance->getIsoName(),
                                                       &actSend->vec_uploadBuffer.front(),
                                                       actSend->vec_uploadBuffer.size(),
                                                       ECU_TO_VT_PGN,
@@ -2247,8 +2215,8 @@ VtClientServerCommunication_c::startUploadCommand()
     // Save first byte for Response-Checking!
     ui8_commandParameter = actSend->mssObjectString->getStreamer()->getFirstByte();
 
-    return getMultiSendInstance4Comm().sendIsoTarget (refc_wsMasterIdentItem.getIsoItem()->nr(),
-                                                      pc_vtServerInstance->getVtSourceAddress(),
+    return getMultiSendInstance4Comm().sendIsoTarget (refc_wsMasterIdentItem.devKey(),
+                                                      pc_vtServerInstance->getIsoName(),
                                                       (IsoAgLib::iMultiSendStreamer_c*)actSend->mssObjectString->getStreamer(),
                                                       ECU_TO_VT_PGN,
                                                       en_sendSuccess);
@@ -2297,10 +2265,10 @@ VtClientServerCommunication_c::setObjectPoolUploadingLanguage()
 {
   c_streamer.i8_objectPoolUploadingLanguage = i8_vtLanguage;
   c_streamer.ui16_objectPoolUploadingLanguageCode = 0x0000;
-  if (c_streamer.pc_pool->getWorkingSetObject().get_vtObjectWorkingSet_a()->numberOfLanguagesToFollow > 1) // supporting multilanguage.
+  if (c_streamer.refc_pool.getWorkingSetObject().get_vtObjectWorkingSet_a()->numberOfLanguagesToFollow > 1) // supporting multilanguage.
   { // only if the objectpool has 2 or more languages, it makes sense to add the language code to the version-name
     const int8_t ci8_realUploadingLanguage = (c_streamer.i8_objectPoolUploadingLanguage < 0) ? 0 : c_streamer.i8_objectPoolUploadingLanguage;
-    const uint8_t* lang = c_streamer.pc_pool->getWorkingSetObject().get_vtObjectWorkingSet_a()->languagesToFollow[ci8_realUploadingLanguage].language;
+    const uint8_t* lang = c_streamer.refc_pool.getWorkingSetObject().get_vtObjectWorkingSet_a()->languagesToFollow[ci8_realUploadingLanguage].language;
     c_streamer.ui16_objectPoolUploadingLanguageCode = (lang [0] << 8) | lang[1];
   }
 }

@@ -123,7 +123,7 @@ public:
   /** every subsystem of IsoAgLib has explicit function for controlled shutdown */
   void close();
 
-  bool registerIsoObjectPool (IdentItem_c& rpc_wsMasterIdentItem, IsoAgLib::iIsoTerminalObjectPool_c& rpc_pool, char* rpc_versionLabel);
+  bool registerIsoObjectPool (IdentItem_c& rpc_wsMasterIdentItem, IsoAgLib::iIsoTerminalObjectPool_c& rrefc_pool, char* rpc_versionLabel);
 
   bool deregisterIsoObjectPool (IdentItem_c& rpc_wsMasterIdentItem);
 

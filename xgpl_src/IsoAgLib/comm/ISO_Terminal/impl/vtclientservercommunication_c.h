@@ -180,7 +180,9 @@ public:
 class VtClientServerCommStreamer_c : public IsoAgLib::iMultiSendStreamer_c
 {
 public:
-  virtual ~VtClientServerCommStreamer_c(){};
+  VtClientServerCommStreamer_c(IsoAgLib::iIsoTerminalObjectPool_c& rrefc_pool) : refc_pool (rrefc_pool) {}
+
+  virtual ~VtClientServerCommStreamer_c(){}
   /** place next data to send direct into send puffer of pointed
       stream send package - MultiSendStreamer_c will send this
       puffer afterwards
@@ -222,8 +224,7 @@ public:
   IsoAgLib::iVtObject_c** pc_iterObjects;
   IsoAgLib::iVtObject_c** pc_iterObjectsStored;
 
-  // the values of registerIsoObjectPool get stored here
-  IsoAgLib::iIsoTerminalObjectPool_c* pc_pool;
+  IsoAgLib::iIsoTerminalObjectPool_c& refc_pool;
 #define ISO_VT_UPLOAD_BUFFER_SIZE 128
   uint8_t uploadBuffer [ISO_VT_UPLOAD_BUFFER_SIZE];
   uint8_t uploadBufferFilled;
@@ -310,21 +311,21 @@ public:
   void notifyOnVtsLanguagePgn();
 
   /** function that handles incoming language pgn */
-  void notifyOnVtStatusMessage() { c_streamer.pc_pool-> eventVtStatusMsg(); }
+  void notifyOnVtStatusMessage() { c_streamer.refc_pool.eventVtStatusMsg(); }
 
   virtual bool processMsg();
 
-  virtual CANPkgExt_c& dataBase() { return c_data; };
+  virtual CANPkgExt_c& dataBase() { return c_data; }
 
-  uint16_t getVtObjectPoolDimension()     { return c_streamer.pc_pool->getDimension(); }
-  uint16_t getVtObjectPoolSoftKeyWidth()  { return c_streamer.pc_pool->getSkWidth(); }
-  uint16_t getVtObjectPoolSoftKeyHeight() { return c_streamer.pc_pool->getSkHeight(); }
+  uint16_t getVtObjectPoolDimension()     { return c_streamer.refc_pool.getDimension(); }
+  uint16_t getVtObjectPoolSoftKeyWidth()  { return c_streamer.refc_pool.getSkWidth(); }
+  uint16_t getVtObjectPoolSoftKeyHeight() { return c_streamer.refc_pool.getSkHeight(); }
   uint32_t getUploadBufferSize();
   uint8_t  getUserClippedColor (uint8_t colorValue, IsoAgLib::iVtObject_c* obj, IsoAgLib::e_vtColour whichColour);
 
-  IdentItem_c& getIdentItem()           { return refc_wsMasterIdentItem; }
-  VtServerInstance_c& getVtServerInst() { return *pc_vtServerInstance;} // @todo Does this make sense? pc_ may be NULL!
-  VtServerInstance_c* getVtServerInstPtr() { return pc_vtServerInstance;}
+  IdentItem_c& getIdentItem()            { return refc_wsMasterIdentItem; }
+  VtServerInstance_c& getVtServerInst()   { return *pc_vtServerInstance; } // @todo Does this make sense? pc_ may be NULL!
+  VtServerInstance_c* getVtServerInstPtr() { return pc_vtServerInstance; }
 
   void notifyOnNewVtServerInstance  (VtServerInstance_c& ref_newVtServerInst);
   void notifyOnVtServerInstanceLoss (VtServerInstance_c& ref_oldVtServerInst);
@@ -427,7 +428,7 @@ private:
   /** private constructor which prevents direct instantiation in user application
     * NEVER define instance of VtClientServerCommunication_c within application
     */
-  VtClientServerCommunication_c (IdentItem_c& refc_wsMasterIdentItem, ISOTerminal_c &ref_isoTerminal, IsoAgLib::iIsoTerminalObjectPool_c& refc_pool, char* rpc_versionLabel, uint8_t ui8_clientId);
+  VtClientServerCommunication_c (IdentItem_c& refc_wsMasterIdentItem, ISOTerminal_c &ref_isoTerminal, IsoAgLib::iIsoTerminalObjectPool_c& rrefc_pool, char* rpc_versionLabel, uint8_t ui8_clientId);
 
   void doStart();
   void doStop();
@@ -462,7 +463,8 @@ private: // attributes
 
   VtServerInstance_c* pc_vtServerInstance;  // back p.
 
-  char* pc_versionLabel; // NULL if no Version Name is given
+  bool b_usingVersionLabel; // if NOT using version label, "p7c_versionLabel" has random values!
+  char p7c_versionLabel [7];
 
   /// General Object-Pool state (empty, loaded, etc.)
   objectPoolState_t en_objectPoolState;

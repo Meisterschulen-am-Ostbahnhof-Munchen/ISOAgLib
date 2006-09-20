@@ -1,6 +1,5 @@
 /***************************************************************************
-                          multisendpkg_c.cpp - data object for Process-Data
-                                           messages
+                          multisendpkg_c.cpp - data object for Multipacket messages
                              -------------------
     begin                : Fri Sep 28 2001
     copyright            : (C) 2000 - 2004 by Dipl.-Inform. Achim Spangler
@@ -91,103 +90,6 @@
 namespace __IsoAgLib {
 
 
-/** default constructor which has nothing to do */
-MultiSendPkg_c::MultiSendPkg_c(){
-  // set the standard uint8_t order as default
-  en_byteOrder = LSB_MSB;
-}
-/** default constructor which has nothing to do */
-MultiSendPkg_c::~MultiSendPkg_c(){
-}
-/**
-  assign operator to insert informations from one CANPkg_c into another
-  @see __IsoAgLib::FilterBox_c::operator>>
-  @see CANPkgExt_c::operator=
-  @see CANPkgExt_c::getData
-  @param rrefc_right reference to the source CANPkg_c on the right
-  @return reference to the source CANPkg_c to enable assign chains like
-      "pkg1 = pkg2 = pkg3 = pkg4;"
-*/
-const CANPkg_c& MultiSendPkg_c::operator=(const CANPkg_c& rrefc_right)
-{
-  const MultiSendPkg_c& rrefc_mine = static_cast<const MultiSendPkg_c&>(rrefc_right);
-  bitfield.b_empf = rrefc_mine.bitfield.b_empf;
-  bitfield.b_send = rrefc_mine.bitfield.b_send;
-  en_byteOrder = rrefc_mine.en_byteOrder;
-
-  return CANPkg_c::operator=(rrefc_right);
-}
-
-/**
-  overloaded virtual function to translate the string data into flag values;
-  needed for assigning informations from another CANPkg_c or CANPkgExt
-  @see CANPkg_c::operator=
-  @see CANPkgExt_c::operator=
-*/
-void MultiSendPkg_c::string2Flags()
-{
-  #ifdef USE_ISO_11783
-  if (identType() == Ident_c::ExtendedIdent)
-  { // set pri, empf, send for convenience
-    setEmpf(isoPs());
-    setSend(isoSa());
-    setIdentType(Ident_c::ExtendedIdent);
-  }
-  else
-  #endif
-  {
-    setEmpf(((ident() >> 4) & 0xF));
-    setSend(ident() & 0xF);
-  }
-};
-
-/**
-  overloaded virtual function to translate flag values to data string;
-  needed for sending informations from this object via CANIO_c on CAN BUS,
-  because CANIO_c doesn't know anything about the data format of this type of msg
-  so that it can only use an unformated data string from CANPkg
-  @see CANPkg_c::getData
-  @see CANPkgExt_c::getData
-*/
-void MultiSendPkg_c::flags2String()
-{
-};
-
-/**
-  deliver the message number in received CTS CAN pkg for IsoAgLib+ transfer
-  (Fieldstar uses MSB_LSB uint8_t order)
-  @param rb_pos position of two uint8_t integer in CAN string
-  @return number of to be sent message
-*/
-uint16_t MultiSendPkg_c::getData_2ByteInteger(uint8_t rb_pos) const
-{
-  return (en_byteOrder == LSB_MSB)
-      // the getUint16Data() provides fast and safe access to LittleEndian
-      // ordered data value string
-    ?(getUint16Data(rb_pos))
-      // in this case, the value is _not_ stored in normal LittleEndian order
-      // in the CAN byte stream
-    :(getUint8Data(rb_pos+1) + (uint16_t(getUint8Data(rb_pos))   << 8));
-}
-/**
-  set the message number for sent CAN pkg for IsoAgLib+ transfer
-  (Fieldstar uses MSB_LSB uint8_t order)
-  @param rb_pos position of two uint8_t integer in CAN string
-  @param rui16_val value to set
-*/
-void MultiSendPkg_c::setData_2ByteInteger(uint8_t rb_pos, uint16_t rui16_val)
-{
-  if (en_byteOrder == MSB_LSB)
-  {
-    setUint8Data( rb_pos,   (rui16_val >> 8)   );
-    setUint8Data( rb_pos+1, (rui16_val & 0xFF) );
-  }
-  else
-  { // LSB_MSB is the standard byte order, which is provided by setUint16Data
-    setUint16Data( rb_pos,  rui16_val & 0xFFFFU );
-  }
-}
-
 static const uint8_t paddingDataArr[] = {0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF};
 
 /**
@@ -210,10 +112,13 @@ void MultiSendPkg_c::setDataPart(const HUGE_MEM uint8_t* rpb_source, int32_t ri3
     pb_source++;
   }
   #else
-  setDataFromString( 1, rpb_source + ri32_pos, rb_partSize );
+  setDataFromString (1, rpb_source + ri32_pos, rb_partSize);
   #endif
-  setDataFromString( 1+rb_partSize, paddingDataArr, (7-rb_partSize) );
+  setDataFromString (1+rb_partSize, paddingDataArr, (7-rb_partSize));
 }
+
+
+
 /**
   set the 7 uint8_t data part of transfer message
   @param rpb_source source data pointer
@@ -232,8 +137,11 @@ void MultiSendPkg_c::setDataPart(const std::vector<uint8_t>& refc_vecSource, int
     // now increment the iterator for next access
     iter++;
   }
-  setDataFromString( 1+rb_partSize, paddingDataArr, (7-rb_partSize) );
+  setDataFromString (1+rb_partSize, paddingDataArr, (7-rb_partSize));
 }
+
+
+
 #if defined(NMEA_2000_FAST_PACKET)
 /**
   set the 7 uint8_t data part of transfer message
@@ -258,10 +166,13 @@ void MultiSendPkg_c::setFastPacketDataPart(const HUGE_MEM uint8_t* rpb_source, i
     pb_source++;
   }
 #else
-  setDataFromString( rui8_offset, rpb_source + ri32_pos, rb_partSize );
+  setDataFromString (rui8_offset, rpb_source + ri32_pos, rb_partSize);
 #endif
-  setDataFromString( rui8_offset+rb_partSize, paddingDataArr, (8-rui8_offset-rb_partSize) );
+  setDataFromString (rui8_offset+rb_partSize, paddingDataArr, (8-rui8_offset-rb_partSize));
 }
+
+
+
 /**
   set the 7 uint8_t data part of transfer message
   @param rpb_source source data pointer
@@ -283,7 +194,7 @@ void MultiSendPkg_c::setFastPacketDataPart(const std::vector<uint8_t>& refc_vecS
     // now increment the iterator for next access
     iter++;
   }
-  setDataFromString( rui8_offset+rb_partSize, paddingDataArr, (8-rui8_offset-rb_partSize) );
+  setDataFromString (rui8_offset+rb_partSize, paddingDataArr, (8-rui8_offset-rb_partSize));
 }
 #endif
 

@@ -179,6 +179,7 @@ public:
   void resetVtAlive();
 
   /** getter */
+  const DevKey_c&            getIsoName()             { return c_devKey; }
   uint8_t                    getVtSourceAddress()     { return (pcc_isoItem != NULL)? pcc_isoItem->nr() : 0xfe; }
   uint32_t                   getVtHardwareDimension() { return (uint32_t) (vtCapabilities_a.hwWidth); }
   uint16_t                   getVtFontSizes()         { return vtCapabilities_a.fontSizes; }

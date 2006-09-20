@@ -407,6 +407,27 @@ class CANPkgExt_c : public CANPkg_c
     */
   void setDevKeyForDA( const DevKey_c& p_devKey );
 
+  /** short inline function for setting the Destination address (PS) to global (0xFF)
+    */
+  void setGlobalDA() { setIsoPs (0xFF); }
+
+  /** get the monitoritem for resolved SA
+    */
+  const ISOItem_c* getMonitorItemForSA() { return addrResolveResSA.pc_monitorItem; }
+
+  /** set the devKey for resolved SA
+    */
+  const DevKey_c& getDevKeyForSA() { return *addrResolveResSA.p_devKey; }
+
+  /** set the monitoritem for resolved SA
+    */
+  const ISOItem_c* getMonitorItemForDA() { return addrResolveResDA.pc_monitorItem; }
+
+  /** set the devKey for resolved SA
+    */
+  const DevKey_c& getDevKeyForDA() { return *addrResolveResDA.p_devKey; }
+
+
   #ifdef ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL
     /** this virtual function can be used to detect CAnCustomer_c derived CAN message handlers, which
         want to send/receive proprietary messages on a CANIO_c instance, which is used to transport

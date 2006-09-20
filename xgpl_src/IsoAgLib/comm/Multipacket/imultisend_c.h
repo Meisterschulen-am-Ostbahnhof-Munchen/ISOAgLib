@@ -70,26 +70,8 @@ namespace IsoAgLib {
 
   @author Dipl.-Inform. Achim Spangler
 */
-class iMultiSend_c : __IsoAgLib::MultiSend_c  {
+class iMultiSend_c : __IsoAgLib::MultiSend_c {
 public:
-#ifdef USE_DIN_TERMINAL
-  /**
-    send a DIN multipacket message for terminal accoring to LBS+
-    @param rb_send dynamic member no of sender
-    @param rb_empf dynamic member no of receiver
-    @param hpb_data HUGE_MEM pointer to the data
-    @param ri32_dataSize size of the complete mask
-    @param rui16_msgSize size of one part message (mask is parted in different messages)
-    @param rb_fileCmd terminal specific file command
-    @param rb_abortOnTimeout choose if transfer should be aborted on timeout
-          (instead of standard resend of last message) (default false)
-    @return true -> MultiSend_c was ready -> mask is spooled to target
-  */
-  bool sendDin(uint8_t rb_send, uint8_t rb_empf, HUGE_MEM uint8_t* rhpb_data, int32_t ri32_dataSize, uint16_t rui16_msgSize, uint16_t rb_fileCmd, bool rb_abortOnTimeout = false)
-    {return MultiSend_c::sendDin(rb_send, rb_empf, rhpb_data, ri32_dataSize, rui16_msgSize, rb_fileCmd, rb_abortOnTimeout);};
-#endif
-#ifdef USE_ISO_11783
-
 
   /**
     send a ISO target multipacket message
@@ -102,8 +84,8 @@ public:
             is written by MultiSend_c
     @return true -> MultiSend_c was ready -> mask is spooled to target
   */
-  bool sendIsoTarget(uint8_t rb_send, uint8_t rb_empf, HUGE_MEM uint8_t* rhpb_data, int32_t ri32_dataSize, int32_t ri32_pgn, sendSuccess_t& rrefen_sendSuccessNotify)
-    {return MultiSend_c::sendIsoTarget(rb_send, rb_empf, rhpb_data, ri32_dataSize, ri32_pgn, rrefen_sendSuccessNotify );};
+  bool sendIsoTarget (const iDevKey_c& rrefc_isoNameSender, const iDevKey_c& rrefc_isoNameReceiver, HUGE_MEM uint8_t* rhpb_data, int32_t ri32_dataSize, int32_t ri32_pgn, sendSuccess_t& rrefen_sendSuccessNotify)
+    { return MultiSend_c::sendIsoTarget (rrefc_isoNameSender, rrefc_isoNameReceiver, rhpb_data, ri32_dataSize, ri32_pgn, rrefen_sendSuccessNotify ); }
 
   /**
     send a ISO broadcast multipacket message
@@ -114,33 +96,35 @@ public:
     @param ri32_pgn PGN to use for the upload
     @return true -> MultiSend_c was ready -> mask is spooled to target
   */
-  bool sendIsoBroadcast(uint8_t rb_send, uint8_t rb_empf, HUGE_MEM uint8_t* rhpb_data, int32_t ri32_dataSize, int32_t ri32_pgn, sendSuccess_t& rrefen_sendSuccessNotify)
-    {return MultiSend_c::sendIsoBroadcast(rb_send, rb_empf, rhpb_data, ri32_dataSize, ri32_pgn, rrefen_sendSuccessNotify);};
-#endif
+  bool sendIsoBroadcast (const iDevKey_c& rrefc_isoNameSender, HUGE_MEM uint8_t* rhpb_data, int32_t ri32_dataSize, int32_t ri32_pgn, sendSuccess_t& rrefen_sendSuccessNotify)
+    { return MultiSend_c::sendIsoBroadcast (rrefc_isoNameSender, rhpb_data, ri32_dataSize, ri32_pgn, rrefen_sendSuccessNotify); }
 
   /** check if at least one multisend stream is running */
-  bool isMultiSendRunning() const { return MultiSend_c::isMultiSendRunning();};
-  private:
+  bool isMultiSendRunning() const { return MultiSend_c::isMultiSendRunning(); }
+
+private:
   /** allow getIMultiSendInstance() access to shielded base class.
-      otherwise __IsoAgLib::getLbsMultiSendInstance() wouldn't be accepted by compiler
+      otherwise __IsoAgLib::getMultiSendInstance() wouldn't be accepted by compiler
     */
   #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
   friend iMultiSend_c& getIMultiSendInstance( uint8_t rui8_instance );
   #else
   friend iMultiSend_c& getIMultiSendInstance( void );
   #endif
-};
+}; // end class
+
+
 #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
-  /** C-style function, to get access to the unique LBSMultiSendC_c singleton instance
+  /** C-style function, to get access to the unique MultiSend_c singleton instance
     * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
     */
   inline iMultiSend_c& getIMultiSendInstance( uint8_t rui8_instance = 0 )
-  { return static_cast<iMultiSend_c&>(__IsoAgLib::getMultiSendInstance(rui8_instance));};
+  { return static_cast<iMultiSend_c&>(__IsoAgLib::getMultiSendInstance(rui8_instance)); }
 #else
-  /** C-style function, to get access to the unique LBSMultiSendC_c singleton instance */
+  /** C-style function, to get access to the unique MultiSend_c singleton instance */
   inline iMultiSend_c& getIMultiSendInstance( void )
-  { return static_cast<iMultiSend_c&>(__IsoAgLib::getMultiSendInstance());};
+  { return static_cast<iMultiSend_c&>(__IsoAgLib::getMultiSendInstance()); }
 #endif
 
-}
+} // end namespace IsoAgLib
 #endif
