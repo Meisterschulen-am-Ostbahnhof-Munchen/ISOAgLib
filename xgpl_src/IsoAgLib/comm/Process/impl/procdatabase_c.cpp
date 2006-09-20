@@ -144,12 +144,12 @@ namespace __IsoAgLib {
                              IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler,
                              int ri_singletonVecKey)
   {
-  ProcIdent_c::init( ps_elementDDI, rui16_element, rc_devKey, rui8_pri, rc_ownerDevKey, rpc_devKey);
+    ProcIdent_c::init( ps_elementDDI, rui16_element, rc_devKey, rui8_pri, rc_ownerDevKey, rpc_devKey);
 
-  setSingletonKey(ri_singletonVecKey);
-  en_procValType = i32_val;
-  pc_processDataChangeHandler = rpc_processDataChangeHandler;
-}
+    setSingletonKey(ri_singletonVecKey);
+    en_procValType = i32_val;
+    pc_processDataChangeHandler = rpc_processDataChangeHandler;
+  }
 
 
 /**
@@ -173,7 +173,8 @@ const ProcDataBase_c& ProcDataBase_c::operator=(const ProcDataBase_c& rrefc_src)
   @param rrefc_src source instance
 */
 ProcDataBase_c::ProcDataBase_c(const ProcDataBase_c& rrefc_src)
-   : ProcIdent_c(rrefc_src) {
+   : ProcIdent_c(rrefc_src)
+{
   assignFromSource(rrefc_src);
 }
 
@@ -186,11 +187,8 @@ void ProcDataBase_c::assignFromSource( const ProcDataBase_c& rrefc_src )
 }
 
 
-
 /** default destructor which has nothing to do */
-ProcDataBase_c::~ProcDataBase_c(){
-}
-
+ProcDataBase_c::~ProcDataBase_c() {}
 
 
 /** helper function to get reference to process data pkg very quick */
@@ -218,8 +216,8 @@ ProcessPkg_c& ProcDataBase_c::getProcessPkg( void ) const
   both functions are virtual, so that depending on loacl or remote
   process data the suitable reaction can be implemented
 */
-void ProcDataBase_c::processMsg() {
-
+void ProcDataBase_c::processMsg()
+{
   if (getProcessInstance4Comm().data().c_generalCommand.checkIsSetpoint())
     processSetpoint();
   else
@@ -228,7 +226,8 @@ void ProcDataBase_c::processMsg() {
 
 
 /** perform periodic acoins */
-bool ProcDataBase_c::timeEvent( void ){
+bool ProcDataBase_c::timeEvent( void )
+{
   return true;
 }
 
@@ -248,24 +247,21 @@ bool ProcDataBase_c::timeEvent( void ){
   @param ri32_val int32_t value to send
   @return true -> sendIntern set successful EMPF and SEND
 */
-bool ProcDataBase_c::sendValDevKey(uint8_t rui8_pri, const DevKey_c& rc_varDevKey, int32_t ri32_val) const
+bool ProcDataBase_c::sendValDevKey(uint8_t /*rui8_pri*/, const DevKey_c& /*rc_varDevKey*/, int32_t ri32_val) const
 {
-  bool b_result;
-  if (resolvDevKeySetBasicSendFlags(rui8_pri, rc_varDevKey))
-  { // now call sendIntern, if var2empfSend was successful
-    // set PD, MOD, and data with the function setPkgDataLong
-    getProcessPkg().setData( ri32_val, en_procValType);
+  setBasicSendFlags();
 
-    // send the msg
-    getCanInstance4Comm() << getProcessPkg();
-    b_result = true;
+  getProcessPkg().setData( ri32_val, en_procValType);
+
+  // send the msg
+  getCanInstance4Comm() << getProcessPkg();
+  // check for any error during send resolve, ...
+  if ( getLbsErrInstance().good(IsoAgLib::LibErr_c::CanBus, IsoAgLib::LibErr_c::Can) )
+  { // good
+    return true;
   }
   else
-  { // EMPF and/or SEND not registered with claimed address in Monitor-List
-    getLbsErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::LbsProcess );
-    b_result = false;
-  }
-  return b_result;
+    return false;
 }
 
 
@@ -285,114 +281,69 @@ bool ProcDataBase_c::sendValDevKey(uint8_t rui8_pri, const DevKey_c& rc_varDevKe
   @param ri32_val float value to send
   @return true -> sendIntern set successful EMPF and SEND
 */
-bool ProcDataBase_c::sendValDevKey(uint8_t rui8_pri, const DevKey_c& rc_varDevKey, float rf_val) const {
-  bool b_result;
-  if (resolvDevKeySetBasicSendFlags(rui8_pri, rc_varDevKey))
-  { // now call sendIntern, if var2empfSend was successful
-    // set PD, MOD, and data with the function setPkgDataLong
-    getProcessPkg().setData( rf_val, en_procValType);
+bool ProcDataBase_c::sendValDevKey(uint8_t /*rui8_pri*/, const DevKey_c& /*rc_varDevKey*/, float rf_val) const
+{
+  setBasicSendFlags();
 
-    // send the msg
-    getCanInstance4Comm() << getProcessPkg();
-    b_result = true;
+  getProcessPkg().setData( rf_val, en_procValType);
+
+  // send the msg
+  getCanInstance4Comm() << getProcessPkg();
+  // check for any error during send resolve, ...
+  if ( getLbsErrInstance().good(IsoAgLib::LibErr_c::CanBus, IsoAgLib::LibErr_c::Can) )
+  { // good
+    return true;
   }
   else
-  { // EMPF and/or SEND not registered with claimed address in Monitor-List
-    getLbsErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::LbsProcess );
-    b_result = false;
-  }
-  return b_result;
+    return false;
 }
 #endif
 
 
-/**
-  resolv SEND|EMPF dependent on DEV_KEY rc_varDevKey
-  (local: receiver; remote: sender)
-  (other paramter fixed by ident of process data)
-  and set basic value independent flags in ProcessPkg
+void ProcDataBase_c::setBasicSendFlags() const
+{
+  ProcessPkg_c& c_data = getProcessPkg();
 
-  the PRI code of the message is set dependent of the ProcIdent_c PRI
-  code for this process data instance, if no basic proc data (rui8_pri == 1)
-  is wanted
+  // the communicating devices are represented on ISO11783
+  c_data.setIsoPri(3);
+  c_data.setIsoPgn(PROCESS_DATA_PGN);
 
-  @param rui8_pri PRI code for the msg
-  @param rc_varDevKey variable DEV_KEY
-  @param rb_pd PD code for the msg
-  @param rb_mod MOD code for the msg
-  @return true -> resolvSendDevKey successfully resolved EMPF and SEND
-*/
-bool ProcDataBase_c::resolvDevKeySetBasicSendFlags(uint8_t rui8_pri, const DevKey_c& rc_varDevKey) const {
-  uint8_t ui8_empf = 0xFF,
-      ui8_send = 0xFF;
-  bool b_result = false;
+  // general command is already set, use these values:
+  // set command in ProcessPkg::flags2string
+  const GeneralCommand_c::ValueGroup_t en_valueGroup = getProcessInstance4Comm().data().c_generalCommand.getValueGroup();
+  const bool b_isSetpoint = getProcessInstance4Comm().data().c_generalCommand.checkIsSetpoint();
 
-  // retreive pointer to te accorisog ISOMonitor_c class
-  static ISOMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
+  // @todo: in case no element/DDI fits send default values
+  c_data.set_Element(0xFFFF);
+  c_data.set_DDI(0);
 
-  // try with ISO communication
-  if (!b_result)
+  std::list<IsoAgLib::ElementDDI_s>::const_iterator iter_elementDDI;
+
+  if (elementDDI().size() == 1)
   {
-    if (c_isoMonitor.existIsoMemberDevKey(rc_varDevKey, true ))
-    { // the member to rc_varDevKey has claimed address (virtual function -> worksdependent on child type local/remote)
-     // en_msgProto = IState_c::Iso;
-      b_result = var2empfSend(rui8_pri, (c_isoMonitor.isoMemberDevKey(rc_varDevKey, true).nr()),
-          ui8_empf, ui8_send);
-    }
+    // we have only one DDI/element pair
+    // interface process data init was possibly called with parameter DDI and element and not with ElementDDI_s
+    // => we don't have reliable infos about en_valueGroup and b_isSetpoint
+    // => don't check for en_valueGroup and b_isSetpoint but use this single entry in list
+    iter_elementDDI = elementDDI().begin();
+    c_data.set_Element(element());
+    c_data.set_DDI(iter_elementDDI->ui16_DDI);
   }
-
-  if ( !b_result )
-  { // the var paramter hasn't claimed address -> signal it by 0xFF to var2empfSend
-    b_result = var2empfSend(rui8_pri, 0xFF, ui8_empf, ui8_send);
-  }
-
-  if (b_result)
-  { // resolv successful -> set basic flags in ProcessPkg
-    ProcessPkg_c& c_data = getProcessPkg();
-
-    // the communicating devices are represented on ISO11783
-    c_data.setIsoPri(3);
-    c_data.setIsoPgn(PROCESS_DATA_PGN);
-    c_data.setIsoPs(ui8_empf);
-    c_data.setIsoSa(ui8_send);
-
-    // general command is already set, use these values:
-    // set command in ProcessPkg::flags2string
-
-    const GeneralCommand_c::ValueGroup_t en_valueGroup = getProcessInstance4Comm().data().c_generalCommand.getValueGroup();
-    const bool b_isSetpoint = getProcessInstance4Comm().data().c_generalCommand.checkIsSetpoint();
-
-    // @todo: in case no element/DDI fits send default values
-    c_data.set_Element(0xFFFF);
-    c_data.set_DDI(0);
-
-    std::list<IsoAgLib::ElementDDI_s>::const_iterator iter_elementDDI;
-
-    if (elementDDI().size() == 1) {
-      // we have only one DDI/element pair
-      // interface process data init was possibly called with parameter DDI and element and not with ElementDDI_s
-      // => we don't have reliable infos about en_valueGroup and b_isSetpoint
-      // => don't check for en_valueGroup and b_isSetpoint but use this single entry in list
-      iter_elementDDI = elementDDI().begin();
-      c_data.set_Element(element());
-      c_data.set_DDI(iter_elementDDI->ui16_DDI);
-    }
-    else
+  else
+  {
+    // get corresponding element/DDI
+    for (iter_elementDDI = elementDDI().begin();
+         iter_elementDDI != elementDDI().end(); iter_elementDDI++)
     {
-      // get corresponding element/DDI
-      for (iter_elementDDI = elementDDI().begin();
-           iter_elementDDI != elementDDI().end(); iter_elementDDI++)
-        if ( (iter_elementDDI->en_valueGroup == en_valueGroup) && (iter_elementDDI->b_isSetpoint == b_isSetpoint) ) {
-          c_data.set_Element(element());
-          c_data.set_DDI(iter_elementDDI->ui16_DDI);
-          break;
-        }
+      if ( (iter_elementDDI->en_valueGroup == en_valueGroup) && (iter_elementDDI->b_isSetpoint == b_isSetpoint) )
+      {
+        c_data.set_Element(element());
+        c_data.set_DDI(iter_elementDDI->ui16_DDI);
+        break;
+      }
     }
   }
-
-  return b_result;
 }
-
 
 /**
   process a measure prog message

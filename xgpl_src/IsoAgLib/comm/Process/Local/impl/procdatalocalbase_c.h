@@ -126,8 +126,7 @@
 // Begin Namespace IsoAgLib
 namespace __IsoAgLib {
 
-/**
-  common base class for all local process data independent from the
+/** common base class for all local process data independent from the
   individual feature set.
   the central accessible singletong instance of Process_c
   manages a list of pointers to ProcDataLocalBase_c
@@ -135,16 +134,13 @@ namespace __IsoAgLib {
 class ProcDataLocalBase_c : public ProcDataBase_c
 {
  public:
-  /**
-    constructor which can set all element vars
-
+  /** constructor which can set all element vars
     possible errors:
         * Err_c::badAlloc not enough memory to insert first  MeasureProgLocal
-
     ISO parameter
     @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
                          (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
-
+    common parameter
     @param rc_devKey optional DEV_KEY code of Process-Data
     @param rui8_pri PRI code of messages with this process data instance (default 2)
     @param rc_ownerDevKey optional DEV_KEY of the owner
@@ -185,22 +181,22 @@ class ProcDataLocalBase_c : public ProcDataBase_c
                       rc_devKey, rui8_pri, rc_ownerDevKey, rpc_devKey, rpc_processDataChangeHandler, ri_singletonVecKey
                      )
 
-    {init( ps_elementDDI, ui16_element, rc_devKey, rui8_pri, rc_ownerDevKey, rpc_devKey, rb_cumulativeValue
+    {
+      init( ps_elementDDI, ui16_element, rc_devKey, rui8_pri, rc_ownerDevKey, rpc_devKey, rb_cumulativeValue
       #ifdef USE_EEPROM_IO
           , rui16_eepromAdr
       #endif // USE_EEPROM_IO
           , rpc_processDataChangeHandler
-          , ri_singletonVecKey);};
+          , ri_singletonVecKey);
+    }
 
-  /**
-    initialise this ProcDataLocalBase_c instance to a well defined initial state
-
+  /** initialise this ProcDataLocalBase_c instance to a well defined initial state
     possible errors:
         * Err_c::badAlloc not enough memory to insert first  MeasureProgLocal
     ISO parameter
     @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
                          (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
-
+    common parameter
     @param rc_devKey optional DEV_KEY code of Process-Data
     @param rui8_pri PRI code of messages with this process data instance (default 2)
     @param rc_ownerDevKey optional DEV_KEY of the owner
@@ -237,25 +233,23 @@ class ProcDataLocalBase_c : public ProcDataBase_c
             , IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL
             , int ri_singletonVecKey = 0
             );
+
   /** copy constructor */
   ProcDataLocalBase_c( const ProcDataLocalBase_c& rrefc_src );
+
   /** assignment operator */
   const ProcDataLocalBase_c& operator=( const ProcDataLocalBase_c& rrefc_src );
 
   /** default destructor which has nothing to do */
   ~ProcDataLocalBase_c();
 
-
   #ifdef USE_EEPROM_IO
-  /**
-    deliver the eeprom adr for the value
+  /** deliver the eeprom adr for the value
     @return configured EEPROM adress
   */
-  uint16_t eepromAdr()const{return ui16_eepromAdr;}
+  uint16_t eepromAdr() const {return ui16_eepromAdr;}
 
-  /**
-    set the eeprom adr for the value, read in value from EEPROM
-
+  /** set the eeprom adr for the value, read in value from EEPROM
     possible errors:
         * dependent error in EEPROMIO_c on problems during read
     @param rui16_eepromAdr new EEPROM adress
@@ -263,102 +257,121 @@ class ProcDataLocalBase_c : public ProcDataBase_c
   virtual void setEepromAdr(uint16_t rui16_eepromAdr);
   #endif
 
-  /**
-    deliver the master value (central measure value of this process data;
+  /** deliver the master value (central measure value of this process data;
     can differ from measure vals of measure progs, as these can be reseted
     independent)
     @return actual master value
   */
-  const int32_t& masterMeasurementVal()const{return i32_masterVal;}
+  const int32_t& masterMeasurementVal() const {return i32_masterVal;}
 
-  /**
-    set the masterMeasurementVal from main application independent from any measure progs
+  /** set the masterMeasurementVal from main application independent from any measure progs
     @param ri32_val new measure value
   */
-  virtual void setMasterMeasurementVal(int32_t ri32_val);
+  virtual void setMasterMeasurementVal (int32_t ri32_val);
 
-  /**
-    increment the value -> update the local and the measuring programs values
+  /** increment the value -> update the local and the measuring programs values
     @param ri32_val size of increment of master value
   */
-  virtual void incrMasterMeasurementVal(int32_t ri32_val);
+  virtual void incrMasterMeasurementVal (int32_t ri32_val);
 
 #ifdef USE_FLOAT_DATA_TYPE
-  /**
-    deliver the master value (central measure value of this process data;
+  /** deliver the master value (central measure value of this process data;
     can differ from measure vals of measure progs, as these can be reseted
     independent) as float
     @return actual master value
   */
-  const float& masterValFloat()const{return f_masterVal;}
+  const float& masterValFloat() const {return f_masterVal;}
 
-  /**
-    set the masterMeasurementVal from main application independent from any measure progs
+  /** set the masterMeasurementVal from main application independent from any measure progs
     @param rf_val new measure value
   */
-  virtual void setMasterMeasurementVal(float rf_val);
+  virtual void setMasterMeasurementVal (float rf_val);
 
-  /**
-    increment the value -> update the local and the measuring programs values
+  /** increment the value -> update the local and the measuring programs values
     @param rf_val size of increment of master value
   */
-  virtual void incrMasterMeasurementVal(float rf_val);
+  virtual void incrMasterMeasurementVal (float rf_val);
 #endif
 
-  /**
-    perform periodic actions
+  /** perform periodic actions
     task for ProcDataLocal_c::timeEvent is to store the actual
     eeprom value in the defined time intervall
     @return true -> all planned executions performed
   */
   virtual bool timeEvent( void );
 
-  /**
-    send a min-information (selected by MOD) to a specified target (selected by DEVKEY)
+  /** send a min-information (selected by MOD) to a specified target (selected by DEVKEY)
     @param rc_targetDevKey DevKey of target
     @param ren_type optional PRI specifier of the message (default Proc_c::Target )
     @return true -> successful sent
   */
   bool sendMasterMeasurementVal( const DevKey_c& rc_targetDevKey, Proc_c::progType_t ren_progType = Proc_c::Target ) const;
 
-  /**
-    check if a setpoint master exists
+  /** check if a setpoint master exists
     (used for accessing setpoint values from measure progs)
     @return true -> setpoint master exists
   */
   virtual bool setpointExistMaster() const { return false;}
 
-  /**
-    (used for accessing setpoint values from measure progs)
+  /** (used for accessing setpoint values from measure progs)
     @return exact value of master setpoint
   */
   virtual int32_t setpointExactValue() const { return 0;}
 
-  /**
-    (used for accessing setpoint values from measure progs)
+  /** (used for accessing setpoint values from measure progs)
     @return default value of master setpoint
   */
   virtual int32_t setpointDefaultValue() const { return 0;}
 
-  /**
-    (used for accessing setpoint values from measure progs)
+  /** (used for accessing setpoint values from measure progs)
     @return min value of master setpoint
   */
   virtual int32_t setpointMinValue() const { return 0;}
 
-  /**
-    (used for accessing setpoint values from measure progs)
+  /** (used for accessing setpoint values from measure progs)
     @return max value of master setpoint
   */
   virtual int32_t setpointMaxValue() const { return 0;}
 
-  /**
-    stop all measurement progs in all local process instances, started with given devKey
+  /** stop all measurement progs in all local process instances, started with given devKey
     (not used for simple measurement)
     @param refc_devKey
   */
-  virtual void stopRunningMeasurement(const DevKey_c& /* refc_devKey */) {};
+  virtual void stopRunningMeasurement(const DevKey_c& /* refc_devKey */) {}
 
+  /** send the given int32_t value with variable DEV_KEY rc_varDevKey;
+      set the int32_t value with conversion (according to central data type) in message
+      string and set data format flags corresponding to central data type of this process data
+      (other parameter fixed by ident of process data)
+        possible errors:
+      * Err_c::elNonexistent one of resolved EMPF/SEND isn't registered with claimed address in Monitor
+      * dependant error in CANIO_c on CAN send problems
+      @param rui8_pri PRI code for the msg
+      @param rc_varDevKey variable DEV_KEY
+      @param ri32_val int32_t value to send
+      @param en_valueGroup: min/max/exact/default
+      @param en_command
+      @return true -> sendIntern set successful EMPF and SEND
+  */
+  bool sendValDevKey(uint8_t rui8_pri, const DevKey_c& rc_varDevKey, int32_t ri32_val = 0) const;
+
+#ifdef USE_FLOAT_DATA_TYPE
+  /** send the given float value with variable DEV_KEY rc_varDevKey;
+      set the float value with conversion (according to central data type) in message
+      string and set data format flags corresponding to central data type of this process data
+      (other parameter fixed by ident of process data)
+      possible errors:
+  * Err_c::elNonexistent one of resolved EMPF/SEND isn't registered with claimed address in Monitor
+  * dependant error in CANIO_c on CAN send problems
+      @param rui8_pri PRI code for the msg
+      @param rc_varDevKey variable DEV_KEY
+      @param rb_pd PD code for the msg
+      @param rb_mod MOD code for the msg
+      @param ri32_val float value to send
+      @return true -> sendIntern set successful EMPF and SEND
+  */
+  bool sendValDevKey (uint8_t rui8_pri, const DevKey_c& rc_varDevKey, float rf_val = 0.0F) const;
+#endif
 
  protected:
   /** processing of a setpoint message.
@@ -374,42 +387,34 @@ class ProcDataLocalBase_c : public ProcDataBase_c
   */
   virtual void processProg();
 
- private:
-
-  friend class ManageMeasureProgLocal_c; /**< allow access to eepromVal() and resetEeprom() */
-
-  friend class ProcDataLocal_c; /**< allow access to eepromVal() and resetEeprom() */
-
-  friend class ProcDataLocalSimpleSetpoint_c; /**< allow access to eepromVal() and resetEeprom() */
+private:
+  friend class ManageMeasureProgLocal_c; /** allow access to eepromVal() and resetEeprom() */
+  friend class ProcDataLocal_c; /** allow access to eepromVal() and resetEeprom() */
+  friend class ProcDataLocalSimpleSetpoint_c; /** allow access to eepromVal() and resetEeprom() */
 
   /** base function for assignment of element vars for copy constructor and operator= */
   void assignFromSource( const ProcDataLocalBase_c& rrefc_src );
 
 #ifdef USE_EEPROM_IO
-  /**
-    deliver the eeprom value
+  /** deliver the eeprom value
     @return actual EEPROM value
   */
-  const int32_t& eepromVal()const{return i32_eepromVal;}
+  const int32_t& eepromVal() const {return i32_eepromVal;}
 
   #ifdef USE_FLOAT_DATA_TYPE
-  /**
-    deliver the eeprom value
+  /** deliver the eeprom value
     @return actual EEPROM value
   */
-  const float& eepromValFloat()const{return f_eepromVal;}
+  const float& eepromValFloat() const {return f_eepromVal;}
   #endif
 
-  /**
-    set the eeprom value
+  /** set the eeprom value
     @param ri32_val new EEPROM value
   */
-  void setEepromVal(int32_t ri32_val){i32_eepromVal = ri32_val;}
+  void setEepromVal (int32_t ri32_val) {i32_eepromVal = ri32_val;}
 
-  /**
-    called from MeasureProg item -> if this item is first in list
+  /** called from MeasureProg item -> if this item is first in list
     reset eeprom val
-
     possible errors:
         * dependent error in EEPROMIO_c on problems during read
     @param pc_progItem MeasureProgLocal_c instance which wants to reset EEPROM val
@@ -417,24 +422,12 @@ class ProcDataLocalBase_c : public ProcDataBase_c
   void resetEeprom( void );
 #endif
 
-  /**
-    virtual function which check dependent on remote/local
-    if send action with given var parameter and address claim state of owner is
-    allowed and resolves the appropriate numbers for sender and receiver (empf)
-
-    possible errors:
-        * Err_c::elNonexistent one of resolved EMPF/SEND isn't registered with claimed address in Monitor
-    @param rui8_pri PRI code of message
-    @param rb_var variable number -> empf
-    @param b_empf refernce to EMPF variable which is updated to rb_var
-    @param b_send refernce to SEND variable which is only check for address claim state
-    @return true -> owner of process data registered as active in Monitor-List
-  */
-  virtual bool var2empfSend(uint8_t rui8_pri, uint8_t rb_var, uint8_t &b_empf, uint8_t &b_send) const;
+  void setLocalSendFlags (const DevKey_c& rc_varDevKey) const;
 
  private:
    /** allow explicit MeasureProgLocal_c the access to private elements */
   friend class MeasureProgLocal_c;
+
 #ifdef USE_FLOAT_DATA_TYPE
   /** store the master value of the main programm
       in anonymous union for dircet access to float or long
@@ -458,9 +451,7 @@ class ProcDataLocalBase_c : public ProcDataBase_c
       float f_eepromVal;
     };
   #endif
-
 #else
-
   /** store the master value of the main programm */
   int32_t i32_masterVal;
 
@@ -471,7 +462,6 @@ class ProcDataLocalBase_c : public ProcDataBase_c
       set disregarding any reset commands from remote */
     int32_t i32_eepromVal;
   #endif
-
 #endif
 
 #ifdef USE_EEPROM_IO

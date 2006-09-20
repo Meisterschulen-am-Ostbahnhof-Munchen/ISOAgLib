@@ -209,6 +209,8 @@ public:
   */
   bool good( LbsLibErrLocations_t rt_errLocation ) const;
 
+  bool good( LbsLibErrTypes_t rt_errType, LbsLibErrLocations_t rt_errLocation ) const;
+
   /**
     check if the object has a local error
   */

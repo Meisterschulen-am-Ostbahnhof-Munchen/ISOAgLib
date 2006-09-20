@@ -104,8 +104,7 @@ namespace IsoAgLib {
 
 // Begin Namespace IsoAgLib
 namespace __IsoAgLib {
-/**
-  base class for local or remote process data object;
+/** base class for local or remote process data object;
   manages identity of a process data object -> comparing identity;
   has standard functions in mostly abstract way for derived classes
   @author Dipl.-Inform. Achim Spangler
@@ -132,13 +131,11 @@ public:
   friend class SetpointLocal_c;
   friend class SetpointRemote_c;
 
-  /**
-    constructor which can set all element vars
+  /** constructor which can set all element vars
     ISO parameters:
     @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
                          (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
     @param ui16_element  device element number
-
     common parameters:
     @param rc_devKey optional DEV_KEY code of Process-Data
     @param rui8_pri PRI code of messages with this process data instance (default 2)
@@ -154,19 +151,17 @@ public:
                  int ri_singletonVecKey = 0)
 
     : ProcIdent_c( ps_elementDDI, ui16_element, rc_devKey, rui8_pri, rc_ownerDevKey, rpc_devKey, ri_singletonVecKey)
-
-    { init( ps_elementDDI, ui16_element, rc_devKey, rui8_pri, rc_ownerDevKey, rpc_devKey,
+    {
+      init( ps_elementDDI, ui16_element, rc_devKey, rui8_pri, rc_ownerDevKey, rpc_devKey,
             rpc_processDataChangeHandler, ri_singletonVecKey );
-    };
+    }
 
 
-  /**
-    initialise this ProcDataBase_c instance to a well defined initial state
+  /** initialise this ProcDataBase_c instance to a well defined initial state
     ISO parameters:
     @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
                          (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
     @param ui16_element  device element number
-
     common parameters:
     @param rc_devKey optional DEV_KEY code of Process-Data
     @param rui8_pri PRI code of messages with this process data instance (default 2)
@@ -181,15 +176,13 @@ public:
             IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
             int ri_singletonVecKey = 0);
 
-  /**
-    assignment operator for this base object
+  /** assignment operator for this base object
     @param rrefc_src source instance
     @return reference to source instance for cmd like "prog1 = prog2 = prog3;"
   */
   const ProcDataBase_c& operator=(const ProcDataBase_c& rrefc_src);
 
-  /**
-    copy constructor for ProcDataBase_c
+  /** copy constructor for ProcDataBase_c
     @param rrefc_src source instance
   */
   ProcDataBase_c(const ProcDataBase_c& rrefc_src);
@@ -197,7 +190,7 @@ public:
   /** default destructor which has nothing to do */
   virtual ~ProcDataBase_c();
 
-  /** set the poitner to the handler class
+  /** set the pointer to the handler class
     * @param rpc_processDataChangeHandler pointer to handler class of application
     */
   void setProcessDataChangeHandler( IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler )
@@ -208,20 +201,17 @@ public:
     */
   IsoAgLib::ProcessDataChangeHandler_c* getProcessDataChangeHandler( void ) const { return pc_processDataChangeHandler; }
 
-  /**
-    deliver the central data type of this process data
+  /** deliver the central data type of this process data
     @return proc_valType_t: i32_val, ui32_val, float_val, cmdVal
   */
   const proc_valType_t valType()const{return en_procValType;}
 
-  /**
-    set the central data type of this process data
+  /** set the central data type of this process data
     @return proc_valType_t: i32_val, ui32_val, float_val, cmdVal
   */
   void setValType(proc_valType_t ren_procValType){en_procValType = ren_procValType;}
 
-  /**
-    deliver the pkg data value as int32_t;
+  /** deliver the pkg data value as int32_t;
     if pd/mod are one of the to be converted one, return converted;
     the value is read from message in the data type format which is
     defined in the message; on different types, a conversion by assignment
@@ -231,8 +221,7 @@ public:
   */
   int32_t pkgDataLong()const;
 
-  /**
-    deliver the pkg data value as uint32_t;
+  /** deliver the pkg data value as uint32_t;
     if pd/mod are one of the to be converted one, return converted;
     the value is read from message in the data type format which is
     defined in the message; on different types, a conversion by assignment
@@ -243,8 +232,7 @@ public:
   uint32_t pkgDataUlong()const;
 
 #ifdef USE_FLOAT_DATA_TYPE
-  /**
-    deliver the pkg data value as float;
+  /** deliver the pkg data value as float;
     if pd/mod are one of the to be converted one, return converted;
     the value is read from message in the data type format which is
     defined in the message; on different types, a conversion by assignment
@@ -255,8 +243,7 @@ public:
   float pkgDataFloat()const;
 #endif
 
-  /**
-    process a message, which is adressed for this process data item;
+  /** process a message, which is adressed for this process data item;
     ProcDataBase_c::processMsg() is responsible to delegate the
     processing of setpoint and measurement messages to the appripriate
     functions processSetpoint and processProg;
@@ -265,39 +252,32 @@ public:
   */
   void processMsg();
 
-  /**
-    perform periodic acoins
+  /** perform periodic acoins
     @return true -> all planned executions performed
   */
   virtual bool timeEvent( void );
 
   virtual const DevKey_c& commanderDevKey()const{return DevKey_c::DevKeyUnspecified;}
 
-  /**
-    delivers state (ISO) for given devKey
+  /** delivers state (ISO) for given devKey
     @param rc_devKey compared DEV_KEY value
     @return IState_c::itemState_t
   */
   /**TODO2 is this function obsolete?*/
  // IState_c::itemState_t getIStateForDevKey( const DevKey_c& rc_devKey );
 
-  /**
-    deliver DDI from last received can pkg
+  /** deliver DDI from last received can pkg
     @return DDI
   */
   uint16_t getDDIfromCANPkg( void ) const;
 
 protected: // Protected methods
-  /**
-    send the given int32_t value with variable DEV_KEY rc_varDevKey;
+  /** send the given int32_t value with variable DEV_KEY rc_varDevKey;
     set the int32_t value with conversion (according to central data type) in message
     string and set data format flags corresponding to central data type of this process data
-
     (local: receiver; remote: sender)
     (other paramter fixed by ident of process data)
-
     set general command before sendValDevKey !
-
     possible errors:
         * Err_c::elNonexistent one of resolved EMPF/SEND isn't registered with claimed address in Monitor
         * dependant error in CANIO_c on CAN send problems
@@ -308,19 +288,15 @@ protected: // Protected methods
     @param en_command
     @return true -> sendIntern set successful EMPF and SEND
   */
-  bool sendValDevKey(uint8_t rui8_pri, const DevKey_c& rc_varDevKey, int32_t ri32_val = 0) const;
+  virtual bool sendValDevKey(uint8_t rui8_pri, const DevKey_c& rc_varDevKey, int32_t ri32_val = 0) const;
 
 #ifdef USE_FLOAT_DATA_TYPE
-  /**
-    send the given float value with variable DEV_KEY rc_varDevKey;
+  /** send the given float value with variable DEV_KEY rc_varDevKey;
     set the float value with conversion (according to central data type) in message
     string and set data format flags corresponding to central data type of this process data
-
     (local: receiver; remote: sender)
     (other paramter fixed by ident of process data)
-
     set general command before sendValDevKey !
-
     possible errors:
         * Err_c::elNonexistent one of resolved EMPF/SEND isn't registered with claimed address in Monitor
         * dependant error in CANIO_c on CAN send problems
@@ -331,56 +307,24 @@ protected: // Protected methods
     @param ri32_val float value to send
     @return true -> sendIntern set successful EMPF and SEND
   */
-  bool sendValDevKey(uint8_t rui8_pri, const DevKey_c& rc_varDevKey, float rf_val = 0.0F) const;
+  virtual bool sendValDevKey(uint8_t rui8_pri, const DevKey_c& rc_varDevKey, float rf_val = 0.0F) const;
 #endif
+
+  void setBasicSendFlags() const;
+
+  /** helper function to get reference to process data pkg very quick */
+  ProcessPkg_c& getProcessPkg( void ) const;
 
 private: // Private methods
   /** base function for assignment of element vars for copy constructor and operator= */
   void assignFromSource( const ProcDataBase_c& rrefc_src );
 
-  /** helper function to get reference to process data pkg very quick */
-  ProcessPkg_c& getProcessPkg( void ) const;
-
-  /**
-    resolv SEND|EMPF dependent on DEV_KEY rc_varDevKey
-    (local: receiver; remote: sender)
-    (other paramter fixed by ident of process data)
-    and set basic value independent flags in ProcessPkg
-
-    the PRI code of the message is set dependent of the ProcIdent_c PRI
-    code for this process data instance, if no basic proc data (rui8_pri == 1)
-    is wanted
-
-    @param rui8_pri PRI code for the msg
-    @param rc_varDevKey variable DEV_KEY
-    @return true -> resolvSendDevKey successfully resolved EMPF and SEND
-  */
-  bool resolvDevKeySetBasicSendFlags(uint8_t rui8_pri, const DevKey_c& rc_varDevKey) const;
-
-  /**
-    virtual function which check dependent on remote/local
-    if send action with given var parameter and address claim state of owner is
-    allowed and resolves the appropriate numbers for sender and receiver (empf)
-
-    possible errors:
-        * Err_c::elNonexistent one of resolved EMPF/SEND isn't registered with claimed address in Monitor
-    @param rui8_pri PRI code of message
-    @param rb_var variable number (local: empf; remote: send)
-    @param b_empf refernce to EMPF variable which is update dependent on type local/remote
-    @param b_send refernce to SEND variable which is update dependent on type local/remote
-    @return true -> owner of process data registered as active in Monitor-List
-  */
-  virtual bool var2empfSend(uint8_t rui8_pri, uint8_t rb_var, uint8_t &b_empf, uint8_t &b_send) const = 0;
-
-  /**
-    process a measure prog message
+  /** process a measure prog message
     -> fully dependent on children type local/remote
   */
   virtual void processProg();
 
-  /**
-    virtual base for processing of a setpoint message
-  */
+  /** virtual base for processing of a setpoint message */
   virtual void processSetpoint();
 
 private: // Private attributes
@@ -398,9 +342,7 @@ private: // Private attributes
   IsoAgLib::ProcessDataChangeHandler_c* pc_processDataChangeHandler;
 };
 
-
-/**
-  deliver the pkg data value as int32_t;
+/** deliver the pkg data value as int32_t;
   if pd/mod are one of the to be converted one, return converted;
   the value is read from message in the data type format which is
   defined in the message; on different types, a conversion by assignment
@@ -413,9 +355,7 @@ inline int32_t ProcDataBase_c::pkgDataLong()const
   return getProcessPkg().dataLong();
 }
 
-
-/**
-  deliver the pkg data value as uint32_t;
+/** deliver the pkg data value as uint32_t;
   if pd/mod are one of the to be converted one, return converted;
   the value is read from message in the data type format which is
   defined in the message; on different types, a conversion by assignment
@@ -428,10 +368,8 @@ inline uint32_t ProcDataBase_c::pkgDataUlong()const
    return getProcessPkg().dataUlong();
 }
 
-
 #ifdef USE_FLOAT_DATA_TYPE
-/**
-  deliver the pkg data value as float;
+/** deliver the pkg data value as float;
   if pd/mod are one of the to be converted one, return converted;
   the value is read from message in the data type format which is
   defined in the message; on different types, a conversion by assignment

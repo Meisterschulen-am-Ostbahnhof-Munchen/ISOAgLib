@@ -495,6 +495,17 @@ bool LibErr_c::good( LbsLibErrLocations_t rt_errLocation ) const
 */
 }
 
+bool LibErr_c::good( LbsLibErrTypes_t rt_errType, LbsLibErrLocations_t rt_errLocation ) const
+{
+  if (!good( rt_errLocation ))
+    return false;
+
+  if (!good( rt_errType ))
+    return false;
+
+  return true;
+}
+
 
 /** default destructor which has nothing to do */
 LibErr_c::~LibErr_c()

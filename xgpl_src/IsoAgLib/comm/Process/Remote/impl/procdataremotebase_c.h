@@ -94,22 +94,18 @@
 // Begin Namespace IsoAgLib
 namespace __IsoAgLib {
 
-/**
-  Common base class for all remote process data independent from the
+/** Common base class for all remote process data independent from the
   individual feature set.
   This class is responsible for deduction of dynamic member adresses ( %i.e. SA for ISO 11783 )
   dependend on device type of managing ECU and this local ECU ( which interacts with the remote ECU )
-  ( \sa ProcDataRemoteBase_c::var2empfSend ).
  */
 class ProcDataRemoteBase_c : public ProcDataBase_c
 {
  public:
-  /**
-    constructor which can set all element vars
+  /** constructor which can set all element vars
     ISO parameter
     @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
                          (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
-
     common parameter
     @param rc_devKey optional DEV_KEY code of this instance
     @param rui8_pri PRI code of messages with this process data instance (default 2)
@@ -124,16 +120,15 @@ class ProcDataRemoteBase_c : public ProcDataBase_c
                         const DevKey_c* rpc_commanderDevKey = NULL,
                         IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
                         int ri_singletonVecKey = 0)
-  { init( ps_elementDDI, rui16_element, rc_devKey, rui8_pri, rc_ownerDevKey, rpc_commanderDevKey,
+  {
+    init( ps_elementDDI, rui16_element, rc_devKey, rui8_pri, rc_ownerDevKey, rpc_commanderDevKey,
           rpc_processDataChangeHandler, ri_singletonVecKey);
   }
 
-  /**
-      initialise this ProcDataRemoteBase_c instance to a well defined initial state
+  /** initialise this ProcDataRemoteBase_c instance to a well defined initial state
       ISO parameter
       @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
                           (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
-
       common parameter
       @param rc_devKey optional DEV_KEY code of this instance
       @param rui8_pri PRI code of messages with this process data instance (default 2)
@@ -149,15 +144,13 @@ class ProcDataRemoteBase_c : public ProcDataBase_c
               IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
               int ri_singletonVecKey = 0);
 
-  /**
-      assignment operator for this object
+  /** assignment operator for this object
       @param rrefc_src source instance
       @return reference to source instance for cmd like "prog1 = prog2 = prog3;"
     */
   const ProcDataRemoteBase_c& operator=(const ProcDataRemoteBase_c& rrefc_src);
 
-  /**
-      copy constructor for IsoAgLibProcDataRemote
+  /** copy constructor for IsoAgLibProcDataRemote
       @param rrefc_src source instance
     */
    ProcDataRemoteBase_c(const ProcDataRemoteBase_c& rrefc_src);
@@ -165,21 +158,18 @@ class ProcDataRemoteBase_c : public ProcDataBase_c
   /** default destructor which has nothing to do */
   ~ProcDataRemoteBase_c();
 
-
-  /**
-    deliver the commanderDevKey (DEV_KEY of local member)
+  /** deliver the commanderDevKey (DEV_KEY of local member)
     @return DEV_KEY used for sending commands to remote owner member
   */
-  virtual const DevKey_c& commanderDevKey()const{return (pc_devKey != NULL)?*pc_devKey:DevKey_c::DevKeyUnspecified;};
-  /**
-    set the pointer to the commander ident devKey
+  virtual const DevKey_c& commanderDevKey() const {return (pc_devKey != NULL)?*pc_devKey:DevKey_c::DevKeyUnspecified;}
+
+  /** set the pointer to the commander ident devKey
     @param rpbdevKey pointer to DEV_KEY var of local member used for
                 sending commands to remote owner member
   */
   virtual void setCommanderDevKey(const DevKey_c* rpc_devKey);
 
-  /**
-    perform periodic actions
+  /** perform periodic actions
     ProcDataRemoteBase_c::timeEvent has nothing to do
     -> this function must only be defined as base for derived variants which
     uses simple measurements and thus doesn't need a time event
@@ -187,22 +177,42 @@ class ProcDataRemoteBase_c : public ProcDataBase_c
   */
   virtual bool timeEvent( void );
 
-private: // Private methods
-  /**
-    virtual function which check dependent on remote/local
-    if send action with given var parameter and address claim state of owner is
-    allowed and resolves the appropriate numbers for sender and receiver (empf)
-
+    /** send the given int32_t value with variable DEV_KEY rc_varDevKey;
+  set the int32_t value with conversion (according to central data type) in message
+  string and set data format flags corresponding to central data type of this process data
+  (other parameter fixed by ident of process data)
     possible errors:
-        * Err_c::elNonexistent one of resolved EMPF/SEND isn't registered with claimed address in Monitor
-    @param rui8_pri PRI code of message
-    @param rb_var variable number -> send
-    @param b_empf refernce to EMPF variable which is only checked for address claim state
-    @param b_send refernce to SEND variable which is updated to rb_var
-    @return true -> owner of process data registered as active in Monitor-List
-  */
-  virtual bool var2empfSend(uint8_t rui8_pri, uint8_t rb_var, uint8_t &b_empf, uint8_t &b_send) const;
+   * Err_c::elNonexistent one of resolved EMPF/SEND isn't registered with claimed address in Monitor
+   * dependant error in CANIO_c on CAN send problems
+  @param rui8_pri PRI code for the msg
+  @param rc_varDevKey variable DEV_KEY
+  @param ri32_val int32_t value to send
+  @param en_valueGroup: min/max/exact/default
+  @param en_command
+  @return true -> sendIntern set successful EMPF and SEND
+     */
+  bool sendValDevKey(uint8_t rui8_pri, const DevKey_c& rc_varDevKey, int32_t ri32_val = 0) const;
 
+#ifdef USE_FLOAT_DATA_TYPE
+  /** send the given float value with variable DEV_KEY rc_varDevKey;
+    set the float value with conversion (according to central data type) in message
+    string and set data format flags corresponding to central data type of this process data
+    (other parameter fixed by ident of process data)
+    possible errors:
+ * Err_c::elNonexistent one of resolved EMPF/SEND isn't registered with claimed address in Monitor
+ * dependant error in CANIO_c on CAN send problems
+      @param rui8_pri PRI code for the msg
+      @param rc_varDevKey variable DEV_KEY
+      @param rb_pd PD code for the msg
+      @param rb_mod MOD code for the msg
+      @param ri32_val float value to send
+      @return true -> sendIntern set successful EMPF and SEND
+   */
+  bool sendValDevKey(uint8_t rui8_pri, const DevKey_c& rc_varDevKey, float rf_val = 0.0F) const;
+#endif
+
+private: // Private methods
+  void setRemoteSendFlags (const DevKey_c& rc_varDevKey) const;
 
 private: // Private attributes
   /** pointer to the devKey of the local ident, which acts as commanding member */

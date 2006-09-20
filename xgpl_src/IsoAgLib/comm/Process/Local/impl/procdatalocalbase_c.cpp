@@ -474,44 +474,28 @@ void ProcDataLocalBase_c::resetEeprom( void ){
 }
 #endif // USE_EEPROM_IO
 
+bool ProcDataLocalBase_c::sendValDevKey(uint8_t rui8_pri, const DevKey_c& rc_varDevKey, int32_t ri32_val) const
+{
+  setLocalSendFlags (rc_varDevKey);
 
-/**
-  virtual function which check dependent on remote/local
-  if send action with given var parameter and address claim state of owner is
-  allowed and resolves the appropriate numbers for sender and receiver (empf)
+  return ProcDataBase_c::sendValDevKey (rui8_pri, rc_varDevKey, ri32_val);
+}
 
-  possible errors:
-      * Err_c::elNonexistent one of resolved EMPF/SEND isn't registered with claimed address in Monitor
-  @param rui8_pri PRI code of message
-  @param rb_var variable number -> empf
-  @param b_empf refernce to EMPF variable which is updated to rb_var
-  @param b_send refernce to SEND variable which is only check for address claim state
-  @return true -> owner of process data registered as active in Monitor-List
-*/
-bool ProcDataLocalBase_c::var2empfSend(uint8_t rui8_pri, uint8_t rb_var, uint8_t &b_empf, uint8_t &b_send) const
-{ // retreive pointer to according SystemMgmt_c class
-  bool b_result = false;
+#ifdef USE_FLOAT_DATA_TYPE
+bool ProcDataLocalBase_c::sendValDevKey(uint8_t rui8_pri, const DevKey_c& rc_varDevKey, float rf_val) const
+{
+  setLocalSendFlags (rc_varDevKey);
 
-  ISOMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
+  return ProcDataBase_c::sendValDevKey (rui8_pri, rc_varDevKey, rf_val);
+}
+#endif
 
-  if (
-        ( c_isoMonitor.existIsoMemberNr(rb_var))
-      &&(c_isoMonitor.existIsoMemberDevKey(ownerDevKey(), true))
-      &&( (rb_var != 0xFF)
-        ||(rui8_pri == 1)
-        )
-       )
-  { // all check was positive -> set b_empf, b_send
-    b_empf = rb_var; // for locel data the var parameter is the receiver for senisog
-    b_send = c_isoMonitor.isoMemberDevKey(ownerDevKey(), true).nr();
-    b_result = true;
-  }
-  else
-  { // one of EMPF or SEND not registered as having claimed address in monior-list
-    getLbsErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::LbsProcess );
-  }
+void ProcDataLocalBase_c::setLocalSendFlags(const DevKey_c& rc_varDevKey) const
+{
+  ProcessPkg_c& c_data = getProcessPkg();
 
-  return b_result;
+  c_data.setDevKeyForDA(rc_varDevKey);
+  c_data.setDevKeyForSA(ownerDevKey());
 }
 
 } // end of namespace __IsoAgLib

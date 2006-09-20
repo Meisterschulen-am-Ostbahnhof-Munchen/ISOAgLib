@@ -1012,7 +1012,11 @@ CANIO_c& CANIO_c::operator<<(CANPkgExt_c& refc_src)
   #endif // end of ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL
   #endif
   {
-    if ( ! refc_src.resolveSendingInformation() ) return *this;
+    if ( ! refc_src.resolveSendingInformation() )
+    { // preconditions for correct sending are not fullfilled -> set error state
+      getLbsErrInstance().registerError(IsoAgLib::LibErr_c::CanBus, IsoAgLib::LibErr_c::Can);
+      return *this;
+    }
   }
   return CANIO_c::operator<<( static_cast<CANPkg_c&>(refc_src) );
 }

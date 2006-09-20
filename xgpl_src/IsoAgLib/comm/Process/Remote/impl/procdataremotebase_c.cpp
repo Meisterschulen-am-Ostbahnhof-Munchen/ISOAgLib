@@ -92,12 +92,10 @@
 
 namespace __IsoAgLib {
 
-/**
-    initialise this ProcDataRemoteBase_c instance to a well defined initial state
+/** initialise this ProcDataRemoteBase_c instance to a well defined initial state
     ISO parameter
     @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
                          (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
-
     common parameter
     @param rc_devKey optional DEV_KEY code of this instance
     @param rui8_pri PRI code of messages with this process data instance (default 2)
@@ -126,8 +124,7 @@ void ProcDataRemoteBase_c::init(  const IsoAgLib::ElementDDI_s* ps_elementDDI, u
   }
 }
 
-/**
-  assignment operator for this object
+/** assignment operator for this object
   @param rrefc_src source instance
   @return reference to source instance for cmd like "prog1 = prog2 = prog3;"
 */
@@ -139,8 +136,7 @@ const ProcDataRemoteBase_c& ProcDataRemoteBase_c::operator=(const ProcDataRemote
   return *this;
 }
 
-/**
-  copy constructor for IsoAgLibProcDataRemote
+/** copy constructor for IsoAgLibProcDataRemote
   @param rrefc_src source instance
 */
 ProcDataRemoteBase_c::ProcDataRemoteBase_c(const ProcDataRemoteBase_c& rrefc_src)
@@ -156,18 +152,17 @@ ProcDataRemoteBase_c::ProcDataRemoteBase_c(const ProcDataRemoteBase_c& rrefc_src
 ProcDataRemoteBase_c::~ProcDataRemoteBase_c(){
   // call unregisterRemoteProcessData in last derived class because unregister does again message processing!
 }
-/**
-  set the pointer to the commander ident devKey
+
+/** set the pointer to the commander ident devKey
   @param rpbdevKey pointer to DEV_KEY var of local member used for
               sending commands to remote owner member
 */
 void ProcDataRemoteBase_c::setCommanderDevKey(const DevKey_c* rpc_devKey)
 {
     pc_devKey = rpc_devKey;
-};
+}
 
-/**
-  perform periodic actions
+/** perform periodic actions
   ProcDataRemoteBase_c::timeEvent
   -> adapt here the ownerDevKey to an existing item, when DevClass/-Instance are matching, but the other fields are
      differen ( don't change anything, if there is an item with identic DEVKEY setting
@@ -178,43 +173,28 @@ bool ProcDataRemoteBase_c::timeEvent( void )
   return true;
 }
 
+bool ProcDataRemoteBase_c::sendValDevKey(uint8_t rui8_pri, const DevKey_c& rc_varDevKey, int32_t ri32_val) const
+{
+  setRemoteSendFlags (rc_varDevKey);
 
-/**
-  virtual function which check dependent on remote/local
-  if send action with given var parameter and address claim state of owner is
-  allowed and resolves the appropriate numbers for sender and receiver (empf)
+  return ProcDataBase_c::sendValDevKey (rui8_pri, rc_varDevKey, ri32_val);
+}
 
-  possible errors:
-      * Err_c::elNonexistent one of resolved EMPF/SEND isn't registered with claimed address in Monitor
-  @param rui8_pri PRI code of message
-  @param rb_var variable number -> send
-  @param b_empf refernce to EMPF variable which is only checked for address claim state
-  @param b_send refernce to SEND variable which is updated to rb_var
-  @return true -> owner of process data registered as active in Monitor-List
-*/
-bool ProcDataRemoteBase_c::var2empfSend(uint8_t rui8_pri, uint8_t rb_var, uint8_t &b_empf, uint8_t &b_send) const
-{ // retreive pointer to according SystemMgmt_c class
-  ISOMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
-  bool b_result = false;
-  rui8_pri += 0; // do something with rui8_pri so that compiler does not complain
+#ifdef USE_FLOAT_DATA_TYPE
+bool ProcDataRemoteBase_c::sendValDevKey(uint8_t rui8_pri, const DevKey_c& rc_varDevKey, float rf_val) const
+{
+  setRemoteSendFlags (rc_varDevKey);
 
-  // try with ISO 11783
-  if (
-      (c_isoMonitor.existIsoMemberNr(rb_var ))
-    &&(c_isoMonitor.existIsoMemberDevKey(ownerDevKey(), true))
-    &&(rb_var != 0xFF)
-     )
-  { // all check was positive -> set b_empf, b_send
-    b_empf = c_isoMonitor.isoMemberDevKey(ownerDevKey(), true).nr();
-    b_send = rb_var; // for remote data the var parameter is the sender for senisog
-    b_result = true;
-  }
-  else
-  { // one of EMPF or SEND not registered as having claimed address in monior-list
-    getLbsErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::LbsProcess );
-  }
+  return ProcDataBase_c::sendValDevKey (rui8_pri, rc_varDevKey, rf_val);
+}
+#endif
 
-  return b_result;
+void ProcDataRemoteBase_c::setRemoteSendFlags(const DevKey_c& rc_varDevKey) const
+{
+  ProcessPkg_c& c_data = getProcessPkg();
+
+  c_data.setDevKeyForDA(ownerDevKey());
+  c_data.setDevKeyForSA(rc_varDevKey);
 }
 
 } // end of namespace __IsoAgLib
