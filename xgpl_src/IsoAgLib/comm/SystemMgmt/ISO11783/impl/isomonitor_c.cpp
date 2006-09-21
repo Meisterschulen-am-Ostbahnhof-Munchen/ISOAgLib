@@ -248,21 +248,19 @@ CANPkgExt_c& ISOMonitor_c::dataBase()
 */
 bool ISOMonitor_c::timeEvent( void )
 {
-#if CONFIG_ISO_ITEM_MAX_AGE > 0
-  if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
-
   for ( std::vector<__IsoAgLib::IdentItem_c*>::iterator pc_iter = c_arrClientC1.begin(); ( pc_iter != c_arrClientC1.end() ); pc_iter++ )
   { // call timeEvent for each registered client -> if timeEvent of item returns false
     // it had to return BEFORE its planned activities were performed (because of the registered end time)
     if ( !(*pc_iter)->timeEvent() ) return false;
   }
 
+#if CONFIG_ISO_ITEM_MAX_AGE > 0
   if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
 
   if ( existActiveLocalIsoMember() )
   { // use the SA of the already active node
     data().setIsoSa(getActiveLocalIsoMember().nr());
-  }
+  } /** @todo check if we really want to have the SA set in ANY case, even if we're not sending afterwards.. */
 
   if ( lastIsoSaRequest() == -1) return true;
   else if ( existActiveLocalIsoMember() )
@@ -1026,7 +1024,9 @@ uint8_t ISOMonitor_c::unifyIsoSa(const ISOItem_c* rpc_isoItem)
     for (Vec_ISOIterator pc_iterItem = vec_isoMember.begin();
           pc_iterItem != vec_isoMember.end(); pc_iterItem++)
     {
-      if (pc_iterItem->nr() == ui8_wishSa)
+      if ((pc_iterItem->nr() == ui8_wishSa)
+           && (&(*pc_iterItem) != rpc_isoItem)
+         )
       { // the tried SA is already used by this item
         // -> break this search loop and try another ui8_wishSa
         b_free = false;
