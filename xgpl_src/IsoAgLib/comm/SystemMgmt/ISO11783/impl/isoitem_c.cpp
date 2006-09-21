@@ -415,12 +415,15 @@ bool ISOItem_c::timeEvent( void )
         // now inform the ISO monitor list change clients on NEW client use
         getIsoMonitorInstance4Comm().broadcastSaAdd2Clients( devKey(), this );
         #ifdef USE_WORKING_SET
-          /** @todo To discuss what makes more sense: for now announce working-set directly after address claimed */
+        if (isMaster())
+        {  /** @todo To discuss what makes more sense: for now announce working-set directly after address claimed */
           #if 1
           triggerWsAnnounce(); // start WS Announce/MaintenanceMsg'ing in case we're master and announced
           #else
+          // we HAVE something to announce (MASTER + *MAYBE* SLAVES), but don't announce anything right now - let the app do by hand!
           i8_slavesToClaimAddress = -2; // indicate that nothing is announced until some "application" triggers announcing!
           #endif
+        }
         #endif
       }
     }
@@ -428,7 +431,7 @@ bool ISOItem_c::timeEvent( void )
   #ifdef USE_WORKING_SET
   else if ( itemState(IState_c::ClaimedAddress) )
   { // do stuff if completely announced
-    if (isMaster() && (i8_slavesToClaimAddress != 0))
+    if (isMaster() && (i8_slavesToClaimAddress > -2)) // -2 means wait, wait, wait.. until the app triggers sending
     { // only master needs to send stuff out after address-claiming
       if ( i8_slavesToClaimAddress == -1 )
       { // Announce WS-Master
@@ -542,6 +545,22 @@ bool ISOItem_c::sendSaClaim()
   getCanInstance4Comm() << c_pkg;
   return true;
 }
+
+
+bool ISOItem_c::sendWsAnnounce()
+{
+  if ((i8_slavesToClaimAddress == -2) || // -2: Waiting for user-trigger
+      (i8_slavesToClaimAddress ==  0))   //  0: Finished ws-ann. so it can be triggered again!
+  { // can trigger wsAnnounce
+    triggerWsAnnounce();
+    return true;
+  }
+  else
+  { // can't trigger wsAnnounce
+    return false;
+  }
+}
+
 
 /** set eeprom adress and read SA from there */
 void ISOItem_c::readEepromSa()

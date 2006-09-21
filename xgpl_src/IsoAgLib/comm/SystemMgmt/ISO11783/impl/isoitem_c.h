@@ -252,29 +252,6 @@ public:
            itemState_t ren_status = IState_c::Active,
            uint16_t rui16_saEepromAdr = 0xFFFF, int riSingletonKey = 0 );
 
-  #if 0
-  /** set all element data with one call
-    @param ri32_time creation time of this item instance
-    @param rc_devKey DEV_KEY code of this item ((deviceClass << 3) | devClInst )
-    @param rui8_nr number of this item
-    @param rb_selfConf true -> the item has a self configurable source adress
-    @param rui8_indGroup industry group code (2 for agriculture)
-    @param rb_func function code (25 = network interconnect)
-    @param rui16_manufCode manufactor code
-    @param rui32_serNo serial no specific for one ECU of one manufactor
-    @param ren_status state of this ident (off, claimed address, ...) (default: off)
-    @param rui16_saEepromAdr EEPROM adress to store actual SA -> next boot with same adr
-    @param rb_funcInst counter for devices with same function (default 0)
-    @param rb_ecuInst counter for ECU with same function and function instance (default 0)
-    @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
-  */
-  void set(int32_t ri32_time, DevKey_c rc_devKey, uint8_t rui8_nr,
-          bool rb_selfConf, uint8_t rui8_indGroup, uint8_t rb_func, uint16_t rui16_manufCode,
-          uint32_t rui32_serNo, itemState_t ren_status = IState_c::Active,
-          uint16_t rui16_saEepromAdr = 0xFFFF, uint8_t rb_funcInst = 0,
-          uint8_t rb_ecuInst = 0, int riSingletonKey = 0 );
-  #endif
-
   /** set DEV_KEY code of this item
     @param rc_devKey DEV_KEY
   */
@@ -325,6 +302,11 @@ public:
    */
   bool sendSaClaim();
 
+  /** send the Working-Set announce message
+   * @return false -> couldn't send out because we're currently in sending out! => try again later!
+   */
+  bool sendWsAnnounce();
+
 #ifdef USE_WORKING_SET
   // returns NULL if standalone, SELF if it is master itself, or the master ISOItem otherwise.
   ISOItem_c* getMaster () const;
@@ -332,12 +314,12 @@ public:
   // attach to a master
   void setMaster ( ISOItem_c* rpc_masterItem );
 
-  // check if this item is a master ( i.e. the master pointer points to itself )
-  bool isMaster () const { return ( this == pc_masterItem )?true:false;}
+  // check if this item is a master (i.e. the master pointer points to itself)
+  bool isMaster () const { return (this == pc_masterItem); }
 
   // this triggers that the ws-master/slave maint. stuff is getting sent out!
   // if it is already in between sending, it is started all over again, we won't wait and re-send from beginning..
-  void triggerWsAnnounce () { i8_slavesToClaimAddress = -1; }
+  void triggerWsAnnounce() { i8_slavesToClaimAddress = -1; }
 
   /** check if item has announced its working-set description
     * Only returns TRUE if the Item has also finished AddressClaiming!
@@ -435,6 +417,7 @@ private:
   ISOItem_c* pc_masterItem;
 
   /** i8_slavesToClaimAddress
+    * == -2  idle - wait until app triggers ws-sending by setting this variable to "-1" by calling triggerWsAnnounce()
     * == -1  waiting to announce WS-master message
     *  >  0  still so many slaves to announce..
     * ==  0  announcing complete!

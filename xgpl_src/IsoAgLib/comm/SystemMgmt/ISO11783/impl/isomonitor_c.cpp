@@ -176,16 +176,22 @@ void ISOMonitor_c::init( void )
     bool b_configure = false;
 
     // add filter REQUEST_PGN_MSG_PGN via ISORequestPGN_c
-    getIsoRequestPgnInstance4Comm().registerPGN (*this, ADRESS_CLAIM_PGN); // request for adress claim
+    getIsoRequestPgnInstance4Comm().registerPGN (*this, ADRESS_CLAIM_PGN);
+#ifdef USE_WORKING_SET
+    getIsoRequestPgnInstance4Comm().registerPGN (*this, WORKING_SET_MASTER_PGN);
+    getIsoRequestPgnInstance4Comm().registerPGN (*this, WORKING_SET_MEMBER_PGN);
+#endif
 
     if (getCanInstance4Comm().insertFilter( *this, MASK_TYPE(static_cast<MASK_TYPE>(0x1FFFF) << 8), MASK_TYPE(static_cast<MASK_TYPE>((ADRESS_CLAIM_PGN)+0xFF) << 8), false, Ident_c::ExtendedIdent))
       b_configure = true;
+#ifdef USE_WORKING_SET
     FilterBox_c* pc_filterBoxWsMaster
       = getCanInstance4Comm().insertFilter( *this, MASK_TYPE(static_cast<MASK_TYPE>(0x1FFFF) << 8), MASK_TYPE(static_cast<MASK_TYPE>(WORKING_SET_MASTER_PGN) << 8), false, Ident_c::ExtendedIdent);
     if (pc_filterBoxWsMaster)
       b_configure = true;
     if (getCanInstance4Comm().insertFilter( *this, MASK_TYPE(static_cast<MASK_TYPE>(0x1FFFF) << 8), MASK_TYPE(static_cast<MASK_TYPE>(WORKING_SET_MEMBER_PGN) << 8), false, Ident_c::ExtendedIdent), pc_filterBoxWsMaster)
       b_configure = true;
+#endif
 
     if (b_configure) {
       getCanInstance4Comm().reconfigureMsgObj();
@@ -213,11 +219,17 @@ void ISOMonitor_c::close( void )
     }
     getSchedulerInstance4Comm().unregisterClient( this );
 
-    getIsoRequestPgnInstance4Comm().unregisterPGN (*this, ADRESS_CLAIM_PGN); // request for adress claim
+    getIsoRequestPgnInstance4Comm().unregisterPGN (*this, ADRESS_CLAIM_PGN);
+#ifdef USE_WORKING_SET
+    getIsoRequestPgnInstance4Comm().unregisterPGN (*this, WORKING_SET_MASTER_PGN);
+    getIsoRequestPgnInstance4Comm().unregisterPGN (*this, WORKING_SET_MEMBER_PGN);
+#endif
 
     getCanInstance4Comm().deleteFilter( *this, MASK_TYPE(static_cast<MASK_TYPE>(0x1FFFF) << 8), MASK_TYPE(static_cast<MASK_TYPE>((ADRESS_CLAIM_PGN)+0xFF) << 8), Ident_c::ExtendedIdent);
+#ifdef USE_WORKING_SET
     getCanInstance4Comm().deleteFilter( *this, MASK_TYPE(static_cast<MASK_TYPE>(0x1FFFF) << 8), MASK_TYPE(static_cast<MASK_TYPE>(WORKING_SET_MASTER_PGN) << 8), Ident_c::ExtendedIdent);
     getCanInstance4Comm().deleteFilter( *this, MASK_TYPE(static_cast<MASK_TYPE>(0x1FFFF) << 8), MASK_TYPE(static_cast<MASK_TYPE>(WORKING_SET_MEMBER_PGN) << 8), Ident_c::ExtendedIdent);
+#endif
   }
 }
 
@@ -1264,37 +1276,95 @@ bool ISOMonitor_c::processMsg()
 }
 
 bool
-ISOMonitor_c::processMsgRequestPGN (uint32_t /*rui32_pgn*/, uint8_t /*rui8_sa*/, uint8_t rui8_da)
+ISOMonitor_c::processMsgRequestPGN (uint32_t rui32_pgn, uint8_t /*rui8_sa*/, uint8_t rui8_da)
 {
-  // Only handling ADRESS_CLAIM_PGN here, no other RequestPGNs registered
-  // if handling multiple PGNs, insert a switch statement
-  // update time of last adress claim request
-  setLastIsoSaRequest (getIsoRequestPgnInstance4Comm().getTimeOfLastRequest()); // Now using CAN-Pkg-Times, see header for "setLastIsoSaRequest" for more information!
-  // don't break because default handling is true for
-  // adress claim request, too
-  // if isoPs is 255 let all local item answer
-  if (rui8_da == 255)
+  switch (rui32_pgn)
   {
-    bool b_processedRequestPGN = false;
-    for (Vec_ISOIterator pc_iterItem = vec_isoMember.begin();
-          pc_iterItem != vec_isoMember.end(); pc_iterItem++)
-    { // let all local pc_iterItem process process this request
-      if (pc_iterItem->itemState(IState_c::Local))
-        b_processedRequestPGN |= pc_iterItem->sendSaClaim();
-    }
-    return b_processedRequestPGN; //return value doesn't matter, because the request was for GLOBAL (255), so it isn't NACKed anyway
-  }
-  else
-  { // check if item with SA == isoPs exist and let it process
-    // if local
-    if (existIsoMemberNr(rui8_da))
-    { // check if local
-      if (isoMemberNr(rui8_da).itemState(IState_c::Local))
-        return isoMemberNr(rui8_da).sendSaClaim();
-    }
-    return false; // this case can't be reached, as isorequestpgn_c won't call us, if it wouldn't knew (by us :-) that we have such a local member!
+    case ADRESS_CLAIM_PGN:
+      // update time of last adress claim request
+      setLastIsoSaRequest (getIsoRequestPgnInstance4Comm().getTimeOfLastRequest()); // Now using CAN-Pkg-Times, see header for "setLastIsoSaRequest" for more information!
+
+      if (rui8_da == 255)
+      { // Let all local item answer
+        bool b_processedRequestPGN = false;
+        for (Vec_ISOIterator pc_iterItem = vec_isoMember.begin();
+              pc_iterItem != vec_isoMember.end(); pc_iterItem++)
+        { // let all local pc_iterItem process process this request
+          if (pc_iterItem->itemState (IState_c::Local))
+            b_processedRequestPGN |= pc_iterItem->sendSaClaim();
+        }
+        return b_processedRequestPGN; //return value doesn't matter, because the request was for GLOBAL (255), so it isn't NACKed anyway
+      }
+      else
+      { // check if item with SA == isoPs exist and let it process
+        // if local
+        if (existIsoMemberNr(rui8_da))
+        { // check if local
+          if (isoMemberNr (rui8_da).itemState (IState_c::Local))
+            return isoMemberNr (rui8_da).sendSaClaim();
+        }
+        return false; // this case can't be reached, as isorequestpgn_c won't call us, if it wouldn't knew (by us :-) that we have such a local member!
+      }
+      break;
+
+#ifdef USE_WORKING_SET
+    case WORKING_SET_MASTER_PGN: // break intentionally left out - react on both PGNs with sending out the complete ws-announce sequence!
+    case WORKING_SET_MEMBER_PGN:
+      if (rui8_da == 255)
+      { // Let ALL local item answer
+        for (Vec_ISOIterator pc_iterItem = vec_isoMember.begin();
+              pc_iterItem != vec_isoMember.end(); pc_iterItem++)
+        { // let all local pc_iterItem process process this request
+          if (pc_iterItem->itemState (IState_c::Local))
+          {
+            if (pc_iterItem->isMaster())
+            { // is Master, so can it send out the ws-announce?
+              if (!pc_iterItem->sendWsAnnounce())
+              { // couldn't send right now, so answer with ACK-BUSY!
+                __IsoAgLib::getIsoRequestPgnInstance4Comm().answerRequestPGNwithCannotRespondNow();
+              }
+            }
+            else
+            { // no master, can't send out these PGNs
+              // ==> NACK, but not when request went to GLOBAL
+            }
+          }
+        }
+        return true; //return value doesn't matter, because the request was for GLOBAL (255), so it isn't NACKed anyway
+      }
+      else
+      { // check if item with SA == isoPs exist and let it process
+        // if local
+        if (existIsoMemberNr (rui8_da))
+        { // check if local
+          ISOItem_c& refc_isoItem = isoMemberNr (rui8_da);
+          if (refc_isoItem.itemState (IState_c::Local))
+          {
+            if (refc_isoItem.isMaster())
+            { // is Master, so can it send out the ws-announce?
+              if (!refc_isoItem.sendWsAnnounce())
+              { // couldn't send right now, so answer with ACK-BUSY!
+                __IsoAgLib::getIsoRequestPgnInstance4Comm().answerRequestPGNwithCannotRespondNow();
+              }
+              return true;
+            }
+            else
+            { // no master, can't send out these PGNs
+              return false; // let it get NACKed
+            }
+          }
+        }
+        return false; // this case can't be reached, as isorequestpgn_c won't call us, if it wouldn't knew (by us :-) that we have such a local member!
+      }
+      break;
+#endif
+
+    default:
+      // shouldn't happen as we only registered for the above handled PGNs
+      return false;
   }
 }
+
 
 #ifdef USE_WORKING_SET
 uint8_t ISOMonitor_c::getSlaveCount (ISOItem_c* rpc_masterItem)
