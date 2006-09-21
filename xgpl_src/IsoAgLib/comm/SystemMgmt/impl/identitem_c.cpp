@@ -488,7 +488,7 @@ void IdentItem_c::init( DevKey_c* rpc_devKey, const uint8_t* rpb_name, const uin
 {
   BaseItem_c::set( System_c::getTime(), IState_c::Active, ri_singletonVecKey );
 
-  // do start up the complete system if not yet done
+  // do start up the complete system if not yet done (call is idempotent!, so okay to do here!)
   getSchedulerInstance4Comm().startSystem();
 
   getIsoMonitorInstance4Comm().registerClient (this);

@@ -344,7 +344,7 @@ bool ISOItem_c::timeEvent( void )
     {
       int32_t i32_wait = 1250 + calc_randomWait();
       if ( ( c_isoMonitor.isoMemberCnt( true ) < 1 ) && (i32_wait < 2500))
-      { // no claimed ISOISOItem_c nodes in the monitor list --> i.e. we received no adr claim
+      { // no claimed ISOItem_c nodes in the monitor list --> i.e. we received no adr claim
         // --> when we are the only ECU on ISOBUS, it doesn't hurt to wait at least 2500 msec after last Req
         i32_wait = 2500;
       }

@@ -1005,37 +1005,24 @@ bool ISOMonitor_c::unifyIsoDevKey(DevKey_c& refc_devKey)
 uint8_t ISOMonitor_c::unifyIsoSa(const ISOItem_c* rpc_isoItem)
 {
   uint8_t ui8_wishSa = rpc_isoItem->nr();
-  bool b_free = true;
+  const bool cb_selfConf = rpc_isoItem->selfConf();
 
-  if ((ui8_wishSa < 128) && (rpc_isoItem->selfConf() == 1))
-  { // false SA adress -> correct
-    ui8_wishSa = 128;
-  }
-
-  if (ui8_wishSa != 254)
-  {
-    for (Vec_ISOIterator pc_iterItem = vec_isoMember.begin();
-          pc_iterItem != vec_isoMember.end(); pc_iterItem++)
-    {
-      if ((pc_iterItem->nr() == ui8_wishSa)
-        &&(&(*pc_iterItem) != rpc_isoItem)
-         )
-      { // same SA, rpc_isoItem had special SA wish and actual
-        // item is different from calling ISOItem
-        b_free = false;
-        break;
-      }
+  if (ui8_wishSa >= 254) // also include 255
+  { // no preferred SA
+    if (cb_selfConf)
+    { // We're self-conf, so start at 128 (0x80)
+      ui8_wishSa = 128;
     }
-    if (b_free) return ui8_wishSa;
+    else
+    { // we're not self-conf, but request the address that's used as "take-any": that won't work!
+      ui8_wishSa = 254; // couldn't find a suitable SA!
+    }
   }
-  if (!(rpc_isoItem->selfConf()))
-  { // wanted fixed SA not free -> signal this with 254
-    return 254;
-  }
-  // now wished SA isn't free or no SA wished
-  for (ui8_wishSa = 128; ui8_wishSa <= 207; ui8_wishSa++)
-  { // try all possible self conf adresses
-    b_free = true;
+
+  // while we have addresses to try, try!
+  while (ui8_wishSa < 254)
+  { // try the current ui8_wishSa
+    bool b_free = true;
     for (Vec_ISOIterator pc_iterItem = vec_isoMember.begin();
           pc_iterItem != vec_isoMember.end(); pc_iterItem++)
     {
@@ -1046,15 +1033,26 @@ uint8_t ISOMonitor_c::unifyIsoSa(const ISOItem_c* rpc_isoItem)
         break;
       }
     }
-
     if (b_free)
-    { // free SA found
-      return ui8_wishSa;
+    { // address is FREE
+      break; // after breaking, ui8_wishSa is returned, so we're done unifying
+    }
+    else
+    { // address is USED
+      if (cb_selfConf)
+      { // we're self-configurable, so let's try the next higher one
+        ui8_wishSa++;
+      }
+      else
+      { // we're not self-configurable, and we didn't get the requested SA --> report this with 254
+        ui8_wishSa = 254;
+        break;
+      }
     }
   }
-  // no free SA found -> return 254 as signal
-  return 254;
+  return ui8_wishSa; // return the best we could get (may 254 if no addresses were free below.
 }
+
 
 /** trigger a request for claimed addreses
   @param rb_force false -> send request only if no request was detected until now
