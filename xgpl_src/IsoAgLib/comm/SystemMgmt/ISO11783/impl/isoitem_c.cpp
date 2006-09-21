@@ -547,6 +547,7 @@ bool ISOItem_c::sendSaClaim()
 }
 
 
+#ifdef USE_WORKING_SET
 bool ISOItem_c::sendWsAnnounce()
 {
   if ((i8_slavesToClaimAddress == -2) || // -2: Waiting for user-trigger
@@ -560,7 +561,7 @@ bool ISOItem_c::sendWsAnnounce()
     return false;
   }
 }
-
+#endif
 
 /** set eeprom adress and read SA from there */
 void ISOItem_c::readEepromSa()

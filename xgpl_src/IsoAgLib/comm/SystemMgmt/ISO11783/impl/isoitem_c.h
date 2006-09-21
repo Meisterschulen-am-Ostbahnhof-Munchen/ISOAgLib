@@ -302,12 +302,12 @@ public:
    */
   bool sendSaClaim();
 
+#ifdef USE_WORKING_SET
   /** send the Working-Set announce message
    * @return false -> couldn't send out because we're currently in sending out! => try again later!
    */
   bool sendWsAnnounce();
 
-#ifdef USE_WORKING_SET
   // returns NULL if standalone, SELF if it is master itself, or the master ISOItem otherwise.
   ISOItem_c* getMaster () const;
 
