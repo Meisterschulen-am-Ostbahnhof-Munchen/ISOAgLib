@@ -196,7 +196,6 @@
 
 /* include some needed util headers */
 //#include <IsoAgLib/util/config.h>
-#include <IsoAgLib/util/idevkey_c.h>
 
 /* include headers for the needed drivers */
 #include <IsoAgLib/driver/system/isystem_c.h>
@@ -244,11 +243,11 @@ int main()
   getIcanInstance().init( cui32_canChannel, 250 );
   // variable for DEV_KEY
   // default with tractor
-  IsoAgLib::iDevKey_c myDevKey( 1, 5 );
+  IsoAgLib::iISOName_c myISOName( 1, 5 );
 
   // start address claim of the local member "IMI"
   // if DEV_KEY conflicts forces change of device class instance, the
-  // IsoAgLib can cahnge the myDevKey val through the pointer to myDevKey
+  // IsoAgLib can cahnge the myISOName val through the pointer to myISOName
   bool b_selfConf = true;
   uint8_t ui8_indGroup = 2,
       b_func = 25,
@@ -260,13 +259,13 @@ int main()
 
   // start address claim of the local member "IMI"
   // if DEV_KEY conflicts forces change of device class instance, the
-  // IsoAgLib can change the myDevKey val through the pointer to myDevKey
-  IsoAgLib::iIdentItem_c c_myIdent( &myDevKey,
+  // IsoAgLib can change the myISOName val through the pointer to myISOName
+  IsoAgLib::iIdentItem_c c_myIdent( &myISOName,
       b_selfConf, ui8_indGroup, b_func, ui16_manufCode,
       ui32_serNo, b_wantedSa, 0xFFFF, b_funcInst, b_ecuInst);
 
   // configure BaseData_c to send nothing on BUS
-  getITimePosGpsInstance().config(&myDevKey, IsoAgLib::IdentModeImplement );
+  getITimePosGpsInstance().config(&myISOName, IsoAgLib::IdentModeImplement );
 
   // timestamp when local ECU will start to send calendar
   // -> 3000msec after own address claim without any calendar
@@ -307,7 +306,7 @@ int main()
 
     if ( ! b_sendCalendar )
     { // check if local item has already claimed address
-      if (getIisoMonitorInstance().existIsoMemberDevKey(myDevKey, true))
+      if (getIisoMonitorInstance().existIsoMemberISOName(myISOName, true))
       { // local item has claimed address
         if ( i32_decideOnCalendar < 0 )
         { // set time for decision
@@ -318,7 +317,7 @@ int main()
                 && ( ! getITimePosGpsInstance().isCalendarReceived() ) )
         { // still no calendar received -> start sending of calendar
           // first set config in BaseData_c
-          getITimePosGpsInstance().config(&myDevKey, IdentModeImplement );
+          getITimePosGpsInstance().config(&myISOName, IdentModeImplement );
           b_sendCalendar = true;
         }
       }

@@ -285,7 +285,7 @@ SendUploadBase_c::SendUploadBase_c (const SendUploadBase_c& ref_source)
   this init() function immediately sends out the first package (RTS or FpFirstFrame
   */
 void
-MultiSend_c::SendStream_c::init (const DevKey_c& rrefc_isoNameSender, const DevKey_c& rrefc_isoNameReceiver, const HUGE_MEM uint8_t* rhpb_data, uint32_t rui32_dataSize, sendSuccess_t& rrefen_sendSuccessNotify, uint32_t rui32_pgn, IsoAgLib::iMultiSendStreamer_c* rpc_mss, msgType_t ren_msgType)
+MultiSend_c::SendStream_c::init (const ISOName_c& rrefc_isoNameSender, const ISOName_c& rrefc_isoNameReceiver, const HUGE_MEM uint8_t* rhpb_data, uint32_t rui32_dataSize, sendSuccess_t& rrefen_sendSuccessNotify, uint32_t rui32_pgn, IsoAgLib::iMultiSendStreamer_c* rpc_mss, msgType_t ren_msgType)
 {
   ui32_pgn = rui32_pgn;
   c_isoNameSender = rrefc_isoNameSender;     // copy the 8byte IsoName
@@ -416,7 +416,7 @@ void MultiSend_c::close()
   @return an "in-progress" stream or NULL if none active for this sa/da-key
 */
 MultiSend_c::SendStream_c*
-MultiSend_c::getSendStream(const DevKey_c& rrefc_isoNameSender, const DevKey_c& rrefc_isoNameReceiver)
+MultiSend_c::getSendStream(const ISOName_c& rrefc_isoNameSender, const ISOName_c& rrefc_isoNameReceiver)
 {
   for (std::list<SendStream_c>::iterator pc_iter=list_sendStream.begin(); pc_iter != list_sendStream.end(); pc_iter++)
   {
@@ -434,7 +434,7 @@ MultiSend_c::getSendStream(const DevKey_c& rrefc_isoNameSender, const DevKey_c& 
   @return reference to added SendStream ==> HAS TO BE INITIALIZED, because it may be a copy of the first (to avoid stack creation of new object)
 */
 MultiSend_c::SendStream_c*
-MultiSend_c::addSendStream(const DevKey_c& rrefc_isoNameSender, const DevKey_c& rrefc_isoNameReceiver)
+MultiSend_c::addSendStream(const ISOName_c& rrefc_isoNameSender, const ISOName_c& rrefc_isoNameReceiver)
 {
   /** @todo check if sender is unspecified!
             receiver may be - that indicated broadcast!?!?! */
@@ -485,24 +485,24 @@ MultiSend_c::addSendStream(const DevKey_c& rrefc_isoNameSender, const DevKey_c& 
   @return true -> MultiSend_c was ready -> mask is spooled to target
 */
 bool
-MultiSend_c::sendIntern (const DevKey_c& rrefc_isoNameSender, const DevKey_c& rrefc_isoNameReceiver, const HUGE_MEM uint8_t* rhpb_data, int32_t ri32_dataSize, sendSuccess_t& rrefen_sendSuccessNotify, int32_t ri32_pgn, IsoAgLib::iMultiSendStreamer_c* rpc_mss, msgType_t ren_msgType)
+MultiSend_c::sendIntern (const ISOName_c& rrefc_isoNameSender, const ISOName_c& rrefc_isoNameReceiver, const HUGE_MEM uint8_t* rhpb_data, int32_t ri32_dataSize, sendSuccess_t& rrefen_sendSuccessNotify, int32_t ri32_pgn, IsoAgLib::iMultiSendStreamer_c* rpc_mss, msgType_t ren_msgType)
 {
   /// first check if new transfer can be started
   /// - is the sender correct?
-  if (!getIsoMonitorInstance4Comm().existIsoMemberDevKey (rrefc_isoNameSender)) return false;
+  if (!getIsoMonitorInstance4Comm().existIsoMemberISOName (rrefc_isoNameSender)) return false;
 
   SendStream_c* pc_newSendStream;
   /// - is the receiver correct?
   if ((ren_msgType == IsoTPbroadcast) || (ren_msgType == NmeaFastPacket))
   { // no destination-isoname checks needed for broadcast messages!
-    // Force destination to be "DevKeyUnspecified"
+    // Force destination to be "ISONameUnspecified"
     /// - check if there's already a SA/DA pair active (in this case NULL is returned!)
     /// - if not NULL is returned, it points to the newly generated stream.
-    pc_newSendStream = addSendStream (rrefc_isoNameSender, DevKey_c::DevKeyUnspecified);
+    pc_newSendStream = addSendStream (rrefc_isoNameSender, ISOName_c::ISONameUnspecified);
   }
   else
   { // destination specific - so the receiver must be registered!
-    if (!getIsoMonitorInstance4Comm().existIsoMemberDevKey (rrefc_isoNameReceiver))
+    if (!getIsoMonitorInstance4Comm().existIsoMemberISOName (rrefc_isoNameReceiver))
     return false;
     /// - check if there's already a SA/DA pair active (in this case NULL is returned!)
     /// - if not NULL is returned, it points to the newly generated stream.
@@ -867,7 +867,7 @@ MultiSend_c::processMsg()
   if (data().getLen() != 8)
     return true; // All corrupted (E)TP-Packages should NOT be of interest for anybody...
 
-  SendStream_c* pc_sendStreamFound = getSendStream (data().getDevKeyForDA(), data().getDevKeyForSA()); // sa/da swapped, of course ;-) !
+  SendStream_c* pc_sendStreamFound = getSendStream (data().getISONameForDA(), data().getISONameForSA()); // sa/da swapped, of course ;-) !
   if (pc_sendStreamFound)
   { // found a matching SendStream, so call its processMsg()
     return pc_sendStreamFound->processMsg();
@@ -901,13 +901,13 @@ MultiSend_c::SendStream_c::abortSend()
 
 
 /** this function is called by ISOMonitor_c when a new CLAIMED ISOItem_c is registered.
- * @param refc_devKey const reference to the item which ISOItem_c state is changed
+ * @param refc_isoName const reference to the item which ISOItem_c state is changed
  * @param rpc_newItem pointer to the currently corresponding ISOItem_c
  */
-void MultiSend_c::reactOnMonitorListAdd( const DevKey_c& refc_devKey, const ISOItem_c* rpc_newItem )
+void MultiSend_c::reactOnMonitorListAdd( const ISOName_c& refc_isoName, const ISOItem_c* rpc_newItem )
 {
   /** @todo to be improved!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
-  if ( getIsoMonitorInstance4Comm().existLocalIsoMemberDevKey(refc_devKey) )
+  if ( getIsoMonitorInstance4Comm().existLocalIsoMemberISOName(refc_isoName) )
   { // local ISOItem_c has finished adr claim
     bool b_isReconfigNeeded = false;
     uint32_t ui32_nr = rpc_newItem->nr();
@@ -929,24 +929,24 @@ void MultiSend_c::reactOnMonitorListAdd( const DevKey_c& refc_devKey, const ISOI
   }
 
   #ifdef DEBUG
-  INTERNAL_DEBUG_DEVICE << "reactOnMonitorListAdd() handles CLAIM of ISOItem_c for device with DevClass: " << int(refc_devKey.getDevClass())
-      << ", Instance: " << int(refc_devKey.getDevClassInst()) << ", and manufacturer ID: " << int(refc_devKey.getConstName().manufCode())
+  INTERNAL_DEBUG_DEVICE << "reactOnMonitorListAdd() handles CLAIM of ISOItem_c for device with DevClass: " << int(refc_isoName.devClass())
+      << ", Instance: " << int(refc_isoName.devClassInst()) << ", and manufacturer ID: " << int(refc_isoName.manufCode())
       << "NOW use SA: " << int(rpc_newItem->nr()) << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_NEWLINE
       << INTERNAL_DEBUG_DEVICE_ENDL;
   #endif
-  // no resurrection here as we do NOT (yet) save the devKey/isoname to our SendStream_c instances in the list...
+  // no resurrection here as we do NOT (yet) save the isoName/isoname to our SendStream_c instances in the list...
   // this can be done later if someone thinks that makes sense...
 }
 
 
 /** this function is called by ISOMonitor_c when a device looses its ISOItem_c.
- * @param refc_devKey const reference to the item which ISOItem_c state is changed
+ * @param refc_isoName const reference to the item which ISOItem_c state is changed
  * @param rui8_oldSa previously used SA which is NOW LOST -> clients which were connected to this item can react explicitly
  */
-void MultiSend_c::reactOnMonitorListRemove( const DevKey_c& refc_devKey, uint8_t rui8_oldSa )
+void MultiSend_c::reactOnMonitorListRemove( const ISOName_c& refc_isoName, uint8_t rui8_oldSa )
 {
 /*
-  if ( getIsoMonitorInstance4Comm().existLocalIsoMemberDevKey(refc_devKey) )
+  if ( getIsoMonitorInstance4Comm().existLocalIsoMemberISOName(refc_isoName) )
   { // lcoal ISOItem_c has lost SA
     uint32_t ui32_nr = rui8_oldSa;
     // only ISO msgs with own SA in PS (destination)
@@ -962,8 +962,8 @@ void MultiSend_c::reactOnMonitorListRemove( const DevKey_c& refc_devKey, uint8_t
     }
   }
   #ifdef DEBUG
-  INTERNAL_DEBUG_DEVICE << "reactOnMonitorListRemove() handles LOSS of ISOItem_c for device with DevClass: " << int(refc_devKey.getDevClass())
-      << ", Instance: " << int(refc_devKey.getDevClassInst()) << ", and manufacturer ID: " << int(refc_devKey.getConstName().manufCode())
+  INTERNAL_DEBUG_DEVICE << "reactOnMonitorListRemove() handles LOSS of ISOItem_c for device with DevClass: " << int(refc_isoName.getDevClass())
+      << ", Instance: " << int(refc_isoName.getDevClassInst()) << ", and manufacturer ID: " << int(refc_isoName.getConstName().manufCode())
       << " and PREVIOUSLY used SA: " << int(rui8_oldSa) << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_NEWLINE
       << INTERNAL_DEBUG_DEVICE_ENDL;
   #endif
@@ -995,7 +995,7 @@ MultiSend_c::SendStream_c::sendPacket()
 
   // set identifier
   refc_multiSendPkg.setIsoPri (6);
-  refc_multiSendPkg.setDevKeyForSA (c_isoNameSender);
+  refc_multiSendPkg.setISONameForSA (c_isoNameSender);
   refc_multiSendPkg.setIdentType (Ident_c::ExtendedIdent);
   refc_multiSendPkg.setLen (8);
 
@@ -1008,10 +1008,10 @@ MultiSend_c::SendStream_c::sendPacket()
                          #endif
                          break;
     case IsoTP:          refc_multiSendPkg.setIsoPgn ((en_sendState == SendData) ?  TP_DATA_TRANSFER_PGN :  TP_CONN_MANAGE_PGN);
-                         refc_multiSendPkg.setDevKeyForDA (c_isoNameReceiver);
+                         refc_multiSendPkg.setISONameForDA (c_isoNameReceiver);
                          break;
     case IsoETP:         refc_multiSendPkg.setIsoPgn ((en_sendState == SendData) ? ETP_DATA_TRANSFER_PGN : ETP_CONN_MANAGE_PGN);
-                         refc_multiSendPkg.setDevKeyForDA (c_isoNameReceiver);
+                         refc_multiSendPkg.setISONameForDA (c_isoNameReceiver);
                          break;
     case IsoTPbroadcast: refc_multiSendPkg.setIsoPgn ((en_sendState == SendData) ?  TP_DATA_TRANSFER_PGN :  TP_CONN_MANAGE_PGN);
                          refc_multiSendPkg.setGlobalDA();
@@ -1044,7 +1044,7 @@ MultiSend_c::SendStream_c::prepareSendMsg(uint8_t &ui8_nettoDataCnt)
 
 /** user function for explicit abort of any running matching stream. */
 void
-MultiSend_c::abortSend (const DevKey_c& rrefc_isoNameSender, const DevKey_c& rrefc_isoNameReceiver)
+MultiSend_c::abortSend (const ISOName_c& rrefc_isoNameSender, const ISOName_c& rrefc_isoNameReceiver)
 {
   SendStream_c* pc_sendStream = getSendStream (rrefc_isoNameSender, rrefc_isoNameReceiver);
   if (pc_sendStream) pc_sendStream->abortSend();

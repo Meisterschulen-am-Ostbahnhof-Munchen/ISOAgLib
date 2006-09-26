@@ -116,10 +116,10 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
       above all create the needed FilterBox_c instances
       possible errors:
         * dependant error in CANIO_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
-      @param rpc_devKey optional pointer to the DEV_KEY variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
+      @param rpc_isoName optional pointer to the ISOName variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
       @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
     */
-  void TracGeneral_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_identMode)
+  void TracGeneral_c::init(const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode)
   {
     if ( checkAlreadyClosed() )
     {
@@ -131,23 +131,23 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     }
 
     //call init for handling which is base data independent
-    BaseCommon_c::init(rpc_devKey, rt_identMode);
+    BaseCommon_c::init(rpc_isoName, rt_identMode);
   };
 
-  /** config the TracGeneral_c object after init -> set pointer to devKey and
+  /** config the TracGeneral_c object after init -> set pointer to isoName and
       config send/receive of different general base msg types
-      @param rpc_devKey pointer to the DEV_KEY variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
+      @param rpc_isoName pointer to the ISOName variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
       @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       @return true -> configuration was successfull
     */
-  bool TracGeneral_c::config(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_identMode)
+  bool TracGeneral_c::config(const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode)
   { // set configure values
     //store old mode to decide to register or unregister to request for pgn
     IsoAgLib::IdentMode_t t_oldMode = getMode();
 
     //call config for handling which is base data independent
     //if something went wrong leave function before something is configured
-    if ( !BaseCommon_c::config(rpc_devKey, rt_identMode) ) return false;
+    if ( !BaseCommon_c::config(rpc_isoName, rt_identMode) ) return false;
 
     // set the member base msg value vars to NO_VAL codes
     setHitchRear(NO_VAL_8);
@@ -238,11 +238,11 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
   bool TracGeneral_c::processMsg()
   {
     bool b_result = false;
-    DevKey_c c_tempDevKey( DevKey_c::DevKeyUnspecified );
-    // store the devKey of the sender of base data
+    ISOName_c c_tempISOName( ISOName_c::ISONameUnspecified );
+    // store the isoName of the sender of base data
     if (getIsoMonitorInstance4Comm().existIsoMemberNr(data().isoSa()))
     { // the corresponding sender entry exist in the monitor list
-      c_tempDevKey = getIsoMonitorInstance4Comm().isoMemberNr(data().isoSa()).devKey();
+      c_tempISOName = getIsoMonitorInstance4Comm().isoMemberNr(data().isoSa()).isoName();
     }
 
     switch (data().isoPgn() & 0x1FFFF)
@@ -251,7 +251,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
       case REAR_HITCH_STATE_PGN:
         // only take values, if i am not the regular sender
         // and if actual sender isn't in conflict to previous sender
-        if ( checkParseReceived( c_tempDevKey ) )
+        if ( checkParseReceived( c_tempISOName ) )
         { // sender is allowed to send
           uint8_t ui8_tempHitch = (( data().getUint8Data( 0 ) * 4) / 10 );
           if ( (ui8_tempHitch != ERROR_VAL_8)
@@ -284,7 +284,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
             i16_rearDraft = static_cast<int16_t>(data().getUint8Data( 3 ) ) + (static_cast<int16_t>(data().getUint8Data( 4 )) << 8);
             t_rearHitchPosLimitStatus = IsoAgLib::IsoLimitFlag_t( ( data().getUint8Data(1) >> 3 ) & 3 );
           }
-          setSelectedDataSourceDevKey(c_tempDevKey);
+          setSelectedDataSourceISOName(c_tempISOName);
           //set update time
           setUpdateTime( Scheduler_c::getLastTimeEventTrigger() );
         }
@@ -346,7 +346,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     if ( ! BaseCommon_c::check4ReqForPgn(rui32_pgn, rui8_sa, rui8_da) ) return false;
 
     // call TracGeneral_c function to send language of Tractor-ECU
-    // sendLanguage checks if this item (identified by DEV_KEY)
+    // sendLanguage checks if this item (identified by ISOName)
     // is configured to send language
     sendLanguage();
     return true;
@@ -356,18 +356,18 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
       @see  CANIO_c::operator<<
     */
   void TracGeneral_c::sendMessage()
-  { //check for devKey and if address claim has yet occured, because this function can also bo called
+  { //check for isoName and if address claim has yet occured, because this function can also bo called
     //independent from timeEvent() function
-    if ( getDevKey() == NULL ) return;
-    if (!getIsoMonitorInstance4Comm().existIsoMemberDevKey(*getDevKey(), true)) return;
+    if ( getISOName() == NULL ) return;
+    if (!getIsoMonitorInstance4Comm().existIsoMemberISOName(*getISOName(), true)) return;
 
     const int32_t ci32_now = Scheduler_c::getLastTimeEventTrigger();
-    data().setDevKeyForSA( *getDevKey() );
+    data().setISONameForSA( *getISOName() );
     data().setIdentType(Ident_c::ExtendedIdent);
     data().setIsoPri(3);
     data().setLen(8);
 
-    setSelectedDataSourceDevKey( *getDevKey() );
+    setSelectedDataSourceISOName( *getISOName() );
     CANIO_c& c_can = getCanInstance4Comm();
     data().setIsoPgn(FRONT_HITCH_STATE_PGN);
     uint8_t ui8_temp = t_frontHitchPosLimitStatus << 3;
@@ -457,19 +457,19 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     if ( checkMode(IsoAgLib::IdentModeImplement) ) return;
 
     if (  !b_languageVtReceived
-       || ( getDevKey()->isUnspecified()  )
-       || !getIsoMonitorInstance4Comm().existIsoMemberDevKey(*getDevKey(), true)
+       || ( getISOName()->isUnspecified()  )
+       || !getIsoMonitorInstance4Comm().existIsoMemberISOName(*getISOName(), true)
        )
     { //if VT has up to now not send the language command there is no sense to send it
       return;
     } else
     {
-      data().setDevKeyForSA( *getDevKey() );
+      data().setISONameForSA( *getISOName() );
       data().setIdentType(Ident_c::ExtendedIdent);
       data().setIsoPri(6);
       data().setLen(8);
 
-      setSelectedDataSourceDevKey( *getDevKey() );
+      setSelectedDataSourceISOName( *getISOName() );
       CANIO_c& c_can = getCanInstance4Comm();
       data().setIsoPgn(LANGUAGE_PGN);
       //Bytes 1,2: language command
@@ -498,8 +498,8 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
    */
   void TracGeneral_c::forceMaintainPower( bool rb_ecuPower, bool rb_actuatorPower, IsoAgLib::IsoMaintainPower_t rt_implState)
   { // as BaseCommon_c timeEvent() checks only for adr claimed state in TractorMode, we have to perform those checks here,
-    // as we reach this function mostly for ImplementMode, where getDevKey() might report NULL at least during init time
-    if ( ( NULL == getDevKey() ) || ( ! getIsoMonitorInstance4Comm().existIsoMemberDevKey( *getDevKey(), true ) ) )
+    // as we reach this function mostly for ImplementMode, where getISOName() might report NULL at least during init time
+    if ( ( NULL == getISOName() ) || ( ! getIsoMonitorInstance4Comm().existIsoMemberISOName( *getISOName(), true ) ) )
       return;
 
      uint8_t val1 = IsoAgLib::IsoInactive,
@@ -529,7 +529,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
         val2 |= ( IsoAgLib::IsoNotAvailablePark      << 4);
         val2 |= ( implState.inWork                   << 2);
     }
-    data().setDevKeyForSA( *getDevKey() );
+    data().setISONameForSA( *getISOName() );
     data().setIdentType(Ident_c::ExtendedIdent);
     data().setIsoPri(6);
 

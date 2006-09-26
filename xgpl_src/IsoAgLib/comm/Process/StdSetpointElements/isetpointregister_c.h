@@ -59,7 +59,8 @@
 /* ********** include headers ************ */
 /* *************************************** */
 #include "impl/setpointregister_c.h"
-#include <IsoAgLib/util/idevkey_c.h>
+#include <IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h>
+
 #include "../generalcommand_c.h"
 
 // Begin Namespace IsoAgLib
@@ -77,11 +78,11 @@ public:
   /* ************************************ */
 
   /**
-    deliver devKey of commanding member
-    @return DEV_KEY of setpoint commander
+    deliver isoName of commanding member
+    @return ISOName of setpoint commander
   */
-  const iDevKey_c& devKey()const
-  {return static_cast<const iDevKey_c&>(SetpointRegister_c::devKey());};
+  const iISOName_c& isoName()const
+  {return static_cast<const iISOName_c&>(SetpointRegister_c::isoName());};
   /**
     deliver the exact setpoint
     @return exact setpoint value
@@ -162,10 +163,10 @@ public:
   /* ************************************ */
 
   /**
-    set devKey of commanding member
-    @param rc_devKey DEV_KEY of commanding member
+    set isoName of commanding member
+    @param rc_isoName ISOName of commanding member
   */
-  void setDevKey(uint8_t rb_val){SetpointRegister_c::setDevKey(rb_val);};
+  void setISOName(uint8_t rb_val){SetpointRegister_c::setISOName(rb_val);};
   /**
     set the exact setpoint value
     @param ri32_val new exact setpoint value

@@ -88,13 +88,13 @@ namespace IsoAgLib {
   Example:
   \code
   // define local device type
-  IsoAgLib::DevKey c_myDevKey( 1, 0 );
+  IsoAgLib::ISOName c_myISOName( 1, 0 );
   // creation of process data instance
   iProcDataLocal_c c_workState;
   // init for LIS=0, local device type/subtype=1/0, complete work width=0xFF,
   // target process data/PRI=2, pointer to my local device type ( to resolve dynamic SA at time of cmd send ),
   // load/store measurememnt data to/from EEPROM
-  c_workState.init( 0, myDevKey, 0x1, 0x0, 0xFF, 2, c_myDevKey, &c_myDevKey, false, 0x1234 );
+  c_workState.init( 0, myISOName, 0x1, 0x0, 0xFF, 2, c_myISOName, &c_myISOName, false, 0x1234 );
 
   // update current measurement value ( real value, which can differ from commanded value )
   c_workState.setMasterMeasurementVal( 100 );
@@ -139,10 +139,10 @@ public:
     @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
                          (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
 
-    @param rc_devKey optional DEV_KEY code of Process-Data
+    @param rc_isoName optional ISOName code of Process-Data
     @param rui8_pri PRI code of messages with this process data instance (default 2)
-    @param rc_ownerDevKey optional DEV_KEY of the owner
-    @param rpc_devKey pointer to updated DEV_KEY variable of owner
+    @param rc_ownerISOName optional ISOName of the owner
+    @param rpc_isoName pointer to updated ISOName variable of owner
     @param rb_cumulativeValue
              -# for process data like distance, time, area
                  the value of the measure prog data sets is updated
@@ -165,10 +165,10 @@ public:
   */
   iProcDataLocal_c( const ElementDDI_s* ps_elementDDI = NULL,
                     uint16_t rui16_element = 0xFFFF,
-                    const iDevKey_c& rc_devKey = iDevKey_c::DevKeyInitialProcessData,
+                    const iISOName_c& rc_isoName = iISOName_c::ISONameInitialProcessData,
                     uint8_t rui8_pri = 2,
-                    const iDevKey_c& rc_ownerDevKey = iDevKey_c::DevKeyUnspecified,
-                    const iDevKey_c *rpc_devKey = NULL,
+                    const iISOName_c& rc_ownerISOName = iISOName_c::ISONameUnspecified,
+                    const iISOName_c *rpc_isoName = NULL,
                     bool rb_cumulativeValue = false,
 #ifdef USE_EEPROM_IO
                   uint16_t rui16_eepromAdr = 0xFFFF,
@@ -176,7 +176,7 @@ public:
                   ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
                   int ri_singletonVecKey = 0)
     : ProcDataLocal_c( ps_elementDDI, rui16_element,
-                       rc_devKey, rui8_pri, rc_ownerDevKey, rpc_devKey, rb_cumulativeValue,
+                       rc_isoName, rui8_pri, rc_ownerISOName, rpc_isoName, rb_cumulativeValue,
 #ifdef USE_EEPROM_IO
                        rui16_eepromAdr,
 #endif
@@ -192,17 +192,17 @@ public:
     ...
   */
   iProcDataLocal_c( uint16_t rui16_DDI, uint16_t rui16_element,
-                    const iDevKey_c& rc_devKey = iDevKey_c::DevKeyInitialProcessData,
+                    const iISOName_c& rc_isoName = iISOName_c::ISONameInitialProcessData,
                     uint8_t rui8_pri = 2,
-                    const iDevKey_c& rc_ownerDevKey = iDevKey_c::DevKeyUnspecified,
-                    const iDevKey_c *rpc_devKey = NULL,
+                    const iISOName_c& rc_ownerISOName = iISOName_c::ISONameUnspecified,
+                    const iISOName_c *rpc_isoName = NULL,
                     bool rb_cumulativeValue = false,
 #ifdef USE_EEPROM_IO
                    uint16_t rui16_eepromAdr = 0xFFFF,
 #endif
                    ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
                    int ri_singletonVecKey = 0)
-    : ProcDataLocal_c( NULL, rui16_element, rc_devKey, rui8_pri, rc_ownerDevKey, rpc_devKey, rb_cumulativeValue,
+    : ProcDataLocal_c( NULL, rui16_element, rc_isoName, rui8_pri, rc_ownerISOName, rpc_isoName, rb_cumulativeValue,
 #ifdef USE_EEPROM_IO
                       rui16_eepromAdr,
 #endif
@@ -218,7 +218,7 @@ public:
     };
 
     ProcDataLocal_c::init( s_tmpElementDDI, rui16_element,
-                      rc_devKey, rui8_pri, rc_ownerDevKey, rpc_devKey, rb_cumulativeValue,
+                      rc_isoName, rui8_pri, rc_ownerISOName, rpc_isoName, rb_cumulativeValue,
 #ifdef USE_EEPROM_IO
                       rui16_eepromAdr,
 #endif
@@ -237,10 +237,10 @@ public:
     @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
                          (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
 
-    @param rc_devKey optional DEV_KEY code of Process-Data
+    @param rc_isoName optional ISOName code of Process-Data
     @param rui8_pri PRI code of messages with this process data instance (default 2)
-    @param rc_ownerDevKey optional DEV_KEY of the owner
-    @param rpc_devKey pointer to updated DEV_KEY variable of owner
+    @param rc_ownerISOName optional ISOName of the owner
+    @param rpc_isoName pointer to updated ISOName variable of owner
     @param rb_cumulativeValue
              -# for process data like distance, time, area
                  the value of the measure prog data sets is updated
@@ -263,10 +263,10 @@ public:
   */
   void init( const ElementDDI_s* ps_elementDDI = NULL,
              uint16_t rui16_element = 0xFFFF,
-             const iDevKey_c& rc_devKey = iDevKey_c::DevKeyInitialProcessData,
+             const iISOName_c& rc_isoName = iISOName_c::ISONameInitialProcessData,
              uint8_t rui8_pri = 2,
-             const iDevKey_c& rc_ownerDevKey = iDevKey_c::DevKeyUnspecified,
-             const iDevKey_c *rpc_devKey = NULL, bool rb_cumulativeValue = false,
+             const iISOName_c& rc_ownerISOName = iISOName_c::ISONameUnspecified,
+             const iISOName_c *rpc_isoName = NULL, bool rb_cumulativeValue = false,
 #ifdef USE_EEPROM_IO
             uint16_t rui16_eepromAdr = 0xFFFF,
 #endif
@@ -274,7 +274,7 @@ public:
             int ri_singletonVecKey = 0
             )
   {ProcDataLocal_c::init( ps_elementDDI, rui16_element,
-                         rc_devKey, rui8_pri, rc_ownerDevKey, rpc_devKey, rb_cumulativeValue,
+                         rc_isoName, rui8_pri, rc_ownerISOName, rpc_isoName, rb_cumulativeValue,
 #ifdef USE_EEPROM_IO
                          rui16_eepromAdr,
 #endif
@@ -292,10 +292,10 @@ public:
     @param rui16_DDI
     @param rui16_element
 
-    @param rc_devKey optional DEV_KEY code of Process-Data
+    @param rc_isoName optional ISOName code of Process-Data
     @param rui8_pri PRI code of messages with this process data instance (default 2)
-    @param rc_ownerDevKey optional DEV_KEY of the owner
-    @param rpc_devKey pointer to updated DEV_KEY variable of owner
+    @param rc_ownerISOName optional ISOName of the owner
+    @param rpc_isoName pointer to updated ISOName variable of owner
     @param rb_cumulativeValue
              -# for process data like distance, time, area
                  the value of the measure prog data sets is updated
@@ -317,10 +317,10 @@ public:
     @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
   void init( uint16_t rui16_DDI, uint16_t rui16_element,
-             const iDevKey_c& rc_devKey = iDevKey_c::DevKeyInitialProcessData,
+             const iISOName_c& rc_isoName = iISOName_c::ISONameInitialProcessData,
              uint8_t rui8_pri = 2,
-             const iDevKey_c& rc_ownerDevKey = iDevKey_c::DevKeyUnspecified,
-             const iDevKey_c *rpc_devKey = NULL, bool rb_cumulativeValue = false,
+             const iISOName_c& rc_ownerISOName = iISOName_c::ISONameUnspecified,
+             const iISOName_c *rpc_isoName = NULL, bool rb_cumulativeValue = false,
 #ifdef USE_EEPROM_IO
             uint16_t rui16_eepromAdr = 0xFFFF,
 #endif
@@ -336,7 +336,7 @@ public:
      };
 
      ProcDataLocal_c::init( s_tmpElementDDI, rui16_element,
-                            rc_devKey, rui8_pri, rc_ownerDevKey, rpc_devKey, rb_cumulativeValue,
+                            rc_isoName, rui8_pri, rc_ownerISOName, rpc_isoName, rb_cumulativeValue,
 #ifdef USE_EEPROM_IO
                             rui16_eepromAdr,
 #endif
@@ -383,11 +383,11 @@ public:
   uint8_t devClass() const{return ProcDataLocal_c::devClass();}
 
   /**
-    deliver value DEV_KEY (machine type specific table of process data types)
+    deliver value ISOName (machine type specific table of process data types)
     use everytime the _device_class_ from the ident part, and take the _instance_ from the owner
-    @return DEV_KEY
+    @return ISOName
   */
-  const iDevKey_c& devKey() const {return static_cast<const iDevKey_c&>(ProcDataLocal_c::devKey());}
+  const iISOName_c& isoName() const {return static_cast<const iISOName_c&>(ProcDataLocal_c::isoName());}
 
   /**
     deliver value WERT (row of process data table)
@@ -437,32 +437,32 @@ public:
   /**
     send the base value (the one that is updated via setMasterMeasurementVal() )
     to a specified target (selected by GPT)
-    @param rc_targetDevKey DevKey of target
+    @param rc_targetISOName ISOName of target
     @param ren_type optional PRI specifier of the message (default Proc_c::Target )
     @return true -> successful sent
   */
-  bool sendMasterMeasurementVal( const iDevKey_c& rc_targetDevKey, Proc_c::progType_t ren_progType = Proc_c::Target ) const
-    { return ProcDataLocal_c::sendMasterMeasurementVal( rc_targetDevKey, ren_progType );}
+  bool sendMasterMeasurementVal( const iISOName_c& rc_targetISOName, Proc_c::progType_t ren_progType = Proc_c::Target ) const
+    { return ProcDataLocal_c::sendMasterMeasurementVal( rc_targetISOName, ren_progType );}
 
   /**
     send a exact-setpoint to a specified target (selected by GPT)
-    @param rc_targetDevKey DevKey of target
+    @param rc_targetISOName ISOName of target
     @param ren_type optional PRI specifier of the message (default Proc_c::Target )
     @return true -> successful sent
   */
-  bool sendMasterSetpointVal( const iDevKey_c& rc_targetDevKey, Proc_c::progType_t ren_progType = Proc_c::Target ) const
-   { return setpointConst().sendMasterSetpointVal( rc_targetDevKey, ren_progType );}
+  bool sendMasterSetpointVal( const iISOName_c& rc_targetISOName, Proc_c::progType_t ren_progType = Proc_c::Target ) const
+   { return setpointConst().sendMasterSetpointVal( rc_targetISOName, ren_progType );}
 
   /**
     send a sub-setpoint (selected by MOD) to a specified target (selected by GPT)
     @param rui8_mod select sub-type of setpoint
-    @param rc_targetDevKey DevKey of target
+    @param rc_targetISOName ISOName of target
     @param ren_type optional PRI specifier of the message (default Proc_c::Target )
     @return true -> successful sent
   */
-  bool sendSetpointMod( GeneralCommand_c::ValueGroup_t en_valueGroup, const iDevKey_c& rc_targetDevKey, Proc_c::progType_t ren_progType = Proc_c::Target ) const
+  bool sendSetpointMod( GeneralCommand_c::ValueGroup_t en_valueGroup, const iISOName_c& rc_targetISOName, Proc_c::progType_t ren_progType = Proc_c::Target ) const
   {
-    return setpointConst().sendSetpointMod( rc_targetDevKey, ren_progType,
+    return setpointConst().sendSetpointMod( rc_targetISOName, ren_progType,
                                             en_valueGroup, __IsoAgLib::GeneralCommand_c::setValue );
   }
 
@@ -595,11 +595,11 @@ public:
    /**
     check if specific measureprog exist
     @param rui8_pri PRI code of searched measure program
-    @param rc_devKey DEVCLASS code of searched measure program
+    @param rc_isoName DEVCLASS code of searched measure program
     @return true -> found item
   */
-  bool existProg(uint8_t rui8_pri, const iDevKey_c& rc_devKey)
-      {return ProcDataLocal_c::existProg(rui8_pri, rc_devKey);}
+  bool existProg(uint8_t rui8_pri, const iISOName_c& rc_isoName)
+      {return ProcDataLocal_c::existProg(rui8_pri, rc_isoName);}
 
   /**
     search for suiting measureprog, if not found AND if rb_doCreate == true
@@ -608,18 +608,18 @@ public:
     possible errors:
         * Err_c::elNonexistent wanted measureprog doesn't exist and rb_doCreate == false
     @param rui8_pri PRI code of searched measure program
-    @param rc_devKey DEVCLASS code of searched measure program
+    @param rc_isoName DEVCLASS code of searched measure program
     @param rb_doCreated true -> create suitable measure program if not found
   */
-  iMeasureProgLocal_c& prog(uint8_t rui8_pri, const iDevKey_c& rc_devKey, bool rb_doCreate)
-    { return static_cast<iMeasureProgLocal_c&>(ProcDataLocal_c::prog(rui8_pri, rc_devKey, rb_doCreate));}
+  iMeasureProgLocal_c& prog(uint8_t rui8_pri, const iISOName_c& rc_isoName, bool rb_doCreate)
+    { return static_cast<iMeasureProgLocal_c&>(ProcDataLocal_c::prog(rui8_pri, rc_isoName, rb_doCreate));}
 
   /** deliver reference to setpoint */
   iSetpointLocal_c& setpoint( void )
     { return static_cast<iSetpointLocal_c&>(ProcDataLocal_c::setpoint()); }
 
   bool startDataLogging(Proc_c::type_t ren_type /* Proc_c::TimeProp, Proc_c::DistProp, ... */,
-                        int32_t ri32_increment, const iDevKey_c* rpc_receiverDevice = NULL )
+                        int32_t ri32_increment, const iISOName_c* rpc_receiverDevice = NULL )
     { return ProcDataLocal_c::startDataLogging(ren_type, ri32_increment, rpc_receiverDevice); }
 
 

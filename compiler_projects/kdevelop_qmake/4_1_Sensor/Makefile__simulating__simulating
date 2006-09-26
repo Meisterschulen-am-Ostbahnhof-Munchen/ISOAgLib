@@ -6,7 +6,7 @@
 ####### Project specific variables
 TARGET = 4_1_Sensor
 ISOAGLIB_PATH = ../../..
-APP_INC = -I../../../IsoAgLib_Examples/tutorial/4_SupplementaryDriver//4_1_Sensor
+APP_INC = -I../../../IsoAgLib_Examples/tutorial/4_SupplementaryDriver//4_1_Sensor 
 ####### Include a version definition file into the Makefile context - when this file exists
 -include versions.mk
 
@@ -15,14 +15,13 @@ PROJ_DEFINES = $(VERSION_DEFINES) -DSYSTEM_PC -DPRJ_USE_AUTOGEN_CONFIG=config_4_
 
 
 ####### Definition of compiler binary prefix corresponding to selected target
-COMPILER_BINARY_PRE =
+COMPILER_BINARY_PRE = 
 
 
 first: all
 
 ####### Files
-SOURCES = ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp  \
+SOURCES = ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.cpp  \
@@ -54,7 +53,7 @@ SOURCES = ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.cpp  \
 		../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp  \
 		../../../xgpl_src/IsoAgLib/driver/can/impl/canio_c.cpp  \
 		../../../xgpl_src/IsoAgLib/driver/system/impl/system_c.cpp  \
-		../../../IsoAgLib_Examples/tutorial/4_SupplementaryDriver//4_1_Sensor/4_1_Sensor.cpp
+		../../../IsoAgLib_Examples/tutorial/4_SupplementaryDriver//4_1_Sensor/4_1_Sensor.cpp  
 
 ####### Some Standard Rules
 CC       = $(COMPILER_BINARY_PRE)gcc

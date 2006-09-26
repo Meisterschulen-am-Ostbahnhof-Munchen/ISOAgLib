@@ -97,24 +97,24 @@ namespace __IsoAgLib {
     @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
                          (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
     common parameter
-    @param rc_devKey optional DEV_KEY code of this instance
+    @param rc_isoName optional ISOName code of this instance
     @param rui8_pri PRI code of messages with this process data instance (default 2)
-    @param rc_ownerDevKey optional DEV_KEY of the owner
-    @param rpc_commanderDevKey pointer to updated DEV_KEY variable of commander
+    @param rc_ownerISOName optional ISOName of the owner
+    @param rpc_commanderISOName pointer to updated ISOName variable of commander
     @param rpc_processDataChangeHandler optional pointer to handler class of application
     @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
 void ProcDataRemoteBase_c::init(  const IsoAgLib::ElementDDI_s* ps_elementDDI, uint16_t rui16_element,
-                                  const DevKey_c& rc_devKey, uint8_t rui8_pri, const DevKey_c& rc_ownerDevKey,
-                                  const DevKey_c* rpc_commanderDevKey,
+                                  const ISOName_c& rc_isoName, uint8_t rui8_pri, const ISOName_c& rc_ownerISOName,
+                                  const ISOName_c* rpc_commanderISOName,
                                   IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler,
                                   int ri_singletonVecKey)
 {
   ProcDataBase_c::init( ps_elementDDI, rui16_element,
-                        rc_devKey, rui8_pri, rc_ownerDevKey, NULL, rpc_processDataChangeHandler);
+                        rc_isoName, rui8_pri, rc_ownerISOName, NULL, rpc_processDataChangeHandler);
 
   setSingletonKey( ri_singletonVecKey );
-  setCommanderDevKey(rpc_commanderDevKey);
+  setCommanderISOName(rpc_commanderISOName);
 
   // don't register proces data object, as long as it's only created with
   // default values (PRI and LIS must be in all cases different from 0xFF)
@@ -131,7 +131,7 @@ void ProcDataRemoteBase_c::init(  const IsoAgLib::ElementDDI_s* ps_elementDDI, u
 const ProcDataRemoteBase_c& ProcDataRemoteBase_c::operator=(const ProcDataRemoteBase_c& rrefc_src){
   // call the assignment operator for the base class
   ProcDataBase_c::operator=(rrefc_src);
-  pc_devKey = rrefc_src.pc_devKey;
+  pc_isoName = rrefc_src.pc_isoName;
   // return reference to source
   return *this;
 }
@@ -142,7 +142,7 @@ const ProcDataRemoteBase_c& ProcDataRemoteBase_c::operator=(const ProcDataRemote
 ProcDataRemoteBase_c::ProcDataRemoteBase_c(const ProcDataRemoteBase_c& rrefc_src)
   : ProcDataBase_c(rrefc_src)
 { // now copy the element var
-  pc_devKey = rrefc_src.pc_devKey;
+  pc_isoName = rrefc_src.pc_isoName;
 
   // now register the pointer to this instance in Process_c
   getProcessInstance4Comm().registerRemoteProcessData( this );
@@ -153,19 +153,19 @@ ProcDataRemoteBase_c::~ProcDataRemoteBase_c(){
   // call unregisterRemoteProcessData in last derived class because unregister does again message processing!
 }
 
-/** set the pointer to the commander ident devKey
-  @param rpbdevKey pointer to DEV_KEY var of local member used for
+/** set the pointer to the commander ident isoName
+  @param rpbisoName pointer to ISOName var of local member used for
               sending commands to remote owner member
 */
-void ProcDataRemoteBase_c::setCommanderDevKey(const DevKey_c* rpc_devKey)
+void ProcDataRemoteBase_c::setCommanderISOName(const ISOName_c* rpc_isoName)
 {
-    pc_devKey = rpc_devKey;
+    pc_isoName = rpc_isoName;
 }
 
 /** perform periodic actions
   ProcDataRemoteBase_c::timeEvent
-  -> adapt here the ownerDevKey to an existing item, when DevClass/-Instance are matching, but the other fields are
-     differen ( don't change anything, if there is an item with identic DEVKEY setting
+  -> adapt here the ownerISOName to an existing item, when DevClass/-Instance are matching, but the other fields are
+     differen ( don't change anything, if there is an item with identic ISOName setting
   @return true -> all planned executions performed
 */
 bool ProcDataRemoteBase_c::timeEvent( void )
@@ -173,28 +173,28 @@ bool ProcDataRemoteBase_c::timeEvent( void )
   return true;
 }
 
-bool ProcDataRemoteBase_c::sendValDevKey(uint8_t rui8_pri, const DevKey_c& rc_varDevKey, int32_t ri32_val) const
+bool ProcDataRemoteBase_c::sendValISOName(uint8_t rui8_pri, const ISOName_c& rc_varISOName, int32_t ri32_val) const
 {
-  setRemoteSendFlags (rc_varDevKey);
+  setRemoteSendFlags (rc_varISOName);
 
-  return ProcDataBase_c::sendValDevKey (rui8_pri, rc_varDevKey, ri32_val);
+  return ProcDataBase_c::sendValISOName (rui8_pri, rc_varISOName, ri32_val);
 }
 
 #ifdef USE_FLOAT_DATA_TYPE
-bool ProcDataRemoteBase_c::sendValDevKey(uint8_t rui8_pri, const DevKey_c& rc_varDevKey, float rf_val) const
+bool ProcDataRemoteBase_c::sendValISOName(uint8_t rui8_pri, const ISOName_c& rc_varISOName, float rf_val) const
 {
-  setRemoteSendFlags (rc_varDevKey);
+  setRemoteSendFlags (rc_varISOName);
 
-  return ProcDataBase_c::sendValDevKey (rui8_pri, rc_varDevKey, rf_val);
+  return ProcDataBase_c::sendValISOName (rui8_pri, rc_varISOName, rf_val);
 }
 #endif
 
-void ProcDataRemoteBase_c::setRemoteSendFlags(const DevKey_c& rc_varDevKey) const
+void ProcDataRemoteBase_c::setRemoteSendFlags(const ISOName_c& rc_varISOName) const
 {
   ProcessPkg_c& c_data = getProcessPkg();
 
-  c_data.setDevKeyForDA(ownerDevKey());
-  c_data.setDevKeyForSA(rc_varDevKey);
+  c_data.setISONameForDA(ownerISOName());
+  c_data.setISONameForSA(rc_varISOName);
 }
 
 } // end of namespace __IsoAgLib

@@ -115,13 +115,13 @@ namespace __IsoAgLib {
   Example:
   \code
   // define local device type
-  IsoAgLib::DevKey c_myDevKey( 1, 0 );
+  IsoAgLib::ISOName c_myISOName( 1, 0 );
   // creation of process data instance
   iProcDataLocalSimpleMeasure_c c_workState;
   // init for LIS=0, local device type/subtype=1/0, complete work width=0xFF,
   // target process data/PRI=2, pointer to my local device type ( to resolve dynamic SA at time of cmd send ),
   // load/store measurememnt data to/from EEPROM
-  c_workState.init( 0, myDevKey, 0x1, 0x0, 0xFF, 2, c_myDevKey, &c_myDevKey, false, 0x1234 );
+  c_workState.init( 0, myISOName, 0x1, 0x0, 0xFF, 2, c_myISOName, &c_myISOName, false, 0x1234 );
 
   // update current measurement value ( real value, which can differ from commanded value )
   c_workState.setMasterMeasurementVal( 100 );
@@ -164,10 +164,10 @@ public:
     @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
                          (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
 
-    @param rc_devKey optional DEV_KEY code of Process-Data
+    @param rc_isoName optional ISOName code of Process-Data
     @param rui8_pri PRI code of messages with this process data instance (default 2)
-    @param rc_ownerDevKey optional DEV_KEY of the owner
-    @param rpc_devKey pointer to updated DEV_KEY variable of owner
+    @param rc_ownerISOName optional ISOName of the owner
+    @param rpc_isoName pointer to updated ISOName variable of owner
     @param rb_cumulativeValue
              -# for process data like distance, time, area
                  the value of the measure prog data sets is updated
@@ -190,10 +190,10 @@ public:
   */
   ProcDataLocalSimpleMeasure_c(const IsoAgLib::ElementDDI_s* ps_elementDDI = NULL,
                                uint16_t rui16_element = 0xFFFF,
-                               const DevKey_c& rc_devKey = DevKey_c::DevKeyInitialProcessData,
+                               const ISOName_c& rc_isoName = ISOName_c::ISONameInitialProcessData,
                                uint8_t rui8_pri = 2,
-                               const DevKey_c& rc_ownerDevKey = DevKey_c::DevKeyUnspecified,
-                               const DevKey_c *rpc_devKey = NULL,
+                               const ISOName_c& rc_ownerISOName = ISOName_c::ISONameUnspecified,
+                               const ISOName_c *rpc_isoName = NULL,
                                bool rb_cumulativeValue = false,
 #ifdef USE_EEPROM_IO
                                uint16_t rui16_eepromAdr = 0xFFFF,
@@ -211,10 +211,10 @@ public:
     @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
                          (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
 
-    @param rc_devKey optional DEV_KEY code of Process-Data
+    @param rc_isoName optional ISOName code of Process-Data
     @param rui8_pri PRI code of messages with this process data instance (default 2)
-    @param rc_ownerDevKey optional DEV_KEY of the owner
-    @param rpc_devKey pointer to updated DEV_KEY variable of owner
+    @param rc_ownerISOName optional ISOName of the owner
+    @param rpc_isoName pointer to updated ISOName variable of owner
     @param rb_cumulativeValue
              -# for process data like distance, time, area
                  the value of the measure prog data sets is updated
@@ -236,10 +236,10 @@ public:
     @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
   void init(const IsoAgLib::ElementDDI_s* ps_elementDDI, uint16_t rui16_element,
-            const DevKey_c& rc_devKey = DevKey_c::DevKeyInitialProcessData,
+            const ISOName_c& rc_isoName = ISOName_c::ISONameInitialProcessData,
             uint8_t rui8_pri = 2,
-            const DevKey_c& rc_ownerDevKey = DevKey_c::DevKeyUnspecified,
-            const DevKey_c *rpc_devKey = NULL, bool rb_cumulativeValue = false,
+            const ISOName_c& rc_ownerISOName = ISOName_c::ISONameUnspecified,
+            const ISOName_c *rpc_isoName = NULL, bool rb_cumulativeValue = false,
 #ifdef USE_EEPROM_IO
             uint16_t rui16_eepromAdr = 0xFFFF,
 #endif

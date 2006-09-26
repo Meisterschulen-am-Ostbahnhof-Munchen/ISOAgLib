@@ -258,7 +258,7 @@ bool ManageMeasureProgLocal_c::timeEvent( void ){
   ISOMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
 
   if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
-  const DevKey_c *pc_callerDevKey;
+  const ISOName_c *pc_callerISOName;
 
   #ifdef DEBUG_HEAP_USEAGE
   if ( ( sui16_lastPrintedMeasureProgLocalTotal != sui16_MeasureProgLocalTotal  )
@@ -290,15 +290,15 @@ bool ManageMeasureProgLocal_c::timeEvent( void ){
     checkInitList();
   }
   else if ( cui16_size == 1)
-  { // only one measure prog -> set it to undefined prog type if devKey inactive
-    pc_callerDevKey = &(vec_prog().begin()->devKey());
+  { // only one measure prog -> set it to undefined prog type if isoName inactive
+    pc_callerISOName = &(vec_prog().begin()->isoName());
     if ( ( !vec_prog().begin()->checkProgType(Proc_c::UndefinedProg))
-        && (   ( !c_isoMonitor.existIsoMemberDevKey(*pc_callerDevKey, true))
-            || ( c_isoMonitor.isoMemberDevKey(*pc_callerDevKey, true).lastedTime() > 3000 )
+        && (   ( !c_isoMonitor.existIsoMemberISOName(*pc_callerISOName, true))
+            || ( c_isoMonitor.isoMemberISOName(*pc_callerISOName, true).lastedTime() > 3000 )
            )
        )
     { // progType of first and only element is not default undefined
-      // --> devKey should be an active member, but is inactie > 3sec
+      // --> isoName should be an active member, but is inactie > 3sec
       // stop all programs and set prog type to default
       vec_prog().begin()->stop(); // programs stopped
       vec_prog().begin()->setProgType(Proc_c::UndefinedProg); // set to default
@@ -311,9 +311,9 @@ bool ManageMeasureProgLocal_c::timeEvent( void ){
       b_repeat=false;
       for (Vec_MeasureProgLocal::iterator pc_iter = vec_prog().begin();
           pc_iter != vec_prog().end(); pc_iter++)
-      { // check if this item has inactive devKey
-        if (  ( !c_isoMonitor.existIsoMemberDevKey(pc_iter->devKey(), true) )
-            ||( c_isoMonitor.isoMemberDevKey(pc_iter->devKey(), true).lastedTime() > 3000 )
+      { // check if this item has inactive isoName
+        if (  ( !c_isoMonitor.existIsoMemberISOName(pc_iter->isoName(), true) )
+            ||( c_isoMonitor.isoMemberISOName(pc_iter->isoName(), true).lastedTime() > 3000 )
            )
         { // item isn't active any more -> stop entries and erase it
           pc_iter->stop();
@@ -364,7 +364,7 @@ bool ManageMeasureProgLocal_c::timeEvent( void ){
 /** process a measure prog message for local process data */
 void ManageMeasureProgLocal_c::processProg(){
   ProcessPkg_c& c_pkg = getProcessInstance4Comm().data();
-  const DevKey_c& c_callerDevKey =  c_pkg.memberSend().devKey();
+  const ISOName_c& c_callerISOName =  c_pkg.memberSend().isoName();
   GeneralCommand_c::CommandType_t en_command = c_pkg.c_generalCommand.getCommand();
 
   // call updateProgCache with createIfNeeded if this is a writing action, otherwise don't create if none found
@@ -374,14 +374,14 @@ void ManageMeasureProgLocal_c::processProg(){
        ( en_command == GeneralCommand_c::setValue)
      )
   { // it's a measuring program message -> create new item if none found
-    updateProgCache(c_pkg.pri(),c_callerDevKey, true);
+    updateProgCache(c_pkg.pri(),c_callerISOName, true);
   }
   else
     // if ( (c_pkg.pd() != 3) || (c_pkg.mod() != 0) )  => pd == 1 || (pd == 3 && mod != 0)
     if ( !c_pkg.c_generalCommand.checkIsRequest() ||
          c_pkg.c_generalCommand.getValueGroup() != GeneralCommand_c::exactValue )
     { // use normal mechanism -> exist function if no entry found
-      if (!updateProgCache(c_pkg.pri(),c_callerDevKey, false))return;
+      if (!updateProgCache(c_pkg.pri(),c_callerISOName, false))return;
     }
 
   #ifdef DEBUG_HEAP_USEAGE
@@ -418,12 +418,12 @@ void ManageMeasureProgLocal_c::processProg(){
   possible errors:
       * Err_c::elNonexistent wanted measureprog doesn't exist and rb_doCreate == false
   @param rui8_pri PRI code of searched measure program
-  @param rc_devKey DEVCLASS code of searched measure program
+  @param rc_isoName DEVCLASS code of searched measure program
   @param rb_doCreated true -> create suitable measure program if not found
 */
-MeasureProgLocal_c& ManageMeasureProgLocal_c::prog(uint8_t rui8_pri, const DevKey_c& rc_devKey, bool rb_doCreate){
+MeasureProgLocal_c& ManageMeasureProgLocal_c::prog(uint8_t rui8_pri, const ISOName_c& rc_isoName, bool rb_doCreate){
   // update the prog cache
-  if (!updateProgCache(rui8_pri, rc_devKey, rb_doCreate) && (!rb_doCreate))
+  if (!updateProgCache(rui8_pri, rc_isoName, rb_doCreate) && (!rb_doCreate))
   { // not found and no creation wanted
     getLbsErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::LbsProcess );
   }
@@ -470,9 +470,9 @@ void ManageMeasureProgLocal_c::setGlobalVal( float rf_val )
   possible errors:
       * Err_c::badAlloc not enough memory to insert new MeasureProgLocal
   @param rui8_type program type: Proc_c::Base, Proc_c::Target
-  @param rc_devKey commanding DEV_KEY
+  @param rc_isoName commanding ISOName
 */
-void ManageMeasureProgLocal_c::insertMeasureprog(uint8_t rui8_type, const DevKey_c& rc_devKey){
+void ManageMeasureProgLocal_c::insertMeasureprog(uint8_t rui8_type, const ISOName_c& rc_isoName){
 // only create new item if first isn't undefined
   const uint8_t b_oldSize = vec_prog().size();
 
@@ -545,8 +545,8 @@ void ManageMeasureProgLocal_c::insertMeasureprog(uint8_t rui8_type, const DevKey
   { // set cache to first undefined item
     pc_progCache = vec_prog().begin();
   }
-  // set type and devKey for item
-  pc_progCache->setDevKey(rc_devKey);
+  // set type and isoName for item
+  pc_progCache->setISOName(rc_isoName);
   pc_progCache->setProgType(rui8_type);
 }
 
@@ -556,11 +556,11 @@ void ManageMeasureProgLocal_c::insertMeasureprog(uint8_t rui8_type, const DevKey
   possible errors:
       * Err_c::badAlloc not enough memory to insert new MeasureProgLocal
   @param rui8_type program type: Proc_c::Base, Proc_c::Target
-  @param rc_devKey commanding DEV_KEY
+  @param rc_isoName commanding ISOName
   @param rb_createIfNotFound true -> create new item if not found
   @return true -> instance found
 */
-bool ManageMeasureProgLocal_c::updateProgCache(uint8_t rui8_type, const DevKey_c& rc_devKey, bool rb_createIfNotFound)
+bool ManageMeasureProgLocal_c::updateProgCache(uint8_t rui8_type, const ISOName_c& rc_isoName, bool rb_createIfNotFound)
 {
   bool b_result = false;
   // insert first default element, if list is empty
@@ -569,19 +569,19 @@ bool ManageMeasureProgLocal_c::updateProgCache(uint8_t rui8_type, const DevKey_c
   Vec_MeasureProgLocalIterator pc_iter = vec_prog().begin();
   // update only if old cache isn't valid
   if ( (!vec_prog().empty())
-    && (pc_progCache->devKey() == rc_devKey)
+    && (pc_progCache->isoName() == rc_isoName)
     && (pc_progCache->progType() == rui8_type))
   { // old is valid -> return true
     b_result =  true;
   }
   else
-  { // actual cache is from another devKey and/or type -> search for new
+  { // actual cache is from another isoName and/or type -> search for new
     // check if type is target
     if (rui8_type == 0x2)
     { // target process msg
       for (pc_iter = vec_prog().begin(); pc_iter != vec_prog().end(); pc_iter++)
-      { // check if devKey and type fit
-        if ((pc_iter->devKey() == rc_devKey) && (pc_iter->progType() == rui8_type))
+      { // check if isoName and type fit
+        if ((pc_iter->isoName() == rc_isoName) && (pc_iter->progType() == rui8_type))
         {
           b_result = true;
           pc_progCache = pc_iter;
@@ -610,7 +610,7 @@ bool ManageMeasureProgLocal_c::updateProgCache(uint8_t rui8_type, const DevKey_c
       }
       else
       { // no suitable item was found -> create suitable one
-        insertMeasureprog(rui8_type, rc_devKey);
+        insertMeasureprog(rui8_type, rc_isoName);
       } // do create if not found
     }// no suitable found
   }
@@ -623,12 +623,12 @@ bool ManageMeasureProgLocal_c::updateProgCache(uint8_t rui8_type, const DevKey_c
   @param ren_type measurement type: Proc_c::TimeProp, Proc_c::DistProp, ...
   @param ren_progType program type: Proc_c::Base, Proc_c::Target
   @param ri32_increment
-  @param rpc_receiverDevice commanding DEV_KEY
+  @param rpc_receiverDevice commanding ISOName
   @return true -> rpc_receiverDevice is set
 */
 bool ManageMeasureProgLocal_c::startDataLogging(Proc_c::type_t ren_type /* Proc_c::TimeProp, Proc_c::DistProp, ... */,
                                                 Proc_c::progType_t ren_progType,
-                                                int32_t ri32_increment, const DevKey_c* rpc_receiverDevice )
+                                                int32_t ri32_increment, const ISOName_c* rpc_receiverDevice )
 {
   if ( !rpc_receiverDevice )
     return FALSE;
@@ -636,7 +636,7 @@ bool ManageMeasureProgLocal_c::startDataLogging(Proc_c::type_t ren_type /* Proc_
   // create new item if none found
   updateProgCache(ren_progType, *rpc_receiverDevice, true);
 
-  pc_progCache->setDevKey(*rpc_receiverDevice);
+  pc_progCache->setISOName(*rpc_receiverDevice);
 
   if (Proc_c::TimeProp == ren_type)
     pc_progCache->addSubprog(ren_type, CNAMESPACE::labs(ri32_increment));
@@ -649,15 +649,15 @@ bool ManageMeasureProgLocal_c::startDataLogging(Proc_c::type_t ren_type /* Proc_
 }
 
 /**
-  stop all measurement progs in all local process instances, started with given devKey
-  @param refc_devKey
+  stop all measurement progs in all local process instances, started with given isoName
+  @param refc_isoName
 */
-void ManageMeasureProgLocal_c::stopRunningMeasurement(const DevKey_c& refc_devKey)
+void ManageMeasureProgLocal_c::stopRunningMeasurement(const ISOName_c& refc_isoName)
 {
   Vec_MeasureProgLocalIterator pc_iter = vec_prog().begin();
   for (pc_iter = vec_prog().begin(); pc_iter != vec_prog().end(); pc_iter++)
-  { // check if devKey and type fit
-    if ((pc_iter->devKey() == refc_devKey) && pc_iter->started())
+  { // check if isoName and type fit
+    if ((pc_iter->isoName() == refc_isoName) && pc_iter->started())
     {
       pc_iter->stop();
     }

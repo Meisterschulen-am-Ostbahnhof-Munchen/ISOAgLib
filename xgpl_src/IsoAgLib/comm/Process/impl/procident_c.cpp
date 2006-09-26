@@ -124,21 +124,21 @@ namespace __IsoAgLib {
     @param ui16_element device element number
 
     common parameter
-    @param rc_devKey optional DEV_KEY code of Process-Data
+    @param rc_isoName optional ISOName code of Process-Data
     @param rui8_pri PRI code of messages with this process data instance (default 2)
-    @param rc_ownerDevKey optional DEV_KEY code of owner of Process-Data
-           ( important if DEVCLASS and/or DEVCLASSINST differs from identity DEVKEY in rc_devKey; this is the case
+    @param rc_ownerISOName optional ISOName code of owner of Process-Data
+           ( important if DEVCLASS and/or DEVCLASSINST differs from identity ISOName in rc_isoName; this is the case
              for process data from base data dictionary table (DEVCLASS==0), which is managed/owned by device of
              type DEVCLASS != 0)
-    @param rpc_ownerDevKey pointer to the optional DEV_KEY var of the owner (for automatic update as soon
+    @param rpc_ownerISOName pointer to the optional ISOName var of the owner (for automatic update as soon
             as corresponding device is registered as having claimed address in monitor table list)
   */
   ProcIdent_c::ProcIdent_c( const IsoAgLib::ElementDDI_s* ps_elementDDI, uint16_t ui16_element,
-                            const DevKey_c& rc_devKey, uint8_t rui8_pri, const DevKey_c& rc_ownerDevKey,
-                            const DevKey_c *rpc_ownerDevKey, int ri_singletonVecKey)
+                            const ISOName_c& rc_isoName, uint8_t rui8_pri, const ISOName_c& rc_ownerISOName,
+                            const ISOName_c *rpc_ownerISOName, int ri_singletonVecKey)
   : ClientBase( ri_singletonVecKey )
 {
-  init( ps_elementDDI, ui16_element, rc_devKey, rui8_pri, rc_ownerDevKey, rpc_ownerDevKey);
+  init( ps_elementDDI, ui16_element, rc_isoName, rui8_pri, rc_ownerISOName, rpc_ownerISOName);
 }
 
 /** copy constructor */
@@ -156,32 +156,32 @@ ProcIdent_c::ProcIdent_c( const ProcIdent_c& rrefc_src )
     @param ui16_element device element number
 
     common parameter
-    @param rc_devKey DEV_KEY code of Process-Data
+    @param rc_isoName ISOName code of Process-Data
     @param rui8_pri optional PRI code of messages with this process data instance (default 2)
-    @param rc_ownerDevKey optional DEV_KEY code of owner of Process-Data
-           ( important if DEVCLASS and/or DEVCLASSINST differs from identity DEVKEY in rc_devKey; this is the case
+    @param rc_ownerISOName optional ISOName code of owner of Process-Data
+           ( important if DEVCLASS and/or DEVCLASSINST differs from identity ISOName in rc_isoName; this is the case
              for process data from base data dictionary table (DEVCLASS==0), which is managed/owned by device of
              type DEVCLASS != 0)
-    @param rpc_ownerDevKey pointer to the optional DEV_KEY var of the owner (for automatic update as soon
+    @param rpc_ownerISOName pointer to the optional ISOName var of the owner (for automatic update as soon
             as corresponding device is registered as having claimed address in monitor table list)
 */
 void ProcIdent_c::init( const IsoAgLib::ElementDDI_s* ps_elementDDI, uint16_t ui16_element,
-                        const DevKey_c& rc_devKey, uint8_t rui8_pri,
-                        const DevKey_c& rc_ownerDevKey, const DevKey_c *rpc_ownerDevKey)
+                        const ISOName_c& rc_isoName, uint8_t rui8_pri,
+                        const ISOName_c& rc_ownerISOName, const ISOName_c *rpc_ownerISOName)
 {
   setElementDDI(ps_elementDDI);
   setElementNumber(ui16_element);
 
-  data.c_devKey = rc_devKey;
+  data.c_isoName = rc_isoName;
   setPri(rui8_pri);
-  pc_ownerDevKey = rpc_ownerDevKey;
+  pc_ownerISOName = rpc_ownerISOName;
 
-  // the DEV_KEY of ident is best defined by pointed value of rpc_ownerDevKey
-  if ( rpc_ownerDevKey != 0 ) data.c_ownerDevKey = *rpc_ownerDevKey;
-  // second choicer is explicit (not default) setting in rc_ownerDevKey
-  else if ( rc_ownerDevKey.isSpecified() ) data.c_ownerDevKey = rc_ownerDevKey;
-  // last choice is definition of c_ownerDevKey by process data identiy
-  else data.c_ownerDevKey = rc_devKey;
+  // the ISOName of ident is best defined by pointed value of rpc_ownerISOName
+  if ( rpc_ownerISOName != 0 ) data.c_ownerISOName = *rpc_ownerISOName;
+  // second choicer is explicit (not default) setting in rc_ownerISOName
+  else if ( rc_ownerISOName.isSpecified() ) data.c_ownerISOName = rc_ownerISOName;
+  // last choice is definition of c_ownerISOName by process data identiy
+  else data.c_ownerISOName = rc_isoName;
 }
 
 /**
@@ -202,9 +202,9 @@ ProcIdent_c& ProcIdent_c::operator=(const ProcIdent_c& rrefc_src){
 void ProcIdent_c::assignFromSource( const ProcIdent_c& rrefc_src )
 {
   setLis(rrefc_src.lis());
-  data.c_devKey = rrefc_src.data.c_devKey;
-  data.c_ownerDevKey = rrefc_src.data.c_ownerDevKey;
-  pc_ownerDevKey = rrefc_src.pc_ownerDevKey;
+  data.c_isoName = rrefc_src.data.c_isoName;
+  data.c_ownerISOName = rrefc_src.data.c_ownerISOName;
+  pc_ownerISOName = rrefc_src.pc_ownerISOName;
   // elementDDI() returns list reference, setElementDDI() expects pointer to list
   setElementDDI(&(rrefc_src.elementDDI()));
   setPri(rrefc_src.pri());
@@ -215,13 +215,13 @@ ProcIdent_c::~ProcIdent_c(){
 }
 
 /**
-  set DEVCLASS and _instance_ of owner by giving pointer to owner DEV_KEY
-  @param rpc_val pointer to owner DEV_KEY
+  set DEVCLASS and _instance_ of owner by giving pointer to owner ISOName
+  @param rpc_val pointer to owner ISOName
 */
-void ProcIdent_c::setOwnerDevKey(const DevKey_c* rpc_val)
+void ProcIdent_c::setOwnerISOName(const ISOName_c* rpc_val)
 {
-  pc_ownerDevKey = rpc_val;
-  data.c_ownerDevKey = *rpc_val;
+  pc_ownerISOName = rpc_val;
+  data.c_ownerISOName = *rpc_val;
 }
 
 /**
@@ -230,8 +230,8 @@ void ProcIdent_c::setOwnerDevKey(const DevKey_c* rpc_val)
    (important for matching received process data msg);
    if INSTANCE is defined (!= 0xFF) then one of the following conditions must be true:<ul>
    <li>parameter INSTANCE == ident INSTANCE (devClassInst())
-   <li>parameter INSTANCE == owner INSTANCE ( ownerDevKey().getDevClassInst() )
-   <li>parameter rc_ownerDevKey == ownerDevKey()
+   <li>parameter INSTANCE == owner INSTANCE ( ownerISOName().devClassInst() )
+   <li>parameter rc_ownerISOName == ownerISOName()
    </ul>
 
    @param rui8_devClassReceiver compared DEVCLASS value
@@ -261,8 +261,8 @@ bool ProcIdent_c::matchISO(
     return false;
 
   if (rui8_devClassSender != 0xFF) {
-    // check in remote case: check if devClass of ownerDevKey in procident matches devClass of sender
-    if (ownerDevKey().getDevClass() != rui8_devClassSender) return false;
+    // check in remote case: check if devClass of ownerISOName in procident matches devClass of sender
+    if (ownerISOName().devClass() != rui8_devClassSender) return false;
   } else {
     // check in local case: check if procident devClass matches devClass of empf
     if (devClass() != rui8_devClassReceiver) return false;
@@ -296,11 +296,11 @@ bool ProcIdent_c::hasType(bool rb_isSetpoint, GeneralCommand_c::ValueGroup_t t_d
   else return true;
 }
 
-bool ProcIdent_c::check4GroupMatch(uint16_t rui16_DDI, uint16_t rui16_element, const DevKey_c& rc_devKey)
+bool ProcIdent_c::check4GroupMatch(uint16_t rui16_DDI, uint16_t rui16_element, const ISOName_c& rc_isoName)
 {
   bool b_foundPair = false;
-  // first check if DevClass is the same like ownerDevKey's DevClass
-  if (rc_devKey.getDevClass() != data.c_ownerDevKey.getDevClass()) return b_foundPair;
+  // first check if DevClass is the same like ownerISOName's DevClass
+  if (rc_isoName.devClass() != data.c_ownerISOName.devClass()) return b_foundPair;
 
   if (rui16_element != element()) return b_foundPair;
 
@@ -312,22 +312,22 @@ bool ProcIdent_c::check4GroupMatch(uint16_t rui16_DDI, uint16_t rui16_element, c
   return b_foundPair;
 }
 
-bool ProcIdent_c::check4GroupMatchExisting(uint16_t rui16_DDI, uint16_t rui16_element, const DevKey_c& rc_devKey)
+bool ProcIdent_c::check4GroupMatchExisting(uint16_t rui16_DDI, uint16_t rui16_element, const ISOName_c& rc_isoName)
 {
   bool b_foundPair = false;
-  // check if rc_devKey is the same like ownerDevKey
-  if (rc_devKey != data.c_ownerDevKey) return b_foundPair;
+  // check if rc_isoName is the same like ownerISOName
+  if (rc_isoName != data.c_ownerISOName) return b_foundPair;
 
   if (rui16_element != element()) return b_foundPair;
 
   return hasDDI(rui16_DDI);
 }
 
-bool ProcIdent_c::checkProprietary4GroupMatch(uint16_t rui16_element, const DevKey_c& rc_devKey)
+bool ProcIdent_c::checkProprietary4GroupMatch(uint16_t rui16_element, const ISOName_c& rc_isoName)
 {
   bool b_foundPair = false;
-  // first check if DevClass is the same like ownerDevKey's DevClass
-  if (rc_devKey.getDevClass() != pc_ownerDevKey->getDevClass()) return b_foundPair;
+  // first check if DevClass is the same like ownerISOName's DevClass
+  if (rc_isoName.devClass() != pc_ownerISOName->devClass()) return b_foundPair;
 
   // if it is not the same device element continue
   if (rui16_element != element()) return b_foundPair;
@@ -522,7 +522,7 @@ void ProcIdent_c::setElementDDI(const std::list<IsoAgLib::ElementDDI_s>* pl_elem
   @return single comparison value
 */
 int32_t ProcIdent_c::calcIdentVal() const {
-  int32_t i32_result = (static_cast<int32_t>(devKey().getDevClass()) & 0x7F   );
+  int32_t i32_result = (static_cast<int32_t>(isoName().devClass()) & 0x7F   );
 
     #ifdef USE_ISO_11783
     #ifdef USE_DIN_9684
@@ -539,7 +539,7 @@ int32_t ProcIdent_c::calcIdentVal() const {
     #else
       i32_result |=
       (
-        (static_cast<int32_t>(devKey().getDevClassInst())    << 8   )
+        (static_cast<int32_t>(isoName().devClassInst())    << 8   )
       | (static_cast<int32_t>(lis())             << 12  )
       | (static_cast<int32_t>(inst())            << 16  )
       | (static_cast<int32_t>(wert())            << 20  )

@@ -126,8 +126,8 @@ namespace __IsoAgLib {
 
 /** default constructor which has nothing to do */
 ProcessPkg_c::ProcessPkg_c( int ri_singletonVecKey ) : CANPkgExt_c( ri_singletonVecKey ) {
-  c_specialTermDevKey.setUnspecified();
-  c_specialTermUseProcDevKey.setUnspecified();
+  c_specialTermISOName.setUnspecified();
+  c_specialTermUseProcISOName.setUnspecified();
 }
 /** default constructor which has nothing to do */
 ProcessPkg_c::~ProcessPkg_c(){
@@ -446,14 +446,14 @@ void ProcessPkg_c::string2Flags()
   #endif
   set_d(0);
 
-  //Need to replace this call with the getpos from the monitor item. DevKey no longer encapsulated in the message data itself
+  //Need to replace this call with the getpos from the monitor item. ISOName no longer encapsulated in the message data itself
   //See new line added below that uses c_isoMonitor. -bac
-  //setDevKey( DevKey_c(((CANPkg_c::c_data[2] >> 4) & 0xF), (CANPkg_c::c_data[2] & 0xF) ) );
+  //setISOName( ISOName_c(((CANPkg_c::c_data[2] >> 4) & 0xF), (CANPkg_c::c_data[2] & 0xF) ) );
 
   ISOMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
 
-  // devKey in ProcessPkg_c is no longer used in ISO
-  //setDevKey(c_isoMonitor.isoMemberNr(send()).devKey());  // Get the devClass and pos (Device Class, Device Class Instance -bac
+  // isoName in ProcessPkg_c is no longer used in ISO
+  //setISOName(c_isoMonitor.isoMemberNr(send()).isoName());  // Get the devClass and pos (Device Class, Device Class Instance -bac
 
   // now set pc_monitorSend and pc_monitorEmpf
   if ((pri() == 2) && (c_isoMonitor.existIsoMemberNr(empf())))
@@ -572,15 +572,15 @@ ISOItem_c& ProcessPkg_c::memberSend() const
 }
 /**
   some LBS+ terminals wants process data interaction for syncronisation of
-  terminal mask with DEV_KEY of terminal even for local process data
-  @param rc_devKey DEV_KEY of terminal, for which the DEV_KEY of data is converted
-  @param rc_useProcDevKey DEVKEY for process data (optional, default to terminal devKey)
+  terminal mask with ISOName of terminal even for local process data
+  @param rc_isoName ISOName of terminal, for which the ISOName of data is converted
+  @param rc_useProcISOName ISOName for process data (optional, default to terminal isoName)
 */
-void ProcessPkg_c::useTermDevKeyForLocalProc(const DevKey_c& rc_devKey, const DevKey_c& rc_useProcDevKey)
+void ProcessPkg_c::useTermISONameForLocalProc(const ISOName_c& rc_isoName, const ISOName_c& rc_useProcISOName)
 {
-  c_specialTermDevKey = rc_devKey;
-  if (rc_useProcDevKey.isSpecified())c_specialTermUseProcDevKey = rc_useProcDevKey;
-  else c_specialTermUseProcDevKey = rc_devKey;
+  c_specialTermISOName = rc_isoName;
+  if (rc_useProcISOName.isSpecified())c_specialTermUseProcISOName = rc_useProcISOName;
+  else c_specialTermUseProcISOName = rc_isoName;
 }
 
 /**

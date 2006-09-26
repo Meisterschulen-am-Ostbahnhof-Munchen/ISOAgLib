@@ -58,7 +58,8 @@
 #ifndef PROCESSDATACHANGEHANDLER_H
 #define PROCESSDATACHANGEHANDLER_H
 
-#include <IsoAgLib/util/idevkey_c.h>
+#include <IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h>
+
 
 // predeclare __IsoAgLib_c::ProcDataBase_c
 namespace __IsoAgLib {
@@ -126,28 +127,28 @@ class ProcessDataChangeHandler_c {
    *  sent a new setpoint value)
    * @param rc_src general event source class, which provides conversion functions to get needed event source class
    * @param ri32_val new value, which caused the event (for immediate access)
-   * @param rc_callerDevKey DevKey of calling device - i.e. which sent new setpoint
+   * @param rc_callerISOName ISOName of calling device - i.e. which sent new setpoint
    * @return true -> handler class reacted on change event
    */
- virtual bool processSetpointSet( EventSource_c rc_src, int32_t ri32_val, const iDevKey_c& rc_callerDevKey, bool rb_change );
+ virtual bool processSetpointSet( EventSource_c rc_src, int32_t ri32_val, const iISOName_c& rc_callerISOName, bool rb_change );
 
  /** react on measurement reset from external system for local process data
    * @param rc_src general event source class, which provides conversion functions to get needed event source class
    * @param ri32_val new value, which caused the event (for immediate access)
-   * @param rc_callerDevKey DevKey of calling device - i.e. which sent new setpoint
+   * @param rc_callerISOName ISOName of calling device - i.e. which sent new setpoint
    * @return true -> handler class reacted on change event
    */
- virtual bool processMeasurementReset( EventSource_c rc_src, int32_t ri32_val, const iDevKey_c& rc_callerDevKey );
+ virtual bool processMeasurementReset( EventSource_c rc_src, int32_t ri32_val, const iISOName_c& rc_callerISOName );
 
  /** react on new received measurement update for remote process data
    * (remote system which manages the process data sent new value on request or
    *  during active measurement programm)
    * @param rc_src general event source class, which provides conversion functions to get needed event source class
    * @param ri32_val new value, which caused the event (for immediate access)
-   * @param rc_callerDevKey DevKey of calling device - i.e. which sent new setpoint
+   * @param rc_callerISOName ISOName of calling device - i.e. which sent new setpoint
    * @return true -> handler class reacted on change event
    */
- virtual bool processMeasurementUpdate( IsoAgLib::EventSource_c rc_src, int32_t ri32_val, const IsoAgLib::iDevKey_c& rc_callerDevKey, bool rb_change );
+ virtual bool processMeasurementUpdate( IsoAgLib::EventSource_c rc_src, int32_t ri32_val, const IsoAgLib::iISOName_c& rc_callerISOName, bool rb_change );
 
 #ifdef USE_FLOAT_DATA_TYPE
  /** react on new received measurement update for remote process data
@@ -155,10 +156,10 @@ class ProcessDataChangeHandler_c {
    *  during active measurement programm)
    * @param rc_src general event source class, which provides conversion functions to get needed event source class
    * @param rf_val new value, which caused the event (for immediate access)
-   * @param rc_callerDevKey DevKey of calling device - i.e. which sent new setpoint
+   * @param rc_callerISOName ISOName of calling device - i.e. which sent new setpoint
    * @return true -> handler class reacted on change event
    */
- virtual bool processMeasurementUpdate( EventSource_c rc_src, float rf_val, const iDevKey_c& rc_callerDevKey, bool rb_change );
+ virtual bool processMeasurementUpdate( EventSource_c rc_src, float rf_val, const iISOName_c& rc_callerISOName, bool rb_change );
 #endif
 
  /** react on received setpoint ACK or NACK upon previous setpoint set for remote process data
@@ -166,19 +167,19 @@ class ProcessDataChangeHandler_c {
    *  new setpoint; commanded manager of process data sent the response with ACK/NACK)
    * @param rc_src general event source class, which provides conversion functions to get needed event source class
    * @param ri32_val new value, which caused the event (for immediate access)
-   * @param rc_callerDevKey DevKey of calling device - i.e. which sent new setpoint
+   * @param rc_callerISOName ISOName of calling device - i.e. which sent new setpoint
    * @return true -> handler class reacted on change event
    */
- virtual bool processSetpointResponse( EventSource_c rc_src, int32_t ri32_val, const iDevKey_c& rc_callerDevKey );
+ virtual bool processSetpointResponse( EventSource_c rc_src, int32_t ri32_val, const iISOName_c& rc_callerISOName );
 
  /** react on received value request for default data logging (DDI 0xDFFF)
    * (can be used to start measurement programms in local process data instances)
    * @param rc_src general event source class, which provides conversion functions to get needed event source class
    * @param ri32_val new value, which caused the event (for immediate access)
-   * @param rc_callerDevKey DevKey of calling device - i.e. which sent new setpoint
+   * @param rc_callerISOName ISOName of calling device - i.e. which sent new setpoint
    * @return true -> handler class reacted on change event
    */
- virtual bool processDefaultLoggingStart( EventSource_c rc_src, int32_t ri32_val, const iDevKey_c& rc_callerDevKey );
+ virtual bool processDefaultLoggingStart( EventSource_c rc_src, int32_t ri32_val, const iISOName_c& rc_callerISOName );
 };
 }
 #endif

@@ -146,13 +146,13 @@ namespace __IsoAgLib {
   Example:
   \code
   // define local device type
-  IsoAgLib::DevKey c_myDevKey( 1, 0 );
+  IsoAgLib::ISOName c_myISOName( 1, 0 );
   // creation of process data instance
   iProcDataLocal_c c_workState;
   // init for LIS=0, local device type/subtype=1/0, complete work width=0xFF,
   // target process data/PRI=2, pointer to my local device type ( to resolve dynamic SA at time of cmd send ),
   // load/store measurememnt data to/from EEPROM
-  c_workState.init( 0, myDevKey, 0x1, 0x0, 0xFF, 2, c_myDevKey, &c_myDevKey, false, 0x1234 );
+  c_workState.init( 0, myISOName, 0x1, 0x0, 0xFF, 2, c_myISOName, &c_myISOName, false, 0x1234 );
 
   // update current measurement value ( real value, which can differ from commanded value )
   c_workState.setMasterMeasurementVal( 100 );
@@ -195,10 +195,10 @@ public:
     @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
                          (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
 
-    @param rc_devKey optional DEV_KEY code of Process-Data
+    @param rc_isoName optional ISOName code of Process-Data
     @param rui8_pri PRI code of messages with this process data instance (default 2)
-    @param rc_ownerDevKey optional DEV_KEY of the owner
-    @param rpc_devKey pointer to updated DEV_KEY variable of owner
+    @param rc_ownerISOName optional ISOName of the owner
+    @param rpc_isoName pointer to updated ISOName variable of owner
     @param rb_cumulativeValue
              -# for process data like distance, time, area
                  the value of the measure prog data sets is updated
@@ -221,10 +221,10 @@ public:
   */
   ProcDataLocal_c(const IsoAgLib::ElementDDI_s* ps_elementDDI = NULL,
                   uint16_t rui16_element = 0xFFFF,
-                  const DevKey_c& rc_devKey = DevKey_c::DevKeyInitialProcessData,
+                  const ISOName_c& rc_isoName = ISOName_c::ISONameInitialProcessData,
                   uint8_t rui8_pri = 2,
-                  const DevKey_c& rc_ownerDevKey = DevKey_c::DevKeyUnspecified,
-                  const DevKey_c *rpc_devKey = NULL,
+                  const ISOName_c& rc_ownerISOName = ISOName_c::ISONameUnspecified,
+                  const ISOName_c *rpc_isoName = NULL,
                   bool rb_cumulativeValue = false,
 #ifdef USE_EEPROM_IO
                   uint16_t rui16_eepromAdr = 0xFFFF,
@@ -242,10 +242,10 @@ public:
     @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
                          (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
 
-    @param rc_devKey optional DEV_KEY code of Process-Data
+    @param rc_isoName optional ISOName code of Process-Data
     @param rui8_pri PRI code of messages with this process data instance (default 2)
-    @param rc_ownerDevKey optional DEV_KEY of the owner
-    @param rpc_devKey pointer to updated DEV_KEY variable of owner
+    @param rc_ownerISOName optional ISOName of the owner
+    @param rpc_isoName pointer to updated ISOName variable of owner
     @param rb_cumulativeValue
              -# for process data like distance, time, area
                  the value of the measure prog data sets is updated
@@ -268,10 +268,10 @@ public:
   */
   void init(const IsoAgLib::ElementDDI_s* ps_elementDDI = NULL,
             uint16_t rui16_element = 0xFFFF,
-            const DevKey_c& rc_devKey = DevKey_c::DevKeyInitialProcessData,
+            const ISOName_c& rc_isoName = ISOName_c::ISONameInitialProcessData,
             uint8_t rui8_pri = 2,
-            const DevKey_c& rc_ownerDevKey = DevKey_c::DevKeyUnspecified,
-            const DevKey_c *rpc_devKey = NULL,
+            const ISOName_c& rc_ownerISOName = ISOName_c::ISONameUnspecified,
+            const ISOName_c *rpc_isoName = NULL,
             bool rb_cumulativeValue = false,
 #ifdef USE_EEPROM_IO
             uint16_t rui16_eepromAdr = 0xFFFF,
@@ -291,11 +291,11 @@ public:
   /**
     check if specific measureprog exist
     @param rui8_pri PRI code of searched measure program
-    @param rc_devKey DEVCLASS code of searched measure program
+    @param rc_isoName DEVCLASS code of searched measure program
     @return true -> found item
   */
-  bool existProg(uint8_t rui8_pri, const DevKey_c& rc_devKey)
-      {return c_measureprog.existProg(rui8_pri, rc_devKey);};
+  bool existProg(uint8_t rui8_pri, const ISOName_c& rc_isoName)
+      {return c_measureprog.existProg(rui8_pri, rc_isoName);};
 
   /**
     search for suiting measureprog, if not found AND if rb_doCreate == true
@@ -304,11 +304,11 @@ public:
     possible errors:
         * Err_c::elNonexistent wanted measureprog doesn't exist and rb_doCreate == false
     @param rui8_pri PRI code of searched measure program
-    @param rc_devKey DEVCLASS code of searched measure program
+    @param rc_isoName DEVCLASS code of searched measure program
     @param rb_doCreated true -> create suitable measure program if not found
   */
-  MeasureProgLocal_c& prog(uint8_t rui8_pri, const DevKey_c& rc_devKey, bool rb_doCreate)
-    { return c_measureprog.prog(rui8_pri, rc_devKey, rb_doCreate);};
+  MeasureProgLocal_c& prog(uint8_t rui8_pri, const ISOName_c& rc_isoName, bool rb_doCreate)
+    { return c_measureprog.prog(rui8_pri, rc_isoName, rb_doCreate);};
 
 
   #ifdef USE_EEPROM_IO
@@ -392,17 +392,17 @@ public:
     (to react on a incoming "start" command for default data logging)
     @param ren_type measurement type: Proc_c::TimeProp, Proc_c::DistProp, ...
     @param ri32_increment
-    @param rpc_receiverDevice commanding DEV_KEY
+    @param rpc_receiverDevice commanding ISOName
     @return true -> measurement started
   */
   bool startDataLogging(Proc_c::type_t ren_type /* Proc_c::TimeProp, Proc_c::DistProp, ... */,
-                        int32_t ri32_increment, const DevKey_c* rpc_receiverDevice = NULL );
+                        int32_t ri32_increment, const ISOName_c* rpc_receiverDevice = NULL );
 
   /**
-    stop all measurement progs in all local process instances, started with given devKey
-    @param refc_devKey
+    stop all measurement progs in all local process instances, started with given isoName
+    @param refc_isoName
   */
-  virtual void stopRunningMeasurement(const DevKey_c& refc_devKey);
+  virtual void stopRunningMeasurement(const ISOName_c& refc_isoName);
 
 private: // Private methods
 #ifdef USE_EEPROM_IO

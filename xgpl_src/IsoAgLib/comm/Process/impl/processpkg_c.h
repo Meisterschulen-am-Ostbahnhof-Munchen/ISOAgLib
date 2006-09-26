@@ -90,7 +90,8 @@
 /* ********** include headers ************ */
 /* *************************************** */
 #include <IsoAgLib/typedef.h>
-#include <IsoAgLib/util/impl/devkey_c.h>
+#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h>
+
 #include <IsoAgLib/util/impl/canpkgext_c.h>
 #include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h>
 #include "generalcommand_c.h"
@@ -459,11 +460,11 @@ public:
 
   /**
     some LBS+ terminals wants process data interaction for syncronisation of
-    terminal mask with DEV_KEY of terminal even for local process data
-    @param rc_devKey DEV_KEY of terminal, for which the DEV_KEY of data is converted
-    @param rui8_useProcDevKey DEVKEY for process data (optional, default to terminal devKey)
+    terminal mask with ISOName of terminal even for local process data
+    @param rc_isoName ISOName of terminal, for which the ISOName of data is converted
+    @param rui8_useProcISOName ISOName for process data (optional, default to terminal isoName)
   */
-  void useTermDevKeyForLocalProc(const DevKey_c& rc_devKey, const DevKey_c& rc_useProcDevKey = DevKey_c::DevKeyUnspecified);
+  void useTermISONameForLocalProc(const ISOName_c& rc_isoName, const ISOName_c& rc_useProcISOName = ISOName_c::ISONameUnspecified);
 
   /** stores the command in generalized form */
   GeneralCommand_c c_generalCommand;
@@ -521,16 +522,16 @@ private: // Private attributes
   /** pointer to monitor list item of receiver "EMPF" (NULL if not claimed address) */
   ISOItem_c* pc_monitorEmpf;
   /**
-    some terminal wants to use DEV_KEY of terminal even for local process
+    some terminal wants to use ISOName of terminal even for local process
     data for communication on CAN BUS (default 0xFF for off)
   */
-  DevKey_c c_specialTermDevKey;
+  ISOName_c c_specialTermISOName;
 
   /**
-    some terminal wants to use DEV_KEY of terminal even for local process
+    some terminal wants to use ISOName of terminal even for local process
     data for communication on CAN BUS (default 0xFF for off)
   */
-  DevKey_c c_specialTermUseProcDevKey;
+  ISOName_c c_specialTermUseProcISOName;
 
 };
 

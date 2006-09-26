@@ -192,7 +192,7 @@
 
 /* include some needed util headers */
 //#include <IsoAgLib/util/config.h>
-#include <IsoAgLib/util/idevkey_c.h>
+#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h>
 
 /* include headers for the needed drivers */
 #include <IsoAgLib/driver/system/isystem_c.h>

@@ -113,20 +113,20 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     return c_lbsTracPto;
   };
   #endif
-  /** config the TracPTO_c object after init -> set pointer to devKey and
+  /** config the TracPTO_c object after init -> set pointer to isoName and
       config send/receive of different base msg types
-      @param rpc_devKey pointer to the DEV_KEY variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
+      @param rpc_isoName pointer to the ISOName variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
       @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       @return true -> configuration was successfull
    */
-  bool TracPTO_c::config(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_identMode)
+  bool TracPTO_c::config(const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode)
   {
     //store old mode to decide to register or unregister from request for pgn
     IsoAgLib::IdentMode_t t_oldMode = getMode();
 
     //call config for handling which is base data independent
     //if something went wrong leave function before something is configured
-    if ( !BaseCommon_c::config(rpc_devKey, rt_identMode) ) return false;
+    if ( !BaseCommon_c::config(rpc_isoName, rt_identMode) ) return false;
 
     // set the member base msg value vars to NO_VAL codes
     t_ptoFront.ui16_pto8DigitPerRpm = t_ptoRear.ui16_pto8DigitPerRpm = NO_VAL_16S;
@@ -191,7 +191,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     if ( ! BaseCommon_c::check4ReqForPgn(rui32_pgn, rui8_sa, rui8_da) ) return false;
 
     // call TracPto_c function to send pto informtation
-    // isoSendMessage checks if this item (identified by DEV_KEY)
+    // isoSendMessage checks if this item (identified by ISOName)
     // is configured to send pto information
     if ( rui32_pgn == FRONT_PTO_STATE_PGN  && t_ptoFront.t_ptoEngaged != IsoAgLib::IsoActive)
     {
@@ -209,11 +209,11 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
   */
   bool TracPTO_c::processMsg()
   {
-    DevKey_c c_tempDevKey( DevKey_c::DevKeyUnspecified );
-    // store the devKey of the sender of base data
+    ISOName_c c_tempISOName( ISOName_c::ISONameUnspecified );
+    // store the isoName of the sender of base data
     if (getIsoMonitorInstance4Comm().existIsoMemberNr(data().isoSa()))
     { // the corresponding sender entry exist in the monitor list
-      c_tempDevKey = getIsoMonitorInstance4Comm().isoMemberNr(data().isoSa()).devKey();
+      c_tempISOName = getIsoMonitorInstance4Comm().isoMemberNr(data().isoSa()).isoName();
     }
 
     if (((data().isoPgn() & 0x1FFFF) == FRONT_PTO_STATE_PGN) || ((data().isoPgn() & 0x1FFFF) == REAR_PTO_STATE_PGN))
@@ -221,7 +221,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
       const int32_t ci32_now = Scheduler_c::getLastTimeEventTrigger();
       // only take values, if i am not the regular sender
       // and if actual sender isn't in conflict to previous sender
-      if ( checkParseReceived( c_tempDevKey ) )
+      if ( checkParseReceived( c_tempISOName ) )
       { // sender is allowed to send
         PtoData_t* pt_ptoData = NULL;
         if (data().isoPgn() == FRONT_PTO_STATE_PGN)
@@ -245,7 +245,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
         pt_ptoData->t_ptoShaftSpeedLimitStatus = IsoAgLib::IsoLimitFlag_t( (data().getUint8Data(5) >> 1) & 0x7 );
 
         // set last time
-        setSelectedDataSourceDevKey(c_tempDevKey);
+        setSelectedDataSourceISOName(c_tempISOName);
         // update time
         pt_ptoData->i32_lastPto = Scheduler_c::getLastTimeEventTrigger();
         // must be set because this is needed in basecommon_c
@@ -290,13 +290,13 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     const int32_t ci32_now = Scheduler_c::getLastTimeEventTrigger();
     // check for different pto data types whether the previously
     // sending node stopped sending -> other nodes can now step in
-    if ( ( ( ci32_now - t_ptoFront.i32_lastPto ) >= TIMEOUT_PTO_DISENGAGED ) || (getSelectedDataSourceDevKey().isUnspecified() ) )
+    if ( ( ( ci32_now - t_ptoFront.i32_lastPto ) >= TIMEOUT_PTO_DISENGAGED ) || (getSelectedDataSourceISOName().isUnspecified() ) )
     { // TECU stoppped its PTO and doesn'T send PTO updates - as defined by ISO 11783
       // --> switch values to ZERO
       t_ptoFront.ui16_pto8DigitPerRpm = 0;
       t_ptoFront.t_ptoEngaged = IsoAgLib::IsoInactive;
     }
-    if ( ( ( ci32_now - t_ptoRear.i32_lastPto ) >= TIMEOUT_PTO_DISENGAGED ) || (getSelectedDataSourceDevKey().isUnspecified() ) )
+    if ( ( ( ci32_now - t_ptoRear.i32_lastPto ) >= TIMEOUT_PTO_DISENGAGED ) || (getSelectedDataSourceISOName().isUnspecified() ) )
     { // TECU stoppped its PTO and doesn'T send PTO updates - as defined by ISO 11783
       // --> switch values to ZERO
       t_ptoRear.ui16_pto8DigitPerRpm = 0;
@@ -312,17 +312,17 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     */
   void TracPTO_c::sendMessage(SendPtoData_t t_sendptodata)
   {
-    if ( getDevKey() == NULL ) return;
-    if (!getIsoMonitorInstance4Comm().existIsoMemberDevKey(*getDevKey(), true)) return;
+    if ( getISOName() == NULL ) return;
+    if (!getIsoMonitorInstance4Comm().existIsoMemberISOName(*getISOName(), true)) return;
 
     CANIO_c& c_can = getCanInstance4Comm();
 
-    data().setDevKeyForSA( *getDevKey() );
+    data().setISONameForSA( *getISOName() );
     data().setIdentType(Ident_c::ExtendedIdent);
     data().setIsoPri(3);
     data().setLen(8);
 
-    setSelectedDataSourceDevKey(*getDevKey());
+    setSelectedDataSourceISOName(*getISOName());
 
     PtoData_t* pt_ptoData = NULL;
     if (t_sendptodata == sendFrontPto)

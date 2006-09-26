@@ -106,15 +106,15 @@ namespace __IsoAgLib {
 
 /** constructor which can set optional all ident data
   @param ri32_time creation time of this item instance
-  @param rc_devKey DEV_KEY code of this item ((deviceClass << 3) | devClInst )
+  @param rc_isoName ISOName code of this item ((deviceClass << 3) | devClInst )
   @param rui8_nr number of this item
   @param rb_status state of this ident (off, claimed address, ...) (default: off)
   @param rui16_saEepromAdr EEPROM adress to store actual SA -> next boot with same adr
   @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
-ISOItem_c::ISOItem_c(int32_t ri32_time, const DevKey_c& rc_devKey, uint8_t rui8_nr, IState_c::itemState_t rb_status,
+ISOItem_c::ISOItem_c(int32_t ri32_time, const ISOName_c& rc_isoName, uint8_t rui8_nr, IState_c::itemState_t rb_status,
       uint16_t rui16_saEepromAdr, int ri_singletonVecKey )
-  : BaseItem_c(0, rb_status, ri_singletonVecKey), ui16_saEepromAdr(rui16_saEepromAdr), ui8_nr(rui8_nr), c_devKey(rc_devKey)
+  : BaseItem_c(0, rb_status, ri_singletonVecKey), ui16_saEepromAdr(rui16_saEepromAdr), ui8_nr(rui8_nr), c_isoName(rc_isoName)
 {
   // mark this item as prepare address claim if local
   setItemState(IState_c::itemState_t(IState_c::Member | IState_c::Iso));
@@ -145,7 +145,7 @@ ISOItem_c::ISOItem_c(int32_t ri32_time, const DevKey_c& rc_devKey, uint8_t rui8_
   @param rrefc_src source ISOItem_c instance
 */
 ISOItem_c::ISOItem_c(const ISOItem_c& rrefc_src)
-  : BaseItem_c(rrefc_src), ui16_saEepromAdr(rrefc_src.ui16_saEepromAdr), ui8_nr(rrefc_src.ui8_nr), c_devKey(rrefc_src.c_devKey)
+  : BaseItem_c(rrefc_src), ui16_saEepromAdr(rrefc_src.ui16_saEepromAdr), ui8_nr(rrefc_src.ui8_nr), c_isoName(rrefc_src.c_isoName)
 {// mark this item as prepare address claim if local
   setItemState(IState_c::itemState_t(IState_c::Member | IState_c::Iso));
 
@@ -182,7 +182,7 @@ ISOItem_c& ISOItem_c::operator=(const ISOItem_c& rrefc_src)
 {
 //   MonitorItem_c::operator=(rrefc_src);
   BaseItem_c::operator=(rrefc_src);
-  setDevKey(rrefc_src.devKey());
+  setISOName(rrefc_src.isoName());
   setNr(rrefc_src.nr());
 
   setItemState(IState_c::itemState_t(IState_c::Member | IState_c::Iso));
@@ -203,24 +203,24 @@ ISOItem_c& ISOItem_c::operator=(const ISOItem_c& rrefc_src)
 }
 
 /**
-  lower comparison between left DEV_KEY uint8_t and right MonitorItem
-  @param rb_left DEV_KEY uint8_t left parameter
+  lower comparison between left ISOName uint8_t and right MonitorItem
+  @param rb_left ISOName uint8_t left parameter
   @param rrefc_right rigth ServiceItem_c parameter
 */
-bool operator<(const DevKey_c& rc_left, const ISOItem_c& rrefc_right)
+bool operator<(const ISOName_c& rc_left, const ISOItem_c& rrefc_right)
 {
-  return (rc_left < rrefc_right.devKey())?true:false;
+  return (rc_left < rrefc_right.isoName())?true:false;
 }
 
 /** default destructor */
 ISOItem_c::~ISOItem_c()
 {
   setNr(0xF);
-  c_devKey.setUnspecified();
+  c_isoName.setUnspecified();
 
   if ( itemState(IState_c::ClaimedAddress ) )
   { // broadcast to handler classes the event of LOSS of this SA
-    getIsoMonitorInstance4Comm().broadcastSaRemove2Clients( devKey(), nr() );
+    getIsoMonitorInstance4Comm().broadcastSaRemove2Clients( isoName(), nr() );
   }
   #ifdef USE_WORKING_SET
   // check if we were a working-set master
@@ -236,7 +236,7 @@ ISOItem_c::~ISOItem_c()
 */
 const uint8_t* ISOItem_c::name() const
 {
-  return devKey().getConstName().outputString();
+  return isoName(). outputString();
 }
 
 /** check if the name field is empty (no name received)
@@ -266,18 +266,17 @@ void ISOItem_c::getPureAsciiName(int8_t *pc_asciiName, uint8_t rui8_maxLen)
 
 /** set all element data with one call
   @param ri32_time creation time of this item instance
-  @param rc_devKey DEV_KEY code of this item ((deviceClass << 3) | devClInst )
+  @param rc_isoName ISOName code of this item ((deviceClass << 3) | devClInst )
   @param rui8_nr number of this item
   @param rb_status state of this ident (off, claimed address, ...)
   @param rui16_saEepromAdr EEPROM adress to store actual SA -> next boot with same adr
   @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
-void ISOItem_c::set(int32_t ri32_time, const DevKey_c& rc_devKey, uint8_t rui8_nr,
+void ISOItem_c::set(int32_t ri32_time, const ISOName_c& rc_isoName, uint8_t rui8_nr,
         itemState_t ren_status, uint16_t rui16_saEepromAdr, int ri_singletonVecKey )
 {
-//   MonitorItem_c::set(ri32_time, rc_devKey, rui8_nr, ren_status, ri_singletonVecKey);
   BaseItem_c::set( ri32_time, ren_status, ri_singletonVecKey );
-  setDevKey(rc_devKey);
+  setISOName(rc_isoName);
   setNr(rui8_nr);
 
   ui16_saEepromAdr = rui16_saEepromAdr;
@@ -287,7 +286,7 @@ void ISOItem_c::set(int32_t ri32_time, const DevKey_c& rc_devKey, uint8_t rui8_n
 #if 0
 /** set all element data with one call
   @param ri32_time creation time of this item instance
-  @param rc_devKey DEV_KEY code of this item ((deviceClass << 3) | devClInst )
+  @param rc_isoName ISOName code of this item ((deviceClass << 3) | devClInst )
   @param rui8_nr number of this item
   @param rb_selfConf true -> the item has a self configurable source adress
   @param rui8_indGroup industry group code (2 for agriculture)
@@ -300,24 +299,20 @@ void ISOItem_c::set(int32_t ri32_time, const DevKey_c& rc_devKey, uint8_t rui8_n
   @param rb_ecuInst counter for ECU with same function and function instance (default 0)
   @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
-void ISOItem_c::set(int32_t ri32_time, DevKey_c rc_devKey, uint8_t rui8_nr,
+void ISOItem_c::set(int32_t ri32_time, ISOName_c rc_isoName, uint8_t rui8_nr,
         bool rb_selfConf, uint8_t rui8_indGroup, uint8_t rb_func, uint16_t rui16_manufCode,
         uint32_t rui32_serNo, itemState_t ren_status, uint16_t rui16_saEepromAdr, uint8_t rb_funcInst,
         uint8_t rb_ecuInst, int ri_singletonVecKey )
 {
-//   MonitorItem_c::set(ri32_time, rc_devKey, rui8_nr, ren_status, ri_singletonVecKey);
-  BaseItem_c::set( ri32_time, ren_status, ri_singletonVecKey );
-  setDevKey(rc_devKey);
-  setNr(rui8_nr);
-
-  c_isoName.set(rb_selfConf, rui8_indGroup, (rc_devKey.getDevClass()), (rc_devKey.getDevClassInst()),
+  MonitorItem_c::set(ri32_time, rc_isoName, rui8_nr, ren_status, ri_singletonVecKey);
+  c_isoName.set(rb_selfConf, rui8_indGroup, (rc_isoName.devClass()), (rc_isoName.devClassInst()),
         rb_func, rui16_manufCode, rui32_serNo, rb_funcInst, rb_ecuInst);
   ui16_saEepromAdr = rui16_saEepromAdr;
   readEepromSa();
-  // set give DEVKEY in NAME field
-  c_isoName.setDevKey(rc_devKey);
-  // set ISOName_c pointer inside DevKey_c to ISOName_c of ISOItem_c
-  c_devKey.setName( &c_isoName );
+  // set give ISOName in NAME field
+  c_isoName.setISOName(rc_isoName);
+  // set ISOName_c pointer inside ISOName_c to ISOName_c of ISOItem_c
+  c_isoName.setName( &c_isoName );
 }
 #endif
 
@@ -413,7 +408,7 @@ bool ISOItem_c::timeEvent( void )
         // now try to save the retrieved SA in EEPROM
         writeEepromSa();
         // now inform the ISO monitor list change clients on NEW client use
-        getIsoMonitorInstance4Comm().broadcastSaAdd2Clients( devKey(), this );
+        getIsoMonitorInstance4Comm().broadcastSaAdd2Clients( isoName(), this );
         #ifdef USE_WORKING_SET
         if (isMaster())
         {  /** @todo To discuss what makes more sense: for now announce working-set directly after address claimed */
@@ -497,20 +492,20 @@ bool ISOItem_c::processMsg()
         getCanInstance4Comm() << c_pkg;
       }
       else
-      { // remote item (( the case with change of devKey should NO MORE HAPPEN as ISOMonitor_c
-        // simply removes ISOItem_c instances with same SA and different DevKey_c ))
-        const bool b_isChange = ( ( c_pkg.isoSa() != nr() ) || ( devKey().getConstName() != *(c_pkg.getDataUnionConst()) ) );
+      { // remote item (( the case with change of isoName should NO MORE HAPPEN as ISOMonitor_c
+        // simply removes ISOItem_c instances with same SA and different ISOName_c ))
+        const bool b_isChange = ( ( c_pkg.isoSa() != nr() ) || ( isoName() != *(c_pkg.getDataUnionConst()) ) );
         const bool b_wasClaimed = itemState(IState_c::ClaimedAddress);
         if ( b_wasClaimed &&  b_isChange )
         { // the previously using item had already claimed an address
-          getIsoMonitorInstance4Comm().broadcastSaRemove2Clients( devKey(), nr() );
+          getIsoMonitorInstance4Comm().broadcastSaRemove2Clients( isoName(), nr() );
         }
         setItemState(IState_c::ClaimedAddress);
         setNr(c_pkg.isoSa());
         inputNameUnion(c_pkg.getDataUnionConst());
         if ( (!b_wasClaimed) || b_isChange )
         { // now inform the ISO monitor list change clients on NEW client use
-          getIsoMonitorInstance4Comm().broadcastSaAdd2Clients( devKey(), this );
+          getIsoMonitorInstance4Comm().broadcastSaAdd2Clients( isoName(), this );
         }
       }
       b_result = true;
@@ -627,13 +622,13 @@ void ISOItem_c::setMaster ( ISOItem_c* rpc_masterItem )
 #endif
 
 /**
-  lower comparison between left ISOItem_c and right DEV_KEY uint8_t
+  lower comparison between left ISOItem_c and right ISOName uint8_t
   @param rrefc_left left ServiceItem_c parameter
-  @param rb_right DEV_KEY uint8_t right parameter
+  @param rb_right ISOName uint8_t right parameter
 */
-bool lessThan(const ISOItem_c& rrefc_left, const DevKey_c& rc_right)
+bool lessThan(const ISOItem_c& rrefc_left, const ISOName_c& rc_right)
 {
-  return (rrefc_left.devKey() < rc_right)?true:false;
+  return (rrefc_left.isoName() < rc_right)?true:false;
 }
 
 } // end of namespace __IsoAgLib

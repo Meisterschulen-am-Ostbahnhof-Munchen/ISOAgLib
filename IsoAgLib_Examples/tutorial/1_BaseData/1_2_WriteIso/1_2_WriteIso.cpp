@@ -231,7 +231,7 @@
 
 /* include some needed util headers */
 #include <IsoAgLib/util/config.h>
-#include <IsoAgLib/util/idevkey_c.h>
+#include <IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h>
 
 /* include headers for the needed drivers */
 #include <IsoAgLib/driver/system/isystem_c.h>
@@ -272,6 +272,7 @@
 #endif
 #ifdef TEST_TRACGUIDANCE
   #include <IsoAgLib/comm/Base/ext/itracguidance_c.h>
+  #include <IsoAgLib/comm/Base/ext/itracguidancecommand_c.h>
 #endif
 
 
@@ -415,13 +416,13 @@ int32_t localGetSpeedTheor(int32_t t_val) { return ( t_val ); }
 int main()
 { // init CAN channel with 250kBaud at needed channel ( count starts with 0 )
   getIcanInstance().init( cui32_canChannel, 250 );
-  // variable for DEV_KEY
+  // variable for ISOName
   // default with tractor
-  IsoAgLib::iDevKey_c myDevKey( 1, 0 );
+  IsoAgLib::iISOName_c myISOName( 1, 0 );
 
   // start address claim of the local member "IMI"
-  // if DEV_KEY conflicts forces change of device class instance, the
-  // IsoAgLib can change the myDevKey val through the pointer to myDevKey
+  // if ISOName conflicts forces change of device class instance, the
+  // IsoAgLib can change the myISOName val through the pointer to myISOName
   bool b_selfConf = true;
   uint8_t ui8_indGroup = 2,
       b_func = 25,
@@ -432,47 +433,48 @@ int main()
   uint32_t ui32_serNo = 27;
 
   // start address claim of the local member "IMI"
-  // if DEV_KEY conflicts forces change of device class instance, the
-  // IsoAgLib can change the myDevKey val through the pointer to myDevKey
-  IsoAgLib::iIdentItem_c c_myIdent( &myDevKey,
+  // if ISOName conflicts forces change of device class instance, the
+  // IsoAgLib can change the myISOName val through the pointer to myISOName
+  IsoAgLib::iIdentItem_c c_myIdent( &myISOName,
       b_selfConf, ui8_indGroup, b_func, ui16_manufCode,
       ui32_serNo, b_wantedSa, 0xFFFF, b_funcInst, b_ecuInst);
 
   #ifdef TEST_TRACTOR_LIGHTING
   // configure send information for lighting on BUS
-  getITracLightInstance().config(&myDevKey, IsoAgLib::IdentModeTractor );  //tractor mode
+  getITracLightInstance().config(&myISOName, IsoAgLib::IdentModeTractor );  //tractor mode
   #endif
 
   #ifdef TEST_TRACTOR_MOVING
-  getITracMoveInstance().config(&myDevKey, IsoAgLib::IdentModeTractor);
+  getITracMoveInstance().config(&myISOName, IsoAgLib::IdentModeTractor);
   #endif
 
   #ifdef TEST_TRACTOR_GENERAL
-  getITracGeneralInstance().config(&myDevKey, IsoAgLib::IdentModeTractor);
+  getITracGeneralInstance().config(&myISOName, IsoAgLib::IdentModeTractor);
   #endif
 
   #ifdef TEST_TIME
-  getITimePosGpsInstance().config(&myDevKey, IsoAgLib::IdentModeTractor);
+  getITimePosGpsInstance().config(&myISOName, IsoAgLib::IdentModeTractor);
   #endif
 
   #ifdef TEST_TRACAUX
-  getITracAuxInstance().config(&myDevKey, IsoAgLib::IdentModeTractor);
+  getITracAuxInstance().config(&myISOName, IsoAgLib::IdentModeTractor);
   #endif
 
   #ifdef TEST_TRACPTO
-  getITracPtoInstance().config(&myDevKey, IsoAgLib::IdentModeTractor);
+  getITracPtoInstance().config(&myISOName, IsoAgLib::IdentModeTractor);
   #endif
 
   #ifdef TEST_TRACCERT
-  getITracCertInstance().config(&myDevKey, IsoAgLib::IdentModeTractor);
+  getITracCertInstance().config(&myISOName, IsoAgLib::IdentModeTractor);
   #endif
 
   #ifdef TEST_TRACGUIDANCE
-  getITracGuidanceInstance().config(&myDevKey, IsoAgLib::IdentModeTractor);
+  getITracGuidanceInstance().config(&myISOName, IsoAgLib::IdentModeTractor);
+  getITracGuidanceCommandInstance().config(&myISOName, IsoAgLib::IdentModeTractor);
   #endif
 
   #ifdef TEST_TRACMOVESETPOINT
-  getITracMoveSetPointInstance().config(&myDevKey, IsoAgLib::IdentModeTractor);
+  getITracMoveSetPointInstance().config(&myISOName, IsoAgLib::IdentModeTractor);
   #endif
 
   /** IMPORTANT:
@@ -737,8 +739,9 @@ else
         #ifdef TEST_TRACGUIDANCE
         //TRACTOR GUIDANCE CLASS TEST FUNCTIONALITY
         EXTERNAL_DEBUG_DEVICE << "\t+++++++++ Guidance KLASSE +++++++++\n";
-//         EXTERNAL_DEBUG_DEVICE << "curvature command:             " << getITracGuidanceInstance().curvatureCmd() << "\n";
-//         EXTERNAL_DEBUG_DEVICE << "request reset command status:  " << IsoSteerFlag( getITracGuidanceInstance().curvatureCmdStatus() ) << "\n";
+        EXTERNAL_DEBUG_DEVICE << "curvature command:             " << getITracGuidanceCommandInstance().curvatureCmd() << "\n";
+        EXTERNAL_DEBUG_DEVICE << "request reset command status:  " << IsoSteerFlag( getITracGuidanceCommandInstance().curvatureCmdStatus() ) << "\n";
+        getITracGuidanceCommandInstance().setCommander(129);
 
         estCurvature += 2;
         getITracGuidanceInstance().setEstCurvature(estCurvature);

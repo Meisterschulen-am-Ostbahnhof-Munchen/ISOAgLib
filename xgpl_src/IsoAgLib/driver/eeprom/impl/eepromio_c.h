@@ -105,7 +105,7 @@
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
-class DevKey_c;
+class ISOName_c;
 
 /**
   object for communication with the EEPROM,
@@ -295,8 +295,8 @@ public:
 private:
 // Private methods
   friend class Singleton<EEPROMIO_c>;
-  friend EEPROMIO_c& operator<<(EEPROMIO_c& refc_stream, const DevKey_c& refc_data );
-  friend EEPROMIO_c& operator>>(EEPROMIO_c& refc_stream, DevKey_c& refc_data );
+  friend EEPROMIO_c& operator<<(EEPROMIO_c& refc_stream, const ISOName_c& refc_data );
+  friend EEPROMIO_c& operator>>(EEPROMIO_c& refc_stream, ISOName_c& refc_data );
 
   /** private constructor which prevents direct instantiation in user application
     * NEVER define instance of EEPROMIO_c within application
@@ -475,8 +475,8 @@ bool EEPROMIO_c::write(uint16_t rui16_adress, T rTemplateVal)
 
 /** C-style function, to get access to the unique EEPROMIO_c singleton instance */
 EEPROMIO_c& getEepromInstance( void );
-EEPROMIO_c& operator<<(EEPROMIO_c& refc_stream, const DevKey_c& refc_data );
-EEPROMIO_c& operator>>(EEPROMIO_c& refc_stream, DevKey_c& refc_data );
+EEPROMIO_c& operator<<(EEPROMIO_c& refc_stream, const ISOName_c& refc_data );
+EEPROMIO_c& operator>>(EEPROMIO_c& refc_stream, ISOName_c& refc_data );
 
 
 }

@@ -192,7 +192,6 @@
 
 /* include some needed util headers */
 //#include <IsoAgLib/util/config.h>
-#include <IsoAgLib/util/idevkey_c.h>
 
 /* include headers for the needed drivers */
 #include <IsoAgLib/driver/system/isystem_c.h>
@@ -233,12 +232,12 @@ int main()
 
   // variable for DEV_KEY ( device type, device type instance )
   // default with primary cultivation mounted back ( device type 2, instance 0 )
-  IsoAgLib::iDevKey_c myDevKey( ui8_deviceType, ui8_deviceTypeInstance );
+  IsoAgLib::iISOName_c myISOName( ui8_deviceType, ui8_deviceTypeInstance );
 
 	// start address claim of the local member
   // if DEV_KEY ( device type, -instance ) conflicts forces change of POS/instance, the
-  // IsoAgLib can change the myDevKey val through the pointer to myDevKey
-  IsoAgLib::iIdentItem_c c_myIdent( &myDevKey,
+  // IsoAgLib can change the myISOName val through the pointer to myISOName
+  IsoAgLib::iIdentItem_c c_myIdent( &myISOName,
       b_selfConf, ui8_indGroup, ui8_func, ui16_manufCode,
       ui32_serNo, ui8_wantedSa, 0xFFFF, ui8_funcInst, ui8_ecuInst);
 

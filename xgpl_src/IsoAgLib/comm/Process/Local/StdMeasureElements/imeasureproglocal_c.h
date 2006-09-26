@@ -59,7 +59,8 @@
 /* ********** include headers ************ */
 /* *************************************** */
 #include "impl/measureproglocal_c.h"
-#include <IsoAgLib/util/idevkey_c.h>
+#include <IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h>
+
 
 // Begin Namespace IsoAgLib
 namespace IsoAgLib {
@@ -154,10 +155,10 @@ public:
   float accelFloat(){return MeasureProgLocal_c::accelFloat();};
 #endif
   /**
-    return the c_devKey code for this measureProg
-    @return DEV_KEY of this measureProg
+    return the c_isoName code for this measureProg
+    @return ISOName of this measureProg
   */
-  const iDevKey_c& devKey(){return static_cast<const iDevKey_c&>(MeasureProgLocal_c::devKey());};
+  const iISOName_c& isoName(){return static_cast<const iISOName_c&>(MeasureProgLocal_c::isoName());};
   /**
     deliver the type of the active increment types
     @return actual Bit-OR combined increment types

@@ -27,6 +27,7 @@
 ../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/tracmovesetpoint_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/traccert_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/tracguidance_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/tracguidancecommand_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/msq_helper.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_client.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
@@ -87,12 +88,14 @@
 ../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/tracptosetpoint_c.h
 ../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/traclight_c.h
 ../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/tracmovesetpoint_c.h
+../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/tracguidancecommand_c.h
 ../../../xgpl_src/IsoAgLib/comm/Base/ext/itracptosetpoint_c.h
 ../../../xgpl_src/IsoAgLib/comm/Base/ext/itraclight_c.h
 ../../../xgpl_src/IsoAgLib/comm/Base/ext/itracmovesetpoint_c.h
 ../../../xgpl_src/IsoAgLib/comm/Base/ext/itracaux_c.h
 ../../../xgpl_src/IsoAgLib/comm/Base/ext/itraccert_c.h
 ../../../xgpl_src/IsoAgLib/comm/Base/ext/itracguidance_c.h
+../../../xgpl_src/IsoAgLib/comm/Base/ext/itracguidancecommand_c.h
 ../../../xgpl_src/IsoAgLib/comm/Base/itracmove_c.h
 ../../../xgpl_src/IsoAgLib/comm/Base/itracgeneral_c.h
 ../../../xgpl_src/IsoAgLib/comm/Base/itimeposgps_c.h

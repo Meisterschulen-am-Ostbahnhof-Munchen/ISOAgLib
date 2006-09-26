@@ -1,9 +1,9 @@
 #include "DeviceDescription.xml-bytestream.inc"
 
-IsoAgLib::iDevKey_c myDeviceDevKey(0x5, 0x0);
+IsoAgLib::iISOName_c myDeviceISOName(0x5, 0x0);
 
-IsoAgLib::iIdentItem_c c_myIdent(&myDeviceDevKey, true, 0x2, 0x19, 0x7ff, 0x1b, 0x80, 0xffff, 0x0, 0x0
- #ifdef USE_ISO_TERMINAL 
+IsoAgLib::iIdentItem_c c_myIdent(&myDeviceISOName, true, 0x2, 0x19, 0x7ff, 0x1b, 0x80, 0xffff, 0x0, 0x0
+ #ifdef USE_ISO_TERMINAL
  , 0, NULL
  #endif
 );
@@ -17,7 +17,7 @@ const IsoAgLib::ElementDDI_s s_workStateElementDDI[] =
 };
 
 IsoAgLib::iProcDataLocal_c c_workState(s_workStateElementDDI,
-scui16_workStateElementNumber, myDeviceDevKey, 0x2, myDeviceDevKey, &myDeviceDevKey, false
+scui16_workStateElementNumber, myDeviceISOName, 0x2, myDeviceISOName, &myDeviceISOName, false
 #ifdef USE_EEPROM_IO
 , 0xffff
 #endif
@@ -35,7 +35,7 @@ const IsoAgLib::ElementDDI_s s_applicationRateElementDDI[] =
 };
 
 IsoAgLib::iProcDataLocal_c c_applicationRate(s_applicationRateElementDDI,
-scui16_applicationRateElementNumber, myDeviceDevKey, 0x2, myDeviceDevKey, &myDeviceDevKey, false
+scui16_applicationRateElementNumber, myDeviceISOName, 0x2, myDeviceISOName, &myDeviceISOName, false
 #ifdef USE_EEPROM_IO
 , 0xffff
 #endif
@@ -50,7 +50,7 @@ const IsoAgLib::ElementDDI_s s_defaultLoggingElementDDI[] =
 };
 
 IsoAgLib::iProcDataLocal_c c_defaultLogging(s_defaultLoggingElementDDI,
-scui16_defaultLoggingElementNumber, myDeviceDevKey, 0x2, myDeviceDevKey, &myDeviceDevKey, false
+scui16_defaultLoggingElementNumber, myDeviceISOName, 0x2, myDeviceISOName, &myDeviceISOName, false
 #ifdef USE_EEPROM_IO
 , 0xffff
 #endif

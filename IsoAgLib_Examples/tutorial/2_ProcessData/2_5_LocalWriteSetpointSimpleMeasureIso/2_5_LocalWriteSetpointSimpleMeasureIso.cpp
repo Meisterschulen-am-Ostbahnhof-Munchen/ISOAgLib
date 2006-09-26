@@ -81,7 +81,7 @@
  *      ECU if current setpoint can't be realized at the moment ( IsoAgLib sends this indication automatically if call of
  *      IsoAgLib::iProcDataLocalSimpleMeasure_c::setMasterMeasurementVal
  *      indicates this problem --> application don't have to do this )
- *  <li>Use IsoAgLib::iSetpointRegister_c::devKey to get device type of corresponding setpoint sender
+ *  <li>Use IsoAgLib::iSetpointRegister_c::isoName to get device type of corresponding setpoint sender
  *  <li>Use IsoAgLib::iSetpointRegister_c::existExact , IsoAgLib::iSetpointRegister_c::existPercent , IsoAgLib::iSetpointRegister_c::existMin and
  *      IsoAgLib::iSetpointRegister_c::existMax to check which setpoint type was used
  *  <li>Use IsoAgLib::iSetpointRegister_c::exact , IsoAgLib::iSetpointRegister_c::percent , IsoAgLib::iSetpointRegister_c::min and
@@ -216,7 +216,7 @@
 
 /* include some needed util headers */
 //#include <IsoAgLib/util/config.h>
-#include <IsoAgLib/util/idevkey_c.h>
+#include <IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h>
 
 /* include headers for the needed drivers */
 #include <IsoAgLib/driver/system/isystem_c.h>
@@ -252,10 +252,10 @@ uint8_t ui8_localDummyWorkState;
 uint32_t ui32_localDummyApplicationRate;
 
 /** dummy function to decide on acceptance of received setpoint */
-bool localIsAcceptableWorkState( const IsoAgLib::iDevKey_c& rc_deviceType, uint32_t rui32_setpointValue )
+bool localIsAcceptableWorkState( const IsoAgLib::iISOName_c& rc_deviceType, uint32_t rui32_setpointValue )
 { // just for demo - accept from other than device type 1 only values smaller than 255
 
-  if ( rc_deviceType.getDevClass() < 2 )
+  if ( rc_deviceType.devClass() < 2 )
   {
     ui8_localDummyWorkState = rui32_setpointValue;
     return true;
@@ -266,9 +266,9 @@ bool localIsAcceptableWorkState( const IsoAgLib::iDevKey_c& rc_deviceType, uint3
   }
 }
 
-bool localIsAcceptableApplicationRate( const IsoAgLib::iDevKey_c& rc_deviceType, uint32_t rui32_setpointValue )
+bool localIsAcceptableApplicationRate( const IsoAgLib::iISOName_c& rc_deviceType, uint32_t rui32_setpointValue )
 { // just for demo - accept from other than device type 1 only values smaller than 255
-  if ( ( rc_deviceType.getDevClass() == 1 ) || ( rui32_setpointValue < 255 ) )
+  if ( ( rc_deviceType.devClass() == 1 ) || ( rui32_setpointValue < 255 ) )
   {
     ui32_localDummyApplicationRate = rui32_setpointValue;
     return true;
@@ -304,11 +304,11 @@ class MyProcDataHandler_c : public IsoAgLib::ProcessDataChangeHandler_c
     //! @param rb_change display if value change or if just new msg arrived, which could be important for handling
     virtual bool processSetpointSet(IsoAgLib::EventSource_c rc_src,
                                     int32_t ri32_val,
-                                    const IsoAgLib::iDevKey_c& rc_setpointSender,
+                                    const IsoAgLib::iISOName_c& rc_setpointSender,
                                     bool rb_change);
 };
 
-bool MyProcDataHandler_c::processSetpointSet(IsoAgLib::EventSource_c rc_src, int32_t ri32_val, const IsoAgLib::iDevKey_c& rc_setpointSender, bool rb_change)
+bool MyProcDataHandler_c::processSetpointSet(IsoAgLib::EventSource_c rc_src, int32_t ri32_val, const IsoAgLib::iISOName_c& rc_setpointSender, bool rb_change)
 {
 
   if ( ! rb_change )
@@ -372,7 +372,7 @@ int main()
                                          s_workStateElementDDI,
                                          scui16_workStateElementNumber,
 
-                                         myDeviceDevKey, 2, myDeviceDevKey, &myDeviceDevKey, true,
+                                         myDeviceISOName, 2, myDeviceISOName, &myDeviceISOName, true,
   #ifdef USE_EEPROM_IO
                                          0xFFFF,
   #endif
@@ -383,7 +383,7 @@ int main()
                                                s_applicationRateElementDDI,
                                                scui16_applicationRateElementNumber,
 
-                                               myDeviceDevKey, 2, myDeviceDevKey, &myDeviceDevKey, true,
+                                               myDeviceISOName, 2, myDeviceISOName, &myDeviceISOName, true,
   #ifdef USE_EEPROM_IO
                                                0xFFFF,
   #endif

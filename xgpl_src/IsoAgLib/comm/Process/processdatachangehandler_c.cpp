@@ -107,11 +107,11 @@ iProcDataRemoteSimpleSetpointSimpleMeasureCombined_c* EventSource_c::makeIProcDa
   *  sent a new setpoint value)
   * @param rc_src general event source class, which provides conversion functions to get needed event source class
   * @param ri32_val new value, which caused the event (for immediate access)
-  * @param rc_callerDevKey DevKey of calling device - i.e. which sent new setpoint
+  * @param rc_callerISOName ISOName of calling device - i.e. which sent new setpoint
   * @return true -> handler class reacted on change event
   */
 bool ProcessDataChangeHandler_c::processSetpointSet( EventSource_c /* rc_src is intentionally unused in base class */, int32_t /* ri32_val is intentionally unused in base class */,
-                                                     const iDevKey_c& /* rc_callerDevKey is intentionally unused in base class */, bool /* rb_change is intentionally unused in base class */ ) {
+                                                     const iISOName_c& /* rc_callerISOName is intentionally unused in base class */, bool /* rb_change is intentionally unused in base class */ ) {
   // empty body -> allow application class to just implement some of the possible handler methods
   return false;
 }
@@ -119,11 +119,11 @@ bool ProcessDataChangeHandler_c::processSetpointSet( EventSource_c /* rc_src is 
 /** react on measurement reset from external system for local process data
   * @param rc_src general event source class, which provides conversion functions to get needed event source class
   * @param ri32_val new value, which caused the event (for immediate access)
-  * @param rc_callerDevKey DevKey of calling device - i.e. which sent new setpoint
+  * @param rc_callerISOName ISOName of calling device - i.e. which sent new setpoint
   * @return true -> handler class reacted on change event
   */
 bool ProcessDataChangeHandler_c::processMeasurementReset( EventSource_c /* rc_src is intentionally unused in base class */, int32_t /* ri32_val is intentionally unused in base class */,
-                                                          const iDevKey_c& /* rc_callerDevKey is intentionally unused in base class */ ) {
+                                                          const iISOName_c& /* rc_callerISOName is intentionally unused in base class */ ) {
   // empty body -> allow application class to just implement some of the possible handler methods
   return false;
 }
@@ -133,11 +133,11 @@ bool ProcessDataChangeHandler_c::processMeasurementReset( EventSource_c /* rc_sr
   *  during active measurement programm)
   * @param rc_src general event source class, which provides conversion functions to get needed event source class
   * @param ri32_val new value, which caused the event (for immediate access)
-  * @param rc_callerDevKey DevKey of calling device - i.e. which sent new setpoint
+  * @param rc_callerISOName ISOName of calling device - i.e. which sent new setpoint
   * @return true -> handler class reacted on change event
   */
 bool ProcessDataChangeHandler_c::processMeasurementUpdate( EventSource_c /* rc_src is intentionally unused in base class */, int32_t /* ri32_val is intentionally unused in base class */,
-                                                           const iDevKey_c& /* rc_callerDevKey is intentionally unused in base class */, bool /* rb_change is intentionally unused in base class */ ) {
+                                                           const iISOName_c& /* rc_callerISOName is intentionally unused in base class */, bool /* rb_change is intentionally unused in base class */ ) {
   // empty body -> allow application class to just implement some of the possible handler methods
   return false;
 }
@@ -148,11 +148,11 @@ bool ProcessDataChangeHandler_c::processMeasurementUpdate( EventSource_c /* rc_s
   *  during active measurement programm)
   * @param rc_src general event source class, which provides conversion functions to get needed event source class
   * @param rf_val new value, which caused the event (for immediate access)
-  * @param rc_callerDevKey DevKey of calling device - i.e. which sent new setpoint
+  * @param rc_callerISOName ISOName of calling device - i.e. which sent new setpoint
   * @return true -> handler class reacted on change event
   */
 bool ProcessDataChangeHandler_c::processMeasurementUpdate( EventSource_c /* rc_src is intentionally unused in base class */, float /* rf_val is intentionally unused in base class */,
-                                                           const iDevKey_c& /* rc_callerDevKey is intentionally unused in base class */, bool /* rb_change is intentionally unused in base class */ ) {
+                                                           const iISOName_c& /* rc_callerISOName is intentionally unused in base class */, bool /* rb_change is intentionally unused in base class */ ) {
   // empty body -> allow application class to just implement some of the possible handler methods
   return false;
 }
@@ -163,11 +163,11 @@ bool ProcessDataChangeHandler_c::processMeasurementUpdate( EventSource_c /* rc_s
   *  new setpoint; commanded manager of process data sent the response with ACK/NACK)
   * @param rc_src general event source class, which provides conversion functions to get needed event source class
   * @param ri32_val new value, which caused the event (for immediate access)
-  * @param rc_callerDevKey DevKey of calling device - i.e. which sent new setpoint
+  * @param rc_callerISOName ISOName of calling device - i.e. which sent new setpoint
   * @return true -> handler class reacted on change event
   */
 bool ProcessDataChangeHandler_c::processSetpointResponse( EventSource_c /* rc_src is intentionally unused in base class */, int32_t /* ri32_val is intentionally unused in base class */,
-                                                          const iDevKey_c& /* rc_callerDevKey is intentionally unused in base class */ ) {
+                                                          const iISOName_c& /* rc_callerISOName is intentionally unused in base class */ ) {
   // empty body -> allow application class to just implement some of the possible handler methods
   return false;
 }
@@ -176,11 +176,11 @@ bool ProcessDataChangeHandler_c::processSetpointResponse( EventSource_c /* rc_sr
   * (can be used to start measurement programms in local process data instances)
   * @param rc_src general event source class, which provides conversion functions to get needed event source class
   * @param ri32_val new value, which caused the event (for immediate access)
-  * @param rc_callerDevKey DevKey of calling device - i.e. which sent new setpoint
+  * @param rc_callerISOName ISOName of calling device - i.e. which sent new setpoint
   * @return true -> handler class reacted on change event
   */
 bool ProcessDataChangeHandler_c::processDefaultLoggingStart( EventSource_c /* rc_src is intentionally unused in base class */, int32_t /* ri32_val is intentionally unused in base class */,
-                                                             const iDevKey_c& /* rc_callerDevKey is intentionally unused in base class */ ) {
+                                                             const iISOName_c& /* rc_callerISOName is intentionally unused in base class */ ) {
   // empty body -> allow application class to just implement some of the possible handler methods
   return false;
 }

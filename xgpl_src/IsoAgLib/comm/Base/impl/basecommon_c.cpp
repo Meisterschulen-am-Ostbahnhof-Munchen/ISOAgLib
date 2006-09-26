@@ -136,10 +136,10 @@ void BaseCommon_c::close( )
     above all create the needed FilterBox_c instances
     possible errors:
       * dependant error in CANIO_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
-    @param rpc_devKey optional pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
+    @param rpc_isoName optional pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
     @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
   */
-void BaseCommon_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_identMode)
+void BaseCommon_c::init(const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode)
 {
   // first register in Scheduler_c
   getSchedulerInstance4Comm().registerClient( this );
@@ -151,27 +151,27 @@ void BaseCommon_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
   }
 
   // set configure values with call for config
-  config(rpc_devKey, rt_identMode);
+  config(rpc_isoName, rt_identMode);
 
   // clear state of b_alreadyClosed, so that close() is called one time
   clearAlreadyClosed();
 };
 
-/** config tractor object after init --> store devKey and mode
-    @param rpc_devKey pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
+/** config tractor object after init --> store isoName and mode
+    @param rpc_isoName pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
     @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
     @return true -> configuration was successfull
   */
-bool BaseCommon_c::config(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_identMode)
+bool BaseCommon_c::config(const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode)
 {
   if (   rt_identMode == IsoAgLib::IdentModeTractor
-      && rpc_devKey == NULL
+      && rpc_isoName == NULL
      )
-  { // the application is in tractor mode but has no valid devKey
-    // IMPORTANT: if we are in tractor mode we MUST have a valid devKey otherwise the configuration makes no sense
+  { // the application is in tractor mode but has no valid isoName
+    // IMPORTANT: if we are in tractor mode we MUST have a valid isoName otherwise the configuration makes no sense
     #ifdef DEBUG
-      INTERNAL_DEBUG_DEVICE << "CONFIG FAILURE. The config function was called with devKey == NULL and\
-                                IdentModeTractor. Is is not allowed that the devKey ist NULL in combination\
+      INTERNAL_DEBUG_DEVICE << "CONFIG FAILURE. The config function was called with isoName == NULL and\
+                                IdentModeTractor. Is is not allowed that the isoName ist NULL in combination\
                                 with tractor mode."
                             << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
@@ -182,31 +182,31 @@ bool BaseCommon_c::config(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_i
     return false;
   }
   // set configure values
-  pc_devKey = rpc_devKey; // store the pointer in any case
+  pc_isoName = rpc_isoName; // store the pointer in any case
   setMode(rt_identMode);
 
   // set the timestamps to 0
   i32_lastMsgReceived = 0;
 
-  //setSelectedDataSourceDevKey is only used in tractor mode
+  //setSelectedDataSourceISOName is only used in tractor mode
   if (rt_identMode == IsoAgLib::IdentModeTractor)
   {
-    c_selectedDataSourceDevKey = *rpc_devKey;
+    c_selectedDataSourceISOName = *rpc_isoName;
   }
   else
   { //implement mode
-    c_selectedDataSourceDevKey.setUnspecified();
+    c_selectedDataSourceISOName.setUnspecified();
   }
   return true;
 }
 
 /** check if a received message should be parsed */
-bool BaseCommon_c::checkParseReceived(const DevKey_c& rrefc_currentSender) const
+bool BaseCommon_c::checkParseReceived(const ISOName_c& rrefc_currentSender) const
 {
   return ( checkMode(IsoAgLib::IdentModeImplement) // I'm not the sender
             && ( // one of the following conditions must be true
-                   (c_selectedDataSourceDevKey == rrefc_currentSender  ) // actual sender equivalent to last
-                || (c_selectedDataSourceDevKey.isUnspecified()         ) // last sender has not correctly claimed address member
+                   (c_selectedDataSourceISOName == rrefc_currentSender  ) // actual sender equivalent to last
+                || (c_selectedDataSourceISOName.isUnspecified()         ) // last sender has not correctly claimed address member
                )
           )?true:false;
 }
@@ -233,13 +233,13 @@ bool BaseCommon_c::timeEvent()
   // sending node stopped sending -> other nodes can now step in
   if (  checkMode(IsoAgLib::IdentModeImplement)
         &&(lastedTimeSinceUpdate() >= TIMEOUT_SENDING_NODE )
-        && (c_selectedDataSourceDevKey.isSpecified())    )
+        && (c_selectedDataSourceISOName.isSpecified())    )
   { // the previously sending node didn't send the information for 3 seconds -> give other items a chance
-    c_selectedDataSourceDevKey.setUnspecified();
+    c_selectedDataSourceISOName.setUnspecified();
   }
 
-  if ( ( getDevKey() != NULL )
-    && (!getIsoMonitorInstance4Comm().existLocalIsoMemberDevKey(*getDevKey(), true)) )
+  if ( ( getISOName() != NULL )
+    && (!getIsoMonitorInstance4Comm().existLocalIsoMemberISOName(*getISOName(), true)) )
   { // local dev key for sending is registrated, but it is not yet fully claimed
     // --> nothing to do
     return true;
@@ -249,8 +249,8 @@ bool BaseCommon_c::timeEvent()
   if ( checkMode(IsoAgLib::IdentModeTractor) )
   { // all tractor mode timeEvent() functions have the only target to send messages,
     // now:
-    // 1) getDevKey() != NULL
-    // 2) getIsoMonitorInstance4Comm().existLocalIsoMemberDevKey(*getDevKey(), true) indicates, that a corresponding
+    // 1) getISOName() != NULL
+    // 2) getSystemMgmtInstance4Comm().existLocalMemberISOName(*getISOName(), true) indicates, that a corresponding
     //    item has already performed its address claim
     // ==> we can directly call sending time event in this case
     bool b_result = true;
@@ -260,7 +260,7 @@ bool BaseCommon_c::timeEvent()
   }
   else
   { // we are in implement mode
-    // call this function also if devKey == NULL, because some functions do settings which are independent from devKey
+    // call this function also if isoName == NULL, because some functions do settings which are independent from isoName
     if ( !timeEventImplMode()) return false;
   }
 
@@ -300,10 +300,10 @@ bool BaseCommon_c::sendPgnRequest(uint32_t ui32_requestedPGN)
   }
 
   // now check and retrieve the target
-  if ( ( getSelectedDataSourceDevKeyConst().isSpecified() )
-    && ( getIsoMonitorInstance4Comm().existIsoMemberDevKey( getSelectedDataSourceDevKeyConst(), true ) ) )
+  if ( ( getSelectedDataSourceISONameConst().isSpecified() )
+    && ( getIsoMonitorInstance4Comm().existIsoMemberISOName( getSelectedDataSourceISONameConst(), true ) ) )
   { // we have a valid tractor data source, that can be asked directly
-    data().setDevKeyForDA( getSelectedDataSourceDevKeyConst() );
+    data().setISONameForDA( getSelectedDataSourceISONameConst() );
   }
   else
   { // there is no selected tractor registered --> ask to global
@@ -324,14 +324,14 @@ bool BaseCommon_c::sendPgnRequest(uint32_t ui32_requestedPGN)
   */
 bool BaseCommon_c::check4ReqForPgn(uint32_t /* rui32_pgn */, uint8_t /*rui8_sa*/, uint8_t rui8_da)
 {
-  if ( NULL == getDevKey() ) return false;
-  if ( ! getIsoMonitorInstance4Comm().existIsoMemberDevKey( *getDevKey(), true ) ) return false;
+  if ( NULL == getISOName() ) return false;
+  if ( ! getIsoMonitorInstance4Comm().existIsoMemberISOName( *getISOName(), true ) ) return false;
 
   // now we can be sure, that we are in tractor mode, and the registered tractor device key
   // belongs to an already claimed IsoItem_c --> we are allowed to send
-  if ( ( getIsoMonitorInstance4Comm().isoMemberDevKey( *getDevKey() ).nr() == rui8_da ) || ( rui8_da == 0xFF ) )
+  if ( ( getIsoMonitorInstance4Comm().isoMemberISOName( *getISOName() ).nr() == rui8_da ) || ( rui8_da == 0xFF ) )
   { // the REQUEST was directed to the SA that belongs to the tractor IdentItem_c that is matched by the registrated
-    // DevKey_c (getDevKey())
+    // ISOName_c (getISOName())
     return true;
   }
   else

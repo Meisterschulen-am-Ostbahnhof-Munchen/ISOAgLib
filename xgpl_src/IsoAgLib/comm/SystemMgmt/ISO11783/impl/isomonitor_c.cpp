@@ -164,7 +164,7 @@ void ISOMonitor_c::init( void )
     vec_isoMember.clear();
     pc_isoMemberCache = vec_isoMember.end();
     i32_lastSaRequest = -1; // not yet requested. Do NOT use 0, as the first "setLastRequest()" could (and does randomly) occur at time0 as it's called at init() time.
-    c_tempIsoMemberItem.set( 0, DevKey_c::DevKeyUnspecified, 0xFE, IState_c::Active,
+    c_tempIsoMemberItem.set( 0, ISOName_c::ISONameUnspecified, 0xFE, IState_c::Active,
             0xFFFF, getSingletonVecKey() );
 
     // clear state of b_alreadyClosed, so that close() is called one time AND no more init()s are performed!
@@ -340,7 +340,7 @@ uint8_t ISOMonitor_c::isoMemberEcuTypeCnt (ISOName_c::ecuType_t r_ecuType, bool 
   uint8_t b_result = 0;
   for (Vec_ISOIterator pc_iter = vec_isoMember.begin() ; pc_iter != vec_isoMember.end(); pc_iter++)
   {
-    if ( ((pc_iter->devKey().getConstName().getEcuType() == r_ecuType))
+    if ( ((pc_iter->isoName(). getEcuType() == r_ecuType))
       && (!rb_forceClaimedAddress || pc_iter->itemState(IState_c::ClaimedAddress)) )
     {
       b_result++;
@@ -369,7 +369,7 @@ ISOItem_c& ISOMonitor_c::isoMemberEcuTypeInd (ISOName_c::ecuType_t r_ecuType, ui
   int8_t c_cnt = -1;
   for (Vec_ISOIterator pc_iter  = vec_isoMember.begin() ; pc_iter != vec_isoMember.end(); pc_iter++)
   {
-    if ( ((pc_iter->devKey().getConstName().getEcuType()) == r_ecuType)
+    if ( ((pc_iter->isoName(). getEcuType()) == r_ecuType)
       && (!rb_forceClaimedAddress || pc_iter->itemState(IState_c::ClaimedAddress)) )
     {
       c_cnt++;
@@ -400,8 +400,8 @@ uint8_t ISOMonitor_c::isoMemberDevClassCnt(uint8_t rui8_devClass, bool rb_forceC
   uint8_t b_result = 0;
   for (Vec_ISOIterator pc_iter = vec_isoMember.begin() ; pc_iter != vec_isoMember.end(); pc_iter++)
   {
-//    cerr << "Tested Member DevClass: " << int( pc_iter->devKey().getDevClass() ) << endl;
-    if ( ( ((pc_iter->devKey().getDevClass()) == rui8_devClass) || (rui8_devClass == 0xFF))
+//    cerr << "Tested Member DevClass: " << int( pc_iter->isoName().devClass() ) << endl;
+    if ( ( ((pc_iter->isoName().devClass()) == rui8_devClass) || (rui8_devClass == 0xFF))
       && (!rb_forceClaimedAddress || pc_iter->itemState(IState_c::ClaimedAddress)) )
     {
       b_result++;
@@ -430,7 +430,7 @@ ISOItem_c& ISOMonitor_c::isoMemberDevClassInd(uint8_t rui8_devClass, uint8_t rui
   int8_t c_cnt = -1;
   for (Vec_ISOIterator pc_iter  = vec_isoMember.begin() ; pc_iter != vec_isoMember.end(); pc_iter++)
   {
-    if ( ( ((pc_iter->devKey().getDevClass()) == rui8_devClass) || (rui8_devClass == 0xFF))
+    if ( ( ((pc_iter->isoName().devClass()) == rui8_devClass) || (rui8_devClass == 0xFF))
       && (!rb_forceClaimedAddress || pc_iter->itemState(IState_c::ClaimedAddress)) )
     {
       c_cnt++;
@@ -449,19 +449,19 @@ ISOItem_c& ISOMonitor_c::isoMemberDevClassInd(uint8_t rui8_devClass, uint8_t rui
   return *pc_isoMemberCache;
 }
 
-/** check if a memberItem with given DEV_KEY exist
+/** check if a memberItem with given ISOName exist
   which optional (!!) match the condition of address claim state
   and update local pc_isoMemberCache
-  @param rc_devKey searched DEV_KEY
+  @param rc_isoName searched ISOName
   @param rb_forceClaimedAddress true -> only members with claimed address are used
         (optional, default false)
   @return true -> searched member exist
 */
-bool ISOMonitor_c::existIsoMemberDevKey(const DevKey_c& rc_devKey, bool rb_forceClaimedAddress)
+bool ISOMonitor_c::existIsoMemberISOName(const ISOName_c& rc_isoName, bool rb_forceClaimedAddress)
 {
   if (!vec_isoMember.empty() && (pc_isoMemberCache != vec_isoMember.end()))
   {
-    if ( (pc_isoMemberCache->devKey() == rc_devKey )
+    if ( (pc_isoMemberCache->isoName() == rc_isoName )
       && (!rb_forceClaimedAddress || pc_isoMemberCache->itemState(IState_c::ClaimedAddress))
         )  return true;
   }
@@ -469,7 +469,7 @@ bool ISOMonitor_c::existIsoMemberDevKey(const DevKey_c& rc_devKey, bool rb_force
        pc_isoMemberCache != vec_isoMember.end();
        pc_isoMemberCache++)
   {
-    if ( (pc_isoMemberCache->devKey() == rc_devKey )
+    if ( (pc_isoMemberCache->isoName() == rc_isoName )
       && (!rb_forceClaimedAddress || pc_isoMemberCache->itemState(IState_c::ClaimedAddress))
         )  return true;
   }
@@ -498,29 +498,29 @@ bool ISOMonitor_c::existIsoMemberNr(uint8_t rui8_nr)
   return false;
 }
 
-/** check if member is in member list with wanted DEV_KEY,
+/** check if member is in member list with wanted ISOName,
   adapt instance if member with claimed address with other device class inst exist
-  @param refc_devKey DEV_KEY to search (-> it's updated if member with claimed address with other dev class inst is found)
-  @return true -> member with claimed address with given DEVCLASS found (and refc_devKey has now its DEV_KEY)
+  @param refc_isoName ISOName to search (-> it's updated if member with claimed address with other dev class inst is found)
+  @return true -> member with claimed address with given DEVCLASS found (and refc_isoName has now its ISOName)
 */
-bool ISOMonitor_c::isoDevClass2DevKeyClaimedAddress(DevKey_c &refc_devKey)
+bool ISOMonitor_c::isoDevClass2ISONameClaimedAddress(ISOName_c &refc_isoName)
 {
-  if (existIsoMemberDevKey(refc_devKey, true))
+  if (existIsoMemberISOName(refc_isoName, true))
   { // there exists a device with exact NAME in claimed address state
     return true;
   }
   else
-  { // no item with DEV_KEY found -> adapt POS
+  { // no item with ISOName found -> adapt POS
     // search for member with claimed address with same DEVCLASS
-    if (isoMemberDevClassCnt(refc_devKey.getDevClass(), true) > 0)
-    { // member with wanted device class exists -> store the DEVKEY
-      refc_devKey = isoMemberDevClassInd(refc_devKey.getDevClass(), 0, true).devKey();
+    if (isoMemberDevClassCnt(refc_isoName.devClass(), true) > 0)
+    { // member with wanted device class exists -> store the ISOName
+      refc_isoName = isoMemberDevClassInd(refc_isoName.devClass(), 0, true).isoName();
       return true;
     }
-    else if (isoMemberDevClassCnt(refc_devKey.getDevClass(), false) > 0)
-    { // member with wanted device class exists -> store the DEVKEY
-      refc_devKey = isoMemberDevClassInd(refc_devKey.getDevClass(), 0, false).devKey();
-      // even if a device with wanted DEVKEY exist - it is not claimed
+    else if (isoMemberDevClassCnt(refc_isoName.devClass(), false) > 0)
+    { // member with wanted device class exists -> store the ISOName
+      refc_isoName = isoMemberDevClassInd(refc_isoName.devClass(), 0, false).isoName();
+      // even if a device with wanted ISOName exist - it is not claimed
       return false;
     }
     else
@@ -535,27 +535,27 @@ bool ISOMonitor_c::isoDevClass2DevKeyClaimedAddress(DevKey_c &refc_devKey)
   possible errors:
     * badAlloc not enough memory to insert new ISOItem_c isntance
     * busy another member with same ident exists already in the list
-  @param rc_devKey DEV_KEY of the member
+  @param rc_isoName ISOName of the member
   @param rui8_nr member number
   @param rui16_saEepromAdr EEPROM adress to store actual SA -> next boot with same adr
   @param ren_status wanted status
   @return pointer to new ISOItem_c or NULL if not succeeded
 */
-ISOItem_c* ISOMonitor_c::insertIsoMember(const DevKey_c& rc_devKey,
+ISOItem_c* ISOMonitor_c::insertIsoMember(const ISOName_c& rc_isoName,
       uint8_t rui8_nr, IState_c::itemState_t ren_state, uint16_t rui16_saEepromAdr)
 {
   ISOItem_c* pc_result = NULL;
 
-  // check if another ISOItem_c with same DEV_KEY already exist
-  if (existIsoMemberDevKey(rc_devKey))
-  { // another member with same DEV_KEY found
+  // check if another ISOItem_c with same ISOName already exist
+  if (existIsoMemberISOName(rc_isoName))
+  { // another member with same ISOName found
     getLbsErrInstance().registerError( LibErr_c::Busy, LibErr_c::LbsSystem );
     return NULL; // don't insert
   }
 
   // FROM NOW ON WE DECIDE TO (TRY TO) CREATE A NEW ISOItem_c
   // prepare temp item with wanted data
-  c_tempIsoMemberItem.set(System_c::getTime(), rc_devKey, rui8_nr,
+  c_tempIsoMemberItem.set(System_c::getTime(), rc_isoName, rui8_nr,
       IState_c::itemState_t(ren_state | IState_c::Member | IState_c::Iso | IState_c::Active),
       rui16_saEepromAdr, getSingletonVecKey() );
 
@@ -595,7 +595,7 @@ uint8_t ISOMonitor_c::localIsoMemberCnt()
   uint8_t b_count = 0;
   for ( pc_searchCacheC1 = c_arrClientC1.begin(); ( pc_searchCacheC1 != c_arrClientC1.end() ); pc_searchCacheC1++ )
   {  // increase reult count if local ident is already registered in MemberList
-    if ( existIsoMemberDevKey( (*pc_searchCacheC1)->devKey(), false ) ) b_count++;
+    if ( existIsoMemberISOName( (*pc_searchCacheC1)->isoName(), false ) ) b_count++;
   }
   return b_count;
 }
@@ -605,7 +605,7 @@ uint8_t ISOMonitor_c::localIsoMemberCnt()
     @param rui8_ind index of wanted member (first item == 0)
     @return reference to wanted local member MonitorItem
       (MonitorItem_c is base class of ISOItem_c which serves
-      adress, devKey, itemState)
+      adress, isoName, itemState)
     @return pointer to wanted local iso member (NULL if no suitable IsoItem_c found)
  */
 ISOItem_c& ISOMonitor_c::localIsoMemberInd(uint8_t rui8_ind)
@@ -614,11 +614,11 @@ ISOItem_c& ISOMonitor_c::localIsoMemberInd(uint8_t rui8_ind)
   uint8_t b_count = 0;
   for ( pc_searchCacheC1 = c_arrClientC1.begin(); ( pc_searchCacheC1 != c_arrClientC1.end() ); pc_searchCacheC1++ )
   {  // increase reult count if local ident is already registered in MemberList
-    if ( existIsoMemberDevKey( (*pc_searchCacheC1)->devKey(), false ) )
+    if ( existIsoMemberISOName( (*pc_searchCacheC1)->isoName(), false ) )
     {
       if (b_count == rui8_ind)
       { // wanted item found
-        pc_result = &( isoMemberDevKey( (*pc_searchCacheC1)->devKey(), false ) );
+        pc_result = &( isoMemberISOName( (*pc_searchCacheC1)->isoName(), false ) );
         break;
       }
       b_count++;
@@ -639,25 +639,25 @@ bool ISOMonitor_c::existActiveLocalIsoMember()
   if ((pc_activeLocalMember == NULL)
        || (!pc_activeLocalMember->itemState(IState_c::ClaimedAddress)))
   { // the actual cache pointer isn't correct -> search new one
-    const DevKey_c *pc_useDevKey = NULL;
+    const ISOName_c *pc_useISOName = NULL;
     ISOItem_c* pc_monitorItem = NULL;
 
     for ( pc_searchCacheC1 = c_arrClientC1.begin(); ( pc_searchCacheC1 != c_arrClientC1.end() ); pc_searchCacheC1++ )
     {
       if ((*pc_searchCacheC1)->itemState(IState_c::ClaimedAddress))
       {
-        if (existIsoMemberDevKey((*pc_searchCacheC1)->devKey(), true ))
+        if (existIsoMemberISOName((*pc_searchCacheC1)->isoName(), true ))
         {
-          pc_monitorItem = &(isoMemberDevKey((*pc_searchCacheC1)->devKey(), true));
+          pc_monitorItem = &(isoMemberISOName((*pc_searchCacheC1)->isoName(), true));
           if (pc_monitorItem->itemState(IState_c::itemState_t(IState_c::ClaimedAddress | IState_c::Local)))
           {
-            pc_useDevKey = &((*pc_searchCacheC1)->devKey());
+            pc_useISOName = &((*pc_searchCacheC1)->isoName());
             break;
           } // end if claimed address and local
-        } // end if existMemberDevKey
+        } // end if existMemberISOName
       } // end if ident_item has claimed address
     } // searching for loop
-    if (pc_useDevKey != NULL)
+    if (pc_useISOName != NULL)
     { // active own identity found
       b_result = true;
       pc_activeLocalMember = pc_monitorItem;
@@ -682,7 +682,7 @@ bool ISOMonitor_c::existActiveLocalIsoMember()
  * lbsSysNoActiveLocalMember on missing own active ident
     @return reference to the MonitorItem_c of the first active local member
       (MonitorItem_c is bas class of both ISOItem_c or DINItem_c which serves
-      adress, devKey, itemState)
+      adress, isoName, itemState)
     @exception preconditionViolation
  */
 ISOItem_c& ISOMonitor_c::getActiveLocalIsoMember()
@@ -699,7 +699,7 @@ ISOItem_c& ISOMonitor_c::getActiveLocalIsoMember()
     THROW_PRECOND_VIOLATION
 
     //return reference to the first ident in IsoMonitor_c
-    return isoMemberDevKey(c_arrClientC1.front()->devKey(), true);
+    return isoMemberISOName(c_arrClientC1.front()->isoName(), true);
   }
 }
 
@@ -727,15 +727,15 @@ bool ISOMonitor_c::existLocalIsoMemberNr(uint8_t rui8_nr)
   }
 }
 
-/** check for own din ident with given DEV_KEY
-    @param rc_devKey DEV_KEY to search for
-    @return true -> one of the own din identities has the wanted DEV_KEY
+/** check for own din ident with given ISOName
+    @param rc_isoName ISOName to search for
+    @return true -> one of the own din identities has the wanted ISOName
  */
-bool ISOMonitor_c::existLocalIsoMemberDevKey (const DevKey_c& rc_devKey, bool rb_forceClaimedAddress)
+bool ISOMonitor_c::existLocalIsoMemberISOName (const ISOName_c& rc_isoName, bool rb_forceClaimedAddress)
 {
   if ( (!c_arrClientC1.empty()) && (pc_searchCacheC1 != c_arrClientC1.end()) )
   { // try to use current cache as it points to valid entry
-    if ( ((*pc_searchCacheC1)->devKey() == rc_devKey )
+    if ( ((*pc_searchCacheC1)->isoName() == rc_isoName )
             && (!rb_forceClaimedAddress || (*pc_searchCacheC1)->itemState(IState_c::ClaimedAddress))
        )  return true;
   }
@@ -743,7 +743,7 @@ bool ISOMonitor_c::existLocalIsoMemberDevKey (const DevKey_c& rc_devKey, bool rb
   for (pc_searchCacheC1 = c_arrClientC1.begin();
        pc_searchCacheC1 != c_arrClientC1.end(); pc_searchCacheC1++)
   {
-    if ( ((*pc_searchCacheC1)->devKey() == rc_devKey )
+    if ( ((*pc_searchCacheC1)->isoName() == rc_isoName )
             && (!rb_forceClaimedAddress || (*pc_searchCacheC1)->itemState(IState_c::ClaimedAddress))
        )  return true;
   }
@@ -754,18 +754,18 @@ bool ISOMonitor_c::existLocalIsoMemberDevKey (const DevKey_c& rc_devKey, bool rb
 /** reset the Addres Claim state by:
   * + reset IdentItem::IStat_c to IState_c::PreAddressClaim
   * + remove pointed ISOItem_c and DINItem_c nodes and the respective pointer
-  * @return true -> there was an item with given DevKey_c that has been resetted to IState_c::PreAddressClaim
+  * @return true -> there was an item with given ISOName_c that has been resetted to IState_c::PreAddressClaim
  */
-bool ISOMonitor_c::restartAddressClaim( const DevKey_c& rrefc_devKey )
+bool ISOMonitor_c::restartAddressClaim( const ISOName_c& rrefc_isoName )
 {
-  if ( existLocalIsoMemberDevKey( rrefc_devKey, false ) )
-  { // there exists a local IdentItem_c with the given DevKey_c
+  if ( existLocalIsoMemberISOName( rrefc_isoName, false ) )
+  { // there exists a local IdentItem_c with the given ISOName_c
     // -> forward the function call
     (*pc_searchCacheC1)->restartAddressClaim();
     return true;
   }
   else
-  { // no local item has same DevKey_c
+  { // no local item has same ISOName_c
     return false;
   }
 }
@@ -801,34 +801,35 @@ ISOMonitor_c::deregisterSaClaimHandler (SaClaimHandler_c* rpc_client)
 }
 
 /** this function is used to broadcast a ISO monitor list change to all registered clients */
-void ISOMonitor_c::broadcastSaAdd2Clients( const DevKey_c& rc_devKey, const ISOItem_c* rpc_isoItem ) const
+void ISOMonitor_c::broadcastSaAdd2Clients( const ISOName_c& rc_isoName, const ISOItem_c* rpc_isoItem ) const
 {
   for ( SaClaimHandlerVectorConstIterator_t iter = vec_saClaimHandler.begin(); iter != vec_saClaimHandler.end(); iter++ )
   { // call the handler function of the client
-    (*iter)->reactOnMonitorListAdd( rc_devKey, rpc_isoItem );
+    (*iter)->reactOnMonitorListAdd( rc_isoName, rpc_isoItem );
   }
 }
 
 /** this function is used to broadcast a ISO monitor list change to all registered clients */
-void ISOMonitor_c::broadcastSaRemove2Clients( const DevKey_c& rc_devKey, uint8_t rui8_oldSa ) const
+void ISOMonitor_c::broadcastSaRemove2Clients( const ISOName_c& rc_isoName, uint8_t rui8_oldSa ) const
 {
   for ( SaClaimHandlerVectorConstIterator_t iter = vec_saClaimHandler.begin(); iter != vec_saClaimHandler.end(); iter++ )
   { // call the handler function of the client
-    (*iter)->reactOnMonitorListRemove( rc_devKey, rui8_oldSa );
+    (*iter)->reactOnMonitorListRemove( rc_isoName, rui8_oldSa );
   }
 }
 
-/** deliver member item with given devKey
-  (check with existIsoMemberDevKey before access to not defined item)
+/**
+  deliver member item with given isoName
+  (check with existIsoMemberISOName before access to not defined item)
   possible errors:
     * elNonexistent on failed search
-  @param rc_devKey searched DEV_KEY
+  @param rc_isoName searched ISOName
   @return reference to searched ISOItem
   @exception containerElementNonexistant
 */
-ISOItem_c& ISOMonitor_c::isoMemberDevKey(const DevKey_c& rc_devKey, bool rb_forceClaimedAddress)
+ISOItem_c& ISOMonitor_c::isoMemberISOName(const ISOName_c& rc_isoName, bool rb_forceClaimedAddress)
 {
-  if (existIsoMemberDevKey(rc_devKey, rb_forceClaimedAddress))
+  if (existIsoMemberISOName(rc_isoName, rb_forceClaimedAddress))
   { // no error
     return static_cast<ISOItem_c&>(*pc_isoMemberCache);
   }
@@ -870,16 +871,16 @@ ISOItem_c& ISOMonitor_c::isoMemberNr(uint8_t rui8_nr)
   }
 }
 
-/** deliver member item with given DEV_KEY, set pointed bool var to true on success
+/** deliver member item with given ISOName, set pointed bool var to true on success
   and set a Member Array Iterator to the result
-  @param rc_devKey searched DEV_KEY
+  @param rc_isoName searched ISOName
   @param pb_success bool pointer to store the success (true on success)
   @param pbc_iter optional member array iterator which points to searched ISOItem_c on success
   @return reference to the searched item
 */
-ISOItem_c& ISOMonitor_c::isoMemberDevKey(const DevKey_c& rc_devKey, bool *const pb_success, bool rb_forceClaimedAddress, Vec_ISOIterator *const pbc_iter)
+ISOItem_c& ISOMonitor_c::isoMemberISOName(const ISOName_c& rc_isoName, bool *const pb_success, bool rb_forceClaimedAddress, Vec_ISOIterator *const pbc_iter)
 {
-  *pb_success = (existIsoMemberDevKey(rc_devKey, rb_forceClaimedAddress))?true:false;
+  *pb_success = (existIsoMemberISOName(rc_isoName, rb_forceClaimedAddress))?true:false;
 
   if (pbc_iter != NULL)
   {
@@ -888,14 +889,15 @@ ISOItem_c& ISOMonitor_c::isoMemberDevKey(const DevKey_c& rc_devKey, bool *const 
   return static_cast<ISOItem_c&>(*pc_isoMemberCache);
 }
 
-/** delete item with specified devKey
+/**
+  delete item with specified isoName
   possible errors:
-    * elNonexistent no member with given DEV_KEY exists
-  @param rc_devKey DEV_KEY of to be deleted member
+    * elNonexistent no member with given ISOName exists
+  @param rc_isoName ISOName of to be deleted member
 */
-bool ISOMonitor_c::deleteIsoMemberDevKey(const DevKey_c& rc_devKey)
+bool ISOMonitor_c::deleteIsoMemberISOName(const ISOName_c& rc_isoName)
 {
-  if (existIsoMemberDevKey(rc_devKey))
+  if (existIsoMemberISOName(rc_isoName))
   { // set correct state
 
     #ifdef USE_WORKING_SET
@@ -906,7 +908,7 @@ bool ISOMonitor_c::deleteIsoMemberDevKey(const DevKey_c& rc_devKey)
     }
     #endif
 
-    // erase it from list (existIsoMemberDevKey sets pc_isoMemberCache to the wanted item)
+    // erase it from list (existIsoMemberISOName sets pc_isoMemberCache to the wanted item)
     vec_isoMember.erase(pc_isoMemberCache);
     #ifdef DEBUG_HEAP_USEAGE
     sui16_isoItemTotal--;
@@ -923,7 +925,7 @@ bool ISOMonitor_c::deleteIsoMemberDevKey(const DevKey_c& rc_devKey)
     return true;
   }
   else
-  { // to be deleted member DEV_KEY does not exist
+  { // to be deleted member ISOName does not exist
     getLbsErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::LbsSystem );
     return false;
   }
@@ -931,14 +933,14 @@ bool ISOMonitor_c::deleteIsoMemberDevKey(const DevKey_c& rc_devKey)
 
 /** delete item with specified member number
   possible errors:
-    * elNonexistent no member with given DEV_KEY exists
+    * elNonexistent no member with given ISOName exists
   @param rui8_nr SA of to be deleted member
 */
 bool ISOMonitor_c::deleteIsoMemberNr(uint8_t rui8_nr)
 {
   if (existIsoMemberNr(rui8_nr))
-  { // use deleteIsoMemberDevKey
-    return deleteIsoMemberDevKey(pc_isoMemberCache->devKey());
+  { // use deleteIsoMemberISOName
+    return deleteIsoMemberISOName(pc_isoMemberCache->isoName());
   }
   else
   { // to be deleted member number does not exist
@@ -947,41 +949,42 @@ bool ISOMonitor_c::deleteIsoMemberNr(uint8_t rui8_nr)
   }
 }
 
-/** change devKey if actual devKey isn't unique
+
+/**
+  change isoName if actual isoName isn't unique
   (search possible free instance to given device class)
   possible errors:
-    * busy no other device class inst code leads to unique DEV_KEY code
-  @param refc_devKey reference to DEV_KEY var (is changed directly if needed!!)
-  @return true -> referenced DEV_KEY is now unique
+    * busy no other device class inst code leads to unique ISOName code
+  @param refc_isoName reference to ISOName var (is changed directly if needed!!)
+  @return true -> referenced ISOName is now unique
 */
-bool ISOMonitor_c::unifyIsoDevKey(DevKey_c& refc_devKey)
-{
+bool ISOMonitor_c::unifyIsoISOName(ISOName_c& refc_isoName){
   bool b_result = true;
-  DevKey_c c_tempDevKey = refc_devKey;
-  if (existIsoMemberDevKey(refc_devKey))
-  { // devKey exist -> search new with changed POS
-    b_result = false; // refc_devKey isn't unique
-    // store the pos part of given devKey
-    int16_t tempPos = (refc_devKey.getDevClassInst()),
+  ISOName_c c_tempISOName = refc_isoName;
+  if (existIsoMemberISOName(refc_isoName))
+  { // isoName exist -> search new with changed POS
+    b_result = false; // refc_isoName isn't unique
+    // store the pos part of given isoName
+    int16_t tempPos = (refc_isoName.devClassInst()),
         diff = 1;
     for (; diff < 8; diff++)
     {
       if (tempPos + diff < 8)
       {  // (tempPos + diff) would be an allowed device class inst code
-        c_tempDevKey.setDevClassInst( tempPos + diff );
-        if (!(existIsoMemberDevKey(c_tempDevKey)))
+        c_tempISOName.setDevClassInst( tempPos + diff );
+        if (!(existIsoMemberISOName(c_tempISOName)))
         {  // (tempPos + diff) can't be found in list -> it is unique
-          refc_devKey.setDevClassInst( tempPos + diff );
+          refc_isoName.setDevClassInst( tempPos + diff );
           b_result = true;
           break;
         }
       }
       if (tempPos - diff >= 0)
       { // (tempPos - diff) would be an allowed device class inst code
-        c_tempDevKey.setDevClassInst( tempPos - diff );
-        if (!(existIsoMemberDevKey(c_tempDevKey)))
+        c_tempISOName.setDevClassInst( tempPos - diff );
+        if (!(existIsoMemberISOName(c_tempISOName)))
         {  // (tempPos - diff) can't be found in list -> it is unique
-          refc_devKey.setDevClassInst( tempPos - diff );
+          refc_isoName.setDevClassInst( tempPos - diff );
           b_result = true;
           break;
         }
@@ -1118,27 +1121,30 @@ bool ISOMonitor_c::processMsg()
 {
   bool b_processed = false;
 
-  ISOItem_c *pc_item = NULL,
-            *pc_itemSameSa = NULL,
-            *pc_itemSameDevKey = NULL;
+  ISOItem_c *pc_itemSameSa = NULL,
+          #ifdef USE_WORKING_SET
+            *pc_item = NULL,
+          #endif
+            *pc_itemSameISOName = NULL;
+
 
   // Handle DESTINATION PGNs
   switch ((data().isoPgn() & 0x1FF00))
   {
     case ADRESS_CLAIM_PGN: // adress claim
-      if ( existIsoMemberDevKey( data().devKey()) )
+      if ( existIsoMemberISOName( data().isoName()) )
       {
-        pc_itemSameDevKey = &(isoMemberDevKey(data().devKey()));
+        pc_itemSameISOName = &(isoMemberISOName(data().isoName()));
       }
       if ( existIsoMemberNr(data().isoSa()) )
       {
         pc_itemSameSa = &(isoMemberNr(data().isoSa()));
       }
 
-      // FIRST REMOVE any REMOTE ISOItem_c with SAME SA but different DevKey_c
+      // FIRST REMOVE any REMOTE ISOItem_c with SAME SA but different ISOName_c
       if ( ( NULL != pc_itemSameSa                       )
         && ( ! pc_itemSameSa->itemState(IState_c::Local) )
-        && ( pc_itemSameSa->devKey() != data().devKey()  ) )
+        && ( pc_itemSameSa->isoName() != data().isoName()  ) )
       { // REMOVE the node that is pointed by pc_itemSameSa
         // - the destructor of the ISOItem_c informs all handlers about the loss
         deleteIsoMemberNr( data().isoSa() );
@@ -1146,18 +1152,18 @@ bool ISOMonitor_c::processMsg()
       }
 
       // SECOND: trigger total restart of ADR claim for any local ISOItem_c with
-      //         SAME DevKey_c
-      if ( ( NULL != pc_itemSameDevKey ) && ( pc_itemSameDevKey->itemState(IState_c::Local)) )
+      //         SAME ISOName_c
+      if ( ( NULL != pc_itemSameISOName ) && ( pc_itemSameISOName->itemState(IState_c::Local)) )
       { // in ANY case - when another node sends SA claim with same NAME we MUST restart
         // as nobody else on the network will detect the NAME clash
-        // - this restart triggers also the REMOVAL of the item pc_itemSameDevKey
+        // - this restart triggers also the REMOVAL of the item pc_itemSameISOName
         if ( ( NULL != pc_itemSameSa ) && ( pc_itemSameSa->itemState( IState_c::Local ) ) )
         { // there is also a SA conflict with a local ISOItem_c
-          if ( pc_itemSameSa != pc_itemSameDevKey )
+          if ( pc_itemSameSa != pc_itemSameISOName )
           { // the received adr claim overlaps two different local ISOItem_c --> restart BOTH
             // (even if pc_itemSameSa would have higher prio - this is needed, as the new remote item would be in conflict by SA with
             //  the currently existing local pc_itemSameSa )
-            getIsoMonitorInstance4Comm().restartAddressClaim( pc_itemSameSa->devKey() );
+            getIsoMonitorInstance4Comm().restartAddressClaim( pc_itemSameSa->isoName() );
           }
           // in case of sort of SA conflict with a local ISOItem_c, we must avoid a later reaction on this SA conflict
           // => set the pointer to NULL to indicate the handled conflict
@@ -1165,8 +1171,8 @@ bool ISOMonitor_c::processMsg()
         }
         // the case of a conflict on SA with a remote ISOItem_c is handled elsewhere as this block is only directed to handle
         // conflicts with LOCAL ISOItem_c
-        getIsoMonitorInstance4Comm().restartAddressClaim( pc_itemSameDevKey->devKey() );
-        pc_itemSameDevKey = NULL;
+        getIsoMonitorInstance4Comm().restartAddressClaim( pc_itemSameISOName->isoName() );
+        pc_itemSameISOName = NULL;
         // DO NOT set b_processed to true as the SA CLAIM shall trigger creation of fresh remote ISOItem_c
       }
 
@@ -1174,7 +1180,7 @@ bool ISOMonitor_c::processMsg()
       if ( ( NULL != pc_itemSameSa ) && ( pc_itemSameSa->itemState(IState_c::Local)) )
       { // there exists a LOCAL item with same SA
         // --> remove it when it has lower PRIO
-        int8_t i8_higherPrio = pc_itemSameSa->devKey().getConstName().higherPriThanPar(data().getDataUnionConst());
+        int8_t i8_higherPrio = pc_itemSameSa->isoName(). higherPriThanPar(data().getDataUnionConst());
         if ( ( i8_higherPrio < 0                              )
                // the local ISOItem_c should be overwritten by the received adr claim, when the local
                // item is not yet sent any adr claim (e.g. Off state or PreAddressClaim)
@@ -1182,7 +1188,7 @@ bool ISOMonitor_c::processMsg()
         { // the LOCAL item has lower PRIO or has not yet fully claimed --> remove it
           // the function SystemMgmt_c::restartAddressClaim() triggers removal of ISOItem_c
           // and registers the next address claim try afterwards
-          getIsoMonitorInstance4Comm().restartAddressClaim( pc_itemSameSa->devKey() );
+          getIsoMonitorInstance4Comm().restartAddressClaim( pc_itemSameSa->isoName() );
           pc_itemSameSa = NULL;
         }
         else
@@ -1198,21 +1204,21 @@ bool ISOMonitor_c::processMsg()
         }
       }
 
-      // FOUR handle case where remote node has SAME DevKey_c (i.e. NAME)
-      if ( ( NULL != pc_itemSameDevKey                       )
-        && ( ! pc_itemSameDevKey->itemState(IState_c::Local) )
+      // FOUR handle case where remote node has SAME ISOName_c (i.e. NAME)
+      if ( ( NULL != pc_itemSameISOName                       )
+        && ( ! pc_itemSameISOName->itemState(IState_c::Local) )
         && ( ! b_processed                                   ) ///< this message has not yet been processed
          )
-      { // there exists a REMOTE item with same DevKey_c
+      { // there exists a REMOTE item with same ISOName_c
         // --> simply let this item process
-        if ( pc_itemSameDevKey->processMsg() ) b_processed = true;
+        if ( pc_itemSameISOName->processMsg() ) b_processed = true;
       }
 
-      // create NEW ISOItem_c in case no ISOItem_c with Pkg.DevKey_c exists
+      // create NEW ISOItem_c in case no ISOItem_c with Pkg.ISOName_c exists
       // and the message has not yet been marked as processed
-      if ( ( NULL == pc_itemSameDevKey ) && ( ! b_processed ) )
+      if ( ( NULL == pc_itemSameISOName ) && ( ! b_processed ) )
       { // create a suitable ISOItem_c and let it process
-        ISOItem_c* pc_newItem = insertIsoMember(data().devKey(), data().isoSa(),
+        ISOItem_c* pc_newItem = insertIsoMember(data().isoName(), data().isoSa(),
                               IState_c::itemState_t(IState_c::AddressClaim));
         if ( NULL != pc_newItem )
         { // new entry has been created
@@ -1256,7 +1262,7 @@ bool ISOMonitor_c::processMsg()
         ISOItem_c *pc_itemMaster = &(isoMemberNr(data().isoSa()));
         // the working set master places the NAME field of each children
         // in the data part of this message type
-        pc_item = &(isoMemberDevKey(data().devKey()));
+        pc_item = &(isoMemberISOName(data().isoName()));
         pc_item->setMaster (pc_itemMaster); // set master on this isoItem
         b_processed = true;
       }

@@ -229,6 +229,7 @@
 #endif
 #ifdef USE_TRACTOR_GUIDANCE
   #define TEST_TRACGUIDANCE
+  #define TEST_TRACGUIDANCECOMMAND
 #endif
 
 // include the central interface header for the hardware adaptation layer part
@@ -236,7 +237,7 @@
 
 /* include some needed util headers */
 #include <IsoAgLib/util/config.h>
-#include <IsoAgLib/util/idevkey_c.h>
+#include <IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h>
 
 /* include headers for the needed drivers */
 #include <IsoAgLib/driver/system/isystem_c.h>
@@ -277,7 +278,9 @@
 #endif
 #ifdef TEST_TRACGUIDANCE
   #include <IsoAgLib/comm/Base/ext/itracguidance_c.h>
+  #include <IsoAgLib/comm/Base/ext/itracguidancecommand_c.h>
 #endif
+
 
 // the interface objects of the IsoAgLib are placed in the IsoAgLibAll namespace
 // -> include all elements of this area for easy access
@@ -501,11 +504,11 @@ int main()
   getIcanInstance().init( 0, 250 );
   // variable for DEV_KEY
   // default with primary cultivation mounted back
-  IsoAgLib::iDevKey_c myDevKey( 2, 0 );
+  IsoAgLib::iISOName_c myISOName( 2, 0 );
 
   // start address claim of the local member "IMI"
   // if DEV_KEY conflicts forces change of device class instance, the
-  // IsoAgLib can change the myDevKey val through the pointer to myDevKey
+  // IsoAgLib can change the myISOName val through the pointer to myISOName
   bool b_selfConf = true;
   uint8_t ui8_indGroup = 2,
       b_func = 25,
@@ -517,31 +520,31 @@ int main()
 
   // start address claim of the local member "IMI"
   // if DEV_KEY conflicts forces change of device class instance, the
-  // IsoAgLib can change the myDevKey val through the pointer to myDevKey
-  IsoAgLib::iIdentItem_c c_myIdent( &myDevKey,
+  // IsoAgLib can change the myISOName val through the pointer to myISOName
+  IsoAgLib::iIdentItem_c c_myIdent( &myISOName,
       b_selfConf, ui8_indGroup, b_func, ui16_manufCode,
       ui32_serNo, b_wantedSa, 0xFFFF, b_funcInst, b_ecuInst);
 
   #ifdef TEST_TRACTOR_LIGHTING
   // configure to send information for lighting on BUS
-  getITracLightInstance().config(&myDevKey, IsoAgLib::IdentModeImplement);
+  getITracLightInstance().config(&myISOName, IsoAgLib::IdentModeImplement);
   #endif
 
   #ifdef TEST_TRACPTOSETPOINT
   //pto set point commands are send from implement!!
-  getITracPtoSetPointInstance().config(&myDevKey, IsoAgLib::IdentModeImplement);
+  getITracPtoSetPointInstance().config(&myISOName, IsoAgLib::IdentModeImplement);
   #endif
 
   #ifdef TEST_TRACAUX
-  getITracAuxInstance().config(&myDevKey, IsoAgLib::IdentModeImplement);
+  getITracAuxInstance().config(&myISOName, IsoAgLib::IdentModeImplement);
   #endif
 
   #ifdef TEST_TRACGUIDANCE
-  getITracGuidanceInstance().config(&myDevKey, IsoAgLib::IdentModeImplement);
+  getITracGuidanceCommandInstance().config(&myISOName, IsoAgLib::IdentModeImplement);
   #endif
 
   #ifdef TEST_TRACMOVESETPOINT
-  getITracMoveSetPointInstance().config(&myDevKey, IsoAgLib::IdentModeImplement);
+  getITracMoveSetPointInstance().config(&myISOName, IsoAgLib::IdentModeImplement);
   #endif
 
   /** IMPORTANT:
@@ -833,8 +836,8 @@ int main()
       EXTERNAL_DEBUG_DEVICE << "mechanical system logout:       " << getIsoActiveFlag(getITracGuidanceInstance().mechanicalSystemLogout() ) << "\n";
 
       curvatureCmd += 3;
-//       getITracGuidanceInstance().setCurvatureCmd(curvatureCmd);
-//       getITracGuidanceInstance().setCurvatureCmdStatus(IsoAgLib::IsoIntendedToSteer);
+      getITracGuidanceCommandInstance().setCurvatureCmd(curvatureCmd);
+      getITracGuidanceCommandInstance().setCurvatureCmdStatus(IsoAgLib::IsoIntendedToSteer);
       #endif
     }
     #endif

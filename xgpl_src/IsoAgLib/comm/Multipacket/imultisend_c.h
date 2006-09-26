@@ -84,7 +84,7 @@ public:
             is written by MultiSend_c
     @return true -> MultiSend_c was ready -> mask is spooled to target
   */
-  bool sendIsoTarget (const iDevKey_c& rrefc_isoNameSender, const iDevKey_c& rrefc_isoNameReceiver, HUGE_MEM uint8_t* rhpb_data, int32_t ri32_dataSize, int32_t ri32_pgn, sendSuccess_t& rrefen_sendSuccessNotify)
+  bool sendIsoTarget (const iISOName_c& rrefc_isoNameSender, const iISOName_c& rrefc_isoNameReceiver, HUGE_MEM uint8_t* rhpb_data, int32_t ri32_dataSize, int32_t ri32_pgn, sendSuccess_t& rrefen_sendSuccessNotify)
     { return MultiSend_c::sendIsoTarget (rrefc_isoNameSender, rrefc_isoNameReceiver, rhpb_data, ri32_dataSize, ri32_pgn, rrefen_sendSuccessNotify ); }
 
   /**
@@ -96,7 +96,7 @@ public:
     @param ri32_pgn PGN to use for the upload
     @return true -> MultiSend_c was ready -> mask is spooled to target
   */
-  bool sendIsoBroadcast (const iDevKey_c& rrefc_isoNameSender, HUGE_MEM uint8_t* rhpb_data, int32_t ri32_dataSize, int32_t ri32_pgn, sendSuccess_t& rrefen_sendSuccessNotify)
+  bool sendIsoBroadcast (const iISOName_c& rrefc_isoNameSender, HUGE_MEM uint8_t* rhpb_data, int32_t ri32_dataSize, int32_t ri32_pgn, sendSuccess_t& rrefen_sendSuccessNotify)
     { return MultiSend_c::sendIsoBroadcast (rrefc_isoNameSender, rhpb_data, ri32_dataSize, ri32_pgn, rrefen_sendSuccessNotify); }
 
   /** check if at least one multisend stream is running */

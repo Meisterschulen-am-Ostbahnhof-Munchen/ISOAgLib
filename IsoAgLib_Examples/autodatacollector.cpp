@@ -209,7 +209,7 @@
 
 /* include some needed util headers */
 //#include <IsoAgLib/util/config.h>
-#include <IsoAgLib/util/idevkey_c.h>
+#include <IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h>
 
 /* include headers for the needed drivers */
 #include <IsoAgLib/driver/system/isystem_c.h>
@@ -262,8 +262,8 @@ bool check_for_imi();
 void writeData();
 
 // DEVKEY of other devices
-IsoAgLib::iDevKey_c pc_otherGdevKey[10];
-uint8_t ui8_cntOtherDevKey = 0;
+IsoAgLib::iISOName_c pc_otherGdevKey[10];
+uint8_t ui8_cntOtherISOName = 0;
 uint8_t ui8_rearEhrVal;
 
 typedef std::list<DevClassFlexManager_c> list_device_data;
@@ -287,7 +287,7 @@ DefaultRecordConfig_c c_defaultRecordConfig;
 #endif
 
 // variable for DEV_KEY
-IsoAgLib::iDevKey_c c_myDevKey( 1, 5 );
+IsoAgLib::iISOName_c c_myISOName( 1, 5 );
 
 int main()
 { // simply call startImi
@@ -312,10 +312,10 @@ int main()
   // set read position in EEPROM
   c_eeprom.setg(ADR_IDENT_DEVKEY);
   // read EEPROM value in variable
-  // (read size equivalent to sizeof(c_myDevKey) )
-  uint8_t ui8_tempDinDevKey;
-  c_eeprom >> ui8_tempDinDevKey;
-  c_myDevKey.set( &ui8_tempDinDevKey );
+  // (read size equivalent to sizeof(c_myISOName) )
+  uint8_t ui8_tempDinISOName;
+  c_eeprom >> ui8_tempDinISOName;
+  c_myISOName.set( &ui8_tempDinISOName );
   // read name
   c_eeprom.setg(ADR_IDENT_NAME_SHORT);
   c_eeprom.readString(myName, 11);
@@ -324,8 +324,8 @@ int main()
 
   // start address claim of the local member "Taskcon"
   // if DEV_KEY conflicts forces change of device class instance, the
-  // IsoAgLib can change the myDevKey val through the pointer to myDevKey
-  IsoAgLib::iIdentItem_c c_myIdent( &c_myDevKey, myName );
+  // IsoAgLib can change the myISOName val through the pointer to myISOName
+  IsoAgLib::iIdentItem_c c_myIdent( &c_myISOName, myName );
 
   // decide if column header should be written on new detected system
   bool b_writeHeader = false;
@@ -517,7 +517,7 @@ int main()
       }
 #endif
     ui8_rearEhrVal = getITracGeneralInstance().hitchRear() & 0x7F;
-    if (getIdinMonitorInstance().existDinMemberDevKey(c_myDevKey, true))
+    if (getIdinMonitorInstance().existDinMemberISOName(c_myISOName, true))
     {
       if (!my_announced)
       {
@@ -573,19 +573,19 @@ bool check_for_imi()
 {
   bool b_writeHeader = false;
   uint8_t ui8_cntAnnounced = getIdinMonitorInstance().dinMemberCnt(true);
-  IsoAgLib::iDevKey_c c_testDevKey;
+  IsoAgLib::iISOName_c c_testISOName;
   IsoAgLib::iDINItem_c *p_member;
   iterator_device_data pc_iter;
 
   for (uint8_t ui8_ind = 0; ui8_ind < ui8_cntAnnounced; ui8_ind++)
   {
     p_member = &(getIdinMonitorInstance().dinMemberInd(ui8_ind, true));
-    c_testDevKey = p_member->devKey();
+    c_testISOName = p_member->devKey();
     // continue immediate with next member if DEVCLASS < 2 (devKey == 0x10 (base or tractor)
     if (p_member->devKey().getDevClass() < 2) continue;
     // DEVCLASS is now >= 0x10
     // search in device data list
-    pc_iter = find(c_listDeviceData.begin(), c_listDeviceData.end(), c_testDevKey);
+    pc_iter = find(c_listDeviceData.begin(), c_listDeviceData.end(), c_testISOName);
     // if not found -> create new item
     if (pc_iter == c_listDeviceData.end())
     { // not found
@@ -607,17 +607,17 @@ bool check_for_imi()
       if ( (getITimePosGpsInstance().dayLocal() == ui8_lastTaskDay)
         && (getITimePosGpsInstance().monthLocal() == ui8_lastTaskMonth) )
       { // try to continue recording
-        uint8_t ui8_lastTaskDeviceDevKey_1, pui8_lastTaskDeviceName_1[8],
-              ui8_lastTaskDeviceDevKey_2, pui8_lastTaskDeviceName_2[8];
+        uint8_t ui8_lastTaskDeviceISOName_1, pui8_lastTaskDeviceName_1[8],
+              ui8_lastTaskDeviceISOName_2, pui8_lastTaskDeviceName_2[8];
         c_eeprom.setg(ADR_TASK_CONTROLLER_IMPLEMENT_1_DEVKEY);
-        c_eeprom >> ui8_lastTaskDeviceDevKey_1;
+        c_eeprom >> ui8_lastTaskDeviceISOName_1;
         c_eeprom.setg(ADR_TASK_CONTROLLER_IMPLEMENT_1_NAME);
         c_eeprom.readString(pui8_lastTaskDeviceName_1, 7);
         c_eeprom.setg(ADR_TASK_CONTROLLER_IMPLEMENT_2_DEVKEY);
-        c_eeprom >> ui8_lastTaskDeviceDevKey_2;
+        c_eeprom >> ui8_lastTaskDeviceISOName_2;
         c_eeprom.setg(ADR_TASK_CONTROLLER_IMPLEMENT_2_NAME);
         c_eeprom.readString(pui8_lastTaskDeviceName_2, 7);
-        if ( (c_testDevKey.getCombinedDin() ==  ui8_lastTaskDeviceDevKey_1)
+        if ( (c_testISOName.getCombinedDin() ==  ui8_lastTaskDeviceISOName_1)
            &&(memcmp(p_member->name(),pui8_lastTaskDeviceName_1,7) == 0)
            )
         { // actual new device is same as first device of last task -> continue
@@ -625,7 +625,7 @@ bool check_for_imi()
         }
         else
         {
-          if ( (c_testDevKey.getCombinedDin() ==  ui8_lastTaskDeviceDevKey_2)
+          if ( (c_testISOName.getCombinedDin() ==  ui8_lastTaskDeviceISOName_2)
              &&(memcmp(p_member->name(),pui8_lastTaskDeviceName_2,7) == 0)
              )
           { // actual new device is same as second device of last task -> continue
@@ -637,7 +637,7 @@ bool check_for_imi()
       { // no record task to be continued -> reset offset values in EEPROM
         // as new job was detected
         c_eeprom.setp(ADR_TASK_CONTROLLER_IMPLEMENT_1_DEVKEY);
-        c_eeprom << c_testDevKey.getCombinedDin();
+        c_eeprom << c_testISOName.getCombinedDin();
         c_eeprom.setp(ADR_TASK_CONTROLLER_IMPLEMENT_1_NAME);
         c_eeprom.writeString(p_member->name(), 7);
         // set actual task record date
@@ -658,7 +658,7 @@ bool check_for_imi()
       // insert new record data set
       c_listDeviceData.push_back(DevClassFlexManager_c(&c_defaultRecordConfig, ui16_eepromOffsetAdr));
       b_writeHeader = true;
-      c_listDeviceData.back().activate(p_member, &c_myDevKey);
+      c_listDeviceData.back().activate(p_member, &c_myISOName);
     }
   }
 
@@ -667,7 +667,7 @@ bool check_for_imi()
     b_repeat = false; // if none found/erased, don't repeat...
     for (pc_iter = c_listDeviceData.begin(); pc_iter != c_listDeviceData.end(); pc_iter++)
     { // test all device data  sets if according member is still active
-      if (!(getIdinMonitorInstance().existDinMemberDevKey(pc_iter->devKey(), true)))
+      if (!(getIdinMonitorInstance().existDinMemberISOName(pc_iter->devKey(), true)))
       { // according member no more announced in monitor list -> delete
         b_writeHeader = true;
 /*      iterator_device_data pc_iter_del = pc_iter;
@@ -691,20 +691,20 @@ bool check_for_imi()
 
   // check for other devices
   uint8_t ui8_memberCnt = getIdinMonitorInstance().dinMemberCnt(true);
-  IsoAgLib::iDevKey_c c_checkedDevKey;
-  ui8_cntOtherDevKey = 0;
+  IsoAgLib::iISOName_c c_checkedISOName;
+  ui8_cntOtherISOName = 0;
   for (uint8_t ui8_ind = 0; ui8_ind < ui8_memberCnt ; ui8_ind++)
   {
-    c_checkedDevKey =getIdinMonitorInstance().dinMemberInd(ui8_ind, true).devKey();
-    if ((c_checkedDevKey.getDevClass() < 2) && (c_checkedDevKey != c_myDevKey))
+    c_checkedISOName =getIdinMonitorInstance().dinMemberInd(ui8_ind, true).devKey();
+    if ((c_checkedISOName.getDevClass() < 2) && (c_checkedISOName != c_myISOName))
     { // this is another not yet recorded device
-      if (c_checkedDevKey != pc_otherGdevKey[ui8_cntOtherDevKey])
+      if (c_checkedISOName != pc_otherGdevKey[ui8_cntOtherISOName])
       {
         b_writeHeader = true;
-        pc_otherGdevKey[ui8_cntOtherDevKey] = c_checkedDevKey;
+        pc_otherGdevKey[ui8_cntOtherISOName] = c_checkedISOName;
       }
       // convert name to pure ascii
-      ui8_cntOtherDevKey++;
+      ui8_cntOtherISOName++;
     }
   }
   return b_writeHeader;
@@ -779,7 +779,7 @@ void writeData()
     << fahrer_name << ";";
 #endif
   int8_t pc_tempName[15];
-  getIdinMonitorInstance().dinMemberDevKey( c_myDevKey, true ).getPureAsciiName(pc_tempName, 14);
+  getIdinMonitorInstance().dinMemberISOName( c_myISOName, true ).getPureAsciiName(pc_tempName, 14);
  c_rs232
     << (char*)pc_tempName << ";";
  c_rs232

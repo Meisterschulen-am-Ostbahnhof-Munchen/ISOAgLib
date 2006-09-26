@@ -21,8 +21,7 @@ COMPILER_BINARY_PRE =
 first: all
 
 ####### Files
-SOURCES = ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp  \
+SOURCES = ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.cpp  \
@@ -36,6 +35,19 @@ SOURCES = ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.cpp  \
 		../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp  \
 		../../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp  \
 		../../../xgpl_src/IsoAgLib/util/liberr_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multireceive_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamchunk_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/chunk_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/stream_c.cpp  \
+		../../../xgpl_src/IsoAgLib/hal/pc/can/msq_helper.cpp  \
+		../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_client.cpp  \
+		../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp  \
+		../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp  \
+		../../../xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp  \
+		../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp  \
+		../../../xgpl_src/IsoAgLib/driver/can/impl/canio_c.cpp  \
+		../../../xgpl_src/IsoAgLib/driver/system/impl/system_c.cpp  \
+		../../../IsoAgLib_Examples/tutorial/2_ProcessData/2_4_LocalWriteSetpointStdIso/2_4_LocalWriteSetpointStdIso.cpp \
 		../../../xgpl_src/IsoAgLib/comm/Process/impl/generalcommand_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Process/impl/process_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Process/impl/processpkg_c.cpp  \
@@ -53,21 +65,9 @@ SOURCES = ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointregister_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointbase_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Process/processdatachangehandler_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multireceive_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamchunk_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisend_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendpkg_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/chunk_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/stream_c.cpp  \
-		../../../xgpl_src/IsoAgLib/hal/pc/can/msq_helper.cpp  \
-		../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_client.cpp  \
-		../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp  \
-		../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp  \
-		../../../xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp  \
-		../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp  \
-		../../../xgpl_src/IsoAgLib/driver/can/impl/canio_c.cpp  \
-		../../../xgpl_src/IsoAgLib/driver/system/impl/system_c.cpp  \
-		../../../IsoAgLib_Examples/tutorial/2_ProcessData/2_4_LocalWriteSetpointStdIso/2_4_LocalWriteSetpointStdIso.cpp
+		../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendpkg_c.cpp
+
 
 
 #Special Sources for CAN Server

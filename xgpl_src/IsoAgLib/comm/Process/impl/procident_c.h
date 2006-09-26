@@ -90,7 +90,8 @@
 /* ********** include headers ************ */
 /* *************************************** */
 #include <IsoAgLib/typedef.h>
-#include <IsoAgLib/util/impl/devkey_c.h>
+#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h>
+
 #include <IsoAgLib/util/impl/singleton.h>
 #include "generalcommand_c.h"
 #include "../elementddi_s.h"
@@ -115,22 +116,22 @@ public:
     @param ui16_element device element number
 
     common parameter
-    @param rc_devKey optional DEV_KEY code of Process-Data
+    @param rc_isoName optional ISOName code of Process-Data
     @param rui8_pri PRI code of messages with this process data instance (default 2)
-    @param rc_ownerDevKey optional DEV_KEY code of owner of Process-Data
-           ( important if DEVCLASS and/or DEVCLASSINST differs from identity DEVKEY in rc_devKey; this is the case
+    @param rc_ownerISOName optional ISOName code of owner of Process-Data
+           ( important if DEVCLASS and/or DEVCLASSINST differs from identity ISOName in rc_isoName; this is the case
              for process data from base data dictionary table (DEVCLASS==0), which is managed/owned by device of
              type DEVCLASS != 0)
-    @param rpc_ownerDevKey pointer to the optional DEV_KEY var of the owner (for automatic update as soon
+    @param rpc_ownerISOName pointer to the optional ISOName var of the owner (for automatic update as soon
             as corresponding device is registered as having claimed address in monitor table list)
   */
   ProcIdent_c(
               const IsoAgLib::ElementDDI_s* ps_elementDDI = NULL,
               uint16_t ui16_element = 0xFFFF,
-              const DevKey_c& rc_devKey = DevKey_c::DevKeyInitialProcessData,
+              const ISOName_c& rc_isoName = ISOName_c::ISONameInitialProcessData,
               uint8_t rui8_pri = 2,
-              const DevKey_c& rc_ownerDevKey = DevKey_c::DevKeyUnspecified,
-              const DevKey_c *rpc_ownerDevKey = NULL,
+              const ISOName_c& rc_ownerISOName = ISOName_c::ISONameUnspecified,
+              const ISOName_c *rpc_ownerISOName = NULL,
               int ri_singletonVecKey = 0);
 
   /** copy constructor */
@@ -144,22 +145,22 @@ public:
     @param ui16_element device element number
 
     common parameter
-    @param rc_devKey DEV_KEY code of Process-Data
+    @param rc_isoName ISOName code of Process-Data
     @param rui8_pri optional PRI code of messages with this process data instance (default 2)
-    @param rc_ownerDevKey optional DEV_KEY code of owner of Process-Data
-           ( important if DEVCLASS and/or DEVCLASSINST differs from identity DEVKEY in rc_devKey; this is the case
+    @param rc_ownerISOName optional ISOName code of owner of Process-Data
+           ( important if DEVCLASS and/or DEVCLASSINST differs from identity ISOName in rc_isoName; this is the case
              for process data from base data dictionary table (DEVCLASS==0), which is managed/owned by device of
              type DEVCLASS != 0)
-    @param rpc_ownerDevKey pointer to the optional DEV_KEY var of the owner (for automatic update as soon
+    @param rpc_ownerISOName pointer to the optional ISOName var of the owner (for automatic update as soon
             as corresponding device is registered as having claimed address in monitor table list)
   */
   void init(
             const IsoAgLib::ElementDDI_s* ps_elementDDI,
             uint16_t ui16_element,
-            const DevKey_c& rc_devKey,
+            const ISOName_c& rc_isoName,
             uint8_t rui8_pri = 2,
-            const DevKey_c& rc_ownerDevKey = DevKey_c::DevKeyUnspecified,
-            const DevKey_c *rpc_ownerDevKey = NULL);
+            const ISOName_c& rc_ownerISOName = ISOName_c::ISONameUnspecified,
+            const ISOName_c *rpc_ownerISOName = NULL);
 
   /**
     copy constructor for class instance
@@ -248,16 +249,16 @@ public:
     everytime deliver the identity DEVCLASS (and NOT the possibly differing DEVCLASS of the owner)
     @return DEVCLASS
   */
-  uint8_t devClass() const{return data.c_devKey.getDevClass();}
+  uint8_t devClass() const{return data.c_isoName.devClass();}
 
   /**
-    deliver value DEV_KEY (machine type specific table of process data types)
+    deliver value ISOName (machine type specific table of process data types)
     use everytime the _device_class_ from the ident part, and take the _instance_ from the owner.
-    Special Case: if DevKey is set to 0,0 -> don't use any logac logic and return
+    Special Case: if ISOName is set to 0,0 -> don't use any logac logic and return
     stored value
-    @return DEV_KEY
+    @return ISOName
   */
-  const DevKey_c& devKey() const {return ownerDevKey();}
+  const ISOName_c& isoName() const {return ownerISOName();}
 
   /**
     deliver value WERT (row of process data table)
@@ -283,14 +284,14 @@ public:
     process data instance.
     @return POS
   */
-  uint8_t devClassInst() const{return ownerDevKey().getDevClassInst();}
+  uint8_t devClassInst() const{return ownerISOName().devClassInst();}
 
   /**
-    deliver the owner devKey (retrieved from pointed devKey value, if valid pointer)
-    @return actual DEV_KEY of owner
+    deliver the owner isoName (retrieved from pointed isoName value, if valid pointer)
+    @return actual ISOName of owner
   */
-  const DevKey_c& ownerDevKey() const
-    { return ((pc_ownerDevKey != 0)?(*pc_ownerDevKey):(data.c_ownerDevKey));}
+  const ISOName_c& ownerISOName() const
+    { return ((pc_ownerISOName != 0)?(*pc_ownerISOName):(data.c_ownerISOName));}
 
   /**
     set DDI, value group and setpoint/measure type of process msg
@@ -325,13 +326,13 @@ public:
     set value DEVCLASS (machine type specific table of process data types)
     @param rui8_val new DEVCLASS val
   */
-  void setDevClass(uint8_t rui8_val){data.c_devKey.setDevClass(rui8_val);}
+  void setDevClass(uint8_t rui8_val){data.c_isoName.setDevClass(rui8_val);}
 
   /**
-    set value DEV_KEY (machine type specific table of process data types)
-    @param rc_val new DEV_KEY val
+    set value ISOName (machine type specific table of process data types)
+    @param rc_val new ISOName val
   */
-  void setDevKey(const DevKey_c& rc_val){data.c_devKey = rc_val;}
+  void setISOName(const ISOName_c& rc_val){data.c_isoName = rc_val;}
 
   /**
     set value WERT (row of process data table)
@@ -356,25 +357,25 @@ public:
     set also the _instance_ of the owner as the owner _instance_ shall be always the most actual value
     @param rui8_val new device class inst val
   */
-  void setDevClassInst(uint8_t rui8_val){data.c_devKey.setDevClassInst(rui8_val); data.c_ownerDevKey.setDevClassInst(rui8_val);}
+  void setDevClassInst(uint8_t rui8_val){data.c_isoName.setDevClassInst(rui8_val); data.c_ownerISOName.setDevClassInst(rui8_val);}
 
   /**
-    set the owner devKey
-    @param rc_val new DEV_KEY of owner
+    set the owner isoName
+    @param rc_val new ISOName of owner
   */
-  void setOwnerDevKey(const DevKey_c& rc_val){data.c_ownerDevKey = rc_val;}
+  void setOwnerISOName(const ISOName_c& rc_val){data.c_ownerISOName = rc_val;}
 
   /**
     set the DEVCLASS of the owner
     @param rui8_val new DEVCLASS of owner
   */
-  void setOwnerDevClass(uint8_t rui8_val){data.c_ownerDevKey.setDevClass(rui8_val);}
+  void setOwnerDevClass(uint8_t rui8_val){data.c_ownerISOName.setDevClass(rui8_val);}
 
   /**
-    set DEVCLASS and _instance_ of owner by giving pointer to owner DEV_KEY
-    @param rpc_val pointer to owner DEV_KEY
+    set DEVCLASS and _instance_ of owner by giving pointer to owner ISOName
+    @param rpc_val pointer to owner ISOName
   */
-  void setOwnerDevKey(const DevKey_c* rpc_val);
+  void setOwnerISOName(const ISOName_c* rpc_val);
 
   /**
     check if this item has the same identity as defined by the parameters,
@@ -382,8 +383,8 @@ public:
     (important for matching received process data msg);
     if INSTANCE is defined (!= 0xFF) then one of the following conditions must be true:<ul>
     <li>parameter INSTANCE == ident INSTANCE (devClassInst())
-    <li>parameter INSTANCE == owner INSTANCE ( ownerDevKey().getDevClassInst() )
-    <li>parameter rc_ownerDevKey == ownerDevKey()
+    <li>parameter INSTANCE == owner INSTANCE ( ownerISOName().devClassInst() )
+    <li>parameter rc_ownerISOName == ownerISOName()
     </ul>
 
     ISO parameter
@@ -401,11 +402,11 @@ public:
              uint16_t rui16_element
              ) const;
 
-  bool check4GroupMatch(uint16_t rui16_DDI, uint16_t rui16_element, const DevKey_c& rc_devKey);
+  bool check4GroupMatch(uint16_t rui16_DDI, uint16_t rui16_element, const ISOName_c& rc_isoName);
 
-  bool check4GroupMatchExisting(uint16_t rui16_DDI, uint16_t rui16_element, const DevKey_c& rc_devKey);
+  bool check4GroupMatchExisting(uint16_t rui16_DDI, uint16_t rui16_element, const ISOName_c& rc_isoName);
 
-  bool checkProprietary4GroupMatch(uint16_t rui_deviceElement, const DevKey_c& rc_devKey);
+  bool checkProprietary4GroupMatch(uint16_t rui_deviceElement, const ISOName_c& rc_isoName);
 
   static bool isPair(uint16_t rui16_ElementDDI, uint16_t rui16_DDI);
 
@@ -422,19 +423,19 @@ private: // Private attributes
   void assignFromSource( const ProcIdent_c& rrefc_src );
 
   /** DEVCLASS code of process data identity */
-  const DevKey_c* pc_ownerDevKey; // only defined for own local data, otherwise NULL
+  const ISOName_c* pc_ownerISOName; // only defined for own local data, otherwise NULL
   struct _data {
     /**
       in most cases equivalent with ((devClass << 3) | pos);
       for data with ident devClass==0 this is mostly NOT the same as the devClass of the owner,
       because then this value is of the general base data table
     */
-    DevKey_c c_ownerDevKey;
-    /** DevKey_c information for this instance
+    ISOName_c c_ownerISOName;
+    /** ISOName_c information for this instance
         ( the _instance_ part is important if more ECU of same _device_class_ are
         parallel active on the BUS)
       */
-    DevKey_c c_devKey;
+    ISOName_c c_isoName;
     /** zaehlnum code */
     uint16_t ui8_zaehlnum : 8;
 

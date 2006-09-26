@@ -82,7 +82,7 @@
  *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
-#include <IsoAgLib/util/impl/devkey_c.h>
+#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h>
 #include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h>
 #include "canpkgext_c.h"
 
@@ -95,8 +95,8 @@ bool CANPkgExt_c::b_runFlag2String = true;
 CANPkgExt_c::CANPkgExt_c( int ri_singletonVecKey )
   : CANPkg_c( ri_singletonVecKey )
 {
-  addrResolveResSA.p_devKey =  new DevKey_c(DevKey_c::DevKeyUnspecified);
-  addrResolveResDA.p_devKey =  new DevKey_c(DevKey_c::DevKeyUnspecified);
+  addrResolveResSA.p_isoName =  new ISOName_c(ISOName_c::ISONameUnspecified);
+  addrResolveResDA.p_isoName =  new ISOName_c(ISOName_c::ISONameUnspecified);
   addrResolveResSA.pc_monitorItem = NULL;
   addrResolveResDA.pc_monitorItem = NULL;
   addrResolveResSA.pui8_address = &identRef(0);
@@ -106,8 +106,8 @@ CANPkgExt_c::CANPkgExt_c( int ri_singletonVecKey )
 /** virtual default destructor, which has nothing to do */
 CANPkgExt_c::~CANPkgExt_c()
 {
-  delete addrResolveResSA.p_devKey;
-  delete addrResolveResDA.p_devKey;
+  delete addrResolveResSA.p_isoName;
+  delete addrResolveResDA.p_isoName;
 }
 
 /**
@@ -199,7 +199,7 @@ void CANPkgExt_c::setIsoPgn(uint32_t rui32_val)
   setIdent( uint8_t(ui16_val & 0xFF), 3, Ident_c::ExtendedIdent);
 }
 
-/** resolve a given address and set devKey and monitoritem if possible
+/** resolve a given address and set isoName and monitoritem if possible
     @param  addressResolveResults  address to resolve
     @return true -> address could be resolved
   */
@@ -213,7 +213,7 @@ bool resolveAddress( AddressResolveResults& addressResolveResults )
 
     if ( addressResolveResults.pc_monitorItem->itemState( IState_c::ClaimedAddress ) )
     { // the existing item has already claimed its address - is fully functional on the BUS
-      *addressResolveResults.p_devKey = addressResolveResults.pc_monitorItem->devKey();
+      *addressResolveResults.p_isoName = addressResolveResults.pc_monitorItem->isoName();
 
       #ifdef DEBUG_CAN
         INTERNAL_DEBUG_DEVICE << "Member is known with given address." << INTERNAL_DEBUG_DEVICE_ENDL;
@@ -223,9 +223,9 @@ bool resolveAddress( AddressResolveResults& addressResolveResults )
   }
   // when we reach this position, the address could not resolve to an already claimed item
   addressResolveResults.pc_monitorItem = NULL;
-  addressResolveResults.p_devKey->setUnspecified();
+  addressResolveResults.p_isoName->setUnspecified();
   #ifdef DEBUG_CAN
-    INTERNAL_DEBUG_DEVICE << "Member is not known with given address. Set monitorItem and devKey to NULL/unspecified." << INTERNAL_DEBUG_DEVICE_ENDL;
+    INTERNAL_DEBUG_DEVICE << "Member is not known with given address. Set monitorItem and isoName to NULL/unspecified." << INTERNAL_DEBUG_DEVICE_ENDL;
   #endif
   return false;
 }
@@ -254,12 +254,12 @@ MessageState_t CANPkgExt_c::resolveReceivingInformation()
   // for receive, the local item is the addressee --> DA is interpreted
   if ( isoPf() >= 0xF0 )
   { // PDU2 format -> no destination address
-    // devKey and monitoritem are unspecified
+    // isoName and monitoritem are unspecified
     // we have no explicit address, but PDU2 implies GLOBAL (0xFF)
     #ifdef DEBUG_CAN
       INTERNAL_DEBUG_DEVICE << "We have PDU2 format -> no destination address." << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
-    addrResolveResDA.p_devKey->setUnspecified();
+    addrResolveResDA.p_isoName->setUnspecified();
     addrResolveResDA.pc_monitorItem = NULL;
   }
   else
@@ -377,29 +377,29 @@ bool CANPkgExt_c::resolveMonitorItem( AddressResolveResults& addressResolveResul
   //check if monitoritem exist
   if ( addressResolveResults.pc_monitorItem == NULL )
   {
-    if( addressResolveResults.p_devKey->isUnspecified() )
+    if( addressResolveResults.p_isoName->isUnspecified() )
     { // leave CAN-Identifier as is
       // nothing more to be done
       #ifdef DEBUG_CAN
         INTERNAL_DEBUG_DEVICE << "Leave CAN-Identifier as is. Nothing more to be done." << INTERNAL_DEBUG_DEVICE_ENDL;
-        INTERNAL_DEBUG_DEVICE << "MonitorItem == NULL. DevKey unspecified." << INTERNAL_DEBUG_DEVICE_ENDL;
+        INTERNAL_DEBUG_DEVICE << "MonitorItem == NULL. ISOName unspecified." << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
       return true;
     }
-    else // ( p_devKey.isSpecified() )
+    else // ( p_isoName.isSpecified() )
     { // get pc_monitorItem if exist in systemmgmt_c
-      if ( !getIsoMonitorInstance4Comm().existIsoMemberDevKey( *addressResolveResults.p_devKey, false ) )
+      if ( !getIsoMonitorInstance4Comm().existIsoMemberISOName( *addressResolveResults.p_isoName, false ) )
       {
         #ifdef DEBUG_CAN
-          INTERNAL_DEBUG_DEVICE << "DevKey specified and item does NOT exists in systemmgmt." << INTERNAL_DEBUG_DEVICE_ENDL;
+          INTERNAL_DEBUG_DEVICE << "ISOName specified and item does NOT exists in systemmgmt." << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
         return false;
       }
       #ifdef DEBUG_CAN
-        INTERNAL_DEBUG_DEVICE << "DevKey specified and item exists in systemmgmt. Get monitoritem." << INTERNAL_DEBUG_DEVICE_ENDL;
+        INTERNAL_DEBUG_DEVICE << "ISOName specified and item exists in systemmgmt. Get monitoritem." << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
 
-      addressResolveResults.pc_monitorItem = &getIsoMonitorInstance4Comm().isoMemberDevKey( *addressResolveResults.p_devKey, false );
+      addressResolveResults.pc_monitorItem = &getIsoMonitorInstance4Comm().isoMemberISOName( *addressResolveResults.p_isoName, false );
     }
   }
   #ifdef DEBUG_CAN
@@ -524,7 +524,7 @@ bool CANPkgExt_c::resolveSendingInformation()
 void CANPkgExt_c::setIsoPs(uint8_t rui8_val)
 {
   *addrResolveResDA.pui8_address = rui8_val;
-  addrResolveResDA.p_devKey->setUnspecified();
+  addrResolveResDA.p_isoName->setUnspecified();
   addrResolveResDA.pc_monitorItem = NULL;
 }
 
@@ -536,7 +536,7 @@ void CANPkgExt_c::setIsoPs(uint8_t rui8_val)
 void CANPkgExt_c::setIsoSa(uint8_t rui8_val)
 {
   *addrResolveResSA.pui8_address = rui8_val;
-  addrResolveResSA.p_devKey->setUnspecified();
+  addrResolveResSA.p_isoName->setUnspecified();
   addrResolveResSA.pc_monitorItem = NULL;
 }
 
@@ -547,19 +547,19 @@ void CANPkgExt_c::setIsoSa(uint8_t rui8_val)
 void CANPkgExt_c::setMonitorItemForSA( const ISOItem_c* pc_monitorItem )
 {
   addrResolveResSA.pc_monitorItem = pc_monitorItem;
-  // p_devKey will not be needed -> set to unspecified
-  addrResolveResSA.p_devKey->setUnspecified();
+  // p_isoName will not be needed -> set to unspecified
+  addrResolveResSA.p_isoName->setUnspecified();
   *addrResolveResSA.pui8_address = 0xFF;
 }
 
 
-/** set the devKey for resolve SA
-    @param p_devKey  needed devKey
+/** set the isoName for resolve SA
+    @param p_isoName  needed isoName
   */
-void CANPkgExt_c::setDevKeyForSA( const DevKey_c& p_devKey )
+void CANPkgExt_c::setISONameForSA( const ISOName_c& p_isoName )
 {
-  *addrResolveResSA.p_devKey = p_devKey;
-  // pc_monitorItem will be set over p_devKey -> reset pc_monitorItem
+  *addrResolveResSA.p_isoName = p_isoName;
+  // pc_monitorItem will be set over p_isoName -> reset pc_monitorItem
   addrResolveResSA.pc_monitorItem = NULL;
   *addrResolveResSA.pui8_address = 0xFF;
 }
@@ -571,39 +571,39 @@ void CANPkgExt_c::setDevKeyForSA( const DevKey_c& p_devKey )
 void CANPkgExt_c::setMonitorItemForDA( const ISOItem_c* pc_monitorItem )
 {
   addrResolveResDA.pc_monitorItem = pc_monitorItem;
-  // p_devKey will not be needed -> set to unspecified
-  addrResolveResDA.p_devKey->setUnspecified();
+  // p_isoName will not be needed -> set to unspecified
+  addrResolveResDA.p_isoName->setUnspecified();
   *addrResolveResDA.pui8_address = 0xFF;
 }
 
 
-/** set the devKey for resolve DA
-    @param p_devKey  needed devKey
+/** set the isoName for resolve DA
+    @param p_isoName  needed isoName
   */
-void CANPkgExt_c::setDevKeyForDA( const DevKey_c& p_devKey )
+void CANPkgExt_c::setISONameForDA( const ISOName_c& p_isoName )
 {
-  *addrResolveResDA.p_devKey = p_devKey;
-  // pc_monitorItem will be set over p_devKey -> reset pc_monitorItem
+  *addrResolveResDA.p_isoName = p_isoName;
+  // pc_monitorItem will be set over p_isoName -> reset pc_monitorItem
   addrResolveResDA.pc_monitorItem = NULL;
   *addrResolveResDA.pui8_address = 0xFF;
 }
 
 
-/** check if an adddress could be resolved with monitorItem and devKey
+/** check if an adddress could be resolved with monitorItem and isoName
     @param  addressResolveResults  address to resolve
 */
-uint8_t checkMonitorItemDevKey( const AddressResolveResults& addressResolveResults )
+uint8_t checkMonitorItemISOName( const AddressResolveResults& addressResolveResults )
 {
-  // check if monitoritem exist and if not resolve it with devKey
+  // check if monitoritem exist and if not resolve it with isoName
   if ( addressResolveResults.pc_monitorItem == NULL )
   { // get pc_monitorItem if exist in systemmgmt_c
-    if (     addressResolveResults.p_devKey->isUnspecified()
-        || !getIsoMonitorInstance4Comm().existIsoMemberDevKey( *addressResolveResults.p_devKey, false )
+    if (     addressResolveResults.p_isoName->isUnspecified()
+        || !getIsoMonitorInstance4Comm().existIsoMemberISOName( *addressResolveResults.p_isoName, false )
        )
-    { // there exist no iso member with given devKey
+    { // there exist no iso member with given isoName
       return *addressResolveResults.pui8_address;
     }
-    return getIsoMonitorInstance4Comm().isoMemberDevKey( *addressResolveResults.p_devKey, false ).nr();
+    return getIsoMonitorInstance4Comm().isoMemberISOName( *addressResolveResults.p_isoName, false ).nr();
   }
   // know we can be shure that an monitorItem exists
   return addressResolveResults.pc_monitorItem->nr();
@@ -620,7 +620,7 @@ uint8_t CANPkgExt_c::isoPs() const
   if (*addrResolveResDA.pui8_address != 0xFF ) return *addrResolveResDA.pui8_address;
 
   // check if destination address is willingly 0xFF or if it can be resolved
-  return checkMonitorItemDevKey( addrResolveResDA );
+  return checkMonitorItemISOName( addrResolveResDA );
 }
 
 
@@ -634,7 +634,7 @@ uint8_t CANPkgExt_c::isoSa() const
   if (*addrResolveResSA.pui8_address != 0xFF ) return *addrResolveResSA.pui8_address;
 
   // check if source address is willingly 0xFF or if it can be resolved
-  return checkMonitorItemDevKey( addrResolveResSA );
+  return checkMonitorItemISOName( addrResolveResSA );
 }
 
 } // end of namespace __IsoAgLib

@@ -227,10 +227,10 @@ namespace __IsoAgLib {
     // check for different base data types whether the previously
     if ( checkMode(IsoAgLib::IdentModeImplement)
       && ( (lastedTimeSinceUpdate() >= 3000 ) || ( yearUtc() == 0 ) )
-      && ( getSelectedDataSourceDevKey().isSpecified()           )
+      && ( getSelectedDataSourceISOName().isSpecified()           )
         )
     { // the previously sending node didn't send the information for 3 seconds -> give other items a chance
-      getSelectedDataSourceDevKey().setUnspecified();
+      getSelectedDataSourceISOName().setUnspecified();
       bit_calendar.year = bit_calendar.hour = bit_calendar.minute = bit_calendar.second = 0;
       bit_calendar.month = bit_calendar.day = 1;
     }
@@ -240,9 +240,9 @@ namespace __IsoAgLib {
       && ( ( ci32_now - i32_lastIsoDirectionStream ) >= TIMEOUT_SENDING_NODE  )
       #endif
       && ( ( ci32_now - i32_lastIsoPositionSimple  ) >= TIMEOUT_SENDING_NODE  )
-      && ( c_sendGpsDevKey.isSpecified()                      ) )
+      && ( c_sendGpsISOName.isSpecified()                      ) )
     { // the previously sending node didn't send the information for 3 seconds -> give other items a chance
-      c_sendGpsDevKey.setUnspecified();
+      c_sendGpsISOName.setUnspecified();
       i32_latitudeDegree10Minus7 = i32_longitudeDegree10Minus7 = 0x7FFFFFFF;
       #ifdef NMEA_2000_FAST_PACKET
       ui8_satelliteCnt = 0;
@@ -252,18 +252,18 @@ namespace __IsoAgLib {
       #endif
     }
 
-    if ( getDevKey() != NULL )
+    if ( getISOName() != NULL )
     { // there is at least something configured to send
-      if (getIsoMonitorInstance4Comm().existIsoMemberDevKey(*getDevKey(), true))
+      if (getIsoMonitorInstance4Comm().existIsoMemberISOName(*getISOName(), true))
       { // stored base information sending ISO member has claimed address
         if ( checkMode(IsoAgLib::IdentModeTractor) ) timeEventTracMode();
       }
       if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
     }
-    if ( pc_devKeyGps != NULL )
+    if ( pc_isoNameGps != NULL )
     { // there is at least something configured to send
 
-      if (getIsoMonitorInstance4Comm().existIsoMemberDevKey(*pc_devKeyGps, true))
+      if (getIsoMonitorInstance4Comm().existIsoMemberISOName(*pc_isoNameGps, true))
       { // stored base information sending ISO member has claimed address
         if (checkModeGps(IsoAgLib::IdentModeTractor) ) timeEventTracMode();
       }
@@ -304,14 +304,14 @@ namespace __IsoAgLib {
       above all create the needed FilterBox_c instances
       possible errors:
         * dependant error in CANIO_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
-      @param rpc_devKey optional pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
+      @param rpc_isoName optional pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
       @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
     */
-  void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_identMode)
+  void TimePosGPS_c::init(const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode)
   {
-    BaseCommon_c::init( rpc_devKey, rt_identMode );
+    BaseCommon_c::init( rpc_isoName, rt_identMode );
 
-    pc_devKeyGps = NULL;
+    pc_isoNameGps = NULL;
     // set the GPS mode always to non-sending
     configGps( NULL, IsoAgLib::IdentModeImplement );
 
@@ -329,20 +329,20 @@ namespace __IsoAgLib {
     }
   }
 
-  /** config the TimePosGPS_c object after init -> set pointer to devKey and
+  /** config the TimePosGPS_c object after init -> set pointer to isoName and
       config send/receive of different base msg types
-      @param rpc_devKey pointer to the DEV_KEY variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
+      @param rpc_isoName pointer to the ISOName variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
       @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       @return true -> configuration was successfull
     */
-  bool TimePosGPS_c::config(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_identMode)
+  bool TimePosGPS_c::config(const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode)
   {
     //store old mode to decide to register or unregister to request for pgn
     IsoAgLib::IdentMode_t t_oldMode = getMode();
 
     //call config for handling which is base data independent
     //if something went wrong leave function before something is configured
-    if ( !BaseCommon_c::config(rpc_devKey, rt_identMode) ) return false;
+    if ( !BaseCommon_c::config(rpc_isoName, rt_identMode) ) return false;
 
     if (t_oldMode == IsoAgLib::IdentModeImplement && rt_identMode == IsoAgLib::IdentModeTractor)
     {  // a change from Implement mode to Tractor mode occured
@@ -382,22 +382,22 @@ namespace __IsoAgLib {
     else
       return false;
   }
-  /** config the Base_c object after init -> set pointer to devKey and
+  /** config the Base_c object after init -> set pointer to isoName and
       config send/receive of different base msg types
-      @param rpc_devKey pointer to the DEV_KEY variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
+      @param rpc_isoName pointer to the ISOName variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
       @param rb_implementMode implement mode (true) or tractor mode (false)!!!
       @return true -> configuration was successfull
     */
-  bool TimePosGPS_c::configGps(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t  rt_identModeGps)
+  bool TimePosGPS_c::configGps(const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_t  rt_identModeGps)
   {
     if (   rt_identModeGps == IsoAgLib::IdentModeTractor
-        && rpc_devKey == NULL
+        && rpc_isoName == NULL
       )
-    { // the application is in tractor mode but has no valid devKey
-      // IMPORTANT: if we are in tractor mode we MUST have a valid devKey otherwise the configuration makes no sense
+    { // the application is in tractor mode but has no valid isoName
+      // IMPORTANT: if we are in tractor mode we MUST have a valid isoName otherwise the configuration makes no sense
       #ifdef DEBUG
-        EXTERNAL_DEBUG_DEVICE << "CONFIG FAILURE. The config function was called with devKey == NULL and\
-                                  IdentModeTractor. Is is not allowed that the devKey ist NULL in combination\
+        EXTERNAL_DEBUG_DEVICE << "CONFIG FAILURE. The config function was called with isoName == NULL and\
+                                  IdentModeTractor. Is is not allowed that the isoName ist NULL in combination\
                                   with tractor mode." << "\n";
       #endif
       #if defined(DEBUG) && defined(SYSTEM_PC)
@@ -409,7 +409,7 @@ namespace __IsoAgLib {
     //set configure values
     i32_lastIsoPositionSimple = 0;
 
-    pc_devKeyGps = rpc_devKey;
+    pc_isoNameGps = rpc_isoName;
     t_identModeGps = rt_identModeGps;
 
     i32_latitudeDegree10Minus7 = i32_longitudeDegree10Minus7 = 0x7FFFFFFF;
@@ -423,8 +423,8 @@ namespace __IsoAgLib {
 
     if ( rt_identModeGps == IsoAgLib::IdentModeTractor )
     { // GPS send from now on
-      // because wer are in tractor mode the rpc_devKey cannot be NULL
-      c_sendGpsDevKey = *rpc_devKey;
+      // because wer are in tractor mode the rpc_isoName cannot be NULL
+      c_sendGpsISOName = *rpc_isoName;
       #ifdef NMEA_2000_FAST_PACKET
       // also remove any previously registered MultiReceive connections
       getMultiReceiveInstance4Comm().deregisterClient( this );
@@ -434,7 +434,7 @@ namespace __IsoAgLib {
     }
     else
     { // IdentModeImplement
-      c_sendGpsDevKey.setUnspecified();
+      c_sendGpsISOName.setUnspecified();
       #ifdef NMEA_2000_FAST_PACKET
       // make sure that the needed multi receive are registered
       getMultiReceiveInstance4Comm().registerClient(NMEA_GPS_POSITON_DATA_PGN,   0xFF, this, true, false, true);
@@ -489,12 +489,12 @@ namespace __IsoAgLib {
   /** process a ISO11783 base information PGN */
   bool TimePosGPS_c::processMsg()
   {
-    DevKey_c c_tempDevKey( DevKey_c::DevKeyUnspecified );
+    ISOName_c c_tempISOName( ISOName_c::ISONameUnspecified );
     const int32_t ci32_now = Scheduler_c::getLastTimeEventTrigger();
-    // store the devKey of the sender of base data
+    // store the isoName of the sender of base data
     if (getIsoMonitorInstance4Comm().existIsoMemberNr(data().isoSa()))
     { // the corresponding sender entry exist in the monitor list
-      c_tempDevKey = getIsoMonitorInstance4Comm().isoMemberNr(data().isoSa()).devKey();
+      c_tempISOName = getIsoMonitorInstance4Comm().isoMemberNr(data().isoSa()).isoName();
     }
 
     switch (data().isoPgn() & 0x1FFFF)
@@ -503,10 +503,10 @@ namespace __IsoAgLib {
         // time - date
         // only take values, if i am not the regular sender
         // and if actual sender isn't in conflict to previous sender
-        if ( checkParseReceived( c_tempDevKey ) )
+        if ( checkParseReceived( c_tempISOName ) )
         { // sender is allowed to send
           // store new calendar setting
-          if ( c_sendGpsDevKey.isUnspecified()  )
+          if ( c_sendGpsISOName.isUnspecified()  )
           { // neither this item nor another item is sending GPS data -> this is the best time source
             setCalendarUtc(
             (data().getUint8Data(5) + 1985), data().getUint8Data(3), (data().getUint8Data(4) / 4), (data().getUint8Data(2)),
@@ -521,7 +521,7 @@ namespace __IsoAgLib {
           bit_calendar.timezoneHourOffsetMinus24 = data().getUint8Data(7);
           // set last time
           setUpdateTime(ci32_now);
-          setSelectedDataSourceDevKey( c_tempDevKey);
+          setSelectedDataSourceISOName( c_tempISOName);
         }
         else
         { // there is a sender conflict
@@ -532,14 +532,14 @@ namespace __IsoAgLib {
       // **********************************************************
       // Added by Brad Cox for NMEA 2000 GPS Messages:
       case NMEA_GPS_POSITON_RAPID_UPDATE_PGN:
-        if ( checkParseReceived( c_tempDevKey ) )
+        if ( checkParseReceived( c_tempISOName ) )
         { // sender is allowed to send
           i32_lastIsoPositionSimple = ci32_now;
           i32_latitudeDegree10Minus7  = data().getInt32Data( 0 );
           i32_longitudeDegree10Minus7 = data().getInt32Data( 4 );
           // set last time
           i32_lastIsoPositionSimple = ci32_now;
-          c_sendGpsDevKey = c_tempDevKey;
+          c_sendGpsISOName = c_tempISOName;
           setUpdateTime( ci32_now );
 
           #if defined (USE_TRACTOR_MOVE) || defined (USE_BASE)
@@ -559,9 +559,9 @@ namespace __IsoAgLib {
     if ( ! BaseCommon_c::check4ReqForPgn(rui32_pgn, rui8_sa, rui8_da) ) return false;
 
     // call TimePosGPS_c function to send time/date
-    // isoSendCalendar checks if this item (identified by DEV_KEY)
+    // isoSendCalendar checks if this item (identified by ISOName)
     // is configured to send time/date
-    sendCalendar(*getDevKey());
+    sendCalendar(*getISOName());
     return true;
   };
 
@@ -598,7 +598,7 @@ namespace __IsoAgLib {
     bit_gpsTime.minute = rb_minute;
     bit_gpsTime.second = rb_second;
     bit_gpsTime.msec = rui16_msec;
-    if ( getSelectedDataSourceDevKey().isUnspecified() )
+    if ( getSelectedDataSourceISOName().isUnspecified() )
     { // no active source for the GPS independent time / date is specified -> so update the other UTC time also from GPS
       setTimeUtc( rb_hour, rb_minute, rb_second, rui16_msec );
     }
@@ -613,7 +613,7 @@ namespace __IsoAgLib {
   void TimePosGPS_c::setHourUtcGps(uint8_t rb_hour)
   {
     bit_gpsTime.hour = rb_hour;
-    if ( getSelectedDataSourceDevKey().isUnspecified() )
+    if ( getSelectedDataSourceISOName().isUnspecified() )
     { // no active source for the GPS independent time / date is specified -> so update the other UTC time also from GPS
       setHourUtc( rb_hour);
     }
@@ -628,7 +628,7 @@ namespace __IsoAgLib {
   void TimePosGPS_c::setMinuteUtcGps(uint8_t rb_minute)
   {
     bit_gpsTime.minute = rb_minute;
-    if ( getSelectedDataSourceDevKey().isUnspecified() )
+    if ( getSelectedDataSourceISOName().isUnspecified() )
     { // no active source for the GPS independent time / date is specified -> so update the other UTC time also from GPS
       setMinuteUtc( rb_minute );
     }
@@ -643,7 +643,7 @@ namespace __IsoAgLib {
   void TimePosGPS_c::setSecondUtcGps(uint8_t rb_second)
   {
     bit_gpsTime.second = rb_second;
-    if ( getSelectedDataSourceDevKey().isUnspecified() )
+    if ( getSelectedDataSourceISOName().isUnspecified() )
     { // no active source for the GPS independent time / date is specified -> so update the other UTC time also from GPS
       setSecond( rb_second );
     }
@@ -658,7 +658,7 @@ namespace __IsoAgLib {
   void TimePosGPS_c::setMillisecondUtcGps(uint16_t rui16_millisecond)
   {
     bit_gpsTime.msec = rui16_millisecond;
-    if ( getSelectedDataSourceDevKey().isUnspecified() )
+    if ( getSelectedDataSourceISOName().isUnspecified() )
     { // no active source for the GPS independent time / date is specified -> so update the other UTC time also from GPS
       setMillisecond( rui16_millisecond );
     }
@@ -753,26 +753,26 @@ namespace __IsoAgLib {
                                 IsoAgLib::iStream_c& refc_stream)
   { // see if it's a pool upload, string upload or whatsoever! (First byte is already read by MultiReceive!)
     const uint8_t cui8_sa = refc_stream.getIdent().getSa();
-    DevKey_c c_tempDevKey( DevKey_c::DevKeyUnspecified );
+    ISOName_c c_tempISOName( ISOName_c::ISONameUnspecified );
     if (getIsoMonitorInstance4Comm().existIsoMemberNr(cui8_sa))
     { // the corresponding sender entry exist in the monitor list
-      c_tempDevKey = getIsoMonitorInstance4Comm().isoMemberNr(cui8_sa).devKey();
+      c_tempISOName = getIsoMonitorInstance4Comm().isoMemberNr(cui8_sa).isoName();
     }
 
     // check if we want to process the information
     if (
         ( checkModeGps(IsoAgLib::IdentModeTractor) ) // I'm the sender
         || ( // one of the following conditions must be true
-          (c_sendGpsDevKey != c_tempDevKey) // actual sender different to last
-        && (c_sendGpsDevKey.isSpecified() ) // last sender has correctly claimed address member
+          (c_sendGpsISOName != c_tempISOName) // actual sender different to last
+        && (c_sendGpsISOName.isSpecified() ) // last sender has correctly claimed address member
           )
       )
     { // DO NOT take this message, as this might be a falsly double source
       return false;
     }
 
-    // set last time and DEVKEY information
-    c_sendGpsDevKey = c_tempDevKey;
+    // set last time and ISOName information
+    c_sendGpsISOName = c_tempISOName;
     uint8_t ui8_tempValue;
 
     switch ( rc_ident.getPgn() )
@@ -795,7 +795,7 @@ namespace __IsoAgLib {
         tm* UtcNow = gmtime( &t_tempUnixTime );
         if ( UtcNow != NULL )
         {
-          if ( checkMode(IsoAgLib::IdentModeTractor) || getSelectedDataSourceDevKey().isUnspecified())
+          if ( checkMode(IsoAgLib::IdentModeTractor) || getSelectedDataSourceISOName().isUnspecified())
           { // update the normal UTC time from GPS time, as we are either sending the calendar + time PGN _or_
             // there is currently no other active sender of this PGN --> other getter functions of this application should get
             // the GPS time as notmal UTC time
@@ -866,14 +866,14 @@ namespace __IsoAgLib {
 
     if ( ( lastedTimeSinceUpdate() >= 1000 )
       && checkMode(IsoAgLib::IdentModeTractor) )
-    { // getDevKey() must be != NULL, because we are in tractor mode
+    { // getISOName() must be != NULL, because we are in tractor mode
       // send actual calendar data
-      setSelectedDataSourceDevKey(*getDevKey());
-      sendCalendar(*getDevKey());
+      setSelectedDataSourceISOName(*getISOName());
+      sendCalendar(*getISOName());
     }
 
     if ( checkModeGps(IsoAgLib::IdentModeTractor) )
-    { // pc_devKeyGps must be != NULL, because we are in tractor mode
+    { // pc_isoNameGps must be != NULL, because we are in tractor mode
       if ( ( ci32_now - i32_lastIsoPositionSimple ) >= 100 )
       {
         if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
@@ -902,8 +902,8 @@ namespace __IsoAgLib {
   /** send position rapid update message */
   void TimePosGPS_c::sendPositionRapidUpdate( void )
   {
-    // retreive the actual dynamic sender no of the member with the registered devKey
-    uint8_t b_sa = getIsoMonitorInstance4Comm().isoMemberDevKey(*pc_devKeyGps, true).nr();
+    // retreive the actual dynamic sender no of the member with the registered isoName
+    uint8_t b_sa = getIsoMonitorInstance4Comm().isoMemberISOName(*pc_isoNameGps, true).nr();
     data().setIdentType(Ident_c::ExtendedIdent);
     data().setIsoPri(3);
     data().setLen(8);
@@ -943,8 +943,8 @@ namespace __IsoAgLib {
     number2LittleEndianString( ui16_driftSpeedCmSec, writeRef );              /// not init'ed  /// NOT there in the RAPID UPDATE one
 
     //now trigger sending
-    // retreive the actual dynamic sender no of the member with the registered devKey
-    const uint8_t b_send = c_iso_monitor.isoMemberDevKey(c_sendGpsDevKey, true).nr();
+    // retreive the actual dynamic sender no of the member with the registered isoName
+    const uint8_t b_send = c_iso_monitor.isoMemberISOName(c_sendGpsISOName, true).nr();
     if ( getMultiSendInstance4Comm().sendIsoFastPacket(b_send, 0xFF, &c_nmea2000Streamer, NMEA_GPS_DIRECTION_DATA_PGN, t_multiSendSuccessState) )
     { // update time
       i32_lastIsoDirectionStream = ci32_now;
@@ -1053,8 +1053,8 @@ namespace __IsoAgLib {
     }
 
     //now trigger sending
-    // retreive the actual dynamic sender no of the member with the registered devKey
-    const uint8_t b_send = c_iso_monitor.isoMemberDevKey(c_sendGpsDevKey, true).nr();
+    // retreive the actual dynamic sender no of the member with the registered isoName
+    const uint8_t b_send = c_iso_monitor.isoMemberISOName(c_sendGpsISOName, true).nr();
     if ( getMultiSendInstance4Comm().sendIsoFastPacket(b_send, 0xFF, &c_nmea2000Streamer, NMEA_GPS_POSITON_DATA_PGN, t_multiSendSuccessState) )
     { // update time
       i32_lastIsoPositionStream = ci32_now;
@@ -1064,7 +1064,7 @@ namespace __IsoAgLib {
   #endif // END OF NMEA_2000_FAST_PACKET
 
   /** send ISO11783 calendar PGN
-      @param rc_devKey DEV_KEY code off calling item which wants to send
+      @param rc_isoName ISOName code off calling item which wants to send
       @param ri32_time timestamp where calendar was last sent (default autodetect)
       possible errors:
           * dependant error in CANIO_c on CAN send problems
@@ -1072,17 +1072,17 @@ namespace __IsoAgLib {
       @see CANPkgExt_c::getData
       @see CANIO_c::operator<<
     */
-  void TimePosGPS_c::sendCalendar(const DevKey_c& rc_devKey)
+  void TimePosGPS_c::sendCalendar(const ISOName_c& rc_isoName)
   {
-    if (!getIsoMonitorInstance4Comm().existIsoMemberDevKey(rc_devKey, true)) return;
+    if (!getIsoMonitorInstance4Comm().existIsoMemberISOName(rc_isoName, true)) return;
 
-    data().setDevKeyForSA( rc_devKey );
+    data().setISONameForSA( rc_isoName );
     data().setIdentType(Ident_c::ExtendedIdent);
     data().setIsoPri(6);
     data().setLen(8);
 
-    if ( ( getSelectedDataSourceDevKey() == rc_devKey ) )
-    { // this item (identified by DEV_KEY is configured to send
+    if ( ( getSelectedDataSourceISOName() == rc_isoName ) )
+    { // this item (identified by ISOName is configured to send
       data().setIsoPgn(TIME_DATE_PGN);
 
       const struct CNAMESPACE::tm* p_tm = currentUtcTm();

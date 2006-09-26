@@ -84,7 +84,7 @@
 #include "eepromio_c.h"
 #include <IsoAgLib/hal/system.h>
 #include <IsoAgLib/util/config.h>
-#include <IsoAgLib/util/impl/devkey_c.h>
+#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h>
 #include <IsoAgLib/driver/system/impl/system_c.h>
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
@@ -505,16 +505,16 @@ EEPROMIO_c& EEPROMIO_c::readIntern(uint8_t* rpb_data, uint8_t rui8_len) {
   return *this;
 }
 
-EEPROMIO_c& operator<<(EEPROMIO_c& refc_stream, const DevKey_c& refc_data )
+EEPROMIO_c& operator<<(EEPROMIO_c& refc_stream, const ISOName_c& refc_data )
 {
-  refc_stream.writeIntern(refc_data.getConstName().outputString(), 8);
+  refc_stream.writeIntern(refc_data.outputString(), 8);
   return refc_stream;
 }
-EEPROMIO_c& operator>>(EEPROMIO_c& refc_stream, DevKey_c& refc_data )
+EEPROMIO_c& operator>>(EEPROMIO_c& refc_stream, ISOName_c& refc_data )
 {
   uint8_t tempName[8];
   refc_stream.readIntern(tempName, sizeof(8));
-  refc_data.set( tempName );
+  refc_data.inputString( tempName );
   return refc_stream;
 }
 

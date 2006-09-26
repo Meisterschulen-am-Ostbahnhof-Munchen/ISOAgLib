@@ -159,7 +159,7 @@ const SimpleManageSetpointLocal_c& SimpleManageSetpointLocal_c::operator=( const
 void SimpleManageSetpointLocal_c::processSetpoint(){
   // for simple setpoint the message is process here
   ProcessPkg_c& c_pkg = getProcessInstance4Comm().data();
-  const DevKey_c& cc_senderDevKey = c_pkg.memberSend().devKey();
+  const ISOName_c& cc_senderISOName = c_pkg.memberSend().isoName();
 
   if (c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::setValue)
   { // setpoint set
@@ -189,7 +189,7 @@ void SimpleManageSetpointLocal_c::processSetpoint(){
     }
     // call handler function if handler class is registered
     if ( processDataConst().getProcessDataChangeHandler() != NULL )
-      processDataConst().getProcessDataChangeHandler()->processSetpointSet( pprocessData(), c_pkg.dataLong(), c_pkg.memberSend().devKey(), b_change );
+      processDataConst().getProcessDataChangeHandler()->processSetpointSet( pprocessData(), c_pkg.dataLong(), static_cast<const IsoAgLib::iISOName_c&>( c_pkg.memberSend().isoName() ), b_change );
   }
   #ifndef SIMPLE_RESPOND_ON_SET
   // if no auto-response on setpoint set is want
@@ -199,7 +199,7 @@ void SimpleManageSetpointLocal_c::processSetpoint(){
   else
   #endif
   {
-    sendSetpointMod(cc_senderDevKey, Proc_c::progType_t( c_pkg.pri() ),
+    sendSetpointMod(cc_senderISOName, Proc_c::progType_t( c_pkg.pri() ),
                     c_pkg.c_generalCommand.getValueGroup(), GeneralCommand_c::setValue );
   }
 
@@ -208,13 +208,13 @@ void SimpleManageSetpointLocal_c::processSetpoint(){
 /**
   send a sub-setpoint (selected by MOD) to a specified target (selected by GPT)
   @param rui8_mod select sub-type of setpoint
-  @param rc_targetDevKey DevKey of target
+  @param rc_targetISOName ISOName of target
   @param ren_type optional PRI specifier of the message (default Proc_c::Target )
   @param en_valueGroup: min/max/exact/default
   @param en_command
   @return true -> successful sent
 */
-bool SimpleManageSetpointLocal_c::sendSetpointMod(const DevKey_c& rc_targetDevKey,
+bool SimpleManageSetpointLocal_c::sendSetpointMod(const ISOName_c& rc_targetISOName,
                                                   Proc_c::progType_t ren_progType,
                                                   GeneralCommand_c::ValueGroup_t en_valueGroup,
                                                   GeneralCommand_c::CommandType_t en_command ) const {
@@ -225,10 +225,10 @@ bool SimpleManageSetpointLocal_c::sendSetpointMod(const DevKey_c& rc_targetDevKe
     // not percent
     #ifdef USE_FLOAT_DATA_TYPE
     if (valType() == float_val)
-      return processDataConst().sendValDevKey(ren_progType, rc_targetDevKey, setpointMasterValFloat());
+      return processDataConst().sendValISOName(ren_progType, rc_targetISOName, setpointMasterValFloat());
     else
     #endif
-      return processDataConst().sendValDevKey(ren_progType, rc_targetDevKey, setpointMasterVal());
+      return processDataConst().sendValISOName(ren_progType, rc_targetISOName, setpointMasterVal());
   //}
 }
 

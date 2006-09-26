@@ -59,7 +59,7 @@
 /* *************************************** */
 /* ********** include headers ************ */
 /* *************************************** */
-#include <IsoAgLib/util/idevkey_c.h>
+#include <IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h>
 #include "ibasetypes.h"
 #include "impl/tracmove_c.h"
 
@@ -77,14 +77,14 @@ namespace IsoAgLib {
   public:
     // Public methods
   /**
-      config the Base_c object after init -> set pointer to devKey and
+      config the Base_c object after init -> set pointer to isoName and
       config send/receive of different base msg types
-      @param rpc_devKey pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
+      @param rpc_isoName pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
       @param rt_identMode set mode to either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       @return true -> configuration was successfull
     */
-  bool config(const iDevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_identMode = IsoAgLib::IdentModeImplement)
-  { return TracMove_c::config(rpc_devKey, rt_identMode ); }
+  bool config(const iISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode = IsoAgLib::IdentModeImplement)
+  { return TracMove_c::config(rpc_isoName, rt_identMode ); }
 
   /** update selected speed with actually best available speed
       @param t_speedSrc  from which source is the speed available

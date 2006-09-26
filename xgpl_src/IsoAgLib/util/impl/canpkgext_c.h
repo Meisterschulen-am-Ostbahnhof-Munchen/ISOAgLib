@@ -94,7 +94,7 @@
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
-class DevKey_c;
+class ISOName_c;
 class ISOItem_c;
 
 /** values which indicates the state of an address */
@@ -104,12 +104,12 @@ typedef enum { Valid = 0, OnlyNetworkMgmt = 1, Invalid = 3 } MessageState_t;
 /** structure which will be filled when an address is resolved */
 typedef struct
 { // IMPORTANT:
-  // the DevKey_c instance should be handled as if it would be a fixed
+  // the ISOName_c instance should be handled as if it would be a fixed
   // _part_ of the struct --> the constructor allocates an instance, the destructur frees it
   //                          and all other operations just operate on the allocated instance.
-  DevKey_c*         p_devKey;
+  ISOName_c*         p_isoName;
   // IMPORTANT:
-  // in contrast to DevKey_c, the ISOItem_c _POINTER_ is always set to NULL or to an instance, that
+  // in contrast to ISOName_c, the MonitorItem_c _POINTER_ is always set to NULL or to an instance, that
   // is located somewhere else (thus do NEVER NEVER NEVER call new or delete for this entry!!!!!!!!)
   const ISOItem_c*  pc_monitorItem;
   //can be source or destination address
@@ -392,20 +392,20 @@ class CANPkgExt_c : public CANPkg_c
     */
   void setMonitorItemForSA( const ISOItem_c* pc_monitorItem );
 
-  /** set the devKey for resolve SA
-      @param p_devKey        needed devKey
+  /** set the isoName for resolve SA
+      @param p_isoName        needed isoName
     */
-  void setDevKeyForSA( const DevKey_c& p_devKey );
+  void setISONameForSA( const ISOName_c& p_isoName );
 
   /** set the monitoritem for resolve SA
       @param pc_monitorItem  needed monitoritem
     */
   void setMonitorItemForDA( const ISOItem_c* pc_monitorItem );
 
-  /** set the devKey for resolve SA
-      @param p_devKey        needed devKey
+  /** set the isoName for resolve SA
+      @param p_isoName        needed isoName
     */
-  void setDevKeyForDA( const DevKey_c& p_devKey );
+  void setISONameForDA( const ISOName_c& p_isoName );
 
   /** short inline function for setting the Destination address (PS) to global (0xFF)
     */
@@ -415,17 +415,17 @@ class CANPkgExt_c : public CANPkg_c
     */
   const ISOItem_c* getMonitorItemForSA() { return addrResolveResSA.pc_monitorItem; }
 
-  /** set the devKey for resolved SA
+  /** set the isoName for resolved SA
     */
-  const DevKey_c& getDevKeyForSA() { return *addrResolveResSA.p_devKey; }
+  const ISOName_c& getISONameForSA() { return *addrResolveResSA.p_isoName; }
 
   /** set the monitoritem for resolved SA
     */
   const ISOItem_c* getMonitorItemForDA() { return addrResolveResDA.pc_monitorItem; }
 
-  /** set the devKey for resolved SA
+  /** set the isoName for resolved SA
     */
-  const DevKey_c& getDevKeyForDA() { return *addrResolveResDA.p_devKey; }
+  const ISOName_c& getISONameForDA() { return *addrResolveResDA.p_isoName; }
 
 
   #ifdef ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL
@@ -461,7 +461,7 @@ private:
   /** set address in context of sending a message
       @param  addressResolveResults  source or destination address
       @param  scope                  local or remote
-      @return  true -> monitoritem_c, devKey_c is a valid combination
+      @return  true -> monitoritem_c, isoName_c is a valid combination
     */
   MessageState_t setAddress(AddressResolveResults& addressResolveResults, Scope scope);
 

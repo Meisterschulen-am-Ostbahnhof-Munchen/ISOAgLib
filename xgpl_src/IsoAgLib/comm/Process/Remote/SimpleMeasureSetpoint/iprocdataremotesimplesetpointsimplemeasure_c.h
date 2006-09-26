@@ -82,12 +82,12 @@ namespace IsoAgLib {
   Example:
   \code
   // define local device type
-  IsoAgLib::DevKey c_myDevKey( 1, 0 );
+  IsoAgLib::ISOName c_myISOName( 1, 0 );
   // creation of process data instance
   iProcDataRemoteSimpleSetpoint_c c_workState;
   // init for LIS=0, remote device type/subtype=5/0, complete work width=0xFF,
   // target process data/PRI=2, pointer to my local device type ( to resolve dynamic SA at time of cmd send )
-  c_workState.init( 0, IsoAgLib::iDevKey_c( 0x5, 0 ), 0x5, 0x0, 0xFF, 2, IsoAgLib::iDevKey_c( 0x5, 0 ), &c_myDevKey );
+  c_workState.init( 0, IsoAgLib::iISOName_c( 0x5, 0 ), 0x5, 0x0, 0xFF, 2, IsoAgLib::iISOName_c( 0x5, 0 ), &c_myISOName );
 
   // request current measurement value ( real value, which can differ from commanded value ); triger update request
   int lastReceivedMeasureState = c_workState.masterVal( true );
@@ -120,22 +120,22 @@ public:
     @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
                          (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
 
-    @param rc_devKey optional DEV_KEY code of this instance
+    @param rc_isoName optional DEV_KEY code of this instance
     @param rui8_pri PRI code of messages with this process data instance (default 2)
-    @param rc_ownerDevKey optional DEV_KEY of the owner
-    @param rpc_commanderDevKey pointer to updated DEV_KEY variable of commander
+    @param rc_ownerISOName optional DEV_KEY of the owner
+    @param rpc_commanderISOName pointer to updated DEV_KEY variable of commander
     @param rpc_processDataChangeHandler optional pointer to handler class of application
     @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
   iProcDataRemoteSimpleSetpointSimpleMeasure_c( const IsoAgLib::ElementDDI_s* ps_elementDDI = NULL,
-                                                const iDevKey_c& rc_devKey = iDevKey_c::DevKeyInitialProcessData,
+                                                const iISOName_c& rc_isoName = iISOName_c::ISONameInitialProcessData,
                                                 uint8_t rui8_pri = 2,
-                                                const iDevKey_c& rc_ownerDevKey = iDevKey_c::DevKeyUnspecified,
-                                                const iDevKey_c* rpc_commanderDevKey = NULL,
+                                                const iISOName_c& rc_ownerISOName = iISOName_c::ISONameUnspecified,
+                                                const iISOName_c* rpc_commanderISOName = NULL,
                                                 ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
                                                 int ri_singletonVecKey = 0)
   : ProcDataRemoteSimpleSetpointSimpleMeasure_c( ps_elementDDI,
-                                                 rc_devKey, rui8_pri, rc_ownerDevKey, rpc_commanderDevKey,
+                                                 rc_isoName, rui8_pri, rc_ownerISOName, rpc_commanderISOName,
                                                  rpc_processDataChangeHandler, ri_singletonVecKey){}
 
   /**
@@ -144,22 +144,22 @@ public:
     @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
                          (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
 
-    @param rc_devKey optional DEV_KEY code of this instance
+    @param rc_isoName optional DEV_KEY code of this instance
     @param rui8_pri PRI code of messages with this process data instance (default 2)
-    @param rc_ownerDevKey optional DEV_KEY of the owner
-    @param rpc_commanderDevKey pointer to updated DEV_KEY variable of commander
+    @param rc_ownerISOName optional DEV_KEY of the owner
+    @param rpc_commanderISOName pointer to updated DEV_KEY variable of commander
     @param rpc_processDataChangeHandler optional pointer to handler class of application
     @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
   void init(const IsoAgLib::ElementDDI_s* ps_elementDDI,
-            const iDevKey_c& rc_devKey = iDevKey_c::DevKeyInitialProcessData,
+            const iISOName_c& rc_isoName = iISOName_c::ISONameInitialProcessData,
             uint8_t rui8_pri = 2,
-            const iDevKey_c& rc_ownerDevKey = iDevKey_c::DevKeyUnspecified,
-            const iDevKey_c* rpc_commanderDevKey = NULL,
+            const iISOName_c& rc_ownerISOName = iISOName_c::ISONameUnspecified,
+            const iISOName_c* rpc_commanderISOName = NULL,
             ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
             int ri_singletonVecKey = 0)
   {ProcDataRemoteSimpleSetpointSimpleMeasure_c::init( ps_elementDDI,
-                                                      rc_devKey, rui8_pri, rc_ownerDevKey, rpc_commanderDevKey,
+                                                      rc_isoName, rui8_pri, rc_ownerISOName, rpc_commanderISOName,
                                                       rpc_processDataChangeHandler, ri_singletonVecKey);
   }
 
@@ -305,17 +305,17 @@ public:
   #endif
 
   /**
-    deliver the commanderDevKey (DEV_KEY of local member)
+    deliver the commanderISOName (DEV_KEY of local member)
     @return DEV_KEY used for sending commands to remote owner member
   */
-  const iDevKey_c& commanderDevKey()const{return static_cast<const iDevKey_c&>(ProcDataRemoteSimpleSetpointSimpleMeasure_c::commanderDevKey());}
+  const iISOName_c& commanderISOName()const{return static_cast<const iISOName_c&>(ProcDataRemoteSimpleSetpointSimpleMeasure_c::commanderISOName());}
 
   /**
-    set the pointer to the commander ident devKey
-    @param rpbdevKey pointer to DEV_KEY var of local member used for
+    set the pointer to the commander ident isoName
+    @param rpbisoName pointer to DEV_KEY var of local member used for
                 sending commands to remote owner member
   */
-  void setCommanderDevKey(const __IsoAgLib::DevKey_c* rpc_devKey){ProcDataRemoteSimpleSetpointSimpleMeasure_c::setCommanderDevKey(rpc_devKey);}
+  void setCommanderISOName(const __IsoAgLib::ISOName_c* rpc_isoName){ProcDataRemoteSimpleSetpointSimpleMeasure_c::setCommanderISOName(rpc_isoName);}
 
   /**
     deliver the central data type of this process data

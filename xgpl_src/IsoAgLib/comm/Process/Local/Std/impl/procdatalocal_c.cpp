@@ -131,10 +131,10 @@ namespace __IsoAgLib {
   @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
                        (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
 
-  @param rc_devKey optional DEV_KEY code of Process-Data
+  @param rc_isoName optional ISOName code of Process-Data
   @param rui8_pri PRI code of messages with this process data instance (default 2)
-  @param rc_ownerDevKey optional DEV_KEY of the owner
-  @param rpc_devKey pointer to updated DEV_KEY variable of owner
+  @param rc_ownerISOName optional ISOName of the owner
+  @param rpc_isoName pointer to updated ISOName variable of owner
   @param rb_cumulativeValue
            -# for process data like distance, time, area
                the value of the measure prog data sets is updated
@@ -156,8 +156,8 @@ namespace __IsoAgLib {
   @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
 ProcDataLocal_c::ProcDataLocal_c( const IsoAgLib::ElementDDI_s* ps_elementDDI, uint16_t rui16_element,
-                                  const DevKey_c& rc_devKey, uint8_t rui8_pri, const DevKey_c& rc_ownerDevKey,
-                                  const DevKey_c *rpc_devKey, bool rb_cumulativeValue,
+                                  const ISOName_c& rc_isoName, uint8_t rui8_pri, const ISOName_c& rc_ownerISOName,
+                                  const ISOName_c *rpc_isoName, bool rb_cumulativeValue,
 #ifdef USE_EEPROM_IO
                   uint16_t rui16_eepromAdr,
 #endif
@@ -165,7 +165,7 @@ ProcDataLocal_c::ProcDataLocal_c( const IsoAgLib::ElementDDI_s* ps_elementDDI, u
                   int ri_singletonVecKey
                   )
     : ProcDataLocalBase_c( ps_elementDDI, rui16_element,
-                          rc_devKey, rui8_pri, rc_ownerDevKey, rpc_devKey, rb_cumulativeValue,
+                          rc_isoName, rui8_pri, rc_ownerISOName, rpc_isoName, rb_cumulativeValue,
 #ifdef USE_EEPROM_IO
                           rui16_eepromAdr,
 #endif
@@ -185,10 +185,10 @@ ProcDataLocal_c::ProcDataLocal_c( const IsoAgLib::ElementDDI_s* ps_elementDDI, u
   @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
                        (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
 
-  @param rc_devKey optional DEV_KEY code of Process-Data
+  @param rc_isoName optional ISOName code of Process-Data
   @param rui8_pri PRI code of messages with this process data instance (default 2)
-  @param rc_ownerDevKey optional DEV_KEY of the owner
-  @param rpc_devKey pointer to updated DEV_KEY variable of owner
+  @param rc_ownerISOName optional ISOName of the owner
+  @param rpc_isoName pointer to updated ISOName variable of owner
   @param rb_cumulativeValue
           -# for process data like distance, time, area
               the value of the measure prog data sets is updated
@@ -210,8 +210,8 @@ ProcDataLocal_c::ProcDataLocal_c( const IsoAgLib::ElementDDI_s* ps_elementDDI, u
   @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
 void ProcDataLocal_c::init( const IsoAgLib::ElementDDI_s* ps_elementDDI, uint16_t rui16_element,
-                            const DevKey_c& rc_devKey, uint8_t rui8_pri, const DevKey_c& rc_ownerDevKey,
-                            const DevKey_c *rpc_devKey, bool rb_cumulativeValue,
+                            const ISOName_c& rc_isoName, uint8_t rui8_pri, const ISOName_c& rc_ownerISOName,
+                            const ISOName_c *rpc_isoName, bool rb_cumulativeValue,
 #ifdef USE_EEPROM_IO
                            uint16_t rui16_eepromAdr,
 #endif
@@ -220,7 +220,7 @@ void ProcDataLocal_c::init( const IsoAgLib::ElementDDI_s* ps_elementDDI, uint16_
                            )
 {
   ProcDataLocalBase_c::init( ps_elementDDI, rui16_element,
-                            rc_devKey, rui8_pri, rc_ownerDevKey, rpc_devKey, rb_cumulativeValue,
+                            rc_isoName, rui8_pri, rc_ownerISOName, rpc_isoName, rb_cumulativeValue,
 #ifdef USE_EEPROM_IO
                             rui16_eepromAdr,
 #endif
@@ -352,33 +352,33 @@ void ProcDataLocal_c::processProg(){
   (to react on a incoming "start" command for default data logging)
   @param ren_type measurement type: Proc_c::TimeProp, Proc_c::DistProp, ...
   @param ri32_increment
-  @param rpc_receiverDevice commanding DEV_KEY
+  @param rpc_receiverDevice commanding ISOName
   @return true -> measurement started
 */
 bool ProcDataLocal_c::startDataLogging(Proc_c::type_t ren_type /* Proc_c::TimeProp, Proc_c::DistProp, ... */,
-                                       int32_t ri32_increment, const DevKey_c* rpc_receiverDevice )
+                                       int32_t ri32_increment, const ISOName_c* rpc_receiverDevice )
 {
   if ( !rpc_receiverDevice )
-    // get devKey of TC from last TC status message
-    rpc_receiverDevice = getProcessInstance4Comm().getTcDevKey();
+    // get isoName of TC from last TC status message
+    rpc_receiverDevice = getProcessInstance4Comm().getTcISOName();
 
   // if still no rpc_receiverDevice => get it from ISO monitor list
   if ( !rpc_receiverDevice )
   {  // get TC dev key (device class 0)
     const ISOItem_c& c_tcISOItem = getIsoMonitorInstance4Comm().isoMemberDevClassInd(0 /* rui8_devClass */, 0 /* rui8_ind */, TRUE /* rb_forceClaimedAddress */);
-    rpc_receiverDevice = &(c_tcISOItem.devKey());
+    rpc_receiverDevice = &(c_tcISOItem.isoName());
   }
 
   return c_measureprog.startDataLogging(ren_type, static_cast<Proc_c::progType_t>(pri()), ri32_increment, rpc_receiverDevice);
 }
 
 /**
-  stop all measurement progs in all local process instances, started with given devKey
-  @param refc_devKey
+  stop all measurement progs in all local process instances, started with given isoName
+  @param refc_isoName
 */
-void ProcDataLocal_c::stopRunningMeasurement(const DevKey_c& refc_devKey)
+void ProcDataLocal_c::stopRunningMeasurement(const ISOName_c& refc_isoName)
 {
-  c_measureprog.stopRunningMeasurement(refc_devKey);
+  c_measureprog.stopRunningMeasurement(refc_isoName);
 }
 
 

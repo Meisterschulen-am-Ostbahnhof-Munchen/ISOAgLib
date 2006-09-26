@@ -122,27 +122,27 @@ class SaClaimHandler_c
    virtual ~SaClaimHandler_c() {}
 
    /** this function is called by ISOMonitor_c when a new CLAIMED ISOItem_c is registered.
-     * @param refc_devKey const reference to the item which ISOItem_c state is changed
+     * @param refc_isoName const reference to the item which ISOItem_c state is changed
      * @param rpc_newItem pointer to the currently corresponding ISOItem_c
      */
-   virtual void reactOnMonitorListAdd( const DevKey_c& refc_devKey, const ISOItem_c* rpc_newItem ) = 0;
+   virtual void reactOnMonitorListAdd( const ISOName_c& refc_isoName, const ISOItem_c* rpc_newItem ) = 0;
 
    /** this function is called by ISOMonitor_c when a device looses its ISOItem_c.
-    * @param refc_devKey const reference to the item which ISOItem_c state is changed
+    * @param refc_isoName const reference to the item which ISOItem_c state is changed
     * @param rui8_oldSa previously used SA which is NOW LOST -> clients which were connected to this item can react explicitly
     */
-   virtual void reactOnMonitorListRemove( const DevKey_c& refc_devKey, uint8_t rui8_oldSa ) = 0;
+   virtual void reactOnMonitorListRemove( const ISOName_c& refc_isoName, uint8_t rui8_oldSa ) = 0;
 };
 
-/** type of map which is used to store SaClaimHandler_c clients corresponding to a DevKey_c reference */
+/** type of map which is used to store SaClaimHandler_c clients corresponding to a ISOName_c reference */
 typedef std::vector<SaClaimHandler_c*> SaClaimHandlerVector_t;
 typedef std::vector<SaClaimHandler_c*>::iterator SaClaimHandlerVectorIterator_t;
 typedef std::vector<SaClaimHandler_c*>::const_iterator SaClaimHandlerVectorConstIterator_t;
 
 class ISOMonitor_c;
-typedef SINGLETON_DERIVED_CLIENT1(ISOMonitor_c, ElementBase_c, IdentItem_c, DevKey_c) SingletonISOMonitor_c;
+typedef SINGLETON_DERIVED_CLIENT1(ISOMonitor_c, ElementBase_c, IdentItem_c, ISOName_c) SingletonISOMonitor_c;
 // NEU SINGLETON TYPEDEF, wenn ISOMonitor auch IdentItem_c liste verwalten soll
-// typedef SINGLETON_DERIVED1(ISOMonitor_c, ElementBase_c, IdentItem_c, DevKey_c) SingletonISOMonitor_c;
+// typedef SINGLETON_DERIVED1(ISOMonitor_c, ElementBase_c, IdentItem_c, ISOName_c) SingletonISOMonitor_c;
 /** this object manages a monitor list of all
   ISO members including inserting and administration of local own members.
   @short Manager for members of Scheduler_c (ISOItem_c)
@@ -267,15 +267,15 @@ public:
   */
   ISOItem_c& isoMemberDevClassInd(uint8_t rui8_devClass, uint8_t rui8_ind, bool rb_forceClaimedAddress = false);
 
-  /** check if a memberItem with given DEV_KEY exist
+  /** check if a memberItem with given ISOName exist
     which optional (!!) match the condition of address claim state
     and update local pc_isoMemberCache
-    @param rc_devKey searched DEV_KEY
+    @param rc_isoName searched ISOName
     @param rb_forceClaimedAddress true -> only members with claimed address are used
           (optional, default false)
     @return true -> searched member exist
   */
-  bool existIsoMemberDevKey(const DevKey_c& rc_devKey, bool rb_forceClaimedAddress = false);
+  bool existIsoMemberISOName(const ISOName_c& rc_isoName, bool rb_forceClaimedAddress = false);
 
   /** check if a member with given number exist
     which optional (!!) match the condition of address claim state
@@ -286,25 +286,25 @@ public:
   bool existIsoMemberNr(uint8_t rui8_nr);
 
   /**
-    check if member is in member list with wanted DEV_KEY,
+    check if member is in member list with wanted ISOName,
     adapt instance if member with claimed address with other device class inst exist
-    @param refc_devKey DEV_KEY to search (-> it's updated if member with claimed address with other dev class inst is found)
-    @return true -> member with claimed address with given DEVCLASS found (and refc_devKey has now its DEV_KEY)
+    @param refc_isoName ISOName to search (-> it's updated if member with claimed address with other dev class inst is found)
+    @return true -> member with claimed address with given DEVCLASS found (and refc_isoName has now its ISOName)
   */
-  bool isoDevClass2DevKeyClaimedAddress(DevKey_c &refc_devKey);
+  bool isoDevClass2ISONameClaimedAddress(ISOName_c &refc_isoName);
 
   /** insert a new ISOItem_c in the list; with unset rui8_nr the member is initiated as
     address claim state; otherwise the given state can be given or state Active is used
     possible errors:
       * Err_c::badAlloc not enough memory to insert new ISOItem_c isntance
       * Err_c::busy another member with same ident exists already in the list
-    @param rc_devKey DEV_KEY of the member
+    @param rc_isoName ISOName of the member
     @param rui8_nr member number
     @param rui16_saEepromAdr EEPROM adress to store actual SA -> next boot with same adr
     @param ren_status wanted status
     @return pointer to new ISOItem_c or NULL if not succeeded
   */
-  ISOItem_c* insertIsoMember(const DevKey_c& rc_devKey, uint8_t rui8_nr = 0xFF,
+  ISOItem_c* insertIsoMember(const ISOName_c& rc_isoName, uint8_t rui8_nr = 0xFF,
                      IState_c::itemState_t ren_state = IState_c::Active, uint16_t rui16_saEepromAdr = 0xFFFF);
 
 
@@ -317,7 +317,7 @@ public:
       @see localMemberCnt
       @param rui8_ind index of wanted member (first item == 0)
       @return pointer to wanted local member (NULL if no suitable MonitorItem_c found)
-      (MonitorItem_c is base class of ISOItem_c which serves address, devKey, itemState)
+      (MonitorItem_c is base class of ISOItem_c which serves address, isoName, itemState)
      */
   ISOItem_c& localIsoMemberInd( uint8_t rui8_ind );
 
@@ -335,7 +335,7 @@ public:
       * Err_c::lbsSysNoActiveLocalMember on missing own active ident
       @return reference to the MonitorItem_c of the first active local member
       (MonitorItem_c is baes class of ISOItem_c which serves
-      adress, devKey, itemState)
+      adress, isoName, itemState)
       @exception preconditionViolation
      */
   ISOItem_c& getActiveLocalIsoMember();
@@ -346,22 +346,22 @@ public:
      */
   bool existLocalIsoMemberNr (uint8_t rui8_nr);
 
-  /** check for own ident with given DEV_KEY
-      @param rc_devKey              DEV_KEY to search for
+  /** check for own ident with given ISOName
+      @param rc_isoName              ISOName to search for
       @param rb_forceClaimedAddress true -> only members with claimed address are used
       (optional, default false)
-      @return true -> one of the own identities has the wanted DEV_KEY
+      @return true -> one of the own identities has the wanted ISOName
      */
-  bool existLocalIsoMemberDevKey (const DevKey_c& rc_devKey, bool rb_forceClaimedAddress = false);
+  bool existLocalIsoMemberISOName (const ISOName_c& rc_isoName, bool rb_forceClaimedAddress = false);
 
   /**
       * reset the Address Claim state by:
       * + reset IdentItem::IStat_c to IState_c::PreAddressClaim
       * + remove pointed ISOItem_c nodes and the respective pointer
-      * @param rc_devKey  DEV_KEY
-      * @return true -> there was an item with given DevKey_c that has been resetted to IState_c::PreAddressClaim
+      * @param rc_isoName  ISOName
+      * @return true -> there was an item with given ISOName_c that has been resetted to IState_c::PreAddressClaim
      */
-  bool restartAddressClaim( const DevKey_c& rrefc_devKey );
+  bool restartAddressClaim( const ISOName_c& rrefc_isoName );
 
   /** register a SaClaimHandler_c */
   bool registerSaClaimHandler (SaClaimHandler_c* rpc_client);
@@ -371,20 +371,21 @@ public:
 
 
   /** this function is used to broadcast a ISO monitor list change to all registered clients */
-  void broadcastSaAdd2Clients( const DevKey_c& rc_devKey, const ISOItem_c* rpc_isoItem ) const;
+  void broadcastSaAdd2Clients( const ISOName_c& rc_isoName, const ISOItem_c* rpc_isoItem ) const;
 
   /** this function is used to broadcast a ISO monitor list change to all registered clients */
-  void broadcastSaRemove2Clients( const DevKey_c& rc_devKey, uint8_t rui8_oldSa ) const;
+  void broadcastSaRemove2Clients( const ISOName_c& rc_isoName, uint8_t rui8_oldSa ) const;
 
-  /** deliver member item with given devKey
-    (check with existIsoMemberDevKey before access to not defined item)
+  /**
+    deliver member item with given isoName
+    (check with existIsoMemberISOName before access to not defined item)
     possible errors:
       * Err_c::elNonexistent on failed search
-    @param rc_devKey searched DEV_KEY
+    @param rc_isoName searched ISOName
     @return reference to searched ISOItem
      @exception containerElementNonexistant
   */
-  ISOItem_c& isoMemberDevKey(const DevKey_c& rc_devKey, bool rb_forceClaimedAddress = false);
+  ISOItem_c& isoMemberISOName(const ISOName_c& rc_isoName, bool rb_forceClaimedAddress = false);
 
   /** deliver member item with given nr
     (check with existIsoMemberNr before access to not defined item)
@@ -396,25 +397,26 @@ public:
   */
   ISOItem_c& isoMemberNr(uint8_t rui8_nr);
 
-  /** deliver member item with given DEV_KEY, set pointed bool var to true on success
+  /** deliver member item with given ISOName, set pointed bool var to true on success
     and set a Member Array Iterator to the result
-    @param rc_devKey searched DEV_KEY
+    @param rc_isoName searched ISOName
     @param pb_success bool pointer to store the success (true on success)
     @param pbc_iter optional member array iterator which points to searched ISOItem_c on success
     @return reference to the searched item
   */
-  ISOItem_c& isoMemberDevKey(const DevKey_c& rc_devKey, bool *const pb_success, bool rb_forceClaimedAddress = false, Vec_ISOIterator *const pbc_iter = NULL);
+  ISOItem_c& isoMemberISOName(const ISOName_c& rc_isoName, bool *const pb_success, bool rb_forceClaimedAddress = false, Vec_ISOIterator *const pbc_iter = NULL);
 
-  /** delete item with specified devKey
+  /**
+    delete item with specified isoName
     possible errors:
-      * Err_c::elNonexistent no member with given DEV_KEY exists
-    @param rc_devKey DEV_KEY of to be deleted member
+      * Err_c::elNonexistent no member with given ISOName exists
+    @param rc_isoName ISOName of to be deleted member
   */
-  bool deleteIsoMemberDevKey(const DevKey_c& rc_devKey);
+  bool deleteIsoMemberISOName(const ISOName_c& rc_isoName);
 
   /** delete item with specified member number
     possible errors:
-      * Err_c::elNonexistent no member with given DEV_KEY exists
+      * Err_c::elNonexistent no member with given ISOName exists
     @param rui8_nr number of to be deleted member
   */
   bool deleteIsoMemberNr(uint8_t rui8_nr);
@@ -429,14 +431,15 @@ public:
   */
   uint8_t unifyIsoSa(const ISOItem_c* rpc_isoItem);
 
-  /** change devKey if actual devKey isn't unique
+  /**
+    change isoName if actual isoName isn't unique
     (search possible free instance to given device class)
     possible errors:
-      * Err_c::busy no other device class inst code leads to unique DEV_KEY code
-    @param refc_devKey reference to DEV_KEY var (is changed directly if needed!!)
-    @return true -> referenced DEV_KEY is now unique
+      * Err_c::busy no other device class inst code leads to unique ISOName code
+    @param refc_isoName reference to ISOName var (is changed directly if needed!!)
+    @return true -> referenced ISOName is now unique
   */
-  bool unifyIsoDevKey(DevKey_c& refc_devKey);
+  bool unifyIsoISOName(ISOName_c& refc_isoName);
 
   /** deliver timestamp of last ISO request for SA claim msg
     @return time of last Request PG for Adress Claim on BUS

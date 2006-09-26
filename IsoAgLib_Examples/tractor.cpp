@@ -185,7 +185,7 @@
 
 /* include some needed util headers */
 //#include <IsoAgLib/util/config.h>
-#include <IsoAgLib/util/idevkey_c.h>
+#include <IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h>
 
 /* include headers for the needed drivers */
 #include <IsoAgLib/driver/system/isystem_c.h>
@@ -202,7 +202,6 @@
    of the "IsoAgLib" */
 #include <IsoAgLib/comm/Scheduler/ischeduler_c.h>
 #include <IsoAgLib/comm/SystemMgmt/iidentitem_c.h>
-#include <IsoAgLib/comm/SystemMgmt/isystemmgmt_c.h>
 #include <IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h>
 #include <IsoAgLib/comm/Base/itimeposgps_c.h>
 #include <IsoAgLib/comm/Base/itracgeneral_c.h>
@@ -267,7 +266,7 @@ class MyInternalPkg_c : public IsoAgLib::iCANPkgExt_c
 
 // variable for DEV_KEY ( device type, device type instance )
 // default with tractor device type
-IsoAgLib::iDevKey_c myDevKey( 1, 0 );
+IsoAgLib::iISOName_c myISOName( 1, 0 );
 
 /**
   Operation: flags2String
@@ -345,7 +344,7 @@ bool MyInternalCanHandler_c::processMsg()
   IsoAgLib::iTimePosGPS_c& c_timePosGps = IsoAgLib::getITimePosGpsInstance();
   IsoAgLib::iTracGeneral_c& c_tracGeneral = IsoAgLib::getITracGeneralInstance();
   IsoAgLib::iTracMove_c& c_tracMove = IsoAgLib::getITracMoveInstance();
-  IsoAgLib::iTracPto_c& c_tracPto = IsoAgLib::getITracPtoInstance();
+  IsoAgLib::iTracPTO_c& c_tracPto = IsoAgLib::getITracPtoInstance();
   // simply set the fresh received value update at IsoAgLib
   // - the timeEvent of internal Base_c will then trigger send
   //   of corresponding CAN messages at the right time period
@@ -387,7 +386,7 @@ bool MyInternalCanHandler_c::processMsg()
       return true;
     case InternalRpm:
       // await engine RPM as 2 byte signed integer
-      c_tracGeneral.setEngine( c_myData.getInt16Data( 0 ) );
+ //     c_tracGeneral.setEngine( c_myData.getInt16Data( 0 ) );
       return true;
     case InternalPower:
       // await key switch state as one byte IsoActiveFlag_t
@@ -399,7 +398,7 @@ bool MyInternalCanHandler_c::processMsg()
       // await first two byte unsigned int year,
       // then each unsigned int one byte:
       // month, day, hour, minute, second
-      c_timePosGps.setCalendar(
+      c_timePosGps.setCalendarUtc(
         c_myData.getUint16Data( 0 ), // year
         c_myData.getUint8Data( 2 ),  // month
         c_myData.getUint8Data( 3 ),  // day
@@ -448,8 +447,8 @@ int main()
 
   // start address claim of the local member
   // if DEV_KEY ( device type, -instance ) conflicts forces change of POS/instance, the
-  // IsoAgLib can change the myDevKey val through the pointer to myDevKey
-  IsoAgLib::iIdentItem_c c_myIdent( &myDevKey,
+  // IsoAgLib can change the myISOName val through the pointer to myISOName
+  IsoAgLib::iIdentItem_c c_myIdent( &myISOName,
       b_selfConf, ui8_indGroup, b_func, ui16_manufCode,
       ui32_serNo, b_wantedSa, 0xFFFF, b_funcInst, b_ecuInst);
 
@@ -458,10 +457,10 @@ int main()
     - BaseDataGroup2: front and rear PTO, engine RPM, front and rear hitch information
     - BaseDataCalendar: calendar data
   */
-  getITimePosGpsInstance().config(&myDevKey, BaseDataCalendar );
-  getITracGeneralInstance().config(&myDevKey, BaseDataGroup1 );
-  getITracMoveInstance().config(&myDevKey, BaseDataGroup1 );
-  getITracPtoInstance().config(&myDevKey, BaseDataGroup2 );
+  getITimePosGpsInstance().config(&myISOName, IsoAgLib::IdentModeTractor );
+  getITracGeneralInstance().config(&myISOName, IsoAgLib::IdentModeTractor );
+  getITracMoveInstance().config(&myISOName, IsoAgLib::IdentModeTractor  );
+  getITracPtoInstance().config(&myISOName, IsoAgLib::IdentModeTractor  );
 
   /** IMPORTANT:
     - The following loop could be replaced of any repeating call of

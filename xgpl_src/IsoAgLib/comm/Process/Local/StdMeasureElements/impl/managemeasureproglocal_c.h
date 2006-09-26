@@ -155,11 +155,11 @@ private:
   /**
     check if specific measureprog exist
     @param rui8_pri PRI code of searched measure program
-    @param rc_devKey DEVCLASS code of searched measure program
+    @param rc_isoName DEVCLASS code of searched measure program
     @return true -> found item
   */
-  bool existProg(uint8_t rui8_pri, const DevKey_c& rc_devKey)
-      {return updateProgCache(rui8_pri, rc_devKey, false);}
+  bool existProg(uint8_t rui8_pri, const ISOName_c& rc_isoName)
+      {return updateProgCache(rui8_pri, rc_isoName, false);}
 
   /**
     search for suiting measureprog, if not found AND if rb_doCreate == true
@@ -168,10 +168,10 @@ private:
     possible errors:
         * Err_c::elNonexistent wanted measureprog doesn't exist and rb_doCreate == false
     @param rui8_pri PRI code of searched measure program
-    @param rc_devKey DEVCLASS code of searched measure program
+    @param rc_isoName DEVCLASS code of searched measure program
     @param rb_doCreated true -> create suitable measure program if not found
   */
-  MeasureProgLocal_c& prog(uint8_t rui8_pri, const DevKey_c& rc_devKey, bool rb_doCreate);
+  MeasureProgLocal_c& prog(uint8_t rui8_pri, const ISOName_c& rc_isoName, bool rb_doCreate);
 
   /** initialise value for all registered Measure Progs */
   void initGlobalVal( int32_t ri32_val );
@@ -193,17 +193,17 @@ private:
     @param ren_type measurement type: Proc_c::TimeProp, Proc_c::DistProp, ...
     @param ren_progType program type: Proc_c::Base, Proc_c::Target
     @param ri32_increment
-    @param rpc_receiverDevice commanding DEV_KEY
+    @param rpc_receiverDevice commanding ISOName
     @return true -> rpc_receiverDevice is set
   */
   bool startDataLogging(Proc_c::type_t ren_type /* Proc_c::TimeProp, Proc_c::DistProp, ... */,
                         Proc_c::progType_t ren_progType,
-                        int32_t ri32_increment, const DevKey_c* rpc_receiverDevice );
+                        int32_t ri32_increment, const ISOName_c* rpc_receiverDevice );
   /**
-    stop all measurement progs in all local process instances, started with given devKey
-    @param refc_devKey
+    stop all measurement progs in all local process instances, started with given isoName
+    @param refc_isoName
   */
-  void stopRunningMeasurement(const DevKey_c& refc_devKey);
+  void stopRunningMeasurement(const ISOName_c& refc_isoName);
 
 
  protected:
@@ -227,20 +227,20 @@ private:
     possible errors:
         * Err_c::badAlloc not enough memory to insert new MeasureProgLocal
     @param rui8_type program type: Proc_c::Base, Proc_c::Target
-    @param rc_devKey commanding DEV_KEY
+    @param rc_isoName commanding ISOName
   */
-  void insertMeasureprog(uint8_t rui8_type, const DevKey_c& rc_devKey);
+  void insertMeasureprog(uint8_t rui8_type, const ISOName_c& rc_isoName);
   /**
     update the programm cache, create an programm item, if wanted
 
     possible errors:
         * Err_c::badAlloc not enough memory to insert new MeasureProgLocal
     @param rui8_type program type: Proc_c::Base, Proc_c::Target
-    @param rc_devKey commanding DEV_KEY
+    @param rc_isoName commanding ISOName
     @param rb_createIfNotFound true -> create new item if not found
     @return true -> instance found
   */
-  bool updateProgCache(uint8_t rui8_type, const DevKey_c& rc_devKey, bool rb_createIfNotFound);
+  bool updateProgCache(uint8_t rui8_type, const ISOName_c& rc_isoName, bool rb_createIfNotFound);
  protected:
   /** container of objects for managing jobs of local measure programs */
   Vec_MeasureProgLocal c_vec_prog;

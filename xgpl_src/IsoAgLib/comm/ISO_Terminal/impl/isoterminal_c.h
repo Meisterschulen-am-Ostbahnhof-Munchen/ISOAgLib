@@ -184,15 +184,15 @@ private:
   void singletonInit();
 
   /** this function is called by ISOMonitor_c when a new CLAIMED ISOItem_c is registered.
-   * @param refc_devKey const reference to the item which ISOItem_c state is changed
+   * @param refc_isoName const reference to the item which ISOItem_c state is changed
    * @param rpc_newItem pointer to the currently corresponding ISOItem_c
    */
-  void reactOnMonitorListAdd (const DevKey_c& refc_devKey, const ISOItem_c* rpc_newItem);
+  void reactOnMonitorListAdd (const ISOName_c& refc_isoName, const ISOItem_c* rpc_newItem);
    /** this function is called by ISOMonitor_c when a device looses its ISOItem_c.
-   * @param refc_devKey const reference to the item which ISOItem_c state is changed
+   * @param refc_isoName const reference to the item which ISOItem_c state is changed
    * @param rui8_oldSa previously used SA which is NOW LOST -> clients which were connected to this item can react explicitly
     */
-  void reactOnMonitorListRemove (const DevKey_c& refc_devKey, uint8_t rui8_oldSa);
+  void reactOnMonitorListRemove (const ISOName_c& refc_isoName, uint8_t rui8_oldSa);
 
   // helper function to shield removal access to vtCSC-list
   void deregisterIsoObjectPoolInd (uint8_t rui8_index);

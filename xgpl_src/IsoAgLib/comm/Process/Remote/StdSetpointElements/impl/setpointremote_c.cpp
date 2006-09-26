@@ -100,9 +100,9 @@ void SetpointRemote_c::init( ProcDataBase_c *const rpc_processData )
 {
   SetpointBase_c::init( rpc_processData );
   i32_answeredTime = i32_commandedTime = 0;
-  c_answeredMaster.setDevKey( DevKey_c::DevKeyUnspecified );
-  c_answeredMe.setDevKey( DevKey_c::DevKeyUnspecified );
-  c_commanded.setDevKey( DevKey_c::DevKeyUnspecified );
+  c_answeredMaster.setISOName( ISOName_c::ISONameUnspecified );
+  c_answeredMe.setISOName( ISOName_c::ISONameUnspecified );
+  c_commanded.setISOName( ISOName_c::ISONameUnspecified );
 
 
 }
@@ -156,7 +156,7 @@ SetpointRemote_c::~SetpointRemote_c(){
 void SetpointRemote_c::setExact(float rf_val)
 { // set value in c_commanded
   c_commanded.setExact( rf_val);
-  c_commanded.setDevKey( processData().commanderDevKey());
+  c_commanded.setISOName( processData().commanderISOName());
 
   // set time of command
   i32_commandedTime = System_c::getTime();
@@ -167,7 +167,7 @@ void SetpointRemote_c::setExact(float rf_val)
                                                               GeneralCommand_c::exactValue,
                                                               GeneralCommand_c::setValue);
 
-  processData().sendValDevKey(Proc_c::Target, processData().commanderDevKey(), rf_val);
+  processData().sendValISOName(Proc_c::Target, processData().commanderISOName(), rf_val);
 }
 
 #endif
@@ -183,7 +183,7 @@ void SetpointRemote_c::setExact(float rf_val)
 void SetpointRemote_c::setExact( int32_t ri32_val){
   // set value in c_commanded
   c_commanded.setExact( ri32_val);
-  c_commanded.setDevKey( processData().commanderDevKey());
+  c_commanded.setISOName( processData().commanderISOName());
 
   // set time of command
   i32_commandedTime = System_c::getTime();
@@ -193,7 +193,7 @@ void SetpointRemote_c::setExact( int32_t ri32_val){
                                                               GeneralCommand_c::exactValue,
                                                               GeneralCommand_c::setValue);
 
-  processData().sendValDevKey( Proc_c::Target, processData().commanderDevKey(), ri32_val);
+  processData().sendValISOName( Proc_c::Target, processData().commanderISOName(), ri32_val);
 }
 
 
@@ -208,7 +208,7 @@ void SetpointRemote_c::setExact( int32_t ri32_val){
 void SetpointRemote_c::setMin( int32_t ri32_val){
   // set value in c_commanded
   c_commanded.setMin( ri32_val);
-  c_commanded.setDevKey( processData().commanderDevKey());
+  c_commanded.setISOName( processData().commanderISOName());
 
   // set time of command
   i32_commandedTime = System_c::getTime();
@@ -218,7 +218,7 @@ void SetpointRemote_c::setMin( int32_t ri32_val){
                                                               GeneralCommand_c::minValue,
                                                               GeneralCommand_c::setValue);
 
-  processData().sendValDevKey( Proc_c::Target, processData().commanderDevKey(), ri32_val);
+  processData().sendValISOName( Proc_c::Target, processData().commanderISOName(), ri32_val);
 }
 
 /**
@@ -232,7 +232,7 @@ void SetpointRemote_c::setMin( int32_t ri32_val){
 void SetpointRemote_c::setMax( int32_t ri32_val){
   // set value in c_commanded
   c_commanded.setMax( ri32_val);
-  c_commanded.setDevKey( processData().commanderDevKey());
+  c_commanded.setISOName( processData().commanderISOName());
 
   // set time of command
   i32_commandedTime = System_c::getTime();
@@ -242,7 +242,7 @@ void SetpointRemote_c::setMax( int32_t ri32_val){
                                                               GeneralCommand_c::maxValue,
                                                               GeneralCommand_c::setValue);
   // send command to owner: PD=0, MOD=3
-  processData().sendValDevKey( Proc_c::Target, processData().commanderDevKey(), ri32_val);
+  processData().sendValISOName( Proc_c::Target, processData().commanderISOName(), ri32_val);
 }
 
 /**
@@ -256,7 +256,7 @@ void SetpointRemote_c::setMax( int32_t ri32_val){
 void SetpointRemote_c::setDefault( int32_t ri32_val){
   // set value in c_commanded
   c_commanded.setDefault( ri32_val);
-  c_commanded.setDevKey( processData().commanderDevKey());
+  c_commanded.setISOName( processData().commanderISOName());
 
   // set time of command
   i32_commandedTime = System_c::getTime();
@@ -266,7 +266,7 @@ void SetpointRemote_c::setDefault( int32_t ri32_val){
                                                               GeneralCommand_c::defaultValue,
                                                               GeneralCommand_c::setValue);
   // send command to owner:
-  processData().sendValDevKey( Proc_c::Target, processData().commanderDevKey(), ri32_val);
+  processData().sendValISOName( Proc_c::Target, processData().commanderISOName(), ri32_val);
 }
 
 /**
@@ -279,7 +279,7 @@ void SetpointRemote_c::requestExact() const
                                                               GeneralCommand_c::exactValue,
                                                               GeneralCommand_c::requestValue);
 
-  processDataConst().sendValDevKey( Proc_c::Target, processDataConst().commanderDevKey(), 0);
+  processDataConst().sendValISOName( Proc_c::Target, processDataConst().commanderISOName(), 0);
 }
 /**
   request remote master setpoint - MIN
@@ -291,7 +291,7 @@ void SetpointRemote_c::requestMin() const
                                                               GeneralCommand_c::minValue,
                                                               GeneralCommand_c::requestValue);
 
-  processDataConst().sendValDevKey( Proc_c::Target, processDataConst().commanderDevKey(), 0);
+  processDataConst().sendValISOName( Proc_c::Target, processDataConst().commanderISOName(), 0);
 }
 /**
   request remote master setpoint - MAX
@@ -303,7 +303,7 @@ void SetpointRemote_c::requestMax() const
                                                               GeneralCommand_c::maxValue,
                                                               GeneralCommand_c::requestValue);
 
-  processDataConst().sendValDevKey( Proc_c::Target, processDataConst().commanderDevKey(), 0);
+  processDataConst().sendValISOName( Proc_c::Target, processDataConst().commanderISOName(), 0);
 }
 /**
   request remote master setpoint - DEFAULT
@@ -314,7 +314,7 @@ void SetpointRemote_c::requestDefault() const
   getProcessInstance4Comm().data().c_generalCommand.setValues(true /* isSetpoint */, true /* isRequest */,
                                                               GeneralCommand_c::defaultValue,
                                                               GeneralCommand_c::requestValue);
-  processDataConst().sendValDevKey( Proc_c::Target, processDataConst().commanderDevKey(), 0);
+  processDataConst().sendValISOName( Proc_c::Target, processDataConst().commanderISOName(), 0);
 }
 
 /**
@@ -339,7 +339,7 @@ bool SetpointRemote_c::accepted() const {
   @return true -> a master setpoint commander exist
 */
 bool SetpointRemote_c::existMaster() const {
-  return (c_answeredMaster.devKey().isSpecified());
+  return (c_answeredMaster.isoName().isSpecified());
 }
 
 /**
@@ -376,7 +376,7 @@ bool SetpointRemote_c::valid() const {
       b_maxTest = true;
   bool b_result =
     ((answered()
-  && (c_commanded.devKey() == c_answeredMaster.devKey())
+  && (c_commanded.isoName() == c_answeredMaster.isoName())
     )) ? true : false;
 
   if ((!b_result) && (answered()) && (existMaster()))
@@ -441,17 +441,17 @@ void SetpointRemote_c::processSet(){
   // detect if something was changed, so that the handler shall be called
   bool b_change = false;
 
-  // retreive the devKey of send and empf
-  const DevKey_c& c_empfDevKey = c_pkg.memberEmpf().devKey();
-  const DevKey_c& c_sendDevKey = c_pkg.memberSend().devKey();
+  // retreive the isoName of send and empf
+  const ISOName_c& c_empfISOName = c_pkg.memberEmpf().isoName();
+  const ISOName_c& c_sendISOName = c_pkg.memberSend().isoName();
 
-  if (c_sendDevKey == processData().ownerDevKey())
+  if (c_sendISOName == processData().ownerISOName())
   { // the owner sent the value
     if (c_pkg.isSpecCmd( static_cast<proc_specCmd_t>(setpointReleaseCmd|setpointErrCmd)) == false)
     { // was a normal value
       if  ( ( c_answeredMaster.valMod( c_pkg.c_generalCommand.getValueGroup() ) != i32_val )
          || ( ! c_answeredMaster.valid() )
-         || ( c_answeredMaster.devKey() != c_empfDevKey )
+         || ( c_answeredMaster.isoName() != c_empfISOName )
          || ( ! c_answeredMaster.master() )
           ) b_change = true;
 
@@ -466,11 +466,11 @@ void SetpointRemote_c::processSet(){
       }
       // call processMeasurementUpdate handler function in case a measurement prog is running for this setpoint DDI
       if ( ( processDataConst().getProcessDataChangeHandler() != NULL ) )
-        processDataConst().getProcessDataChangeHandler()->processMeasurementUpdate( pprocessData(), i32_val, c_pkg.memberSend().devKey(), b_changeMeasurement);
+        processDataConst().getProcessDataChangeHandler()->processMeasurementUpdate( pprocessData(), i32_val, static_cast<const IsoAgLib::iISOName_c&>( c_pkg.memberSend().isoName() ), b_changeMeasurement);
 
       c_answeredMaster.setValMod( i32_val, c_pkg.c_generalCommand.getValueGroup());
-      // set the devKey of the actual master
-      c_answeredMaster.setDevKey( c_empfDevKey);
+      // set the isoName of the actual master
+      c_answeredMaster.setISOName( c_empfISOName);
       // set the valid flag to true
       c_answeredMaster.setValid( true);
       // set for completness themaster flag
@@ -479,15 +479,15 @@ void SetpointRemote_c::processSet(){
     }
   }
   // check if it was a master release command
-  if (((c_empfDevKey == c_answeredMaster.devKey())
-      ||(c_sendDevKey == processData().ownerDevKey()))
+  if (((c_empfISOName == c_answeredMaster.isoName())
+      ||(c_sendISOName == processData().ownerISOName()))
     &&(c_pkg.isSpecCmd( setpointReleaseCmd)) )
   { // the actual master setpoint is released
     releaseMasterIntern();
     b_change = true;
   }
   // check if it was a SETPOINT_ERROR message for the master
-  if ((c_empfDevKey == c_answeredMaster.devKey())
+  if ((c_empfISOName == c_answeredMaster.isoName())
     && (c_pkg.isSpecCmd( setpointErrCmd)) )
   { // the owner (controlling) system can´t deliver the commanded setpoint -> actual invalid
     if ( c_answeredMaster.valid() ) b_change = true;
@@ -495,8 +495,8 @@ void SetpointRemote_c::processSet(){
   }
 
   // check if this is an answer to my last command
-  if ((c_empfDevKey == processData().commanderDevKey())
-    && (c_sendDevKey == processData().ownerDevKey()))
+  if ((c_empfISOName == processData().commanderISOName())
+    && (c_sendISOName == processData().ownerISOName()))
   { // the owner of the process data sent me an answer
     if (c_pkg.isSpecCmd( static_cast<proc_specCmd_t>(setpointReleaseCmd|setpointErrCmd)) == false)
     { // normal value
@@ -524,12 +524,12 @@ void SetpointRemote_c::processSet(){
     }
     // set the answer time
     i32_answeredTime = System_c::getTime();
-    // set the correct devKey
-    c_answeredMe.setDevKey( c_empfDevKey);
+    // set the correct isoName
+    c_answeredMe.setISOName( c_empfISOName);
   }
   // call handler function if handler class is registered
   if ( ( processDataConst().getProcessDataChangeHandler() != NULL ) && ( b_change ) )
-    processDataConst().getProcessDataChangeHandler()->processSetpointResponse( pprocessData(), setpointMasterVal(), c_pkg.memberSend().devKey() );
+    processDataConst().getProcessDataChangeHandler()->processSetpointResponse( pprocessData(), setpointMasterVal(), static_cast<const IsoAgLib::iISOName_c&>( c_pkg.memberSend().isoName() ) );
 
 }
 
@@ -538,28 +538,28 @@ void SetpointRemote_c::processSet(){
   if this action is allowed
 */
 void SetpointRemote_c::releaseMasterIntern(){
-  c_answeredMaster.setDevKey( DevKey_c::DevKeyUnspecified );
+  c_answeredMaster.setISOName( ISOName_c::ISONameUnspecified );
   c_answeredMaster.setMaster( false);
 }
 
 
 /**
   perform periodic actions
-  --> reset all entries if devKey isn't active any more
+  --> reset all entries if isoName isn't active any more
   @return true -> all planned activities performed in available time
 */
 bool SetpointRemote_c::timeEvent( void )
 {
   if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
-  const DevKey_c& c_ownerDevKey = processData().ownerDevKey();
-  if ( !getIsoMonitorInstance4Comm().existIsoMemberDevKey( c_ownerDevKey, true) )
+  const ISOName_c& c_ownerISOName = processData().ownerISOName();
+  if ( !getIsoMonitorInstance4Comm().existIsoMemberISOName( c_ownerISOName, true) )
   { // remote owner of this process data isn't active any more
     // -> reset all entries
     i32_answeredTime = i32_commandedTime = 0;
-    c_answeredMaster.setDevKey( DevKey_c::DevKeyUnspecified );
+    c_answeredMaster.setISOName( ISOName_c::ISONameUnspecified );
     c_answeredMaster.setMaster( false);
-    c_answeredMe.setDevKey( DevKey_c::DevKeyUnspecified );
-    c_commanded.setDevKey( DevKey_c::DevKeyUnspecified );
+    c_answeredMe.setISOName( ISOName_c::ISONameUnspecified );
+    c_commanded.setISOName( ISOName_c::ISONameUnspecified );
   }
   return true;
 }

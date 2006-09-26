@@ -244,8 +244,8 @@ bool SetpointLocal_c::existUnhandledMaster() {
 
   while (pc_registerCache != vec_register.end())
   {
-    if ( ( ((existMaster()) && (pc_registerCache->devKey() == masterConst().devKey()))
-        || ((existMaster()) && (masterConst().devKey() == 0xFF) )
+    if ( ( ((existMaster()) && (pc_registerCache->isoName() == masterConst().isoName()))
+        || ((existMaster()) && (masterConst().isoName() == 0xFF) )
         || ((pc_registerCache->master()) )
          )
       && (!pc_registerCache->handled())
@@ -370,7 +370,7 @@ void SetpointLocal_c::setMasterMeasurementVal( int32_t ri32_val)
   master().setExact( ri32_val);
   master().setHandled( true);
   master().setValid( true);
-  master().setDevKey( 0xFF);
+  master().setISOName( 0xFF);
 
 #ifdef USE_FLOAT_DATA_TYPE
   setValType( i32_val);
@@ -479,7 +479,7 @@ void SetpointLocal_c::respondAckNack(){
       pc_iter->setHandled( true, System_c::getTime());
       // if no master -> send NO_VAL_32S
       if ( (!(pc_iter->master()))
-        && ( (!(existMaster())) || (pc_iter->devKey() != master().devKey()))
+        && ( (!(existMaster())) || (pc_iter->isoName() != master().isoName()))
          )
       { // item is no master and is not sent from actual master
         // send ignore msg
@@ -566,7 +566,7 @@ int32_t SetpointLocal_c::checkMeasurement( int32_t ri32_val, bool rb_sendIfError
 /**
   perform periodic actions
   (here: check if measure val is in limits; delete old handled not master setpoints and
-          delete master entry if it's devKey isn't registered active any more)
+          delete master entry if it's isoName isn't registered active any more)
   @return true -> all planned activities performed in allowed time
 */
 bool SetpointLocal_c::timeEvent( void ){
@@ -574,7 +574,7 @@ bool SetpointLocal_c::timeEvent( void ){
   int32_t i32_time = Scheduler_c::getLastTimeEventTrigger();
 
   // delete all NOT-master entries handled >3sec ago, or
-  // delete master entries where devKey of caller is inactive >3sec
+  // delete master entries where isoName of caller is inactive >3sec
   bool b_repeat=true;
   while (b_repeat && (!vec_register.empty()) ) {
     b_repeat = false;
@@ -600,10 +600,10 @@ bool SetpointLocal_c::timeEvent( void ){
         }
       }
       else if (!b_staticMaster)
-      { // pc_iter is master -> check if devKey is valid
-        const DevKey_c& c_testDevKey = pc_iter->devKey();
-        if ( ( !getIsoMonitorInstance4Comm().existIsoMemberDevKey( c_testDevKey, true) ) )
-        { // devKey of caller not in Monitor-List or inactive since >3sec -> delete entry
+      { // pc_iter is master -> check if isoName is valid
+        const ISOName_c& c_testISOName = pc_iter->isoName();
+        if ( ( !getIsoMonitorInstance4Comm().existIsoMemberISOName( c_testISOName, true) ) )
+        { // isoName of caller not in Monitor-List or inactive since >3sec -> delete entry
           vec_register.erase( pc_iter);
           pc_master = vec_register.end(); // register that no acive master defined
           #ifdef DEBUG_HEAP_USEAGE
@@ -628,13 +628,13 @@ bool SetpointLocal_c::timeEvent( void ){
 /**
   send a sub-setpoint (selected by MOD) to a specified target (selected by GPT)
   @param GeneralCommand_c::ValueGroup_t min/max/exact/default code of the value type to send
-  @param rc_targetDevKey DevKey of target
+  @param rc_targetISOName ISOName of target
   @param ren_type optional PRI specifier of the message (default Proc_c::Target )
   @param en_valueGroup: min/max/exact/default
   @param en_command
   @return true -> successful sent
 */
-bool SetpointLocal_c::sendSetpointMod(const DevKey_c& rc_targetDevKey,
+bool SetpointLocal_c::sendSetpointMod(const ISOName_c& rc_targetISOName,
                                       Proc_c::progType_t ren_progType,
                                       GeneralCommand_c::ValueGroup_t en_valueGroup,
                                       GeneralCommand_c::CommandType_t en_command) const {
@@ -644,11 +644,11 @@ bool SetpointLocal_c::sendSetpointMod(const DevKey_c& rc_targetDevKey,
   #ifdef USE_FLOAT_DATA_TYPE
   if (valType() == i32_val) {
   #endif
-    return processDataConst().sendValDevKey(ren_progType, rc_targetDevKey, masterConst().valMod(en_valueGroup));
+    return processDataConst().sendValISOName(ren_progType, rc_targetISOName, masterConst().valMod(en_valueGroup));
   #ifdef USE_FLOAT_DATA_TYPE
   }
   else {
-    return processDataConst().sendValDevKey( ren_progType,rc_targetDevKey, masterConst().valModFloat(en_valueGroup));
+    return processDataConst().sendValISOName( ren_progType,rc_targetISOName, masterConst().valModFloat(en_valueGroup));
   }
   #endif
 }
@@ -666,7 +666,7 @@ void SetpointLocal_c::processRequest() const {
   if (b_existMaster)
   {
     // use the values in general command which are already set
-    sendSetpointMod(c_pkg.memberSend().devKey(), Proc_c::progType_t( c_pkg.pri() ), c_pkg.c_generalCommand.getValueGroup(), GeneralCommand_c::setValue );
+    sendSetpointMod(c_pkg.memberSend().isoName(), Proc_c::progType_t( c_pkg.pri() ), c_pkg.c_generalCommand.getValueGroup(), GeneralCommand_c::setValue );
   }
 }
 
@@ -680,12 +680,12 @@ void SetpointLocal_c::processSet(){
   // detect if something was changed
   bool b_change = false;
 
-  const DevKey_c& c_callerDevKey = c_pkg.memberSend().devKey();
+  const ISOName_c& c_callerISOName = c_pkg.memberSend().isoName();
   for (pc_callerIter = vec_register.begin(); pc_callerIter != vec_register.end(); pc_callerIter++)
-  { // check if c_callerDevKey already set the item at ui8_callerIndex
+  { // check if c_callerISOName already set the item at ui8_callerIndex
     // ignore item of actual acepted master, as this should be handled as new
     // item
-    if (pc_callerIter->devKey() == c_callerDevKey)
+    if (pc_callerIter->isoName() == c_callerISOName)
        // @todo: disable check?
        if (!pc_callerIter->master())
          break;
@@ -696,7 +696,7 @@ void SetpointLocal_c::processSet(){
     if (c_pkg.isSpecCmd( static_cast<proc_specCmd_t>(setpointReleaseCmd|setpointErrCmd)) == false)
     {
       const uint16_t cui16_oldSize = vec_register.size();
-      vec_register.push_front( SetpointRegister_c( c_callerDevKey));
+      vec_register.push_front( SetpointRegister_c( c_callerISOName));
       if ( cui16_oldSize >= vec_register.size() )
       { // out-of-memory
         getLbsErrInstance().registerError( LibErr_c::BadAlloc, LibErr_c::LbsProcess );
@@ -726,7 +726,7 @@ void SetpointLocal_c::processSet(){
   // check if setpoint is released -  SETPOINT_RELEASE_COMMAND
   if (c_pkg.isSpecCmd( setpointReleaseCmd))
   { // check if the to be deleted item is the actual master
-    if ((existMaster()) && (master().devKey() == c_callerDevKey))
+    if ((existMaster()) && (master().isoName() == c_callerISOName))
     { // if this item was master setpoint, set pc_masterCache to end()
       pc_master = vec_register.end();
       b_change = true;
@@ -745,8 +745,8 @@ void SetpointLocal_c::processSet(){
                                                                 GeneralCommand_c::exactValue,
                                                                 GeneralCommand_c::setValue);
     // notify the caller
-    processData().sendValDevKey( c_pkg.pri(),
-                c_pkg.memberSend().devKey() ,
+    processData().sendValISOName( c_pkg.pri(),
+                c_pkg.memberSend().isoName() ,
                 SETPOINT_RELEASE_COMMAND);
   }
   else
@@ -776,7 +776,7 @@ void SetpointLocal_c::processSet(){
   }
   // call handler function if handler class is registered
   if ( processDataConst().getProcessDataChangeHandler() != NULL )
-    processDataConst().getProcessDataChangeHandler()->processSetpointSet( pprocessData(), processData().pkgDataLong(), c_pkg.memberSend().devKey(), b_change );
+    processDataConst().getProcessDataChangeHandler()->processSetpointSet( pprocessData(), processData().pkgDataLong(), static_cast<const IsoAgLib::iISOName_c&>(c_pkg.memberSend().isoName() ), b_change );
 }
 
 } // end of namespace __IsoAgLib

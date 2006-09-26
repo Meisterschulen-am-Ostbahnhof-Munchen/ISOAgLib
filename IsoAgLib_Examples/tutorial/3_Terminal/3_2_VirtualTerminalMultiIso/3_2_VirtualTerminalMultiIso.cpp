@@ -197,7 +197,6 @@
 
 /* include some needed util headers */
 //#include <IsoAgLib/util/config.h>
-#include <IsoAgLib/util/idevkey_c.h>
 
 /* include headers for the needed drivers */
 #include <IsoAgLib/driver/system/isystem_c.h>
@@ -614,12 +613,12 @@ int main()
 
   // variables for DEV_KEY
   // default with primary cultivation mounted back
-  IsoAgLib::iDevKey_c myDevKeyPool1(7, 0);
-  IsoAgLib::iDevKey_c myDevKeyPool2(7, 1);
+  IsoAgLib::iISOName_c myISONamePool1(7, 0);
+  IsoAgLib::iISOName_c myISONamePool2(7, 1);
 
   // start address claim of the local member "IMI"
   // if DEV_KEY conflicts forces change of device class instance, the
-  // IsoAgLib can change the myDevKeyPoolx val through the pointer to myDevKeyPoolx
+  // IsoAgLib can change the myISONamePoolx val through the pointer to myISONamePoolx
   bool b_selfConf = true;
   uint8_t ui8_indGroup = 2,
       b_func = 25,
@@ -631,13 +630,13 @@ int main()
 
   // start address claim of the local member "IMI"
   // if DEV_KEY conflicts forces change of device class instance, the
-  // IsoAgLib can change the myDevKeyPoolx val through the pointer to myDevKeyPoolx
+  // IsoAgLib can change the myISONamePoolx val through the pointer to myISONamePoolx
   #if 1
-  IsoAgLib::iIdentItem_c c_myIdentPool1 ( &myDevKeyPool1,
+  IsoAgLib::iIdentItem_c c_myIdentPool1 ( &myISONamePool1,
       b_selfConf, ui8_indGroup, b_func, ui16_manufCode,
       ui32_serNo, b_wantedSa, 0xFFFF, b_funcInst, b_ecuInst, 0, NULL );
 
-  IsoAgLib::iIdentItem_c c_myIdentPool2 ( &myDevKeyPool2,
+  IsoAgLib::iIdentItem_c c_myIdentPool2 ( &myISONamePool2,
       b_selfConf, ui8_indGroup, b_func, ui16_manufCode,
       ui32_serNo, b_wantedSa, 0xFFFF, b_funcInst, b_ecuInst, 0, NULL );
 
@@ -647,16 +646,16 @@ int main()
   uint64_t ui64_isoNamePool2 = 0xa00e850000000000ULL;
                         //0x0000000000850ea0;
 
-  IsoAgLib::iIdentItem_c c_myIdentPool1 (&myDevKeyPool1, (const uint8_t*)&ui64_isoNamePool1, b_wantedSa, 0xFFFF, 0, NULL);
-  IsoAgLib::iIdentItem_c c_myIdentPool2 (&myDevKeyPool2, (const uint8_t*)&ui64_isoNamePool2, b_wantedSa, 0xFFFF, 0, NULL);
+  IsoAgLib::iIdentItem_c c_myIdentPool1 (&myISONamePool1, (const uint8_t*)&ui64_isoNamePool1, b_wantedSa, 0xFFFF, 0, NULL);
+  IsoAgLib::iIdentItem_c c_myIdentPool2 (&myISONamePool2, (const uint8_t*)&ui64_isoNamePool2, b_wantedSa, 0xFFFF, 0, NULL);
   #endif
 
   /* Explicit call to init iIsoTerminal instance - not really needed though */
   getIisoTerminalInstance().init();
 
   /*  Call registerIsoObjectPool to initialize both object pools! */
-  getIisoTerminalInstance().registerIsoObjectPool (&c_myIdentPool1, &Tutorial_3_2_Pool_1_c, "321");
-  getIisoTerminalInstance().registerIsoObjectPool (&c_myIdentPool2, &Tutorial_3_2_Pool_2_c, "322");
+  getIisoTerminalInstance().registerIsoObjectPool (c_myIdentPool1, Tutorial_3_2_Pool_1_c, "321");
+  getIisoTerminalInstance().registerIsoObjectPool (c_myIdentPool2, Tutorial_3_2_Pool_2_c, "322");
 
   /** IMPORTANT:
     - The following loop could be replaced of any repeating call of

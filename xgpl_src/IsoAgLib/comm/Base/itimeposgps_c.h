@@ -60,7 +60,7 @@
 /* *************************************** */
 /* ********** include headers ************ */
 /* *************************************** */
-#include <IsoAgLib/util/idevkey_c.h>
+#include <IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h>
 #include "ibasetypes.h"
 #include "impl/timeposgps_c.h"
 
@@ -80,23 +80,23 @@ class iTimePosGPS_c : private __IsoAgLib::TimePosGPS_c {
 public:
   // Public methods
   /**
-      config the Base_c object after init -> set pointer to devKey and
+      config the Base_c object after init -> set pointer to isoName and
       config send/receive of different base msg types
-      @param rpc_devKey pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
+      @param rpc_isoName pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
       @param rt_identMode set mode to either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       @return true -> configuration was successfull
     */
-  bool config(const iDevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_identMode = IsoAgLib::IdentModeImplement)
-  { return TimePosGPS_c::config(rpc_devKey, rt_identMode ); }
+  bool config(const iISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode = IsoAgLib::IdentModeImplement)
+  { return TimePosGPS_c::config(rpc_isoName, rt_identMode ); }
 
-  /** config the Base_c object after init -> set pointer to devKey and
+  /** config the Base_c object after init -> set pointer to isoName and
       config send/receive of different base msg types
-      @param rpc_devKey pointer to the DEV_KEY variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
+      @param rpc_isoName pointer to the ISOName variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
       @param rt_identModeGps either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       @return true -> configuration was successfull
     */
-  bool configGps(const iDevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_identModeGps)
-  {return TimePosGPS_c::configGps( rpc_devKey, rt_identModeGps);}
+  bool configGps(const iISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identModeGps)
+  {return TimePosGPS_c::configGps( rpc_isoName, rt_identModeGps);}
 
   /** Retrieve the last update time of the specified information type
    */
@@ -108,19 +108,19 @@ public:
   {return TimePosGPS_c::lastUpdateTimeGps();}
 
   /** return a sender which sends GPS commands as a tractor */
-  iDevKey_c& getSenderDevKeyGps() {return static_cast<iDevKey_c&>(TimePosGPS_c::getSenderDevKeyGps());}
+  iISOName_c& getSenderISONameGps() {return static_cast<iISOName_c&>(TimePosGPS_c::getSenderISONameGps());}
 
   /** return a sender which sends GPS commands as a tractor */
-  const iDevKey_c& getSenderDevKeyGpsConst() const {return static_cast<const iDevKey_c&>(TimePosGPS_c::getSenderDevKeyGpsConst());}
+  const iISOName_c& getSenderISONameGpsConst() const {return static_cast<const iISOName_c&>(TimePosGPS_c::getSenderISONameGpsConst());}
 
   /** force a request for pgn for time/date information */
   bool sendRequestUpdateTimeDate() { return TimePosGPS_c::sendRequestUpdateTimeDate(); }
 
   /** @return TRUE => data source dev key is specified */
-  bool checkDataSourceSpecified() { return TimePosGPS_c::getSelectedDataSourceDevKeyConst().isSpecified();}
+  bool checkDataSourceSpecified() { return TimePosGPS_c::getSelectedDataSourceISONameConst().isSpecified();}
 
   /** get Devkey of data source (e.g. tractor, terminal) from which commands are send exclusively */
-  const iDevKey_c& getSelectedDataSourceDevKeyConst() const {return static_cast<const iDevKey_c&>(TimePosGPS_c::getSelectedDataSourceDevKeyConst());}
+  const iISOName_c& getSelectedDataSourceISONameConst() const {return static_cast<const iISOName_c&>(TimePosGPS_c::getSelectedDataSourceISONameConst());}
 
   /* ******************************************* */
   /** \name Get Values */

@@ -108,11 +108,11 @@ namespace __IsoAgLib {
   @param rrefc_processData optional reference to containing ProcDataBase_c instance (default NULL)
   @param ren_progType optional program type: Proc_c::Base, Proc_c::Target (default Proc_c::UndefinedProg)
   @param ri32_val optional individual measure val for this program instance (can differ from master measure value)
-  @param rc_devKey optional DEV_KEY of partner member for this measure program
+  @param rc_isoName optional ISOName of partner member for this measure program
 */
 void MeasureProgBase_c::init( ProcDataBase_c *const rpc_processData,
   Proc_c::progType_t ren_progType, int32_t ri32_val,
-  const DevKey_c& rc_devKey)
+  const ISOName_c& rc_isoName)
 { // set the dynamic list to a well defined cleared starting condition
   #ifdef DEBUG_HEAP_USEAGE
   static bool b_doPrint = true;
@@ -133,7 +133,7 @@ void MeasureProgBase_c::init( ProcDataBase_c *const rpc_processData,
   // set the pointers in the baseClass ProcessElementBase
   set(rpc_processData);
   // store the parameter init vals
-  c_devKey = rc_devKey;
+  c_isoName = rc_isoName;
   i32_val = ri32_val;
   en_progType = ren_progType;
 
@@ -171,7 +171,7 @@ MeasureProgBase_c::MeasureProgBase_c(const MeasureProgBase_c& rrefc_src)
 /** base function for assignment of element vars for copy constructor and operator= */
 void MeasureProgBase_c::assignFromSource( const MeasureProgBase_c& rrefc_src )
 { // copy element vars
-  c_devKey = rrefc_src.c_devKey;
+  c_isoName = rrefc_src.c_isoName;
   en_accumProp =  rrefc_src.en_accumProp;
   en_doSend = rrefc_src.en_doSend;
   en_progType = rrefc_src.en_progType;
@@ -269,12 +269,12 @@ MeasureProgBase_c::~MeasureProgBase_c(){
     #endif
   }
 
-  // setting of devKey in MeasureProg is normally done via ProcDataRemote_c::timeEvent( void )
+  // setting of isoName in MeasureProg is normally done via ProcDataRemote_c::timeEvent( void )
   // if start follows immedeately addSubprog timeEvent is not called yet => do it here
-  // remote: virtual ProcDataRemote::commanderDevKey() can give a value different to DevKey_c::DevKeyUnspecified
-  // local: virtual ProcDataLocal::commanderDevKey() gives DevKey_c::DevKeyUnspecified
-  if (pprocessDataConst()->commanderDevKey() != DevKey_c::DevKeyUnspecified)
-    setDevKey(pprocessDataConst()->commanderDevKey());
+  // remote: virtual ProcDataRemote::commanderISOName() can give a value different to ISOName_c::ISONameUnspecified
+  // local: virtual ProcDataLocal::commanderISOName() gives ISOName_c::ISONameUnspecified
+  if (pprocessDataConst()->commanderISOName() != ISOName_c::ISONameUnspecified)
+    setISOName(pprocessDataConst()->commanderISOName());
 
   return true;
 }
@@ -360,7 +360,7 @@ int32_t MeasureProgBase_c::val(bool rb_sendRequest) const
                                                                 GeneralCommand_c::exactValue,
                                                                 GeneralCommand_c::requestValue);
 
-    processData().sendValDevKey(2, devKey(), int32_t(0));
+    processData().sendValISOName(2, isoName(), int32_t(0));
   }
 
   return i32_val;
@@ -379,7 +379,7 @@ int32_t MeasureProgBase_c::integ(bool rb_sendRequest) const
                                                                 GeneralCommand_c::integValue,
                                                                 GeneralCommand_c::requestValue);
 
-    processData().sendValDevKey(2, devKey(), int32_t(0));
+    processData().sendValISOName(2, isoName(), int32_t(0));
   }
   return i32_integ;
 };
@@ -398,7 +398,7 @@ int32_t MeasureProgBase_c::min(bool rb_sendRequest) const
                                                                 GeneralCommand_c::minValue,
                                                                 GeneralCommand_c::requestValue);
 
-    processData().sendValDevKey(2, devKey(), int32_t(0));
+    processData().sendValISOName(2, isoName(), int32_t(0));
   }
   return i32_min;
 };
@@ -416,7 +416,7 @@ int32_t MeasureProgBase_c::max(bool rb_sendRequest) const
                                                                 GeneralCommand_c::maxValue,
                                                                 GeneralCommand_c::requestValue);
 
-    processData().sendValDevKey(2, devKey(), int32_t(0));
+    processData().sendValISOName(2, isoName(), int32_t(0));
   }
   return i32_max;
 };
@@ -451,13 +451,13 @@ void MeasureProgBase_c::initVal(int32_t ri32_val){
   @param rrefc_processData optional reference to containing ProcDataBase_c instance (default NULL)
   @param ren_progType optional program type: Proc_c::Base, Proc_c::Target (default Proc_c::UndefinedProg)
   @param rf_val optional individual measure val for this program instance (can differ from master measure value)
-  @param rc_devKey optional DEV_KEY of partner member for this measure program
+  @param rc_isoName optional ISOName of partner member for this measure program
 */
 void MeasureProgBase_c::init(
   ProcDataBase_c *const rpc_processData,
   Proc_c::progType_t ren_progType,
   float rf_val,
-  const DevKey_c& rc_devKey)
+  const ISOName_c& rc_isoName)
 { // set the dynamic list to a well defined cleared starting condition
   #ifdef DEBUG_HEAP_USEAGE
   static bool b_doPrint = true;
@@ -476,7 +476,7 @@ void MeasureProgBase_c::init(
   // set the pointers in the baseClass ProcessElementBase
   set(rpc_processData);
   // store the parameter init vals
-  c_devKey = rc_devKey;
+  c_isoName = rc_isoName;
   f_val = rf_val;
   en_progType = ren_progType;
 
@@ -501,7 +501,7 @@ float MeasureProgBase_c::valFloat(bool rb_sendRequest) const
                                                                 GeneralCommand_c::exactValue,
                                                                 GeneralCommand_c::requestValue);
 
-    processData().sendValDevKey(2, devKey(), int32_t(0));
+    processData().sendValISOName(2, isoName(), int32_t(0));
   }
   return f_val;
 };
@@ -519,7 +519,7 @@ float MeasureProgBase_c::integFloat(bool rb_sendRequest) const
                                                                 GeneralCommand_c::integValue,
                                                                 GeneralCommand_c::requestValue);
 
-    processData().sendValDevKey(2, devKey(), int32_t(0));
+    processData().sendValISOName(2, isoName(), int32_t(0));
   }
   return f_integ;
 };
@@ -538,7 +538,7 @@ float MeasureProgBase_c::minFloat(bool rb_sendRequest) const
                                                                 GeneralCommand_c::minValue,
                                                                 GeneralCommand_c::requestValue);
 
-    processData().sendValDevKey(2, devKey(), int32_t(0));
+    processData().sendValISOName(2, isoName(), int32_t(0));
   }
   return f_min;
 };
@@ -556,7 +556,7 @@ float MeasureProgBase_c::maxFloat(bool rb_sendRequest) const
                                                                 GeneralCommand_c::maxValue,
                                                                 GeneralCommand_c::requestValue);
 
-    processData().sendValDevKey(2, devKey(), int32_t(0));
+    processData().sendValISOName(2, isoName(), int32_t(0));
   }
   return f_max;
 };
@@ -667,7 +667,7 @@ bool MeasureProgBase_c::processMsg(){
        reset(b_cmd);
        // call handler function if handler class is registered
        if ( processData().getProcessDataChangeHandler() != NULL )
-         processData().getProcessDataChangeHandler()->processMeasurementReset( pprocessData(), 0, c_pkg.memberSend().devKey() );
+         processData().getProcessDataChangeHandler()->processMeasurementReset( pprocessData(), 0, static_cast<const IsoAgLib::iISOName_c&>( c_pkg.memberSend().isoName() ) );
     }
 
     if (en_command == GeneralCommand_c::measurementStop)
@@ -745,7 +745,7 @@ bool MeasureProgBase_c::processMsg(){
           reset(b_cmd);
           // call handler function if handler class is registered
           if ( processData().getProcessDataChangeHandler() != NULL )
-            processData().getProcessDataChangeHandler()->processMeasurementReset( pprocessData(), 0, c_pkg.memberSend().devKey() );
+            processData().getProcessDataChangeHandler()->processMeasurementReset( pprocessData(), 0, c_pkg.memberSend().isoName() );
         }
         else
         { // stop command
@@ -889,8 +889,8 @@ void MeasureProgBase_c::reset(uint8_t rb_comm){
 void MeasureProgBase_c::processIncrementMsg(Proc_c::doSend_t ren_doSend){
   ProcessPkg_c& c_pkg = getProcessInstance4Comm().data();
 
-  // set c_devKey to caller of prog
-  c_devKey = c_pkg.memberSend().devKey();
+  // set c_isoName to caller of prog
+  c_isoName = c_pkg.memberSend().isoName();
 
   // get the int32_t data val without conversion
   int32_t i32_val = c_pkg.dataRawCmdLong();

@@ -83,10 +83,10 @@ public:
   /** get count of process data */
   uint8_t proc_cnt()const {return ui8_cnt;};
   /**
-    deliver remote devKey of this recording set
-    @return c_remoteDevKey
+    deliver remote isoName of this recording set
+    @return c_remoteISOName
   */
-  const IsoAgLib::iDevKey_c& devKey() const { return c_remoteDevKey;};
+  const IsoAgLib::iISOName_c& isoName() const { return c_remoteISOName;};
 protected: // Protected attributes
   /** set activated mode of this instance  */
   void setActivated(bool rb_state = true){b_activated = rb_state;};
@@ -99,8 +99,8 @@ protected: // Protected attributes
   bool b_activated;
   /** amount of managed process data */
   uint8_t ui8_cnt;
-  /** devKey of remote item */
-  IsoAgLib::iDevKey_c c_remoteDevKey;
+  /** isoName of remote item */
+  IsoAgLib::iISOName_c c_remoteISOName;
 };
 
 #endif

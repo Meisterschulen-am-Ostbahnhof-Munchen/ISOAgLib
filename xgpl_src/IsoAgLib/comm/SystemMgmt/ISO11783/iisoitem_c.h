@@ -59,7 +59,7 @@
 /* ********** include headers ************ */
 /* *************************************** */
 #include "impl/isoitem_c.h"
-#include <IsoAgLib/util/idevkey_c.h>
+#include <IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h>
 
 // Begin Namespace IsoAgLib
 namespace IsoAgLib {
@@ -79,10 +79,10 @@ private:
   friend class iISOMonitor_c;
 
 public:
-  /** deliver the DEV_KEY code of this item
-    @return DEV_KEY code
+  /** deliver the ISOName code of this item
+    @return ISOName code
   */
-  const iDevKey_c& devKey()const{return static_cast<const iDevKey_c&>(ISOItem_c::devKey());}
+  const iISOName_c& isoName()const{return static_cast<const iISOName_c&>(ISOItem_c::isoName());}
   /** deliver the number/adress of this item
     @return number
   */

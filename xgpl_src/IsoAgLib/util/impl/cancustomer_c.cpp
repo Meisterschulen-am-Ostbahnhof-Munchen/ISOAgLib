@@ -86,18 +86,18 @@
 /* ********** include headers ************ */
 /* *************************************** */
 #include "cancustomer_c.h"
-#include "devkey_c.h"
-#include "../idevkey_c.h"
+#include <IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h>
+
 
 namespace IsoAgLib {
 /** constant for default parameters and initialization, where the device type is not yet spcified.
     the instantiation of this constant variable is located in the module cancustomer_c.cpp
   */
-const iDevKey_c iDevKey_c::DevKeyUnspecified( 0x7F, 0xF );
+const iISOName_c iISOName_c::ISONameUnspecified( 0x7F, 0xF );
 /** constant for not yet spcified process data ident -> <device class, device class instance> := <0x0,0xF>
     the instantiation of this constant variable is located in the module cancustomer_c.cpp
   */
-const iDevKey_c iDevKey_c::DevKeyInitialProcessData( 0x0, 0xF );
+const iISOName_c iISOName_c::ISONameInitialProcessData( 0x0, 0xF );
 };
 
 
@@ -106,11 +106,11 @@ namespace __IsoAgLib {
 /** constant for default parameters and initialization, where the device type is not yet spcified.
     the instantiation of this constant variable is located in the module cancustomer_c.cpp
   */
-const DevKey_c DevKey_c::DevKeyUnspecified( 0x7F, 0xF );
+const ISOName_c ISOName_c::ISONameUnspecified( 0x7F, 0xF );
 /** constant for not yet spcified process data ident -> <device class, device class instance> := <0x0,0xF>
     the instantiation of this constant variable is located in the module cancustomer_c.cpp
   */
-const DevKey_c DevKey_c::DevKeyInitialProcessData( 0x0, 0xF );
+const ISOName_c ISOName_c::ISONameInitialProcessData( 0x0, 0xF );
 
 
 

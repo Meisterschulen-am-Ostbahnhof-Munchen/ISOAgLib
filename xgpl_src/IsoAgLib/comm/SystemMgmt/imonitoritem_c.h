@@ -60,7 +60,7 @@
 /* ********** include headers ************ */
 /* *************************************** */
 #include "ISO11783/impl/isoitem_c.h"
-#include <IsoAgLib/util/idevkey_c.h>
+#include <IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h>
 
 // Begin Namespace IsoAgLibSystemMgmt_c
 namespace IsoAgLib {
@@ -77,19 +77,19 @@ class iMonitorItem_c  : __IsoAgLib::ISOItem_c {
   friend class iISOMonitor_c;
  public:
   /**
-    deliver the DEV_KEY code of this item
-    @return DEV_KEY code
+    deliver the ISOName code of this item
+    @return ISOName code
   */
-  const iDevKey_c& devKey()const{return static_cast<const iDevKey_c&>(ISOItem_c::devKey());}
+  const iISOName_c& isoName()const{return MonitorItem_c::isoName();}
 
   /**
-    deliver the DEVCLASS code alone (derived from devKey)
+    deliver the DEVCLASS code alone (derived from isoName)
     @return DEVCLASS code
   */
   uint8_t devClass()const{return ISOItem_c::devClass();}
 
   /**
-    deliver the device class inst code alone (derived from devKey)
+    deliver the device class inst code alone (derived from isoName)
     @return device class inst code
   */
   uint8_t devClassInst()const{return ISOItem_c::devClassInst();}

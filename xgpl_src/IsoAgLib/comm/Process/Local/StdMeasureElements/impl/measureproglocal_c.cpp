@@ -89,6 +89,7 @@
 #include "../../../impl/process_c.h"
 #include "../../../processdatachangehandler_c.h"
 #include <IsoAgLib/comm/Base/impl/tracmove_c.h>
+//#include <IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h>
 
 namespace __IsoAgLib {
 
@@ -98,16 +99,16 @@ namespace __IsoAgLib {
   @param ren_progType optional program msg type (Proc_c::Base, Proc_c::Target; default Proc_c::UndefinedProg)
   @param ri32_masterVal optional actual central local measured value used as masterVal (def 0)
   @param ri32_initialVal optional initial value (e.g which was stored in EEPROM) (default 0)
-  @param rui8_callerDevKey optional DEV_KEY of remote member, which caused creation of this instance (default 0xFF == no member)
+  @param rui8_callerISOName optional ISOName of remote member, which caused creation of this instance (default 0xFF == no member)
 */
 void MeasureProgLocal_c::init(
   ProcDataBase_c *const rpc_processData,
   Proc_c::progType_t ren_progType,
   int32_t ri32_masterVal,
   int32_t ri32_initialVal,
-  const DevKey_c& rc_callerDevKey)
+  const ISOName_c& rc_callerISOName)
 {
-  MeasureProgBase_c::init( rpc_processData, ren_progType, ri32_initialVal, rc_callerDevKey  );
+  MeasureProgBase_c::init( rpc_processData, ren_progType, ri32_initialVal, rc_callerISOName  );
 
   i32_lastMasterVal = ri32_masterVal;
   if (ri32_initialVal != 0)
@@ -131,14 +132,14 @@ void MeasureProgLocal_c::init(
   @param ren_progType optional program msg type (Proc_c::Base, Proc_c::Target; default Proc_c::UndefinedProg)
   @param rf_masterVal actual central local measured value used as float masterVal
   @param rf_eepromVal optional value stored in EEPROM (default 0.0)
-  @param rui8_callerDevKey optional DEV_KEY of remote member, which caused creation of this instance (default 0xFF == no member)
+  @param rui8_callerISOName optional ISOName of remote member, which caused creation of this instance (default 0xFF == no member)
 */
 void MeasureProgLocal_c::init(
   ProcDataBase_c *const rpc_processData,
   Proc_c::progType_t ren_progType, float rf_masterVal,
-  float rf_eepromVal, const DevKey_c& rc_callerDevKey)
+  float rf_eepromVal, const ISOName_c& rc_callerISOName)
 {
-  MeasureProgBase_c::init( rpc_processData, ren_progType, rf_eepromVal, rc_callerDevKey  );
+  MeasureProgBase_c::init( rpc_processData, ren_progType, rf_eepromVal, rc_callerISOName  );
 
   f_lastMasterVal = rf_masterVal;
   if (rf_eepromVal != 0)
@@ -434,35 +435,35 @@ bool MeasureProgLocal_c::stop(bool /* b_deleteSubProgs */, Proc_c::type_t ren_ty
 /**
   send a sub-information (selected by en_valueGroup) to a specified target (selected by GPT)
   @param en_valueGroup value group to send
-  @param rc_targetDevKey DevKey of target
+  @param rc_targetISOName ISOName of target
   @param ren_type optional PRI specifier of the message (default Proc_c::Target )
   @return true -> successful sent
 */
-bool MeasureProgLocal_c::sendValMod( GeneralCommand_c::ValueGroup_t en_valueGroup, const DevKey_c& rc_targetDevKey, Proc_c::progType_t ren_progType) const {
+bool MeasureProgLocal_c::sendValMod( GeneralCommand_c::ValueGroup_t en_valueGroup, const ISOName_c& rc_targetISOName, Proc_c::progType_t ren_progType) const {
   // prepare general command in process pkg
   getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false, /* isRequest */
                                                               en_valueGroup, GeneralCommand_c::setValue);
 #ifdef USE_FLOAT_DATA_TYPE
   if (processDataConst().valType() != float_val)
-     return processDataConst().sendValDevKey(ren_progType, rc_targetDevKey, valMod(en_valueGroup));
-  else return processDataConst().sendValDevKey(ren_progType, rc_targetDevKey, valModFloat(en_valueGroup));
+     return processDataConst().sendValISOName(ren_progType, rc_targetISOName, valMod(en_valueGroup));
+  else return processDataConst().sendValISOName(ren_progType, rc_targetISOName, valModFloat(en_valueGroup));
 #else
-  return processDataConst().sendValDevKey(ren_progType, rc_targetDevKey, valMod(en_valueGroup));
+  return processDataConst().sendValISOName(ren_progType, rc_targetISOName, valMod(en_valueGroup));
 #endif
 }
 
 /**
   send a sub-information from the corresponding setpoint master to a specified target (selected by GPT)
   @param en_valueGroup value group to send
-  @param rc_targetDevKey DevKey of target
+  @param rc_targetISOName ISOName of target
   @param ren_type optional PRI specifier of the message (default Proc_c::Target )
   @return true -> successful sent
 */
-bool MeasureProgLocal_c::sendSetpointValMod( GeneralCommand_c::ValueGroup_t en_valueGroup, const DevKey_c& rc_targetDevKey, Proc_c::progType_t ren_progType) const {
+bool MeasureProgLocal_c::sendSetpointValMod( GeneralCommand_c::ValueGroup_t en_valueGroup, const ISOName_c& rc_targetISOName, Proc_c::progType_t ren_progType) const {
   // prepare general command in process pkg
   getProcessInstance4Comm().data().c_generalCommand.setValues(TRUE /* isSetpoint */, false, /* isRequest */
                                                               en_valueGroup, GeneralCommand_c::setValue);
-  return processDataConst().sendValDevKey(ren_progType, rc_targetDevKey, setpointValMod(en_valueGroup));
+  return processDataConst().sendValISOName(ren_progType, rc_targetISOName, setpointValMod(en_valueGroup));
 }
 
 /**
@@ -523,23 +524,23 @@ bool MeasureProgLocal_c::processMsg(){
 
       if (Proc_c::defaultDataLoggingDDI == c_pkg.DDI())
       { // setValue command for default data logging DDI stops measurement (same as TC task status "suspended")
-        getProcessInstance4Comm().processTcStatusMsg(0, c_pkg.memberSend().devKey(), TRUE /* rb_skipLastTcStatus */);
+        getProcessInstance4Comm().processTcStatusMsg(0, c_pkg.memberSend().isoName(), TRUE /* rb_skipLastTcStatus */);
       }
 
       // resetted val is automatically sent
       b_result = true;
       // call handler function if handler class is registered
       if ( processDataConst().getProcessDataChangeHandler() != NULL )
-        processDataConst().getProcessDataChangeHandler()->processMeasurementReset( pprocessData(), 0, c_pkg.memberSend().devKey() );
+        processDataConst().getProcessDataChangeHandler()->processMeasurementReset( pprocessData(), 0, static_cast<const IsoAgLib::iISOName_c&>(c_pkg.memberSend().isoName()));
     } // write
     else
     { // read -> answer wanted value
-      sendValMod( c_pkg.c_generalCommand.getValueGroup(), c_pkg.memberSend().devKey(), Proc_c::progType_t(c_pkg.pri()));
+      sendValMod( c_pkg.c_generalCommand.getValueGroup(), c_pkg.memberSend().isoName(), Proc_c::progType_t(c_pkg.pri()));
 
       if ((Proc_c::defaultDataLoggingDDI == c_pkg.DDI()) &&
           (processDataConst().getProcessDataChangeHandler() != NULL ))
         // call handler function if handler class is registered
-        processDataConst().getProcessDataChangeHandler()->processDefaultLoggingStart( pprocessData(), processData().pkgDataLong(), c_pkg.memberSend().devKey());
+        processDataConst().getProcessDataChangeHandler()->processDefaultLoggingStart( pprocessData(), processData().pkgDataLong(), static_cast<const IsoAgLib::iISOName_c&>(c_pkg.memberSend().isoName() ) );
 
 
       b_result = true;
@@ -789,11 +790,11 @@ bool MeasureProgLocal_c::sendRegisteredVals(Proc_c::doSend_t ren_doSend){
 
   if (GeneralCommand_c::noValue != en_valueGroup)
     // get value from corresponding setpoint and send it
-    b_success = (sendSetpointValMod( en_valueGroup, devKey(), en_progType))?true : b_success;
+    b_success = (sendSetpointValMod( en_valueGroup, isoName(), en_progType))?true : b_success;
 
   // normal measurement (no measurement on setpoint DDI)
   if (Proc_c::DoVal == ren_doSend)
-    b_success = (sendValMod( GeneralCommand_c::exactValue, devKey(), en_progType))?true : b_success;
+    b_success = (sendValMod( GeneralCommand_c::exactValue, isoName(), en_progType))?true : b_success;
 
   return b_success;
 }
@@ -847,13 +848,13 @@ bool MeasureProgLocal_c::resetVal(int32_t ri32_val){
     //i32_val = 0;
     i32_val = ri32_val;
 
-    b_sendSuccess = processData().sendValDevKey(ui8_pri, c_devKey, val());
+    b_sendSuccess = processData().sendValISOName(ui8_pri, c_isoName, val());
 #ifdef USE_FLOAT_DATA_TYPE
   }
   else
   {
     f_val = 0;
-    b_sendSuccess = processData().sendValDevKey(ui8_pri, c_devKey, valFloat());
+    b_sendSuccess = processData().sendValISOName(ui8_pri, c_isoName, valFloat());
   }
 #endif
   #ifdef USE_EEPROM_IO
@@ -888,13 +889,13 @@ bool MeasureProgLocal_c::resetInteg(){
   {
 #endif
   i32_integ = 0;
-  return processData().sendValDevKey(ui8_pri, c_devKey, integ());
+  return processData().sendValISOName(ui8_pri, c_isoName, integ());
 #ifdef USE_FLOAT_DATA_TYPE
   }
   else
   {
     f_integ = 0;
-    return processData().sendValDevKey(ui8_pri, c_devKey, integFloat());
+    return processData().sendValISOName(ui8_pri, c_isoName, integFloat());
   }
 #endif
 
@@ -921,13 +922,13 @@ bool MeasureProgLocal_c::resetMed(){
   {
 #endif
   i32_medSum = 0;
-  return processData().sendValDevKey(ui8_pri, c_devKey, med());
+  return processData().sendValISOName(ui8_pri, c_isoName, med());
 #ifdef USE_FLOAT_DATA_TYPE
   }
   else
   {
     f_medSum = 0;
-    return processData().sendValDevKey(ui8_pri, c_devKey, medFloat());
+    return processData().sendValISOName(ui8_pri, c_isoName, medFloat());
   }
 #endif
 }
@@ -953,13 +954,13 @@ bool MeasureProgLocal_c::resetMin(){
   {
 #endif
   i32_min = 0;
-  return processData().sendValDevKey(ui8_pri, c_devKey, min());
+  return processData().sendValISOName(ui8_pri, c_isoName, min());
 #ifdef USE_FLOAT_DATA_TYPE
   }
   else
   {
     f_min = 0;
-    return processData().sendValDevKey(ui8_pri, c_devKey, minFloat());
+    return processData().sendValISOName(ui8_pri, c_isoName, minFloat());
   }
 #endif
 }
@@ -986,13 +987,13 @@ bool MeasureProgLocal_c::resetMax(){
   {
 #endif
   i32_max = 0;
-  return processData().sendValDevKey(ui8_pri, c_devKey, max());
+  return processData().sendValISOName(ui8_pri, c_isoName, max());
 #ifdef USE_FLOAT_DATA_TYPE
   }
   else
   {
     f_max = 0;
-    return processData().sendValDevKey(ui8_pri, c_devKey, maxFloat());
+    return processData().sendValISOName(ui8_pri, c_isoName, maxFloat());
   }
 #endif
 }

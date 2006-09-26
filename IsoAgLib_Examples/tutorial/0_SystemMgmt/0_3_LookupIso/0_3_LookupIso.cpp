@@ -53,7 +53,7 @@
 /** \example 0_3_LookupIso.cpp
  * This tutorial presents how to check for the existance of another
  * member on the BUS. This lookup can be based independent from the
- * active protocol on the device type specification with IsoAgLib::iDevKey_c .
+ * active protocol on the device type specification with IsoAgLib::iISOName_c .
  * Provide option to send result of lookup on RS232 - this is dependent on
  * define USE_RS232_FOR_DEBUG .
  *
@@ -62,11 +62,11 @@
  * <li>Lookup for specific device type in monitor list
  * <ul>
  *  <li>Providing class IsoAgLib::iSystemMgmt_c
- *  <li>Used member method IsoAgLib::iSystemMgmt_c::existMemberDevKey()
+ *  <li>Used member method IsoAgLib::iSystemMgmt_c::existMemberISOName()
  *    to look for other device ( optionally require that the
  *    other device has already claimed an address, or alternatively allow it
  *    to be currently in the process of claiming and address )
- *  <li>Alternativaly use IsoAgLib::iISOMonitor_c::existIsoMemberDevKey() to restrict
+ *  <li>Alternativaly use IsoAgLib::iISOMonitor_c::existIsoMemberISOName() to restrict
  *    search on ISO 11783 members ( but the other method is more flexible )
  * </ul>
  * <li>Use RS232 for C++ iostream like text output with class IsoAgLib::iRS232IO_c
@@ -201,7 +201,7 @@
 
 /* include some needed util headers */
 //#include <IsoAgLib/util/config.h>
-#include <IsoAgLib/util/idevkey_c.h>
+#include <IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h>
 
 /* include headers for the needed drivers */
 #include <IsoAgLib/driver/system/isystem_c.h>
@@ -228,14 +228,14 @@ int main()
   getIcanInstance().init( 0, 250 );
   // variable for DEV_KEY
   // default with primary cultivation mounted back
-  IsoAgLib::iDevKey_c myDevKey( 5, 0 );
+  IsoAgLib::iISOName_c myISOName( 5, 0 );
 
-  /** IsoAgLib::iDevKey_c of the other remote ECU to lookup */
-  IsoAgLib::iDevKey_c lookupDevKey( 2, 0 );
+  /** IsoAgLib::iISOName_c of the other remote ECU to lookup */
+  IsoAgLib::iISOName_c lookupISOName( 2, 0 );
 
   // start address claim of the local member "IMI"
   // if DEV_KEY conflicts forces change of device class instance, the
-  // IsoAgLib can cahnge the myDevKey val through the pointer to myDevKey
+  // IsoAgLib can cahnge the myISOName val through the pointer to myISOName
   bool b_selfConf = true;
   uint8_t ui8_indGroup = 2,
       b_func = 25,
@@ -247,8 +247,8 @@ int main()
 
   // start address claim of the local member "IMI"
   // if DEV_KEY conflicts forces change of device class instance, the
-  // IsoAgLib can change the myDevKey val through the pointer to myDevKey
-  IsoAgLib::iIdentItem_c c_myIdent( &myDevKey,
+  // IsoAgLib can change the myISOName val through the pointer to myISOName
+  IsoAgLib::iIdentItem_c c_myIdent( &myISOName,
       b_selfConf, ui8_indGroup, b_func, ui16_manufCode,
       ui32_serNo, b_wantedSa, 0xFFFF, b_funcInst, b_ecuInst);
 
@@ -286,11 +286,12 @@ int main()
     // check in main loop for existance of other item
     // ( force that other item has already complete claimed address with true as second parameter )
     static bool b_lastState = false;
-    if (getIisoMonitorInstance().existIsoMemberDevKey(lookupDevKey, true))
+
+    if (getIisoMonitorInstance().existIsoMemberISOName(lookupISOName, true))
     { // fine the other item is active on BUS
       if ( ! b_lastState ) {
         #ifdef USE_RS232_FOR_DEBUG
-        getIrs232Instance() << "Remote ECU with device type: DeviceTpye := " << int( lookupDevKey.getDevClass() ) << " is ACTIVE on BUS\n";
+        getIrs232Instance() << "Remote ECU with device type: DeviceTpye := " << int( lookupISOName.devClass() ) << " is ACTIVE on BUS\n";
         #endif
       }
       b_lastState = true;
@@ -299,7 +300,7 @@ int main()
     { // reset again to false to detect next change for debug
       if ( b_lastState ) {
         #ifdef USE_RS232_FOR_DEBUG
-        getIrs232Instance() << "Remote ECU with device type: DeviceTpye := " << int( lookupDevKey.getDevClass() ) << " is NOT ACTIVE on BUS\n";
+        getIrs232Instance() << "Remote ECU with device type: DeviceTpye := " << int( lookupISOName.devClass() ) << " is NOT ACTIVE on BUS\n";
         #endif
       }
       b_lastState = false;

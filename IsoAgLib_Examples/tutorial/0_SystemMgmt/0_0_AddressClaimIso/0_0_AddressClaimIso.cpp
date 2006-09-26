@@ -184,7 +184,7 @@
 
 /* include some needed util headers */
 //#include <IsoAgLib/util/config.h>
-#include <IsoAgLib/util/idevkey_c.h>
+#include <IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h>
 
 /* include headers for the needed drivers */
 #include <IsoAgLib/driver/system/isystem_c.h>
@@ -203,10 +203,10 @@ using namespace IsoAgLib;
 
 int main()
 { // Initialize the CAN BUS at channel 0 to 250 kbaud
-  getIcanInstance().init( 0, 250 );
+  getIcanInstance().init( 1, 250 );
   // variable for DEV_KEY ( device type, device type instance )
   // default with primary cultivation mounted back ( device type 2, -instance 0 )
-  IsoAgLib::iDevKey_c myDevKey( 2, 0 );
+  IsoAgLib::iISOName_c myISOName( 2, 0 );
 
   // start address claim of the local member
 
@@ -223,8 +223,8 @@ int main()
 
 	// start address claim of the local member
   // if DEV_KEY ( device type, -instance ) conflicts forces change of POS/instance, the
-  // IsoAgLib can change the myDevKey val through the pointer to myDevKey
-  IsoAgLib::iIdentItem_c c_myIdent( &myDevKey,
+  // IsoAgLib can change the myISOName val through the pointer to myISOName
+  IsoAgLib::iIdentItem_c c_myIdent( &myISOName,
       b_selfConf, ui8_indGroup, b_func, ui16_manufCode,
       ui32_serNo, b_wantedSa, 0xFFFF, b_funcInst, b_ecuInst);
 

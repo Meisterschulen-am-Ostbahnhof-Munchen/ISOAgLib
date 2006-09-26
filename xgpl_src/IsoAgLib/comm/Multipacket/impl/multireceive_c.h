@@ -102,8 +102,7 @@ namespace IsoAgLib {
 #include <IsoAgLib/typedef.h>
 #include <IsoAgLib/util/impl/singleton.h>
 #include <IsoAgLib/util/impl/elementbase_c.h>
-#include <IsoAgLib/util/impl/devkey_c.h>
-
+#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h>
 #include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h>
 
 // stl
@@ -155,8 +154,8 @@ class MultiReceiveClientWrapper_s : public ClientBase {
   bool b_isFastPacket;
 #endif
 
-  // the devKey is generated from the source address through iso monitor!
-  __IsoAgLib::DevKey_c c_devKey;
+  // the isoName is generated from the source address through iso monitor!
+  __IsoAgLib::ISOName_c c_isoName;
 };
 
 
@@ -201,15 +200,15 @@ public:
   );
 
    /** this function is called by ISOMonitor_c when a new CLAIMED ISOItem_c is registered.
-   * @param refc_devKey const reference to the item which ISOItem_c state is changed
+   * @param refc_isoName const reference to the item which ISOItem_c state is changed
    * @param rpc_newItem pointer to the currently corresponding ISOItem_c
     */
-  virtual void reactOnMonitorListAdd( const __IsoAgLib::DevKey_c& refc_devKey, const __IsoAgLib::ISOItem_c* rpc_newItem );
+  virtual void reactOnMonitorListAdd( const __IsoAgLib::ISOName_c& refc_isoName, const __IsoAgLib::ISOItem_c* rpc_newItem );
    /** this function is called by ISOMonitor_c when a device looses its ISOItem_c.
-   * @param refc_devKey const reference to the item which ISOItem_c state is changed
+   * @param refc_isoName const reference to the item which ISOItem_c state is changed
    * @param rui8_oldSa previously used SA which is NOW LOST -> clients which were connected to this item can react explicitly
     */
-  virtual void reactOnMonitorListRemove( const __IsoAgLib::DevKey_c& refc_devKey, uint8_t rui8_oldSa );
+  virtual void reactOnMonitorListRemove( const __IsoAgLib::ISOName_c& refc_isoName, uint8_t rui8_oldSa );
 
   /// Use to remove a "kept"-stream after it is gotten by "getFinishedJustKeptStream" and processed.
   void removeKeptStream(IsoAgLib::iStream_c* rpc_keptStream);

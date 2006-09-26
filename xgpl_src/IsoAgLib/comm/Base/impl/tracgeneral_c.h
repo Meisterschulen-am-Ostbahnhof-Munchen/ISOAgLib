@@ -126,18 +126,18 @@ public: // Public methods
       above all create the needed FilterBox_c instances
       possible errors:
         * dependant error in CANIO_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
-      @param rpc_devKey optional pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
+      @param rpc_isoName optional pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
       @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
     */
-  void init(const DevKey_c* rpc_devKey = NULL, IsoAgLib::IdentMode_t rt_identMode = IsoAgLib::IdentModeImplement);
+  void init(const ISOName_c* rpc_isoName = NULL, IsoAgLib::IdentMode_t rt_identMode = IsoAgLib::IdentModeImplement);
 
-  /** config the TracGeneral_c object after init -> set pointer to devKey and
+  /** config the TracGeneral_c object after init -> set pointer to isoName and
       config send/receive of different general base msg types
-      @param rpc_devKey pointer to the DEV_KEY variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
+      @param rpc_isoName pointer to the ISOName variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
       @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       @return true -> configuration was successfull
     */
-  bool config(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_identMode);
+  bool config(const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode);
 
   /** check if filter boxes shall be created - create only filters based
       on active local idents which has already claimed an address

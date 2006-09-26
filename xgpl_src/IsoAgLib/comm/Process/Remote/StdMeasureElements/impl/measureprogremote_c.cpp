@@ -99,7 +99,7 @@ namespace __IsoAgLib {
 */
 void MeasureProgRemote_c::init( ProcDataBase_c *const rpc_processData )
 {
-  MeasureProgBase_c::init( rpc_processData, Proc_c::UndefinedProg, int32_t(0), DevKey_c::DevKeyUnspecified );
+  MeasureProgBase_c::init( rpc_processData, Proc_c::UndefinedProg, int32_t(0), ISOName_c::ISONameUnspecified );
   b_receiveForeignMeasurement = false;
 }
 
@@ -188,9 +188,9 @@ bool MeasureProgRemote_c::start(Proc_c::progType_t ren_progType, Proc_c::type_t 
     setProgType(ren_progType);
   }
 
-  // if stored remote devKey isn't valid exit this function
+  // if stored remote isoName isn't valid exit this function
   // error state are set by the function
-  if (!verifySetRemoteDevKey())return false;
+  if (!verifySetRemoteISOName())return false;
 
 
   // send all registered increments to remote ECU
@@ -244,7 +244,7 @@ bool MeasureProgRemote_c::start(Proc_c::progType_t ren_progType, Proc_c::type_t 
       // prepare general command in process pkg
       getProcessInstance4Comm().data().c_generalCommand.setValues(b_isSetpoint, false /* isRequest */,
                                                                   en_valueGroup, en_command);
-      if (!processData().sendValDevKey(ren_progType, devKey(), i32_tmpValue))
+      if (!processData().sendValISOName(ren_progType, isoName(), i32_tmpValue))
          b_sendResult = false;
     }
   }
@@ -273,9 +273,9 @@ bool MeasureProgRemote_c::start(Proc_c::progType_t ren_progType, Proc_c::type_t 
 bool MeasureProgRemote_c::stop(bool b_deleteSubProgs, Proc_c::type_t ren_type, Proc_c::doSend_t ren_doSend){
   bool b_result = true;
 
-  // if stored remote devKey isn't valid exit this function
+  // if stored remote isoName isn't valid exit this function
   // error state are set by the function
-  if (!verifySetRemoteDevKey()) return false;
+  if (!verifySetRemoteISOName()) return false;
 
   // send stop command to remote ECU
   uint8_t ui8_pri = (checkProgType(Proc_c::Base))? 1:2;
@@ -339,7 +339,7 @@ bool MeasureProgRemote_c::stop(bool b_deleteSubProgs, Proc_c::type_t ren_type, P
       // prepare general command in process pkg
       getProcessInstance4Comm().data().c_generalCommand.setValues(b_isSetpoint, false /* isRequest */,
                                                                   en_valueGroup, en_command);
-      b_result = processData().sendValDevKey(ui8_pri, devKey(), i32_stopVal);
+      b_result = processData().sendValISOName(ui8_pri, isoName(), i32_stopVal);
     }
 
     if (b_deleteSubProgs)
@@ -367,7 +367,7 @@ int32_t MeasureProgRemote_c::med(bool rb_sendRequest) const
     getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */,
                                                                 GeneralCommand_c::medValue,
                                                                 GeneralCommand_c::requestValue);
-    processDataConst().sendValDevKey(2, devKey(), int32_t(0));
+    processDataConst().sendValISOName(2, isoName(), int32_t(0));
   }
   return i32_med;
 }
@@ -385,7 +385,7 @@ float MeasureProgRemote_c::medFloat(bool rb_sendRequest) const
     getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */,
                                                                 GeneralCommand_c::medValue,
                                                                 GeneralCommand_c::requestValue);
-    processDataConst().sendValDevKey(2, devKey(), int32_t(0));
+    processDataConst().sendValISOName(2, isoName(), int32_t(0));
   }
   return f_med;
 }
@@ -467,7 +467,7 @@ void MeasureProgRemote_c::setValFromPkg(){
 
     // call handler function if handler class is registered
     if ( processDataConst().getProcessDataChangeHandler() != NULL )
-      processDataConst().getProcessDataChangeHandler()->processMeasurementUpdate( pprocessData(), i32_new_val, c_pkg.memberSend().devKey(), b_change );
+      processDataConst().getProcessDataChangeHandler()->processMeasurementUpdate( pprocessData(), i32_new_val, static_cast<const IsoAgLib::iISOName_c&>( c_pkg.memberSend().isoName() ), b_change );
 
 #ifdef USE_FLOAT_DATA_TYPE
   }
@@ -503,7 +503,7 @@ void MeasureProgRemote_c::setValFromPkg(){
 
     // call handler function if handler class is registered
     if ( processDataConst().getProcessDataChangeHandler() != NULL )
-      processDataConst().getProcessDataChangeHandler()->processMeasurementUpdate( pprocessData(), c_pkg.dataFloat(), c_pkg.memberSend().devKey(), b_change );
+      processDataConst().getProcessDataChangeHandler()->processMeasurementUpdate( pprocessData(), c_pkg.dataFloat(), static_cast<const IsoAgLib::iISOName_c&>(c_pkg.memberSend().isoName() ), b_change );
 
   }
 #endif
@@ -561,9 +561,9 @@ void MeasureProgRemote_c::initVal(int32_t ri32_val){
   @return true -> command successful sent
 */
 bool MeasureProgRemote_c::resetVal(int32_t ri32_val){
-  // if stored remote devKey isn't valid exit this function
+  // if stored remote isoName isn't valid exit this function
   // error state are set by the function
-  if (!verifySetRemoteDevKey())return false;
+  if (!verifySetRemoteISOName())return false;
   // get suitable PRI code
   uint8_t ui8_pri = (checkProgType(Proc_c::Base))? 1:2;
   // prepare general command in process pkg
@@ -571,7 +571,7 @@ bool MeasureProgRemote_c::resetVal(int32_t ri32_val){
                                                               GeneralCommand_c::exactValue,
                                                               GeneralCommand_c::measurementReset);
 
-  return processData().sendValDevKey(ui8_pri, devKey(), ri32_val);
+  return processData().sendValISOName(ui8_pri, isoName(), ri32_val);
 }
 
 #ifdef USE_FLOAT_DATA_TYPE
@@ -623,16 +623,16 @@ void MeasureProgRemote_c::initVal(float rf_val){
 */
 bool MeasureProgRemote_c::resetMed(){
 /**TODO2 still relevant*/
-  // if stored remote devKey isn't valid exit this function
+  // if stored remote isoName isn't valid exit this function
   // error state are set by the function
-  if (!verifySetRemoteDevKey())return false;
+  if (!verifySetRemoteISOName())return false;
 
   // get suitable PRI code
   uint8_t ui8_pri = (checkProgType(Proc_c::Base))? 1:2;
   getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false /* isRequest */,
                                                               GeneralCommand_c::medValue,
                                                               GeneralCommand_c::measurementReset);
-  return processData().sendValDevKey(ui8_pri, devKey(), int32_t(0x28));
+  return processData().sendValISOName(ui8_pri, isoName(), int32_t(0x28));
 }
 
 /**
@@ -645,9 +645,9 @@ bool MeasureProgRemote_c::resetMed(){
 */
 bool MeasureProgRemote_c::resetInteg(){
 /**TODO2 still relevant*/
-  // if stored remote devKey isn't valid exit this function
+  // if stored remote isoName isn't valid exit this function
   // error state are set by the function
-  if (!verifySetRemoteDevKey())return false;
+  if (!verifySetRemoteISOName())return false;
 
   // get suitable PRI code
   uint8_t ui8_pri = (checkProgType(Proc_c::Base))? 1:2;
@@ -655,7 +655,7 @@ bool MeasureProgRemote_c::resetInteg(){
                                                               GeneralCommand_c::integValue,
                                                               GeneralCommand_c::measurementReset);
 
-  return processData().sendValDevKey(ui8_pri, devKey(), int32_t(0x48));
+  return processData().sendValISOName(ui8_pri, isoName(), int32_t(0x48));
 }
 
 /**
@@ -668,9 +668,9 @@ bool MeasureProgRemote_c::resetInteg(){
 */
 bool MeasureProgRemote_c::resetMin(){
 /**TODO2 still relevant*/
-  // if stored remote devKey isn't valid exit this function
+  // if stored remote isoName isn't valid exit this function
   // error state are set by the function
-  if (!verifySetRemoteDevKey())return false;
+  if (!verifySetRemoteISOName())return false;
 
   // get suitable PRI code
   uint8_t ui8_pri = (checkProgType(Proc_c::Base))? 1:2;
@@ -678,7 +678,7 @@ bool MeasureProgRemote_c::resetMin(){
                                                               GeneralCommand_c::minValue,
                                                               GeneralCommand_c::measurementReset);
 
-  return processData().sendValDevKey(ui8_pri, devKey(), int32_t(0x8));
+  return processData().sendValISOName(ui8_pri, isoName(), int32_t(0x8));
 }
 
 /**
@@ -691,9 +691,9 @@ bool MeasureProgRemote_c::resetMin(){
 */
 bool MeasureProgRemote_c::resetMax(){
 /**TODO2 still relevant*/
-  // if stored remote devKey isn't valid exit this function
+  // if stored remote isoName isn't valid exit this function
   // error state are set by the function
-  if (!verifySetRemoteDevKey())return false;
+  if (!verifySetRemoteISOName())return false;
 
   // get suitable PRI code
   uint8_t ui8_pri = (checkProgType(Proc_c::Base))? 1:2;
@@ -701,16 +701,16 @@ bool MeasureProgRemote_c::resetMax(){
                                                               GeneralCommand_c::maxValue,
                                                               GeneralCommand_c::measurementReset);
 
-  return processData().sendValDevKey(ui8_pri, devKey(), int32_t(0x8));
+  return processData().sendValISOName(ui8_pri, isoName(), int32_t(0x8));
 }
 
 /**
-  perform periodic actions --> stop measuring prog if devKey isn't active any more
+  perform periodic actions --> stop measuring prog if isoName isn't active any more
   @return true -> all planned activities performed in available time
 */
 bool MeasureProgRemote_c::timeEvent( void )
 {
-  if ( (!getIsoMonitorInstance4Comm().existIsoMemberDevKey(devKey(), true)) && started() )
+  if ( (!getIsoMonitorInstance4Comm().existIsoMemberISOName(isoName(), true)) && started() )
   { // remote owner of this process data isn't active any more
     // stop measureing subprogs
     stop();
@@ -732,39 +732,39 @@ void MeasureProgRemote_c::receiveForeignMeasurement(bool rb_useForeign)
 
 
 /**
-  verify the stored DEV_KEY code of the remote system
+  verify the stored ISOName code of the remote system
   and set Err_c::elNonexistent if this system isn't registered as ative;
-  if devKey is undefied yet, retrieve it by the stored ident DEVCLASS of this process data
+  if isoName is undefied yet, retrieve it by the stored ident DEVCLASS of this process data
 
   possible errors:
       * Err_c::elNonexistent no remote member with claimed address with given DEVCLASS found
   @return true -> everything o.k.
 */
-bool MeasureProgRemote_c::verifySetRemoteDevKey()
-{ // if ownerDevKey is specified, check if it's still valid
+bool MeasureProgRemote_c::verifySetRemoteISOName()
+{ // if ownerISOName is specified, check if it's still valid
   ISOMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
-  if ( processData().ownerDevKey().isSpecified()
-    && (c_isoMonitor.existIsoMemberDevKey(processData().ownerDevKey(), true)))
+  if ( processData().ownerISOName().isSpecified()
+    && (c_isoMonitor.existIsoMemberISOName(processData().ownerISOName(), true)))
     return true; // change nothing and return success
 
   // check if proc data identity is valid and corresponding member has claimed address in monitor list
-  if ( processData().devKey().isSpecified()
-    && (c_isoMonitor.existIsoMemberDevKey(processData().devKey(), true)))
+  if ( processData().isoName().isSpecified()
+    && (c_isoMonitor.existIsoMemberISOName(processData().isoName(), true)))
     return true; // change nothing and return success
 
   // if both tests were false look for member with claimed address with DEVCLASS of this process
   // data to update dev class inst of this instance
-  DevKey_c c_tempDevKey = processData().ownerDevKey();
+  ISOName_c c_tempISOName = processData().ownerISOName();
   uint8_t b_tempPos;
   for (b_tempPos = 0; b_tempPos < 8; b_tempPos++)
   {
-    c_tempDevKey.setDevClassInst( b_tempPos );
-    if (getIsoMonitorInstance4Comm().existIsoMemberDevKey(c_tempDevKey))
+    c_tempISOName.setDevClassInst( b_tempPos );
+    if (getIsoMonitorInstance4Comm().existIsoMemberISOName(c_tempISOName))
     {
-      processData().setOwnerDevKey(c_tempDevKey); // set actual DEV_KEY, because member is found in list
-      processData().setDevClassInst(c_tempDevKey.getDevClassInst());
+      processData().setOwnerISOName(c_tempISOName); // set actual ISOName, because member is found in list
+      processData().setDevClassInst(c_tempISOName.devClassInst());
       // stop further search if this item has already claimed address
-      if (getIsoMonitorInstance4Comm().isoMemberDevKey(c_tempDevKey).itemState(IState_c::ClaimedAddress))
+      if (getIsoMonitorInstance4Comm().isoMemberISOName(c_tempISOName).itemState(IState_c::ClaimedAddress))
       { // this item has claimed address -> use it and stop search
         return true; // return from this function with positive result
       }

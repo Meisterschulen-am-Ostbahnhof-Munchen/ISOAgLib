@@ -157,22 +157,22 @@ class SimpleManageSetpointLocal_c : public ProcessElementBase_c
   void processSetpoint();
   /**
     send a exact-setpoint to a specified target (selected by GPT)
-    @param rc_targetDevKey DevKey of target
+    @param rc_targetISOName ISOName of target
     @param ren_type optional PRI specifier of the message (default Proc_c::Target )
     @return true -> successful sent
   */
-  bool sendMasterSetpointVal( const DevKey_c& rc_targetDevKey, Proc_c::progType_t ren_progType = Proc_c::Target ) const
-   { return sendSetpointMod( rc_targetDevKey, ren_progType, GeneralCommand_c::exactValue, GeneralCommand_c::setValue );};
+  bool sendMasterSetpointVal( const ISOName_c& rc_targetISOName, Proc_c::progType_t ren_progType = Proc_c::Target ) const
+   { return sendSetpointMod( rc_targetISOName, ren_progType, GeneralCommand_c::exactValue, GeneralCommand_c::setValue );};
   /**
     send a sub-setpoint (selected by MOD) to a specified target (selected by GPT)
     @param rui8_mod select sub-type of setpoint
-    @param rc_targetDevKey DevKey of target
+    @param rc_targetISOName ISOName of target
     @param ren_type optional PRI specifier of the message (default Proc_c::Target )
     @param en_valueGroup: min/max/exact/default
     @param en_command
     @return true -> successful sent
   */
-  bool sendSetpointMod(const DevKey_c& rc_targetDevKey,
+  bool sendSetpointMod(const ISOName_c& rc_targetISOName,
                        Proc_c::progType_t ren_progType,
                        GeneralCommand_c::ValueGroup_t en_valueGroup,
                        GeneralCommand_c::CommandType_t en_command ) const;

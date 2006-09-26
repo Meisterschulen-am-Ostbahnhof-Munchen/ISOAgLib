@@ -115,9 +115,9 @@ namespace __IsoAgLib {
 /** default constructor, which can optional set the pointer to the containing
   Scheduler_c object instance
 */
-VtServerInstance_c::VtServerInstance_c(const ISOItem_c& ref_newItem, DevKey_c c_newDevKey, ISOTerminal_c& ref_isoTerminal)
+VtServerInstance_c::VtServerInstance_c(const ISOItem_c& ref_newItem, ISOName_c c_newISOName, ISOTerminal_c& ref_isoTerminal)
   : pcc_isoItem (&ref_newItem)
-  , c_devKey (c_newDevKey)
+  , c_isoName (c_newISOName)
   , refc_isoTerminal (ref_isoTerminal)
 {
   /// init all variables to an initial upload state (Upload will not start before ws-announcing is due

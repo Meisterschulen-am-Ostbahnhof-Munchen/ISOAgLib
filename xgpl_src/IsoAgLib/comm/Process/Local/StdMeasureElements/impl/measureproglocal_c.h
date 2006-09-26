@@ -130,30 +130,30 @@ public:
     @param ren_progType optional program msg type (Proc_c::Base, Proc_c::Target; default Proc_c::UndefinedProg)
     @param ri32_masterVal optional actual central local measured value used as masterVal (def 0)
     @param ri32_initialVal optional initial value (e.g which was stored in EEPROM) (default 0)
-    @param rc_callerDevKey optional DEV_KEY of remote member, which caused creation of this instance (default 0xFF == no member)
+    @param rc_callerISOName optional ISOName of remote member, which caused creation of this instance (default 0xFF == no member)
   */
   MeasureProgLocal_c(
     ProcDataBase_c *const rpc_processData = NULL,
     Proc_c::progType_t ren_progType = Proc_c::UndefinedProg,
     int32_t ri32_masterVal = 0,
     int32_t ri32_initialVal = 0,
-    const DevKey_c& rc_callerDevKey = DevKey_c::DevKeyUnspecified )
-    : MeasureProgBase_c(rpc_processData, ren_progType, ri32_initialVal, rc_callerDevKey )
-    {init(rpc_processData, ren_progType, ri32_masterVal, ri32_initialVal, rc_callerDevKey  );};
+    const ISOName_c& rc_callerISOName = ISOName_c::ISONameUnspecified )
+    : MeasureProgBase_c(rpc_processData, ren_progType, ri32_initialVal, rc_callerISOName )
+    {init(rpc_processData, ren_progType, ri32_masterVal, ri32_initialVal, rc_callerISOName  );};
   /**
     initialise this MeasureProgLocal_c instance to a well defined initial state
     @param rpc_processData optional pointer to containing ProcDataLocal_c instance (def NULL)
     @param ren_progType optional program msg type (Proc_c::Base, Proc_c::Target; default Proc_c::UndefinedProg)
     @param ri32_masterVal optional actual central local measured value used as masterVal (def 0)
     @param ri32_initialVal optional initial value (e.g which was stored in EEPROM) (default 0)
-    @param rc_callerDevKey optional DEV_KEY of remote member, which caused creation of this instance (default 0xFF == no member)
+    @param rc_callerISOName optional ISOName of remote member, which caused creation of this instance (default 0xFF == no member)
   */
   void init(
     ProcDataBase_c *const rpc_processData,
     Proc_c::progType_t ren_progType = Proc_c::UndefinedProg,
     int32_t ri32_masterVal = 0,
     int32_t ri32_initialVal = 0,
-    const DevKey_c& rc_callerDevKey = DevKey_c::DevKeyUnspecified );
+    const ISOName_c& rc_callerISOName = ISOName_c::ISONameUnspecified );
 #ifdef USE_FLOAT_DATA_TYPE
   /**
     constructor which can optionally set most element vars of MeasureProgLocal
@@ -161,30 +161,30 @@ public:
     @param ren_progType optional program msg type (Proc_c::Base, Proc_c::Target; default Proc_c::UndefinedProg)
     @param rf_masterVal actual central local measured value used as float masterVal
     @param rf_eepromVal optional value stored in EEPROM (default 0.0)
-    @param rc_callerDevKey optional DEV_KEY of remote member, which caused creation of this instance (default 0xFF == no member)
+    @param rc_callerISOName optional ISOName of remote member, which caused creation of this instance (default 0xFF == no member)
   */
   MeasureProgLocal_c(
     ProcDataBase_c *const rpc_processData,
     Proc_c::progType_t ren_progType,
     float rf_masterVal,
     float rf_eepromVal = 0.0F,
-    const DevKey_c& rc_callerDevKey = DevKey_c::DevKeyUnspecified)
-    : MeasureProgBase_c(rpc_processData, ren_progType, 0, rc_callerDevKey )
-    {init(rpc_processData, ren_progType, rf_masterVal, rf_eepromVal, rc_callerDevKey  );};
+    const ISOName_c& rc_callerISOName = ISOName_c::ISONameUnspecified)
+    : MeasureProgBase_c(rpc_processData, ren_progType, 0, rc_callerISOName )
+    {init(rpc_processData, ren_progType, rf_masterVal, rf_eepromVal, rc_callerISOName  );};
   /**
     initialise this MeasureProgLocal_c instance to a well defined initial state
     @param rpc_processData optional pointer to containing ProcDataLocal_c instance (def NULL)
     @param ren_progType optional program msg type (Proc_c::Base, Proc_c::Target; default Proc_c::UndefinedProg)
     @param rf_masterVal actual central local measured value used as float masterVal
     @param rf_eepromVal optional value stored in EEPROM (default 0.0)
-    @param rc_callerDevKey optional DEV_KEY of remote member, which caused creation of this instance (default 0xFF == no member)
+    @param rc_callerISOName optional ISOName of remote member, which caused creation of this instance (default 0xFF == no member)
   */
   void init(
     ProcDataBase_c *const rpc_processData,
     Proc_c::progType_t ren_progType,
     float rf_masterVal,
     float rf_eepromVal = 0.0F,
-    const DevKey_c& rc_callerDevKey = DevKey_c::DevKeyUnspecified );
+    const ISOName_c& rc_callerISOName = ISOName_c::ISONameUnspecified );
 #endif
   /**
     assignment of MeasureProgLocal_c objects
@@ -269,20 +269,20 @@ public:
   /**
     send a sub-information (selected by en_valueGroup) to a specified target (selected by GPT)
     @param en_valueGroup value group to send
-    @param rc_targetDevKey DevKey of target
+    @param rc_targetISOName ISOName of target
     @param ren_type optional PRI specifier of the message (default Proc_c::Target )
     @return true -> successful sent
   */
-  bool sendValMod( GeneralCommand_c::ValueGroup_t en_valueGroup, const DevKey_c& rc_targetDevKey, Proc_c::progType_t ren_progType = Proc_c::Target) const;
+  bool sendValMod( GeneralCommand_c::ValueGroup_t en_valueGroup, const ISOName_c& rc_targetISOName, Proc_c::progType_t ren_progType = Proc_c::Target) const;
 
   /**
     send a sub-information from the corresponding setpoint master to a specified target (selected by GPT)
     @param en_valueGroup value group to send
-    @param rc_targetDevKey DevKey of target
+    @param rc_targetISOName ISOName of target
     @param ren_type optional PRI specifier of the message (default Proc_c::Target )
     @return true -> successful sent
   */
-  bool sendSetpointValMod( GeneralCommand_c::ValueGroup_t en_valueGroup, const DevKey_c& rc_targetDevKey, Proc_c::progType_t ren_progType) const;
+  bool sendSetpointValMod( GeneralCommand_c::ValueGroup_t en_valueGroup, const ISOName_c& rc_targetISOName, Proc_c::progType_t ren_progType) const;
   /**
     deliver to en_valueGroup according setpoint from a master setpoint
     @param en_valueGroup of wanted subtype

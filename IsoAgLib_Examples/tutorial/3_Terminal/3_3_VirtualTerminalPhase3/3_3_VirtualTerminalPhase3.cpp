@@ -199,7 +199,6 @@
 
 /* include some needed util headers */
 //#include <IsoAgLib/util/config.h>
-#include <IsoAgLib/util/idevkey_c.h>
 
 /* include headers for the needed drivers */
 #include <IsoAgLib/driver/system/isystem_c.h>
@@ -209,7 +208,7 @@
    of the "IsoAgLib" */
 #include <IsoAgLib/comm/Scheduler/ischeduler_c.h>
 #include <IsoAgLib/comm/SystemMgmt/iidentitem_c.h>
-#include <IsoAgLib/comm/SystemMgmt/isystemmgmt_c.h>
+#include <IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h>
 #include <supplementary_driver/driver/datastreams/streaminput_c.h>
 #include <iostream>
 
@@ -381,7 +380,7 @@ void iObjectPool_simpleVTIsoPool_c::eventKeyCode ( uint8_t keyActivationCode, ui
         {
           std::cout << "Reset pressed. Triggering Pool update."<<std::endl;
 
-          /// We should wait until a previous partial update has finished, as else we would 
+          /// We should wait until a previous partial update has finished, as else we would
           /// modify the buffer while it's being used for the pool update!
 
           // this actually only needs to be done once!!! but I don't care for now...
@@ -408,7 +407,7 @@ void iObjectPool_simpleVTIsoPool_c::eventKeyCode ( uint8_t keyActivationCode, ui
       case vtKeyCodeKeyChangeFill: {
         char* text = "Text";
         pressChangeFill++;
-	  
+
 	switch(pressChangeFill) {
 	  case 1:
             iVtObjectBigGC.setGraphicsCursor( iVtPoint_c( 5,5 ) );
@@ -615,11 +614,11 @@ int main()
 
   // variable for DEV_KEY
   // default with primary cultivation mounted back
-  IsoAgLib::iDevKey_c myDevKey( 7, 0 );
+  IsoAgLib::iISOName_c myISOName( 7, 0 );
 
   // start address claim of the local member "IMI"
   // if DEV_KEY conflicts forces change of device class instance, the
-  // IsoAgLib can cahnge the myDevKey val through the pointer to myDevKey
+  // IsoAgLib can cahnge the myISOName val through the pointer to myISOName
   bool b_selfConf = true;
   uint8_t ui8_indGroup = 2,
       b_func = 25,
@@ -631,9 +630,9 @@ int main()
 
   // start address claim of the local member "IMI"
   // if DEV_KEY conflicts forces change of device class instance, the
-  // IsoAgLib can change the myDevKey val through the pointer to myDevKey
+  // IsoAgLib can change the myISOName val through the pointer to myISOName
   #if 1
-  IsoAgLib::iIdentItem_c c_myIdent( &myDevKey,
+  IsoAgLib::iIdentItem_c c_myIdent( &myISOName,
       b_selfConf, ui8_indGroup, b_func, ui16_manufCode,
       ui32_serNo, b_wantedSa, 256 /*0xFFFF*/, b_funcInst, b_ecuInst, 0, NULL );
 
@@ -641,14 +640,14 @@ int main()
   uint64_t ui64_isoName = 0xa00e840000000000ULL;
                         //0x0000000000840ea0;
 
-  IsoAgLib::iIdentItem_c c_myIdent(&myDevKey, (const uint8_t*)&ui64_isoName, b_wantedSa, 0xFFFF, 0, NULL );
+  IsoAgLib::iIdentItem_c c_myIdent(&myISOName, (const uint8_t*)&ui64_isoName, b_wantedSa, 0xFFFF, 0, NULL );
   #endif
 
   /* Explicit call to init iIsoTerminal instance - not really needed though */
   getIisoTerminalInstance().init();
 
   /* Call to init iIsoTerminal instance and initialize object pool! */
-  getIisoTerminalInstance().registerIsoObjectPool(&c_myIdent, &Tutorial_3_0_Pool_c, "Tut-3_0");
+  getIisoTerminalInstance().registerIsoObjectPool(c_myIdent, Tutorial_3_0_Pool_c, "Tut-3_0");
 
   /** IMPORTANT:
     - The following loop could be replaced of any repeating call of

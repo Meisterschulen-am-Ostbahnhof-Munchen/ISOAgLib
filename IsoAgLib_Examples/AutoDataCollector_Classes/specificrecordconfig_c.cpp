@@ -73,7 +73,7 @@ SpecificRecordConfig_c::SpecificRecordConfig_c(uint16_t rui16_eepromAdr, Default
 	ui8_timeDistDevClass = 0xFF;
 	// default only measure prog for IMI and not even single measure request for other ECU
 	ui8_useMeasureProgs = 1;
-	c_recordAsDevKey.setUnspecified();
+	c_recordAsISOName.setUnspecified();
 	ui8_procCnt = 0;
 
 	// check if pointers and eepromd are valid -> call init
@@ -110,7 +110,7 @@ SpecificRecordConfig_c::SpecificRecordConfig_c(const SpecificRecordConfig_c& rre
 	b_transportWorkDist = rrefc_src.b_transportWorkDist;
 	b_fieldstarSend = rrefc_src.b_fieldstarSend;
 	ui8_useMeasureProgs = rrefc_src.ui8_useMeasureProgs;
-	c_recordAsDevKey = rrefc_src.c_recordAsDevKey;
+	c_recordAsISOName = rrefc_src.c_recordAsISOName;
 	ui8_procCnt = rrefc_src.ui8_procCnt;
 	ui8_timeDistDevClass = rrefc_src.ui8_timeDistDevClass;
 }
@@ -205,7 +205,7 @@ bool SpecificRecordConfig_c::init(uint16_t rui16_eepromAdr, DefaultRecordConfig_
 			break;
 	}
 
-	c_recordAsDevKey = rpc_memberItem->devKey();
+	c_recordAsISOName = rpc_memberItem->devKey();
 	b_fieldstarSend = false;
 
 	// get the amount of device records
@@ -336,7 +336,7 @@ bool SpecificRecordConfig_c::init(uint16_t rui16_eepromAdr, DefaultRecordConfig_
 				if (strstr((const char*)pui8_cachedTagName, "rec_asgp") != NULL)
 				{ // read tag is record_as_devKey of data sets for this device
 					sscanf((const char*)pui8_cachedTagData, "%i", &i_val);
-					c_recordAsDevKey.setCombinedDin( i_val );
+					c_recordAsISOName.setCombinedDin( i_val );
 					break; // exit while loop
 				}
 				if (strstr((const char*)pui8_cachedTagName, "td_devClass") != NULL)

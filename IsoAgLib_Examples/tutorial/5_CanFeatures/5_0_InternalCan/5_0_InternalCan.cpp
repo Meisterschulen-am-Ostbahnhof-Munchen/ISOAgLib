@@ -184,7 +184,7 @@
 
 /* include some needed util headers */
 //#include <IsoAgLib/util/config.h>
-#include <IsoAgLib/util/idevkey_c.h>
+#include <IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h>
 
 /* include headers for the needed drivers */
 #include <IsoAgLib/driver/system/isystem_c.h>
@@ -200,7 +200,6 @@
    of the "IsoAgLib" */
 #include <IsoAgLib/comm/Scheduler/ischeduler_c.h>
 #include <IsoAgLib/comm/SystemMgmt/iidentitem_c.h>
-#include <IsoAgLib/comm/SystemMgmt/isystemmgmt_c.h>
 #include <IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h>
 
 
@@ -263,7 +262,7 @@ class MyInternalPkg_c : public IsoAgLib::iCANPkgExt_c
 
 // variable for DEV_KEY ( device type, device type instance )
 // default with primary cultivation mounted back ( device type 2, -instance 0 )
-IsoAgLib::iDevKey_c myDevKey( 2, 0 );
+IsoAgLib::iISOName_c myISOName( 2, 0 );
 
 /**
   Operation: flags2String
@@ -280,10 +279,10 @@ void MyInternalPkg_c::flags2String()
   switch ( ui16_flag1 )
   {
     case 0:
-      if ( IsoAgLib::getIisoMonitorInstance().existIsoMemberDevKey( myDevKey, true ) )
+      if ( IsoAgLib::getIisoMonitorInstance().existIsoMemberISOName( myISOName, true ) )
       { // local ident has already claimed address
         // just place some data which is retrieved in standardized manner
-        pb_data[6] = getIisoMonitorInstance().isoMemberDevKey( myDevKey ).nr();
+        pb_data[6] = getIisoMonitorInstance().isoMemberISOName( myISOName ).nr();
         pb_data[7] = ( ( IsoAgLib::iSystem_c::getTime() / 1000 ) % 0xFF );
         // set len and ident
         setLen( 8 );
@@ -452,8 +451,8 @@ int main()
 
   // start address claim of the local member
   // if DEV_KEY ( device type, -instance ) conflicts forces change of POS/instance, the
-  // IsoAgLib can change the myDevKey val through the pointer to myDevKey
-  IsoAgLib::iIdentItem_c c_myIdent( &myDevKey,
+  // IsoAgLib can change the myISOName val through the pointer to myISOName
+  IsoAgLib::iIdentItem_c c_myIdent( &myISOName,
       b_selfConf, ui8_indGroup, b_func, ui16_manufCode,
       ui32_serNo, b_wantedSa, 0xFFFF, b_funcInst, b_ecuInst);
 

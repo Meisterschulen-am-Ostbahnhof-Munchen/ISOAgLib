@@ -89,9 +89,8 @@
 /* *************************************** */
 /* ********** include headers ************ */
 /* *************************************** */
-// #include "../../impl/monitoritem_c.h"
-#include <IsoAgLib/util/impl/devkey_c.h>
-#include "isoname_c.h"
+#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h>
+#include <IsoAgLib/comm/SystemMgmt/impl/baseitem_c.h>
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
@@ -110,13 +109,13 @@ private:
 public:
   /** constructor which can set optional all ident data
     @param ri32_time creation time of this item instance
-    @param rc_devKey DEV_KEY code of this item ((deviceClass << 3) | devClInst )
+    @param rc_isoName ISOName code of this item ((deviceClass << 3) | devClInst )
     @param rui8_nr number of this item
     @param rb_status state of this ident (off, claimed address, ...) (default: off)
     @param rui16_saEepromAdr EEPROM adress to store actual SA -> next boot with same adr
     @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
-  ISOItem_c(int32_t ri32_time = 0, const DevKey_c& rc_devKey = DevKey_c::DevKeyUnspecified, uint8_t rui8_nr = 0xFE,
+  ISOItem_c(int32_t ri32_time = 0, const ISOName_c& rc_isoName = ISOName_c::ISONameUnspecified, uint8_t rui8_nr = 0xFE,
                IState_c::itemState_t rb_status = IState_c::IstateNull,
                uint16_t rui16_saEepromAdr = 0xFFFF, int riSingletonKey = 0 );
 
@@ -140,128 +139,125 @@ public:
   /** deliver the data NAME string as pointer to 8byte string
     @return const pointer to Flexible8ByteString_c union with NAME
   */
-  const Flexible8ByteString_c* outputNameUnion() const {return c_devKey.getConstName().outputUnion();}
+  const Flexible8ByteString_c* outputNameUnion() const {return c_isoName.outputUnion();}
 
   /** get self config mode
     @return self configuration adress state
   */
-  uint8_t selfConf() const {return c_devKey.getConstName().selfConf();}
+  uint8_t selfConf() const {return c_isoName. selfConf();}
 
   /** get industry group code
     @return industry group of device
   */
-  uint8_t indGroup() const {return c_devKey.getConstName().indGroup();}
+  uint8_t indGroup() const {return c_isoName. indGroup();}
 
   /** get device class instance number
     @return:device class instance number
   */
-  uint8_t devClassInst() const {return c_devKey.getConstName().devClassInst();}
-//   uint8_t devClassInst()const{return c_devKey.getDevClassInst();}
+  uint8_t devClassInst() const {return c_isoName. devClassInst();}
 
   /** get device class code
     @return:device class
   */
-  uint8_t devClass() const {return c_devKey.getConstName().devClass();}
-//   uint8_t devClass()const{return c_devKey.getDevClass();}
+  uint8_t devClass() const {return c_isoName. devClass();}
 
   /** get function code
     @return function code
   */
-  uint8_t func() const {return c_devKey.getConstName().func();}
+  uint8_t func() const {return c_isoName. func();}
 
   /** get function instance code
     @return function instance code
   */
-  uint8_t funcInst() const {return c_devKey.getConstName().funcInst();}
+  uint8_t funcInst() const {return c_isoName. funcInst();}
 
   /** get ECU instance code
     @return ECU instance code
   */
-  uint8_t ecuInst() const {return c_devKey.getConstName().ecuInst();}
+  uint8_t ecuInst() const {return c_isoName. ecuInst();}
 
   /** get manufactor code
     @return manufactor code
   */
-  uint16_t manufCode() const {return c_devKey.getConstName().manufCode();}
+  uint16_t manufCode() const {return c_isoName. manufCode();}
 
   /** get serial number
     @return serial number
   */
-  uint32_t serNo() const {return c_devKey.getConstName().serNo();}
+  uint32_t serNo() const {return c_isoName. serNo();}
 
   /** set the NAME data from 8 uint8_t string
     @param rpb_src pointer to 8byte source string
   */
-  void inputNameUnion(const Flexible8ByteString_c* rpu_src) {c_devKey.set(rpu_src);}
+  void inputNameUnion(const Flexible8ByteString_c* rpu_src) {c_isoName.inputUnion(rpu_src);}
 
   /** set self config mode
     @param rb_selfConf true -> indicate sefl configuring ECU
   */
-  void setSelfConf(bool rb_selfConf) {c_devKey.getName().setSelfConf(rb_selfConf);}
+  void setSelfConf(bool rb_selfConf) {c_isoName.setSelfConf(rb_selfConf);}
 
   /** set industry group code
     @param rui8_indGroup industry group of device (2 for agriculture)
   */
-  void setIndGroup(uint8_t rui8_indGroup) {c_devKey.getName().setIndGroup(rui8_indGroup);}
+  void setIndGroup(uint8_t rui8_indGroup) {c_isoName.setIndGroup(rui8_indGroup);}
 
   /** set device class instance number
     @param rui8_devClassInst instance number of ECU with same devClass in the network */
-  void setDevClassInst(uint8_t rui8_devClassInst) {c_devKey.getName().setDevClassInst(rui8_devClassInst);}
+  void setDevClassInst(uint8_t rui8_devClassInst) {c_isoName.setDevClassInst(rui8_devClassInst);}
 
   /** set device class code
     @param rui8_devClass device class of ECU
   */
-  void setDevClass(uint8_t rui8_devClass) {c_devKey.getName().setDevClass(rui8_devClass);}
+  void setDevClass(uint8_t rui8_devClass) {c_isoName.setDevClass(rui8_devClass);}
 
   /** set function code
     @param rb_func function of the ECU (usual 25 for network interconnect)
   */
-  void setFunc(uint8_t rb_func) {c_devKey.getName().setFunc(rb_func);}
+  void setFunc(uint8_t rb_func) {c_isoName.setFunc(rb_func);}
 
   /** set function instance code
     @param rb_funcInst instance number of ECU with same function and device class
         (default 0 - normally)
   */
-  void setFuncInst(uint8_t rb_funcInst) {c_devKey.getName().setFuncInst(rb_funcInst);}
+  void setFuncInst(uint8_t rb_funcInst) {c_isoName.setFuncInst(rb_funcInst);}
 
   /** set ECU instance code
     @param rb_funcInst instance number of ECU with same function, device class and function instance
         (default 0 - normally)
   */
-  void setEcuInst(uint8_t rb_ecuInst) {c_devKey.getName().setEcuInst(rb_ecuInst);}
+  void setEcuInst(uint8_t rb_ecuInst) {c_isoName.setEcuInst(rb_ecuInst);}
 
   /** set manufactor code
     @param rui16_manufCode code of manufactor (11bit)
   */
-  void setManufCode(uint16_t rui16_manufCode) {c_devKey.getName().setManufCode(rui16_manufCode);}
+  void setManufCode(uint16_t rui16_manufCode) {c_isoName.setManufCode(rui16_manufCode);}
 
   /** set serial number (Identity Number)
     @param rui32_serNo serial no of specific device (21bit)
   */
-  void setSerNo(uint32_t rui32_serNo) {c_devKey.getName().setSerNo(rui32_serNo);}
+  void setSerNo(uint32_t rui32_serNo) {c_isoName.setSerNo(rui32_serNo);}
 
   /** set all element data with one call
     @param ri32_time creation time of this item instance
-    @param rc_devKey DEV_KEY code of this item ((deviceClass << 3) | devClInst )
+    @param rc_isoName ISOName code of this item ((deviceClass << 3) | devClInst )
     @param rui8_nr number of this item
     @param rb_status state of this ident (off, claimed address, ...)
     @param rui16_saEepromAdr EEPROM adress to store actual SA -> next boot with same adr
     @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
-  void set(int32_t ri32_time, const DevKey_c& rc_devKey, uint8_t rui8_nr,
+  void set(int32_t ri32_time, const ISOName_c& rc_isoName, uint8_t rui8_nr,
            itemState_t ren_status = IState_c::Active,
            uint16_t rui16_saEepromAdr = 0xFFFF, int riSingletonKey = 0 );
 
-  /** set DEV_KEY code of this item
-    @param rc_devKey DEV_KEY
+  /** set ISOName code of this item
+    @param rc_isoName ISOName
   */
-  void setDevKey(const DevKey_c& rc_devKey) {c_devKey = rc_devKey;}
+  void setISOName(const ISOName_c& rc_isoName) {c_isoName = rc_isoName;}
 
-  /** deliver DEV_KEY code of this item
-    @return DEV_KEY
+  /** deliver ISOName code of this item
+    @return ISOName
   */
-//   const DevKey_c& devKey() const {return MonitorItem_c::devKey();}
-  const DevKey_c& devKey()const{return c_devKey;}
+  const ISOName_c& isoName() const {return c_isoName;}
 
   /** deliver name
     @return pointer to the name uint8_t string (7byte)
@@ -333,7 +329,7 @@ public:
 
   /**
     set number of this item
-    @param rc_devKey number
+    @param rc_isoName number
   */
   void setNr(uint8_t rui8_nr){ui8_nr = rui8_nr;}
 
@@ -344,43 +340,43 @@ public:
   uint8_t nr()const{return ui8_nr;}
 
   /**
-    lower comparison with another ISOItem_c on the rigth (compare the DEV_KEY)
+    lower comparison with another ISOItem_c on the rigth (compare the ISOName)
     @param rrefc_right rigth parameter for lower compare
   */
   bool operator<(const ISOItem_c& rrefc_right) const
-    {return (devKey() < rrefc_right.devKey())?true:false;}
+    {return (isoName() < rrefc_right.isoName())?true:false;}
 
   /**
-    lower comparison with DEV_KEY uint8_t on the rigth
+    lower comparison with ISOName uint8_t on the rigth
     @param rrefc_right rigth parameter for lower compare
   */
-  bool operator<(const DevKey_c& rc_devKey)const{return (devKey() < rc_devKey)?true:false;}
+  bool operator<(const ISOName_c& rc_isoName)const{return (isoName() < rc_isoName)?true:false;}
 
   /**
-    lower comparison between left DEV_KEY uint8_t and right MonitorItem
-    @param rb_left DEV_KEY uint8_t left parameter
+    lower comparison between left ISOName uint8_t and right MonitorItem
+    @param rb_left ISOName uint8_t left parameter
     @param rrefc_right rigth ServiceItem_c parameter
   */
-  friend bool operator<(const DevKey_c& rc_left, const ISOItem_c& rrefc_right);
+  friend bool operator<(const ISOName_c& rc_left, const ISOItem_c& rrefc_right);
 
   /**
-    lower comparison between left ISOItem_c and right DEV_KEY uint8_t
+    lower comparison between left ISOItem_c and right ISOName uint8_t
     @param rrefc_left left ServiceItem_c parameter
-    @param rb_right DEV_KEY uint8_t right parameter
+    @param rb_right ISOName uint8_t right parameter
   */
-  friend bool lessThan(const ISOItem_c& rrefc_left, const DevKey_c& rc_right);
+  friend bool lessThan(const ISOItem_c& rrefc_left, const ISOName_c& rc_right);
 
   /**
-    equality comparison with DEV_KEY uint8_t on the rigth
+    equality comparison with ISOName uint8_t on the rigth
     @param rrefc_right rigth parameter for lower compare
   */
-  bool operator==(const DevKey_c& rc_right)const { return (devKey() == rc_right)?true:false;}
+  bool operator==(const ISOName_c& rc_right)const { return (isoName() == rc_right)?true:false;}
 
   /**
-    difference comparison with DEV_KEY uint8_t on the rigth
+    difference comparison with ISOName uint8_t on the rigth
     @param rrefc_right rigth parameter for lower compare
   */
-  bool operator!=(const DevKey_c& rc_right) const{ return (devKey() != rc_right)?true:false;}
+  bool operator!=(const ISOName_c& rc_right) const{ return (isoName() != rc_right)?true:false;}
 
   /**
     compare given number to nr of this item and return result
@@ -427,16 +423,16 @@ private:
   /** number of element */
   uint8_t ui8_nr : 8;
 
-  /** DEV_KEY of element */
-  DevKey_c c_devKey;
+  /** ISOName of element */
+  ISOName_c c_isoName;
 };
 
 /**
-  lower comparison between left ISOItem_c and right DEV_KEY uint8_t
+  lower comparison between left ISOItem_c and right ISOName uint8_t
   @param rrefc_left left ServiceItem_c parameter
-  @param rb_right DEV_KEY uint8_t right parameter
+  @param rb_right ISOName uint8_t right parameter
 */
-bool lessThan(const ISOItem_c& rrefc_left, const DevKey_c& rc_right);
+bool lessThan(const ISOItem_c& rrefc_left, const ISOName_c& rc_right);
 
 }
 #endif

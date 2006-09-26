@@ -102,22 +102,22 @@ namespace __IsoAgLib {
   @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
                        (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
 
-  @param rc_devKey optional DEV_KEY code of this instance
+  @param rc_isoName optional ISOName code of this instance
   @param rui8_pri PRI code of messages with this process data instance (default 2)
-  @param rc_ownerDevKey optional DEV_KEY of the owner
-  @param rpc_commanderDevKey pointer to updated DEV_KEY variable of commander
+  @param rc_ownerISOName optional ISOName of the owner
+  @param rpc_commanderISOName pointer to updated ISOName variable of commander
   @param rpc_processDataChangeHandler optional pointer to handler class of application
   @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
 ProcDataRemoteSimpleMeasure_c::ProcDataRemoteSimpleMeasure_c(const IsoAgLib::ElementDDI_s* ps_elementDDI,
-                                                             uint16_t rui16_element, const DevKey_c& rc_devKey,
+                                                             uint16_t rui16_element, const ISOName_c& rc_isoName,
                                                              uint8_t rui8_pri,
-                                                             const DevKey_c& rc_ownerDevKey,
-                                                             const DevKey_c* rpc_commanderDevKey,
+                                                             const ISOName_c& rc_ownerISOName,
+                                                             const ISOName_c* rpc_commanderISOName,
                                                              IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler,
                                                              int ri_singletonVecKey)
   : ProcDataRemoteBase_c(ps_elementDDI, rui16_element,
-                         rc_devKey, rui8_pri, rc_ownerDevKey, rpc_commanderDevKey,
+                         rc_isoName, rui8_pri, rc_ownerISOName, rpc_commanderISOName,
                          rpc_processDataChangeHandler, ri_singletonVecKey)
   , c_setpoint(this)
   , c_measure(this)
@@ -130,22 +130,22 @@ ProcDataRemoteSimpleMeasure_c::ProcDataRemoteSimpleMeasure_c(const IsoAgLib::Ele
   @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
                        (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
 
-  @param rc_devKey optional DEV_KEY code of this instance
+  @param rc_isoName optional ISOName code of this instance
   @param rui8_pri PRI code of messages with this process data instance (default 2)
-  @param rc_ownerDevKey optional DEV_KEY of the owner
-  @param rpc_commanderDevKey pointer to updated DEV_KEY variable of commander
+  @param rc_ownerISOName optional ISOName of the owner
+  @param rpc_commanderISOName pointer to updated ISOName variable of commander
   @param rpc_processDataChangeHandler optional pointer to handler class of application
   @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
 void ProcDataRemoteSimpleMeasure_c::init(const IsoAgLib::ElementDDI_s* ps_elementDDI,uint16_t rui16_element,
-                                         const DevKey_c& rc_devKey, uint8_t rui8_pri,
-                                         const DevKey_c& rc_ownerDevKey,
-                                         const DevKey_c* rpc_commanderDevKey,
+                                         const ISOName_c& rc_isoName, uint8_t rui8_pri,
+                                         const ISOName_c& rc_ownerISOName,
+                                         const ISOName_c* rpc_commanderISOName,
                                          IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler,
                                          int ri_singletonVecKey)
 {
   ProcDataRemoteBase_c::init(ps_elementDDI, rui16_element,
-                             rc_devKey, rui8_pri, rc_ownerDevKey, rpc_commanderDevKey,
+                             rc_isoName, rui8_pri, rc_ownerISOName, rpc_commanderISOName,
                              rpc_processDataChangeHandler, ri_singletonVecKey);
   c_setpoint.init( this );
   c_measure.init( this );

@@ -111,7 +111,7 @@ public:
   */
   MeasureProgRemote_c(
     ProcDataBase_c *const rpc_processData = NULL )
-  : MeasureProgBase_c(rpc_processData, Proc_c::UndefinedProg, 0, DevKey_c::DevKeyUnspecified )
+  : MeasureProgBase_c(rpc_processData, Proc_c::UndefinedProg, 0, ISOName_c::ISONameUnspecified )
   {init( rpc_processData );};
   /**
     initialise this MeasureProgRemote_c instance to well defined initial condition
@@ -307,21 +307,21 @@ public:
   virtual bool resetMax();
 
   /**
-    perform periodic actions --> stop measuring prog if devKey isn't active any more
+    perform periodic actions --> stop measuring prog if isoName isn't active any more
     @return true -> all planned activities performed in available time
   */
   virtual bool timeEvent( void );
 private: // Private methods
   /**
-    verify the stored DEV_KEY code of the remote system
+    verify the stored ISOName code of the remote system
     and set Err_c::elNonexistent if this system isn't registered as ative;
-    if devKey is undefied yet, retrieve it by the stored ident DEVCLASS of this process data
+    if isoName is undefied yet, retrieve it by the stored ident DEVCLASS of this process data
 
     possible errors:
         * Err_c::elNonexistent no remote member with claimed address with given DEVCLASS found
     @return true -> everything o.k.
   */
-  bool verifySetRemoteDevKey();
+  bool verifySetRemoteISOName();
 
   /**
     set medium val

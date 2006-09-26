@@ -1,9 +1,9 @@
 #include "DeviceDescription.xml-bytestream.inc"
 
-IsoAgLib::iDevKey_c myDeviceDevKey(0x5, 0x0);
+IsoAgLib::iISOName_c myDeviceISOName(0x5, 0x0);
 
-IsoAgLib::iIdentItem_c c_myIdent(&myDeviceDevKey, true, 0x2, 0x19, 0x7ff, 0x1b, 0x80, 0xffff, 0x0, 0x0
- #ifdef USE_ISO_TERMINAL 
+IsoAgLib::iIdentItem_c c_myIdent(&myDeviceISOName, true, 0x2, 0x19, 0x7ff, 0x1b, 0x80, 0xffff, 0x0, 0x0
+ #ifdef USE_ISO_TERMINAL
  , 0, NULL
  #endif
 );
@@ -17,7 +17,7 @@ const IsoAgLib::ElementDDI_s s_myOnoffElementDDI[] =
 };
 
 IsoAgLib::iProcDataLocalSimpleMeasure_c c_myOnoff(s_myOnoffElementDDI,
-scui16_myOnoffElementNumber, myDeviceDevKey, 0x2, myDeviceDevKey, &myDeviceDevKey, false
+scui16_myOnoffElementNumber, myDeviceISOName, 0x2, myDeviceISOName, &myDeviceISOName, false
 #ifdef USE_EEPROM_IO
 , 0xffff
 #endif
@@ -32,7 +32,7 @@ const IsoAgLib::ElementDDI_s s_myWorkWidthElementDDI[] =
 };
 
 IsoAgLib::iProcDataLocalSimpleMeasure_c c_myWorkWidth(s_myWorkWidthElementDDI,
-scui16_myWorkWidthElementNumber, myDeviceDevKey, 0x2, myDeviceDevKey, &myDeviceDevKey, false
+scui16_myWorkWidthElementNumber, myDeviceISOName, 0x2, myDeviceISOName, &myDeviceISOName, false
 #ifdef USE_EEPROM_IO
 , 0xffff
 #endif
@@ -47,7 +47,7 @@ const IsoAgLib::ElementDDI_s s_myApplicationRateElementDDI[] =
 };
 
 IsoAgLib::iProcDataLocalSimpleMeasure_c c_myApplicationRate(s_myApplicationRateElementDDI,
-scui16_myApplicationRateElementNumber, myDeviceDevKey, 0x2, myDeviceDevKey, &myDeviceDevKey, false
+scui16_myApplicationRateElementNumber, myDeviceISOName, 0x2, myDeviceISOName, &myDeviceISOName, false
 #ifdef USE_EEPROM_IO
 , 0xffff
 #endif

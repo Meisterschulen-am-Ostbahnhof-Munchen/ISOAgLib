@@ -182,7 +182,7 @@ public:
     /**
       call "init" directly after construction!
     */
-    void init (const DevKey_c& rrefc_isoNameSender, const DevKey_c& rrefc_isoNameReceiver, const HUGE_MEM uint8_t* rhpb_data, uint32_t rui32_dataSize, sendSuccess_t& rpen_sendSuccessNotify, uint32_t rui32_pgn, IsoAgLib::iMultiSendStreamer_c* rpc_mss, msgType_t ren_msgType);
+    void init (const ISOName_c& rrefc_isoNameSender, const ISOName_c& rrefc_isoNameReceiver, const HUGE_MEM uint8_t* rhpb_data, uint32_t rui32_dataSize, sendSuccess_t& rpen_sendSuccessNotify, uint32_t rui32_pgn, IsoAgLib::iMultiSendStreamer_c* rpc_mss, msgType_t ren_msgType);
 
     /**
       perform periodical actions
@@ -227,7 +227,7 @@ public:
     */
     void abortSend ();
 
-    bool matchSaDa (const DevKey_c& rrefc_sa, const DevKey_c& rrefc_da) { return (rrefc_sa == c_isoNameSender) && (rrefc_da == c_isoNameReceiver); }
+    bool matchSaDa (const ISOName_c& rrefc_sa, const ISOName_c& rrefc_da) { return (rrefc_sa == c_isoNameSender) && (rrefc_da == c_isoNameReceiver); }
 
 //    bool matchSa (uint8_t rui8_sa) { return (rui8_sa == ui8_sender); }
 //    bool matchDa (uint8_t rui8_da) { return (rui8_da == ui8_receiver); }
@@ -250,8 +250,8 @@ public:
   private: // attributes
   /// Initialized on init(...)
     uint32_t ui32_pgn;
-    DevKey_c c_isoNameReceiver;
-    DevKey_c c_isoNameSender;
+    ISOName_c c_isoNameReceiver;
+    ISOName_c c_isoNameSender;
 
     #if defined (NMEA_2000_FAST_PACKET)
     uint8_t ui8_FpSequenceCounter;
@@ -316,16 +316,16 @@ public: // methods
 
 
   /** this function is called by ISOMonitor_c when a new CLAIMED ISOItem_c is registered.
-   * @param refc_devKey const reference to the item which ISOItem_c state is changed
+   * @param refc_isoName const reference to the item which ISOItem_c state is changed
    * @param rpc_newItem pointer to the currently corresponding ISOItem_c
     */
-  virtual void reactOnMonitorListAdd( const __IsoAgLib::DevKey_c& refc_devKey, const __IsoAgLib::ISOItem_c* rpc_newItem );
+  virtual void reactOnMonitorListAdd( const __IsoAgLib::ISOName_c& refc_isoName, const __IsoAgLib::ISOItem_c* rpc_newItem );
 
   /** this function is called by ISOMonitor_c when a device looses its ISOItem_c.
-   * @param refc_devKey const reference to the item which ISOItem_c state is changed
+   * @param refc_isoName const reference to the item which ISOItem_c state is changed
    * @param rui8_oldSa previously used SA which is NOW LOST -> clients which were connected to this item can react explicitly
    */
-  virtual void reactOnMonitorListRemove( const __IsoAgLib::DevKey_c& refc_devKey, uint8_t rui8_oldSa );
+  virtual void reactOnMonitorListRemove( const __IsoAgLib::ISOName_c& refc_isoName, uint8_t rui8_oldSa );
 
 
   /**
@@ -342,7 +342,7 @@ public: // methods
             is written by MultiSend_c
     @return true -> MultiSend_c was ready -> mask is spooled to target
   */
-  bool sendIsoTarget (const DevKey_c& rrefc_isoNameSender, const DevKey_c& rrefc_isoNameReceiver, IsoAgLib::iMultiSendStreamer_c* rpc_mss, int32_t ri32_pgn, sendSuccess_t& rrefen_sendSuccessNotify)
+  bool sendIsoTarget (const ISOName_c& rrefc_isoNameSender, const ISOName_c& rrefc_isoNameReceiver, IsoAgLib::iMultiSendStreamer_c* rpc_mss, int32_t ri32_pgn, sendSuccess_t& rrefen_sendSuccessNotify)
     { return sendIntern (rrefc_isoNameSender, rrefc_isoNameReceiver, NULL, rpc_mss->getStreamSize(), rrefen_sendSuccessNotify, ri32_pgn, rpc_mss, ((rpc_mss->getStreamSize() >= 1786) ? IsoETP : IsoTP)); }
 
   /**
@@ -356,7 +356,7 @@ public: // methods
             is written by MultiSend_c
     @return true -> MultiSend_c was ready -> mask is spooled to target
   */
-  bool sendIsoTarget (const DevKey_c& rrefc_isoNameSender, const DevKey_c& rrefc_isoNameReceiver, const HUGE_MEM uint8_t* rhpb_data, uint32_t rui32_dataSize, int32_t ri32_pgn, sendSuccess_t& rrefen_sendSuccessNotify)
+  bool sendIsoTarget (const ISOName_c& rrefc_isoNameSender, const ISOName_c& rrefc_isoNameReceiver, const HUGE_MEM uint8_t* rhpb_data, uint32_t rui32_dataSize, int32_t ri32_pgn, sendSuccess_t& rrefen_sendSuccessNotify)
     { return sendIntern (rrefc_isoNameSender, rrefc_isoNameReceiver, rhpb_data, rui32_dataSize, rrefen_sendSuccessNotify, ri32_pgn, NULL, ((rui32_dataSize >= 1786) ? IsoETP : IsoTP)); }
 
   /**
@@ -366,15 +366,15 @@ public: // methods
     @param rui16_dataSize size of the complete message, limited to TP (1785 bytes) only!
     @return true -> MultiSend_c was ready
   */
-  bool sendIsoBroadcast (const DevKey_c& rrefc_isoNameSender, const HUGE_MEM uint8_t* rhpb_data, uint16_t rui16_dataSize, int32_t ri32_pgn, sendSuccess_t& rrefen_sendSuccessNotify)
-    { return sendIntern (rrefc_isoNameSender, DevKey_c::DevKeyUnspecified, rhpb_data, rui16_dataSize, rrefen_sendSuccessNotify, ri32_pgn, NULL /* NOT "yet" supported */, IsoTPbroadcast); }
+  bool sendIsoBroadcast (const ISOName_c& rrefc_isoNameSender, const HUGE_MEM uint8_t* rhpb_data, uint16_t rui16_dataSize, int32_t ri32_pgn, sendSuccess_t& rrefen_sendSuccessNotify)
+    { return sendIntern (rrefc_isoNameSender, ISOName_c::ISONameUnspecified, rhpb_data, rui16_dataSize, rrefen_sendSuccessNotify, ri32_pgn, NULL /* NOT "yet" supported */, IsoTPbroadcast); }
 
   #if defined(NMEA_2000_FAST_PACKET)
   // no MSS here, not supported by IsoFastPacket
-  bool sendIsoFastPacket (const DevKey_c& rrefc_isoNameSender, const DevKey_c& rrefc_isoNameReceiver, HUGE_MEM uint8_t* rhpb_data, uint16_t rui16_dataSize, int32_t ri32_pgn, sendSuccess_t& rrefen_sendSuccessNotify)
+  bool sendIsoFastPacket (const ISOName_c& rrefc_isoNameSender, const ISOName_c& rrefc_isoNameReceiver, HUGE_MEM uint8_t* rhpb_data, uint16_t rui16_dataSize, int32_t ri32_pgn, sendSuccess_t& rrefen_sendSuccessNotify)
     { return sendIntern (rrefc_isoNameSender, rrefc_isoNameReceiver, rhpb_data, rui16_dataSize, rrefen_sendSuccessNotify, ri32_pgn, NULL, NmeaFastPacket); }
 
-  bool sendIsoFastPacket (const DevKey_c& rrefc_isoNameSender, const DevKey_c& rrefc_isoNameReceiver, IsoAgLib::iMultiSendStreamer_c* rpc_mss, int32_t ri32_pgn, sendSuccess_t& rrefen_sendSuccessNotify)
+  bool sendIsoFastPacket (const ISOName_c& rrefc_isoNameSender, const ISOName_c& rrefc_isoNameReceiver, IsoAgLib::iMultiSendStreamer_c* rpc_mss, int32_t ri32_pgn, sendSuccess_t& rrefen_sendSuccessNotify)
     { return sendIntern (rrefc_isoNameSender, rrefc_isoNameReceiver, NULL, rpc_mss->getStreamSize(), rrefen_sendSuccessNotify, ri32_pgn, rpc_mss, NmeaFastPacket); }
   #endif
 
@@ -414,7 +414,7 @@ public: // methods
   bool timeEvent();
 
   /** user function for explicit abort of any running matching stream. */
-  void abortSend (const DevKey_c& rrefc_isoNameSender, const DevKey_c& rrefc_isoNameReceiver);
+  void abortSend (const ISOName_c& rrefc_isoNameSender, const ISOName_c& rrefc_isoNameReceiver);
 
   /** check if at least one multisend stream is running */
   bool isMultiSendRunning() const { return (list_sendStream.size() > 0); }
@@ -439,8 +439,8 @@ private: // Private methods
   */
   void singletonInit();
 
-  SendStream_c* addSendStream (const DevKey_c& rrefc_isoNameSender, const DevKey_c& rrefc_isoNameReceiver);
-  SendStream_c* getSendStream (const DevKey_c& rrefc_isoNameSender, const DevKey_c& rrefc_isoNameReceiver);
+  SendStream_c* addSendStream (const ISOName_c& rrefc_isoNameSender, const ISOName_c& rrefc_isoNameReceiver);
+  SendStream_c* getSendStream (const ISOName_c& rrefc_isoNameSender, const ISOName_c& rrefc_isoNameReceiver);
 
   /**
     internal function to send a ISO target multipacket message
@@ -459,7 +459,7 @@ private: // Private methods
                   ( e.g. bitmap variants )
     @return true -> MultiSend_c was ready -> mask is spooled to target
   */
-  bool sendIntern (const DevKey_c& rrefc_isoNameSender, const DevKey_c& rrefc_isoNameReceiver, const HUGE_MEM uint8_t* rhpb_data, int32_t ri32_dataSize, sendSuccess_t& rpen_sendSuccessNotify, int32_t ri32_pgn, IsoAgLib::iMultiSendStreamer_c* rpc_mss, msgType_t ren_msgType);
+  bool sendIntern (const ISOName_c& rrefc_isoNameSender, const ISOName_c& rrefc_isoNameReceiver, const HUGE_MEM uint8_t* rhpb_data, int32_t ri32_dataSize, sendSuccess_t& rpen_sendSuccessNotify, int32_t ri32_pgn, IsoAgLib::iMultiSendStreamer_c* rpc_mss, msgType_t ren_msgType);
 
   #if defined(NMEA_2000_FAST_PACKET)
   uint8_t allocFpSequenceCounter() { const uint8_t cui8_returnVal = ui8_nextFpSequenceCounter;

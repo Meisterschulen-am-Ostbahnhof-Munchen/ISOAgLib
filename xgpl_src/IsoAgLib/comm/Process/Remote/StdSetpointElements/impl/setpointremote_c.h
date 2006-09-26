@@ -277,7 +277,7 @@ public:
   */
   virtual bool timeEvent( void );
   /**
-    reset entries (used if according remote system devKey isn't registered
+    reset entries (used if according remote system isoName isn't registered
     active any more
   */
   void reset();

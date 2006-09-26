@@ -117,17 +117,17 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
   };
   #endif
 
-  /** config the TracMove_c object after init -> set pointer to devKey and
+  /** config the TracMove_c object after init -> set pointer to isoName and
       config send/receive of a moving msg type
-      @param rpc_devKey pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
+      @param rpc_isoName pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
       @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       @return true -> configuration was successfull
     */
-  bool TracMove_c::config(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_identMode)
+  bool TracMove_c::config(const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode)
   {
     //call config for handling which is base data independent
     //if something went wrong leave function before something is configured
-    if ( !BaseCommon_c::config(rpc_devKey, rt_identMode) ) return false;
+    if ( !BaseCommon_c::config(rpc_isoName, rt_identMode) ) return false;
 
     // set distance value to 0
     ui32_distReal = ui32_distTheor = 0;
@@ -187,16 +187,16 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     #if defined(USE_BASE) || defined(USE_TRACTOR_GENERAL)
     TracGeneral_c& c_tracgeneral = getTracGeneralInstance4Comm();
     #endif
-    DevKey_c c_tempDevKey( DevKey_c::DevKeyUnspecified );
-    // store the devKey of the sender of base data
+    ISOName_c c_tempISOName( ISOName_c::ISONameUnspecified );
+    // store the isoName of the sender of base data
     if (getIsoMonitorInstance4Comm().existIsoMemberNr(data().isoSa()))
     { // the corresponding sender entry exist in the monitor list
-      c_tempDevKey = getIsoMonitorInstance4Comm().isoMemberNr(data().isoSa()).devKey();
+      c_tempISOName = getIsoMonitorInstance4Comm().isoMemberNr(data().isoSa()).isoName();
     }
 
     #ifdef USE_RS232_FOR_DEBUG
-    INTERNAL_DEBUG_DEVICE << "c_tempDevKey: " <<  static_cast<const int>(c_tempDevKey.getDevClass() ) << INTERNAL_DEBUG_DEVICE_ENDL;
-    INTERNAL_DEBUG_DEVICE << "senderDevKey: " <<  static_cast<const int>(getSelectedDataSourceDevKey().getDevClass() ) << INTERNAL_DEBUG_DEVICE_ENDL;
+    INTERNAL_DEBUG_DEVICE << "c_tempISOName: " <<  static_cast<const int>(c_tempISOName.devClass() ) << INTERNAL_DEBUG_DEVICE_ENDL;
+    INTERNAL_DEBUG_DEVICE << "senderISOName: " <<  static_cast<const int>(getSelectedDataSourceISOName().devClass() ) << INTERNAL_DEBUG_DEVICE_ENDL;
     INTERNAL_DEBUG_DEVICE << "PGN:          " << (data().isoPgn() & 0x1FFFF) << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
 
@@ -208,7 +208,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
       case WHEEL_BASED_SPEED_DIST_PGN:
         // only take values, if i am not the regular sender
         // and if actual sender isn't in conflict to previous sender
-        if ( ( checkParseReceived( c_tempDevKey ) ) )/*|| noch keine normale geschw empfangen */
+        if ( ( checkParseReceived( c_tempISOName ) ) )/*|| noch keine normale geschw empfangen */
         { // sender is allowed to send
           int32_t i32_tempSpeed = data().getUint16Data(0);
 
@@ -225,7 +225,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
             setDistReal( data().getUint32Data( 2 ) );
             t_directionReal = IsoAgLib::IsoDirectionFlag_t(data().getUint8Data(7) & 0x3 );
             #ifdef USE_RS232_FOR_DEBUG
-            INTERNAL_DEBUG_DEVICE << "PROCESS GROUND(65097): " <<  static_cast<const int>(c_tempDevKey.getDevClass() ) << INTERNAL_DEBUG_DEVICE_ENDL;
+            INTERNAL_DEBUG_DEVICE << "PROCESS GROUND(65097): " <<  static_cast<const int>(c_tempISOName.devClass() ) << INTERNAL_DEBUG_DEVICE_ENDL;
             #endif
             uint32_t tempTime = (Scheduler_c::getLastTimeEventTrigger() - ui32_lastUpdateTimeSpeed);
 
@@ -265,7 +265,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
             t_startStopState = IsoAgLib::IsoActiveFlag_t( ( data().getUint8Data(7) >> 4) & 0x3);
             t_directionTheor = IsoAgLib::IsoDirectionFlag_t(data().getUint8Data(7)       & 0x3 );
             #ifdef USE_RS232_FOR_DEBUG
-            INTERNAL_DEBUG_DEVICE << "PROCESS WHEEL(65096): " <<  static_cast<const int>(c_tempDevKey.getDevClass() ) << INTERNAL_DEBUG_DEVICE_ENDL;
+            INTERNAL_DEBUG_DEVICE << "PROCESS WHEEL(65096): " <<  static_cast<const int>(c_tempISOName.devClass() ) << INTERNAL_DEBUG_DEVICE_ENDL;
             #endif
             if (t_speedSource <= IsoAgLib::WheelBasedSpeed
                 || ( (Scheduler_c::getLastTimeEventTrigger() - ui32_lastUpdateTimeSpeed) >= TIMEOUT_SENDING_NODE)
@@ -280,7 +280,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
               updateDistanceDirection(IsoAgLib::WheelBasedDistDirec);
             }
           }
-          setSelectedDataSourceDevKey(c_tempDevKey);
+          setSelectedDataSourceISOName(c_tempISOName);
           setUpdateTime( ci32_now );
         }
         else
@@ -292,12 +292,12 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
       case SELECTED_SPEED_MESSAGE:
         // only take values, if i am not the regular sender
         // and if actual sender isn't in conflict to previous sender
-        if ( ( checkParseReceived( c_tempDevKey ) ) )
+        if ( ( checkParseReceived( c_tempISOName ) ) )
         {
           t_selectedSpeedLimitStatus = IsoAgLib::IsoLimitFlag_t( ( (data().getUint8Data(7) >> 5) & 0x7) );
           t_selectedDirection        = IsoAgLib::IsoDirectionFlag_t( data().getUint8Data(7) & 0x3);
 
-          setSelectedDataSourceDevKey(c_tempDevKey);
+          setSelectedDataSourceISOName(c_tempISOName);
           setUpdateTime( ci32_now );
 
           if (data().getUint16Data(0) <= 0xFAFF) //valid selected speed?
@@ -420,17 +420,17 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     #endif
     CANIO_c& c_can = getCanInstance4Comm();
 
-    data().setDevKeyForSA( *getDevKey() );
+    data().setISONameForSA( *getISOName() );
     data().setIdentType(Ident_c::ExtendedIdent);
     data().setIsoPri(3);
     data().setLen(8);
 
     #ifdef USE_RS232_FOR_DEBUG
-    INTERNAL_DEBUG_DEVICE << "getDevKey: " <<  static_cast<const int>(getDevKey()->getDevClass() ) << INTERNAL_DEBUG_DEVICE_ENDL;
-    INTERNAL_DEBUG_DEVICE << "SEND TRAC senderDevKey: " <<  static_cast<const int>(getSelectedDataSourceDevKey().getDevClass() ) << INTERNAL_DEBUG_DEVICE_ENDL;
+    INTERNAL_DEBUG_DEVICE << "getISOName: " <<  static_cast<const int>(getISOName()->devClass() ) << INTERNAL_DEBUG_DEVICE_ENDL;
+    INTERNAL_DEBUG_DEVICE << "SEND TRAC senderISOName: " <<  static_cast<const int>(getSelectedDataSourceISOName().devClass() ) << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
 
-    setSelectedDataSourceDevKey(*getDevKey());
+    setSelectedDataSourceISOName(*getISOName());
 
     data().setIsoPgn(GROUND_BASED_SPEED_DIST_PGN);
   #ifdef SYSTEM_PC_VC

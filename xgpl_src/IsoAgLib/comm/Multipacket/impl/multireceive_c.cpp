@@ -190,7 +190,7 @@ MultiReceiveClientWrapper_s::MultiReceiveClientWrapper_s( IsoAgLib::MultiReceive
   #endif
 {
   if (__IsoAgLib::getIsoMonitorInstance4Comm().existIsoMemberNr(rui8_clientAddress))
-    c_devKey = __IsoAgLib::getIsoMonitorInstance4Comm().isoMemberNr(rui8_clientAddress).devKey();
+    c_isoName = __IsoAgLib::getIsoMonitorInstance4Comm().isoMemberNr(rui8_clientAddress).isoName();
 //  else
 //    shouldn't occur...
 };
@@ -1306,19 +1306,19 @@ MultiReceive_c::getMaxStreamCompletion1000 (bool b_checkFirstByte, uint8_t ui8_r
 
 
 /** this function is called by ISOMonitor_c when a new CLAIMED ISOItem_c is registered.
-  * @param refc_devKey const reference to the item which ISOItem_c state is changed
+  * @param refc_isoName const reference to the item which ISOItem_c state is changed
   * @param rpc_newItem pointer to the currently corresponding ISOItem_c
     */
 void
-MultiReceive_c::reactOnMonitorListAdd( const __IsoAgLib::DevKey_c& refc_devKey, const __IsoAgLib::ISOItem_c* rpc_newItem )
+MultiReceive_c::reactOnMonitorListAdd( const __IsoAgLib::ISOName_c& refc_isoName, const __IsoAgLib::ISOItem_c* rpc_newItem )
 {
 #ifdef DEBUG
-  INTERNAL_DEBUG_DEVICE << "reactOnMonitorListAdd() handles CLAIM of ISOItem_c for device with DevClass: " << int(refc_devKey.getDevClass())
-      << ", Instance: " << int(refc_devKey.getDevClassInst()) << ", and manufacturer ID: " << int(refc_devKey.getConstName().manufCode())
+  INTERNAL_DEBUG_DEVICE << "reactOnMonitorListAdd() handles CLAIM of ISOItem_c for device with DevClass: " << int(refc_isoName.devClass())
+      << ", Instance: " << int(refc_isoName.devClassInst()) << ", and manufacturer ID: " << int(refc_isoName.manufCode())
       << "NOW use SA: " << int(rpc_newItem->nr()) << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_NEWLINE
       << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
-  if ( getIsoMonitorInstance4Comm().existLocalIsoMemberDevKey(refc_devKey) )
+  if ( getIsoMonitorInstance4Comm().existLocalIsoMemberISOName(refc_isoName) )
   { // lcoal ISOItem_c has finished adr claim
     uint32_t ui32_nr = rpc_newItem->nr();
 
@@ -1336,8 +1336,8 @@ MultiReceive_c::reactOnMonitorListAdd( const __IsoAgLib::DevKey_c& refc_devKey, 
   {
     if (i_list_clients->ui8_clientAddress == 0xFE)
     { // it's a mrcw that was set to hold, so maybe this addr-claim is for it?
-      if (i_list_clients->c_devKey == refc_devKey)
-      { // yes, it's that DEVKEY that lost its SA
+      if (i_list_clients->c_isoName == refc_isoName)
+      { // yes, it's that ISOName that lost its SA
         i_list_clients->ui8_clientAddress = rpc_newItem->nr();
       }
     }
@@ -1345,21 +1345,21 @@ MultiReceive_c::reactOnMonitorListAdd( const __IsoAgLib::DevKey_c& refc_devKey, 
 }
 
 /** this function is called by ISOMonitor_c when a device looses its ISOItem_c.
-  * @param refc_devKey const reference to the item which ISOItem_c state is changed
+  * @param refc_isoName const reference to the item which ISOItem_c state is changed
   * @param rui8_oldSa previously used SA which is NOW LOST -> clients which were connected to this item can react explicitly
   */
 void
-MultiReceive_c::reactOnMonitorListRemove( const __IsoAgLib::DevKey_c&
-                                          refc_devKey
+MultiReceive_c::reactOnMonitorListRemove( const __IsoAgLib::ISOName_c&
+                                          refc_isoName
                                           , uint8_t rui8_oldSa )
 {
 #ifdef DEBUG
-  INTERNAL_DEBUG_DEVICE << "reactOnMonitorListRemove() handles LOSS of ISOItem_c for device with DevClass: " << int(refc_devKey.getDevClass())
-      << ", Instance: " << int(refc_devKey.getDevClassInst()) << ", and manufacturer ID: " << int(refc_devKey.getConstName().manufCode())
+  INTERNAL_DEBUG_DEVICE << "reactOnMonitorListRemove() handles LOSS of ISOItem_c for device with DevClass: " << int(refc_isoName.devClass())
+      << ", Instance: " << int(refc_isoName.devClassInst()) << ", and manufacturer ID: " << int(refc_isoName.manufCode())
       << " and PREVIOUSLY used SA: " << int(rui8_oldSa) << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_NEWLINE
       << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
-  if ( getIsoMonitorInstance4Comm().existLocalIsoMemberDevKey(refc_devKey) )
+  if ( getIsoMonitorInstance4Comm().existLocalIsoMemberISOName(refc_isoName) )
   { // lcoal ISOItem_c has lost SA
     uint32_t ui32_nr = rui8_oldSa;
     MACRO_deleteFilterIfExists_mask1FFFF00(ETP_DATA_TRANSFER_PGN,ui32_nr)
@@ -1378,7 +1378,7 @@ MultiReceive_c::reactOnMonitorListRemove( const __IsoAgLib::DevKey_c&
     }
   }
 
-  // Abort all running streams, because we do NOT save the devKey in the stream and it would be out of sync probably anyway!
+  // Abort all running streams, because we do NOT save the isoName in the stream and it would be out of sync probably anyway!
   for (std::list<DEF_Stream_c_IMPL>::iterator i_list_streams = list_streams.begin();
        i_list_streams != list_streams.end();)
   {

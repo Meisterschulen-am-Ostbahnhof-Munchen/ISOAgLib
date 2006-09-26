@@ -197,7 +197,7 @@
 
 /* include some needed util headers */
 //#include <IsoAgLib/util/config.h>
-#include <IsoAgLib/util/idevkey_c.h>
+#include <IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h>
 
 /* include headers for the needed drivers */
 #include <IsoAgLib/driver/system/isystem_c.h>
@@ -269,22 +269,22 @@ class MyProcDataHandler_c : public IsoAgLib::ProcessDataChangeHandler_c
       *  during active measurement programm)
       * @param rc_src general event source class, which provides conversion functions to get needed event source class
       * @param ri32_val new value, which caused the event (for immediate access)
-      * @param rc_callerDevKey DevKey of calling device - i.e. which sent new setpoint
+      * @param rc_callerISOName ISOName of calling device - i.e. which sent new setpoint
       * @return true -> handler class reacted on change event
       */
-    virtual bool processMeasurementUpdate( EventSource_c rc_src, int32_t ri32_val, const iDevKey_c& rc_callerDevKey, bool rb_change );
+    virtual bool processMeasurementUpdate( EventSource_c rc_src, int32_t ri32_val, const iISOName_c& rc_callerISOName, bool rb_change );
     /** react on received setpoint ACK or NACK upon previous setpoint set for remote process data
       * (remote system which manages the process data, local or other system sent previously a
       *  new setpoint; commanded manager of process data sent the response with ACK/NACK)
       * @param rc_src general event source class, which provides conversion functions to get needed event source class
       * @param ri32_val new value, which caused the event (for immediate access)
-      * @param rc_callerDevKey DevKey of calling device - i.e. which sent new setpoint
+      * @param rc_callerISOName ISOName of calling device - i.e. which sent new setpoint
       * @return true -> handler class reacted on change event
     */
-    virtual bool processSetpointResponse( EventSource_c rc_src, int32_t ri32_val, const iDevKey_c& rc_callerDevKey );
+    virtual bool processSetpointResponse( EventSource_c rc_src, int32_t ri32_val, const iISOName_c& rc_callerISOName );
 };
 
-bool MyProcDataHandler_c::processMeasurementUpdate( EventSource_c rc_src, int32_t ri32_val, const iDevKey_c& /* rc_callerDevKey */, bool rb_change )
+bool MyProcDataHandler_c::processMeasurementUpdate( EventSource_c rc_src, int32_t ri32_val, const iISOName_c& /* rc_callerISOName */, bool rb_change )
 {
   if ( ! rb_change )
   { // don't handle values which don't contain new value - maybe still relevant for other applications
@@ -308,7 +308,7 @@ bool MyProcDataHandler_c::processMeasurementUpdate( EventSource_c rc_src, int32_
   return true;
 }
 
-bool MyProcDataHandler_c::processSetpointResponse( EventSource_c /* rc_src */, int32_t ri32_val, const iDevKey_c& /* rc_callerDevKey */)
+bool MyProcDataHandler_c::processSetpointResponse( EventSource_c /* rc_src */, int32_t ri32_val, const iISOName_c& /* rc_callerISOName */)
 {
   LOG_INFO << "new setpoint response value received: " << ri32_val << "\r\n";
   // answer to IsoAgLib that this new setpoint is handled
@@ -323,16 +323,16 @@ MyProcDataHandler_c c_myMeasurementHandler;
 int main()
 { // init CAN channel with 250kBaud at needed channel ( count starts with 0 )
   getIcanInstance().init( cui32_canChannel, 250 );
-  // variable for DEV_KEY
+  // variable for ISOName
   // default with primary cultivation mounted back
-  IsoAgLib::iDevKey_c c_myDevKey( 2, 0 );
+  IsoAgLib::iISOName_c c_myISOName( 2, 0 );
 
   // device type of remote ECU
-  IsoAgLib::iDevKey_c c_remoteDeviceType( 0x5, 0 );
+  IsoAgLib::iISOName_c c_remoteDeviceType( 0x5, 0 );
 
   // start address claim of the local member "IMI"
-  // if DEV_KEY conflicts forces change of device class instance, the
-  // IsoAgLib can cahnge the c_myDevKey val through the pointer to c_myDevKey
+  // if ISOName conflicts forces change of device class instance, the
+  // IsoAgLib can cahnge the c_myISOName val through the pointer to c_myISOName
   bool b_selfConf = true;
   uint8_t ui8_indGroup = 2,
       b_func = 25,
@@ -343,10 +343,10 @@ int main()
   uint32_t ui32_serNo = 27;
 
   // start address claim of the local member "IMI"
-  // if DEV_KEY conflicts forces change of device class instance, the
-  // IsoAgLib can change the c_myDevKey val through the pointer to c_myDevKey
+  // if ISOName conflicts forces change of device class instance, the
+  // IsoAgLib can change the c_myISOName val through the pointer to c_myISOName
   //  ISO:
-  IsoAgLib::iIdentItem_c c_myIdent( &c_myDevKey,
+  IsoAgLib::iIdentItem_c c_myIdent( &c_myISOName,
     b_selfConf, ui8_indGroup, b_func, ui16_manufCode,
     ui32_serNo, b_wantedSa, 0xFFFF, b_funcInst, b_ecuInst);
 
@@ -376,7 +376,7 @@ int main()
   arr_procData[cui8_indexWorkState].init(
                                          s_workStateElementDDI,
                                          0, // device element number
-                                         c_remoteDeviceType, 2, c_remoteDeviceType, &c_myDevKey,
+                                         c_remoteDeviceType, 2, c_remoteDeviceType, &c_myISOName,
   #ifdef USE_EEPROM_IO
                                          0xFFFF,
   #endif
@@ -386,7 +386,7 @@ int main()
   arr_procData[cui8_indexApplicationRate].init(
                                                s_applicationRateElementDDI,
                                                0, // device element number
-                                               c_remoteDeviceType, 2, c_remoteDeviceType, &c_myDevKey,
+                                               c_remoteDeviceType, 2, c_remoteDeviceType, &c_myISOName,
   #ifdef USE_EEPROM_IO
                                                0xFFFF,
   #endif
@@ -397,7 +397,7 @@ int main()
   IsoAgLib::iProcDataRemote_c c_workState(
                                          s_workStateElementDDI,
                                          0,
-                                         c_remoteDeviceType, 2, c_remoteDeviceType, &c_myDevKey
+                                         c_remoteDeviceType, 2, c_remoteDeviceType, &c_myISOName
   #ifdef USE_EEPROM_IO
                                          ,0xFFFF
   #endif
@@ -407,7 +407,7 @@ int main()
   IsoAgLib::iProcDataRemote_c c_applicationRate(
                                                 s_applicationRateElementDDI,
                                                 0,
-                                                c_remoteDeviceType, 2, c_remoteDeviceType, &c_myDevKey
+                                                c_remoteDeviceType, 2, c_remoteDeviceType, &c_myISOName
   #ifdef USE_EEPROM_IO
                                                 ,0xFFFF
   #endif
@@ -424,6 +424,7 @@ int main()
 
   // add a further DDI now -> that should be added to the group of s_applicationRateElementDDI
   bool b_successfullyAddedDDI = IsoAgLib::getIProcessInstance().checkAndAddMatchingDDI2Group(2 /* DDI */, 0 /* device element ID */, c_remoteDeviceType);
+
 
   /** IMPORTANT:
     - The following loop could be replaced of any repeating call of
@@ -461,8 +462,8 @@ int main()
     // all time controlled actions of IsoAgLib
     IsoAgLib::getISchedulerInstance().timeEvent();
 
-    if ( ! getIisoMonitorInstance().existIsoMemberDevKey(c_myDevKey, true) ) continue;
-    if ( ( ! b_runningPrograms ) && ( getIisoMonitorInstance().existIsoMemberDevKey(c_remoteDeviceType, true) ) )
+    if ( ! getIisoMonitorInstance().existIsoMemberISOName(c_myISOName, true) ) continue;
+    if ( ( ! b_runningPrograms ) && ( getIisoMonitorInstance().existIsoMemberISOName(c_remoteDeviceType, true) ) )
     { // remote device is active and no program is running
       b_runningPrograms = true;
       // if that DDI was successfully added it will receive new application rate values
@@ -479,7 +480,7 @@ int main()
       c_applicationRate.prog().start(Proc_c::Target, Proc_c::TimeProp, Proc_c::DoVal);
       #endif
     }
-    else if ( ! getIisoMonitorInstance().existIsoMemberDevKey(c_remoteDeviceType, true) )
+    else if ( ! getIisoMonitorInstance().existIsoMemberISOName(c_remoteDeviceType, true) )
     { // no more active -> stop
       b_runningPrograms = false;
       #ifdef USE_PROC_HANDLER

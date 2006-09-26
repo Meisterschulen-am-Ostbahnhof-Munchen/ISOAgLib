@@ -181,6 +181,9 @@ void ISOName_c::set(bool rb_selfConf, uint8_t rui8_indGroup, uint8_t rui8_devCla
   setEcuInst(rb_ecuInst);
 }
 
+/** set device class & instance with two seperate parameters */
+void ISOName_c::set( uint8_t rui8_devClass, uint8_t rui8_pos ) { setDevClass( rui8_devClass); setDevClassInst( rui8_pos ); }
+
 ISOName_c::ecuType_t ISOName_c::getEcuType() const
 {
   const uint8_t cui8_func = func();

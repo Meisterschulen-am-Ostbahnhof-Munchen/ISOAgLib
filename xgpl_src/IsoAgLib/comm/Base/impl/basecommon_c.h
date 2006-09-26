@@ -86,7 +86,7 @@
 #define BASE_COMMON_H
 
 #include <IsoAgLib/util/impl/elementbase_c.h>
-#include <IsoAgLib/util/impl/devkey_c.h>
+#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h>
 #include <IsoAgLib/util/impl/singleton.h>
 #include <IsoAgLib/driver/system/impl/system_c.h>
 #include <IsoAgLib/comm/Base/ibasetypes.h>
@@ -108,8 +108,8 @@ namespace __IsoAgLib
     /** constructor */
     BaseCommon_c() : t_identMode(IsoAgLib::IdentModeImplement),
                      i32_lastMsgReceived(0),
-                     pc_devKey(),
-                     c_selectedDataSourceDevKey()
+                     pc_isoName(),
+                     c_selectedDataSourceISOName()
                    {}
     /** destructor */
     ~BaseCommon_c() {};
@@ -121,16 +121,16 @@ namespace __IsoAgLib
         above all create the needed FilterBox_c instances
         possible errors:
           * dependant error in CANIO_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
-        @param rpc_devKey optional pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
+        @param rpc_isoName optional pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
         @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       */
-    virtual void init(const DevKey_c*, IsoAgLib::IdentMode_t rt_identMode = IsoAgLib::IdentModeImplement);
+    virtual void init(const ISOName_c*, IsoAgLib::IdentMode_t rt_identMode = IsoAgLib::IdentModeImplement);
 
-    /** tractor object after init --> store devKey and mode
-        @param rpc_devKey pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
+    /** tractor object after init --> store isoName and mode
+        @param rpc_isoName pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
         @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       */
-    virtual bool config(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_identMode = IsoAgLib::IdentModeImplement);
+    virtual bool config(const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode = IsoAgLib::IdentModeImplement);
 
      /** deliver reference to data pkg
          @return reference to the member CanPkg, which encapsulates the CAN send structure
@@ -184,7 +184,7 @@ namespace __IsoAgLib
     int32_t lastUpdateTime() const {return i32_lastMsgReceived;}
 
     /** check if a received message should be parsed */
-    bool checkParseReceived(const DevKey_c& rrefc_currentSender) const;
+    bool checkParseReceived(const ISOName_c& rrefc_currentSender) const;
 
     /** return if you currently are in implement mode or tractor mode*/
     bool checkMode(IsoAgLib::IdentMode_t rt_identMode) const {return (t_identMode == rt_identMode);}
@@ -197,18 +197,18 @@ namespace __IsoAgLib
     void clearFilterCreated() {b_filterCreated = false;}
 
     /** return sender of a msg*/
-    const DevKey_c* getDevKey() const {return pc_devKey;}
+    const ISOName_c* getISOName() const {return pc_isoName;}
     /** get evkey of data source (e.g. tractor, terminal) from which commands are send exclusively */
-    DevKey_c& getSelectedDataSourceDevKey() {return c_selectedDataSourceDevKey;}
+    ISOName_c& getSelectedDataSourceISOName() {return c_selectedDataSourceISOName;}
     /** get Devkey of data source (e.g. tractor, terminal) from which commands are send exclusively */
-    const DevKey_c& getSelectedDataSourceDevKeyConst() const {return c_selectedDataSourceDevKey;}
+    const ISOName_c& getSelectedDataSourceISONameConst() const {return c_selectedDataSourceISOName;}
 
     /** get actual mode */
     IsoAgLib::IdentMode_t getMode() const {return t_identMode;}
     /** set mode to implement or tractor*/
     void setMode(IsoAgLib::IdentMode_t rt_identMode) {t_identMode = rt_identMode;}
     /** set Devkey of data source (e.g. tractor, terminal) which sends commands exclusively */
-    void setSelectedDataSourceDevKey(const DevKey_c& rc_dataSourceDevKey){c_selectedDataSourceDevKey = rc_dataSourceDevKey;}
+    void setSelectedDataSourceISOName(const ISOName_c& rc_dataSourceISOName){c_selectedDataSourceISOName = rc_dataSourceISOName;}
 
     /** set last time of data msg [msec]*/
     void setUpdateTime(int32_t updateTime) {i32_lastMsgReceived = updateTime;}
@@ -218,7 +218,7 @@ namespace __IsoAgLib
     static const uint16_t TIMEOUT_SENDING_NODE = 3000;
   private:
     /** set sender of a msg*/
-    void setDevKey(const DevKey_c* devKey){pc_devKey = devKey;}
+    void setISOName(const ISOName_c* isoName){pc_isoName = isoName;}
     /** can be implement mode or tractor mode*/
     IsoAgLib::IdentMode_t t_identMode;
     /** flag to detect, if receive filters for ISO are created */
@@ -227,12 +227,12 @@ namespace __IsoAgLib
     /** last time of data msg [msec] */
     int32_t i32_lastMsgReceived;
 
-    /** devKey which act as sender of a msg: either responses on behalf of implement or commands as tractor.
+    /** isoName which act as sender of a msg: either responses on behalf of implement or commands as tractor.
         This pointer is set in config function
       */
-    const DevKey_c* pc_devKey;
+    const ISOName_c* pc_isoName;
     /** Devkey of data source (e.g. tractor, terminal) from which commands are send exclusively */
-    DevKey_c c_selectedDataSourceDevKey;
+    ISOName_c c_selectedDataSourceISOName;
 
     /** temp data where received data is put */
     CANPkgExt_c c_data;

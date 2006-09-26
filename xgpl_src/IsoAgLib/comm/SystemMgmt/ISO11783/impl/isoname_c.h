@@ -102,6 +102,23 @@ namespace __IsoAgLib {
 class ISOName_c {
 private:
 public:
+  /** constant for default parameters and initialization, where the device type is not yet spcified.
+      the instantiation of this constant variable is located in the module cancustomer_c.cpp
+    */
+  static const ISOName_c ISONameUnspecified;
+
+  /** constant for not yet spcified process data ident -> <device class, device class instance> := <0x0,0xF>
+      the instantiation of this constant variable is located in the module cancustomer_c.cpp
+    */
+  static const ISOName_c ISONameInitialProcessData;
+
+  /** default constructor
+      @param rui8_devClass  optional initial DEVCLASS (device type)
+      @param rui8_pos       optional initial device class instance
+    */
+  ISOName_c( uint8_t rui8_devClass, uint8_t rui8_devClassInst = 0xF )
+  { set( true, 2, rui8_devClass, rui8_devClassInst, 0xFF, 0x7FF, 0x1FFFFF, 0x1F, 0x7 ); }
+
   /** constructor which can read in initial data from uint8_t string
     @param rpb_src 64bit input data string
   */
@@ -156,6 +173,17 @@ public:
   void set(bool rb_selfConf, uint8_t rui8_indGroup, uint8_t rui8_devClass, uint8_t rui8_devClassInst,
         uint8_t rb_func, uint16_t rui16_manufCode, uint32_t rui32_serNo, uint8_t rb_funcInst = 0, uint8_t rb_ecuInst = 0);
 
+  /** set device class & instance with two seperate parameters */
+  void set( uint8_t rui8_devClass, uint8_t rui8_pos );
+
+  /** set this instance to indicator for unspecified value */
+  void setUnspecified( void ) { setDevClass( 0x7F ); setDevClassInst( 0xF );}
+
+  /** check if this instance has specified value (different from default) */
+  bool isSpecified( void ) const { return ( ( devClass() != 0x7F ) || ( devClassInst() != 0xF ) )?true:false;}
+
+  /** check if this instance has unspecified value (match default) */
+  bool isUnspecified( void ) const { return ( ( devClass() == 0x7F ) && ( devClassInst() == 0xF ) )?true:false;}
 
   /** IsoAgLib-specific enum for often used types of "functions" of IsoNames */
   enum ecuType_t {

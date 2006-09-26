@@ -111,12 +111,12 @@ namespace __IsoAgLib {
       */
     void checkCreateReceiveFilter( );
 
-    /** config the TracMove_c object after init -> set pointer to devKey and
+    /** config the TracMove_c object after init -> set pointer to isoName and
         config send/receive of a moving msg type
-        @param rpc_devKey pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
+        @param rpc_isoName pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
         @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       */
-    bool config(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_identMode);
+    bool config(const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode);
 
     /** update selected speed with actually best available speed
         @param t_speedSrc  from which source is the speed available

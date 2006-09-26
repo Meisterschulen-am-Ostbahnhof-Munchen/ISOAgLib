@@ -131,16 +131,16 @@ public:
   iISOItem_c& isoMemberDevClassInd(uint8_t rui8_devClass, uint8_t rui8_ind, bool rb_forceClaimedAddress = false)
   { return static_cast<iISOItem_c&>(ISOMonitor_c::isoMemberDevClassInd( rui8_devClass, rui8_ind, rb_forceClaimedAddress ));}
 
-  /** check if a memberItem with given DEV_KEY exist
+  /** check if a memberItem with given ISOName exist
     which optional (!!) match the condition of address claim state
     and update local pc_isoMemberCache
-    @param rc_devKey searched DEV_KEY
+    @param rc_isoName searched ISOName
     @param rb_forceClaimedAddress true -> only members with claimed address are used
           (optional, default false)
     @return true -> searched member exist
   */
-  bool existIsoMemberDevKey(const iDevKey_c& rc_devKey, bool rb_forceClaimedAddress = false)
-  { return ISOMonitor_c::existIsoMemberDevKey(rc_devKey, rb_forceClaimedAddress );}
+  bool existIsoMemberISOName(const iISOName_c& rc_isoName, bool rb_forceClaimedAddress = false)
+  { return ISOMonitor_c::existIsoMemberISOName(rc_isoName, rb_forceClaimedAddress );}
 
   /** check if a member with given number exist
     which optional (!!) match the condition of address claim state
@@ -151,24 +151,24 @@ public:
   bool existIsoMemberNr(uint8_t rui8_nr)
   { return ISOMonitor_c::existIsoMemberNr( rui8_nr );}
 
-  /** check if member is in member list with wanted DEV_KEY,
+  /** check if member is in member list with wanted ISOName,
     adapt instance if member with claimed address with other device class inst exist
-    @param refc_devKey DEV_KEY to search (-> it's updated if member with claimed address with other dev class inst is found)
-    @return true -> member with claimed address with given DEVCLASS found (and refc_devKey has now its DEV_KEY)
+    @param refc_isoName ISOName to search (-> it's updated if member with claimed address with other dev class inst is found)
+    @return true -> member with claimed address with given DEVCLASS found (and refc_isoName has now its ISOName)
   */
-  bool isoDevClass2DevKeyClaimedAddress(iDevKey_c &refc_devKey)
-  { return ISOMonitor_c::isoDevClass2DevKeyClaimedAddress( refc_devKey);}
+  bool isoDevClass2ISONameClaimedAddress(iISOName_c &refc_isoName)
+	{ return ISOMonitor_c::isoDevClass2ISONameClaimedAddress( refc_isoName);}
 
-  /** deliver member item with given devKey
-    (check with existIsoMemberDevKey before access to not defined item)
+  /** deliver member item with given isoName
+    (check with existIsoMemberISOName before access to not defined item)
     possible errors:
       * Err_c::elNonexistent on failed search
-    @param rc_devKey searched DEV_KEY
+    @param rc_isoName searched ISOName
     @return reference to searched ISOItem
      @exception containerElementNonexistant
   */
-  iISOItem_c& isoMemberDevKey(const iDevKey_c& rc_devKey, bool rb_forceClaimedAddress = false)
-    { return static_cast<iISOItem_c&>(ISOMonitor_c::isoMemberDevKey( rc_devKey, rb_forceClaimedAddress));}
+  iISOItem_c& isoMemberISOName(const iISOName_c& rc_isoName, bool rb_forceClaimedAddress = false)
+    { return static_cast<iISOItem_c&>(ISOMonitor_c::isoMemberISOName( rc_isoName, rb_forceClaimedAddress));}
 
   /** deliver member item with given nr
     (check with existIsoMemberNr before access to not defined item)
@@ -180,15 +180,15 @@ public:
   */
   iISOItem_c& isoMemberNr(uint8_t rui8_nr) { return static_cast<iISOItem_c&>(ISOMonitor_c::isoMemberNr( rui8_nr));}
 
-  /** deliver member item with given DEV_KEY, set pointed bool var to true on success
+  /** deliver member item with given ISOName, set pointed bool var to true on success
     and set a Member Array Iterator to the result
-    @param rc_devKey searched DEV_KEY
+    @param rc_isoName searched ISOName
     @param pb_success bool pointer to store the success (true on success)
     @param pbc_iter optional member array iterator which points to searched ISOItem_c on success
     @return reference to the searched item
   */
-  iISOItem_c& isoMemberDevKey(const iDevKey_c& rc_devKey, bool *const pb_success, bool rb_forceClaimedAddress = false )
-  { return static_cast<iISOItem_c&>(ISOMonitor_c::isoMemberDevKey( rc_devKey, pb_success, rb_forceClaimedAddress ));}
+  iISOItem_c& isoMemberISOName(const iISOName_c& rc_isoName, bool *const pb_success, bool rb_forceClaimedAddress = false )
+  { return static_cast<iISOItem_c&>(ISOMonitor_c::isoMemberISOName( rc_isoName, pb_success, rb_forceClaimedAddress ));}
 
   /** check if one of the own local members is active with claimed address at ISO11783
     @return true -> at least one of the own identities is active with claimed address at ISO11783

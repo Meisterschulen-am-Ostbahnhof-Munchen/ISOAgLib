@@ -61,9 +61,6 @@
 #ifndef USE_ISO_11783 
 	#define USE_ISO_11783 
 #endif
-#ifndef USE_DIN_9684 
-	#define USE_DIN_9684 
-#endif
 #ifndef USE_DIN_GPS 
 	#define USE_DIN_GPS 
 #endif

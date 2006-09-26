@@ -83,12 +83,12 @@ namespace IsoAgLib {
   Example:
   \code
   // define local device type
-  IsoAgLib::DevKey c_myDevKey( 1, 0 );
+  IsoAgLib::ISOName c_myISOName( 1, 0 );
   // creation of process data instance
   iProcDataRemote_c c_workState;
   // init for LIS=0, remote device type/subtype=5/0, complete work width=0xFF,
   // target process data/PRI=2, pointer to my local device type ( to resolve dynamic SA at time of cmd send )
-  c_workState.init( 0, IsoAgLib::iDevKey_c( 0x5, 0 ), 0x5, 0x0, 0xFF, 2, IsoAgLib::iDevKey_c( 0x5, 0 ), &c_myDevKey );
+  c_workState.init( 0, IsoAgLib::iISOName_c( 0x5, 0 ), 0x5, 0x0, 0xFF, 2, IsoAgLib::iISOName_c( 0x5, 0 ), &c_myISOName );
 
   // request current measurement value ( real value, which can differ from commanded value ); triger update request
   int lastReceivedMeasureState = c_workState.masterMeasurementVal( true );
@@ -126,7 +126,7 @@ namespace IsoAgLib {
   }
   // if I'm the master setpoint commander, I should release the setpoint explicitly if the
   // controlo is not needed any more
-  if ( c_workState.setpoint().master().devKey() == c_myDevKey )
+  if ( c_workState.setpoint().master().isoName() == c_myISOName )
   { // I'm the master -> release control
     c_workState.setpoint().releaseMaster();
   }
@@ -149,23 +149,23 @@ public:
                           (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
 
       common parameter
-      @param rc_devKey optional DEV_KEY code of this instance
+      @param rc_isoName optional ISOName code of this instance
       @param rui8_pri PRI code of messages with this process data instance (default 2)
-      @param rc_ownerDevKey optional DEV_KEY of the owner
-      @param rpc_commanderDevKey pointer to updated DEV_KEY variable of commander
+      @param rc_ownerISOName optional ISOName of the owner
+      @param rpc_commanderISOName pointer to updated ISOName variable of commander
       @param rpc_processDataChangeHandler optional pointer to handler class of application
       @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
     */
   iProcDataRemote_c(const ElementDDI_s* ps_elementDDI = NULL,
                     uint16_t rui16_element = 0xFFFF,
-                    const iDevKey_c& rc_devKey = iDevKey_c::DevKeyInitialProcessData,
+                    const iISOName_c& rc_isoName = iISOName_c::ISONameInitialProcessData,
                     uint8_t rui8_pri = 2,
-                    const iDevKey_c& rc_ownerDevKey = iDevKey_c::DevKeyUnspecified,
-                    const iDevKey_c* rpc_commanderDevKey = NULL,
+                    const iISOName_c& rc_ownerISOName = iISOName_c::ISONameUnspecified,
+                    const iISOName_c* rpc_commanderISOName = NULL,
                     ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
                     int ri_singletonVecKey = 0)
   : ProcDataRemote_c( ps_elementDDI, rui16_element,
-                     rc_devKey, rui8_pri, rc_ownerDevKey, rpc_commanderDevKey,
+                     rc_isoName, rui8_pri, rc_ownerISOName, rpc_commanderISOName,
                      rpc_processDataChangeHandler, ri_singletonVecKey)
   {}
 
@@ -177,14 +177,14 @@ public:
       ...
     */
   iProcDataRemote_c(uint16_t rui16_DDI, uint16_t rui16_element,
-                    const iDevKey_c& rc_devKey = iDevKey_c::DevKeyInitialProcessData,
+                    const iISOName_c& rc_isoName = iISOName_c::ISONameInitialProcessData,
                     uint8_t rui8_pri = 2,
-                    const iDevKey_c& rc_ownerDevKey = iDevKey_c::DevKeyUnspecified,
-                    const iDevKey_c* rpc_commanderDevKey = NULL,
+                    const iISOName_c& rc_ownerISOName = iISOName_c::ISONameUnspecified,
+                    const iISOName_c* rpc_commanderISOName = NULL,
                     ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
                     int ri_singletonVecKey = 0)
   : ProcDataRemote_c( NULL, rui16_element,
-                      rc_devKey, rui8_pri, rc_ownerDevKey, rpc_commanderDevKey,
+                      rc_isoName, rui8_pri, rc_ownerISOName, rpc_commanderISOName,
                       rpc_processDataChangeHandler, ri_singletonVecKey
                     )
   {
@@ -196,7 +196,7 @@ public:
     };
 
     ProcDataRemote_c::init( s_tmpElementDDI, rui16_element,
-                            rc_devKey, rui8_pri, rc_ownerDevKey, rpc_commanderDevKey,
+                            rc_isoName, rui8_pri, rc_ownerISOName, rpc_commanderISOName,
                             rpc_processDataChangeHandler, ri_singletonVecKey);
   }
 
@@ -207,23 +207,23 @@ public:
                           (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
 
       common parameter
-      @param rc_devKey optional DEV_KEY code of this instance
+      @param rc_isoName optional ISOName code of this instance
       @param rui8_pri PRI code of messages with this process data instance (default 2)
-      @param rc_ownerDevKey optional DEV_KEY of the owner
-      @param rpc_commanderDevKey pointer to updated DEV_KEY variable of commander
+      @param rc_ownerISOName optional ISOName of the owner
+      @param rpc_commanderISOName pointer to updated ISOName variable of commander
       @param rpc_processDataChangeHandler optional pointer to handler class of application
       @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
     */
   void init(const ElementDDI_s* ps_elementDDI, uint16_t rui16_element,
-            const iDevKey_c& rc_devKey = iDevKey_c::DevKeyInitialProcessData,
+            const iISOName_c& rc_isoName = iISOName_c::ISONameInitialProcessData,
             uint8_t rui8_pri = 2,
-            const iDevKey_c& rc_ownerDevKey = iDevKey_c::DevKeyUnspecified,
-            const iDevKey_c* rpc_commanderDevKey = NULL,
+            const iISOName_c& rc_ownerISOName = iISOName_c::ISONameUnspecified,
+            const iISOName_c* rpc_commanderISOName = NULL,
             ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
             int ri_singletonVecKey = 0
            )
    { ProcDataRemote_c::init( ps_elementDDI, rui16_element,
-                             rc_devKey, rui8_pri, rc_ownerDevKey, rpc_commanderDevKey,
+                             rc_isoName, rui8_pri, rc_ownerISOName, rpc_commanderISOName,
                              rpc_processDataChangeHandler, ri_singletonVecKey
                            );
    }
@@ -235,19 +235,19 @@ public:
       @param rui16_element
 
       common parameter
-      @param rc_devKey optional DEV_KEY code of this instance
+      @param rc_isoName optional ISOName code of this instance
       @param rui8_pri PRI code of messages with this process data instance (default 2)
-      @param rc_ownerDevKey optional DEV_KEY of the owner
-      @param rpc_commanderDevKey pointer to updated DEV_KEY variable of commander
+      @param rc_ownerISOName optional ISOName of the owner
+      @param rpc_commanderISOName pointer to updated ISOName variable of commander
       @param rpc_processDataChangeHandler optional pointer to handler class of application
       @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
     */
   void init(uint16_t rui16_DDI,
             uint16_t rui16_element,
-            const iDevKey_c& rc_devKey = iDevKey_c::DevKeyInitialProcessData,
+            const iISOName_c& rc_isoName = iISOName_c::ISONameInitialProcessData,
             uint8_t rui8_pri = 2,
-            const iDevKey_c& rc_ownerDevKey = iDevKey_c::DevKeyUnspecified,
-            const iDevKey_c* rpc_commanderDevKey = NULL,
+            const iISOName_c& rc_ownerISOName = iISOName_c::ISONameUnspecified,
+            const iISOName_c* rpc_commanderISOName = NULL,
             ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
             int ri_singletonVecKey = 0)
   {
@@ -259,7 +259,7 @@ public:
      };
 
      ProcDataRemote_c::init( s_tmpElementDDI, rui16_element,
-                            rc_devKey, rui8_pri, rc_ownerDevKey, rpc_commanderDevKey, rpc_processDataChangeHandler,
+                            rc_isoName, rui8_pri, rc_ownerISOName, rpc_commanderISOName, rpc_processDataChangeHandler,
                             ri_singletonVecKey
                            );
   };
@@ -403,16 +403,16 @@ public:
     {return ProcDataRemote_c::masterValFloat(rb_sendRequest);}
   #endif
 
-  /** deliver the commanderDevKey (DEV_KEY of local member)
-    @return DEV_KEY used for sending commands to remote owner member
+  /** deliver the commanderISOName (ISOName of local member)
+    @return ISOName used for sending commands to remote owner member
   */
-  const iDevKey_c& commanderDevKey() const {return static_cast<const iDevKey_c&>(ProcDataRemote_c::commanderDevKey());}
+  const iISOName_c& commanderISOName() const {return static_cast<const iISOName_c&>(ProcDataRemote_c::commanderISOName());}
 
-  /** set the pointer to the commander ident devKey
-    @param rpbdevKey pointer to DEV_KEY var of local member used for
+  /** set the pointer to the commander ident isoName
+    @param rpbisoName pointer to ISOName var of local member used for
                 sending commands to remote owner member
   */
-  void setCommanderDevKey (const __IsoAgLib::DevKey_c* rpc_devKey) {ProcDataRemote_c::setCommanderDevKey(rpc_devKey);}
+  void setCommanderISOName (const __IsoAgLib::ISOName_c* rpc_isoName) {ProcDataRemote_c::setCommanderISOName(rpc_isoName);}
 
   /** deliver the central data type of this process data
     @return proc_valType_t: i32_val, ui32_val, float_val, cmdVal

@@ -93,8 +93,6 @@
 
 #include <IsoAgLib/util/impl/singleton.h>
 #include <IsoAgLib/util/impl/elementbase_c.h>
-//#include <IsoAgLib/util/impl/cancustomer_c.h>
-//#include <IsoAgLib/driver/system/impl/system_c.h>
 #include <IsoAgLib/util/impl/canpkgext_c.h>
 //#include "isoitem_c.h"
 

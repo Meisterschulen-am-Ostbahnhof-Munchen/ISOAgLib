@@ -40,7 +40,7 @@
 #define SPECIFIC_RECORD_CONFIG_H
 
 #include <IsoAgLib/driver/system/isystem_c.h>
-#include <IsoAgLib/comm/SystemMgmt/isystemmgmt_c.h>
+#include <IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h>
 #include "defaultrecordconfig_c.h"
 
 #define TAG_NAME_LEN 8
@@ -160,7 +160,7 @@ public:
         e.g. TeeJet ECU used for fertiilzer instead of spreader
     @return DEV_KEY which should be used for storing information
   */
-  const IsoAgLib::iDevKey_c& recordAsDevKey() const {return c_recordAsDevKey;};
+  const IsoAgLib::iISOName_c& recordAsISOName() const {return c_recordAsISOName;};
   /**
     deliver the amount of specific process data for this device
     @return amount of specific process data for this device in EEPROM
@@ -270,7 +270,7 @@ private:
 
   /** some devices has a ECU which is implemented for another DEVCLASS than used;
       e.g. TeeJet ECU used for fertiilzer instead of spreader */
-  IsoAgLib::iDevKey_c c_recordAsDevKey;
+  IsoAgLib::iISOName_c c_recordAsISOName;
   /** amount of device specific process data */
   uint8_t ui8_procCnt;
 };

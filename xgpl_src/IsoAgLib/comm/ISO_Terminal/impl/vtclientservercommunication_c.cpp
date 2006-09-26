@@ -486,7 +486,7 @@ VtClientServerCommunication_c::timeEventUploadPoolTimeoutCheck()
       case __IsoAgLib::MultiSend_c::SendAborted:
       { // aborted sending
         /// re-send the current stream!
-        getMultiSendInstance4Comm().sendIsoTarget (refc_wsMasterIdentItem.devKey(), pc_vtServerInstance->getIsoName(), &c_streamer, ECU_TO_VT_PGN, en_sendSuccess);
+        getMultiSendInstance4Comm().sendIsoTarget (refc_wsMasterIdentItem.isoName(), pc_vtServerInstance->getIsoName(), &c_streamer, ECU_TO_VT_PGN, en_sendSuccess);
       } break;
       case __IsoAgLib::MultiSend_c::SendSuccess:
       { // see what part we just finished
@@ -495,7 +495,7 @@ VtClientServerCommunication_c::timeEventUploadPoolTimeoutCheck()
           c_streamer.ui32_streamSize = 0; // indicate completion of GENERAL upload!
           if (c_streamer.ui32_streamSizeLang > 0)
           { // start LANGUAGE part upload!
-            getMultiSendInstance4Comm().sendIsoTarget (refc_wsMasterIdentItem.devKey(), pc_vtServerInstance->getIsoName(), &c_streamer, ECU_TO_VT_PGN, en_sendSuccess);
+            getMultiSendInstance4Comm().sendIsoTarget (refc_wsMasterIdentItem.isoName(), pc_vtServerInstance->getIsoName(), &c_streamer, ECU_TO_VT_PGN, en_sendSuccess);
             break; // we're uploading, do not indicate pool completion ;)
           }
         } // else we just finished streaming the LANGUAGE part, so upload is finished now!
@@ -834,7 +834,7 @@ VtClientServerCommunication_c::processMsgAck()
   bool b_ignoreNack = false; // normally DO NOT ignore NACK
   if (getIsoMonitorInstance4Comm().existIsoMemberNr (c_data.isoSa()))
   { // sender exists in isomonitor, so query its Manufacturer Code
-    const uint16_t cui16_manufCode = getIsoMonitorInstance4Comm().isoMemberNr (c_data.isoSa()).devKey().getConstName().manufCode();
+    const uint16_t cui16_manufCode = getIsoMonitorInstance().isoMemberNr (c_data.isoSa()).isoName().manufCode();
     if (((cui16_manufCode == 98) /*Mller Elektronik*/ || (cui16_manufCode == 103) /*Agrocom*/) &&
           ((pc_vtServerInstance->getVtCapabilities()->lastReceivedVersion == 0) ||
           (pc_vtServerInstance->getVtCapabilities()->iso11783version < 3)))
@@ -1073,7 +1073,7 @@ VtClientServerCommunication_c::processMsg()
         if (c_data.getUint8Data (2) == 0)
         { // start uploading, there MAY BE enough memory
           en_uploadPoolState = UploadPoolUploading;
-          getMultiSendInstance4Comm().sendIsoTarget (refc_wsMasterIdentItem.devKey(), pc_vtServerInstance->getIsoName(), &c_streamer, ECU_TO_VT_PGN, en_sendSuccess);
+          getMultiSendInstance4Comm().sendIsoTarget (refc_wsMasterIdentItem.isoName(), pc_vtServerInstance->getIsoName(), &c_streamer, ECU_TO_VT_PGN, en_sendSuccess);
         }
         else
           vtOutOfMemory();
@@ -1954,7 +1954,7 @@ VtClientServerCommunication_c::doStop()
   /// if any upload is in progress, abort it
   if (pc_vtServerInstance) // no Vt Alives anymore but Vt still announced
   {
-    getMultiSendInstance4Comm().abortSend (refc_wsMasterIdentItem.devKey(), pc_vtServerInstance->getIsoName());
+    getMultiSendInstance4Comm().abortSend (refc_wsMasterIdentItem.isoName(), pc_vtServerInstance->getIsoName());
   }
   else
   {
@@ -2157,7 +2157,7 @@ VtClientServerCommunication_c::startUploadCommand()
       }
       if (c_streamer.ui32_streamSizeLang > 0)
       { // start LANGUAGE/USER part upload!
-        return getMultiSendInstance4Comm().sendIsoTarget (refc_wsMasterIdentItem.devKey(), pc_vtServerInstance->getIsoName(), &c_streamer, ECU_TO_VT_PGN, en_sendSuccess);
+        return getMultiSendInstance4Comm().sendIsoTarget (refc_wsMasterIdentItem.isoName(), pc_vtServerInstance->getIsoName(), &c_streamer, ECU_TO_VT_PGN, en_sendSuccess);
       }
       else
       { // shouldn't happen, but catch case anyway!
@@ -2203,7 +2203,7 @@ VtClientServerCommunication_c::startUploadCommand()
     // Save first byte for Response-Checking!
     ui8_commandParameter = actSend->vec_uploadBuffer [0]; // Save first byte for Response-Checking!
 
-    return getMultiSendInstance4Comm().sendIsoTarget (refc_wsMasterIdentItem.devKey(),
+    return getMultiSendInstance4Comm().sendIsoTarget (refc_wsMasterIdentItem.isoName(),
                                                       pc_vtServerInstance->getIsoName(),
                                                       &actSend->vec_uploadBuffer.front(),
                                                       actSend->vec_uploadBuffer.size(),
@@ -2215,7 +2215,7 @@ VtClientServerCommunication_c::startUploadCommand()
     // Save first byte for Response-Checking!
     ui8_commandParameter = actSend->mssObjectString->getStreamer()->getFirstByte();
 
-    return getMultiSendInstance4Comm().sendIsoTarget (refc_wsMasterIdentItem.devKey(),
+    return getMultiSendInstance4Comm().sendIsoTarget (refc_wsMasterIdentItem.isoName(),
                                                       pc_vtServerInstance->getIsoName(),
                                                       (IsoAgLib::iMultiSendStreamer_c*)actSend->mssObjectString->getStreamer(),
                                                       ECU_TO_VT_PGN,

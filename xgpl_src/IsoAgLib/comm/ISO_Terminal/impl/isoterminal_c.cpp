@@ -401,10 +401,10 @@ ISOTerminal_c::sendCommandForDEBUG(IsoAgLib::iIdentItem_c& refc_wsMasterIdentIte
 
 
 void
-ISOTerminal_c::reactOnMonitorListAdd (const DevKey_c& refc_devKey, const ISOItem_c* rpc_newItem)
+ISOTerminal_c::reactOnMonitorListAdd (const ISOName_c& refc_isoName, const ISOItem_c* rpc_newItem)
 {
   // we only care for the VTs
-  if (refc_devKey.getConstName().getEcuType() != ISOName_c::ecuTypeVirtualTerminal) return;
+  if (refc_isoName.getEcuType() != ISOName_c::ecuTypeVirtualTerminal) return;
 
   STL_NAMESPACE::list<VtServerInstance_c>::iterator lit_vtServerInst;
 
@@ -412,7 +412,7 @@ ISOTerminal_c::reactOnMonitorListAdd (const DevKey_c& refc_devKey, const ISOItem
   { // check if newly added VtServerInstance is already in our list
     if (lit_vtServerInst->getIsoItem())
     {
-      if (refc_devKey == lit_vtServerInst->getIsoItem()->devKey())
+      if (refc_isoName == lit_vtServerInst->getIsoItem()->isoName())
       { // the VtServerInstance is already known and in our list, so update the source address in case it has changed now
         return;
       }
@@ -420,7 +420,7 @@ ISOTerminal_c::reactOnMonitorListAdd (const DevKey_c& refc_devKey, const ISOItem
   }
 
   // VtServerInstance not yet in list, so add it ...
-  l_vtServerInst.push_back (VtServerInstance_c (*rpc_newItem, refc_devKey, *this));
+  l_vtServerInst.push_back (VtServerInstance_c (*rpc_newItem, refc_isoName, *this));
   VtServerInstance_c& ref_vtServerInst = l_vtServerInst.back();
 
   // ... and notify all vtClientServerComm instances
@@ -433,10 +433,10 @@ ISOTerminal_c::reactOnMonitorListAdd (const DevKey_c& refc_devKey, const ISOItem
 
 
 void
-ISOTerminal_c::reactOnMonitorListRemove (const DevKey_c& refc_devKey, uint8_t /*rui8_oldSa*/)
+ISOTerminal_c::reactOnMonitorListRemove (const ISOName_c& refc_isoName, uint8_t /*rui8_oldSa*/)
 {
   // we only care for the VTs
-  if (refc_devKey.getConstName().getEcuType() != ISOName_c::ecuTypeVirtualTerminal) return;
+  if (refc_isoName.getEcuType() != ISOName_c::ecuTypeVirtualTerminal) return;
 
   // check if it is mine???
   /** @todo function to notify every client for vt gone offline */
@@ -446,7 +446,7 @@ ISOTerminal_c::reactOnMonitorListRemove (const DevKey_c& refc_devKey, uint8_t /*
   { // check if lost VtServerInstance is in our list
     if (lit_vtServerInst->getIsoItem())
     {
-      if (refc_devKey == lit_vtServerInst->getIsoItem()->devKey())
+      if (refc_isoName == lit_vtServerInst->getIsoItem()->isoName())
       { // the VtServerInstance is already known and in our list, so it could be deleted
         // notify all clients on early loss of that VtServerInstance
         for (uint8_t ui8_index = 0; ui8_index < vec_vtClientServerComm.size(); ui8_index++)
@@ -505,7 +505,7 @@ void
 ISOTerminal_c::fakeVtProperties (uint16_t rui16_dimension, uint16_t rui16_skWidth, uint16_t rui16_skHeight, uint8_t rui16_colorDepth, uint16_t rui16_fontSizes)
 {
   // casting NULL to a reference is okay here, as the reference isn't used for any FAKE_VT case (iop_generator, etc.)
-  l_vtServerInst.push_back (VtServerInstance_c (static_cast<const ISOItem_c&>(NULL), DevKey_c::DevKeyUnspecified, (*this)));
+  l_vtServerInst.push_back (VtServerInstance_c (static_cast<const ISOItem_c&>(NULL), ISOName_c::ISONameUnspecified, (*this)));
   VtServerInstance_c& ref_vtServerInst = l_vtServerInst.back();
   ref_vtServerInst.fakeVtProperties (rui16_dimension, rui16_skWidth, rui16_skHeight, rui16_colorDepth, rui16_fontSizes);
 

@@ -179,7 +179,7 @@ public:
   void resetVtAlive();
 
   /** getter */
-  const DevKey_c&            getIsoName()             { return c_devKey; }
+  const ISOName_c&           getIsoName()            { return c_isoName; }
   uint8_t                    getVtSourceAddress()     { return (pcc_isoItem != NULL)? pcc_isoItem->nr() : 0xfe; }
   uint32_t                   getVtHardwareDimension() { return (uint32_t) (vtCapabilities_a.hwWidth); }
   uint16_t                   getVtFontSizes()         { return vtCapabilities_a.fontSizes; }
@@ -205,12 +205,12 @@ private:
   /** private constructor which prevents direct instantiation in user application
     * NEVER define instance of ISOTerminal_c within application
     */
-  VtServerInstance_c(const ISOItem_c& ref_newItem, DevKey_c c_newDevKey, ISOTerminal_c& ref_isoTerminal);
+  VtServerInstance_c(const ISOItem_c& ref_newItem, ISOName_c c_newISOName, ISOTerminal_c& ref_isoTerminal);
 
 private: // attributes
   const ISOItem_c* pcc_isoItem;
 
-  DevKey_c c_devKey;
+  ISOName_c c_isoName;
 
   ISOTerminal_c& refc_isoTerminal; // back ref.
 

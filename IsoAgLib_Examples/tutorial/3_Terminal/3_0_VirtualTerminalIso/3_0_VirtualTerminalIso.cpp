@@ -199,7 +199,6 @@
 
 /* include some needed util headers */
 //#include <IsoAgLib/util/config.h>
-#include <IsoAgLib/util/idevkey_c.h>
 
 /* include headers for the needed drivers */
 #include <IsoAgLib/driver/system/isystem_c.h>
@@ -528,11 +527,11 @@ int main()
 
   // variable for DEV_KEY
   // default with primary cultivation mounted back
-  IsoAgLib::iDevKey_c myDevKey( 7, 0 );
+  IsoAgLib::iISOName_c myISOName( 7, 0 );
 
   // start address claim of the local member "IMI"
   // if DEV_KEY conflicts forces change of device class instance, the
-  // IsoAgLib can cahnge the myDevKey val through the pointer to myDevKey
+  // IsoAgLib can cahnge the myISOName val through the pointer to myISOName
   bool b_selfConf = true;
   uint8_t ui8_indGroup = 2,
       b_func = 25,
@@ -544,9 +543,9 @@ int main()
 
   // start address claim of the local member "IMI"
   // if DEV_KEY conflicts forces change of device class instance, the
-  // IsoAgLib can change the myDevKey val through the pointer to myDevKey
+  // IsoAgLib can change the myISOName val through the pointer to myISOName
   #if 1
-  IsoAgLib::iIdentItem_c c_myIdent( &myDevKey,
+  IsoAgLib::iIdentItem_c c_myIdent( &myISOName,
       b_selfConf, ui8_indGroup, b_func, ui16_manufCode,
       ui32_serNo, b_wantedSa, 256 /*0xFFFF*/, b_funcInst, b_ecuInst, 0, NULL );
 
@@ -554,14 +553,14 @@ int main()
   uint64_t ui64_isoName = 0xa00e840000000000ULL;
                         //0x0000000000840ea0;
 
-  IsoAgLib::iIdentItem_c c_myIdent(&myDevKey, (const uint8_t*)&ui64_isoName, b_wantedSa, 0xFFFF, 0, NULL );
+  IsoAgLib::iIdentItem_c c_myIdent(&myISOName, (const uint8_t*)&ui64_isoName, b_wantedSa, 0xFFFF, 0, NULL );
   #endif
 
   /* Explicit call to init iIsoTerminal instance - not really needed though */
   getIisoTerminalInstance().init();
 
   /* Call to init iIsoTerminal instance and initialize object pool! */
-  getIisoTerminalInstance().registerIsoObjectPool(&c_myIdent, &Tutorial_3_0_Pool_c, "Tut-3_0");
+  getIisoTerminalInstance().registerIsoObjectPool(c_myIdent, Tutorial_3_0_Pool_c, "Tut-3_0");
 
   /** IMPORTANT:
     - The following loop could be replaced of any repeating call of

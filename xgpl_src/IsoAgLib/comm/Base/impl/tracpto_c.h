@@ -147,13 +147,13 @@ typedef struct
       */
     void checkCreateReceiveFilter();
 
-    /** config the TracPTO_c object after init -> set pointer to devKey and
+    /** config the TracPTO_c object after init -> set pointer to isoName and
         config send/receive of different base msg types
-        @param rpc_devKey pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
+        @param rpc_isoName pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
         @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
         @return true -> configuration was successfull
       */
-    bool config(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_IdentMode);
+    bool config(const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_IdentMode);
 
     /** destructor for Base_c which has nothing to do */
     virtual ~TracPTO_c() { BaseCommon_c::close();};

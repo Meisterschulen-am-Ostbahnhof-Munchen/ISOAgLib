@@ -185,22 +185,22 @@ class TimePosGPS_c : public SingletonTimePosGps_c
     */
   void checkCreateReceiveFilter( );
 
-  /** config the Base_c object after init -> set pointer to devKey and
+  /** config the Base_c object after init -> set pointer to isoName and
       config send/receive of different base msg types
-      @param rpc_devKey pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
+      @param rpc_isoName pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
       @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       @return true -> configuration was successfull
     */
-  bool config(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_identMode);
+  bool config(const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode);
 
   /** initialise element which can't be done during construct;
       above all create the needed FilterBox_c instances
       possible errors:
         * dependant error in CANIO_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
-      @param rpc_devKey optional pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
+      @param rpc_isoName optional pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
       @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
     */
-  virtual void init(const DevKey_c*, IsoAgLib::IdentMode_t rt_identMode = IsoAgLib::IdentModeImplement);
+  virtual void init(const ISOName_c*, IsoAgLib::IdentMode_t rt_identMode = IsoAgLib::IdentModeImplement);
 
   /** destructor for Base_c which has nothing to do */
   virtual ~TimePosGPS_c() { BaseCommon_c::close();};
@@ -208,13 +208,13 @@ class TimePosGPS_c : public SingletonTimePosGps_c
   bool processMsgRequestPGN (uint32_t rui32_pgn, uint8_t rui8_sa, uint8_t rui8_da);
   /** force a request for pgn for time/date information */
   bool sendRequestUpdateTimeDate();
-   /** config the Base_c object after init -> set pointer to devKey and
+   /** config the Base_c object after init -> set pointer to isoName and
       config send/receive of different base msg types
-      @param rpc_devKey pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
+      @param rpc_isoName pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
       @param rt_identModeGps either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       @return true -> configuration was successfull
     */
-  bool configGps(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_identModeGps);
+  bool configGps(const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identModeGps);
   /** return if you currently are in gps mode*/
   bool checkModeGps(IsoAgLib::IdentMode_t rt_identModeGps) const {return (t_identModeGps == rt_identModeGps);}
 
@@ -225,16 +225,16 @@ class TimePosGPS_c : public SingletonTimePosGps_c
     @see CANPkgExt_c::getData
     @see CANIO_c::operator<<
     */
-  void sendCalendar(const DevKey_c& rpc_devKey);
+  void sendCalendar(const ISOName_c& rpc_isoName);
 
   /** Retrieve the last update time of the specified information type*/
   int32_t lastedTimeSinceUpdateGps() const;
   /** Retrieve the time of last update */
   int32_t lastUpdateTimeGps() const;
   /** return a sender which sends commands as a tractor */
-  DevKey_c& getSenderDevKeyGps() {return c_sendGpsDevKey;};
+  ISOName_c& getSenderISONameGps() {return c_sendGpsISOName;};
   /** return a sender which sends commands as a tractor */
-  const DevKey_c& getSenderDevKeyGpsConst() const {return c_sendGpsDevKey;};
+  const ISOName_c& getSenderISONameGpsConst() const {return c_sendGpsISOName;};
 
   /* ********************************************* */
   /** \name MultiReceive functions for TimePosGPS_c  */
@@ -518,8 +518,8 @@ private:
     NEVER instantiate a variable of type TimePosGPS_c within application
     only access TimePosGPS_c via getTimePosGpsInstance() or getTimePosGpsInstance( int riLbsBusNr ) in case more than one BUS is used for IsoAgLib
     */
-  TimePosGPS_c(): c_sendGpsDevKey(),
-                  pc_devKeyGps(NULL),
+  TimePosGPS_c(): c_sendGpsISOName(),
+                  pc_isoNameGps(NULL),
                   t_identModeGps( IsoAgLib::IdentModeImplement )
   {}
   /** deliver time between now and last calendar set in [msec]
@@ -651,12 +651,12 @@ private:
   /** sending success state */
   MultiSend_c::sendSuccess_t t_multiSendSuccessState;
   #endif // END of NMEA_2000_FAST_PACKET
-  /** DEVKEY of GPS data sender */
-  DevKey_c c_sendGpsDevKey;
-  /** devKey which act as sender of a msg: either responses on behalf of implement or commands as tractor.
+  /** ISOName of GPS data sender */
+  ISOName_c c_sendGpsISOName;
+  /** isoName which act as sender of a msg: either responses on behalf of implement or commands as tractor.
       This pointer is set in config function
     */
-  const DevKey_c* pc_devKeyGps;
+  const ISOName_c* pc_isoNameGps;
   IsoAgLib::IdentMode_t  t_identModeGps;
 };
 

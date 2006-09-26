@@ -89,7 +89,7 @@
 /* *************************************** */
 #include <IsoAgLib/typedef.h>
 #include <IsoAgLib/util/impl/canpkgext_c.h>
-#include <IsoAgLib/util/impl/devkey_c.h>
+#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h>
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {

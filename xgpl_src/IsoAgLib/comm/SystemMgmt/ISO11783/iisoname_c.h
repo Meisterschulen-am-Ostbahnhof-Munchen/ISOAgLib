@@ -69,6 +69,23 @@ namespace IsoAgLib {
 */
 class iISOName_c : public __IsoAgLib::ISOName_c {
 public:
+    /** constant for default parameters and initialization, where the device type is not yet spcified.
+        the instantiation of this constant variable is located in the module cancustomer_c.cpp
+      */
+    static const iISOName_c ISONameUnspecified;
+
+    /** constant for not yet spcified process data ident -> <device class, device class instance> := <0x0,0xF>
+        the instantiation of this constant variable is located in the module cancustomer_c.cpp
+      */
+    static const iISOName_c ISONameInitialProcessData;
+
+    /** default constructor
+        @param rui8_devClass  optional initial DEVCLASS (device type)
+        @param rui8_pos       optional initial device class instance
+      */
+    iISOName_c( uint8_t rui8_devClass = 0x7F, uint8_t rui8_pos /*= 0xF*/ )
+    : ISOName_c( true, 2, rui8_devClass, rui8_pos, 0xFF, 0x7FF, 0x1FFFFF, 0x1F, 0x7 ) {}
+
   /** constructor which format data string from series of input flags
     @param rb_selfConf true -> indicate sefl configuring ECU
     @param rui8_indGroup industry group of device (2 for agriculture)

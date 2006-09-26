@@ -208,7 +208,7 @@ public:
 
   /**
     set if master setpoint should be preserved even if caller
-    devKey is no more active (default false )
+    isoName is no more active (default false )
     @param rb_static choose if master setpoint should be preserved
           if caller isn't acitve
   */
@@ -340,7 +340,7 @@ public:
   /**
     perform periodic actions
     (here: check if measure val is in limits; delete old handled not master setpoints and
-            delete master entry if it's devKey isn't registered active any more )
+            delete master entry if it's isoName isn't registered active any more )
     @return true -> all planned activities performed in allowed time
   */
   virtual bool timeEvent( void );
@@ -349,25 +349,25 @@ public:
   /**
      send a sub-setpoint (selected by MOD) to a specified target (selected by GPT)
      @param GeneralCommand_c::ValueGroup_t min/max/exact/default code of the value type to send
-     @param rc_targetDevKey DevKey of target
+     @param rc_targetISOName ISOName of target
      @param ren_type optional PRI specifier of the message (default Proc_c::Target )
      @param en_valueGroup: min/max/exact/default
      @param en_command
      @return true -> successful sent
   */
-  bool sendSetpointMod(const DevKey_c& rc_targetDevKey,
+  bool sendSetpointMod(const ISOName_c& rc_targetISOName,
                        Proc_c::progType_t ren_progType,
                        GeneralCommand_c::ValueGroup_t en_valueGroup = GeneralCommand_c::noValue,
                        GeneralCommand_c::CommandType_t en_command = GeneralCommand_c::noCommand) const;
 
   /**
     send a exact-setpoint to a specified target (selected by GPT)
-    @param rc_targetDevKey DevKey of target
+    @param rc_targetISOName ISOName of target
     @param ren_type optional PRI specifier of the message (default Proc_c::Target )
     @return true -> successful sent
   */
-  bool sendMasterSetpointVal( const DevKey_c& rc_targetDevKey, Proc_c::progType_t ren_progType = Proc_c::Target ) const
-   { return sendSetpointMod(rc_targetDevKey, ren_progType, GeneralCommand_c::exactValue, GeneralCommand_c::setValue );};
+  bool sendMasterSetpointVal( const ISOName_c& rc_targetISOName, Proc_c::progType_t ren_progType = Proc_c::Target ) const
+   { return sendSetpointMod(rc_targetISOName, ren_progType, GeneralCommand_c::exactValue, GeneralCommand_c::setValue );};
 
 private: // Private methods
   /** base function for assignment of element vars for copy constructor and operator= */
@@ -430,7 +430,7 @@ private: // Private attributes
   uint8_t b_allowedDeltaPercent;
   /**
     set if master setpoint should be preserved even if caller
-    devKey is no more active (default false )
+    isoName is no more active (default false )
   */
   bool b_staticMaster;
 

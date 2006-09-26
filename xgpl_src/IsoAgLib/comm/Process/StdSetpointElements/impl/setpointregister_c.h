@@ -91,7 +91,8 @@
 /* *************************************** */
 #include <IsoAgLib/typedef.h>
 #include <IsoAgLib/util/config.h>
-#include <IsoAgLib/util/impl/devkey_c.h>
+#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h>
+
 #include <IsoAgLib/comm/Process/impl/generalcommand_c.h>
 
 // Begin Namespace __IsoAgLib
@@ -113,7 +114,7 @@ class SetpointRegister_c {
 public:
   /**
     constructor which can set all element variables (all parameters are optional)
-    @param rc_devKey device key of commander of this setpoint register set
+    @param rc_isoName device key of commander of this setpoint register set
     @param ri32_exact exact setpoint value
     @param ri32_min minimum setpoint value
     @param ri32_max maximum setpoint value
@@ -122,13 +123,13 @@ public:
     @param rb_master true -> this setpoint register instance represents the actual master setpoint
     @param rb_valid true -> this setpoint register instance is accepted as valid
   */
-  SetpointRegister_c(const DevKey_c& rc_devKey = DevKey_c::DevKeyUnspecified, int32_t ri32_exact = NO_VAL_32S,
+  SetpointRegister_c(const ISOName_c& rc_isoName = ISOName_c::ISONameUnspecified, int32_t ri32_exact = NO_VAL_32S,
       int32_t ri32_min = NO_VAL_32S, int32_t ri32_max = NO_VAL_32S, int32_t ri32_default = NO_VAL_32S,
       bool rb_handled = false, bool rb_master = false, bool rb_valid = true)
-      {  init(rc_devKey, ri32_exact, ri32_min, ri32_max, ri32_default, rb_handled, rb_master, rb_valid);};
+      {  init(rc_isoName, ri32_exact, ri32_min, ri32_max, ri32_default, rb_handled, rb_master, rb_valid);}
   /**
     initialise this SetpointRegister_c to a well defined starting condition
-    @param rc_devKey device key of commander of this setpoint register set
+    @param rc_isoName device key of commander of this setpoint register set
     @param ri32_exact exact setpoint value
     @param ri32_min minimum setpoint value
     @param ri32_max maximum setpoint value
@@ -137,7 +138,7 @@ public:
     @param rb_master true -> this setpoint register instance represents the actual master setpoint
     @param rb_valid true -> this setpoint register instance is accepted as valid
   */
-  void init(const DevKey_c& rc_devKey = DevKey_c::DevKeyUnspecified, int32_t ri32_exact = NO_VAL_32S,
+  void init(const ISOName_c& rc_isoName = ISOName_c::ISONameUnspecified, int32_t ri32_exact = NO_VAL_32S,
       int32_t ri32_min = NO_VAL_32S, int32_t ri32_max = NO_VAL_32S, int32_t ri32_default = NO_VAL_32S,
       bool rb_handled = false, bool rb_master = false, bool rb_valid = true);
 
@@ -168,38 +169,38 @@ public:
   /* ************************************ */
 
   /**
-    deliver devKey of commanding member
-    @return DEV_KEY of setpoint commander
+    deliver isoName of commanding member
+    @return ISOName of setpoint commander
   */
-  const DevKey_c& devKey()const{return c_requestDevKey;};
+  const ISOName_c& isoName()const{return c_requestISOName;}
   /**
     deliver the exact setpoint
     @return exact setpoint value
   */
-  int32_t exact()const{return i32_exactOrMin;};
+  int32_t exact()const{return i32_exactOrMin;}
 #ifdef USE_FLOAT_DATA_TYPE
   /**
     deliver the exact setpoint
     @return exact setpoint value
   */
-  float exactFloat()const{return f_exactOrMin;};
+  float exactFloat()const{return f_exactOrMin;}
 #endif
   /**
     deliver the minimum limit; if no min is given (~0) return i32_exactOrMin
     @return minimum setpoint value
   */
-  int32_t min()const{return i32_exactOrMin;};
+  int32_t min()const{return i32_exactOrMin;}
   /**
     deliver the maximum limit ; if no max is given (~0) return i32_exactOrMin
     @return maximum setpoint value
   */
-  int32_t max()const{return (existMax())?(i32_max):(i32_exactOrMin);};
+  int32_t max()const{return (existMax())?(i32_max):(i32_exactOrMin);}
   /**
     deliver the default limit ; if no default is given (~0) return i32_exactOrMin
     name: getDefault() because default() doesn't compile
     @return default setpoint value
   */
-  int32_t getDefault()const{return (existDefault())?(i32_default):(i32_exactOrMin);};
+  int32_t getDefault()const{return (existDefault())?(i32_default):(i32_exactOrMin);}
   /**
     deliver the setpoint according to the mod type
     @param en_valueGroup code of wanted setpoint (exact 0, min 2, max 3, default)
@@ -211,17 +212,17 @@ public:
     deliver the minimum limit; if no min is given (~0) return f_exactOrMin
     @return minimum setpoint value
   */
-  float minFloat()const{return f_exactOrMin;};
+  float minFloat()const{return f_exactOrMin;}
   /**
     deliver the maximum limit; if no max is given (~0) return f_exactOrMin
     @return maximum setpoint value
   */
-  float maxFloat()const{return (existMax())?(f_max):(f_exactOrMin);};
+  float maxFloat()const{return (existMax())?(f_max):(f_exactOrMin);}
   /**
     deliver the default value; if no default is given (~0) return f_exactOrMin
     @return default setpoint value
   */
-  float defaultFloat()const{return (existDefault())?(f_default):(f_exactOrMin);};
+  float defaultFloat()const{return (existDefault())?(f_default):(f_exactOrMin);}
   /**
     deliver the setpoint according to the mod type
     @param en_valueGroup code of wanted setpoint (exact 0, min 2, max 3, default)
@@ -233,42 +234,42 @@ public:
     check if setpoint value was already handled
     @return true -> this setpoint was handled by the application
   */
-  bool handled()const{return (data.b_handled == 1)?true:false;};
+  bool handled()const{return (data.b_handled == 1)?true:false;}
   /**
     deliver the timestamp of the last setHandled event
     @return last setHandled timestamp
   */
-  int32_t lastHandledTime()const{return i32_lastHandledTime;};
+  int32_t lastHandledTime()const{return i32_lastHandledTime;}
   /**
     check if setpoint is used as master control
     @return true -> the application set this setpoint as master before
   */
-  bool master()const{return (data.b_master == 1)?true:false;};
+  bool master()const{return (data.b_master == 1)?true:false;}
   /**
     check if setpoint is conformant with actual (!!) master setpoint
     @return true -> the application set this setpoint as valid (accepted)
   */
-  bool valid()const{return (data.b_valid == 1)?true:false;};
+  bool valid()const{return (data.b_valid == 1)?true:false;}
   /**
     check if valid exact limit is set
     @return true -> this setpoint register instance has an exact setpoint value
   */
-  bool existExact()const{return ((data.en_definedSetpoints & exactType) != 0)?true:false;};
+  bool existExact()const{return ((data.en_definedSetpoints & exactType) != 0)?true:false;}
   /**
     check if valid minimum limit is set
     @return true -> this setpoint register instance has an minimum setpoint value
   */
-  bool existMin()const{return ((data.en_definedSetpoints & minType) != 0)?true:false;};
+  bool existMin()const{return ((data.en_definedSetpoints & minType) != 0)?true:false;}
   /**
     check if valid maximum limit is set
     @return true -> this setpoint register instance has an maximum setpoint value
   */
-  bool existMax()const{return ((data.en_definedSetpoints & maxType) != 0)?true:false;};
+  bool existMax()const{return ((data.en_definedSetpoints & maxType) != 0)?true:false;}
   /**
     check if valid default value is set
     @return true -> this setpoint register instance has a default setpoint value
   */
-  bool existDefault()const{return ((data.en_definedSetpoints & defaultType) != 0)?true:false;};
+  bool existDefault()const{return ((data.en_definedSetpoints & defaultType) != 0)?true:false;}
   /**
     checks if setpoint with type rb_mod exists
     @param en_valueGroup value group of tested setpoint type (exact 0, min 2, max 3, default)
@@ -282,15 +283,15 @@ public:
   /* ************************************ */
 
   /**
-    set devKey of cammanding member
-    @param rc_devKey DEV_KEY of commanding member
+    set isoName of cammanding member
+    @param rc_isoName ISOName of commanding member
   */
-  void setDevKey(const DevKey_c& rc_val){c_requestDevKey = rc_val;};
+  void setISOName(const ISOName_c& rc_val){c_requestISOName = rc_val;}
   /**
-    set devKey of cammanding member
-    @param rc_devKey DEV_KEY of commanding member
+    set isoName of cammanding member
+    @param rc_isoName ISOName of commanding member
   */
-  void setDevKey(uint8_t rui8_devClass, uint8_t rui8_devClassInst){c_requestDevKey.set( rui8_devClass, rui8_devClassInst );};
+  void setISOName(uint8_t rui8_devClass, uint8_t rui8_devClassInst){c_requestISOName.set( rui8_devClass, rui8_devClassInst );}
   /**
     set the exact setpoint value
     @param ri32_val new exact setpoint value
@@ -395,8 +396,8 @@ private: // Private attributes
 #endif
   /** tiemstamp of last setXx operation */
   int32_t i32_lastHandledTime;
-  /** devKey code of requester */
-  DevKey_c c_requestDevKey;
+  /** isoName code of requester */
+  ISOName_c c_requestISOName;
   struct {
     /** master state == the setpoint requester can change the value if needed */
     bool b_master : 1;

@@ -131,20 +131,20 @@ namespace __IsoAgLib {
    @param ui16_element  device element number
 
    common parameters:
-   @param rc_devKey optional DEV_KEY code of Process-Data
+   @param rc_isoName optional ISOName code of Process-Data
    @param rui8_pri PRI code of messages with this process data instance (default 2)
-   @param rc_ownerDevKey optional DEV_KEY of the owner
-   @param rpc_devKey pointer to updated DEV_KEY variable of owner
+   @param rc_ownerISOName optional ISOName of the owner
+   @param rpc_isoName pointer to updated ISOName variable of owner
    @param rpc_processDataChangeHandler optional pointer to handler class of application
    @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
   void ProcDataBase_c::init( const IsoAgLib::ElementDDI_s* ps_elementDDI, uint16_t rui16_element,
-                             const DevKey_c& rc_devKey,
-                             uint8_t rui8_pri, const DevKey_c& rc_ownerDevKey, const DevKey_c *rpc_devKey,
+                             const ISOName_c& rc_isoName,
+                             uint8_t rui8_pri, const ISOName_c& rc_ownerISOName, const ISOName_c *rpc_isoName,
                              IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler,
                              int ri_singletonVecKey)
   {
-    ProcIdent_c::init( ps_elementDDI, rui16_element, rc_devKey, rui8_pri, rc_ownerDevKey, rpc_devKey);
+    ProcIdent_c::init( ps_elementDDI, rui16_element, rc_isoName, rui8_pri, rc_ownerISOName, rpc_isoName);
 
     setSingletonKey(ri_singletonVecKey);
     en_procValType = i32_val;
@@ -233,21 +233,21 @@ bool ProcDataBase_c::timeEvent( void )
 
 
 /**
-  send the given int32_t value with variable DEV_KEY rc_varDevKey
+  send the given int32_t value with variable ISOName rc_varISOName
   (local: receiver; remote: sender)
   (other paramter fixed by ident of process data)
 
-  set general command before sendValDevKey !
+  set general command before sendValISOName !
 
   possible errors:
       * Err_c::elNonexistent one of resolved EMPF/SEND isn't registered with claimed address in Monitor
       * dependant error in CANIO_c on CAN send problems
   @param rui8_pri PRI code for the msg
-  @param rc_varDevKey variable DEV_KEY
+  @param rc_varISOName variable ISOName
   @param ri32_val int32_t value to send
   @return true -> sendIntern set successful EMPF and SEND
 */
-bool ProcDataBase_c::sendValDevKey(uint8_t /*rui8_pri*/, const DevKey_c& /*rc_varDevKey*/, int32_t ri32_val) const
+bool ProcDataBase_c::sendValISOName(uint8_t /*rui8_pri*/, const ISOName_c& /*rc_varISOName*/, int32_t ri32_val) const
 {
   setBasicSendFlags();
 
@@ -267,21 +267,21 @@ bool ProcDataBase_c::sendValDevKey(uint8_t /*rui8_pri*/, const DevKey_c& /*rc_va
 
 #ifdef USE_FLOAT_DATA_TYPE
 /**
-  send the given float value with variable DEV_KEY rc_varDevKey
+  send the given float value with variable ISOName rc_varISOName
   (local: receiver; remote: sender)
   (other paramter fixed by ident of process data)
 
-  set general command before sendValDevKey !
+  set general command before sendValISOName !
 
   possible errors:
       * Err_c::elNonexistent one of resolved EMPF/SEND isn't registered with claimed address in Monitor
       * dependant error in CANIO_c on CAN send problems
   @param rui8_pri PRI code for the msg
-  @param rc_varDevKey variable DEV_KEY
+  @param rc_varISOName variable ISOName
   @param ri32_val float value to send
   @return true -> sendIntern set successful EMPF and SEND
 */
-bool ProcDataBase_c::sendValDevKey(uint8_t /*rui8_pri*/, const DevKey_c& /*rc_varDevKey*/, float rf_val) const
+bool ProcDataBase_c::sendValISOName(uint8_t /*rui8_pri*/, const ISOName_c& /*rc_varISOName*/, float rf_val) const
 {
   setBasicSendFlags();
 
@@ -363,22 +363,6 @@ void ProcDataBase_c::processSetpoint()
   return;
 }
 
-
-/**
-  delivers item state for given devKey
-  @param rc_devKey compared DEV_KEY value
-  @return IState_c::itemState_t
-*/
-/**TODO2 is this function obsolete?*/
-//IState_c::itemState_t ProcDataBase_c::getIStateForDevKey( const DevKey_c& rc_devKey )
-// {
-//   IState_c::itemState_t en_msgProto = IState_c::IstateNull;
-//
-//   if ( getIsoMonitorInstance4Comm().existIsoMemberDevKey(rc_devKey, true) )
-//     en_msgProto = IState_c::Iso;
-//
-//   return en_msgProto;
-// }
 
 /**
   deliver DDI from last received can pkg

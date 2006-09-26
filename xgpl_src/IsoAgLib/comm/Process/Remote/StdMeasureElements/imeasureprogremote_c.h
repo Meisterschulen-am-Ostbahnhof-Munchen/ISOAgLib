@@ -59,7 +59,7 @@
 /* ********** include headers ************ */
 /* *************************************** */
 #include "impl/measureprogremote_c.h"
-#include <IsoAgLib/util/idevkey_c.h>
+#include <IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h>
 
 // Begin Namespace IsoAgLib
 namespace IsoAgLib {
@@ -294,10 +294,10 @@ public:
   float accelFloat(){return MeasureProgRemote_c::accelFloat();};
 #endif
   /**
-    return the c_devKey code for this measureProg
-    @return DEV_KEY of this measureProg
+    return the c_isoName code for this measureProg
+    @return ISOName of this measureProg
   */
-  const iDevKey_c& devKey(){return static_cast<const iDevKey_c&>(MeasureProgRemote_c::devKey());};
+  const iISOName_c& isoName(){return static_cast<const iISOName_c&>(MeasureProgRemote_c::isoName());};
   /**
     deliver the type of the active increment types
     @return actual Bit-OR combined increment types
@@ -341,10 +341,10 @@ public:
   */
   void setType(Proc_c::type_t ren_type) {MeasureProgRemote_c::setType(ren_type);};
   /**
-    set the c_devKey code for this measureProg
-    @param rc_devKey DEV_KEY for exact specification of partner system
+    set the c_isoName code for this measureProg
+    @param rc_isoName ISOName for exact specification of partner system
   */
-  void setDevKey(const iDevKey_c& rc_devKey) {MeasureProgRemote_c::setDevKey(rc_devKey);};
+  void setISOName(const iISOName_c& rc_isoName) {MeasureProgRemote_c::setISOName(rc_isoName);};
  private:
   friend class iProcDataRemote_c;
   friend class iProcDataRemoteSimpleMeasure_c;

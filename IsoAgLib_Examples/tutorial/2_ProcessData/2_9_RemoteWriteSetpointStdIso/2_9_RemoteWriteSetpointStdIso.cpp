@@ -195,7 +195,7 @@
 
 /* include some needed util headers */
 //#include <IsoAgLib/util/config.h>
-#include <IsoAgLib/util/idevkey_c.h>
+#include <IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h>
 
 /* include headers for the needed drivers */
 #include <IsoAgLib/driver/system/isystem_c.h>
@@ -276,13 +276,13 @@ class MyProcDataHandler_c : public IsoAgLib::ProcessDataChangeHandler_c
       *  new setpoint; commanded manager of process data sent the response with ACK/NACK)
       * @param rc_src general event source class, which provides conversion functions to get needed event source class
       * @param ri32_val new value, which caused the event (for immediate access)
-      * @param rc_callerDevKey DevKey of calling device - i.e. which sent new setpoint
+      * @param rc_callerISOName ISOName of calling device - i.e. which sent new setpoint
       * @return true -> handler class reacted on change event
       */
-    virtual bool processSetpointResponse( EventSource_c rc_src, int32_t ri32_val, const IsoAgLib::iDevKey_c& rc_callerDevKey );
+    virtual bool processSetpointResponse( EventSource_c rc_src, int32_t ri32_val, const IsoAgLib::iISOName_c& rc_callerISOName );
 };
 
-bool MyProcDataHandler_c::processSetpointResponse( EventSource_c rc_src, int32_t /* ri32_val */, const IsoAgLib::iDevKey_c& /* rc_callerDevKey */ )
+bool MyProcDataHandler_c::processSetpointResponse( EventSource_c rc_src, int32_t /* ri32_val */, const IsoAgLib::iISOName_c& /* rc_callerISOName */ )
 {
   // use helper function to get automatically casted pointer to used process data type
   uint16_t ui16_index = rc_src.makeIProcDataRemote() - arr_procData;
@@ -318,18 +318,18 @@ MyProcDataHandler_c c_myMeasurementHandler;
 #endif
 
 // default with primary cultivation mounted back
-IsoAgLib::iDevKey_c c_myDevKey( 2, 0 );
+IsoAgLib::iISOName_c c_myISOName( 2, 0 );
 // device type of remote ECU
-IsoAgLib::iDevKey_c c_remoteDeviceType( 0x5, 0 );
+IsoAgLib::iISOName_c c_remoteDeviceType( 0x5, 0 );
 
 int main()
 { // init CAN channel with 250kBaud at needed channel ( count starts with 0 )
   getIcanInstance().init( 0, 250 );
-  // variable for DEV_KEY
+  // variable for ISOName
 
   // start address claim of the local member "IMI"
-  // if DEV_KEY conflicts forces change of device class instance, the
-  // IsoAgLib can cahnge the c_myDevKey val through the pointer to c_myDevKey
+  // if ISOName conflicts forces change of device class instance, the
+  // IsoAgLib can cahnge the c_myISOName val through the pointer to c_myISOName
   bool b_selfConf = true;
   uint8_t ui8_indGroup = 2,
       b_func = 25,
@@ -340,10 +340,10 @@ int main()
   uint32_t ui32_serNo = 27;
 
   // start address claim of the local member "IMI"
-  // if DEV_KEY conflicts forces change of device class instance, the
-  // IsoAgLib can change the c_myDevKey val through the pointer to c_myDevKey
+  // if ISOName conflicts forces change of device class instance, the
+  // IsoAgLib can change the c_myISOName val through the pointer to c_myISOName
   // ISO
-  IsoAgLib::iIdentItem_c c_myIdent( &c_myDevKey,
+  IsoAgLib::iIdentItem_c c_myIdent( &c_myISOName,
     b_selfConf, ui8_indGroup, b_func, ui16_manufCode,
     ui32_serNo, b_wantedSa, 0xFFFF, b_funcInst, b_ecuInst);
 
@@ -369,7 +369,7 @@ int main()
   arr_procData[cui8_indexWorkState].init(
                                          s_WorkStateElementDDI,
                                          0,
-                                         c_remoteDeviceType, 2, c_remoteDeviceType, &c_myDevKey,
+                                         c_remoteDeviceType, 2, c_remoteDeviceType, &c_myISOName,
   #ifdef USE_EEPROM_IO
                                          0xFFFF,
   #endif
@@ -379,7 +379,7 @@ int main()
   arr_procData[cui8_indexApplicationRate].init(
                                                s_ApplicationRateElementDDI,
                                                0,
-                                               c_remoteDeviceType, 2, c_remoteDeviceType, &c_myDevKey,
+                                               c_remoteDeviceType, 2, c_remoteDeviceType, &c_myISOName,
   #ifdef USE_EEPROM_IO
                                                0xFFFF,
   #endif
@@ -390,7 +390,7 @@ int main()
   IsoAgLib::iProcDataRemote_c c_workState(
                                          s_WorkStateElementDDI,
                                          0,
-                                         c_remoteDeviceType, 2, c_remoteDeviceType, &c_myDevKey
+                                         c_remoteDeviceType, 2, c_remoteDeviceType, &c_myISOName
   #ifdef USE_EEPROM_IO
                                          ,0xFFFF
   #endif
@@ -400,7 +400,7 @@ int main()
   IsoAgLib::iProcDataRemote_c c_applicationRate(
                                                 s_ApplicationRateElementDDI,
                                                 0,
-                                                c_remoteDeviceType, 2, c_remoteDeviceType, &c_myDevKey
+                                                c_remoteDeviceType, 2, c_remoteDeviceType, &c_myISOName
   #ifdef USE_EEPROM_IO
                                                 ,0xFFFF
   #endif
@@ -449,8 +449,8 @@ int main()
 
     IsoAgLib::getISchedulerInstance().timeEvent();
 
-    if ( ! getIisoMonitorInstance().existIsoMemberDevKey(c_myDevKey, true) ) continue;
-    if ( ! getIisoMonitorInstance().existIsoMemberDevKey(c_remoteDeviceType, true) ) continue;
+    if ( ! getIisoMonitorInstance().existIsoMemberISOName(c_myISOName, true) ) continue;
+    if ( ! getIisoMonitorInstance().existIsoMemberISOName(c_remoteDeviceType, true) ) continue;
 
     if (!b_done1 && (__HAL::getTime() > 3000)) {
       controlRemoteWorkState(true);
@@ -498,8 +498,8 @@ int main()
 /** dummy function which can be called from some other module to control the remote work state */
 void controlRemoteWorkState( bool rb_isWorking )
 {
-  if ( ! getIisoMonitorInstance().existIsoMemberDevKey(c_myDevKey, true) ) return;
-  if ( ! getIisoMonitorInstance().existIsoMemberDevKey(c_remoteDeviceType, true) ) return;
+  if ( ! getIisoMonitorInstance().existIsoMemberISOName(c_myISOName, true) ) return;
+  if ( ! getIisoMonitorInstance().existIsoMemberISOName(c_remoteDeviceType, true) ) return;
   #ifndef USE_PROC_HANDLER
   b_waitingRespWorkState = true;
   if ( rb_isWorking ) c_workState.setSetpointMasterVal( 100 );
@@ -513,8 +513,8 @@ void controlRemoteWorkState( bool rb_isWorking )
 /** dummy function which can be called from some other module to control the remote application rate */
 void controlRemoteApplicationRate( int32_t ri32_applicationRate )
 {
-  if ( ! getIisoMonitorInstance().existIsoMemberDevKey(c_myDevKey, true) ) return;
-  if ( ! getIisoMonitorInstance().existIsoMemberDevKey(c_remoteDeviceType, true) ) return;
+  if ( ! getIisoMonitorInstance().existIsoMemberISOName(c_myISOName, true) ) return;
+  if ( ! getIisoMonitorInstance().existIsoMemberISOName(c_remoteDeviceType, true) ) return;
   #ifndef USE_PROC_HANDLER
   b_waitingRespApplicationRate = true;
   c_applicationRate.setSetpointMasterVal( ri32_applicationRate );

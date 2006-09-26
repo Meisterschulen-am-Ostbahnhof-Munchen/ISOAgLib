@@ -89,7 +89,7 @@
 /* *************************************** */
 #include <IsoAgLib/typedef.h>
 #include <IsoAgLib/util/impl/canpkgext_c.h>
-#include <IsoAgLib/util/impl/devkey_c.h>
+#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h>
 #include "isoname_c.h"
 
 // Begin Namespace __IsoAgLib
@@ -126,12 +126,12 @@ public:
   /* ***retreiving of values*** */
   /* ************************** */
   /**
-    deliver DEV_KEY of sender
-    @return DEV_KEY of sender
+    deliver ISOName of sender
+    @return ISOName of sender
   */
-  const DevKey_c& devKey() const
-  { // read on extended ident ISO msg the DEVKEY from NAME setting
-    return c_isoDevKey;
+  const ISOName_c& isoName() const
+  { // read on extended ident ISO msg the ISOName from NAME setting
+    return c_isoISOName;
   };
   /* *********************** */
   /* ***setting of values*** */
@@ -158,7 +158,7 @@ protected: // protected methods
   */
   virtual void flags2String();
   private:
-    DevKey_c c_isoDevKey;
+    ISOName_c c_isoISOName;
 };
 
 }

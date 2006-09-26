@@ -47,7 +47,7 @@ ProcDataManager_c::ProcDataManager_c( uint8_t rui8_cnt)
   ui8_cnt = rui8_cnt;
   pc_data = NULL;
   b_activated = false;
-	c_remoteDevKey.setUnspecified();
+	c_remoteISOName.setUnspecified();
 }
 ProcDataManager_c::~ProcDataManager_c()
 {
@@ -58,7 +58,7 @@ ProcDataManager_c::ProcDataManager_c(const ProcDataManager_c& rrefc_src)
   pc_monitor = rrefc_src.pc_monitor;
   pc_data = rrefc_src.pc_data;
   ui8_cnt = rrefc_src.ui8_cnt;
-	c_remoteDevKey = rrefc_src.c_remoteDevKey;
+	c_remoteISOName = rrefc_src.c_remoteISOName;
 	// don't copy actation state - start with deactivated
   b_activated = false;
 }
@@ -70,7 +70,7 @@ ProcDataManager_c::ProcDataManager_c(const ProcDataManager_c& rrefc_src)
 void ProcDataManager_c::activate(IsoAgLib::iDINItem_c* rpc_monitor)
 {
   pc_monitor = rpc_monitor;
-	c_remoteDevKey = rpc_monitor->devKey();
+	c_remoteISOName = rpc_monitor->devKey();
   setActivated(true);
 }
 

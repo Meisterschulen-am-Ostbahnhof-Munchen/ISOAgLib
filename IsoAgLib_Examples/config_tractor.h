@@ -30,6 +30,33 @@
 
 // #define CONFIG_DO_NOT_START_RELAIS_ON_STARTUP
 
+#ifndef USE_BASE 
+	#define USE_BASE 
+#endif
+#ifndef USE_TRACTOR_GENERAL 
+	#define USE_TRACTOR_GENERAL 
+#endif
+#ifndef USE_TRACTOR_MOVE 
+	#define USE_TRACTOR_MOVE 
+#endif
+#ifndef USE_TRACTOR_PTO 
+	#define USE_TRACTOR_PTO 
+#endif
+#ifndef USE_TRACTOR_LIGHT 
+	#define USE_TRACTOR_LIGHT 
+#endif
+#ifndef USE_TRACTOR_AUX 
+	#define USE_TRACTOR_AUX 
+#endif
+#ifndef USE_TRACTOR_GUIDANCE 
+	#define USE_TRACTOR_GUIDANCE 
+#endif
+#ifndef USE_TRACTOR_CERTIFICATION 
+	#define USE_TRACTOR_CERTIFICATION 
+#endif
+#ifndef USE_TIME_GPS 
+	#define USE_TIME_GPS 
+#endif
 // Decide if HEAP allocation strategy shall reduce size about 5K to 10K in favour of speed
 // Strong Advice: Don't activate this, as long your target has not too tight memory restrictions
 // Initialization of CAN filters and of local process data might get too slow under worst case conditions
@@ -49,8 +76,8 @@
 #ifndef USE_EEPROM_IO_YN 
 	#define USE_EEPROM_IO_YN NO 
 #endif
-#ifndef USE_DATASTREAMS_IO_YN 
-	#define USE_DATASTREAMS_IO_YN NO 
+#ifndef USE_DATASTREAMS_IO 
+	#define USE_DATASTREAMS_IO 
 #endif
 #ifndef USE_ISO_11783 
 	#define USE_ISO_11783 
