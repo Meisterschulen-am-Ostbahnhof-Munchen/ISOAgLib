@@ -77,7 +77,7 @@ public:
   };
 
   //  Operation: get_vtObjectFontAttributes_a
-  iVtObjectFontAttributes_s* get_vtObjectFontAttributes_a() { return vtObjectFontAttributes_c::get_vtObjectFontAttributes_a(); };
+  const iVtObjectFontAttributes_s& get_vtObjectFontAttributes_a() { return *vtObjectFontAttributes_c::get_vtObjectFontAttributes_a(); };
 
   //  Operation: getScaledWidthHeight
   uint16_t getScaledWidthHeight() { return vtObjectFontAttributes_c::getScaledWidthHeight(); };

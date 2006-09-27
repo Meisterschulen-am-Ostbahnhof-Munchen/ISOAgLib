@@ -79,7 +79,7 @@ public:
   };
 
   //  Operation: get_vtObjectArchedBarGraph_a
-  iVtObjectArchedBarGraph_s* get_vtObjectArchedBarGraph_a() { return vtObjectArchedBarGraph_c::get_vtObjectArchedBarGraph_a(); }
+  const iVtObjectArchedBarGraph_s& get_vtObjectArchedBarGraph_a() { return *vtObjectArchedBarGraph_c::get_vtObjectArchedBarGraph_a(); }
   ~iVtObjectArchedBarGraph_c(){};
 
   //  Operation: setValue

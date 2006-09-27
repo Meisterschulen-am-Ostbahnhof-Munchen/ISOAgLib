@@ -78,7 +78,7 @@ public:
   };
 
   //  Operation: get_vtObjectOutputNumber_a
-  iVtObjectOutputNumber_s* get_vtObjectOutputNumber_a() { return vtObjectOutputNumber_c::get_vtObjectOutputNumber_a(); };
+  const iVtObjectOutputNumber_s& get_vtObjectOutputNumber_a() { return *vtObjectOutputNumber_c::get_vtObjectOutputNumber_a(); };
 
   //  Operation: setValue
   //! Parameter:

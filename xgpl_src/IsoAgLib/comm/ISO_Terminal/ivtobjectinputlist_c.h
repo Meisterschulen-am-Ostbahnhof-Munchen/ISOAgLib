@@ -77,7 +77,7 @@ public:
   };
 
   //  Operation: get_vtObjectInputList_a
-  iVtObjectInputList_s* get_vtObjectInputList_a() { return vtObjectInputList_c::get_vtObjectInputList_a(); };
+  const iVtObjectInputList_s& get_vtObjectInputList_a() { return *vtObjectInputList_c::get_vtObjectInputList_a(); };
 
   //  Operation: getListItem
   //! Parameter:

@@ -78,7 +78,7 @@ public:
   };
 
   //  Operation: get_vtObjectWorkingSet_a
-  iVtObjectWorkingSet_s* get_vtObjectWorkingSet_a() { return vtObjectWorkingSet_c::get_vtObjectWorkingSet_a(); };
+  const iVtObjectWorkingSet_s& get_vtObjectWorkingSet_a() { return *vtObjectWorkingSet_c::get_vtObjectWorkingSet_a(); };
 
   //  Operation: changeActiveMask
   //! Parameter:

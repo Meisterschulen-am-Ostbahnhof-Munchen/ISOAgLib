@@ -78,8 +78,8 @@ public:
   };
 
   //  Operation: get_vtObjectStringVariable_a
-  iVtObjectStringVariable_s* get_vtObjectStringVariable_a() {
-    return vtObjectStringVariable_c::get_vtObjectStringVariable_a ();
+  const iVtObjectStringVariable_s& get_vtObjectStringVariable_a() {
+    return *vtObjectStringVariable_c::get_vtObjectStringVariable_a ();
   }
 
   //  Operation: setValueCopy

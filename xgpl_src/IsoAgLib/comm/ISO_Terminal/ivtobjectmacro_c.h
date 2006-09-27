@@ -79,7 +79,7 @@ public:
   };
 
   //  Operation: get_vtObjectMacro_a
-  iVtObjectMacro_s* get_vtObjectMacro_a() { return vtObjectMacro_c::get_vtObjectMacro_a(); };
+  const iVtObjectMacro_s& get_vtObjectMacro_a() { return *vtObjectMacro_c::get_vtObjectMacro_a(); };
 
 }; // ~X2C
 

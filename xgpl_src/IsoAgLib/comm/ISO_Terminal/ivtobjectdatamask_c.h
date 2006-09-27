@@ -77,7 +77,7 @@ public:
   };
 
   //  Operation: get_vtObjectDataMask_a
-  iVtObjectDataMask_s* get_vtObjectDataMask_a() { return vtObjectDataMask_c::get_vtObjectDataMask_a(); };
+  const iVtObjectDataMask_s& get_vtObjectDataMask_a() { return *vtObjectDataMask_c::get_vtObjectDataMask_a(); };
 
   //  Operation: setSoftKeyMask
   //! Parameter:

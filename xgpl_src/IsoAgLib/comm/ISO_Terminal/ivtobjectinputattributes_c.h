@@ -78,7 +78,7 @@ public:
   };
 
   //  Operation: get_vtObjectInputAttributes_a
-  iVtObjectInputAttributes_s* get_vtObjectInputAttributes_a() { return vtObjectInputAttributes_c::get_vtObjectInputAttributes_a(); };
+  const iVtObjectInputAttributes_s& get_vtObjectInputAttributes_a() { return *vtObjectInputAttributes_c::get_vtObjectInputAttributes_a(); };
 
 
 

@@ -81,6 +81,10 @@ IsoAgLib::iVtObject_c* all_iVtObjects [] = {
   &iVtObjectUnnamed23,
   &iVtObjectKeyChangeFill,
   &iVtObjectUnnamed24,
+  &iVtObjectKeyUpdatePool,
+  &iVtObjectUnnamed25,
+  &iVtObjectKeyChangeLogoPosition,
+  &iVtObjectUnnamed26,
   &iVtObjectLineAttributes_Normal,
   &iVtObjectFillAttributes,
   &iVtObjectdEllipse,
@@ -89,18 +93,18 @@ IsoAgLib::iVtObject_c* all_iVtObjects [] = {
   &iVtObjectMacro_1,
   &iVtObjectMacro_2,
   &iVtObjectAnotherMask,
-  &iVtObjectUnnamed25,
-  &iVtObjectUnnamed26,
   &iVtObjectUnnamed27,
   &iVtObjectUnnamed28,
   &iVtObjectUnnamed29,
   &iVtObjectUnnamed30,
   &iVtObjectUnnamed31,
-  &iVtObjectForbiddenAlarmMask,
-  &iVtObjectalarm1contentscontainer,
   &iVtObjectUnnamed32,
   &iVtObjectUnnamed33,
+  &iVtObjectForbiddenAlarmMask,
+  &iVtObjectalarm1contentscontainer,
   &iVtObjectUnnamed34,
+  &iVtObjectUnnamed35,
+  &iVtObjectUnnamed36,
   &iVtObjectsoftkeysAlarm
 };
 
@@ -112,4 +116,4 @@ IsoAgLib::iVtObject_c** all_iVtObjectLists [] = {
   NULL // indicate end of list
 };
 
-iObjectPool_simpleVTIsoPool_c::iObjectPool_simpleVTIsoPool_c () : iIsoTerminalObjectPool_c (all_iVtObjectLists, 103, 6, 200, 60, 32) {};
+iObjectPool_simpleVTIsoPool_c::iObjectPool_simpleVTIsoPool_c () : iIsoTerminalObjectPool_c (all_iVtObjectLists, 107, 6, 200, 60, 32) {};

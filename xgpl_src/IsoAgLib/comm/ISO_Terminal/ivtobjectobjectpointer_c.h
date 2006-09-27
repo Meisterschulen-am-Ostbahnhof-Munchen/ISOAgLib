@@ -77,7 +77,7 @@ public:
   };
 
   //  Operation: get_vtObjectObjectPointer_a
-  iVtObjectObjectPointer_s* get_vtObjectObjectPointer_a() { return vtObjectObjectPointer_c::get_vtObjectObjectPointer_a(); };
+  const iVtObjectObjectPointer_s& get_vtObjectObjectPointer_a() { return *vtObjectObjectPointer_c::get_vtObjectObjectPointer_a(); };
 
   //  Operation: setValue
   //! Parameter:

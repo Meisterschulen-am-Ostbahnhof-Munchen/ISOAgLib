@@ -96,7 +96,7 @@
 
     <key name='KeyChangeLang' background_colour='white'>
       <outputstring pos_x='0' pos_y='12' width='60' height='8' background_colour='white' font_attributes='FontAttributesSKM6x8'
-        value='AE -&gt; BE' horizontal_justification='middle' />
+        value='AE &lt;-&gt; BE' horizontal_justification='middle' />
     </key>
 
     <key name='KeyChangeCol' background_colour='white'>
@@ -113,7 +113,17 @@
 
     <key name='KeyChangeFill' background_colour='white'>
       <outputstring pos_x='0' pos_y='0' width='60' height='32' background_colour='white' font_attributes='FontAttributesSKM6x8'
-                    value='Change to green Fill Attributes' horizontal_justification='middle' options="autowrap"/>
+                    value='Toggle Fill Attributes' horizontal_justification='middle' options="autowrap"/>
+    </key>
+
+    <key name='KeyUpdatePool' background_colour='white'>
+      <outputstring pos_x='0' pos_y='0' width='60' height='32' background_colour='white' font_attributes='FontAttributesSKM6x8'
+                    value='Partial Object Pool Update' horizontal_justification='middle' options="autowrap"/>
+    </key>
+
+    <key name='KeyChangeLogoPosition' background_colour='white'>
+      <outputstring pos_x='0' pos_y='0' width='60' height='32' background_colour='white' font_attributes='FontAttributesSKM6x8'
+                    value='Reposition Logo' horizontal_justification='middle' options="autowrap"/>
     </key>
 
   </softkeymask>

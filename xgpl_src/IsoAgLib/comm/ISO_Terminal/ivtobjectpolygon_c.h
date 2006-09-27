@@ -79,7 +79,7 @@ public:
   };
 
   //  Operation: get_vtObjectPolygon_a
-  iVtObjectPolygon_s* get_vtObjectPolygon_a() { return vtObjectPolygon_c::get_vtObjectPolygon_a (); };
+  const iVtObjectPolygon_s& get_vtObjectPolygon_a() { return *vtObjectPolygon_c::get_vtObjectPolygon_a(); };
 
   //  Operation: setWidth
   //! Parameter:

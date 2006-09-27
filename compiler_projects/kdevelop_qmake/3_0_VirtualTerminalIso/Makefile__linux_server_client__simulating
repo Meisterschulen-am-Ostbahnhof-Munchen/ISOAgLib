@@ -6,7 +6,7 @@
 ####### Project specific variables
 TARGET = 3_0_VirtualTerminalIso
 ISOAGLIB_PATH = ../../..
-APP_INC = -I../../../IsoAgLib_Examples/tutorial/3_Terminal/3_0_VirtualTerminalIso
+APP_INC = -I../../../IsoAgLib_Examples/tutorial/3_Terminal/3_0_VirtualTerminalIso 
 ####### Include a version definition file into the Makefile context - when this file exists
 -include versions.mk
 
@@ -15,7 +15,7 @@ PROJ_DEFINES = $(VERSION_DEFINES) -DSYSTEM_PC -DPRJ_USE_AUTOGEN_CONFIG=config_3_
 
 
 ####### Definition of compiler binary prefix corresponding to selected target
-COMPILER_BINARY_PRE =
+COMPILER_BINARY_PRE = 
 
 
 first: all
@@ -38,6 +38,8 @@ SOURCES = ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp  \
 		../../../xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multireceive_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamchunk_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisend_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendpkg_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/chunk_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/stream_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectsoftkeymask_c.cpp  \
@@ -92,9 +94,7 @@ SOURCES = ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp  \
 		../../../xgpl_src/IsoAgLib/driver/can/impl/canio_c.cpp  \
 		../../../xgpl_src/IsoAgLib/driver/system/impl/system_c.cpp  \
 		../../../xgpl_src/IsoAgLib/driver/eeprom/impl/eepromio_c.cpp  \
-		../../../IsoAgLib_Examples/tutorial/3_Terminal/3_0_VirtualTerminalIso/3_0_VirtualTerminalIso.cpp \
-		../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisend_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendpkg_c.cpp
+		../../../IsoAgLib_Examples/tutorial/3_Terminal/3_0_VirtualTerminalIso/3_0_VirtualTerminalIso.cpp  
 
 
 #Special Sources for CAN Server

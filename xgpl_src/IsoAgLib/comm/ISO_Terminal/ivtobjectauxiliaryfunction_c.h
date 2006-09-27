@@ -76,7 +76,7 @@ public:
 
 
   //  Operation: get_vtObjectAuxiliaryFunction_a
-  iVtObjectAuxiliaryFunction_s* get_vtObjectAuxiliaryFunction_a() { return vtObjectAuxiliaryFunction_c::get_vtObjectAuxiliaryFunction_a(); };
+  const iVtObjectAuxiliaryFunction_s& get_vtObjectAuxiliaryFunction_a() { return *vtObjectAuxiliaryFunction_c::get_vtObjectAuxiliaryFunction_a(); };
 
   //  Operation: moveChildLocation
   //! Parameter:

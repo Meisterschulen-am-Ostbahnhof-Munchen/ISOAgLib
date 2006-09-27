@@ -76,7 +76,7 @@ public:
 
 
   //  Operation: get_vtObjectAuxiliaryInput_a
-  iVtObjectAuxiliaryInput_s* get_vtObjectAuxiliaryInput_a() { return vtObjectAuxiliaryInput_c::get_vtObjectAuxiliaryInput_a(); };
+  const iVtObjectAuxiliaryInput_s& get_vtObjectAuxiliaryInput_a() { return *vtObjectAuxiliaryInput_c::get_vtObjectAuxiliaryInput_a(); };
 
   //  Operation: moveChildLocation
   //! Parameter:

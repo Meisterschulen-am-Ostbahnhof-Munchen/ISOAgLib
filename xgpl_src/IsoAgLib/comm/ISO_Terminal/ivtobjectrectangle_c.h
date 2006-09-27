@@ -78,7 +78,7 @@ public:
   };
 
   //  Operation: get_vtObjectmeter_a
-  iVtObjectRectangle_s* get_vtObjectRectangle_a() { return vtObjectRectangle_c::get_vtObjectRectangle_a(); };
+  const iVtObjectRectangle_s& get_vtObjectRectangle_a() { return *vtObjectRectangle_c::get_vtObjectRectangle_a(); };
 
   //  Operation: setWidth
   //! Parameter:

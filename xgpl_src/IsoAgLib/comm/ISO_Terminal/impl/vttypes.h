@@ -171,8 +171,8 @@ typedef uint16_t objRange_t;
     int32_t opButtonWidth, opButtonHeight, vtButtonWidth, vtButtonHeight;\
     int32_t factorM, factorD; /* zaehler, nenner */ \
     if (p_parentButtonObject != NULL) { \
-      opButtonWidth  = p_parentButtonObject->get_vtObjectButton_a()->width-8; \
-      opButtonHeight = p_parentButtonObject->get_vtObjectButton_a()->height-8; \
+      opButtonWidth  = p_parentButtonObject->get_vtObjectButton_a().width-8; \
+      opButtonHeight = p_parentButtonObject->get_vtObjectButton_a().height-8; \
       vtButtonWidth  = ((opButtonWidth+8) * vtDimension) / opDimension - 8; \
       vtButtonHeight = ((opButtonHeight+8) * vtDimension) / opDimension - 8; \
       const int32_t ci_factorX = ((vtButtonWidth << 20) / opButtonWidth); \

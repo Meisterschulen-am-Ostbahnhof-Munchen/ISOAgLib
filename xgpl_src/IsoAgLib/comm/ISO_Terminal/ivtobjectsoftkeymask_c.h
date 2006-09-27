@@ -77,7 +77,7 @@ public:
   };
 
   //  Operation: get_vtObjectSoftKeyMask_a
-  iVtObjectSoftKeyMask_s* get_vtObjectSoftKeyMask_a() { return vtObjectSoftKeyMask_c::get_vtObjectSoftKeyMask_a(); };
+  const iVtObjectSoftKeyMask_s& get_vtObjectSoftKeyMask_a() { return *vtObjectSoftKeyMask_c::get_vtObjectSoftKeyMask_a(); };
 
   //  Operation: setBackgroundColour
   //! Parameter:

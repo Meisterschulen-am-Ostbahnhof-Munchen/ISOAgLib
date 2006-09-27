@@ -79,7 +79,7 @@ public:
   };
 
   //  Operation: get_vtObjectOutputString_a
-  iVtObjectOutputString_s* get_vtObjectOutputString_a() { return vtObjectOutputString_c::get_vtObjectOutputString_a(); };
+  const iVtObjectOutputString_s& get_vtObjectOutputString_a() { return *vtObjectOutputString_c::get_vtObjectOutputString_a(); };
 
 
   //  Operation: setValueCopy

@@ -78,7 +78,7 @@ public:
   };
 
   //  Operation: get_vtObjectMeter_a
-  iVtObjectMeter_s* get_vtObjectMeter_a() { return vtObjectMeter_c::get_vtObjectMeter_a(); };
+  const iVtObjectMeter_s& get_vtObjectMeter_a() { return *vtObjectMeter_c::get_vtObjectMeter_a(); };
 
   //  Operation: setWidth
   //! Parameter:

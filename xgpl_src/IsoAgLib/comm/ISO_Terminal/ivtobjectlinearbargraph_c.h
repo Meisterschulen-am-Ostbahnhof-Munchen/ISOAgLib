@@ -76,7 +76,7 @@ public:
   };
 
   //  Operation: get_vtObjectLinearBarGraph_a
-  iVtObjectLinearBarGraph_s* get_vtObjectLinearBarGraph_a() { return vtObjectLinearBarGraph_c::get_vtObjectLinearBarGraph_a(); };
+  const iVtObjectLinearBarGraph_s& get_vtObjectLinearBarGraph_a() { return *vtObjectLinearBarGraph_c::get_vtObjectLinearBarGraph_a(); };
 
   //  Operation: setValue
   //! Parameter:

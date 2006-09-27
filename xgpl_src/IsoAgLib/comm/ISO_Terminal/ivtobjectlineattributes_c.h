@@ -76,7 +76,7 @@ public:
   };
 
   //  Operation: get_vtObjectLineAtrtibutes_a
-  iVtObjectLineAttributes_s* get_vtObjectLineAttributes_a() { return vtObjectLineAttributes_c::get_vtObjectLineAttributes_a (); };
+  const iVtObjectLineAttributes_s& get_vtObjectLineAttributes_a() { return *vtObjectLineAttributes_c::get_vtObjectLineAttributes_a (); };
 
   //  Operation: setLineColour
   //! Parameter:

@@ -885,10 +885,10 @@ VtClientServerCommunication_c::notifyOnVtsLanguagePgn()
 
   if (pc_vtServerInstance)
   {
-    const uint8_t cui8_languages = c_streamer.refc_pool.getWorkingSetObject().get_vtObjectWorkingSet_a()->numberOfLanguagesToFollow;
+    const uint8_t cui8_languages = c_streamer.refc_pool.getWorkingSetObject().get_vtObjectWorkingSet_a().numberOfLanguagesToFollow;
     for (int i=0; i<cui8_languages; i++)
     {
-      const uint8_t* lang = c_streamer.refc_pool.getWorkingSetObject().get_vtObjectWorkingSet_a()->languagesToFollow[i].language;
+      const uint8_t* lang = c_streamer.refc_pool.getWorkingSetObject().get_vtObjectWorkingSet_a().languagesToFollow[i].language;
       if (pc_vtServerInstance->getLocalSettings()->languageCode == ((lang[0] << 8) | lang[1]))
       {
         i8_vtLanguage = i; // yes, VT's language is directly supported by this workingset
@@ -2038,7 +2038,7 @@ VtClientServerCommunication_c::startObjectPoolUploading (uploadPoolType_t ren_up
     }
 
     // *ALWAYS* Calculate LANGUAGE Part size (if objectpool has multilanguage!)
-    if (c_streamer.refc_pool.getWorkingSetObject().get_vtObjectWorkingSet_a()->numberOfLanguagesToFollow > 0) // supporting multilanguage.
+    if (c_streamer.refc_pool.getWorkingSetObject().get_vtObjectWorkingSet_a().numberOfLanguagesToFollow > 0) // supporting multilanguage.
     { // only if the objectpool has 2 or more languages, it makes sense to add the language code to the version-name
       const int8_t ci8_realUploadingLanguage = (c_streamer.i8_objectPoolUploadingLanguage < 0) ? 0 : c_streamer.i8_objectPoolUploadingLanguage;
       for (uint32_t curObject=0; curObject < c_streamer.refc_pool.getNumObjectsLang(); curObject++)
@@ -2265,10 +2265,10 @@ VtClientServerCommunication_c::setObjectPoolUploadingLanguage()
 {
   c_streamer.i8_objectPoolUploadingLanguage = i8_vtLanguage;
   c_streamer.ui16_objectPoolUploadingLanguageCode = 0x0000;
-  if (c_streamer.refc_pool.getWorkingSetObject().get_vtObjectWorkingSet_a()->numberOfLanguagesToFollow > 1) // supporting multilanguage.
+  if (c_streamer.refc_pool.getWorkingSetObject().get_vtObjectWorkingSet_a().numberOfLanguagesToFollow > 1) // supporting multilanguage.
   { // only if the objectpool has 2 or more languages, it makes sense to add the language code to the version-name
     const int8_t ci8_realUploadingLanguage = (c_streamer.i8_objectPoolUploadingLanguage < 0) ? 0 : c_streamer.i8_objectPoolUploadingLanguage;
-    const uint8_t* lang = c_streamer.refc_pool.getWorkingSetObject().get_vtObjectWorkingSet_a()->languagesToFollow[ci8_realUploadingLanguage].language;
+    const uint8_t* lang = c_streamer.refc_pool.getWorkingSetObject().get_vtObjectWorkingSet_a().languagesToFollow[ci8_realUploadingLanguage].language;
     c_streamer.ui16_objectPoolUploadingLanguageCode = (lang [0] << 8) | lang[1];
   }
 }

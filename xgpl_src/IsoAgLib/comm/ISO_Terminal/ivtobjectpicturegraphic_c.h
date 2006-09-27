@@ -73,7 +73,7 @@ public:
   };
 
   //  Operation: get_vtObjectPictureGraphic_a
-  iVtObjectPictureGraphic_s* get_vtObjectPictureGraphic_a() { return vtObjectPictureGraphic_c::get_vtObjectPictureGraphic_a(); };
+  const iVtObjectPictureGraphic_s& get_vtObjectPictureGraphic_a() { return *vtObjectPictureGraphic_c::get_vtObjectPictureGraphic_a(); };
 
   //  Operation: setWidth
   //! Parameter:

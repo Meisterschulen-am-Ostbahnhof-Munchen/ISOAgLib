@@ -77,7 +77,7 @@ public:
   };
 
   //  Operation: get_vtObjectKey_a
-  iVtObjectKey_s* get_vtObjectKey_a() { return vtObjectKey_c::get_vtObjectKey_a(); };
+  const iVtObjectKey_s& get_vtObjectKey_a() { return *vtObjectKey_c::get_vtObjectKey_a(); };
 
   //  Operation: setBackgroundColour
   //! Parameter:

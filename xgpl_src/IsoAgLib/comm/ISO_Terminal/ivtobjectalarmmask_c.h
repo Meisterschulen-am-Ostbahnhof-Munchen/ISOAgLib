@@ -78,7 +78,7 @@ public:
   };
   ~iVtObjectAlarmMask_c(){};
   //  Operation: get_vtObjectAlarmMask_a
-  iVtObjectAlarmMask_s* get_vtObjectAlarmMask_a() { return vtObjectAlarmMask_c::get_vtObjectAlarmMask_a(); };
+  const iVtObjectAlarmMask_s& get_vtObjectAlarmMask_a() { return *vtObjectAlarmMask_c::get_vtObjectAlarmMask_a(); };
 
 
   //  Operation: setBackgroundColour

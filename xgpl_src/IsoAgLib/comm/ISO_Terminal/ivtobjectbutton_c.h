@@ -77,7 +77,7 @@ public:
   };
 
   //  Operation: get_vtObjectButton_a
-  iVtObjectButton_s* get_vtObjectButton_a() { return vtObjectButton_c::get_vtObjectButton_a(); };
+  const iVtObjectButton_s& get_vtObjectButton_a() { return *vtObjectButton_c::get_vtObjectButton_a(); };
 
 
 

@@ -79,7 +79,7 @@ public:
   };
 
   //  Operation: get_vtObjectFillAttributes_a
-  iVtObjectFillAttributes_s* get_vtObjectFillAttributes_a() { return vtObjectFillAttributes_c::get_vtObjectFillAttributes_a(); };
+  const iVtObjectFillAttributes_s& get_vtObjectFillAttributes_a() { return *vtObjectFillAttributes_c::get_vtObjectFillAttributes_a(); };
 
 
   //  Operation: setFillType

@@ -68,8 +68,8 @@ public:
   };
 
   //  Operation: get_vtObjectGraphicsContext_a
-  iVtObjectGraphicsContext_s* get_vtObjectGraphicsContext_a() {
-    return vtObjectGraphicsContext_c::get_vtObjectGraphicsContext_a();
+  const iVtObjectGraphicsContext_s& get_vtObjectGraphicsContext_a() {
+    return *vtObjectGraphicsContext_c::get_vtObjectGraphicsContext_a();
   };
 
   //! This command alters the graphics cursor X/Y attributes of the object (Sub-Command ID 0).

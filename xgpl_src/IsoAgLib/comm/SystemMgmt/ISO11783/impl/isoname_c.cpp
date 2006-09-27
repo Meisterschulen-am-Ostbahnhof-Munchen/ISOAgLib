@@ -124,7 +124,7 @@ ISOName_c::ISOName_c(const Flexible8ByteString_c* rpu_src)
   @param rui32_serNo serial no of specific device (21bit)
   @param rb_funcInst instance number of ECU with same function and device class
       (default 0 - normally)
-  @param rb_funcInst instance number of ECU with same function, device class and function instance
+  @param rb_ecuInst instance number of ECU with same function, device class and function instance
       (default 0 - normally)
 */
 ISOName_c::ISOName_c(bool rb_selfConf, uint8_t rui8_indGroup, uint8_t rui8_devClass, uint8_t rui8_devClassInst,

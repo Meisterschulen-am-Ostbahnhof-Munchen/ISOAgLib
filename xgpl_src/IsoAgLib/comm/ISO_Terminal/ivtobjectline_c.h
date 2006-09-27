@@ -77,7 +77,7 @@ public:
   };
 
   //  Operation: get_vtObjectLine_a
-  iVtObjectLine_s* get_vtObjectLine_a() { return vtObjectLine_c::get_vtObjectLine_a(); };
+  const iVtObjectLine_s& get_vtObjectLine_a() { return *vtObjectLine_c::get_vtObjectLine_a(); };
 
 
   //  Operation: setLineAttributes

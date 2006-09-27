@@ -373,8 +373,9 @@ void IdentItem_c::init( ISOName_c* rpc_isoName, const uint8_t* rpb_isoName,
       pc_isoName->setDevClass(  ui8_deviceClass );
       pc_isoName->setDevClassInst( ui8_deviceClassInstance );
     }
-    setItemState(IState_c::Iso);
   }
+  setItemState(IState_c::Iso);
+
   if (rb_wantedSa != 254) b_wantedSa = rb_wantedSa;
   if (rui16_saEepromAdr != 0xFFFF) ui16_saEepromAdr = rui16_saEepromAdr;
 

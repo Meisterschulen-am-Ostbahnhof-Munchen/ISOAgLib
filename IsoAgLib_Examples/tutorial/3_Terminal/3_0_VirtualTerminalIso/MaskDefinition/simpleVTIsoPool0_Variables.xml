@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 
-<objectpool dimension='200' std_bitmap_path='bitmaps/standard' fix_bitmap_path='bitmaps/vario'>
+<objectpool dimension='200' std_bitmap_path='bitmaps/standard' fix_bitmap_path='bitmaps/vario' sk_width='60' sk_height='32'>
 
 
 <!-- Working Set -->

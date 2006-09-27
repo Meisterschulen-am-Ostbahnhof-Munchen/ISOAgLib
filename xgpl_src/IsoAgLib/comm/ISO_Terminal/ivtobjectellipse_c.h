@@ -78,7 +78,7 @@ public:
   };
 
   //  Operation: get_vtObjectmeter_a
-  iVtObjectEllipse_s* get_vtObjectEllipse_a() { return vtObjectEllipse_c::get_vtObjectEllipse_a(); };
+  const iVtObjectEllipse_s& get_vtObjectEllipse_a() { return *vtObjectEllipse_c::get_vtObjectEllipse_a(); };
 
   //  Operation: setLineAttributes
   //! Parameter:

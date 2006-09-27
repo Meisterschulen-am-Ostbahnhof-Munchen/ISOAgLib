@@ -77,7 +77,7 @@ public:
   };
 
   //  Operation: get_vtObjectContainer_a
-  iVtObjectContainer_s* get_vtObjectContainer_a() { return vtObjectContainer_c::get_vtObjectContainer_a(); };
+  const iVtObjectContainer_s& get_vtObjectContainer_a() { return *vtObjectContainer_c::get_vtObjectContainer_a(); };
 
   //  Operation: hide
   //! Parameter:

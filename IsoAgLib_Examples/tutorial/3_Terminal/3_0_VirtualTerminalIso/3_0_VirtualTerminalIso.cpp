@@ -3,8 +3,8 @@
                              -------------------
     begin                : Sun Jul 18 17:00:00 CEST 2004
 
-    copyright            : (C) 2000 - 2004 by Dipl.-Inform. Achim Spangler
-    email                : a.spangler@osb-ag:de
+    copyright            : (C) 2000 - 2006 by Dipl.-Inf. Martin Wodok
+    email                : m.wodok@osb-ag:de
  ***************************************************************************/
 
 /* *************************************************************************
@@ -48,10 +48,6 @@
  * along with IsoAgLib; if not, write to the Free Software Foundation,     *
  * Inc., 59 Temple Place, Suite 330, Boston, MA  02111_1307  USA           *
  ***************************************************************************/
-
-#define USERPOOLUPDATE_TEST
-// #define DEBUG_RAPID_UPDATE
-// #define DEBUG_TOGGLE_POINTER
 
 /* *********************************************************************** */
 /** \example 3_0_VirtualTerminalIso.cpp
@@ -197,9 +193,6 @@
 // include the central interface header for the hardware adaptation layer part
 // of the "IsoAgLib"
 
-/* include some needed util headers */
-//#include <IsoAgLib/util/config.h>
-
 /* include headers for the needed drivers */
 #include <IsoAgLib/driver/system/isystem_c.h>
 #include <IsoAgLib/driver/can/icanio_c.h>
@@ -209,6 +202,7 @@
 #include <IsoAgLib/comm/Scheduler/ischeduler_c.h>
 #include <IsoAgLib/comm/SystemMgmt/iidentitem_c.h>
 #include <IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h>
+#include <IsoAgLib/comm/Multipacket/imultisend_c.h>
 #include <supplementary_driver/driver/datastreams/streaminput_c.h>
 #include <iostream>
 
@@ -216,9 +210,9 @@
    all generated ISO Terminal Object Pool Definitions */
 #include "MaskDefinition/simpleVTIsoPool_direct.h"
 
-#ifdef USERPOOLUPDATE_TEST
-  #include <IsoAgLib/comm/ISO_Terminal/impl/vtclientservercommunication_c.h>
-#endif
+/// As there's NOT YET an interface class for VtClientServerCommunication_c,
+/// we're right now using this class directly. This is subject to change soon!
+#include <IsoAgLib/comm/ISO_Terminal/impl/vtclientservercommunication_c.h>
 
 // the interface objects of the IsoAgLib are placed in the IsoAgLib namespace
 // -> include all elements of this area for easy access
@@ -226,12 +220,57 @@
 // is needed for the documentation generator
 using namespace IsoAgLib;
 
+
+
+/// Things needed for the Partial Pool Update following...
 iVtObject_c* arrpc_vtObjectsToUpdate[] =
 {
   &iVtObjectValSpeed,
   &iVtObjectValAccel,
   &iVtObjectBigLogo
 };
+static const unsigned int scui_newLogoWidth=16;
+static const unsigned int scui_newLogoHeight=16;
+static uint8_t newLogoBuffer [scui_newLogoWidth*scui_newLogoHeight];
+
+
+// normal program variables (that are also used as source for the vt-display
+static int16_t valSpeed=0,
+               valMiles=0,
+               valAccel=10,
+               color=0,
+               like=0;
+
+// for changeAttribute when pressing on "Change Colour" button
+static iVtObjectStringVariable_c *colTable [9] =
+{ &iVtObjectStrNone
+, &iVtObjectStrRed
+, &iVtObjectStrGreen
+, &iVtObjectStrBlue
+, &iVtObjectStrYellow
+, &iVtObjectStrCyan
+, &iVtObjectStrMagenta
+, &iVtObjectStrBlack
+, &iVtObjectStrWhite
+};
+
+static uint8_t fgcolTable [9] = {0, 12, 2, 9, 14, 11, 13, 0, 1};
+
+// some small helper functions
+void updateMiles (uint32_t rui32_value) {
+  valMiles = rui32_value;
+  int16_t angle;
+  angle = (180*valMiles)>>12;
+  iVtObjectdEllipse.setEndAngle ((angle==0)?1:angle);
+  iVtObjectValMiles.setValue (valMiles+10000);
+}
+
+void updateAccel(int32_t ri32_value) {
+  valAccel = ri32_value;
+  iVtObjectValAccel.setValue (valAccel+10000);
+  iVtObjectAccelArchedBarGraph.setValue (valAccel +10000);
+}
+
 
 /******************************/
 /* Example Code following.... */
@@ -286,26 +325,6 @@ uint8_t iObjectPool_simpleVTIsoPool_c::convertColour(uint8_t colorValue, uint8_t
   }
 }
 
-// normal program variables (that are also used as source for the vt-display
-static int16_t valSpeed=0, valMiles=0, valAccel=10, color=0, like=0;
-
-// for changeAttribute when pressing on "Change Colour" button
-static iVtObjectStringVariable_c *colTable [9] = {&iVtObjectStrNone, &iVtObjectStrRed, &iVtObjectStrGreen, &iVtObjectStrBlue, &iVtObjectStrYellow, &iVtObjectStrCyan, &iVtObjectStrMagenta, &iVtObjectStrBlack, &iVtObjectStrWhite};
-static uint8_t fgcolTable [9] = {0, 12, 2, 9, 14, 11, 13, 0, 1};
-
-void updateMiles(uint32_t rui32_value) {
-  valMiles = rui32_value;
-  int16_t angle;
-  angle = (180*valMiles)>>12;
-  iVtObjectdEllipse.setEndAngle ((angle==0)?1:angle);
-  iVtObjectValMiles.setValue (valMiles+10000);
-}
-
-void updateAccel(int32_t ri32_value) {
-  valAccel = ri32_value;
-  iVtObjectValAccel.setValue (valAccel+10000);
-  iVtObjectAccelArchedBarGraph.setValue (valAccel +10000);
-}
 
 // handle incoming number-inputs from vt
 void iObjectPool_simpleVTIsoPool_c::eventNumericValue ( uint16_t objId, uint8_t ui8_value, uint32_t ui32_value )
@@ -323,7 +342,7 @@ void iObjectPool_simpleVTIsoPool_c::eventNumericValue ( uint16_t objId, uint8_t 
 
     case iVtObjectIDInputListTypFakeMiles:
       /* +++ Showing what can be done in one statement: */
-      updateMiles (((iVtObjectOutputNumber_c *)iVtObjectInputListTypFakeMiles.getListItem (ui8_value))->get_vtObjectOutputNumber_a()->value);
+      updateMiles ((static_cast<iVtObjectOutputNumber_c*>(iVtObjectInputListTypFakeMiles.getListItem (ui8_value))->get_vtObjectOutputNumber_a()).value);
 
       /* +++ Showing the same in four lines, it may be easier to read/understand this way
       // get the selected object from the input list
@@ -340,16 +359,10 @@ void iObjectPool_simpleVTIsoPool_c::eventNumericValue ( uint16_t objId, uint8_t 
 }
 
 
-#ifdef USERPOOLUPDATE_TEST
-  static const unsigned int scui_newLogoWidth=16;
-  static const unsigned int scui_newLogoHeight=16;
-  static uint8_t newLogoBuffer[scui_newLogoWidth*scui_newLogoHeight];
-#endif
 
 // incoming key-events
 void iObjectPool_simpleVTIsoPool_c::eventKeyCode ( uint8_t keyActivationCode, uint16_t /*objId*/, uint16_t /*objIdMask*/, uint8_t keyCode, bool /*wasButton*/ )
 {
-  static int xy=0;
 /* just for your information! - defines are to be found in the "ivttypes.h" include!
   #define BUTTON_HAS_BEEN_UNLATCHED 0
   #define BUTTON_HAS_BEEN_PRESSED 1
@@ -367,11 +380,26 @@ void iObjectPool_simpleVTIsoPool_c::eventKeyCode ( uint8_t keyActivationCode, ui
   if (keyActivationCode == KEY_HAS_BEEN_PRESSED) {   // == BUTTON_HAS_BEEN_PRESSED
     switch (keyCode) {
       case vtKeyCodeKeyReset:
-    #ifdef USERPOOLUPDATE_TEST
-        {
-          std::cout << "Reset pressed. Triggering Pool update."<<std::endl;
+        valSpeed = 0;
+        updateAccel (10);
+        updateMiles (0);
+        iVtObjectValSpeed.setValue (valSpeed+10000);
+        iVtObjectcontainerInAllMasks.setChildPosition (&iVtObjectBigLogo, 0, 0); // reset logo position to left upper corner
+        break;
 
-          /// We should wait until a previous partial update has finished, as else we would
+      case vtKeyCodeKeyChangeFill:
+        if (iVtObjectdPolygon.get_vtObjectPolygon_a().fillAttributes == NULL)
+        { // object was set to NULL as fill-attributes, so toggle it to "iVtObjectFillAttributes"
+          iVtObjectdPolygon.setFillAttributes(&iVtObjectFillAttributes, true); // true == update object (needed for the if-clause above!)
+        }
+        else
+        { // object was already set to "iVtObjectFillAttributes", so toggle it to NULL
+          iVtObjectdPolygon.setFillAttributes(NULL, true); // true == update object (needed for the if-clause above!)
+        }
+        break;
+
+      case vtKeyCodeKeyUpdatePool:
+        { /// @todo We should wait until a previous partial update has finished, as else we would
           /// modify the buffer while it's being used for the pool update!
 
           // this actually only needs to be done once!!! but I don't care for now...
@@ -379,24 +407,11 @@ void iObjectPool_simpleVTIsoPool_c::eventKeyCode ( uint8_t keyActivationCode, ui
 
           for (unsigned int y=0; y < scui_newLogoHeight; y++)
             for (unsigned int x=0; x < scui_newLogoWidth; x++)
-              newLogoBuffer [x+y*scui_newLogoHeight] = valSpeed + (x+y*scui_newLogoHeight); // write some nice pattern in there...
+              newLogoBuffer [x+y*scui_newLogoHeight] = valSpeed + (x+y*scui_newLogoHeight); // write some nice pattern (depending on SPEED) in there...
 
-          __IsoAgLib::VtClientServerCommunication_c& refc_vtCSC = __IsoAgLib::getIsoTerminalInstance().getClientByID(0);
-          refc_vtCSC.sendCommandUpdateObjectPool(arrpc_vtObjectsToUpdate, sizeof(arrpc_vtObjectsToUpdate)/sizeof(iVtObject_c*));
-          std::cout << "Triggered Pool update."<<std::endl;
+          __IsoAgLib::VtClientServerCommunication_c& refc_vtCSC = __IsoAgLib::getIsoTerminalInstance().getClientByID (0);
+          refc_vtCSC.sendCommandUpdateObjectPool (arrpc_vtObjectsToUpdate, sizeof(arrpc_vtObjectsToUpdate)/sizeof(iVtObject_c*));
         }
-    #else
-        valSpeed = 0;
-        updateAccel (10);
-        updateMiles (0);
-        iVtObjectValSpeed.setValue (valSpeed+10000);
-    #endif
-        xy = 0;
-        iVtObjectcontainerInAllMasks.setChildPosition (&iVtObjectBigLogo, xy, xy);
-        break;
-
-      case vtKeyCodeKeyChangeFill:
-        iVtObjectdPolygon.setFillAttributes(&iVtObjectFillAttributes);
         break;
 
       case vtKeyCodeKeyMove:
@@ -407,19 +422,19 @@ void iObjectPool_simpleVTIsoPool_c::eventKeyCode ( uint8_t keyActivationCode, ui
 
       case vtKeyCodeKeyMoreAccel:
         updateAccel (valAccel + 1);
-        xy += 5;
-        iVtObjectcontainerInAllMasks.setChildPosition (&iVtObjectBigLogo, xy, xy);
         break;
 
       case vtKeyCodeKeyLessAccel:
         updateAccel (valAccel - 1);
-        xy -= 5;
-        iVtObjectcontainerInAllMasks.setChildPosition (&iVtObjectBigLogo, xy, xy);
+        break;
+
+      case vtKeyCodeKeyChangeLogoPosition:
+        iVtObjectcontainerInAllMasks.setChildPosition (&iVtObjectBigLogo, HAL::getTime()%100, ((HAL::getTime()+2712)%64)-32); // move to kinda random position
         break;
 
       // Use b_updateObject here to save and access the hidden state directly via the object!
       case vtKeyCodeKeyLogo:
-        if (!(iVtObjectcontainerInAllMasks.get_vtObjectContainer_a()->hidden)) iVtObjectcontainerInAllMasks.hide (true);
+        if (!(iVtObjectcontainerInAllMasks.get_vtObjectContainer_a().hidden)) iVtObjectcontainerInAllMasks.hide (true);
         else iVtObjectcontainerInAllMasks.show (true);
         break;
 
@@ -430,7 +445,16 @@ void iObjectPool_simpleVTIsoPool_c::eventKeyCode ( uint8_t keyActivationCode, ui
         break;
 
       case vtKeyCodeKeyChangeLang:
-        iVtObjectColLabel.setValueRef ("Colour:");
+        // Attention: We're assuimung the the variable reference is NOT being used - else we would access a NULL pointer in "value"
+        /// ATTENTION: Strings are always stored with PADDED SPACES, so consider this in the case of the string-compare!
+        if (strcmp (iVtObjectColLabel.get_vtObjectOutputString_a().value, "Color: ") == 0)
+        { // Change from AE->BE
+          iVtObjectColLabel.setValueRef ("Colour:", true); // setValueRef makes most sense on static strings like here
+        }
+        else
+        { // Change from BE->AE (remember: "Color:" will be padded to the string-length and will become "Color: "
+          iVtObjectColLabel.setValueCopy ("Color:", true); // but just to demonstrate setValueCopy also does the job, although it has a different target use...
+        }
         break;
 
       case vtKeyCodeKeyForbidden:
@@ -447,6 +471,12 @@ void iObjectPool_simpleVTIsoPool_c::eventKeyCode ( uint8_t keyActivationCode, ui
 // has to be implemented - remember that if the VT drops out and comes again, the values have to be up2date!!!
 void iObjectPool_simpleVTIsoPool_c::eventObjectPoolUploadedSuccessfully (bool rb_wasLanguageUpdate, int8_t ri8_languageIndex, uint16_t rui16_languageCode)
 {
+
+  //! The language-code/index given here indicates that the Objectpool Upload or Update has finished NOW with exactly THIS given language!
+  //! --> There's a difference to "eventLanguagePgn", because "eventLanguagePgn" will be called IMMEDIATELY when the user changes the
+  //! --> language in the VT setup - but it may take some time until the pool is updated and remember that you can probably select more
+  //! --> languages than your working-set supports!
+
   if (rb_wasLanguageUpdate)
   {
     /// The update takes place very fast here, so we don't need to perform anything here. Normally one would switch back to normal operation mask
@@ -463,9 +493,9 @@ void iObjectPool_simpleVTIsoPool_c::eventObjectPoolUploadedSuccessfully (bool rb
     iVtObjectColLabel.setValueRef ("Color:"); // this is done so the initial state is up again if VT lost and reconnected!
     iVtObjectColOS.setVariableReference (colTable [color], true);
     iVtObjectFontAttributesNormal6x8.setFontColour (fgcolTable [color], true);
-    if (iVtObjectcontainerInAllMasks.get_vtObjectContainer_a()->hidden) iVtObjectcontainerInAllMasks.hide ();
-      updateAccel (valAccel);
-      updateMiles(valMiles);
+    if (iVtObjectcontainerInAllMasks.get_vtObjectContainer_a().hidden) iVtObjectcontainerInAllMasks.hide ();
+    updateAccel (valAccel);
+    updateMiles (valMiles);
     iVtObjectValSpeed.setValue (valSpeed+10000);
     #ifdef DEBUG
     std::cout << "-->eventObjectPoolUploadedSuccessfully: INITIAL UPLOAD TO Index "<<int(ri8_languageIndex)<<". User tried to select ["<<uint8_t(rui16_languageCode>>8)<<uint8_t(rui16_languageCode&0xFF)<<"] <--\n";
@@ -483,7 +513,7 @@ void iObjectPool_simpleVTIsoPool_c::eventEnterSafeState ()
   #endif
 }
 
-void iObjectPool_simpleVTIsoPool_c::eventStringValue (uint16_t /*rui16_objId*/, uint8_t rui8_length, StreamInput_c &refc_streaminput, uint8_t /*rui8_unparsedBytes*/, bool /*b_isFirst*/, bool b_isLast)
+void iObjectPool_simpleVTIsoPool_c::eventStringValue (uint16_t rui16_objId, uint8_t rui8_length, StreamInput_c &refc_streaminput, uint8_t /*rui8_unparsedBytes*/, bool /*b_isFirst*/, bool b_isLast)
 {
   if (b_isLast)
   {
@@ -493,11 +523,17 @@ void iObjectPool_simpleVTIsoPool_c::eventStringValue (uint16_t /*rui16_objId*/, 
     {
       c_buffer.push_back( refc_streaminput.get() );
     }
-    iVtObjectOSresonible.setValueCopy(c_buffer.c_str());
-    #ifdef DEBUG
-    std::cout << "String: " << c_buffer << ".\n";
-    fflush(0);
-    #endif
+
+    switch (rui16_objId)
+    {
+      case iVtObjectIDISdriver:
+      {
+        iVtObjectOSresonible.setValueCopy (c_buffer.c_str());
+      } break;
+
+      default:
+        break;
+    }
   }
 }
 
@@ -506,61 +542,46 @@ iObjectPool_simpleVTIsoPool_c::eventLanguagePgn(const localSettings_s& rrefs_loc
 {
   /// THIS FUNCTION SHOULD ONLY BE USED FOR CHANGE IN UNITS, ETC.
   /// FOR LANGUAGE CHANGE, REFER TO --> "eventObjectPoolUploadedSuccessfully" <--
+  /// Remeber: If the language changed, it may take some time until your object-pool is updated in this language
+  ///          You'll get a notification on an updated object-pool in "eventObjectPoolUploadedSuccessfully"!
   char languageCode[2+1]; languageCode[2+1-1] = 0x00;
   languageCode[0] = rrefs_localSettings.languageCode >> 8;
   languageCode[1] = rrefs_localSettings.languageCode & 0xFF;
-  #ifdef DEBUG
-  std::cout << "-->eventLanguagePgn("<<languageCode<<")<--\n";
-  #endif
   iVtObjectOSlanguage.setValueCopy (languageCode);
 }
 
+
 static iObjectPool_simpleVTIsoPool_c Tutorial_3_0_Pool_c;
 
-/********************/
-/* End Example Code */
-/********************/
 int main()
-{ // simply call startImi
+{
 
-  getIcanInstance().init( 0, 250 );
+  getIcanInstance().init (0,    // CAN-Bus 0
+                          250); // 250 kbit
 
-  // variable for DEV_KEY
-  // default with primary cultivation mounted back
-  IsoAgLib::iISOName_c myISOName( 7, 0 );
+  IsoAgLib::iISOName_c myISOName (true, // rb_selfConf
+                                  2,    // rui8_indGroup
+                                  7,    // rui8_devClass
+                                  0,    // rui8_devClassInst
+                                  25,   // rb_func
+                                  0x7FF,// rui16_manufCode
+                                  27,   // rui32_serNo
+                                  0,    // rb_funcInst
+                                  0);   // rb_ecuInst
 
-  // start address claim of the local member "IMI"
-  // if DEV_KEY conflicts forces change of device class instance, the
-  // IsoAgLib can cahnge the myISOName val through the pointer to myISOName
-  bool b_selfConf = true;
-  uint8_t ui8_indGroup = 2,
-      b_func = 25,
-      b_wantedSa = 254, //128,
-      b_funcInst = 0,
-      b_ecuInst = 0;
-  uint16_t ui16_manufCode = 0x7FF;
-  uint32_t ui32_serNo = 27;
+  // start address claim of the local identity/member
+  // if the ISO-NAME conflicts forces change (as long as it's not yet announce on the bus!).
+  // IsoAgLib can change the myISOName val through the pointer to myISOName in the 
+  IsoAgLib::iIdentItem_c c_myIdent (&myISOName,
+                                    254,        // No preferred SA, auto-allocate in range 0x80 upwards...
+                                    0x100,      // EEPROM-Address to store the allocated SA for re-use after power-cycle
+                                    0,          // 0 means: We're WS-Master and have 0 WS-Slaves
+                                    NULL);      // so no list given either...
 
-  // start address claim of the local member "IMI"
-  // if DEV_KEY conflicts forces change of device class instance, the
-  // IsoAgLib can change the myISOName val through the pointer to myISOName
-  #if 1
-  IsoAgLib::iIdentItem_c c_myIdent( &myISOName,
-      b_selfConf, ui8_indGroup, b_func, ui16_manufCode,
-      ui32_serNo, b_wantedSa, 256 /*0xFFFF*/, b_funcInst, b_ecuInst, 0, NULL );
 
-  #else
-  uint64_t ui64_isoName = 0xa00e840000000000ULL;
-                        //0x0000000000840ea0;
-
-  IsoAgLib::iIdentItem_c c_myIdent(&myISOName, (const uint8_t*)&ui64_isoName, b_wantedSa, 0xFFFF, 0, NULL );
-  #endif
-
-  /* Explicit call to init iIsoTerminal instance - not really needed though */
-  getIisoTerminalInstance().init();
-
-  /* Call to init iIsoTerminal instance and initialize object pool! */
-  getIisoTerminalInstance().registerIsoObjectPool(c_myIdent, Tutorial_3_0_Pool_c, "Tut-3_0");
+  // Call to init iIsoTerminal instance and initialize object pool!
+  getIisoTerminalInstance().registerIsoObjectPool (c_myIdent, Tutorial_3_0_Pool_c, "T30v1"); // PoolName: Tutorial 3.0 Version 1
+  // only use 5 chars as the pool supports Multi-Language (the last 2 chars are used for the language-code then!
 
   /** IMPORTANT:
     - The following loop could be replaced of any repeating call of
@@ -592,54 +613,17 @@ int main()
     // IMPORTANT: call main timeEvent function for
     // all time controlled actions of IsoAgLib
     IsoAgLib::getISchedulerInstance().timeEvent();
-#ifdef DEBUG_TOGGLE_POINTER
-    {
-      static int32_t si32_lastPtrTime = 0;
-      int32_t i32_nowTime = HAL::getTime();
-      if ((i32_nowTime - si32_lastPtrTime) > 5000) {
-        static bool sb_togglePtr = false;
-        if (sb_togglePtr)
-             iVtObjectChangeAwayPointer.setValue (NULL);
-        else iVtObjectChangeAwayPointer.setValue (&iVtObjectInputMiles);
-        sb_togglePtr = !sb_togglePtr;
-        si32_lastPtrTime = i32_nowTime;
-      }
-    }
-#endif
 
-#ifdef DEBUG_RAPID_UPDATE
-    {
-      static int32_t si32_lastTime = 0;
-      int32_t i32_nowTime = HAL::getTime();
-      if ((i32_nowTime - si32_lastTime) > 1000) {
-        updateMiles (valMiles+1);
-        si32_lastTime = i32_nowTime;
-      }
-    }
-#endif
-#ifdef DEBUG_TOGGLE_MASKS
-    static int32_t si32_lastToggleTime = 0;
-    int32_t i32_nowTime = HAL::getTime();
-    if ((i32_nowTime - si32_lastToggleTime) > 5000) {
-      static bool sb_toggle = false;
-      si32_lastToggleTime = i32_nowTime;
-      if (sb_toggle)
-           iVtObjectimiIsoMaskupload.changeActiveMask (&iVtObjectMainMask);
-//      else iVtObjectimiIsoMaskupload.changeActiveMask (&iVtObjectAnotherMask);
-      else iVtObjectimiIsoMaskupload.changeActiveMask (&iVtObjectForbiddenAlarmMask);
-//      else iVtObjectimiIsoMaskupload.changeActiveMask (&iVtObjectMainMask);
-      sb_toggle = !sb_toggle;
-    }
-#endif
+    // The following sleep mechanism will be changed with the new scheduler reporting back the idle-time
+    // no need to sleep on single-task systems
     #ifdef SYSTEM_PC
-     #ifdef WIN32
-     Sleep(10);
-     #else
-     IsoAgLib::iCANIO_c::waitUntilCanReceiveOrTimeout( 50 );
-     #endif
+      #ifdef WIN32
+        Sleep(10);
+      #else
+        IsoAgLib::iCANIO_c::waitUntilCanReceiveOrTimeout( 50 );
+      #endif
     #endif
   }
-  return 1;
 }
 
 

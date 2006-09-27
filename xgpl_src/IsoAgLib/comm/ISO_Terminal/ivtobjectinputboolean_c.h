@@ -77,7 +77,7 @@ public:
   };
 
   //  Operation: get_vtObjectInputBoolean_a
-  iVtObjectInputBoolean_s* get_vtObjectInputBoolean_a() { return vtObjectInputBoolean_c::get_vtObjectInputBoolean_a(); };
+  const iVtObjectInputBoolean_s& get_vtObjectInputBoolean_a() { return *vtObjectInputBoolean_c::get_vtObjectInputBoolean_a(); };
 
   //  Operation: setValue
   //! Parameter:
