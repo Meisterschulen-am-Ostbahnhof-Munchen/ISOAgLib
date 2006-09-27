@@ -143,12 +143,6 @@ namespace __IsoAgLib
     */
     virtual CANPkgExt_c& dataBase();
 
-    /** check if filter boxes shall be created - create only ISO filters based
-      on active local idents which has already claimed an address
-      --> avoid to much Filter Boxes
-    */
-    virtual void checkCreateReceiveFilter() = 0;
-
     /** functions with actions, which must be performed periodically
         -> called periodically by Scheduler_c
         ==> sends base msg if configured in the needed rates
@@ -163,6 +157,7 @@ namespace __IsoAgLib
 
     /** send a PGN request */
     bool sendPgnRequest(uint32_t ui32_requestedPGN);
+
     /** check if preconditions for request for pgn are fullfilled
         @return  true -> the request for pgn can be send
       */
@@ -180,6 +175,7 @@ namespace __IsoAgLib
 
     /** Retrieve the last update time of the specified information type*/
     int32_t lastedTimeSinceUpdate() const { return (System_c::getTime() - i32_lastMsgReceived);}
+
     /** Retrieve the time of last update */
     int32_t lastUpdateTime() const {return i32_lastMsgReceived;}
 
@@ -191,36 +187,54 @@ namespace __IsoAgLib
 
     /** check if iso filters have alread been created*/
     bool checkFilterCreated() const {return b_filterCreated;}
+
     /** set b_filterCreated*/
     void setFilterCreated() {b_filterCreated = true;}
+
     /** clear b_filterCreated*/
     void clearFilterCreated() {b_filterCreated = false;}
 
     /** return sender of a msg*/
     const ISOName_c* getISOName() const {return pc_isoName;}
+
     /** get evkey of data source (e.g. tractor, terminal) from which commands are send exclusively */
     ISOName_c& getSelectedDataSourceISOName() {return c_selectedDataSourceISOName;}
+
     /** get Devkey of data source (e.g. tractor, terminal) from which commands are send exclusively */
     const ISOName_c& getSelectedDataSourceISONameConst() const {return c_selectedDataSourceISOName;}
 
     /** get actual mode */
     IsoAgLib::IdentMode_t getMode() const {return t_identMode;}
+
     /** set mode to implement or tractor*/
     void setMode(IsoAgLib::IdentMode_t rt_identMode) {t_identMode = rt_identMode;}
+
     /** set Devkey of data source (e.g. tractor, terminal) which sends commands exclusively */
     void setSelectedDataSourceISOName(const ISOName_c& rc_dataSourceISOName){c_selectedDataSourceISOName = rc_dataSourceISOName;}
 
     /** set last time of data msg [msec]*/
     void setUpdateTime(int32_t updateTime) {i32_lastMsgReceived = updateTime;}
 
-
     /** if a message is not send after 3 seconds it is expected that the sending node stopped sending */
     static const uint16_t TIMEOUT_SENDING_NODE = 3000;
+
   private:
+
+    // private methods
+    /** check if filter boxes shall be created - create only ISO filters based
+      on active local idents which has already claimed an address
+      --> avoid to much Filter Boxes
+    */
+    virtual void checkCreateReceiveFilter() = 0;
+
     /** set sender of a msg*/
-    void setISOName(const ISOName_c* isoName){pc_isoName = isoName;}
+    void setISOName(const ISOName_c* isoName) {pc_isoName = isoName;}
+
+
+    // private attributes
     /** can be implement mode or tractor mode*/
     IsoAgLib::IdentMode_t t_identMode;
+
     /** flag to detect, if receive filters for ISO are created */
     bool b_filterCreated;
 
@@ -231,6 +245,7 @@ namespace __IsoAgLib
         This pointer is set in config function
       */
     const ISOName_c* pc_isoName;
+
     /** Devkey of data source (e.g. tractor, terminal) from which commands are send exclusively */
     ISOName_c c_selectedDataSourceISOName;
 

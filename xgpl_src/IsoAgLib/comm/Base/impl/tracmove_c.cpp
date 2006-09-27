@@ -179,28 +179,28 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     }
   }
 
-  /**
-    process a ISO11783 moving information PGN
-  */
+  /** process a ISO11783 base information PGN
+      @pre  sender of message is existent in monitor list
+      @see  CANPkgExt_c::resolveSendingInformation()
+    */
   bool TracMove_c::processMsg()
   {
     #if defined(USE_BASE) || defined(USE_TRACTOR_GENERAL)
     TracGeneral_c& c_tracgeneral = getTracGeneralInstance4Comm();
     #endif
+
+    const int32_t ci32_now = Scheduler_c::getLastTimeEventTrigger();
     ISOName_c c_tempISOName( ISOName_c::ISONameUnspecified );
-    // store the isoName of the sender of base data
-    if (getIsoMonitorInstance4Comm().existIsoMemberNr(data().isoSa()))
-    { // the corresponding sender entry exist in the monitor list
-      c_tempISOName = getIsoMonitorInstance4Comm().isoMemberNr(data().isoSa()).isoName();
-    }
+
+    // there is no need to check if sender exist in the monitor list because this is already done
+    // in CANPkgExt_c -> resolveSendingInformation
+    c_tempISOName = data().getISONameForSA();
 
     #ifdef USE_RS232_FOR_DEBUG
     INTERNAL_DEBUG_DEVICE << "c_tempISOName: " <<  static_cast<const int>(c_tempISOName.devClass() ) << INTERNAL_DEBUG_DEVICE_ENDL;
     INTERNAL_DEBUG_DEVICE << "senderISOName: " <<  static_cast<const int>(getSelectedDataSourceISOName().devClass() ) << INTERNAL_DEBUG_DEVICE_ENDL;
     INTERNAL_DEBUG_DEVICE << "PGN:          " << (data().isoPgn() & 0x1FFFF) << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
-
-    const int32_t ci32_now = Scheduler_c::getLastTimeEventTrigger();
 
     switch (data().isoPgn() & 0x1FFFF)
     {

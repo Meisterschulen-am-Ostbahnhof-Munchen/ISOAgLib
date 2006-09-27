@@ -129,7 +129,7 @@ public: // Public methods
       @param rpc_isoName optional pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
       @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
     */
-  void init(const ISOName_c* rpc_isoName = NULL, IsoAgLib::IdentMode_t rt_identMode = IsoAgLib::IdentModeImplement);
+  virtual void init(const ISOName_c* rpc_isoName = NULL, IsoAgLib::IdentMode_t rt_identMode = IsoAgLib::IdentModeImplement);
 
   /** config the TracGeneral_c object after init -> set pointer to isoName and
       config send/receive of different general base msg types
@@ -137,13 +137,7 @@ public: // Public methods
       @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       @return true -> configuration was successfull
     */
-  bool config(const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode);
-
-  /** check if filter boxes shall be created - create only filters based
-      on active local idents which has already claimed an address
-      --> avoid to much Filter Boxes
-    */
-  void checkCreateReceiveFilter();
+  virtual bool config(const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode);
 
   /** destructor for TracGeneral_c which has nothing to do */
   virtual ~TracGeneral_c() { BaseCommon_c::close();};
@@ -337,6 +331,12 @@ private:
     */
   TracGeneral_c() {};
 
+  /** check if filter boxes shall be created - create only filters based
+      on active local idents which has already claimed an address
+      --> avoid to much Filter Boxes
+    */
+  virtual void checkCreateReceiveFilter();
+
   /** send a ISO11783 general base information PGN.
     * this is only called when sending ident is configured and it has already claimed an address
       @pre  function is only called in tractor mode
@@ -344,7 +344,10 @@ private:
     */
   virtual bool timeEventTracMode();
 
-  /** process a ISO11783 general base information PGN */
+  /** process a ISO11783 base information PGN
+      @pre  sender of message is existent in monitor list
+      @see  CANPkgExt_c::resolveSendingInformation()
+    */
   bool processMsg();
 
   /** send front hitch and rear hitch data msg

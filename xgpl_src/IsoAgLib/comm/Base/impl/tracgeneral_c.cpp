@@ -234,16 +234,18 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     return true;
   }
 
-  /** process a ISO11783 general base information PGN */
+  /** process a ISO11783 base information PGN
+      @pre  sender of message is existent in monitor list
+      @see  CANPkgExt_c::resolveSendingInformation()
+    */
   bool TracGeneral_c::processMsg()
   {
     bool b_result = false;
     ISOName_c c_tempISOName( ISOName_c::ISONameUnspecified );
-    // store the isoName of the sender of base data
-    if (getIsoMonitorInstance4Comm().existIsoMemberNr(data().isoSa()))
-    { // the corresponding sender entry exist in the monitor list
-      c_tempISOName = getIsoMonitorInstance4Comm().isoMemberNr(data().isoSa()).isoName();
-    }
+
+    // there is no need to check if sender exist in the monitor list because this is already done
+    // in CANPkgExt_c -> resolveSendingInformation
+    c_tempISOName = data().getISONameForSA();
 
     switch (data().isoPgn() & 0x1FFFF)
     {

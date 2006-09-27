@@ -212,7 +212,7 @@ bool BaseCommon_c::checkParseReceived(const ISOName_c& rrefc_currentSender) cons
 }
 
 
-  /** functions with actions, which must be performed periodically
+/** functions with actions, which must be performed periodically
     -> called periodically by Scheduler_c
     ==> sends base data msg if configured in the needed rates
     possible errors:
@@ -227,6 +227,7 @@ bool BaseCommon_c::timeEvent()
   if (Scheduler_c::getAvailableExecTime() == 0) return false;
 
   checkCreateReceiveFilter();
+
   if (Scheduler_c::getAvailableExecTime() == 0) return false;
 
   // check for different base data types whether the previously
@@ -327,7 +328,7 @@ bool BaseCommon_c::check4ReqForPgn(uint32_t /* rui32_pgn */, uint8_t /*rui8_sa*/
   if ( NULL == getISOName() ) return false;
   if ( ! getIsoMonitorInstance4Comm().existIsoMemberISOName( *getISOName(), true ) ) return false;
 
-  // now we can be sure, that we are in tractor mode, and the registered tractor device key
+  // now we can be sure, that we are in tractor mode, and the registered tractor isoname
   // belongs to an already claimed IsoItem_c --> we are allowed to send
   if ( ( getIsoMonitorInstance4Comm().isoMemberISOName( *getISOName() ).nr() == rui8_da ) || ( rui8_da == 0xFF ) )
   { // the REQUEST was directed to the SA that belongs to the tractor IdentItem_c that is matched by the registrated
