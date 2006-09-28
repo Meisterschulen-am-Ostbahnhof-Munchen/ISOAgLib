@@ -227,7 +227,7 @@ private:
   //  Operation: updateEnable
   //! Parameter:
   //! @param b_enableOrDisable:
-  void updateEnable(bool b_enableOrDisable);
+  void updateEnable(uint8_t rui8_enOrDis);
 
 }; // ~X2C
 

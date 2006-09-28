@@ -166,10 +166,9 @@ vtObjectInputList_c::fitTerminal() const
 //! Parameter:
 //! @param b_enableOrDisable:
 void
-vtObjectInputList_c::updateEnable(bool b_enableOrDisable)
+vtObjectInputList_c::updateEnable(uint8_t rui8_enOrDis)
 { // ~X2C
-  MACRO_localVars;
-  vtObjectInputList_a->enabled=b_enableOrDisable;
+  saveValue8 (MACRO_getStructOffset(get_vtObjectInputList_a(), enabled), sizeof(iVtObjectInputList_s), rui8_enOrDis);
 } // -X2C
 
 // //////////////////////////////// +X2C Operation 266 : setValue

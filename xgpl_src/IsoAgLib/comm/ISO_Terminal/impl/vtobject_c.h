@@ -112,9 +112,6 @@ public:
   //! Give size of VT object including header and attributes.
   virtual uint32_t fitTerminal() const = 0;
 
-  //  Operation: select
-  bool select();
-
 protected:
 
   /** @todo check for double initialization via flags & STRUCT_IN_RAM etc. */
@@ -147,9 +144,13 @@ protected:
   bool genericChangeChildPosition (IsoAgLib::iVtObject_c* childObject, int16_t dx, int16_t dy, bool b_updateObject, uint8_t numObjectsToFollow, IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow, uint16_t ui16_structOffset, uint16_t ui16_structLen, bool b_enableReplaceOfCmd);
 
   //  Operation: able
+  //! ATTENTION: Should only be used by Input-Objects of course!
   //! Parameter:
   //! @param b_updateObject:
   bool able (uint8_t enOrDis, bool b_updateObject= false, bool b_enableReplaceOfCmd=true);
+
+  //  Operation: select
+  bool select();
 
 private:
   friend class SINGLETON( iVtObject_c );
@@ -159,7 +160,7 @@ private:
     //  Operation: updateEnable
   //! Parameter:
   //! @param b_enableOrDisable:
-  virtual void updateEnable(bool /*b_enableOrDisable*/) {};
+  virtual void updateEnable(uint8_t /*rui8_enOrDis*/) {};
 
 }; // ~X2C
 

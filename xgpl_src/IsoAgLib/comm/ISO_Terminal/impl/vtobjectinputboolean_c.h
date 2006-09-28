@@ -85,7 +85,7 @@
 
 
 // +X2C includes
-#include "../ivtobjectinput_c.h"
+#include "vtobject_c.h"
 #include "isoterminal_c.h"
 // ~X2C
 
@@ -95,7 +95,7 @@ namespace __IsoAgLib {
 
 //  +X2C Class 103 : vtObjectInputBoolean_c
 //!  Stereotype: Klasse
-class vtObjectInputBoolean_c : public IsoAgLib::iVtObjectInput_c
+class vtObjectInputBoolean_c : public vtObject_c
 {
 
 public:
@@ -153,7 +153,7 @@ private:
   //  Operation: updateEnable
   //! Parameter:
   //! @param b_enableOrDisable:
-  void updateEnable(bool b_enableOrDisable);
+  void updateEnable(uint8_t rui8_enOrDis);
 
 }; // ~X2C
 

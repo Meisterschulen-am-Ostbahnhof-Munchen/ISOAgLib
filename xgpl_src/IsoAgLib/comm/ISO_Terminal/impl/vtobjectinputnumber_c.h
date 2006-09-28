@@ -85,7 +85,7 @@
 
 
 // +X2C includes
-#include "../ivtobjectinput_c.h"
+#include "vtobject_c.h"
 #include "isoterminal_c.h"
 #include "vtclientservercommunication_c.h"
 // ~X2C
@@ -96,7 +96,7 @@ namespace __IsoAgLib {
 
 //  +X2C Class 114 : vtObjectInputNumber_c
 //!  Stereotype: Klasse
-class vtObjectInputNumber_c : public IsoAgLib::iVtObjectInput_c
+class vtObjectInputNumber_c : public vtObject_c
 {
 
 public:
@@ -192,7 +192,7 @@ private:
   //  Operation: updateEnable
   //! Parameter:
   //! @param b_enableOrDisable:
-  void updateEnable(bool b_enableOrDisable);
+  void updateEnable(uint8_t rui8_enOrDis);
 
 }; // ~X2C
 

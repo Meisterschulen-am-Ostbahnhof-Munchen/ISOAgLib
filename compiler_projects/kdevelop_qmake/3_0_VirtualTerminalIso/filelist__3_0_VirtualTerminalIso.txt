@@ -44,7 +44,6 @@
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectline_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectoutputstring_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/isoterminalpkg_c.cpp
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectinput_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectfillattributes_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectnumbervariable_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectlineattributes_c.cpp
@@ -123,7 +122,6 @@
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/isoterminalpkg_c.h
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectfillattributes_c.h
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectinputboolean_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectinput_c.h
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vttypes.h
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectobjectpointer_c.h
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectinputnumber_c.h
@@ -157,7 +155,6 @@
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectmacro_c.h
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtclientservercommunication_c.h
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectauxiliaryfunction_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectinput_c.h
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtincludes.h
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobject_c.h
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivttypes.h
