@@ -782,8 +782,12 @@ bool MeasureProgLocal_c::sendRegisteredVals(Proc_c::doSend_t ren_doSend){
   switch (ren_doSend)
   {
     case Proc_c::DoValForDefaultSetpoint: en_valueGroup = GeneralCommand_c::defaultValue; break;
-    case Proc_c::DoValForMinSetpoint:     en_valueGroup = GeneralCommand_c::minValue; break;
-    case Proc_c::DoValForMaxSetpoint:     en_valueGroup = GeneralCommand_c::maxValue; break;
+    case Proc_c::DoValForMinSetpoint:
+    case Proc_c::DoValForMinMeasurement: 
+      en_valueGroup = GeneralCommand_c::minValue; break;
+    case Proc_c::DoValForMaxSetpoint:
+    case Proc_c::DoValForMaxMeasurement:
+      en_valueGroup = GeneralCommand_c::maxValue; break;
     case Proc_c::DoValForExactSetpoint:   en_valueGroup = GeneralCommand_c::exactValue; break;
     default:                              en_valueGroup = GeneralCommand_c::noValue;
   }

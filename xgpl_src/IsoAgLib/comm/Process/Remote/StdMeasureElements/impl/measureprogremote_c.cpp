@@ -148,17 +148,19 @@ MeasureProgRemote_c::~MeasureProgRemote_c(){
   @return true -> command successful sent
 */
 bool MeasureProgRemote_c::start(Proc_c::progType_t ren_progType, Proc_c::doSend_t ren_doSend){
-  // retrieve the ren_type from the registered subprogs
-  Proc_c::type_t en_combinedType = Proc_c::NullType;
+  // retrieve the ren_type from the matching registered subprog
+  Proc_c::type_t en_type = Proc_c::NullType;
+
   for (Vec_MeasureSubprog::iterator pc_subprog = vec_measureSubprog.begin();
        pc_subprog != vec_measureSubprog.end(); pc_subprog++)
-  { // build en_combinedType
-    if (pc_subprog == vec_measureSubprog.begin()) en_combinedType = pc_subprog->type();
-    else en_combinedType = Proc_c::type_t(pc_subprog->type() | en_combinedType);
+  {
+    // take type of measurement prog only from that subprog with the same en_doSend! (no combination!)
+    if (pc_subprog->doSend() == ren_doSend)
+      en_type = pc_subprog->type();
   }
 
   // now call other start with en_combinedType
-  return start(ren_progType, en_combinedType, ren_doSend);
+  return start(ren_progType, en_type, ren_doSend);
 }
 
 /**
@@ -229,16 +231,39 @@ bool MeasureProgRemote_c::start(Proc_c::progType_t ren_progType, Proc_c::type_t 
 
       bool b_isSetpoint = FALSE;
       GeneralCommand_c::ValueGroup_t en_valueGroup;
-      if (Proc_c::DoVal != ren_doSend)
-        // start measurement for a sepoint DDI in proc data instance
-        b_isSetpoint = TRUE;
 
       switch (ren_doSend)
       {
-        case Proc_c::DoValForDefaultSetpoint: en_valueGroup = GeneralCommand_c::defaultValue; break;
-        case Proc_c::DoValForMinSetpoint:     en_valueGroup = GeneralCommand_c::minValue; break;
-        case Proc_c::DoValForMaxSetpoint:     en_valueGroup = GeneralCommand_c::maxValue; break;
-        default:                              en_valueGroup = GeneralCommand_c::exactValue;
+        case Proc_c::DoValForExactSetpoint:
+          en_valueGroup = GeneralCommand_c::exactValue;
+          // start measurement for a sepoint DDI in proc data instance
+          b_isSetpoint = TRUE;
+          break;
+
+        case Proc_c::DoValForDefaultSetpoint:
+          en_valueGroup = GeneralCommand_c::defaultValue;
+          // start measurement for a sepoint DDI in proc data instance
+          b_isSetpoint = TRUE;
+          break;
+
+        case Proc_c::DoValForMinSetpoint:
+          // start measurement for a sepoint DDI in proc data instance
+          b_isSetpoint = TRUE;
+          // no break!
+        case Proc_c::DoValForMinMeasurement:
+          en_valueGroup = GeneralCommand_c::minValue;
+          break;
+
+        case Proc_c::DoValForMaxSetpoint:
+          // start measurement for a sepoint DDI in proc data instance
+          b_isSetpoint = TRUE;
+          // no break!
+        case Proc_c::DoValForMaxMeasurement:
+          en_valueGroup = GeneralCommand_c::maxValue;
+          break;
+
+        default:
+          en_valueGroup = GeneralCommand_c::exactValue;
       }
 
       // prepare general command in process pkg
@@ -324,16 +349,39 @@ bool MeasureProgRemote_c::stop(bool b_deleteSubProgs, Proc_c::type_t ren_type, P
     {
       bool b_isSetpoint = FALSE;
       GeneralCommand_c::ValueGroup_t en_valueGroup;
-      if (Proc_c::DoVal != pc_subprog->doSend())
-        // stop measurement for a sepoint DDI in proc data instance
-        b_isSetpoint = TRUE;
 
       switch (pc_subprog->doSend())
       {
-        case Proc_c::DoValForDefaultSetpoint: en_valueGroup = GeneralCommand_c::defaultValue; break;
-        case Proc_c::DoValForMinSetpoint:     en_valueGroup = GeneralCommand_c::minValue; break;
-        case Proc_c::DoValForMaxSetpoint:     en_valueGroup = GeneralCommand_c::maxValue; break;
-        default:                              en_valueGroup = GeneralCommand_c::exactValue;
+        case Proc_c::DoValForExactSetpoint:
+          en_valueGroup = GeneralCommand_c::exactValue;
+          // start measurement for a sepoint DDI in proc data instance
+          b_isSetpoint = TRUE;
+          break;
+
+        case Proc_c::DoValForDefaultSetpoint: 
+          en_valueGroup = GeneralCommand_c::defaultValue;
+          // stop measurement for a sepoint DDI in proc data instance
+          b_isSetpoint = TRUE;
+          break;
+
+        case Proc_c::DoValForMinSetpoint:
+          // stop measurement for a sepoint DDI in proc data instance
+          b_isSetpoint = TRUE;
+          // no break!
+        case Proc_c::DoValForMinMeasurement:
+          en_valueGroup = GeneralCommand_c::minValue;
+          break;
+
+        case Proc_c::DoValForMaxSetpoint:
+          // stop measurement for a sepoint DDI in proc data instance
+          b_isSetpoint = TRUE;
+          // no break!
+        case Proc_c::DoValForMaxMeasurement:
+          en_valueGroup = GeneralCommand_c::maxValue;
+          break;
+
+        default:
+          en_valueGroup = GeneralCommand_c::exactValue;
       }
 
       // prepare general command in process pkg

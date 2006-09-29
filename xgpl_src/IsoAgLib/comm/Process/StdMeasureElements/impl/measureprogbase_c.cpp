@@ -638,9 +638,13 @@ bool MeasureProgBase_c::processMsg(){
     {
       case GeneralCommand_c::minValue:
         en_doSend = Proc_c::DoValForMinSetpoint; // measurement for min value setpoint
+        if (!c_pkg.c_generalCommand.checkIsSetpoint())
+          en_doSend = Proc_c::DoValForMinMeasurement; // measurement for min value measurement
         break;
       case GeneralCommand_c::maxValue:
         en_doSend = Proc_c::DoValForMaxSetpoint; // measurement for max value setpoint
+        if (!c_pkg.c_generalCommand.checkIsSetpoint())
+          en_doSend = Proc_c::DoValForMaxMeasurement; // measurement for max value measurement
         break;
       case GeneralCommand_c::defaultValue:
         en_doSend = Proc_c::DoValForDefaultSetpoint; // measurement for default value setpoint
