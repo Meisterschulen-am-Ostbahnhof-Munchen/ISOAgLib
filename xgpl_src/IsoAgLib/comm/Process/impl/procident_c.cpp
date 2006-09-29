@@ -234,21 +234,23 @@ void ProcIdent_c::setOwnerISOName(const ISOName_c* rpc_val)
    <li>parameter rc_ownerISOName == ownerISOName()
    </ul>
 
-   @param rui8_devClassReceiver compared DEVCLASS value
-
    ISO parameter
    @param rui8_devClassSender compare this parameter with owner devClass (only for remote, local calls: 0xFF)
+   @param rui8_devClassInstSender
+   @param rui8_devClassReceiver compared DEVCLASS value
+   @param rui8_devClassInstReceiver compared DEVCLASS instance value
    @param rui16_DDI compared DDI value
    @param rui16_element compared element value
 
    @return true -> this instance has same Process-Data identity
 */
-bool ProcIdent_c::matchISO(
-             uint8_t rui8_devClassReceiver,
-             uint8_t rui8_devClassSender,
-             uint16_t rui16_DDI,
-             uint16_t rui16_element
-             ) const
+bool ProcIdent_c::matchISO( uint8_t rui8_devClassSender,
+                            uint8_t rui8_devClassInstSender,
+                            uint8_t rui8_devClassReceiver,
+                            uint8_t rui8_devClassInstReceiver,
+                            uint16_t rui16_DDI,
+                            uint16_t rui16_element
+                          ) const
 {
   // check wether current element/DDI combination matches one list element in process data element/DDI list
   if (rui16_element != element()) return false;
@@ -263,9 +265,16 @@ bool ProcIdent_c::matchISO(
   if (rui8_devClassSender != 0xFF) {
     // check in remote case: check if devClass of ownerISOName in procident matches devClass of sender
     if (ownerISOName().devClass() != rui8_devClassSender) return false;
+
+    if ( (rui8_devClassInstSender != 0xFF) && (ownerISOName().devClassInst() != rui8_devClassInstSender) )
+      return false;
+
   } else {
     // check in local case: check if procident devClass matches devClass of empf
     if (devClass() != rui8_devClassReceiver) return false;
+
+    if ( (rui8_devClassInstReceiver != 0xFF) && (data.c_isoName.devClassInst() != rui8_devClassInstReceiver) )
+      return false;
   }
 
   if (!getProcessInstance4Comm().data().resolveCommandTypeForISO(*iter)) return false;

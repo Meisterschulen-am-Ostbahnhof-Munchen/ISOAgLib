@@ -373,23 +373,23 @@ if ( ( c_data.identType() == Ident_c::ExtendedIdent ) && (
   // decide which devClass to use for matching
   // ISO message: use devClass from corresponding monitor item for checks
   const uint8_t ui8_devClassReceiver = data().memberEmpf().isoName().devClass();
+  const uint8_t ui8_devClassInstReceiver = data().memberEmpf().isoName().devClassInst();
   // ISO only message: check for sender devClass (only in remote)
   const uint8_t ui8_devClassSender = data().memberSend().isoName().devClass();
+  const uint8_t ui8_devClassInstSender = data().memberSend().isoName().devClassInst();
 
   // now ui8_devClassInstData is the best guess for searching the appropriate prcess data item
   // check first for local Process Data
-  if (existProcDataLocal( data().DDI(), data().element(), ui8_devClassReceiver)
-     )
+  if ( existProcDataLocal( data().DDI(), data().element(), ui8_devClassReceiver, ui8_devClassInstReceiver) )
   { // there exists an appropriate process data item -> let the item process the msg
-    procDataLocal( data().DDI(), data().element(), ui8_devClassReceiver ).processMsg();
+    procDataLocal( data().DDI(), data().element(), ui8_devClassReceiver, ui8_devClassInstReceiver).processMsg();
     b_result = true;
   }
 
   // now check for remote Process Data
-  if (existProcDataRemote( data().DDI(), data().element(), ui8_devClassSender, ui8_devClassReceiver )
-      )
+  if ( existProcDataRemote( data().DDI(), data().element(), ui8_devClassSender, ui8_devClassInstSender, ui8_devClassReceiver, ui8_devClassInstReceiver) )
   { // there exists an appropriate process data item -> let the item process the msg
-    procDataRemote( data().DDI(), data().element(), ui8_devClassSender, ui8_devClassReceiver ).processMsg();
+    procDataRemote( data().DDI(), data().element(), ui8_devClassSender, ui8_devClassInstSender, ui8_devClassReceiver, ui8_devClassInstReceiver).processMsg();
     b_result = true;
   }
 
@@ -401,31 +401,31 @@ if ( ( c_data.identType() == Ident_c::ExtendedIdent ) && (
   ISO parameter
   @param rui16_DDI
   @param rui16_element
-
   @param rui8_devClassReceiver DEVCLASS code of searched local Process Data instance
+  @param rui8_devClassInstReceiver DEVCLASS instance code of searched local Process Data instance
   @return true -> suitable instance found
 */
-bool Process_c::existProcDataLocal( uint16_t rui16_DDI, uint16_t rui16_element, uint8_t rui8_devClassReceiver)
+bool Process_c::existProcDataLocal( uint16_t rui16_DDI, uint16_t rui16_element, uint8_t rui8_devClassReceiver, uint8_t rui8_devClassInstReceiver)
 {
-  return updateLocalCache( rui16_DDI, rui16_element, rui8_devClassReceiver);
+  return updateLocalCache( rui16_DDI, rui16_element, rui8_devClassReceiver, rui8_devClassInstReceiver);
 }
 
-  /**
-    checks if a suitable ProcDataRemoteBase_c item exist
-    ISO parameter
-    @param rui16_DDI
-    @param rui16_element
-
-    common parameter
-    @param rui8_devClassSender devClass of the sender (used for check against ownerisoName().devClass())
-    @param rui8_devClassReceiver DEVCLASS code of searched local Process Data instance
-    @return true -> suitable instance found
-  */
+/**
+  checks if a suitable ProcDataRemoteBase_c item exist
+  ISO parameter
+  @param rui16_DDI
+  @param rui16_element
+  @param rui8_devClassSender devClass of the sender (used for check against ownerisoName().devClass())
+  @param rui8_devClassInstSender devClass instance of the sender
+  @param rui8_devClassReceiver DEVCLASS code of searched local Process Data instance
+  @param rui8_devClassInstReceiver DEVCLASS instance
+  @return true -> suitable instance found
+*/
 bool Process_c::existProcDataRemote( uint16_t rui16_DDI, uint16_t rui16_element,
-                           uint8_t rui8_devClassSender, uint8_t rui8_devClassReceiver)
+                                     uint8_t rui8_devClassSender, uint8_t rui8_devClassInstSender,
+                                     uint8_t rui8_devClassReceiver, uint8_t rui8_devClassInstReceiver)
 {
- return updateRemoteCache( rui16_DDI, rui16_element, rui8_devClassSender, rui8_devClassReceiver);
-
+ return updateRemoteCache( rui16_DDI, rui16_element, rui8_devClassSender, rui8_devClassInstSender, rui8_devClassReceiver, rui8_devClassInstReceiver);
 }
 
 /**
@@ -438,13 +438,13 @@ bool Process_c::existProcDataRemote( uint16_t rui16_DDI, uint16_t rui16_element,
   ISO parameter
   @param rui16_DDI
   @param rui16_element
-
   @param rui8_devClassReceiver DEVCLASS code of searched local Process Data instance
+  @param rui8_devClassInstReceiver DEVCLASS instance
   @return reference to searched/created ProcDataLocal_c instance
 */
-ProcDataLocalBase_c& Process_c::procDataLocal( uint16_t rui16_DDI, uint16_t rui16_element, uint8_t rui8_devClassReceiver)
+ProcDataLocalBase_c& Process_c::procDataLocal( uint16_t rui16_DDI, uint16_t rui16_element, uint8_t rui8_devClassReceiver, uint8_t rui8_devClassInstReceiver)
 {
-  bool b_found = updateLocalCache( rui16_DDI, rui16_element, rui8_devClassReceiver);
+  bool b_found = updateLocalCache( rui16_DDI, rui16_element, rui8_devClassReceiver, rui8_devClassInstReceiver);
   if (!b_found)
   { // not found and no creation wanted -> error
     getLbsErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::LbsProcess );
@@ -452,28 +452,28 @@ ProcDataLocalBase_c& Process_c::procDataLocal( uint16_t rui16_DDI, uint16_t rui1
   return **pc_searchCacheC1;
 }
 
-  /**
-    search for suitable ProcDataRemoteBase_c item; create on if not found AND if wanted
+/**
+  search for suitable ProcDataRemoteBase_c item; create on if not found AND if wanted
 
-    possible errors:
-        * Err_c::badAlloc not enough memory to add new ProcDataRemote_c
-          (can cause badAlloc exception)
-        * Err_c::elNonexistent if element not found and rb_doCreate == false
-    ISO parameter
-    @param rui16_DDI
-    @param rui16_element
-
-    common parameter
-    @param rui8_devClassSender devClass of the sender (used for check against ownerisoName().devClass())
-    @param rui8_devClassReceiver DEVCLASS code of searched local Process Data instance
-    @return reference to searched/created ProcDataRemoteBase_c instance
-    @exception badAlloc
-  */
+  possible errors:
+      * Err_c::badAlloc not enough memory to add new ProcDataRemote_c
+        (can cause badAlloc exception)
+      * Err_c::elNonexistent if element not found and rb_doCreate == false
+  ISO parameter
+  @param rui16_DDI
+  @param rui16_element
+  @param rui8_devClassSender devClass of the sender (used for check against ownerisoName().devClass())
+  @param rui8_devClassInstSender devClass instance
+  @param rui8_devClassReceiver DEVCLASS code of searched local Process Data instance
+  @param rui8_devClassInstReceiver DEVCLASS instance
+  @return reference to searched/created ProcDataRemoteBase_c instance
+  @exception badAlloc
+*/
 ProcDataRemoteBase_c& Process_c::procDataRemote( uint16_t rui16_DDI, uint16_t rui16_element,
-                                                uint8_t rui8_devClassSender, uint8_t rui8_devClassReceiver)
+                                                 uint8_t rui8_devClassSender, uint8_t rui8_devClassInstSender,
+                                                 uint8_t rui8_devClassReceiver, uint8_t rui8_devClassInstReceiver)
 {
-  bool b_found = updateRemoteCache(rui16_DDI, rui16_element, rui8_devClassSender, rui8_devClassReceiver);
-
+  bool b_found = updateRemoteCache(rui16_DDI, rui16_element, rui8_devClassSender, rui8_devClassInstSender, rui8_devClassReceiver, rui8_devClassInstReceiver);
   if (!b_found)
   { // not found and no creation wanted -> error
     getLbsErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::LbsProcess );
@@ -488,12 +488,11 @@ ProcDataRemoteBase_c& Process_c::procDataRemote( uint16_t rui16_DDI, uint16_t ru
   ISO parameter
   @param rui16_DDI
   @param rui16_element
-
-  common parameter
   @param rui8_devClass DEVCLASS code of searched local Process Data instance
+  @param rui8_devClassInst DEVCLASS instance
   @return count of similar local process data entries
 */
-uint8_t Process_c::procDataLocalCnt( uint16_t rui16_DDI, uint16_t rui16_element, uint8_t rui8_devClass)
+uint8_t Process_c::procDataLocalCnt( uint16_t rui16_DDI, uint16_t rui16_element, uint8_t rui8_devClass, uint8_t rui8_devClassInst)
 {
   uint8_t ui8_cnt=0;
 
@@ -502,7 +501,7 @@ uint8_t Process_c::procDataLocalCnt( uint16_t rui16_DDI, uint16_t rui16_element,
        pc_iter++ )
   { // search for all local items which match the searched identity
     // don't check sender devClass => 0xFF
-    if ((*pc_iter)->matchISO(rui8_devClass, 0xFF, rui16_DDI, rui16_element))
+    if ((*pc_iter)->matchISO(0xFF, 0xFF, rui8_devClass, rui8_devClassInst, rui16_DDI, rui16_element))
       ui8_cnt++;
   }
   return ui8_cnt;
@@ -516,13 +515,14 @@ uint8_t Process_c::procDataLocalCnt( uint16_t rui16_DDI, uint16_t rui16_element,
   @param rui16_DDI
   @param rui16_element
   @param rui8_devClassSender devClass of the sender (used for check against ownerisoName().devClass())
-
-  common parameter
-  @param rui8_devClass DEVCLASS code of searched local Process Data instance
+  @param rui8_devClassInstSender devClass instance
+  @param rui8_devClass DEVCLASS code of searched remote Process Data instance
+  @param rui8_devClassInst DEVCLASS instance
   @return count of similar remote process data entries
 */
 uint8_t Process_c::procDataRemoteCnt( uint16_t rui16_DDI, uint16_t rui16_element,
-                                     uint8_t rui8_devClassSender, uint8_t rui8_devClass)
+                                      uint8_t rui8_devClassSender, uint8_t rui8_devClassInstSender,
+                                      uint8_t rui8_devClass, uint8_t rui8_devClassInst)
 {
   uint8_t ui8_cnt=0;
 
@@ -530,7 +530,7 @@ uint8_t Process_c::procDataRemoteCnt( uint16_t rui16_DDI, uint16_t rui16_element
        ( pc_iter != c_arrClientC2.end() );
        pc_iter++ )
   { // search for all local items which match the searched identity
-    if ((*pc_iter)->matchISO(rui8_devClass, rui8_devClassSender, rui16_DDI, rui16_element))
+    if ((*pc_iter)->matchISO(rui8_devClassSender, rui8_devClassInstSender, rui8_devClass, rui8_devClassInst, rui16_DDI, rui16_element))
       ui8_cnt++;
   }
   return ui8_cnt;
@@ -542,10 +542,10 @@ uint8_t Process_c::procDataRemoteCnt( uint16_t rui16_DDI, uint16_t rui16_element
   ISO parameter
   @param rui16_DDI
   @param rui16_element
-
   @param rui8_devClassReceiver DEVCLASS code of created local Process Data instance
+  @param rui8_devClassInstReceiver DEVCLASS instance
 */
-bool Process_c::updateLocalCache( uint16_t rui16_DDI, uint16_t rui16_element, uint8_t rui8_devClassReceiver)
+bool Process_c::updateLocalCache( uint16_t rui16_DDI, uint16_t rui16_element, uint8_t rui8_devClassReceiver, uint8_t rui8_devClassInstReceiver)
 {
   bool b_foundLazy = false;
 
@@ -554,7 +554,7 @@ bool Process_c::updateLocalCache( uint16_t rui16_DDI, uint16_t rui16_element, ui
     if ( pc_searchCacheC1 != c_arrClientC1.end() )
     {
       // don't check sender devClass => 0xFF
-      if ((*pc_searchCacheC1)->matchISO(rui8_devClassReceiver, 0xFF, rui16_DDI, rui16_element)) return true;
+      if ((*pc_searchCacheC1)->matchISO(0xFF, 0xFF, rui8_devClassReceiver, rui8_devClassInstReceiver, rui16_DDI, rui16_element)) return true;
     }
     //old cache doesn't match any more -> search new
     for ( cacheTypeC1_t pc_iter = c_arrClientC1.begin();
@@ -565,7 +565,7 @@ bool Process_c::updateLocalCache( uint16_t rui16_DDI, uint16_t rui16_element, ui
       bool b_matched = false;
 
       // don't check sender devClass => 0xFF
-      if ((*pc_iter)->matchISO(rui8_devClassReceiver, 0xFF, rui16_DDI, rui16_element))
+      if ((*pc_iter)->matchISO(0xFF, 0xFF, rui8_devClassReceiver, rui8_devClassInstReceiver, rui16_DDI, rui16_element))
         b_matched = true;
 
       if (b_matched)
@@ -581,25 +581,26 @@ bool Process_c::updateLocalCache( uint16_t rui16_DDI, uint16_t rui16_element, ui
 }
 
 
-  /**
-    update the cache with search for according ProcDataRemoteBase_c item
-    ISO parameter
-    @param rui16_DDI
-    @param rui16_element
-
-    common parameter
-    @param rui8_devClassSender devClass of the sender (used for check against ownerisoName().devClass())
-    @param rui8_devClassReceiver DEVCLASS code of searched local Process Data instance
-  */
+/**
+  update the cache with search for according ProcDataRemoteBase_c item
+  ISO parameter
+  @param rui16_DDI
+  @param rui16_element
+  @param rui8_devClassSender devClass of the sender (used for check against ownerisoName().devClass())
+  @param rui8_devClassInstSender devClass instance
+  @param rui8_devClassReceiver DEVCLASS code of searched local Process Data instance
+  @param rui8_devClassInstReceiver DEVCLASS instance
+*/
 bool Process_c::updateRemoteCache( uint16_t rui16_DDI, uint16_t rui16_element,
-                                   uint8_t rui8_devClassSender, uint8_t rui8_devClassReceiver)
+                                   uint8_t rui8_devClassSender, uint8_t rui8_devClassInstSender,
+                                   uint8_t rui8_devClassReceiver, uint8_t rui8_devClassInstReceiver)
 {
   bool b_foundLazy = false;
   if (!c_arrClientC2.empty())
   {
     if ( pc_searchCacheC2 != c_arrClientC2.end() )
     {
-      if ((*pc_searchCacheC2)->matchISO(rui8_devClassReceiver, rui8_devClassSender, rui16_DDI, rui16_element)) return true;
+      if ((*pc_searchCacheC2)->matchISO(rui8_devClassSender, rui8_devClassInstSender, rui8_devClassReceiver, rui8_devClassInstReceiver, rui16_DDI, rui16_element)) return true;
     }
     //old cache doesn't match any more -> search new
     for ( cacheTypeC2_t pc_iter = c_arrClientC2.begin(); //list of remote process data
@@ -608,7 +609,7 @@ bool Process_c::updateRemoteCache( uint16_t rui16_DDI, uint16_t rui16_element,
     { // check for lazy match with INSTANCE == 0xFF (==joker)
       bool b_matched = false;
 
-      if ((*pc_iter)->matchISO(rui8_devClassReceiver, rui8_devClassSender, rui16_DDI, rui16_element))
+      if ((*pc_iter)->matchISO(rui8_devClassSender, rui8_devClassInstSender, rui8_devClassReceiver, rui8_devClassInstReceiver, rui16_DDI, rui16_element))
         b_matched = true;
 
       if (b_matched)

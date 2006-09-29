@@ -151,28 +151,28 @@ public:
     ISO parameter
     @param rui16_DDI
     @param rui16_element
-
-    common parameter
     @param rui8_devClassReceiver DEVCLASS code of searched local Process Data instance
+    @param rui8_devClassInstReceiver DEVCLASS instance
     @return true -> suitable instance found
   */
-  bool existProcDataLocal( uint16_t rui16_DDI, uint16_t rui16_element, uint8_t rui8_devClassReceiver)
-  { return Process_c::existProcDataLocal(rui16_DDI, rui16_element, rui8_devClassReceiver);}
-
+  bool existProcDataLocal( uint16_t rui16_DDI, uint16_t rui16_element, uint8_t rui8_devClassReceiver, uint8_t rui8_devClassInstReceiver)
+  { return Process_c::existProcDataLocal(rui16_DDI, rui16_element, rui8_devClassReceiver, rui8_devClassInstReceiver);}
   /**
     checks if a suitable iProcessDataRemote_c item exist
     ISO parameter
     @param rui16_DDI
     @param rui16_element
     @param rui8_devClassSender devClass of the sender (used for check against ownerISOName().devClass())
-
-    common parameter
+    @param rui8_devClassInstSender devClass instance of the sender
     @param rui8_devClassReceiver DEVCLASS code of searched local Process Data instance
+    @param rui8_devClassInstReceiver DEVCLASS instance
     @return true -> suitable instance found
   */
   bool existProcDataRemote( uint16_t rui16_DDI, uint16_t rui16_element,
-                            uint8_t rui8_devClassSender, uint8_t rui8_devClassReceiver)
-  { return Process_c::existProcDataRemote(  rui16_DDI, rui16_element, rui8_devClassSender, rui8_devClassReceiver);}
+                            uint8_t rui8_devClassSender, uint8_t rui8_devClassInstSender,
+                            uint8_t rui8_devClassReceiver, uint8_t rui8_devClassInstReceiver)
+  { return Process_c::existProcDataRemote( rui16_DDI, rui16_element, rui8_devClassSender, rui8_devClassInstSender,
+                                           rui8_devClassReceiver, rui8_devClassInstReceiver);}
 
   /**
     delivers count of local process data entries with similar ident
@@ -180,13 +180,12 @@ public:
     ISO parameter
     @param rui16_DDI
     @param rui16_element
-
-    common parameter
     @param rui8_devClass DEVCLASS code of searched local Process Data instance
+    @param rui8_devClassInst DEVCLASS instance
     @return count of similar local process data entries
   */
-  uint8_t procDataLocalCnt( uint16_t rui16_DDI, uint16_t rui16_element, uint8_t rui8_devClass)
-  {return Process_c::procDataLocalCnt(rui16_DDI, rui16_element, rui8_devClass);}
+  uint8_t procDataLocalCnt( uint16_t rui16_DDI, uint16_t rui16_element, uint8_t rui8_devClass, uint8_t rui8_devClassInst)
+  {return Process_c::procDataLocalCnt(rui16_DDI, rui16_element, rui8_devClass, rui8_devClassInst);}
 
   /**
     delivers count of remote process data entries with similar ident
@@ -195,16 +194,18 @@ public:
     @param rui16_DDI
     @param rui16_element
     @param rui8_devClassSender devClass of the sender (used for check against ownerISOName().devClass())
-
-    common parameter
-    @param rui8_devClass DEVCLASS code of searched local Process Data instance
+    @param rui8_devClassInstSender devClass instance
+    @param rui8_devClass DEVCLASS code of searched remote Process Data instance
+    @param rui8_devClassInst DEVCLASS instance
     @return count of similar remote process data entries
   */
   uint8_t procDataRemoteCnt( uint16_t rui16_DDI,
                              uint16_t rui16_element,
                              uint8_t rui8_devClassSender,
-                             uint8_t rui8_devClass)
-  { return Process_c::procDataRemoteCnt( rui16_DDI, rui16_element, rui8_devClassSender, rui8_devClass); }
+                             uint8_t rui8_devClassInstSender,
+                             uint8_t rui8_devClass,
+                             uint8_t rui8_devClassInst)
+  { return Process_c::procDataRemoteCnt( rui16_DDI, rui16_element, rui8_devClassSender, rui8_devClassInstSender, rui8_devClass, rui8_devClassInst); }
 
   // addDDI2ExistingProcData only possible for remote process data project (iProcDataRemote_c has to be defined)
   /** checks if a DDI can be added to a group and return ptr to proc data if successfully */

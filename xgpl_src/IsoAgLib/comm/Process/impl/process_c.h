@@ -212,11 +212,11 @@ public:
     ISO parameter
     @param rui16_DDI
     @param rui16_element
-
     @param rui8_devClassReceiver DEVCLASS code of searched local Process Data instance
+    @param rui8_devClassInstReceiver DEVCLASS instance code of searched local Process Data instance
     @return true -> suitable instance found
   */
-  bool existProcDataLocal( uint16_t rui16_DDI, uint16_t rui16_element, uint8_t rui8_devClassReceiver);
+  bool existProcDataLocal( uint16_t rui16_DDI, uint16_t rui16_element, uint8_t rui8_devClassReceiver, uint8_t rui8_devClassInstReceiver);
 
   /**
     checks if a suitable ProcDataRemoteBase_c item exist
@@ -224,13 +224,14 @@ public:
     @param rui16_DDI
     @param rui16_element
     @param rui8_devClassSender devClass of the sender (used for check against ownerISOName().devClass())
-
-    common parameter
+    @param rui8_devClassInstSender devClass instance of the sender
     @param rui8_devClassReceiver DEVCLASS code of searched local Process Data instance
+    @param rui8_devClassInstReceiver DEVCLASS instance
     @return true -> suitable instance found
   */
   bool existProcDataRemote( uint16_t rui16_DDI, uint16_t rui16_element,
-                            uint8_t rui8_devClassSender, uint8_t rui8_devClassReceiver);
+                            uint8_t rui8_devClassSender, uint8_t rui8_devClassInstSender,
+                            uint8_t rui8_devClassReceiver, uint8_t rui8_devClassInstReceiver);
 
   /**
     search for suitable ProcDataLocalBase_c item; create on if not found AND if wanted
@@ -242,12 +243,11 @@ public:
     ISO parameter
     @param rui16_DDI
     @param rui16_element
-    @param rui8_devClassSender devClass of the sender (used for check against ownerISOName().devClass())
-
     @param rui8_devClassReceiver DEVCLASS code of searched local Process Data instance
+    @param rui8_devClassInstReceiver DEVCLASS instance
     @return reference to searched/created ProcDataLocalBase_c instance
   */
-  ProcDataLocalBase_c& procDataLocal( uint16_t rui16_DDI, uint16_t rui16_element, uint8_t rui8_devClassReceiver);
+  ProcDataLocalBase_c& procDataLocal( uint16_t rui16_DDI, uint16_t rui16_element, uint8_t rui8_devClassReceiver, uint8_t rui8_devClassInstReceiver);
 
   /**
     search for suitable ProcDataRemoteBase_c item; create on if not found AND if wanted
@@ -260,14 +260,14 @@ public:
     @param rui16_DDI
     @param rui16_element
     @param rui8_devClassSender devClass of the sender (used for check against ownerISOName().devClass())
-
-    common parameter
+    @param rui8_devClassInstSender devClass instance
     @param rui8_devClassReceiver DEVCLASS code of searched local Process Data instance
+    @param rui8_devClassInstReceiver DEVCLASS instance
     @return reference to searched/created ProcDataRemoteBase_c instance
     @exception badAlloc
   */
- ProcDataRemoteBase_c& procDataRemote( uint16_t rui16_DDI, uint16_t rui16_element, uint8_t rui8_devClassSender,
-                                       uint8_t rui8_devClassReceiver);
+ ProcDataRemoteBase_c& procDataRemote( uint16_t rui16_DDI, uint16_t rui16_element, uint8_t rui8_devClassSender, uint8_t rui8_devClassInstSender,
+                                       uint8_t rui8_devClassReceiver, uint8_t rui8_devClassInstReceiver);
 
 
   /**
@@ -276,12 +276,11 @@ public:
     ISO parameter
     @param rui16_DDI
     @param rui16_element
-
-    common parameter
     @param rui8_devClass DEVCLASS code of searched local Process Data instance
+    @param rui8_devClassInst DEVCLASS instance
     @return count of similar local process data entries
   */
-  uint8_t procDataLocalCnt( uint16_t rui16_DDI, uint16_t rui16_element, uint8_t rui8_devClass);
+  uint8_t procDataLocalCnt( uint16_t rui16_DDI, uint16_t rui16_element, uint8_t rui8_devClass, uint8_t rui8_devClassInst);
 
   /**
     delivers count of remote process data entries with similar ident
@@ -290,13 +289,14 @@ public:
     @param rui16_DDI
     @param rui16_element
     @param rui8_devClassSender devClass of the sender (used for check against ownerISOName().devClass())
-
-    common parameter
+    @param rui8_devClassInstSender devClass instance
     @param rui8_devClass DEVCLASS code of searched remote Process Data instance
+    @param rui8_devClassInst DEVCLASS instance
     @return count of similar remote process data entries
   */
   uint8_t procDataRemoteCnt( uint16_t rui16_DDI, uint16_t rui16_element,
-                             uint8_t rui8_devClassSender, uint8_t rui8_devClass);
+                             uint8_t rui8_devClassSender, uint8_t rui8_devClassInstSender,
+                             uint8_t rui8_devClass, uint8_t rui8_devClassInst);
 
   /**
     performs periodically actions
@@ -386,23 +386,24 @@ private: // Private methods
     ISO parameter
     @param rui16_DDI
     @param rui16_element
-
     @param rui8_devClassReceiver DEVCLASS code of created local Process Data instance
+    @param rui8_devClassInstReceiver DEVCLASS instance
   */
-  bool updateLocalCache( uint16_t rui16_DDI, uint16_t rui16_element, uint8_t rui8_devClassReceiver);
+  bool updateLocalCache( uint16_t rui16_DDI, uint16_t rui16_element, uint8_t rui8_devClassReceiver, uint8_t rui8_devClassInstReceiver);
 
   /**
     update the cache with search for according ProcDataRemoteBase_c item
     ISO parameter
     @param rui16_DDI
     @param rui16_element
-
-    common parameter
     @param rui8_devClassSender devClass of the sender (used for check against ownerISOName().devClass())
+    @param rui8_devClassInstSender devClass instance
     @param rui8_devClassReceiver DEVCLASS code of searched local Process Data instance
+    @param rui8_devClassInstReceiver DEVCLASS instance
   */
   bool updateRemoteCache(uint16_t rui16_DDI, uint16_t rui16_element,
-                         uint8_t rui8_devClassSender, uint8_t rui8_devClassReceiver);
+                         uint8_t rui8_devClassSender, uint8_t rui8_devClassInstSender,
+                         uint8_t rui8_devClassReceiver, uint8_t rui8_devClassInstReceiver);
 
   /**
    * check if any remote process data needs a new receive filter

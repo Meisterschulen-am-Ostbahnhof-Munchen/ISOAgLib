@@ -388,19 +388,22 @@ public:
     </ul>
 
     ISO parameter
-    @param rui8_devClassReceiver compared DEVCLASS value
     @param rui8_devClassSender compare this parameter with owner devClass (only for remote, local calls: 0xFF)
+    @param rui8_devClassInstSender
+    @param rui8_devClassReceiver compared DEVCLASS value
+    @param rui8_devClassInstReceiver compared DEVCLASS instance value
     @param rui16_DDI compared DDI value
     @param rui16_element compared element value
 
     @return true -> this instance has same Process-Data identity
   */
-  bool matchISO(
-             uint8_t rui8_devClassReceiver,
-             uint8_t rui8_devClassSender,
-             uint16_t rui16_DDI,
-             uint16_t rui16_element
-             ) const;
+  bool matchISO( uint8_t rui8_devClassSender,
+                 uint8_t rui8_devClassInstSender,
+                 uint8_t rui8_devClassReceiver,
+                 uint8_t rui8_devClassInstReceiver,
+                 uint16_t rui16_DDI,
+                 uint16_t rui16_element
+               ) const;
 
   bool check4GroupMatch(uint16_t rui16_DDI, uint16_t rui16_element, const ISOName_c& rc_isoName);
 
