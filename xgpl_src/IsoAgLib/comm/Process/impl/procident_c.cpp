@@ -308,8 +308,8 @@ bool ProcIdent_c::hasType(bool rb_isSetpoint, GeneralCommand_c::ValueGroup_t t_d
 bool ProcIdent_c::check4GroupMatch(uint16_t rui16_DDI, uint16_t rui16_element, const ISOName_c& rc_isoName)
 {
   bool b_foundPair = false;
-  // first check if DevClass is the same like ownerISOName's DevClass
-  if (rc_isoName.devClass() != data.c_ownerISOName.devClass()) return b_foundPair;
+  // first check if DevKey matches
+  if (rc_isoName != data.c_isoName) return b_foundPair;
 
   if (rui16_element != element()) return b_foundPair;
 
@@ -324,8 +324,8 @@ bool ProcIdent_c::check4GroupMatch(uint16_t rui16_DDI, uint16_t rui16_element, c
 bool ProcIdent_c::check4GroupMatchExisting(uint16_t rui16_DDI, uint16_t rui16_element, const ISOName_c& rc_isoName)
 {
   bool b_foundPair = false;
-  // check if rc_isoName is the same like ownerISOName
-  if (rc_isoName != data.c_ownerISOName) return b_foundPair;
+  // first check if DevKey matches
+  if (rc_isoName != data.c_isoName) return b_foundPair;
 
   if (rui16_element != element()) return b_foundPair;
 
