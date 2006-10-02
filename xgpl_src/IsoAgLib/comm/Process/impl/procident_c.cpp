@@ -437,7 +437,7 @@ void ProcIdent_c::getDDIType(uint16_t rui16_DDI, GeneralCommand_c::ValueGroup_t 
     {
       case 0:
         ref_ddiType = GeneralCommand_c::maxValue;
-        refb_isSetpoint = true;
+        refb_isSetpoint = false;
         break;
       case 1:
         ref_ddiType = GeneralCommand_c::exactValue;
@@ -453,7 +453,7 @@ void ProcIdent_c::getDDIType(uint16_t rui16_DDI, GeneralCommand_c::ValueGroup_t 
         break;
       case 4:
         ref_ddiType = GeneralCommand_c::minValue;
-        refb_isSetpoint = true;
+        refb_isSetpoint = false;
         break;
     }
     return;
