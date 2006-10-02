@@ -212,26 +212,22 @@ public:
     ISO parameter
     @param rui16_DDI
     @param rui16_element
-    @param rui8_devClassReceiver DEVCLASS code of searched local Process Data instance
-    @param rui8_devClassInstReceiver DEVCLASS instance code of searched local Process Data instance
+    @param rrefc_isoNameReceiver isoName code of searched local Process Data instance
     @return true -> suitable instance found
   */
-  bool existProcDataLocal( uint16_t rui16_DDI, uint16_t rui16_element, uint8_t rui8_devClassReceiver, uint8_t rui8_devClassInstReceiver);
+  bool existProcDataLocal( uint16_t rui16_DDI, uint16_t rui16_element, const ISOName_c& rrefc_isoNameReceiver);
 
   /**
     checks if a suitable ProcDataRemoteBase_c item exist
     ISO parameter
     @param rui16_DDI
     @param rui16_element
-    @param rui8_devClassSender devClass of the sender (used for check against ownerISOName().devClass())
-    @param rui8_devClassInstSender devClass instance of the sender
-    @param rui8_devClassReceiver DEVCLASS code of searched local Process Data instance
-    @param rui8_devClassInstReceiver DEVCLASS instance
+    @param rrefc_isoNameSender isoName of the sender (used for check against ownerISOName())
+    @param rrefc_isoNameReceiver isoName code of searched local Process Data instance
     @return true -> suitable instance found
   */
   bool existProcDataRemote( uint16_t rui16_DDI, uint16_t rui16_element,
-                            uint8_t rui8_devClassSender, uint8_t rui8_devClassInstSender,
-                            uint8_t rui8_devClassReceiver, uint8_t rui8_devClassInstReceiver);
+                            const ISOName_c& rrefc_isoNameSender, const ISOName_c& rrefc_isoNameReceiver);
 
   /**
     search for suitable ProcDataLocalBase_c item; create on if not found AND if wanted
@@ -243,11 +239,10 @@ public:
     ISO parameter
     @param rui16_DDI
     @param rui16_element
-    @param rui8_devClassReceiver DEVCLASS code of searched local Process Data instance
-    @param rui8_devClassInstReceiver DEVCLASS instance
+    @param rrefc_isoNameReceiver isoName code of searched local Process Data instance
     @return reference to searched/created ProcDataLocalBase_c instance
   */
-  ProcDataLocalBase_c& procDataLocal( uint16_t rui16_DDI, uint16_t rui16_element, uint8_t rui8_devClassReceiver, uint8_t rui8_devClassInstReceiver);
+  ProcDataLocalBase_c& procDataLocal( uint16_t rui16_DDI, uint16_t rui16_element, const ISOName_c& rrefc_isoNameReceiver);
 
   /**
     search for suitable ProcDataRemoteBase_c item; create on if not found AND if wanted
@@ -259,15 +254,13 @@ public:
     ISO parameter
     @param rui16_DDI
     @param rui16_element
-    @param rui8_devClassSender devClass of the sender (used for check against ownerISOName().devClass())
-    @param rui8_devClassInstSender devClass instance
-    @param rui8_devClassReceiver DEVCLASS code of searched local Process Data instance
-    @param rui8_devClassInstReceiver DEVCLASS instance
+    @param rrefc_isoNameSender isoName of the sender (used for check against ownerISOName())
+    @param rrefc_isoNameReceiver isoName code of searched local Process Data instance
     @return reference to searched/created ProcDataRemoteBase_c instance
     @exception badAlloc
   */
- ProcDataRemoteBase_c& procDataRemote( uint16_t rui16_DDI, uint16_t rui16_element, uint8_t rui8_devClassSender, uint8_t rui8_devClassInstSender,
-                                       uint8_t rui8_devClassReceiver, uint8_t rui8_devClassInstReceiver);
+ ProcDataRemoteBase_c& procDataRemote( uint16_t rui16_DDI, uint16_t rui16_element,
+                                       const ISOName_c& rrefc_isoNameSender, const ISOName_c& rrefc_isoNameReceiver);
 
 
   /**
@@ -276,11 +269,10 @@ public:
     ISO parameter
     @param rui16_DDI
     @param rui16_element
-    @param rui8_devClass DEVCLASS code of searched local Process Data instance
-    @param rui8_devClassInst DEVCLASS instance
+    @param rrefc_isoName isoName code of searched local Process Data instance
     @return count of similar local process data entries
   */
-  uint8_t procDataLocalCnt( uint16_t rui16_DDI, uint16_t rui16_element, uint8_t rui8_devClass, uint8_t rui8_devClassInst);
+  uint8_t procDataLocalCnt( uint16_t rui16_DDI, uint16_t rui16_element, const ISOName_c& rrefc_isoName);
 
   /**
     delivers count of remote process data entries with similar ident
@@ -288,15 +280,12 @@ public:
     ISO parameter
     @param rui16_DDI
     @param rui16_element
-    @param rui8_devClassSender devClass of the sender (used for check against ownerISOName().devClass())
-    @param rui8_devClassInstSender devClass instance
-    @param rui8_devClass DEVCLASS code of searched remote Process Data instance
-    @param rui8_devClassInst DEVCLASS instance
+    @param rrefc_isoNameSender isoName of the sender (used for check against ownerISOName())
+    @param rrefc_isoName isoName code of searched remote Process Data instance
     @return count of similar remote process data entries
   */
   uint8_t procDataRemoteCnt( uint16_t rui16_DDI, uint16_t rui16_element,
-                             uint8_t rui8_devClassSender, uint8_t rui8_devClassInstSender,
-                             uint8_t rui8_devClass, uint8_t rui8_devClassInst);
+                             const ISOName_c& rrefc_isoNameSender, const ISOName_c& rrefc_isoName);
 
   /**
     performs periodically actions
@@ -385,24 +374,20 @@ private: // Private methods
     ISO parameter
     @param rui16_DDI
     @param rui16_element
-    @param rui8_devClassReceiver DEVCLASS code of created local Process Data instance
-    @param rui8_devClassInstReceiver DEVCLASS instance
+    @param rrefc_isoNameReceiver isoName code of created local Process Data instance
   */
-  bool updateLocalCache( uint16_t rui16_DDI, uint16_t rui16_element, uint8_t rui8_devClassReceiver, uint8_t rui8_devClassInstReceiver);
+  bool updateLocalCache( uint16_t rui16_DDI, uint16_t rui16_element, const ISOName_c& rrefc_isoNameReceiver);
 
   /**
     update the cache with search for according ProcDataRemoteBase_c item
     ISO parameter
     @param rui16_DDI
     @param rui16_element
-    @param rui8_devClassSender devClass of the sender (used for check against ownerISOName().devClass())
-    @param rui8_devClassInstSender devClass instance
-    @param rui8_devClassReceiver DEVCLASS code of searched local Process Data instance
-    @param rui8_devClassInstReceiver DEVCLASS instance
+    @param rrefc_isoNameSender isoName of the sender (used for check against ownerISOName())
+    @param rrefc_isoNameReceiver isoName code of searched local Process Data instance
   */
   bool updateRemoteCache(uint16_t rui16_DDI, uint16_t rui16_element,
-                         uint8_t rui8_devClassSender, uint8_t rui8_devClassInstSender,
-                         uint8_t rui8_devClassReceiver, uint8_t rui8_devClassInstReceiver);
+                         const ISOName_c& rrefc_isoNameSender, const ISOName_c& rrefc_isoNameReceiver);
 
   /**
    * check if any remote process data needs a new receive filter
