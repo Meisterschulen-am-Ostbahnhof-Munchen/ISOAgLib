@@ -837,6 +837,7 @@ MultiSend_c::SendStream_c::processMsg()
         *pen_sendSuccessNotify = SendSuccess; // will be kicked out after next timeEvent!
       }
       // else: not awaiting end of message ack, no action taken for this error-case in normal operation.
+      getLibErrInstance().registerError( LibErr_c::MultiSendWarn, LibErr_c::MultiSend );
       break;
     case scui8_CM_ConnAbort:
       #if defined( DEBUG )

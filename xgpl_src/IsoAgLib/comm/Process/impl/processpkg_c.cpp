@@ -430,13 +430,10 @@ void ProcessPkg_c::string2Flags()
 {
   // New Part 10 code to go here -bac
   // set pri, empf, send for convenience
-  setPri(2); // signal target message
   setEmpf(isoPs());
   setSend(isoSa());
   setIdentType(Ident_c::ExtendedIdent);
 
-  setLis(0); // ISO doesn't support LIS code -> set to default 0
-  /**TODO2 Lis completly removable??*/
   // bit_data.b_valType = static_cast<proc_valType_t>((CANPkg_c::c_data[0] >> 5) & 0x3);
 
   // Not sure if this is needed at this point. May need the GPS portion but not the Float Data Type stuff since this is not really used in Part 10 now. -bac
@@ -456,7 +453,7 @@ void ProcessPkg_c::string2Flags()
   //setISOName(c_isoMonitor.isoMemberNr(send()).isoName());  // Get the devClass and pos (Device Class, Device Class Instance -bac
 
   // now set pc_monitorSend and pc_monitorEmpf
-  if ((pri() == 2) && (c_isoMonitor.existIsoMemberNr(empf())))
+  if (c_isoMonitor.existIsoMemberNr(empf()))
   { // ISO targeted process msg with empf as defined ISO member
     pc_monitorEmpf = static_cast<ISOItem_c*>(&(c_isoMonitor.isoMemberNr(empf())));
   }

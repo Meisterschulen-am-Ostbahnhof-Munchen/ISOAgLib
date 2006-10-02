@@ -183,41 +183,39 @@ void SetpointBase_c::sendSetpointVals( const SetpointRegister_c& rrefc_src,
   int32_t i32_value;
   bool b_isCmd = false;
   GeneralCommand_c::ValueGroup_t en_valueGroup = GeneralCommand_c::noValue;
-  
+
   if ((ri32_overrideVal == SETPOINT_RELEASE_COMMAND)
    || (ri32_overrideVal == SETPOINT_ERROR_COMMAND)
       ) b_isCmd = true;
 
   if (rrefc_src.existExact())
   { // exact setpoint exist
-    en_valueGroup = GeneralCommand_c::exactValue;  
+    en_valueGroup = GeneralCommand_c::exactValue;
     i32_value = (b_override) ? ri32_overrideVal : rrefc_src.exact();
-  } 
+  }
   else if (rrefc_src.existMin())
   { // min setpoint exist
-    en_valueGroup = GeneralCommand_c::minValue;  
+    en_valueGroup = GeneralCommand_c::minValue;
     i32_value = (b_override) ? ri32_overrideVal : rrefc_src.min();
-  } 
+  }
   else if (rrefc_src.existMax())
   { // max setpoint exist
-     en_valueGroup = GeneralCommand_c::maxValue;  
+     en_valueGroup = GeneralCommand_c::maxValue;
      i32_value = (b_override) ? ri32_overrideVal : rrefc_src.max();
   }
   else if (rrefc_src.existDefault())
   { // default setpoint exist
-     en_valueGroup = GeneralCommand_c::defaultValue;  
+     en_valueGroup = GeneralCommand_c::defaultValue;
      i32_value = (b_override) ? ri32_overrideVal : rrefc_src.getDefault();
   }
-  
-  if (en_valueGroup != GeneralCommand_c::noValue) 
+
+  if (en_valueGroup != GeneralCommand_c::noValue)
   {
      // prepare general command in process pkg
-     getProcessInstance4Comm().data().c_generalCommand.setValues(true /* isSetpoint */, false /* isRequest */, 
+     getProcessInstance4Comm().data().c_generalCommand.setValues(true /* isSetpoint */, false /* isRequest */,
                                                                  en_valueGroup, GeneralCommand_c::setValue);
 
-     pprocessData()->sendValISOName( 2, // target msg
-                                 rrefc_src.isoName(),
-                                 i32_value);
+     pprocessData()->sendValISOName( rrefc_src.isoName(), i32_value);
   }
 }
 

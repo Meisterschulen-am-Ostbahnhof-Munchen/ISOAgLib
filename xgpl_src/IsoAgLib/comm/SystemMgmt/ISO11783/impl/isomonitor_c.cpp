@@ -383,7 +383,7 @@ ISOItem_c& ISOMonitor_c::isoMemberEcuTypeInd (ISOName_c::ecuType_t r_ecuType, ui
   // check if rui8_ind was in correct range
   if (rui8_ind != c_cnt)
   { // wrong range of rui8_ind
-    getLbsErrInstance().registerError( LibErr_c::Range, LibErr_c::LbsSystem );
+    getLibErrInstance().registerError( LibErr_c::Range, LibErr_c::System );
   }
   return *pc_isoMemberCache;
 }
@@ -444,7 +444,7 @@ ISOItem_c& ISOMonitor_c::isoMemberDevClassInd(uint8_t rui8_devClass, uint8_t rui
   // check if rui8_ind was in correct range
   if (rui8_ind != c_cnt)
   { // wrong range of rui8_ind
-    getLbsErrInstance().registerError( LibErr_c::Range, LibErr_c::LbsSystem );
+    getLibErrInstance().registerError( LibErr_c::Range, LibErr_c::System );
   }
   return *pc_isoMemberCache;
 }
@@ -549,7 +549,7 @@ ISOItem_c* ISOMonitor_c::insertIsoMember(const ISOName_c& rc_isoName,
   // check if another ISOItem_c with same ISOName already exist
   if (existIsoMemberISOName(rc_isoName))
   { // another member with same ISOName found
-    getLbsErrInstance().registerError( LibErr_c::Busy, LibErr_c::LbsSystem );
+    getLibErrInstance().registerError( LibErr_c::Busy, LibErr_c::System );
     return NULL; // don't insert
   }
 
@@ -565,7 +565,7 @@ ISOItem_c* ISOMonitor_c::insertIsoMember(const ISOName_c& rc_isoName,
   pc_isoMemberCache = vec_isoMember.begin();
   if (vec_isoMember.size() <= b_oldSize)
   { // array didn't grow
-    getLbsErrInstance().registerError( LibErr_c::BadAlloc, LibErr_c::LbsSystem );
+    getLibErrInstance().registerError( LibErr_c::BadAlloc, LibErr_c::System );
   }
   else
   { // item was inserted
@@ -600,7 +600,7 @@ uint8_t ISOMonitor_c::localIsoMemberCnt()
   return b_count;
 }
 
-/** deliver reference to local din member by index
+/** deliver reference to local member by index
     @see localMemberCnt
     @param rui8_ind index of wanted member (first item == 0)
     @return reference to wanted local member MonitorItem
@@ -624,6 +624,12 @@ ISOItem_c& ISOMonitor_c::localIsoMemberInd(uint8_t rui8_ind)
       b_count++;
     }
   } // for
+
+  if ( pc_result == NULL )
+  { // index exceeds array size
+    getLibErrInstance().registerError( LibErr_c::Range, LibErr_c::System );
+  }
+
   return *pc_result;
 }
 
@@ -693,7 +699,7 @@ ISOItem_c& ISOMonitor_c::getActiveLocalIsoMember()
   }
   else
   { // no active own identity found -> set error state
-    getLbsErrInstance().registerError( LibErr_c::LbsSysNoActiveLocalMember, LibErr_c::LbsSystem );
+    getLibErrInstance().registerError( LibErr_c::SysNoActiveLocalMember, LibErr_c::System );
 
     // throw exception by constant -> if no exception configured no command is created
     THROW_PRECOND_VIOLATION
@@ -835,7 +841,7 @@ ISOItem_c& ISOMonitor_c::isoMemberISOName(const ISOName_c& rc_isoName, bool rb_f
   }
   else
   { // wanted element not found
-    getLbsErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::LbsSystem );
+    getLibErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::System );
 
     // throw exception by constant -> if no exception configured no command is created
     THROW_CONT_EL_NONEXIST
@@ -861,7 +867,7 @@ ISOItem_c& ISOMonitor_c::isoMemberNr(uint8_t rui8_nr)
   }
   else
   { // wanted element not found
-    getLbsErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::LbsSystem );
+    getLibErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::System );
 
     // throw exception by constant -> if no exception configured no command is created
     THROW_CONT_EL_NONEXIST
@@ -926,7 +932,7 @@ bool ISOMonitor_c::deleteIsoMemberISOName(const ISOName_c& rc_isoName)
   }
   else
   { // to be deleted member ISOName does not exist
-    getLbsErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::LbsSystem );
+    getLibErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::System );
     return false;
   }
 }
@@ -944,7 +950,7 @@ bool ISOMonitor_c::deleteIsoMemberNr(uint8_t rui8_nr)
   }
   else
   { // to be deleted member number does not exist
-    getLbsErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::LbsSystem );
+    getLibErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::System );
     return false;
   }
 }
@@ -991,7 +997,7 @@ bool ISOMonitor_c::unifyIsoISOName(ISOName_c& refc_isoName){
       }
     }
   }
-  if (!b_result) getLbsErrInstance().registerError( LibErr_c::Busy, LibErr_c::LbsSystem );
+  if (!b_result) getLibErrInstance().registerError( LibErr_c::Busy, LibErr_c::System );
   return b_result;
 }
 
@@ -1254,6 +1260,7 @@ bool ISOMonitor_c::processMsg()
       else
       {
         // shouldn't happen!
+        getLibErrInstance().registerError( LibErr_c::Inconsistency, LibErr_c::System );
       }
       break;
     case WORKING_SET_MEMBER_PGN: // working set member
@@ -1269,6 +1276,7 @@ bool ISOMonitor_c::processMsg()
       else
       {
         // shouldn't happen!
+        getLibErrInstance().registerError( LibErr_c::Inconsistency, LibErr_c::System );
       }
       break;
     #endif

@@ -125,7 +125,6 @@ namespace __IsoAgLib {
 
     common parameter
     @param rc_isoName optional ISOName code of Process-Data
-    @param rui8_pri PRI code of messages with this process data instance (default 2)
     @param rc_ownerISOName optional ISOName code of owner of Process-Data
            ( important if DEVCLASS and/or DEVCLASSINST differs from identity ISOName in rc_isoName; this is the case
              for process data from base data dictionary table (DEVCLASS==0), which is managed/owned by device of
@@ -134,11 +133,11 @@ namespace __IsoAgLib {
             as corresponding device is registered as having claimed address in monitor table list)
   */
   ProcIdent_c::ProcIdent_c( const IsoAgLib::ElementDDI_s* ps_elementDDI, uint16_t ui16_element,
-                            const ISOName_c& rc_isoName, uint8_t rui8_pri, const ISOName_c& rc_ownerISOName,
+                            const ISOName_c& rc_isoName, const ISOName_c& rc_ownerISOName,
                             const ISOName_c *rpc_ownerISOName, int ri_singletonVecKey)
   : ClientBase( ri_singletonVecKey )
 {
-  init( ps_elementDDI, ui16_element, rc_isoName, rui8_pri, rc_ownerISOName, rpc_ownerISOName);
+  init( ps_elementDDI, ui16_element, rc_isoName, rc_ownerISOName, rpc_ownerISOName);
 }
 
 /** copy constructor */
@@ -157,7 +156,6 @@ ProcIdent_c::ProcIdent_c( const ProcIdent_c& rrefc_src )
 
     common parameter
     @param rc_isoName ISOName code of Process-Data
-    @param rui8_pri optional PRI code of messages with this process data instance (default 2)
     @param rc_ownerISOName optional ISOName code of owner of Process-Data
            ( important if DEVCLASS and/or DEVCLASSINST differs from identity ISOName in rc_isoName; this is the case
              for process data from base data dictionary table (DEVCLASS==0), which is managed/owned by device of
@@ -166,14 +164,14 @@ ProcIdent_c::ProcIdent_c( const ProcIdent_c& rrefc_src )
             as corresponding device is registered as having claimed address in monitor table list)
 */
 void ProcIdent_c::init( const IsoAgLib::ElementDDI_s* ps_elementDDI, uint16_t ui16_element,
-                        const ISOName_c& rc_isoName, uint8_t rui8_pri,
-                        const ISOName_c& rc_ownerISOName, const ISOName_c *rpc_ownerISOName)
+                        const ISOName_c& rc_isoName, const ISOName_c& rc_ownerISOName,
+                        const ISOName_c *rpc_ownerISOName)
 {
   setElementDDI(ps_elementDDI);
   setElementNumber(ui16_element);
 
   data.c_isoName = rc_isoName;
-  setPri(rui8_pri);
+
   pc_ownerISOName = rpc_ownerISOName;
 
   // the ISOName of ident is best defined by pointed value of rpc_ownerISOName
@@ -201,13 +199,11 @@ ProcIdent_c& ProcIdent_c::operator=(const ProcIdent_c& rrefc_src){
 /** internal base function for copy constructor and assignement */
 void ProcIdent_c::assignFromSource( const ProcIdent_c& rrefc_src )
 {
-  setLis(rrefc_src.lis());
   data.c_isoName = rrefc_src.data.c_isoName;
   data.c_ownerISOName = rrefc_src.data.c_ownerISOName;
   pc_ownerISOName = rrefc_src.pc_ownerISOName;
   // elementDDI() returns list reference, setElementDDI() expects pointer to list
   setElementDDI(&(rrefc_src.elementDDI()));
-  setPri(rrefc_src.pri());
 }
 
 /** default destructor which has nothing to do */

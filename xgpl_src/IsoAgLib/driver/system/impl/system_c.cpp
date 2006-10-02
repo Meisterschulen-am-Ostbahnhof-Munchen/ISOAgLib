@@ -140,7 +140,7 @@ bool System_c::init( bool rb_forceReinit, IsoAgLib::SystemPowerdownStrategy_t rt
 		INTERNAL_DEBUG_DEVICE
         << "Fehler bei Systemstart: " << ci_err << INTERNAL_DEBUG_DEVICE_ENDL;
 		#endif
-      getLbsErrInstance().registerError( LibErr_c::SystemOpen, LibErr_c::HwSystem ); // something is still wrong
+      getLibErrInstance().registerError( LibErr_c::SystemOpen, LibErr_c::HwSystem ); // something is still wrong
       b_result = false;
     }
   }
@@ -216,7 +216,7 @@ bool System_c::initWd ( void )
       break;
     default:
       // something went wrong -> system runs with default values
-      getLbsErrInstance().registerError( LibErr_c::SystemWatchdog, LibErr_c::HwSystem );
+      getLibErrInstance().registerError( LibErr_c::SystemWatchdog, LibErr_c::HwSystem );
       b_result = false;
       break;
   }

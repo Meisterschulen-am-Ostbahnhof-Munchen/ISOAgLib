@@ -122,7 +122,6 @@ public:
                          (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
 
     @param rc_isoName optional ISOName code of Process-Data
-    @param rui8_pri PRI code of messages with this process data instance (default 2)
     @param rc_ownerISOName optional ISOName of the owner
     @param rpc_isoName pointer to updated ISOName variable of owner
     @param rb_cumulativeValue
@@ -148,7 +147,6 @@ public:
   iProcDataLocalSimpleSetpointSimpleMeasure_c(const IsoAgLib::ElementDDI_s* ps_elementDDI = NULL,
                                               uint16_t rui16_element = 0xFFF,
                                               const iISOName_c& rc_isoName = iISOName_c::ISONameInitialProcessData,
-                                              uint8_t rui8_pri = 2,
                                               const iISOName_c& rc_ownerISOName = iISOName_c::ISONameUnspecified,
                                               const iISOName_c *rpc_isoName = NULL,
                                               bool rb_cumulativeValue = false,
@@ -159,7 +157,7 @@ public:
                                               int ri_singletonVecKey = 0
                                               )
     : ProcDataLocalSimpleSetpointSimpleMeasure_c(ps_elementDDI, rui16_element,
-                                                 rc_isoName, rui8_pri, rc_ownerISOName, rpc_isoName, rb_cumulativeValue,
+                                                 rc_isoName, rc_ownerISOName, rpc_isoName, rb_cumulativeValue,
 #ifdef USE_EEPROM_IO
                                                  rui16_eepromAdr,
 #endif
@@ -178,7 +176,6 @@ public:
                          (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
 
     @param rc_isoName optional ISOName code of Process-Data
-    @param rui8_pri PRI code of messages with this process data instance (default 2)
     @param rc_ownerISOName optional ISOName of the owner
     @param rpc_isoName pointer to updated ISOName variable of owner
     @param rb_cumulativeValue
@@ -204,7 +201,6 @@ public:
   void init(const IsoAgLib::ElementDDI_s* ps_elementDDI,
             uint16_t rui16_element,
             const iISOName_c& rc_isoName = iISOName_c::ISONameInitialProcessData,
-            uint8_t rui8_pri = 2,
             const iISOName_c& rc_ownerISOName = iISOName_c::ISONameUnspecified,
             const iISOName_c *rpc_isoName = NULL,
             bool rb_cumulativeValue = false,
@@ -215,7 +211,7 @@ public:
             int ri_singletonVecKey = 0
             )
   {ProcDataLocalSimpleSetpointSimpleMeasure_c::init(ps_elementDDI, rui16_element,
-                                                    rc_isoName, rui8_pri, rc_ownerISOName, rpc_isoName, rb_cumulativeValue,
+                                                    rc_isoName, rc_ownerISOName, rpc_isoName, rb_cumulativeValue,
 #ifdef USE_EEPROM_IO
                                                     rui16_eepromAdr,
 #endif
@@ -236,26 +232,6 @@ public:
    { return ProcDataLocalSimpleSetpointSimpleMeasure_c::getProcessDataChangeHandler(); }
 
   /**
-    deliver value PRI of messages with this
-    process data instance
-    @return PRI
-  */
-  uint8_t pri() const{return ProcDataLocalSimpleSetpointSimpleMeasure_c::pri();}
-
-  /**
-    set value PRI of messages with this
-    process data instance (default value is 2 == target message)
-    @param rb_val new PRI value
-  */
-  void setPri(uint8_t rb_val){ProcDataLocalSimpleSetpointSimpleMeasure_c::setPri(rb_val);}
-
-  /**
-    deliver value LIS (list number)
-    @return LIS
-  */
-  uint8_t lis() const{return ProcDataLocalSimpleSetpointSimpleMeasure_c::lis();}
-
-  /**
     deliver value DEVCLASS (machine type specific table of process data types)
     @return DEVCLASS
   */
@@ -267,24 +243,6 @@ public:
     @return ISOName
   */
   const iISOName_c& isoName() const {return static_cast<const iISOName_c&>(ProcDataLocalSimpleSetpointSimpleMeasure_c::isoName());}
-
-  /**
-    deliver value WERT (row of process data table)
-    @return WERT
-  */
-  uint8_t wert() const{return ProcDataLocalSimpleSetpointSimpleMeasure_c::wert();}
-
-  /**
-    deliver value INST (column of process data table)
-    @return INST
-  */
-  uint8_t inst() const{return ProcDataLocalSimpleSetpointSimpleMeasure_c::inst();}
-
-  /**
-    deliver value ZAEHLNUM (0xFF == whole working width; else parts of width)
-    @return ZAEHLNUM
-  */
-  uint8_t zaehlnum() const{return ProcDataLocalSimpleSetpointSimpleMeasure_c::zaehlnum();}
 
   /**
     deliver value _instance_ (important if more than one machine with equal _device_class_ are active)
@@ -311,31 +269,28 @@ public:
     send the base value (the one that is updated via setMasterMeasurementVal() )
     to a specified target (selected by GPT)
     @param rc_targetISOName ISOName of target
-    @param ren_type optional PRI specifier of the message (default Proc_c::Target )
     @return true -> successful sent
   */
-  bool sendMasterMeasurementVal( const iISOName_c& rc_targetISOName, Proc_c::progType_t ren_progType = Proc_c::Target ) const
-    { return ProcDataLocalSimpleSetpointSimpleMeasure_c::sendMasterMeasurementVal( rc_targetISOName, ren_progType );}
+  bool sendMasterMeasurementVal( const iISOName_c& rc_targetISOName ) const
+    { return ProcDataLocalSimpleSetpointSimpleMeasure_c::sendMasterMeasurementVal( rc_targetISOName );}
 
   /**
     send a exact-setpoint to a specified target (selected by GPT)
     @param rc_targetISOName ISOName of target
-    @param ren_type optional PRI specifier of the message (default Proc_c::Target )
     @return true -> successful sent
   */
-  bool sendMasterSetpointVal( const iISOName_c& rc_targetISOName, Proc_c::progType_t ren_progType = Proc_c::Target ) const
-   { return setpointConst().sendMasterSetpointVal( rc_targetISOName, ren_progType );}
+  bool sendMasterSetpointVal( const iISOName_c& rc_targetISOName ) const
+   { return setpointConst().sendMasterSetpointVal( rc_targetISOName );}
 
   /**
     send a sub-setpoint (selected by MOD) to a specified target (selected by GPT)
     @param rui8_mod select sub-type of setpoint
     @param rc_targetISOName ISOName of target
-    @param ren_type optional PRI specifier of the message (default Proc_c::Target )
     @return true -> successful sent
   */
-  bool sendSetpointMod( GeneralCommand_c::ValueGroup_t en_valueGroup, const iISOName_c& rc_targetISOName, Proc_c::progType_t ren_progType = Proc_c::Target ) const
+  bool sendSetpointMod( GeneralCommand_c::ValueGroup_t en_valueGroup, const iISOName_c& rc_targetISOName ) const
    {
-     return setpointConst().sendSetpointMod( rc_targetISOName, ren_progType, en_valueGroup, __IsoAgLib::GeneralCommand_c::setValue);
+     return setpointConst().sendSetpointMod( rc_targetISOName, en_valueGroup, __IsoAgLib::GeneralCommand_c::setValue);
     }
 
   #ifdef USE_EEPROM_IO

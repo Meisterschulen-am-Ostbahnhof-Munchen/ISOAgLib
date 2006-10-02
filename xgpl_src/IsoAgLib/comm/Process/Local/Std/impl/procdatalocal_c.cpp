@@ -132,7 +132,6 @@ namespace __IsoAgLib {
                        (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
 
   @param rc_isoName optional ISOName code of Process-Data
-  @param rui8_pri PRI code of messages with this process data instance (default 2)
   @param rc_ownerISOName optional ISOName of the owner
   @param rpc_isoName pointer to updated ISOName variable of owner
   @param rb_cumulativeValue
@@ -156,7 +155,7 @@ namespace __IsoAgLib {
   @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
 ProcDataLocal_c::ProcDataLocal_c( const IsoAgLib::ElementDDI_s* ps_elementDDI, uint16_t rui16_element,
-                                  const ISOName_c& rc_isoName, uint8_t rui8_pri, const ISOName_c& rc_ownerISOName,
+                                  const ISOName_c& rc_isoName, const ISOName_c& rc_ownerISOName,
                                   const ISOName_c *rpc_isoName, bool rb_cumulativeValue,
 #ifdef USE_EEPROM_IO
                   uint16_t rui16_eepromAdr,
@@ -165,7 +164,7 @@ ProcDataLocal_c::ProcDataLocal_c( const IsoAgLib::ElementDDI_s* ps_elementDDI, u
                   int ri_singletonVecKey
                   )
     : ProcDataLocalBase_c( ps_elementDDI, rui16_element,
-                          rc_isoName, rui8_pri, rc_ownerISOName, rpc_isoName, rb_cumulativeValue,
+                          rc_isoName, rc_ownerISOName, rpc_isoName, rb_cumulativeValue,
 #ifdef USE_EEPROM_IO
                           rui16_eepromAdr,
 #endif
@@ -186,7 +185,6 @@ ProcDataLocal_c::ProcDataLocal_c( const IsoAgLib::ElementDDI_s* ps_elementDDI, u
                        (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
 
   @param rc_isoName optional ISOName code of Process-Data
-  @param rui8_pri PRI code of messages with this process data instance (default 2)
   @param rc_ownerISOName optional ISOName of the owner
   @param rpc_isoName pointer to updated ISOName variable of owner
   @param rb_cumulativeValue
@@ -210,7 +208,7 @@ ProcDataLocal_c::ProcDataLocal_c( const IsoAgLib::ElementDDI_s* ps_elementDDI, u
   @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
 void ProcDataLocal_c::init( const IsoAgLib::ElementDDI_s* ps_elementDDI, uint16_t rui16_element,
-                            const ISOName_c& rc_isoName, uint8_t rui8_pri, const ISOName_c& rc_ownerISOName,
+                            const ISOName_c& rc_isoName, const ISOName_c& rc_ownerISOName,
                             const ISOName_c *rpc_isoName, bool rb_cumulativeValue,
 #ifdef USE_EEPROM_IO
                            uint16_t rui16_eepromAdr,
@@ -220,7 +218,7 @@ void ProcDataLocal_c::init( const IsoAgLib::ElementDDI_s* ps_elementDDI, uint16_
                            )
 {
   ProcDataLocalBase_c::init( ps_elementDDI, rui16_element,
-                            rc_isoName, rui8_pri, rc_ownerISOName, rpc_isoName, rb_cumulativeValue,
+                            rc_isoName, rc_ownerISOName, rpc_isoName, rb_cumulativeValue,
 #ifdef USE_EEPROM_IO
                             rui16_eepromAdr,
 #endif
@@ -369,7 +367,7 @@ bool ProcDataLocal_c::startDataLogging(Proc_c::type_t ren_type /* Proc_c::TimePr
     rpc_receiverDevice = &(c_tcISOItem.isoName());
   }
 
-  return c_measureprog.startDataLogging(ren_type, static_cast<Proc_c::progType_t>(pri()), ri32_increment, rpc_receiverDevice);
+  return c_measureprog.startDataLogging(ren_type, ri32_increment, rpc_receiverDevice);
 }
 
 /**

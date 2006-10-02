@@ -1100,7 +1100,7 @@ VtClientServerCommunication_c::processMsg()
             break;
           case 4: // Insufficient memory available
           default: // well....
-            getLbsErrInstance().registerError(LibErr_c::IsoTerminalOutOfMemory, LibErr_c::IsoTerminal);
+            getLibErrInstance().registerError(LibErr_c::IsoTerminalOutOfMemory, LibErr_c::IsoTerminal);
             break;
         }
         finalizeUploading();
@@ -2252,7 +2252,7 @@ VtClientServerCommunication_c::finishUploadCommand()
 void
 VtClientServerCommunication_c::vtOutOfMemory()
 {  // can't (up)load the pool.
-  getLbsErrInstance().registerError (LibErr_c::IsoTerminalOutOfMemory, LibErr_c::IsoTerminal);
+  getLibErrInstance().registerError (LibErr_c::IsoTerminalOutOfMemory, LibErr_c::IsoTerminal);
   en_uploadPoolState = UploadPoolFailed; // no timeout needed
   en_objectPoolState = OPCannotBeUploaded;
   /// @todo for now allow parallel uploads

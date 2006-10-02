@@ -138,7 +138,8 @@ public:
     Proc_c::progType_t ren_progType = Proc_c::UndefinedProg,
     int32_t ri32_val = 0,
     const ISOName_c& rc_isoName = ISOName_c::ISONameUnspecified ) : ProcessElementBase_c(rpc_processData),
-      vec_measureSubprog() {init(rpc_processData, ren_progType, ri32_val, rc_isoName);};
+      vec_measureSubprog() {init(rpc_processData, ren_progType, ri32_val, rc_isoName);}
+
   /**
     constructor which can optional set most element vars
     @param rrefc_processData optional reference to containing ProcDataBase_c instance (default NULL)
@@ -151,7 +152,8 @@ public:
     Proc_c::progType_t ren_progType = Proc_c::UndefinedProg,
     int32_t ri32_val = 0,
     const ISOName_c& rc_isoName = ISOName_c::ISONameUnspecified) : ProcessElementBase_c(rrefc_processData),
-      vec_measureSubprog() {init(&rrefc_processData, ren_progType, ri32_val, rc_isoName);};
+      vec_measureSubprog() {init(&rrefc_processData, ren_progType, ri32_val, rc_isoName);}
+
   /**
     initialise the measure prog instance, to set this instance to a well defined starting condition
     @param rrefc_processData optional reference to containing ProcDataBase_c instance (default NULL)
@@ -164,17 +166,20 @@ public:
     Proc_c::progType_t ren_progType = Proc_c::UndefinedProg,
     int32_t ri32_val = 0,
     const ISOName_c& rc_isoName = ISOName_c::ISONameUnspecified);
+
   /**
     assignment of MeasureProgBase_c objects
     @param rrefc_src source MeasureProgBase_c instance
     @return reference to source instance for cmd like "prog1 = prog2 = prog3;"
   */
   const MeasureProgBase_c& operator=(const MeasureProgBase_c& rrefc_src);
+
   /**
     copy constructor
     @param rrefc_src source MeasureProgBase_c instance
   */
    MeasureProgBase_c(const MeasureProgBase_c& rrefc_src);
+
   /** default destructor which has nothing to do */
   virtual ~MeasureProgBase_c();
 
@@ -189,21 +194,22 @@ public:
     @return always true; only relevant for overoaded methods in derived classes
   */
   bool addSubprog(Proc_c::type_t ren_type, int32_t ri32_increment, Proc_c::doSend_t ren_doSend = Proc_c::DoVal);
+
   /**
     LBS+ uses positive values even for time proportional measure prog
     -> only the start cmd choose increment type
     -> search for forced increment type and set first to according type if needed
   */
   void forceSubprogType(Proc_c::type_t ren_type);
+
   /**
     start a measuring programm
-    @param ren_progType wanted msg type for measure prog (Proc_c::Base, Proc_c::Target)
     @param ren_type wanted increment type (Proc_c::TimeProp, Proc_c::DistProp, Proc_c::ValIncr)
     @param ren_doSend set process data subtype to send (Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...)
     @return always true; only relevant for overoaded methods in derived classes
   */
-  virtual bool start(Proc_c::progType_t ren_progType, Proc_c::type_t ren_type,
-                     Proc_c::doSend_t ren_doSend);
+  virtual bool start(Proc_c::type_t ren_type, Proc_c::doSend_t ren_doSend);
+
   /**
     stop all running subprog
     @param b_deleteSubProgs is only needed for remote ISO case (but is needed due to overloading here also)
@@ -213,6 +219,7 @@ public:
   */
   virtual bool stop(bool b_deleteSubProgs = true, Proc_c::type_t ren_type = Proc_c::NullType,
                     Proc_c::doSend_t ren_doSend = Proc_c::DoNone);
+
   /**
     check if this measure prog is running
     @return true -> program is running
@@ -227,12 +234,14 @@ public:
     @return measure val for this prog (can differ from master measure val)
   */
   int32_t val(bool rb_sendRequest = false) const;
+
   /**
     deliver the medium value of a measure program (pure virtual function)
     @param rb_sendRequest choose wether a request for value update should be
         sent (default false == send no request)
   */
   virtual int32_t med(bool rb_sendRequest = false) const = 0;
+
   /**
     deliver integ val
     @param rb_sendRequest choose wether a request for value update should be
@@ -240,6 +249,7 @@ public:
     @return integral val for this measure prog
   */
   int32_t integ(bool rb_sendRequest = false) const;
+
   /**
     deliver min val
     @param rb_sendRequest choose wether a request for value update should be
@@ -247,6 +257,7 @@ public:
     @return MIN val for this measure prog
   */
   int32_t min(bool rb_sendRequest = false) const;
+
   /**
     deliver max val
     @param rb_sendRequest choose wether a request for value update should be
@@ -254,16 +265,19 @@ public:
     @return MAX val for this measure prog
   */
   int32_t max(bool rb_sendRequest = false) const;
+
   /**
     deliver the delta
     @return:delta between the last two measure vals [1/sec]
   */
-  int32_t delta() const {return i32_delta;};
+  int32_t delta() const {return i32_delta;}
+
   /**
     deliver the acceleration
     @return acceleration calculated from the last delta values [1/(sec*sec)]
   */
-  int32_t accel() const {return i32_accel;};
+  int32_t accel() const {return i32_accel;}
+
 #ifdef USE_FLOAT_DATA_TYPE
   /**
     initialise the measure prog instance, to set this instance to a well defined starting condition
@@ -277,6 +291,7 @@ public:
     Proc_c::progType_t ren_progType,
     float rf_val,
     const ISOName_c& rc_isoName = ISOName_c::ISONameUnspecified);
+
   /**
     deliver actual last received value
     @param rb_sendRequest choose wether a request for value update should be
@@ -284,12 +299,14 @@ public:
     @return measure val for this prog (can differ from master measure val)
   */
   float valFloat(bool rb_sendRequest = false) const;
+
   /**
     deliver the medium value of a measure program (pure virtual function)
     @param rb_sendRequest choose wether a request for value update should be
         sent (default false == send no request)
   */
   virtual float medFloat(bool rb_sendRequest = false) const = 0;
+
   /**
     deliver integ val
     @param rb_sendRequest choose wether a request for value update should be
@@ -297,6 +314,7 @@ public:
     @return integral val for this measure prog
   */
   float integFloat(bool rb_sendRequest = false) const;
+
   /**
     deliver min val
     @param rb_sendRequest choose wether a request for value update should be
@@ -304,6 +322,7 @@ public:
     @return MIN val for this measure prog
   */
   float minFloat(bool rb_sendRequest = false) const;
+
   /**
     deliver max val
     @param rb_sendRequest choose wether a request for value update should be
@@ -311,64 +330,74 @@ public:
     @return MAX val for this measure prog
   */
   float maxFloat(bool rb_sendRequest = false) const;
+
   /**
     deliver the delta
     @return:delta between the last two measure vals [1/sec]
   */
-  float deltaFloat() const {return f_delta;};
+  float deltaFloat() const {return f_delta;}
+
   /**
     deliver the acceleration
     @return acceleration calculated from the last delta values [1/(sec*sec)]
   */
-  float accelFloat() const {return f_accel;};
+  float accelFloat() const {return f_accel;}
 #endif
+
   /**
     return the c_isoName code for this measureprog
     @return ISOName of this measureprog
   */
-  const ISOName_c& isoName() const{return c_isoName;};
+  const ISOName_c& isoName() const{return c_isoName;}
+
   /**
     deliver the type of the active increment types
     @return actual Bit-OR combined increment types
   */
-  Proc_c::type_t type() const {return en_type;};
+  Proc_c::type_t type() const {return en_type;}
+
   /**
     check if the given increment type is active
     @param ren_type tested increment type
     @return true -> given increment type is set
   */
   bool checkType(Proc_c::type_t ren_type) const
-    {return ((en_type & ren_type) > 0)?true:false;};
+    {return ((en_type & ren_type) > 0)?true:false;}
+
   /**
     return the program type of the item
     @return ProgType: Proc_c::UndefinedProg, Proc_c::Base, Proc_c::Target
   */
   uint8_t progType() const{return static_cast<uint8_t>(en_progType);};
+
   /**
     check if given progType (base, target) is active
     @param ren_progType tested Prog-Type
     @return true -> given Prog-Type is set
   */
   bool checkProgType(Proc_c::progType_t ren_progType) const
-    {return ((en_progType & ren_progType) > 0)?true:false;};
+    {return ((en_progType & ren_progType) > 0)?true:false;}
+
   /**
     check if given send type is activated
     @param ren_doSend tested sended value
     @return true -> given value is sent on trigger
   */
   bool checkDoSend(Proc_c::doSend_t ren_doSend) const
-    {return ((en_doSend & ren_doSend) > 0)?true:false;};
+    {return ((en_doSend & ren_doSend) > 0)?true:false;}
 
   /**
     init the element vars
     @param ri32_val initial measure val
   */
   virtual void initVal(int32_t ri32_val);
+
   /**
     reset the value (pure virtual function)
     @param ri32_val reset measure value to this value (ISO remote only)
   */
   virtual bool resetVal(int32_t ri32_val = 0) = 0;
+
 #ifdef USE_FLOAT_DATA_TYPE
   /**
     init the element vars with float value
@@ -376,18 +405,22 @@ public:
   */
   virtual void initVal(float rf_val);
 #endif
+
   /**
     reset the medium (pure virtual function)
   */
   virtual bool resetMed() = 0;
+
   /**
     reset the integral (pure virtual function)
   */
   virtual bool resetInteg() = 0;
+
   /**
     reset MIN (pure virtual function)
   */
   virtual bool resetMin() = 0;
+
   /**
     reset MAX (pure virtual function)
   */
@@ -398,6 +431,7 @@ public:
     @param ri32_val new measure value
   */
   virtual void setVal(int32_t ri32_val) = 0;
+
 #ifdef USE_FLOAT_DATA_TYPE
   /**
     set a new value (pure virtual function)
@@ -405,23 +439,26 @@ public:
   */
   virtual void setVal(float rf_val) = 0;
 #endif
+
   /**
     set the programm type of the item
     @param rb_type wanted ProgType: Proc_c::UndefinedProg, Proc_c::Base, Proc_c::Target
   */
   void setProgType(uint8_t rb_type)
-    {en_progType = Proc_c::progType_t(rb_type);};
+    {en_progType = Proc_c::progType_t(rb_type);}
+
   /**
     set the type of the active increment types
     @param ren_type Bit-OR combined increment type(s)
   */
-  void setType(Proc_c::type_t ren_type){en_type = ren_type;};
+  void setType(Proc_c::type_t ren_type){en_type = ren_type;}
+
   /**
     set the c_isoName code for this measureprog
     @param rc_isoName ISOName for exact specification of partner system
   */
   // This has something to do with the init failing for the iProcDataRemote_c object. -bac
-  void setISOName(const ISOName_c& rc_isoName){c_isoName = rc_isoName;};
+  void setISOName(const ISOName_c& rc_isoName){c_isoName = rc_isoName;}
 
   /**
     process a message;
@@ -443,35 +480,40 @@ public:
     @return true -> both instances are equal (ISOName and ProgType)
   */
   bool operator==(const MeasureProgBase_c& right) const
-    {return (calcCompVal() == right.calcCompVal());};
+    {return (calcCompVal() == right.calcCompVal());}
+
   /**
     compare two MeasureProg with <
     @param rrefc_right compared object
     @return true -> this instance is < than the other (ISOName and ProgType)
   */
   bool operator<(const MeasureProgBase_c& right) const
-    {return (calcCompVal() < right.calcCompVal());};
+    {return (calcCompVal() < right.calcCompVal());}
+
   /**
     compare two MeasureProg with <=
     @param rrefc_right compared object
     @return true -> this instance is <= than the other (ISOName and ProgType)
   */
   bool operator<=(const MeasureProgBase_c& right) const
-    {return (calcCompVal() <= right.calcCompVal());};
+    {return (calcCompVal() <= right.calcCompVal());}
+
   /**
     compare two MeasureProg with >
     @param rrefc_right compared object
     @return true -> this instance is > than the other (ISOName and ProgType)
   */
   bool operator>(const MeasureProgBase_c& right) const
-    {return (calcCompVal() > right.calcCompVal());};
+    {return (calcCompVal() > right.calcCompVal());}
+
   /**
     compare two MeasureProg with >=
     @param rrefc_right compared object
     @return true -> this instance is >= than the other (ISOName and ProgType)
   */
   bool operator>=(const MeasureProgBase_c& right) const
-    {return (calcCompVal() >= right.calcCompVal());};
+    {return (calcCompVal() >= right.calcCompVal());}
+
 protected: // Protected methods
   /**
     reset according to the MOD the appropriate value type
@@ -487,54 +529,64 @@ protected: // Protected methods
     internal increment the value
     @param ri32_val increment for internal measure val
   */
-  void incrVal(int32_t ri32_val){i32_val += ri32_val;};
+  void incrVal(int32_t ri32_val){i32_val += ri32_val;}
+
   /**
     increment the integer value
     @param ri32_val increment for integral
   */
-  void incrInteg(int32_t ri32_val){i32_integ += ri32_val;};
+  void incrInteg(int32_t ri32_val){i32_integ += ri32_val;}
+
   /**
     set min val
     @param ri32_val new MIN value
   */
-  void setMin(int32_t ri32_val){i32_min = ri32_val;};
+  void setMin(int32_t ri32_val){i32_min = ri32_val;}
+
   /**
     set max val
     @param ri32_val new MAN value
   */
-  void setMax(int32_t ri32_val){i32_max = ri32_val;};
+  void setMax(int32_t ri32_val){i32_max = ri32_val;}
+
   /**
     set integ val
     @param ri32_val new integral value
   */
-  void setInteg(int32_t ri32_val){i32_integ = ri32_val;};
+  void setInteg(int32_t ri32_val){i32_integ = ri32_val;}
+
 #ifdef USE_FLOAT_DATA_TYPE
   /**
     internal increment the value
     @param rf_val increment for internal measure val
   */
-  void incrVal(float rf_val){f_val += rf_val;};
+  void incrVal(float rf_val){f_val += rf_val;}
+
   /**
     increment the integer value
     @param rf_val increment for integral
   */
-  void incrInteg(float rf_val){f_integ += rf_val;};
+  void incrInteg(float rf_val){f_integ += rf_val;}
+
   /**
     set min val
     @param rf_val new MIN value
   */
-  void setMin(float rf_val){f_min = rf_val;};
+  void setMin(float rf_val){f_min = rf_val;}
+
   /**
     set max val
     @param rf_val new MAN value
   */
-  void setMax(float rf_val){f_max = rf_val;};
+  void setMax(float rf_val){f_max = rf_val;}
+
   /**
     set integ val
     @param rf_val new integral value
   */
-  void setInteg(float rf_val){f_integ = rf_val;};
+  void setInteg(float rf_val){f_integ = rf_val;}
 #endif
+
 protected: // Protected attributes
   /**  last time were value was set */
   int32_t i32_lastTime;
@@ -551,12 +603,14 @@ protected: // Protected attributes
     */
     float f_val;
   };
+
   union {
     /** calculated delta value between actual and last val */
     int32_t i32_delta;
     /** calculated delta value between actual and last val */
     float f_delta;
   };
+
   union {
     /** acceleration between values
         (= delta between last i32_deltaVal and actual i32_deltaVal)
@@ -568,27 +622,33 @@ protected: // Protected attributes
     float f_accel;
   };
 #else
+
   /** actual value
       (can differ from masterVal if f.e. value of this program
       was resetted by caller)
   */
   int32_t i32_val;
+
   /** calculated delta value between actual and last val */
   int32_t i32_delta;
+
   /** acceleration between values
       (= delta between last i32_deltaVal and actual i32_deltaVal)
   */
   int32_t i32_accel;
 #endif
+
 private: // Private methods
   /** base function for assignment of element vars for copy constructor and operator= */
   void assignFromSource( const MeasureProgBase_c& rrefc_src );
+
   /**
     calculates a single value from identifying values
     (for easy <,>,...)
     @return single comparison value (depends on ISOName and Prog-Type)
   */
-  int32_t calcCompVal()const {return ( ( (c_isoName.devClass() << 4) | (c_isoName.devClassInst()) ) * en_progType);};
+  int32_t calcCompVal()const {return ( ( (c_isoName.devClass() << 4) | (c_isoName.devClassInst()) ) * en_progType);}
+
   /**
     deliver to rb_mod according measure val type
 
@@ -598,6 +658,7 @@ private: // Private methods
     @return value of specified subtype
   */
   int32_t valMod(GeneralCommand_c::ValueGroup_t en_valueGroup) const;
+
 #ifdef USE_FLOAT_DATA_TYPE
   /**
     deliver to rb_mod according measure val type
@@ -610,11 +671,13 @@ private: // Private methods
   */
   float valModFloat(GeneralCommand_c::ValueGroup_t en_valueGroup) const;
 #endif
+
   /**
     reset according to the process msg command the appropriate value type
     @param rb_comm command from Scheduler_c reset message
   */
   void reset(uint8_t rb_comm);
+
   /**
     process a message with an increment for a measuring program
 
@@ -636,6 +699,7 @@ private: // Private attributes
     */
     float f_min;
   };
+
   union {
     /**
       maximum value (only defined if one proportional prog is active)
@@ -646,6 +710,7 @@ private: // Private attributes
     */
     float f_max;
   };
+
   union {
     /**
       integral value (only defined if one proportional prog is active)
@@ -657,33 +722,40 @@ private: // Private attributes
     float f_integ;
   };
 #else
+
   /**
     minimum value (only defined if one proportional prog is active)
   */
   int32_t i32_min;
+
   /**
     maximum value (only defined if one proportional prog is active)
   */
   int32_t i32_max;
+
   /**
     integral value (only defined if one proportional prog is active)
   */
   int32_t i32_integ;
 #endif
+
   /** dynamic array for subprogs */
   Vec_MeasureSubprog vec_measureSubprog;
   /** specifies which value types should be sent if one subprog triggers */
   Proc_c::doSend_t en_doSend;
+
   /**
     stores if programm is started with baseProcess msg
     or with targetProcess msg -> this type is used for sending of values
   */
   Proc_c::progType_t en_progType;
+
   /**
     active increment types: some of {TimeProp, DistProp, ValIncr, DeltaIncr,
                   AccelIncr, MedIncr, MinIncr, MaxIncr, IntegIncr}
   */
   Proc_c::type_t en_type;
+
   /**
     used proportional type for calculating accumulated values (min, max, med, insteg)
   */

@@ -143,11 +143,11 @@ MeasureProgRemote_c::~MeasureProgRemote_c(){
       * Err_c::elNonexistent no remote member with claimed address with given DEVCLASS found
       * Err_c::precondition if ren_progType is not one of the allowed Proc_c::Base, Proc_c::Target
       * dependant error in CAN_IO
-  @param ren_progType wanted msg type for measure prog (Proc_c::Base, Proc_c::Target)
+
   @param ren_doSend set process data subtype to send (Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...)
   @return true -> command successful sent
 */
-bool MeasureProgRemote_c::start(Proc_c::progType_t ren_progType, Proc_c::doSend_t ren_doSend){
+bool MeasureProgRemote_c::start(Proc_c::doSend_t ren_doSend){
   // retrieve the ren_type from the matching registered subprog
   Proc_c::type_t en_type = Proc_c::NullType;
 
@@ -160,7 +160,7 @@ bool MeasureProgRemote_c::start(Proc_c::progType_t ren_progType, Proc_c::doSend_
   }
 
   // now call other start with en_combinedType
-  return start(ren_progType, en_type, ren_doSend);
+  return start(en_type, ren_doSend);
 }
 
 /**
@@ -170,25 +170,14 @@ bool MeasureProgRemote_c::start(Proc_c::progType_t ren_progType, Proc_c::doSend_
       * Err_c::elNonexistent no remote member with claimed address with given DEVCLASS found
       * Err_c::precondition if ren_progType is not one of the allowed Proc_c::Base, Proc_c::Target
       * dependant error in CAN_IO
-  @param ren_progType wanted msg type for measure prog (Proc_c::Base, Proc_c::Target)
+
   @param ren_type wanted increment type (Proc_c::TimeProp, Proc_c::DistProp, Proc_c::ValIncr)
   @param ren_doSend set process data subtype to send (Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...)
   @return true -> command successful sent
 */
-bool MeasureProgRemote_c::start(Proc_c::progType_t ren_progType, Proc_c::type_t ren_type, Proc_c::doSend_t ren_doSend)
+bool MeasureProgRemote_c::start(Proc_c::type_t ren_type, Proc_c::doSend_t ren_doSend)
 {
   bool b_sendResult = true;
-  // test ren_progType
-  if ((ren_progType & Proc_c::Base | Proc_c::Target) == 0)
-  { // en_progType is different from Proc_c::Base and Proc_c::Target
-    getLbsErrInstance().registerError( LibErr_c::Precondition, LibErr_c::LbsProcess );
-    return false;
-  }
-  else
-  { // o.k.
-    // set the program type: Proc_c::Base or Proc_c::Target
-    setProgType(ren_progType);
-  }
 
   // if stored remote isoName isn't valid exit this function
   // error state are set by the function
@@ -269,13 +258,13 @@ bool MeasureProgRemote_c::start(Proc_c::progType_t ren_progType, Proc_c::type_t 
       // prepare general command in process pkg
       getProcessInstance4Comm().data().c_generalCommand.setValues(b_isSetpoint, false /* isRequest */,
                                                                   en_valueGroup, en_command);
-      if (!processData().sendValISOName(ren_progType, isoName(), i32_tmpValue))
+      if (!processData().sendValISOName(isoName(), i32_tmpValue))
          b_sendResult = false;
     }
   }
 
   // call base function for registering start state
-  MeasureProgBase_c::start(ren_progType, ren_type, ren_doSend);
+  MeasureProgBase_c::start(ren_type, ren_doSend);
 
   // store actual time as last receive measure time to
   // avoid misinterpretation of to int32_t not receive data
@@ -302,8 +291,6 @@ bool MeasureProgRemote_c::stop(bool b_deleteSubProgs, Proc_c::type_t ren_type, P
   // error state are set by the function
   if (!verifySetRemoteISOName()) return false;
 
-  // send stop command to remote ECU
-  uint8_t ui8_pri = (checkProgType(Proc_c::Base))? 1:2;
   // at the moment only TimeProp and DistProp are well -> only send them
 
   // send stop command for each program
@@ -358,7 +345,7 @@ bool MeasureProgRemote_c::stop(bool b_deleteSubProgs, Proc_c::type_t ren_type, P
           b_isSetpoint = TRUE;
           break;
 
-        case Proc_c::DoValForDefaultSetpoint: 
+        case Proc_c::DoValForDefaultSetpoint:
           en_valueGroup = GeneralCommand_c::defaultValue;
           // stop measurement for a sepoint DDI in proc data instance
           b_isSetpoint = TRUE;
@@ -387,7 +374,7 @@ bool MeasureProgRemote_c::stop(bool b_deleteSubProgs, Proc_c::type_t ren_type, P
       // prepare general command in process pkg
       getProcessInstance4Comm().data().c_generalCommand.setValues(b_isSetpoint, false /* isRequest */,
                                                                   en_valueGroup, en_command);
-      b_result = processData().sendValISOName(ui8_pri, isoName(), i32_stopVal);
+      b_result = processData().sendValISOName(isoName(), i32_stopVal);
     }
 
     if (b_deleteSubProgs)
@@ -415,7 +402,7 @@ int32_t MeasureProgRemote_c::med(bool rb_sendRequest) const
     getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */,
                                                                 GeneralCommand_c::medValue,
                                                                 GeneralCommand_c::requestValue);
-    processDataConst().sendValISOName(2, isoName(), int32_t(0));
+    processDataConst().sendValISOName(isoName(), int32_t(0));
   }
   return i32_med;
 }
@@ -433,7 +420,7 @@ float MeasureProgRemote_c::medFloat(bool rb_sendRequest) const
     getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */,
                                                                 GeneralCommand_c::medValue,
                                                                 GeneralCommand_c::requestValue);
-    processDataConst().sendValISOName(2, isoName(), int32_t(0));
+    processDataConst().sendValISOName(isoName(), int32_t(0));
   }
   return f_med;
 }
@@ -612,14 +599,13 @@ bool MeasureProgRemote_c::resetVal(int32_t ri32_val){
   // if stored remote isoName isn't valid exit this function
   // error state are set by the function
   if (!verifySetRemoteISOName())return false;
-  // get suitable PRI code
-  uint8_t ui8_pri = (checkProgType(Proc_c::Base))? 1:2;
+
   // prepare general command in process pkg
   getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false /* isRequest */,
                                                               GeneralCommand_c::exactValue,
                                                               GeneralCommand_c::measurementReset);
 
-  return processData().sendValISOName(ui8_pri, isoName(), ri32_val);
+  return processData().sendValISOName(isoName(), ri32_val);
 }
 
 #ifdef USE_FLOAT_DATA_TYPE
@@ -675,12 +661,10 @@ bool MeasureProgRemote_c::resetMed(){
   // error state are set by the function
   if (!verifySetRemoteISOName())return false;
 
-  // get suitable PRI code
-  uint8_t ui8_pri = (checkProgType(Proc_c::Base))? 1:2;
   getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false /* isRequest */,
                                                               GeneralCommand_c::medValue,
                                                               GeneralCommand_c::measurementReset);
-  return processData().sendValISOName(ui8_pri, isoName(), int32_t(0x28));
+  return processData().sendValISOName(isoName(), int32_t(0x28));
 }
 
 /**
@@ -697,13 +681,11 @@ bool MeasureProgRemote_c::resetInteg(){
   // error state are set by the function
   if (!verifySetRemoteISOName())return false;
 
-  // get suitable PRI code
-  uint8_t ui8_pri = (checkProgType(Proc_c::Base))? 1:2;
   getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false /* isRequest */,
                                                               GeneralCommand_c::integValue,
                                                               GeneralCommand_c::measurementReset);
 
-  return processData().sendValISOName(ui8_pri, isoName(), int32_t(0x48));
+  return processData().sendValISOName(isoName(), int32_t(0x48));
 }
 
 /**
@@ -720,13 +702,11 @@ bool MeasureProgRemote_c::resetMin(){
   // error state are set by the function
   if (!verifySetRemoteISOName())return false;
 
-  // get suitable PRI code
-  uint8_t ui8_pri = (checkProgType(Proc_c::Base))? 1:2;
   getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false /* isRequest */,
                                                               GeneralCommand_c::minValue,
                                                               GeneralCommand_c::measurementReset);
 
-  return processData().sendValISOName(ui8_pri, isoName(), int32_t(0x8));
+  return processData().sendValISOName(isoName(), int32_t(0x8));
 }
 
 /**
@@ -743,13 +723,11 @@ bool MeasureProgRemote_c::resetMax(){
   // error state are set by the function
   if (!verifySetRemoteISOName())return false;
 
-  // get suitable PRI code
-  uint8_t ui8_pri = (checkProgType(Proc_c::Base))? 1:2;
   getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false /* isRequest */,
                                                               GeneralCommand_c::maxValue,
                                                               GeneralCommand_c::measurementReset);
 
-  return processData().sendValISOName(ui8_pri, isoName(), int32_t(0x8));
+  return processData().sendValISOName(isoName(), int32_t(0x8));
 }
 
 /**
@@ -818,7 +796,7 @@ bool MeasureProgRemote_c::verifySetRemoteISOName()
       }
     }
   } // for
-  getLbsErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::LbsProcess );
+  getLibErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::Process );
   return false;
 }
 

@@ -263,7 +263,7 @@ void Scheduler_c::startSystem()
   */
 void Scheduler_c::registerAccessFlt( void )
 {
-  getLbsErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::Lbs );
+  getLibErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::Scheduler );
 }
 
 
@@ -501,7 +501,7 @@ bool Scheduler_c::timeEvent( int32_t ri32_demandedExecEnd )
     if ( getAvailableExecTime() != 0 )
     { // simply call processMsg and don't update statistic
       // process msg of other BUS ( other CAN is always at position 1 (independent from CAN BUS at controller!!)
-      getCanInstance( 1 ).processMsg();
+      getCanInstance4Comm( 1 ).processMsg();
     }
     #endif
 

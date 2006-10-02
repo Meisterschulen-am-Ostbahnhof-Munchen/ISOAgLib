@@ -143,7 +143,7 @@ bool EEPROMIO_c::setp(uint16_t rui16_adress)
   }
   else
   { // wanted position exceeds memory -> set range error
-    getLbsErrInstance().registerError( LibErr_c::Range, LibErr_c::Eeprom );
+    getLibErrInstance().registerError( LibErr_c::Range, LibErr_c::Eeprom );
     return false;
   }
 };
@@ -167,7 +167,7 @@ bool EEPROMIO_c::setg(uint16_t rui16_adress)
   }
   else
   { // wanted position exceeds memory -> set range error
-    getLbsErrInstance().registerError( LibErr_c::Range, LibErr_c::Eeprom );
+    getLibErrInstance().registerError( LibErr_c::Range, LibErr_c::Eeprom );
     return false;
   }
 };
@@ -187,7 +187,7 @@ bool EEPROMIO_c::eofp(uint8_t rui8_length, bool rb_setState)
 { // compare (write position + length of wanted data) with size of EEPROM memory
   if ((ui16_wPosition + rui8_length) >= eepromSize())
   { // actual or end position of write access exceeds EEPROM memory
-    if (rb_setState) getLbsErrInstance().registerError( LibErr_c::Range, LibErr_c::Eeprom );
+    if (rb_setState) getLibErrInstance().registerError( LibErr_c::Range, LibErr_c::Eeprom );
     return true;  // means: End of EEPROM memory is reached
   }
   else
@@ -211,7 +211,7 @@ bool EEPROMIO_c::eofg(uint8_t rui8_length, bool rb_setState)
 { // compare (read position + length of wanted data) with size of EEPROM memory
   if ((ui16_rPosition + rui8_length) >= eepromSize())
   { // actual or end position of read access exceeds EEPROM memory
-    if (rb_setState) getLbsErrInstance().registerError( LibErr_c::Range, LibErr_c::Eeprom );
+    if (rb_setState) getLibErrInstance().registerError( LibErr_c::Range, LibErr_c::Eeprom );
     return true; // means: End of EEPROM memory is reached
   }
   else
@@ -308,7 +308,7 @@ bool EEPROMIO_c::write(uint16_t rui16_adress, uint16_t rui16_number, const uint8
   /* check input data */
   if ((rui16_adress + rui16_number) > eepromSize())
   { // range error because wanted write operation exceeds EEPROM memory
-    getLbsErrInstance().registerError( LibErr_c::Range, LibErr_c::Eeprom );
+    getLibErrInstance().registerError( LibErr_c::Range, LibErr_c::Eeprom );
   }
 
   while (ui16_restNumber > 0)
@@ -349,11 +349,11 @@ bool EEPROMIO_c::write(uint16_t rui16_adress, uint16_t rui16_number, const uint8
       }
       if ( ui8_tryCnt == MAX_EEPROM_WRITE_TRY_CYCLE_CNT )
       { // write without success, as re-read delivers always different value
-        getLbsErrInstance().registerError( LibErr_c::EepromWriteError, LibErr_c::Eeprom );
+        getLibErrInstance().registerError( LibErr_c::EepromWriteError, LibErr_c::Eeprom );
         // don't try further writes
         break;
       }
-      else if (getLbsErrInstance().good( LibErr_c::Eeprom  ))
+      else if (getLibErrInstance().good( LibErr_c::Eeprom  ))
       { //update the write vals
         // decrement number of uint8_t which must be written in next loop run
         ui16_restNumber -= ui16_actualSize;
@@ -369,7 +369,7 @@ bool EEPROMIO_c::write(uint16_t rui16_adress, uint16_t rui16_number, const uint8
     } // if write init
   } // while
   // if good()
-  return (getLbsErrInstance().good( LibErr_c::Eeprom )?true:false);
+  return (getLibErrInstance().good( LibErr_c::Eeprom )?true:false);
 }
 
 
@@ -379,25 +379,25 @@ bool EEPROMIO_c::write(uint16_t rui16_adress, uint16_t rui16_number, const uint8
 */
 bool EEPROMIO_c::writeInit(){
   // clear the BIOS state
-  getLbsErrInstance().clear( LibErr_c::Eeprom );
+  getLibErrInstance().clear( LibErr_c::Eeprom );
 
   // check if eeprom is ready; call BIOS function
   if ( wait_eepromReady() != EE_READY )
   { // error -> got not ready
-    getLbsErrInstance().registerError( LibErr_c::Busy, LibErr_c::Eeprom );
+    getLibErrInstance().registerError( LibErr_c::Busy, LibErr_c::Eeprom );
     return false;
   }
 
   // set EEPROM to writable
   setState4BiosReturn(HAL::eepromWp(OFF));
 
-  if (getLbsErrInstance().good( LibErr_c::Eeprom ))
+  if (getLibErrInstance().good( LibErr_c::Eeprom ))
   { // only try writing if write protect was succesful deactivated
     // call wait_eepromReady() to test if EEPROM is ready
     setState4BiosReturn(wait_eepromReady());
   }
   // return if EEPROM is in good state with writeable and ready state
-  return (getLbsErrInstance().good( LibErr_c::Eeprom )?true:false);
+  return (getLibErrInstance().good( LibErr_c::Eeprom )?true:false);
 }
 /**
   wait with triggering the watchdog, till the EEPROM is ready
@@ -442,17 +442,17 @@ void EEPROMIO_c::setState4BiosReturn(int16_t ri16_biosReturn)
     case HAL_NO_ERR:
       break;
     case HAL_RANGE_ERR:
-      getLbsErrInstance().registerError( LibErr_c::Range, LibErr_c::Eeprom );
+      getLibErrInstance().registerError( LibErr_c::Range, LibErr_c::Eeprom );
       break;
     case HAL_BUSY_ERR:
-      getLbsErrInstance().registerError( LibErr_c::Busy, LibErr_c::Eeprom );
+      getLibErrInstance().registerError( LibErr_c::Busy, LibErr_c::Eeprom );
       break;
     case HAL_OVERFLOW_ERR:
-      getLbsErrInstance().registerError( LibErr_c::EepromSegment, LibErr_c::Eeprom );
+      getLibErrInstance().registerError( LibErr_c::EepromSegment, LibErr_c::Eeprom );
       break;
     case HAL_NOACT_ERR:
     default:
-      getLbsErrInstance().registerError( LibErr_c::Unspecified, LibErr_c::Eeprom );
+      getLibErrInstance().registerError( LibErr_c::Unspecified, LibErr_c::Eeprom );
       break;
   }
 };

@@ -188,7 +188,7 @@ Process_c::~Process_c(){
 void Process_c::registerAccessFlt( void )
 {
 
-  getLbsErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::LbsProcess );
+  getLibErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::Process );
 }
 
 /**
@@ -447,7 +447,7 @@ ProcDataLocalBase_c& Process_c::procDataLocal( uint16_t rui16_DDI, uint16_t rui1
   bool b_found = updateLocalCache( rui16_DDI, rui16_element, rui8_devClassReceiver, rui8_devClassInstReceiver);
   if (!b_found)
   { // not found and no creation wanted -> error
-    getLbsErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::LbsProcess );
+    getLibErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::Process );
   }
   return **pc_searchCacheC1;
 }
@@ -476,7 +476,7 @@ ProcDataRemoteBase_c& Process_c::procDataRemote( uint16_t rui16_DDI, uint16_t ru
   bool b_found = updateRemoteCache(rui16_DDI, rui16_element, rui8_devClassSender, rui8_devClassInstSender, rui8_devClassReceiver, rui8_devClassInstReceiver);
   if (!b_found)
   { // not found and no creation wanted -> error
-    getLbsErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::LbsProcess );
+    getLibErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::Process );
   }
   return **pc_searchCacheC2;
 }
@@ -719,10 +719,9 @@ ProcDataRemoteBase_c* Process_c::check4ProprietaryDDIGroupMatch(uint16_t rui_dev
   (important to delete old Filter Boxes after deletion of
   of remote device from monitor list or after re-adressclaim with different SA)
   @param rc_ownerisoName isoName code of remote owner who sent the message
-  @param rui8_pri PRI code of messages with this process data instance (default 2)
   @return true -> member exist and Filter Box deleted
 */
-bool Process_c::deleteRemoteFilter(const ISOName_c& rc_ownerisoName, uint8_t)
+bool Process_c::deleteRemoteFilter(const ISOName_c& rc_ownerisoName)
 {
   bool b_result = false,
        b_found = false;
@@ -760,10 +759,9 @@ bool Process_c::deleteRemoteFilter(const ISOName_c& rc_ownerisoName, uint8_t)
 /**
   insert FilterBox_c for receive from remote isoName if needed
   @param rc_ownerisoName isoName code of remote owner who sent the message
-  @param rui8_pri PRI code of messages with this process data instance (default 2)
   @return true -> member exist and Filter Box created
  */
-bool Process_c::createRemoteFilter(const ISOName_c& rc_ownerisoName, uint8_t)
+bool Process_c::createRemoteFilter(const ISOName_c& rc_ownerisoName)
 {
   bool b_result = false;
   MASK_TYPE t_filter;
@@ -798,21 +796,20 @@ bool Process_c::checkCreateRemoteReceiveFilter()
   bool b_result = false;
   const ISOName_c *pc_lastFilterisoName = NULL;
   const ISOName_c *pc_actisoName = NULL;
-  uint8_t ui8_lastFilterPri = 0, ui8_actPri = 2;
+
   for ( cacheTypeC2_t pc_iter = c_arrClientC2.begin();
         ( pc_iter != c_arrClientC2.end() );
         pc_iter++ )
   {
     pc_actisoName = &((*pc_iter)->ownerISOName());
-    ui8_actPri = (*pc_iter)->pri();
-    if ( (ui8_actPri != ui8_lastFilterPri) && (*pc_actisoName != ISOName_c::ISONameUnspecified)
+
+    if ( (*pc_actisoName != ISOName_c::ISONameUnspecified)
       && ( ( NULL == pc_lastFilterisoName ) || (*pc_actisoName != *pc_lastFilterisoName) )
        )
     { // last FilterBox_c call with other isoName
       // -> avoid unneccessary calls with search
       pc_lastFilterisoName = pc_actisoName;
-      ui8_lastFilterPri = ui8_actPri;
-      if ( createRemoteFilter(*pc_actisoName, ui8_actPri) ) b_result = true;
+      if ( createRemoteFilter(*pc_actisoName) ) b_result = true;
     }
   }
   return b_result;

@@ -572,6 +572,7 @@ void ISOItem_c::readEepromSa()
 #endif
     setNr(ui8_eepromNr);
   }
+  getLibErrInstance().registerError( LibErr_c::Precondition, LibErr_c::System );
 }
 
 /** write actual SA to the given EEPROM adress */
@@ -583,6 +584,7 @@ void ISOItem_c::writeEepromSa()
     getEepromInstance().setp(ui16_saEepromAdr);
     getEepromInstance() << nr();
   }
+  getLibErrInstance().registerError( LibErr_c::Precondition, LibErr_c::System );
 #endif
 }
 

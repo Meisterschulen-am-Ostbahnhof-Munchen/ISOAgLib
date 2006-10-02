@@ -340,10 +340,9 @@ public:
     (important to delete old Filter Boxes after deletion of
     of remote device from monitor list or after re-adressclaim with different SA)
     @param rc_ownerISOName ISOName code of remote owner who sent the message
-    @param rui8_pri PRI code of messages with this process data instance (default 2)
     @return true -> member exist and Filter Box deleted
   */
-  bool deleteRemoteFilter(const ISOName_c& rc_ownerISOName, uint8_t rui8_pri = 2);
+  bool deleteRemoteFilter(const ISOName_c& rc_ownerISOName);
 
    /** this function is called by ISOMonitor_c when a new CLAIMED ISOItem_c is registered.
    * @param refc_isoName const reference to the item which ISOItem_c state is changed
@@ -414,10 +413,9 @@ private: // Private methods
   /**
     insert FilterBox_c for receive from remote isoName if needed
     @param rc_ownerISOName ISOName code of remote owner who sent the message
-    @param rui8_pri PRI code of messages with this process data instance (default 2)
     @return true -> member exist and Filter Box created
   */
-  bool createRemoteFilter(const ISOName_c& rc_ownerISOName, uint8_t rui8_pri = 2);
+  bool createRemoteFilter(const ISOName_c& rc_ownerISOName);
 
   /** checks if a DDI can be added to a group and return ptr to proc data if successfully */
   ProcDataRemoteBase_c* addDDI2ExistingProcData(uint16_t rui16_DDI, uint16_t rui_deviceElement, const ISOName_c& rc_isoName, GeneralCommand_c::ValueGroup_t& ren_valueGroup, bool& refb_isSetpoint);

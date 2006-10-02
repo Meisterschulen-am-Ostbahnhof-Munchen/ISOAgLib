@@ -134,7 +134,7 @@ int32_t SimpleManageMeasureProgRemote_c::masterMeasurementVal(bool rb_sendReques
                                                                 GeneralCommand_c::exactValue,
                                                                 GeneralCommand_c::requestValue);
 
-    c_base.sendValISOName(c_base.pri(), c_base.commanderISOName(), 0);
+    c_base.sendValISOName(c_base.commanderISOName(), 0);
   }
   return i32_masterVal;
 }
@@ -148,19 +148,19 @@ void SimpleManageMeasureProgRemote_c::resetMasterVal()
   getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false /* isRequest */,
                                                               GeneralCommand_c::exactValue,
                                                               GeneralCommand_c::setValue);
-  c_base.sendValISOName(c_base.pri(), c_base.commanderISOName(), 0);
+  c_base.sendValISOName(c_base.commanderISOName(), 0);
 
   // prepare general command in process pkg
   getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false /* isRequest */,
                                                               GeneralCommand_c::exactValue,
                                                               GeneralCommand_c::measurementReset);
-  c_base.sendValISOName(c_base.pri(), c_base.commanderISOName(), 0x8);
+  c_base.sendValISOName(c_base.commanderISOName(), 0x8);
   #ifdef RESET_MEASUREMENT_WITH_ZERO_EXACT_SETPOINT
     // prepare general command in process pkg
     getProcessInstance4Comm().data().c_generalCommand.setValues(true /* isSetpoint */, false /* isRequest */,
                                                                 GeneralCommand_c::exactValue,
                                                                 GeneralCommand_c::setValue);
-    c_base.sendValISOName(c_base.pri(), c_base.commanderISOName(), 0);
+    c_base.sendValISOName(c_base.commanderISOName(), 0);
   #endif
 }
 
@@ -179,7 +179,7 @@ float SimpleManageMeasureProgRemote_c::masterValFloat(bool rb_sendRequest)
                                                                 GeneralCommand_c::exactValue,
                                                                 GeneralCommand_c::requestValue);
 
-    c_base.sendValISOName(c_base.pri(), c_base.commanderISOName(), 0);
+    c_base.sendValISOName(c_base.commanderISOName(), 0);
   }
   return f_masterVal;
 }

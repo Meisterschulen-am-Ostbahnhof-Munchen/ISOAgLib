@@ -103,13 +103,13 @@ static uint16_t sui16_printedDeconstructMeasureProgBaseTotal = 0;
 #endif
 
 namespace __IsoAgLib {
-/**
-  initialise the measure prog instance, to set this instance to a well defined starting condition
-  @param rrefc_processData optional reference to containing ProcDataBase_c instance (default NULL)
-  @param ren_progType optional program type: Proc_c::Base, Proc_c::Target (default Proc_c::UndefinedProg)
-  @param ri32_val optional individual measure val for this program instance (can differ from master measure value)
-  @param rc_isoName optional ISOName of partner member for this measure program
-*/
+
+/** initialise the measure prog instance, to set this instance to a well defined starting condition
+    @param rrefc_processData optional reference to containing ProcDataBase_c instance (default NULL)
+    @param ren_progType optional program type: Proc_c::Base, Proc_c::Target (default Proc_c::UndefinedProg)
+    @param ri32_val optional individual measure val for this program instance (can differ from master measure value)
+    @param rc_isoName optional ISOName of partner member for this measure program
+  */
 void MeasureProgBase_c::init( ProcDataBase_c *const rpc_processData,
   Proc_c::progType_t ren_progType, int32_t ri32_val,
   const ISOName_c& rc_isoName)
@@ -145,11 +145,11 @@ void MeasureProgBase_c::init( ProcDataBase_c *const rpc_processData,
   i32_accel = i32_delta = i32_integ = i32_lastTime = i32_max = i32_min = 0;
 }
 
-/**
-  assignment of MeasureProgBase_c objects
-  @param rrefc_src source MeasureProgBase_c instance
-  @return reference to source instance for cmd like "prog1 = prog2 = prog3;"
-*/
+
+/** assignment of MeasureProgBase_c objects
+    @param rrefc_src source MeasureProgBase_c instance
+    @return reference to source instance for cmd like "prog1 = prog2 = prog3;"
+  */
 const MeasureProgBase_c& MeasureProgBase_c::operator=(const MeasureProgBase_c& rrefc_src){
   // call base class operator
   ProcessElementBase_c::operator=(rrefc_src);
@@ -160,14 +160,16 @@ const MeasureProgBase_c& MeasureProgBase_c::operator=(const MeasureProgBase_c& r
   return rrefc_src;
 }
 
-/**
-  copy constructor
-  @param rrefc_src source MeasureProgBase_c instance
-*/
+
+/** copy constructor
+    @param rrefc_src source MeasureProgBase_c instance
+  */
 MeasureProgBase_c::MeasureProgBase_c(const MeasureProgBase_c& rrefc_src)
  : ProcessElementBase_c(rrefc_src)  {
   assignFromSource( rrefc_src );
 }
+
+
 /** base function for assignment of element vars for copy constructor and operator= */
 void MeasureProgBase_c::assignFromSource( const MeasureProgBase_c& rrefc_src )
 { // copy element vars
@@ -186,7 +188,7 @@ void MeasureProgBase_c::assignFromSource( const MeasureProgBase_c& rrefc_src )
 
   if (vec_measureSubprog.size() < rrefc_src.vec_measureSubprog.size())
   { // not all items copied
-    getLbsErrInstance().registerError( LibErr_c::BadAlloc, LibErr_c::LbsProcess );
+    getLibErrInstance().registerError( LibErr_c::BadAlloc, LibErr_c::Process );
   }
   #ifdef DEBUG_HEAP_USEAGE
   else
@@ -218,16 +220,15 @@ MeasureProgBase_c::~MeasureProgBase_c(){
   #endif
 }
 
-/**
-  add an aditional subprog or update if one with same kind exist already
+/** add an aditional subprog or update if one with same kind exist already
 
-  possible errors:
-      * Err_c::badAlloc not enough memory to add new subprog
-  @param ren_type increment type: Proc_c::TimeProp, Proc_c::DistProp, Proc_c::ValIncr
-  @param ri32_increment increment value
-  @param ren_doSend set process data subtype to send (Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...)
-  @return true -> subprog was created successfully; fals -> out-of-memory error
-*/
+    possible errors:
+        * Err_c::badAlloc not enough memory to add new subprog
+    @param ren_type increment type: Proc_c::TimeProp, Proc_c::DistProp, Proc_c::ValIncr
+    @param ri32_increment increment value
+    @param ren_doSend set process data subtype to send (Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...)
+    @return true -> subprog was created successfully; fals -> out-of-memory error
+  */
  bool MeasureProgBase_c::addSubprog(Proc_c::type_t ren_type, int32_t ri32_increment, Proc_c::doSend_t ren_doSend){
   if (ren_type == Proc_c::TimeProp) en_accumProp = Proc_c::AccumTime;
   else if (ren_type == Proc_c::DistProp) en_accumProp = Proc_c::AccumDist;
@@ -250,7 +251,7 @@ MeasureProgBase_c::~MeasureProgBase_c(){
     vec_measureSubprog.push_front(MeasureSubprog_c(ren_type, ren_doSend, ri32_increment));
     if (b_oldSize >= vec_measureSubprog.size())
     { // array didn't grow
-      getLbsErrInstance().registerError( LibErr_c::BadAlloc, LibErr_c::LbsProcess );
+      getLibErrInstance().registerError( LibErr_c::BadAlloc, LibErr_c::Process );
       return false;
     }
     #ifdef DEBUG_HEAP_USEAGE
@@ -279,11 +280,10 @@ MeasureProgBase_c::~MeasureProgBase_c(){
   return true;
 }
 
-/**
-  LBS+ uses positive values even for time proportional measure prog
-  -> only the start cmd choose increment type
-  -> search for forced increment type and set first to according type if needed
-*/
+/** ISO uses positive values even for time proportional measure prog
+    -> only the start cmd choose increment type
+    -> search for forced increment type and set first to according type if needed
+  */
 void MeasureProgBase_c::forceSubprogType(Proc_c::type_t ren_type)
 {
   Vec_MeasureSubprog::iterator pc_subprog;
@@ -298,16 +298,13 @@ void MeasureProgBase_c::forceSubprogType(Proc_c::type_t ren_type)
 }
 
 
-/**
-  start a measuring programm
-  @param ren_progType wanted msg type for measure prog (Proc_c::Base, Proc_c::Target)
-  @param ren_type wanted increment type (Proc_c::TimeProp, Proc_c::DistProp, Proc_c::ValIncr)
-  @param ren_doSend set process data subtype to send (Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...)
-  @return always true; only relevant for overoaded methods in derived classes
-*/
-bool MeasureProgBase_c::start(Proc_c::progType_t ren_progType, Proc_c::type_t ren_type, Proc_c::doSend_t ren_doSend){
+/** start a measuring programm
+    @param ren_type wanted increment type (Proc_c::TimeProp, Proc_c::DistProp, Proc_c::ValIncr)
+    @param ren_doSend set process data subtype to send (Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...)
+    @return always true; only relevant for overloaded methods in derived classes
+  */
+bool MeasureProgBase_c::start(Proc_c::type_t ren_type, Proc_c::doSend_t ren_doSend){
   // register values
-  en_progType = ren_progType; // base or target msg
   en_doSend = (ren_doSend != Proc_c::DoNone)?ren_doSend : en_doSend;
   if (en_doSend == Proc_c::DoNone) en_doSend = Proc_c::DoVal;
   forceSubprogType(ren_type);
@@ -315,13 +312,12 @@ bool MeasureProgBase_c::start(Proc_c::progType_t ren_progType, Proc_c::type_t re
   return true;
 }
 
-/**
-  stop all running subprog
-  @param b_deleteSubProgs is only needed for remote ISO case (but is needed due to overloading here also)
-  @param ren_type wanted increment type (Proc_c::TimeProp, Proc_c::DistProp, Proc_c::ValIncr)
-  @param ren_doSend set process data subtype to stop (Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...)
-  @return always true; only relevant for overoaded methods in derived classes
-*/
+/** stop all running subprog
+    @param b_deleteSubProgs is only needed for remote ISO case (but is needed due to overloading here also)
+    @param ren_type wanted increment type (Proc_c::TimeProp, Proc_c::DistProp, Proc_c::ValIncr)
+    @param ren_doSend set process data subtype to stop (Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...)
+    @return always true; only relevant for overloaded methods in derived classes
+  */
 bool MeasureProgBase_c::stop(bool /*b_deleteSubProgs*/, Proc_c::type_t /* ren_type */, Proc_c::doSend_t /* ren_doSend */){
   // clear the array with all subprogs -> no trigger test is done on value set
   #ifdef DEBUG_HEAP_USEAGE
@@ -346,12 +342,11 @@ bool MeasureProgBase_c::stop(bool /*b_deleteSubProgs*/, Proc_c::type_t /* ren_ty
   return true;
 }
 
-/**
-  deliver actual last received value
-  @param rb_sendRequest choose wether a request for value update should be
-      sent (default false == send no request)
-  @return measure val for this prog (can differ from master measure val)
-*/
+/** deliver actual last received value
+    @param rb_sendRequest choose wether a request for value update should be
+        sent (default false == send no request)
+    @return measure val for this prog (can differ from master measure val)
+  */
 int32_t MeasureProgBase_c::val(bool rb_sendRequest) const
 {
   if (rb_sendRequest) {
@@ -360,17 +355,17 @@ int32_t MeasureProgBase_c::val(bool rb_sendRequest) const
                                                                 GeneralCommand_c::exactValue,
                                                                 GeneralCommand_c::requestValue);
 
-    processData().sendValISOName(2, isoName(), int32_t(0));
+    processData().sendValISOName(isoName(), int32_t(0));
   }
 
   return i32_val;
-};
-/**
-  deliver integ val
-  @param rb_sendRequest choose wether a request for value update should be
-      sent (default false == send no request)
-  @return integral val for this measure prog
-*/
+}
+
+/** deliver integ val
+    @param rb_sendRequest choose wether a request for value update should be
+        sent (default false == send no request)
+    @return integral val for this measure prog
+  */
 int32_t MeasureProgBase_c::integ(bool rb_sendRequest) const
 {
   if (rb_sendRequest) {
@@ -379,17 +374,16 @@ int32_t MeasureProgBase_c::integ(bool rb_sendRequest) const
                                                                 GeneralCommand_c::integValue,
                                                                 GeneralCommand_c::requestValue);
 
-    processData().sendValISOName(2, isoName(), int32_t(0));
+    processData().sendValISOName(isoName(), int32_t(0));
   }
   return i32_integ;
-};
+}
 
-/**
-  deliver min val
-  @param rb_sendRequest choose wether a request for value update should be
-      sent (default false == send no request)
-  @return MIN val for this measure prog
-*/
+/** deliver min val
+    @param rb_sendRequest choose wether a request for value update should be
+        sent (default false == send no request)
+    @return MIN val for this measure prog
+  */
 int32_t MeasureProgBase_c::min(bool rb_sendRequest) const
 {
   if(rb_sendRequest) {
@@ -398,16 +392,16 @@ int32_t MeasureProgBase_c::min(bool rb_sendRequest) const
                                                                 GeneralCommand_c::minValue,
                                                                 GeneralCommand_c::requestValue);
 
-    processData().sendValISOName(2, isoName(), int32_t(0));
+    processData().sendValISOName(isoName(), int32_t(0));
   }
   return i32_min;
-};
-/**
-  deliver max val
-  @param rb_sendRequest choose wether a request for value update should be
-      sent (default false == send no request)
-  @return MAX val for this measure prog
-*/
+}
+
+/** deliver max val
+    @param rb_sendRequest choose wether a request for value update should be
+        sent (default false == send no request)
+    @return MAX val for this measure prog
+  */
 int32_t MeasureProgBase_c::max(bool rb_sendRequest) const
 {
   if (rb_sendRequest) {
@@ -416,16 +410,15 @@ int32_t MeasureProgBase_c::max(bool rb_sendRequest) const
                                                                 GeneralCommand_c::maxValue,
                                                                 GeneralCommand_c::requestValue);
 
-    processData().sendValISOName(2, isoName(), int32_t(0));
+    processData().sendValISOName(isoName(), int32_t(0));
   }
   return i32_max;
-};
+}
 
 
-/**
-  init the element vars
-  @param ri32_val initial measure val
-*/
+/** init the element vars
+    @param ri32_val initial measure val
+  */
 void MeasureProgBase_c::initVal(int32_t ri32_val){
   #ifdef DEBUG_HEAP_USEAGE
   if ( ( sui16_MeasureProgBaseTotal != sui16_printedMeasureProgBaseTotal                     )
@@ -446,13 +439,12 @@ void MeasureProgBase_c::initVal(int32_t ri32_val){
 }
 
 #ifdef USE_FLOAT_DATA_TYPE
-/**
-  initialise the measure prog instance, to set this instance to a well defined starting condition
-  @param rrefc_processData optional reference to containing ProcDataBase_c instance (default NULL)
-  @param ren_progType optional program type: Proc_c::Base, Proc_c::Target (default Proc_c::UndefinedProg)
-  @param rf_val optional individual measure val for this program instance (can differ from master measure value)
-  @param rc_isoName optional ISOName of partner member for this measure program
-*/
+/** initialise the measure prog instance, to set this instance to a well defined starting condition
+    @param rrefc_processData optional reference to containing ProcDataBase_c instance (default NULL)
+    @param ren_progType optional program type: Proc_c::Base, Proc_c::Target (default Proc_c::UndefinedProg)
+    @param rf_val optional individual measure val for this program instance (can differ from master measure value)
+    @param rc_isoName optional ISOName of partner member for this measure program
+  */
 void MeasureProgBase_c::init(
   ProcDataBase_c *const rpc_processData,
   Proc_c::progType_t ren_progType,
@@ -487,12 +479,12 @@ void MeasureProgBase_c::init(
 
   i32_accel = i32_delta = i32_integ = i32_lastTime = i32_max = i32_min = 0;
 }
-/**
-  deliver actual last received value
-  @param rb_sendRequest choose wether a request for value update should be
-      sent (default false == send no request)
-  @return measure val for this prog (can differ from master measure val)
-*/
+
+/** deliver actual last received value
+    @param rb_sendRequest choose wether a request for value update should be
+        sent (default false == send no request)
+    @return measure val for this prog (can differ from master measure val)
+  */
 float MeasureProgBase_c::valFloat(bool rb_sendRequest) const
 {
   if (rb_sendRequest) {
@@ -501,16 +493,16 @@ float MeasureProgBase_c::valFloat(bool rb_sendRequest) const
                                                                 GeneralCommand_c::exactValue,
                                                                 GeneralCommand_c::requestValue);
 
-    processData().sendValISOName(2, isoName(), int32_t(0));
+    processData().sendValISOName(isoName(), int32_t(0));
   }
   return f_val;
-};
-/**
-  deliver integ val
-  @param rb_sendRequest choose wether a request for value update should be
-      sent (default false == send no request)
-  @return integral val for this measure prog
-*/
+}
+
+/** deliver integ val
+    @param rb_sendRequest choose wether a request for value update should be
+        sent (default false == send no request)
+    @return integral val for this measure prog
+  */
 float MeasureProgBase_c::integFloat(bool rb_sendRequest) const
 {
   if (rb_sendRequest) {
@@ -519,17 +511,17 @@ float MeasureProgBase_c::integFloat(bool rb_sendRequest) const
                                                                 GeneralCommand_c::integValue,
                                                                 GeneralCommand_c::requestValue);
 
-    processData().sendValISOName(2, isoName(), int32_t(0));
+    processData().sendValISOName(isoName(), int32_t(0));
   }
   return f_integ;
-};
+}
 
-/**
-  deliver min val
-  @param rb_sendRequest choose wether a request for value update should be
-      sent (default false == send no request)
-  @return MIN val for this measure prog
-*/
+
+/** deliver min val
+    @param rb_sendRequest choose wether a request for value update should be
+        sent (default false == send no request)
+    @return MIN val for this measure prog
+  */
 float MeasureProgBase_c::minFloat(bool rb_sendRequest) const
 {
   if (rb_sendRequest) {
@@ -538,16 +530,17 @@ float MeasureProgBase_c::minFloat(bool rb_sendRequest) const
                                                                 GeneralCommand_c::minValue,
                                                                 GeneralCommand_c::requestValue);
 
-    processData().sendValISOName(2, isoName(), int32_t(0));
+    processData().sendValISOName(isoName(), int32_t(0));
   }
   return f_min;
-};
-/**
-  deliver max val
-  @param rb_sendRequest choose wether a request for value update should be
-      sent (default false == send no request)
-  @return MAX val for this measure prog
-*/
+}
+
+
+/** deliver max val
+    @param rb_sendRequest choose wether a request for value update should be
+        sent (default false == send no request)
+    @return MAX val for this measure prog
+  */
 float MeasureProgBase_c::maxFloat(bool rb_sendRequest) const
 {
   if (rb_sendRequest) {
@@ -556,16 +549,15 @@ float MeasureProgBase_c::maxFloat(bool rb_sendRequest) const
                                                                 GeneralCommand_c::maxValue,
                                                                 GeneralCommand_c::requestValue);
 
-    processData().sendValISOName(2, isoName(), int32_t(0));
+    processData().sendValISOName(isoName(), int32_t(0));
   }
   return f_max;
-};
+}
 
 
-/**
-  init the element vars
-  @param rf_val initial measure val
-*/
+/** init the element vars
+    @param rf_val initial measure val
+  */
 void MeasureProgBase_c::initVal(float rf_val){
   #ifdef DEBUG_HEAP_USEAGE
   if ( ( sui16_MeasureProgBaseTotal != sui16_printedMeasureProgBaseTotal                     )
@@ -587,12 +579,11 @@ void MeasureProgBase_c::initVal(float rf_val){
 #endif
 
 
-/**
-  process a message;
-  MeasureProgBase_c::processMsg is responsible for measure prog
-  controlling commands
-  @return true -> message was already edited complete
-*/
+/** process a message;
+    MeasureProgBase_c::processMsg is responsible for measure prog
+    controlling commands
+    @return true -> message was already edited complete
+  */
 bool MeasureProgBase_c::processMsg(){
   ProcessPkg_c& c_pkg = getProcessInstance4Comm().data();
   GeneralCommand_c::CommandType_t en_command = c_pkg.c_generalCommand.getCommand();
@@ -621,7 +612,7 @@ bool MeasureProgBase_c::processMsg(){
     // => handle this in measure prog local => return false
     return false;
 
-// Not sure why this has problems, but it does. So, don't run it with ISO_TASK_CONTROLLER! -bac
+  // Not sure why this has problems, but it does. So, don't run it with ISO_TASK_CONTROLLER! -bac
   // check if PD==0 -> SET increment message
   if (!c_pkg.c_generalCommand.checkIsRequest())
   { // mark that msg already edited
@@ -715,7 +706,7 @@ bool MeasureProgBase_c::processMsg(){
       if (i32_dataLong != 0)
       {
         if (en_type != Proc_c::NullType)
-          start(static_cast<Proc_c::progType_t>(c_pkg.pri()), en_type, en_doSend);
+          start(en_type, en_doSend);
       }
       else
        // call MeasureProgLocal_c::stop() with TRUE and en_type != Proc_c::NullType
@@ -762,21 +753,21 @@ bool MeasureProgBase_c::processMsg(){
   return b_edited;
 }
 
-/**
-  perform periodic actions
-  @return true -> all planned activities performed in available time
-*/
+
+/** perform periodic actions
+    @return true -> all planned activities performed in available time
+  */
 bool MeasureProgBase_c::timeEvent( void )
 {return true;}
 
-/**
-  deliver to en_valueGroup according measure val type
 
-  possible errors:
-      * Err_c:range MOD is not in allowed range [0..6]
-  @param en_valueGroup of wanted subtype
-  @return value of specified subtype
-*/
+/** deliver to en_valueGroup according measure val type
+
+    possible errors:
+        * Err_c:range MOD is not in allowed range [0..6]
+    @param en_valueGroup of wanted subtype
+    @return value of specified subtype
+  */
 int32_t MeasureProgBase_c::valMod(GeneralCommand_c::ValueGroup_t en_valueGroup) const {
   int32_t i32_value = val();
   switch (en_valueGroup)
@@ -799,22 +790,22 @@ int32_t MeasureProgBase_c::valMod(GeneralCommand_c::ValueGroup_t en_valueGroup) 
       break;
     default:
       // wrong range
-      getLbsErrInstance().registerError( LibErr_c::Range, LibErr_c::LbsProcess );
+      getLibErrInstance().registerError( LibErr_c::Range, LibErr_c::Process );
   }
 
   return i32_value;
 }
 
-#ifdef USE_FLOAT_DATA_TYPE
-/**
-  deliver to en_valueGroup according measure val type
-  as float value
 
-  possible errors:
-      * Err_c:range MOD is not in allowed range [0..6]
-  @param en_valueGroup of wanted subtype
-  @return value of specified subtype
-*/
+#ifdef USE_FLOAT_DATA_TYPE
+/** deliver to en_valueGroup according measure val type
+    as float value
+
+    possible errors:
+        * Err_c:range MOD is not in allowed range [0..6]
+    @param en_valueGroup of wanted subtype
+    @return value of specified subtype
+  */
 float MeasureProgBase_c::valModFloat(GeneralCommand_c::ValueGroup_t en_valueGroup) const
 {
   float f_value = valFloat();
@@ -837,17 +828,16 @@ float MeasureProgBase_c::valModFloat(GeneralCommand_c::ValueGroup_t en_valueGrou
         f_value = medFloat();
         break;
       default:
-        getLbsErrInstance().registerError( LibErr_c::Range, LibErr_c::LbsProcess );
+        getLibErrInstance().registerError( LibErr_c::Range, LibErr_c::Process );
     }
   return f_value;
 }
 #endif
 
 
-/**
-  reset according to the process msg command the appropriate value type
-  @param rb_comm command from Scheduler_c reset message
-*/
+/** reset according to the process msg command the appropriate value type
+    @param rb_comm command from Scheduler_c reset message
+  */
 void MeasureProgBase_c::reset(uint8_t rb_comm){
   if ((rb_comm & 0x8) > 0)
   {
@@ -883,13 +873,13 @@ void MeasureProgBase_c::reset(uint8_t rb_comm){
   }
 }
 
-/**
-  process a message with an increment for a measuring program
 
-  possible errors:
-      * Err_c::badAlloc not enough memory to add new subprog
-  @param ren_doSend set process data subtype to send (Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...)
-*/
+/** process a message with an increment for a measuring program
+
+    possible errors:
+        * Err_c::badAlloc not enough memory to add new subprog
+    @param ren_doSend set process data subtype to send (Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...)
+  */
 void MeasureProgBase_c::processIncrementMsg(Proc_c::doSend_t ren_doSend){
   ProcessPkg_c& c_pkg = getProcessInstance4Comm().data();
 
@@ -919,17 +909,16 @@ void MeasureProgBase_c::processIncrementMsg(Proc_c::doSend_t ren_doSend){
   if (c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::measurementMinimumThresholdValueStart)
     // change threshold proportional
     addSubprog(Proc_c::MinimumThreshold, i32_val, ren_doSend);
-
 }
 
-/**
-  reset according to the MOD the appropriate value type
 
-  possible errors:
-      * Err_c:range MOD is not in allowed range [0..4]
-  @param rb_mod MOD of wanted subtype
-  @param ri32_val reset measure value to this value (ISO remote only)
-*/
+/** reset according to the MOD the appropriate value type
+
+    possible errors:
+        * Err_c:range MOD is not in allowed range [0..4]
+    @param rb_mod MOD of wanted subtype
+    @param ri32_val reset measure value to this value (ISO remote only)
+  */
 void MeasureProgBase_c::resetValMod(GeneralCommand_c::ValueGroup_t en_valueGroup, int32_t ri32_val){
     switch (en_valueGroup)
     {
@@ -950,7 +939,7 @@ void MeasureProgBase_c::resetValMod(GeneralCommand_c::ValueGroup_t en_valueGroup
         resetMed();
         break;
       default:
-        getLbsErrInstance().registerError( LibErr_c::Range, LibErr_c::LbsProcess );
+        getLibErrInstance().registerError( LibErr_c::Range, LibErr_c::Process );
     }
 }
 

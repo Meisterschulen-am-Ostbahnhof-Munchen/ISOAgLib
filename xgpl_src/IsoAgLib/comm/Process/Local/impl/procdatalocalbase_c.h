@@ -142,7 +142,6 @@ class ProcDataLocalBase_c : public ProcDataBase_c
                          (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
     common parameter
     @param rc_isoName optional ISOName code of Process-Data
-    @param rui8_pri PRI code of messages with this process data instance (default 2)
     @param rc_ownerISOName optional ISOName of the owner
     @param rpc_isoName pointer to updated ISOName variable of owner
     @param rb_cumulativeValue
@@ -167,7 +166,6 @@ class ProcDataLocalBase_c : public ProcDataBase_c
   */
   ProcDataLocalBase_c( const IsoAgLib::ElementDDI_s* ps_elementDDI = NULL, uint16_t ui16_element = 0xFFFF,
                        const ISOName_c& rc_isoName = ISOName_c::ISONameInitialProcessData,
-                       uint8_t rui8_pri = 2,
                        const ISOName_c& rc_ownerISOName = ISOName_c::ISONameUnspecified,
                        const ISOName_c *rpc_isoName = NULL,
                        bool rb_cumulativeValue = false
@@ -178,11 +176,11 @@ class ProcDataLocalBase_c : public ProcDataBase_c
                        , int ri_singletonVecKey = 0
                        )
     : ProcDataBase_c( ps_elementDDI, ui16_element,
-                      rc_isoName, rui8_pri, rc_ownerISOName, rpc_isoName, rpc_processDataChangeHandler, ri_singletonVecKey
+                      rc_isoName, rc_ownerISOName, rpc_isoName, rpc_processDataChangeHandler, ri_singletonVecKey
                      )
 
     {
-      init( ps_elementDDI, ui16_element, rc_isoName, rui8_pri, rc_ownerISOName, rpc_isoName, rb_cumulativeValue
+      init( ps_elementDDI, ui16_element, rc_isoName, rc_ownerISOName, rpc_isoName, rb_cumulativeValue
       #ifdef USE_EEPROM_IO
           , rui16_eepromAdr
       #endif // USE_EEPROM_IO
@@ -198,7 +196,6 @@ class ProcDataLocalBase_c : public ProcDataBase_c
                          (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
     common parameter
     @param rc_isoName optional ISOName code of Process-Data
-    @param rui8_pri PRI code of messages with this process data instance (default 2)
     @param rc_ownerISOName optional ISOName of the owner
     @param rpc_isoName pointer to updated ISOName variable of owner
     @param rb_cumulativeValue
@@ -223,7 +220,6 @@ class ProcDataLocalBase_c : public ProcDataBase_c
   */
   void init(const IsoAgLib::ElementDDI_s* ps_elementDDI, uint16_t rui16_element,
             const ISOName_c& rc_isoName = ISOName_c::ISONameInitialProcessData,
-            uint8_t rui8_pri = 2,
             const ISOName_c& rc_ownerISOName = ISOName_c::ISONameUnspecified,
             const ISOName_c *rpc_isoName = NULL,
             bool rb_cumulativeValue = false
@@ -302,10 +298,9 @@ class ProcDataLocalBase_c : public ProcDataBase_c
 
   /** send a min-information (selected by MOD) to a specified target (selected by ISOName)
     @param rc_targetISOName ISOName of target
-    @param ren_type optional PRI specifier of the message (default Proc_c::Target )
     @return true -> successful sent
   */
-  bool sendMasterMeasurementVal( const ISOName_c& rc_targetISOName, Proc_c::progType_t ren_progType = Proc_c::Target ) const;
+  bool sendMasterMeasurementVal( const ISOName_c& rc_targetISOName ) const;
 
   /** check if a setpoint master exists
     (used for accessing setpoint values from measure progs)
@@ -346,14 +341,14 @@ class ProcDataLocalBase_c : public ProcDataBase_c
         possible errors:
       * Err_c::elNonexistent one of resolved EMPF/SEND isn't registered with claimed address in Monitor
       * dependant error in CANIO_c on CAN send problems
-      @param rui8_pri PRI code for the msg
+
       @param rc_varISOName variable ISOName
       @param ri32_val int32_t value to send
       @param en_valueGroup: min/max/exact/default
       @param en_command
       @return true -> sendIntern set successful EMPF and SEND
   */
-  bool sendValISOName(uint8_t rui8_pri, const ISOName_c& rc_varISOName, int32_t ri32_val = 0) const;
+  bool sendValISOName( const ISOName_c& rc_varISOName, int32_t ri32_val = 0) const;
 
 #ifdef USE_FLOAT_DATA_TYPE
   /** send the given float value with variable ISOName rc_varISOName;
@@ -363,14 +358,14 @@ class ProcDataLocalBase_c : public ProcDataBase_c
       possible errors:
   * Err_c::elNonexistent one of resolved EMPF/SEND isn't registered with claimed address in Monitor
   * dependant error in CANIO_c on CAN send problems
-      @param rui8_pri PRI code for the msg
+
       @param rc_varISOName variable ISOName
       @param rb_pd PD code for the msg
       @param rb_mod MOD code for the msg
       @param ri32_val float value to send
       @return true -> sendIntern set successful EMPF and SEND
   */
-  bool sendValISOName (uint8_t rui8_pri, const ISOName_c& rc_varISOName, float rf_val = 0.0F) const;
+  bool sendValISOName (const ISOName_c& rc_varISOName, float rf_val = 0.0F) const;
 #endif
 
  protected:

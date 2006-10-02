@@ -167,7 +167,7 @@ void SetpointRemote_c::setExact(float rf_val)
                                                               GeneralCommand_c::exactValue,
                                                               GeneralCommand_c::setValue);
 
-  processData().sendValISOName(Proc_c::Target, processData().commanderISOName(), rf_val);
+  processData().sendValISOName(processData().commanderISOName(), rf_val);
 }
 
 #endif
@@ -193,7 +193,7 @@ void SetpointRemote_c::setExact( int32_t ri32_val){
                                                               GeneralCommand_c::exactValue,
                                                               GeneralCommand_c::setValue);
 
-  processData().sendValISOName( Proc_c::Target, processData().commanderISOName(), ri32_val);
+  processData().sendValISOName(processData().commanderISOName(), ri32_val);
 }
 
 
@@ -218,7 +218,7 @@ void SetpointRemote_c::setMin( int32_t ri32_val){
                                                               GeneralCommand_c::minValue,
                                                               GeneralCommand_c::setValue);
 
-  processData().sendValISOName( Proc_c::Target, processData().commanderISOName(), ri32_val);
+  processData().sendValISOName(processData().commanderISOName(), ri32_val);
 }
 
 /**
@@ -242,7 +242,7 @@ void SetpointRemote_c::setMax( int32_t ri32_val){
                                                               GeneralCommand_c::maxValue,
                                                               GeneralCommand_c::setValue);
   // send command to owner: PD=0, MOD=3
-  processData().sendValISOName( Proc_c::Target, processData().commanderISOName(), ri32_val);
+  processData().sendValISOName(processData().commanderISOName(), ri32_val);
 }
 
 /**
@@ -266,7 +266,7 @@ void SetpointRemote_c::setDefault( int32_t ri32_val){
                                                               GeneralCommand_c::defaultValue,
                                                               GeneralCommand_c::setValue);
   // send command to owner:
-  processData().sendValISOName( Proc_c::Target, processData().commanderISOName(), ri32_val);
+  processData().sendValISOName(processData().commanderISOName(), ri32_val);
 }
 
 /**
@@ -279,7 +279,7 @@ void SetpointRemote_c::requestExact() const
                                                               GeneralCommand_c::exactValue,
                                                               GeneralCommand_c::requestValue);
 
-  processDataConst().sendValISOName( Proc_c::Target, processDataConst().commanderISOName(), 0);
+  processDataConst().sendValISOName(processDataConst().commanderISOName(), 0);
 }
 /**
   request remote master setpoint - MIN
@@ -291,7 +291,7 @@ void SetpointRemote_c::requestMin() const
                                                               GeneralCommand_c::minValue,
                                                               GeneralCommand_c::requestValue);
 
-  processDataConst().sendValISOName( Proc_c::Target, processDataConst().commanderISOName(), 0);
+  processDataConst().sendValISOName(processDataConst().commanderISOName(), 0);
 }
 /**
   request remote master setpoint - MAX
@@ -303,7 +303,7 @@ void SetpointRemote_c::requestMax() const
                                                               GeneralCommand_c::maxValue,
                                                               GeneralCommand_c::requestValue);
 
-  processDataConst().sendValISOName( Proc_c::Target, processDataConst().commanderISOName(), 0);
+  processDataConst().sendValISOName(processDataConst().commanderISOName(), 0);
 }
 /**
   request remote master setpoint - DEFAULT
@@ -314,7 +314,7 @@ void SetpointRemote_c::requestDefault() const
   getProcessInstance4Comm().data().c_generalCommand.setValues(true /* isSetpoint */, true /* isRequest */,
                                                               GeneralCommand_c::defaultValue,
                                                               GeneralCommand_c::requestValue);
-  processDataConst().sendValISOName( Proc_c::Target, processDataConst().commanderISOName(), 0);
+  processDataConst().sendValISOName(processDataConst().commanderISOName(), 0);
 }
 
 /**
@@ -361,7 +361,7 @@ void SetpointRemote_c::releaseMaster(){
   }
   else
   { // I'm not the master
-    getLbsErrInstance().registerError( LibErr_c::Precondition, LibErr_c::LbsProcess );
+    getLibErrInstance().registerError( LibErr_c::Precondition, LibErr_c::Process );
   }
 }
 

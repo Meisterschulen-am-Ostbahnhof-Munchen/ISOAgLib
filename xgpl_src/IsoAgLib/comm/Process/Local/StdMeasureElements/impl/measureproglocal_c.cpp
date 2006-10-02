@@ -93,14 +93,13 @@
 
 namespace __IsoAgLib {
 
-/**
-  initialise this MeasureProgLocal_c instance to a well defined initial state
-  @param rpc_processData optional pointer to containing ProcDataLocal_c instance (def NULL)
-  @param ren_progType optional program msg type (Proc_c::Base, Proc_c::Target; default Proc_c::UndefinedProg)
-  @param ri32_masterVal optional actual central local measured value used as masterVal (def 0)
-  @param ri32_initialVal optional initial value (e.g which was stored in EEPROM) (default 0)
-  @param rui8_callerISOName optional ISOName of remote member, which caused creation of this instance (default 0xFF == no member)
-*/
+/** initialise this MeasureProgLocal_c instance to a well defined initial state
+    @param rpc_processData optional pointer to containing ProcDataLocal_c instance (def NULL)
+    @param ren_progType optional program msg type (Proc_c::Base, Proc_c::Target; default Proc_c::UndefinedProg)
+    @param ri32_masterVal optional actual central local measured value used as masterVal (def 0)
+    @param ri32_initialVal optional initial value (e.g which was stored in EEPROM) (default 0)
+    @param rui8_callerISOName optional ISOName of remote member, which caused creation of this instance (default 0xFF == no member)
+  */
 void MeasureProgLocal_c::init(
   ProcDataBase_c *const rpc_processData,
   Proc_c::progType_t ren_progType,
@@ -125,15 +124,14 @@ void MeasureProgLocal_c::init(
 }
 
 #ifdef USE_FLOAT_DATA_TYPE
-/**
-  initialise this MeasureProgLocal_c instance to a well defined initial state
-  @param rpc_processData optional pointer to containing ProcDataLocal_c instance (def NULL)
+/** initialise this MeasureProgLocal_c instance to a well defined initial state
+    @param rpc_processData optional pointer to containing ProcDataLocal_c instance (def NULL)
 
-  @param ren_progType optional program msg type (Proc_c::Base, Proc_c::Target; default Proc_c::UndefinedProg)
-  @param rf_masterVal actual central local measured value used as float masterVal
-  @param rf_eepromVal optional value stored in EEPROM (default 0.0)
-  @param rui8_callerISOName optional ISOName of remote member, which caused creation of this instance (default 0xFF == no member)
-*/
+    @param ren_progType optional program msg type (Proc_c::Base, Proc_c::Target; default Proc_c::UndefinedProg)
+    @param rf_masterVal actual central local measured value used as float masterVal
+    @param rf_eepromVal optional value stored in EEPROM (default 0.0)
+    @param rui8_callerISOName optional ISOName of remote member, which caused creation of this instance (default 0xFF == no member)
+  */
 void MeasureProgLocal_c::init(
   ProcDataBase_c *const rpc_processData,
   Proc_c::progType_t ren_progType, float rf_masterVal,
@@ -153,13 +151,13 @@ void MeasureProgLocal_c::init(
     f_medSum = 0.0F;
   }
 }
-
 #endif
-/**
-  assignment of MeasureProgLocal_c objects
-  @param rrefc_src source MeasureProgLocal_c instance
-  @return reference to source instance for assignment like "prog1 = prog2 = prog3;"
-*/
+
+
+/** assignment of MeasureProgLocal_c objects
+    @param rrefc_src source MeasureProgLocal_c instance
+    @return reference to source instance for assignment like "prog1 = prog2 = prog3;"
+  */
 const MeasureProgLocal_c& MeasureProgLocal_c::operator=(const MeasureProgLocal_c& rrefc_src){
   // call base class operator
   MeasureProgBase_c::operator=(rrefc_src);
@@ -170,14 +168,15 @@ const MeasureProgLocal_c& MeasureProgLocal_c::operator=(const MeasureProgLocal_c
   return rrefc_src;
 }
 
-/**
-  copy constructor for MeasureProgLocal
-  @param rrefc_src source MeasureProgLocal_c instance
-*/
+/** copy constructor for MeasureProgLocal
+    @param rrefc_src source MeasureProgLocal_c instance
+  */
 MeasureProgLocal_c::MeasureProgLocal_c(const MeasureProgLocal_c& rrefc_src)
    : MeasureProgBase_c(rrefc_src){
   assignFromSource( rrefc_src );
 }
+
+
 /** base function for assignment of element vars for copy constructor and operator= */
 void MeasureProgLocal_c::assignFromSource( const MeasureProgLocal_c& rrefc_src )
 { // copy element vars
@@ -192,22 +191,21 @@ void MeasureProgLocal_c::assignFromSource( const MeasureProgLocal_c& rrefc_src )
 MeasureProgLocal_c::~MeasureProgLocal_c(){
 }
 
-/**
-  start a measuring programm with new master measurement value
+/** start a measuring programm with new master measurement value
 
-  possible errors:
-      * dependant error in ProcDataLocal_c if EMPF or SEND not valid
-      * dependant error in CANIO_c on send problems
-  @param ren_progType process msg type: Proc_c::Base, Proc_c::Target
-  @param ren_type used increment types: Proc_c::TimeProp, Proc_c::DistProp, Proc_c::ValIncr
-  @param ren_doSend value types to send on trigger of subprog: Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...
-  @param ri32_masterVal actual master value to start with
-  @return true -> starting values sent with success
-*/
-bool MeasureProgLocal_c::start(Proc_c::progType_t ren_progType, Proc_c::type_t ren_type,
+    possible errors:
+        * dependant error in ProcDataLocal_c if EMPF or SEND not valid
+        * dependant error in CANIO_c on send problems
+
+    @param ren_type used increment types: Proc_c::TimeProp, Proc_c::DistProp, Proc_c::ValIncr
+    @param ren_doSend value types to send on trigger of subprog: Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...
+    @param ri32_masterVal actual master value to start with
+    @return true -> starting values sent with success
+  */
+bool MeasureProgLocal_c::start(Proc_c::type_t ren_type,
                         Proc_c::doSend_t ren_doSend, int32_t ri32_masterVal){
   // call start function of base class
-  MeasureProgBase_c::start(ren_progType, ren_type, ren_doSend);
+  MeasureProgBase_c::start(ren_type, ren_doSend);
   i32_lastMasterVal = ri32_masterVal;
   bool b_sendVal = TRUE;
 
@@ -281,23 +279,24 @@ bool MeasureProgLocal_c::start(Proc_c::progType_t ren_progType, Proc_c::type_t r
   // return if successful sent starting values
   return b_triggeredIncrement;
 }
-#ifdef USE_FLOAT_DATA_TYPE
-/**
-  start a measuring programm with new master measurement value
 
-  possible errors:
-      * dependant error in ProcDataLocal_c if EMPF or SEND not valid
-      * dependant error in CANIO_c on send problems
-  @param ren_progType process msg type: Proc_c::Base, Proc_c::Target
-  @param ren_type used increment types: Proc_c::TimeProp, Proc_c::DistProp, Proc_c::ValIncr
-  @param ren_doSend value types to send on trigger of subprog: Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...
-  @param rf_masterVal actual master value to start with
-  @return true -> starting values sent with success
-*/
-bool MeasureProgLocal_c::start(Proc_c::progType_t ren_progType, Proc_c::type_t ren_type,
-                        Proc_c::doSend_t ren_doSend, float rf_masterVal){
+
+#ifdef USE_FLOAT_DATA_TYPE
+/** start a measuring programm with new master measurement value
+
+    possible errors:
+        * dependant error in ProcDataLocal_c if EMPF or SEND not valid
+        * dependant error in CANIO_c on send problems
+
+    @param ren_type used increment types: Proc_c::TimeProp, Proc_c::DistProp, Proc_c::ValIncr
+    @param ren_doSend value types to send on trigger of subprog: Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...
+    @param rf_masterVal actual master value to start with
+    @return true -> starting values sent with success
+  */
+bool MeasureProgLocal_c::start(Proc_c::type_t ren_type, Proc_c::doSend_t ren_doSend, float rf_masterVal)
+{
   // call start function of base class
-  MeasureProgBase_c::start(ren_progType, ren_type, ren_doSend);
+  MeasureProgBase_c::start(ren_type, ren_doSend);
   f_lastMasterVal = rf_masterVal;
 
   // start the given subprog items
@@ -361,38 +360,38 @@ bool MeasureProgLocal_c::start(Proc_c::progType_t ren_progType, Proc_c::type_t r
 }
 #endif
 
-/**
-  start a measuring program without new master measurement value
 
-  possible errors:
-      * dependant error in ProcDataLocal_c if EMPF or SEND not valid
-      * dependant error in CANIO_c on send problems
-  @param ren_progType process msg type: Proc_c::Base, Proc_c::Target
-  @param ren_type used increment types: Proc_c::TimeProp, Proc_c::DistProp, Proc_c::ValIncr
-  @param ren_doSend value types to send on trigger of subprog: Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...
-  @return true -> starting values sent with success
-*/
-bool MeasureProgLocal_c::start(Proc_c::progType_t ren_progType, Proc_c::type_t ren_type,
+/** start a measuring program without new master measurement value
+
+    possible errors:
+        * dependant error in ProcDataLocal_c if EMPF or SEND not valid
+        * dependant error in CANIO_c on send problems
+
+    @param ren_type used increment types: Proc_c::TimeProp, Proc_c::DistProp, Proc_c::ValIncr
+    @param ren_doSend value types to send on trigger of subprog: Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...
+    @return true -> starting values sent with success
+  */
+bool MeasureProgLocal_c::start(Proc_c::type_t ren_type,
                         Proc_c::doSend_t ren_doSend){
 #ifdef USE_FLOAT_DATA_TYPE
-  if (processData().valType() != float_val) return start(ren_progType, ren_type, ren_doSend, i32_lastMasterVal);
-  else return start(ren_progType, ren_type, ren_doSend, f_lastMasterVal);
+  if (processData().valType() != float_val) return start(ren_type, ren_doSend, i32_lastMasterVal);
+  else return start(ren_type, ren_doSend, f_lastMasterVal);
 #else
-  return start(ren_progType, ren_type, ren_doSend, i32_lastMasterVal);
+  return start(ren_doSend, i32_lastMasterVal);
 #endif
 }
 
-/**
-  stop local measuring programs -> send actual values
 
-  possible errors:
-      * dependant error in ProcDataLocal_c if EMPF or SEND not valid
-      * dependant error in CANIO_c on send problems
-  @param b_deleteSubProgs is only needed for remote ISO case (but is needed due to overloading here also)
-  @param ren_type wanted increment type (Proc_c::TimeProp, Proc_c::DistProp, Proc_c::ValIncr)
-  @param ren_doSend set process data subtype to stop (Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...)
-  @return true -> stop values sent with success
-*/
+/** stop local measuring programs -> send actual values
+
+    possible errors:
+        * dependant error in ProcDataLocal_c if EMPF or SEND not valid
+        * dependant error in CANIO_c on send problems
+    @param b_deleteSubProgs is only needed for remote ISO case (but is needed due to overloading here also)
+    @param ren_type wanted increment type (Proc_c::TimeProp, Proc_c::DistProp, Proc_c::ValIncr)
+    @param ren_doSend set process data subtype to stop (Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...)
+    @return true -> stop values sent with success
+  */
 bool MeasureProgLocal_c::stop(bool /* b_deleteSubProgs */, Proc_c::type_t ren_type, Proc_c::doSend_t ren_doSend){
   // send the registered values
   bool b_sendResult = TRUE;
@@ -432,45 +431,41 @@ bool MeasureProgLocal_c::stop(bool /* b_deleteSubProgs */, Proc_c::type_t ren_ty
   return b_sendResult;
 }
 
-/**
-  send a sub-information (selected by en_valueGroup) to a specified target (selected by GPT)
-  @param en_valueGroup value group to send
-  @param rc_targetISOName ISOName of target
-  @param ren_type optional PRI specifier of the message (default Proc_c::Target )
-  @return true -> successful sent
-*/
-bool MeasureProgLocal_c::sendValMod( GeneralCommand_c::ValueGroup_t en_valueGroup, const ISOName_c& rc_targetISOName, Proc_c::progType_t ren_progType) const {
+/** send a sub-information (selected by en_valueGroup) to a specified target (selected by GPT)
+    @param en_valueGroup value group to send
+    @param rc_targetISOName ISOName of target
+    @return true -> successful sent
+  */
+bool MeasureProgLocal_c::sendValMod( GeneralCommand_c::ValueGroup_t en_valueGroup, const ISOName_c& rc_targetISOName) const {
   // prepare general command in process pkg
   getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false, /* isRequest */
                                                               en_valueGroup, GeneralCommand_c::setValue);
 #ifdef USE_FLOAT_DATA_TYPE
   if (processDataConst().valType() != float_val)
-     return processDataConst().sendValISOName(ren_progType, rc_targetISOName, valMod(en_valueGroup));
-  else return processDataConst().sendValISOName(ren_progType, rc_targetISOName, valModFloat(en_valueGroup));
+     return processDataConst().sendValISOName(rc_targetISOName, valMod(en_valueGroup));
+  else return processDataConst().sendValISOName(rc_targetISOName, valModFloat(en_valueGroup));
 #else
-  return processDataConst().sendValISOName(ren_progType, rc_targetISOName, valMod(en_valueGroup));
+  return processDataConst().sendValISOName(rc_targetISOName, valMod(en_valueGroup));
 #endif
 }
 
-/**
-  send a sub-information from the corresponding setpoint master to a specified target (selected by GPT)
-  @param en_valueGroup value group to send
-  @param rc_targetISOName ISOName of target
-  @param ren_type optional PRI specifier of the message (default Proc_c::Target )
-  @return true -> successful sent
-*/
-bool MeasureProgLocal_c::sendSetpointValMod( GeneralCommand_c::ValueGroup_t en_valueGroup, const ISOName_c& rc_targetISOName, Proc_c::progType_t ren_progType) const {
+
+/** send a sub-information from the corresponding setpoint master to a specified target (selected by GPT)
+    @param en_valueGroup value group to send
+    @param rc_targetISOName ISOName of target
+    @return true -> successful sent
+  */
+bool MeasureProgLocal_c::sendSetpointValMod( GeneralCommand_c::ValueGroup_t en_valueGroup, const ISOName_c& rc_targetISOName) const {
   // prepare general command in process pkg
   getProcessInstance4Comm().data().c_generalCommand.setValues(TRUE /* isSetpoint */, false, /* isRequest */
                                                               en_valueGroup, GeneralCommand_c::setValue);
-  return processDataConst().sendValISOName(ren_progType, rc_targetISOName, setpointValMod(en_valueGroup));
+  return processDataConst().sendValISOName(rc_targetISOName, setpointValMod(en_valueGroup));
 }
 
-/**
-  deliver to en_valueGroup according setpoint from a master setpoint
-  @param en_valueGroup of wanted subtype
-  @return value of specified subtype
-*/
+/** deliver to en_valueGroup according setpoint from a master setpoint
+    @param en_valueGroup of wanted subtype
+    @return value of specified subtype
+  */
 int32_t MeasureProgLocal_c::setpointValMod(GeneralCommand_c::ValueGroup_t en_valueGroup) const {
   int32_t i32_value = 0;
   ProcDataLocalBase_c* pc_procdata = pprocessData();
@@ -492,21 +487,20 @@ int32_t MeasureProgLocal_c::setpointValMod(GeneralCommand_c::ValueGroup_t en_val
         break;
       default:
         // wrong range
-        getLbsErrInstance().registerError( LibErr_c::Range, LibErr_c::LbsProcess );
+        getLibErrInstance().registerError( LibErr_c::Range, LibErr_c::Process );
     }
   }
   return i32_value;
 }
 
 
-/**
-  process a message: reset command or value requests
+/** process a message: reset command or value requests
 
-  possible errors:
-    * dependant error in ProcDataLocal_c if EMPF or SEND not valid
-    * dependant error in CANIO_c on send problems
-  @return true -> received msg processed by this instance
-*/
+    possible errors:
+      * dependant error in ProcDataLocal_c if EMPF or SEND not valid
+      * dependant error in CANIO_c on send problems
+    @return true -> received msg processed by this instance
+  */
 bool MeasureProgLocal_c::processMsg(){
   bool b_result = MeasureProgBase_c::processMsg();
 
@@ -535,7 +529,7 @@ bool MeasureProgLocal_c::processMsg(){
     } // write
     else
     { // read -> answer wanted value
-      sendValMod( c_pkg.c_generalCommand.getValueGroup(), c_pkg.memberSend().isoName(), Proc_c::progType_t(c_pkg.pri()));
+      sendValMod( c_pkg.c_generalCommand.getValueGroup(), c_pkg.memberSend().isoName() );
 
       if ((Proc_c::defaultDataLoggingDDI == c_pkg.DDI()) &&
           (processDataConst().getProcessDataChangeHandler() != NULL ))
@@ -549,15 +543,15 @@ bool MeasureProgLocal_c::processMsg(){
   return b_result;
 }
 
-/**
-  set the measure prog value and send values if triggered to do
 
-  possible errors:
+/** set the measure prog value and send values if triggered to do
 
-      * dependant error in ProcDataLocal_c if EMPF or SEND not valid
-      * dependant error in CANIO_c on send problems
-  @param ri32_val new measure value
-*/
+    possible errors:
+
+        * dependant error in ProcDataLocal_c if EMPF or SEND not valid
+        * dependant error in CANIO_c on send problems
+    @param ri32_val new measure value
+  */
 void MeasureProgLocal_c::setVal(int32_t ri32_val){
   int32_t i32_incr =  ri32_val - i32_lastMasterVal;
   int32_t i32_time =  System_c::getTime();
@@ -656,15 +650,16 @@ void MeasureProgLocal_c::setVal(int32_t ri32_val){
     }
   } // for
 }
-#ifdef USE_FLOAT_DATA_TYPE
-/**
-  set the measure prog value and send values if triggered to do
 
-  possible errors:
-      * dependant error in ProcDataLocal_c if EMPF or SEND not valid
-      * dependant error in CANIO_c on send problems
-  @param rf_val new measure value
-*/
+
+#ifdef USE_FLOAT_DATA_TYPE
+/** set the measure prog value and send values if triggered to do
+
+    possible errors:
+        * dependant error in ProcDataLocal_c if EMPF or SEND not valid
+        * dependant error in CANIO_c on send problems
+    @param rf_val new measure value
+  */
 void MeasureProgLocal_c::setVal(float rf_val){
   float f_incr =  rf_val - f_lastMasterVal;
   int32_t i32_time =  System_c::getTime();
@@ -765,15 +760,16 @@ void MeasureProgLocal_c::setVal(float rf_val){
   } // for
 }
 #endif
-/**
-  send the values which are registered by a running mesuring program
 
-  possible errors:
-    * dependant error in ProcDataLocal_c if EMPF or SEND not valid
-    * dependant error in CANIO_c on send problems
-  @param ren_doSend value types to send on trigger of subprog: Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...
-  @return true -> value send triggered and performed with success
-*/
+
+/** send the values which are registered by a running mesuring program
+
+    possible errors:
+      * dependant error in ProcDataLocal_c if EMPF or SEND not valid
+      * dependant error in CANIO_c on send problems
+    @param ren_doSend value types to send on trigger of subprog: Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...
+    @return true -> value send triggered and performed with success
+  */
 bool MeasureProgLocal_c::sendRegisteredVals(Proc_c::doSend_t ren_doSend){
   bool b_success = false;
 
@@ -794,19 +790,19 @@ bool MeasureProgLocal_c::sendRegisteredVals(Proc_c::doSend_t ren_doSend){
 
   if (GeneralCommand_c::noValue != en_valueGroup)
     // get value from corresponding setpoint and send it
-    b_success = (sendSetpointValMod( en_valueGroup, isoName(), en_progType))?true : b_success;
+    b_success = (sendSetpointValMod( en_valueGroup, isoName()))?true : b_success;
 
   // normal measurement (no measurement on setpoint DDI)
   if (Proc_c::DoVal == ren_doSend)
-    b_success = (sendValMod( GeneralCommand_c::exactValue, isoName(), en_progType))?true : b_success;
+    b_success = (sendValMod( GeneralCommand_c::exactValue, isoName()))?true : b_success;
 
   return b_success;
 }
 
-/**
-  init the element vals
-  @param ri32_val initial measure val
-*/
+
+/** init the element vals
+    @param ri32_val initial measure val
+  */
 void MeasureProgLocal_c::initVal(int32_t ri32_val){
   // first call the base function
   MeasureProgBase_c::initVal(ri32_val);
@@ -814,11 +810,12 @@ void MeasureProgLocal_c::initVal(int32_t ri32_val){
   i32_medSum = ri32_val;
   i32_medCnt = 1;
 }
+
+
 #ifdef USE_FLOAT_DATA_TYPE
-/**
-  init the element vals
-  @param rf_val initial measure val
-*/
+/** init the element vals
+    @param rf_val initial measure val
+  */
 void MeasureProgLocal_c::initVal(float rf_val){
   // first call the base function
   MeasureProgBase_c::initVal(rf_val);
@@ -827,18 +824,18 @@ void MeasureProgLocal_c::initVal(float rf_val){
   i32_medCnt = 1;
 }
 #endif
-/**
-  reset the local value
 
-  possible errors:
-    * dependant error in ProcDataLocal_c if EMPF or SEND not valid
-    * dependant error in CANIO_c on send problems
-  @param ri32_val reset measure value to this value (ISO only)
-  @return true -> reseted measure val sent with success
-*/
+
+/** reset the local value
+
+    possible errors:
+      * dependant error in ProcDataLocal_c if EMPF or SEND not valid
+      * dependant error in CANIO_c on send problems
+    @param ri32_val reset measure value to this value (ISO only)
+    @return true -> reseted measure val sent with success
+  */
 bool MeasureProgLocal_c::resetVal(int32_t ri32_val){
   // send resetted val
-  uint8_t ui8_pri = progType();
   bool b_sendSuccess;
 
   // prepare general command in process pkg
@@ -852,13 +849,13 @@ bool MeasureProgLocal_c::resetVal(int32_t ri32_val){
     //i32_val = 0;
     i32_val = ri32_val;
 
-    b_sendSuccess = processData().sendValISOName(ui8_pri, c_isoName, val());
+    b_sendSuccess = processData().sendValISOName(c_isoName, val());
 #ifdef USE_FLOAT_DATA_TYPE
   }
   else
   {
     f_val = 0;
-    b_sendSuccess = processData().sendValISOName(ui8_pri, c_isoName, valFloat());
+    b_sendSuccess = processData().sendValISOName(c_isoName, valFloat());
   }
 #endif
   #ifdef USE_EEPROM_IO
@@ -872,18 +869,14 @@ bool MeasureProgLocal_c::resetVal(int32_t ri32_val){
 }
 
 
-/**
-  reset the local intgral value
+/** reset the local intgral value
 
-  possible errors:
-    * dependant error in ProcDataLocal_c if EMPF or SEND not valid
-    * dependant error in CANIO_c on send problems
-  @return true -> reseted integ val sent with success
-*/
+    possible errors:
+      * dependant error in ProcDataLocal_c if EMPF or SEND not valid
+      * dependant error in CANIO_c on send problems
+    @return true -> reseted integ val sent with success
+  */
 bool MeasureProgLocal_c::resetInteg(){
-  // send resetted val
-  uint8_t ui8_pri = progType();
-
   // prepare general command in process pkg
   getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false, /* isRequest */
                                                               GeneralCommand_c::integValue, GeneralCommand_c::setValue);
@@ -893,30 +886,27 @@ bool MeasureProgLocal_c::resetInteg(){
   {
 #endif
   i32_integ = 0;
-  return processData().sendValISOName(ui8_pri, c_isoName, integ());
+  return processData().sendValISOName(c_isoName, integ());
 #ifdef USE_FLOAT_DATA_TYPE
   }
   else
   {
     f_integ = 0;
-    return processData().sendValISOName(ui8_pri, c_isoName, integFloat());
+    return processData().sendValISOName(c_isoName, integFloat());
   }
 #endif
-
 }
 
-/**
-  reset the local medium value
 
-  possible errors:
-    * dependant error in ProcDataLocal_c if EMPF or SEND not valid
-    * dependant error in CANIO_c on send problems
-  @return true -> reseted medium val sent with success
-*/
+/** reset the local medium value
+
+    possible errors:
+      * dependant error in ProcDataLocal_c if EMPF or SEND not valid
+      * dependant error in CANIO_c on send problems
+    @return true -> reseted medium val sent with success
+  */
 bool MeasureProgLocal_c::resetMed(){
   i32_medCnt = 0;
-  // send resetted val
-  uint8_t ui8_pri = progType();
 
   // prepare general command in process pkg
   getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false, /* isRequest */
@@ -926,28 +916,26 @@ bool MeasureProgLocal_c::resetMed(){
   {
 #endif
   i32_medSum = 0;
-  return processData().sendValISOName(ui8_pri, c_isoName, med());
+  return processData().sendValISOName(c_isoName, med());
 #ifdef USE_FLOAT_DATA_TYPE
   }
   else
   {
     f_medSum = 0;
-    return processData().sendValISOName(ui8_pri, c_isoName, medFloat());
+    return processData().sendValISOName(c_isoName, medFloat());
   }
 #endif
 }
 
-/**
-  reset the local min value
 
-  possible errors:
-    * dependant error in ProcDataLocal_c if EMPF or SEND not valid
-    * dependant error in CANIO_c on send problems
-  @return true -> reseted minimum val sent with success
-*/
+/** reset the local min value
+
+    possible errors:
+      * dependant error in ProcDataLocal_c if EMPF or SEND not valid
+      * dependant error in CANIO_c on send problems
+    @return true -> reseted minimum val sent with success
+  */
 bool MeasureProgLocal_c::resetMin(){
-  // send resetted val
-  uint8_t ui8_pri = progType();
 
   // prepare general command in process pkg
   getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false, /* isRequest */
@@ -958,29 +946,26 @@ bool MeasureProgLocal_c::resetMin(){
   {
 #endif
   i32_min = 0;
-  return processData().sendValISOName(ui8_pri, c_isoName, min());
+  return processData().sendValISOName(c_isoName, min());
 #ifdef USE_FLOAT_DATA_TYPE
   }
   else
   {
     f_min = 0;
-    return processData().sendValISOName(ui8_pri, c_isoName, minFloat());
+    return processData().sendValISOName(c_isoName, minFloat());
   }
 #endif
 }
 
-/**
-  reset the local max value
 
-  possible errors:
-    * dependant error in ProcDataLocal_c if EMPF or SEND not valid
-    * dependant error in CANIO_c on send problems
-  @return true -> reseted maximum val sent with success
-*/
+/** reset the local max value
+
+    possible errors:
+      * dependant error in ProcDataLocal_c if EMPF or SEND not valid
+      * dependant error in CANIO_c on send problems
+    @return true -> reseted maximum val sent with success
+  */
 bool MeasureProgLocal_c::resetMax(){
-
-  // send resetted val
-  uint8_t ui8_pri = progType();
 
   // prepare general command in process pkg
   getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false, /* isRequest */
@@ -991,26 +976,26 @@ bool MeasureProgLocal_c::resetMax(){
   {
 #endif
   i32_max = 0;
-  return processData().sendValISOName(ui8_pri, c_isoName, max());
+  return processData().sendValISOName(c_isoName, max());
 #ifdef USE_FLOAT_DATA_TYPE
   }
   else
   {
     f_max = 0;
-    return processData().sendValISOName(ui8_pri, c_isoName, maxFloat());
+    return processData().sendValISOName(c_isoName, maxFloat());
   }
 #endif
 }
 
-/**
-  periodic events
-  (e.g. send value for time proportional progs)
 
-  possible errors:
-    * dependant error in ProcDataLocal_c if EMPF or SEND not valid
-    * dependant error in CANIO_c on send problems
-  @return true -> all planned activities performed in available time
-*/
+/** periodic events
+    (e.g. send value for time proportional progs)
+
+    possible errors:
+      * dependant error in ProcDataLocal_c if EMPF or SEND not valid
+      * dependant error in CANIO_c on send problems
+    @return true -> all planned activities performed in available time
+  */
 bool MeasureProgLocal_c::timeEvent( void )
 {
   if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
@@ -1065,6 +1050,7 @@ bool MeasureProgLocal_c::timeEvent( void )
 
   return true;
 }
+
 
 bool MeasureProgLocal_c::minMaxLimitsPassed(Proc_c::doSend_t ren_doSend) const
 {

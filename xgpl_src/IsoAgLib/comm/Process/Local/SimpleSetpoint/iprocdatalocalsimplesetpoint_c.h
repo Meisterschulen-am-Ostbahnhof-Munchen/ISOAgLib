@@ -125,7 +125,6 @@ public:
                          (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
 
     @param rc_isoName optional ISOName code of Process-Data
-    @param rui8_pri PRI code of messages with this process data instance (default 2)
     @param rc_ownerISOName optional ISOName of the owner
     @param rpc_isoName pointer to updated ISOName variable of owner
     @param rb_cumulativeValue
@@ -149,7 +148,7 @@ public:
     @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
   iProcDataLocalSimpleSetpoint_c(const IsoAgLib::ElementDDI_s* ps_elementDDI = NULL, uint16_t rui16_element = 0xFFFF,
-                                 const iISOName_c& rc_isoName = iISOName_c::ISONameInitialProcessData, uint8_t rui8_pri = 2,
+                                 const iISOName_c& rc_isoName = iISOName_c::ISONameInitialProcessData,
                                  const iISOName_c& rc_ownerISOName = iISOName_c::ISONameUnspecified,
                                  const iISOName_c *rpc_isoName = NULL,
                                  bool rb_cumulativeValue = false,
@@ -158,7 +157,7 @@ public:
 #endif
                                  ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
                                  int ri_singletonVecKey = 0
-  ) : ProcDataLocalSimpleSetpoint_c(ps_elementDDI, rui16_element, rc_isoName, rui8_pri,
+  ) : ProcDataLocalSimpleSetpoint_c(ps_elementDDI, rui16_element, rc_isoName,
                                     rc_ownerISOName, rpc_isoName, rb_cumulativeValue,
 #ifdef USE_EEPROM_IO
                                     rui16_eepromAdr,
@@ -177,7 +176,6 @@ public:
                          (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
 
     @param rc_isoName optional ISOName code of Process-Data
-    @param rui8_pri PRI code of messages with this process data instance (default 2)
     @param rc_ownerISOName optional ISOName of the owner
     @param rpc_isoName pointer to updated ISOName variable of owner
     @param rb_cumulativeValue
@@ -201,7 +199,7 @@ public:
     @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
   void init(const IsoAgLib::ElementDDI_s* ps_elementDDI, uint16_t rui16_element,
-            const iISOName_c& rc_isoName = iISOName_c::ISONameInitialProcessData, uint8_t rui8_pri = 2,
+            const iISOName_c& rc_isoName = iISOName_c::ISONameInitialProcessData,
             const iISOName_c& rc_ownerISOName = iISOName_c::ISONameUnspecified,
             const iISOName_c *rpc_isoName = NULL,
             bool rb_cumulativeValue = false,
@@ -212,7 +210,7 @@ public:
             int ri_singletonVecKey = 0
             )
   {ProcDataLocalSimpleSetpoint_c::init(ps_elementDDI, rui16_element,
-                                       rc_isoName, rui8_pri, rc_ownerISOName, rpc_isoName, rb_cumulativeValue,
+                                       rc_isoName, rc_ownerISOName, rpc_isoName, rb_cumulativeValue,
 #ifdef USE_EEPROM_IO
                                        rui16_eepromAdr,
 #endif
@@ -233,26 +231,6 @@ public:
    { return ProcDataLocalSimpleSetpoint_c::getProcessDataChangeHandler(); }
 
   /**
-    deliver value PRI of messages with this
-    process data instance
-    @return PRI
-  */
-  uint8_t pri() const{return ProcDataLocalSimpleSetpoint_c::pri();}
-
-  /**
-    set value PRI of messages with this
-    process data instance (default value is 2 == target message)
-    @param rb_val new PRI value
-  */
-  void setPri(uint8_t rb_val){ProcDataLocalSimpleSetpoint_c::setPri(rb_val);}
-
-  /**
-    deliver value LIS (list number)
-    @return LIS
-  */
-  uint8_t lis() const{return ProcDataLocalSimpleSetpoint_c::lis();}
-
-  /**
     deliver value DEVCLASS (machine type specific table of process data types)
     @return DEVCLASS
   */
@@ -264,24 +242,6 @@ public:
     @return ISOName
   */
   const iISOName_c& isoName() const {return static_cast<const iISOName_c&>(ProcDataLocalSimpleSetpoint_c::isoName());}
-
-  /**
-    deliver value WERT (row of process data table)
-    @return WERT
-  */
-  uint8_t wert() const{return ProcDataLocalSimpleSetpoint_c::wert();}
-
-  /**
-    deliver value INST (column of process data table)
-    @return INST
-  */
-  uint8_t inst() const{return ProcDataLocalSimpleSetpoint_c::inst();}
-
-  /**
-    deliver value ZAEHLNUM (0xFF == whole working width; else parts of width)
-    @return ZAEHLNUM
-  */
-  uint8_t zaehlnum() const{return ProcDataLocalSimpleSetpoint_c::zaehlnum();}
 
   /**
     deliver value _instance_ (important if more than one machine with equal _device_class_ are active)
@@ -308,37 +268,38 @@ public:
     send the base value (the one that is updated via setMasterMeasurementVal() )
     to a specified target (selected by GPT)
     @param rc_targetISOName ISOName of target
-    @param ren_type optional PRI specifier of the message (default Proc_c::Target )
     @return true -> successful sent
   */
-  bool sendMasterMeasurementVal( const iISOName_c& rc_targetISOName, Proc_c::progType_t ren_progType = Proc_c::Target ) const
-    { return ProcDataLocalSimpleSetpoint_c::sendMasterMeasurementVal( rc_targetISOName, ren_progType );};
+  bool sendMasterMeasurementVal( const iISOName_c& rc_targetISOName ) const
+    { return ProcDataLocalSimpleSetpoint_c::sendMasterMeasurementVal( rc_targetISOName );}
+
   /**
     send a exact-setpoint to a specified target (selected by GPT)
     @param rc_targetISOName ISOName of target
     @param ren_type optional PRI specifier of the message (default Proc_c::Target )
     @return true -> successful sent
   */
-  bool sendMasterSetpointVal( const iISOName_c& rc_targetISOName, Proc_c::progType_t ren_progType = Proc_c::Target ) const
-   { return setpointConst().sendMasterSetpointVal( rc_targetISOName, ren_progType );};
+  bool sendMasterSetpointVal( const iISOName_c& rc_targetISOName ) const
+   { return setpointConst().sendMasterSetpointVal( rc_targetISOName );}
+
   /**
     send a sub-setpoint (selected by MOD) to a specified target (selected by GPT)
     @param rui8_mod select sub-type of setpoint
     @param rc_targetISOName ISOName of target
-    @param ren_type optional PRI specifier of the message (default Proc_c::Target )
     @return true -> successful sent
   */
-  bool sendSetpointMod( GeneralCommand_c::ValueGroup_t en_valueGroup, const iISOName_c& rc_targetISOName, Proc_c::progType_t ren_progType = Proc_c::Target ) const
+  bool sendSetpointMod( GeneralCommand_c::ValueGroup_t en_valueGroup, const iISOName_c& rc_targetISOName ) const
    {
-     return setpointConst().sendSetpointMod(rc_targetISOName, ren_progType, en_valueGroup, __IsoAgLib::GeneralCommand_c::setValue );
-   };
+     return setpointConst().sendSetpointMod(rc_targetISOName, en_valueGroup, __IsoAgLib::GeneralCommand_c::setValue );
+   }
 
   #ifdef USE_EEPROM_IO
   /**
     deliver the eeprom adr for the value
     @return configured EEPROM adress
   */
-  uint16_t eepromAdr()const{return ProcDataLocalSimpleSetpoint_c::eepromAdr();};
+  uint16_t eepromAdr()const{return ProcDataLocalSimpleSetpoint_c::eepromAdr();}
+
   /**
     set the eeprom adr for the value, read in value from EEPROM
 
@@ -347,39 +308,45 @@ public:
     @param rui16_eepromAdr new EEPROM adress
   */
   void setEepromAdr(uint16_t rui16_eepromAdr)
-    {ProcDataLocalSimpleSetpoint_c::setEepromAdr(rui16_eepromAdr);};
+    {ProcDataLocalSimpleSetpoint_c::setEepromAdr(rui16_eepromAdr);}
   #endif
+
   /**
     deliver the master value (central measure value of this process data;
     can differ from measure vals of measure progs, as these can be reseted
     independent)
     @return actual master value
   */
-  const int32_t& masterMeasurementVal()const{return ProcDataLocalSimpleSetpoint_c::masterMeasurementVal();};
+  const int32_t& masterMeasurementVal()const{return ProcDataLocalSimpleSetpoint_c::masterMeasurementVal();}
+
   /**
     set the masterVal from main application independent from any measure progs
     @param ri32_val new measure value
   */
   void setMasterMeasurementVal(int32_t ri32_val)
-    {ProcDataLocalSimpleSetpoint_c::setMasterMeasurementVal(ri32_val);};
+    {ProcDataLocalSimpleSetpoint_c::setMasterMeasurementVal(ri32_val);}
+
   /**
     set the masterVal from main application independent from any measure progs
     @param ri32_val new measure value
   */
   void setMasterMeasurementVal(int16_t ri16_val)
-    {ProcDataLocalSimpleSetpoint_c::setMasterMeasurementVal((int32_t)ri16_val);};
+    {ProcDataLocalSimpleSetpoint_c::setMasterMeasurementVal((int32_t)ri16_val);}
+
   /**
     set the masterVal from main application independent from any measure progs
     @param ri32_val new measure value
   */
   void setMasterMeasurementVal(uint8_t rb_val)
-    {ProcDataLocalSimpleSetpoint_c::setMasterMeasurementVal((int32_t)rb_val);};
+    {ProcDataLocalSimpleSetpoint_c::setMasterMeasurementVal((int32_t)rb_val);}
+
   /**
     increment the value -> update the local and the measuring programs values
     @param ri32_val size of increment of master value
   */
   void incrMasterMeasurementVal(int32_t ri32_val)
-    {ProcDataLocalSimpleSetpoint_c::incrMasterMeasurementVal(ri32_val);};
+    {ProcDataLocalSimpleSetpoint_c::incrMasterMeasurementVal(ri32_val);}
+
 #ifdef USE_FLOAT_DATA_TYPE
   /**
     deliver the master value (central measure value of this process data;
@@ -388,19 +355,21 @@ public:
     @return actual master value
   */
   const float& masterValFloat()const
-    {return ProcDataLocalSimpleSetpoint_c::masterValFloat();};
+    {return ProcDataLocalSimpleSetpoint_c::masterValFloat();}
+
   /**
     set the masterVal from main application independent from any measure progs
     @param rf_val new measure value
   */
   void setMasterMeasurementVal(float rf_val)
-    {ProcDataLocalSimpleSetpoint_c::setMasterMeasurementVal(rf_val);};
+    {ProcDataLocalSimpleSetpoint_c::setMasterMeasurementVal(rf_val);}
+
   /**
     increment the value -> update the local and the measuring programs values
     @param rf_val size of increment of master value
   */
   void incrMasterMeasurementVal(float rf_val)
-    {ProcDataLocalSimpleSetpoint_c::incrMasterMeasurementVal(rf_val);};
+    {ProcDataLocalSimpleSetpoint_c::incrMasterMeasurementVal(rf_val);}
 #endif
 
 
@@ -410,12 +379,13 @@ public:
   */
   proc_valType_t valType()const
     {return ProcDataLocalSimpleSetpoint_c::valType();};
+
   /**
     set the central data type of this process data
     @return proc_valType_t: i32_val, ui32_val, float_val, cmdVal
   */
   void setValType(proc_valType_t ren_procValType)
-    {ProcDataLocalSimpleSetpoint_c::setValType(ren_procValType);};
+    {ProcDataLocalSimpleSetpoint_c::setValType(ren_procValType);}
 
 
   /**
@@ -423,38 +393,40 @@ public:
     @return actual received setpoint value
   */
   int32_t setpointMasterVal() const
-    { return ProcDataLocalSimpleSetpoint_c::setpointConst().setpointMasterVal();};
+    { return ProcDataLocalSimpleSetpoint_c::setpointConst().setpointMasterVal();}
+
     #ifdef USE_FLOAT_DATA_TYPE
   /**
     retreive simple master setpoint
     @return actual received setpoint value
   */
   float setpointMasterValFloat() const
-    { return ProcDataLocalSimpleSetpoint_c::setpointConst().setpointMasterValFloat();};
+    { return ProcDataLocalSimpleSetpoint_c::setpointConst().setpointMasterValFloat();}
     #endif
+
   /**
     set the setpoint value
     @param ri32_val new setpoint value
   */
   void setSetpointMasterVal(int32_t ri32_val)
-    { ProcDataLocalSimpleSetpoint_c::setpoint().setSetpointMasterVal(ri32_val);};
+    { ProcDataLocalSimpleSetpoint_c::setpoint().setSetpointMasterVal(ri32_val);}
+
   #ifdef USE_FLOAT_DATA_TYPE
   /**
     set the setpoint value as float value
     @param rf_val new setpoint value
   */
   void setSetpointMasterVal(float rf_val)
-    { ProcDataLocalSimpleSetpoint_c::setpoint().setSetpointMasterVal(rf_val);};
+    { ProcDataLocalSimpleSetpoint_c::setpoint().setSetpointMasterVal(rf_val);}
   #endif
 
    /**
     check if specific measureprog exist
-    @param rui8_pri PRI code of searched measure program
     @param rc_isoName DEVCLASS code of searched measure program
     @return true -> found item
   */
-  bool existProg(uint8_t rui8_pri, const iISOName_c& rc_isoName)
-      {return ProcDataLocalSimpleSetpoint_c::existProg(rui8_pri, rc_isoName);};
+  bool existProg(const iISOName_c& rc_isoName)
+      {return ProcDataLocalSimpleSetpoint_c::existProg(rc_isoName);}
 
   /**
     search for suiting measureprog, if not found AND if rb_doCreate == true
@@ -462,18 +434,18 @@ public:
 
     possible errors:
         * Err_c::elNonexistent wanted measureprog doesn't exist and rb_doCreate == false
-    @param rui8_pri PRI code of searched measure program
+
     @param rc_isoName DEVCLASS code of searched measure program
     @param rb_doCreated true -> create suitable measure program if not found
   */
-  iMeasureProgLocal_c& prog(uint8_t rui8_pri, const iISOName_c& rc_isoName, bool rb_doCreate)
-    { return static_cast<iMeasureProgLocal_c&>(ProcDataLocalSimpleSetpoint_c::prog(rui8_pri, rc_isoName, rb_doCreate));};
+  iMeasureProgLocal_c& prog(const iISOName_c& rc_isoName, bool rb_doCreate)
+    { return static_cast<iMeasureProgLocal_c&>(ProcDataLocalSimpleSetpoint_c::prog(rc_isoName, rb_doCreate));}
 
   /** deliver reference to setpoint */
   iSimpleManageSetpointLocal_c& setpoint( void )
     { return static_cast<iSimpleManageSetpointLocal_c&>
              (ProcDataLocalSimpleSetpoint_c::setpoint());
-    };
+    }
 
 };
 

@@ -285,7 +285,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
         }
         else
         { // there is a sender conflict
-          getLbsErrInstance().registerError( LibErr_c::LbsBaseSenderConflict, LibErr_c::LbsBase );
+          getLibErrInstance().registerError( LibErr_c::BaseSenderConflict, LibErr_c::Base );
           return false;
         }
         break;
@@ -321,7 +321,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
 
         } else
         { // there is a sender conflict
-          getLbsErrInstance().registerError( LibErr_c::LbsBaseSenderConflict, LibErr_c::LbsBase );
+          getLibErrInstance().registerError( LibErr_c::BaseSenderConflict, LibErr_c::Base );
           return false;
         }
         break;

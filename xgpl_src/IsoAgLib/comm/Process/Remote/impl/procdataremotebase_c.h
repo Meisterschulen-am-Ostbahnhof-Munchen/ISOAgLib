@@ -108,7 +108,6 @@ class ProcDataRemoteBase_c : public ProcDataBase_c
                          (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
     common parameter
     @param rc_isoName optional ISOName code of this instance
-    @param rui8_pri PRI code of messages with this process data instance (default 2)
     @param rc_ownerISOName optional ISOName of the owner
     @param rpc_commanderISOName pointer to updated ISOName variable of commander
     @param rpc_processDataChangeHandler optional pointer to handler class of application
@@ -116,12 +115,12 @@ class ProcDataRemoteBase_c : public ProcDataBase_c
   */
   ProcDataRemoteBase_c( const IsoAgLib::ElementDDI_s* ps_elementDDI = NULL, uint16_t rui16_element = 0xFFFF,
                         const ISOName_c& rc_isoName = ISOName_c::ISONameInitialProcessData,
-                        uint8_t rui8_pri = 2, const ISOName_c& rc_ownerISOName = ISOName_c::ISONameUnspecified,
+                        const ISOName_c& rc_ownerISOName = ISOName_c::ISONameUnspecified,
                         const ISOName_c* rpc_commanderISOName = NULL,
                         IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
                         int ri_singletonVecKey = 0)
   {
-    init( ps_elementDDI, rui16_element, rc_isoName, rui8_pri, rc_ownerISOName, rpc_commanderISOName,
+    init( ps_elementDDI, rui16_element, rc_isoName, rc_ownerISOName, rpc_commanderISOName,
           rpc_processDataChangeHandler, ri_singletonVecKey);
   }
 
@@ -131,7 +130,6 @@ class ProcDataRemoteBase_c : public ProcDataBase_c
                           (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
       common parameter
       @param rc_isoName optional ISOName code of this instance
-      @param rui8_pri PRI code of messages with this process data instance (default 2)
       @param rc_ownerISOName optional ISOName of the owner
       @param rpc_commanderISOName pointer to updated ISOName variable of commander
       @param rpc_processDataChangeHandler optional pointer to handler class of application
@@ -139,7 +137,7 @@ class ProcDataRemoteBase_c : public ProcDataBase_c
     */
   void init(  const IsoAgLib::ElementDDI_s* ps_elementDDI, uint16_t rui16_element,
               const ISOName_c& rc_isoName = ISOName_c::ISONameInitialProcessData,
-              uint8_t rui8_pri = 2, const ISOName_c& rc_ownerISOName = ISOName_c::ISONameUnspecified,
+              const ISOName_c& rc_ownerISOName = ISOName_c::ISONameUnspecified,
               const ISOName_c* rpc_commanderISOName = NULL,
               IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
               int ri_singletonVecKey = 0);
@@ -184,14 +182,14 @@ class ProcDataRemoteBase_c : public ProcDataBase_c
     possible errors:
    * Err_c::elNonexistent one of resolved EMPF/SEND isn't registered with claimed address in Monitor
    * dependant error in CANIO_c on CAN send problems
-  @param rui8_pri PRI code for the msg
+
   @param rc_varISOName variable ISOName
   @param ri32_val int32_t value to send
   @param en_valueGroup: min/max/exact/default
   @param en_command
   @return true -> sendIntern set successful EMPF and SEND
      */
-  bool sendValISOName(uint8_t rui8_pri, const ISOName_c& rc_varISOName, int32_t ri32_val = 0) const;
+  bool sendValISOName(const ISOName_c& rc_varISOName, int32_t ri32_val = 0) const;
 
 #ifdef USE_FLOAT_DATA_TYPE
   /** send the given float value with variable ISOName rc_varISOName;
@@ -201,14 +199,14 @@ class ProcDataRemoteBase_c : public ProcDataBase_c
     possible errors:
  * Err_c::elNonexistent one of resolved EMPF/SEND isn't registered with claimed address in Monitor
  * dependant error in CANIO_c on CAN send problems
-      @param rui8_pri PRI code for the msg
+
       @param rc_varISOName variable ISOName
       @param rb_pd PD code for the msg
       @param rb_mod MOD code for the msg
       @param ri32_val float value to send
       @return true -> sendIntern set successful EMPF and SEND
    */
-  bool sendValISOName(uint8_t rui8_pri, const ISOName_c& rc_varISOName, float rf_val = 0.0F) const;
+  bool sendValISOName(const ISOName_c& rc_varISOName, float rf_val = 0.0F) const;
 #endif
 
 private: // Private methods

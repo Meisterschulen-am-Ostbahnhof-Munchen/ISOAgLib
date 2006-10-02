@@ -191,9 +191,9 @@ MultiReceiveClientWrapper_s::MultiReceiveClientWrapper_s( IsoAgLib::MultiReceive
 {
   if (__IsoAgLib::getIsoMonitorInstance4Comm().existIsoMemberNr(rui8_clientAddress))
     c_isoName = __IsoAgLib::getIsoMonitorInstance4Comm().isoMemberNr(rui8_clientAddress).isoName();
-//  else
-//    shouldn't occur...
-};
+  else //    shouldn't occur...
+    getLibErrInstance().registerError( LibErr_c::Inconsistency, LibErr_c::System );
+}
 
 // //////////////////////////////// +X2C Operation 5653 : ~MultiReceive_c
 MultiReceive_c::~MultiReceive_c()
@@ -588,6 +588,7 @@ MultiReceive_c::processMsg()
   } // end if directed to known dest (this check works NOT for fast packet!!!)
   #ifndef NMEA_2000_FAST_PACKET
   // This point should NOT be reached anyway! all "case" statements
+  getLibErrInstance().registerError( LibErr_c::Inconsistency, LibErr_c::System );
   return false;
   #else
   // Check if it's registered for fast-packet receive

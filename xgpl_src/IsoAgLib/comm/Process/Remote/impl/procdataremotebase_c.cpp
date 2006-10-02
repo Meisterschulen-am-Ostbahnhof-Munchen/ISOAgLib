@@ -98,30 +98,24 @@ namespace __IsoAgLib {
                          (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
     common parameter
     @param rc_isoName optional ISOName code of this instance
-    @param rui8_pri PRI code of messages with this process data instance (default 2)
     @param rc_ownerISOName optional ISOName of the owner
     @param rpc_commanderISOName pointer to updated ISOName variable of commander
     @param rpc_processDataChangeHandler optional pointer to handler class of application
     @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
 void ProcDataRemoteBase_c::init(  const IsoAgLib::ElementDDI_s* ps_elementDDI, uint16_t rui16_element,
-                                  const ISOName_c& rc_isoName, uint8_t rui8_pri, const ISOName_c& rc_ownerISOName,
+                                  const ISOName_c& rc_isoName, const ISOName_c& rc_ownerISOName,
                                   const ISOName_c* rpc_commanderISOName,
                                   IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler,
                                   int ri_singletonVecKey)
 {
   ProcDataBase_c::init( ps_elementDDI, rui16_element,
-                        rc_isoName, rui8_pri, rc_ownerISOName, NULL, rpc_processDataChangeHandler);
+                        rc_isoName, rc_ownerISOName, NULL, rpc_processDataChangeHandler);
 
   setSingletonKey( ri_singletonVecKey );
   setCommanderISOName(rpc_commanderISOName);
 
-  // don't register proces data object, as long as it's only created with
-  // default values (PRI and LIS must be in all cases different from 0xFF)
-  if ( ( rui8_pri != 0xFF ) )
-  { // now register the pointer to this instance in Process_c
-    getProcessInstance4Comm().registerRemoteProcessData( this );
-  }
+  getProcessInstance4Comm().registerRemoteProcessData( this );
 }
 
 /** assignment operator for this object
@@ -173,19 +167,19 @@ bool ProcDataRemoteBase_c::timeEvent( void )
   return true;
 }
 
-bool ProcDataRemoteBase_c::sendValISOName(uint8_t rui8_pri, const ISOName_c& rc_varISOName, int32_t ri32_val) const
+bool ProcDataRemoteBase_c::sendValISOName(const ISOName_c& rc_varISOName, int32_t ri32_val) const
 {
   setRemoteSendFlags (rc_varISOName);
 
-  return ProcDataBase_c::sendValISOName (rui8_pri, rc_varISOName, ri32_val);
+  return ProcDataBase_c::sendValISOName (rc_varISOName, ri32_val);
 }
 
 #ifdef USE_FLOAT_DATA_TYPE
-bool ProcDataRemoteBase_c::sendValISOName(uint8_t rui8_pri, const ISOName_c& rc_varISOName, float rf_val) const
+bool ProcDataRemoteBase_c::sendValISOName(const ISOName_c& rc_varISOName, float rf_val) const
 {
   setRemoteSendFlags (rc_varISOName);
 
-  return ProcDataBase_c::sendValISOName (rui8_pri, rc_varISOName, rf_val);
+  return ProcDataBase_c::sendValISOName (rc_varISOName, rf_val);
 }
 #endif
 

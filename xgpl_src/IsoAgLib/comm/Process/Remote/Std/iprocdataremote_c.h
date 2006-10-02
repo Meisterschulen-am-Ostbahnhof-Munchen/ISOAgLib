@@ -150,7 +150,6 @@ public:
 
       common parameter
       @param rc_isoName optional ISOName code of this instance
-      @param rui8_pri PRI code of messages with this process data instance (default 2)
       @param rc_ownerISOName optional ISOName of the owner
       @param rpc_commanderISOName pointer to updated ISOName variable of commander
       @param rpc_processDataChangeHandler optional pointer to handler class of application
@@ -159,13 +158,12 @@ public:
   iProcDataRemote_c(const ElementDDI_s* ps_elementDDI = NULL,
                     uint16_t rui16_element = 0xFFFF,
                     const iISOName_c& rc_isoName = iISOName_c::ISONameInitialProcessData,
-                    uint8_t rui8_pri = 2,
                     const iISOName_c& rc_ownerISOName = iISOName_c::ISONameUnspecified,
                     const iISOName_c* rpc_commanderISOName = NULL,
                     ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
                     int ri_singletonVecKey = 0)
   : ProcDataRemote_c( ps_elementDDI, rui16_element,
-                     rc_isoName, rui8_pri, rc_ownerISOName, rpc_commanderISOName,
+                     rc_isoName, rc_ownerISOName, rpc_commanderISOName,
                      rpc_processDataChangeHandler, ri_singletonVecKey)
   {}
 
@@ -178,13 +176,12 @@ public:
     */
   iProcDataRemote_c(uint16_t rui16_DDI, uint16_t rui16_element,
                     const iISOName_c& rc_isoName = iISOName_c::ISONameInitialProcessData,
-                    uint8_t rui8_pri = 2,
                     const iISOName_c& rc_ownerISOName = iISOName_c::ISONameUnspecified,
                     const iISOName_c* rpc_commanderISOName = NULL,
                     ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
                     int ri_singletonVecKey = 0)
   : ProcDataRemote_c( NULL, rui16_element,
-                      rc_isoName, rui8_pri, rc_ownerISOName, rpc_commanderISOName,
+                      rc_isoName, rc_ownerISOName, rpc_commanderISOName,
                       rpc_processDataChangeHandler, ri_singletonVecKey
                     )
   {
@@ -196,7 +193,7 @@ public:
     };
 
     ProcDataRemote_c::init( s_tmpElementDDI, rui16_element,
-                            rc_isoName, rui8_pri, rc_ownerISOName, rpc_commanderISOName,
+                            rc_isoName, rc_ownerISOName, rpc_commanderISOName,
                             rpc_processDataChangeHandler, ri_singletonVecKey);
   }
 
@@ -208,7 +205,6 @@ public:
 
       common parameter
       @param rc_isoName optional ISOName code of this instance
-      @param rui8_pri PRI code of messages with this process data instance (default 2)
       @param rc_ownerISOName optional ISOName of the owner
       @param rpc_commanderISOName pointer to updated ISOName variable of commander
       @param rpc_processDataChangeHandler optional pointer to handler class of application
@@ -216,14 +212,13 @@ public:
     */
   void init(const ElementDDI_s* ps_elementDDI, uint16_t rui16_element,
             const iISOName_c& rc_isoName = iISOName_c::ISONameInitialProcessData,
-            uint8_t rui8_pri = 2,
             const iISOName_c& rc_ownerISOName = iISOName_c::ISONameUnspecified,
             const iISOName_c* rpc_commanderISOName = NULL,
             ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
             int ri_singletonVecKey = 0
            )
    { ProcDataRemote_c::init( ps_elementDDI, rui16_element,
-                             rc_isoName, rui8_pri, rc_ownerISOName, rpc_commanderISOName,
+                             rc_isoName, rc_ownerISOName, rpc_commanderISOName,
                              rpc_processDataChangeHandler, ri_singletonVecKey
                            );
    }
@@ -236,7 +231,6 @@ public:
 
       common parameter
       @param rc_isoName optional ISOName code of this instance
-      @param rui8_pri PRI code of messages with this process data instance (default 2)
       @param rc_ownerISOName optional ISOName of the owner
       @param rpc_commanderISOName pointer to updated ISOName variable of commander
       @param rpc_processDataChangeHandler optional pointer to handler class of application
@@ -245,7 +239,6 @@ public:
   void init(uint16_t rui16_DDI,
             uint16_t rui16_element,
             const iISOName_c& rc_isoName = iISOName_c::ISONameInitialProcessData,
-            uint8_t rui8_pri = 2,
             const iISOName_c& rc_ownerISOName = iISOName_c::ISONameUnspecified,
             const iISOName_c* rpc_commanderISOName = NULL,
             ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
@@ -259,7 +252,7 @@ public:
      };
 
      ProcDataRemote_c::init( s_tmpElementDDI, rui16_element,
-                            rc_isoName, rui8_pri, rc_ownerISOName, rpc_commanderISOName, rpc_processDataChangeHandler,
+                            rc_isoName, rc_ownerISOName, rpc_commanderISOName, rpc_processDataChangeHandler,
                             ri_singletonVecKey
                            );
   };
@@ -276,42 +269,10 @@ public:
   IsoAgLib::ProcessDataChangeHandler_c* getProcessDataChangeHandler (void) const
    { return ProcDataRemote_c::getProcessDataChangeHandler(); }
 
-  /** deliver value PRI of messages with this
-    process data instance
-    @return PRI
-  */
-  uint8_t pri() const{return ProcDataRemote_c::pri();}
-
-  /** set value PRI of messages with this
-    process data instance (default value is 2 == target message)
-    @param rb_val new PRI value
-  */
-  void setPri (uint8_t rb_val){ProcDataRemote_c::setPri(rb_val);}
-
-  /** deliver value LIS (list number)
-    @return LIS
-  */
-  uint8_t lis() const{return ProcDataRemote_c::lis();}
-
   /** deliver value DEVCLASS (machine type specific table of process data types)
     @return DEVCLASS
   */
   uint8_t devClass() const{return ProcDataRemote_c::devClass();}
-
-  /** deliver value WERT (row of process data table)
-    @return WERT
-  */
-  uint8_t wert() const{return ProcDataRemote_c::wert();}
-
-  /** deliver value INST (column of process data table)
-    @return INST
-  */
-  uint8_t inst() const{return ProcDataRemote_c::inst();}
-
-  /** deliver value ZAEHLNUM (0xFF == whole working width; else parts of width)
-    @return ZAEHLNUM
-  */
-  uint8_t zaehlnum() const{return ProcDataRemote_c::zaehlnum();}
 
   /** deliver value _instance_ (important if more than one machine with equal _device_class_ are active)
     @return POS

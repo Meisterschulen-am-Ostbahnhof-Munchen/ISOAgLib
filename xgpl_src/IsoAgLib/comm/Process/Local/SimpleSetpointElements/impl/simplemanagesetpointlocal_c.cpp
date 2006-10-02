@@ -199,8 +199,7 @@ void SimpleManageSetpointLocal_c::processSetpoint(){
   else
   #endif
   {
-    sendSetpointMod(cc_senderISOName, Proc_c::progType_t( c_pkg.pri() ),
-                    c_pkg.c_generalCommand.getValueGroup(), GeneralCommand_c::setValue );
+    sendSetpointMod(cc_senderISOName, c_pkg.c_generalCommand.getValueGroup(), GeneralCommand_c::setValue );
   }
 
 }
@@ -215,7 +214,6 @@ void SimpleManageSetpointLocal_c::processSetpoint(){
   @return true -> successful sent
 */
 bool SimpleManageSetpointLocal_c::sendSetpointMod(const ISOName_c& rc_targetISOName,
-                                                  Proc_c::progType_t ren_progType,
                                                   GeneralCommand_c::ValueGroup_t en_valueGroup,
                                                   GeneralCommand_c::CommandType_t en_command ) const {
   // prepare general command in process pkg
@@ -225,10 +223,10 @@ bool SimpleManageSetpointLocal_c::sendSetpointMod(const ISOName_c& rc_targetISON
     // not percent
     #ifdef USE_FLOAT_DATA_TYPE
     if (valType() == float_val)
-      return processDataConst().sendValISOName(ren_progType, rc_targetISOName, setpointMasterValFloat());
+      return processDataConst().sendValISOName(rc_targetISOName, setpointMasterValFloat());
     else
     #endif
-      return processDataConst().sendValISOName(ren_progType, rc_targetISOName, setpointMasterVal());
+      return processDataConst().sendValISOName(rc_targetISOName, setpointMasterVal());
   //}
 }
 

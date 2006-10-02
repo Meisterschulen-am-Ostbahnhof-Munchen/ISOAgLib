@@ -103,7 +103,6 @@ namespace __IsoAgLib {
                        (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
 
   @param rc_isoName optional ISOName code of this instance
-  @param rui8_pri PRI code of messages with this process data instance (default 2)
   @param rc_ownerISOName optional ISOName of the owner
   @param rpc_commanderISOName pointer to updated ISOName variable of commander
   @param rpc_processDataChangeHandler optional pointer to handler class of application
@@ -111,13 +110,12 @@ namespace __IsoAgLib {
 */
 ProcDataRemoteSimpleMeasure_c::ProcDataRemoteSimpleMeasure_c(const IsoAgLib::ElementDDI_s* ps_elementDDI,
                                                              uint16_t rui16_element, const ISOName_c& rc_isoName,
-                                                             uint8_t rui8_pri,
                                                              const ISOName_c& rc_ownerISOName,
                                                              const ISOName_c* rpc_commanderISOName,
                                                              IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler,
                                                              int ri_singletonVecKey)
   : ProcDataRemoteBase_c(ps_elementDDI, rui16_element,
-                         rc_isoName, rui8_pri, rc_ownerISOName, rpc_commanderISOName,
+                         rc_isoName, rc_ownerISOName, rpc_commanderISOName,
                          rpc_processDataChangeHandler, ri_singletonVecKey)
   , c_setpoint(this)
   , c_measure(this)
@@ -131,21 +129,20 @@ ProcDataRemoteSimpleMeasure_c::ProcDataRemoteSimpleMeasure_c(const IsoAgLib::Ele
                        (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
 
   @param rc_isoName optional ISOName code of this instance
-  @param rui8_pri PRI code of messages with this process data instance (default 2)
   @param rc_ownerISOName optional ISOName of the owner
   @param rpc_commanderISOName pointer to updated ISOName variable of commander
   @param rpc_processDataChangeHandler optional pointer to handler class of application
   @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
 void ProcDataRemoteSimpleMeasure_c::init(const IsoAgLib::ElementDDI_s* ps_elementDDI,uint16_t rui16_element,
-                                         const ISOName_c& rc_isoName, uint8_t rui8_pri,
+                                         const ISOName_c& rc_isoName,
                                          const ISOName_c& rc_ownerISOName,
                                          const ISOName_c* rpc_commanderISOName,
                                          IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler,
                                          int ri_singletonVecKey)
 {
   ProcDataRemoteBase_c::init(ps_elementDDI, rui16_element,
-                             rc_isoName, rui8_pri, rc_ownerISOName, rpc_commanderISOName,
+                             rc_isoName, rc_ownerISOName, rpc_commanderISOName,
                              rpc_processDataChangeHandler, ri_singletonVecKey);
   c_setpoint.init( this );
   c_measure.init( this );

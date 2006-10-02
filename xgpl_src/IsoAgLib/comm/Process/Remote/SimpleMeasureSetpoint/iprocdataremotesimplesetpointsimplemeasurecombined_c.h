@@ -176,48 +176,10 @@ public:
    { return ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::getProcessDataChangeHandler(); }
 
   /**
-    deliver value PRI of messages with this
-    process data instance
-    @return PRI
-  */
-  uint8_t pri() const{return ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::pri();}
-
-  /**
-    set value PRI of messages with this
-    process data instance (default value is 2 == target message)
-    @param rb_val new PRI value
-  */
-  void setPri(uint8_t rb_val){ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::setPri(rb_val);}
-
-  /**
-    deliver value LIS (list number)
-    @return LIS
-  */
-  uint8_t lis() const{return ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::lis();}
-
-  /**
     deliver value DEVCLASS (machine type specific table of process data types)
     @return DEVCLASS
   */
   uint8_t devClass() const{return ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::devClass();}
-
-  /**
-    deliver value WERT (row of process data table)
-    @return WERT
-  */
-  uint8_t wert() const{return ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::wert();}
-
-  /**
-    deliver value INST (column of process data table)
-    @return INST
-  */
-  uint8_t inst() const{return ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::inst();}
-
-  /**
-    deliver value ZAEHLNUM (0xFF == whole working width; else parts of width)
-    @return ZAEHLNUM
-  */
-  uint8_t zaehlnum() const{return ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::zaehlnum();}
 
   /**
     deliver value _instance_ (important if more than one machine with equal _device_class_ are active)

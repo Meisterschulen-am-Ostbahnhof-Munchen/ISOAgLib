@@ -196,7 +196,6 @@ public:
                          (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
 
     @param rc_isoName optional ISOName code of Process-Data
-    @param rui8_pri PRI code of messages with this process data instance (default 2)
     @param rc_ownerISOName optional ISOName of the owner
     @param rpc_isoName pointer to updated ISOName variable of owner
     @param rb_cumulativeValue
@@ -222,7 +221,6 @@ public:
   ProcDataLocal_c(const IsoAgLib::ElementDDI_s* ps_elementDDI = NULL,
                   uint16_t rui16_element = 0xFFFF,
                   const ISOName_c& rc_isoName = ISOName_c::ISONameInitialProcessData,
-                  uint8_t rui8_pri = 2,
                   const ISOName_c& rc_ownerISOName = ISOName_c::ISONameUnspecified,
                   const ISOName_c *rpc_isoName = NULL,
                   bool rb_cumulativeValue = false,
@@ -243,7 +241,6 @@ public:
                          (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
 
     @param rc_isoName optional ISOName code of Process-Data
-    @param rui8_pri PRI code of messages with this process data instance (default 2)
     @param rc_ownerISOName optional ISOName of the owner
     @param rpc_isoName pointer to updated ISOName variable of owner
     @param rb_cumulativeValue
@@ -269,7 +266,6 @@ public:
   void init(const IsoAgLib::ElementDDI_s* ps_elementDDI = NULL,
             uint16_t rui16_element = 0xFFFF,
             const ISOName_c& rc_isoName = ISOName_c::ISONameInitialProcessData,
-            uint8_t rui8_pri = 2,
             const ISOName_c& rc_ownerISOName = ISOName_c::ISONameUnspecified,
             const ISOName_c *rpc_isoName = NULL,
             bool rb_cumulativeValue = false,
@@ -290,12 +286,12 @@ public:
 
   /**
     check if specific measureprog exist
-    @param rui8_pri PRI code of searched measure program
+
     @param rc_isoName DEVCLASS code of searched measure program
     @return true -> found item
   */
-  bool existProg(uint8_t rui8_pri, const ISOName_c& rc_isoName)
-      {return c_measureprog.existProg(rui8_pri, rc_isoName);};
+  bool existProg(const ISOName_c& rc_isoName)
+      {return c_measureprog.existProg(rc_isoName);};
 
   /**
     search for suiting measureprog, if not found AND if rb_doCreate == true
@@ -303,12 +299,12 @@ public:
 
     possible errors:
         * Err_c::elNonexistent wanted measureprog doesn't exist and rb_doCreate == false
-    @param rui8_pri PRI code of searched measure program
+
     @param rc_isoName DEVCLASS code of searched measure program
     @param rb_doCreated true -> create suitable measure program if not found
   */
-  MeasureProgLocal_c& prog(uint8_t rui8_pri, const ISOName_c& rc_isoName, bool rb_doCreate)
-    { return c_measureprog.prog(rui8_pri, rc_isoName, rb_doCreate);};
+  MeasureProgLocal_c& prog(const ISOName_c& rc_isoName, bool rb_doCreate)
+    { return c_measureprog.prog(rc_isoName, rb_doCreate);};
 
 
   #ifdef USE_EEPROM_IO

@@ -173,7 +173,6 @@ public:
                          (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
 
     @param rc_isoName optional ISOName code of this instance
-    @param rui8_pri PRI code of messages with this process data instance (default 2)
     @param rc_ownerISOName optional ISOName of the owner
     @param rpc_commanderISOName pointer to updated ISOName variable of commander
     @param rpc_processDataChangeHandler optional pointer to handler class of application
@@ -182,7 +181,6 @@ public:
   ProcDataRemoteSimpleMeasure_c( const IsoAgLib::ElementDDI_s* ps_elementDDI = NULL,
                                  uint16_t rui16_element = 0xFFFF,
                                  const ISOName_c& rc_isoName = ISOName_c::ISONameInitialProcessData,
-                                 uint8_t rui8_pri = 2,
                                  const ISOName_c& rc_ownerISOName = ISOName_c::ISONameUnspecified,
                                  const ISOName_c* rpc_commanderISOName = NULL,
                                  IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
@@ -195,14 +193,13 @@ public:
                          (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
 
     @param rc_isoName optional ISOName code of this instance
-    @param rui8_pri PRI code of messages with this process data instance (default 2)
     @param rc_ownerISOName optional ISOName of the owner
     @param rpc_commanderISOName pointer to updated ISOName variable of commander
     @param rpc_processDataChangeHandler optional pointer to handler class of application
     @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
   void init(const IsoAgLib::ElementDDI_s* ps_elementDDI, uint16_t rui16_element,
-            const ISOName_c& rc_isoName = ISOName_c::ISONameInitialProcessData, uint8_t rui8_pri = 2,
+            const ISOName_c& rc_isoName = ISOName_c::ISONameInitialProcessData,
             const ISOName_c& rc_ownerISOName = ISOName_c::ISONameUnspecified,
             const ISOName_c* rpc_commanderISOName = NULL,
             IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,

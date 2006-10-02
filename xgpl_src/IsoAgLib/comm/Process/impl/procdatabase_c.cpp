@@ -132,7 +132,6 @@ namespace __IsoAgLib {
 
    common parameters:
    @param rc_isoName optional ISOName code of Process-Data
-   @param rui8_pri PRI code of messages with this process data instance (default 2)
    @param rc_ownerISOName optional ISOName of the owner
    @param rpc_isoName pointer to updated ISOName variable of owner
    @param rpc_processDataChangeHandler optional pointer to handler class of application
@@ -140,11 +139,11 @@ namespace __IsoAgLib {
 */
   void ProcDataBase_c::init( const IsoAgLib::ElementDDI_s* ps_elementDDI, uint16_t rui16_element,
                              const ISOName_c& rc_isoName,
-                             uint8_t rui8_pri, const ISOName_c& rc_ownerISOName, const ISOName_c *rpc_isoName,
+                             const ISOName_c& rc_ownerISOName, const ISOName_c *rpc_isoName,
                              IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler,
                              int ri_singletonVecKey)
   {
-    ProcIdent_c::init( ps_elementDDI, rui16_element, rc_isoName, rui8_pri, rc_ownerISOName, rpc_isoName);
+    ProcIdent_c::init( ps_elementDDI, rui16_element, rc_isoName, rc_ownerISOName, rpc_isoName);
 
     setSingletonKey(ri_singletonVecKey);
     en_procValType = i32_val;
@@ -242,12 +241,12 @@ bool ProcDataBase_c::timeEvent( void )
   possible errors:
       * Err_c::elNonexistent one of resolved EMPF/SEND isn't registered with claimed address in Monitor
       * dependant error in CANIO_c on CAN send problems
-  @param rui8_pri PRI code for the msg
+
   @param rc_varISOName variable ISOName
   @param ri32_val int32_t value to send
   @return true -> sendIntern set successful EMPF and SEND
 */
-bool ProcDataBase_c::sendValISOName(uint8_t /*rui8_pri*/, const ISOName_c& /*rc_varISOName*/, int32_t ri32_val) const
+bool ProcDataBase_c::sendValISOName( const ISOName_c& /*rc_varISOName*/, int32_t ri32_val) const
 {
   setBasicSendFlags();
 
@@ -256,7 +255,7 @@ bool ProcDataBase_c::sendValISOName(uint8_t /*rui8_pri*/, const ISOName_c& /*rc_
   // send the msg
   getCanInstance4Comm() << getProcessPkg();
   // check for any error during send resolve, ...
-  if ( getLbsErrInstance().good(IsoAgLib::LibErr_c::CanBus, IsoAgLib::LibErr_c::Can) )
+  if ( getLibErrInstance().good(IsoAgLib::LibErr_c::CanBus, IsoAgLib::LibErr_c::Can) )
   { // good
     return true;
   }
@@ -276,12 +275,12 @@ bool ProcDataBase_c::sendValISOName(uint8_t /*rui8_pri*/, const ISOName_c& /*rc_
   possible errors:
       * Err_c::elNonexistent one of resolved EMPF/SEND isn't registered with claimed address in Monitor
       * dependant error in CANIO_c on CAN send problems
-  @param rui8_pri PRI code for the msg
+
   @param rc_varISOName variable ISOName
   @param ri32_val float value to send
   @return true -> sendIntern set successful EMPF and SEND
 */
-bool ProcDataBase_c::sendValISOName(uint8_t /*rui8_pri*/, const ISOName_c& /*rc_varISOName*/, float rf_val) const
+bool ProcDataBase_c::sendValISOName(const ISOName_c& /*rc_varISOName*/, float rf_val) const
 {
   setBasicSendFlags();
 
@@ -290,7 +289,7 @@ bool ProcDataBase_c::sendValISOName(uint8_t /*rui8_pri*/, const ISOName_c& /*rc_
   // send the msg
   getCanInstance4Comm() << getProcessPkg();
   // check for any error during send resolve, ...
-  if ( getLbsErrInstance().good(IsoAgLib::LibErr_c::CanBus, IsoAgLib::LibErr_c::Can) )
+  if ( getLibErrInstance().good(IsoAgLib::LibErr_c::CanBus, IsoAgLib::LibErr_c::Can) )
   { // good
     return true;
   }

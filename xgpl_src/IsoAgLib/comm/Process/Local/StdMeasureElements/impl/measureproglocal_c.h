@@ -105,7 +105,7 @@ class ProcDataLocalBase_c;
 */
 class MeasureProgLocal_c : public MeasureProgBase_c  {
 private:
-  
+
   struct ThresholdInfo_s
   {
     Proc_c::type_t en_type;
@@ -205,13 +205,13 @@ public:
     possible errors:
       * dependant error in ProcDataLocal_c if EMPF or SEND not valid
       * dependant error in CANIO_c on send problems
-    @param ren_progType process msg type: Proc_c::Base, Proc_c::Target
+
     @param ren_type used increment types: Proc_c::TimeProp, Proc_c::DistProp, Proc_c::ValIncr
     @param ren_doSend value types to send on trigger of subprog: Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...
     @param ri32_masterVal actual master value to start with
     @return true -> starting values sent with success
   */
-  bool start(Proc_c::progType_t ren_progType, Proc_c::type_t ren_type,
+  bool start(Proc_c::type_t ren_type,
              Proc_c::doSend_t ren_doSend, int32_t ri32_masterVal);
 #ifdef USE_FLOAT_DATA_TYPE
   /**
@@ -220,13 +220,13 @@ public:
     possible errors:
       * dependant error in ProcDataLocal_c if EMPF or SEND not valid
       * dependant error in CANIO_c on send problems
-    @param ren_progType process msg type: Proc_c::Base, Proc_c::Target
+
     @param ren_type used increment types: Proc_c::TimeProp, Proc_c::DistProp, Proc_c::ValIncr
     @param ren_doSend value types to send on trigger of subprog: Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...
     @param rf_masterVal actual float master value to start with
     @return true -> starting values sent with success
   */
-  bool start(Proc_c::progType_t ren_progType, Proc_c::type_t ren_type,
+  bool start(Proc_c::type_t ren_type,
              Proc_c::doSend_t ren_doSend, float rf_masterVal);
 #endif
   /**
@@ -235,12 +235,12 @@ public:
     possible errors:
       * dependant error in ProcDataLocal_c if EMPF or SEND not valid
       * dependant error in CANIO_c on send problems
-    @param ren_progType process msg type: Proc_c::Base, Proc_c::Target
+
     @param ren_type used increment types: Proc_c::TimeProp, Proc_c::DistProp, Proc_c::ValIncr
     @param ren_doSend value types to send on trigger of subprog: Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...
     @return true -> starting values sent with success
   */
-  virtual bool start(Proc_c::progType_t ren_progType, Proc_c::type_t ren_type, Proc_c::doSend_t ren_doSend);
+  virtual bool start(Proc_c::type_t ren_type, Proc_c::doSend_t ren_doSend);
   /**
     stop local measuring programs -> send actual values
 
@@ -270,19 +270,17 @@ public:
     send a sub-information (selected by en_valueGroup) to a specified target (selected by GPT)
     @param en_valueGroup value group to send
     @param rc_targetISOName ISOName of target
-    @param ren_type optional PRI specifier of the message (default Proc_c::Target )
     @return true -> successful sent
   */
-  bool sendValMod( GeneralCommand_c::ValueGroup_t en_valueGroup, const ISOName_c& rc_targetISOName, Proc_c::progType_t ren_progType = Proc_c::Target) const;
+  bool sendValMod( GeneralCommand_c::ValueGroup_t en_valueGroup, const ISOName_c& rc_targetISOName) const;
 
   /**
     send a sub-information from the corresponding setpoint master to a specified target (selected by GPT)
     @param en_valueGroup value group to send
     @param rc_targetISOName ISOName of target
-    @param ren_type optional PRI specifier of the message (default Proc_c::Target )
     @return true -> successful sent
   */
-  bool sendSetpointValMod( GeneralCommand_c::ValueGroup_t en_valueGroup, const ISOName_c& rc_targetISOName, Proc_c::progType_t ren_progType) const;
+  bool sendSetpointValMod( GeneralCommand_c::ValueGroup_t en_valueGroup, const ISOName_c& rc_targetISOName) const;
   /**
     deliver to en_valueGroup according setpoint from a master setpoint
     @param en_valueGroup of wanted subtype
@@ -487,7 +485,7 @@ private: // Private attributes
 #endif
   /** count of used songle values to calculate medium val  */
   int32_t i32_medCnt;
-  
+
   /**
     stores if one subprog triggered,
     if sent wasn't possible within one call, this could be retried

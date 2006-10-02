@@ -117,7 +117,6 @@ public:
 
     common parameter
     @param rc_isoName optional ISOName code of Process-Data
-    @param rui8_pri PRI code of messages with this process data instance (default 2)
     @param rc_ownerISOName optional ISOName code of owner of Process-Data
            ( important if DEVCLASS and/or DEVCLASSINST differs from identity ISOName in rc_isoName; this is the case
              for process data from base data dictionary table (DEVCLASS==0), which is managed/owned by device of
@@ -129,7 +128,6 @@ public:
               const IsoAgLib::ElementDDI_s* ps_elementDDI = NULL,
               uint16_t ui16_element = 0xFFFF,
               const ISOName_c& rc_isoName = ISOName_c::ISONameInitialProcessData,
-              uint8_t rui8_pri = 2,
               const ISOName_c& rc_ownerISOName = ISOName_c::ISONameUnspecified,
               const ISOName_c *rpc_ownerISOName = NULL,
               int ri_singletonVecKey = 0);
@@ -146,7 +144,6 @@ public:
 
     common parameter
     @param rc_isoName ISOName code of Process-Data
-    @param rui8_pri optional PRI code of messages with this process data instance (default 2)
     @param rc_ownerISOName optional ISOName code of owner of Process-Data
            ( important if DEVCLASS and/or DEVCLASSINST differs from identity ISOName in rc_isoName; this is the case
              for process data from base data dictionary table (DEVCLASS==0), which is managed/owned by device of
@@ -158,7 +155,6 @@ public:
             const IsoAgLib::ElementDDI_s* ps_elementDDI,
             uint16_t ui16_element,
             const ISOName_c& rc_isoName,
-            uint8_t rui8_pri = 2,
             const ISOName_c& rc_ownerISOName = ISOName_c::ISONameUnspecified,
             const ISOName_c *rpc_ownerISOName = NULL);
 
@@ -232,19 +228,6 @@ public:
   uint16_t element() const{ return data.ui16_element; }
 
   /**
-    deliver value PRI of messages with this
-    process data instance
-    @return PRI
-  */
-  uint8_t pri() const{return data.ui8_pri;}
-
-  /**
-    deliver value LIS (list number)
-    @return LIS
-  */
-  uint8_t lis() const{return data.ui8_lis;}
-
-  /**
     deliver value DEVCLASS (machine type specific table of process data types)
     everytime deliver the identity DEVCLASS (and NOT the possibly differing DEVCLASS of the owner)
     @return DEVCLASS
@@ -259,24 +242,6 @@ public:
     @return ISOName
   */
   const ISOName_c& isoName() const {return ownerISOName();}
-
-  /**
-    deliver value WERT (row of process data table)
-    @return WERT
-  */
-  uint8_t wert() const{return data.ui8_wert;}
-
-  /**
-    deliver value INST (column of process data table)
-    @return INST
-  */
-  uint8_t inst() const{return data.ui8_inst;}
-
-  /**
-    deliver value ZAEHLNUM (0xFF == whole working width; else parts of width)
-    @return ZAEHLNUM
-  */
-  uint8_t zaehlnum() const{return data.ui8_zaehlnum;}
 
   /**
     deliver value _instance_ (important if more than one machine with equal _device_class_ are active)
@@ -310,19 +275,6 @@ public:
   void setElementNumber(uint16_t rui16_element) { data.ui16_element = rui16_element; }
 
   /**
-    set value PRI of messages with this
-    process data instance
-    @param rui8_val new PRI value
-  */
-  void setPri(uint8_t rui8_val){data.ui8_pri = rui8_val;}
-
-  /**
-    set value LIS (list number)
-    @param rui8_val new LIS value
-  */
-  void setLis(uint8_t rui8_val){data.ui8_lis = rui8_val;}
-
-  /**
     set value DEVCLASS (machine type specific table of process data types)
     @param rui8_val new DEVCLASS val
   */
@@ -333,24 +285,6 @@ public:
     @param rc_val new ISOName val
   */
   void setISOName(const ISOName_c& rc_val){data.c_isoName = rc_val;}
-
-  /**
-    set value WERT (row of process data table)
-    @param rui8_val new WERT val
-  */
-  void setWert(uint8_t rui8_val){data.ui8_wert = rui8_val;}
-
-  /**
-    set value INST (column of process data table)
-    @param rui8_val new INST val
-  */
-  void setInst(uint8_t rui8_val){data.ui8_inst = rui8_val;}
-
-  /**
-    set value ZAEHLNUM (0xFF == whole working width; else parts of width)
-    @param rui8_val new ZAEHLNUM val
-  */
-  void setZaehlnum(uint8_t rui8_zaehlnum){data.ui8_zaehlnum = rui8_zaehlnum;}
 
   /**
     set value _instance_ (important if more than one machine with equal _device_class_ are active)
@@ -439,18 +373,7 @@ private: // Private attributes
         parallel active on the BUS)
       */
     ISOName_c c_isoName;
-    /** zaehlnum code */
-    uint16_t ui8_zaehlnum : 8;
 
-    /** WERT code of process data identity */
-    uint16_t ui8_wert : 4;
-    /** INST code of process data identity */
-    uint16_t ui8_inst : 4;
-
-    /** LIS code of process data id */
-    uint16_t ui8_lis : 3;
-    /** PRI code of process data messages; mostly 2 */
-    uint16_t ui8_pri : 3;
 
      std::list<IsoAgLib::ElementDDI_s> l_elementDDI;
      uint16_t ui16_element;

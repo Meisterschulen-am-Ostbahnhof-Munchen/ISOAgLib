@@ -136,7 +136,6 @@ namespace __IsoAgLib {
                        (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
 
   @param rc_isoName optional ISOName code of Process-Data
-  @param rui8_pri PRI code of messages with this process data instance (default 2)
   @param rc_ownerISOName optional ISOName of the owner
   @param rpc_isoName pointer to updated ISOName variable of owner
   @param rb_cumulativeValue
@@ -160,7 +159,7 @@ namespace __IsoAgLib {
   @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
 void ProcDataLocalBase_c::init(const IsoAgLib::ElementDDI_s* ps_elementDDI, uint16_t rui16_element,
-                               const ISOName_c& rc_isoName, uint8_t rui8_pri, const ISOName_c& rc_ownerISOName,
+                               const ISOName_c& rc_isoName, const ISOName_c& rc_ownerISOName,
                                const ISOName_c *rpc_isoName, bool rb_cumulativeValue,
 #ifdef USE_EEPROM_IO
                                uint16_t rui16_eepromAdr,
@@ -169,7 +168,7 @@ void ProcDataLocalBase_c::init(const IsoAgLib::ElementDDI_s* ps_elementDDI, uint
                                int ri_singletonVecKey
                                )
 {
-  ProcDataBase_c::init( ps_elementDDI, rui16_element, rc_isoName, rui8_pri, rc_ownerISOName, rpc_isoName,
+  ProcDataBase_c::init( ps_elementDDI, rui16_element, rc_isoName, rc_ownerISOName, rpc_isoName,
                         rpc_processDataChangeHandler, ri_singletonVecKey);
 
   b_cumulativeValue = rb_cumulativeValue;
@@ -179,13 +178,9 @@ void ProcDataLocalBase_c::init(const IsoAgLib::ElementDDI_s* ps_elementDDI, uint
 #endif // USE_EEPROM_IO
   i32_masterVal = 0;
 
-  // don't register proces data object, as long as it's only created with
-  // default values (PRI and LIS must be in all cases different from 0xFF)
-  if ( ( rui8_pri != 0xFF ) )
-  { // now register the pointer to this instance in Process_c
-   getProcessInstance4Comm().registerLocalProcessData( this );
-  }
+  getProcessInstance4Comm().registerLocalProcessData( this );
 }
+
 /** copy constructor */
 ProcDataLocalBase_c::ProcDataLocalBase_c( const ProcDataLocalBase_c& rrefc_src )
   : ProcDataBase_c( rrefc_src )
@@ -372,10 +367,9 @@ bool ProcDataLocalBase_c::timeEvent( void ){
 /**
   send a main-information (selected by MOD) to a specified target (selected by ISOName)
   @param rc_targetISOName ISOName of target
-  @param ren_type optional PRI specifier of the message (default Proc_c::Target )
   @return true -> successful sent
 */
-bool ProcDataLocalBase_c::sendMasterMeasurementVal( const ISOName_c& rc_targetISOName, Proc_c::progType_t ren_progType ) const {
+bool ProcDataLocalBase_c::sendMasterMeasurementVal( const ISOName_c& rc_targetISOName) const {
 
     // prepare general command in process pkg
     getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false, /* isRequest */
@@ -383,15 +377,15 @@ bool ProcDataLocalBase_c::sendMasterMeasurementVal( const ISOName_c& rc_targetIS
                                                                 GeneralCommand_c::setValue);
 
     #if defined(USE_EEPROM_IO) && defined(USE_FLOAT_DATA_TYPE)
-    if (valType() == i32_val) return sendValISOName(ren_progType, rc_targetISOName, eepromVal());
-    else return sendValISOName(ren_progType, rc_targetISOName, eepromValFloat());
+    if (valType() == i32_val) return sendValISOName(rc_targetISOName, eepromVal());
+    else return sendValISOName(rc_targetISOName, eepromValFloat());
     #elif !defined(USE_EEPROM_IO) && defined(USE_FLOAT_DATA_TYPE)
-    if (valType() == i32_val) return sendValISOName(ren_progType, rc_targetISOName, masterMeasurementVal());
-    else return sendValISOName(ren_progType, rc_targetISOName, masterValFloat());
+    if (valType() == i32_val) return sendValISOName(rc_targetISOName, masterMeasurementVal());
+    else return sendValISOName(rc_targetISOName, masterValFloat());
     #elif defined(USE_EEPROM_IO) && !defined(USE_FLOAT_DATA_TYPE)
-    return sendValISOName(ren_progType, rc_targetISOName, eepromVal());
+    return sendValISOName(rc_targetISOName, eepromVal());
     #elif !defined(USE_EEPROM_IO) && !defined(USE_FLOAT_DATA_TYPE)
-    return sendValISOName(ren_progType, rc_targetISOName, masterMeasurementVal());
+    return sendValISOName(rc_targetISOName, masterMeasurementVal());
     #endif
 }
 
@@ -408,7 +402,7 @@ void ProcDataLocalBase_c::processProg(){
       // c_pkg.c_generalCommand.checkIsMeasure() &&  /* already checked before, we are in processProg() ! */
       c_pkg.c_generalCommand.getValueGroup() == GeneralCommand_c::exactValue)
   { // request for measurement value
-    sendMasterMeasurementVal( c_pkg.memberSend().isoName(), Proc_c::progType_t(c_pkg.pri()) );
+    sendMasterMeasurementVal( c_pkg.memberSend().isoName() );
   }
   else
   {
@@ -420,7 +414,7 @@ void ProcDataLocalBase_c::processProg(){
       setMasterMeasurementVal(int32_t(0));
       #endif
       // now send result of reset action
-      sendMasterMeasurementVal( c_pkg.memberSend().isoName(), Proc_c::progType_t(c_pkg.pri()) );
+      sendMasterMeasurementVal( c_pkg.memberSend().isoName() );
       // call handler function if handler class is registered
       if ( getProcessDataChangeHandler() != NULL )
         getProcessDataChangeHandler()->processMeasurementReset( this, 0, static_cast<const IsoAgLib::iISOName_c&>(c_pkg.memberSend().isoName()) );
@@ -474,19 +468,19 @@ void ProcDataLocalBase_c::resetEeprom( void ){
 }
 #endif // USE_EEPROM_IO
 
-bool ProcDataLocalBase_c::sendValISOName(uint8_t rui8_pri, const ISOName_c& rc_varISOName, int32_t ri32_val) const
+bool ProcDataLocalBase_c::sendValISOName(const ISOName_c& rc_varISOName, int32_t ri32_val) const
 {
   setLocalSendFlags (rc_varISOName);
 
-  return ProcDataBase_c::sendValISOName (rui8_pri, rc_varISOName, ri32_val);
+  return ProcDataBase_c::sendValISOName (rc_varISOName, ri32_val);
 }
 
 #ifdef USE_FLOAT_DATA_TYPE
-bool ProcDataLocalBase_c::sendValISOName(uint8_t rui8_pri, const ISOName_c& rc_varISOName, float rf_val) const
+bool ProcDataLocalBase_c::sendValISOName(const ISOName_c& rc_varISOName, float rf_val) const
 {
   setLocalSendFlags (rc_varISOName);
 
-  return ProcDataBase_c::sendValISOName (rui8_pri, rc_varISOName, rf_val);
+  return ProcDataBase_c::sendValISOName (rc_varISOName, rf_val);
 }
 #endif
 

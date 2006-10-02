@@ -191,7 +191,7 @@ void SetpointLocal_c::assignFromSource( const SetpointLocal_c& rrefc_src )
 
   if (vec_register.size() < rrefc_src.vec_register.size())
   { // not all items copied
-    getLbsErrInstance().registerError( LibErr_c::BadAlloc, LibErr_c::LbsProcess );
+    getLibErrInstance().registerError( LibErr_c::BadAlloc, LibErr_c::Process );
   }
   #ifdef DEBUG_HEAP_USEAGE
   else
@@ -279,7 +279,7 @@ bool SetpointLocal_c::existUnhandledMaster() {
 SetpointRegister_c& SetpointLocal_c::unhandledMaster(){
   if (existUnhandledMaster())
   { // no unhandled master found
-    getLbsErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::LbsProcess );
+    getLibErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::Process );
   }
   return *pc_registerCache;
 }
@@ -335,7 +335,7 @@ void SetpointLocal_c::acceptNewMaster( bool rb_accept){
   }
   else
   { // no master setpoint
-    getLbsErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::LbsProcess );
+    getLibErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::Process );
   }
 }
 
@@ -353,7 +353,7 @@ void SetpointLocal_c::setMasterMeasurementVal( int32_t ri32_val)
     vec_register.push_front();
     if ( cui16_oldSize >= vec_register.size() )
     { // out-of-memory
-      getLbsErrInstance().registerError( LibErr_c::BadAlloc, LibErr_c::LbsProcess );
+      getLibErrInstance().registerError( LibErr_c::BadAlloc, LibErr_c::Process );
       return;
     }
     #ifdef DEBUG_HEAP_USEAGE
@@ -435,7 +435,7 @@ SetpointRegister_c& SetpointLocal_c::unhandledInd( uint8_t rui8_ind){
   // check if enough unhandled items found
   if (b_counter != rui8_ind)
   { // rui8_ind was too big
-    getLbsErrInstance().registerError( LibErr_c::Range, LibErr_c::LbsProcess );
+    getLibErrInstance().registerError( LibErr_c::Range, LibErr_c::Process );
     pc_registerCache = vec_register.begin();
   }
 
@@ -629,13 +629,11 @@ bool SetpointLocal_c::timeEvent( void ){
   send a sub-setpoint (selected by MOD) to a specified target (selected by GPT)
   @param GeneralCommand_c::ValueGroup_t min/max/exact/default code of the value type to send
   @param rc_targetISOName ISOName of target
-  @param ren_type optional PRI specifier of the message (default Proc_c::Target )
   @param en_valueGroup: min/max/exact/default
   @param en_command
   @return true -> successful sent
 */
 bool SetpointLocal_c::sendSetpointMod(const ISOName_c& rc_targetISOName,
-                                      Proc_c::progType_t ren_progType,
                                       GeneralCommand_c::ValueGroup_t en_valueGroup,
                                       GeneralCommand_c::CommandType_t en_command) const {
   // prepare general command in process pkg
@@ -644,11 +642,11 @@ bool SetpointLocal_c::sendSetpointMod(const ISOName_c& rc_targetISOName,
   #ifdef USE_FLOAT_DATA_TYPE
   if (valType() == i32_val) {
   #endif
-    return processDataConst().sendValISOName(ren_progType, rc_targetISOName, masterConst().valMod(en_valueGroup));
+    return processDataConst().sendValISOName(rc_targetISOName, masterConst().valMod(en_valueGroup));
   #ifdef USE_FLOAT_DATA_TYPE
   }
   else {
-    return processDataConst().sendValISOName( ren_progType,rc_targetISOName, masterConst().valModFloat(en_valueGroup));
+    return processDataConst().sendValISOName(rc_targetISOName, masterConst().valModFloat(en_valueGroup));
   }
   #endif
 }
@@ -666,7 +664,7 @@ void SetpointLocal_c::processRequest() const {
   if (b_existMaster)
   {
     // use the values in general command which are already set
-    sendSetpointMod(c_pkg.memberSend().isoName(), Proc_c::progType_t( c_pkg.pri() ), c_pkg.c_generalCommand.getValueGroup(), GeneralCommand_c::setValue );
+    sendSetpointMod(c_pkg.memberSend().isoName(), c_pkg.c_generalCommand.getValueGroup(), GeneralCommand_c::setValue );
   }
 }
 
@@ -699,7 +697,7 @@ void SetpointLocal_c::processSet(){
       vec_register.push_front( SetpointRegister_c( c_callerISOName));
       if ( cui16_oldSize >= vec_register.size() )
       { // out-of-memory
-        getLbsErrInstance().registerError( LibErr_c::BadAlloc, LibErr_c::LbsProcess );
+        getLibErrInstance().registerError( LibErr_c::BadAlloc, LibErr_c::Process );
         return;
       }
       #ifdef DEBUG_HEAP_USEAGE
@@ -745,9 +743,7 @@ void SetpointLocal_c::processSet(){
                                                                 GeneralCommand_c::exactValue,
                                                                 GeneralCommand_c::setValue);
     // notify the caller
-    processData().sendValISOName( c_pkg.pri(),
-                c_pkg.memberSend().isoName() ,
-                SETPOINT_RELEASE_COMMAND);
+    processData().sendValISOName( c_pkg.memberSend().isoName(), SETPOINT_RELEASE_COMMAND);
   }
   else
   {

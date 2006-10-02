@@ -65,12 +65,12 @@
 // Begin Namespace IsoAgLib
 namespace __IsoAgLib {
   /** C-style function, to get access to the unique LibErr_c singleton instance */
-  LibErr_c& getLbsErrInstance( void ) { return IsoAgLib::getLbsErrInstance();}
+  LibErr_c& getLibErrInstance( void ) { return IsoAgLib::getLibErrInstance();}
 }
 
 namespace IsoAgLib {
 /** C-style function, to get access to the unique LibErr_c singleton instance */
-LibErr_c& getLbsErrInstance( void )
+LibErr_c& getLibErrInstance( void )
 {
   static LibErr_c& refc_errInstance = LibErr_c::instance();
   return refc_errInstance;
@@ -105,7 +105,7 @@ LibErr_c::LibErr_c(const LibErr_c& rrefc_src)
   * @param rt_errType type of occured error
   * @param rt_errLocation location of error
   */
-void LibErr_c::registerError( LibErr_c::LbsLibErrTypes_t rt_errType, LbsLibErrLocations_t rt_errLocation )
+void LibErr_c::registerError( LibErr_c::LibErrTypes_t rt_errType, LibErrLocations_t rt_errLocation )
 {
   if ((rt_errLocation != AllErrLocations) && (rt_errType != AllErrTypes)) {
     errTypeAtLoc [rt_errLocation] [rt_errType] = 1;
@@ -113,8 +113,8 @@ void LibErr_c::registerError( LibErr_c::LbsLibErrTypes_t rt_errType, LbsLibErrLo
 
 #ifdef DEBUG
   static int32_t si32_nextDebug = 0;
-  static LibErr_c::LbsLibErrTypes_t st_lastDebugErrType;
-  static LbsLibErrLocations_t st_lastDebugErrLocation;
+  static LibErr_c::LibErrTypes_t st_lastDebugErrType;
+  static LibErrLocations_t st_lastDebugErrLocation;
   if ( ( HAL::getTime() > si32_nextDebug )
     || ( st_lastDebugErrType != rt_errType )
     || ( st_lastDebugErrLocation != rt_errLocation ) )
@@ -150,17 +150,17 @@ void LibErr_c::registerError( LibErr_c::LbsLibErrTypes_t rt_errType, LbsLibErrLo
   case Rs232Underflow: errTypeBitfield.Rs232Underflow++;  break;
   case EepromSegment: errTypeBitfield.EepromSegment++;    break;
   case EepromWriteError: errTypeBitfield.EepromWriteError++;    break;
-  case LbsSysNoActiveLocalMember: errTypeBitfield.LbsSysNoActiveLocalMember++;    break;
-  case LbsBaseSenderConflict: errTypeBitfield.LbsBaseSenderConflict++;                break;
+  case SysNoActiveLocalMember: errTypeBitfield.SysNoActiveLocalMember++;    break;
+  case BaseSenderConflict: errTypeBitfield.BaseSenderConflict++;                break;
   case IsoTerminalOutOfMemory: errTypeBitfield.IsoTerminalOutOfMemory++;            break;
   case LbsMultiSendBusy: errTypeBitfield.LbsMultiSendBusy++;                        break;
   case AllErrTypes: break; // should not happen in work - but to make compiler happy
   }
   switch ( rt_errLocation ) {
     case Lbs: errLocBitfield.Lbs++;            break;
-    case LbsBase: errLocBitfield.LbsBase++;  break;
-    case LbsSystem: errLocBitfield.LbsSystem++;      break;
-    case LbsProcess: errLocBitfield.LbsProcess++;    break;
+    case Base: errLocBitfield.Base++;  break;
+    case System: errLocBitfield.System++;      break;
+    case Process: errLocBitfield.Process++;    break;
     case LbsTerminal: errLocBitfield.LbsTerminal++;  break;
     case LbsMultipacket: errLocBitfield.LbsMultipacket++;    break;
     case HwSystem: errLocBitfield.HwSystem++;      break;
@@ -179,7 +179,7 @@ void LibErr_c::registerError( LibErr_c::LbsLibErrTypes_t rt_errType, LbsLibErrLo
 /**
   clear all error information of a special location
   @param rt_errType select for which error types the counter shall be reset (default reset all counters)
-void LibErr_c::clear( LbsLibErrTypes_t rt_errType )
+void LibErr_c::clear( LibErrTypes_t rt_errType )
 {
   switch ( rt_errType ) {
     case AllErrTypes: CNAMESPACE::memset( &errTypeBitfield, 0, sizeof(errTypeBitfield) ); break;
@@ -204,8 +204,8 @@ void LibErr_c::clear( LbsLibErrTypes_t rt_errType )
     case Rs232Underflow: errTypeBitfield.Rs232Underflow = 0;  break;
     case EepromSegment: errTypeBitfield.EepromSegment = 0;    break;
     case EepromWriteError: errTypeBitfield.EepromWriteError = 0;    break;
-    case LbsSysNoActiveLocalMember: errTypeBitfield.LbsSysNoActiveLocalMember = 0;    break;
-    case LbsBaseSenderConflict: errTypeBitfield.LbsBaseSenderConflict = 0;                break;
+    case SysNoActiveLocalMember: errTypeBitfield.SysNoActiveLocalMember = 0;    break;
+    case BaseSenderConflict: errTypeBitfield.BaseSenderConflict = 0;                break;
     case IsoTerminalOutOfMemory: errTypeBitfield.IsoTerminalOutOfMemory = 0;            break;
     case LbsMultiSendBusy: errTypeBitfield.LbsMultiSendBusy = 0;                        break;
   }
@@ -217,7 +217,7 @@ void LibErr_c::clear( LbsLibErrTypes_t rt_errType )
   @param rt_errLocation select for which error locations the counter shall be reset
   @param rt_errType select for which error types the counter shall be reset (default reset all counters)
 */
-void LibErr_c::clear( LbsLibErrTypes_t rt_errType, LbsLibErrLocations_t rt_errLocation ) {
+void LibErr_c::clear( LibErrTypes_t rt_errType, LibErrLocations_t rt_errLocation ) {
   if (rt_errType == AllErrTypes) {
     clear (rt_errLocation); // Clear complete Location
   } else {
@@ -235,7 +235,7 @@ void LibErr_c::clear( LbsLibErrTypes_t rt_errType, LbsLibErrLocations_t rt_errLo
   clear all error information of a special location
   @param rt_errLocation select for which error locations the counter shall be reset
 */
-void LibErr_c::clear( LbsLibErrLocations_t rt_errLocation ) {
+void LibErr_c::clear( LibErrLocations_t rt_errLocation ) {
   if (rt_errLocation == AllErrLocations) {
     for (int i=0; i<AllErrLocations; i++) {
       errTypeAtLoc [i].reset ();
@@ -247,9 +247,9 @@ void LibErr_c::clear( LbsLibErrLocations_t rt_errLocation ) {
   switch ( rt_errLocation ) {
     case AllErrLocations: CNAMESPACE::memset( &errLocBitfield, 0, sizeof(errLocBitfield) ); break;
     case Lbs: errLocBitfield.Lbs = 0;            break;
-    case LbsBase: errLocBitfield.LbsBase = 0;  break;
-    case LbsSystem: errLocBitfield.LbsSystem = 0;      break;
-    case LbsProcess: errLocBitfield.LbsProcess = 0;    break;
+    case Base: errLocBitfield.Base = 0;  break;
+    case System: errLocBitfield.System = 0;      break;
+    case Process: errLocBitfield.Process = 0;    break;
     case LbsTerminal: errLocBitfield.LbsTerminal = 0;  break;
     case LbsMultipacket: errLocBitfield.LbsMultipacket = 0;    break;
     case HwSystem: errLocBitfield.HwSystem = 0;      break;
@@ -268,7 +268,7 @@ void LibErr_c::clear( LbsLibErrLocations_t rt_errLocation ) {
   @param rt_errType optional select the error-types to count (default all error types)
   @return count of registered error types
 */
-uint16_t LibErr_c::getErrCnt( LbsLibErrTypes_t rt_errType ) const
+uint16_t LibErr_c::getErrCnt( LibErrTypes_t rt_errType ) const
 {
   uint16_t errors=0;
   if (rt_errType == AllErrTypes) {
@@ -306,8 +306,8 @@ uint16_t LibErr_c::getErrCnt( LbsLibErrTypes_t rt_errType ) const
       ui8_result += Rs232Underflow;
       ui8_result += EepromSegment;
       ui8_result += EepromWriteError;
-      ui8_result += LbsSysNoActiveLocalMember;
-      ui8_result += LbsBaseSenderConflict;
+      ui8_result += SysNoActiveLocalMember;
+      ui8_result += BaseSenderConflict;
       ui8_result += IsoTerminalOutOfMemory;
       ui8_result += LbsMultiSendBusy;
       break;
@@ -332,8 +332,8 @@ uint16_t LibErr_c::getErrCnt( LbsLibErrTypes_t rt_errType ) const
     case Rs232Underflow: ui8_result = errTypeBitfield.Rs232Underflow;  break;
     case EepromSegment: ui8_result = errTypeBitfield.EepromSegment;    break;
     case EepromWriteError: ui8_result = errTypeBitfield.EepromWriteError;    break;
-    case LbsSysNoActiveLocalMember: ui8_result = errTypeBitfield.LbsSysNoActiveLocalMember;  break;
-    case LbsBaseSenderConflict: ui8_result = errTypeBitfield.LbsBaseSenderConflict;                break;
+    case SysNoActiveLocalMember: ui8_result = errTypeBitfield.SysNoActiveLocalMember;  break;
+    case BaseSenderConflict: ui8_result = errTypeBitfield.BaseSenderConflict;                break;
     case IsoTerminalOutOfMemory: ui8_result = errTypeBitfield.IsoTerminalOutOfMemory;       break;
     case LbsMultiSendBusy: ui8_result = errTypeBitfield.LbsMultiSendBusy;       }
   return ui8_result;
@@ -343,9 +343,9 @@ uint16_t LibErr_c::getErrCnt( LbsLibErrTypes_t rt_errType ) const
 /**
   deliver the type of the nth error
   @param rui8_ind index of the requested error ( [0..(ErrCnt-1)] )
-  @return LbsLibErrTypes_t
+  @return LibErrTypes_t
 */
-LibErr_c::LbsLibErrTypes_t LibErr_c::getErrIndType( uint8_t rui8_ind ) const
+LibErr_c::LibErrTypes_t LibErr_c::getErrIndType( uint8_t rui8_ind ) const
 {
   int16_t i16_foundInd = -1;
   if ( rui8_ind >= getErrCnt( AllErrTypes ) ) return AllErrTypes;
@@ -357,7 +357,7 @@ LibErr_c::LbsLibErrTypes_t LibErr_c::getErrIndType( uint8_t rui8_ind ) const
       if ( errTypeAtLoc [i].test (j))
       {
         i16_foundInd++;
-        if ( i16_foundInd == rui8_ind ) return LbsLibErrTypes_t(j);
+        if ( i16_foundInd == rui8_ind ) return LibErrTypes_t(j);
       }
     }
   }
@@ -368,9 +368,9 @@ LibErr_c::LbsLibErrTypes_t LibErr_c::getErrIndType( uint8_t rui8_ind ) const
 /**
   deliver the location of the nth error
   @param rui8_ind index of the requested error ( [0..(ErrCnt-1)] )
-  @return LbsLibErrTypes_t
+  @return LibErrTypes_t
 */
-LibErr_c::LbsLibErrLocations_t LibErr_c::getErrIndLocation( uint8_t rui8_ind ) const
+LibErr_c::LibErrLocations_t LibErr_c::getErrIndLocation( uint8_t rui8_ind ) const
 {
   int16_t i16_foundInd = -1;
   if ( rui8_ind >= getErrCnt( AllErrTypes ) ) return AllErrLocations;
@@ -382,7 +382,7 @@ LibErr_c::LbsLibErrLocations_t LibErr_c::getErrIndLocation( uint8_t rui8_ind ) c
       if ( errTypeAtLoc [i].test (j))
       {
         i16_foundInd++;
-        if ( i16_foundInd == rui8_ind ) return LbsLibErrLocations_t(i);
+        if ( i16_foundInd == rui8_ind ) return LibErrLocations_t(i);
       }
     }
   }
@@ -398,7 +398,7 @@ LibErr_c::LbsLibErrLocations_t LibErr_c::getErrIndLocation( uint8_t rui8_ind ) c
   @param rt_errLocation location to check for errors
   @return count of registered error types
 */
-uint16_t LibErr_c::getErrCnt( LbsLibErrLocations_t rt_errLocation ) const
+uint16_t LibErr_c::getErrCnt( LibErrLocations_t rt_errLocation ) const
 {
   uint16_t errors=0;
   if (rt_errLocation == AllErrLocations) {
@@ -414,9 +414,9 @@ uint16_t LibErr_c::getErrCnt( LbsLibErrLocations_t rt_errLocation ) const
   switch ( rt_errLocation ) {
     case AllErrLocations:
       ui8_result += errLocBitfield.Lbs;
-      ui8_result += errLocBitfield.LbsBase;
-      ui8_result += errLocBitfield.LbsSystem;
-      ui8_result += errLocBitfield.LbsProcess;
+      ui8_result += errLocBitfield.Base;
+      ui8_result += errLocBitfield.System;
+      ui8_result += errLocBitfield.Process;
       ui8_result += errLocBitfield.LbsTerminal;
       ui8_result += errLocBitfield.LbsMultipacket;
       ui8_result += errLocBitfield.HwSystem;
@@ -428,9 +428,9 @@ uint16_t LibErr_c::getErrCnt( LbsLibErrLocations_t rt_errLocation ) const
       ui8_result += errLocBitfield.IsoTerminal;
       break;
     case Lbs: ui8_result = errLocBitfield.Lbs;            break;
-    case LbsBase: ui8_result = errLocBitfield.LbsBase;  break;
-    case LbsSystem: ui8_result = errLocBitfield.LbsSystem;      break;
-    case LbsProcess: ui8_result = errLocBitfield.LbsProcess;    break;
+    case Base: ui8_result = errLocBitfield.Base;  break;
+    case System: ui8_result = errLocBitfield.System;      break;
+    case Process: ui8_result = errLocBitfield.Process;    break;
     case LbsTerminal: ui8_result = errLocBitfield.LbsTerminal;  break;
     case LbsMultipacket: ui8_result = errLocBitfield.LbsMultipacket;    break;
     case HwSystem: ui8_result = errLocBitfield.HwSystem;      break;
@@ -450,12 +450,12 @@ uint16_t LibErr_c::getErrCnt( LbsLibErrLocations_t rt_errLocation ) const
   @param rt_errType optional select the error-types to count (default all error types)
   @return true -> the defined error locations report no error
 */
-bool LibErr_c::good( LbsLibErrTypes_t rt_errType ) const
+bool LibErr_c::good( LibErrTypes_t rt_errType ) const
 {
   uint16_t errors=0;
   if ( rt_errType == AllErrTypes ) {
     for (int i=0; i<AllErrTypes; i++) {
-      errors += getErrCnt( (LbsLibErrTypes_t) i );
+      errors += getErrCnt( (LibErrTypes_t) i );
     }
   }
   else {
@@ -469,12 +469,12 @@ bool LibErr_c::good( LbsLibErrTypes_t rt_errType ) const
   @param rt_errLocation location to check for errors
   @return true -> the defined error locations report no error
 */
-bool LibErr_c::good( LbsLibErrLocations_t rt_errLocation ) const
+bool LibErr_c::good( LibErrLocations_t rt_errLocation ) const
 {
   uint16_t errors=0;
   if ( rt_errLocation == AllErrLocations ) {
     for (int i=0; i<AllErrLocations; i++) {
-      errors += getErrCnt( (LbsLibErrLocations_t) i );
+      errors += getErrCnt( (LibErrLocations_t) i );
     }
   }
   else {
@@ -495,7 +495,7 @@ bool LibErr_c::good( LbsLibErrLocations_t rt_errLocation ) const
 */
 }
 
-bool LibErr_c::good( LbsLibErrTypes_t rt_errType, LbsLibErrLocations_t rt_errLocation ) const
+bool LibErr_c::good( LibErrTypes_t rt_errType, LibErrLocations_t rt_errLocation ) const
 {
   if (!good( rt_errLocation ))
     return false;

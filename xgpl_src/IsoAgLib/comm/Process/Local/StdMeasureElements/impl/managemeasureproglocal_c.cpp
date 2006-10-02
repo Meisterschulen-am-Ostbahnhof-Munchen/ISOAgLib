@@ -128,7 +128,7 @@ void ManageMeasureProgLocal_c::checkInitList( void )
   }
   if (vec_prog().size() < 1)
   { // first element added without success
-    getLbsErrInstance().registerError( LibErr_c::BadAlloc, LibErr_c::LbsProcess );
+    getLibErrInstance().registerError( LibErr_c::BadAlloc, LibErr_c::Process );
   }
   #ifdef DEBUG_HEAP_USEAGE
   else
@@ -176,7 +176,7 @@ void ManageMeasureProgLocal_c::assignFromSource( const ManageMeasureProgLocal_c&
   // now initialise the elements
   if (vec_prog().size() < rrefc_src.constVecProg().size())
   { // not all items copied
-    getLbsErrInstance().registerError( LibErr_c::BadAlloc, LibErr_c::LbsProcess );
+    getLibErrInstance().registerError( LibErr_c::BadAlloc, LibErr_c::Process );
   }
   #ifdef DEBUG_HEAP_USEAGE
   else
@@ -374,14 +374,14 @@ void ManageMeasureProgLocal_c::processProg(){
        ( en_command == GeneralCommand_c::setValue)
      )
   { // it's a measuring program message -> create new item if none found
-    updateProgCache(c_pkg.pri(),c_callerISOName, true);
+    updateProgCache(c_callerISOName, true);
   }
   else
     // if ( (c_pkg.pd() != 3) || (c_pkg.mod() != 0) )  => pd == 1 || (pd == 3 && mod != 0)
     if ( !c_pkg.c_generalCommand.checkIsRequest() ||
          c_pkg.c_generalCommand.getValueGroup() != GeneralCommand_c::exactValue )
     { // use normal mechanism -> exist function if no entry found
-      if (!updateProgCache(c_pkg.pri(),c_callerISOName, false))return;
+      if (!updateProgCache(c_callerISOName, false))return;
     }
 
   #ifdef DEBUG_HEAP_USEAGE
@@ -417,15 +417,15 @@ void ManageMeasureProgLocal_c::processProg(){
 
   possible errors:
       * Err_c::elNonexistent wanted measureprog doesn't exist and rb_doCreate == false
-  @param rui8_pri PRI code of searched measure program
+
   @param rc_isoName DEVCLASS code of searched measure program
   @param rb_doCreated true -> create suitable measure program if not found
 */
-MeasureProgLocal_c& ManageMeasureProgLocal_c::prog(uint8_t rui8_pri, const ISOName_c& rc_isoName, bool rb_doCreate){
+MeasureProgLocal_c& ManageMeasureProgLocal_c::prog(const ISOName_c& rc_isoName, bool rb_doCreate){
   // update the prog cache
-  if (!updateProgCache(rui8_pri, rc_isoName, rb_doCreate) && (!rb_doCreate))
+  if (!updateProgCache(rc_isoName, rb_doCreate) && (!rb_doCreate))
   { // not found and no creation wanted
-    getLbsErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::LbsProcess );
+    getLibErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::Process );
   }
 
   // now return the cache pointed prog
@@ -469,10 +469,10 @@ void ManageMeasureProgLocal_c::setGlobalVal( float rf_val )
 
   possible errors:
       * Err_c::badAlloc not enough memory to insert new MeasureProgLocal
-  @param rui8_type program type: Proc_c::Base, Proc_c::Target
+
   @param rc_isoName commanding ISOName
 */
-void ManageMeasureProgLocal_c::insertMeasureprog(uint8_t rui8_type, const ISOName_c& rc_isoName){
+void ManageMeasureProgLocal_c::insertMeasureprog(const ISOName_c& rc_isoName){
 // only create new item if first isn't undefined
   const uint8_t b_oldSize = vec_prog().size();
 
@@ -498,7 +498,7 @@ void ManageMeasureProgLocal_c::insertMeasureprog(uint8_t rui8_type, const ISONam
     }
     if (b_oldSize >= vec_prog().size())
     { // array didn't grow
-      getLbsErrInstance().registerError( LibErr_c::BadAlloc, LibErr_c::LbsProcess );
+      getLibErrInstance().registerError( LibErr_c::BadAlloc, LibErr_c::Process );
       return; // exit function
     }
     #ifdef DEBUG_HEAP_USEAGE
@@ -547,7 +547,9 @@ void ManageMeasureProgLocal_c::insertMeasureprog(uint8_t rui8_type, const ISONam
   }
   // set type and isoName for item
   pc_progCache->setISOName(rc_isoName);
-  pc_progCache->setProgType(rui8_type);
+
+  /**TODO2 remove progType */
+ pc_progCache->setProgType(2);
 }
 
 /**
@@ -555,12 +557,12 @@ void ManageMeasureProgLocal_c::insertMeasureprog(uint8_t rui8_type, const ISONam
 
   possible errors:
       * Err_c::badAlloc not enough memory to insert new MeasureProgLocal
-  @param rui8_type program type: Proc_c::Base, Proc_c::Target
+
   @param rc_isoName commanding ISOName
   @param rb_createIfNotFound true -> create new item if not found
   @return true -> instance found
 */
-bool ManageMeasureProgLocal_c::updateProgCache(uint8_t rui8_type, const ISOName_c& rc_isoName, bool rb_createIfNotFound)
+bool ManageMeasureProgLocal_c::updateProgCache(const ISOName_c& rc_isoName, bool rb_createIfNotFound)
 {
   bool b_result = false;
   // insert first default element, if list is empty
@@ -569,38 +571,23 @@ bool ManageMeasureProgLocal_c::updateProgCache(uint8_t rui8_type, const ISOName_
   Vec_MeasureProgLocalIterator pc_iter = vec_prog().begin();
   // update only if old cache isn't valid
   if ( (!vec_prog().empty())
-    && (pc_progCache->isoName() == rc_isoName)
-    && (pc_progCache->progType() == rui8_type))
+    && (pc_progCache->isoName() == rc_isoName) )
   { // old is valid -> return true
     b_result =  true;
   }
   else
   { // actual cache is from another isoName and/or type -> search for new
-    // check if type is target
-    if (rui8_type == 0x2)
-    { // target process msg
-      for (pc_iter = vec_prog().begin(); pc_iter != vec_prog().end(); pc_iter++)
-      { // check if isoName and type fit
-        if ((pc_iter->isoName() == rc_isoName) && (pc_iter->progType() == rui8_type))
-        {
-          b_result = true;
-          pc_progCache = pc_iter;
-          break;
-        } // fit
-      }// for
-    } // target
-    if ((rui8_type == 0x1)||((rui8_type == 0x2)&&(!b_result)&& (!rb_createIfNotFound)))
-    { // base process msg or search for suitable target item without success and creation wasn't wanted
-      for (pc_iter = vec_prog().begin(); pc_iter != vec_prog().end(); pc_iter++)
-      { // check if type is base process
-        if (pc_iter->progType() == 1)
-        {
-          b_result = true;
-          pc_progCache = pc_iter;
-          break;
-        } // fit
-      }// for
-    } // base or not found target with no item to create
+    // target process msg
+    for (pc_iter = vec_prog().begin(); pc_iter != vec_prog().end(); pc_iter++)
+    { // check if isoName and type fit
+      if ( pc_iter->isoName() == rc_isoName )
+      {
+        b_result = true;
+        pc_progCache = pc_iter;
+        break;
+      } // fit
+    }// for
+
     // check if still no suitable item is found
     if (!b_result)
     {
@@ -610,7 +597,7 @@ bool ManageMeasureProgLocal_c::updateProgCache(uint8_t rui8_type, const ISOName_
       }
       else
       { // no suitable item was found -> create suitable one
-        insertMeasureprog(rui8_type, rc_isoName);
+        insertMeasureprog(rc_isoName);
       } // do create if not found
     }// no suitable found
   }
@@ -627,14 +614,13 @@ bool ManageMeasureProgLocal_c::updateProgCache(uint8_t rui8_type, const ISOName_
   @return true -> rpc_receiverDevice is set
 */
 bool ManageMeasureProgLocal_c::startDataLogging(Proc_c::type_t ren_type /* Proc_c::TimeProp, Proc_c::DistProp, ... */,
-                                                Proc_c::progType_t ren_progType,
                                                 int32_t ri32_increment, const ISOName_c* rpc_receiverDevice )
 {
   if ( !rpc_receiverDevice )
     return FALSE;
 
   // create new item if none found
-  updateProgCache(ren_progType, *rpc_receiverDevice, true);
+  updateProgCache(/*ren_progType,*/ *rpc_receiverDevice, true);
 
   pc_progCache->setISOName(*rpc_receiverDevice);
 
@@ -643,7 +629,7 @@ bool ManageMeasureProgLocal_c::startDataLogging(Proc_c::type_t ren_type /* Proc_
   else
     pc_progCache->addSubprog(ren_type, ri32_increment);
 
-  pc_progCache->start(ren_progType, ren_type, Proc_c::DoVal);
+  pc_progCache->start(ren_type, Proc_c::DoVal);
 
   return TRUE;
 }

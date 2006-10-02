@@ -120,12 +120,6 @@ public:
   /* ************************** */
 
   /**
-    deliver PRI of process msg (message type)
-    @return PRI value of message
-  */
-  uint8_t pri()const{return bit_data.ui8_pri;}
-
-  /**
     deliver EMPF of process msg (receiving member number)
     @return EMPF value of message
   */
@@ -138,24 +132,6 @@ public:
   uint8_t send()const{return bit_data.b_send;}
 
   /**
-    deliver LIS of process msg (list number of Process-Data)
-    @return LIS value of message
-  */
-  uint8_t lis()const{return bit_data.ui8_lis;}
-
-  /**
-    deliver WERT of process msg (row of Process-Data table)
-    @return  value of message
-  */
-  uint8_t wert()const{return bit_data.ui8_wert;}
-
-  /**
-    deliver INST of process msg (column of Process-Data table)
-    @return  value of message
-  */
-  uint8_t inst()const{return bit_data.ui8_inst;}
-
-  /**
     deliver PD of process msg (PD flag for subtype/action of Process-Data)
     @return PD value of message
   */
@@ -166,12 +142,6 @@ public:
     @return MOD value of message
   */
   uint8_t mod()const{return bit_data.b_mod;}
-
-  /**
-    deliver ZAEHLNUM of process msg (specify working width part corresponding to this msg)
-    @return ZAEHLNUM value of message
-  */
-  uint8_t zaehlnum()const{return bit_data.ui8_zaehlnum;}
 
   /**
     deliver D of process msg (0 -> integer; 1 -> float)
@@ -297,15 +267,6 @@ public:
   /* ***setting of values*** */
   /* *********************** */
   /**
-    set value PRI of process msg
-    @param rb_val new PRI value for message
-  */
-  void setPri(uint8_t rb_val) {
-    bit_data.ui8_pri = rb_val;
-    setIdentType(Ident_c::StandardIdent);
-  }
-
-  /**
     set value EMPF of process msg
     @param rb_val new EMPF value for message
   */
@@ -324,24 +285,6 @@ public:
   }
 
   /**
-    set value LIS of process msg
-    @param rb_val new LIS value for message
-  */
-  void setLis(uint8_t rb_val){bit_data.ui8_lis = rb_val;}
-
-  /**
-    set value WERT of process msg
-    @param rb_val new WERT value for message
-  */
-  void setWert(uint8_t rb_val){bit_data.ui8_wert = rb_val;}
-
-  /**
-    set value INST of process msg
-    @param rb_val new INST value for message
-  */
-  void setInst(uint8_t rb_val){bit_data.ui8_inst = rb_val;}
-
-  /**
     set value PD of process msg
     @param rb_val new PD value for message
   */
@@ -352,12 +295,6 @@ public:
     @param rb_val new MOD value for message
   */
   void setMod(uint8_t rb_val){bit_data.b_mod = rb_val;}
-
-  /**
-    set value ZAEHLNUM of process msg
-    @param rb_val new ZAEHLNUM value for message
-  */
-  void setZaehlnum(uint8_t rb_val){bit_data.ui8_zaehlnum = rb_val;}
 
   /**
     set value D of process msg
@@ -485,17 +422,11 @@ private: // Private attributes
   Flexible4ByteString_c c_flex4Data;
 
   struct _bit_data {
-    /** ZAEHLNUM for data */
-    uint16_t ui8_zaehlnum : 8;
     /** EMPF forheader */
     uint16_t b_empf : 8;
     /** SEND for header */
     uint16_t b_send : 8;
 
-    /** PRI for header */
-    uint16_t ui8_pri : 3;
-    /** LIS for data*/
-    uint16_t ui8_lis : 3;
     /** PD for data */
     uint16_t b_pd : 2;
 
@@ -504,10 +435,6 @@ private: // Private attributes
     /** D for data */
     uint16_t b_d : 1;
 
-    /** WERT for data */
-    uint16_t ui8_wert : 4;
-    /** INST for data */
-    uint16_t ui8_inst : 4;
     /** decide about used val type: int32_t, uint32_t, float, cmd */
     uint16_t b_valType : 2;
 

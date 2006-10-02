@@ -138,7 +138,6 @@ public:
     @param ui16_element  device element number
     common parameters:
     @param rc_isoName optional ISOName code of Process-Data
-    @param rui8_pri PRI code of messages with this process data instance (default 2)
     @param rc_ownerISOName optional ISOName of the owner
     @param rpc_isoName pointer to updated ISOName variable of owner
     @param rpc_processDataChangeHandler optional pointer to handler class of application
@@ -146,13 +145,13 @@ public:
   */
   ProcDataBase_c( const IsoAgLib::ElementDDI_s* ps_elementDDI = NULL, uint16_t ui16_element = 0xFFFF,
                  const ISOName_c& rc_isoName = ISOName_c::ISONameInitialProcessData,
-                 uint8_t rui8_pri = 2, const ISOName_c& rc_ownerISOName = ISOName_c::ISONameUnspecified, const ISOName_c *rpc_isoName = NULL,
+                 const ISOName_c& rc_ownerISOName = ISOName_c::ISONameUnspecified, const ISOName_c *rpc_isoName = NULL,
                  IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
                  int ri_singletonVecKey = 0)
 
-    : ProcIdent_c( ps_elementDDI, ui16_element, rc_isoName, rui8_pri, rc_ownerISOName, rpc_isoName, ri_singletonVecKey)
+    : ProcIdent_c( ps_elementDDI, ui16_element, rc_isoName, rc_ownerISOName, rpc_isoName, ri_singletonVecKey)
     {
-      init( ps_elementDDI, ui16_element, rc_isoName, rui8_pri, rc_ownerISOName, rpc_isoName,
+      init( ps_elementDDI, ui16_element, rc_isoName, rc_ownerISOName, rpc_isoName,
             rpc_processDataChangeHandler, ri_singletonVecKey );
     }
 
@@ -164,7 +163,6 @@ public:
     @param ui16_element  device element number
     common parameters:
     @param rc_isoName optional ISOName code of Process-Data
-    @param rui8_pri PRI code of messages with this process data instance (default 2)
     @param rc_ownerISOName optional ISOName of the owner
     @param rpc_isoName pointer to updated ISOName variable of owner
     @param rpc_processDataChangeHandler optional pointer to handler class of application
@@ -172,7 +170,7 @@ public:
     */
   void init( const IsoAgLib::ElementDDI_s* ps_elementDDI, uint16_t rui16_element,
             const ISOName_c& rc_isoName = ISOName_c::ISONameInitialProcessData,
-            uint8_t rui8_pri = 2, const ISOName_c& rc_ownerISOName = ISOName_c::ISONameUnspecified, const ISOName_c *rpc_isoName = NULL,
+            const ISOName_c& rc_ownerISOName = ISOName_c::ISONameUnspecified, const ISOName_c *rpc_isoName = NULL,
             IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
             int ri_singletonVecKey = 0);
 
@@ -275,14 +273,14 @@ protected: // Protected methods
     possible errors:
         * Err_c::elNonexistent one of resolved EMPF/SEND isn't registered with claimed address in Monitor
         * dependant error in CANIO_c on CAN send problems
-    @param rui8_pri PRI code for the msg
+
     @param rc_varISOName variable ISOName
     @param ri32_val int32_t value to send
     @param en_valueGroup: min/max/exact/default
     @param en_command
     @return true -> sendIntern set successful EMPF and SEND
   */
-  virtual bool sendValISOName(uint8_t rui8_pri, const ISOName_c& rc_varISOName, int32_t ri32_val = 0) const;
+  virtual bool sendValISOName(const ISOName_c& rc_varISOName, int32_t ri32_val = 0) const;
 
 #ifdef USE_FLOAT_DATA_TYPE
   /** send the given float value with variable ISOName rc_varISOName;
@@ -294,14 +292,14 @@ protected: // Protected methods
     possible errors:
         * Err_c::elNonexistent one of resolved EMPF/SEND isn't registered with claimed address in Monitor
         * dependant error in CANIO_c on CAN send problems
-    @param rui8_pri PRI code for the msg
+
     @param rc_varISOName variable ISOName
     @param rb_pd PD code for the msg
     @param rb_mod MOD code for the msg
     @param ri32_val float value to send
     @return true -> sendIntern set successful EMPF and SEND
   */
-  virtual bool sendValISOName(uint8_t rui8_pri, const ISOName_c& rc_varISOName, float rf_val = 0.0F) const;
+  virtual bool sendValISOName(const ISOName_c& rc_varISOName, float rf_val = 0.0F) const;
 #endif
 
   void setBasicSendFlags() const;

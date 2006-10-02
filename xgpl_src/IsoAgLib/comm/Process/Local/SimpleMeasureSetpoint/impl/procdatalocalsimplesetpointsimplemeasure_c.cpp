@@ -103,7 +103,6 @@ namespace __IsoAgLib {
                        (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
 
   @param rc_isoName optional ISOName code of this instance
-  @param rui8_pri PRI code of messages with this process data instance (default 2)
   @param rc_ownerISOName optional ISOName of the owner
   @param rpc_isoName pointer to updated ISOName variable of owner
   @param rb_cumulativeValue
@@ -130,7 +129,6 @@ ProcDataLocalSimpleSetpointSimpleMeasure_c::ProcDataLocalSimpleSetpointSimpleMea
      const IsoAgLib::ElementDDI_s* ps_elementDDI,
      uint16_t rui16_element,
      const ISOName_c& rc_isoName,
-     uint8_t rui8_pri,
      const ISOName_c& rc_ownerISOName,
      const ISOName_c *rpc_isoName,
      bool rb_cumulativeValue,
@@ -141,7 +139,7 @@ ProcDataLocalSimpleSetpointSimpleMeasure_c::ProcDataLocalSimpleSetpointSimpleMea
      int ri_singletonVecKey
      )
   : ProcDataLocalBase_c(ps_elementDDI, rui16_element,
-                        rc_isoName, rui8_pri, rc_ownerISOName, rpc_isoName, rb_cumulativeValue,
+                        rc_isoName, rc_ownerISOName, rpc_isoName, rb_cumulativeValue,
 #ifdef USE_EEPROM_IO
                         rui16_eepromAdr,
 #endif
@@ -161,7 +159,6 @@ ProcDataLocalSimpleSetpointSimpleMeasure_c::ProcDataLocalSimpleSetpointSimpleMea
                        (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
 
   @param rc_isoName optional ISOName code of this instance
-  @param rui8_pri PRI code of messages with this process data instance (default 2)
   @param rc_ownerISOName optional ISOName of the owner
   @param rpc_isoName pointer to updated ISOName variable of owner
   @param rb_cumulativeValue
@@ -185,7 +182,7 @@ ProcDataLocalSimpleSetpointSimpleMeasure_c::ProcDataLocalSimpleSetpointSimpleMea
   @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
 void ProcDataLocalSimpleSetpointSimpleMeasure_c::init(const IsoAgLib::ElementDDI_s* ps_elementDDI, uint16_t rui16_element,
-                                                      const ISOName_c& rc_isoName, uint8_t rui8_pri,
+                                                      const ISOName_c& rc_isoName,
                                                       const ISOName_c& rc_ownerISOName,
                                                       const ISOName_c *rpc_isoName,
                                                       bool rb_cumulativeValue,
@@ -197,7 +194,7 @@ void ProcDataLocalSimpleSetpointSimpleMeasure_c::init(const IsoAgLib::ElementDDI
       )
 {
   ProcDataLocalBase_c::init(ps_elementDDI, rui16_element,
-                            rc_isoName, rui8_pri, rc_ownerISOName, rpc_isoName, rb_cumulativeValue,
+                            rc_isoName, rc_ownerISOName, rpc_isoName, rb_cumulativeValue,
 #ifdef USE_EEPROM_IO
                             rui16_eepromAdr,
 #endif

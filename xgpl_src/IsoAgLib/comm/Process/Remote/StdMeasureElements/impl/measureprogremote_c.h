@@ -158,11 +158,11 @@ public:
         * Err_c::elNonexistent no remote member with claimed address with given DEVCLASS found
         * Err_c::precondition if ren_progType is not one of the allowed Proc_c::Base, Proc_c::Target
         * dependant error in CAN_IO
-    @param ren_progType wanted msg type for measure prog (Proc_c::Base, Proc_c::Target)
+
     @param ren_doSend set process data subtype to send (Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...)
     @return true -> command successful sent
   */
-  bool start(Proc_c::progType_t ren_progType, Proc_c::doSend_t ren_doSend);
+  bool start(Proc_c::doSend_t ren_doSend);
 
   /**
     start a measuring programm
@@ -171,12 +171,12 @@ public:
         * Err_c::elNonexistent no remote member with claimed address with given DEVCLASS found
         * Err_c::precondition if ren_progType is not one of the allowed Proc_c::Base, Proc_c::Target
         * dependant error in CAN_IO
-    @param ren_progType wanted msg type for measure prog (Proc_c::Base, Proc_c::Target)
+
     @param ren_type wanted increment type (Proc_c::TimeProp, Proc_c::DistProp, Proc_c::ValIncr)
     @param ren_doSend set process data subtype to send (Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...)
     @return true -> command successful sent
   */
-  virtual bool start(Proc_c::progType_t ren_progType, Proc_c::type_t ren_type, Proc_c::doSend_t ren_doSend);
+  virtual bool start(Proc_c::type_t ren_type, Proc_c::doSend_t ren_doSend);
   /**
     send the stop command to the remote owner of data
 

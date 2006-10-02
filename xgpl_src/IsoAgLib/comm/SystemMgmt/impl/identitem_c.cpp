@@ -355,7 +355,7 @@ void IdentItem_c::init( ISOName_c* rpc_isoName, const uint8_t* rpb_isoName,
   {
     if ( pc_isoName == NULL )
     { // set precondition error
-      getLbsErrInstance().registerError( LibErr_c::Precondition, LibErr_c::LbsSystem );
+      getLibErrInstance().registerError( LibErr_c::Precondition, LibErr_c::System );
       return; // return with error information
     }
   }

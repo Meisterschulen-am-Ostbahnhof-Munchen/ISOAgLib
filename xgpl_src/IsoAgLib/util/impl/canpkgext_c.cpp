@@ -306,6 +306,8 @@ MessageState_t CANPkgExt_c::address2IdentLocalDa()
     #ifdef DEBUG_CAN
       INTERNAL_DEBUG_DEVICE << "We reached an INVALID state. Receiver not known." << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
+
+    getLibErrInstance().registerError( LibErr_c::Precondition, LibErr_c::Can );
     return Invalid;
   }
 }
@@ -348,6 +350,8 @@ MessageState_t CANPkgExt_c::address2IdentRemoteSa()
     #ifdef DEBUG_CAN
       INTERNAL_DEBUG_DEVICE << "We reached an INVALID state with address = 0xFF." << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
+
+    getLibErrInstance().registerError( LibErr_c::Precondition, LibErr_c::Can );
     return Invalid; // mark as invalid
   }
   else if ( *addrResolveResSA.pui8_address == 0xFE )
@@ -447,6 +451,7 @@ bool CANPkgExt_c::resolveSendingInformation()
     #ifdef DEBUG_CAN
       INTERNAL_DEBUG_DEVICE << "We reached an INVALID state. SA could not be resolved." << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
+    getLibErrInstance().registerError( LibErr_c::Precondition, LibErr_c::Can );
     return false;
   }
   else if ( addrResolveResSA.pc_monitorItem != NULL )
@@ -459,6 +464,7 @@ bool CANPkgExt_c::resolveSendingInformation()
       #ifdef DEBUG_CAN
         INTERNAL_DEBUG_DEVICE << "Sending is not possible because item is not known local." << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
+      getLibErrInstance().registerError( LibErr_c::Precondition, LibErr_c::Can );
       return false;
     }
   }
@@ -483,6 +489,7 @@ bool CANPkgExt_c::resolveSendingInformation()
       #ifdef DEBUG_CAN
         INTERNAL_DEBUG_DEVICE << "Sending not valid. DA could not be resolved." << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
+      getLibErrInstance().registerError( LibErr_c::Precondition, LibErr_c::Can );
       return false;
     }
     else if ( addrResolveResDA.pc_monitorItem != NULL )
@@ -495,6 +502,7 @@ bool CANPkgExt_c::resolveSendingInformation()
         #ifdef DEBUG_CAN
           INTERNAL_DEBUG_DEVICE << "Sending is not possible because item is known local." << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
+        getLibErrInstance().registerError( LibErr_c::Precondition, LibErr_c::Can );
         return false;
       }
     }
