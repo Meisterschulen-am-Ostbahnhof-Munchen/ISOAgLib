@@ -142,7 +142,7 @@ void SensorI_c::setDigitalLimits(uint8_t rb_digitalFirst, uint8_t rb_digitalLast
   }
   else
   { // wrong range
-    getLbsErrInstance().registerError( LibErr_c::Range, LibErr_c::Sensor );
+    getLibErrInstance().registerError( LibErr_c::Range, LibErr_c::Sensor );
   }
 }
 
@@ -170,7 +170,7 @@ void SensorI_c::setAnalogLimits(uint8_t rb_analogFirst, uint8_t rb_analogLast){
   }
   else
   { // wrong range
-    getLbsErrInstance().registerError( LibErr_c::Range, LibErr_c::Sensor );
+    getLibErrInstance().registerError( LibErr_c::Range, LibErr_c::Sensor );
   }
 }
 
@@ -198,7 +198,7 @@ void SensorI_c::setCounterLimits(uint8_t rb_counterFirst, uint8_t rb_counterLast
   }
   else
   { // wrong range
-    getLbsErrInstance().registerError( LibErr_c::Range, LibErr_c::Sensor );
+    getLibErrInstance().registerError( LibErr_c::Range, LibErr_c::Sensor );
   }
 }
 /** handler function for access to undefined client.
@@ -206,7 +206,7 @@ void SensorI_c::setCounterLimits(uint8_t rb_counterFirst, uint8_t rb_counterLast
   */
 void SensorI_c::registerAccessFlt( void )
 {
-  getLbsErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::Sensor );
+  getLibErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::Sensor );
   // throw exception if defined to do
   THROW_CONT_EL_NONEXIST
 }

@@ -139,7 +139,7 @@ void ActorO_c::setDigitalLimits(uint8_t rb_digitalFirst, uint8_t rb_digitalLast)
   }
   else
   { // wrong range
-    getLbsErrInstance().registerError( LibErr_c::Range, LibErr_c::Actor );
+    getLibErrInstance().registerError( LibErr_c::Range, LibErr_c::Actor );
   }
 }
 /** handler function for access to undefined client.
@@ -147,7 +147,7 @@ void ActorO_c::setDigitalLimits(uint8_t rb_digitalFirst, uint8_t rb_digitalLast)
   */
 void ActorO_c::registerAccessFlt( void )
 {
-  getLbsErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::Actor );
+  getLibErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::Actor );
   // throw exception if defined to do
   THROW_CONT_EL_NONEXIST
 }

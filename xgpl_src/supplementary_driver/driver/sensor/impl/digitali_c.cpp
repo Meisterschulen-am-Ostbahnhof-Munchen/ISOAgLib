@@ -193,7 +193,7 @@ void DigitalI_c::init(uint8_t rb_channel, Sensor_c::onoff_t ren_onoff, bool rb_s
 
   if (i16_initResult)
   { // wrong input channel no
-    getLbsErrInstance().registerError( LibErr_c::Range, LibErr_c::Sensor );
+    getLibErrInstance().registerError( LibErr_c::Range, LibErr_c::Sensor );
   }
   else
   { // correct input channel no - now register the valid new analog input into SensorI_c
@@ -218,7 +218,7 @@ void DigitalI_c::setOnHigh( void )
 
   if (i16_initResult)
   { // wrong input channel no
-    getLbsErrInstance().registerError( LibErr_c::Range, LibErr_c::Sensor );
+    getLibErrInstance().registerError( LibErr_c::Range, LibErr_c::Sensor );
   }
 }
 /** change detection mode of activity to OnLow */
@@ -233,7 +233,7 @@ void DigitalI_c::setOnLow( void )
 
   if (i16_initResult)
   { // wrong input channel no
-    getLbsErrInstance().registerError( LibErr_c::Range, LibErr_c::Sensor );
+    getLibErrInstance().registerError( LibErr_c::Range, LibErr_c::Sensor );
   }
 }
 
@@ -275,7 +275,7 @@ int16_t DigitalI_c::val()const{
   }
   if (i16_val == HAL_RANGE_ERR)
   { // wrong input channel
-    getLbsErrInstance().registerError( LibErr_c::Range, LibErr_c::Sensor );
+    getLibErrInstance().registerError( LibErr_c::Range, LibErr_c::Sensor );
     return ERROR_VAL_16S;
   }
   else

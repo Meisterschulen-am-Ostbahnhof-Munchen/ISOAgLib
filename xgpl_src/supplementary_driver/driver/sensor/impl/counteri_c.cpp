@@ -126,7 +126,7 @@ void CounterI_c::init(uint8_t rb_channel, uint16_t rui16_timebase, bool rb_activ
   // now init the digital input
   if (HAL::init_counter(channelNr(), rui16_timebase, rb_activHigh, rb_risingEdge) == HAL_RANGE_ERR)
   { // wrong input channel no
-    getLbsErrInstance().registerError( LibErr_c::Range, LibErr_c::Sensor );
+    getLibErrInstance().registerError( LibErr_c::Range, LibErr_c::Sensor );
   }
   else
   { // correct input channel no - now register the valid new analog input into SensorI_c
@@ -169,7 +169,7 @@ void CounterI_c::reset()
 {
   if (HAL::resetCounter(channelNr()))
   { // wrong input channel no
-    getLbsErrInstance().registerError( LibErr_c::Range, LibErr_c::Sensor );
+    getLibErrInstance().registerError( LibErr_c::Range, LibErr_c::Sensor );
   }
 }
 

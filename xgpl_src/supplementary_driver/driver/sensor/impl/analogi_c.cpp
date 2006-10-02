@@ -141,11 +141,11 @@ void AnalogI_c::init(uint8_t rb_channel, Sensor_c::analogType_t ren_analogType, 
       break;
     case HAL_RANGE_ERR:
       // wrong input channel number
-      getLbsErrInstance().registerError( LibErr_c::Range, LibErr_c::Sensor );
+      getLibErrInstance().registerError( LibErr_c::Range, LibErr_c::Sensor );
       break;
     case HAL_CONFIG_ERR:
       // wrong input type
-      getLbsErrInstance().registerError( LibErr_c::Precondition, LibErr_c::Sensor );
+      getLibErrInstance().registerError( LibErr_c::Precondition, LibErr_c::Sensor );
       break;
   }
 }
@@ -177,7 +177,7 @@ int16_t AnalogI_c::val()const{
   {
     if (i16_sensor == HAL_RANGE_ERR)
     { // error during measure -> wrong input channel no
-      getLbsErrInstance().registerError( LibErr_c::Range, LibErr_c::Sensor );
+      getLibErrInstance().registerError( LibErr_c::Range, LibErr_c::Sensor );
       // return error code for 16bit sensor values
       return ERROR_VAL_16S;
     }

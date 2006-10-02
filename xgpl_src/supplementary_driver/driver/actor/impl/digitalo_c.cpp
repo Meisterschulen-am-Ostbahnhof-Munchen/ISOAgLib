@@ -113,7 +113,7 @@ void DigitalO_c::init(uint8_t rui8_channel)
   if (HAL::setPwmFreq(rui8_channel, CONFIG_PWM_DEFAULT_FREQUENCY) == HAL_RANGE_ERR)
   { // wrong channel or PWM
 	ui16_maxOutputPwmFreq = 0xFFFF;
-    getLbsErrInstance().registerError( LibErr_c::Range, LibErr_c::Actor );
+    getLibErrInstance().registerError( LibErr_c::Range, LibErr_c::Actor );
   }
   else
   { // correct channel and PWM - now register the valid new analog input into ActorO_c
@@ -142,7 +142,7 @@ void DigitalO_c::setFreq(uint32_t rui32_val){
   if (HAL::setPwmFreq(channelNr(), rui32_val) == HAL_RANGE_ERR)
   { // wrong channel number or wrong frequency
 	ui16_maxOutputPwmFreq = 0xFFFF;
-    getLbsErrInstance().registerError( LibErr_c::Range, LibErr_c::Actor );
+    getLibErrInstance().registerError( LibErr_c::Range, LibErr_c::Actor );
   }
   else
   {
@@ -163,7 +163,7 @@ void DigitalO_c::set(uint16_t rui16_val){
   // set output PWM signal with BIOS call
   if (HAL::setDigout(channelNr(), rui16_val) == HAL_RANGE_ERR)
   { // wrong channel number
-    getLbsErrInstance().registerError( LibErr_c::Range, LibErr_c::Actor );
+    getLibErrInstance().registerError( LibErr_c::Range, LibErr_c::Actor );
   }
   else
   { // correct channel number
