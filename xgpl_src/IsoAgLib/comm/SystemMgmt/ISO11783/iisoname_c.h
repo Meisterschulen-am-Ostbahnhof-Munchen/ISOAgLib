@@ -83,7 +83,7 @@ public:
         @param rui8_devClass  optional initial DEVCLASS (device type)
         @param rui8_pos       optional initial device class instance
       */
-    iISOName_c( uint8_t rui8_devClass = 0x7F, uint8_t rui8_pos /*= 0xF*/ )
+    iISOName_c( uint8_t rui8_devClass = 0x7F, uint8_t rui8_pos = 0xF )
     : ISOName_c( true, 2, rui8_devClass, rui8_pos, 0xFF, 0x7FF, 0x1FFFFF, 0x1F, 0x7 ) {}
 
   /** constructor which format data string from series of input flags
