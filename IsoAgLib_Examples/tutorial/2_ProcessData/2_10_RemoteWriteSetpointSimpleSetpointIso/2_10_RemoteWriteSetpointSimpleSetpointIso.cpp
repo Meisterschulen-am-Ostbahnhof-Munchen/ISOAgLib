@@ -376,14 +376,14 @@ int main()
   arr_procData[cui8_indexWorkState].init(
                                          s_WorkStateElementDDI,
                                          0,
-                                         c_remoteDeviceType, 2, c_remoteDeviceType, &c_myISOName,
+                                         c_remoteDeviceType, c_remoteDeviceType, &c_myISOName,
                                          &c_myMeasurementHandler);
 
   // WERT == 5 -> device specific material flow information (mostly 5/0 -> distributed/harvested amount per area )
   arr_procData[cui8_indexApplicationRate].init(
                                                s_ApplicationRateElementDDI,
                                                0,
-                                               c_remoteDeviceType, 2, c_remoteDeviceType, &c_myISOName,
+                                               c_remoteDeviceType, c_remoteDeviceType, &c_myISOName,
                                                &c_myMeasurementHandler);
 
 #else
@@ -391,14 +391,14 @@ int main()
   IsoAgLib::iProcDataRemoteSimpleSetpoint_c c_workState(
                                          s_WorkStateElementDDI,
                                          0,
-                                         c_remoteDeviceType, 2, c_remoteDeviceType, &c_myISOName
+                                         c_remoteDeviceType, c_remoteDeviceType, &c_myISOName
                                          );
 
   // WERT == 5 -> device specific material flow information (mostly 5/0 -> distributed/harvested amount per area )
   IsoAgLib::iProcDataRemoteSimpleSetpoint_c c_applicationRate(
                                                 s_ApplicationRateElementDDI,
                                                 0,
-                                                c_remoteDeviceType, 2, c_remoteDeviceType, &c_myISOName
+                                                c_remoteDeviceType, c_remoteDeviceType, &c_myISOName
                                                 );
 #endif
 

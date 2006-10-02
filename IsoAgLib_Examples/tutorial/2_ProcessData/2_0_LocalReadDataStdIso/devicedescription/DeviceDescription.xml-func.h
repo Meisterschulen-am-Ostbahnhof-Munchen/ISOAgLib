@@ -17,7 +17,7 @@ const IsoAgLib::ElementDDI_s s_workStateElementDDI[] =
 };
 
 IsoAgLib::iProcDataLocal_c c_workState(s_workStateElementDDI,
-scui16_workStateElementNumber, myISOName, 0x2, myISOName, &myISOName, false
+scui16_workStateElementNumber, myISOName, myISOName, &myISOName, false
 #ifdef USE_EEPROM_IO
 , 0xffff
 #endif
@@ -32,7 +32,7 @@ const IsoAgLib::ElementDDI_s s_workWidthElementDDI[] =
 };
 
 IsoAgLib::iProcDataLocal_c c_workWidth(s_workWidthElementDDI,
-scui16_workWidthElementNumber, myISOName, 0x2, myISOName, &myISOName, false
+scui16_workWidthElementNumber, myISOName, myISOName, &myISOName, false
 #ifdef USE_EEPROM_IO
 , 0xffff
 #endif
@@ -50,7 +50,7 @@ const IsoAgLib::ElementDDI_s s_applicationRateElementDDI[] =
 };
 
 IsoAgLib::iProcDataLocal_c c_applicationRate(s_applicationRateElementDDI,
-scui16_applicationRateElementNumber, myISOName, 0x2, myISOName, &myISOName, false
+scui16_applicationRateElementNumber, myISOName, myISOName, &myISOName, false
 #ifdef USE_EEPROM_IO
 , 0xffff
 #endif

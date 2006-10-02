@@ -17,11 +17,12 @@ const IsoAgLib::ElementDDI_s s_workStateElementDDI[] =
 };
 
 IsoAgLib::iProcDataLocal_c c_workState(s_workStateElementDDI,
-scui16_workStateElementNumber, myDeviceISOName, 0x2, myDeviceISOName, &myDeviceISOName, false
+scui16_workStateElementNumber, myDeviceISOName, myDeviceISOName, &myDeviceISOName, false
 #ifdef USE_EEPROM_IO
 , 0xffff
 #endif
 );
+
 
 static const uint16_t scui16_applicationRateElementNumber = 0;
 const IsoAgLib::ElementDDI_s s_applicationRateElementDDI[] =
@@ -35,7 +36,7 @@ const IsoAgLib::ElementDDI_s s_applicationRateElementDDI[] =
 };
 
 IsoAgLib::iProcDataLocal_c c_applicationRate(s_applicationRateElementDDI,
-scui16_applicationRateElementNumber, myDeviceISOName, 0x2, myDeviceISOName, &myDeviceISOName, false
+scui16_applicationRateElementNumber, myDeviceISOName, myDeviceISOName, &myDeviceISOName, false
 #ifdef USE_EEPROM_IO
 , 0xffff
 #endif
@@ -50,7 +51,7 @@ const IsoAgLib::ElementDDI_s s_defaultLoggingElementDDI[] =
 };
 
 IsoAgLib::iProcDataLocal_c c_defaultLogging(s_defaultLoggingElementDDI,
-scui16_defaultLoggingElementNumber, myDeviceISOName, 0x2, myDeviceISOName, &myDeviceISOName, false
+scui16_defaultLoggingElementNumber, myDeviceISOName, myDeviceISOName, &myDeviceISOName, false
 #ifdef USE_EEPROM_IO
 , 0xffff
 #endif

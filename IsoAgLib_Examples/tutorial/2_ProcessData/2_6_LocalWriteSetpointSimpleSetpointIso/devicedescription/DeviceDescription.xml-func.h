@@ -17,7 +17,7 @@ const IsoAgLib::ElementDDI_s s_workStateElementDDI[] =
 };
 
 IsoAgLib::iProcDataLocalSimpleSetpoint_c c_workState(s_workStateElementDDI,
-scui16_workStateElementNumber, myDeviceISOName, 0x2, myDeviceISOName, &myDeviceISOName, false
+scui16_workStateElementNumber, myDeviceISOName, myDeviceISOName, &myDeviceISOName, false
 #ifdef USE_EEPROM_IO
 , 0xffff
 #endif
@@ -33,7 +33,7 @@ const IsoAgLib::ElementDDI_s s_applicationRateElementDDI[] =
 };
 
 IsoAgLib::iProcDataLocalSimpleSetpoint_c c_applicationRate(s_applicationRateElementDDI,
-scui16_applicationRateElementNumber, myDeviceISOName, 0x2, myDeviceISOName, &myDeviceISOName, false
+scui16_applicationRateElementNumber, myDeviceISOName, myDeviceISOName, &myDeviceISOName, false
 #ifdef USE_EEPROM_IO
 , 0xffff
 #endif

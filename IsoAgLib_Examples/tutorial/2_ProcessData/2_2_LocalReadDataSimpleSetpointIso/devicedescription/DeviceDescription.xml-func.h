@@ -17,7 +17,7 @@ const IsoAgLib::ElementDDI_s s_myOnoffElementDDI[] =
 };
 
 IsoAgLib::iProcDataLocalSimpleSetpoint_c c_myOnoff(s_myOnoffElementDDI,
-scui16_myOnoffElementNumber, myDeviceISOName, 0x2, myDeviceISOName, &myDeviceISOName, false
+scui16_myOnoffElementNumber, myDeviceISOName, myDeviceISOName, &myDeviceISOName, false
 #ifdef USE_EEPROM_IO
 , 0xffff
 #endif
@@ -33,7 +33,7 @@ const IsoAgLib::ElementDDI_s s_myWorkWidthElementDDI[] =
 };
 
 IsoAgLib::iProcDataLocalSimpleSetpoint_c c_myWorkWidth(s_myWorkWidthElementDDI,
-scui16_myWorkWidthElementNumber, myDeviceISOName, 0x2, myDeviceISOName, &myDeviceISOName, false
+scui16_myWorkWidthElementNumber, myDeviceISOName, myDeviceISOName, &myDeviceISOName, false
 #ifdef USE_EEPROM_IO
 , 0xffff
 #endif
@@ -49,7 +49,7 @@ const IsoAgLib::ElementDDI_s s_myApplicationRateElementDDI[] =
 };
 
 IsoAgLib::iProcDataLocalSimpleSetpoint_c c_myApplicationRate(s_myApplicationRateElementDDI,
-scui16_myApplicationRateElementNumber, myDeviceISOName, 0x2, myDeviceISOName, &myDeviceISOName, false
+scui16_myApplicationRateElementNumber, myDeviceISOName, myDeviceISOName, &myDeviceISOName, false
 #ifdef USE_EEPROM_IO
 , 0xffff
 #endif

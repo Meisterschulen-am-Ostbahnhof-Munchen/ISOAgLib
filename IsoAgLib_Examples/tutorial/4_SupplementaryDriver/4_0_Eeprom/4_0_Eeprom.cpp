@@ -335,20 +335,20 @@ int main()
 				<< "\r\n";
 			if ( c_eeprom.eofp() ) IsoAgLib::getIrs232Instance() << "Lifetime was written at end of EEPROM\r\n";
 			else IsoAgLib::getIrs232Instance() << "End of EEPROM isn't reached after write of lifetime\r\n";
-			if ( IsoAgLib::getLbsErrInstance().getErrCnt( LibErr_c::Eeprom ) > 0 )
+			if ( IsoAgLib::getLibErrInstance().getErrCnt( LibErr_c::Eeprom ) > 0 )
 			{ // at least one EEPROM location error detected
 				IsoAgLib::getIrs232Instance()
-					<< "IsoAgLib detected " << IsoAgLib::getLbsErrInstance().getErrCnt( LibErr_c::Eeprom )
+					<< "IsoAgLib detected " << IsoAgLib::getLibErrInstance().getErrCnt( LibErr_c::Eeprom )
 					<< " EEPROM access errors\r\n";
-				if ( IsoAgLib::getLbsErrInstance().getErrCnt( LibErr_c::EepromSegment ) > 0 )
+				if ( IsoAgLib::getLibErrInstance().getErrCnt( LibErr_c::EepromSegment ) > 0 )
 				{
 					IsoAgLib::getIrs232Instance() << "EEPROM segment error occured\r\n";
 				}
-				else if ( IsoAgLib::getLbsErrInstance().getErrCnt( LibErr_c::EepromWriteError ) > 0 )
+				else if ( IsoAgLib::getLibErrInstance().getErrCnt( LibErr_c::EepromWriteError ) > 0 )
 				{
 					IsoAgLib::getIrs232Instance() << "EEPROM write error occured\r\n";
 				}
-				IsoAgLib::getLbsErrInstance().clear( LibErr_c::Eeprom );
+				IsoAgLib::getLibErrInstance().clear( LibErr_c::Eeprom );
 			}
 		}
 

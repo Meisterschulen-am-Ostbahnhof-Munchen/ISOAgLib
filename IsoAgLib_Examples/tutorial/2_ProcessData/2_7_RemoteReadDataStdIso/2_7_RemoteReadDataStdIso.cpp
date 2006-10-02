@@ -273,6 +273,7 @@ class MyProcDataHandler_c : public IsoAgLib::ProcessDataChangeHandler_c
       * @return true -> handler class reacted on change event
       */
     virtual bool processMeasurementUpdate( EventSource_c rc_src, int32_t ri32_val, const iISOName_c& rc_callerISOName, bool rb_change );
+
     /** react on received setpoint ACK or NACK upon previous setpoint set for remote process data
       * (remote system which manages the process data, local or other system sent previously a
       *  new setpoint; commanded manager of process data sent the response with ACK/NACK)
@@ -376,7 +377,7 @@ int main()
   arr_procData[cui8_indexWorkState].init(
                                          s_workStateElementDDI,
                                          0, // device element number
-                                         c_remoteDeviceType, 2, c_remoteDeviceType, &c_myISOName,
+                                         c_remoteDeviceType, c_remoteDeviceType, &c_myISOName,
   #ifdef USE_EEPROM_IO
                                          0xFFFF,
   #endif
@@ -386,7 +387,7 @@ int main()
   arr_procData[cui8_indexApplicationRate].init(
                                                s_applicationRateElementDDI,
                                                0, // device element number
-                                               c_remoteDeviceType, 2, c_remoteDeviceType, &c_myISOName,
+                                               c_remoteDeviceType, c_remoteDeviceType, &c_myISOName,
   #ifdef USE_EEPROM_IO
                                                0xFFFF,
   #endif
@@ -397,7 +398,7 @@ int main()
   IsoAgLib::iProcDataRemote_c c_workState(
                                          s_workStateElementDDI,
                                          0,
-                                         c_remoteDeviceType, 2, c_remoteDeviceType, &c_myISOName
+                                         c_remoteDeviceType, c_remoteDeviceType, &c_myISOName
   #ifdef USE_EEPROM_IO
                                          ,0xFFFF
   #endif
@@ -407,7 +408,7 @@ int main()
   IsoAgLib::iProcDataRemote_c c_applicationRate(
                                                 s_applicationRateElementDDI,
                                                 0,
-                                                c_remoteDeviceType, 2, c_remoteDeviceType, &c_myISOName
+                                                c_remoteDeviceType, c_remoteDeviceType, &c_myISOName
   #ifdef USE_EEPROM_IO
                                                 ,0xFFFF
   #endif
@@ -512,19 +513,19 @@ int main()
       if (ui16_cnt == 20)
       {
         arr_procData[cui8_indexApplicationRate].prog().addSubprog(Proc_c::TimeProp, 2000);
-        arr_procData[cui8_indexApplicationRate].prog().start(Proc_c::Target, Proc_c::TimeProp, Proc_c::DoVal);
+        arr_procData[cui8_indexApplicationRate].prog().start(Proc_c::TimeProp, Proc_c::DoVal);
         LOG_INFO << "\r\nstart measurement for DDI 2 (normal time increment measurement)" << "\r\n";
       }
       if (ui16_cnt == 120)
       {
         arr_procData[cui8_indexApplicationRate].prog().addSubprog(Proc_c::TimeProp, 500, Proc_c::DoValForExactSetpoint);
-        arr_procData[cui8_indexApplicationRate].prog().start(Proc_c::Target, Proc_c::TimeProp, Proc_c::DoValForExactSetpoint);
+        arr_procData[cui8_indexApplicationRate].prog().start(Proc_c::TimeProp, Proc_c::DoValForExactSetpoint);
         LOG_INFO << "\r\nstart measurement for DDI 1 (measurement for exact setpoint)" << "\r\n";
       }
       if (ui16_cnt == 220)
       {
         arr_procData[cui8_indexApplicationRate].prog().addSubprog(Proc_c::TimeProp, 1000, Proc_c::DoValForDefaultSetpoint);
-        arr_procData[cui8_indexApplicationRate].prog().start(Proc_c::Target, Proc_c::TimeProp, Proc_c::DoValForDefaultSetpoint);
+        arr_procData[cui8_indexApplicationRate].prog().start(Proc_c::TimeProp, Proc_c::DoValForDefaultSetpoint);
         LOG_INFO << "\r\nstart measurement for DDI 3 (measurement for default setpoint)" << "\r\n";
       }
 
@@ -555,9 +556,9 @@ int main()
       if (ui16_cnt == 1000)
       {
         arr_procData[cui8_indexApplicationRate].prog().addSubprog(Proc_c::TimeProp, 1000, Proc_c::DoVal);
-        arr_procData[cui8_indexApplicationRate].prog().start(Proc_c::Target, Proc_c::TimeProp, Proc_c::DoVal);
+        arr_procData[cui8_indexApplicationRate].prog().start(Proc_c::TimeProp, Proc_c::DoVal);
         // use still existing measure sub prog for default setpoint
-        arr_procData[cui8_indexApplicationRate].prog().start(Proc_c::Target, Proc_c::TimeProp, Proc_c::DoValForDefaultSetpoint);
+        arr_procData[cui8_indexApplicationRate].prog().start(Proc_c::TimeProp, Proc_c::DoValForDefaultSetpoint);
         LOG_INFO << "\r\nstarting measurement for DDI 2 and 3 again" << "\r\n";
       }
 
@@ -571,7 +572,7 @@ int main()
       if (ui16_cnt == 1200)
       {
         arr_procData[cui8_indexWorkState].prog().addSubprog(Proc_c::TimeProp, 300, Proc_c::DoValForDefaultSetpoint);
-        arr_procData[cui8_indexWorkState].prog().start(Proc_c::Target, Proc_c::TimeProp, Proc_c::DoValForDefaultSetpoint);
+        arr_procData[cui8_indexWorkState].prog().start(Proc_c::TimeProp, Proc_c::DoValForDefaultSetpoint);
         LOG_INFO << "\r\nstart measurement for DDI 141" << "\r\n";
       }
       if (ui16_cnt == 1300)
