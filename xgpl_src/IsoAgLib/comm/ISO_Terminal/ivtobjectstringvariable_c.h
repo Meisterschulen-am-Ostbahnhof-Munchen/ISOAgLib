@@ -104,7 +104,7 @@ public:
   //! @param newValue:
   //! @param b_updateObject:
   void setValueCopyUTF8(const char* newValue, iVtObjectOutputString_c& rrefc_ops, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    const uint8_t cui8_fontType = rrefc_ops.get_vtObjectOutputString_a()->fontAttributes->get_vtObjectFontAttributes_a()->fontType;
+    const uint8_t cui8_fontType = rrefc_ops.get_vtObjectOutputString_a().fontAttributes->get_vtObjectFontAttributes_a().fontType;
     vtObjectStringVariable_c::setValueCopyUTF8 (newValue, cui8_fontType, b_updateObject, b_enableReplaceOfCmd);
   }
 #endif
