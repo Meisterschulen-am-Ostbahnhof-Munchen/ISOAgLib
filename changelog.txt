@@ -5,7 +5,39 @@ INCLUDE_mainHeaderWithNavbar.txt_INCLUDE
 
 \section IndexChanges Changes
 
-\subsection Change_K 1.2.1 to 1.2.2(unofficial)
+\subsection Change_M 1.2.2(unofficial) to 2.0
+  - removed DIN-related code, adapted proc2iso and rebuild all tutorials and their device descriptions
+  - removed following folders and classes:
+          IsoAgLib/comm/DIN_Terminal
+          IsoAgLib/comm/Process/igps_c.h
+          IsoAgLib/comm/Process/impl/gps_c.cpp
+          IsoAgLib/comm/Process/impl/gps_c.h
+          IsoAgLib/comm/SystemMgmt/DIN9684
+  - removed DIN-related tutorials:
+          0_1_AddressClaimDin
+          0_2_AddressClaimFlexible
+          0_4_LookupDin
+          1_1_ReadDin
+          1_3_WriteDin
+          1_5_WriteFlexibleDin
+          3_1_LBSTerminalDin
+  - removed the not more needed conf-files in projectGeneration/
+  - removed IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.cpp
+            IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.h
+    and adapted all affected classes
+  - removed IsoAgLib/comm/SystemMgmt/impl/systemmgmt_c.cpp
+            IsoAgLib/comm/SystemMgmt/impl/systemmgmt_c.h
+            IsoAgLib/comm/SystemMgmt/isystemmgmt_c.h
+    and replaced all missing function calls with appropriate function calls from the ISOMonitor_c
+  - partly renaming of ISOMonitor_c functions
+  - removed var2empfSend() and replaced with sendValDevKey() in ProcDataLocalBase_c and ProcDataRemoteBase_c
+  - added LibErr_c::good() for test on errLocation AND errType
+  - updated proc2iso documentation
+  - MultiSend rewritten to use ISOName instead of SA
+  - removed classes devKey_c.h and idevKey_c and replaced this classes by isoname_c.h/iisoname_c.h
+  - cleanup of LibErr_c
+
+\subsection Change_L 1.2.1 to 1.2.2(unofficial)
 
   - support for proc2iso XML schema: new mandatory parameter -s=xxx.xsd for personalized path to xsd-file (see proc2iso --help).
     former only -s with a default path

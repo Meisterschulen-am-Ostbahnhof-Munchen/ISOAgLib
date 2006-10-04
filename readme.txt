@@ -52,6 +52,10 @@ as there not only the maintainers can try to help you out. Please <a href="http:
 
 \section IndexNews News
 
+\subsection IndexNewsForBigRelease New for the 2.0 release
+  - <b>September 2006:</b> <b>ISO<i><sub>AgLib</sub></i></b> now is a real ISO library! Complete removal of all DIN-related or DIN-dependent code, classes and preprocessor directives.
+    These changes also affect the tool chain for the process data.
+
 \subsection IndexCurrentAdditionNews News for the 1.2.1 release
   - <b>February 2006:</b> Enhance modularization of base information (Not-ProcessData parts from 11783-7) - this will be finished for release 1.2.2
   - <b>January 2006:</b> Periodic Source Adress (SA) request sending to get early cleanup of stale nodes in monitor list
@@ -63,7 +67,7 @@ as there not only the maintainers can try to help you out. Please <a href="http:
 
 \subsection IndexNewNews News for the 1.2.0 release
 	- <b>during 2005:</b> Virtual Terminal Client<br>
-		- <b>ISO<i><sub>AgLib</sub></i> has now its own internet domains: http://www.isoaglib.org , http://www.isoaglib.de and http://www.isoaglib.com</b>
+		- <b>ISO<i><sub>AgLib</sub></i></b> has now its own internet domains: http://www.isoaglib.org , http://www.isoaglib.de and http://www.isoaglib.com</b>
 		- Added support for IsoLatin-9 fonts: Now for every font-attribute the "font_type" attribute has to be specified. (Please adapt your existing XML files.)<br>
 		- Support for font-downscaling (in case a pool is designed for >200x200 pixel VTs)<br>
 		- Cleanup on Tutorial3_0 example objectpool
