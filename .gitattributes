@@ -179,7 +179,6 @@ IsoAgLib_Examples/tutorial/5_CanFeatures/5_0_InternalCan/TutPrjDesc5_0_InternalC
 IsoAgLib_Examples/tutorial/5_CanFeatures/5_0_InternalCan/config_5_0_InternalCan.h -text
 IsoAgLib_Examples/tutorial/5_CanFeatures/5_0_InternalCan/version.h -text
 IsoAgLib_Examples/version.h -text
-/TODO.dox -text
 build_utils/proc2iso/AUTHORS -text
 build_utils/proc2iso/COPYING -text
 build_utils/proc2iso/ChangeLog -text
