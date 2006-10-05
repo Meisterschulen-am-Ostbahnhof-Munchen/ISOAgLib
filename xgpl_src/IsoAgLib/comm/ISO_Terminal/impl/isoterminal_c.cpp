@@ -207,7 +207,7 @@ ISOTerminal_c::close()
   It will automatically be uploaded as soon as ISO_Terminal_c is connected to the VT
   and all initialization stuff has been done (Get VT Capabilities, Memory, etc.)
  */
-bool
+VtClientServerCommunication_c*
 ISOTerminal_c::registerIsoObjectPool (IdentItem_c& refc_identItem, IsoAgLib::iIsoTerminalObjectPool_c& rrefc_pool, char* rpc_versionLabel)
 {
   uint8_t ui8_index = 0;
@@ -223,7 +223,7 @@ ISOTerminal_c::registerIsoObjectPool (IdentItem_c& refc_identItem, IsoAgLib::iIs
       if (vec_vtClientServerComm[ui8_index]->getIdentItem() == refc_identItem)
       { // this IdentItem has already one pool registered - use multiple
         // IdentItems if you want to use multiple pools!
-        return false;
+        return NULL;
       }
     }
   }
@@ -238,7 +238,7 @@ ISOTerminal_c::registerIsoObjectPool (IdentItem_c& refc_identItem, IsoAgLib::iIs
 
   // if at least one VtServerInstance is online, notify the new VtClientServerCommunication
   if (!l_vtServerInst.empty()) pc_vtCSC->notifyOnNewVtServerInstance (l_vtServerInst.front());
-  return true;
+  return pc_vtCSC;
 }
 
 

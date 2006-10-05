@@ -203,6 +203,7 @@
 #include <IsoAgLib/comm/SystemMgmt/iidentitem_c.h>
 #include <IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h>
 #include <IsoAgLib/comm/Multipacket/imultisend_c.h>
+#include <IsoAgLib/comm/ISO_Terminal/ivtclientservercommunication_c.h>
 #include <supplementary_driver/driver/datastreams/streaminput_c.h>
 #include <iostream>
 
@@ -210,9 +211,6 @@
    all generated ISO Terminal Object Pool Definitions */
 #include "MaskDefinition/simpleVTIsoPool_direct.h"
 
-/// As there's NOT YET an interface class for VtClientServerCommunication_c,
-/// we're right now using this class directly. This is subject to change soon!
-#include <IsoAgLib/comm/ISO_Terminal/impl/vtclientservercommunication_c.h>
 
 // the interface objects of the IsoAgLib are placed in the IsoAgLib namespace
 // -> include all elements of this area for easy access
@@ -220,6 +218,9 @@
 // is needed for the documentation generator
 using namespace IsoAgLib;
 
+
+static iObjectPool_simpleVTIsoPool_c Tutorial_3_0_Pool_c;
+static iVtClientServerCommunication_c* spc_tut30csc;
 
 
 /// Things needed for the Partial Pool Update following...
@@ -409,8 +410,7 @@ void iObjectPool_simpleVTIsoPool_c::eventKeyCode ( uint8_t keyActivationCode, ui
             for (unsigned int x=0; x < scui_newLogoWidth; x++)
               newLogoBuffer [x+y*scui_newLogoHeight] = valSpeed + (x+y*scui_newLogoHeight); // write some nice pattern (depending on SPEED) in there...
 
-          __IsoAgLib::VtClientServerCommunication_c& refc_vtCSC = __IsoAgLib::getIsoTerminalInstance().getClientByID (0);
-          refc_vtCSC.sendCommandUpdateObjectPool (arrpc_vtObjectsToUpdate, sizeof(arrpc_vtObjectsToUpdate)/sizeof(iVtObject_c*));
+          spc_tut30csc->sendCommandUpdateObjectPool (arrpc_vtObjectsToUpdate, sizeof(arrpc_vtObjectsToUpdate)/sizeof(iVtObject_c*));
         }
         break;
 
@@ -551,7 +551,6 @@ iObjectPool_simpleVTIsoPool_c::eventLanguagePgn(const localSettings_s& rrefs_loc
 }
 
 
-static iObjectPool_simpleVTIsoPool_c Tutorial_3_0_Pool_c;
 
 int main()
 {
@@ -580,8 +579,17 @@ int main()
 
 
   // Call to init iIsoTerminal instance and initialize object pool!
-  getIisoTerminalInstance().registerIsoObjectPool (c_myIdent, Tutorial_3_0_Pool_c, "T30v1"); // PoolName: Tutorial 3.0 Version 1
+  spc_tut30csc = getIisoTerminalInstance().registerIsoObjectPool (c_myIdent, Tutorial_3_0_Pool_c, "T30v1"); // PoolName: Tutorial 3.0 Version 1
   // only use 5 chars as the pool supports Multi-Language (the last 2 chars are used for the language-code then!
+  if (spc_tut30csc == NULL)
+  { // shouldln't happen normally!
+    #if defined(DEBUG) && defined(SYSTEM_PC)
+    std::cout << "Could not registerIsoObjectPool()." << std::endl;
+    abort();
+    #else
+    return 1; // Return from main() with error indicated
+    #endif
+  }
 
   /** IMPORTANT:
     - The following loop could be replaced of any repeating call of

@@ -53,6 +53,7 @@
 
 #include "impl/isoterminal_c.h"
 #include "ivttypes.h"
+#include "ivtclientservercommunication_c.h"
 
 // Begin Namespace IsoAgLib
 namespace IsoAgLib {
@@ -84,17 +85,17 @@ public:
     @param rpc_versionLabel pointer to a 7-char name under which the object pool is loaded/stored (NULL for disabling non-volatile operation)
     @param rpc_vtEventHandler pointer to an instance of IsoAgLib::iIsoTerminalEventHandler_c so the hook funtions for key activation, input values and successfull objectpool upload can be invoked
   */
-  bool registerIsoObjectPool (iIdentItem_c& rrefc_wsMasterIdentItem, iIsoTerminalObjectPool_c& rrefc_pool, char* rpc_versionLabel)
-  { return ISOTerminal_c::registerIsoObjectPool (static_cast<__IsoAgLib::IdentItem_c&>(rrefc_wsMasterIdentItem), rrefc_pool, rpc_versionLabel); }
+  iVtClientServerCommunication_c* registerIsoObjectPool (iIdentItem_c& rrefc_wsMasterIdentItem, iIsoTerminalObjectPool_c& rrefc_pool, char* rpc_versionLabel)
+  { return static_cast<iVtClientServerCommunication_c*>(ISOTerminal_c::registerIsoObjectPool (static_cast<__IsoAgLib::IdentItem_c&>(rrefc_wsMasterIdentItem), rrefc_pool, rpc_versionLabel)); }
 
   bool deregisterIsoObjectPool (iIdentItem_c& rrefc_wsMasterIdentItem)
   { return ISOTerminal_c::deregisterIsoObjectPool (rrefc_wsMasterIdentItem); }
 
-  __IsoAgLib::VtClientServerCommunication_c& getClientByID (uint8_t ui8_clientIndex)
-  { return ISOTerminal_c::getClientByID (ui8_clientIndex); }
+  iVtClientServerCommunication_c& getClientByID (uint8_t ui8_clientIndex)
+  { return static_cast<iVtClientServerCommunication_c&>(ISOTerminal_c::getClientByID (ui8_clientIndex)); }
 
-  __IsoAgLib::VtClientServerCommunication_c* getClientPtrByID (uint8_t ui8_clientIndex)
-  { return ISOTerminal_c::getClientPtrByID (ui8_clientIndex); }
+  iVtClientServerCommunication_c* getClientPtrByID (uint8_t ui8_clientIndex)
+  { return static_cast<iVtClientServerCommunication_c*>(ISOTerminal_c::getClientPtrByID (ui8_clientIndex)); }
 
   bool isAnyVtAvailable()
   { return ISOTerminal_c::isAnyVtAvailable(); }

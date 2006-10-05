@@ -294,15 +294,15 @@ public:
   */
   virtual ~VtClientServerCommunication_c();
 
+  /** periodically event -> call timeEvent for all  identities and parent objects
+    @return true -> all planned activities performed in allowed time
+  */
+  bool timeEvent();
   /** timeEvent sub-functions to get a better overview of the timeEvent main-function */
   void timeEventSendLanguagePGN();
   void timeEventUploadPoolTimeoutCheck();
   void timeEventPrePoolUpload();
   bool timeEventPoolUpload();
-  /** periodically event -> call timeEvent for all  identities and parent objects
-    @return true -> all planned activities performed in allowed time
-  */
-  bool timeEvent();
 
   /** function that handles incoming acknowledgement messages */
   bool processMsgAck();
@@ -342,51 +342,18 @@ public:
   bool sendCommandChangeStringValue  (IsoAgLib::iVtObject_c* rpc_object, const char* rpc_newValue, uint16_t overrideSendLength, bool b_enableReplaceOfCmd=true); // no response, no timeout... it's that simple...
   bool sendCommandChangeStringValue  (IsoAgLib::iVtObjectString_c* rpc_objectstring, bool b_enableReplaceOfCmd=true); // no response, no timeout... it's that simple...
 
-  //! Parameter:
-  //! @param rpc_object:
-  //! @param childObjectId:
-  //! @param x:
-  //! @param y:
   bool sendCommandChangeChildPosition (IsoAgLib::iVtObject_c* rpc_object, IsoAgLib::iVtObject_c* rpc_childObject, int16_t x, int16_t y, bool b_enableReplaceOfCmd=true);
-
-  //! Parameter:
-  //! @param rpc_object:
-  //! @param childObjectId:
-  //! @param dx:
-  //! @param dy:
   bool sendCommandChangeChildLocation (IsoAgLib::iVtObject_c* rpc_object, IsoAgLib::iVtObject_c* rpc_childObject, int16_t dx, int16_t dy, bool b_enableReplaceOfCmd=true);
 
-  //! Parameter:
-  //! @param objectId:
-  //! @param colorValue:
-  bool sendCommandChangeBackgroundColour(IsoAgLib::iVtObject_c* rpc_object, uint8_t newColour, bool b_enableReplaceOfCmd=true);
+  bool sendCommandChangeBackgroundColour (IsoAgLib::iVtObject_c* rpc_object, uint8_t newColour,  bool b_enableReplaceOfCmd=true);
+  bool sendCommandChangePriority         (IsoAgLib::iVtObject_c* rpc_object, int8_t newPriority, bool b_enableReplaceOfCmd=true);
+  bool sendCommandChangeSize             (IsoAgLib::iVtObject_c* rpc_object, uint16_t newWidth, uint16_t newHeight, bool b_enableReplaceOfCmd=true);
+  bool sendCommandChangeEndPoint         (IsoAgLib::iVtObject_c* rpc_object, uint16_t newWidth, uint16_t newHeight, uint8_t newLineDirection, bool b_enableReplaceOfCmd=true);
 
-  //! Parameter:
-  //! @param objectId:
-  //! @param colorValue:
-  bool sendCommandChangePriority(IsoAgLib::iVtObject_c* rpc_object, int8_t newPriority, bool b_enableReplaceOfCmd=true);
-
-  //! Parameter:
-  //! @param rpc_object:
-  //! @param newWidth:
-  //! @param newHeight:
-  bool sendCommandChangeSize(IsoAgLib::iVtObject_c* rpc_object,uint16_t newWidth, uint16_t newHeight, bool b_enableReplaceOfCmd=true);
-
-  //! Parameter:
-  //! @param rpc_object:
-  //! @param newWidth:
-  //! @param newHeight:
-  //! @param newLineDirection:
-  bool sendCommandChangeEndPoint(IsoAgLib::iVtObject_c* rpc_object, uint16_t newWidth, uint16_t newHeight, uint8_t newLineDirection, bool b_enableReplaceOfCmd=true);
-
-  //! Parameter:
-  //! @param rpc_object:
-  //! @param newFillType:
-  //! @param newFillColour:
-  //! @param newFillPatternObject:
   bool sendCommandChangeFillAttributes (IsoAgLib::iVtObject_c* rpc_object, uint8_t newFillType, uint8_t newFillColour, IsoAgLib::iVtObjectPictureGraphic_c* newFillPatternObject, bool b_enableReplaceOfCmd=true);
   bool sendCommandChangeFontAttributes (IsoAgLib::iVtObject_c* rpc_object, uint8_t newFontColour, uint8_t newFontSize, uint8_t newFontType, uint8_t newFontStyle, bool b_enableReplaceOfCmd=true);
   bool sendCommandChangeLineAttributes (IsoAgLib::iVtObject_c* rpc_object, uint8_t newLineColour, uint8_t newLineWidth, uint16_t newLineArt, bool b_enableReplaceOfCmd=true);
+
   bool sendCommandControlAudioDevice (uint8_t rui8_repetitions, uint16_t rui16_frequency, uint16_t rui16_onTime, uint16_t rui16_offTime);
   bool sendCommandSetAudioVolume (uint8_t rui8_volume);
 
