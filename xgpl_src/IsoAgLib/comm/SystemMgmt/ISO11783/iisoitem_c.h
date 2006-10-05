@@ -77,6 +77,7 @@ private:
   friend class iIdentItem_c;
   friend class iSystemMgmt_c;
   friend class iISOMonitor_c;
+  friend class iCANPkgExt_c;
 
 public:
   /** deliver the ISOName code of this item

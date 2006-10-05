@@ -720,7 +720,7 @@ void bigEndianDecNumberText2CanStringUint( const char* rc_src, uint8_t* pui8_tar
   simply set a Flexible4ByteString_c at a specific value index with.
   Important: Flexible4ByteString_c and Flexible8ByteString_c have
               the SAME byte order as a CAN message byte string.
-  ==>> for BIG ENDIAN systems, this value can NOT directly be used as intger value
+  ==>> for BIG ENDIAN systems, this value can NOT directly be used as integer value
   @param rui8_ind position of set Flexible4ByteString_c [0..1]
 */
 void Flexible4ByteString_c::setFlexible4DataValueInd(uint8_t rui8_ind, const Flexible8ByteString_c& rc_value )
