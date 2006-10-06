@@ -205,6 +205,7 @@
 #include <IsoAgLib/comm/Multipacket/imultisend_c.h>
 #include <IsoAgLib/comm/ISO_Terminal/ivtclientservercommunication_c.h>
 #include <supplementary_driver/driver/datastreams/streaminput_c.h>
+#include <cstdlib>
 #ifdef DEBUG
   #ifdef SYSTEM_PC
     #include <iostream>
@@ -453,7 +454,7 @@ void iObjectPool_simpleVTIsoPool_c::eventKeyCode ( uint8_t keyActivationCode, ui
       case vtKeyCodeKeyChangeLang:
         // Attention: We're assuimung the the variable reference is NOT being used - else we would access a NULL pointer in "value"
         /// ATTENTION: Strings are always stored with PADDED SPACES, so consider this in the case of the string-compare!
-        if (strcmp (iVtObjectColLabel.get_vtObjectOutputString_a().value, "Color: ") == 0)
+        if (CNAMESPACE::strcmp (iVtObjectColLabel.get_vtObjectOutputString_a().value, "Color: ") == 0)
         { // Change from AE->BE
           iVtObjectColLabel.setValueRef ("Colour:", true); // setValueRef makes most sense on static strings like here
         }
