@@ -396,7 +396,7 @@ namespace __IsoAgLib {
     { // the application is in tractor mode but has no valid isoName
       // IMPORTANT: if we are in tractor mode we MUST have a valid isoName otherwise the configuration makes no sense
       #ifdef DEBUG
-        EXTERNAL_DEBUG_DEVICE << "CONFIG FAILURE. The config function was called with isoName == NULL and\
+        INTERNAL_DEBUG_DEVICE << "CONFIG FAILURE. The config function was called with isoName == NULL and\
                                   IdentModeTractor. Is is not allowed that the isoName ist NULL in combination\
                                   with tractor mode." << "\n";
       #endif

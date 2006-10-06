@@ -205,7 +205,13 @@
 #include <IsoAgLib/comm/Multipacket/imultisend_c.h>
 #include <IsoAgLib/comm/ISO_Terminal/ivtclientservercommunication_c.h>
 #include <supplementary_driver/driver/datastreams/streaminput_c.h>
-#include <iostream>
+#ifdef DEBUG
+  #ifdef SYSTEM_PC
+    #include <iostream>
+  #else
+    #include <supplementary_driver/driver/rs232/irs232io_c.h>
+  #endif
+#endif
 
 /* the following include direction includes
    all generated ISO Terminal Object Pool Definitions */
@@ -482,7 +488,7 @@ void iObjectPool_simpleVTIsoPool_c::eventObjectPoolUploadedSuccessfully (bool rb
     /// The update takes place very fast here, so we don't need to perform anything here. Normally one would switch back to normal operation mask
     /// when it was switched on update to some "Wait while updating language..:" screen!
     #ifdef DEBUG
-    std::cout << "-->eventObjectPoolUploadedSuccessfully: LANGUAGE UPDATE TO Index "<<int(ri8_languageIndex)<<". User tried to select ["<<uint8_t(rui16_languageCode>>8)<<uint8_t(rui16_languageCode&0xFF)<<"] <--\n";
+    EXTERNAL_DEBUG_DEVICE << "-->eventObjectPoolUploadedSuccessfully: LANGUAGE UPDATE TO Index "<<int(ri8_languageIndex)<<". User tried to select ["<<uint8_t(rui16_languageCode>>8)<<uint8_t(rui16_languageCode&0xFF)<<"] <--" << EXTERNAL_DEBUG_DEVICE_ENDL;
     #else
     rui16_languageCode = rui16_languageCode;  // Just prevent from warning
     ri8_languageIndex = ri8_languageIndex;    // Just prevent from warning
@@ -498,7 +504,7 @@ void iObjectPool_simpleVTIsoPool_c::eventObjectPoolUploadedSuccessfully (bool rb
     updateMiles (valMiles);
     iVtObjectValSpeed.setValue (valSpeed+10000);
     #ifdef DEBUG
-    std::cout << "-->eventObjectPoolUploadedSuccessfully: INITIAL UPLOAD TO Index "<<int(ri8_languageIndex)<<". User tried to select ["<<uint8_t(rui16_languageCode>>8)<<uint8_t(rui16_languageCode&0xFF)<<"] <--\n";
+    EXTERNAL_DEBUG_DEVICE << "-->eventObjectPoolUploadedSuccessfully: INITIAL UPLOAD TO Index "<<int(ri8_languageIndex)<<". User tried to select ["<<uint8_t(rui16_languageCode>>8)<<uint8_t(rui16_languageCode&0xFF)<<"] <--" << EXTERNAL_DEBUG_DEVICE_ENDL;
     #endif
   }
 }
@@ -509,7 +515,7 @@ void iObjectPool_simpleVTIsoPool_c::eventEnterSafeState ()
   // As it's a simple Tutorial example there's nothing in real danger!
   // But take care of this function if using for real!!!
   #ifdef DEBUG
-  std::cout << "-->eventEnterSafeState<--\n";
+  EXTERNAL_DEBUG_DEVICE << "-->eventEnterSafeState<--" << EXTERNAL_DEBUG_DEVICE_ENDL;
   #endif
 }
 
@@ -577,7 +583,7 @@ int main()
   if (spc_tut30csc == NULL)
   { // shouldln't happen normally!
     #if defined(DEBUG) && defined(SYSTEM_PC)
-    std::cout << "Could not registerIsoObjectPool()." << std::endl;
+    EXTERNAL_DEBUG_DEVICE << "Could not registerIsoObjectPool()." << EXTERNAL_DEBUG_DEVICE_ENDL;
     abort();
     #else
     return 1; // Return from main() with error indicated
