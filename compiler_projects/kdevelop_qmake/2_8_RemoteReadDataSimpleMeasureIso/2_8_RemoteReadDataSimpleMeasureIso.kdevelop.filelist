@@ -26,9 +26,10 @@
 ../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointregister_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointbase_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/processdatachangehandler_c.cpp
-../../../xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_simulating.cpp
+../../../xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_rte.cpp
 ../../../xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.cpp
-../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_simulating.cpp
+../../../xgpl_src/IsoAgLib/hal/pc/can/msq_helper.cpp
+../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_client.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp
@@ -54,7 +55,6 @@
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/imonitoritem_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/ischeduler_c.h
-../../../xgpl_src/IsoAgLib/util/impl/devkey_c.h
 ../../../xgpl_src/IsoAgLib/util/impl/util_funcs.h
 ../../../xgpl_src/IsoAgLib/util/impl/singleton_container_decl.h
 ../../../xgpl_src/IsoAgLib/util/impl/singleton_container.h
@@ -69,7 +69,6 @@
 ../../../xgpl_src/IsoAgLib/util/icanpkg_c.h
 ../../../xgpl_src/IsoAgLib/util/icanpkgext_c.h
 ../../../xgpl_src/IsoAgLib/util/liberr_c.h
-../../../xgpl_src/IsoAgLib/util/idevkey_c.h
 ../../../xgpl_src/IsoAgLib/util/iutil_funcs.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procident_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.h

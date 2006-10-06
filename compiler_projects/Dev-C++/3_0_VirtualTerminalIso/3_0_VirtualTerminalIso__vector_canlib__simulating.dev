@@ -1,7 +1,7 @@
 [Project]
 FileName=3_0_VirtualTerminalIso__vector_canlib__simulating.dev
 Name=3_0_VirtualTerminalIso
-UnitCount=233
+UnitCount=224
 Type=1
 Ver=1
 ObjFiles=
@@ -48,16 +48,6 @@ ProductVersion=
 AutoIncBuildNr=0
 
 [Unit1]
-FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.cpp
-CompileCpp=1
-Folder=3_0_VirtualTerminalIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit2]
 FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -67,7 +57,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit3]
+[Unit2]
 FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.cpp
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -77,7 +67,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit4]
+[Unit3]
 FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.cpp
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -87,27 +77,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit5]
-FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/systemmgmt_c.cpp
-CompileCpp=1
-Folder=3_0_VirtualTerminalIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit6]
-FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.cpp
-CompileCpp=1
-Folder=3_0_VirtualTerminalIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit7]
+[Unit4]
 FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.cpp
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -117,8 +87,8 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit8]
-FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.cpp
+[Unit5]
+FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.cpp
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
 Compile=1
@@ -127,17 +97,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit9]
-FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.cpp
-CompileCpp=1
-Folder=3_0_VirtualTerminalIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit10]
+[Unit6]
 FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.cpp
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -147,8 +107,48 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit11]
+[Unit7]
+FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.cpp
+CompileCpp=1
+Folder=3_0_VirtualTerminalIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit8]
+FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.cpp
+CompileCpp=1
+Folder=3_0_VirtualTerminalIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit9]
 FileName=../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.cpp
+CompileCpp=1
+Folder=3_0_VirtualTerminalIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit10]
+FileName=../../../xgpl_src/IsoAgLib/util/impl/canpkgext_c.cpp
+CompileCpp=1
+Folder=3_0_VirtualTerminalIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit11]
+FileName=../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
 Compile=1
@@ -168,26 +168,6 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit13]
-FileName=../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
-CompileCpp=1
-Folder=3_0_VirtualTerminalIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit14]
-FileName=../../../xgpl_src/IsoAgLib/util/impl/canpkgext_c.cpp
-CompileCpp=1
-Folder=3_0_VirtualTerminalIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit15]
 FileName=../../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -197,7 +177,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit16]
+[Unit14]
 FileName=../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -207,7 +187,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit17]
+[Unit15]
 FileName=../../../xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.cpp
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -217,7 +197,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit18]
+[Unit16]
 FileName=../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multireceive_c.cpp
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -227,17 +207,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit19]
-FileName=../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisend_c.cpp
-CompileCpp=1
-Folder=3_0_VirtualTerminalIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit20]
+[Unit17]
 FileName=../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamchunk_c.cpp
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -247,7 +217,17 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit21]
+[Unit18]
+FileName=../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisend_c.cpp
+CompileCpp=1
+Folder=3_0_VirtualTerminalIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit19]
 FileName=../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendpkg_c.cpp
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -257,7 +237,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit22]
+[Unit20]
 FileName=../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/chunk_c.cpp
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -267,7 +247,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit23]
+[Unit21]
 FileName=../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/stream_c.cpp
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -277,7 +257,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit24]
+[Unit22]
 FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectsoftkeymask_c.cpp
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -287,7 +267,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit25]
+[Unit23]
 FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectworkingset_c.cpp
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -297,8 +277,28 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit26]
+[Unit24]
 FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectellipse_c.cpp
+CompileCpp=1
+Folder=3_0_VirtualTerminalIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit25]
+FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectgraphicscontext_c.cpp
+CompileCpp=1
+Folder=3_0_VirtualTerminalIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit26]
+FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtclientservercommunication_c.cpp
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
 Compile=1
@@ -508,16 +508,6 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit47]
-FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectinput_c.cpp
-CompileCpp=1
-Folder=3_0_VirtualTerminalIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit48]
 FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectfillattributes_c.cpp
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -527,7 +517,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit49]
+[Unit48]
 FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectnumbervariable_c.cpp
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -537,7 +527,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit50]
+[Unit49]
 FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectlineattributes_c.cpp
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -547,17 +537,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit51]
-FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectinputattributes_c.cpp
-CompileCpp=1
-Folder=3_0_VirtualTerminalIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit52]
+[Unit50]
 FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectinputboolean_c.cpp
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -567,37 +547,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit53]
-FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectrectangle_c.cpp
-CompileCpp=1
-Folder=3_0_VirtualTerminalIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit54]
-FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectcontainer_c.cpp
-CompileCpp=1
-Folder=3_0_VirtualTerminalIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit55]
-FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectstring_c.cpp
-CompileCpp=1
-Folder=3_0_VirtualTerminalIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit56]
+[Unit51]
 FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectobjectpointer_c.cpp
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -607,8 +557,58 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit57]
+[Unit52]
+FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectrectangle_c.cpp
+CompileCpp=1
+Folder=3_0_VirtualTerminalIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit53]
+FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtserverinstance_c.cpp
+CompileCpp=1
+Folder=3_0_VirtualTerminalIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit54]
+FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectstring_c.cpp
+CompileCpp=1
+Folder=3_0_VirtualTerminalIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit55]
+FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectinputattributes_c.cpp
+CompileCpp=1
+Folder=3_0_VirtualTerminalIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit56]
 FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectoutputnumber_c.cpp
+CompileCpp=1
+Folder=3_0_VirtualTerminalIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit57]
+FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectcontainer_c.cpp
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
 Compile=1
@@ -638,36 +638,6 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit60]
-FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtclientservercommunication_c.cpp
-CompileCpp=1
-Folder=3_0_VirtualTerminalIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit61]
-FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectgraphicscontext_c.cpp
-CompileCpp=1
-Folder=3_0_VirtualTerminalIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit62]
-FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtserverinstance_c.cpp
-CompileCpp=1
-Folder=3_0_VirtualTerminalIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit63]
 FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobject_c.cpp
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -677,7 +647,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit64]
+[Unit61]
 FileName=../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -687,7 +657,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit65]
+[Unit62]
 FileName=../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_w32_vector_canlib.cpp
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -697,7 +667,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit66]
+[Unit63]
 FileName=../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -707,7 +677,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit67]
+[Unit64]
 FileName=../../../xgpl_src/IsoAgLib/hal/pc/eeprom/pc_eeditor_can.cpp
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -717,7 +687,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit68]
+[Unit65]
 FileName=../../../xgpl_src/IsoAgLib/hal/pc/eeprom/pc_eeditor_rs232.cpp
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -727,7 +697,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit69]
+[Unit66]
 FileName=../../../xgpl_src/IsoAgLib/hal/pc/eeprom/eeprom_target_extensions.cpp
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -737,7 +707,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit70]
+[Unit67]
 FileName=../../../xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -747,7 +717,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit71]
+[Unit68]
 FileName=../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -757,7 +727,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit72]
+[Unit69]
 FileName=../../../xgpl_src/IsoAgLib/driver/can/impl/canio_c.cpp
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -767,7 +737,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit73]
+[Unit70]
 FileName=../../../xgpl_src/IsoAgLib/driver/system/impl/system_c.cpp
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -777,7 +747,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit74]
+[Unit71]
 FileName=../../../xgpl_src/IsoAgLib/driver/eeprom/impl/eepromio_c.cpp
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -787,7 +757,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit75]
+[Unit72]
 FileName=../../../IsoAgLib_Examples/tutorial/3_Terminal/3_0_VirtualTerminalIso/3_0_VirtualTerminalIso.cpp
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -797,17 +767,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit76]
-FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/systemmgmt_c.h
-CompileCpp=1
-Folder=3_0_VirtualTerminalIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit77]
+[Unit73]
 FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -817,7 +777,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit78]
+[Unit74]
 FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -827,7 +787,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit79]
+[Unit75]
 FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -837,57 +797,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit80]
-FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.h
-CompileCpp=1
-Folder=3_0_VirtualTerminalIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit81]
-FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.h
-CompileCpp=1
-Folder=3_0_VirtualTerminalIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit82]
-FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h
-CompileCpp=1
-Folder=3_0_VirtualTerminalIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit83]
-FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.h
-CompileCpp=1
-Folder=3_0_VirtualTerminalIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit84]
-FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h
-CompileCpp=1
-Folder=3_0_VirtualTerminalIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit85]
+[Unit76]
 FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgnhandler_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -897,7 +807,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit86]
+[Unit77]
 FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -907,7 +817,47 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit87]
+[Unit78]
+FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.h
+CompileCpp=1
+Folder=3_0_VirtualTerminalIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit79]
+FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h
+CompileCpp=1
+Folder=3_0_VirtualTerminalIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit80]
+FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.h
+CompileCpp=1
+Folder=3_0_VirtualTerminalIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit81]
+FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h
+CompileCpp=1
+Folder=3_0_VirtualTerminalIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit82]
 FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -917,7 +867,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit88]
+[Unit83]
 FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoitem_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -927,7 +877,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit89]
+[Unit84]
 FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -937,7 +887,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit90]
+[Unit85]
 FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/iidentitem_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -947,7 +897,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit91]
+[Unit86]
 FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/istate_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -957,7 +907,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit92]
+[Unit87]
 FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/imonitoritem_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -967,17 +917,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit93]
-FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/isystemmgmt_c.h
-CompileCpp=1
-Folder=3_0_VirtualTerminalIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit94]
+[Unit88]
 FileName=../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -987,7 +927,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit95]
+[Unit89]
 FileName=../../../xgpl_src/IsoAgLib/comm/Scheduler/ischeduler_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -997,27 +937,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit96]
-FileName=../../../xgpl_src/IsoAgLib/util/impl/devkey_c.h
-CompileCpp=1
-Folder=3_0_VirtualTerminalIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit97]
-FileName=../../../xgpl_src/IsoAgLib/util/impl/singleton_container_decl.h
-CompileCpp=1
-Folder=3_0_VirtualTerminalIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit98]
+[Unit90]
 FileName=../../../xgpl_src/IsoAgLib/util/impl/util_funcs.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -1027,8 +947,8 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit99]
-FileName=../../../xgpl_src/IsoAgLib/util/impl/singleton.h
+[Unit91]
+FileName=../../../xgpl_src/IsoAgLib/util/impl/singleton_container_decl.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
 Compile=1
@@ -1037,7 +957,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit100]
+[Unit92]
 FileName=../../../xgpl_src/IsoAgLib/util/impl/singleton_container.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -1047,7 +967,17 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit101]
+[Unit93]
+FileName=../../../xgpl_src/IsoAgLib/util/impl/singleton.h
+CompileCpp=1
+Folder=3_0_VirtualTerminalIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit94]
 FileName=../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -1057,7 +987,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit102]
+[Unit95]
 FileName=../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -1067,7 +997,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit103]
+[Unit96]
 FileName=../../../xgpl_src/IsoAgLib/util/impl/canpkgext_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -1077,7 +1007,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit104]
+[Unit97]
 FileName=../../../xgpl_src/IsoAgLib/util/impl/elementbase_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -1087,7 +1017,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit105]
+[Unit98]
 FileName=../../../xgpl_src/IsoAgLib/util/icancustomer_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -1097,57 +1027,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit106]
-FileName=../../../xgpl_src/IsoAgLib/util/icanpkgext_c.h
-CompileCpp=1
-Folder=3_0_VirtualTerminalIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit107]
-FileName=../../../xgpl_src/IsoAgLib/util/icanpkg_c.h
-CompileCpp=1
-Folder=3_0_VirtualTerminalIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit108]
-FileName=../../../xgpl_src/IsoAgLib/util/iutil_funcs.h
-CompileCpp=1
-Folder=3_0_VirtualTerminalIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit109]
-FileName=../../../xgpl_src/IsoAgLib/util/liberr_c.h
-CompileCpp=1
-Folder=3_0_VirtualTerminalIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit110]
-FileName=../../../xgpl_src/IsoAgLib/util/idevkey_c.h
-CompileCpp=1
-Folder=3_0_VirtualTerminalIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit111]
+[Unit99]
 FileName=../../../xgpl_src/IsoAgLib/util/config.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -1157,7 +1037,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit112]
+[Unit100]
 FileName=../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -1167,7 +1047,47 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit113]
+[Unit101]
+FileName=../../../xgpl_src/IsoAgLib/util/icanpkg_c.h
+CompileCpp=1
+Folder=3_0_VirtualTerminalIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit102]
+FileName=../../../xgpl_src/IsoAgLib/util/icanpkgext_c.h
+CompileCpp=1
+Folder=3_0_VirtualTerminalIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit103]
+FileName=../../../xgpl_src/IsoAgLib/util/liberr_c.h
+CompileCpp=1
+Folder=3_0_VirtualTerminalIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit104]
+FileName=../../../xgpl_src/IsoAgLib/util/iutil_funcs.h
+CompileCpp=1
+Folder=3_0_VirtualTerminalIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit105]
 FileName=../../../xgpl_src/Application_Config/isoaglib_config.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -1177,7 +1097,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit114]
+[Unit106]
 FileName=../../../xgpl_src/IsoAgLib/hal/pc/typedef.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -1187,7 +1107,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit115]
+[Unit107]
 FileName=../../../xgpl_src/IsoAgLib/hal/config.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -1197,27 +1117,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit116]
-FileName=../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/chunk_c.h
-CompileCpp=1
-Folder=3_0_VirtualTerminalIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit117]
-FileName=../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/stream_c.h
-CompileCpp=1
-Folder=3_0_VirtualTerminalIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit118]
+[Unit108]
 FileName=../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multireceive_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -1227,7 +1127,27 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit119]
+[Unit109]
+FileName=../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/chunk_c.h
+CompileCpp=1
+Folder=3_0_VirtualTerminalIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit110]
+FileName=../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/stream_c.h
+CompileCpp=1
+Folder=3_0_VirtualTerminalIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit111]
 FileName=../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisend_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -1237,17 +1157,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit120]
-FileName=../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamchunk_c.h
-CompileCpp=1
-Folder=3_0_VirtualTerminalIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit121]
+[Unit112]
 FileName=../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendpkg_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -1257,7 +1167,17 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit122]
+[Unit113]
+FileName=../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamchunk_c.h
+CompileCpp=1
+Folder=3_0_VirtualTerminalIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit114]
 FileName=../../../xgpl_src/IsoAgLib/comm/Multipacket/imultisend_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -1267,17 +1187,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit123]
-FileName=../../../xgpl_src/IsoAgLib/comm/Multipacket/istream_c.h
-CompileCpp=1
-Folder=3_0_VirtualTerminalIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit124]
+[Unit115]
 FileName=../../../xgpl_src/IsoAgLib/comm/Multipacket/imultisendstreamer_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -1287,7 +1197,17 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit125]
+[Unit116]
+FileName=../../../xgpl_src/IsoAgLib/comm/Multipacket/istream_c.h
+CompileCpp=1
+Folder=3_0_VirtualTerminalIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit117]
 FileName=../../../xgpl_src/IsoAgLib/comm/Multipacket/imultireceive_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -1297,7 +1217,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit126]
+[Unit118]
 FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectinputstring_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -1307,7 +1227,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit127]
+[Unit119]
 FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectoutputstring_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -1317,7 +1237,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit128]
+[Unit120]
 FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectline_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -1327,7 +1247,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit129]
+[Unit121]
 FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/isoterminalpkg_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -1337,17 +1257,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit130]
-FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vttypes.h
-CompileCpp=1
-Folder=3_0_VirtualTerminalIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit131]
+[Unit122]
 FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectfillattributes_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -1357,7 +1267,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit132]
+[Unit123]
 FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectinputboolean_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -1367,8 +1277,8 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit133]
-FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectinput_c.h
+[Unit124]
+FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vttypes.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
 Compile=1
@@ -1377,7 +1287,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit134]
+[Unit125]
 FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectobjectpointer_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -1387,7 +1297,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit135]
+[Unit126]
 FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectinputnumber_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -1397,7 +1307,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit136]
+[Unit127]
 FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectoutputnumber_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -1407,7 +1317,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit137]
+[Unit128]
 FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectmeter_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -1417,7 +1327,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit138]
+[Unit129]
 FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectalarmmask_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -1427,7 +1337,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit139]
+[Unit130]
 FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectpolygon_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -1437,7 +1347,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit140]
+[Unit131]
 FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectellipse_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -1447,247 +1357,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit141]
-FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectpicturegraphic_c.h
-CompileCpp=1
-Folder=3_0_VirtualTerminalIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit142]
-FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectstringvariable_c.h
-CompileCpp=1
-Folder=3_0_VirtualTerminalIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit143]
-FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectlinearbargraph_c.h
-CompileCpp=1
-Folder=3_0_VirtualTerminalIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit144]
-FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/isoterminal_c.h
-CompileCpp=1
-Folder=3_0_VirtualTerminalIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit145]
-FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectnumbervariable_c.h
-CompileCpp=1
-Folder=3_0_VirtualTerminalIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit146]
-FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectlineattributes_c.h
-CompileCpp=1
-Folder=3_0_VirtualTerminalIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit147]
-FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectrectangle_c.h
-CompileCpp=1
-Folder=3_0_VirtualTerminalIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit148]
-FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectinputattributes_c.h
-CompileCpp=1
-Folder=3_0_VirtualTerminalIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit149]
-FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectstring_c.h
-CompileCpp=1
-Folder=3_0_VirtualTerminalIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit150]
-FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectcontainer_c.h
-CompileCpp=1
-Folder=3_0_VirtualTerminalIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit151]
-FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectbutton_c.h
-CompileCpp=1
-Folder=3_0_VirtualTerminalIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit152]
-FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobject_c.h
-CompileCpp=1
-Folder=3_0_VirtualTerminalIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit153]
-FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectfontattributes_c.h
-CompileCpp=1
-Folder=3_0_VirtualTerminalIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit154]
-FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectinputlist_c.h
-CompileCpp=1
-Folder=3_0_VirtualTerminalIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit155]
-FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectdatamask_c.h
-CompileCpp=1
-Folder=3_0_VirtualTerminalIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit156]
-FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectkey_c.h
-CompileCpp=1
-Folder=3_0_VirtualTerminalIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit157]
-FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectauxiliaryinput_c.h
-CompileCpp=1
-Folder=3_0_VirtualTerminalIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit158]
-FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectworkingset_c.h
-CompileCpp=1
-Folder=3_0_VirtualTerminalIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit159]
-FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectarchedbargraph_c.h
-CompileCpp=1
-Folder=3_0_VirtualTerminalIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit160]
-FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectsoftkeymask_c.h
-CompileCpp=1
-Folder=3_0_VirtualTerminalIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit161]
-FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectmacro_c.h
-CompileCpp=1
-Folder=3_0_VirtualTerminalIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit162]
-FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectauxiliaryfunction_c.h
-CompileCpp=1
-Folder=3_0_VirtualTerminalIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit163]
-FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtserverinstance_c.h
-CompileCpp=1
-Folder=3_0_VirtualTerminalIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit164]
-FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtclientservercommunication_c.h
-CompileCpp=1
-Folder=3_0_VirtualTerminalIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit165]
+[Unit132]
 FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectgraphicscontext_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -1697,8 +1367,8 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit166]
-FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectinput_c.h
+[Unit133]
+FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectpicturegraphic_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
 Compile=1
@@ -1707,7 +1377,237 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit167]
+[Unit134]
+FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectstringvariable_c.h
+CompileCpp=1
+Folder=3_0_VirtualTerminalIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit135]
+FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectlinearbargraph_c.h
+CompileCpp=1
+Folder=3_0_VirtualTerminalIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit136]
+FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/isoterminal_c.h
+CompileCpp=1
+Folder=3_0_VirtualTerminalIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit137]
+FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectnumbervariable_c.h
+CompileCpp=1
+Folder=3_0_VirtualTerminalIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit138]
+FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectlineattributes_c.h
+CompileCpp=1
+Folder=3_0_VirtualTerminalIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit139]
+FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectrectangle_c.h
+CompileCpp=1
+Folder=3_0_VirtualTerminalIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit140]
+FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtserverinstance_c.h
+CompileCpp=1
+Folder=3_0_VirtualTerminalIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit141]
+FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectinputattributes_c.h
+CompileCpp=1
+Folder=3_0_VirtualTerminalIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit142]
+FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectstring_c.h
+CompileCpp=1
+Folder=3_0_VirtualTerminalIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit143]
+FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectcontainer_c.h
+CompileCpp=1
+Folder=3_0_VirtualTerminalIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit144]
+FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectbutton_c.h
+CompileCpp=1
+Folder=3_0_VirtualTerminalIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit145]
+FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobject_c.h
+CompileCpp=1
+Folder=3_0_VirtualTerminalIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit146]
+FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectfontattributes_c.h
+CompileCpp=1
+Folder=3_0_VirtualTerminalIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit147]
+FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectinputlist_c.h
+CompileCpp=1
+Folder=3_0_VirtualTerminalIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit148]
+FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectdatamask_c.h
+CompileCpp=1
+Folder=3_0_VirtualTerminalIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit149]
+FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectkey_c.h
+CompileCpp=1
+Folder=3_0_VirtualTerminalIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit150]
+FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectauxiliaryinput_c.h
+CompileCpp=1
+Folder=3_0_VirtualTerminalIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit151]
+FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectarchedbargraph_c.h
+CompileCpp=1
+Folder=3_0_VirtualTerminalIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit152]
+FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectworkingset_c.h
+CompileCpp=1
+Folder=3_0_VirtualTerminalIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit153]
+FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectsoftkeymask_c.h
+CompileCpp=1
+Folder=3_0_VirtualTerminalIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit154]
+FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectmacro_c.h
+CompileCpp=1
+Folder=3_0_VirtualTerminalIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit155]
+FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtclientservercommunication_c.h
+CompileCpp=1
+Folder=3_0_VirtualTerminalIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit156]
+FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectauxiliaryfunction_c.h
+CompileCpp=1
+Folder=3_0_VirtualTerminalIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit157]
 FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtincludes.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -1717,7 +1617,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit168]
+[Unit158]
 FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobject_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -1727,7 +1627,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit169]
+[Unit159]
 FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivttypes.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -1737,7 +1637,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit170]
+[Unit160]
 FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectauxiliaryfunction_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -1747,7 +1647,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit171]
+[Unit161]
 FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectfontattributes_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -1757,7 +1657,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit172]
+[Unit162]
 FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/iisoterminal_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -1767,7 +1667,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit173]
+[Unit163]
 FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectauxiliaryinput_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -1777,7 +1677,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit174]
+[Unit164]
 FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectdatamask_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -1787,7 +1687,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit175]
+[Unit165]
 FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectinputstring_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -1797,7 +1697,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit176]
+[Unit166]
 FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectarchedbargraph_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -1807,7 +1707,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit177]
+[Unit167]
 FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectworkingset_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -1817,7 +1717,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit178]
+[Unit168]
 FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectinputattributes_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -1827,7 +1727,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit179]
+[Unit169]
 FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectrectangle_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -1837,7 +1737,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit180]
+[Unit170]
 FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/iisoterminalobjectpool_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -1847,7 +1747,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit181]
+[Unit171]
 FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectobjectpointer_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -1857,7 +1757,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit182]
+[Unit172]
 FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectinputnumber_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -1867,7 +1767,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit183]
+[Unit173]
 FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectpicturegraphic_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -1877,7 +1777,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit184]
+[Unit174]
 FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectmeter_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -1887,7 +1787,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit185]
+[Unit175]
 FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectstringvariable_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -1897,7 +1797,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit186]
+[Unit176]
 FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectlinearbargraph_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -1907,7 +1807,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit187]
+[Unit177]
 FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectcontainer_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -1917,7 +1817,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit188]
+[Unit178]
 FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectline_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -1927,7 +1827,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit189]
+[Unit179]
 FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectoutputstring_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -1937,7 +1837,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit190]
+[Unit180]
 FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectpolygon_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -1947,7 +1847,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit191]
+[Unit181]
 FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectkey_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -1957,7 +1857,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit192]
+[Unit182]
 FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectmask_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -1967,7 +1867,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit193]
+[Unit183]
 FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectinputlist_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -1977,7 +1877,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit194]
+[Unit184]
 FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectellipse_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -1987,7 +1887,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit195]
+[Unit185]
 FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectfillattributes_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -1997,7 +1897,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit196]
+[Unit186]
 FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectnumbervariable_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -2007,7 +1907,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit197]
+[Unit187]
 FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectlineattributes_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -2017,7 +1917,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit198]
+[Unit188]
 FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectinputboolean_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -2027,7 +1927,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit199]
+[Unit189]
 FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectsoftkeymask_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -2037,7 +1937,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit200]
+[Unit190]
 FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectmacro_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -2047,47 +1947,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit201]
-FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectstring_c.h
-CompileCpp=1
-Folder=3_0_VirtualTerminalIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit202]
-FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectalarmmask_c.h
-CompileCpp=1
-Folder=3_0_VirtualTerminalIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit203]
-FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectoutputnumber_c.h
-CompileCpp=1
-Folder=3_0_VirtualTerminalIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit204]
-FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectbutton_c.h
-CompileCpp=1
-Folder=3_0_VirtualTerminalIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit205]
+[Unit191]
 FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectgraphicscontext_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -2097,7 +1957,57 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit206]
+[Unit192]
+FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectstring_c.h
+CompileCpp=1
+Folder=3_0_VirtualTerminalIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit193]
+FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectalarmmask_c.h
+CompileCpp=1
+Folder=3_0_VirtualTerminalIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit194]
+FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectoutputnumber_c.h
+CompileCpp=1
+Folder=3_0_VirtualTerminalIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit195]
+FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectbutton_c.h
+CompileCpp=1
+Folder=3_0_VirtualTerminalIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit196]
+FileName=../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtclientservercommunication_c.h
+CompileCpp=1
+Folder=3_0_VirtualTerminalIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit197]
 FileName=../../../xgpl_src/IsoAgLib/typedef.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -2107,7 +2017,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit207]
+[Unit198]
 FileName=../../../xgpl_src/Application_Config/eeprom_adr.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -2117,47 +2027,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit208]
-FileName=../../../xgpl_src/IsoAgLib/hal/pc/can/can_msq.h
-CompileCpp=1
-Folder=3_0_VirtualTerminalIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit209]
-FileName=../../../xgpl_src/IsoAgLib/hal/pc/can/can.h
-CompileCpp=1
-Folder=3_0_VirtualTerminalIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit210]
-FileName=../../../xgpl_src/IsoAgLib/hal/pc/can/can_typedef.h
-CompileCpp=1
-Folder=3_0_VirtualTerminalIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit211]
-FileName=../../../xgpl_src/IsoAgLib/hal/pc/can/can_server.h
-CompileCpp=1
-Folder=3_0_VirtualTerminalIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit212]
+[Unit199]
 FileName=../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -2167,7 +2037,47 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit213]
+[Unit200]
+FileName=../../../xgpl_src/IsoAgLib/hal/pc/can/can.h
+CompileCpp=1
+Folder=3_0_VirtualTerminalIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit201]
+FileName=../../../xgpl_src/IsoAgLib/hal/pc/can/can_typedef.h
+CompileCpp=1
+Folder=3_0_VirtualTerminalIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit202]
+FileName=../../../xgpl_src/IsoAgLib/hal/pc/can/can_msq.h
+CompileCpp=1
+Folder=3_0_VirtualTerminalIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit203]
+FileName=../../../xgpl_src/IsoAgLib/hal/pc/can/can_server.h
+CompileCpp=1
+Folder=3_0_VirtualTerminalIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit204]
 FileName=../../../xgpl_src/IsoAgLib/hal/pc/can/can_target_extensions.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -2177,7 +2087,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit214]
+[Unit205]
 FileName=../../../xgpl_src/IsoAgLib/hal/pc/system/system.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -2187,7 +2097,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit215]
+[Unit206]
 FileName=../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -2197,7 +2107,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit216]
+[Unit207]
 FileName=../../../xgpl_src/IsoAgLib/hal/pc/eeprom/pc_eeditor_can.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -2207,7 +2117,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit217]
+[Unit208]
 FileName=../../../xgpl_src/IsoAgLib/hal/pc/eeprom/eeprom.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -2217,7 +2127,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit218]
+[Unit209]
 FileName=../../../xgpl_src/IsoAgLib/hal/pc/eeprom/eeprom_target_extensions.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -2227,7 +2137,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit219]
+[Unit210]
 FileName=../../../xgpl_src/IsoAgLib/hal/pc/eeprom/pc_eeditor_rs232.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -2237,7 +2147,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit220]
+[Unit211]
 FileName=../../../xgpl_src/IsoAgLib/hal/pc/config.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -2247,7 +2157,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit221]
+[Unit212]
 FileName=../../../xgpl_src/IsoAgLib/hal/pc/errcodes.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -2257,7 +2167,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit222]
+[Unit213]
 FileName=../../../xgpl_src/IsoAgLib/hal/can.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -2267,7 +2177,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit223]
+[Unit214]
 FileName=../../../xgpl_src/IsoAgLib/hal/system.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -2277,7 +2187,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit224]
+[Unit215]
 FileName=../../../xgpl_src/IsoAgLib/hal/eeprom.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -2287,7 +2197,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit225]
+[Unit216]
 FileName=../../../xgpl_src/IsoAgLib/driver/can/impl/canio_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -2297,7 +2207,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit226]
+[Unit217]
 FileName=../../../xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -2307,7 +2217,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit227]
+[Unit218]
 FileName=../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -2317,7 +2227,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit228]
+[Unit219]
 FileName=../../../xgpl_src/IsoAgLib/driver/can/iident_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -2327,7 +2237,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit229]
+[Unit220]
 FileName=../../../xgpl_src/IsoAgLib/driver/can/icanio_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -2337,7 +2247,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit230]
+[Unit221]
 FileName=../../../xgpl_src/IsoAgLib/driver/system/impl/system_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -2347,7 +2257,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit231]
+[Unit222]
 FileName=../../../xgpl_src/IsoAgLib/driver/system/isystem_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -2357,7 +2267,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit232]
+[Unit223]
 FileName=../../../xgpl_src/IsoAgLib/driver/eeprom/impl/eepromio_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
@@ -2367,7 +2277,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit233]
+[Unit224]
 FileName=../../../xgpl_src/IsoAgLib/driver/eeprom/ieepromio_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso

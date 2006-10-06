@@ -26,7 +26,7 @@
 ../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/traccert_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/tracguidance_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/tracguidancecommand_c.cpp
-../../../xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_simulating.cpp
+../../../xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_rte.cpp
 ../../../xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/msq_helper.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_client.cpp

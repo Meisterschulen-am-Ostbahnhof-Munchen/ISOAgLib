@@ -30,8 +30,6 @@
 
 // #define CONFIG_DO_NOT_START_RELAIS_ON_STARTUP
 
-#define SYSTEM_WITH_ENHANCED_CAN_HAL
-
 #ifndef USE_BASE 
 	#define USE_BASE 
 #endif

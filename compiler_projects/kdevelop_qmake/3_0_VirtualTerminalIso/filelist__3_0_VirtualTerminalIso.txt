@@ -194,6 +194,7 @@
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectalarmmask_c.h
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectoutputnumber_c.h
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectbutton_c.h
+../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtclientservercommunication_c.h
 ../../../xgpl_src/IsoAgLib/typedef.h
 ../../../xgpl_src/Application_Config/eeprom_adr.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.h

@@ -85,10 +85,6 @@ LINK32=link.exe
 
 # PROP Default_Filter "cc;cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\impl\monitoritem_c.cpp
-# End Source File
-
-# Begin Source File
 SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\impl\identitem_c.cpp
 # End Source File
 
@@ -101,7 +97,7 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\impl\istate_c.cpp
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\impl\systemmgmt_c.cpp
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\impl\isosystempkg_c.cpp
 # End Source File
 
 # Begin Source File
@@ -109,7 +105,7 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\impl\isomonitor_c.cpp
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\impl\isosystempkg_c.cpp
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\impl\isorequestpgn_c.cpp
 # End Source File
 
 # Begin Source File
@@ -121,15 +117,11 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\impl\isoname_c.cpp
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\impl\isorequestpgn_c.cpp
-# End Source File
-
-# Begin Source File
 SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Scheduler\impl\scheduler_c.cpp
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\util\impl\cancustomer_c.cpp
+SOURCE=..\..\..\xgpl_src\IsoAgLib\util\impl\canpkgext_c.cpp
 # End Source File
 
 # Begin Source File
@@ -137,7 +129,7 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\util\impl\canpkg_c.cpp
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\util\impl\canpkgext_c.cpp
+SOURCE=..\..\..\xgpl_src\IsoAgLib\util\impl\cancustomer_c.cpp
 # End Source File
 
 # Begin Source File
@@ -214,10 +206,6 @@ SOURCE=..\..\..\IsoAgLib_Examples\tutorial\4_SupplementaryDriver\\4_0_Eeprom\4_0
 
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\impl\systemmgmt_c.h
-# End Source File
-
-# Begin Source File
 SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\impl\baseitem_c.h
 # End Source File
 
@@ -230,7 +218,11 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\impl\identitem_c.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\impl\monitoritem_c.h
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\impl\isorequestpgnhandler_c.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\impl\isorequestpgn_c.h
 # End Source File
 
 # Begin Source File
@@ -247,14 +239,6 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\impl\isosystempkg_c.h
 
 # Begin Source File
 SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\impl\isomonitor_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\impl\isorequestpgnhandler_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\impl\isorequestpgn_c.h
 # End Source File
 
 # Begin Source File
@@ -282,10 +266,6 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\imonitoritem_c.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\isystemmgmt_c.h
-# End Source File
-
-# Begin Source File
 SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Scheduler\impl\scheduler_c.h
 # End Source File
 
@@ -294,7 +274,7 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Scheduler\ischeduler_c.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\util\impl\devkey_c.h
+SOURCE=..\..\..\xgpl_src\IsoAgLib\util\impl\util_funcs.h
 # End Source File
 
 # Begin Source File
@@ -302,15 +282,11 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\util\impl\singleton_container_decl.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\util\impl\util_funcs.h
+SOURCE=..\..\..\xgpl_src\IsoAgLib\util\impl\singleton_container.h
 # End Source File
 
 # Begin Source File
 SOURCE=..\..\..\xgpl_src\IsoAgLib\util\impl\singleton.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\util\impl\singleton_container.h
 # End Source File
 
 # Begin Source File
@@ -334,7 +310,11 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\util\icancustomer_c.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\util\icanpkgext_c.h
+SOURCE=..\..\..\xgpl_src\IsoAgLib\util\config.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\util\compiler_adaptation.h
 # End Source File
 
 # Begin Source File
@@ -342,7 +322,7 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\util\icanpkg_c.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\util\iutil_funcs.h
+SOURCE=..\..\..\xgpl_src\IsoAgLib\util\icanpkgext_c.h
 # End Source File
 
 # Begin Source File
@@ -350,15 +330,7 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\util\liberr_c.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\util\idevkey_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\util\config.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\util\compiler_adaptation.h
+SOURCE=..\..\..\xgpl_src\IsoAgLib\util\iutil_funcs.h
 # End Source File
 
 # Begin Source File
@@ -398,7 +370,7 @@ SOURCE=..\..\..\xgpl_src\Application_Config\eeprom_adr.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\hal\pc\can\can_msq.h
+SOURCE=..\..\..\xgpl_src\IsoAgLib\hal\pc\can\hal_can_interface.h
 # End Source File
 
 # Begin Source File
@@ -410,11 +382,11 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\hal\pc\can\can_typedef.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\hal\pc\can\can_server.h
+SOURCE=..\..\..\xgpl_src\IsoAgLib\hal\pc\can\can_msq.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\hal\pc\can\hal_can_interface.h
+SOURCE=..\..\..\xgpl_src\IsoAgLib\hal\pc\can\can_server.h
 # End Source File
 
 # Begin Source File

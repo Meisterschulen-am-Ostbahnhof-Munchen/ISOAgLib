@@ -23,14 +23,12 @@
 // Decide if the CPU stores number variables in BIG or LITTLE endian byte order in memory.
 // Most CPU will use LITTLE ENDIAN. Only some types of ARM, mostly 68k and PowerPC CPU types will use big endian.
 // Please check the manual of your targret cpu. This setting is used to activate some quick number conversion algorithms,
-// which provide quick conversion from number variable to CAN strings ( which are always little endian in ISO and DIN ) - and other way.
+// which provide quick conversion from number variable to CAN strings ( which are always little endian in ISO ) - and other way.
 #define OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
 
 // #define OPTIMIZE_NUMBER_CONVERSIONS_FOR_BIG_ENDIAN
 
 // #define CONFIG_DO_NOT_START_RELAIS_ON_STARTUP
-
-#define SYSTEM_WITH_ENHANCED_CAN_HAL
 
 // Decide if HEAP allocation strategy shall reduce size about 5K to 10K in favour of speed
 // Strong Advice: Don't activate this, as long your target has not too tight memory restrictions

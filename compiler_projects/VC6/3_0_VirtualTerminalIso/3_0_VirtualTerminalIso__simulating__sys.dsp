@@ -85,10 +85,6 @@ LINK32=link.exe
 
 # PROP Default_Filter "cc;cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\impl\monitoritem_c.cpp
-# End Source File
-
-# Begin Source File
 SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\impl\identitem_c.cpp
 # End Source File
 
@@ -101,7 +97,7 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\impl\istate_c.cpp
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\impl\systemmgmt_c.cpp
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\impl\isosystempkg_c.cpp
 # End Source File
 
 # Begin Source File
@@ -109,7 +105,7 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\impl\isomonitor_c.cpp
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\impl\isosystempkg_c.cpp
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\impl\isorequestpgn_c.cpp
 # End Source File
 
 # Begin Source File
@@ -121,15 +117,11 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\impl\isoname_c.cpp
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\impl\isorequestpgn_c.cpp
-# End Source File
-
-# Begin Source File
 SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Scheduler\impl\scheduler_c.cpp
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\util\impl\cancustomer_c.cpp
+SOURCE=..\..\..\xgpl_src\IsoAgLib\util\impl\canpkgext_c.cpp
 # End Source File
 
 # Begin Source File
@@ -137,7 +129,7 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\util\impl\canpkg_c.cpp
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\util\impl\canpkgext_c.cpp
+SOURCE=..\..\..\xgpl_src\IsoAgLib\util\impl\cancustomer_c.cpp
 # End Source File
 
 # Begin Source File
@@ -157,11 +149,11 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\impl\multireceive_c.cpp
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\impl\multisend_c.cpp
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\impl\streamchunk_c.cpp
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\impl\streamchunk_c.cpp
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\impl\multisend_c.cpp
 # End Source File
 
 # Begin Source File
@@ -186,6 +178,14 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectworkingset_c.cp
 
 # Begin Source File
 SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectellipse_c.cpp
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectgraphicscontext_c.cpp
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtclientservercommunication_c.cpp
 # End Source File
 
 # Begin Source File
@@ -269,10 +269,6 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\isoterminalpkg_c.cpp
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectinput_c.cpp
-# End Source File
-
-# Begin Source File
 SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectfillattributes_c.cpp
 # End Source File
 
@@ -285,23 +281,7 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectlineattributes_
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectinputattributes_c.cpp
-# End Source File
-
-# Begin Source File
 SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectinputboolean_c.cpp
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectrectangle_c.cpp
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectcontainer_c.cpp
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectstring_c.cpp
 # End Source File
 
 # Begin Source File
@@ -309,7 +289,27 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectobjectpointer_c
 # End Source File
 
 # Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectrectangle_c.cpp
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtserverinstance_c.cpp
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectstring_c.cpp
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectinputattributes_c.cpp
+# End Source File
+
+# Begin Source File
 SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectoutputnumber_c.cpp
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectcontainer_c.cpp
 # End Source File
 
 # Begin Source File
@@ -318,18 +318,6 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectpolygon_c.cpp
 
 # Begin Source File
 SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectkey_c.cpp
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtclientservercommunication_c.cpp
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectgraphicscontext_c.cpp
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtserverinstance_c.cpp
 # End Source File
 
 # Begin Source File
@@ -394,10 +382,6 @@ SOURCE=..\..\..\IsoAgLib_Examples\tutorial\3_Terminal\3_0_VirtualTerminalIso\3_0
 
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\impl\systemmgmt_c.h
-# End Source File
-
-# Begin Source File
 SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\impl\baseitem_c.h
 # End Source File
 
@@ -410,7 +394,11 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\impl\identitem_c.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\impl\monitoritem_c.h
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\impl\isorequestpgnhandler_c.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\impl\isorequestpgn_c.h
 # End Source File
 
 # Begin Source File
@@ -427,14 +415,6 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\impl\isosystempkg_c.h
 
 # Begin Source File
 SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\impl\isomonitor_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\impl\isorequestpgnhandler_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\impl\isorequestpgn_c.h
 # End Source File
 
 # Begin Source File
@@ -462,10 +442,6 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\imonitoritem_c.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\isystemmgmt_c.h
-# End Source File
-
-# Begin Source File
 SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Scheduler\impl\scheduler_c.h
 # End Source File
 
@@ -474,7 +450,7 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Scheduler\ischeduler_c.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\util\impl\devkey_c.h
+SOURCE=..\..\..\xgpl_src\IsoAgLib\util\impl\util_funcs.h
 # End Source File
 
 # Begin Source File
@@ -482,15 +458,11 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\util\impl\singleton_container_decl.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\util\impl\util_funcs.h
+SOURCE=..\..\..\xgpl_src\IsoAgLib\util\impl\singleton_container.h
 # End Source File
 
 # Begin Source File
 SOURCE=..\..\..\xgpl_src\IsoAgLib\util\impl\singleton.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\util\impl\singleton_container.h
 # End Source File
 
 # Begin Source File
@@ -514,7 +486,11 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\util\icancustomer_c.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\util\icanpkgext_c.h
+SOURCE=..\..\..\xgpl_src\IsoAgLib\util\config.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\util\compiler_adaptation.h
 # End Source File
 
 # Begin Source File
@@ -522,7 +498,7 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\util\icanpkg_c.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\util\iutil_funcs.h
+SOURCE=..\..\..\xgpl_src\IsoAgLib\util\icanpkgext_c.h
 # End Source File
 
 # Begin Source File
@@ -530,15 +506,7 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\util\liberr_c.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\util\idevkey_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\util\config.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\util\compiler_adaptation.h
+SOURCE=..\..\..\xgpl_src\IsoAgLib\util\iutil_funcs.h
 # End Source File
 
 # Begin Source File
@@ -554,6 +522,10 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\hal\config.h
 # End Source File
 
 # Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\impl\multireceive_c.h
+# End Source File
+
+# Begin Source File
 SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\impl\chunk_c.h
 # End Source File
 
@@ -562,15 +534,7 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\impl\stream_c.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\impl\multireceive_c.h
-# End Source File
-
-# Begin Source File
 SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\impl\multisend_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\impl\streamchunk_c.h
 # End Source File
 
 # Begin Source File
@@ -578,15 +542,19 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\impl\multisendpkg_c.h
 # End Source File
 
 # Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\impl\streamchunk_c.h
+# End Source File
+
+# Begin Source File
 SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\imultisend_c.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\istream_c.h
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\imultisendstreamer_c.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\imultisendstreamer_c.h
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\istream_c.h
 # End Source File
 
 # Begin Source File
@@ -610,10 +578,6 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\isoterminalpkg_c.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vttypes.h
-# End Source File
-
-# Begin Source File
 SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectfillattributes_c.h
 # End Source File
 
@@ -622,7 +586,7 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectinputboolean_c.
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectinput_c.h
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vttypes.h
 # End Source File
 
 # Begin Source File
@@ -654,6 +618,10 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectellipse_c.h
 # End Source File
 
 # Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectgraphicscontext_c.h
+# End Source File
+
+# Begin Source File
 SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectpicturegraphic_c.h
 # End Source File
 
@@ -679,6 +647,10 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectlineattributes_
 
 # Begin Source File
 SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectrectangle_c.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtserverinstance_c.h
 # End Source File
 
 # Begin Source File
@@ -722,11 +694,11 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectauxiliaryinput_
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectworkingset_c.h
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectarchedbargraph_c.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectarchedbargraph_c.h
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectworkingset_c.h
 # End Source File
 
 # Begin Source File
@@ -738,23 +710,11 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectmacro_c.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectauxiliaryfunction_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtserverinstance_c.h
-# End Source File
-
-# Begin Source File
 SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtclientservercommunication_c.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectgraphicscontext_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtobjectinput_c.h
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectauxiliaryfunction_c.h
 # End Source File
 
 # Begin Source File
@@ -894,6 +854,10 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtobjectmacro_c.h
 # End Source File
 
 # Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtobjectgraphicscontext_c.h
+# End Source File
+
+# Begin Source File
 SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtobjectstring_c.h
 # End Source File
 
@@ -910,7 +874,7 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtobjectbutton_c.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtobjectgraphicscontext_c.h
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtclientservercommunication_c.h
 # End Source File
 
 # Begin Source File
@@ -922,7 +886,7 @@ SOURCE=..\..\..\xgpl_src\Application_Config\eeprom_adr.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\hal\pc\can\can_msq.h
+SOURCE=..\..\..\xgpl_src\IsoAgLib\hal\pc\can\hal_can_interface.h
 # End Source File
 
 # Begin Source File
@@ -934,11 +898,11 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\hal\pc\can\can_typedef.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\hal\pc\can\can_server.h
+SOURCE=..\..\..\xgpl_src\IsoAgLib\hal\pc\can\can_msq.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\hal\pc\can\hal_can_interface.h
+SOURCE=..\..\..\xgpl_src\IsoAgLib\hal\pc\can\can_server.h
 # End Source File
 
 # Begin Source File

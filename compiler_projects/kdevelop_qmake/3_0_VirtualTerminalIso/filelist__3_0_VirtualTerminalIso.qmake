@@ -181,6 +181,7 @@ HEADERS += ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectstring_c.h
 HEADERS += ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectalarmmask_c.h
 HEADERS += ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectoutputnumber_c.h
 HEADERS += ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectbutton_c.h
+HEADERS += ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtclientservercommunication_c.h
 HEADERS += ../../../xgpl_src/IsoAgLib/typedef.h
 SOURCES += ../../../xgpl_src/IsoAgLib/hal/pc/can/msq_helper.cpp
 SOURCES += ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_client.cpp

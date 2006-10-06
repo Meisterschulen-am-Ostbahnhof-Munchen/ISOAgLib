@@ -1,7 +1,7 @@
 [Project]
 FileName=2_6_LocalWriteSetpointSimpleSetpointIso__simulating__simulating.dev
 Name=2_6_LocalWriteSetpointSimpleSetpointIso
-UnitCount=138
+UnitCount=132
 Type=1
 Ver=1
 ObjFiles=
@@ -48,16 +48,6 @@ ProductVersion=
 AutoIncBuildNr=0
 
 [Unit1]
-FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.cpp
-CompileCpp=1
-Folder=2_6_LocalWriteSetpointSimpleSetpointIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit2]
 FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -67,7 +57,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit3]
+[Unit2]
 FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.cpp
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -77,7 +67,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit4]
+[Unit3]
 FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.cpp
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -87,27 +77,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit5]
-FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/systemmgmt_c.cpp
-CompileCpp=1
-Folder=2_6_LocalWriteSetpointSimpleSetpointIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit6]
-FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.cpp
-CompileCpp=1
-Folder=2_6_LocalWriteSetpointSimpleSetpointIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit7]
+[Unit4]
 FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.cpp
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -117,8 +87,8 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit8]
-FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.cpp
+[Unit5]
+FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.cpp
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
 Compile=1
@@ -127,17 +97,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit9]
-FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.cpp
-CompileCpp=1
-Folder=2_6_LocalWriteSetpointSimpleSetpointIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit10]
+[Unit6]
 FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.cpp
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -147,8 +107,48 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit11]
+[Unit7]
+FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.cpp
+CompileCpp=1
+Folder=2_6_LocalWriteSetpointSimpleSetpointIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit8]
+FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.cpp
+CompileCpp=1
+Folder=2_6_LocalWriteSetpointSimpleSetpointIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit9]
 FileName=../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.cpp
+CompileCpp=1
+Folder=2_6_LocalWriteSetpointSimpleSetpointIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit10]
+FileName=../../../xgpl_src/IsoAgLib/util/impl/canpkgext_c.cpp
+CompileCpp=1
+Folder=2_6_LocalWriteSetpointSimpleSetpointIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit11]
+FileName=../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
 Compile=1
@@ -168,26 +168,6 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit13]
-FileName=../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
-CompileCpp=1
-Folder=2_6_LocalWriteSetpointSimpleSetpointIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit14]
-FileName=../../../xgpl_src/IsoAgLib/util/impl/canpkgext_c.cpp
-CompileCpp=1
-Folder=2_6_LocalWriteSetpointSimpleSetpointIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit15]
 FileName=../../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -197,7 +177,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit16]
+[Unit14]
 FileName=../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -207,7 +187,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit17]
+[Unit15]
 FileName=../../../xgpl_src/IsoAgLib/comm/Process/impl/generalcommand_c.cpp
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -217,7 +197,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit18]
+[Unit16]
 FileName=../../../xgpl_src/IsoAgLib/comm/Process/impl/process_c.cpp
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -227,7 +207,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit19]
+[Unit17]
 FileName=../../../xgpl_src/IsoAgLib/comm/Process/impl/processpkg_c.cpp
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -237,7 +217,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit20]
+[Unit18]
 FileName=../../../xgpl_src/IsoAgLib/comm/Process/impl/devpropertyhandler_c.cpp
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -247,7 +227,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit21]
+[Unit19]
 FileName=../../../xgpl_src/IsoAgLib/comm/Process/impl/processelementbase_c.cpp
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -257,7 +237,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit22]
+[Unit20]
 FileName=../../../xgpl_src/IsoAgLib/comm/Process/impl/procident_c.cpp
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -267,7 +247,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit23]
+[Unit21]
 FileName=../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.cpp
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -277,7 +257,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit24]
+[Unit22]
 FileName=../../../xgpl_src/IsoAgLib/comm/Process/StdMeasureElements/impl/measureprogbase_c.cpp
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -287,7 +267,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit25]
+[Unit23]
 FileName=../../../xgpl_src/IsoAgLib/comm/Process/StdMeasureElements/impl/measuresubprog_c.cpp
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -297,7 +277,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit26]
+[Unit24]
 FileName=../../../xgpl_src/IsoAgLib/comm/Process/Local/SimpleSetpoint/impl/procdatalocalsimplesetpoint_c.cpp
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -307,7 +287,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit27]
+[Unit25]
 FileName=../../../xgpl_src/IsoAgLib/comm/Process/Local/impl/procdatalocalbase_c.cpp
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -317,7 +297,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit28]
+[Unit26]
 FileName=../../../xgpl_src/IsoAgLib/comm/Process/Local/StdMeasureElements/impl/managemeasureproglocal_c.cpp
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -327,7 +307,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit29]
+[Unit27]
 FileName=../../../xgpl_src/IsoAgLib/comm/Process/Local/StdMeasureElements/impl/measureproglocal_c.cpp
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -337,7 +317,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit30]
+[Unit28]
 FileName=../../../xgpl_src/IsoAgLib/comm/Process/Local/SimpleSetpointElements/impl/simplemanagesetpointlocal_c.cpp
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -347,7 +327,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit31]
+[Unit29]
 FileName=../../../xgpl_src/IsoAgLib/comm/Process/processdatachangehandler_c.cpp
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -357,7 +337,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit32]
+[Unit30]
 FileName=../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multireceive_c.cpp
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -367,17 +347,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit33]
-FileName=../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisend_c.cpp
-CompileCpp=1
-Folder=2_6_LocalWriteSetpointSimpleSetpointIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit34]
+[Unit31]
 FileName=../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamchunk_c.cpp
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -387,7 +357,17 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit35]
+[Unit32]
+FileName=../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisend_c.cpp
+CompileCpp=1
+Folder=2_6_LocalWriteSetpointSimpleSetpointIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit33]
 FileName=../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendpkg_c.cpp
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -397,7 +377,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit36]
+[Unit34]
 FileName=../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/chunk_c.cpp
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -407,7 +387,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit37]
+[Unit35]
 FileName=../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/stream_c.cpp
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -417,7 +397,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit38]
+[Unit36]
 FileName=../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_simulating.cpp
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -427,7 +407,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit39]
+[Unit37]
 FileName=../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -437,7 +417,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit40]
+[Unit38]
 FileName=../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -447,7 +427,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit41]
+[Unit39]
 FileName=../../../xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -457,7 +437,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit42]
+[Unit40]
 FileName=../../../xgpl_src/IsoAgLib/driver/can/impl/msgobj_c.cpp
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -467,7 +447,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit43]
+[Unit41]
 FileName=../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -477,7 +457,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit44]
+[Unit42]
 FileName=../../../xgpl_src/IsoAgLib/driver/can/impl/canio_c.cpp
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -487,7 +467,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit45]
+[Unit43]
 FileName=../../../xgpl_src/IsoAgLib/driver/system/impl/system_c.cpp
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -497,7 +477,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit46]
+[Unit44]
 FileName=../../../IsoAgLib_Examples/tutorial/2_ProcessData/2_6_LocalWriteSetpointSimpleSetpointIso/2_6_LocalWriteSetpointSimpleSetpointIso.cpp
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -507,17 +487,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit47]
-FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/systemmgmt_c.h
-CompileCpp=1
-Folder=2_6_LocalWriteSetpointSimpleSetpointIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit48]
+[Unit45]
 FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.h
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -527,7 +497,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit49]
+[Unit46]
 FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.h
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -537,7 +507,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit50]
+[Unit47]
 FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -547,57 +517,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit51]
-FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.h
-CompileCpp=1
-Folder=2_6_LocalWriteSetpointSimpleSetpointIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit52]
-FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.h
-CompileCpp=1
-Folder=2_6_LocalWriteSetpointSimpleSetpointIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit53]
-FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h
-CompileCpp=1
-Folder=2_6_LocalWriteSetpointSimpleSetpointIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit54]
-FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.h
-CompileCpp=1
-Folder=2_6_LocalWriteSetpointSimpleSetpointIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit55]
-FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h
-CompileCpp=1
-Folder=2_6_LocalWriteSetpointSimpleSetpointIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit56]
+[Unit48]
 FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgnhandler_c.h
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -607,7 +527,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit57]
+[Unit49]
 FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.h
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -617,7 +537,47 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit58]
+[Unit50]
+FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.h
+CompileCpp=1
+Folder=2_6_LocalWriteSetpointSimpleSetpointIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit51]
+FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h
+CompileCpp=1
+Folder=2_6_LocalWriteSetpointSimpleSetpointIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit52]
+FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.h
+CompileCpp=1
+Folder=2_6_LocalWriteSetpointSimpleSetpointIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit53]
+FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h
+CompileCpp=1
+Folder=2_6_LocalWriteSetpointSimpleSetpointIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit54]
 FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -627,7 +587,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit59]
+[Unit55]
 FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoitem_c.h
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -637,7 +597,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit60]
+[Unit56]
 FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -647,7 +607,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit61]
+[Unit57]
 FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/iidentitem_c.h
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -657,7 +617,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit62]
+[Unit58]
 FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/istate_c.h
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -667,7 +627,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit63]
+[Unit59]
 FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/imonitoritem_c.h
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -677,17 +637,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit64]
-FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/isystemmgmt_c.h
-CompileCpp=1
-Folder=2_6_LocalWriteSetpointSimpleSetpointIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit65]
+[Unit60]
 FileName=../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.h
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -697,7 +647,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit66]
+[Unit61]
 FileName=../../../xgpl_src/IsoAgLib/comm/Scheduler/ischeduler_c.h
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -707,27 +657,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit67]
-FileName=../../../xgpl_src/IsoAgLib/util/impl/devkey_c.h
-CompileCpp=1
-Folder=2_6_LocalWriteSetpointSimpleSetpointIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit68]
-FileName=../../../xgpl_src/IsoAgLib/util/impl/singleton_container_decl.h
-CompileCpp=1
-Folder=2_6_LocalWriteSetpointSimpleSetpointIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit69]
+[Unit62]
 FileName=../../../xgpl_src/IsoAgLib/util/impl/util_funcs.h
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -737,8 +667,8 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit70]
-FileName=../../../xgpl_src/IsoAgLib/util/impl/singleton.h
+[Unit63]
+FileName=../../../xgpl_src/IsoAgLib/util/impl/singleton_container_decl.h
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
 Compile=1
@@ -747,7 +677,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit71]
+[Unit64]
 FileName=../../../xgpl_src/IsoAgLib/util/impl/singleton_container.h
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -757,7 +687,17 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit72]
+[Unit65]
+FileName=../../../xgpl_src/IsoAgLib/util/impl/singleton.h
+CompileCpp=1
+Folder=2_6_LocalWriteSetpointSimpleSetpointIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit66]
 FileName=../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.h
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -767,7 +707,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit73]
+[Unit67]
 FileName=../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.h
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -777,7 +717,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit74]
+[Unit68]
 FileName=../../../xgpl_src/IsoAgLib/util/impl/canpkgext_c.h
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -787,7 +727,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit75]
+[Unit69]
 FileName=../../../xgpl_src/IsoAgLib/util/impl/elementbase_c.h
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -797,7 +737,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit76]
+[Unit70]
 FileName=../../../xgpl_src/IsoAgLib/util/icancustomer_c.h
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -807,57 +747,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit77]
-FileName=../../../xgpl_src/IsoAgLib/util/icanpkgext_c.h
-CompileCpp=1
-Folder=2_6_LocalWriteSetpointSimpleSetpointIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit78]
-FileName=../../../xgpl_src/IsoAgLib/util/icanpkg_c.h
-CompileCpp=1
-Folder=2_6_LocalWriteSetpointSimpleSetpointIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit79]
-FileName=../../../xgpl_src/IsoAgLib/util/iutil_funcs.h
-CompileCpp=1
-Folder=2_6_LocalWriteSetpointSimpleSetpointIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit80]
-FileName=../../../xgpl_src/IsoAgLib/util/liberr_c.h
-CompileCpp=1
-Folder=2_6_LocalWriteSetpointSimpleSetpointIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit81]
-FileName=../../../xgpl_src/IsoAgLib/util/idevkey_c.h
-CompileCpp=1
-Folder=2_6_LocalWriteSetpointSimpleSetpointIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit82]
+[Unit71]
 FileName=../../../xgpl_src/IsoAgLib/util/config.h
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -867,7 +757,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit83]
+[Unit72]
 FileName=../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -877,7 +767,47 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit84]
+[Unit73]
+FileName=../../../xgpl_src/IsoAgLib/util/icanpkg_c.h
+CompileCpp=1
+Folder=2_6_LocalWriteSetpointSimpleSetpointIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit74]
+FileName=../../../xgpl_src/IsoAgLib/util/icanpkgext_c.h
+CompileCpp=1
+Folder=2_6_LocalWriteSetpointSimpleSetpointIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit75]
+FileName=../../../xgpl_src/IsoAgLib/util/liberr_c.h
+CompileCpp=1
+Folder=2_6_LocalWriteSetpointSimpleSetpointIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit76]
+FileName=../../../xgpl_src/IsoAgLib/util/iutil_funcs.h
+CompileCpp=1
+Folder=2_6_LocalWriteSetpointSimpleSetpointIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit77]
 FileName=../../../xgpl_src/IsoAgLib/comm/Process/impl/procident_c.h
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -887,7 +817,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit85]
+[Unit78]
 FileName=../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.h
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -897,7 +827,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit86]
+[Unit79]
 FileName=../../../xgpl_src/IsoAgLib/comm/Process/impl/proc_c.h
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -907,7 +837,17 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit87]
+[Unit80]
+FileName=../../../xgpl_src/IsoAgLib/comm/Process/impl/processwsmtaskmsghandler_c.h
+CompileCpp=1
+Folder=2_6_LocalWriteSetpointSimpleSetpointIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit81]
 FileName=../../../xgpl_src/IsoAgLib/comm/Process/impl/generalcommand_c.h
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -917,7 +857,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit88]
+[Unit82]
 FileName=../../../xgpl_src/IsoAgLib/comm/Process/impl/process_c.h
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -927,7 +867,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit89]
+[Unit83]
 FileName=../../../xgpl_src/IsoAgLib/comm/Process/impl/processpkg_c.h
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -937,7 +877,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit90]
+[Unit84]
 FileName=../../../xgpl_src/IsoAgLib/comm/Process/impl/devpropertyhandler_c.h
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -947,7 +887,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit91]
+[Unit85]
 FileName=../../../xgpl_src/IsoAgLib/comm/Process/impl/processelementbase_c.h
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -957,7 +897,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit92]
+[Unit86]
 FileName=../../../xgpl_src/IsoAgLib/comm/Process/StdMeasureElements/impl/measuresubprog_c.h
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -967,7 +907,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit93]
+[Unit87]
 FileName=../../../xgpl_src/IsoAgLib/comm/Process/StdMeasureElements/impl/measureprogbase_c.h
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -977,7 +917,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit94]
+[Unit88]
 FileName=../../../xgpl_src/IsoAgLib/comm/Process/Local/SimpleSetpoint/impl/procdatalocalsimplesetpoint_c.h
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -987,7 +927,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit95]
+[Unit89]
 FileName=../../../xgpl_src/IsoAgLib/comm/Process/Local/SimpleSetpoint/iprocdatalocalsimplesetpoint_c.h
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -997,7 +937,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit96]
+[Unit90]
 FileName=../../../xgpl_src/IsoAgLib/comm/Process/Local/impl/procdatalocalbase_c.h
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -1007,7 +947,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit97]
+[Unit91]
 FileName=../../../xgpl_src/IsoAgLib/comm/Process/Local/StdMeasureElements/impl/managemeasureproglocal_c.h
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -1017,7 +957,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit98]
+[Unit92]
 FileName=../../../xgpl_src/IsoAgLib/comm/Process/Local/StdMeasureElements/impl/measureproglocal_c.h
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -1027,7 +967,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit99]
+[Unit93]
 FileName=../../../xgpl_src/IsoAgLib/comm/Process/Local/StdMeasureElements/imeasureproglocal_c.h
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -1037,7 +977,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit100]
+[Unit94]
 FileName=../../../xgpl_src/IsoAgLib/comm/Process/Local/SimpleSetpointElements/impl/simplemanagesetpointlocal_c.h
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -1047,7 +987,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit101]
+[Unit95]
 FileName=../../../xgpl_src/IsoAgLib/comm/Process/Local/SimpleSetpointElements/isimplemanagesetpointlocal_c.h
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -1057,7 +997,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit102]
+[Unit96]
 FileName=../../../xgpl_src/IsoAgLib/comm/Process/iprocess_c.h
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -1067,17 +1007,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit103]
-FileName=../../../xgpl_src/IsoAgLib/comm/Process/processdatachangehandler_c.h
-CompileCpp=1
-Folder=2_6_LocalWriteSetpointSimpleSetpointIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit104]
+[Unit97]
 FileName=../../../xgpl_src/IsoAgLib/comm/Process/proc_c.h
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -1087,7 +1017,17 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit105]
+[Unit98]
+FileName=../../../xgpl_src/IsoAgLib/comm/Process/processdatachangehandler_c.h
+CompileCpp=1
+Folder=2_6_LocalWriteSetpointSimpleSetpointIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit99]
 FileName=../../../xgpl_src/Application_Config/isoaglib_config.h
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -1097,7 +1037,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit106]
+[Unit100]
 FileName=../../../xgpl_src/IsoAgLib/hal/pc/typedef.h
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -1107,7 +1047,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit107]
+[Unit101]
 FileName=../../../xgpl_src/IsoAgLib/hal/config.h
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -1117,27 +1057,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit108]
-FileName=../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/chunk_c.h
-CompileCpp=1
-Folder=2_6_LocalWriteSetpointSimpleSetpointIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit109]
-FileName=../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/stream_c.h
-CompileCpp=1
-Folder=2_6_LocalWriteSetpointSimpleSetpointIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit110]
+[Unit102]
 FileName=../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multireceive_c.h
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -1147,7 +1067,27 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit111]
+[Unit103]
+FileName=../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/chunk_c.h
+CompileCpp=1
+Folder=2_6_LocalWriteSetpointSimpleSetpointIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit104]
+FileName=../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/stream_c.h
+CompileCpp=1
+Folder=2_6_LocalWriteSetpointSimpleSetpointIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit105]
 FileName=../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisend_c.h
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -1157,17 +1097,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit112]
-FileName=../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamchunk_c.h
-CompileCpp=1
-Folder=2_6_LocalWriteSetpointSimpleSetpointIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit113]
+[Unit106]
 FileName=../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendpkg_c.h
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -1177,7 +1107,17 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit114]
+[Unit107]
+FileName=../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamchunk_c.h
+CompileCpp=1
+Folder=2_6_LocalWriteSetpointSimpleSetpointIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit108]
 FileName=../../../xgpl_src/IsoAgLib/comm/Multipacket/imultisend_c.h
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -1187,17 +1127,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit115]
-FileName=../../../xgpl_src/IsoAgLib/comm/Multipacket/istream_c.h
-CompileCpp=1
-Folder=2_6_LocalWriteSetpointSimpleSetpointIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit116]
+[Unit109]
 FileName=../../../xgpl_src/IsoAgLib/comm/Multipacket/imultisendstreamer_c.h
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -1207,7 +1137,17 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit117]
+[Unit110]
+FileName=../../../xgpl_src/IsoAgLib/comm/Multipacket/istream_c.h
+CompileCpp=1
+Folder=2_6_LocalWriteSetpointSimpleSetpointIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit111]
 FileName=../../../xgpl_src/IsoAgLib/comm/Multipacket/imultireceive_c.h
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -1217,7 +1157,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit118]
+[Unit112]
 FileName=../../../xgpl_src/IsoAgLib/typedef.h
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -1227,47 +1167,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit119]
-FileName=../../../xgpl_src/IsoAgLib/hal/pc/can/can_msq.h
-CompileCpp=1
-Folder=2_6_LocalWriteSetpointSimpleSetpointIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit120]
-FileName=../../../xgpl_src/IsoAgLib/hal/pc/can/can.h
-CompileCpp=1
-Folder=2_6_LocalWriteSetpointSimpleSetpointIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit121]
-FileName=../../../xgpl_src/IsoAgLib/hal/pc/can/can_typedef.h
-CompileCpp=1
-Folder=2_6_LocalWriteSetpointSimpleSetpointIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit122]
-FileName=../../../xgpl_src/IsoAgLib/hal/pc/can/can_server.h
-CompileCpp=1
-Folder=2_6_LocalWriteSetpointSimpleSetpointIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit123]
+[Unit113]
 FileName=../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.h
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -1277,7 +1177,47 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit124]
+[Unit114]
+FileName=../../../xgpl_src/IsoAgLib/hal/pc/can/can.h
+CompileCpp=1
+Folder=2_6_LocalWriteSetpointSimpleSetpointIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit115]
+FileName=../../../xgpl_src/IsoAgLib/hal/pc/can/can_typedef.h
+CompileCpp=1
+Folder=2_6_LocalWriteSetpointSimpleSetpointIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit116]
+FileName=../../../xgpl_src/IsoAgLib/hal/pc/can/can_msq.h
+CompileCpp=1
+Folder=2_6_LocalWriteSetpointSimpleSetpointIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit117]
+FileName=../../../xgpl_src/IsoAgLib/hal/pc/can/can_server.h
+CompileCpp=1
+Folder=2_6_LocalWriteSetpointSimpleSetpointIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit118]
 FileName=../../../xgpl_src/IsoAgLib/hal/pc/can/can_target_extensions.h
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -1287,7 +1227,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit125]
+[Unit119]
 FileName=../../../xgpl_src/IsoAgLib/hal/pc/system/system.h
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -1297,7 +1237,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit126]
+[Unit120]
 FileName=../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.h
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -1307,7 +1247,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit127]
+[Unit121]
 FileName=../../../xgpl_src/IsoAgLib/hal/pc/config.h
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -1317,7 +1257,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit128]
+[Unit122]
 FileName=../../../xgpl_src/IsoAgLib/hal/pc/errcodes.h
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -1327,7 +1267,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit129]
+[Unit123]
 FileName=../../../xgpl_src/IsoAgLib/hal/can.h
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -1337,7 +1277,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit130]
+[Unit124]
 FileName=../../../xgpl_src/IsoAgLib/hal/system.h
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -1347,7 +1287,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit131]
+[Unit125]
 FileName=../../../xgpl_src/IsoAgLib/driver/can/impl/canio_c.h
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -1357,7 +1297,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit132]
+[Unit126]
 FileName=../../../xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.h
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -1367,7 +1307,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit133]
+[Unit127]
 FileName=../../../xgpl_src/IsoAgLib/driver/can/impl/msgobj_c.h
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -1377,7 +1317,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit134]
+[Unit128]
 FileName=../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.h
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -1387,7 +1327,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit135]
+[Unit129]
 FileName=../../../xgpl_src/IsoAgLib/driver/can/iident_c.h
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -1397,7 +1337,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit136]
+[Unit130]
 FileName=../../../xgpl_src/IsoAgLib/driver/can/icanio_c.h
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -1407,7 +1347,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit137]
+[Unit131]
 FileName=../../../xgpl_src/IsoAgLib/driver/system/impl/system_c.h
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
@@ -1417,7 +1357,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit138]
+[Unit132]
 FileName=../../../xgpl_src/IsoAgLib/driver/system/isystem_c.h
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
