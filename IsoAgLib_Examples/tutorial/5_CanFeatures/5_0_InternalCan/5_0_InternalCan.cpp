@@ -202,12 +202,20 @@
 #include <IsoAgLib/comm/SystemMgmt/iidentitem_c.h>
 #include <IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h>
 
-
 // the interface objects of the IsoAgLib are placed in the IsoAgLibAll namespace
 // -> include all elements of this area for easy access
 // with this command the text part "IsoAgLib::" can be avoided, which
 // is needed for the documentation generator
 using namespace IsoAgLib;
+
+// Start address claim of the local identity/member
+iIdentItem_c c_myIdent (2,     // rui8_indGroup
+                        2,     // rui8_devClass
+                        0,     // rui8_devClassInst
+                        25,    // rb_func
+                        0x7FF, // rui16_manufCode
+                        27);   // rui32_serNo
+                        // further parameters use the default values as given in the constructor
 
 /**
   define class for decode/encode of propietary CAN messages
@@ -260,10 +268,6 @@ class MyInternalPkg_c : public IsoAgLib::iCANPkgExt_c
 };
 
 
-// variable for DEV_KEY ( device type, device type instance )
-// default with primary cultivation mounted back ( device type 2, -instance 0 )
-IsoAgLib::iISOName_c myISOName( 2, 0 );
-
 /**
   Operation: flags2String
   Called on each CAN send from IsoAgLib base functions.
@@ -279,11 +283,11 @@ void MyInternalPkg_c::flags2String()
   switch ( ui16_flag1 )
   {
     case 0:
-      if ( IsoAgLib::getIisoMonitorInstance().existIsoMemberISOName( myISOName, true ) )
+      if (c_myIdent.isClaimedAddress())
       { // local ident has already claimed address
         // just place some data which is retrieved in standardized manner
-        pb_data[6] = getIisoMonitorInstance().isoMemberISOName( myISOName ).nr();
-        pb_data[7] = ( ( IsoAgLib::iSystem_c::getTime() / 1000 ) % 0xFF );
+        setUint8Data (6, c_myIdent.getIsoItem()->nr());
+        setUint8Data (7, ( IsoAgLib::iSystem_c::getTime() / 1000 ) % 0xFF );
         // set len and ident
         setLen( 8 );
         setIdent( MASK_TYPE( 0xAFFE ), IsoAgLib::iIdent_c::ExtendedIdent );
@@ -291,7 +295,7 @@ void MyInternalPkg_c::flags2String()
       else
       { // local ident has not yet claimed address
         // just place some data which is retrieved in standardized manner
-        pb_data[6] = 0xFF;
+        setUint8Data (6, 0xFF);
         // set len and ident
         setLen( 7 );
         setIdent( MASK_TYPE( 0xABBA ), IsoAgLib::iIdent_c::ExtendedIdent );
@@ -315,16 +319,16 @@ void MyInternalPkg_c::string2Flags()
   if ( identType() == IsoAgLib::iIdent_c::StandardIdent )
   {
     ui16_flag1 = ( ident() & 0xFFFF );
-    ui16_flag2 = ( ( pb_data[0] * pb_data[1] ) & 0xFFFF );
+    ui16_flag2 = ( ( getUint8Data(0) * getUint8Data(1) ) & 0xFFFF );
   }
   else
   {
-    if ( pb_data[5] != 0 ) ui16_flag1 = ( ( ident() & 0xFFFF ) / pb_data[5] );
+    if ( getUint8Data(5) != 0 ) ui16_flag1 = ( ( ident() & 0xFFFF ) / getUint8Data(5) );
     else ui16_flag1 = ( ident() & 0xFFFF );
     // use helper function to read uint16_t value starting from Byte2 ( start count with [0..n] )
     ui16_flag2 = getUint16Data( 2 );
   }
-  ui16_flag3 = pb_data[4];
+  ui16_flag3 = getUint8Data(4);
 }
 
 /** individual dummy function to set flag data */
@@ -357,7 +361,7 @@ class MyInternalCanHandler_c : public IsoAgLib::iCANCustomer_c
     before processMsg() is executed -> processMsg() can immediately work on the
     received data
   */
-  virtual IsoAgLib::iCANPkgExt_c& dataBase();
+  virtual IsoAgLib::iCANPkgExt_c& iDataBase();
   /** perform dummy send */
   void doSendTest( uint16_t rui16_flag1, uint16_t rui16_flag2, uint16_t rui16_flag3 );
   /** just make compiler happy */
@@ -415,7 +419,7 @@ bool MyInternalCanHandler_c::processMsg()
   before processMsg() is executed -> processMsg() can immediately work on the
   received data
 */
-IsoAgLib::iCANPkgExt_c& MyInternalCanHandler_c::dataBase()
+IsoAgLib::iCANPkgExt_c& MyInternalCanHandler_c::iDataBase()
 {
   return c_myData;
 }
@@ -432,29 +436,12 @@ MyInternalCanHandler_c::~MyInternalCanHandler_c(){}
 
 
 int main()
-{ // Initialize the CAN BUS at channel 0 to 250 kbaud
-  getIcanInstance().init( 0, 250 ); // getIcanInstance() <==> getIcanInstance( 0 )
+{
+  // Initialize CAN-Bus
+  getIcanInstance().init (0); // CAN-Bus 0 (with defaulting 250 kbit)
 
   // create object for handling of internal CAN data
   MyInternalCanHandler_c c_myDataHandler;
-
-  // define the ISO 11783 specific identity settings
-  // for the 64bit NAME field
-  bool b_selfConf = true;
-  uint8_t ui8_indGroup = 2,
-      b_func = 25,
-      b_wantedSa = 128,
-      b_funcInst = 0,
-      b_ecuInst = 0;
-  uint16_t ui16_manufCode = 0x7FF;
-  uint32_t ui32_serNo = 27;
-
-  // start address claim of the local member
-  // if DEV_KEY ( device type, -instance ) conflicts forces change of POS/instance, the
-  // IsoAgLib can change the myISOName val through the pointer to myISOName
-  IsoAgLib::iIdentItem_c c_myIdent( &myISOName,
-      b_selfConf, ui8_indGroup, b_func, ui16_manufCode,
-      ui32_serNo, b_wantedSa, 0xFFFF, b_funcInst, b_ecuInst);
 
   /** IMPORTANT:
     - The following loop could be replaced of any repeating call of

@@ -500,51 +500,39 @@ int16_t localGetOutputShaft(int16_t t_val) { return ( t_val % 8032 ); }
 #endif
 
 int main()
-{ // init CAN channel with 250kBaud at channel 0 ( count starts with 0 )
-  getIcanInstance().init( 0, 250 );
-  // variable for DEV_KEY
-  // default with primary cultivation mounted back
-  IsoAgLib::iISOName_c myISOName( 2, 0 );
+{
+  // Initialize CAN-Bus
+  getIcanInstance().init (0); // CAN-Bus 0 (with defaulting 250 kbit)
 
-  // start address claim of the local member "IMI"
-  // if DEV_KEY conflicts forces change of device class instance, the
-  // IsoAgLib can change the myISOName val through the pointer to myISOName
-  bool b_selfConf = true;
-  uint8_t ui8_indGroup = 2,
-      b_func = 25,
-      b_wantedSa = 128,
-      b_funcInst = 0,
-      b_ecuInst = 0;
-  uint16_t ui16_manufCode = 0x7FF;
-  uint32_t ui32_serNo = 27;
-
-  // start address claim of the local member "IMI"
-  // if DEV_KEY conflicts forces change of device class instance, the
-  // IsoAgLib can change the myISOName val through the pointer to myISOName
-  IsoAgLib::iIdentItem_c c_myIdent( &myISOName,
-      b_selfConf, ui8_indGroup, b_func, ui16_manufCode,
-      ui32_serNo, b_wantedSa, 0xFFFF, b_funcInst, b_ecuInst);
+  // Start address claim of the local identity/member
+  IsoAgLib::iIdentItem_c c_myIdent (2,     // rui8_indGroup
+                                    2,     // rui8_devClass
+                                    0,     // rui8_devClassInst
+                                    25,    // rb_func
+                                    0x7FF, // rui16_manufCode
+                                    27);   // rui32_serNo
+                                    // further parameters use the default values as given in the constructor
 
   #ifdef TEST_TRACTOR_LIGHTING
   // configure to send information for lighting on BUS
-  getITracLightInstance().config(&myISOName, IsoAgLib::IdentModeImplement);
+  getITracLightInstance().config(&c_myIdent.isoName(), IsoAgLib::IdentModeImplement);
   #endif
 
   #ifdef TEST_TRACPTOSETPOINT
   //pto set point commands are send from implement!!
-  getITracPtoSetPointInstance().config(&myISOName, IsoAgLib::IdentModeImplement);
+  getITracPtoSetPointInstance().config(&c_myIdent.isoName(), IsoAgLib::IdentModeImplement);
   #endif
 
   #ifdef TEST_TRACAUX
-  getITracAuxInstance().config(&myISOName, IsoAgLib::IdentModeImplement);
+  getITracAuxInstance().config(&c_myIdent.isoName(), IsoAgLib::IdentModeImplement);
   #endif
 
   #ifdef TEST_TRACGUIDANCE
-  getITracGuidanceCommandInstance().config(&myISOName, IsoAgLib::IdentModeImplement);
+  getITracGuidanceCommandInstance().config(&c_myIdent.isoName(), IsoAgLib::IdentModeImplement);
   #endif
 
   #ifdef TEST_TRACMOVESETPOINT
-  getITracMoveSetPointInstance().config(&myISOName, IsoAgLib::IdentModeImplement);
+  getITracMoveSetPointInstance().config(&c_myIdent.isoName(), IsoAgLib::IdentModeImplement);
   #endif
 
   /** IMPORTANT:

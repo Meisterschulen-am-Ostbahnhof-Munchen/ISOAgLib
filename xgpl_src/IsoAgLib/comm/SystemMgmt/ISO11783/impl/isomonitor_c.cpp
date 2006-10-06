@@ -164,8 +164,7 @@ void ISOMonitor_c::init( void )
     vec_isoMember.clear();
     pc_isoMemberCache = vec_isoMember.end();
     i32_lastSaRequest = -1; // not yet requested. Do NOT use 0, as the first "setLastRequest()" could (and does randomly) occur at time0 as it's called at init() time.
-    c_tempIsoMemberItem.set( 0, ISOName_c::ISONameUnspecified, 0xFE, IState_c::Active,
-            0xFFFF, getSingletonVecKey() );
+    c_tempIsoMemberItem.set( 0, ISOName_c::ISONameUnspecified, 0xFE, IState_c::Active, getSingletonVecKey() );
 
     // clear state of b_alreadyClosed, so that close() is called one time AND no more init()s are performed!
     clearAlreadyClosed();
@@ -537,12 +536,11 @@ bool ISOMonitor_c::isoDevClass2ISONameClaimedAddress(ISOName_c &refc_isoName)
     * busy another member with same ident exists already in the list
   @param rc_isoName ISOName of the member
   @param rui8_nr member number
-  @param rui16_saEepromAdr EEPROM adress to store actual SA -> next boot with same adr
   @param ren_status wanted status
   @return pointer to new ISOItem_c or NULL if not succeeded
 */
 ISOItem_c* ISOMonitor_c::insertIsoMember(const ISOName_c& rc_isoName,
-      uint8_t rui8_nr, IState_c::itemState_t ren_state, uint16_t rui16_saEepromAdr)
+      uint8_t rui8_nr, IState_c::itemState_t ren_state)
 {
   ISOItem_c* pc_result = NULL;
 
@@ -555,9 +553,8 @@ ISOItem_c* ISOMonitor_c::insertIsoMember(const ISOName_c& rc_isoName,
 
   // FROM NOW ON WE DECIDE TO (TRY TO) CREATE A NEW ISOItem_c
   // prepare temp item with wanted data
-  c_tempIsoMemberItem.set(System_c::getTime(), rc_isoName, rui8_nr,
-      IState_c::itemState_t(ren_state | IState_c::Member | IState_c::Iso | IState_c::Active),
-      rui16_saEepromAdr, getSingletonVecKey() );
+  c_tempIsoMemberItem.set (System_c::getTime(), // Actually this value/time can be anything. The time is NOT used in PreAddressClaim and when entering AddressClaim it is being set correctly!
+    rc_isoName, rui8_nr, IState_c::itemState_t(ren_state | IState_c::Member | IState_c::Active), getSingletonVecKey() );
 
   // now insert element
   const uint8_t b_oldSize = vec_isoMember.size();
@@ -962,41 +959,52 @@ bool ISOMonitor_c::deleteIsoMemberNr(uint8_t rui8_nr)
   possible errors:
     * busy no other device class inst code leads to unique ISOName code
   @param refc_isoName reference to ISOName var (is changed directly if needed!!)
+  @param rb_dontUnify don't touch the IsoName because it most likely has already (at least once) claimed
+                      an SA with this IsoName, so it can't change away, it has to keep its identity
   @return true -> referenced ISOName is now unique
 */
-bool ISOMonitor_c::unifyIsoISOName(ISOName_c& refc_isoName){
+bool ISOMonitor_c::unifyIsoISOName (ISOName_c& refc_isoName, bool rb_dontUnify)
+{
   bool b_result = true;
-  ISOName_c c_tempISOName = refc_isoName;
-  if (existIsoMemberISOName(refc_isoName))
+  if (existIsoMemberISOName (refc_isoName))
   { // isoName exist -> search new with changed POS
-    b_result = false; // refc_isoName isn't unique
-    // store the pos part of given isoName
-    int16_t tempPos = (refc_isoName.devClassInst()),
-        diff = 1;
-    for (; diff < 8; diff++)
+    // first, for now, we don't have it unified, we start with conflict.
+    b_result = false;
+
+    if (!rb_dontUnify)
     {
-      if (tempPos + diff < 8)
-      {  // (tempPos + diff) would be an allowed device class inst code
-        c_tempISOName.setDevClassInst( tempPos + diff );
-        if (!(existIsoMemberISOName(c_tempISOName)))
-        {  // (tempPos + diff) can't be found in list -> it is unique
-          refc_isoName.setDevClassInst( tempPos + diff );
-          b_result = true;
-          break;
+      /** @todo What algorithm to use for unifying the IsoName? Which isntance to increase? */
+      ISOName_c c_tempISOName = refc_isoName;
+      b_result = false; // refc_isoName isn't unique
+      // store the pos part of given isoName
+      int16_t tempPos = (refc_isoName.devClassInst()),
+          diff = 1;
+      for (; diff < 8; diff++)
+      {
+        if (tempPos + diff < 8)
+        {  // (tempPos + diff) would be an allowed device class inst code
+          c_tempISOName.setDevClassInst( tempPos + diff );
+          if (!(existIsoMemberISOName(c_tempISOName)))
+          {  // (tempPos + diff) can't be found in list -> it is unique
+            refc_isoName.setDevClassInst( tempPos + diff );
+            b_result = true;
+            break;
+          }
+        }
+        if (tempPos - diff >= 0)
+        { // (tempPos - diff) would be an allowed device class inst code
+          c_tempISOName.setDevClassInst( tempPos - diff );
+          if (!(existIsoMemberISOName(c_tempISOName)))
+          {  // (tempPos - diff) can't be found in list -> it is unique
+            refc_isoName.setDevClassInst( tempPos - diff );
+            b_result = true;
+            break;
+          }
         }
       }
-      if (tempPos - diff >= 0)
-      { // (tempPos - diff) would be an allowed device class inst code
-        c_tempISOName.setDevClassInst( tempPos - diff );
-        if (!(existIsoMemberISOName(c_tempISOName)))
-        {  // (tempPos - diff) can't be found in list -> it is unique
-          refc_isoName.setDevClassInst( tempPos - diff );
-          b_result = true;
-          break;
-        }
-      }
-    }
-  }
+    } // else: if we can't unify, we're lost here as such an IsoName is already claimed on the bus
+  } // else: IsoName doesn't exist --> fine!
+
   if (!b_result) getLibErrInstance().registerError( LibErr_c::Busy, LibErr_c::System );
   return b_result;
 }
@@ -1157,6 +1165,7 @@ bool ISOMonitor_c::processMsg()
         pc_itemSameSa = NULL;
       }
 
+      /** @todo Change handling of case where SAME ISONAME occurs. We shall not change our ISONAME while running in ISO! */
       // SECOND: trigger total restart of ADR claim for any local ISOItem_c with
       //         SAME ISOName_c
       if ( ( NULL != pc_itemSameISOName ) && ( pc_itemSameISOName->itemState(IState_c::Local)) )

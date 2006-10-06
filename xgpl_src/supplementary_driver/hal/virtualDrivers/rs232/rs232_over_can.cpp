@@ -121,7 +121,7 @@ int16_t put_rs232NChar(const uint8_t *bpWrite,uint16_t wNumber, uint8_t rui8_cha
 			numLeft -= cui8_len;
 			}
 
-   return IsoAgLib::getLbsErrInstance().good( IsoAgLib::LibErr_c::Can );
+   return IsoAgLib::getLibErrInstance().good( IsoAgLib::LibErr_c::Can );
 		}
 
 };

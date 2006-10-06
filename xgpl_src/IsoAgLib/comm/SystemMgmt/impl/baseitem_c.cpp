@@ -119,7 +119,8 @@ BaseItem_c::~BaseItem_c(){
 void BaseItem_c::set(int32_t ri32_time, int ri_singletonVecKey)
 {
   if (ri32_time >= 0) i32_lastTime = ri32_time;
-  ClientBase::setSingletonKey(ri_singletonVecKey);
+  /** @todo Put this check into ClientBase itself??? */
+  if (ri_singletonVecKey != -1) ClientBase::setSingletonKey(ri_singletonVecKey);
 }
 
 /**
@@ -171,20 +172,20 @@ bool BaseItem_c::checkTime(uint16_t rui16_timeInterval) const  {
 bool BaseItem_c::checkUpdateTime(uint16_t rui16_timeInterval) {
   if ( checkTime( rui16_timeInterval ) ) {
     // enable constant time intervalls without growing time drift
-	// -> simply add rui16_timeIntervall, if current time
-	//    has max 10% deviation from correct timing
-	const uint16_t cui16_maxDeviation = rui16_timeInterval / 10;
-	if ( Scheduler_c::getLastTimeEventTrigger() <= ( i32_lastTime + rui16_timeInterval + cui16_maxDeviation ) ) {
-	  // time correctness is close enough to increment last timestamp by exact
-	  // rui16_timeIntervall -> avoid growing time drift if %e.g. each alive msg
-	  // is triggered 5 msec too late
-	  i32_lastTime += rui16_timeInterval;
-	}
-	else {
-	  // time difference is too big -> allow reset of timestamp
-      i32_lastTime = Scheduler_c::getLastTimeEventTrigger();
-	}
-	return true;
+    // -> simply add rui16_timeIntervall, if current time
+    //    has max 10% deviation from correct timing
+    const uint16_t cui16_maxDeviation = rui16_timeInterval / 10;
+    if ( Scheduler_c::getLastTimeEventTrigger() <= ( i32_lastTime + rui16_timeInterval + cui16_maxDeviation ) ) {
+      // time correctness is close enough to increment last timestamp by exact
+      // rui16_timeIntervall -> avoid growing time drift if %e.g. each alive msg
+      // is triggered 5 msec too late
+      i32_lastTime += rui16_timeInterval;
+    }
+    else {
+      // time difference is too big -> allow reset of timestamp
+        i32_lastTime = Scheduler_c::getLastTimeEventTrigger();
+    }
+    return true;
   }
   else {
     return false;

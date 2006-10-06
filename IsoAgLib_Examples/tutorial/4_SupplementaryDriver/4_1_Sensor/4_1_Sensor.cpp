@@ -239,203 +239,189 @@ void MyDiginIrqHandle::handleDigitalEvent( uint8_t rui8_channel )
 
 
 int main()
-{ // Initialize the CAN BUS at channel 0 to 250 kbaud
-  IsoAgLib::getIcanInstance().init( 0, 250 );
+{
+  // Initialize CAN-Bus
+  getIcanInstance().init (0); // CAN-Bus 0 (with defaulting 250 kbit)
 
-	// define the ISO 11783 specific identity settings
-  // for the 64bit NAME field
-  bool b_selfConf = true;
-  uint8_t ui8_indGroup = 2,
-      ui8_func = 25,
-      ui8_wantedSa = 128,
-      ui8_funcInst = 0,
-      ui8_ecuInst = 0,
-			ui8_deviceType = 2,
-			ui8_deviceTypeInstance = 0;
-  uint16_t ui16_manufCode = 0x7FF;
-  uint32_t ui32_serNo = 27;
+  // start address claim of the local identity/member
+  IsoAgLib::iIdentItem_c c_myIdent (2,    // rui8_indGroup
+                                    2,    // rui8_devClass
+                                    0,    // rui8_devClassInst
+                                    25,   // rb_func
+                                    0x7FF,// rui16_manufCode
+                                    27);  // rui32_serNo
+                                    // further parameters use the default
 
-  // variable for DEV_KEY ( device type, device type instance )
-  // default with primary cultivation mounted back ( device type 2, instance 0 )
-  IsoAgLib::iISOName_c myISOName( ui8_deviceType, ui8_deviceTypeInstance );
+  // create some sensor instances
+  // create digin which delivers true for high input ( configure digin HW for high-active )
+  IsoAgLib::iDigitalI_c c_diginOnHigh( 0, IsoAgLib::iSensor_c::OnHigh );
+  // create digin which deliers true for low input ( configure digin HW for low-active )
+  IsoAgLib::iDigitalI_c c_diginOnLow( 1, IsoAgLib::iSensor_c::OnLow );
 
-	// start address claim of the local member
-  // if DEV_KEY ( device type, -instance ) conflicts forces change of POS/instance, the
-  // IsoAgLib can change the myISOName val through the pointer to myISOName
-  IsoAgLib::iIdentItem_c c_myIdent( &myISOName,
-      b_selfConf, ui8_indGroup, ui8_func, ui16_manufCode,
-      ui32_serNo, ui8_wantedSa, 0xFFFF, ui8_funcInst, ui8_ecuInst);
-
-	// create some sensor instances
-	// create digin which delivers true for high input ( configure digin HW for high-active )
-	IsoAgLib::iDigitalI_c c_diginOnHigh( 0, IsoAgLib::iSensor_c::OnHigh );
-	// create digin which deliers true for low input ( configure digin HW for low-active )
-	IsoAgLib::iDigitalI_c c_diginOnLow( 1, IsoAgLib::iSensor_c::OnLow );
-
-	// create Digin which uses hardware interrupt function
-	// ( keep in mind, that most BIOS/OS will have some consolidation method to
-	//   avoid reaction on erroneous signals - so use this very immediate reaction on your own risc )
-	MyDiginIrqHandle myHandler;
-	bool b_useStaticRead = false;
-	IsoAgLib::iDigitalI_c c_diginIrqTest( 4, IsoAgLib::iSensor_c::OnHigh, b_useStaticRead, &myHandler );
+  // create Digin which uses hardware interrupt function
+  // ( keep in mind, that most BIOS/OS will have some consolidation method to
+  //   avoid reaction on erroneous signals - so use this very immediate reaction on your own risc )
+  MyDiginIrqHandle myHandler;
+  bool b_useStaticRead = false;
+  IsoAgLib::iDigitalI_c c_diginIrqTest( 4, IsoAgLib::iSensor_c::OnHigh, b_useStaticRead, &myHandler );
 
 
-	// create two simple analog inputs
-	const bool cb_doMean = true;
-	const bool cb_doFastAdc = false;
-	IsoAgLib::iAnalogI_c c_analogVoltage(0, IsoAgLib::iSensor_c::voltage, cb_doMean, cb_doFastAdc );
-	IsoAgLib::iAnalogI_c c_analogCurrent(1, IsoAgLib::iSensor_c::current, cb_doMean, cb_doFastAdc );
+  // create two simple analog inputs
+  const bool cb_doMean = true;
+  const bool cb_doFastAdc = false;
+  IsoAgLib::iAnalogI_c c_analogVoltage(0, IsoAgLib::iSensor_c::voltage, cb_doMean, cb_doFastAdc );
+  IsoAgLib::iAnalogI_c c_analogCurrent(1, IsoAgLib::iSensor_c::current, cb_doMean, cb_doFastAdc );
 
 
-	// create analog inputs which provide range check
-	// you can extend this idea if you derive your own classes from iAnalogIRangeCheck_c
-	// so that they load their limits from given address at EEPROM
-	// and can check if some more narrowed _warning_ limits are reached ( also read these limits from
-	// eeprom -> read five values from EEPROM: channel, err_min, err_max, warn_min, warn_max )
-	// ==>> after system init, you can simply check for GOOD, WARN, ERROR without knowing the exact settings
-	//      at the position of check
-	// ==>> if you place all of these variables in an array, you can simply loop through this array
-	//      without the need to co-ordinate the channels and limits during time of check
-	// range check voltage
-	const uint16_t cui16_minVolt =  500; // MIN:  500 mV
-	const uint16_t cui16_maxVolt = 4500; // MAX: 4500 mV
-	IsoAgLib::iAnalogIRangeCheck_c c_analogRangeCheckVoltage( 2, IsoAgLib::iSensor_c::voltage, cb_doMean, cb_doFastAdc,
-		cui16_minVolt, cui16_maxVolt);
+  // create analog inputs which provide range check
+  // you can extend this idea if you derive your own classes from iAnalogIRangeCheck_c
+  // so that they load their limits from given address at EEPROM
+  // and can check if some more narrowed _warning_ limits are reached ( also read these limits from
+  // eeprom -> read five values from EEPROM: channel, err_min, err_max, warn_min, warn_max )
+  // ==>> after system init, you can simply check for GOOD, WARN, ERROR without knowing the exact settings
+  //      at the position of check
+  // ==>> if you place all of these variables in an array, you can simply loop through this array
+  //      without the need to co-ordinate the channels and limits during time of check
+  // range check voltage
+  const uint16_t cui16_minVolt =  500; // MIN:  500 mV
+  const uint16_t cui16_maxVolt = 4500; // MAX: 4500 mV
+  IsoAgLib::iAnalogIRangeCheck_c c_analogRangeCheckVoltage( 2, IsoAgLib::iSensor_c::voltage, cb_doMean, cb_doFastAdc,
+    cui16_minVolt, cui16_maxVolt);
 
-	// range check current
-	const uint16_t cui16_minCurrent =  500; // MIN:  500 mA
-	const uint16_t cui16_maxCurrent = 4500; // MAX: 4500 mA
-	IsoAgLib::iAnalogIRangeCheck_c c_analogRangeCheckCurrent( 3, IsoAgLib::iSensor_c::current, cb_doMean, cb_doFastAdc,
-		cui16_minCurrent, cui16_maxCurrent);
+  // range check current
+  const uint16_t cui16_minCurrent =  500; // MIN:  500 mA
+  const uint16_t cui16_maxCurrent = 4500; // MAX: 4500 mA
+  IsoAgLib::iAnalogIRangeCheck_c c_analogRangeCheckCurrent( 3, IsoAgLib::iSensor_c::current, cb_doMean, cb_doFastAdc,
+    cui16_minCurrent, cui16_maxCurrent);
 
-	// create counter inputs
-	// first counter which shall count input with high rate,
-	// so that BIOS/OS standard functions can be used
-	// ( BIOS can use hardware timers to evaluate with the help of interrupts the
-	//   counter input )
-	// use timer which overflows below 250msec ( to capture really quick rates )
-	const uint16_t cui16_timerMaxOverflow = 250;
-	const bool cb_doActiveHigh = true;  // evaluate high impulse
-	const bool cb_doRisingEdge = false; // count falling edge
-	IsoAgLib::iCounterI_c c_counterHighRate( 2, cui16_timerMaxOverflow, cb_doActiveHigh, cb_doRisingEdge );
+  // create counter inputs
+  // first counter which shall count input with high rate,
+  // so that BIOS/OS standard functions can be used
+  // ( BIOS can use hardware timers to evaluate with the help of interrupts the
+  //   counter input )
+  // use timer which overflows below 250msec ( to capture really quick rates )
+  const uint16_t cui16_timerMaxOverflow = 250;
+  const bool cb_doActiveHigh = true;  // evaluate high impulse
+  const bool cb_doRisingEdge = false; // count falling edge
+  IsoAgLib::iCounterI_c c_counterHighRate( 2, cui16_timerMaxOverflow, cb_doActiveHigh, cb_doRisingEdge );
 
-	// capture counter signal where events occure with verly low rate
-	// ( real world example: measure fuel flow )
-	const uint16_t cui16_timerFuelMeasure = 5000; // count even rates with impulse distances of 5 sec
-	IsoAgLib::iCounterI_c c_counterLowRate( 3, cui16_timerFuelMeasure, cb_doActiveHigh, cb_doRisingEdge );
+  // capture counter signal where events occure with verly low rate
+  // ( real world example: measure fuel flow )
+  const uint16_t cui16_timerFuelMeasure = 5000; // count even rates with impulse distances of 5 sec
+  IsoAgLib::iCounterI_c c_counterLowRate( 3, cui16_timerFuelMeasure, cb_doActiveHigh, cb_doRisingEdge );
 
   /** IMPORTANT:
-	  - The following loop could be replaced of any repeating call of
-			getISchedulerInstance().timeEvent();
-			which is needed to perform all internal activities of the IsoAgLib.
-		- Define the time intervall for getISchedulerInstance().timeEvent()
-			in a way, that allows IsoAgLib to trigger all reactions on BUS
-			in the ISO 11783 defined time resolution - especially the address
-			claim process has some tight time restrictions, that suggest
-			a trigger rate of at least 100msec ( you could call the function
-			only during address claim, mask updload and other special
-			circumstances in a high repetition rate )
-		- The main loop is running until iSystem_c::canEn() is returning false.
-			This function can be configured by the #define CONFIG_BUFFER_SHORT_CAN_EN_LOSS_MSEC
-			in isoaglib_config.h to ignore short CAN_EN loss.
-		- This explicit control of power state without automatic powerdown on CanEn loss
-			can be controled with the central config define
-			#define CONFIG_DEFAULT_POWERDOWN_STRATEGY IsoAgLib::PowerdownByExplcitCall
-			or
-			#define CONFIG_DEFAULT_POWERDOWN_STRATEGY IsoAgLib::PowerdownOnCanEnLoss
-			in the header xgpl_src/Application_Config/isoaglib_config.h
-		- This can be also controlled during runtime with the function call:
-			getIsystemInstance().setPowerdownStrategy( IsoAgLib::PowerdownByExplcitCall )
-			or
-			getIsystemInstance().setPowerdownStrategy( IsoAgLib::PowerdownOnCanEnLoss )
-	*/
-	int32_t i32_nextDebug = 0;
-	while ( IsoAgLib::iSystem_c::canEn() )
-	{ // run main loop
-		// IMPORTANT: call main timeEvent function for
-		// all time controlled actions of IsoAgLib - \ref IsoAgLib::iScheduler_c::timeEvent()
-		getISchedulerInstance().timeEvent();
+    - The following loop could be replaced of any repeating call of
+      getISchedulerInstance().timeEvent();
+      which is needed to perform all internal activities of the IsoAgLib.
+    - Define the time intervall for getISchedulerInstance().timeEvent()
+      in a way, that allows IsoAgLib to trigger all reactions on BUS
+      in the ISO 11783 defined time resolution - especially the address
+      claim process has some tight time restrictions, that suggest
+      a trigger rate of at least 100msec ( you could call the function
+      only during address claim, mask updload and other special
+      circumstances in a high repetition rate )
+    - The main loop is running until iSystem_c::canEn() is returning false.
+      This function can be configured by the #define CONFIG_BUFFER_SHORT_CAN_EN_LOSS_MSEC
+      in isoaglib_config.h to ignore short CAN_EN loss.
+    - This explicit control of power state without automatic powerdown on CanEn loss
+      can be controled with the central config define
+      #define CONFIG_DEFAULT_POWERDOWN_STRATEGY IsoAgLib::PowerdownByExplcitCall
+      or
+      #define CONFIG_DEFAULT_POWERDOWN_STRATEGY IsoAgLib::PowerdownOnCanEnLoss
+      in the header xgpl_src/Application_Config/isoaglib_config.h
+    - This can be also controlled during runtime with the function call:
+      getIsystemInstance().setPowerdownStrategy( IsoAgLib::PowerdownByExplcitCall )
+      or
+      getIsystemInstance().setPowerdownStrategy( IsoAgLib::PowerdownOnCanEnLoss )
+  */
+  int32_t i32_nextDebug = 0;
+  while ( IsoAgLib::iSystem_c::canEn() )
+  { // run main loop
+    // IMPORTANT: call main timeEvent function for
+    // all time controlled actions of IsoAgLib - \ref IsoAgLib::iScheduler_c::timeEvent()
+    getISchedulerInstance().timeEvent();
 
-		// immediately re-loop if it's not yet time for debug messages
-		if ( i32_nextDebug > IsoAgLib::iSystem_c::getTime() ) continue;
-		// now it's time for debug
-		i32_nextDebug = IsoAgLib::iSystem_c::getTime() + 1000;
+    // immediately re-loop if it's not yet time for debug messages
+    if ( i32_nextDebug > IsoAgLib::iSystem_c::getTime() ) continue;
+    // now it's time for debug
+    i32_nextDebug = IsoAgLib::iSystem_c::getTime() + 1000;
 
-		// example for access to sensors, if no direct access to the
-		// corresponding variables ( e.g. c_diginOnHigh shall be read, but the access shall
-		//  be performed from part of code which doesn't know where this variables is placed,
-		//  but we know the channel )
-		if ( IsoAgLib::getIsensorInstance().existDigital(0) )
-		{ // fine - c_diginOnHigh is already registered in IsoAgLib
-			IsoAgLib::getIrs232Instance()
-				<< "c_diginOnHigh has value: "
-				<< uint16_t( IsoAgLib::getIsensorInstance().digital(0).active() )
-				<< "\r\n";
-		}
-		else
-		{ // something is wrong
-			IsoAgLib::getIrs232Instance() << "ERROR: c_diginOnHigh is obviously not registered in IsoAgLib\r\n";
-		}
+    // example for access to sensors, if no direct access to the
+    // corresponding variables ( e.g. c_diginOnHigh shall be read, but the access shall
+    //  be performed from part of code which doesn't know where this variables is placed,
+    //  but we know the channel )
+    if ( IsoAgLib::getIsensorInstance().existDigital(0) )
+    { // fine - c_diginOnHigh is already registered in IsoAgLib
+      IsoAgLib::getIrs232Instance()
+        << "c_diginOnHigh has value: "
+        << uint16_t( IsoAgLib::getIsensorInstance().digital(0).active() )
+        << "\r\n";
+    }
+    else
+    { // something is wrong
+      IsoAgLib::getIrs232Instance() << "ERROR: c_diginOnHigh is obviously not registered in IsoAgLib\r\n";
+    }
 
-		// well - in this case we can simply access the inputs with the variable
-		IsoAgLib::getIrs232Instance() << "c_diginOnLow delivers: " << uint16_t(c_diginOnLow.active() ) << "\r\n";
+    // well - in this case we can simply access the inputs with the variable
+    IsoAgLib::getIrs232Instance() << "c_diginOnLow delivers: " << uint16_t(c_diginOnLow.active() ) << "\r\n";
 
-		// read the analog values
-		IsoAgLib::getIrs232Instance()
-			<< "Voltage at channel 0: " << c_analogVoltage.val() << " [mV]\r\n";
-		IsoAgLib::getIrs232Instance()
-			<< "Current at channel 1: " << c_analogCurrent.val() << " [mA]\r\n";
+    // read the analog values
+    IsoAgLib::getIrs232Instance()
+      << "Voltage at channel 0: " << c_analogVoltage.val() << " [mV]\r\n";
+    IsoAgLib::getIrs232Instance()
+      << "Current at channel 1: " << c_analogCurrent.val() << " [mA]\r\n";
 
-		IsoAgLib::getIrs232Instance()
-			<< "Voltage at channel 2: " << c_analogRangeCheckVoltage.val() << " [mV]";
-		// the following range check evaluations are possible without
-		// knowledge of the limits itself as they are stored by iAnalogIRangeCheck_c
-		// and can be accessed by the interface methods
-		if ( c_analogRangeCheckVoltage.good() )
-		{
-			IsoAgLib::getIrs232Instance()
-				<< " which is GOOD as inside the limits ["
-				<< c_analogRangeCheckVoltage.getMinValid()
-				<< "..."
-				<< c_analogRangeCheckVoltage.getMaxValid()
-				<< "]\r\n";
-		}
-		else if ( c_analogRangeCheckVoltage.checkTooLow() )
-		{
-			IsoAgLib::getIrs232Instance()
-				<< " which is BAD as lower then allowed "
-				<< c_analogRangeCheckVoltage.getMinValid()
-				<< " [mV]\r\n";
-		}
-		else if ( c_analogRangeCheckVoltage.checkTooHigh() )
-		{
-			IsoAgLib::getIrs232Instance()
-				<< " which is BAD as higher then allowed "
-				<< c_analogRangeCheckVoltage.getMaxValid()
-				<< " [mV]\r\n";
-		}
-		// do less interpretation of current - simply check for error
-		IsoAgLib::getIrs232Instance()
-			<< "Current at channel 1: " << c_analogRangeCheckVoltage.val() << " [mA]\r\n";
-		if ( c_analogRangeCheckVoltage.error() )
-		{ // Bad: iAnalogIRangeCheck_c detected wrong value
-			IsoAgLib::getIrs232Instance() << "ERROR: The value of c_analogRangeCheckVoltage is outside the limits\r\n";
-		}
+    IsoAgLib::getIrs232Instance()
+      << "Voltage at channel 2: " << c_analogRangeCheckVoltage.val() << " [mV]";
+    // the following range check evaluations are possible without
+    // knowledge of the limits itself as they are stored by iAnalogIRangeCheck_c
+    // and can be accessed by the interface methods
+    if ( c_analogRangeCheckVoltage.good() )
+    {
+      IsoAgLib::getIrs232Instance()
+        << " which is GOOD as inside the limits ["
+        << c_analogRangeCheckVoltage.getMinValid()
+        << "..."
+        << c_analogRangeCheckVoltage.getMaxValid()
+        << "]\r\n";
+    }
+    else if ( c_analogRangeCheckVoltage.checkTooLow() )
+    {
+      IsoAgLib::getIrs232Instance()
+        << " which is BAD as lower then allowed "
+        << c_analogRangeCheckVoltage.getMinValid()
+        << " [mV]\r\n";
+    }
+    else if ( c_analogRangeCheckVoltage.checkTooHigh() )
+    {
+      IsoAgLib::getIrs232Instance()
+        << " which is BAD as higher then allowed "
+        << c_analogRangeCheckVoltage.getMaxValid()
+        << " [mV]\r\n";
+    }
+    // do less interpretation of current - simply check for error
+    IsoAgLib::getIrs232Instance()
+      << "Current at channel 1: " << c_analogRangeCheckVoltage.val() << " [mA]\r\n";
+    if ( c_analogRangeCheckVoltage.error() )
+    { // Bad: iAnalogIRangeCheck_c detected wrong value
+      IsoAgLib::getIrs232Instance() << "ERROR: The value of c_analogRangeCheckVoltage is outside the limits\r\n";
+    }
 
-		// read quick counter
-		IsoAgLib::getIrs232Instance()
-			<< "Quick counter at channel 2 has frequency: " << c_counterHighRate.frequency()
-			<< ", with period: " << c_counterHighRate.period()
-			<< "[msec] and counter value: " << c_counterHighRate.val()
-			<< "\r\n";
+    // read quick counter
+    IsoAgLib::getIrs232Instance()
+      << "Quick counter at channel 2 has frequency: " << c_counterHighRate.frequency()
+      << ", with period: " << c_counterHighRate.period()
+      << "[msec] and counter value: " << c_counterHighRate.val()
+      << "\r\n";
 
-		// read slow counter
-		IsoAgLib::getIrs232Instance()
-			<< "Slow counter at channel 3 has frequency: " << c_counterLowRate.frequency()
-			<< ", with period: " << c_counterLowRate.period()
-			<< "[msec], counter value: " << c_counterLowRate.val()
-			<< " and last event detected " << c_counterLowRate.lastSignalAge()
-			<< "[msec] ago\r\n";
+    // read slow counter
+    IsoAgLib::getIrs232Instance()
+      << "Slow counter at channel 3 has frequency: " << c_counterLowRate.frequency()
+      << ", with period: " << c_counterLowRate.period()
+      << "[msec], counter value: " << c_counterLowRate.val()
+      << " and last event detected " << c_counterLowRate.lastSignalAge()
+      << "[msec] ago\r\n";
   }
   return 1;
 }

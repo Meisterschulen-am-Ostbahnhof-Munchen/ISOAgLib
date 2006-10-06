@@ -554,29 +554,22 @@ iObjectPool_simpleVTIsoPool_c::eventLanguagePgn(const localSettings_s& rrefs_loc
 
 int main()
 {
-
-  getIcanInstance().init (0,    // CAN-Bus 0
-                          250); // 250 kbit
-
-  IsoAgLib::iISOName_c myISOName (true, // rb_selfConf
-                                  2,    // rui8_indGroup
-                                  7,    // rui8_devClass
-                                  0,    // rui8_devClassInst
-                                  25,   // rb_func
-                                  0x7FF,// rui16_manufCode
-                                  27,   // rui32_serNo
-                                  0,    // rb_funcInst
-                                  0);   // rb_ecuInst
+  getIcanInstance().init (0); // CAN-Bus 0 (with defaulting 250 kbit)
 
   // start address claim of the local identity/member
-  // if the ISO-NAME conflicts forces change (as long as it's not yet announce on the bus!).
-  // IsoAgLib can change the myISOName val through the pointer to myISOName in the 
-  IsoAgLib::iIdentItem_c c_myIdent (&myISOName,
-                                    254,        // No preferred SA, auto-allocate in range 0x80 upwards...
-                                    0x100,      // EEPROM-Address to store the allocated SA for re-use after power-cycle
-                                    0,          // 0 means: We're WS-Master and have 0 WS-Slaves
-                                    NULL);      // so no list given either...
-
+  IsoAgLib::iIdentItem_c c_myIdent (2,    // rui8_indGroup
+                                    7,    // rui8_devClass
+                                    0,    // rui8_devClassInst
+                                    25,   // rb_func
+                                    0x7FF,// rui16_manufCode
+                                    27,   // rui32_serNo
+                                    254,  // No preferred SA, auto-allocate in range 0x80 upwards...
+                                    0x100,// EEPROM-Address to store the allocated SA for re-use after power-cycle
+                                    0,    // rb_funcInst
+                                    0,    // rb_ecuInst
+                                    true, // rb_selfConf
+                                    0);   // 0 means: We're WS-Master and have 0 WS-Slaves
+                                    // further parameters use the default: NULL /* so no list given either */, 0 /* singletonVecKey */
 
   // Call to init iIsoTerminal instance and initialize object pool!
   spc_tut30csc = getIisoTerminalInstance().registerIsoObjectPool (c_myIdent, Tutorial_3_0_Pool_c, "T30v1"); // PoolName: Tutorial 3.0 Version 1

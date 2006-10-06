@@ -59,7 +59,6 @@
 /* ********** include headers ************ */
 /* *************************************** */
 #include "impl/identitem_c.h"
-#include <IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h>
 #include "ISO11783/iisoitem_c.h"
 #include "ISO11783/iisoname_c.h"
 
@@ -119,48 +118,12 @@ public:
                                 IsoAgLib will then send the needed "master indicates its slaves" messages on BUS
     @param ri_singletonVecKey   optional key for selection of IsoAgLib instance (default 0)
   */
-  iIdentItem_c( iISOName_c* rpc_isoName = NULL,
-      #ifdef USE_WORKING_SET
-      int8_t ri8_slaveCount = -1, const iISOName_c* rpc_slaveIsoNameList = NULL,
-      #endif
-      int ri_singletonVecKey = 0
-      ) : IdentItem_c(rpc_isoName,
-        #ifdef USE_WORKING_SET
-        ri8_slaveCount, rpc_slaveIsoNameList,
-        #endif
-        ri_singletonVecKey) {}
+  iIdentItem_c (uint16_t rui16_saEepromAdr = 0xFFFF, int ri_singletonVecKey = 0)
+    : IdentItem_c (rui16_saEepromAdr, ri_singletonVecKey) {}
 
 
   /**
     constructor for ISO identity, which starts address claim for this identity
-    @param rpc_isoName           pointer to the ISOName variable of this identity, which is resident somewhere else (f.e. main() task)
-    @param rb_wantedSa          optional preselected source adress (SA) of the ISO item (fixed SA or last time
-                                SA for self conf ISO device) (default 254 for free self-conf)
-    @param rui16_saEepromAdr    optional adress in EEPROM, where the according SA is stored
-                                (default 0xFFFF for NO EEPROM store)
-    @param ri8_slaveCount       amount of attached slave devices; default -1 == no master state;
-                                in case an address claim for the slave devices shall be sent by this ECU, they
-                                must get their own IdentItem_c instance ( then with default value -1 for ri8_slaveCount )
-    @param rpc_slaveIsoNameList pointer to list of iISOName_c values, where the slave devices are defined.
-                                IsoAgLib will then send the needed "master indicates its slaves" messages on BUS
-    @param ri_singletonVecKey   optional key for selection of IsoAgLib instance (default 0)
-  */
-  iIdentItem_c(iISOName_c* rpc_isoName,
-      uint8_t rb_wantedSa, uint16_t rui16_saEepromAdr = 0xFFFF,
-      #ifdef USE_WORKING_SET
-      int8_t ri8_slaveCount = -1, const iISOName_c* rpc_slaveIsoNameList = NULL,
-      #endif
-      int ri_singletonVecKey = 0
-      ) : IdentItem_c(rpc_isoName, rb_wantedSa, rui16_saEepromAdr,
-                      #ifdef USE_WORKING_SET
-                      ri8_slaveCount, rpc_slaveIsoNameList,
-                      #endif
-                      ri_singletonVecKey) {}
-
-
-  /**
-    constructor for ISO identity, which starts address claim for this identity
-    @param rpc_isoName           pointer to the ISOName variable of this identity, which is resident somewhere else (f.e. main() task)
     @param rb_selfConf          true -> this member as a self configurable source adress
     @param rui8_indGroup        select the industry group, 2 == agriculture
     @param rb_func              function code of the member (25 = network interconnect)
@@ -179,95 +142,61 @@ public:
                                 IsoAgLib will then send the needed "master indicates its slaves" messages on BUS
     @param ri_singletonVecKey   optional key for selection of IsoAgLib instance (default 0)
   */
-  iIdentItem_c(iISOName_c* rpc_isoName,
-    bool rb_selfConf, uint8_t rui8_indGroup, uint8_t rb_func, uint16_t rui16_manufCode,
-    uint32_t rui32_serNo, uint8_t rb_wantedSa, uint16_t rui16_saEepromAdr, uint8_t rb_funcInst, uint8_t rb_ecuInst,
+  iIdentItem_c (
+    uint8_t rui8_indGroup, uint8_t rui8_devClass, uint8_t rui8_devClassInst, uint8_t rb_func,
+    uint16_t rui16_manufCode, uint32_t rui32_serNo, uint8_t rb_preferredSa = 254, uint16_t rui16_eepromAdr = 0xFFFF,
+    uint8_t rb_funcInst = 0, uint8_t rb_ecuInst = 0, bool rb_selfConf = true,
     #ifdef USE_WORKING_SET
     int8_t ri8_slaveCount = -1, const iISOName_c* rpc_slaveIsoNameList = NULL,
     #endif
-    int ri_singletonVecKey = 0): IdentItem_c(rpc_isoName, rb_selfConf, rui8_indGroup, rb_func,
-                                 rui16_manufCode, rui32_serNo, rb_wantedSa, rui16_saEepromAdr, rb_funcInst, rb_ecuInst,
-                              #ifdef USE_WORKING_SET
-                                 ri8_slaveCount, rpc_slaveIsoNameList,
-                              #endif
-                                 ri_singletonVecKey) {}
+    int ri_singletonVecKey = 0)
+    : IdentItem_c (rui8_indGroup, rui8_devClass, rui8_devClassInst, rb_func, rui16_manufCode, rui32_serNo,
+                   rb_preferredSa, rui16_eepromAdr, rb_funcInst, rb_ecuInst, rb_selfConf,
+                 #ifdef USE_WORKING_SET
+                   ri8_slaveCount, rpc_slaveIsoNameList,
+                 #endif
+                   ri_singletonVecKey) {}
+
+  /** init function for later start of address claim of an ISO identity (this can be only called once upon a default-constructed object)
+      @param rui8_indGroup        select the industry group, 2 == agriculture
+      @param rb_func              function code of the member (25 = network interconnect)
+      @param rui16_manufCode      11bit manufactor code
+      @param rui32_serNo          21bit serial number
+      @param rui8_preferredSa      preferred source adress (SA) of the ISO item (fixed SA or last time
+                                  SA for self conf ISO device) (default 254 for no special wish)
+      @param rui16_eepromAdr      EEPROM adress, where the used IsoName / SA / flags are stored
+                                  (default 0xFFFF for NO EEPROM store)
+      @param rb_funcInst          function instance of this member (default 0)
+      @param rb_ecuInst           ECU instance of this member (default 0)
+      @param rb_selfConf          defaults to true -> this member as a self configurable source adress
+      @param ri8_slaveCount       amount of attached slave devices; default -1 == no master state;
+                                  in case an address claim for the slave devices shall be sent by this ECU, they
+                                  must get their own IdentItem_c instance ( then with default value -1 for ri8_slaveCount )
+      @param rpc_slaveIsoNameList pointer to list of ISOName_c values, where the slave devices are defined.
+                                  IsoAgLib will then send the needed "master indicates its slaves" messages on BUS
+      @param ri_singletonVecKey   optional key for selection of IsoAgLib instance (default 0)
+    */
+  void init(
+    uint8_t rui8_indGroup, uint8_t rui8_devClass, uint8_t rui8_devClassInst, uint8_t rb_func, uint16_t rui16_manufCode,
+    uint32_t rui32_serNo, uint8_t rb_wantedSa, uint16_t rui16_saEepromAdr, uint8_t rb_funcInst = 0, uint8_t rb_ecuInst = 0, bool rb_selfConf = true,
+    #ifdef USE_WORKING_SET
+    int8_t ri8_slaveCount = -1, const iISOName_c* rpc_slaveIsoNameList = NULL,
+    #endif
+    int ri_singletonVecKey = 0)
+  { IdentItem_c::init (rui8_indGroup, rui8_devClass, rui8_devClassInst, rb_func, rui16_manufCode,
+                       rui32_serNo, rb_wantedSa, rui16_saEepromAdr, rb_funcInst, rb_ecuInst, rb_selfConf,
+                       #ifdef USE_WORKING_SET
+                       ri8_slaveCount, rpc_slaveIsoNameList,
+                       #endif
+                       ri_singletonVecKey);
+  }
+
 
 
   /** deliver pointer to ISOItem_c in ISOMonitor_c
       @return NULL -> either no ISO item or not yet registered in ISOMonitor_c
     */
   iISOItem_c* getIsoItem( void ) const { return static_cast<iISOItem_c*>(IdentItem_c::getIsoItem()); }
-
-
-  /**
-    explicit start  for ISO identity, which starts address claim for this identity
-    @param rpc_isoName           pointer to the ISOName variable of this identity, which is resident somewhere else (f.e. main() task)
-    @param rpb_isoName          pointer to the 64Bit ISO11783 NAME of this identity
-    @param rb_wantedSa          optional preselected source adress (SA) of the ISO item (fixed SA or last time
-                                SA for self conf ISO device) (default 254 for free self-conf)
-    @param rui16_saEepromAdr    optional adress in EEPROM, where the according SA is stored
-                                (default 0xFFFF for NO EEPROM store)
-    @param ri8_slaveCount       amount of attached slave devices; default -1 == no master state;
-                                in case an address claim for the slave devices shall be sent by this ECU, they
-                                must get their own IdentItem_c instance ( then with default value -1 for ri8_slaveCount )
-    @param rpc_slaveIsoNameList pointer to list of iISOName_c values, where the slave devices are defined.
-                                IsoAgLib will then send the needed "master indicates its slaves" messages on BUS
-    @param ri_singletonVecKey   optional key for selection of IsoAgLib instance (default 0)
-  */
-  void start(iISOName_c* rpc_isoName,
-      const uint8_t* rpb_isoName,
-      uint8_t rb_wantedSa = 254, uint16_t rui16_saEepromAdr = 0xFFFF,
-      #ifdef USE_WORKING_SET
-      int8_t ri8_slaveCount = -1, const iISOName_c* rpc_slaveIsoNameList = NULL,
-      #endif
-      int ri_singletonVecKey = 0
-      )
-  {
-    IdentItem_c::start (rpc_isoName, rpb_isoName, rb_wantedSa, rui16_saEepromAdr,
-                      #ifdef USE_WORKING_SET
-                        ri8_slaveCount, rpc_slaveIsoNameList,
-                      #endif
-                        ri_singletonVecKey);
-  }
-
-
-  /**
-    explicit start  for ISO identity, which starts address claim for this identity
-    @param rpc_isoName          pointer to the ISOName variable of this identity, which is resident somewhere else (f.e. main() task)
-    @param rb_selfConf          true -> this member as a self configurable source adress
-    @param rui8_indGroup        select the industry group, 2 == agriculture
-    @param rb_func              function code of the member (25 = network interconnect)
-    @param rui16_manufCode      11bit manufactor code
-    @param rui32_serNo          21bit serial number
-    @param rb_wantedSa          preselected source adress (SA) of the ISO item (fixed SA or last time
-                                SA for self conf ISO device) (default 254 for free self-conf)
-    @param rui16_saEepromAdr    EEPROM adress, where the used source adress is stored for self_conf members
-                                (default 0xFFFF for NO EEPROM store)
-    @param rb_funcInst          function instance of this member (default 0)
-    @param rb_ecuInst           ECU instance of this member (default 0)
-    @param ri8_slaveCount       amount of attached slave devices; default -1 == no master state;
-                                in case an address claim for the slave devices shall be sent by this ECU, they
-                                must get their own IdentItem_c instance ( then with default value -1 for ri8_slaveCount )
-    @param rpc_slaveIsoNameList pointer to list of iISOName_c values, where the slave devices are defined.
-                                IsoAgLib will then send the needed "master indicates its slaves" messages on BUS
-    @param ri_singletonVecKey   optional key for selection of IsoAgLib instance (default 0)
-  */
-  void start(iISOName_c* rpc_isoName,
-    bool rb_selfConf, uint8_t rui8_indGroup, uint8_t rb_func, uint16_t rui16_manufCode,
-    uint32_t rui32_serNo, uint8_t rb_wantedSa, uint16_t rui16_saEepromAdr, uint8_t rb_funcInst, uint8_t rb_ecuInst,
-    #ifdef USE_WORKING_SET
-    int8_t ri8_slaveCount = -1, const iISOName_c* rpc_slaveIsoNameList = NULL,
-    #endif
-    int ri_singletonVecKey = 0)
-  {
-    IdentItem_c::start(rpc_isoName, rb_selfConf, rui8_indGroup, rb_func, rui16_manufCode, rui32_serNo,
-                       rb_wantedSa, rui16_saEepromAdr, rb_funcInst, rb_ecuInst,
-                     #ifdef USE_WORKING_SET
-                       ri8_slaveCount, rpc_slaveIsoNameList,
-                     #endif
-                       ri_singletonVecKey);
-  }
-
 
   /** send address release for DIN identities and perform other stop actions at end of lifetime
     * of a local ident
@@ -287,7 +216,6 @@ private:
   friend class iISOTerminal_c;
   friend class __IsoAgLib::ISOTerminal_c;
   friend class __IsoAgLib::DevPropertyHandler_c;
-
 };
 
 }// End Namespace IsoAgLib

@@ -93,11 +93,19 @@
   #include <IsoAgLib/util/impl/util_funcs.h>
 #endif
 
-/* ************************************** */
-/* import some namespaces for easy access */
-/* ************************************** */
-using __IsoAgLib::ISOName_c;
-using __IsoAgLib::Flexible8ByteString_c;
+
+namespace __IsoAgLib {
+
+
+/** constant for default parameters and initialization, where the device type is not yet spcified.
+    the instantiation of this constant variable is located in the module cancustomer_c.cpp
+  */
+const ISOName_c ISOName_c::ISONameUnspecified( 0x7F, 0xF );
+/** constant for not yet spcified process data ident -> <device class, device class instance> := <0x0,0xF>
+    the instantiation of this constant variable is located in the module cancustomer_c.cpp
+  */
+const ISOName_c ISOName_c::ISONameInitialProcessData( 0x0, 0xF );
+
 
 /** constructor which can read in initial data from uint8_t string
   @param rpb_src 64bit input data string
@@ -438,3 +446,21 @@ int8_t ISOName_c::higherPriThanPar(const Flexible8ByteString_c* rpu_compare) con
   // ==> priority is HIGHER when VALUE IS LOWER --> multiply by -1
   return (-1 * u_data.compare( *rpu_compare ));
 }
+
+
+/** Check if all Non-Instance fields of both ISONames match
+  @return true if equal, false if one non-inst field differs!
+*/
+bool
+ISOName_c::isEqualRegardingNonInstFields (const ISOName_c& rrefc_isoName) const
+{
+  return ( (devClass()  == rrefc_isoName.devClass() )
+        && (indGroup()  == rrefc_isoName.indGroup() )
+        && (func()      == rrefc_isoName.func()     )
+        && (serNo()     == rrefc_isoName.serNo()    )
+        && (selfConf()  == rrefc_isoName.selfConf() )
+        && (manufCode() == rrefc_isoName.manufCode())
+         );
+}
+
+} // namespace __IsoAgLib

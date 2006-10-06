@@ -62,6 +62,8 @@
 // for forward declarations
 #include <IsoAgLib/comm/SystemMgmt/ISO11783/iisoitem_c.h>
 #include <IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h>
+#include <IsoAgLib/driver/can/iident_c.h>
+
 
 
 // Begin Namespace IsoAgLib
@@ -88,6 +90,23 @@ public:
     @return ident value
   */
   MASK_TYPE ident(uint8_t rb_pos) const {return CANPkgExt_c::ident(rb_pos); }
+
+  void setIdent(MASK_TYPE rt_ident, IsoAgLib::iIdent_c::identType_t rt_type = DEFAULT_IDENT_TYPE) { CANPkgExt_c::setIdent(rt_ident, rt_type); }
+
+  /**
+    set type of ident
+    @param rt_type type of Ident_c: 11bit Ident_c::S or 29bit Ident_c::E
+  */
+  void setIdentType(IsoAgLib::iIdent_c::identType_t rt_type){CANPkgExt_c::setIdentType(rt_type);}
+
+  /**
+    deliver type of Ident_c: 11bit standard or 29bit extended
+    @return: Ident_c::S or Ident_c::E
+  */
+  IsoAgLib::iIdent_c::identType_t identType() {return CANPkgExt_c::identType();}
+
+  /** retrieve len of last received CAN message */
+  uint8_t getLen() { return CANPkgExt_c::getLen(); }
 
   /**
     simply deliver a uint8_t from a specific position with operator[]
@@ -161,6 +180,11 @@ public:
   */
   int32_t getInt32Data(uint8_t rb_pos) const {return CANPkgExt_c::getInt32Data( rb_pos ); }
 
+  /**
+    deliver time
+    @return timestamp of the CAN telegram in [msec.] since system start
+  */
+  int32_t time() { return CANPkgExt_c::time(); }
 
   /**
     put data into given reference to BIOS related data structure with data, len
@@ -235,6 +259,11 @@ public:
   */
   void setIsoPri(uint8_t rb_val){CANPkgExt_c::setIsoPri(rb_val); }
 
+  /**
+    set the data len of CAN pkg (if rb_val is greater than 8, 8 is stored)
+    @param rb_val length/amount of uint8_t in data string
+  */
+  void setLen(uint8_t rb_val){CANPkgExt_c::setLen(rb_val); }
 
 
   /** set the monitoritem for resolve SA
@@ -279,6 +308,7 @@ public:
 
 private:
   friend class iCANIO_c;
+  friend class iCANCustomer_c;
 };
 
 } // namespace

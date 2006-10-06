@@ -103,14 +103,6 @@ const iISOName_c iISOName_c::ISONameInitialProcessData( 0x0, 0xF );
 
 namespace __IsoAgLib {
 
-/** constant for default parameters and initialization, where the device type is not yet spcified.
-    the instantiation of this constant variable is located in the module cancustomer_c.cpp
-  */
-const ISOName_c ISOName_c::ISONameUnspecified( 0x7F, 0xF );
-/** constant for not yet spcified process data ident -> <device class, device class instance> := <0x0,0xF>
-    the instantiation of this constant variable is located in the module cancustomer_c.cpp
-  */
-const ISOName_c ISOName_c::ISONameInitialProcessData( 0x0, 0xF );
 
 
 

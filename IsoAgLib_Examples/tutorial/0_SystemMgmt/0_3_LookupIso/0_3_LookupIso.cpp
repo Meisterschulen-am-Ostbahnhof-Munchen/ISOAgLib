@@ -224,33 +224,21 @@
 using namespace IsoAgLib;
 
 int main()
-{ // simply call startImi
-  getIcanInstance().init( 0, 250 );
-  // variable for DEV_KEY
-  // default with primary cultivation mounted back
-  IsoAgLib::iISOName_c myISOName( 5, 0 );
+{
+  // Initialize CAN-Bus
+  getIcanInstance().init (0); // CAN-Bus 0 (with defaulting 250 kbit)
+
+  // Start address claim of the local identity/member
+  IsoAgLib::iIdentItem_c c_myIdent (2,     // rui8_indGroup
+                                    5,     // rui8_devClass
+                                    0,     // rui8_devClassInst
+                                    25,    // rb_func
+                                    0x7FF, // rui16_manufCode
+                                    27);   // rui32_serNo
+                                    // further parameters use the default values as given in the constructor
 
   /** IsoAgLib::iISOName_c of the other remote ECU to lookup */
   IsoAgLib::iISOName_c lookupISOName( 2, 0 );
-
-  // start address claim of the local member "IMI"
-  // if DEV_KEY conflicts forces change of device class instance, the
-  // IsoAgLib can cahnge the myISOName val through the pointer to myISOName
-  bool b_selfConf = true;
-  uint8_t ui8_indGroup = 2,
-      b_func = 25,
-      b_wantedSa = 128,
-      b_funcInst = 0,
-      b_ecuInst = 0;
-  uint16_t ui16_manufCode = 0x7FF;
-  uint32_t ui32_serNo = 27;
-
-  // start address claim of the local member "IMI"
-  // if DEV_KEY conflicts forces change of device class instance, the
-  // IsoAgLib can change the myISOName val through the pointer to myISOName
-  IsoAgLib::iIdentItem_c c_myIdent( &myISOName,
-      b_selfConf, ui8_indGroup, b_func, ui16_manufCode,
-      ui32_serNo, b_wantedSa, 0xFFFF, b_funcInst, b_ecuInst);
 
   /** IMPORTANT:
     - The following loop could be replaced of any repeating call of
@@ -291,7 +279,7 @@ int main()
     { // fine the other item is active on BUS
       if ( ! b_lastState ) {
         #ifdef USE_RS232_FOR_DEBUG
-        getIrs232Instance() << "Remote ECU with device type: DeviceTpye := " << int( lookupISOName.devClass() ) << " is ACTIVE on BUS\n";
+        getIrs232Instance() << "Remote ECU with device type: DeviceType := " << int( lookupISOName.devClass() ) << " is ACTIVE on BUS\n";
         #endif
       }
       b_lastState = true;

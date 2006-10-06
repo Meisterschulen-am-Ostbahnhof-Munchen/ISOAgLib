@@ -107,17 +107,9 @@ class ISOItem_c : public BaseItem_c  {
 private:
   // private typedef alias names
 public:
-  /** constructor which can set optional all ident data
-    @param ri32_time creation time of this item instance
-    @param rc_isoName ISOName code of this item ((deviceClass << 3) | devClInst )
-    @param rui8_nr number of this item
-    @param rb_status state of this ident (off, claimed address, ...) (default: off)
-    @param rui16_saEepromAdr EEPROM adress to store actual SA -> next boot with same adr
-    @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
+  /** default constructor - all data has to be initialized with a call to "set(..)"
   */
-  ISOItem_c(int32_t ri32_time = 0, const ISOName_c& rc_isoName = ISOName_c::ISONameUnspecified, uint8_t rui8_nr = 0xFE,
-               IState_c::itemState_t rb_status = IState_c::IstateNull,
-               uint16_t rui16_saEepromAdr = 0xFFFF, int riSingletonKey = 0 );
+  ISOItem_c();
 
   /** copy constructor for ISOItem.
     The copy constructor checks if the source item is
@@ -246,8 +238,7 @@ public:
     @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
   void set(int32_t ri32_time, const ISOName_c& rc_isoName, uint8_t rui8_nr,
-           itemState_t ren_status = IState_c::Active,
-           uint16_t rui16_saEepromAdr = 0xFFFF, int riSingletonKey = 0 );
+           itemState_t ren_status = IState_c::Active, int riSingletonKey = 0 );
 
   /** set ISOName code of this item
     @param rc_isoName ISOName
@@ -392,20 +383,12 @@ protected:
 // Protected Methods
 
 private: // private methods
-  /** set eeprom adress and read SA from there */
-  void readEepromSa();
-  /** write actual SA to the given EEPROM adress */
-  void writeEepromSa();
-
   /** calculate random wait time between 0 and 153msec. from NAME and time
     @return wait offset in msec. [0..153]
   */
   uint8_t calc_randomWait();
 
 private:
-  /** EEPROM adress to store actual SA to use for next run */
-  uint16_t ui16_saEepromAdr;
-
 #ifdef USE_WORKING_SET
   /** pointer to the master ISOItem_c (if == this, then i'm master myself)
     NULL if not part of a master/slave setup

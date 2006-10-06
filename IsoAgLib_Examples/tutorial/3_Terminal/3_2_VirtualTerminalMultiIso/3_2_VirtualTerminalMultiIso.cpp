@@ -325,7 +325,7 @@ iObjectPool_simpleVTIsoPool_c::eventNumericValue (uint16_t objId, uint8_t ui8_va
 
     case iVtObjectIDInputListTypFakeMiles:
       /* +++ Showing what can be done in one statement: */
-      updateMiles (((iVtObjectOutputNumber_c *)iVtObjectInputListTypFakeMiles.getListItem (ui8_value))->get_vtObjectOutputNumber_a()->value);
+      updateMiles (((iVtObjectOutputNumber_c *)iVtObjectInputListTypFakeMiles.getListItem (ui8_value))->get_vtObjectOutputNumber_a().value);
 
       /* +++ Showing the same in four lines, it may be easier to read/understand this way
       // get the selected object from the input list
@@ -398,7 +398,7 @@ iObjectPool_simpleVTIsoPool_c::eventKeyCode (uint8_t keyActivationCode, uint16_t
 
       // Use b_updateObject here to save and access the hidden state directly via the object!
       case vtKeyCodeKeyLogo:
-        if (!(iVtObjectcontainerInAllMasks.get_vtObjectContainer_a()->hidden)) iVtObjectcontainerInAllMasks.hide (true);
+        if (!(iVtObjectcontainerInAllMasks.get_vtObjectContainer_a().hidden)) iVtObjectcontainerInAllMasks.hide (true);
         else iVtObjectcontainerInAllMasks.show (true);
         break;
 
@@ -418,39 +418,6 @@ iObjectPool_simpleVTIsoPool_c::eventKeyCode (uint8_t keyActivationCode, uint16_t
 
       case vtKeyCodeACK:
         iVtObjectimiIsoMaskupload.changeActiveMask (&iVtObjectMainMask);
-        break;
-
-      /// 2nd pool
-      case vtKeyCodeKeyReset_2:
-        col = 1;
-        iVtObjectMainMask.setBackgroundColour(col);
-        break;
-
-      case vtKeyCodeKeyChangeCol_2:
-        col += 1;
-        iVtObjectMainMask.setBackgroundColour(col);
-        break;
-
-      case vtKeyCodeKeyChangeMask_2:
-        iVtObjectimiIsoMaskupload.changeActiveMask (&iVtObjectAnotherMask);
-        break;
-
-      case vtKeyCodeKeyBackMask:
-        iVtObjectimiIsoMaskupload.changeActiveMask (&iVtObjectMainMask);
-        break;
-
-      case vtKeyCodeKeyNextMask:
-        iVtObjectimiIsoMaskupload.changeActiveMask (&iVtObjectLastMask);
-        break;
-
-      case vtKeyCodeKeyForbidden_2:
-        iVtObjectimiIsoMaskupload.changeActiveMask (&iVtObjectForbiddenAlarmMask);
-        break;
-
-        // Use b_updateObject here to save and access the hidden state directly via the object!
-      case vtKeyCodeKeyLogo_2:
-        if (!(iVtObjectcontainerInAllMasks_2.get_vtObjectContainer_a()->hidden)) iVtObjectcontainerInAllMasks_2.hide (true);
-        else iVtObjectcontainerInAllMasks_2.show (true);
         break;
     }
   }
@@ -473,7 +440,7 @@ iObjectPool_simpleVTIsoPool_c::eventObjectPoolUploadedSuccessfully (bool rb_wasL
     iVtObjectColLabel.setValueRef ("Color:"); // this is done so the initial state is up again if VT lost and reconnected!
     iVtObjectColOS.setVariableReference (colTable [color], true);
     iVtObjectFontAttributesNormal6x8.setFontColour (fgcolTable [color], true);
-    if (iVtObjectcontainerInAllMasks.get_vtObjectContainer_a()->hidden) iVtObjectcontainerInAllMasks.hide ();
+    if (iVtObjectcontainerInAllMasks.get_vtObjectContainer_a().hidden) iVtObjectcontainerInAllMasks.hide ();
       updateAccel (valAccel);
       updateMiles(valMiles);
     iVtObjectValSpeed.setValue (valSpeed+10000);
@@ -548,8 +515,58 @@ iObjectPool_simpleVTIsoPool2_c::eventNumericValue (uint16_t /*objId*/, uint8_t /
 
 // incoming key-events
 void
-iObjectPool_simpleVTIsoPool2_c::eventKeyCode (uint8_t /*keyActivationCode*/, uint16_t /*objId*/, uint16_t /*objIdMask*/, uint8_t /*keyCode*/, bool /*wasButton*/)
+iObjectPool_simpleVTIsoPool2_c::eventKeyCode (uint8_t keyActivationCode, uint16_t objId, uint16_t objIdMask, uint8_t keyCode, bool /*wasButton*/)
 {
+/* just for your information! - defines are to be found in the "ivttypes.h" include!
+  #define BUTTON_HAS_BEEN_UNLATCHED 0
+  #define BUTTON_HAS_BEEN_PRESSED 1
+  #define BUTTON_HAS_BEEN_LATCHED 1
+  #define BUTTON_IS_STILL_HELD 2
+
+  #define KEY_HAS_BEEN_RELEASED 0
+  #define KEY_HAS_BEEN_PRESSED 1
+  #define KEY_IS_STILL_HELD 2
+*/
+  // if only interested in xxx_PRESSED you don't have to distinguish between keys/buttons
+  // if (wasButton) { // was button
+  // } else { // was key
+  // }
+  if (keyActivationCode == KEY_HAS_BEEN_PRESSED)
+  {   // == BUTTON_HAS_BEEN_PRESSED
+    switch (keyCode) {
+      case vtKeyCodeKeyReset_2:
+        col = 1;
+        iVtObjectMainMask.setBackgroundColour(col);
+        break;
+
+      case vtKeyCodeKeyChangeCol_2:
+        col += 1;
+        iVtObjectMainMask.setBackgroundColour(col);
+        break;
+
+      case vtKeyCodeKeyChangeMask_2:
+        iVtObjectimiIsoMaskupload.changeActiveMask (&iVtObjectAnotherMask);
+        break;
+
+      case vtKeyCodeKeyBackMask:
+        iVtObjectimiIsoMaskupload.changeActiveMask (&iVtObjectMainMask);
+        break;
+
+      case vtKeyCodeKeyNextMask:
+        iVtObjectimiIsoMaskupload.changeActiveMask (&iVtObjectLastMask);
+        break;
+
+      case vtKeyCodeKeyForbidden_2:
+        iVtObjectimiIsoMaskupload.changeActiveMask (&iVtObjectForbiddenAlarmMask);
+        break;
+
+        // Use b_updateObject here to save and access the hidden state directly via the object!
+      case vtKeyCodeKeyLogo_2:
+        if (!(iVtObjectcontainerInAllMasks_2.get_vtObjectContainer_a().hidden)) iVtObjectcontainerInAllMasks_2.hide (true);
+        else iVtObjectcontainerInAllMasks_2.show (true);
+        break;
+    }
+  }
 }
 
 // has to be implemented - remember that if the VT drops out and comes again, the values have to be up2date!!!
@@ -608,54 +625,41 @@ static iObjectPool_simpleVTIsoPool2_c Tutorial_3_2_Pool_2_c;
 /********************/
 
 int main()
-{ // simply call startImi
-  getIcanInstance().init(0, 250);
+{
+  getIcanInstance().init (0); // CAN-Bus 0 (with defaulting 250 kbit)
 
-  // variables for DEV_KEY
-  // default with primary cultivation mounted back
-  IsoAgLib::iISOName_c myISONamePool1(7, 0);
-  IsoAgLib::iISOName_c myISONamePool2(7, 1);
+  // start address claim of the local identity/member
+  IsoAgLib::iIdentItem_c c_myIdent1 (2,    // rui8_indGroup
+                                     7,    // rui8_devClass
+                                     0,    // rui8_devClassInst
+                                     25,   // rb_func
+                                     0x7FF,// rui16_manufCode
+                                     27,   // rui32_serNo
+                                     254,  // No preferred SA, auto-allocate in range 0x80 upwards...
+                                     0x100,// EEPROM-Address to store the allocated SA for re-use after power-cycle
+                                     1,    // rb_funcInst (to differentiate between Tutorial3_0)
+                                     0,    // rb_ecuInst
+                                     true, // rb_selfConf
+                                     0);   // 0 means: We're WS-Master and have 0 WS-Slaves
+                                     // further parameters use the default: NULL /* so no list given either */, 0 /* singletonVecKey */
 
-  // start address claim of the local member "IMI"
-  // if DEV_KEY conflicts forces change of device class instance, the
-  // IsoAgLib can change the myISONamePoolx val through the pointer to myISONamePoolx
-  bool b_selfConf = true;
-  uint8_t ui8_indGroup = 2,
-      b_func = 25,
-      b_wantedSa = 128,
-      b_funcInst = 0,
-      b_ecuInst = 0;
-  uint16_t ui16_manufCode = 0x7FF;
-  uint32_t ui32_serNo = 27;
-
-  // start address claim of the local member "IMI"
-  // if DEV_KEY conflicts forces change of device class instance, the
-  // IsoAgLib can change the myISONamePoolx val through the pointer to myISONamePoolx
-  #if 1
-  IsoAgLib::iIdentItem_c c_myIdentPool1 ( &myISONamePool1,
-      b_selfConf, ui8_indGroup, b_func, ui16_manufCode,
-      ui32_serNo, b_wantedSa, 0xFFFF, b_funcInst, b_ecuInst, 0, NULL );
-
-  IsoAgLib::iIdentItem_c c_myIdentPool2 ( &myISONamePool2,
-      b_selfConf, ui8_indGroup, b_func, ui16_manufCode,
-      ui32_serNo, b_wantedSa, 0xFFFF, b_funcInst, b_ecuInst, 0, NULL );
-
-  #else
-  uint64_t ui64_isoNamePool1 = 0xa00e840000000000ULL;
-                        //0x0000000000840ea0;
-  uint64_t ui64_isoNamePool2 = 0xa00e850000000000ULL;
-                        //0x0000000000850ea0;
-
-  IsoAgLib::iIdentItem_c c_myIdentPool1 (&myISONamePool1, (const uint8_t*)&ui64_isoNamePool1, b_wantedSa, 0xFFFF, 0, NULL);
-  IsoAgLib::iIdentItem_c c_myIdentPool2 (&myISONamePool2, (const uint8_t*)&ui64_isoNamePool2, b_wantedSa, 0xFFFF, 0, NULL);
-  #endif
-
-  /* Explicit call to init iIsoTerminal instance - not really needed though */
-  getIisoTerminalInstance().init();
+  IsoAgLib::iIdentItem_c c_myIdent2 (2,    // rui8_indGroup
+                                     7,    // rui8_devClass
+                                     0,    // rui8_devClassInst
+                                     25,   // rb_func
+                                     0x7FF,// rui16_manufCode
+                                     27,   // rui32_serNo
+                                     254,  // No preferred SA, auto-allocate in range 0x80 upwards...
+                                     0x100,// EEPROM-Address to store the allocated SA for re-use after power-cycle
+                                     1,    // rb_funcInst (to differentiate between Tutorial3_0)
+                                     1,    // rb_ecuInst (to differentiate between the myIdent1
+                                     true, // rb_selfConf
+                                     0);   // 0 means: We're WS-Master and have 0 WS-Slaves
+                                     // further parameters use the default: NULL /* so no list given either */, 0 /* singletonVecKey */
 
   /*  Call registerIsoObjectPool to initialize both object pools! */
-  getIisoTerminalInstance().registerIsoObjectPool (c_myIdentPool1, Tutorial_3_2_Pool_1_c, "321");
-  getIisoTerminalInstance().registerIsoObjectPool (c_myIdentPool2, Tutorial_3_2_Pool_2_c, "322");
+  getIisoTerminalInstance().registerIsoObjectPool (c_myIdent1, Tutorial_3_2_Pool_1_c, "T3211");
+  getIisoTerminalInstance().registerIsoObjectPool (c_myIdent2, Tutorial_3_2_Pool_2_c, "T3221");
 
   /** IMPORTANT:
     - The following loop could be replaced of any repeating call of
@@ -687,49 +691,6 @@ int main()
     // IMPORTANT: call main timeEvent function for
     // all time controlled actions of IsoAgLib
     IsoAgLib::getISchedulerInstance().timeEvent();
-#ifdef DEBUG_TOGGLE_POINTER
-    {
-      static int32_t si32_lastPtrTime = 0;
-      int32_t i32_nowTime = HAL::getTime();
-      if ((i32_nowTime - si32_lastPtrTime) > 5000)
-      {
-        static bool sb_togglePtr = false;
-        if (sb_togglePtr)
-          iVtObjectChangeAwayPointer.setValue (NULL);
-        else
-          iVtObjectChangeAwayPointer.setValue (&iVtObjectInputMiles);
-        sb_togglePtr = !sb_togglePtr;
-        si32_lastPtrTime = i32_nowTime;
-      }
-    }
-#endif
-
-#ifdef DEBUG_RAPID_UPDATE
-    {
-      static int32_t si32_lastTime = 0;
-      int32_t i32_nowTime = HAL::getTime();
-      if ((i32_nowTime - si32_lastTime) > 1000)
-      {
-        updateMiles (valMiles+1);
-        si32_lastTime = i32_nowTime;
-      }
-    }
-#endif
-#ifdef DEBUG_TOGGLE_MASKS
-    static int32_t si32_lastToggleTime = 0;
-    int32_t i32_nowTime = HAL::getTime();
-    if ((i32_nowTime - si32_lastToggleTime) > 5000)
-    {
-      static bool sb_toggle = false;
-      si32_lastToggleTime = i32_nowTime;
-      if (sb_toggle)
-        iVtObjectimiIsoMaskupload.changeActiveMask (&iVtObjectMainMask);
-//      else iVtObjectimiIsoMaskupload.changeActiveMask (&iVtObjectAnotherMask);
-      else iVtObjectimiIsoMaskupload.changeActiveMask (&iVtObjectForbiddenAlarmMask);
-//      else iVtObjectimiIsoMaskupload.changeActiveMask (&iVtObjectMainMask);
-      sb_toggle = !sb_toggle;
-    }
-#endif
     #ifdef SYSTEM_PC
      #ifdef WIN32
      Sleep(10);
@@ -738,5 +699,4 @@ int main()
      #endif
     #endif
   }
-  return 1;
 }

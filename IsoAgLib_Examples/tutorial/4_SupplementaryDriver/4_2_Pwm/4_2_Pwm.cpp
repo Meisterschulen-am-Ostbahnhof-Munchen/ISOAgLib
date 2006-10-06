@@ -214,150 +214,136 @@ using namespace IsoAgLib;
 
 
 int main()
-{ // Initialize the CAN BUS at channel 0 to 250 kbaud
-  IsoAgLib::getIcanInstance().init( 0, 250 );
+{
+  // Initialize CAN-Bus
+  getIcanInstance().init (0); // CAN-Bus 0 (with defaulting 250 kbit)
 
-	// define the ISO 11783 specific identity settings
-  // for the 64bit NAME field
-  bool b_selfConf = true;
-  uint8_t ui8_indGroup = 2,
-      ui8_func = 25,
-      ui8_wantedSa = 128,
-      ui8_funcInst = 0,
-      ui8_ecuInst = 0,
-			ui8_deviceType = 2,
-			ui8_deviceTypeInstance = 0;
-  uint16_t ui16_manufCode = 0x7FF;
-  uint32_t ui32_serNo = 27;
+  // start address claim of the local identity/member
+  IsoAgLib::iIdentItem_c c_myIdent (2,    // rui8_indGroup
+                                    2,    // rui8_devClass
+                                    0,    // rui8_devClassInst
+                                    25,   // rb_func
+                                    0x7FF,// rui16_manufCode
+                                    27);  // rui32_serNo
+                                    // further parameters use the default
 
-  // variable for DEV_KEY ( device type, device type instance )
-  // default with primary cultivation mounted back ( device type 2, instance 0 )
-  IsoAgLib::iISOName_c myISOName( ui8_deviceType, ui8_deviceTypeInstance );
+  // create some PWM instances
+  // STW BIOS of ESX provides current measurement for channel 0-4
+  IsoAgLib::iDigitalO_c c_pwmCurrentDiagnose( 0 );
+  // set the current limits - they are only used if output is active
+  // allowed [50..500] [mA] ( too low would mean that consuming device is lost )
+  c_pwmCurrentDiagnose.setActiveCurrentLimits( 50, 500 );
+  // set individual PWM frequency if default CONFIG_PWM_DEFAULT_FREQUENCY (100000) is not as wanted
+  c_pwmCurrentDiagnose.setFreq( 200000 ); // 200 Hz
 
-	// start address claim of the local member
-  // if DEV_KEY ( device type, -instance ) conflicts forces change of POS/instance, the
-  // IsoAgLib can change the myISOName val through the pointer to myISOName
-  IsoAgLib::iIdentItem_c c_myIdent( &myISOName,
-      b_selfConf, ui8_indGroup, ui8_func, ui16_manufCode,
-      ui32_serNo, ui8_wantedSa, 0xFFFF, ui8_funcInst, ui8_ecuInst);
-
-	// create some PWM instances
-	// STW BIOS of ESX provides current measurement for channel 0-4
-	IsoAgLib::iDigitalO_c c_pwmCurrentDiagnose( 0 );
-	// set the current limits - they are only used if output is active
-	// allowed [50..500] [mA] ( too low would mean that consuming device is lost )
-	c_pwmCurrentDiagnose.setActiveCurrentLimits( 50, 500 );
-	// set individual PWM frequency if default CONFIG_PWM_DEFAULT_FREQUENCY (100000) is not as wanted
-	c_pwmCurrentDiagnose.setFreq( 200000 ); // 200 Hz
-
-	// STW BIOS of ESX can only check for short circuit for other PWM
-	IsoAgLib::iDigitalO_c c_pwmCurrentSimple( 5 );
-	// set individual PWM frequency if default CONFIG_PWM_DEFAULT_FREQUENCY (100000) is not as wanted
-	c_pwmCurrentSimple.setFreq( 400000 ); // 400 Hz
+  // STW BIOS of ESX can only check for short circuit for other PWM
+  IsoAgLib::iDigitalO_c c_pwmCurrentSimple( 5 );
+  // set individual PWM frequency if default CONFIG_PWM_DEFAULT_FREQUENCY (100000) is not as wanted
+  c_pwmCurrentSimple.setFreq( 400000 ); // 400 Hz
 
   /** IMPORTANT:
-	  - The following loop could be replaced of any repeating call of
-			getISchedulerInstance().timeEvent();
-			which is needed to perform all internal activities of the IsoAgLib.
-		- Define the time intervall for getISchedulerInstance().timeEvent()
-			in a way, that allows IsoAgLib to trigger all reactions on BUS
-			in the ISO 11783 defined time resolution - especially the address
-			claim process has some tight time restrictions, that suggest
-			a trigger rate of at least 100msec ( you could call the function
-			only during address claim, mask updload and other special
-			circumstances in a high repetition rate )
-		- The main loop is running until iSystem_c::canEn() is returning false.
-			This function can be configured by the #define CONFIG_BUFFER_SHORT_CAN_EN_LOSS_MSEC
-			in isoaglib_config.h to ignore short CAN_EN loss.
-		- This explicit control of power state without automatic powerdown on CanEn loss
-			can be controled with the central config define
-			#define CONFIG_DEFAULT_POWERDOWN_STRATEGY IsoAgLib::PowerdownByExplcitCall
-			or
-			#define CONFIG_DEFAULT_POWERDOWN_STRATEGY IsoAgLib::PowerdownOnCanEnLoss
-			in the header xgpl_src/Application_Config/isoaglib_config.h
-		- This can be also controlled during runtime with the function call:
-			getIsystemInstance().setPowerdownStrategy( IsoAgLib::PowerdownByExplcitCall )
-			or
-			getIsystemInstance().setPowerdownStrategy( IsoAgLib::PowerdownOnCanEnLoss )
-	*/
-	int32_t i32_nextDebug = 0;
-	while ( IsoAgLib::iSystem_c::canEn() )
-	{ // run main loop
-		// IMPORTANT: call main timeEvent function for
-		// all time controlled actions of IsoAgLib - \ref IsoAgLib::iScheduler_c::timeEvent()
-		getISchedulerInstance().timeEvent();
+    - The following loop could be replaced of any repeating call of
+      getISchedulerInstance().timeEvent();
+      which is needed to perform all internal activities of the IsoAgLib.
+    - Define the time intervall for getISchedulerInstance().timeEvent()
+      in a way, that allows IsoAgLib to trigger all reactions on BUS
+      in the ISO 11783 defined time resolution - especially the address
+      claim process has some tight time restrictions, that suggest
+      a trigger rate of at least 100msec ( you could call the function
+      only during address claim, mask updload and other special
+      circumstances in a high repetition rate )
+    - The main loop is running until iSystem_c::canEn() is returning false.
+      This function can be configured by the #define CONFIG_BUFFER_SHORT_CAN_EN_LOSS_MSEC
+      in isoaglib_config.h to ignore short CAN_EN loss.
+    - This explicit control of power state without automatic powerdown on CanEn loss
+      can be controled with the central config define
+      #define CONFIG_DEFAULT_POWERDOWN_STRATEGY IsoAgLib::PowerdownByExplcitCall
+      or
+      #define CONFIG_DEFAULT_POWERDOWN_STRATEGY IsoAgLib::PowerdownOnCanEnLoss
+      in the header xgpl_src/Application_Config/isoaglib_config.h
+    - This can be also controlled during runtime with the function call:
+      getIsystemInstance().setPowerdownStrategy( IsoAgLib::PowerdownByExplcitCall )
+      or
+      getIsystemInstance().setPowerdownStrategy( IsoAgLib::PowerdownOnCanEnLoss )
+  */
+  int32_t i32_nextDebug = 0;
+  while ( IsoAgLib::iSystem_c::canEn() )
+  { // run main loop
+    // IMPORTANT: call main timeEvent function for
+    // all time controlled actions of IsoAgLib - \ref IsoAgLib::iScheduler_c::timeEvent()
+    getISchedulerInstance().timeEvent();
 
-		// immediately re-loop if it's not yet time for debug messages
-		if ( i32_nextDebug > IsoAgLib::iSystem_c::getTime() ) continue;
-		// now it's time for debug
-		i32_nextDebug = IsoAgLib::iSystem_c::getTime() + 1000;
+    // immediately re-loop if it's not yet time for debug messages
+    if ( i32_nextDebug > IsoAgLib::iSystem_c::getTime() ) continue;
+    // now it's time for debug
+    i32_nextDebug = IsoAgLib::iSystem_c::getTime() + 1000;
 
-		// use simple loop to switch several states
-		switch ( ( IsoAgLib::iSystem_c::getTime() / 1000 ) % 4 )
-		{
-			case 0: // first second - both on
-				// either set max possible value for total opening
-				c_pwmCurrentDiagnose.set( true );
-				// or set PWM value for detailed control
-				c_pwmCurrentSimple.set( uint16_t(1024) );
-				break;
-			case 1:
-				// either set max possible value for total opening
-				c_pwmCurrentDiagnose.set( false );
-				// or set PWM value for detailed control
-				c_pwmCurrentSimple.set( uint16_t(2048) );
-				break;
-			case 2:
-				// either set max possible value for total opening
-				c_pwmCurrentDiagnose.set( false );
-				// or set PWM value for detailed control
-				c_pwmCurrentSimple.set( uint16_t(0) );
-				break;
-			case 3:
-				// either set max possible value for total opening
-				c_pwmCurrentDiagnose.set( true );
-				// or set PWM value for detailed control
-				c_pwmCurrentSimple.set( uint16_t(0) );
-				break;
-		}
+    // use simple loop to switch several states
+    switch ( ( IsoAgLib::iSystem_c::getTime() / 1000 ) % 4 )
+    {
+      case 0: // first second - both on
+        // either set max possible value for total opening
+        c_pwmCurrentDiagnose.set( true );
+        // or set PWM value for detailed control
+        c_pwmCurrentSimple.set( uint16_t(1024) );
+        break;
+      case 1:
+        // either set max possible value for total opening
+        c_pwmCurrentDiagnose.set( false );
+        // or set PWM value for detailed control
+        c_pwmCurrentSimple.set( uint16_t(2048) );
+        break;
+      case 2:
+        // either set max possible value for total opening
+        c_pwmCurrentDiagnose.set( false );
+        // or set PWM value for detailed control
+        c_pwmCurrentSimple.set( uint16_t(0) );
+        break;
+      case 3:
+        // either set max possible value for total opening
+        c_pwmCurrentDiagnose.set( true );
+        // or set PWM value for detailed control
+        c_pwmCurrentSimple.set( uint16_t(0) );
+        break;
+    }
 
-		// now check for states
-		// use operator!() - which is comparable to if ( !c_pwmCurrentDiagnose.good() )
-		if ( ! c_pwmCurrentDiagnose  )
-		{ // ERROR
-			IsoAgLib::getIrs232Instance()
-				<< "ERROR: c_pwmCurrentDiagnose is faulted with current: " << c_pwmCurrentDiagnose.getDigoutCurrent();
-		}
-		else
-		{
-			IsoAgLib::getIrs232Instance()
-				<< "FINE: c_pwmCurrentDiagnose is in good state with current: " << c_pwmCurrentDiagnose.getDigoutCurrent();
-		}
-		IsoAgLib::getIrs232Instance()
-			<< ", current state: " << c_pwmCurrentDiagnose.get()
-			<< " and PWM output voltage: " << c_pwmCurrentDiagnose.getDigoutAdc()
-			<< "[mV]\r\n";
+    // now check for states
+    // use operator!() - which is comparable to if ( !c_pwmCurrentDiagnose.good() )
+    if ( ! c_pwmCurrentDiagnose  )
+    { // ERROR
+      IsoAgLib::getIrs232Instance()
+        << "ERROR: c_pwmCurrentDiagnose is faulted with current: " << c_pwmCurrentDiagnose.getDigoutCurrent();
+    }
+    else
+    {
+      IsoAgLib::getIrs232Instance()
+        << "FINE: c_pwmCurrentDiagnose is in good state with current: " << c_pwmCurrentDiagnose.getDigoutCurrent();
+    }
+    IsoAgLib::getIrs232Instance()
+      << ", current state: " << c_pwmCurrentDiagnose.get()
+      << " and PWM output voltage: " << c_pwmCurrentDiagnose.getDigoutAdc()
+      << "[mV]\r\n";
 
-		// do some more evaluation
-		IsoAgLib::getIrs232Instance()
-			<< "c_pwmCurrentSimple is currently set to: " << c_pwmCurrentSimple.get()
-			<< ", has PWM output voltage: " << c_pwmCurrentSimple.getDigoutAdc()
-			<< "[mV]\r\n";
-		switch ( c_pwmCurrentSimple.getState() )
-		{
-			case IsoAgLib::iDigitalO_c::noDoutErr :
-				IsoAgLib::getIrs232Instance()
-					<< "FINE - c_pwmCurrentSimple is in good state\r\n";
-				break;
-			case IsoAgLib::iDigitalO_c::dout_openErr :
-				IsoAgLib::getIrs232Instance()
-					<< "PROBLEM - c_pwmCurrentSimple has no contact to consuming device\r\n";
-				break;
-			case IsoAgLib::iDigitalO_c::dout_shortcutErr :
-				IsoAgLib::getIrs232Instance()
-					<< "ERROR - c_pwmCurrentSimple has shortcut\r\n";
-				break;
-		}
+    // do some more evaluation
+    IsoAgLib::getIrs232Instance()
+      << "c_pwmCurrentSimple is currently set to: " << c_pwmCurrentSimple.get()
+      << ", has PWM output voltage: " << c_pwmCurrentSimple.getDigoutAdc()
+      << "[mV]\r\n";
+    switch ( c_pwmCurrentSimple.getState() )
+    {
+      case IsoAgLib::iDigitalO_c::noDoutErr :
+        IsoAgLib::getIrs232Instance()
+          << "FINE - c_pwmCurrentSimple is in good state\r\n";
+        break;
+      case IsoAgLib::iDigitalO_c::dout_openErr :
+        IsoAgLib::getIrs232Instance()
+          << "PROBLEM - c_pwmCurrentSimple has no contact to consuming device\r\n";
+        break;
+      case IsoAgLib::iDigitalO_c::dout_shortcutErr :
+        IsoAgLib::getIrs232Instance()
+          << "ERROR - c_pwmCurrentSimple has shortcut\r\n";
+        break;
+    }
   }
   return 1;
 }

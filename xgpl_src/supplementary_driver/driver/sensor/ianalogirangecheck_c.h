@@ -173,7 +173,7 @@ private:
         detects this fault, and shows you this WARNING!!
     @param rrefc_src source
   */
-  iAnalogIRangeCheck_c(const iAnalogIRangeCheck_c& rrefc_src) : AnalogIRangeCheck_c() {};
+  iAnalogIRangeCheck_c(const iAnalogIRangeCheck_c& /*rrefc_src*/) : AnalogIRangeCheck_c() {};
   /**
     HIDDEN! assignment for AnalogIRangeCheck_c
     NEVER assign a AnalogIRangeCheck_c to another instance!!!!
@@ -181,7 +181,7 @@ private:
         detects this fault, and shows you this WARNING!!
     @param rrefc_src source
   */
-  iAnalogIRangeCheck_c& operator=(const iAnalogIRangeCheck_c& rrefc_src){ return *this;};
+  iAnalogIRangeCheck_c& operator=(const iAnalogIRangeCheck_c& /*rrefc_src*/){ return *this;};
 };
 }
 #endif

@@ -305,7 +305,7 @@ public:
     @return pointer to new ISOItem_c or NULL if not succeeded
   */
   ISOItem_c* insertIsoMember(const ISOName_c& rc_isoName, uint8_t rui8_nr = 0xFF,
-                     IState_c::itemState_t ren_state = IState_c::Active, uint16_t rui16_saEepromAdr = 0xFFFF);
+                     IState_c::itemState_t ren_state = IState_c::Active);
 
 
   /** deliver the amount of local members which matches the searched proto types
@@ -439,7 +439,7 @@ public:
     @param refc_isoName reference to ISOName var (is changed directly if needed!!)
     @return true -> referenced ISOName is now unique
   */
-  bool unifyIsoISOName(ISOName_c& refc_isoName);
+  bool unifyIsoISOName (ISOName_c& refc_isoName, bool rb_dontUnify);
 
   /** deliver timestamp of last ISO request for SA claim msg
     @return time of last Request PG for Adress Claim on BUS

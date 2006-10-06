@@ -67,7 +67,6 @@ SOURCES = ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectline_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectoutputstring_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/isoterminalpkg_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectinput_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectfillattributes_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectnumbervariable_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectlineattributes_c.cpp  \

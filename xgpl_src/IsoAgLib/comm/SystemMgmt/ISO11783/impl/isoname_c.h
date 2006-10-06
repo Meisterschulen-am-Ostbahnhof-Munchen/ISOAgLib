@@ -174,7 +174,7 @@ public:
         uint8_t rb_func, uint16_t rui16_manufCode, uint32_t rui32_serNo, uint8_t rb_funcInst = 0, uint8_t rb_ecuInst = 0);
 
   /** set device class & instance with two seperate parameters */
-  void set( uint8_t rui8_devClass, uint8_t rui8_pos );
+  void set( uint8_t rui8_devClass, uint8_t rui8_devClassInst );
 
   /** set this instance to indicator for unspecified value */
   void setUnspecified( void ) { setDevClass( 0x7F ); setDevClassInst( 0xF );}
@@ -317,6 +317,11 @@ public:
     @return 0 == equal; -1 == this has lower prio than par; +1 == this item has higher prio than par
   */
   int8_t higherPriThanPar(const Flexible8ByteString_c* rpu_compare) const;
+
+  /** Check if all Non-Instance fields of both ISONames match
+    @return true if equal, false if one non-inst field differs!
+  */
+  bool isEqualRegardingNonInstFields (const ISOName_c& rrefc_isoName) const;
 
   /** compare two ISOName_c values with operator== */
   bool operator==( const ISOName_c& refc_right ) const

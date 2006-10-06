@@ -86,12 +86,6 @@
 #include "isomonitor_c.h"
 #include <IsoAgLib/comm/Scheduler/impl/scheduler_c.h>
 #include <IsoAgLib/driver/can/impl/canio_c.h>
-#ifdef USE_EEPROM_IO
-#include <IsoAgLib/driver/eeprom/impl/eepromio_c.h>
-#endif
-#ifdef USE_ISO_TERMINAL
-  #include <IsoAgLib/comm/ISO_Terminal/impl/isoterminal_c.h>
-#endif
 
 #if defined(DEBUG)
   #ifdef SYSTEM_PC
@@ -104,37 +98,17 @@
 
 namespace __IsoAgLib {
 
-/** constructor which can set optional all ident data
-  @param ri32_time creation time of this item instance
-  @param rc_isoName ISOName code of this item ((deviceClass << 3) | devClInst )
-  @param rui8_nr number of this item
-  @param rb_status state of this ident (off, claimed address, ...) (default: off)
-  @param rui16_saEepromAdr EEPROM adress to store actual SA -> next boot with same adr
-  @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
+/** default constructor - all data has to be initialized with a call to "set(..)"
 */
-ISOItem_c::ISOItem_c(int32_t ri32_time, const ISOName_c& rc_isoName, uint8_t rui8_nr, IState_c::itemState_t rb_status,
-      uint16_t rui16_saEepromAdr, int ri_singletonVecKey )
-  : BaseItem_c(0, rb_status, ri_singletonVecKey), ui16_saEepromAdr(rui16_saEepromAdr), ui8_nr(rui8_nr), c_isoName(rc_isoName)
-{
-  // mark this item as prepare address claim if local
-  setItemState(IState_c::itemState_t(IState_c::Member | IState_c::Iso));
+ISOItem_c::ISOItem_c()
+  : BaseItem_c(0, IState_c::IstateNull, 0)
   #ifdef USE_WORKING_SET
-  // no need to set "i8_slavesToClaimAddress", as it's initialized when setting state to ClaimedAddress
-  // define this item as standalone by default
-  pc_masterItem = NULL;
+  , pc_masterItem (NULL)
+  , i8_slavesToClaimAddress (-2) // idle around and wait for this ISOItem_c to get initially initialized!
   #endif
-
-  // just use ri32_time to make compiler happy
-  // an ISO11783 item must start with timestamp 0
-  if ( ri32_time == 0 ) updateTime( ri32_time );
-  else updateTime(0); // state that this item didn't send an adress claim
-
-  readEepromSa();
-  if (itemState(IState_c::Local))
-  {
-    setItemState(IState_c::PreAddressClaim);
-    timeEvent(); // call time for further init
-  }
+  , ui8_nr(0xFE)
+  , c_isoName (ISOName_c::ISONameUnspecified)
+{
 }
 
 /** copy constructor for ISOItem
@@ -145,9 +119,9 @@ ISOItem_c::ISOItem_c(int32_t ri32_time, const ISOName_c& rc_isoName, uint8_t rui
   @param rrefc_src source ISOItem_c instance
 */
 ISOItem_c::ISOItem_c(const ISOItem_c& rrefc_src)
-  : BaseItem_c(rrefc_src), ui16_saEepromAdr(rrefc_src.ui16_saEepromAdr), ui8_nr(rrefc_src.ui8_nr), c_isoName(rrefc_src.c_isoName)
+  : BaseItem_c(rrefc_src), ui8_nr(rrefc_src.ui8_nr), c_isoName(rrefc_src.c_isoName)
 {// mark this item as prepare address claim if local
-  setItemState(IState_c::itemState_t(IState_c::Member | IState_c::Iso));
+  setItemState (IState_c::Member);
 
   #ifdef USE_WORKING_SET
   // no need of setting "i8_slavesToClaimAddress", as it will be set when setting state to CleaimedAddress!
@@ -166,8 +140,7 @@ ISOItem_c::ISOItem_c(const ISOItem_c& rrefc_src)
   }
   #endif
 
-  updateTime(0); // state that this item didn't send an adress claim
-  readEepromSa();
+  updateTime (actualTimestamp());
   if (itemState(IState_c::Local))
   {
     setItemState(IState_c::PreAddressClaim);
@@ -185,15 +158,13 @@ ISOItem_c& ISOItem_c::operator=(const ISOItem_c& rrefc_src)
   setISOName(rrefc_src.isoName());
   setNr(rrefc_src.nr());
 
-  setItemState(IState_c::itemState_t(IState_c::Member | IState_c::Iso));
+  setItemState (IState_c::Member);
   #ifdef USE_WORKING_SET
   // no need of setting "i8_slavesToClaimAddress" here as it will be set when setting state to ClaimedAddress
   /** @todo What to do with the pc_masterItem? */
   #endif
-  updateTime(0); // state that this item didn't send an adress claim
+  updateTime (actualTimestamp());
   // mark this item as prepare address claim if local
-  ui16_saEepromAdr = rrefc_src.ui16_saEepromAdr;
-  readEepromSa();
   if (itemState(IState_c::Local))
   {
     setItemState(IState_c::PreAddressClaim);
@@ -215,9 +186,6 @@ bool operator<(const ISOName_c& rc_left, const ISOItem_c& rrefc_right)
 /** default destructor */
 ISOItem_c::~ISOItem_c()
 {
-  setNr(0xF);
-  c_isoName.setUnspecified();
-
   if ( itemState(IState_c::ClaimedAddress ) )
   { // broadcast to handler classes the event of LOSS of this SA
     getIsoMonitorInstance4Comm().broadcastSaRemove2Clients( isoName(), nr() );
@@ -269,52 +237,16 @@ void ISOItem_c::getPureAsciiName(int8_t *pc_asciiName, uint8_t rui8_maxLen)
   @param rc_isoName ISOName code of this item ((deviceClass << 3) | devClInst )
   @param rui8_nr number of this item
   @param rb_status state of this ident (off, claimed address, ...)
-  @param rui16_saEepromAdr EEPROM adress to store actual SA -> next boot with same adr
   @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
 void ISOItem_c::set(int32_t ri32_time, const ISOName_c& rc_isoName, uint8_t rui8_nr,
-        itemState_t ren_status, uint16_t rui16_saEepromAdr, int ri_singletonVecKey )
+        itemState_t ren_status, int ri_singletonVecKey )
 {
   BaseItem_c::set( ri32_time, ren_status, ri_singletonVecKey );
   setISOName(rc_isoName);
   setNr(rui8_nr);
-
-  ui16_saEepromAdr = rui16_saEepromAdr;
-  readEepromSa();
 }
 
-#if 0
-/** set all element data with one call
-  @param ri32_time creation time of this item instance
-  @param rc_isoName ISOName code of this item ((deviceClass << 3) | devClInst )
-  @param rui8_nr number of this item
-  @param rb_selfConf true -> the item has a self configurable source adress
-  @param rui8_indGroup industry group code (2 for agriculture)
-  @param rb_func function code (25 = network interconnect)
-  @param rui16_manufCode manufactor code
-  @param rui32_serNo serial no specific for one ECU of one manufactor
-  @param ren_status state of this ident (off, claimed address, ...) (default: off)
-  @param rui16_saEepromAdr EEPROM adress to store actual SA -> next boot with same adr
-  @param rb_funcInst counter for devices with same function (default 0)
-  @param rb_ecuInst counter for ECU with same function and function instance (default 0)
-  @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
-*/
-void ISOItem_c::set(int32_t ri32_time, ISOName_c rc_isoName, uint8_t rui8_nr,
-        bool rb_selfConf, uint8_t rui8_indGroup, uint8_t rb_func, uint16_t rui16_manufCode,
-        uint32_t rui32_serNo, itemState_t ren_status, uint16_t rui16_saEepromAdr, uint8_t rb_funcInst,
-        uint8_t rb_ecuInst, int ri_singletonVecKey )
-{
-  MonitorItem_c::set(ri32_time, rc_isoName, rui8_nr, ren_status, ri_singletonVecKey);
-  c_isoName.set(rb_selfConf, rui8_indGroup, (rc_isoName.devClass()), (rc_isoName.devClassInst()),
-        rb_func, rui16_manufCode, rui32_serNo, rb_funcInst, rb_ecuInst);
-  ui16_saEepromAdr = rui16_saEepromAdr;
-  readEepromSa();
-  // set give ISOName in NAME field
-  c_isoName.setISOName(rc_isoName);
-  // set ISOName_c pointer inside ISOName_c to ISOName_c of ISOItem_c
-  c_isoName.setName( &c_isoName );
-}
-#endif
 
 /** periodically time evented actions:
     * find free SA or check if last SA is available
@@ -405,8 +337,6 @@ bool ISOItem_c::timeEvent( void )
       {
         // no conflict since sent of adress claim since 250ms
         setItemState(IState_c::ClaimedAddress);
-        // now try to save the retrieved SA in EEPROM
-        writeEepromSa();
         // now inform the ISO monitor list change clients on NEW client use
         getIsoMonitorInstance4Comm().broadcastSaAdd2Clients( isoName(), this );
         #ifdef USE_WORKING_SET
@@ -557,36 +487,6 @@ bool ISOItem_c::sendWsAnnounce()
   }
 }
 #endif
-
-/** set eeprom adress and read SA from there */
-void ISOItem_c::readEepromSa()
-{
-  if ((ui16_saEepromAdr != 0xFFFF) && (nr() == 0xFE))
-  {
-    uint8_t ui8_eepromNr = 128;
-#ifdef USE_EEPROM_IO
-    getEepromInstance().setg(ui16_saEepromAdr);
-    getEepromInstance() >> ui8_eepromNr;
-    // use fallback to free definition, when the EEPROM has only invalid SA
-    if ( ui8_eepromNr > 0xFE ) ui8_eepromNr = 0xFE;
-#endif
-    setNr(ui8_eepromNr);
-  }
-  getLibErrInstance().registerError( LibErr_c::Precondition, LibErr_c::System );
-}
-
-/** write actual SA to the given EEPROM adress */
-void ISOItem_c::writeEepromSa()
-{
-#ifdef USE_EEPROM_IO
-  if ((ui16_saEepromAdr != 0xFFFF) && (nr() != 0xFE))
-  {
-    getEepromInstance().setp(ui16_saEepromAdr);
-    getEepromInstance() << nr();
-  }
-  getLibErrInstance().registerError( LibErr_c::Precondition, LibErr_c::System );
-#endif
-}
 
 /** calculate random wait time between 0 and 153msec. from NAME and time
   @return wait offset in msec. [0..153]

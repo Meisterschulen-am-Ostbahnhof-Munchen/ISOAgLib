@@ -239,33 +239,21 @@ uint16_t localGetSecond() { return ((iSystem_c::getTime()/1000)%60); };
 
 
 int main()
-{ // init CAN channel with 250kBaud at needed channel ( count starts with 0 )
-  getIcanInstance().init( cui32_canChannel, 250 );
-  // variable for DEV_KEY
-  // default with tractor
-  IsoAgLib::iISOName_c myISOName( 1, 5 );
+{
+  // Initialize CAN-Bus
+  getIcanInstance().init (cui32_canChannel); // CAN-Bus "cui32_canChannel" with defaulting 250 kbit
 
-  // start address claim of the local member "IMI"
-  // if DEV_KEY conflicts forces change of device class instance, the
-  // IsoAgLib can cahnge the myISOName val through the pointer to myISOName
-  bool b_selfConf = true;
-  uint8_t ui8_indGroup = 2,
-      b_func = 25,
-      b_wantedSa = 128,
-      b_funcInst = 0,
-      b_ecuInst = 0;
-  uint16_t ui16_manufCode = 0x7FF;
-  uint32_t ui32_serNo = 27;
-
-  // start address claim of the local member "IMI"
-  // if DEV_KEY conflicts forces change of device class instance, the
-  // IsoAgLib can change the myISOName val through the pointer to myISOName
-  IsoAgLib::iIdentItem_c c_myIdent( &myISOName,
-      b_selfConf, ui8_indGroup, b_func, ui16_manufCode,
-      ui32_serNo, b_wantedSa, 0xFFFF, b_funcInst, b_ecuInst);
+  // Start address claim of the local identity/member
+  iIdentItem_c c_myIdent (2,     // rui8_indGroup
+                          1,     // rui8_devClass
+                          5,     // rui8_devClassInst
+                          25,    // rb_func
+                          0x7FF, // rui16_manufCode
+                          27);   // rui32_serNo
+                          // further parameters use the default values as given in the constructor
 
   // configure BaseData_c to send nothing on BUS
-  getITimePosGpsInstance().config(&myISOName, IsoAgLib::IdentModeImplement );
+  getITimePosGpsInstance().config(&c_myIdent.isoName(), IsoAgLib::IdentModeImplement );
 
   // timestamp when local ECU will start to send calendar
   // -> 3000msec after own address claim without any calendar
@@ -306,7 +294,7 @@ int main()
 
     if ( ! b_sendCalendar )
     { // check if local item has already claimed address
-      if (getIisoMonitorInstance().existIsoMemberISOName(myISOName, true))
+      if (c_myIdent.isClaimedAddress())
       { // local item has claimed address
         if ( i32_decideOnCalendar < 0 )
         { // set time for decision
@@ -317,7 +305,7 @@ int main()
                 && ( ! getITimePosGpsInstance().isCalendarReceived() ) )
         { // still no calendar received -> start sending of calendar
           // first set config in BaseData_c
-          getITimePosGpsInstance().config(&myISOName, IdentModeImplement );
+          getITimePosGpsInstance().config(&c_myIdent.isoName(), IdentModeImplement );
           b_sendCalendar = true;
         }
       }

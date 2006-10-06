@@ -214,144 +214,112 @@
 using namespace IsoAgLib;
 
 int main()
-{ // Initialize the CAN BUS at channel 0 to 250 kbaud
-  IsoAgLib::getIcanInstance().init( 0, 250 );
+{
+  // Initialize CAN-Bus
+  getIcanInstance().init (0); // CAN-Bus 0 (with defaulting 250 kbit)
 
-	// define the ISO 11783 specific identity settings
-  // for the 64bit NAME field
-  bool b_selfConf = true;
-  uint8_t ui8_indGroup = 2,
-      ui8_func = 25,
-      ui8_wantedSa = 128,
-      ui8_funcInst = 0,
-      ui8_ecuInst = 0,
-			ui8_deviceType = 2,
-			ui8_deviceTypeInstance = 0;
-  uint16_t ui16_manufCode = 0x7FF;
-  uint32_t ui32_serNo = 27,
-			ui32_lifetimeMinutes = 0,
-			ui32_startupLifetimeMinutes = 0;
+  // start address claim of the local identity/member
+  IsoAgLib::iIdentItem_c c_myIdent (2,    // rui8_indGroup
+                                    2,    // rui8_devClass
+                                    0,    // rui8_devClassInst
+                                    25,   // rb_func
+                                    0x7FF,// rui16_manufCode
+                                    27,   // rui32_serNo
+                                    0xFE, // rui8_preferredSa
+                                    0x300);//EEPROM Address where ISOName, SA and one internal flag are stored (reserve 10 bytes!)
+                                    // further parameters use the default
 
-	// retrieve reference to EEPROM access class
-	// to avoid multiple call of operator
+  /** IMPORTANT
+    - Be sure to have the EEPROM correctly initialized!
+      ==> At best with a set of 0x00-bytes
+      ==> IsoAgLib stores 10 bytes at the given EEPROM-address!
+    - For more information on storing ISO-Name/SA to EEPROM and how to prepare the EEPROM,
+      see the IsoAgLib documentation!
+   */
+
+  uint32_t ui32_lifetimeMinutes = 0,
+           ui32_startupLifetimeMinutes = 0;
+
+  // retrieve reference to EEPROM access class
+  // to avoid multiple call of operator
   IsoAgLib::iEEPROMIO_c& c_eeprom = IsoAgLib::getIeepromInstance();
-	// set start address in EEPROM, where flags for ISO NAME are stored
-	static const uint16_t cui16_identDataStart = 0x300;
-	// set EEPROM address, where the resulting SA can be stored, to use it
-	// on next system startup
-	static const uint16_t cui16_storeSaAddress = 0x400;
-	// EEPROM addres of lifetime information
-	static const uint16_t cui16_lifetimeAddress = 0x500;
 
-  // set READ position to beginning of ident data
-  c_eeprom.setg(cui16_identDataStart);
-	// read bool from 0x300 direct into
-	// memory representation of b_selfConf
-	// ( i.e. copy EEPROM content at pointer to b_selfConf )
-	c_eeprom >> b_selfConf;
-	// IsoAgLib incremented read position, so that the
-	// value for ui8_indGroup can now be read from 0x301
-	c_eeprom >> ui8_indGroup;
-	c_eeprom >> ui8_func;
-	c_eeprom >> ui8_wantedSa;
-	c_eeprom >> ui8_funcInst;
-	c_eeprom >> ui8_ecuInst;
-	c_eeprom >> ui16_manufCode;
-	c_eeprom >> ui32_serNo;
-	// IsoAgLib detected, that sizeof(ui32_serNo) is 4
-	// -> read address is incremented by 4
-	c_eeprom >> ui8_deviceType;
+  // EEPROM addres of lifetime information
+  static const uint16_t cui16_lifetimeAddress = 0x500;
 
-	// print on RS232 the EEPROM address, where
-	// ui8_deviceTypeInstance is read
-	IsoAgLib::getIrs232Instance() << "read ui8_deviceTypeInstance from EEPROM Address: " << c_eeprom.tellg() << "\r\n";
-	c_eeprom >> ui8_deviceTypeInstance;
-
-	c_eeprom.setg( cui16_lifetimeAddress );
-	if ( c_eeprom.eofg( sizeof(ui32_startupLifetimeMinutes) ) )
-	{ // the address cui16_lifetimeAddress is obviously wrong, as
-		// not enough bytes can be placed at the specified address
-		IsoAgLib::getIrs232Instance()
-			<< "ERROR: There is not enough space in EEPROM to read ui32_startupLifetimeMinutes with sizeof: "
-			<< sizeof(ui32_startupLifetimeMinutes)
-			<< ", from address : " << cui16_lifetimeAddress
-			<< ", the available EEPRO has only " << c_eeprom.eepromSize()
-			<< "\r\n";
-	}
-	c_eeprom >> ui32_startupLifetimeMinutes;
-	ui32_lifetimeMinutes = ui32_startupLifetimeMinutes;
-
-  // variable for DEV_KEY ( device type, device type instance )
-  // default with primary cultivation mounted back ( device type 2, instance 0 )
-  IsoAgLib::iISOName_c myISOName( ui8_deviceType, ui8_deviceTypeInstance );
-
-	// start address claim of the local member
-  // if DEV_KEY ( device type, -instance ) conflicts forces change of POS/instance, the
-  // IsoAgLib can change the myISOName val through the pointer to myISOName
-  IsoAgLib::iIdentItem_c c_myIdent( &myISOName,
-      b_selfConf, ui8_indGroup, ui8_func, ui16_manufCode,
-      ui32_serNo, ui8_wantedSa, cui16_storeSaAddress, ui8_funcInst, ui8_ecuInst);
+  c_eeprom.setg( cui16_lifetimeAddress );
+  if ( c_eeprom.eofg( sizeof(ui32_startupLifetimeMinutes) ) )
+  { // the address cui16_lifetimeAddress is obviously wrong, as
+    // not enough bytes can be placed at the specified address
+    IsoAgLib::getIrs232Instance()
+      << "ERROR: There is not enough space in EEPROM to read ui32_startupLifetimeMinutes with sizeof: "
+      << sizeof(ui32_startupLifetimeMinutes)
+      << ", from address : " << cui16_lifetimeAddress
+      << ", the available EEPRO has only " << c_eeprom.eepromSize()
+      << "\r\n";
+  }
+  c_eeprom >> ui32_startupLifetimeMinutes;
+  ui32_lifetimeMinutes = ui32_startupLifetimeMinutes;
 
   /** IMPORTANT:
-	  - The following loop could be replaced of any repeating call of
-			getISchedulerInstance().timeEvent();
-			which is needed to perform all internal activities of the IsoAgLib.
-		- Define the time intervall for getISchedulerInstance().timeEvent()
-			in a way, that allows IsoAgLib to trigger all reactions on BUS
-			in the ISO 11783 defined time resolution - especially the address
-			claim process has some tight time restrictions, that suggest
-			a trigger rate of at least 100msec ( you could call the function
-			only during address claim, mask updload and other special
-			circumstances in a high repetition rate )
-		- The main loop is running until iSystem_c::canEn() is returning false.
-			This function can be configured by the #define CONFIG_BUFFER_SHORT_CAN_EN_LOSS_MSEC
-			in isoaglib_config.h to ignore short CAN_EN loss.
-		- This explicit control of power state without automatic powerdown on CanEn loss
-			can be controled with the central config define
-			#define CONFIG_DEFAULT_POWERDOWN_STRATEGY IsoAgLib::PowerdownByExplcitCall
-			or
-			#define CONFIG_DEFAULT_POWERDOWN_STRATEGY IsoAgLib::PowerdownOnCanEnLoss
-			in the header xgpl_src/Application_Config/isoaglib_config.h
-		- This can be also controlled during runtime with the function call:
-			getIsystemInstance().setPowerdownStrategy( IsoAgLib::PowerdownByExplcitCall )
-			or
-			getIsystemInstance().setPowerdownStrategy( IsoAgLib::PowerdownOnCanEnLoss )
-	*/
-	while ( IsoAgLib::iSystem_c::canEn() )
-	{ // run main loop
-		// IMPORTANT: call main timeEvent function for
-		// all time controlled actions of IsoAgLib - \ref IsoAgLib::iScheduler_c::timeEvent()
-		getISchedulerInstance().timeEvent();
+    - The following loop could be replaced of any repeating call of
+      getISchedulerInstance().timeEvent();
+      which is needed to perform all internal activities of the IsoAgLib.
+    - Define the time intervall for getISchedulerInstance().timeEvent()
+      in a way, that allows IsoAgLib to trigger all reactions on BUS
+      in the ISO 11783 defined time resolution - especially the address
+      claim process has some tight time restrictions, that suggest
+      a trigger rate of at least 100msec ( you could call the function
+      only during address claim, mask updload and other special
+      circumstances in a high repetition rate )
+    - The main loop is running until iSystem_c::canEn() is returning false.
+      This function can be configured by the #define CONFIG_BUFFER_SHORT_CAN_EN_LOSS_MSEC
+      in isoaglib_config.h to ignore short CAN_EN loss.
+    - This explicit control of power state without automatic powerdown on CanEn loss
+      can be controled with the central config define
+      #define CONFIG_DEFAULT_POWERDOWN_STRATEGY IsoAgLib::PowerdownByExplcitCall
+      or
+      #define CONFIG_DEFAULT_POWERDOWN_STRATEGY IsoAgLib::PowerdownOnCanEnLoss
+      in the header xgpl_src/Application_Config/isoaglib_config.h
+    - This can be also controlled during runtime with the function call:
+      getIsystemInstance().setPowerdownStrategy( IsoAgLib::PowerdownByExplcitCall )
+      or
+      getIsystemInstance().setPowerdownStrategy( IsoAgLib::PowerdownOnCanEnLoss )
+  */
+  while ( IsoAgLib::iSystem_c::canEn() )
+  { // run main loop
+    // IMPORTANT: call main timeEvent function for
+    // all time controlled actions of IsoAgLib - \ref IsoAgLib::iScheduler_c::timeEvent()
+    getISchedulerInstance().timeEvent();
 
-		// update lifetime
-		ui32_lifetimeMinutes = (IsoAgLib::iSystem_c::getTime() / 60000) + ui32_startupLifetimeMinutes;
-		if ( ( ( ui32_lifetimeMinutes - ui32_startupLifetimeMinutes ) % 10 ) == 0 )
-		{ // last lifetime storage was 10 minutes ago
-			c_eeprom.setp( cui16_lifetimeAddress );
-			c_eeprom << ui32_lifetimeMinutes;
-			IsoAgLib::getIrs232Instance()
-				<< "Update Lifetime Minutes: " << ui32_lifetimeMinutes
-				<< ", write position in EEPROM after storage: " << c_eeprom.tellp()
-				<< "\r\n";
-			if ( c_eeprom.eofp() ) IsoAgLib::getIrs232Instance() << "Lifetime was written at end of EEPROM\r\n";
-			else IsoAgLib::getIrs232Instance() << "End of EEPROM isn't reached after write of lifetime\r\n";
-			if ( IsoAgLib::getLibErrInstance().getErrCnt( LibErr_c::Eeprom ) > 0 )
-			{ // at least one EEPROM location error detected
-				IsoAgLib::getIrs232Instance()
-					<< "IsoAgLib detected " << IsoAgLib::getLibErrInstance().getErrCnt( LibErr_c::Eeprom )
-					<< " EEPROM access errors\r\n";
-				if ( IsoAgLib::getLibErrInstance().getErrCnt( LibErr_c::EepromSegment ) > 0 )
-				{
-					IsoAgLib::getIrs232Instance() << "EEPROM segment error occured\r\n";
-				}
-				else if ( IsoAgLib::getLibErrInstance().getErrCnt( LibErr_c::EepromWriteError ) > 0 )
-				{
-					IsoAgLib::getIrs232Instance() << "EEPROM write error occured\r\n";
-				}
-				IsoAgLib::getLibErrInstance().clear( LibErr_c::Eeprom );
-			}
-		}
-
+    // update lifetime
+    ui32_lifetimeMinutes = (IsoAgLib::iSystem_c::getTime() / 60000) + ui32_startupLifetimeMinutes;
+    if ( ( ( ui32_lifetimeMinutes - ui32_startupLifetimeMinutes ) % 10 ) == 0 )
+    { // last lifetime storage was 10 minutes ago
+      c_eeprom.setp( cui16_lifetimeAddress );
+      c_eeprom << ui32_lifetimeMinutes;
+      IsoAgLib::getIrs232Instance()
+        << "Update Lifetime Minutes: " << ui32_lifetimeMinutes
+        << ", write position in EEPROM after storage: " << c_eeprom.tellp()
+        << "\r\n";
+      if ( c_eeprom.eofp() ) IsoAgLib::getIrs232Instance() << "Lifetime was written at end of EEPROM\r\n";
+      else IsoAgLib::getIrs232Instance() << "End of EEPROM isn't reached after write of lifetime\r\n";
+      if ( IsoAgLib::getLibErrInstance().getErrCnt( LibErr_c::Eeprom ) > 0 )
+      { // at least one EEPROM location error detected
+        IsoAgLib::getIrs232Instance()
+          << "IsoAgLib detected " << IsoAgLib::getLibErrInstance().getErrCnt( LibErr_c::Eeprom )
+          << " EEPROM access errors\r\n";
+        if ( IsoAgLib::getLibErrInstance().getErrCnt( LibErr_c::EepromSegment ) > 0 )
+        {
+          IsoAgLib::getIrs232Instance() << "EEPROM segment error occured\r\n";
+        }
+        else if ( IsoAgLib::getLibErrInstance().getErrCnt( LibErr_c::EepromWriteError ) > 0 )
+        {
+          IsoAgLib::getIrs232Instance() << "EEPROM write error occured\r\n";
+        }
+        IsoAgLib::getLibErrInstance().clear( LibErr_c::Eeprom );
+      }
+    }
   }
   return 1;
 }

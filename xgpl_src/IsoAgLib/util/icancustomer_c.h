@@ -54,6 +54,7 @@
 #define ICAN_CUSTOMER_H
 
 #include "impl/cancustomer_c.h"
+#include <IsoAgLib/util/icanpkgext_c.h>
 
 // Begin Namespace IsoAgLib
 namespace IsoAgLib {
@@ -68,7 +69,22 @@ namespace IsoAgLib {
   @see __IsoAgLib::FilterBox
   *@author Dipl.-Inform. Achim Spangler
   */
-class iCANCustomer_c : public __IsoAgLib::CANCustomer_c {
+class iCANCustomer_c : public __IsoAgLib::CANCustomer_c
+{
+public:
+  /**
+    virtual function which delivers a pointer to the iCANCustomer
+    specific iCANPkgExt_c instance
+  */
+  virtual iCANPkgExt_c& iDataBase()=0;
+
+private:
+  /**
+    virtual function which delivers a pointer to the CANCustomer
+    specific CANPkgExt_c instance
+  */
+  virtual __IsoAgLib::CANPkgExt_c& dataBase() { return static_cast<__IsoAgLib::CANPkgExt_c&>(iDataBase()); }
 };
-}
+
+} // namespace
 #endif
