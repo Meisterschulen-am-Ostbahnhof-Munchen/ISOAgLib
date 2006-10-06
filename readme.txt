@@ -54,7 +54,19 @@ as there not only the maintainers can try to help you out. Please <a href="http:
 
 \subsection IndexNewsForBigRelease New for the 2.0 release
   - <b>September 2006:</b> <b>ISO<i><sub>AgLib</sub></i></b> now is a real ISO library! Complete removal of all DIN-related or DIN-dependent code, classes and preprocessor directives.
-    These changes also affect the tool chain for the process data.
+    The following steps had to be done:
+    + remove all unneeded DIN9684 and all its #ifdefs
+    + merge ISONAME_c and DevKey_c to the new ISONAME_c as the only
+      class to represent the device key
+    + merge SystemMgmt_c and IsoMonitor_c to the new IsoMonitor_c class
+      so that it hosts both all IdentItem_c (as list of pointers)
+      and does also maintain list of all ECUs on the BUS
+      --> all Network Management is done by this IsoMonitor_c class right
+      now
+    + optimize adress resolving for process data send, as some helper functions
+      were only needed for the DIN way of life
+    + optimize the TP send and receive classes, as several action flows were
+      only needed for the parallel support of DIN, ISO and Fieldstar/LBS+ TP
 
 \subsection IndexCurrentAdditionNews News for the 1.2.1 release
   - <b>February 2006:</b> Enhance modularization of base information (Not-ProcessData parts from 11783-7) - this will be finished for release 1.2.2
