@@ -262,7 +262,7 @@ bool ProcIdent_c::matchISO( const ISOName_c& rrefc_isoNameSender,
   else
   {
     // check in local case: check if procident devClass matches devClass of empf
-    if (data.c_isoName != rrefc_isoNameReceiver) return false;
+    if (ownerISOName() != rrefc_isoNameReceiver) return false;
   }
 
   if (!getProcessInstance4Comm().data().resolveCommandTypeForISO(*iter)) return false;
