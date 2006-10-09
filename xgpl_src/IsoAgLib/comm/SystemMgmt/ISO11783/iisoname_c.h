@@ -67,7 +67,8 @@ namespace IsoAgLib {
   flags
   @author Dipl.-Inform. Achim Spangler
 */
-class iISOName_c : public __IsoAgLib::ISOName_c {
+class iISOName_c : private __IsoAgLib::ISOName_c
+{
 public:
     /** constant for default parameters and initialization, where the device type is not yet spcified.
         the instantiation of this constant variable is located in the module cancustomer_c.cpp
@@ -238,6 +239,13 @@ public:
     @param rui32_serNo serial no of specific device (21bit)
   */
   void setSerNo(uint32_t rui32_serNo) { ISOName_c::setSerNo( rui32_serNo );}
+
+private:
+  friend class iISOItem_c;
+  friend class iIdentItem_c;
+  friend class iCANPkgExt_c;
+  friend class iISOMonitor_c;
+  friend class iMultiSend_c;
 };
 
 }

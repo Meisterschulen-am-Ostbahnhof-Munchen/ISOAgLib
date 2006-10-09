@@ -66,7 +66,9 @@ namespace IsoAgLib {
   other objects and data structures.
   @author Dipl.-Inform. Achim Spangler
 */
-class iCANPkg_c : public __IsoAgLib::CANPkg_c {
+class iCANPkg_c : private __IsoAgLib::CANPkg_c
+{
+public:
   /**
     assign operator to insert informations from one CANPkg_c into another
     @see __IsoAgLib::FilterBox_c::operator>>
@@ -77,6 +79,9 @@ class iCANPkg_c : public __IsoAgLib::CANPkg_c {
         "pkg1 = pkg2 = pkg3 = pkg4;"
   */
   virtual const CANPkg_c& operator=(const CANPkg_c& rrefc_right) { return CANPkg_c::operator=(rrefc_right);};
+
+private:
+  friend class iCANIO_c;
 };
 
 }

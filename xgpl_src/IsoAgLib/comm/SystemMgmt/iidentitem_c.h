@@ -105,7 +105,7 @@ class iISOTerminal_c;
   @short member ident item of this ECU
   @author Dipl.-Inform. Achim Spangler
   */
-class iIdentItem_c : protected __IsoAgLib::IdentItem_c  {
+class iIdentItem_c : private __IsoAgLib::IdentItem_c  {
 public:
   /**
     default constructor, which can optionally start address claim for this identity, if enough information

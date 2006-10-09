@@ -69,7 +69,7 @@ namespace IsoAgLib {
   @see __IsoAgLib::FilterBox
   *@author Dipl.-Inform. Achim Spangler
   */
-class iCANCustomer_c : public __IsoAgLib::CANCustomer_c
+class iCANCustomer_c : private __IsoAgLib::CANCustomer_c
 {
 public:
   /**
@@ -84,6 +84,8 @@ private:
     specific CANPkgExt_c instance
   */
   virtual __IsoAgLib::CANPkgExt_c& dataBase() { return static_cast<__IsoAgLib::CANPkgExt_c&>(iDataBase()); }
+
+  friend class iCANIO_c;
 };
 
 } // namespace

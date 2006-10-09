@@ -70,7 +70,7 @@ namespace IsoAgLib {
 
   @author Dipl.-Inf. Martin Wodok
 */
-class iMultiReceive_c : __IsoAgLib::MultiReceive_c  {
+class iMultiReceive_c : private __IsoAgLib::MultiReceive_c  {
 public:
 
   //  Operation: init

@@ -70,7 +70,7 @@ namespace IsoAgLib {
 
   @author Dipl.-Inform. Achim Spangler
 */
-class iMultiSend_c : __IsoAgLib::MultiSend_c {
+class iMultiSend_c : private __IsoAgLib::MultiSend_c {
 public:
 
   /**
