@@ -61,13 +61,16 @@
 
 // Begin Namespace IsoAgLib
 namespace IsoAgLib {
+
+// forward declarations
+class iEEPROMIO_c;
+
 /** handle the 64bit ISO11783 NAME field
   with input/output from/to 8byte string
   and specific read/write access to single
   flags
   @author Dipl.-Inform. Achim Spangler
 */
-
 class iISOName_c : private __IsoAgLib::ISOName_c
 {
 public:
@@ -272,6 +275,8 @@ private:
   friend class iProcDataRemoteSimpleSetpointSimpleMeasure_c;
   friend class iProcDataRemoteSimpleSetpointSimpleMeasureCombined_c;
   friend class iMeasureProgRemote_c;
+  friend iEEPROMIO_c& operator<<(iEEPROMIO_c& refc_stream, const iISOName_c& refc_data );
+  friend iEEPROMIO_c& operator>>(iEEPROMIO_c& refc_stream, iISOName_c& refc_data );
 };
 
 }
