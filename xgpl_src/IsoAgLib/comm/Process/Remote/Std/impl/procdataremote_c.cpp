@@ -207,4 +207,22 @@ void ProcDataRemote_c::processProg(){
   prog().processMsg();
 }
 
+/**
+  deliver actual measurement value as long
+  - if no exactValue present => take max or min as fallback
+  @param rb_sendRequest true -> request for new value is sent (optional, default false)
+*/
+int32_t ProcDataRemote_c::masterMeasurementVal(bool rb_sendRequest)
+{
+  if (hasType(FALSE /* b_isSetpoint */, GeneralCommand_c::exactValue))
+    return c_measure.masterMeasurementVal( rb_sendRequest );
+  if (hasType(FALSE /* b_isSetpoint */, GeneralCommand_c::maxValue))
+    return c_measure.max( rb_sendRequest );
+  if (hasType(FALSE /* b_isSetpoint */, GeneralCommand_c::minValue))
+    return c_measure.max( rb_sendRequest );
+
+  return 0;
+
+};
+
 } // end of namespace __IsoAgLib
