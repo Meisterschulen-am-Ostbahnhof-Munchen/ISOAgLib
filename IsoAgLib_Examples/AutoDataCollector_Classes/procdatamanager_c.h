@@ -57,6 +57,11 @@ public:
     activate with creating the needed ProcessData
     @param rpc_monitor pointer to member_item of data delivering member
   */
+
+  //! This example is NOT YET converted to IsoAgLib 2.0
+  //! so please don't wonder why it doesn't compile
+#warning "This example is NOT YET converted to IsoAgLib 2.0 so please don't wonder why it doesn't compile."
+
   void activate(IsoAgLib::iDINItem_c* rpc_monitor);
   /** deactivate with deleting the created ProcessDatas */
   void deactivate();

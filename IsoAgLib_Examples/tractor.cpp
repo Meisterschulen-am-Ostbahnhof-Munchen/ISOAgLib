@@ -311,7 +311,7 @@ class MyInternalCanHandler_c : public IsoAgLib::iCANCustomer_c
     before processMsg() is executed -> processMsg() can immediately work on the
     received data
   */
-  virtual IsoAgLib::iCANPkgExt_c& dataBase();
+  virtual IsoAgLib::iCANPkgExt_c& iDataBase();
   /** perform dummy send */
   void doSendTest( uint16_t rui16_flag1, uint16_t rui16_flag2, uint16_t rui16_flag3 );
   /** just make compiler happy */
@@ -418,7 +418,7 @@ bool MyInternalCanHandler_c::processMsg()
   before processMsg() is executed -> processMsg() can immediately work on the
   received data
 */
-IsoAgLib::iCANPkgExt_c& MyInternalCanHandler_c::dataBase()
+IsoAgLib::iCANPkgExt_c& MyInternalCanHandler_c::iDataBase()
 {
   return c_myData;
 }
@@ -434,33 +434,24 @@ int main()
   // create object for handling of internal CAN data
   MyInternalCanHandler_c c_myDataHandler;
 
-  // define the ISO 11783 specific identity settings
-  // for the 64bit NAME field
-  bool b_selfConf = true;
-  uint8_t ui8_indGroup = 2,
-      b_func = 25,
-      b_wantedSa = 128,
-      b_funcInst = 0,
-      b_ecuInst = 0;
-  uint16_t ui16_manufCode = 0x7FF;
-  uint32_t ui32_serNo = 27;
-
-  // start address claim of the local member
-  // if DEV_KEY ( device type, -instance ) conflicts forces change of POS/instance, the
-  // IsoAgLib can change the myISOName val through the pointer to myISOName
-  IsoAgLib::iIdentItem_c c_myIdent( &myISOName,
-      b_selfConf, ui8_indGroup, b_func, ui16_manufCode,
-      ui32_serNo, b_wantedSa, 0xFFFF, b_funcInst, b_ecuInst);
-
+  // Start address claim of the local identity/member
+  iIdentItem_c c_myIdent (2,     // rui8_indGroup
+                          2,     // rui8_devClass
+                          0,     // rui8_devClassInst
+                          25,    // rb_func
+                          0x7FF, // rui16_manufCode
+                          27);   // rui32_serNo
+                          // further parameters use the default values as given in the constructor
+  
   /** configure BaseData_c to send:
     - BaseDataGroup1: real and gear based speed and distance; for ISO: also key_switch_state and max power time
     - BaseDataGroup2: front and rear PTO, engine RPM, front and rear hitch information
     - BaseDataCalendar: calendar data
   */
-  getITimePosGpsInstance().config(&myISOName, IsoAgLib::IdentModeTractor );
-  getITracGeneralInstance().config(&myISOName, IsoAgLib::IdentModeTractor );
-  getITracMoveInstance().config(&myISOName, IsoAgLib::IdentModeTractor  );
-  getITracPtoInstance().config(&myISOName, IsoAgLib::IdentModeTractor  );
+  getITimePosGpsInstance().config  (&myISOName, IsoAgLib::IdentModeTractor);
+  getITracGeneralInstance().config (&myISOName, IsoAgLib::IdentModeTractor);
+  getITracMoveInstance().config    (&myISOName, IsoAgLib::IdentModeTractor);
+  getITracPtoInstance().config     (&myISOName, IsoAgLib::IdentModeTractor);
 
   /** IMPORTANT:
     - The following loop could be replaced of any repeating call of

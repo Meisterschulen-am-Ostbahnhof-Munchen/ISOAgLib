@@ -35,6 +35,13 @@ SOURCES = ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp  \
 		../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp  \
 		../../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp  \
 		../../../xgpl_src/IsoAgLib/util/liberr_c.cpp  \
+		../../../xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/Base/impl/tracgeneral_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/Base/impl/tracpto_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/Base/impl/tracmove_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/Base/impl/basecommon_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/Base/impl/timeposgps_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/tracptosetpoint_c.cpp  \
 		../../../xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_simulating.cpp  \
 		../../../xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.cpp  \
 		../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_simulating.cpp  \
