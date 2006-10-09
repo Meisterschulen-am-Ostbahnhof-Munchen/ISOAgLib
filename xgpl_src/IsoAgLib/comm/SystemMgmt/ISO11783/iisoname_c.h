@@ -246,6 +246,17 @@ private:
   friend class iCANPkgExt_c;
   friend class iISOMonitor_c;
   friend class iMultiSend_c;
+  friend class iTimePosGPS_c;
+  friend class iTracMove_c;
+  friend class iTracMoveSetPoint_c;
+  friend class iTracGeneral_c;
+  friend class iTracPTO_c;
+  friend class iTracPTOSetPoint_c;
+  friend class iTracLight_c;
+  friend class iTracAux_c;
+  friend class iTracCert_c;
+  friend class iTracGuidance_c;
+  friend class iTracGuidanceCommand_c;
 };
 
 }
