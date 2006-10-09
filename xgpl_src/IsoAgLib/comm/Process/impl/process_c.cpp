@@ -154,6 +154,9 @@ void Process_c::init()
   pc_tcISOName = NULL;
   ui8_lastTcStatus = 0;
   pc_processWsmTaskMsgHandler = NULL;
+
+  pc_processDataChangeHandler = NULL;
+
   c_data.setSingletonKey( getSingletonVecKey() );
 
   // receive PROCESS_DATA_PGN messages which are addressed to GLOBAL
@@ -913,6 +916,11 @@ bool Process_c::processTcStatusMsg(uint8_t ui8_tcStatus, const ISOName_c& refc_i
   }
   if (!rb_skipLastTcStatus)
     ui8_lastTcStatus = ui8_tcStatus;
+
+  if (pc_processDataChangeHandler)
+  { // call handler function if handler class is registered
+    pc_processDataChangeHandler->processTcStatusMessage((1 == ui8_tcStatus) /* 1: task running */, refc_isoName);
+  }
 
   return TRUE;
 }

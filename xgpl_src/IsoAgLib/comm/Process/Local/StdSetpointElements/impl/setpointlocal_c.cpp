@@ -772,7 +772,7 @@ void SetpointLocal_c::processSet(){
   }
   // call handler function if handler class is registered
   if ( processDataConst().getProcessDataChangeHandler() != NULL )
-    processDataConst().getProcessDataChangeHandler()->processSetpointSet( pprocessData(), processData().pkgDataLong(), static_cast<const IsoAgLib::iISOName_c&>(c_pkg.memberSend().isoName() ), b_change );
+    processDataConst().getProcessDataChangeHandler()->processSetpointSet( pprocessData(), processData().pkgDataLong(), c_pkg.memberSend().isoName(), b_change );
 }
 
 } // end of namespace __IsoAgLib

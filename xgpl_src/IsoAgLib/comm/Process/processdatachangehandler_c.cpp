@@ -185,4 +185,15 @@ bool ProcessDataChangeHandler_c::processDefaultLoggingStart( EventSource_c /* rc
   return false;
 }
 
+/** react on received value for TC status message
+  * @param rb_taskRunning
+  * @param rc_callerISOName ISONameof calling device - i.e. TC
+  * @return true -> handler class reacted on change event
+  */
+bool ProcessDataChangeHandler_c::processTcStatusMessage(bool /* rb_taskRunning */, const iISOName_c& /* rc_callerISOName */ )
+{
+  // empty body -> allow application class to just implement some of the possible handler methods
+  return false;
+}
+
 } // end of namespace IsoAgLib

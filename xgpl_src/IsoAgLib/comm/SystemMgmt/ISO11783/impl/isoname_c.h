@@ -91,6 +91,10 @@
 #include <IsoAgLib/typedef.h>
 #include <IsoAgLib/util/impl/canpkg_c.h>
 
+namespace IsoAgLib {
+  class iISOName_c;
+}
+
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 /** handle the 64bit ISO11783 NAME field
@@ -338,6 +342,12 @@ public:
   /** compare two ISOName_c values with operator< */
   bool operator<( const ISOName_c& refc_right ) const
     { return (higherPriThanPar( refc_right.outputUnion() ) == -1)?true:false;}
+
+  /** convert operator */
+  operator IsoAgLib::iISOName_c& ();
+
+  /** convert operator */
+  operator const IsoAgLib::iISOName_c& () const;
 
 private:
   /** ISO 8-uint8_t NAME field */

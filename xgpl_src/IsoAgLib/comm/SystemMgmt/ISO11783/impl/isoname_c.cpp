@@ -83,6 +83,8 @@
 #include <IsoAgLib/typedef.h>
 #include <cstring>
 #include "isoname_c.h"
+// necessary for convert operators
+#include "../iisoname_c.h"
 
 #if defined(DEBUG)
   #ifdef SYSTEM_PC
@@ -461,6 +463,18 @@ ISOName_c::isEqualRegardingNonInstFields (const ISOName_c& rrefc_isoName) const
         && (selfConf()  == rrefc_isoName.selfConf() )
         && (manufCode() == rrefc_isoName.manufCode())
          );
+}
+
+/** convert operator */
+ISOName_c::operator IsoAgLib::iISOName_c& ()
+{
+  return static_cast<IsoAgLib::iISOName_c&>(*this);
+}
+
+/** convert operator */
+ISOName_c::operator const IsoAgLib::iISOName_c& () const
+{
+  return static_cast<const IsoAgLib::iISOName_c&>(*this);
 }
 
 } // namespace __IsoAgLib

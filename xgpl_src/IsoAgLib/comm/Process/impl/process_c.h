@@ -99,6 +99,7 @@
 #include "../Local/impl/procdatalocalbase_c.h"
 #include "../Remote/impl/procdataremotebase_c.h"
 #include "processpkg_c.h"
+#include "../processdatachangehandler_c.h"
 #include "devpropertyhandler_c.h"
 #include <IsoAgLib/comm/Process/impl/processwsmtaskmsghandler_c.h>
 
@@ -368,6 +369,12 @@ public:
   */
   bool processWorkingSetTaskMsg(uint8_t /* ui8_tcStatus */, const ISOName_c& /* refc_isoName */);
 
+  /** set the pointer to the handler class (used for callback when TC status message is processed)
+    * @param rpc_processDataChangeHandler pointer to handler class of application
+    */
+  void setProcessDataChangeHandler( IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler )
+   { pc_processDataChangeHandler = rpc_processDataChangeHandler; }
+
 private: // Private methods
   /**
     update the cache with search for according ProcDataLocalBase_c item
@@ -458,6 +465,11 @@ private: // Private attributes
   uint8_t ui8_lastTcStatus;
 
   ProcessWsmTaskMsgHandler_c* pc_processWsmTaskMsgHandler;
+
+  /** pointer to applications handler class, with handler functions
+      which shall be called when a TC status message arrives
+  */
+  IsoAgLib::ProcessDataChangeHandler_c* pc_processDataChangeHandler;
 
 };
 

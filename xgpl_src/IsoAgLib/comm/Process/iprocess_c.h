@@ -238,6 +238,12 @@ public:
   void registerWsmTaskMsgHandler(__IsoAgLib::ProcessWsmTaskMsgHandler_c* rpc_processWsmTaskMsgHandler)
   { Process_c::registerWsmTaskMsgHandler(rpc_processWsmTaskMsgHandler); }
 
+  /** set the pointer to the handler class (used for callback when TC status message is processed)
+    * @param rpc_processDataChangeHandler pointer to handler class of application
+    */
+  void setProcessDataChangeHandler( ProcessDataChangeHandler_c *rpc_processDataChangeHandler )
+   { Process_c::setProcessDataChangeHandler( rpc_processDataChangeHandler ); } ;
+
  private:
   /** allow getIProcessInstance() access to shielded base class.
       otherwise __IsoAgLib::getProcessInstance() wouldn't be accepted by compiler

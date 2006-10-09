@@ -502,7 +502,7 @@ void MeasureProgRemote_c::setValFromPkg(){
 
     // call handler function if handler class is registered
     if ( processDataConst().getProcessDataChangeHandler() != NULL )
-      processDataConst().getProcessDataChangeHandler()->processMeasurementUpdate( pprocessData(), i32_new_val, static_cast<const IsoAgLib::iISOName_c&>( c_pkg.memberSend().isoName() ), b_change );
+      processDataConst().getProcessDataChangeHandler()->processMeasurementUpdate( pprocessData(), i32_new_val, c_pkg.memberSend().isoName(), b_change );
 
 #ifdef USE_FLOAT_DATA_TYPE
   }
@@ -538,7 +538,7 @@ void MeasureProgRemote_c::setValFromPkg(){
 
     // call handler function if handler class is registered
     if ( processDataConst().getProcessDataChangeHandler() != NULL )
-      processDataConst().getProcessDataChangeHandler()->processMeasurementUpdate( pprocessData(), c_pkg.dataFloat(), static_cast<const IsoAgLib::iISOName_c&>(c_pkg.memberSend().isoName() ), b_change );
+      processDataConst().getProcessDataChangeHandler()->processMeasurementUpdate( pprocessData(), c_pkg.dataFloat(), c_pkg.memberSend().isoName(), b_change );
 
   }
 #endif

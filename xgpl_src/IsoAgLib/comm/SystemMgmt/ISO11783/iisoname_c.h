@@ -67,6 +67,7 @@ namespace IsoAgLib {
   flags
   @author Dipl.-Inform. Achim Spangler
 */
+
 class iISOName_c : private __IsoAgLib::ISOName_c
 {
 public:
@@ -257,6 +258,20 @@ private:
   friend class iTracCert_c;
   friend class iTracGuidance_c;
   friend class iTracGuidanceCommand_c;
+  friend class ISOName_c;
+  friend class iProcess_c;
+  friend class iProcDataLocal_c;
+  friend class iProcDataRemote_c;
+  friend class iProcDataLocalSimpleMeasure_c;
+  friend class iProcDataRemoteSimpleMeasure_c;
+  friend class iMeasureProgLocal_c;
+  friend class iSetpointRegister_c;
+  friend class iProcDataLocalSimpleSetpoint_c;
+  friend class iProcDataRemoteSimpleSetpoint_c;
+  friend class iProcDataLocalSimpleSetpointSimpleMeasure_c;
+  friend class iProcDataRemoteSimpleSetpointSimpleMeasure_c;
+  friend class iProcDataRemoteSimpleSetpointSimpleMeasureCombined_c;
+  friend class iMeasureProgRemote_c;
 };
 
 }

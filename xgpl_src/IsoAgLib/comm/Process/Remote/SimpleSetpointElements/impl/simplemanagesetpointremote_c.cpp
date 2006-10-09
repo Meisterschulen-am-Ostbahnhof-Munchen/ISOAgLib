@@ -166,7 +166,7 @@ void SimpleManageSetpointRemote_c::processSetpoint()
     }
     // call handler function if handler class is registered
     if ( processDataConst().getProcessDataChangeHandler() != NULL )
-      processDataConst().getProcessDataChangeHandler()->processSetpointResponse( pprocessData(), processData().pkgDataLong(), static_cast<const IsoAgLib::iISOName_c&>(c_pkg.memberSend().isoName()) );
+      processDataConst().getProcessDataChangeHandler()->processSetpointResponse( pprocessData(), processData().pkgDataLong(), c_pkg.memberSend().isoName() );
   }
 }
 

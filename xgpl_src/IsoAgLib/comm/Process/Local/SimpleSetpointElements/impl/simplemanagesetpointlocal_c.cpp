@@ -189,7 +189,7 @@ void SimpleManageSetpointLocal_c::processSetpoint(){
     }
     // call handler function if handler class is registered
     if ( processDataConst().getProcessDataChangeHandler() != NULL )
-      processDataConst().getProcessDataChangeHandler()->processSetpointSet( pprocessData(), c_pkg.dataLong(), static_cast<const IsoAgLib::iISOName_c&>( c_pkg.memberSend().isoName() ), b_change );
+      processDataConst().getProcessDataChangeHandler()->processSetpointSet( pprocessData(), c_pkg.dataLong(), c_pkg.memberSend().isoName(), b_change );
   }
   #ifndef SIMPLE_RESPOND_ON_SET
   // if no auto-response on setpoint set is want

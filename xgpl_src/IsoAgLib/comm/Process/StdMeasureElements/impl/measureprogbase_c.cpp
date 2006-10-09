@@ -662,7 +662,7 @@ bool MeasureProgBase_c::processMsg(){
        reset(b_cmd);
        // call handler function if handler class is registered
        if ( processData().getProcessDataChangeHandler() != NULL )
-         processData().getProcessDataChangeHandler()->processMeasurementReset( pprocessData(), 0, static_cast<const IsoAgLib::iISOName_c&>( c_pkg.memberSend().isoName() ) );
+         processData().getProcessDataChangeHandler()->processMeasurementReset( pprocessData(), 0, c_pkg.memberSend().isoName() );
     }
 
     if (en_command == GeneralCommand_c::measurementStop)

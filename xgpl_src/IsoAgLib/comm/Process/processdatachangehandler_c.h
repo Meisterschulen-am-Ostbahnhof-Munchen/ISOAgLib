@@ -180,6 +180,13 @@ class ProcessDataChangeHandler_c {
    * @return true -> handler class reacted on change event
    */
  virtual bool processDefaultLoggingStart( EventSource_c rc_src, int32_t ri32_val, const iISOName_c& rc_callerISOName );
+
+ /** react on received value for TC status message
+   * @param rb_taskRunning
+   * @param rc_callerISOName ISONameof calling device - i.e. TC
+   * @return true -> handler class reacted on change event
+   */
+ virtual bool processTcStatusMessage(bool rb_taskRunning, const iISOName_c& rc_callerISOName );
 };
 }
 #endif
