@@ -84,7 +84,7 @@
 #include "util_funcs.h"
 #include <cstring>
 #include <IsoAgLib/util/config.h>
-#include <stdio.h>
+#include <cstdio>
 #include "../liberr_c.h"
 
 #ifdef USE_DATASTREAMS_IO

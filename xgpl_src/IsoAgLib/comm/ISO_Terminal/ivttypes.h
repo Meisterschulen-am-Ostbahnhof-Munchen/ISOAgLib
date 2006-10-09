@@ -84,7 +84,7 @@
 #define IVTTYPES_H
 
 #include <IsoAgLib/typedef.h>
-#include <stdlib.h>       // using abs()
+#include <cstdlib>       // using abs()
 #include <algorithm>     // using min() max()
 
 #define BUTTON_HAS_BEEN_UNLATCHED 0
@@ -219,7 +219,7 @@ class iVtPoint_c {
     int16_t y;
   private:
     //! Due to problems using the tasking compiler let's add our own abs().
-    static int16_t abs( int16_t i ) { return (i<0) ? -i : i; }
+    static int16_t abs( int16_t i ) { return CNAMESPACE::abs(i); }
 };
 
 inline bool operator==(const iVtPoint_c& a, const iVtPoint_c& b) { return a.equal(b); }
