@@ -130,6 +130,7 @@
   #include <IsoAgLib/util/impl/util_funcs.h>
 #endif
 
+
 #ifdef DEBUG_HEAP_USEAGE
 static uint16_t sui16_clientPointerTotal = 0;
 static uint16_t sui16_clientTimeTotal = 0;
@@ -275,6 +276,12 @@ void Scheduler_c::registerAccessFlt( void )
   */
 bool Scheduler_c::registerClient( ElementBase_c* pc_client)
 {
+  // first check whether this client is already registered
+  for ( std::list<SchedulerEntry_c>::const_iterator iter = c_taskQueue.begin(); iter != c_taskQueue.end(); iter++ )
+  {
+    if (iter->isTask( pc_client ) ) return false;
+  }
+
   /// add 2ms to startTime of new Client to avoid crossing timestamps
   static int32_t si32_taskStartTime = 0;
   if ( si32_taskStartTime == 0 ) si32_taskStartTime = System_c::getTime();
@@ -283,8 +290,9 @@ bool Scheduler_c::registerClient( ElementBase_c* pc_client)
   if ( System_c::getTime() > si32_taskStartTime ) si32_taskStartTime = System_c::getTime();;
 
   #ifdef DEBUG
-  EXTERNAL_DEBUG_DEVICE << "RegisteredClient: "<<  pc_client->getTaskName() <<  EXTERNAL_DEBUG_DEVICE_ENDL;
+  INTERNAL_DEBUG_DEVICE << "RegisteredClient: "<<  pc_client->getTaskName() <<  INTERNAL_DEBUG_DEVICE_ENDL;
   #endif
+
 
   pc_client->startTaskTiming(si32_taskStartTime);
   /// put client in taskQueue
@@ -330,8 +338,8 @@ void Scheduler_c::unregisterClient( ElementBase_c* pc_client)
 
       if(itc_task->isTask(pc_client)){
         #ifdef DEBUG
-        EXTERNAL_DEBUG_DEVICE << "Scheduler_cunregisterClient() Delete from TaskList:"
-        << itc_task->getTaskName() << EXTERNAL_DEBUG_DEVICE_ENDL;
+        INTERNAL_DEBUG_DEVICE << "Scheduler_cunregisterClient() Delete from TaskList:"
+        << itc_task->getTaskName() << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
         c_taskQueue.erase(itc_task) ;
       }
@@ -532,16 +540,16 @@ Scheduler_c::resortTaskList()
   if ( ( System_c::getTime() - si32_lastTaskListTimesDebug ) > 1000 ) {
       si32_lastTaskListTimesDebug = System_c::getTime();;
 
-    EXTERNAL_DEBUG_DEVICE << "\n\nTaskList: Time to next Call after resort: ";
+    INTERNAL_DEBUG_DEVICE << "\n\nTaskList: Time to next Call after resort: ";
     for ( STL_NAMESPACE::list<SchedulerEntry_c>::iterator pc_test = c_taskQueue.begin();
           pc_test != c_taskQueue.end();
           pc_test++ )
     {
-      if ( pc_test != c_taskQueue.begin() ) EXTERNAL_DEBUG_DEVICE << ", ";
-      EXTERNAL_DEBUG_DEVICE << pc_test->getTimeToNextTrigger(  retriggerType_t(StandardRetrigger) ) << " name:"
+      if ( pc_test != c_taskQueue.begin() ) INTERNAL_DEBUG_DEVICE << ", ";
+      INTERNAL_DEBUG_DEVICE << pc_test->getTimeToNextTrigger(  retriggerType_t(StandardRetrigger) ) << " name:"
         << pc_test->getTaskName() ;
     } //end for
-    EXTERNAL_DEBUG_DEVICE << "\n" << EXTERNAL_DEBUG_DEVICE_ENDL;
+    INTERNAL_DEBUG_DEVICE << "\n" << INTERNAL_DEBUG_DEVICE_ENDL;
   }
   #endif
 }
@@ -563,7 +571,7 @@ Scheduler_c::selectCallTaskAndUpdateQueue()
   static bool b_firstCallSelectCallTastAndUpdateQueue = true;
   if ( b_firstCallSelectCallTastAndUpdateQueue ) {
     b_firstCallSelectCallTastAndUpdateQueue = false;
-    IsoAgLib::getIrs232Instance() << "Scheduler_c::selectCallTaskAndUpdateQueue()\n";
+    INTERNAL_DEBUG_DEVICE << "Scheduler_c::selectCallTaskAndUpdateQueue()\n";
   }
   #endif
   // declare local timestamp vars as static to avoid repeating allocation
@@ -588,8 +596,8 @@ Scheduler_c::selectCallTaskAndUpdateQueue()
     const int32_t i32_nextTaskTriggerTimeSpread = pc_nextCallIter->getTimeToNextTrigger( LatestRetrigger );
     if(  i32_nextTaskTriggerTimeSpread   < 5 ){
     #ifdef DEBUG
-    EXTERNAL_DEBUG_DEVICE << "i32_endTime to small for " <<  pc_execIter->getTaskName() << "endTime "
-      << (int) i32_nextTaskTriggerTimeSpread  << " Set to 5ms" << EXTERNAL_DEBUG_DEVICE_ENDL;
+    INTERNAL_DEBUG_DEVICE << "i32_endTime to small for " <<  pc_execIter->getTaskName() << "endTime "
+      << (int) i32_nextTaskTriggerTimeSpread  << " Set to 5ms" << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
       i32_endTime += 5 ;  //add 5ms
     }
@@ -604,8 +612,8 @@ Scheduler_c::selectCallTaskAndUpdateQueue()
 
     IsoAgLib::iSystem_c::triggerWd();
     #ifdef DEBUG
-    EXTERNAL_DEBUG_DEVICE << "Call timeevent of " <<  pc_execIter->getTaskName() << "endTime "
-      << (int) i32_endTime << EXTERNAL_DEBUG_DEVICE_ENDL;
+    INTERNAL_DEBUG_DEVICE << "Call timeevent of " <<  pc_execIter->getTaskName() << "endTime "
+      << (int) i32_endTime << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
     ///Call Clients timeEvent() via SchedulerEntry_c::timeEventExec()
     /// IF Client returns with false -> return i32_idleTime = -1
@@ -655,45 +663,45 @@ Scheduler_c::setDebugTimeAccuracy(SchedulerEntry_c& refc_selectedTask)
   if ( ( i32_now - sui32_lastDebugOutput ) >= 30000 )
   { // send debug data on RS232
     sui32_lastDebugOutput = i32_now;
-    EXTERNAL_DEBUG_DEVICE << "setDebugTimeAccuracy()\n"
+    INTERNAL_DEBUG_DEVICE << "setDebugTimeAccuracy()\n"
       << "Actual time: " << i32_now
       << " for Task: " << refc_selectedTask.getTaskName() /// todo implente  Taskschilds
       << ",\tMax earlier execution: " << si16_maxDeviation
       << ",\tMin earlier execution: " << si16_minDeviation << ",\tCorrect Time Management: "
     << "idle time of FRONT: " << c_taskQueue.front().getNextTriggerTime()
 //    << "idle time of BACK: " << SystemManagement_c::instance().c_taskQueue.back().getNextTriggerTime()
-      << b_correctTimeManagement << EXTERNAL_DEBUG_DEVICE_ENDL;
+      << b_correctTimeManagement << INTERNAL_DEBUG_DEVICE_ENDL;
     if ( i16_timeDeviation >= 0 )
     { // everything is good
-      EXTERNAL_DEBUG_DEVICE << "GOOD System state with task called "
+      INTERNAL_DEBUG_DEVICE << "GOOD System state with task called "
         << i16_timeDeviation << "[ms] before the standard retrigger time (still not earlier than allowed)"
         << ", with typical exec time: " << refc_selectedTask.getExecTime()
-        << ", and period: " << refc_selectedTask.getTimePeriod() << EXTERNAL_DEBUG_DEVICE_ENDL;
+        << ", and period: " << refc_selectedTask.getTimePeriod() << INTERNAL_DEBUG_DEVICE_ENDL;
     }
     else if ( b_correctTimeManagement )
     { // real deviation -> a task is executed after the standard retrigger time
       // but before the latest allowed time
-      EXTERNAL_DEBUG_DEVICE << "Critical Scheduling state, as a task is called "
+      INTERNAL_DEBUG_DEVICE << "Critical Scheduling state, as a task is called "
         << -1*i16_timeDeviation << "[ms] after the standard retrigger time (bot not later than allowed)."
         << ", with typical exec time: " << refc_selectedTask.getExecTime()
-        << ", and period: " << refc_selectedTask.getTimePeriod() << EXTERNAL_DEBUG_DEVICE_ENDL;
+        << ", and period: " << refc_selectedTask.getTimePeriod() << INTERNAL_DEBUG_DEVICE_ENDL;
     }
     else
     { // bad state
-      EXTERNAL_DEBUG_DEVICE << "BAD System state, as  "
+      INTERNAL_DEBUG_DEVICE << "BAD System state, as  "
         << i16_timeDeviation << "[ms] after the standard and latest allowed retrigger time, with typical exec time: "
         << refc_selectedTask.getExecTime()
-        << ", and period: " << refc_selectedTask.getTimePeriod() << EXTERNAL_DEBUG_DEVICE_ENDL;
+        << ", and period: " << refc_selectedTask.getTimePeriod() << INTERNAL_DEBUG_DEVICE_ENDL;
     }
     // print timing fingerprint of actual task
-    EXTERNAL_DEBUG_DEVICE
+    INTERNAL_DEBUG_DEVICE
       << "AVG exec time: " << refc_selectedTask.getAvgExecTime()
       << ", MIN exec time: " << refc_selectedTask.getMinExecTime()
       << ", MAX exec time: " << refc_selectedTask.getMaxExecTime()
       << "\nAVG timing accuracy: " << refc_selectedTask.getAvgTimingAccuracy()
       << ", MIN timing accuracy: " << refc_selectedTask.getMinTimingAccuracy()
       << ", MAX timing accuracy: " << refc_selectedTask.getMaxTimingAccuracy()
-      << EXTERNAL_DEBUG_DEVICE_ENDL;
+      << INTERNAL_DEBUG_DEVICE_ENDL;
 
     // reset extreme values, to compensate short max idle times (e.g. if a lot of debug messages are sent)
     si16_maxDeviation = -32767;
@@ -724,22 +732,22 @@ void Scheduler_c::setDebugIdleInformation(uint16_t rui16_idleTime){
   { // ist's time to send debug data on RS232
     si32_lastRs232Send = i32_now;
     // send debug data on configured Device for Output
-    EXTERNAL_DEBUG_DEVICE << "setDebugIdleInformation()\n"
+    INTERNAL_DEBUG_DEVICE << "setDebugIdleInformation()\n"
       << "Actual time: " << i32_now << ",\tMax IDLE time: " << sui16_maxIdle
       << ",\tMin IDLE time: " << sui16_minIdle
       << ",\tactual IDLE time: " << rui16_idleTime
       << "idle time of FRONT: " << c_taskQueue.front().getNextTriggerTime()
       //<< "idle time of BACK: " << c_taskQueue.back().getNextTriggerTime()
-      << EXTERNAL_DEBUG_DEVICE_ENDL;
+      << INTERNAL_DEBUG_DEVICE_ENDL;
   }
   /// send debug msg if idle time is higher than allowed (longer than shortest period)
   if ( rui16_idleTime > 1001 )
   { // problem with scheduling
-    EXTERNAL_DEBUG_DEVICE << "setDebugIdleInformation() with too long idle of " << rui16_idleTime
+    INTERNAL_DEBUG_DEVICE << "setDebugIdleInformation() with too long idle of " << rui16_idleTime
       << ", TOP Task: " << c_taskQueue.front().getTaskName()
       << ", Now: " << System_c::getTime()
       << ", Retrigger Time: " << c_taskQueue.front().getNextTriggerTime()
-      << EXTERNAL_DEBUG_DEVICE_ENDL;
+      << INTERNAL_DEBUG_DEVICE_ENDL;
 
   }
 
@@ -758,9 +766,9 @@ bool Scheduler_c::changeTimePeriodAndResortTask(ElementBase_c * pc_client  , uin
   int16_t i_deltaTime = rui16_newTimePeriod - pc_client->getTimePeriod()  ;
   int32_t i32_newTriggerTime = pc_client->getNextTriggerTime() + i_deltaTime;
   #ifdef DEBUG
-    EXTERNAL_DEBUG_DEVICE << "New TimePeriod:" << (int) rui16_newTimePeriod
+    INTERNAL_DEBUG_DEVICE << "New TimePeriod:" << (int) rui16_newTimePeriod
     << " Old TimePeriod: "<<  pc_client->getTimePeriod() <<" Name"
-    << pc_client->getTaskName() << EXTERNAL_DEBUG_DEVICE_ENDL;
+    << pc_client->getTaskName() << INTERNAL_DEBUG_DEVICE_ENDL;
   #endif
   ///Now lets do the resort  and update new TimePeriod in client
   return changeRetriggerTimeAndResort(pc_client,i32_newTriggerTime ,rui16_newTimePeriod);
@@ -785,8 +793,8 @@ bool  Scheduler_c::changeRetriggerTimeAndResort(ElementBase_c * pc_client  , int
 
       if(itc_task->isTask(pc_client)){
         #ifdef DEBUG
-        EXTERNAL_DEBUG_DEVICE << "Scheduler_c notifyed by Client:" << itc_task->getTaskName()
-        << EXTERNAL_DEBUG_DEVICE_ENDL;
+        INTERNAL_DEBUG_DEVICE << "Scheduler_c notifyed by Client:" << itc_task->getTaskName()
+        << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
 
         int32_t i32_deltaRetrigger = i32_newRetriggerTime - itc_task->getNextTriggerTime();
@@ -798,8 +806,8 @@ bool  Scheduler_c::changeRetriggerTimeAndResort(ElementBase_c * pc_client  , int
         /// increase of RetriggerTime task should be called LATER
         if (i32_deltaRetrigger > 0) {
           #ifdef DEBUG
-          EXTERNAL_DEBUG_DEVICE << "task should be called LATER for ms: " << i32_deltaRetrigger
-            << EXTERNAL_DEBUG_DEVICE_ENDL;
+          INTERNAL_DEBUG_DEVICE << "task should be called LATER for ms: " << i32_deltaRetrigger
+            << INTERNAL_DEBUG_DEVICE_ENDL;
           #endif
         itc_task->changeNextTriggerTime( i32_newRetriggerTime );
         //remove to LATER Position
@@ -827,8 +835,8 @@ bool  Scheduler_c::changeRetriggerTimeAndResort(ElementBase_c * pc_client  , int
         /// decrease of TimePeriod task should be called EARLIER
         else if (i32_deltaRetrigger < 0){
           #ifdef DEBUG
-          EXTERNAL_DEBUG_DEVICE << "task should be called EARLIER for ms: " << i32_deltaRetrigger
-            << EXTERNAL_DEBUG_DEVICE_ENDL;
+          INTERNAL_DEBUG_DEVICE << "task should be called EARLIER for ms: " << i32_deltaRetrigger
+            << INTERNAL_DEBUG_DEVICE_ENDL;
           #endif
         ///set new NextTriggerTime to now to avoid delay of following tasks
         if((i32_newRetriggerTime < System_c::getTime())   ) i32_newRetriggerTime = System_c::getTime();
