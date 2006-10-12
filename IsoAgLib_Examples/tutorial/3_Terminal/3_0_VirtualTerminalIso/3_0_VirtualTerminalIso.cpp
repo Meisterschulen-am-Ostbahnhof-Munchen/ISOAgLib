@@ -561,7 +561,7 @@ iObjectPool_simpleVTIsoPool_c::eventLanguagePgn(const localSettings_s& rrefs_loc
 
 int main()
 {
-  getIcanInstance().init (2); // CAN-Bus 0 (with defaulting 250 kbit)
+  getIcanInstance().init (0); // CAN-Bus 0 (with defaulting 250 kbit)
 
   // start address claim of the local identity/member
   IsoAgLib::iIdentItem_c c_myIdent (2,    // rui8_indGroup
