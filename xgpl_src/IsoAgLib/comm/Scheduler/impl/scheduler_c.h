@@ -115,7 +115,7 @@ namespace __IsoAgLib {
   @short central manager object for all hardware independent IsoAgLib objects.
 */
 class Scheduler_c;
-typedef SINGLETON_CLIENT1 (Scheduler_c, ElementBase_c, uint8_t) SingletonScheduler_c;
+typedef SINGLETON(Scheduler_c) SingletonScheduler_c;
 class Scheduler_c : public SingletonScheduler_c {
 public:
 

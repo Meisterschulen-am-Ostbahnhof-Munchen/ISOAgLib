@@ -213,6 +213,8 @@ public:
 //!  Allows Scheduler_c to change next retriggerTime
 inline bool changeNextTriggerTime(int32_t ri32_nextRetriggerTime);
 
+  void close() { if (NULL != pc_taskInstance) pc_taskInstance->close();}
+
 protected:
 
 private:

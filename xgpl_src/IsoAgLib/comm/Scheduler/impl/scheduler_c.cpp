@@ -196,11 +196,10 @@ void Scheduler_c::closeCommunication( void ) {
     getCanInstance( ind ).close();
   }
   #endif
-  while ( ! c_arrClientC1.empty() )
+  for ( std::list<SchedulerEntry_c>::iterator iter = c_taskQueue.begin(); ! c_taskQueue.empty(); iter = c_taskQueue.begin())
   { // call close for each registered client
-    pc_searchCacheC1 = c_arrClientC1.begin();
-    if ( *pc_searchCacheC1 != NULL )
-      (*pc_searchCacheC1)->close();
+    iter->close();
+    c_taskQueue.erase(iter);
   }
 }
 
@@ -276,48 +275,46 @@ void Scheduler_c::registerAccessFlt( void )
   */
 bool Scheduler_c::registerClient( ElementBase_c* pc_client)
 {
-  if ( registerC1( pc_client ) )
-  { // new entry registered
+  /// add 2ms to startTime of new Client to avoid crossing timestamps
+  static int32_t si32_taskStartTime = 0;
+  if ( si32_taskStartTime == 0 ) si32_taskStartTime = System_c::getTime();
+  else si32_taskStartTime += 2;
+  //For Client that registers at later timepoint
+  if ( System_c::getTime() > si32_taskStartTime ) si32_taskStartTime = System_c::getTime();;
 
-    /// add 2ms to startTime of new Client to avoid crossing timestamps
-    static int32_t si32_taskStartTime = 0;
-    if ( si32_taskStartTime == 0 ) si32_taskStartTime = System_c::getTime();
-    else si32_taskStartTime += 2;
-    //For Client that registers at later timepoint
-    if ( System_c::getTime() > si32_taskStartTime ) si32_taskStartTime = System_c::getTime();;
+  #ifdef DEBUG
+  EXTERNAL_DEBUG_DEVICE << "RegisteredClient: "<<  pc_client->getTaskName() <<  EXTERNAL_DEBUG_DEVICE_ENDL;
+  #endif
 
-    #ifdef DEBUG
-    EXTERNAL_DEBUG_DEVICE << "RegisteredClient: "<<  pc_client->getTaskName() <<  EXTERNAL_DEBUG_DEVICE_ENDL;
+  pc_client->startTaskTiming(si32_taskStartTime);
+  /// put client in taskQueue
+  const uint16_t ui16_oldSize = c_taskQueue.size();
+  c_taskQueue.push_front( SchedulerEntry_c( pc_client ) );
+  // check whether the task list grew as awaited
+  if ( c_taskQueue.size() <= ui16_oldSize ) return false;
+  #ifdef DEBUG_HEAP_USEAGE
+  sui16_clientPointerTotal++;
+
+  getRs232Instance()
+    << sui16_clientPointerTotal
+    << "(" << c_arrClientC1.capacity()
+    << ") x Scheduler_c Clients: Mal-Alloc: "
+    << sizeVectorTWithMalloc( sizeof(void*), c_taskQueue.capacity() )
+    << "/" << sizeof(void*)
+    << ", Chunk-Alloc: "
+    << sizeVectorTWithChunk( sizeof(void*), c_arrClientC1.capacity() )
+    << INTERNAL_DEBUG_DEVICE_ENDL
+    << sui16_clientTimeTotal
+    #ifdef MASSERT
+    << "\r\n__mall tot:" << AllocateHeapMalloc
+    << ", _mall deal tot: " << DeallocateHeapMalloc
+    << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
+    #else
+    << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
+  #endif
 
-    pc_client->startTaskTiming(si32_taskStartTime);
-    /// put client in taskQueue
-    c_taskQueue.push_front( SchedulerEntry_c( pc_client ) );
-    #ifdef DEBUG_HEAP_USEAGE
-    sui16_clientPointerTotal++;
-
-    getRs232Instance()
-      << sui16_clientPointerTotal
-      << "(" << c_arrClientC1.capacity()
-      << ") x Scheduler_c Clients: Mal-Alloc: "
-      << sizeVectorTWithMalloc( sizeof(void*), c_arrClientC1.capacity() )
-      << "/" << sizeof(void*)
-      << ", Chunk-Alloc: "
-      << sizeVectorTWithChunk( sizeof(void*), c_arrClientC1.capacity() )
-      << INTERNAL_DEBUG_DEVICE_ENDL
-      << sui16_clientTimeTotal
-      #ifdef MASSERT
-      << "\r\n__mall tot:" << AllocateHeapMalloc
-      << ", _mall deal tot: " << DeallocateHeapMalloc
-      << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
-      #else
-      << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
-      #endif
-    #endif
-
-    return true;
-  }
-  else return false;
+  return true;
 }
 
 
@@ -326,9 +323,6 @@ bool Scheduler_c::registerClient( ElementBase_c* pc_client)
   */
 void Scheduler_c::unregisterClient( ElementBase_c* pc_client)
 {
-  // reset timeEvent iterators
-  unregisterC1( pc_client );
-
   // delete from Queue if not empty
   if(!c_taskQueue.empty()){
     STL_NAMESPACE::list<SchedulerEntry_c>::iterator itc_task;
@@ -346,7 +340,7 @@ void Scheduler_c::unregisterClient( ElementBase_c* pc_client)
 
 
   // output client array in sync
-  if ( c_arrClientC1.size() > 0 )
+  if ( c_taskQueue.size() > 0 )
   { // delete last element
     #ifdef DEBUG_HEAP_USEAGE
     sui16_clientPointerTotal--;
@@ -355,10 +349,10 @@ void Scheduler_c::unregisterClient( ElementBase_c* pc_client)
       << sui16_clientPointerTotal
       << "(" << c_arrClientC1.capacity()
       << ") x Scheduler_c Clients: Mal-Alloc: "
-      << sizeVectorTWithMalloc( sizeof(void*), c_arrClientC1.capacity() )
+      << sizeVectorTWithMalloc( sizeof(void*), c_taskQueue.capacity() )
       << "/" << sizeof(void*)
       << ", Chunk-Alloc: "
-      << sizeVectorTWithChunk( sizeof(void*), c_arrClientC1.capacity() )
+      << sizeVectorTWithChunk( sizeof(void*), c_taskQueue.capacity() )
       << INTERNAL_DEBUG_DEVICE_ENDL
       #ifdef MASSERT
       << "\r\n__mall tot:" << AllocateHeapMalloc
