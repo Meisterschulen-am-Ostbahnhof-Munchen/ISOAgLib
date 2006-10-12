@@ -247,6 +247,9 @@ public:
 
   IsoAgLib::iStream_c* getFinishedJustKeptStream (IsoAgLib::iStream_c* rpc_lastKeptStream);
 
+  ///  Used for Debugging Tasks in Scheduler_c
+  virtual const char* getTaskName() const;
+
 protected:
 
 private:

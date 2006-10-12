@@ -779,7 +779,7 @@ bool MeasureProgLocal_c::sendRegisteredVals(Proc_c::doSend_t ren_doSend){
   {
     case Proc_c::DoValForDefaultSetpoint: en_valueGroup = GeneralCommand_c::defaultValue; break;
     case Proc_c::DoValForMinSetpoint:
-    case Proc_c::DoValForMinMeasurement: 
+    case Proc_c::DoValForMinMeasurement:
       en_valueGroup = GeneralCommand_c::minValue; break;
     case Proc_c::DoValForMaxSetpoint:
     case Proc_c::DoValForMaxMeasurement:
@@ -998,8 +998,8 @@ bool MeasureProgLocal_c::resetMax(){
   */
 bool MeasureProgLocal_c::timeEvent( void )
 {
-  if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
-  int32_t i32_time = Scheduler_c::getLastTimeEventTrigger();
+  if ( ElementBase_c::getAvailableExecTime() == 0 ) return false;
+  int32_t i32_time = ElementBase_c::getLastRetriggerTime();
 
   bool b_singleTest;
 

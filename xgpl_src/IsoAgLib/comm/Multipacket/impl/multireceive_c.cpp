@@ -1396,6 +1396,11 @@ MultiReceive_c::reactOnMonitorListRemove( const __IsoAgLib::ISOName_c&
   }
 }
 
+///  Used for Debugging Tasks in Scheduler_c
+const char*
+MultiReceive_c::getTaskName() const
+{ return "MultiReceive_c"; }
+
 
 
 } // end namespace __IsoAgLib

@@ -311,6 +311,10 @@ public: // Public methods
     */
   void sendLanguage();
 
+  ///  Used for Debugging Tasks in Scheduler_c
+  virtual const char* getTaskName() const;
+
+
   /** force maintain power from tractor
       @see  CANIO_c::operator<<
       @param rb_ecuPower true -> maintain ECU power

@@ -180,6 +180,10 @@ public:
   void answerRequestPGNwithNACK()             { sendAcknowledgePGN (0x01); } // Control Byte 3 = NOT Acknowledge
   void answerRequestPGNwithCannotRespondNow() { sendAcknowledgePGN (0x03); } // Control Byte 3 = Cannot Respond
 
+  ///  Operation:  Funktion for Debugging in Scheduler_c
+  virtual const char* getTaskName() const;
+
+
 protected: // Protected methods
   /** process system msg
     * @return true -> message (Request for PGN) processed by ISORequestPGN_c; false -> let others process */

@@ -422,7 +422,12 @@ typedef struct
     /** get present limit status of rear pto shaft speed
         @return  present limit status
       */
-    IsoAgLib::IsoLimitFlag_t rearPtoShaftSpeedLimitStatus() const {return t_ptoRear.t_ptoShaftSpeedLimitStatus;}
+
+    ///  Operation: getTaskName
+    virtual const char* getTaskName() const;
+
+
+ IsoAgLib::IsoLimitFlag_t rearPtoShaftSpeedLimitStatus() const {return t_ptoRear.t_ptoShaftSpeedLimitStatus;}
     /*@}*/
 
   private:

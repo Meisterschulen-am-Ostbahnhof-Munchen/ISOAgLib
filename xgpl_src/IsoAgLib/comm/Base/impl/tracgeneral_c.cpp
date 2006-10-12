@@ -149,6 +149,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     //if something went wrong leave function before something is configured
     if ( !BaseCommon_c::config(rpc_isoName, rt_identMode) ) return false;
 
+    setTimePeriod( (uint16_t) 100   );
     // set the member base msg value vars to NO_VAL codes
     setHitchRear(NO_VAL_8);
     setHitchFront(NO_VAL_8);
@@ -220,16 +221,20 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
 
   /** send a ISO11783 general base information PGN.
     * this is only called when sending ident is configured and it has already claimed an address
+    * Timeperiod of 100ms is set in config()
       @pre  function is only called in tractor mode
       @see  BaseCommon_c::timeEvent()
     */
   bool TracGeneral_c::timeEventTracMode( )
   {
-    if ( lastedTimeSinceUpdate() >= 100 )
-    {// it's time to send hitch information
-      sendMessage();
+
+    ///Timeperiod of 100ms is set in ::config
+    sendMessage();
+
+    if ( getAvailableExecTime() == 0 ){
+      return false;
+
     }
-    if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
 
     return true;
   }
@@ -288,7 +293,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
           }
           setSelectedDataSourceISOName(c_tempISOName);
           //set update time
-          setUpdateTime( Scheduler_c::getLastTimeEventTrigger() );
+          setUpdateTime( data().time() );
         }
         else
         { // there is a sender conflict
@@ -363,7 +368,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     if ( getISOName() == NULL ) return;
     if (!getIsoMonitorInstance4Comm().existIsoMemberISOName(*getISOName(), true)) return;
 
-    const int32_t ci32_now = Scheduler_c::getLastTimeEventTrigger();
+    const int32_t ci32_now = getLastRetriggerTime();
     data().setISONameForSA( *getISOName() );
     data().setIdentType(Ident_c::ExtendedIdent);
     data().setIsoPri(3);
@@ -555,5 +560,10 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     else
       return false;
   }
+
+///  Used for Debugging Tasks in Scheduler_c
+const char*
+TracGeneral_c::getTaskName() const
+{   return "TracGeneral_c"; }
 
 } // End Namespace __IsoAgLib

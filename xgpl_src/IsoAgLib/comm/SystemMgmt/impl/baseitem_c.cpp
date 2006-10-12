@@ -151,7 +151,7 @@ BaseItem_c& BaseItem_c::operator=(const BaseItem_c& src){
   @return lasted time between last update and the compare time [msec.]
 */
 int32_t BaseItem_c::lastedTime( void ) const {
-  return ( Scheduler_c::getLastTimeEventTrigger() - i32_lastTime );
+  return ( ElementBase_c::getLastRetriggerTime() - i32_lastTime );
 }
 
 /**
@@ -172,20 +172,21 @@ bool BaseItem_c::checkTime(uint16_t rui16_timeInterval) const  {
 bool BaseItem_c::checkUpdateTime(uint16_t rui16_timeInterval) {
   if ( checkTime( rui16_timeInterval ) ) {
     // enable constant time intervalls without growing time drift
-    // -> simply add rui16_timeIntervall, if current time
-    //    has max 10% deviation from correct timing
-    const uint16_t cui16_maxDeviation = rui16_timeInterval / 10;
-    if ( Scheduler_c::getLastTimeEventTrigger() <= ( i32_lastTime + rui16_timeInterval + cui16_maxDeviation ) ) {
-      // time correctness is close enough to increment last timestamp by exact
-      // rui16_timeIntervall -> avoid growing time drift if %e.g. each alive msg
-      // is triggered 5 msec too late
-      i32_lastTime += rui16_timeInterval;
-    }
-    else {
-      // time difference is too big -> allow reset of timestamp
-        i32_lastTime = Scheduler_c::getLastTimeEventTrigger();
-    }
-    return true;
+	// -> simply add rui16_timeIntervall, if current time
+	//    has max 10% deviation from correct timing
+	const uint16_t cui16_maxDeviation = rui16_timeInterval / 10;
+	if ( ElementBase_c::getLastRetriggerTime() <= ( i32_lastTime + rui16_timeInterval + cui16_maxDeviation ) ) {
+	  // time correctness is close enough to increment last timestamp by exact
+	  // rui16_timeIntervall -> avoid growing time drift if %e.g. each alive msg
+	  // is triggered 5 msec too late
+	  i32_lastTime += rui16_timeInterval;
+	}
+	else {
+	  // time difference is too big -> allow reset of timestamp
+      i32_lastTime = ElementBase_c::getLastRetriggerTime();
+	}
+	return true;
+
   }
   else {
     return false;

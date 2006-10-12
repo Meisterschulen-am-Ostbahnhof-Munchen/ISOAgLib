@@ -483,6 +483,14 @@ public:
 
   bool processMsgRequestPGN (uint32_t rui32_pgn, uint8_t rui8_sa, uint8_t rui8_da);
 
+  ///  Operation: // Function for Debugging in Scheduler_c
+  virtual const char* getTaskName() const;
+
+  /// Function notify Scheduler_c to set new retriggerTime
+  /// will be called from IdentItem_c and registerClient
+  /// ISOMonitor_c.timeEvent() should be called in 50 ms
+  void changeRetriggerTime() { getSchedulerInstance4Comm().changeRetriggerTimeAndResort(this,System_c::getTime() + 50 ); };
+
 protected: // Protected methods
   /** process system msg with informations which are
     important for managing of members
@@ -496,7 +504,12 @@ private:
   /** register pointer to a new client
     * this function is called within construction of new client instance
    */
-  bool registerClient( IdentItem_c* pc_client) { return registerC1 ( pc_client ); }
+  bool registerClient( IdentItem_c* pc_client)
+  {
+    /// ISOMonitor_c.timeEvent() should be called from Scheduler_c in 50 ms
+    changeRetriggerTime();
+    return registerC1 ( pc_client );
+  }
 
   /** register pointer to a new client
    * this function is called within construction of new client instance

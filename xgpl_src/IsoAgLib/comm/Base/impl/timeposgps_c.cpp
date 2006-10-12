@@ -217,12 +217,12 @@ namespace __IsoAgLib {
     */
   bool TimePosGPS_c::timeEvent(  )
   {
-    if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
+    if ( getAvailableExecTime() == 0 ) return false;
 
     checkCreateReceiveFilter();
-    if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
+    if ( getAvailableExecTime() == 0 ) return false;
 
-    const int32_t ci32_now = Scheduler_c::getLastTimeEventTrigger();
+    const int32_t ci32_now = getLastRetriggerTime();
 
     // check for different base data types whether the previously
     if ( checkMode(IsoAgLib::IdentModeImplement)
@@ -258,7 +258,7 @@ namespace __IsoAgLib {
       { // stored base information sending ISO member has claimed address
         if ( checkMode(IsoAgLib::IdentModeTractor) ) timeEventTracMode();
       }
-      if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
+      if ( getAvailableExecTime() == 0 ) return false;
     }
     if ( pc_isoNameGps != NULL )
     { // there is at least something configured to send
@@ -343,6 +343,9 @@ namespace __IsoAgLib {
     //call config for handling which is base data independent
     //if something went wrong leave function before something is configured
     if ( !BaseCommon_c::config(rpc_isoName, rt_identMode) ) return false;
+
+    ///setTimePeriod for Scheduler_c 100ms is minimal periode in GPSmodul up to now
+    setTimePeriod( (uint16_t) 100   );
 
     if (t_oldMode == IsoAgLib::IdentModeImplement && rt_identMode == IsoAgLib::IdentModeTractor)
     {  // a change from Implement mode to Tractor mode occured
@@ -449,7 +452,7 @@ namespace __IsoAgLib {
     */
   int32_t TimePosGPS_c::lastedTimeSinceUpdateGps() const
   {
-    const int32_t ci32_now = Scheduler_c::getLastTimeEventTrigger();
+    const int32_t ci32_now = getLastRetriggerTime();
     #ifdef NMEA_2000_FAST_PACKET
     if ( i32_lastIsoPositionStream > i32_lastIsoPositionSimple ) return ( ci32_now - i32_lastIsoPositionStream);
     else return ( ci32_now - i32_lastIsoPositionSimple);
@@ -493,7 +496,7 @@ namespace __IsoAgLib {
   bool TimePosGPS_c::processMsg()
   {
     ISOName_c c_tempISOName( ISOName_c::ISONameUnspecified );
-    const int32_t ci32_now = Scheduler_c::getLastTimeEventTrigger();
+    const int32_t ci32_now = data().time();
 
     // there is no need to check if sender exist in the monitor list because this is already done
     // in CANPkgExt_c -> resolveSendingInformation
@@ -864,7 +867,7 @@ namespace __IsoAgLib {
     */
   bool TimePosGPS_c::timeEventTracMode()
   {
-    const int32_t ci32_now = Scheduler_c::getLastTimeEventTrigger();
+    const int32_t ci32_now = getLastRetriggerTime();
 
     if ( ( lastedTimeSinceUpdate() >= 1000 )
       && checkMode(IsoAgLib::IdentModeTractor) )
@@ -878,7 +881,7 @@ namespace __IsoAgLib {
     { // pc_isoNameGps must be != NULL, because we are in tractor mode
       if ( ( ci32_now - i32_lastIsoPositionSimple ) >= 100 )
       {
-        if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
+        if ( getAvailableExecTime() == 0 ) return false;
         sendPositionRapidUpdate();
       }
 
@@ -886,14 +889,14 @@ namespace __IsoAgLib {
       if ( ( ( ci32_now - i32_lastIsoPositionStream ) >= 1000 )
         && ( t_multiSendSuccessState != MultiSend_c::Running  ) )
       {
-        if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
+        if ( getAvailableExecTime() == 0 ) return false;
         isoSendPositionStream();
       }
 
       if ( ( ( ci32_now - i32_lastIsoDirectionStream ) >= 1000 )
         && ( t_multiSendSuccessState != MultiSend_c::Running   ) )
       {
-        if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
+        if ( getAvailableExecTime() == 0 ) return false;
         isoSendDirectionStream();
       }
       #endif // END of NMEA_2000_FAST_PACKET
@@ -920,14 +923,14 @@ namespace __IsoAgLib {
     getCanInstance4Comm() << data();
 
     // update time
-    i32_lastIsoPositionSimple = Scheduler_c::getLastTimeEventTrigger();
+    i32_lastIsoPositionSimple = getLastRetriggerTime();
   }
 
   #if defined(NMEA_2000_FAST_PACKET)
   /** send direction as detailed stream */
   void TimePosGPS_c::isoSendDirectionStream( void )
   {
-    const int32_t ci32_now = Scheduler_c::getLastTimeEventTrigger();
+    const int32_t ci32_now = getLastRetriggerTime();
     ISOMonitor_c& c_iso_monitor = getIsoMonitorInstance4Comm();
     // set data in Nmea2000SendStreamer_c
     c_nmea2000Streamer.reset();
@@ -991,7 +994,7 @@ namespace __IsoAgLib {
   /** send position as detailed stream */
   void TimePosGPS_c::isoSendPositionStream( void )
   {
-    const int32_t ci32_now = Scheduler_c::getLastTimeEventTrigger();
+    const int32_t ci32_now = getLastRetriggerTime();
     ISOMonitor_c& c_iso_monitor = getIsoMonitorInstance4Comm();
     // set data in Nmea2000SendStreamer_c
     c_nmea2000Streamer.reset();
@@ -1113,7 +1116,7 @@ namespace __IsoAgLib {
       getCanInstance4Comm() << data();
 
       // update time
-      setUpdateTime(Scheduler_c::getLastTimeEventTrigger() );
+      setUpdateTime(getLastRetriggerTime() );
     }
   }
 
@@ -1381,5 +1384,11 @@ namespace __IsoAgLib {
     // compensate system time zone setting (part 2)
     return localtime( &t_secondsSince1970 );
   }
+
+///  Used for Debugging Tasks in Scheduler_c
+const char*
+TimePosGPS_c::getTaskName() const
+{   return "TimePosGPS_c"; }
+
 } // namespace __IsoAgLib
 

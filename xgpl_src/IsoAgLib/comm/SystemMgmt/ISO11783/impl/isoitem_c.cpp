@@ -259,9 +259,9 @@ bool ISOItem_c::timeEvent( void )
 {
   CANIO_c& c_can = getCanInstance4Comm();
   ISOMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
-  int32_t i32_time = Scheduler_c::getLastTimeEventTrigger();
+  int32_t i32_time = ElementBase_c::getLastRetriggerTime();
 
-  if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
+  if ( ElementBase_c::getAvailableExecTime() == 0 ) return false;
 
   ISOSystemPkg_c& c_pkg = c_isoMonitor.data();
   if (itemState(IState_c::PreAddressClaim))
@@ -400,7 +400,7 @@ bool ISOItem_c::processMsg()
   bool b_result = false;
   ISOSystemPkg_c& c_pkg = getIsoMonitorInstance4Comm().data();
   int32_t i32_pkgTime = c_pkg.time(),
-      i32_now = Scheduler_c::getLastTimeEventTrigger();
+      i32_now = ElementBase_c::getLastRetriggerTime();
   if ((i32_now - i32_pkgTime) > 100) updateTime(i32_now);
   else updateTime(i32_pkgTime);
 

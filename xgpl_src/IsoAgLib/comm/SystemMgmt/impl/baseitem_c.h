@@ -172,7 +172,7 @@ public:
     @param ri32_time optional time to store as last update time (default retreive actual time from central SystemMgmt_c instance)
   */
   void updateTime( int32_t ri32_time = -1 )
-    {if ( ri32_time < 0 ) i32_lastTime = Scheduler_c::getLastTimeEventTrigger();
+    {if ( ri32_time < 0 ) i32_lastTime = ElementBase_c::getLastRetriggerTime();
      else i32_lastTime = ri32_time;
     }
 

@@ -91,7 +91,17 @@
 #include <IsoAgLib/util/impl/singleton.h>
 #include <IsoAgLib/util/impl/elementbase_c.h>
 
+#include <IsoAgLib/util/impl/schedulerentry_c.h>
+
 #include <vector>
+
+#if defined(SYSTEM_PC) && !defined(SYSTEM_PC_VC)
+  #include <list>
+  //namespace std { using list;};  //old __gnu_cxx::slist
+#else
+  #include <list>
+#endif
+
 
 /// Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
@@ -128,12 +138,24 @@ public:
     registered within Scheduler_c for periodic timeEvent.
     Define common trigger timestamp, so that distributed activities can be performed with
     common time base.
-    @param ri32_demandedExecEnd optional timestamp, where timeEvent shall return execution to calling function
+    @param ri32_demandedExecEndScheduler optional timestamp, where timeEvent shall return execution to calling function
            -> allow tight integration of IsoAgLib into application specific scheduler, as In-Time execution is
            guaranteed (default -1 -> no execution stop defined)
-    @return true -> all planned executions performed
+  @return idleTime for main application (> 0 wait for next call; == 0 call function again)
+          idleTime == -1 One Client could not finish his Job
   */
-  bool timeEvent (int32_t ri32_demandedExecEnd = -1);
+  int32_t timeEvent( int32_t ri32_demandedExecEndScheduler = -1);
+
+  //!  This function implements the main scheduler work defined in UC15 Scheduler. It selects the next task, executes it and updates the task-list.
+  //!  If no task can be immediately started with EarliestRetrigger-option,
+  //!  the time to earliest triggerable task
+  //!  is given to setDebugIdleInformation.
+  //!  Each In-Time call of a task is
+  //!  given to setDebugTimeAccuracy,
+  //!  to debug the time behaviour of the system.
+  //!  @return idle time till next executable task ( 0 == this function should be called immediately again )
+  int32_t selectCallTaskAndUpdateQueue();
+
 
   /**
     * deliver the average execution time for timeEvent calls -> allows scheduler to
@@ -149,7 +171,7 @@ public:
     * is WITHIN execution in the main task. This way, the IsoAgLib is leaved by Scheduler_c::timeEvent()
     * in a guaranteed WELL DEFINED and VALID state.
     */
-  static void forceExecStop( void ) {b_execStopForced = true;i32_demandedExecEnd = 0;}
+  static void forceExecStop( void ) {b_execStopForced = true;i32_demandedExecEndScheduler = 0;}
 
   /**
     * informative function for all IsoAgLib subsystems which are triggered by Scheduler_c::timeEvent to
@@ -160,12 +182,6 @@ public:
 
   /** get last timestamp of Scheduler_c::timeEvent trigger */
   static int32_t getLastTimeEventTrigger( void ) { return i32_lastTimeEventTime;}
-
-  /** deliver available time for time event
-    * @param ri16_awaitedExecTime optional awaited execution time of planned next step
-             ==> answer of this function tells, if planned step will fit into time frame
-    */
-  static int16_t getAvailableExecTime( int16_t ri16_awaitedExecTime = 0 );
 
   /** handler function for access to undefined client.
     * the base Singleton calls this function, if it detects an error
@@ -182,6 +198,24 @@ public:
     */
   void unregisterClient( ElementBase_c* pc_client);
 
+  //!  Calculate Delta from TimePeriod of a Client
+  //!  Scheduler_c set (NOW + TimePeriod) as New Retrigger for Client
+  //!  and sort Task to the right Position in the TaskQueue
+  //! @param p_client -> Client in Scheduler_c TaskQueue
+  //! @param ri16_newTimePeriod -> New Period will set for the Client by Scheduler_c
+  bool changeTimePeriodAndResortTask(ElementBase_c * pc_client  , uint16_t rui16_newTimePeriod );
+
+
+  //!  Uses Delta from TimePeriod of a Client
+  //!  to put a Task to the right Position in the TaskQueue
+  //!  ATTENTION parameter nextRetriggerTime will exactly used from Scheduler_c
+  //!  for call of timevent.-> so add e.g. an TimePeriod for an later call
+  //! @param p_client -> Client in Scheduler_c TaskQueue
+  //! @param i32_nextRetriggerTime -> New i32_nextRetriggerTime set for Client by Scheduler_c
+  //! @param  ri16_newTimePeriod otpional -> New Period will set for the Client by Scheduler_c
+  bool  changeRetriggerTimeAndResort(ElementBase_c * pc_client  , int32_t i32_nextRetriggerTime, int16_t ri16_newTimePeriod = -1);
+
+
 private: //Private methods
   friend class SINGLETON( Scheduler_c );
   /** constructor for the central IsoAgLib object */
@@ -194,42 +228,45 @@ private: //Private methods
   */
   void singletonInit() { init(); };
 
+  /** deliver available time for time event of SCHEDULER only
+    * @param ri16_awaitedExecTime optional awaited execution time of planned next step
+             ==> answer of this function tells, if planned step will fit into time frame
+  */
+  int16_t getAvailableExecTime( int16_t ri16_awaitedExecTime = 0 );
+
+  //!  resort from start of task list by swapping neighbour elements.
+  //!  Stop execution, if compared elements are in correct order.
+  //!  Avoid complex complete sort of list, if only the previously executed task must be placed in the correct position again - the rest of the list is still correct sorted.
+  void resortTaskList();
+
+
+//!  Send debug messages with information on the
+//!  acfuracy of time behaviour.
+//!  Retrieve information about actual executed task from referenced SchedulerEntry_c.
+//!  As long as time to next standard retrigger >= 0,
+//!  everything is O.K.
+//!  As long as latest execution would allow some idle time,
+//!  the timing is acceptable.
+//! Parameter:
+//! @param refc_selectedTask: reference to the next executed task
+void setDebugTimeAccuracy(SchedulerEntry_c& refc_selectedTask);
+
+
+//!  Send debug messages with information on the idletime
+//!  This is important to check whether the time
+//!  restrictions are fullfilled.
+//! Parameter:
+//! @param rui16_idleTime:
+void setDebugIdleInformation(uint16_t rui16_idleTime);
+
+
 private: // Private attributes
-  #ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
-  /** vector of execution times for all registered timeEvent clients */
-  STL_NAMESPACE::vector<int16_t,STL_NAMESPACE::__malloc_alloc_template<0> > arrExecTime;
-
-  /** iterator to continue each timeEvent after end of last timeEvent call
-      -> cache in execution time vector
-    */
-  STL_NAMESPACE::vector<int16_t,STL_NAMESPACE::__malloc_alloc_template<0> >::iterator pc_timeEventTimeIter;
-
-  /** iterator to continue each timeEvent after end of last timeEvent call
-      -> cache in client vector
-    */
-  STL_NAMESPACE::vector<ElementBase_c*,STL_NAMESPACE::__malloc_alloc_template<0> >::iterator pc_timeEventClientIter;
-  #else
-
-  /** vector of execution times for all registered timeEvent clients */
-  STL_NAMESPACE::vector<int16_t> arrExecTime;
-
-  /** iterator to continue each timeEvent after end of last timeEvent call
-      -> cache in execution time vector
-    */
-  STL_NAMESPACE::vector<int16_t>::iterator pc_timeEventTimeIter;
-
-  /** iterator to continue each timeEvent after end of last timeEvent call
-      -> cache in client vector
-    */
-  STL_NAMESPACE::vector<ElementBase_c*>::iterator pc_timeEventClientIter;
-  #endif
-
 
   /** timestamp where last timeEvent was called -> can be used to synchronise distributed timeEvent activities */
   static int32_t i32_lastTimeEventTime;
 
   /** commanded timestamp, where Scheduler_c::timeEvent MUST return action to caller */
-  static int32_t i32_demandedExecEnd;
+  static int32_t i32_demandedExecEndScheduler;
 
   /** average execution time for Scheduler_c::timeEvent */
   int32_t i32_averageExecTime;
@@ -242,6 +279,11 @@ private: // Private attributes
 
   /** flag to detect, if other interrupting task forced immediated stop of Scheduler_c::timeEvent() */
   static bool b_execStopForced;
+
+
+  //  Attribute: c_taskQueue
+  //!  central priority queue for all tasks
+  std::list<SchedulerEntry_c> c_taskQueue;
 
 };
 

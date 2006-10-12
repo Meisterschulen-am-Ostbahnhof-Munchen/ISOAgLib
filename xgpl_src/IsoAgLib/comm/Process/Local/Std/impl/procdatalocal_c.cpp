@@ -300,7 +300,7 @@ void ProcDataLocal_c::incrMasterMeasurementVal(float rf_val){
   @return true -> all planned executions performed
 */
 bool ProcDataLocal_c::timeEvent( void ){
-  if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
+  if ( ElementBase_c::getAvailableExecTime() == 0 ) return false;
 
   // perform time event activities for base class
   if ( ! ProcDataLocalBase_c::timeEvent() ) return false;

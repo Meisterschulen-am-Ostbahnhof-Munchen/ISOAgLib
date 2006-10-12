@@ -259,6 +259,9 @@ namespace __IsoAgLib {
       */
     IsoAgLib::IsoSpeedSourceFlag_t selectedSpeedSource() const {return t_selectedSpeedSource;}
 
+
+  virtual const char* getTaskName() const;
+
   private:
     // Private methods
     friend class SINGLETON_DERIVED(TracMove_c,BaseCommon_c);

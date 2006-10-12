@@ -257,7 +257,7 @@ ManageMeasureProgLocal_c::~ManageMeasureProgLocal_c()
 bool ManageMeasureProgLocal_c::timeEvent( void ){
   ISOMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
 
-  if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
+  if ( ElementBase_c::getAvailableExecTime() == 0 ) return false;
   const ISOName_c *pc_callerISOName;
 
   #ifdef DEBUG_HEAP_USEAGE

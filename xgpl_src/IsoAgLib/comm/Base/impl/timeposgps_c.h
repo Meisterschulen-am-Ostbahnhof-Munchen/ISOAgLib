@@ -561,6 +561,10 @@ class TimePosGPS_c : public SingletonTimePosGps_c
   { return (System_c::getTime() - i32_lastIsoPositionSimple);}
 #endif
 
+  ///  Used for Debugging Tasks in Scheduler_c
+  virtual const char* getTaskName() const;
+
+
 private:
   // Private methods
   friend class SINGLETON_DERIVED(TimePosGPS_c,BaseCommon_c);

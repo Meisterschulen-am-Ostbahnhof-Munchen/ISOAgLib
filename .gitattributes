@@ -1387,6 +1387,9 @@ xgpl_src/IsoAgLib/util/config.h -text
 xgpl_src/IsoAgLib/util/icanpkgext_c.h -text
 xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp -text
 xgpl_src/IsoAgLib/util/impl/canpkgext_c.cpp -text
+xgpl_src/IsoAgLib/util/impl/elementbase_c.cpp -text
+xgpl_src/IsoAgLib/util/impl/schedulerentry_c.cpp -text
+xgpl_src/IsoAgLib/util/impl/schedulerentry_c.h -text
 xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.cpp -text
 xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.h -text
 xgpl_src/supplementary_driver/hal/a2/rs232/rs232.h -text

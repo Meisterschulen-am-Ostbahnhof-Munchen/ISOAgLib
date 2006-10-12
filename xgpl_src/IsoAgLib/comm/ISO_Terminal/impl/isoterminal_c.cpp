@@ -286,7 +286,7 @@ ISOTerminal_c::deregisterIsoObjectPoolInd (uint8_t rui8_index)
 bool
 ISOTerminal_c::timeEvent(void)
 {
-  if (Scheduler_c::getAvailableExecTime() == 0) return false;
+  if (getAvailableExecTime() == 0) return false;
 
   System_c::triggerWd(); /** @todo what to do with those calls? */
 
@@ -517,5 +517,10 @@ ISOTerminal_c::fakeVtProperties (uint16_t rui16_dimension, uint16_t rui16_skWidt
   }
 }
 #endif
+///  Used for Debugging Tasks in Scheduler_c
+const char*
+ISOTerminal_c::getTaskName() const
+{ return "ISOTerminal_c()"; }
+
 
 } // end namespace __IsoAgLib

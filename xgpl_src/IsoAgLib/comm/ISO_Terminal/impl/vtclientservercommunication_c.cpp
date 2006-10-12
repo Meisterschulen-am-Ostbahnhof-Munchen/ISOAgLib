@@ -647,7 +647,7 @@ VtClientServerCommunication_c::timeEventPoolUpload()
 bool
 VtClientServerCommunication_c::timeEvent(void)
 {
-  if (Scheduler_c::getAvailableExecTime() == 0) return false;
+  if (ElementBase_c::getAvailableExecTime() == 0) return false;
 #ifdef DEBUG_HEAP_USEAGE
   if ((sui16_lastPrintedSendUploadQueueSize < sui16_sendUploadQueueSize)
   || (sui16_lastPrintedMaxSendUploadQueueSize < sui16_maxSendUploadQueueSize))

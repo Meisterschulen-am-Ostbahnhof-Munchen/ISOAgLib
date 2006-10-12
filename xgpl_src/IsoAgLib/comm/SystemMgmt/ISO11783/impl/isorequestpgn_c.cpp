@@ -346,6 +346,11 @@ ISORequestPGN_c::singletonInit ()
   init();
 };
 
+// Funktion for Debugging in Scheduler_c
+const char*
+ISORequestPGN_c::getTaskName() const
+{   return "ISORequestPGN_c";}
+
 
 #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
 /** C-style function, to get access to the unique ISORequestPGN_c singleton instance

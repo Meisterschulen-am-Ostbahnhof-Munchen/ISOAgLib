@@ -369,11 +369,17 @@ public:
   */
   bool processWorkingSetTaskMsg(uint8_t /* ui8_tcStatus */, const ISOName_c& /* refc_isoName */);
 
+
+  ///  Used for Debugging Tasks in Scheduler_c
+  virtual const char* getTaskName() const;
+
+
   /** set the pointer to the handler class (used for callback when TC status message is processed)
     * @param rpc_processDataChangeHandler pointer to handler class of application
     */
   void setProcessDataChangeHandler( IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler )
    { pc_processDataChangeHandler = rpc_processDataChangeHandler; }
+
 
 private: // Private methods
   /**

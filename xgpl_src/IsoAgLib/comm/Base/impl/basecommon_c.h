@@ -153,7 +153,7 @@ namespace __IsoAgLib
         @see CANIO_c::operator<<
         @return true -> all planned activities performed in allowed time
       */
-    virtual bool timeEvent();
+    virtual bool timeEvent(void);
 
     /** send a PGN request */
     bool sendPgnRequest(uint32_t ui32_requestedPGN);
@@ -178,6 +178,9 @@ namespace __IsoAgLib
 
     /** Retrieve the time of last update */
     int32_t lastUpdateTime() const {return i32_lastMsgReceived;}
+
+    /** set last time of data msg [msec]*/
+    void setUpdateTime(int32_t updateTime) {i32_lastMsgReceived = updateTime;}
 
     /** check if a received message should be parsed */
     bool checkParseReceived(const ISOName_c& rrefc_currentSender) const;
@@ -211,9 +214,6 @@ namespace __IsoAgLib
 
     /** set Devkey of data source (e.g. tractor, terminal) which sends commands exclusively */
     void setSelectedDataSourceISOName(const ISOName_c& rc_dataSourceISOName){c_selectedDataSourceISOName = rc_dataSourceISOName;}
-
-    /** set last time of data msg [msec]*/
-    void setUpdateTime(int32_t updateTime) {i32_lastMsgReceived = updateTime;}
 
     /** if a message is not send after 3 seconds it is expected that the sending node stopped sending */
     static const uint16_t TIMEOUT_SENDING_NODE = 3000;

@@ -286,11 +286,18 @@ int main()
       or
       getIsystemInstance().setPowerdownStrategy( IsoAgLib::PowerdownOnCanEnLoss )
   */
+
+  int32_t i32_idleTimeSpread = 0;
+  int32_t i32_nextRun = 0;
+
   while ( iSystem_c::canEn() )
   { // run main loop
     // IMPORTANT: call main timeEvent function for
     // all time controlled actions of IsoAgLib
-    getISchedulerInstance().timeEvent();
+    if(iSystem_c::getTime() > i32_nextRun) {
+      i32_idleTimeSpread = getISchedulerInstance().timeEvent();
+      i32_nextRun = iSystem_c::getTime()  + i32_idleTimeSpread;
+    }
 
     if ( ! b_sendCalendar )
     { // check if local item has already claimed address
@@ -314,6 +321,18 @@ int main()
     { // we are currently sending calendar
       getITimePosGpsInstance().setCalendarLocal( localGetYear(), localGetMonth(), localGetDay(), localGetHour(), localGetMinute(), localGetSecond() );
     }
+
+    // The following sleep mechanism uses idle_time of  scheduler reported back
+    // no need to sleep on single-task systems
+    #ifdef SYSTEM_PC
+      #ifdef WIN32
+        Sleep(i32_idleTimeSpread);
+      #else
+        IsoAgLib::iCANIO_c::waitUntilCanReceiveOrTimeout( i32_idleTimeSpread );
+      #endif
+    #endif
+
+
   }
   return 1;
 }

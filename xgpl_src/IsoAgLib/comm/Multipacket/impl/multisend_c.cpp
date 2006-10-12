@@ -699,12 +699,12 @@ MultiSend_c::SendStream_c::timeEvent (uint8_t rui8_pkgCnt, int32_t ri32_time)
 bool
 MultiSend_c::timeEvent()
 {
-  if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
+  if ( getAvailableExecTime() == 0 ) return false;
 
   // nothing to do if no transfer is Running
   if (list_sendStream.empty()) return true;
 
-  const int32_t ci32_time = Scheduler_c::getLastTimeEventTrigger();
+  const int32_t ci32_time = ElementBase_c::getLastRetriggerTime();
   // store time of last call, to get time interval between execution
   static int32_t si32_lastCall = 0;
   // only send max 1 package for first call, when execution period can't be derived
@@ -1053,5 +1053,11 @@ MultiSend_c::abortSend (const ISOName_c& rrefc_isoNameSender, const ISOName_c& r
   /// reason: if someone starts a new send directly after aborting the current,
   /// we can use the same place in the stl-list without remove/insert!
 }
+
+///  Used for Debugging Tasks in Scheduler_c
+const char*
+MultiSend_c::getTaskName() const
+{ return "MultiSend_c()"; }
+
 
 } // end namespace __IsoAgLib

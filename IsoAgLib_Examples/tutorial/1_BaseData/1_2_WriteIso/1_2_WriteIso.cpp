@@ -509,11 +509,22 @@ int main()
   #ifdef TEST_TRACGUIDANCE
   int estCurvature = 0;
   #endif
+
+  int32_t i32_nextRun = 0;
+
   while ( iSystem_c::canEn() )
   { // run main loop
     // IMPORTANT: call main timeEvent function for
     // all time controlled actions of IsoAgLib
-    getISchedulerInstance().timeEvent();
+    if( i32_nextRun <= IsoAgLib::iSystem_c::getTime()   )   {
+        i32_nextRun = getISchedulerInstance().timeEvent();
+        #ifdef DEBUG
+          std::cout << IsoAgLib::iSystem_c::getTime() << " now. i32_nextRun in ms: "<< (int) i32_nextRun
+          << " for next Call Scheduler_c timeEvent\n\n" ;
+        #endif
+        i32_nextRun += IsoAgLib::iSystem_c::getTime();
+      }
+
 
     #ifdef USE_RS232_FOR_DEBUG
       static int32_t si32_lastDebug = 0;

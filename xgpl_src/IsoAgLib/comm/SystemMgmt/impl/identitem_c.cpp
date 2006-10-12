@@ -338,6 +338,7 @@ void IdentItem_c::restartAddressClaim()
   }
   clearItemState( IState_c::ClaimedAddress );
   setItemState( IState_c::PreAddressClaim );
+  getIsoMonitorInstance4Comm().changeRetriggerTime();
 }
 
 
@@ -365,19 +366,16 @@ void IdentItem_c::close( void )
 
     possible errors:
         * dependant memory error in SystemMgmt_c caused by inserting item in monitor list
-    @see Scheduler_c::timeEvent
-    @see SystemMgmt_c::timeEvent
-    @see System_c::getTime
+    @see Scheduler_c::timeEvent()
+    @see ISOMonitor_c::timeEvent()
+    @see System_c::getTime()
     @return true -> all planned activities performed
   */
 bool IdentItem_c::timeEvent( void )
 {
-   if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
-    /** @todo When new Task Scheduling is implemented!
-    am anfang: kurze periode 10
-    beim laufen (claimed address):sleep (500)
-    */
-   if ( (!itemState(IState_c::Off)) && (checkUpdateTime(10)) )
+   if ( ElementBase_c::getAvailableExecTime() == 0 ) return false;
+
+   if (!itemState(IState_c::Off))
    { // the system is not switched to off state
     // and last timed action is 1sec lasted
      // -> check for possible state switch or needed actions

@@ -235,7 +235,6 @@ public: // methods
       possible errors:
           * dependant memory error in SystemMgmt_c caused by inserting item in monitor list
       @see Scheduler_c::timeEvent
-      @see SystemMgmt_c::timeEvent
       @see System_c::getTime
       @return true -> all planned activities performed
     */

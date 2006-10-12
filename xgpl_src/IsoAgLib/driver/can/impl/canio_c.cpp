@@ -890,7 +890,7 @@ int16_t CANIO_c::processMsg(){
 
   for (ArrMsgObj::iterator pc_iter = arrMsgObj.begin(); pc_iter != arrMsgObj.end(); pc_iter++)
   { // stop processing of message buffers, if not enough time
-    if ( Scheduler_c::getAvailableExecTime() == 0 )
+    if ( ElementBase_c::getAvailableExecTime() == 0 )
     { // switch the flag back, so that further processings are enabled
       b_runningCanProcess = false;
       return -1;
@@ -973,7 +973,7 @@ int16_t CANIO_c::processMsg(){
         ui8_processedMsgCnt++;
     }
     HAL::can_useMsgobjPopFront(ui8_busNumber, i32_ident );
-    if (( Scheduler_c::getAvailableExecTime() == 0 ) && (!b_forceProcessAll))
+    if (( ElementBase_c::getAvailableExecTime() == 0 ) && (!b_forceProcessAll))
     { // switch the flag back, so that further processings are enabled
       b_runningCanProcess = false;
       return -1;

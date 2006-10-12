@@ -246,8 +246,8 @@ CANPkgExt_c& Process_c::dataBase()
 */
 bool Process_c::timeEvent( void ){
   bool b_result = true;
-  if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
-  int32_t i32_time = Scheduler_c::getLastTimeEventTrigger();
+  if ( getAvailableExecTime() == 0 ) return false;
+  int32_t i32_time = ElementBase_c::getLastRetriggerTime();
 
   if ( l_filtersToDeleteISO.size() > 0)
   {
@@ -310,7 +310,7 @@ bool Process_c::timeEvent( void ){
         ( pc_iter != c_arrClientC1.end() );
         pc_iter++ )
   { // delete item at pc_timeIter, if pc_searchCacheC1 points to pc_client
-    if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
+    if ( getAvailableExecTime() == 0 ) return false;
     if ( !(*pc_iter)->timeEvent() ) b_result = false; /** @todo seemded to segfault here, although this is REALLY STRANGE! */
   }
   // call the time event for all remote data
@@ -318,7 +318,7 @@ bool Process_c::timeEvent( void ){
         ( pc_iter != c_arrClientC2.end() );
         pc_iter++ )
   { // delete item at pc_timeIter, if pc_searchCacheC1 points to pc_client
-    if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
+    if ( getAvailableExecTime() == 0 ) return false;
     if ( !(*pc_iter)->timeEvent() ) b_result = false;
   }
   // if local active member exist - check every second if
@@ -932,5 +932,11 @@ bool Process_c::processWorkingSetTaskMsg(uint8_t ui8_tcStatus, const ISOName_c& 
     pc_processWsmTaskMsgHandler->processWsmTaskMessage(ui8_tcStatus, refc_isoName);
   return TRUE;
 }
+
+///  Used for Debugging Tasks in Scheduler_c
+const char*
+Process_c::getTaskName() const
+{ return "Process_c"; }
+
 
 } // end of namespace __IsoAgLib

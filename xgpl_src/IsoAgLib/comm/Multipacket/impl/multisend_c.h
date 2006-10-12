@@ -314,7 +314,6 @@ public: // methods
   /** default destructor which has nothing special to do (only call close!) */
   virtual ~MultiSend_c() { close(); }
 
-
   /** this function is called by ISOMonitor_c when a new CLAIMED ISOItem_c is registered.
    * @param refc_isoName const reference to the item which ISOItem_c state is changed
    * @param rpc_newItem pointer to the currently corresponding ISOItem_c
@@ -418,6 +417,9 @@ public: // methods
 
   /** check if at least one multisend stream is running */
   bool isMultiSendRunning() const { return (list_sendStream.size() > 0); }
+
+  ///  Used for Debugging Tasks in Scheduler_c
+  virtual const char* getTaskName() const;
 
 private: // Private methods
   friend class SINGLETON_DERIVED(MultiSend_c, ElementBase_c);

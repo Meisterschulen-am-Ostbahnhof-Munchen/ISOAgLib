@@ -122,11 +122,16 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
   bool TracPTO_c::config(const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode)
   {
     //store old mode to decide to register or unregister from request for pgn
+    //and set Periode for Scheduler_c
     IsoAgLib::IdentMode_t t_oldMode = getMode();
 
     //call config for handling which is base data independent
     //if something went wrong leave function before something is configured
     if ( !BaseCommon_c::config(rpc_isoName, rt_identMode) ) return false;
+
+    ///Set time Period for Scheduler_c
+    if (rt_identMode == IsoAgLib::IdentModeTractor) setTimePeriod( (uint16_t) 100);
+    else  setTimePeriod( (uint16_t) TIMEOUT_PTO_DISENGAGED   );
 
     // set the member base msg value vars to NO_VAL codes
     t_ptoFront.ui16_pto8DigitPerRpm = t_ptoRear.ui16_pto8DigitPerRpm = NO_VAL_16S;
@@ -140,13 +145,16 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
       const uint8_t pgnCount = 2;
       const uint32_t pgnArray[pgnCount] = {FRONT_PTO_STATE_PGN, REAR_PTO_STATE_PGN};
 
-      if (t_oldMode == IsoAgLib::IdentModeImplement)
+      if (t_oldMode == IsoAgLib::IdentModeImplement){
         // register to request for pgn
         // create FilterBox_c for REQUEST_PGN_MSG_PGN, FRONT_PTO_STATE_PGN
         getIsoRequestPgnInstance4Comm().registerPGN (*this, pgnCount, pgnArray); // request for front pto state
-      else
+      }
+      else {
         // unregister from request for pgn, because in implement mode no requests should be answered
         getIsoRequestPgnInstance4Comm().unregisterPGN (*this, pgnCount, pgnArray);
+      }
+
     }
 
     t_ptoFront.t_ptoEngaged = t_ptoRear.t_ptoEngaged
@@ -210,6 +218,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     */
   bool TracPTO_c::processMsg()
   {
+
     ISOName_c c_tempISOName( ISOName_c::ISONameUnspecified );
 
     // there is no need to check if sender exist in the monitor list because this is already done
@@ -218,7 +227,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
 
     if (((data().isoPgn() & 0x1FFFF) == FRONT_PTO_STATE_PGN) || ((data().isoPgn() & 0x1FFFF) == REAR_PTO_STATE_PGN))
     {
-      const int32_t ci32_now = Scheduler_c::getLastTimeEventTrigger();
+      const int32_t ci32_now = data().time();
       // only take values, if i am not the regular sender
       // and if actual sender isn't in conflict to previous sender
       if ( checkParseReceived( c_tempISOName ) )
@@ -247,10 +256,15 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
         // set last time
         setSelectedDataSourceISOName(c_tempISOName);
         // update time
-        pt_ptoData->i32_lastPto = Scheduler_c::getLastTimeEventTrigger();
+        pt_ptoData->i32_lastPto = data().time();
         // must be set because this is needed in basecommon_c
         setUpdateTime( pt_ptoData->i32_lastPto );
+
+        //msg from Tractor received do tell Scheduler_c next call not until  3000ms
+        getSchedulerInstance4Comm().changeRetriggerTimeAndResort(this,data().time() + TIMEOUT_PTO_DISENGAGED);
+
       }
+
       else
       { // there is a sender conflict
         getLibErrInstance().registerError( LibErr_c::BaseSenderConflict, LibErr_c::Base );
@@ -267,16 +281,24 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     */
   bool TracPTO_c::timeEventTracMode( )
   {
-    const int32_t ci32_now = Scheduler_c::getLastTimeEventTrigger();
 
-    if ( ( (ci32_now - t_ptoFront.i32_lastPto ) >= 100) && ( t_ptoFront.t_ptoEngaged == IsoAgLib::IsoActive ) )
+     ///Timeperiod of 100ms is set in ::config
+    if ( t_ptoFront.t_ptoEngaged == IsoAgLib::IsoActive  )
     { // it's time to send tractor PTO information and the FRONT PTO is engaged
       sendMessage(sendFrontPto);
     }
 
-    if (Scheduler_c::getAvailableExecTime() == 0) return false;
+/*
+    if ( ( (ci32_now - t_ptoFront.i32_lastPto ) >= 100) && ( t_ptoFront.t_ptoEngaged == IsoAgLib::IsoActive ) )
+    { // it's time to send tractor PTO information and the FRONT PTO is engaged
+      sendMessage(sendFrontPto);
+    }
+*/
+    if ( getAvailableExecTime() == 0) return false;
 
-    if ( ( (ci32_now - t_ptoRear.i32_lastPto ) >= 100) && ( t_ptoRear.t_ptoEngaged == IsoAgLib::IsoActive ) )
+   /// if ( ( (ci32_now - t_ptoRear.i32_lastPto ) >= 100) && ( t_ptoRear.t_ptoEngaged == IsoAgLib::IsoActive ) )
+
+    if ( t_ptoRear.t_ptoEngaged == IsoAgLib::IsoActive  )
     { // it's time to send tractor PTO information and the REAR PTO is engaged
       sendMessage(sendRearPto);
     }
@@ -287,7 +309,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
   /** Detect stop of PTO update from tractor -> indication for stopped PTO */
   bool TracPTO_c::timeEventImplMode()
   {
-    const int32_t ci32_now = Scheduler_c::getLastTimeEventTrigger();
+    const int32_t ci32_now = getLastRetriggerTime();
     // check for different pto data types whether the previously
     // sending node stopped sending -> other nodes can now step in
     if ( ( ( ci32_now - t_ptoFront.i32_lastPto ) >= TIMEOUT_PTO_DISENGAGED ) || (getSelectedDataSourceISOName().isUnspecified() ) )
@@ -357,7 +379,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     c_can << data();
 
     // update time
-    pt_ptoData->i32_lastPto = Scheduler_c::getLastTimeEventTrigger();
+    pt_ptoData->i32_lastPto = getLastRetriggerTime();
   }
 
   /** force a request for pgn for front pto state */
@@ -376,5 +398,11 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     else
       return false;
   }
+
+/// Funktion for Debugging in Scheduler_c
+const char*
+TracPTO_c::getTaskName() const
+{   return "TracPTO_c"; }
+
 
 } // End Namespace __IsoAgLib

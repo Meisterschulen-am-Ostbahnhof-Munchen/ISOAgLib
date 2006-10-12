@@ -201,6 +201,7 @@
  #include <supplementary_driver/driver/rs232/irs232io_c.h>
 #endif
 
+
 /** set the following defines if to test onforceMaintainPowerforceMaintainPowerforceMaintainPowere or more of the base data*/
 //the defines are set with the update_makefile skript if in the corresponding config_1_0_ReadIso
 //the defines are set. All base data is defined if the USE_BASE define is active
@@ -242,6 +243,8 @@
 /* include headers for the needed drivers */
 #include <IsoAgLib/driver/system/isystem_c.h>
 #include <IsoAgLib/driver/can/icanio_c.h>
+
+#include <IsoAgLib/util/impl/canpkgext_c.h>
 
 /* include the central interface header for the communication layer part
    of the "IsoAgLib" */
@@ -573,11 +576,28 @@ int main()
   #ifdef TEST_TRACGUIDANCE
   int curvatureCmd = -100;
   #endif
+
+  int32_t i32_nextRun = 0;
+  int32_t i32_idleTimeSpread = 0;
+
   while ( iSystem_c::canEn() )
   { // run main loop
     // IMPORTANT: call main timeEvent function for
     // all time controlled actions of IsoAgLib
-    getISchedulerInstance().timeEvent();
+
+
+        //use idle_time of Scheduler_c for relax to next call
+    if( i32_nextRun <= IsoAgLib::iSystem_c::getTime()   )   {
+        i32_idleTimeSpread = getISchedulerInstance().timeEvent();
+        #ifdef DEBUG
+        std::cout << IsoAgLib::iSystem_c::getTime() << " now. i32_nextRun in ms: "<< (int) i32_idleTimeSpread
+        << " for next Call Scheduler_c timeEvent\n\n" ;
+        if(i32_idleTimeSpread == -1 ) std::cout << "Scheduler_c timeEvent one Client was out of time"  << std::endl;
+        #endif
+
+        i32_nextRun = i32_idleTimeSpread + IsoAgLib::iSystem_c::getTime();
+
+      }
 
     #ifdef USE_RS232_FOR_DEBUG
     static int32_t si32_lastDebug = 0;
@@ -585,6 +605,7 @@ int main()
     if ( ( IsoAgLib::iSystem_c::getTime() / 1000 ) > si32_lastDebug )
     { // it's time to print debug msg
       si32_lastDebug = ( IsoAgLib::iSystem_c::getTime() / 1000 );
+
 
       #ifdef TEST_TRACTOR_LIGHTING
       //LIGHTING CLASS TEST FUNCTIONALITY
@@ -714,6 +735,7 @@ int main()
 
       #ifdef TEST_TRACTOR_GENERAL
       //GENERAL CLASS TEST FUNCTIONALITY
+/*
       EXTERNAL_DEBUG_DEVICE << "\t+++++++++GENERAL KLASSE+++++++++\n";
       EXTERNAL_DEBUG_DEVICE << "Hitch front:                  " << static_cast<int16_t>(getITracGeneralInstance().hitchFront()) << "\n";
       EXTERNAL_DEBUG_DEVICE << "Hitch rear:                   " << static_cast<int16_t>(getITracGeneralInstance().hitchRear() ) << "\n";
@@ -723,7 +745,7 @@ int main()
       EXTERNAL_DEBUG_DEVICE << "Hitch rear lower link force:  " << getITracGeneralInstance().hitchRearLowerLinkForce() << "\n";
       EXTERNAL_DEBUG_DEVICE << "Hitch front lower link force: " << getIsoLimitFlag( getITracGeneralInstance().frontHitchPosLimitStatus() ) << "\n";
       EXTERNAL_DEBUG_DEVICE << "Hitch rear lower link force:  " << getIsoLimitFlag( getITracGeneralInstance().rearHitchPosLimitStatus() ) << "\n";
-
+*/
       getITracGeneralInstance().setMaintainPowerForImplInWork(IsoAgLib::IsoReadyForFieldWork);
       getITracGeneralInstance().setMaintainPowerForImplInTransport(IsoAgLib::IsoTransported);
       getITracGeneralInstance().setMaintainPowerForImplInPark(IsoAgLib::IsoNotAvailablePark);
@@ -733,18 +755,21 @@ int main()
         getITracGeneralInstance().forceMaintainPower(true, true, IsoAgLib::implInTransport);
       }
       t_keySwitch = getITracGeneralInstance().keySwitch();
-      EXTERNAL_DEBUG_DEVICE << "Key switch:                  " << getIsoActiveFlag( t_keySwitch ) << "\n";
+  /*  EXTERNAL_DEBUG_DEVICE << "Key switch:                  " << getIsoActiveFlag( t_keySwitch ) << "\n";
       EXTERNAL_DEBUG_DEVICE << "Maximum power time:          " << static_cast<int>(getITracGeneralInstance().maxPowerTime()) << "\n";
+  */
       #endif
 
       #ifdef TEST_TIME
         //Time CLASS TEST FUNCTIONALITY
       EXTERNAL_DEBUG_DEVICE << "\t+++++++++ TIME KLASSE +++++++++\n";
-      EXTERNAL_DEBUG_DEVICE << "Kalender Local:  " << getITimePosGpsInstance().isCalendarReceived() << "\n";
-      EXTERNAL_DEBUG_DEVICE << "Monat UTC:       " << static_cast<int>(getITimePosGpsInstance().monthUtc()) << "\n";
-      EXTERNAL_DEBUG_DEVICE << "Tag UTC:         " << static_cast<int>(getITimePosGpsInstance().dayUtc()) << "\n";
-      EXTERNAL_DEBUG_DEVICE << "Stunde UTC:      " << static_cast<int>(getITimePosGpsInstance().hourUtc()) << "\n";
-      EXTERNAL_DEBUG_DEVICE << "Minute UTC:      " << static_cast<int>(getITimePosGpsInstance().minuteUtc()) << "\n";
+      EXTERNAL_DEBUG_DEVICE << "GPS Kalender Local:  " << getITimePosGpsInstance().isCalendarReceived() << "\n";
+      EXTERNAL_DEBUG_DEVICE << "GPS Monat UTC:       " << static_cast<int>(getITimePosGpsInstance().monthUtc()) << "\n";
+      EXTERNAL_DEBUG_DEVICE << "GPS Tag UTC:         " << static_cast<int>(getITimePosGpsInstance().dayUtc()) << "\n";
+      EXTERNAL_DEBUG_DEVICE << "GPS Stunde UTC:      " << static_cast<int>(getITimePosGpsInstance().hourUtc()) << "\n";
+      EXTERNAL_DEBUG_DEVICE << "GPS Minute UTC:      " << static_cast<int>(getITimePosGpsInstance().minuteUtc()) << "\n";
+      EXTERNAL_DEBUG_DEVICE << "GPS getGpsLongitudeMinute:      " << static_cast<float>(getITimePosGpsInstance().getGpsLongitudeMinute()) << "\n";
+
       #endif
 
       #ifdef TEST_TRACPTOSETPOINT
@@ -805,13 +830,28 @@ int main()
       #endif
 
       #ifdef TEST_TRACCERT
-      EXTERNAL_DEBUG_DEVICE << "\t+++++++++ Certifikation KLASSE +++++++++\n";
+      EXTERNAL_DEBUG_DEVICE << "\t+++++++++ Zertifikation KLASSE +++++++++\n";
       EXTERNAL_DEBUG_DEVICE << "Certification reference number:        " << getITracCertInstance().certReferenceNumber() << "\n";
       EXTERNAL_DEBUG_DEVICE << "ISOBUS certification year:             " << static_cast<int>(getITracCertInstance().isobusCertYear()) << "\n";
       EXTERNAL_DEBUG_DEVICE << "certification laboratory ID:           " << getITracCertInstance().certLabID() << "\n";
       EXTERNAL_DEBUG_DEVICE << "ISOBUS certification revision:         " << getIsoCertRevisionFlag(getITracCertInstance().isobusCertRevision() ) << "\n";
       EXTERNAL_DEBUG_DEVICE << "ISOBUS certification laboratory type:  " << getIsoCertLabTypeFlag(getITracCertInstance().isobusCertLabType() ) << "\n";
       EXTERNAL_DEBUG_DEVICE << "Minimum ECU:                           " << getIsoCertTypeFlag(getITracCertInstance().minimumECU() ) << "\n";
+
+      //request for new Certification info
+      IsoAgLib::iCANPkgExt_c c_myCanExt;
+      c_myCanExt.setIsoPgn(REQUEST_PGN_MSG_PGN);
+      c_myCanExt.setMonitorItemForDA(NULL);
+      c_myCanExt.setISONameForSA(c_myIdent.isoName());
+      c_myCanExt.setIsoPri(3);
+      c_myCanExt.setLen(3);
+      //set 3 Byte long PGN
+      c_myCanExt.setUint16Data(0,ISOBUS_CERTIFICATION);
+      c_myCanExt.setUint8Data(2,ISOBUS_CERTIFICATION >> 16);
+
+      getIcanInstance() <<    c_myCanExt ;
+
+
       #endif
 
       #ifdef TEST_TRACGUIDANCE
@@ -829,6 +869,19 @@ int main()
       #endif
     }
     #endif
+
+
+    // The following sleep mechanism uses idle_time of  scheduler reported back
+    // no need to sleep on single-task systems
+    #ifdef SYSTEM_PC
+      #ifdef WIN32
+        Sleep(i32_idleTimeSpread);
+      #else
+        IsoAgLib::iCANIO_c::waitUntilCanReceiveOrTimeout( i32_idleTimeSpread );
+      #endif
+    #endif
+
+
 
   }
   return 1;

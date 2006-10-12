@@ -141,7 +141,8 @@ void BaseCommon_c::close( )
   */
 void BaseCommon_c::init(const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode)
 {
-  // first register in Scheduler_c
+  // first register in Scheduler_c and set Time Period in mms
+  setTimePeriod( (uint16_t) 100   );
   getSchedulerInstance4Comm().registerClient( this );
   c_data.setSingletonKey( c_data.getSingletonVecKey() );
 
@@ -149,6 +150,8 @@ void BaseCommon_c::init(const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_i
   {
     b_filterCreated = false;
   }
+
+
 
   // set configure values with call for config
   config(rpc_isoName, rt_identMode);
@@ -217,6 +220,7 @@ bool BaseCommon_c::checkParseReceived(const ISOName_c& rrefc_currentSender) cons
     ==> sends base data msg if configured in the needed rates
     possible errors:
       * dependant error in CANIO_c on CAN send problems
+    @param ri32_demandedExecEnd optional timestamp, where timeEvent shall return execution to calling function
     @see CANPkg_c::getData
     @see CANPkgExt_c::getData
     @see CANIO_c::operator<<
@@ -224,11 +228,13 @@ bool BaseCommon_c::checkParseReceived(const ISOName_c& rrefc_currentSender) cons
   */
 bool BaseCommon_c::timeEvent()
 {
-  if (Scheduler_c::getAvailableExecTime() == 0) return false;
+
+
+  if ( getAvailableExecTime() == 0 ) return false;
 
   checkCreateReceiveFilter();
 
-  if (Scheduler_c::getAvailableExecTime() == 0) return false;
+  if (getAvailableExecTime() == 0) return false;
 
   // check for different base data types whether the previously
   // sending node stopped sending -> other nodes can now step in
@@ -264,7 +270,6 @@ bool BaseCommon_c::timeEvent()
     // call this function also if isoName == NULL, because some functions do settings which are independent from isoName
     if ( !timeEventImplMode()) return false;
   }
-
   return true;
 }
 

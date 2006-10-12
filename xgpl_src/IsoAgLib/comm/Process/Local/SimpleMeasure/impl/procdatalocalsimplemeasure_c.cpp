@@ -245,7 +245,7 @@ ProcDataLocalSimpleMeasure_c::~ProcDataLocalSimpleMeasure_c(){
   @return true -> all planned executions performed
 */
 bool ProcDataLocalSimpleMeasure_c::timeEvent( void ){
-  if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
+  if ( getAvailableExecTime() == 0 ) return false;
   // perform time event activities for base class
   if ( ! ProcDataLocalBase_c::timeEvent() ) return false;
   if ( ! c_setpoint.timeEvent() ) return false;

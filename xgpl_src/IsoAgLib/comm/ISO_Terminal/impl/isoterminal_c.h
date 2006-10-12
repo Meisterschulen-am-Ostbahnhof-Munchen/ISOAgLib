@@ -167,7 +167,8 @@ public:
   void fakeVtProperties (uint16_t rui16_dimension, uint16_t rui16_skWidth, uint16_t rui16_skHeight, uint8_t rui16_colorDepth, uint16_t rui16_fontSizes);
 #endif
 
-
+ ///  Used for Debugging Tasks in Scheduler_c
+ virtual const char* getTaskName() const;
 
 private:
   friend class SINGLETON_DERIVED(ISOTerminal_c, ElementBase_c);

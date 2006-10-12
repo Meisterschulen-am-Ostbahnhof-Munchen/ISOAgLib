@@ -128,6 +128,9 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     //call config for handling which is base data independent
     //if something went wrong leave function before something is configured
     if ( !BaseCommon_c::config(rpc_isoName, rt_identMode) ) return false;
+    // set Time Period in ms for Scheduler_c
+    setTimePeriod( (uint16_t) 100   );
+
 
     // set distance value to 0
     ui32_distReal = ui32_distTheor = 0;
@@ -189,7 +192,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     TracGeneral_c& c_tracgeneral = getTracGeneralInstance4Comm();
     #endif
 
-    const int32_t ci32_now = Scheduler_c::getLastTimeEventTrigger();
+    const int32_t ci32_now = data().time();
     ISOName_c c_tempISOName( ISOName_c::ISONameUnspecified );
 
     // there is no need to check if sender exist in the monitor list because this is already done
@@ -227,7 +230,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
             #ifdef USE_RS232_FOR_DEBUG
             INTERNAL_DEBUG_DEVICE << "PROCESS GROUND(65097): " <<  static_cast<const int>(c_tempISOName.devClass() ) << INTERNAL_DEBUG_DEVICE_ENDL;
             #endif
-            uint32_t tempTime = (Scheduler_c::getLastTimeEventTrigger() - ui32_lastUpdateTimeSpeed);
+            uint32_t tempTime = (data().time() - ui32_lastUpdateTimeSpeed);
 
             //decide if ground based speed is actually the best available speed
             if ( t_speedSource <= IsoAgLib::GroundBasedSpeed && labs(i32_speedReal) <= 0xFAFF
@@ -240,7 +243,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
             if (t_speedSource == IsoAgLib::GroundBasedSpeed && labs(i32_speedReal) > 0xFAFF)
               t_speedSource = IsoAgLib::WheelBasedSpeed;
 
-            tempTime = (Scheduler_c::getLastTimeEventTrigger() - ui32_lastUpdateTimeDistDirec);
+            tempTime = (data().time() - ui32_lastUpdateTimeDistDirec);
             //if ground based dist and direction is actually the best available
             if ( t_distDirecSource <= IsoAgLib::GroundBasedDistDirec && ui32_distReal <= 0xFAFFFFFF
                 || (tempTime >= TIMEOUT_SENDING_NODE && tempTime < 4000)
@@ -268,13 +271,13 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
             INTERNAL_DEBUG_DEVICE << "PROCESS WHEEL(65096): " <<  static_cast<const int>(c_tempISOName.devClass() ) << INTERNAL_DEBUG_DEVICE_ENDL;
             #endif
             if (t_speedSource <= IsoAgLib::WheelBasedSpeed
-                || ( (Scheduler_c::getLastTimeEventTrigger() - ui32_lastUpdateTimeSpeed) >= TIMEOUT_SENDING_NODE)
+                || ( (data().time() - ui32_lastUpdateTimeSpeed) >= TIMEOUT_SENDING_NODE)
                )
             {
               updateSpeed(IsoAgLib::WheelBasedSpeed);
             }
             if (t_distDirecSource <= IsoAgLib::WheelBasedDistDirec
-                || ( (Scheduler_c::getLastTimeEventTrigger() - ui32_lastUpdateTimeDistDirec) >= TIMEOUT_SENDING_NODE)
+                || ( (data().time() - ui32_lastUpdateTimeDistDirec) >= TIMEOUT_SENDING_NODE)
                )
             {
               updateDistanceDirection(IsoAgLib::WheelBasedDistDirec);
@@ -326,6 +329,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
         }
         break;
     }
+    //@todo tell Scheduler_c after how long we can wait for next timeeventcall after receive of data use TIMEOUT_SENDING_NODE
     return true;
   }
 
@@ -362,7 +366,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
         break;
     }
     // update time
-    ui32_lastUpdateTimeSpeed = Scheduler_c::getLastTimeEventTrigger();
+    ui32_lastUpdateTimeSpeed = data().time();
   }
 
   void TracMove_c::updateDistanceDirection(IsoAgLib::DistanceDirectionSource_t t_distanceSrc)
@@ -387,8 +391,8 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
         t_distDirecSource = IsoAgLib::NoDistDirec;
         break;
     }
-    // update time
-    ui32_lastUpdateTimeDistDirec = Scheduler_c::getLastTimeEventTrigger();
+    /// update time -> System Time caused by call of interface class
+    ui32_lastUpdateTimeDistDirec = System_c::getTime();
   }
 
   /** send a ISO11783 moving information PGN.
@@ -398,11 +402,10 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     */
   bool TracMove_c::timeEventTracMode( )
   {
-    if ( lastedTimeSinceUpdate()  >= 100 )
-    { // it's time to send moving information
-      sendMovingTracMode();
-    }
-    if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
+    ///Timeperiod of 100ms is set in ::config
+    sendMovingTracMode();
+
+    if ( getAvailableExecTime() == 0 ) return false;
 
     return true;
   }
@@ -496,7 +499,11 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     c_can << data();
 
     // update time
-    setUpdateTime( Scheduler_c::getLastTimeEventTrigger() );
+    setUpdateTime( getLastRetriggerTime() );
   }
+///  Used for Debugging Tasks in Scheduler_c
+const char*
+TracMove_c::getTaskName() const
+{   return "TracMove_c"; }
 
 } // End Namespace __IsoAglib

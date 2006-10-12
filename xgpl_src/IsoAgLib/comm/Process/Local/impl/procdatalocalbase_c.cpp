@@ -341,10 +341,10 @@ void ProcDataLocalBase_c::incrMasterMeasurementVal(float rf_val){
   @return true -> all planned executions performed
 */
 bool ProcDataLocalBase_c::timeEvent( void ){
-  if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
+  if ( ElementBase_c::getAvailableExecTime() == 0 ) return false;
   #ifdef USE_EEPROM_IO
   // check if eeprom value should be stored
-  int32_t i32_time = Scheduler_c::getLastTimeEventTrigger();
+  int32_t i32_time = ElementBase_c::getLastRetriggerTime();
   if ((i32_time - i32_lastEepromStore > CONFIG_PROC_STORE_EEPROM_INTERVAL) && (ui16_eepromAdr != 0xFFFF))
   { // store needed
     getEepromInstance().setp(ui16_eepromAdr);

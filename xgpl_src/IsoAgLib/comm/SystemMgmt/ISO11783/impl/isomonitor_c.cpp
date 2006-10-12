@@ -168,8 +168,13 @@ void ISOMonitor_c::init( void )
 
     // clear state of b_alreadyClosed, so that close() is called one time AND no more init()s are performed!
     clearAlreadyClosed();
+
+    /// Set Period for Scheduler_c Start Period is 125
+    /// timeEvent will change to longer Period after Start
+    setTimePeriod( (uint16_t) 125   );
     // register in Scheduler_c to be triggered fopr timeEvent
     getSchedulerInstance4Comm().registerClient( this );
+
     pc_activeLocalMember = NULL;
 
     bool b_configure = false;
@@ -242,20 +247,44 @@ CANPkgExt_c& ISOMonitor_c::dataBase()
 
 /** performs periodically actions,
   possible errors:
-    * pertial error caused by one of the memberItems
+  partial error caused by one of the memberItems
   @return true -> all planned activities performed in allowed time
 */
 bool ISOMonitor_c::timeEvent( void )
 {
+
+  if ( getAvailableExecTime() == 0 ) return false;
+
+  int32_t i32_checkPeriod = 3000;
   for ( std::vector<__IsoAgLib::IdentItem_c*>::iterator pc_iter = c_arrClientC1.begin(); ( pc_iter != c_arrClientC1.end() ); pc_iter++ )
   { // call timeEvent for each registered client -> if timeEvent of item returns false
     // it had to return BEFORE its planned activities were performed (because of the registered end time)
-    if ( !(*pc_iter)->timeEvent() ) return false;
+    if ( !(*pc_iter)->timeEvent() )return false;
+    switch( (*pc_iter)->itemState() & 0x7C  ){
+
+
+    case IState_c::PreAddressClaim :
+    case IState_c::AddressClaim :
+      if( i32_checkPeriod > 250) i32_checkPeriod = 250 ;
+
+    case IState_c::ClaimedAddress :
+       if( i32_checkPeriod > 1000) i32_checkPeriod = 1000 ;
+
+    //do not change period
+    case IState_c::Off :
+    case IState_c::Standby :
+    default :
+      //nothing to todo stay on 3000 ms timePeriod
+      break;
+    }
+
   }
+  //new TimePeriod is necessary change it
+  if(i32_checkPeriod != getTimePeriod() )   setTimePeriod(i32_checkPeriod);
+
+  if ( getAvailableExecTime() == 0 ) return false;
 
 #if CONFIG_ISO_ITEM_MAX_AGE > 0
-  if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
-
   if ( existActiveLocalIsoMember() )
   { // use the SA of the already active node
     data().setIsoSa(getActiveLocalIsoMember().nr());
@@ -276,7 +305,7 @@ bool ISOMonitor_c::timeEvent( void )
     }
   }
 
-  int32_t i32_now = Scheduler_c::getLastTimeEventTrigger();
+  int32_t i32_now = getLastRetriggerTime();
   const int32_t ci32_timeSinceLastAdrClaimRequest = (i32_now - lastIsoSaRequest());
   bool b_requestAdrClaim = false;
   if ( ci32_timeSinceLastAdrClaimRequest > CONFIG_ISO_ITEM_MAX_AGE )
@@ -324,6 +353,7 @@ bool ISOMonitor_c::timeEvent( void )
     }
   } // if
   #endif
+
   return true;
 }
 
@@ -1086,17 +1116,16 @@ bool ISOMonitor_c::sendRequestForClaimedAddress( bool rb_force )
   }
   bool b_sendOwnSa = false;
   // now it's needed to send
-//  int32_t i32_time = Scheduler_c::getLastTimeEventTrigger();
-  const int32_t i32_time = System_c::getTime();
+  const int32_t i32_time = ElementBase_c::getLastRetriggerTime();
 
 //  getRs232Instance() << "_time in sendReq4AdrCl: " << HAL::getTime() <<"_";
 
   data().setIsoPri(6);
   data().setIsoPgn(REQUEST_PGN_MSG_PGN);
   data().setIsoPs(255); // global request
-  if ( getIsoMonitorInstance4Comm().existActiveLocalIsoMember() )
+  if ( existActiveLocalIsoMember() )
   { // use the SA of the already active node
-    data().setMonitorItemForSA( &getIsoMonitorInstance4Comm().getActiveLocalIsoMember() );
+    data().setMonitorItemForSA( &getActiveLocalIsoMember() );
     b_sendOwnSa = true;
   }
   else
@@ -1121,7 +1150,7 @@ bool ISOMonitor_c::sendRequestForClaimedAddress( bool rb_force )
     const uint8_t cui8_localCnt = localIsoMemberCnt();
     for ( uint8_t ui8_ind = 0; ui8_ind < cui8_localCnt; ui8_ind++ )
     { // the function ISOItem_c::sendSaClaim() checks if this item is local and has already claimed a SA
-      getIsoMonitorInstance4Comm().localIsoMemberInd( ui8_ind ).sendSaClaim();
+      localIsoMemberInd( ui8_ind ).sendSaClaim();
     }
   }
   return true;
@@ -1178,7 +1207,7 @@ bool ISOMonitor_c::processMsg()
           { // the received adr claim overlaps two different local ISOItem_c --> restart BOTH
             // (even if pc_itemSameSa would have higher prio - this is needed, as the new remote item would be in conflict by SA with
             //  the currently existing local pc_itemSameSa )
-            getIsoMonitorInstance4Comm().restartAddressClaim( pc_itemSameSa->isoName() );
+            restartAddressClaim( pc_itemSameSa->isoName() );
           }
           // in case of sort of SA conflict with a local ISOItem_c, we must avoid a later reaction on this SA conflict
           // => set the pointer to NULL to indicate the handled conflict
@@ -1186,7 +1215,7 @@ bool ISOMonitor_c::processMsg()
         }
         // the case of a conflict on SA with a remote ISOItem_c is handled elsewhere as this block is only directed to handle
         // conflicts with LOCAL ISOItem_c
-        getIsoMonitorInstance4Comm().restartAddressClaim( pc_itemSameISOName->isoName() );
+        restartAddressClaim( pc_itemSameISOName->isoName() );
         pc_itemSameISOName = NULL;
         // DO NOT set b_processed to true as the SA CLAIM shall trigger creation of fresh remote ISOItem_c
       }
@@ -1203,7 +1232,7 @@ bool ISOMonitor_c::processMsg()
         { // the LOCAL item has lower PRIO or has not yet fully claimed --> remove it
           // the function SystemMgmt_c::restartAddressClaim() triggers removal of ISOItem_c
           // and registers the next address claim try afterwards
-          getIsoMonitorInstance4Comm().restartAddressClaim( pc_itemSameSa->isoName() );
+          restartAddressClaim( pc_itemSameSa->isoName() );
           pc_itemSameSa = NULL;
         }
         else
@@ -1385,6 +1414,11 @@ ISOMonitor_c::processMsgRequestPGN (uint32_t rui32_pgn, uint8_t /*rui8_sa*/, uin
       return false;
   }
 }
+
+// Funktion for Debugging in Scheduler_c
+const char*
+ISOMonitor_c::getTaskName() const
+{   return "ISOMonitor_c";}
 
 
 #ifdef USE_WORKING_SET
