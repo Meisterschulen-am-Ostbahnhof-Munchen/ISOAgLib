@@ -240,24 +240,26 @@ private: //Private methods
   void resortTaskList();
 
 
-//!  Send debug messages with information on the
-//!  acfuracy of time behaviour.
-//!  Retrieve information about actual executed task from referenced SchedulerEntry_c.
-//!  As long as time to next standard retrigger >= 0,
-//!  everything is O.K.
-//!  As long as latest execution would allow some idle time,
-//!  the timing is acceptable.
-//! Parameter:
-//! @param refc_selectedTask: reference to the next executed task
-void setDebugTimeAccuracy(SchedulerEntry_c& refc_selectedTask);
+#ifdef DEBUG
+  //!  Send debug messages with information on the
+  //!  acfuracy of time behaviour.
+  //!  Retrieve information about actual executed task from referenced SchedulerEntry_c.
+  //!  As long as time to next standard retrigger >= 0,
+  //!  everything is O.K.
+  //!  As long as latest execution would allow some idle time,
+  //!  the timing is acceptable.
+  //! Parameter:
+  //! @param refc_selectedTask: reference to the next executed task
+  void setDebugTimeAccuracy(SchedulerEntry_c& refc_selectedTask);
 
 
-//!  Send debug messages with information on the idletime
-//!  This is important to check whether the time
-//!  restrictions are fullfilled.
-//! Parameter:
-//! @param rui16_idleTime:
-void setDebugIdleInformation(uint16_t rui16_idleTime);
+  //!  Send debug messages with information on the idletime
+  //!  This is important to check whether the time
+  //!  restrictions are fullfilled.
+  //! Parameter:
+  //! @param rui16_idleTime:
+  void setDebugIdleInformation(uint16_t rui16_idleTime);
+#endif
 
 
 private: // Private attributes

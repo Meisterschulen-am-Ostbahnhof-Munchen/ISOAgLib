@@ -636,6 +636,7 @@ Scheduler_c::selectCallTaskAndUpdateQueue()
   return i32_idleTime;
 }
 
+#ifdef DEBUG
 //!  Send debug messages with information on the
 //!  acfuracy of time behaviour.
 //!  Retrieve information about actual executed task from referenced SchedulerEntry_c.
@@ -750,9 +751,8 @@ void Scheduler_c::setDebugIdleInformation(uint16_t rui16_idleTime){
       << INTERNAL_DEBUG_DEVICE_ENDL;
 
   }
-
-
 }
+#endif
 
 
 //!  Calculate Delta from TimePeriod of a Client
