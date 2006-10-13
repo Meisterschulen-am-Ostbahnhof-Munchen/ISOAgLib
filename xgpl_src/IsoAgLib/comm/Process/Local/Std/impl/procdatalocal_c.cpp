@@ -272,7 +272,8 @@ void ProcDataLocal_c::setMasterMeasurementVal(int32_t ri32_val){
 */
 void ProcDataLocal_c::incrMasterMeasurementVal(int32_t ri32_val){
   ProcDataLocalBase_c::incrMasterMeasurementVal( ri32_val );
-  c_measureprog.setGlobalVal( ri32_val );
+  // ProcDataLocalBase_c::incrMasterMeasurementVal sets new ProcDataLocalBase_c::i32_masterVal
+  c_measureprog.setGlobalVal( masterMeasurementVal() );
 }
 #ifdef USE_FLOAT_DATA_TYPE
 /**
@@ -289,7 +290,8 @@ void ProcDataLocal_c::setMasterMeasurementVal(float rf_val){
 */
 void ProcDataLocal_c::incrMasterMeasurementVal(float rf_val){
   ProcDataLocalBase_c::incrMasterMeasurementVal( rf_val );
-  c_measureprog.setGlobalVal( rf_val );
+  // ProcDataLocalBase_c::incrMasterMeasurementVal sets new ProcDataLocalBase_c::i32_masterVal
+  c_measureprog.setGlobalVal( masterValFloat() );
 }
 #endif
 
