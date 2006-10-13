@@ -336,92 +336,101 @@ int main()
       getIsystemInstance().setPowerdownStrategy( IsoAgLib::PowerdownOnCanEnLoss )
   */
   int32_t i32_nextDebug = 0;
-  while ( IsoAgLib::iSystem_c::canEn() )
+  int32_t i32_idleTimeSpread = 0;
+  while ( iSystem_c::canEn() )
   { // run main loop
     // IMPORTANT: call main timeEvent function for
-    // all time controlled actions of IsoAgLib - \ref IsoAgLib::iScheduler_c::timeEvent()
-    getISchedulerInstance().timeEvent();
+    // all time controlled actions of IsoAgLib
+    i32_idleTimeSpread = IsoAgLib::getISchedulerInstance().timeEvent();
 
     // immediately re-loop if it's not yet time for debug messages
-    if ( i32_nextDebug > IsoAgLib::iSystem_c::getTime() ) continue;
-    // now it's time for debug
-    i32_nextDebug = IsoAgLib::iSystem_c::getTime() + 1000;
+    if ( IsoAgLib::iSystem_c::getTime() >= i32_nextDebug )
+    { // now it's time for debug
+      i32_nextDebug = IsoAgLib::iSystem_c::getTime() + 1000;
 
-    // example for access to sensors, if no direct access to the
-    // corresponding variables ( e.g. c_diginOnHigh shall be read, but the access shall
-    //  be performed from part of code which doesn't know where this variables is placed,
-    //  but we know the channel )
-    if ( IsoAgLib::getIsensorInstance().existDigital(0) )
-    { // fine - c_diginOnHigh is already registered in IsoAgLib
+      // example for access to sensors, if no direct access to the
+      // corresponding variables ( e.g. c_diginOnHigh shall be read, but the access shall
+      //  be performed from part of code which doesn't know where this variables is placed,
+      //  but we know the channel )
+      if ( IsoAgLib::getIsensorInstance().existDigital(0) )
+      { // fine - c_diginOnHigh is already registered in IsoAgLib
+        IsoAgLib::getIrs232Instance()
+          << "c_diginOnHigh has value: "
+          << uint16_t( IsoAgLib::getIsensorInstance().digital(0).active() )
+          << "\r\n";
+      }
+      else
+      { // something is wrong
+        IsoAgLib::getIrs232Instance() << "ERROR: c_diginOnHigh is obviously not registered in IsoAgLib\r\n";
+      }
+
+      // well - in this case we can simply access the inputs with the variable
+      IsoAgLib::getIrs232Instance() << "c_diginOnLow delivers: " << uint16_t(c_diginOnLow.active() ) << "\r\n";
+
+      // read the analog values
       IsoAgLib::getIrs232Instance()
-        << "c_diginOnHigh has value: "
-        << uint16_t( IsoAgLib::getIsensorInstance().digital(0).active() )
+        << "Voltage at channel 0: " << c_analogVoltage.val() << " [mV]\r\n";
+      IsoAgLib::getIrs232Instance()
+        << "Current at channel 1: " << c_analogCurrent.val() << " [mA]\r\n";
+
+      IsoAgLib::getIrs232Instance()
+        << "Voltage at channel 2: " << c_analogRangeCheckVoltage.val() << " [mV]";
+      // the following range check evaluations are possible without
+      // knowledge of the limits itself as they are stored by iAnalogIRangeCheck_c
+      // and can be accessed by the interface methods
+      if ( c_analogRangeCheckVoltage.good() )
+      {
+        IsoAgLib::getIrs232Instance()
+          << " which is GOOD as inside the limits ["
+          << c_analogRangeCheckVoltage.getMinValid()
+          << "..."
+          << c_analogRangeCheckVoltage.getMaxValid()
+          << "]\r\n";
+      }
+      else if ( c_analogRangeCheckVoltage.checkTooLow() )
+      {
+        IsoAgLib::getIrs232Instance()
+          << " which is BAD as lower then allowed "
+          << c_analogRangeCheckVoltage.getMinValid()
+          << " [mV]\r\n";
+      }
+      else if ( c_analogRangeCheckVoltage.checkTooHigh() )
+      {
+        IsoAgLib::getIrs232Instance()
+          << " which is BAD as higher then allowed "
+          << c_analogRangeCheckVoltage.getMaxValid()
+          << " [mV]\r\n";
+      }
+      // do less interpretation of current - simply check for error
+      IsoAgLib::getIrs232Instance()
+        << "Current at channel 1: " << c_analogRangeCheckVoltage.val() << " [mA]\r\n";
+      if ( c_analogRangeCheckVoltage.error() )
+      { // Bad: iAnalogIRangeCheck_c detected wrong value
+        IsoAgLib::getIrs232Instance() << "ERROR: The value of c_analogRangeCheckVoltage is outside the limits\r\n";
+      }
+
+      // read quick counter
+      IsoAgLib::getIrs232Instance()
+        << "Quick counter at channel 2 has frequency: " << c_counterHighRate.frequency()
+        << ", with period: " << c_counterHighRate.period()
+        << "[msec] and counter value: " << c_counterHighRate.val()
         << "\r\n";
-    }
-    else
-    { // something is wrong
-      IsoAgLib::getIrs232Instance() << "ERROR: c_diginOnHigh is obviously not registered in IsoAgLib\r\n";
-    }
 
-    // well - in this case we can simply access the inputs with the variable
-    IsoAgLib::getIrs232Instance() << "c_diginOnLow delivers: " << uint16_t(c_diginOnLow.active() ) << "\r\n";
-
-    // read the analog values
-    IsoAgLib::getIrs232Instance()
-      << "Voltage at channel 0: " << c_analogVoltage.val() << " [mV]\r\n";
-    IsoAgLib::getIrs232Instance()
-      << "Current at channel 1: " << c_analogCurrent.val() << " [mA]\r\n";
-
-    IsoAgLib::getIrs232Instance()
-      << "Voltage at channel 2: " << c_analogRangeCheckVoltage.val() << " [mV]";
-    // the following range check evaluations are possible without
-    // knowledge of the limits itself as they are stored by iAnalogIRangeCheck_c
-    // and can be accessed by the interface methods
-    if ( c_analogRangeCheckVoltage.good() )
-    {
+      // read slow counter
       IsoAgLib::getIrs232Instance()
-        << " which is GOOD as inside the limits ["
-        << c_analogRangeCheckVoltage.getMinValid()
-        << "..."
-        << c_analogRangeCheckVoltage.getMaxValid()
-        << "]\r\n";
+        << "Slow counter at channel 3 has frequency: " << c_counterLowRate.frequency()
+        << ", with period: " << c_counterLowRate.period()
+        << "[msec], counter value: " << c_counterLowRate.val()
+        << " and last event detected " << c_counterLowRate.lastSignalAge()
+        << "[msec] ago\r\n";
     }
-    else if ( c_analogRangeCheckVoltage.checkTooLow() )
-    {
-      IsoAgLib::getIrs232Instance()
-        << " which is BAD as lower then allowed "
-        << c_analogRangeCheckVoltage.getMinValid()
-        << " [mV]\r\n";
-    }
-    else if ( c_analogRangeCheckVoltage.checkTooHigh() )
-    {
-      IsoAgLib::getIrs232Instance()
-        << " which is BAD as higher then allowed "
-        << c_analogRangeCheckVoltage.getMaxValid()
-        << " [mV]\r\n";
-    }
-    // do less interpretation of current - simply check for error
-    IsoAgLib::getIrs232Instance()
-      << "Current at channel 1: " << c_analogRangeCheckVoltage.val() << " [mA]\r\n";
-    if ( c_analogRangeCheckVoltage.error() )
-    { // Bad: iAnalogIRangeCheck_c detected wrong value
-      IsoAgLib::getIrs232Instance() << "ERROR: The value of c_analogRangeCheckVoltage is outside the limits\r\n";
-    }
-
-    // read quick counter
-    IsoAgLib::getIrs232Instance()
-      << "Quick counter at channel 2 has frequency: " << c_counterHighRate.frequency()
-      << ", with period: " << c_counterHighRate.period()
-      << "[msec] and counter value: " << c_counterHighRate.val()
-      << "\r\n";
-
-    // read slow counter
-    IsoAgLib::getIrs232Instance()
-      << "Slow counter at channel 3 has frequency: " << c_counterLowRate.frequency()
-      << ", with period: " << c_counterLowRate.period()
-      << "[msec], counter value: " << c_counterLowRate.val()
-      << " and last event detected " << c_counterLowRate.lastSignalAge()
-      << "[msec] ago\r\n";
+    #ifdef SYSTEM_PC
+      #ifdef WIN32
+        if ( i32_idleTimeSpread > 0 ) Sleep(i32_idleTimeSpread);
+      #else
+        if ( i32_idleTimeSpread > 0 ) IsoAgLib::iCANIO_c::waitUntilCanReceiveOrTimeout( i32_idleTimeSpread );
+      #endif
+    #endif
   }
   return 1;
 }

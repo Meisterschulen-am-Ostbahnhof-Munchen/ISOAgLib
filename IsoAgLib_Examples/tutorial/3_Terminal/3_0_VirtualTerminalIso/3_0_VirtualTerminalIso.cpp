@@ -621,21 +621,21 @@ int main()
       or
       getIsystemInstance().setPowerdownStrategy( IsoAgLib::PowerdownOnCanEnLoss )
   */
+  int32_t i32_idleTimeSpread = 0;
   while ( iSystem_c::canEn() )
   { // run main loop
     // IMPORTANT: call main timeEvent function for
     // all time controlled actions of IsoAgLib
-    const int16_t ci16_sleep = IsoAgLib::getISchedulerInstance().timeEvent();
+    i32_idleTimeSpread = IsoAgLib::getISchedulerInstance().timeEvent();
 
     // The following sleep mechanism will be changed with the new scheduler reporting back the idle-time
     // no need to sleep on single-task systems
     #ifdef SYSTEM_PC
-      if (ci16_sleep <= 0) continue;
-      #ifdef WIN32
-        Sleep(ci16_sleep);
-      #else
-        IsoAgLib::iCANIO_c::waitUntilCanReceiveOrTimeout(ci16_sleep);
-      #endif
+     #ifdef WIN32
+     if ( i32_idleTimeSpread > 0 ) Sleep( i32_idleTimeSpread );
+     #else
+     if ( i32_idleTimeSpread > 0 ) IsoAgLib::iCANIO_c::waitUntilCanReceiveOrTimeout( i32_idleTimeSpread );
+     #endif
     #endif
   }
 }

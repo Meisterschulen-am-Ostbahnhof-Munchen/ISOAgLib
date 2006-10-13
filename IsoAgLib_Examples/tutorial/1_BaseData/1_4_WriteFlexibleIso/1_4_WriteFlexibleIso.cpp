@@ -294,10 +294,7 @@ int main()
   { // run main loop
     // IMPORTANT: call main timeEvent function for
     // all time controlled actions of IsoAgLib
-    if(iSystem_c::getTime() > i32_nextRun) {
-      i32_idleTimeSpread = getISchedulerInstance().timeEvent();
-      i32_nextRun = iSystem_c::getTime()  + i32_idleTimeSpread;
-    }
+    i32_idleTimeSpread = getISchedulerInstance().timeEvent();
 
     if ( ! b_sendCalendar )
     { // check if local item has already claimed address
@@ -326,13 +323,11 @@ int main()
     // no need to sleep on single-task systems
     #ifdef SYSTEM_PC
       #ifdef WIN32
-        Sleep(i32_idleTimeSpread);
+        if ( i32_idleTimeSpread > 0 ) Sleep(i32_idleTimeSpread);
       #else
-        IsoAgLib::iCANIO_c::waitUntilCanReceiveOrTimeout( i32_idleTimeSpread );
+        if ( i32_idleTimeSpread > 0 ) IsoAgLib::iCANIO_c::waitUntilCanReceiveOrTimeout( i32_idleTimeSpread );
       #endif
     #endif
-
-
   }
   return 1;
 }

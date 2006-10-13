@@ -577,27 +577,14 @@ int main()
   int curvatureCmd = -100;
   #endif
 
-  int32_t i32_nextRun = 0;
   int32_t i32_idleTimeSpread = 0;
-
   while ( iSystem_c::canEn() )
   { // run main loop
     // IMPORTANT: call main timeEvent function for
     // all time controlled actions of IsoAgLib
+    //use idle_time of Scheduler_c for relax to next call
+    i32_idleTimeSpread = getISchedulerInstance().timeEvent();
 
-
-        //use idle_time of Scheduler_c for relax to next call
-    if( i32_nextRun <= IsoAgLib::iSystem_c::getTime()   )   {
-        i32_idleTimeSpread = getISchedulerInstance().timeEvent();
-        #ifdef DEBUG
-        std::cout << IsoAgLib::iSystem_c::getTime() << " now. i32_nextRun in ms: "<< (int) i32_idleTimeSpread
-        << " for next Call Scheduler_c timeEvent\n\n" ;
-        if(i32_idleTimeSpread == -1 ) std::cout << "Scheduler_c timeEvent one Client was out of time"  << std::endl;
-        #endif
-
-        i32_nextRun = i32_idleTimeSpread + IsoAgLib::iSystem_c::getTime();
-
-      }
 
     #ifdef USE_RS232_FOR_DEBUG
     static int32_t si32_lastDebug = 0;
@@ -875,9 +862,9 @@ int main()
     // no need to sleep on single-task systems
     #ifdef SYSTEM_PC
       #ifdef WIN32
-        Sleep(i32_idleTimeSpread);
+        if ( i32_idleTimeSpread > 0 ) Sleep(i32_idleTimeSpread);
       #else
-        IsoAgLib::iCANIO_c::waitUntilCanReceiveOrTimeout( i32_idleTimeSpread );
+        if ( i32_idleTimeSpread > 0 ) IsoAgLib::iCANIO_c::waitUntilCanReceiveOrTimeout( i32_idleTimeSpread );
       #endif
     #endif
 

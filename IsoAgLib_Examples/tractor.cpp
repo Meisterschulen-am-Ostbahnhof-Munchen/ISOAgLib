@@ -442,7 +442,7 @@ int main()
                           0x7FF, // rui16_manufCode
                           27);   // rui32_serNo
                           // further parameters use the default values as given in the constructor
-  
+
   /** configure BaseData_c to send:
     - BaseDataGroup1: real and gear based speed and distance; for ISO: also key_switch_state and max power time
     - BaseDataGroup2: front and rear PTO, engine RPM, front and rear hitch information
@@ -479,15 +479,24 @@ int main()
       getIsystemInstance().setPowerdownStrategy( IsoAgLib::PowerdownOnCanEnLoss )
   */
   int32_t i32_nextDebugSend = 0;
+  int32_t i32_idleTimeSpread = 0;
   while ( iSystem_c::canEn() )
   { // run main loop
     // IMPORTANT: call main timeEvent function for
-    // all time controlled actions of IsoAgLib - \ref IsoAgLib::iScheduler_c::timeEvent()
-    getISchedulerInstance().timeEvent();
+    // all time controlled actions of IsoAgLib
+    i32_idleTimeSpread = IsoAgLib::getISchedulerInstance().timeEvent();
     // the internal data processing is also triggered by the IsoAgLib scheduler
     // - and each received value update is then automatically transfered by
     //   MyInternalCanHandler_c::processMsg() into the suitable flags of
     //   IsoAgLib internal part for base data sending ( Base_c )
+
+    #ifdef SYSTEM_PC
+     #ifdef WIN32
+     if ( i32_idleTimeSpread > 0 ) Sleep( i32_idleTimeSpread );
+     #else
+     if ( i32_idleTimeSpread > 0 ) IsoAgLib::iCANIO_c::waitUntilCanReceiveOrTimeout( i32_idleTimeSpread );
+     #endif
+    #endif
   }
   return 1;
 }

@@ -469,17 +469,26 @@ int main()
       getIsystemInstance().setPowerdownStrategy( IsoAgLib::PowerdownOnCanEnLoss )
   */
   int32_t i32_nextDebugSend = 0;
+  int32_t i32_idleTimeSpread = 0;
   while ( iSystem_c::canEn() )
   { // run main loop
     // IMPORTANT: call main timeEvent function for
-    // all time controlled actions of IsoAgLib - \ref IsoAgLib::iScheduler_c::timeEvent()
-    getISchedulerInstance().timeEvent();
+    // all time controlled actions of IsoAgLib
+    i32_idleTimeSpread = IsoAgLib::getISchedulerInstance().timeEvent();
 
-    if ( IsoAgLib::iSystem_c::getTime() < i32_nextDebugSend ) continue;
-    // if we are getting here - send test message
-    i32_nextDebugSend = IsoAgLib::iSystem_c::getTime() + 1000;
-    c_myDataHandler.doSendTest( (IsoAgLib::iSystem_c::getTime()&0xFFFF), (IsoAgLib::iSystem_c::getTime()>>8),
-      (IsoAgLib::iSystem_c::getTime()%100) );
+    if ( IsoAgLib::iSystem_c::getTime() >= i32_nextDebugSend )
+    { // if we are getting here - send test message
+      i32_nextDebugSend = IsoAgLib::iSystem_c::getTime() + 1000;
+      c_myDataHandler.doSendTest( (IsoAgLib::iSystem_c::getTime()&0xFFFF), (IsoAgLib::iSystem_c::getTime()>>8),
+        (IsoAgLib::iSystem_c::getTime()%100) );
+    }
+    #ifdef SYSTEM_PC
+      #ifdef WIN32
+        if ( i32_idleTimeSpread > 0 ) Sleep(i32_idleTimeSpread);
+      #else
+        if ( i32_idleTimeSpread > 0 ) IsoAgLib::iCANIO_c::waitUntilCanReceiveOrTimeout( i32_idleTimeSpread );
+      #endif
+    #endif
   }
   return 1;
 }

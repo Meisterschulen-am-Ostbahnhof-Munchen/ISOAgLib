@@ -414,15 +414,12 @@ int main()
       or
       getIsystemInstance().setPowerdownStrategy( IsoAgLib::PowerdownOnCanEnLoss )
   */
-
+  int32_t i32_idleTimeSpread = 0;
   while ( iSystem_c::canEn() )
   { // run main loop
-
-    IsoAgLib::iCANIO_c::waitUntilCanReceiveOrTimeout( 50 );
-
     // IMPORTANT: call main timeEvent function for
     // all time controlled actions of IsoAgLib
-    IsoAgLib::getISchedulerInstance().timeEvent();
+    i32_idleTimeSpread = IsoAgLib::getISchedulerInstance().timeEvent();
 
     #ifndef USE_PROC_HANDLER
     // if no handler is used to react on received setpoints, each process data must be polled for new
@@ -478,6 +475,13 @@ int main()
     #else
     c_workState.setMasterMeasurementVal( getCurrentWorkState() );
     c_applicationRate.setMasterMeasurementVal( getCurrentApplicationRate() );
+    #endif
+    #ifdef SYSTEM_PC
+      #ifdef WIN32
+        if ( i32_idleTimeSpread > 0 ) Sleep(i32_idleTimeSpread);
+      #else
+        if ( i32_idleTimeSpread > 0 ) IsoAgLib::iCANIO_c::waitUntilCanReceiveOrTimeout( i32_idleTimeSpread );
+      #endif
     #endif
   }
   return 1;

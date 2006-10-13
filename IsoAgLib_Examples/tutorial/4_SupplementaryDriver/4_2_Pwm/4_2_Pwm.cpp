@@ -267,83 +267,92 @@ int main()
       getIsystemInstance().setPowerdownStrategy( IsoAgLib::PowerdownOnCanEnLoss )
   */
   int32_t i32_nextDebug = 0;
-  while ( IsoAgLib::iSystem_c::canEn() )
+  int32_t i32_idleTimeSpread = 0;
+  while ( iSystem_c::canEn() )
   { // run main loop
     // IMPORTANT: call main timeEvent function for
-    // all time controlled actions of IsoAgLib - \ref IsoAgLib::iScheduler_c::timeEvent()
-    getISchedulerInstance().timeEvent();
+    // all time controlled actions of IsoAgLib
+    i32_idleTimeSpread = IsoAgLib::getISchedulerInstance().timeEvent();
 
     // immediately re-loop if it's not yet time for debug messages
-    if ( i32_nextDebug > IsoAgLib::iSystem_c::getTime() ) continue;
-    // now it's time for debug
-    i32_nextDebug = IsoAgLib::iSystem_c::getTime() + 1000;
+    if ( IsoAgLib::iSystem_c::getTime() >= i32_nextDebug )
+    { // now it's time for debug
+      i32_nextDebug = IsoAgLib::iSystem_c::getTime() + 1000;
 
-    // use simple loop to switch several states
-    switch ( ( IsoAgLib::iSystem_c::getTime() / 1000 ) % 4 )
-    {
-      case 0: // first second - both on
-        // either set max possible value for total opening
-        c_pwmCurrentDiagnose.set( true );
-        // or set PWM value for detailed control
-        c_pwmCurrentSimple.set( uint16_t(1024) );
-        break;
-      case 1:
-        // either set max possible value for total opening
-        c_pwmCurrentDiagnose.set( false );
-        // or set PWM value for detailed control
-        c_pwmCurrentSimple.set( uint16_t(2048) );
-        break;
-      case 2:
-        // either set max possible value for total opening
-        c_pwmCurrentDiagnose.set( false );
-        // or set PWM value for detailed control
-        c_pwmCurrentSimple.set( uint16_t(0) );
-        break;
-      case 3:
-        // either set max possible value for total opening
-        c_pwmCurrentDiagnose.set( true );
-        // or set PWM value for detailed control
-        c_pwmCurrentSimple.set( uint16_t(0) );
-        break;
-    }
+      // use simple loop to switch several states
+      switch ( ( IsoAgLib::iSystem_c::getTime() / 1000 ) % 4 )
+      {
+        case 0: // first second - both on
+          // either set max possible value for total opening
+          c_pwmCurrentDiagnose.set( true );
+          // or set PWM value for detailed control
+          c_pwmCurrentSimple.set( uint16_t(1024) );
+          break;
+        case 1:
+          // either set max possible value for total opening
+          c_pwmCurrentDiagnose.set( false );
+          // or set PWM value for detailed control
+          c_pwmCurrentSimple.set( uint16_t(2048) );
+          break;
+        case 2:
+          // either set max possible value for total opening
+          c_pwmCurrentDiagnose.set( false );
+          // or set PWM value for detailed control
+          c_pwmCurrentSimple.set( uint16_t(0) );
+          break;
+        case 3:
+          // either set max possible value for total opening
+          c_pwmCurrentDiagnose.set( true );
+          // or set PWM value for detailed control
+          c_pwmCurrentSimple.set( uint16_t(0) );
+          break;
+      }
 
-    // now check for states
-    // use operator!() - which is comparable to if ( !c_pwmCurrentDiagnose.good() )
-    if ( ! c_pwmCurrentDiagnose  )
-    { // ERROR
+      // now check for states
+      // use operator!() - which is comparable to if ( !c_pwmCurrentDiagnose.good() )
+      if ( ! c_pwmCurrentDiagnose  )
+      { // ERROR
+        IsoAgLib::getIrs232Instance()
+          << "ERROR: c_pwmCurrentDiagnose is faulted with current: " << c_pwmCurrentDiagnose.getDigoutCurrent();
+      }
+      else
+      {
+        IsoAgLib::getIrs232Instance()
+          << "FINE: c_pwmCurrentDiagnose is in good state with current: " << c_pwmCurrentDiagnose.getDigoutCurrent();
+      }
       IsoAgLib::getIrs232Instance()
-        << "ERROR: c_pwmCurrentDiagnose is faulted with current: " << c_pwmCurrentDiagnose.getDigoutCurrent();
-    }
-    else
-    {
-      IsoAgLib::getIrs232Instance()
-        << "FINE: c_pwmCurrentDiagnose is in good state with current: " << c_pwmCurrentDiagnose.getDigoutCurrent();
-    }
-    IsoAgLib::getIrs232Instance()
-      << ", current state: " << c_pwmCurrentDiagnose.get()
-      << " and PWM output voltage: " << c_pwmCurrentDiagnose.getDigoutAdc()
-      << "[mV]\r\n";
+        << ", current state: " << c_pwmCurrentDiagnose.get()
+        << " and PWM output voltage: " << c_pwmCurrentDiagnose.getDigoutAdc()
+        << "[mV]\r\n";
 
-    // do some more evaluation
-    IsoAgLib::getIrs232Instance()
-      << "c_pwmCurrentSimple is currently set to: " << c_pwmCurrentSimple.get()
-      << ", has PWM output voltage: " << c_pwmCurrentSimple.getDigoutAdc()
-      << "[mV]\r\n";
-    switch ( c_pwmCurrentSimple.getState() )
-    {
-      case IsoAgLib::iDigitalO_c::noDoutErr :
-        IsoAgLib::getIrs232Instance()
-          << "FINE - c_pwmCurrentSimple is in good state\r\n";
-        break;
-      case IsoAgLib::iDigitalO_c::dout_openErr :
-        IsoAgLib::getIrs232Instance()
-          << "PROBLEM - c_pwmCurrentSimple has no contact to consuming device\r\n";
-        break;
-      case IsoAgLib::iDigitalO_c::dout_shortcutErr :
-        IsoAgLib::getIrs232Instance()
-          << "ERROR - c_pwmCurrentSimple has shortcut\r\n";
-        break;
+      // do some more evaluation
+      IsoAgLib::getIrs232Instance()
+        << "c_pwmCurrentSimple is currently set to: " << c_pwmCurrentSimple.get()
+        << ", has PWM output voltage: " << c_pwmCurrentSimple.getDigoutAdc()
+        << "[mV]\r\n";
+      switch ( c_pwmCurrentSimple.getState() )
+      {
+        case IsoAgLib::iDigitalO_c::noDoutErr :
+          IsoAgLib::getIrs232Instance()
+            << "FINE - c_pwmCurrentSimple is in good state\r\n";
+          break;
+        case IsoAgLib::iDigitalO_c::dout_openErr :
+          IsoAgLib::getIrs232Instance()
+            << "PROBLEM - c_pwmCurrentSimple has no contact to consuming device\r\n";
+          break;
+        case IsoAgLib::iDigitalO_c::dout_shortcutErr :
+          IsoAgLib::getIrs232Instance()
+            << "ERROR - c_pwmCurrentSimple has shortcut\r\n";
+          break;
+      }
     }
+    #ifdef SYSTEM_PC
+      #ifdef WIN32
+        if ( i32_idleTimeSpread > 0 ) Sleep(i32_idleTimeSpread);
+      #else
+        if ( i32_idleTimeSpread > 0 ) IsoAgLib::iCANIO_c::waitUntilCanReceiveOrTimeout( i32_idleTimeSpread );
+      #endif
+    #endif
   }
   return 1;
 }

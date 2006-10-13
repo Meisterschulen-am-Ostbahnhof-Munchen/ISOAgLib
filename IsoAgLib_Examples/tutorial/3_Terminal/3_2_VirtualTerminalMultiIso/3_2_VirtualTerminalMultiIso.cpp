@@ -692,16 +692,17 @@ int main()
       or
       getIsystemInstance().setPowerdownStrategy( IsoAgLib::PowerdownOnCanEnLoss )
   */
-  while (iSystem_c::canEn())
+  int32_t i32_idleTimeSpread = 0;
+  while ( iSystem_c::canEn() )
   { // run main loop
     // IMPORTANT: call main timeEvent function for
     // all time controlled actions of IsoAgLib
-    IsoAgLib::getISchedulerInstance().timeEvent();
+    i32_idleTimeSpread = IsoAgLib::getISchedulerInstance().timeEvent();
     #ifdef SYSTEM_PC
      #ifdef WIN32
-     Sleep(10);
+     if ( i32_idleTimeSpread > 0 ) Sleep(i32_idleTimeSpread);
      #else
-     IsoAgLib::iCANIO_c::waitUntilCanReceiveOrTimeout( 50 );
+     if ( i32_idleTimeSpread > 0 ) IsoAgLib::iCANIO_c::waitUntilCanReceiveOrTimeout( i32_idleTimeSpread );
      #endif
     #endif
   }

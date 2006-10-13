@@ -510,20 +510,12 @@ int main()
   int estCurvature = 0;
   #endif
 
-  int32_t i32_nextRun = 0;
-
+  int32_t i32_idleTimeSpread = 0;
   while ( iSystem_c::canEn() )
   { // run main loop
     // IMPORTANT: call main timeEvent function for
     // all time controlled actions of IsoAgLib
-    if( i32_nextRun <= IsoAgLib::iSystem_c::getTime()   )   {
-        i32_nextRun = getISchedulerInstance().timeEvent();
-        #ifdef DEBUG
-          std::cout << IsoAgLib::iSystem_c::getTime() << " now. i32_nextRun in ms: "<< (int) i32_nextRun
-          << " for next Call Scheduler_c timeEvent\n\n" ;
-        #endif
-        i32_nextRun += IsoAgLib::iSystem_c::getTime();
-      }
+    i32_idleTimeSpread = IsoAgLib::getISchedulerInstance().timeEvent();
 
 
     #ifdef USE_RS232_FOR_DEBUG
@@ -610,10 +602,10 @@ int main()
           getITracMoveInstance().setDirectionTheor(IsoAgLib::IsoForward);
         getITracMoveInstance().setDistTheor(ui32_tempTheorDist);
         getITracMoveInstance().setOperatorDirectionReversed(IsoAgLib::IsoReversed);
-if (count < 5 )
-        getITracMoveInstance().setSelectedSpeed(count);
-else
-        getITracMoveInstance().setSelectedSpeed(256);
+        if (count < 5 )
+          getITracMoveInstance().setSelectedSpeed(count);
+        else
+          getITracMoveInstance().setSelectedSpeed(256);
         //getITracMoveInstance().setSelectedSpeedSource(IsoAgLib::IsoNavigationBasedSpeed);
         count++;
         #endif
@@ -750,6 +742,13 @@ else
         getITracGuidanceInstance().setMechanicalSystemLogout(IsoAgLib::IsoActive);
         #endif
      }
+    #endif
+    #ifdef SYSTEM_PC
+      #ifdef WIN32
+        if ( i32_idleTimeSpread > 0 ) Sleep(i32_idleTimeSpread);
+      #else
+        if ( i32_idleTimeSpread > 0 ) IsoAgLib::iCANIO_c::waitUntilCanReceiveOrTimeout( i32_idleTimeSpread );
+      #endif
     #endif
   }
   return 1;

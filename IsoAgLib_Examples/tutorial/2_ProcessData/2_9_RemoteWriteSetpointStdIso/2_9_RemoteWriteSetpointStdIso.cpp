@@ -440,14 +440,12 @@ int main()
   bool b_done1=false;
   bool b_done2=false;
 
+  int32_t i32_idleTimeSpread = 0;
   while ( iSystem_c::canEn() )
   { // run main loop
     // IMPORTANT: call main timeEvent function for
     // all time controlled actions of IsoAgLib
-
-    IsoAgLib::iCANIO_c::waitUntilCanReceiveOrTimeout( 50 );
-
-    IsoAgLib::getISchedulerInstance().timeEvent();
+    i32_idleTimeSpread = IsoAgLib::getISchedulerInstance().timeEvent();
 
     if ( ! getIisoMonitorInstance().existIsoMemberISOName(c_myISOName, true) ) continue;
     if ( ! getIisoMonitorInstance().existIsoMemberISOName(c_remoteDeviceType, true) ) continue;
@@ -490,6 +488,14 @@ int main()
         indicateRemoteApplicationRateResponse( false );
       }
     }
+    #endif
+
+    #ifdef SYSTEM_PC
+      #ifdef WIN32
+        if ( i32_idleTimeSpread > 0 ) Sleep(i32_idleTimeSpread);
+      #else
+        if ( i32_idleTimeSpread > 0 ) IsoAgLib::iCANIO_c::waitUntilCanReceiveOrTimeout( i32_idleTimeSpread );
+      #endif
     #endif
   }
   return 1;
