@@ -836,8 +836,12 @@ MultiSend_c::SendStream_c::processMsg()
         // Notify sender that it finished!
         *pen_sendSuccessNotify = SendSuccess; // will be kicked out after next timeEvent!
       }
-      // else: not awaiting end of message ack, no action taken for this error-case in normal operation.
-      getLibErrInstance().registerError( LibErr_c::MultiSendWarn, LibErr_c::MultiSend );
+      else
+      { // not awaiting end of message ack, no action taken for this error-case in normal operation.
+        /// Comment out right now as getLibErrInstance() seems to need to much memory on the ESX
+        /// (at least when called here) so it's commented out completely for now!
+        //getLibErrInstance().registerError( LibErr_c::MultiSendWarn, LibErr_c::MultiSend );
+      }
       break;
     case scui8_CM_ConnAbort:
       #if defined( DEBUG )

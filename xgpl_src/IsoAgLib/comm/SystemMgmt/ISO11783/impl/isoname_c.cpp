@@ -465,16 +465,24 @@ ISOName_c::isEqualRegardingNonInstFields (const ISOName_c& rrefc_isoName) const
          );
 }
 
-/** convert operator */
+/** convert operator - avoids lots of explicit static_casts */
 ISOName_c::operator IsoAgLib::iISOName_c& ()
 {
-  return static_cast<IsoAgLib::iISOName_c&>(*this);
+  return static_cast<IsoAgLib::iISOName_c&>(*static_cast<IsoAgLib::iISOName_c*>((void *)(this)));
+  // doing it the ugly way, as some compiler do a recursive call of this operator at the "correct" 
+  // "return static_cast<IsoAgLib::iISOName_c&>(*this);" statement - some do not.
+  // with the above way we can get absolutely sure that there are no recursive uses of this operator
+  // as those would overflow the stack and hence cause a system-crash
 }
 
-/** convert operator */
+/** convert operator - avoids lots of explicit static_casts */
 ISOName_c::operator const IsoAgLib::iISOName_c& () const
 {
-  return static_cast<const IsoAgLib::iISOName_c&>(*this);
+  return static_cast<const IsoAgLib::iISOName_c&>(*static_cast<const IsoAgLib::iISOName_c*>((void *)(this)));
+  // doing it the ugly way, as some compiler do a recursive call of this operator at the "correct" 
+  // "return static_cast<const IsoAgLib::iISOName_c&>(*this);" statement - some do not.
+  // with the above way we can get absolutely sure that there are no recursive uses of this operator
+  // as those would overflow the stack and hence cause a system-crash
 }
 
 } // namespace __IsoAgLib
