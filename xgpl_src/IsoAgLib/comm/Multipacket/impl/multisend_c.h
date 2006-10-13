@@ -188,7 +188,7 @@ public:
       perform periodical actions
       @return true -> remove me, I'm finished!
     */
-    bool timeEvent (uint8_t rui8_pkgCnt, int32_t ri32_time);
+    bool timeEvent (uint8_t rui8_pkgCnt);
 
     /**
       start processing of a process msg
@@ -196,13 +196,13 @@ public:
     */
     bool processMsg();
 
+    int32_t getNextTriggerTime() const { return i32_timestampToWaitTo; }
+
     /**
-      check if the forced time delay since last timestamp is over
-      @param ri32_time actual time
-      @param rui16_dynamicDelay individual delay
+      check if time delay is reached
       @return true -> time delay is over
     */
-    bool isDelayEnd (int32_t ri32_time, uint16_t rui16_dynamicDelay) const {return ((ri32_time - i32_timestamp) >= rui16_dynamicDelay); }
+    bool timeHasCome() const {return (System_c::getTime() - i32_timestampToWaitTo) >= 0; }
 
     /**
       check if current message is complete
@@ -245,7 +245,9 @@ public:
     */
     void prepareSendMsg (uint8_t &ui8_nettoDataCnt);
 
-    void switchToState (sendState_t ren_sendState) { en_sendState = ren_sendState; i32_timestamp = System_c::getTime(); }
+    void retriggerIn (int32_t i32_timeDelta) { i32_timestampToWaitTo = System_c::getTime() + i32_timeDelta;}
+
+    void switchToState (sendState_t ren_sendState, int32_t i32_timeDelta) { en_sendState = ren_sendState; retriggerIn (i32_timeDelta); }
 
   private: // attributes
   /// Initialized on init(...)
@@ -258,7 +260,7 @@ public:
     #endif
 
     /** timestamp for time control */
-    int32_t i32_timestamp;
+    int32_t i32_timestampToWaitTo;
 
     /** data counter for data to send */
     uint32_t ui32_dataBufferOffset;
@@ -421,6 +423,14 @@ public: // methods
   ///  Used for Debugging Tasks in Scheduler_c
   virtual const char* getTaskName() const;
 
+protected: // methods
+  //! Function set ui16_earlierInterval and
+  //! ui16_laterInterval that will be used by
+  //! getTimeToNextTrigger(retriggerType_t)
+  //! can be overloaded by Childclass for special condition
+  virtual void updateEarlierAndLatestInterval();
+
+
 private: // Private methods
   friend class SINGLETON_DERIVED(MultiSend_c, ElementBase_c);
   friend class iMultiSend_c;
@@ -443,6 +453,11 @@ private: // Private methods
 
   SendStream_c* addSendStream (const ISOName_c& rrefc_isoNameSender, const ISOName_c& rrefc_isoNameReceiver);
   SendStream_c* getSendStream (const ISOName_c& rrefc_isoNameSender, const ISOName_c& rrefc_isoNameReceiver);
+
+  /** this function should NOT be called from INSIDE of timeEvent !
+      ==> Only call it from OUTSIDE functions like init(), processMsg(), addSendStream, etc.
+  */
+  void calcAndSetNextTriggerTime();
 
   /**
     internal function to send a ISO target multipacket message

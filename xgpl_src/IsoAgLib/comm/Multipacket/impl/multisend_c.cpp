@@ -109,7 +109,7 @@ static const uint8_t scui8_eCM_DPO = 22;
 static const uint8_t scui8_eCM_EndofMsgACK = 23;
 static const uint8_t scui8_CM_ConnAbort = 255;
 
-static const uint8_t scui8_isoCanPkgDelay = 4;
+static const uint8_t scui8_isoCanPkgDelay = 4; /** @todo figure that one out... new ISO says we can put out head2head messages! */
 
 
 
@@ -318,7 +318,8 @@ MultiSend_c::SendStream_c::init (const ISOName_c& rrefc_isoNameSender, const ISO
       pc_mss->setDataNextFastPacketStreamPart (&refc_multiSendPkg, ui8_nettoCnt, 2);
     }
     ui32_dataBufferOffset = ui8_nettoCnt;
-    switchToState (SendData);
+    switchToState (SendData, 2);
+    /** @todo maybe send out more packets right now if it's just about some - why wait? */
   }
   else
 #endif
@@ -331,14 +332,14 @@ MultiSend_c::SendStream_c::init (const ISOName_c& rrefc_isoNameSender, const ISO
       refc_multiSendPkg.setUint8Data (0, static_cast<uint8_t>(scui8_eCM_RTS));              // Byte 1
       refc_multiSendPkg.setUint16Data(3, getDataSize() >> 16);                              // Byte 4+5
       ui32_dataPacketOffset = 0;
-      switchToState (AwaitCts);
+      switchToState (AwaitCts, 1250);
     }
     else if (en_msgType == IsoTP)
     {
       refc_multiSendPkg.setUint8Data (0, static_cast<uint8_t>(scui8_CM_RTS));               // Byte 1
       refc_multiSendPkg.setUint8Data (3, static_cast<uint8_t>((ui32_dataSize + 6) / 7));    // Byte 4
       refc_multiSendPkg.setUint8Data (4, static_cast<uint8_t>(0xFF));                       // Byte 5
-      switchToState (AwaitCts);
+      switchToState (AwaitCts, 1250);
     }
     else if (en_msgType == IsoTPbroadcast)
     {
@@ -346,8 +347,13 @@ MultiSend_c::SendStream_c::init (const ISOName_c& rrefc_isoNameSender, const ISO
       refc_multiSendPkg.setUint8Data (3, static_cast<uint8_t>((ui32_dataSize + 6) / 7));    // Byte 4
       refc_multiSendPkg.setUint8Data (4, static_cast<uint8_t>(0xFF));                       // Byte 5
       ui8_burstPkgYetToSend = (ui32_dataSize + 6) / 7;
-      switchToState (SendData);
+      switchToState (SendData, 50); // on broadcast, we'll have to interspace with 50ms (minimum!)
     }
+#if 0
+/// Disabled as long as getLibErrInstance().registerError() makes problems on the ESX
+    else getLibErrInstance().registerError( LibErr_c::Precondition, LibErr_c::MultiSend );
+#endif
+
     ui32_lastNextPacketNumberToSend = 0xFFFFFFFF; // so the first coming CTS is definitively NO repeated burst!
     if (pc_mss) pc_mss->resetDataNextStreamPart();
   }
@@ -512,6 +518,8 @@ MultiSend_c::sendIntern (const ISOName_c& rrefc_isoNameSender, const ISOName_c& 
   if (pc_newSendStream)
   {
     pc_newSendStream->init (rrefc_isoNameSender, rrefc_isoNameReceiver, rhpb_data, ri32_dataSize, rrefen_sendSuccessNotify, ri32_pgn, rpc_mss, ren_msgType);
+    // let this SendStream get sorted in now...
+    calcAndSetNextTriggerTime();
     return true;
   }
   else
@@ -527,13 +535,8 @@ MultiSend_c::sendIntern (const ISOName_c& rrefc_isoNameSender, const ISOName_c& 
   @return true: stream finished
 */
 bool
-MultiSend_c::SendStream_c::timeEvent (uint8_t rui8_pkgCnt, int32_t ri32_time)
+MultiSend_c::SendStream_c::timeEvent (uint8_t rui8_pkgCnt)
 {
-  if (isFinished ())
-  { // SendStream finished in processMsg() or by user-abort, so return true for deletion of SendStream.
-    return true;
-  }
-
   MultiSendPkg_c& refc_multiSendPkg = refc_multiSend.data();
   uint8_t ui8_nettoDataCnt;
   uint8_t ui8_pkgInd;
@@ -541,44 +544,17 @@ MultiSend_c::SendStream_c::timeEvent (uint8_t rui8_pkgCnt, int32_t ri32_time)
   switch (en_sendState)
   {
     case AwaitCts:
-      switch (en_msgType)
-      {
-        case NmeaFastPacket:
-        case IsoTPbroadcast:
-          // this state shouldn't be possible in these cases!
-          break;
-        case IsoTP: // break left out intentionally
-        case IsoETP:
-          if (isDelayEnd(ri32_time, 1250))
-          { // abort send
-            abortSend();
-            return true; // FINISHED SendStream, remove it from list please!
-          }
-      }
-      break;
-
     case AwaitEndofmsgack:
+    case SendPauseTillCts:
       switch (en_msgType)
       {
-        case IsoTP: // break left out intentionally
-        case IsoETP:
-          if (isDelayEnd(ri32_time, 1250))
-          { // abort send
-            abortSend();
-            return true; // FINISHED SendStream, remove it from list please!
-          }
-          break;
         case IsoTPbroadcast: // we shouldn't reach this state!
         case NmeaFastPacket: // we shouldn't reach this state!
           break;
-      }
-      break;
-
-    case SendPauseTillCts:
-      if (isDelayEnd(ri32_time, 500))
-      { // abort send
-        abortSend();
-        return true; // FINISHED SendStream, remove it from list please!
+        case IsoTP: // break left out intentionally
+        case IsoETP:
+          abortSend();
+          return true; // FINISHED SendStream, remove it from list please!
       }
       break;
 
@@ -620,18 +596,15 @@ MultiSend_c::SendStream_c::timeEvent (uint8_t rui8_pkgCnt, int32_t ri32_time)
             return true; // FINISHED SendStream, remove it from list please!
           }
         } // for
+        /** @todo how fast must fast-packet be? send all right now? set retriggerIn to (0) or (1) ?? */
+        retriggerIn (2); // if we couldn't finish now, retrigger right soon! we're FAST-PACKET!
       }
       else
 #endif
       { // NOT NmeaFastPacket - some ISO protocol!
         if (en_msgType == IsoTPbroadcast)
         { // IsoTPbroadcast forces 50ms between all packets!!
-          if (!isDelayEnd (ri32_time, 50))
-          { // if 50ms has not elapsed, wait on...
-            break;
-          }
           rui8_pkgCnt = 1; // only send 1 packet at a time, then wait 50ms.
-          switchToState (SendData); // same state - but the time stamp gets updated, so we'll wait on for 50ms...
         }
         else
         { // IsoTP || IsoETP
@@ -669,21 +642,30 @@ MultiSend_c::SendStream_c::timeEvent (uint8_t rui8_pkgCnt, int32_t ri32_time)
               #if defined( DEBUG )
               INTERNAL_DEBUG_DEVICE << "MultiSend_c::timeEvent --- after complete Sending now awaiting EOMACK!" << INTERNAL_DEBUG_DEVICE_ENDL;
               #endif
-              switchToState (AwaitEndofmsgack);
-              break; // stream not yet finished!
+              switchToState (AwaitEndofmsgack, 1250);
+              return false; // stream not yet finished!
             }
           }
           // not completely finished, but maybe this burst has finished?
           if (isCompleteBurst())
           { // wait for CTS for next part of transfer
-            switchToState (AwaitCts);
+            switchToState (AwaitCts, 1250);
             #if defined( DEBUG )
             INTERNAL_DEBUG_DEVICE << "MultiSend_c::timeEvent --- after Sending now awaiting CTS!" << INTERNAL_DEBUG_DEVICE_ENDL;
             #endif
-            break; // stream not yet finished!
+            return false; // stream not yet finished!
           }
           // nothing special, keep on sending...
         } // for - sent all pkgs for now, yet some more to go, send them in a later timeEvent()
+
+        if (en_msgType == IsoTPbroadcast)
+        { // IsoTPbroadcast forces 50ms between all packets!!
+          retriggerIn (50); // same state - but the time stamp gets updated, so we'll wait on for 50ms...
+        }
+        else
+        { // IsoTP || IsoETP can send on "immediately"
+          retriggerIn (3);
+        }
       } // Not Nmea- some ISO protocol
     } break; // case SendData
   }
@@ -701,9 +683,16 @@ MultiSend_c::timeEvent()
 {
   if ( getAvailableExecTime() == 0 ) return false;
 
-  // nothing to do if no transfer is Running
-  if (list_sendStream.empty()) return true;
+  if (list_sendStream.empty())
+  { // nothing to do if no transfer is Running
+    setTimePeriod (5000); // actually we could use "infinite here"
+    return true;
+  }
 
+  /** @todo Check how we want to calculate the max nr. of packets to send
+            ==> Best would be to know when the next comes.
+            clip that value as we may expect incoming can-pkgs, too - so be a little polite!
+  */
   const int32_t ci32_time = ElementBase_c::getLastRetriggerTime();
   // store time of last call, to get time interval between execution
   static int32_t si32_lastCall = 0;
@@ -714,10 +703,13 @@ MultiSend_c::timeEvent()
 
   const uint8_t cui8_pkgCntForEach = ui8_pkgCnt / list_sendStream.size(); // in case it gets 0 after division, it is set to 1 inside of SendStream's timeEvent().
 
+  int32_t i32_nextRetriggerNeeded = -1; // default to: "no retriggering needed"
+
   // Call each SendStream_c's timeEvent()
   for (std::list<SendStream_c>::iterator pc_iter=list_sendStream.begin(); pc_iter != list_sendStream.end();)
-  {
-    if (pc_iter->timeEvent (cui8_pkgCntForEach, ci32_time))
+  { // only call a SendStream when its time has come!
+    if ( pc_iter->isFinished () ||
+        (pc_iter->timeHasCome() && (pc_iter->timeEvent (cui8_pkgCntForEach))) )
     { // SendStream finished
       pc_iter = list_sendStream.erase (pc_iter);
       #ifdef DEBUG
@@ -726,6 +718,12 @@ MultiSend_c::timeEvent()
     }
     else
     { // SendStream not yet finished
+      const int32_t ci32_nextTriggerTime = pc_iter->getNextTriggerTime();
+      // needs to be triggered at the following time
+      if ((i32_nextRetriggerNeeded == -1) || (ci32_nextTriggerTime < i32_nextRetriggerNeeded))
+      { // no trigger yet set or this SendStream needs to come earlier!
+        i32_nextRetriggerNeeded = ci32_nextTriggerTime;
+      }
       pc_iter++;
     }
   }
@@ -735,8 +733,40 @@ MultiSend_c::timeEvent()
     getCanInstance4Comm().setSendpause (0); /** @todo remove if there's no minimum between data-packets! */
   }
 
+  // ALWAYS calculate when we want to be triggered again!
+  uint16_t ui16_newTimePeriod = 5000; // default: no SendStream running, idle around with 10 secs.. (actually "unlimited" would be correct - we can sleep!
+
+  if (i32_nextRetriggerNeeded > -1) // "!= -1"
+  { // HARD-timing, we need to come to action then!
+    int32_t i32_delta = i32_nextRetriggerNeeded-System_c::getTime();
+    if (i32_delta < 0) i32_delta = 0;
+    ui16_newTimePeriod = i32_delta;
+  }
+  setTimePeriod (ui16_newTimePeriod);
+
   return true;
 };
+
+
+//! Function set ui16_earlierInterval and
+//! ui16_laterInterval that will be used by
+//! getTimeToNextTrigger(retriggerType_t)
+//! can be overloaded by Childclass for special condition
+void
+MultiSend_c::updateEarlierAndLatestInterval()
+{ /** @todo improve with a flag for HARD/SOFT timing, but it's okay for right now... */
+  if (getTimePeriod() <= 1250)
+  { // use HARD-Timing
+    ui16_earlierInterval = 0;
+    ui16_latestInterval  = getTimePeriod()/2; //50; // be polite and let other tasks do their job, we can wait a little bit
+    // ==> this is better than always interrupting important big tasks as WE can wait and slicing is NOT nice to handle for the big task.
+    if (ui16_latestInterval > 100) ui16_latestInterval = 100;
+  }
+  else
+  { // use SOFT-Timing (using jitter for earlier/after)
+    ui16_earlierInterval = ui16_latestInterval = ( (getTimePeriod() * 1) / 4);
+  }
+}
 
 
 
@@ -774,7 +804,7 @@ MultiSend_c::SendStream_c::processMsg()
 
         if ( refc_multiSendPkg.getUint8Data(1) == 0)
         { // send pause commanded from receiver
-          switchToState (SendPauseTillCts);
+          switchToState (SendPauseTillCts, 1050);
         }
         else
         { // really some packets requested
@@ -821,10 +851,10 @@ MultiSend_c::SendStream_c::processMsg()
           #if defined( DEBUG )
           INTERNAL_DEBUG_DEVICE << "Start To Send Next Data Block" << INTERNAL_DEBUG_DEVICE_ENDL;
           #endif
-          switchToState (SendData);
+          switchToState (SendData, 5); // we'll have to trigger that we want to
         } // end request to send
       } // awaited (or resent-) CTS received
-      // else: nothing to do on "SendRts
+      // else: nothing to do on "SendRts"
       break;
     case scui8_CM_EndofMsgACK:
     case scui8_eCM_EndofMsgACK:
@@ -835,19 +865,23 @@ MultiSend_c::SendStream_c::processMsg()
         #endif
         // Notify sender that it finished!
         *pen_sendSuccessNotify = SendSuccess; // will be kicked out after next timeEvent!
+        // so trigger timeEvent so it gets actually deleted - but needn't be too soon
+        retriggerIn (1500);
       }
+#if 0
+/// Disabled as long as getLibErrInstance().registerError() makes problems on the ESX
       else
-      { // not awaiting end of message ack, no action taken for this error-case in normal operation.
-        /// Comment out right now as getLibErrInstance() seems to need to much memory on the ESX
-        /// (at least when called here) so it's commented out completely for now!
-        //getLibErrInstance().registerError( LibErr_c::MultiSendWarn, LibErr_c::MultiSend );
+      {  // not awaiting end of message ack, no action taken for this error-case in normal operation.
+        getLibErrInstance().registerError( LibErr_c::MultiSendWarn, LibErr_c::MultiSend );
       }
+#endif
       break;
     case scui8_CM_ConnAbort:
       #if defined( DEBUG )
       INTERNAL_DEBUG_DEVICE << "MultiSend_c::processMsg --- ConnAbort received!" << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
       *pen_sendSuccessNotify = SendAborted; // will be kicked out after next timeEvent!
+      retriggerIn (1500);
       return false; // in case a MultiSend & MultiReceive are running parallel, then this ConnAbort should be for both!
     default:
       return false;
@@ -875,14 +909,40 @@ MultiSend_c::processMsg()
   SendStream_c* pc_sendStreamFound = getSendStream (data().getISONameForDA(), data().getISONameForSA()); // sa/da swapped, of course ;-) !
   if (pc_sendStreamFound)
   { // found a matching SendStream, so call its processMsg()
-    return pc_sendStreamFound->processMsg();
+    const bool cb_success = pc_sendStreamFound->processMsg();
+    calcAndSetNextTriggerTime();
+    return cb_success;
   }
   else
   { // no matching SendStream found
+    // keep next trigger time
     return false;
   }
 }
 
+void
+MultiSend_c::calcAndSetNextTriggerTime()
+{
+  int32_t i32_nextRetriggerNeeded = -1;
+  for (std::list<SendStream_c>::iterator pc_iter=list_sendStream.begin(); pc_iter != list_sendStream.end();)
+  {
+    /** @todo We could remove any finished send-streams here now
+              as we're iterating through now because of the next trigger time... */
+    const int32_t ci32_nextTriggerTime = pc_iter->getNextTriggerTime();
+
+    if ((i32_nextRetriggerNeeded == -1) || (ci32_nextTriggerTime < i32_nextRetriggerNeeded))
+    { // no trigger yet set or this SendStream needs to come earlier!
+      i32_nextRetriggerNeeded = ci32_nextTriggerTime;
+    }
+    pc_iter++;
+  }
+
+  if (i32_nextRetriggerNeeded == -1)
+  { // no SendStreams needs to come to action, so idle around
+    i32_nextRetriggerNeeded = System_c::getTime() + 5000;
+  }
+  getSchedulerInstance4Comm().changeRetriggerTimeAndResort (this, i32_nextRetriggerNeeded); // no need to change the period, as we don't use it - we always calculate the next trigger time!
+}
 
 
 /**
@@ -899,7 +959,7 @@ MultiSend_c::SendStream_c::abortSend()
   refc_multiSendPkg.setUint32Data(1, uint32_t(0xFFFFFFFFUL));
   refc_multiSendPkg.setUint8Data (5, static_cast<uint8_t>(ui32_pgn & 0xFF));
   refc_multiSendPkg.setUint16Data(6, static_cast<uint16_t>(ui32_pgn >> 8));
-  switchToState (AwaitCts); /// Attention!!! - Only setting "en_sendState" to anything other than "SendData" so CONNMANAGE PGN is used instead of DATATRANSFER.
+  switchToState (AwaitCts, 1000); /// Let the stream be removed in 100ms ... Attention!!! - Only setting "en_sendState" to anything other than "SendData" so CONNMANAGE PGN is used instead of DATATRANSFER.
   sendPacket();
   *pen_sendSuccessNotify = SendAborted;
 }
