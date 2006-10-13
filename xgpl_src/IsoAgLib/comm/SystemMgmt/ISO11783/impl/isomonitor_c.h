@@ -499,6 +499,12 @@ protected: // Protected methods
   */
   bool processMsg();
 
+  //! Function set ui16_earlierInterval and
+  //! ui16_laterInterval that will be used by
+  //! getTimeToNextTrigger(retriggerType_t)
+  //! can be overloaded by Childclass for special condition
+  virtual void updateEarlierAndLatestInterval();
+
 private:
   friend class IdentItem_c;
   /** register pointer to a new client

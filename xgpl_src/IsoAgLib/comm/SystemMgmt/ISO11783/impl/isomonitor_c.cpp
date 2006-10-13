@@ -252,35 +252,52 @@ CANPkgExt_c& ISOMonitor_c::dataBase()
 */
 bool ISOMonitor_c::timeEvent( void )
 {
-
   if ( getAvailableExecTime() == 0 ) return false;
 
   int32_t i32_checkPeriod = 3000;
-  for ( std::vector<__IsoAgLib::IdentItem_c*>::iterator pc_iter = c_arrClientC1.begin(); ( pc_iter != c_arrClientC1.end() ); pc_iter++ )
+  for ( STL_NAMESPACE::vector<__IsoAgLib::IdentItem_c*>::iterator pc_iter = c_arrClientC1.begin(); ( pc_iter != c_arrClientC1.end() ); pc_iter++ )
   { // call timeEvent for each registered client -> if timeEvent of item returns false
     // it had to return BEFORE its planned activities were performed (because of the registered end time)
-    if ( !(*pc_iter)->timeEvent() )return false;
-    switch( (*pc_iter)->itemState() & 0x7C  ){
+    if ( !(*pc_iter)->timeEvent() ) return false;
+    switch( (*pc_iter)->itemState() & 0x7C )
+    {
+    case IState_c::AddressClaim | IState_c::Active:
+      if (i32_checkPeriod > 150) i32_checkPeriod = 150;
+      break;
 
+    case IState_c::ClaimedAddress | IState_c::Active:
+      #ifdef USE_WORKING_SET
+      if (!(*pc_iter)->getIsoItem()->isClaimedAndWsAnnounced())
+      { // we need 100ms for WS-Announce Sequence!
+        if (i32_checkPeriod > 100) i32_checkPeriod = 100;
+        break;
+      }
+      #endif
+      if (i32_checkPeriod > 1000) i32_checkPeriod = 1000;
+      break;
 
-    case IState_c::PreAddressClaim :
-    case IState_c::AddressClaim :
-      if( i32_checkPeriod > 250) i32_checkPeriod = 250 ;
-
-    case IState_c::ClaimedAddress :
-       if( i32_checkPeriod > 1000) i32_checkPeriod = 1000 ;
-
-    //do not change period
-    case IState_c::Off :
-    case IState_c::Standby :
-    default :
-      //nothing to todo stay on 3000 ms timePeriod
+    // do not change period
+    case IState_c::PreAddressClaim | IState_c::Active: // shouldn't happen. after timeEvent we can not be any longer PreAddressClaim
+    case IState_c::Off:
+    case IState_c::Standby:
+    default:
+      // nothing to todo stay on 3000 ms timePeriod
       break;
     }
 
   }
-  //new TimePeriod is necessary change it
-  if(i32_checkPeriod != getTimePeriod() )   setTimePeriod(i32_checkPeriod);
+  // new TimePeriod is necessary - change it
+  if (i32_checkPeriod != getTimePeriod()) setTimePeriod(i32_checkPeriod);
+
+  /// We have now: (HT=HardTiming, ST=SoftTiming)
+  /// At least one IdentItem
+  /// - that has state AddressClaim: 150ms HT
+  /// - ClaimedAddress, WS claiming: 100ms HT
+  /// - ClaimedAddress, ws claimed: 1000ms ST
+  /// otherwise idling around with: 3000ms ST
+  /// @todo improve later to have the IdentItems give back fix timestamps. If you, use Hard-Timing and wait for exactly this timestamp
+  ///       if not so, use soft-timing and idle around...
+
 
   if ( getAvailableExecTime() == 0 ) return false;
 
@@ -1421,6 +1438,26 @@ ISOMonitor_c::getTaskName() const
 {   return "ISOMonitor_c";}
 
 
+//! Function set ui16_earlierInterval and
+//! ui16_laterInterval that will be used by
+//! getTimeToNextTrigger(retriggerType_t)
+//! can be overloaded by Childclass for special condition
+void
+ISOMonitor_c::updateEarlierAndLatestInterval()
+{
+  if (getTimePeriod() <= 250)
+  { // use HARD-Timing
+    ui16_earlierInterval = 0;
+    ui16_latestInterval  = (getTimePeriod() / 2);
+  }
+  else
+  { // use SOFT-Timing (using jitter for earlier/after
+    ui16_earlierInterval = ( (getTimePeriod() * 3) / 4);
+    ui16_latestInterval  =   (getTimePeriod() / 2);
+  }
+}
+
+
 #ifdef USE_WORKING_SET
 uint8_t ISOMonitor_c::getSlaveCount (ISOItem_c* rpc_masterItem)
 {
@@ -1471,5 +1508,6 @@ ISOMonitor_c::notifyOnWsMasterLoss (ISOItem_c& rrefc_masterItem)
   }
 }
 #endif
+
 
 } // end of namespace __IsoAgLib

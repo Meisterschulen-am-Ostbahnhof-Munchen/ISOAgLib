@@ -198,12 +198,15 @@ public: // methods
     #endif
     int ri_singletonVecKey = 0);
 
+
+#ifdef USE_WORKING_SET
   /** set this Ident as Working Set Master, create all ISOItem_c slave items
       and set them to prepare address claim with master set to the responding master ISOItem_c
       @param rb_slaveCount how many slaves does the master have?
       @param rpc_listSlaves the ISONames or whatever of all the slaves
     */
   void setToMaster (int8_t ri8_slaveCount=-1, const ISOName_c* rpc_slaveIsoNameList=NULL);
+#endif
 
   /** deliver pointer to ISOItem_c in ISOMonitor_c
       @return NULL -> either no ISO item or not yet registered in ISOMonitor_c

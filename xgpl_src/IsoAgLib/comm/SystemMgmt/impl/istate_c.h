@@ -104,9 +104,6 @@ public:
   /** enum type for state of a monitor list item */
   enum itemState_t {
          IstateNull = 0x0,
-         // states for ISO Members
-//         Din = 0x1, -> this flag is disused because we just only use ISO 11783 Standard
-//         Iso = 0x2, -> this flag also, because we have no choice anymore - we're Iso anyway
          // only one states of following Line possible
          Off = 0x4, Standby = 0xC, Active = 0x8,
          // only one states of following Line possible

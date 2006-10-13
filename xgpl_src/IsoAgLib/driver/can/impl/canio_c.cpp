@@ -640,7 +640,7 @@ FilterBox_c* CANIO_c::insertFilter(__IsoAgLib::CANCustomer_c& rref_customer,
   FilterBox_c* tempFilterBox_c = getFilterBox(c_newMask, c_newFilter);
 
   if (tempFilterBox_c != NULL)
-  { //cancustomer does not exits -> insert
+  { //cancustomer does not exist -> insert
     #ifdef DEBUG
     INTERNAL_DEBUG_DEVICE << "filterbox mask/filter already exist -> insert cancustomer" << INTERNAL_DEBUG_DEVICE_ENDL;
     #ifdef SYSTEM_PC

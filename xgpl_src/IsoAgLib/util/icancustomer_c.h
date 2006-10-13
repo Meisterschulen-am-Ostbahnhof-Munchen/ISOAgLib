@@ -86,6 +86,7 @@ private:
   virtual __IsoAgLib::CANPkgExt_c& dataBase() { return static_cast<__IsoAgLib::CANPkgExt_c&>(iDataBase()); }
 
   friend class iCANIO_c;
+  friend class iISOFilter_s;
 };
 
 } // namespace

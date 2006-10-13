@@ -86,10 +86,8 @@
 #include "canio_c.h"
 #include <IsoAgLib/util/impl/cancustomer_c.h>
 
-/* ************************************** */
-/* import some namespaces for easy access */
-/* ************************************** */
-using namespace __IsoAgLib;
+
+namespace __IsoAgLib {
 
 /**
   default constructor without parameter values for creating an instance
@@ -121,7 +119,6 @@ FilterBox_c::FilterBox_c()
   @param ren_E         select if FilterBox_c is used for standard 11bit or extended 29bit ident
   @param rpc_filterBox optional parameter for getting to filterboxes connected together into the same MsgObj!
   @exception badAlloc
-*/
 FilterBox_c::FilterBox_c(CANCustomer_c* rrpc_customer,
                          MASK_TYPE rt_mask, MASK_TYPE rt_filter,
                          Ident_c::identType_t ren_identType, FilterBox_c* rpc_filterBox)
@@ -136,6 +133,7 @@ FilterBox_c::FilterBox_c(CANCustomer_c* rrpc_customer,
     , b_performIsobusResolve(rpc_filterBox->b_performIsobusResolve)
   #endif
 {}
+*/
 
 /**
   copy constructor which uses data of another FilterBox_c instance
@@ -511,3 +509,5 @@ void FilterBox_c::doDebug(uint8_t rui8_busNumber)
   }
 }
 #endif
+
+} // End namespace __IsoAgLib

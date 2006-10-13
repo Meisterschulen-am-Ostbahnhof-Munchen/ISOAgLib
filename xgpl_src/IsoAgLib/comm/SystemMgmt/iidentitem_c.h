@@ -210,7 +210,7 @@ public:
     retreive the actual ISOName value of this ident item
     @return ISOName code of this ident item instance
   */
-  const iISOName_c& isoName() const {return static_cast<const iISOName_c&>(IdentItem_c::isoName());}
+  const iISOName_c& isoName() const {return IdentItem_c::isoName(); }
 
 private:
   friend class iISOTerminal_c;

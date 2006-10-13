@@ -136,10 +136,10 @@ public:
     @param ren_identType select if FilterBox_c is used for standard 11bit or extended 29bit ident
     @param rpc_filterBox optional parameter for getting to filterboxes connected together into the same MsgObj!
      @exception badAlloc
-  */
   FilterBox_c(CANCustomer_c* rpc_customer,
               MASK_TYPE rt_mask, MASK_TYPE rt_filter,
               Ident_c::identType_t ren_identType = Ident_c::StandardIdent, FilterBox_c* rpc_filterBox = NULL);
+  */
 
   /** copy constructor which uses data of another FilterBox_c instance
     @param rrefc_src reference to the source FilterBox_c instance for copying

@@ -159,9 +159,9 @@ class CANIO_c : public SingletonCANIO_c {
     #else
     typedef STL_NAMESPACE::slist<FilterBox_c> ArrFilterBox;
     #endif
-   #else
+  #else
    typedef STL_NAMESPACE::vector<FilterBox_c> ArrFilterBox;
- #endif //SYSTEM_WITH_ENHANCED_CAN_HAL
+  #endif //SYSTEM_WITH_ENHANCED_CAN_HAL
 
  public:
 

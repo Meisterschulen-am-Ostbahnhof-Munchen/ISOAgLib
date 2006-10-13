@@ -578,6 +578,11 @@ int main()
                                     0);   // 0 means: We're WS-Master and have 0 WS-Slaves
                                     // further parameters use the default: NULL /* so no list given either */, 0 /* singletonVecKey */
 
+  // the following line can be used to retrieve the reference to the used ISOName.
+  // Attention: while not announced, some instance fields can change!
+  // That's why you get a reference to the ISOName!
+  /// IsoAgLib::iISOName_c const &myISOName = c_myIdent.isoName();
+
   // Call to init iIsoTerminal instance and initialize object pool!
   spc_tut30csc = getIisoTerminalInstance().registerIsoObjectPool (c_myIdent, Tutorial_3_0_Pool_c, "T30v1"); // PoolName: Tutorial 3.0 Version 1
   // only use 5 chars as the pool supports Multi-Language (the last 2 chars are used for the language-code then!
@@ -620,15 +625,16 @@ int main()
   { // run main loop
     // IMPORTANT: call main timeEvent function for
     // all time controlled actions of IsoAgLib
-    IsoAgLib::getISchedulerInstance().timeEvent();
+    const int16_t ci16_sleep = IsoAgLib::getISchedulerInstance().timeEvent();
 
     // The following sleep mechanism will be changed with the new scheduler reporting back the idle-time
     // no need to sleep on single-task systems
     #ifdef SYSTEM_PC
+      if (ci16_sleep <= 0) continue;
       #ifdef WIN32
-        Sleep(10);
+        Sleep(ci16_sleep);
       #else
-        IsoAgLib::iCANIO_c::waitUntilCanReceiveOrTimeout( 50 );
+        IsoAgLib::iCANIO_c::waitUntilCanReceiveOrTimeout(ci16_sleep);
       #endif
     #endif
   }

@@ -217,11 +217,9 @@ private:
   friend iISOMonitor_c& getIisoMonitorInstance( void );
   #endif
 
-  /** HIDDEN constructor for a iISOMonitor_c object instance which can optional
-    set the configuration for send/receive for base msg type 1,2
-    and calendar
+  /** HIDDEN constructor for a iISOMonitor_c object instance
     NEVER instantiate a variable of type iISOMonitor_c within application
-    only access iISOMonitor_c via getBaseInstance() or getBaseInstance( int riLbsBusNr ) in case more than one ISO11783 BUS is used for IsoAgLib
+    only access iISOMonitor_c via getIisoInstance() or getIisoInstance( int riLbsBusNr ) in case more than one ISO11783 BUS is used for IsoAgLib
     */
   iISOMonitor_c() : ISOMonitor_c() {}
 };

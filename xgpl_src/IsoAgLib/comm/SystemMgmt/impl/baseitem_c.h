@@ -161,12 +161,6 @@ public:
   int32_t lastTime() const {return i32_lastTime;}
 
   /**
-    deliver actual timestamp
-    @return actual val of i32_lastTime
-  */
-  int32_t actualTimestamp() const {return i32_lastTime;}
-
-  /**
     updates i32_lastTime to ri32_time or actual
     system time if no time is given
     @param ri32_time optional time to store as last update time (default retreive actual time from central SystemMgmt_c instance)

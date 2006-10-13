@@ -140,7 +140,7 @@ ISOItem_c::ISOItem_c(const ISOItem_c& rrefc_src)
   }
   #endif
 
-  updateTime (actualTimestamp());
+  updateTime (/*get current time due to default parameter*/);
   if (itemState(IState_c::Local))
   {
     setItemState(IState_c::PreAddressClaim);
@@ -163,7 +163,7 @@ ISOItem_c& ISOItem_c::operator=(const ISOItem_c& rrefc_src)
   // no need of setting "i8_slavesToClaimAddress" here as it will be set when setting state to ClaimedAddress
   /** @todo What to do with the pc_masterItem? */
   #endif
-  updateTime (actualTimestamp());
+  updateTime (/*get current time due to default parameter*/);
   // mark this item as prepare address claim if local
   if (itemState(IState_c::Local))
   {
