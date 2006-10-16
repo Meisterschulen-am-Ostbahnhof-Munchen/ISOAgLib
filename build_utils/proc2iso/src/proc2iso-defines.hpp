@@ -75,33 +75,30 @@
 #define attrTrigger_methods (11)
 #define attrDevice_value_presentation_name (12)
 #define attrProperty_value (13)
-#define attrLis (14)
-#define attrWert_inst (15)
-#define attrZaehl_num (16)
-#define attrOffset (17)
-#define attrScale (18)
-#define attrNumber_of_decimals (19)
-#define attrUnitdesignator (20)
-#define attrSelf_conf (21)
-#define attrIndustry_group (22)
-#define attrFunction (23)
-#define attrWanted_SA (24)
-#define attrFunc_Inst (25)
-#define attrECU_Inst (26)
-#define attrStore_SA_at_EEPROM_address (27)
-#define attrManufacturer_code (28)
-#define attrDevice_class (29)
-#define attrDevice_class_instance (30)
-#define attrWS_identity_number (31)
-#define attrFeature_set (32)
-#define attrPriority (33)
-#define attrDevProgVarName (34)
-#define attrProcProgVarName (35)
-#define attrCumulative_value (36)
-#define attrCommand_type (37)
-#define attrSetpoint (38)
+#define attrOffset (14)
+#define attrScale (15)
+#define attrNumber_of_decimals (16)
+#define attrUnitdesignator (17)
+#define attrSelf_conf (18)
+#define attrIndustry_group (19)
+#define attrFunction (20)
+#define attrWanted_SA (21)
+#define attrFunc_Inst (22)
+#define attrECU_Inst (23)
+#define attrStore_SA_at_EEPROM_address (24)
+#define attrManufacturer_code (25)
+#define attrDevice_class (26)
+#define attrDevice_class_instance (27)
+#define attrWS_identity_number (28)
+#define attrFeature_set (29)
+#define attrPriority (30)
+#define attrDevProgVarName (31)
+#define attrProcProgVarName (32)
+#define attrCumulative_value (33)
+#define attrCommand_type (34)
+#define attrSetpoint (35)
 
-#define maxAttributeNames (39)
+#define maxAttributeNames (36)
 
 
 #define maxObjectTypesToCompare (maxObjectTypes)
@@ -148,9 +145,6 @@ char attrNameTable [maxAttributeNames] [stringLength+1] = {
       "trigger_methods",
       "device_value_presentation_name",
       "property_value",
-      "lis",
-      "wert_inst",
-      "zaehl_num",
       "offset",
       "scale",
       "number_of_decimals",
@@ -181,7 +175,6 @@ char tableIDTable [maxTableID] [stringLength+1] = {
     "DET",
     "DPD",
     "DPT",
-    "DDP",
     "DPC",
     "DVP"
 };

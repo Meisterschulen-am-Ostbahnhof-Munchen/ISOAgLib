@@ -441,21 +441,6 @@ void defaultAttributes ()
     vecstr_attrString [attrDevice_value_presentation_name] = "65535";
     attrIsGiven [attrDevice_value_presentation_name] = true;
   }
-  if (!attrIsGiven [attrLis])
-  {
-    vecstr_attrString [attrLis] = "0";
-    attrIsGiven [attrLis] = true;
-  }
-  if (!attrIsGiven [attrWert_inst])
-  {
-    vecstr_attrString [attrWert_inst] = "0xFF";
-    attrIsGiven [attrWert_inst] = true;
-  }
-  if (!attrIsGiven [attrZaehl_num])
-  {
-    vecstr_attrString [attrZaehl_num] = "0xFF";
-    attrIsGiven [attrZaehl_num] = true;
-  }
   if (!attrIsGiven [attrCumulative_value])
   {
     vecstr_attrString [attrCumulative_value] = "false";
@@ -717,9 +702,9 @@ void getAttributesFromNode(DOMNode *node, unsigned int objType)
 //
 // ---------------------------------------------------------------------------
 #ifdef WIN32
-void processElement (DOMNode *node, uint64_t ombType, const char* rc_workDir, signed int parentObjType = -1)
+void processElement (DOMNode *node, uint64_t ombType, const char* rc_workDir, signed int parentObjType = -1, std::vector<uint16_t>* pvec_ID = NULL, std::stringstream* p_buffer = NULL)
 #else
-static void processElement (DOMNode *node, uint64_t ombType, const char* rc_workDir, signed int parentObjType = -1)
+static void processElement (DOMNode *node, uint64_t ombType, const char* rc_workDir, signed int parentObjType = -1, std::vector<uint16_t>* pvec_ID = NULL, std::stringstream* p_buffer = NULL)
 #endif
 {
   DOMNode *child;
@@ -1039,32 +1024,58 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
 
           fprintf(partFileA, "%s", buffer.str().c_str());
           buffer.str("");
-          fprintf(partFileB, "IsoAgLib::iDevKey_c %sDevKey(0x%x, 0x%x);\n\n",
-                   vecstr_attrString[attrDevProgVarName].c_str(), c_isoname.devClass(), c_isoname.devClassInst());
-          fprintf(partFileB, "IsoAgLib::iIdentItem_c c_myIdent(&%sDevKey, %s, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x\n #ifdef USE_ISO_TERMINAL \n , 0, NULL\n #endif\n);\n\n",
-                   vecstr_attrString[attrDevProgVarName].c_str(), c_isoname.selfConf()? "true" : "false",
-                   c_isoname.indGroup(), c_isoname.func(), c_isoname.manufCode(), c_isoname.serNo(),
-                   atoi(vecstr_attrString[attrWanted_SA].c_str()), stringtonumber(vecstr_attrString[attrStore_SA_at_EEPROM_address].c_str(), 0, -1),
-                   c_isoname.funcInst(),c_isoname.ecuInst());
+//           fprintf(partFileB, "IsoAgLib::iISOName_c %sISOName(0x%x, 0x%x);\n\n",
+//                    vecstr_attrString[attrDevProgVarName].c_str(), c_isoname.devClass(), c_isoname.devClassInst());
+//           fprintf(partFileB, "IsoAgLib::iIdentItem_c c_myIdent(%s, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x\n #ifdef USE_ISO_TERMINAL \n , 0, NULL\n #endif\n);\n\n",
+//                   c_isoname.selfConf()? "true" : "false",
+//                   c_isoname.indGroup(), c_isoname.func(), c_isoname.manufCode(), c_isoname.serNo(),
+//                   atoi(vecstr_attrString[attrWanted_SA].c_str()), stringtonumber(vecstr_attrString[attrStore_SA_at_EEPROM_address].c_str(), 0, -1),
+//                   c_isoname.funcInst(),c_isoname.ecuInst());
+          fprintf(partFileB, "IsoAgLib::iIdentItem_c c_myIdent(0x%x, 0x%x, %d, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, %d,%d,%s);\n\n",
+                  c_isoname.indGroup(), c_isoname.devClass(), c_isoname.devClassInst(), c_isoname.func(),
+                  c_isoname.manufCode(), c_isoname.serNo(), atoi(vecstr_attrString[attrWanted_SA].c_str()), stringtonumber(vecstr_attrString[attrStore_SA_at_EEPROM_address].c_str(), 0, -1),
+                  c_isoname.funcInst(), c_isoname.ecuInst(),c_isoname.selfConf()? "true" : "false");
           vecstr_constructor[0] = vecstr_attrString[attrDevProgVarName].c_str();
           vecstr_constructor[1] = vecstr_attrString[attrPriority].c_str();
         }
         break;
+
       case otDeviceElement:
+      {
+        std::vector<uint16_t> vec_EltchildID;
+        std::stringstream childBuffer;
+
         if (!attrIsGiven[attrElement_type] || !attrIsGiven[attrParent_name])
         {
           clean_exit (-1, "YOU NEED TO SPECIFY THE element_type= AND parent_name= ATTRIBUTES FOR THE <deviceelement> OBJECT! STOPPING PARSER! bye.\n\n");
         }
 
         vecstr_dataForCombination.clear();
+
         //save element_number for later use in deviceprocessdatacombination
         vecstr_dataForCombination.push_back(vecstr_attrString[attrElement_number].c_str());
+        //save Device Element ID which is overwritten during reccurssive call
+        unsigned int localID = objID;
+
+        // First Process all DPD child reccursively
+        uint64_t omcType = omcTypeTable [objType];
+
+        for (child = node->getFirstChild(); child != 0; child=child->getNextSibling())
+        {
+          if (child->getNodeType() == DOMNode::ELEMENT_NODE)
+            processElement (child, omcType, rc_workDir, objType,&vec_EltchildID,&childBuffer);
+        }
+
+        // retrive Device Element Attributes which were overwritten during reccurssive call
+        getAttributesFromNode(node, objType);
+
+        // Then Process Device Element
         //output: tableID & objID
         buffer  << ", \n'" << tableIDTable [objType][0] << "', "
                 << "'" << tableIDTable [objType][1]   << "', "
                 << "'" << tableIDTable [objType][2]   << "', "
-                << uint16_t(objID & 0xFF)             << ", "
-                << uint16_t((objID >> 8) & 0xFF)      << ", ";
+                << uint16_t(localID & 0xFF)             << ", "
+                << uint16_t((localID >> 8) & 0xFF)      << ", ";
         buf_length += 5;
 
         //elementtype
@@ -1091,11 +1102,11 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
         buf_length += 2;
 
         //number_of_objects_to_follow
-        buffer << uint16_t(objChildObjects & 0xFF) << ", "
-               << uint16_t((objChildObjects >> 8) & 0xFF);
+        buffer << uint16_t(vec_EltchildID.size() & 0xFF) << ", "
+               << uint16_t((vec_EltchildID.size() >> 8) & 0xFF);
         buf_length += 2;
 
-        for (it_childID = vecstr_childID.begin(); it_childID != vecstr_childID.end(); it_childID++)
+        for (it_childID = vec_EltchildID.begin(); it_childID != vec_EltchildID.end(); it_childID++)
         {
           buffer << ", " << uint16_t(*it_childID & 0xFF) << ", " << uint16_t((*it_childID >> 8) & 0xFF);
           buf_length += 2;
@@ -1104,9 +1115,15 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
         fprintf(partFileA, "%s", buffer.str().c_str());
         buffer.str("");
         vecstr_constructor[2] = vecstr_attrString[attrElement_number].c_str();
-        // save ID vector of device element childrens for later use in otDeviceProcessData
-        vecstr_childID_DET = vecstr_childID;
+
+        // write child buffer in file
+        fprintf(partFileA, "%s", childBuffer.str().c_str());
+        childBuffer.str("");
+
+        return;
+
         break;
+      }
       case otDeviceProcessData:
       {
         if (!attrIsGiven[attrDdi])
@@ -1159,6 +1176,7 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
         buffer << (idOrName_toi(vecstr_attrString[attrDevice_value_presentation_name].c_str(), otDeviceValuePresentation) & 0xFF) << ", "
                << ((idOrName_toi(vecstr_attrString[attrDevice_value_presentation_name].c_str(), otDeviceValuePresentation) >> 8) & 0xFF);
         buf_length_dpd += 2;
+
         vecstr_dataFromDPD[2] = vecstr_attrString[attrDevice_value_presentation_name].c_str();
         vecstr_dataFromDPD[3] = vecstr_attrString[attrDesignator];
 
@@ -1175,10 +1193,10 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
 
           uint16_t ui16_newObjChildID = 0;
           // get next ID from vec saved during processing otDeviceElement
-          if (vecstr_childID_DET.size())
+          if (vecstr_childID.size())
           {
-            ui16_newObjChildID = vecstr_childID_DET.front();
-            vecstr_childID_DET.erase(vecstr_childID_DET.begin());
+            ui16_newObjChildID = vecstr_childID.front();
+            vecstr_childID.erase(vecstr_childID.begin());
           }
 
           if (objectIsType(XMLString::transcode(child->getNodeName())) == otDeviceProcessDataCombination)
@@ -1235,7 +1253,13 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
             buffer << (idOrName_toi(vecstr_dataFromDPD[2].c_str(), otDeviceValuePresentation) & 0xFF) << ", "
                    << ((idOrName_toi(vecstr_dataFromDPD[2].c_str(), otDeviceValuePresentation) >> 8) & 0xFF);
             buf_length += 2;
-            fprintf(partFileA, "%s", buffer.str().c_str());
+
+            // add ID in vector
+            if (pvec_ID)
+              pvec_ID->push_back(ui16_newObjChildID);
+            // add DPD created to input buffer
+            if (p_buffer)
+              *p_buffer << buffer.str().c_str();
             buffer.str("");
 
             // save values for later output into header file
@@ -1272,9 +1296,8 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
 
         b_dpdCombination = FALSE;
 
-        fprintf(partFileB, "%sDevKey, 0x%x, %sDevKey, &%sDevKey, %s",
-                vecstr_constructor[0].c_str(), atoi(vecstr_constructor[1].c_str()), vecstr_constructor[0].c_str(),
-                vecstr_constructor[0].c_str(), vecstr_constructor[4].c_str());
+        fprintf(partFileB, "c_myIdent.isoName(), c_myIdent.isoName(), &c_myIdent.isoName(), %s",
+                vecstr_constructor[4].c_str());
         fprintf(partFileB, "\n#ifdef USE_EEPROM_IO\n");
         fprintf(partFileB, ", 0x%x", stringtonumber(vecstr_attrString[attrStore_SA_at_EEPROM_address].c_str(), 0, -1));
         fprintf(partFileB, "\n#endif\n");
@@ -1286,11 +1309,14 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
         // no DeviceProcessDataCombination found => write now
         if (strcmp(buffer.str().c_str(), "") != 0)
         {
-          fprintf(partFileA, "%s", buffer.str().c_str());
+          if (p_buffer)
+            *p_buffer << buffer.str().c_str();
+          if (pvec_ID)
+            pvec_ID->push_back(objID);
           buffer.str("");
         }
-
         break;
+
       }
       case otDeviceProperty:
         if (!attrIsGiven[attrDdi] || !attrIsGiven[attrProperty_value])
@@ -1328,11 +1354,18 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
         buf_length += vecstr_attrString[attrDesignator].size();
 
         //device_value_presentation_object_id
-        buffer << (idOrName_toi(vecstr_attrString[attrDevice_value_presentation_name].c_str(), parentObjType) & 0xFF) << ", "
-               << ((idOrName_toi(vecstr_attrString[attrDevice_value_presentation_name].c_str(), parentObjType) >> 8) & 0xFF);
+        buffer << (idOrName_toi(vecstr_attrString[attrDevice_value_presentation_name].c_str(), otDeviceValuePresentation) & 0xFF) << ", "
+            << ((idOrName_toi(vecstr_attrString[attrDevice_value_presentation_name].c_str(), otDeviceValuePresentation) >> 8) & 0xFF);
+
         buf_length += 2;
 
-        fprintf(partFileA, "%s", buffer.str().c_str());
+        // save ID in vector
+        if (pvec_ID)
+          pvec_ID->push_back(objID);
+
+        // add buffer to input buffer
+        if (p_buffer)
+          *p_buffer << buffer.str().c_str();
         buffer.str("");
         break;
 
@@ -1375,16 +1408,13 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
         buf_length++;
 
         //length of unitdesignator
-        buffer << vecstr_attrString[attrUnitdesignator].size() << ", ";
+        buffer << vecstr_attrString[attrUnitdesignator].size();
         buf_length++;
 
         //unit_designator
         for (i = 0;i<vecstr_attrString[attrUnitdesignator].size();i++)
         {
-          if (!((i+1) < (uint8_t)vecstr_attrString[attrUnitdesignator].size()))
-            buffer << "'" << vecstr_attrString[attrUnitdesignator][i] << "'";
-          else
-            buffer << "'" << vecstr_attrString[attrUnitdesignator][i] << "', ";
+            buffer << " ,'" << vecstr_attrString[attrUnitdesignator][i] << "'";
         }
         buf_length += vecstr_attrString[attrUnitdesignator].size();
 
