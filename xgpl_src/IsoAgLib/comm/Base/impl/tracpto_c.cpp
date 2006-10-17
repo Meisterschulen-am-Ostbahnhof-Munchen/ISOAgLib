@@ -184,11 +184,11 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
       setFilterCreated();
       // create FilterBox_c for PGN FRONT_PTO_STATE_PGN, PF 254 - mask for DP, PF and PS
       // mask: (0x1FFFF << 8) filter: (TIME_DATE_PGN << 8)
-      c_can.insertFilter(*this, (static_cast<MASK_TYPE>(0x1FFFF) << 8),
+      c_can.insertFilter(*this, 0x1FFFF00UL,
                         (static_cast<MASK_TYPE>(FRONT_PTO_STATE_PGN) << 8), false, Ident_c::ExtendedIdent);
       // create FilterBox_c for PGN REAR_PTO_STATE_PGN, PF 254 - mask for DP, PF and PS
       // mask: (0x1FFFF << 8) filter: (TIME_DATE_PGN << 8)
-      c_can.insertFilter(*this, (static_cast<MASK_TYPE>(0x1FFFF) << 8),
+      c_can.insertFilter(*this, 0x1FFFF00UL,
                         (static_cast<MASK_TYPE>(REAR_PTO_STATE_PGN) << 8), true, Ident_c::ExtendedIdent);
     }
   }

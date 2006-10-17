@@ -116,7 +116,7 @@ ISORequestPGN_c::init (void)
     // clear state of b_alreadyClosed, so that close() is called one time AND no more init()s are performed!
     clearAlreadyClosed();
 
-    if (getCanInstance4Comm().insertFilter( *this, MASK_TYPE(static_cast<MASK_TYPE>(0x1FF00) << 8), MASK_TYPE(static_cast<MASK_TYPE>(REQUEST_PGN_MSG_PGN) << 8), true, Ident_c::ExtendedIdent));
+    getCanInstance4Comm().insertFilter( *this, 0x1FFFF00UL, MASK_TYPE(static_cast<MASK_TYPE>(REQUEST_PGN_MSG_PGN | 0xFF) << 8), true, Ident_c::ExtendedIdent);
   }
 }
 
@@ -128,8 +128,7 @@ ISORequestPGN_c::close (void)
   if (!checkAlreadyClosed ())
   {
     setAlreadyClosed();
-
-    getCanInstance4Comm().deleteFilter( *this, MASK_TYPE(static_cast<MASK_TYPE>(0x1FF00) << 8), MASK_TYPE(static_cast<MASK_TYPE>(REQUEST_PGN_MSG_PGN) << 8), Ident_c::ExtendedIdent);
+    getCanInstance4Comm().deleteFilter( *this, 0x1FFFF00UL, MASK_TYPE(static_cast<MASK_TYPE>(REQUEST_PGN_MSG_PGN | 0xFF) << 8), Ident_c::ExtendedIdent);
   }
 };
 

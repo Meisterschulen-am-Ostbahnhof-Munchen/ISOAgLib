@@ -128,7 +128,7 @@ public:
   /** default destructor which has nothing to do */
   virtual ~ISORequestPGN_c ();
 
-  bool timeEvent (void) { return true; };
+  bool timeEvent (void) { return true; }
 
   /** deliver reference to data pkg
       @return reference to the CAN communication member object c_data (CANPkgExt_c)

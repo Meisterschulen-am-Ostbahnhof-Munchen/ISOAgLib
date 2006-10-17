@@ -121,7 +121,7 @@ public:
   /** assign constructor for ISOName
     @param rrefc_src source ISOName_c object
   */
-  const iISOName_c& operator=(const iISOName_c& rrefc_src) { return static_cast<const iISOName_c&>(ISOName_c::operator=( rrefc_src ));}
+  const iISOName_c& operator=(const iISOName_c& rrefc_src) { return ISOName_c::operator=( rrefc_src ).toConstIisoName_c();}
 
   /** set data string with all flags with one call
     @param rb_selfConf true -> indicate sefl configuring ECU

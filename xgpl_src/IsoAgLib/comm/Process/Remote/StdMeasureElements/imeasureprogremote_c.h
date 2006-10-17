@@ -297,7 +297,7 @@ public:
     return the c_isoName code for this measureProg
     @return ISOName of this measureProg
   */
-  const iISOName_c& isoName(){return static_cast<const iISOName_c&>(MeasureProgRemote_c::isoName());};
+  const iISOName_c& isoName(){return MeasureProgRemote_c::isoName().toConstIisoName_c();};
   /**
     deliver the type of the active increment types
     @return actual Bit-OR combined increment types

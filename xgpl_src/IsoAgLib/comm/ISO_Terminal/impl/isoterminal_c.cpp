@@ -161,7 +161,8 @@ ISOTerminal_c::init()
     b_atLeastOneFilterAdded |= (getCanInstance4Comm().insertFilter (*this, (0x1FFFF00UL), (static_cast<MASK_TYPE>(VT_TO_GLOBAL_PGN) << 8),    false, Ident_c::ExtendedIdent) != NULL);
     b_atLeastOneFilterAdded |= (getCanInstance4Comm().insertFilter (*this, (0x1FFFF00UL), (static_cast<MASK_TYPE>(LANGUAGE_PGN) << 8),        false, Ident_c::ExtendedIdent) != NULL);
 #if !defined(IGNORE_VTSERVER_NACK)  // The NACK must be ignored for the Mueller VT Server
-    b_atLeastOneFilterAdded |= (getCanInstance4Comm().insertFilter (*this, (0x1FF0000UL), (static_cast<MASK_TYPE>(ACKNOWLEDGEMENT_PGN) << 8), false, Ident_c::ExtendedIdent) != NULL);
+    // register here only for any ACKNOWLEDGEMENT_PGN which is sent to GLOBAL
+    b_atLeastOneFilterAdded |= (getCanInstance4Comm().insertFilter (*this, (0x1FFFF00UL), ((static_cast<MASK_TYPE>(ACKNOWLEDGEMENT_PGN | 0xFF) << 8)), false, Ident_c::ExtendedIdent) != NULL);
 #endif
     if (b_atLeastOneFilterAdded) getCanInstance4Comm().reconfigureMsgObj();
 
@@ -189,7 +190,7 @@ ISOTerminal_c::close()
     getCanInstance4Comm().deleteFilter(*this, (0x1FFFF00UL), (static_cast<MASK_TYPE>(VT_TO_GLOBAL_PGN) << 8),    Ident_c::ExtendedIdent);
     getCanInstance4Comm().deleteFilter(*this, (0x1FFFF00UL), (static_cast<MASK_TYPE>(LANGUAGE_PGN) << 8),        Ident_c::ExtendedIdent);
 #if !defined(IGNORE_VTSERVER_NACK)  // The NACK must be ignored for the Mueller VT Server
-    getCanInstance4Comm().deleteFilter(*this, (0x1FF0000UL), (static_cast<MASK_TYPE>(ACKNOWLEDGEMENT_PGN) << 8), Ident_c::ExtendedIdent);
+    getCanInstance4Comm().deleteFilter(*this, (0x1FFFF00UL), (static_cast<MASK_TYPE>(ACKNOWLEDGEMENT_PGN | 0xFF) << 8), Ident_c::ExtendedIdent);
 #endif
 
     for (uint8_t ui8_index = 0; ui8_index < vec_vtClientServerComm.size(); ui8_index++)
@@ -402,7 +403,7 @@ ISOTerminal_c::sendCommandForDEBUG(IsoAgLib::iIdentItem_c& refc_wsMasterIdentIte
 
 void
 ISOTerminal_c::reactOnMonitorListAdd (const ISOName_c& refc_isoName, const ISOItem_c* rpc_newItem)
-{
+{ 
   // we only care for the VTs
   if (refc_isoName.getEcuType() != ISOName_c::ecuTypeVirtualTerminal) return;
 
@@ -433,8 +434,14 @@ ISOTerminal_c::reactOnMonitorListAdd (const ISOName_c& refc_isoName, const ISOIt
 
 
 void
-ISOTerminal_c::reactOnMonitorListRemove (const ISOName_c& refc_isoName, uint8_t /*rui8_oldSa*/)
+ISOTerminal_c::reactOnMonitorListRemove (const ISOName_c& refc_isoName, uint8_t rui8_oldSa)
 {
+  #if !defined(IGNORE_VTSERVER_NACK)  // The NACK must be ignored for the Mueller VT Server
+  // deregister here only for any ACKNOWLEDGEMENT_PGN which are sent to the lost SA
+  // (when the lost node was not local - then simply nothing is found for deletion
+  getCanInstance4Comm().deleteFilter(*this, (0x1FFFF00UL), (static_cast<MASK_TYPE>(ACKNOWLEDGEMENT_PGN | rui8_oldSa) << 8), Ident_c::ExtendedIdent);
+  #endif
+
   // we only care for the VTs
   if (refc_isoName.getEcuType() != ISOName_c::ecuTypeVirtualTerminal) return;
 

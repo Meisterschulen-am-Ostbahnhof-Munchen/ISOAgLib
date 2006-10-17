@@ -296,7 +296,7 @@ public:
 
   /** set the isoName for resolved SA
     */
-  const iISOName_c& getISONameForSA() { return static_cast<const iISOName_c&>(CANPkgExt_c::getISONameForSA()); }
+  const iISOName_c& getISONameForSA() { return CANPkgExt_c::getISONameForSA().toConstIisoName_c(); }
 
   /** set the monitoritem for resolved SA
     */
@@ -304,7 +304,7 @@ public:
 
   /** set the isoName for resolved SA
     */
-  const iISOName_c& getISONameForDA() { return static_cast<const iISOName_c&>(getISONameForDA()); }
+  const iISOName_c& getISONameForDA() { return getISONameForDA().toConstIisoName_c(); }
 
 private:
   friend class iCANIO_c;

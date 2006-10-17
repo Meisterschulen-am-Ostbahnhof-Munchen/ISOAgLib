@@ -209,7 +209,7 @@ void SimpleManageMeasureProgRemote_c::processProg()
   }
   // call handler function if handler class is registered
   if ( processDataConst().getProcessDataChangeHandler() != NULL )
-    processDataConst().getProcessDataChangeHandler()->processMeasurementUpdate( pprocessData(), c_pkg.dataLong(), c_pkg.memberSend().isoName(), b_change );
+    processDataConst().getProcessDataChangeHandler()->processMeasurementUpdate( pprocessData(), c_pkg.dataLong(), c_pkg.memberSend().isoName().toConstIisoName_c(), b_change );
 }
 
 

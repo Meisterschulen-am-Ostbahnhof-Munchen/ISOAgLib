@@ -298,7 +298,7 @@ public:
     deliver the commanderISOName (ISOName of local member)
     @return ISOName used for sending commands to remote owner member
   */
-  const iISOName_c& commanderISOName()const{return static_cast<const iISOName_c&>(ProcDataRemoteSimpleMeasure_c::commanderISOName());};
+  const iISOName_c& commanderISOName()const{return ProcDataRemoteSimpleMeasure_c::commanderISOName().toConstIisoName_c();};
   /**
     set the pointer to the commander ident isoName
     @param rpbisoName pointer to ISOName var of local member used for

@@ -190,7 +190,7 @@ public:
   /** get the common filter part of all merged FilterBox instances
     @return common filter of all FilterBoxes in this MsgObj_c instance
   */
-  void commonFilterAfterMerge( Ident_c& rrefc_globalMask ) const;
+  void commonFilterAfterMerge( Ident_c& rrefc_globalMask );
 
   /** check if actual filter with specific filter type are equal to given combination
     @param rrefc_filter compared filter setting

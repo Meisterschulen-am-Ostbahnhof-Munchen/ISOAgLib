@@ -466,7 +466,7 @@ void SetpointRemote_c::processSet(){
       }
       // call processMeasurementUpdate handler function in case a measurement prog is running for this setpoint DDI
       if ( ( processDataConst().getProcessDataChangeHandler() != NULL ) )
-        processDataConst().getProcessDataChangeHandler()->processMeasurementUpdate( pprocessData(), i32_val, c_pkg.memberSend().isoName(), b_changeMeasurement);
+        processDataConst().getProcessDataChangeHandler()->processMeasurementUpdate( pprocessData(), i32_val, c_pkg.memberSend().isoName().toConstIisoName_c(), b_changeMeasurement);
 
       c_answeredMaster.setValMod( i32_val, c_pkg.c_generalCommand.getValueGroup());
       // set the isoName of the actual master
@@ -529,7 +529,7 @@ void SetpointRemote_c::processSet(){
   }
   // call handler function if handler class is registered
   if ( ( processDataConst().getProcessDataChangeHandler() != NULL ) && ( b_change ) )
-    processDataConst().getProcessDataChangeHandler()->processSetpointResponse( pprocessData(), setpointMasterVal(), c_pkg.memberSend().isoName() );
+    processDataConst().getProcessDataChangeHandler()->processSetpointResponse( pprocessData(), setpointMasterVal(), c_pkg.memberSend().isoName().toConstIisoName_c() );
 
 }
 

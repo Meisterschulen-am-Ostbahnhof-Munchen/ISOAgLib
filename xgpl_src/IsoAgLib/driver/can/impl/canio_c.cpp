@@ -811,6 +811,7 @@ FilterBox_c* CANIO_c::insertFilter(__IsoAgLib::CANCustomer_c& rref_customer,
   @param rt_identType ident type of the deleted ident: standard 11bit or extended 29bit
         (defualt DEFAULT_IDENT_TYPE defined in isoaglib_config.h)
   @return true -> FilterBox_c found and deleted
+  // @todo: additional boolean parameter for skipping reconfigureMsgObj
 */
 bool CANIO_c::deleteFilter(const __IsoAgLib::CANCustomer_c& rref_customer,
                            MASK_TYPE rt_mask, MASK_TYPE rt_filter,
@@ -1316,19 +1317,27 @@ void CANIO_c::CheckSetCntMsgObj()
   // => amount of bits in data type for ident
   int16_t i16_minDistance = sizeof(MASK_TYPE)*8,
       i16_tempDist;
-  uint8_t b_allowedSize = maxHALMsgObjNr() - (minHALMsgObjNr() + 1);
-  // check if result of b_allowedSize is correct
-  if ((b_allowedSize == 0) || (b_allowedSize > 14)) b_allowedSize = 12;
+  uint8_t ui8_allowedSize = maxHALMsgObjNr() - (minHALMsgObjNr() + 1);
+  // check if result of ui8_allowedSize is correct
+  if ((ui8_allowedSize == 0) || (ui8_allowedSize > 14)) ui8_allowedSize = 12;
 
   // if both ident types are sent, two send objects are configured -> reserve more space
-  if (en_identType == Ident_c::BothIdent) b_allowedSize--;
+  if (en_identType == Ident_c::BothIdent) ui8_allowedSize--;
+
+  // before any preparation of further merge work - check whether we have to merge anyway
+  if (arrMsgObj.size() <= ui8_allowedSize) return;
+
+  // NOW WE HAVE TO MERGE AT LEAST TWO MsgObj_c together
+
   ArrMsgObj::iterator pc_minLeft = arrMsgObj.begin(),
           pc_minRight = arrMsgObj.begin();
 
   // [min;max] allowed, but first one or two reserved for send
-  while (arrMsgObj.size() > b_allowedSize)
+  bool b_continueMerging = true;
+  while (b_continueMerging)
   { // more objects than allowed are in arrMsgObj, because intervall between
     // min+1 and max is smaller than size -> shrink array
+    if (arrMsgObj.size() <= ui8_allowedSize) b_continueMerging = false;
 
     // start a comparison(left_ind, right_ind) loop for all elements
     for (ArrMsgObj::iterator pc_leftInd = arrMsgObj.begin(); pc_leftInd != arrMsgObj.end(); pc_leftInd++)
@@ -1337,7 +1346,7 @@ void CANIO_c::CheckSetCntMsgObj()
       for (pc_rightInd++; pc_rightInd != arrMsgObj.end(); pc_rightInd++)
       {
         // retreive bit distance between instances left_ind and right_ind -> use Bit-XOR
-        i16_tempDist = pc_leftInd->filter().bit_diff(pc_rightInd->filter());
+        i16_tempDist = pc_leftInd->filter().bitDiffWithMask(pc_rightInd->filter(), c_maskExt.ident());
 
         // store new min only if capacity of left is enough for objects of right
         if ((i16_tempDist < i16_minDistance)
@@ -1351,23 +1360,36 @@ void CANIO_c::CheckSetCntMsgObj()
           pc_minLeft = pc_leftInd;
           pc_minRight = pc_rightInd;
           i16_minDistance = i16_tempDist;
-          if ( i16_tempDist == 0 ) break; // stop searching for "smaller" difference if 0 is found
+          if ( i16_tempDist == 0 ) 
+          {
+            b_continueMerging = true; // merge the compared MsgObj_c IN ANY CASE, as they are equal
+            break; // stop searching for "smaller" difference if 0 is found
+          }
         }
       }
     }
-    // now min_dist is minimal bit distance of most similar filters at i16_minLeft and
-    // i16_minRight -> merge them
-    // merge right filter into the left
-    pc_minLeft->merge(*pc_minRight);
-    arrMsgObj.erase(pc_minRight);
-    #ifdef DEBUG_HEAP_USEAGE
-    sui16_msgObjTotal--;
-    sui16_deconstructMsgObjCnt++;
-    #endif
-    // reset search arguments for posible next search
-    pc_minRight = pc_minLeft = arrMsgObj.begin();
-    i16_minDistance = sizeof(MASK_TYPE)*8;
+    if ( b_continueMerging )
+    { // we have to merge the found min bit difference because:
+      // a) amount of MsgObj_c still too large
+      // b) a pair of MsgObj_c with EQUAL (BitDiff of zero) has been found
+
+      // now min_dist is minimal bit distance of most similar filters at i16_minLeft and
+      // i16_minRight -> merge them
+      // merge right filter into the left
+      c_maskExt.set( c_maskExt.ident() & (~( pc_minLeft->filter().ident() ^ pc_minRight->filter().ident() ) ), Ident_c::ExtendedIdent );
+
+      pc_minLeft->merge(*pc_minRight);
+      arrMsgObj.erase(pc_minRight);
+      #ifdef DEBUG_HEAP_USEAGE
+      sui16_msgObjTotal--;
+      sui16_deconstructMsgObjCnt++;
+      #endif
+      // reset search arguments for posible next search
+      pc_minRight = pc_minLeft = arrMsgObj.begin();
+      i16_minDistance = sizeof(MASK_TYPE)*8;
+    }
   }
+
   // now the amount of arrMsgObj is allowed
   #ifdef DEBUG_HEAP_USEAGE
   INTERNAL_DEBUG_DEVICE

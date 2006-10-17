@@ -360,7 +360,7 @@ public:
     use everytime the _device_class_ from the ident part, and take the _instance_ from the owner
     @return ISOName
   */
-  const iISOName_c& isoName() const {return static_cast<const iISOName_c&>(ProcDataLocal_c::isoName());}
+  const iISOName_c& isoName() const {return ProcDataLocal_c::isoName().toConstIisoName_c();}
 
   /**
     deliver value _instance_ (important if more than one machine with equal _device_class_ are active)

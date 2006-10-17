@@ -177,6 +177,13 @@ public:
     @return amount of different bits
   */
   uint8_t bit_diff(const Ident_c& rrefc_ident) const;
+  /**
+    deliver amount of different bits from own ident to compared ident
+    @param rrefc_ident reference to compared ident
+    @param rt_mask
+    @return amount of different bits
+  */
+  uint8_t bitDiffWithMask(const Ident_c& rrefc_ident, MASK_TYPE rt_mask) const;
 
   /** deliver the ident type
     @return Ident_c::S for 11bit ident or Ident_c::E for 29bit

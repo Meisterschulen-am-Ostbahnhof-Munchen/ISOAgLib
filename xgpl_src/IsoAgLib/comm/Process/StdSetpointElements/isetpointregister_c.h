@@ -82,7 +82,7 @@ public:
     @return ISOName of setpoint commander
   */
   const iISOName_c& isoName()const
-  {return static_cast<const iISOName_c&>(SetpointRegister_c::isoName());};
+  {return SetpointRegister_c::isoName().toConstIisoName_c();};
   /**
     deliver the exact setpoint
     @return exact setpoint value

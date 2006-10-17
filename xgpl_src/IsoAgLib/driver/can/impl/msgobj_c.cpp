@@ -719,20 +719,9 @@ bool MsgObj_c::verifyBusMsgobjNr(int8_t rc_busNr, int8_t rc_msgobjNr)
   FilterBox instances
   @return common filter of all FilterBoxes in this MsgObj_c instance
 */
-void MsgObj_c::commonFilterAfterMerge( Ident_c& rrefc_globalMask ) const
-{
-  Ident_c c_common = filter();
-  c_common.ident_bitAnd( rrefc_globalMask );
-  Ident_c c_compareRelevantPart;
-  Ident_c c_deltaFilter;
-  for ( uint8_t ui8_ind = 0; ui8_ind < cnt_filterBox(); ui8_ind++ )
-  { // derive delta mask between c_common and currently tested
-    if ( filter().ident() == arrPfilterBox[ui8_ind]->filter().ident() ) continue;
-    c_compareRelevantPart = arrPfilterBox[ui8_ind]->filter();
-    c_compareRelevantPart.ident_bitAnd( rrefc_globalMask );
-    c_deltaFilter.set( (~( c_common.ident() ^ c_compareRelevantPart.ident() ) ),filter().identType() ) ;
-    rrefc_globalMask.ident_bitAnd( c_deltaFilter );
-  }
+void MsgObj_c::commonFilterAfterMerge( Ident_c& rrefc_globalMask )
+{ // clear any bits which are no more used in the current global mask
+  c_filter.ident_bitAnd( rrefc_globalMask );
 }
 
 

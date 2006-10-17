@@ -343,11 +343,11 @@ public:
   bool operator<( const ISOName_c& refc_right ) const
     { return (higherPriThanPar( refc_right.outputUnion() ) == -1)?true:false;}
 
-  /** convert operator */
-  operator IsoAgLib::iISOName_c& ();
+  /** convert function */
+  IsoAgLib::iISOName_c& toIisoName_c();
 
-  /** convert operator */
-  operator const IsoAgLib::iISOName_c& () const;
+  /** convert function */
+  const IsoAgLib::iISOName_c& toConstIisoName_c() const;
 
 private:
   /** ISO 8-uint8_t NAME field */

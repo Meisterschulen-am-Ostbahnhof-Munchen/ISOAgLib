@@ -164,11 +164,27 @@ namespace __IsoAgLib
   */
   uint8_t Ident_c::bit_diff(const Ident_c& rrefc_ident)const
   {
-      uint8_t cnt = 0;
+    uint8_t cnt = 0;
     // XOR delivers '1' where both values are different
     MASK_TYPE ui32_comp = t_ident ^ rrefc_ident.t_ident;
       for(MASK_TYPE ui32_new = (ui32_comp & (ui32_comp-1)); ui32_new != ui32_comp;
         ui32_comp=ui32_new, ui32_new &= (ui32_new-1))cnt++;
       return cnt;
   }
+
+  /**
+    deliver amount of different bits from own ident to compared ident
+    @param rrefc_ident reference to compared ident
+    @param rt_mask
+    @return amount of different bits
+  */
+  uint8_t Ident_c::bitDiffWithMask(const Ident_c& rrefc_ident, MASK_TYPE rt_mask) const
+  {
+    uint8_t cnt = 0;
+    // XOR delivers '1' where both values are different
+    MASK_TYPE ui32_comp = (t_ident&rt_mask) ^ (rrefc_ident.t_ident & rt_mask);
+      for(MASK_TYPE ui32_new = (ui32_comp & (ui32_comp-1)); ui32_new != ui32_comp;
+        ui32_comp=ui32_new, ui32_new &= (ui32_new-1))cnt++;
+      return cnt;
+  };
 }

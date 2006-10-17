@@ -919,7 +919,7 @@ bool Process_c::processTcStatusMsg(uint8_t ui8_tcStatus, const ISOName_c& refc_i
 
   if (pc_processDataChangeHandler)
   { // call handler function if handler class is registered
-    pc_processDataChangeHandler->processTcStatusMessage((1 == ui8_tcStatus) /* 1: task running */, refc_isoName);
+    pc_processDataChangeHandler->processTcStatusMessage((1 == ui8_tcStatus) /* 1: task running */, refc_isoName.toConstIisoName_c());
   }
 
   return TRUE;

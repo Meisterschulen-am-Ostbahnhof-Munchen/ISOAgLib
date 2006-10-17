@@ -373,6 +373,9 @@ private: // attributes
   const ISOName_c* pc_slaveIsoNameList;
   int8_t i8_slaveCount;
   #endif
+
+  uint8_t ui8_lastUsedSa;
+
 };
 
 }

@@ -108,10 +108,10 @@ public:
   {return TimePosGPS_c::lastUpdateTimeGps();}
 
   /** return a sender which sends GPS commands as a tractor */
-  iISOName_c& getSenderISONameGps() {return static_cast<iISOName_c&>(TimePosGPS_c::getSenderISONameGps());}
+  iISOName_c& getSenderISONameGps() {return TimePosGPS_c::getSenderISONameGps().toIisoName_c();}
 
   /** return a sender which sends GPS commands as a tractor */
-  const iISOName_c& getSenderISONameGpsConst() const {return static_cast<const iISOName_c&>(TimePosGPS_c::getSenderISONameGpsConst());}
+  const iISOName_c& getSenderISONameGpsConst() const {return TimePosGPS_c::getSenderISONameGpsConst().toConstIisoName_c();}
 
   /** force a request for pgn for time/date information */
   bool sendRequestUpdateTimeDate() { return TimePosGPS_c::sendRequestUpdateTimeDate(); }
@@ -120,7 +120,7 @@ public:
   bool checkDataSourceSpecified() { return TimePosGPS_c::getSelectedDataSourceISONameConst().isSpecified();}
 
   /** get Devkey of data source (e.g. tractor, terminal) from which commands are send exclusively */
-  const iISOName_c& getSelectedDataSourceISONameConst() const {return static_cast<const iISOName_c&>(TimePosGPS_c::getSelectedDataSourceISONameConst());}
+  const iISOName_c& getSelectedDataSourceISONameConst() const {return TimePosGPS_c::getSelectedDataSourceISONameConst().toConstIisoName_c();}
 
   /* ******************************************* */
   /** \name Get Values */

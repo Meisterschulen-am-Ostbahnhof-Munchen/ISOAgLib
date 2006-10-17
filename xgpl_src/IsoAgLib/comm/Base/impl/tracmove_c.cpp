@@ -169,15 +169,15 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
       setFilterCreated();
       // create FilterBox_c for PGN GROUND_BASED_SPEED_DIST_PGN, PF 254 - mask for DP, PF and PS
       // mask: (0x1FFFF << 8) filter: (GROUND_BASED_SPEED_DIST_PGN << 8)
-      c_can.insertFilter(*this, (static_cast<MASK_TYPE>(0x1FFFF) << 8),
+      c_can.insertFilter(*this, 0x1FFFF00UL,
                         (static_cast<MASK_TYPE>(GROUND_BASED_SPEED_DIST_PGN) << 8), false, Ident_c::ExtendedIdent);
       // create FilterBox_c for PGN WHEEL_BASED_SPEED_DIST_PGN, PF 254 - mask for DP, PF and PS
       // mask: (0x1FFFF << 8) filter: (WHEEL_BASED_SPEED_DIST_PGN << 8)
-      c_can.insertFilter(*this, (static_cast<MASK_TYPE>(0x1FFFF) << 8),
+      c_can.insertFilter(*this, 0x1FFFF00UL,
                         (static_cast<MASK_TYPE>(WHEEL_BASED_SPEED_DIST_PGN) << 8), false, Ident_c::ExtendedIdent);
       // create FilterBox_c for PGN SELECTED_SPEED_MESSAGE, PF 254 - mask for DP, PF and PS
       // mask: (0x1FFFF << 8) filter: (SELECTED_SPEED_MESSAGE << 8)
-      c_can.insertFilter(*this, (static_cast<MASK_TYPE>(0x1FFFF) << 8),
+      c_can.insertFilter(*this, 0x1FFFF00UL,
                         (static_cast<MASK_TYPE>(SELECTED_SPEED_MESSAGE) << 8), true, Ident_c::ExtendedIdent);
     }
   }

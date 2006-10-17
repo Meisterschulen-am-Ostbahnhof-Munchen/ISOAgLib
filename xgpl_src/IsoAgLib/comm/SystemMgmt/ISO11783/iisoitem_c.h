@@ -83,7 +83,7 @@ public:
   /** deliver the ISOName code of this item
     @return ISOName code
   */
-  const iISOName_c& isoName()const{return static_cast<const iISOName_c&>(ISOItem_c::isoName());}
+  const iISOName_c& isoName()const{return ISOItem_c::isoName().toConstIisoName_c();}
   /** deliver the number/adress of this item
     @return number
   */

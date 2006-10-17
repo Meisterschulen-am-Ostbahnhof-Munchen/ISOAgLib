@@ -281,7 +281,7 @@ public:
     deliver the commanderISOName (DEV_KEY of local member)
     @return DEV_KEY used for sending commands to remote owner member
   */
-  const iISOName_c& commanderISOName()const{return static_cast<const iISOName_c&>(ProcDataRemoteSimpleSetpoint_c::commanderISOName());}
+  const iISOName_c& commanderISOName()const{return ProcDataRemoteSimpleSetpoint_c::commanderISOName().toConstIisoName_c();}
 
   /**
     set the pointer to the commander ident isoName

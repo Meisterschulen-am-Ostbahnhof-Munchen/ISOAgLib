@@ -417,7 +417,7 @@ void ProcDataLocalBase_c::processProg(){
       sendMasterMeasurementVal( c_pkg.memberSend().isoName() );
       // call handler function if handler class is registered
       if ( getProcessDataChangeHandler() != NULL )
-        getProcessDataChangeHandler()->processMeasurementReset( this, 0, c_pkg.memberSend().isoName() );
+        getProcessDataChangeHandler()->processMeasurementReset( this, 0, c_pkg.memberSend().isoName().toConstIisoName_c() );
     }
   }
 }
