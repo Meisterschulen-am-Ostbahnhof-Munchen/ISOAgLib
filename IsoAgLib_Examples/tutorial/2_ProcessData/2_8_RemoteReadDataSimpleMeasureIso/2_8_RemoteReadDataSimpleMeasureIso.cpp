@@ -320,10 +320,13 @@ int main()
   // if ISOName conflicts forces change of device class instance, the
   // IsoAgLib can change the c_myISOName val through the pointer to c_myISOName
   // ISO
-  IsoAgLib::iIdentItem_c c_myIdent( &c_myISOName,
-    b_selfConf, ui8_indGroup, b_func, ui16_manufCode,
-    ui32_serNo, b_wantedSa, 0xFFFF, b_funcInst, b_ecuInst);
-
+  //IsoAgLib::iIdentItem_c c_myIdent( &c_myISOName,
+  //  b_selfConf, ui8_indGroup, b_func, ui16_manufCode,
+  //  ui32_serNo, b_wantedSa, 0xFFFF, b_funcInst, b_ecuInst);
+  
+  IsoAgLib::iIdentItem_c c_myIdent(ui8_indGroup, c_myISOName.devClass(), c_myISOName.devClassInst(),
+    b_func, ui16_manufCode, ui32_serNo, b_wantedSa, 0xFFFF, b_funcInst, b_ecuInst, b_selfConf );
+  
   // device type of remote ECU
   IsoAgLib::iISOName_c c_remoteDeviceType( 0x5, 0 );
 

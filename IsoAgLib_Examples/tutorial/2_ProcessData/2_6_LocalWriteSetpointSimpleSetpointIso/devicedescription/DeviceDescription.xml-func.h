@@ -1,12 +1,6 @@
 #include "DeviceDescription.xml-bytestream.inc"
 
-IsoAgLib::iISOName_c myDeviceISOName(0x5, 0x0);
-
-IsoAgLib::iIdentItem_c c_myIdent(&myDeviceISOName, true, 0x2, 0x19, 0x7ff, 0x1b, 0x80, 0xffff, 0x0, 0x0
- #ifdef USE_ISO_TERMINAL
- , 0, NULL
- #endif
-);
+IsoAgLib::iIdentItem_c c_myIdent(0x2, 0x5, 0, 0x19, 0x7ff, 0x1b, 0x80, 0xffff, 0,0,true);
 
 static const uint16_t scui16_workStateElementNumber = 0;
 const IsoAgLib::ElementDDI_s s_workStateElementDDI[] =
@@ -17,7 +11,7 @@ const IsoAgLib::ElementDDI_s s_workStateElementDDI[] =
 };
 
 IsoAgLib::iProcDataLocalSimpleSetpoint_c c_workState(s_workStateElementDDI,
-scui16_workStateElementNumber, myDeviceISOName, myDeviceISOName, &myDeviceISOName, false
+scui16_workStateElementNumber, c_myIdent.isoName(), c_myIdent.isoName(), &c_myIdent.isoName(), false
 #ifdef USE_EEPROM_IO
 , 0xffff
 #endif
@@ -33,7 +27,7 @@ const IsoAgLib::ElementDDI_s s_applicationRateElementDDI[] =
 };
 
 IsoAgLib::iProcDataLocalSimpleSetpoint_c c_applicationRate(s_applicationRateElementDDI,
-scui16_applicationRateElementNumber, myDeviceISOName, myDeviceISOName, &myDeviceISOName, false
+scui16_applicationRateElementNumber, c_myIdent.isoName(), c_myIdent.isoName(), &c_myIdent.isoName(), false
 #ifdef USE_EEPROM_IO
 , 0xffff
 #endif

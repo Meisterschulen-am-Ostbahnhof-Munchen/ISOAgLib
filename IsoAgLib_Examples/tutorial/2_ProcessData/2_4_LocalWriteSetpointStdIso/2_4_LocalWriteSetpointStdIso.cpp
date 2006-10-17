@@ -372,7 +372,7 @@ int main()
   arr_procData[cui8_indexWorkState].init(
                                          s_workStateElementDDI,
                                          scui16_workStateElementNumber,
-                                         myDeviceISOName, myDeviceISOName, &myDeviceISOName, true,
+                                         c_myIdent.isoName(), c_myIdent.isoName(), &(c_myIdent.isoName()), true,
   #ifdef USE_EEPROM_IO
                                          0xFFFF,
   #endif
@@ -382,7 +382,7 @@ int main()
   arr_procData[cui8_indexApplicationRate].init(
                                                s_applicationRateElementDDI,
                                                scui16_applicationRateElementNumber,
-                                               myDeviceISOName, myDeviceISOName, &myDeviceISOName, true,
+                                               c_myIdent.isoName(), c_myIdent.isoName(), &(c_myIdent.isoName()), true,
   #ifdef USE_EEPROM_IO
                                                0xFFFF,
   #endif
