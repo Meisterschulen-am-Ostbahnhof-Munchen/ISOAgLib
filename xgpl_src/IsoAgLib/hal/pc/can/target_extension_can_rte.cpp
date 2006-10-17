@@ -202,12 +202,14 @@ int16_t can_stopDriver()
       canlogDat[ind] = NULL;
     }
     delete (rteCan_c [ind]);
+    rteCan_c[ind] = NULL;
   }
 
   for( uint32_t i=0; i<cui32_maxCanBusCnt; i++ )
       arrMsgObj[i].clear();
 
   delete[] arrMsgObj;
+  arrMsgObj = NULL;
    
   return HAL_NO_ERR;
 }
@@ -344,8 +346,8 @@ int16_t configCanObj ( uint8_t bBusNumber, uint8_t bMsgObj, tCanObjConfig * ptCo
         arrMsgObj[bBusNumber].resize(bMsgObj + 1);
     } else {
         // reconfigure element -> reinit rec_buf
-        if (arrMsgObj[bBusNumber][bMsgObj].rec_buf != NULL)
-            delete [] (arrMsgObj[bBusNumber][bMsgObj].rec_buf);
+        delete [] (arrMsgObj[bBusNumber][bMsgObj].rec_buf);
+        arrMsgObj[bBusNumber][bMsgObj].rec_buf = NULL;
     }
 
   arrMsgObj[bBusNumber][bMsgObj].rec_bufSize = 0;
@@ -439,6 +441,8 @@ int16_t closeCanObj ( uint8_t bBusNumber,uint8_t bMsgObj )
   else
   { // empfangsobjekt
     delete [] (arrMsgObj[bBusNumber][bMsgObj].rec_buf);
+    arrMsgObj[bBusNumber][bMsgObj].rec_buf = NULL;
+
     arrMsgObj[bBusNumber][bMsgObj].rec_bufSize = -1;
     arrMsgObj[bBusNumber][bMsgObj].rec_bufCnt = 0;
     arrMsgObj[bBusNumber][bMsgObj].rec_bufOut = 0;
