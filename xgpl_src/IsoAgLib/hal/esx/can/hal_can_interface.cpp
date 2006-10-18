@@ -532,7 +532,8 @@ int16_t can_configMsgobjInit(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgL
 
   if (rrefc_ident.identType() == __IsoAgLib::Ident_c::BothIdent)
     pt_config->bXtd = DEFAULT_IDENT_TYPE;
-  else pt_config->bXtd = rrefc_ident.identType();
+  else 
+    pt_config->bXtd = rrefc_ident.identType();
 
   if (rb_rxtx == 0)
   { // receive
@@ -543,7 +544,9 @@ int16_t can_configMsgobjInit(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgL
     const uint32_t highLoadCheckList[] = CONFIG_CAN_HIGH_LOAD_IDENT_LIST ;
     for ( uint8_t ind = 0; ind < CONFIG_CAN_HIGH_LOAD_IDENT_CNT; ind++ )
     {
-      if ( highLoadCheckList[ind] == pt_config->dwId )
+      if ( (highLoadCheckList[ind] & CONFIG_CAN_HIGH_LOAD_IDENT_MASK) // prevent "0 == 0"
+           && ((highLoadCheckList[ind] & CONFIG_CAN_HIGH_LOAD_IDENT_MASK) == (pt_config->dwId & CONFIG_CAN_HIGH_LOAD_IDENT_MASK))
+          )
       {
         pt_config->wNumberMsgs = CONFIG_CAN_HIGH_LOAD_REC_BUF_SIZE_MIN;
         break;
