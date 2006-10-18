@@ -217,8 +217,6 @@ namespace __IsoAgLib {
     */
   bool TimePosGPS_c::timeEvent(  )
   {
-    if ( getAvailableExecTime() == 0 ) return false;
-
     checkCreateReceiveFilter();
     if ( getAvailableExecTime() == 0 ) return false;
 
@@ -252,21 +250,10 @@ namespace __IsoAgLib {
       #endif
     }
 
-    if ( getISOName() != NULL )
-    { // there is at least something configured to send
-      if (getIsoMonitorInstance4Comm().existIsoMemberISOName(*getISOName(), true))
-      { // stored base information sending ISO member has claimed address
-        if ( checkMode(IsoAgLib::IdentModeTractor) ) timeEventTracMode();
-      }
-      if ( getAvailableExecTime() == 0 ) return false;
-    }
-    if ( pc_isoNameGps != NULL )
-    { // there is at least something configured to send
-
-      if (getIsoMonitorInstance4Comm().existIsoMemberISOName(*pc_isoNameGps, true))
-      { // stored base information sending ISO member has claimed address
-        if (checkModeGps(IsoAgLib::IdentModeTractor) ) timeEventTracMode();
-      }
+    if ( ( ( getISOName() != NULL )  && (getIsoMonitorInstance4Comm().existIsoMemberISOName(*getISOName(), true))  && ( checkMode(IsoAgLib::IdentModeTractor) ) )
+      || ( ( pc_isoNameGps != NULL ) && (getIsoMonitorInstance4Comm().existIsoMemberISOName(*pc_isoNameGps, true)) && (checkModeGps(IsoAgLib::IdentModeTractor) ) ) )
+    { // there is at least something configured for send where the time sending or GPS sending is activated
+      return timeEventTracMode();
     }
     return true;
   }

@@ -93,14 +93,9 @@
 
 #include <IsoAgLib/util/impl/schedulerentry_c.h>
 
-#include <vector>
+#include <list>
 
-#if defined(SYSTEM_PC) && !defined(SYSTEM_PC_VC)
-  #include <list>
-  //namespace std { using list;};  //old __gnu_cxx::slist
-#else
-  #include <list>
-#endif
+#define DEBUG_SCHEDULER
 
 
 /// Begin Namespace __IsoAgLib
@@ -240,7 +235,7 @@ private: //Private methods
   void resortTaskList();
 
 
-#ifdef DEBUG
+#ifdef DEBUG_SCHEDULER
   //!  Send debug messages with information on the
   //!  acfuracy of time behaviour.
   //!  Retrieve information about actual executed task from referenced SchedulerEntry_c.
@@ -259,6 +254,10 @@ private: //Private methods
   //! Parameter:
   //! @param rui16_idleTime:
   void setDebugIdleInformation(uint16_t rui16_idleTime);
+
+  //! Debug function to print current list of tasks in the scheduler with
+  //! the single retrigger times
+  void printTaskList();
 #endif
 
 

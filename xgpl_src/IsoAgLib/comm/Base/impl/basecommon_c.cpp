@@ -228,10 +228,6 @@ bool BaseCommon_c::checkParseReceived(const ISOName_c& rrefc_currentSender) cons
   */
 bool BaseCommon_c::timeEvent()
 {
-
-
-  if ( getAvailableExecTime() == 0 ) return false;
-
   checkCreateReceiveFilter();
 
   if (getAvailableExecTime() == 0) return false;
@@ -260,17 +256,13 @@ bool BaseCommon_c::timeEvent()
     // 2) getSystemMgmtInstance4Comm().existLocalMemberISOName(*getISOName(), true) indicates, that a corresponding
     //    item has already performed its address claim
     // ==> we can directly call sending time event in this case
-    bool b_result = true;
-    if ( !timeEventTracMode()) b_result = false;
-
-    return b_result;
+    return timeEventTracMode();
   }
   else
   { // we are in implement mode
     // call this function also if isoName == NULL, because some functions do settings which are independent from isoName
-    if ( !timeEventImplMode()) return false;
+    return timeEventImplMode();
   }
-  return true;
 }
 
 

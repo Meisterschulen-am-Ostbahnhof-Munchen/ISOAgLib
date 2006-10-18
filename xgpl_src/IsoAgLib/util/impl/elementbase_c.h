@@ -176,6 +176,19 @@ class ElementBase_c : public CANCustomer_c {
   //  Operation: getTimePeriod
   inline uint16_t getTimePeriod() const;
 
+  //! register too short available timeEvent() execution time, which was caused
+  //! by latest retrigger time of next task in Scheduler_c queue being too early
+  //! @return true -> the consolidation limit has been reached, so that the next task should
+  //!                 be postponed by one msec, so that this task gets step-by-step more exec time
+  bool registerNextTaskTooNear();
+
+  //! register correct timing, so that the counter for too short time can be consolidated
+  void registerEnoughTime() { if (i_executionTimeHealth>0) --i_executionTimeHealth;}
+  //! reset the counter for too short timing.
+  //! this is needed, when the next task in the Scheduler_c queue has been shifted 1msec
+  //! away, so that the consolidation starts fresh from zero
+  void resetTooShortExectTimeCount() { i_executionTimeHealth = 0;}
+
 
   //  Operation: startTaskTiming
   //!  this function is called at the end of system init, to set the trigger times to a suitable and realizable
@@ -221,7 +234,7 @@ class ElementBase_c : public CANCustomer_c {
 
   //  Operation: getStdTimeToNextTrigger
   //!  deliver standard time till next retrigger (used for comparisong operators in priority queue of SystemManagement_c -> must be very quick as very often called)
-  inline int32_t getStdTimeToNextTrigger() const;
+  int32_t getStdTimeToNextTrigger() const;
 
   //  Operation: getNextTriggerTime
   //!  deliver timestamp of next planned retrigger (timeEvent() call)
@@ -245,6 +258,9 @@ class ElementBase_c : public CANCustomer_c {
   //  Operation: getLastRetriggerTime
   static inline int32_t getLastRetriggerTime();
 
+  //! delay the next execution time by given period
+  void delayNextTriggerTime( unsigned int ui_delay ) { i32_nextRetriggerTime += ui_delay;}
+
 
   //!  Virtual Destructor - just to avoid compiler warnings
   virtual ~ElementBase_c();
@@ -263,7 +279,7 @@ protected:
   //!  Do NOT call from outside (e.g. processMsg)
   //! Parameter:
   //! @param rui16_timePeriod: needed time between calls of timeEvent in [msec]
-  inline void setTimePeriod(uint16_t rui16_timePeriod);
+  void setTimePeriod(uint16_t rui16_timePeriod);
 
   //  Operation: getDemandedExecEnd
   //!  Deliver the registered exec end timestamp.
@@ -315,6 +331,9 @@ protected:
   bool b_alreadyClosed;
 
   /** Start Integrate private Implementation for Timescheduling */
+  //! counter to detect amount of timeEvent() calls, where the next task in the Scheduler_c
+  //! queue had a too early/tight latest retrigger time
+  int i_executionTimeHealth;
 
   //!  at the end of timeEvent() the function timeEventPostUpdateStatistics() stores the next retrigger timestamp
   int32_t i32_nextRetriggerTime;
@@ -381,24 +400,6 @@ ElementBase_c::getExecTime() const
   return ui16_approxExecTime;
 }
 
-//!  Each from ElementBase_c derived class must set at its init
-//!  the needed time period between calls of timeEvent.
-//! Parameter:
-//! @param rui16_timePeriod: needed time between calls of timeEvent in [msec]
-inline
-void
-ElementBase_c::setTimePeriod
-(uint16_t rui16_timePeriod)
-{
-  ui16_timePeriod = rui16_timePeriod;
-  //call Function to calculate new intervals
-  updateEarlierAndLatestInterval();
-  #ifdef DEBUG
-  INTERNAL_DEBUG_DEVICE
-      << "ElementBase_c::setTimePeriod( " << rui16_timePeriod << ") zu Task "
-      << getTaskName() << INTERNAL_DEBUG_DEVICE_ENDL;
-  #endif
-}
 
 
 inline
@@ -501,16 +502,6 @@ ElementBase_c::getMaxRetriggerJitter() const
 }
 
 
-//!  deliver standard time till next retrigger (used for comparisong operators in priority queue of SystemManagement_c -> must be very quick as very often called)
-inline
-int32_t
-ElementBase_c::getStdTimeToNextTrigger() const
-{
-  int32_t i32_temp = ( i32_nextRetriggerTime - System_c::getTime() );
-  if ( i32_temp < -32767 ) return -32767;
-  else if ( i32_temp > 32767 ) return 32767;
-  else return i32_temp;
-}
 
 //!  deliver timestamp of next planned retrigger (timeEvent() call)
 inline

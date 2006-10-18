@@ -226,15 +226,8 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
       @see  BaseCommon_c::timeEvent()
     */
   bool TracGeneral_c::timeEventTracMode( )
-  {
-
-    ///Timeperiod of 100ms is set in ::config
+  { ///Timeperiod of 100ms is set in ::config
     sendMessage();
-
-    if ( getAvailableExecTime() == 0 ){
-      return false;
-
-    }
 
     return true;
   }

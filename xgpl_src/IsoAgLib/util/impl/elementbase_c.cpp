@@ -20,6 +20,9 @@
 
 
 #include "elementbase_c.h"
+
+#define DEF_CONSOLIDATION_LIMIT_FOR_DELAY_1MSEC 3
+
 namespace __IsoAgLib {
 
 // ////////////////////////////// Operation 1398 : ElementBase_c
@@ -27,6 +30,7 @@ namespace __IsoAgLib {
 ElementBase_c::ElementBase_c()
 : ui16_earlierInterval(75) //default 3/4 of timeperiod
 , ui16_latestInterval(50)   //default 1/2 of timeperiod
+, i_executionTimeHealth( 0 )
 , i32_nextRetriggerTime( 0 )
 , ui32_callCnt( 0 )
 , ui32_sumTime( 0 )
@@ -92,6 +96,16 @@ ElementBase_c::getTimeToNextTrigger(retriggerType_t t_retriggerType) const
   return i32_resultTime;
 }
 
+//! register too short available timeEvent() execution time, which was caused
+//! by latest retrigger time of next task in Scheduler_c queue being too early
+//! @return true -> the consolidation limit has been reached, so that the next task should
+//!                 be postponed by one msec, so that this task gets step-by-step more exec time
+bool ElementBase_c::registerNextTaskTooNear()
+{
+  ++i_executionTimeHealth;
+  if ( i_executionTimeHealth > DEF_CONSOLIDATION_LIMIT_FOR_DELAY_1MSEC ) return true;
+  else return false;
+}
 
 
 
@@ -190,6 +204,35 @@ void ElementBase_c::startTaskTiming(int32_t rint32_StartTaskTime)
 {
   i32_nextRetriggerTime = rint32_StartTaskTime;
 }
+
+//!  Each from ElementBase_c derived class must set at its init
+//!  the needed time period between calls of timeEvent.
+//! Parameter:
+//! @param rui16_timePeriod: needed time between calls of timeEvent in [msec]
+void
+ElementBase_c::setTimePeriod
+(uint16_t rui16_timePeriod)
+{
+  ui16_timePeriod = rui16_timePeriod;
+  //call Function to calculate new intervals
+  updateEarlierAndLatestInterval();
+  #ifdef DEBUG
+  INTERNAL_DEBUG_DEVICE
+      << "ElementBase_c::setTimePeriod( " << rui16_timePeriod << ") zu Task "
+      << getTaskName() << INTERNAL_DEBUG_DEVICE_ENDL;
+  #endif
+}
+
+//!  deliver standard time till next retrigger (used for comparisong operators in priority queue of SystemManagement_c -> must be very quick as very often called)
+int32_t
+ElementBase_c::getStdTimeToNextTrigger() const
+{
+  int32_t i32_temp = ( i32_nextRetriggerTime - System_c::getTime() );
+  if ( i32_temp < -32767 ) return -32767;
+  else if ( i32_temp > 32767 ) return 32767;
+  else return i32_temp;
+}
+
 
 //! Function set ui16_earlierInterval and
 //! ui16_laterInterval that will be used by
