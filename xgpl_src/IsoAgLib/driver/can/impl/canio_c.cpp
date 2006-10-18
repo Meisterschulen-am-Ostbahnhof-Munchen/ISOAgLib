@@ -1318,6 +1318,10 @@ void CANIO_c::CheckSetCntMsgObj()
   int16_t i16_minDistance = sizeof(MASK_TYPE)*8,
       i16_tempDist;
   uint8_t ui8_allowedSize = maxHALMsgObjNr() - (minHALMsgObjNr() + 1);
+
+  unsigned int ui_lsbDiffMin = 0;
+  unsigned int ui_lsbDiffTemp = 0;
+
   // check if result of ui8_allowedSize is correct
   if ((ui8_allowedSize == 0) || (ui8_allowedSize > 14)) ui8_allowedSize = 12;
 
@@ -1346,10 +1350,14 @@ void CANIO_c::CheckSetCntMsgObj()
       for (pc_rightInd++; pc_rightInd != arrMsgObj.end(); pc_rightInd++)
       {
         // retreive bit distance between instances left_ind and right_ind -> use Bit-XOR
-        i16_tempDist = pc_leftInd->filter().bitDiffWithMask(pc_rightInd->filter(), c_maskExt.ident());
+        i16_tempDist = pc_leftInd->filter().bitDiffWithMask(pc_rightInd->filter(), c_maskExt.ident(), ui_lsbDiffTemp);
 
-        // store new min only if capacity of left is enough for objects of right
-        if ((i16_tempDist < i16_minDistance)
+        // a) store new min only if capacity of left is enough for objects of right
+        // b) if bitDiff equal => prefere filters with differ in the most significant bits
+        // c) prefere diffs in the two upper bytes even when bittDiff is not optimal
+        if (((i16_tempDist < i16_minDistance) ||
+             ((i16_tempDist == i16_minDistance) && (ui_lsbDiffTemp > ui_lsbDiffMin)) ||
+             ((i16_tempDist-1 == i16_minDistance) && (ui_lsbDiffTemp > ui_lsbDiffMin) && (ui_lsbDiffMin<16) && (ui_lsbDiffTemp>=16)))
         #if 0
           && (pc_leftInd->getFilterBoxCapacity() >= pc_rightInd->cnt_filterBox())
         #endif
@@ -1360,6 +1368,7 @@ void CANIO_c::CheckSetCntMsgObj()
           pc_minLeft = pc_leftInd;
           pc_minRight = pc_rightInd;
           i16_minDistance = i16_tempDist;
+          ui_lsbDiffMin = ui_lsbDiffTemp;
           if ( i16_tempDist == 0 ) 
           {
             b_continueMerging = true; // merge the compared MsgObj_c IN ANY CASE, as they are equal

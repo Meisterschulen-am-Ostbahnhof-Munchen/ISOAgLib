@@ -178,13 +178,22 @@ namespace __IsoAgLib
     @param rt_mask
     @return amount of different bits
   */
-  uint8_t Ident_c::bitDiffWithMask(const Ident_c& rrefc_ident, MASK_TYPE rt_mask) const
+  uint8_t Ident_c::bitDiffWithMask(const Ident_c& rrefc_ident, MASK_TYPE rt_mask, unsigned int& ui_lsbFromDiff ) const
   {
     uint8_t cnt = 0;
+    ui_lsbFromDiff = 0;
     // XOR delivers '1' where both values are different
-    MASK_TYPE ui32_comp = (t_ident&rt_mask) ^ (rrefc_ident.t_ident & rt_mask);
+    MASK_TYPE ui32_comp = (t_ident & rt_mask) ^ (rrefc_ident.t_ident & rt_mask);
+    for ( ui_lsbFromDiff = 0; ui_lsbFromDiff< sizeof(MASK_TYPE)*8; ui_lsbFromDiff++)
+    {
+      if ((ui32_comp >> ui_lsbFromDiff) & 0x01)
+      {
+        break;
+      }
+    }
+
       for(MASK_TYPE ui32_new = (ui32_comp & (ui32_comp-1)); ui32_new != ui32_comp;
-        ui32_comp=ui32_new, ui32_new &= (ui32_new-1))cnt++;
+          ui32_comp=ui32_new, ui32_new &= (ui32_new-1))cnt++;
       return cnt;
   };
 }

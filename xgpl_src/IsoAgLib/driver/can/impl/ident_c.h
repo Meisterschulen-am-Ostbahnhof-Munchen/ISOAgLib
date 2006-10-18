@@ -183,7 +183,7 @@ public:
     @param rt_mask
     @return amount of different bits
   */
-  uint8_t bitDiffWithMask(const Ident_c& rrefc_ident, MASK_TYPE rt_mask) const;
+  uint8_t bitDiffWithMask(const Ident_c& rrefc_ident, MASK_TYPE rt_mask, unsigned int& ui_lsbFromDiff) const;
 
   /** deliver the ident type
     @return Ident_c::S for 11bit ident or Ident_c::E for 29bit
