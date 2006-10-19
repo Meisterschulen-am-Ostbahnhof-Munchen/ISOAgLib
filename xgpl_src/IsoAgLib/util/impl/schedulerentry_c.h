@@ -150,23 +150,6 @@ public:
   //! @return true if client could finish his job else false
   bool timeEventExec(int32_t ri32_demandedExecEnd= -1);
 
-  //! register too short available timeEvent() execution time, which was caused
-  //! by latest retrigger time of next task in Scheduler_c queue being too early
-  //! @return true -> the consolidation limit has been reached, so that the next task should
-  //!                 be postponed by one msec, so that this task gets step-by-step more exec time
-  bool registerNextTaskTooNear() { if ( pc_taskInstance != NULL ) return pc_taskInstance->registerNextTaskTooNear();
-                                   else return false;}
-
-  //! register correct timing, so that the counter for too short time can be consolidated
-  void registerEnoughTime() { if ( pc_taskInstance != NULL ) return pc_taskInstance->registerEnoughTime();}
-  //! reset the counter for too short timing.
-  //! this is needed, when the next task in the Scheduler_c queue has been shifted 1msec
-  //! away, so that the consolidation starts fresh from zero
-  void resetTooShortExectTimeCount() { if ( pc_taskInstance != NULL ) return pc_taskInstance->resetTooShortExectTimeCount();}
-
-  //! delay the next execution time by given period
-  void delayNextTriggerTime( unsigned int ui_delay ) { if ( pc_taskInstance != NULL ) return pc_taskInstance->delayNextTriggerTime(ui_delay);}
-
   //  Operation: operator=
   //!  Assign pointer to task from source item to this item.
   //! Parameter:
@@ -192,6 +175,7 @@ public:
   //!  @return AVG of exec time
   inline uint16_t getAvgExecTime() const;
 
+#ifdef DEBUG_SCHEDULER
   //  Operation: getAvgTimingAccuracy
   inline int16_t getAvgTimingAccuracy() const;
 
@@ -214,7 +198,7 @@ public:
   //!  (> 0 -> better than planned, < 0 -> worse than planned)
   //!  (only needed for debug tests)
   inline int16_t getMinTimingAccuracy() const;
-
+#endif
   //  Operation: getStdTimeToNextTrigger
   //!  deliver standard time till next retrigger (used for comparisong operators in priority queue of SystemManagement_c -> must be very quick as very often called)
   inline int32_t getStdTimeToNextTrigger() const;
@@ -358,7 +342,7 @@ SchedulerEntry_c::getAvgExecTime() const
   else return pc_taskInstance->getAvgExecTime();
 }
 
-
+#ifdef DEBUG_SCHEDULER
 inline
 int16_t
 SchedulerEntry_c::getAvgTimingAccuracy() const
@@ -409,7 +393,7 @@ SchedulerEntry_c::getMinTimingAccuracy() const
   if ( pc_taskInstance == NULL ) return 0;
   else return pc_taskInstance->getMinTimingAccuracy();
 }
-
+#endif
 // //////////////////////////////// +X2C Operation 4184 : getStdTimeToNextTrigger
 //!  deliver standard time till next retrigger (used for comparisong operators in priority queue of SystemManagement_c -> must be very quick as very often called)
 inline

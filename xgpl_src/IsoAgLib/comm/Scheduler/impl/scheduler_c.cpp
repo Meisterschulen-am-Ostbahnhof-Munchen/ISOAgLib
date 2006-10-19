@@ -386,17 +386,12 @@ int16_t Scheduler_c::getAvailableExecTime( int16_t ri16_awaitedExecTime )
   /// values < 0 for i32_demandedExecEndScheduler means unrestricted execution time
   if ( i32_demandedExecEndScheduler >= 0 )
   {
-    int16_t i16_result = int32_t( i32_demandedExecEndScheduler - System_c::getTime() );
-    if ( ( i32_demandedExecEndScheduler > System_c::getTime() ) && ( i16_result < 0 ) )
-    { // overflow as we have TOOO much time to execute -> set to biggest possible time
-      i16_result = 0x7FFF;
-    }
-    // if awaited time for next planned step is longer than available time
-    // answer 0 to indicate need for immediate return from timeEvent
-    if ( i16_result < ri16_awaitedExecTime ){
-      return 0;
-    }
-    return i16_result;
+    const int32_t ci32_now = System_c::getTime();
+    const int32_t ci32_result = i32_demandedExecEndScheduler - ci32_now;
+    if ( ci32_result < 0 ) return 0; ///< we are too late
+    else if ( ci32_result < ri16_awaitedExecTime ) return 0; ///< indicate that awaited time for next step is too long
+    else if ( ci32_result > 0x7FFF ) return 0x7FFF; ///< limit to the biggest int16_t time
+    else return ci32_result;
   }
   return -1;
 }
@@ -594,8 +589,8 @@ Scheduler_c::selectCallTaskAndUpdateQueue()
     #endif
 
     // get max time to execution of next entry waiting
-    STL_NAMESPACE::list<SchedulerEntry_c>::iterator pc_nextCallIter = pc_execIter;
-    pc_nextCallIter++; /// go one further IN REVERSE DIRECTION
+    STL_NAMESPACE::list<SchedulerEntry_c>::const_iterator pc_nextCallIter = pc_execIter;
+    pc_nextCallIter++; /// go one further
 
     ///get Last Execution Time of next in Queue and ADD to actualTime
     const int32_t i32_nextTaskTriggerTimeSpread = pc_nextCallIter->getTimeToNextTrigger( LatestRetrigger );
@@ -612,8 +607,11 @@ Scheduler_c::selectCallTaskAndUpdateQueue()
     }
 
     /// Decrease (Time to next Task) if remaining Time of Scheduler is smaller
-    const int ci32_schedulerAvailableExecTime = getAvailableExecTime() + System_c::getTime();
-    if(ci32_schedulerAvailableExecTime < i32_endTime) i32_endTime = ci32_schedulerAvailableExecTime;
+    if ( ( getCentralSchedulerExecEndTime() >= 0 )
+    && ( i32_endTime > getCentralSchedulerExecEndTime() ) )
+    { // the calling app specified an end time which is lower than the calculated end time
+      i32_endTime = getCentralSchedulerExecEndTime();
+    }
 
     IsoAgLib::iSystem_c::triggerWd();
     #ifdef DEBUG_SCHEDULER_EXTREME
@@ -624,21 +622,27 @@ Scheduler_c::selectCallTaskAndUpdateQueue()
     /// IF Client returns with false -> return i32_idleTime = -1
     /// because last Client could not finish in available TimeSpan
     const bool b_result = pc_execIter->timeEventExec( i32_endTime );
-    if ( !b_result && pc_nextCallIter->getTimeToNextTrigger( LatestRetrigger ) <= System_c::getTime() )
-    { // the executed task had not enough time
-      if ( pc_execIter->registerNextTaskTooNear() )
-      { // the consolidation limit of too short execution time due to too near next task is reached
-        // --> delay the next task by 1msec
-        pc_nextCallIter->delayNextTriggerTime(1);
-        pc_execIter->resetTooShortExectTimeCount();
-      }
+    if ( !b_result && ElementBase_c::getDemandedExecEnd() != getCentralSchedulerExecEndTime() )
+    { // the executed task had not enough time and the limit was NOT defined by the central
+      // scheduler end time, that was defined by the APP
+      // --> reschedule this task _after_ the following task
+      int16_t i16_avgTime = (pc_nextCallIter->getAvgExecTime() > 2)?pc_nextCallIter->getAvgExecTime():2;
+      if ( pc_nextCallIter->getExecTime() > i16_avgTime ) i16_avgTime = pc_nextCallIter->getExecTime();
+      #ifdef DEBUG_SCHEDULER
+      INTERNAL_DEBUG_DEVICE
+        << "+++++++++++++++++++++\nretrigger tie breaked task: " << pc_execIter->getTaskName() << " for time: "
+        << (i16_avgTime+pc_nextCallIter->getNextTriggerTime()) << " so that task "
+        << pc_nextCallIter->getTaskName()
+        << " with AVG exect time of: " << pc_nextCallIter->getAvgExecTime()
+        << " can start as planned\n" << INTERNAL_DEBUG_DEVICE_ENDL;
+      #endif
+      changeRetriggerTimeAndResort( pc_execIter, i16_avgTime+pc_nextCallIter->getNextTriggerTime() );
     }
     else if (b_result)
-    { // executed task was able to finish its work
-      pc_execIter->registerEnoughTime();
+    { // executed task finished its work -> reschedule it by resort of task list
+      resortTaskList();
     }
     IsoAgLib::iSystem_c::triggerWd();
-    resortTaskList();
 
     if(!b_result) return -1 ;
     // update idle time: first item is probably changed by sort
@@ -809,6 +813,32 @@ bool Scheduler_c::changeTimePeriodAndResortTask(ElementBase_c * pc_client  , uin
 
 }
 
+
+
+//!  Uses Delta from TimePeriod of a Client
+//!  to put a Task to the right Position in the TaskQueue
+//!  ATTENTION parameter nextRetriggerTime will exactly used from Scheduler_c
+//!  for call of timevent.-> so add e.g. an TimePeriod for an later call
+//! @param rc_client -> Client in Scheduler_c TaskQueue
+//! @param i32_nextRetriggerTime -> New i32_nextRetriggerTime set for Client by Scheduler_c
+//! @param  ri16_newTimePeriod otpional -> New Period will set for the Client by Scheduler_c
+bool  Scheduler_c::changeRetriggerTimeAndResort(SchedulerEntry_c rc_client  , int32_t i32_newRetriggerTime, int16_t ri16_newTimePeriod)
+{
+  if ( c_taskQueue.empty() ) return false;
+  else if (c_taskQueue.size() == 1) return true;
+  else
+  { // search iterator for the client of change
+    std::list<SchedulerEntry_c>::iterator itc_task;
+    for(itc_task = c_taskQueue.begin(); itc_task != c_taskQueue.end(); itc_task++)
+    {
+      if (*itc_task == rc_client)
+        return changeRetriggerTimeAndResort(itc_task, i32_newRetriggerTime, ri16_newTimePeriod);
+    }
+    // not found
+    return false;
+  }
+}
+
 //!  Uses Delta from i32_nextRetriggerTime of a Client
 //!  to put a Task to the right Position in the TaskQueue
 //!  ATTENTION parameter nextRetriggerTime will be exactly used from Scheduler_c
@@ -816,148 +846,160 @@ bool Scheduler_c::changeTimePeriodAndResortTask(ElementBase_c * pc_client  , uin
 //! @param p_client -> Client in Scheduler_c TaskQueue
 //! @param i32_nextRetriggerTime -> New i32_nextRetriggerTime set for Client by Scheduler_c
 //! @param  ri16_newTimePeriod optional -> New Period will set for the Client by Scheduler_c
-bool  Scheduler_c::changeRetriggerTimeAndResort(ElementBase_c * pc_client  , int32_t i32_newRetriggerTime, int16_t ri16_newTimePeriod){
-
-  if( !c_taskQueue.empty() ){
-
-    if(c_taskQueue.size() <= 1) return true; //nothing to sort
-
-    #ifdef DEBUG_SCHEDULER
-    printTaskList();
-    #endif
-
-    STL_NAMESPACE::list<SchedulerEntry_c>::iterator itc_task;
-    for(itc_task = c_taskQueue.begin(); itc_task != c_taskQueue.end(); itc_task++){
-
-      if(itc_task->isTask(pc_client)){
-        #ifdef DEBUG_SCHEDULER
-        INTERNAL_DEBUG_DEVICE << "Scheduler_c notifyed by Client:" << itc_task->getTaskName()
-        << INTERNAL_DEBUG_DEVICE_ENDL;
-        #endif
-
-        int32_t i32_deltaRetrigger = i32_newRetriggerTime - itc_task->getNextTriggerTime();
-
-        //set New TimePeriod
-        if(ri16_newTimePeriod > -1 ) itc_task->setTimePeriod(ri16_newTimePeriod);
-
-
-        /// increase of RetriggerTime task should be called LATER
-        if (i32_deltaRetrigger > 0) {
-          #ifdef DEBUG_SCHEDULER
-          INTERNAL_DEBUG_DEVICE << "task should be called LATER for ms: " << i32_deltaRetrigger
-            << INTERNAL_DEBUG_DEVICE_ENDL;
-          #endif
-          itc_task->changeNextTriggerTime( i32_newRetriggerTime );
-          //remove to LATER Position
-          STL_NAMESPACE::list<SchedulerEntry_c>::iterator itc_greater = itc_task;
-          ++itc_greater;
-          if ( itc_greater == c_taskQueue.end() )
-          {
-            #ifdef DEBUG_SCHEDULER
-            printTaskList();
-            #endif
-            return true; ///< was already last element
-          }
-          else if ( *itc_task <= *itc_greater )
-          { // there is no need to resort, as following item is still later
-            #ifdef DEBUG_SCHEDULER
-            printTaskList();
-            #endif
-            return true;
-          }
-          // from here on: the list has to be resorted
-          for ( ++itc_greater; itc_greater != c_taskQueue.end(); ++itc_greater )
-          {
-            if ( *itc_task <= *itc_greater )
-            { // the item at itc_greater has late enough retrigger time, so that
-              // itc_task can be inserted before
-              const SchedulerEntry_c c_move(*itc_task);
-              c_taskQueue.erase( itc_task );
-              c_taskQueue.insert( itc_greater, c_move );
-              #ifdef DEBUG_SCHEDULER
-              printTaskList();
-              #endif
-              return true;
-            }
-          }
-          // we reach only here, when no other task in queue afterwards has later retrigger time
-          // --> place it at end
-          const SchedulerEntry_c c_move(*itc_task);
-          c_taskQueue.erase( itc_task );
-          c_taskQueue.push_back( c_move );
-          #ifdef DEBUG_SCHEDULER
-          printTaskList();
-          #endif
-        }
-        /// decrease of TimePeriod task should be called EARLIER
-        else if (i32_deltaRetrigger < 0){
-          #ifdef DEBUG_SCHEDULER
-          INTERNAL_DEBUG_DEVICE << "task should be called EARLIER for ms: " << i32_deltaRetrigger
-            << INTERNAL_DEBUG_DEVICE_ENDL;
-          #endif
-          ///set new NextTriggerTime to now to avoid delay of following tasks
-          if((i32_newRetriggerTime < System_c::getTime())   ) i32_newRetriggerTime = System_c::getTime();
-
-          ///set new NextTriggerTime
-          itc_task->changeNextTriggerTime( i32_newRetriggerTime );
-          //remove to EARLIER Position
-          if ( itc_task == c_taskQueue.begin() )
-          {
-            #ifdef DEBUG_SCHEDULER
-            printTaskList();
-            #endif
-            return true; ///< the changed task is already at start of queue
-          }
-          STL_NAMESPACE::list<SchedulerEntry_c>::iterator itc_smaller = itc_task;
-          --itc_smaller;
-          if ( *itc_smaller <= *itc_task )
-          {
-            #ifdef DEBUG_SCHEDULER
-            printTaskList();
-            #endif
-            return true; ///< the changed task is still later scheduled than the item before it
-          }
-          // now we really have to resort
-          for ( ; itc_smaller != c_taskQueue.begin(); --itc_smaller )
-          {
-            if ( *itc_smaller <= *itc_task )
-            { // the item at itc_smaller has early enough retrigger time, so that
-              // itc_task can be inserted afterwards
-              ++itc_smaller; ///< the insertion can only take place _before_ an iterator
-              const SchedulerEntry_c c_move(*itc_task);
-              c_taskQueue.erase( itc_task );
-              c_taskQueue.insert( itc_smaller, c_move );
-              #ifdef DEBUG_SCHEDULER
-              printTaskList();
-              #endif
-              return true;
-            }
-          }
-          if ( ( itc_smaller == c_taskQueue.begin() ) && (*itc_smaller <= *itc_task))
-          { // the first item in list has earlier trigger
-            ++itc_smaller; ///< the insertion can only take place _before_ an iterator
-            const SchedulerEntry_c c_move(*itc_task);
-            c_taskQueue.erase( itc_task );
-            c_taskQueue.insert( itc_smaller, c_move );
-            #ifdef DEBUG_SCHEDULER
-            printTaskList();
-            #endif
-            return true;
-          }
-          // we reach only here, when no other item before changed task has earlier retrigger time
-          // -> place it at front of list
-          const SchedulerEntry_c c_move(*itc_task);
-          c_taskQueue.erase( itc_task );
-          c_taskQueue.push_front( c_move );
-        }
-      }// end if
-    }//end for
-    #ifdef DEBUG_SCHEDULER
-    printTaskList();
-    #endif
-    return  true ;
+bool  Scheduler_c::changeRetriggerTimeAndResort(ElementBase_c * pc_client  , int32_t i32_newRetriggerTime, int16_t ri16_newTimePeriod)
+{
+  if ( c_taskQueue.empty() ) return false;
+  else if (c_taskQueue.size() == 1) return true;
+  else
+  { // search iterator for the client of change
+    std::list<SchedulerEntry_c>::iterator itc_task;
+    for(itc_task = c_taskQueue.begin(); itc_task != c_taskQueue.end(); itc_task++)
+    {
+      if(itc_task->isTask(pc_client))
+        return changeRetriggerTimeAndResort(itc_task, i32_newRetriggerTime, ri16_newTimePeriod);
+    }
+    // not found
+    return false;
   }
-  return false;
+}
+
+//!  Uses Delta from i32_nextRetriggerTime of a Client
+//!  to put a Task to the right Position in the TaskQueue
+//!  ATTENTION parameter nextRetriggerTime will be exactly used from Scheduler_c
+//!  for call of timevent.-> so add e.g. an TimePeriod for an later call
+//! @param itc_task -> iterator to the task that should be changed
+//! @param i32_nextRetriggerTime -> New i32_nextRetriggerTime set for Client by Scheduler_c
+//! @param  ri16_newTimePeriod optional -> New Period will set for the Client by Scheduler_c
+bool  Scheduler_c::changeRetriggerTimeAndResort(std::list<SchedulerEntry_c>::iterator itc_task, int32_t i32_newRetriggerTime, int16_t ri16_newTimePeriod)
+{
+  #ifdef DEBUG_SCHEDULER
+  printTaskList();
+  #endif
+
+  #ifdef DEBUG_SCHEDULER
+  INTERNAL_DEBUG_DEVICE << "Scheduler_c notifyed by Client:" << itc_task->getTaskName()
+  << INTERNAL_DEBUG_DEVICE_ENDL;
+  #endif
+
+  int32_t i32_deltaRetrigger = i32_newRetriggerTime - itc_task->getNextTriggerTime();
+
+  //set New TimePeriod
+  if(ri16_newTimePeriod > -1 ) itc_task->setTimePeriod(ri16_newTimePeriod);
+
+
+  /// increase of RetriggerTime task should be called LATER
+  if (i32_deltaRetrigger > 0) {
+    #ifdef DEBUG_SCHEDULER
+    INTERNAL_DEBUG_DEVICE << "task should be called LATER for ms: " << i32_deltaRetrigger
+      << INTERNAL_DEBUG_DEVICE_ENDL;
+    #endif
+    itc_task->changeNextTriggerTime( i32_newRetriggerTime );
+    //remove to LATER Position
+    STL_NAMESPACE::list<SchedulerEntry_c>::iterator itc_greater = itc_task;
+    ++itc_greater;
+    if ( itc_greater == c_taskQueue.end() )
+    {
+      #ifdef DEBUG_SCHEDULER
+      printTaskList();
+      #endif
+      return true; ///< was already last element
+    }
+    else if ( *itc_task <= *itc_greater )
+    { // there is no need to resort, as following item is still later
+      #ifdef DEBUG_SCHEDULER
+      printTaskList();
+      #endif
+      return true;
+    }
+    // from here on: the list has to be resorted
+    for ( ++itc_greater; itc_greater != c_taskQueue.end(); ++itc_greater )
+    {
+      if ( *itc_task <= *itc_greater )
+      { // the item at itc_greater has late enough retrigger time, so that
+        // itc_task can be inserted before
+        const SchedulerEntry_c c_move(*itc_task);
+        c_taskQueue.erase( itc_task );
+        c_taskQueue.insert( itc_greater, c_move );
+        #ifdef DEBUG_SCHEDULER
+        printTaskList();
+        #endif
+        return true;
+      }
+    }
+    // we reach only here, when no other task in queue afterwards has later retrigger time
+    // --> place it at end
+    const SchedulerEntry_c c_move(*itc_task);
+    c_taskQueue.erase( itc_task );
+    c_taskQueue.push_back( c_move );
+    #ifdef DEBUG_SCHEDULER
+    printTaskList();
+    #endif
+  }
+  /// decrease of TimePeriod task should be called EARLIER
+  else if (i32_deltaRetrigger < 0){
+    #ifdef DEBUG_SCHEDULER
+    INTERNAL_DEBUG_DEVICE << "task should be called EARLIER for ms: " << i32_deltaRetrigger
+      << INTERNAL_DEBUG_DEVICE_ENDL;
+    #endif
+    ///set new NextTriggerTime to now to avoid delay of following tasks
+    if((i32_newRetriggerTime < System_c::getTime())   ) i32_newRetriggerTime = System_c::getTime();
+
+    ///set new NextTriggerTime
+    itc_task->changeNextTriggerTime( i32_newRetriggerTime );
+    //remove to EARLIER Position
+    if ( itc_task == c_taskQueue.begin() )
+    {
+      #ifdef DEBUG_SCHEDULER
+      printTaskList();
+      #endif
+      return true; ///< the changed task is already at start of queue
+    }
+    STL_NAMESPACE::list<SchedulerEntry_c>::iterator itc_smaller = itc_task;
+    --itc_smaller;
+    if ( *itc_smaller <= *itc_task )
+    {
+      #ifdef DEBUG_SCHEDULER
+      printTaskList();
+      #endif
+      return true; ///< the changed task is still later scheduled than the item before it
+    }
+    // now we really have to resort
+    for ( ; itc_smaller != c_taskQueue.begin(); --itc_smaller )
+    {
+      if ( *itc_smaller <= *itc_task )
+      { // the item at itc_smaller has early enough retrigger time, so that
+        // itc_task can be inserted afterwards
+        ++itc_smaller; ///< the insertion can only take place _before_ an iterator
+        const SchedulerEntry_c c_move(*itc_task);
+        c_taskQueue.erase( itc_task );
+        c_taskQueue.insert( itc_smaller, c_move );
+        #ifdef DEBUG_SCHEDULER
+        printTaskList();
+        #endif
+        return true;
+      }
+    }
+    if ( ( itc_smaller == c_taskQueue.begin() ) && (*itc_smaller <= *itc_task))
+    { // the first item in list has earlier trigger
+      ++itc_smaller; ///< the insertion can only take place _before_ an iterator
+      const SchedulerEntry_c c_move(*itc_task);
+      c_taskQueue.erase( itc_task );
+      c_taskQueue.insert( itc_smaller, c_move );
+      #ifdef DEBUG_SCHEDULER
+      printTaskList();
+      #endif
+      return true;
+    }
+    // we reach only here, when no other item before changed task has earlier retrigger time
+    // -> place it at front of list
+    const SchedulerEntry_c c_move(*itc_task);
+    c_taskQueue.erase( itc_task );
+    c_taskQueue.push_front( c_move );
+  } // end if shift forward
+  #ifdef DEBUG_SCHEDULER
+  printTaskList();
+  #endif
+  return  true ;
 }
 
 } // end of namespace __IsoAgLib

@@ -34,13 +34,15 @@ ElementBase_c::ElementBase_c()
 , i32_nextRetriggerTime( 0 )
 , ui32_callCnt( 0 )
 , ui32_sumTime( 0 )
+#ifdef DEBUG_SCHEDULER
 , i32_sumTimingAccuracy( 0 )
 , i16_minTimingAccuracy( 32767 )
 , i16_maxTimingAccuracy( -3276 )
-, ui16_approxExecTime( 0 )
-, ui16_timePeriod( 100 )   //Long value for TimePeriod as default
 , ui16_minTime( 0xFFFF )
 , ui16_maxTime( 0 )
+#endif
+, ui16_approxExecTime( 0 )
+, ui16_timePeriod( 100 )   //Long value for TimePeriod as default
 {
 }
 
@@ -96,18 +98,6 @@ ElementBase_c::getTimeToNextTrigger(retriggerType_t t_retriggerType) const
   return i32_resultTime;
 }
 
-//! register too short available timeEvent() execution time, which was caused
-//! by latest retrigger time of next task in Scheduler_c queue being too early
-//! @return true -> the consolidation limit has been reached, so that the next task should
-//!                 be postponed by one msec, so that this task gets step-by-step more exec time
-bool ElementBase_c::registerNextTaskTooNear()
-{
-  ++i_executionTimeHealth;
-  if ( i_executionTimeHealth > DEF_CONSOLIDATION_LIMIT_FOR_DELAY_1MSEC ) return true;
-  else return false;
-}
-
-
 
 
 //!  This function is called by the schedulerEntry_C to update timestamps
@@ -141,21 +131,25 @@ ElementBase_c::timeEventPostUpdateStatistics()
   if ( ui32_callCnt != 0 )
   {
     ui32_sumTime += ui16_approxExecTime;
+    #ifdef DEBUG_SCHEDULER
     if ( ui16_approxExecTime > ui16_maxTime ) ui16_maxTime = ui16_approxExecTime;
     if ( ui16_approxExecTime < ui16_minTime ) ui16_minTime = ui16_approxExecTime;
-    int32_t i32_tempTriggerTimeDelta = ( i32_nextRetriggerTime - i32_retriggerTime );
+    const int32_t i32_tempTriggerTimeDelta = ( i32_nextRetriggerTime - i32_retriggerTime );
     i32_sumTimingAccuracy += i32_tempTriggerTimeDelta;
     if ( i32_tempTriggerTimeDelta > i16_maxTimingAccuracy ) i16_maxTimingAccuracy = i32_tempTriggerTimeDelta;
     if ( i32_tempTriggerTimeDelta < i16_minTimingAccuracy ) i16_minTimingAccuracy = i32_tempTriggerTimeDelta;
+    #endif
   }
   else
   { /// ui32_callCnt overflow -> reset values to get valid AVG,...
     ui32_sumTime = 0;
+    #ifdef DEBUG_SCHEDULER
     ui16_maxTime = 0;
     ui16_minTime = 0xFFFF;
     i32_sumTimingAccuracy = 0;
     i16_maxTimingAccuracy = -32766;
     i16_minTimingAccuracy = 32767;
+    #endif
   }
 
 

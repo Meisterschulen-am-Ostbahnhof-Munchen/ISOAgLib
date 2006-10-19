@@ -176,20 +176,6 @@ class ElementBase_c : public CANCustomer_c {
   //  Operation: getTimePeriod
   inline uint16_t getTimePeriod() const;
 
-  //! register too short available timeEvent() execution time, which was caused
-  //! by latest retrigger time of next task in Scheduler_c queue being too early
-  //! @return true -> the consolidation limit has been reached, so that the next task should
-  //!                 be postponed by one msec, so that this task gets step-by-step more exec time
-  bool registerNextTaskTooNear();
-
-  //! register correct timing, so that the counter for too short time can be consolidated
-  void registerEnoughTime() { if (i_executionTimeHealth>0) --i_executionTimeHealth;}
-  //! reset the counter for too short timing.
-  //! this is needed, when the next task in the Scheduler_c queue has been shifted 1msec
-  //! away, so that the consolidation starts fresh from zero
-  void resetTooShortExectTimeCount() { i_executionTimeHealth = 0;}
-
-
   //  Operation: startTaskTiming
   //!  this function is called at the end of system init, to set the trigger times to a suitable and realizable
   //!  start state, so that the scheduler can find
@@ -209,6 +195,7 @@ class ElementBase_c : public CANCustomer_c {
   //!  @return AVG of exec time
   inline uint16_t getAvgExecTime() const;
 
+#ifdef DEBUG_SCHEDULER
   //  Operation: getMaxExecTime
   //!  deliver the max exec time of this task (used only for debug based on ui16_maxTime)
   inline uint16_t getMaxExecTime() const;
@@ -231,7 +218,7 @@ class ElementBase_c : public CANCustomer_c {
   //!  (> 0 -> better than planned, < 0 -> worse than planned)
   //!  (only needed for debug tests)
   inline int16_t getMaxTimingAccuracy() const;
-
+#endif
   //  Operation: getStdTimeToNextTrigger
   //!  deliver standard time till next retrigger (used for comparisong operators in priority queue of SystemManagement_c -> must be very quick as very often called)
   int32_t getStdTimeToNextTrigger() const;
@@ -254,6 +241,10 @@ class ElementBase_c : public CANCustomer_c {
   //!  on available time.
   //!  @return 0 == immediate return is forced, <0 == unrestricted time, else available time in [msec]
   static int16_t getAvailableExecTime();
+
+  //  Operation: getDemandedExecEnd
+  //!  Deliver the registered exec end timestamp.
+  static inline int32_t getDemandedExecEnd();
 
   //  Operation: getLastRetriggerTime
   static inline int32_t getLastRetriggerTime();
@@ -280,10 +271,6 @@ protected:
   //! Parameter:
   //! @param rui16_timePeriod: needed time between calls of timeEvent in [msec]
   void setTimePeriod(uint16_t rui16_timePeriod);
-
-  //  Operation: getDemandedExecEnd
-  //!  Deliver the registered exec end timestamp.
-  static inline int32_t getDemandedExecEnd();
 
   //! Deliver the max Jitter in ms that uses the
   //! Scheduler for earlier oder later call of a task
@@ -350,7 +337,7 @@ protected:
 
   //  Attribute: ui32_sumTime
   uint32_t ui32_sumTime;
-
+#ifdef DEBUG_SCHEDULER
   //  Attribute: i32_sumTimingAccuracy
   //!  SUM of time between actual and next planned execution (to calc AVG)
   //!  (> 0 -> better than planned, < 0 -> worse than planned)
@@ -369,14 +356,6 @@ protected:
   //!  (only needed for debug tests)
   int16_t i16_maxTimingAccuracy;
 
-  //  Attribute: ui16_approxExecTime
-  //!  approximate runtim of the timeEvent() function
-  uint16_t ui16_approxExecTime;
-
-  //  Attribute: ui16_timePeriod
-  //!  standard period in [msec] when timeEvent() should be called
-  uint16_t ui16_timePeriod;
-
   //  Attribute: ui16_minTime
   //!  minimum execution time (only needed for debug tests)
   uint16_t ui16_minTime;
@@ -384,6 +363,14 @@ protected:
   //  Attribute: ui16_maxTime
   //!  maximum execution time (only needed for debug tests)
   uint16_t ui16_maxTime;
+#endif
+  //  Attribute: ui16_approxExecTime
+  //!  approximate runtim of the timeEvent() function
+  uint16_t ui16_approxExecTime;
+
+  //  Attribute: ui16_timePeriod
+  //!  standard period in [msec] when timeEvent() should be called
+  uint16_t ui16_timePeriod;
 
   /** End Integrate private Implementation for Timescheduling */
 
@@ -418,7 +405,7 @@ ElementBase_c::getAvgExecTime() const
 {
   return ( ui32_callCnt != 0 )?( ui32_sumTime / ui32_callCnt ):0;
 }
-
+#ifdef DEBUG_SCHEDULER
 //!  deliver the max exec time of this task (used only for debug based on ui16_maxTime)
 inline
 uint16_t
@@ -434,7 +421,6 @@ ElementBase_c::getMinExecTime() const
 {
   return ui16_minTime;
 }
-
 inline
 int16_t
 ElementBase_c::getAvgTimingAccuracy() const
@@ -461,7 +447,7 @@ ElementBase_c::getMaxTimingAccuracy() const
 {
   return i16_maxTimingAccuracy;
 }
-
+#endif
 //!  This static function can be called by the central Task-Scheduler or by RegisterInterrupts_c to force rapid stop of activities,
 //!  so that a very important other task can be started.
 //!  This function sets the i32_demandedExecEnd to 0 which commands the derived class timeEvent function to return activity as soon as possible

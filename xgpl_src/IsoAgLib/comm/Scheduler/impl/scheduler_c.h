@@ -95,7 +95,11 @@
 
 #include <list>
 
-#define DEBUG_SCHEDULER
+/** uncomment the following define for specific debugging of the new Scheduler_c */
+//#define DEBUG_SCHEDULER
+
+/** uncomment the following define if you want a documentation of each scheduled task */
+//#define DEBUG_SCHEDULER_EXTREME
 
 
 /// Begin Namespace __IsoAgLib
@@ -141,15 +145,12 @@ public:
   */
   int32_t timeEvent( int32_t ri32_demandedExecEndScheduler = -1);
 
-  //!  This function implements the main scheduler work defined in UC15 Scheduler. It selects the next task, executes it and updates the task-list.
-  //!  If no task can be immediately started with EarliestRetrigger-option,
-  //!  the time to earliest triggerable task
-  //!  is given to setDebugIdleInformation.
-  //!  Each In-Time call of a task is
-  //!  given to setDebugTimeAccuracy,
-  //!  to debug the time behaviour of the system.
-  //!  @return idle time till next executable task ( 0 == this function should be called immediately again )
-  int32_t selectCallTaskAndUpdateQueue();
+  /** deliver the global execution time event for the central IsoAgLib Scheduler_c.
+      This end time is defined by the application which calls Scheduler_c::timeEvent().
+      This is different from the individual end time, which has to be regarded by each
+      individual task!
+    */
+  static int32_t getCentralSchedulerExecEndTime() { return i32_demandedExecEndScheduler;}
 
 
   /**
@@ -210,6 +211,15 @@ public:
   //! @param  ri16_newTimePeriod otpional -> New Period will set for the Client by Scheduler_c
   bool  changeRetriggerTimeAndResort(ElementBase_c * pc_client  , int32_t i32_nextRetriggerTime, int16_t ri16_newTimePeriod = -1);
 
+  //!  Uses Delta from TimePeriod of a Client
+  //!  to put a Task to the right Position in the TaskQueue
+  //!  ATTENTION parameter nextRetriggerTime will exactly used from Scheduler_c
+  //!  for call of timevent.-> so add e.g. an TimePeriod for an later call
+  //! @param rc_client -> Client in Scheduler_c TaskQueue
+  //! @param i32_nextRetriggerTime -> New i32_nextRetriggerTime set for Client by Scheduler_c
+  //! @param  ri16_newTimePeriod otpional -> New Period will set for the Client by Scheduler_c
+  bool  changeRetriggerTimeAndResort(SchedulerEntry_c rc_client  , int32_t i32_nextRetriggerTime, int16_t ri16_newTimePeriod = -1);
+
 
 private: //Private methods
   friend class SINGLETON( Scheduler_c );
@@ -229,11 +239,30 @@ private: //Private methods
   */
   int16_t getAvailableExecTime( int16_t ri16_awaitedExecTime = 0 );
 
+  //!  This function implements the main scheduler work defined in UC15 Scheduler. It selects the next task, executes it and updates the task-list.
+  //!  If no task can be immediately started with EarliestRetrigger-option,
+  //!  the time to earliest triggerable task
+  //!  is given to setDebugIdleInformation.
+  //!  Each In-Time call of a task is
+  //!  given to setDebugTimeAccuracy,
+  //!  to debug the time behaviour of the system.
+  //!  @return idle time till next executable task ( 0 == this function should be called immediately again )
+  int32_t selectCallTaskAndUpdateQueue();
+
   //!  resort from start of task list by swapping neighbour elements.
   //!  Stop execution, if compared elements are in correct order.
   //!  Avoid complex complete sort of list, if only the previously executed task must be placed in the correct position again - the rest of the list is still correct sorted.
   void resortTaskList();
 
+
+  //!  Uses Delta from TimePeriod of a Client
+  //!  to put a Task to the right Position in the TaskQueue
+  //!  ATTENTION parameter nextRetriggerTime will exactly used from Scheduler_c
+  //!  for call of timevent.-> so add e.g. an TimePeriod for an later call
+  //! @param itc_task -> iterator to the task that should be changed
+  //! @param i32_nextRetriggerTime -> New i32_nextRetriggerTime set for Client by Scheduler_c
+  //! @param  ri16_newTimePeriod otpional -> New Period will set for the Client by Scheduler_c
+  bool  changeRetriggerTimeAndResort(std::list<SchedulerEntry_c>::iterator itc_task, int32_t i32_nextRetriggerTime, int16_t ri16_newTimePeriod = -1);
 
 #ifdef DEBUG_SCHEDULER
   //!  Send debug messages with information on the

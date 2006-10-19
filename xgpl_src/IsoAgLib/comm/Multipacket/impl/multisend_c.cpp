@@ -681,8 +681,6 @@ MultiSend_c::SendStream_c::timeEvent (uint8_t rui8_pkgCnt)
 bool
 MultiSend_c::timeEvent()
 {
-  if ( getAvailableExecTime() == 0 ) return false;
-
   if (list_sendStream.empty())
   { // nothing to do if no transfer is Running
     setTimePeriod (5000); // actually we could use "infinite here"

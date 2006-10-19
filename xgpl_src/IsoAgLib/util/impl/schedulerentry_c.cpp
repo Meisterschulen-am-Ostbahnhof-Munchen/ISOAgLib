@@ -114,14 +114,6 @@ SchedulerEntry_c::timeEventExec(int32_t ri32_demandedExecEnd)
   /// should NOT be Updated in  timeEventPostUpdateStatistics()
   /// so Client keep old nextRetriggerTime and stay as FIRST in TaskQueue
   if( cb_result )pc_taskInstance->timeEventPostUpdateStatistics();
-  else
-  {
-    if ( pc_taskInstance->registerNextTaskTooNear() )
-    { // this task has a too bad timing --> force call of timeEventPostUpdateStatistics()
-      // so that it can not block any other task after this entry in the central Scheduler_c queue
-      pc_taskInstance->timeEventPostUpdateStatistics();
-    }
-  }
 
   #ifdef DEBUG
     if(!b_result)  {
