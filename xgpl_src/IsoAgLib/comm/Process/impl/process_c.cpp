@@ -166,6 +166,8 @@ void Process_c::init()
     getCanInstance4Comm().insertFilter( *this, (0x1FFFF00UL), ui32_filter, true, Ident_c::ExtendedIdent);
   }
 
+  //  start with 200 msec timer period
+  ElementBase_c::setTimePeriod(200);
 }
 
 /** every subsystem of IsoAgLib has explicit function for controlled shutdown
@@ -305,13 +307,24 @@ bool Process_c::timeEvent( void ){
   }
   #endif
 
+  uint16_t ui16_nextTimePeriod = 0;
+
   // call the time event for all local data
   for ( cacheTypeC1_t pc_iter = c_arrClientC1.begin();
         ( pc_iter != c_arrClientC1.end() );
         pc_iter++ )
   { // delete item at pc_timeIter, if pc_searchCacheC1 points to pc_client
     if ( getAvailableExecTime() == 0 ) return false;
-    if ( !(*pc_iter)->timeEvent() ) b_result = false; /** @todo seemded to segfault here, although this is REALLY STRANGE! */
+    if ( !(*pc_iter)->timeEvent( &ui16_nextTimePeriod ) ) b_result = false; /** @todo seemded to segfault here, although this is REALLY STRANGE! */
+  }
+
+  if (ui16_nextTimePeriod)
+  {
+    if (ui16_nextTimePeriod < 20)
+    { // skip small values
+      ui16_nextTimePeriod = 20;
+    }
+    ElementBase_c::setTimePeriod(ui16_nextTimePeriod); // + ElementBase_c::getEarlierInterval());
   }
   // call the time event for all remote data
   for ( cacheTypeC2_t pc_iter = c_arrClientC2.begin();
@@ -329,6 +342,13 @@ bool Process_c::timeEvent( void ){
   // the other list elements doesn't need periodic actions
   return b_result;
 };
+
+
+/** called when a new measurement is started */
+void Process_c::resetTimerPeriod( void )
+{
+  getSchedulerInstance().changeTimePeriodAndResortTask(this, 100);
+}
 
 /**
   start processing of a process msg
@@ -938,5 +958,15 @@ const char*
 Process_c::getTaskName() const
 { return "Process_c"; }
 
+
+//! Function set ui16_earlierInterval and
+//! ui16_laterInterval that will be used by
+//! getTimeToNextTrigger(retriggerType_t)
+//! can be overloaded by Childclass for special condition
+void
+Process_c::updateEarlierAndLatestInterval(){
+  ui16_earlierInterval = 0; //( ( getTimePeriod() * 3) / 4);
+  ui16_latestInterval   =  ( getTimePeriod() / 2) ;
+}
 
 } // end of namespace __IsoAgLib

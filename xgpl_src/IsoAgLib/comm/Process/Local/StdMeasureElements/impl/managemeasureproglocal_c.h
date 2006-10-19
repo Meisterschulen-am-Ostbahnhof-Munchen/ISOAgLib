@@ -145,9 +145,10 @@ private:
     perform periodic actions
     delete all running measure programs of members which are >3sec inactive;
     deletion of outdated setpoints is managed by SetpointLocal_c::timeEvent
+    @param pui16_nextTimePeriod calculated new time period, based on current measure progs (only for local proc data)
     @return true -> all planned executions performed
   */
-  bool timeEvent( void );
+  bool timeEvent( uint16_t *pui16_nextTimePeriod = NULL );
 
   /** process a measure prog message for local process data */
   void processProg();

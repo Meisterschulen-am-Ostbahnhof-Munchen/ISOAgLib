@@ -184,6 +184,9 @@ public:
     @return true -> this subprog triggers (e.g. send actual value)
   */
   bool updateTrigger(int32_t ri32_val);
+
+  int32_t nextTriggerTime(int32_t ri32_val);
+
 #ifdef USE_FLOAT_DATA_TYPE
   /**
     deliver the increment value of this subprog

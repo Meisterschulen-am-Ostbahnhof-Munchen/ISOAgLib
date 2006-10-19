@@ -242,9 +242,10 @@ ProcDataLocalSimpleMeasure_c::~ProcDataLocalSimpleMeasure_c(){
   perform periodic actions
   delete all running measure programs of members which are >3sec inactive
   deletion of outdated setpoints is managed by SetpointLocal_c::timeEvent
+  @param pui16_nextTimePeriod calculated new time period, based on current measure progs (only for local proc data)
   @return true -> all planned executions performed
 */
-bool ProcDataLocalSimpleMeasure_c::timeEvent( void ){
+bool ProcDataLocalSimpleMeasure_c::timeEvent( uint16_t* /* pui16_nextTimePeriod */ ){
   if ( ElementBase_c::getAvailableExecTime() == 0 ) return false;
   // perform time event activities for base class
   if ( ! ProcDataLocalBase_c::timeEvent() ) return false;

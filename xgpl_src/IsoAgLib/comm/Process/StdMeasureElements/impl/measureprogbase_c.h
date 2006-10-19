@@ -470,9 +470,10 @@ public:
 
   /**
     perform periodic actions
+    @param pui16_nextTimePeriod calculated new time period, based on current measure progs (only for local proc data)
     @return true -> all planned activities performed in available time
   */
-  virtual bool timeEvent( void );
+  virtual bool timeEvent( uint16_t *pui16_nextTimePeriod = NULL );
 
   /**
     compare two items for PRI and ISOName

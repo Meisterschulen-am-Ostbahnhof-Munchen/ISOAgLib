@@ -178,9 +178,10 @@ ProcDataRemoteSimpleSetpoint_c::~ProcDataRemoteSimpleSetpoint_c(){
 }
 /**
   perform periodic actions
+  @param pui16_nextTimePeriod calculated new time period, based on current measure progs (only for local proc data)
   @return true -> all planned executions performed
 */
-bool ProcDataRemoteSimpleSetpoint_c::timeEvent( void )
+bool ProcDataRemoteSimpleSetpoint_c::timeEvent( uint16_t* /* pui16_nextTimePeriod = NULL */)
 {
   prog().setISOName(commanderISOName());
   return prog().timeEvent();

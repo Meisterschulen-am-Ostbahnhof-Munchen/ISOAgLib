@@ -338,9 +338,10 @@ void ProcDataLocalBase_c::incrMasterMeasurementVal(float rf_val){
   perform periodic actions
   task for ProcDataLocal_c::timeEvent is to store the actual
   eeprom value in the defined time intervall
+    @param pui16_nextTimePeriod calculated new time period, based on current measure progs (only for local proc data)
   @return true -> all planned executions performed
 */
-bool ProcDataLocalBase_c::timeEvent( void ){
+bool ProcDataLocalBase_c::timeEvent( uint16_t* /* pui16_nextTimePeriod */){
   if ( ElementBase_c::getAvailableExecTime() == 0 ) return false;
   #ifdef USE_EEPROM_IO
   // check if eeprom value should be stored

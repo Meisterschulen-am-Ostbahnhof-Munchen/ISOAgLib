@@ -171,9 +171,10 @@ class ProcDataRemoteBase_c : public ProcDataBase_c
     ProcDataRemoteBase_c::timeEvent has nothing to do
     -> this function must only be defined as base for derived variants which
     uses simple measurements and thus doesn't need a time event
+    @param pui16_nextTimePeriod calculated new time period, based on current measure progs (only for local proc data)
     @return true -> all planned executions performed
   */
-  virtual bool timeEvent( void );
+  virtual bool timeEvent( uint16_t *pui16_nextTimePeriod = NULL );
 
     /** send the given int32_t value with variable ISOName rc_varISOName;
   set the int32_t value with conversion (according to central data type) in message

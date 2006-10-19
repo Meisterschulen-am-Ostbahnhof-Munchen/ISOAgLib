@@ -160,9 +160,10 @@ void ProcDataRemoteBase_c::setCommanderISOName(const ISOName_c* rpc_isoName)
   ProcDataRemoteBase_c::timeEvent
   -> adapt here the ownerISOName to an existing item, when DevClass/-Instance are matching, but the other fields are
      differen ( don't change anything, if there is an item with identic ISOName setting
+  @param pui16_nextTimePeriod calculated new time period, based on current measure progs (only for local proc data)
   @return true -> all planned executions performed
 */
-bool ProcDataRemoteBase_c::timeEvent( void )
+bool ProcDataRemoteBase_c::timeEvent( uint16_t *pui16_nextTimePeriod )
 {
   return true;
 }

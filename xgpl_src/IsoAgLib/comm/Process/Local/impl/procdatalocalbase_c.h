@@ -292,9 +292,10 @@ class ProcDataLocalBase_c : public ProcDataBase_c
   /** perform periodic actions
     task for ProcDataLocal_c::timeEvent is to store the actual
     eeprom value in the defined time intervall
+    @param pui16_nextTimePeriod calculated new time period, based on current measure progs (only for local proc data)
     @return true -> all planned executions performed
   */
-  virtual bool timeEvent( void );
+  virtual bool timeEvent( uint16_t *pui16_nextTimePeriod = NULL );
 
   /** send a min-information (selected by MOD) to a specified target (selected by ISOName)
     @param rc_targetISOName ISOName of target

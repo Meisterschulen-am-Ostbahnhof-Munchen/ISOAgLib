@@ -251,9 +251,10 @@ public:
   void processMsg();
 
   /** perform periodic acoins
+    @param pui16_nextTimePeriod calculated new time period, based on current measure progs (only for local proc data)
     @return true -> all planned executions performed
   */
-  virtual bool timeEvent( void );
+  virtual bool timeEvent( uint16_t *pui16_nextTimePeriod = NULL );
 
   virtual const ISOName_c& commanderISOName()const{return ISOName_c::ISONameUnspecified;}
 

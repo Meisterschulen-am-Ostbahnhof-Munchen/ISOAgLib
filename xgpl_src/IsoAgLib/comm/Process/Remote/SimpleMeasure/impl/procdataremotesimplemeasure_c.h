@@ -281,9 +281,10 @@ public:
 
   /**
     perform periodic actions
+    @param pui16_nextTimePeriod calculated new time period, based on current measure progs (only for local proc data)
     @return true -> all planned executions performed
   */
-  virtual bool timeEvent( void );
+  virtual bool timeEvent( uint16_t *pui16_nextTimePeriod = NULL );
 
 private: // Private methods
   /** process a measure prog message for remote process data */

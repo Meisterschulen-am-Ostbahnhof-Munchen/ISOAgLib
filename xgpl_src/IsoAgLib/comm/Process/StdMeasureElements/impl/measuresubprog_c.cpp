@@ -87,7 +87,12 @@
 /* ********** include headers ************ */
 /* *************************************** */
 #include "measuresubprog_c.h"
+#include <IsoAgLib/util/impl/elementbase_c.h>
 #include <cstdlib>
+
+#if defined(USE_BASE) || defined(USE_TRACTOR_MOVE)
+  #include <IsoAgLib/comm/Base/impl/tracmove_c.h>
+#endif
 
 namespace __IsoAgLib {
 
@@ -187,6 +192,49 @@ bool MeasureSubprog_c::updateTrigger(int32_t ri32_val){
     return false;
   }
 }
+
+int32_t MeasureSubprog_c::nextTriggerTime(int32_t ri32_val)
+{
+  switch (type())
+  {
+    case Proc_c::TimeProp:
+      return (i32_lastVal + i32_increment - ri32_val);
+    case Proc_c::DistProp:
+    {
+      const int32_t i32_restDistance = i32_lastVal + i32_increment - ri32_val;
+#if defined(USE_BASE) || defined(USE_TRACTOR_MOVE)
+      const int32_t i32_speed = CNAMESPACE::labs(getTracMoveInstance4Comm().speedTheor());  // speed can be negative
+
+      if (0 == i32_speed)
+        // speed == 0
+        return 500;
+
+      if (i32_speed >= 0xFAFF)
+        // invalid speed, no tractor available
+        return 200;
+
+      if (i32_restDistance < 0)
+        // should not happen if distance does only grow
+        return 100;
+
+      int32_t i32_nextTriggerTime = (i32_restDistance * 1000 ) / i32_speed; // distance in mm, div speed in mm/sec, result in msec
+
+      if (i32_nextTriggerTime > 500)
+      {
+        i32_nextTriggerTime = 500;
+      }
+
+      return i32_nextTriggerTime;  // distance (in mm) div speed (in mm/sec) => time in msec
+#else
+      return 200; // 200 msec
+#endif
+    }
+    default:
+      return 0;
+  }
+}
+
+
 #ifdef USE_FLOAT_DATA_TYPE
 /**
   start a measuring subprogramm, potentially with increment and lastVal definition

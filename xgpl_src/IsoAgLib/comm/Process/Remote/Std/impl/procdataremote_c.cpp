@@ -180,9 +180,10 @@ ProcDataRemote_c::~ProcDataRemote_c(){
 }
 /**
   perform periodic actions
+  @param pui16_nextTimePeriod calculated new time period, based on current measure progs (only for local proc data)
   @return true -> all planned executions performed
 */
-bool ProcDataRemote_c::timeEvent( void )
+bool ProcDataRemote_c::timeEvent( uint16_t *pui16_nextTimePeriod )
 {
   // check if remote isoName isn't active any more (>3sec) and stop all
   // measureing progs

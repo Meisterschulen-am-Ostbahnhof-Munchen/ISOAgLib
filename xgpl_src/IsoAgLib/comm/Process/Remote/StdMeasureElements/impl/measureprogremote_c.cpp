@@ -732,9 +732,10 @@ bool MeasureProgRemote_c::resetMax(){
 
 /**
   perform periodic actions --> stop measuring prog if isoName isn't active any more
+  @param pui16_nextTimePeriod calculated new time period, based on current measure progs (only for local proc data)
   @return true -> all planned activities performed in available time
 */
-bool MeasureProgRemote_c::timeEvent( void )
+bool MeasureProgRemote_c::timeEvent( uint16_t *pui16_nextTimePeriod )
 {
   if ( (!getIsoMonitorInstance4Comm().existIsoMemberISOName(isoName(), true)) && started() )
   { // remote owner of this process data isn't active any more

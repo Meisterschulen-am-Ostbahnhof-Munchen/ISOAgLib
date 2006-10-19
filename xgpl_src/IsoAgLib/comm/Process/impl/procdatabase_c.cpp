@@ -224,8 +224,10 @@ void ProcDataBase_c::processMsg()
 }
 
 
-/** perform periodic acoins */
-bool ProcDataBase_c::timeEvent( void )
+/** perform periodic acoins 
+  @param pui16_nextTimePeriod calculated new time period, based on current measure progs (only for local proc data)
+*/
+bool ProcDataBase_c::timeEvent( uint16_t* /* pui16_nextTimePeriod */ )
 {
   return true;
 }

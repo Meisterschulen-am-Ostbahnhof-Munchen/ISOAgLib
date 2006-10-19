@@ -755,9 +755,10 @@ bool MeasureProgBase_c::processMsg(){
 
 
 /** perform periodic actions
+    @param pui16_nextTimePeriod calculated new time period, based on current measure progs (only for local proc data)
     @return true -> all planned activities performed in available time
   */
-bool MeasureProgBase_c::timeEvent( void )
+bool MeasureProgBase_c::timeEvent( uint16_t* /* pui16_nextTimePeriod */ )
 {return true;}
 
 

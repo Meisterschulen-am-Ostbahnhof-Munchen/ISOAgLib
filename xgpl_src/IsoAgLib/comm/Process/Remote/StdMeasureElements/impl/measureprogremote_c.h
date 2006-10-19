@@ -308,9 +308,10 @@ public:
 
   /**
     perform periodic actions --> stop measuring prog if isoName isn't active any more
+    @param pui16_nextTimePeriod calculated new time period, based on current measure progs (only for local proc data)
     @return true -> all planned activities performed in available time
   */
-  virtual bool timeEvent( void );
+  virtual bool timeEvent( uint16_t *pui16_nextTimePeriod = NULL );
 private: // Private methods
   /**
     verify the stored ISOName code of the remote system

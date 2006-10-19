@@ -276,6 +276,9 @@ bool MeasureProgLocal_c::start(Proc_c::type_t ren_type,
   if (b_sendVal)
     b_triggeredIncrement = (sendRegisteredVals(ren_doSend))? false:true;
 
+  // set the timer period for process_c to a low value (maybe the new programm triggers soon)
+  getProcessInstance4Comm().resetTimerPeriod();
+
   // return if successful sent starting values
   return b_triggeredIncrement;
 }
@@ -579,7 +582,7 @@ void MeasureProgLocal_c::setVal(int32_t ri32_val){
   }
 
   // now check if one subprog triggers
-  bool b_singleTest;
+  bool b_singleTest = false;
   for (Vec_MeasureSubprogIterator pc_iter = vec_measureSubprog.begin();
        pc_iter != vec_measureSubprog.end(); pc_iter++)
   {
@@ -686,7 +689,7 @@ void MeasureProgLocal_c::setVal(float rf_val){
   }
 
   // now check if one subprog triggers
-  bool b_singleTest;
+  bool b_singleTest = false;
   for (Vec_MeasureSubprogIterator pc_iter = vec_measureSubprog.begin();
        pc_iter != vec_measureSubprog.end(); pc_iter++)
   {
@@ -994,18 +997,23 @@ bool MeasureProgLocal_c::resetMax(){
     possible errors:
       * dependant error in ProcDataLocal_c if EMPF or SEND not valid
       * dependant error in CANIO_c on send problems
+    @param pui16_nextTimePeriod calculated new time period, based on current measure progs (only for local proc data)
     @return true -> all planned activities performed in available time
   */
-bool MeasureProgLocal_c::timeEvent( void )
+bool MeasureProgLocal_c::timeEvent( uint16_t *pui16_nextTimePeriod )
 {
   if ( ElementBase_c::getAvailableExecTime() == 0 ) return false;
   int32_t i32_time = ElementBase_c::getLastRetriggerTime();
 
   bool b_singleTest;
+  int32_t i32_nextTimePeriod;
+  int32_t i32_distTheor;
 
   for (Vec_MeasureSubprogIterator pc_iter = vec_measureSubprog.begin(); pc_iter != vec_measureSubprog.end(); pc_iter++)
   {
     b_triggeredIncrement = false;
+    b_singleTest = false;
+    i32_nextTimePeriod = 0;
     switch (pc_iter->type())
     {
       case Proc_c::TimeProp:
@@ -1015,14 +1023,25 @@ bool MeasureProgLocal_c::timeEvent( void )
         b_triggeredIncrement = (b_singleTest)? true : b_triggeredIncrement;
         // update med/integ
         if ((b_singleTest)&&(en_accumProp == Proc_c::AccumTime))updatePropDepVals();
+
+        // calculate next timer period
+        i32_nextTimePeriod = pc_iter->nextTriggerTime(i32_time);
+
         break;
       case Proc_c::DistProp:
         #if defined(USE_BASE) || defined(USE_TRACTOR_MOVE)
-        b_singleTest = pc_iter->updateTrigger(int32_t(getTracMoveInstance4Comm().distTheor()));
+        i32_distTheor = getTracMoveInstance4Comm().distTheor();
+        b_singleTest = pc_iter->updateTrigger(i32_distTheor);
+        #else
+        i32_distTheor = 0;
         #endif
         b_triggeredIncrement = (b_singleTest)? true : b_triggeredIncrement;
         // update med/integ
         if ((b_singleTest)&&(en_accumProp == Proc_c::AccumTime))updatePropDepVals();
+
+        // calculate next timer period
+        i32_nextTimePeriod = pc_iter->nextTriggerTime(i32_distTheor);
+
         break;
       case Proc_c::OnChange:
         b_singleTest = pc_iter->updateTrigger(val());
@@ -1031,6 +1050,17 @@ bool MeasureProgLocal_c::timeEvent( void )
       default:
         break;
     } // switch
+
+    if (i32_nextTimePeriod && pui16_nextTimePeriod)
+    {
+      if ( (i32_nextTimePeriod > 0) // something valid to set 
+            // *pui16_nextTimePeriod not yet set or i32_nextTimePeriod smaller => set
+            && ((0 == *pui16_nextTimePeriod) || (i32_nextTimePeriod < *pui16_nextTimePeriod)) 
+          )
+      {
+        *pui16_nextTimePeriod = i32_nextTimePeriod;
+      }
+    }
 
     // if b_triggeredIncrement == true the registered values should be sent
     // if needed an old unsuccessfull send try is redone (deactivated!)

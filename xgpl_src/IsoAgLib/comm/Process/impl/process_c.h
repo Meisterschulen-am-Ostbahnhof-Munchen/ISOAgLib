@@ -295,6 +295,9 @@ public:
   */
   bool timeEvent( void );
 
+  /** called when a new measurement is started */
+  void resetTimerPeriod( void );
+
   /** handler function for access to undefined client.
     * the base Singleton calls this function, if it detects an error
     */
@@ -380,6 +383,12 @@ public:
   void setProcessDataChangeHandler( IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler )
    { pc_processDataChangeHandler = rpc_processDataChangeHandler; }
 
+protected:
+  //! Function set ui16_earlierInterval and
+  //! ui16_laterInterval that will be used by
+  //! getTimeToNextTrigger(retriggerType_t)
+  //! can be overloaded by Childclass for special condition
+  virtual void updateEarlierAndLatestInterval();
 
 private: // Private methods
   /**
