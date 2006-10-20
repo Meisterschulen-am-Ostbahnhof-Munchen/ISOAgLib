@@ -134,7 +134,7 @@ public:
     @param snrDat pointer to 6 uint8_t array, where the serial no of the device is stored
   */
   static void serialNo(uint8_t *const snrDat){System_c::serialNo(snrDat);};
-
+  static uint32_t serialNo( void ){return System_c::serialNo();};
 
 private:
   /** allow getIsystemInstance() access to shielded base class.

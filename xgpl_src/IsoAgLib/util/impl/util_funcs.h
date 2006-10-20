@@ -95,6 +95,8 @@ class StreamInput_c;
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
+  uint8_t bcd2dec(uint8_t rb_bcd);
+  uint8_t dec2bcd(uint8_t rb_dec);
 /**
   calculate res = (mul_1 / div_1) * (mul_2 / div_2) with 4 uint8_t
   integers without overflow problems caused by (mul_1 * mul_2)

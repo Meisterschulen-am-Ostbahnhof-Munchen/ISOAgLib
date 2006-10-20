@@ -182,6 +182,13 @@ public:
   */
   static inline void serialNo(uint8_t *const snrDat){HAL::getSnr(snrDat);};
 
+  /**
+  return the serial nr of the device as an uint32_t
+  (uses BIOS function)
+  @param
+  @return serial nr of the device
+   */
+  static inline uint32_t serialNo( void ) {return HAL::getSerialNr();};
 
 protected:
 private:

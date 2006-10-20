@@ -544,6 +544,29 @@ unsigned int commandtypetoi (const char *text_command)
   return retval;
 };
 
+bool checkifnumber(const char *text_number)
+{
+  uint32_t ui32_temp;
+  uint8_t ui8_check;
+  char p_text_number[32];
+  uint8_t i;
+  for (i=0; i < strlen(text_number); i++) p_text_number[i] = tolower (text_number[i]);
+  p_text_number[i] = 0x00;
+  //check if hex or decimal number
+  if (strncmp((p_text_number), "0x", 2) == 0) //yes, it is a hex number
+    ui8_check = sscanf((p_text_number+2), "%x", &ui32_temp);
+  else //it is a decimal number
+    ui8_check = sscanf(p_text_number, "%d", &ui32_temp);
+
+  if (ui8_check != 0)
+  {
+    return true;
+  }
+  else
+  {
+    return false;
+  }
+}
 
 uint32_t stringtonumber(const char *text_number, int8_t ui8_bitRange, int8_t i8_attrIndex)
 {
@@ -564,7 +587,7 @@ uint32_t stringtonumber(const char *text_number, int8_t ui8_bitRange, int8_t i8_
   {
     //test correct range of value
     if (i8_attrIndex == -1) return ui32_temp;
-    if ((ui32_temp >= 0) && (ui32_temp < ((uint32_t)(1 << ui8_bitRange) - 1)))
+    if ((ui32_temp >= 0) && (ui32_temp <= ((uint32_t)(1 << ui8_bitRange) - 1)))
       return ui32_temp;
     else
     {
@@ -883,6 +906,11 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
         {
           if (!attrIsGiven[attrWorkingset_mastername])
           {
+            //test if attrWS_identity_number is composed from a function or from an hexadecimal number
+            bool b_test = checkifnumber(vecstr_attrString [attrWS_identity_number].c_str());
+
+            if (b_test) {
+
             //alle Attribute zum Workingset_mastername zusammensetzen
             c_isoname.set(booltoi(vecstr_attrString [attrSelf_conf].c_str()),
                           stringtonumber(vecstr_attrString [attrIndustry_group].c_str(), 3, attrIndustry_group),
@@ -893,6 +921,21 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
                           stringtonumber(vecstr_attrString [attrWS_identity_number].c_str(), 21, attrWS_identity_number),
                           stringtonumber(vecstr_attrString [attrFunc_Inst].c_str(), 5, attrFunc_Inst),
                           stringtonumber(vecstr_attrString [attrECU_Inst].c_str(), 3, attrECU_Inst));
+            }
+            else
+            {
+            //alle Attribute zum Workingset_mastername zusammensetzen
+                  c_isoname.set(booltoi(vecstr_attrString [attrSelf_conf].c_str()),
+                                stringtonumber(vecstr_attrString [attrIndustry_group].c_str(), 3, attrIndustry_group),
+                                stringtonumber(vecstr_attrString [attrDevice_class].c_str(), 7, attrDevice_class),
+                                stringtonumber(vecstr_attrString [attrDevice_class_instance].c_str(), 4, attrDevice_class_instance),
+                                stringtonumber(vecstr_attrString [attrFunction].c_str(), 8, attrFunction),
+                                stringtonumber(vecstr_attrString [attrManufacturer_code].c_str(), 11, attrManufacturer_code),
+                                0,
+                                stringtonumber(vecstr_attrString [attrFunc_Inst].c_str(), 5, attrFunc_Inst),
+                                stringtonumber(vecstr_attrString [attrECU_Inst].c_str(), 3, attrECU_Inst));
+
+            }
           }
           else
           {
@@ -1024,17 +1067,18 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
 
           fprintf(partFileA, "%s", buffer.str().c_str());
           buffer.str("");
-//           fprintf(partFileB, "IsoAgLib::iISOName_c %sISOName(0x%x, 0x%x);\n\n",
-//                    vecstr_attrString[attrDevProgVarName].c_str(), c_isoname.devClass(), c_isoname.devClassInst());
-//           fprintf(partFileB, "IsoAgLib::iIdentItem_c c_myIdent(%s, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x\n #ifdef USE_ISO_TERMINAL \n , 0, NULL\n #endif\n);\n\n",
-//                   c_isoname.selfConf()? "true" : "false",
-//                   c_isoname.indGroup(), c_isoname.func(), c_isoname.manufCode(), c_isoname.serNo(),
-//                   atoi(vecstr_attrString[attrWanted_SA].c_str()), stringtonumber(vecstr_attrString[attrStore_SA_at_EEPROM_address].c_str(), 0, -1),
-//                   c_isoname.funcInst(),c_isoname.ecuInst());
-          fprintf(partFileB, "IsoAgLib::iIdentItem_c c_myIdent(0x%x, 0x%x, %d, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, %d,%d,%s);\n\n",
+          bool b_test = checkifnumber(vecstr_attrString [attrWS_identity_number].c_str());
+          if (b_test)
+            fprintf(partFileB, "IsoAgLib::iIdentItem_c c_myIdent(0x%x, 0x%x, %d, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, %d,%d,%s);\n\n",
                   c_isoname.indGroup(), c_isoname.devClass(), c_isoname.devClassInst(), c_isoname.func(),
                   c_isoname.manufCode(), c_isoname.serNo(), atoi(vecstr_attrString[attrWanted_SA].c_str()), stringtonumber(vecstr_attrString[attrStore_SA_at_EEPROM_address].c_str(), 0, -1),
                   c_isoname.funcInst(), c_isoname.ecuInst(),c_isoname.selfConf()? "true" : "false");
+          else
+            fprintf(partFileB, "IsoAgLib::iIdentItem_c c_myIdent(0x%x, 0x%x, %d, 0x%x, 0x%x, %s, 0x%x, 0x%x, %d,%d,%s);\n\n",
+                    c_isoname.indGroup(), c_isoname.devClass(), c_isoname.devClassInst(), c_isoname.func(),
+                    c_isoname.manufCode(), vecstr_attrString [attrWS_identity_number].c_str(), atoi(vecstr_attrString[attrWanted_SA].c_str()), stringtonumber(vecstr_attrString[attrStore_SA_at_EEPROM_address].c_str(), 0, -1),
+                    c_isoname.funcInst(), c_isoname.ecuInst(),c_isoname.selfConf()? "true" : "false");
+
           vecstr_constructor[0] = vecstr_attrString[attrDevProgVarName].c_str();
           vecstr_constructor[1] = vecstr_attrString[attrPriority].c_str();
         }

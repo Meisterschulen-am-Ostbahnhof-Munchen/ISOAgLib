@@ -235,6 +235,21 @@ int32_t localGetApplicationRate() { return IsoAgLib::iSystem_c::getTime(); }
 int main()
 { // init CAN channel with 250kBaud at channel 0 ( count starts with 0 )
   IsoAgLib::getIcanInstance().init( 0, 250 );
+  
+  /// Identity Number definition -> change Device Description xml file to used one of the following method.
+  // Identity Number is represented by the last 21 bits of the workingset master name. It could be set :
+  // - directly in the Device Description xml file. It could be the last 21 bit of attribut workingset_mastername <deviceelement>
+  //    or attribut ws_identity_number with decimal or hexadecimal value f.e. ws_identity_number="0x1b"
+  //    example :
+  //    <device designator="Device1" software_version="0.1" workingset_mastername="Ma00a1900ffe0001b"
+  //        serialnumber="WXYZ999" structure_label="STRUCT4" localization_label="de50015A56FF" device_program_name="myDevice">
+  // - with bios information through a call to function IsoAgLib::iSystem_c::serialNo()
+  //    in this case every single part of the workingset master name must be specified in DeviceDescription.xml,
+  //    and ws_identity_number gives a function call f.e. ws_identity_number="IsoAgLib::iSystem_c::serialNo()"
+  //    example :
+  //    <device designator="Device1" software_version="0.1" self_configurable_address="true" industry_group="2"
+  //        device_class_instance="0" device_class="5" function="25" function_instance="0"
+  //        ecu_instance="0" manufacturer_code="0x7ff" ws_identity_number="IsoAgLib::iSystem_c::serialNo()"
 
   /// register pool of the device description
   bool b_registerSuccess = IsoAgLib::getIProcessInstance().getDevPropertyHandlerInstance().registerDevicePool(&c_myIdent, deviceDescription_de, ui32_arrayLength_de, true);

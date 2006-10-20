@@ -149,7 +149,11 @@ namespace HAL
 
   inline int16_t getSnr(uint8_t *snrDat)
     {return 1;};
-
+  inline int32_t getSerialNr(int16_t* pi16_errCode = NULL)
+  {
+    if (pi16_errCode) *pi16_errCode = 0;
+    return 0;
+  };
   /**
     start the Task Timer -> time between calls of Task Manager
   */

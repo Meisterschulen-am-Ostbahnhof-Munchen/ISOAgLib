@@ -96,6 +96,25 @@ using namespace std;
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
+
+/**
+  translate BCD to normal value
+*/
+uint8_t bcd2dec(uint8_t rb_bcd)
+{
+ return ((rb_bcd >> 4) * 10) + (rb_bcd & 0xF);
+}
+/**
+  translate normal value to BCD
+*/
+uint8_t dec2bcd(uint8_t rb_dec)
+{
+  const uint8_t ui8_v10 = rb_dec / 10;
+  const uint8_t ui8_v0  = rb_dec % 10;
+  const uint8_t ui8_result = ( ui8_v10 << 4 ) + ui8_v0;
+  return ui8_result;
+}
+
 /**
   calculate res = (mul_1 / div_1) * (mul_2 / div_2) with 4 uint8_t
   integers without overflow problems caused by (mul_1 * mul_2)

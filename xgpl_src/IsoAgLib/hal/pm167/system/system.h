@@ -74,6 +74,8 @@
 #include "../errcodes.h"
 #include "target_extensions.h"
 
+#include <IsoAgLib/util/impl/util_funcs.h>
+
 namespace __HAL {
   extern "C" {
     /** include the BIOS specific header into __HAL */
@@ -147,6 +149,17 @@ namespace HAL
 
   inline int16_t getSnr(uint8_t *snrDat)
     {return __HAL::getSnr(snrDat);};
+  inline int32_t getSerialNr(int16_t* pi16_errCode = NULL)
+  {
+    uint8_t uint8 [6];
+    int16_t errCode = __HAL::getSnr(uint8);
+    if (pi16_errCode) *pi16_errCode = errCode;
+    // ESX Serial number is coded in BCD. As we only get 21 bits,
+    // we can take only a part of the information transmitted here.
+    //  - uint8[0] is the year of construction -> 7 bits
+    //  - uint8[2] and uint8[3] a contract numering -> 14 bits
+    return (__IsoAgLib::bcd2dec(uint8[2]) * 100 + __IsoAgLib::bcd2dec(uint8[3])) + (__IsoAgLib::bcd2dec(uint8[0]) << 14);
+  };
 
   /**
     start the Task Timer -> time between calls of Task Manager

@@ -94,6 +94,7 @@
 #include <IsoAgLib/comm/Multipacket/istream_c.h>
 #include <IsoAgLib/comm/Multipacket/impl/multisendpkg_c.h>
 #include <IsoAgLib/util/iutil_funcs.h>
+#include <IsoAgLib/util/impl/util_funcs.h>
 #include <IsoAgLib/comm/Base/itracmove_c.h>
 #include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.h>
 
@@ -149,9 +150,6 @@ void getAltitude10Minus2FromStream( IsoAgLib::iStream_c& refc_stream, uint32_t& 
 #endif // END of NMEA_2000_FAST_PACKET
 
 namespace __IsoAgLib {
-
-  uint8_t bcd2dec(uint8_t rb_bcd);
-  uint8_t dec2bcd(uint8_t rb_dec);
 
   #if defined(NMEA_2000_FAST_PACKET)
   /** place next data to send direct into send buffer of pointed
@@ -1105,24 +1103,6 @@ namespace __IsoAgLib {
       // update time
       setUpdateTime(getLastRetriggerTime() );
     }
-  }
-
-  /**
-  translate BCD to normal value
-  */
-  uint8_t bcd2dec(uint8_t rb_bcd)
-  {
-    return ((rb_bcd >> 4) * 10) + (rb_bcd & 0xF);
-  }
-  /**
-    translate normal value to BCD
-  */
-  uint8_t dec2bcd(uint8_t rb_dec)
-  {
-    const uint8_t ui8_v10 = rb_dec / 10;
-    const uint8_t ui8_v0  = rb_dec % 10;
-    const uint8_t ui8_result = ( ui8_v10 << 4 ) + ui8_v0;
-    return ui8_result;
   }
 
   /** check if a calendar information was received since init */

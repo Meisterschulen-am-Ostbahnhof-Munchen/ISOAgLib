@@ -79,6 +79,8 @@
 #include "../errcodes.h"
 #include "system_target_extensions.h"
 
+#include <IsoAgLib/util/impl/util_funcs.h>
+
 namespace __HAL {
   extern "C" {
     /** include the BIOS specific header into __HAL */
@@ -170,6 +172,17 @@ HAL::put_rs232NChar( buf, CNAMESPACE::strlen( (char*)buf ), 0 /*HAL::RS232_over_
 
 	return retval;
     }
+    inline int32_t getSerialNr(int16_t* pi16_errCode = NULL)
+    {
+      uint8_t uint8 [6];
+      int16_t errCode = __HAL::get_snr(uint8);
+      if (pi16_errCode) *pi16_errCode = errCode;
+    // ESX Serial number is coded in BCD. As we only get 21 bits,
+    // we can take only a part of the information transmitted here.
+    //  - uint8[0] is the year of construction -> 7 bits
+    //  - uint8[2] and uint8[3] a contract numering -> 14 bits
+      return (bcd2dec(uint8[2]) * 100 + bcd2dec(uint8[3])) + (bcd2dec(uint8[0]) << 14);
+    };
 
   inline int16_t getLokalId(uint8_t *Dat)
     {
