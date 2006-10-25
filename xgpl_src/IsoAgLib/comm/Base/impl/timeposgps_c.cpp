@@ -794,6 +794,11 @@ namespace __IsoAgLib {
           }
           // now set also the pure GPS time
           setTimeUtcGps(UtcNow->tm_hour, UtcNow->tm_min, UtcNow->tm_sec, (ui32_milliseconds%1000));
+
+          if (getSelectedDataSourceDevKey().isSpecified())
+          { // set also UTC time (in this case setTimeUtcGps() doesn't update the UTC time)
+            setTimeUtc(UtcNow->tm_hour, UtcNow->tm_min, UtcNow->tm_sec, (ui32_milliseconds%1000));
+          }
         }
         // now read Latitude --> convert into double [degree]
         getDegree10Minus7FromStream( refc_stream, i32_latitudeDegree10Minus7 );
@@ -1227,8 +1232,16 @@ namespace __IsoAgLib {
   }
 
   /** set the time in UTC timezone */
-  void TimePosGPS_c::setTimeUtc(uint8_t rb_hour, uint8_t rb_minute, uint8_t rb_second, uint16_t rui16_msec)
+  void TimePosGPS_c::setTimeUtc(uint8_t rb_hour, uint8_t rb_minute, uint8_t rb_second, uint16_t rui16_msec, bool b_updateDate)
   {
+    if (b_updateDate)
+    { 
+      struct CNAMESPACE::tm* p_tm = currentUtcTm();
+      bit_calendar.year   = p_tm->tm_year + 1900;
+      bit_calendar.month  = p_tm->tm_mon +1;
+      bit_calendar.day    = p_tm->tm_mday;
+    }
+
     i32_lastCalendarSet = System_c::getTime();
     t_cachedLocalSeconds1970AtLastSet = 0;
     bit_calendar.hour   = rb_hour;

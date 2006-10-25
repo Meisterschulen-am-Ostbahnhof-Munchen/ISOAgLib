@@ -269,9 +269,8 @@ public:
   { return TimePosGPS_c::setTimeLocal(rb_hour, rb_minute, rb_second, rui16_msec);}
 
   /** set the time in UTC timezone */
-  void setTimeUtc(uint8_t rb_hour, uint8_t rb_minute, uint8_t rb_second, uint16_t rui16_msec = 0)
-  { return TimePosGPS_c::setTimeUtc(rb_hour, rb_minute, rb_second, rui16_msec);}
-
+  void setTimeUtc(uint8_t rb_hour, uint8_t rb_minute, uint8_t rb_second, uint16_t rui16_msec = 0, bool b_updateDate = FALSE)
+  { return TimePosGPS_c::setTimeUtc(rb_hour, rb_minute, rb_second, rui16_msec, b_updateDate);};
   /** set the actual calendar year value */
   void setYearUtc(uint16_t rui16_year)
   { return TimePosGPS_c::setYearUtc(rui16_year);}

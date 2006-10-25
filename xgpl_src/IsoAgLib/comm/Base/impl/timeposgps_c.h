@@ -292,7 +292,7 @@ class TimePosGPS_c : public SingletonTimePosGps_c
   void setTimeLocal(uint8_t rb_hour, uint8_t rb_minute, uint8_t rb_second, uint16_t rui16_msec = 0);
 
   /** set the time in UTC timezone */
-  void setTimeUtc(uint8_t rb_hour, uint8_t rb_minute, uint8_t rb_second, uint16_t rui16_msec = 0);
+  void setTimeUtc(uint8_t rb_hour, uint8_t rb_minute, uint8_t rb_second, uint16_t rui16_msec = 0, bool b_updateDate = FALSE);
 
   /** set the actual calendar year value */
   void setYearUtc(uint16_t rui16_year){i32_lastCalendarSet = System_c::getTime();bit_calendar.year = rui16_year; t_cachedLocalSeconds1970AtLastSet = 0;};
