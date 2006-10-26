@@ -222,15 +222,14 @@
   #define TEST_TRACAUX
 #endif
 #ifdef USE_TRACTOR_PTO
-  #define TEST_TRACPTO
-  #define TEST_TRACPTOSETPOINT
+ #define TEST_TRACPTO
+ #define TEST_TRACPTOSETPOINT
 #endif
 #ifdef USE_TRACTOR_CERTIFICATION
   #define TEST_TRACCERT
 #endif
 #ifdef USE_TRACTOR_GUIDANCE
   #define TEST_TRACGUIDANCE
-  #define TEST_TRACGUIDANCECOMMAND
 #endif
 
 // include the central interface header for the hardware adaptation layer part
@@ -301,6 +300,20 @@ std::string getIsoActiveFlag(IsoAgLib::IsoActiveFlag_t t_val)
     case 1: return "IsoActive";
     case 2: return "IsoError";
     case 3: return "IsoNotAvailable";
+    default: return "there went something wrong!!";
+
+  }
+}
+
+/**interpret the IsoDataReq_t values as strings when output on console */
+std::string getIsoDataReq(IsoAgLib::IsoDataReq_t t_val)
+{
+  switch ( t_val )
+  {
+    case 0: return "IsoNoDataRequested";
+    case 1: return "IsoDataRequested";
+    case 2: return "IsoReservedData";
+    case 3: return "IsoDontCare";
     default: return "there went something wrong!!";
 
   }
@@ -684,7 +697,7 @@ int main()
       EXTERNAL_DEBUG_DEVICE << "implement left forward work light:  " << getIsoActiveFlag(temp) << "\n";
 
       temp = getITracLightInstance().getCommand(IsoAgLib::dataMsgReq);
-      EXTERNAL_DEBUG_DEVICE << "lighting data message request:      " << getIsoActiveFlag(temp) << "\n";
+      EXTERNAL_DEBUG_DEVICE << "lighting data message request:      " << getIsoDataReq( static_cast<IsoAgLib::IsoDataReq_t>(temp) ) << "\n";
 
       temp = getITracLightInstance().getCommand(IsoAgLib::implRightFacingWork);
       EXTERNAL_DEBUG_DEVICE << "implement right facing work light:  " << getIsoActiveFlag(temp) << "\n";
@@ -722,7 +735,7 @@ int main()
 
       #ifdef TEST_TRACTOR_GENERAL
       //GENERAL CLASS TEST FUNCTIONALITY
-/*
+
       EXTERNAL_DEBUG_DEVICE << "\t+++++++++GENERAL KLASSE+++++++++\n";
       EXTERNAL_DEBUG_DEVICE << "Hitch front:                  " << static_cast<int16_t>(getITracGeneralInstance().hitchFront()) << "\n";
       EXTERNAL_DEBUG_DEVICE << "Hitch rear:                   " << static_cast<int16_t>(getITracGeneralInstance().hitchRear() ) << "\n";
@@ -732,7 +745,7 @@ int main()
       EXTERNAL_DEBUG_DEVICE << "Hitch rear lower link force:  " << getITracGeneralInstance().hitchRearLowerLinkForce() << "\n";
       EXTERNAL_DEBUG_DEVICE << "Hitch front lower link force: " << getIsoLimitFlag( getITracGeneralInstance().frontHitchPosLimitStatus() ) << "\n";
       EXTERNAL_DEBUG_DEVICE << "Hitch rear lower link force:  " << getIsoLimitFlag( getITracGeneralInstance().rearHitchPosLimitStatus() ) << "\n";
-*/
+
       getITracGeneralInstance().setMaintainPowerForImplInWork(IsoAgLib::IsoReadyForFieldWork);
       getITracGeneralInstance().setMaintainPowerForImplInTransport(IsoAgLib::IsoTransported);
       getITracGeneralInstance().setMaintainPowerForImplInPark(IsoAgLib::IsoNotAvailablePark);
@@ -742,9 +755,9 @@ int main()
         getITracGeneralInstance().forceMaintainPower(true, true, IsoAgLib::implInTransport);
       }
       t_keySwitch = getITracGeneralInstance().keySwitch();
-  /*  EXTERNAL_DEBUG_DEVICE << "Key switch:                  " << getIsoActiveFlag( t_keySwitch ) << "\n";
+      EXTERNAL_DEBUG_DEVICE << "Key switch:                  " << getIsoActiveFlag( t_keySwitch ) << "\n";
       EXTERNAL_DEBUG_DEVICE << "Maximum power time:          " << static_cast<int>(getITracGeneralInstance().maxPowerTime()) << "\n";
-  */
+
       #endif
 
       #ifdef TEST_TIME

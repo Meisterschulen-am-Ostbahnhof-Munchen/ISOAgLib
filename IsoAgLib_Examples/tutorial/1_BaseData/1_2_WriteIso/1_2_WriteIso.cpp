@@ -442,6 +442,7 @@ int main()
 
   #ifdef TEST_TIME
   getITimePosGpsInstance().config(&c_myIdent.isoName(), IsoAgLib::IdentModeTractor);
+  getITimePosGpsInstance().configGps(&c_myIdent.isoName(), IsoAgLib::IdentModeTractor);
   #endif
 
   #ifdef TEST_TRACAUX
@@ -450,6 +451,10 @@ int main()
 
   #ifdef TEST_TRACPTO
   getITracPtoInstance().config(&c_myIdent.isoName(), IsoAgLib::IdentModeTractor);
+  #endif
+
+  #ifdef TEST_TRACPTOSETPOINT
+  getITracPtoSetPointInstance().config(&c_myIdent.isoName(), IsoAgLib::IdentModeTractor);
   #endif
 
   #ifdef TEST_TRACCERT
@@ -508,6 +513,9 @@ int main()
   #endif
   #ifdef TEST_TRACGUIDANCE
   int estCurvature = 0;
+  #endif
+  #ifdef TEST_TRACTOR_LIGHTING
+  int lightCount = 0;
   #endif
 
   int32_t i32_idleTimeSpread = 0;
@@ -569,7 +577,13 @@ int main()
         getITracLightInstance().setCommand(IsoAgLib::implRightForwardWork, IsoAgLib::IsoInactive);
         getITracLightInstance().setCommand(IsoAgLib::implLeftForwardWork, IsoAgLib::IsoInactive);
 
-        getITracLightInstance().setCommand(IsoAgLib::dataMsgReq, IsoAgLib::IsoActive);
+        if ( (lightCount % 4) == 0 )
+          getITracLightInstance().setCommand(IsoAgLib::dataMsgReq, IsoAgLib::IsoActive);
+        else
+          getITracLightInstance().setCommand(IsoAgLib::dataMsgReq, IsoAgLib::IsoInactive);
+
+        lightCount++;
+
         getITracLightInstance().setCommand(IsoAgLib::implRightFacingWork, IsoAgLib::IsoInactive);
         getITracLightInstance().setCommand(IsoAgLib::implLeftFacingWork, IsoAgLib::IsoInactive);
         getITracLightInstance().setCommand(IsoAgLib::implRearWork, IsoAgLib::IsoInactive);
@@ -591,21 +605,26 @@ int main()
           getITracMoveInstance().setSpeedReal(localGetSpeedReal(0xFF00));
           getITracMoveInstance().setDistReal(0xFFFFFFFF);
         }
+
         getITracMoveInstance().setSpeedTheor(localGetSpeedTheor(i32_speedTheor));
+
         if (i32_speedReal < 0)
           getITracMoveInstance().setDirectionReal(IsoAgLib::IsoReverse);
         else
           getITracMoveInstance().setDirectionReal(IsoAgLib::IsoForward);
+
         if (i32_speedTheor < 0)
           getITracMoveInstance().setDirectionTheor(IsoAgLib::IsoReverse);
         else
           getITracMoveInstance().setDirectionTheor(IsoAgLib::IsoForward);
+
         getITracMoveInstance().setDistTheor(ui32_tempTheorDist);
         getITracMoveInstance().setOperatorDirectionReversed(IsoAgLib::IsoReversed);
-        if (count < 5 )
-          getITracMoveInstance().setSelectedSpeed(count);
-        else
-          getITracMoveInstance().setSelectedSpeed(256);
+
+//         if (count < 5 )
+//           getITracMoveInstance().setSelectedSpeed(count);
+//         else
+//           getITracMoveInstance().setSelectedSpeed(256);
         //getITracMoveInstance().setSelectedSpeedSource(IsoAgLib::IsoNavigationBasedSpeed);
         count++;
         #endif
