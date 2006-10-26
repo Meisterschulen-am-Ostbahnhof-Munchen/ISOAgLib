@@ -141,8 +141,6 @@ void BaseCommon_c::close( )
   */
 void BaseCommon_c::init(const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode)
 {
-  // first register in Scheduler_c and set Time Period in mms
-  setTimePeriod( (uint16_t) 100   );
   getSchedulerInstance4Comm().registerClient( this );
   c_data.setSingletonKey( c_data.getSingletonVecKey() );
 
@@ -150,8 +148,6 @@ void BaseCommon_c::init(const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_i
   {
     b_filterCreated = false;
   }
-
-
 
   // set configure values with call for config
   config(rpc_isoName, rt_identMode);
@@ -243,12 +239,12 @@ bool BaseCommon_c::timeEvent()
 
   if ( ( getISOName() != NULL )
     && (!getIsoMonitorInstance4Comm().existLocalIsoMemberISOName(*getISOName(), true)) )
-  { // local dev key for sending is registrated, but it is not yet fully claimed
+  { // local isoname for sending is registrated, but it is not yet fully claimed
     // --> nothing to do
     return true;
   }
 
-  // check if we are in tractor mode and have a pointer to the sending device key
+  // check if we are in tractor mode and have a pointer to the sending isoname
   if ( checkMode(IsoAgLib::IdentModeTractor) )
   { // all tractor mode timeEvent() functions have the only target to send messages,
     // now:

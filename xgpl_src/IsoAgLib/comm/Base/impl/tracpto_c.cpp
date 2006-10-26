@@ -262,7 +262,6 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
 
         //msg from Tractor received do tell Scheduler_c next call not until  3000ms
         getSchedulerInstance4Comm().changeRetriggerTimeAndResort(this,data().time() + TIMEOUT_PTO_DISENGAGED);
-
       }
 
       else
@@ -281,23 +280,15 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     */
   bool TracPTO_c::timeEventTracMode( )
   {
-
      ///Timeperiod of 100ms is set in ::config
     if ( t_ptoFront.t_ptoEngaged == IsoAgLib::IsoActive  )
     { // it's time to send tractor PTO information and the FRONT PTO is engaged
       sendMessage(sendFrontPto);
     }
 
-/*
-    if ( ( (ci32_now - t_ptoFront.i32_lastPto ) >= 100) && ( t_ptoFront.t_ptoEngaged == IsoAgLib::IsoActive ) )
-    { // it's time to send tractor PTO information and the FRONT PTO is engaged
-      sendMessage(sendFrontPto);
-    }
-*/
     if ( getAvailableExecTime() == 0) return false;
 
-   /// if ( ( (ci32_now - t_ptoRear.i32_lastPto ) >= 100) && ( t_ptoRear.t_ptoEngaged == IsoAgLib::IsoActive ) )
-
+    ///Timeperiod of 100ms is set in ::config
     if ( t_ptoRear.t_ptoEngaged == IsoAgLib::IsoActive  )
     { // it's time to send tractor PTO information and the REAR PTO is engaged
       sendMessage(sendRearPto);
@@ -312,13 +303,21 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     const int32_t ci32_now = getLastRetriggerTime();
     // check for different pto data types whether the previously
     // sending node stopped sending -> other nodes can now step in
-    if ( ( ( ci32_now - t_ptoFront.i32_lastPto ) >= TIMEOUT_PTO_DISENGAGED ) || (getSelectedDataSourceISOName().isUnspecified() ) )
+    if ( ( (ci32_now - t_ptoFront.i32_lastPto)  >= TIMEOUT_PTO_DISENGAGED
+           || getSelectedDataSourceISOName().isUnspecified()
+         )
+         && ( t_ptoFront.ui16_pto8DigitPerRpm != 0 && t_ptoFront.t_ptoEngaged != IsoAgLib::IsoInactive)
+       )
     { // TECU stoppped its PTO and doesn'T send PTO updates - as defined by ISO 11783
       // --> switch values to ZERO
       t_ptoFront.ui16_pto8DigitPerRpm = 0;
       t_ptoFront.t_ptoEngaged = IsoAgLib::IsoInactive;
     }
-    if ( ( ( ci32_now - t_ptoRear.i32_lastPto ) >= TIMEOUT_PTO_DISENGAGED ) || (getSelectedDataSourceISOName().isUnspecified() ) )
+    if ( ( ( ci32_now - t_ptoRear.i32_lastPto ) >= TIMEOUT_PTO_DISENGAGED
+           || (getSelectedDataSourceISOName().isUnspecified() )
+         )
+         && ( t_ptoRear.ui16_pto8DigitPerRpm != 0 && t_ptoRear.t_ptoEngaged != IsoAgLib::IsoInactive )
+       )
     { // TECU stoppped its PTO and doesn'T send PTO updates - as defined by ISO 11783
       // --> switch values to ZERO
       t_ptoRear.ui16_pto8DigitPerRpm = 0;

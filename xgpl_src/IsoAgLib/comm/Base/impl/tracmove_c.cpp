@@ -329,7 +329,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
         }
         break;
     }
-    //@todo tell Scheduler_c after how long we can wait for next timeeventcall after receive of data use TIMEOUT_SENDING_NODE
+    //@todo tell Scheduler_c after how long we can wait for next time_event_call after receive of data use TIMEOUT_SENDING_NODE
     return true;
   }
 
@@ -494,9 +494,6 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     // CANIO_c::operator<< retreives the information with the help of CANPkg_c::getData
     // then it sends the data
     c_can << data();
-
-    // update time
-    setUpdateTime( getLastRetriggerTime() );
   }
 ///  Used for Debugging Tasks in Scheduler_c
 const char*

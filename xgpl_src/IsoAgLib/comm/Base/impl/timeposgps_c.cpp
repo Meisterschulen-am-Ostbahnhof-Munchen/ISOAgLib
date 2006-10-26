@@ -222,11 +222,12 @@ namespace __IsoAgLib {
 
     // check for different base data types whether the previously
     if ( checkMode(IsoAgLib::IdentModeImplement)
-      && ( (lastedTimeSinceUpdate() >= 3000 ) || ( yearUtc() == 0 ) )
+      && ( (lastedTimeSinceUpdate() >= TIMEOUT_SENDING_NODE ) || ( yearUtc() == 0 ) )
       && ( getSelectedDataSourceISOName().isSpecified()           )
         )
     { // the previously sending node didn't send the information for 3 seconds -> give other items a chance
       getSelectedDataSourceISOName().setUnspecified();
+
       bit_calendar.year = bit_calendar.hour = bit_calendar.minute = bit_calendar.second = 0;
       bit_calendar.month = bit_calendar.day = 1;
     }
@@ -859,13 +860,7 @@ namespace __IsoAgLib {
   {
     const int32_t ci32_now = getLastRetriggerTime();
 
-    if ( ( lastedTimeSinceUpdate() >= 1000 )
-      && checkMode(IsoAgLib::IdentModeTractor) )
-    { // getISOName() must be != NULL, because we are in tractor mode
-      // send actual calendar data
-      setSelectedDataSourceISOName(*getISOName());
-      sendCalendar(*getISOName());
-    }
+    // time/date is only send on request
 
     if ( checkModeGps(IsoAgLib::IdentModeTractor) )
     { // pc_isoNameGps must be != NULL, because we are in tractor mode
@@ -1060,7 +1055,6 @@ namespace __IsoAgLib {
 
   /** send ISO11783 calendar PGN
       @param rc_isoName ISOName code off calling item which wants to send
-      @param ri32_time timestamp where calendar was last sent (default autodetect)
       possible errors:
           * dependant error in CANIO_c on CAN send problems
       @see CANPkg_c::getData
@@ -1078,6 +1072,9 @@ namespace __IsoAgLib {
 
     if ( ( getSelectedDataSourceISOName() == rc_isoName ) )
     { // this item (identified by ISOName is configured to send
+      if ( checkMode(IsoAgLib::IdentModeTractor) )
+        setSelectedDataSourceISOName(*getISOName());
+
       data().setIsoPgn(TIME_DATE_PGN);
 
       const struct CNAMESPACE::tm* p_tm = currentUtcTm();

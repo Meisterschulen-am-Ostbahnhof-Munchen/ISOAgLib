@@ -361,7 +361,6 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     if ( getISOName() == NULL ) return;
     if (!getIsoMonitorInstance4Comm().existIsoMemberISOName(*getISOName(), true)) return;
 
-    const int32_t ci32_now = getLastRetriggerTime();
     data().setISONameForSA( *getISOName() );
     data().setIdentType(Ident_c::ExtendedIdent);
     data().setIsoPri(3);
@@ -442,9 +441,6 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     // CANIO_c::operator<< retreives the information with the help of CANPkg_c::getData
     // then it sends the data
     c_can << data();
-
-    // update time
-    setUpdateTime(ci32_now);
   }
 
   /** send iso language data msg

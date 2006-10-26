@@ -133,7 +133,6 @@ typedef struct
       Derive from SINGLETON to create a Singleton which manages one global accessible singleton
       per IsoAgLib instance (if only one IsoAgLib instance is defined in application config, no overhead is produced).
     */
-
   class TracPTO_c : public SingletonTracPto_c
                   , public ISORequestPGNHandler_c
   {
