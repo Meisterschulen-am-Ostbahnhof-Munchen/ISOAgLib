@@ -66,6 +66,14 @@ typedef enum {
   IsoNotAvailable = 3 ///< corresponding function is not available/not implemented in service provider
 } IsoActiveFlag_t;
 
+/** use an enum typedef for the different states of ISO flags */
+typedef enum {
+  IsoNoDataRequested = 0, ///< no lighting data is requested from all implements
+  IsoDataRequested = 1,   ///< lighting data is requested from all implements
+  IsoReservedData = 2,        ///< reserved field
+  IsoDontCare = 3         ///< corresponding function is not available/not implemented in service provider
+} IsoDataReq_t;
+
 /** GPS GNSS Method */
 typedef enum {
   IsoNoGps           = 0,
