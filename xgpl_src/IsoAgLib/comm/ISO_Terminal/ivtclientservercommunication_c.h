@@ -57,6 +57,7 @@
 
 //include the declaration of the internal object
 #include "impl/vtclientservercommunication_c.h"
+#include "iisoterminal_c.h"
 
 // Begin Namespace IsoAgLib
 namespace IsoAgLib {
@@ -67,6 +68,14 @@ namespace IsoAgLib {
 class iVtClientServerCommunication_c : private __IsoAgLib::VtClientServerCommunication_c
 {
 public:
+    /** constructor */
+   iVtClientServerCommunication_c (iIdentItem_c& refc_wsMasterIdentItem,iISOTerminal_c& ref_isoTerminal,iIsoTerminalObjectPool_c& rrefc_pool,char* rpc_versionLabel, uint8_t ui8_clientId)
+    : __IsoAgLib::VtClientServerCommunication_c(
+        static_cast<__IsoAgLib::IdentItem_c&>(refc_wsMasterIdentItem),
+        static_cast<__IsoAgLib::ISOTerminal_c&>( ref_isoTerminal),
+        rrefc_pool,rpc_versionLabel, ui8_clientId )
+   {}
+
   bool isVtActive() { return VtClientServerCommunication_c::isVtActive(); }
 
   bool sendCommandUpdateObjectPool (IsoAgLib::iVtObject_c** rppc_vtObjects, uint16_t rui16_numObjects)
@@ -74,6 +83,7 @@ public:
 
 private:
   friend class iISOTerminal_c;
+  friend class __IsoAgLib::VtClientServerCommunication_c;
 };
 
 }

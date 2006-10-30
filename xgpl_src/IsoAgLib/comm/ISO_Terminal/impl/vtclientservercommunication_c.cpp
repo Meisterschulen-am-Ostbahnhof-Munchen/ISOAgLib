@@ -89,6 +89,7 @@
 
 
 #include "vtclientservercommunication_c.h"
+#include "../ivtclientservercommunication_c.h"
 #include <IsoAgLib/driver/can/impl/canio_c.h>
 // #include <IsoAgLib/hal/system.h>
 #include <IsoAgLib/comm/Multipacket/impl/multireceive_c.h>
@@ -103,6 +104,8 @@
 #include "../ivtobjectfontattributes_c.h"
 #include "../ivtobjectstring_c.h"
 #include "../ivtobjectworkingset_c.h"
+
+
 
 #if defined(DEBUG) || defined(DEBUG_HEAP_USEAGE)
   #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
@@ -2272,5 +2275,18 @@ VtClientServerCommunication_c::setObjectPoolUploadingLanguage()
     c_streamer.ui16_objectPoolUploadingLanguageCode = (lang [0] << 8) | lang[1];
   }
 }
+
+
+/** explicit conversion to reference of interface class type */
+IsoAgLib::iVtClientServerCommunication_c& VtClientServerCommunication_c::toInterfaceReference()
+{
+  return static_cast<IsoAgLib::iVtClientServerCommunication_c&>(*this);
+}
+/** explicit conversion to reference of interface class type */
+IsoAgLib::iVtClientServerCommunication_c* VtClientServerCommunication_c::toInterfacePointer()
+{
+  return static_cast<IsoAgLib::iVtClientServerCommunication_c*>(this);
+}
+
 
 } // end namespace __IsoAgLib

@@ -53,7 +53,6 @@
 
 #include "impl/isoterminal_c.h"
 #include "ivttypes.h"
-#include "ivtclientservercommunication_c.h"
 
 // Begin Namespace IsoAgLib
 namespace IsoAgLib {
@@ -86,16 +85,16 @@ public:
     @param rpc_vtEventHandler pointer to an instance of IsoAgLib::iIsoTerminalEventHandler_c so the hook funtions for key activation, input values and successfull objectpool upload can be invoked
   */
   iVtClientServerCommunication_c* registerIsoObjectPool (iIdentItem_c& rrefc_wsMasterIdentItem, iIsoTerminalObjectPool_c& rrefc_pool, char* rpc_versionLabel)
-  { return static_cast<iVtClientServerCommunication_c*>(ISOTerminal_c::registerIsoObjectPool (static_cast<__IsoAgLib::IdentItem_c&>(rrefc_wsMasterIdentItem), rrefc_pool, rpc_versionLabel)); }
+  { return ISOTerminal_c::registerIsoObjectPool (static_cast<__IsoAgLib::IdentItem_c&>(rrefc_wsMasterIdentItem), rrefc_pool, rpc_versionLabel)->toInterfacePointer(); }
 
   bool deregisterIsoObjectPool (iIdentItem_c& rrefc_wsMasterIdentItem)
   { return ISOTerminal_c::deregisterIsoObjectPool (rrefc_wsMasterIdentItem); }
 
   iVtClientServerCommunication_c& getClientByID (uint8_t ui8_clientIndex)
-  { return static_cast<iVtClientServerCommunication_c&>(ISOTerminal_c::getClientByID (ui8_clientIndex)); }
+  { return ISOTerminal_c::getClientByID (ui8_clientIndex).toInterfaceReference(); }
 
   iVtClientServerCommunication_c* getClientPtrByID (uint8_t ui8_clientIndex)
-  { return static_cast<iVtClientServerCommunication_c*>(ISOTerminal_c::getClientPtrByID (ui8_clientIndex)); }
+  { return ISOTerminal_c::getClientPtrByID (ui8_clientIndex)->toInterfacePointer(); }
 
   bool isAnyVtAvailable()
   { return ISOTerminal_c::isAnyVtAvailable(); }
@@ -115,6 +114,7 @@ public:
   #else
   friend iISOTerminal_c& getIisoTerminalInstance (void);
   #endif
+  friend class iVtClientServerCommunication_c;
 };
 
 #if defined(PRT_INSTANCE_CNT) && (PRT_INSTANCE_CNT > 1)

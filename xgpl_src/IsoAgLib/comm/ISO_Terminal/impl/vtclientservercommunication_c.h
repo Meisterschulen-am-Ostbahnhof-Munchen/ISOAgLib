@@ -109,6 +109,7 @@
 
 namespace IsoAgLib {
 class iVtObjectString_c;
+class iVtClientServerCommunication_c;
 }
 
 // Begin Namespace __IsoAgLib
@@ -289,6 +290,16 @@ public:
   virtual bool reactOnStreamStart (IsoAgLib::ReceiveStreamIdentifier_c rc_ident, uint32_t rui32_totalLen);
   virtual bool processPartStreamDataChunk (IsoAgLib::iStream_c* rpc_stream, bool rb_isFirstChunk, bool rb_isLastChunk);
 
+  /** constructor of VtClientServerCommunication_c
+   */
+  VtClientServerCommunication_c (IdentItem_c& refc_wsMasterIdentItem, ISOTerminal_c &ref_isoTerminal, IsoAgLib::iIsoTerminalObjectPool_c& rrefc_pool, char* rpc_versionLabel, uint8_t ui8_clientId);
+
+
+  /** explicit conversion to reference of interface class type */
+  IsoAgLib::iVtClientServerCommunication_c& toInterfaceReference();
+  /** explicit conversion to reference of interface class type */
+  IsoAgLib::iVtClientServerCommunication_c* toInterfacePointer();
+
   /** default destructor, which initiate sending address release for all own identities
   @see VtClientServerCommunication_c::~VtClientServerCommunication_c
   */
@@ -392,10 +403,6 @@ public:
 
 private:
   friend class ISOTerminal_c;
-  /** private constructor which prevents direct instantiation in user application
-    * NEVER define instance of VtClientServerCommunication_c within application
-    */
-  VtClientServerCommunication_c (IdentItem_c& refc_wsMasterIdentItem, ISOTerminal_c &ref_isoTerminal, IsoAgLib::iIsoTerminalObjectPool_c& rrefc_pool, char* rpc_versionLabel, uint8_t ui8_clientId);
 
   void doStart();
   void doStop();

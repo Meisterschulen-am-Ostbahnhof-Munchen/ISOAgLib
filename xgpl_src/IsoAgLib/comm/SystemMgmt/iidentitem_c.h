@@ -214,6 +214,7 @@ public:
 
 private:
   friend class iISOTerminal_c;
+  friend class iVtClientServerCommunication_c;
   friend class __IsoAgLib::ISOTerminal_c;
   friend class __IsoAgLib::DevPropertyHandler_c;
 };
