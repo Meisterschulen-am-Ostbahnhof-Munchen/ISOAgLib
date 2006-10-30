@@ -233,27 +233,10 @@ bool MsgObj_c::merge(MsgObj_c& right)
 
 
   // collect FilterBox_c references
-  int16_t cnt = cnt_filterBox(),
-      j = 0;
-  for (;((cnt < FILTER_BOX_PER_MSG_OBJ) && (j < right.cnt_filterBox()));
-      (cnt++, j++))
+  while ( !right.arrPfilterBox.empty() )
   {
-    arrPfilterBox[cnt] = right.arrPfilterBox[j];
-    #if defined( DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION )
-    #ifdef SYSTEM_PC
-    std::cout.setf( std::ios_base::hex, std::ios_base::basefield );
-    #endif
-    INTERNAL_DEBUG_DEVICE << "add additional FilterBox in merge nr: " << cnt
-      << "FilterBox: 0x"
-      << arrPfilterBox[cnt]->filter().ident()
-      << ", Mask: 0x" << arrPfilterBox[cnt]->mask().ident()
-      << ", IdentType: " << arrPfilterBox[cnt]->identType()
-      << " and Filter of MsgObj: " << int( filter().ident() )
-      << std::endl;
-    #ifdef SYSTEM_PC
-    std::cout.setf( std::ios_base::dec, std::ios_base::basefield );
-    #endif
-    #endif
+    arrPfilterBox.push_back( right.arrPfilterBox.back() );
+    right.arrPfilterBox.pop_back();
   }
   #if 0
   #if defined(DEBUG_CAN_BUFFER_FILLING) || defined(DEBUG)
