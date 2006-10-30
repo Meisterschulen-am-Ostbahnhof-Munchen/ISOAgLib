@@ -1171,7 +1171,7 @@ void CANIO_c::getCommonFilterMask()
 
 /** correct global masks after merge based on merged IDs of all
     resulting MsgObj_c instances
- */
+ */                                   
 void CANIO_c::getCommonFilterMaskAfterMerge()
 {
 
@@ -1230,10 +1230,9 @@ int16_t CANIO_c::FilterBox2MsgObj()
     else c_tempIdent.ident_bitAnd(c_maskExt);
 
     for (pc_iterMsgObj = arrMsgObj.begin(); pc_iterMsgObj != pc_searchEnd; pc_iterMsgObj++)
-    { // compare and break search loop if equal
+    { 
       if (pc_iterMsgObj->equalFilter(c_tempIdent)) break;
     }
-
     // if no item with this filter was found add new MsgObj
     if (pc_iterMsgObj == pc_searchEnd)
     {
@@ -1296,12 +1295,16 @@ int16_t CANIO_c::FilterBox2MsgObj()
     sui16_deconstructMsgObjCnt += (cui16_oldSize - arrMsgObj.size() );
     #endif
   }
+
   if ( i16_result >= 0) i16_result = arrMsgObj.size();
   #ifdef DEBUG_HEAP_USEAGE
   INTERNAL_DEBUG_DEVICE
     << "MsgObj: " << sui16_msgObjTotal << " -> ";
   #endif
+  HAL::wdTriggern();
+
   return i16_result;
+
 }
 
 /** checks if count of preconfigured msgObj
@@ -1384,8 +1387,10 @@ void CANIO_c::CheckSetCntMsgObj()
 
       // now min_dist is minimal bit distance of most similar filters at i16_minLeft and
       // i16_minRight -> merge them
-      // merge right filter into the left
+      // merge  right filter into the left
       c_maskExt.set( c_maskExt.ident() & (~( pc_minLeft->filter().ident() ^ pc_minRight->filter().ident() ) ), Ident_c::ExtendedIdent );
+
+      HAL::wdTriggern();
 
       pc_minLeft->merge(*pc_minRight);
       arrMsgObj.erase(pc_minRight);
@@ -1415,6 +1420,9 @@ void CANIO_c::CheckSetCntMsgObj()
     << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
   #endif
   #endif
+
+   HAL::wdTriggern();
+
 }
 
 /* *************************************** */
@@ -1552,7 +1560,6 @@ bool CANIO_c::reconfigureMsgObj()
   #endif
 
   bool b_result = true;
-
   // store old mask to check if global CAN BIOS mask must be changed
   Ident_c oldMaskStd = c_maskStd,
         oldMaskExt = c_maskExt;
@@ -1576,11 +1583,12 @@ bool CANIO_c::reconfigureMsgObj()
 
   // create according to new global t_mask all MsgObj_c with
   // unique filter settings -> merge all filter settings where
-  // the the global t_mask delets all different bits
+  // the the global t_mask delets all different bits 
   if ( FilterBox2MsgObj() == false) b_result = false;
 
   // shrink number of MsgObj to fit the intervall of
   // [min_msgObjNr; maxMsgObjNr]
+
   CheckSetCntMsgObj();
 
   // check and correct global masks after merge in CheckSetCntMsgObj()
@@ -1609,6 +1617,8 @@ bool CANIO_c::reconfigureMsgObj()
   // clear any CAN BUFFER OVERFLOW error that might occure
   // for last message object
   getLibErrInstance().clear( LibErr_c::CanOverflow, LibErr_c::Can );
+
+  HAL::wdTriggern();
 
   return b_result;
   #endif //SYSTEM_WITH_ENHANCED_CAN_HAL
