@@ -81,6 +81,7 @@
  *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
+#include <cstdlib>
 #include <IsoAgLib/util/config.h>
 #include <IsoAgLib/hal/system.h>
 #include <IsoAgLib/driver/system/impl/system_c.h>
