@@ -1171,7 +1171,7 @@ void CANIO_c::getCommonFilterMask()
 
 /** correct global masks after merge based on merged IDs of all
     resulting MsgObj_c instances
- */                                   
+ */
 void CANIO_c::getCommonFilterMaskAfterMerge()
 {
 
@@ -1230,7 +1230,7 @@ int16_t CANIO_c::FilterBox2MsgObj()
     else c_tempIdent.ident_bitAnd(c_maskExt);
 
     for (pc_iterMsgObj = arrMsgObj.begin(); pc_iterMsgObj != pc_searchEnd; pc_iterMsgObj++)
-    { 
+    {
       if (pc_iterMsgObj->equalFilter(c_tempIdent)) break;
     }
     // if no item with this filter was found add new MsgObj
@@ -1320,16 +1320,12 @@ void CANIO_c::CheckSetCntMsgObj()
   // => amount of bits in data type for ident
   int16_t i16_minDistance = sizeof(MASK_TYPE)*8,
       i16_tempDist;
-  uint8_t ui8_allowedSize = maxHALMsgObjNr() - (minHALMsgObjNr() + 1);
+  // maxHALMsgObjNr() delivers also the special lastMsgObj, which cannot be used for normal receiveMsgObj
+  // ==> subtract from (max - min + 1 ) again one item
+  uint8_t ui8_allowedSize = maxHALMsgObjNr() - minReceiveObjNr() + 1 - 1;
 
   unsigned int ui_lsbDiffMin = 0;
   unsigned int ui_lsbDiffTemp = 0;
-
-  // check if result of ui8_allowedSize is correct
-  if ((ui8_allowedSize == 0) || (ui8_allowedSize > 14)) ui8_allowedSize = 12;
-
-  // if both ident types are sent, two send objects are configured -> reserve more space
-  if (en_identType == Ident_c::BothIdent) ui8_allowedSize--;
 
   // before any preparation of further merge work - check whether we have to merge anyway
   if (arrMsgObj.size() <= ui8_allowedSize) return;
@@ -1338,6 +1334,8 @@ void CANIO_c::CheckSetCntMsgObj()
 
   ArrMsgObj::iterator pc_minLeft = arrMsgObj.begin(),
           pc_minRight = arrMsgObj.begin();
+
+  Ident_c* pc_useGlobalMask = NULL;
 
   // [min;max] allowed, but first one or two reserved for send
   bool b_continueMerging = true;
@@ -1353,7 +1351,7 @@ void CANIO_c::CheckSetCntMsgObj()
       for (pc_rightInd++; pc_rightInd != arrMsgObj.end(); pc_rightInd++)
       {
         // retreive bit distance between instances left_ind and right_ind -> use Bit-XOR
-        i16_tempDist = pc_leftInd->filter().bitDiffWithMask(pc_rightInd->filter(), c_maskExt.ident(), ui_lsbDiffTemp);
+        i16_tempDist = pc_leftInd->filter().bitDiff(pc_rightInd->filter(), ui_lsbDiffTemp);
 
         // a) store new min only if capacity of left is enough for objects of right
         // b) if bitDiff equal => prefere filters with differ in the most significant bits
@@ -1361,9 +1359,6 @@ void CANIO_c::CheckSetCntMsgObj()
         if (((i16_tempDist < i16_minDistance) ||
              ((i16_tempDist == i16_minDistance) && (ui_lsbDiffTemp > ui_lsbDiffMin)) ||
              ((i16_tempDist-1 == i16_minDistance) && (ui_lsbDiffTemp > ui_lsbDiffMin) && (ui_lsbDiffMin<16) && (ui_lsbDiffTemp>=16)))
-        #if 0
-          && (pc_leftInd->getFilterBoxCapacity() >= pc_rightInd->cnt_filterBox())
-        #endif
           && (pc_leftInd->filter().identType() == pc_rightInd->filter().identType())
            )
         {
@@ -1372,7 +1367,7 @@ void CANIO_c::CheckSetCntMsgObj()
           pc_minRight = pc_rightInd;
           i16_minDistance = i16_tempDist;
           ui_lsbDiffMin = ui_lsbDiffTemp;
-          if ( i16_tempDist == 0 ) 
+          if ( i16_tempDist == 0 )
           {
             b_continueMerging = true; // merge the compared MsgObj_c IN ANY CASE, as they are equal
             break; // stop searching for "smaller" difference if 0 is found
@@ -1388,6 +1383,7 @@ void CANIO_c::CheckSetCntMsgObj()
       // now min_dist is minimal bit distance of most similar filters at i16_minLeft and
       // i16_minRight -> merge them
       // merge  right filter into the left
+      pc_useGlobalMask = &c_maskExt;
       c_maskExt.set( c_maskExt.ident() & (~( pc_minLeft->filter().ident() ^ pc_minRight->filter().ident() ) ), Ident_c::ExtendedIdent );
 
       HAL::wdTriggern();
@@ -1398,6 +1394,13 @@ void CANIO_c::CheckSetCntMsgObj()
       sui16_msgObjTotal--;
       sui16_deconstructMsgObjCnt++;
       #endif
+      // update the filters in the filters in the existing MsgObj_c to the changed mask
+      for (ArrMsgObj::iterator c_iter = arrMsgObj.begin(); c_iter != arrMsgObj.end(); c_iter++)
+      {
+        c_iter->updateFilterWithMask( *pc_useGlobalMask );
+      }
+
+
       // reset search arguments for posible next search
       pc_minRight = pc_minLeft = arrMsgObj.begin();
       i16_minDistance = sizeof(MASK_TYPE)*8;
@@ -1583,7 +1586,7 @@ bool CANIO_c::reconfigureMsgObj()
 
   // create according to new global t_mask all MsgObj_c with
   // unique filter settings -> merge all filter settings where
-  // the the global t_mask delets all different bits 
+  // the the global t_mask delets all different bits
   if ( FilterBox2MsgObj() == false) b_result = false;
 
   // shrink number of MsgObj to fit the intervall of

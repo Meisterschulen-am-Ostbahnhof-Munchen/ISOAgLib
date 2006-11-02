@@ -184,8 +184,19 @@ public:
     @return amount of different bits
   */
   uint8_t bitDiffWithMask(const Ident_c& rrefc_ident, MASK_TYPE rt_mask, unsigned int& ui_lsbFromDiff) const;
-
-  /** deliver the ident type
+  /**
+    deliver amount of different bits from own ident to compared ident
+    @param rrefc_ident reference to compared ident
+    @return amount of different bits
+  */
+  uint8_t bitDiff(const Ident_c& rrefc_ident, unsigned int& ui_lsbFromDiff) const;
+  /** update the ident value with the given mask --> clear any bit in ident, which are not set in given mask.
+      Update the mask only, when the ident type of the referenced mask is the same.
+    */
+  void updateWithMask( const Ident_c& rrefc_mask )
+    { if ( data.type == rrefc_mask.data.type ) t_ident &= rrefc_mask.t_ident;}
+  /**
+    deliver the ident type
     @return Ident_c::S for 11bit ident or Ident_c::E for 29bit
   */
   identType_t identType() const {return static_cast<identType_t>(data.type);}

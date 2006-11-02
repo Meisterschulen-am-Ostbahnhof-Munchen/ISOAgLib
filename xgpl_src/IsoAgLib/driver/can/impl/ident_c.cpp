@@ -180,20 +180,55 @@ namespace __IsoAgLib
   */
   uint8_t Ident_c::bitDiffWithMask(const Ident_c& rrefc_ident, MASK_TYPE rt_mask, unsigned int& ui_lsbFromDiff ) const
   {
-    uint8_t cnt = 0;
+    unsigned int cnt = 0;
     ui_lsbFromDiff = 0;
     // XOR delivers '1' where both values are different
     MASK_TYPE ui32_comp = (t_ident & rt_mask) ^ (rrefc_ident.t_ident & rt_mask);
-    for ( ui_lsbFromDiff = 0; ui_lsbFromDiff< sizeof(MASK_TYPE)*8; ui_lsbFromDiff++)
+    for ( MASK_TYPE testMask = 1; testMask <= 0x10000000; testMask <<= 1 )
     {
-      if ((ui32_comp >> ui_lsbFromDiff) & 0x01)
-      {
-        break;
+      if ( ui32_comp & testMask )
+      { // the checked bit is set in ui32_comp
+        cnt++;
       }
+      else if ( 0 == cnt )
+      { // the compared bit is not set in ui32_comp --> the lowest possible bit position in
+        // ui32_comp is another position higher
+        ui_lsbFromDiff++;
+      }
+      // break from compare loop, as soon as the test mask value is equal/larger than compare
+      // value, as no higher bit than in testMask can be set in ui32_comp
+      if ( testMask >= ui32_comp ) break;
     }
-
-      for(MASK_TYPE ui32_new = (ui32_comp & (ui32_comp-1)); ui32_new != ui32_comp;
-          ui32_comp=ui32_new, ui32_new &= (ui32_new-1))cnt++;
       return cnt;
   };
+
+  /**
+    deliver amount of different bits from own ident to compared ident
+    @param rrefc_ident reference to compared ident
+    @return amount of different bits
+  */
+  uint8_t Ident_c::bitDiff(const Ident_c& rrefc_ident, unsigned int& ui_lsbFromDiff) const
+  {
+    unsigned int cnt = 0;
+    ui_lsbFromDiff = 0;
+    // XOR delivers '1' where both values are different
+    MASK_TYPE ui32_comp = t_ident ^ rrefc_ident.t_ident;
+    for ( MASK_TYPE testMask = 1; testMask <= 0x10000000; testMask <<= 1 )
+    {
+      if ( ui32_comp & testMask )
+      { // the checked bit is set in ui32_comp
+        cnt++;
+      }
+      else if ( 0 == cnt )
+      { // the compared bit is not set in ui32_comp --> the lowest possible bit position in
+        // ui32_comp is another position higher
+        ui_lsbFromDiff++;
+      }
+      // break from compare loop, as soon as the test mask value is equal/larger than compare
+      // value, as no higher bit than in testMask can be set in ui32_comp
+      if ( testMask >= ui32_comp ) break;
+    }
+      return cnt;
+  };
+
 }

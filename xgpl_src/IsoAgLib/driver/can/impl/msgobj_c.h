@@ -186,6 +186,11 @@ public:
     @return filter of this MsgObj_c instance
   */
   inline const Ident_c& filter() const {return c_filter;}
+  /** update the ident value with the given mask --> clear any bit in ident, which are not set in given mask.
+      Update the mask only, when the ident type of the referenced mask is the same.
+    */
+  void updateFilterWithMask( const Ident_c& rrefc_mask )
+    { c_filter.updateWithMask( rrefc_mask );}
 
   /** get the common filter part of all merged FilterBox instances
     @return common filter of all FilterBoxes in this MsgObj_c instance
