@@ -169,7 +169,7 @@ public:
   /** check if this filterBox_c instance is really in use
       @return true -> filterBox is not in use
   */
-  bool isIdle() {return (ui8_busNumber == IdleState && ui8_filterBoxNr == IdleState);}
+  bool isIdle() {return (ui8_busNumber == IdleState && ui8_filterBoxNr == IdleState && vec_customer.empty());}
   #endif
   /** store new can customer with same filter and mask
       @param pc_cancustomer  new can customer

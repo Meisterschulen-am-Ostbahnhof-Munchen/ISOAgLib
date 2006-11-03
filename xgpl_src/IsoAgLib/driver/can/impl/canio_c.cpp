@@ -695,7 +695,7 @@ FilterBox_c* CANIO_c::insertFilter(__IsoAgLib::CANCustomer_c& rref_customer,
       arrFilterBox[ui8_overwritenFilterBoxIndex].configCan(ui8_busNumber, ui8_overwritenFilterBoxIndex + minReceiveObjNr());
       filterBoxOverwrite = true;
       #ifdef DEBUG
-      INTERNAL_DEBUG_DEVICE << "overwrite FilterBox[" << ui8_overwritenFilterBoxIndex << "] with busnumber: " << static_cast<int>(ui8_busNumber) << INTERNAL_DEBUG_DEVICE_ENDL;
+      INTERNAL_DEBUG_DEVICE << "overwrite FilterBox[" << int(ui8_overwritenFilterBoxIndex) << "] with busnumber: " << static_cast<int>(ui8_busNumber) << INTERNAL_DEBUG_DEVICE_ENDL;
       INTERNAL_DEBUG_DEVICE << "                    mask: " << std::hex << c_newMask.ident() << " filter: " << c_newFilter.ident() << std::dec << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
       break;
