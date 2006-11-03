@@ -2276,7 +2276,6 @@ VtClientServerCommunication_c::setObjectPoolUploadingLanguage()
   }
 }
 
-
 /** explicit conversion to reference of interface class type */
 IsoAgLib::iVtClientServerCommunication_c& VtClientServerCommunication_c::toInterfaceReference()
 {
@@ -2288,5 +2287,15 @@ IsoAgLib::iVtClientServerCommunication_c* VtClientServerCommunication_c::toInter
   return static_cast<IsoAgLib::iVtClientServerCommunication_c*>(this);
 }
 
+
+void
+VtClientServerCommunication_c::resetVtToEcuPgnFilter()
+{
+  if (b_receiveFilterCreated)
+  {
+    getCanInstance4Comm().deleteFilter (*this, (0x1FFFF00UL), (static_cast<MASK_TYPE>(VT_TO_ECU_PGN) << 8), Ident_c::ExtendedIdent);
+    b_receiveFilterCreated = false;
+  }
+}
 
 } // end namespace __IsoAgLib

@@ -401,6 +401,8 @@ public:
 
   bool isVtActive();
 
+  void resetVtToEcuPgnFilter();
+
 private:
   friend class ISOTerminal_c;
 

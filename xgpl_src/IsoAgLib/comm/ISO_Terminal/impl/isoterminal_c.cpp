@@ -442,6 +442,14 @@ ISOTerminal_c::reactOnMonitorListRemove (const ISOName_c& refc_isoName, uint8_t 
   getCanInstance4Comm().deleteFilter(*this, (0x1FFFF00UL), (static_cast<MASK_TYPE>(ACKNOWLEDGEMENT_PGN | rui8_oldSa) << 8), Ident_c::ExtendedIdent);
   #endif
 
+  for (uint8_t ui8_index = 0; ui8_index < vec_vtClientServerComm.size(); ui8_index++)
+  {
+    if (vec_vtClientServerComm[ui8_index]->getIdentItem().isoName() == refc_isoName)
+    {
+      vec_vtClientServerComm[ui8_index]->resetVtToEcuPgnFilter();
+    }
+  }
+
   // we only care for the VTs
   if (refc_isoName.getEcuType() != ISOName_c::ecuTypeVirtualTerminal) return;
 
@@ -472,6 +480,7 @@ ISOTerminal_c::reactOnMonitorListRemove (const ISOName_c& refc_isoName, uint8_t 
       }
     }
   }
+
 }
 
 
