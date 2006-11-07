@@ -126,28 +126,25 @@ public:
     @param rui8_pos position [0..6]
     @param rui16_val uint16_t value to set
   */
-  void setUint16Data( uint8_t rui8_pos, uint16_t rui16_val) { CANPkgExt_c::setUint8Data( rui8_pos, rui16_val ); }
+  void setUint16Data( uint8_t rui8_pos, uint16_t rui16_val) { CANPkgExt_c::setUint16Data( rui8_pos, rui16_val ); }
   /**
     set an int16_t value at specified position in string
     @param rui8_pos position [0..6]
     @param ri16_val int16_t value to set
   */
-  void setInt16Data( uint8_t rui8_pos, int16_t ri16_val) { CANPkgExt_c::setUint8Data( rui8_pos, ri16_val ); }
+  void setInt16Data( uint8_t rui8_pos, int16_t ri16_val) { CANPkgExt_c::setInt16Data( rui8_pos, ri16_val ); }
   /**
     set an uint32_t value at specified position in string
     @param rui8_pos position [0..4]
     @param rui32_val uint32_t value to set
   */
-  void setUint32Data( uint8_t rui8_pos, uint32_t rui32_val)
-    { setUint16Data( rui8_pos,     uint16_t(rui32_val & 0xFFFF) );
-      setUint16Data( (rui8_pos+2), uint16_t( rui32_val >> 16 ) ); }
+  void setUint32Data( uint8_t rui8_pos, uint32_t rui32_val) { CANPkgExt_c::setUint32Data( rui8_pos, rui32_val ); }
   /**
     set an int32_t value at specified position in string
     @param rui8_pos position [0..4]
     @param ri32_val int32_t value to set
   */
-  void setInt32Data( uint8_t rui8_pos, int32_t ri32_val)
-    { CANPkgExt_c::setUint8Data( rui8_pos, ri32_val ); }
+  void setInt32Data( uint8_t rui8_pos, int32_t ri32_val) { CANPkgExt_c::setInt32Data( rui8_pos, ri32_val ); }
 
   /**
     simply deliver a uint8_t from a specific position with
@@ -304,7 +301,7 @@ public:
 
   /** set the isoName for resolved SA
     */
-  const iISOName_c& getISONameForDA() { return getISONameForDA().toConstIisoName_c(); }
+  const iISOName_c& getISONameForDA() { return CANPkgExt_c::getISONameForDA().toConstIisoName_c(); }
 
 private:
   friend class iCANIO_c;
