@@ -118,6 +118,9 @@ public:
 
 private:
 
+  static uint8_t font2PixelDimensionTableW [15];
+  static uint8_t font2PixelDimensionTableH [15];
+
   //! Calculate font size and cache in ui8_fontSizeScaled
   void calcScaledFontDimension() const;
 

@@ -88,6 +88,9 @@
 namespace __IsoAgLib {
 
 
+uint8_t vtObjectFontAttributes_c::font2PixelDimensionTableW [15] = {6,  8,  8, 12, 16, 16, 24, 32, 32, 48, 64, 64, 96,128,128};
+uint8_t vtObjectFontAttributes_c::font2PixelDimensionTableH [15] = {8,  8, 12, 16, 16, 24, 32, 32, 48, 64, 64, 96,128,128,192};
+
 
 // //////////////////////////////// +X2C Operation 168 : stream
 //! Parameter:
@@ -143,30 +146,12 @@ vtObjectFontAttributes_c::fitTerminal() const
 uint16_t
 vtObjectFontAttributes_c::getScaledWidthHeight()
 {
-  static uint16_t font2PixelDimensionTable [15] = {
-    (  6<<8) | (  8),
-    (  8<<8) | (  8),
-    (  8<<8) | ( 12),
-    ( 12<<8) | ( 16),
-    ( 16<<8) | ( 16),
-    ( 16<<8) | ( 24),
-    ( 24<<8) | ( 32),
-    ( 32<<8) | ( 32),
-    ( 32<<8) | ( 48),
-    ( 48<<8) | ( 64),
-    ( 64<<8) | ( 64),
-    ( 64<<8) | ( 96),
-    ( 96<<8) | (128),
-    (128<<8) | (128),
-    (128<<8) | (192)
-  };
-
   calcScaledFontDimension(); // idempotent! method doesn't calc more than once, so no problem to call...
 
   if (ui8_fontSizeScaled >= 15)
     return ((0<<6) | (0));
   else
-    return (font2PixelDimensionTable [ui8_fontSizeScaled]);
+    return ((font2PixelDimensionTableW [ui8_fontSizeScaled] << 8) | (font2PixelDimensionTableH [ui8_fontSizeScaled]));
 }
 
 
@@ -183,81 +168,50 @@ vtObjectFontAttributes_c::calcScaledFontDimension() const
     return; // already calculated
 
   ui8_fontSizeScaled = vtObjectFontAttributes_a->fontSize;
-  uint32_t scale;
+  if (ui8_fontSizeScaled > (15-1)) ui8_fontSizeScaled = (15-1);
+
+  uint32_t scale, width, height;
   if ((s_properties.flags & FLAG_ORIGIN_SKM) || p_parentButtonObject) {
-    scale = (((uint32_t) factorM * 0x100000)/factorD); // (20 bit shifted fixed floating)
+    width = (((uint32_t) factorM * (font2PixelDimensionTableW [ui8_fontSizeScaled]) <<10)/factorD); // (8 bit shifted fixed floating)
+    height= (((uint32_t) factorM * (font2PixelDimensionTableH [ui8_fontSizeScaled]) <<10)/factorD); // (8 bit shifted fixed floating)
   } else {
-    scale = (((uint32_t) vtDimension * 0x100000)/opDimension); // (20 bit shifted fixed floating)
+    width = (((uint32_t) vtDimension * (font2PixelDimensionTableW [ui8_fontSizeScaled]) <<10)/opDimension); // (8 bit shifted fixed floating)
+    height= (((uint32_t) vtDimension * (font2PixelDimensionTableH [ui8_fontSizeScaled]) <<10)/opDimension); // (8 bit shifted fixed floating)
   }
 
-  /** @todo Optimize, see if there're better values than 2, 1.5, 1.3
-      maybe keep aspect ratio
-   */
+  /** @todo maybe keep aspect ratio?? */
 
-  if (scale > 0x100000)
-  { /// (try to) scale up
-    while ((scale >= 0x200000) && (ui8_fontSizeScaled <= 11)) { // 2.00000
-      ui8_fontSizeScaled += 3; // double font size
-      scale >>= 1; // doubled, now see if we still have x2 or x1.33
-    }
-    while ((scale >= 0x180000) && (ui8_fontSizeScaled <= 13)) { // 1.50000
-      switch (ui8_fontSizeScaled % 3) {
-        case 0:
-          ui8_fontSizeScaled += 2;
-          break;
-        case 1:
-          ui8_fontSizeScaled += 1;
-          break;
-        case 2:
-          ui8_fontSizeScaled += 1;
-          break;
+  if (scale != 0x100)
+  { /// (do theoretic) scale
+    uint8_t wIndex=0;
+    uint8_t hIndex=0;
+
+    // now get the lower possible size, (never take a too big size!)
+    int i, j;
+    for (i=14; i>=0; i--) {
+      if (((uint32_t (font2PixelDimensionTableW [i])) << 10) < width) {
+        wIndex = i;
+        break;
       }
-      scale *= 2; scale /= 3;
     }
-    while ((scale >= 0x155555) && ((ui8_fontSizeScaled % 3) == 0)) {
-      ui8_fontSizeScaled += 1;
-      scale *= 3; scale /= 4;
+    for (j=14; j>=0; j--) {
+      if (((uint32_t (font2PixelDimensionTableH [j])) << 10) < height) {
+        hIndex = j;
+        break;
+      }
+    }
+    if ((i < 0) || (j < 0))
+    { // too small font, smaller than 6x8... ==> take 6x8
+      ui8_fontSizeScaled = 0;
+    }
+    else
+    { // match indices together... take the lowest one, that'll do!
+      if (wIndex < hIndex)
+        ui8_fontSizeScaled = wIndex;
+      else
+        ui8_fontSizeScaled = hIndex;
     }
   }
-  else if (scale < 0x100000)
-  { /// (try to) scale down
-    while ((scale <= 0x080000) && (ui8_fontSizeScaled > 0)) { // 1.00000 / 2
-      ui8_fontSizeScaled -= 3; // double font size
-      if (ui8_fontSizeScaled > 127) ui8_fontSizeScaled = 0; // "ui8>127" means "ui8 got < 0" by the "-= 3" above!
-      scale <<= 1; // halfed, now see if we still have /2 or /1.33
-    }
-    while ((scale <= 0x0AAAAA) && (ui8_fontSizeScaled > 0)) { // 1.00000 / 1.5
-      switch (ui8_fontSizeScaled % 3) {
-        case 0:
-          ui8_fontSizeScaled -= 2;
-          break;
-        case 1:
-          ui8_fontSizeScaled -= 3; // so we COULD multiply scale by 2 and not 3/2. but doesn't matter anyway ;(
-          break;
-        case 2:
-          ui8_fontSizeScaled -= 3;
-          break;
-      }
-      scale *= 3; scale /= 2;
-      if (ui8_fontSizeScaled > 127) ui8_fontSizeScaled = 0; // "ui8>127" means "ui8 got < 0" by the "-= 3" above!
-    }
-    while ((scale <= 0x0C4EC5) && (ui8_fontSizeScaled > 0)) { // 1.00000 / 1.3
-      switch (ui8_fontSizeScaled % 3) {
-        case 0:
-          ui8_fontSizeScaled -= 1;
-          break;
-        case 1:
-          ui8_fontSizeScaled -= 2;
-          break;
-        case 2:
-          ui8_fontSizeScaled -= 2;
-          break;
-      }
-      scale *= 4; scale /= 3;
-      if (ui8_fontSizeScaled > 127) ui8_fontSizeScaled = 0; // "ui8>127" means "ui8 got < 0" by the "-= 3" above!
-    }
-  }
-  // else if (scale == 0x100000) ==> no need to scale!
 
   /// Always check if the font is available!
   while (!(__IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).getVtServerInst().getVtFontSizes() & (1 << ui8_fontSizeScaled))) {
