@@ -189,13 +189,13 @@ vtObjectFontAttributes_c::calcScaledFontDimension() const
     // now get the lower possible size, (never take a too big size!)
     int i, j;
     for (i=14; i>=0; i--) {
-      if (((uint32_t (font2PixelDimensionTableW [i])) << 10) < width) {
+      if (((uint32_t (font2PixelDimensionTableW [i])) << 10) <= width) {
         wIndex = i;
         break;
       }
     }
     for (j=14; j>=0; j--) {
-      if (((uint32_t (font2PixelDimensionTableH [j])) << 10) < height) {
+      if (((uint32_t (font2PixelDimensionTableH [j])) << 10) <= height) {
         hIndex = j;
         break;
       }
