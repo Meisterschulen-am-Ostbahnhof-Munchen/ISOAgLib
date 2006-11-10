@@ -106,6 +106,13 @@
         value='Colour' horizontal_justification='middle' />
     </key>
 
+    <key name='KeyTransCol' background_colour='white'>
+      <outputstring pos_x='0' pos_y='8' width='60' height='8' background_colour='white' font_attributes='FontAttributesSKM6x8'
+                    value='Change' horizontal_justification='middle' />
+      <outputstring pos_x='0' pos_y='16' width='60' height='8' background_colour='white' font_attributes='FontAttributesSKM6x8'
+                    value='Transp-Col' horizontal_justification='middle' />
+    </key>
+
     <key name='KeyForbidden' background_colour='white'>
       <outputstring pos_x='0' pos_y='12' width='60' height='8' background_colour='white' font_attributes='FontAttributesSKM6x8'
                     value='Forbidden!' horizontal_justification='middle' />

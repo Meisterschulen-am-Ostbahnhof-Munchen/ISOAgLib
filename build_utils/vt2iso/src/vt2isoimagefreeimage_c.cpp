@@ -44,6 +44,16 @@
 
 #include "vt2isoimagefreeimage_c.h"
 #include <iostream>
+#include <iomanip>
+
+typedef struct tagBGR {
+  uint8_t rgbBlue;
+  uint8_t rgbGreen;
+  uint8_t rgbRed;
+} BGR_s;
+
+extern BGR_s vtColorTable[256];
+
 
 bool Vt2IsoImageFreeImage_c::b_FreeImageLibInited = false;
 
@@ -61,6 +71,8 @@ Vt2IsoImageFreeImage_c::Vt2IsoImageFreeImage_c( const char* filename )
   if ( openBitmap( filename ) ) getOptimalBwThreshold();
  }
 }
+
+
 /** open the given bitmap file and guarantee
  that the pixels can be accessed by RGB
  ( i.e. convert if indexed )
@@ -110,22 +122,80 @@ bool Vt2IsoImageFreeImage_c::openBitmap( const char* filename )
   else std::cerr << "Erfolgreich mit BMP geladen" << std::endl;
  }
 
- // convert to 32-Bit standard bitmap
- FIBITMAP *tmp = FreeImage_ConvertTo32Bits(bitmap);
- FreeImage_Unload(bitmap);
- bitmap = tmp;
+ if (FreeImage_GetBPP(bitmap) > 8)
+ { // convert to 32-Bit standard bitmap ONLY if NOT palettized!
+   FIBITMAP *tmp = FreeImage_ConvertTo32Bits(bitmap);
+   FreeImage_Unload(bitmap);
+   bitmap = tmp;
+ }
 
  ui_width  = FreeImage_GetWidth(bitmap);
  ui_height = FreeImage_GetHeight(bitmap);
  // Calculate the number of bytes per pixel (3 for 24-bit or 4 for 32-bit)
  bytespp = FreeImage_GetLine(bitmap) / FreeImage_GetWidth(bitmap);
- return true;
+
+ mb_palettized = false;
+
+ if (FreeImage_GetBPP(bitmap) <= 8)
+ {
+   bool b_colorsMatch = true;
+   // check all colors if the bitmap uses the ISO-palette
+   int i;
+   for (i=0; i<(16+216); i++)
+   {
+     if ( (vtColorTable[i].rgbRed != FreeImage_GetPalette (bitmap)[i].rgbRed)
+       || (vtColorTable[i].rgbGreen != FreeImage_GetPalette (bitmap)[i].rgbGreen)
+       || (vtColorTable[i].rgbBlue != FreeImage_GetPalette (bitmap)[i].rgbBlue) )
+     {
+       b_colorsMatch = false;
+       break;
+     }
+   }
+   if (!b_colorsMatch)
+   {
+     std::cerr << "*** COULDN'T LOAD BITMAP: WRONG PALETTE. Color at index "<<i<<" is wrong!. Please use the ISO11783-Part 6 (VT)-Palette. Use 'vt2iso -p' to generate an .act file and resample your bitmap to use this palette! ***" << std::endl;
+     std::cerr << "HAS TO BE | you had" << std::hex << std::setfill('0');
+     for (int i=0; i<(16+216); i++)
+     {
+       if ((i % 8) == 0) std::cerr << std::endl;
+       else std::cerr << "     ";
+       std::cerr << std::setw(2) << uint16_t(vtColorTable[i].rgbRed) << std::setw(2) << uint16_t(vtColorTable[i].rgbGreen) << std::setw(2) << uint16_t(vtColorTable[i].rgbBlue) << " | "
+                 << std::setw(2) << uint16_t(FreeImage_GetPalette (bitmap)[i].rgbRed) << std::setw(2) << uint16_t(FreeImage_GetPalette (bitmap)[i].rgbGreen) << std::setw(2) << uint16_t(FreeImage_GetPalette (bitmap)[i].rgbBlue);
+     }
+     std::cerr << std::endl;
+     return false;
+   }
+   mb_palettized = true;
+   std::cout << "--loaded palettized - depth="<<FreeImage_GetBPP(bitmap)<<"--";
+   return true;
+ }
+ else
+ {
+   std::cout << "--loaded as RGB - depth="<<FreeImage_GetBPP(bitmap)<<"--";
+   return true;
+ }
 }
+
+
+int Vt2IsoImageFreeImage_c::getPaletteIndex (unsigned int rui_x, unsigned int rui_y)
+{
+  if (mb_palettized)
+  {
+    uint8_t idx;
+    FreeImage_GetPixelIndex (bitmap, rui_x, (ui_height - 1) - rui_y, &idx);
+    return idx;
+  }
+  else return -1;
+}
+
+
 void Vt2IsoImageFreeImage_c::close( void )
 { // unload bitmap from memory
  FreeImage_Unload(bitmap);
  reset();
 }
+
+
 /** check and adapt scanline */
 void Vt2IsoImageFreeImage_c::checkUpdateScanline( unsigned int rui_y )
 {

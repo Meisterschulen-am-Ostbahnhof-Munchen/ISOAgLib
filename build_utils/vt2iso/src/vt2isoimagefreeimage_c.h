@@ -68,6 +68,8 @@ class Vt2IsoImageFreeImage_c : public Vt2IsoImageBase_c
 	/** deliver B-value of bitmap at given position */
 	virtual unsigned int getB( unsigned int rui_x, unsigned int rui_y );
 
+  int getPaletteIndex (unsigned int rui_x, unsigned int rui_y);
+
  private:
 	/** check and adapt scanline */
 	void checkUpdateScanline( unsigned int rui_y );
@@ -77,6 +79,8 @@ class Vt2IsoImageFreeImage_c : public Vt2IsoImageBase_c
 	int bytespp;
 	int i_curScanLineY;
 	static bool b_FreeImageLibInited;
+  
+  bool mb_palettized;
 };
 
 #endif

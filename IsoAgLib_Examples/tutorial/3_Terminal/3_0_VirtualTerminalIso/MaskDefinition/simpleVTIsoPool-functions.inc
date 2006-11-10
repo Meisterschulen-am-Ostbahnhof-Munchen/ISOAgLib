@@ -97,14 +97,17 @@ void iObjectPool_simpleVTIsoPool_c::initAllObjectsOnce (SINGLETON_VEC_KEY_PARAME
   iVtObjectKeyChangeCol.init (&iVtObjectKeyChangeCol_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
   iVtObjectUnnamed21.init (&iVtObjectUnnamed21_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
   iVtObjectUnnamed22.init (&iVtObjectUnnamed22_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
-  iVtObjectKeyForbidden.init (&iVtObjectKeyForbidden_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
+  iVtObjectKeyTransCol.init (&iVtObjectKeyTransCol_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
   iVtObjectUnnamed23.init (&iVtObjectUnnamed23_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
-  iVtObjectKeyChangeFill.init (&iVtObjectKeyChangeFill_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
   iVtObjectUnnamed24.init (&iVtObjectUnnamed24_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
-  iVtObjectKeyUpdatePool.init (&iVtObjectKeyUpdatePool_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
+  iVtObjectKeyForbidden.init (&iVtObjectKeyForbidden_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
   iVtObjectUnnamed25.init (&iVtObjectUnnamed25_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
-  iVtObjectKeyChangeLogoPosition.init (&iVtObjectKeyChangeLogoPosition_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
+  iVtObjectKeyChangeFill.init (&iVtObjectKeyChangeFill_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
   iVtObjectUnnamed26.init (&iVtObjectUnnamed26_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
+  iVtObjectKeyUpdatePool.init (&iVtObjectKeyUpdatePool_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
+  iVtObjectUnnamed27.init (&iVtObjectUnnamed27_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
+  iVtObjectKeyChangeLogoPosition.init (&iVtObjectKeyChangeLogoPosition_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
+  iVtObjectUnnamed28.init (&iVtObjectUnnamed28_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
   iVtObjectLineAttributes_Normal.init (&iVtObjectLineAttributes_Normal_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
   iVtObjectFillAttributes.init (&iVtObjectFillAttributes_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
   iVtObjectdEllipse.init (&iVtObjectdEllipse_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
@@ -113,18 +116,18 @@ void iObjectPool_simpleVTIsoPool_c::initAllObjectsOnce (SINGLETON_VEC_KEY_PARAME
   iVtObjectMacro_1.init (&iVtObjectMacro_1_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
   iVtObjectMacro_2.init (&iVtObjectMacro_2_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
   iVtObjectAnotherMask.init (&iVtObjectAnotherMask_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
-  iVtObjectUnnamed27.init (&iVtObjectUnnamed27_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
-  iVtObjectUnnamed28.init (&iVtObjectUnnamed28_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
   iVtObjectUnnamed29.init (&iVtObjectUnnamed29_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
   iVtObjectUnnamed30.init (&iVtObjectUnnamed30_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
   iVtObjectUnnamed31.init (&iVtObjectUnnamed31_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
   iVtObjectUnnamed32.init (&iVtObjectUnnamed32_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
   iVtObjectUnnamed33.init (&iVtObjectUnnamed33_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
-  iVtObjectForbiddenAlarmMask.init (&iVtObjectForbiddenAlarmMask_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
-  iVtObjectalarm1contentscontainer.init (&iVtObjectalarm1contentscontainer_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
   iVtObjectUnnamed34.init (&iVtObjectUnnamed34_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
   iVtObjectUnnamed35.init (&iVtObjectUnnamed35_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
+  iVtObjectForbiddenAlarmMask.init (&iVtObjectForbiddenAlarmMask_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
+  iVtObjectalarm1contentscontainer.init (&iVtObjectalarm1contentscontainer_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
   iVtObjectUnnamed36.init (&iVtObjectUnnamed36_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
+  iVtObjectUnnamed37.init (&iVtObjectUnnamed37_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
+  iVtObjectUnnamed38.init (&iVtObjectUnnamed38_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
   iVtObjectsoftkeysAlarm.init (&iVtObjectsoftkeysAlarm_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
 
   #include "simpleVTIsoPool-functions-origin.inc"

@@ -106,6 +106,11 @@ class Vt2IsoImageBase_c
 	/** deliver B-value of bitmap at given position */
 	virtual unsigned int getB( unsigned int rui_x, unsigned int rui_y ) = 0;
 
+  /** deliver Palette-Index of bitmap
+   @return -1 for NOT IN PALETTE MODE
+   @return 0..255 for PALETTE INDEX */
+  virtual int getPaletteIndex (unsigned int rui_x, unsigned int rui_y) = 0;
+
 	/** calculate the optimal threshold for conversion to b/w */
 	void getOptimalBwThreshold( void );
 	/** deliver 4Bit palette value */

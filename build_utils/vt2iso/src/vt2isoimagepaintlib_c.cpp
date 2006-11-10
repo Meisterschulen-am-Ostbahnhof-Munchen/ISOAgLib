@@ -74,10 +74,20 @@ bool Vt2IsoImagePaintlib_c::openBitmap( const char* filename )
     }
     return result;
 }
+
+
 void Vt2IsoImagePaintlib_c::close( void )
 { // simply reset
 	reset();
 }
+
+
+int Vt2IsoImagePaintlib_c::getPaletteIndex (unsigned int rui_x, unsigned int rui_y)
+{
+  /** @todo See if we can retrieve the palette index via paintlib, too.. */
+  return -1;
+}
+
 
 /** check and adapt scanline */
 void Vt2IsoImagePaintlib_c::checkUpdateScanline( unsigned int rui_y )

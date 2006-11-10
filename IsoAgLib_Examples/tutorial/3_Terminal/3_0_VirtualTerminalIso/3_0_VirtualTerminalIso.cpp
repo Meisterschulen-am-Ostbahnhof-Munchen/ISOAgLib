@@ -451,6 +451,10 @@ void iObjectPool_simpleVTIsoPool_c::eventKeyCode ( uint8_t keyActivationCode, ui
         iVtObjectFontAttributesNormal6x8.setFontColour (fgcolTable [color]);
         break;
 
+      case vtKeyCodeKeyTransCol:
+        iVtObjectBigLogo.setTransparencyColour ((iVtObjectBigLogo.get_vtObjectPictureGraphic_a().transparencyColour == 1) ? 11 : 1, /* updateObject:*/ true);
+        break;
+
       case vtKeyCodeKeyChangeLang:
         // Attention: We're assuimung the the variable reference is NOT being used - else we would access a NULL pointer in "value"
         /// ATTENTION: Strings are always stored with PADDED SPACES, so consider this in the case of the string-compare!
@@ -584,7 +588,7 @@ int main()
   /// IsoAgLib::iISOName_c const &myISOName = c_myIdent.isoName();
 
   // Call to init iIsoTerminal instance and initialize object pool!
-  spc_tut30csc = getIisoTerminalInstance().registerIsoObjectPool (c_myIdent, Tutorial_3_0_Pool_c, "T30v1"); // PoolName: Tutorial 3.0 Version 1
+  spc_tut30csc = getIisoTerminalInstance().registerIsoObjectPool (c_myIdent, Tutorial_3_0_Pool_c, "T30v2"); // PoolName: Tutorial 3.0 Version 2
   // only use 5 chars as the pool supports Multi-Language (the last 2 chars are used for the language-code then!
   if (spc_tut30csc == NULL)
   { // shouldln't happen normally!
