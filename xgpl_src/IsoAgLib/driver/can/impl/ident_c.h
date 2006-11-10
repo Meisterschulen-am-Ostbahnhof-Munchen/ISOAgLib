@@ -229,8 +229,10 @@ public:
 #elif defined(  OPTIMIZE_NUMBER_CONVERSIONS_FOR_BIG_ENDIAN )
     return pb_ident[sizeof(MASK_TYPE) - 1 - rb_pos];
 #else
+     static uint8_t sui8_buffer;
+     sui8_buffer = ((t_ident >> (rb_pos*8)) & 0xFF);
     // this bitshift operation is independent of the big/little endianess of the CPU
-    return ((t_ident >> (rb_pos*8)) & 0xFF);
+    return sui8_buffer;
 #endif
   }
 

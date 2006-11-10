@@ -5,14 +5,14 @@ CPP  = g++.exe
 CC   = gcc.exe
 WINDRES = windres.exe
 RES  = 
-OBJ  = src/proc2iso.o ../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.o $(RES)
-LINKOBJ  = src/proc2iso.o ../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.o $(RES)
-LIBS =  -L"C:/Programme/Dev-Cpp/lib" -L"C:/Programme/Dev-Cpp/xerces-c_2_5_0/lib" -lfreeimage -lkernel32 -luser32 -lxerces-c_2 -Wl --enable-runtime-pseudo-reloc  
-INCS =  -I"C:/Programme/Dev-Cpp/include"  -I"C:/Programme/Dev-Cpp/xerces-c_2_5_0/include"  -I"H:/Projekte/TaskController/IsoAgLib/xgpl_src" 
-CXXINCS =  -I"C:/Programme/Dev-Cpp/lib/gcc/mingw32/3.4.2/include"  -I"C:/Programme/Dev-Cpp/include/c++/3.4.2/backward"  -I"C:/Programme/Dev-Cpp/include/c++/3.4.2/mingw32"  -I"C:/Programme/Dev-Cpp/include/c++/3.4.2"  -I"C:/Programme/Dev-Cpp/include"  -I"C:/Programme/Dev-Cpp/xerces-c_2_5_0/include"  -I"H:/Projekte/TaskController/IsoAgLib/xgpl_src" 
+OBJ  = src/proc2iso.o ../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.o ../../xgpl_src/IsoAgLib/util/impl/util_funcs.o $(RES)
+LINKOBJ  = src/proc2iso.o ../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.o ../../xgpl_src/IsoAgLib/util/impl/util_funcs.o $(RES)
+LIBS =  -L"C:/Development/Dev-Cpp/lib" -L"C:/Programme/Dev-Cpp/xerces-c_2_5_0/lib" -lfreeimage -lkernel32 -luser32 -lxerces-c_2 -Wl --enable-runtime-pseudo-reloc  
+INCS =  -I"C:/Development/Dev-Cpp/include"  -I"C:/Programme/Dev-Cpp/xerces-c_2_5_0/include"  -I"C:/Projekte_Subversion/IsoAgLib/xgpl_src" 
+CXXINCS =  -I"C:/Development/Dev-Cpp/include/c++/3.3.1"  -I"C:/Development/Dev-Cpp/include/c++/3.3.1/mingw32"  -I"C:/Development/Dev-Cpp/include/c++/3.3.1/backward"  -I"C:/Development/Dev-Cpp/lib/gcc-lib/mingw32/3.3.1/include"  -I"C:/Development/Dev-Cpp/include"  -I"C:/Programme/Dev-Cpp/xerces-c_2_5_0/include"  -I"C:/Projekte_Subversion/IsoAgLib/xgpl_src" 
 BIN  = Proc2Iso.exe
-CXXFLAGS = $(CXXINCS) -DUSE_FREE_IMAGE_LIB -DXERCES_TMPLSINC -D__GNUWIN32__  -fexpensive-optimizations  -O3 -DNDEBUG -DPLATFORM_WIN32 -D_CRTDBG_MAP_ALLOC  -DPROJ_XMLPARSER  -DPROJ_XMLUTIL  -DPROJ_PARSERS  -DPROJ_SAX4C  -DPROJ_SAX2  -DPROJ_DOM  -DPROJ_VALIDATORS -DXML_SINGLEDLL  -DWIN32  -D_WINDOWS  -DXML_USE_WIN32_TRANSCODER  -DXML_USE_WIN32_MSGLOADER  -DXML_USE_NETACCESSOR_WINSOCK -fpermissive -w -DSYSTEM_PC  
-CFLAGS = $(INCS) -DUSE_FREE_IMAGE_LIB -DXERCES_TMPLSINC -D__GNUWIN32__  -fexpensive-optimizations  -O3 -DNDEBUG -DPLATFORM_WIN32 -D_CRTDBG_MAP_ALLOC  -DPROJ_XMLPARSER  -DPROJ_XMLUTIL  -DPROJ_PARSERS  -DPROJ_SAX4C  -DPROJ_SAX2  -DPROJ_DOM  -DPROJ_VALIDATORS -DXML_SINGLEDLL  -DWIN32  -D_WINDOWS  -DXML_USE_WIN32_TRANSCODER  -DXML_USE_WIN32_MSGLOADER  -DXML_USE_NETACCESSOR_WINSOCK -fpermissive -w -DSYSTEM_PC  
+CXXFLAGS = $(CXXINCS) -DUSE_FREE_IMAGE_LIB -DXERCES_TMPLSINC -D__GNUWIN32__  -fexpensive-optimizations  -O3 -DNDEBUG -DPLATFORM_WIN32 -D_CRTDBG_MAP_ALLOC  -DPROJ_XMLPARSER  -DPROJ_XMLUTIL  -DPROJ_PARSERS  -DPROJ_SAX4C  -DPROJ_SAX2  -DPROJ_DOM  -DPROJ_VALIDATORS -DXML_SINGLEDLL  -DWIN32  -D_WINDOWS  -DXML_USE_WIN32_TRANSCODER  -DXML_USE_WIN32_MSGLOADER  -DXML_USE_NETACCESSOR_WINSOCK -fpermissive -w -DSYSTEM_PC -DMASK_TYPE=uint32_t  
+CFLAGS = $(INCS) -DUSE_FREE_IMAGE_LIB -DXERCES_TMPLSINC -D__GNUWIN32__  -fexpensive-optimizations  -O3 -DNDEBUG -DPLATFORM_WIN32 -D_CRTDBG_MAP_ALLOC  -DPROJ_XMLPARSER  -DPROJ_XMLUTIL  -DPROJ_PARSERS  -DPROJ_SAX4C  -DPROJ_SAX2  -DPROJ_DOM  -DPROJ_VALIDATORS -DXML_SINGLEDLL  -DWIN32  -D_WINDOWS  -DXML_USE_WIN32_TRANSCODER  -DXML_USE_WIN32_MSGLOADER  -DXML_USE_NETACCESSOR_WINSOCK -fpermissive -w -DSYSTEM_PC -DMASK_TYPE=uint32_t  
 RM = rm -f
 
 .PHONY: all all-before all-after clean clean-custom
@@ -31,3 +31,6 @@ src/proc2iso.o: src/proc2iso.cpp
 
 ../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.o: ../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.cpp
 	$(CPP) -c ../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.cpp -o ../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.o $(CXXFLAGS)
+
+../../xgpl_src/IsoAgLib/util/impl/util_funcs.o: ../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
+	$(CPP) -c ../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp -o ../../xgpl_src/IsoAgLib/util/impl/util_funcs.o $(CXXFLAGS)
