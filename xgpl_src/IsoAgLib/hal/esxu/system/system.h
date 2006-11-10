@@ -197,7 +197,7 @@ HAL::put_rs232NChar( buf, CNAMESPACE::strlen( (char*)buf ), 0 /*HAL::RS232_over_
     // we can take only a part of the information transmitted here.
     //  - uint8[0] is the year of construction -> 7 bits
     //  - uint8[2] and uint8[3] a contract numering -> 14 bits
-    return (bcd2dec(uint8[2]) * 100 + bcd2dec(uint8[3])) + (bcd2dec(uint8[0]) << 14);
+    return (__IsoAgLib::bcd2dec(uint8[2]) * 100 + __IsoAgLib::bcd2dec(uint8[3])) + (__IsoAgLib::bcd2dec(uint8[0]) << 14);
   };
 
   inline int16_t getLokalId(uint8_t *Dat)
