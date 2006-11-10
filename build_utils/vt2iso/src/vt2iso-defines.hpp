@@ -52,7 +52,6 @@
 
 #define stringLength 1024
 
-
 // Object Types
 #define otWorkingset        (0)
 #define otDatamask          (1)
@@ -200,115 +199,114 @@
 #define attrHidden (8)
 #define attrKey_code (9)
 #define attrBorder_colour (10)
-#define attrLatchable (11)
-#define attrForeground_colour (12)
-#define attrVariable_reference (13)
-#define attrValue (14)
-#define attrFont_attributes (15)
-#define attrInput_attributes (16)
-#define attrOptions (17)
-#define attrHorizontal_justification (18)
-#define attrLength (19)
-#define attrMin_value (20)
-#define attrMax_value (21)
-#define attrOffset (22)
-#define attrScale (23)
-#define attrNumber_of_decimals (24)
-#define attrFormat (25)
-#define attrLine_attributes (26)
-#define attrLine_suppression (27)
-#define attrFill_attributes (28)
-#define attrEllipse_type (29)
-#define attrStart_angle (30)
-#define attrEnd_angle (31)
-#define attrPolygon_type (32)
-#define attrNeedle_colour (33)
-#define attrArc_and_tick_colour (34)
-#define attrNumber_of_ticks (35)
-#define attrColour (36)
-#define attrTarget_line_colour (37)
-#define attrTarget_value_variable_reference (38)
-#define attrTarget_value (39)
-#define attrBar_graph_width (40)
-#define attrActual_width (41)
-#define attrActual_height (42)
-#define attrTransparency_colour (43)
-#define attrFont_colour (44)
-#define attrFont_size (45)
-#define attrFont_type (46)
-#define attrFont_style (47)
-#define attrLine_colour (48)
-#define attrLine_width (49)
-#define attrLine_art (50)
-#define attrFill_type (51)
-#define attrFill_colour (52)
-#define attrFill_pattern (53)
-#define attrValidation_type (54)
-#define attrValidation_string (55)
-#define attrPos_x (56)
-#define attrPos_y (57)
-#define attrEvent (58)
-#define attrFile (59)
-#define attrLine_direction (60)
-#define attrEnabled (61)
-#define attrFile0 (62)
-#define attrFile1 (63)
-#define attrFile2 (64)
-#define attrBlock_font (65)
-#define attrBlock_row (66)
-#define attrBlock_col (67)
+#define attrForeground_colour (11)
+#define attrVariable_reference (12)
+#define attrValue (13)
+#define attrFont_attributes (14)
+#define attrInput_attributes (15)
+#define attrOptions (16)
+#define attrHorizontal_justification (17)
+#define attrLength (18)
+#define attrMin_value (19)
+#define attrMax_value (20)
+#define attrOffset (21)
+#define attrScale (22)
+#define attrNumber_of_decimals (23)
+#define attrFormat (24)
+#define attrLine_attributes (25)
+#define attrLine_suppression (26)
+#define attrFill_attributes (27)
+#define attrEllipse_type (28)
+#define attrStart_angle (29)
+#define attrEnd_angle (30)
+#define attrPolygon_type (31)
+#define attrNeedle_colour (32)
+#define attrArc_and_tick_colour (33)
+#define attrNumber_of_ticks (34)
+#define attrColour (35)
+#define attrTarget_line_colour (36)
+#define attrTarget_value_variable_reference (37)
+#define attrTarget_value (38)
+#define attrBar_graph_width (39)
+#define attrActual_width (40)
+#define attrActual_height (41)
+#define attrTransparency_colour (42)
+#define attrFont_colour (43)
+#define attrFont_size (44)
+#define attrFont_type (45)
+#define attrFont_style (46)
+#define attrLine_colour (47)
+#define attrLine_width (48)
+#define attrLine_art (49)
+#define attrFill_type (50)
+#define attrFill_colour (51)
+#define attrFill_pattern (52)
+#define attrValidation_type (53)
+#define attrValidation_string (54)
+#define attrPos_x (55)
+#define attrPos_y (56)
+#define attrEvent (57)
+#define attrFile (58)
+#define attrLine_direction (59)
+#define attrEnabled (60)
+#define attrFile0 (61)
+#define attrFile1 (62)
+#define attrFile2 (63)
+#define attrBlock_font (64)
+#define attrBlock_row (65)
+#define attrBlock_col (66)
 
-#define attrNumber_of_items (68)
-#define attrNumber_of_points (69)
-#define attrRle (70)
-#define attrNumber_of_bytes (71)
+#define attrNumber_of_items (67)
+#define attrNumber_of_points (68)
+#define attrRle (69)
+#define attrNumber_of_bytes (70)
 //addtional Aux Function/Input Attributes
-#define attrFunction_type (72)
-#define attrInput_id (73)
+#define attrFunction_type (71)
+#define attrInput_id (72)
 
 // Command Attributes:
-#define attrObjectID  (74)
-#define attrHideShow  (75)
-#define attrDisable_enable (76)
-#define attrNumber_of_repetitions (77)
-#define attrFrequency (78)
-#define attrOnTime_duration (79)
-#define attrOffTime_duration (80)
-#define attrPercentage (81)
-#define attrParent_objectID (82)
-#define attrX_change (83)
-#define attrY_change (84)
-#define attrX_pos (85)
-#define attrY_pos (86)
-#define attrNew_width (87)
-#define attrNew_height (88)
-#define attrNew_background_colour (89)
-#define attrNew_value (90)
-#define attrWorking_setID (91)
-#define attrNew_active_mask (92)
-#define attrMask_type (93)
-#define attrMaskID (94)
-#define attrNew_softkey_mask (95)
-#define attrAttributeID (96)
-#define attrNew_priority (97)
-#define attrList_index (98)
-#define attrNew_objectID (99)
-#define attrBytes_in_string (100)
-#define attrCode (101)
-#define attrLanguage (102)
-#define attrInKey (103)
-#define attrInButton (104)
+#define attrObjectID  (73)
+#define attrHideShow  (74)
+#define attrDisable_enable (75)
+#define attrNumber_of_repetitions (76)
+#define attrFrequency (77)
+#define attrOnTime_duration (78)
+#define attrOffTime_duration (79)
+#define attrPercentage (80)
+#define attrParent_objectID (81)
+#define attrX_change (82)
+#define attrY_change (83)
+#define attrX_pos (84)
+#define attrY_pos (85)
+#define attrNew_width (86)
+#define attrNew_height (87)
+#define attrNew_background_colour (88)
+#define attrNew_value (89)
+#define attrWorking_setID (90)
+#define attrNew_active_mask (91)
+#define attrMask_type (92)
+#define attrMaskID (93)
+#define attrNew_softkey_mask (94)
+#define attrAttributeID (95)
+#define attrNew_priority (96)
+#define attrList_index (97)
+#define attrNew_objectID (98)
+#define attrBytes_in_string (99)
+#define attrCode (100)
+#define attrLanguage (101)
+#define attrInKey (102)
+#define attrInButton (103)
 
 // Attributes for graphics context
-#define attrViewportWidth (105)
-#define attrViewportHeight (106)
-#define attrViewportX (107)
-#define attrViewportY (108)
-#define attrCanvasWidth (109)
-#define attrCanvasHeight (110)
-#define attrViewportZoom (111)
-#define attrCursorX (112)
-#define attrCursorY (113)
+#define attrViewportWidth (104)
+#define attrViewportHeight (105)
+#define attrViewportX (106)
+#define attrViewportY (107)
+#define attrCanvasWidth (108)
+#define attrCanvasHeight (109)
+#define attrViewportZoom (110)
+#define attrCursorX (111)
+#define attrCursorY (112)
 // Attributes allready defined and used by graphics context:
 //#define attrForeground_colour (12)
 //#define attrBackground_colour (0)
@@ -318,6 +316,9 @@
 //#define attrFormat (25)
 //#define attrOptions (17)
 //#define attrTransparency_colour (43)
+
+// attribute for inputnumber/list only!
+#define attrInputObjectOptions (113)
 
 #define maxAttributeNames (114)
 
@@ -491,7 +492,6 @@ char otClassnameTable [maxObjectTypes] [stringLength+1] = {
   "GraphicsContext",
 };
 
-
 char attrNameTable [maxAttributeNames] [stringLength+1] = {
   "background_colour",
   "selectable",
@@ -504,7 +504,6 @@ char attrNameTable [maxAttributeNames] [stringLength+1] = {
   "hidden",
   "key_code",
   "border_colour",
-  "latchable",
   "foreground_colour",
   "variable_reference",
   "value",
@@ -635,7 +634,6 @@ char ctCommandTable [maxCommandsToCompare] [stringLength+1] = {
   "command_change_priority",
   "command_change_list_item"
 };
-
 
 char colorTable [16] [stringLength+1] = {
   "black",
@@ -878,10 +876,25 @@ char auxFunctionTypeTable [maxAuxFunctionTypes] [stringLength+1] = {
   "nonlatchingboolean"
 };
 
-
 #define maxGCOptions 2
 char GCOptionsTable [maxGCOptions] [stringLength+1] = {
   "transparent",
   "uselinefontfillcolourfordraw"
+};
+
+#define maxButtonOptions 6
+char buttonOptionsTable [maxButtonOptions] [stringLength+1] = {
+  "latchable",
+  "latched",
+  "suppress_border",
+  "transparent_background",
+  "disabled",
+  "no_border"
+};
+
+#define maxInputObjectOptionsTable 2
+char inputobjectOptionsTable [maxInputObjectOptionsTable] [stringLength+1] = {
+  "enable",
+  "live_editing"
 };
 

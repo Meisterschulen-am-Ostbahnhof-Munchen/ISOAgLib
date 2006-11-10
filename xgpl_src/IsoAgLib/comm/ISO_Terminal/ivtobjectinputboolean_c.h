@@ -130,7 +130,7 @@ public:
   bool disable(bool b_updateObject= false, bool b_enableReplaceOfCmd=false) { return vtObject_c::able (0, b_updateObject, b_enableReplaceOfCmd); }
 
   //  Operation: select
-  bool select() { return vtObject_c::select(); }
+  bool select(uint8_t selectOrActivate) { return vtObject_c::select(selectOrActivate); }
 
   
   // ///////////////////////// getter for attributes

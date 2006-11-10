@@ -349,11 +349,11 @@ vtObject_c::able (uint8_t enOrDis, bool b_updateObject, bool b_enableReplaceOfCm
 
 // //////////////////////////////// +X2C Operation 218 : select
 bool
-vtObject_c::select()
+vtObject_c::select(uint8_t selectOrActivate)
 { // ~X2C
   return __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommand (0xA2 /* Command: Command --- Parameter: Select Input Object */,
                                                           vtObject_a->ID & 0xFF, vtObject_a->ID >> 8,
-                                                          0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 1000, true);
+                                                          selectOrActivate, 0xFF, 0xFF, 0xFF, 0xFF, 1000, true);
 } // -X2C
 
 } // end of namespace __IsoAgLib

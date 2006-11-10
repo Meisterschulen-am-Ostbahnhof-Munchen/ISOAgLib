@@ -185,8 +185,8 @@ public:
   bool disable(bool b_updateObject= false, bool b_enableReplaceOfCmd=false) { return vtObject_c::able (0, b_updateObject, b_enableReplaceOfCmd); }
 
   //  Operation: select
-  bool select() { return vtObject_c::select(); }
-	
+  bool select(uint8_t selectOrActivate) { return vtObject_c::select(selectOrActivate); }
+
   // ///////////////////////// getter for attributes
   /** that attribute is in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const { return vtObjectInputString_c::updateObjectType(); }

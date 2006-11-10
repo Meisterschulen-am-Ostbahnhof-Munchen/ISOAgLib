@@ -79,10 +79,8 @@
  *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
-
 #ifndef VTOBJECT_C_H
 #define VTOBJECT_C_H
-
 
 // +X2C includes
 #include "../ivtobject_c.h"
@@ -91,15 +89,12 @@
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
-
-
 //  +X2C Class 2 : vtObject_c
 //!  Stereotype: Klasse
 class vtObject_c : public IsoAgLib::iVtObject_c
 {
-
 public:
-  virtual ~vtObject_c(){};
+  virtual ~vtObject_c() {}
   //  Operation: stream
   //! Parameter:
   //! @param destMemory:
@@ -121,7 +116,6 @@ public:
 
 
 protected:
-
   /** @todo check for double initialization via flags & STRUCT_IN_RAM etc. */
   void init (iVtObject_s* rps_vtObject_a SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) { vtObject_a = rps_vtObject_a; SINGLETON_VEC_KEY_INIT_CALL }
 
@@ -177,17 +171,17 @@ protected:
   bool able (uint8_t enOrDis, bool b_updateObject= false, bool b_enableReplaceOfCmd=true);
 
   //  Operation: select
-  bool select();
+  bool select(uint8_t selectOrActivate);
 
 private:
   friend class SINGLETON( iVtObject_c );
   friend class SINGLETON( vtObject_c );
   bool genericChangeChildLocationPosition (bool rb_isLocation, IsoAgLib::iVtObject_c* childObject, int16_t dx, int16_t dy, bool b_updateObject, uint8_t numObjectsToFollow, IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow, uint16_t ui16_structOffset, uint16_t ui16_structLen);
 
-    //  Operation: updateEnable
+  //  Operation: updateEnable
   //! Parameter:
   //! @param b_enableOrDisable:
-  virtual void updateEnable(uint8_t /*rui8_enOrDis*/) {};
+  virtual void updateEnable(uint8_t /*rui8_enOrDis*/) {}
 
 }; // ~X2C
 
