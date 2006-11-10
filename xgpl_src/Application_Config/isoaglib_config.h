@@ -1042,6 +1042,9 @@
 #if defined(SYSTEM_PC)
   /// set subdirectory name to "pc" for PC platform
   #define HAL_SUBDIR pc
+#elif defined(SYSTEM_PC_MFC)
+  /// set subdirectory name to "pc_mfc" for PC_MFC platform
+  #define HAL_SUBDIR pc_mfc
 #elif defined(SYSTEM_ESX)
   /// set subdirectory name to "esx" for ESX platform
   #define HAL_SUBDIR esx
