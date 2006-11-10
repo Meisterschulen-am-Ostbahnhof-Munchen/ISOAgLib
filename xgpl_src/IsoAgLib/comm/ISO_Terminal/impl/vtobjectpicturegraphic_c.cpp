@@ -79,18 +79,13 @@
  *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
-
 #include "vtobjectpicturegraphic_c.h"
-#include "../ivtobjectbutton_c.h"
-//#include "../ivtobjectmacro_c.h"
-#include "isoterminal_c.h"
 
+#include "../ivtobjectbutton_c.h"
+#include "isoterminal_c.h"
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
-
-
-
 #if 0
 #define helperForDifferentSizes(a,b,c,f,g,h,x,y,z,optionander) \
         if (vtDimension < 400) { \
@@ -180,14 +175,13 @@ namespace __IsoAgLib {
 #endif
 
 
-// //////////////////////////////// +X2C Operation 150 : stream
-//! Parameter:
+// Operation : stream
 //! @param:destMemory:
 //! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
 //! @param sourceOffset:
 int16_t
 vtObjectPictureGraphic_c::stream(uint8_t* destMemory, uint16_t maxBytes, objRange_t sourceOffset)
-{ // ~X2C
+{
 #define MACRO_vtObjectTypeA vtObjectPictureGraphic_a
 #define MACRO_vtObjectTypeS iVtObjectPictureGraphic_s
     MACRO_streamLocalVars;
@@ -262,9 +256,7 @@ vtObjectPictureGraphic_c::stream(uint8_t* destMemory, uint16_t maxBytes, objRang
     return curBytes;
 }
 
-vtObjectPictureGraphic_c::vtObjectPictureGraphic_c()
-{
-}
+vtObjectPictureGraphic_c::vtObjectPictureGraphic_c() {}
 
 uint32_t
 vtObjectPictureGraphic_c::fitTerminal() const
@@ -295,5 +287,76 @@ vtObjectPictureGraphic_c::fitTerminal() const
   return 17+numberOfBytesInRawData+vtObjectPictureGraphic_a->numberOfMacrosToFollow*2;
 }
 
-} // end of namespace __IsoAgLib
+uint16_t
+vtObjectPictureGraphic_c::updateWidth(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), width), sizeof(iVtObjectPictureGraphic_s), 1);
+  else
+    return getValue16(MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), width), sizeof(iVtObjectPictureGraphic_s));
+}
 
+uint8_t
+vtObjectPictureGraphic_c::updateOptions(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), options), sizeof(iVtObjectPictureGraphic_s), 2);
+  else
+    return getValue8(MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), options), sizeof(iVtObjectPictureGraphic_s));
+}
+
+uint8_t
+vtObjectPictureGraphic_c::updateTransparencyColour(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), transparencyColour), sizeof(iVtObjectPictureGraphic_s), 3);
+  else
+    return getValue8(MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), transparencyColour), sizeof(iVtObjectPictureGraphic_s));
+}
+
+/** these attributes are in parentheses in the spec, so commented out here
+uint16_t
+vtObjectPictureGraphic_c::updateActualWidth(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), actualWidth), sizeof(iVtObjectPictureGraphic_s), 4);
+  else
+    return getValue16(MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), actualWidth), sizeof(iVtObjectPictureGraphic_s));
+}
+
+uint16_t
+vtObjectPictureGraphic_c::updateActualHeight(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), actualHeight), sizeof(iVtObjectPictureGraphic_s), 5);
+  else
+    return getValue16(MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), actualHeight), sizeof(iVtObjectPictureGraphic_s));
+}
+
+uint8_t
+vtObjectPictureGraphic_c::updateFormat(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), format), sizeof(iVtObjectPictureGraphic_s), 6);
+  else
+    return getValue8(MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), format), sizeof(iVtObjectPictureGraphic_s));
+}
+*/
+
+void
+vtObjectPictureGraphic_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attributeValue)
+{
+  switch (attrID)
+  {
+    case 1: saveValue16(MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), width), sizeof(iVtObjectPictureGraphic_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
+    case 2: saveValue8(MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), options), sizeof(iVtObjectPictureGraphic_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
+    case 3: saveValue8(MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), transparencyColour), sizeof(iVtObjectPictureGraphic_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
+    /** these attributes are in parentheses in the spec, so commented out here
+    case 4: saveValue16(MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), actualWidth), sizeof(iVtObjectPictureGraphic_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
+    case 5: saveValue16(MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), actualHeight), sizeof(iVtObjectPictureGraphic_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
+    case 6: saveValue8(MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), format), sizeof(iVtObjectPictureGraphic_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
+    */
+    default: break;
+  }
+}
+} // end of namespace __IsoAgLib

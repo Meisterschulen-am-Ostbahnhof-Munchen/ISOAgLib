@@ -76,10 +76,10 @@ public:
   //! @param b_initPointer:
   void init(const iVtObjectFillAttributes_s* vtObjectFillAttributesSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) {
     vtObjectFillAttributes_c::init (vtObjectFillAttributesSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
-  };
+  }
 
   //  Operation: get_vtObjectFillAttributes_a
-  const iVtObjectFillAttributes_s& get_vtObjectFillAttributes_a() { return *vtObjectFillAttributes_c::get_vtObjectFillAttributes_a(); };
+  const iVtObjectFillAttributes_s& get_vtObjectFillAttributes_a() { return *vtObjectFillAttributes_c::get_vtObjectFillAttributes_a(); }
 
 
   //  Operation: setFillType
@@ -91,7 +91,6 @@ public:
   }
 
   //  Operation: setFillColour
-  //! Parameter:
   //! @param newFillColour:
   //! @param b_updateObject:
   void setFillColour(uint8_t newFillColour, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
@@ -99,7 +98,6 @@ public:
   }
 
   //  Operation: setFillPattern
-  //! Parameter:
   //! @param newFillPatternObject:
   //! @param b_updateObject:
   void setFillPattern(iVtObjectPictureGraphic_c* newFillPatternObject, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
@@ -107,17 +105,31 @@ public:
   }
 
   //  Operation: changeFillAttributes
-  //! Parameter:
   //! @param newFillType:
   //! @param newFillColour:
   //! @param newFillPatternObject:
   //! @param b_updateObject:
   void setFillAttributes(uint8_t newFillType, uint8_t newFillColour, iVtObjectPictureGraphic_c* newFillPattern, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectFillAttributes_c::setFillAttributes(newFillType, newFillColour, newFillPattern, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
-}; // ~X2C
+  /** that attribute is in parentheses in the spec, so commented out here
+  uint8_t updateObjectType() const { return vtObjectFillAttributes_c::updateObjectType(); }
+  */
+
+  uint8_t updateFillType(bool b_SendRequest=false) {
+    return vtObjectFillAttributes_c::updateFillType(b_SendRequest);
+  }
+
+  uint8_t updateFillColour(bool b_SendRequest=false) {
+    return vtObjectFillAttributes_c::updateFillColour(b_SendRequest);
+  }
+
+  uint16_t updateFillPattern(bool b_SendRequest=false) {
+    return vtObjectFillAttributes_c::updateFillPattern(b_SendRequest);
+  }
+};
 
 } // end namespace IsoAgLib
 
-#endif // -X2C
+#endif

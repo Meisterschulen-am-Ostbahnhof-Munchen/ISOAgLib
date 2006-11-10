@@ -79,29 +79,18 @@
  *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
-
-
 #ifndef VTOBJECTRECTANGLE_C_H
 #define VTOBJECTRECTANGLE_C_H
 
-
-// +X2C includes
 #include "vtobject_c.h"
-// ~X2C
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
-
-//  +X2C Class 119 : vtObjectrectangle_c
-//!  Stereotype: Klasse
 class vtObjectRectangle_c : public vtObject_c
 {
-
 public:
-
   //  Operation: stream
-  //! Parameter:
   //! @param destMemory:
   //! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
   //! @param sourceOffset:
@@ -110,10 +99,10 @@ public:
                  objRange_t sourceOffset);
 
   //  Operation: init
-  //! Parameter:
   //! @param vtObjectrectangleSROM:
   //! @param b_initPointer:
-  void init(const iVtObjectRectangle_s* vtObjectRectangleSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) { vtObject_c::init ((iVtObject_s*) vtObjectRectangleSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA); };
+  void init(const iVtObjectRectangle_s* vtObjectRectangleSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA)
+  { vtObject_c::init ((iVtObject_s*) vtObjectRectangleSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA); }
 
   //  Operation: get_vtObjectmeter_a
   iVtObjectRectangle_s* get_vtObjectRectangle_a() { return (iVtObjectRectangle_s *)vtObject_a; }
@@ -125,54 +114,64 @@ public:
   uint32_t fitTerminal() const;
 
   //  Operation: setLineAttribute
-  //! Parameter:
   //! @param newLineAttribute:
   //! @param b_updateObject:
   void setLineAttributes(IsoAgLib::iVtObjectLineAttributes_c* newLineAttributes, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectRectangle_a(), lineAttributes) : 0, sizeof(iVtObjectRectangle_s), 1 /* "Line Attribute" */, (IsoAgLib::iVtObject_c*) newLineAttributes, b_enableReplaceOfCmd);
-  };
+  }
 
   //  Operation: setWidth
-  //! Parameter:
   //! @param newWidth:
   //! @param b_updateObject:
   void setWidth(uint16_t newWidth, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     saveValue16SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectRectangle_a(), width) : 0, sizeof(iVtObjectRectangle_s), 2 /* "Width" */, newWidth, b_enableReplaceOfCmd);
-  };
+  }
 
   //  Operation: setHeight
-  //! Parameter:
   //! @param newHeight:
   //! @param b_updateObject:
   void setHeight(uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     saveValue16SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectRectangle_a(), height) : 0, sizeof(iVtObjectRectangle_s), 3 /* "Height" */, newHeight, b_enableReplaceOfCmd);
-  };
+  }
 
   //  Operation: setLineSuppression
-  //! Parameter:
   //! @param newLineSupressionValue:
   //! @param b_updateObject:
   void setLineSuppression(uint8_t newLineSupressionValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectRectangle_a(), lineSuppression) : 0, sizeof(iVtObjectRectangle_s), 4 /* "Line Suppression" */, newLineSupressionValue, newLineSupressionValue, b_enableReplaceOfCmd);
-  };
+  }
 
   //  Operation: setFillAttributes
-  //! Parameter:
   //! @param newFillAttribute:
   //! @param b_updateObject:
   void setFillAttributes(IsoAgLib::iVtObjectFillAttributes_c* newFillAttributes, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectRectangle_a(), fillAttributes) : 0, sizeof(iVtObjectRectangle_s), 5 /* "Fill Attributes" */, (IsoAgLib::iVtObject_c*) newFillAttributes, b_enableReplaceOfCmd);
-  };
+  }
 
   //  Operation: setOriginSKM
-  //! Parameter:
   //! @param b_SKM:
   void setOriginSKM(bool b_SKM);
 
   void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
-}; // ~X2C
+  // ///////////////////////// getter for attributes
+  /** that attribute is in parentheses in the spec, so commented out here
+  uint8_t updateObjectType() const { return 14; }
+  */
+
+  uint16_t updateLineAttributes(bool b_SendRequest=false);
+
+  uint16_t updateWidth(bool b_SendRequest=false);
+
+  uint16_t updateHeight(bool b_SendRequest=false);
+
+  uint8_t updateLineSuppression(bool b_SendRequest=false);
+
+  uint16_t updateFillAttributes(bool b_SendRequest=false);
+
+  void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue);
+};
 
 } // end namespace __IsoAgLib
 
-#endif // -X2C
+#endif

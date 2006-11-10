@@ -79,8 +79,8 @@
  *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
-
 #include "vtobjectauxiliaryinput_c.h"
+
 #include "isoterminal_c.h"
 #include "../ivtobjectfontattributes_c.h"
 #include "../ivtobjectbutton_c.h"
@@ -88,15 +88,13 @@
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
-
-// //////////////////////////////// +X2C Operation 87 : stream
-//! Parameter:
+// Operation : stream
 //! @param destMemory:
 //! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
 //! @param sourceOffset:
 int16_t
 vtObjectAuxiliaryInput_c::stream(uint8_t* destMemory, uint16_t maxBytes, objRange_t sourceOffset)
-{ // ~X2C
+{
 #define MACRO_vtObjectTypeA vtObjectAuxiliaryInput_a
 #define MACRO_vtObjectTypeS iVtObjectAuxiliaryInput_s
   MACRO_streamLocalVars;
@@ -116,16 +114,13 @@ vtObjectAuxiliaryInput_c::stream(uint8_t* destMemory, uint16_t maxBytes, objRang
   MACRO_streamObjectXYcenteredInSoftKey(7);
 
   return curBytes;
-} // -X2C
-
-
-// //////////////////////////////// +X2C Operation 90 : vtObjectAuxiliaryInput_c
-
-vtObjectAuxiliaryInput_c::vtObjectAuxiliaryInput_c()
-{
 }
 
-// //////////////////////////////// +X2C Operation 193 : size
+
+// Operation : vtObjectAuxiliaryInput_c
+vtObjectAuxiliaryInput_c::vtObjectAuxiliaryInput_c() {}
+
+// Operation : size
 uint32_t
 vtObjectAuxiliaryInput_c::fitTerminal() const
 {
@@ -147,16 +142,15 @@ vtObjectAuxiliaryInput_c::setChildPosition(IsoAgLib::iVtObject_c* rpc_childObjec
   return genericChangeChildPosition (rpc_childObject, x, y, b_updateObject, vtObjectAuxiliaryInput_a->numberOfObjectsToFollow, (IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s *) vtObjectAuxiliaryInput_a->objectsToFollow, MACRO_getStructOffset(get_vtObjectAuxiliaryInput_a(), objectsToFollow), sizeof(iVtObjectAuxiliaryInput_s), b_enableReplaceOfCmd);
 }
 
-// //////////////////////////////// +X2C Operation 232 : setOriginSKM
-//! Parameter:
+// Operation : setOriginSKM
 //! @param b_SKM:
 void
 vtObjectAuxiliaryInput_c::setOriginSKM(bool /* b_SKM */)
-{ // ~X2C
+{
   MACRO_localVars;
   for (int i=0; i<vtObjectAuxiliaryInput_a->numberOfObjectsToFollow; i++) {
     vtObjectAuxiliaryInput_a->objectsToFollow[i].vtObject->setOriginSKM (true);
   }
-} // -X2C
+}
 
 } // end of namespace __IsoAgLib

@@ -79,8 +79,8 @@
  *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
-
 #include "../ivtobjectpicturegraphic_c.h"
+
 #include "../ivtobjectfontattributes_c.h"
 #include "../ivtobjectlineattributes_c.h"
 #include "../ivtobjectfillattributes_c.h"
@@ -94,7 +94,6 @@
 #undef MACRO_vtObjectTypeS
 
 namespace __IsoAgLib {
-
 //! @param:destMemory:
 //! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
 //! @param sourceOffset:
@@ -105,7 +104,7 @@ vtObjectGraphicsContext_c::stream(uint8_t* destMemory, uint16_t maxBytes, objRan
   iVtObjectGraphicsContext_s* pc_vtOGC_a = get_vtObjectGraphicsContext_a();
 
   if (sourceOffset == 0) { // dump out constant sized stuff
-    // Check precondition 
+    // Check precondition
     // (Not allways because we have no exception handling for 16-bit systems implemented).
 #if defined(DEBUG) && defined(SYSTEM_PC)
     if (maxBytes < i_totalSize) { abort(); }
@@ -160,17 +159,14 @@ vtObjectGraphicsContext_c::stream(uint8_t* destMemory, uint16_t maxBytes, objRan
   return 0;
 }
 
-// //////////////////////////////// +X2C Operation 153 : vtObjectGraphicsContext_c
-vtObjectGraphicsContext_c::vtObjectGraphicsContext_c()
-{
-}
+vtObjectGraphicsContext_c::vtObjectGraphicsContext_c() {}
 
 void
 vtObjectGraphicsContext_c::setGraphicsCursor( const IsoAgLib::iVtPoint_c& rc_point,
                                               bool b_updateObject, bool b_enableReplaceOfCmd)
 {
   if (b_updateObject) {
-    saveSignedValue16 (MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), cursorX), 
+    saveSignedValue16 (MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), cursorX),
       sizeof(iVtObjectGraphicsContext_s), rc_point.getX() );
     saveSignedValue16 (MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), cursorY),
       sizeof(iVtObjectGraphicsContext_s), rc_point.getY() );
@@ -455,5 +451,162 @@ vtObjectGraphicsContext_c::copyViewport2PictureGraphic( const IsoAgLib::iVtObjec
               this, pc_iVtObjectPictureGraphic, b_enableReplaceOfCmd);
 }
 
-} // namespace __IsoAgLib
+uint16_t
+vtObjectGraphicsContext_c::updateViewportWidth(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), viewportWidth), sizeof(iVtObjectGraphicsContext_s), 1);
+  else
+    return getValue16(MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), viewportWidth), sizeof(iVtObjectGraphicsContext_s));
+}
 
+uint16_t
+vtObjectGraphicsContext_c::updateViewportHeight(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), viewportHeight), sizeof(iVtObjectGraphicsContext_s), 2);
+  else
+    return getValue16(MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), viewportHeight), sizeof(iVtObjectGraphicsContext_s));
+}
+
+uint16_t
+vtObjectGraphicsContext_c::updateViewportXPos(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), viewportX), sizeof(iVtObjectGraphicsContext_s), 3);
+  else
+    return getValue16(MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), viewportX), sizeof(iVtObjectGraphicsContext_s));
+}
+
+uint16_t
+vtObjectGraphicsContext_c::updateViewportYPos(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), viewportY), sizeof(iVtObjectGraphicsContext_s), 4);
+  else
+    return getValue16(MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), viewportY), sizeof(iVtObjectGraphicsContext_s));
+}
+
+uint8_t
+vtObjectGraphicsContext_c::updateViewPortZoom(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), viewportZoom), sizeof(iVtObjectGraphicsContext_s), 5);
+  else
+    return getValue8(MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), viewportZoom), sizeof(iVtObjectGraphicsContext_s));
+}
+
+uint16_t
+vtObjectGraphicsContext_c::updateCursorXPos(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), cursorX), sizeof(iVtObjectGraphicsContext_s), 6);
+  else
+    return getValue8(MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), cursorY), sizeof(iVtObjectGraphicsContext_s));
+}
+
+uint16_t
+vtObjectGraphicsContext_c::updateCursorYPos(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), viewportY), sizeof(iVtObjectGraphicsContext_s), 7);
+  else
+    return getValue16(MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), viewportY), sizeof(iVtObjectGraphicsContext_s));
+}
+
+uint8_t vtObjectGraphicsContext_c::updateForegroundColour(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), foregroundColour), sizeof(iVtObjectGraphicsContext_s), 8);
+  else
+    return getValue8(MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), foregroundColour), sizeof(iVtObjectGraphicsContext_s));
+}
+
+uint8_t
+vtObjectGraphicsContext_c::updateBackgroundColour(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), backgroundColour), sizeof(iVtObjectGraphicsContext_s), 9);
+  else
+    return getValue8(MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), backgroundColour), sizeof(iVtObjectGraphicsContext_s));
+}
+
+uint16_t
+vtObjectGraphicsContext_c::updateFontAttributes(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), fontAttributes), sizeof(iVtObjectGraphicsContext_s), 10);
+  else
+    return getValue16(MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), fontAttributes), sizeof(iVtObjectGraphicsContext_s));
+}
+
+uint16_t
+vtObjectGraphicsContext_c::updateLineAttributes(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), lineAttributes), sizeof(iVtObjectGraphicsContext_s), 11);
+  else
+    return getValue16(MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), lineAttributes), sizeof(iVtObjectGraphicsContext_s));
+}
+
+uint16_t
+vtObjectGraphicsContext_c::updateFillAttributes(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), fillAttributes), sizeof(iVtObjectGraphicsContext_s), 12);
+  else
+    return getValue16(MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), fillAttributes), sizeof(iVtObjectGraphicsContext_s));
+}
+
+uint8_t
+vtObjectGraphicsContext_c::updateFormat(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), format), sizeof(iVtObjectGraphicsContext_s), 13);
+  else
+    return getValue8(MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), format), sizeof(iVtObjectGraphicsContext_s));
+}
+
+uint8_t
+vtObjectGraphicsContext_c::updateOptions(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), options), sizeof(iVtObjectGraphicsContext_s), 14);
+  else
+    return getValue8(MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), options), sizeof(iVtObjectGraphicsContext_s));
+}
+
+uint8_t
+vtObjectGraphicsContext_c::updateTransparencyColour(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), transparencyColour), sizeof(iVtObjectGraphicsContext_s), 15);
+  else
+    return getValue8(MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), transparencyColour), sizeof(iVtObjectGraphicsContext_s));
+}
+
+void
+vtObjectGraphicsContext_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attributeValue)
+{
+  switch (attrID)
+  {
+    case 1: saveValue16(MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), viewportWidth), sizeof(iVtObjectGraphicsContext_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
+    case 2: saveValue16(MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), viewportHeight), sizeof(iVtObjectGraphicsContext_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
+    case 3: saveValue16(MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), viewportX), sizeof(iVtObjectGraphicsContext_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
+    case 4: saveValue16(MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), viewportY), sizeof(iVtObjectGraphicsContext_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
+    case 5: saveValue8(MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), viewportZoom), sizeof(iVtObjectGraphicsContext_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
+    case 6: saveValue16(MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), cursorX), sizeof(iVtObjectGraphicsContext_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
+    case 7: saveValue16(MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), viewportY), sizeof(iVtObjectGraphicsContext_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
+    case 8: saveValue8(MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), foregroundColour), sizeof(iVtObjectGraphicsContext_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
+    case 9: saveValue8(MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), backgroundColour), sizeof(iVtObjectGraphicsContext_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
+    case 10: saveValue16(MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), fontAttributes), sizeof(iVtObjectGraphicsContext_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
+    case 11: saveValue16(MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), lineAttributes), sizeof(iVtObjectGraphicsContext_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
+    case 12: saveValue16(MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), fillAttributes), sizeof(iVtObjectGraphicsContext_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
+    case 13: saveValue8(MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), format), sizeof(iVtObjectGraphicsContext_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
+    case 14: saveValue8(MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), options), sizeof(iVtObjectGraphicsContext_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
+    case 15: saveValue8(MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), transparencyColour), sizeof(iVtObjectGraphicsContext_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
+    default: break;
+  }
+}
+
+} // namespace __IsoAgLib

@@ -79,30 +79,19 @@
  *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
-
-
 #ifndef VTOBJECTINPUTATTRIBUTES_C_H
 #define VTOBJECTINPUTATTRIBUTES_C_H
 
-
-// +X2C includes
 #include "../ivtobjectstring_c.h"
 #include "vtclientservercommunication_c.h"
-// ~X2C
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
-
-//  +X2C Class 167 : vtObjectInputAttributes_c
-//!  Stereotype: Klasse
 class vtObjectInputAttributes_c : public IsoAgLib::iVtObjectString_c
 {
-
 public:
-
   //  Operation: stream
-  //! Parameter:
   //! @param destMemory:
   //! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
   //! @param sourceOffset:
@@ -111,10 +100,10 @@ public:
                  objRange_t sourceOffset);
 
   //  Operation: init
-  //! Parameter:
   //! @param vtObjectInputAttributesSROM:
   //! @param b_initPointer:
-  void init(const iVtObjectInputAttributes_s* vtObjectInputAttributesSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) { vtObject_c::init ((iVtObject_s*) vtObjectInputAttributesSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA); };
+  void init(const iVtObjectInputAttributes_s* vtObjectInputAttributesSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA)
+  { vtObject_c::init ((iVtObject_s*) vtObjectInputAttributesSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA); }
 
   //  Operation: get_vtObjectInputAttributes_a
   iVtObjectInputAttributes_s* get_vtObjectInputAttributes_a() { return (iVtObjectInputAttributes_s *)vtObject_a; }
@@ -129,19 +118,24 @@ public:
   const char* getString();
 
   //  Operation: setValidationStringCopy
-  //! Parameter:
   //! @param newValidationString:
   //! @param b_updateObject:
   void setValidationStringCopy(const char* newValidationString, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
 
   //  Operation: setValidationStringRef
-  //! Parameter:
   //! @param newValidationString:
   //! @param b_updateObject:
   void setValidationStringRef(const char* newValidationString, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
 
-}; // ~X2C
+  /** these attributes are in parentheses in the spec, so commented out here
+  uint8_t updateObjectType() const { return 26; }
+
+  uint8_t updateValidationType(bool b_SendRequest=false);
+  */
+
+  void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue);
+};
 
 } // end namespace __IsoAgLib
 
-#endif // -X2C
+#endif

@@ -79,9 +79,8 @@
  *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
-
-
 #include "vtobjectinputstring_c.h"
+
 #include <IsoAgLib/util/impl/util_funcs.h>
 #include "../ivtobjectfontattributes_c.h"
 #include "../ivtobjectinputattributes_c.h"
@@ -92,10 +91,7 @@
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
-
-
-// //////////////////////////////// +X2C Operation 110 : stream
-//! Parameter:
+// Operation : stream
 //! @param destMemory:
 //! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
 //! @param sourceOffset:
@@ -103,7 +99,7 @@ int16_t
 vtObjectInputString_c::stream(uint8_t* destMemory,
                                uint16_t maxBytes,
                                objRange_t sourceOffset)
-{ // ~X2C
+{
 #define MACRO_vtObjectTypeA vtObjectInputString_a
 #define MACRO_vtObjectTypeS iVtObjectInputString_s
     MACRO_streamLocalVars;
@@ -152,7 +148,6 @@ vtObjectInputString_c::stream(uint8_t* destMemory,
       curBytes += 17;
     }
 
-
     while ((sourceOffset >= 17U) && (sourceOffset < (17U+vtObjectInputString_a->length)) && ((curBytes+1) <= maxBytes)) {
       if (vtObjectInputString_a->value == NULL)
         destMemory [curBytes] = 0x00;
@@ -172,35 +167,31 @@ vtObjectInputString_c::stream(uint8_t* destMemory,
     }
     MACRO_streamEventMacro(19U+vtObjectInputString_a->length);
     return curBytes;
-} // -X2C
+}
 
 
-// //////////////////////////////// +X2C Operation 113 : vtObjectInputString_c
-vtObjectInputString_c::vtObjectInputString_c()
-{ // ~X2C
-} // -X2C
+// Operation : vtObjectInputString_c
+vtObjectInputString_c::vtObjectInputString_c() {}
 
-// //////////////////////////////// +X2C Operation 198 : size
+// Operation : size
 uint32_t
 vtObjectInputString_c::fitTerminal() const
-{ // ~X2C
+{
   MACRO_localVars;
   return 19+vtObjectInputString_a->length+vtObjectInputString_a->numberOfMacrosToFollow*2;
-} // -X2C
+}
 
-// //////////////////////////////// +X2C Operation 220 : updateEnable
-//! Parameter:
+// Operation : updateEnable
 //! @param b_enableOrDisable:
 void
 vtObjectInputString_c::updateEnable(uint8_t rui8_enOrDis)
-{ // ~X2C
+{
   saveValue8 (MACRO_getStructOffset(get_vtObjectInputString_a(), enabled), sizeof(iVtObjectInputString_s), rui8_enOrDis);
-} // -X2C
+}
 
 
 #ifdef USE_VT_UNICODE_SUPPORT
-// //////////////////////////////// +X2C Operation 237 : setValueCopyUTF8
-//! Parameter:
+// Operation : setValueCopyUTF8
 //! @param newValue:
 //! @param b_updateObject:
 void
@@ -219,13 +210,12 @@ vtObjectInputString_c::setValueCopyUTF8 (const char* newValue, bool b_updateObje
 #endif
 
 
-// //////////////////////////////// +X2C Operation 237 : setValueCopy
-//! Parameter:
+// Operation : setValueCopy
 //! @param newValue:
 //! @param b_updateObject:
 void
 vtObjectInputString_c::setValueCopy(const char* newValue, bool b_updateObject, bool b_enableReplaceOfCmd)
-{ // ~X2C
+{
   MACRO_localVars;
   if (vtObjectInputString_a->variableReference != NULL) {
     // register error!!
@@ -249,15 +239,14 @@ vtObjectInputString_c::setValueCopy(const char* newValue, bool b_updateObject, b
   }
 
   __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeStringValue (this, newValue, get_vtObjectInputString_a()->length, b_enableReplaceOfCmd);
-} // -X2C
+}
 
-// //////////////////////////////// +X2C Operation 237 : setValueRef
-//! Parameter:
+// Operation : setValueRef
 //! @param newValue:
 //! @param b_updateObject:
 void
 vtObjectInputString_c::setValueRef(const char* newValue, bool b_updateObject, bool b_enableReplaceOfCmd)
-{ // ~X2C
+{
   MACRO_localVars;
   if (vtObjectInputString_a->variableReference != NULL) {
     // register error!!
@@ -279,15 +268,15 @@ vtObjectInputString_c::setValueRef(const char* newValue, bool b_updateObject, bo
   if (newValue != NULL ) ui16_tempLen = (CNAMESPACE::strlen (newValue) <= get_vtObjectInputString_a()->length) ? CNAMESPACE::strlen (newValue) : get_vtObjectInputString_a()->length;
   setStrLenToSend( ui16_tempLen );
   __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeStringValue (this, b_enableReplaceOfCmd);
-} // -X2C
+}
 
 
-// //////////////////////////////// +X2C Operation 247 : getString
+// Operation : getString
 const char*
 vtObjectInputString_c::getString()
-{ // ~X2C
+{
   return get_vtObjectInputString_a()->value;
-} // -X2C
+}
 
 void
 vtObjectInputString_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject, bool b_enableReplaceOfCmd)
@@ -298,6 +287,109 @@ vtObjectInputString_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_upd
   }
 
   __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeSize (this, newWidth, newHeight, b_enableReplaceOfCmd);
+}
+
+uint16_t
+vtObjectInputString_c::updateWidth(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectInputString_a(), width), sizeof(iVtObjectInputString_s), 1);
+  else
+    return getValue16(MACRO_getStructOffset(get_vtObjectInputString_a(), width), sizeof(iVtObjectInputString_s));
+}
+
+uint16_t
+vtObjectInputString_c::updateHeight(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectInputString_a(), height), sizeof(iVtObjectInputString_s), 2);
+  else
+    return getValue16(MACRO_getStructOffset(get_vtObjectInputString_a(), height), sizeof(iVtObjectInputString_s));
+}
+
+uint8_t
+vtObjectInputString_c::updateBackgroundColour(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectInputString_a(), backgroundColour), sizeof(iVtObjectInputString_s), 3);
+  else
+    return getValue8(MACRO_getStructOffset(get_vtObjectInputString_a(), backgroundColour), sizeof(iVtObjectInputString_s));
+}
+
+uint16_t
+vtObjectInputString_c::updateFontAttributes(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectInputString_a(), fontAttributes), sizeof(iVtObjectInputBoolean_s), 4);
+  else
+    return getValue16(MACRO_getStructOffset(get_vtObjectInputString_a(), fontAttributes), sizeof(iVtObjectInputBoolean_s));
+}
+
+uint16_t
+vtObjectInputString_c::updateInputAttributes(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectInputString_a(), inputAttributes), sizeof(iVtObjectInputString_s), 5);
+  else
+    return getValue16(MACRO_getStructOffset(get_vtObjectInputString_a(), inputAttributes), sizeof(iVtObjectInputString_s));
+}
+
+uint8_t
+vtObjectInputString_c::updateOptions(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectInputString_a(), options), sizeof(iVtObjectInputString_s), 6);
+  else
+    return getValue16(MACRO_getStructOffset(get_vtObjectInputString_a(), options), sizeof(iVtObjectInputString_s));
+}
+
+uint16_t
+vtObjectInputString_c::updateVariableReference(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectInputString_a(), variableReference), sizeof(iVtObjectInputString_s), 7);
+  else
+    return getValue16(MACRO_getStructOffset(get_vtObjectInputString_a(), variableReference), sizeof(iVtObjectInputString_s));
+}
+
+uint8_t
+vtObjectInputString_c::updateJustification(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectInputString_a(), horizontalJustification), sizeof(iVtObjectInputString_s), 8);
+  else
+    return getValue16(MACRO_getStructOffset(get_vtObjectInputString_a(), horizontalJustification), sizeof(iVtObjectInputString_s));
+}
+
+/** that attribute is in parentheses in the spec, so commented out here
+uint8_t
+vtObjectInputString_c::updateEnabled(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectInputString_a(), enabled), sizeof(iVtObjectInputString_s), 9);
+  else
+    return getValue16(MACRO_getStructOffset(get_vtObjectInputString_a(), enabled), sizeof(iVtObjectInputString_s));
+}
+*/
+
+void
+vtObjectInputString_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attributeValue)
+{
+  switch (attrID)
+  {
+    case 1: saveValue16(MACRO_getStructOffset(get_vtObjectInputString_a(), width), sizeof(iVtObjectInputString_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
+    case 2: saveValue16(MACRO_getStructOffset(get_vtObjectInputString_a(), height), sizeof(iVtObjectInputString_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
+    case 3: saveValue8(MACRO_getStructOffset(get_vtObjectInputString_a(), backgroundColour), sizeof(iVtObjectInputString_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
+    case 4: saveValue16(MACRO_getStructOffset(get_vtObjectInputString_a(), fontAttributes), sizeof(iVtObjectInputBoolean_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
+    case 5: saveValue16(MACRO_getStructOffset(get_vtObjectInputString_a(), inputAttributes), sizeof(iVtObjectInputString_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
+    case 6: saveValue8(MACRO_getStructOffset(get_vtObjectInputString_a(), options), sizeof(iVtObjectInputString_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
+    case 7: saveValue16(MACRO_getStructOffset(get_vtObjectInputString_a(), variableReference), sizeof(iVtObjectInputString_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
+    case 8: saveValue8(MACRO_getStructOffset(get_vtObjectInputString_a(), horizontalJustification), sizeof(iVtObjectInputString_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
+    /** that attribute is in parentheses in the spec, so commented out here
+    case 9:  saveValue8(MACRO_getStructOffset(get_vtObjectInputString_a(), enabled), sizeof(iVtObjectInputString_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
+    */
+    default: break;
+  }
 }
 
 } // end namespace __IsoAgLib

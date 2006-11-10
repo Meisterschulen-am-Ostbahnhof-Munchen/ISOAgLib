@@ -48,38 +48,26 @@
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
  * the main author Achim Spangler by a.spangler@osb-ag.de                  *
  ***************************************************************************/
-
-
 #ifndef IVTOBJECTMASK_C_H
 #define IVTOBJECTMASK_C_H
 
-
-// +X2C includes
 #include "impl/vtobject_c.h"
-// ~X2C
-
 
 // Begin Namespace __IsoAgLib
 namespace IsoAgLib {
 
-
-//  +X2C Class 222 : iVtObjectMask_c
-//!  Stereotype: class
 class iVtObjectMask_c : public __IsoAgLib::vtObject_c
 {
-
 public:
-
   //  Operation: setSoftKeyMask
-  //! Parameter:
   //! @param newSoftKeyMask:
   //! @param b_updateObject:
   virtual void setSoftKeyMask(iVtObjectSoftKeyMask_c* newSoftKeyMask,
                               bool b_updateObject= false, bool b_enableReplaceOfCmd=false) = 0;
 
-  virtual ~iVtObjectMask_c(){};
-}; // ~X2C
+  virtual ~iVtObjectMask_c() {}
+};
 
 } // end of namespace __IsoAgLib
 
-#endif // -X2C
+#endif

@@ -74,10 +74,10 @@ public:
   //! @param b_initPointer:
   void init(const iVtObjectLine_s* vtObjectLineSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) {
     vtObjectLine_c::init (vtObjectLineSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
-  };
+  }
 
   //  Operation: get_vtObjectLine_a
-  const iVtObjectLine_s& get_vtObjectLine_a() { return *vtObjectLine_c::get_vtObjectLine_a(); };
+  const iVtObjectLine_s& get_vtObjectLine_a() { return *vtObjectLine_c::get_vtObjectLine_a(); }
 
 
   //  Operation: setLineAttributes
@@ -86,7 +86,7 @@ public:
   //! @param b_updateObject:
   void setLineAttributes(iVtObjectLineAttributes_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectLine_c::setLineAttributes(newValue, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
   //  Operation: setWidth
   //! Parameter:
@@ -94,7 +94,7 @@ public:
   //! @param b_updateObject:
   void setWidth (int32_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectLine_c::setWidth(newValue, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
   //  Operation: setHeight
   //! Parameter:
@@ -102,35 +102,52 @@ public:
   //! @param b_updateObject:
   void setHeight (int32_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectLine_c::setHeight(newValue, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
   //  Operation: setLineDirection
-  //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
   void setLineDirection (uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectLine_c::setLineDirection(newValue, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
   //  Operation: setLineDirection
-  //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
   void setEndPoint (uint16_t newWidth, uint16_t newHeight, uint8_t newLineDirection, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectLine_c::setEndPoint(newWidth, newHeight, newLineDirection, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
   //  Operation: setSize
-  //! Parameter:
   //! @param newWidth:
   //! @param newHeight:
   //! @param b_updateObject:
   void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectLine_c::setSize(newWidth, newHeight, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
-}; // ~X2C
+  // ///////////////////////// getter for attributes
+  /** that attribute is in parentheses in the spec, so commented out here
+  uint8_t updateObjectType() const { return vtObjectLine_c::updateObjectType(); }
+  */
+
+  uint16_t updateLineAttributes(bool b_SendRequest=false) {
+    return vtObjectLine_c::updateLineAttributes(b_SendRequest);
+  }
+
+  uint16_t updateWidth(bool b_SendRequest=false) {
+    return vtObjectLine_c::updateWidth(b_SendRequest);
+  }
+
+  uint16_t updateHeight(bool b_SendRequest=false) {
+    return vtObjectLine_c::updateHeight(b_SendRequest);
+  }
+
+  uint8_t updateLineDirection(bool b_SendRequest=false) {
+    return vtObjectLine_c::updateLineDirection(b_SendRequest);
+  }
+};
 
 } // end of namespace IsoAgLib
 
-#endif // -X2C
+#endif

@@ -79,18 +79,13 @@
  *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
-
 #include "vtobjectstringvariable_c.h"
-#include "isoterminal_c.h"
 
+#include "isoterminal_c.h"
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
-
-
-
-// //////////////////////////////// +X2C Operation 162 : stream
-//! Parameter:
+// Operation : stream
 //! @param:destMemory:
 //! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
 //! @param sourceOffset:
@@ -98,7 +93,7 @@ int16_t
 vtObjectStringVariable_c::stream(uint8_t* destMemory,
                                  uint16_t maxBytes,
                                  objRange_t sourceOffset)
-{ // ~X2C
+{
 #define MACRO_vtObjectTypeA vtObjectStringVariable_a
 #define MACRO_vtObjectTypeS iVtObjectStringVariable_s
   MACRO_streamLocalVars;
@@ -120,14 +115,12 @@ vtObjectStringVariable_c::stream(uint8_t* destMemory,
   }
 
   return curBytes;
-} // -X2C
-
-// //////////////////////////////// +X2C Operation 165 : vtObjectStringVariable_c
-vtObjectStringVariable_c::vtObjectStringVariable_c()
-{
 }
 
-// //////////////////////////////// +X2C Operation 204 : size
+// Operation : vtObjectStringVariable_c
+vtObjectStringVariable_c::vtObjectStringVariable_c() {}
+
+// Operation : size
 uint32_t
 vtObjectStringVariable_c::fitTerminal() const
 {
@@ -135,10 +128,8 @@ vtObjectStringVariable_c::fitTerminal() const
   return 5+vtObjectStringVariable_a->length;
 }
 
-
 #ifdef USE_VT_UNICODE_SUPPORT
-// //////////////////////////////// +X2C Operation 237 : setValueCopyUTF8
-//! Parameter:
+// Operation : setValueCopyUTF8
 //! @param newValue:
 //! @param b_updateObject:
 void
@@ -154,13 +145,12 @@ vtObjectStringVariable_c::setValueCopyUTF8 (const char* newValue, uint8_t rui8_f
 }
 #endif
 
-// //////////////////////////////// +X2C Operation 236 : setValueCopy
-//! Parameter:
+// Operation : setValueCopy
 //! @param newValue:
 //! @param b_updateObject:
 void
 vtObjectStringVariable_c::setValueCopy(const char* newValue, bool b_updateObject, bool b_enableReplaceOfCmd)
-{ // ~X2C
+{
   if (b_updateObject) {
     // check if not already RAM string buffer?
     if (!(s_properties.flags & FLAG_STRING_IN_RAM)) {
@@ -178,15 +168,14 @@ vtObjectStringVariable_c::setValueCopy(const char* newValue, bool b_updateObject
   }
 
   __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeStringValue (this, newValue, get_vtObjectStringVariable_a()->length, b_enableReplaceOfCmd);
-} // -X2C
+}
 
-// //////////////////////////////// +X2C Operation 236 : setValue
-//! Parameter:
+// Operation : setValue
 //! @param newValue:
 //! @param b_updateObject:
 void
 vtObjectStringVariable_c::setValueRef(const char* newValue, bool b_updateObject, bool b_enableReplaceOfCmd)
-{ // ~X2C
+{
   if (b_updateObject) {
     // delete RAM_String first, before we lose the pointer!
     if (s_properties.flags & FLAG_STRING_IN_RAM) {
@@ -202,14 +191,13 @@ vtObjectStringVariable_c::setValueRef(const char* newValue, bool b_updateObject,
   if (newValue != NULL ) ui16_tempLen = (CNAMESPACE::strlen (newValue) <= get_vtObjectStringVariable_a()->length) ? CNAMESPACE::strlen (newValue) : get_vtObjectStringVariable_a()->length;
   setStrLenToSend( ui16_tempLen );
   __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeStringValue (this, b_enableReplaceOfCmd);
-} // -X2C
+}
 
-
-// //////////////////////////////// +X2C Operation 248 : getString
+// Operation : getString
 const char*
 vtObjectStringVariable_c::getString()
-{ // ~X2C
+{
   return get_vtObjectStringVariable_a()->value;
-} // -X2C
+}
 
 } // end of namespace __IsoAgLib

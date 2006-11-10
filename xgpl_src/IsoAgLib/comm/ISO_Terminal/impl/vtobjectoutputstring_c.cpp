@@ -79,8 +79,8 @@
  *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
-
 #include "vtobjectoutputstring_c.h"
+
 #include "../ivtobjectfontattributes_c.h"
 #include "../ivtobjectbutton_c.h"
 #include "../ivtobjectstringvariable_c.h"
@@ -90,9 +90,7 @@
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
-
-// //////////////////////////////// +X2C Operation 110 : stream
-//! Parameter:
+// Operation : stream
 //! @param:destMemory:
 //! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
 //! @param sourceOffset:
@@ -100,7 +98,7 @@ int16_t
 vtObjectOutputString_c::stream(uint8_t* destMemory,
                                uint16_t maxBytes,
                                objRange_t sourceOffset)
-{ // ~X2C
+{
 #define MACRO_vtObjectTypeA vtObjectOutputString_a
 #define MACRO_vtObjectTypeS iVtObjectOutputString_s
     MACRO_streamLocalVars;
@@ -140,7 +138,6 @@ vtObjectOutputString_c::stream(uint8_t* destMemory,
       curBytes += 16;
     }
 
-
     while ((sourceOffset >= 16U) && (sourceOffset < (16U+vtObjectOutputString_a->length)) && ((curBytes+1) <= maxBytes)) {
       if (vtObjectOutputString_a->value == NULL)
         destMemory [curBytes] = 0x00;
@@ -158,14 +155,12 @@ vtObjectOutputString_c::stream(uint8_t* destMemory,
 
     MACRO_streamEventMacro(17U+vtObjectOutputString_a->length);
     return curBytes;
-} // -X2C
-
-// //////////////////////////////// +X2C Operation 113 : vtObjectOutputString_c
-vtObjectOutputString_c::vtObjectOutputString_c()
-{
 }
 
-// //////////////////////////////// +X2C Operation 198 : size
+// Operation : vtObjectOutputString_c
+vtObjectOutputString_c::vtObjectOutputString_c() {}
+
+// Operation : size
 uint32_t
 vtObjectOutputString_c::fitTerminal() const
 {
@@ -173,21 +168,18 @@ vtObjectOutputString_c::fitTerminal() const
   return 17+vtObjectOutputString_a->length+vtObjectOutputString_a->numberOfMacrosToFollow*2;
 }
 
-// //////////////////////////////// +X2C Operation 233 : setOriginSKM
-//! Parameter:
+// Operation : setOriginSKM
 //! @param b_SKM:
 void
 vtObjectOutputString_c::setOriginSKM(bool b_SKM)
-{ // ~X2C
+{
   MACRO_localVars;
   if (b_SKM) {
     s_properties.flags |= FLAG_ORIGIN_SKM;
     vtObjectOutputString_a->fontAttributes->setOriginSKM (b_SKM);
   }
-} // -X2C
+}
 
-//! Parameter:
-//! @param p_btn:
 void
 vtObjectOutputString_c::setOriginBTN(IsoAgLib::iVtObjectButton_c* p_btn)
 {
@@ -200,8 +192,7 @@ vtObjectOutputString_c::setOriginBTN(IsoAgLib::iVtObjectButton_c* p_btn)
 }
 
 #ifdef USE_VT_UNICODE_SUPPORT
-// //////////////////////////////// +X2C Operation 237 : setValueCopyUTF8
-//! Parameter:
+// Operation : setValueCopyUTF8
 //! @param newValue:
 //! @param b_updateObject:
 void
@@ -219,13 +210,12 @@ vtObjectOutputString_c::setValueCopyUTF8 (const char* newValue, bool b_updateObj
 }
 #endif
 
-// //////////////////////////////// +X2C Operation 237 : setValueCopy
-//! Parameter:
+// Operation : setValueCopy
 //! @param newValue:
 //! @param b_updateObject:
 void
 vtObjectOutputString_c::setValueCopy(const char* newValue, bool b_updateObject, bool b_enableReplaceOfCmd)
-{ // ~X2C
+{
   MACRO_localVars;
   if (vtObjectOutputString_a->variableReference != NULL) {
     // register error!!
@@ -249,15 +239,14 @@ vtObjectOutputString_c::setValueCopy(const char* newValue, bool b_updateObject, 
   }
 
   __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeStringValue (this, newValue, get_vtObjectOutputString_a()->length, b_enableReplaceOfCmd);
-} // -X2C
+}
 
-// //////////////////////////////// +X2C Operation 237 : setValueRef
-//! Parameter:
+// Operation : setValueRef
 //! @param newValue:
 //! @param b_updateObject:
 void
 vtObjectOutputString_c::setValueRef(const char* newValue, bool b_updateObject, bool b_enableReplaceOfCmd)
-{ // ~X2C
+{
   MACRO_localVars;
   if (vtObjectOutputString_a->variableReference != NULL) {
     // register error!!
@@ -279,16 +268,15 @@ vtObjectOutputString_c::setValueRef(const char* newValue, bool b_updateObject, b
   if (newValue != NULL ) ui16_tempLen = (CNAMESPACE::strlen (newValue) <= get_vtObjectOutputString_a()->length) ? CNAMESPACE::strlen (newValue) : get_vtObjectOutputString_a()->length;
   setStrLenToSend( ui16_tempLen );
   __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeStringValue (this, b_enableReplaceOfCmd);
-} // -X2C
+}
 
 /** obsolete, now no more checking for length != 0, set VaRef anyway!
-// //////////////////////////////// +X2C Operation 757 : setVariableReference
-//! Parameter:
+// Operation : setVariableReference
 //! @param newVariable:
 //! @param b_updateObject:
 void
 vtObjectOutputString_c::setVariableReference(IsoAgLib::iVtObjectStringVariable_c* newVariable, bool b_updateObject, bool b_enableReplaceOfCmd)
-{ // ~X2C
+{
   MACRO_localVars;
   if (vtObjectOutputString_a->length != 0) {
     // register error!!
@@ -299,7 +287,7 @@ vtObjectOutputString_c::setVariableReference(IsoAgLib::iVtObjectStringVariable_c
 
   uint16_t newVariableID = newVariable ? (newVariable->getID()) : 0xFFFF;
   __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeAttribute (this, 6, (newVariableID & 0xFF), (newVariableID >> 8), 0, 0, b_enableReplaceOfCmd);
-} // -X2C
+}
 */
 
 void
@@ -313,11 +301,90 @@ vtObjectOutputString_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_up
   __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeSize (this, newWidth, newHeight, b_enableReplaceOfCmd);
 }
 
-// //////////////////////////////// +X2C Operation 247 : getString
+// Operation : getString
 const char*
 vtObjectOutputString_c::getString()
-{ // ~X2C
+{
   return get_vtObjectOutputString_a()->value;
-} // -X2C
+}
+
+uint16_t
+vtObjectOutputString_c::updateWidth(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectOutputString_a(), width), sizeof(iVtObjectOutputString_s), 1);
+  else
+    return getValue16(MACRO_getStructOffset(get_vtObjectOutputString_a(), width), sizeof(iVtObjectOutputString_s));
+}
+
+uint16_t
+vtObjectOutputString_c::updateHeight(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectOutputString_a(), height), sizeof(iVtObjectOutputString_s), 2);
+  else
+    return getValue16(MACRO_getStructOffset(get_vtObjectOutputString_a(), height), sizeof(iVtObjectOutputString_s));
+}
+
+uint8_t
+vtObjectOutputString_c::updateBackgroundColour(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectOutputString_a(), backgroundColour), sizeof(iVtObjectOutputString_s), 3);
+  else
+    return getValue8(MACRO_getStructOffset(get_vtObjectOutputString_a(), backgroundColour), sizeof(iVtObjectOutputString_s));
+}
+
+uint16_t
+vtObjectOutputString_c::updateFontAttributes(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectOutputString_a(), fontAttributes), sizeof(iVtObjectOutputString_s), 4);
+  else
+    return getValue16(MACRO_getStructOffset(get_vtObjectOutputString_a(), fontAttributes), sizeof(iVtObjectOutputString_s));
+}
+
+uint8_t
+vtObjectOutputString_c::updateOptions(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectOutputString_a(), options), sizeof(iVtObjectOutputString_s), 5);
+  else
+    return getValue8(MACRO_getStructOffset(get_vtObjectOutputString_a(), options), sizeof(iVtObjectOutputString_s));
+}
+
+uint16_t
+vtObjectOutputString_c::updateVariableReference(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectOutputString_a(), variableReference), sizeof(iVtObjectOutputString_s), 6);
+  else
+    return getValue16(MACRO_getStructOffset(get_vtObjectOutputString_a(), variableReference), sizeof(iVtObjectOutputString_s));
+}
+
+uint8_t
+vtObjectOutputString_c::updateJustification(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectOutputString_a(), horizontalJustification), sizeof(iVtObjectOutputString_s), 7);
+  else
+    return getValue8(MACRO_getStructOffset(get_vtObjectOutputString_a(), horizontalJustification), sizeof(iVtObjectOutputString_s));
+}
+
+void
+vtObjectOutputString_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attributeValue)
+{
+  switch (attrID)
+  {
+    case 1: saveValue16(MACRO_getStructOffset(get_vtObjectOutputString_a(), width), sizeof(iVtObjectOutputString_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
+    case 2: saveValue16(MACRO_getStructOffset(get_vtObjectOutputString_a(), height), sizeof(iVtObjectOutputString_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
+    case 3: saveValue8(MACRO_getStructOffset(get_vtObjectOutputString_a(), backgroundColour), sizeof(iVtObjectOutputString_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
+    case 4: saveValue16(MACRO_getStructOffset(get_vtObjectOutputString_a(), fontAttributes), sizeof(iVtObjectOutputString_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
+    case 5: saveValue8(MACRO_getStructOffset(get_vtObjectOutputString_a(), options), sizeof(iVtObjectOutputString_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
+    case 6: saveValue16(MACRO_getStructOffset(get_vtObjectOutputString_a(), variableReference), sizeof(iVtObjectOutputString_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
+    case 7: saveValue8(MACRO_getStructOffset(get_vtObjectOutputString_a(), horizontalJustification), sizeof(iVtObjectOutputString_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
+    default: break;
+  }
+}
 
 } // end of namespace __IsoAgLib

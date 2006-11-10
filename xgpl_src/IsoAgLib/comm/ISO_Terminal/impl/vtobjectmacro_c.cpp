@@ -46,53 +46,50 @@
  * this file might be covered by the GNU General Public License.           *
  *                                                                         *
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
- * the main author Achim Spangler by a.spangler@osb-ag:de                  * 
- ***************************************************************************/ 
-
- /**************************************************************************
- *                                                                         * 
- *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   * 
- * Each software module, which accesses directly elements of this file,    * 
- * is considered to be an extension of IsoAgLib and is thus covered by the * 
- * GPL license. Applications must use only the interface definition out-   * 
- * side :impl: subdirectories. Never access direct elements of __IsoAgLib  * 
- * and __HAL namespaces from applications which shouldnt be affected by    * 
- * the license. Only access their interface counterparts in the IsoAgLib   * 
- * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- * 
- * ion really needs access to a part of an internal namespace, so that the * 
- * interface might be extended if your request is accepted.                * 
- *                                                                         * 
- * Definition of direct access:                                            * 
- * - Instantiation of a variable with a datatype from internal namespace   * 
- * - Call of a (member-) function                                          * 
- * Allowed is:                                                             * 
- * - Instatiation of a variable with a datatype from interface namespace,  * 
- *   even if this is derived from a base class inside an internal namespace* 
- * - Call of member functions which are defined in the interface class     * 
- *   definition ( header )                                                 * 
- *                                                                         * 
- * Pairing of internal and interface classes:                              * 
- * - Internal implementation in an :impl: subdirectory                     * 
- * - Interface in the parent directory of the corresponding internal class * 
- * - Interface class name IsoAgLib::iFoo_c maps to the internal class      * 
- *   __IsoAgLib::Foo_c                                                     * 
- *                                                                         * 
- * AS A RULE: Use only classes with names beginning with small letter :i:  *
+ * the main author Achim Spangler by a.spangler@osb-ag:de                  *
  ***************************************************************************/
 
-
+ /**************************************************************************
+ *                                                                         *
+ *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   *
+ * Each software module, which accesses directly elements of this file,    *
+ * is considered to be an extension of IsoAgLib and is thus covered by the *
+ * GPL license. Applications must use only the interface definition out-   *
+ * side :impl: subdirectories. Never access direct elements of __IsoAgLib  *
+ * and __HAL namespaces from applications which shouldnt be affected by    *
+ * the license. Only access their interface counterparts in the IsoAgLib   *
+ * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- *
+ * ion really needs access to a part of an internal namespace, so that the *
+ * interface might be extended if your request is accepted.                *
+ *                                                                         *
+ * Definition of direct access:                                            *
+ * - Instantiation of a variable with a datatype from internal namespace   *
+ * - Call of a (member-) function                                          *
+ * Allowed is:                                                             *
+ * - Instatiation of a variable with a datatype from interface namespace,  *
+ *   even if this is derived from a base class inside an internal namespace*
+ * - Call of member functions which are defined in the interface class     *
+ *   definition ( header )                                                 *
+ *                                                                         *
+ * Pairing of internal and interface classes:                              *
+ * - Internal implementation in an :impl: subdirectory                     *
+ * - Interface in the parent directory of the corresponding internal class *
+ * - Interface class name IsoAgLib::iFoo_c maps to the internal class      *
+ *   __IsoAgLib::Foo_c                                                     *
+ *                                                                         *
+ * AS A RULE: Use only classes with names beginning with small letter :i:  *
+ ***************************************************************************/
 #include "vtobjectmacro_c.h"
+
 #include "isoterminal_c.h"
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
-
-// //////////////////////////////// +X2C Operation 180 : stream
-//! Parameter:
-//! @param destMemory: 
+// Operation : stream
+//! @param destMemory:
 //! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
-//! @param sourceOffset: 
+//! @param sourceOffset:
 int16_t
 vtObjectMacro_c::stream(uint8_t* destMemory,
                         uint16_t maxBytes,
@@ -106,7 +103,7 @@ vtObjectMacro_c::stream(uint8_t* destMemory,
       destMemory [0] = vtObject_a->ID & 0xFF;
       destMemory [1] = vtObject_a->ID >> 8;
       destMemory [2] = 28; // Object Type = Macro
-//      if (vtObjectMacro_a->numBytesToFollow != NULL) 
+//      if (vtObjectMacro_a->numBytesToFollow != NULL)
 //      {
         destMemory [3] = vtObjectMacro_a->numBytesToFollow & 0xFF;
         destMemory [4] = vtObjectMacro_a->numBytesToFollow >> 8;
@@ -120,22 +117,19 @@ vtObjectMacro_c::stream(uint8_t* destMemory,
       sourceOffset += 5;
     }
 
-    while ((sourceOffset >= 5U) && (sourceOffset < (5U+vtObjectMacro_a->numBytesToFollow)) && ((curBytes+1) <= maxBytes)) 
+    while ((sourceOffset >= 5U) && (sourceOffset < (5U+vtObjectMacro_a->numBytesToFollow)) && ((curBytes+1) <= maxBytes))
     {
       destMemory [curBytes] = vtObjectMacro_a->commandsToFollow [sourceOffset-5];
       curBytes++;
       sourceOffset++;
     }
     return curBytes;
-} // -X2C
-
-
-// //////////////////////////////// +X2C Operation 183 : vtObjectMacro_c
-vtObjectMacro_c::vtObjectMacro_c()
-{
 }
 
-// //////////////////////////////// +X2C Operation 207 : size
+// Operation : vtObjectMacro_c
+vtObjectMacro_c::vtObjectMacro_c() {}
+
+// Operation : size
 uint32_t
 vtObjectMacro_c::fitTerminal() const
 {

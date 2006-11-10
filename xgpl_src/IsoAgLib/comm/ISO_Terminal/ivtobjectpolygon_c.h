@@ -76,10 +76,10 @@ public:
   //! @param b_initPointer:
   void init(const iVtObjectPolygon_s* vtObjectPolygonSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) {
     vtObjectPolygon_c::init (vtObjectPolygonSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
-  };
+  }
 
   //  Operation: get_vtObjectPolygon_a
-  const iVtObjectPolygon_s& get_vtObjectPolygon_a() { return *vtObjectPolygon_c::get_vtObjectPolygon_a(); };
+  const iVtObjectPolygon_s& get_vtObjectPolygon_a() { return *vtObjectPolygon_c::get_vtObjectPolygon_a(); }
 
   //  Operation: setWidth
   //! Parameter:
@@ -87,7 +87,7 @@ public:
   //! @param b_updateObject:
   void setWidth(uint16_t newWidth, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectPolygon_c::setWidth (newWidth, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
   //  Operation: setHeight
   //! Parameter:
@@ -95,7 +95,7 @@ public:
   //! @param b_updateObject:
   void setHeight(uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectPolygon_c::setHeight (newHeight, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
   //  Operation: setLineAttributes
   //! Parameter:
@@ -103,7 +103,7 @@ public:
   //! @param b_updateObject:
   void setLineAttributes(IsoAgLib::iVtObjectLineAttributes_c* newLineAttributes, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectPolygon_c::setLineAttributes (newLineAttributes, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
   //  Operation: setFillAttributes
   //! Parameter:
@@ -111,7 +111,7 @@ public:
   //! @param b_updateObject:
   void setFillAttributes(IsoAgLib::iVtObjectFillAttributes_c* newFillAttributes, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectPolygon_c::setFillAttributes (newFillAttributes, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
   //  Operation: setPolygonType
   //! Parameter:
@@ -119,7 +119,7 @@ public:
   //! @param b_updateObject:
   void setPolygonType(uint8_t newPolygonType, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectPolygon_c::setPolygonType (newPolygonType, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
   //  Operation: setSize
   //! Parameter:
@@ -130,8 +130,32 @@ public:
     vtObjectPolygon_c::setSize(newWidth, newHeight, b_updateObject, b_enableReplaceOfCmd);
   }
 
-}; // ~X2C
+  // ///////////////////////// getter for attributes
+  /** that attribute is in parentheses in the spec, so commented out here
+  uint8_t updateObjectType() const { return vtObjectPolygon_c::updateObjectType(); }
+  */
+
+  uint16_t updateWidth(bool b_SendRequest=false) {
+    return vtObjectPolygon_c::updateWidth(b_SendRequest);
+  }
+
+  uint16_t updateHeight(bool b_SendRequest=false) {
+    return vtObjectPolygon_c::updateHeight(b_SendRequest);
+  }
+
+  uint16_t updateLineAttributes(bool b_SendRequest=false) {
+    return vtObjectPolygon_c::updateLineAttributes(b_SendRequest);
+  }
+
+  uint16_t updateFillAttributes(bool b_SendRequest=false) {
+    return vtObjectPolygon_c::updateFillAttributes(b_SendRequest);
+  }
+
+  uint8_t updatePolygonType(bool b_SendRequest=false) {
+    return vtObjectPolygon_c::updatePolygonType(b_SendRequest);
+  }
+};
 
 } // end namepsace IsoAgLibb
 
-#endif // -X2C
+#endif

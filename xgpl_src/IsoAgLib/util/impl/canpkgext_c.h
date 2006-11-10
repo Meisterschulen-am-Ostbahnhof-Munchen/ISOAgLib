@@ -203,6 +203,13 @@ class CANPkgExt_c : public CANPkg_c
     { c_data.setInt32Data(rui8_pos, ri32_val);}
 
   /**
+    set an float value at specified position in string
+    @param rui8_pos position [0..4]
+    @param rf_val float value to set
+   */
+  void setFloatData( uint8_t rui8_pos, float rf_val)
+  { c_data.setFloatData(rui8_pos, rf_val);}
+  /**
     simply deliver a uint8_t from a specific position with
     @param rb_pos position of dellivered uint8_t [0..7]
     @return uint8_t balue in CAN data string at pos rb_pos
@@ -236,6 +243,13 @@ class CANPkgExt_c : public CANPkg_c
     @return int32_t balue in CAN data string at pos (rb_pos, rb_pos+1) read Low/High order
   */
   int32_t getInt32Data(uint8_t rui8_pos) const {return c_data.getInt32Data(rui8_pos);}
+
+  /**
+    simply deliver a float from a specific starting position with
+    @param rui8_pos position [0..4]
+    @return rf_val float to return
+   */
+  float getFloatData( uint8_t rui8_pos) const { return c_data.getFloatData(rui8_pos);}
 
   /**
     put data into given reference to BIOS related data structure with data, len

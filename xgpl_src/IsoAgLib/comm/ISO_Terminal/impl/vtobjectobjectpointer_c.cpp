@@ -79,16 +79,14 @@
  *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
-
 #include "vtobjectobjectpointer_c.h"
+
 #include "isoterminal_c.h"
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
-
-// //////////////////////////////// +X2C Operation 180 : stream
-//! Parameter:
+// Operation : stream
 //! @param:destMemory:
 //! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
 //! @param sourceOffset:
@@ -96,7 +94,7 @@ int16_t
 vtObjectObjectPointer_c::stream(uint8_t* destMemory,
                                 uint16_t /*maxBytes*/,
                                 objRange_t sourceOffset)
-{ // ~X2C
+{
 #define MACRO_vtObjectTypeA vtObjectObjectPointer_a
 #define MACRO_vtObjectTypeS iVtObjectObjectPointer_s
     MACRO_localVars;
@@ -115,48 +113,40 @@ vtObjectObjectPointer_c::stream(uint8_t* destMemory,
       return 5;
     }
     return 0;
-} // -X2C
-
-
-// //////////////////////////////// +X2C Operation 183 : vtObjectObjectPointer_c
-vtObjectObjectPointer_c::vtObjectObjectPointer_c()
-{
 }
 
-// //////////////////////////////// +X2C Operation 207 : size
+
+// Operation : vtObjectObjectPointer_c
+vtObjectObjectPointer_c::vtObjectObjectPointer_c() {}
+
+// Operation : size
 uint32_t
 vtObjectObjectPointer_c::fitTerminal() const
 {
   return 5;
 }
 
-// //////////////////////////////// +X2C Operation 226 : setValue
-//! Parameter:
+// Operation : setValue
 //! @param rpc_newObject:
 //! @param b_updateObject:
 void
 vtObjectObjectPointer_c::setValue(IsoAgLib::iVtObject_c* rpc_newObject, bool b_updateObject, bool b_enableReplaceOfCmd)
-{ // ~X2C
+{
   if (b_updateObject) saveValueP (MACRO_getStructOffset(get_vtObjectObjectPointer_a(), value),  sizeof(iVtObjectObjectPointer_s), rpc_newObject);
 
   if (rpc_newObject != NULL) __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeNumericValue (this, rpc_newObject->getID() & 0xFF, (rpc_newObject->getID() >> 8) & 0xFF, 0x00, 0x00, b_enableReplaceOfCmd);
   else                       __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeNumericValue (this, 0xFF, 0xFF, 0x00, 0x00, b_enableReplaceOfCmd);
-} // -X2C
+}
 
-// //////////////////////////////// +X2C Operation 230 : setOriginSKM
-//! Parameter:
-//! @param b_SKM:
 void
 vtObjectObjectPointer_c::setOriginSKM(bool b_SKM)
-{ // ~X2C
+{
   MACRO_localVars;
   if (vtObjectObjectPointer_a->value != NULL) {
     vtObjectObjectPointer_a->value->setOriginSKM (b_SKM);
   }
-} // -X2C
+}
 
-//! Parameter:
-//! @param p_btn:
 void
 vtObjectObjectPointer_c::setOriginBTN(IsoAgLib::iVtObjectButton_c* p_btn)
 {
@@ -165,6 +155,26 @@ vtObjectObjectPointer_c::setOriginBTN(IsoAgLib::iVtObjectButton_c* p_btn)
   if (vtObjectObjectPointer_a->value != NULL) {
     vtObjectObjectPointer_a->value->setOriginBTN (p_btn);
   }
+}
+
+/** that attribute is in parentheses in the spec, so commented out here
+uint16_t
+vtObjectObjectPointer_c::updateValue(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectObjectPointer_a(), value), sizeof(iVtObjectObjectPointer_s), 1);
+  else
+    return getValue16(MACRO_getStructOffset(get_vtObjectObjectPointer_a(), value), sizeof(iVtObjectObjectPointer_s));
+}
+*/
+
+void
+vtObjectObjectPointer_c::saveReceivedAttribute(uint8_t /*attrID*/, uint8_t* /*pui8_attributeValue*/)
+{
+  /** that attribute is in parentheses in the spec, so commented out here
+  case 1: saveValue16(MACRO_getStructOffset(get_vtObjectObjectPointer_a(), value), sizeof(iVtObjectObjectPointer_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
+  default: break;
+  */
 }
 
 } // end of namespace __IsoAgLib

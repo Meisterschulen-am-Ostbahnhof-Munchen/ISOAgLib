@@ -79,32 +79,21 @@
  *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
-
-
 #ifndef VTOBJECTINPUTSTRING_C_H
 #define VTOBJECTINPUTSTRING_C_H
 
-
-// +X2C includes
 #include "../ivtobjectstring_c.h"
 #include "../ivtobjectfontattributes_c.h"
 #include "../ivtobjectinputattributes_c.h"
 #include "../ivtobjectstringvariable_c.h"
-// ~X2C
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
-
-//  +X2C Class 109 : vtObjectInputString_c
-//!  Stereotype: Klasse
 class vtObjectInputString_c : public IsoAgLib::iVtObjectString_c
 {
-
 public:
-
   //  Operation: stream
-  //! Parameter:
   //! @param destMemory:
   //! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
   //! @param sourceOffset:
@@ -113,10 +102,10 @@ public:
                  objRange_t sourceOffset);
 
   //  Operation: init
-  //! Parameter:
   //! @param vtObjectInputStringSROM:
   //! @param b_initPointer:
-  void init(const iVtObjectInputString_s* vtObjectInputStringSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) { vtObject_c::init ((iVtObject_s*) vtObjectInputStringSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA); };
+  void init(const iVtObjectInputString_s* vtObjectInputStringSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA)
+  { vtObject_c::init ((iVtObject_s*) vtObjectInputStringSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA); }
 
   //  Operation: get_vtObjectInputString_a
   iVtObjectInputString_s* get_vtObjectInputString_a() { return (iVtObjectInputString_s *)vtObject_a; }
@@ -130,36 +119,30 @@ public:
   //  Operation: getString
   const char* getString();
 
-
   //  Operation: setValueRef
-  //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
   void setValueRef(const char* newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
 
   //  Operation: setValueCopy
-  //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
   void setValueCopy(const char* newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
 
 #ifdef USE_VT_UNICODE_SUPPORT
   //  Operation: setValueCopyUTF8
-  //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
   void setValueCopyUTF8(const char* newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
 #endif
 
   //  Operation: setSize
-  //! Parameter:
   //! @param newWidth:
   //! @param newHeight:
   //! @param b_updateObject:
   void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
   // Operation: setWidth
-  //! Parameter:
   //! @param newWidth:
   //! @param b_updateObject:
   void setWidth(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
@@ -167,7 +150,6 @@ public:
   }
 
   // Operation: setHeight
-  //! Parameter:
   //! @param newHeight:
   //! @param b_updateObject:
   void setHeight(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
@@ -175,15 +157,13 @@ public:
   }
 
   //  Operation: setBackgroundColor
-  //! Parameter:
-  //! @param colorValue:
+   //! @param colorValue:
   //! @param b_updateObject:
   void setBackgroundColour(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectInputString_a(), backgroundColour) : 0, sizeof(iVtObjectInputString_s), 3 /* "Background Colour" */, newValue, __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).getUserClippedColor (newValue, this, IsoAgLib::BackgroundColour), b_enableReplaceOfCmd);
   }
 
   // Operation: setFontAttributes
-  //! Parameter:
   //! @param newFontAttributes:
   //! @param b_updateObject:
   void setFontAttributes(IsoAgLib::iVtObjectFontAttributes_c* newFontAttributes, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
@@ -191,7 +171,6 @@ public:
   }
 
   // Operation: setInputAttributes
-  //! Parameter:
   //! @param newInputAttributes:
   //! @param b_updateObject:
   void setInputAttributes(IsoAgLib::iVtObjectInputAttributes_c* newInputAttributes, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
@@ -199,7 +178,6 @@ public:
   }
 
   // Operation: setOptions
-  //! Parameter:
   //! @param newOptions:
   //! @param b_updateObject:
   void setOptions(uint8_t newOptions, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
@@ -207,7 +185,6 @@ public:
   }
 
   // Operation: setVariableReference
-  //! Parameter:
   //! @param newVariableRef:
   //! @param b_updateObject:
   void setVariableReference(IsoAgLib::iVtObjectStringVariable_c* newVariableRef, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
@@ -215,22 +192,45 @@ public:
   }
 
   // Operation: setHorizontalJustification
-  //! Parameter:
   //! @param newHorizontalJustification:
   //! @param b_updateObject:
   void setHorizontalJustification(uint8_t newHorizontalJustification, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectInputString_a(), horizontalJustification) : 0, sizeof(iVtObjectInputString_s), 8 /* "Horizontal justification" */, newHorizontalJustification, newHorizontalJustification, b_enableReplaceOfCmd);
   }
 
-private:
+  // ///////////////////////// getter for attributes
+  /** that attribute is in parentheses in the spec, so commented out here
+  uint8_t updateObjectType() const { return 8; }
+  */
 
+  uint16_t updateWidth(bool b_SendRequest=false);
+
+  uint16_t updateHeight(bool b_SendRequest=false);
+
+  uint8_t updateBackgroundColour(bool b_SendRequest=false);
+
+  uint16_t updateFontAttributes(bool b_SendRequest=false);
+
+  uint16_t updateInputAttributes(bool b_SendRequest=false);
+
+  uint8_t updateOptions(bool b_SendRequest=false);
+
+  uint16_t updateVariableReference(bool b_SendRequest=false);
+
+  uint8_t updateJustification(bool b_SendRequest=false);
+
+  /** that attribute is in parentheses in the spec, so commented out here
+  uint8_t updateEnabled(bool b_SendRequest=false);
+  */
+
+  void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue);
+
+private:
   //  Operation: updateEnable
-  //! Parameter:
   //! @param b_enableOrDisable:
   void updateEnable(uint8_t rui8_enOrDis);
-
-}; // ~X2C
+};
 
 } // end namespace __IsoAgLib
 
-#endif // -X2C
+#endif

@@ -101,7 +101,7 @@ int16_t
 vtObjectFontAttributes_c::stream(uint8_t* destMemory,
                                  uint16_t maxBytes,
                                  objRange_t sourceOffset)
-{ // ~X2C
+{
 #define MACRO_vtObjectTypeA vtObjectFontAttributes_a
 #define MACRO_vtObjectTypeS iVtObjectFontAttributes_s
   MACRO_streamLocalVars;
@@ -121,15 +121,14 @@ vtObjectFontAttributes_c::stream(uint8_t* destMemory,
 
   MACRO_streamEventMacro(8);
   return curBytes;
-} // -X2C
+}
 
-// //////////////////////////////// +X2C Operation 171 : vtObjectFontAttributes_c
+// Operation : vtObjectFontAttributes_c
 vtObjectFontAttributes_c::vtObjectFontAttributes_c()
 : ui8_fontSizeScaled( 0xFF ) // set ui8_fontSizeScaled to "not yet calculated"
-{ // ~X2C
-} // -X2C
+{}
 
-// //////////////////////////////// +X2C Operation 205 : size
+// Operation : size
 uint32_t
 vtObjectFontAttributes_c::fitTerminal() const
 {
@@ -142,7 +141,7 @@ vtObjectFontAttributes_c::fitTerminal() const
   return 8+vtObjectFontAttributes_a->numberOfMacrosToFollow*2;
 }
 
-// //////////////////////////////// +X2C Operation 281 : getScaledWidthHeight
+// Operation : getScaledWidthHeight
 uint16_t
 vtObjectFontAttributes_c::getScaledWidthHeight()
 {
@@ -154,11 +153,10 @@ vtObjectFontAttributes_c::getScaledWidthHeight()
     return ((font2PixelDimensionTableW [ui8_fontSizeScaled] << 8) | (font2PixelDimensionTableH [ui8_fontSizeScaled]));
 }
 
-
-// //////////////////////////////// +X2C Operation 282 : calcScaledFontDimension
+// Operation : calcScaledFontDimension
 void
 vtObjectFontAttributes_c::calcScaledFontDimension() const
-{ // ~X2C
+{
   MACRO_localVars;
   MACRO_scaleLocalVars;
   MACRO_scaleSKLocalVars;
@@ -217,7 +215,7 @@ vtObjectFontAttributes_c::calcScaledFontDimension() const
   while (!(__IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).getVtServerInst().getVtFontSizes() & (1 << ui8_fontSizeScaled))) {
     ui8_fontSizeScaled--; // try a smaller font, but "6x8" should be there in any way, 'cause we set it in processMsg!!
   }
-} // -X2C
+}
 
 void
 vtObjectFontAttributes_c::setFontAttributes(uint8_t newFontColour, uint8_t newFontSize, uint8_t newFontType, uint8_t newFontStyle, bool b_updateObject, bool b_enableReplaceOfCmd) {
@@ -230,5 +228,53 @@ vtObjectFontAttributes_c::setFontAttributes(uint8_t newFontColour, uint8_t newFo
   __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeFontAttributes (this, __IsoAgLib::getIsoTerminalInstance().getClientByID (s_properties.clientId).getUserClippedColor (newFontColour, this, IsoAgLib::FontColour), newFontSize, newFontType, newFontStyle, b_enableReplaceOfCmd);
 }
 
+uint8_t
+vtObjectFontAttributes_c::updateFontColour(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectFontAttributes_a(), fontColour), sizeof(iVtObjectFontAttributes_s), 1);
+  else
+    return getValue8(MACRO_getStructOffset(get_vtObjectFontAttributes_a(), fontColour), sizeof(iVtObjectFontAttributes_s));
+}
+
+uint8_t
+vtObjectFontAttributes_c::updateFontSize(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectFontAttributes_a(), fontSize), sizeof(iVtObjectFontAttributes_s), 2);
+  else
+    return getValue8(MACRO_getStructOffset(get_vtObjectFontAttributes_a(), fontSize), sizeof(iVtObjectFontAttributes_s));
+}
+
+uint8_t
+vtObjectFontAttributes_c::updateFontType(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectFontAttributes_a(), fontType), sizeof(iVtObjectFontAttributes_s), 3);
+  else
+    return getValue8(MACRO_getStructOffset(get_vtObjectFontAttributes_a(), fontType), sizeof(iVtObjectFontAttributes_s));
+}
+
+uint8_t
+vtObjectFontAttributes_c::updateFontStyle(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectFontAttributes_a(), fontStyle), sizeof(iVtObjectFontAttributes_s), 4);
+  else
+    return getValue8(MACRO_getStructOffset(get_vtObjectFontAttributes_a(), fontStyle), sizeof(iVtObjectFontAttributes_s));
+}
+
+void
+vtObjectFontAttributes_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attributeValue)
+{
+  switch (attrID)
+  {
+    case 1: saveValue8(MACRO_getStructOffset(get_vtObjectFontAttributes_a(), fontColour), sizeof(iVtObjectFontAttributes_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
+    case 2: saveValue8(MACRO_getStructOffset(get_vtObjectFontAttributes_a(), fontSize), sizeof(iVtObjectFontAttributes_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
+    case 3: saveValue8(MACRO_getStructOffset(get_vtObjectFontAttributes_a(), fontType), sizeof(iVtObjectFontAttributes_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
+    case 4: saveValue8(MACRO_getStructOffset(get_vtObjectFontAttributes_a(), fontStyle), sizeof(iVtObjectFontAttributes_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
+    default: break;
+  }
+}
 
 } // end of namespace __IsoAgLib

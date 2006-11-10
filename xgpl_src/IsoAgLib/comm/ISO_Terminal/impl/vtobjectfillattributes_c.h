@@ -79,30 +79,19 @@
  *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
-
-
 #ifndef VTOBJECTFILLATTRIBUTES_C_H
 #define VTOBJECTFILLATTRIBUTES_C_H
 
-
-// +X2C includes
 #include "vtobject_c.h"
 #include "../ivtobjectpicturegraphic_c.h"
-// ~X2C
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
-
-//  +X2C Class 167 : vtObjectFillAttributes_c
-//!  Stereotype: Klasse
 class vtObjectFillAttributes_c : public vtObject_c
 {
-
 public:
-
   //  Operation: stream
-  //! Parameter:
   //! @param destMemory:
   //! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
   //! @param sourceOffset:
@@ -111,10 +100,10 @@ public:
                  objRange_t sourceOffset);
 
   //  Operation: init
-  //! Parameter:
   //! @param vtObjectFillAttributesSROM:
   //! @param b_initPointer:
-  void init(const iVtObjectFillAttributes_s* vtObjectFillAttributesSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) { vtObject_c::init ((iVtObject_s*) vtObjectFillAttributesSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA); };
+  void init(const iVtObjectFillAttributes_s* vtObjectFillAttributesSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA)
+  { vtObject_c::init ((iVtObject_s*) vtObjectFillAttributesSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA); }
 
   //  Operation: get_vtObjectFillAttributes_a
   iVtObjectFillAttributes_s* get_vtObjectFillAttributes_a() { return (iVtObjectFillAttributes_s *)vtObject_a; }
@@ -126,38 +115,45 @@ public:
   uint32_t fitTerminal() const;
 
   //  Operation: setFillType
-  //! Parameter:
   //! @param newFillType:
   //! @param b_updateObject:
   void setFillType(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectFillAttributes_a(), fillType) : 0, sizeof(iVtObjectFillAttributes_s), 1 /* "Fill Type" */, newValue, newValue, b_enableReplaceOfCmd);
-  };
+  }
 
   //  Operation: setFillColour
-  //! Parameter:
   //! @param newFillColour:
   //! @param b_updateObject:
   void setFillColour(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectFillAttributes_a(), fillColour) : 0, sizeof(iVtObjectFillAttributes_s), 2 /* "Fill Colour" */, newValue, __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).getUserClippedColor (newValue, this, IsoAgLib::FillColour), b_enableReplaceOfCmd);
-  };
+  }
 
   //  Operation: setFillPattern
-  //! Parameter:
   //! @param newFillPatternObject:
   //! @param b_updateObject:
   void setFillPattern(IsoAgLib::iVtObjectPictureGraphic_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectFillAttributes_a(), fillPatternObject) : 0, sizeof(iVtObjectFillAttributes_s), 3 /* "Fill Pattern" */, newValue, b_enableReplaceOfCmd);
-  };
+  }
 
   //  Operation: changeFillAttributes
-  //! Parameter:
   //! @param newFillType:
   //! @param newFillColour:
   //! @param newFillPatternObject
   //! @param b_updateObject:
   void setFillAttributes(uint8_t newFillType, uint8_t newFillColour, IsoAgLib::iVtObjectPictureGraphic_c* newFillPattern, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
-}; // ~X2C
+  /** that attribute is in parentheses in the spec, so commented out here
+  uint8_t updateObjectType() const { return 25; }
+  */
+
+  uint8_t updateFillType(bool b_SendRequest=false);
+
+  uint8_t updateFillColour(bool b_SendRequest=false);
+
+  uint16_t updateFillPattern(bool b_SendRequest=false);
+
+  void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue);
+};
 
 } // end namespace
-#endif // -X2C
+#endif

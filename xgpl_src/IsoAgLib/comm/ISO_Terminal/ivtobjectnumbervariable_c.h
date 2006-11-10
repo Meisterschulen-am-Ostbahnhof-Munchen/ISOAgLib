@@ -74,17 +74,27 @@ public:
   //! @param b_initPointer:
   void init(const iVtObjectNumberVariable_s* vtObjectNumberVariableSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) {
     vtObjectNumberVariable_c::init (vtObjectNumberVariableSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
-  };
+  }
 
   //  Operation: get_vtObjectNumberVariable_a
-  const iVtObjectNumberVariable_s& get_vtObjectNumberVariable_a() { return *vtObjectNumberVariable_c::get_vtObjectNumberVariable_a(); };
+  const iVtObjectNumberVariable_s& get_vtObjectNumberVariable_a() { return *vtObjectNumberVariable_c::get_vtObjectNumberVariable_a(); }
 
   //  Operation: setValue
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
   void setValue(uint32_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true) {
-    vtObjectNumberVariable_c::setValue (newValue, b_updateObject, b_enableReplaceOfCmd); };
+    vtObjectNumberVariable_c::setValue (newValue, b_updateObject, b_enableReplaceOfCmd); }
+
+  
+  // ///////////////////////// getter for attributes
+  /** these attributes are in parentheses in the spec, so commented out here
+  uint8_t updateObjectType() const { return vtObjectNumberVariable_c::updateObjectType(); }
+  
+  uint32_t updateValue(bool b_SendRequest=false) {
+    return vtObjectNumberVariable_c::getValue(b_SendRequest);
+  }
+  */
 
 }; // ~X2C
 

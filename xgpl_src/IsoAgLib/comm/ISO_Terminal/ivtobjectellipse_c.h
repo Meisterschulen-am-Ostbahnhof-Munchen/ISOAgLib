@@ -75,10 +75,10 @@ public:
   //! @param b_initPointer:
   void init(const iVtObjectEllipse_s* vtObjectellipseSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) {
     vtObjectEllipse_c::init (vtObjectellipseSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
-  };
+  }
 
   //  Operation: get_vtObjectmeter_a
-  const iVtObjectEllipse_s& get_vtObjectEllipse_a() { return *vtObjectEllipse_c::get_vtObjectEllipse_a(); };
+  const iVtObjectEllipse_s& get_vtObjectEllipse_a() { return *vtObjectEllipse_c::get_vtObjectEllipse_a(); }
 
   //  Operation: setLineAttributes
   //! Parameter:
@@ -86,7 +86,7 @@ public:
   //! @param b_updateObject:
   void setLineAttributes(iVtObjectLineAttributes_c* newLineAttributes, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectEllipse_c::setLineAttributes (newLineAttributes, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
   //  Operation: setWidth
   //! Parameter:
@@ -94,7 +94,7 @@ public:
   //! @param b_updateObject:
   void setWidth(uint16_t newWidth, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectEllipse_c::setWidth (newWidth, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
   //  Operation: setHeight
   //! Parameter:
@@ -102,7 +102,7 @@ public:
   //! @param b_updateObject:
   void setHeight(uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectEllipse_c::setHeight (newHeight, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
   //  Operation: setEllipseType
   //! Parameter:
@@ -110,7 +110,7 @@ public:
   //! @param b_updateObject:
   void setEllipseType(uint8_t newEllipseType, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectEllipse_c::setEllipseType (newEllipseType, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
   //  Operation: setStartAngle
   //! Parameter:
@@ -118,7 +118,7 @@ public:
   //! @param b_updateObject:
   void setStartAngle(uint8_t newStartAngle, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectEllipse_c::setStartAngle (newStartAngle, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
   //  Operation: setEndAngle
   //! Parameter:
@@ -126,7 +126,7 @@ public:
   //! @param b_updateObject:
   void setEndAngle(uint8_t newEndAngle, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectEllipse_c::setEndAngle (newEndAngle, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
   //  Operation: setFillAttributes
   //! Parameter:
@@ -134,7 +134,7 @@ public:
   //! @param b_updateObject:
   void setFillAttributes(iVtObjectFillAttributes_c* newFillAttributes, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectEllipse_c::setFillAttributes (newFillAttributes, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
   //  Operation: setSize
   //! Parameter:
@@ -143,7 +143,40 @@ public:
   //! @param b_updateObject:
   void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectEllipse_c::setSize(newWidth, newHeight, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
+
+  // ///////////////////////// getter for attributes
+  /** that attribute is in parentheses in the spec, so commented out here
+  uint8_t updateObjectType() const { return vtObjectEllipse_c::updateObjectType(); }
+  */
+  
+  uint16_t updateLineAttributes(bool b_SendRequest=false) {
+    return vtObjectEllipse_c::updateLineAttributes(b_SendRequest);
+  }
+
+  uint16_t updateWidth(bool b_SendRequest=false) {
+    return vtObjectEllipse_c::updateWidth(b_SendRequest);
+  }
+
+  uint16_t updateHeight(bool b_SendRequest=false) {
+    return vtObjectEllipse_c::updateHeight(b_SendRequest);
+  }
+
+  uint8_t updateEllipseType(bool b_SendRequest=false) {
+    return vtObjectEllipse_c::updateEllipseType(b_SendRequest);
+  }
+
+  uint8_t updateStartAngle(bool b_SendRequest=false) {
+    return vtObjectEllipse_c::updateStartAngle(b_SendRequest);
+  }
+
+  uint8_t updateEndAngle(bool b_SendRequest=false) {
+    return vtObjectEllipse_c::updateEndAngle(b_SendRequest);
+  }
+
+  uint16_t updateFillAttributes(bool b_SendRequest=false) {
+    return vtObjectEllipse_c::updateFillAttributes(b_SendRequest);
+  }
 
 }; // ~X2C
 

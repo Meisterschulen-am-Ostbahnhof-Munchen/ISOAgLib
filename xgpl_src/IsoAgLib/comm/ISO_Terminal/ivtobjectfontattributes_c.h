@@ -123,9 +123,29 @@ public:
   //! @param b_updateObject:
   void setFontAttributes(uint8_t newFontColour, uint8_t newFontSize, uint8_t newFontType, uint8_t newFontStyle, bool b_updateObject=false, bool b_enableReplaceOfCmd=false){
     vtObjectFontAttributes_c::setFontAttributes(newFontColour, newFontSize, newFontType, newFontStyle, b_updateObject, b_enableReplaceOfCmd);
-  };
-}; // ~X2C
+  }
+
+  /** that attribute is in parentheses in the spec, so commented out here
+  uint8_t updateObjectType() const { return vtObjectFontAttributes_c::updateObjectType(); }
+  */
+
+  uint8_t updateFontColour(bool b_SendRequest=false) {
+    return vtObjectFontAttributes_c::updateFontColour(b_SendRequest);
+  }
+
+  uint8_t updateFontSize(bool b_SendRequest=false) {
+    return vtObjectFontAttributes_c::updateFontSize(b_SendRequest);
+  }
+
+  uint8_t updateFontType(bool b_SendRequest=false) {
+    return vtObjectFontAttributes_c::updateFontType(b_SendRequest);
+  }
+
+  uint8_t updateFontStyle(bool b_SendRequest=false) {
+    return vtObjectFontAttributes_c::updateFontStyle(b_SendRequest);
+  }
+};
 
 } // end of namespace IsoAgLib
 
-#endif // -X2C
+#endif

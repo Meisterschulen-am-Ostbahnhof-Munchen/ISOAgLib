@@ -79,17 +79,14 @@
  *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
-
 #include "vtobjectmeter_c.h"
+
 #include "isoterminal_c.h"
 #include "../ivtobjectbutton_c.h"
 
-
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
-
-// //////////////////////////////// +X2C Operation 120 : stream
-//! Parameter:
+// Operation : stream
 //! @param destMemory:
 //! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
 //! @param sourceOffset:
@@ -97,7 +94,7 @@ int16_t
 vtObjectMeter_c::stream(uint8_t* destMemory,
                         uint16_t maxBytes,
                         objRange_t sourceOffset)
-{ // ~X2C
+{
 #define MACRO_vtObjectTypeA vtObjectMeter_a
 #define MACRO_vtObjectTypeS iVtObjectMeter_s
     MACRO_streamLocalVars;
@@ -143,14 +140,12 @@ vtObjectMeter_c::stream(uint8_t* destMemory,
 
     MACRO_streamEventMacro(21);
     return curBytes;
-} // -X2C
-
-// //////////////////////////////// +X2C Operation 123 : vtObjectMeter_c
-vtObjectMeter_c::vtObjectMeter_c()
-{
 }
 
-// //////////////////////////////// +X2C Operation 201 : size
+// Operation : vtObjectMeter_c
+vtObjectMeter_c::vtObjectMeter_c() {}
+
+// Operation : fitTerminal
 uint32_t
 vtObjectMeter_c::fitTerminal() const
 {
@@ -158,18 +153,149 @@ vtObjectMeter_c::fitTerminal() const
   return 21+vtObjectMeter_a->numberOfMacrosToFollow*2;
 }
 
-// //////////////////////////////// +X2C Operation 250 : setValue
-//! Parameter:
+// Operation : setValue
 //! @param newValue:
 //! @param b_updateObject:
 void
 vtObjectMeter_c::setValue(uint16_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd)
-{ // ~X2C
+{
   if (get_vtObjectMeter_a()->variableReference == NULL) {
     if (b_updateObject) saveValue16 (MACRO_getStructOffset(get_vtObjectMeter_a(), value), sizeof(iVtObjectMeter_s), newValue);
 
     __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeNumericValue (this, newValue & 0xFF, (newValue >> 8) & 0xFF, 0x00, 0x00, b_enableReplaceOfCmd);
   }
-} // -X2C
+}
 
+uint16_t
+vtObjectMeter_c::updateWidth(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectMeter_a(), width), sizeof(iVtObjectMeter_s), 1);
+  else
+    return getValue16(MACRO_getStructOffset(get_vtObjectMeter_a(), width), sizeof(iVtObjectMeter_s));
+}
+
+uint8_t
+vtObjectMeter_c::updateNeedleColour(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectMeter_a(), needleColour), sizeof(iVtObjectMeter_s), 2);
+  else
+    return getValue8(MACRO_getStructOffset(get_vtObjectMeter_a(), needleColour), sizeof(iVtObjectMeter_s));
+}
+
+uint8_t
+vtObjectMeter_c::updateBorderColour(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectMeter_a(), borderColour), sizeof(iVtObjectMeter_s), 3);
+  else
+    return getValue8(MACRO_getStructOffset(get_vtObjectMeter_a(), borderColour), sizeof(iVtObjectMeter_s));
+}
+
+uint8_t
+vtObjectMeter_c::updateArcAndTickColour(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectMeter_a(), arcAndTickColour), sizeof(iVtObjectMeter_s), 4);
+  else
+    return getValue8(MACRO_getStructOffset(get_vtObjectMeter_a(), arcAndTickColour), sizeof(iVtObjectMeter_s));
+}
+
+uint8_t
+vtObjectMeter_c::updateOptions(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectMeter_a(), options), sizeof(iVtObjectMeter_s), 5);
+  else
+    return getValue8(MACRO_getStructOffset(get_vtObjectMeter_a(), options), sizeof(iVtObjectMeter_s));
+}
+
+uint8_t
+vtObjectMeter_c::updateNumberOfTicks(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectMeter_a(), numberOfTicks), sizeof(iVtObjectMeter_s), 6);
+  else
+    return getValue8(MACRO_getStructOffset(get_vtObjectMeter_a(), numberOfTicks), sizeof(iVtObjectMeter_s));
+}
+
+uint8_t
+vtObjectMeter_c::updateStartAngle(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectMeter_a(), startAngle), sizeof(iVtObjectMeter_s), 7);
+  else
+    return getValue8(MACRO_getStructOffset(get_vtObjectMeter_a(), startAngle), sizeof(iVtObjectMeter_s));
+}
+
+uint8_t
+vtObjectMeter_c::updateEndAngle(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectMeter_a(), endAngle), sizeof(iVtObjectMeter_s), 8);
+  else
+    return getValue8(MACRO_getStructOffset(get_vtObjectMeter_a(), endAngle), sizeof(iVtObjectMeter_s));
+}
+
+uint16_t
+vtObjectMeter_c::updateMinValue(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectMeter_a(), minValue), sizeof(iVtObjectMeter_s), 9);
+  else
+    return getValue16(MACRO_getStructOffset(get_vtObjectMeter_a(), minValue), sizeof(iVtObjectMeter_s));
+}
+
+uint16_t
+vtObjectMeter_c::updateMaxValue(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectMeter_a(), maxValue), sizeof(iVtObjectMeter_s), 10);
+  else
+    return getValue16(MACRO_getStructOffset(get_vtObjectMeter_a(), maxValue), sizeof(iVtObjectMeter_s));
+}
+
+uint16_t
+vtObjectMeter_c::updateVariableReference(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectMeter_a(), variableReference), sizeof(iVtObjectMeter_s), 11);
+  else
+    return getValue16(MACRO_getStructOffset(get_vtObjectMeter_a(), variableReference), sizeof(iVtObjectMeter_s));
+}
+
+/** that attribute is in parentheses in the spec, so commented out here
+uint16_t
+vtObjectMeter_c::updateValue(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectMeter_a(), value), sizeof(iVtObjectMeter_s), 12);
+  else
+    return getValue16(MACRO_getStructOffset(get_vtObjectMeter_a(), value), sizeof(iVtObjectMeter_s));
+}
+*/
+
+void
+vtObjectMeter_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attributeValue)
+{
+  switch (attrID)
+  {
+    case 1: saveValue16(MACRO_getStructOffset(get_vtObjectMeter_a(), width), sizeof(iVtObjectMeter_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
+    case 2: saveValue8(MACRO_getStructOffset(get_vtObjectMeter_a(), needleColour), sizeof(iVtObjectMeter_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
+    case 3: saveValue8(MACRO_getStructOffset(get_vtObjectMeter_a(), borderColour), sizeof(iVtObjectMeter_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
+    case 4: saveValue8(MACRO_getStructOffset(get_vtObjectMeter_a(), arcAndTickColour), sizeof(iVtObjectMeter_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
+    case 5: saveValue8(MACRO_getStructOffset(get_vtObjectMeter_a(), options), sizeof(iVtObjectMeter_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
+    case 6: saveValue8(MACRO_getStructOffset(get_vtObjectMeter_a(), numberOfTicks), sizeof(iVtObjectMeter_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
+    case 7: saveValue8(MACRO_getStructOffset(get_vtObjectMeter_a(), startAngle), sizeof(iVtObjectMeter_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
+    case 8: saveValue8(MACRO_getStructOffset(get_vtObjectMeter_a(), endAngle), sizeof(iVtObjectMeter_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
+    case 9: saveValue16(MACRO_getStructOffset(get_vtObjectMeter_a(), minValue), sizeof(iVtObjectMeter_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
+    case 10: saveValue16(MACRO_getStructOffset(get_vtObjectMeter_a(), maxValue), sizeof(iVtObjectMeter_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
+    case 11: saveValue16(MACRO_getStructOffset(get_vtObjectMeter_a(), variableReference), sizeof(iVtObjectMeter_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
+    /** that attribute is in parentheses in the spec, so commented out here
+    case 12: saveValue16(MACRO_getStructOffset(get_vtObjectMeter_a(), value), sizeof(iVtObjectMeter_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
+    */
+    default: break;
+  }
+}
 } // end namespace __IsoAgLib

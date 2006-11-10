@@ -79,16 +79,13 @@
  *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
-
 #include "vtobjectsoftkeymask_c.h"
+
 #include "isoterminal_c.h"
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
-
-
-// //////////////////////////////// +X2C Operation 82 : stream
-//! Parameter:
+// Operation : stream
 //! @param:destMemory:
 //! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
 //! @param sourceOffset:
@@ -96,7 +93,7 @@ int16_t
 vtObjectSoftKeyMask_c::stream(uint8_t* destMemory,
                               uint16_t maxBytes,
                               objRange_t sourceOffset)
-{ // ~X2C
+{
 #define MACRO_vtObjectTypeA vtObjectSoftKeyMask_a
 #define MACRO_vtObjectTypeS iVtObjectSoftKeyMask_s
   MACRO_streamLocalVars;
@@ -116,32 +113,47 @@ vtObjectSoftKeyMask_c::stream(uint8_t* destMemory,
   MACRO_streamObject(6);
   MACRO_streamEventMacro(6+vtObjectSoftKeyMask_a->numberOfObjectsToFollow*2U);
   return curBytes;
-} // -X2C
+}
 
 
-// //////////////////////////////// +X2C Operation 85 : vtObjectSoftKeyMask_c
+// Operation : vtObjectSoftKeyMask_c
 vtObjectSoftKeyMask_c::vtObjectSoftKeyMask_c()
-{ // ~X2C
-} // -X2C
+{
+}
 
-// //////////////////////////////// +X2C Operation 192 : size
+// Operation : size
 uint32_t
 vtObjectSoftKeyMask_c::fitTerminal() const
-{ // ~X2C
+{
   MACRO_localVars;
   return 6+vtObjectSoftKeyMask_a->numberOfObjectsToFollow*2+vtObjectSoftKeyMask_a->numberOfMacrosToFollow*2;
-} // -X2C
+}
 
-// //////////////////////////////// +X2C Operation 229 : setOriginSKM
-//! Parameter:
+// Operation : setOriginSKM
 //! @param b_SKM:
 void
 vtObjectSoftKeyMask_c::setOriginSKM(bool /*b_SKM*/)
-{ // ~X2C
+{
   MACRO_localVars;
   for (int i=0; i<vtObjectSoftKeyMask_a->numberOfObjectsToFollow; i++) {
     vtObjectSoftKeyMask_a->objectsToFollow[i].vtObject->setOriginSKM (true);
   }
-} // -X2C
+}
+
+uint8_t
+vtObjectSoftKeyMask_c::updateBackgroundColour(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectSoftKeyMask_a(), backgroundColour), sizeof(iVtObjectSoftKeyMask_s), 1);
+  else
+    return getValue8(MACRO_getStructOffset(get_vtObjectSoftKeyMask_a(), backgroundColour), sizeof(iVtObjectSoftKeyMask_s));
+}
+
+void
+vtObjectSoftKeyMask_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attributeValue)
+{
+  if (attrID == 1)
+    saveValue8(MACRO_getStructOffset(get_vtObjectSoftKeyMask_a(), backgroundColour), sizeof(iVtObjectSoftKeyMask_s), convertLittleEndianStringUi8(pui8_attributeValue));
+}
 
 } // end of namespace __IsoAgLib

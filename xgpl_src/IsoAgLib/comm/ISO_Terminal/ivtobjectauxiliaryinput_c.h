@@ -72,11 +72,11 @@ public:
   //! Parameter:
   //! @param vtObjectAuxiliaryInputSROM:
   //! @param b_initPointer:
-  void init(const iVtObjectAuxiliaryInput_s* vtObjectAuxiliaryInputSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) { vtObject_c::init ((iVtObject_s*) vtObjectAuxiliaryInputSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA); };
+  void init(const iVtObjectAuxiliaryInput_s* vtObjectAuxiliaryInputSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) { vtObject_c::init ((iVtObject_s*) vtObjectAuxiliaryInputSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA); }
 
 
   //  Operation: get_vtObjectAuxiliaryInput_a
-  const iVtObjectAuxiliaryInput_s& get_vtObjectAuxiliaryInput_a() { return *vtObjectAuxiliaryInput_c::get_vtObjectAuxiliaryInput_a(); };
+  const iVtObjectAuxiliaryInput_s& get_vtObjectAuxiliaryInput_a() { return *vtObjectAuxiliaryInput_c::get_vtObjectAuxiliaryInput_a(); }
 
   //  Operation: moveChildLocation
   //! Parameter:
@@ -89,7 +89,6 @@ public:
   }
 
   //  Operation: setChildPosition
-  //! Parameter:
   //! @param rpc_childObject:
   //! @param dx:
   //! @param dy:
@@ -97,8 +96,11 @@ public:
     return vtObjectAuxiliaryInput_c::setChildPosition(rpc_childObject, dx, dy, b_updateObject, b_enableReplaceOfCmd);
   }
 
-}; // ~X2C
+  /** that attribute is in parentheses in the spec, so commented out here
+  uint8_t updateObjectType() const { return vtObjectAuxiliaryInput_c::updateObjectType(); }
+  */
+};
 
 } // end of namespace IsoAgLib
 
-#endif // -X2C
+#endif

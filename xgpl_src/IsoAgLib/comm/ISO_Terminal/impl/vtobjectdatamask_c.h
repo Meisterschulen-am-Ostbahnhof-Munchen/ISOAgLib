@@ -79,30 +79,22 @@
  *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
-
 #ifndef VTOBJECTDATAMASK_C_H
 #define VTOBJECTDATAMASK_C_H
 
-
-// +X2C includes
 #include "../ivtobjectmask_c.h"
 #include "../ivtobjectsoftkeymask_c.h"
 #include "isoterminal_c.h"
-// ~X2C
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
-
-//  +X2C Class 71 : vtObjectDataMask_c
-//!  Stereotype: Klasse
 class vtObjectDataMask_c : public IsoAgLib::iVtObjectMask_c
 {
-
 public:
-  virtual ~vtObjectDataMask_c(){};
+  virtual ~vtObjectDataMask_c() {}
+
   //  Operation: stream
-  //! Parameter:
   //! @param:destMemory:
   //! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
   //! @param sourceOffset:
@@ -111,10 +103,10 @@ public:
                  objRange_t sourceOffset);
 
   //  Operation: init
-  //! Parameter:
   //! @param vtObjectDataMaskSROM:
   //! @param b_initPointer:
-  void init(const iVtObjectDataMask_s* vtObjectDataMaskSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) { vtObject_c::init ((iVtObject_s*) vtObjectDataMaskSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);};
+  void init(const iVtObjectDataMask_s* vtObjectDataMaskSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA)
+  { vtObject_c::init ((iVtObject_s*) vtObjectDataMaskSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);}
 
   //  Operation: get_vtObjectDataMask_a
   iVtObjectDataMask_s* get_vtObjectDataMask_a() { return (iVtObjectDataMask_s *)vtObject_a; }
@@ -126,7 +118,6 @@ public:
   uint32_t fitTerminal() const;
 
   //  Operation: setSoftKeyMask
-  //! Parameter:
   //! @param newSoftKeyMask:
   //! @param b_updateObject:
   void setSoftKeyMask(IsoAgLib::iVtObjectSoftKeyMask_c* newSoftKeyMask, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
@@ -141,8 +132,15 @@ public:
 
   bool setChildPosition(IsoAgLib::iVtObject_c* rpc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
-}; // ~X2C
+  /** that attribute is in parentheses in the spec, so commented out here
+  uint8_t updateObjectType() const { return 1; }
+  */
+  uint8_t updateBackgroundColour(bool b_SendRequest=false);
+  uint16_t updateSoftKeyMask(bool b_SendRequest=false);
+
+  void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue);
+};
 
 } // end of namespace __IsoAgLib
 
-#endif // -X2C
+#endif

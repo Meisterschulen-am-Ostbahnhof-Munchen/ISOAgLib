@@ -75,10 +75,10 @@ public:
   //! @param b_initPointer:
   void init(const iVtObjectOutputNumber_s* vtObjectOutputNumberSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) {
     vtObjectOutputNumber_c::init (vtObjectOutputNumberSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
-  };
+  }
 
   //  Operation: get_vtObjectOutputNumber_a
-  const iVtObjectOutputNumber_s& get_vtObjectOutputNumber_a() { return *vtObjectOutputNumber_c::get_vtObjectOutputNumber_a(); };
+  const iVtObjectOutputNumber_s& get_vtObjectOutputNumber_a() { return *vtObjectOutputNumber_c::get_vtObjectOutputNumber_a(); }
 
   //  Operation: setValue
   //! Parameter:
@@ -86,7 +86,7 @@ public:
   //! @param b_updateObject:
   void setValue(uint32_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true) {
     vtObjectOutputNumber_c::setValue (newValue, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
   //  Operation: setWidth
   //! Parameter:
@@ -94,7 +94,7 @@ public:
   //! @param b_updateObject:
   void setWidth(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectOutputNumber_c::setWidth (newValue, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
   //  Operation: setHeight
   //! Parameter:
@@ -102,7 +102,7 @@ public:
   //! @param b_updateObject:
   void setHeight(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectOutputNumber_c::setHeight (newValue, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
   //  Operation: setBackgroundColour
   //! Parameter:
@@ -110,7 +110,7 @@ public:
   //! @param b_updateObject:
   void setBackgroundColour(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectOutputNumber_c::setBackgroundColour (newValue, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
   //  Operation: setFontAttributes
   //! Parameter:
@@ -118,7 +118,7 @@ public:
   //! @param b_updateObject:
   void setFontAttributes(iVtObjectFontAttributes_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectOutputNumber_c::setFontAttributes (newValue, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
   //  Operation: setOptions
   //! Parameter:
@@ -126,7 +126,7 @@ public:
   //! @param b_updateObject:
   void setOptions(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectOutputNumber_c::setOptions (newValue, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
   //  Operation: setVariableReference
   //! Parameter:
@@ -134,7 +134,7 @@ public:
   //! @param b_updateObject:
   void setVariableReference(iVtObjectNumberVariable_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectOutputNumber_c::setVariableReference (newValue, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
   //  Operation: setOffset
   //! Parameter:
@@ -142,7 +142,7 @@ public:
   //! @param b_updateObject:
   void setOffset(int32_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectOutputNumber_c::setOffset (newValue, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
   //  Operation: setScale
   //! Parameter:
@@ -150,7 +150,7 @@ public:
   //! @param b_updateObject:
   void setScale(float newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectOutputNumber_c::setScale (newValue, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
   //  Operation: setNumberOfDecimals
   //! Parameter:
@@ -158,7 +158,7 @@ public:
   //! @param b_updateObject:
   void setNumberOfDecimals(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectOutputNumber_c::setNumberOfDecimals (newValue, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
   //  Operation: setFormat
   //! Parameter:
@@ -166,7 +166,7 @@ public:
   //! @param b_updateObject:
   void setFormat(bool newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectOutputNumber_c::setFormat (newValue, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
   //  Operation: setHorizontalJustification
   //! Parameter:
@@ -174,7 +174,7 @@ public:
   //! @param b_updateObject:
   void setHorizontalJustification(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectOutputNumber_c::setHorizontalJustification (newValue, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
   //  Operation: setSize
   //! Parameter:
@@ -183,7 +183,64 @@ public:
   //! @param b_updateObject:
   void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectOutputNumber_c::setSize(newWidth, newHeight, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
+
+
+  
+  // ///////////////////////// getter for attributes
+  /** that attribute is in parentheses in the spec, so commented out here
+  uint8_t updateObjectType() const { return vtObjectOutputNumber_c::updateObjectType(); }
+  */
+  
+  uint16_t updateWidth(bool b_SendRequest=false) {
+    return vtObjectOutputNumber_c::updateWidth(b_SendRequest);
+  }
+
+  uint16_t updateHeight(bool b_SendRequest=false) {
+    return vtObjectOutputNumber_c::updateHeight(b_SendRequest);
+  }
+
+  uint8_t updateBackgroundColour(bool b_SendRequest=false) {
+    return vtObjectOutputNumber_c::updateBackgroundColour(b_SendRequest);
+  }
+
+  uint16_t updateFontAttributes(bool b_SendRequest=false) {
+    return vtObjectOutputNumber_c::updateFontAttributes(b_SendRequest);
+  }
+
+  uint8_t updateOptions(bool b_SendRequest=false) {
+    return vtObjectOutputNumber_c::updateOptions(b_SendRequest);
+  }
+
+  uint16_t updateVariableReference(bool b_SendRequest=false) {
+    return vtObjectOutputNumber_c::updateVariableReference(b_SendRequest);
+  }
+
+  int32_t updateOffset(bool b_SendRequest=false) {
+    return vtObjectOutputNumber_c::updateOffset(b_SendRequest);
+  }
+
+  float updateScale(bool b_SendRequest=false) {
+    return vtObjectOutputNumber_c::updateScale(b_SendRequest);
+  }
+
+  uint8_t updateNumberOfDecimals(bool b_SendRequest=false) {
+    return vtObjectOutputNumber_c::updateNumberOfDecimals(b_SendRequest);
+  }
+
+  uint8_t updateFormat(bool b_SendRequest=false) {
+    return vtObjectOutputNumber_c::updateFormat(b_SendRequest);
+  }
+
+  uint8_t updateJustification(bool b_SendRequest=false) {
+    return vtObjectOutputNumber_c::updateJustification(b_SendRequest);
+  }
+
+  /** that attribute is in parentheses in the spec, so commented out here
+  uint32_t updateValue(bool b_SendRequest=false) {
+    return vtObjectOutputNumber_c::getValue(b_SendRequest);
+  }
+  */
 
 }; // ~X2C
 

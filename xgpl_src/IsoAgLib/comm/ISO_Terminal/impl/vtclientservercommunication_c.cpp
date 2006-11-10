@@ -169,8 +169,8 @@ static const uint8_t scpui8_cmdCompareTable[(scui8_cmdCompareTableMax-scui8_cmdC
 /* 0xB5 */ 0 , //invalid command
 /* 0xB6 */ 0 , //invalid command
 /* 0xB7 */ 0 , //invalid command
-/* 0xB8 */ 0 , //invalid command
-/* 0xB9 */ (1<<0)  //NEVER OVERRIDE THIS COMMAND (Graphics Context)
+/* 0xB8 */ (1<<0) ,  //NEVER OVERRIDE THIS COMMAND (Graphics Context)
+/* 0xB9 */ (1<<1) | (1<<2) | (1<<3) | (1<<4) // (Get Attribute Value)
 };
 
 
@@ -184,7 +184,6 @@ namespace __IsoAgLib {
 #define DEF_Retries_NormalCommands 2
 #define DEF_Retries_TPCommands 2
 #define DEF_TimeOut_ChangeStringValue 1500   /* 1,5 seconds are stated in F.1 (page 96) */
-
 
 
 void SendUpload_c::set (vtObjectString_c* rpc_objectString)
@@ -206,27 +205,26 @@ void SendUpload_c::set (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byt
   mssObjectString = NULL;
   ppc_vtObjects = NULL; /// Use BUFFER - NOT MultiSendStreamer!
   ui16_numObjects = 0;
-};
+}
 void SendUpload_c::set (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint32_t rui32_timeout, IsoAgLib::iVtObject_c** rppc_vtObjects, uint16_t rui16_numObjects)
 {
   SendUploadBase_c::set( byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8, rui32_timeout );
   mssObjectString = NULL;  /// Use BUFFER - NOT MultiSendStreamer!
   ppc_vtObjects = rppc_vtObjects;
   ui16_numObjects = rui16_numObjects;
-};
+}
 void SendUpload_c::set (uint16_t rui16_objId, const char* rpc_string, uint16_t overrideSendLength, uint8_t ui8_cmdByte)
 {
   SendUploadBase_c::set( rui16_objId, rpc_string, overrideSendLength, ui8_cmdByte );
   mssObjectString = NULL;  /// Use BUFFER - NOT MultiSendStreamer!
   ppc_vtObjects = NULL;
-};
+}
 void SendUpload_c::set (uint8_t* rpui8_buffer, uint32_t bufferSize)
 {
   SendUploadBase_c::set (rpui8_buffer, bufferSize);
   mssObjectString = NULL;  /// Use BUFFER - NOT MultiSendStreamer!
   ppc_vtObjects = NULL;
-};
-
+}
 
 
 /** place next data to send direct into send puffer of pointed
@@ -1052,7 +1050,7 @@ VtClientServerCommunication_c::processMsg()
     case 0xA7: // Command: "Command", parameter "Change Background Colour Response"
     case 0xAF: // Command: "Command", parameter "Change Attribute Response"
     case 0xB0: // Command: "Command", parameter "Change Priority Response"
-    case 0xB9: // Command: "Command", parameter "Graphics Context Command"
+    case 0xB8: // Command: "Command", parameter "Graphics Context Command"
       MACRO_setStateDependantOnError (5)
       break;
 
@@ -1069,6 +1067,80 @@ VtClientServerCommunication_c::processMsg()
       MACRO_setStateDependantOnError (7)
       break;
 
+    case 0xB9: // Command: "Get Technical Data", parameter "Get Attribute Value"
+      MACRO_setStateDependantOnError (7)
+      // client requested any attribute value for an object in the pool -> create ram struct if not yet existing
+      if ((c_data.getUint8Data (1) == 0xFF) && (c_data.getUint8Data (2) == 0xFF)) // object id is set to 0xFFFF to indicate error response
+      {
+        /// what to do if attribute value request returns error response???
+      }
+      else
+      {
+        // first store object ID for later use
+        uint16_t ui16_objID = c_data.getUint8Data(1) | (c_data.getUint8Data (2) << 8);
+
+        /// search for suitable iVtObject in all object lists of the client (pointer array to all fix and language dependent iVtObjects)
+
+        uint8_t ui8_arrIndex = 0;
+        bool b_objectFound = false;
+
+        // first check if first item is the requested one -> working is the first item list no matter what objectID it has
+        if (ui16_objID == c_streamer.refc_pool.getIVtObjects()[ui8_arrIndex][0]->getID())
+          c_streamer.refc_pool.eventAttributeValue(c_streamer.refc_pool.getIVtObjects()[ui8_arrIndex][0],
+                                                  c_data.getUint8Data(3),
+                                                  c_data.getUint8DataPointer()+4);
+        else
+        {
+          // if last item of the list was reached or the requested object was found
+          while (c_streamer.refc_pool.getIVtObjects()[ui8_arrIndex] != NULL)
+          {
+            uint16_t ui16_arrBegin = 1;
+            uint16_t ui16_arrMiddle;
+            uint16_t ui16_arrEnd;
+
+            // first item in list contains all fix objects of the pool (when language changes, these object stay the same)
+            if (ui8_arrIndex == 0)
+              ui16_arrEnd = c_streamer.refc_pool.getNumObjects() - 1;
+            else
+              ui16_arrEnd = c_streamer.refc_pool.getNumObjectsLang() - 1;
+
+            // if object is among these we can leave the while-loop
+            if ((ui16_objID < c_streamer.refc_pool.getIVtObjects()[ui8_arrIndex][ui16_arrBegin]->getID())
+                || (ui16_objID > c_streamer.refc_pool.getIVtObjects()[ui8_arrIndex][ui16_arrEnd]->getID())) // range check
+            {
+              ui8_arrIndex++;
+              continue; // try next object list, the requested object could not be found in the current list
+            }
+
+            while (ui16_arrBegin <= ui16_arrEnd)
+            {
+              ui16_arrMiddle = ui16_arrBegin + ((ui16_arrEnd - ui16_arrBegin) / 2);
+
+              if (c_streamer.refc_pool.getIVtObjects()[ui8_arrIndex][ui16_arrMiddle]->getID() == ui16_objID) // objID found?
+              {
+                b_objectFound = true;
+                c_streamer.refc_pool.eventAttributeValue(c_streamer.refc_pool.getIVtObjects()[ui8_arrIndex][ui16_arrMiddle],
+                                                        c_data.getUint8Data(3),
+                                                        c_data.getUint8DataPointer()+4);
+                break;
+              }
+              else
+              {
+                if (c_streamer.refc_pool.getIVtObjects()[ui8_arrIndex][ui16_arrMiddle]->getID() > ui16_objID)
+                  ui16_arrEnd = ui16_arrMiddle - 1;
+                else
+                  ui16_arrBegin = ui16_arrMiddle + 1;
+              }
+            }
+
+            if ((ui8_arrIndex == 0) && b_objectFound) // an object is either a fix object or a language dependent object (at least once in any language dependent list)
+              break;
+
+            ui8_arrIndex++;
+          }
+        }
+      }
+      break;
     case 0xC0: // Command: "Get Technical Data", parameter "Get Memory Size Response"
       pc_vtServerInstance->setVersion();
       if ((en_uploadType == UploadPool) && (en_uploadPoolState == UploadPoolWaitingForMemoryResponse))
@@ -1151,7 +1223,11 @@ VtClientServerCommunication_c::processMsg()
       { /// Our command was successfully sent & responded to, so remove it from the queue
         if (ui8_commandParameter == c_data.getUint8Data (0))
         { /* okay, right response for our current command! */
-          ui8_uploadCommandError = c_data.getUint8Data (ui8_errByte-1);
+          // special treatment for Get Attribute Value command -> error byte is also being used as value byte for successful response
+          if ((ui8_commandParameter == 0xB9) && (c_data.getUint16Data (2-1) != 0xFFFF))
+            ui8_uploadCommandError = 0;
+          else
+            ui8_uploadCommandError = c_data.getUint8Data (ui8_errByte-1);
           /// Inform user on success/error of this command
           c_streamer.refc_pool.eventCommandResponse (ui8_uploadCommandError, c_data.getUint8DataConstPointer()); // pass "ui8_uploadCommandError" in case it's only important if it's an error or not. get Cmd and all databytes from "c_data.name()"
 #ifdef DEBUG
@@ -1446,9 +1522,7 @@ VtClientServerCommunication_c::sendCommandUpdateObjectPool (IsoAgLib::iVtObject_
                       0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, DEF_TimeOut_EndOfObjectPool, false); // replaces COULD happen if user-triggered sequences are there.
 }
 
-
 // ########## Gaphics Context ##########
-
 //! @return Flag if successful
 bool
 VtClientServerCommunication_c::sendCommandSetGraphicsCursor(
@@ -1754,9 +1828,17 @@ VtClientServerCommunication_c::sendCommandCopyViewport2PictureGraphic(
                       pc_VtObject->getID() & 0xFF, pc_VtObject->getID() >> 8, 0xFF, 0xFF,
                       DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
 }
-
 // ########## END Graphics Context ##########
 
+bool
+VtClientServerCommunication_c::sendCommandGetAttributeValue( IsoAgLib::iVtObject_c* rpc_object, const uint8_t cui8_attrID, bool b_enableReplaceOfCmd)
+{
+  return sendCommand (185 /* Command: Get Technical Data --- Parameter: Get Attribute Value */,
+                      rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
+                      cui8_attrID,
+                      0xFF, 0xFF, 0xFF, 0xFF,
+                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
+}
 
 bool
 VtClientServerCommunication_c::queueOrReplace (SendUpload_c& rref_sendUpload, bool b_enableReplaceOfCmd)

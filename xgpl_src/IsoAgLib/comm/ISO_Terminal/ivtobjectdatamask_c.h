@@ -74,10 +74,10 @@ public:
   //! @param b_initPointer:
   void init(const iVtObjectDataMask_s* vtObjectDataMaskSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) {
     vtObjectDataMask_c::init (vtObjectDataMaskSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
-  };
+  }
 
   //  Operation: get_vtObjectDataMask_a
-  const iVtObjectDataMask_s& get_vtObjectDataMask_a() { return *vtObjectDataMask_c::get_vtObjectDataMask_a(); };
+  const iVtObjectDataMask_s& get_vtObjectDataMask_a() { return *vtObjectDataMask_c::get_vtObjectDataMask_a(); }
 
   //  Operation: setSoftKeyMask
   //! Parameter:
@@ -85,7 +85,7 @@ public:
   //! @param b_updateObject:
   void setSoftKeyMask(iVtObjectSoftKeyMask_c* newSoftKeyMask, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
     vtObjectDataMask_c::setSoftKeyMask (newSoftKeyMask, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
   //  Operation: setBackgroundColour
   //! Parameter:
@@ -93,7 +93,7 @@ public:
   //! @param b_updateObject:
   void setBackgroundColour(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectDataMask_c::setBackgroundColour (newValue, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
   //  Operation: moveChildLocation
   //! Parameter:
@@ -106,7 +106,6 @@ public:
   }
 
   //  Operation: setChildPosition
-  //! Parameter:
   //! @param rpc_childObject:
   //! @param dx:
   //! @param dy:
@@ -114,8 +113,22 @@ public:
     return vtObjectDataMask_c::setChildPosition(rpc_childObject, dx, dy, b_updateObject, b_enableReplaceOfCmd);
   }
 
-}; // ~X2C
+  // ///////////////////////// getter for attributes
+  /** that attribute is in parentheses in the spec, so commented out here
+  uint8_t updateObjectType() const {
+    return vtObjectDataMask_c::updateObjectType();
+  }
+  */
+
+  uint8_t updateBackgroundColour(bool b_SendRequest=false) {
+    return vtObjectDataMask_c::updateBackgroundColour(b_SendRequest);
+  }
+
+  uint16_t updateSoftKeyMask(bool b_SendRequest=false) {
+    return vtObjectDataMask_c::updateSoftKeyMask(b_SendRequest);
+  }
+};
 
 } // end of namespace IsoAgLib
 
-#endif // -X2C
+#endif

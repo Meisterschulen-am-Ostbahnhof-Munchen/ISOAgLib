@@ -75,13 +75,13 @@ public:
   //! @param b_initPointer:
   void init(const iVtObjectInputString_s* vtObjectInputStringSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) {
     vtObjectInputString_c::init (vtObjectInputStringSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
-  };
+  }
 
   //  Operation: get_vtObjectInputString_a
-  const iVtObjectInputString_s& get_vtObjectInputString_a() { return *vtObjectInputString_c::get_vtObjectInputString_a(); };
+  const iVtObjectInputString_s& get_vtObjectInputString_a() { return *vtObjectInputString_c::get_vtObjectInputString_a(); }
 
   //  Operation: getString
-  const char* getString() { return vtObjectInputString_c::getString(); };
+  const char* getString() { return vtObjectInputString_c::getString(); }
 
 
   //  Operation: setValueRef
@@ -90,7 +90,7 @@ public:
   //! @param b_updateObject:
   void setValueRef(const char* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectInputString_c::setValueRef (newValue, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
   //  Operation: setValueCopy
   //! Parameter:
@@ -98,7 +98,7 @@ public:
   //! @param b_updateObject:
   void setValueCopy(const char* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectInputString_c::setValueCopy (newValue, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
 #ifdef USE_VT_UNICODE_SUPPORT
   //  Operation: setValueCopyUTF8
@@ -107,7 +107,7 @@ public:
   //! @param b_updateObject:
   void setValueCopyUTF8(const char* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectInputString_c::setValueCopyUTF8 (newValue, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 #endif
 
   //  Operation: setVariableReference
@@ -116,7 +116,7 @@ public:
   //! @param b_updateObject:
   void setVariableReference(iVtObjectStringVariable_c* newVariable, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectInputString_c::setVariableReference (newVariable, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
   //  Operation: changeBackgroundColor
   //! Parameter:
@@ -124,7 +124,7 @@ public:
   //! @param b_updateObject:
   void changeBackgroundColour(uint8_t colorValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectInputString_c::setBackgroundColour (colorValue, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
   // Operation: setWidth
   //! Parameter:
@@ -132,7 +132,7 @@ public:
   //! @param b_updateObject:
   void setWidth(uint16_t newWidth, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectInputString_c::setWidth (newWidth, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
   // Operation: setHeight
   //! Parameter:
@@ -140,7 +140,7 @@ public:
   //! @param b_updateObject:
   void setHeight(uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectInputString_c::setHeight (newHeight, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
   // Operation: setFontAttributes
   //! Parameter:
@@ -148,7 +148,7 @@ public:
   //! @param b_updateObject:
   void setFontAttributes(IsoAgLib::iVtObjectFontAttributes_c* newFontAttributes, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectInputString_c::setFontAttributes (newFontAttributes, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
   // Operation: setInputAttributes
   //! Parameter:
@@ -156,7 +156,7 @@ public:
   //! @param b_updateObject:
   void setInputAttributes(IsoAgLib::iVtObjectInputAttributes_c* newInputAttributes, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectInputString_c::setInputAttributes (newInputAttributes, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
   // Operation: setOptions
   //! Parameter:
@@ -164,7 +164,7 @@ public:
   //! @param b_updateObject:
   void setOptions(uint8_t newOptions, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectInputString_c::setOptions (newOptions, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
   // Operation: setHorizontalJustification
   //! Parameter:
@@ -172,22 +172,63 @@ public:
   //! @param b_updateObject:
   void setHorizontalJustification(uint8_t newHorizontalJustification, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectInputString_c::setHorizontalJustification (newHorizontalJustification, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
     //  Operation: enable
   //! Parameter:
   //! @param b_updateObject:
-  bool enable(bool b_updateObject= false, bool b_enableReplaceOfCmd=false) { return vtObject_c::able (1, b_updateObject, b_enableReplaceOfCmd); };
+  bool enable(bool b_updateObject= false, bool b_enableReplaceOfCmd=false) { return vtObject_c::able (1, b_updateObject, b_enableReplaceOfCmd); }
 
   //  Operation: disable
   //! Parameter:
   //! @param b_updateObject:
-  bool disable(bool b_updateObject= false, bool b_enableReplaceOfCmd=false) { return vtObject_c::able (0, b_updateObject, b_enableReplaceOfCmd); };
+  bool disable(bool b_updateObject= false, bool b_enableReplaceOfCmd=false) { return vtObject_c::able (0, b_updateObject, b_enableReplaceOfCmd); }
 
   //  Operation: select
   bool select() { return vtObject_c::select(); }
+	
+  // ///////////////////////// getter for attributes
+  /** that attribute is in parentheses in the spec, so commented out here
+  uint8_t updateObjectType() const { return vtObjectInputString_c::updateObjectType(); }
+  */
+  
+  uint16_t updateWidth(bool b_SendRequest=false) {
+    return vtObjectInputString_c::updateWidth(b_SendRequest);
+  }
+  
+  uint16_t updateHeight(bool b_SendRequest=false) {
+    return vtObjectInputString_c::updateHeight(b_SendRequest);
+  }
 
-private:
+  uint8_t updateBackgroundColour(bool b_SendRequest=false) {
+    return vtObjectInputString_c::updateBackgroundColour(b_SendRequest);
+  }
+
+  uint16_t updateFontAttributes(bool b_SendRequest=false) {
+    return vtObjectInputString_c::updateFontAttributes(b_SendRequest);
+  }
+
+  uint16_t updateInputAttributes(bool b_SendRequest=false) {
+    return vtObjectInputString_c::updateInputAttributes(b_SendRequest);
+  }
+
+  uint8_t updateOptions(bool b_SendRequest=false) {
+    return vtObjectInputString_c::updateOptions(b_SendRequest);
+  }
+
+  uint16_t updateVariableReference(bool b_SendRequest=false) {
+    return vtObjectInputString_c::updateVariableReference(b_SendRequest);
+  }
+
+  uint8_t updateJustification(bool b_SendRequest=false) {
+    return vtObjectInputString_c::updateJustification(b_SendRequest);
+  }
+
+  /** that attribute is in parentheses in the spec, so commented out here
+  uint8_t updateEnabled(bool b_SendRequest=false) {
+    return vtObjectInputString_c::updateEnabled(b_SendRequest);
+  }
+  */
 
 }; // ~X2C
 

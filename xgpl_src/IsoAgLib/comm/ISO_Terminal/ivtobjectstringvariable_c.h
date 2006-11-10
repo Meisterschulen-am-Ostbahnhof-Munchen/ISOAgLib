@@ -48,34 +48,24 @@
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
  * the main author Achim Spangler by a.spangler@osb-ag.de                  *
  ***************************************************************************/
-
 #ifndef IVTOBJECTSTRINGVARIABLE_C_H
 #define IVTOBJECTSTRINGVARIABLE_C_H
 
-
-// +X2C includes
 #include "impl/vtobjectstringvariable_c.h"
 #include "ivtobjectoutputstring_c.h"
-// ~X2C
 
 // Begin Namespace IsoAgLib
 namespace IsoAgLib {
 
-
-//  +X2C Class 161 : iVtObjectStringVariable_c
-//!  Stereotype: Klasse
 class iVtObjectStringVariable_c : public __IsoAgLib::vtObjectStringVariable_c
 {
-
 public:
-
   //  Operation: init
-  //! Parameter:
   //! @param vtObjectStringVariableSROM:
   //! @param b_initPointer:
   void init(const iVtObjectStringVariable_s* vtObjectStringVariableSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) {
     vtObjectStringVariable_c::init (vtObjectStringVariableSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
-  };
+  }
 
   //  Operation: get_vtObjectStringVariable_a
   const iVtObjectStringVariable_s& get_vtObjectStringVariable_a() {
@@ -83,7 +73,6 @@ public:
   }
 
   //  Operation: setValueCopy
-  //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
   void setValueCopy(char* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
@@ -92,7 +81,6 @@ public:
 
 #ifdef USE_VT_UNICODE_SUPPORT
   //  Operation: setValueCopyUTF8
-  //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
   void setValueCopyUTF8(const char* newValue, uint8_t rui8_fontType, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
@@ -100,7 +88,6 @@ public:
   }
 
   //  Operation: setValueCopyUTF8
-  //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
   void setValueCopyUTF8(const char* newValue, iVtObjectOutputString_c& rrefc_ops, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
@@ -110,16 +97,20 @@ public:
 #endif
 
   //  Operation: setValueRef
-  //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void setValueRef(const char* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) { vtObjectStringVariable_c::setValueRef (newValue, b_updateObject, b_enableReplaceOfCmd); };
+  void setValueRef(const char* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
+    vtObjectStringVariable_c::setValueRef (newValue, b_updateObject, b_enableReplaceOfCmd);
+  }
 
   //  Operation: getString
-  const char* getString() { return vtObjectStringVariable_c::getString(); };
+  const char* getString() { return vtObjectStringVariable_c::getString(); }
 
-}; // ~X2C
+  /** that attribute is in parentheses in the spec, so commented out here
+  uint8_t updateObjectType() const { return vtObjectStringVariable_c::updateObjectType(); }
+  */
+};
 
 } // end of namespace IsoAgLib
 
-#endif // -X2C
+#endif

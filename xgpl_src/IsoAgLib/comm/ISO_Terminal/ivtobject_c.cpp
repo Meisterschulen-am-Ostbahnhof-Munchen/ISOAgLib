@@ -48,31 +48,27 @@
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
  * the main author Achim Spangler by a.spangler@osb-ag.de                  *
  ***************************************************************************/
-
-
 #include "ivtobject_c.h"
+
 #include "impl/vttypes.h"
 
 // Begin Namespace IsoAgLib
 namespace IsoAgLib {
-
-
-// //////////////////////////////// +X2C Operation 53 : vtObject_c
+// Operation : vtObject_c
 //iVtObject_c::vtObject_c()
-//: flags( 0 )
-//{ // ~X2C
-//} // -X2C
+//: flags( 0 ), ui16_bitmaskAttributeAlreadyRequested  (0)
+//{
+//}
 
-// //////////////////////////////// +X2C Operation 227 : setOriginSKM
-//! Parameter:
+// Operation : setOriginSKM
 //! @param b_SKM: true if this object is included in a softkeymask.
 void
 iVtObject_c::setOriginSKM(bool b_SKM)
-{ // ~X2C
+{
   if (b_SKM) s_properties.flags |= FLAG_ORIGIN_SKM;
-} // -X2C
+}
 
-//! Parameter:
+// Operation : setOriginBTN
 //! @param p_btn: false if this object is not included in a button.
 void iVtObject_c::setOriginBTN(iVtObjectButton_c* p_btn)
 {

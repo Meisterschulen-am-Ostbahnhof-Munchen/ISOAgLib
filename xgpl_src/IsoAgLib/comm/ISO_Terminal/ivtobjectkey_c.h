@@ -74,10 +74,10 @@ public:
   //! @param b_initPointer:
   void init(const iVtObjectKey_s* vtObjectKeySROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) {
     vtObjectKey_c::init (vtObjectKeySROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
-  };
+  }
 
   //  Operation: get_vtObjectKey_a
-  const iVtObjectKey_s& get_vtObjectKey_a() { return *vtObjectKey_c::get_vtObjectKey_a(); };
+  const iVtObjectKey_s& get_vtObjectKey_a() { return *vtObjectKey_c::get_vtObjectKey_a(); }
 
   //  Operation: setBackgroundColour
   //! Parameter:
@@ -85,7 +85,7 @@ public:
   //! @param b_updateObject:
   void setBackgroundColour(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectKey_c::setBackgroundColour (newValue, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
   //  Operation: setKeyCode
   //! Parameter:
@@ -93,7 +93,7 @@ public:
   //! @param b_initPointer:
   void setKeyCode(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectKey_c::setKeyCode (newValue, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
   //  Operation: moveChildLocation
   //! Parameter:
@@ -106,7 +106,6 @@ public:
   }
 
   //  Operation: setChildPosition
-  //! Parameter:
   //! @param rpc_childObject:
   //! @param dx:
   //! @param dy:
@@ -114,8 +113,22 @@ public:
     return vtObjectKey_c::setChildPosition(rpc_childObject, dx, dy, b_updateObject, b_enableReplaceOfCmd);
   }
 
-}; // ~X2C
+  // ///////////////////////// getter for attributes
+  /** that attribute is in parentheses in the spec, so commented out here
+  uint8_t updateObjectType() const {
+  return vtObjectKey_c::updateObjectType();
+  }
+   */
+
+  uint8_t updateBackgroundColour(bool b_SendRequest=false) {
+    return vtObjectKey_c::updateBackgroundColour(b_SendRequest);
+  }
+
+  uint8_t updateKeyCode(bool b_SendRequest=false) {
+    return vtObjectKey_c::updateKeyCode(b_SendRequest);
+  }
+};
 
 } // end of namespace IsoAgLib
 
-#endif // -X2C
+#endif

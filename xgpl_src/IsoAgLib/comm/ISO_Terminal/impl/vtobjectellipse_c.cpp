@@ -79,10 +79,8 @@
  *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
-
-
-
 #include "vtobjectellipse_c.h"
+
 #include "../ivtobjectlineattributes_c.h"
 #include "../ivtobjectfillattributes_c.h"
 #include "../ivtobjectbutton_c.h"
@@ -91,10 +89,7 @@
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
-
-
-// //////////////////////////////// +X2C Operation 120 : stream
-//! Parameter:
+// Operation : stream
 //! @param destMemory:
 //! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
 //! @param sourceOffset:
@@ -102,7 +97,7 @@ int16_t
 vtObjectEllipse_c::stream(uint8_t* destMemory,
                           uint16_t maxBytes,
                           objRange_t sourceOffset)
-{ // ~X2C
+{
 #define MACRO_vtObjectTypeA vtObjectEllipse_a
 #define MACRO_vtObjectTypeS iVtObjectEllipse_s
     MACRO_streamLocalVars;
@@ -147,34 +142,30 @@ vtObjectEllipse_c::stream(uint8_t* destMemory,
 
     MACRO_streamEventMacro(15);
     return curBytes;
-} // -X2C
+}
 
-// //////////////////////////////// +X2C Operation 123 : vtObjectEllipse_c
-vtObjectEllipse_c::vtObjectEllipse_c()
-{ // ~X2C
-} // -X2C
+// Operation : vtObjectEllipse_c
+vtObjectEllipse_c::vtObjectEllipse_c() {}
 
-// //////////////////////////////// +X2C Operation 201 : size
+// Operation : size
 uint32_t
 vtObjectEllipse_c::fitTerminal() const
-{ // ~X2C
+{
   MACRO_localVars;
   return 15+vtObjectEllipse_a->numberOfMacrosToFollow*2;
-} // -X2C
+}
 
-
-// //////////////////////////////// +X2C Operation 231 : setOriginSKM
-//! Parameter:
+// Operation : setOriginSKM
 //! @param b_SKM:
 void
 vtObjectEllipse_c::setOriginSKM(bool b_SKM)
-{ // ~X2C
+{
   MACRO_localVars;
   if (b_SKM) {
     s_properties.flags |= FLAG_ORIGIN_SKM;
     vtObjectEllipse_a->lineAttributes->setOriginSKM (b_SKM);
   }
-} // -X2C
+}
 
 void
 vtObjectEllipse_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject, bool b_enableReplaceOfCmd)
@@ -184,6 +175,85 @@ vtObjectEllipse_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateO
     saveValue16 (MACRO_getStructOffset(get_vtObjectEllipse_a(), height), sizeof(iVtObjectEllipse_s), newHeight);
   }
   __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeSize (this, newWidth, newHeight, b_enableReplaceOfCmd);
+}
+
+uint16_t
+vtObjectEllipse_c::updateLineAttributes(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectEllipse_a(), lineAttributes), sizeof(iVtObjectEllipse_s), 1);
+  else
+    return getValue16(MACRO_getStructOffset(get_vtObjectEllipse_a(), lineAttributes), sizeof(iVtObjectEllipse_s));
+}
+
+uint16_t
+vtObjectEllipse_c::updateWidth(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectEllipse_a(), lineAttributes), sizeof(iVtObjectEllipse_s), 2);
+  else
+    return getValue16(MACRO_getStructOffset(get_vtObjectEllipse_a(), lineAttributes), sizeof(iVtObjectEllipse_s));
+}
+
+uint16_t
+vtObjectEllipse_c::updateHeight(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectEllipse_a(), height), sizeof(iVtObjectEllipse_s), 3);
+  else
+    return getValue16(MACRO_getStructOffset(get_vtObjectEllipse_a(), height), sizeof(iVtObjectEllipse_s));
+}
+
+uint8_t
+vtObjectEllipse_c::updateEllipseType(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectEllipse_a(), ellipseType), sizeof(iVtObjectEllipse_s), 4);
+  else
+    return getValue8(MACRO_getStructOffset(get_vtObjectEllipse_a(), ellipseType), sizeof(iVtObjectEllipse_s));
+}
+
+uint8_t
+vtObjectEllipse_c::updateStartAngle(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectEllipse_a(), startAngle), sizeof(iVtObjectEllipse_s), 5);
+  else
+    return getValue8(MACRO_getStructOffset(get_vtObjectEllipse_a(), startAngle), sizeof(iVtObjectEllipse_s));
+}
+
+uint8_t
+vtObjectEllipse_c::updateEndAngle(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectEllipse_a(), endAngle), sizeof(iVtObjectEllipse_s), 6);
+  else
+    return getValue8(MACRO_getStructOffset(get_vtObjectEllipse_a(), endAngle), sizeof(iVtObjectEllipse_s));
+}
+
+uint16_t
+vtObjectEllipse_c::updateFillAttributes(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectEllipse_a(), fillAttributes), sizeof(iVtObjectEllipse_s), 7);
+  else
+    return getValue16(MACRO_getStructOffset(get_vtObjectEllipse_a(), fillAttributes), sizeof(iVtObjectEllipse_s));
+}
+
+void
+vtObjectEllipse_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attributeValue)
+{
+  switch (attrID)
+  {
+    case 1: saveValue16(MACRO_getStructOffset(get_vtObjectEllipse_a(), lineAttributes), sizeof(iVtObjectEllipse_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
+    case 2: saveValue16(MACRO_getStructOffset(get_vtObjectEllipse_a(), lineAttributes), sizeof(iVtObjectEllipse_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
+    case 3: saveValue16(MACRO_getStructOffset(get_vtObjectEllipse_a(), height), sizeof(iVtObjectEllipse_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
+    case 4: saveValue8(MACRO_getStructOffset(get_vtObjectEllipse_a(), ellipseType), sizeof(iVtObjectEllipse_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
+    case 5: saveValue8(MACRO_getStructOffset(get_vtObjectEllipse_a(), startAngle), sizeof(iVtObjectEllipse_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
+    case 6: saveValue8(MACRO_getStructOffset(get_vtObjectEllipse_a(), endAngle), sizeof(iVtObjectEllipse_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
+    case 7: saveValue16(MACRO_getStructOffset(get_vtObjectEllipse_a(), fillAttributes), sizeof(iVtObjectEllipse_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
+    default: break;
+  }
 }
 
 } // end namespace __IsoAgLib

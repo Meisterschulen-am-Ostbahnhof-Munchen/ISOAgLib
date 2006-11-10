@@ -79,27 +79,23 @@
  *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
-
 #ifndef VTOBJECTGRAPHICSCONTEXT_C_H
 #define VTOBJECTGRAPHICSCONTEXT_C_H
-
 
 #include "vtobject_c.h"
 #include "isoterminal_c.h"
 
 namespace __IsoAgLib {
-
 //! VT client object for graphics context.
 class vtObjectGraphicsContext_c : public vtObject_c
 {
 public:
-
   //! ISO related IDs
   enum ID_t {
      //! Object type ID as defined by ISO App.B
      e_objectType               = 36
      //! Command ID as defined by ISO App.F
-    ,e_commandID                = 0xB9  // dec. 185
+    ,e_commandID                = 0xB8  // dec. 184
      //! Graphics context sub command ID as in ISO App.F
     ,e_setGraphicsCursorCmdID   = 0
     ,e_setForegroundColourCmdID = 1
@@ -117,7 +113,6 @@ public:
     ,e_panViewportCmdID         = 13
     ,e_zoomViewportCmdID        = 14
     ,e_panAndZoomViewportCmdID  = 15
-    //! @todo Not conform to the current proposal ID094 20060718 (using 15 twice)
     ,e_changeViewportSizeCmdID  = 16
     ,e_drawVTObjectCmdID        = 17
     ,e_copyCanvasToPictureGraphicCmdID   = 18
@@ -130,15 +125,16 @@ public:
   int16_t stream(uint8_t* destMemory, uint16_t maxBytes, objRange_t sourceOffset);
 
   //  Operation: init
-  //! Parameter:
   //! @param vtObjectGraphicsContextSROM:
   //! @param b_initPointer:
   void init(const iVtObjectGraphicsContext_s* vtObjectGraphicsContextSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) {
-       vtObject_c::init ((iVtObject_s*) vtObjectGraphicsContextSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA); };
+    vtObject_c::init ((iVtObject_s*) vtObjectGraphicsContextSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
+  }
 
   //  Operation: get_vtObjectGraphicsContext_a
   inline iVtObjectGraphicsContext_s* get_vtObjectGraphicsContext_a( void ) {
-       return (iVtObjectGraphicsContext_s *)vtObject_a; }
+    return (iVtObjectGraphicsContext_s *)vtObject_a;
+  }
 
   //  Operation: vtObjectGraphicsContext_c
   vtObjectGraphicsContext_c( void );
@@ -148,7 +144,6 @@ public:
 
   // //////////////////////////////////
   // All special Attribute-Set methods
-
   void setGraphicsCursor(const IsoAgLib::iVtPoint_c& rc_point,
        bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
@@ -209,6 +204,43 @@ public:
   void copyViewport2PictureGraphic(const IsoAgLib::iVtObjectPictureGraphic_c* const pc_VtObjectPictureGraphic,
        bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
+  // ///////////////////////// getter for attributes
+  /** that attribute is in parentheses in the spec, so commented out here
+  uint8_t updateObjectType() const { return 36; }
+  */
+
+  uint16_t updateViewportWidth(bool b_SendRequest=false);
+
+  uint16_t updateViewportHeight(bool b_SendRequest=false);
+
+  uint16_t updateViewportXPos(bool b_SendRequest=false);
+
+  uint16_t updateViewportYPos(bool b_SendRequest=false);
+
+  uint8_t updateViewPortZoom(bool b_SendRequest=false);
+
+  uint16_t updateCursorXPos(bool b_SendRequest=false);
+
+  uint16_t updateCursorYPos(bool b_SendRequest=false);
+
+  uint8_t updateForegroundColour(bool b_SendRequest=false);
+
+  uint8_t updateBackgroundColour(bool b_SendRequest=false);
+
+  uint16_t updateFontAttributes(bool b_SendRequest=false);
+
+  uint16_t updateLineAttributes(bool b_SendRequest=false);
+
+  uint16_t updateFillAttributes(bool b_SendRequest=false);
+
+  uint8_t updateFormat(bool b_SendRequest=false);
+
+  uint8_t updateOptions(bool b_SendRequest=false);
+
+  uint8_t updateTransparencyColour(bool b_SendRequest=false);
+
+  void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue);
+
 private:
   //! Total size of Graphics Context attributes.
   static const unsigned i_attributesSize = (
@@ -230,10 +262,8 @@ private:
 
   //! Total size of Graphics Context object including header
   static const unsigned i_totalSize = 3+i_attributesSize;
-
 };
 
 } // namespace __IsoAgLib
 
 #endif // VTOBJECTGRAPHICSCONTEXT_C_H
-

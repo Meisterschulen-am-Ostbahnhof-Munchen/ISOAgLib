@@ -48,10 +48,8 @@
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
  * the main author Achim Spangler by a.spangler@osb-ag:de                  *
  ***************************************************************************/
-
 #ifndef VTOBJECTFONTATTRIBUTES_C_H
 #define VTOBJECTFONTATTRIBUTES_C_H
-
 
 #include "vtobject_c.h"
 #include "isoterminal_c.h"
@@ -60,16 +58,10 @@
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
-
-//  +X2C Class 167 : vtObjectFontAttributes_c
-//!  Stereotype: Klasse
 class vtObjectFontAttributes_c : public vtObject_c
 {
-
 public:
-
   //  Operation: stream
-  //! Parameter:
   //! @param:destMemory:
   //! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
   //! @param sourceOffset:
@@ -78,17 +70,19 @@ public:
                  objRange_t sourceOffset);
 
   //  Operation: init
-  //! Parameter:
   //! @param vtObjectFontAttributesSROM:
   //! @param b_initPointer:
-  void init(const iVtObjectFontAttributes_s* vtObjectFontAttributesSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) { vtObject_c::init ((iVtObject_s*) vtObjectFontAttributesSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);};
+  void init(const iVtObjectFontAttributes_s* vtObjectFontAttributesSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA)
+  { vtObject_c::init ((iVtObject_s*) vtObjectFontAttributesSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);}
 
   //  Operation: get_vtObjectFontAttributes_a
   iVtObjectFontAttributes_s* get_vtObjectFontAttributes_a() { return (iVtObjectFontAttributes_s *)vtObject_a; }
 
   //  Operation: vtObjectFontAttributes_c
   vtObjectFontAttributes_c();
-  virtual ~vtObjectFontAttributes_c(){};
+
+  virtual ~vtObjectFontAttributes_c() {}
+
   //  Operation: size
   uint32_t fitTerminal() const;
 
@@ -115,6 +109,21 @@ public:
   }
 
   void setFontAttributes(uint8_t newFontColour, uint8_t newFontSize, uint8_t newFontType, uint8_t newFontStyle, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+
+  /** that attribute is in parentheses in the spec, so commented out here
+  uint8_t updateObjectType() const { return 23; }
+  */
+
+  uint8_t updateFontColour(bool b_SendRequest=false);
+
+  uint8_t updateFontSize(bool b_SendRequest=false);
+
+  uint8_t updateFontType(bool b_SendRequest=false);
+
+  uint8_t updateFontStyle(bool b_SendRequest=false);
+
+  void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue);
+
 
 private:
 

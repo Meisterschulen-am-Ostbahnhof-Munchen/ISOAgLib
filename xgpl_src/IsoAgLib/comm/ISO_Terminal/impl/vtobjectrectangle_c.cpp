@@ -79,23 +79,16 @@
  *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
-
-
-
 #include "vtobjectrectangle_c.h"
+
 #include "../ivtobjectlineattributes_c.h"
 #include "../ivtobjectfillattributes_c.h"
 #include "../ivtobjectbutton_c.h"
 #include "isoterminal_c.h"
 
-
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
-
-
-
-// //////////////////////////////// +X2C Operation 120 : stream
-//! Parameter:
+// Operation : stream
 //! @param destMemory:
 //! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
 //! @param sourceOffset:
@@ -103,7 +96,7 @@ int16_t
 vtObjectRectangle_c::stream(uint8_t* destMemory,
                             uint16_t maxBytes,
                             objRange_t sourceOffset)
-{ // ~X2C
+{
 #define MACRO_vtObjectTypeA vtObjectRectangle_a
 #define MACRO_vtObjectTypeS iVtObjectRectangle_s
     MACRO_streamLocalVars;
@@ -146,14 +139,12 @@ vtObjectRectangle_c::stream(uint8_t* destMemory,
 
     MACRO_streamEventMacro(13);
     return curBytes;
-} // -X2C
-
-// //////////////////////////////// +X2C Operation 123 : vtObjectRectangle_c
-vtObjectRectangle_c::vtObjectRectangle_c()
-{
 }
 
-// //////////////////////////////// +X2C Operation 201 : size
+// Operation : vtObjectRectangle_c
+vtObjectRectangle_c::vtObjectRectangle_c() {}
+
+// Operation : fitTerminal
 uint32_t
 vtObjectRectangle_c::fitTerminal() const
 {
@@ -162,18 +153,16 @@ vtObjectRectangle_c::fitTerminal() const
 }
 
 
-// //////////////////////////////// +X2C Operation 231 : setOriginSKM
-//! Parameter:
-//! @param b_SKM:
+// Operation : setOriginSKM
 void
 vtObjectRectangle_c::setOriginSKM(bool b_SKM)
-{ // ~X2C
+{
   MACRO_localVars;
   if (b_SKM) {
     s_properties.flags |= FLAG_ORIGIN_SKM;
     vtObjectRectangle_a->lineAttributes->setOriginSKM (b_SKM);
   }
-} // -X2C
+}
 
 void
 vtObjectRectangle_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject, bool b_enableReplaceOfCmd)
@@ -183,6 +172,65 @@ vtObjectRectangle_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_updat
     saveValue16 (MACRO_getStructOffset(get_vtObjectRectangle_a(), height), sizeof(iVtObjectRectangle_s), newHeight);
   }
   __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeSize (this, newWidth, newHeight, b_enableReplaceOfCmd);
+}
+
+uint16_t
+vtObjectRectangle_c::updateLineAttributes(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectRectangle_a(), lineAttributes), sizeof(iVtObjectRectangle_s), 1);
+  else
+    return getValue16(MACRO_getStructOffset(get_vtObjectRectangle_a(), lineAttributes), sizeof(iVtObjectRectangle_s));
+}
+
+uint16_t
+vtObjectRectangle_c::updateWidth(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectRectangle_a(), width), sizeof(iVtObjectRectangle_s), 2);
+  else
+    return getValue16(MACRO_getStructOffset(get_vtObjectRectangle_a(), width), sizeof(iVtObjectRectangle_s));
+}
+
+uint16_t
+vtObjectRectangle_c::updateHeight(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectRectangle_a(), height), sizeof(iVtObjectRectangle_s), 3);
+  else
+    return getValue16(MACRO_getStructOffset(get_vtObjectRectangle_a(), height), sizeof(iVtObjectRectangle_s));
+}
+
+uint8_t
+vtObjectRectangle_c::updateLineSuppression(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectRectangle_a(), lineSuppression), sizeof(iVtObjectRectangle_s), 4);
+  else
+    return getValue8(MACRO_getStructOffset(get_vtObjectRectangle_a(), lineSuppression), sizeof(iVtObjectRectangle_s));
+}
+
+uint16_t
+vtObjectRectangle_c::updateFillAttributes(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectRectangle_a(), fillAttributes), sizeof(iVtObjectRectangle_s), 5);
+  else
+    return getValue16(MACRO_getStructOffset(get_vtObjectRectangle_a(), fillAttributes), sizeof(iVtObjectRectangle_s));
+}
+
+void
+vtObjectRectangle_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attributeValue)
+{
+  switch (attrID)
+  {
+    case 1: saveValue16(MACRO_getStructOffset(get_vtObjectRectangle_a(), lineAttributes), sizeof(iVtObjectRectangle_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
+    case 2: saveValue16(MACRO_getStructOffset(get_vtObjectRectangle_a(), width), sizeof(iVtObjectRectangle_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
+    case 3: saveValue16(MACRO_getStructOffset(get_vtObjectRectangle_a(), height), sizeof(iVtObjectRectangle_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
+    case 4: saveValue8(MACRO_getStructOffset(get_vtObjectRectangle_a(), lineSuppression), sizeof(iVtObjectRectangle_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
+    case 5: saveValue16(MACRO_getStructOffset(get_vtObjectRectangle_a(), fillAttributes), sizeof(iVtObjectRectangle_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
+    default: break;
+  }
 }
 
 } // end namespace __IsoAgLib

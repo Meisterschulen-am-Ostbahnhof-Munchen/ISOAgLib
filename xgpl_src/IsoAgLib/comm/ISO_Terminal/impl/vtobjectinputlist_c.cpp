@@ -79,17 +79,13 @@
  *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
-
 #include "vtobjectinputlist_c.h"
-#include "isoterminal_c.h"
-//#include "../ivttypes.h"
 
+#include "isoterminal_c.h"
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
-
-// //////////////////////////////// +X2C Operation 94 : stream
-//! Parameter:
+// Operation : stream
 //! @param:destMemory:
 //! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
 //! @param sourceOffset:
@@ -97,7 +93,7 @@ int16_t
 vtObjectInputList_c::stream(uint8_t* destMemory,
                             uint16_t maxBytes,
                             objRange_t sourceOffset)
-{ // ~X2C
+{
 #define MACRO_vtObjectTypeA vtObjectInputList_a
 #define MACRO_vtObjectTypeS iVtObjectInputList_s
     MACRO_streamLocalVars;
@@ -130,31 +126,27 @@ vtObjectInputList_c::stream(uint8_t* destMemory,
     MACRO_streamObject(13);
     MACRO_streamEventMacro(13U+vtObjectInputList_a->numberOfObjectsToFollow*2U);
     return curBytes;
-} // -X2C
+}
 
 
-// //////////////////////////////// +X2C Operation 97 : vtObjectInputList_c
-vtObjectInputList_c::vtObjectInputList_c()
-{ // ~X2C
-} // -X2C
+// Operation : vtObjectInputList_c
+vtObjectInputList_c::vtObjectInputList_c() {}
 
-// //////////////////////////////// +X2C Operation 185 : getListItem
-//! Parameter:
-//! @param xth:
+// Operation : getListItem
 IsoAgLib::iVtObject_c*
 vtObjectInputList_c::getListItem(uint8_t xth)
-{ // ~X2C
-    return ((iVtObjectInputList_s *) vtObject_a)->objectsToFollow[xth].vtObject;
-} // -X2C
+{
+  return ((iVtObjectInputList_s *) vtObject_a)->objectsToFollow[xth].vtObject;
+}
 
-// //////////////////////////////// +X2C Operation 186 : getNumberOfListItems
+// Operation : getNumberOfListItems
 uint8_t
 vtObjectInputList_c::getNumberOfListItems()
 {
     return ((iVtObjectInputList_s *) vtObject_a)->numberOfObjectsToFollow;
 }
 
-// //////////////////////////////// +X2C Operation 197 : size
+// Operation : fitTerminal
 uint32_t
 vtObjectInputList_c::fitTerminal() const
 {
@@ -162,36 +154,33 @@ vtObjectInputList_c::fitTerminal() const
   return 13+vtObjectInputList_a->numberOfObjectsToFollow*2+vtObjectInputList_a->numberOfMacrosToFollow*2;
 }
 
-// //////////////////////////////// +X2C Operation 221 : updateEnable
-//! Parameter:
+// Operation : updateEnable
 //! @param b_enableOrDisable:
 void
 vtObjectInputList_c::updateEnable(uint8_t rui8_enOrDis)
-{ // ~X2C
+{
   saveValue8 (MACRO_getStructOffset(get_vtObjectInputList_a(), enabled), sizeof(iVtObjectInputList_s), rui8_enOrDis);
-} // -X2C
+}
 
-// //////////////////////////////// +X2C Operation 266 : setValue
-//! Parameter:
+// Operation : setValue
 //! @param newValue:
 //! @param b_updateObject:
 void
 vtObjectInputList_c::setValue(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd)
-{ // ~X2C
+{
   if (get_vtObjectInputList_a()->variableReference == NULL) {
     if (b_updateObject) saveValue8 (MACRO_getStructOffset(get_vtObjectInputList_a(), value), sizeof(iVtObjectInputList_s), newValue);
 
     __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeNumericValue (this, newValue, 0x00, 0x00, 0x00, b_enableReplaceOfCmd);
   }
-} // -X2C
+}
 
-// //////////////////////////////// +X2C Operation 280 : setItem
-//! Parameter:
+// Operation : setItem
 //! @param rui8_index:
 //! @param rpc_object:
 void
 vtObjectInputList_c::setItem(uint8_t rui8_index, IsoAgLib::iVtObject_c* rpc_object, bool b_enableReplaceOfCmd)
-{ // ~X2C
+{
   uint8_t hi, lo;
   if (rpc_object == NULL) {
     lo = 0xFF;
@@ -211,7 +200,7 @@ vtObjectInputList_c::setItem(uint8_t rui8_index, IsoAgLib::iVtObject_c* rpc_obje
                                                    1000 /* timeout value */,
                                                    b_enableReplaceOfCmd
                                                    );
-} // -X2C
+}
 
 void
 vtObjectInputList_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject, bool b_enableReplaceOfCmd)
@@ -224,4 +213,66 @@ vtObjectInputList_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_updat
   __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeSize (this, newWidth, newHeight, b_enableReplaceOfCmd);
 }
 
+uint16_t
+vtObjectInputList_c::updateWidth(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectInputList_a(), width), sizeof(iVtObjectInputList_s), 1);
+  else
+    return getValue16(MACRO_getStructOffset(get_vtObjectInputList_a(), width), sizeof(iVtObjectInputList_s));
+}
+
+uint16_t
+vtObjectInputList_c::updateHeight(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectInputList_a(), height), sizeof(iVtObjectInputList_s), 2);
+  else
+    return getValue16(MACRO_getStructOffset(get_vtObjectInputList_a(), height), sizeof(iVtObjectInputList_s));
+}
+
+uint16_t
+vtObjectInputList_c::updateVariableReference(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectInputList_a(), variableReference), sizeof(iVtObjectInputList_s), 3);
+  else
+    return getValue16(MACRO_getStructOffset(get_vtObjectInputList_a(), variableReference), sizeof(iVtObjectInputList_s));
+}
+
+/** these attributes are in parentheses in the spec, so commented out here
+uint8_t
+vtObjectInputList_c::updateValue(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectInputList_a(), value), sizeof(iVtObjectInputList_s), 4);
+  else
+    return getValue8(MACRO_getStructOffset(get_vtObjectInputList_a(), value), sizeof(iVtObjectInputList_s));
+}
+
+uint8_t
+vtObjectInputList_c::updateOptions(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectInputList_a(), enabled), sizeof(iVtObjectInputList_s), 5);
+  else
+    return getValue8(MACRO_getStructOffset(get_vtObjectInputList_a(), enabled), sizeof(iVtObjectInputList_s));
+}
+*/
+
+void
+vtObjectInputList_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attributeValue)
+{
+  switch (attrID)
+  {
+    case 1: saveValue16(MACRO_getStructOffset(get_vtObjectInputList_a(), width), sizeof(iVtObjectInputList_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
+    case 2: saveValue16(MACRO_getStructOffset(get_vtObjectInputList_a(), height), sizeof(iVtObjectInputList_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
+    case 3: saveValue16(MACRO_getStructOffset(get_vtObjectInputList_a(), variableReference), sizeof(iVtObjectInputList_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
+    /** these attributes are in parentheses in the spec, so commented out here
+    case 4: saveValue8(MACRO_getStructOffset(get_vtObjectInputList_a(), value), sizeof(iVtObjectInputList_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
+    case 5: saveValue8(MACRO_getStructOffset(get_vtObjectInputList_a(), enabled), sizeof(iVtObjectInputList_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
+    */
+    default: break;
+  }
+}
 } // end of namespace __IsoAgLib

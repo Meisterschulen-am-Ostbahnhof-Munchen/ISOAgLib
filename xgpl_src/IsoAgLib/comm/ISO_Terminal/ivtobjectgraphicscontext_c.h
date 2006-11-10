@@ -48,7 +48,6 @@
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
  * the main author Achim Spangler by a.spangler@osb-ag.de                  *
  ***************************************************************************/
-
 #ifndef IVTOBJECTGRAPHICSCONTEXT_C_H
 #define IVTOBJECTGRAPHICSCONTEXT_C_H
 
@@ -56,7 +55,6 @@
 
 namespace IsoAgLib {
 
-//!  Stereotype: Klasse
 class iVtObjectGraphicsContext_c : public __IsoAgLib::vtObjectGraphicsContext_c
 {
 public:
@@ -80,7 +78,7 @@ public:
   void setGraphicsCursor(const iVtPoint_c& rc_point,
                          bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectGraphicsContext_c::setGraphicsCursor( rc_point, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
   //! This command modifies the foreground colour attribute (Sub-Command ID 1).
   //! The graphics cursor is not moved.
@@ -90,7 +88,7 @@ public:
   void setForegroundColour(uint8_t newValue,
                            bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectGraphicsContext_c::setForegroundColour (newValue, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
   //! This command modifies the background colour attribute (Sub-Command ID 2).
   //! The graphics cursor is not moved.
@@ -100,21 +98,20 @@ public:
   void setBackgroundColour(uint8_t newValue,
                            bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectGraphicsContext_c::setBackgroundColour (newValue, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
   //! This command modifies the line object attribute (Sub-Command ID 3).
   //! All drawing commands that follow use the new attribute value.
   //! For line suppression, set the object ID to 65535.
   //! The graphics cursor is not moved.
-  //! Parameter:
   //! @param newLineAttributes
   //! @param b_updateObject
   //! @param b_enableReplaceOfCmd
   void setLineAttributes(const iVtObjectLineAttributes_c* const newLineAttributes,
                          bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectGraphicsContext_c::setLineAttributes (newLineAttributes, b_updateObject, b_enableReplaceOfCmd);
-  };
-  
+  }
+
   //! This command modifies the fill object attribute (Sub-Command ID 4).
   //! All drawing commands that follow use the new attribute value.
   //! For no filling, set the object ID to 65535.
@@ -125,7 +122,7 @@ public:
   void setFillAttributes(const iVtObjectFillAttributes_c* const newFillAttributes,
                          bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectGraphicsContext_c::setFillAttributes (newFillAttributes, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
   //! This command modifies the font object attribute (Sub-Command ID 5).
   //! All drawing commands that follow use the new attribute value.
@@ -137,7 +134,7 @@ public:
   void setFontAttributes(const iVtObjectFontAttributes_c* const newFontAttributes,
                          bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectGraphicsContext_c::setFontAttributes (newFontAttributes, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
   //! Fills the rectangle from the graphics cursor to the defined end pixel
   //! using the current background colour (Sub-Command ID 6).
@@ -150,26 +147,26 @@ public:
   void eraseRectangle(const iVtPoint_c& rc_point,
                       bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectGraphicsContext_c::eraseRectangle( rc_point, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
   //! Sets the pixel at the graphics cursor to the foreground colour (Sub-Command ID 7).
-  //! The graphics cursor is not moved. 
+  //! The graphics cursor is not moved.
   //! @param b_updateObject
   //! @param b_enableReplaceOfCmd
   void drawPoint(bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectGraphicsContext_c::drawPoint( b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
   //! Draws a line from the graphics cursor to the defined end pixel using the foreground colour (Sub-Command ID 8).
   //! The Line Object drawing rules apply with respect to the end pixel location and line attributes.
-  //! The graphics cursor is moved to the defined end pixel. 
+  //! The graphics cursor is moved to the defined end pixel.
   //! @param rc_point End pixel position
   //! @param b_updateObject
   //! @param b_enableReplaceOfCmd
   void drawLine(const iVtPoint_c& rc_point,
                 bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectGraphicsContext_c::drawLine( rc_point, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
   //! Draws a rectangle from the graphics cursor to the defined end pixel (Sub-Command ID 9).
   //! The Rectangle Object drawing rules apply.
@@ -182,7 +179,7 @@ public:
   void drawRectangle(const iVtPoint_c& rc_point,
                      bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectGraphicsContext_c::drawRectangle( rc_point, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
   //! Draws a closed ellipse bounded by the rectangle defined by the current graphics cursor
   //! location and the end pixel given (Sub-Command ID 10).
@@ -196,7 +193,7 @@ public:
   void drawClosedEllipse(const iVtPoint_c& rc_point,
                          bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectGraphicsContext_c::drawClosedEllipse( rc_point, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
   //! Draws a polygon from the graphics cursor to the first point,
   //! then to the second point and so on (Sub-Command ID 11).
@@ -213,7 +210,7 @@ public:
   void drawPolygon(uint16_t cnt, const iVtPoint_c* const rpc_data,
                    bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectGraphicsContext_c::drawPolygon (cnt, rpc_data, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
   //! Draws the given text using the font attribute object (Sub-Command ID 12).
   //! Any flashing bits in the Font style of the font attribute object are ignored.
@@ -227,7 +224,7 @@ public:
   void drawText(uint8_t type, uint8_t cnt, const char* rpc_string,
                 bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectGraphicsContext_c::drawText( type, cnt, rpc_string, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
   //! This command modifies the viewport X and Y attributes and forces a redraw of the object (Sub-Command ID 13).
   //! This allows "panning" of the underlying object contents.
@@ -238,7 +235,7 @@ public:
   void panViewport(const iVtPoint_c& rc_point,
                    bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectGraphicsContext_c::panViewport( rc_point, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
   //! This command allows magnification of the viewport contents (Sub-Command ID 14).
   //! See "ISO11783 part 6 Graphics Context" section on zooming for meaning of the zoom value.
@@ -249,7 +246,7 @@ public:
   void zoomViewport(int8_t newValue,
                     bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectGraphicsContext_c::zoomViewport( newValue, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
   //! @todo Coordinates need to be signed.
   //! This command allows both panning and zooming at the same time
@@ -261,7 +258,7 @@ public:
   void panAndZoomViewport(const iVtPoint_c& rc_point, int8_t newValue,
                           bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectGraphicsContext_c::panAndZoomViewport( rc_point, newValue, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
   //! This command changes the size of the viewport and can be compared to
   //! the normal Change Size command (Sub-Command ID 15).
@@ -274,11 +271,11 @@ public:
   void changeViewportSize(uint16_t newWidth, uint16_t newHeight,
                           bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectGraphicsContext_c::changeViewportSize (newWidth, newHeight, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
   //! This command draws the VT Object at the current graphics cursor location (top left corner)(Sub-Command ID 16).
   //! Any drawable object may be specified with the exception of the Graphics Context
-  //! object itselve or any object that contains this Graphics Context object 
+  //! object itselve or any object that contains this Graphics Context object
   //! (circular references are not allowed).
   //! The object shall be drawn using the current value and state of that object at the time
   //! the command was specified (for instance, enabled or disabled).
@@ -294,14 +291,14 @@ public:
   //! @param iVtObject Pointer to the VT Object to be drawn
   //! @param b_updateObject
   //! @param b_enableReplaceOfCmd
-  void drawVtObject(const iVtObject_c* const iVtObject, 
+  void drawVtObject(const iVtObject_c* const iVtObject,
                     bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectGraphicsContext_c::drawVtObject( iVtObject, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
-  //! This command copies the current canvas of the Graphics Context Object into the 
+  //! This command copies the current canvas of the Graphics Context Object into the
   //! Picture Graphic Object (Sub-Command ID 17).
-  //! If the Picture Graphic is smaller than the canvas, 
+  //! If the Picture Graphic is smaller than the canvas,
   //! then it shall be clipped to fit within the Picture Graphic.
   //! If the Picture Graphic is larger than the canvas, then the extra pixels in the
   //! Picture Graphic are not changed.
@@ -318,9 +315,9 @@ public:
   void copyCanvas2PictureGraphic(const iVtObjectPictureGraphic_c* const iVtObjectPictureGraphic,
                                  bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectGraphicsContext_c::copyCanvas2PictureGraphic (iVtObjectPictureGraphic, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
-  //! This command copies the current Viewport (zoomed or panned) of the Graphics 
+  //! This command copies the current Viewport (zoomed or panned) of the Graphics
   //! Context Object into the Picture Graphic Object (Sub-Command ID 18).
   //! If the Picture Graphic is smaller than the Viewport, then it shall be clipped
   //! to fit within the Picture Graphic.
@@ -339,11 +336,74 @@ public:
   void copyViewport2PictureGraphic(const iVtObjectPictureGraphic_c* const iVtObjectPictureGraphic,
                                    bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectGraphicsContext_c::copyViewport2PictureGraphic (iVtObjectPictureGraphic, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
+  // ///////////////////////// getter for attributes
+  /** that attribute is in parentheses in the spec, so commented out here
+  uint8_t updateObjectType() const { return vtObjectGraphicsContext_c::updateObjectType(); }
+  */
+
+  uint16_t updateViewportWidth(bool b_SendRequest=false) {
+    return vtObjectGraphicsContext_c::updateViewportWidth(b_SendRequest);
+  }
+
+  uint16_t updateViewportHeight(bool b_SendRequest=false) {
+    return vtObjectGraphicsContext_c::updateViewportHeight(b_SendRequest);
+  }
+
+  uint16_t updateViewportXPos(bool b_SendRequest=false) {
+    return vtObjectGraphicsContext_c::updateViewportXPos(b_SendRequest);
+  }
+
+  uint16_t updateViewportYPos(bool b_SendRequest=false) {
+    return vtObjectGraphicsContext_c::updateViewportYPos(b_SendRequest);
+  }
+
+  uint8_t updateViewPortZoom(bool b_SendRequest=false) {
+    return vtObjectGraphicsContext_c::updateViewPortZoom(b_SendRequest);
+  }
+
+  uint16_t updateCursorXPos(bool b_SendRequest=false) {
+    return vtObjectGraphicsContext_c::updateCursorXPos(b_SendRequest);
+  }
+
+  uint16_t updateCursorYPos(bool b_SendRequest=false) {
+    return vtObjectGraphicsContext_c::updateCursorYPos(b_SendRequest);
+  }
+
+  uint8_t updateForegroundColour(bool b_SendRequest=false) {
+    return vtObjectGraphicsContext_c::updateForegroundColour(b_SendRequest);
+  }
+
+  uint8_t updateBackgroundColour(bool b_SendRequest=false) {
+    return vtObjectGraphicsContext_c::updateBackgroundColour(b_SendRequest);
+  }
+
+  uint16_t updateFontAttributes(bool b_SendRequest=false) {
+    return vtObjectGraphicsContext_c::updateFontAttributes(b_SendRequest);
+  }
+
+  uint16_t updateLineAttributes(bool b_SendRequest=false) {
+    return vtObjectGraphicsContext_c::updateLineAttributes(b_SendRequest);
+  }
+
+  uint16_t updateFillAttributes(bool b_SendRequest=false) {
+    return vtObjectGraphicsContext_c::updateFillAttributes(b_SendRequest);
+  }
+
+  uint8_t updateFormat(bool b_SendRequest=false) {
+    return vtObjectGraphicsContext_c::updateFormat(b_SendRequest);
+  }
+
+  uint8_t updateOptions(bool b_SendRequest=false) {
+    return vtObjectGraphicsContext_c::updateOptions(b_SendRequest);
+  }
+
+  uint8_t updateTransparencyColour(bool b_SendRequest=false) {
+    return vtObjectGraphicsContext_c::updateTransparencyColour(b_SendRequest);
+  }
 }; // class iVtObjectGraphicsContext_c
 
 } // namespace IsoAgLib
 
 #endif // IVTOBJECTGRAPHICSCONTEXT_C_H
-

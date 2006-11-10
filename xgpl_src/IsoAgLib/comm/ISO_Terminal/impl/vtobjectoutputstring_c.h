@@ -79,30 +79,20 @@
  *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
-
 #ifndef VTOBJECTOUTPUTSTRING_C_H
 #define VTOBJECTOUTPUTSTRING_C_H
 
-
-// +X2C includes
 #include "../ivtobjectstring_c.h"
 #include "isoterminal_c.h"
 #include "vtclientservercommunication_c.h"
-// ~X2C
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
-
-//  +X2C Class 109 : vtObjectOutputString_c
-//!  Stereotype: Klasse
 class vtObjectOutputString_c : public IsoAgLib::iVtObjectString_c
 {
-
 public:
-
   //  Operation: stream
-  //! Parameter:
   //! @param:destMemory:
   //! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
   //! @param sourceOffset:
@@ -111,10 +101,10 @@ public:
                  objRange_t sourceOffset);
 
   //  Operation: init
-  //! Parameter:
   //! @param vtObjectOutputStringSROM:
   //! @param b_initPointer:
-  void init(const iVtObjectOutputString_s* vtObjectOutputStringSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) { vtObject_c::init ((iVtObject_s*) vtObjectOutputStringSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA); };
+  void init(const iVtObjectOutputString_s* vtObjectOutputStringSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA)
+  { vtObject_c::init ((iVtObject_s*) vtObjectOutputStringSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA); }
 
   //  Operation: get_vtObjectOutputString_a
   iVtObjectOutputString_s* get_vtObjectOutputString_a() { return (iVtObjectOutputString_s *)vtObject_a; }
@@ -126,21 +116,16 @@ public:
   uint32_t fitTerminal() const;
 
   //  Operation: setOriginSKM
-  //! Parameter:
   //! @param b_SKM:
   void setOriginSKM(bool b_SKM);
 
-  //! Parameter:
   //! @param p_btn:
   void setOriginBTN(IsoAgLib::iVtObjectButton_c* p_btn);
 
   //  Operation: getString
   const char* getString();
 
-
-
   //  Operation: setValueCopy / setValueCopyUTF8
-  //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
   void setValueCopy    (const char* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
@@ -149,7 +134,6 @@ public:
 #endif
 
   //  Operation: setValueRef
-  //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
   void setValueRef(const char* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
@@ -180,8 +164,28 @@ public:
 
   void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
-}; // ~X2C
+  // ///////////////////////// getter for attributes
+  /** that attribute is in parentheses in the spec, so commented out here
+  uint8_t updateObjectType() const { return 11; }
+  */
+
+  uint16_t updateWidth(bool b_SendRequest=false);
+
+  uint16_t updateHeight(bool b_SendRequest=false);
+
+  uint8_t updateBackgroundColour(bool b_SendRequest=false);
+
+  uint16_t updateFontAttributes(bool b_SendRequest=false);
+
+  uint8_t updateOptions(bool b_SendRequest=false);
+
+  uint16_t updateVariableReference(bool b_SendRequest=false);
+
+  uint8_t updateJustification(bool b_SendRequest=false);
+
+  void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue);
+};
 
 } // end of namespace __IsoAgLib
 
-#endif // -X2C
+#endif

@@ -79,22 +79,10 @@
  *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
-
-// LOESCHE_POOL will send DeleteVersion INSTEAD of LoadVersion
-//#define LOESCHE_POOL
-//#define GET_VERSIONS
-//#define USE_SIMPLE_AUX_RESPONSE
-
 #include "vtserverinstance_c.h"
 
-// #include <IsoAgLib/comm/Scheduler/impl/scheduler_c.h>
-// #include <IsoAgLib/driver/can/impl/canio_c.h>
 #include <IsoAgLib/hal/system.h>
-// #include <IsoAgLib/comm/Multipacket/impl/multireceive_c.h>
-// #include <supplementary_driver/driver/datastreams/volatilememory_c.h>
-// #include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h>
 #include "isoterminal_c.h"
-// #include "vttypes.h"
 
 #if defined(DEBUG) || defined(DEBUG_HEAP_USEAGE)
   #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
@@ -106,9 +94,7 @@
   #endif
 #endif
 
-
 namespace __IsoAgLib {
-
   /****************************************/
  /*** VtServer Instance Implementation ***/
 /****************************************/
@@ -132,14 +118,12 @@ VtServerInstance_c::VtServerInstance_c(const ISOItem_c& ref_newItem, ISOName_c c
   localSettings_a.lastReceived = 0; // no language info received yet
 }
 
-
 /** default destructor, which initiate sending address release for all own identities
   @see VtServerInstance_c::~VtServerInstance_c
 */
 VtServerInstance_c::~VtServerInstance_c()
 {
 }
-
 
 /** call to check if at least one vt_statusMessage has arrived so we know if the terminal is there.
   @return true -> >= 1 vt_statusMessages have arrived -> terminal is there.
@@ -161,7 +145,6 @@ VtServerInstance_c::isVtActive ()
   return false;
 }
 
-
 /** process received vt status message
   @return true -> message was processed; else the received CAN message will be served to other matching CANCustomer_c
 */
@@ -175,8 +158,6 @@ VtServerInstance_c::setLatestVtStatusData()
   vtState_a.busyCodes = refc_isoTerminal.data().getUint8Data (6);
   vtState_a.functionBusy = refc_isoTerminal.data().getUint8Data (7);
 }
-
-
 
 /** process received language messages
   @return true -> message was processed; else the received CAN message will be served to other matching CANCustomer_c
@@ -200,14 +181,12 @@ VtServerInstance_c::setLocalSettings()
   // The other fields are reserved. (yet ;-)
 }
 
-
 void
 VtServerInstance_c::setVersion()
 {
   vtCapabilities_a.lastReceivedVersion = HAL::getTime();
   vtCapabilities_a.iso11783version = refc_isoTerminal.data().getUint8Data (1);
 }
-
 
 void
 VtServerInstance_c::setSoftKeyData()
@@ -219,7 +198,6 @@ VtServerInstance_c::setSoftKeyData()
   vtCapabilities_a.skPhysical = refc_isoTerminal.data().getUint8Data (7);
 }
 
-
 void
 VtServerInstance_c::setTextFontData()
 {
@@ -228,7 +206,6 @@ VtServerInstance_c::setTextFontData()
   vtCapabilities_a.fontSizes += refc_isoTerminal.data().getUint8Data (6) << 8;
   vtCapabilities_a.fontTypes = refc_isoTerminal.data().getUint8Data (7);
 }
-
 
 void
 VtServerInstance_c::setHardwareData()
@@ -239,7 +216,6 @@ VtServerInstance_c::setHardwareData()
   vtCapabilities_a.hwWidth = refc_isoTerminal.data().getUint8Data (4) + (refc_isoTerminal.data().getUint8Data (5) << 8);
   vtCapabilities_a.hwHeight = refc_isoTerminal.data().getUint8Data (6) + (refc_isoTerminal.data().getUint8Data (7) << 8);
 }
-
 
 void
 VtServerInstance_c::resetVtAlive()

@@ -79,19 +79,15 @@
  *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
-
 #include "vtobjectdatamask_c.h"
+
 #include "../ivtobjectfontattributes_c.h"
 #include "isoterminal_c.h"
-//#include "../ivtobjectsoftkeymask_c.h"
-
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
-
-// //////////////////////////////// +X2C Operation 72 : stream
-//! Parameter:
+// Operation : stream
 //! @param:destMemory:
 //! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
 //! @param sourceOffset:
@@ -99,7 +95,7 @@ int16_t
 vtObjectDataMask_c::stream(uint8_t* destMemory,
                            uint16_t maxBytes,
                            objRange_t sourceOffset)
-{ // ~X2C
+{
 #define MACRO_vtObjectTypeA vtObjectDataMask_a
 #define MACRO_vtObjectTypeS iVtObjectDataMask_s
     MACRO_streamLocalVars;
@@ -129,15 +125,13 @@ vtObjectDataMask_c::stream(uint8_t* destMemory,
     MACRO_streamEventMacro(8U+vtObjectDataMask_a->numberOfObjectsToFollow*6U);
 
     return curBytes;
-} // -X2C
-
-
-// //////////////////////////////// +X2C Operation 75 : vtObjectDataMask_c
-vtObjectDataMask_c::vtObjectDataMask_c()
-{
 }
 
-// //////////////////////////////// +X2C Operation 189 : size
+
+// Operation : vtObjectDataMask_c
+vtObjectDataMask_c::vtObjectDataMask_c() {}
+
+// Operation : size
 uint32_t
 vtObjectDataMask_c::fitTerminal() const
 {
@@ -148,11 +142,11 @@ vtObjectDataMask_c::fitTerminal() const
 
 void
 vtObjectDataMask_c::setSoftKeyMask(IsoAgLib::iVtObjectSoftKeyMask_c* newSoftKeyMask, bool b_updateObject, bool b_enableReplaceOfCmd)
-{ // ~X2C
+{
   if (b_updateObject) saveValueP (MACRO_getStructOffset(get_vtObjectDataMask_a(), softKeyMask), sizeof(iVtObjectDataMask_s), newSoftKeyMask);
 
   __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeSoftKeyMask (this, 1 /* "Type: Data Mask" */, (newSoftKeyMask == NULL) ? 0xFFFF : newSoftKeyMask->getID(), b_enableReplaceOfCmd);
-} // -X2C
+}
 
 bool
 vtObjectDataMask_c::moveChildLocation(IsoAgLib::iVtObject_c* rpc_childObject, int8_t dx, int8_t dy, bool b_updateObject, bool b_enableReplaceOfCmd)
@@ -161,7 +155,6 @@ vtObjectDataMask_c::moveChildLocation(IsoAgLib::iVtObject_c* rpc_childObject, in
   return genericChangeChildLocation (rpc_childObject, dx, dy, b_updateObject, vtObjectDataMask_a->numberOfObjectsToFollow, (IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s *) vtObjectDataMask_a->objectsToFollow, MACRO_getStructOffset(get_vtObjectDataMask_a(), objectsToFollow), sizeof(iVtObjectDataMask_s), b_enableReplaceOfCmd);
 }
 
-
 bool
 vtObjectDataMask_c::setChildPosition(IsoAgLib::iVtObject_c* rpc_childObject, int16_t x, int16_t y, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
@@ -169,5 +162,33 @@ vtObjectDataMask_c::setChildPosition(IsoAgLib::iVtObject_c* rpc_childObject, int
   return genericChangeChildPosition (rpc_childObject, x, y, b_updateObject, vtObjectDataMask_a->numberOfObjectsToFollow, (IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s *) vtObjectDataMask_a->objectsToFollow, MACRO_getStructOffset(get_vtObjectDataMask_a(), objectsToFollow), sizeof(iVtObjectDataMask_s), b_enableReplaceOfCmd);
 }
 
+uint8_t
+vtObjectDataMask_c::updateBackgroundColour (bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectDataMask_a(), backgroundColour), sizeof(iVtObjectDataMask_s), 1);
+  else
+    return getValue8(MACRO_getStructOffset(get_vtObjectDataMask_a(), backgroundColour), sizeof(iVtObjectDataMask_s));
+}
+
+uint16_t
+vtObjectDataMask_c::updateSoftKeyMask(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectDataMask_a(), softKeyMask), sizeof(iVtObjectDataMask_s), 2);
+  else
+    return getValue16(MACRO_getStructOffset(get_vtObjectDataMask_a(), softKeyMask), sizeof(iVtObjectDataMask_s));
+}
+
+void
+vtObjectDataMask_c::saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue)
+{
+  switch (attrID)
+  {
+    case 1: saveValue8(MACRO_getStructOffset(get_vtObjectDataMask_a(), backgroundColour), sizeof(iVtObjectDataMask_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
+    case 2: saveValue16(MACRO_getStructOffset(get_vtObjectDataMask_a(), softKeyMask), sizeof(iVtObjectDataMask_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
+    default: break;
+  }
+}
 
 } // end of namespace __IsoAgLib

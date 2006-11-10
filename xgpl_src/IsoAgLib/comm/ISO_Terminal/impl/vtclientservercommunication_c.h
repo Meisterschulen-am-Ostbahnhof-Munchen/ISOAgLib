@@ -84,17 +84,11 @@
 #ifndef VT_CLIENT_SERVER_COMMUNICATION_H
 #define VT_CLIENT_SERVER_COMMUNICATION_H
 
-
-/* *************************************** */
-/* ********** include headers ************ */
-/* *************************************** */
-// #include <IsoAgLib/typedef.h>
 #include <IsoAgLib/comm/ISO_Terminal/impl/isoterminalpkg_c.h>
 #include <IsoAgLib/comm/ISO_Terminal/iisoterminalobjectpool_c.h>
 #include <IsoAgLib/comm/Multipacket/impl/multisend_c.h>
 #include <IsoAgLib/comm/Multipacket/imultisendstreamer_c.h>
 #include <IsoAgLib/comm/Multipacket/multireceiveclient_c.h>
-// #include <IsoAgLib/comm/Multipacket/impl/stream_c.h>
 #include <IsoAgLib/comm/SystemMgmt/iidentitem_c.h>
 #include <IsoAgLib/util/impl/cancustomer_c.h>
 
@@ -105,7 +99,6 @@
 #else
   #include <queue>
 #endif
-
 
 namespace IsoAgLib {
 class iVtObjectString_c;
@@ -118,28 +111,29 @@ class SendUpload_c : public SendUploadBase_c
 {
 public:
   /** StringUpload constructor that initializes all fields of this class (use only for Change String Value TP Commands) */
-  SendUpload_c() : SendUploadBase_c() {};
+  SendUpload_c() : SendUploadBase_c() {}
+
   SendUpload_c (vtObjectString_c* rpc_objectString)
-    {set(rpc_objectString);};
+    {set(rpc_objectString);}
 
   SendUpload_c (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint8_t byte9, uint32_t rui32_timeout)
     : SendUploadBase_c( byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8, byte9, rui32_timeout ), mssObjectString(NULL)  /// Use BUFFER - NOT MultiSendStreamer!
     , ppc_vtObjects (NULL)
-    {};
+    {}
   SendUpload_c (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint32_t rui32_timeout, IsoAgLib::iVtObject_c** rppc_vtObjects, uint16_t rui16_numObjects)
     : SendUploadBase_c( byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8, rui32_timeout ), mssObjectString(NULL)  /// Use BUFFER - NOT MultiSendStreamer!
     , ppc_vtObjects (rppc_vtObjects)
     , ui16_numObjects (rui16_numObjects)
-    {};
+    {}
   SendUpload_c (uint16_t rui16_objId, const char* rpc_string, uint16_t overrideSendLength, uint8_t ui8_cmdByte = 179 /*is standard case for VT Change String Value (TP)*/)
     : SendUploadBase_c( rui16_objId, rpc_string, overrideSendLength, ui8_cmdByte ), mssObjectString(NULL)  /// Use BUFFER - NOT MultiSendStreamer!
     , ppc_vtObjects (NULL)
-    {};
+    {}
   SendUpload_c (uint8_t* rpui8_buffer, uint32_t bufferSize)
     : SendUploadBase_c (rpui8_buffer, bufferSize)
     , mssObjectString(NULL)  /// Use BUFFER - NOT MultiSendStreamer!
     , ppc_vtObjects (NULL)
-    {};
+    {}
 
   void set (vtObjectString_c* rpc_objectString);
   void set (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint8_t byte9, uint32_t rui32_timeout);
@@ -147,14 +141,12 @@ public:
   void set (uint16_t rui16_objId, const char* rpc_string, uint16_t overrideSendLength, uint8_t ui8_cmdByte = 179 /*is standard case for VT Change String Value (TP)*/);
   void set (uint8_t* rpui8_buffer, uint32_t bufferSize);
 
-
-
   SendUpload_c (const SendUpload_c& ref_source)
     : SendUploadBase_c(ref_source)
     , mssObjectString(ref_source.mssObjectString)
     , ppc_vtObjects (ref_source.ppc_vtObjects)
     , ui16_numObjects (ref_source.ui16_numObjects)
-    {};
+    {}
 
   const SendUpload_c& operator= (const SendUpload_c& ref_source)
   {
@@ -209,7 +201,7 @@ public:
   /** calculate the size of the data source
       - implementation of the abstract IsoAgLib::MultiSendStreamer_c function
     */
-  uint32_t getStreamSize() { return (ui32_streamSize != 0) ? ui32_streamSize : ui32_streamSizeLang; };
+  uint32_t getStreamSize() { return (ui32_streamSize != 0) ? ui32_streamSize : ui32_streamSizeLang; }
 
   uint8_t getFirstByte() { return 0x11; } // If ISOTerminal streams out, it's because of an Annex C. Object Pool Upload, so 0x11 can be returned ALWAYS!
 
@@ -341,7 +333,6 @@ public:
   void notifyOnNewVtServerInstance  (VtServerInstance_c& ref_newVtServerInst);
   void notifyOnVtServerInstanceLoss (VtServerInstance_c& ref_oldVtServerInst);
 
-
   /** sendCommand... methods */
   bool sendCommand (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint8_t byte9, uint32_t ui32_timeout, bool b_enableReplaceOfCmd=true);
   bool sendCommand (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint32_t ui32_timeout, bool b_enableReplaceOfCmd=true, IsoAgLib::iVtObject_c** rppc_vtObjects=NULL, uint16_t rui16_numObjects=0);
@@ -368,26 +359,29 @@ public:
   bool sendCommandControlAudioDevice (uint8_t rui8_repetitions, uint16_t rui16_frequency, uint16_t rui16_onTime, uint16_t rui16_offTime);
   bool sendCommandSetAudioVolume (uint8_t rui8_volume);
 
-  bool sendCommandSetGraphicsCursor(   IsoAgLib::iVtObject_c* rpc_object, const IsoAgLib::iVtPoint_c& rc_point, bool b_enableReplaceOfCmd=true);
-  bool sendCommandSetForegroundColour( IsoAgLib::iVtObject_c* rpc_object, uint8_t newValue, bool b_enableReplaceOfCmd=true);
-  bool sendCommandSetBackgroundColour( IsoAgLib::iVtObject_c* rpc_object, uint8_t newValue, bool b_enableReplaceOfCmd=true);
-  bool sendCommandSetGCLineAttributes( IsoAgLib::iVtObject_c* rpc_object, const IsoAgLib::iVtObjectLineAttributes_c* const newLineAttributes, bool b_enableReplaceOfCmd=true);
-  bool sendCommandSetGCFillAttributes( IsoAgLib::iVtObject_c* rpc_object, const IsoAgLib::iVtObjectFillAttributes_c* const newFillAttributes, bool b_enableReplaceOfCmd=true);
-  bool sendCommandSetGCFontAttributes( IsoAgLib::iVtObject_c* rpc_object, const IsoAgLib::iVtObjectFontAttributes_c* const newFontAttributes, bool b_enableReplaceOfCmd=true);
-  bool sendCommandEraseRectangle(      IsoAgLib::iVtObject_c* rpc_object, const IsoAgLib::iVtPoint_c& rc_point, bool b_enableReplaceOfCmd=true);
-  bool sendCommandDrawPoint(           IsoAgLib::iVtObject_c* rpc_object, bool  b_enableReplaceOfCmd=true);
-  bool sendCommandDrawLine(            IsoAgLib::iVtObject_c* rpc_object, const IsoAgLib::iVtPoint_c& rc_point, bool b_enableReplaceOfCmd=true);
-  bool sendCommandDrawRectangle(       IsoAgLib::iVtObject_c* rpc_object, const IsoAgLib::iVtPoint_c& rc_point, bool b_enableReplaceOfCmd=true);
-  bool sendCommandDrawClosedEllipse(   IsoAgLib::iVtObject_c* rpc_object, const IsoAgLib::iVtPoint_c& rc_point, bool b_enableReplaceOfCmd=true);
-  bool sendCommandDrawPolygon(         IsoAgLib::iVtObject_c* rpc_object, uint16_t ui16_numOfPoints, const IsoAgLib::iVtPoint_c* const rpc_data, bool b_enableReplaceOfCmd=true);
-  bool sendCommandDrawText(            IsoAgLib::iVtObject_c* rpc_object, uint8_t ui8_textType, uint8_t ui8_numOfCharacters, const char *rpc_newValue, bool b_enableReplaceOfCmd=true);
-  bool sendCommandPanViewport(         IsoAgLib::iVtObject_c* rpc_object, const IsoAgLib::iVtPoint_c& rc_point, bool b_enableReplaceOfCmd=true);
-  bool sendCommandZoomViewport(        IsoAgLib::iVtObject_c* rpc_object, int8_t newValue, bool b_enableReplaceOfCmd=true);
-  bool sendCommandPanAndZoomViewport(  IsoAgLib::iVtObject_c* rpc_object, const IsoAgLib::iVtPoint_c& rc_point, int8_t newValue, bool b_enableReplaceOfCmd=true);
-  bool sendCommandChangeViewportSize(  IsoAgLib::iVtObject_c* rpc_object, uint16_t newWidth, uint16_t newHeight, bool b_enableReplaceOfCmd=true);
-  bool sendCommandDrawVtObject(        IsoAgLib::iVtObject_c* rpc_object, const IsoAgLib::iVtObject_c* const pc_VtObject, bool b_enableReplaceOfCmd=true);
-  bool sendCommandCopyCanvas2PictureGraphic(   IsoAgLib::iVtObject_c* rpc_object, const IsoAgLib::iVtObjectPictureGraphic_c* const pc_VtObjectPictureGraphic, bool b_enableReplaceOfCmd=true);
-  bool sendCommandCopyViewport2PictureGraphic( IsoAgLib::iVtObject_c* rpc_object, const IsoAgLib::iVtObjectPictureGraphic_c* const pc_VtObjectPictureGraphic, bool b_enableReplaceOfCmd=true);
+  bool sendCommandSetGraphicsCursor (IsoAgLib::iVtObject_c* rpc_object, const IsoAgLib::iVtPoint_c& rc_point, bool b_enableReplaceOfCmd=true);
+  bool sendCommandSetForegroundColour (IsoAgLib::iVtObject_c* rpc_object, uint8_t newValue, bool b_enableReplaceOfCmd=true);
+  bool sendCommandSetBackgroundColour (IsoAgLib::iVtObject_c* rpc_object, uint8_t newValue, bool b_enableReplaceOfCmd=true);
+  bool sendCommandSetGCLineAttributes (IsoAgLib::iVtObject_c* rpc_object, const IsoAgLib::iVtObjectLineAttributes_c* const newLineAttributes, bool b_enableReplaceOfCmd=true);
+  bool sendCommandSetGCFillAttributes (IsoAgLib::iVtObject_c* rpc_object, const IsoAgLib::iVtObjectFillAttributes_c* const newFillAttributes, bool b_enableReplaceOfCmd=true);
+  bool sendCommandSetGCFontAttributes (IsoAgLib::iVtObject_c* rpc_object, const IsoAgLib::iVtObjectFontAttributes_c* const newFontAttributes, bool b_enableReplaceOfCmd=true);
+  bool sendCommandEraseRectangle (IsoAgLib::iVtObject_c* rpc_object, const IsoAgLib::iVtPoint_c& rc_point, bool b_enableReplaceOfCmd=true);
+  bool sendCommandDrawPoint (IsoAgLib::iVtObject_c* rpc_object, bool  b_enableReplaceOfCmd=true);
+  bool sendCommandDrawLine (IsoAgLib::iVtObject_c* rpc_object, const IsoAgLib::iVtPoint_c& rc_point, bool b_enableReplaceOfCmd=true);
+  bool sendCommandDrawRectangle (IsoAgLib::iVtObject_c* rpc_object, const IsoAgLib::iVtPoint_c& rc_point, bool b_enableReplaceOfCmd=true);
+  bool sendCommandDrawClosedEllipse (IsoAgLib::iVtObject_c* rpc_object, const IsoAgLib::iVtPoint_c& rc_point, bool b_enableReplaceOfCmd=true);
+  bool sendCommandDrawPolygon (IsoAgLib::iVtObject_c* rpc_object, uint16_t ui16_numOfPoints, const IsoAgLib::iVtPoint_c* const rpc_data, bool b_enableReplaceOfCmd=true);
+  bool sendCommandDrawText (IsoAgLib::iVtObject_c* rpc_object, uint8_t ui8_textType, uint8_t ui8_numOfCharacters, const char *rpc_newValue, bool b_enableReplaceOfCmd=true);
+  bool sendCommandPanViewport (IsoAgLib::iVtObject_c* rpc_object, const IsoAgLib::iVtPoint_c& rc_point, bool b_enableReplaceOfCmd=true);
+  bool sendCommandZoomViewport (IsoAgLib::iVtObject_c* rpc_object, int8_t newValue, bool b_enableReplaceOfCmd=true);
+  bool sendCommandPanAndZoomViewport (IsoAgLib::iVtObject_c* rpc_object, const IsoAgLib::iVtPoint_c& rc_point, int8_t newValue, bool b_enableReplaceOfCmd=true);
+  bool sendCommandChangeViewportSize (IsoAgLib::iVtObject_c* rpc_object, uint16_t newWidth, uint16_t newHeight, bool b_enableReplaceOfCmd=true);
+  bool sendCommandDrawVtObject (IsoAgLib::iVtObject_c* rpc_object, const IsoAgLib::iVtObject_c* const pc_VtObject, bool b_enableReplaceOfCmd=true);
+  bool sendCommandCopyCanvas2PictureGraphic (IsoAgLib::iVtObject_c* rpc_object, const IsoAgLib::iVtObjectPictureGraphic_c* const pc_VtObjectPictureGraphic, bool b_enableReplaceOfCmd=true);
+  bool sendCommandCopyViewport2PictureGraphic (IsoAgLib::iVtObject_c* rpc_object, const IsoAgLib::iVtObjectPictureGraphic_c* const pc_VtObjectPictureGraphic, bool b_enableReplaceOfCmd=true);
+  
+  bool sendCommandGetAttributeValue (IsoAgLib::iVtObject_c* rpc_object, const uint8_t cui8_attrID, bool b_enableReplaceOfCmd=true);
+
 
   bool sendCommandDeleteObjectPool();
   bool sendCommandUpdateLanguagePool();

@@ -367,10 +367,10 @@ BGR_s vtColorTable[256]=
 #endif
 
 
-#include <string>
 #include <set>
 #include <iostream>
 #include <vector>
+#include <map>
 
 
 
@@ -428,6 +428,12 @@ unsigned int skHeight;    bool is_skHeight=false;
 
 char attrString [maxAttributeNames] [stringLength+1];
 bool attrIsGiven [maxAttributeNames];
+
+typedef std::map<uint16_t, std::string> ObjListEntry;
+
+std::map<int32_t /*langID*/, ObjListEntry /* listentry */> map_objNameAndID;
+static bool sb_WSFound = false;
+uint16_t ui16_WSObjID;
 
 // ---------------------------------------------------------------------------
 //  GLOBAL Bitmap instance
@@ -527,7 +533,54 @@ void clean_exit (int return_value, char* error_message=NULL)
     fclose (partFileD);
   }
 
+  std::map<int32_t, ObjListEntry>::iterator mit_lang;
+  std::map<uint16_t, std::string>::iterator mit_obj;
+
+  FILE* fileList;
+  bool *pb_firstLine;
+
+  for (mit_lang = map_objNameAndID.begin(); mit_lang != map_objNameAndID.end(); mit_lang++)
+  {
+    if (mit_lang->first < 0x0) // negative index was defined for default objects
+    {
+      fileList = partFileE;
+      pb_firstLine = &firstLineFileE;
+
+      // get workingset object and set as first item in list -> needed for pool upload/initialization
+      if (sb_WSFound) // should always be the case!
+      {
+        mit_obj = mit_lang->second.find (ui16_WSObjID);
+        *pb_firstLine = false;
+
+        // first, print out the workingset object
+        fprintf (fileList, "\n %s", mit_obj->second.c_str());
+        // delete from the map
+        mit_lang->second.erase (mit_obj);
+      }
+    }
+    else
+    {
+      fileList = arrs_language[mit_lang->first].partFile;
+      pb_firstLine = &arrs_language[mit_lang->first].firstLine;
+    }
+
+    for (mit_obj = mit_lang->second.begin(); mit_obj != mit_lang->second.end(); mit_obj++)
+    {
+      if (*pb_firstLine) {
+        *pb_firstLine = false;
+      } else {
+        fprintf (fileList, ",");
+      }
+
+      fprintf (fileList, "\n %s", mit_obj->second.c_str());
+    }
+  }
+
   if (partFileE) { // -list
+    if (firstLineFileE)
+    {
+      firstLineFileE = false;
+    }
     fputs ("\n};\n", partFileE);
     // write implementation of handler class constructor into list
     // as there the list must be known
@@ -583,6 +636,8 @@ void clean_exit (int return_value, char* error_message=NULL)
     fprintf (partFileF, "\n  //virtual void eventLanguagePgn (const localSettings_s& rrefs_localSettings);");
     fprintf (partFileF, "\n  /* Uncomment the following function if you want to react on any incoming VT Status messages */");
     fprintf (partFileF, "\n  //virtual void eventVtStatusMsg();");
+    fprintf (partFileF, "\n  /* Uncomment the following function if you want to react on any incoming VT Get Attribute Value messages */");
+    fprintf (partFileF, "\n  //virtual void eventAttributeValue(IsoAgLib::iVtObject_c* obj, uint8_t ui8_attributeValue, uint8_t* pui8_value);");
     fprintf (partFileF, "\n  void initAllObjectsOnce(SINGLETON_VEC_KEY_PARAMETER_DEF);");
     fprintf (partFileF, "\n  iObjectPool_%s_c ();", proName);
     fprintf (partFileF, "\n};\n");
@@ -965,6 +1020,10 @@ void defaultAttributes (unsigned int r_objType)
       sprintf (attrString [attrCursorY], "0");
       attrIsGiven [attrCursorY] = true;
     }
+  }
+  if (!attrIsGiven [attrInputObjectOptions]) {
+    sprintf (attrString [attrInputObjectOptions], "enabled");
+    attrIsGiven [attrInputObjectOptions] = true;
   }
 }
 
@@ -1395,6 +1454,17 @@ unsigned int gcoptionstoi (char *text_options)
 }
 
 
+
+unsigned int inputobjectoptiontoi (char *text_inputobjectoptions)
+{
+  int l, retval=0;
+  for (l=0; l<maxInputObjectOptionsTable; l++) {
+    if (strstr (text_inputobjectoptions, inputobjectOptionsTable [l]) != 0) {
+      retval += (uint64_t(1)<<l);
+    }
+  }
+  return retval;
+}
 
 
 // Assuming an 8 bit per pixel bitmap.
@@ -1866,7 +1936,6 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
         objHasArrayLanguagecode = true;
         break;
     }
-
 
     bool objHasArrayMacroCommand = false;
     switch (objType)
@@ -3095,9 +3164,8 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
       // ### Print out definition, values and init-calls ###
       // ###################################################
 
-      FILE *fileList;
+      FILE* fileList;
       bool *pb_firstLine;
-
       /// MultiLanguage-Support: See which -list.inc file to write object to!
       if (attrIsGiven [attrLanguage] && (strlen (attrString [attrLanguage]) > 0))
       { // write to special language-list file if language is correct!
@@ -3114,10 +3182,27 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
         }
         fileList = arrs_language[curLang].partFile;
         pb_firstLine = &arrs_language[curLang].firstLine;
+
         arrs_language[curLang].count++; // and do NOT count the normal list up!
         if (curLang > 0)
         {
           sprintf (pc_postfix, "_%d", curLang);
+        }
+
+        std::string str_objClassName = std::string("&iVtObject") + std::string(objName) + std::string(pc_postfix);
+        // first check if found language was inserted before into the map
+        std::map<int32_t, ObjListEntry>::iterator mit_entry = map_objNameAndID.find (curLang);
+
+        if (mit_entry != map_objNameAndID.end()) // success! language enty found
+        { // only insert an further entry in the found language map
+          //store the objectId - objectName pair in the appropriate language map
+          mit_entry->second.insert (std::pair<uint16_t, std::string>(objID, str_objClassName));
+        }
+        else
+        { // add a new map entry for a further language which includes the first entry in that language specific map
+          ObjListEntry listEntry;
+          listEntry.insert (std::pair<uint16_t, std::string>(objID, str_objClassName));
+          map_objNameAndID.insert (std::pair<int32_t, ObjListEntry>(curLang, listEntry));
         }
 
         /// Try to retrieve   value='...'   from language-value-file
@@ -3203,17 +3288,27 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
             }
           }
         }
-      } else {
-        fileList = partFileE;
-        pb_firstLine = &firstLineFileE;
+      }
+      else
+      {
+        // was the standard map already created?
+        // standard map get the index -1 to differ between "real" language map and normal object map
+        std::map<int32_t, ObjListEntry>::iterator mit_entry = map_objNameAndID.find (0xFFFFFFFF);
+
+        std::string str_objClassName = std::string("&iVtObject") + std::string(objName) + std::string(pc_postfix);
+
+        if (mit_entry != map_objNameAndID.end())
+        {
+          mit_entry->second.insert (std::pair<uint16_t, std::string>(objID, str_objClassName));
+        }
+        else
+        {
+          ObjListEntry listEntry;
+          listEntry.insert (std::pair<uint16_t, std::string>(objID, str_objClassName));
+          map_objNameAndID.insert (std::pair<int32_t, ObjListEntry>(0xFFFFFFFF, listEntry));
+        }
       }
 
-      if (*pb_firstLine) {
-        *pb_firstLine = false;
-      } else {
-        fprintf (fileList, ",");
-      }
-      fprintf (fileList, "\n  &iVtObject%s%s", objName, pc_postfix);
       fprintf (partFileA, "IsoAgLib::iVtObject%s_c iVtObject%s%s;\n", otClassnameTable [objType], objName, pc_postfix);
       fprintf (partFileAextern, "extern IsoAgLib::iVtObject%s_c iVtObject%s%s;\n", otClassnameTable [objType], objName, pc_postfix);
       fprintf (partFileB, "const IsoAgLib::iVtObject_c::iVtObject%s_s iVtObject%s%s_sROM = {%d", otClassnameTable [objType], objName, pc_postfix, objID);
@@ -3230,7 +3325,6 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
         bool resultat = booltoi (attrString [attrInKey]);
         fprintf (partFileC2, "  iVtObject%s%s.setOriginSKM (%s);\n", objName, pc_postfix, resultat ? "true":"false");
       }
-
 
 
       if ((strcmp ("NULL", attrString [attrVariable_reference]) != 0) && (strncmp (attrString [attrVariable_reference], "&iVtObject", strlen ("&iVtObject")) != 0))
@@ -3258,6 +3352,11 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
           if (booltoi (attrString [attrSelectable]) == 0)
                fprintf (partFileB, ", %d, %d, NULL",         colortoi (attrString [attrBackground_colour]), booltoi (attrString [attrSelectable]));
           else fprintf (partFileB, ", %d, %d, &iVtObject%s", colortoi (attrString [attrBackground_colour]), booltoi (attrString [attrSelectable]), attrString [attrActive_mask]);
+          if (!sb_WSFound)
+          {
+            sb_WSFound = true;
+            ui16_WSObjID = objID;
+          }
           break;
 
         case otDatamask:

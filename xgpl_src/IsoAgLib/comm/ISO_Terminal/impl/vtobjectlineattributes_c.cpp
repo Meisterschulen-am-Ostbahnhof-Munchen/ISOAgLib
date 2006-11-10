@@ -79,17 +79,15 @@
  *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
-
 #include "vtobjectlineattributes_c.h"
+
 #include "isoterminal_c.h"
 #include "../ivtobjectbutton_c.h"
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
-
-// //////////////////////////////// +X2C Operation 173 : stream
-//! Parameter:
+// Operation : stream
 //! @param:destMemory:
 //! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
 //! @param sourceOffset:
@@ -97,7 +95,7 @@ int16_t
 vtObjectLineAttributes_c::stream(uint8_t* destMemory,
                                  uint16_t maxBytes,
                                  objRange_t sourceOffset)
-{ // ~X2C
+{
 #define MACRO_vtObjectTypeA vtObjectLineAttributes_a
 #define MACRO_vtObjectTypeS iVtObjectLineAttributes_s
     MACRO_streamLocalVars;
@@ -128,22 +126,19 @@ vtObjectLineAttributes_c::stream(uint8_t* destMemory,
 
     MACRO_streamEventMacro(8);
     return curBytes;
-} // -X2C
-
-
-// //////////////////////////////// +X2C Operation 176 : vtObjectLineAttributes_c
-vtObjectLineAttributes_c::vtObjectLineAttributes_c()
-{
 }
 
-// //////////////////////////////// +X2C Operation 206 : size
+
+// Operation : vtObjectLineAttributes_c
+vtObjectLineAttributes_c::vtObjectLineAttributes_c() {}
+
+// Operation : size
 uint32_t
 vtObjectLineAttributes_c::fitTerminal() const
 {
   MACRO_localVars;
   return 8+vtObjectLineAttributes_a->numberOfMacrosToFollow*2;
 }
-
 
 void
 vtObjectLineAttributes_c::setLineAttributes(uint8_t newLineColour, uint8_t newLineWidth, uint16_t newLineArt, bool b_updateObject, bool b_enableReplaceOfCmd) {
@@ -153,6 +148,45 @@ vtObjectLineAttributes_c::setLineAttributes(uint8_t newLineColour, uint8_t newLi
     saveValue16 (MACRO_getStructOffset(get_vtObjectLineAttributes_a(), lineArt), sizeof(iVtObjectLineAttributes_s), newLineArt);
   }
   __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeLineAttributes (this, __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).getUserClippedColor (newLineColour, this, IsoAgLib::LineColour), newLineWidth, newLineArt, b_enableReplaceOfCmd);
+}
+
+uint8_t
+vtObjectLineAttributes_c::updateLineColour(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectLineAttributes_a(), lineColour), sizeof(iVtObjectLineAttributes_s), 1);
+  else
+    return getValue8(MACRO_getStructOffset(get_vtObjectLineAttributes_a(), lineColour), sizeof(iVtObjectLineAttributes_s));
+}
+
+uint8_t
+vtObjectLineAttributes_c::updateLineWidth(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectLineAttributes_a(), lineWidth), sizeof(iVtObjectLineAttributes_s), 2);
+  else
+    return getValue8(MACRO_getStructOffset(get_vtObjectLineAttributes_a(), lineWidth), sizeof(iVtObjectLineAttributes_s));
+}
+
+uint16_t
+vtObjectLineAttributes_c::updateLineArt(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectLineAttributes_a(), lineArt), sizeof(iVtObjectLineAttributes_s), 3);
+  else
+    return getValue16(MACRO_getStructOffset(get_vtObjectLineAttributes_a(), lineArt), sizeof(iVtObjectLineAttributes_s));
+}
+
+void
+vtObjectLineAttributes_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attributeValue)
+{
+  switch (attrID)
+  {
+    case 1: saveValue8(MACRO_getStructOffset(get_vtObjectLineAttributes_a(), lineColour), sizeof(iVtObjectLineAttributes_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
+    case 2: saveValue8(MACRO_getStructOffset(get_vtObjectLineAttributes_a(), lineWidth), sizeof(iVtObjectLineAttributes_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
+    case 3: saveValue16(MACRO_getStructOffset(get_vtObjectLineAttributes_a(), lineArt), sizeof(iVtObjectLineAttributes_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
+    default: break;
+  }
 }
 
 } // end of namespace __IsoAgLib

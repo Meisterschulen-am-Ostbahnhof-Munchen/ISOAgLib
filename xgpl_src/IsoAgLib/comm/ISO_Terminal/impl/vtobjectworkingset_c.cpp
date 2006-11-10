@@ -79,19 +79,15 @@
  *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
-
 #include "vtobjectworkingset_c.h"
+
 #include "isoterminal_c.h"
 #include "../ivtobjectfontattributes_c.h"
 #include "../ivtobjectbutton_c.h"
 
-
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
-
-
-// //////////////////////////////// +X2C Operation 67 : stream
-//! Parameter:
+// Operation : stream
 //! @param:destMemory:
 //! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
 //! @param sourceOffset:
@@ -99,7 +95,7 @@ int16_t
 vtObjectWorkingSet_c::stream(uint8_t* destMemory,
                              uint16_t maxBytes,
                              objRange_t sourceOffset)
-{ // ~X2C
+{
 #define MACRO_vtObjectTypeA vtObjectWorkingSet_a
 #define MACRO_vtObjectTypeS iVtObjectWorkingSet_s
     MACRO_streamLocalVars;
@@ -133,43 +129,40 @@ vtObjectWorkingSet_c::stream(uint8_t* destMemory,
     MACRO_streamLanguages(tempOffset);
 
     return curBytes;
-} // -X2C
+}
 
-// //////////////////////////////// +X2C Operation 70 : vtObjectWorkingSet_c
-vtObjectWorkingSet_c::vtObjectWorkingSet_c()
-{ // ~X2C
-} // -X2C
+// Operation : vtObjectWorkingSet_c
+vtObjectWorkingSet_c::vtObjectWorkingSet_c() {}
 
-// //////////////////////////////// +X2C Operation 188 : size
+// Operation : size
 uint32_t
 vtObjectWorkingSet_c::fitTerminal() const
-{ // ~X2C
+{
   MACRO_localVars;
   return 10+vtObjectWorkingSet_a->numberOfObjectsToFollow*6+vtObjectWorkingSet_a->numberOfMacrosToFollow*2+vtObjectWorkingSet_a->numberOfLanguagesToFollow*2;
-} // -X2C
+}
 
-// //////////////////////////////// +X2C Operation 224 : changeActiveMask
-//! Parameter:
+// Operation : changeActiveMask
 //! @param rpc_vtObjectMask:
 //! @param b_updateObject:
 void
 vtObjectWorkingSet_c::changeActiveMask(IsoAgLib::iVtObjectMask_c* rpc_vtObjectMask, bool b_updateObject, bool b_enableReplaceOfCmd)
-{ // ~X2C
+{
   if (b_updateObject) saveValueP (MACRO_getStructOffset(get_vtObjectWorkingSet_a(), activeMask), sizeof(iVtObjectWorkingSet_s), rpc_vtObjectMask);
 
   __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommand (173 /* Command: Command --- Parameter: Change Active Mask */,
                                                    vtObject_a->ID & 0xFF, vtObject_a->ID >> 8,
                                                    rpc_vtObjectMask->getID() & 0xFF, rpc_vtObjectMask->getID() >> 8,
                                                    0xFF, 0xFF, 0xFF, 2000, b_enableReplaceOfCmd);
-} // -X2C
+}
 
 void
 vtObjectWorkingSet_c::changeBackgroundColour(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd)
-{ // ~X2C
+{
   if (b_updateObject) saveValue8 (MACRO_getStructOffset(get_vtObjectWorkingSet_a(), backgroundColour), sizeof(iVtObjectWorkingSet_s), newValue);
 
   __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeBackgroundColour (this, newValue, b_enableReplaceOfCmd);
-} // -X2C
+}
 
 bool
 vtObjectWorkingSet_c::moveChildLocation(IsoAgLib::iVtObject_c* rpc_childObject, int8_t dx, int8_t dy, bool b_updateObject, bool b_enableReplaceOfCmd)
@@ -198,17 +191,58 @@ vtObjectWorkingSet_c::setAudioVolume (uint8_t rui8_volume)
 }
 
 
-// //////////////////////////////// +X2C Operation 235 : setOriginSKM
-//! Parameter:
+// Operation : setOriginSKM
 //! @param b_SKM:
 void
 vtObjectWorkingSet_c::setOriginSKM(bool /*b_SKM*/)
-{ // ~X2C
+{
   MACRO_localVars;
   s_properties.flags |= FLAG_ORIGIN_SKM; // WS Descriptor has to fit inside a SoftKey!
   for (int i=0; i<vtObjectWorkingSet_a->numberOfObjectsToFollow; i++) {
     vtObjectWorkingSet_a->objectsToFollow[i].vtObject->setOriginSKM (true);
   }
-} // -X2C
+}
 
+/** these attributes are in parentheses in the spec, so commented out here
+uint8_t
+vtObjectWorkingSet_c::updateBackgroundColour (bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectWorkingSet_a(), backgroundColour), sizeof(iVtObjectWorkingSet_s), 1);
+  else
+    return getValue8(MACRO_getStructOffset(get_vtObjectWorkingSet_a(), backgroundColour), sizeof(iVtObjectWorkingSet_s));
+}
+
+uint8_t
+vtObjectWorkingSet_c::updateSelectable(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectWorkingSet_a(), selectable), sizeof(iVtObjectWorkingSet_s), 2);
+  else
+    return getValue8(MACRO_getStructOffset(get_vtObjectWorkingSet_a(), selectable), sizeof(iVtObjectWorkingSet_s));
+}
+
+uint16_t
+vtObjectWorkingSet_c::updateActiveMask(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectWorkingSet_a(), activeMask), sizeof(iVtObjectWorkingSet_s), 3);
+  else
+    return getValue16(MACRO_getStructOffset(get_vtObjectWorkingSet_a(), activeMask), sizeof(iVtObjectWorkingSet_s));
+}
+*/
+
+void
+vtObjectWorkingSet_c::saveReceivedAttribute (uint8_t attrID, uint8_t* /*pui8_attributeValue*/)
+{
+  switch (attrID)
+  {
+    /** these attributes are in parentheses in the spec, so commented out here
+    case 1: saveValue8(MACRO_getStructOffset(get_vtObjectWorkingSet_a(), backgroundColour), sizeof(iVtObjectWorkingSet_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
+    case 2: saveValue8(MACRO_getStructOffset(get_vtObjectWorkingSet_a(), selectable), sizeof(iVtObjectWorkingSet_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
+    case 3: saveValue16(MACRO_getStructOffset(get_vtObjectWorkingSet_a(), activeMask), sizeof(iVtObjectWorkingSet_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
+    */
+    default: break;
+  }
+}
 } // end of namespace __IsoAgLib

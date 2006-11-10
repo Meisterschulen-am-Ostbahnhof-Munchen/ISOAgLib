@@ -75,10 +75,10 @@ public:
   //! @param b_initPointer:
   void init(const iVtObjectWorkingSet_s* vtObjectWorkingSetSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) {
     vtObjectWorkingSet_c::init (vtObjectWorkingSetSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
-  };
+  }
 
   //  Operation: get_vtObjectWorkingSet_a
-  const iVtObjectWorkingSet_s& get_vtObjectWorkingSet_a() { return *vtObjectWorkingSet_c::get_vtObjectWorkingSet_a(); };
+  const iVtObjectWorkingSet_s& get_vtObjectWorkingSet_a() { return *vtObjectWorkingSet_c::get_vtObjectWorkingSet_a(); }
 
   //  Operation: changeActiveMask
   //! Parameter:
@@ -86,7 +86,7 @@ public:
   //! @param b_updateObject:
   void changeActiveMask(iVtObjectMask_c* rpc_iVtObjectMask, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
     vtObjectWorkingSet_c::changeActiveMask (rpc_iVtObjectMask, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
   //  Operation: changeBackgroundColour
   //! Parameter:
@@ -94,7 +94,7 @@ public:
   //! @param b_updateObject:
   void changeBackgroundColour(uint8_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
     vtObjectWorkingSet_c::changeBackgroundColour (newValue, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
   //  Operation: moveChildLocation
   //! Parameter:
@@ -107,7 +107,6 @@ public:
   }
 
   //  Operation: setChildPosition
-  //! Parameter:
   //! @param rpc_childObject:
   //! @param dx:
   //! @param dy:
@@ -116,7 +115,6 @@ public:
   }
 
   //  Operation: controlAudioDevice
-  //! Parameter:
   //! @param rui8_repetitions
   //! @param rui16_frequency
   //! @param rui16_onTime
@@ -126,14 +124,31 @@ public:
   }
 
   //  Operation: setAudioVolume
-  //! Parameter:
   //! @param rui8_volume The Volume given in percent. Range 0..100
   bool setAudioVolume (uint8_t rui8_volume) {
     return vtObjectWorkingSet_c::setAudioVolume (rui8_volume);
   }
 
-}; // ~X2C
+  // ///////////////////////// getter for attributes
+  /** these attributes are in parentheses in the spec, so commented out here
+  uint8_t updateObjectType() const {
+    return vtObjectWorkingSet_c::updateObjectType();
+  }
+
+  uint8_t updateBackgroundColour(bool b_SendRequest=false) {
+    return vtObjectWorkingSet_c::updateBackgroundColour(b_SendRequest);
+  }
+
+  uint8_t updateSelectable(bool b_SendRequest=false) {
+    return vtObjectWorkingSet_c::updateSelectable(b_SendRequest);
+  }
+
+  uint16_t updateActiveMask(bool b_SendRequest=false) {
+    return vtObjectWorkingSet_c::updateActiveMask(b_SendRequest);
+  }
+  */
+};
 
 } // end of namespace IsoAgLib
 
-#endif // -X2C
+#endif

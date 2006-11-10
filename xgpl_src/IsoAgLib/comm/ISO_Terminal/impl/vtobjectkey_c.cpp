@@ -79,19 +79,15 @@
  *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
-
 #include "vtobjectkey_c.h"
+
 #include "isoterminal_c.h"
 #include "../ivtobjectfontattributes_c.h"
 #include "../ivtobjectbutton_c.h"
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
-
-
-
-// //////////////////////////////// +X2C Operation 87 : stream
-//! Parameter:
+// Operation : stream
 //! @param:destMemory:
 //! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
 //! @param sourceOffset:
@@ -99,7 +95,7 @@ int16_t
 vtObjectKey_c::stream(uint8_t* destMemory,
                       uint16_t maxBytes,
                       objRange_t sourceOffset)
-{ // ~X2C
+{
 #define MACRO_vtObjectTypeA vtObjectKey_a
 #define MACRO_vtObjectTypeS iVtObjectKey_s
     MACRO_streamLocalVars;
@@ -120,15 +116,13 @@ vtObjectKey_c::stream(uint8_t* destMemory,
     MACRO_streamObjectXYcenteredInSoftKey(7);
     MACRO_streamEventMacro(7U+vtObjectKey_a->numberOfObjectsToFollow*6U);
     return curBytes;
-} // -X2C
-
-
-// //////////////////////////////// +X2C Operation 90 : vtObjectKey_c
-vtObjectKey_c::vtObjectKey_c()
-{
 }
 
-// //////////////////////////////// +X2C Operation 193 : size
+
+// Operation : vtObjectKey_c
+vtObjectKey_c::vtObjectKey_c() {}
+
+// Operation : size
 uint32_t
 vtObjectKey_c::fitTerminal() const
 {
@@ -150,16 +144,44 @@ vtObjectKey_c::setChildPosition(IsoAgLib::iVtObject_c* rpc_childObject, int16_t 
   return genericChangeChildPosition (rpc_childObject, x, y, b_updateObject, vtObjectKey_a->numberOfObjectsToFollow, (IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s *) vtObjectKey_a->objectsToFollow, MACRO_getStructOffset(get_vtObjectKey_a(), objectsToFollow), sizeof(iVtObjectKey_s), b_enableReplaceOfCmd);
 }
 
-// //////////////////////////////// +X2C Operation 232 : setOriginSKM
-//! Parameter:
+// Operation : setOriginSKM
 //! @param b_SKM:
 void
 vtObjectKey_c::setOriginSKM(bool /*b_SKM*/)
-{ // ~X2C
+{
   MACRO_localVars;
   for (int i=0; i<vtObjectKey_a->numberOfObjectsToFollow; i++) {
     vtObjectKey_a->objectsToFollow[i].vtObject->setOriginSKM (true);
   }
-} // -X2C
+}
+
+uint8_t
+vtObjectKey_c::updateBackgroundColour(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectKey_a(), backgroundColour), sizeof(iVtObjectKey_s), 1);
+  else
+    return getValue8(MACRO_getStructOffset(get_vtObjectKey_a(), backgroundColour), sizeof(iVtObjectKey_s));
+}
+
+uint8_t
+vtObjectKey_c::updateKeyCode(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectKey_a(), keyCode), sizeof(iVtObjectKey_s), 2);
+  else
+    return getValue8(MACRO_getStructOffset(get_vtObjectKey_a(), keyCode), sizeof(iVtObjectKey_s));
+}
+
+void
+vtObjectKey_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attributeValue)
+{
+  switch (attrID)
+  {
+    case 1: saveValue8(MACRO_getStructOffset(get_vtObjectKey_a(), backgroundColour), sizeof(iVtObjectKey_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
+    case 2: saveValue8(MACRO_getStructOffset(get_vtObjectKey_a(), keyCode), sizeof(iVtObjectKey_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
+    default: break;
+  }
+}
 
 } // end of namespace __IsoAgLib

@@ -79,30 +79,19 @@
  *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
-
 #ifndef VTOBJECTINPUTLIST_C_H
 #define VTOBJECTINPUTLIST_C_H
 
-
-// +X2C includes
 #include "vtobject_c.h"
 #include "vtclientservercommunication_c.h"
-
-// ~X2C
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
-
-//  +X2C Class 93 : vtObjectInputList_c
-//!  Stereotype: Klasse
 class vtObjectInputList_c : public vtObject_c
 {
-
 public:
-
   //  Operation: stream
-  //! Parameter:
   //! @param:destMemory:
   //! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
   //! @param sourceOffset:
@@ -111,10 +100,10 @@ public:
                  objRange_t sourceOffset);
 
   //  Operation: init
-  //! Parameter:
   //! @param vtObjectInputListSROM:
   //! @param b_initPointer:
-  void init(const iVtObjectInputList_s* vtObjectInputListSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) { vtObject_c::init ((iVtObject_s*) vtObjectInputListSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);};
+  void init(const iVtObjectInputList_s* vtObjectInputListSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA)
+  { vtObject_c::init ((iVtObject_s*) vtObjectInputListSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);}
 
   //  Operation: get_vtObjectInputList_a
   iVtObjectInputList_s* get_vtObjectInputList_a() { return (iVtObjectInputList_s *)vtObject_a; }
@@ -123,7 +112,6 @@ public:
   vtObjectInputList_c();
 
   //  Operation: getListItem
-  //! Parameter:
   //! @param xth:
   IsoAgLib::iVtObject_c* getListItem(uint8_t xth);
 
@@ -134,13 +122,11 @@ public:
   uint32_t fitTerminal() const;
 
   //  Operation: setValue
-  //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
   void setValue(uint8_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true);
 
   //  Operation: setItem
-  //! Parameter:
   //! @param rui8_index:
   //! @param rpc_object:
   void setItem(uint8_t rui8_index, IsoAgLib::iVtObject_c* rpc_object, bool b_enableReplaceOfCmd=false);
@@ -161,15 +147,31 @@ public:
 
   void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
-private:
+  // ///////////////////////// getter for attributes
+  /** that attribute is in parentheses in the spec, so commented out here
+  uint8_t updateObjectType() const { return 10; }
+  */
 
+  uint16_t updateWidth(bool b_SendRequest=false);
+
+  uint16_t updateHeight(bool b_SendRequest=false);
+
+  uint16_t updateVariableReference(bool b_SendRequest=false);
+
+  /** these attributes are in parentheses in the spec, so commented out here
+  uint8_t updateValue(bool b_SendRequest=false);
+
+  uint8_t updateOptions(bool b_SendRequest=false);
+  */
+
+  void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue);
+
+private:
   //  Operation: updateEnable
-  //! Parameter:
   //! @param b_enableOrDisable:
   void updateEnable(uint8_t rui8_enOrDis);
-
-}; // ~X2C
+};
 
 } // end of namespace __IsoAgLib
 
-#endif // -X2C
+#endif

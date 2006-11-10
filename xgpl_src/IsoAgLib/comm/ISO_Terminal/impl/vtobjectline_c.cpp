@@ -79,19 +79,15 @@
  *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
-
 #include "vtobjectline_c.h"
+
 #include "../ivtobjectlineattributes_c.h"
 #include "isoterminal_c.h"
 #include "../ivtobjectbutton_c.h"
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
-
-
-
-// //////////////////////////////// +X2C Operation 143 : stream
-//! Parameter:
+// Operation : stream
 //! @param:destMemory:
 //! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
 //! @param sourceOffset:
@@ -99,7 +95,7 @@ int16_t
 vtObjectLine_c::stream(uint8_t* destMemory,
                        uint16_t maxBytes,
                        objRange_t sourceOffset)
-{ // ~X2C
+{
 #define MACRO_vtObjectTypeA vtObjectLine_a
 #define MACRO_vtObjectTypeS iVtObjectLine_s
     MACRO_streamLocalVars;
@@ -131,15 +127,12 @@ vtObjectLine_c::stream(uint8_t* destMemory,
 
     MACRO_streamEventMacro(11);
     return curBytes;
-} // -X2C
-
-
-// //////////////////////////////// +X2C Operation 146 : vtObjectLine_c
-vtObjectLine_c::vtObjectLine_c()
-{
 }
 
-// //////////////////////////////// +X2C Operation 200 : size
+// Operation : vtObjectLine_c
+vtObjectLine_c::vtObjectLine_c() {}
+
+// Operation : size
 uint32_t
 vtObjectLine_c::fitTerminal() const
 {
@@ -147,18 +140,17 @@ vtObjectLine_c::fitTerminal() const
   return 11+vtObjectLine_a->numberOfMacrosToFollow*2;
 }
 
-// //////////////////////////////// +X2C Operation 231 : setOriginSKM
-//! Parameter:
+// Operation : setOriginSKM
 //! @param b_SKM:
 void
 vtObjectLine_c::setOriginSKM(bool b_SKM)
-{ // ~X2C
+{
   MACRO_localVars;
   if (b_SKM) {
     s_properties.flags |= FLAG_ORIGIN_SKM;
     vtObjectLine_a->lineAttributes->setOriginSKM (b_SKM);
   }
-} // -X2C
+}
 
 void
 vtObjectLine_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject, bool b_enableReplaceOfCmd)
@@ -183,5 +175,53 @@ vtObjectLine_c::setEndPoint (uint16_t newWidth, uint16_t newHeight, uint8_t newL
   __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeEndPoint (this, newWidth, newHeight, newLineDirection, b_enableReplaceOfCmd);
 }
 
+uint16_t
+vtObjectLine_c::updateLineAttributes(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectLine_a(), lineAttributes), sizeof(iVtObjectLine_s), 1);
+  else
+    return getValue16(MACRO_getStructOffset(get_vtObjectLine_a(), lineAttributes), sizeof(iVtObjectLine_s));
+}
+
+uint16_t
+vtObjectLine_c::updateWidth(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectLine_a(), width), sizeof(iVtObjectLine_s), 2);
+  else
+    return getValue16(MACRO_getStructOffset(get_vtObjectLine_a(), width), sizeof(iVtObjectLine_s));
+}
+
+uint16_t
+vtObjectLine_c::updateHeight(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectLine_a(), height), sizeof(iVtObjectLine_s), 3);
+  else
+    return getValue16(MACRO_getStructOffset(get_vtObjectLine_a(), height), sizeof(iVtObjectLine_s));
+}
+
+uint8_t
+vtObjectLine_c::updateLineDirection(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectLine_a(), lineDirection), sizeof(iVtObjectLine_s), 4);
+  else
+    return getValue8(MACRO_getStructOffset(get_vtObjectLine_a(), lineDirection), sizeof(iVtObjectLine_s));
+}
+
+void
+vtObjectLine_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attributeValue)
+{
+  switch (attrID)
+  {
+    case 1: saveValue16(MACRO_getStructOffset(get_vtObjectLine_a(), lineAttributes), sizeof(iVtObjectLine_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
+    case 2: saveValue16(MACRO_getStructOffset(get_vtObjectLine_a(), width), sizeof(iVtObjectLine_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
+    case 3: saveValue16(MACRO_getStructOffset(get_vtObjectLine_a(), height), sizeof(iVtObjectLine_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
+    case 4: saveValue8(MACRO_getStructOffset(get_vtObjectLine_a(), lineDirection), sizeof(iVtObjectLine_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
+    default: break;
+  }
+}
 
 } // end of namespace __IsoAgLib

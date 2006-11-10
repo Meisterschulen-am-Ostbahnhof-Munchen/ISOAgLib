@@ -75,16 +75,16 @@ public:
   //! @param b_initPointer:
   void init(const iVtObjectInputAttributes_s* vtObjectInputAttributesSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) {
     vtObjectInputAttributes_c::init (vtObjectInputAttributesSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
-  };
+  }
 
   //  Operation: get_vtObjectInputAttributes_a
-  const iVtObjectInputAttributes_s& get_vtObjectInputAttributes_a() { return *vtObjectInputAttributes_c::get_vtObjectInputAttributes_a(); };
+  const iVtObjectInputAttributes_s& get_vtObjectInputAttributes_a() { return *vtObjectInputAttributes_c::get_vtObjectInputAttributes_a(); }
 
 
 
  //  Operation: getString
   const char* getString(){
-      return vtObjectInputAttributes_c::getString();};
+      return vtObjectInputAttributes_c::getString();}
 
 
   //  Operation: setValidationStringCopy
@@ -93,7 +93,7 @@ public:
   //! @param b_updateObject:
   void setValidationStringCopy(const char* newValidationString, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
     vtObjectInputAttributes_c::setValidationStringCopy (newValidationString, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
   //  Operation: setValidationString
   //! Parameter:
@@ -101,9 +101,17 @@ public:
   //! @param b_updateObject:
   void setValidationStringRef(const char* newValidationString, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
     vtObjectInputAttributes_c::setValidationStringRef (newValidationString, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
-}; // ~X2C
+  /** these attributes are in parentheses in the spec, so commented out here
+  uint8_t updateObjectType() const { return vtObjectInputAttributes_c::updateObjectType(); }
+  
+  uint8_t updateValidationType(bool b_SendRequest=false) {
+    return vtObjectInputAttributes_c::updateValidationType(b_SendRequest);
+  }
+  */
+
+};
 
 } // end namespace IsoAgLib
 

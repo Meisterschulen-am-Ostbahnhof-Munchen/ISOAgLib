@@ -79,30 +79,18 @@
  *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
-
-
 #ifndef VTOBJECTMACRO_C_H
 #define VTOBJECTMACRO_C_H
 
-
-// +X2C includes
 #include "vtobject_c.h"
-// ~X2C
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
-
-
-//  +X2C Class 179 : vtObjectMacro_c
-//!  Stereotype: Klasse
 class vtObjectMacro_c : public vtObject_c
 {
-
 public:
-
   //  Operation: stream
-  //! Parameter:
   //! @param destMemory:
   //! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
   //! @param sourceOffset:
@@ -111,10 +99,10 @@ public:
                  objRange_t sourceOffset);
 
   //  Operation: init
-  //! Parameter:
   //! @param vtObjectMacroSROM:
   //! @param b_initPointer:
-  void init(const iVtObjectMacro_s* vtObjectMacroSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) { vtObject_c::init ((iVtObject_s*) vtObjectMacroSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA); };
+  void init(const iVtObjectMacro_s* vtObjectMacroSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA)
+  { vtObject_c::init ((iVtObject_s*) vtObjectMacroSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA); }
 
   //  Operation: get_vtObjectMacro_a
   iVtObjectMacro_s* get_vtObjectMacro_a() { return (iVtObjectMacro_s *)vtObject_a; }
@@ -122,15 +110,16 @@ public:
   //  Operation: vtObjectMacro_c
   vtObjectMacro_c();
 
-  //  Operation: size
+  //  Operation: fitTerminal
   uint32_t fitTerminal() const;
 
-protected:
+  /** these attributes are in parentheses in the spec, so commented out here
+  uint8_t updateObjectType() const { return 28; }
+   */
 
-private:
-
-}; // ~X2C
+  void saveReceivedAttribute (uint8_t /*attrID*/, uint8_t* /*pui8_attributeValue*/) {};
+};
 
 } // end namespace __IsoAgLib
 
-#endif // -X2C
+#endif

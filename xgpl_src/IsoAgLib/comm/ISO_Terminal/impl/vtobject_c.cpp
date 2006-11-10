@@ -79,38 +79,37 @@
  *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
-
 #include "vtobject_c.h"
+
 #include "isoterminal_c.h"
 #include "vtclientservercommunication_c.h"
-
 #include <IsoAgLib/util/impl/util_funcs.h>
 
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
-
-
-
-// //////////////////////////////// +X2C Operation 783 : setAttribute
-//! Parameter:
+// Operation : setAttribute
 //! @param attrID: Attribute ID of the object's attribute
 //! @param newValue: New Value of the attribute
 void
 vtObject_c::setAttribute(uint8_t attrID, uint32_t newValue, bool b_enableReplaceOfCmd)
-{ // ~X2C
+{
   __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeAttribute (this, attrID, newValue & 0xFF, (newValue >> 8) & 0xFF, (newValue >> 16) & 0xFF, newValue >> 24, b_enableReplaceOfCmd);
-} // -X2C
+}
 
 void
 vtObject_c::setAttributeFloat(uint8_t attrID, float newValue, bool b_enableReplaceOfCmd)
-{ // ~X2C
+{
   uint32_t ui32_convertedFloat;
   floatVar2LittleEndianStream (&newValue, &ui32_convertedFloat);
   setAttribute (attrID, ui32_convertedFloat, b_enableReplaceOfCmd);
-} // -X2C
+}
 
-
+void
+vtObject_c::getAttribute(uint8_t attrID, bool b_enableReplaceOfCmd)
+{
+  __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandGetAttributeValue (this, attrID, b_enableReplaceOfCmd);
+}
 
 void
 vtObject_c::createRamStructIfNotYet (uint16_t ui16_structLen)
@@ -122,7 +121,6 @@ vtObject_c::createRamStructIfNotYet (uint16_t ui16_structLen)
     s_properties.flags |= FLAG_IN_RAM;
   }
 }
-
 
 // //////////////////////////////// saveValue(8/16/32)
 void
@@ -201,9 +199,91 @@ vtObject_c::saveValuePSetAttribute (uint16_t ui16_structOffset, uint16_t ui16_st
   setAttribute (ui8_ind, (p_newValue == NULL) ? 65535 : p_newValue->getID(), b_enableReplaceOfCmd);
 }
 
+// //////////////////////////////// GetAttributeValue 8/16/32
+uint8_t
+vtObject_c::getValue8 (uint16_t ui16_structOffset, uint16_t ui16_structLen, bool b_createRamStructIfNeeded)
+{
+  if (b_createRamStructIfNeeded) createRamStructIfNotYet (ui16_structLen);
+  return * (((uint8_t *)vtObject_a)+ui16_structOffset);
+}
+uint16_t
+vtObject_c::getValue16 (uint16_t ui16_structOffset, uint16_t ui16_structLen, bool b_createRamStructIfNeeded)
+{
+  if (b_createRamStructIfNeeded) createRamStructIfNotYet (ui16_structLen);
+  return * ((uint16_t*) (((uint8_t *)vtObject_a)+ui16_structOffset));
+}
+uint32_t
+vtObject_c::getValue32 (uint16_t ui16_structOffset, uint16_t ui16_structLen, bool b_createRamStructIfNeeded)
+{
+  if (b_createRamStructIfNeeded) createRamStructIfNotYet (ui16_structLen);
+  return * ((uint32_t*) (((uint8_t *)vtObject_a)+ui16_structOffset));
+}
+int8_t
+vtObject_c::getSignedValue8 (uint16_t ui16_structOffset, uint16_t ui16_structLen, bool b_createRamStructIfNeeded)
+{
+  if (b_createRamStructIfNeeded) createRamStructIfNotYet (ui16_structLen);
+  return * (((int8_t *)vtObject_a)+ui16_structOffset);
+}
+int16_t
+vtObject_c::getSignedValue16 (uint16_t ui16_structOffset, uint16_t ui16_structLen, bool b_createRamStructIfNeeded)
+{
+  if (b_createRamStructIfNeeded)  createRamStructIfNotYet (ui16_structLen);
+  return * ((int16_t*) (((uint8_t *)vtObject_a)+ui16_structOffset));
+}
+int32_t
+vtObject_c::getSignedValue32 (uint16_t ui16_structOffset, uint16_t ui16_structLen, bool b_createRamStructIfNeeded)
+{
+  if (b_createRamStructIfNeeded) createRamStructIfNotYet (ui16_structLen);
+  return * ((int32_t*) (((uint8_t *)vtObject_a)+ui16_structOffset));
+}
+float
+vtObject_c::getValueFloat (uint16_t ui16_structOffset, uint16_t ui16_structLen, bool b_createRamStructIfNeeded)
+{
+  if (b_createRamStructIfNeeded) createRamStructIfNotYet (ui16_structLen);
+  return * ((float*) (((uint8_t *)vtObject_a)+ui16_structOffset));
+}
+
+// //////////////////////////////// get(Signed)Value(8/16/32)GetAttribute
+uint8_t
+vtObject_c::getValue8GetAttribute (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint8_t ui8_ind, bool b_enableReplaceOfCmd) {
+  getAttribute (ui8_ind, b_enableReplaceOfCmd);
+  return getValue8 (ui16_structOffset, ui16_structLen);
+}
+uint16_t
+vtObject_c::getValue16GetAttribute (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint8_t ui8_ind, bool b_enableReplaceOfCmd) {
+  getAttribute (ui8_ind, b_enableReplaceOfCmd);
+  return getValue16 (ui16_structOffset, ui16_structLen);
+}
+uint32_t
+vtObject_c::getValue32GetAttribute (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint8_t ui8_ind, bool b_enableReplaceOfCmd) {
+  getAttribute (ui8_ind, b_enableReplaceOfCmd);
+  return getValue32 (ui16_structOffset, ui16_structLen);
+}
+int8_t
+vtObject_c::getSignedValue8GetAttribute (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint8_t ui8_ind, bool b_enableReplaceOfCmd) {
+  getAttribute (ui8_ind, b_enableReplaceOfCmd);
+  return getSignedValue8 (ui16_structOffset, ui16_structLen);
+}
+int16_t
+vtObject_c::getSignedValue16GetAttribute (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint8_t ui8_ind, bool b_enableReplaceOfCmd) {
+  getAttribute (ui8_ind, b_enableReplaceOfCmd);
+  return getSignedValue16 (ui16_structOffset, ui16_structLen);
+}
+int32_t
+vtObject_c::getSignedValue32GetAttribute (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint8_t ui8_ind, bool b_enableReplaceOfCmd) {
+  getAttribute (ui8_ind, b_enableReplaceOfCmd);
+  return getSignedValue32 (ui16_structOffset, ui16_structLen);
+}
+float
+vtObject_c::getValueFloatGetAttribute (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint8_t ui8_ind, bool b_enableReplaceOfCmd) {
+  getAttribute (ui8_ind, b_enableReplaceOfCmd);
+  return getValueFloat (ui16_structOffset, ui16_structLen);
+}
+
+
 bool
 vtObject_c::genericChangeChildLocationPosition (bool rb_isLocation, IsoAgLib::iVtObject_c* childObject, int16_t dx, int16_t dy, bool b_updateObject, uint8_t numObjectsToFollow, IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow, uint16_t ui16_structOffset, uint16_t ui16_structLen)
-{ // ~X2C
+{
   // Find the child object in question
   for(int8_t i = 0; i < numObjectsToFollow; i++) {
     if (childObject->getID() == objectsToFollow[i].vtObject->getID()) {
@@ -231,7 +311,7 @@ vtObject_c::genericChangeChildLocationPosition (bool rb_isLocation, IsoAgLib::iV
     }
   }
   return false; // Object was not child object --> return FALSE!
-} // -X2C
+}
 
 // only using int16_t because ISO's offset is -127 and hence the range is -127..0..+128 :-(((
 bool
@@ -253,12 +333,11 @@ vtObject_c::genericChangeChildPosition (IsoAgLib::iVtObject_c* childObject, int1
   return b_result;
 }
 
-// //////////////////////////////// +X2C Operation 216 : disable
-//! Parameter:
+// Operation : disable
 //! @param b_updateObject:
 bool
 vtObject_c::able (uint8_t enOrDis, bool b_updateObject, bool b_enableReplaceOfCmd)
-{ // ~X2C
+{
   if (b_updateObject) {
     updateEnable (enOrDis);
   }

@@ -79,30 +79,20 @@
  *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
-
 #ifndef VTOBJECTPICTUREGRAPHIC_C_H
 #define VTOBJECTPICTUREGRAPHIC_C_H
 
-
-// +X2C includes
 #include "vtobject_c.h"
 #include "isoterminal_c.h"
 #include "vtclientservercommunication_c.h"
-// ~X2C
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
-
-//  +X2C Class 149 : vtObjectPictureGraphic_c
-//!  Stereotype: Klasse
 class vtObjectPictureGraphic_c : public vtObject_c
 {
-
 public:
-
   //  Operation: stream
-  //! Parameter:
   //! @param:destMemory:
   //! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
   //! @param sourceOffset:
@@ -111,10 +101,10 @@ public:
                  objRange_t sourceOffset);
 
   //  Operation: init
-  //! Parameter:
   //! @param vtObjectPictureGraphicSROM:
   //! @param b_initPointer:
-  void init(const iVtObjectPictureGraphic_s* vtObjectPictureGraphicSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) { vtObject_c::init ((iVtObject_s*) vtObjectPictureGraphicSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA); };
+  void init(const iVtObjectPictureGraphic_s* vtObjectPictureGraphicSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA)
+  { vtObject_c::init ((iVtObject_s*) vtObjectPictureGraphicSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA); }
 
   //  Operation: get_vtObjectPictureGraphic_a
   inline iVtObjectPictureGraphic_s* get_vtObjectPictureGraphic_a() { return (iVtObjectPictureGraphic_s *)vtObject_a; }
@@ -149,6 +139,7 @@ public:
     if (rui16_actHeight!= 0xFFFF) saveValue16(MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), actualHeight), sizeof(iVtObjectPictureGraphic_s), rui16_actHeight);
     if (rui16_width    != 0xFFFF) saveValue16(MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), width),        sizeof(iVtObjectPictureGraphic_s), rui16_width);
   }
+
   void setRawData1 (HUGE_MEM uint8_t* newValue, uint32_t rui32_size, bool rb_rle, uint16_t rui16_actWidth=0xFFFF, uint16_t rui16_actHeight=0xFFFF, uint16_t rui16_width=0xFFFF)
   { // normally it would be enough to just use saveValueP once, because the ram-struct is then created... but anyway...
     saveValueP (MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), rawData1),                sizeof(iVtObjectPictureGraphic_s), (IsoAgLib::iVtObject_c*)newValue);
@@ -159,6 +150,7 @@ public:
     if (rui16_actHeight!= 0xFFFF) saveValue16(MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), actualHeight), sizeof(iVtObjectPictureGraphic_s), rui16_actHeight);
     if (rui16_width    != 0xFFFF) saveValue16(MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), width),        sizeof(iVtObjectPictureGraphic_s), rui16_width);
   }
+
   void setRawData2 (HUGE_MEM uint8_t* newValue, uint32_t rui32_size, bool rb_rle, uint16_t rui16_actWidth=0xFFFF, uint16_t rui16_actHeight=0xFFFF, uint16_t rui16_width=0xFFFF)
   { // normally it would be enough to just use saveValueP once, because the ram-struct is then created... but anyway...
     saveValueP (MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), rawData2),                sizeof(iVtObjectPictureGraphic_s), (IsoAgLib::iVtObject_c*)newValue);
@@ -170,8 +162,28 @@ public:
     if (rui16_width    != 0xFFFF) saveValue16(MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), width),        sizeof(iVtObjectPictureGraphic_s), rui16_width);
   }
 
-}; // ~X2C
+  // ///////////////////////// getter for attributes
+  /** that attribute is in parentheses in the spec, so commented out here
+  uint8_t updateObjectType() const { return 20; }
+  */
+
+  uint16_t updateWidth(bool b_SendRequest=false);
+
+  uint8_t updateOptions(bool b_SendRequest=false);
+
+  uint8_t updateTransparencyColour(bool b_SendRequest=false);
+
+  /** these attributes are in parentheses in the spec, so commented out here
+  uint16_t updateActualWidth(bool b_SendRequest=false);
+
+  uint16_t updateActualHeight(bool b_SendRequest=false);
+
+  uint8_t updateFormat(bool b_SendRequest=false);
+  */
+
+  void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue);
+};
 
 } // end of namespace __IsoAgLib
 
-#endif // -X2C
+#endif

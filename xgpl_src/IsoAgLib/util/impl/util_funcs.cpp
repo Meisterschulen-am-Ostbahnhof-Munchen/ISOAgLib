@@ -532,6 +532,13 @@ int32_t convertLittleEndianStringI32( const uint8_t* rpui8_src )
 #endif
   return i32_temp;
 }
+/** convert receive multistream into a float variable */
+float convertLittleEndianStringFloat( const uint8_t* rpui8_src )
+{
+  float f_temp;
+  littleEndianStream2FloatVar(rpui8_src, &f_temp);
+  return f_temp;
+}
 
 
 void int2littleEndianString( unsigned int input, uint8_t* pui8_target, unsigned int size )
@@ -1192,6 +1199,65 @@ int16_t Flexible8ByteString_c::getInt16Data(uint8_t rui8_pos) const
   };
   // only reach here on error
   return 0;
+}
+
+
+/**
+    simply deliver a float from a specific position with.
+    IMPORTANT: position 0 matches to the least significant byte,
+    as the string is ordered in LittleEndian order,
+    identic to the order which is used for CAN messages
+    @param rui8_pos position of delivered uint8_t [0..4]
+    @return float value in CAN data string at pos rui8_pos
+*/
+float Flexible8ByteString_c::getFloatData(uint8_t rui8_pos) const
+{
+  float f;
+  switch ( rui8_pos )
+  {
+    case 0: /* Byte0 -> 1st float*/ littleEndianStream2FloatVar(&uint32[0], &f); return f;
+    case 4: /* Byte4 -> 2nd float*/ littleEndianStream2FloatVar(&uint32[1], &f); return f;
+    default:
+      if ( rui8_pos < 4 ) {
+        littleEndianStream2FloatVar(uint8+rui8_pos, &f);
+        return f;
+      }
+      else
+      {
+        getLibErrInstance().registerError(LibErr_c::Range, LibErr_c::Can);
+#if defined(SYSTEM_PC) && defined(DEBUG)
+        fprintf( stderr,
+                 "ERROR!! Flexible8ByteString_c::getFloatData has been called with write position %d which is larger than the allowed 6\n", rui8_pos );
+        abort();
+#endif
+      }
+      break;
+  }
+  // only reach here on error
+  return 0;
+}
+
+/**
+  set a float value at specified position in string.
+  IMPORTANT: position 0 matches to the least significant byte,
+  as the string is ordered in LittleEndian order,
+  identic to the order which is used for CAN messages
+  Possible Error: <LibErr_c::Range, LibErr_c::Can> when rui8_pos > 6
+  @param rui8_pos Byte position [0..4]
+  @param rf_val float value to set
+  */
+void Flexible8ByteString_c::setFloatData(uint8_t rui8_pos, const float rf_val)
+{
+  if ( rui8_pos < 5 ) floatVar2LittleEndianStream( &rf_val, (uint8+rui8_pos) );
+  else
+  {
+    getLibErrInstance().registerError(LibErr_c::Range, LibErr_c::Can);
+#if defined(SYSTEM_PC) && defined(DEBUG)
+    fprintf( stderr,
+            "ERROR!! Flexible8ByteString_c::setFloatData has been called with write position %d which is larger than the allowed 6\n", rui8_pos );
+    abort();
+#endif
+  }
 }
 
 /**

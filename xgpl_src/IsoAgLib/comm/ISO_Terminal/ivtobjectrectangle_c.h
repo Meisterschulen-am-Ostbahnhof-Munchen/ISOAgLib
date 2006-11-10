@@ -75,10 +75,10 @@ public:
   //! @param b_initPointer:
   void init(const iVtObjectRectangle_s* vtObjectRectangleSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) {
     vtObjectRectangle_c::init (vtObjectRectangleSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
-  };
+  }
 
   //  Operation: get_vtObjectmeter_a
-  const iVtObjectRectangle_s& get_vtObjectRectangle_a() { return *vtObjectRectangle_c::get_vtObjectRectangle_a(); };
+  const iVtObjectRectangle_s& get_vtObjectRectangle_a() { return *vtObjectRectangle_c::get_vtObjectRectangle_a(); }
 
   //  Operation: setWidth
   //! Parameter:
@@ -86,7 +86,7 @@ public:
   //! @param b_updateObject:
   void setWidth(uint16_t newWidth, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectRectangle_c::setWidth (newWidth, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
   //  Operation: setHeight
   //! Parameter:
@@ -94,7 +94,7 @@ public:
   //! @param b_updateObject:
   void setHeight(uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectRectangle_c::setHeight (newHeight, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
   //  Operation: setLineAttributes
   //! Parameter:
@@ -102,7 +102,7 @@ public:
   //! @param b_updateObject:
   void setLineAttributes(iVtObjectLineAttributes_c* newLineAttributes, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectRectangle_c::setLineAttributes (newLineAttributes, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
   //  Operation: setLineSuppression
   //! Parameter:
@@ -110,7 +110,7 @@ public:
   //! @param b_updateObject:
   void setLineSuppression(uint8_t newLineSupressionValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectRectangle_c::setLineSuppression (newLineSupressionValue, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
   //  Operation: setFillAttributes
   //! Parameter:
@@ -118,7 +118,7 @@ public:
   //! @param b_updateObject:
   void setFillAttributes(iVtObjectFillAttributes_c* newFillAttribute, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectRectangle_c::setFillAttributes (newFillAttribute, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
   //  Operation: setSize
   //! Parameter:
@@ -129,8 +129,32 @@ public:
     vtObjectRectangle_c::setSize(newWidth, newHeight, b_updateObject, b_enableReplaceOfCmd);
   }
 
-}; // ~X2C
+  // ///////////////////////// getter for attributes
+  /** that attribute is in parentheses in the spec, so commented out here
+  uint8_t updateObjectType() const { return vtObjectRectangle_c::updateObjectType(); }
+  */
+
+  uint16_t updateLineAttributes(bool b_SendRequest=false) {
+    return vtObjectRectangle_c::updateLineAttributes(b_SendRequest);
+  }
+
+  uint16_t updateWidth(bool b_SendRequest=false) {
+    return vtObjectRectangle_c::updateWidth(b_SendRequest);
+  }
+
+  uint16_t updateHeight(bool b_SendRequest=false) {
+    return vtObjectRectangle_c::updateHeight(b_SendRequest);
+  }
+
+  uint8_t updateLineSuppression(bool b_SendRequest=false) {
+    return vtObjectRectangle_c::updateLineSuppression(b_SendRequest);
+  }
+
+  uint16_t updateFillAttributes(bool b_SendRequest=false) {
+    return vtObjectRectangle_c::updateFillAttributes(b_SendRequest);
+  }
+};
 
 } // end namespace __IsoAgLib
 
-#endif // -X2C
+#endif

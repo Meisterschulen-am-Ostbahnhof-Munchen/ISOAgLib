@@ -89,7 +89,6 @@ public:
   }
 
   //  Operation: setChildPosition
-  //! Parameter:
   //! @param rpc_childObject:
   //! @param dx:
   //! @param dy:
@@ -97,8 +96,11 @@ public:
     return vtObjectAuxiliaryFunction_c::setChildPosition(rpc_childObject, dx, dy, b_updateObject, b_enableReplaceOfCmd);
   }
 
-}; // ~X2C
+  /** that attribute is in parentheses in the spec, so commented out here
+  uint8_t updateObjectType() const { return vtObjectAuxiliaryFunction_c::updateObjectType(); }
+  */
+};
 
 } // end of namespace IsoAgLib
 
-#endif // -X2C
+#endif

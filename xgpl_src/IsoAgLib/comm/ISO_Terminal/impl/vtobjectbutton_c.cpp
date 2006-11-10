@@ -79,18 +79,15 @@
  *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
-
 #include "vtobjectbutton_c.h"
+
 #include "../ivtobjectfontattributes_c.h"
 #include "../ivtobjectbutton_c.h"
 #include "isoterminal_c.h"
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
-
-
-// //////////////////////////////// +X2C Operation 99 : stream
-//! Parameter:
+// Operation : stream
 //! @param:destMemory:
 //! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
 //! @param sourceOffset:
@@ -98,7 +95,7 @@ int16_t
 vtObjectButton_c::stream(uint8_t* destMemory,
                          uint16_t maxBytes,
                          objRange_t sourceOffset)
-{ // ~X2C
+{
 #define MACRO_vtObjectTypeA vtObjectButton_a
 #define MACRO_vtObjectTypeS iVtObjectButton_s
     MACRO_streamLocalVars;
@@ -115,7 +112,7 @@ vtObjectButton_c::stream(uint8_t* destMemory,
       destMemory [7] = __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).getUserClippedColor (vtObjectButton_a->backgroundColour, this, IsoAgLib::BackgroundColour);
       destMemory [8] = __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).getUserClippedColor (vtObjectButton_a->borderColour, this, IsoAgLib::BorderColour);
       destMemory [9] = vtObjectButton_a->keyCode;
-      destMemory [10] = vtObjectButton_a->latchable;
+      destMemory [10] = vtObjectButton_a->options;
       destMemory [11] = vtObjectButton_a->numberOfObjectsToFollow;
       destMemory [12] = vtObjectButton_a->numberOfMacrosToFollow;
       sourceOffset += 13;
@@ -125,21 +122,19 @@ vtObjectButton_c::stream(uint8_t* destMemory,
     MACRO_streamObjectXYcenteredInButton(13);
     MACRO_streamEventMacro(13U+vtObjectButton_a->numberOfObjectsToFollow*6U);
     return curBytes;
-} // -X2C
+}
 
 
-// //////////////////////////////// +X2C Operation 102 : vtObjectButton_c
-vtObjectButton_c::vtObjectButton_c()
-{ // ~X2C
-} // -X2C
+// Operation : vtObjectButton_c
+vtObjectButton_c::vtObjectButton_c() {}
 
-// //////////////////////////////// +X2C Operation 194 : size
+// Operation : size
 uint32_t
 vtObjectButton_c::fitTerminal() const
-{ // ~X2C
+{
   MACRO_localVars;
   return 13+vtObjectButton_a->numberOfObjectsToFollow*6+vtObjectButton_a->numberOfMacrosToFollow*2;
-} // -X2C
+}
 
 void
 vtObjectButton_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject, bool b_enableReplaceOfCmd)
@@ -166,8 +161,6 @@ vtObjectButton_c::setChildPosition(IsoAgLib::iVtObject_c* rpc_childObject, int16
   return genericChangeChildPosition (rpc_childObject, x, y, b_updateObject, vtObjectButton_a->numberOfObjectsToFollow, (IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s *) vtObjectButton_a->objectsToFollow, MACRO_getStructOffset(get_vtObjectButton_a(), objectsToFollow), sizeof(iVtObjectButton_s), b_enableReplaceOfCmd);
 }
 
-//! Parameter:
-//! @param p_btn:
 void
 vtObjectButton_c::setOriginBTN(IsoAgLib::iVtObjectButton_c* /*p_btn*/)
 {
@@ -175,6 +168,75 @@ vtObjectButton_c::setOriginBTN(IsoAgLib::iVtObjectButton_c* /*p_btn*/)
   p_parentButtonObject = (IsoAgLib::iVtObjectButton_c*)this;
   for (int i=0; i<vtObjectButton_a->numberOfObjectsToFollow; i++) {
     vtObjectButton_a->objectsToFollow[i].vtObject->setOriginBTN (p_parentButtonObject);
+  }
+}
+
+uint16_t
+vtObjectButton_c::updateWidth(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectButton_a(), width), sizeof(iVtObjectButton_s), 1);
+  else
+    return getValue16(MACRO_getStructOffset(get_vtObjectButton_a(), width), sizeof(iVtObjectButton_s));
+}
+
+uint16_t
+vtObjectButton_c::updateHeight(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectButton_a(), height), sizeof(iVtObjectButton_s), 2);
+  else
+    return getValue16(MACRO_getStructOffset(get_vtObjectButton_a(), height), sizeof(iVtObjectButton_s));
+}
+
+uint8_t
+vtObjectButton_c::updateBackgroundColour(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectButton_a(), backgroundColour), sizeof(iVtObjectButton_s), 3);
+  else
+    return getValue8(MACRO_getStructOffset(get_vtObjectButton_a(), backgroundColour), sizeof(iVtObjectButton_s));
+}
+
+uint8_t
+vtObjectButton_c::updateBorderColour(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectButton_a(), borderColour), sizeof(iVtObjectButton_s), 4);
+  else
+    return getValue8(MACRO_getStructOffset(get_vtObjectButton_a(), borderColour), sizeof(iVtObjectButton_s));
+}
+
+uint8_t
+vtObjectButton_c::updateKeyCode(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectButton_a(), keyCode), sizeof(iVtObjectButton_s), 5);
+  else
+    return getValue8(MACRO_getStructOffset(get_vtObjectButton_a(), keyCode), sizeof(iVtObjectButton_s));
+}
+
+uint8_t
+vtObjectButton_c::updateOptions(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectButton_a(), options), sizeof(iVtObjectButton_s), 6);
+  else
+    return getValue8(MACRO_getStructOffset(get_vtObjectButton_a(), options), sizeof(iVtObjectButton_s));
+}
+
+void
+vtObjectButton_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attributeValue)
+{
+  switch (attrID)
+  {
+    case 1: saveValue16(MACRO_getStructOffset(get_vtObjectButton_a(), width), sizeof(iVtObjectButton_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
+    case 2: saveValue16(MACRO_getStructOffset(get_vtObjectButton_a(), height), sizeof(iVtObjectButton_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
+    case 3: saveValue8(MACRO_getStructOffset(get_vtObjectButton_a(), backgroundColour), sizeof(iVtObjectButton_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
+    case 4: saveValue8(MACRO_getStructOffset(get_vtObjectButton_a(), borderColour), sizeof(iVtObjectButton_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
+    case 5: saveValue8(MACRO_getStructOffset(get_vtObjectButton_a(), keyCode), sizeof(iVtObjectButton_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
+    case 6: saveValue8(MACRO_getStructOffset(get_vtObjectButton_a(), options), sizeof(iVtObjectButton_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
+    default: break;
   }
 }
 

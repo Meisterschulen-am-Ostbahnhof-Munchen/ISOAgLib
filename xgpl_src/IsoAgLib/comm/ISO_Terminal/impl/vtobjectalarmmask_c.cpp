@@ -79,17 +79,15 @@
  *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
-
 #include "vtobjectalarmmask_c.h"
+
 #include "../ivtobjectfontattributes_c.h"
 #include "isoterminal_c.h"
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
-
-// //////////////////////////////// +X2C Operation 77 : stream
-//! Parameter:
+// Operation : stream
 //! @param:destMemory:
 //! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
 //! @param sourceOffset:
@@ -97,7 +95,7 @@ int16_t
 vtObjectAlarmMask_c::stream(uint8_t* destMemory,
                             uint16_t maxBytes,
                             objRange_t sourceOffset)
-{ // ~X2C
+{
 #define MACRO_vtObjectTypeA vtObjectAlarmMask_a
 #define MACRO_vtObjectTypeS iVtObjectAlarmMask_s
     MACRO_streamLocalVars;
@@ -128,41 +126,32 @@ vtObjectAlarmMask_c::stream(uint8_t* destMemory,
     MACRO_streamObjectXY(10);
     MACRO_streamEventMacro(10U+vtObjectAlarmMask_a->numberOfObjectsToFollow*6U);
     return curBytes;
-} // -X2C
+}
 
 
-
-// //////////////////////////////// +X2C Operation 80 : vtObjectAlarmMask_c
-vtObjectAlarmMask_c::vtObjectAlarmMask_c()
-{ // ~X2C
-} // -X2C
+// Operation : vtObjectAlarmMask_c
+vtObjectAlarmMask_c::vtObjectAlarmMask_c() {}
 
 
-
-// //////////////////////////////// +X2C Operation 190 : size
+// Operation : size
 uint32_t
 vtObjectAlarmMask_c::fitTerminal() const
-{ // ~X2C
+{
   MACRO_localVars;
   return 10+vtObjectAlarmMask_a->numberOfObjectsToFollow*6+vtObjectAlarmMask_a->numberOfMacrosToFollow*2;
-} // -X2C
+}
 
-
-
-// //////////////////////////////// +X2C Operation 262 : setSoftKeyMask
-//! Parameter:
+// Operation : setSoftKeyMask
 //! @param newSoftKeyMask:
 //! @param b_updateObject:
 void
 vtObjectAlarmMask_c::setSoftKeyMask(IsoAgLib::iVtObjectSoftKeyMask_c* newSoftKeyMask,
                                     bool b_updateObject, bool b_enableReplaceOfCmd)
-{ // ~X2C
+{
   if (b_updateObject) saveValueP (MACRO_getStructOffset(get_vtObjectAlarmMask_a(), softKeyMask), sizeof(iVtObjectAlarmMask_s), newSoftKeyMask);
 
   __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeSoftKeyMask (this, 2 /* "Type: Alarm Mask" */, newSoftKeyMask->getID(), b_enableReplaceOfCmd);
-} // -X2C
-
-
+}
 
 /// No cmdReplacing here, as it's a relative command!!
 bool
@@ -177,6 +166,55 @@ vtObjectAlarmMask_c::setChildPosition(IsoAgLib::iVtObject_c* rpc_childObject, in
 {
   MACRO_localVars;
   return genericChangeChildPosition (rpc_childObject, x, y, b_updateObject, vtObjectAlarmMask_a->numberOfObjectsToFollow, (IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s *) vtObjectAlarmMask_a->objectsToFollow, MACRO_getStructOffset(get_vtObjectAlarmMask_a(), objectsToFollow), sizeof(iVtObjectAlarmMask_s), b_enableReplaceOfCmd);
+}
+
+uint8_t
+vtObjectAlarmMask_c::updateBackgroundColour (bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectAlarmMask_a(), backgroundColour), sizeof(iVtObjectAlarmMask_s), 1);
+  else
+    return getValue8(MACRO_getStructOffset(get_vtObjectAlarmMask_a(), backgroundColour), sizeof(iVtObjectAlarmMask_s));
+}
+
+uint16_t
+vtObjectAlarmMask_c::updateSoftKeyMask(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectAlarmMask_a(), softKeyMask), sizeof(iVtObjectAlarmMask_s), 2);
+  else
+    return getValue16(MACRO_getStructOffset(get_vtObjectAlarmMask_a(), softKeyMask), sizeof(iVtObjectAlarmMask_s));
+}
+
+uint8_t
+vtObjectAlarmMask_c::updatePriority (bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectAlarmMask_a(), priority), sizeof(iVtObjectAlarmMask_s), 3);
+  else
+    return getValue8(MACRO_getStructOffset(get_vtObjectAlarmMask_a(), priority), sizeof(iVtObjectAlarmMask_s));
+}
+
+uint8_t
+vtObjectAlarmMask_c::updateAcousticSignal(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectAlarmMask_a(), acousticSignal), sizeof(iVtObjectAlarmMask_s), 4);
+  else
+    return getValue8(MACRO_getStructOffset(get_vtObjectAlarmMask_a(), acousticSignal), sizeof(iVtObjectAlarmMask_s));
+}
+
+void
+vtObjectAlarmMask_c::saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue)
+{
+  switch (attrID)
+  {
+    case 1: saveValue8(MACRO_getStructOffset(get_vtObjectAlarmMask_a(), backgroundColour), sizeof(iVtObjectAlarmMask_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
+    case 2: saveValue16(MACRO_getStructOffset(get_vtObjectAlarmMask_a(), softKeyMask), sizeof(iVtObjectAlarmMask_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
+    case 3: saveValue8(MACRO_getStructOffset(get_vtObjectAlarmMask_a(), priority), sizeof(iVtObjectAlarmMask_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
+    case 4: saveValue8(MACRO_getStructOffset(get_vtObjectAlarmMask_a(), acousticSignal), sizeof(iVtObjectAlarmMask_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
+    default: break;
+  }
 }
 
 } // end of namespace __IsoAgLib

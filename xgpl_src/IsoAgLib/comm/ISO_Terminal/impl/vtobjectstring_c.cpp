@@ -79,20 +79,18 @@
  *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
-
 #include "vtobjectstring_c.h"
-#include <IsoAgLib/comm/Multipacket/impl/multisendpkg_c.h>
 
+#include <IsoAgLib/comm/Multipacket/impl/multisendpkg_c.h>
 
 namespace __IsoAgLib {
 
-// //////////////////////////////// +X2C Operation 243 : setDataNextStreamPart
-//! Parameter:
+// Operation : setDataNextStreamPart
 //! @param mspData:
 //! @param bytes:
 void
 vtObjectStringStreamer_c::setDataNextStreamPart(__IsoAgLib::MultiSendPkg_c* mspData, uint8_t bytes)
-{ // ~X2C
+{
   uint8_t bytesDone=0;
   if (streamPosition == 0) {
     set5ByteCommandHeader(uploadBuffer);
@@ -108,7 +106,7 @@ vtObjectStringStreamer_c::setDataNextStreamPart(__IsoAgLib::MultiSendPkg_c* mspD
   }
 
   mspData->setDataPart (uploadBuffer, 0, bytes);
-} // -X2C
+}
 
 
 void
@@ -121,35 +119,35 @@ vtObjectStringStreamer_c::set5ByteCommandHeader(uint8_t* destinBuffer)
   destinBuffer [4] = ui16_strLenToSend >> 8;
 }
 
-// //////////////////////////////// +X2C Operation 249 : resetDataNextStreamPart
+// Operation : resetDataNextStreamPart
 void
 vtObjectStringStreamer_c::resetDataNextStreamPart()
-{ // ~X2C
+{
   streamPosition = 0;
-} // -X2C
+}
 
 
-// //////////////////////////////// +X2C Operation 254 : saveDataNextStreamPart
+// Operation : saveDataNextStreamPart
 void
 vtObjectStringStreamer_c::saveDataNextStreamPart()
-{ // ~X2C
+{
   streamPositionStored = streamPosition;
-} // -X2C
+}
 
 
-// //////////////////////////////// +X2C Operation 255 : restoreDataNextStreamPart
+// Operation : restoreDataNextStreamPart
 void
 vtObjectStringStreamer_c::restoreDataNextStreamPart()
-{ // ~X2C
+{
   streamPosition = streamPositionStored;
-} // -X2C
+}
 
-// //////////////////////////////// +X2C Operation 267 : getStreamSize
+// Operation : getStreamSize
 uint32_t
 vtObjectStringStreamer_c::getStreamSize()
-{ // ~X2C
+{
   return 5+ui16_strLenToSend;
-} // -X2C
+}
 
 void vtObjectString_c::setStringToStream( const char* rpc_stringToStream )
 {
@@ -161,6 +159,5 @@ void vtObjectString_c::setStrLenToSend( uint16_t rui16_strLenToSend )
 {
   c_streamer.setStrLenToSend( rui16_strLenToSend );
 }
-
 
 } // end namespace __IsoAgLib

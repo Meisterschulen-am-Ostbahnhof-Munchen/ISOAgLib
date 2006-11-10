@@ -48,7 +48,6 @@
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
  * the main author Achim Spangler by a.spangler@osb-ag.de                  *
  ***************************************************************************/
-
 #ifndef IVTOBJECTPICTUREGRAPHIC_C_H
 #define IVTOBJECTPICTUREGRAPHIC_C_H
 
@@ -70,10 +69,10 @@ public:
   //! @param b_initPointer:
   void init(const iVtObjectPictureGraphic_s* vtObjectPictureGraphicSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) {
     vtObjectPictureGraphic_c::init (vtObjectPictureGraphicSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
-  };
+  }
 
   //  Operation: get_vtObjectPictureGraphic_a
-  const iVtObjectPictureGraphic_s& get_vtObjectPictureGraphic_a() { return *vtObjectPictureGraphic_c::get_vtObjectPictureGraphic_a(); };
+  const iVtObjectPictureGraphic_s& get_vtObjectPictureGraphic_a() { return *vtObjectPictureGraphic_c::get_vtObjectPictureGraphic_a(); }
 
   //  Operation: setWidth
   //! Parameter:
@@ -81,7 +80,7 @@ public:
   //! @param b_updateObject:
   void setWidth(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectPictureGraphic_c::setWidth (newValue, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
   //  Operation: setOptions
   //! Parameter:
@@ -89,7 +88,7 @@ public:
   //! @param b_updateObject:
   void setOptions(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectPictureGraphic_c::setOptions (newValue, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
   //  Operation: setTransparencyColour
   //! Parameter:
@@ -97,7 +96,7 @@ public:
   //! @param b_updateObject:
   void setTransparencyColour(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectPictureGraphic_c::setTransparencyColour (newValue, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
   void setRawData0 (HUGE_MEM uint8_t* newValue, uint32_t rui32_size, bool rb_rle, uint16_t rui16_actWidth=0xFFFF, uint16_t rui16_actHeight=0xFFFF, uint16_t rui16_width=0xFFFF) {
     vtObjectPictureGraphic_c::setRawData0 (newValue, rui32_size, rb_rle, rui16_actWidth, rui16_actHeight, rui16_width);
@@ -108,9 +107,39 @@ public:
   void setRawData2 (HUGE_MEM uint8_t* newValue, uint32_t rui32_size, bool rb_rle, uint16_t rui16_actWidth=0xFFFF, uint16_t rui16_actHeight=0xFFFF, uint16_t rui16_width=0xFFFF) {
     vtObjectPictureGraphic_c::setRawData2 (newValue, rui32_size, rb_rle, rui16_actWidth, rui16_actHeight, rui16_width);
   }
+
+  // ///////////////////////// getter for attributes
+  /** that attribute is in parentheses in the spec, so commented out here
+  uint8_t updateObjectType() const { return vtObjectPictureGraphic_c::updateObjectType(); }
+  */
+
+  uint16_t updateWidth(bool b_SendRequest=false) {
+    return vtObjectPictureGraphic_c::updateWidth(b_SendRequest);
+  }
+
+  uint8_t updateOptions(bool b_SendRequest=false) {
+    return vtObjectPictureGraphic_c::updateOptions(b_SendRequest);
+  }
+
+  uint8_t updateTransparencyColour(bool b_SendRequest=false) {
+    return vtObjectPictureGraphic_c::updateTransparencyColour(b_SendRequest);
+  }
+
+  /** these attributes are in parentheses in the spec, so commented out here
+  uint16_t updateActualWidth(bool b_SendRequest=false) {
+    return vtObjectPictureGraphic_c::updateActualWidth(b_SendRequest);
+  }
+
+  uint16_t updateActualHeight(bool b_SendRequest=false) {
+    return vtObjectPictureGraphic_c::updateActualHeight(b_SendRequest);
+  }
+
+  uint8_t updateFormat(bool b_SendRequest=false) {
+    return vtObjectPictureGraphic_c::updateFormat(b_SendRequest);
+  }
+  */
 };
 
 } // end of namespace IsoAgLib
 
-#endif // IVTOBJECTPICTUREGRAPHIC_C_H
-
+#endif

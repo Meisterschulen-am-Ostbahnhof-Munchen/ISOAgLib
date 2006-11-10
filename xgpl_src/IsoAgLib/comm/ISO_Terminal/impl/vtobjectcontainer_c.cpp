@@ -79,18 +79,15 @@
  *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
-
 #include "vtobjectcontainer_c.h"
+
 #include "../ivtobjectfontattributes_c.h"
 #include "../ivtobjectbutton_c.h"
 #include "isoterminal_c.h"
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
-
-
-// //////////////////////////////// +X2C Operation 34 : stream
-//! Parameter:
+// Operation : stream
 //! @param:destMemory:
 //! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
 //! @param sourceOffset:
@@ -98,7 +95,7 @@ int16_t
 vtObjectContainer_c::stream(uint8_t* destMemory,
                             uint16_t maxBytes,
                             objRange_t sourceOffset)
-{ // ~X2C
+{
 #define MACRO_vtObjectTypeA vtObjectContainer_a
 #define MACRO_vtObjectTypeS iVtObjectContainer_s
     MACRO_streamLocalVars;
@@ -131,15 +128,13 @@ vtObjectContainer_c::stream(uint8_t* destMemory,
     MACRO_streamObjectXY(10);
     MACRO_streamEventMacro(10U+vtObjectContainer_a->numberOfObjectsToFollow*6U);
     return curBytes;
-} // -X2C
-
-
-// //////////////////////////////// +X2C Operation 65 : vtObjectContainer_c
-vtObjectContainer_c::vtObjectContainer_c()
-{
 }
 
-// //////////////////////////////// +X2C Operation 191 : size
+
+// Operation : vtObjectContainer_c
+vtObjectContainer_c::vtObjectContainer_c() {}
+
+// Operation : size
 uint32_t
 vtObjectContainer_c::fitTerminal() const
 {
@@ -148,20 +143,19 @@ vtObjectContainer_c::fitTerminal() const
 }
 
 
-// //////////////////////////////// +X2C Operation 212 : hideShow
-//! Parameter:
+// Operation : hideShow
 //! @param b_hideOrShow:
 //! @param b_updateObject:
 void
 vtObjectContainer_c::hideShow(uint8_t b_hideOrShow, bool b_updateObject, bool b_enableReplaceOfCmd)
-{ // ~X2C
+{
   if (b_updateObject) saveValue8 (MACRO_getStructOffset(get_vtObjectContainer_a(), hidden), sizeof(iVtObjectContainer_s), (!b_hideOrShow)&0x01);
 
   __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommand (160 /* Command: Command --- Parameter: Hide/Show Object */,
                                                    vtObject_a->ID & 0xFF, vtObject_a->ID >> 8,
                                                    b_hideOrShow,
                                                    0xFF, 0xFF, 0xFF, 0xFF, 1000, b_enableReplaceOfCmd);
-} // -X2C
+}
 
 void
 vtObjectContainer_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject, bool b_enableReplaceOfCmd)
@@ -173,7 +167,6 @@ vtObjectContainer_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_updat
 
   __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeSize (this, newWidth, newHeight, b_enableReplaceOfCmd);
 }
-
 
 bool
 vtObjectContainer_c::moveChildLocation(IsoAgLib::iVtObject_c* rpc_childObject, int8_t dx, int8_t dy, bool b_updateObject, bool b_enableReplaceOfCmd)
@@ -190,13 +183,9 @@ vtObjectContainer_c::setChildPosition(IsoAgLib::iVtObject_c* rpc_childObject, in
   return genericChangeChildPosition (rpc_childObject, x, y, b_updateObject, vtObjectContainer_a->numberOfObjectsToFollow, (IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s *) vtObjectContainer_a->objectsToFollow, MACRO_getStructOffset(get_vtObjectContainer_a(), objectsToFollow), sizeof(iVtObjectContainer_s), b_enableReplaceOfCmd);
 }
 
-
-// //////////////////////////////// +X2C Operation 228 : setOriginSKM
-//! Parameter:
-//! @param b_SKM:
 void
 vtObjectContainer_c::setOriginSKM(bool b_SKM)
-{ // ~X2C
+{
   MACRO_localVars;
   if (b_SKM) {
     s_properties.flags |= FLAG_ORIGIN_SKM;
@@ -204,10 +193,8 @@ vtObjectContainer_c::setOriginSKM(bool b_SKM)
       vtObjectContainer_a->objectsToFollow[i].vtObject->setOriginSKM (b_SKM);
     }
   }
-} // -X2C
+}
 
-//! Parameter:
-//! @param p_btn:
 void
 vtObjectContainer_c::setOriginBTN(IsoAgLib::iVtObjectButton_c* p_btn)
 {
@@ -218,4 +205,46 @@ vtObjectContainer_c::setOriginBTN(IsoAgLib::iVtObjectButton_c* p_btn)
   }
 }
 
+/** these attributes are in parentheses in the spec, so commented out here
+uint16_t
+vtObjectContainer_c::updateWidth(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectContainer_a(), width), sizeof(iVtObjectContainer_s), 1);
+  else
+    return getValue16(MACRO_getStructOffset(get_vtObjectContainer_a(), width), sizeof(iVtObjectContainer_s));
+}
+
+uint16_t
+vtObjectContainer_c::updateHeight(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectContainer_a(), height), sizeof(iVtObjectContainer_s), 2);
+  else
+    return getValue8(MACRO_getStructOffset(get_vtObjectContainer_a(), height), sizeof(iVtObjectContainer_s));
+}
+
+uint8_t
+vtObjectContainer_c::updateHidden(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectContainer_a(), hidden), sizeof(iVtObjectContainer_s), 3);
+  else
+    return getValue8(MACRO_getStructOffset(get_vtObjectContainer_a(), hidden), sizeof(iVtObjectContainer_s));
+}
+*/
+
+void
+vtObjectContainer_c::saveReceivedAttribute(uint8_t attrID, uint8_t* /*pui8_attributeValue*/)
+{
+  switch (attrID)
+  {
+    /** these attributes are in parentheses in the spec, so commented out here
+    case 1: saveValue16(MACRO_getStructOffset(get_vtObjectContainer_a(), width), sizeof(iVtObjectContainer_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
+    case 2: saveValue16(MACRO_getStructOffset(get_vtObjectContainer_a(), height), sizeof(iVtObjectContainer_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
+    case 3: saveValue8(MACRO_getStructOffset(get_vtObjectContainer_a(), hidden), sizeof(iVtObjectContainer_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
+    */
+    default: break;
+  }
+}
 } // end of namespace __IsoAgLib

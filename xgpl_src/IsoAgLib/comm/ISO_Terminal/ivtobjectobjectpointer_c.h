@@ -74,10 +74,10 @@ public:
   //! @param b_initPointer:
   void init(const iVtObjectObjectPointer_s* vtObjectObjectPointerSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) {
     vtObjectObjectPointer_c::init (vtObjectObjectPointerSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
-  };
+  }
 
   //  Operation: get_vtObjectObjectPointer_a
-  const iVtObjectObjectPointer_s& get_vtObjectObjectPointer_a() { return *vtObjectObjectPointer_c::get_vtObjectObjectPointer_a(); };
+  const iVtObjectObjectPointer_s& get_vtObjectObjectPointer_a() { return *vtObjectObjectPointer_c::get_vtObjectObjectPointer_a(); }
 
   //  Operation: setValue
   //! Parameter:
@@ -85,9 +85,17 @@ public:
   //! @param b_updateObject:
   void setValue(iVtObject_c* rpc_newObject, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
     vtObjectObjectPointer_c::setValue (rpc_newObject, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
-}; // ~X2C
+  /** these attributes are in parentheses in the spec, so commented out here
+  uint8_t updateObjectType() const { return vtObjectInputAttributes_c::updateObjectType(); }
+  
+  uint16_t updateValue(bool b_SendRequest=false) {
+    return vtObjectInputAttributes_c::getValue(b_SendRequest);
+  }
+  */
+
+};
 
 } // end of namespace IsoAgLib
 

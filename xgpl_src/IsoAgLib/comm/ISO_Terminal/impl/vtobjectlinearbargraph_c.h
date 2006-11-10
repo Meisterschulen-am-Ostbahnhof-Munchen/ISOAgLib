@@ -79,29 +79,20 @@
  *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
-
 #ifndef VTOBJECTLINEARBARGRAPH_C_H
 #define VTOBJECTLINEARBARGRAPH_C_H
 
-// +X2C includes
 #include "vtobject_c.h"
 #include "isoterminal_c.h"
 #include "vtclientservercommunication_c.h"
-// ~X2C
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
-
-//  +X2C Class 119 : vtObjectLinearBarGraph_c
-//!  Stereotype: Klasse
 class vtObjectLinearBarGraph_c : public vtObject_c
 {
-
 public:
-
   //  Operation: stream
-  //! Parameter:
   //! @param:destMemory:
   //! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
   //! @param sourceOffset:
@@ -110,10 +101,10 @@ public:
                  objRange_t sourceOffset);
 
   //  Operation: init
-  //! Parameter:
   //! @param vtObjectLinearBarGraphSROM:
   //! @param b_initPointer:
-  void init(const iVtObjectLinearBarGraph_s* vtObjectLinearBarGraphSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) { vtObject_c::init ((iVtObject_s*) vtObjectLinearBarGraphSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA); };
+  void init(const iVtObjectLinearBarGraph_s* vtObjectLinearBarGraphSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA)
+  { vtObject_c::init ((iVtObject_s*) vtObjectLinearBarGraphSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA); }
 
   //  Operation: get_vtObjectLinearBarGraph_a
   iVtObjectLinearBarGraph_s* get_vtObjectLinearBarGraph_a() { return (iVtObjectLinearBarGraph_s *)vtObject_a; }
@@ -165,8 +156,40 @@ public:
 
   void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
-}; // ~X2C
+  // ///////////////////////// getter for attributes
+  /** that attribute is in parentheses in the spec, so commented out here
+  uint8_t updateObjectType() const { return 18; }
+  */
+
+  uint16_t updateWidth(bool b_SendRequest=false);
+
+  uint16_t updateHeight(bool b_SendRequest=false);
+
+  uint8_t updateColour(bool b_SendRequest=false);
+
+  uint8_t updateTargetLineColour(bool b_SendRequest=false);
+
+  uint8_t updateOptions(bool b_SendRequest=false);
+
+  uint8_t updateNumberOfTicks(bool b_SendRequest=false);
+
+  uint16_t updateMinValue(bool b_SendRequest=false);
+
+  uint16_t updateMaxValue(bool b_SendRequest=false);
+
+  uint16_t updateVariableReference(bool b_SendRequest=false);
+
+  uint16_t updateTargetValueVariableReference(bool b_SendRequest=false);
+
+  uint16_t updateTargetValue(bool b_SendRequest=false);
+
+  /** that attribute is in parentheses in the spec, so commented out here
+  uint16_t updateValue(bool b_SendRequest=false);
+  */
+
+  void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue);
+};
 
 } // end of namespace __IsoAgLib
 
-#endif // -X2C
+#endif

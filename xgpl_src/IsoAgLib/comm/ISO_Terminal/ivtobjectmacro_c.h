@@ -76,10 +76,15 @@ public:
   //! @param b_initPointer:
   void init(const iVtObjectMacro_s* vtObjectMacroSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) {
     vtObjectMacro_c::init (vtObjectMacroSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
-  };
+  }
 
   //  Operation: get_vtObjectMacro_a
-  const iVtObjectMacro_s& get_vtObjectMacro_a() { return *vtObjectMacro_c::get_vtObjectMacro_a(); };
+  const iVtObjectMacro_s& get_vtObjectMacro_a() { return *vtObjectMacro_c::get_vtObjectMacro_a(); }
+
+  
+  /** these attributes are in parentheses in the spec, so commented out here
+  uint8_t updateObjectType() const { return vtObjectMacro_c::updateObjectType(); }
+  */
 
 }; // ~X2C
 

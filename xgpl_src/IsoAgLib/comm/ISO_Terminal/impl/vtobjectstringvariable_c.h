@@ -79,29 +79,19 @@
  *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
-
 #ifndef VTOBJECTSTRINGVARIABLE_C_H
 #define VTOBJECTSTRINGVARIABLE_C_H
 
-
-// +X2C includes
 #include "../ivtobjectstring_c.h"
 #include "vtclientservercommunication_c.h"
-// ~X2C
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
-
-//  +X2C Class 161 : vtObjectStringVariable_c
-//!  Stereotype: Klasse
 class vtObjectStringVariable_c : public IsoAgLib::iVtObjectString_c
 {
-
 public:
-
   //  Operation: stream
-  //! Parameter:
   //! @param:destMemory:
   //! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
   //! @param sourceOffset:
@@ -110,10 +100,10 @@ public:
                  objRange_t sourceOffset);
 
   //  Operation: init
-  //! Parameter:
   //! @param vtObjectStringVariableSROM:
   //! @param b_initPointer:
-  void init(const iVtObjectStringVariable_s* vtObjectStringVariableSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) { vtObject_c::init ((iVtObject_s*) vtObjectStringVariableSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA); };
+  void init(const iVtObjectStringVariable_s* vtObjectStringVariableSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA)
+  { vtObject_c::init ((iVtObject_s*) vtObjectStringVariableSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA); }
 
   //  Operation: get_vtObjectStringVariable_a
   iVtObjectStringVariable_s* get_vtObjectStringVariable_a() { return (iVtObjectStringVariable_s *)vtObject_a; }
@@ -125,7 +115,6 @@ public:
   uint32_t fitTerminal() const;
 
   //  Operation: setValueCopy
-  //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
   void setValueCopy    (const char* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
@@ -134,7 +123,6 @@ public:
 #endif
 
   //  Operation: setValueRef
-  //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
   void setValueRef(const char* newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
@@ -142,8 +130,13 @@ public:
   //  Operation: getString
   const char* getString();
 
-}; // ~X2C
+  /** that attribute is in parentheses in the spec, so commented out here
+  uint8_t updateObjectType() const { return 22; }
+  */
+
+  void saveReceivedAttribute (uint8_t /*attrID*/, uint8_t* /*pui8_attributeValue*/) {};
+};
 
 } // end of namespace __IsoAgLib
 
-#endif // -X2C
+#endif

@@ -46,33 +46,23 @@
  * this file might be covered by the GNU General Public License.           *
  *                                                                         *
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
- * the main author Achim Spangler by a.spangler@osb-ag.de                  * 
- ***************************************************************************/ 
-
+ * the main author Achim Spangler by a.spangler@osb-ag.de                  *
+ ***************************************************************************/
 #ifndef IVTOBJECTSTRING_H
 #define IVTOBJECTSTRING_H
 
-
-// +X2C includes
 #include "impl/vtobjectstring_c.h"
-// ~X2C
 
 // Begin Namespace IsoAgLib
 namespace IsoAgLib {
 
-
-
-//  +X2C Class 241 : vtObjectString
-//!  Stereotype: class
 class iVtObjectString_c : public __IsoAgLib::vtObjectString_c
 {
-
 public:
   //  Operation: getString
   virtual const char* getString() = 0;
-
-}; // ~X2C
+};
 
 } // end of namespace IsoAgLib
 
-#endif // -X2C
+#endif

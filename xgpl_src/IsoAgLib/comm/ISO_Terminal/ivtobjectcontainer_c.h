@@ -74,20 +74,20 @@ public:
   //! @param b_initPointer:
   void init(const iVtObjectContainer_s* vtObjectContainer_sROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) {
     vtObjectContainer_c::init (vtObjectContainer_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
-  };
+  }
 
   //  Operation: get_vtObjectContainer_a
-  const iVtObjectContainer_s& get_vtObjectContainer_a() { return *vtObjectContainer_c::get_vtObjectContainer_a(); };
+  const iVtObjectContainer_s& get_vtObjectContainer_a() { return *vtObjectContainer_c::get_vtObjectContainer_a(); }
 
   //  Operation: hide
   //! Parameter:
   //! @param b_updateObject:
-  void hide(bool b_updateObject= false, bool b_enableReplaceOfCmd=false) { vtObjectContainer_c::hideShow (0, b_updateObject, b_enableReplaceOfCmd); };
+  void hide(bool b_updateObject= false, bool b_enableReplaceOfCmd=false) { vtObjectContainer_c::hideShow (0, b_updateObject, b_enableReplaceOfCmd); }
 
   //  Operation: show
   //! Parameter:
   //! @param b_updateObject:
-  void show(bool b_updateObject= false, bool b_enableReplaceOfCmd=false) { vtObjectContainer_c::hideShow (1, b_updateObject, b_enableReplaceOfCmd); };
+  void show(bool b_updateObject= false, bool b_enableReplaceOfCmd=false) { vtObjectContainer_c::hideShow (1, b_updateObject, b_enableReplaceOfCmd); }
 
   //  Operation: setSize
   //! Parameter:
@@ -99,7 +99,6 @@ public:
   }
 
   //  Operation: moveChildLocation
-  //! Parameter:
   //! @param rpc_childObject:
   //! @param dx:
   //! @param dy:
@@ -109,7 +108,6 @@ public:
   }
 
   //  Operation: setChildPosition
-  //! Parameter:
   //! @param rpc_childObject:
   //! @param dx:
   //! @param dy:
@@ -117,8 +115,27 @@ public:
     return vtObjectContainer_c::setChildPosition(rpc_childObject, dx, dy, b_updateObject, b_enableReplaceOfCmd);
   }
 
-}; // ~X2C
+  // ///////////////////////// getter for attributes
+  /** these attributes are in parentheses in the spec, so commented out here
+  uint8_t updateObjectType() const {
+    return vtObjectContainer_c::updateObjectType();
+  }
+
+
+  uint16_t updateWidth(bool b_SendRequest=false) {
+    return vtObjectContainer_c::updateWidth(b_SendRequest);
+  }
+
+  uint16_t updateHeight(bool b_SendRequest=false) {
+    return vtObjectContainer_c::updateHeight(b_SendRequest);
+  }
+
+  uint8_t updateHidden(bool b_SendRequest=false) {
+    return vtObjectContainer_c::updateHidden(b_SendRequest);
+  }
+  */
+};
 
 } // end of namespace IsoAgLib
 
-#endif // -X2C
+#endif

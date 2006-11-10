@@ -48,32 +48,24 @@
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
  * the main author Achim Spangler by a.spangler@osb-ag.de                  *
  ***************************************************************************/
-
 #ifndef IVTOBJECT_C_H
 #define IVTOBJECT_C_H
 
-
-// +X2C includes
+// includes
 #include "ivttypes.h"
 #include <IsoAgLib/hal/config.h>
 #include <IsoAgLib/util/impl/singleton.h>
-// ~X2C
 
 // Begin Namespace IsoAgLib
 namespace IsoAgLib {
-
-
-//  +X2C Class 2 : iVtObject_c
-//!  Stereotype: Klasse
+// Class : iVtObject_c
 class iVtObject_c : public ClientBase
 {
-
 // STRUCTURES
-
 public:
   typedef struct iVtObject_s {
     uint16_t ID;
-  } iVtObject_s ;
+  } iVtObject_s;
 
   typedef struct iVtObjectAlarmMask_s {
     uint16_t ID;
@@ -114,7 +106,7 @@ public:
     uint8_t backgroundColour;
     uint8_t borderColour;
     uint8_t keyCode;
-    uint8_t latchable;
+    uint8_t options;
     uint8_t numberOfObjectsToFollow;
     const repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow;
     uint8_t numberOfMacrosToFollow;
@@ -224,7 +216,7 @@ public:
     uint8_t numberOfDecimals;
     uint8_t format;
     uint8_t horizontalJustification;
-    uint8_t enabled;
+    uint8_t secondOptionsByte;
     uint8_t numberOfMacrosToFollow;
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
   } iVtObjectInputNumber_s;
@@ -460,7 +452,7 @@ public:
     int16_t  viewportY;
     uint16_t canvasWidth;
     uint16_t canvasHeight;
-    int8_t   viewportZoom;    //!< Zoom value [-32 ... 32] 
+    int8_t   viewportZoom;    //!< Zoom value [-32 ... 32]
     int16_t  cursorX;
     int16_t  cursorY;
     uint8_t  foregroundColour;
@@ -474,39 +466,31 @@ public:
   } iVtObjectGraphicsContext_s;
 
 // METHODS
-
 public:
-
   // Constructor
-  iVtObject_c() : p_parentButtonObject(NULL) {s_properties.flags = 0; s_properties.clientId = 0; };
-  virtual ~iVtObject_c() {};
+  iVtObject_c() : p_parentButtonObject(NULL) { s_properties.flags = 0; s_properties.clientId = 0; }
+
+  virtual ~iVtObject_c() {}
 
   //  Operation: getID
-  uint16_t getID() const { return vtObject_a->ID; };
+  uint16_t getID() const { return vtObject_a->ID; }
 
   //  Operation: setOriginSKM
-  //! Parameter:
   //! @param b_SKM:
   virtual void setOriginSKM(bool b_SKM);
 
   //  Operation: setOriginBTN
-  //! Parameter:
   //! @param b_BTN:
   virtual void setOriginBTN(iVtObjectButton_c* p_btn);
 
   void setClientID (uint8_t ui8_clientID) { s_properties.clientId = ui8_clientID; }
 
-
-protected:
-
-  //  Attribute: vtObject_a
+protected: // Attributes
   iVtObject_s* vtObject_a;
 
-  //Attribute: p_vtObject
   iVtObjectButton_c* p_parentButtonObject;
 
   struct {
-     //  Attribute: flags
     uint8_t flags:4;
     uint8_t clientId:4;
   } s_properties;
@@ -515,4 +499,3 @@ protected:
 } // end of namespace IsoAgLib
 
 #endif // IVTOBJECT_C_H
-

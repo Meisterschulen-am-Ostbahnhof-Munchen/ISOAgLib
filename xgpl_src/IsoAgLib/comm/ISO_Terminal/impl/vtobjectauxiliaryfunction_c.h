@@ -79,29 +79,20 @@
  *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
-
-
 #ifndef VTOBJECTAUXILIARYFUNCTION_C_H
 #define VTOBJECTAUXILIARYFUNCTION_C_H
 
-
-// +X2C includes
+// includes
 #include "vtobject_c.h"
 #include "vttypes.h"
-// ~X2C
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
-
-
-//  +X2C Class 86 : vtObjectAuxiliaryFunction_c
-//!  Stereotype: Klasse
+// Class : vtObjectAuxiliaryFunction_c
 class vtObjectAuxiliaryFunction_c : public vtObject_c
 {
 public:
-
   //  Operation: stream
-  //! Parameter:
   //! @param destMemory:
   //! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
   //! @param sourceOffset:
@@ -110,23 +101,23 @@ public:
                  objRange_t sourceOffset);
 
   //  Operation: init
-  //! Parameter:
   //! @param vtObjectAuxiliaryFunctionSROM:
   //! @param b_initPointer:
-  void init(const iVtObjectAuxiliaryFunction_s* vtObjectAuxiliaryFunctionSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA){vtObject_c::init((iVtObject_s *)vtObjectAuxiliaryFunctionSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);};
+  void init(const iVtObjectAuxiliaryFunction_s* vtObjectAuxiliaryFunctionSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA)
+  {vtObject_c::init((iVtObject_s *)vtObjectAuxiliaryFunctionSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);}
 
   //  Operation: get_vtObjectAuxiliaryFunction_a
   iVtObjectAuxiliaryFunction_s* get_vtObjectAuxiliaryFunction_a() {return (iVtObjectAuxiliaryFunction_s *)vtObject_a;}
 
   //  Operation: vtObjectAuxiliaryFunction_c
   vtObjectAuxiliaryFunction_c();
-  ~vtObjectAuxiliaryFunction_c(){};
+
+  ~vtObjectAuxiliaryFunction_c() {}
 
   //  Operation: size
   uint32_t fitTerminal() const;
 
   //  Operation: setOriginSKM
-  //! Parameter:
   //! @param b_SKM:
   void setOriginSKM(bool b_SKM);
 
@@ -134,8 +125,13 @@ public:
 
   bool setChildPosition(IsoAgLib::iVtObject_c* rpc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
-}; // ~X2C
+  /** that attribute is in parentheses in the spec, so commented out here
+  uint8_t updateObjectType() const { return 29; }
+  */
+
+  void saveReceivedAttribute (uint8_t /*attrID*/, uint8_t* /*pui8_attributeValue*/) {};
+};
 
 } // end of namespace __IsoAgLib
 
-#endif // -X2C
+#endif

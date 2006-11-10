@@ -73,10 +73,10 @@ public:
   //! @param b_initPointer:
   void init(const iVtObjectLineAttributes_s* vtObjectLineAttributesSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) {
     vtObjectLineAttributes_c::init (vtObjectLineAttributesSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
-  };
+  }
 
   //  Operation: get_vtObjectLineAtrtibutes_a
-  const iVtObjectLineAttributes_s& get_vtObjectLineAttributes_a() { return *vtObjectLineAttributes_c::get_vtObjectLineAttributes_a (); };
+  const iVtObjectLineAttributes_s& get_vtObjectLineAttributes_a() { return *vtObjectLineAttributes_c::get_vtObjectLineAttributes_a (); }
 
   //  Operation: setLineColour
   //! Parameter:
@@ -84,7 +84,7 @@ public:
   //! @param b_updateObject:
   void setLineColour(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectLineAttributes_c::setLineColour (newValue, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
   //  Operation: setLineWidth
   //! Parameter:
@@ -92,23 +92,41 @@ public:
   //! @param b_updateObject:
   void setLineWidth(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectLineAttributes_c::setLineWidth (newValue, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
   //  Operation: setLineArt
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void setLineArt(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
+  void setLineArt(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectLineAttributes_c::setLineArt (newValue, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
   //  Operation: setLineAttributes
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void setLineAttributes(uint8_t newLineColour, uint8_t newLineWidth, uint16_t newLineArt, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
+  void setLineAttributes(uint16_t newLineColour, uint8_t newLineWidth, uint16_t newLineArt, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectLineAttributes_c::setLineAttributes (newLineColour, newLineWidth, newLineArt, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
+
+  
+  /** that attribute is in parentheses in the spec, so commented out here
+  uint8_t updateObjectType() const { return vtObjectLineAttributes_c::updateObjectType(); }
+  */
+
+  uint8_t updateLineColour(bool b_SendRequest=false) {
+    return vtObjectLineAttributes_c::updateLineColour(b_SendRequest);
+  }
+
+  uint8_t updateLineWidth(bool b_SendRequest=false) {
+    return vtObjectLineAttributes_c::updateLineWidth(b_SendRequest);
+  }
+
+  uint16_t updateLineArt(bool b_SendRequest=false) {
+    return vtObjectLineAttributes_c::updateLineArt(b_SendRequest);
+  }
+
 }; // ~X2C
 
 } // end of namespace IsoAgLib

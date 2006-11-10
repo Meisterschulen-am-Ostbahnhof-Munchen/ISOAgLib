@@ -75,10 +75,10 @@ public:
   //! @param b_initPointer:
   void init(const iVtObjectAlarmMask_s* vtObjectAlarmMaskSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) {
     vtObjectAlarmMask_c::init (vtObjectAlarmMaskSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
-  };
-  ~iVtObjectAlarmMask_c(){};
+  }
+  ~iVtObjectAlarmMask_c(){}
   //  Operation: get_vtObjectAlarmMask_a
-  const iVtObjectAlarmMask_s& get_vtObjectAlarmMask_a() { return *vtObjectAlarmMask_c::get_vtObjectAlarmMask_a(); };
+  const iVtObjectAlarmMask_s& get_vtObjectAlarmMask_a() { return *vtObjectAlarmMask_c::get_vtObjectAlarmMask_a(); }
 
 
   //  Operation: setBackgroundColour
@@ -88,7 +88,7 @@ public:
   //! @param b_enableReplaceOfCmd:
   void setBackgroundColour(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectAlarmMask_c::setBackgroundColour (newValue, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
   //  Operation: setSoftKeyMask
   //! Parameter:
@@ -96,7 +96,7 @@ public:
   //! @param b_updateObject:
   void setSoftKeyMask(iVtObjectSoftKeyMask_c* newSoftKeyMask, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
     vtObjectAlarmMask_c::setSoftKeyMask (newSoftKeyMask, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
   //  Operation: setPriority
   //! Parameter:
@@ -104,7 +104,7 @@ public:
   //! @param b_updateObject:
   void setPriority(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectAlarmMask_c::setPriority (newValue, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
   //  Operation: setAcousticSignal
   //! Parameter:
@@ -112,7 +112,7 @@ public:
   //! @param b_updateObject:
   void setAcousticSignal(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectAlarmMask_c::setAcousticSignal (newValue, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
 
   //  Operation: moveChildLocation
   //! Parameter:
@@ -125,7 +125,7 @@ public:
   }
 
   //  Operation: setChildPosition
-  //! Parameter:
+
   //! @param rpc_childObject:
   //! @param dx:
   //! @param dy:
@@ -133,8 +133,30 @@ public:
     return vtObjectAlarmMask_c::setChildPosition(rpc_childObject, dx, dy, b_updateObject, b_enableReplaceOfCmd);
   }
 
-}; // ~X2C
+  // ///////////////////////// getter for attributes
+  /** that attribute is in parentheses in the spec, so commented out here
+  uint8_t updateObjectType() const {
+    return vtObjectAlarmMask_c::updateObjectType();
+  }
+   */
+
+  uint8_t updateBackgroundColour(bool b_SendRequest=false) {
+    return vtObjectAlarmMask_c::updateBackgroundColour(b_SendRequest);
+  }
+
+  uint16_t updateSoftKeyMask(bool b_SendRequest=false) {
+    return vtObjectAlarmMask_c::updateSoftKeyMask(b_SendRequest);
+  }
+
+  uint8_t updatePriority(bool b_SendRequest=false) {
+    return vtObjectAlarmMask_c::updatePriority(b_SendRequest);
+  }
+
+  uint8_t updateAcousticSignal(bool b_SendRequest=false) {
+    return vtObjectAlarmMask_c::updateAcousticSignal(b_SendRequest);
+  }
+};
 
 } // end of namespace IsoAgLib
 
-#endif // -X2C
+#endif

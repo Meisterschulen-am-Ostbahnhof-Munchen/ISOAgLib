@@ -79,16 +79,11 @@
  *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
-
 #ifndef VTOBJECTSTRING_C_H
 #define VTOBJECTSTRING_C_H
 
-
-// +X2C includes
 #include <IsoAgLib/comm/Multipacket/imultisendstreamer_c.h>
 #include "vtobject_c.h"
-// ~X2C
-
 
 namespace __IsoAgLib {
 class MultiSendPkg_c;
@@ -97,9 +92,7 @@ class MultiSendPkg_c;
 class vtObjectStringStreamer_c : public IsoAgLib::iMultiSendStreamer_c
 {
  public:
-
   //  Operation: setDataNextStreamPart
-  //! Parameter:
   //! @param mspData:
   //! @param bytes:
   void setDataNextStreamPart(MultiSendPkg_c* mspData,
@@ -117,20 +110,21 @@ class vtObjectStringStreamer_c : public IsoAgLib::iMultiSendStreamer_c
   //  Operation: getStreamSize
   uint32_t getStreamSize();
 
-  uint8_t getFirstByte () { return 179; /* Command: "Command" --- Parameter: "Change String Value"; */ };
+  uint8_t getFirstByte () { return 179; /* Command: "Command" --- Parameter: "Change String Value"; */ }
 
-  const char* getStringToStream() { return pc_stringToStream; };
+  const char* getStringToStream() { return pc_stringToStream; }
 
   void set5ByteCommandHeader(uint8_t* destinBuffer);
 
-  void setStringToStream( const char* rpc_stringToStream ) { pc_stringToStream = rpc_stringToStream;};
-  void setStrLenToSend( uint16_t rui16_strLenToSend ) { ui16_strLenToSend = rui16_strLenToSend;};
+  void setStringToStream( const char* rpc_stringToStream ) { pc_stringToStream = rpc_stringToStream;}
+  void setStrLenToSend( uint16_t rui16_strLenToSend ) { ui16_strLenToSend = rui16_strLenToSend;}
 
   //  Operation: getID
-  uint16_t getID() { return vtObject_a_ID; };
+  uint16_t getID() { return vtObject_a_ID; }
   //  Operation: setID
-  void setID( uint16_t rui16_id ) { vtObject_a_ID = rui16_id; };
- private:
+  void setID( uint16_t rui16_id ) { vtObject_a_ID = rui16_id; }
+
+private:
   // ID from the connected __IsoAgLib::vtObject_c
   uint16_t vtObject_a_ID;
   // those both will be set before multisending is getting started.
@@ -145,11 +139,8 @@ class vtObjectStringStreamer_c : public IsoAgLib::iMultiSendStreamer_c
 
   //  Attribute: streamPositionStored
   uint32_t streamPositionStored;
+};
 
-}; // ~X2C
-
-//  +X2C Class 241 : vtObjectString
-//!  Stereotype: class
 class vtObjectString_c : public vtObject_c
 {
  public:
@@ -163,8 +154,8 @@ class vtObjectString_c : public vtObject_c
  private:
   // streaming helper class which is called by the sending class
   vtObjectStringStreamer_c c_streamer;
-}; // ~X2C
+};
 
 } // end namespace __IsoAgLib
 
-#endif // -X2C
+#endif

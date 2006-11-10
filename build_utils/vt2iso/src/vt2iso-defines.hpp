@@ -607,7 +607,8 @@ char attrNameTable [maxAttributeNames] [stringLength+1] = {
   "canvas_height",
   "viewport_zoom",
   "cursor_x",
-  "cursor_y"
+  "cursor_y",
+  "inputobject_options"
 };
 
 // Table of possible Macro Commands

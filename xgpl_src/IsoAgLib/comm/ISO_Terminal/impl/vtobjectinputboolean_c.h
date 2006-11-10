@@ -79,29 +79,19 @@
  *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
-
 #ifndef VTOBJECTINPUTBOOLEAN_C_H
 #define VTOBJECTINPUTBOOLEAN_C_H
 
-
-// +X2C includes
 #include "vtobject_c.h"
 #include "isoterminal_c.h"
-// ~X2C
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
-
-//  +X2C Class 103 : vtObjectInputBoolean_c
-//!  Stereotype: Klasse
 class vtObjectInputBoolean_c : public vtObject_c
 {
-
 public:
-
   //  Operation: stream
-  //! Parameter:
   //! @param:destMemory:
   //! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
   //! @param sourceOffset:
@@ -110,10 +100,10 @@ public:
                  objRange_t sourceOffset);
 
   //  Operation: init
-  //! Parameter:
   //! @param vtObjectInputBooleanSROM:
   //! @param b_initPointer:
-  void init(const iVtObjectInputBoolean_s* vtObjectInputBooleanSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) { vtObject_c::init ((iVtObject_s*) vtObjectInputBooleanSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA); };
+  void init(const iVtObjectInputBoolean_s* vtObjectInputBooleanSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA)
+  { vtObject_c::init ((iVtObject_s*) vtObjectInputBooleanSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA); }
 
   //  Operation: get_vtObjectInputBoolean_a
   iVtObjectInputBoolean_s* get_vtObjectInputBoolean_a() { return (iVtObjectInputBoolean_s *)vtObject_a; }
@@ -125,7 +115,6 @@ public:
   uint32_t fitTerminal() const;
 
   //  Operation: setValue
-  //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
   void setValue(bool newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true);
@@ -138,25 +127,43 @@ public:
 
   void setWidth(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     saveValue16SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectInputBoolean_a(), width) : 0, sizeof(iVtObjectInputBoolean_s), 2, newValue, b_enableReplaceOfCmd);
-
   }
+
   void setForegroundColour(IsoAgLib::iVtObject_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectInputBoolean_a(), foregroundColour) : 0, sizeof(iVtObjectInputBoolean_s), 3, newValue, b_enableReplaceOfCmd);
-
   }
+
   void setVariableReference(IsoAgLib::iVtObject_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectInputBoolean_a(), variableReference) : 0, sizeof(iVtObjectInputBoolean_s), 4, newValue, b_enableReplaceOfCmd);
   }
 
-private:
+  // ///////////////////////// getter for attributes
+  /** that attribute is in parentheses in the spec, so commented out here
+  uint8_t updateObjectType() const { return 7; }
+  */
 
+  uint8_t updateBackgroundColour(bool b_SendRequest=false);
+
+  uint16_t updateWidth(bool b_SendRequest=false);
+
+  uint16_t updateForegroundColour(bool b_SendRequest=false);
+
+  uint16_t updateVariableReference(bool b_SendRequest=false);
+
+  /** these attributes are in parentheses in the spec, so commented out here
+  uint8_t updateValue(bool b_SendRequest=false);
+
+  uint8_t updateEnabled(bool b_SendRequest=false);
+  */
+
+  void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue);
+
+private:
   //  Operation: updateEnable
-  //! Parameter:
   //! @param b_enableOrDisable:
   void updateEnable(uint8_t rui8_enOrDis);
-
-}; // ~X2C
+};
 
 } // end of namespace __IsoAgLib
 
-#endif // -X2C
+#endif

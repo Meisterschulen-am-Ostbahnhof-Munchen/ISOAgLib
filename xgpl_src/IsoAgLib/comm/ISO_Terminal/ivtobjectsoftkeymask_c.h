@@ -67,17 +67,17 @@ class iVtObjectSoftKeyMask_c : public __IsoAgLib::vtObjectSoftKeyMask_c
 {
 
 public:
-  virtual ~iVtObjectSoftKeyMask_c(){};
+  virtual ~iVtObjectSoftKeyMask_c(){}
   //  Operation: init
   //! Parameter:
   //! @param vtObjectSoftKeyMaskSROM:
   //! @param b_initPointer:
   void init(const iVtObjectSoftKeyMask_s* vtObjectSoftKeyMaskSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) {
     vtObjectSoftKeyMask_c::init (vtObjectSoftKeyMaskSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
-  };
+  }
 
   //  Operation: get_vtObjectSoftKeyMask_a
-  const iVtObjectSoftKeyMask_s& get_vtObjectSoftKeyMask_a() { return *vtObjectSoftKeyMask_c::get_vtObjectSoftKeyMask_a(); };
+  const iVtObjectSoftKeyMask_s& get_vtObjectSoftKeyMask_a() { return *vtObjectSoftKeyMask_c::get_vtObjectSoftKeyMask_a(); }
 
   //  Operation: setBackgroundColour
   //! Parameter:
@@ -85,7 +85,19 @@ public:
   //! @param b_updateObject:
   void setBackgroundColour(uint8_t newValue,  bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectSoftKeyMask_c::setBackgroundColour (newValue, b_updateObject, b_enableReplaceOfCmd);
-  };
+  }
+
+  
+  // ///////////////////////// getter for attributes
+  /** that attribute is in parentheses in the spec, so commented out here
+  uint8_t updateObjectType() const {
+    return vtObjectSoftKeyMask_c::updateObjectType();
+  }
+  */
+  
+  uint8_t updateBackgroundColour(bool b_SendRequest=false) {
+    return vtObjectSoftKeyMask_c::updateBackgroundColour(b_SendRequest);
+  }
 
 }; // ~X2C
 

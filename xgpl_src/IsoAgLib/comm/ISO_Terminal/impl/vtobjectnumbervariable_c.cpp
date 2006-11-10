@@ -79,16 +79,13 @@
  *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
-
 #include "vtobjectnumbervariable_c.h"
+
 #include "isoterminal_c.h"
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
-
-
-// //////////////////////////////// +X2C Operation 157 : stream
-//! Parameter:
+// Operation : stream
 //! @param:destMemory:
 //! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
 //! @param sourceOffset:
@@ -96,7 +93,7 @@ int16_t
 vtObjectNumberVariable_c::stream(uint8_t* destMemory,
                                  uint16_t /*maxBytes*/,
                                  objRange_t sourceOffset)
-{ // ~X2C
+{
 #define MACRO_vtObjectTypeA vtObjectNumberVariable_a
 #define MACRO_vtObjectTypeS iVtObjectNumberVariable_s
     MACRO_localVars;
@@ -113,14 +110,12 @@ vtObjectNumberVariable_c::stream(uint8_t* destMemory,
       return 7;
     }
     return 0;
-} // -X2C
-
-// //////////////////////////////// +X2C Operation 160 : vtObjectNumberVariable_c
-vtObjectNumberVariable_c::vtObjectNumberVariable_c()
-{
 }
 
-// //////////////////////////////// +X2C Operation 203 : size
+// Operation : vtObjectNumberVariable_c
+vtObjectNumberVariable_c::vtObjectNumberVariable_c() {}
+
+// Operation : size
 uint32_t
 vtObjectNumberVariable_c::fitTerminal() const
 {
@@ -128,17 +123,35 @@ vtObjectNumberVariable_c::fitTerminal() const
   return (3+4);
 }
 
-// //////////////////////////////// +X2C Operation 209 : setValue
-//! Parameter:
+// Operation : setValue
 //! @param newValue:
 //! @param b_updateObject:
 void
 vtObjectNumberVariable_c::setValue(uint32_t newValue,
                                    bool b_updateObject, bool b_enableReplaceOfCmd)
-{ // ~X2C
+{
   if (b_updateObject) saveValue32 (MACRO_getStructOffset(get_vtObjectNumberVariable_a(), value), sizeof(iVtObjectNumberVariable_s), newValue);
 
   __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeNumericValue (this, newValue & 0xFF, (newValue >> 8) & 0xFF, (newValue >> 16) & 0xFF, newValue >> 24, b_enableReplaceOfCmd);
-} // -X2C
+}
 
+/** that attribute is in parentheses in the spec, so commented out here
+uint32_t
+vtObjectNumberVariable_c::updateValue(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue32GetAttribute(MACRO_getStructOffset(get_vtObjectNumberVariable_a(), value), sizeof(iVtObjectNumberVariable_s), 1);
+  else
+    return getValue32(MACRO_getStructOffset(get_vtObjectNumberVariable_a(), value), sizeof(iVtObjectNumberVariable_s));
+}
+*/
+
+void
+vtObjectNumberVariable_c::saveReceivedAttribute(uint8_t /*attrID*/, uint8_t* /*pui8_attributeValue*/)
+{
+  /** that attribute is in parentheses in the spec, so commented out here
+  if (attrID == 1)
+    saveValue32(MACRO_getStructOffset(get_vtObjectNumberVariable_a(), value), sizeof(iVtObjectNumberVariable_s), convertLittleEndianStringUi32(pui8_attributeValue));
+  */
+}
 } // end of namespace __IsoAgLib

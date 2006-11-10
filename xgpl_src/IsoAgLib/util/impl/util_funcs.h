@@ -216,6 +216,8 @@ int16_t convertLittleEndianStringI16( const uint8_t* rpui8_src );
 uint32_t convertLittleEndianStringUi32( const uint8_t* rpui8_src );
 /** convert receive multistream into an unsigned variable */
 int32_t convertLittleEndianStringI32( const uint8_t* rpui8_src );
+/** convert receive multistream into a float variable */
+float convertLittleEndianStringFloat( const uint8_t* rpui8_src );
 
 /** convert number reference variable to little endian byte string */
 template<class T> void numberRef2LittleEndianString( const T& refc_src, uint8_t* pui8_target )
@@ -437,7 +439,6 @@ class Flexible4ByteString_c {
   */
   uint8_t getUint8Data(uint8_t rui8_pos) const {return uint8[rui8_pos];};
 
-
   #ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
   /**
     set an uint16_t value at specified position in string.
@@ -521,9 +522,7 @@ class Flexible4ByteString_c {
   int16_t getInt16Data(uint8_t rui8_pos) const { return convertLittleEndianStringI16(uint8+rui8_pos);};
   #endif
 
-
-  /**
-    set an uint32_t value
+  /** set an uint32_t value
     @param rui32_val uint32_t value to set
   */
   void setUint32Data( uint32_t rui32_val)
@@ -532,8 +531,7 @@ class Flexible4ByteString_c {
     #else
     {numberRef2LittleEndianString( rui32_val, uint8 );};
     #endif
-  /**
-    set an int32_t value
+  /** set an int32_t value
     @param ri32_val int32_t value to set
   */
   void setInt32Data( int32_t ri32_val)
@@ -543,8 +541,7 @@ class Flexible4ByteString_c {
     {numberRef2LittleEndianString( ri32_val, uint8 );};
     #endif
 
-  /**
-    simply deliver a uint32_t
+  /** simply deliver a uint32_t
     @return uint32_t balue in CAN data string at pos rui32_pos
   */
   uint32_t getUint32Data() const
@@ -553,8 +550,7 @@ class Flexible4ByteString_c {
     #else
     { return convertLittleEndianStringUi32(uint8);};
     #endif
-  /**
-    simply deliver a int32_t
+  /** simply deliver a int32_t
     @return int32_t balue in CAN data string at pos rui32_pos
   */
   int32_t getInt32Data() const
@@ -563,7 +559,6 @@ class Flexible4ByteString_c {
     #else
     { return convertLittleEndianStringI32(uint8);};
     #endif
-
 
   /** define the values as anonymous union */
   union {
@@ -712,6 +707,27 @@ class Flexible8ByteString_c {
     @return uint8_t balue in CAN data string at pos rui8_pos
   */
   uint8_t getUint8Data(uint8_t rui8_pos) const {return uint8[rui8_pos];};
+
+  /**
+    simply deliver a float from a specific position with.
+    IMPORTANT: position 0 matches to the least significant byte,
+    as the string is ordered in LittleEndian order,
+    identic to the order which is used for CAN messages
+    @param rui8_pos position of delivered uint8_t [0..7]
+    @return float value in CAN data string at pos rui8_pos
+   */
+  float getFloatData(uint8_t rui8_pos) const;
+
+  /**
+    set a float value at specified position in string.
+    IMPORTANT: position 0 matches to the least significant byte,
+    as the string is ordered in LittleEndian order,
+    identic to the order which is used for CAN messages
+    Possible Error: <LibErr_c::Range, LibErr_c::Can> when rui8_pos > 6
+    @param rui8_pos Byte position [0..4]
+    @param rf_val float value to set
+   */
+  void setFloatData(uint8_t rui8_pos, const float rf_val);
 
   #ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
   /**

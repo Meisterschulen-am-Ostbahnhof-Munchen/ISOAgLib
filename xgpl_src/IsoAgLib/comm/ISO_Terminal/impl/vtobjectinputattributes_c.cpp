@@ -79,19 +79,13 @@
  *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
-
-
-
 #include "vtobjectinputattributes_c.h"
+
 #include "isoterminal_c.h"
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
-
-
-
-// //////////////////////////////// +X2C Operation 168 : stream
-//! Parameter:
+// Operation : stream
 //! @param destMemory:
 //! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
 //! @param sourceOffset:
@@ -99,7 +93,7 @@ int16_t
 vtObjectInputAttributes_c::stream(uint8_t* destMemory,
                                   uint16_t maxBytes,
                                   objRange_t sourceOffset)
-{ // ~X2C
+{
 #define MACRO_vtObjectTypeA vtObjectInputAttributes_a
 #define MACRO_vtObjectTypeS iVtObjectInputAttributes_s
     MACRO_streamLocalVars;
@@ -118,13 +112,10 @@ vtObjectInputAttributes_c::stream(uint8_t* destMemory,
     while ((sourceOffset >= 5U) && (sourceOffset < (5U+vtObjectInputAttributes_a->length)) && ((curBytes+1) <= maxBytes))
     {
       if (vtObjectInputAttributes_a->validationString == NULL)
-      {
           destMemory [curBytes] = 0x00;
-      }
       else
-      {
           destMemory [curBytes] = vtObjectInputAttributes_a->validationString [sourceOffset-5];
-      }
+
       curBytes++;
       sourceOffset++;
     }
@@ -137,14 +128,12 @@ vtObjectInputAttributes_c::stream(uint8_t* destMemory,
     }
     MACRO_streamEventMacro(6U+vtObjectInputAttributes_a->length);
     return curBytes;
-} // -X2C
-
-// //////////////////////////////// +X2C Operation 171 : vtObjectInputAttributes_c
-vtObjectInputAttributes_c::vtObjectInputAttributes_c()
-{
 }
 
-// //////////////////////////////// +X2C Operation 205 : size
+// Operation : vtObjectInputAttributes_c
+vtObjectInputAttributes_c::vtObjectInputAttributes_c() {}
+
+// Operation : size
 uint32_t
 vtObjectInputAttributes_c::fitTerminal() const
 {
@@ -152,13 +141,12 @@ vtObjectInputAttributes_c::fitTerminal() const
   return 6+vtObjectInputAttributes_a->length+vtObjectInputAttributes_a->numberOfMacrosToFollow*2;
 }
 
-// //////////////////////////////// +X2C Operation 250 : setValidationStringCopy
-//! Parameter:
+// Operation : setValidationStringCopy
 //! @param newValidationString:
 //! @param b_updateObject:
 void
 vtObjectInputAttributes_c::setValidationStringCopy(const char* newValidationString, bool b_updateObject, bool b_enableReplaceOfCmd)
-{ // ~X2C
+{
   if (b_updateObject) {
     // check if not already RAM string buffer?
     if (!(s_properties.flags & FLAG_STRING_IN_RAM)) {
@@ -176,15 +164,14 @@ vtObjectInputAttributes_c::setValidationStringCopy(const char* newValidationStri
   }
 
   __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeStringValue (this, newValidationString, get_vtObjectInputAttributes_a()->length, b_enableReplaceOfCmd);
-} // -X2C
+}
 
-// //////////////////////////////// +X2C Operation 250 : setValidationStringRef
-//! Parameter:
+// Operation : setValidationStringRef
 //! @param newValidationString:
 //! @param b_updateObject:
 void
 vtObjectInputAttributes_c::setValidationStringRef(const char* newValidationString, bool b_updateObject, bool b_enableReplaceOfCmd)
-{ // ~X2C
+{
   if (b_updateObject) {
     // delete RAM_String first, before we lose the pointer!
     if (s_properties.flags & FLAG_STRING_IN_RAM) {
@@ -199,13 +186,33 @@ vtObjectInputAttributes_c::setValidationStringRef(const char* newValidationStrin
   const uint16_t ui16_tempLen = (CNAMESPACE::strlen (newValidationString) <= get_vtObjectInputAttributes_a()->length) ? CNAMESPACE::strlen (newValidationString) : get_vtObjectInputAttributes_a()->length;
   setStrLenToSend( ui16_tempLen );
   __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeStringValue (this, b_enableReplaceOfCmd);
-} // -X2C
+}
 
 
-// //////////////////////////////// +X2C Operation 247 : getString
+// Operation : getString
 const char*
 vtObjectInputAttributes_c::getString()
-{ // ~X2C
+{
   return get_vtObjectInputAttributes_a()->validationString;
-} // -X2C
+}
+
+/** that attribute is in parentheses in the spec, so commented out here
+uint8_t
+vtObjectInputAttributes_c::updateValidationType(bool b_SendRequest)
+{
+  if (b_SendRequest)
+    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectInputAttributes_a(), validationType), sizeof(iVtObjectInputAttributes_s), 1);
+  else
+    return getValue8(MACRO_getStructOffset(get_vtObjectInputAttributes_a(), validationType), sizeof(iVtObjectInputAttributes_s));
+}
+*/
+
+void
+vtObjectInputAttributes_c::saveReceivedAttribute(uint8_t /*attrID*/, uint8_t* /*pui8_attributeValue*/)
+{
+  /** that attribute is in parentheses in the spec, so commented out here
+  if (attrID == 1)
+    saveValue8(MACRO_getStructOffset(get_vtObjectInputAttributes_a(), validationType), sizeof(iVtObjectInputAttributes_s), convertLittleEndianStringUi8(pui8_attributeValue));
+  */
+}
 } // end namespace __IsoAgLib
