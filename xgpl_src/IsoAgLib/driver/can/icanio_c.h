@@ -240,7 +240,7 @@ class iCANIO_c : private __IsoAgLib::CANIO_c {
                      const Ident_c::identType_t rt_identType = DEFAULT_IDENT_TYPE)
   {return CANIO_c::insertFilter
       (static_cast<CANCustomer_c&>(rref_customer),
-       rt_mask, rt_filter, rb_reconfigImmediate, rt_identType);
+	  rt_mask, rt_filter, rb_reconfigImmediate, rt_identType) ? true : false;
   };
   /**
     reconfigure the MsgObj after insert/delete of FilterBox
