@@ -70,6 +70,8 @@
 // now include dependent on used target the suitable header
 #if defined(SYSTEM_PC)
 	#include "pc/eeprom/eeprom.h"
+#elif defined(SYSTEM_PC_MFC)
+	#include "pc_mfc/eeprom/eeprom.h"
 #elif defined(SYSTEM_ESX)
 	#include "esx/eeprom/eeprom.h"
 #elif defined(SYSTEM_ESXu)

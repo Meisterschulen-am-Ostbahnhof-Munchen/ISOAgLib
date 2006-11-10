@@ -70,6 +70,8 @@
 // now include dependent on used target the suitable header
 #if defined(SYSTEM_PC)
 	#include "pc/system/system.h"
+#elif defined(SYSTEM_PC_MFC)
+	#include "pc_mfc/system/system.h"
 #elif defined(SYSTEM_ESX)
 	#include "esx/system/system.h"
 #elif defined(SYSTEM_A2)
