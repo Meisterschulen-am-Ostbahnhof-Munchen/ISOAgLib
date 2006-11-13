@@ -1,8 +1,8 @@
-IsoAgLib::iVtObject_c* all_iVtObjects0 [] = {
-  &iVtObjectFontAttributesNormal6x8LangDep,
-  &iVtObjectStrNone,
-  &iVtObjectStrRed,
-  &iVtObjectStrGreen,
-  &iVtObjectStrBlue,
-  &iVtObjectresetTextOS
+IsoAgLib::iVtObject_c* HUGE_MEM all_iVtObjects0 [] = {
+ &iVtObjectresetTextOS,
+ &iVtObjectStrBlue,
+ &iVtObjectStrGreen,
+ &iVtObjectStrRed,
+ &iVtObjectStrNone,
+ &iVtObjectFontAttributesNormal6x8LangDep
 };

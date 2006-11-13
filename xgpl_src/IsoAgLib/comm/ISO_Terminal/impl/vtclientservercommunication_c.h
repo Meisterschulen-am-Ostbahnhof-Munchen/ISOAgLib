@@ -214,8 +214,8 @@ public:
   IsoAgLib::iVtObject_c** pc_userPoolUpdateObjects;
 
   /** pointers needed by MultiSendStreamer */
-  IsoAgLib::iVtObject_c** pc_iterObjects;
-  IsoAgLib::iVtObject_c** pc_iterObjectsStored;
+  IsoAgLib::iVtObject_c* HUGE_MEM * pc_iterObjects;
+  IsoAgLib::iVtObject_c* HUGE_MEM * pc_iterObjectsStored;
 
   IsoAgLib::iIsoTerminalObjectPool_c& refc_pool;
 #define ISO_VT_UPLOAD_BUFFER_SIZE 128

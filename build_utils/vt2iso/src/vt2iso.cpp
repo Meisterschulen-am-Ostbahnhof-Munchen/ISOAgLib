@@ -911,7 +911,7 @@ void init (const char* xmlFile)
   strncpy (partFileName, xmlFile, 1024);
   strcat (partFileName, "-list.inc");
   partFileE = fopen (partFileName,"wt");
-  fputs ("IsoAgLib::iVtObject_c* all_iVtObjects [] = {", partFileE);
+  fputs ("IsoAgLib::iVtObject_c* HUGE_MEM all_iVtObjects [] = {", partFileE);
 
   strncpy (partFileName, xmlFile, 1024);
   strcat (partFileName, "-handler-direct.inc");
@@ -2069,7 +2069,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
             char langFileName [1024+1];
             sprintf (langFileName, "%s-list%02d.inc", xmlFileGlobal, ui_languages);
             arrs_language [ui_languages].partFile = fopen (langFileName, "wt");
-            sprintf (langFileName, "IsoAgLib::iVtObject_c* all_iVtObjects%d [] = {", ui_languages);
+            sprintf (langFileName, "IsoAgLib::iVtObject_c* HUGE_MEM all_iVtObjects%d [] = {", ui_languages);
             fputs (langFileName, arrs_language [ui_languages].partFile);
             arrs_language [ui_languages].code[0] = languageCode[0];
             arrs_language [ui_languages].code[1] = languageCode[1];

@@ -68,13 +68,6 @@ namespace IsoAgLib {
 class iVtClientServerCommunication_c : private __IsoAgLib::VtClientServerCommunication_c
 {
 public:
-    /** constructor */
-   iVtClientServerCommunication_c (iIdentItem_c& refc_wsMasterIdentItem,iISOTerminal_c& ref_isoTerminal,iIsoTerminalObjectPool_c& rrefc_pool,char* rpc_versionLabel, uint8_t ui8_clientId)
-    : __IsoAgLib::VtClientServerCommunication_c(
-        static_cast<__IsoAgLib::IdentItem_c&>(refc_wsMasterIdentItem),
-        static_cast<__IsoAgLib::ISOTerminal_c&>( ref_isoTerminal),
-        rrefc_pool,rpc_versionLabel, ui8_clientId )
-   {}
 
   bool isVtActive() { return VtClientServerCommunication_c::isVtActive(); }
 
@@ -82,6 +75,16 @@ public:
     { return VtClientServerCommunication_c::sendCommandUpdateObjectPool (rppc_vtObjects, rui16_numObjects); }
 
 private:
+  /** PRIVATE constructor to forbid instantiation of this interface class.
+    * it can only be static_cast'ed to this class, not constructed!
+    */
+  iVtClientServerCommunication_c (iIdentItem_c& refc_wsMasterIdentItem,iISOTerminal_c& ref_isoTerminal,iIsoTerminalObjectPool_c& rrefc_pool,char* rpc_versionLabel, uint8_t ui8_clientId)
+  : __IsoAgLib::VtClientServerCommunication_c(
+      static_cast<__IsoAgLib::IdentItem_c&>(refc_wsMasterIdentItem),
+      static_cast<__IsoAgLib::ISOTerminal_c&>( ref_isoTerminal),
+      rrefc_pool,rpc_versionLabel, ui8_clientId )
+  {}
+
   friend class iISOTerminal_c;
   friend class __IsoAgLib::VtClientServerCommunication_c;
 };
