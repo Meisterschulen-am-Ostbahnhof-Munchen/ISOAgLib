@@ -79,7 +79,7 @@ USE_STLPORT_HEADER_DIRECTORY="C:/STLport/stlport"
 # USE_STLPORT_LIBRARY_DIRECTORY=""
 
 # if spec file defines this, the setting is simply overwritten
-APP_SEARCH_SRC_CONDITION="*.cc *.c *.cpp"
+APP_SEARCH_SRC_CONDITION="*.C *.cc *.c *.cpp *.cxx"
 APP_SEARCH_HDR_CONDITION="*.h *.hpp"
 
 APP_PATH_EXLCUDE=""
@@ -692,7 +692,7 @@ function create_filelist( )
 
 
   LIB_ROOT="../$ISO_AG_LIB_PATH/xgpl_src"
-  SRC_EXT="\( -name '*.c' -o -name "*.cc" -o -name "*.cpp" \)"
+  SRC_EXT="\( -name '*.c' -o -name '*.cc' -o -name '*.cpp' \)"
 
   # go back to directory where config file resides
   mkdir -p $1
@@ -724,7 +724,7 @@ function create_filelist( )
 	fi
 	rm -f .exec.tmp
 	if [ $USE_TARGET_SYSTEM == "pc_linux" ] ; then
-		echo "find $LIB_ROOT $SRC_EXT -a \( -path '*/Scheduler/*' -o -path '*/SystemMgmt/*' -o -path '*/util/*' \) $EXCLUDE_FROM_SYSTEM_MGMT -printf 'SOURCES += %h/%f\n' >> $FILELIST_QMAKE" > .exec.tmp
+		echo "find $LIB_ROOT $SRC_EXT -a \( -path '*/Scheduler/*' -o -path '*/SystemMgmt/*' -o -path '*/util/*' \) $EXCLUDE_FROM_SYSTEM_MGMT -printf 'SOURCES += %h/%f\n' >> $FILELIST_QMAKE"  > .exec.tmp
 		echo "find $LIB_ROOT -name '*.h' -a \( -path '*/Scheduler/*' -o -path '*/SystemMgmt/*' -o -path '*/util/*' \) $EXCLUDE_FROM_SYSTEM_MGMT -printf 'HEADERS += %h/%f\n' >> $FILELIST_QMAKE" >> .exec.tmp
   fi
 	echo "find $LIB_ROOT $SRC_EXT -a \( -path '*/Scheduler/*' -o -path '*/SystemMgmt/*' -o -path '*/util/*' \) $EXCLUDE_FROM_SYSTEM_MGMT -printf '%h/%f\n' >> $FILELIST_PURE" >> .exec.tmp
@@ -807,13 +807,17 @@ function create_filelist( )
 
 	FIRST_LOOP="YES"
 	APP_SEARCH_SRC_TYPE_PART="\( "
+
+	# remove the joker '*' from the file type spec, as this causes only trouble
+	APP_SEARCH_SRC_CONDITION=`echo "$APP_SEARCH_SRC_CONDITION" | sed -e 's/\*//g'`
+	
 	for itemSrcType in $APP_SEARCH_SRC_CONDITION ; do
 		if [ $FIRST_LOOP != "YES" ] ; then
 			APP_SEARCH_SRC_TYPE_PART="$APP_SEARCH_SRC_TYPE_PART -or"
 		else
 			FIRST_LOOP="NO"
 		fi
-		APP_SEARCH_SRC_TYPE_PART="$APP_SEARCH_SRC_TYPE_PART -name \"$itemSrcType\""
+		APP_SEARCH_SRC_TYPE_PART="$APP_SEARCH_SRC_TYPE_PART -name '*$itemSrcType'"
 	done
 	APP_SEARCH_SRC_TYPE_PART="$APP_SEARCH_SRC_TYPE_PART \)"
 

@@ -7,8 +7,6 @@
     <projectmanagement>KDevCustomProject</projectmanagement>
     <primarylanguage>C++</primarylanguage>
     <ignoreparts>
-      <part>kdevrbdebugger</part>
-      <part>kdevctags2</part>
       <part>kdevdoxygen</part>
       <part>kdevdistpart</part>
     </ignoreparts>
@@ -16,10 +14,11 @@
     <absoluteprojectpath>false</absoluteprojectpath>
     <description/>
     <secondaryLanguages/>
+    <versioncontrol>kdevsubversion</versioncontrol>
   </general>
   <kdevcustomproject>
     <run>
-      <mainprogram>3_0_VirtualTerminalIso</mainprogram>
+      <mainprogram/>
       <directoryradio>build</directoryradio>
       <customdirectory>/</customdirectory>
       <programargs/>
@@ -40,6 +39,9 @@
       <environments>
         <default/>
       </environments>
+      <prio>0</prio>
+      <defaulttarget/>
+      <makeoptions/>
     </make>
   </kdevcustomproject>
   <kdevdebugger>
@@ -57,6 +59,7 @@
     <display>
       <staticmembers>true</staticmembers>
       <demanglenames>true</demanglenames>
+      <outputradix>10</outputradix>
     </display>
   </kdevdebugger>
   <kdevfilecreate>
@@ -80,7 +83,7 @@
   <cppsupportpart>
     <filetemplates>
       <interfacesuffix>.h</interfacesuffix>
-      <implementationsuffix>.cc</implementationsuffix>
+      <implementationsuffix>.cpp</implementationsuffix>
     </filetemplates>
   </cppsupportpart>
   <kdevcppsupport>
@@ -97,6 +100,19 @@
       <headerCompletionDelay>250</headerCompletionDelay>
     </codecompletion>
     <references/>
+    <qt>
+      <used>false</used>
+      <version>3</version>
+      <root/>
+    </qt>
+    <creategettersetter>
+      <prefixGet/>
+      <prefixSet>set</prefixSet>
+      <prefixVariable>m_,_</prefixVariable>
+      <parameterName>theValue</parameterName>
+      <inlineGet>true</inlineGet>
+      <inlineSet>true</inlineSet>
+    </creategettersetter>
   </kdevcppsupport>
   <kdevfileview>
     <groups>
@@ -106,6 +122,14 @@
     <tree>
       <hidepatterns>*.o,*.lo,CVS</hidepatterns>
       <hidenonprojectfiles>false</hidenonprojectfiles>
+      <showvcsfields>false</showvcsfields>
     </tree>
   </kdevfileview>
+  <kdevdocumentation>
+    <projectdoc>
+      <docsystem/>
+      <docurl/>
+      <usermanualurl/>
+    </projectdoc>
+  </kdevdocumentation>
 </kdevelop>

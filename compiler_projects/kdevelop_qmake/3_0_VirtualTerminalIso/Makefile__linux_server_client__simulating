@@ -6,7 +6,7 @@
 ####### Project specific variables
 TARGET = 3_0_VirtualTerminalIso
 ISOAGLIB_PATH = ../../..
-APP_INC = -I../../../IsoAgLib_Examples/tutorial/3_Terminal/3_0_VirtualTerminalIso 
+APP_INC = -I../../../IsoAgLib_Examples/tutorial/3_Terminal/3_0_VirtualTerminalIso
 ####### Include a version definition file into the Makefile context - when this file exists
 -include versions.mk
 
@@ -15,7 +15,7 @@ PROJ_DEFINES = $(VERSION_DEFINES) -DSYSTEM_PC -DPRJ_USE_AUTOGEN_CONFIG=config_3_
 
 
 ####### Definition of compiler binary prefix corresponding to selected target
-COMPILER_BINARY_PRE = 
+COMPILER_BINARY_PRE =
 
 
 first: all
@@ -29,8 +29,6 @@ SOURCES = ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofiltermanager_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofilterbox_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.cpp  \
 		../../../xgpl_src/IsoAgLib/util/impl/canpkgext_c.cpp  \
 		../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp  \
@@ -97,7 +95,7 @@ SOURCES = ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp  \
 		../../../xgpl_src/IsoAgLib/driver/can/impl/canio_c.cpp  \
 		../../../xgpl_src/IsoAgLib/driver/system/impl/system_c.cpp  \
 		../../../xgpl_src/IsoAgLib/driver/eeprom/impl/eepromio_c.cpp  \
-		../../../IsoAgLib_Examples/tutorial/3_Terminal/3_0_VirtualTerminalIso/3_0_VirtualTerminalIso.cpp  
+		../../../IsoAgLib_Examples/tutorial/3_Terminal/3_0_VirtualTerminalIso/3_0_VirtualTerminalIso.cpp
 
 
 #Special Sources for CAN Server
