@@ -1518,10 +1518,48 @@ void checkForFileOrFile148 (char *tag) {
 }
 
 
-void getAttributesFromNode(DOMNode *n, bool treatSpecial) {
+DOMNamedNodeMap *patched_getAttributes(DOMNode *n)
+{
+  char local_attrName [1024+1];
+  char local_attrValue[1024+1];
+  DOMNamedNodeMap *pAttributes = n->getAttributes();
+
+  if (n->hasAttributes()) { // parse through all attributes
+    int nSize = pAttributes->getLength();
+
+    for (int i=0;i<nSize;++i) {
+      DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
+      utf16convert ((char *)pAttributeNode->getName(), local_attrName, 1024);
+      utf16convert ((char *)pAttributeNode->getValue(), local_attrValue, 1024);
+
+      if (strncmp (local_attrName, "latchable", stringLength) == 0)
+      {
+        // remove in any case, if latchable="no" removing and no addition is fine...
+        ((DOMElement *)n)->removeAttributeNode (pAttributeNode);
+        if ( (strncmp (local_attrValue, "yes", stringLength) == 0)
+          || (strncmp (local_attrValue, "true", stringLength) == 0)
+          || (strncmp (local_attrValue, "on", stringLength) == 0)
+          || (strncmp (local_attrValue, "show", stringLength) == 0)
+          || (strncmp (local_attrValue, "enable", stringLength) == 0)
+           )
+        {
+          std::cout << "*** WARNING: Replaced latchable='"<<local_attrValue<<"' by the new options='latchable'. Please adapt your XML files... ***"<<std::endl;
+          sprintf (local_attrValue, "latchable");
+          ((DOMElement *)n)->setAttribute (X("options"), X(local_attrValue));
+        }
+        break;
+      }
+    }
+  }
+  return pAttributes;
+}
+
+
+void getAttributesFromNode(DOMNode *n, bool treatSpecial)
+{
   DOMNamedNodeMap *pAttributes;
   if (n->hasAttributes()) { // parse through all attributes
-    pAttributes = n->getAttributes();
+    pAttributes = patched_getAttributes(n);
     int nSize = pAttributes->getLength();
 
     // empty all possible attribute-values...
@@ -1784,7 +1822,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
     if (objType == otObjectpool)
     { // expect (datamask) dimension here
       if (n->hasAttributes()) { // parse through all attributes
-        pAttributes = n->getAttributes();
+        pAttributes = patched_getAttributes(n);
         int nSize = pAttributes->getLength();
 
         // now get all attributes listed in the <tag ...> element
@@ -2013,7 +2051,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
             if(child->hasAttributes())
             {
               // parse through all attributes
-              pAttributes = child->getAttributes();
+              pAttributes = patched_getAttributes(child);
               int nSize = pAttributes->getLength();
 
               attrString [attrCode] [stringLength+1-1] = 0x00; attrIsGiven [attrCode] = false;
@@ -2216,7 +2254,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
 
             if (child->hasAttributes())
             { // see where there may be a LANGUAGE= attribute
-              pAttributes = child->getAttributes();
+              pAttributes = patched_getAttributes(child);
               int nSize = pAttributes->getLength();
               for (int i=0; i<nSize; ++i) {
                 DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
@@ -2294,7 +2332,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                 // get NAME and POS_X and POS_Y attributes out of child
                 if(child->hasAttributes()) {
                   // parse through all attributes
-                  pAttributes = child->getAttributes();
+                  pAttributes = patched_getAttributes(child);
                   int nSize = pAttributes->getLength();
 
                   objChildName [stringLength+1-1] = 0x00; is_objChildName = false;
@@ -2448,7 +2486,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
             // get 'event=' and 'name=' out of child
             if(child->hasAttributes()) {
               // parse through all attributes
-              pAttributes = child->getAttributes();
+              pAttributes = patched_getAttributes(child);
               int nSize = pAttributes->getLength();
 
               attrString [attrEvent] [stringLength+1-1] = 0x00; attrIsGiven [attrEvent] = false;
@@ -2526,7 +2564,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                 if(child->hasAttributes())
                 {
                   // parse through all attributes
-                  pAttributes = child->getAttributes();
+                  pAttributes = patched_getAttributes(child);
                   int nSize = pAttributes->getLength();
 
                   cleanAttribute(attrObjectID);
@@ -2550,7 +2588,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                 if(child->hasAttributes())
                 {
                   // parse through all attributes
-                  pAttributes = child->getAttributes();
+                  pAttributes = patched_getAttributes(child);
                   int nSize = pAttributes->getLength();
 
                   cleanAttribute(attrObjectID);
@@ -2574,7 +2612,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                 if(child->hasAttributes())
                 {
                   // parse through all attributes
-                  pAttributes = child->getAttributes();
+                  pAttributes = patched_getAttributes(child);
                   int nSize = pAttributes->getLength();
 
                   cleanAttribute(attrObjectID);
@@ -2596,7 +2634,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                 if(child->hasAttributes())
                 {
                   // parse through all attributes
-                  pAttributes = child->getAttributes();
+                  pAttributes = patched_getAttributes(child);
                   int nSize = pAttributes->getLength();
 
                   cleanAttribute(attrObjectID);
@@ -2625,7 +2663,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                 if(child->hasAttributes())
                 {
                   // parse through all attributes
-                  pAttributes = child->getAttributes();
+                  pAttributes = patched_getAttributes(child);
                   int nSize = pAttributes->getLength();
 
                   cleanAttribute(attrPercentage);
@@ -2647,7 +2685,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                 if(child->hasAttributes())
                 {
                   // parse through all attributes
-                  pAttributes = child->getAttributes();
+                  pAttributes = patched_getAttributes(child);
                   int nSize = pAttributes->getLength();
 
                   cleanAttribute(attrParent_objectID);
@@ -2676,7 +2714,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                 if(child->hasAttributes())
                 {
                   // parse through all attributes
-                  pAttributes = child->getAttributes();
+                  pAttributes = patched_getAttributes(child);
                   int nSize = pAttributes->getLength();
 
                   cleanAttribute(attrParent_objectID);
@@ -2704,7 +2742,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                 if(child->hasAttributes())
                 {
                   // parse through all attributes
-                  pAttributes = child->getAttributes();
+                  pAttributes = patched_getAttributes(child);
                   int nSize = pAttributes->getLength();
 
                   cleanAttribute(attrObjectID);
@@ -2730,7 +2768,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                 if(child->hasAttributes())
                 {
                   // parse through all attributes
-                  pAttributes = child->getAttributes();
+                  pAttributes = patched_getAttributes(child);
                   int nSize = pAttributes->getLength();
 
                   cleanAttribute(attrObjectID);
@@ -2754,7 +2792,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                 if(child->hasAttributes())
                 {
                   // parse through all attributes
-                  pAttributes = child->getAttributes();
+                  pAttributes = patched_getAttributes(child);
                   int nSize = pAttributes->getLength();
 
                   cleanAttribute(attrObjectID);
@@ -2778,7 +2816,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                 if(child->hasAttributes())
                 {
                   // parse through all attributes
-                  pAttributes = child->getAttributes();
+                  pAttributes = patched_getAttributes(child);
                   int nSize = pAttributes->getLength();
 
                   cleanAttribute(attrObjectID);
@@ -2819,7 +2857,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                 if(child->hasAttributes())
                 {
                   // parse through all attributes
-                  pAttributes = child->getAttributes();
+                  pAttributes = patched_getAttributes(child);
                   int nSize = pAttributes->getLength();
 
                   cleanAttribute(attrObjectID);
@@ -2848,7 +2886,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                 if(child->hasAttributes())
                 {
                   // parse through all attributes
-                  pAttributes = child->getAttributes();
+                  pAttributes = patched_getAttributes(child);
                   int nSize = pAttributes->getLength();
 
                   cleanAttribute(attrObjectID);
@@ -2879,7 +2917,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                 if(child->hasAttributes())
                 {
                   // parse through all attributes
-                  pAttributes = child->getAttributes();
+                  pAttributes = patched_getAttributes(child);
                   int nSize = pAttributes->getLength();
 
                   cleanAttribute(attrObjectID);
@@ -2908,7 +2946,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                 if(child->hasAttributes())
                 {
                   // parse through all attributes
-                  pAttributes = child->getAttributes();
+                  pAttributes = patched_getAttributes(child);
                   int nSize = pAttributes->getLength();
 
                   cleanAttribute(attrObjectID);
@@ -2938,7 +2976,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                 if(child->hasAttributes())
                 {
                   // parse through all attributes
-                  pAttributes = child->getAttributes();
+                  pAttributes = patched_getAttributes(child);
                   int nSize = pAttributes->getLength();
 
                   cleanAttribute(attrWorking_setID);
@@ -2963,7 +3001,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                 if(child->hasAttributes())
                 {
                   // parse through all attributes
-                  pAttributes = child->getAttributes();
+                  pAttributes = patched_getAttributes(child);
                   int nSize = pAttributes->getLength();
 
                   cleanAttribute(attrMask_type);
@@ -2990,7 +3028,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                 if(child->hasAttributes())
                 {
                   // parse through all attributes
-                  pAttributes = child->getAttributes();
+                  pAttributes = patched_getAttributes(child);
                   int nSize = pAttributes->getLength();
 
                   cleanAttribute(attrObjectID);
@@ -3017,7 +3055,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                 if(child->hasAttributes())
                 {
                   // parse through all attributes
-                  pAttributes = child->getAttributes();
+                  pAttributes = patched_getAttributes(child);
                   int nSize = pAttributes->getLength();
 
                   cleanAttribute(attrObjectID);
@@ -3042,7 +3080,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                 if(child->hasAttributes())
                 {
                 // parse through all attributes
-                  pAttributes = child->getAttributes();
+                  pAttributes = patched_getAttributes(child);
                   int nSize = pAttributes->getLength();
 
                   cleanAttribute(attrObjectID);
@@ -3103,7 +3141,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
             // get 'event=' and 'name=' out of child
             if(child->hasAttributes()) {
               // parse through all attributes
-              pAttributes = child->getAttributes();
+              pAttributes = patched_getAttributes(child);
               int nSize = pAttributes->getLength();
 
               attrString [attrPos_x] [stringLength+1-1] = 0x00; attrIsGiven [attrPos_x] = false;
