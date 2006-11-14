@@ -138,32 +138,17 @@ bool Vt2IsoImageFreeImage_c::openBitmap( const char* filename )
 
  if (FreeImage_GetBPP(bitmap) <= 8)
  {
-   bool b_colorsMatch = true;
-   // check all colors if the bitmap uses the ISO-palette
-   int i;
-   for (i=0; i<(16+216); i++)
-   {
+   mi_colorMismatch = -1; // default: no color mismatches...
+
+   for (int i=0; i<(16+216); i++)
+   { // check all colors if the bitmap uses the ISO-palette
      if ( (vtColorTable[i].rgbRed != FreeImage_GetPalette (bitmap)[i].rgbRed)
        || (vtColorTable[i].rgbGreen != FreeImage_GetPalette (bitmap)[i].rgbGreen)
        || (vtColorTable[i].rgbBlue != FreeImage_GetPalette (bitmap)[i].rgbBlue) )
      {
-       b_colorsMatch = false;
+       mi_colorMismatch = i;
        break;
      }
-   }
-   if (!b_colorsMatch)
-   {
-     std::cerr << "*** COULDN'T LOAD BITMAP: WRONG PALETTE. Color at index "<<i<<" is wrong!. Please use the ISO11783-Part 6 (VT)-Palette. Use 'vt2iso -p' to generate an .act file and resample your bitmap to use this palette! ***" << std::endl;
-     std::cerr << "HAS TO BE | you had" << std::hex << std::setfill('0');
-     for (int i=0; i<(16+216); i++)
-     {
-       if ((i % 8) == 0) std::cerr << std::endl;
-       else std::cerr << "     ";
-       std::cerr << std::setw(2) << uint16_t(vtColorTable[i].rgbRed) << std::setw(2) << uint16_t(vtColorTable[i].rgbGreen) << std::setw(2) << uint16_t(vtColorTable[i].rgbBlue) << " | "
-                 << std::setw(2) << uint16_t(FreeImage_GetPalette (bitmap)[i].rgbRed) << std::setw(2) << uint16_t(FreeImage_GetPalette (bitmap)[i].rgbGreen) << std::setw(2) << uint16_t(FreeImage_GetPalette (bitmap)[i].rgbBlue);
-     }
-     std::cerr << std::endl;
-     return false;
    }
    mb_palettized = true;
    std::cout << "--loaded palettized - depth="<<FreeImage_GetBPP(bitmap)<<"--";
@@ -176,11 +161,28 @@ bool Vt2IsoImageFreeImage_c::openBitmap( const char* filename )
  }
 }
 
-
+// this function is only called for the 8bit case!
 int Vt2IsoImageFreeImage_c::getPaletteIndex (unsigned int rui_x, unsigned int rui_y)
 {
   if (mb_palettized)
   {
+    // do this check here, because in case we only use 4bit bitmap, we don't have to care for the palette matching...
+    if (mi_colorMismatch >= 0)
+    {
+      std::cerr << "*** COULDN'T LOAD BITMAP: WRONG PALETTE. See (first) mismatching color #"<<mi_colorMismatch<<" below. Please use the ISO11783-Part 6 (VT)-Palette for bitmaps you have saved palettized and use in 8bit-mode. Use 'vt2iso -p' to generate an .act file and resample your bitmap to use this palette! ***" << std::endl;
+      std::cerr << "HAS TO BE | you had" << std::hex << std::setfill('0');
+      for (int i=0; i<(16+216); i++)
+      {
+        if ((i % 8) == 0) std::cerr << std::endl;
+        else std::cerr << "     ";
+        std::cerr << std::setw(2) << uint16_t(vtColorTable[i].rgbRed) << std::setw(2) << uint16_t(vtColorTable[i].rgbGreen) << std::setw(2) << uint16_t(vtColorTable[i].rgbBlue);
+        if (i == mi_colorMismatch) std::cerr << "*|*"; else std::cerr << " | ";
+        std::cerr << std::setw(2) << uint16_t(FreeImage_GetPalette (bitmap)[i].rgbRed) << std::setw(2) << uint16_t(FreeImage_GetPalette (bitmap)[i].rgbGreen) << std::setw(2) << uint16_t(FreeImage_GetPalette (bitmap)[i].rgbBlue);
+      }
+      std::cerr << std::endl;
+      return -2;
+    }
+
     uint8_t idx;
     FreeImage_GetPixelIndex (bitmap, rui_x, (ui_height - 1) - rui_y, &idx);
     return idx;

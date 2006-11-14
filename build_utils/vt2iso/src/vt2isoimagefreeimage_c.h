@@ -81,6 +81,7 @@ class Vt2IsoImageFreeImage_c : public Vt2IsoImageBase_c
 	static bool b_FreeImageLibInited;
   
   bool mb_palettized;
+  int mi_colorMismatch; // <0 for NO MISMATCH, 0..255 for the color index mismatching!
 };
 
 #endif

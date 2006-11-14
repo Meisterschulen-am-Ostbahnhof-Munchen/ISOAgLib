@@ -89,7 +89,7 @@ unsigned int Vt2IsoImageBase_c::get8BitPixel( unsigned int rui_x, unsigned int r
     // 0..255 possible - directly taken out of the bitmap!
     return idx;
   }
-  else
+  else if (idx == -1)
   { // we're NOT palettized, calculate a palette index!
     idx = 16 + ( componenttoindex6 ( getR( rui_x, rui_y ) )*36 )
              + ( componenttoindex6 ( getG( rui_x, rui_y ) )*6  )
@@ -117,6 +117,11 @@ unsigned int Vt2IsoImageBase_c::get8BitPixel( unsigned int rui_x, unsigned int r
     }
     return idx;
   }
+  else if (idx == -2)
+  { // we were palettized, but the color table didn't match!
+    exit (1);
+  }
+  else return 0; // make compiler happy!
 }
 
 /** write the Bitmap to the given buffer and return amount of written Bytes */
