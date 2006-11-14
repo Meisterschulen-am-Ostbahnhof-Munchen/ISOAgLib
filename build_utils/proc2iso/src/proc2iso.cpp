@@ -718,6 +718,22 @@ void getAttributesFromNode(DOMNode *node, unsigned int objType)
   }
 }
 
+uint8_t cntNodeChild(DOMNode *node, unsigned int objType)
+{
+  uint8_t ui8_cnt = 0;
+  DOMNode *child; 
+
+  for (child = node->getFirstChild(); child != 0; child=child->getNextSibling())
+  {
+    if (child->getNodeType() != DOMNode::ELEMENT_NODE)
+      continue;
+    if (objectIsType(XMLString::transcode(child->getNodeName())) == objType)
+      ui8_cnt++;
+  }
+
+  return ui8_cnt;
+}
+
 // ---------------------------------------------------------------------------
 //
 //  static void processElement (DOMNode *n, unsigned int omb, const char* rc_workDir, signed int parentObjType) --- Recursively process all ELEMENT XML-Tags...
@@ -1229,6 +1245,8 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
         vecstr_constructor[5] = vecstr_attrString[attrProcProgVarName].c_str();
         vecstr_constructor[6] = vecstr_attrString[attrDdi].c_str();
 
+        uint8_t cntChildWithProcDataCombination = cntNodeChild(node, otDeviceProcessDataCombination);
+
         // process DeviceProcessDataCombination childs
         for (child = node->getFirstChild(); child != 0; child=child->getNextSibling())
         {
@@ -1259,7 +1277,10 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
 
             //designator
             char tmpBuf [33];
-            sprintf (tmpBuf, "%s_%u", vecstr_dataFromDPD[3].c_str(), commandtypetoi(vecstr_attrString[attrCommand_type].c_str()));
+            if ( cntChildWithProcDataCombination > 1 ) //we need to differentiate the different otDeviceProcessDataCombination child
+                sprintf (tmpBuf, "%s_%u", vecstr_dataFromDPD[3].c_str(), commandtypetoi(vecstr_attrString[attrCommand_type].c_str()));
+            else //only one otDeviceProcessDataCombination child
+                sprintf (tmpBuf, "%s", vecstr_dataFromDPD[3].c_str());
             std::string str_designator = tmpBuf;
 
             //output: tableID & objID
@@ -1336,7 +1357,7 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
         if (b_dpdCombination)
           fprintf(partFileB, "s_%sElementDDI,\nscui16_%sElementNumber, ", vecstr_constructor[5].c_str(), vecstr_dataForCombination[1].c_str());
         else
-          fprintf(partFileB, "0x%x, 0x%x, ", stringtonumber(vecstr_constructor[6].c_str(), 0, -1), stringtonumber(vecstr_constructor[2].c_str(), 0, -1));
+          fprintf(partFileB, "0x%x, %i, ", stringtonumber(vecstr_constructor[6].c_str(), 0, -1), stringtonumber(vecstr_dataForCombination[0].c_str(), 0, -1));
 
         b_dpdCombination = FALSE;
 
