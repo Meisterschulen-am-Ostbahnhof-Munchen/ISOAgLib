@@ -168,7 +168,8 @@ vtObjectFontAttributes_c::calcScaledFontDimension() const
   ui8_fontSizeScaled = vtObjectFontAttributes_a->fontSize;
   if (ui8_fontSizeScaled > (15-1)) ui8_fontSizeScaled = (15-1);
 
-  uint32_t scale, width, height;
+  uint32_t width, height;
+  uint8_t wIndex=0, hIndex=0;
   if ((s_properties.flags & FLAG_ORIGIN_SKM) || p_parentButtonObject) {
     width = (((uint32_t) factorM * (font2PixelDimensionTableW [ui8_fontSizeScaled]) <<10)/factorD); // (8 bit shifted fixed floating)
     height= (((uint32_t) factorM * (font2PixelDimensionTableH [ui8_fontSizeScaled]) <<10)/factorD); // (8 bit shifted fixed floating)
@@ -178,37 +179,30 @@ vtObjectFontAttributes_c::calcScaledFontDimension() const
   }
 
   /** @todo maybe keep aspect ratio?? */
-
-  if (scale != 0x100)
-  { /// (do theoretic) scale
-    uint8_t wIndex=0;
-    uint8_t hIndex=0;
-
-    // now get the lower possible size, (never take a too big size!)
-    int i, j;
-    for (i=14; i>=0; i--) {
-      if (((uint32_t (font2PixelDimensionTableW [i])) << 10) <= width) {
-        wIndex = i;
-        break;
-      }
+  // now get the lower possible size...
+  int i, j;
+  for (i=14; i>=0; i--) {
+    if (((uint32_t (font2PixelDimensionTableW [i])) << 10) <= width) {
+      wIndex = i;
+      break;
     }
-    for (j=14; j>=0; j--) {
-      if (((uint32_t (font2PixelDimensionTableH [j])) << 10) <= height) {
-        hIndex = j;
-        break;
-      }
+  }
+  for (j=14; j>=0; j--) {
+    if (((uint32_t (font2PixelDimensionTableH [j])) << 10) <= height) {
+      hIndex = j;
+      break;
     }
-    if ((i < 0) || (j < 0))
-    { // too small font, smaller than 6x8... ==> take 6x8
-      ui8_fontSizeScaled = 0;
-    }
+  }
+  if ((i < 0) || (j < 0))
+  { // too small font, smaller than 6x8... ==> take 6x8
+    ui8_fontSizeScaled = 0;
+  }
+  else
+  { // match indices together... take the lowest one, that'll do!
+    if (wIndex < hIndex)
+      ui8_fontSizeScaled = wIndex;
     else
-    { // match indices together... take the lowest one, that'll do!
-      if (wIndex < hIndex)
-        ui8_fontSizeScaled = wIndex;
-      else
-        ui8_fontSizeScaled = hIndex;
-    }
+      ui8_fontSizeScaled = hIndex;
   }
 
   /// Always check if the font is available!
