@@ -191,7 +191,7 @@ typedef struct vtState_s {
 class iVtPoint_c {
   public:
     iVtPoint_c( void ) : x(0), y(0) {}
-    iVtPoint_c( int16_t x, int16_t y ) : x(x), y(y) {}
+    iVtPoint_c( int16_t ri16_x, int16_t ri16_y ) : x(ri16_x), y(ri16_y) {}
     int16_t getX( void ) const { return x; }
     int16_t getY( void ) const { return y; }
     void setX( int16_t i_x ) { x = i_x; }
@@ -232,7 +232,7 @@ inline iVtPoint_c operator-( const iVtPoint_c& a, const iVtPoint_c& b ) {
 inline iVtPoint_c operator*( const iVtPoint_c& a, int b ) { iVtPoint_c r(a); return r *= b; }
 inline iVtPoint_c operator/( const iVtPoint_c& a, int b ) { iVtPoint_c r(a); return r /= b; }
 inline iVtPoint_c abs( const iVtPoint_c& a ) { return a.abs(); }
-inline iVtPoint_c min( const iVtPoint_c& a, const iVtPoint_c& b ) { 
+inline iVtPoint_c min( const iVtPoint_c& a, const iVtPoint_c& b ) {
   return iVtPoint_c( CNAMESPACE::min(a.getX(),b.getX()), CNAMESPACE::min(a.getY(),b.getY()) );
 }
 inline iVtPoint_c max( const iVtPoint_c& a, const iVtPoint_c& b ) {

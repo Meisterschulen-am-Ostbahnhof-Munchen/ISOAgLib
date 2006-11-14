@@ -1988,10 +1988,10 @@ VtClientServerCommunication_c::dumpQueue()
       int i_strSize = i_sendUpload->mssObjectString->getStreamer()->getStreamSize();
       for (int i=0; i < i_strSize; i+=7) {
         i_sendUpload->mssObjectString->getStreamer()->setDataNextStreamPart (&msp, (unsigned char) ((i_strSize - i) > 7 ? 7 : (i_strSize-i)));
-        for (uint8_t i=1; i<=7; i++)
+        for (uint8_t j=1; j<=7; j++)
         {
 #ifdef DEBUG
-          INTERNAL_DEBUG_DEVICE << " " << (uint16_t)(msp[i]);
+          INTERNAL_DEBUG_DEVICE << " " << (uint16_t)(msp[j]);
 #endif
         }
       }

@@ -88,6 +88,9 @@
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
+
+vtObject_c::~vtObject_c() {}
+
 // Operation : setAttribute
 //! @param attrID: Attribute ID of the object's attribute
 //! @param newValue: New Value of the attribute

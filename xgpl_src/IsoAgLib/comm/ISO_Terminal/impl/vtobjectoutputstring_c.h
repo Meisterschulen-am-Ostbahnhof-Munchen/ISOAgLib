@@ -111,6 +111,7 @@ public:
 
   //  Operation: vtObjectOutputString_c
   vtObjectOutputString_c();
+  ~vtObjectOutputString_c();
 
   //  Operation: fitTerminal
   uint32_t fitTerminal() const;

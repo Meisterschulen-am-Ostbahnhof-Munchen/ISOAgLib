@@ -96,7 +96,7 @@ public:
           idleTime == -1 One Client could not finish his Job
   */
 
-  int32_t timeEvent( int32_t i32_demandedExecEndScheduler = -1) { return Scheduler_c::timeEvent( i32_demandedExecEndScheduler );};
+  int32_t timeEvent( int32_t ri32_demandedExecEndScheduler = -1) { return Scheduler_c::timeEvent( ri32_demandedExecEndScheduler );};
   /**
     * deliver the average execution time for timeEvent calls -> allows scheduler to
     * refine time schedule within execution

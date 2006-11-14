@@ -184,11 +184,15 @@ typedef uint16_t objRange_t;
         factorM = vtButtonHeight; \
         factorD = opButtonHeight; \
       } \
+      /* initialize variables which are normally only used in the else branch */ \
+      opSoftKeyWidth = opSoftKeyHeight = vtSoftKeyWidth = vtSoftKeyHeight = 0; \
     } else {  \
       opSoftKeyWidth  = __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).getVtObjectPoolSoftKeyWidth(); \
       opSoftKeyHeight = __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).getVtObjectPoolSoftKeyHeight(); \
       vtSoftKeyWidth  = __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).getVtServerInst().getVtCapabilities ()->skWidth; \
       vtSoftKeyHeight = __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).getVtServerInst().getVtCapabilities ()->skHeight; \
+      /* set defaults for button sizes to avoid compiler warning */ \
+      opButtonWidth = opButtonHeight = vtButtonWidth = vtButtonHeight = 0; \
       const int32_t ci_factorX = (vtSoftKeyWidth  << 20) / opSoftKeyWidth; \
       const int32_t ci_factorY = (vtSoftKeyHeight << 20) / opSoftKeyHeight; \
       if (ci_factorX < ci_factorY) { \

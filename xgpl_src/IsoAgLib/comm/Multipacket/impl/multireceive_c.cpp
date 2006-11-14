@@ -195,6 +195,11 @@ MultiReceiveClientWrapper_s::MultiReceiveClientWrapper_s( IsoAgLib::MultiReceive
     getLibErrInstance().registerError( LibErr_c::Inconsistency, LibErr_c::System );
 }
 
+
+MultiReceive_c::MultiReceive_c()
+{
+}
+
 // //////////////////////////////// +X2C Operation 5653 : ~MultiReceive_c
 MultiReceive_c::~MultiReceive_c()
 { // ~X2C

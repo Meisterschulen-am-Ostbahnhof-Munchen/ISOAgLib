@@ -79,6 +79,7 @@
  *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
+#include "../ivtobjectstringvariable_c.h"
 #include "vtobjectstringvariable_c.h"
 
 #include "isoterminal_c.h"
@@ -119,6 +120,10 @@ vtObjectStringVariable_c::stream(uint8_t* destMemory,
 
 // Operation : vtObjectStringVariable_c
 vtObjectStringVariable_c::vtObjectStringVariable_c() {}
+// implement here a normal constructor, as the compiler dislikes inlining of that simple constructor
+// direct in scope of iVtObjectStringVariable_c
+IsoAgLib::iVtObjectStringVariable_c::iVtObjectStringVariable_c() : vtObjectStringVariable_c() {}
+
 
 // Operation : size
 uint32_t

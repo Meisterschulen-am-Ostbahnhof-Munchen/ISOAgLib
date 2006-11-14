@@ -169,7 +169,7 @@ class MultiReceive_c : public SingletonMultiReceive_c, public __IsoAgLib::SaClai
 {
 
 public:
-
+  MultiReceive_c();
   //  Operation: ~MultiReceive_c
   ~MultiReceive_c();
 

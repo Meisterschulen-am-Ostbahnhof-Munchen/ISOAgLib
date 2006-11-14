@@ -60,6 +60,7 @@ namespace IsoAgLib {
 class iVtObjectStringVariable_c : public __IsoAgLib::vtObjectStringVariable_c
 {
 public:
+  iVtObjectStringVariable_c();
   //  Operation: init
   //! @param vtObjectStringVariableSROM:
   //! @param b_initPointer:

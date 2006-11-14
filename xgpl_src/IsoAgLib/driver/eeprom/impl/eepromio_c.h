@@ -223,7 +223,7 @@ public:
     @return reference to this EEPROMIO_c instance (for chains like "eeprom << val1 << val2 << ... << val_n;")
   */
   template<class T>
-    EEPROMIO_c& operator<<(const T& rTemlpateVal){return writeIntern(((uint8_t*)(&rTemlpateVal)), sizeof(T));}
+    EEPROMIO_c& operator<<(const T& rTemlpateVal){return writeIntern(((const uint8_t*)(&rTemlpateVal)), sizeof(T));}
   /**
     write a text string value to EEPROM from actual write position on (tellp() )
 

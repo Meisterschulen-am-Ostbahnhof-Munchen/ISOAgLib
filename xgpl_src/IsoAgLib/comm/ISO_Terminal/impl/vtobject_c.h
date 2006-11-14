@@ -94,7 +94,7 @@ namespace __IsoAgLib {
 class vtObject_c : public IsoAgLib::iVtObject_c
 {
 public:
-  virtual ~vtObject_c() {}
+  virtual ~vtObject_c();
   //  Operation: stream
   //! Parameter:
   //! @param destMemory:

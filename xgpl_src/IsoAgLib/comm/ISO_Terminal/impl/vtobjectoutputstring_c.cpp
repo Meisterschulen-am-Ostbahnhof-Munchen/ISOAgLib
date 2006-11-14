@@ -159,6 +159,7 @@ vtObjectOutputString_c::stream(uint8_t* destMemory,
 
 // Operation : vtObjectOutputString_c
 vtObjectOutputString_c::vtObjectOutputString_c() {}
+vtObjectOutputString_c::~vtObjectOutputString_c() {}
 
 // Operation : size
 uint32_t

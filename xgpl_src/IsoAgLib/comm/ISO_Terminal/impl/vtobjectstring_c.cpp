@@ -149,6 +149,10 @@ vtObjectStringStreamer_c::getStreamSize()
   return 5+ui16_strLenToSend;
 }
 
+
+vtObjectString_c::vtObjectString_c()
+{}
+
 void vtObjectString_c::setStringToStream( const char* rpc_stringToStream )
 {
   c_streamer.setStringToStream( rpc_stringToStream );
