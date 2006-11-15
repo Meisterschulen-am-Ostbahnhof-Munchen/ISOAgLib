@@ -116,7 +116,7 @@ SchedulerEntry_c::timeEventExec(int32_t ri32_demandedExecEnd)
   if( cb_result )pc_taskInstance->timeEventPostUpdateStatistics();
 
   #ifdef DEBUG
-    if(!b_result)  {
+    if(!cb_result)  {
         EXTERNAL_DEBUG_DEVICE << pc_taskInstance->getTaskName() << ".timeEvent() returned false."
         << EXTERNAL_DEBUG_DEVICE_ENDL;
     }

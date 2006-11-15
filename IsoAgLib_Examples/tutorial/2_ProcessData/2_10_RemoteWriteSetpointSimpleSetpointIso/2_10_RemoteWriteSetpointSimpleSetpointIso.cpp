@@ -331,10 +331,10 @@ IsoAgLib::iISOName_c c_remoteDeviceType( 0x5, 0 );
 int main()
 { // init CAN channel with 250kBaud at needed channel ( count starts with 0 )
   getIcanInstance().init( cui32_canChannel, 250 );
-  // variable for DEV_KEY
+  // variable for ISOName
 
   // start address claim of the local member "IMI"
-  // if DEV_KEY conflicts forces change of device class instance, the
+  // if ISOName conflicts forces change of device class instance, the
   // IsoAgLib can cahnge the c_myISOName val through the pointer to c_myISOName
   bool b_selfConf = true;
   uint8_t ui8_indGroup = 2,
@@ -346,7 +346,7 @@ int main()
   uint32_t ui32_serNo = 27;
 
   // start address claim of the local member "IMI"
-  // if DEV_KEY conflicts forces change of device class instance, the
+  // if ISOName conflicts forces change of device class instance, the
   // IsoAgLib can change the c_myISOName val through the pointer to c_myISOName
   // ISO
   //IsoAgLib::iIdentItem_c c_myIdent( &c_myISOName,

@@ -120,10 +120,10 @@ public:
     @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
                          (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
 
-    @param rc_isoName optional DEV_KEY code of this instance
+    @param rc_isoName optional ISOName code of this instance
     @param rui8_pri PRI code of messages with this process data instance (default 2)
-    @param rc_ownerISOName optional DEV_KEY of the owner
-    @param rpc_commanderISOName pointer to updated DEV_KEY variable of commander
+    @param rc_ownerISOName optional ISOName of the owner
+    @param rpc_commanderISOName pointer to updated ISOName variable of commander
     @param rpc_processDataChangeHandler optional pointer to handler class of application
     @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
@@ -144,10 +144,10 @@ public:
     @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
                          (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
 
-    @param rc_isoName optional DEV_KEY code of this instance
+    @param rc_isoName optional ISOName code of this instance
     @param rui8_pri PRI code of messages with this process data instance (default 2)
-    @param rc_ownerISOName optional DEV_KEY of the owner
-    @param rpc_commanderISOName pointer to updated DEV_KEY variable of commander
+    @param rc_ownerISOName optional ISOName of the owner
+    @param rpc_commanderISOName pointer to updated ISOName variable of commander
     @param rpc_processDataChangeHandler optional pointer to handler class of application
     @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
@@ -267,14 +267,14 @@ public:
   #endif
 
   /**
-    deliver the commanderISOName (DEV_KEY of local member)
-    @return DEV_KEY used for sending commands to remote owner member
+    deliver the commanderISOName (ISOName of local member)
+    @return ISOName used for sending commands to remote owner member
   */
   const iISOName_c& commanderISOName()const{return ProcDataRemoteSimpleSetpointSimpleMeasure_c::commanderISOName().toConstIisoName_c();}
 
   /**
     set the pointer to the commander ident isoName
-    @param rpbisoName pointer to DEV_KEY var of local member used for
+    @param rpbisoName pointer to ISOName var of local member used for
                 sending commands to remote owner member
   */
   void setCommanderISOName(const __IsoAgLib::ISOName_c* rpc_isoName){ProcDataRemoteSimpleSetpointSimpleMeasure_c::setCommanderISOName(rpc_isoName);}

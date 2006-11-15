@@ -101,9 +101,9 @@ namespace __IsoAgLib {
   @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
                        (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
 
-  @param rc_isoName optional DEV_KEY code of this instance
-  @param rc_ownerISOName optional DEV_KEY of the owner
-  @param rpc_commanderISOName pointer to updated DEV_KEY variable of commander
+  @param rc_isoName optional ISOName code of this instance
+  @param rc_ownerISOName optional ISOName of the owner
+  @param rpc_commanderISOName pointer to updated ISOName variable of commander
   @param rpc_processDataChangeHandler optional pointer to handler class of application
   @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
@@ -128,9 +128,9 @@ ProcDataRemoteSimpleSetpoint_c::ProcDataRemoteSimpleSetpoint_c(const IsoAgLib::E
   @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
                        (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
 
-  @param rc_isoName optional DEV_KEY code of this instance
-  @param rc_ownerISOName optional DEV_KEY of the owner
-  @param rpc_commanderISOName pointer to updated DEV_KEY variable of commander
+  @param rc_isoName optional ISOName code of this instance
+  @param rc_ownerISOName optional ISOName of the owner
+  @param rpc_commanderISOName pointer to updated ISOName variable of commander
   @param rpc_processDataChangeHandler optional pointer to handler class of application
   @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */

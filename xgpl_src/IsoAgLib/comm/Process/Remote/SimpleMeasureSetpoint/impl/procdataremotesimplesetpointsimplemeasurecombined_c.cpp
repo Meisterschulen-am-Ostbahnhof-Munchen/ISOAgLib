@@ -103,22 +103,22 @@ namespace __IsoAgLib {
   @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
                        (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
 
-  @param rc_devKey optional DEV_KEY code of this instance
+  @param rc_isoName optional ISOName code of this instance
   @param rui8_pri PRI code of messages with this process data instance (default 2)
-  @param rc_ownerDevKey optional DEV_KEY of the owner
-  @param rpc_commanderDevKey pointer to updated DEV_KEY variable of commander
+  @param rc_ownerISOName optional ISOName of the owner
+  @param rpc_commanderISOName pointer to updated ISOName variable of commander
   @param rpc_processDataChangeHandler optional pointer to handler class of application
   @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
 ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c(
             const IsoAgLib::ElementDDI_s* ps_elementDDI = NULL,
-            const DevKey_c& rc_devKey,
+            const ISOName_c& rc_isoName,
             uint8_t rui8_pri,
-            const DevKey_c& rc_ownerDevKey, const DevKey_c* rpc_commanderDevKey,
+            const ISOName_c& rc_ownerISOName, const ISOName_c* rpc_commanderISOName,
             IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler,
             int ri_singletonVecKey)
   : ProcDataRemoteBase_c(ps_elementDDI,
-                         rc_devKey, rui8_pri, rc_ownerDevKey, rpc_commanderDevKey,
+                         rc_isoName, rui8_pri, rc_ownerISOName, rpc_commanderISOName,
                          rpc_processDataChangeHandler, ri_singletonVecKey)
 {
   i32_masterVal = 0;
@@ -130,22 +130,22 @@ ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::ProcDataRemoteSimpleSetpoin
   @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
                        (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
 
-  @param rc_devKey optional DEV_KEY code of this instance
+  @param rc_isoName optional ISOName code of this instance
   @param rui8_pri PRI code of messages with this process data instance (default 2)
-  @param rc_ownerDevKey optional DEV_KEY of the owner
-  @param rpc_commanderDevKey pointer to updated DEV_KEY variable of commander
+  @param rc_ownerISOName optional ISOName of the owner
+  @param rpc_commanderISOName pointer to updated ISOName variable of commander
   @param rpc_processDataChangeHandler optional pointer to handler class of application
   @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
 void ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::init(const IsoAgLib::ElementDDI_s* ps_elementDDI,
-                                                               const DevKey_c& rc_devKey, uint8_t rui8_pri,
-                                                               const DevKey_c& rc_ownerDevKey,
-                                                               const DevKey_c* rpc_commanderDevKey,
+                                                               const ISOName_c& rc_isoName, uint8_t rui8_pri,
+                                                               const ISOName_c& rc_ownerISOName,
+                                                               const ISOName_c* rpc_commanderISOName,
                                                                IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler,
                                                                int ri_singletonVecKey)
 {
   ProcDataRemoteBase_c::init(ps_elementDDI,
-                             rc_devKey, rui8_pri, rc_ownerDevKey, rpc_commanderDevKey,
+                             rc_isoName, rui8_pri, rc_ownerISOName, rpc_commanderISOName,
                              rpc_processDataChangeHandler, ri_singletonVecKey);
   i32_masterVal = 0;
 }
@@ -200,7 +200,7 @@ int32_t ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::setpointMasterVal(b
                                                                 GeneralCommand_c::exactValue,
                                                                 GeneralCommand_c::requestValue);
 
-    sendValDevKey(pri(), commanderDevKey(), 0);
+    sendValISOName(pri(), commanderISOName(), 0);
   }
   return i32_masterVal;
 }
@@ -217,7 +217,7 @@ void ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::setSetpointMasterVal(i
   getProcessInstance4Comm().data().c_generalCommand.setValues(true /* isSetpoint */, false /* isRequest */,
                                                               GeneralCommand_c::exactValue,
                                                               GeneralCommand_c::setValue);
-  sendValDevKey(pri(), commanderDevKey(), ri32_val);
+  sendValISOName(pri(), commanderISOName(), ri32_val);
   if (!rb_onlyStoreOnResponse) i32_masterVal = ri32_val;
 }
 #ifdef USE_FLOAT_DATA_TYPE
@@ -235,7 +235,7 @@ float ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::setpointMasterValFloa
                                                                 GeneralCommand_c::exactValue,
                                                                 GeneralCommand_c::requestValue);
 
-    sendValDevKey(pri(), commanderDevKey(), 0);
+    sendValISOName(pri(), commanderISOName(), 0);
   }
   return f_masterVal;
 }
@@ -252,7 +252,7 @@ void ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::setSetpointMasterVal(f
                                                               GeneralCommand_c::exactValue,
                                                               GeneralCommand_c::setValue);
 
-  sendValDevKey(pri(), commanderDevKey(), rf_val);
+  sendValISOName(pri(), commanderISOName(), rf_val);
   if (!rb_onlyStoreOnResponse) f_masterVal = rf_val;
 }
 #endif
@@ -270,7 +270,7 @@ int32_t ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::masterVal(bool rb_s
                                                                 GeneralCommand_c::exactValue,
                                                                 GeneralCommand_c::requestValue);
 
-    sendValDevKey(pri(), commanderDevKey(), 0);
+    sendValISOName(pri(), commanderISOName(), 0);
   }
   return i32_masterVal;
 }
@@ -283,19 +283,19 @@ void ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::resetMasterVal()
   getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false /* isRequest */,
                                                               GeneralCommand_c::exactValue,
                                                               GeneralCommand_c::setValue);
-  sendValDevKey(pri(), commanderDevKey(), 0);
+  sendValISOName(pri(), commanderISOName(), 0);
 
   // prepare general command in process pkg
   getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false /* isRequest */,
                                                               GeneralCommand_c::exactValue,
                                                               GeneralCommand_c::measurementReset);
-  sendValDevKey(pri(), commanderDevKey(), 0x8);
+  sendValISOName(pri(), commanderISOName(), 0x8);
   #ifdef RESET_MEASUREMENT_WITH_ZERO_EXACT_SETPOINT
   // prepare general command in process pkg
   getProcessInstance4Comm().data().c_generalCommand.setValues(true /* isSetpoint */, false /* isRequest */,
                                                               GeneralCommand_c::exactValue,
                                                               GeneralCommand_c::setValue);
-  sendValDevKey(pri(), commanderDevKey(), 0);
+  sendValISOName(pri(), commanderISOName(), 0);
   #endif
 }
 
@@ -312,7 +312,7 @@ float ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::masterValFloat(bool r
     getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */,
                                                                 GeneralCommand_c::exactValue,
                                                                 GeneralCommand_c::requestValue);
-    sendValDevKey(pri(), commanderDevKey(), 0);
+    sendValISOName(pri(), commanderISOName(), 0);
   }
   return f_masterVal;
 }

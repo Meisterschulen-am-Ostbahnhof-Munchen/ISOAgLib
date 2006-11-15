@@ -796,7 +796,7 @@ namespace __IsoAgLib {
           // now set also the pure GPS time
           setTimeUtcGps(UtcNow->tm_hour, UtcNow->tm_min, UtcNow->tm_sec, (ui32_milliseconds%1000));
 
-          if (getSelectedDataSourceDevKey().isSpecified())
+          if (getSelectedDataSourceISOName().isSpecified())
           { // set also UTC time (in this case setTimeUtcGps() doesn't update the UTC time)
             setTimeUtc(UtcNow->tm_hour, UtcNow->tm_min, UtcNow->tm_sec, (ui32_milliseconds%1000));
           }
@@ -1232,7 +1232,7 @@ namespace __IsoAgLib {
   void TimePosGPS_c::setTimeUtc(uint8_t rb_hour, uint8_t rb_minute, uint8_t rb_second, uint16_t rui16_msec, bool b_updateDate)
   {
     if (b_updateDate)
-    { 
+    {
       struct CNAMESPACE::tm* p_tm = currentUtcTm();
       bit_calendar.year   = p_tm->tm_year + 1900;
       bit_calendar.month  = p_tm->tm_mon +1;

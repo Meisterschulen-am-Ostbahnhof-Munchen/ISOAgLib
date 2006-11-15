@@ -88,7 +88,7 @@ public:
         @param rui8_devClass  optional initial DEVCLASS (device type)
         @param rui8_pos       optional initial device class instance
       */
-    iISOName_c( uint8_t rui8_devClass = 0x7F, uint8_t rui8_pos = 0xF )
+    iISOName_c( uint8_t rui8_devClass, uint8_t rui8_pos = 0xF )
     : ISOName_c( true, 2, rui8_devClass, rui8_pos, 0xFF, 0x7FF, 0x1FFFFF, 0x1F, 0x7 ) {}
 
   /** constructor which format data string from series of input flags
@@ -122,6 +122,14 @@ public:
     @param rrefc_src source ISOName_c object
   */
   const iISOName_c& operator=(const iISOName_c& rrefc_src) { return ISOName_c::operator=( rrefc_src ).toConstIisoName_c();}
+
+  /** compare two ISOName_c values with operator== */
+  bool operator==( const iISOName_c& refc_right ) const
+    { return ISOName_c::operator==(refc_right);}
+
+  /** compare two ISOName_c values with operator!= */
+  bool operator!=( const iISOName_c& refc_right ) const
+    { return ISOName_c::operator!=(refc_right);}
 
   /** set data string with all flags with one call
     @param rb_selfConf true -> indicate sefl configuring ECU
@@ -243,6 +251,15 @@ public:
     @param rui32_serNo serial no of specific device (21bit)
   */
   void setSerNo(uint32_t rui32_serNo) { ISOName_c::setSerNo( rui32_serNo );}
+
+  /** set this instance to indicator for unspecified value */
+  void setUnspecified( void ) { ISOName_c::setUnspecified( );}
+
+  /** check if this instance has specified value (different from default) */
+  bool isSpecified( void ) const { return ISOName_c::isSpecified( );}
+
+  /** check if this instance has unspecified value (match default) */
+  bool isUnspecified( void ) const { return ISOName_c::isUnspecified( );}
 
 private:
   friend class iISOItem_c;

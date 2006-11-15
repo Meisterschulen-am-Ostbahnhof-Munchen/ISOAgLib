@@ -612,12 +612,12 @@ int main()
 
   getIcanInstance().init( 0, 250 );
 
-  // variable for DEV_KEY
+  // variable for ISOName
   // default with primary cultivation mounted back
   IsoAgLib::iISOName_c myISOName( 7, 0 );
 
   // start address claim of the local member "IMI"
-  // if DEV_KEY conflicts forces change of device class instance, the
+  // if ISOName conflicts forces change of device class instance, the
   // IsoAgLib can cahnge the myISOName val through the pointer to myISOName
   bool b_selfConf = true;
   uint8_t ui8_indGroup = 2,
@@ -629,7 +629,7 @@ int main()
   uint32_t ui32_serNo = 27;
 
   // start address claim of the local member "IMI"
-  // if DEV_KEY conflicts forces change of device class instance, the
+  // if ISOName conflicts forces change of device class instance, the
   // IsoAgLib can change the myISOName val through the pointer to myISOName
   #if 1
   IsoAgLib::iIdentItem_c c_myIdent( &myISOName,
