@@ -84,6 +84,11 @@
 
 #include "isoterminal_c.h"
 
+namespace IsoAgLib {
+  // implement here a normal constructor, as the compiler dislikes inlining of that simple constructor
+  // direct in scope of iVtObjectStringVariable_c
+  iVtObjectStringVariable_c::iVtObjectStringVariable_c() : vtObjectStringVariable_c() {}
+}
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 // Operation : stream
@@ -120,9 +125,6 @@ vtObjectStringVariable_c::stream(uint8_t* destMemory,
 
 // Operation : vtObjectStringVariable_c
 vtObjectStringVariable_c::vtObjectStringVariable_c() {}
-// implement here a normal constructor, as the compiler dislikes inlining of that simple constructor
-// direct in scope of iVtObjectStringVariable_c
-IsoAgLib::iVtObjectStringVariable_c::iVtObjectStringVariable_c() : vtObjectStringVariable_c() {}
 
 
 // Operation : size
