@@ -54,6 +54,9 @@
 #include "impl/vtobjectstringvariable_c.h"
 #include "ivtobjectoutputstring_c.h"
 
+#ifdef USE_VT_UNICODE_SUPPORT
+#include "ivtobjectfontattributes_c.h"
+#endif
 // Begin Namespace IsoAgLib
 namespace IsoAgLib {
 
