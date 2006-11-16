@@ -67,7 +67,7 @@
  * This example claims an address for an IMI on Scheduler_c, requests the member
  * names of the other systems after succeded address claim and create the
  * local process data that should be recorded. All informations including
- * DEV_KEY, name, transport-or-not and working width are read from EEPROM.
+ * ISOName, name, transport-or-not and working width are read from EEPROM.
  * If hitch position is not available in Scheduler_c base data, the information is
  * requested as propietary process data from task controller (needed for
  * Scheduler_c retrofit system within research).
@@ -134,7 +134,7 @@ using namespace IsoAgLib;
 int main()
 { // simply call startImi
   getIcanInstance().init( 0, 250 );
-  // variable for DEV_KEY
+  // variable for ISOName
   // default with primary cultivation mounted back
   iISOName_c myISOName( 2, 0 );
   // uint8_t string for name of this IMI (7 characters + '\0')
@@ -164,7 +164,7 @@ int main()
 
 #if READ_EEPROM_IDENT_YN ==  YES
   // read preconfigured data from EEPROM
-  // read DEV_KEY
+  // read ISOName
   // set read position in EEPROM
   c_eeprom.setg(ADR_IDENT_ISOName);
   // read EEPROM value in variable
@@ -209,7 +209,7 @@ int main()
   c_eeprom >> b_forceWorkingSpeed;
 
   // start address claim of the local member "IMI"
-  // if DEV_KEY conflicts forces change of device class instance, the
+  // if ISOName conflicts forces change of device class instance, the
   // IsoAgLib can cahnge the myISOName val through the pointer to myISOName
 #ifdef USE_ISO_11783
   bool b_selfConf = true;
@@ -224,7 +224,7 @@ int main()
 
 #ifdef USE_EEPROM_IO
   // read preconfigured data from EEPROM
-  // read DEV_KEY
+  // read ISOName
   // set read position in EEPROM
   c_eeprom.setg(ADR_IDENT_ISOName);
   // read EEPROM value in variable
@@ -264,7 +264,7 @@ int main()
   #endif
 #endif
   // start address claim of the local member "IMI"
-  // if DEV_KEY conflicts forces change of device class instance, the
+  // if ISOName conflicts forces change of device class instance, the
   // IsoAgLib can change the myISOName val through the pointer to myISOName
 #if !defined(USE_ISO_11783)
   iIdentItem_c c_myIdent( &myISOName, myName );
@@ -295,8 +295,8 @@ int main()
   int16_t i16_ptoRearVal, i16_ptoFrontVal;
 
   // local process data for "on/off mechanical" [0/0x64] of primaer Bodenbearbeitung (LIS=0, DEVCLASS=2, WERT=1, INST=0)
-  // with full working width (ZAEHLNUM 0xFF), POS, DEV_KEY of local data (can vary from previously given device class & instance),
-  // the pointer to myISOName helps automatic update of DEV_KEY, mark this value as NOT cumulated (default)
+  // with full working width (ZAEHLNUM 0xFF), POS, ISOName of local data (can vary from previously given device class & instance),
+  // the pointer to myISOName helps automatic update of ISOName, mark this value as NOT cumulated (default)
   iProcDataLocalSimpleSetpoint_c c_myOnoff(0, myISOName, 0x1, 0x0, 0xFF, 2, myISOName, &myISOName, false);
 
   // local process data for "whole distance" [m] of primaer Bodenbearbeitung (LIS=0, DEVCLASS=2, WERT=8, INST=1)
@@ -320,13 +320,13 @@ int main()
     // set the constant width
     pMyWidth->setMasterMeasurementVal(myWidth);
     // local process data for "working area" [m2] of primaer Bodenbearbeitung (LIS=0, DEVCLASS=2, WERT=8, INST=0)
-    // with full working width (ZAEHLNUM 0xFF), POS, DEV_KEY of local data (can vary from previously given device class & instance),
-    // the pointer to myISOName helps automatic update of DEV_KEY, mark this value as CUMULATED (area grows -> update by de/increment)
+    // with full working width (ZAEHLNUM 0xFF), POS, ISOName of local data (can vary from previously given device class & instance),
+    // the pointer to myISOName helps automatic update of ISOName, mark this value as CUMULATED (area grows -> update by de/increment)
     pMyWorkArea = new iProcDataLocalSimpleSetpoint_c( 0, myISOName, 0x8, 0x0, 0xFF, 2, myISOName, &myISOName, true);
   }
 
    // self defined remote process data for "EHR position" [%] of tracctor (LIS=0, DEVCLASS=1, WERT=0x4, INST=0)
-  // with full working width (ZAEHLNUM 0xFF), POS, DEV_KEY of remote data (can vary from previously given device class & instance),
+  // with full working width (ZAEHLNUM 0xFF), POS, ISOName of remote data (can vary from previously given device class & instance),
   // ui8_remoteISOName tells the remote owner of the Process Data (where it is located as local),
   // the pointer to myISOName tells the local commanding member, used for target messages as SEND
   iProcDataRemote_c c_remoteEhr(0, c_autodatacollectorISOName, 0x4, 0x0, 0xFF, 2, c_autodatacollectorISOName, &myISOName);

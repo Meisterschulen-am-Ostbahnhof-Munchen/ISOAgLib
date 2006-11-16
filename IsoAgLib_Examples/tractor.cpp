@@ -264,7 +264,7 @@ class MyInternalPkg_c : public IsoAgLib::iCANPkgExt_c
 };
 
 
-// variable for DEV_KEY ( device type, device type instance )
+// variable for ISOName ( device type, device type instance )
 // default with tractor device type
 IsoAgLib::iISOName_c myISOName( 1, 0 );
 
