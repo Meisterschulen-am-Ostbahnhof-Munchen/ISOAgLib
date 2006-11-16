@@ -204,7 +204,7 @@ class TimePosGPS_c : public SingletonTimePosGps_c
       @param  rui8_sa    source address
       @param  rui8_da    destination address
     */
-  bool processMsgRequestPGN (uint32_t rui32_pgn, uint8_t rui8_sa, uint8_t rui8_da);
+  bool processMsgRequestPGN (uint32_t rui32_pgn, ISOItem_c* rpc_isoItemSender, ISOItem_c* rpc_isoItemReceiver);
 
   /** force a request for pgn for time/date information */
   bool sendRequestUpdateTimeDate();

@@ -177,13 +177,11 @@ public:
 
   /**
     start processing of a process msg
-    ignore all invalid messages where SEND is not of a member with claimed address,
-    or where EMPF isn't valid
-
-    possible errors:
-      * Err_c::elNonexistent on SEND/EMPF not registered in Monitor-List
   */
   bool processMsg();
+
+  // needed for bus-snooping!
+  virtual bool isNetworkMgmt() const { return true; }
 
 #if defined(USE_PROC_DATA_DESCRIPTION_POOL)
   DevPropertyHandler_c& getDevPropertyHandlerInstance( void );

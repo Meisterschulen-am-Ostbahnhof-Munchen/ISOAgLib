@@ -291,20 +291,42 @@ MessageState_t CANPkgExt_c::address2IdentLocalDa()
   // now try to resolve the address
   const bool cb_addressBelongsToKnownItem = resolveAddress( addrResolveResDA );
 
-  if ( ( cb_addressBelongsToKnownItem ) || ( *addrResolveResDA.pui8_address == 0xFF ) )
-  { // fine - the target adr is known
-    // OR
-    // we received a broadcasted message
+  if ( cb_addressBelongsToKnownItem )
+  { // only problem might be: when we receive a message sent to a remote node
+    if ( addrResolveResDA.pc_monitorItem->itemState(IState_c::Local) )
+    { // everything is fine
+      #ifdef DEBUG_CAN
+        INTERNAL_DEBUG_DEVICE << "We reached a VALID state. Either the target is known." << INTERNAL_DEBUG_DEVICE_ENDL;
+        INTERNAL_DEBUG_DEVICE << "address =  " << int( *addrResolveResDA.pui8_address ) << INTERNAL_DEBUG_DEVICE_ENDL;
+      #endif
+      return Valid;
+    }
+    else
+    { // this is ONLY interesting for BUS-SNOOPING classes like Process_c or handling
+      // of Working-Set-Slaves which have to snoop messages to their Working-Set-Master
+      #ifdef DEBUG_CAN
+        INTERNAL_DEBUG_DEVICE << "We reached an ONLYNETWORKMGTM state. Destination is a remote node." << INTERNAL_DEBUG_DEVICE_ENDL;
+        INTERNAL_DEBUG_DEVICE << "address =  " << int( *addrResolveResDA.pui8_address ) << INTERNAL_DEBUG_DEVICE_ENDL;
+      #endif
+      return OnlyNetworkMgmt;
+    }
+  }
+  else if ( *addrResolveResDA.pui8_address == 0xFF )
+  { // we received a broadcasted message
     #ifdef DEBUG_CAN
-      INTERNAL_DEBUG_DEVICE << "We reached a VALID state. Either the target is known or address = 0xFF." << INTERNAL_DEBUG_DEVICE_ENDL;
-      INTERNAL_DEBUG_DEVICE << "address =  " << int( *addrResolveResDA.pui8_address ) << INTERNAL_DEBUG_DEVICE_ENDL;
+      INTERNAL_DEBUG_DEVICE << "We reached a VALID state. Target address is 0xFF (broadcast)." << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
     return Valid;
   }
   else
-  { // the receiver is not known -> don't process this message
+  { // the receiver is not known OR is 0xFE (which is not a valid receiver address) -> don't process this message
     #ifdef DEBUG_CAN
-      INTERNAL_DEBUG_DEVICE << "We reached an INVALID state. Receiver not known." << INTERNAL_DEBUG_DEVICE_ENDL;
+      if ( *addrResolveResDA.pui8_address == 0xFE ) {
+        INTERNAL_DEBUG_DEVICE << "We reached an INVALID state. Receiver is 0xFE which is NOT possible." << INTERNAL_DEBUG_DEVICE_ENDL;
+      } else {
+        INTERNAL_DEBUG_DEVICE << "We reached an INVALID state. Receiver not known." << INTERNAL_DEBUG_DEVICE_ENDL;
+      INTERNAL_DEBUG_DEVICE << "address =  " << int( *addrResolveResDA.pui8_address ) << INTERNAL_DEBUG_DEVICE_ENDL;
+      }
     #endif
 
     getLibErrInstance().registerError( LibErr_c::Precondition, LibErr_c::Can );
@@ -552,7 +574,7 @@ void CANPkgExt_c::setIsoSa(uint8_t rui8_val)
 /** set the structure for resolve results DA
     @param pc_monitorItem  needed monitoritem
   */
-void CANPkgExt_c::setMonitorItemForSA( const ISOItem_c* pc_monitorItem )
+void CANPkgExt_c::setMonitorItemForSA( ISOItem_c* pc_monitorItem )
 {
   addrResolveResSA.pc_monitorItem = pc_monitorItem;
   // p_isoName will not be needed -> set to unspecified
@@ -576,7 +598,7 @@ void CANPkgExt_c::setISONameForSA( const ISOName_c& p_isoName )
 /** set the structure for resolve results DA
     @param pc_monitorItem  needed monitoritem
   */
-void CANPkgExt_c::setMonitorItemForDA( const ISOItem_c* pc_monitorItem )
+void CANPkgExt_c::setMonitorItemForDA( ISOItem_c* pc_monitorItem )
 {
   addrResolveResDA.pc_monitorItem = pc_monitorItem;
   // p_isoName will not be needed -> set to unspecified

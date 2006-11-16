@@ -266,7 +266,7 @@ public:
   /** set the monitoritem for resolve SA
       @param pc_monitorItem  needed monitoritem
     */
-  void setMonitorItemForSA (const iISOItem_c* pc_monitorItem) { CANPkgExt_c::setMonitorItemForSA (pc_monitorItem); }
+  void setMonitorItemForSA (iISOItem_c* pc_monitorItem) { CANPkgExt_c::setMonitorItemForSA (pc_monitorItem); }
 
   /** set the isoName for resolve SA
       @param p_isoName        needed isoName
@@ -276,7 +276,7 @@ public:
   /** set the monitoritem for resolve SA
       @param pc_monitorItem  needed monitoritem
     */
-  void setMonitorItemForDA (const iISOItem_c* pc_monitorItem) { CANPkgExt_c::setMonitorItemForDA (pc_monitorItem); }
+  void setMonitorItemForDA (iISOItem_c* pc_monitorItem) { CANPkgExt_c::setMonitorItemForDA (pc_monitorItem); }
 
   /** set the isoName for resolve SA
       @param p_isoName        needed isoName

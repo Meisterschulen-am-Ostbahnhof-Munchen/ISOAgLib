@@ -340,10 +340,10 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     return b_result;
   }
 
-  bool TracGeneral_c::processMsgRequestPGN (uint32_t rui32_pgn, uint8_t rui8_sa, uint8_t rui8_da)
+  bool TracGeneral_c::processMsgRequestPGN (uint32_t rui32_pgn, ISOItem_c* rpc_isoItemSender, ISOItem_c* rpc_isoItemReceiver)
   {
     // check if we are allowed to send a request for pgn
-    if ( ! BaseCommon_c::check4ReqForPgn(rui32_pgn, rui8_sa, rui8_da) ) return false;
+    if ( ! BaseCommon_c::check4ReqForPgn(rui32_pgn, rpc_isoItemSender, rpc_isoItemReceiver) ) return false;
 
     // call TracGeneral_c function to send language of Tractor-ECU
     // sendLanguage checks if this item (identified by ISOName)

@@ -161,7 +161,7 @@ namespace __IsoAgLib
     /** check if preconditions for request for pgn are fullfilled
         @return  true -> the request for pgn can be send
       */
-    virtual bool check4ReqForPgn(uint32_t rui32_pgn, uint8_t rui8_sa, uint8_t rui8_da);
+    virtual bool check4ReqForPgn(uint32_t rui32_pgn, ISOItem_c* rpc_isoItemSender, ISOItem_c* rpc_isoItemReceiver);
 
     /** send a ISO11783 base information PGN.
       * this is only called when sending ident is configured and it has already claimed an address

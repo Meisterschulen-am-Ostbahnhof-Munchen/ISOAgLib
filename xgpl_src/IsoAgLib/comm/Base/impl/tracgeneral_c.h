@@ -142,7 +142,7 @@ public: // Public methods
   /** destructor for TracGeneral_c which has nothing to do */
   virtual ~TracGeneral_c() { BaseCommon_c::close();};
 
-  bool processMsgRequestPGN (uint32_t rui32_pgn, uint8_t rui8_sa, uint8_t rui8_da);
+  bool processMsgRequestPGN (uint32_t rui32_pgn, ISOItem_c* rpc_isoItemSender, ISOItem_c* rpc_isoItemReceiver);
 
   /** force a request for pgn for language information */
   bool sendRequestUpdateLanguage();

@@ -56,6 +56,7 @@
 #define ISO_REQUEST_PGN_HANDLER_C_H
 
 #include <IsoAgLib/typedef.h>
+#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.h>
 
 /* *************************************** */
 /* ********** include headers ************ */
@@ -74,7 +75,7 @@ class ISORequestPGNHandler_c
 
 public:
   virtual ~ISORequestPGNHandler_c() {};
-  virtual bool processMsgRequestPGN (uint32_t rui32_pgn, uint8_t rui8_sa, uint8_t rui8_da)=0;
+  virtual bool processMsgRequestPGN (uint32_t rui32_pgn, ISOItem_c* rpc_isoItemSender, ISOItem_c* rpc_isoItemReceiver)=0;
 };
 
 }

@@ -316,16 +316,17 @@ bool BaseCommon_c::sendPgnRequest(uint32_t ui32_requestedPGN)
 /** check if preconditions for request for pgn are fullfilled
     @return  true -> the request for pgn can be send
   */
-bool BaseCommon_c::check4ReqForPgn(uint32_t /* rui32_pgn */, uint8_t /*rui8_sa*/, uint8_t rui8_da)
+bool BaseCommon_c::check4ReqForPgn(uint32_t /* rui32_pgn */, ISOItem_c* /*rpc_isoItemSender*/, ISOItem_c* rpc_isoItemReceiver)
 {
-  if ( NULL == getISOName() ) return false;
+  if ( NULL == getISOName() ) return false; // not configured for Send
   if ( ! getIsoMonitorInstance4Comm().existIsoMemberISOName( *getISOName(), true ) ) return false;
 
   // now we can be sure, that we are in tractor mode, and the registered tractor isoname
   // belongs to an already claimed IsoItem_c --> we are allowed to send
-  if ( ( getIsoMonitorInstance4Comm().isoMemberISOName( *getISOName() ).nr() == rui8_da ) || ( rui8_da == 0xFF ) )
-  { // the REQUEST was directed to the SA that belongs to the tractor IdentItem_c that is matched by the registrated
-    // ISOName_c (getISOName())
+  if ( ( rpc_isoItemReceiver == NULL ) ||
+  ( &getIsoMonitorInstance4Comm().isoMemberISOName( *getISOName() ) == rpc_isoItemReceiver ) )
+  { // the REQUEST was directed to GLOBAL or to the SA that belongs to the
+    // tractor IdentItem_c that is matched by the registrated ISOName_c (getISOName())
     return true;
   }
   else

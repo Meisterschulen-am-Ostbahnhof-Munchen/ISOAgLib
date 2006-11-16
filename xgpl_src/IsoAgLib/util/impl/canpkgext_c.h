@@ -107,11 +107,11 @@ typedef struct
   // the ISOName_c instance should be handled as if it would be a fixed
   // _part_ of the struct --> the constructor allocates an instance, the destructur frees it
   //                          and all other operations just operate on the allocated instance.
-  ISOName_c*         p_isoName;
+  ISOName_c* p_isoName;
   // IMPORTANT:
   // in contrast to ISOName_c, the MonitorItem_c _POINTER_ is always set to NULL or to an instance, that
   // is located somewhere else (thus do NEVER NEVER NEVER call new or delete for this entry!!!!!!!!)
-  const ISOItem_c*  pc_monitorItem;
+  ISOItem_c* pc_monitorItem;
   //can be source or destination address
   uint8_t* pui8_address;
 } AddressResolveResults;
@@ -404,7 +404,7 @@ class CANPkgExt_c : public CANPkg_c
   /** set the monitoritem for resolve SA
       @param pc_monitorItem  needed monitoritem
     */
-  void setMonitorItemForSA( const ISOItem_c* pc_monitorItem );
+  void setMonitorItemForSA( ISOItem_c* pc_monitorItem );
 
   /** set the isoName for resolve SA
       @param p_isoName        needed isoName
@@ -414,7 +414,7 @@ class CANPkgExt_c : public CANPkg_c
   /** set the monitoritem for resolve SA
       @param pc_monitorItem  needed monitoritem
     */
-  void setMonitorItemForDA( const ISOItem_c* pc_monitorItem );
+  void setMonitorItemForDA( ISOItem_c* pc_monitorItem );
 
   /** set the isoName for resolve SA
       @param p_isoName        needed isoName
@@ -427,17 +427,17 @@ class CANPkgExt_c : public CANPkg_c
 
   /** get the monitoritem for resolved SA
     */
-  const ISOItem_c* getMonitorItemForSA() { return addrResolveResSA.pc_monitorItem; }
+  ISOItem_c* getMonitorItemForSA() { return addrResolveResSA.pc_monitorItem; }
 
-  /** set the isoName for resolved SA
+  /** get the isoName for resolved SA
     */
   const ISOName_c& getISONameForSA() { return *addrResolveResSA.p_isoName; }
 
   /** set the monitoritem for resolved SA
     */
-  const ISOItem_c* getMonitorItemForDA() { return addrResolveResDA.pc_monitorItem; }
+  ISOItem_c* getMonitorItemForDA() { return addrResolveResDA.pc_monitorItem; }
 
-  /** set the isoName for resolved SA
+  /** set the isoName for resolved DA
     */
   const ISOName_c& getISONameForDA() { return *addrResolveResDA.p_isoName; }
 

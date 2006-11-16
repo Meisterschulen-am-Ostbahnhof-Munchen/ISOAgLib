@@ -177,8 +177,8 @@ public:
   int32_t getTimeOfLastRequest() { return data().time(); }
 
   /** Only call sendCannotRespondNow(..) when you're about to respond to a requested PGN */
-  void answerRequestPGNwithNACK()             { sendAcknowledgePGN (0x01); } // Control Byte 3 = NOT Acknowledge
-  void answerRequestPGNwithCannotRespondNow() { sendAcknowledgePGN (0x03); } // Control Byte 3 = Cannot Respond
+  void answerRequestPGNwithNACK()                       { if (pc_isoItemDA != NULL) sendAcknowledgePGN (*pc_isoItemDA, 0x01); } // Control Byte 1 = NOT Acknowledge
+  void answerRequestPGNwithCannotRespondNow(ISOItem_c& rrefc_isoItemSender) { sendAcknowledgePGN (rrefc_isoItemSender, 0x03); } // Control Byte 3 = Cannot Respond
 
   ///  Operation:  Funktion for Debugging in Scheduler_c
   virtual const char* getTaskName() const;
@@ -198,7 +198,7 @@ private: // Private methods
       users please use init(...) instead. */
   void singletonInit ();
 
-  void sendAcknowledgePGN (uint8_t rui8_ackType);
+  void sendAcknowledgePGN (ISOItem_c& rrefc_isoItemSender, uint8_t rui8_ackType);
 
 
 private: // Private attributes
@@ -210,9 +210,12 @@ private: // Private attributes
   /** temp data where received and to be sent data is put */
   CANPkgExt_c c_data;
 
-  uint8_t  ui8_saFromRequest;
-  uint8_t  ui8_psFromRequest;
-  uint32_t ui32_reqPgnFromRequest;
+  /// The following variables are just kept here as cache in case the user
+  /// calls "sendAcknowledgePGN" out and the CAN-Pkg was changed in between
+  /// by another ReqPGNHandler...
+  ISOItem_c* pc_isoItemSA;
+  ISOItem_c* pc_isoItemDA;
+  uint32_t ui32_requestedPGN;
 };
 
 #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )

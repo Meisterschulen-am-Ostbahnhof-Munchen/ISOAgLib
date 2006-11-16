@@ -83,26 +83,10 @@
  ***************************************************************************/
 #include "isorequestpgn_c.h"
 #include "isorequestpgnhandler_c.h"
-
-#include <IsoAgLib/driver/can/impl/canio_c.h>
 #include "isomonitor_c.h"
 
-/*
-#include "isosystempkg_c.h"
-#include <IsoAgLib/util/liberr_c.h>
-#include <IsoAgLib/comm/Scheduler/impl/scheduler_c.h>
-#include <IsoAgLib/comm/SystemMgmt/impl/systemmgmt_c.h>
+#include <IsoAgLib/driver/can/impl/canio_c.h>
 
-#if defined(DEBUG) || defined(DEBUG_HEAP_USEAGE)
-  #include <IsoAgLib/util/impl/util_funcs.h>
-  #ifdef SYSTEM_PC
-    #include <iostream>
-  #else
-    #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
-  #endif
-  #include <IsoAgLib/util/impl/util_funcs.h>
-#endif
-*/
 
 namespace __IsoAgLib {
 
@@ -228,82 +212,48 @@ ISORequestPGN_c::checkIfAlreadyRegistered (ISORequestPGNHandler_c &ref_PGNHandle
 };
 
 
-/** process system msg
+/** process REQUEST_PGN_MSG_PGN message
+    Since we only insertFilter for REQUEST_PGN_MSG_PGN we don't need further checking
+    a la "if ((data().isoPgn() & 0x1FF00) == REQUEST_PGN_MSG_PGN)"
   * @return true -> message processed by ISORequestPGN_c (also possible is NACK); false -> let others process */
 bool
 ISORequestPGN_c::processMsg ()
 {
-  ui8_saFromRequest = data().isoSa();
-  ui8_psFromRequest = data().isoPs();
+  /// Store incoming information for possible later user-triggered "sendAcknowledgePGN()"
+  pc_isoItemSA = data().getMonitorItemForSA();
+  pc_isoItemDA = data().getMonitorItemForDA();
+  ui32_requestedPGN = ( (static_cast<uint32_t>(data().operator[](0)))
+                      | (static_cast<uint32_t>(data().operator[](1)) << 8)
+                      | (static_cast<uint32_t>(data().operator[](2)) << 16) );
 
-  /// it is not allowed to have source address 0xFF
-  /// it needs to be != 0xFF
-  if (ui8_saFromRequest == 0xFF)
-    return true;
+  /// In case a node on the bus has not yet claimed an address (it sends with sa=0xFE, i.e. MonitorItem_c==NULL),
+  /// it can still request ANY PGNs according to Mike - so no special check done here!
 
-  // since we only insertFilter for REQUEST_PGN_MSG_PGN we don't need further checking
-  //  if ((data().isoPgn() & 0x1FF00) == REQUEST_PGN_MSG_PGN)
-  //  { // request for PGN
-  ui32_reqPgnFromRequest = ( (static_cast<uint32_t>(data().operator[](0)))
-                           | (static_cast<uint32_t>(data().operator[](1)) << 8)
-                           | (static_cast<uint32_t>(data().operator[](2)) << 16)
-                           );
-
-  /// in case of ISOItem_c has no address claimed yet it has sa 0xFE
-  /// that ISOItem_c is not allowed to send any other REQUEST_PGN_MSG_PGN than ADDRESS_CLAIM_PGN
-  /// Mike said: FE can request anything it wants ;-) so we'll do it!
-  //     if ((data().isoSa() == 0xFE) && (ui32_reqPgn != ADDRESS_CLAIM_PGN))
-  //       return true;
-  //     else
-
-  /// if the ISOItem_c is not in the monitor list, ignore this request
-  if ((ui8_saFromRequest != 0xFE) && (!getIsoMonitorInstance4Comm().existIsoMemberNr (ui8_saFromRequest)))
-    return true;
-
-  bool b_distributeToClients = false;
-  // if isoPs is 255 let all local item answer
-  if (ui8_psFromRequest == 0xFF)
-  {
-    b_distributeToClients = true;
-  }
-  else
-  {
-    if (getIsoMonitorInstance4Comm().existIsoMemberNr (ui8_psFromRequest))
-    { // check if local
-      if (getIsoMonitorInstance4Comm().isoMemberNr (ui8_psFromRequest).itemState (IState_c::Local))
-        b_distributeToClients = true;
-    }
+  /// 1. Distribute to all clients
+  bool b_processedByAnyClient = false;
+  for (STL_NAMESPACE::vector<PGN_s>::iterator regPGN_it = registeredClientsWithPGN.begin();
+        regPGN_it != registeredClientsWithPGN.end(); regPGN_it++)
+  { // let all local regPGN_it process this request
+    if (regPGN_it->ui32_pgn == ui32_requestedPGN)
+      b_processedByAnyClient |= regPGN_it->p_handler->processMsgRequestPGN (ui32_requestedPGN, pc_isoItemSA, pc_isoItemDA);
   }
 
-  if (b_distributeToClients)
-  {
-    /// 1. Distribute to all clients
-    bool b_processedByAnyClient = false;
-    for (STL_NAMESPACE::vector<PGN_s>::iterator regPGN_it = registeredClientsWithPGN.begin();
-          regPGN_it != registeredClientsWithPGN.end(); regPGN_it++)
-    { // let all local regPGN_it process this request
-      if (regPGN_it->ui32_pgn == ui32_reqPgnFromRequest)
-        b_processedByAnyClient |= regPGN_it->p_handler->processMsgRequestPGN(ui32_reqPgnFromRequest, ui8_saFromRequest, ui8_psFromRequest);
-    }
-
-    /// 2. Check if we have to send a NACK as nobody could answer it
-    if ((ui8_psFromRequest != 0xFF) && !b_processedByAnyClient) // no client could answer the Request PGN, so NACK it!
-    {
-      answerRequestPGNwithNACK(); // Control Byte = 1, Negative Acknowledgement: NACK
-    }
+  /// 2. Check if we have to send a NACK as nobody could answer it
+  /// (only for destination-specific, will be checked by answerRequestPGNwithNACK() !)
+  if (!b_processedByAnyClient)
+  { // no client could answer the Request PGN, so NACK it!
+    answerRequestPGNwithNACK ();
   }
+
   return true;
-//  }
-// since we only insertFilter for REQUEST_PGN_MSG_PGN we don't need further checking
-//  return b_processed; // return if msg was processed by ISORequestPGN_c
 }
 
 
 
 void
-ISORequestPGN_c::sendAcknowledgePGN (uint8_t rui8_ackType)
+ISORequestPGN_c::sendAcknowledgePGN (ISOItem_c& rrefc_isoItemSender, uint8_t rui8_ackType)
 {
-  uint32_t ui32_purePgn = ui32_reqPgnFromRequest;
+  uint32_t ui32_purePgn = ui32_requestedPGN;
   if (((ui32_purePgn >> 8) & 0xFF) < 0xF0)
   { // destination specific, so clear the destSA field as we want the PURE PGN!
     ui32_purePgn &= 0x1FF00;
@@ -312,8 +262,8 @@ ISORequestPGN_c::sendAcknowledgePGN (uint8_t rui8_ackType)
   data().setIsoPri(6);
   data().setIsoDp(0);
   data().setIsoPf(ACKNOWLEDGEMENT_PGN >> 8);
-  data().setIsoPs(ui8_saFromRequest);
-  data().setIsoSa(ui8_psFromRequest);
+  data().setMonitorItemForDA (pc_isoItemSA);
+  data().setMonitorItemForSA (&rrefc_isoItemSender);
   // set the first four bytes as uint32_t value, where lowest byte equals to ControlByte
   data().setUint32Data ((1-1), (0xFFFFFF00UL | uint32_t (rui8_ackType)));
   // set at lowest byte of second uint32_t value the reserved 0xFF
@@ -348,7 +298,9 @@ ISORequestPGN_c::singletonInit ()
 // Funktion for Debugging in Scheduler_c
 const char*
 ISORequestPGN_c::getTaskName() const
-{   return "ISORequestPGN_c";}
+{
+  return "ISORequestPGN_c";
+}
 
 
 #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )

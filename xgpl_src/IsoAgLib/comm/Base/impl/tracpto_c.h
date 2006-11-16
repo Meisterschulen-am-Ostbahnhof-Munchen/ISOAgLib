@@ -201,7 +201,7 @@ typedef struct
       else                              setPtoFrontEngaged( IsoAgLib::IsoActive );
     }
 
-    bool processMsgRequestPGN (uint32_t rui32_pgn, uint8_t rui8_sa, uint8_t rui8_da);
+    bool processMsgRequestPGN (uint32_t rui32_pgn, ISOItem_c* rpc_isoItemSender, ISOItem_c* rpc_isoItemReceiver);
 
     /** force a request for pgn for front pto state */
     bool sendRequestUpdateFront();

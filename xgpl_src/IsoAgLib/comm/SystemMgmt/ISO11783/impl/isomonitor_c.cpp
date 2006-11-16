@@ -1343,7 +1343,7 @@ bool ISOMonitor_c::processMsg()
 }
 
 bool
-ISOMonitor_c::processMsgRequestPGN (uint32_t rui32_pgn, uint8_t /*rui8_sa*/, uint8_t rui8_da)
+ISOMonitor_c::processMsgRequestPGN (uint32_t rui32_pgn, ISOItem_c* /*rpc_isoItemSender*/, ISOItem_c* rpc_isoItemReceiver)
 {
   switch (rui32_pgn)
   {
@@ -1351,33 +1351,27 @@ ISOMonitor_c::processMsgRequestPGN (uint32_t rui32_pgn, uint8_t /*rui8_sa*/, uin
       // update time of last adress claim request
       setLastIsoSaRequest (getIsoRequestPgnInstance4Comm().getTimeOfLastRequest()); // Now using CAN-Pkg-Times, see header for "setLastIsoSaRequest" for more information!
 
-      if (rui8_da == 255)
-      { // Let all local item answer
+      if (rpc_isoItemReceiver == NULL)
+      { // No specific destination so it's broadcast: Let all local item answer!
         bool b_processedRequestPGN = false;
         for (Vec_ISOIterator pc_iterItem = vec_isoMember.begin();
               pc_iterItem != vec_isoMember.end(); pc_iterItem++)
-        { // let all local pc_iterItem process process this request
+        { // let all local pc_iterItem process this request
           if (pc_iterItem->itemState (IState_c::Local))
             b_processedRequestPGN |= pc_iterItem->sendSaClaim();
         }
         return b_processedRequestPGN; //return value doesn't matter, because the request was for GLOBAL (255), so it isn't NACKed anyway
       }
       else
-      { // check if item with SA == isoPs exist and let it process
-        // if local
-        if (existIsoMemberNr(rui8_da))
-        { // check if local
-          if (isoMemberNr (rui8_da).itemState (IState_c::Local))
-            return isoMemberNr (rui8_da).sendSaClaim();
-        }
-        return false; // this case can't be reached, as isorequestpgn_c won't call us, if it wouldn't knew (by us :-) that we have such a local member!
+      { // ISORequestPGN ensured that the Item exists and is local: Let it process!
+        return rpc_isoItemReceiver->sendSaClaim();
       }
       break;
 
 #ifdef USE_WORKING_SET
     case WORKING_SET_MASTER_PGN: // break intentionally left out - react on both PGNs with sending out the complete ws-announce sequence!
     case WORKING_SET_MEMBER_PGN:
-      if (rui8_da == 255)
+      if (rpc_isoItemReceiver == NULL)
       { // Let ALL local item answer
         for (Vec_ISOIterator pc_iterItem = vec_isoMember.begin();
               pc_iterItem != vec_isoMember.end(); pc_iterItem++)
@@ -1388,7 +1382,7 @@ ISOMonitor_c::processMsgRequestPGN (uint32_t rui32_pgn, uint8_t /*rui8_sa*/, uin
             { // is Master, so can it send out the ws-announce?
               if (!pc_iterItem->sendWsAnnounce())
               { // couldn't send right now, so answer with ACK-BUSY!
-                __IsoAgLib::getIsoRequestPgnInstance4Comm().answerRequestPGNwithCannotRespondNow();
+                __IsoAgLib::getIsoRequestPgnInstance4Comm().answerRequestPGNwithCannotRespondNow (*pc_iterItem);
               }
             }
             else
@@ -1400,30 +1394,21 @@ ISOMonitor_c::processMsgRequestPGN (uint32_t rui32_pgn, uint8_t /*rui8_sa*/, uin
         return true; //return value doesn't matter, because the request was for GLOBAL (255), so it isn't NACKed anyway
       }
       else
-      { // check if item with SA == isoPs exist and let it process
-        // if local
-        if (existIsoMemberNr (rui8_da))
-        { // check if local
-          ISOItem_c& refc_isoItem = isoMemberNr (rui8_da);
-          if (refc_isoItem.itemState (IState_c::Local))
-          {
-            if (refc_isoItem.isMaster())
-            { // is Master, so can it send out the ws-announce?
-              if (!refc_isoItem.sendWsAnnounce())
-              { // couldn't send right now, so answer with ACK-BUSY!
-                __IsoAgLib::getIsoRequestPgnInstance4Comm().answerRequestPGNwithCannotRespondNow();
-              }
-              return true;
-            }
-            else
-            { // no master, can't send out these PGNs
-              return false; // let it get NACKed
-            }
+      { // Let the given local item answer
+        if (rpc_isoItemReceiver->isMaster())
+        { // is Master, so can it send out the ws-announce?
+          if (!rpc_isoItemReceiver->sendWsAnnounce())
+          { // couldn't send right now, so answer with ACK-BUSY!
+            __IsoAgLib::getIsoRequestPgnInstance4Comm().answerRequestPGNwithCannotRespondNow(*rpc_isoItemReceiver);
           }
+          return true;
         }
-        return false; // this case can't be reached, as isorequestpgn_c won't call us, if it wouldn't knew (by us :-) that we have such a local member!
+        else
+        { // no master, can't send out these PGNs
+          return false; // let it get NACKed
+        }
       }
-      break;
+      break; // actually not needed, but for safety...
 #endif
 
     default:

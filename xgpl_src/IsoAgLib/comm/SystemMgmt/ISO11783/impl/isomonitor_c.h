@@ -481,7 +481,7 @@ public:
   */
   void notifyOnWsMasterLoss (ISOItem_c& rrefc_masterItem);
 
-  bool processMsgRequestPGN (uint32_t rui32_pgn, uint8_t rui8_sa, uint8_t rui8_da);
+  bool processMsgRequestPGN (uint32_t rui32_pgn, ISOItem_c* rpc_isoItemSender, ISOItem_c* rpc_isoItemReceiver);
 
   ///  Operation: // Function for Debugging in Scheduler_c
   virtual const char* getTaskName() const;
