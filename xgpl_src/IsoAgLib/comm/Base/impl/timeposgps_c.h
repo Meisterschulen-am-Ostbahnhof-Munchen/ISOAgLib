@@ -575,10 +575,7 @@ private:
     NEVER instantiate a variable of type TimePosGPS_c within application
     only access TimePosGPS_c via getTimePosGpsInstance() or getTimePosGpsInstance( int riLbsBusNr ) in case more than one BUS is used for IsoAgLib
     */
-  TimePosGPS_c(): c_sendGpsISOName(),
-                  pc_isoNameGps(NULL),
-                  t_identModeGps( IsoAgLib::IdentModeImplement )
-  {}
+  TimePosGPS_c();
 
   /** deliver time between now and last calendar set in [msec]
     @return msec since last calendar set

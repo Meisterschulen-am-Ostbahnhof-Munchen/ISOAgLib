@@ -109,10 +109,7 @@ public:
     Scheduler_c and Process_c instances
     @param rpc_processData optional pointer to Process_c
   */
-  MeasureProgRemote_c(
-    ProcDataBase_c *const rpc_processData = NULL )
-  : MeasureProgBase_c(rpc_processData, Proc_c::UndefinedProg, 0, ISOName_c::ISONameUnspecified )
-  {init( rpc_processData );};
+  MeasureProgRemote_c( ProcDataBase_c *const rpc_processData = NULL );
   /**
     initialise this MeasureProgRemote_c instance to well defined initial condition
     Scheduler_c and Process_c instances

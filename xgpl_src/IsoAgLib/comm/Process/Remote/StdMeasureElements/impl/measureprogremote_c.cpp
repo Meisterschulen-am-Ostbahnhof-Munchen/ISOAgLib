@@ -91,6 +91,17 @@
 #include "../../../processdatachangehandler_c.h"
 
 namespace __IsoAgLib {
+  /**
+    constructor of MeasureProgRemote_c which can needed pointers to containing
+    Scheduler_c and Process_c instances
+    @param rpc_processData optional pointer to Process_c
+   */
+  MeasureProgRemote_c::MeasureProgRemote_c(
+      ProcDataBase_c *const rpc_processData )
+  : MeasureProgBase_c(rpc_processData, Proc_c::UndefinedProg, 0, ISOName_c::ISONameUnspecified )
+  {
+    init( rpc_processData );
+  }
 
 /**
   initialise this MeasureProgRemote_c instance to well defined initial condition

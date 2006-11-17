@@ -80,12 +80,18 @@
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 #include "vtobjectoutputstring_c.h"
+#include "../ivtobjectoutputstring_c.h"
 
 #include "../ivtobjectfontattributes_c.h"
 #include "../ivtobjectbutton_c.h"
 #include "../ivtobjectstringvariable_c.h"
 #include "isoterminal_c.h"
 #include <IsoAgLib/util/impl/util_funcs.h>
+
+namespace IsoAgLib {
+  iVtObjectOutputString_c::iVtObjectOutputString_c() {}
+  iVtObjectOutputString_c::~iVtObjectOutputString_c(){}
+};
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {

@@ -67,6 +67,8 @@ class iVtObjectContainer_c : public __IsoAgLib::vtObjectContainer_c
 {
 
 public:
+  iVtObjectContainer_c();
+  ~iVtObjectContainer_c();
 
   //  Operation: init
   //! Parameter:

@@ -204,7 +204,7 @@ public:
      deliver list of ElementDDI_s
      @return std::list<IsoAgLib::ElementDDI_s>
   */
-  const std::list<IsoAgLib::ElementDDI_s>& elementDDI()const {return data.l_elementDDI;}
+  const std::list<IsoAgLib::ElementDDI_s>& elementDDI()const {return l_elementDDI;}
 
   /** check if this ProcIdent_c has the given DDI as element */
   bool hasDDI( uint16_t rui16_checkDDI ) const;
@@ -215,8 +215,8 @@ public:
     @return DDI
   */
   uint16_t DDI() const{
-    if (data.l_elementDDI.size() == 1)
-      return data.l_elementDDI.begin()->ui16_DDI;
+    if (l_elementDDI.size() == 1)
+      return l_elementDDI.begin()->ui16_DDI;
     else
       return 0;
   }
@@ -225,14 +225,14 @@ public:
     deliver value element (only possible if only one elementDDI in list)
     @return element
   */
-  uint16_t element() const{ return data.ui16_element; }
+  uint16_t element() const{ return ui16_element; }
 
   /**
     deliver value DEVCLASS (machine type specific table of process data types)
     everytime deliver the identity DEVCLASS (and NOT the possibly differing DEVCLASS of the owner)
     @return DEVCLASS
   */
-  uint8_t devClass() const{return data.c_isoName.devClass();}
+  uint8_t devClass() const{return c_isoName.devClass();}
 
   /**
     deliver value ISOName (machine type specific table of process data types)
@@ -256,7 +256,7 @@ public:
     @return actual ISOName of owner
   */
   const ISOName_c& ownerISOName() const
-    { return ((pc_ownerISOName != 0)?(*pc_ownerISOName):(data.c_ownerISOName));}
+    { return ((pc_ownerISOName != 0)?(*pc_ownerISOName):(c_ownerISOName));}
 
   /**
     set DDI, value group and setpoint/measure type of process msg
@@ -272,38 +272,38 @@ public:
 
   /** set device element number
     * @param  rui16_element */
-  void setElementNumber(uint16_t rui16_element) { data.ui16_element = rui16_element; }
+  void setElementNumber(uint16_t rui16_element) { ui16_element = rui16_element; }
 
   /**
     set value DEVCLASS (machine type specific table of process data types)
     @param rui8_val new DEVCLASS val
   */
-  void setDevClass(uint8_t rui8_val){data.c_isoName.setDevClass(rui8_val);}
+  void setDevClass(uint8_t rui8_val){c_isoName.setDevClass(rui8_val);}
 
   /**
     set value ISOName (machine type specific table of process data types)
     @param rc_val new ISOName val
   */
-  void setISOName(const ISOName_c& rc_val){data.c_isoName = rc_val;}
+  void setISOName(const ISOName_c& rc_val){c_isoName = rc_val;}
 
   /**
     set value _instance_ (important if more than one machine with equal _device_class_ are active)
     set also the _instance_ of the owner as the owner _instance_ shall be always the most actual value
     @param rui8_val new device class inst val
   */
-  void setDevClassInst(uint8_t rui8_val){data.c_isoName.setDevClassInst(rui8_val); data.c_ownerISOName.setDevClassInst(rui8_val);}
+  void setDevClassInst(uint8_t rui8_val){c_isoName.setDevClassInst(rui8_val); c_ownerISOName.setDevClassInst(rui8_val);}
 
   /**
     set the owner isoName
     @param rc_val new ISOName of owner
   */
-  void setOwnerISOName(const ISOName_c& rc_val){data.c_ownerISOName = rc_val;}
+  void setOwnerISOName(const ISOName_c& rc_val){c_ownerISOName = rc_val;}
 
   /**
     set the DEVCLASS of the owner
     @param rui8_val new DEVCLASS of owner
   */
-  void setOwnerDevClass(uint8_t rui8_val){data.c_ownerISOName.setDevClass(rui8_val);}
+  void setOwnerDevClass(uint8_t rui8_val){c_ownerISOName.setDevClass(rui8_val);}
 
   /**
     set DEVCLASS and _instance_ of owner by giving pointer to owner ISOName
@@ -357,24 +357,21 @@ private: // Private attributes
 
   /** DEVCLASS code of process data identity */
   const ISOName_c* pc_ownerISOName; // only defined for own local data, otherwise NULL
-  struct _data {
-    /**
-      in most cases equivalent with ((devClass << 3) | pos);
-      for data with ident devClass==0 this is mostly NOT the same as the devClass of the owner,
-      because then this value is of the general base data table
+  /**
+    in most cases equivalent with ((devClass << 3) | pos);
+    for data with ident devClass==0 this is mostly NOT the same as the devClass of the owner,
+    because then this value is of the general base data table
+  */
+  ISOName_c c_ownerISOName;
+  /** ISOName_c information for this instance
+      ( the _instance_ part is important if more ECU of same _device_class_ are
+      parallel active on the BUS)
     */
-    ISOName_c c_ownerISOName;
-    /** ISOName_c information for this instance
-        ( the _instance_ part is important if more ECU of same _device_class_ are
-        parallel active on the BUS)
-      */
-    ISOName_c c_isoName;
+  ISOName_c c_isoName;
 
 
-     std::list<IsoAgLib::ElementDDI_s> l_elementDDI;
-     uint16_t ui16_element;
-
-  } data;
+   std::list<IsoAgLib::ElementDDI_s> l_elementDDI;
+   uint16_t ui16_element;
 
 private: // Private methods
 

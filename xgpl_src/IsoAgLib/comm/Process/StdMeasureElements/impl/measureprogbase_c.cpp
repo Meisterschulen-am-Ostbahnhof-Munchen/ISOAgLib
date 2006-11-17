@@ -618,27 +618,27 @@ bool MeasureProgBase_c::processMsg(){
   { // mark that msg already edited
     b_edited = true;
 
-    // set en_doSend (for ISO)
+    // set en_doSendPkg (for ISO)
     GeneralCommand_c::ValueGroup_t en_valueGroup = c_pkg.c_generalCommand.getValueGroup();
 
-    Proc_c::doSend_t en_doSend = Proc_c::DoVal;  //default send data mode
+    Proc_c::doSend_t en_doSendPkg = Proc_c::DoVal;  //default send data mode
     if (c_pkg.c_generalCommand.checkIsSetpoint())
-      en_doSend = Proc_c::DoValForExactSetpoint; // measurement for exact value setpoint
+      en_doSendPkg = Proc_c::DoValForExactSetpoint; // measurement for exact value setpoint
 
     switch (en_valueGroup)
     {
       case GeneralCommand_c::minValue:
-        en_doSend = Proc_c::DoValForMinSetpoint; // measurement for min value setpoint
+        en_doSendPkg = Proc_c::DoValForMinSetpoint; // measurement for min value setpoint
         if (!c_pkg.c_generalCommand.checkIsSetpoint())
-          en_doSend = Proc_c::DoValForMinMeasurement; // measurement for min value measurement
+          en_doSendPkg = Proc_c::DoValForMinMeasurement; // measurement for min value measurement
         break;
       case GeneralCommand_c::maxValue:
-        en_doSend = Proc_c::DoValForMaxSetpoint; // measurement for max value setpoint
+        en_doSendPkg = Proc_c::DoValForMaxSetpoint; // measurement for max value setpoint
         if (!c_pkg.c_generalCommand.checkIsSetpoint())
-          en_doSend = Proc_c::DoValForMaxMeasurement; // measurement for max value measurement
+          en_doSendPkg = Proc_c::DoValForMaxMeasurement; // measurement for max value measurement
         break;
       case GeneralCommand_c::defaultValue:
-        en_doSend = Proc_c::DoValForDefaultSetpoint; // measurement for default value setpoint
+        en_doSendPkg = Proc_c::DoValForDefaultSetpoint; // measurement for default value setpoint
         break;
       default:
         ;
@@ -652,7 +652,7 @@ bool MeasureProgBase_c::processMsg(){
         en_command == GeneralCommand_c::measurementMinimumThresholdValueStart ||
         en_command == GeneralCommand_c::measurementMaximumThresholdValueStart)
       // increment
-      processIncrementMsg(en_doSend);
+      processIncrementMsg(en_doSendPkg);
 
 
     uint8_t b_cmd = c_pkg.data(0);
@@ -675,27 +675,27 @@ bool MeasureProgBase_c::processMsg(){
         en_command == GeneralCommand_c::measurementMinimumThresholdValueStart ||
         en_command == GeneralCommand_c::measurementMaximumThresholdValueStart)
     {
-      Proc_c::type_t en_type = Proc_c::NullType;
+      Proc_c::type_t en_typePkg = Proc_c::NullType;
       int32_t i32_dataLong = c_pkg.dataLong();
       switch (en_command) {
         case GeneralCommand_c::measurementTimeValueStart:
-          en_type = Proc_c::TimeProp;
+          en_typePkg = Proc_c::TimeProp;
           break;
         case GeneralCommand_c::measurementDistanceValueStart:
-          en_type = Proc_c::DistProp;
+          en_typePkg = Proc_c::DistProp;
           break;
         case GeneralCommand_c::measurementChangeThresholdValueStart:
-          en_type = Proc_c::OnChange;
+          en_typePkg = Proc_c::OnChange;
           if (Proc_c::ThresholdChangeStopVal == i32_dataLong)
             i32_dataLong = 0; // stop command
           break;
         case GeneralCommand_c::measurementMaximumThresholdValueStart:
-          en_type = Proc_c::MaximumThreshold;
+          en_typePkg = Proc_c::MaximumThreshold;
           if (Proc_c::ThresholdMaximumStopVal == i32_dataLong)
             i32_dataLong = 0; // stop command
           break;
         case GeneralCommand_c::measurementMinimumThresholdValueStart:
-          en_type = Proc_c::MinimumThreshold;
+          en_typePkg = Proc_c::MinimumThreshold;
           if (Proc_c::ThresholdMinimumStopVal == i32_dataLong)
             i32_dataLong = 0; // stop command
           break;
@@ -705,13 +705,13 @@ bool MeasureProgBase_c::processMsg(){
       // if dataLong() == 0 => stop
       if (i32_dataLong != 0)
       {
-        if (en_type != Proc_c::NullType)
-          start(en_type, en_doSend);
+        if (en_typePkg != Proc_c::NullType)
+          start(en_typePkg, en_doSendPkg);
       }
       else
-       // call MeasureProgLocal_c::stop() with TRUE and en_type != Proc_c::NullType
+       // call MeasureProgLocal_c::stop() with TRUE and en_typePkg != Proc_c::NullType
        // => only the appropriate MeasureSubprog_c is deleted (selective stop)
-       stop(TRUE /* b_deleteSubProgs */, en_type, en_doSend);
+       stop(TRUE /* b_deleteSubProgs */, en_typePkg, en_doSendPkg);
     }
   }
 

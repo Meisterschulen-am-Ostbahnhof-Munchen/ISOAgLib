@@ -132,20 +132,27 @@ namespace __IsoAgLib {
     @param rpc_ownerISOName pointer to the optional ISOName var of the owner (for automatic update as soon
             as corresponding device is registered as having claimed address in monitor table list)
   */
-  ProcIdent_c::ProcIdent_c( const IsoAgLib::ElementDDI_s* ps_elementDDI, uint16_t ui16_element,
+  ProcIdent_c::ProcIdent_c( const IsoAgLib::ElementDDI_s* rps_elementDDI, uint16_t rui16_element,
                             const ISOName_c& rc_isoName, const ISOName_c& rc_ownerISOName,
                             const ISOName_c *rpc_ownerISOName, int ri_singletonVecKey)
-  : ClientBase( ri_singletonVecKey )
+  : ClientBase( ri_singletonVecKey ),
+    pc_ownerISOName(NULL),
+    c_ownerISOName(ISOName_c::ISONameUnspecified),
+		c_isoName(ISOName_c::ISONameUnspecified)
 {
-  init( ps_elementDDI, ui16_element, rc_isoName, rc_ownerISOName, rpc_ownerISOName);
+  init( rps_elementDDI, rui16_element, rc_isoName, rc_ownerISOName, rpc_ownerISOName);
 }
 
 /** copy constructor */
 ProcIdent_c::ProcIdent_c( const ProcIdent_c& rrefc_src )
-  : ClientBase( rrefc_src )
+  : ClientBase( rrefc_src ),
+	  pc_ownerISOName( rrefc_src.pc_ownerISOName ),
+		c_ownerISOName( rrefc_src.c_ownerISOName ),
+		c_isoName( rrefc_src.c_isoName )
 {
   assignFromSource( rrefc_src );
 }
+
 
 /**
     initialisation which can set this process data instance to a defined intial state
@@ -163,23 +170,23 @@ ProcIdent_c::ProcIdent_c( const ProcIdent_c& rrefc_src )
     @param rpc_ownerISOName pointer to the optional ISOName var of the owner (for automatic update as soon
             as corresponding device is registered as having claimed address in monitor table list)
 */
-void ProcIdent_c::init( const IsoAgLib::ElementDDI_s* ps_elementDDI, uint16_t ui16_element,
+void ProcIdent_c::init( const IsoAgLib::ElementDDI_s* rps_elementDDI, uint16_t rui16_element,
                         const ISOName_c& rc_isoName, const ISOName_c& rc_ownerISOName,
                         const ISOName_c *rpc_ownerISOName)
 {
-  setElementDDI(ps_elementDDI);
-  setElementNumber(ui16_element);
+  setElementDDI(rps_elementDDI);
+  setElementNumber(rui16_element);
 
-  data.c_isoName = rc_isoName;
+  c_isoName = rc_isoName;
 
   pc_ownerISOName = rpc_ownerISOName;
 
   // the ISOName of ident is best defined by pointed value of rpc_ownerISOName
-  if ( rpc_ownerISOName != 0 ) data.c_ownerISOName = *rpc_ownerISOName;
+  if ( rpc_ownerISOName != 0 ) c_ownerISOName = *rpc_ownerISOName;
   // second choicer is explicit (not default) setting in rc_ownerISOName
-  else if ( rc_ownerISOName.isSpecified() ) data.c_ownerISOName = rc_ownerISOName;
+  else if ( rc_ownerISOName.isSpecified() ) c_ownerISOName = rc_ownerISOName;
   // last choice is definition of c_ownerISOName by process data identiy
-  else data.c_ownerISOName = rc_isoName;
+  else c_ownerISOName = rc_isoName;
 }
 
 /**
@@ -199,8 +206,8 @@ ProcIdent_c& ProcIdent_c::operator=(const ProcIdent_c& rrefc_src){
 /** internal base function for copy constructor and assignement */
 void ProcIdent_c::assignFromSource( const ProcIdent_c& rrefc_src )
 {
-  data.c_isoName = rrefc_src.data.c_isoName;
-  data.c_ownerISOName = rrefc_src.data.c_ownerISOName;
+  c_isoName = rrefc_src.c_isoName;
+  c_ownerISOName = rrefc_src.c_ownerISOName;
   pc_ownerISOName = rrefc_src.pc_ownerISOName;
   // elementDDI() returns list reference, setElementDDI() expects pointer to list
   setElementDDI(&(rrefc_src.elementDDI()));
@@ -217,7 +224,7 @@ ProcIdent_c::~ProcIdent_c(){
 void ProcIdent_c::setOwnerISOName(const ISOName_c* rpc_val)
 {
   pc_ownerISOName = rpc_val;
-  data.c_ownerISOName = *rpc_val;
+  c_ownerISOName = *rpc_val;
 }
 
 /**
@@ -247,11 +254,11 @@ bool ProcIdent_c::matchISO( const ISOName_c& rrefc_isoNameSender,
   // check wether current element/DDI combination matches one list element in process data element/DDI list
   if (rui16_element != element()) return false;
   std::list<IsoAgLib::ElementDDI_s>::const_iterator iter = NULL;
-  for (iter = data.l_elementDDI.begin(); iter != data.l_elementDDI.end(); iter++)
+  for (iter = l_elementDDI.begin(); iter != l_elementDDI.end(); iter++)
     if ( iter->ui16_DDI == rui16_DDI )
       break;
 
-  if (iter == data.l_elementDDI.end())
+  if (iter == l_elementDDI.end())
     return false;
 
   if (ISOName_c::ISONameUnspecified != rrefc_isoNameSender)
@@ -274,22 +281,22 @@ bool ProcIdent_c::matchISO( const ISOName_c& rrefc_isoNameSender,
 bool ProcIdent_c::hasDDI( uint16_t rui16_checkDDI ) const
 {
   std::list<IsoAgLib::ElementDDI_s>::const_iterator iter = NULL;
-  for (iter = data.l_elementDDI.begin(); iter != data.l_elementDDI.end(); iter++)
+  for (iter = l_elementDDI.begin(); iter != l_elementDDI.end(); iter++)
     if (iter->ui16_DDI == rui16_checkDDI)
       break;
 
-  if (iter == data.l_elementDDI.end()) return false;
+  if (iter == l_elementDDI.end()) return false;
   else return true;
 }
 
 bool ProcIdent_c::hasType(bool rb_isSetpoint, GeneralCommand_c::ValueGroup_t t_ddiType) const
 {
   std::list<IsoAgLib::ElementDDI_s>::const_iterator iter = NULL;
-  for (iter = data.l_elementDDI.begin(); iter != data.l_elementDDI.end(); iter++)
+  for (iter = l_elementDDI.begin(); iter != l_elementDDI.end(); iter++)
     if ((iter->en_valueGroup == t_ddiType) && (iter->b_isSetpoint == rb_isSetpoint))
       break;
 
-  if (iter == data.l_elementDDI.end()) return false;
+  if (iter == l_elementDDI.end()) return false;
   else return true;
 }
 
@@ -297,11 +304,11 @@ bool ProcIdent_c::check4GroupMatch(uint16_t rui16_DDI, uint16_t rui16_element, c
 {
   bool b_foundPair = false;
   // first check if ISOName matches
-  if (rc_isoName != data.c_isoName) return b_foundPair;
+  if (rc_isoName != c_isoName) return b_foundPair;
 
   if (rui16_element != element()) return b_foundPair;
 
-  for (std::list<IsoAgLib::ElementDDI_s>::const_iterator iter = data.l_elementDDI.begin(); iter != data.l_elementDDI.end(); iter++)
+  for (std::list<IsoAgLib::ElementDDI_s>::const_iterator iter = l_elementDDI.begin(); iter != l_elementDDI.end(); iter++)
   {
     b_foundPair = isPair((*iter).ui16_DDI, rui16_DDI);
     if (b_foundPair) break;
@@ -313,7 +320,7 @@ bool ProcIdent_c::check4GroupMatchExisting(uint16_t rui16_DDI, uint16_t rui16_el
 {
   bool b_foundPair = false;
   // first check if ISOName matches
-  if (rc_isoName != data.c_isoName) return b_foundPair;
+  if (rc_isoName != c_isoName) return b_foundPair;
 
   if (rui16_element != element()) return b_foundPair;
 
@@ -329,8 +336,8 @@ bool ProcIdent_c::checkProprietary4GroupMatch(uint16_t rui16_element, const ISON
   // if it is not the same device element continue
   if (rui16_element != element()) return b_foundPair;
 
-  std::list<IsoAgLib::ElementDDI_s>::const_iterator iter = data.l_elementDDI.begin();
-  if (iter != data.l_elementDDI.end())
+  std::list<IsoAgLib::ElementDDI_s>::const_iterator iter = l_elementDDI.begin();
+  if (iter != l_elementDDI.end())
   {
     // device element was found
     b_foundPair = true;
@@ -368,7 +375,7 @@ bool ProcIdent_c::add2Group(uint16_t rui16_DDI)
 {
   bool b_foundPair = false;
 
-  for (std::list<IsoAgLib::ElementDDI_s>::const_iterator iter = data.l_elementDDI.begin(); iter != data.l_elementDDI.end(); iter++)
+  for (std::list<IsoAgLib::ElementDDI_s>::const_iterator iter = l_elementDDI.begin(); iter != l_elementDDI.end(); iter++)
   {
     b_foundPair = isPair(iter->ui16_DDI, rui16_DDI);
 
@@ -380,7 +387,7 @@ bool ProcIdent_c::add2Group(uint16_t rui16_DDI)
       if (ddiType != GeneralCommand_c::noValue)
       {
         IsoAgLib::ElementDDI_s s_DDIToAdd = {rui16_DDI, b_isSetpoint, ddiType};
-        data.l_elementDDI.push_back(s_DDIToAdd);
+        l_elementDDI.push_back(s_DDIToAdd);
       }
       break;
     }
@@ -392,7 +399,7 @@ bool ProcIdent_c::add2Group(uint16_t rui16_DDI)
 bool ProcIdent_c::addProprietary2Group(uint16_t rui16_DDI, bool b_isSetpoint, GeneralCommand_c::ValueGroup_t ddiType)
 {
   IsoAgLib::ElementDDI_s s_DDIToAdd = {rui16_DDI, b_isSetpoint, ddiType};
-  data.l_elementDDI.push_back(s_DDIToAdd);
+  l_elementDDI.push_back(s_DDIToAdd);
 
   return true;
 }
@@ -493,23 +500,23 @@ bool ProcIdent_c::hasDDIType (uint16_t rui16_DDI, GeneralCommand_c::ValueGroup_t
 
 void ProcIdent_c::setElementDDI(const IsoAgLib::ElementDDI_s* ps_elementDDI)
 {
-  data.l_elementDDI.clear();
+  l_elementDDI.clear();
   // check if pointer to strcut (array) is set (constructor call with NULL possible!)
   if (ps_elementDDI) {
     // in last struct element == 0xFFFF
     while (ps_elementDDI->ui16_DDI != 0xFFFF)
-      data.l_elementDDI.push_back(*ps_elementDDI++);
+      l_elementDDI.push_back(*ps_elementDDI++);
   }
 }
 
 void ProcIdent_c::setElementDDI(const std::list<IsoAgLib::ElementDDI_s>* pl_elementDDI)
 {
-  data.l_elementDDI.clear();
+  l_elementDDI.clear();
   // check if pointer to struct (array) is set (constructor call with NULL possible!)
   if (pl_elementDDI) {
     for (std::list<IsoAgLib::ElementDDI_s>::const_iterator iter = pl_elementDDI->begin();
          iter != pl_elementDDI->end(); iter++)
-        data.l_elementDDI.push_back(*iter);
+        l_elementDDI.push_back(*iter);
   }
 }
 

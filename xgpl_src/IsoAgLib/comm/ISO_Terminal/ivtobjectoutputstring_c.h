@@ -69,6 +69,8 @@ class iVtObjectOutputString_c : public __IsoAgLib::vtObjectOutputString_c
 {
 
 public:
+  iVtObjectOutputString_c();
+  ~iVtObjectOutputString_c();
 
   //  Operation: init
   //! Parameter:

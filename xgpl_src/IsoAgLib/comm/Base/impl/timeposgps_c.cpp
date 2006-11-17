@@ -203,6 +203,22 @@ namespace __IsoAgLib {
   }
   #endif // END of NMEA_2000_FAST_PACKET
 
+
+  /** HIDDEN constructor for a TimePosGPS_c object instance which can optional
+  set the configuration for send/receive for base msg type NMEA 2000 GPS
+  and calendar
+  NEVER instantiate a variable of type TimePosGPS_c within application
+  only access TimePosGPS_c via getTimePosGpsInstance() or getTimePosGpsInstance( int riLbsBusNr ) in case more than one ISO11783 or DIN9684 BUS is used for IsoAgLib
+   */
+  TimePosGPS_c::TimePosGPS_c()
+#ifdef USE_ISO_11783
+  : c_sendGpsDevKey(),
+  pc_devKeyGps(NULL),
+  t_identModeGps( IsoAgLib::IdentModeImplement )
+#endif
+  {}
+
+
   /** functions with actions, which must be performed periodically
       -> called periodically by Scheduler_c
       ==> sends base msg if configured in the needed rates

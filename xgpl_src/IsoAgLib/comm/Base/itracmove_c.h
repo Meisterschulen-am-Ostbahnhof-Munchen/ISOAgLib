@@ -89,7 +89,7 @@ namespace IsoAgLib {
   /** update selected speed with actually best available speed
       @param t_speedSrc  from which source is the speed available
     */
-  void updateSpeed(IsoAgLib::SpeedSource_t t_speedSource) {TracMove_c::updateSpeed(t_speedSource);}
+  void updateSpeed(IsoAgLib::SpeedSource_t rt_speedSource) {TracMove_c::updateSpeed(rt_speedSource);}
 
   /** update distance and direction with the actually best available distance and direction
       @param t_distanceSrc  from which source is the distance and direction available

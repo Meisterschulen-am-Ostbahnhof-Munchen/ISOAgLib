@@ -132,7 +132,6 @@ namespace __IsoAgLib {
 #define DEF_Retries_TPCommands 2
 #define DEF_Retries_NormalCommands 2
 
-
 /** This is mostly used for debugging now... */
 void SendUploadBase_c::set (uint8_t* rpui8_buffer, uint32_t rui32_bufferSize)
 {
@@ -672,6 +671,13 @@ MultiSend_c::SendStream_c::timeEvent (uint8_t rui8_pkgCnt)
   return false; // stream not yet finished!
 }
 
+/**
+  HIDDEN constructor for a MultiSend_c object instance
+  NEVER instantiate a variable of type MultiSend_c within application
+  only access MultiSend_c via getMultiSendInstance() or getMultiSendInstance( int riLbsBusNr )
+  in case more than one ISO11783 or DIN9684 BUS is used for IsoAgLib
+  */
+ MultiSend_c::MultiSend_c() {};
 
 
 /**

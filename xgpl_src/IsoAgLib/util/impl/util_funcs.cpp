@@ -1485,7 +1485,7 @@ void convertString8859ToUnicode (const std::string& rrefstr_iso8859, std::string
 void convertStringUnicodeTo8859 (const char* rpui8_stringUnicode, uint16_t rui16_stringUnicodeLength, char* rpui8_iso8859buffer, uint8_t rui8_encoding)
 {
   int i_more=0;
-  uint32_t ui32_unicode;
+  uint32_t ui32_unicode = 0;
   for (int i=0; i<rui16_stringUnicodeLength; i++)
   {
     const uint8_t cui8_byte = *rpui8_stringUnicode++;

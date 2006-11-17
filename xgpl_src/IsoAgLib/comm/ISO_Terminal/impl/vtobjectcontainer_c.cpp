@@ -80,10 +80,16 @@
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 #include "vtobjectcontainer_c.h"
+#include "../ivtobjectcontainer_c.h"
 
 #include "../ivtobjectfontattributes_c.h"
 #include "../ivtobjectbutton_c.h"
 #include "isoterminal_c.h"
+
+namespace IsoAgLib {
+  iVtObjectContainer_c::iVtObjectContainer_c() {}
+  iVtObjectContainer_c::~iVtObjectContainer_c() {}
+};
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
@@ -129,7 +135,6 @@ vtObjectContainer_c::stream(uint8_t* destMemory,
     MACRO_streamEventMacro(10U+vtObjectContainer_a->numberOfObjectsToFollow*6U);
     return curBytes;
 }
-
 
 // Operation : vtObjectContainer_c
 vtObjectContainer_c::vtObjectContainer_c() {}

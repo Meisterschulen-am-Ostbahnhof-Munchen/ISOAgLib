@@ -68,7 +68,8 @@ template<TEMPLATE_DECL> class CLASS_NAME() : public BASE_CLASS_NAME
  protected:
   /** default constructor which ints the search cache */
   CLASS_NAME()( void );
-  #define GET_CL_DECL() C1
+  ~CLASS_NAME()( void );
+#define GET_CL_DECL() C1
   #define GET_K_DECL() K1
   #include "singleton_container_decl.h"
   #undef GET_CL_DECL
@@ -99,6 +100,11 @@ template<TEMPLATE_DECL> CLASS_NAME()<TEMPLATE_QUAL>::CLASS_NAME()( void )
 #if ( CLIENT_TYPE_CNT() > 2 )
   pc_searchCacheC3 = c_arrClientC3.begin();
 #endif
+}
+
+/** destructor which ints the search cache */
+template<TEMPLATE_DECL> CLASS_NAME()<TEMPLATE_QUAL>::~CLASS_NAME()( void )
+{
 }
 
   #define GET_CL_DEF() C1

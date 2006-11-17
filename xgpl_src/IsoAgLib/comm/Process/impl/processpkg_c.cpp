@@ -471,10 +471,10 @@ void ProcessPkg_c::string2Flags()
   }
 
   set_Cmd(CANPkg_c::c_data[0] & 0xf);
-  uint16_t element = 0;
-    element = uint16_t(CANPkg_c::c_data[1]) << 4;
-  element |= ((CANPkg_c::c_data[0] & 0xF0)>>4);
-  set_Element(element);
+  uint16_t ui16_element = 0;
+  ui16_element = uint16_t(CANPkg_c::c_data[1]) << 4;
+  ui16_element |= ((CANPkg_c::c_data[0] & 0xF0)>>4);
+  set_Element(ui16_element);
 
   uint16_t newDDI = 0;
   newDDI |= CANPkg_c::c_data[3];

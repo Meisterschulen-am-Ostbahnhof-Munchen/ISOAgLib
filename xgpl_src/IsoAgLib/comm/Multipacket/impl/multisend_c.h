@@ -442,7 +442,7 @@ private: // Private methods
     only access MultiSend_c via getMultiSendInstance() or getMultiSendInstance( int riLbsBusNr )
     in case more than one ISO11783 BUS is used for IsoAgLib
     */
-  MultiSend_c() {};
+  MultiSend_c();
 
   /**
     initialize directly after the singleton instance is created.
