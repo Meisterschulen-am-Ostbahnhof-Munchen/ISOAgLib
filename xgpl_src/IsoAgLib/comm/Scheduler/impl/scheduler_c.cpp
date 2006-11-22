@@ -234,22 +234,22 @@ void Scheduler_c::startSystem()
     getProcessInstance4Comm().init();
 #endif
 #ifdef USE_TRACTOR_GENERAL
-    getTracGeneralInstance4Comm().init(NULL, IsoAgLib::IdentModeImplement);
+    getTracGeneralInstance4Comm().init();
 #endif
 #ifdef USE_TRACTOR_MOVE
-    getTracMoveInstance4Comm().init( NULL, IsoAgLib::IdentModeImplement );
+    getTracMoveInstance4Comm().init();
 #endif
 #ifdef USE_TRACTOR_PTO
-    getTracPtoInstance4Comm().init( NULL, IsoAgLib::IdentModeImplement );
+    getTracPtoInstance4Comm().init();
 #endif
 #ifdef USE_TRACTOR_LIGHT
-    getTracLightInstance4Comm().init(NULL, IsoAgLib::IdentModeImplement);
+    getTracLightInstance4Comm().init();
 #endif
 #ifdef USE_TRACTOR_AUX
-    getTracAuxInstance4Comm().init(NULL, IsoAgLib::IdentModeImplement);
+    getTracAuxInstance4Comm().init();
 #endif
 #ifdef USE_TIME_GPS
-    getTimePosGpsInstance4Comm().init(NULL, IsoAgLib::IdentModeImplement);
+    getTimePosGpsInstance4Comm().init();
 #endif
 #ifdef USE_ISO_TERMINAL
     getIsoTerminalInstance().init();

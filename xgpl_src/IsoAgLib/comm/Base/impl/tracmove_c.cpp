@@ -123,11 +123,11 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
       @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       @return true -> configuration was successfull
     */
-  bool TracMove_c::config(const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode)
+  bool TracMove_c::config_base (const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode)
   {
     //call config for handling which is base data independent
     //if something went wrong leave function before something is configured
-    if ( !BaseCommon_c::config(rpc_isoName, rt_identMode) ) return false;
+    if ( !BaseCommon_c::config_base (rpc_isoName, rt_identMode) ) return false;
     // set Time Period in ms for Scheduler_c
     setTimePeriod( (uint16_t) 100   );
 

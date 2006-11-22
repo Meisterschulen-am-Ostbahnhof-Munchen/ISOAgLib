@@ -105,6 +105,11 @@ namespace __IsoAgLib
       */
     void singletonInit();
 
+    /// General init() so that EVERY subsystem of IsoAgLib has its init() call.
+    /// nothing done so far, but can be overwritten in the derived classes if needed
+    /// do not mistake this init() with the virtual (!) init_base() function
+    void init() {}
+
     /** constructor */
     BaseCommon_c() : t_identMode(IsoAgLib::IdentModeImplement),
                      i32_lastMsgReceived(0),
@@ -124,13 +129,16 @@ namespace __IsoAgLib
         @param rpc_isoName optional pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
         @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       */
-    virtual void init(const ISOName_c*, IsoAgLib::IdentMode_t rt_identMode = IsoAgLib::IdentModeImplement);
+    virtual void init_base (const ISOName_c*, IsoAgLib::IdentMode_t rt_identMode = IsoAgLib::IdentModeImplement);
 
     /** tractor object after init --> store isoName and mode
+        this function was originally named "config", but to avoid warnings with the interface classes'
+        "config" function this one is now named "config_base". It's simply not clean to name interface
+        functions to virtual functions the same!
         @param rpc_isoName pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
         @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       */
-    virtual bool config(const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode = IsoAgLib::IdentModeImplement);
+    virtual bool config_base (const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode = IsoAgLib::IdentModeImplement);
 
      /** deliver reference to data pkg
          @return reference to the member CanPkg, which encapsulates the CAN send structure

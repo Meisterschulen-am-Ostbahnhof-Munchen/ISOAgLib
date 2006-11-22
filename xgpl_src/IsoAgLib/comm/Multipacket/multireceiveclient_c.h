@@ -111,19 +111,19 @@ public:
   //! Parameter:
   //! @param rc_ident:
   //! @param rui32_totalLen:
-  virtual bool reactOnStreamStart(IsoAgLib::ReceiveStreamIdentifier_c rc_ident, uint32_t rui32_totalLen) = 0;
+  virtual bool reactOnStreamStart (const IsoAgLib::ReceiveStreamIdentifier_c& rc_ident, uint32_t rui32_totalLen) = 0;
 
   //  Operation: reactOnAbort
-  virtual void reactOnAbort(IsoAgLib::iStream_c* rpc_stream) = 0;
+  virtual void reactOnAbort (IsoAgLib::iStream_c& rpc_stream) = 0;
 
   //  Operation: processPartStreamDataChunk
   //! Parameter:
   //! @param rpc_stream: stream that is to be processed
   //! @param rb_isFirstChunk: is it the first chunk? do we have to perform some decision action?
   //! @param rb_isLastChunk: this also indicates that the MultiPacket-Message has been acknowledged via "End Of Message Acknowledge"!
-  virtual bool processPartStreamDataChunk(IsoAgLib::iStream_c* rpc_stream, bool rb_isFirstChunk, bool rb_isLastChunk) = 0;
+  virtual bool processPartStreamDataChunk (IsoAgLib::iStream_c& rpc_stream, bool rb_isFirstChunk, bool rb_isLastChunk) = 0;
 
-  virtual void notificationOnMultiReceiveError(IsoAgLib::ReceiveStreamIdentifier_c& /*rc_streamIdent*/, uint8_t /*rui8_multiReceiveError*/, bool /*rb_isGlobal*/) {}; // needs not to be overwritten
+  virtual void notificationOnMultiReceiveError (const IsoAgLib::ReceiveStreamIdentifier_c& /*rc_streamIdent*/, uint8_t /*rui8_multiReceiveError*/, bool /*rb_isGlobal*/) {}; // needs not to be overwritten
 
 protected:
 

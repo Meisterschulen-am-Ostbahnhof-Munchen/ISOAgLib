@@ -459,7 +459,7 @@ bool init(uint8_t rui8_busNumber, uint16_t rui16_bitrate,
     * NEVER define instance of CANIO_c within application
     * (set ui8_busNumber to 0xFF so that init() detects first call after constructor)
     */
-  CANIO_c( void ) : arrFilterBox() {}
+  CANIO_c( void );
 
   /** initialize directly after the singleton instance is created.
       this is called from singleton.h and should NOT be called from the user again.

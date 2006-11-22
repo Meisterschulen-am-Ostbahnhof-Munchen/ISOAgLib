@@ -92,7 +92,7 @@
 #include <IsoAgLib/util/config.h>
 
 #include <IsoAgLib/util/impl/singleton.h>
-#include <IsoAgLib/util/impl/elementbase_c.h>
+#include <IsoAgLib/util/impl/cancustomer_c.h>
 #include <IsoAgLib/util/impl/canpkgext_c.h>
 //#include "isoitem_c.h"
 
@@ -105,7 +105,7 @@ namespace __IsoAgLib {
 class ISORequestPGNHandler_c;
 
 class ISORequestPGN_c;
-typedef SINGLETON_DERIVED(ISORequestPGN_c, ElementBase_c) SingletonISORequestPGN_c;
+typedef SINGLETON_DERIVED(ISORequestPGN_c, CANCustomer_c) SingletonISORequestPGN_c;
 /** this object manages a list of all ISO members to react on Request for PGN
     @short Manager for handling of Requests for PGN
     @see
@@ -127,8 +127,6 @@ public:
 
   /** default destructor which has nothing to do */
   virtual ~ISORequestPGN_c ();
-
-  bool timeEvent (void) { return true; }
 
   /** deliver reference to data pkg
       @return reference to the CAN communication member object c_data (CANPkgExt_c)
@@ -201,11 +199,21 @@ private: // Private methods
   void sendAcknowledgePGN (ISOItem_c& rrefc_isoItemSender, uint8_t rui8_ackType);
 
 
+  /** clear b_alreadyClosed so that close() can be called one time */
+  void clearAlreadyClosed( void ) { b_alreadyClosed = false; }
+
+  /** set b_alreadyClosed so that close() can't be called another time */
+  void setAlreadyClosed( void ) { b_alreadyClosed = true; }
+
+  /** check b_alreadyClosed to decide if close() can be called */
+  bool checkAlreadyClosed( void ) const { return b_alreadyClosed; }
+
+
 private: // Private attributes
   /// holds all registered clients with PGN(s)
   STL_NAMESPACE::vector<PGN_s> registeredClientsWithPGN;
 
-  friend class SINGLETON_DERIVED (ISORequestPGN_c,ElementBase_c);
+  friend class SINGLETON_DERIVED (ISORequestPGN_c,CANCustomer_c);
 
   /** temp data where received and to be sent data is put */
   CANPkgExt_c c_data;
@@ -216,6 +224,8 @@ private: // Private attributes
   ISOItem_c* pc_isoItemSA;
   ISOItem_c* pc_isoItemDA;
   uint32_t ui32_requestedPGN;
+
+  bool b_alreadyClosed;
 };
 
 #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )

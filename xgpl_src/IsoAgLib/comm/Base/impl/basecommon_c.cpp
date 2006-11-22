@@ -109,7 +109,7 @@ namespace __IsoAgLib {
 void BaseCommon_c::singletonInit()
 {
   setAlreadyClosed();
-  init(NULL);
+  init_base (NULL);
 }
 
 /**
@@ -139,7 +139,7 @@ void BaseCommon_c::close( )
     @param rpc_isoName optional pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
     @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
   */
-void BaseCommon_c::init(const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode)
+void BaseCommon_c::init_base (const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode)
 {
   getSchedulerInstance4Comm().registerClient( this );
   c_data.setSingletonKey( c_data.getSingletonVecKey() );
@@ -150,7 +150,7 @@ void BaseCommon_c::init(const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_i
   }
 
   // set configure values with call for config
-  config(rpc_isoName, rt_identMode);
+  config_base (rpc_isoName, rt_identMode);
 
   // clear state of b_alreadyClosed, so that close() is called one time
   clearAlreadyClosed();
@@ -161,7 +161,7 @@ void BaseCommon_c::init(const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_i
     @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
     @return true -> configuration was successfull
   */
-bool BaseCommon_c::config(const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode)
+bool BaseCommon_c::config_base (const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode)
 {
   if (   rt_identMode == IsoAgLib::IdentModeTractor
       && rpc_isoName == NULL

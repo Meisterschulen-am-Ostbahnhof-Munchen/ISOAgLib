@@ -185,7 +185,7 @@ class TimePosGPS_c : public SingletonTimePosGps_c
       @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       @return true -> configuration was successfull
     */
-  bool config(const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode);
+  bool config_base (const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode);
 
   /** initialise element which can't be done during construct;
       above all create the needed FilterBox_c instances
@@ -194,7 +194,7 @@ class TimePosGPS_c : public SingletonTimePosGps_c
       @param rpc_isoName optional pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
       @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
     */
-  virtual void init(const ISOName_c*, IsoAgLib::IdentMode_t rt_identMode = IsoAgLib::IdentModeImplement);
+  virtual void init_base (const ISOName_c*, IsoAgLib::IdentMode_t rt_identMode = IsoAgLib::IdentModeImplement);
 
   /** destructor for Base_c which has nothing to do */
   virtual ~TimePosGPS_c() { BaseCommon_c::close();}
@@ -245,22 +245,28 @@ class TimePosGPS_c : public SingletonTimePosGps_c
   /** \name MultiReceive functions for TimePosGPS_c  */
   /*@{*/
   #if defined(NMEA_2000_FAST_PACKET)
+public:
   //! @param rc_ident:
   //! @param rui32_totalLen:
-  virtual bool reactOnStreamStart(IsoAgLib::ReceiveStreamIdentifier_c rc_ident,
+  virtual bool reactOnStreamStart(const IsoAgLib::ReceiveStreamIdentifier_c& rc_ident,
                                   uint32_t rui32_totalLen);
 
   //! @param rpc_stream:
   //! @param rb_isFirstChunk:
   //! @param rb_isLastChunkAndACKd:
-  virtual bool processPartStreamDataChunk(IsoAgLib::iStream_c* rpc_stream,
+  virtual bool processPartStreamDataChunk(IsoAgLib::iStream_c& rpc_stream,
                                           bool rb_isFirstChunk,
                                           bool rb_isLastChunkAndACKd);
 
-  virtual void reactOnAbort(IsoAgLib::ReceiveStreamIdentifier_c rc_ident);
+  virtual void reactOnAbort (IsoAgLib::iStream_c& rpc_stream);
+
+private:
+  //! @param rc_ident:
+  //! @param rpc_stream:
+  bool reactOnLastChunk (const IsoAgLib::ReceiveStreamIdentifier_c& rc_ident, IsoAgLib::iStream_c& rpc_stream);
   #endif // END of NMEA_2000_FAST_PACKET
 
-
+public:
   /// Setter functions /////////////////////////////////////////////////////////////////////////////////
   /** set the calendar value
     @param ri16_year value to store as year
@@ -612,13 +618,6 @@ private:
 
   /** send direction as detailed stream */
   void isoSendDirectionStream( void );
-
-  //! @param rc_ident:
-  //! @param rpc_stream:
-  bool reactOnLastChunk(IsoAgLib::ReceiveStreamIdentifier_c rc_ident,
-                        IsoAgLib::iStream_c& rpc_stream);
-
-  virtual void reactOnAbort(IsoAgLib::iStream_c* rpc_stream);
   #endif // END NMEA_2000_FAST_PACKET
 
 private:

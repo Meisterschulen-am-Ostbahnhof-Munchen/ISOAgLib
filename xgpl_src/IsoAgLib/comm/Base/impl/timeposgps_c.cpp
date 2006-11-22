@@ -212,8 +212,8 @@ namespace __IsoAgLib {
    */
   TimePosGPS_c::TimePosGPS_c()
 #ifdef USE_ISO_11783
-  : c_sendGpsDevKey(),
-  pc_devKeyGps(NULL),
+  : c_sendGpsISOName(),
+  pc_isoNameGps(NULL),
   t_identModeGps( IsoAgLib::IdentModeImplement )
 #endif
   {}
@@ -309,9 +309,9 @@ namespace __IsoAgLib {
       @param rpc_isoName optional pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
       @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
     */
-  void TimePosGPS_c::init(const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode)
+  void TimePosGPS_c::init_base (const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode)
   {
-    BaseCommon_c::init( rpc_isoName, rt_identMode );
+    BaseCommon_c::init_base( rpc_isoName, rt_identMode );
 
     pc_isoNameGps = NULL;
     // set the GPS mode always to non-sending
@@ -337,14 +337,14 @@ namespace __IsoAgLib {
       @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       @return true -> configuration was successfull
     */
-  bool TimePosGPS_c::config(const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode)
+  bool TimePosGPS_c::config_base (const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode)
   {
     //store old mode to decide to register or unregister to request for pgn
     IsoAgLib::IdentMode_t t_oldMode = getMode();
 
     //call config for handling which is base data independent
     //if something went wrong leave function before something is configured
-    if ( !BaseCommon_c::config(rpc_isoName, rt_identMode) ) return false;
+    if ( !BaseCommon_c::config_base (rpc_isoName, rt_identMode) ) return false;
 
     ///setTimePeriod for Scheduler_c 100ms is minimal periode in GPSmodul up to now
     setTimePeriod( (uint16_t) 100   );
@@ -709,7 +709,7 @@ namespace __IsoAgLib {
   //! Parameter:
   //! @param rc_ident:
   //! @param rui32_totalLen:
-  bool TimePosGPS_c::reactOnStreamStart(IsoAgLib::ReceiveStreamIdentifier_c rc_ident,
+  bool TimePosGPS_c::reactOnStreamStart (const IsoAgLib::ReceiveStreamIdentifier_c& rc_ident,
                                   uint32_t /*rui32_totalLen */)
   {
     if ( ( ( rc_ident.getPgn() == NMEA_GPS_POSITON_DATA_PGN   )
@@ -724,21 +724,15 @@ namespace __IsoAgLib {
     }
   }
 
-  void TimePosGPS_c::reactOnAbort(IsoAgLib::ReceiveStreamIdentifier_c /*rc_ident*/)
-  {
-    // as we don't perform an on-the-fly parse of the pool, nothing has to be done here
-    // - this is only important with on-the-fly parse, where everything parsed already has to be invalidated
-  }
-
   //! Parameter:
   //! @param rc_ident:
   //! @param rb_isFirstChunk:
   //! @param rb_isLastChunkAndACKd:
-  bool TimePosGPS_c::processPartStreamDataChunk(IsoAgLib::iStream_c* rpc_stream,
+  bool TimePosGPS_c::processPartStreamDataChunk (IsoAgLib::iStream_c* rpc_stream,
                                           bool /*rb_isFirstChunk*/,
                                           bool rb_isLastChunkAndACKd)
   {
-    IsoAgLib::ReceiveStreamIdentifier_c rc_ident = rpc_stream->getIdent();
+    IsoAgLib::ReceiveStreamIdentifier_c& rc_ident = rpc_stream->getIdent();
 
     // >>>Last Chunk<<< Processing
     if (rb_isLastChunkAndACKd)
@@ -749,15 +743,15 @@ namespace __IsoAgLib {
     return false;
   }
 
-  void TimePosGPS_c::reactOnAbort(IsoAgLib::iStream_c* /*rpc_stream*/)
+  void TimePosGPS_c::reactOnAbort (IsoAgLib::iStream_c* /*rpc_stream*/)
   { // as we don't perform on-the-fly parse, there is nothing special to do
   }
 
   //! Parameter:
   //! @param rc_ident:
   //! @param rpc_stream:
-  bool TimePosGPS_c::reactOnLastChunk( IsoAgLib::ReceiveStreamIdentifier_c rc_ident,
-                                IsoAgLib::iStream_c& refc_stream)
+  bool TimePosGPS_c::reactOnLastChunk (const IsoAgLib::ReceiveStreamIdentifier_c& rc_ident,
+                                       IsoAgLib::iStream_c& refc_stream)
   { // see if it's a pool upload, string upload or whatsoever! (First byte is already read by MultiReceive!)
     const uint8_t cui8_sa = refc_stream.getIdent().getSa();
     ISOName_c c_tempISOName( ISOName_c::ISONameUnspecified );

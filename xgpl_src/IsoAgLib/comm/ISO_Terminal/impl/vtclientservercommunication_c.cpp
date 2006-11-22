@@ -336,7 +336,7 @@ SendUpload_c VtClientServerCommunication_c::sc_tempSendUpload;
 
 
 void
-VtClientServerCommunication_c::reactOnAbort (IsoAgLib::iStream_c* /*rpc_stream*/)
+VtClientServerCommunication_c::reactOnAbort (IsoAgLib::iStream_c& /*rrefc_stream*/)
 {
   c_streamer.refc_pool.eventStringValueAbort();
 }
@@ -344,10 +344,10 @@ VtClientServerCommunication_c::reactOnAbort (IsoAgLib::iStream_c* /*rpc_stream*/
 
 // handle all string values between length of 9 and 259 bytes
 bool
-VtClientServerCommunication_c::reactOnStreamStart (IsoAgLib::ReceiveStreamIdentifier_c rc_ident, uint32_t rui32_totalLen)
+VtClientServerCommunication_c::reactOnStreamStart (const IsoAgLib::ReceiveStreamIdentifier_c& rc_ident, uint32_t rui32_totalLen)
 {
   // if SA is not the address from the vt -> don't react on stream
-  if (rc_ident.getSa() != pc_vtServerInstance->getVtSourceAddress()) return false;
+  if ((rc_ident.getSaIsoName()) != (pc_vtServerInstance->getIsoName().toConstIisoName_c())) return false;
   //handling string value >= 9 Bytes
   if (rui32_totalLen > (4 /* H.18 byte 1-4 */ + 255 /* max string length */))
     return false;
@@ -356,23 +356,23 @@ VtClientServerCommunication_c::reactOnStreamStart (IsoAgLib::ReceiveStreamIdenti
 
 
 bool
-VtClientServerCommunication_c::processPartStreamDataChunk (IsoAgLib::iStream_c* rpc_stream, bool rb_isFirstChunk, bool rb_isLastChunk)
+VtClientServerCommunication_c::processPartStreamDataChunk (IsoAgLib::iStream_c& rrefc_stream, bool rb_isFirstChunk, bool rb_isLastChunk)
 {
-  if (rpc_stream->getStreamInvalid()) return false;
+  if (rrefc_stream.getStreamInvalid()) return false;
   if (rb_isFirstChunk)
   {
-    if (rpc_stream->getFirstByte() != 0x8 ) return false; // check for command input string value H.18
-    ui16_inputStringId = rpc_stream->getNextNotParsed() | (rpc_stream->getNextNotParsed() << 8);
-    ui8_inputStringLength = rpc_stream->getNextNotParsed();
+    if (rrefc_stream.getFirstByte() != 0x8 ) return false; // check for command input string value H.18
+    ui16_inputStringId = rrefc_stream.getNextNotParsed() | (rrefc_stream.getNextNotParsed() << 8);
+    ui8_inputStringLength = rrefc_stream.getNextNotParsed();
 
-    const uint16_t ui16_totalstreamsize = rpc_stream->getByteTotalSize();
+    const uint16_t ui16_totalstreamsize = rrefc_stream.getByteTotalSize();
     if (ui16_totalstreamsize != (ui8_inputStringLength + 4))
     {
-      rpc_stream->setStreamInvalid();
+      rrefc_stream.setStreamInvalid();
       return false;
     }
   }
-  c_streamer.refc_pool.eventStringValue (ui16_inputStringId, ui8_inputStringLength, *rpc_stream, rpc_stream->getNotParsedSize(), rb_isFirstChunk, rb_isLastChunk);
+  c_streamer.refc_pool.eventStringValue (ui16_inputStringId, ui8_inputStringLength, rrefc_stream, rrefc_stream.getNotParsedSize(), rb_isFirstChunk, rb_isLastChunk);
 
   return false;
 }
@@ -670,7 +670,7 @@ VtClientServerCommunication_c::timeEvent(void)
 
   if (!b_receiveFilterCreated)
   { /*** MultiReceive Registration ***/
-    getMultiReceiveInstance4Comm().registerClient (VT_TO_ECU_PGN, getIdentItem().getIsoItem()->nr(), this);
+    getMultiReceiveInstance4Comm().registerClient (VT_TO_ECU_PGN, getIdentItem().isoName(), this);
 
     /** add filter for VT_TO_ECU_PGN for our SA */
     const uint32_t cui32_filter = ((static_cast<MASK_TYPE>(VT_TO_ECU_PGN) | static_cast<MASK_TYPE>(getIdentItem().getIsoItem()->nr())) << 8);

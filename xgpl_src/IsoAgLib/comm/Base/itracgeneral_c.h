@@ -77,15 +77,6 @@ namespace IsoAgLib {
   class iTracGeneral_c : private __IsoAgLib::TracGeneral_c {
   public:
     // Public methods
-  /** initialise element which can't be done during construct;
-      above all create the needed FilterBox_c instances
-      possible errors:
-        * dependant error in CANIO_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
-      @param rpc_isoName optional pointer to the ISOName variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
-      @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
-    */
-  void init(const iISOName_c* rpc_isoName = NULL, IsoAgLib::IdentMode_t rt_IdentMode = IsoAgLib::IdentModeImplement)
-  {TracGeneral_c::init(rpc_isoName, rt_IdentMode);}
 
   /**
       config the iTracGeneral_c object after init -> set pointer to isoName and
@@ -94,8 +85,8 @@ namespace IsoAgLib {
       @param rt_identMode set mode to either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       @return true -> configuration was successfull
     */
-  bool config(const iISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode = IsoAgLib::IdentModeImplement)
-  { return TracGeneral_c::config(rpc_isoName, rt_identMode ); }
+  bool config (const iISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode = IsoAgLib::IdentModeImplement)
+  { return TracGeneral_c::config_base( rpc_isoName, rt_identMode ); }
 
 
   /* ******************************************* */

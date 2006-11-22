@@ -163,7 +163,7 @@ class Stream_c : public IsoAgLib::iStream_c
 
 public:
 
-  Stream_c (StreamType_t rt_streamType, IsoAgLib::ReceiveStreamIdentifier_c rc_rsi, uint32_t rui32_msgSize, bool rb_skipCtsAwait=false);
+  Stream_c (StreamType_t rt_streamType, const IsoAgLib::ReceiveStreamIdentifier_c& rc_rsi, uint32_t rui32_msgSize, bool rb_skipCtsAwait=false);
 
   virtual ~Stream_c();
 
@@ -215,17 +215,17 @@ public:
   bool setDataPageOffset(uint32_t rui32_dataPageOffset);
 
   // simple getter function!
-  IsoAgLib::ReceiveStreamIdentifier_c& getIdent() { return c_ident; }
-  StreamType_t     getStreamType()                { return t_streamType; };
-  StreamingState_t getStreamingState ()           { return t_streamState; };
-  NextComing_t     getNextComing ()               { return t_awaitStep; };
-  uint32_t getPkgNextToWrite ()             const { return ui32_pkgNextToWrite; };
-  uint32_t getPkgTotalSize ()               const { return ui32_pkgTotalSize; };
-  uint32_t getByteTotalSize ()              const { return ui32_byteTotalSize; };
-  uint32_t getByteAlreadyReceived()         const { return ui32_byteAlreadyReceived; };
-  uint32_t getBurstNumber()                 const { return ui32_burstCurrent; };
+  const IsoAgLib::ReceiveStreamIdentifier_c& getIdent() { return c_ident; }
+  StreamType_t     getStreamType()              { return t_streamType; };
+  StreamingState_t getStreamingState ()         { return t_streamState; };
+  NextComing_t     getNextComing ()             { return t_awaitStep; };
+  uint32_t getPkgNextToWrite ()           const { return ui32_pkgNextToWrite; };
+  uint32_t getPkgTotalSize ()             const { return ui32_pkgTotalSize; };
+  uint32_t getByteTotalSize ()            const { return ui32_byteTotalSize; };
+  uint32_t getByteAlreadyReceived()       const { return ui32_byteAlreadyReceived; };
+  uint32_t getBurstNumber()               const { return ui32_burstCurrent; };
   //! Provide first byte set by first call of processDataChunk... First byte containes command.
-  uint8_t  getFirstByte()                   const { return ui8_streamFirstByte; };
+  uint8_t  getFirstByte()                 const { return ui8_streamFirstByte; };
   //! Store first byte of stream. First byte containes command.
   void     setFirstByte(uint8_t rui8_firstByte) { ui8_streamFirstByte = rui8_firstByte; };
 

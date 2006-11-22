@@ -135,7 +135,7 @@ namespace __IsoAgLib {
 class MultiReceiveClientWrapper_s : public ClientBase {
   public:
   MultiReceiveClientWrapper_s( IsoAgLib::MultiReceiveClient_c* rpc_client,
-                               uint8_t rui8_clientAddress,
+                               const ISOName_c& rrefc_isoNameClient,
                                uint32_t rui32_pgn,
                                bool rb_alsoBroadcast,
                                bool rb_alsoGlobalErrors
@@ -146,16 +146,14 @@ class MultiReceiveClientWrapper_s : public ClientBase {
                              );
 
   IsoAgLib::MultiReceiveClient_c* pc_client;
-  uint8_t ui8_clientAddress; // kinda "cached" (normally clients register for receiving multi-packages to their own SA)
+  ISOName_c c_isoName;
   uint32_t ui32_pgn;
+  uint8_t ui8_cachedClientAddress; // kinda "cached" (normally clients register for receiving multi-packages to their own SA)
   bool b_alsoBroadcast;
   bool b_alsoGlobalErrors;
 #ifdef NMEA_2000_FAST_PACKET
   bool b_isFastPacket;
 #endif
-
-  // the isoName is generated from the source address through iso monitor!
-  __IsoAgLib::ISOName_c c_isoName;
 };
 
 
@@ -177,7 +175,7 @@ public:
   bool processMsg();
 
   //  Operation: (de)registerClient
-  void registerClient   (uint32_t rui32_pgn, uint8_t rui8_clientAddress,
+  void registerClient   (uint32_t rui32_pgn, const ISOName_c& rrefc_isoName,
                          IsoAgLib::MultiReceiveClient_c* rpc_client, bool b_alsoBroadcast=false, bool rb_alsoGlobalErrors=false
                          #ifdef NMEA_2000_FAST_PACKET
                          , bool rb_isFastPacket=false
@@ -296,7 +294,7 @@ private:
   void sendEndOfMessageAck(DEF_Stream_c_IMPL* rpc_stream);
 
 
-  bool processStreamDataChunk_ofMatchingClient (Stream_c* rpc_stream, bool b_lastChunk);
+  bool processStreamDataChunk_ofMatchingClient (Stream_c& rrefc_stream, bool b_lastChunk);
 
 
   void sendConnAbort(StreamType_t rt_streamType, IsoAgLib::ReceiveStreamIdentifier_c rc_streamIdent);
@@ -305,7 +303,7 @@ private:
   void removeStream(Stream_c* rpc_stream);
 
 
-  void notifyError (IsoAgLib::ReceiveStreamIdentifier_c& rc_streamIdent, uint8_t rui8_multiReceiveErrorCode);
+  void notifyError (const IsoAgLib::ReceiveStreamIdentifier_c& rc_streamIdent, uint8_t rui8_multiReceiveErrorCode);
 
 
 private: // attributes

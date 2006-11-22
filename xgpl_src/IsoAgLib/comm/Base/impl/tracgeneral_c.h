@@ -129,7 +129,7 @@ public: // Public methods
       @param rpc_isoName optional pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
       @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
     */
-  virtual void init(const ISOName_c* rpc_isoName = NULL, IsoAgLib::IdentMode_t rt_identMode = IsoAgLib::IdentModeImplement);
+  virtual void init_base (const ISOName_c* rpc_isoName = NULL, IsoAgLib::IdentMode_t rt_identMode = IsoAgLib::IdentModeImplement);
 
   /** config the TracGeneral_c object after init -> set pointer to isoName and
       config send/receive of different general base msg types
@@ -137,7 +137,7 @@ public: // Public methods
       @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       @return true -> configuration was successfull
     */
-  virtual bool config(const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode);
+  virtual bool config_base (const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode);
 
   /** destructor for TracGeneral_c which has nothing to do */
   virtual ~TracGeneral_c() { BaseCommon_c::close();};

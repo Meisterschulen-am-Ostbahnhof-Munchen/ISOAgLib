@@ -115,7 +115,7 @@ uint8_t Stream_c::sui8_pkgBurst=0x10;
 
 
 
-Stream_c::Stream_c (StreamType_t rt_streamType, IsoAgLib::ReceiveStreamIdentifier_c rc_rsi, uint32_t rui32_msgSize, bool rb_skipCtsAwait)
+Stream_c::Stream_c (StreamType_t rt_streamType, const IsoAgLib::ReceiveStreamIdentifier_c& rc_rsi, uint32_t rui32_msgSize, bool rb_skipCtsAwait)
   : iStream_c()
   , c_ident (rc_rsi)
   , t_streamState (StreamRunning)

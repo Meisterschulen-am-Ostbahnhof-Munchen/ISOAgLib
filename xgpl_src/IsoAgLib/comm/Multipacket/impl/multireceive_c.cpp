@@ -171,7 +171,7 @@ static const uint8_t scui8_tpPriority=6;
 
 
 MultiReceiveClientWrapper_s::MultiReceiveClientWrapper_s( IsoAgLib::MultiReceiveClient_c* rpc_client,
-                                                          uint8_t rui8_clientAddress,
+                                                          const ISOName_c& rrefc_isoNameClient,
                                                           uint32_t rui32_pgn,
                                                           bool rb_alsoBroadcast,
                                                           bool rb_alsoGlobalErrors
@@ -181,7 +181,7 @@ MultiReceiveClientWrapper_s::MultiReceiveClientWrapper_s( IsoAgLib::MultiReceive
                                                           SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA
                                                         )
   : SINGLETON_PARENT_CONSTRUCTOR pc_client(rpc_client)
-  , ui8_clientAddress(rui8_clientAddress)
+  , c_isoName (rrefc_isoNameClient)
   , ui32_pgn(rui32_pgn)
   , b_alsoBroadcast (rb_alsoBroadcast)
   , b_alsoGlobalErrors (rb_alsoGlobalErrors)
@@ -189,10 +189,13 @@ MultiReceiveClientWrapper_s::MultiReceiveClientWrapper_s( IsoAgLib::MultiReceive
   , b_isFastPacket (rb_isFastPacket) // means the PGN has to be "insertFilter"/"removeFilter"ed
   #endif
 {
-  if (__IsoAgLib::getIsoMonitorInstance4Comm().existIsoMemberNr(rui8_clientAddress))
-    c_isoName = __IsoAgLib::getIsoMonitorInstance4Comm().isoMemberNr(rui8_clientAddress).isoName();
+  if (__IsoAgLib::getIsoMonitorInstance4Comm().existIsoMemberISOName(rrefc_isoNameClient, true)) // it needs to have claimed an address
+    ui8_cachedClientAddress = __IsoAgLib::getIsoMonitorInstance4Comm().isoMemberISOName(rrefc_isoNameClient).nr();
   else //    shouldn't occur...
+  {
+    ui8_cachedClientAddress = 0xFE;
     getLibErrInstance().registerError( LibErr_c::Inconsistency, LibErr_c::System );
+  }
 }
 
 
@@ -208,7 +211,7 @@ MultiReceive_c::~MultiReceive_c()
 
 
 void
-MultiReceive_c::notifyError (IsoAgLib::ReceiveStreamIdentifier_c& rc_streamIdent, uint8_t rui8_multiReceiveErrorCode)
+MultiReceive_c::notifyError (const IsoAgLib::ReceiveStreamIdentifier_c& rc_streamIdent, uint8_t rui8_multiReceiveErrorCode)
 {
   if (rc_streamIdent.getDa() == 0xFF)
   { // BAM
@@ -263,25 +266,24 @@ MultiReceive_c::processMsg()
   bool b_ePgn=false;
   bool b_eCmd=false;
   StreamType_t t_streamType; // will be set before used, see MACRO_t_streamType_checkInvalid
-  uint32_t ui32_msgSize;
-  uint32_t ui32_pgn;
 
   // Always get sure that the can-pkg from "data()" is NOT written to unless it's FULLY PARSED!
+  const uint8_t cui8_pgnFormat = data().isoPf();
+  const uint8_t cui8_dataByte0 = data().getUint8Data(0);
+  const uint8_t cui8_da = data().isoPs();
+  const uint8_t cui8_sa = data().isoSa();
+  const uint32_t ui32_pgn =  uint32_t (data().getUint8Data(5)) |
+                            (uint32_t (data().getUint8Data(6)) << 8) |
+                            (uint32_t (data().getUint8Data(7)) << 16);
 
-  const uint8_t ui8_pgnFormat = data().isoPf();
-  const uint8_t ui8_dataByte0 = data().getUint8Data(0);
-//uint8_t ui8_da = data().isoPs();
-//uint8_t ui8_sa = data().isoSa();
+  // build the RSI here as we need it downwards normally...
+  IsoAgLib::ReceiveStreamIdentifier_c c_tmpRSI (ui32_pgn, cui8_da, data().getISONameForDA().toConstIisoName_c(),
+                                                          cui8_sa, data().getISONameForSA().toConstIisoName_c());
 
-  ui32_pgn =  uint32_t (data().getUint8Data(5)) |
-             (uint32_t (data().getUint8Data(6)) << 8) |
-             (uint32_t (data().getUint8Data(7)) << 16);
-  IsoAgLib::ReceiveStreamIdentifier_c c_tmpRSI (ui32_pgn, data().isoPs() /* Ps is destin adr in the (E)TP-PGNs*/, data().isoSa());
-
-  if (anyMultiReceiveClientRegisteredForThisDa (data().isoPs()))
+  if (anyMultiReceiveClientRegisteredForThisDa (cui8_da))
   { // we ONLY care for this can-pkg at all, as it's NOT directed to any of the registered clients!
 
-    switch (ui8_pgnFormat) {
+    switch (cui8_pgnFormat) {
       case MACRO_pgnFormatOfPGN(ETP_CONN_MANAGE_PGN):
         b_ePgn = true; // break left out intentionally!
       case MACRO_pgnFormatOfPGN(TP_CONN_MANAGE_PGN):
@@ -290,7 +292,7 @@ MultiReceive_c::processMsg()
         #endif
 
       {// to allow local variables
-        switch (ui8_dataByte0)
+        switch (cui8_dataByte0)
         {
 
           case 0x14: // decimal 20
@@ -304,7 +306,7 @@ MultiReceive_c::processMsg()
             { // to allow local variables!
 
               // RTS from an SA that has already a Stream running? // regardless of PGN
-              Stream_c* pc_streamFound = getStream (data().isoSa(), data().isoPs() /* Ps is destin adr in the (E)TP-PGNs*/
+              Stream_c* pc_streamFound = getStream (cui8_sa, cui8_da
               #ifdef NMEA_2000_FAST_PACKET
               , /* Fast-Packet:*/ false
               #endif
@@ -315,7 +317,7 @@ MultiReceive_c::processMsg()
                 notifyError(c_tmpRSI, 101);
                 connAbortTellClientRemoveStream (true /* send connAbort-Msg */, pc_streamFound);
                 #ifdef DEBUG
-                INTERNAL_DEBUG_DEVICE << "\n*** ConnectionAbort due to Already-Running-Stream! (RTS in between) ***" << (int) data().isoSa() << " " << (int)data().isoPs() << INTERNAL_DEBUG_DEVICE_ENDL;
+                INTERNAL_DEBUG_DEVICE << "\n*** ConnectionAbort due to Already-Running-Stream! (RTS in between) ***" << (int) data().isoSa() << " " << (int)cui8_da << INTERNAL_DEBUG_DEVICE_ENDL;
                 #endif
                 return true; // all RTSes are not of interest for MultiSend or other CAN-Customers!
               }
@@ -323,13 +325,14 @@ MultiReceive_c::processMsg()
               // otherwise it is a new stream, but before check from the client if he can take it (size is okay)
 
               // Get Message Size
-              if (ui8_dataByte0 == 0x14) ui32_msgSize = data().getUint32Data(1);
-              else /* 0x10, decimal 16*/ ui32_msgSize = data().getUint16Data(1);
+              uint32_t ui32_msgSize;
+              if (cui8_dataByte0 == 0x14) ui32_msgSize = data().getUint32Data(1);
+              else /* 0x10, decimal 16 */ ui32_msgSize = data().getUint16Data(1);
 
               // Calculate Number of Packets (only for TP-#Pkg-Check!)
-              uint32_t ui32_numPkg = (ui32_msgSize + 6) / 7;
+              const uint32_t cui32_numPkg = (ui32_msgSize + 6) / 7;
               // check for TP-RTS if pkg-count matches the calculated AND if size > 0
-              if (((ui8_dataByte0 == 0x10) && (data().getUint8Data(3) != ui32_numPkg))
+              if (((cui8_dataByte0 == 0x10) && (data().getUint8Data(3) != cui32_numPkg))
                 || (ui32_msgSize < 9))
               { // This handles both
                 notifyError(c_tmpRSI, 102);
@@ -430,11 +433,11 @@ MultiReceive_c::processMsg()
 
             { // to allow local variables!
               // Is BAM directed to 0xFF (global) ?
-              if (data().isoPs() != 0xFF)
+              if (cui8_da != 0xFF)
               { // we do NOT take BAMs that are NOT directed to the GLOBAL (255) address
                 notifyError(c_tmpRSI, 112);
                 #ifdef DEBUG
-                INTERNAL_DEBUG_DEVICE << "\n*** BAM to NON-GLOBAL address "<< (uint16_t) data().isoPs() <<" ***" << INTERNAL_DEBUG_DEVICE_ENDL;
+                INTERNAL_DEBUG_DEVICE << "\n*** BAM to NON-GLOBAL address "<< (uint16_t) cui8_da <<" ***" << INTERNAL_DEBUG_DEVICE_ENDL;
                 #endif
                 return true; // all BAMs are not of interest for MultiSend or other CAN-Customers!
               }
@@ -458,11 +461,10 @@ MultiReceive_c::processMsg()
                 // ^^^ do NOT return, if the old BAM is "aborted" due to this BAM, try with this BAM now...
               }
 
-              ui32_msgSize = data().getUint16Data(1);
-
-              uint32_t ui32_numPkg = (ui32_msgSize + 6) / 7;
+              const uint32_t cui32_msgSize = data().getUint16Data(1);
+              const uint32_t cui32_numPkg = (cui32_msgSize + 6) / 7;
               // check for TP-RTS if pkg-count matches the calculated AND if size > 0
-              if ((data().getUint8Data(3) != ui32_numPkg) || (ui32_msgSize < 9))
+              if ((data().getUint8Data(3) != cui32_numPkg) || (cui32_msgSize < 9))
               { // This handles both
                 notifyError(c_tmpRSI, 113);
                 #ifdef DEBUG
@@ -474,7 +476,7 @@ MultiReceive_c::processMsg()
               // NO client checks as in RTS-case above, as it's for ALL clients, they HAVE to take it =)
 
               // "Stream_c"'s constructor will set awaitStep to "awaitData" and timeOut to 250ms!
-              createStream(t_streamType, c_tmpRSI, ui32_msgSize);
+              createStream(t_streamType, c_tmpRSI, cui32_msgSize);
             }
 
             return true; // all BAMs are not of interest for MultiSend or other CAN-Customers!
@@ -543,7 +545,7 @@ MultiReceive_c::processMsg()
         /// Data Transfer (DATA)
         { // to allow local variables!
           // Check if there's already a Stream active from this SA->DA pair (it should ;-)
-          Stream_c* pc_streamFound = getStream (data().isoSa(), data().isoPs() /* Ps is destin adr in the (E)TP-PGNs*/
+          Stream_c* pc_streamFound = getStream (cui8_sa, cui8_da
           #ifdef NMEA_2000_FAST_PACKET
           , false
           #endif
@@ -559,7 +561,7 @@ MultiReceive_c::processMsg()
           // From this point on the SA/DA pair matches, so that we can return true
           if (!(pc_streamFound->handleDataPacket(data().getDataUnionConst()))) {
             // Stream was not in state of receiving DATA right now, connection abort, inform Client and close Stream!
-            if (data().isoPs() == 0xFF)
+            if (cui8_da == 0xFF)
             {
               notifyError(c_tmpRSI, 114);
               #ifdef DEBUG
@@ -599,7 +601,7 @@ MultiReceive_c::processMsg()
   // Check if it's registered for fast-packet receive
   for (std::list<MultiReceiveClientWrapper_s>::iterator pc_iter = list_clients.begin(); pc_iter != list_clients.end(); pc_iter++)
   { // is it fast-packet, and is it this pgn?
-    /** @todo determine when to set the PS field of the pgn to "rui8_clientAddress" */
+    /** @todo determine when to set the PS field of the pgn to "rui8_cachedClientAddress" */
     if ((pc_iter->b_isFastPacket) && (pc_iter->ui32_pgn == data().isoPgn()))
     {
       uint8_t ui8_counterFrame = data().getUint8Data (0) & 0x1F;
@@ -614,7 +616,7 @@ MultiReceive_c::processMsg()
         if (ui8_counterFrame == 0)
         { // First Frame => okay, create new Stream!
           /** @todo check for range of 0..223 */
-          /** @todo determine when to set the PS field of the pgn to "rui8_clientAddress" */
+          /** @todo determine when to set the PS field of the pgn to "rui8_cachedClientAddress" */
           IsoAgLib::ReceiveStreamIdentifier_c c_fpRSI (data().isoPgn(), 0xFF /* Ps is destin adr in the (E)TP-PGNs*/, data().isoSa());
           pc_streamFound = createStream (StreamFastPacket, c_fpRSI, data().getUint8Data (1));
         }
@@ -649,9 +651,10 @@ MultiReceive_c::processMsg()
 
 
 
+/** @todo Add function with ISOItem/IdentItem probably, too? */
 // Operation: registerClient
 void
-MultiReceive_c::registerClient(uint32_t rui32_pgn, uint8_t rui8_clientAddress,
+MultiReceive_c::registerClient(uint32_t rui32_pgn, const ISOName_c& rrefc_isoName,
                                IsoAgLib::MultiReceiveClient_c* rpc_client, bool rb_alsoBroadcast, bool rb_alsoGlobalErrors
                                #ifdef NMEA_2000_FAST_PACKET
                                , bool rb_isFastPacket
@@ -662,12 +665,16 @@ MultiReceive_c::registerClient(uint32_t rui32_pgn, uint8_t rui8_clientAddress,
   // Already in list?
   while (list_clients_i != list_clients.end()) {
     MultiReceiveClientWrapper_s iterMRCW = *list_clients_i;
-    if ((iterMRCW.pc_client == rpc_client) && (iterMRCW.ui8_clientAddress == rui8_clientAddress) && (iterMRCW.ui32_pgn == rui32_pgn))
+    if ((iterMRCW.pc_client == rpc_client) && (iterMRCW.c_isoName == rrefc_isoName) && (iterMRCW.ui32_pgn == rui32_pgn)
+    #ifdef NMEA_2000_FAST_PACKET
+      && (iterMRCW.b_isFastPacket == rb_isFastPacket)
+    #endif
+    )
       return; // Already in list!!
     list_clients_i++;
   }
   // Not already in list, so insert!
-  list_clients.push_back(MultiReceiveClientWrapper_s(rpc_client, rui8_clientAddress, rui32_pgn, rb_alsoBroadcast, rb_alsoGlobalErrors
+  list_clients.push_back(MultiReceiveClientWrapper_s(rpc_client, rrefc_isoName, rui32_pgn, rb_alsoBroadcast, rb_alsoGlobalErrors
                          #ifdef NMEA_2000_FAST_PACKET
                          , rb_isFastPacket
                          #endif
@@ -679,7 +686,7 @@ MultiReceive_c::registerClient(uint32_t rui32_pgn, uint8_t rui8_clientAddress,
   {
     const uint32_t ui32_mask = (0x1FFFF00UL);
     const uint32_t ui32_filter = (static_cast<MASK_TYPE>(rui32_pgn << 8));
-    /** @todo determine when to set the PS field of the pgn to "rui8_clientAddress" */
+    /** @todo determine when to set the PS field of the pgn to "rui8_cachedClientAddress" */
     if (!__IsoAgLib::getCanInstance4Comm().existFilter(*this, ui32_mask, ui32_filter, __IsoAgLib::Ident_c::ExtendedIdent))
     { /* create FilterBox */
       __IsoAgLib::getCanInstance4Comm().insertFilter(*this, ui32_mask, ui32_filter, true, __IsoAgLib::Ident_c::ExtendedIdent);
@@ -716,7 +723,7 @@ MultiReceive_c::deregisterClient (IsoAgLib::MultiReceiveClient_c* rpc_client)
       if (pc_iter->b_isFastPacket) {
         const uint32_t cui32_mask = (0x1FFFF00UL);
         const uint32_t cui32_filter = (static_cast<MASK_TYPE>(pc_iter->ui32_pgn << 8));
-        /** @todo determine when to set the PS field of the pgn to "rui8_clientAddress" */
+        /** @todo determine when to set the PS field of the pgn to "rui8_cachedClientAddress" */
         if (__IsoAgLib::getCanInstance4Comm().existFilter( *this, cui32_mask, cui32_filter, __IsoAgLib::Ident_c::ExtendedIdent))
         { /* delete FilterBox */
           __IsoAgLib::getCanInstance4Comm().deleteFilter( *this, cui32_mask, cui32_filter, __IsoAgLib::Ident_c::ExtendedIdent);
@@ -854,19 +861,19 @@ MultiReceive_c::removeStream(Stream_c* rpc_stream)
 // //////////////////////////////// +X2C Operation : processStreamDataChunk_ofMatchingClient
 //! Parameter:
 bool /* keep it? */
-MultiReceive_c::processStreamDataChunk_ofMatchingClient(Stream_c* pc_stream, bool b_lastChunk)
+MultiReceive_c::processStreamDataChunk_ofMatchingClient(Stream_c& rrefc_stream, bool b_lastChunk)
 {
   bool b_firstChunk = false;
-  if (pc_stream->getBurstNumber() == 1) {
+  if (rrefc_stream.getBurstNumber() == 1) {
     // For first chunk processing, fill in the "ui8_streamFirstByte" field into the stream, so that the Client will now and later know what type of stream it is and how to handle the later Chunks...
     uint8_t ui8_firstByte;
-    *pc_stream >> ui8_firstByte;
-    pc_stream->setFirstByte(ui8_firstByte);
+    rrefc_stream >> ui8_firstByte;
+    rrefc_stream.setFirstByte(ui8_firstByte);
     b_firstChunk = true;
   }
 
   // There must be a registered client, we can assume that here!
-  bool b_keepIt = getClient (pc_stream->getIdent())->processPartStreamDataChunk (pc_stream, b_firstChunk, b_lastChunk);
+  bool b_keepIt = getClient (rrefc_stream.getIdent())->processPartStreamDataChunk (rrefc_stream, b_firstChunk, b_lastChunk);
   if (!b_lastChunk) return false; // result doesn't care if it's not the last chunk
   return b_keepIt;
 }
@@ -894,7 +901,7 @@ MultiReceive_c::finishStream (DEF_Stream_c_IMPL& rrefc_stream)
             #endif
             curClientWrapper.b_alsoBroadcast)
         {
-          curClientWrapper.pc_client->processPartStreamDataChunk (&rrefc_stream, /*firstChunk*/true/*it's only one, don't care*/, /*b_lastChunk*/true); // don't care about result, as BAMs will NOT be kept anyway!
+          curClientWrapper.pc_client->processPartStreamDataChunk (rrefc_stream, /*firstChunk*/true/*it's only one, don't care*/, /*b_lastChunk*/true); // don't care about result, as BAMs will NOT be kept anyway!
         }
       }
     }
@@ -907,7 +914,7 @@ MultiReceive_c::finishStream (DEF_Stream_c_IMPL& rrefc_stream)
     #endif
     sendEndOfMessageAck (&rrefc_stream);
 
-    if (processStreamDataChunk_ofMatchingClient (&rrefc_stream, true))
+    if (processStreamDataChunk_ofMatchingClient (rrefc_stream, true))
     { // keep stream (in "FinishedJustKept" kinda state
       rrefc_stream.setStreamFinishedJustKept();
       b_keepStream = true;
@@ -957,7 +964,7 @@ MultiReceive_c::timeEvent( void )
       #endif
       // CTS after Burst? -> process last Burst!
       if (refc_stream.getBurstNumber() > 0) { // 0 means that no CTS has been sent, the first incoming burst is nr. 1 !
-        processStreamDataChunk_ofMatchingClient(&refc_stream, false);
+        processStreamDataChunk_ofMatchingClient(refc_stream, false);
         // don't care for result here!
       }
       #ifdef DEBUG
@@ -978,7 +985,7 @@ MultiReceive_c::timeEvent( void )
           INTERNAL_DEBUG_DEVICE << "\n *** (E)TP-";
         INTERNAL_DEBUG_DEVICE << "Stream with SA " << (uint16_t) refc_stream.getIdent().getSa() << " timedOut, so sending out 'connAbort'. AwaitStep was " << (uint16_t) refc_stream.getNextComing() << " ***" << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
-      notifyError(refc_stream.getIdent(), 110);
+      notifyError (refc_stream.getIdent(), 110);
       connAbortTellClient (/* send Out ConnAbort Msg*/ true, &refc_stream);
       // remove Stream
       i_list_streams = list_streams.erase (i_list_streams);
@@ -1093,7 +1100,7 @@ MultiReceive_c::connAbortTellClient(bool rb_sendConnAbort, Stream_c* rpc_stream)
     // search Client and tell about connAbort
     IsoAgLib::MultiReceiveClient_c* pc_clientFound = getClient(rpc_stream->getIdent());
     if (pc_clientFound) {
-      pc_clientFound->reactOnAbort (rpc_stream);
+      pc_clientFound->reactOnAbort (*rpc_stream);
     }
   } // else: // NEVER promote aborts from BROADCASTS, because there's no partial parsing possible, so no need to inform the user...
 }
@@ -1190,7 +1197,7 @@ MultiReceive_c::getClient(IsoAgLib::ReceiveStreamIdentifier_c rc_streamIdent)
        i_list_clients != list_clients.end();
        i_list_clients++)
   {
-    if (rc_streamIdent.matchDaPgn (i_list_clients->ui8_clientAddress, i_list_clients->ui32_pgn))
+    if (rc_streamIdent.matchDaPgn (i_list_clients->ui8_cachedClientAddress, i_list_clients->ui32_pgn))
       return i_list_clients->pc_client;
   }
   return NULL;
@@ -1202,12 +1209,13 @@ bool
 MultiReceive_c::anyMultiReceiveClientRegisteredForThisDa (uint8_t ui8_da)
 {
   if (ui8_da == 0xFF) return true;
-  /** @todo extend this function, so it checks if any of the clients want BAMs! */
+  /** @todo extend this function, so it checks if any of the clients want BAMs!
+            -- do we need this check anyway????? costs us more than just processing the message I guess... */
   for (std::list<MultiReceiveClientWrapper_s>::iterator i_list_clients = list_clients.begin();
        i_list_clients != list_clients.end();
        i_list_clients++)
   {
-    if (ui8_da == i_list_clients->ui8_clientAddress)
+    if (ui8_da == i_list_clients->ui8_cachedClientAddress)
       return true;
   }
   return false;
@@ -1324,6 +1332,7 @@ MultiReceive_c::reactOnMonitorListAdd( const __IsoAgLib::ISOName_c& refc_isoName
       << "NOW use SA: " << int(rpc_newItem->nr()) << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_NEWLINE
       << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
+  /** @todo BEGIN to add to registerMultiReceiveClient(), using ISOFilterBox then! */
   if ( getIsoMonitorInstance4Comm().existLocalIsoMemberISOName(refc_isoName) )
   { // lcoal ISOItem_c has finished adr claim
     uint32_t ui32_nr = rpc_newItem->nr();
@@ -1336,28 +1345,40 @@ MultiReceive_c::reactOnMonitorListAdd( const __IsoAgLib::ISOName_c& refc_isoName
     MACRO_insertFilterIfNotYetExists_mask1FFFF00_useRef(ETP_DATA_TRANSFER_PGN,ui32_nr,true,refFB)
     /*** Filter Registration End ***/
   }
+  /** @todo END to add to registerMultiReceiveClient(), using ISOFilterBox then! */
+
+  // rpc_newItem is always != NULL
+  const uint8_t cui8_nr = rpc_newItem->nr();
   for (std::list<MultiReceiveClientWrapper_s>::iterator i_list_clients = list_clients.begin();
        i_list_clients != list_clients.end();
        i_list_clients++)
   {
-    if (i_list_clients->ui8_clientAddress == 0xFE)
-    { // it's a mrcw that was set to hold, so maybe this addr-claim is for it?
-      if (i_list_clients->c_isoName == refc_isoName)
-      { // yes, it's that ISOName that lost its SA
-        i_list_clients->ui8_clientAddress = rpc_newItem->nr();
-      }
+    if (i_list_clients->c_isoName == refc_isoName)
+    { // yes, it's that ISOName that A) (locally) lost its SA before or B) (remotely) just changed it.
+      // note: we can receive (E)TPs for remote nodes, too. Needed for sniffing the WS-slave stuff!
+      // conclusion: just update it, regardless if it "lost (SA == 0xFF)" its SA before or not...
+      i_list_clients->ui8_cachedClientAddress = cui8_nr;
     }
   }
+
+  // Notify all running streams
+  for (std::list<DEF_Stream_c_IMPL>::iterator i_list_streams = list_streams.begin();
+       i_list_streams != list_streams.end();)
+  { // Adapt the SA also for kept streams - the application should only use the isoname anyway!
+    const IsoAgLib::ReceiveStreamIdentifier_c& refc_rsi = i_list_streams->getIdent();
+    // re-vitalize the Addresses, so that following packets using this address will get processed again...
+    if (refc_rsi.getDaIsoName() == refc_isoName.toConstIisoName_c()) refc_rsi.setDa (cui8_nr);
+    if (refc_rsi.getSaIsoName() == refc_isoName.toConstIisoName_c()) refc_rsi.setSa (cui8_nr);
+  }
 }
+
 
 /** this function is called by ISOMonitor_c when a device looses its ISOItem_c.
   * @param refc_isoName const reference to the item which ISOItem_c state is changed
   * @param rui8_oldSa previously used SA which is NOW LOST -> clients which were connected to this item can react explicitly
   */
 void
-MultiReceive_c::reactOnMonitorListRemove( const __IsoAgLib::ISOName_c&
-                                          refc_isoName
-                                          , uint8_t rui8_oldSa )
+MultiReceive_c::reactOnMonitorListRemove( const __IsoAgLib::ISOName_c& refc_isoName, uint8_t rui8_oldSa )
 {
 #ifdef DEBUG
   INTERNAL_DEBUG_DEVICE << "reactOnMonitorListRemove() handles LOSS of ISOItem_c for device with DevClass: " << int(refc_isoName.devClass())
@@ -1365,6 +1386,7 @@ MultiReceive_c::reactOnMonitorListRemove( const __IsoAgLib::ISOName_c&
       << " and PREVIOUSLY used SA: " << int(rui8_oldSa) << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_NEWLINE
       << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
+  /** @todo BEGIN to add to registerMultiReceiveClient(), using ISOFilterBox then! */
   if ( getIsoMonitorInstance4Comm().existLocalIsoMemberISOName(refc_isoName) )
   { // lcoal ISOItem_c has lost SA
     uint32_t ui32_nr = rui8_oldSa;
@@ -1373,33 +1395,29 @@ MultiReceive_c::reactOnMonitorListRemove( const __IsoAgLib::ISOName_c&
     MACRO_deleteFilterIfExists_mask1FFFF00(TP_DATA_TRANSFER_PGN,ui32_nr)
     MACRO_deleteFilterIfExists_mask1FFFF00(TP_CONN_MANAGE_PGN,ui32_nr)
   }
+  /** @todo END to add to registerMultiReceiveClient(), using ISOFilterBox then! */
 
   // Notify all registered clients
   for (std::list<MultiReceiveClientWrapper_s>::iterator i_list_clients = list_clients.begin();
        i_list_clients != list_clients.end();
        i_list_clients++)
-  {
-    if (rui8_oldSa == i_list_clients->ui8_clientAddress) {
-      i_list_clients->ui8_clientAddress = 0xFE;
+  { // @todo can we assume this is safe/consistent? or should we check our ISOName instead to be 100% sure */
+    if (rui8_oldSa == i_list_clients->ui8_cachedClientAddress) {
+      i_list_clients->ui8_cachedClientAddress = 0xFE; // as FE won't be valid as sender (FF would be broadcast) - so we don't get such packets in "processMsg()"
     }
   }
 
-  // Abort all running streams, because we do NOT save the isoName in the stream and it would be out of sync probably anyway!
+  // Notify all running streams
   for (std::list<DEF_Stream_c_IMPL>::iterator i_list_streams = list_streams.begin();
        i_list_streams != list_streams.end();)
-  {
-    /** @todo What to do with the kept streams?? */
-    if ((i_list_streams->getIdent().getDa() == rui8_oldSa) || (i_list_streams->getIdent().getSa() == rui8_oldSa))
-    {
-      connAbortTellClient(true, &(*i_list_streams));
-      i_list_streams = list_streams.erase(i_list_streams);
-    }
-    else
-    {
-      i_list_streams++;
-    }
+  { // Adapt the SA also for kept streams - the application should only use the isoname anyway!
+    const IsoAgLib::ReceiveStreamIdentifier_c& refc_rsi = i_list_streams->getIdent();
+    // unset the Addresses, so that a following packet using this address does NOT get processed here!
+    if (refc_rsi.getDa() == rui8_oldSa) refc_rsi.setDa (0xFE); // as FE won't be valid as sender (FF would be broadcast) - so we don't get such packets in "processMsg()"
+    if (refc_rsi.getSa() == rui8_oldSa) refc_rsi.setSa (0xFE); // as FE won't be valid as sender (FF would be broadcast) - so we don't get such packets in "processMsg()"
   }
 }
+
 
 ///  Used for Debugging Tasks in Scheduler_c
 const char*

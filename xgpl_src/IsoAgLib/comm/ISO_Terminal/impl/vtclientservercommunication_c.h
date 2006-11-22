@@ -278,9 +278,9 @@ public:
   // UploadCommandFailed is obsolete, as we're not retrying and error-responses any more.
   // UploadCommandResponseless is used for cmd:0x11 Object Pool Transfer, as there's NO response sent from the VT and it's a "special" upload...
 
-  virtual void reactOnAbort (IsoAgLib::iStream_c* rpc_stream);
-  virtual bool reactOnStreamStart (IsoAgLib::ReceiveStreamIdentifier_c rc_ident, uint32_t rui32_totalLen);
-  virtual bool processPartStreamDataChunk (IsoAgLib::iStream_c* rpc_stream, bool rb_isFirstChunk, bool rb_isLastChunk);
+  virtual void reactOnAbort (IsoAgLib::iStream_c& rpc_stream);
+  virtual bool reactOnStreamStart (const IsoAgLib::ReceiveStreamIdentifier_c& rc_ident, uint32_t rui32_totalLen);
+  virtual bool processPartStreamDataChunk (IsoAgLib::iStream_c& rpc_stream, bool rb_isFirstChunk, bool rb_isLastChunk);
 
   /** constructor of VtClientServerCommunication_c
    */

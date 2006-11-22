@@ -1684,6 +1684,14 @@ bool CANIO_c::setBitrate(uint16_t rui16_newSpeed, bool rb_force)
   return b_success;
 }
 
+
+/** private constructor which prevents direct instantiation in user application
+  * NEVER define instance of CANIO_c within application
+  * (set ui8_busNumber to 0xFF so that init() detects first call after constructor)
+  */
+CANIO_c::CANIO_c( void ) : arrFilterBox() {}
+
+
 /** perform bas init for CAN with set of speed and init of send object(s)
   @param rui16_bitrate wanted CAN bitrate
 */

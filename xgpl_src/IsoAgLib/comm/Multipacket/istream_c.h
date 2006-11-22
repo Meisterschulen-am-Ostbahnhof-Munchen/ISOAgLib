@@ -90,6 +90,15 @@
 
 // IsoAgLib
 #include <supplementary_driver/driver/datastreams/streaminput_c.h>
+#include <IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h>
+
+
+
+namespace __IsoAgLib
+{ // forward declarations
+  class MultiReceive_c;
+  class Stream_c;
+}
 
 
 
@@ -98,50 +107,81 @@ namespace IsoAgLib {
 
 
 
-
 /**
   struct for stream identification
 */
 class ReceiveStreamIdentifier_c {
 public:
-  ReceiveStreamIdentifier_c (uint32_t rui32_pgn, uint8_t rui8_da, uint8_t rui8_sa)
-                          : ui32_pgn (rui32_pgn), ui8_da (rui8_da), ui8_sa (rui8_sa) {};
+  ReceiveStreamIdentifier_c (uint32_t rui32_pgn, uint8_t rui8_da, const iISOName_c& rrefc_daIsoName,
+                                                 uint8_t rui8_sa, const iISOName_c& rrefc_saIsoName)
+                          : ui32_pgn (rui32_pgn)
+                          , ui8_da (rui8_da)
+                          , ui8_sa (rui8_sa)
+                          , c_daIsoName (rrefc_daIsoName)
+                          , c_saIsoName (rrefc_saIsoName) {}
 
   ReceiveStreamIdentifier_c (const ReceiveStreamIdentifier_c& rc_rsi)
-                          : ui32_pgn (rc_rsi.ui32_pgn), ui8_da (rc_rsi.ui8_da), ui8_sa (rc_rsi.ui8_sa) {};
+                          : ui32_pgn (rc_rsi.ui32_pgn)
+                          , ui8_da (rc_rsi.ui8_da)
+                          , ui8_sa (rc_rsi.ui8_sa)
+                          , c_daIsoName (rc_rsi.c_daIsoName)
+                          , c_saIsoName (rc_rsi.c_saIsoName) {}
 
-  bool operator == (const ReceiveStreamIdentifier_c& rc_rsi)
+  bool operator == (const ReceiveStreamIdentifier_c& rc_rsi) const
   {
     return (rc_rsi.ui8_sa == ui8_sa) && (rc_rsi.ui8_da == ui8_da) && (rc_rsi.ui32_pgn == ui32_pgn);
-  };
+  }
 
-  bool matchSaDa(uint8_t sa, uint8_t da)
+
+  bool matchSaDa(uint8_t sa, uint8_t da) const
   {
     return (sa == ui8_sa) && (da == ui8_da);
-  };
+  }
+
 
   /** test if the client's da/pgn match this RCI, so the incoming stream is to be handled by this client.
       the client also HAS to handle Broadcasts, so in case of (da==0xFF) he's also responsible!
     */
-  bool matchDaPgn(uint8_t da, uint32_t pgn)
+  bool matchDaPgn(uint8_t da, uint32_t pgn) const
   {
     return ((da == 0xFF) || (da == ui8_da)) && (pgn == ui32_pgn);
-  };
+  }
 
-  uint8_t  getSa()  const { return ui8_sa; };
-  uint8_t  getDa()  const { return ui8_da; };
-  uint32_t getPgn() const { return ui32_pgn; };
+
+  uint32_t          getPgn()       const { return ui32_pgn; }
+  const iISOName_c& getDaIsoName() const { return c_daIsoName; }
+  const iISOName_c& getSaIsoName() const { return c_saIsoName; }
+
+// declaring/defining the following methods mutable as
+// A) they're only updating the cached SA/DA and
+// B) only MultiReceive is friend and can do this!
+private:
+  void setDa (uint8_t rui8_da) const { ui8_da = rui8_da; }
+  void setSa (uint8_t rui8_sa) const { ui8_sa = rui8_sa; }
+
+// private, so applications can not access them - they should access via ISOName getter functions!
+  uint8_t getDa() const { return ui8_da; }
+  uint8_t getSa() const { return ui8_sa; }
+
+  friend class __IsoAgLib::MultiReceive_c;
+  friend class __IsoAgLib::Stream_c;
 
 private:
 
   /** PGN of the stream */
   uint32_t ui32_pgn;
 
-  /** Destination of the stream, normall "part" of the PGN, i.e. PS-field */
-  uint8_t ui8_da;
+  /** Destination Address - mutable as it's only a CACHE for the c_daIsoName! */
+  mutable uint8_t ui8_da;
 
-  /** source address of the corresponding sender */
-  uint8_t ui8_sa;
+  /** Source Address - mutable as it's only a CACHE for the c_daIsoName! */
+  mutable uint8_t ui8_sa;
+
+  /** Destination ISOName */
+  iISOName_c c_daIsoName;
+
+  /** Source ISOName */
+  iISOName_c c_saIsoName;
 };
 
 
@@ -163,7 +203,7 @@ public:
 
   virtual uint32_t getByteAlreadyReceived() const=0;
 
-  virtual ReceiveStreamIdentifier_c& getIdent()=0;
+  virtual const ReceiveStreamIdentifier_c& getIdent()=0;
 
   virtual uint8_t getFirstByte() const=0;
 

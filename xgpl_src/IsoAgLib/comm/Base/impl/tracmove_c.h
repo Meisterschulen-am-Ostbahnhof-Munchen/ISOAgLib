@@ -111,7 +111,7 @@ namespace __IsoAgLib {
         @param rpc_isoName pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
         @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       */
-    virtual bool config(const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode);
+    virtual bool config_base (const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode);
 
     /** update selected speed with actually best available speed
         @param t_speedSrc  from which source is the speed available

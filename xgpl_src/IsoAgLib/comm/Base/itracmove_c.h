@@ -83,8 +83,8 @@ namespace IsoAgLib {
       @param rt_identMode set mode to either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       @return true -> configuration was successfull
     */
-  bool config(const iISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode = IsoAgLib::IdentModeImplement)
-  { return TracMove_c::config(rpc_isoName, rt_identMode ); }
+  bool config (const iISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode = IsoAgLib::IdentModeImplement)
+  { return TracMove_c::config_base(rpc_isoName, rt_identMode ); }
 
   /** update selected speed with actually best available speed
       @param t_speedSrc  from which source is the speed available
