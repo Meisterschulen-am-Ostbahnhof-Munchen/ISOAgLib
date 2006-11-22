@@ -38,7 +38,7 @@ SOURCES = ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp  \
 		../../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp  \
 		../../../xgpl_src/IsoAgLib/util/impl/schedulerentry_c.cpp  \
 		../../../xgpl_src/IsoAgLib/util/impl/elementbase_c.cpp  \
-		../../../xgpl_src/IsoAgLib/util/liberr_c.cpp  \
+		../../../xgpl_src/IsoAgLib/util/iliberr_c.cpp  \
 		../../../xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multireceive_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamchunk_c.cpp  \

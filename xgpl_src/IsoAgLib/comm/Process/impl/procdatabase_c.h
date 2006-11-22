@@ -143,15 +143,15 @@ public:
     @param rpc_processDataChangeHandler optional pointer to handler class of application
     @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
-  ProcDataBase_c( const IsoAgLib::ElementDDI_s* ps_elementDDI = NULL, uint16_t ui16_element = 0xFFFF,
+  ProcDataBase_c( const IsoAgLib::ElementDDI_s* rps_elementDDI = NULL, uint16_t rui16_element = 0xFFFF,
                  const ISOName_c& rc_isoName = ISOName_c::ISONameInitialProcessData,
                  const ISOName_c& rc_ownerISOName = ISOName_c::ISONameUnspecified, const ISOName_c *rpc_isoName = NULL,
                  IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
                  int ri_singletonVecKey = 0)
 
-    : ProcIdent_c( ps_elementDDI, ui16_element, rc_isoName, rc_ownerISOName, rpc_isoName, ri_singletonVecKey)
+    : ProcIdent_c( rps_elementDDI, rui16_element, rc_isoName, rc_ownerISOName, rpc_isoName, ri_singletonVecKey)
     {
-      init( ps_elementDDI, ui16_element, rc_isoName, rc_ownerISOName, rpc_isoName,
+      init( rps_elementDDI, rui16_element, rc_isoName, rc_ownerISOName, rpc_isoName,
             rpc_processDataChangeHandler, ri_singletonVecKey );
     }
 

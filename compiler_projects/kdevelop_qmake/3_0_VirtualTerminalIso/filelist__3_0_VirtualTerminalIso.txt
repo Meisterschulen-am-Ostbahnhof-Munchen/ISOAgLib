@@ -15,7 +15,7 @@
 ../../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/schedulerentry_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/elementbase_c.cpp
-../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
+../../../xgpl_src/IsoAgLib/util/iliberr_c.cpp
 ../../../xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multireceive_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamchunk_c.cpp
@@ -109,7 +109,7 @@
 ../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/IsoAgLib/util/icanpkg_c.h
 ../../../xgpl_src/IsoAgLib/util/icanpkgext_c.h
-../../../xgpl_src/IsoAgLib/util/liberr_c.h
+../../../xgpl_src/IsoAgLib/util/iliberr_c.h
 ../../../xgpl_src/IsoAgLib/util/iutil_funcs.h
 ../../../xgpl_src/Application_Config/isoaglib_config.h
 ../../../xgpl_src/IsoAgLib/hal/pc/typedef.h

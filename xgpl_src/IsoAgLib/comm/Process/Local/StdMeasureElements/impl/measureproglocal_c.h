@@ -137,9 +137,7 @@ public:
     Proc_c::progType_t ren_progType = Proc_c::UndefinedProg,
     int32_t ri32_masterVal = 0,
     int32_t ri32_initialVal = 0,
-    const ISOName_c& rc_callerISOName = ISOName_c::ISONameUnspecified )
-    : MeasureProgBase_c(rpc_processData, ren_progType, ri32_initialVal, rc_callerISOName )
-    {init(rpc_processData, ren_progType, ri32_masterVal, ri32_initialVal, rc_callerISOName  );};
+    const ISOName_c& rc_callerISOName = ISOName_c::ISONameUnspecified );
   /**
     initialise this MeasureProgLocal_c instance to a well defined initial state
     @param rpc_processData optional pointer to containing ProcDataLocal_c instance (def NULL)

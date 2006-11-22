@@ -164,7 +164,7 @@ class ProcDataLocalBase_c : public ProcDataBase_c
     @param rpc_processDataChangeHandler optional pointer to handler class of application
     @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
-  ProcDataLocalBase_c( const IsoAgLib::ElementDDI_s* ps_elementDDI = NULL, uint16_t ui16_element = 0xFFFF,
+  ProcDataLocalBase_c( const IsoAgLib::ElementDDI_s* rps_elementDDI = NULL, uint16_t rui16_element = 0xFFFF,
                        const ISOName_c& rc_isoName = ISOName_c::ISONameInitialProcessData,
                        const ISOName_c& rc_ownerISOName = ISOName_c::ISONameUnspecified,
                        const ISOName_c *rpc_isoName = NULL,
@@ -175,12 +175,12 @@ class ProcDataLocalBase_c : public ProcDataBase_c
                        , IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL
                        , int ri_singletonVecKey = 0
                        )
-    : ProcDataBase_c( ps_elementDDI, ui16_element,
+    : ProcDataBase_c( rps_elementDDI, rui16_element,
                       rc_isoName, rc_ownerISOName, rpc_isoName, rpc_processDataChangeHandler, ri_singletonVecKey
                      )
 
     {
-      init( ps_elementDDI, ui16_element, rc_isoName, rc_ownerISOName, rpc_isoName, rb_cumulativeValue
+      init( rps_elementDDI, rui16_element, rc_isoName, rc_ownerISOName, rpc_isoName, rb_cumulativeValue
       #ifdef USE_EEPROM_IO
           , rui16_eepromAdr
       #endif // USE_EEPROM_IO

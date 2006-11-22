@@ -195,6 +195,10 @@ const DevicePool_c& DevicePool_c::operator=(const DevicePool_c& c_devicePool)
 //===================================================================
 
 
+DevPropertyHandler_c::DevPropertyHandler_c() : ui16_currentSendPosition(0), ui16_storedSendPosition(0)
+{}
+
+
 /** process received can messages
     @return true -> message was processed; else the received CAN message will be served to other matching CANCustomer_c
   */
@@ -751,7 +755,7 @@ DevPropertyHandler_c::timeEvent( void )
     @return true => device description successfully stored
   */
 bool
-DevPropertyHandler_c::queuePoolInMap (const HUGE_MEM uint8_t* rpc_devicePoolByteArray, uint32_t rui32_bytestreamlength, bool b_setToDefault)
+DevPropertyHandler_c::queuePoolInMap (const HUGE_MEM uint8_t* rpc_devicePoolByteArray, uint32_t rui32_bytestreamlength, bool rb_setToDefault)
 {
   /** @todo should we test for minimum size of the pool??? (1 DeviceObject + 1 DeviceElementObject)*/
 
@@ -763,7 +767,7 @@ DevPropertyHandler_c::queuePoolInMap (const HUGE_MEM uint8_t* rpc_devicePoolByte
 
   //set DeviceDescription to default
   //if nothing is default, take the first mapped pointer
-  if ((pc_devDefaultDeviceDescription == NULL) || (b_setToDefault) )
+  if ((pc_devDefaultDeviceDescription == NULL) || (rb_setToDefault) )
   {
     pc_devDefaultDeviceDescription = &(c_iterNew->second);
     #if 0
@@ -780,14 +784,14 @@ DevPropertyHandler_c::queuePoolInMap (const HUGE_MEM uint8_t* rpc_devicePoolByte
     @return true => if pool was successfully stored
   */
 bool
-DevPropertyHandler_c::registerDevicePool(const IsoAgLib::iIdentItem_c* rpc_wsMasterIdentItem, const HUGE_MEM uint8_t* rpc_devicePoolByteArray, const uint32_t rui32_bytestreamlength, bool b_setToDefault)
+DevPropertyHandler_c::registerDevicePool(const IsoAgLib::iIdentItem_c* rpc_wsMasterIdentItem, const HUGE_MEM uint8_t* rpc_devicePoolByteArray, const uint32_t rui32_bytestreamlength, bool rb_setToDefault)
 {
   //no double registration for one device description
   if (en_poolState != OPNotRegistered) return false;
 
   pc_wsMasterIdentItem = rpc_wsMasterIdentItem;
 
-  if (!(queuePoolInMap(rpc_devicePoolByteArray, rui32_bytestreamlength, b_setToDefault)))
+  if (!(queuePoolInMap(rpc_devicePoolByteArray, rui32_bytestreamlength, rb_setToDefault)))
   {
     return false;
   }
@@ -995,7 +999,7 @@ DevPropertyHandler_c::startUpload()
 void
 DevPropertyHandler_c::outOfMemory()
 { // can't (up)load the pool.
-  getILibErrInstance().registerError( iLibErr_c::IsoTerminalOutOfMemory, iLibErr_c::IsoTerminal );
+  getILibErrInstance().registerError( iLibErr_c::RemoteServiceOutOfMemory, iLibErr_c::TaskController );
   en_uploadStep = UploadFailed; // no timeout needed
   en_poolState = OPCannotBeUploaded;
   #ifdef DEBUG

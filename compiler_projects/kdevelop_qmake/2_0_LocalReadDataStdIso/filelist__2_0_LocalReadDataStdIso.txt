@@ -6,6 +6,8 @@
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.cpp
+../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofiltermanager_c.cpp
+../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofilterbox_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/canpkgext_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
@@ -13,7 +15,7 @@
 ../../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/schedulerentry_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/elementbase_c.cpp
-../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
+../../../xgpl_src/IsoAgLib/util/iliberr_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/generalcommand_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/process_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/processpkg_c.cpp
@@ -55,9 +57,13 @@
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofilterbox_c.h
+../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofiltermanager_c.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoitem_c.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h
+../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisofiltermanager_c.h
+../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisofilter_s.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/iidentitem_c.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/istate_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.h
@@ -76,7 +82,7 @@
 ../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/IsoAgLib/util/icanpkg_c.h
 ../../../xgpl_src/IsoAgLib/util/icanpkgext_c.h
-../../../xgpl_src/IsoAgLib/util/liberr_c.h
+../../../xgpl_src/IsoAgLib/util/iliberr_c.h
 ../../../xgpl_src/IsoAgLib/util/iutil_funcs.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procident_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.h
@@ -110,8 +116,8 @@
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/chunk_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/stream_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisend_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamchunk_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendpkg_c.h
+../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamchunk_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/imultisend_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/imultisendstreamer_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/istream_c.h

@@ -516,8 +516,8 @@ bool MeasureProgLocal_c::processMsg(){
     if ( c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::setValue)
     { // write - accept only write actions to local data only if this is reset try
       // ISO: value in message contains reset value
-      int32_t i32_val = c_pkg.dataRawCmdLong();
-      resetValMod(c_pkg.c_generalCommand.getValueGroup(), i32_val);
+      const int32_t ci32_val = c_pkg.dataRawCmdLong();
+      resetValMod(c_pkg.c_generalCommand.getValueGroup(), ci32_val);
 
       if (Proc_c::defaultDataLoggingDDI == c_pkg.DDI())
       { // setValue command for default data logging DDI stops measurement (same as TC task status "suspended")
@@ -544,6 +544,26 @@ bool MeasureProgLocal_c::processMsg(){
     } // read
   }
   return b_result;
+}
+
+
+/**
+  constructor which can optionally set most element vars of MeasureProgLocal
+  @param rpc_processData optional pointer to containing ProcDataLocal_c instance (def NULL)
+  @param ren_progType optional program msg type (Proc_c::Base, Proc_c::Target; default Proc_c::UndefinedProg)
+  @param ri32_masterVal optional actual central local measured value used as masterVal (def 0)
+  @param ri32_initialVal optional initial value (e.g which was stored in EEPROM) (default 0)
+  @param rc_callerISOName optional ISOName of remote member, which caused creation of this instance (default 0xFF == no member)
+*/
+MeasureProgLocal_c::MeasureProgLocal_c(
+  ProcDataBase_c *const rpc_processData,
+  Proc_c::progType_t ren_progType,
+  int32_t ri32_masterVal,
+  int32_t ri32_initialVal,
+  const ISOName_c& rc_callerISOName)
+: MeasureProgBase_c(rpc_processData, ren_progType, ri32_initialVal, rc_callerISOName )
+{
+  init( rpc_processData, ren_progType, ri32_masterVal, ri32_initialVal, rc_callerISOName );
 }
 
 

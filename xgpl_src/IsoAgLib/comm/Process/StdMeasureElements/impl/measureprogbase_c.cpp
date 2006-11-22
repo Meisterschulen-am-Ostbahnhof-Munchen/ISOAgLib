@@ -888,28 +888,28 @@ void MeasureProgBase_c::processIncrementMsg(Proc_c::doSend_t ren_doSend){
   c_isoName = c_pkg.memberSend().isoName();
 
   // get the int32_t data val without conversion
-  int32_t i32_val = c_pkg.dataRawCmdLong();
+  const int32_t ci32_val = c_pkg.dataRawCmdLong();
 
   if ( c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::measurementTimeValueStart)
     // time proportional
-    addSubprog(Proc_c::TimeProp, CNAMESPACE::labs(i32_val), ren_doSend);
+    addSubprog(Proc_c::TimeProp, CNAMESPACE::labs(ci32_val), ren_doSend);
 
   if ( c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::measurementDistanceValueStart)
     // distance proportional
-    addSubprog(Proc_c::DistProp, i32_val, ren_doSend);
+    addSubprog(Proc_c::DistProp, ci32_val, ren_doSend);
 
   if (c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::measurementChangeThresholdValueStart)
     // change threshold proportional
     // @todo: was DistProp ?
-    addSubprog(Proc_c::OnChange, i32_val, ren_doSend);
+    addSubprog(Proc_c::OnChange, ci32_val, ren_doSend);
 
   if (c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::measurementMaximumThresholdValueStart)
     // change threshold proportional
-    addSubprog(Proc_c::MaximumThreshold, i32_val, ren_doSend);
+    addSubprog(Proc_c::MaximumThreshold, ci32_val, ren_doSend);
 
   if (c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::measurementMinimumThresholdValueStart)
     // change threshold proportional
-    addSubprog(Proc_c::MinimumThreshold, i32_val, ren_doSend);
+    addSubprog(Proc_c::MinimumThreshold, ci32_val, ren_doSend);
 }
 
 

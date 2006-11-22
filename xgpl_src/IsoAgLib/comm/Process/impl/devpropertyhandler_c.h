@@ -128,7 +128,7 @@ class MultiSendPkg_c;
 class DevPropertyHandler_c : public IsoAgLib::iMultiSendStreamer_c,  ClientBase
 {
   public:
-    DevPropertyHandler_c() : ui16_currentSendPosition(0), ui16_storedSendPosition(0) {};
+    DevPropertyHandler_c();
     virtual ~DevPropertyHandler_c()  {};
 
     /** initialisation for DevPropertyHandler_c */
