@@ -266,7 +266,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
 
       else
       { // there is a sender conflict
-        getLibErrInstance().registerError( LibErr_c::BaseSenderConflict, LibErr_c::Base );
+        getILibErrInstance().registerError( iLibErr_c::BaseSenderConflict, iLibErr_c::Base );
         return false;
       }
     }

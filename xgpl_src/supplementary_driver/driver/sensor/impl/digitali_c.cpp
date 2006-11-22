@@ -153,7 +153,7 @@ void DigitalI_c::handleHalIrqEvent( uint8_t rui8_channel ) {
   (uses BIOS function)
 
   possible errors:
-      * LibErr_c::Range wrong input number
+      * iLibErr_c::Range wrong input number
   @see SensorI_c::createDigital
   @see Sensor_c::t_onoff
   @param rb_channel default-argument for setting hardware channel for this input
@@ -170,7 +170,7 @@ DigitalI_c::DigitalI_c(uint8_t rb_channel, Sensor_c::onoff_t ren_onoff, bool rb_
   (uses BIOS function)
 
   possible errors:
-      * LibErr_c::Range wrong input number
+      * iLibErr_c::Range wrong input number
   @see SensorI_c::createDigital
   @see Sensor_c::t_onoff
   @param rb_channel default-argument for setting hardware channel for this input
@@ -193,7 +193,7 @@ void DigitalI_c::init(uint8_t rb_channel, Sensor_c::onoff_t ren_onoff, bool rb_s
 
   if (i16_initResult)
   { // wrong input channel no
-    getLibErrInstance().registerError( LibErr_c::Range, LibErr_c::Sensor );
+    getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Sensor );
   }
   else
   { // correct input channel no - now register the valid new analog input into SensorI_c
@@ -218,7 +218,7 @@ void DigitalI_c::setOnHigh( void )
 
   if (i16_initResult)
   { // wrong input channel no
-    getLibErrInstance().registerError( LibErr_c::Range, LibErr_c::Sensor );
+    getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Sensor );
   }
 }
 /** change detection mode of activity to OnLow */
@@ -233,7 +233,7 @@ void DigitalI_c::setOnLow( void )
 
   if (i16_initResult)
   { // wrong input channel no
-    getLibErrInstance().registerError( LibErr_c::Range, LibErr_c::Sensor );
+    getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Sensor );
   }
 }
 
@@ -246,7 +246,7 @@ DigitalI_c::~DigitalI_c(){
   check for the input value (uses BIOS function)
 
   possible errors:
-      * LibErr_c::Range wrong input number
+      * iLibErr_c::Range wrong input number
   @return true for (High signal AND ren_onoff==OnHigh)(Default!) or (Low signal AND ren_onoff==OnLow); otherwise false
 */
 bool DigitalI_c::active() const {
@@ -260,7 +260,7 @@ bool DigitalI_c::active() const {
 /**
   check for the input value (uses BIOS function)
   possible errors:
-      * LibErr_c::Range wrong input number
+      * iLibErr_c::Range wrong input number
   @return 1 for (High signal AND ren_onoff==OnHigh)(Default!) or (Low signal AND ren_onoff==OnLow); otherwise 0
 */
 int16_t DigitalI_c::val()const{
@@ -275,7 +275,7 @@ int16_t DigitalI_c::val()const{
   }
   if (i16_val == HAL_RANGE_ERR)
   { // wrong input channel
-    getLibErrInstance().registerError( LibErr_c::Range, LibErr_c::Sensor );
+    getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Sensor );
     return ERROR_VAL_16S;
   }
   else

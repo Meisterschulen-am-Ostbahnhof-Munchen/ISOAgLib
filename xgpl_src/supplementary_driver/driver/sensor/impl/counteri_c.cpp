@@ -93,7 +93,7 @@ namespace __IsoAgLib {
   (uses BIOS function)
 
   possible errors:
-      * LibErr_c::Range wrong input number
+      * iLibErr_c::Range wrong input number
   @see SensorI_c::createCounter
   @param rb_channel default-argument for setting hardware channel for this input
   @param rui16_timebase default-argument for setting the timebase which should be
@@ -111,7 +111,7 @@ CounterI_c::CounterI_c(uint8_t rb_channel, uint16_t rui16_timebase, bool rb_acti
   (uses BIOS function)
 
   possible errors:
-      * LibErr_c::Range wrong input number
+      * iLibErr_c::Range wrong input number
   @see SensorI_c::createCounter
   @param rb_channel default-argument for setting hardware channel for this input
   @param rui16_timebase default-argument for setting the timebase which should be
@@ -126,7 +126,7 @@ void CounterI_c::init(uint8_t rb_channel, uint16_t rui16_timebase, bool rb_activ
   // now init the digital input
   if (HAL::init_counter(channelNr(), rui16_timebase, rb_activHigh, rb_risingEdge) == HAL_RANGE_ERR)
   { // wrong input channel no
-    getLibErrInstance().registerError( LibErr_c::Range, LibErr_c::Sensor );
+    getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Sensor );
   }
   else
   { // correct input channel no - now register the valid new analog input into SensorI_c
@@ -163,13 +163,13 @@ int32_t CounterI_c::valLong(){
   reset the given counter
 
   possible errors:
-      * LibErr_c::Range wrong input number
+      * iLibErr_c::Range wrong input number
 */
 void CounterI_c::reset()
 {
   if (HAL::resetCounter(channelNr()))
   { // wrong input channel no
-    getLibErrInstance().registerError( LibErr_c::Range, LibErr_c::Sensor );
+    getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Sensor );
   }
 }
 

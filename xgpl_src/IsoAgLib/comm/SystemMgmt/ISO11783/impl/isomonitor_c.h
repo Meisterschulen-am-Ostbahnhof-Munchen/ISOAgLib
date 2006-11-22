@@ -525,7 +525,7 @@ private:
   /** handler function for access to undefined client.
     * the base Singleton calls this function, if it detects an error
      */
-  void registerAccessFlt( void ) {getLibErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::System );}
+  void registerAccessFlt( void ) {getILibErrInstance().registerError( iLibErr_c::ElNonexistent, iLibErr_c::System );}
 
   friend class SINGLETON_DERIVED(ISOMonitor_c,ElementBase_c);
 

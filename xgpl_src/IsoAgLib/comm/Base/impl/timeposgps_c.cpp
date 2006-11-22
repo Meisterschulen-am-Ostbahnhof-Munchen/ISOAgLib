@@ -408,7 +408,7 @@ namespace __IsoAgLib {
       #if defined(DEBUG) && defined(SYSTEM_PC)
         abort();
       #endif
-      getLibErrInstance().registerError( LibErr_c::Precondition, LibErr_c::Base );
+      getILibErrInstance().registerError( iLibErr_c::Precondition, iLibErr_c::Base );
       return false;
     }
     //set configure values
@@ -532,7 +532,7 @@ namespace __IsoAgLib {
         }
         else
         { // there is a sender conflict
-          getLibErrInstance().registerError( LibErr_c::BaseSenderConflict, LibErr_c::Base );
+          getILibErrInstance().registerError( iLibErr_c::BaseSenderConflict, iLibErr_c::Base );
           return false;
         }
         break;

@@ -445,7 +445,7 @@ class Flexible4ByteString_c {
     IMPORTANT: position 0 matches to the least significant byte,
                as the string is ordered in LittleEndian order,
                identic to the order which is used for CAN messages
-    Possible Error: <LibErr_c::Range, LibErr_c::Can> when rui8_pos > 2
+    Possible Error: <iLibErr_c::Range, iLibErr_c::Can> when rui8_pos > 2
     @param rui8_pos Byte position [0..2]
     @param rui16_val uint16_t value to set
   */
@@ -455,7 +455,7 @@ class Flexible4ByteString_c {
     IMPORTANT: position 0 matches to the least significant byte,
                as the string is ordered in LittleEndian order,
                identic to the order which is used for CAN messages
-    Possible Error: <LibErr_c::Range, LibErr_c::Can> when rui8_pos > 2
+    Possible Error: <iLibErr_c::Range, iLibErr_c::Can> when rui8_pos > 2
     @param rui8_pos Byte position [0..2]
     @param ri16_val int16_t value to set
   */
@@ -465,7 +465,7 @@ class Flexible4ByteString_c {
     IMPORTANT: position 0 matches to the least significant byte,
                as the string is ordered in LittleEndian order,
                identic to the order which is used for CAN messages
-    Possible Error: <LibErr_c::Range, LibErr_c::Can> when rui8_pos > 2
+    Possible Error: <iLibErr_c::Range, iLibErr_c::Can> when rui8_pos > 2
     @param rui8_pos position of delivered uint16_t [0..2]
     @return uint16_t balue in CAN data string at pos (rui8_pos, rui8_pos+1) read Low/High order
   */
@@ -475,7 +475,7 @@ class Flexible4ByteString_c {
     IMPORTANT: position 0 matches to the least significant byte,
                as the string is ordered in LittleEndian order,
                identic to the order which is used for CAN messages
-    Possible Error: <LibErr_c::Range, LibErr_c::Can> when rui8_pos > 2
+    Possible Error: <iLibErr_c::Range, iLibErr_c::Can> when rui8_pos > 2
     @param rui8_pos position of delivered int16_t [0..2]
     @return int16_t balue in CAN data string at pos (rui8_pos, rui8_pos+1) read Low/High order
   */
@@ -723,7 +723,7 @@ class Flexible8ByteString_c {
     IMPORTANT: position 0 matches to the least significant byte,
     as the string is ordered in LittleEndian order,
     identic to the order which is used for CAN messages
-    Possible Error: <LibErr_c::Range, LibErr_c::Can> when rui8_pos > 6
+    Possible Error: <iLibErr_c::Range, iLibErr_c::Can> when rui8_pos > 6
     @param rui8_pos Byte position [0..4]
     @param rf_val float value to set
    */
@@ -735,7 +735,7 @@ class Flexible8ByteString_c {
     IMPORTANT: position 0 matches to the least significant byte,
                as the string is ordered in LittleEndian order,
                identic to the order which is used for CAN messages
-    Possible Error: <LibErr_c::Range, LibErr_c::Can> when rui8_pos > 6
+    Possible Error: <iLibErr_c::Range, iLibErr_c::Can> when rui8_pos > 6
     @param rui8_pos Byte position [0..6]
     @param rui16_val uint16_t value to set
   */
@@ -745,7 +745,7 @@ class Flexible8ByteString_c {
     IMPORTANT: position 0 matches to the least significant byte,
                as the string is ordered in LittleEndian order,
                identic to the order which is used for CAN messages
-    Possible Error: <LibErr_c::Range, LibErr_c::Can> when rui8_pos > 6
+    Possible Error: <iLibErr_c::Range, iLibErr_c::Can> when rui8_pos > 6
     @param rui8_pos Byte position [0..6]
     @param ri16_val int16_t value to set
   */
@@ -755,7 +755,7 @@ class Flexible8ByteString_c {
     IMPORTANT: position 0 matches to the least significant byte,
                as the string is ordered in LittleEndian order,
                identic to the order which is used for CAN messages
-    Possible Error: <LibErr_c::Range, LibErr_c::Can> when rui8_pos > 6
+    Possible Error: <iLibErr_c::Range, iLibErr_c::Can> when rui8_pos > 6
     @param rui8_pos position of delivered uint16_t [0..6]
     @return uint16_t balue in CAN data string at pos (rui8_pos, rui8_pos+1) read Low/High order
   */
@@ -765,7 +765,7 @@ class Flexible8ByteString_c {
     IMPORTANT: position 0 matches to the least significant byte,
                as the string is ordered in LittleEndian order,
                identic to the order which is used for CAN messages
-    Possible Error: <LibErr_c::Range, LibErr_c::Can> when rui8_pos > 6
+    Possible Error: <iLibErr_c::Range, iLibErr_c::Can> when rui8_pos > 6
     @param rui8_pos position of delivered int16_t [0..6]
     @return int16_t balue in CAN data string at pos (rui8_pos, rui8_pos+1) read Low/High order
   */
@@ -775,7 +775,7 @@ class Flexible8ByteString_c {
     IMPORTANT: position 0 matches to the least significant byte,
                as the string is ordered in LittleEndian order,
                identic to the order which is used for CAN messages
-    Possible Error: <LibErr_c::Range, LibErr_c::Can> when rui8_pos > 6
+    Possible Error: <iLibErr_c::Range, iLibErr_c::Can> when rui8_pos > 6
     @param rui8_pos Byte position [0..4]
     @param rui32_val uint32_t value to set
   */
@@ -785,7 +785,7 @@ class Flexible8ByteString_c {
     IMPORTANT: position 0 matches to the least significant byte,
                as the string is ordered in LittleEndian order,
                identic to the order which is used for CAN messages
-    Possible Error: <LibErr_c::Range, LibErr_c::Can> when rui8_pos > 6
+    Possible Error: <iLibErr_c::Range, iLibErr_c::Can> when rui8_pos > 6
     @param rui8_pos Byte position [0..4]
     @param ri32_val int32_t value to set
   */
@@ -795,7 +795,7 @@ class Flexible8ByteString_c {
     IMPORTANT: position 0 matches to the least significant byte,
                as the string is ordered in LittleEndian order,
                identic to the order which is used for CAN messages
-    Possible Error: <LibErr_c::Range, LibErr_c::Can> when rui8_pos > 6
+    Possible Error: <iLibErr_c::Range, iLibErr_c::Can> when rui8_pos > 6
     @param rui8_pos position of delivered uint32_t [0..4]
     @return uint32_t balue in CAN data string at pos (rui8_pos, rui8_pos+1) read Low/High order
   */
@@ -805,7 +805,7 @@ class Flexible8ByteString_c {
     IMPORTANT: position 0 matches to the least significant byte,
                as the string is ordered in LittleEndian order,
                identic to the order which is used for CAN messages
-    Possible Error: <LibErr_c::Range, LibErr_c::Can> when rui8_pos > 6
+    Possible Error: <iLibErr_c::Range, iLibErr_c::Can> when rui8_pos > 6
     @param rui8_pos position of delivered int32_t [0..4]
     @return int32_t balue in CAN data string at pos (rui8_pos, rui8_pos+1) read Low/High order
   */

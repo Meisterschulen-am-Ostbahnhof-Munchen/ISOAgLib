@@ -257,7 +257,7 @@ bool ProcDataBase_c::sendValISOName( const ISOName_c& /*rc_varISOName*/, int32_t
   // send the msg
   getCanInstance4Comm() << getProcessPkg();
   // check for any error during send resolve, ...
-  if ( getLibErrInstance().good(IsoAgLib::LibErr_c::CanBus, IsoAgLib::LibErr_c::Can) )
+  if ( getILibErrInstance().good(IsoAgLib::iLibErr_c::CanBus, IsoAgLib::iLibErr_c::Can) )
   { // good
     return true;
   }
@@ -291,7 +291,7 @@ bool ProcDataBase_c::sendValISOName(const ISOName_c& /*rc_varISOName*/, float rf
   // send the msg
   getCanInstance4Comm() << getProcessPkg();
   // check for any error during send resolve, ...
-  if ( getLibErrInstance().good(IsoAgLib::LibErr_c::CanBus, IsoAgLib::LibErr_c::Can) )
+  if ( getILibErrInstance().good(IsoAgLib::iLibErr_c::CanBus, IsoAgLib::iLibErr_c::Can) )
   { // good
     return true;
   }

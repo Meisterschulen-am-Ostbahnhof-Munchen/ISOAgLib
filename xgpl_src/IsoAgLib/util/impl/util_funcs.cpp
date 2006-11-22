@@ -85,7 +85,7 @@
 #include <cstring>
 #include <IsoAgLib/util/config.h>
 #include <cstdio>
-#include "../liberr_c.h"
+#include "../iliberr_c.h"
 
 #ifdef USE_DATASTREAMS_IO
 #include <IsoAgLib/comm/Multipacket/impl/stream_c.h>
@@ -960,7 +960,7 @@ int Flexible8ByteString_c::compare( const Flexible8ByteString_c& rrefc_cmp ) con
   IMPORTANT: position 0 matches to the least significant byte,
               as the string is ordered in LittleEndian order,
               identic to the order which is used for CAN messages
-  Possible Error: <LibErr_c::Range, LibErr_c::Can> when rui8_pos > 2
+  Possible Error: <iLibErr_c::Range, iLibErr_c::Can> when rui8_pos > 2
   @param rui8_pos Byte position [0..2]
   @param rui16_val uint16_t value to set
 */
@@ -973,7 +973,7 @@ void Flexible4ByteString_c::setUint16Data( uint8_t rui8_pos, uint16_t rui16_val)
     case 1:
       numberRef2LittleEndianString( rui16_val, (uint8+1) ); break;
     default:
-      getLibErrInstance().registerError(LibErr_c::Range, LibErr_c::Can);
+      getILibErrInstance().registerError(iLibErr_c::Range, iLibErr_c::Can);
       #if defined(SYSTEM_PC) && defined(DEBUG)
       fprintf( stderr,
         "ERROR!! Flexible4ByteString_c::setUint16Data has been called with write position %d which is larger than the allowed 2\n", rui8_pos );
@@ -988,7 +988,7 @@ void Flexible4ByteString_c::setUint16Data( uint8_t rui8_pos, uint16_t rui16_val)
   IMPORTANT: position 0 matches to the least significant byte,
               as the string is ordered in LittleEndian order,
               identic to the order which is used for CAN messages
-  Possible Error: <LibErr_c::Range, LibErr_c::Can> when rui8_pos > 2
+  Possible Error: <iLibErr_c::Range, iLibErr_c::Can> when rui8_pos > 2
   @param rui8_pos Byte position [0..2]
   @param ri16_val int16_t value to set
 */
@@ -1001,7 +1001,7 @@ void Flexible4ByteString_c::setInt16Data( uint8_t rui8_pos, int16_t ri16_val)
     case 1:
       numberRef2LittleEndianString( ri16_val, (uint8+1) ); break;
     default:
-      getLibErrInstance().registerError(LibErr_c::Range, LibErr_c::Can);
+      getILibErrInstance().registerError(iLibErr_c::Range, iLibErr_c::Can);
       #if defined(SYSTEM_PC) && defined(DEBUG)
       fprintf( stderr,
         "ERROR!! Flexible4ByteString_c::setInt16Data has been called with write position %d which is larger than the allowed 2\n", rui8_pos );
@@ -1028,7 +1028,7 @@ uint16_t Flexible4ByteString_c::getUint16Data(uint8_t rui8_pos) const
     case 1:
       return convertLittleEndianStringUi16(uint8+1);
     default:
-      getLibErrInstance().registerError(LibErr_c::Range, LibErr_c::Can);
+      getILibErrInstance().registerError(iLibErr_c::Range, iLibErr_c::Can);
       #if defined(SYSTEM_PC) && defined(DEBUG)
       fprintf( stderr,
         "ERROR!! Flexible4ByteString_c::getUint16Data has been called with write position %d which is larger than the allowed 2\n", rui8_pos );
@@ -1057,7 +1057,7 @@ int16_t Flexible4ByteString_c::getInt16Data(uint8_t rui8_pos) const
     case 1:
       return convertLittleEndianStringI16(uint8+1);
     default:
-      getLibErrInstance().registerError(LibErr_c::Range, LibErr_c::Can);
+      getILibErrInstance().registerError(iLibErr_c::Range, iLibErr_c::Can);
       #if defined(SYSTEM_PC) && defined(DEBUG)
       fprintf( stderr,
         "ERROR!! Flexible4ByteString_c::getInt16Data has been called with write position %d which is larger than the allowed 2\n", rui8_pos );
@@ -1075,7 +1075,7 @@ int16_t Flexible4ByteString_c::getInt16Data(uint8_t rui8_pos) const
   IMPORTANT: position 0 matches to the least significant byte,
               as the string is ordered in LittleEndian order,
               identic to the order which is used for CAN messages
-  Possible Error: <LibErr_c::Range, LibErr_c::Can> when rui8_pos > 6
+  Possible Error: <iLibErr_c::Range, iLibErr_c::Can> when rui8_pos > 6
   @param rui8_pos Byte position [0..6]
   @param rui16_val uint16_t value to set
 */
@@ -1091,7 +1091,7 @@ void Flexible8ByteString_c::setUint16Data( uint8_t rui8_pos, uint16_t rui16_val)
       if ( rui8_pos < 6 ) numberRef2LittleEndianString( rui16_val, (uint8+rui8_pos) );
       else
       {
-        getLibErrInstance().registerError(LibErr_c::Range, LibErr_c::Can);
+        getILibErrInstance().registerError(iLibErr_c::Range, iLibErr_c::Can);
         #if defined(SYSTEM_PC) && defined(DEBUG)
         fprintf( stderr,
           "ERROR!! Flexible8ByteString_c::setUint16Data has been called with write position %d which is larger than the allowed 6\n", rui8_pos );
@@ -1107,7 +1107,7 @@ void Flexible8ByteString_c::setUint16Data( uint8_t rui8_pos, uint16_t rui16_val)
   IMPORTANT: position 0 matches to the least significant byte,
               as the string is ordered in LittleEndian order,
               identic to the order which is used for CAN messages
-  Possible Error: <LibErr_c::Range, LibErr_c::Can> when rui8_pos > 6
+  Possible Error: <iLibErr_c::Range, iLibErr_c::Can> when rui8_pos > 6
   @param rui8_pos Byte position [0..6]
   @param ri16_val int16_t value to set
 */
@@ -1123,7 +1123,7 @@ void Flexible8ByteString_c::setInt16Data( uint8_t rui8_pos, int16_t ri16_val)
       if ( rui8_pos < 6 ) numberRef2LittleEndianString( ri16_val, (uint8+rui8_pos) );
       else
       {
-        getLibErrInstance().registerError(LibErr_c::Range, LibErr_c::Can);
+        getILibErrInstance().registerError(iLibErr_c::Range, iLibErr_c::Can);
         #if defined(SYSTEM_PC) && defined(DEBUG)
         fprintf( stderr,
           "ERROR!! Flexible8ByteString_c::setInt16Data has been called with write position %d which is larger than the allowed 6\n", rui8_pos );
@@ -1138,7 +1138,7 @@ void Flexible8ByteString_c::setInt16Data( uint8_t rui8_pos, int16_t ri16_val)
   IMPORTANT: position 0 matches to the least significant byte,
               as the string is ordered in LittleEndian order,
               identic to the order which is used for CAN messages
-  Possible Error: <LibErr_c::Range, LibErr_c::Can> when rui8_pos > 6
+  Possible Error: <iLibErr_c::Range, iLibErr_c::Can> when rui8_pos > 6
   @param rui8_pos position of delivered uint16_t [0..6]
   @return uint16_t balue in CAN data string at pos (rui8_pos, rui8_pos+1) read Low/High order
 */
@@ -1154,7 +1154,7 @@ uint16_t Flexible8ByteString_c::getUint16Data(uint8_t rui8_pos) const
       if ( rui8_pos < 6 ) return convertLittleEndianStringUi16(uint8+rui8_pos);
       else
       {
-        getLibErrInstance().registerError(LibErr_c::Range, LibErr_c::Can);
+        getILibErrInstance().registerError(iLibErr_c::Range, iLibErr_c::Can);
         #if defined(SYSTEM_PC) && defined(DEBUG)
         fprintf( stderr,
           "ERROR!! Flexible8ByteString_c::getUint16Data has been called with write position %d which is larger than the allowed 6\n", rui8_pos );
@@ -1172,7 +1172,7 @@ uint16_t Flexible8ByteString_c::getUint16Data(uint8_t rui8_pos) const
   IMPORTANT: position 0 matches to the least significant byte,
               as the string is ordered in LittleEndian order,
               identic to the order which is used for CAN messages
-  Possible Error: <LibErr_c::Range, LibErr_c::Can> when rui8_pos > 6
+  Possible Error: <iLibErr_c::Range, iLibErr_c::Can> when rui8_pos > 6
   @param rui8_pos position of delivered int16_t [0..6]
   @return int16_t balue in CAN data string at pos (rui8_pos, rui8_pos+1) read Low/High order
 */
@@ -1188,7 +1188,7 @@ int16_t Flexible8ByteString_c::getInt16Data(uint8_t rui8_pos) const
       if ( rui8_pos < 6 ) return convertLittleEndianStringI16(uint8+rui8_pos);
       else
       {
-        getLibErrInstance().registerError(LibErr_c::Range, LibErr_c::Can);
+        getILibErrInstance().registerError(iLibErr_c::Range, iLibErr_c::Can);
         #if defined(SYSTEM_PC) && defined(DEBUG)
         fprintf( stderr,
           "ERROR!! Flexible8ByteString_c::getInt16Data has been called with write position %d which is larger than the allowed 6\n", rui8_pos );
@@ -1224,7 +1224,7 @@ float Flexible8ByteString_c::getFloatData(uint8_t rui8_pos) const
       }
       else
       {
-        getLibErrInstance().registerError(LibErr_c::Range, LibErr_c::Can);
+        getILibErrInstance().registerError(iLibErr_c::Range, iLibErr_c::Can);
 #if defined(SYSTEM_PC) && defined(DEBUG)
         fprintf( stderr,
                  "ERROR!! Flexible8ByteString_c::getFloatData has been called with write position %d which is larger than the allowed 6\n", rui8_pos );
@@ -1242,7 +1242,7 @@ float Flexible8ByteString_c::getFloatData(uint8_t rui8_pos) const
   IMPORTANT: position 0 matches to the least significant byte,
   as the string is ordered in LittleEndian order,
   identic to the order which is used for CAN messages
-  Possible Error: <LibErr_c::Range, LibErr_c::Can> when rui8_pos > 6
+  Possible Error: <iLibErr_c::Range, iLibErr_c::Can> when rui8_pos > 6
   @param rui8_pos Byte position [0..4]
   @param rf_val float value to set
   */
@@ -1251,7 +1251,7 @@ void Flexible8ByteString_c::setFloatData(uint8_t rui8_pos, const float rf_val)
   if ( rui8_pos < 5 ) floatVar2LittleEndianStream( &rf_val, (uint8+rui8_pos) );
   else
   {
-    getLibErrInstance().registerError(LibErr_c::Range, LibErr_c::Can);
+    getILibErrInstance().registerError(iLibErr_c::Range, iLibErr_c::Can);
 #if defined(SYSTEM_PC) && defined(DEBUG)
     fprintf( stderr,
             "ERROR!! Flexible8ByteString_c::setFloatData has been called with write position %d which is larger than the allowed 6\n", rui8_pos );
@@ -1265,7 +1265,7 @@ void Flexible8ByteString_c::setFloatData(uint8_t rui8_pos, const float rf_val)
   IMPORTANT: position 0 matches to the least significant byte,
               as the string is ordered in LittleEndian order,
               identic to the order which is used for CAN messages
-  Possible Error: <LibErr_c::Range, LibErr_c::Can> when rui8_pos > 6
+  Possible Error: <iLibErr_c::Range, iLibErr_c::Can> when rui8_pos > 6
   @param rui8_pos Byte position [0..4]
   @param rui32_val uint32_t value to set
 */
@@ -1279,7 +1279,7 @@ void Flexible8ByteString_c::setUint32Data( uint8_t rui8_pos, uint32_t rui32_val)
       if ( rui8_pos < 4 ) numberRef2LittleEndianString( rui32_val, (uint8+rui8_pos) );
       else
       {
-        getLibErrInstance().registerError(LibErr_c::Range, LibErr_c::Can);
+        getILibErrInstance().registerError(iLibErr_c::Range, iLibErr_c::Can);
         #if defined(SYSTEM_PC) && defined(DEBUG)
         fprintf( stderr,
           "ERROR!! Flexible8ByteString_c::setUint32Data has been called with write position %d which is larger than the allowed 6\n", rui8_pos );
@@ -1295,7 +1295,7 @@ void Flexible8ByteString_c::setUint32Data( uint8_t rui8_pos, uint32_t rui32_val)
   IMPORTANT: position 0 matches to the least significant byte,
               as the string is ordered in LittleEndian order,
               identic to the order which is used for CAN messages
-  Possible Error: <LibErr_c::Range, LibErr_c::Can> when rui8_pos > 6
+  Possible Error: <iLibErr_c::Range, iLibErr_c::Can> when rui8_pos > 6
   @param rui8_pos Byte position [0..4]
   @param ri32_val int32_t value to set
 */
@@ -1309,7 +1309,7 @@ void Flexible8ByteString_c::setInt32Data( uint8_t rui8_pos, int32_t ri32_val)
       if ( rui8_pos < 4 ) numberRef2LittleEndianString( ri32_val, (uint8+rui8_pos) );
       else
       {
-        getLibErrInstance().registerError(LibErr_c::Range, LibErr_c::Can);
+        getILibErrInstance().registerError(iLibErr_c::Range, iLibErr_c::Can);
         #if defined(SYSTEM_PC) && defined(DEBUG)
         fprintf( stderr,
           "ERROR!! Flexible8ByteString_c::setInt32Data has been called with write position %d which is larger than the allowed 6\n", rui8_pos );
@@ -1324,7 +1324,7 @@ void Flexible8ByteString_c::setInt32Data( uint8_t rui8_pos, int32_t ri32_val)
   IMPORTANT: position 0 matches to the least significant byte,
               as the string is ordered in LittleEndian order,
               identic to the order which is used for CAN messages
-  Possible Error: <LibErr_c::Range, LibErr_c::Can> when rui8_pos > 6
+  Possible Error: <iLibErr_c::Range, iLibErr_c::Can> when rui8_pos > 6
   @param rui8_pos position of delivered uint32_t [0..4]
   @return uint32_t balue in CAN data string at pos (rui8_pos, rui8_pos+1) read Low/High order
 */
@@ -1338,7 +1338,7 @@ uint32_t Flexible8ByteString_c::getUint32Data(uint8_t rui8_pos) const
       if ( rui8_pos < 4 ) return convertLittleEndianStringUi32(uint8+rui8_pos);
       else
       {
-        getLibErrInstance().registerError(LibErr_c::Range, LibErr_c::Can);
+        getILibErrInstance().registerError(iLibErr_c::Range, iLibErr_c::Can);
         #if defined(SYSTEM_PC) && defined(DEBUG)
         fprintf( stderr,
           "ERROR!! Flexible8ByteString_c::getUint32Data has been called with write position %d which is larger than the allowed 6\n", rui8_pos );
@@ -1356,7 +1356,7 @@ uint32_t Flexible8ByteString_c::getUint32Data(uint8_t rui8_pos) const
   IMPORTANT: position 0 matches to the least significant byte,
               as the string is ordered in LittleEndian order,
               identic to the order which is used for CAN messages
-  Possible Error: <LibErr_c::Range, LibErr_c::Can> when rui8_pos > 6
+  Possible Error: <iLibErr_c::Range, iLibErr_c::Can> when rui8_pos > 6
   @param rui8_pos position of delivered int32_t [0..4]
   @return int32_t balue in CAN data string at pos (rui8_pos, rui8_pos+1) read Low/High order
 */
@@ -1370,7 +1370,7 @@ int32_t Flexible8ByteString_c::getInt32Data(uint8_t rui8_pos) const
       if ( rui8_pos < 4 ) return convertLittleEndianStringI32(uint8+rui8_pos);
       else
       {
-        getLibErrInstance().registerError(LibErr_c::Range, LibErr_c::Can);
+        getILibErrInstance().registerError(iLibErr_c::Range, iLibErr_c::Can);
         #if defined(SYSTEM_PC) && defined(DEBUG)
         fprintf( stderr,
           "ERROR!! Flexible8ByteString_c::getInt32Data has been called with write position %d which is larger than the allowed 6\n", rui8_pos );

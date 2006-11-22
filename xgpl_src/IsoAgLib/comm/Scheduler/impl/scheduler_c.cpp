@@ -84,7 +84,7 @@
 #include "scheduler_c.h"
 #include <IsoAgLib/driver/system/impl/system_c.h>
 #include <IsoAgLib/driver/can/impl/canio_c.h>
-#include <IsoAgLib/util/liberr_c.h>
+#include <IsoAgLib/util/iliberr_c.h>
 #include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h>
 
 #ifdef USE_PROCESS
@@ -267,7 +267,7 @@ void Scheduler_c::startSystem()
   */
 void Scheduler_c::registerAccessFlt( void )
 {
-  getLibErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::Scheduler );
+  getILibErrInstance().registerError( iLibErr_c::ElNonexistent, iLibErr_c::Scheduler );
 }
 
 

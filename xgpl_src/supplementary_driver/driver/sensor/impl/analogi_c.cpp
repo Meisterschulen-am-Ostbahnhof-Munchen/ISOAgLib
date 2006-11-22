@@ -93,8 +93,8 @@ namespace __IsoAgLib {
   (uses BIOS function)
 
   possible errors:
-      * LibErr_c::Range wrong input number
-      * LibErr_c::Precondition wrong input type
+      * iLibErr_c::Range wrong input number
+      * iLibErr_c::Precondition wrong input type
   @see SensorI_c::createAnalog
   @see Sensor_c::t_analogType
   @param rb_channel default-argument for the hardware channel of the input
@@ -111,8 +111,8 @@ AnalogI_c::AnalogI_c(uint8_t rb_channel, Sensor_c::analogType_t ren_analogType, 
   (uses BIOS function)
 
   possible errors:
-      * LibErr_c::Range wrong input number
-      * LibErr_c::Precondition wrong input type
+      * iLibErr_c::Range wrong input number
+      * iLibErr_c::Precondition wrong input type
   @see SensorI_c::createAnalog
   @see Sensor_c::t_analogType
   @param rb_channel default-argument for the hardware channel of the input
@@ -141,11 +141,11 @@ void AnalogI_c::init(uint8_t rb_channel, Sensor_c::analogType_t ren_analogType, 
       break;
     case HAL_RANGE_ERR:
       // wrong input channel number
-      getLibErrInstance().registerError( LibErr_c::Range, LibErr_c::Sensor );
+      getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Sensor );
       break;
     case HAL_CONFIG_ERR:
       // wrong input type
-      getLibErrInstance().registerError( LibErr_c::Precondition, LibErr_c::Sensor );
+      getILibErrInstance().registerError( iLibErr_c::Precondition, iLibErr_c::Sensor );
       break;
   }
 }
@@ -177,7 +177,7 @@ int16_t AnalogI_c::val()const{
   {
     if (i16_sensor == HAL_RANGE_ERR)
     { // error during measure -> wrong input channel no
-      getLibErrInstance().registerError( LibErr_c::Range, LibErr_c::Sensor );
+      getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Sensor );
       // return error code for 16bit sensor values
       return ERROR_VAL_16S;
     }
@@ -199,7 +199,7 @@ void AnalogI_c::setFastAdc(bool rb_useFast){
   (uses BIOS function)
 
   possible errors:
-      * LibErr_c::Range wrong input number
+      * iLibErr_c::Range wrong input number
   @return true if sensor value is different from 0, otherwise 0
 */
 bool AnalogI_c::active() const {

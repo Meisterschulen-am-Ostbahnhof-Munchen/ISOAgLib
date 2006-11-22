@@ -122,7 +122,7 @@ public:
 
 
     possible errors:
-        * LibErr_c::Range given limits are not possible
+        * iLibErr_c::Range given limits are not possible
     @param rb_digitalFirst smallest allowed digital input channel number (DIGITAL_INPUT_MIN)
     @param rb_digitalLast greatest allowed digital input channel number (DIGITAL_INPUT_MAX)
     @param rb_analogFirst smallest allowed analog input channel number (ANALOG_INPUT_MIN)
@@ -144,7 +144,7 @@ public:
     set the limits for digital input channels (first setting can be done by constructor parameters)
 
     possible errors:
-        * LibErr_c::Range given limits are not possible
+        * iLibErr_c::Range given limits are not possible
     @param rb_digitalFirst number of the smallest allowed digital input channel
     @param rb_digitalLast number of the greatest allowed digital input channel
   */
@@ -153,7 +153,7 @@ public:
     set the limits for analog input channels (first setting can be done by constructor parameters)
 
     possible errors:
-        * LibErr_c::Range given limits are not possible
+        * iLibErr_c::Range given limits are not possible
     @param rb_analogFirst number of the smallest allowed analog input channel
     @param rb_analogLast number of the greatest allowed analog input channel
   */
@@ -162,7 +162,7 @@ public:
     set the limits for counter input channels (first setting can be done by constructor parameters)
 
     possible errors:
-        * LibErr_c::Range given limits are not possible
+        * iLibErr_c::Range given limits are not possible
     @param rb_counterFirst number of the smallest allowed counter input channel
     @param rb_counterLast number of the greatest allowed counter input channel
   */
@@ -209,7 +209,7 @@ public:
                (throw exception if exceptions are activated on compile time)
 
     possible errors:
-        * LibErr_c::elNonexistant wanted analog input with given channel no does not exist
+        * iLibErr_c::elNonexistant wanted analog input with given channel no does not exist
     @see SensorI_c::createAnalog
     @see SensorI_c::existAnalog
     @see SensorI_c::digital
@@ -227,7 +227,7 @@ public:
                (throw exception if exceptions are activated on compile time)
 
     possible errors:
-        * LibErr_c::elNonexistant wanted digital input with given channel no does not exist
+        * iLibErr_c::elNonexistant wanted digital input with given channel no does not exist
     @see SensorI_c::createDigital
     @see SensorI_c::existDigital
     @see DigitalI_c::Digital_I
@@ -245,7 +245,7 @@ public:
                (throw exception if exceptions are activated on compile time)
 
     possible errors:
-        * LibErr_c::elNonexistant wanted counter input with given channel no does not exist
+        * iLibErr_c::elNonexistant wanted counter input with given channel no does not exist
     @see SensorI_c::createCounter
     @see SensorI_c::existCounter
     @see CounterI_c::Counter_I

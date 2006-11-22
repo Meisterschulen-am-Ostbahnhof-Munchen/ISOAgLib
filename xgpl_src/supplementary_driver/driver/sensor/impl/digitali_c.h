@@ -127,7 +127,7 @@ public:
     (uses BIOS function)
 
     possible errors:
-        * LibErr_c::Range wrong input number
+        * iLibErr_c::Range wrong input number
     @see SensorI_c::createDigital
     @see Sensor_c::t_onoff
     @param rb_channel default-argument for setting hardware channel for this input
@@ -142,7 +142,7 @@ public:
     (uses BIOS function)
 
     possible errors:
-        * LibErr_c::Range wrong input number
+        * iLibErr_c::Range wrong input number
     @see SensorI_c::createDigital
     @see Sensor_c::t_onoff
     @param rb_channel default-argument for setting hardware channel for this input
@@ -163,7 +163,7 @@ public:
     check for the input value (uses BIOS function)
 
     possible errors:
-        * LibErr_c::Range wrong input number
+        * iLibErr_c::Range wrong input number
     @return 1 for (High signal AND ren_onoff==OnHigh)(Default!) or (Low signal AND ren_onoff==OnLow); otherwise 0
   */
   int16_t val()const;
@@ -171,7 +171,7 @@ public:
     check for the input value (uses BIOS function)
 
     possible errors:
-        * LibErr_c::Range wrong input number
+        * iLibErr_c::Range wrong input number
     @return true for (High signal AND ren_onoff==OnHigh)(Default!) or (Low signal AND ren_onoff==OnLow); otherwise false
   */
   bool active() const;

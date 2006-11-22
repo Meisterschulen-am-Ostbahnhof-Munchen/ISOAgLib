@@ -194,7 +194,7 @@ MultiReceiveClientWrapper_s::MultiReceiveClientWrapper_s( IsoAgLib::MultiReceive
   else //    shouldn't occur...
   {
     ui8_cachedClientAddress = 0xFE;
-    getLibErrInstance().registerError( LibErr_c::Inconsistency, LibErr_c::System );
+    getILibErrInstance().registerError( iLibErr_c::Inconsistency, iLibErr_c::System );
   }
 }
 
@@ -595,7 +595,7 @@ MultiReceive_c::processMsg()
   } // end if directed to known dest (this check works NOT for fast packet!!!)
   #ifndef NMEA_2000_FAST_PACKET
   // This point should NOT be reached anyway! all "case" statements
-  getLibErrInstance().registerError( LibErr_c::Inconsistency, LibErr_c::System );
+  getILibErrInstance().registerError( iLibErr_c::Inconsistency, iLibErr_c::System );
   return false;
   #else
   // Check if it's registered for fast-packet receive

@@ -89,7 +89,7 @@
 /* *************************************** */
 /* ********** include headers ************ */
 /* *************************************** */
-#include <IsoAgLib/util/liberr_c.h>
+#include <IsoAgLib/util/iliberr_c.h>
 #include <IsoAgLib/util/impl/singleton.h>
 #include <IsoAgLib/hal/eeprom.h>
 
@@ -468,7 +468,7 @@ bool EEPROMIO_c::write(uint16_t rui16_adress, T rTemplateVal)
   }
   else
   { // write action would exceed limits
-    getLibErrInstance().registerError( LibErr_c::Range, LibErr_c::Eeprom ); // changed by M.Wodok, was "eeprom"
+    getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Eeprom ); // changed by M.Wodok, was "eeprom"
   }
   return b_result;
 };

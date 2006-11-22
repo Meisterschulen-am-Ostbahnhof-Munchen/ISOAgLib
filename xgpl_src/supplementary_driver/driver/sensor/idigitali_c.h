@@ -118,7 +118,7 @@ public:
     (uses BIOS function)
 
     possible errors:
-        * LibErr_c::Range wrong input number
+        * iLibErr_c::Range wrong input number
     @see SensorI_c::createDigital
     @see Sensor_c::t_onoff
     @param rb_channel default-argument for setting hardware channel for this input

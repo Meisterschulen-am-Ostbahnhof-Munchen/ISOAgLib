@@ -83,7 +83,7 @@
  ***************************************************************************/
 #include "isomonitor_c.h"
 #include "isosystempkg_c.h"
-#include <IsoAgLib/util/liberr_c.h>
+#include <IsoAgLib/util/iliberr_c.h>
 #include <IsoAgLib/comm/Scheduler/impl/scheduler_c.h>
 #include <IsoAgLib/driver/can/impl/canio_c.h>
 #include "isorequestpgn_c.h"
@@ -429,7 +429,7 @@ ISOItem_c& ISOMonitor_c::isoMemberEcuTypeInd (ISOName_c::ecuType_t r_ecuType, ui
   // check if rui8_ind was in correct range
   if (rui8_ind != c_cnt)
   { // wrong range of rui8_ind
-    getLibErrInstance().registerError( LibErr_c::Range, LibErr_c::System );
+    getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::System );
   }
   return *pc_isoMemberCache;
 }
@@ -490,7 +490,7 @@ ISOItem_c& ISOMonitor_c::isoMemberDevClassInd(uint8_t rui8_devClass, uint8_t rui
   // check if rui8_ind was in correct range
   if (rui8_ind != c_cnt)
   { // wrong range of rui8_ind
-    getLibErrInstance().registerError( LibErr_c::Range, LibErr_c::System );
+    getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::System );
   }
   return *pc_isoMemberCache;
 }
@@ -594,7 +594,7 @@ ISOItem_c* ISOMonitor_c::insertIsoMember(const ISOName_c& rc_isoName,
   // check if another ISOItem_c with same ISOName already exist
   if (existIsoMemberISOName(rc_isoName))
   { // another member with same ISOName found
-    getLibErrInstance().registerError( LibErr_c::Busy, LibErr_c::System );
+    getILibErrInstance().registerError( iLibErr_c::Busy, iLibErr_c::System );
     return NULL; // don't insert
   }
 
@@ -609,7 +609,7 @@ ISOItem_c* ISOMonitor_c::insertIsoMember(const ISOName_c& rc_isoName,
   pc_isoMemberCache = vec_isoMember.begin();
   if (vec_isoMember.size() <= b_oldSize)
   { // array didn't grow
-    getLibErrInstance().registerError( LibErr_c::BadAlloc, LibErr_c::System );
+    getILibErrInstance().registerError( iLibErr_c::BadAlloc, iLibErr_c::System );
   }
   else
   { // item was inserted
@@ -671,7 +671,7 @@ ISOItem_c& ISOMonitor_c::localIsoMemberInd(uint8_t rui8_ind)
 
   if ( pc_result == NULL )
   { // index exceeds array size
-    getLibErrInstance().registerError( LibErr_c::Range, LibErr_c::System );
+    getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::System );
   }
 
   return *pc_result;
@@ -743,7 +743,7 @@ ISOItem_c& ISOMonitor_c::getActiveLocalIsoMember()
   }
   else
   { // no active own identity found -> set error state
-    getLibErrInstance().registerError( LibErr_c::SysNoActiveLocalMember, LibErr_c::System );
+    getILibErrInstance().registerError( iLibErr_c::SysNoActiveLocalMember, iLibErr_c::System );
 
     // throw exception by constant -> if no exception configured no command is created
     THROW_PRECOND_VIOLATION
@@ -885,7 +885,7 @@ ISOItem_c& ISOMonitor_c::isoMemberISOName(const ISOName_c& rc_isoName, bool rb_f
   }
   else
   { // wanted element not found
-    getLibErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::System );
+    getILibErrInstance().registerError( iLibErr_c::ElNonexistent, iLibErr_c::System );
 
     // throw exception by constant -> if no exception configured no command is created
     THROW_CONT_EL_NONEXIST
@@ -911,7 +911,7 @@ ISOItem_c& ISOMonitor_c::isoMemberNr(uint8_t rui8_nr)
   }
   else
   { // wanted element not found
-    getLibErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::System );
+    getILibErrInstance().registerError( iLibErr_c::ElNonexistent, iLibErr_c::System );
 
     // throw exception by constant -> if no exception configured no command is created
     THROW_CONT_EL_NONEXIST
@@ -976,7 +976,7 @@ bool ISOMonitor_c::deleteIsoMemberISOName(const ISOName_c& rc_isoName)
   }
   else
   { // to be deleted member ISOName does not exist
-    getLibErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::System );
+    getILibErrInstance().registerError( iLibErr_c::ElNonexistent, iLibErr_c::System );
     return false;
   }
 }
@@ -994,7 +994,7 @@ bool ISOMonitor_c::deleteIsoMemberNr(uint8_t rui8_nr)
   }
   else
   { // to be deleted member number does not exist
-    getLibErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::System );
+    getILibErrInstance().registerError( iLibErr_c::ElNonexistent, iLibErr_c::System );
     return false;
   }
 }
@@ -1052,7 +1052,7 @@ bool ISOMonitor_c::unifyIsoISOName (ISOName_c& refc_isoName, bool rb_dontUnify)
     } // else: if we can't unify, we're lost here as such an IsoName is already claimed on the bus
   } // else: IsoName doesn't exist --> fine!
 
-  if (!b_result) getLibErrInstance().registerError( LibErr_c::Busy, LibErr_c::System );
+  if (!b_result) getILibErrInstance().registerError( iLibErr_c::Busy, iLibErr_c::System );
   return b_result;
 }
 
@@ -1315,7 +1315,7 @@ bool ISOMonitor_c::processMsg()
       else
       {
         // shouldn't happen!
-        getLibErrInstance().registerError( LibErr_c::Inconsistency, LibErr_c::System );
+        getILibErrInstance().registerError( iLibErr_c::Inconsistency, iLibErr_c::System );
       }
       break;
     case WORKING_SET_MEMBER_PGN: // working set member
@@ -1331,7 +1331,7 @@ bool ISOMonitor_c::processMsg()
       else
       {
         // shouldn't happen!
-        getLibErrInstance().registerError( LibErr_c::Inconsistency, LibErr_c::System );
+        getILibErrInstance().registerError( iLibErr_c::Inconsistency, iLibErr_c::System );
       }
       break;
     #endif

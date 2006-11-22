@@ -188,7 +188,7 @@ void MeasureProgBase_c::assignFromSource( const MeasureProgBase_c& rrefc_src )
 
   if (vec_measureSubprog.size() < rrefc_src.vec_measureSubprog.size())
   { // not all items copied
-    getLibErrInstance().registerError( LibErr_c::BadAlloc, LibErr_c::Process );
+    getILibErrInstance().registerError( iLibErr_c::BadAlloc, iLibErr_c::Process );
   }
   #ifdef DEBUG_HEAP_USEAGE
   else
@@ -251,7 +251,7 @@ MeasureProgBase_c::~MeasureProgBase_c(){
     vec_measureSubprog.push_front(MeasureSubprog_c(ren_type, ren_doSend, ri32_increment));
     if (b_oldSize >= vec_measureSubprog.size())
     { // array didn't grow
-      getLibErrInstance().registerError( LibErr_c::BadAlloc, LibErr_c::Process );
+      getILibErrInstance().registerError( iLibErr_c::BadAlloc, iLibErr_c::Process );
       return false;
     }
     #ifdef DEBUG_HEAP_USEAGE
@@ -791,7 +791,7 @@ int32_t MeasureProgBase_c::valMod(GeneralCommand_c::ValueGroup_t en_valueGroup) 
       break;
     default:
       // wrong range
-      getLibErrInstance().registerError( LibErr_c::Range, LibErr_c::Process );
+      getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Process );
   }
 
   return i32_value;
@@ -829,7 +829,7 @@ float MeasureProgBase_c::valModFloat(GeneralCommand_c::ValueGroup_t en_valueGrou
         f_value = medFloat();
         break;
       default:
-        getLibErrInstance().registerError( LibErr_c::Range, LibErr_c::Process );
+        getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Process );
     }
   return f_value;
 }
@@ -940,7 +940,7 @@ void MeasureProgBase_c::resetValMod(GeneralCommand_c::ValueGroup_t en_valueGroup
         resetMed();
         break;
       default:
-        getLibErrInstance().registerError( LibErr_c::Range, LibErr_c::Process );
+        getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Process );
     }
 }
 

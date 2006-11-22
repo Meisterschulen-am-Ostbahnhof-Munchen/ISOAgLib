@@ -49,7 +49,7 @@
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
  * the main author Achim Spangler by a.spangler@osb-ag:de                  *
  ***************************************************************************/
-#include "liberr_c.h"
+#include "iliberr_c.h"
 #include "config.h"
 #include <IsoAgLib/hal/system.h>
 
@@ -64,15 +64,15 @@
 
 // Begin Namespace IsoAgLib
 namespace __IsoAgLib {
-  /** C-style function, to get access to the unique LibErr_c singleton instance */
-  LibErr_c& getLibErrInstance( void ) { return IsoAgLib::getLibErrInstance();}
+  /** C-style function, to get access to the unique iLibErr_c singleton instance */
+  iLibErr_c& getILibErrInstance( void ) { return IsoAgLib::getILibErrInstance();}
 }
 
 namespace IsoAgLib {
-/** C-style function, to get access to the unique LibErr_c singleton instance */
-LibErr_c& getLibErrInstance( void )
+/** C-style function, to get access to the unique iLibErr_c singleton instance */
+iLibErr_c& getILibErrInstance( void )
 {
-  static LibErr_c& refc_errInstance = LibErr_c::instance();
+  static iLibErr_c& refc_errInstance = iLibErr_c::instance();
   return refc_errInstance;
 }
 
@@ -80,7 +80,7 @@ LibErr_c& getLibErrInstance( void )
   Initialize the unique error state handler
   @return true -> everything without errors initialised
 */
-bool LibErr_c::init( void )
+bool iLibErr_c::init( void )
 {
 	clear( AllErrTypes, AllErrLocations );
 //  ui32_lastErrorTime = 0;
@@ -88,11 +88,11 @@ bool LibErr_c::init( void )
 }
 
 /** default constructor which sets the error value to noErr */
-LibErr_c::LibErr_c() : errTypeAtLoc() // : ui32_lastErrorTime(0)
+iLibErr_c::iLibErr_c() : errTypeAtLoc() // : ui32_lastErrorTime(0)
 { }
 
 /** copy constructor which sets the error value to the err value of the source */
-LibErr_c::LibErr_c(const LibErr_c& rrefc_src)
+iLibErr_c::iLibErr_c(const iLibErr_c& rrefc_src)
 {
   for (int i=0; i<AllErrLocations; i++) {
     errTypeAtLoc [i] = rrefc_src.errTypeAtLoc [i];
@@ -105,7 +105,7 @@ LibErr_c::LibErr_c(const LibErr_c& rrefc_src)
   * @param rt_errType type of occured error
   * @param rt_errLocation location of error
   */
-void LibErr_c::registerError( LibErr_c::LibErrTypes_t rt_errType, LibErrLocations_t rt_errLocation )
+void iLibErr_c::registerError( iLibErr_c::iLibErrTypes_t rt_errType, iLibErrLocations_t rt_errLocation )
 {
   if ((rt_errLocation != AllErrLocations) && (rt_errType != AllErrTypes)) {
     errTypeAtLoc [rt_errLocation] [rt_errType] = 1;
@@ -113,8 +113,8 @@ void LibErr_c::registerError( LibErr_c::LibErrTypes_t rt_errType, LibErrLocation
 
 #ifdef DEBUG
   static int32_t si32_nextDebug = 0;
-  static LibErr_c::LibErrTypes_t st_lastDebugErrType;
-  static LibErrLocations_t st_lastDebugErrLocation;
+  static iLibErr_c::iLibErrTypes_t st_lastDebugErrType;
+  static iLibErrLocations_t st_lastDebugErrLocation;
   if ( ( HAL::getTime() > si32_nextDebug )
     || ( st_lastDebugErrType != rt_errType )
     || ( st_lastDebugErrLocation != rt_errLocation ) )
@@ -179,7 +179,7 @@ void LibErr_c::registerError( LibErr_c::LibErrTypes_t rt_errType, LibErrLocation
 /**
   clear all error information of a special location
   @param rt_errType select for which error types the counter shall be reset (default reset all counters)
-void LibErr_c::clear( LibErrTypes_t rt_errType )
+void iLibErr_c::clear( iLibErrTypes_t rt_errType )
 {
   switch ( rt_errType ) {
     case AllErrTypes: CNAMESPACE::memset( &errTypeBitfield, 0, sizeof(errTypeBitfield) ); break;
@@ -217,7 +217,7 @@ void LibErr_c::clear( LibErrTypes_t rt_errType )
   @param rt_errLocation select for which error locations the counter shall be reset
   @param rt_errType select for which error types the counter shall be reset (default reset all counters)
 */
-void LibErr_c::clear( LibErrTypes_t rt_errType, LibErrLocations_t rt_errLocation ) {
+void iLibErr_c::clear( iLibErrTypes_t rt_errType, iLibErrLocations_t rt_errLocation ) {
   if (rt_errType == AllErrTypes) {
     clear (rt_errLocation); // Clear complete Location
   } else {
@@ -235,7 +235,7 @@ void LibErr_c::clear( LibErrTypes_t rt_errType, LibErrLocations_t rt_errLocation
   clear all error information of a special location
   @param rt_errLocation select for which error locations the counter shall be reset
 */
-void LibErr_c::clear( LibErrLocations_t rt_errLocation ) {
+void iLibErr_c::clear( iLibErrLocations_t rt_errLocation ) {
   if (rt_errLocation == AllErrLocations) {
     for (int i=0; i<AllErrLocations; i++) {
       errTypeAtLoc [i].reset ();
@@ -268,7 +268,7 @@ void LibErr_c::clear( LibErrLocations_t rt_errLocation ) {
   @param rt_errType optional select the error-types to count (default all error types)
   @return count of registered error types
 */
-uint16_t LibErr_c::getErrCnt( LibErrTypes_t rt_errType ) const
+uint16_t iLibErr_c::getErrCnt( iLibErrTypes_t rt_errType ) const
 {
   uint16_t errors=0;
   if (rt_errType == AllErrTypes) {
@@ -343,9 +343,9 @@ uint16_t LibErr_c::getErrCnt( LibErrTypes_t rt_errType ) const
 /**
   deliver the type of the nth error
   @param rui8_ind index of the requested error ( [0..(ErrCnt-1)] )
-  @return LibErrTypes_t
+  @return iLibErrTypes_t
 */
-LibErr_c::LibErrTypes_t LibErr_c::getErrIndType( uint8_t rui8_ind ) const
+iLibErr_c::iLibErrTypes_t iLibErr_c::getErrIndType( uint8_t rui8_ind ) const
 {
   int16_t i16_foundInd = -1;
   if ( rui8_ind >= getErrCnt( AllErrTypes ) ) return AllErrTypes;
@@ -357,7 +357,7 @@ LibErr_c::LibErrTypes_t LibErr_c::getErrIndType( uint8_t rui8_ind ) const
       if ( errTypeAtLoc [i].test (j))
       {
         i16_foundInd++;
-        if ( i16_foundInd == rui8_ind ) return LibErrTypes_t(j);
+        if ( i16_foundInd == rui8_ind ) return iLibErrTypes_t(j);
       }
     }
   }
@@ -368,9 +368,9 @@ LibErr_c::LibErrTypes_t LibErr_c::getErrIndType( uint8_t rui8_ind ) const
 /**
   deliver the location of the nth error
   @param rui8_ind index of the requested error ( [0..(ErrCnt-1)] )
-  @return LibErrTypes_t
+  @return iLibErrTypes_t
 */
-LibErr_c::LibErrLocations_t LibErr_c::getErrIndLocation( uint8_t rui8_ind ) const
+iLibErr_c::iLibErrLocations_t iLibErr_c::getErrIndLocation( uint8_t rui8_ind ) const
 {
   int16_t i16_foundInd = -1;
   if ( rui8_ind >= getErrCnt( AllErrTypes ) ) return AllErrLocations;
@@ -382,7 +382,7 @@ LibErr_c::LibErrLocations_t LibErr_c::getErrIndLocation( uint8_t rui8_ind ) cons
       if ( errTypeAtLoc [i].test (j))
       {
         i16_foundInd++;
-        if ( i16_foundInd == rui8_ind ) return LibErrLocations_t(i);
+        if ( i16_foundInd == rui8_ind ) return iLibErrLocations_t(i);
       }
     }
   }
@@ -398,7 +398,7 @@ LibErr_c::LibErrLocations_t LibErr_c::getErrIndLocation( uint8_t rui8_ind ) cons
   @param rt_errLocation location to check for errors
   @return count of registered error types
 */
-uint16_t LibErr_c::getErrCnt( LibErrLocations_t rt_errLocation ) const
+uint16_t iLibErr_c::getErrCnt( iLibErrLocations_t rt_errLocation ) const
 {
   uint16_t errors=0;
   if (rt_errLocation == AllErrLocations) {
@@ -450,12 +450,12 @@ uint16_t LibErr_c::getErrCnt( LibErrLocations_t rt_errLocation ) const
   @param rt_errType optional select the error-types to count (default all error types)
   @return true -> the defined error locations report no error
 */
-bool LibErr_c::good( LibErrTypes_t rt_errType ) const
+bool iLibErr_c::good( iLibErrTypes_t rt_errType ) const
 {
   uint16_t errors=0;
   if ( rt_errType == AllErrTypes ) {
     for (int i=0; i<AllErrTypes; i++) {
-      errors += getErrCnt( (LibErrTypes_t) i );
+      errors += getErrCnt( (iLibErrTypes_t) i );
     }
   }
   else {
@@ -469,12 +469,12 @@ bool LibErr_c::good( LibErrTypes_t rt_errType ) const
   @param rt_errLocation location to check for errors
   @return true -> the defined error locations report no error
 */
-bool LibErr_c::good( LibErrLocations_t rt_errLocation ) const
+bool iLibErr_c::good( iLibErrLocations_t rt_errLocation ) const
 {
   uint16_t errors=0;
   if ( rt_errLocation == AllErrLocations ) {
     for (int i=0; i<AllErrLocations; i++) {
-      errors += getErrCnt( (LibErrLocations_t) i );
+      errors += getErrCnt( (iLibErrLocations_t) i );
     }
   }
   else {
@@ -495,7 +495,7 @@ bool LibErr_c::good( LibErrLocations_t rt_errLocation ) const
 */
 }
 
-bool LibErr_c::good( LibErrTypes_t rt_errType, LibErrLocations_t rt_errLocation ) const
+bool iLibErr_c::good( iLibErrTypes_t rt_errType, iLibErrLocations_t rt_errLocation ) const
 {
   if (!good( rt_errLocation ))
     return false;
@@ -508,7 +508,7 @@ bool LibErr_c::good( LibErrTypes_t rt_errType, LibErrLocations_t rt_errLocation 
 
 
 /** default destructor which has nothing to do */
-LibErr_c::~LibErr_c()
+iLibErr_c::~iLibErr_c()
 {
 }
 

@@ -96,7 +96,7 @@ SensorI_c& getSensorInstance( void ) { return SensorI_c::instance();};
   initial state
 
   possible errors:
-      * LibErr_c::Range given limits are not possible
+      * iLibErr_c::Range given limits are not possible
   @param rb_digitalFirst smallest allowed digital input channel number (DIGITAL_INPUT_MIN)
   @param rb_digitalLast greatest allowed digital input channel number (DIGITAL_INPUT_MAX)
   @param rb_analogFirst smallest allowed analog input channel number (ANALOG_INPUT_MIN)
@@ -122,7 +122,7 @@ SensorI_c::~SensorI_c(){
 /**
   set the limits for digital input channels (first setting can be done by constructor parameters)
   possible errors:
-      * LibErr_c::Range given limits are not possible
+      * iLibErr_c::Range given limits are not possible
   @param rb_digitalFirst number of the smallest allowed digital input channel
   @param rb_digitalLast number of the greatest allowed digital input channel
 */
@@ -142,7 +142,7 @@ void SensorI_c::setDigitalLimits(uint8_t rb_digitalFirst, uint8_t rb_digitalLast
   }
   else
   { // wrong range
-    getLibErrInstance().registerError( LibErr_c::Range, LibErr_c::Sensor );
+    getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Sensor );
   }
 }
 
@@ -150,7 +150,7 @@ void SensorI_c::setDigitalLimits(uint8_t rb_digitalFirst, uint8_t rb_digitalLast
   set the limits for analog input channels (first setting can be done by constructor parameters)
 
   possible errors:
-      * LibErr_c::Range given limits are not possible
+      * iLibErr_c::Range given limits are not possible
   @param rb_analogFirst number of the smallest allowed analog input channel
   @param rb_analogLast number of the greatest allowed analog input channel
 */
@@ -170,7 +170,7 @@ void SensorI_c::setAnalogLimits(uint8_t rb_analogFirst, uint8_t rb_analogLast){
   }
   else
   { // wrong range
-    getLibErrInstance().registerError( LibErr_c::Range, LibErr_c::Sensor );
+    getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Sensor );
   }
 }
 
@@ -178,7 +178,7 @@ void SensorI_c::setAnalogLimits(uint8_t rb_analogFirst, uint8_t rb_analogLast){
   set the limits for counter input channels (first setting can be done by constructor parameters)
 
   possible errors:
-      * LibErr_c::Range given limits are not possible
+      * iLibErr_c::Range given limits are not possible
   @param rb_counterFirst number of the smallest allowed counter input channel
   @param rb_counterLast number of the greatest allowed counter input channel
 */
@@ -198,7 +198,7 @@ void SensorI_c::setCounterLimits(uint8_t rb_counterFirst, uint8_t rb_counterLast
   }
   else
   { // wrong range
-    getLibErrInstance().registerError( LibErr_c::Range, LibErr_c::Sensor );
+    getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Sensor );
   }
 }
 /** handler function for access to undefined client.
@@ -206,7 +206,7 @@ void SensorI_c::setCounterLimits(uint8_t rb_counterFirst, uint8_t rb_counterLast
   */
 void SensorI_c::registerAccessFlt( void )
 {
-  getLibErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::Sensor );
+  getILibErrInstance().registerError( iLibErr_c::ElNonexistent, iLibErr_c::Sensor );
   // throw exception if defined to do
   THROW_CONT_EL_NONEXIST
 }

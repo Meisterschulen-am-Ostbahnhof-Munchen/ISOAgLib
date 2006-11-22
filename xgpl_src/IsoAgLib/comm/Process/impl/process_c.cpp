@@ -193,7 +193,7 @@ Process_c::~Process_c(){
 void Process_c::registerAccessFlt( void )
 {
 
-  getLibErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::Process );
+  getILibErrInstance().registerError( iLibErr_c::ElNonexistent, iLibErr_c::Process );
 }
 
 /**
@@ -462,7 +462,7 @@ ProcDataLocalBase_c& Process_c::procDataLocal( uint16_t rui16_DDI, uint16_t rui1
   bool b_found = updateLocalCache( rui16_DDI, rui16_element, rrefc_isoNameReceiver);
   if (!b_found)
   { // not found and no creation wanted -> error
-    getLibErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::Process );
+    getILibErrInstance().registerError( iLibErr_c::ElNonexistent, iLibErr_c::Process );
   }
   return **pc_searchCacheC1;
 }
@@ -488,7 +488,7 @@ ProcDataRemoteBase_c& Process_c::procDataRemote( uint16_t rui16_DDI, uint16_t ru
   bool b_found = updateRemoteCache(rui16_DDI, rui16_element, rrefc_isoNameSender, rrefc_isoNameReceiver);
   if (!b_found)
   { // not found and no creation wanted -> error
-    getLibErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::Process );
+    getILibErrInstance().registerError( iLibErr_c::ElNonexistent, iLibErr_c::Process );
   }
   return **pc_searchCacheC2;
 }

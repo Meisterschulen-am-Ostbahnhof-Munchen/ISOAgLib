@@ -361,7 +361,7 @@ void SetpointRemote_c::releaseMaster(){
   }
   else
   { // I'm not the master
-    getLibErrInstance().registerError( LibErr_c::Precondition, LibErr_c::Process );
+    getILibErrInstance().registerError( iLibErr_c::Precondition, iLibErr_c::Process );
   }
 }
 

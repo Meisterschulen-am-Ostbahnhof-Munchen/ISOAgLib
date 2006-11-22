@@ -107,8 +107,8 @@ public:
     (uses BIOS function)
 
     possible errors:
-        * LibErr_c::Range wrong input number
-        * LibErr_c::Precondition wrong input type
+        * iLibErr_c::Range wrong input number
+        * iLibErr_c::Precondition wrong input type
     @see SensorI_c::createAnalog
     @see Sensor_c::t_analogType
     @param rb_channel default-argument for the hardware channel of the input
@@ -125,8 +125,8 @@ public:
     (uses BIOS function)
 
     possible errors:
-        * LibErr_c::Range wrong input number
-        * LibErr_c::Precondition wrong input type
+        * iLibErr_c::Range wrong input number
+        * iLibErr_c::Precondition wrong input type
     @see SensorI_c::createAnalog
     @see Sensor_c::t_analogType
     @param rb_channel default-argument for the hardware channel of the input

@@ -128,7 +128,7 @@ void ManageMeasureProgLocal_c::checkInitList( void )
   }
   if (vec_prog().size() < 1)
   { // first element added without success
-    getLibErrInstance().registerError( LibErr_c::BadAlloc, LibErr_c::Process );
+    getILibErrInstance().registerError( iLibErr_c::BadAlloc, iLibErr_c::Process );
   }
   #ifdef DEBUG_HEAP_USEAGE
   else
@@ -176,7 +176,7 @@ void ManageMeasureProgLocal_c::assignFromSource( const ManageMeasureProgLocal_c&
   // now initialise the elements
   if (vec_prog().size() < rrefc_src.constVecProg().size())
   { // not all items copied
-    getLibErrInstance().registerError( LibErr_c::BadAlloc, LibErr_c::Process );
+    getILibErrInstance().registerError( iLibErr_c::BadAlloc, iLibErr_c::Process );
   }
   #ifdef DEBUG_HEAP_USEAGE
   else
@@ -427,7 +427,7 @@ MeasureProgLocal_c& ManageMeasureProgLocal_c::prog(const ISOName_c& rc_isoName, 
   // update the prog cache
   if (!updateProgCache(rc_isoName, rb_doCreate) && (!rb_doCreate))
   { // not found and no creation wanted
-    getLibErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::Process );
+    getILibErrInstance().registerError( iLibErr_c::ElNonexistent, iLibErr_c::Process );
   }
 
   // now return the cache pointed prog
@@ -500,7 +500,7 @@ void ManageMeasureProgLocal_c::insertMeasureprog(const ISOName_c& rc_isoName){
     }
     if (b_oldSize >= vec_prog().size())
     { // array didn't grow
-      getLibErrInstance().registerError( LibErr_c::BadAlloc, LibErr_c::Process );
+      getILibErrInstance().registerError( iLibErr_c::BadAlloc, iLibErr_c::Process );
       return; // exit function
     }
     #ifdef DEBUG_HEAP_USEAGE

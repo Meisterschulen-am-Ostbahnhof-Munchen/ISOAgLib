@@ -265,22 +265,22 @@ bool FilterBox_c::configCan(uint8_t rui8_busNumber, uint8_t rui8_FilterBoxNr)
       break;
     case HAL_BUSY_ERR:
       /* this BIOS-Obj is already in use */
-      getLibErrInstance().registerError( LibErr_c::Busy, LibErr_c::Can );
+      getILibErrInstance().registerError( iLibErr_c::Busy, iLibErr_c::Can );
       break;
     case HAL_CONFIG_ERR:
       /* BUS not initialized, undefined msg type, CAN-BIOS memory error */
       #if defined(DEBUG_CAN_BUFFER_FILLING) || defined(DEBUG)
       INTERNAL_DEBUG_DEVICE << "\r\nALARM Not enough memory for CAN buffer" << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
-      getLibErrInstance().registerError( LibErr_c::HwConfig, LibErr_c::Can );
+      getILibErrInstance().registerError( iLibErr_c::HwConfig, iLibErr_c::Can );
       break;
     case HAL_RANGE_ERR:
       /* undefined BUS number, undefined BIOS-Obj number, wrong puffer size */
-      getLibErrInstance().registerError( LibErr_c::Range, LibErr_c::Can );
+      getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Can );
       break;
     default:
       /* unspecified error */
-      getLibErrInstance().registerError( LibErr_c::Unspecified, LibErr_c::Can );
+      getILibErrInstance().registerError( iLibErr_c::Unspecified, iLibErr_c::Can );
       break;
   }
   #endif
@@ -295,7 +295,7 @@ void FilterBox_c::closeHAL()
   {
     if (HAL::can_configMsgobjClose(ui8_busNumber, ui8_filterBoxNr ) == HAL_RANGE_ERR)
     { // given BUS or filterBox number is wrong
-      getLibErrInstance().registerError( LibErr_c::Range, LibErr_c::Can );
+      getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Can );
     }
     ui8_busNumber = ui8_filterBoxNr = IdleState;
   }
@@ -389,7 +389,7 @@ bool FilterBox_c::processMsg()
     if (vec_customer[i] == NULL)
     { // pointer to CANCustomer_c wasn't set
       // -> don't know who wants to process the msg
-      getLibErrInstance().registerError( LibErr_c::Precondition, LibErr_c::Can );
+      getILibErrInstance().registerError( iLibErr_c::Precondition, iLibErr_c::Can );
       return false;
     }
     // ####################################################

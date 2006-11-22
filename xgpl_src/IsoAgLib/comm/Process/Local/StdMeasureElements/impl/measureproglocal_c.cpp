@@ -490,7 +490,7 @@ int32_t MeasureProgLocal_c::setpointValMod(GeneralCommand_c::ValueGroup_t en_val
         break;
       default:
         // wrong range
-        getLibErrInstance().registerError( LibErr_c::Range, LibErr_c::Process );
+        getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Process );
     }
   }
   return i32_value;

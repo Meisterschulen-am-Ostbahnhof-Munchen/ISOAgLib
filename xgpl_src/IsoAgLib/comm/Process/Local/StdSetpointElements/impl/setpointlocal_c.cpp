@@ -191,7 +191,7 @@ void SetpointLocal_c::assignFromSource( const SetpointLocal_c& rrefc_src )
 
   if (vec_register.size() < rrefc_src.vec_register.size())
   { // not all items copied
-    getLibErrInstance().registerError( LibErr_c::BadAlloc, LibErr_c::Process );
+    getILibErrInstance().registerError( iLibErr_c::BadAlloc, iLibErr_c::Process );
   }
   #ifdef DEBUG_HEAP_USEAGE
   else
@@ -279,7 +279,7 @@ bool SetpointLocal_c::existUnhandledMaster() {
 SetpointRegister_c& SetpointLocal_c::unhandledMaster(){
   if (existUnhandledMaster())
   { // no unhandled master found
-    getLibErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::Process );
+    getILibErrInstance().registerError( iLibErr_c::ElNonexistent, iLibErr_c::Process );
   }
   return *pc_registerCache;
 }
@@ -335,7 +335,7 @@ void SetpointLocal_c::acceptNewMaster( bool rb_accept){
   }
   else
   { // no master setpoint
-    getLibErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::Process );
+    getILibErrInstance().registerError( iLibErr_c::ElNonexistent, iLibErr_c::Process );
   }
 }
 
@@ -353,7 +353,7 @@ void SetpointLocal_c::setMasterMeasurementVal( int32_t ri32_val)
     vec_register.push_front();
     if ( cui16_oldSize >= vec_register.size() )
     { // out-of-memory
-      getLibErrInstance().registerError( LibErr_c::BadAlloc, LibErr_c::Process );
+      getILibErrInstance().registerError( iLibErr_c::BadAlloc, iLibErr_c::Process );
       return;
     }
     #ifdef DEBUG_HEAP_USEAGE
@@ -435,7 +435,7 @@ SetpointRegister_c& SetpointLocal_c::unhandledInd( uint8_t rui8_ind){
   // check if enough unhandled items found
   if (b_counter != rui8_ind)
   { // rui8_ind was too big
-    getLibErrInstance().registerError( LibErr_c::Range, LibErr_c::Process );
+    getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Process );
     pc_registerCache = vec_register.begin();
   }
 
@@ -697,7 +697,7 @@ void SetpointLocal_c::processSet(){
       vec_register.push_front( SetpointRegister_c( c_callerISOName));
       if ( cui16_oldSize >= vec_register.size() )
       { // out-of-memory
-        getLibErrInstance().registerError( LibErr_c::BadAlloc, LibErr_c::Process );
+        getILibErrInstance().registerError( iLibErr_c::BadAlloc, iLibErr_c::Process );
         return;
       }
       #ifdef DEBUG_HEAP_USEAGE

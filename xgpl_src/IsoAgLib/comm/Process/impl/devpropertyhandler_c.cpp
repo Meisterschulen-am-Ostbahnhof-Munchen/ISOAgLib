@@ -995,7 +995,7 @@ DevPropertyHandler_c::startUpload()
 void
 DevPropertyHandler_c::outOfMemory()
 { // can't (up)load the pool.
-  getLibErrInstance().registerError( LibErr_c::IsoTerminalOutOfMemory, LibErr_c::IsoTerminal );
+  getILibErrInstance().registerError( iLibErr_c::IsoTerminalOutOfMemory, iLibErr_c::IsoTerminal );
   en_uploadStep = UploadFailed; // no timeout needed
   en_poolState = OPCannotBeUploaded;
   #ifdef DEBUG

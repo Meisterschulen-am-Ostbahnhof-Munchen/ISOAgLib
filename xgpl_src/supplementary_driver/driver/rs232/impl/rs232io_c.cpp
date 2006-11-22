@@ -219,12 +219,12 @@ bool RS232IO_c::init(uint16_t rui16_baudrate, t_dataMode ren_dataMode, bool rb_x
     if (HAL::configRs232TxObj(ui16_sndPuf, NULL, NULL RS232_CHANNEL_CALL_PARAM_LAST) != HAL_NO_ERR) b_result = false;
     if (HAL::configRs232RxObj(ui16_recPuf, NULL RS232_CHANNEL_CALL_PARAM_LAST) != HAL_NO_ERR) b_result = false;
 
-    if (!b_result) getLibErrInstance().registerError( LibErr_c::BadAlloc, LibErr_c::Rs232 );
+    if (!b_result) getILibErrInstance().registerError( iLibErr_c::BadAlloc, iLibErr_c::Rs232 );
   }
   else
   { //wrong values given
     b_result = false;
-    getLibErrInstance().registerError( LibErr_c::Range, LibErr_c::Rs232 ); // something is still wrong
+    getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Rs232 ); // something is still wrong
   }
   return b_result;
 }
@@ -273,7 +273,7 @@ bool RS232IO_c::setBaudrate(uint16_t rui16_baudrate)
   }
   else
   { // wrong setting
-    getLibErrInstance().registerError( LibErr_c::Range, LibErr_c::Rs232 );
+    getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Rs232 );
   }
   return b_baudAllowed;
 }
@@ -295,7 +295,7 @@ bool RS232IO_c::setSndPufferSize(uint16_t rui16_pufferSize)
   }
   else
   {
-    getLibErrInstance().registerError( LibErr_c::BadAlloc, LibErr_c::Rs232 );
+    getILibErrInstance().registerError( iLibErr_c::BadAlloc, iLibErr_c::Rs232 );
     return false;
   }
 }
@@ -316,7 +316,7 @@ bool RS232IO_c::setRecPufferSize(uint16_t rui16_pufferSize)
   }
   else
   {
-    getLibErrInstance().registerError( LibErr_c::BadAlloc, LibErr_c::Rs232 );
+    getILibErrInstance().registerError( iLibErr_c::BadAlloc, iLibErr_c::Rs232 );
 
     return false;
   }
@@ -350,7 +350,7 @@ bool RS232IO_c::setRecPufferSize(uint16_t rui16_pufferSize)
       // send actual item
       if (HAL::put_rs232NChar((rpb_data + ui8_startSendPos), ui8_maxSendItemSize RS232_CHANNEL_PARAM_LAST) != HAL_NO_ERR)
       {
-        getLibErrInstance().registerError( LibErr_c::Rs232Overflow, LibErr_c::Rs232 );
+        getILibErrInstance().registerError( iLibErr_c::Rs232Overflow, iLibErr_c::Rs232 );
       }
       // update ui8_restLen
       ui8_restLen -= ui8_maxSendItemSize;
@@ -401,7 +401,7 @@ bool RS232IO_c::setRecPufferSize(uint16_t rui16_pufferSize)
   {
     if (HAL::put_rs232Char(rb_data RS232_CHANNEL_PARAM_LAST) != HAL_NO_ERR)
     {
-      getLibErrInstance().registerError( LibErr_c::Rs232Overflow, LibErr_c::Rs232 );
+      getILibErrInstance().registerError( iLibErr_c::Rs232Overflow, iLibErr_c::Rs232 );
     }
     return *this;
   }
@@ -546,7 +546,7 @@ void RS232IO_c::receive(uint8_t* pData, uint16_t rui16_len)
   {
     if (eof())
     { // error - puffer empty before reading wanted count of data
-      getLibErrInstance().registerError( LibErr_c::Rs232Underflow, LibErr_c::Rs232 );
+      getILibErrInstance().registerError( iLibErr_c::Rs232Underflow, iLibErr_c::Rs232 );
       break;
     }
     HAL::getRs232Char(pb_writer RS232_CHANNEL_PARAM_LAST);
@@ -781,7 +781,7 @@ void RS232IO_c::readToken()
   if (eof())
   { // overwrite old token data with '\0'
     for (ui8_ind = 0; ui8_ind < 12; ui8_ind++)pc_token[ui8_ind] = '\0';
-    getLibErrInstance().registerError( LibErr_c::Rs232Underflow, LibErr_c::Rs232 );
+    getILibErrInstance().registerError( iLibErr_c::Rs232Underflow, iLibErr_c::Rs232 );
     return;
   }
 

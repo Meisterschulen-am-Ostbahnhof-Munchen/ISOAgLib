@@ -808,7 +808,7 @@ bool MeasureProgRemote_c::verifySetRemoteISOName()
       }
     }
   } // for
-  getLibErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::Process );
+  getILibErrInstance().registerError( iLibErr_c::ElNonexistent, iLibErr_c::Process );
   return false;
 }
 

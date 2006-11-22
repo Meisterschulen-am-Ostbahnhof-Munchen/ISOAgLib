@@ -204,7 +204,7 @@ namespace __IsoAgLib {
   /** process received base msg and store updated value for later reading access;
       called by FilterBox_c::processMsg after receiving a msg
       possible errors:
-        * LibErr_c::LbsBaseSenderConflict base msg recevied from different member than before
+        * iLibErr_c::LbsBaseSenderConflict base msg recevied from different member than before
       @see FilterBox_c::processMsg
       @see CANIO_c::processMsg
       @return true -> message was processed; else the received CAN message will be served to other matching CANCustomer_c

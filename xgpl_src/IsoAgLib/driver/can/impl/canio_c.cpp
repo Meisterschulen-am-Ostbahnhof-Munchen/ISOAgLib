@@ -222,7 +222,7 @@ CANIO_c::singletonInit()
     }
     else
     { // invalid bus number
-      getLibErrInstance().registerError( LibErr_c::Range, LibErr_c::Can );
+      getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Can );
     }
 
     /* ************************************* */
@@ -299,7 +299,7 @@ CANIO_c::singletonInit()
         (rui8_busNumber > HAL_CAN_MAX_BUS_NR)
         )
     { // one of the range tests not passed
-      getLibErrInstance().registerError( LibErr_c::Range, LibErr_c::Can );
+      getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Can );
       #ifdef DEBUG
       INTERNAL_DEBUG_DEVICE
           << "Ende CANIO_c::init() mit falschen Parametern" << INTERNAL_DEBUG_DEVICE_ENDL;
@@ -372,7 +372,7 @@ void CANIO_c::close( void )
       break;
     default:
       // wrong channel
-      getLibErrInstance().registerError( LibErr_c::Range, LibErr_c::Can );
+      getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Can );
       break;
   }
   #ifdef DEBUG_HEAP_USEAGE
@@ -721,7 +721,7 @@ FilterBox_c* CANIO_c::insertFilter(__IsoAgLib::CANCustomer_c& rref_customer,
 
   if (b_oldSize >= arrFilterBox.size())
   { // dynamic array didn't grow -> alloc error
-    getLibErrInstance().registerError( LibErr_c::BadAlloc, LibErr_c::Can );
+    getILibErrInstance().registerError( iLibErr_c::BadAlloc, iLibErr_c::Can );
     return NULL; // exit the function
   }
   #ifdef DEBUG_HEAP_USEAGE
@@ -922,7 +922,7 @@ int16_t CANIO_c::processMsg(){
       case HAL_NO_ERR:
         break;
       case HAL_RANGE_ERR:
-        getLibErrInstance().registerError( LibErr_c::Range, LibErr_c::Can );
+        getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Can );
         #ifdef DEBUG
         INTERNAL_DEBUG_DEVICE << "CAN-Receive Range Err" << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
@@ -933,7 +933,7 @@ int16_t CANIO_c::processMsg(){
         #if defined(DEBUG_CAN_BUFFER_FILLING) || defined(DEBUG)
         INTERNAL_DEBUG_DEVICE << "\r\nBUS not initialized or wrong BUS nr: " << uint16_t(ui8_busNumber) << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
-        getLibErrInstance().registerError( LibErr_c::HwConfig, LibErr_c::Can );
+        getILibErrInstance().registerError( iLibErr_c::HwConfig, iLibErr_c::Can );
         HAL::can_useMsgobjPopFront(ui8_busNumber, i32_ident);
         b_runningCanProcess = false;
         return ui8_processedMsgCnt;
@@ -942,18 +942,18 @@ int16_t CANIO_c::processMsg(){
         INTERNAL_DEBUG_DEVICE << "CAN-Receive NoAct Err" << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
         // wrong use of MsgObj (not likely) or CAN BUS OFF
-        getLibErrInstance().registerError( LibErr_c::CanOff, LibErr_c::Can );
+        getILibErrInstance().registerError( iLibErr_c::CanOff, iLibErr_c::Can );
         HAL::can_useMsgobjPopFront(ui8_busNumber, i32_ident);
         b_runningCanProcess = false;
         return ui8_processedMsgCnt;
       case HAL_WARN_ERR:
-        getLibErrInstance().registerError( LibErr_c::CanWarn, LibErr_c::Can );
+        getILibErrInstance().registerError( iLibErr_c::CanWarn, iLibErr_c::Can );
         break;
       case HAL_OVERFLOW_ERR:
         // CAN BUFFER Overflow can most probably happen on process of
         // messages in last msg obj, where ALL CAN messages are placed
         // during reconfiguration
-        getLibErrInstance().registerError( LibErr_c::CanOverflow, LibErr_c::Can );
+        getILibErrInstance().registerError( iLibErr_c::CanOverflow, iLibErr_c::Can );
         HAL::can_stateMsgobjOverflow(ui8_busNumber, i32_ident );
         #ifdef DEBUG_CAN_BUFFER_FILLING
         if ( ! b_detectedOverflow )
@@ -1019,7 +1019,7 @@ CANIO_c& CANIO_c::operator<<(CANPkgExt_c& refc_src)
   {
     if ( ! refc_src.resolveSendingInformation() )
     { // preconditions for correct sending are not fullfilled -> set error state
-      getLibErrInstance().registerError(IsoAgLib::LibErr_c::CanBus, IsoAgLib::LibErr_c::Can);
+      getILibErrInstance().registerError(IsoAgLib::iLibErr_c::CanBus, IsoAgLib::iLibErr_c::Can);
       return *this;
     }
   }
@@ -1113,26 +1113,26 @@ CANIO_c& CANIO_c::operator<<(CANPkg_c& refc_src)
       #if defined(DEBUG)
         INTERNAL_DEBUG_DEVICE << "\r\nBUS " << uint16_t(ui8_busNumber) << " not initialized or MsgObj: " << uint16_t(ui8_sendObjNr) << " no send obj" << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
-      getLibErrInstance().registerError( LibErr_c::HwConfig, LibErr_c::Can );
+      getILibErrInstance().registerError( iLibErr_c::HwConfig, iLibErr_c::Can );
       break;
     case HAL_NOACT_ERR:
       // BUS off
-      getLibErrInstance().registerError( LibErr_c::CanOff, LibErr_c::Can );
+      getILibErrInstance().registerError( iLibErr_c::CanOff, iLibErr_c::Can );
       break;
     case HAL_OVERFLOW_ERR:
       // overflow of send puffer
-      getLibErrInstance().registerError( LibErr_c::CanOverflow, LibErr_c::Can );
+      getILibErrInstance().registerError( iLibErr_c::CanOverflow, iLibErr_c::Can );
       break;
     case HAL_RANGE_ERR:
       // BUS nr or obj nr outer allowed limits (shouldn't be the case after successful init call)
-      getLibErrInstance().registerError( LibErr_c::Range, LibErr_c::Can );
+      getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Can );
       break;
     case HAL_WARN_ERR:
       // signal for BUS-WARN problem
       #if defined(DEBUG)
       INTERNAL_DEBUG_DEVICE << "BUS " << uint16_t(ui8_busNumber) << " in WARN STATE" << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
-      getLibErrInstance().registerError( LibErr_c::CanWarn, LibErr_c::Can );
+      getILibErrInstance().registerError( iLibErr_c::CanWarn, iLibErr_c::Can );
       break;
   } //switch
 
@@ -1262,7 +1262,7 @@ int16_t CANIO_c::FilterBox2MsgObj()
         arrMsgObj.push_front(c_tempObj);
         if (ui16_oldSize >= arrMsgObj.size())
         { // dyn array didn't grow -> set badAlloc error state
-          getLibErrInstance().registerError( LibErr_c::BadAlloc, LibErr_c::Can );
+          getILibErrInstance().registerError( iLibErr_c::BadAlloc, iLibErr_c::Can );
         }
         #ifdef DEBUG_HEAP_USEAGE
         else
@@ -1444,7 +1444,7 @@ bool CANIO_c::registerChangedGlobalMasks(void)
   if (i16_retvalInit == HAL_RANGE_ERR)
   { // BIOS complains about limits of BUSnr or msgObj
     // seldom, because before checked with defined LIMITS
-    getLibErrInstance().registerError( LibErr_c::Range, LibErr_c::Can );
+    getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Can );
     return false;
   }
   else
@@ -1527,7 +1527,7 @@ bool CANIO_c::verifyBusMsgobjNr(uint8_t rui8_busNr, uint8_t rui8_objNr)
   #endif
      )
   {
-    getLibErrInstance().registerError( LibErr_c::Range, LibErr_c::Can );
+    getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Can );
     return false;
   }
   return true;
@@ -1542,7 +1542,7 @@ bool CANIO_c::reconfigureMsgObj()
   #else
   if ( ui8_busNumber > HAL_CAN_MAX_BUS_NR )
   {
-    getLibErrInstance().registerError( LibErr_c::Range, LibErr_c::Can );
+    getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Can );
     return false;
   }
 
@@ -1619,7 +1619,7 @@ bool CANIO_c::reconfigureMsgObj()
 
   // clear any CAN BUFFER OVERFLOW error that might occure
   // for last message object
-  getLibErrInstance().clear( LibErr_c::CanOverflow, LibErr_c::Can );
+  getILibErrInstance().clear( iLibErr_c::CanOverflow, iLibErr_c::Can );
 
   HAL::wdTriggern();
 
@@ -1713,7 +1713,7 @@ bool CANIO_c::baseCanInit(uint16_t rui16_bitrate)
   // if given bitrate fits to no allowed value set a range error state
   if (!b_allowed)
   {
-    getLibErrInstance().registerError( LibErr_c::Range, LibErr_c::Can );
+    getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Can );
     return false; // exit function with error value
   }
 
@@ -1772,7 +1772,7 @@ bool CANIO_c::baseCanInit(uint16_t rui16_bitrate)
   if (i16_retvalInit == HAL_RANGE_ERR)
   { // BIOS complains about limits of BUSnr or msgObj
     // seldom, because before checked with defined LIMITS
-    getLibErrInstance().registerError( LibErr_c::Range, LibErr_c::Can );
+    getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Can );
     return false;
   }
 
@@ -1827,13 +1827,13 @@ bool CANIO_c::baseCanInit(uint16_t rui16_bitrate)
         break;
       case HAL_BUSY_ERR:
         // send obj already in use
-        getLibErrInstance().registerError( LibErr_c::Busy, LibErr_c::Can );
+        getILibErrInstance().registerError( iLibErr_c::Busy, iLibErr_c::Can );
         break;
       case HAL_CONFIG_ERR:
         // because CAN was initialized direct above without error, msgObj limits was
         // allowed and the SEND type is hardcoded to an allowed number,
         // HAL_CONFIG_ERR error can only be caused by allocating problem
-        getLibErrInstance().registerError( LibErr_c::BadAlloc, LibErr_c::Can );
+        getILibErrInstance().registerError( iLibErr_c::BadAlloc, iLibErr_c::Can );
         b_configSuccess = false;
         break;
     }

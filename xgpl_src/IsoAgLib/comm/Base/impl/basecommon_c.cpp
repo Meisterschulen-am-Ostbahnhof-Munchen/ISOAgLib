@@ -177,7 +177,7 @@ bool BaseCommon_c::config_base (const ISOName_c* rpc_isoName, IsoAgLib::IdentMod
     #if defined(DEBUG) && defined(SYSTEM_PC)
       abort();
     #endif
-    getLibErrInstance().registerError( LibErr_c::Precondition, LibErr_c::Base );
+    getILibErrInstance().registerError( iLibErr_c::Precondition, iLibErr_c::Base );
     return false;
   }
   // set configure values

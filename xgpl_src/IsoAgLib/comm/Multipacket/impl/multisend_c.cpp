@@ -349,8 +349,8 @@ MultiSend_c::SendStream_c::init (const ISOName_c& rrefc_isoNameSender, const ISO
       switchToState (SendData, 50); // on broadcast, we'll have to interspace with 50ms (minimum!)
     }
 #if 0
-/// Disabled as long as getLibErrInstance().registerError() makes problems on the ESX
-    else getLibErrInstance().registerError( LibErr_c::Precondition, LibErr_c::MultiSend );
+/// Disabled as long as getILibErrInstance().registerError() makes problems on the ESX
+    else getILibErrInstance().registerError( iLibErr_c::Precondition, iLibErr_c::MultiSend );
 #endif
 
     ui32_lastNextPacketNumberToSend = 0xFFFFFFFF; // so the first coming CTS is definitively NO repeated burst!
@@ -873,10 +873,10 @@ MultiSend_c::SendStream_c::processMsg()
         retriggerIn (1500);
       }
 #if 0
-/// Disabled as long as getLibErrInstance().registerError() makes problems on the ESX
+/// Disabled as long as getILibErrInstance().registerError() makes problems on the ESX
       else
       {  // not awaiting end of message ack, no action taken for this error-case in normal operation.
-        getLibErrInstance().registerError( LibErr_c::MultiSendWarn, LibErr_c::MultiSend );
+        getILibErrInstance().registerError( iLibErr_c::MultiSendWarn, iLibErr_c::MultiSend );
       }
 #endif
       break;

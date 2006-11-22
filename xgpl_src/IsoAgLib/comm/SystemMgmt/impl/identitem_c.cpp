@@ -96,7 +96,7 @@
 #include <IsoAgLib/comm/Scheduler/impl/scheduler_c.h>
 #include <IsoAgLib/driver/system/impl/system_c.h>
 #include <IsoAgLib/driver/can/impl/canio_c.h>
-#include <IsoAgLib/util/liberr_c.h>
+#include <IsoAgLib/util/iliberr_c.h>
 
 
 namespace __IsoAgLib {
@@ -175,7 +175,7 @@ void IdentItem_c::init (ISOName_c* rpc_isoNameParam, uint8_t rui8_preferredSa, u
   /// Check if Item was already ACTIVE (detect double init()-call!)
   if (itemState (IState_c::Active))
   { // For init again, you'd first have to stop the identity - this feature is to come somewhen (when needed)...
-    getLibErrInstance().registerError( LibErr_c::Precondition, LibErr_c::System );
+    getILibErrInstance().registerError( iLibErr_c::Precondition, iLibErr_c::System );
     #if defined(DEBUG) && defined(SYSTEM_PC)
     std::cout << "ERROR: Double initialization of IdentItem_c detected!!!!" << std::endl;
     abort();
@@ -241,7 +241,7 @@ void IdentItem_c::init (ISOName_c* rpc_isoNameParam, uint8_t rui8_preferredSa, u
     }
    #else
     // ERROR: Using EEPROM Address but IsoAgLib is NOT compiled with USE_EEPROM_IO !!!!
-    getLibErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::Eeprom );
+    getILibErrInstance().registerError( iLibErr_c::ElNonexistent, iLibErr_c::Eeprom );
     #if defined(DEBUG) && defined(SYSTEM_PC)
     std::cout << "ERROR: Using EEPROM Address in IdentItem_c() construction but IsoAgLib is NOT compiled with USE_EEPROM_IO !!!!" << std::endl;
     abort();
@@ -547,7 +547,7 @@ bool IdentItem_c::timeEventActive( void )
         refc_eeprom.writeString (pcui8_isoName, 8);
         #else
         // ERROR: Using EEPROM Address in IdentItem_c()'s timeEventActive but IsoAgLib is NOT compiled with USE_EEPROM_IO !!!!" << std::endl;
-        getLibErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::Eeprom );
+        getILibErrInstance().registerError( iLibErr_c::ElNonexistent, iLibErr_c::Eeprom );
         #if defined(DEBUG) && defined(SYSTEM_PC)
         std::cout << "ERROR: Using EEPROM Address in IdentItem_c()'s timeEventActive but IsoAgLib is NOT compiled with USE_EEPROM_IO !!!!" << std::endl;
         abort();
@@ -599,7 +599,7 @@ bool IdentItem_c::timeEventActive( void )
     }
     else
     { /// IsoName now already used on the bus - we can't claim an address now anymore!
-      getLibErrInstance().registerError( LibErr_c::Busy, LibErr_c::System ); /** @todo insert new error-location/type for thsoe cases! */
+      getILibErrInstance().registerError( iLibErr_c::Busy, iLibErr_c::System ); /** @todo insert new error-location/type for thsoe cases! */
       ISOItem_c& refc_foundIsoItemSameIsoName = refc_isoMonitor.isoMemberISOName (c_isoName);
       if (refc_foundIsoItemSameIsoName.itemState (IState_c::Local))
       { // now the ISOName is used by some other member on the BUS

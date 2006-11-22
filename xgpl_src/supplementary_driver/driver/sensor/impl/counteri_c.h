@@ -109,7 +109,7 @@ public:
     (uses BIOS function)
 
     possible errors:
-        * LibErr_c::Range wrong input number
+        * iLibErr_c::Range wrong input number
     @see SensorI_c::createCounter
     @param rb_channel default-argument for setting hardware channel for this input
     @param rui16_timebase default-argument for setting the timebase which should be
@@ -125,7 +125,7 @@ public:
     (uses BIOS function)
 
     possible errors:
-        * LibErr_c::Range wrong input number
+        * iLibErr_c::Range wrong input number
     @see SensorI_c::createCounter
     @param rb_channel default-argument for setting hardware channel for this input
     @param rui16_timebase default-argument for setting the timebase which should be
@@ -157,7 +157,7 @@ public:
     reset the given counter
 
     possible errors:
-        * LibErr_c::Range wrong input number
+        * iLibErr_c::Range wrong input number
   */
   void reset();
   /**

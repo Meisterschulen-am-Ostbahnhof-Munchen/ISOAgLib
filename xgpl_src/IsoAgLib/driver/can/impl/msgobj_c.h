@@ -84,7 +84,7 @@
 #ifndef MSG_OBJ_H
 #define MSG_OBJ_H
 
-#include <IsoAgLib/util/liberr_c.h>
+#include <IsoAgLib/util/iliberr_c.h>
 #include <IsoAgLib/util/impl/singleton.h>
 #include <IsoAgLib/hal/can.h>
 

@@ -170,7 +170,7 @@ bool MsgObj_c::merge(MsgObj_c& right)
   //check if amount of FilterBox_c references can be stored in on MsgObj
   if ((cnt_filterBox() + right.cnt_filterBox()) > FILTER_BOX_PER_MSG_OBJ)
   { // the FilterBox_c refs can't be stored in one MsgObj_c -> set range error
-    getLibErrInstance().registerError( LibErr_c::CanOverflow, LibErr_c::Can );
+    getILibErrInstance().registerError( iLibErr_c::CanOverflow, iLibErr_c::Can );
     return false;
   }
 
@@ -189,7 +189,7 @@ bool MsgObj_c::merge(MsgObj_c& right)
     if (HAL::can_configMsgobjChgid(busNumber(), msgObjNr(), c_filter)
         == HAL_CONFIG_ERR)
     { // BUS not initialized or ID can'tbe changed
-      getLibErrInstance().registerError( LibErr_c::HwConfig, LibErr_c::Can );
+      getILibErrInstance().registerError( iLibErr_c::HwConfig, iLibErr_c::Can );
     }
   }
   else if ((right.isOpen()) && (right.verifyBusMsgobjNr()))
@@ -204,7 +204,7 @@ bool MsgObj_c::merge(MsgObj_c& right)
       #if defined(DEBUG_CAN_BUFFER_FILLING) || defined(DEBUG)
       INTERNAL_DEBUG_DEVICE << "\r\nBUS not initialized or ID can't be changed" << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
-      getLibErrInstance().registerError( LibErr_c::HwConfig, LibErr_c::Can );
+      getILibErrInstance().registerError( iLibErr_c::HwConfig, iLibErr_c::Can );
     }
     right.setIsOpen(false); // now left is correlated to the open obj
   }
@@ -354,7 +354,7 @@ bool MsgObj_c::insertFilterBox(FilterRef rrefc_box)
   }
   else
   { // report the insertion failure
-    getLibErrInstance().registerError( LibErr_c::CanOverflow, LibErr_c::Can );
+    getILibErrInstance().registerError( iLibErr_c::CanOverflow, iLibErr_c::Can );
     return false;
   }
   #else
@@ -366,7 +366,7 @@ bool MsgObj_c::insertFilterBox(FilterRef rrefc_box)
   }
   else
   { // vector didn't grow --> out of memory
-    getLibErrInstance().registerError( LibErr_c::CanOverflow, LibErr_c::Can );
+    getILibErrInstance().registerError( iLibErr_c::CanOverflow, iLibErr_c::Can );
     return false;
   }
   #endif
@@ -403,7 +403,7 @@ bool MsgObj_c::deleteFilterBox(FilterRef rrefc_box)
   }
   if (!b_result)
   { // to be deleted reference not found
-    getLibErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::Can );
+    getILibErrInstance().registerError( iLibErr_c::ElNonexistent, iLibErr_c::Can );
   }
   #else
   for ( std::vector<FilterRef>::iterator iter = arrPfilterBox.begin() ; iter != arrPfilterBox.end(); iter++ )
@@ -417,7 +417,7 @@ bool MsgObj_c::deleteFilterBox(FilterRef rrefc_box)
   }
   if ( !b_result )
   { // nothing has been erased
-    getLibErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::Can );
+    getILibErrInstance().registerError( iLibErr_c::ElNonexistent, iLibErr_c::Can );
   }
   #endif
   return b_result;
@@ -508,7 +508,7 @@ uint8_t MsgObj_c::processMsg(uint8_t rui8_busNumber, bool rb_forceProcessAll)
       case HAL_NO_ERR:
         break;
       case HAL_RANGE_ERR:
-        getLibErrInstance().registerError( LibErr_c::Range, LibErr_c::Can );
+        getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Can );
         #ifdef DEBUG
         INTERNAL_DEBUG_DEVICE << "CAN-Receive Range Err" << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
@@ -518,7 +518,7 @@ uint8_t MsgObj_c::processMsg(uint8_t rui8_busNumber, bool rb_forceProcessAll)
         #if defined(DEBUG_CAN_BUFFER_FILLING) || defined(DEBUG)
         INTERNAL_DEBUG_DEVICE << "\r\nBUS not initialized or wrong BUS nr: " << uint16_t(rui8_busNumber) << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
-        getLibErrInstance().registerError( LibErr_c::HwConfig, LibErr_c::Can );
+        getILibErrInstance().registerError( iLibErr_c::HwConfig, iLibErr_c::Can );
         HAL::can_useMsgobjPopFront(rui8_busNumber, msgObjNr());
         return (b_count-1);
       case HAL_NOACT_ERR:
@@ -526,17 +526,17 @@ uint8_t MsgObj_c::processMsg(uint8_t rui8_busNumber, bool rb_forceProcessAll)
         INTERNAL_DEBUG_DEVICE << "CAN-Receive NoAct Err" << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
         // wrong use of MsgObj (not likely) or CAN BUS OFF
-        getLibErrInstance().registerError( LibErr_c::CanOff, LibErr_c::Can );
+        getILibErrInstance().registerError( iLibErr_c::CanOff, iLibErr_c::Can );
         HAL::can_useMsgobjPopFront(rui8_busNumber, msgObjNr());
         return (b_count-1);
       case HAL_WARN_ERR:
-        getLibErrInstance().registerError( LibErr_c::CanWarn, LibErr_c::Can );
+        getILibErrInstance().registerError( iLibErr_c::CanWarn, iLibErr_c::Can );
         break;
       case HAL_OVERFLOW_ERR:
         // CAN BUFFER Overflow can most probably happen on process of
         // messages in last msg obj, where ALL CAN messages are placed
         // during reconfiguration
-        getLibErrInstance().registerError( LibErr_c::CanOverflow, LibErr_c::Can );
+        getILibErrInstance().registerError( iLibErr_c::CanOverflow, iLibErr_c::Can );
         HAL::can_stateMsgobjOverflow(rui8_busNumber, msgObjNr() );
         #ifdef DEBUG_CAN_BUFFER_FILLING
         if ( ! b_detectedOverflow )
@@ -617,7 +617,7 @@ bool MsgObj_c::configCan(uint8_t rui8_busNumber, uint8_t rui8_msgNr)
   bool b_result = false;
   if (!verifyBusMsgobjNr(rui8_busNumber, rui8_msgNr))
   { // the given values are not within allowed limits (defined in isoaglib_config.h)
-    getLibErrInstance().registerError( LibErr_c::Range, LibErr_c::Can );
+    getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Can );
     return false;
   }
   else
@@ -645,22 +645,22 @@ bool MsgObj_c::configCan(uint8_t rui8_busNumber, uint8_t rui8_msgNr)
       break;
     case HAL_BUSY_ERR:
       /* this BIOS-Obj is already in use */
-      getLibErrInstance().registerError( LibErr_c::Busy, LibErr_c::Can );
+      getILibErrInstance().registerError( iLibErr_c::Busy, iLibErr_c::Can );
       break;
     case HAL_CONFIG_ERR:
       /* BUS not initialized, undefined msg type, CAN-BIOS memory error */
       #if defined(DEBUG_CAN_BUFFER_FILLING) || defined(DEBUG)
       INTERNAL_DEBUG_DEVICE << "\r\nALARM Not enough memory for CAN buffer" << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
-      getLibErrInstance().registerError( LibErr_c::HwConfig, LibErr_c::Can );
+      getILibErrInstance().registerError( iLibErr_c::HwConfig, iLibErr_c::Can );
       break;
     case HAL_RANGE_ERR:
       /* undefined BUS number, undefined BIOS-Obj number, wrong puffer size */
-      getLibErrInstance().registerError( LibErr_c::Range, LibErr_c::Can );
+      getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Can );
       break;
     default:
       /* unspecified error */
-      getLibErrInstance().registerError( LibErr_c::Unspecified, LibErr_c::Can );
+      getILibErrInstance().registerError( iLibErr_c::Unspecified, iLibErr_c::Can );
       break;
   }
   return b_result;
@@ -689,7 +689,7 @@ bool MsgObj_c::verifyBusMsgobjNr(int8_t rc_busNr, int8_t rc_msgobjNr)
   || (b_testMsgobj > HAL_CAN_MAX_REC_OBJ)
      )
   { // set range-error status if called with default values for both parameters
-    if ((rc_busNr < 0) && (rc_msgobjNr < 0)) getLibErrInstance().registerError( LibErr_c::Range, LibErr_c::Can );
+    if ((rc_busNr < 0) && (rc_msgobjNr < 0)) getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Can );
     return false;
   }
   else
@@ -720,7 +720,7 @@ void MsgObj_c::closeCan()
   {
     if (HAL::can_configMsgobjClose(busNumber(), msgObjNr() ) == HAL_RANGE_ERR)
     { // given BUS or MsgObj number is wrong
-      getLibErrInstance().registerError( LibErr_c::Range, LibErr_c::Can );
+      getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Can );
     }
     setIsOpen(false);
   }

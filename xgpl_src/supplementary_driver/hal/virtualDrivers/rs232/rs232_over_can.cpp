@@ -48,7 +48,7 @@ int16_t init_rs232(uint16_t wBaudrate,uint8_t bMode,uint8_t bStoppbits,bool bitS
 //	{
 ////    getIcanInstance(RS232_over_can_busnum).init( RS232_over_can_busnum, 250 );
 //	getIcanInstance(RS232_over_can_busnum);
-//	if( getLbsErrInstance().good( LibErr_c::Can ) )
+//	if( getLbsErrInstance().good( iLibErr_c::Can ) )
 //		RS232_over_can_initialized = true;
 //	}
 //
@@ -121,7 +121,7 @@ int16_t put_rs232NChar(const uint8_t *bpWrite,uint16_t wNumber, uint8_t rui8_cha
 			numLeft -= cui8_len;
 			}
 
-   return IsoAgLib::getLibErrInstance().good( IsoAgLib::LibErr_c::Can );
+   return IsoAgLib::getILibErrInstance().good( IsoAgLib::iLibErr_c::Can );
 		}
 
 };

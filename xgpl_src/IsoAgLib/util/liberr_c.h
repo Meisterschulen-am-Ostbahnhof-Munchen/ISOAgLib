@@ -1,5 +1,5 @@
 /***************************************************************************
-                          liberr_c.h - central object for error management
+                          iliberr_c.h - central object for error management
 
                              -------------------
     begin                : Thu Jan 20 2000
@@ -53,8 +53,8 @@
  * the main author Achim Spangler by a.spangler@osb-ag:de                  *
  ***************************************************************************/
 
-#ifndef _LIB_ERR_H
-#define _LIB_ERR_H
+#ifndef _ILIB_ERR_H
+#define _ILIB_ERR_H
 
 #include "../typedef.h"
 #include <IsoAgLib/util/impl/singleton.h>
@@ -66,11 +66,11 @@
 
 // Begin Namespace IsoAgLib
 namespace IsoAgLib {
-  class LibErr_c;
-  typedef SINGLETON( LibErr_c ) SingletonLiberr_c;
+  class iLibErr_c;
+  typedef SINGLETON( iLibErr_c ) SingletonILibErr_c;
 
-  /** C-style function, to get access to the unique LibErr_c singleton instance */
-  LibErr_c& getLibErrInstance( void );
+  /** C-style function, to get access to the unique iLibErr_c singleton instance */
+  iLibErr_c& getILibErrInstance( void );
 
 /**
   Basic object for Error Management:
@@ -79,7 +79,7 @@ namespace IsoAgLib {
   All objects which Can hold their own error state are derived from Err
   *@author Dipl.-Inform. Achim Spangler
 */
-class LibErr_c : public SingletonLiberr_c {
+class iLibErr_c : public SingletonILibErr_c {
 public:
   /** enum to identify the different error types */
   typedef enum {
@@ -106,12 +106,12 @@ public:
     EepromWriteError=20,
     SysNoActiveLocalMember=21,
     BaseSenderConflict=22,
-    IsoTerminalOutOfMemory=23,
+    RemoteServiceOutOfMemory=23,
     FIRSTWARNINDEX =24, /// this is only a dummy to identify at which index the first warning is located
     CanWarn=24,
     MultiSendWarn=25,
     AllErrTypes=26,
-  } LibErrTypes_t;
+  } iLibErrTypes_t;
 
   /** enum to identify the different error locations */
   typedef enum {
@@ -128,8 +128,9 @@ public:
     Sensor=10,
     Actor=11,
     Rs232=12,
-    AllErrLocations=13,
-  } LibErrLocations_t;
+    TaskController=13,
+    AllErrLocations=14,
+  } iLibErrLocations_t;
 
   /**
     Initialize the unique error state handler
@@ -140,7 +141,7 @@ public:
     * @param rt_errType type of occured error
     * @param rt_errLocation location of error
     */
-  void registerError( LibErrTypes_t rt_errType, LibErrLocations_t rt_errLocation );
+  void registerError( iLibErrTypes_t rt_errType, iLibErrLocations_t rt_errLocation );
 
   /**
     clear all error information
@@ -152,66 +153,63 @@ public:
     @param rt_errLocation select for which error locations the counter shall be reset
     @param rt_errType select for which error types the counter shall be reset (default reset all counters)
   */
-  void clear( LibErrTypes_t rt_errType, LibErrLocations_t rt_errLocation );
+  void clear( iLibErrTypes_t rt_errType, iLibErrLocations_t rt_errLocation );
 
   /**
     clear all error information of a special type
     @param rt_errType select for which error types the counter shall be reset
   */
-  void clear( LibErrTypes_t rt_errType );
+  void clear( iLibErrTypes_t rt_errType );
 
   /**
     clear all error information of a special location
     @param rt_errLocation select for which error locations the counter shall be reset
   */
-  void clear( LibErrLocations_t rt_errLocation );
-
-//  /** deliver the timestamp of last error occurence */
-//  uint32_t getLastErrorTime( void ) const { return ui32_lastErrorTime;};
+  void clear( iLibErrLocations_t rt_errLocation );
 
   /**
     deliver the count of registered errors
     @param rt_errType optional select the error-types to count (default all error types)
     @return count of registered error types
   */
-  uint16_t getErrCnt( LibErrTypes_t rt_errType = AllErrTypes ) const;
+  uint16_t getErrCnt( iLibErrTypes_t rt_errType = AllErrTypes ) const;
 
   /**
     deliver the count of registered errors with a special error location
     @param rt_errLocation location to check for errors
     @return count of registered error types
   */
-  uint16_t getErrCnt( LibErrLocations_t rt_errLocation ) const;
+  uint16_t getErrCnt( iLibErrLocations_t rt_errLocation ) const;
 
   /**
     deliver the type of the nth error
     @param rui8_ind index of the requested error ( [0..(ErrCnt-1)] )
-    @return LibErrTypes_t
+    @return iLibErrTypes_t
   */
-  LibErrTypes_t getErrIndType( uint8_t rui8_ind ) const;
+  iLibErrTypes_t getErrIndType( uint8_t rui8_ind ) const;
 
   /**
     deliver the location of the nth error
     @param rui8_ind index of the requested error ( [0..(ErrCnt-1)] )
-    @return LibErrTypes_t
+    @return iLibErrTypes_t
   */
-  LibErrLocations_t getErrIndLocation( uint8_t rui8_ind ) const;
+  iLibErrLocations_t getErrIndLocation( uint8_t rui8_ind ) const;
 
   /**
     check if the error value reports correct error free state
     @param rt_errType optional select the error-types to count (default all error types)
     @return true -> the defined error locations report no error
   */
-  bool good( LibErrTypes_t rt_errType = AllErrTypes ) const;
+  bool good( iLibErrTypes_t rt_errType = AllErrTypes ) const;
 
   /**
     check if the error value reports correct error free state
     @param rt_errLocation location to check for errors
     @return true -> the defined error locations report no error
   */
-  bool good( LibErrLocations_t rt_errLocation ) const;
+  bool good( iLibErrLocations_t rt_errLocation ) const;
 
-  bool good( LibErrTypes_t rt_errType, LibErrLocations_t rt_errLocation ) const;
+  bool good( iLibErrTypes_t rt_errType, iLibErrLocations_t rt_errLocation ) const;
 
   /**
     check if the object has a local error
@@ -219,16 +217,16 @@ public:
   inline bool operator!(){ return (good(AllErrTypes))?false:true;};
 
   /** default destructor which has nothing to do */
-  virtual ~LibErr_c();
+  virtual ~iLibErr_c();
 
 private:
-  friend class SINGLETON( LibErr_c );
+  friend class SINGLETON( iLibErr_c );
 
   /** default constructor which sets the error value to noErr */
-  LibErr_c();
+  iLibErr_c();
 
   /** copy constructor which sets the error value to the err value of the source */
-  LibErr_c(const LibErr_c& rrefc_src);
+  iLibErr_c(const iLibErr_c& rrefc_src);
 
   /**
     initialize directly after the singleton instance is created.
@@ -238,62 +236,14 @@ private:
   void singletonInit() { init(); };
 
   std::bitset<AllErrTypes> errTypeAtLoc [AllErrLocations];
-
-/*
-  struct errTypeBitfield {
-    unsigned int Precondition : ERR_FIELD_COUNTER_SIZE;
-    unsigned int BadAlloc : ERR_FIELD_COUNTER_SIZE;
-    unsigned int ElNonexistent : ERR_FIELD_COUNTER_SIZE;
-    unsigned int Unspecified : ERR_FIELD_COUNTER_SIZE;
-    unsigned int HwConfig : ERR_FIELD_COUNTER_SIZE;
-    unsigned int Range : ERR_FIELD_COUNTER_SIZE;
-    unsigned int Busy : ERR_FIELD_COUNTER_SIZE;
-    unsigned int SystemOpen : ERR_FIELD_COUNTER_SIZE;
-    unsigned int SystemWatchdog : ERR_FIELD_COUNTER_SIZE;
-    unsigned int CanOff : ERR_FIELD_COUNTER_SIZE;
-    unsigned int CanWarn : ERR_FIELD_COUNTER_SIZE;
-    unsigned int CanBus : ERR_FIELD_COUNTER_SIZE;
-    unsigned int CanMsgObj : ERR_FIELD_COUNTER_SIZE;
-    unsigned int CanMem : ERR_FIELD_COUNTER_SIZE;
-    unsigned int CanOverflow : ERR_FIELD_COUNTER_SIZE;
-    unsigned int CanConflict : ERR_FIELD_COUNTER_SIZE;
-    unsigned int CanDiffSpeed : ERR_FIELD_COUNTER_SIZE;
-    unsigned int Rs232Overflow : ERR_FIELD_COUNTER_SIZE;
-    unsigned int Rs232Underflow : ERR_FIELD_COUNTER_SIZE;
-    unsigned int EepromSegment : ERR_FIELD_COUNTER_SIZE;
-    unsigned int EepromWriteError : ERR_FIELD_COUNTER_SIZE;
-    unsigned int SysNoActiveLocalMember : ERR_FIELD_COUNTER_SIZE;
-    unsigned int BaseSenderConflict : ERR_FIELD_COUNTER_SIZE;
-    unsigned int IsoTerminalOutOfMemory : ERR_FIELD_COUNTER_SIZE;
-    unsigned int LbsMultiSendBusy : ERR_FIELD_COUNTER_SIZE;
-  } errTypeBitfield;
-  struct errLocBitfield {
-    unsigned int Lbs : ERR_FIELD_COUNTER_SIZE;
-    unsigned int Base : ERR_FIELD_COUNTER_SIZE;
-    unsigned int System : ERR_FIELD_COUNTER_SIZE;
-    unsigned int Process : ERR_FIELD_COUNTER_SIZE;
-    unsigned int LbsTerminal : ERR_FIELD_COUNTER_SIZE;
-    unsigned int IsoTerminal : ERR_FIELD_COUNTER_SIZE;
-    unsigned int LbsMultipacket : ERR_FIELD_COUNTER_SIZE;
-    unsigned int HwSystem : ERR_FIELD_COUNTER_SIZE;
-    unsigned int Can : ERR_FIELD_COUNTER_SIZE;
-    unsigned int Eeprom : ERR_FIELD_COUNTER_SIZE;
-    unsigned int Sensor : ERR_FIELD_COUNTER_SIZE;
-    unsigned int Actor : ERR_FIELD_COUNTER_SIZE;
-    unsigned int Rs232 : ERR_FIELD_COUNTER_SIZE;
-  } errLocBitfield;
-*/
-
-///// No more Last Error Time, as long as not requested by anyone...
-//  uint32_t ui32_lastErrorTime;
 };
 
 } // end of namespace IsoAgLib
 
 // Begin Namespace IsoAgLib
 namespace __IsoAgLib {
-  /** C-style function, to get access to the unique LibErr_c singleton instance */
-  IsoAgLib::LibErr_c& getLibErrInstance( void );
-  using IsoAgLib::LibErr_c;
+  /** C-style function, to get access to the unique iLibErr_c singleton instance */
+  IsoAgLib::iLibErr_c& getILibErrInstance( void );
+  using IsoAgLib::iLibErr_c;
 }
 #endif
