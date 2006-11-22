@@ -52,7 +52,7 @@
  ***************************************************************************/
 #include "actor_target_extensions.h"
 #include <IsoAgLib/typedef.h>
-#include <IsoAgLib/util/liberr_c.h>
+#include <IsoAgLib/util/iliberr_c.h>
 #include <IsoAgLib/hal/pc/errcodes.h>
 #include <cstdio>
 

@@ -82,7 +82,7 @@
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 #include "actoro_c.h"
-#include <IsoAgLib/util/liberr_c.h>
+#include <IsoAgLib/util/iliberr_c.h>
 #include <IsoAgLib/util/config.h>
 #include <IsoAgLib/driver/system/impl/system_c.h>
 

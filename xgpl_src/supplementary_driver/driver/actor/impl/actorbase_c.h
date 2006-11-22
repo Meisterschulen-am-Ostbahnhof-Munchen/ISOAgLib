@@ -87,7 +87,7 @@
 #define ACTOR_BASE_H
 
 #include "actor_c.h"
-#include <IsoAgLib/util/liberr_c.h>
+#include <IsoAgLib/util/iliberr_c.h>
 #include <supplementary_driver/hal/actor.h>
 
 // Begin Namespace __IsoAgLib

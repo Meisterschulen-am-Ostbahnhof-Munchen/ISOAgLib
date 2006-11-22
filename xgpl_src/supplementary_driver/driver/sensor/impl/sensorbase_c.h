@@ -87,7 +87,7 @@
 #define SENSOR_BASE_H
 
 #include "sensor_c.h"
-#include <IsoAgLib/util/liberr_c.h>
+#include <IsoAgLib/util/iliberr_c.h>
 #include <supplementary_driver/hal/sensor.h>
 
 // Begin Namespace __IsoAgLib
