@@ -152,16 +152,19 @@ public:
   const iISOName_c& getDaIsoName() const { return c_daIsoName; }
   const iISOName_c& getSaIsoName() const { return c_saIsoName; }
 
+  // public for direct access to the CACHED addresses.
+  //! Be aware that SA/DA can CHANGE while the system is running, so
+  //! better use the IsoName normally instead. Only use the SA if you
+  //! keep your own SA list also up-to-date with the SA-Claim-Handlers!
+  uint8_t getDa() const { return ui8_da; }
+  uint8_t getSa() const { return ui8_sa; }
+
 // declaring/defining the following methods mutable as
 // A) they're only updating the cached SA/DA and
 // B) only MultiReceive is friend and can do this!
 private:
   void setDa (uint8_t rui8_da) const { ui8_da = rui8_da; }
   void setSa (uint8_t rui8_sa) const { ui8_sa = rui8_sa; }
-
-// private, so applications can not access them - they should access via ISOName getter functions!
-  uint8_t getDa() const { return ui8_da; }
-  uint8_t getSa() const { return ui8_sa; }
 
   friend class __IsoAgLib::MultiReceive_c;
   friend class __IsoAgLib::Stream_c;

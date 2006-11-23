@@ -211,23 +211,23 @@ MultiReceive_c::~MultiReceive_c()
 
 
 void
-MultiReceive_c::notifyError (const IsoAgLib::ReceiveStreamIdentifier_c& rc_streamIdent, uint8_t rui8_multiReceiveErrorCode)
+MultiReceive_c::notifyError (const IsoAgLib::ReceiveStreamIdentifier_c& rrefc_streamIdent, uint8_t rui8_multiReceiveErrorCode)
 {
-  if (rc_streamIdent.getDa() == 0xFF)
+  if (rrefc_streamIdent.getDa() == 0xFF)
   { // BAM
     for (std::list<MultiReceiveClientWrapper_s>::iterator i_list_clients = list_clients.begin(); i_list_clients != list_clients.end(); i_list_clients++)
     { // // inform all clients that want Broadcast-TP-Messages
       MultiReceiveClientWrapper_s& curClientWrapper = *i_list_clients;
       if (curClientWrapper.b_alsoBroadcast) {
-        curClientWrapper.pc_client->notificationOnMultiReceiveError (rc_streamIdent, rui8_multiReceiveErrorCode, false);
+        curClientWrapper.pc_client->notificationOnMultiReceiveError (rrefc_streamIdent, rui8_multiReceiveErrorCode, false);
       }
     }
   }
   else
   { // really destin specific
-    if (getClient(rc_streamIdent))
+    if (getClient(rrefc_streamIdent))
     {
-      getClient(rc_streamIdent)->notificationOnMultiReceiveError (rc_streamIdent, rui8_multiReceiveErrorCode, false);
+      getClient(rrefc_streamIdent)->notificationOnMultiReceiveError (rrefc_streamIdent, rui8_multiReceiveErrorCode, false);
     }
     else
     {
@@ -236,7 +236,7 @@ MultiReceive_c::notifyError (const IsoAgLib::ReceiveStreamIdentifier_c& rc_strea
       { // // inform all clients that want Broadcast-TP-Messages
         MultiReceiveClientWrapper_s& curClientWrapper = *i_list_clients;
         if (curClientWrapper.b_alsoGlobalErrors) {
-          curClientWrapper.pc_client->notificationOnMultiReceiveError (rc_streamIdent, rui8_multiReceiveErrorCode, true);
+          curClientWrapper.pc_client->notificationOnMultiReceiveError (rrefc_streamIdent, rui8_multiReceiveErrorCode, true);
         }
       }
     }

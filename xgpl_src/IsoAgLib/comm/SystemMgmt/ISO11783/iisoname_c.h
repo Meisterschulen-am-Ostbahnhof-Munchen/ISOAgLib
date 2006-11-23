@@ -267,6 +267,7 @@ private:
   friend class iCANPkgExt_c;
   friend class iISOMonitor_c;
   friend class iMultiSend_c;
+  friend class iMultiReceive_c;
   friend class iTimePosGPS_c;
   friend class iTracMove_c;
   friend class iTracMoveSetPoint_c;
