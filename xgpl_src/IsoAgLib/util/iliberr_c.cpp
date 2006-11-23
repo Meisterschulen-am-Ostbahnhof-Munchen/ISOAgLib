@@ -1,8 +1,8 @@
 /***************************************************************************
-                          liberr_c.cpp  - central object for error management
+                          iliberr_c.cpp  - central object for error management
                              -------------------
     begin                : Thu Mar 16 2000
-    copyright            : (C) 2000 - 2004 by Dipl.-Inform. Achim Spangler
+    copyright            : (C) 2000 - 2006 by Dipl.-Inform. Achim Spangler/Dipl.-Inf. Martin Wodok
     email                : spangler@tec.agrar.tu-muenchen.de
     type                 : Source
  ***************************************************************************/
@@ -94,11 +94,10 @@ iLibErr_c::iLibErr_c() : errTypeAtLoc() // : ui32_lastErrorTime(0)
 /** copy constructor which sets the error value to the err value of the source */
 iLibErr_c::iLibErr_c(const iLibErr_c& rrefc_src)
 {
-  for (int i=0; i<AllErrLocations; i++) {
+  for (int i=0; i<AllErrLocations; i++)
+  { // copy all std::bitset for all locations!
     errTypeAtLoc [i] = rrefc_src.errTypeAtLoc [i];
   }
-//  CNAMESPACE::memcpy( &errTypeBitfield, &(rrefc_src.errTypeBitfield), sizeof(errTypeBitfield) );
-//  CNAMESPACE::memcpy( &errLocBitfield, &(rrefc_src.errLocBitfield), sizeof(errLocBitfield) );
 }
 
 /** register an error
@@ -108,7 +107,7 @@ iLibErr_c::iLibErr_c(const iLibErr_c& rrefc_src)
 void iLibErr_c::registerError( iLibErr_c::iLibErrTypes_t rt_errType, iLibErrLocations_t rt_errLocation )
 {
   if ((rt_errLocation != AllErrLocations) && (rt_errType != AllErrTypes)) {
-    errTypeAtLoc [rt_errLocation] [rt_errType] = 1;
+    errTypeAtLoc [rt_errLocation].set (rt_errType);
   }
 
 #ifdef DEBUG
@@ -126,91 +125,8 @@ void iLibErr_c::registerError( iLibErr_c::iLibErrTypes_t rt_errType, iLibErrLoca
       << "registerError( " << rt_errType << ", " << rt_errLocation << " )" << INTERNAL_DEBUG_DEVICE_ENDL;
   }
 #endif
-
-/*
-  switch ( rt_errType ) {
-  case Precondition: errTypeBitfield.Precondition++;  break;
-  case BadAlloc: errTypeBitfield.BadAlloc++;        break;
-  case ElNonexistent: errTypeBitfield.ElNonexistent++;    break;
-  case Unspecified: errTypeBitfield.Unspecified++;    break;
-  case HwConfig: errTypeBitfield.HwConfig++;        break;
-  case Range: errTypeBitfield.Range++;                break;
-  case Busy: errTypeBitfield.Busy++;                  break;
-  case SystemOpen: errTypeBitfield.SystemOpen++;    break;
-  case SystemWatchdog: errTypeBitfield.SystemWatchdog++;    break;
-  case CanOff: errTypeBitfield.CanOff++;            break;
-  case CanWarn: errTypeBitfield.CanWarn++;          break;
-  case CanBus: errTypeBitfield.CanBus++;            break;
-  case CanMsgObj: errTypeBitfield.CanMsgObj++;    break;
-  case CanMem: errTypeBitfield.CanMem++;            break;
-  case CanOverflow: errTypeBitfield.CanOverflow++;  break;
-  case CanConflict: errTypeBitfield.CanConflict++;  break;
-  case CanDiffSpeed: errTypeBitfield.CanDiffSpeed++;    break;
-  case Rs232Overflow: errTypeBitfield.Rs232Overflow++;    break;
-  case Rs232Underflow: errTypeBitfield.Rs232Underflow++;  break;
-  case EepromSegment: errTypeBitfield.EepromSegment++;    break;
-  case EepromWriteError: errTypeBitfield.EepromWriteError++;    break;
-  case SysNoActiveLocalMember: errTypeBitfield.SysNoActiveLocalMember++;    break;
-  case BaseSenderConflict: errTypeBitfield.BaseSenderConflict++;                break;
-  case IsoTerminalOutOfMemory: errTypeBitfield.IsoTerminalOutOfMemory++;            break;
-  case LbsMultiSendBusy: errTypeBitfield.LbsMultiSendBusy++;                        break;
-  case AllErrTypes: break; // should not happen in work - but to make compiler happy
-  }
-  switch ( rt_errLocation ) {
-    case Lbs: errLocBitfield.Lbs++;            break;
-    case Base: errLocBitfield.Base++;  break;
-    case System: errLocBitfield.System++;      break;
-    case Process: errLocBitfield.Process++;    break;
-    case LbsTerminal: errLocBitfield.LbsTerminal++;  break;
-    case LbsMultipacket: errLocBitfield.LbsMultipacket++;    break;
-    case HwSystem: errLocBitfield.HwSystem++;      break;
-    case Can: errLocBitfield.Can++;            break;
-    case Eeprom: errLocBitfield.Eeprom++;      break;
-    case Sensor: errLocBitfield.Sensor++;      break;
-    case Actor: errLocBitfield.Actor++;        break;
-    case Rs232: errLocBitfield.Rs232++;        break;
-    case IsoTerminal: errLocBitfield.IsoTerminal++;  break;
-    case AllErrLocations: break; // should not happen in work - but to make compiler happy
-  }
-*/
-//  ui32_lastErrorTime = HAL::getTime();
 }
 
-/**
-  clear all error information of a special location
-  @param rt_errType select for which error types the counter shall be reset (default reset all counters)
-void iLibErr_c::clear( iLibErrTypes_t rt_errType )
-{
-  switch ( rt_errType ) {
-    case AllErrTypes: CNAMESPACE::memset( &errTypeBitfield, 0, sizeof(errTypeBitfield) ); break;
-    case Precondition: errTypeBitfield.Precondition = 0;  break;
-    case BadAlloc: errTypeBitfield.BadAlloc = 0;        break;
-    case ElNonexistent: errTypeBitfield.ElNonexistent = 0;    break;
-    case Unspecified: errTypeBitfield.Unspecified = 0;    break;
-    case HwConfig: errTypeBitfield.HwConfig = 0;        break;
-    case Range: errTypeBitfield.Range = 0;                break;
-    case Busy: errTypeBitfield.Busy = 0;                  break;
-    case SystemOpen: errTypeBitfield.SystemOpen = 0;    break;
-    case SystemWatchdog: errTypeBitfield.SystemWatchdog = 0;    break;
-    case CanOff: errTypeBitfield.CanOff = 0;            break;
-    case CanWarn: errTypeBitfield.CanWarn = 0;          break;
-    case CanBus: errTypeBitfield.CanBus = 0;            break;
-    case CanMsgObj: errTypeBitfield.CanMsgObj = 0;    break;
-    case CanMem: errTypeBitfield.CanMem = 0;            break;
-    case CanOverflow: errTypeBitfield.CanOverflow = 0;  break;
-    case CanConflict: errTypeBitfield.CanConflict = 0;  break;
-    case CanDiffSpeed: errTypeBitfield.CanDiffSpeed = 0;    break;
-    case Rs232Overflow: errTypeBitfield.Rs232Overflow = 0;    break;
-    case Rs232Underflow: errTypeBitfield.Rs232Underflow = 0;  break;
-    case EepromSegment: errTypeBitfield.EepromSegment = 0;    break;
-    case EepromWriteError: errTypeBitfield.EepromWriteError = 0;    break;
-    case SysNoActiveLocalMember: errTypeBitfield.SysNoActiveLocalMember = 0;    break;
-    case BaseSenderConflict: errTypeBitfield.BaseSenderConflict = 0;                break;
-    case IsoTerminalOutOfMemory: errTypeBitfield.IsoTerminalOutOfMemory = 0;            break;
-    case LbsMultiSendBusy: errTypeBitfield.LbsMultiSendBusy = 0;                        break;
-  }
-}
-*/
 
 /**
   clear specific error information of a special location
@@ -218,9 +134,12 @@ void iLibErr_c::clear( iLibErrTypes_t rt_errType )
   @param rt_errType select for which error types the counter shall be reset (default reset all counters)
 */
 void iLibErr_c::clear( iLibErrTypes_t rt_errType, iLibErrLocations_t rt_errLocation ) {
-  if (rt_errType == AllErrTypes) {
-    clear (rt_errLocation); // Clear complete Location
-  } else {
+  if (rt_errType == AllErrTypes)
+  { // Clear all types on (specifc/all) Location(s)
+    clear (rt_errLocation);
+  }
+  else
+  { // clear specific type  on (specific/all) Location(s)
     if (rt_errLocation == AllErrLocations) {
       for (int i=0; i<AllErrLocations; i++) {
         errTypeAtLoc [i].reset (rt_errType);
@@ -230,6 +149,7 @@ void iLibErr_c::clear( iLibErrTypes_t rt_errType, iLibErrLocations_t rt_errLocat
     }
   }
 }
+
 
 /**
   clear all error information of a special location
@@ -243,25 +163,8 @@ void iLibErr_c::clear( iLibErrLocations_t rt_errLocation ) {
   } else {
     errTypeAtLoc [rt_errLocation].reset ();
   }
-/*
-  switch ( rt_errLocation ) {
-    case AllErrLocations: CNAMESPACE::memset( &errLocBitfield, 0, sizeof(errLocBitfield) ); break;
-    case Lbs: errLocBitfield.Lbs = 0;            break;
-    case Base: errLocBitfield.Base = 0;  break;
-    case System: errLocBitfield.System = 0;      break;
-    case Process: errLocBitfield.Process = 0;    break;
-    case LbsTerminal: errLocBitfield.LbsTerminal = 0;  break;
-    case LbsMultipacket: errLocBitfield.LbsMultipacket = 0;    break;
-    case HwSystem: errLocBitfield.HwSystem = 0;      break;
-    case Can: errLocBitfield.Can = 0;            break;
-    case Eeprom: errLocBitfield.Eeprom = 0;      break;
-    case Sensor: errLocBitfield.Sensor = 0;      break;
-    case Actor: errLocBitfield.Actor = 0;        break;
-    case Rs232: errLocBitfield.Rs232 = 0;        break;
-    case IsoTerminal: errLocBitfield.IsoTerminal = 0; break;
-  }
-*/
 }
+
 
 /**
   deliver the count of registered errors
@@ -281,64 +184,8 @@ uint16_t iLibErr_c::getErrCnt( iLibErrTypes_t rt_errType ) const
     }
   }
   return errors;
-/*
-  uint8_t ui8_result = 0;
-  switch ( rt_errType ) {
-    case AllErrTypes:
-      ui8_result += Precondition;
-      ui8_result += BadAlloc;
-      ui8_result += ElNonexistent;
-      ui8_result += Unspecified;
-      ui8_result += HwConfig;
-      ui8_result += Range;
-      ui8_result += Busy;
-      ui8_result += SystemOpen;
-      ui8_result += SystemWatchdog;
-      ui8_result += CanOff;
-      ui8_result += CanWarn;
-      ui8_result += CanBus;
-      ui8_result += CanMsgObj;
-      ui8_result += CanMem;
-      ui8_result += CanOverflow;
-      ui8_result += CanConflict;
-      ui8_result += CanDiffSpeed;
-      ui8_result += Rs232Overflow;
-      ui8_result += Rs232Underflow;
-      ui8_result += EepromSegment;
-      ui8_result += EepromWriteError;
-      ui8_result += SysNoActiveLocalMember;
-      ui8_result += BaseSenderConflict;
-      ui8_result += IsoTerminalOutOfMemory;
-      ui8_result += LbsMultiSendBusy;
-      break;
-    case Precondition: ui8_result = errTypeBitfield.Precondition;  break;
-    case BadAlloc: ui8_result = errTypeBitfield.BadAlloc;        break;
-    case ElNonexistent: ui8_result = errTypeBitfield.ElNonexistent;    break;
-    case Unspecified: ui8_result = errTypeBitfield.Unspecified;    break;
-    case HwConfig: ui8_result = errTypeBitfield.HwConfig;        break;
-    case Range: ui8_result = errTypeBitfield.Range;                break;
-    case Busy: ui8_result = errTypeBitfield.Busy;                  break;
-    case SystemOpen: ui8_result = errTypeBitfield.SystemOpen;    break;
-    case SystemWatchdog: ui8_result = errTypeBitfield.SystemWatchdog;    break;
-    case CanOff: ui8_result = errTypeBitfield.CanOff;            break;
-    case CanWarn: ui8_result = errTypeBitfield.CanWarn;          break;
-    case CanBus: ui8_result = errTypeBitfield.CanBus;            break;
-    case CanMsgObj: ui8_result = errTypeBitfield.CanMsgObj;    break;
-    case CanMem: ui8_result = errTypeBitfield.CanMem;            break;
-    case CanOverflow: ui8_result = errTypeBitfield.CanOverflow;  break;
-    case CanConflict: ui8_result = errTypeBitfield.CanConflict;  break;
-    case CanDiffSpeed: ui8_result = errTypeBitfield.CanDiffSpeed;    break;
-    case Rs232Overflow: ui8_result = errTypeBitfield.Rs232Overflow;    break;
-    case Rs232Underflow: ui8_result = errTypeBitfield.Rs232Underflow;  break;
-    case EepromSegment: ui8_result = errTypeBitfield.EepromSegment;    break;
-    case EepromWriteError: ui8_result = errTypeBitfield.EepromWriteError;    break;
-    case SysNoActiveLocalMember: ui8_result = errTypeBitfield.SysNoActiveLocalMember;  break;
-    case BaseSenderConflict: ui8_result = errTypeBitfield.BaseSenderConflict;                break;
-    case IsoTerminalOutOfMemory: ui8_result = errTypeBitfield.IsoTerminalOutOfMemory;       break;
-    case LbsMultiSendBusy: ui8_result = errTypeBitfield.LbsMultiSendBusy;       }
-  return ui8_result;
-*/
 }
+
 
 /**
   deliver the type of the nth error
@@ -364,6 +211,7 @@ iLibErr_c::iLibErrTypes_t iLibErr_c::getErrIndType( uint8_t rui8_ind ) const
 
   return AllErrTypes;
 }
+
 
 /**
   deliver the location of the nth error
@@ -391,8 +239,6 @@ iLibErr_c::iLibErrLocations_t iLibErr_c::getErrIndLocation( uint8_t rui8_ind ) c
 }
 
 
-
-
 /**
   deliver the count of registered errors with a special error location
   @param rt_errLocation location to check for errors
@@ -409,41 +255,8 @@ uint16_t iLibErr_c::getErrCnt( iLibErrLocations_t rt_errLocation ) const
     errors += errTypeAtLoc [rt_errLocation].count ();
   }
   return errors;
-/*
-  uint8_t ui8_result = 0;
-  switch ( rt_errLocation ) {
-    case AllErrLocations:
-      ui8_result += errLocBitfield.Lbs;
-      ui8_result += errLocBitfield.Base;
-      ui8_result += errLocBitfield.System;
-      ui8_result += errLocBitfield.Process;
-      ui8_result += errLocBitfield.LbsTerminal;
-      ui8_result += errLocBitfield.LbsMultipacket;
-      ui8_result += errLocBitfield.HwSystem;
-      ui8_result += errLocBitfield.Can;
-      ui8_result += errLocBitfield.Eeprom;
-      ui8_result += errLocBitfield.Sensor;
-      ui8_result += errLocBitfield.Actor;
-      ui8_result += errLocBitfield.Rs232;
-      ui8_result += errLocBitfield.IsoTerminal;
-      break;
-    case Lbs: ui8_result = errLocBitfield.Lbs;            break;
-    case Base: ui8_result = errLocBitfield.Base;  break;
-    case System: ui8_result = errLocBitfield.System;      break;
-    case Process: ui8_result = errLocBitfield.Process;    break;
-    case LbsTerminal: ui8_result = errLocBitfield.LbsTerminal;  break;
-    case LbsMultipacket: ui8_result = errLocBitfield.LbsMultipacket;    break;
-    case HwSystem: ui8_result = errLocBitfield.HwSystem;      break;
-    case Can: ui8_result = errLocBitfield.Can;            break;
-    case Eeprom: ui8_result = errLocBitfield.Eeprom;      break;
-    case Sensor: ui8_result = errLocBitfield.Sensor;      break;
-    case Actor: ui8_result = errLocBitfield.Actor;        break;
-    case Rs232: ui8_result = errLocBitfield.Rs232;        break;
-    case IsoTerminal: ui8_result = errLocBitfield.IsoTerminal;  break;
-  }
-  return ui8_result;
-*/
 }
+
 
 /**
   check if the error value reports correct error free state
@@ -464,6 +277,7 @@ bool iLibErr_c::good( iLibErrTypes_t rt_errType ) const
   return (errors > 0 )?false:true;
 }
 
+
 /**
   check if the error value reports correct error free state
   @param rt_errLocation location to check for errors
@@ -481,19 +295,9 @@ bool iLibErr_c::good( iLibErrLocations_t rt_errLocation ) const
     errors = getErrCnt( rt_errLocation );
   }
   return (errors > 0 )?false:true;
-/*
-  if ( rt_errLocation == AllErrLocations ) {
-    uint8_t temp[sizeof(errLocBitfield)];
-    CNAMESPACE::memset( temp, 0, sizeof(errLocBitfield) );
-    // compare errLocBitfield with string of "\0" -> if all bytes in errLocBitfield
-    // are 0 memcmp returns 0
-    return ( CNAMESPACE::memcmp( &errLocBitfield, temp, sizeof(errLocBitfield) ) == 0)?true:false;
-  }
-  else {
-    return (getErrCnt( rt_errLocation ) > 0 )?false:true;
-  }
-*/
 }
+
+
 
 bool iLibErr_c::good( iLibErrTypes_t rt_errType, iLibErrLocations_t rt_errLocation ) const
 {
@@ -506,10 +310,5 @@ bool iLibErr_c::good( iLibErrTypes_t rt_errType, iLibErrLocations_t rt_errLocati
   return true;
 }
 
-
-/** default destructor which has nothing to do */
-iLibErr_c::~iLibErr_c()
-{
-}
 
 } // end of namespace IsoAgLib

@@ -217,7 +217,7 @@ public:
   inline bool operator!(){ return (good(AllErrTypes))?false:true;};
 
   /** default destructor which has nothing to do */
-  virtual ~iLibErr_c();
+  ~iLibErr_c() {}
 
 private:
   friend class SINGLETON( iLibErr_c );

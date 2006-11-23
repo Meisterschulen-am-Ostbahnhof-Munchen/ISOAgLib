@@ -230,6 +230,11 @@ void Scheduler_c::startSystem()
     b_systemStarted = true;
     // NOW INIT ONCE the core singleton classes that correspond to the compile time
     // configured features of the IsoAgLib
+    getILibErrInstance().init();
+#ifdef DEF_Stream_IMPL
+    getMultiReceiveInstance4Comm().init();
+    getMultiSendInstance4Comm().init();
+#endif
 #ifdef USE_PROCESS
     getProcessInstance4Comm().init();
 #endif
@@ -253,10 +258,6 @@ void Scheduler_c::startSystem()
 #endif
 #ifdef USE_ISO_TERMINAL
     getIsoTerminalInstance().init();
-#endif
-#ifdef DEF_Stream_IMPL
-    getMultiReceiveInstance4Comm().init();
-    getMultiSendInstance4Comm().init();
 #endif
   }
 }
