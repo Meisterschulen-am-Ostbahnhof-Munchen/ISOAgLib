@@ -884,7 +884,8 @@ MultiReceive_c::finishStream (DEF_Stream_c_IMPL& rrefc_stream)
 {
   bool b_keepStream = false;
   #ifdef NMEA_2000_FAST_PACKET
-  if ((rrefc_stream.getStreamType() == StreamFastPacket) || (rrefc_stream.getIdent().getDa() == 0xFF))
+  const bool cb_isFastPacketStream = (rrefc_stream.getStreamType() == StreamFastPacket)?true:false;
+  if (cb_isFastPacketStream || (rrefc_stream.getIdent().getDa() == 0xFF))
   { // FastPacket or BAM
   #else
   if (rrefc_stream.getIdent().getDa() == 0xFF)
@@ -897,9 +898,12 @@ MultiReceive_c::finishStream (DEF_Stream_c_IMPL& rrefc_stream)
       {
         if (
             #ifdef NMEA_2000_FAST_PACKET
-            curClientWrapper.b_isFastPacket ||
+            (curClientWrapper.b_isFastPacket == cb_isFastPacketStream)
+         && ( curClientWrapper.b_alsoBroadcast )
+            #else
+            curClientWrapper.b_alsoBroadcast
             #endif
-            curClientWrapper.b_alsoBroadcast)
+          )
         {
           curClientWrapper.pc_client->processPartStreamDataChunk (rrefc_stream, /*firstChunk*/true/*it's only one, don't care*/, /*b_lastChunk*/true); // don't care about result, as BAMs will NOT be kept anyway!
         }
@@ -1163,6 +1167,13 @@ MultiReceive_c::init()
     __IsoAgLib::getSchedulerInstance4Comm().registerClient( this );
     // register to get ISO monitor list changes
     __IsoAgLib::getIsoMonitorInstance4Comm().registerSaClaimHandler( this );
+
+    // insert receive filter for broadcasted TP
+    __IsoAgLib::FilterBox_c* refFB;
+    MACRO_insertFilterIfNotYetExists_mask1FFFF00_setRef(TP_CONN_MANAGE_PGN,0xFF,false,refFB)
+    MACRO_insertFilterIfNotYetExists_mask1FFFF00_useRef(TP_DATA_TRANSFER_PGN,0xFF,false,refFB)
+    MACRO_insertFilterIfNotYetExists_mask1FFFF00_setRef(ETP_CONN_MANAGE_PGN,0xFF,false,refFB)
+    MACRO_insertFilterIfNotYetExists_mask1FFFF00_useRef(ETP_DATA_TRANSFER_PGN,0xFF,true,refFB)
 
   }
 
