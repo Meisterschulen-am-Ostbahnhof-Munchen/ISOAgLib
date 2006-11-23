@@ -98,6 +98,15 @@
 #include <IsoAgLib/comm/Base/itracmove_c.h>
 #include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.h>
 
+#ifdef DEBUG
+  #ifdef SYSTEM_PC
+    #include <iostream>
+  #else
+    #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
+  #endif
+#endif
+
+
 
 using namespace std;
 
@@ -440,6 +449,9 @@ namespace __IsoAgLib {
     else
     { // IdentModeImplement
       c_sendGpsISOName.setUnspecified();
+			// register Broadcast-TP receive of NMEA 2000 data
+      getMultiReceiveInstance4Comm().registerClient(NMEA_GPS_POSITON_DATA_PGN,   0xFF, this, true, false, false);
+      getMultiReceiveInstance4Comm().registerClient(NMEA_GPS_DIRECTION_DATA_PGN, 0xFF, this, true, false, false);
       #ifdef NMEA_2000_FAST_PACKET
       // make sure that the needed multi receive are registered
       getMultiReceiveInstance4Comm().registerClient(NMEA_GPS_POSITON_DATA_PGN,   0xFF, this, true, false, true);
@@ -842,6 +854,12 @@ namespace __IsoAgLib {
           if ( vec_refStationDifferentialAge10Msec.size() < (ind+1) ) vec_refStationDifferentialAge10Msec.push_back(__IsoAgLib::convertIstreamUi16( refc_stream ) );
           else IsoAgLib::convertIstream( refc_stream, vec_refStationDifferentialAge10Msec[ind] );
         }
+        #ifdef DEBUG
+        INTERNAL_DEBUG_DEVICE << "process NMEA_GPS_POSITON_DATA_PGN Lat: " << i32_latitudeDegree10Minus7
+          << ", Lon: " << i32_longitudeDegree10Minus7 << ", Alt: " << ui32_altitudeCm
+          << ", TotalSize: " << refc_stream.getByteTotalSize() << ", resceived: " << refc_stream.getByteAlreadyReceived()
+          << INTERNAL_DEBUG_DEVICE_ENDL;
+        #endif
       }
       break;
       case NMEA_GPS_DIRECTION_DATA_PGN: // 0x01FE11LU - 130577 with Heading and Speed
@@ -855,6 +873,13 @@ namespace __IsoAgLib {
         IsoAgLib::convertIstream( refc_stream, ui16_speedCmSec );
         IsoAgLib::convertIstream( refc_stream, ui16_flowDirectionRad10Minus4 );
         IsoAgLib::convertIstream( refc_stream, ui16_driftSpeedCmSec );
+        #ifdef DEBUG
+        INTERNAL_DEBUG_DEVICE << "process NMEA_GPS_DIRECTION_DATA_PGN: CourseOverGround: " << ui16_courseOverGroundRad10Minus4
+          << ", SpeedOverGround [cm/sec]: " << ui16_speedOverGroundCmSec
+          << ", Heading: " << ui16_headingRad10Minus4
+          << ", Speed [cm/sec]: " << ui16_speedCmSec
+          << INTERNAL_DEBUG_DEVICE_ENDL;
+        #endif
         break;
     }
     return false;
@@ -945,7 +970,11 @@ namespace __IsoAgLib {
     //now trigger sending
     // retreive the actual dynamic sender no of the member with the registered isoName
     const uint8_t b_send = c_iso_monitor.isoMemberISOName(c_sendGpsISOName, true).nr();
+    #ifdef SEND_NMEA2000_FAST_PACKET
     if ( getMultiSendInstance4Comm().sendIsoFastPacket(b_send, 0xFF, &c_nmea2000Streamer, NMEA_GPS_DIRECTION_DATA_PGN, t_multiSendSuccessState) )
+    #else
+    if ( getMultiSendInstance4Comm().sendIsoBroadcast(b_send, 0xFF, &c_nmea2000Streamer, NMEA_GPS_DIRECTION_DATA_PGN, t_multiSendSuccessState) )
+    #endif
     { // update time
       i32_lastIsoDirectionStream = ci32_now;
       ui8_directionSequenceID++;
@@ -1040,13 +1069,13 @@ namespace __IsoAgLib {
     number2LittleEndianString( i32_geoidalSeparation, writeRef );
 
     // write number of reference stations
-    unsigned int limit = ui8_noRefStations;
-    if ( vec_refStationTypeAndStation.size() < limit ) limit = vec_refStationTypeAndStation.size();
-    if ( vec_refStationDifferentialAge10Msec.size() < limit ) limit = vec_refStationDifferentialAge10Msec.size();
+    uint8_t ui8_limit = ui8_noRefStations;
+    if ( vec_refStationTypeAndStation.size() < ui8_limit ) ui8_limit = vec_refStationTypeAndStation.size();
+    if ( vec_refStationDifferentialAge10Msec.size() < ui8_limit ) ui8_limit = vec_refStationDifferentialAge10Msec.size();
 
-    number2LittleEndianString( limit, writeRef );
+    number2LittleEndianString( ui8_limit, writeRef );
 
-    for ( unsigned int ind = 0; ind < limit; ind++ )
+    for ( unsigned int ind = 0; ind < ui8_limit; ind++ )
     {
       number2LittleEndianString( vec_refStationTypeAndStation[ind], writeRef );
       number2LittleEndianString( vec_refStationDifferentialAge10Msec[ind], writeRef );
@@ -1055,7 +1084,11 @@ namespace __IsoAgLib {
     //now trigger sending
     // retreive the actual dynamic sender no of the member with the registered isoName
     const uint8_t b_send = c_iso_monitor.isoMemberISOName(c_sendGpsISOName, true).nr();
+    #ifdef SEND_NMEA2000_FAST_PACKET
     if ( getMultiSendInstance4Comm().sendIsoFastPacket(b_send, 0xFF, &c_nmea2000Streamer, NMEA_GPS_POSITON_DATA_PGN, t_multiSendSuccessState) )
+    #else
+    if ( getMultiSendInstance4Comm().sendIsoBroadcast(b_send, 0xFF, &c_nmea2000Streamer, NMEA_GPS_POSITON_DATA_PGN, t_multiSendSuccessState) )
+    #endif
     { // update time
       i32_lastIsoPositionStream = ci32_now;
       ui8_positionSequenceID++;
