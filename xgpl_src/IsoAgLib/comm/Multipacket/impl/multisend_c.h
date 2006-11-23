@@ -369,8 +369,8 @@ public: // methods
   */
   bool sendIsoBroadcast (const ISOName_c& rrefc_isoNameSender, const HUGE_MEM uint8_t* rhpb_data, uint16_t rui16_dataSize, int32_t ri32_pgn, sendSuccess_t& rrefen_sendSuccessNotify)
     { return sendIntern (rrefc_isoNameSender, ISOName_c::ISONameUnspecified, rhpb_data, rui16_dataSize, rrefen_sendSuccessNotify, ri32_pgn, NULL /* NOT "yet" supported */, IsoTPbroadcast); }
-  bool sendIsoBroadcast(uint8_t rb_send, uint8_t rb_empf, IsoAgLib::iMultiSendStreamer_c* rpc_mss, int32_t ri32_pgn, sendSuccess_t& rrefen_sendSuccessNotify);
-    { return sendIsoIntern(rb_send, rb_empf, NULL, rpc_mss->getStreamSize(), rrefen_sendSuccessNotify, ri32_pgn, rpc_mss, IsoBroadcast);}
+  bool sendIsoBroadcast(const ISOName_c& rrefc_isoNameSender, IsoAgLib::iMultiSendStreamer_c* rpc_mss, int32_t ri32_pgn, sendSuccess_t& rrefen_sendSuccessNotify)
+    { return sendIntern(rrefc_isoNameSender, ISOName_c::ISONameUnspecified, NULL, rpc_mss->getStreamSize(), rrefen_sendSuccessNotify, ri32_pgn, rpc_mss, IsoTPbroadcast);}
 
   #if defined(NMEA_2000_FAST_PACKET)
   // no MSS here, not supported by IsoFastPacket
