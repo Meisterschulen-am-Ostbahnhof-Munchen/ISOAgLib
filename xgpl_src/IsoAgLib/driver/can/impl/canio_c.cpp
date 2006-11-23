@@ -220,10 +220,6 @@ CANIO_c::singletonInit()
       #endif
       HAL::can_configGlobalClose(ui8_busNumber);
     }
-    else
-    { // invalid bus number
-      getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Can );
-    }
 
     /* ************************************* */
     /* *****set initial attribute values**** */
