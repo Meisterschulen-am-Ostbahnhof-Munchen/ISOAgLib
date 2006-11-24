@@ -108,6 +108,8 @@ namespace __IsoAgLib
     /// General init() so that EVERY subsystem of IsoAgLib has its init() call.
     /// nothing done so far, but can be overwritten in the derived classes if needed
     /// do not mistake this init() with the virtual (!) init_base() function
+    /// It's okay that this init() normally does NOTHING, as init_base() is being
+    /// called from singleonInit()!
     void init() {}
 
     /** constructor */
