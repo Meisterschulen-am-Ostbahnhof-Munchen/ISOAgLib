@@ -662,6 +662,7 @@ void clean_exit (int return_value, char* error_message=NULL, SpecialParsingBase_
 
   if (pc_specialParsing)
   {
+    pc_specialParsing->addFileIncludes(partFileA, xmlFileWithoutPath);
   }
 
   fclose (partFileA);
@@ -1753,7 +1754,8 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
   commandType = commandIsType (node_name);
 
   /// if USE_SPECIAL_PARSING is defined the objType will also be tested if it is a valid additional object type
-  if (pc_specialParsing && (objType == 0xFFFF) && (commandType == 0xFFFF)) objType = pc_specialParsing->getObjType(node_name);
+  if (pc_specialParsing && (objType == 0xFFFF) && (commandType == 0xFFFF))
+    objType = pc_specialParsing->getObjType(node_name);
 
   // ERROR: Wrong <TAG>
   if (objType == 0xFFFF && commandType == 0xFFFF) {
