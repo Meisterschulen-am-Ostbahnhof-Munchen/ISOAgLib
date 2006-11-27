@@ -75,8 +75,8 @@ PLATFORM = LINUX
 COMPILER = g++
 GCC = yes
 GXX = yes
-CXXFLAGS =  -g  -Wall -O  -DAPP_NO_THREADS -DXML_USE_NO_THREADS -DUSE_FREE_IMAGE_LIB
-CFLAGS =  -g  -Wall -O  -DAPP_NO_THREADS -DXML_USE_NO_THREADS -DUSE_FREE_IMAGE_LIB
+CXXFLAGS =  -g  -Wall -DAPP_NO_THREADS -DXML_USE_NO_THREADS -DUSE_FREE_IMAGE_LIB
+CFLAGS =  -g  -Wall -DAPP_NO_THREADS -DXML_USE_NO_THREADS -DUSE_FREE_IMAGE_LIB
 LDFLAGS =
 THREADS = none
 EXTRA_LIBS =
@@ -89,7 +89,8 @@ APP_NAME=vt2iso
 
 OUTDIR= bin/obj
 EXEC=	bin
-OBJS=	${OUTDIR}/vt2iso.o ${OUTDIR}/vt2isoimagebase_c.o ${OUTDIR}/vt2isoimagefreeimage_c.o
+OBJS=	${OUTDIR}/vt2iso.o ${OUTDIR}/vt2isoimagebase_c.o ${OUTDIR}/vt2isoimagefreeimage_c.o \
+			${OUTDIR}/vt2iso-defines.o
 myLIBRARY_NAMES = ${LIBRARY_NAMES} -lfreeimage -lpng -ljpeg -ltiff -lpthread
 SRC=	src
 
@@ -117,6 +118,10 @@ $(OUTDIR)/vt2isoimagebase_c.o:: ${SRC}/vt2isoimagebase_c.h ${SRC}/vt2isoimagebas
 
 $(OUTDIR)/vt2isoimagefreeimage_c.o:: ${SRC}/vt2isoimagebase_c.h ${SRC}/vt2isoimagefreeimage_c.cpp ${SRC}/vt2isoimagefreeimage_c.h
 	${CC} ${INCLUDES} ${CMP} -o $(OUTDIR)/vt2isoimagefreeimage_c.o ${SRC}/vt2isoimagefreeimage_c.cpp
+
+${OUTDIR}/vt2iso-defines.o:: ${SRC}/vt2iso-defines.hpp ${SRC}/vt2iso-defines.cpp
+	${CC} ${INCLUDES} ${CMP} -o $(OUTDIR)/vt2iso-defines.o ${SRC}/vt2iso-defines.cpp
+
 
 clean::
 	rm -f ${OBJS} ${EXEC}/${APP_NAME}

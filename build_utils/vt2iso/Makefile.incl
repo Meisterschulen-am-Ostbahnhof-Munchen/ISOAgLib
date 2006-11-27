@@ -62,8 +62,8 @@
 ifeq (${SYSOVR},OS400)
 PLATFORM = OS400
 endif
-INCLUDES= -I. -I${XERCESCROOT}/include -I/usr/include -I/usr/local/include
-LIB_DIR=${XERCESCROOT}/lib
+INCLUDES= -I. -I${XERCESCROOT} -I/usr/include -I/usr/local/include
+LIB_DIR=${XERCESCROOT}
 ifneq (${PLATFORM},OS400)
 LIBNAME=xerces-c
 else
@@ -202,7 +202,7 @@ endif
 #=============== QNX SPECIFIC OPTIONS =========================
 ifeq (${PLATFORM}, QNX)
 CMP= -c ${CXXFLAGS}
-CC= QCC -c 
+CC= QCC -c
 LINK = QCC ${LDFLAGS}
 PLATFORM_LIB_LINK_OPTIONS=-L/usr/local/lib
 EXTRA_LINK_OPTIONS=${EXTRA_LIBS}

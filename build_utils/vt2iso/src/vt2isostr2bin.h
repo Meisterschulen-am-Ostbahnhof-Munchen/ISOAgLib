@@ -363,7 +363,7 @@ extern char archedBarGraphOptionsTable [maxArchedBarGraphOptionsTable] [stringLe
 #define maxPriorityAcousticSignalTable 4
 extern char priorityAcousticSignalTable [maxPriorityAcousticSignalTable] [stringLength+1];
 
-//event Table for Macros:
+//event Table for Macros
 #define maxEventTable 26
 extern char eventTable [maxEventTable] [stringLength+1];
 

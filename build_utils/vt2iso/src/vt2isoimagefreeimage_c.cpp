@@ -54,7 +54,6 @@ typedef struct tagBGR {
 
 extern BGR_s vtColorTable[256];
 
-
 bool Vt2IsoImageFreeImage_c::b_FreeImageLibInited = false;
 
 /** constructor which can directly open the corresponding file */

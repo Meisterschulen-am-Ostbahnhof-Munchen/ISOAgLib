@@ -37,16 +37,16 @@
  * along with IsoAgLib; if not, write to the Free Software Foundation,     *
  * Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA           *
  ***************************************************************************/
-#include <xercesc/util/PlatformUtils.hpp>
+// #include <xercesc/util/PlatformUtils.hpp>
 #include <xercesc/parsers/AbstractDOMParser.hpp>
 #include <xercesc/dom/DOMImplementation.hpp>
 #include <xercesc/dom/DOMImplementationLS.hpp>
 #include <xercesc/dom/DOMImplementationRegistry.hpp>
 #include <xercesc/dom/DOMBuilder.hpp>
-#include <xercesc/dom/DOMException.hpp>
-#include <xercesc/dom/DOMDocument.hpp>
+// #include <xercesc/dom/DOMException.hpp>
+// #include <xercesc/dom/DOMDocument.hpp>
 #include <xercesc/dom/DOMNodeList.hpp>
-#include <xercesc/dom/DOMError.hpp>
+// #include <xercesc/dom/DOMError.hpp>
 #include <xercesc/dom/DOMLocator.hpp>
 #include <xercesc/dom/DOMNamedNodeMap.hpp>
 #include <xercesc/dom/DOMAttr.hpp>
@@ -59,36 +59,38 @@
 // Includes (findfirst, findnext)
 #include <stddef.h>
 #include <sys/types.h>
+#include <fstream>
 
 #ifdef WIN32
- #include <fstream>
  #include <windows.h>
-// #include <winbase.h>
  #include <stdio.h>
  #include <ostream>
-//        extern "C"
 #else
- #include <fstream>
  #include <dirent.h>
 #endif
 
-// Includes (vt2iso)
+#ifdef USE_FREE_IMAGE_LIB
+#include "vt2isoimagefreeimage_c.h"
+#else
+#include "vt2isoimagepaintlib_c.h"
+#endif
+
+#include <set>
+#include <iostream>
+#include <vector>
+#include <map>
+
+ // Includes (vt2iso)
 #include "vt2iso.hpp"
 #include "vt2iso-defines.hpp"
 
+#ifdef USE_SPECIAL_PARSING
+#include <specialparsinguse_c.h>
+#else
+#include <specialparsingbase_c.h>
+#endif
+
 using namespace std;
-
-typedef struct tagBGR {
-  uint8_t bgrBlue;
-  uint8_t bgrGreen;
-  uint8_t bgrRed;
-} BGR_s;
-
-typedef struct tagRGB {
-  uint8_t rgbRed;
-  uint8_t rgbGreen;
-  uint8_t rgbBlue;
-} RGB_s;
 
 BGR_s vtColorTable[256]=
 { /// ATTENTION: This is stored "Blue-Green-Red" !!!
@@ -351,45 +353,15 @@ BGR_s vtColorTable[256]=
   {0x00,0x00,0x00} //255
 };
 
-
 /**** CHOOSE YOU IMAGE_PROCESSOR *****/
 /** set it here or in the makefile! **/
 // #define USE_FREE_IMAGE_LIB
 // #define USE_PAINTLIB
 
-
-
-#ifdef USE_FREE_IMAGE_LIB
- #include "vt2isoimagefreeimage_c.h"
-#else
- #include "vt2isoimagepaintlib_c.h"
-#endif
-
-
-#include <set>
-#include <iostream>
-#include <vector>
-#include <map>
-
-
-
 #define MACRO_16bitToLE(value) (value & 0xFF), ((value >> 8) & 0xFF)
 #define MACRO_32bitToLE(value) (value & 0xFF), ((value >> 8) & 0xFF), ((value >> 16) & 0xFF), ((value >> 24) & 0xFF)
 
-
-
-typedef struct {
-  FILE* partFile;
-  char code [2+1]; // NULL terminated, so it gets comparable by "strcmp", etc.
-  unsigned int count;
-  bool firstLine;
-  char* valueBuffer;
-  unsigned int valueBufferLen;
-} language_s;
-
-
 // ### GLOBALS ###
-#define DEF_iso639entries 136
 char iso639table [DEF_iso639entries][2+1] = {{"aa"},{"ab"},{"af"},{"am"},{"ar"},{"as"},{"ay"},{"az"},{"ba"},{"be"},{"bg"},{"bh"},{"bi"},{"bn"},{"bo"},{"br"},{"ca"},{"co"},{"cs"},{"cy"},{"da"},{"de"},{"dz"},{"el"},{"en"},{"eo"},{"es"},{"et"},{"eu"},{"fa"},{"fi"},{"fj"},{"fo"},{"fr"},{"fy"},{"ga"},{"gd"},{"gl"},{"gn"},{"gu"},{"ha"},{"hi"},{"hr"},{"hu"},{"hy"},{"ia"},{"ie"},{"ik"},{"in"},{"is"},{"it"},{"iw"},{"ja"},{"ji"},{"jw"},{"ka"},{"kk"},{"kl"},{"km"},{"kn"},{"ko"},{"ks"},{"ku"},{"ky"},{"la"},{"ln"},{"lo"},{"lt"},{"lv"},{"mg"},{"mi"},{"mk"},{"ml"},{"mn"},{"mo"},{"mr"},{"ms"},{"mt"},{"my"},{"na"},{"ne"},{"nl"},{"no"},{"oc"},{"om"},{"or"},{"pa"},{"pl"},{"ps"},{"pt"},{"qu"},{"rm"},{"rn"},{"ro"},{"ru"},{"rw"},{"sa"},{"sd"},{"sg"},{"sh"},{"si"},{"sk"},{"sl"},{"sm"},{"sn"},{"so"},{"sq"},{"sr"},{"ss"},{"st"},{"su"},{"sv"},{"sw"},{"ta"},{"te"},{"tg"},{"th"},{"ti"},{"tk"},{"tl"},{"tn"},{"to"},{"tr"},{"ts"},{"tt"},{"tw"},{"uk"},{"ur"},{"uz"},{"vi"},{"vo"},{"wo"},{"xh"},{"yo"},{"zh"},{"zu"}};
 
 FILE *partFileA;
@@ -435,7 +407,6 @@ uint16_t ui16_WSObjID;
 // ---------------------------------------------------------------------------
 //  GLOBAL Bitmap instance
 // ---------------------------------------------------------------------------
-//
 #ifdef USE_FREE_IMAGE_LIB
   Vt2IsoImageFreeImage_c c_Bitmap;
 #else
@@ -445,7 +416,6 @@ uint16_t ui16_WSObjID;
 // ---------------------------------------------------------------------------
 //  void usage () --- Prints out usage text.
 // ---------------------------------------------------------------------------
-
 static void usage()
 {
   std::cout << "\nvt2iso BUILD DATE: 14-Jan-2005\n\n"
@@ -466,10 +436,9 @@ static void usage()
     << std::endl;
 }
 
-
 char proName[1024+1];
 
-void clean_exit (int return_value, char* error_message=NULL)
+void clean_exit (int return_value, char* error_message=NULL, SpecialParsingBase_c* pc_specialParsing = NULL)
 {
   char partFileName [1024+1]; partFileName [1024+1-1] = 0x00;
 
@@ -653,7 +622,6 @@ void clean_exit (int return_value, char* error_message=NULL)
   }
 
 // Write Direct Includes
-
   strncpy (partFileName, xmlFileGlobal, 1024);
   strcat (partFileName, "_direct.h");
   partFileA = fopen (partFileName,"wt");
@@ -669,6 +637,11 @@ void clean_exit (int return_value, char* error_message=NULL)
   fprintf (partFileA, "#include \"%s-list.inc\"\n", xmlFileWithoutPath);
   fprintf (partFileA, "#include \"%s-defines.inc\"\n", xmlFileWithoutPath);
   fprintf (partFileA, "#include \"%s-functions.inc\"\n", xmlFileWithoutPath);
+
+  if (pc_specialParsing)
+  {
+    pc_specialParsing->addFileIncludes(partFileA, xmlFileWithoutPath);
+  }
 
   fclose (partFileA);
 
@@ -687,6 +660,10 @@ void clean_exit (int return_value, char* error_message=NULL)
   fprintf (partFileA, "#include \"%s-defines.inc\"\n", xmlFileWithoutPath);
   fprintf (partFileA, "#include \"%s-functions.inc\"\n", xmlFileWithoutPath);
 
+  if (pc_specialParsing)
+  {
+  }
+
   fclose (partFileA);
 
 // Write Direct Includes
@@ -698,6 +675,13 @@ void clean_exit (int return_value, char* error_message=NULL)
   fprintf (partFileA, "#include \"%s-handler-derived.inc\"\n", xmlFileWithoutPath);
 
   fclose (partFileA);
+
+  /// if USE_SPECIAL_PARSING is defined additional output is done
+  if (pc_specialParsing)
+  {
+    pc_specialParsing->outputData2Files();
+    delete pc_specialParsing;
+  }
 
   exit (return_value);
 }
@@ -724,7 +708,6 @@ unsigned int strlenUnescaped (const char* pcc_string)
   return i_unescapedLength;
 }
 
-
 void copyWithQuoteAndLength (char *dest, const char *src, unsigned int len)
 {
   *dest++ = '"';
@@ -750,7 +733,6 @@ void copyWithQuoteAndLength (char *dest, const char *src, unsigned int len)
   *dest = 0x00;
 }
 
-
 // ---------------------------------------------------------------------------
 //  This is a simple class that lets us do easy (though not terribly efficient)
 //  trancoding of char* data to XMLCh data.
@@ -772,38 +754,35 @@ class XStr
       XMLString::release(&fUnicodeForm);
     }
 
-  // -----------------------------------------------------------------------
-  //  Getter methods
-  // -----------------------------------------------------------------------
+    // -----------------------------------------------------------------------
+    //  Getter methods
+    // -----------------------------------------------------------------------
     const XMLCh* unicodeForm() const
     {
       return fUnicodeForm;
     }
 
   private :
-  // -----------------------------------------------------------------------
-  //  Private data members
-    //
-  //  fUnicodeForm
-  //   This is the Unicode XMLCh format of the string.
-  // -----------------------------------------------------------------------
+    // -----------------------------------------------------------------------
+    //  Private data members
+    //  fUnicodeForm
+    //   This is the Unicode XMLCh format of the string.
+    // -----------------------------------------------------------------------
     XMLCh*   fUnicodeForm;
 };
 
 #define X(str) XStr(str).unicodeForm()
 
-
 // ---------------------------------------------------------------------------
 //  unsigned int getID (char* objName, bool isMacro, bool widhingID, unsigned int wishID=0)
 // ---------------------------------------------------------------------------
-
-unsigned int getID (char* objName, bool isMacro, bool wishingID, unsigned int wishID)
+unsigned int getID (char* objName, bool b_isMacro, bool b_wishingID, unsigned int wishID)
 {
   bool isThere = false;
   unsigned int foundID = 0;
 
   // Added the following check. This is necessary so that objects like input lists which can contain lists of the NULL  object ID (65535)
-  // do not assign object ids for this, and as a result count an additional object unnecessarily by incrementing objCount. -BAC 10-Jan-2004
+  // do not assign object ids for this, and as a result count an additional object unnecessarily by incrementing objCount.
   if (wishID == 65535)
   {
     return wishID;
@@ -822,10 +801,10 @@ unsigned int getID (char* objName, bool isMacro, bool wishingID, unsigned int wi
 
   if (!isThere) {
     // check what's the new ID to be
-    if (wishingID) {
+    if (b_wishingID) {
       foundID = wishID;
     } else {
-      if (isMacro) {
+      if (b_isMacro) {
         foundID = objNextMacroAutoID;
         objNextMacroAutoID--;
       } else {
@@ -843,7 +822,6 @@ unsigned int getID (char* objName, bool isMacro, bool wishingID, unsigned int wi
   return (foundID);
 }
 
-
 unsigned int idOrName_toi(char* rpc_string, bool rb_isMacro)
 {
   if (rpc_string [0] == 0x00) clean_exit (-1, "*** ERROR *** idOrName_toi: Empty 'object_id' attribute!\n\n");
@@ -853,8 +831,7 @@ unsigned int idOrName_toi(char* rpc_string, bool rb_isMacro)
   return getID (rpc_string, rb_isMacro, false, 0);
 }
 
-
-void getKeyCode ()
+void getKeyCode()
 {
   attrIsGiven [attrKey_code] = true;
   sprintf (attrString [attrKey_code], "%d", kcNextAutoID);
@@ -934,7 +911,6 @@ void init (const char* xmlFile)
     attrString [j] [stringLength+1-1] = 0x00;
 }
 
-
 void defaultAttributes (unsigned int r_objType)
 {
   if (r_objType != otGraphicsContext)
@@ -1013,7 +989,6 @@ void defaultAttributes (unsigned int r_objType)
   }
 }
 
-
 void convertIdReferenceToNameReference(int ri_attrType)
 {
   if (attrIsGiven [ri_attrType])
@@ -1047,7 +1022,6 @@ void convertIdReferencesToNameReferences()
   convertIdReferenceToNameReference (attrTarget_value_variable_reference);
 }
 
-
 int languageCodeToIndex (char* lc)
 {
   for (unsigned int index = 0; index<ui_languages; index++)
@@ -1060,26 +1034,6 @@ int languageCodeToIndex (char* lc)
     }
   }
   return -1; // negative number to indicate language code not found
-}
-
-unsigned int objectIsType (char* lookup_name)
-{
-  for (int i=0; i<maxObjectTypesToCompare; i++) {
-    if (0 == strncmp (lookup_name, otCompTable [i], stringLength)) {
-      return i;
-    }
-  }
-  return 0xFFFF;
-}
-
-unsigned int commandIsType (char* lookup_name)
-{
-  for (int i=0; i<maxCommandsToCompare; i++) {
-    if (0 == strncmp (lookup_name, ctCommandTable [i], stringLength)) {
-      return i;
-    }
-  }
-  return 0xFFFF;
 }
 
 unsigned int colortoi (char* text_color)
@@ -1135,7 +1089,6 @@ unsigned int fonttypetoi (char* text_fonttype)
   clean_exit (-1);
   return 0; // to make compiler happy
 }
-
 
 unsigned int booltoi (char *text_bool)
 {
@@ -1297,7 +1250,6 @@ unsigned int acousticsignaltoi (char *text_acousticsignal)
   return 0; // to make compiler happy
 }
 
-
 unsigned int fontstyletoi (char *text_fontstyle)
 {
   int l, retval=0;
@@ -1435,8 +1387,6 @@ unsigned int gcoptionstoi (char *text_options)
   return retval;
 }
 
-
-
 unsigned int inputobjectoptiontoi (char *text_inputobjectoptions)
 {
   int l, retval=0;
@@ -1458,7 +1408,6 @@ unsigned int buttonoptiontoi (char *text_buttonoptions)
   }
   return retval;
 }
-
 
 // Assuming an 8 bit per pixel bitmap.
 static unsigned char picBuffer [480*480];
@@ -1490,15 +1439,6 @@ void cleanAttribute(int attrID)
   attrIsGiven [attrID] = false;
 }
 
-void utf16convert (char* source, char* destin, int count)
-{
-  int i=-1;
-  do {
-    i++;
-    destin [i] = source [(i*2)];
-  } while (destin [i] != 0x00);
-}
-
 void checkForFileOrFile148 (char *tag) {
   char errMsg[1024+1]; errMsg[0] = 0x00;
   if (!attrIsGiven [attrFile]) {
@@ -1517,8 +1457,7 @@ void checkForFileOrFile148 (char *tag) {
   }
 }
 
-
-DOMNamedNodeMap *patched_getAttributes(DOMNode *n)
+DOMNamedNodeMap* patched_getAttributes(DOMNode *n)
 {
   char local_attrName [1024+1];
   char local_attrValue[1024+1];
@@ -1555,7 +1494,7 @@ DOMNamedNodeMap *patched_getAttributes(DOMNode *n)
 }
 
 
-void getAttributesFromNode(DOMNode *n, bool treatSpecial)
+void getAttributesFromNode(DOMNode *n, bool treatSpecial, SpecialParsingBase_c* pc_specialParsing)
 {
   DOMNamedNodeMap *pAttributes;
   if (n->hasAttributes()) { // parse through all attributes
@@ -1600,12 +1539,17 @@ void getAttributesFromNode(DOMNode *n, bool treatSpecial)
         }
       }
 
+      /// if USE_SPECIAL_PARSING is NOT defined, output an error warning and stop here, if attribute is unknown
       // ERROR: We didn't match a possible attribute name
-      if (l == maxAttributeNames)
+      if (!pc_specialParsing && (l == maxAttributeNames))
       {
         std::cout << "\n\nUNKNOWN ATTRIBUTE " << attr_name <<"="<< attr_value <<" IN TAG <"<< XMLString::transcode(n->getNodeName()) <<"> ENCOUNTERED! STOPPING PARSER! bye.\n\n";
         clean_exit (-1);
       }
+
+      /// if USE_SPECIAL_PARSING is defined, set a flag to sign if any attribute is unknown
+      if (pc_specialParsing && (l == maxAttributeNames))
+        pc_specialParsing->setUnknownAttributes (true);
     }
   }
 
@@ -1620,7 +1564,6 @@ void getAttributesFromNode(DOMNode *n, bool treatSpecial)
     }
   }
 }
-
 
 void openDecodePrintOut (const char* workDir, char* _bitmap_path, unsigned int &options, int fixNr=-1)
 {
@@ -1740,14 +1683,12 @@ void openDecodePrintOut (const char* workDir, char* _bitmap_path, unsigned int &
 // we're in an element here, not text or something else...
 //
 // ---------------------------------------------------------------------------
-
 /// @todo const char* rpcc_inKey, const char* rpcc_inButton
 ///       NOT USED atm for recursive uses, as the recursion is done in the setOrigin code!!!!
-
 #ifdef WIN32
-void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir /*, const char* rpcc_inKey, const char* rpcc_inButton*/)
+void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir /*, const char* rpcc_inKey, const char* rpcc_inButton*/, SpecialParsingBase_c* pc_specialParsing)
 #else
-static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir /*, const char* rpcc_inKey, const char* rpcc_inButton*/)
+static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir /*, const char* rpcc_inKey, const char* rpcc_inButton*/, SpecialParsingBase_c* pc_specialParsing)
 #endif
 {
   DOMNode *child;
@@ -1811,13 +1752,16 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
   // get own Command Type
   commandType = commandIsType (node_name);
 
+  /// if USE_SPECIAL_PARSING is defined the objType will also be tested if it is a valid additional object type
+  if (pc_specialParsing && (objType == 0xFFFF) && (commandType == 0xFFFF)) objType = pc_specialParsing->getObjType(node_name);
+
   // ERROR: Wrong <TAG>
   if (objType == 0xFFFF && commandType == 0xFFFF) {
     std::cout << "\n\nUNKNOWN TAG <"<< node_name <<"> ENCOUNTERED! STOPPING PARSER! bye.\n\n";
     clean_exit (-1);
   }
 
-  if (objType >= maxObjectTypes)
+  if (objType >= otObjectpool)
   {
     if (objType == otObjectpool)
     { // expect (datamask) dimension here
@@ -1875,10 +1819,13 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
       }
     }
   } else {
-    // normal to insert element!
-    if (( (uint64_t(1)<<objType) & ombType) == 0) {
+    /// if USE_SPECIAL_PARSING is defined, check here if found tag is valid at this position
+    if (pc_specialParsing && ((objType >= maxObjectTypes) && !pc_specialParsing->checkTag(n, objType, ombType)))
+      clean_exit (-1);
+    else if (( (uint64_t(1)<<objType) & ombType) == 0) { // normal to insert element!
       // ERROR: Unallowed <TAG> here?!
-      std::cout << "\n\nENCOUNTERED WRONG TAG AT THIS POSITION!\nENCOUNTERED: <" << node_name << "> objType: " << objType << " ombType: " << ombType << "\nPOSSIBLE TAGS HERE WOULD BE: ";
+      std::cout << "\n\nENCOUNTERED WRONG TAG AT THIS POSITION!\nENCOUNTERED: <" << node_name << "> objType: "
+                << objType << " ombType: " << ombType << "\nPOSSIBLE TAGS HERE WOULD BE: ";
       for (int j=0; j<maxObjectTypesToCompare; j++) {
         if ((uint64_t(1)<<j) & ombType) {
           std::cout << " <" << otCompTable [j] << ">  ";
@@ -1887,6 +1834,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
       std::cout << "\n\n";
       clean_exit (-1);
     }
+
     static bool sb_firstObject=true;
     if (sb_firstObject)
     { // first object has to be WorkingSet
@@ -1898,10 +1846,57 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
       sb_firstObject = false; // check is only valid for first element!
     }
 
-    getAttributesFromNode(n, true); // true: read name= and id=
+    getAttributesFromNode(n, true, pc_specialParsing); // true: read name= and id=
 
     // set all non-set attributes to default values (as long as sensible, like bg_colour etc.)
     defaultAttributes (objType);
+
+    /** if USE_SPECIAL_PARSING is defined then a special parsing follows here
+      * either to parse the additional attributes in the known tags
+      * or to fully parse an unknown tag
+    */
+    if (pc_specialParsing)
+    {
+      if (objType >= maxObjectTypes) /// that tag is unknown for basic vt2iso
+      {
+        if (!pc_specialParsing->parseUnknownTag(n, objType, &is_objID))
+          clean_exit (-1);
+      }
+      else
+      {
+        switch (objType)
+        {
+          case otDatamask:
+          case otAlarmmask:
+            /// attribute for reference to softkeymask
+            if (!pc_specialParsing->parseKnownTag(n, objType, objName, &objID, &is_objID, attrString[attrSoft_key_mask]))
+              clean_exit (-1);
+            break;
+          case otInputboolean:
+          case otInputstring:
+          case otInputnumber:
+          case otInputlist:
+          case otOutputstring:
+          case otOutputnumber:
+          case otMeter:
+            /// attribute for variable reference
+            if (!pc_specialParsing->parseKnownTag(n, objType, objName, &objID, &is_objID, "NULL", attrString[attrVariable_reference]))
+              clean_exit (-1);
+            break;
+          case otLinearbargraph:
+          case otArchedbargraph:
+            /// two attributes for variable references
+            if (!pc_specialParsing->parseKnownTag(n, objType, objName, &objID, &is_objID, "NULL", attrString[attrVariable_reference], attrString[attrTarget_value_variable_reference]))
+              clean_exit (-1);
+            break;
+          default:
+            /// no attribute for variable reference
+            if (!pc_specialParsing->parseKnownTag(n, objType, objName, &objID, &is_objID))
+              clean_exit (-1);
+            break;
+        }
+      }
+    }
 
     // get a new ID for this object is not yet done
     objID = getID (objName, (objType == otMacro) ? true: false, is_objID, objID);
@@ -1984,14 +1979,20 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
         break;
     }
 
-
     static char duplicateForLanguages[(136*2)+1]; // max for all languages
     char* dupLangNext=NULL;
     bool b_dupMode=false;
+
     /// Backup as those values are overriden by the multilanguage processing when getting values from the .xx.txt
-    char backupAttrStringValue [stringLength+1]; strcpy (backupAttrStringValue, attrString [attrValue]);
+    char backupAttrStringValue [stringLength+1];
+
+    strcpy (backupAttrStringValue, attrString [attrValue]);
+
     bool backupAttrIsGivenValue = attrIsGiven [attrValue];
-    char backupAttrStringLength [stringLength+1]; strcpy (backupAttrStringLength, attrString [attrLength]);
+    char backupAttrStringLength [stringLength+1];
+
+    strcpy (backupAttrStringLength, attrString [attrLength]);
+
     bool backupAttrIsGivenLength = attrIsGiven [attrLength];
 
     // ************* NEW: Language duplicates!! ************
@@ -2001,19 +2002,14 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
       { // build all languages we have defined in the working set
         duplicateForLanguages [0] = 0x00;
         for (unsigned int ui=0; ui<ui_languages; ui++)
-        {
           strcat (duplicateForLanguages, arrs_language [ui].code);
-        }
       }
       else
-      {
         strcpy (duplicateForLanguages, attrString [attrLanguage]);
-      }
+
       b_dupMode=true;
       dupLangNext=duplicateForLanguages;
     }
-
-
 
     do // language duplication loop!
     {
@@ -2032,11 +2028,9 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
         attrIsGiven [attrLength] = backupAttrIsGivenLength;
       }
 
-
       // ##########################################
       // ### Print out Repeat Array definitions ###
       // ##########################################
-
       // ### Print out LANGUAGECODE array
       if (objHasArrayLanguagecode)
       {
@@ -2148,16 +2142,15 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
       }
 
       // ### Print out RAWBITMAP byte array
-      if (objType == otPicturegraphic) {
+      if (objType == otPicturegraphic)
+      {
         if (!(attrIsGiven [attrWidth] && attrIsGiven [attrFormat] && attrIsGiven [attrTransparency_colour]))
         {
           clean_exit (-1, "YOU NEED TO SPECIFY THE width= AND format= AND transparency_colour= ATTRIBUTES FOR THE <picturegraphic> OBJECT! STOPPING PARSER! bye.\n\n");
         }
 
-
         ///////////////////////////////////////////////////////
         /// ### +BEGIN+ -- FIRST -- process "standard" bitmap
-
         c_Bitmap.resetLengths();
         checkForFileOrFile148 ("picturegraphic");
 
@@ -2171,17 +2164,15 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
         deXactualWidth = c_Bitmap.getWidth();
         deXactualHeight = c_Bitmap.getHeight();
         for (int i=0; i<3; i++) stdRawBitmapBytes [i] = c_Bitmap.objRawBitmapBytes [i];
-
         /// ### +END+ -- FIRST -- process "standard" bitmap
         ///////////////////////////////////////////////////////
-
 
         //////////////////////////////////////////////////////
         /// ### +BEGIN+ -- SECOND -- process "fixed" bitmaps
         fixNr = 0;
         for (child = n->getFirstChild(); child != 0; child=child->getNextSibling()) {
           if ( (child->getNodeType() == DOMNode::ELEMENT_NODE) && (0 == strcmp (XMLString::transcode(child->getNodeName()), otCompTable [otFixedBitmap]) )) {
-            getAttributesFromNode(child, false); // false: DON'T read name= and id=
+            getAttributesFromNode(child, false, pc_specialParsing); // false: DON'T read name= and id=
             // no defaultAttributes() needed here...
 
             c_Bitmap.resetLengths();
@@ -2216,13 +2207,10 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
             }
           }
           fprintf (partFileB, "};\n");
-
         }
         /// ### +END+ -- SECOND -- process "fixed" bitmaps
         //////////////////////////////////////////////////////
-
       }
-
 
       // ### Print out OBJECTID(_X_Y) array
       bool xyNeeded = false;
@@ -2292,7 +2280,6 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
               b_dupModeChild=true;
               dupLangNextChild=duplicateForLanguagesChild;
             }
-
 
             do // language duplication loop!
             {
@@ -2430,7 +2417,6 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
               }
             } while (b_dupModeChild && (*dupLangNextChild != 0x00));
             /// END Language Dup Loop
-
           }
         }
         // all child-elements processed, now:
@@ -2469,7 +2455,6 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
         if (firstElement == false)
           fprintf (partFileB, "};\n");
       }
-
 
       // ### Print out EVENT_MACRO array
       if (objHasArrayEventMacro)
@@ -2558,6 +2543,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
             char *command_name = XMLString::transcode(child->getNodeName());
             commandType = commandIsType (command_name);
             commandMessage [stringLength+1-1] = 0x00;
+
             switch (commandType)
             {
               case ctHideShowObject:
@@ -2584,6 +2570,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                   objChildCommands++;
                 }
                 break;
+
               case ctEnableDisableObject:
                 if(child->hasAttributes())
                 {
@@ -2608,6 +2595,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                   objChildCommands++;
                 }
                 break;
+
               case ctSelectInputObject:
                 if(child->hasAttributes())
                 {
@@ -2630,6 +2618,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                   objChildCommands++;
                 }
                 break;
+
               case ctControlAudioDevice:
                 if(child->hasAttributes())
                 {
@@ -2659,6 +2648,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                   objChildCommands++;
                 }
                 break;
+
               case ctSetAudioVolume:
                 if(child->hasAttributes())
                 {
@@ -2681,6 +2671,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                   objChildCommands++;
                 }
                 break;
+
               case ctChangeChildLocation:
                 if(child->hasAttributes())
                 {
@@ -2710,6 +2701,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                   objChildCommands++;
                 }
                 break;
+
               case ctChangeChildPosition:
                 if(child->hasAttributes())
                 {
@@ -2738,6 +2730,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                   objChildCommands++;
                 }
                 break;
+
               case ctChangeSize:
                 if(child->hasAttributes())
                 {
@@ -2764,6 +2757,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                   objChildCommands++;
                 }
                 break;
+
               case ctChangeBackgroundColour:
                 if(child->hasAttributes())
                 {
@@ -2788,6 +2782,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                   objChildCommands++;
                 }
                 break;
+
               case ctChangeNumericValue:
                 if(child->hasAttributes())
                 {
@@ -2812,6 +2807,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                   objChildCommands++;
                 }
                 break;
+
               case ctChangeStringValue:
                 if(child->hasAttributes())
                 {
@@ -2853,6 +2849,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                   objChildCommands++;
                 }
                 break;
+
               case ctChangeEndPoint:
                 if(child->hasAttributes())
                 {
@@ -2882,6 +2879,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                   objChildCommands++;
                 }
                 break;
+
               case ctChangeFontAttributes:
                 if(child->hasAttributes())
                 {
@@ -2913,6 +2911,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                   objChildCommands++;
                 }
                 break;
+
               case ctChangeLineAttributes:
                 if(child->hasAttributes())
                 {
@@ -2942,6 +2941,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                   objChildCommands++;
                 }
                 break;
+
               case ctChangeFillAttributes:
                 if(child->hasAttributes())
                 {
@@ -2972,6 +2972,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                   objChildCommands++;
                 }
                 break;
+
               case ctChangeActiveMask:
                 if(child->hasAttributes())
                 {
@@ -2997,6 +2998,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                   objChildCommands++;
                 }
                 break;
+
               case ctChangeSoftKeyMask:
                 if(child->hasAttributes())
                 {
@@ -3024,6 +3026,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                   objChildCommands++;
                 }
                 break;
+
               case ctChangeAttribute:
                 if(child->hasAttributes())
                 {
@@ -3051,6 +3054,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                   objChildCommands++;
                 }
                 break;
+
               case ctChangePriority:
                 if(child->hasAttributes())
                 {
@@ -3076,6 +3080,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                   objChildCommands++;
                 }
                 break;
+
               case ctChangeListItem:
                 if(child->hasAttributes())
                 {
@@ -3190,11 +3195,9 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
       //*************************************************************************************************************************************************************
       //******************** End of code added by Brad Cox **********************************************************************************************************
 
-
       // ###################################################
       // ### Print out definition, values and init-calls ###
       // ###################################################
-
       FILE* fileList;
       bool *pb_firstLine;
       /// MultiLanguage-Support: See which -list.inc file to write object to!
@@ -3368,7 +3371,6 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
         sprintf (tempString, "&iVtObject%s", attrString [attrTarget_value_variable_reference]);
         sprintf (attrString [attrTarget_value_variable_reference], "%s", tempString);
       }
-
 
       //! @todo To be enabled when handling cases where only IDs are used in XMLs. Not 100% supported now, even if the
       //! following "convertIdReferencesToNameReferences();" call wouldn't be commented out!
@@ -3751,6 +3753,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
         case otMacro:
           fprintf (partFileB, ", %s", attrString [attrNumber_of_bytes]);
           break;
+
         case otAuxiliaryfunction:
           if (!(attrIsGiven [attrBackground_colour] && attrIsGiven[attrFunction_type]) )
           {
@@ -3758,6 +3761,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
           }
           fprintf (partFileB, ", %d, %d", colortoi (attrString [attrBackground_colour]), auxfunctiontyptetoi(attrString [attrFunction_type]));
           break;
+
         case otAuxiliaryinput:
           if (!(attrIsGiven [attrBackground_colour] && attrIsGiven[attrFunction_type] && attrIsGiven[attrInput_id]) )
           {
@@ -3765,6 +3769,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
           }
           fprintf (partFileB, ", %d, %d, %s", colortoi (attrString [attrBackground_colour]), auxfunctiontyptetoi(attrString [attrFunction_type]), attrString[attrInput_id]);
           break;
+
         case otGraphicsContext:
           if (!attrIsGiven [attrViewportWidth] || !attrIsGiven [attrViewportHeight])
             clean_exit (-1, "YOU NEED TO SPECIFY THE viewport_width= and viewport_height= ATTRIBUTE FOR THE <graphicscontext> OBJECT! STOPPING PARSER! bye.\n\n");
@@ -3813,11 +3818,9 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
           break;
       }
 
-
       // #########################################
       // ### Print out Repeat Array REFERENCES ###
       // #########################################
-
       if (objHasArrayObject) {
         if (objChildObjects == 0) {
           fprintf (partFileB, ", 0,NULL");
@@ -3887,7 +3890,6 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
     } while (b_dupMode && (*dupLangNext != 0x00));
   } // end of "normal" element processing
 
-
   // Add all Child-Elements recursively
   uint64_t omcType = omcTypeTable [objType];
   if (objType == otContainer) omcType = ombType; // Object May Contain what the Object Is - Simple rule. more simple than the graphic in the spec. ;)
@@ -3896,11 +3898,10 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
   {
     if (child->getNodeType() == DOMNode::ELEMENT_NODE)
     {
-      processElement (child, omcType, rc_workDir /*, rpcc_inKey, rpcc_inButton*/);
+      processElement (child, omcType, rc_workDir /*, rpcc_inKey, rpcc_inButton*/, pc_specialParsing);
     }
   }
 }
-
 
 // ---------------------------------------------------------------------------
 //
@@ -3912,7 +3913,7 @@ int main(int argC, char* argV[])
   // Check command line and extract arguments.
   if (argC < 2) { usage(); return 1; }
 
-  const char*    xmlFile = 0;
+  const char* xmlFile = 0;
   AbstractDOMParser::ValSchemes valScheme = AbstractDOMParser::Val_Auto;
   bool        doNamespaces    = false;
   bool        doSchema     = false;
@@ -3921,7 +3922,7 @@ int main(int argC, char* argV[])
   char        localeStr[64];
   char        xmlFiles [256] [1024+1];
   char        xmlFileTemp [1024+1];
-  int      indexXmlFile, amountXmlFiles=0;
+  int         indexXmlFile, amountXmlFiles=0;
 
   bool generatePalette = false;
 
@@ -3990,8 +3991,7 @@ int main(int argC, char* argV[])
     }
     else
     {
-      std::cerr << "Unknown option '" << argV[argInd]
-          << "', ignoring it\n" << std::endl;
+      std::cerr << "Unknown option '" << argV[argInd] << "', ignoring it\n" << std::endl;
     }
   }
 
@@ -4010,319 +4010,309 @@ int main(int argC, char* argV[])
   }
 
   //
-  //  There should be only one and only one parameter left, and that
+  //  There should be only one parameter left, and that
   //  should be the file name.
   //
   if (argInd != argC - 1) { usage(); return 1; }
 
+  std::basic_string<char> c_unwantedType = ".inc";
+  std::basic_string<char> c_unwantedType2 = ".h";
+  std::basic_string<char> c_unwantedType3 = ".inc-template";
+  std::basic_string<char> c_unwantedType4 = ".iop";
+  std::basic_string<char> c_unwantedType5 = ".txt";
+  std::basic_string<char> c_expectedType = ".xml";
+  std::basic_string<char> c_expectedType2 = ".XML";
+  std::basic_string<char> c_unwantedType6 = ".csv";
 
-    std::basic_string<char> c_unwantedType = ".inc";
-    std::basic_string<char> c_unwantedType2 = ".h";
-    std::basic_string<char> c_unwantedType3 = ".inc-template";
-    std::basic_string<char> c_unwantedType4 = ".iop";
-    std::basic_string<char> c_unwantedType5 = ".txt";
-    std::basic_string<char> c_expectedType = ".xml";
-    std::basic_string<char> c_expectedType2 = ".XML";
-
-    // get file list with matching files!
-
-    std::basic_string<char> c_fileName( argV [argInd] );
-    // strip the ".xml" away!
-    if ((c_fileName.length()-4) > 4)
-    { // see if the user gave ".xml" !
-      if ( (c_fileName.substr( c_fileName.length()-4 ) == c_expectedType)
-         ||(c_fileName.substr( c_fileName.length()-4 ) == c_expectedType) )
-      { // strip off ".xml"
-        c_fileName.erase (c_fileName.length()-4, 4);
-      }
+  // get file list with matching files!
+  std::basic_string<char> c_fileName( argV [argInd] );
+  // strip the ".xml" away!
+  if ((c_fileName.length()-4) > 4)
+  { // see if the user gave ".xml" !
+    if ( (c_fileName.substr( c_fileName.length()-4 ) == c_expectedType)
+        ||(c_fileName.substr( c_fileName.length()-4 ) == c_expectedType) )
+    { // strip off ".xml"
+      c_fileName.erase (c_fileName.length()-4, 4);
     }
-    #ifdef WIN32
-    int lastDirPos = c_fileName.find_last_of( "\\" );
-    std::basic_string<char> c_directory = c_fileName.substr( 0, lastDirPos+1 );
-    if (c_directory == "") c_directory = ".\\";
-    #else
-    int lastDirPos = c_fileName.find_last_of( "/" );
-    std::basic_string<char> c_directory = c_fileName.substr( 0, lastDirPos+1 );
-    if (c_directory == "") c_directory = "./";
-    #endif
-    /* globally defined */  c_project = c_fileName.substr( lastDirPos+1 );
-    std::basic_string<char> c_directoryCompareItem;
-    std::cerr << "--> Directory: " << c_directory << std::endl << "--> File:      " << c_project << std::endl;
-    strncpy (proName, c_project.c_str(), 1024); proName [1024+1-1] = 0x00;
-    for (unsigned int i=0; i<strlen(proName); i++) if (proName[i] == '.') { proName[i] = 0x00; break; }
+  }
+  #ifdef WIN32
+  int lastDirPos = c_fileName.find_last_of( "\\" );
+  std::basic_string<char> c_directory = c_fileName.substr( 0, lastDirPos+1 );
+  if (c_directory == "") c_directory = ".\\";
+  #else
+  int lastDirPos = c_fileName.find_last_of( "/" );
+  std::basic_string<char> c_directory = c_fileName.substr( 0, lastDirPos+1 );
+  if (c_directory == "") c_directory = "./";
+  #endif
+  /* globally defined */  c_project = c_fileName.substr( lastDirPos+1 );
+  std::basic_string<char> c_directoryCompareItem;
+  std::cerr << "--> Directory: " << c_directory << std::endl << "--> File:      " << c_project << std::endl;
+  strncpy (proName, c_project.c_str(), 1024); proName [1024+1-1] = 0x00;
+  for (unsigned int i=0; i<strlen(proName); i++) if (proName[i] == '.') { proName[i] = 0x00; break; }
 
 #ifdef WIN32
-    HANDLE    hList;
-    TCHAR     szDir[255];
-    TCHAR     szSubDir[255];
-    TCHAR    szCurDir[255];
-    WIN32_FIND_DATA FileData;
-
+  HANDLE hList;
+  TCHAR  szDir[255];
+  TCHAR  szSubDir[255];
+  TCHAR  szCurDir[255];
+  WIN32_FIND_DATA FileData;
 
   // save current directory
-    GetCurrentDirectory(255, szCurDir);
-    std::cerr << "CurDir: " << szCurDir << std::endl;
+  GetCurrentDirectory(255, szCurDir);
+  std::cerr << "CurDir: " << szCurDir << std::endl;
 
     // go to new working directory
-    if (SetCurrentDirectory(c_directory.c_str()) == 0)
-    {
-      std::cerr <<  "Couldn't open the directory."<< std::endl;
+  if (SetCurrentDirectory(c_directory.c_str()) == 0)
+  {
+    std::cerr <<  "Couldn't open the directory."<< std::endl;
 
-      CHAR szBuf[80];
-      DWORD dw = GetLastError();
-      sprintf(szBuf, "Open %s failed: GetLastError returned %u\n", szCurDir, dw);
-      printf(szBuf);
-      HRESULT_FROM_WIN32(dw);
-      return 0;
-    }
+    CHAR szBuf[80];
+    DWORD dw = GetLastError();
+    sprintf(szBuf, "Open %s failed: GetLastError returned %u\n", szCurDir, dw);
+    printf(szBuf);
+    HRESULT_FROM_WIN32(dw);
+    return 0;
+  }
 
-    // Get the proper directory path
-    wsprintf(szDir, TEXT("*") );
-    hList = FindFirstFile(szDir, &FileData);
-    if (hList != INVALID_HANDLE_VALUE)
-    {   // Traverse through the directory structure
-      do
-      {   // Check the object is a directory or not
-        if (!(FileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
-        {   //if ((strcmp(FileData.cFileName, ".") != 0) && (strcmp(FileData.cFileName, "..") != 0))
-          c_directoryCompareItem = FileData.cFileName;
-          if ( c_directoryCompareItem[0] == '.' ) continue;
-          if (c_directoryCompareItem [c_directoryCompareItem.length()-1] == '~') continue;
-          if ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-4 ) == c_unwantedType ) continue;
-          if ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-2 ) == c_unwantedType2 ) continue;
-          if ( (c_directoryCompareItem.length() > 13) && (c_directoryCompareItem.substr( c_directoryCompareItem.length()-13 ) == c_unwantedType3) ) continue;
-          if ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-4 ) == c_unwantedType4 ) continue;
-          if ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-4 ) == c_unwantedType5 ) continue;
-
-          if ( c_directoryCompareItem.find( c_project ) != std::string::npos ) {
-            c_directoryCompareItem.insert(0, "\\" );
-            c_directoryCompareItem.insert(0, c_directory );
-            strcpy (xmlFiles [amountXmlFiles], c_directoryCompareItem.c_str() );
-            amountXmlFiles++;
-            //std::cout << "found: " << c_directoryCompareItem << "\n";
-          }
-        }
-
-      }while (FindNextFile(hList, &FileData));
-      FindClose(hList);
-    }
-    else
-    {
-      std::cerr <<  "Couldn't open the directory.";
-      return 0;
-    }
-    SetCurrentDirectory(szCurDir);
-#else
-    // LINUX -> POSIX method for directory traversal
-    DIR *dp;
-    dp = opendir (c_directory.c_str());
-    if (dp != NULL)
-    {
-      dirent *ep;
-      while ((ep = readdir (dp))) {
-        c_directoryCompareItem = ep->d_name;
+  // Get the proper directory path
+  wsprintf(szDir, TEXT("*") );
+  hList = FindFirstFile(szDir, &FileData);
+  if (hList != INVALID_HANDLE_VALUE)
+  { // Traverse through the directory structure
+    do
+    { // Check the object is a directory or not
+      if (!(FileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
+      { //if ((strcmp(FileData.cFileName, ".") != 0) && (strcmp(FileData.cFileName, "..") != 0))
+        c_directoryCompareItem = FileData.cFileName;
         if ( c_directoryCompareItem[0] == '.' ) continue;
-        if ( (c_directoryCompareItem.length() > 1  ) && ( c_directoryCompareItem [c_directoryCompareItem.length()-1] == '~')) continue;
-        if ( (c_directoryCompareItem.length() > 4  ) && ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-4  ) == c_unwantedType  ) ) continue;
-        if ( (c_directoryCompareItem.length() > 2  ) && ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-2  ) == c_unwantedType2 ) ) continue;
-        if ( (c_directoryCompareItem.length() > 13 ) && ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-13 ) == c_unwantedType3 ) ) continue;
-        if ( (c_directoryCompareItem.length() > 4  ) && ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-4  ) == c_unwantedType4 ) ) continue;
-        if ( (c_directoryCompareItem.length() > 4  ) && ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-4  ) == c_unwantedType5 ) ) continue;
+        if (c_directoryCompareItem [c_directoryCompareItem.length()-1] == '~') continue;
+        if ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-4 ) == c_unwantedType ) continue;
+        if ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-2 ) == c_unwantedType2 ) continue;
+        if ( (c_directoryCompareItem.length() > 13) && (c_directoryCompareItem.substr( c_directoryCompareItem.length()-13 ) == c_unwantedType3) ) continue;
+        if ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-4 ) == c_unwantedType4 ) continue;
+        if ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-4 ) == c_unwantedType5 ) continue;
+        if ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-4 ) == c_unwantedType6 ) continue;
 
         if ( c_directoryCompareItem.find( c_project ) != std::string::npos ) {
-          c_directoryCompareItem.insert(0, "/" );
+          c_directoryCompareItem.insert(0, "\\" );
           c_directoryCompareItem.insert(0, c_directory );
           strcpy (xmlFiles [amountXmlFiles], c_directoryCompareItem.c_str() );
           amountXmlFiles++;
-      //    std::cout << "found: " << ep->d_name << "\n";
+          //std::cout << "found: " << c_directoryCompareItem << "\n";
         }
       }
-      closedir(dp);
-    } else
-    {
-      std::cerr <<  "Couldn't open the directory '" << c_directory.c_str() << "'.";
-      return 0;
+    } while (FindNextFile(hList, &FileData));
+    FindClose(hList);
+  }
+  else
+  {
+    std::cerr <<  "Couldn't open the directory.";
+    return 0;
+  }
+  SetCurrentDirectory(szCurDir);
+#else
+  // LINUX -> POSIX method for directory traversal
+  DIR *dp;
+  dp = opendir (c_directory.c_str());
+  if (dp != NULL)
+  {
+    dirent *ep;
+    while ((ep = readdir (dp))) {
+      c_directoryCompareItem = ep->d_name;
+      if ( c_directoryCompareItem[0] == '.' ) continue;
+      if ( (c_directoryCompareItem.length() > 1  ) && ( c_directoryCompareItem [c_directoryCompareItem.length()-1] == '~')) continue;
+      if ( (c_directoryCompareItem.length() > 4  ) && ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-4  ) == c_unwantedType  ) ) continue;
+      if ( (c_directoryCompareItem.length() > 2  ) && ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-2  ) == c_unwantedType2 ) ) continue;
+      if ( (c_directoryCompareItem.length() > 13 ) && ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-13 ) == c_unwantedType3 ) ) continue;
+      if ( (c_directoryCompareItem.length() > 4  ) && ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-4  ) == c_unwantedType4 ) ) continue;
+      if ( (c_directoryCompareItem.length() > 4  ) && ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-4  ) == c_unwantedType5 ) ) continue;
+      if ( (c_directoryCompareItem.length() > 4  ) && ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-4  ) == c_unwantedType6 ) ) continue;
+
+      if ( c_directoryCompareItem.find( c_project ) != std::string::npos ) {
+        c_directoryCompareItem.insert(0, "/" );
+        c_directoryCompareItem.insert(0, c_directory );
+        strcpy (xmlFiles [amountXmlFiles], c_directoryCompareItem.c_str() );
+        amountXmlFiles++;
+    //    std::cout << "found: " << ep->d_name << "\n";
+      }
     }
+    closedir(dp);
+  } else
+  {
+    std::cerr <<  "Couldn't open the directory '" << c_directory.c_str() << "'.";
+    return 0;
+  }
 #endif
 
-    // now sort this list
-    bool stillSorting;
-    do {
-      stillSorting=false;
-      for (int a=1; a< amountXmlFiles; a++) {
-        if (strcmp (xmlFiles [a-1], xmlFiles [a]) > 0) {
-          strcpy (xmlFileTemp, xmlFiles [a]);
-          strcpy (xmlFiles [a], xmlFiles [a-1]);
-          strcpy (xmlFiles [a-1], xmlFileTemp);
-          stillSorting=true;
-        }
+  // now sort this list
+  bool stillSorting;
+  do {
+    stillSorting=false;
+    for (int a=1; a< amountXmlFiles; a++) {
+      if (strcmp (xmlFiles [a-1], xmlFiles [a]) > 0) {
+        strcpy (xmlFileTemp, xmlFiles [a]);
+        strcpy (xmlFiles [a], xmlFiles [a-1]);
+        strcpy (xmlFiles [a-1], xmlFileTemp);
+        stillSorting=true;
       }
-    } while (stillSorting);
-
-    std::cout << std::endl << "--> Sorted Filelist:" << std::endl;
-    for (int dex=0; dex < amountXmlFiles; dex++) std::cout << xmlFiles [dex] << "\n";
-    std::cout << "\n";
-
-    // Do INITIALIZATION STUFF
-    init (c_fileName.c_str());
-
-    for (indexXmlFile = 0; indexXmlFile < amountXmlFiles; indexXmlFile++)
-    { // loop all xmlFiles!
-      // Initialize the XML4C system
-      try
-      {
-        if (strlen(localeStr)) {
-          XMLPlatformUtils::Initialize(localeStr);
-        } else {
-          XMLPlatformUtils::Initialize("de_DE");
-        }
-      }
-
-      catch (const XMLException& toCatch)
-      {
-        std::cerr << "Error during initialization! :\n"
-            << StrX(toCatch.getMessage()) << std::endl;
-        return 1;
-      }
-
-      // Instantiate the DOM parser.
-      static const XMLCh gLS[] = { chLatin_L, chLatin_S, chNull };
-      DOMImplementation *impl = DOMImplementationRegistry::getDOMImplementation(gLS);
-      DOMBuilder  *parser = ((DOMImplementationLS*)impl)->createDOMBuilder(DOMImplementationLS::MODE_SYNCHRONOUS, 0);
-
-      parser->setFeature(XMLUni::fgDOMNamespaces, doNamespaces);
-      parser->setFeature(XMLUni::fgXercesSchema, doSchema);
-      parser->setFeature(XMLUni::fgXercesSchemaFullChecking, schemaFullChecking);
-
-      if (valScheme == AbstractDOMParser::Val_Auto)        parser->setFeature(XMLUni::fgDOMValidateIfSchema, true);
-      else if (valScheme == AbstractDOMParser::Val_Never)  parser->setFeature(XMLUni::fgDOMValidation, false);
-      else if (valScheme == AbstractDOMParser::Val_Always) parser->setFeature(XMLUni::fgDOMValidation, true);
-
-      // enable datatype normalization - default is off
-      parser->setFeature(XMLUni::fgDOMDatatypeNormalization, true);
-
-      /** @todo Get path of vt2iso and add it to "vt2iso.xsd" */
-      char xsdLocation[1024+1];
-      strcpy (xsdLocation, argV[0]);
-      // now trim exe filename
-      for (int i=strlen(xsdLocation)-1; i >= 0; i--) {
-        if (xsdLocation[i] == '/') { xsdLocation[i+1]=0x00; break; }
-      }
-      strcat (xsdLocation, "vt2iso.xsd");
-      XMLCh* propertyValue = XMLString::transcode(xsdLocation);
-      parser->setProperty(XMLUni::fgXercesSchemaExternalNoNameSpaceSchemaLocation, propertyValue);
-
-      // And create our error handler and install it
-      DOMCountErrorHandler errorHandler;
-      parser->setErrorHandler(&errorHandler);
-
-      //
-      //  Get the starting time and kick off the parse of the indicated
-      //  file. Catch any exceptions that might propogate out of it.
-      //
-      std::ifstream fin;
-
-      char fURI[1000];
-      //initialize the array to zeros
-      memset(fURI,0,sizeof(fURI));
-      xmlFile = xmlFiles [indexXmlFile];
-
-      //reset error count first
-      errorHandler.resetErrors();
-
-      XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument *doc = 0;
-
-      try
-      {   // reset document pool
-        parser->resetDocumentPool();
-        doc = parser->parseURI(xmlFile);
-      }
-
-      catch (const XMLException& toCatch)
-      {
-        std::cerr << "\nError during parsing: '" << xmlFile << "'\n"
-            << "Exception message is:  \n"
-            << StrX(toCatch.getMessage()) << "\n" << std::endl;
-        errorOccurred = true;
-      }
-      catch (const DOMException& toCatch)
-      {
-        const unsigned int maxChars = 2047;
-        XMLCh errText[maxChars + 1];
-
-        std::cerr << "\nDOM Error during parsing: '" << xmlFile << "'\n"
-            << "DOMException code is:  " << toCatch.code << std::endl;
-
-        if (DOMImplementation::loadDOMExceptionMsg(toCatch.code, errText, maxChars))
-          std::cerr << "Message is: " << StrX(errText) << std::endl;
-
-        errorOccurred = true;
-      }
-      catch (...)
-      {
-        std::cerr << "\nUnexpected exception during parsing: '" << xmlFile << "'\n";
-        errorOccurred = true;
-      }
-
-      //
-      //  Extract the DOM tree, get the list of all the elements and report the
-      //  length as the count of elements.
-      //
-      if (errorHandler.getSawErrors() || errorOccurred)
-      {
-        std::cout << "\nErrors occurred, no output available\n" << std::endl;
-        errorOccurred = true;
-      } else {
-        if (doc) {
-          // ### main routine starts right here!!! ###
-          processElement ((DOMNode*)doc->getDocumentElement(), (uint64_t(1)<<otObjectpool), c_directory.c_str() /*, NULL, NULL */); // must all be included in an objectpool tag !
-          if (!is_opDimension) {
-            std::cout << "\n\nYOU NEED TO SPECIFY THE dimension= TAG IN <objectpool> ! STOPPING PARSER! bye.\n\n";
-            clean_exit (-1);
-          }
-        }
-      }
-
-
-      //
-      //  Delete the parser itself.  Must be done prior to calling Terminate, below.
-      //
-      parser->release();
-
-      // And call the termination method
-      XMLPlatformUtils::Terminate();
-
-    } // loop all files
-
-
-    if (!is_skWidth) skWidth = 60;
-    if (!is_skHeight) skHeight = 32;
-    if (!is_skWidth || !is_skHeight) {
-      std::cout << "\n\nWARNING: You have NOT specified a SoftKey-Width/Height, so vt2iso assumes your softkeys are designed on a 60x32 pixel basis.\n"
-          << "ATTENTION: SoftKeys are scaled and centered to fit the SK-Dimensions of the VT it is displayed on, so take care that you know what you're doing!\n\n";
     }
-    fprintf (partFileD, "#define vtObjectPoolDimension %d\n", opDimension);
-    fprintf (partFileD, "#define vtObjectPoolSoftKeyWidth %d\n", skWidth);
-    fprintf (partFileD, "#define vtObjectPoolSoftKeyHeight %d\n", skHeight);
+  } while (stillSorting);
 
+  std::cout << std::endl << "--> Sorted Filelist:" << std::endl;
+  for (int dex=0; dex < amountXmlFiles; dex++) std::cout << xmlFiles [dex] << "\n";
+  std::cout << "\n";
 
-    if (errorOccurred) clean_exit (4, "XML-Parsing error occured. Terminating.\n");
-    else clean_exit (0, "All conversion done successfully.\n");
+  // Do INITIALIZATION STUFF
+  init (c_fileName.c_str());
+
+#ifdef USE_SPECIAL_PARSING
+  SpecialParsingUse_c* pc_specialParsing = new SpecialParsingUse_c(c_fileName);
+#else
+  SpecialParsingBase_c* pc_specialParsing = NULL;
+#endif
+
+  for (indexXmlFile = 0; indexXmlFile < amountXmlFiles; indexXmlFile++)
+  { // loop all xmlFiles!
+    // Initialize the XML4C system
+    try
+    {
+      if (strlen(localeStr)) {
+        XMLPlatformUtils::Initialize(localeStr);
+      } else {
+        XMLPlatformUtils::Initialize("de_DE");
+      }
+    }
+
+    catch (const XMLException& toCatch)
+    {
+      std::cerr << "Error during initialization! :\n"
+          << StrX(toCatch.getMessage()) << std::endl;
+      return 1;
+    }
+
+    // Instantiate the DOM parser.
+    static const XMLCh gLS[] = { chLatin_L, chLatin_S, chNull };
+    DOMImplementation *impl = DOMImplementationRegistry::getDOMImplementation(gLS);
+    DOMBuilder  *parser = ((DOMImplementationLS*)impl)->createDOMBuilder(DOMImplementationLS::MODE_SYNCHRONOUS, 0);
+
+    parser->setFeature(XMLUni::fgDOMNamespaces, doNamespaces);
+    parser->setFeature(XMLUni::fgXercesSchema, doSchema);
+    parser->setFeature(XMLUni::fgXercesSchemaFullChecking, schemaFullChecking);
+
+    if (valScheme == AbstractDOMParser::Val_Auto)        parser->setFeature(XMLUni::fgDOMValidateIfSchema, true);
+    else if (valScheme == AbstractDOMParser::Val_Never)  parser->setFeature(XMLUni::fgDOMValidation, false);
+    else if (valScheme == AbstractDOMParser::Val_Always) parser->setFeature(XMLUni::fgDOMValidation, true);
+
+    // enable datatype normalization - default is off
+    parser->setFeature(XMLUni::fgDOMDatatypeNormalization, true);
+
+    /** @todo Get path of vt2iso and add it to "vt2iso.xsd" */
+    char xsdLocation[1024+1];
+    strcpy (xsdLocation, argV[0]);
+    // now trim exe filename
+    for (int i=strlen(xsdLocation)-1; i >= 0; i--) {
+      if (xsdLocation[i] == '/') { xsdLocation[i+1]=0x00; break; }
+    }
+    strcat (xsdLocation, "vt2iso.xsd");
+    XMLCh* propertyValue = XMLString::transcode(xsdLocation);
+    parser->setProperty(XMLUni::fgXercesSchemaExternalNoNameSpaceSchemaLocation, propertyValue);
+
+    // And create our error handler and install it
+    DOMCountErrorHandler errorHandler;
+    parser->setErrorHandler(&errorHandler);
+
+    //
+    //  Get the starting time and kick off the parse of the indicated
+    //  file. Catch any exceptions that might propogate out of it.
+    //
+    std::ifstream fin;
+
+    char fURI[1000];
+    //initialize the array to zeros
+    memset(fURI,0,sizeof(fURI));
+    xmlFile = xmlFiles [indexXmlFile];
+
+    //reset error count first
+    errorHandler.resetErrors();
+
+    XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument *doc = 0;
+
+    try
+    {   // reset document pool
+      parser->resetDocumentPool();
+      doc = parser->parseURI(xmlFile);
+    }
+
+    catch (const XMLException& toCatch)
+    {
+      std::cerr << "\nError during parsing: '" << xmlFile << "'\n"
+          << "Exception message is:  \n"
+          << StrX(toCatch.getMessage()) << "\n" << std::endl;
+      errorOccurred = true;
+    }
+    catch (const DOMException& toCatch)
+    {
+      const unsigned int maxChars = 2047;
+      XMLCh errText[maxChars + 1];
+
+      std::cerr << "\nDOM Error during parsing: '" << xmlFile << "'\n"
+          << "DOMException code is:  " << toCatch.code << std::endl;
+
+      if (DOMImplementation::loadDOMExceptionMsg(toCatch.code, errText, maxChars))
+        std::cerr << "Message is: " << StrX(errText) << std::endl;
+
+      errorOccurred = true;
+    }
+    catch (...)
+    {
+      std::cerr << "\nUnexpected exception during parsing: '" << xmlFile << "'\n";
+      errorOccurred = true;
+    }
+
+    //  Extract the DOM tree, get the list of all the elements and report the
+    //  length as the count of elements.
+    if (errorHandler.getSawErrors() || errorOccurred)
+    {
+      std::cout << "\nErrors occurred, no output available\n" << std::endl;
+      errorOccurred = true;
+    } else {
+      if (doc) {
+        // ### main routine starts right here!!! ###
+        processElement ((DOMNode*)doc->getDocumentElement(), (uint64_t(1)<<otObjectpool), c_directory.c_str() /*, NULL, NULL*/, pc_specialParsing); // must all be included in an objectpool tag !
+        if (!is_opDimension) {
+          std::cout << "\n\nYOU NEED TO SPECIFY THE dimension= TAG IN <objectpool> ! STOPPING PARSER! bye.\n\n";
+          clean_exit (-1);
+        }
+      }
+    }
+
+    //  Delete the parser itself.  Must be done prior to calling Terminate, below.
+    parser->release();
+
+    // And call the termination method
+    XMLPlatformUtils::Terminate();
+
+  } // loop all files
+
+  if (!is_skWidth) skWidth = 60;
+  if (!is_skHeight) skHeight = 32;
+  if (!is_skWidth || !is_skHeight) {
+    std::cout << "\n\nWARNING: You have NOT specified a SoftKey-Width/Height, so vt2iso assumes your softkeys are designed on a 60x32 pixel basis.\n"
+        << "ATTENTION: SoftKeys are scaled and centered to fit the SK-Dimensions of the VT it is displayed on, so take care that you know what you're doing!\n\n";
+  }
+  fprintf (partFileD, "#define vtObjectPoolDimension %d\n", opDimension);
+  fprintf (partFileD, "#define vtObjectPoolSoftKeyWidth %d\n", skWidth);
+  fprintf (partFileD, "#define vtObjectPoolSoftKeyHeight %d\n", skHeight);
+
+  if (errorOccurred) clean_exit (4, "XML-Parsing error occured. Terminating.\n", pc_specialParsing);
+  else clean_exit (0, "All conversion done successfully.\n", pc_specialParsing);
 }
-
-
-
 
 
 DOMCountErrorHandler::DOMCountErrorHandler()
-  : fSawErrors(false)
-{
-}
+  : fSawErrors(false) {}
 
-DOMCountErrorHandler::~DOMCountErrorHandler()
-{
-}
-
+DOMCountErrorHandler::~DOMCountErrorHandler() {}
 
 // ---------------------------------------------------------------------------
 //  DOMCountHandlers: Overrides of the DOM ErrorHandler interface

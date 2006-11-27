@@ -222,6 +222,8 @@ build_utils/vt2iso/Vt2Iso.exe -text
 build_utils/vt2iso/bin/vt2iso -text
 build_utils/vt2iso/bin/vt2iso.xsd -text
 build_utils/vt2iso/doc/ISO-VirtualTerminal-Objects.txt -text
+build_utils/vt2iso/src/specialparsingbase_c.h -text
+build_utils/vt2iso/src/vt2iso-defines.cpp -text
 build_utils/vt2iso/src/vt2iso-defines.hpp -text
 build_utils/vt2iso/src/vt2iso.hpp -text
 build_utils/vt2iso/src/vt2isostr2bin.cpp -text

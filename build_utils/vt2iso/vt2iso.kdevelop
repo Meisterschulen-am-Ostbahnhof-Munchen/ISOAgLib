@@ -18,7 +18,7 @@
       <mainprogram>bin/vt2iso</mainprogram>
       <directoryradio>executable</directoryradio>
       <customdirectory>/</customdirectory>
-      <programargs>../../../src_test/testcase/button/Pool.xml</programargs>
+      <programargs>../../../../src_test/test_pools/datamask/Pool.xml</programargs>
       <terminal>false</terminal>
       <autocompile>true</autocompile>
       <envvars/>
@@ -44,7 +44,7 @@
   <kdevdebugger>
     <general>
       <dbgshell/>
-      <programargs>../../../../src_test/test_pools/testcase/button/Pool.xml</programargs>
+      <programargs>../../../../src_test/test_pools/datamask/Pool.xml</programargs>
       <gdbpath/>
       <configGdbScript/>
       <runShellScript/>
@@ -173,4 +173,8 @@
       <usermanualurl/>
     </projectdoc>
   </kdevdocumentation>
+  <ctagspart>
+    <customArguments/>
+    <customTagfilePath/>
+  </ctagspart>
 </kdevelop>
