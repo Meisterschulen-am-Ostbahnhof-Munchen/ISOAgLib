@@ -102,7 +102,7 @@ public:
   virtual uint16_t getObjType (const char* node_name) { return 0xFFFF; }
 
   /// returns the total sum of basic and special object types
-  virtual uint8_t getMaxOfObjTypes() { return 0xFF; }
+  virtual uint8_t getMaxOfObjTypes() = 0;
 
   /// if a tag has unknown attributes, set that flag
   virtual void setUnknownAttributes (bool b_hasUnknownAttr) {}
@@ -113,7 +113,9 @@ public:
   /** that functions writes all necessary file includes into a given file */
   virtual void addFileIncludes(FILE* p_includeFile, const char* fileName) {}
 
-  /** check if the found wish ID is already used as resource_id */
+  /** check if the found wish ID is already used as resource ID
+    * @return if true, the found ID is NOT used as resource ID
+  */
   virtual bool checkUseOfResourceID (unsigned int objID) { return true; }
 
   virtual ~SpecialParsingBase_c() {}

@@ -638,7 +638,7 @@ void clean_exit (int return_value, char* error_message=NULL, SpecialParsingBase_
   fprintf (partFile_direct, "#include \"%s-defines.inc\"\n", xmlFileWithoutPath);
   fprintf (partFile_direct, "#include \"%s-functions.inc\"\n", xmlFileWithoutPath);
 
-  if (pc_specialParsing)
+  if (pc_specialParsing && (return_value == 0))
   {
     pc_specialParsing->addFileIncludes(partFile_direct, xmlFileWithoutPath);
   }
@@ -660,7 +660,7 @@ void clean_exit (int return_value, char* error_message=NULL, SpecialParsingBase_
   fprintf (partFile_direct, "#include \"%s-defines.inc\"\n", xmlFileWithoutPath);
   fprintf (partFile_direct, "#include \"%s-functions.inc\"\n", xmlFileWithoutPath);
 
-  if (pc_specialParsing)
+  if (pc_specialParsing && (return_value == 0))
   {
     pc_specialParsing->addFileIncludes(partFile_direct, xmlFileWithoutPath);
   }
@@ -678,7 +678,7 @@ void clean_exit (int return_value, char* error_message=NULL, SpecialParsingBase_
   fclose (partFile_direct);
 
   /// if USE_SPECIAL_PARSING is defined additional output is done
-  if (pc_specialParsing)
+  if (pc_specialParsing && (return_value == 0))
   {
     pc_specialParsing->outputData2Files();
     delete pc_specialParsing;
