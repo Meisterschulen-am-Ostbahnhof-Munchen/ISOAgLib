@@ -1330,6 +1330,12 @@ xgpl_src/IsoAgLib/comm/Process/generalcommand_c.h -text
 xgpl_src/IsoAgLib/comm/Process/impl/generalcommand_c.cpp -text
 xgpl_src/IsoAgLib/comm/Process/impl/generalcommand_c.h -text
 xgpl_src/IsoAgLib/comm/Process/impl/processwsmtaskmsghandler_c.h -text
+xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisofilter_s.h -text
+xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisofiltermanager_c.h -text
+xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofilterbox_c.cpp -text
+xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofilterbox_c.h -text
+xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofiltermanager_c.cpp -text
+xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofiltermanager_c.h -text
 xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.cpp -text
 xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.h -text
 xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgnhandler_c.h -text
