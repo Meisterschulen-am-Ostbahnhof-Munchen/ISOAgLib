@@ -364,15 +364,15 @@ BGR_s vtColorTable[256]=
 // ### GLOBALS ###
 char iso639table [DEF_iso639entries][2+1] = {{"aa"},{"ab"},{"af"},{"am"},{"ar"},{"as"},{"ay"},{"az"},{"ba"},{"be"},{"bg"},{"bh"},{"bi"},{"bn"},{"bo"},{"br"},{"ca"},{"co"},{"cs"},{"cy"},{"da"},{"de"},{"dz"},{"el"},{"en"},{"eo"},{"es"},{"et"},{"eu"},{"fa"},{"fi"},{"fj"},{"fo"},{"fr"},{"fy"},{"ga"},{"gd"},{"gl"},{"gn"},{"gu"},{"ha"},{"hi"},{"hr"},{"hu"},{"hy"},{"ia"},{"ie"},{"ik"},{"in"},{"is"},{"it"},{"iw"},{"ja"},{"ji"},{"jw"},{"ka"},{"kk"},{"kl"},{"km"},{"kn"},{"ko"},{"ks"},{"ku"},{"ky"},{"la"},{"ln"},{"lo"},{"lt"},{"lv"},{"mg"},{"mi"},{"mk"},{"ml"},{"mn"},{"mo"},{"mr"},{"ms"},{"mt"},{"my"},{"na"},{"ne"},{"nl"},{"no"},{"oc"},{"om"},{"or"},{"pa"},{"pl"},{"ps"},{"pt"},{"qu"},{"rm"},{"rn"},{"ro"},{"ru"},{"rw"},{"sa"},{"sd"},{"sg"},{"sh"},{"si"},{"sk"},{"sl"},{"sm"},{"sn"},{"so"},{"sq"},{"sr"},{"ss"},{"st"},{"su"},{"sv"},{"sw"},{"ta"},{"te"},{"tg"},{"th"},{"ti"},{"tk"},{"tl"},{"tn"},{"to"},{"tr"},{"ts"},{"tt"},{"tw"},{"uk"},{"ur"},{"uz"},{"vi"},{"vo"},{"wo"},{"xh"},{"yo"},{"zh"},{"zu"}};
 
-FILE *partFileA;
-FILE *partFileAextern;
-FILE *partFileB;
-FILE *partFileC;
-FILE *partFileC2;
-FILE *partFileD;
-FILE *partFileE; bool firstLineFileE = true;
-FILE *partFileF;
-FILE *partFileFderived;
+FILE *partFile_direct;
+FILE *partFile_variables_extern;
+FILE *partFile_attributes;
+FILE *partFile_functions;
+FILE *partFile_functions_origin;
+FILE *partFile_defines;
+FILE *partFile_list; bool firstLineFileE = true;
+FILE *partFile_handler_direct;
+FILE *partFile_handler_derived;
 
 language_s arrs_language [DEF_iso639entries];
 unsigned int ui_languages=0;
@@ -471,30 +471,30 @@ void clean_exit (int return_value, char* error_message=NULL, SpecialParsingBase_
     strncpy( xmlFileWithoutPath, (pc_lastDirectorySlash+1), 254 );
   }
 
-  if (partFileA) fclose (partFileA);
-  if (partFileAextern) fclose (partFileAextern);
+  if (partFile_direct) fclose (partFile_direct);
+  if (partFile_variables_extern) fclose (partFile_variables_extern);
 
-  if (partFileB) fclose (partFileB);
+  if (partFile_attributes) fclose (partFile_attributes);
 
-  if (partFileC) {
-    fprintf (partFileC, "\n  #include \"%s-functions-origin.inc\"\n", xmlFileWithoutPath);
-    fprintf (partFileC, "\n  b_initAllObjects = true;");
-    fprintf (partFileC, "\n}\n");
-    fclose (partFileC);
+  if (partFile_functions) {
+    fprintf (partFile_functions, "\n  #include \"%s-functions-origin.inc\"\n", xmlFileWithoutPath);
+    fprintf (partFile_functions, "\n  b_initAllObjects = true;");
+    fprintf (partFile_functions, "\n}\n");
+    fclose (partFile_functions);
   }
 
-  if (partFileC2) {
-    fprintf (partFileC2, "\n  for (int i=0;i<numObjects; i++) {");
-    fprintf (partFileC2, "\n    iVtObjects [0][i]->setOriginSKM (false);");
-    fprintf (partFileC2, "\n    iVtObjects [0][i]->setOriginBTN (NULL);");
-    fprintf (partFileC2, "\n  }\n");
-    fclose (partFileC2);
+  if (partFile_functions_origin) {
+    fprintf (partFile_functions_origin, "\n  for (int i=0;i<numObjects; i++) {");
+    fprintf (partFile_functions_origin, "\n    iVtObjects [0][i]->setOriginSKM (false);");
+    fprintf (partFile_functions_origin, "\n    iVtObjects [0][i]->setOriginBTN (NULL);");
+    fprintf (partFile_functions_origin, "\n  }\n");
+    fclose (partFile_functions_origin);
   }
 
-  if (partFileD) {
-    fprintf (partFileD, "\n#define vtKeyCodeACK 0\n");
-    // OLD:  fprintf (partFileD, "\n#define vtObjectCount %d\n", objCount);
-    fclose (partFileD);
+  if (partFile_defines) {
+    fprintf (partFile_defines, "\n#define vtKeyCodeACK 0\n");
+    // OLD:  fprintf (partFile_defines, "\n#define vtObjectCount %d\n", objCount);
+    fclose (partFile_defines);
   }
 
   std::map<int32_t, ObjListEntry>::iterator mit_lang;
@@ -507,7 +507,7 @@ void clean_exit (int return_value, char* error_message=NULL, SpecialParsingBase_
   {
     if (mit_lang->first < 0x0) // negative index was defined for default objects
     {
-      fileList = partFileE;
+      fileList = partFile_list;
       pb_firstLine = &firstLineFileE;
 
       // get workingset object and set as first item in list -> needed for pool upload/initialization
@@ -540,26 +540,26 @@ void clean_exit (int return_value, char* error_message=NULL, SpecialParsingBase_
     }
   }
 
-  if (partFileE) { // -list
+  if (partFile_list) { // -list
     if (firstLineFileE)
     {
       firstLineFileE = false;
     }
-    fputs ("\n};\n", partFileE);
+    fputs ("\n};\n", partFile_list);
     // write implementation of handler class constructor into list
     // as there the list must be known
     // -> the handler decleration can be included from everywhere
-    fprintf (partFileE, "\nIsoAgLib::iVtObject_c** all_iVtObjectLists [] = {");
-    fprintf (partFileE, "\n  all_iVtObjects,");
+    fprintf (partFile_list, "\nIsoAgLib::iVtObject_c** all_iVtObjectLists [] = {");
+    fprintf (partFile_list, "\n  all_iVtObjects,");
     for (unsigned int i=0; i<ui_languages; i++)
-      fprintf (partFileE, "\n  all_iVtObjects%d,", i);
-    fprintf (partFileE, "\n  NULL // indicate end of list");
-    fprintf (partFileE, "\n};\n");
+      fprintf (partFile_list, "\n  all_iVtObjects%d,", i);
+    fprintf (partFile_list, "\n  NULL // indicate end of list");
+    fprintf (partFile_list, "\n};\n");
     int extraLanguageLists = (ui_languages>0)?arrs_language[0].count : 0;
-    fprintf (partFileE, "\niObjectPool_%s_c::iObjectPool_%s_c () : iIsoTerminalObjectPool_c (all_iVtObjectLists, %d, %d, %d, %d, %d) {};\n",
+    fprintf (partFile_list, "\niObjectPool_%s_c::iObjectPool_%s_c () : iIsoTerminalObjectPool_c (all_iVtObjectLists, %d, %d, %d, %d, %d) {};\n",
              proName, proName, objCount - extraLanguageLists, extraLanguageLists, opDimension, skWidth, skHeight);
 
-    fclose(partFileE);
+    fclose(partFile_list);
   }
 
   for (unsigned int i=0; i<ui_languages; i++)
@@ -576,106 +576,106 @@ void clean_exit (int return_value, char* error_message=NULL, SpecialParsingBase_
     fclose (arrs_language [i].partFile);
   }
 
-  if (partFileF) { // handler class direct
+  if (partFile_handler_direct) { // handler class direct
   // NEW:
-    fprintf (partFileF, "\n #ifndef DECL_direct_iObjectPool_%s_c", proName );
-    fprintf (partFileF, "\n #define DECL_direct_iObjectPool_%s_c", proName );
-    fprintf (partFileF, "\nclass iObjectPool_%s_c : public IsoAgLib::iIsoTerminalObjectPool_c {", proName);
-    fprintf (partFileF, "\npublic:");
-    fprintf (partFileF, "\n  virtual void eventKeyCode (uint8_t keyActivationCode, uint16_t objId, uint16_t objIdMask, uint8_t keyCode, bool wasButton);");
-    fprintf (partFileF, "\n  /* Uncomment the following function if you want to use command-response handling! */");
-    fprintf (partFileF, "\n  //virtual void eventPointingEvent (uint16_t rui16_xPosition, uint16_t rui16_yPosition);");
-    fprintf (partFileF, "\n  virtual void eventNumericValue (uint16_t objId, uint8_t ui8_value, uint32_t ui32_value);");
-    fprintf (partFileF, "\n  virtual void eventStringValue (uint16_t rui16_objId, uint8_t rui8_length, StreamInput_c &refc_streaminput, uint8_t rui8_unparsedBytes, bool b_isFirst, bool b_isLast);");
-    fprintf (partFileF, "\n  /* Uncomment the following function if you want to use input value string on-the-fly parsing/handling! */");
-    fprintf (partFileF, "\n  //virtual void eventStringValueAbort();");
-    fprintf (partFileF, "\n  virtual void eventObjectPoolUploadedSuccessfully (bool rb_wasLanguageUpdate, int8_t ri8_languageIndex, uint16_t rui16_languageCode);");
-    fprintf (partFileF, "\n  //virtual void eventPrepareForLanguageChange (int8_t ri8_languageIndex, uint16_t rui16_languageCode);");
-    fprintf (partFileF, "\n  virtual void eventEnterSafeState ();");
-    fprintf (partFileF, "\n  /* Uncomment the following function if you want to use command-response handling! */");
-    fprintf (partFileF, "\n  //virtual void eventCommandResponse (uint8_t rui8_responseCommandError, const uint8_t rpui8_responseDataBytes[8]);");
-    fprintf (partFileF, "\n  /* Uncomment the following function if you want to use a special colour-conversion! */");
-    fprintf (partFileF, "\n  //virtual uint8_t convertColour (uint8_t colourValue, uint8_t colourDepth, IsoAgLib::iVtObject_c* obj, IsoAgLib::e_vtColour whichColour);");
-    fprintf (partFileF, "\n  /* Uncomment the following function if you want to react on any incoming LANGUAGE_PGN */");
-    fprintf (partFileF, "\n  //virtual void eventLanguagePgn (const localSettings_s& rrefs_localSettings);");
-    fprintf (partFileF, "\n  /* Uncomment the following function if you want to react on any incoming VT Status messages */");
-    fprintf (partFileF, "\n  //virtual void eventVtStatusMsg();");
-    fprintf (partFileF, "\n  /* Uncomment the following function if you want to react on any incoming VT Get Attribute Value messages */");
-    fprintf (partFileF, "\n  //virtual void eventAttributeValue(IsoAgLib::iVtObject_c* obj, uint8_t ui8_attributeValue, uint8_t* pui8_value);");
-    fprintf (partFileF, "\n  void initAllObjectsOnce(SINGLETON_VEC_KEY_PARAMETER_DEF);");
-    fprintf (partFileF, "\n  iObjectPool_%s_c ();", proName);
-    fprintf (partFileF, "\n};\n");
-    fprintf (partFileF, "\n #endif\n" );
-    fclose (partFileF);
+    fprintf (partFile_handler_direct, "\n #ifndef DECL_direct_iObjectPool_%s_c", proName );
+    fprintf (partFile_handler_direct, "\n #define DECL_direct_iObjectPool_%s_c", proName );
+    fprintf (partFile_handler_direct, "\nclass iObjectPool_%s_c : public IsoAgLib::iIsoTerminalObjectPool_c {", proName);
+    fprintf (partFile_handler_direct, "\npublic:");
+    fprintf (partFile_handler_direct, "\n  virtual void eventKeyCode (uint8_t keyActivationCode, uint16_t objId, uint16_t objIdMask, uint8_t keyCode, bool wasButton);");
+    fprintf (partFile_handler_direct, "\n  /* Uncomment the following function if you want to use command-response handling! */");
+    fprintf (partFile_handler_direct, "\n  //virtual void eventPointingEvent (uint16_t rui16_xPosition, uint16_t rui16_yPosition);");
+    fprintf (partFile_handler_direct, "\n  virtual void eventNumericValue (uint16_t objId, uint8_t ui8_value, uint32_t ui32_value);");
+    fprintf (partFile_handler_direct, "\n  virtual void eventStringValue (uint16_t rui16_objId, uint8_t rui8_length, StreamInput_c &refc_streaminput, uint8_t rui8_unparsedBytes, bool b_isFirst, bool b_isLast);");
+    fprintf (partFile_handler_direct, "\n  /* Uncomment the following function if you want to use input value string on-the-fly parsing/handling! */");
+    fprintf (partFile_handler_direct, "\n  //virtual void eventStringValueAbort();");
+    fprintf (partFile_handler_direct, "\n  virtual void eventObjectPoolUploadedSuccessfully (bool rb_wasLanguageUpdate, int8_t ri8_languageIndex, uint16_t rui16_languageCode);");
+    fprintf (partFile_handler_direct, "\n  //virtual void eventPrepareForLanguageChange (int8_t ri8_languageIndex, uint16_t rui16_languageCode);");
+    fprintf (partFile_handler_direct, "\n  virtual void eventEnterSafeState ();");
+    fprintf (partFile_handler_direct, "\n  /* Uncomment the following function if you want to use command-response handling! */");
+    fprintf (partFile_handler_direct, "\n  //virtual void eventCommandResponse (uint8_t rui8_responseCommandError, const uint8_t rpui8_responseDataBytes[8]);");
+    fprintf (partFile_handler_direct, "\n  /* Uncomment the following function if you want to use a special colour-conversion! */");
+    fprintf (partFile_handler_direct, "\n  //virtual uint8_t convertColour (uint8_t colourValue, uint8_t colourDepth, IsoAgLib::iVtObject_c* obj, IsoAgLib::e_vtColour whichColour);");
+    fprintf (partFile_handler_direct, "\n  /* Uncomment the following function if you want to react on any incoming LANGUAGE_PGN */");
+    fprintf (partFile_handler_direct, "\n  //virtual void eventLanguagePgn (const localSettings_s& rrefs_localSettings);");
+    fprintf (partFile_handler_direct, "\n  /* Uncomment the following function if you want to react on any incoming VT Status messages */");
+    fprintf (partFile_handler_direct, "\n  //virtual void eventVtStatusMsg();");
+    fprintf (partFile_handler_direct, "\n  /* Uncomment the following function if you want to react on any incoming VT Get Attribute Value messages */");
+    fprintf (partFile_handler_direct, "\n  //virtual void eventAttributeValue(IsoAgLib::iVtObject_c* obj, uint8_t ui8_attributeValue, uint8_t* pui8_value);");
+    fprintf (partFile_handler_direct, "\n  void initAllObjectsOnce(SINGLETON_VEC_KEY_PARAMETER_DEF);");
+    fprintf (partFile_handler_direct, "\n  iObjectPool_%s_c ();", proName);
+    fprintf (partFile_handler_direct, "\n};\n");
+    fprintf (partFile_handler_direct, "\n #endif\n" );
+    fclose (partFile_handler_direct);
   }
-  if (partFileFderived) { // handler class derived
+  if (partFile_handler_derived) { // handler class derived
   // NEW:
-    fprintf (partFileFderived, "\n #ifndef DECL_derived_iObjectPool_%s_c", proName );
-    fprintf (partFileFderived, "\n #define DECL_derived_iObjectPool_%s_c", proName );
-    fprintf (partFileFderived, "\nclass iObjectPool_%s_c : public IsoAgLib::iIsoTerminalObjectPool_c {", proName);
-    fprintf (partFileFderived, "\npublic:");
-    fprintf (partFileFderived, "\n  void initAllObjectsOnce(SINGLETON_VEC_KEY_PARAMETER_DEF);");
-    fprintf (partFileFderived, "\n  iObjectPool_%s_c ();", proName);
-    fprintf (partFileFderived, "\n};\n");
-    fprintf (partFileFderived, "\n #endif\n" );
-    fclose (partFileFderived);
+    fprintf (partFile_handler_derived, "\n #ifndef DECL_derived_iObjectPool_%s_c", proName );
+    fprintf (partFile_handler_derived, "\n #define DECL_derived_iObjectPool_%s_c", proName );
+    fprintf (partFile_handler_derived, "\nclass iObjectPool_%s_c : public IsoAgLib::iIsoTerminalObjectPool_c {", proName);
+    fprintf (partFile_handler_derived, "\npublic:");
+    fprintf (partFile_handler_derived, "\n  void initAllObjectsOnce(SINGLETON_VEC_KEY_PARAMETER_DEF);");
+    fprintf (partFile_handler_derived, "\n  iObjectPool_%s_c ();", proName);
+    fprintf (partFile_handler_derived, "\n};\n");
+    fprintf (partFile_handler_derived, "\n #endif\n" );
+    fclose (partFile_handler_derived);
   }
 
 // Write Direct Includes
   strncpy (partFileName, xmlFileGlobal, 1024);
   strcat (partFileName, "_direct.h");
-  partFileA = fopen (partFileName,"wt");
+  partFile_direct = fopen (partFileName,"wt");
 
-  fprintf (partFileA, "#include <IsoAgLib/comm/ISO_Terminal/ivtincludes.h>\n");
-  fprintf (partFileA, "#include \"%s-handler-direct.inc\"\n", xmlFileWithoutPath);
-  fprintf (partFileA, "#include \"%s-variables.inc\"\n", xmlFileWithoutPath);
-  fprintf (partFileA, "#include \"%s-attributes.inc\"\n", xmlFileWithoutPath);
+  fprintf (partFile_direct, "#include <IsoAgLib/comm/ISO_Terminal/ivtincludes.h>\n");
+  fprintf (partFile_direct, "#include \"%s-handler-direct.inc\"\n", xmlFileWithoutPath);
+  fprintf (partFile_direct, "#include \"%s-variables.inc\"\n", xmlFileWithoutPath);
+  fprintf (partFile_direct, "#include \"%s-attributes.inc\"\n", xmlFileWithoutPath);
   for (unsigned int i=0; i<ui_languages; i++)
   {
-    fprintf (partFileA, "#include \"%s-list%02d.inc\"\n", xmlFileWithoutPath, i);
+    fprintf (partFile_direct, "#include \"%s-list%02d.inc\"\n", xmlFileWithoutPath, i);
   }
-  fprintf (partFileA, "#include \"%s-list.inc\"\n", xmlFileWithoutPath);
-  fprintf (partFileA, "#include \"%s-defines.inc\"\n", xmlFileWithoutPath);
-  fprintf (partFileA, "#include \"%s-functions.inc\"\n", xmlFileWithoutPath);
+  fprintf (partFile_direct, "#include \"%s-list.inc\"\n", xmlFileWithoutPath);
+  fprintf (partFile_direct, "#include \"%s-defines.inc\"\n", xmlFileWithoutPath);
+  fprintf (partFile_direct, "#include \"%s-functions.inc\"\n", xmlFileWithoutPath);
 
   if (pc_specialParsing)
   {
-    pc_specialParsing->addFileIncludes(partFileA, xmlFileWithoutPath);
+    pc_specialParsing->addFileIncludes(partFile_direct, xmlFileWithoutPath);
   }
 
-  fclose (partFileA);
+  fclose (partFile_direct);
 
 // Write Direct Includes
   strncpy (partFileName, xmlFileGlobal, 1024);
   strcat (partFileName, "_derived-cpp.h");
-  partFileA = fopen (partFileName,"wt");
+  partFile_direct = fopen (partFileName,"wt");
 
-  fprintf (partFileA, "#include \"%s-variables.inc\"\n", xmlFileWithoutPath);
-  fprintf (partFileA, "#include \"%s-attributes.inc\"\n", xmlFileWithoutPath);
+  fprintf (partFile_direct, "#include \"%s-variables.inc\"\n", xmlFileWithoutPath);
+  fprintf (partFile_direct, "#include \"%s-attributes.inc\"\n", xmlFileWithoutPath);
   for (unsigned int i=0; i<ui_languages; i++)
   {
-    fprintf (partFileA, "#include \"%s-list%02d.inc\"\n", xmlFileWithoutPath, i);
+    fprintf (partFile_direct, "#include \"%s-list%02d.inc\"\n", xmlFileWithoutPath, i);
   }
-  fprintf (partFileA, "#include \"%s-list.inc\"\n", xmlFileWithoutPath);
-  fprintf (partFileA, "#include \"%s-defines.inc\"\n", xmlFileWithoutPath);
-  fprintf (partFileA, "#include \"%s-functions.inc\"\n", xmlFileWithoutPath);
+  fprintf (partFile_direct, "#include \"%s-list.inc\"\n", xmlFileWithoutPath);
+  fprintf (partFile_direct, "#include \"%s-defines.inc\"\n", xmlFileWithoutPath);
+  fprintf (partFile_direct, "#include \"%s-functions.inc\"\n", xmlFileWithoutPath);
 
   if (pc_specialParsing)
   {
-    pc_specialParsing->addFileIncludes(partFileA, xmlFileWithoutPath);
+    pc_specialParsing->addFileIncludes(partFile_direct, xmlFileWithoutPath);
   }
 
-  fclose (partFileA);
+  fclose (partFile_direct);
 
 // Write Direct Includes
   strncpy (partFileName, xmlFileGlobal, 1024);
   strcat (partFileName, "_derived-h.h");
-  partFileA = fopen (partFileName,"wt");
+  partFile_direct = fopen (partFileName,"wt");
 
-  fprintf (partFileA, "#include <IsoAgLib/comm/ISO_Terminal/ivtincludes.h>\n");
-  fprintf (partFileA, "#include \"%s-handler-derived.inc\"\n", xmlFileWithoutPath);
+  fprintf (partFile_direct, "#include <IsoAgLib/comm/ISO_Terminal/ivtincludes.h>\n");
+  fprintf (partFile_direct, "#include \"%s-handler-derived.inc\"\n", xmlFileWithoutPath);
 
-  fclose (partFileA);
+  fclose (partFile_direct);
 
   /// if USE_SPECIAL_PARSING is defined additional output is done
   if (pc_specialParsing)
@@ -866,58 +866,58 @@ void init (const char* xmlFile)
   kcNextAutoID = 254; // for safety, 255 should also be okay though...
   objNextUnnamedName = 1;
 
-// partFileA = fopen ("picture.raw", "wb");
-// fwrite (vtObjectdeXbitmap1_aRawBitmap, 16384, 1, partFileA);
-// fclose (partFileA);
+// partFile_direct = fopen ("picture.raw", "wb");
+// fwrite (vtObjectdeXbitmap1_aRawBitmap, 16384, 1, partFile_direct);
+// fclose (partFile_direct);
 
   strncpy (partFileName, xmlFile, 1024);
   strcat (partFileName, "-variables.inc");
-  partFileA = fopen (partFileName,"wt");
+  partFile_direct = fopen (partFileName,"wt");
 
   strncpy (partFileName, xmlFile, 1024);
   strcat (partFileName, "-variables-extern.inc");
-  partFileAextern = fopen (partFileName,"wt");
+  partFile_variables_extern = fopen (partFileName,"wt");
 
 
   strncpy (partFileName, xmlFile, 1024);
   strcat (partFileName, "-attributes.inc");
-  partFileB = fopen (partFileName,"wt");
+  partFile_attributes = fopen (partFileName,"wt");
 
   strncpy (partFileName, xmlFile, 1024);
   strcat (partFileName, "-functions.inc");
-  partFileC = fopen (partFileName,"wt");
-  fprintf (partFileC, "void iObjectPool_%s_c::initAllObjectsOnce (SINGLETON_VEC_KEY_PARAMETER_DEF)\n{\n", proName);
-  fprintf (partFileC, "  if (b_initAllObjects) return;   // so the pointer to the ROM structures are only getting set once on initialization!\n");
+  partFile_functions = fopen (partFileName,"wt");
+  fprintf (partFile_functions, "void iObjectPool_%s_c::initAllObjectsOnce (SINGLETON_VEC_KEY_PARAMETER_DEF)\n{\n", proName);
+  fprintf (partFile_functions, "  if (b_initAllObjects) return;   // so the pointer to the ROM structures are only getting set once on initialization!\n");
 
   strncpy (partFileName, xmlFile, 1024);
   strcat (partFileName, "-functions-origin.inc");
-  partFileC2 = fopen (partFileName,"wt");
+  partFile_functions_origin = fopen (partFileName,"wt");
 
   strncpy (partFileName, xmlFile, 1024);
   strcat (partFileName, "-defines.inc");
-  partFileD = fopen (partFileName,"wt");
+  partFile_defines = fopen (partFileName,"wt");
 
   strncpy (partFileName, xmlFile, 1024);
   strcat (partFileName, "-list.inc");
-  partFileE = fopen (partFileName,"wt");
-  fputs ("IsoAgLib::iVtObject_c* HUGE_MEM all_iVtObjects [] = {", partFileE);
+  partFile_list = fopen (partFileName,"wt");
+  fputs ("IsoAgLib::iVtObject_c* HUGE_MEM all_iVtObjects [] = {", partFile_list);
 
   strncpy (partFileName, xmlFile, 1024);
   strcat (partFileName, "-handler-direct.inc");
   // check if "-hanlder-direct" is there, in this case generate "-handler-direct.inc-template" !
-  partFileF = fopen (partFileName,"rb");
-  if (partFileF) {
+  partFile_handler_direct = fopen (partFileName,"rb");
+  if (partFile_handler_direct) {
    // could open file, so it exists --> don't overwrite - create "-template" then
-    fclose (partFileF);
+    fclose (partFile_handler_direct);
     strcat (partFileName, "-template");
   } else {
     // file couldn't be opened, so create it, simply write to it...
   }
-  partFileF = fopen (partFileName,"wt");
+  partFile_handler_direct = fopen (partFileName,"wt");
 
   strncpy (partFileName, xmlFile, 1024);
   strcat (partFileName, "-handler-derived.inc");
-  partFileFderived = fopen (partFileName,"wt");
+  partFile_handler_derived = fopen (partFileName,"wt");
 
   for (int j=0; j<maxAttributeNames; j++)
     attrString [j] [stringLength+1-1] = 0x00;
@@ -1598,8 +1598,8 @@ void openDecodePrintOut (const char* workDir, char* _bitmap_path, unsigned int &
       if (attrIsGiven [attrFile0+actDepth] && (strlen (attrString [attrFile0+actDepth]) == 0)) continue;
     }
 
-    if (fixNr == -1) fprintf (partFileB, "const HUGE_MEM uint8_t iVtObject%s_aRawBitmap%d [] = {", objName, actDepth);
-    else /* -fix- */ fprintf (partFileB, "const HUGE_MEM uint8_t iVtObject%s_aRawBitmap%dFixed%d [] = {", objName, actDepth, fixNr);
+    if (fixNr == -1) fprintf (partFile_attributes, "const HUGE_MEM uint8_t iVtObject%s_aRawBitmap%d [] = {", objName, actDepth);
+    else /* -fix- */ fprintf (partFile_attributes, "const HUGE_MEM uint8_t iVtObject%s_aRawBitmap%dFixed%d [] = {", objName, actDepth, fixNr);
 
     if (attrIsGiven [attrFile0+actDepth]) sprintf (filename, "%s%s/%s", workDir, _bitmap_path, attrString [attrFile0+actDepth]);
     else /* use std file for all depth */ sprintf (filename, "%s%s/%s", workDir, _bitmap_path, attrString [attrFile]);
@@ -1653,8 +1653,8 @@ void openDecodePrintOut (const char* workDir, char* _bitmap_path, unsigned int &
       while (offset < c_Bitmap.objRawBitmapBytes [actDepth]) {
         unsigned int cnt=1;
         while (((offset+cnt) < c_Bitmap.objRawBitmapBytes [actDepth]) && (picBuffer [offset] == picBuffer [offset+cnt]) && (cnt < 255)) cnt++;
-        if (offset == 0) fprintf (partFileB, " /* RLE-Encoded Raw-Bitmap Data */ %d, %d", cnt, picBuffer [offset]);
-        else /* ----- */ fprintf (partFileB, ",%d, %d", cnt, picBuffer [offset]);
+        if (offset == 0) fprintf (partFile_attributes, " /* RLE-Encoded Raw-Bitmap Data */ %d, %d", cnt, picBuffer [offset]);
+        else /* ----- */ fprintf (partFile_attributes, ",%d, %d", cnt, picBuffer [offset]);
         offset += cnt;
         rleBytes += 2;
         PixelCount += cnt;
@@ -1667,24 +1667,24 @@ void openDecodePrintOut (const char* workDir, char* _bitmap_path, unsigned int &
     } else {
       //// +++ NORMAL UNCOMPRESSED OUTPUT +++
       if (actDepth == 1) { // nur der lesbarkeit halber!!
-        fprintf (partFileB, " /* 16-Color Raw-Bitmap Data */ (%d << 4) | %d", picBuffer [0] >> 4, picBuffer [0] & 0xF);
+        fprintf (partFile_attributes, " /* 16-Color Raw-Bitmap Data */ (%d << 4) | %d", picBuffer [0] >> 4, picBuffer [0] & 0xF);
         for (unsigned int i=1; i<c_Bitmap.objRawBitmapBytes [actDepth]; i++) {
-          fprintf (partFileB, ", (%d << 4) | %d", picBuffer [i] >> 4, picBuffer [i] & 0xF);
+          fprintf (partFile_attributes, ", (%d << 4) | %d", picBuffer [i] >> 4, picBuffer [i] & 0xF);
         }
       } else {
-        fprintf (partFileB, " /* Raw-Bitmap Data */ %d", picBuffer [0]);
+        fprintf (partFile_attributes, " /* Raw-Bitmap Data */ %d", picBuffer [0]);
         for (unsigned int i=1; i<c_Bitmap.objRawBitmapBytes [actDepth]; i++) {
-          fprintf (partFileB, ", %d", picBuffer [i]);
+          fprintf (partFile_attributes, ", %d", picBuffer [i]);
         }
       }
       if (c_Bitmap.objRawBitmapBytes [actDepth] > 65000) b_largeObject = true; // normally 65535-restAttributesSize would be enough, but don't care, go save!
     }
-    fprintf (partFileB, "};\n");
+    fprintf (partFile_attributes, "};\n");
     if (!b_oldLarge && b_largeObject)
     {
-      fprintf (partFileB, "#ifndef USE_OBJECTS_LARGER_THAN_64K\n");
-      fprintf (partFileB, "  #error \"Your objectpool has large object(s) so you need to compile your project with the   USE_OBJECTS_LARGER_THAN_64K   define set.\"\n");
-      fprintf (partFileB, "#endif\n");
+      fprintf (partFile_attributes, "#ifndef USE_OBJECTS_LARGER_THAN_64K\n");
+      fprintf (partFile_attributes, "  #error \"Your objectpool has large object(s) so you need to compile your project with the   USE_OBJECTS_LARGER_THAN_64K   define set.\"\n");
+      fprintf (partFile_attributes, "#endif\n");
     }
   } // for actDepth...
 }
@@ -1835,7 +1835,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
     /// if USE_SPECIAL_PARSING is defined, check here if found tag is valid at this position
     if (pc_specialParsing && ((objType >= maxObjectTypes) && !pc_specialParsing->checkTag(n, objType, ombType)))
       clean_exit (-1);
-    else if (( (uint64_t(1)<<objType) & ombType) == 0) { // normal to insert element!
+    else if (!pc_specialParsing && ( ( (uint64_t(1)<<objType) & ombType) == 0 ) ) { // normal to insert element!
       // ERROR: Unallowed <TAG> here?!
       std::cout << "\n\nENCOUNTERED WRONG TAG AT THIS POSITION!\nENCOUNTERED: <" << node_name << "> objType: "
                 << objType << " ombType: " << ombType << "\nPOSSIBLE TAGS HERE WOULD BE: ";
@@ -2089,9 +2089,9 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
             }
 
             if (firstElement) {
-              fprintf (partFileB, "const IsoAgLib::repeat_vtLanguage_s ivtObject%s_aLanguage [] = {", objName);
+              fprintf (partFile_attributes, "const IsoAgLib::repeat_vtLanguage_s ivtObject%s_aLanguage [] = {", objName);
             } else {
-              fprintf (partFileB, ", ");
+              fprintf (partFile_attributes, ", ");
             }
             if (!(attrIsGiven [attrCode]))
             {
@@ -2113,7 +2113,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
               clean_exit (-1);
             }
             sprintf (tempString, "'%c', '%c'", languageCode[0], languageCode[1]);
-            fprintf (partFileB, "{%s}", tempString);
+            fprintf (partFile_attributes, "{%s}", tempString);
             objChildLanguages++;
             firstElement = false;
 
@@ -2158,7 +2158,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
           }
         }
         if (firstElement == false)
-          fprintf (partFileB, "};\n");
+          fprintf (partFile_attributes, "};\n");
       }
 
       // ### Print out RAWBITMAP byte array
@@ -2213,20 +2213,20 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
         // have there been any Fixed Bitmaps?
         if (fixNr > 0) {
           // 1st: Print out array here now...
-          fprintf (partFileB, "const IsoAgLib::repeat_rawData_rawBytes_actWidth_actHeight_formatoptions_s iVtObject%s_aFixedBitmaps [] = {", objName);
+          fprintf (partFile_attributes, "const IsoAgLib::repeat_rawData_rawBytes_actWidth_actHeight_formatoptions_s iVtObject%s_aFixedBitmaps [] = {", objName);
           bool firstEntry=true;
           for (unsigned int i=0; i<fixNr; i++) {
             for (int actDepth=0; actDepth<2; actDepth++) {
               // was this depth generated for this special bitmap?
               if (fixRawBitmapBytes[i] [actDepth] > 0) {
-                if (!firstEntry) fprintf (partFileB, ", ");
+                if (!firstEntry) fprintf (partFile_attributes, ", ");
                 unsigned int options = (fixBitmapOptions[i] & 0x3) | ( (fixBitmapOptions[i] & (uint64_t(1)<<(2+actDepth))) ? (uint64_t(1)<<2) : 0 );
-                fprintf (partFileB, "{iVtObject%s_aRawBitmap%dFixed%d, %d, %d, %d, (%d << 6) | %d}", objName, actDepth, i, fixRawBitmapBytes[i] [actDepth], fiXactualWidth[i], fiXactualHeight[i], actDepth, options);
+                fprintf (partFile_attributes, "{iVtObject%s_aRawBitmap%dFixed%d, %d, %d, %d, (%d << 6) | %d}", objName, actDepth, i, fixRawBitmapBytes[i] [actDepth], fiXactualWidth[i], fiXactualHeight[i], actDepth, options);
                 firstEntry = false;
               }
             }
           }
-          fprintf (partFileB, "};\n");
+          fprintf (partFile_attributes, "};\n");
         }
         /// ### +END+ -- SECOND -- process "fixed" bitmaps
         //////////////////////////////////////////////////////
@@ -2397,27 +2397,27 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                 // give him an ID, although not necessary now...
                 objChildID = getID (objChildName, false /* assumption: not a macro here */, is_objChildID, objChildID);
                 if (firstElement) {
-                  if (xyNeeded) fprintf (partFileB, "const IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s iVtObject%s_aObject_x_y_font_row_col [] = {", objName);
-                  else          fprintf (partFileB, "const IsoAgLib::repeat_iVtObject_s iVtObject%s_aObject [] = {", objName);
+                  if (xyNeeded) fprintf (partFile_attributes, "const IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s iVtObject%s_aObject_x_y_font_row_col [] = {", objName);
+                  else          fprintf (partFile_attributes, "const IsoAgLib::repeat_iVtObject_s iVtObject%s_aObject [] = {", objName);
                 } else {
-                  fprintf (partFileB, ", ");
+                  fprintf (partFile_attributes, ", ");
                 }
                 if (xyNeeded) {
                   if (!(is_objChildX && is_objChildY)) {
                     std::cout << "\n\npos_x AND pos_y ATTRIBUTES NEEDED IN CHILD-OBJECT OF <"<< node_name <<"> ! STOPPING PARSER! bye.\n\n";
                     clean_exit (-1);
                   }
-                  fprintf (partFileB, "{&iVtObject%s, %d, %d, %s ,%d, %d}", objChildName, objChildX, objChildY, objBlockFont, objBlockRow, objBlockCol);
+                  fprintf (partFile_attributes, "{&iVtObject%s, %d, %d, %s ,%d, %d}", objChildName, objChildX, objChildY, objBlockFont, objBlockRow, objBlockCol);
                 } else {
                   // Added this if statement to account for InputList objects who might have NULL Object IDs in their list of objects. (Which is legal per the standard!)
                   // Instead of inserting a faulty object name, just insert NULL into the array. -BAC 07-Jan-2005
                   if (objChildID == 65535)
                   {
-                    fprintf (partFileB, "{NULL}");
+                    fprintf (partFile_attributes, "{NULL}");
                   }
                   else
                   {
-                    fprintf (partFileB, "{&iVtObject%s}", objChildName);
+                    fprintf (partFile_attributes, "{&iVtObject%s}", objChildName);
                   }
                 }
                 objChildObjects++;
@@ -2428,11 +2428,11 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                 /// Add implicit Button/Key includement
                 if (rpcc_inButton)
                 {
-                  fprintf (partFileC2, "  iVtObject%s_%d.setOriginBTN (&iVtObject%s);\n", objChildName, childLang, rpcc_inButton);
+                  fprintf (partFile_functions_origin, "  iVtObject%s_%d.setOriginBTN (&iVtObject%s);\n", objChildName, childLang, rpcc_inButton);
                 }
                 if (rpcc_inKey)
                 {
-                  fprintf (partFileC2, "  iVtObject%s_%d.setOriginSKM (%s);\n", objChildName, childLang, rpcc_inKey ? "true":"false"); // is now always "true"...
+                  fprintf (partFile_functions_origin, "  iVtObject%s_%d.setOriginSKM (%s);\n", objChildName, childLang, rpcc_inKey ? "true":"false"); // is now always "true"...
                 }
               }
             } while (b_dupModeChild && (*dupLangNextChild != 0x00));
@@ -2448,8 +2448,8 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
           {
             for (uint16_t ui_leftChildObjects = objChildObjects; ui_leftChildObjects<(uint16_t)atoi(attrString [attrNumber_of_items]); ui_leftChildObjects++)
             {
-              if (ui_leftChildObjects < atoi(attrString [attrNumber_of_items])) fprintf (partFileB, ", ");
-              fprintf (partFileB, "{NULL}");
+              if (ui_leftChildObjects < atoi(attrString [attrNumber_of_items])) fprintf (partFile_attributes, ", ");
+              fprintf (partFile_attributes, "{NULL}");
             }
             objChildObjects=(uint16_t)atoi(attrString [attrNumber_of_items]);
           }
@@ -2462,18 +2462,18 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
               // it is set to 0 in the attributes of the inputlist
               objChildObjects = (uint16_t)atoi(attrString [attrNumber_of_items]);
               // create for all number_of_items a no-item placeholder
-              fprintf (partFileB, "const IsoAgLib::repeat_iVtObject_s iVtObject%s_aObject [] = {", objName);
+              fprintf (partFile_attributes, "const IsoAgLib::repeat_iVtObject_s iVtObject%s_aObject [] = {", objName);
               for (int i_emptyChildObj=1; i_emptyChildObj <= atoi(attrString [attrNumber_of_items]); i_emptyChildObj++)
               {
-                fprintf (partFileB, "{NULL}");
-                if (i_emptyChildObj < atoi(attrString [attrNumber_of_items])) fprintf (partFileB, ", ");
+                fprintf (partFile_attributes, "{NULL}");
+                if (i_emptyChildObj < atoi(attrString [attrNumber_of_items])) fprintf (partFile_attributes, ", ");
               }
-              fprintf (partFileB, "};\n");
+              fprintf (partFile_attributes, "};\n");
             }
           }
         }
         if (firstElement == false)
-          fprintf (partFileB, "};\n");
+          fprintf (partFile_attributes, "};\n");
       }
 
       // ### Print out EVENT_MACRO array
@@ -2528,23 +2528,23 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
             objChildID = getID (objChildName, true, is_objChildID, objChildID);
             if (firstElement) {
               // Changed the macro struct name in the following line to match what is in version 1.1.0 of IsoAgLib -bac 06-Jan-2005
-              // fprintf (partFileB, "const IsoAgLib::repeat_Macro_iVtObject_s iVtObject%s_aMacro_Object [] = {", objName);
-              fprintf (partFileB, "const IsoAgLib::repeat_event_iVtObjectMacro_s iVtObject%s_aMacro_Object [] = {", objName);
+              // fprintf (partFile_attributes, "const IsoAgLib::repeat_Macro_iVtObject_s iVtObject%s_aMacro_Object [] = {", objName);
+              fprintf (partFile_attributes, "const IsoAgLib::repeat_event_iVtObjectMacro_s iVtObject%s_aMacro_Object [] = {", objName);
             } else {
-              fprintf (partFileB, ", ");
+              fprintf (partFile_attributes, ", ");
             }
             if (!(attrIsGiven [attrEvent])) {
               std::cout << "\n\nevent ATTRIBUTE NEEDED IN <macro ...> ! STOPPING PARSER! bye.\n\n";
               clean_exit (-1);
             }
-            //fprintf (partFileB, "{%d, &vtObject%s}", atoi (attrString [attrEvent]), objChildName);
-            fprintf (partFileB, "{%d, &iVtObject%s}", eventToi(attrString [attrEvent]), objChildName);
+            //fprintf (partFile_attributes, "{%d, &vtObject%s}", atoi (attrString [attrEvent]), objChildName);
+            fprintf (partFile_attributes, "{%d, &iVtObject%s}", eventToi(attrString [attrEvent]), objChildName);
             objChildMacros++;
             firstElement = false;
           }
         }
         if (firstElement == false)
-          fprintf (partFileB, "};\n");
+          fprintf (partFile_attributes, "};\n");
       }
 
       //****************************************************************************************************************************************
@@ -3132,9 +3132,9 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
 
             if (firstElement)
             {
-              fprintf (partFileB, "const uint8_t iVtObject%s_aMacro_Commands [] = {", objName);
+              fprintf (partFile_attributes, "const uint8_t iVtObject%s_aMacro_Commands [] = {", objName);
             } else {
-              fprintf (partFileB, ", ");
+              fprintf (partFile_attributes, ", ");
             }
 
             // We need something like this, but up above for each command type in order to deal with the varying attributes for each command. . . -bac
@@ -3143,14 +3143,14 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
             std::cout << "\n\nevent ATTRIBUTE NEEDED IN <macro ...> ! STOPPING PARSER! bye.\n\n";
             clean_exit (-1);
           }*/
-            //fprintf (partFileB, "{%d, &vtObject%s}", atoi (attrString [attrEvent]), objChildName);
-            fprintf (partFileB, "%s", commandMessage);
+            //fprintf (partFile_attributes, "{%d, &vtObject%s}", atoi (attrString [attrEvent]), objChildName);
+            fprintf (partFile_attributes, "%s", commandMessage);
             firstElement = false;
           }
         }
 
         if (firstElement == false)
-          fprintf (partFileB, "};\n");
+          fprintf (partFile_attributes, "};\n");
       } // End of if (objHasArrayMacroCommand)
 
       // ### Print out point array for a Polygon Object
@@ -3192,9 +3192,9 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
             }
 
             if (firstElement) {
-              fprintf (partFileB, "const IsoAgLib::repeat_x_y_s iVtObject%s_aPoints [] = {", objName);
+              fprintf (partFile_attributes, "const IsoAgLib::repeat_x_y_s iVtObject%s_aPoints [] = {", objName);
             } else {
-              fprintf (partFileB, ", ");
+              fprintf (partFile_attributes, ", ");
             }
             if (!(attrIsGiven [attrPos_x])) {
               std::cout << "\n\npos_x ATTRIBUTE NEEDED IN <point ...> ! STOPPING PARSER! bye.\n\n";
@@ -3204,13 +3204,13 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
               std::cout << "\n\npos_y ATTRIBUTE NEEDED IN <point ...> ! STOPPING PARSER! bye.\n\n";
               clean_exit (-1);
             }
-            fprintf (partFileB, "{%d, %d}", atoi(attrString [attrPos_x]), atoi(attrString [attrPos_y]));
+            fprintf (partFile_attributes, "{%d, %d}", atoi(attrString [attrPos_x]), atoi(attrString [attrPos_y]));
             objChildPoints++;
             firstElement = false;
           }
         }
         if (firstElement == false)
-          fprintf (partFileB, "};\n");
+          fprintf (partFile_attributes, "};\n");
       }
       //*************************************************************************************************************************************************************
       //******************** End of code added by Brad Cox **********************************************************************************************************
@@ -3363,21 +3363,21 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
         }
       }
 
-      fprintf (partFileA, "IsoAgLib::iVtObject%s_c iVtObject%s%s;\n", otClassnameTable [objType], objName, pc_postfix);
-      fprintf (partFileAextern, "extern IsoAgLib::iVtObject%s_c iVtObject%s%s;\n", otClassnameTable [objType], objName, pc_postfix);
-      fprintf (partFileB, "const IsoAgLib::iVtObject_c::iVtObject%s_s iVtObject%s%s_sROM = {%d", otClassnameTable [objType], objName, pc_postfix, objID);
-      fprintf (partFileC, "  iVtObject%s%s.init (&iVtObject%s%s_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);\n", objName, pc_postfix, objName, pc_postfix);
-      fprintf (partFileD, "#define iVtObjectID%s%s %d\n", objName, pc_postfix, objID);
+      fprintf (partFile_direct, "IsoAgLib::iVtObject%s_c iVtObject%s%s;\n", otClassnameTable [objType], objName, pc_postfix);
+      fprintf (partFile_variables_extern, "extern IsoAgLib::iVtObject%s_c iVtObject%s%s;\n", otClassnameTable [objType], objName, pc_postfix);
+      fprintf (partFile_attributes, "const IsoAgLib::iVtObject_c::iVtObject%s_s iVtObject%s%s_sROM = {%d", otClassnameTable [objType], objName, pc_postfix, objID);
+      fprintf (partFile_functions, "  iVtObject%s%s.init (&iVtObject%s%s_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);\n", objName, pc_postfix, objName, pc_postfix);
+      fprintf (partFile_defines, "#define iVtObjectID%s%s %d\n", objName, pc_postfix, objID);
 
       /// Add explicit Button/Key includement
       if (attrIsGiven [attrInButton])
       {
-        fprintf (partFileC2, "  iVtObject%s%s.setOriginBTN (&iVtObject%s);\n", objName, pc_postfix, attrString [attrInButton]);
+        fprintf (partFile_functions_origin, "  iVtObject%s%s.setOriginBTN (&iVtObject%s);\n", objName, pc_postfix, attrString [attrInButton]);
       }
       if (attrIsGiven [attrInKey])
       {
         bool resultat = booltoi (attrString [attrInKey]);
-        fprintf (partFileC2, "  iVtObject%s%s.setOriginSKM (%s);\n", objName, pc_postfix, resultat ? "true":"false");
+        fprintf (partFile_functions_origin, "  iVtObject%s%s.setOriginSKM (%s);\n", objName, pc_postfix, resultat ? "true":"false");
       }
 
 
@@ -3403,8 +3403,8 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
         case otWorkingset:
           if (!attrIsGiven [attrActive_mask] && (booltoi (attrString [attrSelectable]) == 1)) clean_exit (-1, "YOU NEED TO SPECIFY THE active_mask= ATTRIBUTE FOR THE <workingset> OBJECT (if selectable='yes'!)! STOPPING PARSER! bye.\n\n");
           if (booltoi (attrString [attrSelectable]) == 0)
-            fprintf (partFileB, ", %d, %d, NULL",         colortoi (attrString [attrBackground_colour]), booltoi (attrString [attrSelectable]));
-          else fprintf (partFileB, ", %d, %d, &iVtObject%s", colortoi (attrString [attrBackground_colour]), booltoi (attrString [attrSelectable]), attrString [attrActive_mask]);
+            fprintf (partFile_attributes, ", %d, %d, NULL",         colortoi (attrString [attrBackground_colour]), booltoi (attrString [attrSelectable]));
+          else fprintf (partFile_attributes, ", %d, %d, &iVtObject%s", colortoi (attrString [attrBackground_colour]), booltoi (attrString [attrSelectable]), attrString [attrActive_mask]);
           if (!sb_WSFound)
           {
             sb_WSFound = true;
@@ -3414,45 +3414,45 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
 
         case otDatamask:
           if ( (strcmp ("NULL", attrString [attrSoft_key_mask]) == 0)  || (strcmp("65535",  attrString [attrSoft_key_mask]) == 0))
-            fprintf (partFileB, ", %d, NULL", colortoi (attrString [attrBackground_colour]));
+            fprintf (partFile_attributes, ", %d, NULL", colortoi (attrString [attrBackground_colour]));
           else
-            fprintf (partFileB, ", %d, &iVtObject%s", colortoi (attrString [attrBackground_colour]), attrString [attrSoft_key_mask]);
+            fprintf (partFile_attributes, ", %d, &iVtObject%s", colortoi (attrString [attrBackground_colour]), attrString [attrSoft_key_mask]);
           break;
 
         case otAlarmmask:
           if ( (strcmp ("NULL", attrString [attrSoft_key_mask]) == 0) || (strcmp("65535",  attrString [attrSoft_key_mask]) == 0))
-            fprintf (partFileB, ", %d, NULL, %d, %d", colortoi (attrString [attrBackground_colour]), atoi (attrString [attrPriority]), atoi (attrString [attrAcoustic_signal]));
+            fprintf (partFile_attributes, ", %d, NULL, %d, %d", colortoi (attrString [attrBackground_colour]), atoi (attrString [attrPriority]), atoi (attrString [attrAcoustic_signal]));
           else
-            fprintf (partFileB, ", %d, &iVtObject%s, %d, %d", colortoi (attrString [attrBackground_colour]), attrString [attrSoft_key_mask], prioritytoi (attrString [attrPriority]), acousticsignaltoi (attrString [attrAcoustic_signal]));
+            fprintf (partFile_attributes, ", %d, &iVtObject%s, %d, %d", colortoi (attrString [attrBackground_colour]), attrString [attrSoft_key_mask], prioritytoi (attrString [attrPriority]), acousticsignaltoi (attrString [attrAcoustic_signal]));
           break;
 
         case otContainer:
           if (!(attrIsGiven [attrWidth] && attrIsGiven [attrHeight])) clean_exit (-1, "YOU NEED TO SPECIFY THE width= AND height= ATTRIBUTES FOR THE <container> OBJECT! STOPPING PARSER! bye.\n\n");
-          fprintf (partFileB, ", %s, %s, %d", attrString [attrWidth], attrString [attrHeight], booltoi (attrString [attrHidden]));
+          fprintf (partFile_attributes, ", %s, %s, %d", attrString [attrWidth], attrString [attrHeight], booltoi (attrString [attrHidden]));
           break;
 
         case otSoftkeymask:
-          fprintf (partFileB, ", %d", colortoi (attrString [attrBackground_colour]));
+          fprintf (partFile_attributes, ", %d", colortoi (attrString [attrBackground_colour]));
           break;
 
         case otKey:
           if (!attrIsGiven [attrKey_code]) getKeyCode ();
-          fprintf (partFileB, ", %d, %s", colortoi (attrString [attrBackground_colour]), attrString [attrKey_code]);
-          fprintf (partFileD, "#define vtKeyCode%s %d\n", objName, atoi (attrString [attrKey_code])); // like in otButton
+          fprintf (partFile_attributes, ", %d, %s", colortoi (attrString [attrBackground_colour]), attrString [attrKey_code]);
+          fprintf (partFile_defines, "#define vtKeyCode%s %d\n", objName, atoi (attrString [attrKey_code])); // like in otButton
           break;
 
         case otButton:
           if (!attrIsGiven [attrKey_code]) getKeyCode ();
           if (!(attrIsGiven [attrWidth] && attrIsGiven [attrHeight])) clean_exit (-1, "YOU NEED TO SPECIFY THE width= AND height= ATTRIBUTES FOR THE <key> OBJECT! STOPPING PARSER! bye.\n\n");
-          fprintf (partFileB, ", %s, %s, %d, %d, %s, %d", attrString [attrWidth], attrString [attrHeight], colortoi (attrString [attrBackground_colour]), colortoi (attrString [attrBorder_colour]), attrString [attrKey_code], buttonoptiontoi (attrString [attrOptions]));
-          fprintf (partFileD, "#define vtKeyCode%s %d\n", objName, atoi (attrString [attrKey_code])); // like in otKey
+          fprintf (partFile_attributes, ", %s, %s, %d, %d, %s, %d", attrString [attrWidth], attrString [attrHeight], colortoi (attrString [attrBackground_colour]), colortoi (attrString [attrBorder_colour]), attrString [attrKey_code], buttonoptiontoi (attrString [attrOptions]));
+          fprintf (partFile_defines, "#define vtKeyCode%s %d\n", objName, atoi (attrString [attrKey_code])); // like in otKey
           break;
 
         case otInputboolean:
           if (!(attrIsGiven [attrWidth] && attrIsGiven [attrForeground_colour])) clean_exit (-1, "YOU NEED TO SPECIFY THE width= AND foreground_colour= ATTRIBUTES FOR THE <inputboolean> OBJECT! STOPPING PARSER! bye.\n\n");
           if (!attrIsGiven [attrValue])
             sprintf (attrString [attrValue], "0");
-          fprintf (partFileB, ", %d, %s, &iVtObject%s, %s, %s, %d", colortoi (attrString [attrBackground_colour]), attrString [attrWidth], attrString [attrForeground_colour], attrString [attrVariable_reference], attrString [attrValue], booltoi (attrString [attrEnabled]));
+          fprintf (partFile_attributes, ", %d, %s, &iVtObject%s, %s, %s, %d", colortoi (attrString [attrBackground_colour]), attrString [attrWidth], attrString [attrForeground_colour], attrString [attrVariable_reference], attrString [attrValue], booltoi (attrString [attrEnabled]));
           break;
 
         case otInputstring:
@@ -3486,11 +3486,11 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
           if ( (!attrIsGiven [attrInput_attributes]) || (strcmp( attrString[attrInput_attributes], "65535")==0) )
           {
             sprintf (attrString [attrInput_attributes], "NULL");
-            fprintf (partFileB, ", %s, %s, %d, &iVtObject%s, %s, %d, %s, %d, %s, %s, %d", attrString [attrWidth], attrString [attrHeight], colortoi (attrString [attrBackground_colour]), attrString [attrFont_attributes], attrString [attrInput_attributes], optionstoi (attrString [attrOptions]), attrString [attrVariable_reference], horizontaljustificationtoi (attrString [attrHorizontal_justification]), attrString [attrLength], attrString [attrValue], booltoi(attrString [attrEnabled]) );
+            fprintf (partFile_attributes, ", %s, %s, %d, &iVtObject%s, %s, %d, %s, %d, %s, %s, %d", attrString [attrWidth], attrString [attrHeight], colortoi (attrString [attrBackground_colour]), attrString [attrFont_attributes], attrString [attrInput_attributes], optionstoi (attrString [attrOptions]), attrString [attrVariable_reference], horizontaljustificationtoi (attrString [attrHorizontal_justification]), attrString [attrLength], attrString [attrValue], booltoi(attrString [attrEnabled]) );
           }
           else
           {
-            fprintf (partFileB, ", %s, %s, %d, &iVtObject%s, &iVtObject%s, %d, %s, %d, %s, %s, %d", attrString [attrWidth], attrString [attrHeight], colortoi (attrString [attrBackground_colour]), attrString [attrFont_attributes], attrString [attrInput_attributes], optionstoi (attrString [attrOptions]), attrString [attrVariable_reference], horizontaljustificationtoi (attrString [attrHorizontal_justification]), attrString [attrLength], attrString [attrValue], booltoi(attrString [attrEnabled]) );
+            fprintf (partFile_attributes, ", %s, %s, %d, &iVtObject%s, &iVtObject%s, %d, %s, %d, %s, %s, %d", attrString [attrWidth], attrString [attrHeight], colortoi (attrString [attrBackground_colour]), attrString [attrFont_attributes], attrString [attrInput_attributes], optionstoi (attrString [attrOptions]), attrString [attrVariable_reference], horizontaljustificationtoi (attrString [attrHorizontal_justification]), attrString [attrLength], attrString [attrValue], booltoi(attrString [attrEnabled]) );
           }
           break;
 
@@ -3502,18 +3502,18 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
           }
           if (!attrIsGiven [attrValue])
             sprintf (attrString [attrValue], "0");
-          fprintf (partFileB, ", %s, %s, %d, &iVtObject%s, %d, %s, %sUL, %sUL, %sUL", attrString [attrWidth], attrString [attrHeight],
+          fprintf (partFile_attributes, ", %s, %s, %d, &iVtObject%s, %d, %s, %sUL, %sUL, %sUL", attrString [attrWidth], attrString [attrHeight],
                    colortoi (attrString [attrBackground_colour]), attrString [attrFont_attributes], numberoptionstoi (attrString [attrOptions]), attrString [attrVariable_reference],
                    attrString [attrValue], attrString [attrMin_value], attrString [attrMax_value]);
           if ( strchr( attrString [attrOffset], 'L' ) != NULL )
           { // contains already a number type specifier
-            fprintf (partFileB, ", %s", attrString [attrOffset] );
+            fprintf (partFile_attributes, ", %s", attrString [attrOffset] );
           }
           else
           { // place "L" for type specifier
-            fprintf (partFileB, ", %sL", attrString [attrOffset] );
+            fprintf (partFile_attributes, ", %sL", attrString [attrOffset] );
           }
-          fprintf (partFileB, ", %s, %s, %d, %d, %d", attrString [attrScale],
+          fprintf (partFile_attributes, ", %s, %s, %d, %d, %d", attrString [attrScale],
                    attrString [attrNumber_of_decimals], formattoi (attrString [attrFormat]), horizontaljustificationtoi (attrString [attrHorizontal_justification]),
                    booltoi (attrString [attrEnabled]));
           break;
@@ -3522,7 +3522,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
           if (!(attrIsGiven [attrWidth] && attrIsGiven [attrHeight])) clean_exit (-1, "YOU NEED TO SPECIFY THE width= AND height= ATTRIBUTES FOR THE <inputlist> OBJECT! STOPPING PARSER! bye.\n\n");
           if (!attrIsGiven [attrValue])
             sprintf (attrString [attrValue], "0");
-          fprintf (partFileB, ", %s, %s, %s, %s, %d", attrString [attrWidth], attrString [attrHeight], attrString [attrVariable_reference], attrString [attrValue],
+          fprintf (partFile_attributes, ", %s, %s, %s, %s, %d", attrString [attrWidth], attrString [attrHeight], attrString [attrVariable_reference], attrString [attrValue],
                    booltoi (attrString [attrEnabled]));
           break;
 
@@ -3545,7 +3545,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
             copyWithQuoteAndLength (tempString, attrString [attrValue], atoi (attrString [attrLength]));
             sprintf (attrString [attrValue], "%s", tempString);
           }
-          fprintf (partFileB, ", %s, %s, %d, &iVtObject%s, %d, %s, %d, %s, %s", attrString [attrWidth], attrString [attrHeight], colortoi (attrString [attrBackground_colour]),
+          fprintf (partFile_attributes, ", %s, %s, %d, &iVtObject%s, %d, %s, %d, %s, %s", attrString [attrWidth], attrString [attrHeight], colortoi (attrString [attrBackground_colour]),
                    attrString [attrFont_attributes], optionstoi (attrString [attrOptions]), attrString [attrVariable_reference],
                    horizontaljustificationtoi (attrString [attrHorizontal_justification]), attrString [attrLength], attrString [attrValue]);
       //    printf ("%s --- %d\n", attrString [attrOptions], optionstoi (attrString [attrOptions]));
@@ -3559,18 +3559,18 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
           }
           if (!attrIsGiven [attrValue])
             sprintf (attrString [attrValue], "0");
-          fprintf (partFileB, ", %s, %s, %d, &iVtObject%s, %d, %s, %sUL", attrString [attrWidth], attrString [attrHeight],
+          fprintf (partFile_attributes, ", %s, %s, %d, &iVtObject%s, %d, %s, %sUL", attrString [attrWidth], attrString [attrHeight],
                    colortoi (attrString [attrBackground_colour]), attrString [attrFont_attributes], numberoptionstoi (attrString [attrOptions]),
                    attrString [attrVariable_reference], attrString [attrValue] );
           if ( strchr( attrString [attrOffset], 'L' ) != NULL )
           { // offset has already type indication -> don't add additional "L"
-            fprintf (partFileB, ", %s", attrString [attrOffset]);
+            fprintf (partFile_attributes, ", %s", attrString [attrOffset]);
           }
           else
           {
-            fprintf (partFileB, ", %sL", attrString [attrOffset]);
+            fprintf (partFile_attributes, ", %sL", attrString [attrOffset]);
           }
-          fprintf (partFileB, ", %s, %s, %d, %d", attrString [attrScale], attrString [attrNumber_of_decimals],
+          fprintf (partFile_attributes, ", %s, %s, %d, %d", attrString [attrScale], attrString [attrNumber_of_decimals],
                    formattoi (attrString [attrFormat]), horizontaljustificationtoi (attrString [attrHorizontal_justification]));
           break;
 
@@ -3579,7 +3579,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
           {
             clean_exit (-1, "YOU NEED TO SPECIFY THE Line_attributes= AND width= AND height= ATTRIBUTES FOR THE <line> OBJECT! STOPPING PARSER! bye.\n\n");
           }
-          fprintf (partFileB, ", &iVtObject%s, %s, %s, %d", attrString [attrLine_attributes], attrString [attrWidth], attrString [attrHeight], linedirectiontoi (attrString [attrLine_direction]));
+          fprintf (partFile_attributes, ", &iVtObject%s, %s, %s, %d", attrString [attrLine_attributes], attrString [attrWidth], attrString [attrHeight], linedirectiontoi (attrString [attrLine_direction]));
           break;
 
         case otRectangle:
@@ -3599,7 +3599,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
 
           //else
           // sprintf (attrString [attrFill_attributes], "&vtObject%s", attrString[attrFill_attributes]);
-          fprintf (partFileB, ", &iVtObject%s, %s, %s, %d, %s", attrString [attrLine_attributes], attrString [attrWidth], attrString [attrHeight], linesuppressiontoi (attrString [attrLine_suppression]), attrString[attrFill_attributes]);
+          fprintf (partFile_attributes, ", &iVtObject%s, %s, %s, %d, %s", attrString [attrLine_attributes], attrString [attrWidth], attrString [attrHeight], linesuppressiontoi (attrString [attrLine_suppression]), attrString[attrFill_attributes]);
           break;
 
         case otEllipse:
@@ -3617,7 +3617,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
             sprintf (tempString, "&iVtObject%s", attrString[attrFill_attributes]);
             sprintf (attrString [attrFill_attributes], "%s", tempString);
           }
-          fprintf (partFileB, ", &iVtObject%s, %s, %s, %d, %s, %s, %s", attrString [attrLine_attributes], attrString [attrWidth], attrString [attrHeight], ellipsetypetoi (attrString [attrEllipse_type]), attrString[attrStart_angle], attrString[attrEnd_angle], attrString[attrFill_attributes]);
+          fprintf (partFile_attributes, ", &iVtObject%s, %s, %s, %d, %s, %s, %s", attrString [attrLine_attributes], attrString [attrWidth], attrString [attrHeight], ellipsetypetoi (attrString [attrEllipse_type]), attrString[attrStart_angle], attrString[attrEnd_angle], attrString[attrFill_attributes]);
           break;
 
         case otPolygon:
@@ -3632,7 +3632,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
             sprintf (tempString, "&iVtObject%s", attrString[attrFill_attributes]);
             sprintf (attrString [attrFill_attributes], "%s", tempString);
           }
-          fprintf (partFileB, ", %s, %s, &iVtObject%s, %s, %d", attrString [attrWidth], attrString [attrHeight], attrString [attrLine_attributes], attrString[attrFill_attributes], polygontypetoi (attrString [attrPolygon_type]));
+          fprintf (partFile_attributes, ", %s, %s, &iVtObject%s, %s, %d", attrString [attrWidth], attrString [attrHeight], attrString [attrLine_attributes], attrString[attrFill_attributes], polygontypetoi (attrString [attrPolygon_type]));
           break;
 
         case otMeter:
@@ -3644,7 +3644,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
           if (!attrIsGiven [attrOptions])
             sprintf(attrString[attrOptions], "0");
 
-          fprintf (partFileB, ", %s, %d, %d, %d, %d, %s, %s, %s, %s, %s, %s, %s", attrString [attrWidth], colortoi(attrString[attrNeedle_colour]), colortoi (attrString [attrBorder_colour]), colortoi (attrString [attrArc_and_tick_colour]), meteroptionstoi (attrString [attrOptions]), attrString [attrNumber_of_ticks], attrString[attrStart_angle], attrString[attrEnd_angle], attrString [attrMin_value], attrString [attrMax_value], attrString [attrVariable_reference], attrString [attrValue]);
+          fprintf (partFile_attributes, ", %s, %d, %d, %d, %d, %s, %s, %s, %s, %s, %s, %s", attrString [attrWidth], colortoi(attrString[attrNeedle_colour]), colortoi (attrString [attrBorder_colour]), colortoi (attrString [attrArc_and_tick_colour]), meteroptionstoi (attrString [attrOptions]), attrString [attrNumber_of_ticks], attrString[attrStart_angle], attrString[attrEnd_angle], attrString [attrMin_value], attrString [attrMax_value], attrString [attrVariable_reference], attrString [attrValue]);
           break;
 
         case otLinearbargraph:
@@ -3657,7 +3657,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
             sprintf (attrString [attrValue], "0");
           if (!attrIsGiven [attrTarget_value])
             sprintf (attrString [attrTarget_value], "0");
-          fprintf (partFileB, ", %s, %s, %d, %d, %d, %s, %s, %s, %s, %s, %s, %s", attrString [attrWidth], attrString [attrHeight], colortoi (attrString [attrColour]),
+          fprintf (partFile_attributes, ", %s, %s, %d, %d, %d, %s, %s, %s, %s, %s, %s, %s", attrString [attrWidth], attrString [attrHeight], colortoi (attrString [attrColour]),
                    colortoi (attrString [attrTarget_line_colour]), linearbargraphoptionstoi (attrString [attrOptions]), attrString [attrNumber_of_ticks],
                    attrString [attrMin_value], attrString [attrMax_value], attrString [attrVariable_reference], attrString [attrValue],
                    attrString [attrTarget_value_variable_reference], attrString [attrTarget_value]);
@@ -3673,18 +3673,18 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
             sprintf (attrString [attrTarget_value], "0");
           if (!attrIsGiven [attrOptions])
             sprintf (attrString [attrOptions], "0");
-          fprintf (partFileB, ", %s, %s, %d, %d, %d, %s, %s, %s, %s, %s, %s, %s, %s, %s", attrString [attrWidth], attrString [attrHeight], colortoi (attrString [attrColour]), colortoi (attrString [attrTarget_line_colour]), archedbargraphoptionstoi (attrString [attrOptions]), attrString[attrStart_angle], attrString[attrEnd_angle], attrString[attrBar_graph_width], attrString [attrMin_value], attrString [attrMax_value], attrString [attrVariable_reference], attrString [attrValue], attrString [attrTarget_value_variable_reference], attrString [attrTarget_value]);
+          fprintf (partFile_attributes, ", %s, %s, %d, %d, %d, %s, %s, %s, %s, %s, %s, %s, %s, %s", attrString [attrWidth], attrString [attrHeight], colortoi (attrString [attrColour]), colortoi (attrString [attrTarget_line_colour]), archedbargraphoptionstoi (attrString [attrOptions]), attrString[attrStart_angle], attrString[attrEnd_angle], attrString[attrBar_graph_width], attrString [attrMin_value], attrString [attrMax_value], attrString [attrVariable_reference], attrString [attrValue], attrString [attrTarget_value_variable_reference], attrString [attrTarget_value]);
           break;
 
         case otPicturegraphic:
           // check moved above!
-          fprintf (partFileB, ", %d, %d,%d, %d, %d, %d", deXwidth, deXactualWidth, deXactualHeight, deXcolorDepth, objBitmapOptions, deXtransCol);
+          fprintf (partFile_attributes, ", %d, %d,%d, %d, %d, %d", deXwidth, deXactualWidth, deXactualHeight, deXcolorDepth, objBitmapOptions, deXtransCol);
           break;
 
         case otNumbervariable:
           if (!attrIsGiven [attrValue])
             sprintf (attrString [attrValue], "0");
-          fprintf (partFileB, ", %sUL", attrString [attrValue]);
+          fprintf (partFile_attributes, ", %sUL", attrString [attrValue]);
           break;
 
         case otStringvariable:
@@ -3699,7 +3699,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
         //     sprintf (tempString, "\"%s\"", attrString [attrValue]);
             sprintf (attrString [attrValue], "%s", tempString);
           }
-          fprintf (partFileB, ", %s, %s", attrString [attrLength], attrString [attrValue]);
+          fprintf (partFile_attributes, ", %s, %s", attrString [attrLength], attrString [attrValue]);
           break;
 
         case otFontattributes:
@@ -3713,7 +3713,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
           {
             clean_exit (-1, "YOU NEED TO SPECIFY THE font_colour= AND font_size= AND font_type= ATTRIBUTE FOR THE <fontattributes> OBJECT! STOPPING PARSER! bye.\n\n");
           }
-          fprintf (partFileB, ", %d, %d, %d, %d", colortoi (attrString [attrFont_colour]), fontsizetoi (attrString [attrFont_size]), fonttypetoi (attrString [attrFont_type]), fontstyletoi (attrString [attrFont_style]));
+          fprintf (partFile_attributes, ", %d, %d, %d, %d", colortoi (attrString [attrFont_colour]), fontsizetoi (attrString [attrFont_size]), fonttypetoi (attrString [attrFont_type]), fontstyletoi (attrString [attrFont_style]));
           break;
 
         case otLineattributes:
@@ -3721,7 +3721,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
           {
             clean_exit (-1, "YOU NEED TO SPECIFY THE line_colour= AND line_width= AND line_art= ATTRIBUTE FOR THE <lineattributes> OBJECT! STOPPING PARSER! bye.\n\n");
           }
-          fprintf (partFileB, ", %d, %s, 0x%x", colortoi (attrString [attrLine_colour]), attrString [attrLine_width], linearttoi (attrString [attrLine_art]));
+          fprintf (partFile_attributes, ", %d, %s, 0x%x", colortoi (attrString [attrLine_colour]), attrString [attrLine_width], linearttoi (attrString [attrLine_art]));
           break;
 
         case otFillattributes:
@@ -3732,11 +3732,11 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
           if(!attrIsGiven [attrFill_pattern])
           {
             sprintf (attrString [attrFill_pattern], "NULL");
-            fprintf (partFileB, ",%d, %d, %s", filltypetoi (attrString[attrFill_type]), colortoi (attrString [attrFill_colour]), attrString [attrFill_pattern]);
+            fprintf (partFile_attributes, ",%d, %d, %s", filltypetoi (attrString[attrFill_type]), colortoi (attrString [attrFill_colour]), attrString [attrFill_pattern]);
           }
           else
           {
-            fprintf (partFileB, ",%d, %d, &iVtObject%s", filltypetoi (attrString[attrFill_type]), colortoi (attrString [attrFill_colour]), attrString [attrFill_pattern]);
+            fprintf (partFile_attributes, ",%d, %d, &iVtObject%s", filltypetoi (attrString[attrFill_type]), colortoi (attrString [attrFill_colour]), attrString [attrFill_pattern]);
           }
           break;
 
@@ -3753,7 +3753,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
             sprintf (tempString, "\"%s\"", attrString [attrValidation_string]);
             sprintf (attrString [attrValidation_string], "%s", tempString);
           }
-          fprintf (partFileB, ", %d, %s, %s", validationtypetoi (attrString [attrValidation_type]), attrString [attrLength], attrString [attrValidation_string]);
+          fprintf (partFile_attributes, ", %d, %s, %s", validationtypetoi (attrString [attrValidation_type]), attrString [attrLength], attrString [attrValidation_string]);
           break;
 
         case otObjectpointer:
@@ -3767,11 +3767,11 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
             sprintf (tempString, "&iVtObject%s", attrString [attrValue]);
             sprintf (attrString [attrValue], "%s", tempString);
           }
-          fprintf (partFileB, ", %s", attrString [attrValue]);
+          fprintf (partFile_attributes, ", %s", attrString [attrValue]);
           break;
 
         case otMacro:
-          fprintf (partFileB, ", %s", attrString [attrNumber_of_bytes]);
+          fprintf (partFile_attributes, ", %s", attrString [attrNumber_of_bytes]);
           break;
 
         case otAuxiliaryfunction:
@@ -3779,7 +3779,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
           {
             clean_exit (-1, "YOU NEED TO SPECIFY THE background_colour= and function_type= ATTRIBUTE FOR THE <auxiliaryfunction> OBJECT! STOPPING PARSER! bye.\n\n");
           }
-          fprintf (partFileB, ", %d, %d", colortoi (attrString [attrBackground_colour]), auxfunctiontyptetoi(attrString [attrFunction_type]));
+          fprintf (partFile_attributes, ", %d, %d", colortoi (attrString [attrBackground_colour]), auxfunctiontyptetoi(attrString [attrFunction_type]));
           break;
 
         case otAuxiliaryinput:
@@ -3787,7 +3787,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
           {
             clean_exit (-1, "YOU NEED TO SPECIFY THE background_colour= and function_type= and input_id= ATTRIBUTE FOR THE <auxiliaryinput> OBJECT! STOPPING PARSER! bye.\n\n");
           }
-          fprintf (partFileB, ", %d, %d, %s", colortoi (attrString [attrBackground_colour]), auxfunctiontyptetoi(attrString [attrFunction_type]), attrString[attrInput_id]);
+          fprintf (partFile_attributes, ", %d, %d, %s", colortoi (attrString [attrBackground_colour]), auxfunctiontyptetoi(attrString [attrFunction_type]), attrString[attrInput_id]);
           break;
 
         case otGraphicsContext:
@@ -3804,7 +3804,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
           if (!attrIsGiven [attrFormat] || !attrIsGiven [attrOptions])
             clean_exit (-1, "YOU NEED TO SPECIFY THE format= and options= ATTRIBUTE FOR THE <graphicscontext> OBJECT! STOPPING PARSER! bye.\n\n");
 
-          fprintf (partFileB, ", %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d",
+          fprintf (partFile_attributes, ", %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d",
                    atoi (attrString [attrViewportWidth]), atoi (attrString [attrViewportHeight]),
                    atoi (attrString [attrViewportX]),     atoi (attrString [attrViewportY]),
                    atoi (attrString [attrCanvasWidth]),   atoi (attrString [attrCanvasHeight]),
@@ -3814,26 +3814,26 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                    colortoi (attrString [attrBackground_colour]));
 
           if (!attrIsGiven [attrFont_attributes])
-            fprintf (partFileB, ", NULL");
+            fprintf (partFile_attributes, ", NULL");
           else
-            fprintf (partFileB, ", &iVtObject%s", attrString [attrFont_attributes]);
+            fprintf (partFile_attributes, ", &iVtObject%s", attrString [attrFont_attributes]);
 
           if (!attrIsGiven [attrLine_attributes])
-            fprintf (partFileB, ", NULL");
+            fprintf (partFile_attributes, ", NULL");
           else
-            fprintf (partFileB, ", &iVtObject%s", attrString [attrLine_attributes]);
+            fprintf (partFile_attributes, ", &iVtObject%s", attrString [attrLine_attributes]);
 
           if (!attrIsGiven [attrFill_attributes])
-            fprintf (partFileB, ", NULL");
+            fprintf (partFile_attributes, ", NULL");
           else
-            fprintf (partFileB, ", &iVtObject%s", attrString [attrFill_attributes]);
+            fprintf (partFile_attributes, ", &iVtObject%s", attrString [attrFill_attributes]);
 
-          fprintf (partFileB, ", %d, %d", colordepthtoi (attrString [attrFormat]), gcoptionstoi (attrString [attrOptions]));
+          fprintf (partFile_attributes, ", %d, %d", colordepthtoi (attrString [attrFormat]), gcoptionstoi (attrString [attrOptions]));
 
           if (!attrIsGiven [attrTransparency_colour])
-            fprintf (partFileB, ", 0");
+            fprintf (partFile_attributes, ", 0");
           else
-            fprintf (partFileB, ", %d", colortoi (attrString [attrTransparency_colour]));
+            fprintf (partFile_attributes, ", %d", colortoi (attrString [attrTransparency_colour]));
 
           break;
       }
@@ -3843,70 +3843,70 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
       // #########################################
       if (objHasArrayObject) {
         if (objChildObjects == 0) {
-          fprintf (partFileB, ", 0,NULL");
+          fprintf (partFile_attributes, ", 0,NULL");
         } else {
-          fprintf (partFileB, ", %d,iVtObject%s_aObject", objChildObjects, objName);
+          fprintf (partFile_attributes, ", %d,iVtObject%s_aObject", objChildObjects, objName);
         }
       }
 
       if (objHasArrayObjectXY) {
         if (objChildObjects == 0) {
-          fprintf (partFileB, ", 0,NULL");
+          fprintf (partFile_attributes, ", 0,NULL");
         } else {
-          fprintf (partFileB, ", %d,iVtObject%s_aObject_x_y_font_row_col", objChildObjects, objName);
+          fprintf (partFile_attributes, ", %d,iVtObject%s_aObject_x_y_font_row_col", objChildObjects, objName);
         }
       }
 
       if (objType == otPicturegraphic) {
         for (unsigned int actDepth=0; actDepth <= 2; actDepth++) {
           if ( (actDepth > deXcolorDepth) || (stdRawBitmapBytes [actDepth] == 0)) {
-            fprintf (partFileB, ", 0,NULL");
+            fprintf (partFile_attributes, ", 0,NULL");
           } else {
-            fprintf (partFileB, ", %d,iVtObject%s_aRawBitmap%d", stdRawBitmapBytes [actDepth], objName, actDepth);
+            fprintf (partFile_attributes, ", %d,iVtObject%s_aRawBitmap%d", stdRawBitmapBytes [actDepth], objName, actDepth);
           }
         }
         if (fixNr == 0) {
-          fprintf (partFileB, ", 0,NULL");
+          fprintf (partFile_attributes, ", 0,NULL");
         } else {
-          fprintf (partFileB, ", %d,iVtObject%s_aFixedBitmaps", fixNr, objName);
+          fprintf (partFile_attributes, ", %d,iVtObject%s_aFixedBitmaps", fixNr, objName);
         }
       }
 
       if (objHasArrayPoints) {
         if(objChildPoints == 0) {
-          fprintf (partFileB, ", 0,NULL");
+          fprintf (partFile_attributes, ", 0,NULL");
         } else {
-          fprintf (partFileB, ", %d,iVtObject%s_aPoints", objChildPoints, objName);
+          fprintf (partFile_attributes, ", %d,iVtObject%s_aPoints", objChildPoints, objName);
         }
       }
 
       if (objHasArrayEventMacro) {
         if (objChildMacros == 0) {
-          fprintf (partFileB, ", 0,NULL");
+          fprintf (partFile_attributes, ", 0,NULL");
         } else {
           // Changed this line to give the correct name to the Macro object to match the naming conventions of IsoAgLib V 1.1.0.
           // This coincides with a change made above to the name of the Macro struct. -bac 06-Jan-2005
-          //fprintf (partFileB, ", %d,iVtObject%s_aEvent_Macro", objChildMacros, objName);
-          fprintf (partFileB, ", %d,iVtObject%s_aMacro_Object", objChildMacros, objName);
+          //fprintf (partFile_attributes, ", %d,iVtObject%s_aEvent_Macro", objChildMacros, objName);
+          fprintf (partFile_attributes, ", %d,iVtObject%s_aMacro_Object", objChildMacros, objName);
         }
       }
 
       if (objHasArrayLanguagecode) {
         if (objChildLanguages == 0) {
-          fprintf (partFileB, ", 0,NULL");
+          fprintf (partFile_attributes, ", 0,NULL");
         } else {
-          fprintf (partFileB, ", %d,ivtObject%s_aLanguage", objChildLanguages, objName);
+          fprintf (partFile_attributes, ", %d,ivtObject%s_aLanguage", objChildLanguages, objName);
         }
       }
 
       if (objHasArrayMacroCommand) { /** @todo I think the "else" is not correct, the length has to be put out also!? -mjw */
         if (objChildCommands == 0) {
-          fprintf (partFileB, ", 0,NULL");
+          fprintf (partFile_attributes, ", 0,NULL");
         } else {
-          fprintf (partFileB, ", iVtObject%s_aMacro_Commands", objName);
+          fprintf (partFile_attributes, ", iVtObject%s_aMacro_Commands", objName);
         }
       }
-      fprintf (partFileB, "};\n"); //s_ROM bla blub terminator...
+      fprintf (partFile_attributes, "};\n"); //s_ROM bla blub terminator...
     } while (b_dupMode && (*dupLangNext != 0x00));
   } // end of "normal" element processing
 
@@ -4159,7 +4159,7 @@ int main(int argC, char* argV[])
     closedir(dp);
   } else
   {
-    std::cerr <<  "Couldn't open the directory '" << c_directory.c_str() << "'.";
+    std::cerr <<  "Couldn't open the directory '" << c_directory.c_str() << "'." << std::endl;
     return 0;
   }
 #endif
@@ -4320,9 +4320,9 @@ int main(int argC, char* argV[])
     std::cout << "\n\nWARNING: You have NOT specified a SoftKey-Width/Height, so vt2iso assumes your softkeys are designed on a 60x32 pixel basis.\n"
         << "ATTENTION: SoftKeys are scaled and centered to fit the SK-Dimensions of the VT it is displayed on, so take care that you know what you're doing!\n\n";
   }
-  fprintf (partFileD, "#define vtObjectPoolDimension %d\n", opDimension);
-  fprintf (partFileD, "#define vtObjectPoolSoftKeyWidth %d\n", skWidth);
-  fprintf (partFileD, "#define vtObjectPoolSoftKeyHeight %d\n", skHeight);
+  fprintf (partFile_defines, "#define vtObjectPoolDimension %d\n", opDimension);
+  fprintf (partFile_defines, "#define vtObjectPoolSoftKeyWidth %d\n", skWidth);
+  fprintf (partFile_defines, "#define vtObjectPoolSoftKeyHeight %d\n", skHeight);
 
   if (errorOccurred) clean_exit (4, "XML-Parsing error occured. Terminating.\n", pc_specialParsing);
   else clean_exit (0, "All conversion done successfully.\n", pc_specialParsing);
