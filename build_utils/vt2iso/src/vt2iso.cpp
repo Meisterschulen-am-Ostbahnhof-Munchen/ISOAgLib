@@ -803,6 +803,17 @@ unsigned int getID (char* objName, bool b_isMacro, bool b_wishingID, unsigned in
   if (!isThere) {
     // check what's the new ID to be
     if (b_wishingID) {
+      // first check if ID is there already
+      for (unsigned int i=0; i<objCount; i++)
+      {
+        // std::cout << "comparing " << wishID << " with " << objIDTable [i] << "\n";
+        if (objIDTable [i] == wishID)
+        {
+          std::cout << "DOUBLE USE OF ID '" << wishID << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
+          clean_exit (-1);
+        }
+      }
+      // if we reach here that wishID is not assigned yet, so we can use it!
       foundID = wishID;
     } else {
       if (b_isMacro) {
@@ -816,7 +827,7 @@ unsigned int getID (char* objName, bool b_isMacro, bool b_wishingID, unsigned in
     // insert new name-id pair now!
     objIDTable [objCount] = foundID;
     strncpy (&objNameTable [objCount*(stringLength+1)], objName, stringLength); // so we have 0-termination in every case, as our strings are 128+1 bytes!
-//     printf("objName: %s, objCount: %i\n", objName, objCount);
+//     printf("newly added: objName: %s, objCount: %i\n", objName, objCount);
     objCount++;
   }
   // else { take ID found }
@@ -1859,6 +1870,13 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
     */
     if (pc_specialParsing)
     {
+      /// first check if the wished id (attribute id="" is given) is a valid resource id
+      if (is_objID && !pc_specialParsing->checkUseOfResourceID (objID))
+      {
+        std::cout << "\n\nMISUSE OF RESOURCE ID '" << objID << "' AS WISH OBJECT ID IN OBJECT <" << node_name << "> STOPPING PARSER! bye.\n\n ";
+        clean_exit (-1);
+      }
+
       if (objType >= maxObjectTypes) /// that tag is unknown for basic vt2iso
       {
         if (!pc_specialParsing->parseUnknownTag(n, objType, &is_objID))

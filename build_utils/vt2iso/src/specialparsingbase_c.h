@@ -99,19 +99,22 @@ public:
   virtual bool parseUnknownTag (DOMNode* pNode, unsigned int objectType, bool* pb_isObjID) = 0;
 
   /// returns the object type from a given DOMNode if type is known and sets it
-  virtual uint16_t getObjType (const char* node_name) = 0;
+  virtual uint16_t getObjType (const char* node_name) { return 0xFFFF; }
 
   /// returns the total sum of basic and special object types
-  virtual uint8_t getMaxOfObjTypes() = 0;
+  virtual uint8_t getMaxOfObjTypes() { return 0xFF; }
 
   /// if a tag has unknown attributes, set that flag
-  virtual void setUnknownAttributes (bool b_hasUnknownAttr) = 0;
+  virtual void setUnknownAttributes (bool b_hasUnknownAttr) {}
 
   /** that functions creates all necessary files and prints out all collected data */
-  virtual void outputData2Files() = 0;
+  virtual void outputData2Files() {}
 
   /** that functions writes all necessary file includes into a given file */
-  virtual void addFileIncludes(FILE* p_includeFile, const char* fileName) = 0;
+  virtual void addFileIncludes(FILE* p_includeFile, const char* fileName) {}
+
+  /** check if the found wish ID is already used as resource_id */
+  virtual bool checkUseOfResourceID (unsigned int objID) { return true; }
 
   virtual ~SpecialParsingBase_c() {}
 };
