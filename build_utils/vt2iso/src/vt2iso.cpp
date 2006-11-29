@@ -364,13 +364,14 @@ BGR_s vtColorTable[256]=
 // ### GLOBALS ###
 char iso639table [DEF_iso639entries][2+1] = {{"aa"},{"ab"},{"af"},{"am"},{"ar"},{"as"},{"ay"},{"az"},{"ba"},{"be"},{"bg"},{"bh"},{"bi"},{"bn"},{"bo"},{"br"},{"ca"},{"co"},{"cs"},{"cy"},{"da"},{"de"},{"dz"},{"el"},{"en"},{"eo"},{"es"},{"et"},{"eu"},{"fa"},{"fi"},{"fj"},{"fo"},{"fr"},{"fy"},{"ga"},{"gd"},{"gl"},{"gn"},{"gu"},{"ha"},{"hi"},{"hr"},{"hu"},{"hy"},{"ia"},{"ie"},{"ik"},{"in"},{"is"},{"it"},{"iw"},{"ja"},{"ji"},{"jw"},{"ka"},{"kk"},{"kl"},{"km"},{"kn"},{"ko"},{"ks"},{"ku"},{"ky"},{"la"},{"ln"},{"lo"},{"lt"},{"lv"},{"mg"},{"mi"},{"mk"},{"ml"},{"mn"},{"mo"},{"mr"},{"ms"},{"mt"},{"my"},{"na"},{"ne"},{"nl"},{"no"},{"oc"},{"om"},{"or"},{"pa"},{"pl"},{"ps"},{"pt"},{"qu"},{"rm"},{"rn"},{"ro"},{"ru"},{"rw"},{"sa"},{"sd"},{"sg"},{"sh"},{"si"},{"sk"},{"sl"},{"sm"},{"sn"},{"so"},{"sq"},{"sr"},{"ss"},{"st"},{"su"},{"sv"},{"sw"},{"ta"},{"te"},{"tg"},{"th"},{"ti"},{"tk"},{"tl"},{"tn"},{"to"},{"tr"},{"ts"},{"tt"},{"tw"},{"uk"},{"ur"},{"uz"},{"vi"},{"vo"},{"wo"},{"xh"},{"yo"},{"zh"},{"zu"}};
 
-FILE *partFile_direct;
+bool firstLineFileE = true;
+FILE *partFile_variables;
 FILE *partFile_variables_extern;
 FILE *partFile_attributes;
 FILE *partFile_functions;
 FILE *partFile_functions_origin;
 FILE *partFile_defines;
-FILE *partFile_list; bool firstLineFileE = true;
+FILE *partFile_list;
 FILE *partFile_handler_direct;
 FILE *partFile_handler_derived;
 
@@ -440,6 +441,7 @@ char proName[1024+1];
 
 void clean_exit (int return_value, char* error_message=NULL, SpecialParsingBase_c* pc_specialParsing = NULL)
 {
+  FILE* partFile_direct = NULL;
   char partFileName [1024+1]; partFileName [1024+1-1] = 0x00;
 
   if (error_message != NULL)
@@ -471,16 +473,13 @@ void clean_exit (int return_value, char* error_message=NULL, SpecialParsingBase_
     strncpy( xmlFileWithoutPath, (pc_lastDirectorySlash+1), 254 );
   }
 
-  if (partFile_direct) fclose (partFile_direct);
-  if (partFile_variables_extern) fclose (partFile_variables_extern);
-
-  if (partFile_attributes) fclose (partFile_attributes);
+  // close all streams to files at the end of this function because someone may want
+  // to write into these files in special parsing
 
   if (partFile_functions) {
     fprintf (partFile_functions, "\n  #include \"%s-functions-origin.inc\"\n", xmlFileWithoutPath);
     fprintf (partFile_functions, "\n  b_initAllObjects = true;");
     fprintf (partFile_functions, "\n}\n");
-    fclose (partFile_functions);
   }
 
   if (partFile_functions_origin) {
@@ -488,13 +487,11 @@ void clean_exit (int return_value, char* error_message=NULL, SpecialParsingBase_
     fprintf (partFile_functions_origin, "\n    iVtObjects [0][i]->setOriginSKM (false);");
     fprintf (partFile_functions_origin, "\n    iVtObjects [0][i]->setOriginBTN (NULL);");
     fprintf (partFile_functions_origin, "\n  }\n");
-    fclose (partFile_functions_origin);
   }
 
   if (partFile_defines) {
     fprintf (partFile_defines, "\n#define vtKeyCodeACK 0\n");
     // OLD:  fprintf (partFile_defines, "\n#define vtObjectCount %d\n", objCount);
-    fclose (partFile_defines);
   }
 
   std::map<int32_t, ObjListEntry>::iterator mit_lang;
@@ -643,9 +640,7 @@ void clean_exit (int return_value, char* error_message=NULL, SpecialParsingBase_
     pc_specialParsing->addFileIncludes(partFile_direct, xmlFileWithoutPath);
   }
 
-  fclose (partFile_direct);
-
-// Write Direct Includes
+  // Write Direct Includes
   strncpy (partFileName, xmlFileGlobal, 1024);
   strcat (partFileName, "_derived-cpp.h");
   partFile_direct = fopen (partFileName,"wt");
@@ -675,14 +670,19 @@ void clean_exit (int return_value, char* error_message=NULL, SpecialParsingBase_
   fprintf (partFile_direct, "#include <IsoAgLib/comm/ISO_Terminal/ivtincludes.h>\n");
   fprintf (partFile_direct, "#include \"%s-handler-derived.inc\"\n", xmlFileWithoutPath);
 
-  fclose (partFile_direct);
-
   /// if USE_SPECIAL_PARSING is defined additional output is done
   if (pc_specialParsing && (return_value == 0))
   {
-    pc_specialParsing->outputData2Files();
+    pc_specialParsing->outputCollectedData2Files();
     delete pc_specialParsing;
   }
+
+  if (partFile_direct)           fclose (partFile_direct);
+  if (partFile_variables_extern) fclose (partFile_variables_extern);
+  if (partFile_attributes)       fclose (partFile_attributes);
+  if (partFile_defines)          fclose (partFile_defines);
+  if (partFile_functions)        fclose (partFile_functions);
+  if (partFile_functions_origin) fclose (partFile_functions_origin);
 
   exit (return_value);
 }
@@ -866,13 +866,13 @@ void init (const char* xmlFile)
   kcNextAutoID = 254; // for safety, 255 should also be okay though...
   objNextUnnamedName = 1;
 
-// partFile_direct = fopen ("picture.raw", "wb");
-// fwrite (vtObjectdeXbitmap1_aRawBitmap, 16384, 1, partFile_direct);
-// fclose (partFile_direct);
+// partFile_variables = fopen ("picture.raw", "wb");
+// fwrite (vtObjectdeXbitmap1_aRawBitmap, 16384, 1, partFile_variables);
+// fclose (partFile_variables);
 
   strncpy (partFileName, xmlFile, 1024);
   strcat (partFileName, "-variables.inc");
-  partFile_direct = fopen (partFileName,"wt");
+  partFile_variables = fopen (partFileName,"wt");
 
   strncpy (partFileName, xmlFile, 1024);
   strcat (partFileName, "-variables-extern.inc");
@@ -1879,7 +1879,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
 
       if (objType >= maxObjectTypes) /// that tag is unknown for basic vt2iso
       {
-        if (!pc_specialParsing->parseUnknownTag(n, objType, &is_objID))
+        if (!pc_specialParsing->parseUnknownTag(n, objType, &is_objID, objName, objID))
           clean_exit (-1);
       }
       else
@@ -3363,9 +3363,18 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
         }
       }
 
-      fprintf (partFile_direct, "IsoAgLib::iVtObject%s_c iVtObject%s%s;\n", otClassnameTable [objType], objName, pc_postfix);
-      fprintf (partFile_variables_extern, "extern IsoAgLib::iVtObject%s_c iVtObject%s%s;\n", otClassnameTable [objType], objName, pc_postfix);
-      fprintf (partFile_attributes, "const IsoAgLib::iVtObject_c::iVtObject%s_s iVtObject%s%s_sROM = {%d", otClassnameTable [objType], objName, pc_postfix, objID);
+      // if special parsing is active and the object type is greater than maxObjectType
+      // the output to the files must be done separately
+      if ( pc_specialParsing && objType >= maxObjectTypes )
+      {
+        pc_specialParsing->outputData2FilesPiecewise();
+      }
+      else
+      {
+        fprintf (partFile_variables, "IsoAgLib::iVtObject%s_c iVtObject%s%s;\n", otClassnameTable [objType], objName, pc_postfix);
+        fprintf (partFile_variables_extern, "extern IsoAgLib::iVtObject%s_c iVtObject%s%s;\n", otClassnameTable [objType], objName, pc_postfix);
+        fprintf (partFile_attributes, "const IsoAgLib::iVtObject_c::iVtObject%s_s iVtObject%s%s_sROM = {%d", otClassnameTable [objType], objName, pc_postfix, objID);
+      }
       fprintf (partFile_functions, "  iVtObject%s%s.init (&iVtObject%s%s_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);\n", objName, pc_postfix, objName, pc_postfix);
       fprintf (partFile_defines, "#define iVtObjectID%s%s %d\n", objName, pc_postfix, objID);
 

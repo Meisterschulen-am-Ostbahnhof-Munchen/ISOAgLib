@@ -96,7 +96,7 @@ public:
     * @param objectType object type of pNode
     * @param pb_isObjID pointer to boolean
   */
-  virtual bool parseUnknownTag (DOMNode* pNode, unsigned int objectType, bool* pb_isObjID) = 0;
+  virtual bool parseUnknownTag (DOMNode* pNode, unsigned int objectType, bool* pb_isObjID, char* pc_objName, unsigned int rui_objID) = 0;
 
   /// returns the object type from a given DOMNode if type is known and sets it
   virtual uint16_t getObjType (const char* node_name) { return 0xFFFF; }
@@ -108,7 +108,10 @@ public:
   virtual void setUnknownAttributes (bool b_hasUnknownAttr) {}
 
   /** that functions creates all necessary files and prints out all collected data */
-  virtual void outputData2Files() {}
+  virtual void outputCollectedData2Files() {}
+
+  /** that functions writes to already existing files and prints out a record during runtime of vt2iso */
+  virtual void outputData2FilesPiecewise() {}
 
   /** that functions writes all necessary file includes into a given file */
   virtual void addFileIncludes(FILE* p_includeFile, const char* fileName) {}
