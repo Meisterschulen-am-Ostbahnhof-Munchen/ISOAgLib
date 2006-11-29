@@ -3374,9 +3374,9 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
         fprintf (partFile_variables, "IsoAgLib::iVtObject%s_c iVtObject%s%s;\n", otClassnameTable [objType], objName, pc_postfix);
         fprintf (partFile_variables_extern, "extern IsoAgLib::iVtObject%s_c iVtObject%s%s;\n", otClassnameTable [objType], objName, pc_postfix);
         fprintf (partFile_attributes, "const IsoAgLib::iVtObject_c::iVtObject%s_s iVtObject%s%s_sROM = {%d", otClassnameTable [objType], objName, pc_postfix, objID);
+        fprintf (partFile_functions, "  iVtObject%s%s.init (&iVtObject%s%s_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);\n", objName, pc_postfix, objName, pc_postfix);
+        fprintf (partFile_defines, "#define iVtObjectID%s%s %d\n", objName, pc_postfix, objID);
       }
-      fprintf (partFile_functions, "  iVtObject%s%s.init (&iVtObject%s%s_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);\n", objName, pc_postfix, objName, pc_postfix);
-      fprintf (partFile_defines, "#define iVtObjectID%s%s %d\n", objName, pc_postfix, objID);
 
       /// Add explicit Button/Key includement
       if (attrIsGiven [attrInButton])
@@ -3915,7 +3915,10 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
           fprintf (partFile_attributes, ", iVtObject%s_aMacro_Commands", objName);
         }
       }
-      fprintf (partFile_attributes, "};\n"); //s_ROM bla blub terminator...
+
+      if (!pc_specialParsing || (pc_specialParsing && pc_specialParsing->checkForProprietaryOrBasicObjTypes()))
+        fprintf (partFile_attributes, "};\n"); //s_ROM bla blub terminator...
+
     } while (b_dupMode && (*dupLangNext != 0x00));
   } // end of "normal" element processing
 

@@ -121,6 +121,9 @@ public:
   */
   virtual bool checkUseOfResourceID (unsigned int objID) { return true; }
 
+  /// returns if the current parsing module contains proprietary object types which can be handled like basic object types
+  virtual bool checkForProprietaryOrBasicObjTypes() = 0;
+
   virtual ~SpecialParsingBase_c() {}
 };
 
