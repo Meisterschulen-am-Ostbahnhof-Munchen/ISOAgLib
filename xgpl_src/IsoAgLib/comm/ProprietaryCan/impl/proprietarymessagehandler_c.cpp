@@ -1,0 +1,390 @@
+/***************************************************************************
+                          ProprietaryMessageHandler_c.cpp -
+                             -------------------
+    begin                : Tue Oct 31 2006
+    copyright            : (C) 1999 - 2006 by Dipl.-Inform. Achim Spangler
+    email                : a.spangler@osb-ag:de
+ ***************************************************************************/
+
+/***************************************************************************
+ *                                                                         *
+ * This file is part of the "IsoAgLib", an object oriented program library *
+ * to serve as a software layer between application specific program and   *
+ * communication protocol details. By providing simple function calls for  *
+ * jobs like starting a measuring program for a process data value on a    *
+ * remote ECU, the main program has not to deal with single CAN telegram   *
+ * formatting. This way communication problems between ECU's which use     *
+ * this library should be prevented.                                       *
+ * Everybody and every company is invited to use this library to make a    *
+ * working plug and play standard out of the printed protocol standard.    *
+ *                                                                         *
+ * Copyright (C) 1999 - 2004 Dipl.-Inform. Achim Spangler                  *
+ *                                                                         *
+ * The IsoAgLib is free software; you can redistribute it and/or modify it *
+ * under the terms of the GNU General Public License as published          *
+ * by the Free Software Foundation; either version 2 of the License, or    *
+ * (at your option) any later version.                                     *
+ *                                                                         *
+ * This library is distributed in the hope that it will be useful, but     *
+ * WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU       *
+ * General Public License for more details.                                *
+ *                                                                         *
+ * You should have received a copy of the GNU General Public License       *
+ * along with IsoAgLib; if not, write to the Free Software Foundation,     *
+ * Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA           *
+ *                                                                         *
+ * As a special exception, if other files instantiate templates or use     *
+ * macros or inline functions from this file, or you compile this file and *
+ * link it with other works to produce a work based on this file, this file*
+ * does not by itself cause the resulting work to be covered by the GNU    *
+ * General Public License. However the source code for this file must still*
+ * be made available in accordance with section (3) of the                 *
+ * GNU General Public License.                                             *
+ *                                                                         *
+ * This exception does not invalidate any other reasons why a work based on*
+ * this file might be covered by the GNU General Public License.           *
+ *                                                                         *
+ * Alternative licenses for IsoAgLib may be arranged by contacting         *
+ * the main author Achim Spangler by a.spangler@osb-ag:de                  *
+ ***************************************************************************/
+
+ /**************************************************************************
+ *                                                                         *
+ *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   *
+ * Each software module, which accesses directly elements of this file,    *
+ * is considered to be an extension of IsoAgLib and is thus covered by the *
+ * GPL license. Applications must use only the interface definition out-   *
+ * side :impl: subdirectories. Never access direct elements of __IsoAgLib  *
+ * and __HAL namespaces from applications which shouldnt be affected by    *
+ * the license. Only access their interface counterparts in the IsoAgLib   *
+ * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- *
+ * ion really needs access to a part of an internal namespace, so that the *
+ * interface might be extended if your request is accepted.                *
+ *                                                                         *
+ * Definition of direct access:                                            *
+ * - Instantiation of a variable with a datatype from internal namespace   *
+ * - Call of a (member-) function                                          *
+ * Allowed is:                                                             *
+ * - Instatiation of a variable with a datatype from interface namespace,  *
+ *   even if this is derived from a base class inside an internal namespace*
+ * - Call of member functions which are defined in the interface class     *
+ *   definition ( header )                                                 *
+ *                                                                         *
+ * Pairing of internal and interface classes:                              *
+ * - Internal implementation in an :impl: subdirectory                     *
+ * - Interface in the parent directory of the corresponding internal class *
+ * - Interface class name IsoAgLib::iFoo_c maps to the internal class      *
+ *   __IsoAgLib::Foo_c                                                     *
+ *                                                                         *
+ * AS A RULE: Use only classes with names beginning with small letter :i:  *
+ ***************************************************************************/
+
+
+
+/**     Liste der proprietaeren Nachrichten laut ISO Teil 1
+
+        J1939 proprietary message
+        45312 = B100 hex PCM1 proprietarily configurable message
+        45568 = B200 hex PCM2
+        45824 = B300 hex PCM3....
+        47360 = B900 hex PCM9....
+        49152 = C000 hex PCM16
+
+        ISO 11783 proprietary message
+        61184 = EF00 hex Prop A
+
+        65280 = FF00 hex Prop B_00
+
+        65535 = FFFF hex Prop B_255
+
+        126720 = 1EF00 hex Prop A2
+*/
+
+#include <list>
+
+namespace __IsoAgLib
+{
+    ProprietaryMessageHandler_c::ProprietaryMessageHandler_c() : SingletonProprietaryMessageHandler_c(), vec_isoMember()
+    {
+    }
+
+    /** initialize directly after the singleton instance is created.
+    */
+    void ProprietaryMessageHandler_c::singletonInit()
+    {
+      setAlreadyClosed();
+      init( NULL );
+    }
+
+    /** delivers an instance of proprietaryMessageHandler
+     */
+    ProprietaryMessageHandler_c& getProprietaryMessageHandlerInstance(uint8_t rui8_instance)
+    {
+      return ProprietaryMessageHandler_c::instance( rui8_instance );
+    }
+
+    /** deliver reference to data pkg as reference to CANPkgExt_c
+      to implement the base virtual function correct
+    */
+    CANPkgExt_c& ProprietaryMessageHandler_c::dataBase()
+    {
+      return c_data;
+    }
+
+    /**
+     */
+    void ProprietaryMessageHandler_c::init(const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode)
+    {
+      getSchedulerInstance4Comm().registerClient( this );
+      c_data.setSingletonKey( c_data.getSingletonVecKey() );
+
+      if (checkAlreadyClosed())
+      {
+        b_filterCreated = false;
+      }
+    }
+
+    /** every subsystem of IsoAgLib has explicit function for controlled shutdown
+     */
+    void ProprietaryMessageHandler_c::close( )
+    {
+      if ( ! checkAlreadyClosed() )
+      {
+        // avoid another call
+        setAlreadyClosed();
+        // unregister from timeEvent() call by Scheduler_c
+        getSchedulerInstance4Comm().unregisterClient( this );
+      }
+    }
+
+    /** DESTRUCTOR
+     */
+    ProprietaryMessageHandler_c::~ProprietaryMessageHandler_c()
+    {
+      close();
+    }
+
+    /** register the proprietary message client pointer in an internal list of all clients.
+        Derive and register from the member attributes:
+            ui32_can, ui32_canFilter, c_isonameRemoteECU, pc_localIdent
+        the suitable CAN message receive filters.
+        The internal implementation will take care to adapt the receive filter as soon as
+        the SA of the remote or local is changed.
+        @return true if client is registered otherwise false
+     */
+    bool ProprietaryMessageHandler_c::registerProprietaryMessageClient (ProprietaryMessageClient_c* rpc_proprietaryclient)
+    {
+      // look in the whole list
+      for ( ProprietaryMessageClientVectorConstIterator_t client_iterator = vec_proprietaryclient.begin(); client_iterator != vec_proprietaryclient.end(); client_iterator++ )
+      { // client is registered
+        if ( (*client_iterator).pc_client ==  rpc_proprietaryclient ) return true;
+      }
+      // store old list size
+      const unsigned int oldClientSize = vec_proprietaryclient.size();
+      // push back new client
+      vec_proprietaryclient.push_back( rpc_proprietaryclient );
+      // return true if new client is registered
+      return ( vec_proprietaryclient.size() > oldClientSize ) ? true : false;
+    }
+
+    /** deregister a ProprietaryMessageClient */
+    bool ProprietaryMessageHandler_c::deregisterProprietaryMessageClient (ProprietaryMessageClient_c* rpc_proprietaryclient)
+    {
+    //define receive filter...............
+      const unsigned int oldClientSize = vec_proprietaryclient.size();
+      // look in the whole list
+      for ( ProprietaryMessageClientVectorIterator_t client_iterator = vec_proprietaryclient.begin(); client_iterator != vec_proprietaryclient.end(); client_iterator++ )
+      {
+        // same Client -> erase client from list
+        if ( (*client_iterator).pc_client == rpc_proprietaryclient )
+        {
+          vec_proprietaryclient.erase (client_iterator);
+          break;
+        }
+      }
+      // true if client ist deregistered
+      return (vec_proprietaryclient.size() < oldClientSize) ? true : false;
+    }
+
+    /** force an update of the CAN receive filter, as new data has been set in an already
+        registered client.
+        @return true, when the client has been found, so that an update has been performed
+     */
+    bool ProprietaryMessageHandler_c::triggerClientDataUpdate(ProprietaryMessageClient_c* rpc_proprietaryclient)
+    {
+      // look in the whole list
+      for ( ProprietaryMessageClientVectorConstIterator_t client_iterator = vec_proprietaryclient.begin(); client_iterator != vec_proprietaryclient.end(); client_iterator++ )
+      {
+        // if client is found in the list
+        if ( (*client_iterator).pc_client ==  rpc_proprietaryclient )
+        {
+          if ( (rpc_proprietaryclient->pc_localIdent == NULL ) || (!rpc_proprietaryclient->pc_localIdent->isClaimedAddress()) )
+          {// client not yet ready
+            return false;
+          }
+          // filter and mask are also the same
+          if ( ( (*client_iterator).ui32_filter != rpc_proprietaryclient->ui32_canFilter ) || ((*client_iterator).ui32_mask != rpc_proprietaryclient->ui32_canMask) )
+          {
+            // if old filter is not equal to "no filter"
+            if ((*client_iterator).ui32_filter != scui32_noFilter)
+            {
+              // delete filter
+              getIisoFilterManagerInstance().removeIsoFilter( iISOFilter_s (*this, (*client_iterator).ui32_mask, (*client_iterator).ui32_filter,
+              &(rpc_proprietaryclient->c_isonameRemoteECU), &(rpc_proprietaryclient->pc_localIdent ) );
+            }
+            // if new filter is not equal to "no filter"
+            if (rpc_proprietaryclient->ui32_canFilter != scui32_noFilter)
+            {
+              // insert new filter
+              getIisoFilterManagerInstance().insertIsoFilter( iISOFilter_s (*this, rpc_proprietaryclient->ui32_mask, rpc_proprietaryclient->ui32_canFilter,
+              &(rpc_proprietaryclient->c_isonameRemoteECU), &(rpc_proprietaryclient->pc_localIdent ) );
+            }
+            // update filter and mask
+            (*client_iterator).ui32_filter = rpc_proprietaryclient->ui32_canFilter;
+            (*client_iterator).ui32_mask = rpc_proprietaryclient->ui32_canMask;
+            // update has performed
+            return true;
+          }
+        }
+        return false;
+      }
+    }
+
+    /** this function is called by ISOMonitor_c when a new CLAIMED ISOItem_c is registered.
+      * @param refc_isoName const reference to the item which ISOItem_c state is changed
+      * @param rpc_newItem pointer to the currently corresponding ISOItem_c
+     */
+
+    void ProprietaryMessageHandler_c::reactOnMonitorListAdd( const __IsoAgLib::ISOName_c& refc_isoName, const __IsoAgLib::ISOItem_c* rpc_newItem )
+    {
+      // look in the whole list
+      for ( ProprietaryMessageClientVectorConstIterator_t client_iterator = vec_proprietaryclient.begin(); client_iterator != vec_proprietaryclient.end(); client_iterator++ )
+      {
+
+      }
+    }
+
+    /** this function is called by ISOMonitor_c when a device looses its ISOItem_c.
+      * @param refc_isoName const reference to the item which ISOItem_c state is changed
+      * @param rui8_oldSa previously used SA which is NOW LOST -> clients which were connected to this item can react explicitly
+      */
+    void ProprietaryMessageHandler_c::reactOnMonitorListRemove( const ISOName_c& refc_isoName, uint8_t rui8_oldSa )
+    {
+
+    }
+
+    /** send the data in
+            ProprietaryMessageClient_c::s_sendData
+        the data can be accessed directly by
+           iProprietaryMessageHandler_c as its a friend of ProprietaryMessageClient_c
+        the variable ui32_sendPeriodicMSec (in ProprietaryMessageClient_c) will be
+        used to control repeated sending
+     */
+    void ProprietaryMessageHandler_c::sendData(ProprietaryMessageClient_c* client)
+    {
+      CANIO_c& c_can = getCanInstance4Comm();
+      c_can << data();
+    }
+
+    /**  Operation:  Function for Debugging in Scheduler_c
+    */
+    const char* ProprietaryMessageHandler_c::getTaskName() const
+    {
+      return "ProprietaryMessageHandler_c()";
+    }
+
+    /** functions with actions, which must be performed periodically
+      -> called periodically by Scheduler_c
+      ==> sends base data msg if configured in the needed rates
+      possible errors:
+        * dependant error in CANIO_c on CAN send problems
+      @see CANPkg_c::getData
+      @see CANPkgExt_c::getData
+      @see CANIO_c::operator<<
+      @return true -> all planned activities performed in allowed time
+    */
+    bool ProprietaryMessageHandler_c::timeEvent()
+    {
+      if (Scheduler_c::getAvailableExecTime() == 0) return false;//ok
+
+      SystemMgmt_c& c_systemMgmt = getSystemMgmtInstance4Comm();
+      CANIO_c &c_can = getCanInstance4Comm();
+
+      if ( ( !checkIsoFilterCreated() ) && ( c_systemMgmt.existActiveLocalIsoMember() ) )
+      { // check if needed receive filters for ISO are active
+        setIsoFilterCreated();
+        // create FilterBox_c for PROPRIETARY_PGN's
+        // 0xFEA0 -> Proprietary A PGN
+        // 0x1EF00 -> Proprietary A2 PGN
+        // Bereich 0xFF00 bis 0xFFFF -> proprietary B PGN
+        c_can.insertFilter(*this, (static_cast<MASK_TYPE>(0x0FF00) << 8),
+                          (static_cast<MASK_TYPE>(PROPRIETARY_B_PGN) << 8), true, Ident_c::ExtendedIdent);
+      }
+
+      if ( ( getDevKey() != NULL ) && (!getSystemMgmtInstance4Comm().existLocalMemberDevKey(*getDevKey(), true)) )
+      { // local dev key for sending is registrated, but it is not yet fully claimed
+        // --> nothing to do
+        return true;
+      }
+      if ( !proprietaryTimeEvent()) return false;
+        return true;
+    }
+
+    /** time event steuert alle 100 ms
+     */
+    bool ProprietaryMessageHandler_c::proprietaryTimeEvent()
+    {
+      if (lastTimeSinceUpdate()  >= 100)
+      {
+        SendData();
+        setUpdateTime( Scheduler_c::getLastTimeEventTrigger() );
+      }
+      if ( Scheduler_c::getAvailableExecTime() == 0 )  return false;
+      return true;
+    }
+
+    /** process received moving msg and store updated value for later reading access;
+        called by FilterBox_c::processMsg after receiving a msg
+        possible errors:
+          * LibErr_c::LbsBaseSenderConflict moving msg recevied from different member than before
+        @see FilterBox_c::processMsg
+        @see CANIO_c::processMsg
+        @return true -> message was processed; else the received CAN message will be served to other matching CANCustomer_c
+      */
+    bool ProprietaryMessageHandler_c::processMsg()
+    {
+      if (c_data.identType() == Ident_c::ExtendedIdent)
+      { // an ISO11783 base information msg received
+        return proprietaryProcessMsg();
+      }
+      else
+        return false;
+    }
+
+    /** proprietaryMessageHandler entscheidet ob Maske und ident in Frage kommen oder nicht
+        die Maske muss gleich der erwarteten Maske sein
+        ident muss gleich erwrtetem ident sein
+     */
+    bool ProprietaryMessageHandler_c::proprietaryProcessMsg()
+    {
+      DevKey_c c_tempDevKey( DevKey_c::DevKeyUnspecified );
+      if (getIsoMonitorInstance4Comm().existIsoMemberNr(data().isoSa()))
+      {
+        // the corresponding sender entry exist in the monitor list
+        c_tempDevKey = getIsoMonitorInstance4Comm().isoMemberNr(data().isoSa()).devKey();
+      }
+      switch (data().isoPgn() & 0x1FF00)
+      {
+        case PROPRIETARY_A_PGN:
+        break;
+        case PROPRIETARY_B_PGN:
+        break;
+
+        default:
+        break
+      }
+      return true;
+    }
+
+};
