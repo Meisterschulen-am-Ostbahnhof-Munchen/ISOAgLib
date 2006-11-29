@@ -777,7 +777,7 @@ class XStr
 // ---------------------------------------------------------------------------
 //  unsigned int getID (char* objName, bool isMacro, bool widhingID, unsigned int wishID=0)
 // ---------------------------------------------------------------------------
-unsigned int getID (char* objName, bool b_isMacro, bool b_wishingID, unsigned int wishID)
+unsigned int getID (char* objName, bool b_isMacro, bool b_wishingID, unsigned int wishID, SpecialParsingBase_c* pc_specialParsing)
 {
   bool isThere = false;
   unsigned int foundID = 0;
@@ -815,7 +815,8 @@ unsigned int getID (char* objName, bool b_isMacro, bool b_wishingID, unsigned in
       }
       // if we reach here that wishID is not assigned yet, so we can use it!
       foundID = wishID;
-    } else {
+    } else if (!pc_specialParsing || (pc_specialParsing && pc_specialParsing->checkForProprietaryOrBasicObjTypes())) {
+      /// only auot-decrement if the current object has a basic or proprietary object type
       if (b_isMacro) {
         foundID = objNextMacroAutoID;
         objNextMacroAutoID--;
@@ -824,23 +825,28 @@ unsigned int getID (char* objName, bool b_isMacro, bool b_wishingID, unsigned in
         objNextAutoID--;
       }
     }
-    // insert new name-id pair now!
-    objIDTable [objCount] = foundID;
-    strncpy (&objNameTable [objCount*(stringLength+1)], objName, stringLength); // so we have 0-termination in every case, as our strings are 128+1 bytes!
-//     printf("newly added: objName: %s, objCount: %i\n", objName, objCount);
-    objCount++;
+
+    /// only insert object if it is basic or proprietary
+    if (!pc_specialParsing || (pc_specialParsing && pc_specialParsing->checkForProprietaryOrBasicObjTypes()))
+    {
+      // insert new name-id pair now!
+      objIDTable [objCount] = foundID;
+      strncpy (&objNameTable [objCount*(stringLength+1)], objName, stringLength); // so we have 0-termination in every case, as our strings are 128+1 bytes!
+  //     printf("newly added: objName: %s, objCount: %i\n", objName, objCount);
+      objCount++;
+    }
   }
   // else { take ID found }
   return (foundID);
 }
 
-unsigned int idOrName_toi(char* rpc_string, bool rb_isMacro)
+unsigned int idOrName_toi(char* rpc_string, bool rb_isMacro, SpecialParsingBase_c* pc_specialParsing)
 {
   if (rpc_string [0] == 0x00) clean_exit (-1, "*** ERROR *** idOrName_toi: Empty 'object_id' attribute!\n\n");
   /** @todo check if all chars in the string are numbers, not only the first! */
   if ((rpc_string [0] >= '0') && (rpc_string [0] <= '9')) return atoi (rpc_string);
   // Starting with a letter, so look up id!
-  return getID (rpc_string, rb_isMacro, false, 0);
+  return getID (rpc_string, rb_isMacro, false, 0, pc_specialParsing);
 }
 
 void getKeyCode()
@@ -1919,7 +1925,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
     }
 
     // get a new ID for this object is not yet done
-    objID = getID (objName, (objType == otMacro) ? true: false, is_objID, objID);
+    objID = getID (objName, (objType == otMacro) ? true: false, is_objID, objID, pc_specialParsing);
 
 
     // Completely parsed <tag ...> now, start writing out to the files!
@@ -2395,7 +2401,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                   is_objChildName = true;
                 }
                 // give him an ID, although not necessary now...
-                objChildID = getID (objChildName, false /* assumption: not a macro here */, is_objChildID, objChildID);
+                objChildID = getID (objChildName, false /* assumption: not a macro here */, is_objChildID, objChildID, pc_specialParsing);
                 if (firstElement) {
                   if (xyNeeded) fprintf (partFile_attributes, "const IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s iVtObject%s_aObject_x_y_font_row_col [] = {", objName);
                   else          fprintf (partFile_attributes, "const IsoAgLib::repeat_iVtObject_s iVtObject%s_aObject [] = {", objName);
@@ -2525,7 +2531,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
               is_objChildName = true;
             }
             // give him an ID, although not necessary now...
-            objChildID = getID (objChildName, true, is_objChildID, objChildID);
+            objChildID = getID (objChildName, true, is_objChildID, objChildID, pc_specialParsing);
             if (firstElement) {
               // Changed the macro struct name in the following line to match what is in version 1.1.0 of IsoAgLib -bac 06-Jan-2005
               // fprintf (partFile_attributes, "const IsoAgLib::repeat_Macro_iVtObject_s iVtObject%s_aMacro_Object [] = {", objName);
@@ -2586,7 +2592,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                     setAttributeValue(attrHideShow);
                   }
                   // Need check for all attributes being present for this command -bac
-                  sprintf(commandMessage, "0xA0, %d, %d, %d, 0xFF, 0xFF, 0xFF, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), booltoi(attrString[attrHideShow]));
+                  sprintf(commandMessage, "0xA0, %d, %d, %d, 0xFF, 0xFF, 0xFF, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false, pc_specialParsing)), booltoi(attrString[attrHideShow]));
                   objChildCommands++;
                 }
                 break;
@@ -2611,7 +2617,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                     setAttributeValue(attrDisable_enable);
                   }
                   // Need check for all attributes being present for this command -bac
-                  sprintf(commandMessage, "0xA1, %d, %d, %d, 0xFF, 0xFF, 0xFF, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), booltoi(attrString[attrDisable_enable]));
+                  sprintf(commandMessage, "0xA1, %d, %d, %d, 0xFF, 0xFF, 0xFF, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false, pc_specialParsing)), booltoi(attrString[attrDisable_enable]));
                   objChildCommands++;
                 }
                 break;
@@ -2634,7 +2640,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                     setAttributeValue(attrObjectID);
                   }
                   // Need check for all attributes being present for this command -bac
-                  sprintf(commandMessage, "0xA2, %d, %d, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)));
+                  sprintf(commandMessage, "0xA2, %d, %d, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false, pc_specialParsing)));
                   objChildCommands++;
                 }
                 break;
@@ -2717,7 +2723,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                   }
                   // Need check for all attributes being present for this command -bac
                   // add 127 to relative x,y
-                  sprintf(commandMessage, "0xA5, %d, %d, %d, %d, %d, %d, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrParent_objectID], /*macro?*/false)), MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), atoi(attrString [attrX_change]) + 127 ,atoi(attrString [attrY_change]) + 127 );
+                  sprintf(commandMessage, "0xA5, %d, %d, %d, %d, %d, %d, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrParent_objectID], /*macro?*/false, pc_specialParsing)), MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false, pc_specialParsing)), atoi(attrString [attrX_change]) + 127 ,atoi(attrString [attrY_change]) + 127 );
                   objChildCommands++;
                 }
                 break;
@@ -2746,7 +2752,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                     setAttributeValue(attrY_pos);
                   }
                   // Need check for all attributes being present for this command -bac
-                  sprintf(commandMessage, "0xB4, %d, %d, %d, %d, %d, %d, %d, %d", MACRO_16bitToLE(idOrName_toi(attrString [attrParent_objectID], /*macro?*/false)), MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), MACRO_16bitToLE(atoi(attrString [attrX_pos])), MACRO_16bitToLE(atoi(attrString [attrY_pos])));
+                  sprintf(commandMessage, "0xB4, %d, %d, %d, %d, %d, %d, %d, %d", MACRO_16bitToLE(idOrName_toi(attrString [attrParent_objectID], /*macro?*/false, pc_specialParsing)), MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false, pc_specialParsing)), MACRO_16bitToLE(atoi(attrString [attrX_pos])), MACRO_16bitToLE(atoi(attrString [attrY_pos])));
                   objChildCommands++;
                 }
                 break;
@@ -2773,7 +2779,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                     setAttributeValue(attrNew_height);
                   }
                   // Need check for all attributes being present for this command -bac
-                  sprintf(commandMessage, "0xA6, %d, %d, %d, %d, %d, %d, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), MACRO_16bitToLE(atoi(attrString [attrNew_width])), MACRO_16bitToLE(atoi(attrString [attrNew_height])));
+                  sprintf(commandMessage, "0xA6, %d, %d, %d, %d, %d, %d, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false, pc_specialParsing)), MACRO_16bitToLE(atoi(attrString [attrNew_width])), MACRO_16bitToLE(atoi(attrString [attrNew_height])));
                   objChildCommands++;
                 }
                 break;
@@ -2798,7 +2804,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                     setAttributeValue(attrNew_background_colour);
                   }
                   // Need check for all attributes being present for this command -bac
-                  sprintf(commandMessage, "0xA7, %d, %d, %d, 0xFF, 0xFF, 0xFF, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), colortoi(attrString [attrNew_background_colour]));
+                  sprintf(commandMessage, "0xA7, %d, %d, %d, 0xFF, 0xFF, 0xFF, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false, pc_specialParsing)), colortoi(attrString [attrNew_background_colour]));
                   objChildCommands++;
                 }
                 break;
@@ -2823,7 +2829,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                     setAttributeValue(attrNew_value);
                   }
                   // Need check for all attributes being present for this command -bac
-                  sprintf(commandMessage, "0xA8, %d, %d, 0x00, %d, %d, %d, %d", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), MACRO_32bitToLE(idOrName_toi(attrString [attrNew_value], /*macro?*/false)));
+                  sprintf(commandMessage, "0xA8, %d, %d, 0x00, %d, %d, %d, %d", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false, pc_specialParsing)), MACRO_32bitToLE(idOrName_toi(attrString [attrNew_value], /*macro?*/false, pc_specialParsing)));
                   objChildCommands++;
                 }
                 break;
@@ -2864,7 +2870,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                     strcat(tempString2, tempString);
                   }
                   //sprintf (attrString [attrValue], "%s", tempString2);
-                  sprintf(commandMessage, "0xB3, %d, %d, %d, %d%s", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), MACRO_16bitToLE(idOrName_toi(attrString [attrBytes_in_string], /*macro?*/false)), tempString2);
+                  sprintf(commandMessage, "0xB3, %d, %d, %d, %d%s", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false, pc_specialParsing)), MACRO_16bitToLE(idOrName_toi(attrString [attrBytes_in_string], /*macro?*/false, pc_specialParsing)), tempString2);
 
                   objChildCommands++;
                 }
@@ -2894,7 +2900,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                     setAttributeValue(attrLine_direction);
                   }
                   // Need check for all attributes being present for this command -bac
-                  sprintf(commandMessage, "0xA9, %d,%d, %d,%d, %d,%d, %d", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), MACRO_16bitToLE(atoi(attrString [attrNew_width])), MACRO_16bitToLE(atoi(attrString [attrNew_height])), atoi(attrString [attrLine_direction]));
+                  sprintf(commandMessage, "0xA9, %d,%d, %d,%d, %d,%d, %d", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false, pc_specialParsing)), MACRO_16bitToLE(atoi(attrString [attrNew_width])), MACRO_16bitToLE(atoi(attrString [attrNew_height])), atoi(attrString [attrLine_direction]));
 
                   objChildCommands++;
                 }
@@ -2926,7 +2932,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                     setAttributeValue(attrFont_style);
                   }
                   // Need check for all attributes being present for this command -bac
-                  sprintf(commandMessage, "0xAA, %d, %d, %d, %d, %d, %d, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), colortoi(attrString [attrFont_colour]), fontsizetoi(attrString [attrFont_size]), atoi(attrString [attrFont_type]), fontstyletoi(attrString [attrFont_style]));
+                  sprintf(commandMessage, "0xAA, %d, %d, %d, %d, %d, %d, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false, pc_specialParsing)), colortoi(attrString [attrFont_colour]), fontsizetoi(attrString [attrFont_size]), atoi(attrString [attrFont_type]), fontstyletoi(attrString [attrFont_style]));
 
                   objChildCommands++;
                 }
@@ -2956,7 +2962,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                     setAttributeValue(attrLine_art);
                   }
                   // Need check for all attributes being present for this command -bac
-                  sprintf(commandMessage, "0xAB, %d, %d, %d, %d, %d, %d, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), colortoi(attrString [attrLine_colour]), atoi(attrString [attrLine_width]), MACRO_16bitToLE(linearttoi(attrString [attrLine_art])));
+                  sprintf(commandMessage, "0xAB, %d, %d, %d, %d, %d, %d, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false, pc_specialParsing)), colortoi(attrString [attrLine_colour]), atoi(attrString [attrLine_width]), MACRO_16bitToLE(linearttoi(attrString [attrLine_art])));
 
                   objChildCommands++;
                 }
@@ -2987,7 +2993,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                     setAttributeValue(attrFill_pattern);
                   }
                   // Need check for all attributes being present for this command -bac
-                  sprintf(commandMessage, "0xAC, %d, %d, %d, %d, %d, %d, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), filltypetoi(attrString [attrFill_type]), colortoi(attrString [attrFill_colour]), MACRO_16bitToLE(atoi(attrString [attrFill_pattern])));
+                  sprintf(commandMessage, "0xAC, %d, %d, %d, %d, %d, %d, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false, pc_specialParsing)), filltypetoi(attrString [attrFill_type]), colortoi(attrString [attrFill_colour]), MACRO_16bitToLE(atoi(attrString [attrFill_pattern])));
 
                   objChildCommands++;
                 }
@@ -3013,7 +3019,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                     setAttributeValue(attrNew_active_mask);
                   }
                   // Need check for all attributes being present for this command -bac
-                  sprintf(commandMessage, "0xAD, %d, %d, %d, %d, 0xFF, 0xFF, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrWorking_setID], /*macro?*/false)), MACRO_16bitToLE(idOrName_toi(attrString [attrNew_active_mask], /*macro?*/false)));
+                  sprintf(commandMessage, "0xAD, %d, %d, %d, %d, 0xFF, 0xFF, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrWorking_setID], /*macro?*/false, pc_specialParsing)), MACRO_16bitToLE(idOrName_toi(attrString [attrNew_active_mask], /*macro?*/false, pc_specialParsing)));
 
                   objChildCommands++;
                 }
@@ -3041,7 +3047,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                     setAttributeValue(attrNew_softkey_mask);
                   }
                   // Need check for all attributes being present for this command -bac
-                  sprintf(commandMessage, "0xAE, %d, %d, %d, %d, %d, 0xFF, 0xFF", masktypetoi(attrString [attrMask_type]), MACRO_16bitToLE(idOrName_toi(attrString [attrMaskID], /*macro?*/false)), MACRO_16bitToLE(idOrName_toi(attrString [attrNew_softkey_mask], /*macro?*/false)));
+                  sprintf(commandMessage, "0xAE, %d, %d, %d, %d, %d, 0xFF, 0xFF", masktypetoi(attrString [attrMask_type]), MACRO_16bitToLE(idOrName_toi(attrString [attrMaskID], /*macro?*/false, pc_specialParsing)), MACRO_16bitToLE(idOrName_toi(attrString [attrNew_softkey_mask], /*macro?*/false, pc_specialParsing)));
 
                   objChildCommands++;
                 }
@@ -3069,7 +3075,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                     setAttributeValue(attrNew_value);
                   }
                   // Need check for all attributes being present for this command -bac
-                  sprintf(commandMessage, "0xAF, %d, %d, %d, %d, %d, %d, %d", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), atoi(attrString [attrAttributeID]), MACRO_32bitToLE(idOrName_toi(attrString [attrNew_value], /*macro?*/false)));
+                  sprintf(commandMessage, "0xAF, %d, %d, %d, %d, %d, %d, %d", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false, pc_specialParsing)), atoi(attrString [attrAttributeID]), MACRO_32bitToLE(idOrName_toi(attrString [attrNew_value], /*macro?*/false, pc_specialParsing)));
 
                   objChildCommands++;
                 }
@@ -3095,7 +3101,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                     setAttributeValue(attrNew_priority);
                   }
                   // Need check for all attributes being present for this command -bac
-                  sprintf(commandMessage, "0xB0, %d, %d, %d, 0xFF, 0xFF, 0xFF, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), prioritytoi(attrString [attrNew_priority]));
+                  sprintf(commandMessage, "0xB0, %d, %d, %d, 0xFF, 0xFF, 0xFF, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false, pc_specialParsing)), prioritytoi(attrString [attrNew_priority]));
 
                   objChildCommands++;
                 }
@@ -3123,7 +3129,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                     setAttributeValue(attrNew_objectID);
                   }
                 // Need check for all attributes being present for this command -bac
-                  sprintf(commandMessage, "0xB1, %d, %d, %d, %d, %d, 0xFF, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), atoi(attrString [attrList_index]), MACRO_16bitToLE(idOrName_toi(attrString [attrNew_objectID], /*macro?*/false)));
+                  sprintf(commandMessage, "0xB1, %d, %d, %d, %d, %d, 0xFF, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false, pc_specialParsing)), atoi(attrString [attrList_index]), MACRO_16bitToLE(idOrName_toi(attrString [attrNew_objectID], /*macro?*/false, pc_specialParsing)));
 
                   objChildCommands++;
                 }
@@ -3243,20 +3249,23 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
           sprintf (pc_postfix, "_%d", curLang);
         }
 
-        std::string str_objClassName = std::string("&iVtObject") + std::string(objName) + std::string(pc_postfix);
-        // first check if found language was inserted before into the map
-        std::map<int32_t, ObjListEntry>::iterator mit_entry = map_objNameAndID.find (curLang);
+        if (!pc_specialParsing || (pc_specialParsing && pc_specialParsing->checkForProprietaryOrBasicObjTypes()))
+        {
+          std::string str_objClassName = std::string("&iVtObject") + std::string(objName) + std::string(pc_postfix);
+          // first check if found language was inserted before into the map
+          std::map<int32_t, ObjListEntry>::iterator mit_entry = map_objNameAndID.find (curLang);
 
-        if (mit_entry != map_objNameAndID.end()) // success! language enty found
-        { // only insert an further entry in the found language map
-          //store the objectId - objectName pair in the appropriate language map
-          mit_entry->second.insert (std::pair<uint16_t, std::string>(objID, str_objClassName));
-        }
-        else
-        { // add a new map entry for a further language which includes the first entry in that language specific map
-          ObjListEntry listEntry;
-          listEntry.insert (std::pair<uint16_t, std::string>(objID, str_objClassName));
-          map_objNameAndID.insert (std::pair<int32_t, ObjListEntry>(curLang, listEntry));
+          if (mit_entry != map_objNameAndID.end()) // success! language entry found
+          { // only insert an further entry in the found language map
+            //store the objectId - objectName pair in the appropriate language map
+            mit_entry->second.insert (std::pair<uint16_t, std::string>(objID, str_objClassName));
+          }
+          else
+          { // add a new map entry for a further language which includes the first entry in that language specific map
+            ObjListEntry listEntry;
+            listEntry.insert (std::pair<uint16_t, std::string>(objID, str_objClassName));
+            map_objNameAndID.insert (std::pair<int32_t, ObjListEntry>(curLang, listEntry));
+          }
         }
 
         /// Try to retrieve   value='...'   from language-value-file
@@ -3345,21 +3354,24 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
       }
       else
       {
-        // was the standard map already created?
-        // standard map get the index -1 to differ between "real" language map and normal object map
-        std::map<int32_t, ObjListEntry>::iterator mit_entry = map_objNameAndID.find (0xFFFFFFFF);
-
-        std::string str_objClassName = std::string("&iVtObject") + std::string(objName) + std::string(pc_postfix);
-
-        if (mit_entry != map_objNameAndID.end())
+        if (!pc_specialParsing || (pc_specialParsing && pc_specialParsing->checkForProprietaryOrBasicObjTypes()))
         {
-          mit_entry->second.insert (std::pair<uint16_t, std::string>(objID, str_objClassName));
-        }
-        else
-        {
-          ObjListEntry listEntry;
-          listEntry.insert (std::pair<uint16_t, std::string>(objID, str_objClassName));
-          map_objNameAndID.insert (std::pair<int32_t, ObjListEntry>(0xFFFFFFFF, listEntry));
+          // was the standard map already created?
+          // standard map get the index -1 to differ between "real" language map and normal object map
+          std::map<int32_t, ObjListEntry>::iterator mit_entry = map_objNameAndID.find (0xFFFFFFFF);
+
+          std::string str_objClassName = std::string("&iVtObject") + std::string(objName) + std::string(pc_postfix);
+
+          if (mit_entry != map_objNameAndID.end())
+          {
+            mit_entry->second.insert (std::pair<uint16_t, std::string>(objID, str_objClassName));
+          }
+          else
+          {
+            ObjListEntry listEntry;
+            listEntry.insert (std::pair<uint16_t, std::string>(objID, str_objClassName));
+            map_objNameAndID.insert (std::pair<int32_t, ObjListEntry>(0xFFFFFFFF, listEntry));
+          }
         }
       }
 
