@@ -38,40 +38,29 @@
  * Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA           *
  ***************************************************************************/
 
-// ---------------------------------------------------------------------------
-//  Includes
-// ---------------------------------------------------------------------------
 #include <xercesc/dom/DOMErrorHandler.hpp>
 #include <xercesc/util/XMLString.hpp>
 #include <iostream>
+#include <set>
+#include <vector>
+#include <map>
 
-// from brad, but i think it's okay also for linux with <iostream>...
-//#ifdef WIN32
-//#include<iostream>
-//#else
-//#include <iostream.h>
-//#endif
+#include "vt2iso-defines.hpp"
 
 XERCES_CPP_NAMESPACE_USE
 
-// ---------------------------------------------------------------------------
 //  Simple error handler deriviative to install on parser
-// ---------------------------------------------------------------------------
 class DOMCountErrorHandler : public DOMErrorHandler
 {
 public:
-    // -----------------------------------------------------------------------
     //  Constructors and Destructor
-    // -----------------------------------------------------------------------
     DOMCountErrorHandler();
     ~DOMCountErrorHandler();
-
 
     // -----------------------------------------------------------------------
     //  Getter methods
     // -----------------------------------------------------------------------
     bool getSawErrors() const;
-
 
     // -----------------------------------------------------------------------
     //  Implementation of the DOM ErrorHandler interface
@@ -79,14 +68,12 @@ public:
     bool handleError(const DOMError& domError);
     void resetErrors();
 
-
 private :
     // -----------------------------------------------------------------------
     //  Unimplemented constructors and operators
     // -----------------------------------------------------------------------
     DOMCountErrorHandler(const DOMCountErrorHandler&);
     void operator=(const DOMCountErrorHandler&);
-
 
     // -----------------------------------------------------------------------
     //  Private data members
@@ -121,7 +108,6 @@ public :
         XMLString::release(&fLocalForm);
     }
 
-
     // -----------------------------------------------------------------------
     //  Getter methods
     // -----------------------------------------------------------------------
@@ -145,7 +131,6 @@ std::ostream& operator<<(std::ostream& target, const StrX& toDump)
 #else
 inline std::ostream& operator<<(std::ostream& target, const StrX& toDump)
 #endif
-
 {
     target << toDump.localForm();
     return target;
@@ -159,3 +144,196 @@ inline bool DOMCountErrorHandler::getSawErrors() const
 {
     return fSawErrors;
 }
+
+
+// forward declarations
+#ifdef USE_SPECIAL_PARSING_PROP
+  class SpecialParsingUsePropTag_c;
+#else
+  class SpecialParsingBasePropTag_c;
+#endif
+
+#ifdef USE_SPECIAL_PARSING
+  class SpecialParsingUse_c;
+#else
+  class SpecialParsingBase_c;
+#endif
+
+class vt2iso_c
+{
+public:
+  vt2iso_c (std::basic_string<char>* xmlFile);
+
+  ~vt2iso_c();
+
+  bool processElement (DOMNode *n, uint64_t ombType/* const char* rpcc_inKey, const char* rpcc_inButton, */);
+
+  void clean_exit(char* error_message = NULL);
+
+  bool getIsOPDimension() const { return is_opDimension; }
+  bool getIsSKWidth() const { return is_skWidth; }
+  bool getIsSKHeight() const { return is_skHeight; }
+
+  void setIsOPDimension (bool b_isOPDimension) { is_opDimension = b_isOPDimension; }
+  void setIsSKWidth (bool b_isSKWidth) { is_skWidth = b_isSKWidth; }
+  void setIsSKHeight (bool b_isSKHeight) { is_skHeight = b_isSKHeight; }
+
+  unsigned int getOPDimension() const { return opDimension; }
+  unsigned int getSKWidth() const { return skWidth; }
+  unsigned int getSKHeight() const { return skHeight; }
+
+  void setOPDimension (unsigned int OPDimension) { opDimension = OPDimension; }
+  void setSKWidth (unsigned int SKWidth) { skWidth = SKWidth; }
+  void setSKHeight (unsigned int SKHeight) { skHeight = SKHeight; }
+
+  void skRelatedFileOutput();
+
+  int getAmountXmlFiles() const {return amountXmlFiles;}
+
+  const char* getXmlFile (int index) { return xmlFiles[index]; }
+
+private:
+  signed int strlenUnescaped (const char* pcc_string);
+
+  bool copyWithQuoteAndLength (char *dest, const char *src, unsigned int len);
+
+  signed long int getID (char* objName, bool b_isMacro, bool b_wishingID, unsigned int wishID);
+
+  signed long int idOrName_toi (char* rpc_string, bool rb_isMacro);
+
+  void getKeyCode();
+
+  void defaultAttributes (unsigned int r_objType);
+
+  void convertIdReferenceToNameReference (int ri_attrType);
+
+  void convertIdReferencesToNameReferences();
+
+  int languageCodeToIndex (char* lc);
+
+  unsigned int colortoi (char* text_color);
+  unsigned int masktypetoi (char* masktype);
+  unsigned int colordepthtoi (char* text_colordepth);
+  signed int fonttypetoi (char* text_fonttype);
+  signed int booltoi (char *text_bool);
+  signed int fontsizetoi (char *text_fontsize);
+  signed int formattoi (char *text_format);
+  signed int horizontaljustificationtoi (char *text_horiz);
+  unsigned int optionstoi (char *text_options);
+  unsigned int numberoptionstoi (char *text_options);
+  unsigned int picturegraphicoptionstoi (char *text_options);
+  unsigned int picturegraphicrletoi (char *text_options);
+  unsigned int meteroptionstoi (char *text_options);
+  unsigned int linearbargraphoptionstoi (char *text_options);
+  unsigned int archedbargraphoptionstoi (char *text_options);
+  signed int prioritytoi (char *text_priority);
+  signed int acousticsignaltoi (char *text_acousticsignal);
+  unsigned int fontstyletoi (char *text_fontstyle);
+  unsigned int linedirectiontoi (char *text_linedirection);
+  unsigned int linearttoi (char *text_lineart);
+  unsigned int linesuppressiontoi (char *text_linesuppression);
+  unsigned int ellipsetypetoi (char *text_ellipsetype);
+  unsigned int polygontypetoi (char *text_polygontype);
+  unsigned int validationtypetoi (char *text_validationtype);
+  unsigned int filltypetoi (char *text_filltype);
+  unsigned int eventToi (char *text_eventName);
+  unsigned int auxfunctiontyptetoi(char *text_auxFunctionType);
+  unsigned int gcoptionstoi (char *text_options);
+  unsigned int inputobjectoptiontoi (char *text_inputobjectoptions);
+  unsigned int buttonoptiontoi (char *text_buttonoptions);
+
+  void setAttributeValue (int attrID);
+  void cleanAttribute (int attrID);
+
+  bool checkForFileOrFile148 (char *tag);
+
+  DOMNamedNodeMap* patched_getAttributes (DOMNode *n);
+
+  bool getAttributesFromNode (DOMNode *n, bool treatSpecial);
+
+  bool openDecodePrintOut (const char* workDir, char* _bitmap_path, unsigned int &options, int fixNr=-1);
+
+  bool checkForAllowedExecution() /*const*/;
+
+  void init (const char* xmlFile);
+
+  void prepareFileNameAndDirectory(std::basic_string<char>* pch_fileName);
+
+private:
+  bool firstLineFileE;
+
+  FILE *partFile_variables;
+  FILE *partFile_variables_extern;
+  FILE *partFile_attributes;
+  FILE *partFile_functions;
+  FILE *partFile_functions_origin;
+  FILE *partFile_defines;
+  FILE *partFile_list;
+  FILE *partFile_handler_direct;
+  FILE *partFile_handler_derived;
+
+  unsigned int ui_languages;
+
+  char xmlFileGlobal [1024+1];
+  char std_bitmap_path [1024+1];
+  char fix_bitmap_path [1024+1];
+  char spc_autoLanguage[1024+1];
+
+  char proName[1024+1];
+  std::basic_string<char> c_project;
+
+  int amountXmlFiles;
+  std::basic_string<char> c_directory;
+  const char* rc_workDir;
+  char xmlFiles [256] [1024+1];
+
+  char objNameTable [(stringLength+1)*4000];
+  unsigned int objIDTable [4000];
+  unsigned int objNextAutoID;
+  unsigned int objNextMacroAutoID;
+  unsigned int kcNextAutoID;
+  unsigned int objNextUnnamedName;
+  unsigned int objCount;
+  unsigned int opDimension;
+  unsigned int skWidth;
+  unsigned int skHeight;
+  bool is_opDimension;
+  bool is_skWidth;
+  bool is_skHeight;
+
+  char attrString [maxAttributeNames] [stringLength+1];
+  bool attrIsGiven [maxAttributeNames];
+
+  typedef std::map<uint16_t, std::string> ObjListEntry;
+
+  std::map<int32_t, ObjListEntry> map_objNameAndID;
+  static bool sb_WSFound;
+  uint16_t ui16_WSObjID;
+
+  language_s arrs_language [DEF_iso639entries];
+
+  // Assuming an 8 bit per pixel bitmap.
+  unsigned char picBuffer [480*480];
+
+  char attr_name [1024+1];
+  char attr_value [1024+1];
+  char attr_value2 [1024+1];
+  char filename [1024+1];
+
+  char objName [stringLength+1];
+  bool is_objName;
+  unsigned int objID;
+  bool is_objID;
+
+#ifdef USE_SPECIAL_PARSING_PROP
+  SpecialParsingUsePropTag_c* pc_specialParsingPropTag;
+#else
+  SpecialParsingBasePropTag_c* pc_specialParsingPropTag;
+#endif
+
+#ifdef USE_SPECIAL_PARSING
+  SpecialParsingUse_c* pc_specialParsing;
+#else
+  SpecialParsingBase_c* pc_specialParsing;
+#endif
+};

@@ -75,19 +75,20 @@
 #include "vt2isoimagepaintlib_c.h"
 #endif
 
-#include <set>
-#include <iostream>
-#include <vector>
-#include <map>
-
  // Includes (vt2iso)
 #include "vt2iso.hpp"
 #include "vt2iso-defines.hpp"
 
-#ifdef USE_SPECIAL_PARSING
-#include <specialparsinguse_c.h>
+#ifdef USE_SPECIAL_PARSING_PROP
+ #include <specialparsinguseproptag_c.h>
 #else
-#include <specialparsingbase_c.h>
+  #include <specialparsingbaseproptag_c.h>
+#endif
+
+#ifdef USE_SPECIAL_PARSING
+ #include <specialparsinguse_c.h>
+#else
+  #include <specialparsingbase_c.h>
 #endif
 
 using namespace std;
@@ -364,46 +365,77 @@ BGR_s vtColorTable[256]=
 // ### GLOBALS ###
 char iso639table [DEF_iso639entries][2+1] = {{"aa"},{"ab"},{"af"},{"am"},{"ar"},{"as"},{"ay"},{"az"},{"ba"},{"be"},{"bg"},{"bh"},{"bi"},{"bn"},{"bo"},{"br"},{"ca"},{"co"},{"cs"},{"cy"},{"da"},{"de"},{"dz"},{"el"},{"en"},{"eo"},{"es"},{"et"},{"eu"},{"fa"},{"fi"},{"fj"},{"fo"},{"fr"},{"fy"},{"ga"},{"gd"},{"gl"},{"gn"},{"gu"},{"ha"},{"hi"},{"hr"},{"hu"},{"hy"},{"ia"},{"ie"},{"ik"},{"in"},{"is"},{"it"},{"iw"},{"ja"},{"ji"},{"jw"},{"ka"},{"kk"},{"kl"},{"km"},{"kn"},{"ko"},{"ks"},{"ku"},{"ky"},{"la"},{"ln"},{"lo"},{"lt"},{"lv"},{"mg"},{"mi"},{"mk"},{"ml"},{"mn"},{"mo"},{"mr"},{"ms"},{"mt"},{"my"},{"na"},{"ne"},{"nl"},{"no"},{"oc"},{"om"},{"or"},{"pa"},{"pl"},{"ps"},{"pt"},{"qu"},{"rm"},{"rn"},{"ro"},{"ru"},{"rw"},{"sa"},{"sd"},{"sg"},{"sh"},{"si"},{"sk"},{"sl"},{"sm"},{"sn"},{"so"},{"sq"},{"sr"},{"ss"},{"st"},{"su"},{"sv"},{"sw"},{"ta"},{"te"},{"tg"},{"th"},{"ti"},{"tk"},{"tl"},{"tn"},{"to"},{"tr"},{"ts"},{"tt"},{"tw"},{"uk"},{"ur"},{"uz"},{"vi"},{"vo"},{"wo"},{"xh"},{"yo"},{"zh"},{"zu"}};
 
-bool firstLineFileE = true;
-FILE *partFile_variables;
-FILE *partFile_variables_extern;
-FILE *partFile_attributes;
-FILE *partFile_functions;
-FILE *partFile_functions_origin;
-FILE *partFile_defines;
-FILE *partFile_list;
-FILE *partFile_handler_direct;
-FILE *partFile_handler_derived;
+#define X(str) XStr(str).unicodeForm()
 
-language_s arrs_language [DEF_iso639entries];
-unsigned int ui_languages=0;
+// ---------------------------------------------------------------------------
+//  This is a simple class that lets us do easy (though not terribly efficient)
+//  trancoding of char* data to XMLCh data.
+// ---------------------------------------------------------------------------
+class XStr
+{
+  public :
+    // -----------------------------------------------------------------------
+    //  Constructors and Destructor
+    // -----------------------------------------------------------------------
+    XStr(const char* const toTranscode)
+    {
+      // Call the private transcoding method
+      fUnicodeForm = XMLString::transcode(toTranscode);
+    }
 
-char xmlFileGlobal [1024+1];
-char std_bitmap_path [1024+1];
-char fix_bitmap_path [1024+1];
-char spc_autoLanguage[1024+1];
+    ~XStr()
+    {
+      XMLString::release(&fUnicodeForm);
+    }
 
-std::basic_string<char> c_project;
+    // -----------------------------------------------------------------------
+    //  Getter methods
+    // -----------------------------------------------------------------------
+    const XMLCh* unicodeForm() const
+    {
+      return fUnicodeForm;
+    }
 
-char objNameTable [(stringLength+1)*4000];
-unsigned int objIDTable [4000];
-unsigned int objNextAutoID;
-unsigned int objNextMacroAutoID;
-unsigned int kcNextAutoID;
-unsigned int objNextUnnamedName;
-unsigned int objCount;
-unsigned int opDimension; bool is_opDimension=false;
-unsigned int skWidth;     bool is_skWidth=false;
-unsigned int skHeight;    bool is_skHeight=false;
+  private :
+    // -----------------------------------------------------------------------
+    //  Private data members
+    //  fUnicodeForm
+    //   This is the Unicode XMLCh format of the string.
+    // -----------------------------------------------------------------------
+    XMLCh*   fUnicodeForm;
+};
 
-char attrString [maxAttributeNames] [stringLength+1];
-bool attrIsGiven [maxAttributeNames];
+DOMCountErrorHandler::DOMCountErrorHandler()
+  : fSawErrors(false) {}
 
-typedef std::map<uint16_t, std::string> ObjListEntry;
+DOMCountErrorHandler::~DOMCountErrorHandler() {}
 
-std::map<int32_t /*langID*/, ObjListEntry /* listentry */> map_objNameAndID;
-static bool sb_WSFound = false;
-uint16_t ui16_WSObjID;
+// ---------------------------------------------------------------------------
+//  DOMCountHandlers: Overrides of the DOM ErrorHandler interface
+// ---------------------------------------------------------------------------
+bool DOMCountErrorHandler::handleError(const DOMError& domError)
+{
+  fSawErrors = true;
+  if (domError.getSeverity() == DOMError::DOM_SEVERITY_WARNING)
+    std::cerr << "\nWarning at file ";
+  else if (domError.getSeverity() == DOMError::DOM_SEVERITY_ERROR)
+    std::cerr << "\nError at file ";
+  else
+    std::cerr << "\nFatal Error at file ";
+
+  std::cerr << StrX(domError.getLocation()->getURI())
+      << ", line " << domError.getLocation()->getLineNumber()
+      << ", char " << domError.getLocation()->getColumnNumber()
+      << "\n  Message: " << StrX(domError.getMessage()) << std::endl;
+
+  return true;
+}
+
+void DOMCountErrorHandler::resetErrors()
+{
+  fSawErrors = false;
+}
+
 
 // ---------------------------------------------------------------------------
 //  GLOBAL Bitmap instance
@@ -437,9 +469,10 @@ static void usage()
     << std::endl;
 }
 
-char proName[1024+1];
+bool vt2iso_c::sb_WSFound = false;
 
-void clean_exit (int return_value, char* error_message=NULL, SpecialParsingBase_c* pc_specialParsing = NULL)
+void
+vt2iso_c::clean_exit (char* error_message)
 {
   FILE* partFile_direct = NULL;
   char partFileName [1024+1]; partFileName [1024+1-1] = 0x00;
@@ -635,7 +668,7 @@ void clean_exit (int return_value, char* error_message=NULL, SpecialParsingBase_
   fprintf (partFile_direct, "#include \"%s-defines.inc\"\n", xmlFileWithoutPath);
   fprintf (partFile_direct, "#include \"%s-functions.inc\"\n", xmlFileWithoutPath);
 
-  if (pc_specialParsing && (return_value == 0))
+  if (pc_specialParsing)
   {
     pc_specialParsing->addFileIncludes(partFile_direct, xmlFileWithoutPath);
   }
@@ -655,7 +688,7 @@ void clean_exit (int return_value, char* error_message=NULL, SpecialParsingBase_
   fprintf (partFile_direct, "#include \"%s-defines.inc\"\n", xmlFileWithoutPath);
   fprintf (partFile_direct, "#include \"%s-functions.inc\"\n", xmlFileWithoutPath);
 
-  if (pc_specialParsing && (return_value == 0))
+  if (pc_specialParsing)
   {
     pc_specialParsing->addFileIncludes(partFile_direct, xmlFileWithoutPath);
   }
@@ -671,11 +704,8 @@ void clean_exit (int return_value, char* error_message=NULL, SpecialParsingBase_
   fprintf (partFile_direct, "#include \"%s-handler-derived.inc\"\n", xmlFileWithoutPath);
 
   /// if USE_SPECIAL_PARSING is defined additional output is done
-  if (pc_specialParsing && (return_value == 0))
-  {
+  if (pc_specialParsing)
     pc_specialParsing->outputCollectedData2Files();
-    delete pc_specialParsing;
-  }
 
   if (partFile_direct)           fclose (partFile_direct);
   if (partFile_variables_extern) fclose (partFile_variables_extern);
@@ -683,11 +713,10 @@ void clean_exit (int return_value, char* error_message=NULL, SpecialParsingBase_
   if (partFile_defines)          fclose (partFile_defines);
   if (partFile_functions)        fclose (partFile_functions);
   if (partFile_functions_origin) fclose (partFile_functions_origin);
-
-  exit (return_value);
 }
 
-unsigned int strlenUnescaped (const char* pcc_string)
+signed int
+vt2iso_c::strlenUnescaped (const char* pcc_string)
 {
   int i_unescapedLength=0;
   char c_current;
@@ -704,15 +733,25 @@ unsigned int strlenUnescaped (const char* pcc_string)
       b_lastWasEscapeChar=false;
     }
   }
-  if (b_lastWasEscapeChar) clean_exit (-1, "Unproperly escaped string. Bailing out. Check your strings!");
+  if (b_lastWasEscapeChar)
+  {
+    clean_exit ( "Unproperly escaped string. Bailing out. Check your strings!");
+    return -1;
+  }
 
   return i_unescapedLength;
 }
 
-void copyWithQuoteAndLength (char *dest, const char *src, unsigned int len)
+bool
+vt2iso_c::copyWithQuoteAndLength (char *dest, const char *src, unsigned int len)
 {
   *dest++ = '"';
-  unsigned int take = (strlenUnescaped(src) <= len) ? strlenUnescaped(src) : len;
+
+  signed int ret = strlenUnescaped(src);
+  if (ret == -1) return false;
+
+  unsigned int take = ( (unsigned int)ret <= len) ? ret : len;
+
   unsigned int i=0;
   bool b_lastWasEscapeChar=false;
   for (; i<take;)
@@ -732,52 +771,15 @@ void copyWithQuoteAndLength (char *dest, const char *src, unsigned int len)
   for (; i<len; i++) *dest++ = ' '; // fill with spaces if necessary
   *dest++ = '"';
   *dest = 0x00;
+
+  return true;
 }
 
 // ---------------------------------------------------------------------------
-//  This is a simple class that lets us do easy (though not terribly efficient)
-//  trancoding of char* data to XMLCh data.
+//  signed long int getID (char* objName, bool isMacro, bool widhingID, unsigned int wishID=0)
 // ---------------------------------------------------------------------------
-class XStr
-{
-  public :
-    // -----------------------------------------------------------------------
-    //  Constructors and Destructor
-    // -----------------------------------------------------------------------
-    XStr(const char* const toTranscode)
-    {
-      // Call the private transcoding method
-      fUnicodeForm = XMLString::transcode(toTranscode);
-    }
-
-    ~XStr()
-    {
-      XMLString::release(&fUnicodeForm);
-    }
-
-    // -----------------------------------------------------------------------
-    //  Getter methods
-    // -----------------------------------------------------------------------
-    const XMLCh* unicodeForm() const
-    {
-      return fUnicodeForm;
-    }
-
-  private :
-    // -----------------------------------------------------------------------
-    //  Private data members
-    //  fUnicodeForm
-    //   This is the Unicode XMLCh format of the string.
-    // -----------------------------------------------------------------------
-    XMLCh*   fUnicodeForm;
-};
-
-#define X(str) XStr(str).unicodeForm()
-
-// ---------------------------------------------------------------------------
-//  unsigned int getID (char* objName, bool isMacro, bool widhingID, unsigned int wishID=0)
-// ---------------------------------------------------------------------------
-unsigned int getID (char* objName, bool b_isMacro, bool b_wishingID, unsigned int wishID, SpecialParsingBase_c* pc_specialParsing)
+signed long int
+vt2iso_c::getID (char* objName, bool b_isMacro, bool b_wishingID, unsigned int wishID)
 {
   bool isThere = false;
   unsigned int foundID = 0;
@@ -810,12 +812,13 @@ unsigned int getID (char* objName, bool b_isMacro, bool b_wishingID, unsigned in
         if (objIDTable [i] == wishID)
         {
           std::cout << "DOUBLE USE OF ID '" << wishID << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
-          clean_exit (-1);
+          clean_exit ();
+          return -1;
         }
       }
       // if we reach here that wishID is not assigned yet, so we can use it!
       foundID = wishID;
-    } else if (!pc_specialParsing || (pc_specialParsing && pc_specialParsing->checkForProprietaryOrBasicObjTypes())) {
+    } else if ( checkForAllowedExecution() ) {
       /// only auot-decrement if the current object has a basic or proprietary object type
       if (b_isMacro) {
         foundID = objNextMacroAutoID;
@@ -827,7 +830,7 @@ unsigned int getID (char* objName, bool b_isMacro, bool b_wishingID, unsigned in
     }
 
     /// only insert object if it is basic or proprietary
-    if (!pc_specialParsing || (pc_specialParsing && pc_specialParsing->checkForProprietaryOrBasicObjTypes()))
+    if ( checkForAllowedExecution() )
     {
       // insert new name-id pair now!
       objIDTable [objCount] = foundID;
@@ -840,25 +843,55 @@ unsigned int getID (char* objName, bool b_isMacro, bool b_wishingID, unsigned in
   return (foundID);
 }
 
-unsigned int idOrName_toi(char* rpc_string, bool rb_isMacro, SpecialParsingBase_c* pc_specialParsing)
+signed long int
+vt2iso_c::idOrName_toi(char* rpc_string, bool rb_isMacro)
 {
-  if (rpc_string [0] == 0x00) clean_exit (-1, "*** ERROR *** idOrName_toi: Empty 'object_id' attribute!\n\n");
+  if (rpc_string [0] == 0x00)
+  {
+    clean_exit ("*** ERROR *** idOrName_toi: Empty 'object_id' attribute!\n\n");
+    return -1;
+  }
   /** @todo check if all chars in the string are numbers, not only the first! */
   if ((rpc_string [0] >= '0') && (rpc_string [0] <= '9')) return atoi (rpc_string);
   // Starting with a letter, so look up id!
-  return getID (rpc_string, rb_isMacro, false, 0, pc_specialParsing);
+  return getID (rpc_string, rb_isMacro, false, 0);
 }
 
-void getKeyCode()
+void
+vt2iso_c::getKeyCode()
 {
   attrIsGiven [attrKey_code] = true;
   sprintf (attrString [attrKey_code], "%d", kcNextAutoID);
   kcNextAutoID--;
 }
 
-void init (const char* xmlFile)
+void
+vt2iso_c::init (const char* xmlFile)
 {
+  firstLineFileE = true;
+  ui_languages=0;
+
+  is_opDimension=false;
+  is_skWidth=false;
+  is_skHeight=false;
+
+  partFile_variables = NULL;
+  partFile_variables_extern = NULL;
+  partFile_attributes = NULL;
+  partFile_functions = NULL;
+  partFile_functions_origin = NULL;
+  partFile_defines = NULL;
+  partFile_list = NULL;
+  partFile_handler_direct = NULL;
+  partFile_handler_derived = NULL;
+
   strcpy (xmlFileGlobal, xmlFile);
+
+  std_bitmap_path [0] = 0x00;
+  fix_bitmap_path [0] = 0x00;
+  attr_name [1024+1-1] = 0x00;
+  attr_value [1024+1-1] = 0x00;
+  spc_autoLanguage[0] = 0x00; // default to no autoLanguage
 
   char partFileName [1024+1]; partFileName [1024+1-1] = 0x00;
 
@@ -929,7 +962,8 @@ void init (const char* xmlFile)
     attrString [j] [stringLength+1-1] = 0x00;
 }
 
-void defaultAttributes (unsigned int r_objType)
+void
+vt2iso_c::defaultAttributes (unsigned int r_objType)
 {
   if (r_objType != otGraphicsContext)
   {
@@ -1007,7 +1041,8 @@ void defaultAttributes (unsigned int r_objType)
   }
 }
 
-void convertIdReferenceToNameReference(int ri_attrType)
+void
+vt2iso_c::convertIdReferenceToNameReference(int ri_attrType)
 {
   if (attrIsGiven [ri_attrType])
   {
@@ -1028,7 +1063,8 @@ void convertIdReferenceToNameReference(int ri_attrType)
   }
 }
 
-void convertIdReferencesToNameReferences()
+void
+vt2iso_c::convertIdReferencesToNameReferences()
 {
   convertIdReferenceToNameReference (attrActive_mask);
   convertIdReferenceToNameReference (attrSoft_key_mask);
@@ -1040,7 +1076,8 @@ void convertIdReferencesToNameReferences()
   convertIdReferenceToNameReference (attrTarget_value_variable_reference);
 }
 
-int languageCodeToIndex (char* lc)
+int
+vt2iso_c::languageCodeToIndex (char* lc)
 {
   for (unsigned int index = 0; index<ui_languages; index++)
   {
@@ -1054,7 +1091,8 @@ int languageCodeToIndex (char* lc)
   return -1; // negative number to indicate language code not found
 }
 
-unsigned int colortoi (char* text_color)
+unsigned int
+vt2iso_c::colortoi (char* text_color)
 {
   int l;
   for (l=0; l<16; l++) {
@@ -1065,7 +1103,8 @@ unsigned int colortoi (char* text_color)
   return atoi (text_color);
 }
 
-unsigned int masktypetoi (char* masktype)
+unsigned int
+vt2iso_c::masktypetoi (char* masktype)
 {
   int l;
   for (l=0; l<3; l++) {
@@ -1076,7 +1115,8 @@ unsigned int masktypetoi (char* masktype)
   return atoi (masktype);
 }
 
-unsigned int colordepthtoi (char* text_colordepth)
+unsigned int
+vt2iso_c::colordepthtoi (char* text_colordepth)
 {
   int l;
   for (l=0; l<2; l++) {
@@ -1087,7 +1127,8 @@ unsigned int colordepthtoi (char* text_colordepth)
   return 2;
 }
 
-unsigned int fonttypetoi (char* text_fonttype)
+signed int
+vt2iso_c::fonttypetoi (char* text_fonttype)
 {
   int l;
   if (text_fonttype && isdigit(*text_fonttype))
@@ -1104,29 +1145,31 @@ unsigned int fonttypetoi (char* text_fonttype)
     }
   }
   std::cout << "INVALID FONT TYPE '" << text_fonttype << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
-  clean_exit (-1);
-  return 0; // to make compiler happy
+  clean_exit ();
+  return -1;
 }
 
-unsigned int booltoi (char *text_bool)
+signed int
+vt2iso_c::booltoi (char *text_bool)
 {
   int l;
   for (l=0; l<maxTruthTable; l++) {
     if (strncmp (text_bool, truthTable [l], stringLength) == 0) {
-      return true;
+      return 1;
     }
   }
   for (l=0; l<maxFalseTable; l++) {
     if (strncmp (text_bool, falseTable [l], stringLength) == 0) {
-      return false;
+      return 0;
     }
   }
   std::cout << "INVALID TRUTH VALUE '" << text_bool << " ENCOUNTERED! STOPPING PARSER! bye.\n\n";
-  clean_exit (-1);
-  return 0; // to make compiler happy
+  clean_exit ();
+  return -1;
 }
 
-unsigned int fontsizetoi (char *text_fontsize)
+signed int
+vt2iso_c::fontsizetoi (char *text_fontsize)
 {
   int l;
   for (l=0; l<maxFontsizeTable; l++) {
@@ -1135,11 +1178,12 @@ unsigned int fontsizetoi (char *text_fontsize)
     }
   }
   std::cout << "INVALID FONT SIZE '" << text_fontsize << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
-  clean_exit (-1);
-  return 0; // to make compiler happy
+  clean_exit ();
+  return -1;
 }
 
-unsigned int formattoi (char *text_format)
+signed int
+vt2iso_c::formattoi (char *text_format)
 {
   int l;
   for (l=0; l<maxFormatTable; l++) {
@@ -1148,11 +1192,12 @@ unsigned int formattoi (char *text_format)
     }
   }
   std::cout << "INVALID FORMAT '" << text_format << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
-  clean_exit (-1);
-  return 0; // to make compiler happy
+  clean_exit ();
+  return -1;
 }
 
-unsigned int horizontaljustificationtoi (char *text_horiz)
+signed int
+vt2iso_c::horizontaljustificationtoi (char *text_horiz)
 {
   int l;
   for (l=0; l<maxHorizontalJustificationTable; l++) {
@@ -1161,11 +1206,12 @@ unsigned int horizontaljustificationtoi (char *text_horiz)
     }
   }
   std::cout << "INVALID HORIZONTALJUSTIFICATION '" << text_horiz << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
-  clean_exit (-1);
-  return 0; // to make compiler happy
+  clean_exit ();
+  return -1;
 }
 
-unsigned int optionstoi (char *text_options)
+unsigned int
+vt2iso_c::optionstoi (char *text_options)
 {
   int l, retval=0;
   for (l=0; l<maxOptionsTable; l++) {
@@ -1176,7 +1222,8 @@ unsigned int optionstoi (char *text_options)
   return retval;
 }
 
-unsigned int numberoptionstoi (char *text_options)
+unsigned int
+vt2iso_c::numberoptionstoi (char *text_options)
 {
   int l, retval=0;
   for (l=0; l<maxOutputNumberOptionsTable; l++) {
@@ -1187,7 +1234,8 @@ unsigned int numberoptionstoi (char *text_options)
   return retval;
 }
 
-unsigned int picturegraphicoptionstoi (char *text_options)
+unsigned int
+vt2iso_c::picturegraphicoptionstoi (char *text_options)
 {
   int l, retval=0;
   for (l=0; l<maxPictureGraphicOptionsTable; l++) {
@@ -1198,7 +1246,8 @@ unsigned int picturegraphicoptionstoi (char *text_options)
   return retval;
 }
 
-unsigned int picturegraphicrletoi (char *text_options)
+unsigned int
+vt2iso_c::picturegraphicrletoi (char *text_options)
 {
   int l, retval=0;
   for (l=0; l<maxPictureGraphicRleTable; l++) {
@@ -1209,7 +1258,8 @@ unsigned int picturegraphicrletoi (char *text_options)
   return retval;
 }
 
-unsigned int meteroptionstoi (char *text_options)
+unsigned int
+vt2iso_c::meteroptionstoi (char *text_options)
 {
   int l, retval=0;
   for (l=0; l<maxMeterOptionsTable; l++) {
@@ -1220,7 +1270,8 @@ unsigned int meteroptionstoi (char *text_options)
   return retval;
 }
 
-unsigned int linearbargraphoptionstoi (char *text_options)
+unsigned int
+vt2iso_c::linearbargraphoptionstoi (char *text_options)
 {
   int l, retval=0;
   for (l=0; l<maxLinearBarGraphOptionsTable; l++) {
@@ -1231,7 +1282,8 @@ unsigned int linearbargraphoptionstoi (char *text_options)
   return retval;
 }
 
-unsigned int archedbargraphoptionstoi (char *text_options)
+unsigned int
+vt2iso_c::archedbargraphoptionstoi (char *text_options)
 {
   int l, retval=0;
   for (l=0; l<maxArchedBarGraphOptionsTable; l++) {
@@ -1242,7 +1294,8 @@ unsigned int archedbargraphoptionstoi (char *text_options)
   return retval;
 }
 
-unsigned int prioritytoi (char *text_priority)
+signed int
+vt2iso_c::prioritytoi (char *text_priority)
 {
   int l;
   for (l=0; l<maxPriorityAcousticSignalTable-1; l++) {
@@ -1251,11 +1304,12 @@ unsigned int prioritytoi (char *text_priority)
     }
   }
   std::cout << "INVALID PRIORITY '" << text_priority << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
-  clean_exit (-1);
-  return 0; // to make compiler happy
+  clean_exit ();
+  return -1;
 }
 
-unsigned int acousticsignaltoi (char *text_acousticsignal)
+signed int
+vt2iso_c::acousticsignaltoi (char *text_acousticsignal)
 {
   int l;
   for (l=0; l<maxPriorityAcousticSignalTable; l++) {
@@ -1264,11 +1318,12 @@ unsigned int acousticsignaltoi (char *text_acousticsignal)
     }
   }
   std::cout << "INVALID ACOUSTIC SIGNAL '" << text_acousticsignal << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
-  clean_exit (-1);
-  return 0; // to make compiler happy
+  clean_exit ();
+  return -1;
 }
 
-unsigned int fontstyletoi (char *text_fontstyle)
+unsigned int
+vt2iso_c::fontstyletoi (char *text_fontstyle)
 {
   int l, retval=0;
   for (l=0; l<maxFontstyleTable; l++) {
@@ -1291,7 +1346,8 @@ unsigned int fontstyletoi (char *text_fontstyle)
   return retval;
 }
 
-unsigned int linedirectiontoi (char *text_linedirection)
+unsigned int
+vt2iso_c::linedirectiontoi (char *text_linedirection)
 {
   int retval=0;
   if (strstr (text_linedirection, "bottomlefttotopright") != NULL) {
@@ -1300,7 +1356,8 @@ unsigned int linedirectiontoi (char *text_linedirection)
   return retval;
 }
 
-unsigned int linearttoi (char *text_lineart)
+unsigned int
+vt2iso_c::linearttoi (char *text_lineart)
 {
   int retval=0;
   char thischar;
@@ -1314,7 +1371,8 @@ unsigned int linearttoi (char *text_lineart)
   return retval;
 }
 
-unsigned int linesuppressiontoi (char *text_linesuppression)
+unsigned int
+vt2iso_c::linesuppressiontoi (char *text_linesuppression)
 {
   int l, retval=0;
   for (l=0; l<maxLineSuppressionTable; l++) {
@@ -1325,7 +1383,8 @@ unsigned int linesuppressiontoi (char *text_linesuppression)
   return retval;
 }
 
-unsigned int ellipsetypetoi (char *text_ellipsetype)
+unsigned int
+vt2iso_c::ellipsetypetoi (char *text_ellipsetype)
 {
   int l, retval=0;
   for (l=0; l<maxEllipseTypeTable; l++) {
@@ -1337,7 +1396,8 @@ unsigned int ellipsetypetoi (char *text_ellipsetype)
   return retval;
 }
 
-unsigned int polygontypetoi (char *text_polygontype)
+unsigned int
+vt2iso_c::polygontypetoi (char *text_polygontype)
 {
   int l, retval=0;
   for (l=0; l<maxPolygonTypeTable; l++) {
@@ -1349,7 +1409,8 @@ unsigned int polygontypetoi (char *text_polygontype)
   return retval;
 }
 
-unsigned int validationtypetoi (char *text_validationtype)
+unsigned int
+vt2iso_c::validationtypetoi (char *text_validationtype)
 {
   int retval=0;
   if (strstr (text_validationtype, "invalid") != 0) {
@@ -1358,7 +1419,8 @@ unsigned int validationtypetoi (char *text_validationtype)
   return retval;
 }
 
-unsigned int filltypetoi (char *text_filltype)
+unsigned int
+vt2iso_c::filltypetoi (char *text_filltype)
 {
   int l, retval=0;
   for (l=0; l<maxFillTypeTable; l++) {
@@ -1370,7 +1432,8 @@ unsigned int filltypetoi (char *text_filltype)
   return retval;
 }
 
-unsigned int eventToi (char *text_eventName)
+unsigned int
+vt2iso_c::eventToi (char *text_eventName)
 {
   int l, retval=0;
   for (l=0; l<maxEventTable; l++) {
@@ -1382,7 +1445,8 @@ unsigned int eventToi (char *text_eventName)
   return retval;
 }
 
-unsigned int auxfunctiontyptetoi(char *text_auxFunctionType)
+unsigned int
+vt2iso_c::auxfunctiontyptetoi(char *text_auxFunctionType)
 {
   int l, retval=0;
   for (l=0; l<maxAuxFunctionTypes; l++) {
@@ -1394,7 +1458,8 @@ unsigned int auxfunctiontyptetoi(char *text_auxFunctionType)
   return retval;
 }
 
-unsigned int gcoptionstoi (char *text_options)
+unsigned int
+vt2iso_c::gcoptionstoi (char *text_options)
 {
   int l, retval=0;
   for (l=0; l<maxGCOptions; l++) {
@@ -1405,7 +1470,8 @@ unsigned int gcoptionstoi (char *text_options)
   return retval;
 }
 
-unsigned int inputobjectoptiontoi (char *text_inputobjectoptions)
+unsigned int
+vt2iso_c::inputobjectoptiontoi (char *text_inputobjectoptions)
 {
   int l, retval=0;
   for (l=0; l<maxInputObjectOptionsTable; l++) {
@@ -1416,7 +1482,8 @@ unsigned int inputobjectoptiontoi (char *text_inputobjectoptions)
   return retval;
 }
 
-unsigned int buttonoptiontoi (char *text_buttonoptions)
+unsigned int
+vt2iso_c::buttonoptiontoi (char *text_buttonoptions)
 {
   int l, retval=0;
   for (l=0; l<maxButtonOptions; l++) {
@@ -1427,21 +1494,9 @@ unsigned int buttonoptiontoi (char *text_buttonoptions)
   return retval;
 }
 
-// Assuming an 8 bit per pixel bitmap.
-static unsigned char picBuffer [480*480];
-
-static char attr_name [1024+1];
-static char attr_value [1024+1];
-static char attr_value2 [1024+1];
-static char filename [1024+1];
-
-char objName [stringLength+1];
-bool is_objName;
-unsigned int objID;
-bool is_objID;
-
 /* sets the passed attribute if name matches id */
-void setAttributeValue(int attrID)
+void
+vt2iso_c::setAttributeValue(int attrID)
 {
   if (strncmp (attr_name, attrNameTable[attrID], stringLength) == 0)
   {
@@ -1451,31 +1506,42 @@ void setAttributeValue(int attrID)
 }
 
 /* cleans the passed attribute value */
-void cleanAttribute(int attrID)
+void
+vt2iso_c::cleanAttribute(int attrID)
 {
   attrString [attrID] [stringLength+1-1] = 0x00;
   attrIsGiven [attrID] = false;
 }
 
-void checkForFileOrFile148 (char *tag) {
+bool
+vt2iso_c::checkForFileOrFile148 (char *tag)
+{
   char errMsg[1024+1]; errMsg[0] = 0x00;
-  if (!attrIsGiven [attrFile]) {
-    switch (colordepthtoi (attrString [attrFormat])) {
+  if (!attrIsGiven [attrFile])
+  {
+    switch (colordepthtoi (attrString [attrFormat]))
+    {
+      case 0: if (!(attrIsGiven [attrFile0]))
+        sprintf (errMsg, "YOU NEED TO SPECIFY THE file= OR THE file0= ATTRIBUTE FOR THE <%s> OBJECT! STOPPING PARSER! bye.\n\n", tag);
+        break;
+      case 1: if (!(attrIsGiven [attrFile0] && attrIsGiven [attrFile1]))
+        sprintf (errMsg, "YOU NEED TO SPECIFY THE file= OR ALL fileX= (x=0,1) ATTRIBUTES FOR THE <%s> OBJECT! STOPPING PARSER! bye.\n\n", tag);
+        break;
       case 2: if (!(attrIsGiven [attrFile0] && attrIsGiven [attrFile2]))
-          sprintf (errMsg, "YOU NEED TO SPECIFY THE file= OR MINIMUM fileX= (x=0,2) ATTRIBUTES FOR THE <%s> OBJECT! STOPPING PARSER! bye.\n\n", tag);
-          break;
-          case 1: if (!(attrIsGiven [attrFile0] && attrIsGiven [attrFile1]))
-              sprintf (errMsg, "YOU NEED TO SPECIFY THE file= OR ALL fileX= (x=0,1) ATTRIBUTES FOR THE <%s> OBJECT! STOPPING PARSER! bye.\n\n", tag);
-              break;
-              case 0: if (!(attrIsGiven [attrFile0]))
-                  sprintf (errMsg, "YOU NEED TO SPECIFY THE file= OR THE file0= ATTRIBUTE FOR THE <%s> OBJECT! STOPPING PARSER! bye.\n\n", tag);
-                  break;
+        sprintf (errMsg, "YOU NEED TO SPECIFY THE file= OR MINIMUM fileX= (x=0,2) ATTRIBUTES FOR THE <%s> OBJECT! STOPPING PARSER! bye.\n\n", tag);
+        break;
     }
-    if (strlen(errMsg)) clean_exit (-1, errMsg);
+    if (strlen(errMsg))
+    {
+      clean_exit (errMsg);
+      return false;
+    }
   }
+  return true;
 }
 
-DOMNamedNodeMap* patched_getAttributes(DOMNode *n)
+DOMNamedNodeMap*
+vt2iso_c::patched_getAttributes(DOMNode *n)
 {
   char local_attrName [1024+1];
   char local_attrValue[1024+1];
@@ -1512,7 +1578,8 @@ DOMNamedNodeMap* patched_getAttributes(DOMNode *n)
 }
 
 
-void getAttributesFromNode(DOMNode *n, bool treatSpecial, SpecialParsingBase_c* pc_specialParsing)
+bool
+vt2iso_c::getAttributesFromNode(DOMNode *n, bool treatSpecial)
 {
   DOMNamedNodeMap *pAttributes;
   if (n->hasAttributes()) { // parse through all attributes
@@ -1559,15 +1626,17 @@ void getAttributesFromNode(DOMNode *n, bool treatSpecial, SpecialParsingBase_c* 
 
       /// if USE_SPECIAL_PARSING is NOT defined, output an error warning and stop here, if attribute is unknown
       // ERROR: We didn't match a possible attribute name
-      if (!pc_specialParsing && (l == maxAttributeNames))
+      if (pc_specialParsing && (l == maxAttributeNames))
+      {
+        /// set a flag to sign if any attribute is unknown
+        pc_specialParsing->setUnknownAttributes (true);
+      }
+      else if (l == maxAttributeNames)
       {
         std::cout << "\n\nUNKNOWN ATTRIBUTE " << attr_name <<"="<< attr_value <<" IN TAG <"<< XMLString::transcode(n->getNodeName()) <<"> ENCOUNTERED! STOPPING PARSER! bye.\n\n";
-        clean_exit (-1);
+        clean_exit ();
+        return false;
       }
-
-      /// if USE_SPECIAL_PARSING is defined, set a flag to sign if any attribute is unknown
-      if (pc_specialParsing && (l == maxAttributeNames))
-        pc_specialParsing->setUnknownAttributes (true);
     }
   }
 
@@ -1581,9 +1650,11 @@ void getAttributesFromNode(DOMNode *n, bool treatSpecial, SpecialParsingBase_c* 
       is_objName = true;
     }
   }
+  return true;
 }
 
-void openDecodePrintOut (const char* workDir, char* _bitmap_path, unsigned int &options, int fixNr=-1)
+bool
+vt2iso_c::openDecodePrintOut (const char* workDir, char* _bitmap_path, unsigned int &options, int fixNr)
 {
   std::cout << "Bitmappath: " << _bitmap_path << std::endl;
   if (attrIsGiven [attrRle]) {
@@ -1613,7 +1684,11 @@ void openDecodePrintOut (const char* workDir, char* _bitmap_path, unsigned int &
     // Open Bitmap
     std::cout << std::endl; // Opening text is printed out by openBitmap
     if ( c_Bitmap.openBitmap( filename ) ) std::cout << "Loaded successfully!\n";
-    else clean_exit (-1, "Loading failed!\n");
+    else
+    {
+      clean_exit ("Loading failed!\n");
+      return false;
+    }
 
     // Decode bitmap to buffer!
     switch (actDepth) {
@@ -1628,7 +1703,11 @@ void openDecodePrintOut (const char* workDir, char* _bitmap_path, unsigned int &
             break;
     } // switch
 
-    if (c_Bitmap.objRawBitmapBytes [actDepth] == 0) clean_exit (-1, "===> Bitmap with size 0. Terminating!\n\n");
+    if (c_Bitmap.objRawBitmapBytes [actDepth] == 0)
+    {
+      clean_exit ("===> Bitmap with size 0. Terminating!\n\n");
+      return false;
+    }
 
     // Is RLE wanted/sensible? ("rle[actDepth]" set?)
     if (options & (uint64_t(1)<<(2+actDepth))) {
@@ -1693,30 +1772,41 @@ void openDecodePrintOut (const char* workDir, char* _bitmap_path, unsigned int &
       fprintf (partFile_attributes, "#endif\n");
     }
   } // for actDepth...
+
+  return true;
+}
+
+bool
+vt2iso_c::checkForAllowedExecution() /*const*/
+{
+  return  (  !( pc_specialParsing && pc_specialParsingPropTag )
+           || ( pc_specialParsingPropTag && pc_specialParsingPropTag->checkForProprietaryOrBasicObjTypes() )
+           || ( pc_specialParsing && pc_specialParsing->checkForProprietaryOrBasicObjTypes() )
+          );
 }
 
 // ---------------------------------------------------------------------------
 //
-//  static void processElement (DOMNode *n, unsigned int omb, const char* rc_workDir) --- Recursively process all ELEMENT XML-Tags...
+//  static void processElement (DOMNode *n, unsigned int omb) --- Recursively process all ELEMENT XML-Tags...
 // we're in an element here, not text or something else...
 //
 // ---------------------------------------------------------------------------
 /// @todo const char* rpcc_inKey, const char* rpcc_inButton
 ///       NOT USED atm for recursive uses, as the recursion is done in the setOrigin code!!!!
-#ifdef WIN32
-void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir /*, const char* rpcc_inKey, const char* rpcc_inButton*/, SpecialParsingBase_c* pc_specialParsing)
-#else
-static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir /*, const char* rpcc_inKey, const char* rpcc_inButton*/, SpecialParsingBase_c* pc_specialParsing)
-#endif
+bool
+vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKey, const char* rpcc_inButton*/)
 {
   DOMNode *child;
   DOMNamedNodeMap *pAttributes;
   char *node_name = XMLString::transcode(n->getNodeName());
 
   // all possible values of the objects
-  unsigned int objChildID=0; bool is_objChildID=false; //init for happy compiler
-  unsigned int objChildX=0; bool is_objChildX=false; //init for happy compiler
-  unsigned int objChildY=0; bool is_objChildY=false; //init for happy compiler
+  signed long int objChildID=0;
+  unsigned int objChildX=0;
+  unsigned int objChildY=0;
+  bool is_objChildID=false; //init for happy compiler
+  bool is_objChildX=false; //init for happy compiler
+  bool is_objChildY=false; //init for happy compiler
   unsigned int objBlockRow=0; //init for happy compiler
   unsigned int objBlockCol=0; //init for happy compiler
   unsigned int objType=0; //init for happy compiler
@@ -1762,7 +1852,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
   pc_postfix [0] = 0x00;
   unsigned int curLang;
 
-  if (!n) return;
+  if (!n) return false;
 
   // get own ObjectType
   objType = objectIsType (node_name); // returns 0..34
@@ -1771,13 +1861,20 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
   commandType = commandIsType (node_name);
 
   /// if USE_SPECIAL_PARSING is defined the objType will also be tested if it is a valid additional object type
-  if (pc_specialParsing && (objType == 0xFFFF) && (commandType == 0xFFFF))
-    objType = pc_specialParsing->getObjType(node_name);
+  if ( ( pc_specialParsing || pc_specialParsingPropTag) && (objType == 0xFFFF) && (commandType == 0xFFFF))
+  {
+    if ( pc_specialParsing )
+      objType = pc_specialParsing->getObjType(node_name);
+
+    if ( pc_specialParsingPropTag && objType == 0xFFFF )
+      objType = pc_specialParsingPropTag->getObjType(node_name);
+  }
 
   // ERROR: Wrong <TAG>
   if (objType == 0xFFFF && commandType == 0xFFFF) {
     std::cout << "\n\nUNKNOWN TAG <"<< node_name <<"> ENCOUNTERED! STOPPING PARSER! bye.\n\n";
-    clean_exit (-1);
+    clean_exit ();
+    return false;
   }
 
   if (objType >= otObjectpool)
@@ -1798,7 +1895,8 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
           if (strncmp (attr_name, "dimension", stringLength) == 0) {
             if (is_opDimension) {
               std::cout << "\n\nYOU MUSTN'T SPECIFY THE dimension= TAG IN <objectpool> MORE THAN ONCE! STOPPING PARSER! bye.\n\n";
-              clean_exit (-1);
+              clean_exit ();
+              return false;
             }
             opDimension = atoi (attr_value);
             is_opDimension = true;
@@ -1807,7 +1905,8 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
           if (strncmp (attr_name, "sk_width", stringLength) == 0) {
             if (is_skWidth) {
               std::cout << "\n\nYOU MUSTN'T SPECIFY THE sk_width= TAG IN <objectpool> MORE THAN ONCE! STOPPING PARSER! bye.\n\n";
-              clean_exit (-1);
+              clean_exit ();
+              return false;
             }
             skWidth = atoi (attr_value);
             is_skWidth = true;
@@ -1816,7 +1915,8 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
           if (strncmp (attr_name, "sk_height", stringLength) == 0) {
             if (is_skHeight) {
               std::cout << "\n\nYOU MUSTN'T SPECIFY THE sk_height= TAG IN <objectpool> MORE THAN ONCE! STOPPING PARSER! bye.\n\n";
-              clean_exit (-1);
+              clean_exit ();
+              return false;
             }
             skHeight = atoi (attr_value);
             is_skHeight = true;
@@ -1837,11 +1937,11 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
         }
       }
     }
-  } else {
-    /// if USE_SPECIAL_PARSING is defined, check here if found tag is valid at this position
-    if (pc_specialParsing && ((objType >= maxObjectTypes) && !pc_specialParsing->checkTag(n, objType, ombType)))
-      clean_exit (-1);
-    else if (!pc_specialParsing && ( ( (uint64_t(1)<<objType) & ombType) == 0 ) ) { // normal to insert element!
+  }
+  else
+  {
+    if ( objType < maxObjectTypes && ( ( (uint64_t(1)<<objType) & ombType) == 0 ) )
+    {
       // ERROR: Unallowed <TAG> here?!
       std::cout << "\n\nENCOUNTERED WRONG TAG AT THIS POSITION!\nENCOUNTERED: <" << node_name << "> objType: "
                 << objType << " ombType: " << ombType << "\nPOSSIBLE TAGS HERE WOULD BE: ";
@@ -1851,7 +1951,21 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
         }
       }
       std::cout << "\n\n";
-      clean_exit (-1);
+      clean_exit ();
+      return false;
+    }
+
+    /// if USE_SPECIAL_PARSING is defined, check here if found tag is valid at this position
+    bool b_unknownTag = false;
+    if (pc_specialParsing && ((objType >= maxObjectTypes) && !pc_specialParsing->checkTag(n, objType, ombType)))
+    {
+      b_unknownTag = true;
+    }
+
+    if (!b_unknownTag && pc_specialParsingPropTag && ((objType >= maxObjectTypes) && !pc_specialParsingPropTag->checkTag(n, objType, ombType)))
+    {
+      clean_exit ();
+      return false;
     }
 
     static bool sb_firstObject=true;
@@ -1860,15 +1974,25 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
       if (objType != otWorkingset)
       {
         std::cout << "\n\nFIRST ELEMENT HAS TO BE <workingset>! Stopping parser. Please put your workingset-object at the top in your <objectpool>!\n\n ";
-        clean_exit (-1);
+        clean_exit ();
+        return false;
       }
       sb_firstObject = false; // check is only valid for first element!
     }
 
-    getAttributesFromNode(n, true, pc_specialParsing); // true: read name= and id=
+    if (!getAttributesFromNode(n, true)) return false; // true: read name= and id=
 
     // set all non-set attributes to default values (as long as sensible, like bg_colour etc.)
     defaultAttributes (objType);
+
+    if (pc_specialParsingPropTag && (objType >= maxObjectTypes))
+    {
+      if (!pc_specialParsingPropTag->parseUnknownTag(n, objType, objName))
+      {
+        clean_exit ();
+        return false;
+      }
+    }
 
     /** if USE_SPECIAL_PARSING is defined then a special parsing follows here
       * either to parse the additional attributes in the known tags
@@ -1880,13 +2004,17 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
       if (is_objID && !pc_specialParsing->checkUseOfResourceID (objID))
       {
         std::cout << "\n\nMISUSE OF RESOURCE ID '" << objID << "' AS WISH OBJECT ID IN OBJECT <" << node_name << "> STOPPING PARSER! bye.\n\n ";
-        clean_exit (-1);
+        clean_exit ();
+        return false;
       }
 
       if (objType >= maxObjectTypes) /// that tag is unknown for basic vt2iso
       {
-        if (!pc_specialParsing->parseUnknownTag(n, objType, &is_objID, objName, objID))
-          clean_exit (-1);
+        if (!pc_specialParsing->parseUnknownTag(n, objType, &is_objID, objID))
+        {
+          clean_exit ();
+          return false;
+        }
       }
       else
       {
@@ -1896,7 +2024,10 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
           case otAlarmmask:
             /// attribute for reference to softkeymask
             if (!pc_specialParsing->parseKnownTag(n, objType, objName, &objID, &is_objID, attrString[attrSoft_key_mask]))
-              clean_exit (-1);
+            {
+              clean_exit ();
+              return false;
+            }
             break;
           case otInputboolean:
           case otInputstring:
@@ -1907,32 +2038,44 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
           case otMeter:
             /// attribute for variable reference
             if (!pc_specialParsing->parseKnownTag(n, objType, objName, &objID, &is_objID, "NULL", attrString[attrVariable_reference]))
-              clean_exit (-1);
+            {
+              clean_exit ();
+              return false;
+            }
             break;
           case otLinearbargraph:
           case otArchedbargraph:
             /// two attributes for variable references
             if (!pc_specialParsing->parseKnownTag(n, objType, objName, &objID, &is_objID, "NULL", attrString[attrVariable_reference], attrString[attrTarget_value_variable_reference]))
-              clean_exit (-1);
+            {
+              clean_exit ();
+              return false;
+            }
             break;
           default:
             /// no attribute for variable reference
             if (!pc_specialParsing->parseKnownTag(n, objType, objName, &objID, &is_objID))
-              clean_exit (-1);
+            {
+              clean_exit ();
+              return false;
+            }
             break;
         }
       }
     }
 
     // get a new ID for this object is not yet done
-    objID = getID (objName, (objType == otMacro) ? true: false, is_objID, objID, pc_specialParsing);
+    signed long int checkObjID = getID (objName, (objType == otMacro) ? true: false, is_objID, objID);
 
+    if (checkObjID == -1)
+      return false;
+    else
+      objID = (unsigned int)checkObjID;
 
     // Completely parsed <tag ...> now, start writing out to the files!
     // ______________________________________________________________________________________________________________________________
     // we got objName, objID, objType here now! - print out standard definitions in A, B and C right after the array definition lines
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
     bool objHasArrayEventMacro = false;
     switch (objType)
     {
@@ -2089,7 +2232,8 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                   attrIsGiven [attrCode] = true;
                 } else {
                   std::cout << "\n\nATTRIBUTE OTHER THAN 'code=' GIVEN IN <language ...> ! STOPPING PARSER! bye.\n\n";
-                  clean_exit (-1);
+                  clean_exit ();
+                  return false;
                 }
               }
             }
@@ -2102,7 +2246,8 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
             if (!(attrIsGiven [attrCode]))
             {
               std::cout << "\n\ncode ATTRIBUTE NEEDED IN <language ...> ! STOPPING PARSER! bye.\n\n";
-              clean_exit (-1);
+              clean_exit ();
+              return false;
             }
             char languageCode[2];
             languageCode[0] = attrString[attrCode][0];
@@ -2116,7 +2261,8 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
             if (lc == DEF_iso639entries) {
               // language not found!
               std::cout << "\n\n<language code=\"" << languageCode[0] << languageCode[1] << "\" /> is NOT conform to ISO 639 (Maybe you didn't use lower-case letters?!)! STOPPING PARSER! bye.\n\n";
-              clean_exit (-1);
+              clean_exit ();
+              return false;
             }
             sprintf (tempString, "'%c', '%c'", languageCode[0], languageCode[1]);
             fprintf (partFile_attributes, "{%s}", tempString);
@@ -2172,7 +2318,8 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
       {
         if (!(attrIsGiven [attrWidth] && attrIsGiven [attrFormat] && attrIsGiven [attrTransparency_colour]))
         {
-          clean_exit (-1, "YOU NEED TO SPECIFY THE width= AND format= AND transparency_colour= ATTRIBUTES FOR THE <picturegraphic> OBJECT! STOPPING PARSER! bye.\n\n");
+          clean_exit ("YOU NEED TO SPECIFY THE width= AND format= AND transparency_colour= ATTRIBUTES FOR THE <picturegraphic> OBJECT! STOPPING PARSER! bye.\n\n");
+          return false;
         }
 
         ///////////////////////////////////////////////////////
@@ -2181,7 +2328,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
         checkForFileOrFile148 ("picturegraphic");
 
         objBitmapOptions = picturegraphicoptionstoi (attrString [attrOptions]);
-        openDecodePrintOut (rc_workDir, std_bitmap_path, objBitmapOptions);
+        if (!openDecodePrintOut (rc_workDir, std_bitmap_path, objBitmapOptions)) return false;
 
         // copy values from c_Bitmap somewhere to have them when Print'ing out the array afterwards...
         deXwidth = atoi (attrString [attrWidth]);
@@ -2198,14 +2345,14 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
         fixNr = 0;
         for (child = n->getFirstChild(); child != 0; child=child->getNextSibling()) {
           if ( (child->getNodeType() == DOMNode::ELEMENT_NODE) && (0 == strcmp (XMLString::transcode(child->getNodeName()), otCompTable [otFixedBitmap]) )) {
-            getAttributesFromNode(child, false, pc_specialParsing); // false: DON'T read name= and id=
+            if (!getAttributesFromNode(child, false)) return false; // false: DON'T read name= and id=
             // no defaultAttributes() needed here...
 
             c_Bitmap.resetLengths();
             checkForFileOrFile148 ("fixedbitmap");
 
             fixBitmapOptions [fixNr] = objBitmapOptions & 0x3; // keep flashing/transparency information from <pictureobject>
-            openDecodePrintOut (rc_workDir, fix_bitmap_path, fixBitmapOptions[fixNr], fixNr);
+            if (!openDecodePrintOut (rc_workDir, fix_bitmap_path, fixBitmapOptions[fixNr], fixNr)) return false;
 
             // copy values from c_Bitmap somewhere in a temp array that will be printed afterwards............
             //fiXtransCol [fixNr] = colortoi (attrString [attrTransparency_colour]);
@@ -2401,7 +2548,10 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                   is_objChildName = true;
                 }
                 // give him an ID, although not necessary now...
-                objChildID = getID (objChildName, false /* assumption: not a macro here */, is_objChildID, objChildID, pc_specialParsing);
+                objChildID = getID (objChildName, false /* assumption: not a macro here */, is_objChildID, objChildID);
+
+                if (objChildID == -1) return false;
+
                 if (firstElement) {
                   if (xyNeeded) fprintf (partFile_attributes, "const IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s iVtObject%s_aObject_x_y_font_row_col [] = {", objName);
                   else          fprintf (partFile_attributes, "const IsoAgLib::repeat_iVtObject_s iVtObject%s_aObject [] = {", objName);
@@ -2411,7 +2561,8 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                 if (xyNeeded) {
                   if (!(is_objChildX && is_objChildY)) {
                     std::cout << "\n\npos_x AND pos_y ATTRIBUTES NEEDED IN CHILD-OBJECT OF <"<< node_name <<"> ! STOPPING PARSER! bye.\n\n";
-                    clean_exit (-1);
+                    clean_exit ();
+                    return false;
                   }
                   fprintf (partFile_attributes, "{&iVtObject%s, %d, %d, %s ,%d, %d}", objChildName, objChildX, objChildY, objBlockFont, objBlockRow, objBlockCol);
                 } else {
@@ -2531,7 +2682,9 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
               is_objChildName = true;
             }
             // give him an ID, although not necessary now...
-            objChildID = getID (objChildName, true, is_objChildID, objChildID, pc_specialParsing);
+            objChildID = getID (objChildName, true, is_objChildID, objChildID);
+
+            if (objChildID == -1) return false;
             if (firstElement) {
               // Changed the macro struct name in the following line to match what is in version 1.1.0 of IsoAgLib -bac 06-Jan-2005
               // fprintf (partFile_attributes, "const IsoAgLib::repeat_Macro_iVtObject_s iVtObject%s_aMacro_Object [] = {", objName);
@@ -2541,7 +2694,8 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
             }
             if (!(attrIsGiven [attrEvent])) {
               std::cout << "\n\nevent ATTRIBUTE NEEDED IN <macro ...> ! STOPPING PARSER! bye.\n\n";
-              clean_exit (-1);
+              clean_exit ();
+              return false;
             }
             //fprintf (partFile_attributes, "{%d, &vtObject%s}", atoi (attrString [attrEvent]), objChildName);
             fprintf (partFile_attributes, "{%d, &iVtObject%s}", eventToi(attrString [attrEvent]), objChildName);
@@ -2591,8 +2745,11 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                     setAttributeValue(attrObjectID);
                     setAttributeValue(attrHideShow);
                   }
+                  signed long int ret = idOrName_toi(attrString [attrObjectID], /*macro?*/false);
+                  signed int retHideShow = booltoi(attrString[attrHideShow]);
+                  if ((ret == -1) || (retHideShow == -1)) return false;
                   // Need check for all attributes being present for this command -bac
-                  sprintf(commandMessage, "0xA0, %d, %d, %d, 0xFF, 0xFF, 0xFF, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false, pc_specialParsing)), booltoi(attrString[attrHideShow]));
+                  sprintf(commandMessage, "0xA0, %d, %d, %d, 0xFF, 0xFF, 0xFF, 0xFF", MACRO_16bitToLE((unsigned int)ret), (unsigned int)retHideShow);
                   objChildCommands++;
                 }
                 break;
@@ -2616,8 +2773,11 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                     setAttributeValue(attrObjectID);
                     setAttributeValue(attrDisable_enable);
                   }
+                  signed long int ret = idOrName_toi(attrString [attrObjectID], /*macro?*/false);
+                  signed int retDisEnable = booltoi(attrString[attrDisable_enable]);
+                  if ((ret == -1) || (retDisEnable == -1))return false;
                   // Need check for all attributes being present for this command -bac
-                  sprintf(commandMessage, "0xA1, %d, %d, %d, 0xFF, 0xFF, 0xFF, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false, pc_specialParsing)), booltoi(attrString[attrDisable_enable]));
+                  sprintf(commandMessage, "0xA1, %d, %d, %d, 0xFF, 0xFF, 0xFF, 0xFF", MACRO_16bitToLE((unsigned int)ret), (unsigned int)retDisEnable);
                   objChildCommands++;
                 }
                 break;
@@ -2639,8 +2799,10 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
 
                     setAttributeValue(attrObjectID);
                   }
+                  signed long int ret = idOrName_toi(attrString [attrObjectID], /*macro?*/false);
+                  if (ret == -1) return false;
                   // Need check for all attributes being present for this command -bac
-                  sprintf(commandMessage, "0xA2, %d, %d, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false, pc_specialParsing)));
+                  sprintf(commandMessage, "0xA2, %d, %d, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF", MACRO_16bitToLE((unsigned int)ret));
                   objChildCommands++;
                 }
                 break;
@@ -2723,7 +2885,10 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                   }
                   // Need check for all attributes being present for this command -bac
                   // add 127 to relative x,y
-                  sprintf(commandMessage, "0xA5, %d, %d, %d, %d, %d, %d, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrParent_objectID], /*macro?*/false, pc_specialParsing)), MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false, pc_specialParsing)), atoi(attrString [attrX_change]) + 127 ,atoi(attrString [attrY_change]) + 127 );
+                  signed long int retParent = idOrName_toi(attrString [attrParent_objectID], /*macro?*/false);
+                  signed long int ret = idOrName_toi(attrString [attrObjectID], /*macro?*/false);
+                  if ((ret == -1) || (retParent == -1)) return false;
+                  sprintf(commandMessage, "0xA5, %d, %d, %d, %d, %d, %d, 0xFF", MACRO_16bitToLE((unsigned int)retParent), MACRO_16bitToLE((unsigned int)ret), atoi(attrString [attrX_change]) + 127 ,atoi(attrString [attrY_change]) + 127 );
                   objChildCommands++;
                 }
                 break;
@@ -2751,8 +2916,11 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                     setAttributeValue(attrX_pos);
                     setAttributeValue(attrY_pos);
                   }
+                  signed long int retParent = idOrName_toi(attrString [attrParent_objectID], /*macro?*/false);
+                  signed long int ret = idOrName_toi(attrString [attrObjectID], /*macro?*/false);
+                  if ((ret == -1) || (retParent == -1)) return false;
                   // Need check for all attributes being present for this command -bac
-                  sprintf(commandMessage, "0xB4, %d, %d, %d, %d, %d, %d, %d, %d", MACRO_16bitToLE(idOrName_toi(attrString [attrParent_objectID], /*macro?*/false, pc_specialParsing)), MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false, pc_specialParsing)), MACRO_16bitToLE(atoi(attrString [attrX_pos])), MACRO_16bitToLE(atoi(attrString [attrY_pos])));
+                  sprintf(commandMessage, "0xB4, %d, %d, %d, %d, %d, %d, %d, %d", MACRO_16bitToLE((unsigned int)retParent), MACRO_16bitToLE((unsigned int)ret), MACRO_16bitToLE(atoi(attrString [attrX_pos])), MACRO_16bitToLE(atoi(attrString [attrY_pos])));
                   objChildCommands++;
                 }
                 break;
@@ -2778,8 +2946,10 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                     setAttributeValue(attrNew_width);
                     setAttributeValue(attrNew_height);
                   }
+                  signed long int ret = idOrName_toi(attrString [attrObjectID], /*macro?*/false);
+                  if (ret == -1) return false;
                   // Need check for all attributes being present for this command -bac
-                  sprintf(commandMessage, "0xA6, %d, %d, %d, %d, %d, %d, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false, pc_specialParsing)), MACRO_16bitToLE(atoi(attrString [attrNew_width])), MACRO_16bitToLE(atoi(attrString [attrNew_height])));
+                  sprintf(commandMessage, "0xA6, %d, %d, %d, %d, %d, %d, 0xFF", MACRO_16bitToLE((unsigned int)ret), MACRO_16bitToLE(atoi(attrString [attrNew_width])), MACRO_16bitToLE(atoi(attrString [attrNew_height])));
                   objChildCommands++;
                 }
                 break;
@@ -2803,8 +2973,10 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                     setAttributeValue(attrObjectID);
                     setAttributeValue(attrNew_background_colour);
                   }
+                  signed long int ret = idOrName_toi(attrString [attrObjectID], /*macro?*/false);
+                  if (ret == -1) return false;
                   // Need check for all attributes being present for this command -bac
-                  sprintf(commandMessage, "0xA7, %d, %d, %d, 0xFF, 0xFF, 0xFF, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false, pc_specialParsing)), colortoi(attrString [attrNew_background_colour]));
+                  sprintf(commandMessage, "0xA7, %d, %d, %d, 0xFF, 0xFF, 0xFF, 0xFF", MACRO_16bitToLE((unsigned int)ret), colortoi(attrString [attrNew_background_colour]));
                   objChildCommands++;
                 }
                 break;
@@ -2828,8 +3000,11 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                     setAttributeValue(attrObjectID);
                     setAttributeValue(attrNew_value);
                   }
+                  signed long int ret = idOrName_toi(attrString [attrObjectID], /*macro?*/false);
+                  signed long int retNewValue = idOrName_toi(attrString [attrNew_value], /*macro?*/false);
+                  if ((retNewValue == -1) || (ret == -1)) return false;
                   // Need check for all attributes being present for this command -bac
-                  sprintf(commandMessage, "0xA8, %d, %d, 0x00, %d, %d, %d, %d", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false, pc_specialParsing)), MACRO_32bitToLE(idOrName_toi(attrString [attrNew_value], /*macro?*/false, pc_specialParsing)));
+                  sprintf(commandMessage, "0xA8, %d, %d, 0x00, %li, %li, %li, %li", MACRO_16bitToLE((unsigned int)ret), MACRO_32bitToLE(retNewValue));
                   objChildCommands++;
                 }
                 break;
@@ -2869,8 +3044,11 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                     sprintf(tempString, ", %d", tempStrPtr[i]);
                     strcat(tempString2, tempString);
                   }
+                  signed long int ret = idOrName_toi(attrString [attrObjectID], /*macro?*/false);
+                  signed long int retBytesInString = idOrName_toi(attrString [attrBytes_in_string], /*macro?*/false);
+                  if ((ret == -1) || (retBytesInString == -1)) return false;
                   //sprintf (attrString [attrValue], "%s", tempString2);
-                  sprintf(commandMessage, "0xB3, %d, %d, %d, %d%s", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false, pc_specialParsing)), MACRO_16bitToLE(idOrName_toi(attrString [attrBytes_in_string], /*macro?*/false, pc_specialParsing)), tempString2);
+                  sprintf(commandMessage, "0xB3, %d, %d, %d, %d%s", MACRO_16bitToLE((unsigned int)ret), MACRO_16bitToLE((unsigned int)retBytesInString), tempString2);
 
                   objChildCommands++;
                 }
@@ -2899,8 +3077,10 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                     setAttributeValue(attrNew_height);
                     setAttributeValue(attrLine_direction);
                   }
+                  signed long int ret = idOrName_toi(attrString [attrObjectID], /*macro?*/false);
+                  if (ret == -1) return false;
                   // Need check for all attributes being present for this command -bac
-                  sprintf(commandMessage, "0xA9, %d,%d, %d,%d, %d,%d, %d", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false, pc_specialParsing)), MACRO_16bitToLE(atoi(attrString [attrNew_width])), MACRO_16bitToLE(atoi(attrString [attrNew_height])), atoi(attrString [attrLine_direction]));
+                  sprintf(commandMessage, "0xA9, %d,%d, %d,%d, %d,%d, %d", MACRO_16bitToLE((unsigned int)ret), MACRO_16bitToLE(atoi(attrString [attrNew_width])), MACRO_16bitToLE(atoi(attrString [attrNew_height])), atoi(attrString [attrLine_direction]));
 
                   objChildCommands++;
                 }
@@ -2931,8 +3111,11 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                     setAttributeValue(attrFont_type);
                     setAttributeValue(attrFont_style);
                   }
+                  signed long int ret = idOrName_toi(attrString [attrObjectID], /*macro?*/false);
+                  signed long int retFontSize = fontsizetoi(attrString [attrFont_size]);
+                  if ((ret == -1) || (retFontSize == -1)) return false;
                   // Need check for all attributes being present for this command -bac
-                  sprintf(commandMessage, "0xAA, %d, %d, %d, %d, %d, %d, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false, pc_specialParsing)), colortoi(attrString [attrFont_colour]), fontsizetoi(attrString [attrFont_size]), atoi(attrString [attrFont_type]), fontstyletoi(attrString [attrFont_style]));
+                  sprintf(commandMessage, "0xAA, %d, %d, %d, %d, %d, %d, 0xFF", MACRO_16bitToLE((unsigned int)ret), colortoi(attrString [attrFont_colour]), (unsigned int)retFontSize, atoi(attrString [attrFont_type]), fontstyletoi(attrString [attrFont_style]));
 
                   objChildCommands++;
                 }
@@ -2961,8 +3144,10 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                     setAttributeValue(attrLine_width);
                     setAttributeValue(attrLine_art);
                   }
+                  signed long int ret = idOrName_toi(attrString [attrObjectID], /*macro?*/false);
+                  if (ret == -1) return false;
                   // Need check for all attributes being present for this command -bac
-                  sprintf(commandMessage, "0xAB, %d, %d, %d, %d, %d, %d, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false, pc_specialParsing)), colortoi(attrString [attrLine_colour]), atoi(attrString [attrLine_width]), MACRO_16bitToLE(linearttoi(attrString [attrLine_art])));
+                  sprintf(commandMessage, "0xAB, %d, %d, %d, %d, %d, %d, 0xFF", MACRO_16bitToLE((unsigned int)ret), colortoi(attrString [attrLine_colour]), atoi(attrString [attrLine_width]), MACRO_16bitToLE(linearttoi(attrString [attrLine_art])));
 
                   objChildCommands++;
                 }
@@ -2992,8 +3177,10 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                     setAttributeValue(attrFill_colour);
                     setAttributeValue(attrFill_pattern);
                   }
+                  signed long int ret = idOrName_toi(attrString [attrObjectID], /*macro?*/false);
+                  if (ret == -1) return false;
                   // Need check for all attributes being present for this command -bac
-                  sprintf(commandMessage, "0xAC, %d, %d, %d, %d, %d, %d, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false, pc_specialParsing)), filltypetoi(attrString [attrFill_type]), colortoi(attrString [attrFill_colour]), MACRO_16bitToLE(atoi(attrString [attrFill_pattern])));
+                  sprintf(commandMessage, "0xAC, %d, %d, %d, %d, %d, %d, 0xFF", MACRO_16bitToLE((unsigned int)ret), filltypetoi(attrString [attrFill_type]), colortoi(attrString [attrFill_colour]), MACRO_16bitToLE(atoi(attrString [attrFill_pattern])));
 
                   objChildCommands++;
                 }
@@ -3018,8 +3205,11 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                     setAttributeValue(attrWorking_setID);
                     setAttributeValue(attrNew_active_mask);
                   }
+                  signed long int retWS_ID = idOrName_toi(attrString [attrWorking_setID], /*macro?*/false);
+                  signed long int retNewMask = idOrName_toi(attrString [attrNew_active_mask], /*macro?*/false);
+                  if ((retWS_ID == -1) || (retNewMask == -1)) return false;
                   // Need check for all attributes being present for this command -bac
-                  sprintf(commandMessage, "0xAD, %d, %d, %d, %d, 0xFF, 0xFF, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrWorking_setID], /*macro?*/false, pc_specialParsing)), MACRO_16bitToLE(idOrName_toi(attrString [attrNew_active_mask], /*macro?*/false, pc_specialParsing)));
+                  sprintf(commandMessage, "0xAD, %d, %d, %d, %d, 0xFF, 0xFF, 0xFF", MACRO_16bitToLE((unsigned int)retWS_ID), MACRO_16bitToLE((unsigned int)retNewMask));
 
                   objChildCommands++;
                 }
@@ -3046,8 +3236,11 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                     setAttributeValue(attrMaskID);
                     setAttributeValue(attrNew_softkey_mask);
                   }
+                  signed long int retMaskID = idOrName_toi(attrString [attrMaskID], /*macro?*/false);
+                  signed long int retNewSKM = idOrName_toi(attrString [attrNew_softkey_mask], /*macro?*/false);
+                  if ((retMaskID == -1) || (retNewSKM == -1)) return false;
                   // Need check for all attributes being present for this command -bac
-                  sprintf(commandMessage, "0xAE, %d, %d, %d, %d, %d, 0xFF, 0xFF", masktypetoi(attrString [attrMask_type]), MACRO_16bitToLE(idOrName_toi(attrString [attrMaskID], /*macro?*/false, pc_specialParsing)), MACRO_16bitToLE(idOrName_toi(attrString [attrNew_softkey_mask], /*macro?*/false, pc_specialParsing)));
+                  sprintf(commandMessage, "0xAE, %d, %d, %d, %d, %d, 0xFF, 0xFF", masktypetoi(attrString [attrMask_type]), MACRO_16bitToLE((unsigned int)retMaskID), MACRO_16bitToLE((unsigned int)retNewSKM));
 
                   objChildCommands++;
                 }
@@ -3074,8 +3267,11 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                     setAttributeValue(attrAttributeID);
                     setAttributeValue(attrNew_value);
                   }
+                  signed long int ret = idOrName_toi(attrString [attrObjectID], /*macro?*/false);
+                  signed long int retNewValue = idOrName_toi(attrString [attrNew_value], /*macro?*/false);
+                  if ((ret == -1) || (retNewValue == -1)) return false;
                   // Need check for all attributes being present for this command -bac
-                  sprintf(commandMessage, "0xAF, %d, %d, %d, %d, %d, %d, %d", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false, pc_specialParsing)), atoi(attrString [attrAttributeID]), MACRO_32bitToLE(idOrName_toi(attrString [attrNew_value], /*macro?*/false, pc_specialParsing)));
+                  sprintf(commandMessage, "0xAF, %d, %d, %d, %li, %li, %li, %li", MACRO_16bitToLE((unsigned int)ret), atoi(attrString [attrAttributeID]), MACRO_32bitToLE(retNewValue));
 
                   objChildCommands++;
                 }
@@ -3100,8 +3296,11 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                     setAttributeValue(attrObjectID);
                     setAttributeValue(attrNew_priority);
                   }
+                  signed long int ret = idOrName_toi(attrString [attrObjectID], /*macro?*/false);
+                  signed long int retPrio = prioritytoi(attrString [attrNew_priority]);
+                  if ((ret == -1) || (retPrio == -1)) return false;
                   // Need check for all attributes being present for this command -bac
-                  sprintf(commandMessage, "0xB0, %d, %d, %d, 0xFF, 0xFF, 0xFF, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false, pc_specialParsing)), prioritytoi(attrString [attrNew_priority]));
+                  sprintf(commandMessage, "0xB0, %d, %d, %d, 0xFF, 0xFF, 0xFF, 0xFF", MACRO_16bitToLE((unsigned int)ret), (unsigned int)retPrio);
 
                   objChildCommands++;
                 }
@@ -3128,8 +3327,11 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                     setAttributeValue(attrList_index);
                     setAttributeValue(attrNew_objectID);
                   }
+                  signed long int ret = idOrName_toi(attrString [attrObjectID], /*macro?*/false);
+                  signed long int retNewID = idOrName_toi(attrString [attrNew_objectID], /*macro?*/false);
+                  if ((ret == -1) || (retNewID == -1)) return false;
                 // Need check for all attributes being present for this command -bac
-                  sprintf(commandMessage, "0xB1, %d, %d, %d, %d, %d, 0xFF, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false, pc_specialParsing)), atoi(attrString [attrList_index]), MACRO_16bitToLE(idOrName_toi(attrString [attrNew_objectID], /*macro?*/false, pc_specialParsing)));
+                  sprintf(commandMessage, "0xB1, %d, %d, %d, %d, %d, 0xFF, 0xFF", MACRO_16bitToLE((unsigned int)ret), atoi(attrString [attrList_index]), MACRO_16bitToLE((unsigned int)retNewID));
 
                   objChildCommands++;
                 }
@@ -3147,7 +3349,8 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
             /*if (!(attrIsGiven [attrEvent]))
             {
             std::cout << "\n\nevent ATTRIBUTE NEEDED IN <macro ...> ! STOPPING PARSER! bye.\n\n";
-            clean_exit (-1);
+            clean_exit ();
+            return false;
           }*/
             //fprintf (partFile_attributes, "{%d, &vtObject%s}", atoi (attrString [attrEvent]), objChildName);
             fprintf (partFile_attributes, "%s", commandMessage);
@@ -3204,11 +3407,13 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
             }
             if (!(attrIsGiven [attrPos_x])) {
               std::cout << "\n\npos_x ATTRIBUTE NEEDED IN <point ...> ! STOPPING PARSER! bye.\n\n";
-              clean_exit (-1);
+              clean_exit ();
+              return false;
             }
             if (!(attrIsGiven [attrPos_y])) {
               std::cout << "\n\npos_y ATTRIBUTE NEEDED IN <point ...> ! STOPPING PARSER! bye.\n\n";
-              clean_exit (-1);
+              clean_exit ();
+              return false;
             }
             fprintf (partFile_attributes, "{%d, %d}", atoi(attrString [attrPos_x]), atoi(attrString [attrPos_y]));
             objChildPoints++;
@@ -3238,7 +3443,8 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
         if ((curLang==ui_languages) && (ui_languages>0))
         { // language not found!
           std::cout << "\n\nYOU NEED TO SPECIFY A VALID LANGUAGE which you have also defined in the <workingset> object ("<<attrString[attrLanguage]<<" is not!)! STOPPING PARSER! bye.\n\n";
-          clean_exit (-1);
+          clean_exit ();
+          return false;
         }
         fileList = arrs_language[curLang].partFile;
         pb_firstLine = &arrs_language[curLang].firstLine;
@@ -3249,7 +3455,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
           sprintf (pc_postfix, "_%d", curLang);
         }
 
-        if (!pc_specialParsing || (pc_specialParsing && pc_specialParsing->checkForProprietaryOrBasicObjTypes()))
+        if ( checkForAllowedExecution() )
         {
           std::string str_objClassName = std::string("&iVtObject") + std::string(objName) + std::string(pc_postfix);
           // first check if found language was inserted before into the map
@@ -3311,12 +3517,14 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                   }
                   else
                   { // no closing quote
-                    clean_exit (-1, "No CLOSING quote in the language file!\n");
+                    clean_exit ("No CLOSING quote in the language file!\n");
+                    return false;
                   }
                 }
                 else
                 { // no opening quote
-                  clean_exit (-1, "No OPENING quote in the language file!\n");
+                  clean_exit ("No OPENING quote in the language file!\n");
+                  return false;
                 }
                 /// BREAK HERE TO WATCH GOTTEN IN THE DIFFERENT CASES!
                 if (strcmp (pc_id, objName) == 0)
@@ -3328,7 +3536,8 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
               }
               else
               { // no comma found, although it was not a commentary line :(
-                clean_exit (-1, "No COMMA in a non-comment line in the language file!\n");
+                clean_exit ("No COMMA in a non-comment line in the language file!\n");
+                return false;
               }
             }
             // advance to next line
@@ -3342,7 +3551,8 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
             if (attrIsGiven [attrValue])
             {
               std::cout <<"\n\nConflicting values in ["<< objName <<"]!! Someone put more debug output here, please ;) STOPPING PARSER! bye.\n\n";
-              clean_exit (-1);
+              clean_exit ();
+              return false;
             }
             else
             { // override attrValue
@@ -3354,7 +3564,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
       }
       else
       {
-        if (!pc_specialParsing || (pc_specialParsing && pc_specialParsing->checkForProprietaryOrBasicObjTypes()))
+        if ( checkForAllowedExecution() )
         {
           // was the standard map already created?
           // standard map get the index -1 to differ between "real" language map and normal object map
@@ -3377,11 +3587,13 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
 
       // if special parsing is active and the object type is greater than maxObjectType
       // the output to the files must be done separately
-      if ( pc_specialParsing && objType >= maxObjectTypes )
+      if ( pc_specialParsingPropTag && objType >= maxObjectTypes )
       {
-        pc_specialParsing->outputData2FilesPiecewise();
+        // need to know the object id in special parsing when data is written to files
+        pc_specialParsingPropTag->setObjID(objID);
+        pc_specialParsingPropTag->outputData2FilesPiecewise();
       }
-      else
+      else if (objType < maxObjectTypes)
       {
         fprintf (partFile_variables, "IsoAgLib::iVtObject%s_c iVtObject%s%s;\n", otClassnameTable [objType], objName, pc_postfix);
         fprintf (partFile_variables_extern, "extern IsoAgLib::iVtObject%s_c iVtObject%s%s;\n", otClassnameTable [objType], objName, pc_postfix);
@@ -3397,7 +3609,8 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
       }
       if (attrIsGiven [attrInKey])
       {
-        bool resultat = booltoi (attrString [attrInKey]);
+        signed int resultat = booltoi (attrString [attrInKey]);
+        if (resultat == -1) return false;
         fprintf (partFile_functions_origin, "  iVtObject%s%s.setOriginSKM (%s);\n", objName, pc_postfix, resultat ? "true":"false");
       }
 
@@ -3422,13 +3635,21 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
       switch (objType)
       {
         case otWorkingset:
-          if (!attrIsGiven [attrActive_mask] && (booltoi (attrString [attrSelectable]) == 1)) clean_exit (-1, "YOU NEED TO SPECIFY THE active_mask= ATTRIBUTE FOR THE <workingset> OBJECT (if selectable='yes'!)! STOPPING PARSER! bye.\n\n");
-          if (booltoi (attrString [attrSelectable]) == 0)
-            fprintf (partFile_attributes, ", %d, %d, NULL",         colortoi (attrString [attrBackground_colour]), booltoi (attrString [attrSelectable]));
-          else fprintf (partFile_attributes, ", %d, %d, &iVtObject%s", colortoi (attrString [attrBackground_colour]), booltoi (attrString [attrSelectable]), attrString [attrActive_mask]);
-          if (!sb_WSFound)
+          signed int retSelectable = booltoi (attrString [attrSelectable]);
+          if (retSelectable == -1) return false;
+          if (!attrIsGiven [attrActive_mask] && (retSelectable == 1))
           {
-            sb_WSFound = true;
+            clean_exit ("YOU NEED TO SPECIFY THE active_mask= ATTRIBUTE FOR THE <workingset> OBJECT (if selectable='yes'!)! STOPPING PARSER! bye.\n\n");
+            return false;
+          }
+          if (retSelectable == 0)
+            fprintf (partFile_attributes, ", %d, %d, NULL",         colortoi (attrString [attrBackground_colour]), retSelectable);
+          else
+            fprintf (partFile_attributes, ", %d, %d, &iVtObject%s", colortoi (attrString [attrBackground_colour]), retSelectable, attrString [attrActive_mask]);
+
+          if (!vt2iso_c::sb_WSFound)
+          {
+            vt2iso_c::sb_WSFound = true;
             ui16_WSObjID = objID;
           }
           break;
@@ -3441,15 +3662,24 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
           break;
 
         case otAlarmmask:
+          signed long int retPrio = prioritytoi(attrString [attrPriority]);
+          signed long int retSignal = acousticsignaltoi (attrString [attrAcoustic_signal]);
+          if ((retPrio == -1) || (retSignal == -1)) return false;
           if ( (strcmp ("NULL", attrString [attrSoft_key_mask]) == 0) || (strcmp("65535",  attrString [attrSoft_key_mask]) == 0))
             fprintf (partFile_attributes, ", %d, NULL, %d, %d", colortoi (attrString [attrBackground_colour]), atoi (attrString [attrPriority]), atoi (attrString [attrAcoustic_signal]));
           else
-            fprintf (partFile_attributes, ", %d, &iVtObject%s, %d, %d", colortoi (attrString [attrBackground_colour]), attrString [attrSoft_key_mask], prioritytoi (attrString [attrPriority]), acousticsignaltoi (attrString [attrAcoustic_signal]));
+            fprintf (partFile_attributes, ", %d, &iVtObject%s, %d, %d", colortoi (attrString [attrBackground_colour]), attrString [attrSoft_key_mask], (unsigned int)retPrio, (unsigned int)retSignal);
           break;
 
         case otContainer:
-          if (!(attrIsGiven [attrWidth] && attrIsGiven [attrHeight])) clean_exit (-1, "YOU NEED TO SPECIFY THE width= AND height= ATTRIBUTES FOR THE <container> OBJECT! STOPPING PARSER! bye.\n\n");
-          fprintf (partFile_attributes, ", %s, %s, %d", attrString [attrWidth], attrString [attrHeight], booltoi (attrString [attrHidden]));
+          if (!(attrIsGiven [attrWidth] && attrIsGiven [attrHeight]))
+          {
+            clean_exit ("YOU NEED TO SPECIFY THE width= AND height= ATTRIBUTES FOR THE <container> OBJECT! STOPPING PARSER! bye.\n\n");
+            return false;
+          }
+          signed int retHidden = booltoi (attrString [attrHidden]);
+          if (retHidden == -1) return false;
+          fprintf (partFile_attributes, ", %s, %s, %d", attrString [attrWidth], attrString [attrHeight], (unsigned int)retHidden);
           break;
 
         case otSoftkeymask:
@@ -3464,62 +3694,89 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
 
         case otButton:
           if (!attrIsGiven [attrKey_code]) getKeyCode ();
-          if (!(attrIsGiven [attrWidth] && attrIsGiven [attrHeight])) clean_exit (-1, "YOU NEED TO SPECIFY THE width= AND height= ATTRIBUTES FOR THE <key> OBJECT! STOPPING PARSER! bye.\n\n");
+          if (!(attrIsGiven [attrWidth] && attrIsGiven [attrHeight]))
+          {
+            clean_exit ("YOU NEED TO SPECIFY THE width= AND height= ATTRIBUTES FOR THE <key> OBJECT! STOPPING PARSER! bye.\n\n");
+            return false;
+          }
           fprintf (partFile_attributes, ", %s, %s, %d, %d, %s, %d", attrString [attrWidth], attrString [attrHeight], colortoi (attrString [attrBackground_colour]), colortoi (attrString [attrBorder_colour]), attrString [attrKey_code], buttonoptiontoi (attrString [attrOptions]));
           fprintf (partFile_defines, "#define vtKeyCode%s %d\n", objName, atoi (attrString [attrKey_code])); // like in otKey
           break;
 
         case otInputboolean:
-          if (!(attrIsGiven [attrWidth] && attrIsGiven [attrForeground_colour])) clean_exit (-1, "YOU NEED TO SPECIFY THE width= AND foreground_colour= ATTRIBUTES FOR THE <inputboolean> OBJECT! STOPPING PARSER! bye.\n\n");
+        {
+          if (!(attrIsGiven [attrWidth] && attrIsGiven [attrForeground_colour]))
+          {
+            clean_exit ("YOU NEED TO SPECIFY THE width= AND foreground_colour= ATTRIBUTES FOR THE <inputboolean> OBJECT! STOPPING PARSER! bye.\n\n");
+            return false;
+          }
           if (!attrIsGiven [attrValue])
             sprintf (attrString [attrValue], "0");
-          fprintf (partFile_attributes, ", %d, %s, &iVtObject%s, %s, %s, %d", colortoi (attrString [attrBackground_colour]), attrString [attrWidth], attrString [attrForeground_colour], attrString [attrVariable_reference], attrString [attrValue], booltoi (attrString [attrEnabled]));
+
+          signed int retEnabled = booltoi (attrString [attrEnabled]);
+          if (retEnabled == -1) return false;
+          fprintf (partFile_attributes, ", %d, %s, &iVtObject%s, %s, %s, %d", colortoi (attrString [attrBackground_colour]), attrString [attrWidth], attrString [attrForeground_colour], attrString [attrVariable_reference], attrString [attrValue], (unsigned int)retEnabled);
+        }
           break;
 
         case otInputstring:
+        {
           if (!attrIsGiven [attrValue])
           {
             if (!(attrIsGiven [attrWidth] && attrIsGiven [attrHeight] && attrIsGiven [attrFont_attributes] && attrIsGiven [attrLength] && attrIsGiven [attrEnabled]))
             {
-              clean_exit (-1, "YOU NEED TO SPECIFY THE width= AND height= AND font_attributes= AND length= AND enabled= ATTRIBUTES FOR THE <inputstring> OBJECT IF NO VALUE IS GIVEN! STOPPING PARSER! bye.\n\n");
+              clean_exit ("YOU NEED TO SPECIFY THE width= AND height= AND font_attributes= AND length= AND enabled= ATTRIBUTES FOR THE <inputstring> OBJECT IF NO VALUE IS GIVEN! STOPPING PARSER! bye.\n\n");
+              return false;
             }
     /// @todo MAYBE WARN/FAIL HERE WHEN NO LANGUAGE IS GIVEN BUT NO ENTRY IS DEFINED????????
         /*
             if (arrs_language[i].valueBuffer == NULL)
             { // open failed.
             std::cout << "\n\nLanguage file for code=\"" << arrs_language[i].code[0] << arrs_language[i].code[1] << "\" in object ["<< objName <<"] not found! STOPPING PARSER! bye.\n\n";
-            clean_exit (-1);
+            clean_exit ();
+            return false;
           }*/
             sprintf (attrString [attrValue], "NULL");
           }
           else
           {
+            signed int ret = strlenUnescaped (attrString [attrValue]);
+            if (ret == -1) return false;
             //auto-calculate string length
-            if (!attrIsGiven [attrLength]) { sprintf (attrString [attrLength], "%d", strlenUnescaped (attrString [attrValue])); attrIsGiven [attrLength] = true; }
+            if (!attrIsGiven [attrLength]) { sprintf (attrString [attrLength], "%d", ret); attrIsGiven [attrLength] = true; }
             if (!(attrIsGiven [attrWidth] && attrIsGiven [attrHeight] && attrIsGiven [attrFont_attributes] && attrIsGiven [attrEnabled]))
             {
-              clean_exit (-1, "YOU NEED TO SPECIFY THE width= AND height= AND font_attributes= AND enabled = ATTRIBUTES FOR THE <inputstring> OBJECT! STOPPING PARSER! bye.\n\n");
+              clean_exit ("YOU NEED TO SPECIFY THE width= AND height= AND font_attributes= AND enabled = ATTRIBUTES FOR THE <inputstring> OBJECT! STOPPING PARSER! bye.\n\n");
+              return false;
             }
-            copyWithQuoteAndLength (tempString, attrString [attrValue], atoi (attrString [attrLength]));
-      //      sprintf (tempString, "\"%s\"", attrString [attrValue]);
+            if (!copyWithQuoteAndLength (tempString, attrString [attrValue], atoi (attrString [attrLength])))
+              return false;
+
             sprintf (attrString [attrValue], "%s", tempString);
           }
+          signed int retEnabled = booltoi(attrString [attrEnabled]);
+          signed int retJustification = horizontaljustificationtoi (attrString [attrHorizontal_justification]);
+          if (retEnabled == -1 || retJustification == -1) return false;
           if ( (!attrIsGiven [attrInput_attributes]) || (strcmp( attrString[attrInput_attributes], "65535")==0) )
           {
             sprintf (attrString [attrInput_attributes], "NULL");
-            fprintf (partFile_attributes, ", %s, %s, %d, &iVtObject%s, %s, %d, %s, %d, %s, %s, %d", attrString [attrWidth], attrString [attrHeight], colortoi (attrString [attrBackground_colour]), attrString [attrFont_attributes], attrString [attrInput_attributes], optionstoi (attrString [attrOptions]), attrString [attrVariable_reference], horizontaljustificationtoi (attrString [attrHorizontal_justification]), attrString [attrLength], attrString [attrValue], booltoi(attrString [attrEnabled]) );
+
+            fprintf (partFile_attributes, ", %s, %s, %d, &iVtObject%s, %s, %d, %s, %d, %s, %s, %d", attrString [attrWidth], attrString [attrHeight], colortoi (attrString [attrBackground_colour]), attrString [attrFont_attributes], attrString [attrInput_attributes], optionstoi (attrString [attrOptions]), attrString [attrVariable_reference], (unsigned int)retJustification, attrString [attrLength], attrString [attrValue], (unsigned int)retEnabled );
           }
           else
           {
-            fprintf (partFile_attributes, ", %s, %s, %d, &iVtObject%s, &iVtObject%s, %d, %s, %d, %s, %s, %d", attrString [attrWidth], attrString [attrHeight], colortoi (attrString [attrBackground_colour]), attrString [attrFont_attributes], attrString [attrInput_attributes], optionstoi (attrString [attrOptions]), attrString [attrVariable_reference], horizontaljustificationtoi (attrString [attrHorizontal_justification]), attrString [attrLength], attrString [attrValue], booltoi(attrString [attrEnabled]) );
+            fprintf (partFile_attributes, ", %s, %s, %d, &iVtObject%s, &iVtObject%s, %d, %s, %d, %s, %s, %d", attrString [attrWidth], attrString [attrHeight], colortoi (attrString [attrBackground_colour]), attrString [attrFont_attributes], attrString [attrInput_attributes], optionstoi (attrString [attrOptions]), attrString [attrVariable_reference], (unsigned int)retJustification, attrString [attrLength], attrString [attrValue], (unsigned int)retEnabled );
           }
+        }
           break;
 
         case otInputnumber:
+        {
           if (!(attrIsGiven [attrWidth] && attrIsGiven [attrHeight] && attrIsGiven [attrFont_attributes] && attrIsGiven [attrMin_value] && attrIsGiven [attrMax_value]
                 && attrIsGiven [attrOffset] && attrIsGiven [attrScale] && attrIsGiven [attrNumber_of_decimals] && attrIsGiven [attrFormat]))
           {
-            clean_exit (-1, "YOU NEED TO SPECIFY THE width= AND height= AND font_attributes= AND min_value= AND max_value= AND offset= AND scale= AND number_of_decimals= AND format= ATTRIBUTES FOR THE <inputnumber> OBJECT! STOPPING PARSER! bye.\n\n");
+            clean_exit ("YOU NEED TO SPECIFY THE width= AND height= AND font_attributes= AND min_value= AND max_value= AND offset= AND scale= AND number_of_decimals= AND format= ATTRIBUTES FOR THE <inputnumber> OBJECT! STOPPING PARSER! bye.\n\n");
+            return false;
           }
           if (!attrIsGiven [attrValue])
             sprintf (attrString [attrValue], "0");
@@ -3534,49 +3791,75 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
           { // place "L" for type specifier
             fprintf (partFile_attributes, ", %sL", attrString [attrOffset] );
           }
-          fprintf (partFile_attributes, ", %s, %s, %d, %d, %d", attrString [attrScale],
-                   attrString [attrNumber_of_decimals], formattoi (attrString [attrFormat]), horizontaljustificationtoi (attrString [attrHorizontal_justification]),
-                   booltoi (attrString [attrEnabled]));
+
+          signed int retEnabled = booltoi (attrString [attrEnabled]);
+          signed int retFormat = formattoi (attrString [attrFormat]);
+          signed int retJust = horizontaljustificationtoi (attrString [attrHorizontal_justification]);
+          if ((retEnabled == -1) || (retFormat == -1) || (retJust = -1)) return false;
+          fprintf (partFile_attributes, ", %s, %s, %d, %d, %d", attrString [attrScale], attrString [attrNumber_of_decimals],
+                   (unsigned int)retFormat, (unsigned int)retJust, (unsigned int)retEnabled);
           break;
+        }
 
         case otInputlist:
-          if (!(attrIsGiven [attrWidth] && attrIsGiven [attrHeight])) clean_exit (-1, "YOU NEED TO SPECIFY THE width= AND height= ATTRIBUTES FOR THE <inputlist> OBJECT! STOPPING PARSER! bye.\n\n");
+        {
+          if (!(attrIsGiven [attrWidth] && attrIsGiven [attrHeight]))
+          {
+            clean_exit ("YOU NEED TO SPECIFY THE width= AND height= ATTRIBUTES FOR THE <inputlist> OBJECT! STOPPING PARSER! bye.\n\n");
+            return false;
+          }
           if (!attrIsGiven [attrValue])
             sprintf (attrString [attrValue], "0");
-          fprintf (partFile_attributes, ", %s, %s, %s, %s, %d", attrString [attrWidth], attrString [attrHeight], attrString [attrVariable_reference], attrString [attrValue],
-                   booltoi (attrString [attrEnabled]));
+
+          signed int retEnabled = booltoi (attrString [attrEnabled]);
+          if (retEnabled == -1) return false;
+          fprintf (partFile_attributes, ", %s, %s, %s, %s, %d", attrString [attrWidth], attrString [attrHeight], attrString [attrVariable_reference],
+                   attrString [attrValue], (unsigned int)retEnabled);
           break;
+        }
 
         case otOutputstring:
           if (!attrIsGiven [attrValue]) {
             // Variable Reference
-            if (!(attrIsGiven [attrWidth] && attrIsGiven [attrHeight] && attrIsGiven [attrFont_attributes] && attrIsGiven [attrLength])) {
-              clean_exit (-1, "YOU NEED TO SPECIFY THE width= AND height= AND font_attributes= AND length= ATTRIBUTES FOR THE <outputstring> OBJECT WHEN VALUE IS SET BY REFERENCE! STOPPING PARSER! bye.\n\n");
+            if (!(attrIsGiven [attrWidth] && attrIsGiven [attrHeight] && attrIsGiven [attrFont_attributes] && attrIsGiven [attrLength]))
+            {
+              clean_exit ("YOU NEED TO SPECIFY THE width= AND height= AND font_attributes= AND length= ATTRIBUTES FOR THE <outputstring> OBJECT WHEN VALUE IS SET BY REFERENCE! STOPPING PARSER! bye.\n\n");
+              return false;
             }
             sprintf (attrString [attrValue], "NULL");
           } else {
             // Direct Value
             if (!attrIsGiven [attrLength]) {
+              signed int ret = strlenUnescaped (attrString [attrValue]);
+              if (ret == -1) return false;
               // Auto-calculate Length-field
-              sprintf (attrString [attrLength], "%d", strlenUnescaped (attrString [attrValue])); attrIsGiven [attrLength] = true;
+              sprintf (attrString [attrLength], "%d", ret); attrIsGiven [attrLength] = true;
             }
-            if (!(attrIsGiven [attrWidth] && attrIsGiven [attrHeight] && attrIsGiven [attrFont_attributes] && attrIsGiven [attrLength])) {
-              clean_exit (-1, "YOU NEED TO SPECIFY THE width= AND height= AND font_attributes= AND length= ATTRIBUTES FOR THE <outputstring> OBJECT! STOPPING PARSER! bye.\n\n");
+            if (!(attrIsGiven [attrWidth] && attrIsGiven [attrHeight] && attrIsGiven [attrFont_attributes] && attrIsGiven [attrLength]))
+            {
+              clean_exit ("YOU NEED TO SPECIFY THE width= AND height= AND font_attributes= AND length= ATTRIBUTES FOR THE <outputstring> OBJECT! STOPPING PARSER! bye.\n\n");
+              return false;
             }
-            copyWithQuoteAndLength (tempString, attrString [attrValue], atoi (attrString [attrLength]));
+            if (!copyWithQuoteAndLength (tempString, attrString [attrValue], atoi (attrString [attrLength])))
+              return false;
+
             sprintf (attrString [attrValue], "%s", tempString);
           }
+          signed int retJust = horizontaljustificationtoi (attrString [attrHorizontal_justification]);
+          if (retJust == -1) return false;
           fprintf (partFile_attributes, ", %s, %s, %d, &iVtObject%s, %d, %s, %d, %s, %s", attrString [attrWidth], attrString [attrHeight], colortoi (attrString [attrBackground_colour]),
                    attrString [attrFont_attributes], optionstoi (attrString [attrOptions]), attrString [attrVariable_reference],
-                   horizontaljustificationtoi (attrString [attrHorizontal_justification]), attrString [attrLength], attrString [attrValue]);
+                   (unsigned int)retJust, attrString [attrLength], attrString [attrValue]);
       //    printf ("%s --- %d\n", attrString [attrOptions], optionstoi (attrString [attrOptions]));
           break;
 
         case otOutputnumber:
+        {
           if (!(attrIsGiven [attrWidth] && attrIsGiven [attrHeight] && attrIsGiven [attrFont_attributes] && attrIsGiven [attrOffset] && attrIsGiven [attrScale]
                 && attrIsGiven [attrNumber_of_decimals] && attrIsGiven [attrFormat]))
           {
-            clean_exit (-1, "YOU NEED TO SPECIFY THE width= AND height= AND font_attributes= AND offset= AND scale= AND number_of_decimals= AND format= ATTRIBUTES FOR THE <outputnumber> OBJECT! STOPPING PARSER! bye.\n\n");
+            clean_exit ("YOU NEED TO SPECIFY THE width= AND height= AND font_attributes= AND offset= AND scale= AND number_of_decimals= AND format= ATTRIBUTES FOR THE <outputnumber> OBJECT! STOPPING PARSER! bye.\n\n");
+            return false;
           }
           if (!attrIsGiven [attrValue])
             sprintf (attrString [attrValue], "0");
@@ -3591,21 +3874,29 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
           {
             fprintf (partFile_attributes, ", %sL", attrString [attrOffset]);
           }
+          signed int retFormat = formattoi (attrString [attrFormat]);
+          signed int retJust = horizontaljustificationtoi (attrString [attrHorizontal_justification]);
+          if ((retFormat == -1) || (retJust == -1)) return false;
           fprintf (partFile_attributes, ", %s, %s, %d, %d", attrString [attrScale], attrString [attrNumber_of_decimals],
-                   formattoi (attrString [attrFormat]), horizontaljustificationtoi (attrString [attrHorizontal_justification]));
+                   (unsigned int)retFormat, (unsigned int)retJust);
           break;
+        }
 
         case otLine:
           if (!(attrIsGiven [attrLine_attributes] && attrIsGiven [attrWidth] && attrIsGiven [attrHeight]))
           {
-            clean_exit (-1, "YOU NEED TO SPECIFY THE Line_attributes= AND width= AND height= ATTRIBUTES FOR THE <line> OBJECT! STOPPING PARSER! bye.\n\n");
+            clean_exit ("YOU NEED TO SPECIFY THE Line_attributes= AND width= AND height= ATTRIBUTES FOR THE <line> OBJECT! STOPPING PARSER! bye.\n\n");
+            return false;
           }
           fprintf (partFile_attributes, ", &iVtObject%s, %s, %s, %d", attrString [attrLine_attributes], attrString [attrWidth], attrString [attrHeight], linedirectiontoi (attrString [attrLine_direction]));
           break;
 
         case otRectangle:
-          //clean_exit (-1, "<rectangle> OBJECT NOT YET IMPLEMENTED STOPPING PARSER! bye.\n\n");
-          if (!(attrIsGiven [attrLine_attributes] && attrIsGiven [attrWidth] && attrIsGiven [attrHeight])) clean_exit (-1, "YOU NEED TO SPECIFY THE Line_attributes= AND width= AND height= ATTRIBUTES FOR THE <rectangle> OBJECT! STOPPING PARSER! bye.\n\n");
+          if (!(attrIsGiven [attrLine_attributes] && attrIsGiven [attrWidth] && attrIsGiven [attrHeight]))
+          {
+            clean_exit ("YOU NEED TO SPECIFY THE Line_attributes= AND width= AND height= ATTRIBUTES FOR THE <rectangle> OBJECT! STOPPING PARSER! bye.\n\n");
+            return false;
+          }
           if (!attrIsGiven [attrLine_suppression])
             sprintf (attrString [attrLine_suppression], "0");
           if ( (!attrIsGiven [attrFill_attributes]) || (strcmp( attrString[attrFill_attributes], "65535")==0) )
@@ -3624,9 +3915,15 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
           break;
 
         case otEllipse:
-          //clean_exit (-1, "<ellipse> OBJECT NOT YET IMPLEMENTED STOPPING PARSER! bye.\n\n");
-          if (!(attrIsGiven [attrLine_attributes] && attrIsGiven [attrWidth] && attrIsGiven [attrHeight] && attrIsGiven [attrStart_angle] && attrIsGiven [attrEnd_angle])) clean_exit (-1, "YOU NEED TO SPECIFY THE Line_attributes= AND width= AND height= AND start_angle= AND end_angle= ATTRIBUTES FOR THE <ellipse> OBJECT! STOPPING PARSER! bye.\n\n");
-          if (atoi(attrString[attrStart_angle]) > 180 || atoi(attrString[attrEnd_angle]) > 180) clean_exit (-1, "start_angle= AND end_angle= FOR THE <ellipse> OBJECT NEED TO HAVE A VALUE LESS OR EQUAL TO 180! STOPPING PARSER! bye.\n\n");
+          if (!(attrIsGiven [attrLine_attributes] && attrIsGiven [attrWidth] && attrIsGiven [attrHeight] && attrIsGiven [attrStart_angle] && attrIsGiven [attrEnd_angle]))
+          {
+            clean_exit ( "YOU NEED TO SPECIFY THE Line_attributes= AND width= AND height= AND start_angle= AND end_angle= ATTRIBUTES FOR THE <ellipse> OBJECT! STOPPING PARSER! bye.\n\n");
+          }
+          if (atoi(attrString[attrStart_angle]) > 180 || atoi(attrString[attrEnd_angle]) > 180)
+          {
+            clean_exit ("start_angle= AND end_angle= FOR THE <ellipse> OBJECT NEED TO HAVE A VALUE LESS OR EQUAL TO 180! STOPPING PARSER! bye.\n\n");
+            return false;
+          }
           if (!attrIsGiven [attrEllipse_type])
             sprintf (attrString [attrEllipse_type], "0");
           if ( (!attrIsGiven [attrFill_attributes]) || (strcmp( attrString[attrFill_attributes], "65535")==0) )
@@ -3642,8 +3939,11 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
           break;
 
         case otPolygon:
-          //clean_exit (-1, "<polygon> OBJECT NOT YET IMPLEMENTED STOPPING PARSER! bye.\n\n");
-          if (!(attrIsGiven [attrWidth] && attrIsGiven [attrHeight] && attrIsGiven [attrLine_attributes])) clean_exit (-1, "YOU NEED TO SPECIFY THE width= AND height= AND Line_attributes= ATTRIBUTES FOR THE <polygon> OBJECT! STOPPING PARSER! bye.\n\n");
+          if (!(attrIsGiven [attrWidth] && attrIsGiven [attrHeight] && attrIsGiven [attrLine_attributes]))
+          {
+            clean_exit ("YOU NEED TO SPECIFY THE width= AND height= AND Line_attributes= ATTRIBUTES FOR THE <polygon> OBJECT! STOPPING PARSER! bye.\n\n");
+            return false;
+          }
           if (!attrIsGiven [attrPolygon_type])
             sprintf (attrString [attrPolygon_type], "0");
           if ( (!attrIsGiven [attrFill_attributes]) || (strcmp( attrString[attrFill_attributes], "65535")==0) )
@@ -3657,9 +3957,16 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
           break;
 
         case otMeter:
-          //clean_exit (-1, "<meter> OBJECT NOT YET IMPLEMENTED STOPPING PARSER! bye.\n\n");
-          if (!(attrIsGiven [attrWidth] && attrIsGiven [attrNeedle_colour] && attrIsGiven [attrBorder_colour] && attrIsGiven [attrArc_and_tick_colour] && attrIsGiven [attrNumber_of_ticks] && attrIsGiven[attrStart_angle] && attrIsGiven[attrEnd_angle] && attrIsGiven [attrMin_value] && attrIsGiven [attrMax_value])) clean_exit (-1, "YOU NEED TO SPECIFY THE width= AND needle_colour= AND border_colour= AND target_line_colour= AND number_of_ticks= AND start_angle AND end_angle AND min_value= AND max_value= ATTRIBUTES FOR THE <meter> OBJECT! STOPPING PARSER! bye.\n\n");
-          if (atoi(attrString[attrStart_angle]) > 180 || atoi(attrString[attrEnd_angle]) > 180) clean_exit (-1, "start_angle= AND end_angle= FOR THE <meter> OBJECT NEED TO HAVE A VALUE LESS OR EQUAL TO 180! STOPPING PARSER! bye.\n\n");
+          if (!(attrIsGiven [attrWidth] && attrIsGiven [attrNeedle_colour] && attrIsGiven [attrBorder_colour] && attrIsGiven [attrArc_and_tick_colour] && attrIsGiven [attrNumber_of_ticks] && attrIsGiven[attrStart_angle] && attrIsGiven[attrEnd_angle] && attrIsGiven [attrMin_value] && attrIsGiven [attrMax_value]))
+          {
+            clean_exit ("YOU NEED TO SPECIFY THE width= AND needle_colour= AND border_colour= AND target_line_colour= AND number_of_ticks= AND start_angle AND end_angle AND min_value= AND max_value= ATTRIBUTES FOR THE <meter> OBJECT! STOPPING PARSER! bye.\n\n");
+            return false;
+          }
+          if (atoi(attrString[attrStart_angle]) > 180 || atoi(attrString[attrEnd_angle]) > 180)
+          {
+            clean_exit ("start_angle= AND end_angle= FOR THE <meter> OBJECT NEED TO HAVE A VALUE LESS OR EQUAL TO 180! STOPPING PARSER! bye.\n\n");
+            return false;
+          }
           if (!attrIsGiven [attrValue])
             sprintf (attrString [attrValue], "0");
           if (!attrIsGiven [attrOptions])
@@ -3672,7 +3979,8 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
           if (!(attrIsGiven [attrWidth] && attrIsGiven [attrHeight] && attrIsGiven [attrColour] && attrIsGiven [attrTarget_line_colour]
                 && attrIsGiven [attrNumber_of_ticks] && attrIsGiven [attrMin_value] && attrIsGiven [attrMax_value]))
           {
-            clean_exit (-1, "YOU NEED TO SPECIFY THE width= AND height= AND colour= AND target_line_colour= AND number_of_ticks= AND min_value= AND max_value= ATTRIBUTES FOR THE <linearbargraph> OBJECT! STOPPING PARSER! bye.\n\n");
+            clean_exit ("YOU NEED TO SPECIFY THE width= AND height= AND colour= AND target_line_colour= AND number_of_ticks= AND min_value= AND max_value= ATTRIBUTES FOR THE <linearbargraph> OBJECT! STOPPING PARSER! bye.\n\n");
+            return false;
           }
           if (!attrIsGiven [attrValue])
             sprintf (attrString [attrValue], "0");
@@ -3685,9 +3993,16 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
           break;
 
         case otArchedbargraph:
-          //clean_exit (-1, "<archedbargraph> OBJECT NOT YET IMPLEMENTED STOPPING PARSER! bye.\n\n");
-          if (!(attrIsGiven [attrWidth] && attrIsGiven [attrHeight] && attrIsGiven [attrColour] && attrIsGiven [attrTarget_line_colour] && attrIsGiven [attrStart_angle] && attrIsGiven [attrEnd_angle] && attrIsGiven[attrBar_graph_width] && attrIsGiven [attrMin_value] && attrIsGiven [attrMax_value])) clean_exit (-1, "YOU NEED TO SPECIFY THE width= AND height= AND colour= AND target_line_colour= AND start_angle= AND end_angle= AND bar_graph_width AND min_value= AND max_value= ATTRIBUTES FOR THE <archedbargraph> OBJECT! STOPPING PARSER! bye.\n\n");
-          if (atoi(attrString[attrStart_angle]) > 180 || atoi(attrString[attrEnd_angle]) > 180) clean_exit (-1, "start_angle= AND end_angle= FOR THE <archedbargraph> OBJECT NEED TO HAVE A VALUE LESS OR EQUAL TO 180! STOPPING PARSER! bye.\n\n");
+          if (!(attrIsGiven [attrWidth] && attrIsGiven [attrHeight] && attrIsGiven [attrColour] && attrIsGiven [attrTarget_line_colour] && attrIsGiven [attrStart_angle] && attrIsGiven [attrEnd_angle] && attrIsGiven[attrBar_graph_width] && attrIsGiven [attrMin_value] && attrIsGiven [attrMax_value]))
+          {
+            clean_exit ("YOU NEED TO SPECIFY THE width= AND height= AND colour= AND target_line_colour= AND start_angle= AND end_angle= AND bar_graph_width AND min_value= AND max_value= ATTRIBUTES FOR THE <archedbargraph> OBJECT! STOPPING PARSER! bye.\n\n");
+            return false;
+          }
+          if (atoi(attrString[attrStart_angle]) > 180 || atoi(attrString[attrEnd_angle]) > 180)
+          {
+            clean_exit ("start_angle= AND end_angle= FOR THE <archedbargraph> OBJECT NEED TO HAVE A VALUE LESS OR EQUAL TO 180! STOPPING PARSER! bye.\n\n");
+            return false;
+          }
           if (!attrIsGiven [attrValue])
             sprintf (attrString [attrValue], "0");
           if (!attrIsGiven [attrTarget_value])
@@ -3711,13 +4026,25 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
         case otStringvariable:
           if (!attrIsGiven [attrValue]) {
             std::cout << objName << ":\n  ";
-            if (!(attrIsGiven [attrLength])) clean_exit (-1, "YOU NEED TO SPECIFY THE length= ATTRIBUTE FOR THE <stringvariable> OBJECT (as no value= is given)! STOPPING PARSER! bye.\n\n");
+            if (!(attrIsGiven [attrLength]))
+            {
+              clean_exit ("YOU NEED TO SPECIFY THE length= ATTRIBUTE FOR THE <stringvariable> OBJECT (as no value= is given)! STOPPING PARSER! bye.\n\n");
+              return false;
+            }
             sprintf (attrString [attrValue], "NULL");
           } else {
+            signed int ret = strlenUnescaped (attrString [attrValue]);
+            if (ret == -1) return false;
             //auto-calculate length
-            if (!attrIsGiven [attrLength]) { sprintf (attrString [attrLength], "%d", strlenUnescaped (attrString [attrValue])); attrIsGiven [attrLength] = true; }
-            copyWithQuoteAndLength (tempString, attrString [attrValue], atoi (attrString [attrLength]));
-        //     sprintf (tempString, "\"%s\"", attrString [attrValue]);
+            if (!attrIsGiven [attrLength])
+            {
+              sprintf (attrString [attrLength], "%d", ret);
+              attrIsGiven [attrLength] = true;
+            }
+
+            if (!copyWithQuoteAndLength (tempString, attrString [attrValue], atoi (attrString [attrLength])))
+              return false;
+
             sprintf (attrString [attrValue], "%s", tempString);
           }
           fprintf (partFile_attributes, ", %s, %s", attrString [attrLength], attrString [attrValue]);
@@ -3726,28 +4053,38 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
         case otFontattributes:
           if (!attrIsGiven [attrFont_type])
           {
-            clean_exit (-1, "INFORMATION: WITH THAT VERSION OF VT2ISO YOU NEED TO SPECIFY THE font_type= ATTRIBUTE FOR THE <fontattributes> OBJECT! \n \
+            clean_exit ("INFORMATION: WITH THAT VERSION OF VT2ISO YOU NEED TO SPECIFY THE font_type= ATTRIBUTE FOR THE <fontattributes> OBJECT! \n \
                 VALID VALUES ARE latin1, latin2, latin4, latin5, latin7, latin9 or proprietary! STOPPING PARSER! bye.\n\n");
+            return false;
           }
 
           if (!(attrIsGiven [attrFont_colour] && attrIsGiven [attrFont_size]))
           {
-            clean_exit (-1, "YOU NEED TO SPECIFY THE font_colour= AND font_size= AND font_type= ATTRIBUTE FOR THE <fontattributes> OBJECT! STOPPING PARSER! bye.\n\n");
+            clean_exit ("YOU NEED TO SPECIFY THE font_colour= AND font_size= AND font_type= ATTRIBUTE FOR THE <fontattributes> OBJECT! STOPPING PARSER! bye.\n\n");
+            return false;
           }
-          fprintf (partFile_attributes, ", %d, %d, %d, %d", colortoi (attrString [attrFont_colour]), fontsizetoi (attrString [attrFont_size]), fonttypetoi (attrString [attrFont_type]), fontstyletoi (attrString [attrFont_style]));
+          signed int ret = fonttypetoi (attrString [attrFont_type]);
+          signed int retFontSize = fontsizetoi (attrString [attrFont_size]);
+          if ((ret == -1) || (retFontSize == -1))return false;
+
+          fprintf (partFile_attributes, ", %d, %d, %d, %d", colortoi (attrString [attrFont_colour]), (unsigned int)retFontSize, (unsigned int)ret, fontstyletoi (attrString [attrFont_style]));
           break;
 
         case otLineattributes:
           if (!(attrIsGiven [attrLine_colour] && attrIsGiven [attrLine_width] && attrIsGiven [attrLine_art]))
           {
-            clean_exit (-1, "YOU NEED TO SPECIFY THE line_colour= AND line_width= AND line_art= ATTRIBUTE FOR THE <lineattributes> OBJECT! STOPPING PARSER! bye.\n\n");
+            clean_exit ("YOU NEED TO SPECIFY THE line_colour= AND line_width= AND line_art= ATTRIBUTE FOR THE <lineattributes> OBJECT! STOPPING PARSER! bye.\n\n");
+            return false;
           }
           fprintf (partFile_attributes, ", %d, %s, 0x%x", colortoi (attrString [attrLine_colour]), attrString [attrLine_width], linearttoi (attrString [attrLine_art]));
           break;
 
         case otFillattributes:
-          //clean_exit (-1, "<fillattribute> OBJECT NOT YET IMPLEMENTED. STOPPING PARSER! bye.\n\n");
-          if (!(attrIsGiven [attrFill_colour])) clean_exit (-1, "YOU NEED TO SPECIFY THE fill_colour= ATTRIBUTE FOR THE <fillattributes> OBJECT! STOPPING PARSER! bye.\n\n");
+          if (!(attrIsGiven [attrFill_colour]))
+          {
+            clean_exit ("YOU NEED TO SPECIFY THE fill_colour= ATTRIBUTE FOR THE <fillattributes> OBJECT! STOPPING PARSER! bye.\n\n");
+            return false;
+          }
           if (!attrIsGiven [attrFill_type])
             sprintf (attrString [attrFill_type], "0");
           if(!attrIsGiven [attrFill_pattern])
@@ -3762,15 +4099,20 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
           break;
 
         case otInputattributes:
-          //clean_exit (-1, "<inputattribute> OBJECT NOT YET IMPLEMENTED. STOPPING PARSER! bye.\n\n");
           if (!attrIsGiven [attrValidation_type])
             sprintf (attrString [attrValidation_type], "0");
           if (!attrIsGiven [attrValidation_string]) {
-            if (!(attrIsGiven [attrLength])) clean_exit (-1, "YOU NEED TO SPECIFY THE length= ATTRIBUTE FOR THE <inputattribute> OBJECT! STOPPING PARSER! bye.\n\n");
+            if (!(attrIsGiven [attrLength]))
+            {
+              clean_exit ("YOU NEED TO SPECIFY THE length= ATTRIBUTE FOR THE <inputattribute> OBJECT! STOPPING PARSER! bye.\n\n");
+              return false;
+            }
             sprintf (attrString [attrValidation_string], "NULL");
           } else {
+            signed int ret = strlenUnescaped (attrString [attrValidation_string]);
+            if (ret == -1) return false;
             // auto-calculate string-length
-            if (!attrIsGiven [attrLength]) { sprintf (attrString [attrLength], "%d", strlenUnescaped (attrString [attrValidation_string])); attrIsGiven [attrLength] = true; }
+            if (!attrIsGiven [attrLength]) { sprintf (attrString [attrLength], "%d", ret); attrIsGiven [attrLength] = true; }
             sprintf (tempString, "\"%s\"", attrString [attrValidation_string]);
             sprintf (attrString [attrValidation_string], "%s", tempString);
           }
@@ -3798,7 +4140,8 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
         case otAuxiliaryfunction:
           if (!(attrIsGiven [attrBackground_colour] && attrIsGiven[attrFunction_type]) )
           {
-            clean_exit (-1, "YOU NEED TO SPECIFY THE background_colour= and function_type= ATTRIBUTE FOR THE <auxiliaryfunction> OBJECT! STOPPING PARSER! bye.\n\n");
+            clean_exit ("YOU NEED TO SPECIFY THE background_colour= and function_type= ATTRIBUTE FOR THE <auxiliaryfunction> OBJECT! STOPPING PARSER! bye.\n\n");
+            return false;
           }
           fprintf (partFile_attributes, ", %d, %d", colortoi (attrString [attrBackground_colour]), auxfunctiontyptetoi(attrString [attrFunction_type]));
           break;
@@ -3806,24 +4149,43 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
         case otAuxiliaryinput:
           if (!(attrIsGiven [attrBackground_colour] && attrIsGiven[attrFunction_type] && attrIsGiven[attrInput_id]) )
           {
-            clean_exit (-1, "YOU NEED TO SPECIFY THE background_colour= and function_type= and input_id= ATTRIBUTE FOR THE <auxiliaryinput> OBJECT! STOPPING PARSER! bye.\n\n");
+            clean_exit ("YOU NEED TO SPECIFY THE background_colour= and function_type= and input_id= ATTRIBUTE FOR THE <auxiliaryinput> OBJECT! STOPPING PARSER! bye.\n\n");
+            return false;
           }
           fprintf (partFile_attributes, ", %d, %d, %s", colortoi (attrString [attrBackground_colour]), auxfunctiontyptetoi(attrString [attrFunction_type]), attrString[attrInput_id]);
           break;
 
         case otGraphicsContext:
           if (!attrIsGiven [attrViewportWidth] || !attrIsGiven [attrViewportHeight])
-            clean_exit (-1, "YOU NEED TO SPECIFY THE viewport_width= and viewport_height= ATTRIBUTE FOR THE <graphicscontext> OBJECT! STOPPING PARSER! bye.\n\n");
+          {
+            clean_exit ("YOU NEED TO SPECIFY THE viewport_width= and viewport_height= ATTRIBUTE FOR THE <graphicscontext> OBJECT! STOPPING PARSER! bye.\n\n");
+            return false;
+          }
           if (!attrIsGiven [attrViewportX] || !attrIsGiven [attrViewportY])
-            clean_exit (-1, "YOU NEED TO SPECIFY THE viewport_x= and viewport_y= ATTRIBUTE FOR THE <graphicscontext> OBJECT! STOPPING PARSER! bye.\n\n");
+          {
+            clean_exit ("YOU NEED TO SPECIFY THE viewport_x= and viewport_y= ATTRIBUTE FOR THE <graphicscontext> OBJECT! STOPPING PARSER! bye.\n\n");
+            return false;
+          }
           if (!attrIsGiven [attrCanvasWidth] || !attrIsGiven [attrCanvasHeight])
-            clean_exit (-1, "YOU NEED TO SPECIFY THE canvas_width= and canvas_height= ATTRIBUTE FOR THE <graphicscontext> OBJECT! STOPPING PARSER! bye.\n\n");
+          {
+            clean_exit ("YOU NEED TO SPECIFY THE canvas_width= and canvas_height= ATTRIBUTE FOR THE <graphicscontext> OBJECT! STOPPING PARSER! bye.\n\n");
+            return false;
+          }
           if (!attrIsGiven [attrViewportZoom])
-            clean_exit (-1, "YOU NEED TO SPECIFY THE viewport_zoom= ATTRIBUTE FOR THE <graphicscontext> OBJECT! STOPPING PARSER! bye.\n\n");
+          {
+            clean_exit ("YOU NEED TO SPECIFY THE viewport_zoom= ATTRIBUTE FOR THE <graphicscontext> OBJECT! STOPPING PARSER! bye.\n\n");
+            return false;
+          }
           if (!attrIsGiven [attrForeground_colour] || !attrIsGiven [attrBackground_colour])
-            clean_exit (-1, "YOU NEED TO SPECIFY THE foreground_colour= and background_colour= ATTRIBUTE FOR THE <graphicscontext> OBJECT! STOPPING PARSER! bye.\n\n");
+          {
+            clean_exit ("YOU NEED TO SPECIFY THE foreground_colour= and background_colour= ATTRIBUTE FOR THE <graphicscontext> OBJECT! STOPPING PARSER! bye.\n\n");
+            return false;
+          }
           if (!attrIsGiven [attrFormat] || !attrIsGiven [attrOptions])
-            clean_exit (-1, "YOU NEED TO SPECIFY THE format= and options= ATTRIBUTE FOR THE <graphicscontext> OBJECT! STOPPING PARSER! bye.\n\n");
+          {
+            clean_exit ("YOU NEED TO SPECIFY THE format= and options= ATTRIBUTE FOR THE <graphicscontext> OBJECT! STOPPING PARSER! bye.\n\n");
+            return false;
+          }
 
           fprintf (partFile_attributes, ", %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d",
                    atoi (attrString [attrViewportWidth]), atoi (attrString [attrViewportHeight]),
@@ -3928,7 +4290,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
         }
       }
 
-      if (!pc_specialParsing || (pc_specialParsing && pc_specialParsing->checkForProprietaryOrBasicObjTypes()))
+      if ( checkForAllowedExecution() )
         fprintf (partFile_attributes, "};\n"); //s_ROM bla blub terminator...
 
     } while (b_dupMode && (*dupLangNext != 0x00));
@@ -3942,10 +4304,227 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
   {
     if (child->getNodeType() == DOMNode::ELEMENT_NODE)
     {
-      processElement (child, omcType, rc_workDir /*, rpcc_inKey, rpcc_inButton*/, pc_specialParsing);
+      if (!processElement (child, omcType/*, rpcc_inKey, rpcc_inButton*/))
+        return false;
     }
   }
+
+  return true;
 }
+
+vt2iso_c::vt2iso_c(std::basic_string<char>* pch_fileName): amountXmlFiles(0)
+{
+  prepareFileNameAndDirectory(pch_fileName);
+
+  const char* pc_projName = pch_fileName->c_str();
+
+  init ( pc_projName );
+
+  #ifdef USE_SPECIAL_PARSING_PROP
+  pc_specialParsingPropTag = new SpecialParsingUsePropTag_c( pc_projName,
+                                                             partFile_variables,
+                                                             partFile_variables_extern,
+                                                             partFile_attributes,
+                                                             partFile_functions,
+                                                             partFile_defines
+                                                           );
+  #else
+  pc_specialParsingPropTag = NULL;
+  #endif
+
+  #ifdef USE_SPECIAL_PARSING
+  pc_specialParsing = new SpecialParsingUse_c(pc_projName);
+  #else
+  pc_specialParsing = NULL;
+  #endif
+}
+
+vt2iso_c::~vt2iso_c()
+{
+   delete pc_specialParsing;
+   delete pc_specialParsingPropTag;
+}
+
+void
+vt2iso_c::skRelatedFileOutput()
+{
+  if (!getIsSKWidth()) setSKWidth (60);
+  if (!getIsSKHeight()) setSKHeight (32);
+  if (!getIsSKWidth() || !getIsSKHeight()) {
+    std::cout << "\n\nWARNING: You have NOT specified a SoftKey-Width/Height, so vt2iso assumes your softkeys are designed on a 60x32 pixel basis.\n"
+        << "ATTENTION: SoftKeys are scaled and centered to fit the SK-Dimensions of the VT it is displayed on, so take care that you know what you're doing!\n\n";
+  }
+  fprintf (partFile_defines, "#define vtObjectPoolDimension %d\n", getOPDimension());
+  fprintf (partFile_defines, "#define vtObjectPoolSoftKeyWidth %d\n", getSKWidth());
+  fprintf (partFile_defines, "#define vtObjectPoolSoftKeyHeight %d\n", getSKHeight());
+}
+
+void
+vt2iso_c::prepareFileNameAndDirectory(std::basic_string<char>* pch_fileName)
+{
+  char        xmlFileTemp [1024+1];
+  int lastDirPos;
+
+  std::basic_string<char> c_expectedType = ".xml";
+  std::basic_string<char> c_expectedType2 = ".XML";
+
+  std::basic_string<char> c_unwantedType = ".inc";
+  std::basic_string<char> c_unwantedType2 = ".h";
+  std::basic_string<char> c_unwantedType3 = ".inc-template";
+  std::basic_string<char> c_unwantedType4 = ".iop";
+  std::basic_string<char> c_unwantedType5 = ".txt";
+  std::basic_string<char> c_unwantedType6 = ".csv";
+
+  // strip the ".xml" away!
+  if ((pch_fileName->length()-4) > 4)
+  { // see if the user gave ".xml" !
+    if ( (pch_fileName->substr( pch_fileName->length()-4 ) == c_expectedType)
+          ||(pch_fileName->substr( pch_fileName->length()-4 ) == c_expectedType) )
+    { // strip off ".xml"
+      pch_fileName->erase (pch_fileName->length()-4, 4);
+    }
+  }
+#ifdef WIN32
+  lastDirPos = pch_fileName->find_last_of( "\\" );
+  c_directory = pch_fileName->substr( 0, lastDirPos+1 );
+  if (c_directory == "") c_directory = ".\\";
+#else
+  lastDirPos = pch_fileName->find_last_of( "/" );
+  c_directory = pch_fileName->substr( 0, lastDirPos+1 );
+  if (c_directory == "") c_directory = "./";
+#endif
+
+  c_project = pch_fileName->substr( lastDirPos+1 );
+
+  std::basic_string<char> c_directoryCompareItem;
+  std::cerr << "--> Directory: " << c_directory << std::endl << "--> File:      " << c_project << std::endl;
+
+  strncpy (proName, c_project.c_str(), 1024);
+  proName [1024+1-1] = 0x00;
+  for (unsigned int i=0; i<strlen(proName); i++)
+  {
+    if (proName[i] == '.')
+    {
+      proName[i] = 0x00; break;
+    }
+  }
+
+#ifdef WIN32
+  HANDLE hList;
+  TCHAR  szDir[255];
+  TCHAR  szSubDir[255];
+  TCHAR  szCurDir[255];
+  WIN32_FIND_DATA FileData;
+
+  // save current directory
+  GetCurrentDirectory(255, szCurDir);
+  std::cerr << "CurDir: " << szCurDir << std::endl;
+
+    // go to new working directory
+  if (SetCurrentDirectory(c_directory.c_str()) == 0)
+  {
+    std::cerr <<  "Couldn't open the directory."<< std::endl;
+
+    CHAR szBuf[80];
+    DWORD dw = GetLastError();
+    sprintf(szBuf, "Open %s failed: GetLastError returned %u\n", szCurDir, dw);
+    printf(szBuf);
+    HRESULT_FROM_WIN32(dw);
+    return;
+  }
+
+  // Get the proper directory path
+  wsprintf(szDir, TEXT("*") );
+  hList = FindFirstFile(szDir, &FileData);
+  if (hList != INVALID_HANDLE_VALUE)
+  { // Traverse through the directory structure
+    do
+    { // Check the object is a directory or not
+      if (!(FileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
+      { //if ((strcmp(FileData.cFileName, ".") != 0) && (strcmp(FileData.cFileName, "..") != 0))
+        c_directoryCompareItem = FileData.cFileName;
+        if ( c_directoryCompareItem[0] == '.' ) continue;
+        if (c_directoryCompareItem [c_directoryCompareItem.length()-1] == '~') continue;
+        if ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-4 ) == c_unwantedType ) continue;
+        if ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-2 ) == c_unwantedType2 ) continue;
+        if ( (c_directoryCompareItem.length() > 13) && (c_directoryCompareItem.substr( c_directoryCompareItem.length()-13 ) == c_unwantedType3) ) continue;
+        if ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-4 ) == c_unwantedType4 ) continue;
+        if ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-4 ) == c_unwantedType5 ) continue;
+        if ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-4 ) == c_unwantedType6 ) continue;
+
+        if ( c_directoryCompareItem.find( c_project ) != std::string::npos ) {
+          c_directoryCompareItem.insert(0, "\\" );
+          c_directoryCompareItem.insert(0, c_directory );
+          strcpy (xmlFiles [amountXmlFiles], c_directoryCompareItem.c_str() );
+          amountXmlFiles++;
+          //std::cout << "found: " << c_directoryCompareItem << "\n";
+        }
+      }
+    } while (FindNextFile(hList, &FileData));
+    FindClose(hList);
+  }
+  else
+  {
+    std::cerr <<  "Couldn't open the directory.";
+    return;
+  }
+  SetCurrentDirectory(szCurDir);
+#else
+  // LINUX -> POSIX method for directory traversal
+  DIR *dp;
+  dp = opendir (c_directory.c_str());
+  if (dp != NULL)
+  {
+    dirent *ep;
+    while ((ep = readdir (dp))) {
+      c_directoryCompareItem = ep->d_name;
+      if ( c_directoryCompareItem[0] == '.' ) continue;
+      if ( (c_directoryCompareItem.length() > 1  ) && ( c_directoryCompareItem [c_directoryCompareItem.length()-1] == '~')) continue;
+      if ( (c_directoryCompareItem.length() > 4  ) && ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-4  ) == c_unwantedType  ) ) continue;
+      if ( (c_directoryCompareItem.length() > 2  ) && ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-2  ) == c_unwantedType2 ) ) continue;
+      if ( (c_directoryCompareItem.length() > 13 ) && ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-13 ) == c_unwantedType3 ) ) continue;
+      if ( (c_directoryCompareItem.length() > 4  ) && ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-4  ) == c_unwantedType4 ) ) continue;
+      if ( (c_directoryCompareItem.length() > 4  ) && ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-4  ) == c_unwantedType5 ) ) continue;
+      if ( (c_directoryCompareItem.length() > 4  ) && ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-4  ) == c_unwantedType6 ) ) continue;
+
+      if ( c_directoryCompareItem.find( c_project ) != std::string::npos ) {
+        c_directoryCompareItem.insert(0, "/" );
+        c_directoryCompareItem.insert(0, c_directory );
+        strcpy (xmlFiles [amountXmlFiles], c_directoryCompareItem.c_str() );
+        amountXmlFiles++;
+    //    std::cout << "found: " << ep->d_name << "\n";
+      }
+    }
+    closedir(dp);
+  }
+  else
+  {
+    std::cerr <<  "Couldn't open the directory '" << c_directory.c_str() << "'." << std::endl;
+    return;
+  }
+#endif
+  // finished preparations on directory -> needed in processElement(...)
+  rc_workDir = c_directory.c_str();
+
+  // now sort this list
+  bool stillSorting;
+  do {
+    stillSorting=false;
+    for (int a=1; a< amountXmlFiles; a++) {
+      if (strcmp (xmlFiles [a-1], xmlFiles [a]) > 0) {
+        strcpy (xmlFileTemp, xmlFiles [a]);
+        strcpy (xmlFiles [a], xmlFiles [a-1]);
+        strcpy (xmlFiles [a-1], xmlFileTemp);
+        stillSorting=true;
+      }
+    }
+  } while (stillSorting);
+
+  std::cout << std::endl << "--> Sorted Filelist:" << std::endl;
+  for (int dex=0; dex < amountXmlFiles; dex++) std::cout << xmlFiles [dex] << "\n";
+  std::cout << "\n";
+}
+
 
 // ---------------------------------------------------------------------------
 //
@@ -3964,17 +4543,9 @@ int main(int argC, char* argV[])
   bool        schemaFullChecking = false;
   bool        errorOccurred = false;
   char        localeStr[64];
-  char        xmlFiles [256] [1024+1];
-  char        xmlFileTemp [1024+1];
-  int         indexXmlFile, amountXmlFiles=0;
+  int         indexXmlFile;
 
   bool generatePalette = false;
-
-  std_bitmap_path [0] = 0x00;
-  fix_bitmap_path [0] = 0x00;
-  attr_name [1024+1-1] = 0x00;
-  attr_value [1024+1-1] = 0x00;
-  spc_autoLanguage[0] = 0x00; // default to no autoLanguage
 
   memset(localeStr, 0, sizeof localeStr);
 
@@ -4059,163 +4630,13 @@ int main(int argC, char* argV[])
   //
   if (argInd != argC - 1) { usage(); return 1; }
 
-  std::basic_string<char> c_unwantedType = ".inc";
-  std::basic_string<char> c_unwantedType2 = ".h";
-  std::basic_string<char> c_unwantedType3 = ".inc-template";
-  std::basic_string<char> c_unwantedType4 = ".iop";
-  std::basic_string<char> c_unwantedType5 = ".txt";
-  std::basic_string<char> c_expectedType = ".xml";
-  std::basic_string<char> c_expectedType2 = ".XML";
-  std::basic_string<char> c_unwantedType6 = ".csv";
-
   // get file list with matching files!
   std::basic_string<char> c_fileName( argV [argInd] );
-  // strip the ".xml" away!
-  if ((c_fileName.length()-4) > 4)
-  { // see if the user gave ".xml" !
-    if ( (c_fileName.substr( c_fileName.length()-4 ) == c_expectedType)
-        ||(c_fileName.substr( c_fileName.length()-4 ) == c_expectedType) )
-    { // strip off ".xml"
-      c_fileName.erase (c_fileName.length()-4, 4);
-    }
-  }
-  #ifdef WIN32
-  int lastDirPos = c_fileName.find_last_of( "\\" );
-  std::basic_string<char> c_directory = c_fileName.substr( 0, lastDirPos+1 );
-  if (c_directory == "") c_directory = ".\\";
-  #else
-  int lastDirPos = c_fileName.find_last_of( "/" );
-  std::basic_string<char> c_directory = c_fileName.substr( 0, lastDirPos+1 );
-  if (c_directory == "") c_directory = "./";
-  #endif
-  /* globally defined */  c_project = c_fileName.substr( lastDirPos+1 );
-  std::basic_string<char> c_directoryCompareItem;
-  std::cerr << "--> Directory: " << c_directory << std::endl << "--> File:      " << c_project << std::endl;
-  strncpy (proName, c_project.c_str(), 1024); proName [1024+1-1] = 0x00;
-  for (unsigned int i=0; i<strlen(proName); i++) if (proName[i] == '.') { proName[i] = 0x00; break; }
-
-#ifdef WIN32
-  HANDLE hList;
-  TCHAR  szDir[255];
-  TCHAR  szSubDir[255];
-  TCHAR  szCurDir[255];
-  WIN32_FIND_DATA FileData;
-
-  // save current directory
-  GetCurrentDirectory(255, szCurDir);
-  std::cerr << "CurDir: " << szCurDir << std::endl;
-
-    // go to new working directory
-  if (SetCurrentDirectory(c_directory.c_str()) == 0)
-  {
-    std::cerr <<  "Couldn't open the directory."<< std::endl;
-
-    CHAR szBuf[80];
-    DWORD dw = GetLastError();
-    sprintf(szBuf, "Open %s failed: GetLastError returned %u\n", szCurDir, dw);
-    printf(szBuf);
-    HRESULT_FROM_WIN32(dw);
-    return 0;
-  }
-
-  // Get the proper directory path
-  wsprintf(szDir, TEXT("*") );
-  hList = FindFirstFile(szDir, &FileData);
-  if (hList != INVALID_HANDLE_VALUE)
-  { // Traverse through the directory structure
-    do
-    { // Check the object is a directory or not
-      if (!(FileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
-      { //if ((strcmp(FileData.cFileName, ".") != 0) && (strcmp(FileData.cFileName, "..") != 0))
-        c_directoryCompareItem = FileData.cFileName;
-        if ( c_directoryCompareItem[0] == '.' ) continue;
-        if (c_directoryCompareItem [c_directoryCompareItem.length()-1] == '~') continue;
-        if ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-4 ) == c_unwantedType ) continue;
-        if ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-2 ) == c_unwantedType2 ) continue;
-        if ( (c_directoryCompareItem.length() > 13) && (c_directoryCompareItem.substr( c_directoryCompareItem.length()-13 ) == c_unwantedType3) ) continue;
-        if ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-4 ) == c_unwantedType4 ) continue;
-        if ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-4 ) == c_unwantedType5 ) continue;
-        if ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-4 ) == c_unwantedType6 ) continue;
-
-        if ( c_directoryCompareItem.find( c_project ) != std::string::npos ) {
-          c_directoryCompareItem.insert(0, "\\" );
-          c_directoryCompareItem.insert(0, c_directory );
-          strcpy (xmlFiles [amountXmlFiles], c_directoryCompareItem.c_str() );
-          amountXmlFiles++;
-          //std::cout << "found: " << c_directoryCompareItem << "\n";
-        }
-      }
-    } while (FindNextFile(hList, &FileData));
-    FindClose(hList);
-  }
-  else
-  {
-    std::cerr <<  "Couldn't open the directory.";
-    return 0;
-  }
-  SetCurrentDirectory(szCurDir);
-#else
-  // LINUX -> POSIX method for directory traversal
-  DIR *dp;
-  dp = opendir (c_directory.c_str());
-  if (dp != NULL)
-  {
-    dirent *ep;
-    while ((ep = readdir (dp))) {
-      c_directoryCompareItem = ep->d_name;
-      if ( c_directoryCompareItem[0] == '.' ) continue;
-      if ( (c_directoryCompareItem.length() > 1  ) && ( c_directoryCompareItem [c_directoryCompareItem.length()-1] == '~')) continue;
-      if ( (c_directoryCompareItem.length() > 4  ) && ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-4  ) == c_unwantedType  ) ) continue;
-      if ( (c_directoryCompareItem.length() > 2  ) && ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-2  ) == c_unwantedType2 ) ) continue;
-      if ( (c_directoryCompareItem.length() > 13 ) && ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-13 ) == c_unwantedType3 ) ) continue;
-      if ( (c_directoryCompareItem.length() > 4  ) && ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-4  ) == c_unwantedType4 ) ) continue;
-      if ( (c_directoryCompareItem.length() > 4  ) && ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-4  ) == c_unwantedType5 ) ) continue;
-      if ( (c_directoryCompareItem.length() > 4  ) && ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-4  ) == c_unwantedType6 ) ) continue;
-
-      if ( c_directoryCompareItem.find( c_project ) != std::string::npos ) {
-        c_directoryCompareItem.insert(0, "/" );
-        c_directoryCompareItem.insert(0, c_directory );
-        strcpy (xmlFiles [amountXmlFiles], c_directoryCompareItem.c_str() );
-        amountXmlFiles++;
-    //    std::cout << "found: " << ep->d_name << "\n";
-      }
-    }
-    closedir(dp);
-  } else
-  {
-    std::cerr <<  "Couldn't open the directory '" << c_directory.c_str() << "'." << std::endl;
-    return 0;
-  }
-#endif
-
-  // now sort this list
-  bool stillSorting;
-  do {
-    stillSorting=false;
-    for (int a=1; a< amountXmlFiles; a++) {
-      if (strcmp (xmlFiles [a-1], xmlFiles [a]) > 0) {
-        strcpy (xmlFileTemp, xmlFiles [a]);
-        strcpy (xmlFiles [a], xmlFiles [a-1]);
-        strcpy (xmlFiles [a-1], xmlFileTemp);
-        stillSorting=true;
-      }
-    }
-  } while (stillSorting);
-
-  std::cout << std::endl << "--> Sorted Filelist:" << std::endl;
-  for (int dex=0; dex < amountXmlFiles; dex++) std::cout << xmlFiles [dex] << "\n";
-  std::cout << "\n";
 
   // Do INITIALIZATION STUFF
-  init (c_fileName.c_str());
+  vt2iso_c* pc_vt2iso = new vt2iso_c(&c_fileName);
 
-#ifdef USE_SPECIAL_PARSING
-  SpecialParsingUse_c* pc_specialParsing = new SpecialParsingUse_c(c_fileName);
-#else
-  SpecialParsingBase_c* pc_specialParsing = NULL;
-#endif
-
-  for (indexXmlFile = 0; indexXmlFile < amountXmlFiles; indexXmlFile++)
+  for (indexXmlFile = 0; indexXmlFile < pc_vt2iso->getAmountXmlFiles(); indexXmlFile++)
   { // loop all xmlFiles!
     // Initialize the XML4C system
     try
@@ -4274,7 +4695,7 @@ int main(int argC, char* argV[])
     char fURI[1000];
     //initialize the array to zeros
     memset(fURI,0,sizeof(fURI));
-    xmlFile = xmlFiles [indexXmlFile];
+    xmlFile = pc_vt2iso->getXmlFile(indexXmlFile);
 
     //reset error count first
     errorHandler.resetErrors();
@@ -4322,10 +4743,17 @@ int main(int argC, char* argV[])
     } else {
       if (doc) {
         // ### main routine starts right here!!! ###
-        processElement ((DOMNode*)doc->getDocumentElement(), (uint64_t(1)<<otObjectpool), c_directory.c_str() /*, NULL, NULL*/, pc_specialParsing); // must all be included in an objectpool tag !
-        if (!is_opDimension) {
+        bool b_returnRootElement = pc_vt2iso->processElement ((DOMNode*)doc->getDocumentElement(), (uint64_t(1)<<otObjectpool) /*, NULL, NULL*/); // must all be included in an objectpool tag !
+
+        if (!pc_vt2iso->getIsOPDimension()) {
           std::cout << "\n\nYOU NEED TO SPECIFY THE dimension= TAG IN <objectpool> ! STOPPING PARSER! bye.\n\n";
-          clean_exit (-1);
+          delete pc_vt2iso;
+          exit (-1);
+        }
+        if (!b_returnRootElement)
+        { /// ANY ERROR OCCURED DURING THE PARSING PROCESS
+          delete pc_vt2iso;
+          exit (-1);
         }
       }
     }
@@ -4338,48 +4766,13 @@ int main(int argC, char* argV[])
 
   } // loop all files
 
-  if (!is_skWidth) skWidth = 60;
-  if (!is_skHeight) skHeight = 32;
-  if (!is_skWidth || !is_skHeight) {
-    std::cout << "\n\nWARNING: You have NOT specified a SoftKey-Width/Height, so vt2iso assumes your softkeys are designed on a 60x32 pixel basis.\n"
-        << "ATTENTION: SoftKeys are scaled and centered to fit the SK-Dimensions of the VT it is displayed on, so take care that you know what you're doing!\n\n";
-  }
-  fprintf (partFile_defines, "#define vtObjectPoolDimension %d\n", opDimension);
-  fprintf (partFile_defines, "#define vtObjectPoolSoftKeyWidth %d\n", skWidth);
-  fprintf (partFile_defines, "#define vtObjectPoolSoftKeyHeight %d\n", skHeight);
+  pc_vt2iso->skRelatedFileOutput();
 
-  if (errorOccurred) clean_exit (4, "XML-Parsing error occured. Terminating.\n", pc_specialParsing);
-  else clean_exit (0, "All conversion done successfully.\n", pc_specialParsing);
-}
-
-
-DOMCountErrorHandler::DOMCountErrorHandler()
-  : fSawErrors(false) {}
-
-DOMCountErrorHandler::~DOMCountErrorHandler() {}
-
-// ---------------------------------------------------------------------------
-//  DOMCountHandlers: Overrides of the DOM ErrorHandler interface
-// ---------------------------------------------------------------------------
-bool DOMCountErrorHandler::handleError(const DOMError& domError)
-{
-  fSawErrors = true;
-  if (domError.getSeverity() == DOMError::DOM_SEVERITY_WARNING)
-    std::cerr << "\nWarning at file ";
-  else if (domError.getSeverity() == DOMError::DOM_SEVERITY_ERROR)
-    std::cerr << "\nError at file ";
+  if (errorOccurred)
+    pc_vt2iso->clean_exit ("XML-Parsing error occured. Terminating.\n");
   else
-    std::cerr << "\nFatal Error at file ";
+    pc_vt2iso->clean_exit ("All conversion done successfully.\n");
 
-  std::cerr << StrX(domError.getLocation()->getURI())
-      << ", line " << domError.getLocation()->getLineNumber()
-      << ", char " << domError.getLocation()->getColumnNumber()
-      << "\n  Message: " << StrX(domError.getMessage()) << std::endl;
-
-  return true;
-}
-
-void DOMCountErrorHandler::resetErrors()
-{
-  fSawErrors = false;
+  delete pc_vt2iso;
+  return 0; /// everything well done
 }
