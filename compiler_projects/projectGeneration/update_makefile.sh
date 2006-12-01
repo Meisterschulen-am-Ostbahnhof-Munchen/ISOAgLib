@@ -85,7 +85,6 @@ APP_SEARCH_HDR_CONDITION="*.h *.hpp"
 APP_PATH_EXLCUDE=""
 APP_SRC_EXCLUDE=""
 
-MAKEFILE_SKELETON_FILE="$DEV_PRJ_DIR/../$ISO_AG_LIB_PATH/compiler_projects/projectGeneration/MakefileSkeleton.txt"
 
 USE_SYSTEM_DEFINE=""
 
@@ -1186,6 +1185,11 @@ function create_makefile()
 
 	MakefileName="Makefile"
 	MakefileNameLong="Makefile"'__'"$USE_CAN_DRIVER"'__'"$USE_RS232_DRIVER"
+	
+	if [ "A$MAKEFILE_SKELETON_FILE" = "A" ] ; then
+  	MAKEFILE_SKELETON_FILE="$DEV_PRJ_DIR/../$ISO_AG_LIB_PATH/compiler_projects/projectGeneration/MakefileSkeleton.txt"
+  fi
+	
 
 	# create Makefile Header
 	echo "#############################################################################" > $MakefileNameLong
