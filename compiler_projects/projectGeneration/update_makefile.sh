@@ -85,6 +85,7 @@ APP_SEARCH_HDR_CONDITION="*.h *.hpp"
 APP_PATH_EXLCUDE=""
 APP_SRC_EXCLUDE=""
 
+MAKEFILE_SKELETON_FILE="$DEV_PRJ_DIR/../$ISO_AG_LIB_PATH/compiler_projects/projectGeneration/MakefileSkeleton.txt"
 
 USE_SYSTEM_DEFINE=""
 
@@ -1286,7 +1287,7 @@ function create_makefile()
 		cat $DEV_PRJ_DIR/../$ISO_AG_LIB_PATH/compiler_projects/projectGeneration/MakefileCanServerPart.txt >> $MakefileNameLong
 	fi
 
-	cat $DEV_PRJ_DIR/../$ISO_AG_LIB_PATH/compiler_projects/projectGeneration/MakefileSkeleton.txt >> $MakefileNameLong
+	cat $MAKEFILE_SKELETON_FILE >> $MakefileNameLong
 
 	# add can_server creation to target "all"
 	if [ $USE_CAN_DRIVER = "linux_server_client" ] ; then
@@ -1815,6 +1816,8 @@ Create filelist, Makefile and configuration settings for a IsoAgLib project.
                                     ( "simulating"|"sys"|"rte" ).
   --little-endian-cpu               select configuration for LITTLE ENDIAN CPU type
   --big-endian-cpu                  select configuration for BIG ENDIAN CPU type
+  --with-makefile-skeleton=filename define project specific MakefileSkeleton text file which is used as base for
+                                    Makefiles (default: MakefileSkeleton.txt in the same directory as this script)
 
 $0 parses the selected project configuration file and overwrites the default values for all contained settings.
 It collects then the corresponding files which can then be imported to an individual IDE.
@@ -1873,6 +1876,10 @@ for option in "$@"; do
 			;;
 		--big-endian-cpu)
 			PARAMETER_LITTLE_ENDIAN_CPU=0
+			;;
+		--with-makefile-skeleton=*)
+			RootDir=`pwd`
+			MAKEFILE_SKELETON_FILE=$RootDir/`echo "$option" | sed 's/--with-makefile-skeleton=//'`
 			;;
 		-*)
 			echo "Unrecognized option $option'" 1>&2
