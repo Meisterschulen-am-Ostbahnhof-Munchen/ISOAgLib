@@ -1522,6 +1522,122 @@ VtClientServerCommunication_c::sendCommandUpdateObjectPool (IsoAgLib::iVtObject_
                       0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, DEF_TimeOut_EndOfObjectPool, false); // replaces COULD happen if user-triggered sequences are there.
 }
 
+
+//////////////
+bool
+VtClientServerCommunication_c::sendCommandChangeNumericValue (uint16_t rui16_objectUid, uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, bool b_enableReplaceOfCmd)
+{
+  return sendCommand (168 /* Command: Command --- Parameter: Change Numeric Value */,
+                      rui16_objectUid & 0xFF, rui16_objectUid >> 8,
+                      0xFF, byte1, byte2, byte3, byte4,
+                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
+}
+
+bool
+VtClientServerCommunication_c::sendCommandChangeAttribute (uint16_t rui16_objectUid, uint8_t attrId, uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, bool b_enableReplaceOfCmd)
+{
+  return sendCommand (175 /* Command: Command --- Parameter: Change Attribute */,
+                      rui16_objectUid & 0xFF, rui16_objectUid >> 8,
+                      attrId, byte1, byte2, byte3, byte4,
+                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
+}
+
+bool
+VtClientServerCommunication_c::sendCommandChangeSoftKeyMask (uint16_t rui16_objectUid, uint8_t maskType, uint16_t newSoftKeyMask, bool b_enableReplaceOfCmd)
+{
+  return sendCommand (174 /* Command: Command --- Parameter: Change Soft Key Mask */,
+                      maskType,
+                      rui16_objectUid & 0xFF, rui16_objectUid >> 8,
+                      newSoftKeyMask & 0xFF, newSoftKeyMask >> 8,
+                      0xFF, 0xFF,
+                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
+}
+
+bool
+VtClientServerCommunication_c::sendCommandChangeStringValue (uint16_t rui16_objectUid, const char* rpc_newValue, uint16_t overrideSendLength, bool b_enableReplaceOfCmd)
+{
+#ifdef DEBUG
+  INTERNAL_DEBUG_DEVICE << "Enqueued string-ref: " << q_sendUpload.size() << " -> ";
+#endif
+
+  sc_tempSendUpload.set (rui16_objectUid, rpc_newValue, overrideSendLength);
+
+  return queueOrReplace (sc_tempSendUpload, b_enableReplaceOfCmd);
+}
+
+bool
+VtClientServerCommunication_c::sendCommandChangeChildPosition (uint16_t rui16_objectUid, uint16_t rui16_childObjectUid, int16_t x, int16_t y, bool b_enableReplaceOfCmd)
+{
+  return sendCommand (180 /* Command: Command --- Parameter: Change Child Position */,
+                      rui16_objectUid & 0xFF, rui16_objectUid >> 8,
+                      rui16_childObjectUid & 0xFF, rui16_childObjectUid >> 8,
+                      x & 0xFF, x >> 8,
+                      y & 0xFF, y >> 8,
+                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
+}
+
+//! should only be called with valid values ranging -127..0..128 (according to ISO!!!)
+bool
+VtClientServerCommunication_c::sendCommandChangeChildLocation (uint16_t rui16_objectUid, uint16_t rui16_childObjectUid, int16_t dx, int16_t dy, bool b_enableReplaceOfCmd)
+{
+  return sendCommand (165 /* Command: Command --- Parameter: Change Child Location */,
+                      rui16_objectUid & 0xFF, rui16_objectUid >> 8,
+                      rui16_childObjectUid & 0xFF, rui16_childObjectUid >> 8,
+                      dx+127, dy+127, 0xFF,
+                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
+}
+
+bool
+VtClientServerCommunication_c::sendCommandChangeBackgroundColour (uint16_t rui16_objectUid, uint8_t newColour, bool b_enableReplaceOfCmd)
+{
+  return sendCommand (167 /* Command: Command --- Parameter: Change Background Color */,
+                      rui16_objectUid & 0xFF, rui16_objectUid >> 8,
+                      newColour, 0xFF, 0xFF, 0xFF, 0xFF,
+                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
+}
+
+bool
+VtClientServerCommunication_c::sendCommandChangeSize (uint16_t rui16_objectUid,uint16_t newWidth, uint16_t newHeight, bool b_enableReplaceOfCmd)
+{
+  return sendCommand (166 /* Command: Command --- Parameter: Change Size */,
+                      rui16_objectUid & 0xFF, rui16_objectUid >> 8,
+                      newWidth & 0xFF, newWidth >> 8,
+                      newHeight & 0xFF, newHeight >> 8,
+                      0xFF,
+                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
+}
+
+bool
+VtClientServerCommunication_c::sendCommandChangeFillAttributes (uint16_t rui16_objectUid, uint8_t newFillType, uint8_t newFillColour, IsoAgLib::iVtObjectPictureGraphic_c* newFillPatternObject, bool b_enableReplaceOfCmd)
+{
+  return sendCommand (172 /* Command: Command --- Parameter: Change FillAttributes */,
+                      rui16_objectUid & 0xFF, rui16_objectUid >> 8,
+                      newFillType, newFillColour,
+                      (newFillType == 3) ? newFillPatternObject->getID() & 0xFF : 0xFF,
+                      (newFillType == 3) ? newFillPatternObject->getID() >> 8 : 0xFF,
+                      0xFF,
+                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
+}
+
+bool
+VtClientServerCommunication_c::sendCommandChangeFontAttributes (uint16_t rui16_objectUid, uint8_t newFontColour, uint8_t newFontSize, uint8_t newFontType, uint8_t newFontStyle, bool b_enableReplaceOfCmd)
+{
+  return sendCommand (170 /* Command: Command --- Parameter: Change FontAttributes */,
+                      rui16_objectUid & 0xFF, rui16_objectUid >> 8,
+                      newFontColour, newFontSize, newFontType, newFontStyle, 0xFF,
+                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
+}
+
+bool
+VtClientServerCommunication_c::sendCommandChangeLineAttributes (uint16_t rui16_objectUid, uint8_t newLineColour, uint8_t newLineWidth, uint16_t newLineArt, bool b_enableReplaceOfCmd)
+{
+  return sendCommand (171 /* Command: Command --- Parameter: Change LineAttributes */,
+                      rui16_objectUid & 0xFF, rui16_objectUid >> 8,
+                      newLineColour, newLineWidth, newLineArt & 0xFF, newLineArt >> 8, 0xFF,
+                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
+}
+/////////////
+
 // ########## Gaphics Context ##########
 //! @return Flag if successful
 bool
