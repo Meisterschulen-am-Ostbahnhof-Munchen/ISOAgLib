@@ -253,7 +253,7 @@ private:
 
   bool openDecodePrintOut (const char* workDir, char* _bitmap_path, unsigned int &options, int fixNr=-1);
 
-  bool checkForAllowedExecution() /*const*/;
+  bool checkForAllowedExecution() const;
 
   void init (const char* xmlFile);
 

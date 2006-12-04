@@ -88,6 +88,9 @@ class SpecialParsingBasePropTag_c
   /// simple setter function to set the object type
   void setObjType (uint8_t rui8_objType) { ui8_objType = rui8_objType; }
 
+  /// set the object id for the current handled tag element
+  virtual void setObjID (uint16_t rui16_objID) = 0;
+
   /** that functions creates all necessary files and prints out all collected data */
   virtual void outputCollectedData2Files() {}
 

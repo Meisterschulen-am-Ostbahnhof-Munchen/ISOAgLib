@@ -1777,12 +1777,21 @@ vt2iso_c::openDecodePrintOut (const char* workDir, char* _bitmap_path, unsigned 
 }
 
 bool
-vt2iso_c::checkForAllowedExecution() /*const*/
+vt2iso_c::checkForAllowedExecution() const
 {
-  return  (  !( pc_specialParsing && pc_specialParsingPropTag )
-           || ( pc_specialParsingPropTag && pc_specialParsingPropTag->checkForProprietaryOrBasicObjTypes() )
-           || ( pc_specialParsing && pc_specialParsing->checkForProprietaryOrBasicObjTypes() )
-          );
+  // no module is wished
+  if (!pc_specialParsing && !pc_specialParsingPropTag)
+    return true;
+
+  // if parsing of proprietary tags/attributes is wished, check here for correct proprietary type
+  if (pc_specialParsingPropTag && pc_specialParsingPropTag->checkForProprietaryOrBasicObjTypes())
+    return true;
+
+  // if parsing for lookup tables is wished, check here for correct additional types
+  if (pc_specialParsing && pc_specialParsing->checkForProprietaryOrBasicObjTypes())
+    return true;
+
+  return false;
 }
 
 // ---------------------------------------------------------------------------
@@ -1867,7 +1876,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
       objType = pc_specialParsing->getObjType(node_name);
 
     if ( pc_specialParsingPropTag && objType == 0xFFFF )
-      objType = pc_specialParsingPropTag->getObjType(node_name);
+      objType = pc_specialParsingPropTag->getObjType (node_name);
   }
 
   // ERROR: Wrong <TAG>
@@ -1962,7 +1971,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
       b_unknownTag = true;
     }
 
-    if (!b_unknownTag && pc_specialParsingPropTag && ((objType >= maxObjectTypes) && !pc_specialParsingPropTag->checkTag(n, objType, ombType)))
+    if (!b_unknownTag && pc_specialParsingPropTag && ((objType >= maxObjectTypes) && !pc_specialParsingPropTag->checkTag (n, objType, ombType)))
     {
       clean_exit ();
       return false;
@@ -1987,9 +1996,9 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
 
     if (pc_specialParsingPropTag && (objType >= maxObjectTypes))
     {
-      if (!pc_specialParsingPropTag->parseUnknownTag(n, objType, objName))
+      if (!pc_specialParsingPropTag->parseUnknownTag (n, objType, objName))
       {
-        clean_exit ();
+        clean_exit();
         return false;
       }
     }
@@ -3587,10 +3596,10 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
 
       // if special parsing is active and the object type is greater than maxObjectType
       // the output to the files must be done separately
-      if ( pc_specialParsingPropTag && objType >= maxObjectTypes )
+      if ( pc_specialParsingPropTag && (objType >= maxObjectTypes) )
       {
         // need to know the object id in special parsing when data is written to files
-        pc_specialParsingPropTag->setObjID(objID);
+        pc_specialParsingPropTag->setObjID (objID);
         pc_specialParsingPropTag->outputData2FilesPiecewise();
       }
       else if (objType < maxObjectTypes)
@@ -3635,6 +3644,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
       switch (objType)
       {
         case otWorkingset:
+        {
           signed int retSelectable = booltoi (attrString [attrSelectable]);
           if (retSelectable == -1) return false;
           if (!attrIsGiven [attrActive_mask] && (retSelectable == 1))
@@ -3653,6 +3663,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             ui16_WSObjID = objID;
           }
           break;
+        }
 
         case otDatamask:
           if ( (strcmp ("NULL", attrString [attrSoft_key_mask]) == 0)  || (strcmp("65535",  attrString [attrSoft_key_mask]) == 0))
@@ -3662,6 +3673,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           break;
 
         case otAlarmmask:
+        {
           signed long int retPrio = prioritytoi(attrString [attrPriority]);
           signed long int retSignal = acousticsignaltoi (attrString [attrAcoustic_signal]);
           if ((retPrio == -1) || (retSignal == -1)) return false;
@@ -3670,8 +3682,10 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           else
             fprintf (partFile_attributes, ", %d, &iVtObject%s, %d, %d", colortoi (attrString [attrBackground_colour]), attrString [attrSoft_key_mask], (unsigned int)retPrio, (unsigned int)retSignal);
           break;
+        }
 
         case otContainer:
+        {
           if (!(attrIsGiven [attrWidth] && attrIsGiven [attrHeight]))
           {
             clean_exit ("YOU NEED TO SPECIFY THE width= AND height= ATTRIBUTES FOR THE <container> OBJECT! STOPPING PARSER! bye.\n\n");
@@ -3681,6 +3695,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           if (retHidden == -1) return false;
           fprintf (partFile_attributes, ", %s, %s, %d", attrString [attrWidth], attrString [attrHeight], (unsigned int)retHidden);
           break;
+        }
 
         case otSoftkeymask:
           fprintf (partFile_attributes, ", %d", colortoi (attrString [attrBackground_colour]));
@@ -3716,8 +3731,8 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           signed int retEnabled = booltoi (attrString [attrEnabled]);
           if (retEnabled == -1) return false;
           fprintf (partFile_attributes, ", %d, %s, &iVtObject%s, %s, %s, %d", colortoi (attrString [attrBackground_colour]), attrString [attrWidth], attrString [attrForeground_colour], attrString [attrVariable_reference], attrString [attrValue], (unsigned int)retEnabled);
-        }
           break;
+        }
 
         case otInputstring:
         {
@@ -3767,8 +3782,8 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           {
             fprintf (partFile_attributes, ", %s, %s, %d, &iVtObject%s, &iVtObject%s, %d, %s, %d, %s, %s, %d", attrString [attrWidth], attrString [attrHeight], colortoi (attrString [attrBackground_colour]), attrString [attrFont_attributes], attrString [attrInput_attributes], optionstoi (attrString [attrOptions]), attrString [attrVariable_reference], (unsigned int)retJustification, attrString [attrLength], attrString [attrValue], (unsigned int)retEnabled );
           }
-        }
           break;
+        }
 
         case otInputnumber:
         {
@@ -3819,7 +3834,9 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
         }
 
         case otOutputstring:
-          if (!attrIsGiven [attrValue]) {
+        {
+          if (!attrIsGiven [attrValue])
+          {
             // Variable Reference
             if (!(attrIsGiven [attrWidth] && attrIsGiven [attrHeight] && attrIsGiven [attrFont_attributes] && attrIsGiven [attrLength]))
             {
@@ -3827,9 +3844,12 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
               return false;
             }
             sprintf (attrString [attrValue], "NULL");
-          } else {
+          }
+          else
+          {
             // Direct Value
-            if (!attrIsGiven [attrLength]) {
+            if (!attrIsGiven [attrLength])
+            {
               signed int ret = strlenUnescaped (attrString [attrValue]);
               if (ret == -1) return false;
               // Auto-calculate Length-field
@@ -3852,6 +3872,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
                    (unsigned int)retJust, attrString [attrLength], attrString [attrValue]);
       //    printf ("%s --- %d\n", attrString [attrOptions], optionstoi (attrString [attrOptions]));
           break;
+        }
 
         case otOutputnumber:
         {
@@ -3899,10 +3920,9 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           }
           if (!attrIsGiven [attrLine_suppression])
             sprintf (attrString [attrLine_suppression], "0");
+
           if ( (!attrIsGiven [attrFill_attributes]) || (strcmp( attrString[attrFill_attributes], "65535")==0) )
-          {
             sprintf (attrString [attrFill_attributes], "NULL");
-          }
           else
           {
             sprintf (tempString, "&iVtObject%s", attrString[attrFill_attributes]);
@@ -3918,6 +3938,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           if (!(attrIsGiven [attrLine_attributes] && attrIsGiven [attrWidth] && attrIsGiven [attrHeight] && attrIsGiven [attrStart_angle] && attrIsGiven [attrEnd_angle]))
           {
             clean_exit ( "YOU NEED TO SPECIFY THE Line_attributes= AND width= AND height= AND start_angle= AND end_angle= ATTRIBUTES FOR THE <ellipse> OBJECT! STOPPING PARSER! bye.\n\n");
+            return false;
           }
           if (atoi(attrString[attrStart_angle]) > 180 || atoi(attrString[attrEnd_angle]) > 180)
           {
@@ -3926,10 +3947,9 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           }
           if (!attrIsGiven [attrEllipse_type])
             sprintf (attrString [attrEllipse_type], "0");
+
           if ( (!attrIsGiven [attrFill_attributes]) || (strcmp( attrString[attrFill_attributes], "65535")==0) )
-          {
             sprintf (attrString [attrFill_attributes], "NULL");
-          }
           else
           {
             sprintf (tempString, "&iVtObject%s", attrString[attrFill_attributes]);
@@ -3946,10 +3966,11 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           }
           if (!attrIsGiven [attrPolygon_type])
             sprintf (attrString [attrPolygon_type], "0");
+
           if ( (!attrIsGiven [attrFill_attributes]) || (strcmp( attrString[attrFill_attributes], "65535")==0) )
-          {
             sprintf (attrString [attrFill_attributes], "NULL");
-          } else {
+          else
+          {
             sprintf (tempString, "&iVtObject%s", attrString[attrFill_attributes]);
             sprintf (attrString [attrFill_attributes], "%s", tempString);
           }
@@ -3969,6 +3990,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           }
           if (!attrIsGiven [attrValue])
             sprintf (attrString [attrValue], "0");
+
           if (!attrIsGiven [attrOptions])
             sprintf(attrString[attrOptions], "0");
 
@@ -3984,8 +4006,10 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           }
           if (!attrIsGiven [attrValue])
             sprintf (attrString [attrValue], "0");
+
           if (!attrIsGiven [attrTarget_value])
             sprintf (attrString [attrTarget_value], "0");
+
           fprintf (partFile_attributes, ", %s, %s, %d, %d, %d, %s, %s, %s, %s, %s, %s, %s", attrString [attrWidth], attrString [attrHeight], colortoi (attrString [attrColour]),
                    colortoi (attrString [attrTarget_line_colour]), linearbargraphoptionstoi (attrString [attrOptions]), attrString [attrNumber_of_ticks],
                    attrString [attrMin_value], attrString [attrMax_value], attrString [attrVariable_reference], attrString [attrValue],
@@ -4005,10 +4029,13 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           }
           if (!attrIsGiven [attrValue])
             sprintf (attrString [attrValue], "0");
+
           if (!attrIsGiven [attrTarget_value])
             sprintf (attrString [attrTarget_value], "0");
+
           if (!attrIsGiven [attrOptions])
             sprintf (attrString [attrOptions], "0");
+
           fprintf (partFile_attributes, ", %s, %s, %d, %d, %d, %s, %s, %s, %s, %s, %s, %s, %s, %s", attrString [attrWidth], attrString [attrHeight], colortoi (attrString [attrColour]), colortoi (attrString [attrTarget_line_colour]), archedbargraphoptionstoi (attrString [attrOptions]), attrString[attrStart_angle], attrString[attrEnd_angle], attrString[attrBar_graph_width], attrString [attrMin_value], attrString [attrMax_value], attrString [attrVariable_reference], attrString [attrValue], attrString [attrTarget_value_variable_reference], attrString [attrTarget_value]);
           break;
 
@@ -4020,11 +4047,13 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
         case otNumbervariable:
           if (!attrIsGiven [attrValue])
             sprintf (attrString [attrValue], "0");
+
           fprintf (partFile_attributes, ", %sUL", attrString [attrValue]);
           break;
 
         case otStringvariable:
-          if (!attrIsGiven [attrValue]) {
+          if (!attrIsGiven [attrValue])
+          {
             std::cout << objName << ":\n  ";
             if (!(attrIsGiven [attrLength]))
             {
@@ -4032,7 +4061,9 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
               return false;
             }
             sprintf (attrString [attrValue], "NULL");
-          } else {
+          }
+          else
+          {
             signed int ret = strlenUnescaped (attrString [attrValue]);
             if (ret == -1) return false;
             //auto-calculate length
@@ -4051,6 +4082,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           break;
 
         case otFontattributes:
+        {
           if (!attrIsGiven [attrFont_type])
           {
             clean_exit ("INFORMATION: WITH THAT VERSION OF VT2ISO YOU NEED TO SPECIFY THE font_type= ATTRIBUTE FOR THE <fontattributes> OBJECT! \n \
@@ -4069,6 +4101,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
 
           fprintf (partFile_attributes, ", %d, %d, %d, %d", colortoi (attrString [attrFont_colour]), (unsigned int)retFontSize, (unsigned int)ret, fontstyletoi (attrString [attrFont_style]));
           break;
+        }
 
         case otLineattributes:
           if (!(attrIsGiven [attrLine_colour] && attrIsGiven [attrLine_width] && attrIsGiven [attrLine_art]))
@@ -4087,28 +4120,31 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           }
           if (!attrIsGiven [attrFill_type])
             sprintf (attrString [attrFill_type], "0");
+
           if(!attrIsGiven [attrFill_pattern])
           {
             sprintf (attrString [attrFill_pattern], "NULL");
             fprintf (partFile_attributes, ",%d, %d, %s", filltypetoi (attrString[attrFill_type]), colortoi (attrString [attrFill_colour]), attrString [attrFill_pattern]);
           }
           else
-          {
             fprintf (partFile_attributes, ",%d, %d, &iVtObject%s", filltypetoi (attrString[attrFill_type]), colortoi (attrString [attrFill_colour]), attrString [attrFill_pattern]);
-          }
           break;
 
         case otInputattributes:
           if (!attrIsGiven [attrValidation_type])
             sprintf (attrString [attrValidation_type], "0");
-          if (!attrIsGiven [attrValidation_string]) {
+
+          if (!attrIsGiven [attrValidation_string])
+          {
             if (!(attrIsGiven [attrLength]))
             {
               clean_exit ("YOU NEED TO SPECIFY THE length= ATTRIBUTE FOR THE <inputattribute> OBJECT! STOPPING PARSER! bye.\n\n");
               return false;
             }
             sprintf (attrString [attrValidation_string], "NULL");
-          } else {
+          }
+          else
+          {
             signed int ret = strlenUnescaped (attrString [attrValidation_string]);
             if (ret == -1) return false;
             // auto-calculate string-length
@@ -4138,7 +4174,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           break;
 
         case otAuxiliaryfunction:
-          if (!(attrIsGiven [attrBackground_colour] && attrIsGiven[attrFunction_type]) )
+          if (!(attrIsGiven [attrBackground_colour] && attrIsGiven[attrFunction_type]))
           {
             clean_exit ("YOU NEED TO SPECIFY THE background_colour= and function_type= ATTRIBUTE FOR THE <auxiliaryfunction> OBJECT! STOPPING PARSER! bye.\n\n");
             return false;
@@ -4224,70 +4260,70 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
       // #########################################
       // ### Print out Repeat Array REFERENCES ###
       // #########################################
-      if (objHasArrayObject) {
-        if (objChildObjects == 0) {
+      if (objHasArrayObject)
+      {
+        if (objChildObjects == 0)
           fprintf (partFile_attributes, ", 0,NULL");
-        } else {
+        else
           fprintf (partFile_attributes, ", %d,iVtObject%s_aObject", objChildObjects, objName);
-        }
       }
 
-      if (objHasArrayObjectXY) {
-        if (objChildObjects == 0) {
+      if (objHasArrayObjectXY)
+      {
+        if (objChildObjects == 0)
           fprintf (partFile_attributes, ", 0,NULL");
-        } else {
+        else
           fprintf (partFile_attributes, ", %d,iVtObject%s_aObject_x_y_font_row_col", objChildObjects, objName);
-        }
       }
 
-      if (objType == otPicturegraphic) {
-        for (unsigned int actDepth=0; actDepth <= 2; actDepth++) {
-          if ( (actDepth > deXcolorDepth) || (stdRawBitmapBytes [actDepth] == 0)) {
+      if (objType == otPicturegraphic)
+      {
+        for (unsigned int actDepth=0; actDepth <= 2; actDepth++)
+        {
+          if ( (actDepth > deXcolorDepth) || (stdRawBitmapBytes [actDepth] == 0))
             fprintf (partFile_attributes, ", 0,NULL");
-          } else {
+          else
             fprintf (partFile_attributes, ", %d,iVtObject%s_aRawBitmap%d", stdRawBitmapBytes [actDepth], objName, actDepth);
-          }
         }
-        if (fixNr == 0) {
+        if (fixNr == 0)
           fprintf (partFile_attributes, ", 0,NULL");
-        } else {
+        else
           fprintf (partFile_attributes, ", %d,iVtObject%s_aFixedBitmaps", fixNr, objName);
-        }
       }
 
-      if (objHasArrayPoints) {
-        if(objChildPoints == 0) {
+      if (objHasArrayPoints)
+      {
+        if(objChildPoints == 0)
           fprintf (partFile_attributes, ", 0,NULL");
-        } else {
+        else
           fprintf (partFile_attributes, ", %d,iVtObject%s_aPoints", objChildPoints, objName);
-        }
       }
 
-      if (objHasArrayEventMacro) {
-        if (objChildMacros == 0) {
+      if (objHasArrayEventMacro)
+      {
+        if (objChildMacros == 0)
           fprintf (partFile_attributes, ", 0,NULL");
-        } else {
+        else
           // Changed this line to give the correct name to the Macro object to match the naming conventions of IsoAgLib V 1.1.0.
           // This coincides with a change made above to the name of the Macro struct. -bac 06-Jan-2005
           //fprintf (partFile_attributes, ", %d,iVtObject%s_aEvent_Macro", objChildMacros, objName);
           fprintf (partFile_attributes, ", %d,iVtObject%s_aMacro_Object", objChildMacros, objName);
-        }
       }
 
-      if (objHasArrayLanguagecode) {
-        if (objChildLanguages == 0) {
+      if (objHasArrayLanguagecode)
+      {
+        if (objChildLanguages == 0)
           fprintf (partFile_attributes, ", 0,NULL");
-        } else {
+        else
           fprintf (partFile_attributes, ", %d,ivtObject%s_aLanguage", objChildLanguages, objName);
-        }
       }
 
-      if (objHasArrayMacroCommand) { /** @todo I think the "else" is not correct, the length has to be put out also!? -mjw */
-        if (objChildCommands == 0) {
+      if (objHasArrayMacroCommand)
+      { /** @todo I think the "else" is not correct, the length has to be put out also!? -mjw */
+        if (objChildCommands == 0)
           fprintf (partFile_attributes, ", 0,NULL");
-        } else {
+        else
           fprintf (partFile_attributes, ", iVtObject%s_aMacro_Commands", objName);
-        }
       }
 
       if ( checkForAllowedExecution() )
@@ -4321,13 +4357,13 @@ vt2iso_c::vt2iso_c(std::basic_string<char>* pch_fileName): amountXmlFiles(0)
   init ( pc_projName );
 
   #ifdef USE_SPECIAL_PARSING_PROP
-  pc_specialParsingPropTag = new SpecialParsingUsePropTag_c( pc_projName,
+  pc_specialParsingPropTag = new SpecialParsingUsePropTag_c (pc_projName,
                                                              partFile_variables,
                                                              partFile_variables_extern,
                                                              partFile_attributes,
                                                              partFile_functions,
                                                              partFile_defines
-                                                           );
+                                                            );
   #else
   pc_specialParsingPropTag = NULL;
   #endif
