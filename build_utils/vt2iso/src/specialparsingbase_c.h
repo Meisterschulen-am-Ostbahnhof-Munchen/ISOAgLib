@@ -102,6 +102,9 @@ class SpecialParsingBase_c
   /// returns the object type from a given DOMNode if type is known and sets it
   virtual uint16_t getObjType (const char* node_name) { return 0xFFFF; }
 
+  /// set the object id for the current handled tag element
+  virtual void setObjID (uint16_t rui16_objID) = 0;
+
   /// returns the total sum of basic and special object types
   virtual uint8_t getMaxOfObjTypes() = 0;
 
