@@ -94,7 +94,7 @@
 #include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h>
 #include <IsoAgLib/comm/Scheduler/impl/scheduler_c.h>
 #include <IsoAgLib/driver/can/impl/canio_c.h>
-#include <IsoAgLib/driver/can/impl/filterbox_c.h>
+#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofiltermanager_c.h>
 
 
 #ifdef DEBUG
@@ -1343,20 +1343,14 @@ MultiReceive_c::reactOnMonitorListAdd( const __IsoAgLib::ISOName_c& refc_isoName
       << "NOW use SA: " << int(rpc_newItem->nr()) << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_NEWLINE
       << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
-  /** @todo BEGIN to add to registerMultiReceiveClient(), using ISOFilterBox then! */
   if ( getIsoMonitorInstance4Comm().existLocalIsoMemberISOName(refc_isoName) )
   { // lcoal ISOItem_c has finished adr claim
-    uint32_t ui32_nr = rpc_newItem->nr();
-
-    /*** Filter Registration Start ***/
-    __IsoAgLib::FilterBox_c* refFB;
-    MACRO_insertFilterIfNotYetExists_mask1FFFF00_setRef(TP_CONN_MANAGE_PGN,ui32_nr,false,refFB)
-    MACRO_insertFilterIfNotYetExists_mask1FFFF00_useRef(TP_DATA_TRANSFER_PGN,ui32_nr,false,refFB)
-    MACRO_insertFilterIfNotYetExists_mask1FFFF00_setRef(ETP_CONN_MANAGE_PGN,ui32_nr,false,refFB)
-    MACRO_insertFilterIfNotYetExists_mask1FFFF00_useRef(ETP_DATA_TRANSFER_PGN,ui32_nr,true,refFB)
-    /*** Filter Registration End ***/
+    // put CONN/DATA in ONE CONNECTED FILTERBOX!
+    getIsoFilterManagerInstance().insertIsoFilterConnected (ISOFilter_s (*this, (0x1FFFF00UL), (TP_CONN_MANAGE_PGN << 8),   &refc_isoName),
+                                                            ISOFilter_s (*this, (0x1FFFF00UL), (TP_DATA_TRANSFER_PGN << 8), &refc_isoName));
+    getIsoFilterManagerInstance().insertIsoFilterConnected (ISOFilter_s (*this, (0x1FFFF00UL), (ETP_CONN_MANAGE_PGN << 8),  &refc_isoName),
+                                                            ISOFilter_s (*this, (0x1FFFF00UL), (ETP_DATA_TRANSFER_PGN << 8),&refc_isoName));
   }
-  /** @todo END to add to registerMultiReceiveClient(), using ISOFilterBox then! */
 
   // rpc_newItem is always != NULL
   const uint8_t cui8_nr = rpc_newItem->nr();
@@ -1389,7 +1383,7 @@ MultiReceive_c::reactOnMonitorListAdd( const __IsoAgLib::ISOName_c& refc_isoName
   * @param rui8_oldSa previously used SA which is NOW LOST -> clients which were connected to this item can react explicitly
   */
 void
-MultiReceive_c::reactOnMonitorListRemove( const __IsoAgLib::ISOName_c& refc_isoName, uint8_t rui8_oldSa )
+MultiReceive_c::reactOnMonitorListRemove( const __IsoAgLib::ISOName_c& /*refc_isoName*/, uint8_t rui8_oldSa )
 {
 #ifdef DEBUG
   INTERNAL_DEBUG_DEVICE << "reactOnMonitorListRemove() handles LOSS of ISOItem_c for device with DevClass: " << int(refc_isoName.devClass())
@@ -1397,16 +1391,6 @@ MultiReceive_c::reactOnMonitorListRemove( const __IsoAgLib::ISOName_c& refc_isoN
       << " and PREVIOUSLY used SA: " << int(rui8_oldSa) << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_NEWLINE
       << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
-  /** @todo BEGIN to add to registerMultiReceiveClient(), using ISOFilterBox then! */
-  if ( getIsoMonitorInstance4Comm().existLocalIsoMemberISOName(refc_isoName) )
-  { // lcoal ISOItem_c has lost SA
-    uint32_t ui32_nr = rui8_oldSa;
-    MACRO_deleteFilterIfExists_mask1FFFF00(ETP_DATA_TRANSFER_PGN,ui32_nr)
-    MACRO_deleteFilterIfExists_mask1FFFF00(ETP_CONN_MANAGE_PGN,ui32_nr)
-    MACRO_deleteFilterIfExists_mask1FFFF00(TP_DATA_TRANSFER_PGN,ui32_nr)
-    MACRO_deleteFilterIfExists_mask1FFFF00(TP_CONN_MANAGE_PGN,ui32_nr)
-  }
-  /** @todo END to add to registerMultiReceiveClient(), using ISOFilterBox then! */
 
   // Notify all registered clients
   for (std::list<MultiReceiveClientWrapper_s>::iterator i_list_clients = list_clients.begin();

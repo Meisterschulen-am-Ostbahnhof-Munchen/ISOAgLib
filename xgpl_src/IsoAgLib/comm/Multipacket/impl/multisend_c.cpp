@@ -89,6 +89,7 @@
 #include <IsoAgLib/driver/system/impl/system_c.h>
 #include <IsoAgLib/driver/can/impl/canio_c.h>
 #include <IsoAgLib/comm/Scheduler/impl/scheduler_c.h>
+#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofiltermanager_c.h>
 
 #ifdef DEBUG
   #ifdef SYSTEM_PC
@@ -973,38 +974,16 @@ MultiSend_c::SendStream_c::abortSend()
  * @param refc_isoName const reference to the item which ISOItem_c state is changed
  * @param rpc_newItem pointer to the currently corresponding ISOItem_c
  */
-void MultiSend_c::reactOnMonitorListAdd( const ISOName_c& refc_isoName, const ISOItem_c* rpc_newItem )
+void MultiSend_c::reactOnMonitorListAdd( const ISOName_c& refc_isoName, const ISOItem_c* /*rpc_newItem*/ )
 {
-  /** @todo to be improved!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
   if ( getIsoMonitorInstance4Comm().existLocalIsoMemberISOName(refc_isoName) )
   { // local ISOItem_c has finished adr claim
-    bool b_isReconfigNeeded = false;
-    uint32_t ui32_nr = rpc_newItem->nr();
-    // only ISO msgs with own SA in PS (destination)
-    uint32_t ui32_filter = ((static_cast<MASK_TYPE>(TP_CONN_MANAGE_PGN) | static_cast<MASK_TYPE>(ui32_nr)) << 8);
-    if (!getCanInstance4Comm().existFilter( *this, (0x1FFFF00UL), ui32_filter, Ident_c::ExtendedIdent))
-    { // create FilterBox
-      getCanInstance4Comm().insertFilter( *this, (0x1FFFF00UL), ui32_filter, true, Ident_c::ExtendedIdent);
-      b_isReconfigNeeded = true;
-    }
-
-    ui32_filter = ((static_cast<MASK_TYPE>(ETP_CONN_MANAGE_PGN) | static_cast<MASK_TYPE>(ui32_nr)) << 8);
-    if (!getCanInstance4Comm().existFilter( *this, (0x1FFFF00UL), ui32_filter, Ident_c::ExtendedIdent))
-    { // create FilterBox
-      getCanInstance4Comm().insertFilter( *this, (0x1FFFF00UL), ui32_filter, true, Ident_c::ExtendedIdent);
-      b_isReconfigNeeded = true;
-    }
-    if ( b_isReconfigNeeded ) getCanInstance4Comm().reconfigureMsgObj();
+    #ifdef DEBUG
+    INTERNAL_DEBUG_DEVICE << "MultiSend_c added receive filter for LocalIsoMember as it's now active (=claimed)." << INTERNAL_DEBUG_DEVICE_ENDL;
+    #endif
+    getIsoFilterManagerInstance().insertIsoFilter (ISOFilter_s (*this, (0x1FFFF00UL),  (TP_CONN_MANAGE_PGN << 8), &refc_isoName));
+    getIsoFilterManagerInstance().insertIsoFilter (ISOFilter_s (*this, (0x1FFFF00UL), (ETP_CONN_MANAGE_PGN << 8), &refc_isoName));
   }
-
-  #ifdef DEBUG
-  INTERNAL_DEBUG_DEVICE << "reactOnMonitorListAdd() handles CLAIM of ISOItem_c for device with DevClass: " << int(refc_isoName.devClass())
-      << ", Instance: " << int(refc_isoName.devClassInst()) << ", and manufacturer ID: " << int(refc_isoName.manufCode())
-      << "NOW use SA: " << int(rpc_newItem->nr()) << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_NEWLINE
-      << INTERNAL_DEBUG_DEVICE_ENDL;
-  #endif
-  // no resurrection here as we do NOT (yet) save the isoName/isoname to our SendStream_c instances in the list...
-  // this can be done later if someone thinks that makes sense...
 }
 
 
@@ -1012,44 +991,8 @@ void MultiSend_c::reactOnMonitorListAdd( const ISOName_c& refc_isoName, const IS
  * @param refc_isoName const reference to the item which ISOItem_c state is changed
  * @param rui8_oldSa previously used SA which is NOW LOST -> clients which were connected to this item can react explicitly
  */
-void MultiSend_c::reactOnMonitorListRemove( const ISOName_c& refc_isoName, uint8_t rui8_oldSa )
-{
-/*
-  if ( getIsoMonitorInstance4Comm().existLocalIsoMemberISOName(refc_isoName) )
-  { // lcoal ISOItem_c has lost SA
-    uint32_t ui32_nr = rui8_oldSa;
-    // only ISO msgs with own SA in PS (destination)
-    uint32_t ui32_filter = ((static_cast<MASK_TYPE>(TP_CONN_MANAGE_PGN) | static_cast<MASK_TYPE>(ui32_nr)) << 8);
-    if (getCanInstance4Comm().existFilter( *this, (0x1FFFF00UL), ui32_filter, Ident_c::ExtendedIdent))
-    { // create FilterBox
-      getCanInstance4Comm().deleteFilter( *this, (0x1FFFF00UL), ui32_filter, Ident_c::ExtendedIdent);
-    }
-    ui32_filter = ((static_cast<MASK_TYPE>(ETP_CONN_MANAGE_PGN) | static_cast<MASK_TYPE>(ui32_nr)) << 8);
-    if (getCanInstance4Comm().existFilter( *this, (0x1FFFF00UL), ui32_filter, Ident_c::ExtendedIdent))
-    { // create FilterBox
-      getCanInstance4Comm().deleteFilter( *this, (0x1FFFF00UL), ui32_filter, Ident_c::ExtendedIdent);
-    }
-  }
-  #ifdef DEBUG
-  INTERNAL_DEBUG_DEVICE << "reactOnMonitorListRemove() handles LOSS of ISOItem_c for device with DevClass: " << int(refc_isoName.getDevClass())
-      << ", Instance: " << int(refc_isoName.getDevClassInst()) << ", and manufacturer ID: " << int(refc_isoName.getConstName().manufCode())
-      << " and PREVIOUSLY used SA: " << int(rui8_oldSa) << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_NEWLINE
-      << INTERNAL_DEBUG_DEVICE_ENDL;
-  #endif
-  for (std::list<SendStream_c>::iterator pc_iter=list_sendStream.begin(); pc_iter != list_sendStream.end();)
-  {
-// @todo MARTIN DO TODO !!!!
-//    if (pc_iter->matchSa (rui8_oldSa) || pc_iter->matchDa (rui8_oldSa))
-//    { // SendStream found in list, abort and erase!
-//      pc_iter->abortSend();
-//      pc_iter = list_sendStream.erase (pc_iter);
-//    }
-//    else
-//    { // SendStream not yet found
-//      pc_iter++;
-//    }
-//  }
-*/
+void MultiSend_c::reactOnMonitorListRemove( const ISOName_c& /*refc_isoName*/, uint8_t /*rui8_oldSa*/ )
+{ // not needed anymore, as IsoFilterManager_c handles all this
 }
 
 

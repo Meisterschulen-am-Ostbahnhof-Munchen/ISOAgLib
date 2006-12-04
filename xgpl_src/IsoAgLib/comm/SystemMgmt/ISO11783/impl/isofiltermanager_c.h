@@ -127,9 +127,10 @@ public:
   /** default destructor which has nothing to do */
   ~ISOFilterManager_c ();
 
+  bool existIsoFilter (const ISOFilter_s& rrefcs_isoFilter);
 
-  /** @return true on success */
-  bool insertIsoFilter (const ISOFilter_s& rrefcs_isoFilter);
+  void insertIsoFilter (const ISOFilter_s& rrefcs_isoFilter);
+  void insertIsoFilterConnected (const ISOFilter_s& rrefcs_isoFilter, const ISOFilter_s& rrefcs_isoFilter2);
 
   bool addToIsoFilter (const ISOFilter_s& rrefcs_isoFilterExisting, const ISOFilter_s& rrefcs_isoFilterToAdd);
 

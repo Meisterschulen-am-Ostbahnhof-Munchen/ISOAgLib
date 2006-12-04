@@ -126,27 +126,62 @@ ISOFilterManager_c::singletonInit ()
 }
 
 
-
-
+//! Checks WITH CANCustomer!
 bool
+ISOFilterManager_c::existIsoFilter (const ISOFilter_s& rrefcs_isoFilter)
+{
+  for (ISOFilterBox_it it_isoFilterBox = vec_isoFilterBox.begin();
+       it_isoFilterBox != vec_isoFilterBox.end();
+       it_isoFilterBox++)
+  { // Search for existing ISOFilterBox
+    if (it_isoFilterBox->hasIsoFilterWithCustomer (rrefcs_isoFilter))
+    { // This ISOFilterBox already has such a filter
+      return true;
+    }
+  }
+  return false;
+}
+
+
+void
 ISOFilterManager_c::insertIsoFilter (const ISOFilter_s& rrefcs_isoFilter)
 {
-  // insert an empty ISOFilterBox. initialized then in list right after
-  vec_isoFilterBox.push_back (ISOFilterBox_c());
+  // Check if ISOFilter does yet exist in some ISOFilterBox
+  if (!existIsoFilter (rrefcs_isoFilter))
+  { // insert an empty ISOFilterBox. initialized then in list right after
+    vec_isoFilterBox.push_back (ISOFilterBox_c());
 
-  // now get the inserted ISOFilterBox
-  ISOFilterBox_c& refc_isoFilterBox = vec_isoFilterBox.back();
+    // now get the inserted ISOFilterBox
+    ISOFilterBox_c& refc_isoFilterBox = vec_isoFilterBox.back();
 
-  // initialize it!
-  //refc_isoFilterBox.init (rrefc_customer);
+    // add the filter(s)
+    refc_isoFilterBox.addIsoFilter (rrefcs_isoFilter);
 
-  // add the filter(s)
-  refc_isoFilterBox.addIsoFilter (rrefcs_isoFilter);
-  // maybe add some more... use variable argument list like printf?
+    // retrigger update of real hardware filters
+    refc_isoFilterBox.syncFiltersToCan();
+  }
+}
 
-  refc_isoFilterBox.updateOnAdd (NULL); // update them all once!
 
-  return true;
+/** @todo use vararg list somewhen! */
+void
+ISOFilterManager_c::insertIsoFilterConnected (const ISOFilter_s& rrefcs_isoFilter, const ISOFilter_s& rrefcs_isoFilter2)
+{
+  // Check if ISOFilter does yet exist in some ISOFilterBox
+  if ( (!existIsoFilter (rrefcs_isoFilter)) && (!existIsoFilter (rrefcs_isoFilter2)) )
+  { // insert an empty ISOFilterBox. initialized then in list right after
+    vec_isoFilterBox.push_back (ISOFilterBox_c());
+
+    // now get the inserted ISOFilterBox
+    ISOFilterBox_c& refc_isoFilterBox = vec_isoFilterBox.back();
+
+    // add the filter(s)
+    refc_isoFilterBox.addIsoFilter (rrefcs_isoFilter);
+    refc_isoFilterBox.addIsoFilter (rrefcs_isoFilter2);
+
+    // retrigger update of real hardware filters
+    refc_isoFilterBox.syncFiltersToCan();
+  }
 }
 
 
@@ -157,17 +192,17 @@ ISOFilterManager_c::addToIsoFilter (const ISOFilter_s& rrefcs_isoFilterExisting,
        it_isoFilterBox != vec_isoFilterBox.end();
        it_isoFilterBox++)
   { // Search for existing ISOFilterBox
-    if (it_isoFilterBox->hasIsoFilter (rrefcs_isoFilterExisting))
+    if (it_isoFilterBox->hasIsoFilterWithoutCustomer (rrefcs_isoFilterExisting))
     { // Add ISOFilter to existing ISOFilterBox
-      // initialize it!
-      //refc_isoFilterBox.init (rrefc_customer);
 
-      // add the filter(s)
-      it_isoFilterBox->addIsoFilter (rrefcs_isoFilterToAdd);
+      // if filter not yet there
+      if (!(it_isoFilterBox->hasIsoFilterWithCustomer (rrefcs_isoFilterToAdd)))
+      { // add the filter
+        it_isoFilterBox->addIsoFilter (rrefcs_isoFilterToAdd);
+      }
       // maybe add some more... use variable argument list like printf?
 
-      it_isoFilterBox->updateOnAdd (NULL); // update them all once!
-
+      it_isoFilterBox->syncFiltersToCan();
       return true;
     }
   }
@@ -210,7 +245,7 @@ ISOFilterManager_c::reactOnMonitorListAdd (const ISOName_c& refc_isoName, const 
        it_isoFilterBox != vec_isoFilterBox.end();
        it_isoFilterBox++)
   { // the ISOFilterBoxes will take care if they have to do anything at all or not...
-    it_isoFilterBox->updateOnAdd (&refc_isoName);
+    it_isoFilterBox->updateOnAdd (refc_isoName);
   }
 }
 
@@ -225,7 +260,7 @@ ISOFilterManager_c::reactOnMonitorListRemove (const ISOName_c& refc_isoName, uin
        it_isoFilterBox != vec_isoFilterBox.end();
        it_isoFilterBox++)
   { // the ISOFilterBoxes will take care if they have to do anything at all or not...
-    it_isoFilterBox->updateOnRemove (&refc_isoName);
+    it_isoFilterBox->updateOnRemove (refc_isoName);
   }
 }
 

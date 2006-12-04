@@ -110,27 +110,27 @@ class CANCustomer_c;
 
 struct ISOFilter_s
 {
-  ISOFilter_s (CANCustomer_c& rrefc_canCustomer, const Ident_c& rrefc_mask, const Ident_c& rrefc_filter, const ISOName_c* rpc_isoNameSa = NULL, const ISOName_c* rpc_isoNameDa = NULL)
-    : pc_canCustomer (&rrefc_canCustomer)
+  ISOFilter_s (CANCustomer_c& rrefc_canCustomer, uint32_t rui32_mask, uint32_t rui32_filter, const ISOName_c* rpc_isoNameDa = NULL, const ISOName_c* rpc_isoNameSa = NULL, Ident_c::identType_t rt_identType=Ident_c::ExtendedIdent)
+    : c_identMask (rui32_mask, rt_identType)
+    , c_identFilter (rui32_filter, rt_identType)
+    , pc_canCustomer (&rrefc_canCustomer)
   {
-    c_identMask   = rrefc_mask;    // operator =
-    c_identFilter = rrefc_filter;  // operator =
-    if (rpc_isoNameSa) c_isoNameSa = *rpc_isoNameSa;                // operator =
-    else /* no name */ c_isoNameSa = ISOName_c::ISONameUnspecified; // operator =
     if (rpc_isoNameDa) c_isoNameDa = *rpc_isoNameDa;                // operator =
     else /* no name */ c_isoNameDa = ISOName_c::ISONameUnspecified; // operator =
+    if (rpc_isoNameSa) c_isoNameSa = *rpc_isoNameSa;                // operator =
+    else /* no name */ c_isoNameSa = ISOName_c::ISONameUnspecified; // operator =
   }
 
 private:
-  bool equalFilter (const ISOFilter_s& rrefc_isoFilter);
+  bool equalMaskAndFilter (const ISOFilter_s& rrefc_isoFilter);
   bool operator == (const ISOFilter_s& rrefc_isoFilter)
-  { return equalFilter (rrefc_isoFilter) && pc_canCustomer == rrefc_isoFilter.pc_canCustomer; }
+  { return equalMaskAndFilter (rrefc_isoFilter) && pc_canCustomer == rrefc_isoFilter.pc_canCustomer; }
 
 private:
   Ident_c c_identMask;
   Ident_c c_identFilter;
-  ISOName_c c_isoNameSa;
   ISOName_c c_isoNameDa;
+  ISOName_c c_isoNameSa;
 
   /** Pointer to a CANCustomer_c instance. Assume this like a reference to be always valid! */
   CANCustomer_c* pc_canCustomer;
@@ -176,12 +176,15 @@ public:
    */
   bool addIsoFilter (const ISOFilter_s& rrefcs_isoFilter);
 
-  bool hasIsoFilter (const ISOFilter_s& rrefcs_isoFilter);
+  bool hasIsoFilterWithoutCustomer (const ISOFilter_s& rrefcs_isoFilter);
+  bool hasIsoFilterWithCustomer    (const ISOFilter_s& rrefcs_isoFilter);
 
   RemoveAnswer_en removeIsoFilter (const ISOFilter_s& rrefcs_isoFilter);
 
-  void updateOnAdd    (const ISOName_c* rpc_isoName);
-  void updateOnRemove (const ISOName_c* rpc_isoName);
+  void updateOnAdd    (const ISOName_c& rpc_isoName);
+  void updateOnRemove (const ISOName_c& rpc_isoName);
+
+  void syncFiltersToCan();
 
   //! Here could come another constructor that takes a variable list of filters and
   //! keeps them all connected. Yet to be done, but not important right now...
