@@ -93,28 +93,29 @@
   /** the macro autoInstance() uses the class  value singletonVecKey
     * to get a corresponding class instance, which is delegated to the same BUS
     */
-  #define autoInstance()                   instance( ClientBase::getSingletonVecKey() )
-  #define SINGLETON_PARENT_CONSTRUCTOR     ClientBase( ri_singletonVecKey ),
-  #define SINGLETON_VEC_KEY_USE4CALL       , getSingletonVecKey()
-  #define SINGLETON_VEC_KEY_PARAMETER_DEF  int ri_singletonVecKey
+  #define autoInstance()                    instance( ClientBase::getSingletonVecKey() )
+  #define SINGLETON_PARENT_CONSTRUCTOR      ClientBase( ri_singletonVecKey ),
+  #define SINGLETON_VEC_KEY_USE4CALL        , getSingletonVecKey()
+  #define SINGLETON_VEC_KEY_PARAMETER_DEF   int ri_singletonVecKey
   #define SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA  , int ri_singletonVecKey
-  #define SINGLETON_VEC_KEY_PARAMETER_VAR  getSingletonVecKey()
+  #define SINGLETON_VEC_KEY_PARAMETER_VAR   getSingletonVecKey()
   #define SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA , ri_singletonVecKey
-  #define SINGLETON_VEC_KEY_INIT_CALL      setSingletonKey( ri_singletonVecKey );
-  #define getCanInstance4Comm()            getCanInstance( getSingletonVecKey() )
-  #define getSchedulerInstance4Comm()      getSchedulerInstance( getSingletonVecKey() )
-  #define getTimePosGpsInstance4Comm()     getTimePosGpsInstance( getSingletonVecKey() )
-  #define getTracGeneralInstance4Comm()    getTracGeneralInstance( getSingletonVecKey() )
-  #define getTracMoveInstance4Comm()       getTracMoveInstance( getSingletonVecKey() )
-  #define getTracLightInstance4Comm()      getTracLightInstance( getSingletonVecKey() )
-  #define getTracAuxInstance4Comm()        getTracAuxInstance( getSingletonVecKey() )
-  #define getTracPtoInstance4Comm()        getTracPtoInstance( getSingletonVecKey() )
-  #define getIsoMonitorInstance4Comm()     getIsoMonitorInstance( getSingletonVecKey() )
-  #define getProcessInstance4Comm()        getProcessInstance( getSingletonVecKey() )
-  #define getMultiSendInstance4Comm()      getMultiSendInstance( getSingletonVecKey() )
-  #define getIsoTerminalInstance4Comm()    getIsoTerminalInstance( getSingletonVecKey() )
-  #define getMultiReceiveInstance4Comm()   getMultiReceiveInstance( getSingletonVecKey() )
-  #define getIsoRequestPgnInstance4Comm()  getIsoRequestPgnInstance(getSingletonVecKey())
+  #define SINGLETON_VEC_KEY_INIT_CALL       setSingletonKey( ri_singletonVecKey );
+  #define getCanInstance4Comm()             getCanInstance( getSingletonVecKey() )
+  #define getSchedulerInstance4Comm()       getSchedulerInstance( getSingletonVecKey() )
+  #define getTimePosGpsInstance4Comm()      getTimePosGpsInstance( getSingletonVecKey() )
+  #define getTracGeneralInstance4Comm()     getTracGeneralInstance( getSingletonVecKey() )
+  #define getTracMoveInstance4Comm()        getTracMoveInstance( getSingletonVecKey() )
+  #define getTracLightInstance4Comm()       getTracLightInstance( getSingletonVecKey() )
+  #define getTracAuxInstance4Comm()         getTracAuxInstance( getSingletonVecKey() )
+  #define getTracPtoInstance4Comm()         getTracPtoInstance( getSingletonVecKey() )
+  #define getIsoMonitorInstance4Comm()      getIsoMonitorInstance( getSingletonVecKey() )
+  #define getProcessInstance4Comm()         getProcessInstance( getSingletonVecKey() )
+  #define getMultiSendInstance4Comm()       getMultiSendInstance( getSingletonVecKey() )
+  #define getIsoTerminalInstance4Comm()     getIsoTerminalInstance( getSingletonVecKey() )
+  #define getMultiReceiveInstance4Comm()    getMultiReceiveInstance( getSingletonVecKey() )
+  #define getIsoRequestPgnInstance4Comm()   getIsoRequestPgnInstance(getSingletonVecKey())
+  #define getMaskHandlerInstance4Comm()     getMaskHandlerInstance(getSingletonVecKey())
 
   /** the class ClientBase delivers the base information, to concat client class instances
     * with the corresponding server class instance. This is realized by the single
@@ -214,7 +215,7 @@
   /** the macro autoInstance() is simply replaced by instance() in cases where only one BUS is managed
     * as the more usual case is only one BUS, this solution creates no unneeded overhead
     */
-  #define autoInstance()                      instance()
+  #define autoInstance()                  instance()
   #define SINGLETON_PARENT_CONSTRUCTOR
   #define SINGLETON_VEC_KEY_USE4CALL
   #define SINGLETON_VEC_KEY_PARAMETER_DEF
@@ -222,20 +223,21 @@
   #define SINGLETON_VEC_KEY_PARAMETER_VAR
   #define SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA
   #define SINGLETON_VEC_KEY_INIT_CALL
-  #define getCanInstance4Comm()               getCanInstance()
-  #define getSchedulerInstance4Comm()         getSchedulerInstance()
-  #define getTimePosGpsInstance4Comm()        getTimePosGpsInstance()
-  #define getTracGeneralInstance4Comm()       getTracGeneralInstance()
-  #define getTracMoveInstance4Comm()          getTracMoveInstance()
-  #define getTracLightInstance4Comm()         getTracLightInstance()
-  #define getTracAuxInstance4Comm()           getTracAuxInstance( )
-  #define getTracPtoInstance4Comm()           getTracPtoInstance()
-  #define getIsoMonitorInstance4Comm()        getIsoMonitorInstance()
-  #define getProcessInstance4Comm()           getProcessInstance()
-  #define getMultiSendInstance4Comm()         getMultiSendInstance()
-  #define getIsoTerminalInstance4Comm()       getIsoTerminalInstance()
-  #define getMultiReceiveInstance4Comm()      getMultiReceiveInstance()
-  #define getIsoRequestPgnInstance4Comm()     getIsoRequestPgnInstance()
+  #define getCanInstance4Comm()           getCanInstance()
+  #define getSchedulerInstance4Comm()     getSchedulerInstance()
+  #define getTimePosGpsInstance4Comm()    getTimePosGpsInstance()
+  #define getTracGeneralInstance4Comm()   getTracGeneralInstance()
+  #define getTracMoveInstance4Comm()      getTracMoveInstance()
+  #define getTracLightInstance4Comm()     getTracLightInstance()
+  #define getTracAuxInstance4Comm()       getTracAuxInstance( )
+  #define getTracPtoInstance4Comm()       getTracPtoInstance()
+  #define getIsoMonitorInstance4Comm()    getIsoMonitorInstance()
+  #define getProcessInstance4Comm()       getProcessInstance()
+  #define getMultiSendInstance4Comm()     getMultiSendInstance()
+  #define getIsoTerminalInstance4Comm()   getIsoTerminalInstance()
+  #define getMultiReceiveInstance4Comm()  getMultiReceiveInstance()
+  #define getIsoRequestPgnInstance4Comm() getIsoRequestPgnInstance()
+  #define getMaskHandlerInstance4Comm()   getMaskHandlerInstance()
   /** the class ClientBase delivers the base information, to concat client class instances
     * with the corresponding server class instance. This is realized by the single
     * attribute singletonVecKey, which is evaluated by the macro autoInstance()
