@@ -114,8 +114,9 @@ VtServerInstance_c::VtServerInstance_c(const ISOItem_c& ref_newItem, ISOName_c c
   vtCapabilities_a.lastReceivedFont = 0; // not yet (queried and) got answer about vt's capabilities yet
   vtCapabilities_a.lastRequestedFont = 0; // not yet requested vt's capabilities yet
   vtCapabilities_a.lastReceivedVersion = 0; // interesting for NACK handling, that's why it's reset here!
-  localSettings_a.lastRequested = 0; // no vt_statusMessage received yet
+  localSettings_a.lastRequested = 0; // no language info requested yet
   localSettings_a.lastReceived = 0; // no language info received yet
+  vtState_a.lastReceived = 0; // no vt_statusMessage received yet
 }
 
 /** default destructor, which initiate sending address release for all own identities

@@ -114,7 +114,7 @@ IdentItem_c::IdentItem_c (uint16_t rui16_eepromAdr, int ri_singletonVecKey)
   : BaseItem_c (System_c::getTime(), IState_c::IstateNull, ri_singletonVecKey)
   , pc_isoItem (NULL)
   , ui16_eepromAdr (rui16_eepromAdr)
-  , ui8_lastUsedSa( 0xFF )
+//  , ui8_lastUsedSa( 0xFF )
 {
   init (NULL, 0xFF, rui16_eepromAdr,
 #ifdef USE_WORKING_SET
@@ -154,7 +154,7 @@ IdentItem_c::IdentItem_c (uint8_t rui8_indGroup, uint8_t rui8_devClass, uint8_t 
   int ri_singletonVecKey)
   : BaseItem_c (System_c::getTime(), IState_c::IstateNull, ri_singletonVecKey) /// needs to be init'ed, so double "init()" can be detected!
   , pc_isoItem (NULL)
-  , ui8_lastUsedSa( 0xFF )
+//  , ui8_lastUsedSa( 0xFF )
 {
   init (rui8_indGroup, rui8_devClass, rui8_devClassInst, rb_func, rui16_manufCode, rui32_serNo,
         rui8_preferredSa, rui16_eepromAdr, rb_funcInst, rb_ecuInst, rb_selfConf,
@@ -339,25 +339,7 @@ void IdentItem_c::restartAddressClaim()
     && (pc_isoItem->itemState( IState_c::Local ))
      )
   { // item has claimed address -> send unregister cmd
-        // delete item from memberList
-
-    if (0xFF != ui8_lastUsedSa)
-    {
-      if (!getCanInstance4Comm().existFilter(getIsoRequestPgnInstance4Comm(), 0x1FFFF00UL, MASK_TYPE(static_cast<MASK_TYPE>(REQUEST_PGN_MSG_PGN | ui8_lastUsedSa) << 8), Ident_c::ExtendedIdent))
-      {
-        getCanInstance4Comm().deleteFilter(getIsoRequestPgnInstance4Comm(), 0x1FFFF00UL, MASK_TYPE(static_cast<MASK_TYPE>(REQUEST_PGN_MSG_PGN | ui8_lastUsedSa) << 8), Ident_c::ExtendedIdent);
-        b_configure = true;
-      }
-
-      #if !defined(IGNORE_VTSERVER_NACK) && defined(USE_ISO_TERMINAL)
-      if (!getCanInstance4Comm().existFilter(getIsoTerminalInstance4Comm(), 0x1FFFF00UL, MASK_TYPE(static_cast<MASK_TYPE>(ACKNOWLEDGEMENT_PGN | ui8_lastUsedSa) << 8), Ident_c::ExtendedIdent))
-      {
-        getCanInstance4Comm().deleteFilter(getIsoTerminalInstance4Comm(), 0x1FFFF00UL, MASK_TYPE(static_cast<MASK_TYPE>(ACKNOWLEDGEMENT_PGN | ui8_lastUsedSa) << 8), Ident_c::ExtendedIdent);
-        b_configure = true;
-      }
-      #endif
-    }
-
+    // delete item from memberList
     getIsoMonitorInstance4Comm().deleteIsoMemberISOName (isoName());
     pc_isoItem = NULL;
   }
@@ -520,22 +502,7 @@ bool IdentItem_c::timeEventActive( void )
       // -> create local filter for processs data
       setItemState(IState_c::ClaimedAddress);
 
-      ui8_lastUsedSa = pc_isoItem->nr(); // save SA for later filter removal
-
-      if (!getCanInstance4Comm().existFilter(getIsoRequestPgnInstance4Comm(), 0x1FFFF00UL, MASK_TYPE(static_cast<MASK_TYPE>(REQUEST_PGN_MSG_PGN | ui8_lastUsedSa) << 8), Ident_c::ExtendedIdent))
-      { // create FilterBox
-        getCanInstance4Comm().insertFilter(getIsoRequestPgnInstance4Comm(), 0x1FFFF00UL, MASK_TYPE(static_cast<MASK_TYPE>(REQUEST_PGN_MSG_PGN | ui8_lastUsedSa) << 8), false, Ident_c::ExtendedIdent);
-        b_configure = true;
-      }
-
-      // first check for any new claimed LOCAL IDENT whether receive filters should be created
-      #if !defined(IGNORE_VTSERVER_NACK) && defined(USE_ISO_TERMINAL) // The NACK must be ignored for the Mueller VT Server
-      if (!getCanInstance4Comm().existFilter(getIsoTerminalInstance4Comm(), 0x1FFFF00UL, MASK_TYPE(static_cast<MASK_TYPE>(ACKNOWLEDGEMENT_PGN | ui8_lastUsedSa) << 8), Ident_c::ExtendedIdent))
-      { // create FilterBox
-        getCanInstance4Comm().insertFilter(getIsoTerminalInstance4Comm(), 0x1FFFF00UL, MASK_TYPE(static_cast<MASK_TYPE>(ACKNOWLEDGEMENT_PGN | ui8_lastUsedSa) << 8), false, Ident_c::ExtendedIdent);
-        b_configure = true;
-      }
-      #endif
+//      ui8_lastUsedSa = pc_isoItem->nr(); // save SA for later filter removal
 
       if (ui16_eepromAdr != 0xFFFF)
       {
@@ -571,23 +538,6 @@ bool IdentItem_c::timeEventActive( void )
       { // set item as member and as own identity and overwrite old value
         pc_isoItem->setItemState
           (IState_c::itemState_t(IState_c::Member | IState_c::Local | IState_c::PreAddressClaim));
-
-        if (0xFF != ui8_lastUsedSa)
-        {
-          if (!getCanInstance4Comm().existFilter(getIsoRequestPgnInstance4Comm(), 0x1FFFF00UL, MASK_TYPE(static_cast<MASK_TYPE>(REQUEST_PGN_MSG_PGN | ui8_lastUsedSa) << 8), Ident_c::ExtendedIdent))
-          {
-            getCanInstance4Comm().deleteFilter(getIsoRequestPgnInstance4Comm(), 0x1FFFF00UL, MASK_TYPE(static_cast<MASK_TYPE>(REQUEST_PGN_MSG_PGN | ui8_lastUsedSa) << 8), Ident_c::ExtendedIdent);
-            b_configure = true;
-          }
-
-          #if !defined(IGNORE_VTSERVER_NACK) && defined(USE_ISO_TERMINAL)
-          if (!getCanInstance4Comm().existFilter(getIsoTerminalInstance4Comm(), 0x1FFFF00UL, MASK_TYPE(static_cast<MASK_TYPE>(ACKNOWLEDGEMENT_PGN | ui8_lastUsedSa) << 8), Ident_c::ExtendedIdent))
-          {
-            getCanInstance4Comm().deleteFilter(getIsoTerminalInstance4Comm(), 0x1FFFF00UL, MASK_TYPE(static_cast<MASK_TYPE>(ACKNOWLEDGEMENT_PGN | ui8_lastUsedSa) << 8), Ident_c::ExtendedIdent);
-            b_configure = true;
-          }
-          #endif
-        }
 
         #ifdef USE_WORKING_SET
         // insert all slave ISOItem objects (if not yet there) and set me as their master

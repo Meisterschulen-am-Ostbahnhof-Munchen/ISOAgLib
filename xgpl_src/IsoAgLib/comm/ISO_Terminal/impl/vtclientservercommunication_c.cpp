@@ -95,6 +95,7 @@
 #include <IsoAgLib/comm/Multipacket/impl/multireceive_c.h>
 // #include <IsoAgLib/comm/Multipacket/impl/multisendpkg_c.h>
 #include <supplementary_driver/driver/datastreams/volatilememory_c.h>
+#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofiltermanager_c.h>
 // #include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h>
 // #include "vttypes.h"
 #include "../ivtobjectpicturegraphic_c.h"
@@ -669,12 +670,10 @@ VtClientServerCommunication_c::timeEvent(void)
   if (!refc_wsMasterIdentItem.isClaimedAddress()) return true;
 
   if (!b_receiveFilterCreated)
-  { /*** MultiReceive Registration ***/
+  { /*** MultiReceive/IsoFilterManager Registration ***/
     getMultiReceiveInstance4Comm().registerClient (VT_TO_ECU_PGN, getIdentItem().isoName(), this);
-
-    /** add filter for VT_TO_ECU_PGN for our SA */
-    const uint32_t cui32_filter = ((static_cast<MASK_TYPE>(VT_TO_ECU_PGN) | static_cast<MASK_TYPE>(getIdentItem().getIsoItem()->nr())) << 8);
-    getCanInstance4Comm().insertFilter (*this, (0x1FFFF00UL), cui32_filter, true, Ident_c::ExtendedIdent);
+    getIsoFilterManagerInstance().insertIsoFilter (ISOFilter_s (*this, (0x1FFFF00UL), (VT_TO_ECU_PGN << 8), &getIdentItem().isoName()));
+    getIsoFilterManagerInstance().insertIsoFilter (ISOFilter_s (*this, (0x1FFFF00UL), (ACKNOWLEDGEMENT_PGN << 8), &getIdentItem().isoName()));
 
     b_receiveFilterCreated = true;
   }

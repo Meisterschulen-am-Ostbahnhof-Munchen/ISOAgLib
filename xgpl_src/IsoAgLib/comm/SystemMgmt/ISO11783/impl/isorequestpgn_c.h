@@ -94,6 +94,7 @@
 #include <IsoAgLib/util/impl/singleton.h>
 #include <IsoAgLib/util/impl/cancustomer_c.h>
 #include <IsoAgLib/util/impl/canpkgext_c.h>
+#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h>
 //#include "isoitem_c.h"
 
 #include <vector>
@@ -110,7 +111,7 @@ typedef SINGLETON_DERIVED(ISORequestPGN_c, CANCustomer_c) SingletonISORequestPGN
     @short Manager for handling of Requests for PGN
     @see
     @author Dipl.-Inf. (FH) Martina Winkler */
-class ISORequestPGN_c : public SingletonISORequestPGN_c
+class ISORequestPGN_c : public SingletonISORequestPGN_c, public __IsoAgLib::SaClaimHandler_c
 {
 private:
   struct PGN_s
@@ -120,6 +121,17 @@ private:
   };
 
 public:
+   /** this function is called by ISOMonitor_c when a new CLAIMED ISOItem_c is registered.
+   * @param refc_isoName const reference to the item which ISOItem_c state is changed
+   * @param rpc_newItem pointer to the currently corresponding ISOItem_c
+    */
+  virtual void reactOnMonitorListAdd( const __IsoAgLib::ISOName_c& refc_isoName, const __IsoAgLib::ISOItem_c* rpc_newItem );
+   /** this function is called by ISOMonitor_c when a device looses its ISOItem_c.
+   * @param refc_isoName const reference to the item which ISOItem_c state is changed
+   * @param rui8_oldSa previously used SA which is NOW LOST -> clients which were connected to this item can react explicitly
+    */
+  virtual void reactOnMonitorListRemove( const __IsoAgLib::ISOName_c& /*refc_isoName*/, uint8_t /*rui8_oldSa*/ ) {}
+
   /** initialisation for ISORequestPGN_c */
   void init (void);
   /** every subsystem of IsoAgLib has explicit function for controlled shutdown */

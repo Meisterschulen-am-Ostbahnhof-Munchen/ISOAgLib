@@ -86,6 +86,7 @@
 #include "isomonitor_c.h"
 
 #include <IsoAgLib/driver/can/impl/canio_c.h>
+#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofiltermanager_c.h>
 
 
 namespace __IsoAgLib {
@@ -273,6 +274,16 @@ ISORequestPGN_c::sendAcknowledgePGN (ISOItem_c& rrefc_isoItemSender, uint8_t rui
   data().setLen (8);
 
   __IsoAgLib::getCanInstance4Comm() << c_data;
+}
+
+
+void
+ISORequestPGN_c::reactOnMonitorListAdd( const __IsoAgLib::ISOName_c& refc_isoName, const __IsoAgLib::ISOItem_c* /*rpc_newItem*/ )
+{
+  if ( getIsoMonitorInstance4Comm().existLocalIsoMemberISOName(refc_isoName) )
+  { // local ISOItem_c has finished adr claim
+    getIsoFilterManagerInstance().insertIsoFilter (ISOFilter_s (*this, (0x1FFFF00UL), (REQUEST_PGN_MSG_PGN << 8), &refc_isoName));
+  }
 }
 
 
