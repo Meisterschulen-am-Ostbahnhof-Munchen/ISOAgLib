@@ -90,7 +90,7 @@ APP_NAME=vt2iso
 OUTDIR= bin/obj
 EXEC=	bin
 OBJS=	${OUTDIR}/vt2iso.o ${OUTDIR}/vt2isoimagebase_c.o ${OUTDIR}/vt2isoimagefreeimage_c.o \
-			${OUTDIR}/vt2iso-defines.o
+			${OUTDIR}/vt2iso-defines.o ${OUTDIR}/vt2iso-globals.o
 myLIBRARY_NAMES = ${LIBRARY_NAMES} -lfreeimage -lpng -ljpeg -ltiff -lpthread
 SRC=	src
 
@@ -121,6 +121,9 @@ $(OUTDIR)/vt2isoimagefreeimage_c.o:: ${SRC}/vt2isoimagebase_c.h ${SRC}/vt2isoima
 
 ${OUTDIR}/vt2iso-defines.o:: ${SRC}/vt2iso-defines.hpp ${SRC}/vt2iso-defines.cpp
 	${CC} ${INCLUDES} ${CMP} -o $(OUTDIR)/vt2iso-defines.o ${SRC}/vt2iso-defines.cpp
+
+${OUTDIR}/vt2iso-globals.o:: ${SRC}/vt2iso-globals.hpp ${SRC}/vt2iso-globals.cpp
+	${CC} ${INCLUDES} ${CMP} -o $(OUTDIR)/vt2iso-globals.o ${SRC}/vt2iso-globals.cpp
 
 
 clean::
