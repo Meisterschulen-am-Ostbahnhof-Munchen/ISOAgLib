@@ -226,6 +226,8 @@ build_utils/vt2iso/src/specialparsingbase_c.h -text
 build_utils/vt2iso/src/specialparsingbaseproptag_c.h -text
 build_utils/vt2iso/src/vt2iso-defines.cpp -text
 build_utils/vt2iso/src/vt2iso-defines.hpp -text
+build_utils/vt2iso/src/vt2iso-globals.cpp -text
+build_utils/vt2iso/src/vt2iso-globals.hpp -text
 build_utils/vt2iso/src/vt2iso.hpp -text
 build_utils/vt2iso/src/vt2isostr2bin.cpp -text
 build_utils/vt2iso/src/vt2isostr2bin.h -text

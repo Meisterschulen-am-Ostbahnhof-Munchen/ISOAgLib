@@ -46,6 +46,7 @@
 #include <map>
 
 #include "vt2iso-defines.hpp"
+#include "vt2iso-globals.hpp"
 
 XERCES_CPP_NAMESPACE_USE
 
@@ -210,37 +211,6 @@ private:
   void convertIdReferencesToNameReferences();
 
   int languageCodeToIndex (char* lc);
-
-  unsigned int colortoi (char* text_color);
-  unsigned int masktypetoi (char* masktype);
-  unsigned int colordepthtoi (char* text_colordepth);
-  signed int fonttypetoi (char* text_fonttype);
-  signed int booltoi (char *text_bool);
-  signed int fontsizetoi (char *text_fontsize);
-  signed int formattoi (char *text_format);
-  signed int horizontaljustificationtoi (char *text_horiz);
-  unsigned int optionstoi (char *text_options);
-  unsigned int numberoptionstoi (char *text_options);
-  unsigned int picturegraphicoptionstoi (char *text_options);
-  unsigned int picturegraphicrletoi (char *text_options);
-  unsigned int meteroptionstoi (char *text_options);
-  unsigned int linearbargraphoptionstoi (char *text_options);
-  unsigned int archedbargraphoptionstoi (char *text_options);
-  signed int prioritytoi (char *text_priority);
-  signed int acousticsignaltoi (char *text_acousticsignal);
-  unsigned int fontstyletoi (char *text_fontstyle);
-  unsigned int linedirectiontoi (char *text_linedirection);
-  unsigned int linearttoi (char *text_lineart);
-  unsigned int linesuppressiontoi (char *text_linesuppression);
-  unsigned int ellipsetypetoi (char *text_ellipsetype);
-  unsigned int polygontypetoi (char *text_polygontype);
-  unsigned int validationtypetoi (char *text_validationtype);
-  unsigned int filltypetoi (char *text_filltype);
-  unsigned int eventToi (char *text_eventName);
-  unsigned int auxfunctiontyptetoi(char *text_auxFunctionType);
-  unsigned int gcoptionstoi (char *text_options);
-  unsigned int inputobjectoptiontoi (char *text_inputobjectoptions);
-  unsigned int buttonoptiontoi (char *text_buttonoptions);
 
   void setAttributeValue (int attrID);
   void cleanAttribute (int attrID);

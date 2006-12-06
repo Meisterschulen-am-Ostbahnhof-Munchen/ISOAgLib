@@ -572,7 +572,7 @@ unsigned int fonttypetoi (char* text_fonttype)
     }
   }
   std::cout << "INVALID FONT TYPE '" << text_fonttype << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
-  clean_exit (-1);
+  clean_exit ();
   return 0; // to make compiler happy
 }
 
@@ -591,7 +591,7 @@ unsigned int booltoi (char *text_bool)
     }
   }
   std::cout << "INVALID TRUTH VALUE '" << text_bool << " ENCOUNTERED! STOPPING PARSER! bye.\n\n";
-  clean_exit (-1);
+  clean_exit ();
   return 0; // to make compiler happy
 }
 
@@ -604,7 +604,7 @@ unsigned int fontsizetoi (char *text_fontsize)
     }
   }
   std::cout << "INVALID FONT SIZE '" << text_fontsize << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
-  clean_exit (-1);
+  clean_exit ();
   return 0; // to make compiler happy
 }
 
@@ -617,7 +617,7 @@ unsigned int formattoi (char *text_format)
     }
   }
   std::cout << "INVALID FORMAT '" << text_format << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
-  clean_exit (-1);
+  clean_exit ();
   return 0; // to make compiler happy
 }
 
@@ -630,7 +630,7 @@ unsigned int horizontaljustificationtoi (char *text_horiz)
     }
   }
   std::cout << "INVALID HORIZONTALJUSTIFICATION '" << text_horiz << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
-  clean_exit (-1);
+  clean_exit ();
   return 0; // to make compiler happy
 }
 
@@ -721,7 +721,7 @@ unsigned int prioritytoi (char *text_priority)
     }
   }
   std::cout << "INVALID PRIORITY '" << text_priority << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
-  clean_exit (-1);
+  clean_exit ();
   return 0; // to make compiler happy
 }
 
@@ -734,7 +734,7 @@ unsigned int acousticsignaltoi (char *text_acousticsignal)
     }
   }
   std::cout << "INVALID ACOUSTIC SIGNAL '" << text_acousticsignal << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
-  clean_exit (-1);
+  clean_exit ();
   return 0; // to make compiler happy
 }
 

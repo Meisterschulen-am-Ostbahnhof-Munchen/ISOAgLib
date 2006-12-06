@@ -1,8 +1,8 @@
 <?xml version = '1.0'?>
 <kdevelop>
   <general>
-    <author>Martina Winkler</author>
-    <email>M.Winkler@osb-ag.de</email>
+    <author>Eva Erdmann</author>
+    <email>eva.erdmann@osb-ag.de</email>
     <version>$VERSION$</version>
     <projectmanagement>KDevCustomProject</projectmanagement>
     <primarylanguage>C++</primarylanguage>
@@ -18,7 +18,7 @@
       <mainprogram>bin/vt2iso</mainprogram>
       <directoryradio>executable</directoryradio>
       <customdirectory>/</customdirectory>
-      <programargs>../../../../src_test/test_pools/datamask/Pool.xml</programargs>
+      <programargs>./../../../../src_test/test_pools/testcase/layoutManager/Pool.xml</programargs>
       <terminal>false</terminal>
       <autocompile>true</autocompile>
       <envvars/>
@@ -44,7 +44,7 @@
   <kdevdebugger>
     <general>
       <dbgshell/>
-      <programargs>../../../../src_test/test_pools/datamask/Pool.xml</programargs>
+      <programargs>../../../../src_test/test_pools/testcase/layoutManager/Pool.xml</programargs>
       <gdbpath/>
       <configGdbScript/>
       <runShellScript/>

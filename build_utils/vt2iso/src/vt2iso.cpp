@@ -51,14 +51,8 @@
 #include <xercesc/dom/DOMNamedNodeMap.hpp>
 #include <xercesc/dom/DOMAttr.hpp>
 #include <xercesc/dom/DOMElement.hpp>
-#include <string>
-#include <string.h>
-#include <stdlib.h>
-#include <ctype.h>
 
 // Includes (findfirst, findnext)
-#include <stddef.h>
-#include <sys/types.h>
 #include <fstream>
 
 #ifdef WIN32
@@ -77,7 +71,6 @@
 
  // Includes (vt2iso)
 #include "vt2iso.hpp"
-#include "vt2iso-defines.hpp"
 
 #ifdef USE_SPECIAL_PARSING_PROP
  #include <specialparsinguseproptag_c.h>
@@ -1089,409 +1082,6 @@ vt2iso_c::languageCodeToIndex (char* lc)
     }
   }
   return -1; // negative number to indicate language code not found
-}
-
-unsigned int
-vt2iso_c::colortoi (char* text_color)
-{
-  int l;
-  for (l=0; l<16; l++) {
-    if (strncmp (text_color, colorTable [l], stringLength) == 0) {
-      return l;
-    }
-  }
-  return atoi (text_color);
-}
-
-unsigned int
-vt2iso_c::masktypetoi (char* masktype)
-{
-  int l;
-  for (l=0; l<3; l++) {
-    if (strncmp (masktype, masktypeTable [l], stringLength) == 0) {
-      return l;
-    }
-  }
-  return atoi (masktype);
-}
-
-unsigned int
-vt2iso_c::colordepthtoi (char* text_colordepth)
-{
-  int l;
-  for (l=0; l<2; l++) {
-    if (text_colordepth [0] == colorDepthTable [l]) {
-      return l;
-    }
-  }
-  return 2;
-}
-
-signed int
-vt2iso_c::fonttypetoi (char* text_fonttype)
-{
-  int l;
-  if (text_fonttype && isdigit(*text_fonttype))
-  {
-    if ((atoi(text_fonttype) == 0) || (atoi(text_fonttype) == 1) || (atoi(text_fonttype) == 2) || (atoi(text_fonttype) == 4) || (atoi(text_fonttype) == 5) || (atoi(text_fonttype) == 7) || (atoi(text_fonttype) == 255)) return atoi(text_fonttype);
-  }
-  else
-  {
-    for (l=0; l<maxFonttypeTable; l++) {
-      if (strncmp (text_fonttype, fonttypeTable [l], stringLength) == 0) {
-        if (l == maxFonttypeTable-1) return 0xFF;
-        return l;
-      }
-    }
-  }
-  std::cout << "INVALID FONT TYPE '" << text_fonttype << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
-  clean_exit ();
-  return -1;
-}
-
-signed int
-vt2iso_c::booltoi (char *text_bool)
-{
-  int l;
-  for (l=0; l<maxTruthTable; l++) {
-    if (strncmp (text_bool, truthTable [l], stringLength) == 0) {
-      return 1;
-    }
-  }
-  for (l=0; l<maxFalseTable; l++) {
-    if (strncmp (text_bool, falseTable [l], stringLength) == 0) {
-      return 0;
-    }
-  }
-  std::cout << "INVALID TRUTH VALUE '" << text_bool << " ENCOUNTERED! STOPPING PARSER! bye.\n\n";
-  clean_exit ();
-  return -1;
-}
-
-signed int
-vt2iso_c::fontsizetoi (char *text_fontsize)
-{
-  int l;
-  for (l=0; l<maxFontsizeTable; l++) {
-    if (strncmp (text_fontsize, fontsizeTable [l], stringLength) == 0) {
-      return l;
-    }
-  }
-  std::cout << "INVALID FONT SIZE '" << text_fontsize << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
-  clean_exit ();
-  return -1;
-}
-
-signed int
-vt2iso_c::formattoi (char *text_format)
-{
-  int l;
-  for (l=0; l<maxFormatTable; l++) {
-    if (strncmp (text_format, formatTable [l], stringLength) == 0) {
-      return l;
-    }
-  }
-  std::cout << "INVALID FORMAT '" << text_format << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
-  clean_exit ();
-  return -1;
-}
-
-signed int
-vt2iso_c::horizontaljustificationtoi (char *text_horiz)
-{
-  int l;
-  for (l=0; l<maxHorizontalJustificationTable; l++) {
-    if (strncmp (text_horiz, horizontalJustificationTable [l], stringLength) == 0) {
-      return l;
-    }
-  }
-  std::cout << "INVALID HORIZONTALJUSTIFICATION '" << text_horiz << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
-  clean_exit ();
-  return -1;
-}
-
-unsigned int
-vt2iso_c::optionstoi (char *text_options)
-{
-  int l, retval=0;
-  for (l=0; l<maxOptionsTable; l++) {
-    if (strstr (text_options, optionsTable [l]) != 0) {
-      retval += (uint64_t(1)<<l);
-    }
-  }
-  return retval;
-}
-
-unsigned int
-vt2iso_c::numberoptionstoi (char *text_options)
-{
-  int l, retval=0;
-  for (l=0; l<maxOutputNumberOptionsTable; l++) {
-    if (strstr (text_options, outputNumberOptionsTable [l]) != 0) {
-      retval += (uint64_t(1)<<l);
-    }
-  }
-  return retval;
-}
-
-unsigned int
-vt2iso_c::picturegraphicoptionstoi (char *text_options)
-{
-  int l, retval=0;
-  for (l=0; l<maxPictureGraphicOptionsTable; l++) {
-    if (strstr (text_options, pictureGraphicOptionsTable [l]) != 0) {
-      retval += (uint64_t(1)<<l);
-    }
-  }
-  return retval;
-}
-
-unsigned int
-vt2iso_c::picturegraphicrletoi (char *text_options)
-{
-  int l, retval=0;
-  for (l=0; l<maxPictureGraphicRleTable; l++) {
-    if (strstr (text_options, pictureGraphicRleTable [l]) != 0) {
-      retval += (uint64_t(1)<<l);
-    }
-  }
-  return retval;
-}
-
-unsigned int
-vt2iso_c::meteroptionstoi (char *text_options)
-{
-  int l, retval=0;
-  for (l=0; l<maxMeterOptionsTable; l++) {
-    if (strstr (text_options, meterOptionsTable [l]) != 0) {
-      retval += (uint64_t(1)<<l);
-    }
-  }
-  return retval;
-}
-
-unsigned int
-vt2iso_c::linearbargraphoptionstoi (char *text_options)
-{
-  int l, retval=0;
-  for (l=0; l<maxLinearBarGraphOptionsTable; l++) {
-    if (strstr (text_options, linearBarGraphOptionsTable [l]) != 0) {
-      retval += (uint64_t(1)<<l);
-    }
-  }
-  return retval;
-}
-
-unsigned int
-vt2iso_c::archedbargraphoptionstoi (char *text_options)
-{
-  int l, retval=0;
-  for (l=0; l<maxArchedBarGraphOptionsTable; l++) {
-    if (strstr (text_options, archedBarGraphOptionsTable [l]) != 0) {
-      retval += (uint64_t(1)<<l);
-    }
-  }
-  return retval;
-}
-
-signed int
-vt2iso_c::prioritytoi (char *text_priority)
-{
-  int l;
-  for (l=0; l<maxPriorityAcousticSignalTable-1; l++) {
-    if (strncmp (text_priority, priorityAcousticSignalTable [l], stringLength) == 0) {
-      return l;
-    }
-  }
-  std::cout << "INVALID PRIORITY '" << text_priority << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
-  clean_exit ();
-  return -1;
-}
-
-signed int
-vt2iso_c::acousticsignaltoi (char *text_acousticsignal)
-{
-  int l;
-  for (l=0; l<maxPriorityAcousticSignalTable; l++) {
-    if (strncmp (text_acousticsignal, priorityAcousticSignalTable [l], stringLength) == 0) {
-      return l;
-    }
-  }
-  std::cout << "INVALID ACOUSTIC SIGNAL '" << text_acousticsignal << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
-  clean_exit ();
-  return -1;
-}
-
-unsigned int
-vt2iso_c::fontstyletoi (char *text_fontstyle)
-{
-  int l, retval=0;
-  for (l=0; l<maxFontstyleTable; l++) {
-    char *pos=strstr (text_fontstyle, fontstyleTable [l]);
-    if (pos != NULL)
-    {
-      bool b_flashingInverted = false;
-      if (l==4)
-      { // "inverted" - only take if it's NOT flashing inverted!
-        if (pos >= text_fontstyle+strlen (fontstyleTable [5])-strlen (fontstyleTable [4]))
-        { // now check if the part left of it is "flashing" - in this case, do NOT consider this one as inverted!
-          if (strncmp (pos-(strlen (fontstyleTable [5])-strlen (fontstyleTable [4])), fontstyleTable [5], strlen (fontstyleTable [5])) == 0)
-            b_flashingInverted = true;
-        }
-      }
-      if (!b_flashingInverted)
-        retval += (uint64_t(1)<<l);
-    }
-  }
-  return retval;
-}
-
-unsigned int
-vt2iso_c::linedirectiontoi (char *text_linedirection)
-{
-  int retval=0;
-  if (strstr (text_linedirection, "bottomlefttotopright") != NULL) {
-    retval = 1;
-  }
-  return retval;
-}
-
-unsigned int
-vt2iso_c::linearttoi (char *text_lineart)
-{
-  int retval=0;
-  char thischar;
-  while ((thischar = *text_lineart) != 0x00) {
-    retval <<= 1;
-    if (thischar == '1') {
-      retval |= 0x0001;
-    }
-    text_lineart++;
-  }
-  return retval;
-}
-
-unsigned int
-vt2iso_c::linesuppressiontoi (char *text_linesuppression)
-{
-  int l, retval=0;
-  for (l=0; l<maxLineSuppressionTable; l++) {
-    if (strstr (text_linesuppression, lineSuppressionTable [l]) != 0) {
-      retval += (uint64_t(1)<<l);
-    }
-  }
-  return retval;
-}
-
-unsigned int
-vt2iso_c::ellipsetypetoi (char *text_ellipsetype)
-{
-  int l, retval=0;
-  for (l=0; l<maxEllipseTypeTable; l++) {
-    if (strcmp(text_ellipsetype, ellipseTypeTable [l]) == 0) {
-      retval = l;
-      break;
-    }
-  }
-  return retval;
-}
-
-unsigned int
-vt2iso_c::polygontypetoi (char *text_polygontype)
-{
-  int l, retval=0;
-  for (l=0; l<maxPolygonTypeTable; l++) {
-    if (strcmp (text_polygontype, polygonTypeTable [l]) == 0) {
-      retval = l;
-      break;
-    }
-  }
-  return retval;
-}
-
-unsigned int
-vt2iso_c::validationtypetoi (char *text_validationtype)
-{
-  int retval=0;
-  if (strstr (text_validationtype, "invalid") != 0) {
-    retval = 1;
-  }
-  return retval;
-}
-
-unsigned int
-vt2iso_c::filltypetoi (char *text_filltype)
-{
-  int l, retval=0;
-  for (l=0; l<maxFillTypeTable; l++) {
-    if (strstr (text_filltype, fillTypeTable [l]) != 0) {
-      retval = l;
-      break;
-    }
-  }
-  return retval;
-}
-
-unsigned int
-vt2iso_c::eventToi (char *text_eventName)
-{
-  int l, retval=0;
-  for (l=0; l<maxEventTable; l++) {
-    if (strstr (text_eventName, eventTable [l]) != 0) {
-      retval = l + 1;
-      break;
-    }
-  }
-  return retval;
-}
-
-unsigned int
-vt2iso_c::auxfunctiontyptetoi(char *text_auxFunctionType)
-{
-  int l, retval=0;
-  for (l=0; l<maxAuxFunctionTypes; l++) {
-    if (strstr (text_auxFunctionType, auxFunctionTypeTable [l]) != 0) {
-      retval = l;
-      break;
-    }
-  }
-  return retval;
-}
-
-unsigned int
-vt2iso_c::gcoptionstoi (char *text_options)
-{
-  int l, retval=0;
-  for (l=0; l<maxGCOptions; l++) {
-    if (strstr (text_options, GCOptionsTable [l]) != 0) {
-      retval += (uint64_t(1)<<l);
-    }
-  }
-  return retval;
-}
-
-unsigned int
-vt2iso_c::inputobjectoptiontoi (char *text_inputobjectoptions)
-{
-  int l, retval=0;
-  for (l=0; l<maxInputObjectOptionsTable; l++) {
-    if (strstr (text_inputobjectoptions, inputobjectOptionsTable [l]) != 0) {
-      retval += (uint64_t(1)<<l);
-    }
-  }
-  return retval;
-}
-
-unsigned int
-vt2iso_c::buttonoptiontoi (char *text_buttonoptions)
-{
-  int l, retval=0;
-  for (l=0; l<maxButtonOptions; l++) {
-    if (strstr (text_buttonoptions, buttonOptionsTable [l]) != 0) {
-      retval += (uint64_t(1)<<l);
-    }
-  }
-  return retval;
 }
 
 /* sets the passed attribute if name matches id */
@@ -2756,7 +2346,13 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
                   }
                   signed long int ret = idOrName_toi(attrString [attrObjectID], /*macro?*/false);
                   signed int retHideShow = booltoi(attrString[attrHideShow]);
-                  if ((ret == -1) || (retHideShow == -1)) return false;
+                  if ( ret == -1 ) return false;
+                  if ( retHideShow == -1 )
+                  {
+                    clean_exit();
+                    return false;
+                  }
+
                   // Need check for all attributes being present for this command -bac
                   sprintf(commandMessage, "0xA0, %d, %d, %d, 0xFF, 0xFF, 0xFF, 0xFF", MACRO_16bitToLE((unsigned int)ret), (unsigned int)retHideShow);
                   objChildCommands++;
@@ -2784,7 +2380,12 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
                   }
                   signed long int ret = idOrName_toi(attrString [attrObjectID], /*macro?*/false);
                   signed int retDisEnable = booltoi(attrString[attrDisable_enable]);
-                  if ((ret == -1) || (retDisEnable == -1))return false;
+                  if ( ret == -1 )return false;
+                  if ( retDisEnable == -1 )
+                  {
+                    clean_exit();
+                    return false;
+                  }
                   // Need check for all attributes being present for this command -bac
                   sprintf(commandMessage, "0xA1, %d, %d, %d, 0xFF, 0xFF, 0xFF, 0xFF", MACRO_16bitToLE((unsigned int)ret), (unsigned int)retDisEnable);
                   objChildCommands++;
@@ -3122,7 +2723,13 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
                   }
                   signed long int ret = idOrName_toi(attrString [attrObjectID], /*macro?*/false);
                   signed long int retFontSize = fontsizetoi(attrString [attrFont_size]);
-                  if ((ret == -1) || (retFontSize == -1)) return false;
+                  if ( ret == -1 ) return false;
+                  if ( retFontSize == -1 )
+                  {
+                    clean_exit();
+                    return false;
+                  }
+
                   // Need check for all attributes being present for this command -bac
                   sprintf(commandMessage, "0xAA, %d, %d, %d, %d, %d, %d, 0xFF", MACRO_16bitToLE((unsigned int)ret), colortoi(attrString [attrFont_colour]), (unsigned int)retFontSize, atoi(attrString [attrFont_type]), fontstyletoi(attrString [attrFont_style]));
 
@@ -3307,7 +2914,12 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
                   }
                   signed long int ret = idOrName_toi(attrString [attrObjectID], /*macro?*/false);
                   signed long int retPrio = prioritytoi(attrString [attrNew_priority]);
-                  if ((ret == -1) || (retPrio == -1)) return false;
+                  if (ret == -1) return false;
+                  if (retPrio == -1)
+                  {
+                    clean_exit();
+                    return false;
+                  }
                   // Need check for all attributes being present for this command -bac
                   sprintf(commandMessage, "0xB0, %d, %d, %d, 0xFF, 0xFF, 0xFF, 0xFF", MACRO_16bitToLE((unsigned int)ret), (unsigned int)retPrio);
 
@@ -3600,7 +3212,8 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
       {
         // need to know the object id in special parsing when data is written to files
         pc_specialParsingPropTag->setObjID (objID);
-        pc_specialParsingPropTag->outputData2FilesPiecewise();
+        bool b_outputOK = pc_specialParsingPropTag->outputData2FilesPiecewise(attrString, attrIsGiven);
+        if ( !b_outputOK ) return false;
       }
       else if (objType < maxObjectTypes)
       {
@@ -3619,7 +3232,11 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
       if (attrIsGiven [attrInKey])
       {
         signed int resultat = booltoi (attrString [attrInKey]);
-        if (resultat == -1) return false;
+        if (resultat == -1)
+        {
+          clean_exit();
+          return false;
+        }
         fprintf (partFile_functions_origin, "  iVtObject%s%s.setOriginSKM (%s);\n", objName, pc_postfix, resultat ? "true":"false");
       }
 
@@ -3646,7 +3263,11 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
         case otWorkingset:
         {
           signed int retSelectable = booltoi (attrString [attrSelectable]);
-          if (retSelectable == -1) return false;
+          if (retSelectable == -1)
+          {
+            clean_exit();
+            return false;
+          }
           if (!attrIsGiven [attrActive_mask] && (retSelectable == 1))
           {
             clean_exit ("YOU NEED TO SPECIFY THE active_mask= ATTRIBUTE FOR THE <workingset> OBJECT (if selectable='yes'!)! STOPPING PARSER! bye.\n\n");
@@ -3676,7 +3297,11 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
         {
           signed long int retPrio = prioritytoi(attrString [attrPriority]);
           signed long int retSignal = acousticsignaltoi (attrString [attrAcoustic_signal]);
-          if ((retPrio == -1) || (retSignal == -1)) return false;
+          if ((retPrio == -1) || (retSignal == -1))
+          {
+            clean_exit();
+            return false;
+          }
           if ( (strcmp ("NULL", attrString [attrSoft_key_mask]) == 0) || (strcmp("65535",  attrString [attrSoft_key_mask]) == 0))
             fprintf (partFile_attributes, ", %d, NULL, %d, %d", colortoi (attrString [attrBackground_colour]), atoi (attrString [attrPriority]), atoi (attrString [attrAcoustic_signal]));
           else
@@ -3692,7 +3317,11 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             return false;
           }
           signed int retHidden = booltoi (attrString [attrHidden]);
-          if (retHidden == -1) return false;
+          if (retHidden == -1)
+          {
+            clean_exit();
+            return false;
+          }
           fprintf (partFile_attributes, ", %s, %s, %d", attrString [attrWidth], attrString [attrHeight], (unsigned int)retHidden);
           break;
         }
@@ -3729,7 +3358,11 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             sprintf (attrString [attrValue], "0");
 
           signed int retEnabled = booltoi (attrString [attrEnabled]);
-          if (retEnabled == -1) return false;
+          if (retEnabled == -1)
+          {
+            clean_exit();
+            return false;
+          }
           fprintf (partFile_attributes, ", %d, %s, &iVtObject%s, %s, %s, %d", colortoi (attrString [attrBackground_colour]), attrString [attrWidth], attrString [attrForeground_colour], attrString [attrVariable_reference], attrString [attrValue], (unsigned int)retEnabled);
           break;
         }
@@ -3771,7 +3404,11 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           }
           signed int retEnabled = booltoi(attrString [attrEnabled]);
           signed int retJustification = horizontaljustificationtoi (attrString [attrHorizontal_justification]);
-          if (retEnabled == -1 || retJustification == -1) return false;
+          if (retEnabled == -1 || retJustification == -1)
+          {
+            clean_exit();
+            return false;
+          }
           if ( (!attrIsGiven [attrInput_attributes]) || (strcmp( attrString[attrInput_attributes], "65535")==0) )
           {
             sprintf (attrString [attrInput_attributes], "NULL");
@@ -3810,7 +3447,12 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           signed int retEnabled = booltoi (attrString [attrEnabled]);
           signed int retFormat = formattoi (attrString [attrFormat]);
           signed int retJust = horizontaljustificationtoi (attrString [attrHorizontal_justification]);
-          if ((retEnabled == -1) || (retFormat == -1) || (retJust = -1)) return false;
+          if ((retEnabled == -1) || (retFormat == -1) || (retJust = -1))
+          {
+            clean_exit();
+            return false;
+          }
+
           fprintf (partFile_attributes, ", %s, %s, %d, %d, %d", attrString [attrScale], attrString [attrNumber_of_decimals],
                    (unsigned int)retFormat, (unsigned int)retJust, (unsigned int)retEnabled);
           break;
@@ -3827,7 +3469,11 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             sprintf (attrString [attrValue], "0");
 
           signed int retEnabled = booltoi (attrString [attrEnabled]);
-          if (retEnabled == -1) return false;
+          if (retEnabled == -1)
+          {
+            clean_exit();
+            return false;
+          }
           fprintf (partFile_attributes, ", %s, %s, %s, %s, %d", attrString [attrWidth], attrString [attrHeight], attrString [attrVariable_reference],
                    attrString [attrValue], (unsigned int)retEnabled);
           break;
@@ -3866,7 +3512,11 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             sprintf (attrString [attrValue], "%s", tempString);
           }
           signed int retJust = horizontaljustificationtoi (attrString [attrHorizontal_justification]);
-          if (retJust == -1) return false;
+          if (retJust == -1)
+          {
+            clean_exit();
+            return false;
+          }
           fprintf (partFile_attributes, ", %s, %s, %d, &iVtObject%s, %d, %s, %d, %s, %s", attrString [attrWidth], attrString [attrHeight], colortoi (attrString [attrBackground_colour]),
                    attrString [attrFont_attributes], optionstoi (attrString [attrOptions]), attrString [attrVariable_reference],
                    (unsigned int)retJust, attrString [attrLength], attrString [attrValue]);
@@ -3897,7 +3547,11 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           }
           signed int retFormat = formattoi (attrString [attrFormat]);
           signed int retJust = horizontaljustificationtoi (attrString [attrHorizontal_justification]);
-          if ((retFormat == -1) || (retJust == -1)) return false;
+          if ((retFormat == -1) || (retJust == -1))
+          {
+            clean_exit();
+            return false;
+          }
           fprintf (partFile_attributes, ", %s, %s, %d, %d", attrString [attrScale], attrString [attrNumber_of_decimals],
                    (unsigned int)retFormat, (unsigned int)retJust);
           break;
@@ -4097,7 +3751,11 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           }
           signed int ret = fonttypetoi (attrString [attrFont_type]);
           signed int retFontSize = fontsizetoi (attrString [attrFont_size]);
-          if ((ret == -1) || (retFontSize == -1))return false;
+          if ((ret == -1) || (retFontSize == -1))
+          {
+            clean_exit();
+            return false;
+          }
 
           fprintf (partFile_attributes, ", %d, %d, %d, %d", colortoi (attrString [attrFont_colour]), (unsigned int)retFontSize, (unsigned int)ret, fontstyletoi (attrString [attrFont_style]));
           break;

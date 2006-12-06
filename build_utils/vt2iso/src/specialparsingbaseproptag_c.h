@@ -51,6 +51,8 @@
 #include <xercesc/parsers/XercesDOMParser.hpp>
 #include <xercesc/util/XMLUni.hpp>
 
+#include "vt2iso-defines.hpp"
+
 #ifndef SYSTEM_PC_VC
 #include <stdint.h>
 #else
@@ -92,10 +94,10 @@ class SpecialParsingBasePropTag_c
   virtual void setObjID (uint16_t rui16_objID) = 0;
 
   /** that functions creates all necessary files and prints out all collected data */
-  virtual void outputCollectedData2Files() {}
+  virtual void outputCollectedData2Files(const char attrString[maxAttributeNames] [stringLength+1], const bool attrIsGiven[maxAttributeNames]) {}
 
   /** that functions writes to already existing files and prints out a record during runtime of vt2iso */
-  virtual void outputData2FilesPiecewise() {}
+  virtual bool outputData2FilesPiecewise(const char attrString[maxAttributeNames] [stringLength+1], const bool attrIsGiven[maxAttributeNames]) {return true;}
 
   /// returns if the current parsing module contains proprietary object types which can be handled like basic object types
   virtual bool checkForProprietaryOrBasicObjTypes() = 0;
