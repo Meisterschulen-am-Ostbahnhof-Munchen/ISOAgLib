@@ -85,8 +85,8 @@ class SpecialParsingBase_c
   */
   virtual bool parseKnownTag (DOMNode* pNode, const uint8_t objectType,
                               const char* objName, unsigned int* pui_objID,
-                              bool* pb_isObjID, const char* pcch_SKM=NULL,
-                              const char* pcch_varRef1st=NULL, const char* pcch_varRef2nd=NULL) = 0;
+                              bool* pb_isObjID, const char* pcch_SKM="NULL",
+                              const char* pcch_varRef="NULL") = 0;
 
   /** check if found tag is invalid at this position */
   virtual bool checkTag(DOMNode* pNode, unsigned int objectType, uint64_t ombType) = 0;
