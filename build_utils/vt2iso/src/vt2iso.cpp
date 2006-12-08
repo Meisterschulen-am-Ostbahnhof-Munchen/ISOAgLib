@@ -1628,24 +1628,9 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
               return false;
             }
             break;
-          case otInputboolean:
-          case otInputstring:
-          case otInputnumber:
-          case otInputlist:
-          case otOutputstring:
           case otOutputnumber:
-          case otMeter:
             /// attribute for variable reference
             if (!pc_specialParsing->parseKnownTag(n, objType, objName, &objID, &is_objID, "NULL", attrString[attrVariable_reference]))
-            {
-              clean_exit ();
-              return false;
-            }
-            break;
-          case otLinearbargraph:
-          case otArchedbargraph:
-            /// two attributes for variable references
-            if (!pc_specialParsing->parseKnownTag(n, objType, objName, &objID, &is_objID, "NULL", attrString[attrVariable_reference], attrString[attrTarget_value_variable_reference]))
             {
               clean_exit ();
               return false;
