@@ -86,7 +86,7 @@
 #include <IsoAgLib/driver/can/impl/canio_c.h>
 #include <IsoAgLib/util/iliberr_c.h>
 #include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h>
-
+#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofiltermanager_c.h>
 #ifdef USE_PROCESS
   #include <IsoAgLib/comm/Process/impl/process_c.h>
 #endif
@@ -231,7 +231,8 @@ void Scheduler_c::startSystem()
     // NOW INIT ONCE the core singleton classes that correspond to the compile time
     // configured features of the IsoAgLib
     getILibErrInstance().init();
-    getIsoMonitorInstance().init();
+    getIsoMonitorInstance4Comm().init();
+    getIsoFilterManagerInstance4Comm().init();
 #ifdef DEF_Stream_IMPL
     getMultiReceiveInstance4Comm().init();
     getMultiSendInstance4Comm().init();

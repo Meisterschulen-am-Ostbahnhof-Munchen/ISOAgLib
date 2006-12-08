@@ -116,7 +116,7 @@
   #define getMultiReceiveInstance4Comm()    getMultiReceiveInstance( getSingletonVecKey() )
   #define getIsoRequestPgnInstance4Comm()   getIsoRequestPgnInstance(getSingletonVecKey())
   #define getMaskHandlerInstance4Comm()     getMaskHandlerInstance(getSingletonVecKey())
-
+  #define getIsoFilterManagerInstance4Comm() getIsoFilterManagerInstance(getSingletonVecKey())
   /** the class ClientBase delivers the base information, to concat client class instances
     * with the corresponding server class instance. This is realized by the single
     * attribute singletonVecKey, which is evaluated by the macro autoInstance()
@@ -238,6 +238,7 @@
   #define getMultiReceiveInstance4Comm()  getMultiReceiveInstance()
   #define getIsoRequestPgnInstance4Comm() getIsoRequestPgnInstance()
   #define getMaskHandlerInstance4Comm()   getMaskHandlerInstance()
+  #define getIsoFilterManagerInstance4Comm() getIsoFilterManagerInstance()
   /** the class ClientBase delivers the base information, to concat client class instances
     * with the corresponding server class instance. This is realized by the single
     * attribute singletonVecKey, which is evaluated by the macro autoInstance()

@@ -116,13 +116,8 @@ public:
   typedef STL_NAMESPACE::vector<ISOFilterBox_c> ISOFilterBox_vec;
   typedef STL_NAMESPACE::vector<ISOFilterBox_c>::iterator ISOFilterBox_it;
 
-#if 0
   /** initialisation for ISOFilterManager_c */
-  void init (void);
-
-  /** every subsystem of IsoAgLib has explicit function for controlled shutdown */
-  void close (void);
-#endif
+  void init();
 
   /** default destructor which has nothing to do */
   ~ISOFilterManager_c ();
@@ -164,6 +159,8 @@ private: // Private attributes
   ISOFilterBox_vec vec_isoFilterBox;
 
   friend class SINGLETON_DERIVED (ISOFilterManager_c,SaClaimHandler_c);
+
+  bool b_alreadyInitialized;
 };
 
 #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )

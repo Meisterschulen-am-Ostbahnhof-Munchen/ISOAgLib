@@ -86,21 +86,6 @@
 namespace __IsoAgLib {
 
 
-#if 0
-/** initialisation for ISOFilterManager_c */
-void
-ISOFilterManager_c::init (void)
-{
-}
-
-
-/** every subsystem of IsoAgLib has explicit function for controlled shutdown */
-void
-ISOFilterManager_c::close (void)
-{
-}
-#endif
-
 /** default destructor which has nothing to do */
 ISOFilterManager_c::~ISOFilterManager_c ()
 {
@@ -122,7 +107,19 @@ ISOFilterManager_c::ISOFilterManager_c ()
 void
 ISOFilterManager_c::singletonInit ()
 {
-//  init();
+  b_alreadyInitialized = false; // so init() will init!
+}
+
+
+void
+ISOFilterManager_c::init()
+{
+  if (!b_alreadyInitialized)
+  { // avoid double initialization. for now now close needed, only init once! ==> see Scheduler_c::startupSystem()
+    b_alreadyInitialized = true;
+    // register to get ISO monitor list changes
+    __IsoAgLib::getIsoMonitorInstance4Comm().registerSaClaimHandler( this );
+  }
 }
 
 
