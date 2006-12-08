@@ -101,6 +101,9 @@ ISORequestPGN_c::init (void)
     // clear state of b_alreadyClosed, so that close() is called one time AND no more init()s are performed!
     clearAlreadyClosed();
 
+    // register to get ISO monitor list changes
+    __IsoAgLib::getIsoMonitorInstance4Comm().registerSaClaimHandler( this );
+
     getCanInstance4Comm().insertFilter( *this, 0x1FFFF00UL, MASK_TYPE(static_cast<MASK_TYPE>(REQUEST_PGN_MSG_PGN | 0xFF) << 8), true, Ident_c::ExtendedIdent);
   }
 }
@@ -229,7 +232,6 @@ ISORequestPGN_c::processMsg ()
 
   /// In case a node on the bus has not yet claimed an address (it sends with sa=0xFE, i.e. MonitorItem_c==NULL),
   /// it can still request ANY PGNs according to Mike - so no special check done here!
-
   /// 1. Distribute to all clients
   bool b_processedByAnyClient = false;
   for (STL_NAMESPACE::vector<PGN_s>::iterator regPGN_it = registeredClientsWithPGN.begin();

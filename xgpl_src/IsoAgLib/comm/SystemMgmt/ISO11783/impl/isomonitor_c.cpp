@@ -147,7 +147,7 @@ void
 ISOMonitor_c::singletonInit()
 {
   setAlreadyClosed(); // so init() will init ;-) (but only once!)
-  init();
+  // "init();" moved to systemStartup() in Scheduler_c to avoid circular dependencies
 }
 
 

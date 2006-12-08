@@ -231,6 +231,7 @@ void Scheduler_c::startSystem()
     // NOW INIT ONCE the core singleton classes that correspond to the compile time
     // configured features of the IsoAgLib
     getILibErrInstance().init();
+    getIsoMonitorInstance().init();
 #ifdef DEF_Stream_IMPL
     getMultiReceiveInstance4Comm().init();
     getMultiSendInstance4Comm().init();
