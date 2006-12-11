@@ -105,7 +105,7 @@ public:
   { vtObject_c::init ((iVtObject_s*) vtObjectRectangleSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA); }
 
   //  Operation: get_vtObjectmeter_a
-  iVtObjectRectangle_s* get_vtObjectRectangle_a() { return (iVtObjectRectangle_s *)vtObject_a; }
+  iVtObjectRectangle_s* get_vtObjectRectangle_a() { return (iVtObjectRectangle_s *)&(get_vtObject_a()); }
 
   //  Operation: vtObjectRectangle_c
   vtObjectRectangle_c();

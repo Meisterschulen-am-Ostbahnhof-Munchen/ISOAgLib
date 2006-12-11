@@ -106,7 +106,7 @@ public:
   { vtObject_c::init ((iVtObject_s*) vtObjectFillAttributesSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA); }
 
   //  Operation: get_vtObjectFillAttributes_a
-  iVtObjectFillAttributes_s* get_vtObjectFillAttributes_a() { return (iVtObjectFillAttributes_s *)vtObject_a; }
+  iVtObjectFillAttributes_s* get_vtObjectFillAttributes_a() { return (iVtObjectFillAttributes_s *)&(get_vtObject_a()); }
 
   //  Operation: vtObjectFillAttributes_c
   vtObjectFillAttributes_c();

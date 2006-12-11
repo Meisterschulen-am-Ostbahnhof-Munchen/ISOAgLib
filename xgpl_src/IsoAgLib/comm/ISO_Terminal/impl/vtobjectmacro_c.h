@@ -105,7 +105,7 @@ public:
   { vtObject_c::init ((iVtObject_s*) vtObjectMacroSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA); }
 
   //  Operation: get_vtObjectMacro_a
-  iVtObjectMacro_s* get_vtObjectMacro_a() { return (iVtObjectMacro_s *)vtObject_a; }
+  iVtObjectMacro_s* get_vtObjectMacro_a() { return (iVtObjectMacro_s *)&(get_vtObject_a()); }
 
   //  Operation: vtObjectMacro_c
   vtObjectMacro_c();

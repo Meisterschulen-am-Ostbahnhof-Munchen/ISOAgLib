@@ -107,7 +107,7 @@ public:
   { vtObject_c::init ((iVtObject_s*) vtObjectOutputStringSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA); }
 
   //  Operation: get_vtObjectOutputString_a
-  iVtObjectOutputString_s* get_vtObjectOutputString_a() { return (iVtObjectOutputString_s *)vtObject_a; }
+  iVtObjectOutputString_s* get_vtObjectOutputString_a() { return (iVtObjectOutputString_s *)&(get_vtObject_a()); }
 
   //  Operation: vtObjectOutputString_c
   vtObjectOutputString_c();

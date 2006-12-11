@@ -1383,10 +1383,14 @@ MultiReceive_c::reactOnMonitorListAdd( const __IsoAgLib::ISOName_c& refc_isoName
   * @param rui8_oldSa previously used SA which is NOW LOST -> clients which were connected to this item can react explicitly
   */
 void
-MultiReceive_c::reactOnMonitorListRemove( const __IsoAgLib::ISOName_c& /*refc_isoName*/, uint8_t rui8_oldSa )
+MultiReceive_c::reactOnMonitorListRemove( const __IsoAgLib::ISOName_c&
+#ifdef DEBUG
+refc_isoName
+#endif
+, uint8_t rui8_oldSa )
 {
 #ifdef DEBUG
-  INTERNAL_DEBUG_DEVICE << "reactOnMonitorListRemove() handles LOSS of ISOItem_c for device with DevClass: " << int(refc_isoName.devClass())
+  INTERNAL_DEBUG_DEVICE << "MR::reactOnMonitorListRemove() handles LOSS of ISOItem_c for device with DevClass: " << int(refc_isoName.devClass())
       << ", Instance: " << int(refc_isoName.devClassInst()) << ", and manufacturer ID: " << int(refc_isoName.manufCode())
       << " and PREVIOUSLY used SA: " << int(rui8_oldSa) << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_NEWLINE
       << INTERNAL_DEBUG_DEVICE_ENDL;

@@ -108,7 +108,7 @@ public:
   { vtObject_c::init ((iVtObject_s*) vtObjectArchedBarGraphSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA); }
 
   //  Operation: get_vtObjectArchedBarGraph_a
-  iVtObjectArchedBarGraph_s* get_vtObjectArchedBarGraph_a() { return (iVtObjectArchedBarGraph_s *)vtObject_a; }
+  iVtObjectArchedBarGraph_s* get_vtObjectArchedBarGraph_a() { return (iVtObjectArchedBarGraph_s *)&(get_vtObject_a()); }
 
   //  Operation: vtObjectArchedBarGraph_c
   vtObjectArchedBarGraph_c();

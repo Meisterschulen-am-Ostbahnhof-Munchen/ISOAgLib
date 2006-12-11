@@ -664,8 +664,8 @@ int main()
                                      // further parameters use the default: NULL /* so no list given either */, 0 /* singletonVecKey */
 
   /*  Call registerIsoObjectPool to initialize both object pools! */
-  getIisoTerminalInstance().registerIsoObjectPool (c_myIdent1, Tutorial_3_2_Pool_1_c, "T3211");
-  getIisoTerminalInstance().registerIsoObjectPool (c_myIdent2, Tutorial_3_2_Pool_2_c, "T3221");
+  getIisoTerminalInstance().initAndRegisterIsoObjectPool (c_myIdent1, Tutorial_3_2_Pool_1_c, "T3211");
+  getIisoTerminalInstance().initAndRegisterIsoObjectPool (c_myIdent2, Tutorial_3_2_Pool_2_c, "T3221");
 
   /** IMPORTANT:
     - The following loop could be replaced of any repeating call of

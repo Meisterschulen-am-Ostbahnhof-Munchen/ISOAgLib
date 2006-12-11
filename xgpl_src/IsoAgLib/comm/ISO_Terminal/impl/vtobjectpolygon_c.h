@@ -105,7 +105,7 @@ public:
   { vtObject_c::init ((iVtObject_s*) vtObjectPolygonSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA); }
 
   //  Operation: get_vtObjectPolygon_a
-  iVtObjectPolygon_s* get_vtObjectPolygon_a() { return (iVtObjectPolygon_s *)vtObject_a; }
+  iVtObjectPolygon_s* get_vtObjectPolygon_a() { return (iVtObjectPolygon_s *)&(get_vtObject_a()); }
 
   //  Operation: vtObjectPolygon_c
   vtObjectPolygon_c();

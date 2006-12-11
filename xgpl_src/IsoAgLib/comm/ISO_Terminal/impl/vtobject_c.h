@@ -119,6 +119,21 @@ protected:
   /** @todo check for double initialization via flags & STRUCT_IN_RAM etc. */
   void init (iVtObject_s* rps_vtObject_a SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) { vtObject_a = rps_vtObject_a; SINGLETON_VEC_KEY_INIT_CALL }
 
+  //  Operation: get_vtObject_a
+  iVtObject_s& get_vtObject_a()
+  {
+    #ifdef DEBUG
+    if (vtObject_a == NULL)
+    {
+      INTERNAL_DEBUG_DEVICE << "vtObject(s) not initialized properly. Do not used vtObjects before having called initAndRegisterIsoObjectPool(...)." << INTERNAL_DEBUG_DEVICE_ENDL;
+      #ifdef SYSTEM_PC
+      abort();
+      #endif
+    }
+    #endif
+    return *vtObject_a;
+  }
+
   // //////////////////////////////// +X2C Operation 783 : setAttribute
   //! Parameter:
   //! @param attrID: Attribute ID of the object's attribute

@@ -105,7 +105,7 @@ public:
   void init(const iVtObjectWorkingSet_s* vtObjectWorkingSetSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) { vtObject_c::init ((iVtObject_s*) vtObjectWorkingSetSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA); };
 
   //  Operation: get_vtObjectWorkingSet_a
-  iVtObjectWorkingSet_s* get_vtObjectWorkingSet_a() { return (iVtObjectWorkingSet_s *)vtObject_a; }
+  iVtObjectWorkingSet_s* get_vtObjectWorkingSet_a() { return (iVtObjectWorkingSet_s *)&(get_vtObject_a()); }
 
   //  Operation: vtObjectWorkingSet_c
   vtObjectWorkingSet_c();

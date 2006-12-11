@@ -107,7 +107,7 @@ public:
   { vtObject_c::init ((iVtObject_s*) vtObjectPictureGraphicSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA); }
 
   //  Operation: get_vtObjectPictureGraphic_a
-  inline iVtObjectPictureGraphic_s* get_vtObjectPictureGraphic_a() { return (iVtObjectPictureGraphic_s *)vtObject_a; }
+  inline iVtObjectPictureGraphic_s* get_vtObjectPictureGraphic_a() { return (iVtObjectPictureGraphic_s *)&(get_vtObject_a()); }
 
   //  Operation: vtObjectPictureGraphic_c
   vtObjectPictureGraphic_c();

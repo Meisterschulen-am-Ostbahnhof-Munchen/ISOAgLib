@@ -84,8 +84,8 @@ public:
     @param rpc_versionLabel pointer to a 7-char name under which the object pool is loaded/stored (NULL for disabling non-volatile operation)
     @param rpc_vtEventHandler pointer to an instance of IsoAgLib::iIsoTerminalEventHandler_c so the hook funtions for key activation, input values and successfull objectpool upload can be invoked
   */
-  iVtClientServerCommunication_c* registerIsoObjectPool (iIdentItem_c& rrefc_wsMasterIdentItem, iIsoTerminalObjectPool_c& rrefc_pool, char* rpc_versionLabel)
-  { return ISOTerminal_c::registerIsoObjectPool (static_cast<__IsoAgLib::IdentItem_c&>(rrefc_wsMasterIdentItem), rrefc_pool, rpc_versionLabel)->toInterfacePointer(); }
+  iVtClientServerCommunication_c* initAndRegisterIsoObjectPool (iIdentItem_c& rrefc_wsMasterIdentItem, iIsoTerminalObjectPool_c& rrefc_pool, char* rpc_versionLabel)
+  { return ISOTerminal_c::initAndRegisterIsoObjectPool (static_cast<__IsoAgLib::IdentItem_c&>(rrefc_wsMasterIdentItem), rrefc_pool, rpc_versionLabel)->toInterfacePointer(); }
 
   bool deregisterIsoObjectPool (iIdentItem_c& rrefc_wsMasterIdentItem)
   { return ISOTerminal_c::deregisterIsoObjectPool (rrefc_wsMasterIdentItem); }

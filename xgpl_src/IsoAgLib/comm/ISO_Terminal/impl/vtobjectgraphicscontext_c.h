@@ -133,7 +133,7 @@ public:
 
   //  Operation: get_vtObjectGraphicsContext_a
   inline iVtObjectGraphicsContext_s* get_vtObjectGraphicsContext_a( void ) {
-    return (iVtObjectGraphicsContext_s *)vtObject_a;
+    return (iVtObjectGraphicsContext_s *)&(get_vtObject_a());
   }
 
   //  Operation: vtObjectGraphicsContext_c

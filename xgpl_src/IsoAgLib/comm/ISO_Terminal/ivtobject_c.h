@@ -468,12 +468,30 @@ public:
 // METHODS
 public:
   // Constructor
-  iVtObject_c() : p_parentButtonObject(NULL) { s_properties.flags = 0; s_properties.clientId = 0; }
+  iVtObject_c() : p_parentButtonObject(NULL)
+  {
+    #ifdef DEBUG
+    vtObject_a = NULL; // so it can be detected that objects are used without proper initialization!
+    #endif
+    s_properties.flags = 0; s_properties.clientId = 0;
+  }
 
   virtual ~iVtObject_c() {}
 
   //  Operation: getID
-  uint16_t getID() const { return vtObject_a->ID; }
+  uint16_t getID() const
+  {
+    #ifdef DEBUG
+    if (vtObject_a == NULL)
+    {
+      INTERNAL_DEBUG_DEVICE << "vtObject(s) not initialized properly for getID(). Do not used vtObjects before having called initAndRegisterIsoObjectPool(...)." << INTERNAL_DEBUG_DEVICE_ENDL;
+      #ifdef SYSTEM_PC
+      abort();
+      #endif
+    }
+    #endif
+    return vtObject_a->ID;
+  }
 
   //  Operation: setOriginSKM
   //! @param b_SKM:

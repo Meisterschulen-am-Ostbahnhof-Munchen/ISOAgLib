@@ -209,7 +209,7 @@ ISOTerminal_c::close()
   and all initialization stuff has been done (Get VT Capabilities, Memory, etc.)
  */
 VtClientServerCommunication_c*
-ISOTerminal_c::registerIsoObjectPool (IdentItem_c& refc_identItem, IsoAgLib::iIsoTerminalObjectPool_c& rrefc_pool, char* rpc_versionLabel)
+ISOTerminal_c::initAndRegisterIsoObjectPool (IdentItem_c& refc_identItem, IsoAgLib::iIsoTerminalObjectPool_c& rrefc_pool, char* rpc_versionLabel)
 {
   uint8_t ui8_index = 0;
   // add new instance of VtClientServerCommunication
