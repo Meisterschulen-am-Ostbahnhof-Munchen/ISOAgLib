@@ -465,32 +465,6 @@ public:
     uint8_t  transparencyColour;  //!< Colour to be shown transparent.
   } iVtObjectGraphicsContext_s;
 
-
-  //#ifdef AGCO_LAYOUTMANAGER
-  typedef struct iVtObjectDataAlarmMaskConnector_s {
-    uint16_t ID;
-    uint16_t width;
-    uint16_t height;
-    iVtObject_c* value; ///@todo change to ISONAME_C
-  } iVtObjectDataAlarmMaskConnector_s;
-
-  typedef struct iVtObjectSoftKeyMaskConnector_s {
-    uint16_t ID;
-    uint16_t width;
-    uint16_t height;
-    iVtObject_c* value; ///@todo change to ISONAME_C
-  } iVtObjectSoftKeyMaskConnector_s;
-
-  typedef struct iVtObjectWorkingSetDescriptorConnector_s {
-    uint16_t ID;
-    uint16_t width;
-    uint16_t height;
-    iVtObject_c* value; ///@todo change to ISONAME_C
-  } iVtObjectWorkingSetDescriptorConnector_s;
-//#endif
-
-
-
 // METHODS
 public:
   // Constructor
