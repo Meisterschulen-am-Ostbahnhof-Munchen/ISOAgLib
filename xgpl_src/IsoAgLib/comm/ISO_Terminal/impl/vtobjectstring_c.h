@@ -145,6 +145,7 @@ class vtObjectString_c : public vtObject_c
 {
  public:
   vtObjectString_c();
+  ~vtObjectString_c();
   vtObjectStringStreamer_c* getStreamer( void ) { return &c_streamer;};
  protected:
 

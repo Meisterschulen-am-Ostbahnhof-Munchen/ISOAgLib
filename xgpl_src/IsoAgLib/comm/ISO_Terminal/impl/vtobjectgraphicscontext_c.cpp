@@ -113,38 +113,43 @@ vtObjectGraphicsContext_c::stream(uint8_t* destMemory, uint16_t maxBytes, objRan
 #endif
 
     uint8_t* p = destMemory;
-    *(p++) = convert_n::getByte( vtObject_a->ID,             0 );
-    *(p++) = convert_n::getByte( vtObject_a->ID,             1 );
-    *(p++) = e_objectType;
-    *(p++) = convert_n::getByte( pc_vtOGC_a->viewportWidth,  0 );
-    *(p++) = convert_n::getByte( pc_vtOGC_a->viewportWidth,  1 );
-    *(p++) = convert_n::getByte( pc_vtOGC_a->viewportHeight, 0 );
-    *(p++) = convert_n::getByte( pc_vtOGC_a->viewportHeight, 1 );
-    *(p++) = convert_n::getByte( pc_vtOGC_a->viewportX,      0 );
-    *(p++) = convert_n::getByte( pc_vtOGC_a->viewportX,      1 );
-    *(p++) = convert_n::getByte( pc_vtOGC_a->viewportY,      0 );
-    *(p++) = convert_n::getByte( pc_vtOGC_a->viewportY,      1 );
-    *(p++) = convert_n::getByte( pc_vtOGC_a->canvasWidth,    0 );
-    *(p++) = convert_n::getByte( pc_vtOGC_a->canvasWidth,    1 );
-    *(p++) = convert_n::getByte( pc_vtOGC_a->canvasHeight,   0 );
-    *(p++) = convert_n::getByte( pc_vtOGC_a->canvasHeight,   1 );
-    *(p++) = convert_n::getByte( pc_vtOGC_a->viewportZoom,   0 );
-    *(p++) = convert_n::getByte( pc_vtOGC_a->cursorX,        0 );
-    *(p++) = convert_n::getByte( pc_vtOGC_a->cursorX,        1 );
-    *(p++) = convert_n::getByte( pc_vtOGC_a->cursorY,        0 );
-    *(p++) = convert_n::getByte( pc_vtOGC_a->cursorY,        1 );
+    number2LittleEndianString( uint16_t(vtObject_a->ID), p ); p += sizeof(uint16_t);
+    number2LittleEndianString( uint8_t(e_objectType), p ); p += sizeof(uint8_t);
+    number2LittleEndianString( uint16_t(pc_vtOGC_a->viewportWidth), p ); p += sizeof(uint16_t);
+    number2LittleEndianString( uint16_t(pc_vtOGC_a->viewportHeight), p ); p += sizeof(uint16_t);
+    number2LittleEndianString( uint16_t(pc_vtOGC_a->viewportX), p ); p += sizeof(uint16_t);
+    number2LittleEndianString( uint16_t(pc_vtOGC_a->viewportY), p ); p += sizeof(uint16_t);
+    number2LittleEndianString( uint16_t(pc_vtOGC_a->canvasWidth), p ); p += sizeof(uint16_t);
+    number2LittleEndianString( uint16_t(pc_vtOGC_a->canvasHeight), p ); p += sizeof(uint16_t);
+    number2LittleEndianString( uint8_t(pc_vtOGC_a->viewportZoom), p ); p += sizeof(uint8_t);
+
+    number2LittleEndianString( uint16_t(pc_vtOGC_a->cursorX), p ); p += sizeof(uint16_t);
+    number2LittleEndianString( uint16_t(pc_vtOGC_a->cursorY), p ); p += sizeof(uint16_t);
     *(p++) = getIsoTerminalInstance4Comm().getClientByID(s_properties.clientId).getUserClippedColor(
                                     pc_vtOGC_a->foregroundColour, this, IsoAgLib::Colour);
     *(p++) = getIsoTerminalInstance4Comm().getClientByID(s_properties.clientId).getUserClippedColor(
                                     pc_vtOGC_a->backgroundColour, this, IsoAgLib::BackgroundColour);
-    *(p++) = (pc_vtOGC_a->fontAttributes)? (pc_vtOGC_a->fontAttributes->getID() & 0xFF) : 0xFF;
-    *(p++) = (pc_vtOGC_a->fontAttributes)? (pc_vtOGC_a->fontAttributes->getID() >> 8) : 0xFF;
-    *(p++) = (pc_vtOGC_a->lineAttributes)? (pc_vtOGC_a->lineAttributes->getID() & 0xFF) : 0xFF;
-    *(p++) = (pc_vtOGC_a->lineAttributes)? (pc_vtOGC_a->lineAttributes->getID() >> 8) : 0xFF;
-    *(p++) = (pc_vtOGC_a->fillAttributes)? (pc_vtOGC_a->fillAttributes->getID() & 0xFF) : 0xFF;
-    *(p++) = (pc_vtOGC_a->fillAttributes)? (pc_vtOGC_a->fillAttributes->getID() >> 8) : 0xFF;
-    *(p++) = convert_n::getByte( pc_vtOGC_a->format,         0 );
-    *(p++) = convert_n::getByte( pc_vtOGC_a->options,        0 );
+
+    if (pc_vtOGC_a->fontAttributes)
+      number2LittleEndianString( uint16_t(pc_vtOGC_a->fontAttributes->getID()), p );
+    else
+      number2LittleEndianString( uint16_t(0xFFFF), p );
+    p += sizeof(uint16_t);
+
+    if (pc_vtOGC_a->lineAttributes)
+      number2LittleEndianString( uint16_t(pc_vtOGC_a->lineAttributes->getID()), p );
+    else
+      number2LittleEndianString( uint16_t(0xFFFF), p );
+    p += sizeof(uint16_t);
+
+    if (pc_vtOGC_a->fillAttributes)
+      number2LittleEndianString( uint16_t(pc_vtOGC_a->fillAttributes->getID()), p );
+    else
+      number2LittleEndianString( uint16_t(0xFFFF), p );
+    p += sizeof(uint16_t);
+
+    number2LittleEndianString( uint8_t(pc_vtOGC_a->format), p ); p += sizeof(uint8_t);
+    number2LittleEndianString( uint8_t(pc_vtOGC_a->options), p ); p += sizeof(uint8_t);
     *(p++) = getIsoTerminalInstance4Comm().getClientByID(s_properties.clientId).getUserClippedColor(
                                     pc_vtOGC_a->transparencyColour, this, IsoAgLib::TransparencyColour );
 

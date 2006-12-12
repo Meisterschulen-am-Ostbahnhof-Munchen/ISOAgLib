@@ -181,8 +181,8 @@ public:
   /** getter */
   const ISOName_c&           getIsoName()            { return c_isoName; }
   uint8_t                    getVtSourceAddress()     { return (pcc_isoItem != NULL)? pcc_isoItem->nr() : 0xfe; }
-  uint32_t                   getVtHardwareDimension() { return (uint32_t) (vtCapabilities_a.hwWidth); }
-  uint16_t                   getVtFontSizes()         { return vtCapabilities_a.fontSizes; }
+  uint32_t                   getVtHardwareDimension();
+  uint16_t                   getVtFontSizes();
   vtCapabilities_s*          getVtCapabilities()      { return &vtCapabilities_a; }
   const IsoAgLib::vtState_s* getVtState() const       { return &vtState_a; }
   localSettings_s*           getLocalSettings()       { return &localSettings_a; }

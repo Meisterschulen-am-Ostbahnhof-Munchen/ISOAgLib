@@ -59,7 +59,8 @@ namespace IsoAgLib {
 class iVtObjectString_c : public __IsoAgLib::vtObjectString_c
 {
 public:
-  iVtObjectString_c() : vtObjectString_c() {}
+  iVtObjectString_c();
+  ~iVtObjectString_c();
   //  Operation: getString
   virtual const char* getString() = 0;
 };

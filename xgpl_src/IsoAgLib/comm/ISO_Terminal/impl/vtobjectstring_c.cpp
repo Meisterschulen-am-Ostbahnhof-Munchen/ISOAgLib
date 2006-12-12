@@ -80,8 +80,16 @@
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 #include "vtobjectstring_c.h"
+#include "../ivtobjectstring_c.h"
 
 #include <IsoAgLib/comm/Multipacket/impl/multisendpkg_c.h>
+
+namespace IsoAgLib {
+  // implement here a normal constructor/destructor, as the compiler dislikes inlining of that simple
+  // constructor/destructor direct in scope of iVtObjectString_c
+  iVtObjectString_c::iVtObjectString_c() : vtObjectString_c() {}
+  iVtObjectString_c::~iVtObjectString_c(){}
+}
 
 namespace __IsoAgLib {
 
@@ -153,12 +161,16 @@ vtObjectStringStreamer_c::getStreamSize()
 vtObjectString_c::vtObjectString_c()
 {}
 
+vtObjectString_c::~vtObjectString_c()
+{}
+
 void vtObjectString_c::setStringToStream( const char* rpc_stringToStream )
 {
   c_streamer.setStringToStream( rpc_stringToStream );
   // additionally set the ID
   c_streamer.setID( getID() );
 }
+
 void vtObjectString_c::setStrLenToSend( uint16_t rui16_strLenToSend )
 {
   c_streamer.setStrLenToSend( rui16_strLenToSend );

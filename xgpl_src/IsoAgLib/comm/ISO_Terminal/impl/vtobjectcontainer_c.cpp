@@ -87,6 +87,8 @@
 #include "isoterminal_c.h"
 
 namespace IsoAgLib {
+  // implement here a normal constructor/destructor, as the compiler dislikes inlining of that simple
+  // constructor/destructor direct in scope of iVtObjectContainer_c
   iVtObjectContainer_c::iVtObjectContainer_c() {}
   iVtObjectContainer_c::~iVtObjectContainer_c() {}
 };

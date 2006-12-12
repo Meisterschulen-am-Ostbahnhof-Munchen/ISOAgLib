@@ -67,7 +67,9 @@ class iVtObjectFontAttributes_c : public __IsoAgLib::vtObjectFontAttributes_c
 {
 
 public:
-  virtual ~iVtObjectFontAttributes_c(){};
+  iVtObjectFontAttributes_c();
+
+  virtual ~iVtObjectFontAttributes_c();
   //  Operation: init
   //! Parameter:
   //! @param vtObjectFontAttributesSROM:
@@ -80,7 +82,7 @@ public:
   const iVtObjectFontAttributes_s& get_vtObjectFontAttributes_a() { return *vtObjectFontAttributes_c::get_vtObjectFontAttributes_a(); };
 
   //  Operation: getScaledWidthHeight
-  uint16_t getScaledWidthHeight() { return vtObjectFontAttributes_c::getScaledWidthHeight(); };
+  uint16_t getScaledWidthHeight();
 
   //  Operation: setFontColour
   //! Parameter:

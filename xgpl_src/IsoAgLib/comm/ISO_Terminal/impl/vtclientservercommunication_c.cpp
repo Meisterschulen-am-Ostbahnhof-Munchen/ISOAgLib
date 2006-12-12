@@ -2495,4 +2495,30 @@ VtClientServerCommunication_c::resetVtToEcuPgnFilter()
   }
 }
 
+uint16_t
+VtClientServerCommunication_c::getVtObjectPoolSoftKeyWidth()
+{
+  return c_streamer.refc_pool.getSkWidth();
+}
+
+
+uint16_t
+VtClientServerCommunication_c::getVtObjectPoolDimension()
+{
+  return c_streamer.refc_pool.getDimension();
+}
+
+VtServerInstance_c&
+VtClientServerCommunication_c::getVtServerInst()
+{ // @todo Does this make sense? pc_ may be NULL!
+  return *pc_vtServerInstance;
+}
+
+uint16_t
+VtClientServerCommunication_c::getVtObjectPoolSoftKeyHeight()
+{
+  return c_streamer.refc_pool.getSkHeight();
+}
+
+
 } // end namespace __IsoAgLib

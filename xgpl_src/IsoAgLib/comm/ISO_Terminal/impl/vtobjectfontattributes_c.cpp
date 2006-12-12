@@ -80,9 +80,24 @@
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 
+#include "../ivtobjectfontattributes_c.h"
 #include "vtobjectfontattributes_c.h"
 #include "isoterminal_c.h"
 #include "../ivtobjectbutton_c.h"
+
+namespace IsoAgLib {
+// implement here a normal constructor and functions, as the compiler dislikes inlining of that simple
+// cconstructor/functions direct in scope of iVtObjectFontAttributes_c
+  iVtObjectFontAttributes_c::iVtObjectFontAttributes_c() : vtObjectFontAttributes_c() {}
+
+  iVtObjectFontAttributes_c::~iVtObjectFontAttributes_c() {}
+
+  uint16_t
+      iVtObjectFontAttributes_c::getScaledWidthHeight()
+  {
+    return vtObjectFontAttributes_c::getScaledWidthHeight();
+  }
+}
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
@@ -104,7 +119,7 @@ vtObjectFontAttributes_c::stream(uint8_t* destMemory,
 {
 #define MACRO_vtObjectTypeA vtObjectFontAttributes_a
 #define MACRO_vtObjectTypeS iVtObjectFontAttributes_s
-  MACRO_streamLocalVars;
+  MACRO_streamLocalVars
 
   if (sourceOffset == 0) { // dump out constant sized stuff
     destMemory [0] = vtObject_a->ID & 0xFF;
@@ -127,6 +142,11 @@ vtObjectFontAttributes_c::stream(uint8_t* destMemory,
 vtObjectFontAttributes_c::vtObjectFontAttributes_c()
 : ui8_fontSizeScaled( 0xFF ) // set ui8_fontSizeScaled to "not yet calculated"
 {}
+
+
+vtObjectFontAttributes_c::~vtObjectFontAttributes_c()
+{}
+
 
 // Operation : size
 uint32_t

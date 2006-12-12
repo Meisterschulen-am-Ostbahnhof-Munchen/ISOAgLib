@@ -89,6 +89,8 @@
 #include <IsoAgLib/util/impl/util_funcs.h>
 
 namespace IsoAgLib {
+  // implement here a normal constructor/destructor, as the compiler dislikes inlining of that simple
+  // constructor/destructor direct in scope of iVtObjectOutputString_c
   iVtObjectOutputString_c::iVtObjectOutputString_c() {}
   iVtObjectOutputString_c::~iVtObjectOutputString_c(){}
 };

@@ -465,33 +465,42 @@ public:
     uint8_t  transparencyColour;  //!< Colour to be shown transparent.
   } iVtObjectGraphicsContext_s;
 
+
+  //#ifdef AGCO_LAYOUTMANAGER
+  typedef struct iVtObjectDataAlarmMaskConnector_s {
+    uint16_t ID;
+    uint16_t width;
+    uint16_t height;
+    iVtObject_c* value; ///@todo change to ISONAME_C
+  } iVtObjectDataAlarmMaskConnector_s;
+
+  typedef struct iVtObjectSoftKeyMaskConnector_s {
+    uint16_t ID;
+    uint16_t width;
+    uint16_t height;
+    iVtObject_c* value; ///@todo change to ISONAME_C
+  } iVtObjectSoftKeyMaskConnector_s;
+
+  typedef struct iVtObjectWorkingSetDescriptorConnector_s {
+    uint16_t ID;
+    uint16_t width;
+    uint16_t height;
+    iVtObject_c* value; ///@todo change to ISONAME_C
+  } iVtObjectWorkingSetDescriptorConnector_s;
+//#endif
+
+
+
 // METHODS
 public:
   // Constructor
-  iVtObject_c() : p_parentButtonObject(NULL)
-  {
-    #ifdef DEBUG
-    vtObject_a = NULL; // so it can be detected that objects are used without proper initialization!
-    #endif
-    s_properties.flags = 0; s_properties.clientId = 0;
-  }
+  iVtObject_c();
 
   virtual ~iVtObject_c() {}
 
   //  Operation: getID
-  uint16_t getID() const
-  {
-    #ifdef DEBUG
-    if (vtObject_a == NULL)
-    {
-      INTERNAL_DEBUG_DEVICE << "vtObject(s) not initialized properly for getID(). Do not used vtObjects before having called initAndRegisterIsoObjectPool(...)." << INTERNAL_DEBUG_DEVICE_ENDL;
-      #ifdef SYSTEM_PC
-      abort();
-      #endif
-    }
-    #endif
-    return vtObject_a->ID;
-  }
+  uint16_t getID() const;
+
 
   //  Operation: setOriginSKM
   //! @param b_SKM:

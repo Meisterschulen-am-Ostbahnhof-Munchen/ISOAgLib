@@ -101,8 +101,8 @@
 #endif
 
 namespace IsoAgLib {
-class iVtObjectString_c;
-class iVtClientServerCommunication_c;
+  class iVtObjectString_c;
+  class iVtClientServerCommunication_c;
 }
 
 // Begin Namespace __IsoAgLib
@@ -320,14 +320,14 @@ public:
 
   virtual CANPkgExt_c& dataBase() { return c_data; }
 
-  uint16_t getVtObjectPoolDimension()     { return c_streamer.refc_pool.getDimension(); }
-  uint16_t getVtObjectPoolSoftKeyWidth()  { return c_streamer.refc_pool.getSkWidth(); }
-  uint16_t getVtObjectPoolSoftKeyHeight() { return c_streamer.refc_pool.getSkHeight(); }
+  uint16_t getVtObjectPoolDimension();
+  uint16_t getVtObjectPoolSoftKeyWidth();
+  uint16_t getVtObjectPoolSoftKeyHeight();
   uint32_t getUploadBufferSize();
   uint8_t  getUserClippedColor (uint8_t colorValue, IsoAgLib::iVtObject_c* obj, IsoAgLib::e_vtColour whichColour);
 
   IdentItem_c& getIdentItem()            { return refc_wsMasterIdentItem; }
-  VtServerInstance_c& getVtServerInst()   { return *pc_vtServerInstance; } // @todo Does this make sense? pc_ may be NULL!
+  VtServerInstance_c& getVtServerInst();
   VtServerInstance_c* getVtServerInstPtr() { return pc_vtServerInstance; }
 
   void notifyOnNewVtServerInstance  (VtServerInstance_c& ref_newVtServerInst);

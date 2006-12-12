@@ -80,14 +80,43 @@
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 #include "vtobject_c.h"
+#include "../ivtobject_c.h"
+
 
 #include "isoterminal_c.h"
 #include "vtclientservercommunication_c.h"
 #include <IsoAgLib/util/impl/util_funcs.h>
 
+namespace IsoAgLib {
+  // implement here a normal constructor and functions, as the compiler dislikes inlining of that simple
+  // constructor/functions direct in scope of iVtObject_c
+  iVtObject_c::iVtObject_c() : p_parentButtonObject(NULL)
+  {
+  #ifdef DEBUG
+    vtObject_a = NULL; // so it can be detected that objects are used without proper initialization!
+  #endif
+    s_properties.flags = 0; s_properties.clientId = 0;
+  }
+
+  uint16_t iVtObject_c::getID() const
+  {
+  #ifdef DEBUG
+    if (vtObject_a == NULL)
+    {
+      INTERNAL_DEBUG_DEVICE << "vtObject(s) not initialized properly for getID(). Do not used vtObjects before having called initAndRegisterIsoObjectPool(...)." << INTERNAL_DEBUG_DEVICE_ENDL;
+    #ifdef SYSTEM_PC
+      abort();
+    #endif
+  }
+  #endif
+    return vtObject_a->ID;
+  }
+}
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
+
+vtObject_c::vtObject_c( ) {}
 
 vtObject_c::~vtObject_c() {}
 

@@ -89,6 +89,8 @@ namespace IsoAgLib {
   // direct in scope of iVtObjectStringVariable_c
   iVtObjectStringVariable_c::iVtObjectStringVariable_c() : vtObjectStringVariable_c() {}
 }
+
+
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 // Operation : stream

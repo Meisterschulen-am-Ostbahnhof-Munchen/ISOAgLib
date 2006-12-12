@@ -224,4 +224,16 @@ VtServerInstance_c::resetVtAlive()
   vtState_a.lastReceived = 0;
 }
 
+uint32_t VtServerInstance_c::getVtHardwareDimension()
+{
+  return (uint32_t) (vtCapabilities_a.hwWidth);
+}
+
+uint16_t
+VtServerInstance_c::getVtFontSizes()
+{
+  return vtCapabilities_a.fontSizes;
+}
+
+
 } // end namespace __IsoAgLib

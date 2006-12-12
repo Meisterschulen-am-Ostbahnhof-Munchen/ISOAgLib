@@ -55,6 +55,7 @@
 #include "isoterminal_c.h"
 #include "vtclientservercommunication_c.h"
 
+
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
@@ -81,7 +82,7 @@ public:
   //  Operation: vtObjectFontAttributes_c
   vtObjectFontAttributes_c();
 
-  virtual ~vtObjectFontAttributes_c() {}
+  virtual ~vtObjectFontAttributes_c();
 
   //  Operation: size
   uint32_t fitTerminal() const;
