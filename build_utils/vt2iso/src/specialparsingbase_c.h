@@ -89,7 +89,7 @@ class SpecialParsingBase_c
                               const char* pcch_varRef="NULL") = 0;
 
   /** check if found tag is invalid at this position */
-  virtual bool checkTag(DOMNode* pNode, unsigned int objectType, uint64_t ombType) = 0;
+  virtual bool checkTag (DOMNode* pNode, unsigned int objectType, uint64_t ombType) = 0;
 
   /** that function tries to parse an unknown tag from vt2iso
     * @return returns 0 if successful else anything unequal to 0
@@ -102,17 +102,11 @@ class SpecialParsingBase_c
   /// returns the object type from a given DOMNode if type is known and sets it
   virtual uint16_t getObjType (const char* node_name) { return 0xFFFF; }
 
-  /// returns the total sum of basic and special object types
-  virtual uint8_t getMaxOfObjTypes() = 0;
-
   /// if a tag has unknown attributes, set that flag
   virtual void setUnknownAttributes (bool b_hasUnknownAttr) {}
 
   /** that functions creates all necessary files and prints out all collected data */
-  virtual void outputCollectedData2Files() {}
-
-  /** that functions writes to already existing files and prints out a record during runtime of vt2iso */
-  virtual void outputData2FilesPiecewise() {}
+  virtual bool outputCollectedData2Files() { return true; }
 
   /** that functions writes all necessary file includes into a given file */
   virtual void addFileIncludes(FILE* p_includeFile, const char* fileName) {}
@@ -121,6 +115,9 @@ class SpecialParsingBase_c
     * @return if true, the found ID is NOT used as resource ID
   */
   virtual bool checkUseOfResourceID (unsigned int objID) { return true; }
+
+  /** set rui_objID and pb_isObjID appropriate if a resource ID should be used as object ID */
+  virtual bool setResourceID (bool* pb_isObjID, signed long int* pli_objID) = 0;
 
   /// returns if the current parsing module contains proprietary object types which can be handled like basic object types
   virtual bool checkForProprietaryOrBasicObjTypes() = 0;

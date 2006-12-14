@@ -2131,8 +2131,17 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
                   objNextUnnamedName++;
                   is_objChildName = true;
                 }
-                // give him an ID, although not necessary now...
-                objChildID = getID (objChildName, false /* assumption: not a macro here */, is_objChildID, objChildID);
+
+                if (pc_specialParsing)
+                { /// check if the found child object needs a resource ID as object ID
+                  if (!pc_specialParsing->setResourceID (&is_objChildID, &objChildID))
+                    return false;
+                }
+                else
+                {
+                  // give him an ID, although not necessary now...
+                  objChildID = getID (objChildName, false /* assumption: not a macro here */, is_objChildID, objChildID);
+                }
 
                 if (objChildID == -1) return false;
 
