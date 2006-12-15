@@ -88,112 +88,145 @@
 #include <IsoAgLib/util/icanpkgext_c.h>
 #include <IsoAgLib/util/impl/canpkgext_c.h>
 
-
-//#include "IsoAgLib/util/impl/canpkg_c.h"
-
-/** storing the data in a vector of uint8_t allows to store any length of data
-    for length > 8 the data is sent by Transport-Protocol
- */
-class GenericData_c
+/** Begin Namespace IsoAgLib */
+namespace IsoAgLib
 {
-public:
-  /** Constructor */
-  GenericData_c();
+  /** storing the data in a vector of uint8_t allows to store any length of data
+    for length > 8 the data is sent by Transport-Protocol
+   */
+  class GenericData_c
+  {
+  public:
+    /** Constructor */
+    GenericData_c();
 
-  /** Destructor */
-  ~GenericData_c();
+    /** Destructor */
+    ~GenericData_c();
 
-  /**
-    set ident for the telegram
-    @param rui32_ident ident for the telegram
-  */
-  void setIdent(uint32_t rui32_ident);
+    /**
+      set ident for the telegram
+      @param rui32_ident ident for the telegram
+    */
+    void setIdent(uint32_t rui32_ident);
 
-  /**
-  */
-  void setDataUi8( uint16_t rui16_pos, uint8_t rui8_data);
+    /**
+      @return uint32_t ident
+    */
+    uint32_t GenericData_c::getIdent() const;
 
-  /**
-  */
+    /** storing data
+      @param rui16_pos position to store data in vector
+      @param rui8_data data byte
+    */
+    void setDataUi8( uint16_t rui16_pos, uint8_t rui8_data);
 
-  void setDataI8( uint16_t rui16_pos, int8_t ri8_data);
+    /** storing data
+      @param rui16_pos position to store data in vector
+      @param ri8_data data byte
+    */
+    void setDataI8( uint16_t rui16_pos, int8_t ri8_data);
 
-  /**
-  */
-  void setDataUi16( uint16_t rui16_pos, uint16_t rui16_data);
+    /** storing data
+      @param rui16_pos position to store data in vector
+      @param rui16_data data bytes
+    */
+    void setDataUi16( uint16_t rui16_pos, uint16_t rui16_data);
 
-  /**
-  */
-  void setDataI16( uint16_t rui16_pos, int16_t ri16_data);
+    /** storing data
+      @param rui16_pos position to store data in vector
+      @param ri16_data data bytes
+    */
+    void setDataI16( uint16_t rui16_pos, int16_t ri16_data);
 
-  /**
-  */
-  void setDataUi32( uint16_t rui16_pos, uint32_t rui32_data);
+    /** storing data
+      @param rui16_pos position to store data in vector
+      @param rui32_data data bytes
+    */
+    void setDataUi32( uint16_t rui16_pos, uint32_t rui32_data);
 
-  /**
-  */
-  void setDataI32( uint16_t rui16_pos, int32_t ri32_data);
+    /** storing data
+      @param rui16_pos position to store data in vector
+      @param ri32_data data bytes
+    */
+    void setDataI32( uint16_t rui16_pos, int32_t ri32_data);
 
-  /**
-  */
-  void setDataStream(uint16_t rui16_bytePos, const uint8_t* rpui8_data, uint16_t rui16_dataLength);
+    /** deliver data from vector
+      @param  rui16_pos position of byte in vector
+      @return unsigned data byte at position rui16_pos
+    */
+    uint8_t getDataUi8( uint16_t rui16_pos) const;
 
-  /**
-  */
-  uint32_t GenericData_c::getIdent() const;
+    /** deliver data from vector
+      @param  rui16_pos position of byte in vector
+      @return signed data byte at position rui16_pos
+    */
+    int8_t getDataI8( uint16_t rui16_pos) const;
 
-  /**
-  */
-  uint8_t getDataUi8( uint16_t rui16_pos) const;
+    /** deliver data from vector
+      @param  rui16_pos position of byte in vector
+      @return unsigned data bytes at position rui16_pos
+    */
+    uint16_t getDataUi16( uint16_t rui16_pos) const;
 
-  /**
-  */
-  int8_t getDataI8( uint16_t rui16_pos) const;
+    /** deliver data from vector
+      @param  rui16_pos position of byte in vector
+      @return signed data bytes at position rui16_pos
+    */
+    int16_t getDataI16( uint16_t rui16_pos) const;
 
-  /**
-  */
-  uint16_t getDataUi16( uint16_t rui16_pos) const;
+    /** deliver data from vector
+      @param  rui16_pos position of byte in vector
+      @return unsigned data bytes at position rui16_pos
+    */
+    uint32_t getDataUi32( uint16_t rui16_pos) const;
 
-  /**
-  */
-  int16_t getDataI16( uint16_t rui16_pos) const;
+    /** deliver data from vector
+      @param  rui16_pos position of byte in vector
+      @return signed data bytes at position rui16_pos
+    */
+    int32_t getDataI32( uint16_t rui16_pos) const;
 
-  /**
-  */
-  uint32_t getDataUi32( uint16_t rui16_pos) const;
+    /**
+    */
+    void setDataStream(uint16_t rui16_bytePos, const uint8_t* rpui8_data, uint16_t rui16_dataLength);
 
-  /**
-  */
-  int32_t getDataI32( uint16_t rui16_pos) const;
+    /**
+    */
+    const uint8_t* getDataStream(uint16_t rui16_bytePos) const;
 
-  /**
-  */
-  const uint8_t* getDataStream(uint16_t rui16_bytePos) const;
+    /** this method is clearing the vector
+    */
+    void ClearVector();
 
-  /** this method is clearing the vector
-  */
-  void ClearVector();
+    /** this method is checking the size of the vector for writing data
+    */
+    void CheckSizeOfVectorForWrite(uint16_t rui16_pos, uint8_t rui8_size );
 
-  /** this method is checking the size of the vector for writing data
-  */
-  void CheckSizeOfVectorForWrite(uint16_t rui16_pos, uint8_t rui8_size );
+    /** this method is checking the size of the vector for reading data
+    */
+    bool CheckSizeOfVectorForRead(uint16_t rui16_pos, uint8_t rui8_size ) const;
 
-  /** this method is checking the size of the vector for reading data
-  */
-  bool CheckSizeOfVectorForRead(uint16_t rui16_pos, uint8_t rui8_size ) const;
+    /** type definition of vector */
+    typedef std::vector<uint8_t> vec_data_t;
 
-  typedef std::vector<uint8_t> vec_data_t;
-  typedef std::vector<uint8_t>::iterator vec_data_iterator_t;
-  typedef std::vector<uint8_t>::const_iterator vec_data_const_iterator_t;
+    /** type definition of an iterator to write the data */
+    typedef std::vector<uint8_t>::iterator vec_data_iterator_t;
 
-private:
-  /**
-  */
-  vec_data_t vec_data;
+    /** type definition of a constant iterator to read the data */
+    typedef std::vector<uint8_t>::const_iterator vec_data_const_iterator_t;
 
-  uint16_t ui16_pos;
+  private:
+    /** vector to store the data */
+    vec_data_t vec_data;
 
-  uint32_t ui32_ident;
+    /** position of data byte in the vector */
+    uint16_t ui16_pos;
 
+    /** ident of the message */
+    uint32_t ui32_ident;
+
+    /** datastream */
+    const uint8_t* s_datastream;
+  };
 };
 #endif

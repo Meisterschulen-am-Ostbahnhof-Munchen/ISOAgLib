@@ -143,14 +143,14 @@ namespace __IsoAgLib
       /** the application shall only get a constant reference to the received data
           is only set by the friend class __IsoAgLib::ProprietaryMessageHandler_c
         */
-      const GenericData_c& getDataReceive() const
+      const IsoAgLib::GenericData_c& getDataReceive() const
       {
         return (s_receivedData);
       }
 
       /** the application shall be able to set the data for send
         */
-      GenericData_c& getDataSend()
+      IsoAgLib::GenericData_c& getDataSend()
       {
         return(s_sendData);
       }
@@ -207,11 +207,11 @@ namespace __IsoAgLib
       /** data structure for send and receive - separated iProprietaryMessageHandler_c places received data HERE.
           before it calls ProprietaryMessageClient_c::processMsg()
       */
-      GenericData_c s_receivedData;
+      IsoAgLib::GenericData_c s_receivedData;
 
       /** application should place here any data that should be send
       */
-      GenericData_c s_sendData;
+      IsoAgLib::GenericData_c s_sendData;
 
       /** is used to control repeated sending
           0 - send only one time when iProprietaryMessageHandler_c::sendData is called

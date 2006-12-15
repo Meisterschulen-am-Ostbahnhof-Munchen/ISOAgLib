@@ -1,7 +1,7 @@
 /***************************************************************************
                           genericdata_c.cpp -
                              -------------------
-    begin                : Tue Oct 31 2006
+    begin                : Tue Dec 14 2006
     copyright            : (C) 1999 - 2006 by Dipl.-Inform. Achim Spangler
     email                : a.spangler@osb-ag:de
  ***************************************************************************/
@@ -80,8 +80,12 @@
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 
-  #include "genericdata_c.h"
+#include "genericdata_c.h"
+#include <IsoAgLib/util/iliberr_c.h>
 
+// Begin Namespace IsoAgLib
+namespace IsoAgLib
+{
   /** Constructor which has nothing to do */
   GenericData_c::GenericData_c()
   {
@@ -107,7 +111,7 @@
   */
   uint32_t GenericData_c::getIdent() const
   {
-    return (uint32_t);
+    return (ui32_ident);
   }
 
   /** storing data
@@ -199,11 +203,13 @@
     /** element is existing */
     if ( CheckSizeOfVectorForRead( rui16_pos, sizeof(uint8_t) ) )
     {
+      /** data ok */
       return(vec_data.at(rui16_pos));
     }
     else
     {
-      getILibErrInstance().registerError(iLibErr_c::Range, iLibErr_c::Can);
+      /** in case of an error */
+      IsoAgLib::getILibErrInstance().registerError(IsoAgLib::iLibErr_c::Range, IsoAgLib::iLibErr_c::Can);
       return(0);
     }
   }
@@ -221,7 +227,8 @@
     }
     else
     {
-      getILibErrInstance().registerError(iLibErr_c::Range, iLibErr_c::Can);
+      /** in case of an error */
+      IsoAgLib::getILibErrInstance().registerError(IsoAgLib::iLibErr_c::Range, IsoAgLib::iLibErr_c::Can);
       return(0);
     }
   }
@@ -232,6 +239,7 @@
   */
   uint16_t GenericData_c::getDataUi16( uint16_t rui16_pos) const
   {
+    /** initialize temporary variable */
     uint16_t ui16_retData = 0x0000;
     /** element is existing */
     if ( CheckSizeOfVectorForRead( rui16_pos, sizeof(uint16_t) ) )
@@ -242,7 +250,8 @@
     }
     else
     {
-      getILibErrInstance().registerError(iLibErr_c::Range, iLibErr_c::Can);
+      /** in case of an error */
+      IsoAgLib::getILibErrInstance().registerError(IsoAgLib::iLibErr_c::Range, IsoAgLib::iLibErr_c::Can);
       return(0);
     }
   }
@@ -253,6 +262,7 @@
   */
   int16_t GenericData_c::getDataI16( uint16_t rui16_pos) const
   {
+    /** initialize temporary variable */
     uint16_t ui16_retData = 0x0000;
     /** element is existing */
     if (CheckSizeOfVectorForRead( rui16_pos, sizeof(int16_t) ) )
@@ -263,7 +273,8 @@
     }
     else
     {
-      getILibErrInstance().registerError(iLibErr_c::Range, iLibErr_c::Can);
+      /** in case of an error */
+      IsoAgLib::getILibErrInstance().registerError(IsoAgLib::iLibErr_c::Range, IsoAgLib::iLibErr_c::Can);
       return(0);
     }
   }
@@ -274,6 +285,7 @@
   */
   uint32_t GenericData_c::getDataUi32( uint16_t rui16_pos) const
   {
+    /** initialize temporary variable */
     uint32_t ui32_retData = 0x00000000;
     /** element is existing */
     if ( CheckSizeOfVectorForRead( rui16_pos, sizeof(uint32_t) ) )
@@ -286,7 +298,8 @@
     }
     else
     {
-      getILibErrInstance().registerError(iLibErr_c::Range, iLibErr_c::Can);
+      /** in case of an error */
+      IsoAgLib::getILibErrInstance().registerError(IsoAgLib::iLibErr_c::Range, IsoAgLib::iLibErr_c::Can);
       return(0);
     }
   }
@@ -297,6 +310,7 @@
   */
   int32_t GenericData_c::getDataI32( uint16_t rui16_pos) const
   {
+    /** initialize temporary variable */
     uint32_t ui32_retData = 0x00000000;
     /** element is existing */
     if ( CheckSizeOfVectorForRead( rui16_pos, sizeof(int32_t) ) )
@@ -309,7 +323,8 @@
     }
     else
     {
-      getILibErrInstance().registerError(iLibErr_c::Range, iLibErr_c::Can);
+      /** in case of an error */
+      IsoAgLib::getILibErrInstance().registerError(IsoAgLib::iLibErr_c::Range, IsoAgLib::iLibErr_c::Can);
       return(0);
     }
   }
@@ -329,7 +344,7 @@
   */
   const uint8_t* GenericData_c::getDataStream(uint16_t rui16_bytePos) const
   {
-
+    return(s_datastream);
   }
 
   /** this method is clearing the vector
@@ -382,4 +397,5 @@
       return(true);
     }
   }
+};
 
