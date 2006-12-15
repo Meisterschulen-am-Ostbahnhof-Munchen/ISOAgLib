@@ -83,8 +83,13 @@
 #ifndef GENERICDATA_H
 #define GENERICDATA_H
 
+#include <IsoAgLib/typedef.h>
+#include <vector>
+#include <IsoAgLib/util/icanpkgext_c.h>
+#include <IsoAgLib/util/impl/canpkgext_c.h>
+
+
 //#include "IsoAgLib/util/impl/canpkg_c.h"
-//#include "IsoAgLib/util/impl/canpkgext_c.h"
 
 /** storing the data in a vector of uint8_t allows to store any length of data
     for length > 8 the data is sent by Transport-Protocol
@@ -92,6 +97,12 @@
 class GenericData_c
 {
 public:
+  /** Constructor */
+  GenericData_c();
+
+  /** Destructor */
+  ~GenericData_c();
+
   /**
     set ident for the telegram
     @param rui32_ident ident for the telegram
@@ -100,97 +111,89 @@ public:
 
   /**
   */
-  void setDataUi8( uint16_t ui16_pos, uint8_t rui8_data)
-  {
-//    c_data.setDataUi8(rui16_pos, rui8_data);
-  }
-  /**
-  */
-  void setDataI8( uint16_t ui16_pos, uint8_t ri8_data)
-  {
-//    c_data.setDataI8(rui16_pos, ri8_data);
-  }
-  /**
-  */
-  void setDataUi16( uint16_t ui16_pos, uint16_t rui16_data)
-  {
-//    c_data.setDataUi16(rui16_pos, rui16_data);
-  }
-  /**
-  */
-  void setDataI16( uint16_t ui16_pos, int16_t ri16_data)
-  {
-//    c_data.setDataI16(rui16_pos, ri16_data);
-  }
-  /**
-  */
-  void setDataUi32( uint16_t ui16_pos, uint32_t rui32_data)
-  {
-//    c_data.setDataUi32(rui16_pos, rui32_data);
-  }
-  /**
-  */
-  void setDataI32( uint16_t ui16_pos, int32_t ri32_data)
-  {
-//    c_data.setDataI32(rui16_pos, ri32_data);
-  }
-  /**
-  */
-  void setDataStream(uint16_t rui16_bytePos, const uint8_t* rpui8_data, uint16_t rui16_dataLength)
-  {
+  void setDataUi8( uint16_t rui16_pos, uint8_t rui8_data);
 
-  }
   /**
   */
-  uint8_t getDataUi8( uint16_t ui16_pos, uint8_t rui8_data)
-  {
-//    c_data.setDataUi8(rui16_pos, rui8_data);
-    return(1);
-  }
+
+  void setDataI8( uint16_t rui16_pos, int8_t ri8_data);
+
   /**
   */
-  int8_t getDataI8( uint16_t ui16_pos, uint8_t ri8_data) const
-  {
-//    c_data.setDataI8(rui16_pos, ri8_data);
-    return(1);
-  }
+  void setDataUi16( uint16_t rui16_pos, uint16_t rui16_data);
+
   /**
   */
-  uint16_t getDataUi16( uint16_t ui16_pos, uint16_t rui16_data) const
-  {
-//    c_data.setDataUi16(rui16_pos, rui16_data);
-    return(1);
-  }
+  void setDataI16( uint16_t rui16_pos, int16_t ri16_data);
+
   /**
   */
-  int16_t getDataI16( uint16_t ui16_pos, int16_t ri16_data) const
-  {
-//    c_data.setDataI16(rui16_pos, ri16_data);
-    return(1);
-  }
+  void setDataUi32( uint16_t rui16_pos, uint32_t rui32_data);
+
   /**
   */
-  uint32_t getDataUi32( uint16_t ui16_pos, uint32_t rui32_data) const
-  {
-//    c_data.setDataUi32(rui16_pos, rui32_data);
-    return(1);
-  }
+  void setDataI32( uint16_t rui16_pos, int32_t ri32_data);
+
   /**
   */
-  int32_t getDataI32( uint16_t ui16_pos, int32_t ri32_data) const
-  {
-//    c_data.setDataI32(rui16_pos, ri32_data);
-    return(1);
-  }
+  void setDataStream(uint16_t rui16_bytePos, const uint8_t* rpui8_data, uint16_t rui16_dataLength);
+
+  /**
+  */
+  uint32_t GenericData_c::getIdent() const;
+
+  /**
+  */
+  uint8_t getDataUi8( uint16_t rui16_pos) const;
+
+  /**
+  */
+  int8_t getDataI8( uint16_t rui16_pos) const;
+
+  /**
+  */
+  uint16_t getDataUi16( uint16_t rui16_pos) const;
+
+  /**
+  */
+  int16_t getDataI16( uint16_t rui16_pos) const;
+
+  /**
+  */
+  uint32_t getDataUi32( uint16_t rui16_pos) const;
+
+  /**
+  */
+  int32_t getDataI32( uint16_t rui16_pos) const;
+
   /**
   */
   const uint8_t* getDataStream(uint16_t rui16_bytePos) const;
 
+  /** this method is clearing the vector
+  */
+  void ClearVector();
+
+  /** this method is checking the size of the vector for writing data
+  */
+  void CheckSizeOfVectorForWrite(uint16_t rui16_pos, uint8_t rui8_size );
+
+  /** this method is checking the size of the vector for reading data
+  */
+  void CheckSizeOfVectorForRead(uint16_t rui16_pos, uint8_t rui8_size ) const;
+
+  typedef std::vector<uint8_t> vec_data_t;
+  typedef std::vector<uint8_t>::iterator vec_data_iterator_t;
+  typedef std::vector<uint8_t>::const_iterator vec_data_const_iterator_t;
+
 private:
   /**
   */
-  std::vector<uint8_t> vec_data;
+  vec_data_t vec_data;
 
-  uint16_t rui16_pos;
+  uint16_t ui16_pos;
+
+  uint32_t ui32_ident;
+
 };
 #endif

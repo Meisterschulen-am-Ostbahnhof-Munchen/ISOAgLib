@@ -81,27 +81,17 @@
  ***************************************************************************/
 
 
-#ifndef iPROPRIETARYMESSAGEHANDLER_H
-#define iPROPRIETARYMESSAGEHANDLER_H
+#ifndef iPROPRIETARYMESSAGEHANDLER_C_H
+#define iPROPRIETARYMESSAGEHANDLER_C_H
 
 #include "IsoAgLib/util/impl/elementbase_c.h"
+#include "impl/proprietarymessagehandler_c.h"
+#include "impl/proprietarymessageclient_c.h"
 
 // Begin Namespace IsoAgLib
 namespace IsoAgLib
 {
-  /** initialization parameter for filter must be > 29 Bit */
-  static const uint32_t scui32_noFilter = 0xFFFFFFFF;
-
-  /** initialization parameter for mask must be > 29 Bit */
-  static const uint32_t scui32_noMask = 0xFFFFFFFF;
-
-  /** initialization parameter for IsoName */
-  static const IsoAgLib::iISOName_c& rrefc_norremoteECU = ISOName_c::ISONameUnspecified;
-
-  /** initialization parameter for local ident */
-  static const IsoAgLib::iIdentItem_c* rpc_nolocalIdent = NULL;
-
-  class iProprietaryMessageHandler_c : public ElementBase_c
+  class iProprietaryMessageHandler_c /*: public ElementBase_c*/
   {
   public:
   /** register the proprietary message client pointer in an internal list of all clients.
@@ -130,6 +120,7 @@ namespace IsoAgLib
       used to control repeated sending
    */
   void sendData(ProprietaryMessageClient_c* client);
+
   };
 };
 

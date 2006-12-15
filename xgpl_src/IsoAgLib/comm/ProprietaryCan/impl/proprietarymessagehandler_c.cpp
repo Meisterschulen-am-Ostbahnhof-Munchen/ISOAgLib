@@ -102,27 +102,36 @@
 */
 
 #include <list>
+#include <IsoAgLib/comm/ProprietaryCan/impl/proprietarymessagehandler_c.h>
+#include <IsoAgLib/driver/can/impl/canio_c.h>
 
 namespace __IsoAgLib
 {
-    ProprietaryMessageHandler_c::ProprietaryMessageHandler_c() : SingletonProprietaryMessageHandler_c(), vec_isoMember()
-    {
-    }
-
     /** initialize directly after the singleton instance is created.
     */
     void ProprietaryMessageHandler_c::singletonInit()
     {
       setAlreadyClosed();
-      init( NULL );
+      init();
     }
 
     /** delivers an instance of proprietaryMessageHandler
      */
-    ProprietaryMessageHandler_c& getProprietaryMessageHandlerInstance(uint8_t rui8_instance)
-    {
-      return ProprietaryMessageHandler_c::instance( rui8_instance );
-    }
+    #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
+      /** C-style function, to get access to the unique GPS_c singleton instance
+        * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
+        */
+      ProprietaryMessageHandler_c& getProprietaryMessageHandlerInstance(uint8_t rui8_instance)
+      {
+        return ProprietaryMessageHandler_c::instance( rui8_instance );
+      }
+    #else
+      /** C-style function, to get access to the unique GPS_c singleton instance */
+      ProprietaryMessageHandler_c& getProprietaryMessageHandlerInstance( void )
+      {
+        return ProprietaryMessageHandler_c::instance();
+      }
+    #endif
 
     /** deliver reference to data pkg as reference to CANPkgExt_c
       to implement the base virtual function correct
@@ -133,15 +142,18 @@ namespace __IsoAgLib
     }
 
     /**
+        die Parameter in init(##### const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode #####) werden
+        wahrscheinlich nicht gebraucht
      */
-    void ProprietaryMessageHandler_c::init(const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode)
+    void ProprietaryMessageHandler_c::init()
     {
-      getSchedulerInstance4Comm().registerClient( this );
-      c_data.setSingletonKey( c_data.getSingletonVecKey() );
-
       if (checkAlreadyClosed())
       {
-        b_filterCreated = false;
+        getSchedulerInstance4Comm().registerClient( this );
+        c_data.setSingletonKey( c_data.getSingletonVecKey() );
+        // register to get ISO monitor list changes
+        __IsoAgLib::getIsoMonitorInstance4Comm().registerSaClaimHandler( this );
+        clearAlreadyClosed();
       }
     }
 
@@ -155,6 +167,8 @@ namespace __IsoAgLib
         setAlreadyClosed();
         // unregister from timeEvent() call by Scheduler_c
         getSchedulerInstance4Comm().unregisterClient( this );
+        // unregister ISO monitor list changes
+        __IsoAgLib::getIsoMonitorInstance4Comm().deregisterSaClaimHandler( this );
       }
     }
 
@@ -182,8 +196,13 @@ namespace __IsoAgLib
       }
       // store old list size
       const unsigned int oldClientSize = vec_proprietaryclient.size();
+
+      /* define receive filter with "no"-values
+      scui32_noFilter marks the whole filter as "not set"*/
+      IsoAgLib::iISOFilter_s s_tempIsoFilter (static_cast<IsoAgLib::iCANCustomer_c&>(static_cast<__IsoAgLib::CANCustomer_c&>(*this)), scui32_noFilter, scui32_noMask, NULL, NULL);
+      ClientNode_t t_tempClientNode (rpc_proprietaryclient, s_tempIsoFilter);
       // push back new client
-      vec_proprietaryclient.push_back( rpc_proprietaryclient );
+      vec_proprietaryclient.push_back (t_tempClientNode);
       // return true if new client is registered
       return ( vec_proprietaryclient.size() > oldClientSize ) ? true : false;
     }
@@ -191,7 +210,9 @@ namespace __IsoAgLib
     /** deregister a ProprietaryMessageClient */
     bool ProprietaryMessageHandler_c::deregisterProprietaryMessageClient (ProprietaryMessageClient_c* rpc_proprietaryclient)
     {
-    //define receive filter...............
+      /* define receive filter with "no"-values*/
+      rpc_proprietaryclient->defineReceiveFilter(scui32_noFilter, scui32_noMask,screfc_noIsoName,rpc_nolocalIdent);
+      /* store list size */
       const unsigned int oldClientSize = vec_proprietaryclient.size();
       // look in the whole list
       for ( ProprietaryMessageClientVectorIterator_t client_iterator = vec_proprietaryclient.begin(); client_iterator != vec_proprietaryclient.end(); client_iterator++ )
@@ -214,44 +235,59 @@ namespace __IsoAgLib
     bool ProprietaryMessageHandler_c::triggerClientDataUpdate(ProprietaryMessageClient_c* rpc_proprietaryclient)
     {
       // look in the whole list
-      for ( ProprietaryMessageClientVectorConstIterator_t client_iterator = vec_proprietaryclient.begin(); client_iterator != vec_proprietaryclient.end(); client_iterator++ )
+      for ( ProprietaryMessageClientVectorIterator_t client_iterator = vec_proprietaryclient.begin(); client_iterator != vec_proprietaryclient.end(); client_iterator++ )
       {
         // if client is found in the list
         if ( (*client_iterator).pc_client ==  rpc_proprietaryclient )
         {
+          // = (*client_iterator).pc_localIdent->getName();
           if ( (rpc_proprietaryclient->pc_localIdent == NULL ) || (!rpc_proprietaryclient->pc_localIdent->isClaimedAddress()) )
-          {// client not yet ready
+          {
+            // client not yet ready
             return false;
           }
           // filter and mask are also the same
-          if ( ( (*client_iterator).ui32_filter != rpc_proprietaryclient->ui32_canFilter ) || ((*client_iterator).ui32_mask != rpc_proprietaryclient->ui32_canMask) )
+          if ( (*client_iterator).s_isoFilter != IsoAgLib::iISOFilter_s (static_cast<IsoAgLib::iCANCustomer_c&>(static_cast<__IsoAgLib::CANCustomer_c&>(*this)),
+                                                                         rpc_proprietaryclient->ui32_canFilter,
+                                                                         rpc_proprietaryclient->ui32_canMask,
+                                                                         &rpc_proprietaryclient->c_isonameRemoteECU,
+                                                                         &rpc_proprietaryclient->pc_localIdent->isoName()) )
           {
-            // if old filter is not equal to "no filter"
-            if ((*client_iterator).ui32_filter != scui32_noFilter)
+            /// ## if old filter is not equal to "no filter"
+            if ((*client_iterator).s_isoFilter.getFilter() != scui32_noFilter)
             {
               // delete filter
-              getIisoFilterManagerInstance().removeIsoFilter( iISOFilter_s (*this, (*client_iterator).ui32_mask, (*client_iterator).ui32_filter,
-              &(rpc_proprietaryclient->c_isonameRemoteECU), &(rpc_proprietaryclient->pc_localIdent ) );
+               __IsoAgLib::getIsoFilterManagerInstance4Comm().removeIsoFilter( IsoAgLib::iISOFilter_s (static_cast<IsoAgLib::iCANCustomer_c&>(static_cast<__IsoAgLib::CANCustomer_c&>(*this)),
+                                                                                             (*client_iterator).s_isoFilter.getMask(),
+                                                                                             (*client_iterator).s_isoFilter.getFilter(),
+                                                                                              &(rpc_proprietaryclient->c_isonameRemoteECU),
+                                                                                              &(rpc_proprietaryclient->pc_localIdent->isoName() ) ));
             }
-            // if new filter is not equal to "no filter"
+            /** set new filter */
+            IsoAgLib::iISOFilter_s s_tempIsoFilter (static_cast<IsoAgLib::iCANCustomer_c&>(static_cast<__IsoAgLib::CANCustomer_c&>(*this)),
+                                                    rpc_proprietaryclient->ui32_canFilter,
+                                                    rpc_proprietaryclient->ui32_canMask,
+                                                    &rpc_proprietaryclient->c_isonameRemoteECU,
+                                                    &rpc_proprietaryclient->pc_localIdent->isoName());
+
+            /// ## if new filter is not equal to "no filter"
             if (rpc_proprietaryclient->ui32_canFilter != scui32_noFilter)
             {
-              // insert new filter
-              getIisoFilterManagerInstance().insertIsoFilter( iISOFilter_s (*this, rpc_proprietaryclient->ui32_mask, rpc_proprietaryclient->ui32_canFilter,
-              &(rpc_proprietaryclient->c_isonameRemoteECU), &(rpc_proprietaryclient->pc_localIdent ) );
+              //  insert new filter
+              __IsoAgLib::getIsoFilterManagerInstance4Comm().insertIsoFilter(s_tempIsoFilter);
             }
             // update filter and mask
-            (*client_iterator).ui32_filter = rpc_proprietaryclient->ui32_canFilter;
-            (*client_iterator).ui32_mask = rpc_proprietaryclient->ui32_canMask;
+            (*client_iterator).s_isoFilter = s_tempIsoFilter;
             // update has performed
             return true;
           }
         }
-        return false;
       }
+      return false;
     }
 
     /** this function is called by ISOMonitor_c when a new CLAIMED ISOItem_c is registered.
+        called by ...........
       * @param refc_isoName const reference to the item which ISOItem_c state is changed
       * @param rpc_newItem pointer to the currently corresponding ISOItem_c
      */
@@ -261,7 +297,16 @@ namespace __IsoAgLib
       // look in the whole list
       for ( ProprietaryMessageClientVectorConstIterator_t client_iterator = vec_proprietaryclient.begin(); client_iterator != vec_proprietaryclient.end(); client_iterator++ )
       {
-
+        // whether the client has claimed address
+        if ( !(*client_iterator).pc_client->pc_localIdent->isClaimedAddress() )
+        {
+          // address has claimed -> isoItem
+          if ( (*client_iterator).pc_client->pc_localIdent->isoName() == refc_isoName.toConstIisoName_c() )
+          {
+            // insertFilter now
+            triggerClientDataUpdate( (*client_iterator).pc_client );
+          }
+        }
       }
     }
 
@@ -269,9 +314,8 @@ namespace __IsoAgLib
       * @param refc_isoName const reference to the item which ISOItem_c state is changed
       * @param rui8_oldSa previously used SA which is NOW LOST -> clients which were connected to this item can react explicitly
       */
-    void ProprietaryMessageHandler_c::reactOnMonitorListRemove( const ISOName_c& refc_isoName, uint8_t rui8_oldSa )
+    void ProprietaryMessageHandler_c::reactOnMonitorListRemove( const ISOName_c& /*refc_isoName*/, uint8_t /*rui8_oldSa*/ )
     {
-
     }
 
     /** send the data in
@@ -284,7 +328,12 @@ namespace __IsoAgLib
     void ProprietaryMessageHandler_c::sendData(ProprietaryMessageClient_c* client)
     {
       CANIO_c& c_can = getCanInstance4Comm();
-      c_can << data();
+      c_can << dataBase();
+      // if client is found in the list
+      // only warning
+      if (client)
+      {
+      }
     }
 
     /**  Operation:  Function for Debugging in Scheduler_c
@@ -294,97 +343,48 @@ namespace __IsoAgLib
       return "ProprietaryMessageHandler_c()";
     }
 
+  /** process received moving msg and store updated value for later reading access;
+      called by FilterBox_c::processMsg after receiving a msg
+      process message can work with the received data. method has to be overloaded by the application
+      proprietaryMessageHandler is deciding whether Mask and Ident are ok
+      @return true -> message was processed; else the received CAN message will be served to other matching CANCustomer_c
+    */
+  bool ProprietaryMessageHandler_c::processMsg()
+  {
+    return (true);
+  }
+
+
     /** functions with actions, which must be performed periodically
       -> called periodically by Scheduler_c
       ==> sends base data msg if configured in the needed rates
-      possible errors:
-        * dependant error in CANIO_c on CAN send problems
-      @see CANPkg_c::getData
-      @see CANPkgExt_c::getData
-      @see CANIO_c::operator<<
       @return true -> all planned activities performed in allowed time
     */
     bool ProprietaryMessageHandler_c::timeEvent()
     {
-      if (Scheduler_c::getAvailableExecTime() == 0) return false;//ok
+/*      if (Scheduler_c::getAvailableExecTime() == 0) return false;
 
       SystemMgmt_c& c_systemMgmt = getSystemMgmtInstance4Comm();
       CANIO_c &c_can = getCanInstance4Comm();
 
       if ( ( !checkIsoFilterCreated() ) && ( c_systemMgmt.existActiveLocalIsoMember() ) )
-      { // check if needed receive filters for ISO are active
-        setIsoFilterCreated();
+      {
+        // check if needed receive filters for ISO are active
+        //setIsoFilterCreated();
         // create FilterBox_c for PROPRIETARY_PGN's
         // 0xFEA0 -> Proprietary A PGN
         // 0x1EF00 -> Proprietary A2 PGN
         // Bereich 0xFF00 bis 0xFFFF -> proprietary B PGN
-        c_can.insertFilter(*this, (static_cast<MASK_TYPE>(0x0FF00) << 8),
-                          (static_cast<MASK_TYPE>(PROPRIETARY_B_PGN) << 8), true, Ident_c::ExtendedIdent);
+
+        //c_can.insertFilter(*this, (static_cast<MASK_TYPE>(0x0FF00) << 8),
+        //                  (static_cast<MASK_TYPE>(PROPRIETARY_B_PGN) << 8), true, Ident_c::ExtendedIdent);
       }
 
       if ( ( getDevKey() != NULL ) && (!getSystemMgmtInstance4Comm().existLocalMemberDevKey(*getDevKey(), true)) )
       { // local dev key for sending is registrated, but it is not yet fully claimed
         // --> nothing to do
         return true;
-      }
-      if ( !proprietaryTimeEvent()) return false;
-        return true;
+      }*/
+    return (true);
     }
-
-    /** time event steuert alle 100 ms
-     */
-    bool ProprietaryMessageHandler_c::proprietaryTimeEvent()
-    {
-      if (lastTimeSinceUpdate()  >= 100)
-      {
-        SendData();
-        setUpdateTime( Scheduler_c::getLastTimeEventTrigger() );
-      }
-      if ( Scheduler_c::getAvailableExecTime() == 0 )  return false;
-      return true;
-    }
-
-    /** process received moving msg and store updated value for later reading access;
-        called by FilterBox_c::processMsg after receiving a msg
-        possible errors:
-          * LibErr_c::LbsBaseSenderConflict moving msg recevied from different member than before
-        @see FilterBox_c::processMsg
-        @see CANIO_c::processMsg
-        @return true -> message was processed; else the received CAN message will be served to other matching CANCustomer_c
-      */
-    bool ProprietaryMessageHandler_c::processMsg()
-    {
-      if (c_data.identType() == Ident_c::ExtendedIdent)
-      { // an ISO11783 base information msg received
-        return proprietaryProcessMsg();
-      }
-      else
-        return false;
-    }
-
-    /** proprietaryMessageHandler entscheidet ob Maske und ident in Frage kommen oder nicht
-        die Maske muss gleich der erwarteten Maske sein
-        ident muss gleich erwrtetem ident sein
-     */
-    bool ProprietaryMessageHandler_c::proprietaryProcessMsg()
-    {
-      DevKey_c c_tempDevKey( DevKey_c::DevKeyUnspecified );
-      if (getIsoMonitorInstance4Comm().existIsoMemberNr(data().isoSa()))
-      {
-        // the corresponding sender entry exist in the monitor list
-        c_tempDevKey = getIsoMonitorInstance4Comm().isoMemberNr(data().isoSa()).devKey();
-      }
-      switch (data().isoPgn() & 0x1FF00)
-      {
-        case PROPRIETARY_A_PGN:
-        break;
-        case PROPRIETARY_B_PGN:
-        break;
-
-        default:
-        break
-      }
-      return true;
-    }
-
 };

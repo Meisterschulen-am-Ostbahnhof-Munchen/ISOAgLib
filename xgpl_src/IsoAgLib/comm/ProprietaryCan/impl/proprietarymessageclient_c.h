@@ -88,22 +88,30 @@
 #include <IsoAgLib/util/impl/canpkgext_c.h>
 #include <IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h>
 #include <IsoAgLib/comm/SystemMgmt/iidentitem_c.h>
-
 #include <IsoAgLib/comm/ProprietaryCan/impl/genericdata_c.h>
-
 
 namespace IsoAgLib
 { // forward declarations for friends
   class iProprietaryMessageHandler_c;
 }
 
-
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib
 {
-  // forward declarations
+  // forward declarations for friends
   class ProprietaryMessageHandler_c;
 
+  /** initialization parameter for filter must be > 29 Bit */
+  static const uint32_t scui32_noFilter = 0xFFFFFFFF;
+
+  /** initialization parameter for mask must be > 29 Bit */
+  static const uint32_t scui32_noMask = 0xFFFFFFFF;
+
+  /** initialization parameter for IsoName */
+  static const IsoAgLib::iISOName_c& screfc_noIsoName = IsoAgLib::iISOName_c::ISONameUnspecified;
+
+  /** initialization parameter for local ident */
+  static const IsoAgLib::iIdentItem_c* rpc_nolocalIdent = NULL;
 
   /** Class proprietarymessageclient_c
       internal base class where each object represents one "proprietary PGN, Local node, remote node"-set
@@ -120,13 +128,13 @@ namespace __IsoAgLib
       /** second constructor
           initializes the parameter for filter and mask to ""
         */
-      ProprietaryMessageClient_c(uint32_t rui32_mask, uint32_t rui32_filter,
+      ProprietaryMessageClient_c(uint32_t rui32_filter, uint32_t rui32_mask,
                                  const IsoAgLib::iISOName_c& rrefc_rremoteECU,
                                  const IsoAgLib::iIdentItem_c& rpc_localIdent);
 
       /** destructor which has nothing to do
         */
-      virtual ~ProprietaryMessageClient_c() {}
+      virtual ~ProprietaryMessageClient_c();
 
       /** virtual bool processMsg() must be overloaded by the application
         */
@@ -135,11 +143,20 @@ namespace __IsoAgLib
       /** the application shall only get a constant reference to the received data
           is only set by the friend class __IsoAgLib::ProprietaryMessageHandler_c
         */
-      const GenericData_c& getDataReceive() const;
+      const GenericData_c& getDataReceive() const
+      {
+        return (s_receivedData);
+      }
 
-      /** the application shall be able to set the data for sendprietaryMessageClientVectorConstIterator_t
+      /** the application shall be able to set the data for send
         */
-      GenericData_c& getDataSend();
+      GenericData_c& getDataSend()
+      {
+        return(s_sendData);
+      }
+
+      /** function to tell "i will send data" to the handler */
+      void sendDataToHandler();
 
       /** will be used by ProprietaryMessageHandler_c for definition of CAN-Filter
           trigger an update of CAN receive filters with call of
@@ -152,7 +169,11 @@ namespace __IsoAgLib
       /** set time period in milliseconds for repeated send of the data that has been stored in c_sendData()
           only one message is send when period = 0
         */
-      void setSendPeriodMsec(uint32_t rui32_sendPeriodMsec);
+      void setSendPeriodMsec(uint32_t rui32_sendPeriodMsec)
+      {
+        // set time period in msec
+        ui32_sendPriodicMsec = rui32_sendPeriodMsec;
+      }
 
     private:
 
@@ -165,13 +186,12 @@ namespace __IsoAgLib
       /** information for definition of received filters, the application sets the data
           ProprietaryMessageHandler_c::registerProprietaryMessageClient() reads the following
           attributes directly (see friend) to verify allowed PGN range and to set appropriate
-          CAN receive filters
-      Mask for selection of decision bits */
-      uint32_t ui32_canMask;
+          CAN receive filters */
 
-      /** Filter to define receive compare
-      */
+      /** Filter to define receive compare */
       uint32_t ui32_canFilter;
+      /** Mask for selection of decision bits */
+      uint32_t ui32_canMask;
 
       /**
           define individual remote ECU for selection of message receive and selection of message send target

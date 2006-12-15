@@ -80,8 +80,184 @@
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 
+  #include "genericdata_c.h"
 
-#include ""
+  GenericData_c::GenericData_c()
+  {
+
+  }
+
+  GenericData_c::~GenericData_c()
+  {
+    ClearVector();
+  }
+
+  /**
+    set ident for the telegram
+    @param rui32_ident ident for the telegram
+  */
+  void GenericData_c::setIdent(uint32_t rui32_ident)
+  {
+    ui32_ident = __IsoAgLib::CANPkgExt_c::ident();
+  }
+
+  /**
+  */
+  void GenericData_c::setDataUi8( uint16_t rui16_pos, uint8_t rui8_data)
+  {
+      /**  */
+    CheckSizeOfVectorForWrite( rui16_pos, sizeof(rui8_data) );
+    /**  */
+    vec_data.at(rui16_pos) = rui8_data;
+  }
+
+  /**
+  */
+  void GenericData_c::setDataI8( uint16_t rui16_pos, int8_t ri8_data)
+  {
+      /**  */
+    CheckSizeOfVectorForWrite( rui16_pos, sizeof(ri8_data) );
+    /**  */
+    vec_data.at(rui16_pos) = (uint8_t)(ri8_data);
+  }
+
+  /**
+  */
+  void GenericData_c::setDataUi16( uint16_t rui16_pos, uint16_t rui16_data)
+  {
+    /**  */
+    CheckSizeOfVectorForWrite( rui16_pos, sizeof(rui16_data) );
+    /**  */
+    vec_data.at(rui16_pos)   = (rui16_data & 0xFF00) >> 8;
+    vec_data.at(rui16_pos+1) = (rui16_data & 0x00FF);
+  }
+
+  /**
+  */
+  void GenericData_c::setDataI16( uint16_t rui16_pos, int16_t ri16_data)
+  {
+    /**  */
+    CheckSizeOfVectorForWrite( rui16_pos, sizeof(ri16_data) );
+    /**  */
+    vec_data.at(rui16_pos)   = (uint8_t)( (ri16_data & 0xFF00) >> 8 );
+    vec_data.at(rui16_pos+1) = (uint8_t)( (ri16_data & 0x00FF) );
+
+  }
+  /**
+  */
+  void GenericData_c::setDataUi32( uint16_t rui16_pos, uint32_t rui32_data)
+  {
+    /**  */
+    CheckSizeOfVectorForWrite( rui16_pos, sizeof(rui32_data) );
+    /**  */
+    vec_data.at(rui16_pos)   = (rui32_data & 0xFF000000) >> 24;
+    vec_data.at(rui16_pos+1) = (rui32_data & 0x00FF0000) >> 16;
+    vec_data.at(rui16_pos+2) = (rui32_data & 0x0000FF00) >> 8;
+    vec_data.at(rui16_pos+3) = (rui32_data & 0x000000FF);
+  }
+  /**
+  */
+  void GenericData_c::setDataI32( uint16_t rui16_pos, int32_t ri32_data)
+  {
+    /**  */
+    CheckSizeOfVectorForWrite( rui16_pos, sizeof(ri32_data) );
+    /**  */
+    vec_data.at(rui16_pos)   = (uint8_t)( (ri32_data & 0xFF000000) >> 24 );
+    vec_data.at(rui16_pos)   = (uint8_t)( (ri32_data & 0x00FF0000) >> 16 );
+    vec_data.at(rui16_pos)   = (uint8_t)( (ri32_data & 0x0000FF00) >> 8 );
+    vec_data.at(rui16_pos+1) = (uint8_t)( (ri32_data & 0x000000FF) );
+  }
+  /**
+  */
+  void GenericData_c::setDataStream(uint16_t rui16_bytePos, const uint8_t* rpui8_data, uint16_t rui16_dataLength)
+  {
+    if (rpui8_data != NULL )
+    {
+      const unsigned int cui_useLen = ( (rui16_dataLength + rui16_bytePos) < 8 ) ? (rui16_dataLength + rui16_bytePos) : 8;
+//      CNAMESPACE::memcpy(uint8_t + rui16_bytePos, rpui8_data, cui_useLen );
+    }
+  }
+
+  /**
+  */
+  uint32_t GenericData_c::getIdent() const
+  {
+
+return (1);
+  }
+
+
+  /**
+  */
+  uint8_t GenericData_c::getDataUi8( uint16_t rui16_pos) const
+  {
+    CheckSizeOfVectorForRead( rui16_pos, sizeof(uint8_t) );
+    return(vec_data.at(rui16_pos));
+  }
+  /**
+  */
+  int8_t GenericData_c::getDataI8( uint16_t rui16_pos) const
+  {
+    CheckSizeOfVectorForRead( rui16_pos, sizeof(int8_t) );
+    return( (int8_t)(vec_data.at(rui16_pos)) );
+  }
+  /**
+  */
+  uint16_t GenericData_c::getDataUi16( uint16_t rui16_pos) const
+  {
+    uint16_t ui16_retData = 0x0000;
+    /**  */
+    CheckSizeOfVectorForRead( rui16_pos, sizeof(uint16_t) );
+    ui16_retData = vec_data.at(rui16_pos) << 8;
+    ui16_retData = ui16_retData | vec_data.at(rui16_pos + 1) ;
+    return(ui16_retData);
+  }
+
+  /**
+  */
+  int16_t GenericData_c::getDataI16( uint16_t rui16_pos) const
+  {
+    uint16_t ui16_retData = 0x0000;
+    /**  */
+    CheckSizeOfVectorForRead( rui16_pos, sizeof(int16_t) );
+    ui16_retData = vec_data.at(rui16_pos) << 8;
+    ui16_retData = ui16_retData | vec_data.at(rui16_pos + 1) ;
+    return( (int16_t)(ui16_retData) );
+  }
+  /**
+  */
+  uint32_t GenericData_c::getDataUi32( uint16_t rui16_pos) const
+  {
+    uint32_t ui32_retData = 0x00000000;
+    /**  */
+    CheckSizeOfVectorForRead( rui16_pos, sizeof(uint32_t) );
+    ui32_retData = vec_data.at(rui16_pos) << 24;
+    ui32_retData = ui32_retData | vec_data.at(rui16_pos + 1) << 16;
+    ui32_retData = ui32_retData | vec_data.at(rui16_pos + 2) << 8;
+    ui32_retData = ui32_retData | vec_data.at(rui16_pos + 3) ;
+    return(ui32_retData);
+  }
+
+  /**
+  */
+  int32_t GenericData_c::getDataI32( uint16_t rui16_pos) const
+  {
+    uint32_t ui32_retData = 0x00000000;
+    /**  */
+    CheckSizeOfVectorForRead( rui16_pos, sizeof(int32_t) );
+    ui32_retData = vec_data.at(rui16_pos) << 24;
+    ui32_retData = ui32_retData | vec_data.at(rui16_pos + 1) << 16;
+    ui32_retData = ui32_retData | vec_data.at(rui16_pos + 2) << 8;
+    ui32_retData = ui32_retData | vec_data.at(rui16_pos + 3) ;
+    return( (int32_t)(ui32_retData) );
+  }
+
+  /**
+  */
+  const uint8_t* GenericData_c::getDataStream(uint16_t rui16_bytePos) const
+  {
+
+  }
 
   /** this method is clearing the vector
   */
@@ -95,124 +271,33 @@
     }
   }
 
-
-  /**
-    set ident for the telegram
-    @param rui32_ident ident for the telegram
-  */
-  void GenericData_c::setIdent(uint32_t rui32_ident)
+  /** check whether the write position is out of range */
+  void GenericData_c::CheckSizeOfVectorForWrite( uint16_t rui16_pos, uint8_t rui8_size )
   {
-    c_data.setIdent(rui32_ident)
-  }
-
-  /**
-  */
-  void GenericData_c::setDataUi8( uint16_t rui16_pos, uint8_t rui8_data)
-  {
-    vec_data.insert( ui16_pos16, rui8_data );
-    //oder push_back ????? was ist besser
-    c_data.setDataUi8(rui16_pos, rui8_data);
-  }
-
-  /**
-  */
-  void GenericData_c::setDataI8( uint16_t rui16_pos, uint8_t ri8_data)
-  {
-    c_data.setDataI8(rui16_pos, ri8_data);
-
-    switch ( rui16_pos )
+    if ( (rui16_pos + rui8_size) > (vec_data.size() - 1 ) )
     {
-      case 0: uint16[0] = rui8_val;
-              vec_data.push_back();
-      break;
-      case 2: uint16[1] = rui8_val;
-      break;
-      case 1:
-      break;
-      default:
-//        getLibErrInstance().registerError(LibErr_c::Range, LibErr_c::Can);
-      break;
-    };
-  }
-
-  /**
-  */
-  void GenericData_c::setDataUi16( uint16_t rui16_pos, uint16_t rui16_data)
-  {
-    c_data.setDataUi16(rui16_pos, rui16_data);
-  }
-  /**
-  */
-  void GenericData_c::setDataI16( uint16_t rui16_pos, int16_t ri16_data)
-  {
-    c_data.setDataI16(rui16_pos, ri16_data);
-  }
-  /**
-  */
-  void GenericData_c::setDataUi32( uint16_t rui16_pos, uint32_t rui32_data)
-  {
-    c_data.setDataUi32(rui16_pos, rui32_data);
-  }
-  /**
-  */
-  void GenericData_c::setDataI32( uint16_t rui16_pos, int32_t ri32_data)
-  {
-    c_data.setDataI32(rui16_pos, ri32_data);
-  }
-  /**
-  */
-  void GenericData_c::setDataStream(uint16_t rui16_bytePos, const uint8_t* rpui8_data, uint16_t rui16_dataLength)
-  {
-    if (rpui8_data != NULL )
-    {
-      const unsigned int cui_useLen = ( (rui16_dataLength + rui16_bytePos) < 8 ) ? (rui16_dataLength + rui16_bytePos) : 8;
-
-      CNAMESPACE::memcpy(uint8 + rui16_bytePos, rpui8_data, cui_useLen );
+      /** iterieren ab size bis rui16_pos + number of bytes */
+      for (vec_data_iterator_t vec_data_iterator = vec_data.begin() + vec_data.size() - 1;
+           vec_data_iterator >= vec_data.begin() + rui16_pos + rui8_size;
+           vec_data_iterator++ )
+      {
+        *vec_data_iterator = 0x00;
+      }
     }
   }
-  /**
-  */
-  uint8_t GenericData_c::getDataUi8( uint16_t rui16_pos, uint8_t rui8_data)
-  {
-    return( c_data.setDataUi8(rui16_pos, rui8_data);
-  }
-  /**
-  */
-  int8_t GenericData_c::getDataI8( uint16_t rui16_pos, uint8_t ri8_data) const
-  {
-    return( c_data.setDataI8(rui16_pos, ri8_data);
-  }
-  /**
-  */
-  uint16_t GenericData_c::getDataUi16( uint16_t rui16_pos, uint16_t rui16_data) const
-  {
-    return( c_data.setDataUi16(rui16_pos, rui16_data);
-  }
-  /**
-  */
-  int16_t GenericData_c::getDataI16( uint16_t rui16_pos, int16_t ri16_data) const
-  {
-    return( c_data.setDataI16(rui16_pos, ri16_data);
-  }
-  /**
-  */
-  uint32_t GenericData_c::getDataUi32( uint16_t rui16_pos, uint32_t rui32_data) const
-  {
-    return( c_data.setDataUi32(rui16_pos, rui32_data);
-  }
-  /**
-  */
-  int32_t GenericData_c::getDataI32( uint16_t rui16_pos, int32_t ri32_data) const
-  {
-    return( c_data.setDataI32(rui16_pos, ri32_data) );
-  }
-  /**
-  */
-  const uint8_t* GenericData_c::getDataStream(uint16_t rui16_bytePos) const
-  {
-    if ()
-    return(vec_data);
-  }
 
-
+  /** check whether the read position is out of range */
+  void GenericData_c::CheckSizeOfVectorForRead( uint16_t rui16_pos, uint8_t rui8_size ) const
+  {
+    if ( (rui16_pos + rui8_size) > (vec_data.size() - 1 ) )
+    {// const iterator muss rein
+      /** iterieren ab size bis rui16_pos + number of bytes */
+      for (vec_data_const_iterator_t vec_data_const_iterator = vec_data.begin() + vec_data.size() - 1;
+           vec_data_const_iterator >= vec_data.begin() + rui16_pos + rui8_size;
+           vec_data_const_iterator++ )
+      {
+// hier muss noch was passieren
+      }
+    }
+  }
 

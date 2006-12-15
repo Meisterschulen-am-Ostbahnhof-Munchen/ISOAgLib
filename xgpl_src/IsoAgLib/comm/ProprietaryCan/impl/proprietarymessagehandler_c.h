@@ -84,14 +84,18 @@
 #define PROPRIETARYMESSAGEHANDLER_H
 
 #include <IsoAgLib/comm/ProprietaryCan/iproprietarymessageclient_c.h>
-#include <IsoAgLib/comm/ProprietaryCan/impl/proprietarymessageclient_c.h>
-#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h>
 #include <IsoAgLib/comm/SystemMgmt/ISO11783/iisofilter_s.h>
-#include <IsoAgLib/comm/SystemMgmt/ISO11783/iisofiltermanager_c.h>
+#include <vector>
+//#include <IsoAgLib/driver/can/impl/canio_c.h>
+//#include "IsoAgLib/util/impl/elementbase_c.h"
+//#include <IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h>
+#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h>
+//#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h>
+//#include <IsoAgLib/comm/SystemMgmt/iidentitem_c.h>
 
 namespace IsoAgLib
 {
-  class iProprietaryMessageHandler_c;
+  class iProprietaryMessageClient_c;
 }
 
 namespace __IsoAgLib
@@ -99,7 +103,8 @@ namespace __IsoAgLib
   class ProprietaryMessageHandler_c;
   typedef SINGLETON_DERIVED(ProprietaryMessageHandler_c, ElementBase_c) SingletonProprietaryMessageHandler_c;
 
-  class ProprietaryMessageHandler_c : public SingletonProprietaryMessageHandler_c
+  class ProprietaryMessageHandler_c : public SingletonProprietaryMessageHandler_c,
+                                      public __IsoAgLib::SaClaimHandler_c
   {
   public:
     /** default destructor which has nothing to do */
@@ -111,21 +116,16 @@ namespace __IsoAgLib
     /** every subsystem of IsoAgLib has explicit function for controlled shutdown */
     void close( void );
 
+    /** virtual bool processMsg() must be overloaded by the application
+      */
+    virtual bool processMsg();
+
     /** performs periodically actions,
       possible errors:
         * partial error caused by one of the memberItems
       @return true -> all planned activities performed in allowed time
     */
-//    bool timeEvent( void );
-
-    /** deliver reference to data pkg
-      @return reference to the CAN communication member object c_data (ISOSystemPkg_c)
-      @see CANPkgExt
-    */
-    CANPkgExt_c& data()
-    {
-      return c_data;
-    }
+    virtual bool timeEvent( void );
 
     /** deliver reference to data pkg as reference to CANPkgExt_c
       to implement the base virtual function correct
@@ -180,11 +180,14 @@ namespace __IsoAgLib
                         filter and mask
         mit Martins neuer KLasse ...........
       */
-    typedef struct
+    struct ClientNode_t
     {
+      ClientNode_t (ProprietaryMessageClient_c* rpc_client,
+                    const IsoAgLib::iISOFilter_s& rrefcs_isoFilter) : pc_client(rpc_client), s_isoFilter (rrefcs_isoFilter) {}
+
       ProprietaryMessageClient_c* pc_client;
       IsoAgLib::iISOFilter_s s_isoFilter;
-    } ClientNode_t;
+    };
 
     /** type of map which is used to store proprietary clients */
     typedef std::vector<ClientNode_t> ProprietaryMessageClientVector_t;
@@ -193,17 +196,20 @@ namespace __IsoAgLib
 
     /** Retrieve the last update time of the specified information type*/
 //    int32_t lastTimeSinceUpdate() const { return (System_c::getTime() - i32_lastReceived);}
+
     /** set last time of data msg [msec]*/
-//    void setUpdateTime(int32_t updateTime) {i32_lastReceived = updateTime;}
-
-
-  private:
-    friend class SINGLETON_DERIVED(ISOMonitor_c,ElementBase_c);
+    void updateTime(int32_t i32_updateTime)
+    {
+      i32_lastReceived = i32_updateTime;
+    }
 
     /**
 
     */
     void singletonInit();
+
+  private:
+    friend class SINGLETON_DERIVED(ISOMonitor_c,ElementBase_c);
 
     /** temp data where received and to be sent data is put */
     CANPkgExt_c c_data;
@@ -212,6 +218,20 @@ namespace __IsoAgLib
         of single member informations
     */
     ProprietaryMessageClientVector_t vec_proprietaryclient;
+
+    /** time ... */
+    int32_t i32_lastReceived;
   };
+  #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
+    /** C-style function, to get access to the unique GPS_c singleton instance
+      * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
+      */
+    ProprietaryMessageHandler_c& getProprietaryMessageHandlerInstance(uint8_t rui8_instance = 0);
+  #else
+    /** C-style function, to get access to the unique Process_c singleton instance */
+    ProprietaryMessageHandler_c& getProprietaryMessageHandlerInstance( void );
+  #endif
 };
 #endif
+
+

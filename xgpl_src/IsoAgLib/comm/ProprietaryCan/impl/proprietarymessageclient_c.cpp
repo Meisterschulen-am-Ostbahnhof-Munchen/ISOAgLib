@@ -80,63 +80,80 @@
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 
+#include <IsoAgLib/comm/ProprietaryCan/impl/proprietarymessageclient_c.h>
+#include <IsoAgLib/comm/ProprietaryCan/impl/proprietarymessagehandler_c.h>
 
-/** default constructor
-    initializes the parameter for filter and mask to "novalue"
-  */
-ProprietaryMessageClient_c::ProprietaryMessageClient_c(): ui32_canFilter(scui32_noFilter), ui32_canMask(scui32_noMask),
-                                                          c_isonameRemoteECU(rrefc_norremoteECU), pc_localIdent(rpc_nolocalIdent)
+namespace __IsoAgLib
 {
-  registerProprietaryMessageClient(this);
-}
-
-/** second constructor
-    initializes the parameter to actual values
-  */
-ProprietaryMessageClient_c::ProprietaryMessageClient_c( uint32_t rui32_mask, uint32_t rui32_filter,
-                                                        const IsoAgLib::iISOName_c& rrefc_rremoteECU,
-                                                        const IsoAgLib::iIdentItem_c* rpc_localIdent)
-{
-  /* register the client*/
-  registerProprietaryMessageClient(this);
-  /* define receive filter */
-  defineReceiveFilter( rui32_mask, rui32_filter, rrefc_rremoteECU, rpc_localIdent);
-}
-
-/** destructor which have nothing to do
-  */
-virtual ~ProprietaryMessageClient_c() {}
-
-bool processMsg() = 0;
-
-/** the application shall only get a constant reference to the received data
-    is only set by the friend class __IsoAgLib::ProprietaryMessageHandler_c
-  */
-const GenericData_c& getDataReceive() const;
-
-/** the application shall be able to set the data for send
-  */
-GenericData_c& getDataSend();
-
-/** will be used by ProprietaryMessageHandler_c for definition of CAN-Filter
-    trigger an update of CAN receive filters with call of
-      - ProprietaryMessageHandler_c::triggerClientDataUpdate()
-    @return true when wanted PGN is in allowed range
-  */
-bool ProprietaryMessageClient_c::defineReceiveFilter( uint32_t rui32_mask, uint32_t rui32_filter, const IsoAgLib::iISOName_c& rrefc_rremoteECU,
-                                                                        const IsoAgLib::iIdentItem_c* rpc_localIdent)
-{
-  /** set actual values for filter, mask, remote and local ident
+  /** default constructor
+      initializes the parameter for filter and mask to "novalue"
     */
-  ui32_canFilter = rui32_filter;
-  ui32_canMask = rui32_mask;
-  c_isonameRemoteECU = rrefc_rremoteECU;
-  pc_localIdent = rpc_localIdent;
-  /* forces an update */
-  triggerClientDataUpdate(this);
-}
+  ProprietaryMessageClient_c::ProprietaryMessageClient_c(): ui32_canFilter(scui32_noFilter), ui32_canMask(scui32_noMask),
+                                                            c_isonameRemoteECU(screfc_noIsoName), pc_localIdent(rpc_nolocalIdent)
+  {
+    getProprietaryMessageHandlerInstance().registerProprietaryMessageClient(this);
+  }
 
-/** set time period in milliseconds for repeated send of the data that has been stored in c_sendData()
-    only one message is send when period = 0
-  */
-void setSendPeriodMsec(uint32_t rui32_sendPeriodMsec);
+  /** second constructor
+      initializes the parameter to actual values
+    */
+  ProprietaryMessageClient_c::ProprietaryMessageClient_c( uint32_t rui32_filter, uint32_t rui32_mask,
+                                                          const IsoAgLib::iISOName_c& rrefc_rremoteECU,
+                                                          const IsoAgLib::iIdentItem_c& rpc_localIdent)
+  {
+    /* register the client*/
+    getProprietaryMessageHandlerInstance().registerProprietaryMessageClient(this);
+    /* define receive filter */
+    defineReceiveFilter( rui32_mask, rui32_filter, rrefc_rremoteECU, &rpc_localIdent);
+  }
+
+  /** destructor which have nothing to do
+    */
+  ProprietaryMessageClient_c::~ProprietaryMessageClient_c() {}
+
+  bool processMsg();
+
+  /** will be used by ProprietaryMessageHandler_c for definition of CAN-Filter
+      trigger an update of CAN receive filters with call of
+        - ProprietaryMessageHandler_c::triggerClientDataUpdate()
+      @return true when wanted PGN is in allowed range
+    */
+  bool ProprietaryMessageClient_c::defineReceiveFilter( uint32_t rui32_mask, uint32_t rui32_filter, const IsoAgLib::iISOName_c& rrefc_rremoteECU,
+                                                                          const IsoAgLib::iIdentItem_c* rpc_localIdent)
+  {
+    if ( ((rui32_mask & 0x0FF0000) == 0x0EF0000) && ((rui32_filter & 0x0FF0000) == 0x0EF0000)   || /** Proprietary A */
+         ((rui32_mask & 0x1FF0000) == 0x1EF0000) && ((rui32_filter & 0x1FF0000) == 0x1EF0000)   || /** Proprietary A2 */
+         ((rui32_mask & 0x0FF0000) == 0x0FF0000) && (0x0FF00 <= (rui32_filter << 8) <= 0x0FFFF)    /** Proprietary B */
+       )
+    {
+      /** set actual values for filter, mask, remote and local ident */
+      ui32_canFilter = rui32_filter;
+      ui32_canMask = rui32_mask;
+      c_isonameRemoteECU = rrefc_rremoteECU;
+      pc_localIdent = rpc_localIdent;
+
+      /* forces an update */
+      getProprietaryMessageHandlerInstance().triggerClientDataUpdate(this);
+      return(true);
+    }
+    return(false);
+  }
+
+  /** function to tell "i will send data" to the handler */
+  void ProprietaryMessageClient_c::sendDataToHandler()
+  {
+    getProprietaryMessageHandlerInstance().sendData(this);
+  }
+
+  /** process received moving msg and store updated value for later reading access;
+      called by FilterBox_c::processMsg after receiving a msg
+      process message can work with the received data. method has to be overloaded by the application
+      proprietaryMessageHandler is deciding whether Mask and Ident are ok
+      @return true -> message was processed; else the received CAN message will be served to other matching CANCustomer_c
+    */
+  bool ProprietaryMessageClient_c::processMsg()
+  {
+  return (true);
+  }
+
+};
