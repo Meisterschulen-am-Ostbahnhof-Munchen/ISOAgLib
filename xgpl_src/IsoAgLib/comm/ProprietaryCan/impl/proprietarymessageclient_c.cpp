@@ -85,6 +85,7 @@
 
 namespace __IsoAgLib
 {
+
   /** default constructor
       initializes the parameter for filter and mask to "novalue"
     */

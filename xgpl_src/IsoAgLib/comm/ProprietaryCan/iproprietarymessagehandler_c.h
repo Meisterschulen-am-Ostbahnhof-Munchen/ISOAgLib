@@ -113,10 +113,10 @@ namespace IsoAgLib
   bool triggerClientDataUpdate(ProprietaryMessageClient_c* client);
 
   /** send the data in
-            ProprietaryMessageClient_c::s_sendData
+            ProprietaryMessageClient_c::s_sendDatac_passwortc_passwort
       the data can be accessed directly by
            iProprietaryMessageHandler_c as its a friend of ProprietaryMessageClient_c
-      the variable ui32_sendPeriodicMSec (in ProprietaryMessageClient_c) will be
+      the variable ui32_sendPeriodicMSec (in ProprietaryMessageClient_cc_passwort) will be
       used to control repeated sending
    */
   void sendData(ProprietaryMessageClient_c* client);

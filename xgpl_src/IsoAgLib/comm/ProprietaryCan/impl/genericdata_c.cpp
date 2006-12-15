@@ -123,7 +123,7 @@ namespace IsoAgLib
   {
     /** first check size of vector */
     CheckSizeOfVectorForWrite( rui16_pos, sizeof(rui8_data) );
-    /** generic method to set the right data */
+    /** overloaded generic method to set the right data */
     __IsoAgLib::number2LittleEndianString( rui8_data, vec_data, rui16_pos);
   }
 
@@ -135,7 +135,7 @@ namespace IsoAgLib
   {
       /** first check size of vector */
     CheckSizeOfVectorForWrite( rui16_pos, sizeof(ri8_data) );
-    /** generic method to set the right data */
+    /** overloaded generic method to set the right data */
     __IsoAgLib::number2LittleEndianString( ri8_data, vec_data, rui16_pos);
   }
 
@@ -147,7 +147,7 @@ namespace IsoAgLib
   {
     /** first check size of vector */
     CheckSizeOfVectorForWrite( rui16_pos, sizeof(rui16_data) );
-    /** generic method to set the right data */
+    /** overloaded generic method to set the right data */
     __IsoAgLib::number2LittleEndianString( rui16_data, vec_data, rui16_pos);
   }
 
@@ -159,7 +159,7 @@ namespace IsoAgLib
   {
     /** first check size of vector */
     CheckSizeOfVectorForWrite( rui16_pos, sizeof(ri16_data) );
-    /** generic method to set the right data */
+    /** overloaded generic method to set the right data */
     __IsoAgLib::number2LittleEndianString( ri16_data, vec_data, rui16_pos);
   }
 
@@ -171,7 +171,7 @@ namespace IsoAgLib
   {
     /** first check size of vector */
     CheckSizeOfVectorForWrite( rui16_pos, sizeof(rui32_data) );
-    /** generic method to set the right data */
+    /** overloaded generic method to set the right data */
     __IsoAgLib::number2LittleEndianString( rui32_data, vec_data, rui16_pos);
   }
 
@@ -183,7 +183,7 @@ namespace IsoAgLib
   {
     /** first check size of vector */
     CheckSizeOfVectorForWrite( rui16_pos, sizeof(ri32_data) );
-    /** generic method to set the right data */
+    /** overloaded generic method to set the right data */
     __IsoAgLib::number2LittleEndianString( ri32_data, vec_data, rui16_pos);
   }
 

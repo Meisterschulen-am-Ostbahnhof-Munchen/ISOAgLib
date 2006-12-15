@@ -238,37 +238,41 @@ namespace __IsoAgLib
       for ( ProprietaryMessageClientVectorIterator_t client_iterator = vec_proprietaryclient.begin(); client_iterator != vec_proprietaryclient.end(); client_iterator++ )
       {
         // if client is found in the list
-        if ( (*client_iterator).pc_client ==  rpc_proprietaryclient )
+        if ( (*client_iterator).pc_client == rpc_proprietaryclient )
         {
           // = (*client_iterator).pc_localIdent->getName();
-          if ( (rpc_proprietaryclient->pc_localIdent == NULL ) || (!rpc_proprietaryclient->pc_localIdent->isClaimedAddress()) )
-          {
-            // client not yet ready
+          if ( (rpc_proprietaryclient->pc_localIdent != NULL ) && (!rpc_proprietaryclient->pc_localIdent->isClaimedAddress()) )
+          { // client not yet ready
             return false;
+          }
+          const IsoAgLib::iISOName_c* pc_localIsoName;
+          if (rpc_proprietaryclient->pc_localIdent == NULL)
+          { // if we have no IdentItem, we have no IsoName
+            pc_localIsoName = NULL; // or set to ISONameUnspecified - don't care, is the same!!
+          }
+          else
+          {
+            pc_localIsoName = &rpc_proprietaryclient->pc_localIdent->isoName();
           }
           // filter and mask are also the same
           if ( (*client_iterator).s_isoFilter != IsoAgLib::iISOFilter_s (static_cast<IsoAgLib::iCANCustomer_c&>(static_cast<__IsoAgLib::CANCustomer_c&>(*this)),
                                                                          rpc_proprietaryclient->ui32_canFilter,
                                                                          rpc_proprietaryclient->ui32_canMask,
                                                                          &rpc_proprietaryclient->c_isonameRemoteECU,
-                                                                         &rpc_proprietaryclient->pc_localIdent->isoName()) )
+                                                                         pc_localIsoName) )
           {
             /// ## if old filter is not equal to "no filter"
             if ((*client_iterator).s_isoFilter.getFilter() != scui32_noFilter)
             {
               // delete filter
-               __IsoAgLib::getIsoFilterManagerInstance4Comm().removeIsoFilter( IsoAgLib::iISOFilter_s (static_cast<IsoAgLib::iCANCustomer_c&>(static_cast<__IsoAgLib::CANCustomer_c&>(*this)),
-                                                                                             (*client_iterator).s_isoFilter.getMask(),
-                                                                                             (*client_iterator).s_isoFilter.getFilter(),
-                                                                                              &(rpc_proprietaryclient->c_isonameRemoteECU),
-                                                                                              &(rpc_proprietaryclient->pc_localIdent->isoName() ) ));
+               __IsoAgLib::getIsoFilterManagerInstance4Comm().removeIsoFilter ((*client_iterator).s_isoFilter);
             }
             /** set new filter */
             IsoAgLib::iISOFilter_s s_tempIsoFilter (static_cast<IsoAgLib::iCANCustomer_c&>(static_cast<__IsoAgLib::CANCustomer_c&>(*this)),
                                                     rpc_proprietaryclient->ui32_canFilter,
                                                     rpc_proprietaryclient->ui32_canMask,
                                                     &rpc_proprietaryclient->c_isonameRemoteECU,
-                                                    &rpc_proprietaryclient->pc_localIdent->isoName());
+                                                    pc_localIsoName);
 
             /// ## if new filter is not equal to "no filter"
             if (rpc_proprietaryclient->ui32_canFilter != scui32_noFilter)
@@ -292,21 +296,21 @@ namespace __IsoAgLib
       * @param rpc_newItem pointer to the currently corresponding ISOItem_c
      */
 
-    void ProprietaryMessageHandler_c::reactOnMonitorListAdd( const __IsoAgLib::ISOName_c& refc_isoName, const __IsoAgLib::ISOItem_c* rpc_newItem )
+    void ProprietaryMessageHandler_c::reactOnMonitorListAdd( const __IsoAgLib::ISOName_c& /*refc_isoName*/, const __IsoAgLib::ISOItem_c* rpc_newItem )
     {
       // look in the whole list
       for ( ProprietaryMessageClientVectorConstIterator_t client_iterator = vec_proprietaryclient.begin(); client_iterator != vec_proprietaryclient.end(); client_iterator++ )
       {
-        // whether the client has claimed address
-        if ( !(*client_iterator).pc_client->pc_localIdent->isClaimedAddress() )
-        {
+/*      // whether the client has claimed address
+        if ( (*client_iterator).pc_client->pc_localIdent->isClaimedAddress() )
+        { */
           // address has claimed -> isoItem
-          if ( (*client_iterator).pc_client->pc_localIdent->isoName() == refc_isoName.toConstIisoName_c() )
+          if ( (*client_iterator).pc_client->pc_localIdent->getIsoItem() == rpc_newItem )
           {
             // insertFilter now
             triggerClientDataUpdate( (*client_iterator).pc_client );
           }
-        }
+//      }
       }
     }
 

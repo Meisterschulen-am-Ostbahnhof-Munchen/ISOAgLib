@@ -113,7 +113,7 @@ namespace IsoAgLib
     /**
       @return uint32_t ident
     */
-    uint32_t GenericData_c::getIdent() const;
+    uint32_t getIdent() const;
 
     /** storing data
       @param rui16_pos position to store data in vector
