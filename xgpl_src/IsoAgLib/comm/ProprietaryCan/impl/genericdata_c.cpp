@@ -83,6 +83,7 @@
 #include "genericdata_c.h"
 #include <IsoAgLib/util/iliberr_c.h>
 
+
 // Begin Namespace IsoAgLib
 namespace IsoAgLib
 {
@@ -120,9 +121,10 @@ namespace IsoAgLib
   */
   void GenericData_c::setDataUi8( uint16_t rui16_pos, uint8_t rui8_data)
   {
-      /** first check size of vector */
+    /** first check size of vector */
     CheckSizeOfVectorForWrite( rui16_pos, sizeof(rui8_data) );
-    vec_data.at(rui16_pos) = rui8_data;
+    /** generic method to set the right data */
+    __IsoAgLib::number2LittleEndianString( rui8_data, vec_data, rui16_pos);
   }
 
   /** storing data
@@ -133,8 +135,8 @@ namespace IsoAgLib
   {
       /** first check size of vector */
     CheckSizeOfVectorForWrite( rui16_pos, sizeof(ri8_data) );
-    /** formatting data */
-    vec_data.at(rui16_pos) = (uint8_t)(ri8_data);
+    /** generic method to set the right data */
+    __IsoAgLib::number2LittleEndianString( ri8_data, vec_data, rui16_pos);
   }
 
   /** storing data
@@ -145,9 +147,8 @@ namespace IsoAgLib
   {
     /** first check size of vector */
     CheckSizeOfVectorForWrite( rui16_pos, sizeof(rui16_data) );
-    /** formatting data */
-    vec_data.at(rui16_pos)   = (rui16_data & 0xFF00) >> 8;
-    vec_data.at(rui16_pos+1) = (rui16_data & 0x00FF);
+    /** generic method to set the right data */
+    __IsoAgLib::number2LittleEndianString( rui16_data, vec_data, rui16_pos);
   }
 
   /** storing data
@@ -158,10 +159,8 @@ namespace IsoAgLib
   {
     /** first check size of vector */
     CheckSizeOfVectorForWrite( rui16_pos, sizeof(ri16_data) );
-    /** formatting data */
-    vec_data.at(rui16_pos)   = (uint8_t)( (ri16_data & 0xFF00) >> 8 );
-    vec_data.at(rui16_pos+1) = (uint8_t)( (ri16_data & 0x00FF) );
-
+    /** generic method to set the right data */
+    __IsoAgLib::number2LittleEndianString( ri16_data, vec_data, rui16_pos);
   }
 
   /** storing data
@@ -172,11 +171,8 @@ namespace IsoAgLib
   {
     /** first check size of vector */
     CheckSizeOfVectorForWrite( rui16_pos, sizeof(rui32_data) );
-    /** formatting data */
-    vec_data.at(rui16_pos)   = (rui32_data & 0xFF000000) >> 24;
-    vec_data.at(rui16_pos+1) = (rui32_data & 0x00FF0000) >> 16;
-    vec_data.at(rui16_pos+2) = (rui32_data & 0x0000FF00) >> 8;
-    vec_data.at(rui16_pos+3) = (rui32_data & 0x000000FF);
+    /** generic method to set the right data */
+    __IsoAgLib::number2LittleEndianString( rui32_data, vec_data, rui16_pos);
   }
 
   /** storing data
@@ -187,11 +183,8 @@ namespace IsoAgLib
   {
     /** first check size of vector */
     CheckSizeOfVectorForWrite( rui16_pos, sizeof(ri32_data) );
-    /** formatting data */
-    vec_data.at(rui16_pos)   = (uint8_t)( (ri32_data & 0xFF000000) >> 24 );
-    vec_data.at(rui16_pos)   = (uint8_t)( (ri32_data & 0x00FF0000) >> 16 );
-    vec_data.at(rui16_pos)   = (uint8_t)( (ri32_data & 0x0000FF00) >> 8 );
-    vec_data.at(rui16_pos+1) = (uint8_t)( (ri32_data & 0x000000FF) );
+    /** generic method to set the right data */
+    __IsoAgLib::number2LittleEndianString( ri32_data, vec_data, rui16_pos);
   }
 
   /** deliver data from vector
@@ -223,6 +216,7 @@ namespace IsoAgLib
     /** element is existing */
     if ( CheckSizeOfVectorForRead( rui16_pos, sizeof(int8_t) ) )
     {
+      /** data ok */
       return( (int8_t)(vec_data.at(rui16_pos)) );
     }
     else
@@ -246,6 +240,7 @@ namespace IsoAgLib
     {
       ui16_retData = vec_data.at(rui16_pos) << 8;
       ui16_retData = ui16_retData | vec_data.at(rui16_pos + 1) ;
+      /** data ok */
       return(ui16_retData);
     }
     else
@@ -269,6 +264,7 @@ namespace IsoAgLib
     {
       ui16_retData = vec_data.at(rui16_pos) << 8;
       ui16_retData = ui16_retData | vec_data.at(rui16_pos + 1) ;
+      /** data ok */
       return( (int16_t)(ui16_retData) );
     }
     else

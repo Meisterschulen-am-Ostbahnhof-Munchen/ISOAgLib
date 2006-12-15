@@ -87,6 +87,7 @@
 #include <vector>
 #include <IsoAgLib/util/icanpkgext_c.h>
 #include <IsoAgLib/util/impl/canpkgext_c.h>
+#include <IsoAgLib/util/impl/util_funcs.h>
 
 /** Begin Namespace IsoAgLib */
 namespace IsoAgLib
@@ -194,16 +195,13 @@ namespace IsoAgLib
     */
     const uint8_t* getDataStream(uint16_t rui16_bytePos) const;
 
-    /** this method is clearing the vector
-    */
+    /** this method is clearing the vector */
     void ClearVector();
 
-    /** this method is checking the size of the vector for writing data
-    */
+    /** this method is checking the size of the vector for writing data */
     void CheckSizeOfVectorForWrite(uint16_t rui16_pos, uint8_t rui8_size );
 
-    /** this method is checking the size of the vector for reading data
-    */
+    /** this method is checking the size of the vector for reading data */
     bool CheckSizeOfVectorForRead(uint16_t rui16_pos, uint8_t rui8_size ) const;
 
     /** type definition of vector */
