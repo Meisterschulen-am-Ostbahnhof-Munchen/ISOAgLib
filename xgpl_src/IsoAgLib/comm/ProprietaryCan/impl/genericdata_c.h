@@ -180,7 +180,7 @@ public:
 
   /** this method is checking the size of the vector for reading data
   */
-  void CheckSizeOfVectorForRead(uint16_t rui16_pos, uint8_t rui8_size ) const;
+  bool CheckSizeOfVectorForRead(uint16_t rui16_pos, uint8_t rui8_size ) const;
 
   typedef std::vector<uint8_t> vec_data_t;
   typedef std::vector<uint8_t>::iterator vec_data_iterator_t;

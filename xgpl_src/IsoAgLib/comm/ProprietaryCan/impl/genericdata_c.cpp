@@ -82,11 +82,12 @@
 
   #include "genericdata_c.h"
 
+  /** Constructor which has nothing to do */
   GenericData_c::GenericData_c()
   {
-
   }
 
+  /** Destructor is clearing the vector */
   GenericData_c::~GenericData_c()
   {
     ClearVector();
@@ -102,71 +103,217 @@
   }
 
   /**
+    @return uint32_t ident
+  */
+  uint32_t GenericData_c::getIdent() const
+  {
+    return (uint32_t);
+  }
+
+  /** storing data
+    @param rui16_pos position to store data in vector
+    @param rui8_data data byte
   */
   void GenericData_c::setDataUi8( uint16_t rui16_pos, uint8_t rui8_data)
   {
-      /**  */
+      /** first check size of vector */
     CheckSizeOfVectorForWrite( rui16_pos, sizeof(rui8_data) );
-    /**  */
     vec_data.at(rui16_pos) = rui8_data;
   }
 
-  /**
+  /** storing data
+    @param rui16_pos position to store data in vector
+    @param ri8_data data byte
   */
   void GenericData_c::setDataI8( uint16_t rui16_pos, int8_t ri8_data)
   {
-      /**  */
+      /** first check size of vector */
     CheckSizeOfVectorForWrite( rui16_pos, sizeof(ri8_data) );
-    /**  */
+    /** formatting data */
     vec_data.at(rui16_pos) = (uint8_t)(ri8_data);
   }
 
-  /**
+  /** storing data
+    @param rui16_pos position to store data in vector
+    @param rui16_data data bytes
   */
   void GenericData_c::setDataUi16( uint16_t rui16_pos, uint16_t rui16_data)
   {
-    /**  */
+    /** first check size of vector */
     CheckSizeOfVectorForWrite( rui16_pos, sizeof(rui16_data) );
-    /**  */
+    /** formatting data */
     vec_data.at(rui16_pos)   = (rui16_data & 0xFF00) >> 8;
     vec_data.at(rui16_pos+1) = (rui16_data & 0x00FF);
   }
 
-  /**
+  /** storing data
+    @param rui16_pos position to store data in vector
+    @param ri16_data data bytes
   */
   void GenericData_c::setDataI16( uint16_t rui16_pos, int16_t ri16_data)
   {
-    /**  */
+    /** first check size of vector */
     CheckSizeOfVectorForWrite( rui16_pos, sizeof(ri16_data) );
-    /**  */
+    /** formatting data */
     vec_data.at(rui16_pos)   = (uint8_t)( (ri16_data & 0xFF00) >> 8 );
     vec_data.at(rui16_pos+1) = (uint8_t)( (ri16_data & 0x00FF) );
 
   }
-  /**
+
+  /** storing data
+    @param rui16_pos position to store data in vector
+    @param rui32_data data bytes
   */
   void GenericData_c::setDataUi32( uint16_t rui16_pos, uint32_t rui32_data)
   {
-    /**  */
+    /** first check size of vector */
     CheckSizeOfVectorForWrite( rui16_pos, sizeof(rui32_data) );
-    /**  */
+    /** formatting data */
     vec_data.at(rui16_pos)   = (rui32_data & 0xFF000000) >> 24;
     vec_data.at(rui16_pos+1) = (rui32_data & 0x00FF0000) >> 16;
     vec_data.at(rui16_pos+2) = (rui32_data & 0x0000FF00) >> 8;
     vec_data.at(rui16_pos+3) = (rui32_data & 0x000000FF);
   }
-  /**
+
+  /** storing data
+    @param rui16_pos position to store data in vector
+    @param ri32_data data bytes
   */
   void GenericData_c::setDataI32( uint16_t rui16_pos, int32_t ri32_data)
   {
-    /**  */
+    /** first check size of vector */
     CheckSizeOfVectorForWrite( rui16_pos, sizeof(ri32_data) );
-    /**  */
+    /** formatting data */
     vec_data.at(rui16_pos)   = (uint8_t)( (ri32_data & 0xFF000000) >> 24 );
     vec_data.at(rui16_pos)   = (uint8_t)( (ri32_data & 0x00FF0000) >> 16 );
     vec_data.at(rui16_pos)   = (uint8_t)( (ri32_data & 0x0000FF00) >> 8 );
     vec_data.at(rui16_pos+1) = (uint8_t)( (ri32_data & 0x000000FF) );
   }
+
+  /** deliver data from vector
+    @param  rui16_pos position of byte in vector
+    @return unsigned data byte at position rui16_pos
+  */
+  uint8_t GenericData_c::getDataUi8( uint16_t rui16_pos) const
+  {
+    /** element is existing */
+    if ( CheckSizeOfVectorForRead( rui16_pos, sizeof(uint8_t) ) )
+    {
+      return(vec_data.at(rui16_pos));
+    }
+    else
+    {
+      getILibErrInstance().registerError(iLibErr_c::Range, iLibErr_c::Can);
+      return(0);
+    }
+  }
+
+  /** deliver data from vector
+    @param  rui16_pos position of byte in vector
+    @return signed data byte at position rui16_pos
+  */
+  int8_t GenericData_c::getDataI8( uint16_t rui16_pos) const
+  {
+    /** element is existing */
+    if ( CheckSizeOfVectorForRead( rui16_pos, sizeof(int8_t) ) )
+    {
+      return( (int8_t)(vec_data.at(rui16_pos)) );
+    }
+    else
+    {
+      getILibErrInstance().registerError(iLibErr_c::Range, iLibErr_c::Can);
+      return(0);
+    }
+  }
+
+  /** deliver data from vector
+    @param  rui16_pos position of byte in vector
+    @return unsigned data bytes at position rui16_pos
+  */
+  uint16_t GenericData_c::getDataUi16( uint16_t rui16_pos) const
+  {
+    uint16_t ui16_retData = 0x0000;
+    /** element is existing */
+    if ( CheckSizeOfVectorForRead( rui16_pos, sizeof(uint16_t) ) )
+    {
+      ui16_retData = vec_data.at(rui16_pos) << 8;
+      ui16_retData = ui16_retData | vec_data.at(rui16_pos + 1) ;
+      return(ui16_retData);
+    }
+    else
+    {
+      getILibErrInstance().registerError(iLibErr_c::Range, iLibErr_c::Can);
+      return(0);
+    }
+  }
+
+  /** deliver data from vector
+    @param  rui16_pos position of byte in vector
+    @return signed data bytes at position rui16_pos
+  */
+  int16_t GenericData_c::getDataI16( uint16_t rui16_pos) const
+  {
+    uint16_t ui16_retData = 0x0000;
+    /** element is existing */
+    if (CheckSizeOfVectorForRead( rui16_pos, sizeof(int16_t) ) )
+    {
+      ui16_retData = vec_data.at(rui16_pos) << 8;
+      ui16_retData = ui16_retData | vec_data.at(rui16_pos + 1) ;
+      return( (int16_t)(ui16_retData) );
+    }
+    else
+    {
+      getILibErrInstance().registerError(iLibErr_c::Range, iLibErr_c::Can);
+      return(0);
+    }
+  }
+
+  /** deliver data from vector
+    @param  rui16_pos position of byte in vector
+    @return unsigned data bytes at position rui16_pos
+  */
+  uint32_t GenericData_c::getDataUi32( uint16_t rui16_pos) const
+  {
+    uint32_t ui32_retData = 0x00000000;
+    /** element is existing */
+    if ( CheckSizeOfVectorForRead( rui16_pos, sizeof(uint32_t) ) )
+    {
+      ui32_retData = vec_data.at(rui16_pos) << 24;
+      ui32_retData = ui32_retData | vec_data.at(rui16_pos + 1) << 16;
+      ui32_retData = ui32_retData | vec_data.at(rui16_pos + 2) << 8;
+      ui32_retData = ui32_retData | vec_data.at(rui16_pos + 3) ;
+      return(ui32_retData);
+    }
+    else
+    {
+      getILibErrInstance().registerError(iLibErr_c::Range, iLibErr_c::Can);
+      return(0);
+    }
+  }
+
+  /** deliver data from vector
+    @param  rui16_pos position of byte in vector
+    @return signed data bytes at position rui16_pos
+  */
+  int32_t GenericData_c::getDataI32( uint16_t rui16_pos) const
+  {
+    uint32_t ui32_retData = 0x00000000;
+    /** element is existing */
+    if ( CheckSizeOfVectorForRead( rui16_pos, sizeof(int32_t) ) )
+    {
+      ui32_retData = vec_data.at(rui16_pos) << 24;
+      ui32_retData = ui32_retData | vec_data.at(rui16_pos + 1) << 16;
+      ui32_retData = ui32_retData | vec_data.at(rui16_pos + 2) << 8;
+      ui32_retData = ui32_retData | vec_data.at(rui16_pos + 3) ;
+      return( (int32_t)(ui32_retData) );
+    }
+    else
+    {
+      getILibErrInstance().registerError(iLibErr_c::Range, iLibErr_c::Can);
+      return(0);
+    }
+  }
+
   /**
   */
   void GenericData_c::setDataStream(uint16_t rui16_bytePos, const uint8_t* rpui8_data, uint16_t rui16_dataLength)
@@ -174,82 +321,8 @@
     if (rpui8_data != NULL )
     {
       const unsigned int cui_useLen = ( (rui16_dataLength + rui16_bytePos) < 8 ) ? (rui16_dataLength + rui16_bytePos) : 8;
-//      CNAMESPACE::memcpy(uint8_t + rui16_bytePos, rpui8_data, cui_useLen );
+
     }
-  }
-
-  /**
-  */
-  uint32_t GenericData_c::getIdent() const
-  {
-
-return (1);
-  }
-
-
-  /**
-  */
-  uint8_t GenericData_c::getDataUi8( uint16_t rui16_pos) const
-  {
-    CheckSizeOfVectorForRead( rui16_pos, sizeof(uint8_t) );
-    return(vec_data.at(rui16_pos));
-  }
-  /**
-  */
-  int8_t GenericData_c::getDataI8( uint16_t rui16_pos) const
-  {
-    CheckSizeOfVectorForRead( rui16_pos, sizeof(int8_t) );
-    return( (int8_t)(vec_data.at(rui16_pos)) );
-  }
-  /**
-  */
-  uint16_t GenericData_c::getDataUi16( uint16_t rui16_pos) const
-  {
-    uint16_t ui16_retData = 0x0000;
-    /**  */
-    CheckSizeOfVectorForRead( rui16_pos, sizeof(uint16_t) );
-    ui16_retData = vec_data.at(rui16_pos) << 8;
-    ui16_retData = ui16_retData | vec_data.at(rui16_pos + 1) ;
-    return(ui16_retData);
-  }
-
-  /**
-  */
-  int16_t GenericData_c::getDataI16( uint16_t rui16_pos) const
-  {
-    uint16_t ui16_retData = 0x0000;
-    /**  */
-    CheckSizeOfVectorForRead( rui16_pos, sizeof(int16_t) );
-    ui16_retData = vec_data.at(rui16_pos) << 8;
-    ui16_retData = ui16_retData | vec_data.at(rui16_pos + 1) ;
-    return( (int16_t)(ui16_retData) );
-  }
-  /**
-  */
-  uint32_t GenericData_c::getDataUi32( uint16_t rui16_pos) const
-  {
-    uint32_t ui32_retData = 0x00000000;
-    /**  */
-    CheckSizeOfVectorForRead( rui16_pos, sizeof(uint32_t) );
-    ui32_retData = vec_data.at(rui16_pos) << 24;
-    ui32_retData = ui32_retData | vec_data.at(rui16_pos + 1) << 16;
-    ui32_retData = ui32_retData | vec_data.at(rui16_pos + 2) << 8;
-    ui32_retData = ui32_retData | vec_data.at(rui16_pos + 3) ;
-    return(ui32_retData);
-  }
-
-  /**
-  */
-  int32_t GenericData_c::getDataI32( uint16_t rui16_pos) const
-  {
-    uint32_t ui32_retData = 0x00000000;
-    /**  */
-    CheckSizeOfVectorForRead( rui16_pos, sizeof(int32_t) );
-    ui32_retData = vec_data.at(rui16_pos) << 24;
-    ui32_retData = ui32_retData | vec_data.at(rui16_pos + 1) << 16;
-    ui32_retData = ui32_retData | vec_data.at(rui16_pos + 2) << 8;
-    ui32_retData = ui32_retData | vec_data.at(rui16_pos + 3) ;
-    return( (int32_t)(ui32_retData) );
   }
 
   /**
@@ -271,33 +344,42 @@ return (1);
     }
   }
 
-  /** check whether the write position is out of range */
+  /** check whether the write position is out of range
+      @param rui16_pos position in vector to write
+      @param rui8_size size of data
+  */
   void GenericData_c::CheckSizeOfVectorForWrite( uint16_t rui16_pos, uint8_t rui8_size )
   {
     if ( (rui16_pos + rui8_size) > (vec_data.size() - 1 ) )
     {
-      /** iterieren ab size bis rui16_pos + number of bytes */
+      /** iterate from size to rui16_pos + number of bytes */
       for (vec_data_iterator_t vec_data_iterator = vec_data.begin() + vec_data.size() - 1;
            vec_data_iterator >= vec_data.begin() + rui16_pos + rui8_size;
            vec_data_iterator++ )
       {
+        /** initialize the element of the vector*/
         *vec_data_iterator = 0x00;
       }
     }
   }
 
-  /** check whether the read position is out of range */
-  void GenericData_c::CheckSizeOfVectorForRead( uint16_t rui16_pos, uint8_t rui8_size ) const
+  /** check whether the read position is out of range
+      @param rui16_pos position in vector to read
+      @param rui8_size size of data
+      @return false if data does'nt exist otherwise true
+   */
+  bool GenericData_c::CheckSizeOfVectorForRead( uint16_t rui16_pos, uint8_t rui8_size ) const
   {
+    /** have a look to the size of the vector */
     if ( (rui16_pos + rui8_size) > (vec_data.size() - 1 ) )
-    {// const iterator muss rein
-      /** iterieren ab size bis rui16_pos + number of bytes */
-      for (vec_data_const_iterator_t vec_data_const_iterator = vec_data.begin() + vec_data.size() - 1;
-           vec_data_const_iterator >= vec_data.begin() + rui16_pos + rui8_size;
-           vec_data_const_iterator++ )
-      {
-// hier muss noch was passieren
-      }
+    {
+      /** data at position rui16_pos not existant */
+      return(false);
+    }
+    else
+    {
+      /** data ok */
+      return(true);
     }
   }
 
