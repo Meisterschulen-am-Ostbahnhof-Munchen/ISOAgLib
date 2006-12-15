@@ -286,7 +286,7 @@ public: // methods
   bool equalNr(uint8_t rui8_nr);
 
   /** check if the ident has claimed address */
-  bool isClaimedAddress( void ) const { return itemState (IState_c::ClaimedAddress); }
+  bool isClaimedAddress( void ) const { return (getIsoItem() != NULL) ? (getIsoItem()->itemState (IState_c::ClaimedAddress)) : (itemState (IState_c::ClaimedAddress)); }
 
 
 protected: // methods
