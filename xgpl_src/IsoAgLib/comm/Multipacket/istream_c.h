@@ -142,9 +142,9 @@ public:
   /** test if the client's da/pgn match this RCI, so the incoming stream is to be handled by this client.
       the client also HAS to handle Broadcasts, so in case of (da==0xFF) he's also responsible!
     */
-  bool matchDaPgn(uint8_t da, uint32_t pgn) const
+  bool matchDaPgnWithMask(uint8_t rui8_da, uint32_t rui32_pgn, uint32_t rui32_pgnMask) const
   {
-    return ((da == 0xFF) || (da == ui8_da)) && (pgn == ui32_pgn);
+    return ((rui8_da == 0xFF) || (rui8_da == ui8_da)) && ((rui32_pgn & rui32_pgnMask) == (ui32_pgn & rui32_pgnMask));
   }
 
 

@@ -137,6 +137,7 @@ class MultiReceiveClientWrapper_s : public ClientBase {
   MultiReceiveClientWrapper_s( IsoAgLib::MultiReceiveClient_c* rpc_client,
                                const ISOName_c& rrefc_isoNameClient,
                                uint32_t rui32_pgn,
+                               uint32_t rui32_pgnMask,
                                bool rb_alsoBroadcast,
                                bool rb_alsoGlobalErrors
                               #ifdef NMEA_2000_FAST_PACKET
@@ -148,6 +149,7 @@ class MultiReceiveClientWrapper_s : public ClientBase {
   IsoAgLib::MultiReceiveClient_c* pc_client;
   ISOName_c c_isoName;
   uint32_t ui32_pgn;
+  uint32_t ui32_pgnMask;
   uint8_t ui8_cachedClientAddress; // kinda "cached" (normally clients register for receiving multi-packages to their own SA)
   bool b_alsoBroadcast;
   bool b_alsoGlobalErrors;
@@ -175,8 +177,9 @@ public:
   bool processMsg();
 
   //  Operation: (de)registerClient
-  void registerClient   (uint32_t rui32_pgn, const ISOName_c& rrefc_isoName,
-                         IsoAgLib::MultiReceiveClient_c* rpc_client, bool b_alsoBroadcast=false, bool rb_alsoGlobalErrors=false
+  void registerClient   (IsoAgLib::MultiReceiveClient_c* rpc_client, const ISOName_c& rrefc_isoName,
+                         uint32_t rui32_pgn, uint32_t rui32_pgnMask=0x3FFFF,
+                         bool b_alsoBroadcast=false, bool rb_alsoGlobalErrors=false
                          #ifdef NMEA_2000_FAST_PACKET
                          , bool rb_isFastPacket=false
                          #endif

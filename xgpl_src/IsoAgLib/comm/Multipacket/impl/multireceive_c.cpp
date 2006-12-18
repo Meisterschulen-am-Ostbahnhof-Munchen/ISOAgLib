@@ -138,6 +138,8 @@ static const uint8_t scui8_tpPriority=6;
 
 
 
+#if 1
+// to be OBSOLETEd !!! - can use ISOFilterBox later on...
 /** the mask is set to 1FFFF00, as we're accepting for EVERY _local_ destination address first. afterwards list_clients is getting search for matching destination address */
 #define MACRO_insertFilterIfNotYetExists_mask1FFFF00_setRef(mpPGN,LocalSa,reconf,ref) \
   { \
@@ -168,11 +170,13 @@ static const uint8_t scui8_tpPriority=6;
       __IsoAgLib::getCanInstance4Comm().deleteFilter( *this, (0x1FFFF00UL), ui32_filter, __IsoAgLib::Ident_c::ExtendedIdent); \
     } \
   }
+#endif
 
 
 MultiReceiveClientWrapper_s::MultiReceiveClientWrapper_s( IsoAgLib::MultiReceiveClient_c* rpc_client,
                                                           const ISOName_c& rrefc_isoNameClient,
                                                           uint32_t rui32_pgn,
+                                                          uint32_t rui32_pgnMask,
                                                           bool rb_alsoBroadcast,
                                                           bool rb_alsoGlobalErrors
                                                           #ifdef NMEA_2000_FAST_PACKET
@@ -183,6 +187,7 @@ MultiReceiveClientWrapper_s::MultiReceiveClientWrapper_s( IsoAgLib::MultiReceive
   : SINGLETON_PARENT_CONSTRUCTOR pc_client(rpc_client)
   , c_isoName (rrefc_isoNameClient)
   , ui32_pgn(rui32_pgn)
+  , ui32_pgnMask(rui32_pgnMask)
   , b_alsoBroadcast (rb_alsoBroadcast)
   , b_alsoGlobalErrors (rb_alsoGlobalErrors)
   #ifdef NMEA_2000_FAST_PACKET
@@ -321,6 +326,7 @@ MultiReceive_c::processMsg()
                 #endif
                 return true; // all RTSes are not of interest for MultiSend or other CAN-Customers!
               }
+              /** @todo Maybe close old stream and open a new one nevertheless right here, right now? */
 
               // otherwise it is a new stream, but before check from the client if he can take it (size is okay)
 
@@ -654,8 +660,9 @@ MultiReceive_c::processMsg()
 /** @todo Add function with ISOItem/IdentItem probably, too? */
 // Operation: registerClient
 void
-MultiReceive_c::registerClient(uint32_t rui32_pgn, const ISOName_c& rrefc_isoName,
-                               IsoAgLib::MultiReceiveClient_c* rpc_client, bool rb_alsoBroadcast, bool rb_alsoGlobalErrors
+MultiReceive_c::registerClient(IsoAgLib::MultiReceiveClient_c* rpc_client, const ISOName_c& rrefc_isoName,
+                               uint32_t rui32_pgn, uint32_t rui32_pgnMask,
+                               bool rb_alsoBroadcast, bool rb_alsoGlobalErrors
                                #ifdef NMEA_2000_FAST_PACKET
                                , bool rb_isFastPacket
                                #endif
@@ -674,12 +681,14 @@ MultiReceive_c::registerClient(uint32_t rui32_pgn, const ISOName_c& rrefc_isoNam
     list_clients_i++;
   }
   // Not already in list, so insert!
-  list_clients.push_back(MultiReceiveClientWrapper_s(rpc_client, rrefc_isoName, rui32_pgn, rb_alsoBroadcast, rb_alsoGlobalErrors
-                         #ifdef NMEA_2000_FAST_PACKET
-                         , rb_isFastPacket
-                         #endif
-                         SINGLETON_VEC_KEY_USE4CALL
-                         ) );
+  list_clients.push_back (MultiReceiveClientWrapper_s (rpc_client, rrefc_isoName, rui32_pgn, rui32_pgnMask, rb_alsoBroadcast, rb_alsoGlobalErrors
+                                                       #ifdef NMEA_2000_FAST_PACKET
+                                                       , rb_isFastPacket
+                                                       #endif
+                                                       SINGLETON_VEC_KEY_USE4CALL
+                                                      )
+                         );
+
   #ifdef NMEA_2000_FAST_PACKET
   /// Fast-Packet additions
   if (rb_isFastPacket)
@@ -1208,7 +1217,7 @@ MultiReceive_c::getClient(IsoAgLib::ReceiveStreamIdentifier_c rc_streamIdent)
        i_list_clients != list_clients.end();
        i_list_clients++)
   {
-    if (rc_streamIdent.matchDaPgn (i_list_clients->ui8_cachedClientAddress, i_list_clients->ui32_pgn))
+    if (rc_streamIdent.matchDaPgnWithMask (i_list_clients->ui8_cachedClientAddress, i_list_clients->ui32_pgn, i_list_clients->ui32_pgnMask))
       return i_list_clients->pc_client;
   }
   return NULL;
