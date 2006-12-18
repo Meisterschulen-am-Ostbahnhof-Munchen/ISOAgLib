@@ -671,7 +671,7 @@ VtClientServerCommunication_c::timeEvent(void)
 
   if (!b_receiveFilterCreated)
   { /*** MultiReceive/IsoFilterManager Registration ***/
-    getMultiReceiveInstance4Comm().registerClient (this, getIdentItem().isoName(), VT_TO_ECU_PGN);
+    getMultiReceiveInstance4Comm().registerClient (*this, getIdentItem().isoName(), VT_TO_ECU_PGN);
     getIsoFilterManagerInstance().insertIsoFilter (ISOFilter_s (*this, (0x1FFFF00UL), (VT_TO_ECU_PGN << 8), &getIdentItem().isoName()));
     getIsoFilterManagerInstance().insertIsoFilter (ISOFilter_s (*this, (0x1FFFF00UL), (ACKNOWLEDGEMENT_PGN << 8), &getIdentItem().isoName()));
 

@@ -173,7 +173,7 @@ static const uint8_t scui8_tpPriority=6;
 #endif
 
 
-MultiReceiveClientWrapper_s::MultiReceiveClientWrapper_s( IsoAgLib::MultiReceiveClient_c* rpc_client,
+MultiReceiveClientWrapper_s::MultiReceiveClientWrapper_s( IsoAgLib::MultiReceiveClient_c& rrefc_client,
                                                           const ISOName_c& rrefc_isoNameClient,
                                                           uint32_t rui32_pgn,
                                                           uint32_t rui32_pgnMask,
@@ -184,7 +184,7 @@ MultiReceiveClientWrapper_s::MultiReceiveClientWrapper_s( IsoAgLib::MultiReceive
                                                           #endif
                                                           SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA
                                                         )
-  : SINGLETON_PARENT_CONSTRUCTOR pc_client(rpc_client)
+  : SINGLETON_PARENT_CONSTRUCTOR pc_client(&rrefc_client)
   , c_isoName (rrefc_isoNameClient)
   , ui32_pgn(rui32_pgn)
   , ui32_pgnMask(rui32_pgnMask)
@@ -660,7 +660,7 @@ MultiReceive_c::processMsg()
 /** @todo Add function with ISOItem/IdentItem probably, too? */
 // Operation: registerClient
 void
-MultiReceive_c::registerClient(IsoAgLib::MultiReceiveClient_c* rpc_client, const ISOName_c& rrefc_isoName,
+MultiReceive_c::registerClient(IsoAgLib::MultiReceiveClient_c& rrefc_client, const ISOName_c& rrefc_isoName,
                                uint32_t rui32_pgn, uint32_t rui32_pgnMask,
                                bool rb_alsoBroadcast, bool rb_alsoGlobalErrors
                                #ifdef NMEA_2000_FAST_PACKET
@@ -672,7 +672,7 @@ MultiReceive_c::registerClient(IsoAgLib::MultiReceiveClient_c* rpc_client, const
   // Already in list?
   while (list_clients_i != list_clients.end()) {
     MultiReceiveClientWrapper_s iterMRCW = *list_clients_i;
-    if ((iterMRCW.pc_client == rpc_client) && (iterMRCW.c_isoName == rrefc_isoName) && (iterMRCW.ui32_pgn == rui32_pgn)
+    if ((iterMRCW.pc_client == (&rrefc_client)) && (iterMRCW.c_isoName == rrefc_isoName) && (iterMRCW.ui32_pgn == rui32_pgn)
     #ifdef NMEA_2000_FAST_PACKET
       && (iterMRCW.b_isFastPacket == rb_isFastPacket)
     #endif
@@ -681,7 +681,7 @@ MultiReceive_c::registerClient(IsoAgLib::MultiReceiveClient_c* rpc_client, const
     list_clients_i++;
   }
   // Not already in list, so insert!
-  list_clients.push_back (MultiReceiveClientWrapper_s (rpc_client, rrefc_isoName, rui32_pgn, rui32_pgnMask, rb_alsoBroadcast, rb_alsoGlobalErrors
+  list_clients.push_back (MultiReceiveClientWrapper_s (rrefc_client, rrefc_isoName, rui32_pgn, rui32_pgnMask, rb_alsoBroadcast, rb_alsoGlobalErrors
                                                        #ifdef NMEA_2000_FAST_PACKET
                                                        , rb_isFastPacket
                                                        #endif

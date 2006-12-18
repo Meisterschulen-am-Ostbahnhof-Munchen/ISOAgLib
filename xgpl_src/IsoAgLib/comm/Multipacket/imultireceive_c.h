@@ -82,14 +82,14 @@ public:
     { MultiReceive_c::close(); }
 
   //  Operation: (de)registerClient
-  void registerClient   (IsoAgLib::MultiReceiveClient_c* rpc_client, const iISOName_c& rrefc_isoName,
+  void registerClient   (IsoAgLib::MultiReceiveClient_c& rrefc_client, const iISOName_c& rrefc_isoName,
                          uint32_t rui32_pgn, uint32_t rui32_pgnMask=0x3FFFF,
                          bool b_alsoBroadcast=false, bool rb_alsoGlobalErrors=false
                          #ifdef NMEA_2000_FAST_PACKET
                          , bool rb_isFastPacket=false
                          #endif
                          )
-    { MultiReceive_c::registerClient (rpc_client, rrefc_isoName, rui32_pgn, rui32_pgnMask, b_alsoBroadcast, rb_alsoGlobalErrors
+    { MultiReceive_c::registerClient (rrefc_client, rrefc_isoName, rui32_pgn, rui32_pgnMask, b_alsoBroadcast, rb_alsoGlobalErrors
                          #ifdef NMEA_2000_FAST_PACKET
                          , rb_isFastPacket
                          #endif

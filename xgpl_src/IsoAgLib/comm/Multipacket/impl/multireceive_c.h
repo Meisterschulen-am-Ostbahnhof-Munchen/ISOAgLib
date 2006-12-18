@@ -134,7 +134,7 @@ namespace __IsoAgLib {
 /** struct for client definition */
 class MultiReceiveClientWrapper_s : public ClientBase {
   public:
-  MultiReceiveClientWrapper_s( IsoAgLib::MultiReceiveClient_c* rpc_client,
+  MultiReceiveClientWrapper_s( IsoAgLib::MultiReceiveClient_c& rpc_client,
                                const ISOName_c& rrefc_isoNameClient,
                                uint32_t rui32_pgn,
                                uint32_t rui32_pgnMask,
@@ -177,7 +177,7 @@ public:
   bool processMsg();
 
   //  Operation: (de)registerClient
-  void registerClient   (IsoAgLib::MultiReceiveClient_c* rpc_client, const ISOName_c& rrefc_isoName,
+  void registerClient   (IsoAgLib::MultiReceiveClient_c& rrefc_client, const ISOName_c& rrefc_isoName,
                          uint32_t rui32_pgn, uint32_t rui32_pgnMask=0x3FFFF,
                          bool b_alsoBroadcast=false, bool rb_alsoGlobalErrors=false
                          #ifdef NMEA_2000_FAST_PACKET
