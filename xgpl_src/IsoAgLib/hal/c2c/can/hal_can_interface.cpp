@@ -539,6 +539,11 @@ int16_t can_configMsgobjInit(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgL
 
   if (rb_rxtx == 0)
   { // receive
+    // retrieve current global masks
+    get_can_bus_status(rui8_busNr, &t_cinterfCanState);
+    uint32_t ui32_globalMask = (pt_config->bXtd)?t_cinterfCanState.dwGlobMask:t_cinterfCanState.wGlobMask;
+
+
     ui8_cinterfLastSendBufCnt[rui8_busNr][rui8_msgobjNr] = 0xFF;
     pt_config->bMsgType = RX;
     pt_config->pfIrqFunction = IsoAgLibCanHandler;
@@ -546,13 +551,23 @@ int16_t can_configMsgobjInit(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgL
     const uint32_t highLoadCheckList[] = CONFIG_CAN_HIGH_LOAD_IDENT_LIST ;
     for ( uint8_t ind = 0; ind < CONFIG_CAN_HIGH_LOAD_IDENT_CNT; ind++ )
     {
-      if ( (highLoadCheckList[ind] & CONFIG_CAN_HIGH_LOAD_IDENT_MASK) // prevent "0 == 0"
-           && ((highLoadCheckList[ind] & CONFIG_CAN_HIGH_LOAD_IDENT_MASK) == (pt_config->dwId & CONFIG_CAN_HIGH_LOAD_IDENT_MASK))
+      if ( (highLoadCheckList[ind] & CONFIG_CAN_HIGH_LOAD_IDENT_MASK & ui32_globalMask) // prevent "0 == 0"
+           && ((highLoadCheckList[ind] & CONFIG_CAN_HIGH_LOAD_IDENT_MASK & ui32_globalMask) == (pt_config->dwId & CONFIG_CAN_HIGH_LOAD_IDENT_MASK & ui32_globalMask))
           )
       {
         pt_config->wNumberMsgs = CONFIG_CAN_HIGH_LOAD_REC_BUF_SIZE_MIN;
+        #ifdef DEBUG_CAN_BUFFER_FILLING
+        char temp[100];
+        std::sprintf( temp, "High-Load MsgObj: Bus %hd, MsgObj: %hd, GlobalMask: 0x%lx, Filter: 0x%lx\r\n",
+          rui8_busNr, rui8_msgobjNr, ui32_globalMask, pt_config->dwId );
+        __HAL::put_rs232_string( RS232_1, (byte*)temp );
+        #endif
         break;
         }
+      }
+      if ( 14 == rui8_msgobjNr )
+      { // the special last message object is being configured --> it has to store many messages
+        pt_config->wNumberMsgs = 25;
       }
   }
   else
