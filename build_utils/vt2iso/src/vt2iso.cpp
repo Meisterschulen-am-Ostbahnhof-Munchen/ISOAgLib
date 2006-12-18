@@ -4021,7 +4021,7 @@ vt2iso_c::vt2iso_c(std::basic_string<char>* pch_fileName): amountXmlFiles(0)
   #endif
 
   #ifdef USE_SPECIAL_PARSING
-  pc_specialParsing = new SpecialParsingUse_c(pc_projName);
+  pc_specialParsing = new SpecialParsingUse_c(pc_projName, c_directory);
   #else
   pc_specialParsing = NULL;
   #endif
@@ -4050,7 +4050,7 @@ vt2iso_c::skRelatedFileOutput()
 void
 vt2iso_c::prepareFileNameAndDirectory(std::basic_string<char>* pch_fileName)
 {
-  char        xmlFileTemp [1024+1];
+  char xmlFileTemp [1024+1];
   int lastDirPos;
 
   std::basic_string<char> c_expectedType = ".xml";
