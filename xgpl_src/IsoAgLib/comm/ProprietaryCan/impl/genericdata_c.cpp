@@ -125,6 +125,11 @@ namespace IsoAgLib
     CheckSizeOfVectorForWrite( rui16_pos, sizeof(rui8_data) );
     /** overloaded generic method to set the right data */
     __IsoAgLib::number2LittleEndianString( rui8_data, vec_data, rui16_pos);
+    #ifdef DEBUG
+      INTERNAL_DEBUG_DEVICE << "setDataUi8: " << rui8_data << "Position: " << rui16_pos << INTERNAL_DEBUG_DEVICE_ENDL;
+      abort();
+    #endif
+
   }
 
   /** storing data
@@ -137,6 +142,10 @@ namespace IsoAgLib
     CheckSizeOfVectorForWrite( rui16_pos, sizeof(ri8_data) );
     /** overloaded generic method to set the right data */
     __IsoAgLib::number2LittleEndianString( ri8_data, vec_data, rui16_pos);
+    #ifdef DEBUG
+      INTERNAL_DEBUG_DEVICE << "SetDataI8: " << rui8_data << "Position: " << rui16_pos << INTERNAL_DEBUG_DEVICE_ENDL;
+      abort();
+    #endif
   }
 
   /** storing data
@@ -149,6 +158,10 @@ namespace IsoAgLib
     CheckSizeOfVectorForWrite( rui16_pos, sizeof(rui16_data) );
     /** overloaded generic method to set the right data */
     __IsoAgLib::number2LittleEndianString( rui16_data, vec_data, rui16_pos);
+    #ifdef DEBUG
+      INTERNAL_DEBUG_DEVICE << "setDataUi16: " << rui8_data << "Position: " << rui16_pos << INTERNAL_DEBUG_DEVICE_ENDL;
+      abort();
+    #endif
   }
 
   /** storing data
@@ -161,6 +174,10 @@ namespace IsoAgLib
     CheckSizeOfVectorForWrite( rui16_pos, sizeof(ri16_data) );
     /** overloaded generic method to set the right data */
     __IsoAgLib::number2LittleEndianString( ri16_data, vec_data, rui16_pos);
+    #ifdef DEBUG
+      INTERNAL_DEBUG_DEVICE << "setDataI16: " << rui8_data << "Position: " << rui16_pos << INTERNAL_DEBUG_DEVICE_ENDL;
+      abort();
+    #endif
   }
 
   /** storing data
@@ -173,6 +190,10 @@ namespace IsoAgLib
     CheckSizeOfVectorForWrite( rui16_pos, sizeof(rui32_data) );
     /** overloaded generic method to set the right data */
     __IsoAgLib::number2LittleEndianString( rui32_data, vec_data, rui16_pos);
+    #ifdef DEBUG
+      INTERNAL_DEBUG_DEVICE << "setDataUi32: " << rui8_data << "Position: " << rui16_pos << INTERNAL_DEBUG_DEVICE_ENDL;
+      abort();
+    #endif
   }
 
   /** storing data
@@ -185,6 +206,10 @@ namespace IsoAgLib
     CheckSizeOfVectorForWrite( rui16_pos, sizeof(ri32_data) );
     /** overloaded generic method to set the right data */
     __IsoAgLib::number2LittleEndianString( ri32_data, vec_data, rui16_pos);
+    #ifdef DEBUG
+      INTERNAL_DEBUG_DEVICE << "setDataI32: " << rui8_data << "Position: " << rui16_pos << INTERNAL_DEBUG_DEVICE_ENDL;
+      abort();
+    #endif
   }
 
   /** deliver data from vector
@@ -201,6 +226,10 @@ namespace IsoAgLib
     }
     else
     {
+      #ifdef DEBUG
+        INTERNAL_DEBUG_DEVICE "getDataUi8 from position: " << rui16_pos << INTERNAL_DEBUG_DEVICE_ENDL;
+        abort();
+      #endif
       /** in case of an error */
       IsoAgLib::getILibErrInstance().registerError(IsoAgLib::iLibErr_c::Range, IsoAgLib::iLibErr_c::Can);
       return(0);
@@ -221,6 +250,10 @@ namespace IsoAgLib
     }
     else
     {
+      #ifdef DEBUG
+        INTERNAL_DEBUG_DEVICE "getDataI8 from position: " << rui16_pos << INTERNAL_DEBUG_DEVICE_ENDL;
+        abort();
+      #endif
       /** in case of an error */
       IsoAgLib::getILibErrInstance().registerError(IsoAgLib::iLibErr_c::Range, IsoAgLib::iLibErr_c::Can);
       return(0);
@@ -245,6 +278,10 @@ namespace IsoAgLib
     }
     else
     {
+      #ifdef DEBUG
+        INTERNAL_DEBUG_DEVICE "getDataUi16 from position: " << rui16_pos << INTERNAL_DEBUG_DEVICE_ENDL;
+        abort();
+      #endif
       /** in case of an error */
       IsoAgLib::getILibErrInstance().registerError(IsoAgLib::iLibErr_c::Range, IsoAgLib::iLibErr_c::Can);
       return(0);
@@ -269,6 +306,10 @@ namespace IsoAgLib
     }
     else
     {
+      #ifdef DEBUG
+        INTERNAL_DEBUG_DEVICE "getDataI16 from position: " << rui16_pos << INTERNAL_DEBUG_DEVICE_ENDL;
+        abort();
+      #endif
       /** in case of an error */
       IsoAgLib::getILibErrInstance().registerError(IsoAgLib::iLibErr_c::Range, IsoAgLib::iLibErr_c::Can);
       return(0);
@@ -294,6 +335,10 @@ namespace IsoAgLib
     }
     else
     {
+      #ifdef DEBUG
+        INTERNAL_DEBUG_DEVICE "getDataUi32 from position: " << rui16_pos << INTERNAL_DEBUG_DEVICE_ENDL;
+        abort();
+      #endif
       /** in case of an error */
       IsoAgLib::getILibErrInstance().registerError(IsoAgLib::iLibErr_c::Range, IsoAgLib::iLibErr_c::Can);
       return(0);
@@ -319,6 +364,10 @@ namespace IsoAgLib
     }
     else
     {
+      #ifdef DEBUG
+        INTERNAL_DEBUG_DEVICE "getDataI32 from position: " << rui16_pos << INTERNAL_DEBUG_DEVICE_ENDL;
+        abort();
+      #endif
       /** in case of an error */
       IsoAgLib::getILibErrInstance().registerError(IsoAgLib::iLibErr_c::Range, IsoAgLib::iLibErr_c::Can);
       return(0);
