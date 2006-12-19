@@ -160,10 +160,6 @@ ISOTerminal_c::init()
     bool b_atLeastOneFilterAdded=false;
     b_atLeastOneFilterAdded |= (getCanInstance4Comm().insertFilter (*this, (0x1FFFF00UL), (static_cast<MASK_TYPE>(VT_TO_GLOBAL_PGN) << 8),    false, Ident_c::ExtendedIdent) != NULL);
     b_atLeastOneFilterAdded |= (getCanInstance4Comm().insertFilter (*this, (0x1FFFF00UL), (static_cast<MASK_TYPE>(LANGUAGE_PGN) << 8),        false, Ident_c::ExtendedIdent) != NULL);
-#if !defined(IGNORE_VTSERVER_NACK)  // The NACK must be ignored for the Mueller VT Server
-    // register here only for any ACKNOWLEDGEMENT_PGN which is sent to GLOBAL
-    b_atLeastOneFilterAdded |= (getCanInstance4Comm().insertFilter (*this, (0x1FFFF00UL), ((static_cast<MASK_TYPE>(ACKNOWLEDGEMENT_PGN | 0xFF) << 8)), false, Ident_c::ExtendedIdent) != NULL);
-#endif
     if (b_atLeastOneFilterAdded) getCanInstance4Comm().reconfigureMsgObj();
 
     /** for now allow parallel uploads
@@ -189,9 +185,6 @@ ISOTerminal_c::close()
 
     getCanInstance4Comm().deleteFilter(*this, (0x1FFFF00UL), (static_cast<MASK_TYPE>(VT_TO_GLOBAL_PGN) << 8),    Ident_c::ExtendedIdent);
     getCanInstance4Comm().deleteFilter(*this, (0x1FFFF00UL), (static_cast<MASK_TYPE>(LANGUAGE_PGN) << 8),        Ident_c::ExtendedIdent);
-#if !defined(IGNORE_VTSERVER_NACK)  // The NACK must be ignored for the Mueller VT Server
-    getCanInstance4Comm().deleteFilter(*this, (0x1FFFF00UL), (static_cast<MASK_TYPE>(ACKNOWLEDGEMENT_PGN | 0xFF) << 8), Ident_c::ExtendedIdent);
-#endif
 
     for (uint8_t ui8_index = 0; ui8_index < vec_vtClientServerComm.size(); ui8_index++)
     {
@@ -345,24 +338,6 @@ ISOTerminal_c::processMsg()
     return false; // VT_TO_GLOBAL IS of interest for anyone else, because of AUX Assignment, etc...
   }
 
-#if !defined(IGNORE_VTSERVER_NACK)  // The NACK must be ignored for the Mueller VT Server
-  /// -->ACKNOWLEDGEMENT_PGN<-- ///
-  if ((data().isoPgn() & 0x1FF00) == ACKNOWLEDGEMENT_PGN)
-  { /// on NACK do:
-    // iterate through all registered VtClientServerCommunication and process msg if vtDesteAddress == isoPs
-    for (ui8_index = 0; ui8_index < vec_vtClientServerComm.size(); ui8_index++)
-    {
-      if (vec_vtClientServerComm[ui8_index])
-      {
-        if (vec_vtClientServerComm[ui8_index]->getIdentItem().getIsoItem() && (data().isoPs() == vec_vtClientServerComm[ui8_index]->getIdentItem().getIsoItem()->nr()))
-          return vec_vtClientServerComm[ui8_index]->processMsgAck();
-      }
-    }
-
-    // no processing before, so ignore that msg
-    return false; // (N)ACK for our SA will NOT be of interest for anyone else...
-  }
-#endif
 
   /// -->LANGUAGE_PGN<-- ///
   if ((data().isoPgn() & 0x1FFFF) == LANGUAGE_PGN)
@@ -434,27 +409,12 @@ ISOTerminal_c::reactOnMonitorListAdd (const ISOName_c& refc_isoName, const ISOIt
 
 
 void
-ISOTerminal_c::reactOnMonitorListRemove (const ISOName_c& refc_isoName, uint8_t rui8_oldSa)
+ISOTerminal_c::reactOnMonitorListRemove (const ISOName_c& refc_isoName, uint8_t /*rui8_oldSa*/)
 {
-  #if !defined(IGNORE_VTSERVER_NACK)  // The NACK must be ignored for the Mueller VT Server
-  // deregister here only for any ACKNOWLEDGEMENT_PGN which are sent to the lost SA
-  // (when the lost node was not local - then simply nothing is found for deletion
-  getCanInstance4Comm().deleteFilter(*this, (0x1FFFF00UL), (static_cast<MASK_TYPE>(ACKNOWLEDGEMENT_PGN | rui8_oldSa) << 8), Ident_c::ExtendedIdent);
-  #endif
-
-  for (uint8_t ui8_index = 0; ui8_index < vec_vtClientServerComm.size(); ui8_index++)
-  {
-    if (vec_vtClientServerComm[ui8_index]->getIdentItem().isoName() == refc_isoName)
-    {
-      vec_vtClientServerComm[ui8_index]->resetVtToEcuPgnFilter();
-    }
-  }
-
   // we only care for the VTs
   if (refc_isoName.getEcuType() != ISOName_c::ecuTypeVirtualTerminal) return;
 
   // check if it is mine???
-  /** @todo function to notify every client for vt gone offline */
   STL_NAMESPACE::list<VtServerInstance_c>::iterator lit_vtServerInst;
 
   for (lit_vtServerInst = l_vtServerInst.begin(); lit_vtServerInst != l_vtServerInst.end(); lit_vtServerInst++)

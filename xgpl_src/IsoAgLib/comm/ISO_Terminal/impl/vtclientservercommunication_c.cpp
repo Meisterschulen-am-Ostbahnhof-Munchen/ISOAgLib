@@ -432,7 +432,8 @@ VtClientServerCommunication_c::VtClientServerCommunication_c (IdentItem_c& ref_w
 VtClientServerCommunication_c::~VtClientServerCommunication_c()
 {
   __IsoAgLib::getMultiReceiveInstance4Comm().deregisterClient (this);
-  __IsoAgLib::getCanInstance4Comm().deleteFilter (*this, (0x1FFFF00UL), (static_cast<MASK_TYPE>(VT_TO_ECU_PGN) << 8), Ident_c::ExtendedIdent);
+  getIsoFilterManagerInstance().removeIsoFilter (ISOFilter_s (*this, (0x1FFFF00UL), (VT_TO_ECU_PGN << 8), &getIdentItem().isoName()));
+  getIsoFilterManagerInstance().removeIsoFilter (ISOFilter_s (*this, (0x1FFFF00UL), (ACKNOWLEDGEMENT_PGN << 8), &getIdentItem().isoName()));
 }
 
 
@@ -912,6 +913,11 @@ VtClientServerCommunication_c::processMsg()
 
   /** @todo check for can-pkg-length==8???? */
 
+  if ((c_data.isoPgn() & 0x1FF00) == ACKNOWLEDGEMENT_PGN)
+  { // Pass on to ACK-Processing!
+    return processMsgAck();
+  }
+
   uint8_t ui8_uploadCommandError; // who is interested in the errorCode anyway?
   uint8_t ui8_errByte=0; // from 1-8, or 0 for NO errorHandling, as NO user command (was intern command like C0/C2/C3/C7/etc.)
 
@@ -921,6 +927,7 @@ VtClientServerCommunication_c::processMsg()
   // If VT is not active, don't react on PKGs addressed to us, as VT's not active ;)
   if (!isVtActive()) return true;
 
+  // check below not needed any more with new isofilter!?!??!??! */
   if ((c_data.isoPgn() & 0x1FFFF) != (VT_TO_ECU_PGN | getIdentItem().getIsoItem()->nr())) return false;
 
   /// process all VT_TO_ECU addressed to us
@@ -2484,16 +2491,6 @@ IsoAgLib::iVtClientServerCommunication_c* VtClientServerCommunication_c::toInter
   return static_cast<IsoAgLib::iVtClientServerCommunication_c*>(this);
 }
 
-
-void
-VtClientServerCommunication_c::resetVtToEcuPgnFilter()
-{
-  if (b_receiveFilterCreated)
-  {
-    getCanInstance4Comm().deleteFilter (*this, (0x1FFFF00UL), (static_cast<MASK_TYPE>(VT_TO_ECU_PGN) << 8), Ident_c::ExtendedIdent);
-    b_receiveFilterCreated = false;
-  }
-}
 
 uint16_t
 VtClientServerCommunication_c::getVtObjectPoolSoftKeyWidth()
