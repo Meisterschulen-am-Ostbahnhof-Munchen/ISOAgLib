@@ -129,7 +129,8 @@ public:
     Actor=11,
     Rs232=12,
     TaskController=13,
-    AllErrLocations=14,
+    ProprietaryCan=14,
+    AllErrLocations=15,
   } iLibErrLocations_t;
 
   /**

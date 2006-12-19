@@ -2,10 +2,10 @@
                           icancustomer_c.h  -  header file for basic object
                                             for customer relationship to one
                                             or more FilterBox_c (-> CAN IO) instances
-                             -------------------                                         
-    begin                : Tue Aug 3 1999                                           
-    copyright            : (C) 1999 - 2004 by Dipl.-Inform. Achim Spangler                         
-    email                : a.spangler@osb-ag:de                                     
+                             -------------------
+    begin                : Tue Aug 3 1999
+    copyright            : (C) 1999 - 2004 by Dipl.-Inform. Achim Spangler
+    email                : a.spangler@osb-ag:de
  ***************************************************************************/
 
 /***************************************************************************
@@ -56,6 +56,11 @@
 #include "impl/cancustomer_c.h"
 #include <IsoAgLib/util/icanpkgext_c.h>
 
+namespace __IsoAgLib
+{ // forward declarations
+  class ProprietaryMessageHandler_c;
+}
+
 // Begin Namespace IsoAgLib
 namespace IsoAgLib {
 
@@ -87,6 +92,7 @@ private:
 
   friend class iCANIO_c;
   friend class iISOFilter_s;
+  friend class __IsoAgLib::ProprietaryMessageHandler_c;
 };
 
 } // namespace

@@ -290,8 +290,48 @@ template<class T> void number2LittleEndianString( const T rt_src, std::vector<ui
 #endif
 }
 
+/** convert number call-by-val variable to little endian byte string
+ * @return iterator so that write can be continued directly after last written position
+*/
+template<class T> void number2LittleEndianString( const T rt_src, std::vector<uint8_t>& refc_target, uint16_t rui16_bytePos)
+{
+#ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
+  const uint8_t* pui8_src = (const uint8_t*)(&rt_src);
+  const unsigned int size = sizeof(T);
+  for ( unsigned int ind = 0; ind < size; ind++ )
+  {
+    refc_target.at( rui16_bytePos )= pui8_src[ind] ;
+    rui16_bytePos++;
+  }
+#else
+  const unsigned int BitSize = sizeof(T) * 8;
+  for ( unsigned int ind = 0; ( ind < BitSize ); ind += 8 )
+  {
+    refc_target.at( rui16_bytePos ) = (rt_src >> ind) & 0xFF;
+    rui16_bytePos++;
+  }
+#endif
+}
 
+/** */
+template<class T> T string2Number( const std::vector<uint8_t>& refc_target, uint16_t rui16_pos, T t_Data )
+{
+  T t_retData = t_Data;
+  for ( uint8_t index = 0; index < sizeof(t_Data); index++ )
+  {
+    t_retData = refc_target.at(rui16_pos + index) << ((sizeof(t_Data)-index-1) * 8);
+  }
+  return(t_retData);
+}
 
+/** */
+template<class T> void setStream( const T rt_src, std::vector<uint8_t>& refc_target, uint16_t rui16_bytePos, uint16_t rui16_length)
+{
+  for ( unsigned int index = rui16_bytePos;  index < rui16_length ; index ++ )
+  {
+    refc_target.at( index ) = *rt_src ;
+  }
+}
 
 /** convert big endian textual number representation into little endian uint8_t string of specified size */
 void bigEndianHexNumberText2CanString( const char* rc_src, uint8_t* pui8_target, unsigned int size );
