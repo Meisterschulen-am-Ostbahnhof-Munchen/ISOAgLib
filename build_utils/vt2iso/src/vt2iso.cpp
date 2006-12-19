@@ -2098,31 +2098,46 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
                     if (strncmp (attr_name, "name", stringLength) == 0) {
                       strncpy (objChildName, attr_value, stringLength);
                       is_objChildName = true;
+                      continue;
                     }
                     if (strncmp (attr_name, "id", stringLength) == 0) {
                       objChildID = atoi (attr_value);
                       is_objChildID = true;
+                      continue;
                     }
                     if (strncmp (attr_name, "pos_x", stringLength) == 0) {
                       objChildX = atoi (attr_value);
                       is_objChildX = true;
+                      continue;
                     }
                     if (strncmp (attr_name, "pos_y", stringLength) == 0) {
                       objChildY = atoi (attr_value);
                       is_objChildY = true;
+                      continue;
                     }
                     if (strncmp (attr_name, "block_font", stringLength) == 0) {
                       strcpy (objBlockFont, "&iVtObject");
                       strncat (objBlockFont, attr_value, stringLength-9);
+                      continue;
                     }
                     if (strncmp (attr_name, "block_row", stringLength) == 0) {
                       objBlockRow = atoi (attr_value);
+                      continue;
                     }
                     if (strncmp (attr_name, "block_col", stringLength) == 0) {
                       objBlockCol = atoi (attr_value);
+                      continue;
                     }
                   }
                 }
+
+                if (pc_specialParsing)
+                { /// check if the found child object needs a resource ID as object ID
+                  if (is_objChildName)
+                    if (!pc_specialParsing->setResourceID (child, objChildName, &is_objChildID, &objChildID))
+                      return false;
+                }
+
                 if (is_objChildName == false)
                 {
                   // create auto-named NAME attribute
@@ -2132,16 +2147,8 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
                   is_objChildName = true;
                 }
 
-                if (pc_specialParsing)
-                { /// check if the found child object needs a resource ID as object ID
-                  if (!pc_specialParsing->setResourceID (&is_objChildID, &objChildID))
-                    return false;
-                }
-                else
-                {
-                  // give him an ID, although not necessary now...
-                  objChildID = getID (objChildName, false /* assumption: not a macro here */, is_objChildID, objChildID);
-                }
+                // give him an ID, although not necessary now...
+                objChildID = getID (objChildName, false /* assumption: not a macro here */, is_objChildID, objChildID);
 
                 if (objChildID == -1) return false;
 
@@ -4000,7 +4007,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
   return true;
 }
 
-vt2iso_c::vt2iso_c(std::basic_string<char>* pch_fileName): amountXmlFiles(0)
+vt2iso_c::vt2iso_c(std::basic_string<char>* pch_fileName): amountXmlFiles(0), doc (0)
 {
   prepareFileNameAndDirectory(pch_fileName);
 
@@ -4388,12 +4395,10 @@ int main(int argC, char* argV[])
     //reset error count first
     errorHandler.resetErrors();
 
-    XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument *doc = 0;
-
     try
     {   // reset document pool
       parser->resetDocumentPool();
-      doc = parser->parseURI(xmlFile);
+      pc_vt2iso->setDoc(parser->parseURI(xmlFile));
     }
 
     catch (const XMLException& toCatch)
@@ -4429,9 +4434,9 @@ int main(int argC, char* argV[])
       std::cout << "\nErrors occurred, no output available\n" << std::endl;
       errorOccurred = true;
     } else {
-      if (doc) {
+      if (pc_vt2iso->getDoc()) {
         // ### main routine starts right here!!! ###
-        bool b_returnRootElement = pc_vt2iso->processElement ((DOMNode*)doc->getDocumentElement(), (uint64_t(1)<<otObjectpool) /*, NULL, NULL*/); // must all be included in an objectpool tag !
+        bool b_returnRootElement = pc_vt2iso->processElement ((DOMNode*)pc_vt2iso->getDoc()->getDocumentElement(), (uint64_t(1)<<otObjectpool) /*, NULL, NULL*/); // must all be included in an objectpool tag !
 
         if (!pc_vt2iso->getIsOPDimension()) {
           std::cout << "\n\nYOU NEED TO SPECIFY THE dimension= TAG IN <objectpool> ! STOPPING PARSER! bye.\n\n";
