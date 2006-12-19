@@ -205,7 +205,7 @@ template<class T> void convertLittleEndianString( const uint8_t* rpui8_src, T& r
 }
 
 /** convert receive multistream into an unsigned variable */
-inline uint8_t convertLittleEndianStringUi8( const uint8_t* rpui8_src ) { return rpui8_src[0];};
+uint8_t convertLittleEndianStringUi8( const uint8_t* rpui8_src );
 /** convert receive multistream into an unsigned variable */
 inline int8_t convertLittleEndianStringI8( const uint8_t* rpui8_src ){ return (int8_t)(rpui8_src[0]);};
 /** convert receive multistream into an unsigned variable */

@@ -97,6 +97,13 @@ using namespace std;
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
+/** convert receive multistream into an unsigned variable */
+uint8_t convertLittleEndianStringUi8( const uint8_t* rpui8_src )
+{
+  return rpui8_src[0];
+}
+
+
 /**
   translate BCD to normal value
 */
