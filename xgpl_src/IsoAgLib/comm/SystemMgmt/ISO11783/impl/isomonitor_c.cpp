@@ -143,8 +143,7 @@ ISOMonitor_c::ISOMonitor_c()
   this is called from singleton.h and should NOT be called from the user again.
   users please use init(...) instead.
 */
-void
-ISOMonitor_c::singletonInit()
+void ISOMonitor_c::singletonInit()
 {
   setAlreadyClosed(); // so init() will init ;-) (but only once!)
   // "init();" moved to systemStartup() in Scheduler_c to avoid circular dependencies

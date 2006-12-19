@@ -104,7 +104,7 @@ namespace IsoAgLib
   */
   void GenericData_c::setIdent(uint32_t rui32_ident)
   {
-    ui32_ident = __IsoAgLib::CANPkgExt_c::ident();
+    ui32_ident = rui32_ident;
   }
 
   /**
@@ -218,20 +218,20 @@ namespace IsoAgLib
   */
   uint8_t GenericData_c::getDataUi8( uint16_t rui16_pos) const
   {
+    uint8_t ui8_data;
     /** element is existing */
     if ( CheckSizeOfVectorForRead( rui16_pos, sizeof(uint8_t) ) )
     {
-      /** data ok */
-      return(vec_data.at(rui16_pos));
+      return( __IsoAgLib::string2Number( vec_data, rui16_pos, ui8_data ));
     }
     else
     {
       #ifdef DEBUG
-        INTERNAL_DEBUG_DEVICE "getDataUi8 from position: " << rui16_pos << INTERNAL_DEBUG_DEVICE_ENDL;
+        INTERNAL_DEBUG_DEVICE "getDataUi8 from position: " << rui16_pos << "not existent" << INTERNAL_DEBUG_DEVICE_ENDL;
         abort();
       #endif
       /** in case of an error */
-      IsoAgLib::getILibErrInstance().registerError(IsoAgLib::iLibErr_c::Range, IsoAgLib::iLibErr_c::Can);
+      IsoAgLib::getILibErrInstance().registerError(IsoAgLib::iLibErr_c::Range, IsoAgLib::iLibErr_c::ProprietaryCan);
       return(0);
     }
   }
@@ -242,20 +242,20 @@ namespace IsoAgLib
   */
   int8_t GenericData_c::getDataI8( uint16_t rui16_pos) const
   {
+    uint8_t ui8_data;
     /** element is existing */
     if ( CheckSizeOfVectorForRead( rui16_pos, sizeof(int8_t) ) )
     {
-      /** data ok */
-      return( (int8_t)(vec_data.at(rui16_pos)) );
+      return( (int8_t)(__IsoAgLib::string2Number( vec_data, rui16_pos, ui8_data )));
     }
     else
     {
       #ifdef DEBUG
-        INTERNAL_DEBUG_DEVICE "getDataI8 from position: " << rui16_pos << INTERNAL_DEBUG_DEVICE_ENDL;
+        INTERNAL_DEBUG_DEVICE "getDataI8 from position: " << rui16_pos << "not existent" << INTERNAL_DEBUG_DEVICE_ENDL;
         abort();
       #endif
       /** in case of an error */
-      IsoAgLib::getILibErrInstance().registerError(IsoAgLib::iLibErr_c::Range, IsoAgLib::iLibErr_c::Can);
+      IsoAgLib::getILibErrInstance().registerError(IsoAgLib::iLibErr_c::Range, IsoAgLib::iLibErr_c::ProprietaryCan);
       return(0);
     }
   }
@@ -267,23 +267,20 @@ namespace IsoAgLib
   uint16_t GenericData_c::getDataUi16( uint16_t rui16_pos) const
   {
     /** initialize temporary variable */
-    uint16_t ui16_retData = 0x0000;
+    uint16_t ui16_data;
     /** element is existing */
     if ( CheckSizeOfVectorForRead( rui16_pos, sizeof(uint16_t) ) )
     {
-      ui16_retData = vec_data.at(rui16_pos) << 8;
-      ui16_retData = ui16_retData | vec_data.at(rui16_pos + 1) ;
-      /** data ok */
-      return(ui16_retData);
+      return( __IsoAgLib::string2Number( vec_data, rui16_pos, ui16_data ));
     }
     else
     {
       #ifdef DEBUG
-        INTERNAL_DEBUG_DEVICE "getDataUi16 from position: " << rui16_pos << INTERNAL_DEBUG_DEVICE_ENDL;
+        INTERNAL_DEBUG_DEVICE "getDataUi16 from position: " << rui16_pos << "not existent" << INTERNAL_DEBUG_DEVICE_ENDL;
         abort();
       #endif
       /** in case of an error */
-      IsoAgLib::getILibErrInstance().registerError(IsoAgLib::iLibErr_c::Range, IsoAgLib::iLibErr_c::Can);
+      IsoAgLib::getILibErrInstance().registerError(IsoAgLib::iLibErr_c::Range, IsoAgLib::iLibErr_c::ProprietaryCan);
       return(0);
     }
   }
@@ -294,24 +291,22 @@ namespace IsoAgLib
   */
   int16_t GenericData_c::getDataI16( uint16_t rui16_pos) const
   {
-    /** initialize temporary variable */
-    uint16_t ui16_retData = 0x0000;
+    /** temporary variable */
+    uint16_t ui16_data;
+
     /** element is existing */
     if (CheckSizeOfVectorForRead( rui16_pos, sizeof(int16_t) ) )
     {
-      ui16_retData = vec_data.at(rui16_pos) << 8;
-      ui16_retData = ui16_retData | vec_data.at(rui16_pos + 1) ;
-      /** data ok */
-      return( (int16_t)(ui16_retData) );
+      return( (int16_t)(__IsoAgLib::string2Number( vec_data, rui16_pos, ui16_data )));
     }
     else
     {
       #ifdef DEBUG
-        INTERNAL_DEBUG_DEVICE "getDataI16 from position: " << rui16_pos << INTERNAL_DEBUG_DEVICE_ENDL;
+        INTERNAL_DEBUG_DEVICE "getDataI16 from position: " << rui16_pos << "not existent" << INTERNAL_DEBUG_DEVICE_ENDL;
         abort();
       #endif
       /** in case of an error */
-      IsoAgLib::getILibErrInstance().registerError(IsoAgLib::iLibErr_c::Range, IsoAgLib::iLibErr_c::Can);
+      IsoAgLib::getILibErrInstance().registerError(IsoAgLib::iLibErr_c::Range, IsoAgLib::iLibErr_c::ProprietaryCan);
       return(0);
     }
   }
@@ -322,25 +317,21 @@ namespace IsoAgLib
   */
   uint32_t GenericData_c::getDataUi32( uint16_t rui16_pos) const
   {
-    /** initialize temporary variable */
-    uint32_t ui32_retData = 0x00000000;
+    /** temporary variable */
+    uint32_t ui32_data;
     /** element is existing */
     if ( CheckSizeOfVectorForRead( rui16_pos, sizeof(uint32_t) ) )
     {
-      ui32_retData = vec_data.at(rui16_pos) << 24;
-      ui32_retData = ui32_retData | vec_data.at(rui16_pos + 1) << 16;
-      ui32_retData = ui32_retData | vec_data.at(rui16_pos + 2) << 8;
-      ui32_retData = ui32_retData | vec_data.at(rui16_pos + 3) ;
-      return(ui32_retData);
+      return( __IsoAgLib::string2Number( vec_data, rui16_pos, ui32_data ));
     }
     else
     {
       #ifdef DEBUG
-        INTERNAL_DEBUG_DEVICE "getDataUi32 from position: " << rui16_pos << INTERNAL_DEBUG_DEVICE_ENDL;
+        INTERNAL_DEBUG_DEVICE "getDataUi32 from position: " << rui16_pos << "not existent" << INTERNAL_DEBUG_DEVICE_ENDL;
         abort();
       #endif
       /** in case of an error */
-      IsoAgLib::getILibErrInstance().registerError(IsoAgLib::iLibErr_c::Range, IsoAgLib::iLibErr_c::Can);
+      IsoAgLib::getILibErrInstance().registerError(IsoAgLib::iLibErr_c::Range, IsoAgLib::iLibErr_c::ProprietaryCan);
       return(0);
     }
   }
@@ -351,45 +342,47 @@ namespace IsoAgLib
   */
   int32_t GenericData_c::getDataI32( uint16_t rui16_pos) const
   {
-    /** initialize temporary variable */
-    uint32_t ui32_retData = 0x00000000;
+    uint32_t ui32_data;
     /** element is existing */
     if ( CheckSizeOfVectorForRead( rui16_pos, sizeof(int32_t) ) )
     {
-      ui32_retData = vec_data.at(rui16_pos) << 24;
-      ui32_retData = ui32_retData | vec_data.at(rui16_pos + 1) << 16;
-      ui32_retData = ui32_retData | vec_data.at(rui16_pos + 2) << 8;
-      ui32_retData = ui32_retData | vec_data.at(rui16_pos + 3) ;
-      return( (int32_t)(ui32_retData) );
+      return( (int32_t)(__IsoAgLib::string2Number( vec_data, rui16_pos, ui32_data )));
     }
     else
     {
       #ifdef DEBUG
-        INTERNAL_DEBUG_DEVICE "getDataI32 from position: " << rui16_pos << INTERNAL_DEBUG_DEVICE_ENDL;
+        INTERNAL_DEBUG_DEVICE "getDataI32 from position: " << rui16_pos << "not existent" << INTERNAL_DEBUG_DEVICE_ENDL;
         abort();
       #endif
       /** in case of an error */
-      IsoAgLib::getILibErrInstance().registerError(IsoAgLib::iLibErr_c::Range, IsoAgLib::iLibErr_c::Can);
+      IsoAgLib::getILibErrInstance().registerError(IsoAgLib::iLibErr_c::Range, IsoAgLib::iLibErr_c::ProprietaryCan);
       return(0);
     }
   }
 
-  /**
+  /** set data stream to vector vec_data
+    @param rui16_bytePos position of byte in vector
+    @param rpui8_data pointer to data for read
+    @param rui16_dataLength num of data bytes at position rui16_bytePos
   */
-  void GenericData_c::setDataStream(uint16_t rui16_bytePos, const uint8_t* rpui8_data, uint16_t rui16_dataLength)
+  void GenericData_c::setDataStream(uint16_t rui16_pos, const uint8_t* rpui8_data, uint16_t rui16_dataLength)
   {
+    /** first check size of vector */
+    CheckSizeOfVectorForWrite( rui16_pos, rui16_dataLength );
+    /** rpui8_data exist */
     if (rpui8_data != NULL )
     {
-      const unsigned int cui_useLen = ( (rui16_dataLength + rui16_bytePos) < 8 ) ? (rui16_dataLength + rui16_bytePos) : 8;
-
+      __IsoAgLib::setStream( rpui8_data, vec_data, rui16_pos, rui16_dataLength);
     }
   }
 
-  /**
+  /** deliver a pointer to the wanted data
+    @param rui16_bytePos position of data
+    @return uint8_t* pointer to data
   */
   const uint8_t* GenericData_c::getDataStream(uint16_t rui16_bytePos) const
   {
-    return(s_datastream);
+    return( &(vec_data.at(rui16_bytePos)) );
   }
 
   /** this method is clearing the vector

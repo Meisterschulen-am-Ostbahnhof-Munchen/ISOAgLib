@@ -121,10 +121,16 @@ struct ISOFilter_s
     else /* no name */ c_isoNameSa = ISOName_c::ISONameUnspecified; // operator =
   }
 
-private:
-  bool equalMaskAndFilter (const ISOFilter_s& rrefc_isoFilter);
-  bool operator == (const ISOFilter_s& rrefc_isoFilter)
+  uint32_t getMask()   const { return c_identMask.ident(); }
+  uint32_t getFilter() const { return c_identFilter.ident(); }
+
+  bool operator == (const ISOFilter_s& rrefc_isoFilter) const
   { return equalMaskAndFilter (rrefc_isoFilter) && pc_canCustomer == rrefc_isoFilter.pc_canCustomer; }
+  bool operator != (const ISOFilter_s& rrefc_isoFilter) const
+  { return !operator == (rrefc_isoFilter); }
+
+private:
+  bool equalMaskAndFilter (const ISOFilter_s& rrefc_isoFilter) const;
 
 private:
   Ident_c c_identMask;

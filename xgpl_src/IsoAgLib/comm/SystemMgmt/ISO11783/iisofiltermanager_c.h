@@ -74,13 +74,13 @@ public:
 
   /** @return true on success */
   bool insertIsoFilter (const iISOFilter_s& rrefcs_isoFilter)
-  { return ISOFilterManager_c::insertIsoFilter (rrefcs_isoFilter); }
+  { ISOFilterManager_c::insertIsoFilter (rrefcs_isoFilter); return true; }
 
   bool addToIsoFilter (const iISOFilter_s& rrefcs_isoFilterExisting, const iISOFilter_s& rrefcs_isoFilterToAdd)
   { return ISOFilterManager_c::addToIsoFilter (rrefcs_isoFilterExisting, rrefcs_isoFilterToAdd); }
 
    void removeIsoFilter (const iISOFilter_s& rrefcs_isoFilter)
-   { return ISOFilterManager_c::removeIsoFilter (rrefcs_isoFilter); }
+   { ISOFilterManager_c::removeIsoFilter (rrefcs_isoFilter); }
 
 private: // Private methods/attributes
   /** HIDDEN constructor for an iISOFilterManager_c object instance

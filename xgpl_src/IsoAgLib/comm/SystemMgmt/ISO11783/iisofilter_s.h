@@ -56,6 +56,12 @@
 #define IISO_FILTER_H
 
 #include <IsoAgLib/util/icancustomer_c.h>
+#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofiltermanager_c.h>
+
+namespace __IsoAgLib {
+
+class ProprietaryMessageHandler_c;
+}
 
 namespace IsoAgLib {
 
@@ -64,13 +70,21 @@ class iISOName_c;
 
 struct iISOFilter_s : private __IsoAgLib::ISOFilter_s
 {
-  iISOFilter_s (iCANCustomer_c& rrefc_canCustomer, const iIdent_c& rrefc_mask, const iIdent_c& rrefc_filter, const iISOName_c* rpc_isoNameSa = NULL, const iISOName_c* rpc_isoNameDa = NULL)
+  iISOFilter_s (iCANCustomer_c& rrefc_canCustomer, uint32_t rui32_mask, uint32_t rui32_filter, const iISOName_c* rpc_isoNameDa = NULL, const iISOName_c* rpc_isoNameSa = NULL, iIdent_c::identType_t rt_identType=iIdent_c::ExtendedIdent)
     : ISOFilter_s (static_cast<__IsoAgLib::CANCustomer_c&>(rrefc_canCustomer),
-      rrefc_mask, rrefc_filter,
-      rpc_isoNameSa, rpc_isoNameDa) {}
+      rui32_mask, rui32_filter,
+      rpc_isoNameDa, rpc_isoNameSa,
+      rt_identType) {}
+
+  uint32_t getMask()   const { return __IsoAgLib::ISOFilter_s::getMask(); }
+  uint32_t getFilter() const { return __IsoAgLib::ISOFilter_s::getFilter(); }
+
+  bool operator == (const iISOFilter_s rrefcs_isoFilter) const { return __IsoAgLib::ISOFilter_s::operator == (rrefcs_isoFilter); }
+  bool operator != (const iISOFilter_s rrefcs_isoFilter) const { return __IsoAgLib::ISOFilter_s::operator != (rrefcs_isoFilter); }
 
 private:
   friend class iISOFilterManager_c;
+  friend class __IsoAgLib::ProprietaryMessageHandler_c;
 };
 
 } // End Namespace IsoAgLib

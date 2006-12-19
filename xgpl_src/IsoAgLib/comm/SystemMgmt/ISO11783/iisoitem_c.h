@@ -61,6 +61,11 @@
 #include "impl/isoitem_c.h"
 #include <IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h>
 
+namespace __IsoAgLib
+{ // forward declarations (for friends)
+  class ProprietaryMessageHandler_c;
+}
+
 // Begin Namespace IsoAgLib
 namespace IsoAgLib {
 
@@ -78,6 +83,7 @@ private:
   friend class iSystemMgmt_c;
   friend class iISOMonitor_c;
   friend class iCANPkgExt_c;
+  friend class __IsoAgLib::ProprietaryMessageHandler_c;
 
 public:
   /** deliver the ISOName code of this item

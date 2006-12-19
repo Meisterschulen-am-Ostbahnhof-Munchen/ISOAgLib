@@ -187,11 +187,16 @@ namespace IsoAgLib
     */
     int32_t getDataI32( uint16_t rui16_pos) const;
 
-    /**
+    /** set data stream to vector vec_data
+      @param rui16_bytePos position of byte in vector
+      @param rpui8_data pointer to data for read
+      @param rui16_dataLength num of data bytes at position rui16_bytePos
     */
     void setDataStream(uint16_t rui16_bytePos, const uint8_t* rpui8_data, uint16_t rui16_dataLength);
 
-    /**
+    /** deliver a pointer to the wanted data
+      @param rui16_bytePos position of data
+      @return uint8_t* pointer to data
     */
     const uint8_t* getDataStream(uint16_t rui16_bytePos) const;
 
@@ -218,13 +223,13 @@ namespace IsoAgLib
     vec_data_t vec_data;
 
     /** position of data byte in the vector */
-    uint16_t ui16_pos;
+//    uint16_t ui16_pos;
 
     /** ident of the message */
     uint32_t ui32_ident;
 
     /** datastream */
-    const uint8_t* s_datastream;
+//    const uint8_t* s_datastream;
   };
 };
 #endif

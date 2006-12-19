@@ -108,7 +108,7 @@ ISOFilterBox_c::ISOFilterBox_c(const ISOFilterBox_c& rrefcc_refFB)
 
 
 bool
-ISOFilter_s::equalMaskAndFilter (const ISOFilter_s& rrefc_isoFilter)
+ISOFilter_s::equalMaskAndFilter (const ISOFilter_s& rrefc_isoFilter) const
 {
   return ((c_identMask   == rrefc_isoFilter.c_identMask)
        && (c_identFilter == rrefc_isoFilter.c_identFilter)
