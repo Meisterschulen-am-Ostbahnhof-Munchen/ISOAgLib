@@ -293,6 +293,9 @@ ISOTerminal_c::timeEvent(void)
   }
   /** @todo maybe store the one that was out of time if not all could perform their actions? */
 
+  // set back the scheduler period to 100msec, as any waiting command has been set
+  if (getTimePeriod() != 100) setTimePeriod( 100 );
+
   return b_allActivitiesPerformed;
 }
 
@@ -378,7 +381,7 @@ ISOTerminal_c::sendCommandForDEBUG(IsoAgLib::iIdentItem_c& refc_wsMasterIdentIte
 
 void
 ISOTerminal_c::reactOnMonitorListAdd (const ISOName_c& refc_isoName, const ISOItem_c* rpc_newItem)
-{ 
+{
   // we only care for the VTs
   if (refc_isoName.getEcuType() != ISOName_c::ecuTypeVirtualTerminal) return;
 

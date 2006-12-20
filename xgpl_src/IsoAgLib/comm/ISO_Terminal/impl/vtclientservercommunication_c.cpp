@@ -2453,6 +2453,12 @@ VtClientServerCommunication_c::finishUploadCommand()
   #ifdef DEBUG
   INTERNAL_DEBUG_DEVICE << q_sendUpload.size() << "." << INTERNAL_DEBUG_DEVICE_ENDL;
   #endif
+
+  // trigger fast reschedule if more messages are waiting
+  if ( ( getUploadBufferSize() > 0 ) && ( getIsoTerminalInstance4Comm().getTimePeriod() != 10 ) )
+  { // there is a command waiting
+    getSchedulerInstance().changeTimePeriodAndResortTask(&(getIsoTerminalInstance4Comm()), 10);
+  }
 }
 
 
