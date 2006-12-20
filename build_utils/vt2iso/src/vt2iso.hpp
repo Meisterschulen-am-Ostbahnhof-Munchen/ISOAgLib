@@ -192,10 +192,6 @@ public:
 
   const char* getXmlFile (int index) { return xmlFiles[index]; }
 
-  const DOMDocument* getDoc() { return doc; }
-
-  void setDoc (DOMDocument* r_doc) { doc = r_doc; }
-
 private:
   signed int strlenUnescaped (const char* pcc_string);
 
@@ -297,8 +293,6 @@ private:
   bool is_objName;
   unsigned int objID;
   bool is_objID;
-
-  XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc;
 
 #ifdef USE_SPECIAL_PARSING_PROP
   SpecialParsingUsePropTag_c* pc_specialParsingPropTag;

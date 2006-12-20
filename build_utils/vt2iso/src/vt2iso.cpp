@@ -741,7 +741,11 @@ vt2iso_c::copyWithQuoteAndLength (char *dest, const char *src, unsigned int len)
   *dest++ = '"';
 
   signed int ret = strlenUnescaped(src);
-  if (ret == -1) return false;
+  if (ret == -1)
+  {
+    printf ("Error in copyWithQuoteAndLength()! STOP PARSER! bye.\n\n");
+    return false;
+  }
 
   unsigned int take = ( (unsigned int)ret <= len) ? ret : len;
 
@@ -1451,7 +1455,11 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
   pc_postfix [0] = 0x00;
   unsigned int curLang;
 
-  if (!n) return false;
+  if (!n)
+  {
+    printf ("processElement(): DOMNode is invalid! STOP PARSER! bye.\n\n");
+    return false;
+  }
 
   // get own ObjectType
   objType = objectIsType (node_name); // returns 0..34
@@ -1563,7 +1571,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
 
     if (!b_unknownTag && pc_specialParsingPropTag && ((objType >= maxObjectTypes) && !pc_specialParsingPropTag->checkTag (n, objType, ombType)))
     {
-      clean_exit ();
+      clean_exit ("Unknown tag for enhanced parsing modules! STOP PARSER! bye.\n\n");
       return false;
     }
 
@@ -1579,7 +1587,8 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
       sb_firstObject = false; // check is only valid for first element!
     }
 
-    if (!getAttributesFromNode(n, true)) return false; // true: read name= and id=
+    if (!getAttributesFromNode(n, true))
+      return false; // true: read name= and id=
 
     // set all non-set attributes to default values (as long as sensible, like bg_colour etc.)
     defaultAttributes (objType);
@@ -1652,7 +1661,10 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
     signed long int checkObjID = getID (objName, (objType == otMacro) ? true: false, is_objID, objID);
 
     if (checkObjID == -1)
+    {
+      printf ("Error in getID()! STOP PARSER! bye.\n\n");
       return false;
+    }
     else
       objID = (unsigned int)checkObjID;
 
@@ -2150,7 +2162,11 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
                 // give him an ID, although not necessary now...
                 objChildID = getID (objChildName, false /* assumption: not a macro here */, is_objChildID, objChildID);
 
-                if (objChildID == -1) return false;
+                if (objChildID == -1)
+                {
+                  printf ("Error in getID() for a childObject! STOP PARSER! bye.\n\n");
+                  return false;
+                }
 
                 if (firstElement) {
                   if (xyNeeded) fprintf (partFile_attributes, "const IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s iVtObject%s_aObject_x_y_font_row_col [] = {", objName);
@@ -2284,7 +2300,12 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             // give him an ID, although not necessary now...
             objChildID = getID (objChildName, true, is_objChildID, objChildID);
 
-            if (objChildID == -1) return false;
+            if (objChildID == -1)
+            {
+              printf ("Error in getID() for a childObject! STOP PARSER! bye.\n\n");
+              return false;
+            }
+
             if (firstElement) {
               // Changed the macro struct name in the following line to match what is in version 1.1.0 of IsoAgLib -bac 06-Jan-2005
               // fprintf (partFile_attributes, "const IsoAgLib::repeat_Macro_iVtObject_s iVtObject%s_aMacro_Object [] = {", objName);
@@ -2347,10 +2368,14 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
                   }
                   signed long int ret = idOrName_toi(attrString [attrObjectID], /*macro?*/false);
                   signed int retHideShow = booltoi(attrString[attrHideShow]);
-                  if ( ret == -1 ) return false;
+                  if ( ret == -1 )
+                  {
+                    clean_exit ("Error in idOrName_toi()! STOP PARSER! bye.\n\n");
+                    return false;
+                  }
                   if ( retHideShow == -1 )
                   {
-                    clean_exit();
+                    clean_exit("Error in booltoi()! STOP PARSER! bye.\n\n");
                     return false;
                   }
 
@@ -2381,10 +2406,14 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
                   }
                   signed long int ret = idOrName_toi(attrString [attrObjectID], /*macro?*/false);
                   signed int retDisEnable = booltoi(attrString[attrDisable_enable]);
-                  if ( ret == -1 )return false;
+                  if ( ret == -1 )
+                  {
+                    clean_exit("Error in idOrName_toi()! STOP PARSER! bye.\n\n");
+                    return false;
+                  }
                   if ( retDisEnable == -1 )
                   {
-                    clean_exit();
+                    clean_exit("Error in booltoi()! STOP PARSER! bye.\n\n");
                     return false;
                   }
                   // Need check for all attributes being present for this command -bac
@@ -2411,7 +2440,11 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
                     setAttributeValue(attrObjectID);
                   }
                   signed long int ret = idOrName_toi(attrString [attrObjectID], /*macro?*/false);
-                  if (ret == -1) return false;
+                  if (ret == -1)
+                  {
+                    clean_exit("Error in idOrName_toi()! STOP PARSER! bye.\n\n");
+                    return false;
+                  }
                   // Need check for all attributes being present for this command -bac
                   sprintf(commandMessage, "0xA2, %d, %d, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF", MACRO_16bitToLE((unsigned int)ret));
                   objChildCommands++;
@@ -2498,7 +2531,11 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
                   // add 127 to relative x,y
                   signed long int retParent = idOrName_toi(attrString [attrParent_objectID], /*macro?*/false);
                   signed long int ret = idOrName_toi(attrString [attrObjectID], /*macro?*/false);
-                  if ((ret == -1) || (retParent == -1)) return false;
+                  if ((ret == -1) || (retParent == -1))
+                  {
+                    clean_exit("Error in idOrName_toi()! STOP PARSER! bye.\n\n");
+                    return false;
+                  }
                   sprintf(commandMessage, "0xA5, %d, %d, %d, %d, %d, %d, 0xFF", MACRO_16bitToLE((unsigned int)retParent), MACRO_16bitToLE((unsigned int)ret), atoi(attrString [attrX_change]) + 127 ,atoi(attrString [attrY_change]) + 127 );
                   objChildCommands++;
                 }
@@ -2529,7 +2566,11 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
                   }
                   signed long int retParent = idOrName_toi(attrString [attrParent_objectID], /*macro?*/false);
                   signed long int ret = idOrName_toi(attrString [attrObjectID], /*macro?*/false);
-                  if ((ret == -1) || (retParent == -1)) return false;
+                  if ((ret == -1) || (retParent == -1))
+                  {
+                    clean_exit("Error in idOrName_toi()! STOP PARSER! bye.\n\n");
+                    return false;
+                  }
                   // Need check for all attributes being present for this command -bac
                   sprintf(commandMessage, "0xB4, %d, %d, %d, %d, %d, %d, %d, %d", MACRO_16bitToLE((unsigned int)retParent), MACRO_16bitToLE((unsigned int)ret), MACRO_16bitToLE(atoi(attrString [attrX_pos])), MACRO_16bitToLE(atoi(attrString [attrY_pos])));
                   objChildCommands++;
@@ -2558,7 +2599,11 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
                     setAttributeValue(attrNew_height);
                   }
                   signed long int ret = idOrName_toi(attrString [attrObjectID], /*macro?*/false);
-                  if (ret == -1) return false;
+                  if (ret == -1)
+                  {
+                    clean_exit("Error in idOrName_toi()! STOP PARSER! bye.\n\n");
+                    return false;
+                  }
                   // Need check for all attributes being present for this command -bac
                   sprintf(commandMessage, "0xA6, %d, %d, %d, %d, %d, %d, 0xFF", MACRO_16bitToLE((unsigned int)ret), MACRO_16bitToLE(atoi(attrString [attrNew_width])), MACRO_16bitToLE(atoi(attrString [attrNew_height])));
                   objChildCommands++;
@@ -2585,7 +2630,11 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
                     setAttributeValue(attrNew_background_colour);
                   }
                   signed long int ret = idOrName_toi(attrString [attrObjectID], /*macro?*/false);
-                  if (ret == -1) return false;
+                  if (ret == -1)
+                  {
+                    clean_exit("Error in idOrName_toi()! STOP PARSER! bye.\n\n");
+                    return false;
+                  }
                   // Need check for all attributes being present for this command -bac
                   sprintf(commandMessage, "0xA7, %d, %d, %d, 0xFF, 0xFF, 0xFF, 0xFF", MACRO_16bitToLE((unsigned int)ret), colortoi(attrString [attrNew_background_colour]));
                   objChildCommands++;
@@ -2613,7 +2662,11 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
                   }
                   signed long int ret = idOrName_toi(attrString [attrObjectID], /*macro?*/false);
                   signed long int retNewValue = idOrName_toi(attrString [attrNew_value], /*macro?*/false);
-                  if ((retNewValue == -1) || (ret == -1)) return false;
+                  if ((retNewValue == -1) || (ret == -1))
+                  {
+                    clean_exit("Error in idOrName_toi()! STOP PARSER! bye.\n\n");
+                    return false;
+                  }
                   // Need check for all attributes being present for this command -bac
                   sprintf(commandMessage, "0xA8, %d, %d, 0x00, %li, %li, %li, %li", MACRO_16bitToLE((unsigned int)ret), MACRO_32bitToLE(retNewValue));
                   objChildCommands++;
@@ -2657,7 +2710,11 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
                   }
                   signed long int ret = idOrName_toi(attrString [attrObjectID], /*macro?*/false);
                   signed long int retBytesInString = idOrName_toi(attrString [attrBytes_in_string], /*macro?*/false);
-                  if ((ret == -1) || (retBytesInString == -1)) return false;
+                  if ((ret == -1) || (retBytesInString == -1))
+                  {
+                    clean_exit("Error in idOrName_toi()! STOP PARSER! bye.\n\n");
+                    return false;
+                  }
                   //sprintf (attrString [attrValue], "%s", tempString2);
                   sprintf(commandMessage, "0xB3, %d, %d, %d, %d%s", MACRO_16bitToLE((unsigned int)ret), MACRO_16bitToLE((unsigned int)retBytesInString), tempString2);
 
@@ -2689,7 +2746,11 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
                     setAttributeValue(attrLine_direction);
                   }
                   signed long int ret = idOrName_toi(attrString [attrObjectID], /*macro?*/false);
-                  if (ret == -1) return false;
+                  if (ret == -1)
+                  {
+                    clean_exit("Error in idOrName_toi()! STOP PARSER! bye.\n\n");
+                    return false;
+                  }
                   // Need check for all attributes being present for this command -bac
                   sprintf(commandMessage, "0xA9, %d,%d, %d,%d, %d,%d, %d", MACRO_16bitToLE((unsigned int)ret), MACRO_16bitToLE(atoi(attrString [attrNew_width])), MACRO_16bitToLE(atoi(attrString [attrNew_height])), atoi(attrString [attrLine_direction]));
 
@@ -2724,10 +2785,14 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
                   }
                   signed long int ret = idOrName_toi(attrString [attrObjectID], /*macro?*/false);
                   signed long int retFontSize = fontsizetoi(attrString [attrFont_size]);
-                  if ( ret == -1 ) return false;
+                  if ( ret == -1 )
+                  {
+                    clean_exit("Error in idOrName_toi()! STOP PARSER! bye.\n\n");
+                    return false;
+                  }
                   if ( retFontSize == -1 )
                   {
-                    clean_exit();
+                    clean_exit("Error in fontsizetoi()! STOP PARSER! bye.\n\n");
                     return false;
                   }
 
@@ -2762,7 +2827,11 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
                     setAttributeValue(attrLine_art);
                   }
                   signed long int ret = idOrName_toi(attrString [attrObjectID], /*macro?*/false);
-                  if (ret == -1) return false;
+                  if (ret == -1)
+                  {
+                    clean_exit("Error in idOrName_toi()! STOP PARSER! bye.\n\n");
+                    return false;
+                  }
                   // Need check for all attributes being present for this command -bac
                   sprintf(commandMessage, "0xAB, %d, %d, %d, %d, %d, %d, 0xFF", MACRO_16bitToLE((unsigned int)ret), colortoi(attrString [attrLine_colour]), atoi(attrString [attrLine_width]), MACRO_16bitToLE(linearttoi(attrString [attrLine_art])));
 
@@ -2795,7 +2864,11 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
                     setAttributeValue(attrFill_pattern);
                   }
                   signed long int ret = idOrName_toi(attrString [attrObjectID], /*macro?*/false);
-                  if (ret == -1) return false;
+                  if (ret == -1)
+                  {
+                    clean_exit("Error in idOrName_toi()! STOP PARSER! bye.\n\n");
+                    return false;
+                  }
                   // Need check for all attributes being present for this command -bac
                   sprintf(commandMessage, "0xAC, %d, %d, %d, %d, %d, %d, 0xFF", MACRO_16bitToLE((unsigned int)ret), filltypetoi(attrString [attrFill_type]), colortoi(attrString [attrFill_colour]), MACRO_16bitToLE(atoi(attrString [attrFill_pattern])));
 
@@ -2824,7 +2897,11 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
                   }
                   signed long int retWS_ID = idOrName_toi(attrString [attrWorking_setID], /*macro?*/false);
                   signed long int retNewMask = idOrName_toi(attrString [attrNew_active_mask], /*macro?*/false);
-                  if ((retWS_ID == -1) || (retNewMask == -1)) return false;
+                  if ((retWS_ID == -1) || (retNewMask == -1))
+                  {
+                    clean_exit("Error in idOrName_toi()! STOP PARSER! bye.\n\n");
+                    return false;
+                  }
                   // Need check for all attributes being present for this command -bac
                   sprintf(commandMessage, "0xAD, %d, %d, %d, %d, 0xFF, 0xFF, 0xFF", MACRO_16bitToLE((unsigned int)retWS_ID), MACRO_16bitToLE((unsigned int)retNewMask));
 
@@ -2855,7 +2932,11 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
                   }
                   signed long int retMaskID = idOrName_toi(attrString [attrMaskID], /*macro?*/false);
                   signed long int retNewSKM = idOrName_toi(attrString [attrNew_softkey_mask], /*macro?*/false);
-                  if ((retMaskID == -1) || (retNewSKM == -1)) return false;
+                  if ((retMaskID == -1) || (retNewSKM == -1))
+                  {
+                    clean_exit("Error in idOrName_toi()! STOP PARSER! bye.\n\n");
+                    return false;
+                  }
                   // Need check for all attributes being present for this command -bac
                   sprintf(commandMessage, "0xAE, %d, %d, %d, %d, %d, 0xFF, 0xFF", masktypetoi(attrString [attrMask_type]), MACRO_16bitToLE((unsigned int)retMaskID), MACRO_16bitToLE((unsigned int)retNewSKM));
 
@@ -2886,7 +2967,11 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
                   }
                   signed long int ret = idOrName_toi(attrString [attrObjectID], /*macro?*/false);
                   signed long int retNewValue = idOrName_toi(attrString [attrNew_value], /*macro?*/false);
-                  if ((ret == -1) || (retNewValue == -1)) return false;
+                  if ((ret == -1) || (retNewValue == -1))
+                  {
+                    clean_exit("Error in idOrName_toi()! STOP PARSER! bye.\n\n");
+                    return false;
+                  }
                   // Need check for all attributes being present for this command -bac
                   sprintf(commandMessage, "0xAF, %d, %d, %d, %li, %li, %li, %li", MACRO_16bitToLE((unsigned int)ret), atoi(attrString [attrAttributeID]), MACRO_32bitToLE(retNewValue));
 
@@ -2915,10 +3000,14 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
                   }
                   signed long int ret = idOrName_toi(attrString [attrObjectID], /*macro?*/false);
                   signed long int retPrio = prioritytoi(attrString [attrNew_priority]);
-                  if (ret == -1) return false;
+                  if (ret == -1)
+                  {
+                    clean_exit("Error in idOrName_toi()! STOP PARSER! bye.\n\n");
+                    return false;
+                  }
                   if (retPrio == -1)
                   {
-                    clean_exit();
+                    clean_exit("Error in prioritytoi()! STOP PARSER! bye.\n\n");
                     return false;
                   }
                   // Need check for all attributes being present for this command -bac
@@ -2951,7 +3040,11 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
                   }
                   signed long int ret = idOrName_toi(attrString [attrObjectID], /*macro?*/false);
                   signed long int retNewID = idOrName_toi(attrString [attrNew_objectID], /*macro?*/false);
-                  if ((ret == -1) || (retNewID == -1)) return false;
+                  if ((ret == -1) || (retNewID == -1))
+                  {
+                    clean_exit("Error in idOrName_toi()! STOP PARSER! bye.\n\n");
+                    return false;
+                  }
                 // Need check for all attributes being present for this command -bac
                   sprintf(commandMessage, "0xB1, %d, %d, %d, %d, %d, 0xFF, 0xFF", MACRO_16bitToLE((unsigned int)ret), atoi(attrString [attrList_index]), MACRO_16bitToLE((unsigned int)retNewID));
 
@@ -3028,13 +3121,11 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
               fprintf (partFile_attributes, ", ");
             }
             if (!(attrIsGiven [attrPos_x])) {
-              std::cout << "\n\npos_x ATTRIBUTE NEEDED IN <point ...> ! STOPPING PARSER! bye.\n\n";
-              clean_exit ();
+              clean_exit ("\n\npos_x ATTRIBUTE NEEDED IN <point ...> ! STOPPING PARSER! bye.\n\n");
               return false;
             }
             if (!(attrIsGiven [attrPos_y])) {
-              std::cout << "\n\npos_y ATTRIBUTE NEEDED IN <point ...> ! STOPPING PARSER! bye.\n\n";
-              clean_exit ();
+              clean_exit ("\n\npos_y ATTRIBUTE NEEDED IN <point ...> ! STOPPING PARSER! bye.\n\n");
               return false;
             }
             fprintf (partFile_attributes, "{%d, %d}", atoi(attrString [attrPos_x]), atoi(attrString [attrPos_y]));
@@ -3214,7 +3305,11 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
         // need to know the object id in special parsing when data is written to files
         pc_specialParsingPropTag->setObjID (objID);
         bool b_outputOK = pc_specialParsingPropTag->outputData2FilesPiecewise(attrString, attrIsGiven);
-        if ( !b_outputOK ) return false;
+        if ( !b_outputOK )
+        {
+          clean_exit("Error in outputData2FilesPiecewise()! STOPPING PARSER! bye.\n\n");
+          return false;
+        }
       }
       else if (objType < maxObjectTypes)
       {
@@ -3235,7 +3330,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
         signed int resultat = booltoi (attrString [attrInKey]);
         if (resultat == -1)
         {
-          clean_exit();
+          clean_exit("Error in booltoi()! STOPPING PARSER! bye.\n\n");
           return false;
         }
         fprintf (partFile_functions_origin, "  iVtObject%s%s.setOriginSKM (%s);\n", objName, pc_postfix, resultat ? "true":"false");
@@ -3266,7 +3361,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           signed int retSelectable = booltoi (attrString [attrSelectable]);
           if (retSelectable == -1)
           {
-            clean_exit();
+            clean_exit("Error in booltoi()! STOPPING PARSER! bye.\n\n");
             return false;
           }
           if (!attrIsGiven [attrActive_mask] && (retSelectable == 1))
@@ -3300,7 +3395,10 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           signed long int retSignal = acousticsignaltoi (attrString [attrAcoustic_signal]);
           if ((retPrio == -1) || (retSignal == -1))
           {
-            clean_exit();
+            if (retPrio == -1)
+              clean_exit("Error in prioritytoi()! STOPPING PARSER! bye.\n\n");
+            else
+              clean_exit("Error in acousticsignaltoi()! STOPPING PARSER! bye.\n\n");
             return false;
           }
           if ( (strcmp ("NULL", attrString [attrSoft_key_mask]) == 0) || (strcmp("65535",  attrString [attrSoft_key_mask]) == 0))
@@ -3320,7 +3418,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           signed int retHidden = booltoi (attrString [attrHidden]);
           if (retHidden == -1)
           {
-            clean_exit();
+            clean_exit("Error in booltoi()! STOPPING PARSER! bye.\n\n");
             return false;
           }
           fprintf (partFile_attributes, ", %s, %s, %d", attrString [attrWidth], attrString [attrHeight], (unsigned int)retHidden);
@@ -3361,7 +3459,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           signed int retEnabled = booltoi (attrString [attrEnabled]);
           if (retEnabled == -1)
           {
-            clean_exit();
+            clean_exit("Error in booltoi()! STOPPING PARSER! bye.\n\n");
             return false;
           }
           fprintf (partFile_attributes, ", %d, %s, &iVtObject%s, %s, %s, %d", colortoi (attrString [attrBackground_colour]), attrString [attrWidth], attrString [attrForeground_colour], attrString [attrVariable_reference], attrString [attrValue], (unsigned int)retEnabled);
@@ -3390,7 +3488,11 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           else
           {
             signed int ret = strlenUnescaped (attrString [attrValue]);
-            if (ret == -1) return false;
+            if (ret == -1)
+            {
+              clean_exit("Error in strlenUnescaped()! STOPPING PARSER! bye.\n\n");
+              return false;
+            }
             //auto-calculate string length
             if (!attrIsGiven [attrLength]) { sprintf (attrString [attrLength], "%d", ret); attrIsGiven [attrLength] = true; }
             if (!(attrIsGiven [attrWidth] && attrIsGiven [attrHeight] && attrIsGiven [attrFont_attributes] && attrIsGiven [attrEnabled]))
@@ -3407,7 +3509,10 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           signed int retJustification = horizontaljustificationtoi (attrString [attrHorizontal_justification]);
           if (retEnabled == -1 || retJustification == -1)
           {
-            clean_exit();
+            if (retEnabled == -1)
+              clean_exit("Error in booltoi()! STOPPING PARSER! bye.\n\n");
+            else
+              clean_exit("Error in horizontaljustificationtoi()! STOPPING PARSER! bye.\n\n");
             return false;
           }
           if ( (!attrIsGiven [attrInput_attributes]) || (strcmp( attrString[attrInput_attributes], "65535")==0) )
@@ -3450,7 +3555,14 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           signed int retJust = horizontaljustificationtoi (attrString [attrHorizontal_justification]);
           if ((retEnabled == -1) || (retFormat == -1) || (retJust = -1))
           {
-            clean_exit();
+            if (retEnabled == -1)
+              clean_exit("Error in booltoi()! STOPPING PARSER! bye.\n\n");
+
+            if (retFormat == -1)
+              clean_exit("Error in formattoi()! STOPPING PARSER! bye.\n\n");
+
+            if (retJust = -1)
+              clean_exit("Error in horizontaljustificationtoi()! STOPPING PARSER! bye.\n\n");
             return false;
           }
 
@@ -3472,7 +3584,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           signed int retEnabled = booltoi (attrString [attrEnabled]);
           if (retEnabled == -1)
           {
-            clean_exit();
+            clean_exit("Error in booltoi()! STOPPING PARSER! bye.\n\n");
             return false;
           }
           fprintf (partFile_attributes, ", %s, %s, %s, %s, %d", attrString [attrWidth], attrString [attrHeight], attrString [attrVariable_reference],
@@ -3498,7 +3610,11 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             if (!attrIsGiven [attrLength])
             {
               signed int ret = strlenUnescaped (attrString [attrValue]);
-              if (ret == -1) return false;
+              if (ret == -1)
+              {
+                clean_exit("Error in strlenUnescaped()! STOPPING PARSER! bye.\n\n");
+                return false;
+              }
               // Auto-calculate Length-field
               sprintf (attrString [attrLength], "%d", ret); attrIsGiven [attrLength] = true;
             }
@@ -3515,7 +3631,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           signed int retJust = horizontaljustificationtoi (attrString [attrHorizontal_justification]);
           if (retJust == -1)
           {
-            clean_exit();
+            clean_exit("Error in horizontaljustificationtoi()! STOPPING PARSER! bye.\n\n");
             return false;
           }
           fprintf (partFile_attributes, ", %s, %s, %d, &iVtObject%s, %d, %s, %d, %s, %s", attrString [attrWidth], attrString [attrHeight], colortoi (attrString [attrBackground_colour]),
@@ -3550,7 +3666,11 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           signed int retJust = horizontaljustificationtoi (attrString [attrHorizontal_justification]);
           if ((retFormat == -1) || (retJust == -1))
           {
-            clean_exit();
+            if (retFormat == -1)
+              clean_exit("Error in formattoi()! STOPPING PARSER! bye.\n\n");
+
+            if (retJust == -1)
+              clean_exit("Error in horizontaljustificationtoi()! STOPPING PARSER! bye.\n\n");
             return false;
           }
           fprintf (partFile_attributes, ", %s, %s, %d, %d", attrString [attrScale], attrString [attrNumber_of_decimals],
@@ -3720,7 +3840,11 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           else
           {
             signed int ret = strlenUnescaped (attrString [attrValue]);
-            if (ret == -1) return false;
+            if (ret == -1)
+            {
+              clean_exit("Error in strlenUnescaped()! STOPPING PARSER! bye.\n\n");
+              return false;
+            }
             //auto-calculate length
             if (!attrIsGiven [attrLength])
             {
@@ -3754,7 +3878,11 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           signed int retFontSize = fontsizetoi (attrString [attrFont_size]);
           if ((ret == -1) || (retFontSize == -1))
           {
-            clean_exit();
+            if (ret == -1)
+              clean_exit("Error in fonttypetoi()! STOPPING PARSER! bye.\n\n");
+
+            if (retFontSize == -1)
+              clean_exit("Error in fontsizetoi()! STOPPING PARSER! bye.\n\n");
             return false;
           }
 
@@ -3805,7 +3933,11 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           else
           {
             signed int ret = strlenUnescaped (attrString [attrValidation_string]);
-            if (ret == -1) return false;
+            if (ret == -1)
+            {
+              clean_exit("Error in strlenUnescaped()! STOPPING PARSER! bye.\n\n");
+              return false;
+            }
             // auto-calculate string-length
             if (!attrIsGiven [attrLength]) { sprintf (attrString [attrLength], "%d", ret); attrIsGiven [attrLength] = true; }
             sprintf (tempString, "\"%s\"", attrString [attrValidation_string]);
@@ -4007,7 +4139,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
   return true;
 }
 
-vt2iso_c::vt2iso_c(std::basic_string<char>* pch_fileName): amountXmlFiles(0), doc (0)
+vt2iso_c::vt2iso_c(std::basic_string<char>* pch_fileName): amountXmlFiles(0)
 {
   prepareFileNameAndDirectory(pch_fileName);
 
@@ -4395,10 +4527,12 @@ int main(int argC, char* argV[])
     //reset error count first
     errorHandler.resetErrors();
 
+    XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc;
+
     try
     {   // reset document pool
       parser->resetDocumentPool();
-      pc_vt2iso->setDoc(parser->parseURI(xmlFile));
+      doc = parser->parseURI(xmlFile);
     }
 
     catch (const XMLException& toCatch)
@@ -4434,9 +4568,9 @@ int main(int argC, char* argV[])
       std::cout << "\nErrors occurred, no output available\n" << std::endl;
       errorOccurred = true;
     } else {
-      if (pc_vt2iso->getDoc()) {
+      if (doc) {
         // ### main routine starts right here!!! ###
-        bool b_returnRootElement = pc_vt2iso->processElement ((DOMNode*)pc_vt2iso->getDoc()->getDocumentElement(), (uint64_t(1)<<otObjectpool) /*, NULL, NULL*/); // must all be included in an objectpool tag !
+        bool b_returnRootElement = pc_vt2iso->processElement ((DOMNode*)doc->getDocumentElement(), (uint64_t(1)<<otObjectpool) /*, NULL, NULL*/); // must all be included in an objectpool tag !
 
         if (!pc_vt2iso->getIsOPDimension()) {
           std::cout << "\n\nYOU NEED TO SPECIFY THE dimension= TAG IN <objectpool> ! STOPPING PARSER! bye.\n\n";
