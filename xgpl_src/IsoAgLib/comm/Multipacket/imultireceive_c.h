@@ -97,7 +97,7 @@ public:
                          ); }
 
   void deregisterClient (__IsoAgLib::CANCustomer_c* rpc_client)
-    { MultiReceive_c::deregisterClient (rpc_client); }
+    { MultiReceive_c::deregisterClient (*rpc_client); }
 
   /// Use to remove a "kept"-stream after it is gotten by "getFinishedJustKeptStream" and processed.
   void removeKeptStream (IsoAgLib::iStream_c* rpc_keptStream)
