@@ -114,7 +114,10 @@ void MultiSendPkg_c::setDataPart(const HUGE_MEM uint8_t* rpb_source, int32_t ri3
   #else
   setDataFromString (1, rpb_source + ri32_pos, rb_partSize);
   #endif
-  setDataFromString (1+rb_partSize, paddingDataArr, (7-rb_partSize));
+  if ( rb_partSize < 7 )
+  { // only pad when less than 7 data byte
+    setDataFromString( 1+rb_partSize, paddingDataArr, (7-rb_partSize) );
+  }
 }
 
 
@@ -137,7 +140,10 @@ void MultiSendPkg_c::setDataPart(const std::vector<uint8_t>& refc_vecSource, int
     // now increment the iterator for next access
     iter++;
   }
-  setDataFromString (1+rb_partSize, paddingDataArr, (7-rb_partSize));
+  if ( rb_partSize < 7 )
+  { // only pad when less than 7 data byte
+    setDataFromString( 1+rb_partSize, paddingDataArr, (7-rb_partSize) );
+  }
 }
 
 

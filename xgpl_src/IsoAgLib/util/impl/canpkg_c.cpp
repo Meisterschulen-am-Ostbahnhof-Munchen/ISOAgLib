@@ -172,8 +172,12 @@ void CANPkg_c::set(MASK_TYPE rt_ident, const uint8_t* rpb_data, uint8_t rui8_len
 */
 void CANPkg_c::setDataFromString(const uint8_t* rpb_data, uint8_t rui8_len)
 {
-  ui8_len = (rui8_len<9)?rui8_len:8;
-  c_data.setDataFromString( rpb_data, ui8_len);
+  if ( rui8_len > 0 )
+  { // there is something to set - this function might be called from some generic algorithms which rely
+    // on the underlying functions to handle zero-lenght properly
+    ui8_len = (rui8_len<9)?rui8_len:8;
+    c_data.setDataFromString( rpb_data, ui8_len);
+  }
 }
 
 /**
@@ -186,9 +190,13 @@ void CANPkg_c::setDataFromString(const uint8_t* rpb_data, uint8_t rui8_len)
 */
 void CANPkg_c::setDataFromString(uint8_t rui8_targetPositionOffset, const uint8_t* rpb_data, uint8_t rui8_len)
 {
-  const unsigned int cui_copyByteCnt = (rui8_len+rui8_targetPositionOffset <= 8)?rui8_len:(8-rui8_targetPositionOffset);
-  ui8_len = rui8_targetPositionOffset + cui_copyByteCnt;
-  c_data.setDataFromString( rui8_targetPositionOffset, rpb_data, cui_copyByteCnt);
+  if ( rui8_len > 0 )
+  { // there is something to set - this function might be called from some generic algorithms which rely
+    // on the underlying functions to handle zero-lenght properly
+    const unsigned int cui_copyByteCnt = (rui8_len+rui8_targetPositionOffset <= 8)?rui8_len:(8-rui8_targetPositionOffset);
+    ui8_len = rui8_targetPositionOffset + cui_copyByteCnt;
+    c_data.setDataFromString( rui8_targetPositionOffset, rpb_data, cui_copyByteCnt);
+  }
 }
 
 /**

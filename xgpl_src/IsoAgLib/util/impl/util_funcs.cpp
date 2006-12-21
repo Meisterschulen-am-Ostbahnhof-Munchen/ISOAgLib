@@ -798,18 +798,18 @@ Flexible8ByteString_c::Flexible8ByteString_c( const uint8_t* rpui8_srcStream )
 /** set this object from a optionally odd addressed string */
 void Flexible4ByteString_c::setDataFromString( uint8_t rui8_offset, const uint8_t* rpui8_srcStream, uint8_t rui8_len )
 {
-  if (rpui8_srcStream != NULL )
-  {
-    const unsigned int cui_useLen = ((rui8_len+rui8_offset)<4)?(rui8_len+rui8_offset):4;
+  if ((rpui8_srcStream != NULL ) && (rui8_len > 0) && (rui8_offset< 5) )
+  { // source is defined and the wanted length is in allowed range
+    const unsigned int cui_useLen = ((rui8_len+rui8_offset)<4)?(rui8_len+rui8_offset):(4-rui8_offset);
     CNAMESPACE::memcpy(uint8+rui8_offset, rpui8_srcStream, cui_useLen );
   }
 };
 /** copy contents of this object to a optionally odd addressed string */
 void Flexible4ByteString_c::getDataToString( uint8_t rui8_offset, uint8_t* pui8_targetStream, uint8_t rui8_len ) const
 {
-  if (pui8_targetStream != NULL )
-  {
-    const unsigned int cui_useLen = ((rui8_len+rui8_offset)<4)?(rui8_len+rui8_offset):4;
+  if ((pui8_targetStream != NULL ) && (rui8_len > 0) && (rui8_offset< 5))
+  { // target is defined and the wanted length is in allowed range
+    const unsigned int cui_useLen = ((rui8_len+rui8_offset)<4)?(rui8_len+rui8_offset):(4-rui8_offset);
     CNAMESPACE::memcpy(pui8_targetStream, uint8+rui8_offset, cui_useLen );
   }
 };
@@ -817,18 +817,18 @@ void Flexible4ByteString_c::getDataToString( uint8_t rui8_offset, uint8_t* pui8_
 /** set this object from a optionally odd addressed string */
 void Flexible8ByteString_c::setDataFromString( uint8_t rui8_offset, const uint8_t* rpui8_srcStream, uint8_t rui8_len )
 {
-  if (rpui8_srcStream != NULL )
-  {
-    const uint8_t cui8_useLen = ((rui8_len+rui8_offset)<8)?(rui8_len+rui8_offset):8;
+  if ((rpui8_srcStream != NULL ) && (rui8_len > 0) && (rui8_offset< 9))
+  { // source is defined and the wanted length is in allowed range
+    const uint8_t cui8_useLen = ((rui8_len+rui8_offset)<8)?(rui8_len+rui8_offset):(8-rui8_offset);
     CNAMESPACE::memcpy(uint8+rui8_offset, rpui8_srcStream, cui8_useLen );
   }
 };
 /** copy contents of this object to a optionally odd addressed string */
 void Flexible8ByteString_c::getDataToString( uint8_t rui8_offset, uint8_t* pui8_srcStream, uint8_t rui8_len ) const
 {
-  if (pui8_srcStream != NULL )
-  {
-    const uint8_t cui8_useLen = ((rui8_len+rui8_offset)<8)?(rui8_len+rui8_offset):8;
+  if ((pui8_srcStream != NULL ) && (rui8_len > 0) && (rui8_offset< 9))
+  { // source is defined and the wanted length is in allowed range
+    const uint8_t cui8_useLen = ((rui8_len+rui8_offset)<8)?(rui8_len+rui8_offset):(8-rui8_offset);
     CNAMESPACE::memcpy(pui8_srcStream, uint8+rui8_offset, cui8_useLen );
   }
 };
