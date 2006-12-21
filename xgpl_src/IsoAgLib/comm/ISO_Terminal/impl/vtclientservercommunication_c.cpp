@@ -2455,9 +2455,9 @@ VtClientServerCommunication_c::finishUploadCommand()
   #endif
 
   // trigger fast reschedule if more messages are waiting
-  if ( ( getUploadBufferSize() > 0 ) && ( getIsoTerminalInstance4Comm().getTimePeriod() != 10 ) )
+  if ( ( getUploadBufferSize() > 0 ) && ( getIsoTerminalInstance4Comm().getTimePeriod() != 4 ) )
   { // there is a command waiting
-    getSchedulerInstance().changeTimePeriodAndResortTask(&(getIsoTerminalInstance4Comm()), 10);
+    getSchedulerInstance().changeTimePeriodAndResortTask(&(getIsoTerminalInstance4Comm()), 4);
   }
 }
 
