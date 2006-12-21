@@ -542,6 +542,7 @@ namespace __IsoAgLib {
           // set last time
           setUpdateTime(ci32_now);
           setSelectedDataSourceISOName( c_tempISOName);
+          return true;
         }
         else
         { // there is a sender conflict
@@ -567,10 +568,10 @@ namespace __IsoAgLib {
           c_tracmove.updateSpeed(IsoAgLib::GpsBasedSpeed);
           #endif
         }
-        break;
+        return true;
       // **********************************************************
     }
-    return true;
+    return false;
   }
 
   bool TimePosGPS_c::processMsgRequestPGN (uint32_t rui32_pgn, ISOItem_c* rpc_isoItemSender, ISOItem_c* rpc_isoItemReceiver)
