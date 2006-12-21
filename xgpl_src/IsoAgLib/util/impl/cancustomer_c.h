@@ -87,6 +87,14 @@
 #include <IsoAgLib/driver/can/impl/ident_c.h>
 #include "canpkgext_c.h"
 
+
+namespace IsoAgLib
+{ // forward declarations
+  class ReceiveStreamIdentifier_c;
+  class iStream_c;
+}
+
+
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
@@ -102,6 +110,20 @@ namespace __IsoAgLib {
   */
 class CANCustomer_c  {
 public:
+
+  /**
+    virtual function which delivers a pointer to the CANCustomer
+    specific CANPkgExt_c instance
+  */
+  virtual CANPkgExt_c& dataBase();
+
+  /** virtual destructor */
+  virtual ~CANCustomer_c();
+
+
+/// SINGLE-PACKET METHODS
+/// /////////////////////
+
   /**
     process a message -> the specialized/derived version of this virtual
     function is called during processing of received CAN telegrams in CANIO_c::processMsg
@@ -118,15 +140,31 @@ public:
   */
   virtual bool processInvalidMsg() { return false; }
 
-  virtual bool isNetworkMgmt() const { return false; } ;
+  virtual bool isNetworkMgmt() const { return false; }
 
-  /**
-    virtual function which delivers a pointer to the CANCustomer
-    specific CANPkgExt_c instance
-  */
-  virtual CANPkgExt_c& dataBase();
-	/** virtual destructor */
-	virtual ~CANCustomer_c();
+
+/// MULTI-PACKET (TP/ETP) METHODS
+/// /////////////////////////////
+
+  //  Operation: reactOnStreamStart
+  //! Parameter:
+  //! @param rc_ident:
+  //! @param rui32_totalLen:
+  virtual bool reactOnStreamStart (const IsoAgLib::ReceiveStreamIdentifier_c& /*rc_ident*/, uint32_t /*rui32_totalLen*/) { return false; }
+
+  //  Operation: reactOnAbort
+  virtual void reactOnAbort (IsoAgLib::iStream_c& /*rrefc_stream*/) {}
+
+  //  Operation: processPartStreamDataChunk
+  //! Parameter:
+  //! @param rrefc_stream: stream that is to be processed
+  //! @param rb_isFirstChunk: is it the first chunk? do we have to perform some decision action?
+  //! @param rb_isLastChunk: this also indicates that the MultiPacket-Message has been acknowledged via "End Of Message Acknowledge"!
+  //! @return .... keep stuff @todo describe here
+  virtual bool processPartStreamDataChunk (IsoAgLib::iStream_c& /*rpc_stream*/, bool /*rb_isFirstChunk*/, bool /*rb_isLastChunk*/) { return false; }
+
+  virtual void notificationOnMultiReceiveError (const IsoAgLib::ReceiveStreamIdentifier_c& /*rc_streamIdent*/, uint8_t /*rui8_multiReceiveError*/, bool /*rb_isGlobal*/) {} // needs not to be overwritten
+
 
 #if defined(ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL)
   /** this virtual function can be used to detect CAnCustomer_c derived CAN message handlers, which
@@ -134,7 +172,7 @@ public:
       standardized protocol ISO 11783.
       Any proprietary derived CAN message handler should overload this function to return true in this function.
   */
-  virtual bool isProprietaryMessageOnStandardizedCan() const { return false;};
+  virtual bool isProprietaryMessageOnStandardizedCan() const { return false; }
 #endif
 };
 

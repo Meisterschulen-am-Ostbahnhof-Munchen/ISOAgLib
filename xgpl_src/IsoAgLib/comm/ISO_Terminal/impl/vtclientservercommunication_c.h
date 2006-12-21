@@ -88,7 +88,6 @@
 #include <IsoAgLib/comm/ISO_Terminal/iisoterminalobjectpool_c.h>
 #include <IsoAgLib/comm/Multipacket/impl/multisend_c.h>
 #include <IsoAgLib/comm/Multipacket/imultisendstreamer_c.h>
-#include <IsoAgLib/comm/Multipacket/multireceiveclient_c.h>
 #include <IsoAgLib/comm/SystemMgmt/iidentitem_c.h>
 #include <IsoAgLib/util/impl/cancustomer_c.h>
 
@@ -238,7 +237,7 @@ public:
 class VtServerInstance_c;
 class ISOTerminal_c;
 /** class for managing the communication between vt client and server */
-class VtClientServerCommunication_c : public IsoAgLib::MultiReceiveClient_c, public __IsoAgLib::CANCustomer_c
+class VtClientServerCommunication_c : public CANCustomer_c
 {
 public:
   enum objectPoolState_t {

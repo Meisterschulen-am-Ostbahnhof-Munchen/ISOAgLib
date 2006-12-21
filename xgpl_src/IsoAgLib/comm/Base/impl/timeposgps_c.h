@@ -94,7 +94,6 @@
 
 #if defined(NMEA_2000_FAST_PACKET)
 #include <IsoAgLib/comm/Multipacket/imultisendstreamer_c.h>
-#include <IsoAgLib/comm/Multipacket/multireceiveclient_c.h>
 #include <IsoAgLib/comm/Multipacket/impl/multisend_c.h>
 #endif
 
@@ -158,9 +157,6 @@ typedef SINGLETON_DERIVED(TimePosGPS_c,BaseCommon_c) SingletonTimePosGps_c;
 
 class TimePosGPS_c : public SingletonTimePosGps_c
                    , public ISORequestPGNHandler_c
-              #if defined(NMEA_2000_FAST_PACKET)
-                   , public IsoAgLib::MultiReceiveClient_c
-              #endif // END of NMEA_2000_FAST_PACKET
 {
  public:
   // Public methods

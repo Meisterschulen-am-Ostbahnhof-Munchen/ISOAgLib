@@ -85,14 +85,7 @@
 /* *************************************** */
 /* ********** include headers ************ */
 /* *************************************** */
-// #include <IsoAgLib/comm/ISO_Terminal/impl/isoterminalpkg_c.h>
-// #include <IsoAgLib/comm/Multipacket/impl/multisend_c.h>
-// #include <IsoAgLib/comm/Multipacket/imultisendstreamer_c.h>
-// #include <IsoAgLib/comm/Multipacket/multireceiveclient_c.h>
-// #include <IsoAgLib/comm/Multipacket/impl/stream_c.h>
 #include <IsoAgLib/comm/SystemMgmt/iidentitem_c.h>
-// #include <IsoAgLib/util/impl/devkey_c.h>
-// #include <IsoAgLib/typedef.h>
 #include "../ivttypes.h"
 
 /** struct that stores the Language and Units information

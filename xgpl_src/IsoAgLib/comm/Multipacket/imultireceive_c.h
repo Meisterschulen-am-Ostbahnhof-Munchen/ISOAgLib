@@ -82,7 +82,8 @@ public:
     { MultiReceive_c::close(); }
 
   //  Operation: (de)registerClient
-  void registerClient   (IsoAgLib::MultiReceiveClient_c& rrefc_client, const iISOName_c& rrefc_isoName,
+  /** @todo switch here to iCANCustomer_c? do we need an interface for multireceive anyway? */
+  void registerClient   (__IsoAgLib::CANCustomer_c& rrefc_client, const iISOName_c& rrefc_isoName,
                          uint32_t rui32_pgn, uint32_t rui32_pgnMask=0x3FFFF,
                          bool b_alsoBroadcast=false, bool rb_alsoGlobalErrors=false
                          #ifdef NMEA_2000_FAST_PACKET
@@ -95,7 +96,7 @@ public:
                          #endif
                          ); }
 
-  void deregisterClient (IsoAgLib::MultiReceiveClient_c* rpc_client)
+  void deregisterClient (__IsoAgLib::CANCustomer_c* rpc_client)
     { MultiReceive_c::deregisterClient (rpc_client); }
 
   /// Use to remove a "kept"-stream after it is gotten by "getFinishedJustKeptStream" and processed.

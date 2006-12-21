@@ -88,7 +88,6 @@
 /* *************************************** */
 #include "processpkg_c.h"
 #include <IsoAgLib/comm/SystemMgmt/iidentitem_c.h>
-#include <IsoAgLib/comm/Multipacket/multireceiveclient_c.h>
 #include <IsoAgLib/comm/Multipacket/imultisendstreamer_c.h>
 #include <IsoAgLib/comm/Multipacket/impl/multisend_c.h>
 

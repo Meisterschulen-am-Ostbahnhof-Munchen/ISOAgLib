@@ -431,7 +431,7 @@ VtClientServerCommunication_c::VtClientServerCommunication_c (IdentItem_c& ref_w
  */
 VtClientServerCommunication_c::~VtClientServerCommunication_c()
 {
-  __IsoAgLib::getMultiReceiveInstance4Comm().deregisterClient (this);
+  getMultiReceiveInstance4Comm().deregisterClient (*this);
   getIsoFilterManagerInstance().removeIsoFilter (ISOFilter_s (*this, (0x1FFFF00UL), (VT_TO_ECU_PGN << 8), &getIdentItem().isoName()));
   getIsoFilterManagerInstance().removeIsoFilter (ISOFilter_s (*this, (0x1FFFF00UL), (ACKNOWLEDGEMENT_PGN << 8), &getIdentItem().isoName()));
 }

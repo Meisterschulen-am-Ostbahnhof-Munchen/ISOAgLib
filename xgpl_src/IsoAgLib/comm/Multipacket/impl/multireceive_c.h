@@ -94,7 +94,6 @@
 // forward declarations
 namespace IsoAgLib {
   class ReceiveStreamIdentifier_c;
-  class MultiReceiveClient_c;
 }
 
 
@@ -134,7 +133,7 @@ namespace __IsoAgLib {
 /** struct for client definition */
 class MultiReceiveClientWrapper_s : public ClientBase {
   public:
-  MultiReceiveClientWrapper_s( IsoAgLib::MultiReceiveClient_c& rpc_client,
+  MultiReceiveClientWrapper_s( CANCustomer_c& rpc_client,
                                const ISOName_c& rrefc_isoNameClient,
                                uint32_t rui32_pgn,
                                uint32_t rui32_pgnMask,
@@ -146,7 +145,7 @@ class MultiReceiveClientWrapper_s : public ClientBase {
                               SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA
                              );
 
-  IsoAgLib::MultiReceiveClient_c* pc_client;
+  CANCustomer_c* pc_client;
   ISOName_c c_isoName;
   uint32_t ui32_pgn;
   uint32_t ui32_pgnMask;
@@ -177,14 +176,14 @@ public:
   bool processMsg();
 
   //  Operation: (de)registerClient
-  void registerClient   (IsoAgLib::MultiReceiveClient_c& rrefc_client, const ISOName_c& rrefc_isoName,
+  void registerClient   (CANCustomer_c& rrefc_client, const ISOName_c& rrefc_isoName,
                          uint32_t rui32_pgn, uint32_t rui32_pgnMask=0x3FFFF,
                          bool b_alsoBroadcast=false, bool rb_alsoGlobalErrors=false
                          #ifdef NMEA_2000_FAST_PACKET
                          , bool rb_isFastPacket=false
                          #endif
                          );
-  void deregisterClient (IsoAgLib::MultiReceiveClient_c* rpc_client);
+  void deregisterClient (CANCustomer_c& rpc_client);
 
   //  Operation: createStream
   //! Parameter:
@@ -281,8 +280,8 @@ private:
   //  Operation: getClient
   //! Parameter:
   //! @param rc_streamIdent:
-  //! @return NULL for "doesn't exist", otherwise valid "MultiReceiveClient_c*"
-  IsoAgLib::MultiReceiveClient_c* getClient(IsoAgLib::ReceiveStreamIdentifier_c rc_streamIdent);
+  //! @return NULL for "doesn't exist", otherwise valid "CANCustomer_c*"
+  CANCustomer_c* getClient (IsoAgLib::ReceiveStreamIdentifier_c rc_streamIdent);
 
   //  Operation: sendCurrentCts
   //! Parameter:

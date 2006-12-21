@@ -88,7 +88,6 @@
  ***************************************************************************/
 
 #include "multireceive_c.h"
-#include "../multireceiveclient_c.h"
 
 // IsoAgLib
 #include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h>
@@ -173,7 +172,7 @@ static const uint8_t scui8_tpPriority=6;
 #endif
 
 
-MultiReceiveClientWrapper_s::MultiReceiveClientWrapper_s( IsoAgLib::MultiReceiveClient_c& rrefc_client,
+MultiReceiveClientWrapper_s::MultiReceiveClientWrapper_s( CANCustomer_c& rrefc_client,
                                                           const ISOName_c& rrefc_isoNameClient,
                                                           uint32_t rui32_pgn,
                                                           uint32_t rui32_pgnMask,
@@ -350,7 +349,7 @@ MultiReceive_c::processMsg()
               }
 
               // First of all, is there a client registered that handles those PGNs via (E)TP-Messages?
-              IsoAgLib::MultiReceiveClient_c* pc_clientFound = getClient(c_tmpRSI);
+              CANCustomer_c* pc_clientFound = getClient(c_tmpRSI);
               if (pc_clientFound == NULL)
               { // There's no client registered to take this PGN->thisAddress! */
                 notifyError(c_tmpRSI, 115);
@@ -660,7 +659,7 @@ MultiReceive_c::processMsg()
 /** @todo Add function with ISOItem/IdentItem probably, too? */
 // Operation: registerClient
 void
-MultiReceive_c::registerClient(IsoAgLib::MultiReceiveClient_c& rrefc_client, const ISOName_c& rrefc_isoName,
+MultiReceive_c::registerClient(CANCustomer_c& rrefc_client, const ISOName_c& rrefc_isoName,
                                uint32_t rui32_pgn, uint32_t rui32_pgnMask,
                                bool rb_alsoBroadcast, bool rb_alsoGlobalErrors
                                #ifdef NMEA_2000_FAST_PACKET
@@ -708,13 +707,13 @@ MultiReceive_c::registerClient(IsoAgLib::MultiReceiveClient_c& rrefc_client, con
 
 //  Operation: deregisterClient
 void
-MultiReceive_c::deregisterClient (IsoAgLib::MultiReceiveClient_c* rpc_client)
+MultiReceive_c::deregisterClient (CANCustomer_c& rrefc_client)
 {
   // first of all remove all streams that are for this client!
   for (std::list<DEF_Stream_c_IMPL>::iterator pc_iter = list_streams.begin(); pc_iter != list_streams.end(); )
   {
     // do also erase "kept" streams!!
-    if (getClient(pc_iter->getIdent()) == rpc_client)
+    if (getClient (pc_iter->getIdent()) == &rrefc_client)
     { // remove stream (do not call any callbacks, as deregister is likely called in the client's destructor
       pc_iter = list_streams.erase (pc_iter);
     } else {
@@ -725,7 +724,7 @@ MultiReceive_c::deregisterClient (IsoAgLib::MultiReceiveClient_c* rpc_client)
   // then remove all MultiReceiveClientWrappers for this client
   for (std::list<MultiReceiveClientWrapper_s>::iterator pc_iter = list_clients.begin(); pc_iter != list_clients.end(); )
   {
-    if (pc_iter->pc_client == rpc_client)
+    if (pc_iter->pc_client == &rrefc_client)
     { // remove MultiReceiveClientWrapper_s
       #ifdef NMEA_2000_FAST_PACKET
       /// Fast-Packet additions
@@ -1111,7 +1110,7 @@ MultiReceive_c::connAbortTellClient(bool rb_sendConnAbort, Stream_c* rpc_stream)
   if (rpc_stream->getIdent().getDa() != 0xFF)
   {
     // search Client and tell about connAbort
-    IsoAgLib::MultiReceiveClient_c* pc_clientFound = getClient(rpc_stream->getIdent());
+    CANCustomer_c* pc_clientFound = getClient (rpc_stream->getIdent());
     if (pc_clientFound) {
       pc_clientFound->reactOnAbort (*rpc_stream);
     }
@@ -1209,9 +1208,9 @@ MultiReceive_c::close( void )
 //  Operation: getClient
 //! Parameter:
 //! @param rc_streamIdent:
-//! @return NULL for "doesn't exist", otherwise valid "MultiReceiveClient_c*"
-IsoAgLib::MultiReceiveClient_c*
-MultiReceive_c::getClient(IsoAgLib::ReceiveStreamIdentifier_c rc_streamIdent)
+//! @return NULL for "doesn't exist", otherwise valid "CANCustomer_c*"
+CANCustomer_c*
+MultiReceive_c::getClient (IsoAgLib::ReceiveStreamIdentifier_c rc_streamIdent)
 {
   for (std::list<MultiReceiveClientWrapper_s>::iterator i_list_clients = list_clients.begin();
        i_list_clients != list_clients.end();
