@@ -93,7 +93,7 @@
   #include <IsoAgLib/hal/eeprom.h>
 #endif
 
-#if defined(DEBUG) || defined(DEBUG_HEAP_USEAGE)
+#if defined(DEBUG) || defined(DEBUG_HEAP_USEAGE) || defined(DEBUG_CAN_BUFFER_FILLING)
   #ifdef SYSTEM_PC
     #include <iostream>
   #else

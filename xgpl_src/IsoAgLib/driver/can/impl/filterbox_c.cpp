@@ -86,6 +86,14 @@
 #include "canio_c.h"
 #include <IsoAgLib/util/impl/cancustomer_c.h>
 
+#if defined(DEBUG) || defined(DEBUG_HEAP_USEAGE) || defined(DEBUG_CAN_BUFFER_FILLING)
+  #ifdef SYSTEM_PC
+    #include <iostream>
+  #else
+    #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
+  #endif
+  #include <IsoAgLib/util/impl/util_funcs.h>
+#endif
 
 namespace __IsoAgLib {
 

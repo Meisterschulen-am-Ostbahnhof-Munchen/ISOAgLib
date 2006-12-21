@@ -541,10 +541,11 @@ uint8_t MsgObj_c::processMsg(uint8_t rui8_busNumber, bool rb_forceProcessAll)
         #ifdef DEBUG_CAN_BUFFER_FILLING
         if ( ! b_detectedOverflow )
         {
-          INTERNAL_DEBUG_DEVICE << "\r\nALARM!!!!!! CAN Buffer Overflow at MsgObj: "
-            << uint16_t(msgObjNr()) << " at BUS: " << uint16_t(rui8_busNumber)
-            << " with Ident: " << c_filter.ident()
-            << INTERNAL_DEBUG_DEVICE_ENDL;
+          char temp[200];
+          std::sprintf( temp, "\r\nALARM!!!!!! CAN Buffer Overflow at MsgObj: %d at BUS: %d with Ident: 0x%lx, \r\nBufer-Filling: %d, Free: %d",
+            uint16_t(msgObjNr()), uint16_t(rui8_busNumber), c_filter.ident(), HAL::can_stateMsgobjBuffercnt(rui8_busNumber, msgObjNr() ),
+            HAL::can_stateMsgobjFreecnt(rui8_busNumber, msgObjNr() ) );
+          INTERNAL_DEBUG_DEVICE << temp << INTERNAL_DEBUG_DEVICE_ENDL;
         }
         b_detectedOverflow = true;
         #endif

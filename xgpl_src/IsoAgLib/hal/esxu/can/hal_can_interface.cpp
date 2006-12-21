@@ -579,7 +579,7 @@ int16_t can_configMsgobjInit(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgL
       }
       if ( 14 == rui8_msgobjNr )
       { // the special last message object is being configured --> it has to store many messages
-        pt_config->wNumberMsgs = 25;
+        pt_config->wNumberMsgs = 50;
       }
     }
   }

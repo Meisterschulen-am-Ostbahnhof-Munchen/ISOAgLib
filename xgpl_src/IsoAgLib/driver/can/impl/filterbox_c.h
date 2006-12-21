@@ -249,7 +249,7 @@ public:
 
   #ifdef DEBUG_CAN_BUFFER_FILLING
   /** some debug messages */
-  void FilterBox_c::doDebug(uint8_t rui8_busNumber);
+  void doDebug(uint8_t rui8_busNumber);
   #endif
 
   /* ************************************************** */
