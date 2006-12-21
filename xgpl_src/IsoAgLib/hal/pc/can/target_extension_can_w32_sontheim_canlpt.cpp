@@ -189,6 +189,8 @@ DWORD WINAPI thread( PVOID par )
     // checkMsg() sets the b_blockApp
     // flag as soon as the buffers are written
     checkMsg();
+
+	Sleep( 5 );		// Don't burn up the entire processor!
   }
   return 0;
 }
