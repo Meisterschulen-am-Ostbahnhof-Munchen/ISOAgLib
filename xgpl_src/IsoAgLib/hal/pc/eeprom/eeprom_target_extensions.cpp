@@ -131,7 +131,9 @@ int16_t eepromWrite(uint16_t wAddress,uint16_t wNumber,uint8_t *pbData){
       for (i=0; i < wNumber; i++)
       {
         c_temp = pByte[i];
+#ifdef DEBUG_EEPROM
         if ( isprint( c_temp ) ) putchar(c_temp);
+#endif
         fputc(c_temp, eepromDat);
       }
 //      printf(", als Zahl %i", i32_temp);
@@ -141,21 +143,27 @@ int16_t eepromWrite(uint16_t wAddress,uint16_t wNumber,uint8_t *pbData){
       pByte = (uint8_t*)&sTemp;
       for (i=0; i < wNumber; i++)
       {
+#ifdef DEBUG_EEPROM
        if ( isprint( pByte[i] ) ) putchar(pByte[i]);
+#endif
        fputc(pByte[i], eepromDat);
       }
 //      printf(", als Zahl %hi", sTemp);
       break;
     case 1:
       c_temp = *(int8_t*)pbData;
+#ifdef DEBUG_EEPROM
       if ( isprint( c_temp ) ) putchar(c_temp);
+#endif
       fputc(c_temp, eepromDat);
 //      printf(", als Zahl %hi oder als Text %c", c_temp, c_temp);
       break;
     default:
       for (i=0; i < wNumber; i++)
       {
+#ifdef DEBUG_EEPROM
         if ( isprint( pbData[i] ) ) putchar(pbData[i]);
+#endif
         fputc(pbData[i], eepromDat);
       }
       break;
@@ -203,7 +211,9 @@ int16_t eepromRead(uint16_t wAddress,uint16_t wNumber,uint8_t *pbByte){
       for (i=0; i < wNumber; i++)
       {
         pbByte[i] = (uint8_t)fgetc(eepromDat);
+#ifdef DEBUG_EEPROM
         putchar(pbByte[i]);
+#endif
       }
       i32_temp = *(int32_t*)pbByte;
 //      printf(", als Zahl %i", i32_temp);
@@ -212,14 +222,18 @@ int16_t eepromRead(uint16_t wAddress,uint16_t wNumber,uint8_t *pbByte){
       for (i=0; i < wNumber; i++)
       {
         pbByte[i] = (uint8_t)fgetc(eepromDat);
+#ifdef DEBUG_EEPROM
         putchar(pbByte[i]);
+#endif
       }
       sTemp = *(short*)pbByte;
 //      printf(", als Zahl %hi", sTemp);
       break;
     case 1:
       pbByte[0] =  (uint8_t)fgetc(eepromDat);
+#ifdef DEBUG_EEPROM
       putchar(pbByte[0]);
+#endif
       c_temp = *(int8_t*)pbByte;
 //      printf(", als Zahl %hi", c_temp);
       break;
@@ -227,7 +241,9 @@ int16_t eepromRead(uint16_t wAddress,uint16_t wNumber,uint8_t *pbByte){
       for (i=0; i < wNumber; i++)
       {
         pbByte[i] = (uint8_t)fgetc(eepromDat);
+#ifdef DEBUG_EEPROM
         putchar(pbByte[i]);
+#endif
       }
       break;
   }
