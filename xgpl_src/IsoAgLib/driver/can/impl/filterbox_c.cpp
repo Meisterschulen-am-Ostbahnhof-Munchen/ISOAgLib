@@ -126,8 +126,8 @@ FilterBox_c::FilterBox_c(CANCustomer_c* rrpc_customer,
     c_mask(rt_mask, ren_identType),
     c_additionalMask( (rpc_filterBox == NULL) ? (~0) : (~(rpc_filterBox->c_filter.ident() ^ rt_filter)), ren_identType),
     vec_customer(1,rrpc_customer),
-    ui8_filterBoxNr(rpc_filterBox->ui8_filterBoxNr),
-    ui8_busNumber(rpc_filterBox->ui8_busNumber)
+    ui8_filterBoxNr( (rpc_filterBox == NULL) ? (IdleState) : (rpc_filterBox->ui8_filterBoxNr) ),
+    ui8_busNumber( (rpc_filterBox == NULL) ? (IdleState) : (rpc_filterBox->ui8_busNumber) )
 #if ((defined( USE_ISO_11783)) \
      && ((CAN_INSTANCE_CNT > PRT_INSTANCE_CNT) || defined(ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL)))
     , b_performIsobusResolve(rpc_filterBox->b_performIsobusResolve)
