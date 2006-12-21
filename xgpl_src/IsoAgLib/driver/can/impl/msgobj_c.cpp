@@ -523,13 +523,16 @@ uint8_t MsgObj_c::processMsg(uint8_t rui8_busNumber, bool rb_forceProcessAll)
         return (b_count-1);
       case HAL_NOACT_ERR:
         #ifdef DEBUG
-        INTERNAL_DEBUG_DEVICE << "CAN-Receive NoAct Err" << INTERNAL_DEBUG_DEVICE_ENDL;
+        INTERNAL_DEBUG_DEVICE << "CAN-Receive NoAct == BUS OFF Err" << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
         // wrong use of MsgObj (not likely) or CAN BUS OFF
         getILibErrInstance().registerError( iLibErr_c::CanOff, iLibErr_c::Can );
         HAL::can_useMsgobjPopFront(rui8_busNumber, msgObjNr());
         return (b_count-1);
       case HAL_WARN_ERR:
+        #ifdef DEBUG
+        INTERNAL_DEBUG_DEVICE << "CAN WARN Err" << INTERNAL_DEBUG_DEVICE_ENDL;
+        #endif
         getILibErrInstance().registerError( iLibErr_c::CanWarn, iLibErr_c::Can );
         break;
       case HAL_OVERFLOW_ERR:

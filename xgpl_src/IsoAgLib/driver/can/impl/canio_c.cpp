@@ -1113,6 +1113,9 @@ CANIO_c& CANIO_c::operator<<(CANPkg_c& refc_src)
       break;
     case HAL_NOACT_ERR:
       // BUS off
+      #if defined(DEBUG)
+      INTERNAL_DEBUG_DEVICE << "BUS " << uint16_t(ui8_busNumber) << " in BUS OFF STATE" << INTERNAL_DEBUG_DEVICE_ENDL;
+      #endif
       getILibErrInstance().registerError( iLibErr_c::CanOff, iLibErr_c::Can );
       break;
     case HAL_OVERFLOW_ERR:
