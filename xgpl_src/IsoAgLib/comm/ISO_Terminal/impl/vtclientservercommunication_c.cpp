@@ -1965,12 +1965,12 @@ VtClientServerCommunication_c::sendCommandGetAttributeValue( IsoAgLib::iVtObject
 bool
 VtClientServerCommunication_c::queueOrReplace (SendUpload_c& rref_sendUpload, bool b_enableReplaceOfCmd)
 {
-  if (!isVtActive())
+  if (en_objectPoolState != OPUploadedSuccessfully)
   {
 #ifdef DEBUG
-    INTERNAL_DEBUG_DEVICE << "--NOT ENQUEUED - VT IS NOT ACTIVE!--" << INTERNAL_DEBUG_DEVICE_ENDL;
+    INTERNAL_DEBUG_DEVICE << "--NOT ENQUEUED - POOL NO YET COMPLETELY UPLOADED!--" << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
-    //  return false;
+    return false;
   }
   SendUpload_c* p_queue = NULL;
   uint8_t i = 0;
