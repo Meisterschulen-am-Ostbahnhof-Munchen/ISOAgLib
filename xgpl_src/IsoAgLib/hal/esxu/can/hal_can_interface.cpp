@@ -595,6 +595,13 @@ int16_t can_configMsgobjInit(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgL
   pt_config->bTimeStamped = true;
   pt_config->wPause = 0;
 
+  #ifdef DEBUG_CAN_BUFFER_FILLING
+  char temp[100];
+  std::sprintf( temp, "Init CAN MsgObj with: Bus %hd, MsgObj: %hd, Filter: 0x%lx, FIFO-Size: %d\r\n",
+    rui8_busNr, rui8_msgobjNr, pt_config->dwId, pt_config->wNumberMsgs );
+  INTERNAL_DEBUG_DEVICE << temp << INTERNAL_DEBUG_DEVICE_ENDL;
+  #endif
+
   // add offset 1 to rui8_msgobjNr as the BIOS starts counting with 1
   // whereas IsoAgLib starts with 0
   return config_can_obj(rui8_busNr, (rui8_msgobjNr+1), pt_config);
