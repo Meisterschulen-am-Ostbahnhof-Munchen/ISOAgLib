@@ -32,6 +32,158 @@ extern "C"
 #define MSGTYPE_EXTENDED        0x01            /* extended frame */
 #define MSGTYPE_STANDARD        0x00            /* standard frame */
 
+//SettingApp/D3App can not read message from bios directly using rx_can1_msg or rx_can2_msg
+//Instead, they should read from an application message queue, where non-fs messages are forward
+//from FileServer
+
+#define FORWARD_NON_FS_MESSAGE_TO_OTHER_APPLICATIONS
+#ifdef FORWARD_NON_FS_MESSAGE_TO_OTHER_APPLICATIONS
+#define MAX_QUEUE_ENTRIES	128
+#define FORWARDING_STATUS_MESSAGE_NOT_BELONG_TO_OTHER_APPS	 0
+#define FORWARDING_STATUS_MESSAGE_FORWORDING_SUCCEDED		 1	
+#define FORWARDING_STATUS_MESSAGE_FORWORDING_QUEUE_FULL		 4	  //no error handling for this case
+
+int forward_can1_msg_to_other_apps(sCAN1 * s);
+int forward_can2_msg_to_other_apps(sCAN2 * s);
+
+extern "C"	  //These function will be called from C app
+{
+void rx_can1_msg_from_file_server(sCAN1 * s);
+void rx_can2_msg_from_file_server(sCAN2 * s);
+}
+
+sCAN2 	can2_app_FIFO[MAX_QUEUE_ENTRIES];
+u8                    can2_app_write;
+u8                    can2_app_read;
+
+#ifdef STANDALONE_TERMINAL
+//	#define ENABLE_CAN1_MESSAGE_FORWARDING
+#endif 
+
+#ifdef ENABLE_CAN1_MESSAGE_FORWARDING
+sCAN1 	can1_app_FIFO[MAX_QUEUE_ENTRIES];
+u8                    can1_app_write;
+u8                    can1_app_read;
+//This function is supposed to be called by D3App/SettingApp
+void rx_can1_msg_from_file_server(sCAN1 * s)
+{
+if (can1_app_read != can1_app_write)
+	{     	// there is a message in the queue
+		*s = can1_app_FIFO[can1_app_read];
+		can1_app_FIFO[can1_app_read].ident = 0;
+		// this is the one and only function writing to can1_app_read
+		can1_app_read = (can1_app_read + 1) & (MAX_QUEUE_ENTRIES-1);	// set read pointer to next element and catch overflow
+	}
+else
+	{	// nothing to return - return initialized message
+		s->ident   = 0;
+		s->size    = 0;
+		s->RTR     = 0;
+		for (int i=0;i<8;i++)
+			s->data[i] = 0;
+	}
+	return;
+}
+#endif
+
+
+//This function is supposed to be called by D3App/SettingApp
+void rx_can2_msg_from_file_server(sCAN2 * s)
+{
+if (can2_app_read != can2_app_write)
+	{     	// there is a message in the queue
+		*s = can2_app_FIFO[can2_app_read];
+		can2_app_FIFO[can2_app_read].ident = 0;
+		// this is the one and only function writing to can2_app_read
+		can2_app_read = (can2_app_read + 1) & (MAX_QUEUE_ENTRIES-1);	// set read pointer to next element and catch overflow
+	}
+else
+	{	// nothing to return - return initialized message
+		s->ident   = 0;
+		s->size    = 0;
+		s->RTR     = 0;
+		for (int i=0;i<8;i++)
+			s->data[i] = 0;
+	}
+	return;
+}
+
+#ifdef ENABLE_CAN1_MESSAGE_FORWARDING
+//return: 
+//		 0: this message does not belong other apps, file server should handle it 		 
+//		 1: this message belong to other apps,  FORWARDING_STATUS_MESSAGE_FORWORDING_SUCCEDED
+//		 2: this message belong to other apps,  FORWARDING_STATUS_MESSAGE_FORWORDING_QUEUE_FULL
+int forward_can1_msg_to_other_apps(sCAN1 * s)
+{
+//Wachendorff bios: the first three bits of all received extended is "111"
+//using  &0x1FFFFFFF to remove it.
+	s->ident = s->ident &0x1FFFFFFF;
+
+ 	//Filtering here, 09/27/06
+ 	//Later on, should change to dynamic filtering
+	//So SettingApp/D3App can register interested message through a filter registration function
+	if(!(  //	((s->ident & 0x00FF0000) == 0x00EF0000) || 	//proprietary messages, maybe come from BSAC
+			((s->ident & 0x00FFFF00) == 0x00FE0800) ||		//Required tractor facility 
+			((s->ident & 0x00FFFF00) == 0x00FE4700) ||		//Maintain power
+			((s->ident & 0x00FFFF00) == 0x00EBFF00) ||		//BAM, AutoGuide broadcast GNSS message
+			((s->ident & 0x00FFFF00) == 0x00ECFF00) ||		//BAM, AutoGuide broadcast GNSS message
+			((s->ident & 0x00000FFF) == 0x5A2)				//jmp to bootloader after receiving this message
+		)) //if the message is  not  any of the above messages
+		return 	FORWARDING_STATUS_MESSAGE_NOT_BELONG_TO_OTHER_APPS;
+
+	//From now on, the message passed the filter, to be one of interested messages by SettingApp/D3App				
+ 	if (((can1_app_write+1)&(MAX_QUEUE_ENTRIES-1)) != can1_app_read)
+		{
+			can1_app_FIFO[can1_app_write] = *s;
+			can1_app_write = (can1_app_write +1) & (MAX_QUEUE_ENTRIES-1);
+			return FORWARDING_STATUS_MESSAGE_FORWORDING_SUCCEDED;	
+		}
+	else
+		{
+			 return FORWARDING_STATUS_MESSAGE_FORWORDING_QUEUE_FULL;   // Queue full, to be consistent with  error code provided by Wachendorff bios
+		 }
+			
+
+}
+#endif
+
+int forward_can2_msg_to_other_apps(sCAN2 * s)
+{
+//Wachendorff bios: the first three bits of all received extended is "111"
+//using  &0x1FFFFFFF to remove it.
+	s->ident = s->ident &0x1FFFFFFF;
+
+
+ 	//Filtering here, 09/27/06
+ 	//Later on, should change to dynamic filtering
+	//So SettingApp/D3App can register interested message through a filter registration function
+	if(!( // 	((s->ident & 0x00FF0000) == 0x00EF0000) || 	 //proprietary messages, maybe come from BSAC
+   			((s->ident & 0x00FFFF00) == 0x00FE0800) ||		//Required tractor facility 
+			((s->ident & 0x00FFFF00) == 0x00EBFF00) ||		//BAM, TP_DT, AutoGuide broadcast GNSS message
+			((s->ident & 0x00FFFF00) == 0x00ECFF00) ||		//BAM, TP_CM, AutoGuide broadcast GNSS message
+			((s->ident & 0x00FFFF00) == 0x00FE4700) ||		//Maintain power
+//   			((s->ident & 0x000000FF) == 0x00000026) ||		//SA=0x26, sent from VT
+//   			((s->ident & 0x0000FF00) == 0x00002600) ||		//DA=0x26, target for VT
+			((s->ident & 0x00000FFF) == 0x5A2)		//jmp to bootloader after receiving this message
+		)) //if the message is  not  any of the above messages
+		return 	FORWARDING_STATUS_MESSAGE_NOT_BELONG_TO_OTHER_APPS;
+  
+	//From now on, the message passed the filter, to be one of interested messages by SettingApp/D3App				
+ 	if (((can2_app_write+1)&(MAX_QUEUE_ENTRIES-1)) != can2_app_read)
+		{
+			can2_app_FIFO[can2_app_write] = *s;
+			can2_app_write = (can2_app_write +1) & (MAX_QUEUE_ENTRIES-1);
+			return FORWARDING_STATUS_MESSAGE_FORWORDING_SUCCEDED;	
+		}
+	else
+		{
+			 return FORWARDING_STATUS_MESSAGE_FORWORDING_QUEUE_FULL;   // Queue full, to be consistent with  error code provided by Wachendorff bios
+		 }
+			
+
+}
+#endif
+
 namespace __HAL {
 
 struct can_data {
@@ -230,8 +382,16 @@ int16_t closeCanObj ( uint8_t bBusNumber,uint8_t bMsgObj )
   return HAL_NO_ERR;
 };
 
+//#define ADD_DELAY_BETWEEN_XMIT_MESSAGES
 int16_t sendCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tSend * ptSend )
 {
+#ifdef ADD_DELAY_BETWEEN_XMIT_MESSAGES	 //Brian Wei, 09/05/06
+#define DELAY_TIME_BETWEEN_CONSECUTIVE_XMIT_MESSAGES 8 //8 // 8 ms delay between two consecutive messages
+ static long previous_xmit_can1_time=0;
+ static long current_xmit_can1_time=DELAY_TIME_BETWEEN_CONSECUTIVE_XMIT_MESSAGES;
+ static long previous_xmit_can2_time=0;
+ static long current_xmit_can2_time=DELAY_TIME_BETWEEN_CONSECUTIVE_XMIT_MESSAGES;
+#endif
 if (bBusNumber==0)
  {
 	 sCAN1 CanToSend;
@@ -246,7 +406,25 @@ if (bBusNumber==0)
 	CanToSend.RTR	    =0; //Iso bus does not use RTR at all
 	for (int i=0;i<ptSend->bDlc;i++)
 			 CanToSend.data[i]=ptSend->abData[i];
+#ifdef ADD_DELAY_BETWEEN_XMIT_MESSAGES
+current_xmit_can1_time=get_time();
+if ( (current_xmit_can1_time-previous_xmit_can1_time) >=DELAY_TIME_BETWEEN_CONSECUTIVE_XMIT_MESSAGES)
+	{
+	 xmit_can1_msg(&CanToSend);
+	 previous_xmit_can1_time=current_xmit_can1_time;
+	}
+else
+   {
+   	long ci32_endWait;
+    ci32_endWait = get_time()+DELAY_TIME_BETWEEN_CONSECUTIVE_XMIT_MESSAGES;
+    while (get_time()<ci32_endWait);
+	xmit_can1_msg(&CanToSend);
+	previous_xmit_can1_time=ci32_endWait;
+   }
+#else	 //Original program without delay
     xmit_can1_msg(&CanToSend);
+#endif
+
     return HAL_NO_ERR;
  } else if (bBusNumber==1)
  {
@@ -256,7 +434,25 @@ if (bBusNumber==0)
 	CanToSend.RTR	    =0; //Iso bus does not use RTR at all
  	for (int i=0;i<ptSend->bDlc;i++)
 			 CanToSend.data[i]=ptSend->abData[i];
+
+#ifdef ADD_DELAY_BETWEEN_XMIT_MESSAGES
+current_xmit_can2_time=get_time();
+if ( (current_xmit_can2_time-previous_xmit_can2_time) >=DELAY_TIME_BETWEEN_CONSECUTIVE_XMIT_MESSAGES)
+	{
+	 xmit_can2_msg(&CanToSend);
+	 previous_xmit_can2_time=current_xmit_can2_time;
+	}
+else
+   {
+   	long ci32_endWait2;
+    ci32_endWait2 = get_time()+DELAY_TIME_BETWEEN_CONSECUTIVE_XMIT_MESSAGES;
+    while (get_time()<ci32_endWait2);
+	xmit_can2_msg(&CanToSend);
+	previous_xmit_can2_time=ci32_endWait2;
+   }
+#else	 //Original code without delay
     xmit_can2_msg(&CanToSend);
+#endif
  
      return HAL_NO_ERR;
 }
@@ -321,6 +517,15 @@ int ca_GetData (can_recv_data* receivedata)
 				}
 		     else
 	            {
+#ifdef FORWARD_NON_FS_MESSAGE_TO_OTHER_APPLICATIONS
+#ifdef ENABLE_CAN1_MESSAGE_FORWARDING
+if(forward_can1_msg_to_other_apps(&can1)!=FORWARDING_STATUS_MESSAGE_NOT_BELONG_TO_OTHER_APPS)
+	return 0; //if message belong to other apps, no need for FileServer to process 
+else //message not belong to other apps, business as usual, FileServer will continue to process it
+	;
+#endif
+#endif
+
 			        receivedata->b_bus = channel;
 //			        receivedata->msg.i32_ident = can1.ident;
 //2006-06-06 Wachendorff bios, 
@@ -383,6 +588,14 @@ if	(tmpCANid == 0xF81C)
 				}
 		     else
 	            {
+
+#ifdef FORWARD_NON_FS_MESSAGE_TO_OTHER_APPLICATIONS
+if(forward_can2_msg_to_other_apps(&can2)!=FORWARDING_STATUS_MESSAGE_NOT_BELONG_TO_OTHER_APPS)
+	return 0; //if message belong to other apps, no need for FileServer to process 
+else //message not belong to other apps, business as usual, FileServer will continue to process it
+	;
+#endif
+
 			        receivedata->b_bus = channel;
 //			        receivedata->msg.i32_ident = can2.ident;
 //2006-06-06 Wachendorff bios, 

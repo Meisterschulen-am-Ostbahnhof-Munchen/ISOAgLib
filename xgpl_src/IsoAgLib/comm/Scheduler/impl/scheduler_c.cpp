@@ -480,10 +480,12 @@ int32_t Scheduler_c::timeEvent( int32_t ri32_demandedExecEndScheduler )
     System_c::triggerWd();
     // was used to process received messages
     // ==> allows to cope wiht high BUS loads
+#ifndef SYSTEM_A2	////For OPUS A2 system, avoid processMsg again to improve scheduler speed
     if ( getAvailableExecTime() != 0 )
     { // simply call processMsg and don't update statistic
       getCanInstance4Comm().processMsg();
     }
+#endif
     #if defined( CAN_INSTANCE_CNT ) && ( CAN_INSTANCE_CNT > 1 )
     if ( getAvailableExecTime() != 0 )
     { // simply call processMsg and don't update statistic

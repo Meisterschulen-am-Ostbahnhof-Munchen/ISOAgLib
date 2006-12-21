@@ -97,7 +97,7 @@ static sSET_PALETTE 	pal;
 void ToPaletteClear()	   		//FOND VERT CLAIR
 {
 	u8 i;
-
+	
 	u8 palette_vga[48] =
 	{
  		13,13,13, 		//grey MODIFIED = gris moyen
@@ -112,29 +112,29 @@ void ToPaletteClear()	   		//FOND VERT CLAIR
 		11,13,15,		//navy MODIFIED = bleu pale
 		2,6,6, 			//green MODIFED = sulky burel
 		0,7,7, 			//teal
-		7,0,0, 			//marron
+		7,0,0, 			//marron 
 		14,14,14, 		//purple MODIFIED = gris moyen-1
-		12,12,12, 		//olive modifed = gris moyen +1
+		12,12,12, 		//olive modifed = gris moyen +1 
 		10,10,10		//silver modified = gris moyen+2
-	};
-
+	}; 
+	
 	for (i=0;i<48;i++)
 		pal.palette[i] = palette_vga[i];
 
 	setPalette(&pal);
 }
 
-*/
+*/	  
 
 //Copied from ./hal/pc/system_target_extension.cpp
 int get_snr(byte *snr_dat)   //int16_t getSnr(uint8_t *snrDat)
 {
-  snrDat[0] = 0x99;
-  snrDat[1] = 0x12;
-  snrDat[2] = 0x34;
-  snrDat[3] = 0x56;
-  snrDat[4] = 0x00;
-  snrDat[5] = 0x01;
+  snr_dat[0] = 0x99;
+  snr_dat[1] = 0x12;
+  snr_dat[2] = 0x34;
+  snr_dat[3] = 0x56;
+  snr_dat[4] = 0x00;
+  snr_dat[5] = 0x01;
 
   return 0;//HAL_NO_ERR;
 }
@@ -148,8 +148,8 @@ void wd_triggern(void){return;}                  /* watchdog triggering*/
 int  wd_reset(void){return 0;}                    /* to force a reset*/
 
 
-//BW, 4/17/06, clean up typedef later
-int32_t get_time(void) //return time in milliseconds
+//BW, 4/17/06, clean up typedef later 
+int32_t get_time(void) //return time in milliseconds 
 {
 	sTIMER timer;
 	getTimerTicks(&timer);
@@ -172,14 +172,14 @@ void delay_us(word wTimer) /* delay micro secounds*/
 
 //BW, 4/17/06
 //Related to close_system, shall never be invoked. Just run empty operation for now.
-    void staying_alive(void)
-    {
-   // printf("staying alive \n");
+    void staying_alive(void) 
+    { 
+   // printf("staying alive \n"); 
     return;
     }  // to activate the power selfholding
     void power_down(void)
-    {
-    //printf("System Stop aufgerufen\n");
+    { 
+    //printf("System Stop aufgerufen\n"); 
     return;
     } // to deactivate the power selfholding
 	//BW, 4/20/06, get_on_off_switch must return true, otherwise system can not run
