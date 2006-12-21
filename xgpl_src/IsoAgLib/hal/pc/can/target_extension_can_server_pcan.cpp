@@ -57,8 +57,8 @@
  ***************************************************************************/
 
 // do not use can bus, operation is based on message forwarding in server
-#ifndef SYSTEM_MCC
-#define SIMULATE_BUS_MODE 1
+#if !defined( SYSTEM_MCC ) && !defined( PCAN_MSCAN_MINOR_BASE )
+	#define SIMULATE_BUS_MODE 1
 #endif
 
 #include "can_target_extensions.h"
@@ -149,7 +149,9 @@ using namespace __HAL;
 #define PCAN_GET_EXT_STATUS _IOR (CAN_MAGIC_NUMBER, MYSEQ_START + 6, TPEXTENDEDSTATUS)
 
 // device nodes minor base. Must be the same as defined in the driver (file pcan_mpc5200.c).
-#define PCAN_MSCAN_MINOR_BASE     40
+#ifndef PCAN_MSCAN_MINOR_BASE
+	#define PCAN_MSCAN_MINOR_BASE     40
+#endif
 
 
 //****************************************************************************
@@ -291,7 +293,7 @@ int ca_InitCanCard_1 (uint32_t channel, int wBitrate, server_c* pc_serverData)
     ///////////////
     // pcan modification
     ///////////////
-     
+
       TPBTR0BTR1 ratix;
       TPCANInit init;
       

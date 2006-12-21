@@ -57,7 +57,7 @@
  ***************************************************************************/
 
 // do not use can bus, operation is based on message forwarding in server
-#if !defined( SYSTEM_A1 ) && !defined( SYSTEM_MCC )
+#if !defined( SYSTEM_A1 ) && !defined( SYSTEM_MCC ) && !defined( PCAN_MSCAN_MINOR_BASE )
   #define SIMULATE_BUS_MODE 1
 #endif
 
