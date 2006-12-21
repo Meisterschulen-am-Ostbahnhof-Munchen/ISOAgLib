@@ -3561,7 +3561,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             if (retFormat == -1)
               clean_exit("Error in formattoi()! STOPPING PARSER! bye.\n\n");
 
-            if (retJust = -1)
+            if (retJust == -1)
               clean_exit("Error in horizontaljustificationtoi()! STOPPING PARSER! bye.\n\n");
             return false;
           }
