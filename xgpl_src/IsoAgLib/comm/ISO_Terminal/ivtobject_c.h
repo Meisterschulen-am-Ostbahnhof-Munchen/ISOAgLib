@@ -55,7 +55,6 @@
 #include "ivttypes.h"
 #include <IsoAgLib/hal/config.h>
 #include <IsoAgLib/util/impl/singleton.h>
-#include <IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h>
 
 // Begin Namespace IsoAgLib
 namespace IsoAgLib {
@@ -465,32 +464,6 @@ public:
     uint8_t  options;         //!< Bit 0 transparent flag; Bit 1 line, font, fill colour usage
     uint8_t  transparencyColour;  //!< Colour to be shown transparent.
   } iVtObjectGraphicsContext_s;
-
-
-  //#ifdef AGCO_LAYOUTMANAGER
-  typedef struct iVtObjectDataAlarmMaskConnector_s {
-    uint16_t ID;
-    uint16_t width;
-    uint16_t height;
-    IsoAgLib::iISOName_c value;
-  } iVtObjectDataAlarmMaskConnector_s;
-
-  typedef struct iVtObjectSoftKeyMaskConnector_s {
-    uint16_t ID;
-    uint16_t width;
-    uint16_t height;
-    IsoAgLib::iISOName_c value;
-  } iVtObjectSoftKeyMaskConnector_s;
-
-  typedef struct iVtObjectWorkingSetDescriptorConnector_s {
-    uint16_t ID;
-    uint16_t width;
-    uint16_t height;
-    IsoAgLib::iISOName_c value;
-  } iVtObjectWorkingSetDescriptorConnector_s;
-//#endif
-
-
 
 // METHODS
 public:
