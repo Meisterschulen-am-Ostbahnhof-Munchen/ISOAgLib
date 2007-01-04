@@ -360,20 +360,28 @@ bool
 VtClientServerCommunication_c::processPartStreamDataChunk (IsoAgLib::iStream_c& rrefc_stream, bool rb_isFirstChunk, bool rb_isLastChunk)
 {
   if (rrefc_stream.getStreamInvalid()) return false;
-  if (rb_isFirstChunk)
-  {
-    if (rrefc_stream.getFirstByte() != 0x8 ) return false; // check for command input string value H.18
-    ui16_inputStringId = rrefc_stream.getNextNotParsed() | (rrefc_stream.getNextNotParsed() << 8);
-    ui8_inputStringLength = rrefc_stream.getNextNotParsed();
 
-    const uint16_t ui16_totalstreamsize = rrefc_stream.getByteTotalSize();
-    if (ui16_totalstreamsize != (ui8_inputStringLength + 4))
-    {
-      rrefc_stream.setStreamInvalid();
-      return false;
-    }
+  switch ( rrefc_stream.getFirstByte() )
+  {
+    case 0x8:
+      if (rb_isFirstChunk)  // check for command input string value H.18
+      {
+        ui16_inputStringId = rrefc_stream.getNextNotParsed() | (rrefc_stream.getNextNotParsed() << 8);
+        ui8_inputStringLength = rrefc_stream.getNextNotParsed();
+
+        const uint16_t ui16_totalstreamsize = rrefc_stream.getByteTotalSize();
+        if (ui16_totalstreamsize != (ui8_inputStringLength + 4))
+        {
+          rrefc_stream.setStreamInvalid();
+          return false;
+        }
+      }
+      c_streamer.refc_pool.eventStringValue (ui16_inputStringId, ui8_inputStringLength, rrefc_stream, rrefc_stream.getNotParsedSize(), rb_isFirstChunk, rb_isLastChunk);
+      break;
+
+    default:
+      break;
   }
-  c_streamer.refc_pool.eventStringValue (ui16_inputStringId, ui8_inputStringLength, rrefc_stream, rrefc_stream.getNotParsedSize(), rb_isFirstChunk, rb_isLastChunk);
 
   return false;
 }
@@ -392,6 +400,14 @@ VtClientServerCommunication_c::VtClientServerCommunication_c (IdentItem_c& ref_w
   pc_vtServerInstance = NULL;
   i8_vtLanguage = -1;
   b_receiveFilterCreated = false;
+
+  if (   refc_wsMasterIdentItem.isoName().manufCode() == 0x66
+      && refc_wsMasterIdentItem.isoName().indGroup() == 0x2
+      && refc_wsMasterIdentItem.isoName().devClass() == 0x78
+     )
+  { // this is an agco layout manager client
+    c_streamer.refc_pool.setClientID(ui8_clientId);
+  }
 
   // the generated initAllObjectsOnce() has to ensure to be idempotent! (vt2iso-generated source does this!)
   c_streamer.refc_pool.initAllObjectsOnce (SINGLETON_VEC_KEY_PARAMETER_VAR);
@@ -1218,6 +1234,22 @@ VtClientServerCommunication_c::processMsg()
         }
       }
       break;
+
+    default:
+      // handle proprietary messages from an AGCO VT
+      if (    c_data.getUint8Data (0) >= 0x60
+           && c_data.getUint8Data (0) <= 0x7F
+           && pc_vtServerInstance->getIsoName().indGroup() == 0x2
+           && pc_vtServerInstance->getIsoName().manufCode() == 0x66
+         )
+      {
+      #ifdef DEBUG
+        std::cout << "\n%% Proprietäres Kommando empfangen!! %%%\n" << std::endl;
+      #endif
+        c_streamer.refc_pool.eventProprietaryCommand();
+      }
+      break;
+
   } // switch
 
   // Was it some command that requires queue-deletion & error processing?

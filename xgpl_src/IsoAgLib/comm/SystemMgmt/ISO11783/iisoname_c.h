@@ -54,6 +54,13 @@
 #ifndef IISO_NAME_H
 #define IISO_NAME_H
 
+/// The following define is only to be used in Variable-definitions when
+/// "IsoAgLib::iISOName_c(IsoAgLib::iISOName_c::iISONameUnspecified)"
+/// does NOT work as "iISONameUnspecified" itself is (probably!!) not yet
+/// constructed. This may be the case if the variable-definition order
+/// indicates that it gets initialized later then it's being used.
+#define IISONAME_UNSPECIFIED_CONSTRUCTOR IsoAgLib::iISOName_c(0x7F, 0xF)
+
 /* *************************************** */
 /* ********** include headers ************ */
 /* *************************************** */
@@ -77,19 +84,19 @@ public:
     /** constant for default parameters and initialization, where the device type is not yet spcified.
         the instantiation of this constant variable is located in the module cancustomer_c.cpp
       */
-    static const iISOName_c ISONameUnspecified;
+    static const iISOName_c iISONameUnspecified;
 
     /** constant for not yet spcified process data ident -> <device class, device class instance> := <0x0,0xF>
         the instantiation of this constant variable is located in the module cancustomer_c.cpp
       */
-    static const iISOName_c ISONameInitialProcessData;
+    static const iISOName_c iISONameInitialProcessData;
 
     /** default constructor
         @param rui8_devClass  optional initial DEVCLASS (device type)
         @param rui8_pos       optional initial device class instance
       */
     iISOName_c( uint8_t rui8_devClass, uint8_t rui8_pos = 0xF )
-    : ISOName_c( true, 2, rui8_devClass, rui8_pos, 0xFF, 0x7FF, 0x1FFFFF, 0x1F, 0x7 ) {}
+  : ISOName_c( rui8_devClass, rui8_pos ) {}
 
   /** constructor which format data string from series of input flags
     @param rb_selfConf true -> indicate sefl configuring ECU
@@ -116,7 +123,7 @@ public:
   /** copy constructor for ISOName
     @param rrefc_src source ISOName_c instance
   */
-  iISOName_c(const iISOName_c& rrefc_src) : ISOName_c( rrefc_src ) {}
+    iISOName_c(const iISOName_c& rrefc_src) : ISOName_c( rrefc_src ) {}
 
   /** assign constructor for ISOName
     @param rrefc_src source ISOName_c object
@@ -296,6 +303,7 @@ private:
   friend iEEPROMIO_c& operator<<(iEEPROMIO_c& refc_stream, const iISOName_c& refc_data );
   friend iEEPROMIO_c& operator>>(iEEPROMIO_c& refc_stream, iISOName_c& refc_data );
   friend class iISOFilter_s;
+  friend class vtDocumentLayoutManager_c;
 };
 
 }

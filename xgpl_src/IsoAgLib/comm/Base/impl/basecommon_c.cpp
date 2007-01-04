@@ -170,7 +170,7 @@ bool BaseCommon_c::config_base (const ISOName_c* rpc_isoName, IsoAgLib::IdentMod
     // IMPORTANT: if we are in tractor mode we MUST have a valid isoName otherwise the configuration makes no sense
     #ifdef DEBUG
       INTERNAL_DEBUG_DEVICE << "CONFIG FAILURE. The config function was called with isoName == NULL and\
-                                IdentModeTractor. Is is not allowed that the isoName ist NULL in combination\
+                                IdentModeTractor. Is is not allowed that the isoName is NULL in combination\
                                 with tractor mode."
                             << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
