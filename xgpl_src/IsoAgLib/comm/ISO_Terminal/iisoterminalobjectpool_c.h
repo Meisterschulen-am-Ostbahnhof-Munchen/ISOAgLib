@@ -264,6 +264,12 @@ public:
   virtual void eventVtStatusMsg() {};
 
   /**
+     hook function that gets called after recognizing an incoming
+     VT proprietary message.
+   */
+  virtual void eventProprietaryCommand() {};
+
+  /**
     this init function has to be idempotent! use "b_initAllObjects" for this reason, it's initialized to false at construction time.
   */
   virtual void initAllObjectsOnce(SINGLETON_VEC_KEY_PARAMETER_DEF)=0;
@@ -311,6 +317,9 @@ public:
   */
   virtual void eventAttributeValue (IsoAgLib::iVtObject_c* /*obj*/, uint8_t /*ui8_attributeValue*/, uint8_t* /*pui8_value*/) {};
 
+  //@todo: remove function??
+  virtual void setClientID(uint8_t /*ui8_id*/) {}
+
 protected:
   iVtObject_c* HUGE_MEM ** iVtObjects;
   uint16_t numObjects;
@@ -332,7 +341,7 @@ public:
   uint8_t   getNumLang()        const { return numLang; }
 
   iVtObjectWorkingSet_c&
-               getWorkingSetObject() const { return *(iVtObjectWorkingSet_c*)(**iVtObjects); }
+  getWorkingSetObject() const { return *(iVtObjectWorkingSet_c*)(**iVtObjects); }
 };
 
 } // end namespace IsoAgLib

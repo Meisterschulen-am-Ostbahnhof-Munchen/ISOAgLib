@@ -131,6 +131,11 @@ class vtObjectInputAttributes_c;
 class vtObjectObjectPointer_c;
 class vtObjectMacro_c;
 class vtObjectArchedBarGraph_c;
+#ifdef AGCO_LAYOUTMANAGER
+  class vtObjectDataAlarmMaskConnector_c;
+  class vtObjectSoftKeyMaskConnector_c;
+  class vtObjectWorkingSetDescriptorConnector_c;
+#endif
 
 class vtObjectAuxiliaryFuntion_c;
 class vtObjectAuxiliaryInput_c;
