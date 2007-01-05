@@ -401,14 +401,6 @@ VtClientServerCommunication_c::VtClientServerCommunication_c (IdentItem_c& ref_w
   i8_vtLanguage = -1;
   b_receiveFilterCreated = false;
 
-  if (   refc_wsMasterIdentItem.isoName().manufCode() == 0x66
-      && refc_wsMasterIdentItem.isoName().indGroup() == 0x2
-      && refc_wsMasterIdentItem.isoName().devClass() == 0x78
-     )
-  { // this is an agco layout manager client
-    c_streamer.refc_pool.setClientID(ui8_clientId);
-  }
-
   // the generated initAllObjectsOnce() has to ensure to be idempotent! (vt2iso-generated source does this!)
   c_streamer.refc_pool.initAllObjectsOnce (SINGLETON_VEC_KEY_PARAMETER_VAR);
   // now let all clients know which client they belong to
