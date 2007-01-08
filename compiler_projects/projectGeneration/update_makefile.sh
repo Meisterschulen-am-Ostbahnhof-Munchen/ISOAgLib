@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # ####################################################################### #
 #                         update_makefile.sh  -
 #                          Script to create file list, configuration
