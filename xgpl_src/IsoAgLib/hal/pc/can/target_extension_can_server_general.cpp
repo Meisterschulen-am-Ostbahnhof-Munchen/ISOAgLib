@@ -191,7 +191,7 @@ static void enqueue_msg(uint32_t DLC, uint32_t ui32_id, uint32_t b_bus, uint8_t 
 {
 
   can_data* pc_data;
-  std::list<client_s>::iterator iter, iter_delete = 0;
+  std::list<client_s>::iterator iter, iter_delete = pc_serverData->l_clients.end();
 
   // semaphore to prevent client list modification already set in calling function
 
@@ -329,7 +329,7 @@ static void enqueue_msg(uint32_t DLC, uint32_t ui32_id, uint32_t b_bus, uint8_t 
                 #ifdef CAN_SERVER_LOG_PATH
                 logging << "oldest msg from queue removed!!" << std::endl;
                 #endif
-                int i_rcSnd=msgsnd(pc_serverData->msqDataServer.i32_rdHandle, &msqReadBuf, sizeof(msqRead_s) - sizeof(int32_t), IPC_NOWAIT);
+                i_rcSnd=msgsnd(pc_serverData->msqDataServer.i32_rdHandle, &msqReadBuf, sizeof(msqRead_s) - sizeof(int32_t), IPC_NOWAIT);
                 if (i_rcSnd == 0)
                 {
                   DEBUG_PRINT("message sent again after queue full!!\n");
@@ -361,7 +361,7 @@ static void enqueue_msg(uint32_t DLC, uint32_t ui32_id, uint32_t b_bus, uint8_t 
     } // for objNr
   }// for iter
 
-  if (iter_delete != 0)
+  if (iter_delete != pc_serverData->l_clients.end())
     // clear read/write queue for this client, close pipe, remove from client list
     releaseClient(pc_serverData, iter_delete);
 
@@ -608,7 +608,7 @@ static void* command_thread_func(void* ptr)
     }
 
     // get client
-    std::list<client_s>::iterator iter_client = NULL, tmp_iter;
+    std::list<client_s>::iterator iter_client = pc_serverData->l_clients.end(), tmp_iter;
     for (tmp_iter = pc_serverData->l_clients.begin(); tmp_iter != pc_serverData->l_clients.end(); tmp_iter++)
       if (tmp_iter->i32_clientID == msqCommandBuf.i32_mtype) {
         iter_client = tmp_iter;
@@ -677,7 +677,7 @@ static void* command_thread_func(void* ptr)
         DEBUG_PRINT("command stop driver\n");
 
         // @todo: is queue clearing necessary?
-        if (iter_client != NULL) {
+        if (iter_client != pc_serverData->l_clients.end()) {
 
           for (uint8_t j=0; j<cui32_maxCanBusCnt; j++)
             iter_client->arrMsgObj[j].clear();
@@ -708,7 +708,7 @@ static void* command_thread_func(void* ptr)
 
           memset(fdata, 0, sizeof(fdata));
 
-          if (iter_client != NULL) {
+          if (iter_client != pc_serverData->l_clients.end()) {
 
             // open log file only once per bus
             if (pc_serverData->b_logMode) {
@@ -758,7 +758,7 @@ static void* command_thread_func(void* ptr)
           i32_error = HAL_RANGE_ERR;
         else {
 
-          if (iter_client != NULL) {
+          if (iter_client != pc_serverData->l_clients.end()) {
 
             if (ui16_busRefCnt[msqCommandBuf.s_init.ui8_bus])
               ui16_busRefCnt[msqCommandBuf.s_init.ui8_bus]--;
@@ -802,7 +802,7 @@ static void* command_thread_func(void* ptr)
         if ((msqCommandBuf.s_config.ui8_bus > HAL_CAN_MAX_BUS_NR ) || ( msqCommandBuf.s_config.ui8_obj > iter_client->arrMsgObj[msqCommandBuf.s_config.ui8_bus].size()-1 ))
           i32_error = HAL_RANGE_ERR;
         else {
-          if (iter_client != NULL) {
+          if (iter_client != pc_serverData->l_clients.end()) {
 
             iter_client->arrMsgObj[msqCommandBuf.s_config.ui8_bus][msqCommandBuf.s_config.ui8_obj].b_canObjConfigured = TRUE;
 
@@ -840,7 +840,7 @@ static void* command_thread_func(void* ptr)
         if ((msqCommandBuf.s_config.ui8_bus > HAL_CAN_MAX_BUS_NR ) || ( msqCommandBuf.s_config.ui8_obj > iter_client->arrMsgObj[msqCommandBuf.s_config.ui8_bus].size()-1 ))
           i32_error = HAL_RANGE_ERR;
         else {
-          if (iter_client != NULL) {
+          if (iter_client != pc_serverData->l_clients.end()) {
             if (msqCommandBuf.i16_command == COMMAND_LOCK) {
               iter_client->arrMsgObj[msqCommandBuf.s_config.ui8_bus][msqCommandBuf.s_config.ui8_obj].b_canBufferLock = TRUE;
               DEBUG_PRINT2("locked buf %d, obj %d\n", msqCommandBuf.s_config.ui8_bus, msqCommandBuf.s_config.ui8_obj);
@@ -862,7 +862,7 @@ static void* command_thread_func(void* ptr)
         if ((msqCommandBuf.s_config.ui8_bus > HAL_CAN_MAX_BUS_NR ) || ( msqCommandBuf.s_config.ui8_obj > iter_client->arrMsgObj[msqCommandBuf.s_config.ui8_bus].size()-1 ))
           i32_error = HAL_RANGE_ERR;
         else {
-          if (iter_client != NULL) {
+          if (iter_client != pc_serverData->l_clients.end()) {
             msqCommandBuf.s_config.ui16_queryLockResult = iter_client->arrMsgObj[msqCommandBuf.s_config.ui8_bus][msqCommandBuf.s_config.ui8_obj].b_canBufferLock;
           } else
             i32_error = HAL_CONFIG_ERR;
@@ -878,7 +878,7 @@ static void* command_thread_func(void* ptr)
         if ((msqCommandBuf.s_config.ui8_bus > HAL_CAN_MAX_BUS_NR ) || ( msqCommandBuf.s_config.ui8_obj > iter_client->arrMsgObj[msqCommandBuf.s_config.ui8_bus].size()-1 ))
           i32_error = HAL_RANGE_ERR;
         else {
-          if (iter_client != NULL) {
+          if (iter_client != pc_serverData->l_clients.end()) {
 
             iter_client->arrMsgObj[msqCommandBuf.s_config.ui8_bus][msqCommandBuf.s_config.ui8_obj].b_canObjConfigured = FALSE;
 
