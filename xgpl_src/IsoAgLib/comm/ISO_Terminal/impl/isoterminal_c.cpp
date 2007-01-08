@@ -301,12 +301,12 @@ ISOTerminal_c::timeEvent(void)
 
   System_c::triggerWd(); /** @todo what to do with those calls? */
 
-  bool b_allActivitiesPerformed = false;
+  bool b_allActivitiesPerformed = true;
 
   for (uint8_t ui8_index = 0; ui8_index < vec_vtClientServerComm.size(); ui8_index++)
   {
     if (vec_vtClientServerComm[ui8_index])
-      b_allActivitiesPerformed |= vec_vtClientServerComm[ui8_index]->timeEvent();
+      b_allActivitiesPerformed &= vec_vtClientServerComm[ui8_index]->timeEvent();
   }
   /** @todo maybe store the one that was out of time if not all could perform their actions? */
 
