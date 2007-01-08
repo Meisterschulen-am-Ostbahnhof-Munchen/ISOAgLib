@@ -104,7 +104,7 @@ ISORequestPGN_c::init (void)
     // register to get ISO monitor list changes
     __IsoAgLib::getIsoMonitorInstance4Comm().registerSaClaimHandler( this );
 
-    getCanInstance4Comm().insertFilter( *this, 0x1FFFF00UL, MASK_TYPE(static_cast<MASK_TYPE>(REQUEST_PGN_MSG_PGN | 0xFF) << 8), true, Ident_c::ExtendedIdent);
+    getCanInstance4Comm().insertFilter( *this, 0x3FFFF00UL, MASK_TYPE(static_cast<MASK_TYPE>(REQUEST_PGN_MSG_PGN | 0xFF) << 8), true, Ident_c::ExtendedIdent);
   }
 }
 
@@ -116,7 +116,7 @@ ISORequestPGN_c::close (void)
   if (!checkAlreadyClosed ())
   {
     setAlreadyClosed();
-    getCanInstance4Comm().deleteFilter( *this, 0x1FFFF00UL, MASK_TYPE(static_cast<MASK_TYPE>(REQUEST_PGN_MSG_PGN | 0xFF) << 8), Ident_c::ExtendedIdent);
+    getCanInstance4Comm().deleteFilter( *this, 0x3FFFF00UL, MASK_TYPE(static_cast<MASK_TYPE>(REQUEST_PGN_MSG_PGN | 0xFF) << 8), Ident_c::ExtendedIdent);
   }
 };
 
@@ -218,7 +218,7 @@ ISORequestPGN_c::checkIfAlreadyRegistered (ISORequestPGNHandler_c &ref_PGNHandle
 
 /** process REQUEST_PGN_MSG_PGN message
     Since we only insertFilter for REQUEST_PGN_MSG_PGN we don't need further checking
-    a la "if ((data().isoPgn() & 0x1FF00) == REQUEST_PGN_MSG_PGN)"
+    a la "if ((data().isoPgn() & 0x3FF00) == REQUEST_PGN_MSG_PGN)"
   * @return true -> message processed by ISORequestPGN_c (also possible is NACK); false -> let others process */
 bool
 ISORequestPGN_c::processMsg ()
@@ -259,7 +259,7 @@ ISORequestPGN_c::sendAcknowledgePGN (ISOItem_c& rrefc_isoItemSender, uint8_t rui
   uint32_t ui32_purePgn = ui32_requestedPGN;
   if (((ui32_purePgn >> 8) & 0xFF) < 0xF0)
   { // destination specific, so clear the destSA field as we want the PURE PGN!
-    ui32_purePgn &= 0x1FF00;
+    ui32_purePgn &= 0x3FF00;
   }
 
   data().setIsoPri(6);
@@ -284,7 +284,7 @@ ISORequestPGN_c::reactOnMonitorListAdd( const __IsoAgLib::ISOName_c& refc_isoNam
 {
   if ( getIsoMonitorInstance4Comm().existLocalIsoMemberISOName(refc_isoName) )
   { // local ISOItem_c has finished adr claim
-    getIsoFilterManagerInstance4Comm().insertIsoFilter (ISOFilter_s (*this, (0x1FFFF00UL), (REQUEST_PGN_MSG_PGN << 8), &refc_isoName));
+    getIsoFilterManagerInstance4Comm().insertIsoFilter (ISOFilter_s (*this, (0x3FFFF00UL), (REQUEST_PGN_MSG_PGN << 8), &refc_isoName));
   }
 }
 

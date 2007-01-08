@@ -404,7 +404,7 @@ bool ISOItem_c::processMsg()
   if ((i32_now - i32_pkgTime) > 100) updateTime(i32_now);
   else updateTime(i32_pkgTime);
 
-  switch ((c_pkg.isoPgn() & 0x1FF00))
+  switch ((c_pkg.isoPgn() & 0x3FF00))
   {
     case ADRESS_CLAIM_PGN: // adress claim
       // check if this item is local

@@ -161,9 +161,9 @@ void Process_c::init()
 
   // receive PROCESS_DATA_PGN messages which are addressed to GLOBAL
   uint32_t ui32_filter = ((static_cast<MASK_TYPE>(PROCESS_DATA_PGN) | static_cast<MASK_TYPE>(0xFF)) << 8);
-  if (!getCanInstance4Comm().existFilter( *this, (0x1FFFF00UL), ui32_filter, Ident_c::ExtendedIdent))
+  if (!getCanInstance4Comm().existFilter( *this, (0x3FFFF00UL), ui32_filter, Ident_c::ExtendedIdent))
   { // create FilterBox
-    getCanInstance4Comm().insertFilter( *this, (0x1FFFF00UL), ui32_filter, true, Ident_c::ExtendedIdent);
+    getCanInstance4Comm().insertFilter( *this, (0x3FFFF00UL), ui32_filter, true, Ident_c::ExtendedIdent);
   }
 
   //  start with 200 msec timer period
@@ -257,9 +257,9 @@ bool Process_c::timeEvent( void ){
          iter != l_filtersToDeleteISO.end();
          iter++)
     {
-      if (getCanInstance4Comm().existFilter( *this, 0x1FF00FF, *iter, Ident_c::ExtendedIdent))
+      if (getCanInstance4Comm().existFilter( *this, 0x3FF00FF, *iter, Ident_c::ExtendedIdent))
         // corresponding FilterBox_c exist -> delete it
-        getCanInstance4Comm().deleteFilter( *this, 0x1FF00FF, *iter, Ident_c::ExtendedIdent);
+        getCanInstance4Comm().deleteFilter( *this, 0x3FF00FF, *iter, Ident_c::ExtendedIdent);
     }
     l_filtersToDeleteISO.clear();
   }
@@ -744,9 +744,9 @@ bool Process_c::deleteRemoteFilter(const ISOName_c& rc_ownerisoName)
     { // remote owner exist and has claimed address -> check if corresponding FilterBox_c exist
       uint8_t ui8_recNr = getIsoMonitorInstance4Comm().isoMemberISOName(rc_ownerisoName, true).nr();
       ui32_filter = (PROCESS_DATA_PGN << 8) | ui8_recNr;
-      if (getCanInstance4Comm().existFilter( *this, 0x1FF00FF, ui32_filter, Ident_c::ExtendedIdent))
+      if (getCanInstance4Comm().existFilter( *this, 0x3FF00FF, ui32_filter, Ident_c::ExtendedIdent))
       { // corresponding FilterBox_c exist -> delete it
-        getCanInstance4Comm().deleteFilter( *this, 0x1FF00FF, ui32_filter, Ident_c::ExtendedIdent);
+        getCanInstance4Comm().deleteFilter( *this, 0x3FF00FF, ui32_filter, Ident_c::ExtendedIdent);
         b_result = true;
       }
     } // owner exist with claimed address in isoMonitor
@@ -775,9 +775,9 @@ bool Process_c::createRemoteFilter(const ISOName_c& rc_ownerisoName)
     const uint8_t ui8_recNr = getIsoMonitorInstance4Comm().isoMemberISOName(rc_ownerisoName, true).nr();
     // only receive msg from ui8_recNr / rc_ownerisoName to all other devices
     t_filter = (PROCESS_DATA_PGN << 8) | ui8_recNr;
-    if (!getCanInstance4Comm().existFilter( *this, 0x1FF00FFUL, t_filter, Ident_c::ExtendedIdent))
+    if (!getCanInstance4Comm().existFilter( *this, 0x3FF00FFUL, t_filter, Ident_c::ExtendedIdent))
     { // no suitable FilterBox_c exist -> create it
-      getCanInstance4Comm().insertFilter( *this, 0x1FF00FFUL, t_filter, false, Ident_c::ExtendedIdent);
+      getCanInstance4Comm().insertFilter( *this, 0x3FF00FFUL, t_filter, false, Ident_c::ExtendedIdent);
       b_result = true;
     }
   }
@@ -831,9 +831,9 @@ void Process_c::reactOnMonitorListAdd( const ISOName_c& refc_isoName, const ISOI
     uint32_t ui32_nr = rpc_newItem->nr();
           // only ISO msgs with own SA in PS (destination)
     uint32_t ui32_filter = ((static_cast<MASK_TYPE>(PROCESS_DATA_PGN) | static_cast<MASK_TYPE>(ui32_nr)) << 8);
-    if (!getCanInstance4Comm().existFilter( *this, (0x1FFFF00UL), ui32_filter, Ident_c::ExtendedIdent))
+    if (!getCanInstance4Comm().existFilter( *this, (0x3FFFF00UL), ui32_filter, Ident_c::ExtendedIdent))
     { // create FilterBox
-      getCanInstance4Comm().insertFilter( *this, (0x1FFFF00UL), ui32_filter, true, Ident_c::ExtendedIdent);
+      getCanInstance4Comm().insertFilter( *this, (0x3FFFF00UL), ui32_filter, true, Ident_c::ExtendedIdent);
     }
   }
   else
@@ -854,9 +854,9 @@ void Process_c::reactOnMonitorListRemove( const ISOName_c& refc_isoName, uint8_t
     uint32_t ui32_nr = rui8_oldSa;
           // only ISO msgs with own SA in PS (destination)
     uint32_t ui32_filter = ((static_cast<MASK_TYPE>(PROCESS_DATA_PGN) | static_cast<MASK_TYPE>(ui32_nr)) << 8);
-    if (getCanInstance4Comm().existFilter( *this, (0x1FFFF00UL), ui32_filter, Ident_c::ExtendedIdent))
+    if (getCanInstance4Comm().existFilter( *this, (0x3FFFF00UL), ui32_filter, Ident_c::ExtendedIdent))
     { // create FilterBox
-      getCanInstance4Comm().deleteFilter( *this, (0x1FFFF00UL), ui32_filter, Ident_c::ExtendedIdent);
+      getCanInstance4Comm().deleteFilter( *this, (0x3FFFF00UL), ui32_filter, Ident_c::ExtendedIdent);
     }
   }
   else

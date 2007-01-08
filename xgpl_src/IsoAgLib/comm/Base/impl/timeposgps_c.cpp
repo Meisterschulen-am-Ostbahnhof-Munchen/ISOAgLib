@@ -296,15 +296,15 @@ namespace __IsoAgLib {
       setFilterCreated();
 
       // create FilterBox_c for PGN TIME_DATE_PGN, PF 254 - mask for DP, PF and PS
-      // mask: (0x1FFFF << 8) filter: (TIME_DATE_PGN << 8)
-      c_can.insertFilter(*this, 0x1FFFF00UL,
+      // mask: (0x3FFFF << 8) filter: (TIME_DATE_PGN << 8)
+      c_can.insertFilter(*this, 0x3FFFF00UL,
                         (static_cast<MASK_TYPE>(TIME_DATE_PGN) << 8), false, Ident_c::ExtendedIdent);
       // *************************************************************************************************
       // Added by Brad Cox to accomodate NMEA 2000 GPS Messages:
 
       // GNSS Position Rapid Update
-      // mask: (0x1FFFF << 8) filter: (NMEA_GPS_POSITON_RAPID_UPDATE_PGN << 8)
-      c_can.insertFilter(*this, 0x1FFFF00UL,
+      // mask: (0x3FFFF << 8) filter: (NMEA_GPS_POSITON_RAPID_UPDATE_PGN << 8)
+      c_can.insertFilter(*this, 0x3FFFF00UL,
                     (static_cast<MASK_TYPE>(NMEA_GPS_POSITON_RAPID_UPDATE_PGN) << 8), true, Ident_c::ExtendedIdent);
 
       // *************************************************************************************************
@@ -517,7 +517,7 @@ namespace __IsoAgLib {
     // in CANPkgExt_c -> resolveSendingInformation
     c_tempISOName = data().getISONameForSA();
 
-    switch (data().isoPgn() & 0x1FFFF)
+    switch (data().isoPgn() /*& 0x3FFFF*/) // don't need to &, we're interested in the whole PGN.
     {
       case TIME_DATE_PGN:
         // time - date

@@ -168,16 +168,16 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     { // check if needed receive filters for ISO are active
       setFilterCreated();
       // create FilterBox_c for PGN GROUND_BASED_SPEED_DIST_PGN, PF 254 - mask for DP, PF and PS
-      // mask: (0x1FFFF << 8) filter: (GROUND_BASED_SPEED_DIST_PGN << 8)
-      c_can.insertFilter(*this, 0x1FFFF00UL,
+      // mask: (0x3FFFF << 8) filter: (GROUND_BASED_SPEED_DIST_PGN << 8)
+      c_can.insertFilter(*this, 0x3FFFF00UL,
                         (static_cast<MASK_TYPE>(GROUND_BASED_SPEED_DIST_PGN) << 8), false, Ident_c::ExtendedIdent);
       // create FilterBox_c for PGN WHEEL_BASED_SPEED_DIST_PGN, PF 254 - mask for DP, PF and PS
-      // mask: (0x1FFFF << 8) filter: (WHEEL_BASED_SPEED_DIST_PGN << 8)
-      c_can.insertFilter(*this, 0x1FFFF00UL,
+      // mask: (0x3FFFF << 8) filter: (WHEEL_BASED_SPEED_DIST_PGN << 8)
+      c_can.insertFilter(*this, 0x3FFFF00UL,
                         (static_cast<MASK_TYPE>(WHEEL_BASED_SPEED_DIST_PGN) << 8), false, Ident_c::ExtendedIdent);
       // create FilterBox_c for PGN SELECTED_SPEED_MESSAGE, PF 254 - mask for DP, PF and PS
-      // mask: (0x1FFFF << 8) filter: (SELECTED_SPEED_MESSAGE << 8)
-      c_can.insertFilter(*this, 0x1FFFF00UL,
+      // mask: (0x3FFFF << 8) filter: (SELECTED_SPEED_MESSAGE << 8)
+      c_can.insertFilter(*this, 0x3FFFF00UL,
                         (static_cast<MASK_TYPE>(SELECTED_SPEED_MESSAGE) << 8), true, Ident_c::ExtendedIdent);
     }
   }
@@ -202,10 +202,10 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     #ifdef USE_RS232_FOR_DEBUG
     INTERNAL_DEBUG_DEVICE << "c_tempISOName: " <<  static_cast<const int>(c_tempISOName.devClass() ) << INTERNAL_DEBUG_DEVICE_ENDL;
     INTERNAL_DEBUG_DEVICE << "senderISOName: " <<  static_cast<const int>(getSelectedDataSourceISOName().devClass() ) << INTERNAL_DEBUG_DEVICE_ENDL;
-    INTERNAL_DEBUG_DEVICE << "PGN:          " << (data().isoPgn() & 0x1FFFF) << INTERNAL_DEBUG_DEVICE_ENDL;
+    INTERNAL_DEBUG_DEVICE << "PGN:          " << (data().isoPgn() /*& 0x1FFFF*/) << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
 
-    switch (data().isoPgn() & 0x1FFFF)
+    switch (data().isoPgn() /*& 0x3FFFF*/) // don't need to &0x3FFFF as this is the whole PGN...
     {
       case GROUND_BASED_SPEED_DIST_PGN:
       case WHEEL_BASED_SPEED_DIST_PGN:

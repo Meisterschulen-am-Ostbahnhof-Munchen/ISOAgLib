@@ -123,7 +123,7 @@ namespace __IsoAgLib
                                                                           const IsoAgLib::iIdentItem_c* rpc_localIdent)
   {
     if ( ((rui32_mask & 0x0FF0000) == 0x0EF0000) && ((rui32_filter & 0x0FF0000) == 0x0EF0000)   || /** Proprietary A */
-         ((rui32_mask & 0x1FF0000) == 0x1EF0000) && ((rui32_filter & 0x1FF0000) == 0x1EF0000)   || /** Proprietary A2 */
+         ((rui32_mask & 0x3FF0000) == 0x3EF0000) && ((rui32_filter & 0x3FF0000) == 0x3EF0000)   || /** Proprietary A2 */
          ((rui32_mask & 0x0FF0000) == 0x0FF0000) && (0x0FF00 <= (rui32_filter << 8) <= 0x0FFFF)    /** Proprietary B */
        )
     {

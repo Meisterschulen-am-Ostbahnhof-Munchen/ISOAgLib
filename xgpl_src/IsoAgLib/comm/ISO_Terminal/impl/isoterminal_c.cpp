@@ -158,8 +158,8 @@ ISOTerminal_c::init()
 
     // register Filter in CANIO_c
     bool b_atLeastOneFilterAdded=false;
-    b_atLeastOneFilterAdded |= (getCanInstance4Comm().insertFilter (*this, (0x1FFFF00UL), (static_cast<MASK_TYPE>(VT_TO_GLOBAL_PGN) << 8),    false, Ident_c::ExtendedIdent) != NULL);
-    b_atLeastOneFilterAdded |= (getCanInstance4Comm().insertFilter (*this, (0x1FFFF00UL), (static_cast<MASK_TYPE>(LANGUAGE_PGN) << 8),        false, Ident_c::ExtendedIdent) != NULL);
+    b_atLeastOneFilterAdded |= (getCanInstance4Comm().insertFilter (*this, (0x3FFFF00UL), (static_cast<MASK_TYPE>(VT_TO_GLOBAL_PGN) << 8),    false, Ident_c::ExtendedIdent) != NULL);
+    b_atLeastOneFilterAdded |= (getCanInstance4Comm().insertFilter (*this, (0x3FFFF00UL), (static_cast<MASK_TYPE>(LANGUAGE_PGN) << 8),        false, Ident_c::ExtendedIdent) != NULL);
     if (b_atLeastOneFilterAdded) getCanInstance4Comm().reconfigureMsgObj();
 
     /** for now allow parallel uploads
@@ -183,8 +183,8 @@ ISOTerminal_c::close()
     // deregister in ISOMonitor_c
     getIsoMonitorInstance4Comm().deregisterSaClaimHandler(this);
 
-    getCanInstance4Comm().deleteFilter(*this, (0x1FFFF00UL), (static_cast<MASK_TYPE>(VT_TO_GLOBAL_PGN) << 8),    Ident_c::ExtendedIdent);
-    getCanInstance4Comm().deleteFilter(*this, (0x1FFFF00UL), (static_cast<MASK_TYPE>(LANGUAGE_PGN) << 8),        Ident_c::ExtendedIdent);
+    getCanInstance4Comm().deleteFilter(*this, (0x3FFFF00UL), (static_cast<MASK_TYPE>(VT_TO_GLOBAL_PGN) << 8),    Ident_c::ExtendedIdent);
+    getCanInstance4Comm().deleteFilter(*this, (0x3FFFF00UL), (static_cast<MASK_TYPE>(LANGUAGE_PGN) << 8),        Ident_c::ExtendedIdent);
 
     for (uint8_t ui8_index = 0; ui8_index < vec_vtClientServerComm.size(); ui8_index++)
     {
@@ -200,6 +200,11 @@ ISOTerminal_c::close()
 /** Register the given object pool
   It will automatically be uploaded as soon as ISO_Terminal_c is connected to the VT
   and all initialization stuff has been done (Get VT Capabilities, Memory, etc.)
+  @return NULL if new vtClientServerCommunication_c instance could be created.
+          This could be the case because you have passed a versionLabel
+          - longer than 7 characters for a non-multilanguage object-pool
+          - longer than 5 characters for a multilanguage object-pool
+          or if you already registered an object-pool for this IdentItem
  */
 VtClientServerCommunication_c*
 ISOTerminal_c::initAndRegisterIsoObjectPool (IdentItem_c& refc_identItem, IsoAgLib::iIsoTerminalObjectPool_c& rrefc_pool, char* rpc_versionLabel)
@@ -223,6 +228,18 @@ ISOTerminal_c::initAndRegisterIsoObjectPool (IdentItem_c& refc_identItem, IsoAgL
   }
   // create new instance
   VtClientServerCommunication_c* pc_vtCSC = new VtClientServerCommunication_c (refc_identItem, *this, rrefc_pool, rpc_versionLabel, ui8_index);
+  if (pc_vtCSC->en_objectPoolState == VtClientServerCommunication_c::OPCannotBeUploaded) // meaning here is: OPCannotBeInitialized (due to versionLabel problems)
+  { // most likely due to wrong version label
+    /// Error already registered in the VtClientServerCommunication_c(..) constructor!
+    #if defined (DEBUG)
+    std::cerr << "Wrong version label (too long!)" << std::endl;
+    #if defined (SYSTEM_PC)
+    abort();
+    #endif
+    #endif
+    delete pc_vtCSC;
+    return NULL;
+  }
 
   // add new instance to vector
   if (ui8_index < vec_vtClientServerComm.size())
@@ -311,7 +328,7 @@ ISOTerminal_c::processMsg()
   uint8_t ui8_index;
 
   /// -->VT_TO_GLOBAL_PGN<-- ///
-  if ((data().isoPgn() & 0x1FFFF) == VT_TO_GLOBAL_PGN)
+  if ((data().isoPgn() & 0x3FFFF) == VT_TO_GLOBAL_PGN)
   { // iterate through all registered VtServerInstances and process msg if vtSourceAddress == isoSa
     for (lit_vtServerInst = l_vtServerInst.begin(); lit_vtServerInst != l_vtServerInst.end(); lit_vtServerInst++)
     {
@@ -343,7 +360,7 @@ ISOTerminal_c::processMsg()
 
 
   /// -->LANGUAGE_PGN<-- ///
-  if ((data().isoPgn() & 0x1FFFF) == LANGUAGE_PGN)
+  if ((data().isoPgn() & 0x3FFFF) == LANGUAGE_PGN)
   {
       // first process LANGUAGE_PGN for all VtServerInstances BEFORE processing for the VtClientServerCommunications
     for (lit_vtServerInst = l_vtServerInst.begin(); lit_vtServerInst != l_vtServerInst.end(); lit_vtServerInst++)

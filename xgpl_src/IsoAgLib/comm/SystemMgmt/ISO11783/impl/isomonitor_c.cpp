@@ -185,14 +185,14 @@ void ISOMonitor_c::init( void )
     getIsoRequestPgnInstance4Comm().registerPGN (*this, WORKING_SET_MEMBER_PGN);
 #endif
 
-    if (getCanInstance4Comm().insertFilter( *this, (0x1FFFF00UL), MASK_TYPE(static_cast<MASK_TYPE>((ADRESS_CLAIM_PGN)+0xFF) << 8), false, Ident_c::ExtendedIdent))
+    if (getCanInstance4Comm().insertFilter( *this, (0x3FFFF00UL), MASK_TYPE(static_cast<MASK_TYPE>((ADRESS_CLAIM_PGN)+0xFF) << 8), false, Ident_c::ExtendedIdent))
       b_configure = true;
 #ifdef USE_WORKING_SET
     FilterBox_c* pc_filterBoxWsMaster
-      = getCanInstance4Comm().insertFilter( *this, (0x1FFFF00UL), MASK_TYPE(static_cast<MASK_TYPE>(WORKING_SET_MASTER_PGN) << 8), false, Ident_c::ExtendedIdent);
+      = getCanInstance4Comm().insertFilter( *this, (0x3FFFF00UL), MASK_TYPE(static_cast<MASK_TYPE>(WORKING_SET_MASTER_PGN) << 8), false, Ident_c::ExtendedIdent);
     if (pc_filterBoxWsMaster)
       b_configure = true;
-    if (getCanInstance4Comm().insertFilter( *this, (0x1FFFF00UL), MASK_TYPE(static_cast<MASK_TYPE>(WORKING_SET_MEMBER_PGN) << 8), false, Ident_c::ExtendedIdent), pc_filterBoxWsMaster)
+    if (getCanInstance4Comm().insertFilter( *this, (0x3FFFF00UL), MASK_TYPE(static_cast<MASK_TYPE>(WORKING_SET_MEMBER_PGN) << 8), false, Ident_c::ExtendedIdent), pc_filterBoxWsMaster)
       b_configure = true;
 #endif
 
@@ -228,10 +228,10 @@ void ISOMonitor_c::close( void )
     getIsoRequestPgnInstance4Comm().unregisterPGN (*this, WORKING_SET_MEMBER_PGN);
 #endif
 
-    getCanInstance4Comm().deleteFilter( *this, 0x1FFFF00UL, MASK_TYPE(static_cast<MASK_TYPE>((ADRESS_CLAIM_PGN)+0xFF) << 8), Ident_c::ExtendedIdent);
+    getCanInstance4Comm().deleteFilter( *this, 0x3FFFF00UL, MASK_TYPE(static_cast<MASK_TYPE>((ADRESS_CLAIM_PGN)+0xFF) << 8), Ident_c::ExtendedIdent);
 #ifdef USE_WORKING_SET
-    getCanInstance4Comm().deleteFilter( *this, 0x1FFFF00UL, MASK_TYPE(static_cast<MASK_TYPE>(WORKING_SET_MASTER_PGN) << 8), Ident_c::ExtendedIdent);
-    getCanInstance4Comm().deleteFilter( *this, 0x1FFFF00UL, MASK_TYPE(static_cast<MASK_TYPE>(WORKING_SET_MEMBER_PGN) << 8), Ident_c::ExtendedIdent);
+    getCanInstance4Comm().deleteFilter( *this, 0x3FFFF00UL, MASK_TYPE(static_cast<MASK_TYPE>(WORKING_SET_MASTER_PGN) << 8), Ident_c::ExtendedIdent);
+    getCanInstance4Comm().deleteFilter( *this, 0x3FFFF00UL, MASK_TYPE(static_cast<MASK_TYPE>(WORKING_SET_MEMBER_PGN) << 8), Ident_c::ExtendedIdent);
 #endif
   }
 }
@@ -1188,7 +1188,7 @@ bool ISOMonitor_c::processMsg()
 
 
   // Handle DESTINATION PGNs
-  switch ((data().isoPgn() & 0x1FF00))
+  switch ((data().isoPgn() & 0x3FF00))
   {
     case ADRESS_CLAIM_PGN: // adress claim
       if ( existIsoMemberISOName( data().isoName()) )
@@ -1297,7 +1297,7 @@ bool ISOMonitor_c::processMsg()
   } // end switch for DESTINATION pgn
 
   // Handle NON-DESTINATION PGNs
-  switch ((data().isoPgn() /* & 0x1FFFF */ )) // isoPgn is already "& 0x1FFFF" !
+  switch ((data().isoPgn() /* & 0x3FFFF */ )) // isoPgn is already "& 0x3FFFF" !
   {
     #ifdef USE_WORKING_SET
     case WORKING_SET_MASTER_PGN: // working set master

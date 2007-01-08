@@ -277,7 +277,7 @@ class CANPkgExt_c : public CANPkg_c
     get the value of the ISO11783 ident field PGN
     @return parameter group number
   */
-  uint32_t isoPgn() const {return ( ( ( (uint32_t)ident() >> 8) & 0x1FF00 ) | isoPs() );}
+  uint32_t isoPgn() const {return ( ( ( (uint32_t)ident() >> 8) & 0x3FF00 ) | isoPs() );}
 
   /**
     get the value of the ISO11783 ident field DP
@@ -319,7 +319,7 @@ class CANPkgExt_c : public CANPkg_c
     set the value of the ISO11783 ident field DP
     @return data page
   */
-  void setIsoDp(uint8_t rui8_val) {setIdent( ((ident(3)& 0x1E) | (rui8_val & 1)), 3, Ident_c::ExtendedIdent);}
+  void setIsoDp(uint8_t rui8_val) {setIdent( ((ident(3)& 0x1C) | (rui8_val & 0x03)), 3, Ident_c::ExtendedIdent);}
 
   /**
     set the value of the ISO11783 ident field PF

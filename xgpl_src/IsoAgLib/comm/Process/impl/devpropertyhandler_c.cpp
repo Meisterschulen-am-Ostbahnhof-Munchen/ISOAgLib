@@ -205,7 +205,7 @@ DevPropertyHandler_c::DevPropertyHandler_c() : ui16_currentSendPosition(0), ui16
 bool
 DevPropertyHandler_c::processMsg()
 {
-  if ((data().isoPgn() & 0x1FF00) != PROCESS_DATA_PGN)
+  if ((data().isoPgn() & 0x3FF00) != PROCESS_DATA_PGN)
     //should never be the case
     return FALSE;
 

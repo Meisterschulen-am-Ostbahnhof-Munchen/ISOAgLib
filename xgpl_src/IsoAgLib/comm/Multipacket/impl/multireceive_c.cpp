@@ -144,18 +144,18 @@ static const uint8_t scui8_tpPriority=6;
   { \
     uint32_t ui32_filter = ((static_cast<MASK_TYPE>(mpPGN) | static_cast<MASK_TYPE>(LocalSa)) << 8); \
     ref = NULL; \
-    if (!__IsoAgLib::getCanInstance4Comm().existFilter( *this, (0x1FFFF00UL), ui32_filter, __IsoAgLib::Ident_c::ExtendedIdent)) \
+    if (!__IsoAgLib::getCanInstance4Comm().existFilter( *this, (0x3FFFF00UL), ui32_filter, __IsoAgLib::Ident_c::ExtendedIdent)) \
     { /* create FilterBox */ \
-      ref = __IsoAgLib::getCanInstance4Comm().insertFilter(*this, (0x1FFFF00UL), ui32_filter, reconf, __IsoAgLib::Ident_c::ExtendedIdent); \
+      ref = __IsoAgLib::getCanInstance4Comm().insertFilter(*this, (0x3FFFF00UL), ui32_filter, reconf, __IsoAgLib::Ident_c::ExtendedIdent); \
     } \
   }
 
 #define MACRO_insertFilterIfNotYetExists_mask1FFFF00_useRef(mpPGN,LocalSa,reconf,ref) \
   { \
     uint32_t ui32_filter = ((static_cast<MASK_TYPE>(mpPGN) | static_cast<MASK_TYPE>(LocalSa)) << 8); \
-    if (!__IsoAgLib::getCanInstance4Comm().existFilter( *this, (0x1FFFF00UL), ui32_filter, __IsoAgLib::Ident_c::ExtendedIdent)) \
+    if (!__IsoAgLib::getCanInstance4Comm().existFilter( *this, (0x3FFFF00UL), ui32_filter, __IsoAgLib::Ident_c::ExtendedIdent)) \
     { /* create FilterBox */ \
-      __IsoAgLib::getCanInstance4Comm().insertFilter( *this, (0x1FFFF00UL), ui32_filter, reconf, __IsoAgLib::Ident_c::ExtendedIdent, ref); \
+      __IsoAgLib::getCanInstance4Comm().insertFilter( *this, (0x3FFFF00UL), ui32_filter, reconf, __IsoAgLib::Ident_c::ExtendedIdent, ref); \
     } \
   }
 
@@ -164,9 +164,9 @@ static const uint8_t scui8_tpPriority=6;
 #define MACRO_deleteFilterIfExists_mask1FFFF00(mpPGN,LocalSa) \
   { \
     uint32_t ui32_filter = ((static_cast<MASK_TYPE>(mpPGN) | static_cast<MASK_TYPE>(LocalSa)) << 8); \
-    if (__IsoAgLib::getCanInstance4Comm().existFilter( *this, (0x1FFFF00UL), ui32_filter, __IsoAgLib::Ident_c::ExtendedIdent)) \
+    if (__IsoAgLib::getCanInstance4Comm().existFilter( *this, (0x3FFFF00UL), ui32_filter, __IsoAgLib::Ident_c::ExtendedIdent)) \
     { /* delete FilterBox */ \
-      __IsoAgLib::getCanInstance4Comm().deleteFilter( *this, (0x1FFFF00UL), ui32_filter, __IsoAgLib::Ident_c::ExtendedIdent); \
+      __IsoAgLib::getCanInstance4Comm().deleteFilter( *this, (0x3FFFF00UL), ui32_filter, __IsoAgLib::Ident_c::ExtendedIdent); \
     } \
   }
 #endif
@@ -692,7 +692,7 @@ MultiReceive_c::registerClient(CANCustomer_c& rrefc_client, const ISOName_c& rre
   /// Fast-Packet additions
   if (rb_isFastPacket)
   {
-    const uint32_t ui32_mask = (0x1FFFF00UL);
+    const uint32_t ui32_mask = (0x3FFFF00UL);
     const uint32_t ui32_filter = (static_cast<MASK_TYPE>(rui32_pgn << 8));
     /** @todo determine when to set the PS field of the pgn to "rui8_cachedClientAddress" */
     if (!__IsoAgLib::getCanInstance4Comm().existFilter(*this, ui32_mask, ui32_filter, __IsoAgLib::Ident_c::ExtendedIdent))
@@ -729,7 +729,7 @@ MultiReceive_c::deregisterClient (CANCustomer_c& rrefc_client)
       #ifdef NMEA_2000_FAST_PACKET
       /// Fast-Packet additions
       if (pc_iter->b_isFastPacket) {
-        const uint32_t cui32_mask = (0x1FFFF00UL);
+        const uint32_t cui32_mask = (0x3FFFF00UL);
         const uint32_t cui32_filter = (static_cast<MASK_TYPE>(pc_iter->ui32_pgn << 8));
         /** @todo determine when to set the PS field of the pgn to "rui8_cachedClientAddress" */
         if (__IsoAgLib::getCanInstance4Comm().existFilter( *this, cui32_mask, cui32_filter, __IsoAgLib::Ident_c::ExtendedIdent))
@@ -1354,10 +1354,10 @@ MultiReceive_c::reactOnMonitorListAdd( const __IsoAgLib::ISOName_c& refc_isoName
   if ( getIsoMonitorInstance4Comm().existLocalIsoMemberISOName(refc_isoName) )
   { // lcoal ISOItem_c has finished adr claim
     // put CONN/DATA in ONE CONNECTED FILTERBOX!
-    getIsoFilterManagerInstance().insertIsoFilterConnected (ISOFilter_s (*this, (0x1FFFF00UL), (TP_CONN_MANAGE_PGN << 8),   &refc_isoName),
-                                                            ISOFilter_s (*this, (0x1FFFF00UL), (TP_DATA_TRANSFER_PGN << 8), &refc_isoName));
-    getIsoFilterManagerInstance().insertIsoFilterConnected (ISOFilter_s (*this, (0x1FFFF00UL), (ETP_CONN_MANAGE_PGN << 8),  &refc_isoName),
-                                                            ISOFilter_s (*this, (0x1FFFF00UL), (ETP_DATA_TRANSFER_PGN << 8),&refc_isoName));
+    getIsoFilterManagerInstance().insertIsoFilterConnected (ISOFilter_s (*this, (0x3FFFF00UL), (TP_CONN_MANAGE_PGN << 8),   &refc_isoName),
+                                                            ISOFilter_s (*this, (0x3FFFF00UL), (TP_DATA_TRANSFER_PGN << 8), &refc_isoName));
+    getIsoFilterManagerInstance().insertIsoFilterConnected (ISOFilter_s (*this, (0x3FFFF00UL), (ETP_CONN_MANAGE_PGN << 8),  &refc_isoName),
+                                                            ISOFilter_s (*this, (0x3FFFF00UL), (ETP_DATA_TRANSFER_PGN << 8),&refc_isoName));
   }
 
   // rpc_newItem is always != NULL

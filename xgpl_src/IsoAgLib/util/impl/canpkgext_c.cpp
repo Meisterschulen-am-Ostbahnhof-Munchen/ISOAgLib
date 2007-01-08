@@ -178,26 +178,30 @@ void CANPkgExt_c::getData(uint32_t& reft_ident, uint8_t& refui8_identType,
 
 /**
   set the value of the ISO11783 ident field PGN
+  @todo optimize DP/PF setting in one operation
   @return parameter group number
 */
 void CANPkgExt_c::setIsoPgn(uint32_t rui32_val)
 {
-  uint16_t ui16_val = rui32_val & 0x1FFFF;
+  const uint8_t cui8_dp = static_cast<uint8_t>((rui32_val >> 16) & 0x03); // now extended to 2 bits (added R/EDP)
+  const uint8_t cui8_pf = static_cast<uint8_t>(rui32_val >> 8);
+  const uint8_t cui8_ge = static_cast<uint8_t>(rui32_val);
 
-  // the PGN parameter contains PF at the second lowest byte
-  // ==> PF >= 0xF0 correlates to PGN >= 0xF000
-  if ( ui16_val >= 0xF000 )
-  { // broadcasted message --> set Byte2 (index 1) from the PGN --> it is used as GroupExtension (GE)
-    setIsoPs( (ui16_val & 0xFF) );
-    //setIdent( (ui16_val & 0xFF), 1, Ident_c::ExtendedIdent);
+  /// set PF
+  setIsoPf (cui8_pf);
+
+  /// set PS (if GE)
+  // the PGN parameter contains PF at the second lowest byte ==> PF >= 0xF0 correlates to PGN >= 0xF000
+  if ( cui8_pf >= 0xF0 )
+  { // broadcasted message --> set Byte2 (index 1) from the PGN
+    setIsoPs (cui8_ge); // --> PS is used as GroupExtension (GE)
   }
-  // ELSE: do NOT set Byte2 (index 1) here, as this might be already set with call to setIsoPs() !!!!
+  /// don't set PS (if DA) - has to be done by application itself!
 
-  setIdent( (ui16_val >> 8), 2, Ident_c::ExtendedIdent);
-  ui16_val = (rui32_val >> 16) & 0x1;
-  ui16_val |= (ident(3) & 0x1E);
-  setIdent( uint8_t(ui16_val & 0xFF), 3, Ident_c::ExtendedIdent);
+  /// set DP (along with R/EDP)
+  setIsoDp (cui8_dp);
 }
+
 
 /** resolve a given address and set isoName and monitoritem if possible
     @param  addressResolveResults  address to resolve

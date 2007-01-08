@@ -196,23 +196,23 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     { // check if needed receive filters for ISO are active
       setFilterCreated();
       // create FilterBox_c for PGN FRONT_HITCH_STATE_PGN, PF 254 - mask for DP, PF and PS
-      // mask: (0x1FFFF << 8) filter: (TIME_DATE_PGN << 8)
-      c_can.insertFilter(*this, 0x1FFFF00UL,
+      // mask: (0x3FFFF << 8) filter: (TIME_DATE_PGN << 8)
+      c_can.insertFilter(*this, 0x3FFFF00UL,
                         (static_cast<MASK_TYPE>(FRONT_HITCH_STATE_PGN) << 8), false, Ident_c::ExtendedIdent);
       // create FilterBox_c for PGN REAR_HITCH_STATE_PGN, PF 254 - mask for DP, PF and PS
-      // mask: (0x1FFFF << 8) filter: (TIME_DATE_PGN << 8)
-      c_can.insertFilter(*this, 0x1FFFF00UL,
+      // mask: (0x3FFFF << 8) filter: (TIME_DATE_PGN << 8)
+      c_can.insertFilter(*this, 0x3FFFF00UL,
                         (static_cast<MASK_TYPE>(REAR_HITCH_STATE_PGN) << 8), false, Ident_c::ExtendedIdent);
      // create FilterBox_c for PGN MAINTAIN_POWER_REQUEST_PGN, PF 254 - mask for DP, PF and PS
-      // mask: (0x1FFFF << 8) filter: (TIME_DATE_PGN << 8)
-      c_can.insertFilter(*this, 0x1FFFF00UL,
+      // mask: (0x3FFFF << 8) filter: (TIME_DATE_PGN << 8)
+      c_can.insertFilter(*this, 0x3FFFF00UL,
                         (static_cast<MASK_TYPE>(MAINTAIN_POWER_REQUEST_PGN) << 8), false, Ident_c::ExtendedIdent);
 
       // *************************************************************************************************
       // Added by Martin Wodok to accomodate LANGUAGE_PGN Messages:
       // create FilterBox_c for LANGUAGE_PGN, PF 254 - mask for DP, PF and PS
-      // mask: (0x1FFFF << 8) filter: (LANGUAGE_PGN << 8)
-      c_can.insertFilter(*this, 0x1FFFF00UL,
+      // mask: (0x3FFFF << 8) filter: (LANGUAGE_PGN << 8)
+      c_can.insertFilter(*this, 0x3FFFF00UL,
                         (static_cast<MASK_TYPE>(LANGUAGE_PGN) << 8), true, Ident_c::ExtendedIdent);
 
       // *************************************************************************************************
@@ -245,7 +245,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     // in CANPkgExt_c -> resolveSendingInformation
     c_tempISOName = data().getISONameForSA();
 
-    switch (data().isoPgn() & 0x1FFFF)
+    switch (data().isoPgn() /* & 0x3FFFF */) // don't need to &0x3FFFF, as this is the whole PGN...
     {
       case FRONT_HITCH_STATE_PGN:
       case REAR_HITCH_STATE_PGN:

@@ -415,11 +415,18 @@ VtClientServerCommunication_c::VtClientServerCommunication_c (IdentItem_c& ref_w
 
   if (rpc_versionLabel)
   {
-    uint32_t len = CNAMESPACE::strlen (rpc_versionLabel);
-    if (len > 7) len=7;
+    const uint32_t cui_len = CNAMESPACE::strlen (rpc_versionLabel);
+    if ( ((c_streamer.refc_pool.getNumLang() == 0) && (cui_len > 7))
+      || ((c_streamer.refc_pool.getNumLang()  > 0) && (cui_len > 5))
+       )
+    { // too long, fail!
+      getILibErrInstance().registerError (iLibErr_c::Precondition, iLibErr_c::IsoTerminal);
+      en_objectPoolState = OPCannotBeUploaded; // has to be checked after calling this constructor!
+      return;
+    }
     unsigned int i=0;
-    for (; i<len; i++) p7c_versionLabel [i] = rpc_versionLabel [i];
-    for (; i<7; i++) p7c_versionLabel [i] = ' '; // ASCII: Space
+    for (; i<cui_len; i++) p7c_versionLabel [i] = rpc_versionLabel [i];
+    for (; i<7;       i++) p7c_versionLabel [i] = ' '; // ASCII: Space
     b_usingVersionLabel = true;
   }
   else
@@ -440,8 +447,8 @@ VtClientServerCommunication_c::VtClientServerCommunication_c (IdentItem_c& ref_w
 VtClientServerCommunication_c::~VtClientServerCommunication_c()
 {
   getMultiReceiveInstance4Comm().deregisterClient (*this);
-  getIsoFilterManagerInstance().removeIsoFilter (ISOFilter_s (*this, (0x1FFFF00UL), (VT_TO_ECU_PGN << 8), &getIdentItem().isoName()));
-  getIsoFilterManagerInstance().removeIsoFilter (ISOFilter_s (*this, (0x1FFFF00UL), (ACKNOWLEDGEMENT_PGN << 8), &getIdentItem().isoName()));
+  getIsoFilterManagerInstance().removeIsoFilter (ISOFilter_s (*this, (0x3FFFF00UL), (VT_TO_ECU_PGN << 8), &getIdentItem().isoName()));
+  getIsoFilterManagerInstance().removeIsoFilter (ISOFilter_s (*this, (0x3FFFF00UL), (ACKNOWLEDGEMENT_PGN << 8), &getIdentItem().isoName()));
 }
 
 
@@ -681,8 +688,8 @@ VtClientServerCommunication_c::timeEvent(void)
   if (!b_receiveFilterCreated)
   { /*** MultiReceive/IsoFilterManager Registration ***/
     getMultiReceiveInstance4Comm().registerClient (*this, getIdentItem().isoName(), VT_TO_ECU_PGN);
-    getIsoFilterManagerInstance().insertIsoFilter (ISOFilter_s (*this, (0x1FFFF00UL), (VT_TO_ECU_PGN << 8), &getIdentItem().isoName()));
-    getIsoFilterManagerInstance().insertIsoFilter (ISOFilter_s (*this, (0x1FFFF00UL), (ACKNOWLEDGEMENT_PGN << 8), &getIdentItem().isoName()));
+    getIsoFilterManagerInstance().insertIsoFilter (ISOFilter_s (*this, (0x3FFFF00UL), (VT_TO_ECU_PGN << 8), &getIdentItem().isoName()));
+    getIsoFilterManagerInstance().insertIsoFilter (ISOFilter_s (*this, (0x3FFFF00UL), (ACKNOWLEDGEMENT_PGN << 8), &getIdentItem().isoName()));
 
     b_receiveFilterCreated = true;
   }
@@ -921,7 +928,7 @@ VtClientServerCommunication_c::processMsg()
 
   /** @todo check for can-pkg-length==8???? */
 
-  if ((c_data.isoPgn() & 0x1FF00) == ACKNOWLEDGEMENT_PGN)
+  if ((c_data.isoPgn() & 0x3FF00) == ACKNOWLEDGEMENT_PGN)
   { // Pass on to ACK-Processing!
     return processMsgAck();
   }
@@ -936,7 +943,7 @@ VtClientServerCommunication_c::processMsg()
   if (!isVtActive()) return true;
 
   // check below not needed any more with new isofilter!?!??!??! */
-  if ((c_data.isoPgn() & 0x1FFFF) != (VT_TO_ECU_PGN | getIdentItem().getIsoItem()->nr())) return false;
+  if ((c_data.isoPgn() & 0x3FFFF) != (VT_TO_ECU_PGN | getIdentItem().getIsoItem()->nr())) return false;
 
   /// process all VT_TO_ECU addressed to us
   switch (c_data.getUint8Data (0))
