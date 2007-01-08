@@ -778,8 +778,8 @@ All archives should be extracted from the same directory.
 The sources of the ISO<i><sub>AgLib</sub></i> managed by the version management system
 <a href="http://subversion.tigris.org">Subversion</a> which is developed as a replacement for CVS.
 The ISO<i><sub>AgLib</sub></i> repository can be accessed in read-only mode with anonymous access, so that no
-registration is needed. Due to the server configuration, the direct Subversion repository access is only
-possible with the following special ports:
+registration is needed. 
+
 	- HTTP:
 		- HEAD: <a href="http://www.isoaglib.org/svn/OSB/IsoAgLib/IsoAgLib">http://www.isoaglib.org/svn/OSB/IsoAgLib/IsoAgLib</a>
 		- Releases: <a href="http://www.isoaglib.org/svn/OSB/IsoAgLib/releases">http://www.isoaglib.org/svn/OSB/IsoAgLib/releases</a>
@@ -788,29 +788,22 @@ possible with the following special ports:
 		- Releases: <a href="https://www.isoaglib.org/svn/OSB/IsoAgLib/releases">https://www.isoaglib.org/svn/OSB/IsoAgLib/releases</a>
 
 You can access the repository by:
-	- normal Browser ( use the URL <a href="http://linux90.idvnet.de:8092/websvn">http://linux90.idvnet.de:8092/websvn</a>
-		or <a href="http://linux90.idvnet.de/websvn">http://linux90.idvnet.de/websvn</a>
-		for a capable Browser access including option to compare different versions of a file )
+	- normal Browser (<a href="http://www.isoaglib.org/svn/OSB/IsoAgLib/IsoAgLib">directly use the links above</a>)
 	- with command line tools of Subversion
 	- with GUI tools like rapidsvn and TortoiseSVN ( integration in Windows File Manager for very easy
 		version management access )
 		which can be downloaded from <a href="http://subversion.tigris.org">Subversion Webiste</a> .<br>
 		<b>Important:</b><br>
-		Please make shure that you select the option to enable usage by all users on computer during install, as this seems to be
+		Please make sure that you select the option to enable usage by all users on computer during install, as this seems to be
 		no default option. Otherwise you can't use it as ordinary user on WinXP, WinNT or Win2000.<br>
 
 
 <b>What to do on access problems:</b><br>
 Please look at the <a href="https://linux90.idvnet.de/pipermail/isoaglib/">email list (HTTPS)</a> to see, if your problem is known.
 In case your problem differs from already known cases, you should subscribe to the email list and post there your problem report.<br>
-Some problems might be caused by proxies where WebDAV can't pass ( only for HTTP ) and firewalls that block the special
-ports 8092 ( HTTP ) and 8093 ( HTTPS ).<br>
 If you can only access Internet through a proxy, you have to configure subversion ( or your GUI frontend like TortoiseSVN ) to use your
 proxy. See the <a href="http://svnbook.red-bean.com/en/1.0/svn-book.html">manual</a> for more information on
 the use of subversion.<br>
-We are planning to change server configuration to enable the use of the standard HTTP and HTTPS ports, so that any problems with
-firewalls and our current special ports should be avoided ( this won't happen before February 2005 - we'll indicate this change in the email
-list ).<br>
 If your company proxy blocks the needed WebDAV commands by default, and you can't use HTTPS for some reasons, you might look at
 <a href="http://subversion.tigris.org/project_faq.html%23proxy#proxy">there</a> for a description of the needed WebDAV commands. Maybe
 you can ask your proxy administrator to allow these commands to pass thru.

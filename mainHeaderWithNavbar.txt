@@ -1,5 +1,5 @@
 <center>
-<h2>Copyright &copy; 1999 - 2006 Achim Spangler, Martin Wodok</h2>
+<h2>Copyright &copy; 1999 - 2007 Achim Spangler, Martin Wodok</h2>
 <h2>Licensed with Exceptions under the General Public License (GPL) of the Free Software Foundation</h2>
 </center>
 
@@ -40,6 +40,6 @@
 <li> \ref FurtherReading
 </ul>
 &nbsp;<br>
-Last Update: <br>07 February 2006 by<br>
+Last Update: <br>07 January 2007 by<br>
 <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a><br>
 </div>
