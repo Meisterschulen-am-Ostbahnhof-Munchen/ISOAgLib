@@ -154,7 +154,7 @@ void ManageMeasureProgLocal_c::init( ProcDataBase_c *const rpc_processData )
   sui16_deconstructMeasureProgLocalTotal += c_vec_prog.size();
   #endif
   c_vec_prog.clear();
-  pc_progCache = NULL;
+  pc_progCache = vec_prog().begin();
 }
 /** copy constructor */
 ManageMeasureProgLocal_c::ManageMeasureProgLocal_c( const ManageMeasureProgLocal_c& rrefc_src )

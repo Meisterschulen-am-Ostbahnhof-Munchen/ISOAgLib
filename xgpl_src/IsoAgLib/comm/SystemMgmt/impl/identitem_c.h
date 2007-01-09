@@ -192,7 +192,7 @@ public: // methods
     */
   void init(
     uint8_t rui8_indGroup, uint8_t rui8_devClass, uint8_t rui8_devClassInst, uint8_t rb_func, uint16_t rui16_manufCode,
-    uint32_t rui32_serNo, uint8_t rb_wantedSa, uint16_t rui16_saEepromAdr, uint8_t rb_funcInst = 0, uint8_t rb_ecuInst = 0, bool rb_selfConf = true,
+    uint32_t rui32_serNo, uint8_t rb_preferredSa, uint16_t rui16_saEepromAdr, uint8_t rb_funcInst = 0, uint8_t rb_ecuInst = 0, bool rb_selfConf = true,
     #ifdef USE_WORKING_SET
     int8_t ri8_slaveCount = -1, const ISOName_c* rpc_slaveIsoNameList = NULL,
     #endif

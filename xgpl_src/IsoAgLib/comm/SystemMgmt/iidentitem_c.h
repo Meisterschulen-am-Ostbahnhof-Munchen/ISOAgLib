@@ -124,17 +124,17 @@ public:
 
   /**
     constructor for ISO identity, which starts address claim for this identity
-    @param rb_selfConf          true -> this member as a self configurable source adress
     @param rui8_indGroup        select the industry group, 2 == agriculture
     @param rb_func              function code of the member (25 = network interconnect)
     @param rui16_manufCode      11bit manufactor code
     @param rui32_serNo          21bit serial number
-    @param rb_wantedSa          preselected source adress (SA) of the ISO item (fixed SA or last time
+    @param rb_preferredSa       preselected source adress (SA) of the ISO item (fixed SA or last time
                                 SA for self conf ISO device) (default 254 for free self-conf)
     @param rui16_saEepromAdr    EEPROM adress, where the used source adress is stored for self_conf members
                                 (default 0xFFFF for NO EEPROM store)
     @param rb_funcInst          function instance of this member (default 0)
     @param rb_ecuInst           ECU instance of this member (default 0)
+    @param rb_selfConf          true -> this member as a self configurable source adress
     @param ri8_slaveCount       amount of attached slave devices; default -1 == no master state;
                                 in case an address claim for the slave devices shall be sent by this ECU, they
                                 must get their own IdentItem_c instance ( then with default value -1 for ri8_slaveCount )
@@ -162,9 +162,9 @@ public:
       @param rb_func              function code of the member (25 = network interconnect)
       @param rui16_manufCode      11bit manufactor code
       @param rui32_serNo          21bit serial number
-      @param rui8_preferredSa      preferred source adress (SA) of the ISO item (fixed SA or last time
+      @param rui8_preferredSa     preferred source adress (SA) of the ISO item (fixed SA or last time
                                   SA for self conf ISO device) (default 254 for no special wish)
-      @param rui16_eepromAdr      EEPROM adress, where the used IsoName / SA / flags are stored
+      @param rui16_saEepromAdr    EEPROM adress, where the used IsoName / SA / flags are stored
                                   (default 0xFFFF for NO EEPROM store)
       @param rb_funcInst          function instance of this member (default 0)
       @param rb_ecuInst           ECU instance of this member (default 0)
@@ -178,13 +178,13 @@ public:
     */
   void init(
     uint8_t rui8_indGroup, uint8_t rui8_devClass, uint8_t rui8_devClassInst, uint8_t rb_func, uint16_t rui16_manufCode,
-    uint32_t rui32_serNo, uint8_t rb_wantedSa, uint16_t rui16_saEepromAdr, uint8_t rb_funcInst = 0, uint8_t rb_ecuInst = 0, bool rb_selfConf = true,
+    uint32_t rui32_serNo, uint8_t rb_preferredSa, uint16_t rui16_saEepromAdr, uint8_t rb_funcInst = 0, uint8_t rb_ecuInst = 0, bool rb_selfConf = true,
     #ifdef USE_WORKING_SET
     int8_t ri8_slaveCount = -1, const iISOName_c* rpc_slaveIsoNameList = NULL,
     #endif
     int ri_singletonVecKey = 0)
   { IdentItem_c::init (rui8_indGroup, rui8_devClass, rui8_devClassInst, rb_func, rui16_manufCode,
-                       rui32_serNo, rb_wantedSa, rui16_saEepromAdr, rb_funcInst, rb_ecuInst, rb_selfConf,
+                       rui32_serNo, rb_preferredSa, rui16_saEepromAdr, rb_funcInst, rb_ecuInst, rb_selfConf,
                        #ifdef USE_WORKING_SET
                        ri8_slaveCount, rpc_slaveIsoNameList,
                        #endif
