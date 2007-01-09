@@ -63,7 +63,7 @@
  *		<li>Perform activities until defined rl_endTime is reached, which is important
  *			for scheduling purposes of whole system - call by IsoAgLib::iScheduler_c::timeEvent( rl_endTime )
  *		<li>Process all received CAN messages until all receive buffers are empty
- *			-> simple call, but can lead to deadlock on to high CAN load
+ *			-> simple call, but can lead to deadlock on too high CAN load
  *		</ul>
  *	</ul>
  * <li>Create local identity, for which the ISO<i><sub>AgLib</sub></i> performs an address claim,
@@ -224,7 +224,7 @@ int main()
       in the ISO 11783 defined time resolution - especially the address
       claim process has some tight time restrictions, that suggest
       a trigger rate of at least 100msec ( you could call the function
-      only during address claim, mask updload and other special
+      only during address claim, mask upload and other special
       circumstances in a high repetition rate )
     - The main loop is running until iSystem_c::canEn() is returning false.
       This function can be configured by the #define CONFIG_BUFFER_SHORT_CAN_EN_LOSS_MSEC

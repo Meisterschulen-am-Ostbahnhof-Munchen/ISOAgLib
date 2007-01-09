@@ -289,7 +289,7 @@ int main()
     { // reset again to false to detect next change for debug
       if ( b_lastState ) {
         #ifdef USE_RS232_FOR_DEBUG
-        getIrs232Instance() << "Remote ECU with device type: DeviceTpye := " << int( lookupISOName.devClass() ) << " is NOT ACTIVE on BUS\n";
+        getIrs232Instance() << "Remote ECU with device type: DeviceType := " << int( lookupISOName.devClass() ) << " is NOT ACTIVE on BUS\n";
         #endif
       }
       b_lastState = false;

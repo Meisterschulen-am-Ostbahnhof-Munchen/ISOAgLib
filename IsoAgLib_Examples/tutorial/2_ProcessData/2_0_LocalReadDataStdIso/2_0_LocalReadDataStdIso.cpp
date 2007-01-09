@@ -224,7 +224,7 @@ int32_t localGetApplicationRate() { return IsoAgLib::iSystem_c::getTime(); }
 int main()
 { // init CAN channel with 250kBaud at channel 0 ( count starts with 0 )
   getIcanInstance().init( 0, 250 );
-  
+
   /// Identity Number definition -> change Device Description xml file to used one of the following method.
   // Identity Number is represented by the last 21 bits of the workingset master name. It could be set :
   // - directly in the Device Description xml file. It could be the last 21 bit of attribut workingset_mastername <deviceelement>
