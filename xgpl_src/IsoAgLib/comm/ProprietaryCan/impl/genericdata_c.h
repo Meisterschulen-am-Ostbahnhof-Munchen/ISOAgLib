@@ -187,6 +187,9 @@ namespace IsoAgLib
     */
     int32_t getDataI32( uint16_t rui16_pos) const;
 
+    /** return the length of data vector */
+    uint8_t getLen() const;
+
     /** set data stream to vector vec_data
       @param rui16_bytePos position of byte in vector
       @param rpui8_data pointer to data for read
@@ -222,14 +225,8 @@ namespace IsoAgLib
     /** vector to store the data */
     vec_data_t vec_data;
 
-    /** position of data byte in the vector */
-//    uint16_t ui16_pos;
-
     /** ident of the message */
     uint32_t ui32_ident;
-
-    /** datastream */
-//    const uint8_t* s_datastream;
   };
 };
 #endif

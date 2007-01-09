@@ -85,8 +85,8 @@
 
 #include <IsoAgLib/comm/ProprietaryCan/iproprietarymessageclient_c.h>
 #include <IsoAgLib/comm/SystemMgmt/ISO11783/iisofilter_s.h>
+#include <IsoAgLib/driver/can/impl/canio_c.h>
 #include <vector>
-//#include <IsoAgLib/driver/can/impl/canio_c.h>
 //#include "IsoAgLib/util/impl/elementbase_c.h"
 //#include <IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h>
 #include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h>
@@ -119,6 +119,9 @@ namespace __IsoAgLib
     /** virtual bool processMsg() must be overloaded by the application
       */
     virtual bool processMsg();
+
+//    virtual bool reactOnStreamStart (const IsoAgLib::ReceiveStreamIdentifier_c& rc_ident, uint32_t rui32_totalLen);
+//    virtual bool processPartStreamDataChunk (IsoAgLib::iStream_c& rpc_stream, bool rb_isFirstChunk, bool rb_isLastChunk);
 
     /** performs periodically actions,
       possible errors:
@@ -174,7 +177,7 @@ namespace __IsoAgLib
         the variable ui32_sendPeriodicMSec (in ProprietaryMessageClient_c) will be
         used to control repeated sending
      */
-    void sendData(ProprietaryMessageClient_c* client);
+    void sendData(ProprietaryMessageClient_c& client);
 
     /** struct to store proprietary message client
                         filter and mask
@@ -194,14 +197,6 @@ namespace __IsoAgLib
     typedef std::vector<ClientNode_t>::iterator ProprietaryMessageClientVectorIterator_t;
     typedef std::vector<ClientNode_t>::const_iterator ProprietaryMessageClientVectorConstIterator_t;
 
-    /** Retrieve the last update time of the specified information type*/
-//    int32_t lastTimeSinceUpdate() const { return (System_c::getTime() - i32_lastReceived);}
-
-    /** set last time of data msg [msec]*/
-    void updateTime(int32_t i32_updateTime)
-    {
-      i32_lastReceived = i32_updateTime;
-    }
 
     /**
 

@@ -90,7 +90,8 @@ namespace __IsoAgLib
       initializes the parameter for filter and mask to "novalue"
     */
   ProprietaryMessageClient_c::ProprietaryMessageClient_c(): ui32_canFilter(scui32_noFilter), ui32_canMask(scui32_noMask),
-                                                            c_isonameRemoteECU(screfc_noIsoName), pc_localIdent(rpc_nolocalIdent)
+                                                            c_isonameRemoteECU(screfc_noIsoName), pc_localIdent(rpc_nolocalIdent),
+                                                            en_sendSuccess(MultiSend_c::SendSuccess)
   {
     getProprietaryMessageHandlerInstance().registerProprietaryMessageClient(this);
   }
@@ -101,6 +102,7 @@ namespace __IsoAgLib
   ProprietaryMessageClient_c::ProprietaryMessageClient_c( uint32_t rui32_filter, uint32_t rui32_mask,
                                                           const IsoAgLib::iISOName_c& rrefc_rremoteECU,
                                                           const IsoAgLib::iIdentItem_c& rpc_localIdent)
+                                                          : en_sendSuccess(MultiSend_c::SendSuccess)
   {
     /* register the client*/
     getProprietaryMessageHandlerInstance().registerProprietaryMessageClient(this);
@@ -111,8 +113,6 @@ namespace __IsoAgLib
   /** destructor which have nothing to do
     */
   ProprietaryMessageClient_c::~ProprietaryMessageClient_c() {}
-
-  bool processMsg();
 
   /** will be used by ProprietaryMessageHandler_c for definition of CAN-Filter
       trigger an update of CAN receive filters with call of
@@ -143,7 +143,7 @@ namespace __IsoAgLib
   /** function to tell "i will send data" to the handler */
   void ProprietaryMessageClient_c::sendDataToHandler()
   {
-    getProprietaryMessageHandlerInstance().sendData(this);
+    getProprietaryMessageHandlerInstance().sendData(*this);
   }
 
   /** process received moving msg and store updated value for later reading access;
@@ -154,7 +154,7 @@ namespace __IsoAgLib
     */
   bool ProprietaryMessageClient_c::processMsg()
   {
-  return (true);
+    return (true);
   }
 
 };

@@ -89,6 +89,7 @@
 #include <IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h>
 #include <IsoAgLib/comm/SystemMgmt/iidentitem_c.h>
 #include <IsoAgLib/comm/ProprietaryCan/impl/genericdata_c.h>
+#include <IsoAgLib/comm/Multipacket/impl/multisend_c.h>
 
 namespace IsoAgLib
 { // forward declarations for friends
@@ -108,7 +109,7 @@ namespace __IsoAgLib
   static const uint32_t scui32_noMask = 0xFFFFFFFF;
 
   /** initialization parameter for IsoName */
-  static const IsoAgLib::iISOName_c& screfc_noIsoName = IsoAgLib::iISOName_c::ISONameUnspecified;
+  static const IsoAgLib::iISOName_c& screfc_noIsoName = IsoAgLib::iISOName_c::iISONameUnspecified;
 
   /** initialization parameter for local ident */
   static const IsoAgLib::iIdentItem_c* rpc_nolocalIdent = NULL;
@@ -155,6 +156,11 @@ namespace __IsoAgLib
         return(s_sendData);
       }
 
+      /* User can check if the sendData is currently being used because MultiSend_c
+        is streaming out right now. In this case DO NOT MODIFY the
+        GenericData_c SendData via getDataSend() !!! */
+      bool isSending() { return (en_sendSuccess == MultiSend_c::Running); }
+
       /** function to tell "i will send data" to the handler */
       void sendDataToHandler();
 
@@ -174,6 +180,7 @@ namespace __IsoAgLib
         // set time period in msec
         ui32_sendPriodicMsec = rui32_sendPeriodMsec;
       }
+
 
     private:
 
@@ -218,6 +225,9 @@ namespace __IsoAgLib
           else the sendData() starts periodically send of data
        */
       uint32_t ui32_sendPriodicMsec;
+
+      /** actual (E)TP-send state */
+      MultiSend_c::sendSuccess_t en_sendSuccess;
   };
 };
 

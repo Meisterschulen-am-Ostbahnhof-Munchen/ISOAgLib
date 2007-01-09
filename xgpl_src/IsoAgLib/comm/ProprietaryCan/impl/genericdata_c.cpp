@@ -218,7 +218,7 @@ namespace IsoAgLib
   */
   uint8_t GenericData_c::getDataUi8( uint16_t rui16_pos) const
   {
-    uint8_t ui8_data;
+    uint8_t ui8_data = 0;
     /** element is existing */
     if ( CheckSizeOfVectorForRead( rui16_pos, sizeof(uint8_t) ) )
     {
@@ -242,7 +242,7 @@ namespace IsoAgLib
   */
   int8_t GenericData_c::getDataI8( uint16_t rui16_pos) const
   {
-    uint8_t ui8_data;
+    uint8_t ui8_data = 0;
     /** element is existing */
     if ( CheckSizeOfVectorForRead( rui16_pos, sizeof(int8_t) ) )
     {
@@ -267,7 +267,7 @@ namespace IsoAgLib
   uint16_t GenericData_c::getDataUi16( uint16_t rui16_pos) const
   {
     /** initialize temporary variable */
-    uint16_t ui16_data;
+    uint16_t ui16_data = 0;
     /** element is existing */
     if ( CheckSizeOfVectorForRead( rui16_pos, sizeof(uint16_t) ) )
     {
@@ -292,7 +292,7 @@ namespace IsoAgLib
   int16_t GenericData_c::getDataI16( uint16_t rui16_pos) const
   {
     /** temporary variable */
-    uint16_t ui16_data;
+    uint16_t ui16_data = 0;
 
     /** element is existing */
     if (CheckSizeOfVectorForRead( rui16_pos, sizeof(int16_t) ) )
@@ -318,7 +318,7 @@ namespace IsoAgLib
   uint32_t GenericData_c::getDataUi32( uint16_t rui16_pos) const
   {
     /** temporary variable */
-    uint32_t ui32_data;
+    uint32_t ui32_data = 0;
     /** element is existing */
     if ( CheckSizeOfVectorForRead( rui16_pos, sizeof(uint32_t) ) )
     {
@@ -342,7 +342,7 @@ namespace IsoAgLib
   */
   int32_t GenericData_c::getDataI32( uint16_t rui16_pos) const
   {
-    uint32_t ui32_data;
+    uint32_t ui32_data = 0;
     /** element is existing */
     if ( CheckSizeOfVectorForRead( rui16_pos, sizeof(int32_t) ) )
     {
@@ -403,15 +403,16 @@ namespace IsoAgLib
   */
   void GenericData_c::CheckSizeOfVectorForWrite( uint16_t rui16_pos, uint8_t rui8_size )
   {
-    if ( (rui16_pos + rui8_size) > (vec_data.size() - 1 ) )
+    /** size of the vector is less than */
+    if ( (rui16_pos + rui8_size) > ( vec_data.size() ) )
     {
       /** iterate from size to rui16_pos + number of bytes */
-      for (vec_data_iterator_t vec_data_iterator = vec_data.begin() + vec_data.size() - 1;
-           vec_data_iterator >= vec_data.begin() + rui16_pos + rui8_size;
-           vec_data_iterator++ )
+      for (std::vector<uint8_t>::size_type ui8_pos = vec_data.size();
+           ui8_pos < rui16_pos + rui8_size;
+           ++ui8_pos )
       {
-        /** initialize the element of the vector*/
-        *vec_data_iterator = 0x00;
+        /** initialize new elements of the vector*/
+        vec_data.push_back(0x00);
       }
     }
   }
@@ -424,7 +425,7 @@ namespace IsoAgLib
   bool GenericData_c::CheckSizeOfVectorForRead( uint16_t rui16_pos, uint8_t rui8_size ) const
   {
     /** have a look to the size of the vector */
-    if ( (rui16_pos + rui8_size) > (vec_data.size() - 1 ) )
+    if ( (rui16_pos + rui8_size) >  vec_data.size() )
     {
       /** data at position rui16_pos not existant */
       return(false);
@@ -435,5 +436,13 @@ namespace IsoAgLib
       return(true);
     }
   }
+
+  /** return the length of the data vector */
+  uint8_t GenericData_c::getLen() const
+  {
+    return vec_data.size();
+  }
+
+
 };
 

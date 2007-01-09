@@ -80,17 +80,7 @@
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 
-
-
-/**     Liste der proprietaeren Nachrichten laut ISO Teil 1
-
-        J1939 proprietary message
-        45312 = B100 hex PCM1 proprietarily configurable message
-        45568 = B200 hex PCM2
-        45824 = B300 hex PCM3....
-        47360 = B900 hex PCM9....
-        49152 = C000 hex PCM16
-
+/**
         ISO 11783 proprietary message
         61184 = EF00 hex Prop A
 
@@ -103,7 +93,6 @@
 
 #include <list>
 #include <IsoAgLib/comm/ProprietaryCan/impl/proprietarymessagehandler_c.h>
-#include <IsoAgLib/driver/can/impl/canio_c.h>
 
 namespace __IsoAgLib
 {
@@ -295,22 +284,25 @@ namespace __IsoAgLib
       * @param refc_isoName const reference to the item which ISOItem_c state is changed
       * @param rpc_newItem pointer to the currently corresponding ISOItem_c
      */
-
     void ProprietaryMessageHandler_c::reactOnMonitorListAdd( const __IsoAgLib::ISOName_c& /*refc_isoName*/, const __IsoAgLib::ISOItem_c* rpc_newItem )
     {
       // look in the whole list
       for ( ProprietaryMessageClientVectorConstIterator_t client_iterator = vec_proprietaryclient.begin(); client_iterator != vec_proprietaryclient.end(); client_iterator++ )
       {
-/*      // whether the client has claimed address
-        if ( (*client_iterator).pc_client->pc_localIdent->isClaimedAddress() )
-        { */
-          // address has claimed -> isoItem
-          if ( (*client_iterator).pc_client->pc_localIdent->getIsoItem() == rpc_newItem )
+        // look for the ident (if Proprietary B messages no ident is there)
+        if ( (*client_iterator).pc_client->pc_localIdent)
+        {
+          // whether the client has claimed address
+          if ( (*client_iterator).pc_client->pc_localIdent->isClaimedAddress() )
           {
-            // insertFilter now
-            triggerClientDataUpdate( (*client_iterator).pc_client );
+            // address has claimed -> isoItem
+            if ( (*client_iterator).pc_client->pc_localIdent->getIsoItem()  == rpc_newItem )
+            {
+              // insertFilter now
+              triggerClientDataUpdate( (*client_iterator).pc_client );
+            }
           }
-//      }
+        }
       }
     }
 
@@ -329,14 +321,52 @@ namespace __IsoAgLib
         the variable ui32_sendPeriodicMSec (in ProprietaryMessageClient_c) will be
         used to control repeated sending
      */
-    void ProprietaryMessageHandler_c::sendData(ProprietaryMessageClient_c* client)
+    void ProprietaryMessageHandler_c::sendData(ProprietaryMessageClient_c& client)
     {
+      /** get a CAN instance */
       CANIO_c& c_can = getCanInstance4Comm();
-      c_can << dataBase();
-      // if client is found in the list
-      // only warning
-      if (client)
-      {
+      IsoAgLib::GenericData_c& refc_sendData = client.getDataSend();
+
+      /** length <= 8 Bytes */
+      if (refc_sendData.getLen() <= 8)
+      { /** single packet */
+
+        c_data.setIdent (refc_sendData.getIdent(), Ident_c::ExtendedIdent);
+
+        /** if PGN is proprietary A PGN then add destination address */
+        if ( ( ( c_data.isoPgn()) & 0x3FF00 ) == PROPRIETARY_A_PGN)
+        {
+          /** add destination address */
+          c_data.setISONameForDA( client.c_isonameRemoteECU );
+        }
+        /** @todo do we need to NULL-check the localIdent? I don't think so */
+        /** @todo the localIdent should always have an ISOName - if it's not yet unified,
+                  then the sending will not find it in the ISOMonitor_c-list so simply no
+                  packet is being sent */
+        c_data.setISONameForSA (client.pc_localIdent->isoName());
+
+        /** fix for Proprietary PGN */
+        c_data.setIsoPri(6);
+        /** set the right length of data */
+        c_data.setLen(refc_sendData.getLen());
+        /** set data  */
+        for ( uint8_t i= 0; i < refc_sendData.getLen(); i++ )
+        {
+          c_data.setUint8Data(i, refc_sendData.getDataUi8(i));
+        }
+        /** sending */
+        c_can << c_data;
+      }
+      else
+      { /** multi-packet */
+          /** variable should be evaluated */
+//        const bool cb_couldStartMultiSend =
+          getMultiSendInstance4Comm().sendIsoTarget (client.pc_localIdent->isoName(),
+                                                    client.c_isonameRemoteECU,
+                                                    refc_sendData.getDataStream(0),
+                                                    refc_sendData.getLen(),
+                                                    refc_sendData.getIdent() >> 8,
+                                                    client.en_sendSuccess);
       }
     }
 
@@ -355,9 +385,32 @@ namespace __IsoAgLib
     */
   bool ProprietaryMessageHandler_c::processMsg()
   {
+    // look in the whole list
+    for ( ProprietaryMessageClientVectorIterator_t client_iterator = vec_proprietaryclient.begin(); client_iterator != vec_proprietaryclient.end(); client_iterator++ )
+    {
+      if ( ( (c_data.isoPgn() << 8) & (*client_iterator).pc_client->ui32_canMask) ==  (*client_iterator).pc_client->ui32_canFilter )
+      { // PGN check okay
+        if ( ( (*client_iterator).pc_client->c_isonameRemoteECU.isUnspecified() || ((*client_iterator).pc_client->c_isonameRemoteECU == c_data.getISONameForSA().toConstIisoName_c())))
+        { // SA check okay
+          if ( (c_data.isoPgn() & 0xFF00) == 0xEF00)
+          { // DA check
+          /** @todo global???  DA = 0xFF (an alle) */
+            if (! (( (*client_iterator).pc_client->pc_localIdent == NULL) || ((*client_iterator).pc_client->pc_localIdent->isoName() == c_data.getISONameForDA().toConstIisoName_c())))
+            { // DA did NOT match
+              continue;
+            }
+          } // Destination Address matched
+          (*client_iterator).pc_client->s_receivedData.setIdent( c_data.ident() );
+          /**  */
+          (*client_iterator).pc_client->s_receivedData.setDataStream(0, c_data.getUint8DataConstPointer(), c_data.getLen());
+          /** process message from client */
+          (*client_iterator).pc_client->processMsg();
+          /** s_receivedData muss noch geloescht werden */
+        }
+      }
+    }
     return (true);
   }
-
 
     /** functions with actions, which must be performed periodically
       -> called periodically by Scheduler_c
@@ -391,4 +444,5 @@ namespace __IsoAgLib
       }*/
     return (true);
     }
+//(*client_iterator).pc_client->s_receivedData.setDataStream( 0, c_data.getUint8Data(0), c_data.getLen() );
 };
