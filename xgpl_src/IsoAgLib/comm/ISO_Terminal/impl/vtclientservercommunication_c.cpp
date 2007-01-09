@@ -1238,14 +1238,12 @@ VtClientServerCommunication_c::processMsg()
       // handle proprietary messages from an AGCO VT
       if (    c_data.getUint8Data (0) >= 0x60
            && c_data.getUint8Data (0) <= 0x7F
-           && pc_vtServerInstance->getIsoName().indGroup() == 0x2
-           && pc_vtServerInstance->getIsoName().manufCode() == 0x66
          )
       {
       #ifdef DEBUG
-        std::cout << "\n%% Proprietäres Kommando empfangen!! %%%\n" << std::endl;
+        std::cout << "\n%% proprietary command received!! %%%\n" << std::endl;
       #endif
-        c_streamer.refc_pool.eventProprietaryCommand();
+        MACRO_setStateDependantOnError( c_streamer.refc_pool.eventProprietaryCommand( pc_vtServerInstance->getIsoName().toConstIisoName_c() ) )
       }
       break;
 
@@ -1992,6 +1990,7 @@ VtClientServerCommunication_c::sendCommandGetAttributeValue( IsoAgLib::iVtObject
                       0xFF, 0xFF, 0xFF, 0xFF,
                       DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
 }
+
 
 bool
 VtClientServerCommunication_c::queueOrReplace (SendUpload_c& rref_sendUpload, bool b_enableReplaceOfCmd)

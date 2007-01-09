@@ -61,6 +61,7 @@
 
 #include "ivttypes.h"
 #include <supplementary_driver/driver/datastreams/streaminput_c.h>
+#include <IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h>
 //#include <IsoAgLib/comm/ISO_Terminal/impl/isoterminal_c.h>
 
 /* *************************************** */
@@ -267,7 +268,7 @@ public:
      hook function that gets called after recognizing an incoming
      VT proprietary message.
    */
-  virtual void eventProprietaryCommand() {};
+  virtual uint8_t eventProprietaryCommand(iISOName_c /*cc_isoname*/) { return 0; };
 
   /**
     this init function has to be idempotent! use "b_initAllObjects" for this reason, it's initialized to false at construction time.
