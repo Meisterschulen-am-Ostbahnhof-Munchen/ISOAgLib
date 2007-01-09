@@ -59,6 +59,9 @@
 #include "can_typedef.h"
 
 namespace __HAL {
+
+#define COMMON_MSGOBJ_IN_QUEUE  0xFF
+
 /* ******************************************************** */
 /**
  * \name CAN Specific Functions

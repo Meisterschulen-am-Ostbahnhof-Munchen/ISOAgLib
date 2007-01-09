@@ -149,8 +149,8 @@ static FILE* canlogDat[cui32_maxCanBusCnt];
 // static rte_time_t t_rteOffset = RTE_NEVER;
 
 int16_t can_startDriver()
-{  
-    
+{
+
   arrMsgObj = new ArrMsgOb_t [cui32_maxCanBusCnt];
 
   // open the driver
@@ -210,7 +210,7 @@ int16_t can_stopDriver()
 
   delete[] arrMsgObj;
   arrMsgObj = NULL;
-   
+  
   return HAL_NO_ERR;
 }
 
@@ -505,7 +505,7 @@ int16_t getCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tReceive * ptReceive )
   uint8_t ui8_useMsgObj = bMsgObj;
 #else
   uint8_t ui8_useMsgObj = bMsgObj;
-  if (bMsgObj == 0xFF) {
+  if (bMsgObj == COMMON_MSGOBJ_IN_QUEUE) {
     int32_t i32_minReceivedTime = -1;
     int32_t i32_compareTime;
     int16_t i16_tmp;

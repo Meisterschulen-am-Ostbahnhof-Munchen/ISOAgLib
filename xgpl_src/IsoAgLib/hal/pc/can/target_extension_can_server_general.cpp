@@ -293,7 +293,7 @@ static void enqueue_msg(uint32_t DLC, uint32_t ui32_id, uint32_t b_bus, uint8_t 
           DEBUG_PRINT1("mtype: 0x%08x\n", assemble_mtype(iter->i32_clientID, b_bus, i32_obj));
           msqReadBuf.i32_mtype = assemble_mtype(iter->i32_clientID, b_bus, i32_obj);
 #else
-          msqReadBuf.i32_mtype = assemble_mtype(iter->i32_clientID, b_bus, 0xFF);
+          msqReadBuf.i32_mtype = assemble_mtype(iter->i32_clientID, b_bus, COMMON_MSGOBJ_IN_QUEUE);
           msqReadBuf.s_canData.bMsgObj = i32_obj;
 #endif
 
@@ -763,10 +763,15 @@ static void* command_thread_func(void* ptr)
             if (ui16_busRefCnt[msqCommandBuf.s_init.ui8_bus])
               ui16_busRefCnt[msqCommandBuf.s_init.ui8_bus]--;
 
-              for (uint8_t j=0; j<iter_client->arrMsgObj[msqCommandBuf.s_init.ui8_bus].size(); j++) {
-                clearReadQueue(msqCommandBuf.s_init.ui8_bus, j, pc_serverData->msqDataServer.i32_rdHandle, iter_client->i32_clientID);
-                clearWriteQueue(msqCommandBuf.s_init.ui8_bus, j, pc_serverData->msqDataServer.i32_wrHandle, iter_client->i32_clientID);
-              }
+#ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
+            for (uint8_t j=0; j<iter_client->arrMsgObj[msqCommandBuf.s_init.ui8_bus].size(); j++) {
+              clearReadQueue(msqCommandBuf.s_init.ui8_bus, j, pc_serverData->msqDataServer.i32_rdHandle, iter_client->i32_clientID);
+              clearWriteQueue(msqCommandBuf.s_init.ui8_bus, j, pc_serverData->msqDataServer.i32_wrHandle, iter_client->i32_clientID);
+            }
+#else
+            clearReadQueue(msqCommandBuf.s_init.ui8_bus, COMMON_MSGOBJ_IN_QUEUE, pc_serverData->msqDataServer.i32_rdHandle, iter_client->i32_clientID);
+            clearWriteQueue(msqCommandBuf.s_init.ui8_bus, COMMON_MSGOBJ_IN_QUEUE, pc_serverData->msqDataServer.i32_wrHandle, iter_client->i32_clientID);
+#endif
 
             if (!ui16_busRefCnt[msqCommandBuf.s_init.ui8_bus] && pc_serverData->b_logMode && pc_serverData->f_canOutput[msqCommandBuf.s_init.ui8_bus]) {
               fclose(pc_serverData->f_canOutput[msqCommandBuf.s_init.ui8_bus]);
@@ -817,7 +822,6 @@ static void* command_thread_func(void* ptr)
 #endif
 
             if (msqCommandBuf.i16_command == COMMAND_CONFIG) {
-
               clearReadQueue(msqCommandBuf.s_config.ui8_bus, msqCommandBuf.s_config.ui8_obj, pc_serverData->msqDataServer.i32_rdHandle, iter_client->i32_clientID);
               clearWriteQueue(msqCommandBuf.s_config.ui8_bus, msqCommandBuf.s_config.ui8_obj, pc_serverData->msqDataServer.i32_wrHandle, iter_client->i32_clientID);
 

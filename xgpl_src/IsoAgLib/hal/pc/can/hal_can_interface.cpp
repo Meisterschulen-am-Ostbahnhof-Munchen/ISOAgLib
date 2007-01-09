@@ -725,7 +725,7 @@ int32_t can_useNextMsgobjNumber(uint8_t rui8_busNr, int32_t &refMsgobjNr)
   // buffered for detecting of the received ident
   if (!b_cinterfBufferedReceivedMsg)
   { // to-be-processed item is not yet buttered in pt_receive -> read from driver
-    i16_retVal = getCanMsg(rui8_busNr, 0xFF , pt_receive);
+    i16_retVal = getCanMsg(rui8_busNr, COMMON_MSGOBJ_IN_QUEUE , pt_receive);
   }
 
   if ((i16_retVal == HAL_NO_ERR) || (i16_retVal == HAL_OVERFLOW_ERR) || (i16_retVal == HAL_WARN_ERR))

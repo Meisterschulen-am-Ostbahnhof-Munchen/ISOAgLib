@@ -1,5 +1,5 @@
 /***************************************************************************
-						  can_server_helper.cpp - 
+						  can_server_helper.cpp -
                     helper routines for can server
                              -------------------
     begin                : Tue Oct 2 2001
@@ -95,7 +95,7 @@ int open_semaphore_set(int sema_proj_id)
     unsigned short int *array;
     struct seminfo *__buf;
   } semopts;
-  
+
   /* Generate our IPC key value */
   semkey = ftok(MSQ_KEY_PATH, sema_proj_id);
 
@@ -132,7 +132,7 @@ void dumpCanMsg (uint8_t bBusNumber, uint8_t bMsgObj, tSend* ptSend, FILE* f_han
   if (f_handle) {
     fprintf(f_handle,
             "%05d %d %d %d %d %d %-8x   %-3hx %-3hx %-3hx %-3hx %-3hx %-3hx %-3hx %-3hx\n",
-            t_sendTimestamp, bBusNumber, bMsgObj, ptSend->bXtd, ptSend->bDlc, (ptSend->dwId >> 26) & 7 /* priority */, ptSend->dwId,
+            t_sendTimestamp*10, bBusNumber, bMsgObj, ptSend->bXtd, ptSend->bDlc, (ptSend->dwId >> 26) & 7 /* priority */, ptSend->dwId,
             data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7]);
     fflush(f_handle);
   }
@@ -158,7 +158,7 @@ bool readCanDataFile(server_c* pc_serverData, can_recv_data* ps_receiveData)
       perror("fopen");
       exit(1);
     }
-    
+
     if (gettimeofday(&tv_start, &tz)) {
       perror("error in gettimeofday()");
       exit(1);
@@ -166,7 +166,7 @@ bool readCanDataFile(server_c* pc_serverData, can_recv_data* ps_receiveData)
   }
 
   for (;;) {
-  
+
     if (fgets(zeile, 99, pc_serverData->f_canInput) == NULL) {
       if ( feof(pc_serverData->f_canInput) )
         // no more data available
@@ -175,9 +175,9 @@ bool readCanDataFile(server_c* pc_serverData, can_recv_data* ps_receiveData)
 
     if ( strlen(zeile) == 0 )
       continue;
-    
+
     int obj, xtd, dlc, prio;
-    int rc = sscanf(zeile, "%u %d %d %d %d %d %x   %hx %hx %hx %hx %hx %hx %hx %hx \n", 
+    int rc = sscanf(zeile, "%u %d %d %d %d %d %x   %hx %hx %hx %hx %hx %hx %hx %hx \n",
                     &(ps_receiveData->msg.i32_time),
                     &(ps_receiveData->b_bus), &obj,
                     &xtd, &dlc, &prio,
@@ -192,7 +192,7 @@ bool readCanDataFile(server_c* pc_serverData, can_recv_data* ps_receiveData)
 
     // sscanf uses int by default (overwriting of two adjacent uint8_t with format "%d"!)
     ps_receiveData->msg.b_xtd = xtd;
-    ps_receiveData->msg.b_dlc = dlc; 
+    ps_receiveData->msg.b_dlc = dlc;
 
     // is data ready for submission?
     if (gettimeofday(&tv_current, &tz)) {
@@ -217,10 +217,17 @@ bool readCanDataFile(server_c* pc_serverData, can_recv_data* ps_receiveData)
 void releaseClient(server_c* pc_serverData, std::list<client_s>::iterator& iter_delete) {
 
   for (uint8_t i=0; i<cui32_maxCanBusCnt; i++)
+  {
+#ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
     for (uint8_t j=0; j<iter_delete->arrMsgObj[i].size(); j++) {
       clearReadQueue(i, j, pc_serverData->msqDataServer.i32_rdHandle, iter_delete->i32_clientID);
       clearWriteQueue(i, j, pc_serverData->msqDataServer.i32_wrHandle, iter_delete->i32_clientID);
     }
+#else
+    clearReadQueue(i, COMMON_MSGOBJ_IN_QUEUE, pc_serverData->msqDataServer.i32_rdHandle,iter_delete->i32_clientID);
+    clearWriteQueue(i, COMMON_MSGOBJ_IN_QUEUE, pc_serverData->msqDataServer.i32_wrHandle,iter_delete->i32_clientID);
+#endif
+  }
 
   if (iter_delete->i32_pipeHandle)
     close(iter_delete->i32_pipeHandle);
