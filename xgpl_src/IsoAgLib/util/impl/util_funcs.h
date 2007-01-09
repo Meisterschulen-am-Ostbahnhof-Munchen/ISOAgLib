@@ -300,7 +300,7 @@ template<class T> void number2LittleEndianString( const T rt_src, std::vector<ui
   const unsigned int size = sizeof(T);
   for ( unsigned int ind = 0; ind < size; ind++ )
   {
-    refc_target.at( rui16_bytePos )= pui8_src[ind] ;
+    refc_target.at( rui16_bytePos )= pui8_src[ind];
     rui16_bytePos++;
   }
 #else
