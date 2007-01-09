@@ -178,11 +178,6 @@ IsoAgLib_Examples/tutorial/4_SupplementaryDriver/4_2_Pwm/version.h -text
 IsoAgLib_Examples/tutorial/5_CanFeatures/5_0_InternalCan/TutPrjDesc5_0_InternalCan.txt -text
 IsoAgLib_Examples/tutorial/5_CanFeatures/5_0_InternalCan/config_5_0_InternalCan.h -text
 IsoAgLib_Examples/tutorial/5_CanFeatures/5_0_InternalCan/version.h -text
-IsoAgLib_Examples/tutorial/6_ProprietaryCan/config_ProprietaryCan.h -text
-IsoAgLib_Examples/tutorial/6_ProprietaryCan/proprietarycanclient_c.cpp -text
-IsoAgLib_Examples/tutorial/6_ProprietaryCan/proprietarycanclient_c.h -text
-IsoAgLib_Examples/tutorial/6_ProprietaryCan/prorietarycanclient_c.h -text
-IsoAgLib_Examples/tutorial/6_ProprietaryCan/version.h -text
 IsoAgLib_Examples/version.h -text
 build_utils/proc2iso/AUTHORS -text
 build_utils/proc2iso/COPYING -text
