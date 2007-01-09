@@ -130,10 +130,11 @@ void dumpCanMsg (uint8_t bBusNumber, uint8_t bMsgObj, tSend* ptSend, FILE* f_han
   memcpy(data, ptSend->abData, ptSend->bDlc);
 
   if (f_handle) {
-    fprintf(f_handle,
-            "%05d %d %d %d %d %d %-8x   %-3hx %-3hx %-3hx %-3hx %-3hx %-3hx %-3hx %-3hx\n",
-            t_sendTimestamp*10, bBusNumber, bMsgObj, ptSend->bXtd, ptSend->bDlc, (ptSend->dwId >> 26) & 7 /* priority */, ptSend->dwId,
-            data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7]);
+    fprintf(f_handle, "%05d %d %d %d %d %d %-8x  ",
+            t_sendTimestamp*10, bBusNumber, bMsgObj, ptSend->bXtd, ptSend->bDlc, (ptSend->dwId >> 26) & 7 /* priority */, ptSend->dwId);
+    for (uint8_t ui8_i = 0; (ui8_i < ptSend->bDlc) && (ui8_i < 8); ui8_i++)
+      fprintf(f_handle, " %-3hx", data[ui8_i]);
+    fprintf(f_handle, "\n");
     fflush(f_handle);
   }
 };
