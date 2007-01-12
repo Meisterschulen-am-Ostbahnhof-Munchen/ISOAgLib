@@ -284,7 +284,7 @@ ISORequestPGN_c::reactOnMonitorListAdd( const __IsoAgLib::ISOName_c& refc_isoNam
 {
   if ( getIsoMonitorInstance4Comm().existLocalIsoMemberISOName(refc_isoName) )
   { // local ISOItem_c has finished adr claim
-    getIsoFilterManagerInstance4Comm().insertIsoFilter (ISOFilter_s (*this, (0x3FFFF00UL), (REQUEST_PGN_MSG_PGN << 8), &refc_isoName));
+    getIsoFilterManagerInstance4Comm().insertIsoFilter (ISOFilter_s (*this, (0x3FFFF00UL), (REQUEST_PGN_MSG_PGN << 8), &refc_isoName, NULL, 3));
   }
 }
 

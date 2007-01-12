@@ -431,7 +431,7 @@ iObjectPool_simpleVTIsoPool_c::eventKeyCode (uint8_t keyActivationCode, uint16_t
 
 // has to be implemented - remember that if the VT drops out and comes again, the values have to be up2date!!!
 void
-iObjectPool_simpleVTIsoPool_c::eventObjectPoolUploadedSuccessfully (bool rb_wasLanguageUpdate, int8_t ri8_languageIndex, uint16_t rui16_languageCode)
+iObjectPool_simpleVTIsoPool_c::eventObjectPoolUploadedSuccessfully (bool rb_wasLanguageUpdate, int8_t /*ri8_languageIndex*/, uint16_t /*rui16_languageCode*/)
 {
   if (rb_wasLanguageUpdate)
   {
@@ -521,7 +521,7 @@ iObjectPool_simpleVTIsoPool2_c::eventNumericValue (uint16_t /*objId*/, uint8_t /
 
 // incoming key-events
 void
-iObjectPool_simpleVTIsoPool2_c::eventKeyCode (uint8_t keyActivationCode, uint16_t objId, uint16_t objIdMask, uint8_t keyCode, bool /*wasButton*/)
+iObjectPool_simpleVTIsoPool2_c::eventKeyCode (uint8_t keyActivationCode, uint16_t /*objId*/, uint16_t /*objIdMask*/, uint8_t keyCode, bool /*wasButton*/)
 {
 /* just for your information! - defines are to be found in the "ivttypes.h" include!
   #define BUTTON_HAS_BEEN_UNLATCHED 0
@@ -577,7 +577,7 @@ iObjectPool_simpleVTIsoPool2_c::eventKeyCode (uint8_t keyActivationCode, uint16_
 
 // has to be implemented - remember that if the VT drops out and comes again, the values have to be up2date!!!
 void
-iObjectPool_simpleVTIsoPool2_c::eventObjectPoolUploadedSuccessfully (bool rb_wasLanguageUpdate, int8_t ri8_languageIndex, uint16_t rui16_languageCode)
+iObjectPool_simpleVTIsoPool2_c::eventObjectPoolUploadedSuccessfully (bool rb_wasLanguageUpdate, int8_t /*ri8_languageIndex*/, uint16_t /*rui16_languageCode*/)
 {
   if (rb_wasLanguageUpdate)
   {

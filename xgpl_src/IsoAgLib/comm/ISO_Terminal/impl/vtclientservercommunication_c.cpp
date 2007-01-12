@@ -447,8 +447,8 @@ VtClientServerCommunication_c::VtClientServerCommunication_c (IdentItem_c& ref_w
 VtClientServerCommunication_c::~VtClientServerCommunication_c()
 {
   getMultiReceiveInstance4Comm().deregisterClient (*this);
-  getIsoFilterManagerInstance().removeIsoFilter (ISOFilter_s (*this, (0x3FFFF00UL), (VT_TO_ECU_PGN << 8), &getIdentItem().isoName()));
-  getIsoFilterManagerInstance().removeIsoFilter (ISOFilter_s (*this, (0x3FFFF00UL), (ACKNOWLEDGEMENT_PGN << 8), &getIdentItem().isoName()));
+  getIsoFilterManagerInstance().removeIsoFilter (ISOFilter_s (*this, (0x3FFFF00UL), (VT_TO_ECU_PGN << 8),       &getIdentItem().isoName(), NULL, 8));
+  getIsoFilterManagerInstance().removeIsoFilter (ISOFilter_s (*this, (0x3FFFF00UL), (ACKNOWLEDGEMENT_PGN << 8), &getIdentItem().isoName(), NULL, 8));
 }
 
 
@@ -688,8 +688,8 @@ VtClientServerCommunication_c::timeEvent(void)
   if (!b_receiveFilterCreated)
   { /*** MultiReceive/IsoFilterManager Registration ***/
     getMultiReceiveInstance4Comm().registerClient (*this, getIdentItem().isoName(), VT_TO_ECU_PGN);
-    getIsoFilterManagerInstance().insertIsoFilter (ISOFilter_s (*this, (0x3FFFF00UL), (VT_TO_ECU_PGN << 8), &getIdentItem().isoName()));
-    getIsoFilterManagerInstance().insertIsoFilter (ISOFilter_s (*this, (0x3FFFF00UL), (ACKNOWLEDGEMENT_PGN << 8), &getIdentItem().isoName()));
+    getIsoFilterManagerInstance().insertIsoFilter (ISOFilter_s (*this, (0x3FFFF00UL), (VT_TO_ECU_PGN << 8),       &getIdentItem().isoName(), NULL, 8));
+    getIsoFilterManagerInstance().insertIsoFilter (ISOFilter_s (*this, (0x3FFFF00UL), (ACKNOWLEDGEMENT_PGN << 8), &getIdentItem().isoName(), NULL, 8));
 
     b_receiveFilterCreated = true;
   }

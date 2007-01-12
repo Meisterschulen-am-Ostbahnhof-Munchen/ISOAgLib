@@ -97,9 +97,6 @@ namespace __IsoAgLib {
 class ISOName_c;
 class ISOItem_c;
 
-/** values which indicates the state of an address */
-typedef enum { Valid = 0, OnlyNetworkMgmt = 1, Invalid = 3 } MessageState_t;
-
 
 /** structure which will be filled when an address is resolved */
 typedef struct

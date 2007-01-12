@@ -119,6 +119,14 @@ typedef enum
 
 class FilterBox_c {
 public:
+  struct CustomerLen_s
+  {
+    CustomerLen_s (CANCustomer_c* rpc_customer, int8_t ri8_dlcForce) : pc_customer(rpc_customer), i8_dlcForce (ri8_dlcForce) {}
+
+    CANCustomer_c* pc_customer;
+    int8_t i8_dlcForce; // 0..8: DLC must exactly be 0..8.   < 0 (-1): DLC doesn't care! (default!)
+  };
+
   /** default constructor without parameter values for creating an instance
     with default start state (init variables)
 
@@ -174,7 +182,7 @@ public:
   /** store new can customer with same filter and mask
       @param pc_cancustomer  new can customer
     */
-  void insertCustomer(CANCustomer_c* pc_cancustomer) {vec_customer.push_back(pc_cancustomer);}
+  void insertCustomer(CANCustomer_c* pc_cancustomer, int8_t ri8_len) {vec_customer.push_back(CustomerLen_s(pc_cancustomer, ri8_len));}
 
   /** configures the CAN hardware of given FilterBox (uses BIOS function with EXTENDED_HAL)
 
@@ -194,13 +202,17 @@ public:
   /* *************************************** */
 
   /** set the mask (t_mask) and filter (t_filter) of this FilterBox
-    @param rpc_customer pointer to the CANCustomer_c instance, which creates this FilterBox_c instance
     @param rt_mask mask for this Filer_Box (MASK_TYPE defined in isoaglib_config.h)
     @param rt_filter filter for this Filer_Box (MASK_TYPE defined in isoaglib_config.h)
+    @param rpc_customer pointer to the CANCustomer_c instance, which creates this FilterBox_c instance
+    @param ri8_dlcForce force the DLC to be exactly this long (0 to 8 bytes). use -1 for NO FORCING and accepting any length can-pkg
     @param ren_identType select if FilterBox_c is used for standard 11bit or extended 29bit ident
   */
-  void set(const Ident_c& rrefc_mask, const Ident_c& rrefc_filter,
-           CANCustomer_c *pc_customer = NULL, FilterBox_c* rpc_filterBox = NULL);
+  void set (const Ident_c& rrefc_mask,
+            const Ident_c& rrefc_filter,
+            CANCustomer_c *rpc_customer = NULL,
+            int8_t ri8_dlcForce = -1,
+            FilterBox_c* rpc_filterBox = NULL);
 
   /** check if ID from a CAN msg matches this FilterBox
     @param rt_ident CAN ident of received msg
@@ -279,7 +291,7 @@ private:
   Ident_c c_additionalMask;
 
   /**vector of pointer to pc_customer CANCustomer_c which works with the received CAN data */
-  std::vector<CANCustomer_c*> vec_customer;
+  std::vector<CustomerLen_s> vec_customer;
 
   /** number of message object */
   uint8_t ui8_filterBoxNr; //use like ui8_msgObjNr from msgobj_c class

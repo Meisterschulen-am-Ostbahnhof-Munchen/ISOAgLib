@@ -158,8 +158,8 @@ ISOTerminal_c::init()
 
     // register Filter in CANIO_c
     bool b_atLeastOneFilterAdded=false;
-    b_atLeastOneFilterAdded |= (getCanInstance4Comm().insertFilter (*this, (0x3FFFF00UL), (static_cast<MASK_TYPE>(VT_TO_GLOBAL_PGN) << 8),    false, Ident_c::ExtendedIdent) != NULL);
-    b_atLeastOneFilterAdded |= (getCanInstance4Comm().insertFilter (*this, (0x3FFFF00UL), (static_cast<MASK_TYPE>(LANGUAGE_PGN) << 8),        false, Ident_c::ExtendedIdent) != NULL);
+    b_atLeastOneFilterAdded |= (getCanInstance4Comm().insertFilter (*this, (0x3FFFF00UL), (static_cast<MASK_TYPE>(VT_TO_GLOBAL_PGN) << 8),    false, Ident_c::ExtendedIdent, 8) != NULL);
+    b_atLeastOneFilterAdded |= (getCanInstance4Comm().insertFilter (*this, (0x3FFFF00UL), (static_cast<MASK_TYPE>(LANGUAGE_PGN) << 8),        false, Ident_c::ExtendedIdent, 8) != NULL);
     if (b_atLeastOneFilterAdded) getCanInstance4Comm().reconfigureMsgObj();
 
     /** for now allow parallel uploads

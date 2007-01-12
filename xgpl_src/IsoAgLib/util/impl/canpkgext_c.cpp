@@ -247,13 +247,10 @@ MessageState_t CANPkgExt_c::resolveReceivingInformation()
   INTERNAL_DEBUG_DEVICE << "*-*-*-* PROCESS MESSAGE *-*-*-*" << INTERNAL_DEBUG_DEVICE_ENDL;
   #endif
 
-//  *addrResolveResSA.pui8_address = ident() & 0xFF;
-//  *addrResolveResDA.pui8_address = (ident() >> 8) & 0xFF;
-
   // resolve source address
   // in context of receiving SA is remote
   MessageState_t messageStateSA = address2IdentRemoteSa();
-  MessageState_t messageStateDA = Valid;
+  MessageState_t messageStateDA;
 
   // for receive, the local item is the addressee --> DA is interpreted
   if ( isoPf() >= 0xF0 )
@@ -265,6 +262,8 @@ MessageState_t CANPkgExt_c::resolveReceivingInformation()
     #endif
     addrResolveResDA.p_isoName->setUnspecified();
     addrResolveResDA.pc_monitorItem = NULL;
+
+    messageStateDA = DaValid;
   }
   else
   { // for receive, the remote item is the sender --> SA is interpreted
@@ -303,7 +302,7 @@ MessageState_t CANPkgExt_c::address2IdentLocalDa()
         INTERNAL_DEBUG_DEVICE << "We reached a VALID state. Either the target is known." << INTERNAL_DEBUG_DEVICE_ENDL;
         INTERNAL_DEBUG_DEVICE << "address =  " << int( *addrResolveResDA.pui8_address ) << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
-      return Valid;
+      return DaValid;
     }
     else
     { // this is ONLY interesting for BUS-SNOOPING classes like Process_c or handling
@@ -312,7 +311,7 @@ MessageState_t CANPkgExt_c::address2IdentLocalDa()
         INTERNAL_DEBUG_DEVICE << "We reached an ONLYNETWORKMGTM state. Destination is a remote node." << INTERNAL_DEBUG_DEVICE_ENDL;
         INTERNAL_DEBUG_DEVICE << "address =  " << int( *addrResolveResDA.pui8_address ) << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
-      return OnlyNetworkMgmt;
+      return static_cast<MessageState_t>(DaInvalidRemote | AdrOnlyNetworkMgmt);
     }
   }
   else if ( *addrResolveResDA.pui8_address == 0xFF )
@@ -320,21 +319,22 @@ MessageState_t CANPkgExt_c::address2IdentLocalDa()
     #ifdef DEBUG_CAN
       INTERNAL_DEBUG_DEVICE << "We reached a VALID state. Target address is 0xFF (broadcast)." << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
-    return Valid;
+    return DaValid;
   }
   else
   { // the receiver is not known OR is 0xFE (which is not a valid receiver address) -> don't process this message
-    #ifdef DEBUG_CAN
-      if ( *addrResolveResDA.pui8_address == 0xFE ) {
-        INTERNAL_DEBUG_DEVICE << "We reached an INVALID state. Receiver is 0xFE which is NOT possible." << INTERNAL_DEBUG_DEVICE_ENDL;
-      } else {
-        INTERNAL_DEBUG_DEVICE << "We reached an INVALID state. Receiver not known." << INTERNAL_DEBUG_DEVICE_ENDL;
-      INTERNAL_DEBUG_DEVICE << "address =  " << int( *addrResolveResDA.pui8_address ) << INTERNAL_DEBUG_DEVICE_ENDL;
-      }
-    #endif
-
     getILibErrInstance().registerError( iLibErr_c::Precondition, iLibErr_c::Can );
-    return Invalid;
+    if ( *addrResolveResDA.pui8_address == 0xFE ) {
+      #ifdef DEBUG_CAN
+      INTERNAL_DEBUG_DEVICE << "We reached an INVALID state. Receiver is 0xFE which is NOT possible." << INTERNAL_DEBUG_DEVICE_ENDL;
+      #endif
+      return static_cast<MessageState_t>(DaInvalidAnonymous | AdrInvalid);
+    } else {
+      #ifdef DEBUG_CAN
+      INTERNAL_DEBUG_DEVICE << "We reached an INVALID state. Receiver is " << int( *addrResolveResDA.pui8_address ) << " which is NOT known." << INTERNAL_DEBUG_DEVICE_ENDL;
+      #endif
+      return static_cast<MessageState_t>(DaInvalidUnknown | AdrInvalid);
+    }
   }
 }
 
@@ -361,14 +361,14 @@ MessageState_t CANPkgExt_c::address2IdentRemoteSa()
       #ifdef DEBUG_CAN
         INTERNAL_DEBUG_DEVICE << "Someone sends with one of our SA's." << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
-      return OnlyNetworkMgmt;
+      return static_cast<MessageState_t>(SaInvalidLocal | AdrOnlyNetworkMgmt);
     }
     else
     { // everything is fine
       #ifdef DEBUG_CAN
         INTERNAL_DEBUG_DEVICE << "We reached a valid state." << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
-      return Valid;
+      return SaValid;
     }
   }
   else if ( *addrResolveResSA.pui8_address == 0xFF )
@@ -378,21 +378,21 @@ MessageState_t CANPkgExt_c::address2IdentRemoteSa()
     #endif
 
     getILibErrInstance().registerError( iLibErr_c::Precondition, iLibErr_c::Can );
-    return Invalid; // mark as invalid
+    return static_cast<MessageState_t>(SaInvalidGlobal | AdrInvalid); // mark as invalid
   }
   else if ( *addrResolveResSA.pui8_address == 0xFE )
   { // each RequestForXY message (not only ReqForAdrClaim) is allowed to be sent with SA == 0xFE
     #ifdef DEBUG_CAN
       INTERNAL_DEBUG_DEVICE << "We reached a VALID state with address = OxFE." << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
-    return Valid;
+    return SaValid;
   }
   else
   { // normal address, which is not yet known to monitor lists (possible during first SA claim)
     #ifdef DEBUG_CAN
       INTERNAL_DEBUG_DEVICE << "We reached an ONLYNETWORKMGTM state." << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
-    return OnlyNetworkMgmt;
+    return static_cast<MessageState_t>(SaInvalidUnknown | AdrOnlyNetworkMgmt);
   }
 }
 

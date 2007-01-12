@@ -70,11 +70,11 @@ class iISOName_c;
 
 struct iISOFilter_s : private __IsoAgLib::ISOFilter_s
 {
-  iISOFilter_s (iCANCustomer_c& rrefc_canCustomer, uint32_t rui32_mask, uint32_t rui32_filter, const iISOName_c* rpc_isoNameDa = NULL, const iISOName_c* rpc_isoNameSa = NULL, iIdent_c::identType_t rt_identType=iIdent_c::ExtendedIdent)
+  iISOFilter_s (iCANCustomer_c& rrefc_canCustomer, uint32_t rui32_mask, uint32_t rui32_filter, const iISOName_c* rpc_isoNameDa = NULL, const iISOName_c* rpc_isoNameSa = NULL, int8_t ri8_dlcForce=-1, iIdent_c::identType_t rt_identType=iIdent_c::ExtendedIdent)
     : ISOFilter_s (static_cast<__IsoAgLib::CANCustomer_c&>(rrefc_canCustomer),
       rui32_mask, rui32_filter,
       rpc_isoNameDa, rpc_isoNameSa,
-      rt_identType) {}
+      ri8_dlcForce, rt_identType) {}
 
   uint32_t getMask()   const { return __IsoAgLib::ISOFilter_s::getMask(); }
   uint32_t getFilter() const { return __IsoAgLib::ISOFilter_s::getFilter(); }

@@ -140,22 +140,22 @@ static const uint8_t scui8_tpPriority=6;
 #if 1
 // to be OBSOLETEd !!! - can use ISOFilterBox later on...
 /** the mask is set to 1FFFF00, as we're accepting for EVERY _local_ destination address first. afterwards list_clients is getting search for matching destination address */
-#define MACRO_insertFilterIfNotYetExists_mask1FFFF00_setRef(mpPGN,LocalSa,reconf,ref) \
+#define MACRO_insertFilterIfNotYetExists_mask1FFFF00_setRef(mpPGN,LocalSa,reconf,ref,len) \
   { \
     uint32_t ui32_filter = ((static_cast<MASK_TYPE>(mpPGN) | static_cast<MASK_TYPE>(LocalSa)) << 8); \
     ref = NULL; \
     if (!__IsoAgLib::getCanInstance4Comm().existFilter( *this, (0x3FFFF00UL), ui32_filter, __IsoAgLib::Ident_c::ExtendedIdent)) \
     { /* create FilterBox */ \
-      ref = __IsoAgLib::getCanInstance4Comm().insertFilter(*this, (0x3FFFF00UL), ui32_filter, reconf, __IsoAgLib::Ident_c::ExtendedIdent); \
+      ref = __IsoAgLib::getCanInstance4Comm().insertFilter(*this, (0x3FFFF00UL), ui32_filter, reconf, __IsoAgLib::Ident_c::ExtendedIdent, len); \
     } \
   }
 
-#define MACRO_insertFilterIfNotYetExists_mask1FFFF00_useRef(mpPGN,LocalSa,reconf,ref) \
+#define MACRO_insertFilterIfNotYetExists_mask1FFFF00_useRef(mpPGN,LocalSa,reconf,ref,len) \
   { \
     uint32_t ui32_filter = ((static_cast<MASK_TYPE>(mpPGN) | static_cast<MASK_TYPE>(LocalSa)) << 8); \
     if (!__IsoAgLib::getCanInstance4Comm().existFilter( *this, (0x3FFFF00UL), ui32_filter, __IsoAgLib::Ident_c::ExtendedIdent)) \
     { /* create FilterBox */ \
-      __IsoAgLib::getCanInstance4Comm().insertFilter( *this, (0x3FFFF00UL), ui32_filter, reconf, __IsoAgLib::Ident_c::ExtendedIdent, ref); \
+      __IsoAgLib::getCanInstance4Comm().insertFilter( *this, (0x3FFFF00UL), ui32_filter, reconf, __IsoAgLib::Ident_c::ExtendedIdent, len, ref); \
     } \
   }
 
@@ -1178,10 +1178,10 @@ MultiReceive_c::init()
 
     // insert receive filter for broadcasted TP
     __IsoAgLib::FilterBox_c* refFB;
-    MACRO_insertFilterIfNotYetExists_mask1FFFF00_setRef(TP_CONN_MANAGE_PGN,0xFF,false,refFB)
-    MACRO_insertFilterIfNotYetExists_mask1FFFF00_useRef(TP_DATA_TRANSFER_PGN,0xFF,false,refFB)
-    MACRO_insertFilterIfNotYetExists_mask1FFFF00_setRef(ETP_CONN_MANAGE_PGN,0xFF,false,refFB)
-    MACRO_insertFilterIfNotYetExists_mask1FFFF00_useRef(ETP_DATA_TRANSFER_PGN,0xFF,true,refFB)
+    MACRO_insertFilterIfNotYetExists_mask1FFFF00_setRef(TP_CONN_MANAGE_PGN,0xFF,false,refFB,8)
+    MACRO_insertFilterIfNotYetExists_mask1FFFF00_useRef(TP_DATA_TRANSFER_PGN,0xFF,false,refFB,8)
+    MACRO_insertFilterIfNotYetExists_mask1FFFF00_setRef(ETP_CONN_MANAGE_PGN,0xFF,false,refFB,8)
+    MACRO_insertFilterIfNotYetExists_mask1FFFF00_useRef(ETP_DATA_TRANSFER_PGN,0xFF,true,refFB,8)
 
   }
 
@@ -1354,10 +1354,10 @@ MultiReceive_c::reactOnMonitorListAdd( const __IsoAgLib::ISOName_c& refc_isoName
   if ( getIsoMonitorInstance4Comm().existLocalIsoMemberISOName(refc_isoName) )
   { // lcoal ISOItem_c has finished adr claim
     // put CONN/DATA in ONE CONNECTED FILTERBOX!
-    getIsoFilterManagerInstance().insertIsoFilterConnected (ISOFilter_s (*this, (0x3FFFF00UL), (TP_CONN_MANAGE_PGN << 8),   &refc_isoName),
-                                                            ISOFilter_s (*this, (0x3FFFF00UL), (TP_DATA_TRANSFER_PGN << 8), &refc_isoName));
-    getIsoFilterManagerInstance().insertIsoFilterConnected (ISOFilter_s (*this, (0x3FFFF00UL), (ETP_CONN_MANAGE_PGN << 8),  &refc_isoName),
-                                                            ISOFilter_s (*this, (0x3FFFF00UL), (ETP_DATA_TRANSFER_PGN << 8),&refc_isoName));
+    getIsoFilterManagerInstance().insertIsoFilterConnected (ISOFilter_s (*this, (0x3FFFF00UL), (TP_CONN_MANAGE_PGN << 8),   &refc_isoName, NULL, 8),
+                                                            ISOFilter_s (*this, (0x3FFFF00UL), (TP_DATA_TRANSFER_PGN << 8), &refc_isoName, NULL, 8));
+    getIsoFilterManagerInstance().insertIsoFilterConnected (ISOFilter_s (*this, (0x3FFFF00UL), (ETP_CONN_MANAGE_PGN << 8),  &refc_isoName, NULL, 8),
+                                                            ISOFilter_s (*this, (0x3FFFF00UL), (ETP_DATA_TRANSFER_PGN << 8),&refc_isoName, NULL, 8));
   }
 
   // rpc_newItem is always != NULL

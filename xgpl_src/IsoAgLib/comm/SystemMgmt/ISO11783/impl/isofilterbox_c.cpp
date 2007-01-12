@@ -134,7 +134,7 @@ ISOFilterBox_c::removeIsoFilter (const ISOFilter_s& rrefcs_isoFilter)
        it_managedIsoFilter != slist_managedISOFilter.end();
        it_managedIsoFilter++)
   {
-    if (it_managedIsoFilter->s_isoFilter == rrefcs_isoFilter) // yes, compare all - including canCustomer
+    if (it_managedIsoFilter->s_isoFilter == rrefcs_isoFilter) // yes, compare all - including canCustomer (but NOT dlcForce!!!)
     {
       if (it_managedIsoFilter->pc_filterBox)
       { // filter was created in CANIO_c - remove filter
@@ -176,7 +176,7 @@ ISOFilterBox_c::hasIsoFilterWithoutCustomer (const ISOFilter_s& rrefcs_isoFilter
        it_managedIsoFilter != slist_managedISOFilter.end();
        it_managedIsoFilter++)
   {
-    if (it_managedIsoFilter->s_isoFilter.equalMaskAndFilter (rrefcs_isoFilter)) // overloaded operator==.
+    if (it_managedIsoFilter->s_isoFilter.equalMaskAndFilter (rrefcs_isoFilter))
       return true;
   }
   return false;
@@ -389,7 +389,8 @@ ISOFilterBox_c::syncFiltersToCan()
         FilterBox_c* const cpc_insertedFilter =
           getCanInstance4Comm().insertFilter (*it_managedIsoFilter->s_isoFilter.pc_canCustomer,
                                               c_mask.ident(), c_filter.ident(),
-                                              false, c_filter.identType(), pc_firstFilter);
+                                              false, c_filter.identType(),
+                                              it_managedIsoFilter->s_isoFilter.i8_dlcForce, pc_firstFilter);
         ui8_filtersSetUp++;
         b_reconfigFilter = true;
         it_managedIsoFilter->pc_filterBox = cpc_insertedFilter;

@@ -982,8 +982,8 @@ void MultiSend_c::reactOnMonitorListAdd( const ISOName_c& refc_isoName, const IS
     #ifdef DEBUG
     INTERNAL_DEBUG_DEVICE << "MultiSend_c added receive filter for LocalIsoMember as it's now active (=claimed)." << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
-    getIsoFilterManagerInstance().insertIsoFilter (ISOFilter_s (*this, (0x3FFFF00UL),  (TP_CONN_MANAGE_PGN << 8), &refc_isoName));
-    getIsoFilterManagerInstance().insertIsoFilter (ISOFilter_s (*this, (0x3FFFF00UL), (ETP_CONN_MANAGE_PGN << 8), &refc_isoName));
+    getIsoFilterManagerInstance().insertIsoFilter (ISOFilter_s (*this, (0x3FFFF00UL),  (TP_CONN_MANAGE_PGN << 8), &refc_isoName, NULL, 8));
+    getIsoFilterManagerInstance().insertIsoFilter (ISOFilter_s (*this, (0x3FFFF00UL), (ETP_CONN_MANAGE_PGN << 8), &refc_isoName, NULL, 8));
   }
 }
 

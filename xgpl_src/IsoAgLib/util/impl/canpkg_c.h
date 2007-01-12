@@ -91,6 +91,34 @@
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
+/** values which indicate the state of the received can-message */
+typedef enum { MessageValid        = 0,
+
+               AdrResolveMask      = (0x3<<0), // AdrResolve wraps SA and DA into one!
+               AdrValid            = (0x0<<0),
+               AdrOnlyNetworkMgmt  = (0x1<<0), // e.g. someone sending to a remote address (can be interesting to snoop!)
+               AdrInvalid          = (0x3<<0), // e.g. someone sending with SA 0xFF. definitely malformed can-packet!
+
+               DlcValidationMask   = (0x3<<2),
+               DlcValid            = (0x0<<2),
+               DlcInvalidTooLong   = (0x1<<2),
+               DlcInvalidTooShort  = (0x2<<2),
+
+               // from here on it's just additional information -
+               // decisions can be purely taken on the flags above!
+               SaValidationMask    = (0x3<<4),
+               SaValid             = (0x0<<4),
+               SaInvalidUnknown    = (0x1<<4),
+               SaInvalidGlobal     = (0x2<<4),
+               SaInvalidLocal      = (0x3<<4),
+
+               DaValidationMask    = (0x3<<6),
+               DaValid             = (0x0<<6),
+               DaInvalidUnknown    = (0x1<<6),
+               DaInvalidAnonymous  = (0x2<<6),
+               DaInvalidRemote     = (0x3<<6),
+             } MessageState_t;
+
 
 /**
   Storing the informations of one CAN
@@ -335,6 +363,8 @@ public:
 
   /** identifier of CAN msg */
   static __IsoAgLib::Ident_c c_ident;
+
+  static MessageState_t t_msgState;
 
   /** size of data */
   static uint8_t ui8_len;

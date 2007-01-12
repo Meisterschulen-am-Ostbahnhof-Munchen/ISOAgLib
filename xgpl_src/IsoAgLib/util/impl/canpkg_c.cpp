@@ -94,6 +94,9 @@ int32_t CANPkg_c::i32_time = 0;
 /** identifier of CAN msg */
 __IsoAgLib::Ident_c CANPkg_c::c_ident;
 
+/** state of the received can-message */
+MessageState_t CANPkg_c::t_msgState = MessageValid; // no default value is needed, but anyway..
+
 /** size of data */
 uint8_t CANPkg_c::ui8_len = 0;
 

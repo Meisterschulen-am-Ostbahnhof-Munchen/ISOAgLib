@@ -110,10 +110,12 @@ class CANCustomer_c;
 
 struct ISOFilter_s
 {
-  ISOFilter_s (CANCustomer_c& rrefc_canCustomer, uint32_t rui32_mask, uint32_t rui32_filter, const ISOName_c* rpc_isoNameDa = NULL, const ISOName_c* rpc_isoNameSa = NULL, Ident_c::identType_t rt_identType=Ident_c::ExtendedIdent)
+  // dlcForce == -1: don't check dlc. value of 0..8: force to be exactly this dlc!
+  ISOFilter_s (CANCustomer_c& rrefc_canCustomer, uint32_t rui32_mask, uint32_t rui32_filter, const ISOName_c* rpc_isoNameDa = NULL, const ISOName_c* rpc_isoNameSa = NULL, int8_t ri8_dlcForce=-1, Ident_c::identType_t rt_identType=Ident_c::ExtendedIdent)
     : c_identMask (rui32_mask, rt_identType)
     , c_identFilter (rui32_filter, rt_identType)
     , pc_canCustomer (&rrefc_canCustomer)
+    , i8_dlcForce (ri8_dlcForce)
   {
     if (rpc_isoNameDa) c_isoNameDa = *rpc_isoNameDa;                // operator =
     else /* no name */ c_isoNameDa = ISOName_c::ISONameUnspecified; // operator =
@@ -124,8 +126,10 @@ struct ISOFilter_s
   uint32_t getMask()   const { return c_identMask.ident(); }
   uint32_t getFilter() const { return c_identFilter.ident(); }
 
+  /** operator== does INTENTIONALLY NOT compare the dlcForce field as you can't have the same filter for
+      the same customer just with another dlcForce! do NEVER do this! */
   bool operator == (const ISOFilter_s& rrefc_isoFilter) const
-  { return equalMaskAndFilter (rrefc_isoFilter) && pc_canCustomer == rrefc_isoFilter.pc_canCustomer; }
+  { return equalMaskAndFilter (rrefc_isoFilter) && (pc_canCustomer == rrefc_isoFilter.pc_canCustomer) /*&& (i8_dlcForce == rrefc_isoFilter.i8_dlcForce) */;}
   bool operator != (const ISOFilter_s& rrefc_isoFilter) const
   { return !operator == (rrefc_isoFilter); }
 
@@ -140,6 +144,8 @@ private:
 
   /** Pointer to a CANCustomer_c instance. Assume this like a reference to be always valid! */
   CANCustomer_c* pc_canCustomer;
+
+  int8_t i8_dlcForce; // 0..8 to force the DLC, -1 to X (don't care)
 
   friend class ISOFilterBox_c;
 };

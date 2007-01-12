@@ -316,30 +316,45 @@ void FilterBox_c::closeHAL()
 
 /**
   set the mask (t_mask) and filter (t_filter) of this FilterBox
-  @param rpc_customer pointer to the CANCustomer_c instance, which creates this FilterBox_c instance
   @param rt_mask mask for this Filer_Box (MASK_TYPE defined in isoaglib_config.h)
   @param rt_filter filter for this Filer_Box (MASK_TYPE defined in isoaglib_config.h)
+  @param rpc_customer pointer to the CANCustomer_c instance, which creates this FilterBox_c instance
+  @param ri8_dlcForce force the DLC to be exactly this long (0 to 8 bytes). use -1 for NO FORCING and accepting any length can-pkg
   @param ren_E select if FilterBox_c is used for standard 11bit or extended 29bit ident
 */
-void FilterBox_c::set(const Ident_c& rrefc_mask,
-    const Ident_c& rrefc_filter, CANCustomer_c *rpc_customer, FilterBox_c* rpc_filterBox)
+void FilterBox_c::set (const Ident_c& rrefc_mask,
+                       const Ident_c& rrefc_filter,
+                       CANCustomer_c* rpc_customer,
+                       int8_t ri8_dlcForce,
+                       FilterBox_c* rpc_filterBox)
 {
   c_filter = rrefc_filter;
   c_mask = rrefc_mask;
-  if( !equalCustomer( *rpc_customer) )
-    vec_customer.push_back(rpc_customer);
+
+  std::vector<CustomerLen_s>::iterator pc_iter = vec_customer.begin();
+  for (; pc_iter != vec_customer.end(); pc_iter++)
+  {
+    if (rpc_customer == pc_iter->pc_customer)
+    { // overwrite the DLC of the one found!
+      pc_iter->i8_dlcForce = ri8_dlcForce;
+      break;
+    }
+  }
+  if (pc_iter == vec_customer.end())
+  { // push back new
+    vec_customer.push_back (CustomerLen_s (rpc_customer, ri8_dlcForce));
+  }
 
   if (rpc_filterBox == NULL)
-    c_additionalMask.set (~0, c_mask.identType());
-  else
-    c_additionalMask.set (~(rpc_filterBox->c_filter.ident() ^ c_filter.ident()), c_mask.identType());
+       c_additionalMask.set (~0, c_mask.identType());
+  else c_additionalMask.set (~(rpc_filterBox->c_filter.ident() ^ c_filter.ident()), c_mask.identType());
 };
 
 bool FilterBox_c::equalCustomer( const __IsoAgLib::CANCustomer_c& rref_customer ) const
 {
-  std::vector<CANCustomer_c*>::const_iterator pc_iter;
+  std::vector<CustomerLen_s>::const_iterator pc_iter;
   for(pc_iter = vec_customer.begin(); pc_iter != vec_customer.end(); pc_iter++)
-    if( &rref_customer == *pc_iter)
+    if( &rref_customer == pc_iter->pc_customer)
       return true;
 
   return false;
@@ -352,10 +367,10 @@ bool FilterBox_c::equalCustomer( const __IsoAgLib::CANCustomer_c& rref_customer 
   */
 bool FilterBox_c::deleteFilter( const __IsoAgLib::CANCustomer_c& rref_customer)
 {
-  for (std::vector<CANCustomer_c*>::iterator pc_iter = vec_customer.begin();
+  for (std::vector<CustomerLen_s>::iterator pc_iter = vec_customer.begin();
         pc_iter != vec_customer.end(); pc_iter++)
   {
-    if (&rref_customer == *pc_iter)
+    if (&rref_customer == pc_iter->pc_customer)
     { // the to-be-deleted customer is found and now pointed by pc_iter
       vec_customer.erase(pc_iter);
       break;
@@ -394,7 +409,7 @@ bool FilterBox_c::processMsg()
 {
   for (uint8_t i=0; i < vec_customer.size(); i++)
   {
-    if (vec_customer[i] == NULL)
+    if (vec_customer[i].pc_customer == NULL)
     { // pointer to CANCustomer_c wasn't set
       // -> don't know who wants to process the msg
       getILibErrInstance().registerError( iLibErr_c::Precondition, iLibErr_c::Can );
@@ -404,31 +419,50 @@ bool FilterBox_c::processMsg()
     // from here on the vec_customer[i] has a valid pointer
     // ####################################################
 
-    CANPkgExt_c* pc_target = &(vec_customer[i]->dataBase());
+    CANPkgExt_c* pc_target = &(vec_customer[i].pc_customer->dataBase());
     #if defined SYSTEM_WITH_ENHANCED_CAN_HAL
       HAL::can_useMsgobjGet(ui8_busNumber, 0xFF, pc_target);
     #else
       HAL::can_useMsgobjGet(ui8_busNumber, ui8_filterBoxNr, pc_target);
     #endif
 
-#if ((defined(USE_ISO_11783)) \
-     && ((CAN_INSTANCE_CNT > PRT_INSTANCE_CNT) || defined(ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL)))
+    const int8_t ci8_vecCurstomerDlcForce = vec_customer[i].i8_dlcForce;
+    const int8_t ci8_targetLen = pc_target->getLen();
 
-    #ifdef ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL
-    if ( ( b_performIsobusResolve ) && ( !vec_customer[i]->isProprietaryMessageOnStandardizedCan() ) )
-    #else
+    /// Check DataLengthCode (DLC) if required
+    if ((ci8_vecCurstomerDlcForce < 0) || (ci8_vecCurstomerDlcForce == ci8_targetLen))
+    { // either no dlc-check requested or dlc matches the check!
+      pc_target->t_msgState = DlcValid;
+    }
+    else
+    { // dlc-check was requested but failed
+      pc_target->t_msgState = (ci8_targetLen < ci8_vecCurstomerDlcForce) ? DlcInvalidTooShort : DlcInvalidTooLong;
+    }
+
+    #ifdef USE_ISO_11783
+    // this is a compile where at least one CAN channel uses ISO 11783 protocol (i.e. this is not a pure proprietary CAN project)
+      #if ((CAN_INSTANCE_CNT > PRT_INSTANCE_CNT) || defined(ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL))
+      // there is either a proprietary CAN channel in addition to the ISO 11783 channel, or some proprietary messages
+      // have to be handled at the ISO 11783 BUS (e.g. some bootloader messages are sent on ISOBUS)
+        #ifdef ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL
+        // we have to decide based on the individual CANCustomer, whether it is a real ISOBUS message
+    if ( ( b_performIsobusResolve ) && ( !vec_customer[i].pc_customer->isProprietaryMessageOnStandardizedCan() ) )
+        #else
+        // the decision whether a FilterBox_c has to perform SA resolve is derived for _all_ messages which are routed through this FilterBox_c object
     if ( b_performIsobusResolve )
-    #endif // end ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL
-    #endif // end combination check of whether the flag based decision on resolving has to be performed
-
+        #endif // end ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL
+      #endif // end combination check of whether the flag based decision on resolving has to be performed
     { // this block is only used for ISOBUS messages
-      const MessageState_t cb_wasValidMsg = pc_target->resolveReceivingInformation();
+      // add address-resolving result to dlc-check result!
+      pc_target->t_msgState = static_cast<MessageState_t>(pc_target->t_msgState | pc_target->resolveReceivingInformation());
 
       // call customer's processMsg function, to let it
       // process the received CAN msg
       pc_target->string2Flags();
 
-      if ( cb_wasValidMsg == Invalid )
+      if ( ((pc_target->t_msgState & AdrResolveMask) == AdrInvalid)
+        || ((pc_target->t_msgState & DlcValidationMask) != DlcValid)
+         )
       {
         #ifdef PROCESS_INVALID_PACKETS
         if (vec_customer[i]->processInvalidMsg() )
@@ -438,30 +472,48 @@ bool FilterBox_c::processMsg()
         }
         #endif
       }
-      else if ( ( cb_wasValidMsg == Valid ) || ( vec_customer[i]->isNetworkMgmt() ) )
+      else if ( ((pc_target->t_msgState & AdrResolveMask) == AdrValid) || (vec_customer[i].pc_customer->isNetworkMgmt()) )
       { // is either valid or OnlyNetworkMgmt with a CANCustomer which is of type NetworkMgmt
-        if ( vec_customer[i]->processMsg() )
+        if ( vec_customer[i].pc_customer->processMsg() )
         { // customer indicated, that it processed the content of the received message
           //--> do not show this message to any other FilterBox_c that might be connected to the same MsgObj_c
           return true;
         }
       }
     }
-
-    #if ( ( defined( USE_ISO_11783 ) ) \
-         && ( ( CAN_INSTANCE_CNT > PRT_INSTANCE_CNT ) || defined(ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL) ) )
-      else
-    #endif
-    #if ( ( CAN_INSTANCE_CNT > PRT_INSTANCE_CNT ) || defined(ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL) )
+      #if ( ( CAN_INSTANCE_CNT > PRT_INSTANCE_CNT ) || defined(ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL) )
+      // the project uses at least on one of the CAN BUSes ISO 11783 OR proprietary messages are handled at least on one CAN channel
+    else
+      #endif
+    #endif // end of #ifdef USE_ISO_11783
+    #if ( ( CAN_INSTANCE_CNT > PRT_INSTANCE_CNT ) \
+     ||  defined(ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL) \
+     || !defined(USE_ISO_11783) )
+     // either this project does NOT use ISO 11783 at all,
+     // OR there is a proprietary message CAN channel - and this FilterBox_c object is dedicated to the proprietary CAN channel (by being at "else" block)
+     // OR there can be a mixture of ISO 11783 and proprietary messages on one channel - and the currently handled message is not ISO 11783 (by being at "else" block)
     {
       // call customer's processMsg function, to let it
       // process the received CAN msg
       pc_target->string2Flags();
 
-      if ( vec_customer[i]->processMsg() )
-      { // customer indicated, that it processed the content of the received message
-        //--> do not show this message to any other FilterBox_c that might be connected to the same MsgObj_c
-        return true;
+      if ((pc_target->t_msgState & DlcValidationMask) != DlcValid)
+      {
+        #ifdef PROCESS_INVALID_PACKETS
+        if (vec_customer[i]->processInvalidMsg() )
+        { // customer indicated, that it processed the content of the received message
+          // --> do not show this message to any other FilterBox_c that might be connected to the same MsgObj_c
+          return true;
+        }
+        #endif
+      }
+      else
+      {
+        if ( vec_customer[i].pc_customer->processMsg() )
+        { // customer indicated, that it processed the content of the received message
+          //--> do not show this message to any other FilterBox_c that might be connected to the same MsgObj_c
+          return true;
+        }
       }
     }
     #endif

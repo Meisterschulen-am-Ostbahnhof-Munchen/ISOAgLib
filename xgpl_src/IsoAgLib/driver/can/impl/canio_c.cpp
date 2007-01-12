@@ -623,6 +623,7 @@ FilterBox_c* CANIO_c::insertFilter(__IsoAgLib::CANCustomer_c& rref_customer,
                                   bool /*rb_reconfigImmediate*/,
                                   #endif
                                   const Ident_c::identType_t rt_identType,
+                                  int8_t ri8_dlcForce,
                                   FilterBox_c* rpc_connectedFilterBox)
 {
   Ident_c c_newMask = Ident_c(rt_mask, rt_identType);
@@ -645,7 +646,7 @@ FilterBox_c* CANIO_c::insertFilter(__IsoAgLib::CANCustomer_c& rref_customer,
     INTERNAL_DEBUG_DEVICE << "mask: " << c_newMask.ident() << " filter: " << c_newFilter.ident() << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
     #endif
-    tempFilterBox_c->insertCustomer(&rref_customer);
+    tempFilterBox_c->insertCustomer (&rref_customer, ri8_dlcForce);
     //do not insert new filterbox because it already exists
     return tempFilterBox_c;
   }
@@ -656,7 +657,7 @@ FilterBox_c* CANIO_c::insertFilter(__IsoAgLib::CANCustomer_c& rref_customer,
   c_tempFilterBox.clearData();
 
   // define temp FilterBox_c with new values
-  c_tempFilterBox.set(c_newMask, c_newFilter, &rref_customer, rpc_connectedFilterBox);
+  c_tempFilterBox.set(c_newMask, c_newFilter, &rref_customer, ri8_dlcForce, rpc_connectedFilterBox);
 
   // insert new FilterBox_c and exit function if no dyn array growth is reported
   const uint8_t b_oldSize = arrFilterBox.size();
@@ -687,7 +688,7 @@ FilterBox_c* CANIO_c::insertFilter(__IsoAgLib::CANCustomer_c& rref_customer,
   {
     if ( arrFilterBox[ui8_overwritenFilterBoxIndex].isIdle() )
     { //if idle filterbox found overwrite it with the new filterbox
-      arrFilterBox[ui8_overwritenFilterBoxIndex].set(c_newMask, c_newFilter, &rref_customer, rpc_connectedFilterBox);
+      arrFilterBox[ui8_overwritenFilterBoxIndex].set(c_newMask, c_newFilter, &rref_customer, ri8_dlcForce, rpc_connectedFilterBox);
       arrFilterBox[ui8_overwritenFilterBoxIndex].configCan(ui8_busNumber, ui8_overwritenFilterBoxIndex + minReceiveObjNr());
       filterBoxOverwrite = true;
       #ifdef DEBUG
@@ -775,7 +776,8 @@ FilterBox_c* CANIO_c::insertFilter(__IsoAgLib::CANCustomer_c& rref_customer,
                                    uint32_t rt_mask, uint32_t rt_filter,
                                    bool rb_reconfigImmediate,
                                    const Ident_c::identType_t rt_identType, uint32_t rt_connectedMask,
-                                   uint32_t rt_connectedFilter, const Ident_c::identType_t rt_connectedIdentType
+                                   uint32_t rt_connectedFilter, const Ident_c::identType_t rt_connectedIdentType,
+                                   int8_t ri8_dlcForce
                                   )
 {
   Ident_c c_connectedMask = Ident_c(rt_connectedMask, rt_connectedIdentType);
@@ -797,7 +799,7 @@ FilterBox_c* CANIO_c::insertFilter(__IsoAgLib::CANCustomer_c& rref_customer,
   if (!b_connectedFilterFound) // "existFilter()" not used as it also compares the customer!
     return NULL;
 
-  return insertFilter(rref_customer, rt_mask, rt_filter, rb_reconfigImmediate, rt_identType, &(*pc_iter));
+  return insertFilter(rref_customer, rt_mask, rt_filter, rb_reconfigImmediate, rt_identType, ri8_dlcForce, &(*pc_iter));
 }
 
 /** delete a FilterBox definition
