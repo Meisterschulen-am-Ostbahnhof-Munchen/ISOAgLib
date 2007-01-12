@@ -3553,7 +3553,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           signed int retEnabled = booltoi (attrString [attrEnabled]);
           signed int retFormat = formattoi (attrString [attrFormat]);
           signed int retJust = horizontaljustificationtoi (attrString [attrHorizontal_justification]);
-          if ((retEnabled == -1) || (retFormat == -1) || (retJust = -1))
+          if ((retEnabled == -1) || (retFormat == -1) || (retJust == -1))
           {
             if (retEnabled == -1)
               clean_exit("Error in booltoi()! STOPPING PARSER! bye.\n\n");
