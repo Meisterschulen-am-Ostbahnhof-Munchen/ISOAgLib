@@ -106,6 +106,7 @@ GENERATE_FILES_ROOT_DIR=`pwd`
 # + REL_APP_PATH ( specify path to application of this project - error message if not given; use relative path!! )
 # + APP_NAME ( optionally select single CC file for the main app - otherwise the whole given path is interpreted as part of this project )
 #
+# + PRJ_ISO11783=1 ( select ISO 11783, default not even ISO for internal CAN comm only )
 # + PRJ_ISO_TERMINAL ( specify if ISO virtual terminal is wanted; default 0; only possible if PRJ_ISO11783=1 -> error message if not )
 # + PRJ_BASE ( specify if Base data - main tractor information as PGN or LBS Base message - is wanted; default 0 )
 # + PRJ_TRACTOR_GENERAL (only incorporate parts from BASE that provide tractor hitch and RPM information)
@@ -263,11 +264,22 @@ if [ "A$CAN_BUS_CNT" = "A" ] ; then
   if [ "A$PRJ_TRACTOR_GENERAL" = "A" ] ; then
   	PRJ_TRACTOR_GENERAL=0
   fi
-  if [ "A$PRJ_TRACTOR_MOVE" = "A" ] ; then
+  if test "A$PRJ_TRACTOR_MOVE" = "A" -a "A$PRJ_TRACTOR_MOVE_SETPOINT" = "A" ; then
   	PRJ_TRACTOR_MOVE=0
+		PRJ_TRACTOR_MOVE_SETPOINT=0
+	elif test "A$PRJ_TRACTOR_MOVE" != "A" -a "A$PRJ_TRACTOR_MOVE_SETPOINT" = "A" ; then
+		PRJ_TRACTOR_MOVE_SETPOINT=0
+	elif test "A$PRJ_TRACTOR_MOVE" = "A" -a "A$PRJ_TRACTOR_MOVE_SETPOINT" != "A" ; then
+		PRJ_TRACTOR_MOVE=1 # force basic trac move to compile in
   fi
-  if [ "A$PRJ_TRACTOR_PTO" = "A" ] ; then
+
+  if test "A$PRJ_TRACTOR_PTO" = "A" -a "A$PRJ_TRACTOR_PTO_SETPOINT" = "A" ; then
   	PRJ_TRACTOR_PTO=0
+		PRJ_TRACTOR_PTO_SETPOINT=0
+	elif test "A$PRJ_TRACTOR_PTO" != "A" -a "A$PRJ_TRACTOR_PTO_SETPOINT" = "A" ; then
+		PRJ_TRACTOR_PTO_SETPOINT=0
+	elif test "A$PRJ_TRACTOR_PTO" = "A" -a "A$PRJ_TRACTOR_PTO_SETPOINT" != "A" ; then
+		PRJ_TRACTOR_PTO=1 # force basic trac move to compile in
   fi
   if [ "A$PRJ_TRACTOR_LIGHT" = "A" ] ; then
   	PRJ_TRACTOR_LIGHT=0
@@ -302,9 +314,6 @@ if [ "A$CAN_BUS_CNT" = "A" ] ; then
 
   if [ "A$PRJ_PROCESS" = "A" ] ; then
   	PRJ_PROCESS=0
-  fi
-  if [ "A$PRJ_FIELDSTAR_GPS" = "A" ] ; then
-  	PRJ_FIELDSTAR_GPS=0
   fi
 
   if [ "A$PROC_LOCAL" = "A" ] ; then
@@ -396,9 +405,6 @@ function create_filelist( )
     fi
     COMM_PROC_FEATURES="$COMM_PROC_FEATURES -name 'processdatachangehandler_c.*' -o -name 'iprocess_c.*' -o -name 'proc_c.h' -o -path '*/Process/impl/proc*' -o -path '*/Process/impl/generalcommand*'"
 
-		if [ $PRJ_FIELDSTAR_GPS -gt 0 ] ; then
-			COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -name '*gps_c.*'"
-		fi
 		if [ $PRJ_ISO11783 -gt 0 -a $PROC_LOCAL -gt 0 ] ; then
 			# allow DevPropertyHandler
 			COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*/Process/impl/dev*'"
@@ -500,11 +506,6 @@ function create_filelist( )
 			;;
 	esac
 
-	if test $PRJ_TRACTOR_GENERAL -gt 0 -o $PRJ_TRACTOR_PTO -gt 0 ; then
-	  PRJ_TRACTOR_GENERAL=1
-	  PRJ_TRACTOR_PTO=1
-	fi
-
   COMM_FEATURES=" -path '*/IsoAgLib/typedef.h' -o -path '*/hal/"$HAL_PATH"/typedef.h' -o -name 'isoaglib_config.h' -o -path '*/hal/config.h'"
   if [ $PRJ_BASE -gt 0 ] ; then
     if [ $PRJ_ISO11783 -lt 1 ] ; then
@@ -522,25 +523,15 @@ function create_filelist( )
   if [ $PRJ_TRACTOR_GENERAL -gt 0 ] ; then
     COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -name '*tracgeneral_c*' \)"
   fi
-  if [ $PRJ_TRACTOR_MOVE -gt 0 ] ; then
-		if [ $PRJ_ISO11783 -lt 1 ] ; then
+  if test $PRJ_TRACTOR_MOVE -gt 0 -a $PRJ_TRACTOR_MOVE_SETPOINT -gt 0 ; then
+	    COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -name '*tracmove*' \)"
+  elif test $PRJ_TRACTOR_MOVE -gt 0 -a $PRJ_TRACTOR_MOVE_SETPOINT -lt 1 ; then
 	    COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -name '*tracmove_c.*' \)"
-		else
-			# allow tracmove_c.h and tracmovesetpoint_c.h
-# until the setpoint classes for PTO and Move are fully implemented, the setpoint classes are NOT integrated into project files
-#	    COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -name '*tracmove*' \)"
-	    COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -name '*tracmove_c.*' \)"
-		fi
   fi
-  if [ $PRJ_TRACTOR_PTO -gt 0 ] ; then
-		if [ $PRJ_ISO11783 -lt 1 ] ; then
+  if test $PRJ_TRACTOR_PTO -gt 0 -a $PRJ_TRACTOR_PTO_SETPOINT -gt 0 ; then
+	    COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -name '*tracpto*' \)"
+  elif test $PRJ_TRACTOR_PTO -gt 0 -a $PRJ_TRACTOR_PTO_SETPOINT -lt 1 ; then
 	    COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -name '*tracpto_c.*' \)"
-		else
-			# allow tracpto_c.h and tracptosetpoint_c.h
-# until the setpoint classes for PTO and Move are fully implemented, the setpoint classes are NOT integrated into project files
-      COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -name '*tracpto*' \)"
-	#    COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -name '*tracpto_c.*' \)"
-		fi
   fi
   if test $PRJ_TRACTOR_LIGHT -gt 0 -a $PRJ_ISO11783 -gt 0 ; then
     COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -name '*traclight*' \)"
@@ -590,8 +581,6 @@ function create_filelist( )
 			else
 				COMM_FEATURES="$COMM_FEATURES -o -path '*/Multipacket/impl/streamlinear_c.*'"
 			fi
-		else
-			COMM_FEATURES="$COMM_FEATURES -o -path '*/Multipacket/i*multisend*'"
 		fi
   fi
 
@@ -701,9 +690,18 @@ function create_filelist( )
   # mkdir tmpdir
   mkdir -p $PROJECT
   cd $PROJECT
-	FILELIST_QMAKE="filelist"'__'"$PROJECT.qmake"
-	FILELIST_HDR="filelist"'__'"$PROJECT_hdr.txt"
-	FILELIST_PURE="filelist"'__'"$PROJECT.txt"
+	FILELIST_LIBRARY_QMAKE="filelist"'__'"$PROJECT.library.qmake"
+	FILELIST_LIBRARY_HDR="filelist"'__'"$PROJECT_hdr.library.txt"
+	FILELIST_LIBRARY_PURE="filelist"'__'"$PROJECT.library.txt"
+
+	FILELIST_APP_QMAKE="filelist"'__'"$PROJECT.app.qmake"
+	FILELIST_APP_HDR="filelist"'__'"$PROJECT_hdr.app.txt"
+	FILELIST_APP_PURE="filelist"'__'"$PROJECT.app.txt"
+
+	FILELIST_COMBINED_QMAKE="filelist"'__'"$PROJECT.qmake"
+	FILELIST_COMBINED_HDR="filelist"'__'"$PROJECT_hdr.txt"
+	FILELIST_COMBINED_PURE="filelist"'__'"$PROJECT.txt"
+
 	if [ "A$DOXYGEN_EXPORT_DIR" = "A" ] ; then
 		FILELIST_DOXYGEN_READY="filelist"'__'"$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$USE_CAN_DRIVER"'__'"$USE_RS232_DRIVER-doc.txt"
 	else
@@ -711,10 +709,12 @@ function create_filelist( )
 	fi
 
 
-  rm -f "$FILELIST_PURE" "$FILELIST_QMAKE"
-  touch "$FILELIST_PURE"
+  rm -f "$FILELIST_LIBRARY_PURE" "$FILELIST_LIBRARY_QMAKE"
+	rm -f "$FILELIST_APP_PURE" "$FILELIST_APP_QMAKE"
+	rm -f "$FILELIST_COMBINED_PURE" "$FILELIST_COMBINED_QMAKE"
+  touch "$FILELIST_LIBRARY_PURE" "$FILELIST_APP_PURE" "$FILELIST_COMBINED_PURE"
 	if [ $USE_TARGET_SYSTEM == "pc_linux" ] ; then
-		touch "$FILELIST_QMAKE"
+		touch "$FILELIST_LIBRARY_QMAKE"
 	fi
   # find central elements
   if [ $PRJ_ISO11783 -lt 1 ] ; then
@@ -724,39 +724,39 @@ function create_filelist( )
 	fi
 	rm -f .exec.tmp
 	if [ $USE_TARGET_SYSTEM == "pc_linux" ] ; then
-		echo "find $LIB_ROOT $SRC_EXT -a \( -path '*/Scheduler/*' -o -path '*/SystemMgmt/*' -o -path '*/util/*' \) $EXCLUDE_FROM_SYSTEM_MGMT -printf 'SOURCES += %h/%f\n' >> $FILELIST_QMAKE"  > .exec.tmp
-		echo "find $LIB_ROOT -name '*.h' -a \( -path '*/Scheduler/*' -o -path '*/SystemMgmt/*' -o -path '*/util/*' \) $EXCLUDE_FROM_SYSTEM_MGMT -printf 'HEADERS += %h/%f\n' >> $FILELIST_QMAKE" >> .exec.tmp
+		echo "find $LIB_ROOT $SRC_EXT -a \( -path '*/Scheduler/*' -o -path '*/SystemMgmt/*' -o -path '*/util/*' \) $EXCLUDE_FROM_SYSTEM_MGMT -printf 'SOURCES += %h/%f\n' >> $FILELIST_LIBRARY_QMAKE"  > .exec.tmp
+		echo "find $LIB_ROOT -name '*.h' -a \( -path '*/Scheduler/*' -o -path '*/SystemMgmt/*' -o -path '*/util/*' \) $EXCLUDE_FROM_SYSTEM_MGMT -printf 'HEADERS += %h/%f\n' >> $FILELIST_LIBRARY_QMAKE" >> .exec.tmp
   fi
-	echo "find $LIB_ROOT $SRC_EXT -a \( -path '*/Scheduler/*' -o -path '*/SystemMgmt/*' -o -path '*/util/*' \) $EXCLUDE_FROM_SYSTEM_MGMT -printf '%h/%f\n' >> $FILELIST_PURE" >> .exec.tmp
-  echo "find $LIB_ROOT -name '*.h' -a \( -path '*/Scheduler/*' -o -path '*/SystemMgmt/*' -o -path '*/util/*' \) $EXCLUDE_FROM_SYSTEM_MGMT -printf '%h/%f\n' >> $FILELIST_HDR" >> .exec.tmp
+	echo "find $LIB_ROOT $SRC_EXT -a \( -path '*/Scheduler/*' -o -path '*/SystemMgmt/*' -o -path '*/util/*' \) $EXCLUDE_FROM_SYSTEM_MGMT -printf '%h/%f\n' >> $FILELIST_LIBRARY_PURE" >> .exec.tmp
+  echo "find $LIB_ROOT -name '*.h' -a \( -path '*/Scheduler/*' -o -path '*/SystemMgmt/*' -o -path '*/util/*' \) $EXCLUDE_FROM_SYSTEM_MGMT -printf '%h/%f\n' >> $FILELIST_LIBRARY_HDR" >> .exec.tmp
 
   # find wanted process data communication features
   if [ "$COMM_PROC_FEATURES" != "" ] ; then
     if [ $USE_TARGET_SYSTEM == "pc_linux" ] ; then
-			echo "find $LIB_ROOT $SRC_EXT -a \( $COMM_PROC_FEATURES \) -printf 'SOURCES += %h/%f\n' >> $FILELIST_QMAKE" >> .exec.tmp
-			echo "find $LIB_ROOT -name '*.h' -a \( $COMM_PROC_FEATURES \) -printf 'HEADERS += %h/%f\n' >> $FILELIST_QMAKE" >> .exec.tmp
+			echo "find $LIB_ROOT $SRC_EXT -a \( $COMM_PROC_FEATURES \) -printf 'SOURCES += %h/%f\n' >> $FILELIST_LIBRARY_QMAKE" >> .exec.tmp
+			echo "find $LIB_ROOT -name '*.h' -a \( $COMM_PROC_FEATURES \) -printf 'HEADERS += %h/%f\n' >> $FILELIST_LIBRARY_QMAKE" >> .exec.tmp
     fi
-		echo "find $LIB_ROOT $SRC_EXT -a \( $COMM_PROC_FEATURES \) -printf '%h/%f\n' >> $FILELIST_PURE" >> .exec.tmp
-    echo "find $LIB_ROOT -name '*.h' -a \( $COMM_PROC_FEATURES \) -printf '%h/%f\n' >> $FILELIST_HDR" >> .exec.tmp
+		echo "find $LIB_ROOT $SRC_EXT -a \( $COMM_PROC_FEATURES \) -printf '%h/%f\n' >> $FILELIST_LIBRARY_PURE" >> .exec.tmp
+    echo "find $LIB_ROOT -name '*.h' -a \( $COMM_PROC_FEATURES \) -printf '%h/%f\n' >> $FILELIST_LIBRARY_HDR" >> .exec.tmp
   fi
 
   # find wanted other communication features
   if [ "$COMM_FEATURES" != "" ] ; then
     if [ $USE_TARGET_SYSTEM == "pc_linux" ] ; then
-			echo "find $LIB_ROOT $SRC_EXT -a \( $COMM_FEATURES \) -printf 'SOURCES += %h/%f\n' >> $FILELIST_QMAKE" >> .exec.tmp
-    	echo "find $LIB_ROOT -name '*.h' -a \( $COMM_FEATURES \) -printf 'HEADERS += %h/%f\n' >> $FILELIST_QMAKE" >> .exec.tmp
+			echo "find $LIB_ROOT $SRC_EXT -a \( $COMM_FEATURES \) -printf 'SOURCES += %h/%f\n' >> $FILELIST_LIBRARY_QMAKE" >> .exec.tmp
+    	echo "find $LIB_ROOT -name '*.h' -a \( $COMM_FEATURES \) -printf 'HEADERS += %h/%f\n' >> $FILELIST_LIBRARY_QMAKE" >> .exec.tmp
     fi
-		echo "find $LIB_ROOT $SRC_EXT -a \( $COMM_FEATURES \) -printf '%h/%f\n' >> $FILELIST_PURE" >> .exec.tmp
-    echo "find $LIB_ROOT -name '*.h' -a \( $COMM_FEATURES \) -printf '%h/%f\n' >> $FILELIST_HDR" >> .exec.tmp
+		echo "find $LIB_ROOT $SRC_EXT -a \( $COMM_FEATURES \) -printf '%h/%f\n' >> $FILELIST_LIBRARY_PURE" >> .exec.tmp
+    echo "find $LIB_ROOT -name '*.h' -a \( $COMM_FEATURES \) -printf '%h/%f\n' >> $FILELIST_LIBRARY_HDR" >> .exec.tmp
   fi
 
   #find optional HW features
   if [ $USE_TARGET_SYSTEM == "pc_linux" ] ; then
-		echo "find $LIB_ROOT $SRC_EXT  -a \( $DRIVER_FEATURES \) -printf 'SOURCES += %h/%f\n' >> $FILELIST_QMAKE" >> .exec.tmp
-  	echo "find $LIB_ROOT -name '*.h' -a \(  $DRIVER_FEATURES \) -printf 'HEADERS += %h/%f\n' >> $FILELIST_QMAKE" >> .exec.tmp
+		echo "find $LIB_ROOT $SRC_EXT  -a \( $DRIVER_FEATURES \) -printf 'SOURCES += %h/%f\n' >> $FILELIST_LIBRARY_QMAKE" >> .exec.tmp
+  	echo "find $LIB_ROOT -name '*.h' -a \(  $DRIVER_FEATURES \) -printf 'HEADERS += %h/%f\n' >> $FILELIST_LIBRARY_QMAKE" >> .exec.tmp
   fi
-	echo "find $LIB_ROOT $SRC_EXT -a \( $DRIVER_FEATURES \) -printf '%h/%f\n' >> $FILELIST_PURE" >> .exec.tmp
-  echo "find $LIB_ROOT -name '*.h' -a \(  $DRIVER_FEATURES \) -printf '%h/%f\n' >> $FILELIST_HDR" >> .exec.tmp
+	echo "find $LIB_ROOT $SRC_EXT -a \( $DRIVER_FEATURES \) -printf '%h/%f\n' >> $FILELIST_LIBRARY_PURE" >> .exec.tmp
+  echo "find $LIB_ROOT -name '*.h' -a \(  $DRIVER_FEATURES \) -printf '%h/%f\n' >> $FILELIST_LIBRARY_HDR" >> .exec.tmp
 
   # find application files
 	FIRST_LOOP="YES"
@@ -810,7 +810,7 @@ function create_filelist( )
 
 	# remove the joker '*' from the file type spec, as this causes only trouble
 	APP_SEARCH_SRC_CONDITION=`echo "$APP_SEARCH_SRC_CONDITION" | sed -e 's/\*//g'`
-	
+
 	for itemSrcType in $APP_SEARCH_SRC_CONDITION ; do
 		if [ $FIRST_LOOP != "YES" ] ; then
 			APP_SEARCH_SRC_TYPE_PART="$APP_SEARCH_SRC_TYPE_PART -or"
@@ -836,33 +836,38 @@ function create_filelist( )
 
 #  if [ -n "$APP_NAME" ] ; then
 #  	if [ $USE_TARGET_SYSTEM == "pc_linux" ] ; then
-#			echo "find ../$ISO_AG_LIB_PATH/$REL_APP_PATH/ -name "$APP_NAME" -printf 'SOURCES += %h/%f\n' >> $FILELIST_QMAKE" >> .exec.tmp
+#			echo "find ../$ISO_AG_LIB_PATH/$REL_APP_PATH/ -name "$APP_NAME" -printf 'SOURCES += %h/%f\n' >> $FILELIST_LIBRARY_QMAKE" >> .exec.tmp
 #  	fi
-# 		echo "find ../$ISO_AG_LIB_PATH/$REL_APP_PATH/ -name "$APP_NAME" -printf '%h/%f\n' >> $FILELIST_PURE" >> .exec.tmp
+# 		echo "find ../$ISO_AG_LIB_PATH/$REL_APP_PATH/ -name "$APP_NAME" -printf '%h/%f\n' >> $FILELIST_LIBRARY_PURE" >> .exec.tmp
 #	else
 #  	if [ $USE_TARGET_SYSTEM == "pc_linux" ] ; then
-#			echo "find ../$ISO_AG_LIB_PATH/$REL_APP_PATH/ $APP_SEARCH_SRC_CONDITION -printf 'SOURCES += %h/%f\n' >> $FILELIST_QMAKE" >> .exec.tmp
-#			echo "find ../$ISO_AG_LIB_PATH/$REL_APP_PATH/ $APP_SEARCH_HDR_CONDITION -printf 'HEADERS += %h/%f\n' >> $FILELIST_QMAKE" >> .exec.tmp
+#			echo "find ../$ISO_AG_LIB_PATH/$REL_APP_PATH/ $APP_SEARCH_SRC_CONDITION -printf 'SOURCES += %h/%f\n' >> $FILELIST_LIBRARY_QMAKE" >> .exec.tmp
+#			echo "find ../$ISO_AG_LIB_PATH/$REL_APP_PATH/ $APP_SEARCH_HDR_CONDITION -printf 'HEADERS += %h/%f\n' >> $FILELIST_LIBRARY_QMAKE" >> .exec.tmp
 #		fi
 
-# 		echo "find ../$ISO_AG_LIB_PATH/$REL_APP_PATH/ $APP_SEARCH_SRC_CONDITION -printf '%h/%f\n' >> $FILELIST_PURE" >> .exec.tmp
-#  	echo "find ../$ISO_AG_LIB_PATH/$REL_APP_PATH/ $APP_SEARCH_HDR_CONDITION -printf '%h/%f\n' >> $FILELIST_HDR" >> .exec.tmp
+# 		echo "find ../$ISO_AG_LIB_PATH/$REL_APP_PATH/ $APP_SEARCH_SRC_CONDITION -printf '%h/%f\n' >> $FILELIST_LIBRARY_PURE" >> .exec.tmp
+#  	echo "find ../$ISO_AG_LIB_PATH/$REL_APP_PATH/ $APP_SEARCH_HDR_CONDITION -printf '%h/%f\n' >> $FILELIST_LIBRARY_HDR" >> .exec.tmp
 #  fi
 
-  	if [ $USE_TARGET_SYSTEM == "pc_linux" ] ; then
-	            for EACH_REL_APP_PATH in $REL_APP_PATH ; do
-			echo "find ../$ISO_AG_LIB_PATH/$EACH_REL_APP_PATH/ $APP_SEARCH_SRC_TYPE_PART $APP_SRC_PART $EXCLUDE_PATH_PART $EXCLUDE_SRC_PART -printf 'SOURCES += %h/%f\n' >> $FILELIST_QMAKE" >> .exec.tmp
-			echo "find ../$ISO_AG_LIB_PATH/$EACH_REL_APP_PATH/ $APP_SEARCH_HDR_TYPE_PART $APP_SRC_PART $EXCLUDE_PATH_PART $EXCLUDE_SRC_PART -printf 'HEADERS += %h/%f\n' >> $FILELIST_QMAKE" >> .exec.tmp
-                    done
-		fi
+	if [ $USE_TARGET_SYSTEM == "pc_linux" ] ; then
+		for EACH_REL_APP_PATH in $REL_APP_PATH ; do
+			echo "find ../$ISO_AG_LIB_PATH/$EACH_REL_APP_PATH/ $APP_SEARCH_SRC_TYPE_PART $APP_SRC_PART $EXCLUDE_PATH_PART $EXCLUDE_SRC_PART -printf 'SOURCES += %h/%f\n' >> $FILELIST_APP_QMAKE" >> .exec.tmp
+			echo "find ../$ISO_AG_LIB_PATH/$EACH_REL_APP_PATH/ $APP_SEARCH_HDR_TYPE_PART $APP_SRC_PART $EXCLUDE_PATH_PART $EXCLUDE_SRC_PART -printf 'HEADERS += %h/%f\n' >> $FILELIST_APP_QMAKE" >> .exec.tmp
+		done
+	fi
 
-        for EACH_REL_APP_PATH in $REL_APP_PATH ; do
-		echo "find ../$ISO_AG_LIB_PATH/$EACH_REL_APP_PATH/ $APP_SEARCH_SRC_TYPE_PART $APP_SRC_PART $EXCLUDE_PATH_PART $EXCLUDE_SRC_PART -printf '%h/%f\n' >> $FILELIST_PURE" >> .exec.tmp
-		echo "find ../$ISO_AG_LIB_PATH/$EACH_REL_APP_PATH/ $APP_SEARCH_HDR_TYPE_PART $APP_SRC_PART $EXCLUDE_PATH_PART $EXCLUDE_SRC_PART -printf '%h/%f\n' >> $FILELIST_HDR" >> .exec.tmp
-        done
+	for EACH_REL_APP_PATH in $REL_APP_PATH ; do
+		echo "find ../$ISO_AG_LIB_PATH/$EACH_REL_APP_PATH/ $APP_SEARCH_SRC_TYPE_PART $APP_SRC_PART $EXCLUDE_PATH_PART $EXCLUDE_SRC_PART -printf '%h/%f\n' >> $FILELIST_APP_PURE" >> .exec.tmp
+		echo "find ../$ISO_AG_LIB_PATH/$EACH_REL_APP_PATH/ $APP_SEARCH_HDR_TYPE_PART $APP_SRC_PART $EXCLUDE_PATH_PART $EXCLUDE_SRC_PART -printf '%h/%f\n' >> $FILELIST_APP_HDR" >> .exec.tmp
+	done
 
 
   sh .exec.tmp
+	cat $FILELIST_LIBRARY_PURE $FILELIST_APP_PURE > $FILELIST_COMBINED_PURE
+	if [ $USE_TARGET_SYSTEM == "pc_linux" ] ; then
+		cat $FILELIST_LIBRARY_QMAKE $FILELIST_APP_QMAKE > $FILELIST_COMBINED_QMAKE
+	fi
+	cat $FILELIST_LIBRARY_HDR $FILELIST_APP_HDR > $FILELIST_COMBINED_HDR
   rm -f .exec.tmp
 
 	# create list with suitable block definition for doxygen import
@@ -880,7 +885,7 @@ function create_filelist( )
 	#echo "/*@{*/" >> $FILELIST_DOXYGEN_READY
 	echo -e "\n\n \section SrcList$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$USE_CAN_DRIVER"'__'"$USE_RS232_DRIVER List of Sourcefiles for $PROJECT with CAN Driver $USE_CAN_DRIVER and RS232 Driver $USE_RS232_DRIVER" >> $FILELIST_DOXYGEN_READY
 	echo "\code" >> $FILELIST_DOXYGEN_READY
-  cat $FILELIST_PURE >> $FILELIST_DOXYGEN_READY
+  cat $FILELIST_COMBINED_PURE >> $FILELIST_DOXYGEN_READY
 	echo "\endcode" >> $FILELIST_DOXYGEN_READY
 	#echo "/*@}*/" >> $FILELIST_DOXYGEN_READY
 
@@ -893,15 +898,15 @@ function create_filelist( )
 	#echo "/*@{*/" >> $FILELIST_DOXYGEN_READY
 	echo -e "\n\n \section HdrList$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$USE_CAN_DRIVER"'__'"$USE_RS232_DRIVER List of Headers for $PROJECT with CAN Driver $USE_CAN_DRIVER and RS232 Driver $USE_RS232_DRIVER" >> $FILELIST_DOXYGEN_READY
 	echo "\code" >> $FILELIST_DOXYGEN_READY
-	cat $FILELIST_HDR >> $FILELIST_DOXYGEN_READY
+	cat $FILELIST_COMBINED_HDR >> $FILELIST_DOXYGEN_READY
 	echo "\endcode" >> $FILELIST_DOXYGEN_READY
 	#echo "/*@}*/" >> $FILELIST_DOXYGEN_READY
 
 	# write end of main block of all project files
 	#echo "/*@}*/" >> $FILELIST_DOXYGEN_READY
 
-	cat $FILELIST_HDR >> $FILELIST_PURE
-	rm -f $FILELIST_HDR
+	cat $FILELIST_COMBINED_HDR >> $FILELIST_COMBINED_PURE
+	rm -f $FILELIST_COMBINED_HDR
 
 
   # go back to directory where config file resides
@@ -1180,16 +1185,17 @@ function create_makefile()
   # go to project dir - below config dir
   DEV_PRJ_DIR="$1/$PROJECT"
   cd $DEV_PRJ_DIR
-  mkdir -p "objects"
-  MakefileFilelist="$1/$PROJECT/$FILELIST_PURE"
+  mkdir -p "objects_library objects_app"
+  MakefileFilelistLibrary="$1/$PROJECT/$FILELIST_LIBRARY_PURE"
+  MakefileFilelistApp="$1/$PROJECT/$FILELIST_APP_PURE"
 
 	MakefileName="Makefile"
 	MakefileNameLong="Makefile"'__'"$USE_CAN_DRIVER"'__'"$USE_RS232_DRIVER"
-	
+
 	if [ "A$MAKEFILE_SKELETON_FILE" = "A" ] ; then
   	MAKEFILE_SKELETON_FILE="$DEV_PRJ_DIR/../$ISO_AG_LIB_PATH/compiler_projects/projectGeneration/MakefileSkeleton.txt"
   fi
-	
+
 
 	# create Makefile Header
 	echo "#############################################################################" > $MakefileNameLong
@@ -1204,6 +1210,10 @@ function create_makefile()
   for EACH_REL_APP_PATH in $REL_APP_PATH ; do
 		echo -n "-I../$ISO_AG_LIB_PATH/$EACH_REL_APP_PATH " >> $MakefileNameLong
   done
+	for SingleInclPath in $PRJ_INCLUDE_PATH ; do
+		echo -n " -I$SingleInclPath" >> $MakefileNameLong
+	done
+	echo "" >> $MakefileNameLong
 
 	echo -e "\n####### Include a version definition file into the Makefile context - when this file exists"  >> $MakefileNameLong
 	echo    "-include versions.mk" >> $MakefileNameLong
@@ -1220,7 +1230,6 @@ function create_makefile()
 	for SinglePrjDefine in $PRJ_DEFINES ; do
 		echo -n " -D$SinglePrjDefine" >> $MakefileNameLong
 	done
-	echo "" >> $MakefileNameLong
 
 	echo -e "\n\n####### Definition of compiler binary prefix corresponding to selected target" >> $MakefileNameLong
 	if [ "A$PRJ_COMPILER_BINARY_PRE" != "A" ] ; then
@@ -1246,11 +1255,9 @@ function create_makefile()
 
 	echo -e "\n\nfirst: all\n" >> $MakefileNameLong
 	echo "####### Files" >> $MakefileNameLong
-	echo -n "SOURCES = " >> $MakefileNameLong
-
-
+	echo -n "SOURCES_LIBRARY = " >> $MakefileNameLong
 	FIRST_LOOP="YES"
-	for CcFile in `grep -E "\.cc|\.cpp|\.c" $MakefileFilelist` ; do
+	for CcFile in `grep -E "\.cc|\.cpp|\.c" $MakefileFilelistLibrary` ; do
 		if [ $FIRST_LOOP != "YES" ] ; then
 			echo -e -n '\\' >> $MakefileNameLong
 			echo -e -n "\n\t\t" >> $MakefileNameLong
@@ -1260,6 +1267,20 @@ function create_makefile()
 		echo -e -n "$CcFile  " >> $MakefileNameLong
 	done
 	echo -e "\n" >> $MakefileNameLong
+
+	echo -n "SOURCES_APP = " >> $MakefileNameLong
+	FIRST_LOOP="YES"
+	for CcFile in `grep -E "\.cc|\.cpp|\.c" $MakefileFilelistApp` ; do
+		if [ $FIRST_LOOP != "YES" ] ; then
+			echo -e -n '\\' >> $MakefileNameLong
+			echo -e -n "\n\t\t" >> $MakefileNameLong
+		else
+			FIRST_LOOP="NO"
+		fi
+		echo -e -n "$CcFile  " >> $MakefileNameLong
+	done
+	echo -e "\n" >> $MakefileNameLong
+
 
 	# build special target for CAN server
 	if [ $USE_CAN_DRIVER = "linux_server_client" ] ; then
@@ -1352,7 +1373,7 @@ function create_DevCCPrj() {
   cd $DEV_PRJ_DIR
   # org test
 	PROJECT_FILE_NAME="$PROJECT"'__'"$USE_CAN_DRIVER"'__'"$USE_RS232_DRIVER.dev"
-  DevCcPrjFilelist="$1/$PROJECT/$FILELIST_PURE"
+  DevCcPrjFilelist="$1/$PROJECT/$FILELIST_COMBINED_PURE"
 
   # echo "Erzeuge $PROJECT_FILE_NAME"
   PROJECT_EXE_NAME="$PROJECT"'__'"$USE_CAN_DRIVER"'__'"$USE_RS232_DRIVER.exe"
@@ -1404,7 +1425,12 @@ function create_DevCCPrj() {
 		DEFINE_LINE="$DEFINE_LINE"'_@@_-DUSE_CAN_CARD_TYPE='"$USE_WIN32_CAN_HW_TYPE"'_@@_'
 	fi
 
-	echo "Includes=$INCLUDE_DIR_LINE" >> $PROJECT_FILE_NAME
+	echo -n "Includes=$INCLUDE_DIR_LINE" >> $PROJECT_FILE_NAME
+	for SingleInclPath in $PRJ_INCLUDE_PATH ; do
+		echo -n ";$SingleInclPath" >> $PROJECT_FILE_NAME
+	done
+	echo "" >> $PROJECT_FILE_NAME
+
 	echo "Libs=$LIB_DIR_LINE" >> $PROJECT_FILE_NAME
 	echo "Linker=$LIB_FILE_LINE" >> $PROJECT_FILE_NAME
 
@@ -1494,7 +1520,7 @@ function create_EdePrj()
   # echo "Create Projekt file for EDE in $DEV_PRJ_DIR"
   mkdir -p $DEV_PRJ_DIR/Template.dir
   PROJECT_FILE_NAME="$PROJECT"'_'"$USE_TARGET_SYSTEM.pjt"
-  EdePrjFilelist="$1/$PROJECT/$FILELIST_PURE"
+  EdePrjFilelist="$1/$PROJECT/$FILELIST_COMBINED_PURE"
   CONFIG_HDR_NAME="config_""$PROJECT.h"
 
 ### @todo
@@ -1506,6 +1532,11 @@ function create_EdePrj()
 		fi
 	done
 	echo "USE_APP_PATH: $USE_APP_PATH"
+
+	INCLUDE_APP_PATH_TASKING="../$ISO_AG_LIB_PATH/$USE_EMBED_HEADER_DIRECTORY"
+	for SingleInclPath in $PRJ_INCLUDE_PATH ; do
+		INCLUDE_APP_PATH_TASKING="$INCLUDE_APP_PATH_TASKING;$SingleInclPath"
+	done
 
   USE_EMBED_HEADER_DIRECTORY=`echo "../$ISO_AG_LIB_PATH/$USE_EMBED_HEADER_DIRECTORY" | sed -e 's/\/[0-9a-zA-Z_+\-]+\/\.\.//g' -e 's/\\[0-9a-zA-Z_+\-]+\\\.\.//g'`
   USE_EMBED_LIB_DIRECTORY=`echo "../$ISO_AG_LIB_PATH/$USE_EMBED_LIB_DIRECTORY" | sed -e 's/\/[0-9a-zA-Z_+\-]+\/\.\.//g' -e 's/\\[0-9a-zA-Z_+\-]+\\\.\.//g'`
@@ -1587,7 +1618,7 @@ function create_VCPrj()
   mkdir -p $DEV_PRJ_DIR/Debug
 	PROJECT_FILE_NAME="$PROJECT"'__'"$USE_CAN_DRIVER"'__'"$USE_RS232_DRIVER.dsp"
 
-  DspPrjFilelist="$1/$PROJECT/$FILELIST_PURE"
+  DspPrjFilelist="$1/$PROJECT/$FILELIST_COMBINED_PURE"
   CONFIG_HDR_NAME="config_""$PROJECT.h"
 
 
@@ -1610,6 +1641,9 @@ function create_VCPrj()
 	USE_WIN32_LIB_DIRECTORY_WIN=`echo "$USE_WIN32_LIB_DIRECTORY" | sed -e 's#/#=_=_#g'`
 	USE_WIN32_LIB_DIRECTORY_WIN=`echo "$USE_WIN32_LIB_DIRECTORY_WIN" | sed -e 's#\\\#=_=_#g'`
 
+	PRJ_INCLUDE_PATH_WIN=`echo "$PRJ_INCLUDE_PATH" | sed -e 's#/#=_=_#g'`
+
+
 	if  [ $USE_CAN_DRIVER = "vector_canlib" ] ; then
 		USE_INCLUDE_PATHS='/I "'"$USE_STLPORT_HEADER_DIRECTORY"'" /I "'"$ISO_AG_LIB_PATH_WIN"'" /I "'"$ISO_AG_LIB_PATH_WIN=_=_xgpl_src"'" /I "'"$USE_WIN32_HEADER_DIRECTORY_WIN=_=_CANLIB=_=_dll"'"'
 		USE_DEFINES="$USE_DEFINES"' /D ''"'"$USE_WIN32_CAN_HW_TYPE"'"'
@@ -1631,6 +1665,11 @@ function create_VCPrj()
 		LIB_DIR_LINE="\"$USE_WIN32_LIB_DIRECTORY_WIN=_=_Sontheim\""
 		echo "$USE_WIN32_LIB_DIRECTORY_WIN=_=_Sontheim=_=CANAPI.H" >> $DspPrjFilelist
 	fi
+
+	for SingleInclPath in $PRJ_INCLUDE_PATH_WIN ; do
+		USE_INCLUDE_PATHS="$USE_INCLUDE_PATHS"' /I "'"$SingleInclPath"'"'
+	done
+
 
 	sed -e 's#=_=_#\\#g'  $DspPrjFilelist > $DspPrjFilelist.1
 	mv $DspPrjFilelist.1 $DspPrjFilelist

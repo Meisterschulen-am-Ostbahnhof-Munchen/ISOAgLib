@@ -21,7 +21,7 @@ PROJECT_AUTHOR_EMAIL=MyEmail@Location
 # define the path where the aplication can be found
 # ( in relation to the root of the IsoAgLib
 #    - ONLY RELATIVE PATH )
-# seperate files by whitespace
+# seperate directories by whitespace
 REL_APP_PATH="IsoAgLib_Examples/tutorial/2_ProcessData/2_7_RemoteReadDataStdIso"
 # define the name of the app
 # ( if this variable is not set, then
@@ -44,6 +44,11 @@ APP_SRC_FILE="2_7_RemoteReadDataStdIso.cpp"
 # ( jokers like "*" are allowed - example "test*.cpp" )
 # APP_SRC_EXCLUDE=""
 
+# the directories of REL_APP_PATH are already integrated into the compiler list of
+# header include search paths. But a project might need some additional paths.
+# seperate directories by whitespace
+# PRJ_INCLUDE_PATH=""
+
 # ###############################################################
 # Selection of Basic Project Settings
 # ###############################################################
@@ -64,7 +69,7 @@ ISO_AG_LIB_PATH="../.."
 # - DEBUG_CAN_BUFFER_FILLING for RS232 output of MAX amount of buffered CAN messages
 #   ( important to decide on amount of items in the BIOS/OS CAN receive buffer )
 # - DEBUG_HEAP_USEAGE for RS232 output of amount of bytes which are needed of one
-#   item in the different types of dynamic lists: MsgObj_c , FilterBox_c , IsoItem_c , DinItem_c ,
+#   item in the different types of dynamic lists: MsgObj_c , FilterBox_c , IsoItem_c  ,
 #   MeasureSubprog_c , SetpointRegister ;
 #   additionally print calculated amount of HEAP memory which is used by the several types of
 #   dynamic lists ( output on each list change )
@@ -80,6 +85,11 @@ ISO_AG_LIB_PATH="../.."
 # ( this has an impact on process data, RS232 output,
 #   GPS decode )
 USE_FLOAT_DATA_TYPE=1
+
+# select if HEAP usage should reduce size in favour of speed
+# ( default: maximize speed, which costs about 10KByte more HEAPSIZE,
+#            but avoids slow memory allocation in too small units )
+# OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED=0
 
 # ###############################################################
 # Basic Hardware Setup
@@ -108,6 +118,13 @@ PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
 # only target "pc_win32" can use the driver "vector_canlib"|"vector_xl_drv_lib"
 # only target "pc_linux" can us the driver "rte"|"linux_server_client"
 USE_CAN_DRIVER="linux_server_client"
+
+# especially the Linux linux_server_client driver type is available for different can cards,
+# where all of them use some common files and just one individual file.
+# the suffix of the individual CAN card has to be specified with
+# PRJ_CAN_DRIVER_SUFFIX=A1|pcan (default: A!)
+# PRJ_CAN_DRIVER_SUFFIX="A1"
+
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
 # targets other than pc_linux or pc_win32 can only use "sys"
 # only target "pc_linux" can us the driver "rte"
@@ -164,12 +181,23 @@ PRJ_ISO11783=1
 # PRJ_TRACTOR_GENERAL=0
 
 # only incorporate parts from BASE that provide tractor moving (distance, speed, direction, ...) information
+# the following project setting includes only measurement of tractor data.
+# i.e. NO SETTING OF COMMANDS
 # PRJ_TRACTOR_MOVE=0
+
+# additionally integrate sending of tractor move commands
+# PRJ_TRACTOR_MOVE_SETPOINT=0
+
 
 # only incorporate parts from BASE that provide tractor PTO information
 # this part includes tractor pto set point data which is not available in the
 # free ISOAgLib edition. If you are interested in this feature please contact OSB AG
+# the following project setting includes only measurement of tractor data.
+# i.e. NO SETTING OF COMMANDS
 # PRJ_TRACTOR_PTO=0
+
+# additionally integrate sending of tractor PTO commands
+# PRJ_TRACTOR_PTO_SETPOINT=0
 
 # only incorporate parts from BASE that provide tractor lighting information
 # this part is only defined for ISO 11783
@@ -316,7 +344,7 @@ PROC_REMOTE_STD=1
 # designed for typical RPM values
 # PRJ_SENSOR_COUNTER=0
 
-# slect if the digital output driver shall be integrated into the project.
+# select if the digital output driver shall be integrated into the project.
 # you can then use the HAL of IsoAgLib to realize a mostly hardware independend
 # access on PWM output. This is completely independent from communication tasks,
 # but was created during research and is actively used by OSB AG for its own
@@ -326,7 +354,6 @@ PROC_REMOTE_STD=1
 # ###############################################################
 # Build System Configuration for LINUX
 # ###############################################################
-
 
 # ###############################################################
 # Build System Configuration for Cross Compilers ( like Tasking EDE )
@@ -436,3 +463,14 @@ PROC_REMOTE_STD=1
 #   if the XL driver is selected --> DONT'T set the XL_ here again
 #   ==> this allows simpler switch between different CAN driver libs )
 # USE_WIN32_CAN_HW_TYPE="HWTYPE_AUTO"
+
+# ###############################################################
+# Build System Configuration for gcc based cross compilers and the like
+# ###############################################################
+
+# typical development systems have a host compiler version of gcc
+# in the application execution path as "gcc".
+# the appropriate cross-compiler gcc is often placed in a separate directory
+# with a special prefix. This can be specified by PRJ_COMPILER_BINARY_PRE
+# PRJ_COMPILER_BINARY_PRE="/opt/hardhat/devkit/arm/xscale_le/bin/xscale_le-"
+
