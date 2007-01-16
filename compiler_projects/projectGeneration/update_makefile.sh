@@ -230,6 +230,9 @@ if [ "A$CAN_BUS_CNT" = "A" ] ; then
   if [ "A$PRJ_ISO_TERMINAL_SERVER" = "A" ] ; then
 		PRJ_ISO_TERMINAL_SERVER=0
   fi
+  if [ "A$PRJ_ISO_TERMINAL_LAYOUT_MANAGER" = "A" ] ; then
+		PRJ_ISO_TERMINAL_LAYOUT_MANAGER=0
+  fi
 
   if test $PRJ_ISO11783 -lt 1 -a $PRJ_ISO_TERMINAL -gt 0 ; then
   	echo "Warning overwrite setting of PRJ_ISO_TERMINAL == $PRJ_ISO_TERMINAL as ISO11783 is not activated"
@@ -564,7 +567,11 @@ function create_filelist( )
     PRJ_MULTIPACKET=1
   fi
   if [ $PRJ_ISO_TERMINAL -gt 0 ] ; then
-    COMM_FEATURES="$COMM_FEATURES -o -path '*/ISO_Terminal/*'"
+		if [ $PRJ_ISO_TERMINAL_LAYOUT_MANAGER -gt 0 ] ; then
+	    COMM_FEATURES="$COMM_FEATURES -o -path '*/ISO_Terminal/*'"
+		else
+	    COMM_FEATURES="$COMM_FEATURES -o -path '*/ISO_Terminal/i*'"
+		fi
     PRJ_MULTIPACKET=1
   fi
   if [ $PRJ_DATASTREAMS -lt 1 ] ; then
