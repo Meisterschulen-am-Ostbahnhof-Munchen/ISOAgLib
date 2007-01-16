@@ -1185,7 +1185,7 @@ function create_makefile()
   # go to project dir - below config dir
   DEV_PRJ_DIR="$1/$PROJECT"
   cd $DEV_PRJ_DIR
-  mkdir -p "objects_library objects_app"
+  mkdir -p "objects_library" "objects_app"
   MakefileFilelistLibrary="$1/$PROJECT/$FILELIST_LIBRARY_PURE"
   MakefileFilelistApp="$1/$PROJECT/$FILELIST_APP_PURE"
 
@@ -1207,11 +1207,14 @@ function create_makefile()
 	echo "TARGET = $PROJECT" >> $MakefileNameLong
 	echo "ISOAGLIB_PATH = ../$ISO_AG_LIB_PATH" >> $MakefileNameLong
 	echo -n "APP_INC = " >> $MakefileNameLong
+	KDEVELOP_INCLUDE_PATH="../$ISO_AG_LIB_PATH/xgpl_src;"
   for EACH_REL_APP_PATH in $REL_APP_PATH ; do
 		echo -n "-I../$ISO_AG_LIB_PATH/$EACH_REL_APP_PATH " >> $MakefileNameLong
+		KDEVELOP_INCLUDE_PATH="$KDEVELOP_INCLUDE_PATH ../$ISO_AG_LIB_PATH/$EACH_REL_APP_PATH;"
   done
 	for SingleInclPath in $PRJ_INCLUDE_PATH ; do
-		echo -n " -I$SingleInclPath" >> $MakefileNameLong
+		echo -n " -I../$ISO_AG_LIB_PATH/$SingleInclPath" >> $MakefileNameLong
+		KDEVELOP_INCLUDE_PATH="$KDEVELOP_INCLUDE_PATH ../$ISO_AG_LIB_PATH/$SingleInclPath;"
 	done
 	echo "" >> $MakefileNameLong
 
@@ -1333,7 +1336,10 @@ function create_makefile()
 	echo $CMDLINE | sh
 	CMDLINE=`echo "sed -e 's/REPLACE_PROJECT/$PROJECT/g' $PROJECT.kdevelop > $PROJECT.kdevelop.1"`
 	echo $CMDLINE | sh
-	mv $PROJECT.kdevelop.1 $PROJECT.kdevelop
+	CMDLINE=`echo "sed -e 's#REPLACE_INCLUDE#$KDEVELOP_INCLUDE_PATH#g' $PROJECT.kdevelop.1 > $PROJECT.kdevelop"`
+	echo $CMDLINE | sh
+#	mv $PROJECT.kdevelop.1 $PROJECT.kdevelop
+	rm $PROJECT.kdevelop.1
 
 	echo "# KDevelop Custom Project File List" > $PROJECT.kdevelop.filelist
 	cat filelist__$PROJECT.txt >> $PROJECT.kdevelop.filelist
