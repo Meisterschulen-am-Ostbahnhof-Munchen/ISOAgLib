@@ -107,6 +107,22 @@ ISOFilterBox_c::ISOFilterBox_c(const ISOFilterBox_c& rrefcc_refFB)
 // }
 
 
+// dlcForce == -1: don't check dlc. value of 0..8: force to be exactly this dlc!
+ISOFilter_s::ISOFilter_s (CANCustomer_c& rrefc_canCustomer, uint32_t rui32_mask, uint32_t rui32_filter, const ISOName_c* rpc_isoNameDa, const ISOName_c* rpc_isoNameSa, int8_t ri8_dlcForce, Ident_c::identType_t rt_identType)
+  : c_identMask (rui32_mask, rt_identType)
+  , c_identFilter (rui32_filter, rt_identType)
+  , pc_canCustomer (&rrefc_canCustomer)
+  , i8_dlcForce (ri8_dlcForce)
+{
+  if (rpc_isoNameDa) c_isoNameDa = *rpc_isoNameDa;                // operator =
+  else /* no name */ c_isoNameDa = ISOName_c::ISONameUnspecified; // operator =
+  if (rpc_isoNameSa) c_isoNameSa = *rpc_isoNameSa;                // operator =
+  else /* no name */ c_isoNameSa = ISOName_c::ISONameUnspecified; // operator =
+}
+
+ISOFilter_s::~ISOFilter_s() {}
+
+
 bool
 ISOFilter_s::equalMaskAndFilter (const ISOFilter_s& rrefc_isoFilter) const
 {

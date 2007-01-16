@@ -111,17 +111,8 @@ class CANCustomer_c;
 struct ISOFilter_s
 {
   // dlcForce == -1: don't check dlc. value of 0..8: force to be exactly this dlc!
-  ISOFilter_s (CANCustomer_c& rrefc_canCustomer, uint32_t rui32_mask, uint32_t rui32_filter, const ISOName_c* rpc_isoNameDa = NULL, const ISOName_c* rpc_isoNameSa = NULL, int8_t ri8_dlcForce=-1, Ident_c::identType_t rt_identType=Ident_c::ExtendedIdent)
-    : c_identMask (rui32_mask, rt_identType)
-    , c_identFilter (rui32_filter, rt_identType)
-    , pc_canCustomer (&rrefc_canCustomer)
-    , i8_dlcForce (ri8_dlcForce)
-  {
-    if (rpc_isoNameDa) c_isoNameDa = *rpc_isoNameDa;                // operator =
-    else /* no name */ c_isoNameDa = ISOName_c::ISONameUnspecified; // operator =
-    if (rpc_isoNameSa) c_isoNameSa = *rpc_isoNameSa;                // operator =
-    else /* no name */ c_isoNameSa = ISOName_c::ISONameUnspecified; // operator =
-  }
+  ISOFilter_s (CANCustomer_c& rrefc_canCustomer, uint32_t rui32_mask, uint32_t rui32_filter, const ISOName_c* rpc_isoNameDa = NULL, const ISOName_c* rpc_isoNameSa = NULL, int8_t ri8_dlcForce=-1, Ident_c::identType_t rt_identType=Ident_c::ExtendedIdent);
+  ~ISOFilter_s();
 
   uint32_t getMask()   const { return c_identMask.ident(); }
   uint32_t getFilter() const { return c_identFilter.ident(); }
