@@ -312,8 +312,11 @@ public:
   /** function that handles incoming language pgn */
   void notifyOnVtsLanguagePgn();
 
-  /** function that handles incoming language pgn */
+  /** function that handles incoming Vt Status Message */
   void notifyOnVtStatusMessage() { c_streamer.refc_pool.eventVtStatusMsg(); }
+
+  /** function that handles incoming VT ESC */
+  void notifyOnVtESC() { c_streamer.refc_pool.eventVtESC(); }
 
   virtual bool processMsg();
 

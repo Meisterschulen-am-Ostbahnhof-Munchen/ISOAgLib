@@ -265,6 +265,12 @@ public:
   virtual void eventVtStatusMsg() {};
 
   /**
+    hook function that gets called immediately after recognizing an incoming
+    VT ESC.
+   */
+  virtual void eventVtESC() {};
+
+  /**
      hook function that gets called after recognizing an incoming
      VT proprietary message.
    */

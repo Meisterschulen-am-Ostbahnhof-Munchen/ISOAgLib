@@ -623,6 +623,8 @@ vt2iso_c::clean_exit (char* error_message)
     fprintf (partFile_handler_direct, "\n  //virtual void eventLanguagePgn (const localSettings_s& rrefs_localSettings);");
     fprintf (partFile_handler_direct, "\n  /* Uncomment the following function if you want to react on any incoming VT Status messages */");
     fprintf (partFile_handler_direct, "\n  //virtual void eventVtStatusMsg();");
+    fprintf (partFile_handler_direct, "\n  /* Uncomment the following function if you want to react on any incoming VT ESC */");
+    fprintf (partFile_handler_direct, "\n  //virtual void eventVtESC();");
     fprintf (partFile_handler_direct, "\n  /* Uncomment the following function if you want to react on any incoming VT Get Attribute Value messages */");
     fprintf (partFile_handler_direct, "\n  //virtual void eventAttributeValue(IsoAgLib::iVtObject_c* obj, uint8_t ui8_attributeValue, uint8_t* pui8_value);");
     fprintf (partFile_handler_direct, "\n  void initAllObjectsOnce(SINGLETON_VEC_KEY_PARAMETER_DEF);");

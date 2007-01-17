@@ -915,7 +915,6 @@ VtClientServerCommunication_c::notifyOnVtsLanguagePgn()
   }
 }
 
-
 /** process received can messages
   @return true -> message was processed; else the received CAN message will be served to other matching CANCustomer_c
  */
@@ -962,6 +961,13 @@ VtClientServerCommunication_c::processMsg()
       c_streamer.refc_pool.eventPointingEvent (c_data.getUint8Data (1) | (c_data.getUint8Data (2) << 8) /* X position in pixels */,
                                               c_data.getUint8Data (3) | (c_data.getUint8Data (4) << 8) /* Y position in pixels */);
       break;
+    case 0x04: // Command: "Control Element Function", parameter "VT ESC"
+        /// if no error occured, that ESC is for an opened input dialog!!! Do not handle here!!!
+        if (c_data.getUint8Data (3) != 0x0)
+        {
+          c_streamer.refc_pool.eventVtESC();
+        }
+        break;
     case 0x05: // Command: "Control Element Function", parameter "VT Change Numeric Value"
       c_streamer.refc_pool.eventNumericValue (uint16_t(c_data.getUint8Data (1)) | (uint16_t(c_data.getUint8Data (2)) << 8) /* objID */,
                                               c_data.getUint8Data (4) /* 1 byte value */,
