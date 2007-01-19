@@ -4436,7 +4436,7 @@ int main(int argC, char* argV[])
   bool schemaFullChecking = false;
   bool errorOccurred      = false;
   char localeStr[64];
-  char* poolIdentStr = NULL;
+  char* poolIdentStr = "";
   int  indexXmlFile;
 
   bool generatePalette = false;
