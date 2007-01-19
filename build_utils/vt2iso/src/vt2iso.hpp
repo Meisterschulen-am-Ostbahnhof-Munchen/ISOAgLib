@@ -162,7 +162,7 @@ inline bool DOMCountErrorHandler::getSawErrors() const
 class vt2iso_c
 {
 public:
-  vt2iso_c (std::basic_string<char>* xmlFile);
+  vt2iso_c (std::basic_string<char>* xmlFile, char* poolIdent);
 
   ~vt2iso_c();
 
@@ -197,7 +197,7 @@ private:
 
   bool copyWithQuoteAndLength (char *dest, const char *src, unsigned int len);
 
-  signed long int getID (char* objName, bool b_isMacro, bool b_wishingID, unsigned int wishID);
+  signed long int getID (const char* objName, bool b_isMacro, bool b_wishingID, unsigned int wishID);
 
   signed long int idOrName_toi (char* rpc_string, bool rb_isMacro);
 
@@ -228,6 +228,8 @@ private:
 
   void prepareFileNameAndDirectory(std::basic_string<char>* pch_fileName);
 
+  const char* getObjNameWithPoolIdent (char* pcch_objName);
+
 private:
   bool firstLineFileE;
 
@@ -255,6 +257,7 @@ private:
   std::basic_string<char> c_directory;
   const char* rc_workDir;
   char xmlFiles [256] [1024+1];
+  const char* pcch_poolIdent;
 
   char objNameTable [(stringLength+1)*4000];
   unsigned int objIDTable [4000];
