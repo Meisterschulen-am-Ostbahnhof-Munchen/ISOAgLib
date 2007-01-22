@@ -1218,17 +1218,15 @@ vt2iso_c::getAttributesFromNode(DOMNode *n, bool treatSpecial)
       }
       int l;
       for (l=0; l<maxAttributeNames; l++) {
-        if (pcch_poolIdent) {
-          if (strncmp (attr_name, "soft_key_mask", stringLength) == 0) {
-            sprintf (attrString [attrSoft_key_mask], "%s%s", pcch_poolIdent, attr_value);
-            attrIsGiven [attrSoft_key_mask] = true;
-            continue;
-          }
-          else if (strncmp (attr_name, "active_mask", stringLength) == 0) {
-            sprintf (attrString [attrActive_mask], "%s%s", pcch_poolIdent, attr_value);
-            attrIsGiven [attrActive_mask] = true;
-            continue;
-          }
+        if (strncmp (attr_name, "soft_key_mask", stringLength) == 0) {
+          sprintf (attrString [attrSoft_key_mask], "%s%s", pcch_poolIdent, attr_value);
+          attrIsGiven [attrSoft_key_mask] = true;
+          break;
+        }
+        else if (strncmp (attr_name, "active_mask", stringLength) == 0) {
+          sprintf (attrString [attrActive_mask], "%s%s", pcch_poolIdent, attr_value);
+          attrIsGiven [attrActive_mask] = true;
+          break;
         }
 
         if (strncmp (attr_name, attrNameTable [l], stringLength) == 0) {
