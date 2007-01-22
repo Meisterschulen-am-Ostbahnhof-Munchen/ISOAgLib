@@ -100,8 +100,6 @@
   #include <IsoAgLib/comm/ISO_Terminal/impl/vtclientservercommunication_c.h>
 #endif
 
-#define DEBUG 1
-
 //define length of every attribute in deviceObject
 #define DEF_Transfer_Code 1
 #define DEF_TableID 3
