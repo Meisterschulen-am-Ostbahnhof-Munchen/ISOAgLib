@@ -4205,8 +4205,7 @@ vt2iso_c::vt2iso_c(std::basic_string<char>* pch_fileName, char* pch_poolIdent): 
                                                              partFile_variables_extern,
                                                              partFile_attributes,
                                                              partFile_functions,
-                                                             partFile_defines,
-                                                             pcch_poolIdent
+                                                             partFile_defines
                                                             );
   #else
   pc_specialParsingPropTag = NULL;
