@@ -84,6 +84,7 @@
 
 #include <IsoAgLib/comm/Scheduler/impl/scheduler_c.h>
 #include <IsoAgLib/driver/can/impl/canio_c.h>
+#include <IsoAgLib/comm/Multipacket/imultisend_c.h>
 #include <IsoAgLib/comm/Multipacket/impl/multisend_c.h>
 #include <IsoAgLib/comm/Multipacket/impl/multireceive_c.h>
 #include <IsoAgLib/comm/Multipacket/istream_c.h>
@@ -91,10 +92,15 @@
 #include <IsoAgLib/util/impl/singleton.h>
 #include <supplementary_driver/driver/rs232/irs232io_c.h>
 
+#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.h>
+#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h>
+
 #ifdef USE_ISO_TERMINAL
   #include <IsoAgLib/comm/ISO_Terminal/impl/isoterminal_c.h>
   #include <IsoAgLib/comm/ISO_Terminal/impl/vtclientservercommunication_c.h>
 #endif
+
+#define DEBUG 1
 
 //define length of every attribute in deviceObject
 #define DEF_Transfer_Code 1
@@ -298,8 +304,9 @@ DevPropertyHandler_c::processMsg()
         if (data().getUint8Data(1) == 0)
         {
           en_uploadStep = UploadUploading;
-          getMultiSendInstance4Comm().sendIsoTarget(pc_wsMasterIdentItem->getIsoItem()->nr(), tcSourceAddress,
-          this, PROCESS_DATA_PGN, en_sendSuccess);
+          IsoAgLib::getIMultiSendInstance().sendIsoTarget(pc_wsMasterIdentItem->isoName(),
+            getIsoMonitorInstance4Comm().isoMemberNr(tcSourceAddress).isoName().toConstIisoName_c(),
+            this, PROCESS_DATA_PGN, en_sendSuccess);
         }
         else
         {
@@ -1056,8 +1063,9 @@ DevPropertyHandler_c::startUploadCommandChangeDesignator()
   else
   {
     /// Use multi CAN-Pkgs [(E)TP], doesn't fit into a single CAN-Pkg!
-    getMultiSendInstance4Comm().sendIsoTarget(pc_wsMasterIdentItem->getIsoItem()->nr(), tcSourceAddress,
-           &actSend->vec_uploadBuffer.front(), actSend->vec_uploadBuffer.size(), PROCESS_DATA_PGN, en_sendSuccess);
+    IsoAgLib::getIMultiSendInstance().sendIsoTarget(pc_wsMasterIdentItem->isoName(),
+      getIsoMonitorInstance4Comm().isoMemberNr(tcSourceAddress).isoName().toConstIisoName_c(),
+      &actSend->vec_uploadBuffer.front(), actSend->vec_uploadBuffer.size(), PROCESS_DATA_PGN, en_sendSuccess);
     en_uploadCommand = UploadMultiSendCommandWaitingForCommandResponse;
   }
 }
