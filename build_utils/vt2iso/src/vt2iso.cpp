@@ -3364,12 +3364,12 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
 
       if ((strcmp ("NULL", attrString [attrVariable_reference]) != 0) && (strncmp (attrString [attrVariable_reference], "&iVtObject", strlen ("&iVtObject")) != 0))
       { // != 0 means an object reference is given, so add the "&iVtObject" prefix!!
-        sprintf (tempString, "&iVtObject%s%s", pcch_poolIdent, attrString [attrVariable_reference]);
+        sprintf (tempString, "&iVtObject%s", getObjNameWithPoolIdent (attrString [attrVariable_reference]));
         sprintf (attrString [attrVariable_reference], "%s", tempString);
       }
       if ((strcmp ("NULL", attrString [attrTarget_value_variable_reference]) != 0) && (strncmp (attrString [attrTarget_value_variable_reference], "&iVtObject", strlen ("&iVtObject")) != 0))
       { // != 0 means an object reference is given, so add the "&iVtObject" prefix!!
-        sprintf (tempString, "&iVtObject%s%s", pcch_poolIdent, attrString [attrTarget_value_variable_reference]);
+        sprintf (tempString, "&iVtObject%s", getObjNameWithPoolIdent (attrString [attrTarget_value_variable_reference]));
         sprintf (attrString [attrTarget_value_variable_reference], "%s", tempString);
       }
 
@@ -3728,7 +3728,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             sprintf (attrString [attrFill_attributes], "NULL");
           else
           {
-            sprintf (tempString, "&iVtObject%s", attrString[attrFill_attributes]);
+            sprintf (tempString, "&iVtObject%s", getObjNameWithPoolIdent (attrString[attrFill_attributes]));
             sprintf (attrString [attrFill_attributes], "%s", tempString);
           }
 
@@ -3736,7 +3736,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           // sprintf (attrString [attrFill_attributes], "&vtObject%s", attrString[attrFill_attributes]);
           fprintf (partFile_attributes, ", &iVtObject%s, %s, %s, %d, %s", getObjNameWithPoolIdent (attrString [attrLine_attributes]),
                    attrString [attrWidth], attrString [attrHeight], linesuppressiontoi (attrString [attrLine_suppression]),
-                   getObjNameWithPoolIdent (attrString[attrFill_attributes]));
+                   attrString[attrFill_attributes]);
           break;
 
         case otEllipse:
@@ -3757,12 +3757,12 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             sprintf (attrString [attrFill_attributes], "NULL");
           else
           {
-            sprintf (tempString, "&iVtObject%s", attrString[attrFill_attributes]);
+            sprintf (tempString, "&iVtObject%s", getObjNameWithPoolIdent (attrString[attrFill_attributes]));
             sprintf (attrString [attrFill_attributes], "%s", tempString);
           }
           fprintf (partFile_attributes, ", &iVtObject%s, %s, %s, %d, %s, %s, %s", getObjNameWithPoolIdent (attrString [attrLine_attributes]),
                    attrString [attrWidth], attrString [attrHeight], ellipsetypetoi (attrString [attrEllipse_type]),
-                   attrString[attrStart_angle], attrString[attrEnd_angle], getObjNameWithPoolIdent (attrString[attrFill_attributes]));
+                   attrString[attrStart_angle], attrString[attrEnd_angle], attrString[attrFill_attributes]);
           break;
 
         case otPolygon:
@@ -3778,11 +3778,11 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             sprintf (attrString [attrFill_attributes], "NULL");
           else
           {
-            sprintf (tempString, "&iVtObject%s", attrString[attrFill_attributes]);
+            sprintf (tempString, "&iVtObject%s", getObjNameWithPoolIdent (attrString[attrFill_attributes]));
             sprintf (attrString [attrFill_attributes], "%s", tempString);
           }
           fprintf (partFile_attributes, ", %s, %s, &iVtObject%s, %s, %d", attrString [attrWidth], attrString [attrHeight],
-                   getObjNameWithPoolIdent (attrString [attrLine_attributes]), getObjNameWithPoolIdent (attrString[attrFill_attributes]),
+                   getObjNameWithPoolIdent (attrString [attrLine_attributes]), attrString[attrFill_attributes],
                    polygontypetoi (attrString [attrPolygon_type]));
           break;
 
