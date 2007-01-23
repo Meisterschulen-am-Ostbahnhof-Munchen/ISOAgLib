@@ -3573,7 +3573,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             fprintf (partFile_attributes, ", %sL", attrString [attrOffset] );
           }
 
-          signed int retEnabled = booltoi (attrString [attrEnabled]);
+          signed int retEnabled = inputobjectoptiontoi (attrString [attrInputObjectOptions]);
           signed int retFormat = formattoi (attrString [attrFormat]);
           signed int retJust = horizontaljustificationtoi (attrString [attrHorizontal_justification]);
           if ((retEnabled == -1) || (retFormat == -1) || (retJust == -1))
