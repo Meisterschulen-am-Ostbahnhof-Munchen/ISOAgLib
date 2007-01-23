@@ -203,8 +203,27 @@ vtObject_c::saveValueP (uint16_t ui16_structOffset, uint16_t ui16_structLen, con
   createRamStructIfNotYet (ui16_structLen);
   * ((const IsoAgLib::iVtObject_c** const) (((uint8_t *)vtObject_a)+ui16_structOffset)) = p_newValue;
 }
+void
+vtObject_c::saveValueISOName (const uint16_t ui16_structOffset, const uint16_t ui16_structLen, const IsoAgLib::iISOName_c& rref_newIsoName)
+{
+  createRamStructIfNotYet (ui16_structLen);
+  *((IsoAgLib::iISOName_c*) (((uint8_t *)vtObject_a)+ui16_structOffset)) = rref_newIsoName;
+}
+
+void vtObject_c::saveValueBool (const uint16_t ui16_structOffset, const uint16_t ui16_structLen, bool b_newValue)
+{
+  createRamStructIfNotYet (ui16_structLen);
+  *((bool*) (((uint8_t *)vtObject_a)+ui16_structOffset)) = b_newValue;
+}
+
 
 // //////////////////////////////// saveValue(8/16/32)SetAttribute
+void vtObject_c::saveValueBoolSetAttribute (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint8_t ui8_ind, uint8_t ui8_newValue, bool b_enableReplaceOfCmd)
+{
+  if (ui16_structOffset != 0) saveValueBool (ui16_structOffset, ui16_structLen, ui8_newValue);
+  setAttribute (ui8_ind, (uint32_t) ui8_newValue, b_enableReplaceOfCmd);
+}
+
 void
 vtObject_c::saveValue8SetAttribute (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint8_t ui8_ind, uint8_t ui8_newValue, uint8_t ui8_newValueSend, bool b_enableReplaceOfCmd) {
   if (ui16_structOffset != 0) saveValue8 (ui16_structOffset, ui16_structLen, ui8_newValue);

@@ -85,6 +85,7 @@
 // +X2C includes
 #include "../ivtobject_c.h"
 #include "vttypes.h"
+#include  <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h>
 // ~X2C
 
 // Begin Namespace __IsoAgLib
@@ -147,6 +148,7 @@ protected:
 
   void createRamStructIfNotYet (uint16_t ui16_structLen);
 
+  void saveValueBool  (const uint16_t ui16_structOffset, const uint16_t ui16_structLen, bool b_newValue);
   void saveValue8     (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint8_t ui8_newValue);
   void saveValue16    (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint16_t ui16_newValue);
   void saveValue32    (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint32_t ui32_newValue);
@@ -155,6 +157,8 @@ protected:
   void saveSignedValue32 (uint16_t ui16_structOffset, uint16_t ui16_structLen, int32_t i32_newValue);
   void saveValueFloat (uint16_t ui16_structOffset, uint16_t ui16_structLen, float f_newValue);
   void saveValueP     (uint16_t ui16_structOffset, uint16_t ui16_structLen, const IsoAgLib::iVtObject_c* const p_newValue);
+  void saveValueISOName (uint16_t ui16_structOffset, uint16_t ui16_structLen, const IsoAgLib::iISOName_c& rref_newIsoName);
+  void saveValueBoolSetAttribute (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint8_t ui8_ind, uint8_t ui8_newValue, bool b_enableReplaceOfCmd);
   void saveValue8SetAttribute     (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint8_t ui8_ind, uint8_t ui8_newValue, uint8_t newValueSend, bool b_enableReplaceOfCmd);
   void saveValue16SetAttribute    (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint8_t ui8_ind, uint16_t ui16_newValue, bool b_enableReplaceOfCmd);
   void saveValue32SetAttribute    (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint8_t ui8_ind, uint32_t ui32_newValue, bool b_enableReplaceOfCmd);
@@ -192,6 +196,7 @@ protected:
 private:
   friend class SINGLETON( iVtObject_c );
   friend class SINGLETON( vtObject_c );
+  friend class vtLayoutManager_c;
   bool genericChangeChildLocationPosition (bool rb_isLocation, IsoAgLib::iVtObject_c* childObject, int16_t dx, int16_t dy, bool b_updateObject, uint8_t numObjectsToFollow, IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow, uint16_t ui16_structOffset, uint16_t ui16_structLen);
 
   //  Operation: updateEnable
