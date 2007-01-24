@@ -162,7 +162,7 @@ inline bool DOMCountErrorHandler::getSawErrors() const
 class vt2iso_c
 {
 public:
-  vt2iso_c (std::basic_string<char>* xmlFile, char* poolIdent);
+  vt2iso_c (std::basic_string<char>* xmlFile, char* poolIdent, std::basic_string<char>* dictionary = NULL);
 
   ~vt2iso_c();
 

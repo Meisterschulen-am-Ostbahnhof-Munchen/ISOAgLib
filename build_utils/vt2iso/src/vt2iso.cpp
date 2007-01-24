@@ -456,11 +456,18 @@ static void usage()
     " -n     Enable namespace processing. Defaults to off.\n"
     " -s     Enable schema processing. Defaults to off.\n"
     " -f     Enable full schema constraint checking. Defaults to off.\n"
-    " -i=xxx Specify a unique identfication which will be used as prefix for every object in the pool. (max. 8 char)"
     " -locale=ll_CC  specify the locale. Defaults to en_US.\n"
-    " -p    Output ISO11783-VT Palette to act-file.\n"
-    " -?    Show this help.\n\n"
-    << std::endl;
+    " -p    Output ISO11783-VT Palette to act-file.\n";
+
+#ifdef USE_SPECIAL_PARSING
+    std::cout <<
+    " -i=xxx Specify a unique identfication which will be used as prefix for every object in the pool. (max. 8 char\n"
+    " -dict=xxx Specify the relative path to the resource dictionary\n";
+#endif
+  std::cout << " -?    Show this help.\n\n" << std::endl;
+
+
+
 }
 
 bool vt2iso_c::sb_WSFound = false;
@@ -4188,7 +4195,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
   return true;
 }
 
-vt2iso_c::vt2iso_c(std::basic_string<char>* pch_fileName, char* pch_poolIdent): amountXmlFiles(0), pcch_poolIdent (pch_poolIdent)
+vt2iso_c::vt2iso_c(std::basic_string<char>* pch_fileName, char* pch_poolIdent, std::basic_string<char>* dictionary): amountXmlFiles(0), pcch_poolIdent (pch_poolIdent)
 {
   prepareFileNameAndDirectory(pch_fileName);
 
@@ -4196,7 +4203,6 @@ vt2iso_c::vt2iso_c(std::basic_string<char>* pch_fileName, char* pch_poolIdent): 
 
   init ( pc_projName );
 
-  /// @todo implement pool_ident in SpecialParsingUsePropTag_c
   #ifdef USE_SPECIAL_PARSING_PROP
   pc_specialParsingPropTag = new SpecialParsingUsePropTag_c (pc_projName,
                                                              partFile_variables,
@@ -4210,7 +4216,7 @@ vt2iso_c::vt2iso_c(std::basic_string<char>* pch_fileName, char* pch_poolIdent): 
   #endif
 
   #ifdef USE_SPECIAL_PARSING
-  pc_specialParsing = new SpecialParsingUse_c (pc_projName, c_directory, pcch_poolIdent);
+  pc_specialParsing = new SpecialParsingUse_c (pc_projName, c_directory, dictionary, pcch_poolIdent);
   #else
   pc_specialParsing = NULL;
   #endif
@@ -4434,6 +4440,7 @@ int main(int argC, char* argV[])
   bool errorOccurred      = false;
   char localeStr[64];
   char* poolIdentStr = "";
+  std::basic_string<char> dictionary = "";
   int  indexXmlFile;
 
   bool generatePalette = false;
@@ -4500,6 +4507,10 @@ int main(int argC, char* argV[])
     {
       poolIdentStr = &argV[argInd][3];
     }
+    else if (!strncmp(argV[argInd], "-dict=", 6))
+    {
+      dictionary = &argV[argInd][6];
+    }
     else
     {
       std::cerr << "Unknown option '" << argV[argInd] << "', ignoring it\n" << std::endl;
@@ -4530,7 +4541,11 @@ int main(int argC, char* argV[])
   std::basic_string<char> c_fileName( argV [argInd] );
 
   // Do INITIALIZATION STUFF
+#ifdef USE_SPECIAL_PARSING
+  vt2iso_c* pc_vt2iso = new vt2iso_c(&c_fileName, poolIdentStr, &dictionary);
+#else
   vt2iso_c* pc_vt2iso = new vt2iso_c(&c_fileName, poolIdentStr);
+#endif
 
   for (indexXmlFile = 0; indexXmlFile < pc_vt2iso->getAmountXmlFiles(); indexXmlFile++)
   { // loop all xmlFiles!
