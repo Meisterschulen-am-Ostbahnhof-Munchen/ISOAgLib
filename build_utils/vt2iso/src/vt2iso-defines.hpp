@@ -335,6 +335,7 @@ typedef struct {
 #define attrViewportZoom (110)
 #define attrCursorX (111)
 #define attrCursorY (112)
+#define attrForeground_colour_from_font (113)
 // Attributes allready defined and used by graphics context:
 //#define attrForeground_colour (12)
 //#define attrBackground_colour (0)
@@ -346,9 +347,9 @@ typedef struct {
 //#define attrTransparency_colour (43)
 
 // attribute for inputnumber/list only!
-#define attrInputObjectOptions (113)
+#define attrInputObjectOptions (114)
 
-#define maxAttributeNames (114)
+#define maxAttributeNames (115)
 
 //! Number of regular object plus gap plus number of internal objects.
 #define maxObjectTypesToCompare (maxObjectTypes+18+6)

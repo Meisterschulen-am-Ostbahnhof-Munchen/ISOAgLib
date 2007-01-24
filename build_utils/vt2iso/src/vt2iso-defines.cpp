@@ -324,7 +324,8 @@ char attrNameTable [maxAttributeNames] [stringLength+1] = {
   "viewport_zoom",
   "cursor_x",
   "cursor_y",
-  "inputobject_options"
+  "inputobject_options",
+  "foreground_colour_from_font"
 };
 
 // Table of possible Macro Commands
