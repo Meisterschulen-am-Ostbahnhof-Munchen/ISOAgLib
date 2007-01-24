@@ -1053,6 +1053,10 @@ vt2iso_c::defaultAttributes (unsigned int r_objType)
     sprintf (attrString [attrInputObjectOptions], "enabled");
     attrIsGiven [attrInputObjectOptions] = true;
   }
+  if (!attrIsGiven [attrScale]) {
+    sprintf (attrString [attrScale], "1");
+    attrIsGiven [attrScale] = true;
+  }
 }
 
 void
@@ -1248,10 +1252,14 @@ vt2iso_c::getAttributesFromNode(DOMNode *n, bool treatSpecial)
 
       /// if USE_SPECIAL_PARSING is NOT defined, output an error warning and stop here, if attribute is unknown
       // ERROR: We didn't match a possible attribute name
-      if (pc_specialParsing && (l == maxAttributeNames))
+      if ((pc_specialParsingPropTag || pc_specialParsing) && (l == maxAttributeNames))
       {
         /// set a flag to sign if any attribute is unknown
-        pc_specialParsing->setUnknownAttributes (true);
+        if (pc_specialParsing)
+          pc_specialParsing->setUnknownAttributes (true);
+
+        if (pc_specialParsingPropTag)
+          pc_specialParsingPropTag->setUnknownAttributes (true);
       }
       else if (l == maxAttributeNames)
       {

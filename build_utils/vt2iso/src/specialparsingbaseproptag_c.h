@@ -87,6 +87,9 @@ class SpecialParsingBasePropTag_c
   /// returns the object type from a given DOMNode if type is known and sets it
   virtual uint16_t getObjType (const char* node_name) { return ui8_objType; }
 
+  /// if a tag has unknown attributes, set that flag
+  virtual void setUnknownAttributes (bool b_hasUnknownAttr) {}
+
   /// simple setter function to set the object type
   void setObjType (uint8_t rui8_objType) { ui8_objType = rui8_objType; }
 
