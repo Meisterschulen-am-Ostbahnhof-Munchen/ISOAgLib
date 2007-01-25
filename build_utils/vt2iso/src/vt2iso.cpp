@@ -2191,8 +2191,10 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
                 if (is_objChildName == false)
                 {
                   // create auto-named NAME attribute
-                  sprintf (objChildName, "%sUnnamed%d", pcch_poolIdent, objNextUnnamedName);
+                  sprintf (objChildName, "Unnamed%d", objNextUnnamedName);
                   ((DOMElement *)child)->setAttribute (X("name"), X(objChildName));
+                  // add pool_ident to the name for getting an ID -> if child gets processed, its name gets the pool_ident added
+                  sprintf (objChildName,  "%sUnnamed%d", pcch_poolIdent, objNextUnnamedName);
                   objNextUnnamedName++;
                   is_objChildName = true;
                 }
@@ -2330,8 +2332,10 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             if (is_objChildName == false)
             {
               // create auto-named NAME attribute
-              sprintf (objChildName, "%sUnnamed%d", pcch_poolIdent, objNextUnnamedName);
+              sprintf (objChildName, "Unnamed%d", objNextUnnamedName);
               ((DOMElement *)child)->setAttribute (X("name"), X(objChildName));
+              // add pool_ident to the name for getting an ID -> if child gets processed, its name gets the pool_ident added
+              sprintf (objChildName, "%sUnnamed%d", pcch_poolIdent, objNextUnnamedName);
               objNextUnnamedName++;
               is_objChildName = true;
             }
