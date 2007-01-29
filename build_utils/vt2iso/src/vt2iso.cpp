@@ -3462,9 +3462,9 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
 
         case otInputboolean:
         {
-          if (!(attrIsGiven [attrWidth] && attrIsGiven [attrForeground_colour_from_font]))
+          if (!(attrIsGiven [attrWidth] && attrIsGiven [attrForeground_colour]))
           {
-            std::cout << "YOU NEED TO SPECIFY THE width= AND foreground_colour_from_font= ATTRIBUTES FOR THE <inputboolean> OBJECT '" << objName << "'! STOPPING PARSER! bye.\n\n";
+            std::cout << "YOU NEED TO SPECIFY THE width= AND foreground_colour= ATTRIBUTES FOR THE <inputboolean> OBJECT '" << objName << "'! STOPPING PARSER! bye.\n\n";
             return false;
           }
           if (!attrIsGiven [attrValue])
@@ -3476,7 +3476,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             std::cout << "Error in booltoi() from object <" << node_name << "> '" << objName << "'! STOPPING PARSER! bye.\n\n";
             return false;
           }
-          fprintf (partFile_attributes, ", %d, %s, &iVtObject%s, %s, %s, %d", colortoi (attrString [attrBackground_colour]), attrString [attrWidth], getObjNameWithPoolIdent (attrString [attrForeground_colour_from_font]), attrString [attrVariable_reference], attrString [attrValue], (unsigned int)retEnabled);
+          fprintf (partFile_attributes, ", %d, %s, &iVtObject%s, %s, %s, %d", colortoi (attrString [attrBackground_colour]), attrString [attrWidth], getObjNameWithPoolIdent (attrString [attrForeground_colour]), attrString [attrVariable_reference], attrString [attrValue], (unsigned int)retEnabled);
           break;
         }
 
