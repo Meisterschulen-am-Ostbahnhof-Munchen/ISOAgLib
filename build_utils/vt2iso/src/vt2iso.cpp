@@ -2143,7 +2143,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
                       continue;
                     }
                     if (strncmp (attr_name, "block_font", stringLength) == 0) {
-                      strcpy (objBlockFont, "&iVtObject");
+                      sprintf (objBlockFont, "&iVtObject%s", pcch_poolIdent);
                       strncat (objBlockFont, attr_value, stringLength-9);
                       continue;
                     }

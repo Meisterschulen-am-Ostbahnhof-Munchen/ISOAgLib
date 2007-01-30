@@ -122,6 +122,8 @@ class SpecialParsingBase_c
   /// returns if the current parsing module contains proprietary object types which can be handled like basic object types
   virtual bool checkForProprietaryOrBasicObjTypes() = 0;
 
+  virtual const char* getResourceName (uint16_t ui16_resourceID) { return NULL; }
+
   virtual ~SpecialParsingBase_c() {}
 
 };

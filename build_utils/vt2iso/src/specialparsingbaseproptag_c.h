@@ -107,7 +107,7 @@ class SpecialParsingBasePropTag_c
 
   virtual ~SpecialParsingBasePropTag_c() {}
 
-  SpecialParsingBasePropTag_c(): ui8_objType(0xFFFF) {}
+  SpecialParsingBasePropTag_c(): ui8_objType(0xFF) {}
 
  private:
   uint8_t ui8_objType;
