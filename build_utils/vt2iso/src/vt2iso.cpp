@@ -2158,13 +2158,6 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
                   }
                 }
 
-                if (pc_specialParsing)
-                { /// check if the found child object needs a resource ID as object ID
-                  if (is_objChildName)
-                    if (!pc_specialParsing->setResourceID (child, objNameWithoutPoolIdent, &is_objChildID, &objChildID))
-                      return false;
-                }
-
                 if (is_objChildName == false)
                 {
                   // create auto-named NAME attribute
