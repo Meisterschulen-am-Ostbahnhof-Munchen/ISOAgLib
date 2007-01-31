@@ -337,14 +337,18 @@ void Scheduler_c::unregisterClient( ElementBase_c* pc_client)
   // delete from Queue if not empty
   if(!c_taskQueue.empty()){
     STL_NAMESPACE::list<SchedulerEntry_c>::iterator itc_task;
-    for(itc_task = c_taskQueue.begin(); itc_task != c_taskQueue.end(); itc_task++){
+    for(itc_task = c_taskQueue.begin(); itc_task != c_taskQueue.end();){
 
       if(itc_task->isTask(pc_client)){
         #ifdef DEBUG_SCHEDULER
         INTERNAL_DEBUG_DEVICE << "Scheduler_cunregisterClient() Delete from TaskList:"
         << itc_task->getTaskName() << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
-        c_taskQueue.erase(itc_task) ;
+        itc_task = c_taskQueue.erase(itc_task);
+      }
+      else
+      {
+        itc_task++;
       }
     }//end for
   }

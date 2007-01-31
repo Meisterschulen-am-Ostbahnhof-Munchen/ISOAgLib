@@ -222,6 +222,12 @@ void ISOMonitor_c::close( void )
     }
     getSchedulerInstance4Comm().unregisterClient( this );
 
+    // Explicitly clear the saClaimHandler-list BEFORE clearing the ISOItems.
+    // else the ISOItems would notify the saClaimHandlers on their loss
+    // which is of course not needed here (and crashed :-()
+    vec_saClaimHandler.clear();
+    vec_isoMember.clear();
+
     getIsoRequestPgnInstance4Comm().unregisterPGN (*this, ADRESS_CLAIM_PGN);
 #ifdef USE_WORKING_SET
     getIsoRequestPgnInstance4Comm().unregisterPGN (*this, WORKING_SET_MASTER_PGN);
