@@ -7,12 +7,12 @@
 TARGET = 3_0_VirtualTerminalIso
 ISOAGLIB_PATH = ../../..
 APP_INC = -I../../../IsoAgLib_Examples/tutorial/3_Terminal/3_0_VirtualTerminalIso 
+
 ####### Include a version definition file into the Makefile context - when this file exists
 -include versions.mk
 
 
 PROJ_DEFINES = $(VERSION_DEFINES) -DSYSTEM_PC -DPRJ_USE_AUTOGEN_CONFIG=config_3_0_VirtualTerminalIso.h
-
 
 ####### Definition of compiler binary prefix corresponding to selected target
 COMPILER_BINARY_PRE = 
@@ -21,7 +21,7 @@ COMPILER_BINARY_PRE =
 first: all
 
 ####### Files
-SOURCES = ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp  \
+SOURCES_LIBRARY = ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.cpp  \
@@ -96,8 +96,9 @@ SOURCES = ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp  \
 		../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp  \
 		../../../xgpl_src/IsoAgLib/driver/can/impl/canio_c.cpp  \
 		../../../xgpl_src/IsoAgLib/driver/system/impl/system_c.cpp  \
-		../../../xgpl_src/IsoAgLib/driver/eeprom/impl/eepromio_c.cpp  \
-		../../../IsoAgLib_Examples/tutorial/3_Terminal/3_0_VirtualTerminalIso/3_0_VirtualTerminalIso.cpp  
+		../../../xgpl_src/IsoAgLib/driver/eeprom/impl/eepromio_c.cpp  
+
+SOURCES_APP = ../../../IsoAgLib_Examples/tutorial/3_Terminal/3_0_VirtualTerminalIso/3_0_VirtualTerminalIso.cpp  
 
 
 #Special Sources for CAN Server
@@ -154,35 +155,63 @@ MKDIR    = mkdir -p
 
 ####### Output directory
 
-OBJ_DIR  = objects
+OBJ_DIR_LIBRARY  = objects_library
+OBJ_DIR_APP  = objects_app
 
-####### Build Rules
+####### Build Rules for Library Part
 
-OBJECTS = $(patsubst %.cpp,$(OBJ_DIR)/%.o,$(notdir $(SOURCES)))
-DEPS := $(patsubst %.o,%.d,$(OBJECTS))
+OBJECTS_LIBRARY = $(patsubst %.cpp,$(OBJ_DIR_LIBRARY)/%.o,$(notdir $(SOURCES_LIBRARY)))
+DEPS_LIBRARY := $(patsubst %.o,%.d,$(OBJECTS_LIBRARY))
 
-# $(OBJ_DIR)/%.d :
+# $(OBJ_DIR_LIBRARY)/%.d :
 # 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -MM -MT $(patsubst %.d,%.o,$@)  $(filter %/$(patsubst $(OBJ_DIR)/%.d,%,$@).cpp,$(SOURCES)) > $@
 
-$(OBJ_DIR)/%.d :
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -MM $(filter %/$(patsubst $(OBJ_DIR)/%.d,%,$@).cpp,$(SOURCES)) 2>/dev/null | \
-	perl -p -e 's!^([^:]+:)!$(OBJ_DIR)/$$1!' > $@
+$(OBJ_DIR_LIBRARY)/%.d :
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -MM $(filter %/$(patsubst $(OBJ_DIR_LIBRARY)/%.d,%,$@).cpp,$(SOURCES_LIBRARY)) 2>/dev/null | \
+	perl -p -e 's!^([^:]+:)!$(OBJ_DIR_LIBRARY)/$$1!' > $@
 
-include $(DEPS)
+include $(DEPS_LIBRARY)
+
+####### Build Rules for Application Part
+
+OBJECTS_APP = $(patsubst %.cpp,$(OBJ_DIR_APP)/%.o,$(notdir $(SOURCES_APP)))
+DEPS_APP := $(patsubst %.o,%.d,$(OBJECTS_APP))
+
+# $(OBJ_DIR_APP)/%.d :
+# 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -MM -MT $(patsubst %.d,%.o,$@)  $(filter %/$(patsubst $(OBJ_DIR)/%.d,%,$@).cpp,$(SOURCES)) > $@
+
+$(OBJ_DIR_APP)/%.d :
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -MM $(filter %/$(patsubst $(OBJ_DIR_APP)/%.d,%,$@).cpp,$(SOURCES_APP)) 2>/dev/null | \
+	perl -p -e 's!^([^:]+:)!$(OBJ_DIR_APP)/$$1!' > $@
+
+include $(DEPS_APP)
 
 ####### Implicit rules
 
 .SUFFIXES: .c .o .cpp .cc .cxx .C
 
-$(OBJ_DIR)/%.o : $(filter %/$(patsubst $(OBJ_DIR)/%.d,%,$@).cpp,$(SOURCES)) $(OBJ_DIR)/%.d
-	$(CXX) $(CXXFLAGS) $(INCPATH)  -o $@ -c $(filter %/$(patsubst $(OBJ_DIR)/%.o,%,$@).cpp,$(SOURCES))
+$(OBJ_DIR_LIBRARY)/%.o : $(filter %/$(patsubst $(OBJ_DIR_LIBRARY)/%.d,%,$@).cpp,$(SOURCES_LIBRARY)) $(OBJ_DIR_LIBRARY)/%.d
+	$(CXX) $(CXXFLAGS) $(INCPATH)  -o $@ -c $(filter %/$(patsubst $(OBJ_DIR_LIBRARY)/%.o,%,$@).cpp,$(SOURCES_LIBRARY))
+
+$(OBJ_DIR_APP)/%.o : $(filter %/$(patsubst $(OBJ_DIR_APP)/%.d,%,$@).cpp,$(SOURCES_APP)) $(OBJ_DIR_APP)/%.d
+	$(CXX) $(CXXFLAGS) $(INCPATH)  -o $@ -c $(filter %/$(patsubst $(OBJ_DIR_APP)/%.o,%,$@).cpp,$(SOURCES_APP))
 
 ####### Build rules
-deps : $(DEPS)
+deps : $(DEPS_LIBRARY) $(DEPS_APP)
 
-all: can_server Makefile $(TARGET)
-$(TARGET):  $(OBJECTS)
-	$(LINK) $(LFLAGS) -o $(TARGET) $(OBJECTS) $(LIBS)
+static_library:  $(OBJECTS_LIBRARY)
+	ar rcs $(OBJ_DIR_LIBRARY)/libisoaglib.a $^
+
+dynamic_library:  $(OBJECTS_LIBRARY)
+	$(CXX) -shared -o $(OBJ_DIR_LIBRARY)/libisoaglib.so $^
+
+
+all: can_server Makefile static_library dynamic_library  $(TARGET)
+$(TARGET):  $(OBJECTS_APP) static_library dynamic_library
+	$(LINK) $(LFLAGS) -o $(TARGET)_static $(OBJECTS_APP) $(LIBS) $(OBJ_DIR_LIBRARY)/libisoaglib.a
+	$(LINK) $(LFLAGS) -o $(TARGET)_dynamic $(OBJECTS_APP) $(LIBS) $(OBJ_DIR_LIBRARY)/libisoaglib.so
+	rm -f $(TARGET)
+	ln -s $(TARGET)_dynamic $(TARGET)
 
 dist:
 	@mkdir -p objects/$(TARGET) && $(COPY_FILE) --parents $(SOURCES) $(HEADERS) $(FORMS) $(DIST) objects/$(TARGET)/ && ( cd `dirname objects/$(TARGET)` && $(TAR) vtserver_rte.tar vtserver_rte && $(GZIP) vtserver_rte.tar ) && $(MOVE) `dirname objects/vtserver_rte`/vtserver_rte.tar.gz . && $(DEL_FILE) -r objects/vtserver_rte
@@ -190,14 +219,14 @@ dist:
 yaccclean:
 lexclean:
 clean:
-	-$(DEL_FILE) $(OBJECTS) $(DEPS)
+	-$(DEL_FILE) $(OBJECTS_LIBRARY) $(DEPS_LIBRARY) $(OBJECTS_APP) $(DEPS_APP)
 	-$(DEL_FILE) *~ core *.core
 
 
 ####### Sub-libraries
 
 distclean: clean
-	-$(DEL_FILE) $(TARGET) $(TARGET)
+	-$(DEL_FILE) $(TARGET)_static $(TARGET)_dynamic $(TARGET)
 
 
 FORCE:

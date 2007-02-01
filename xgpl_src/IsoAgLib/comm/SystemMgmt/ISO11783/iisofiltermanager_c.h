@@ -100,12 +100,12 @@ private: // Private methods/attributes
 #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
   /** C-style function, to get access to the unique ISOFilterManager_c singleton instance
       if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS */
-  iISOFilterManager_c& getIisoFilterManagerInstance (uint8_t rui8_instance = 0)
-  { return static_cast<iISOFilterManager_c&>(getIisoFilterManagerInstance (rui8_instance)); }
+  inline iISOFilterManager_c& getIisoFilterManagerInstance (uint8_t rui8_instance = 0)
+  { return static_cast<iISOFilterManager_c&>(__IsoAgLib::getIsoFilterManagerInstance (rui8_instance)); }
 #else
   /** C-style function, to get access to the unique ISOFilterManager_c singleton instance */
-  iISOFilterManager_c& getIisoFilterManagerInstance (void)
-  { return static_cast<iISOFilterManager_c&>(getIisoFilterManagerInstance()); }
+  inline iISOFilterManager_c& getIisoFilterManagerInstance (void)
+  { return static_cast<iISOFilterManager_c&>(__IsoAgLib::getIsoFilterManagerInstance()); }
 #endif
 
 }
