@@ -108,21 +108,23 @@
 #define ctControlAudioDevice     (3)
 #define ctSetAudioVolume         (4)
 #define ctChangeChildLocation    (5)
-#define ctChangeChildPosition    (6)
-#define ctChangeSize             (7)
-#define ctChangeBackgroundColour (8)
-#define ctChangeNumericValue     (9)
-#define ctChangeStringValue      (10)
-#define ctChangeEndPoint         (11)
-#define ctChangeFontAttributes   (12)
-#define ctChangeLineAttributes   (13)
-#define ctChangeFillAttributes   (14)
-#define ctChangeActiveMask       (15)
-#define ctChangeSoftKeyMask      (16)
-#define ctChangeAttribute        (17)
-#define ctChangePriority         (18)
-#define ctChangeListItem         (19)
-#define maxCommands              (20) // +++ MAX +++
+#define ctChangeSize             (6)
+#define ctChangeBackgroundColour (7)
+#define ctChangeNumericValue     (8)
+#define ctChangeEndPoint         (9)
+#define ctChangeFontAttributes   (10)
+#define ctChangeLineAttributes   (11)
+#define ctChangeFillAttributes   (12)
+#define ctChangeActiveMask       (13)
+#define ctChangeSoftKeyMask      (14)
+#define ctChangeAttribute        (15)
+#define ctChangePriority         (16)
+#define ctChangeListItem         (17)
+#define notvalidMacroCommand     (18)
+#define ctChangeStringValue      (19)
+#define ctChangeChildPosition    (20)
+#define maxCommands              (21) // +++ MAX +++
+
 
 // Object May Be
 #define ombWorkingset        (uint64_t(1)<<0)
@@ -284,6 +286,44 @@
 #define maxAttributeNames (105)
 
 
+// const uint16_t ui16_arrStartUidRange[] = 
+// 	{	
+// 	2000,   /* ObjectWorkingSet		=0, */
+//   	4000,  /* ObjectDataMask 		=1, */
+//   	6000,  /* ObjectAlarmMask 		=2, */
+//   	8000,  /* ObjectContainer		=3, */
+//   	10000,  /* ObjectSoftKeyMask 	=4, */
+//   	12000,  /* ObjectKey 			=5, */
+//   	14000, /* ObjectButton 			=6, */
+//   	16000, /* ObjectInputBoolean 	=7, */
+//   	18000, /* ObjectInputString		=8, */
+//   	20000, /* ObjectInputNumber  	=9, */
+//   	22000, /* ObjectInputList 		=10, */
+//   	24000, /* ObjectOutputString	=11, */
+//   	26000, /* ObjectOutputNumber 	=12, */
+//   	28000, /* ObjectLine 			=13, */
+//   	30000, /* ObjectRectangle 		=14, */
+//   	32000, /* ObjectEllipse 		=15, */
+//   	34000, /* ObjectPolygon			=16, */
+//   	36000, /* ObjectMeter 			=17, */
+//   	38000, /* ObjectLinearBarGraph	=18, */
+//   	40000, /* ObjectArchedBarGraph  =19, */
+//   	42000, /* ObjectPictureGraphic	=20, */
+//   	44000, /* ObjectNumberVariable	=21, */
+//   	46000, /* ObjectStringVariable 	=22, */
+//   	48000, /* ObjectFontAttributes	=23, */
+//   	50000, /* ObjectLineAttributes  =24, */
+//   	52000, /* ObjectFillAttributes  =25, */
+//   	54000, /* ObjectInputAttributes =26, */
+//   	56000, /* ObjectObjectPointer   =27, */
+//   	1,	   /* ObjectMacro           =28, */
+//   	256,   /* ObjectAuxFunction     =29, */
+//   	500,   /* ObjectAuxInput        =30,    =    ObjectMAXIMUM=30,  */	 
+// 	1000,  /* ObjectINVALID         =31, */
+// 	58000 /* ObjectMyScrollKey Is The End of Numbers	=32, */
+// };
+
+
 #define maxObjectTypesToCompare (maxObjectTypes+6)
 extern char otCompTable [maxObjectTypesToCompare] [stringLength+1];
 
@@ -430,38 +470,36 @@ unsigned int eventToi (char *text_eventName);
 
 unsigned int auxfunctiontyptetoi(char *text_auxFunctionType);
 
-//###__XML Extension for VtGuiBuilder BEGIN-### ##########################################################
+
+///### Extension for GUI Editor BEGIN-### #############################################
+
+  #ifdef WIN32  // PATHSLASH
+    const std::string c_PathSlash = "\\";
+  #else
+    const std::string c_PathSlash = "/";
+  #endif
+
 
 // Da es eine unterschiedliche Angabe von Eigenschaften vorkommen kann
 /// < rectangle color='green' color='12'  // muss man unterscheiden zw String-Zahl und String-Wort
 
-unsigned int getvalidtypefromstring (char *text_validtype);
+unsigned int getacoustsignfromstring (char *text_acousticsignal);
 
-unsigned int getcolorfromstring (char *text_backgrndcol);
+unsigned int getarchbargraphoptfromstring (char *text_options);
 
-unsigned int gethorizjustifyfromstring (char *text_horizstr);
+unsigned int getauxfunctyptefromstring(char *text_auxFuncType);
 
 unsigned int getboolfromstring (char *text_boolstr);
 
-unsigned int getformatfromstring (char *text_formatstr);
+unsigned int getcolordepthfromstring (char* text_colordepth);
 
-unsigned int getlinesuppresfromstring (char *text_linesupprstr);
+unsigned int getcolorfromstring (char *text_backgrndcol);
 
 unsigned int  getellipsetypefromstring (char *text_ellipsetype);
 
-unsigned int getpolygontypefromstring (char *text_polygontype);
+unsigned int geteventfromstring (char *text_eventName);
 
-unsigned int getoptionsfromstring (char *text_options);
-
-unsigned int getoutnumoptionsfromstring (char *text_options);
-
-unsigned int getmeteroptionsfromstring (char *text_options);
-
-unsigned int getlinebargraphoptionfromstring (char *text_options);
-
-unsigned int getcolordepthfromstring (char* text_colordepth);
-
-unsigned int getpicgraphoptionfromstring (char *text_options);
+unsigned int getformatfromstring (char *text_formatstr);
 
 unsigned int getfontsizefromstring (char *text_fontsize);
 
@@ -471,7 +509,35 @@ unsigned int getfontstylefromstring (char *text_fontstyle);
 
 unsigned int getfilltypefromstring (char *text_filltype);
 
-unsigned int geteventfromstring (char *text_eventName);
+unsigned int gethorizjustifyfromstring (char *text_horizstr);
+
+unsigned int getlinebargraphoptionfromstring (char *text_options);
+
+unsigned int getlinedirectfromstring (char *text_linedirect);
+
+unsigned int getlinesuppresfromstring (char *text_linesupprstr);
+
+unsigned int getmeteroptionsfromstring (char *text_options);
+
+unsigned int getoptionsfromstring (char *text_options);
+
+unsigned int getoutnumoptionsfromstring (char *text_options);
+
+unsigned int getpolygontypefromstring (char *text_polygontype);
+
+unsigned int getpicgraphoptionfromstring (char *text_options);
+
+unsigned int getpriorityfromstring (char *text_priority);
+
+unsigned int getvalidtypefromstring (char *text_validtype);
+
+std::string getobjectnamefromint (unsigned int iObjTypeId);
+
+// uint16_t getStartUidOfObjType(ObjectType_t type);
+// 
+// uint16_t getNextFreeUidForObjType(ObjectType_t objType,
+//               const std::map<uint16_t, std::string>& rmap_UsedObjID);
+
 
 //###__XML Extension for VtGuiBuilder ###-END ##########################################################
 
