@@ -43,7 +43,7 @@ char otCompTable [maxObjectTypesToCompare] [stringLength+1] = {
     "objectpointer",    // 27
     "macro",            // 28
     "auxiliaryfunction", // 29
-    "auxiliaryinput",     // 30 Maximal Mögliche Object Type
+    "auxiliaryinput",     // 30 Maximal Mï¿½liche Object Type
     "objectpool",         // 31
     "include_object",     // 32 = 0x20
     "include_macro",      // 33 = 0x21
@@ -382,8 +382,8 @@ char lineSuppressionTable [maxLineSuppressionTable] [stringLength+1] = {
 char ellipseTypeTable [maxEllipseTypeTable] [stringLength+1] = {
    "closed",
    "open",
-   "closedsegment",
-   "closedsection"
+   "segment",
+   "section"
 };
 
 char polygonTypeTable [maxPolygonTypeTable] [stringLength+1] = {
@@ -487,29 +487,7 @@ char auxFunctionTypeTable [maxAuxFunctionTypes] [stringLength+1] = {
 };
 
 
-//   objCount = 0;
-//   objNextAutoID = 65534;
-//   objNextMacroAutoID = 255;
-//   kcNextAutoID = 254; // for safety, 255 should also be okay though...
-//   objNextUnnamedName = 1;
-
-// extern unsigned int objCount;
-// extern unsigned int objNextMacroAutoID;
-// extern unsigned int objNextAutoID;
-// extern char objNameTable [(stringLength+1)*4000];
- extern void clean_exit (int return_value, char* error_message=NULL);
-// extern unsigned int objIDTable [4000];
-// extern unsigned int objNextMacroAutoID;
-// extern char attrString [maxAttributeNames] [stringLength+1];
-// extern bool attrIsGiven [maxAttributeNames];
-// extern unsigned int kcNextAutoID;
-//
-// extern char attr_name [1024+1];
-// extern char attr_value [1024+1];
-
-// extern struct language_s;
-// extern unsigned int ui_languages;
-// extern language_s arrs_language [DEF_iso639entries];
+ extern void clean_exit (int return_value = -1, char* error_message=NULL);
 
 
 unsigned int objectIsType (char* lookup_name)
@@ -868,7 +846,7 @@ unsigned int auxfunctiontyptetoi(char *text_auxFunctionType)
   return retval;
 }
 
-//###__XML Extension for VtGuiBuilder BEGIN-### ##########################################################
+///### Extension for VtGuiBuilder BEGIN-### ##########################################################
 
 unsigned int getacoustsignfromstring (char *text_acousticsignal)
 {
@@ -1171,8 +1149,46 @@ unsigned int getvalidtypefromstring (char *text_validtype)
   return ui_res;
 }
 
+std::string getobjectnamefromint (unsigned int iObjTypeId)
+{
+     return (otCompTable [iObjTypeId]);
+}
 
 
-//###__XML Extension for VtGuiBuilder ###-END ##########################################################
+// uint16_t 
+// getStartUidOfObjType(ObjectType_t type)
+// {
+// 	return ui16_arrStartUidRange[type];
+// 
+// }
+// 
+// 
+// uint16_t 
+// getNextFreeUidForObjType(ObjectType_t objType, 
+// 						const std::map<uint16_t, std::string>& rmap_UsedObjID)
+// {
+// 	uint16_t startRange = 0xFFFF;
+// 	if ( !(objType < ObjectINVALID) ) 	return startRange;
+// 	startRange=getStartUidOfObjType ( objType );
+// // 	std::map<uint16_t, std::string>::const_reference ref_Uid = rmap_UsedObjID.begin();
+// 	uint16_t endRange = getStartUidOfObjType ((ObjectType_t )(objType+1) );
+// 	if ( objType == ObjectObjectPointer )
+// 		endRange = getStartUidOfObjType ( ObjectMyScrollKey );
+// 
+// 	for (unsigned int i = startRange; i < endRange; i++)
+// 	{
+// 		if (! (rmap_UsedObjID.at(i) == "used") )
+// 		{
+// 			return i;
+// 		}
+// 	}
+// 	return 0xFFFF;
+// }
+// 
+
+
+
+
+///### Extension for VtGuiBuilder ###-END ##########################################################
 
 
