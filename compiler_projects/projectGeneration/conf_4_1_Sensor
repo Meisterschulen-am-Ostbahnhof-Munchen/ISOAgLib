@@ -297,6 +297,15 @@ PRJ_ISO11783=1
 # PROC_REMOTE_SIMPLE_MEASURE_SETPOINT_COMBINED=0
 
 # ###############################################################
+# Special CAN features
+# ###############################################################
+
+# Decide to activate an interface for handling of proprietary CAN identifiers
+# as defined by ISO 11783
+# PRJ_PROPRIETARY_CAN_INTERFACE=0
+
+
+# ###############################################################
 # Optional Driver Selection
 # ###############################################################
 
@@ -354,6 +363,14 @@ PRJ_SENSOR_COUNTER=1
 # ###############################################################
 # Build System Configuration for LINUX
 # ###############################################################
+
+# The libraries (headers and library files) can be
+# installed with "make install_library" to a global system
+# directory, so that applications can be compiled with
+# refering to a general system path like "/usr/local/include"
+# and "/usr/local/lib".
+# ISOAGLIB_INSTALL_PATH="/usr/local/"
+
 
 # ###############################################################
 # Build System Configuration for Cross Compilers ( like Tasking EDE )
