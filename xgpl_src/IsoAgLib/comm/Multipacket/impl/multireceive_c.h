@@ -183,7 +183,9 @@ public:
                          , bool rb_isFastPacket=false
                          #endif
                          );
+
   void deregisterClient (CANCustomer_c& rpc_client);
+  void deregisterClient (CANCustomer_c& rrefc_client, const ISOName_c& rrefc_isoName, uint32_t rui32_pgn, uint32_t rui32_pgnMask);
 
   //  Operation: createStream
   //! Parameter:

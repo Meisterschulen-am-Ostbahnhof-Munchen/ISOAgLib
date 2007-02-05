@@ -114,8 +114,10 @@ struct ISOFilter_s
   ISOFilter_s (CANCustomer_c& rrefc_canCustomer, uint32_t rui32_mask, uint32_t rui32_filter, const ISOName_c* rpc_isoNameDa = NULL, const ISOName_c* rpc_isoNameSa = NULL, int8_t ri8_dlcForce=-1, Ident_c::identType_t rt_identType=Ident_c::ExtendedIdent);
   ~ISOFilter_s();
 
-  uint32_t getMask()   const { return c_identMask.ident(); }
-  uint32_t getFilter() const { return c_identFilter.ident(); }
+  uint32_t         getMask()      const { return c_identMask.ident(); }
+  uint32_t         getFilter()    const { return c_identFilter.ident(); }
+  const ISOName_c& getIsoNameDa() const { return c_isoNameDa; }
+  const ISOName_c& getIsoNameSa() const { return c_isoNameSa; }
 
   /** operator== does INTENTIONALLY NOT compare the dlcForce field as you can't have the same filter for
       the same customer just with another dlcForce! do NEVER do this! */

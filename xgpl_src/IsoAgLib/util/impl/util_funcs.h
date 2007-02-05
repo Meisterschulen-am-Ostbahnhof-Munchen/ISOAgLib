@@ -313,26 +313,6 @@ template<class T> void number2LittleEndianString( const T rt_src, std::vector<ui
 #endif
 }
 
-/** */
-template<class T> T string2Number( const std::vector<uint8_t>& refc_target, uint16_t rui16_pos, T t_Data )
-{
-  T t_retData = t_Data;
-  for ( uint8_t index = 0; index < sizeof(t_Data); index++ )
-  {
-    t_retData = refc_target.at(rui16_pos + index) << ((sizeof(t_Data)-index-1) * 8);
-  }
-  return(t_retData);
-}
-
-/** */
-template<class T> void setStream( const T rt_src, std::vector<uint8_t>& refc_target, uint16_t rui16_bytePos, uint16_t rui16_length)
-{
-  for ( unsigned int index = rui16_bytePos;  index < rui16_length ; index ++ )
-  {
-    refc_target.at( index ) = *rt_src ;
-  }
-}
-
 /** convert big endian textual number representation into little endian uint8_t string of specified size */
 void bigEndianHexNumberText2CanString( const char* rc_src, uint8_t* pui8_target, unsigned int size );
 

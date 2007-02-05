@@ -656,7 +656,6 @@ MultiReceive_c::processMsg()
 
 
 
-/** @todo Add function with ISOItem/IdentItem probably, too? */
 // Operation: registerClient
 void
 MultiReceive_c::registerClient(CANCustomer_c& rrefc_client, const ISOName_c& rrefc_isoName,
@@ -665,7 +664,7 @@ MultiReceive_c::registerClient(CANCustomer_c& rrefc_client, const ISOName_c& rre
                                #ifdef NMEA_2000_FAST_PACKET
                                , bool rb_isFastPacket
                                #endif
-                               )
+                              )
 { // ~X2C
   std::list<MultiReceiveClientWrapper_s>::iterator list_clients_i = list_clients.begin();
   // Already in list?
@@ -706,6 +705,9 @@ MultiReceive_c::registerClient(CANCustomer_c& rrefc_client, const ISOName_c& rre
 
 
 //  Operation: deregisterClient
+//! Will kick all the MR-Clients registered by a CANCustomer_c.
+//! Mainly to be used when shutting down a class-instance
+//! that just wants to notify MR that it's gone!
 void
 MultiReceive_c::deregisterClient (CANCustomer_c& rrefc_client)
 {
@@ -732,10 +734,7 @@ MultiReceive_c::deregisterClient (CANCustomer_c& rrefc_client)
         const uint32_t cui32_mask = (0x3FFFF00UL);
         const uint32_t cui32_filter = (static_cast<MASK_TYPE>(pc_iter->ui32_pgn << 8));
         /** @todo determine when to set the PS field of the pgn to "rui8_cachedClientAddress" */
-        if (__IsoAgLib::getCanInstance4Comm().existFilter( *this, cui32_mask, cui32_filter, __IsoAgLib::Ident_c::ExtendedIdent))
-        { /* delete FilterBox */
-          __IsoAgLib::getCanInstance4Comm().deleteFilter( *this, cui32_mask, cui32_filter, __IsoAgLib::Ident_c::ExtendedIdent);
-        }
+        __IsoAgLib::getCanInstance4Comm().deleteFilter( *this, cui32_mask, cui32_filter, __IsoAgLib::Ident_c::ExtendedIdent);
       }
       #endif
       pc_iter = list_clients.erase (pc_iter);
@@ -746,6 +745,62 @@ MultiReceive_c::deregisterClient (CANCustomer_c& rrefc_client)
 }
 
 
+// Operation: deregisterClient
+void
+MultiReceive_c::deregisterClient(CANCustomer_c& rrefc_client, const ISOName_c& rrefc_isoName,
+                                 uint32_t rui32_pgn, uint32_t rui32_pgnMask)
+{
+  // first of all remove all streams that are for this client with this filter/mask/isoname tuple
+  for (std::list<DEF_Stream_c_IMPL>::iterator pc_iter = list_streams.begin(); pc_iter != list_streams.end(); )
+  {
+    // do also erase "kept" streams!!
+    std::list<MultiReceiveClientWrapper_s>::iterator i_list_clients = list_clients.begin();
+    while (i_list_clients != list_clients.end())
+    {
+      if (pc_iter->getIdent().matchDaPgnWithMask (i_list_clients->ui8_cachedClientAddress, i_list_clients->ui32_pgn, i_list_clients->ui32_pgnMask))
+        break;
+      i_list_clients++;
+    }
+
+    if (i_list_clients != list_clients.end())
+    {
+      if ( (i_list_clients->pc_client == &rrefc_client)
+        && (i_list_clients->c_isoName == rrefc_isoName)
+        && (i_list_clients->ui32_pgn == rui32_pgn)
+        && (i_list_clients->ui32_pgnMask == rui32_pgnMask)
+         )
+      { // remove stream (do not call any callbacks, as deregister is likely called in the client's destructor
+        pc_iter = list_streams.erase (pc_iter);
+      } else {
+        pc_iter++;
+      }
+    }
+  }
+
+  // then remove all MultiReceiveClientWrappers for this client
+  for (std::list<MultiReceiveClientWrapper_s>::iterator pc_iter = list_clients.begin(); pc_iter != list_clients.end(); )
+  {
+    if ( (pc_iter->pc_client == &rrefc_client)
+      && (pc_iter->c_isoName == rrefc_isoName)
+      && (pc_iter->ui32_pgn == rui32_pgn)
+      && (pc_iter->ui32_pgnMask == rui32_pgnMask)
+       )
+    { // remove MultiReceiveClientWrapper_s
+      #ifdef NMEA_2000_FAST_PACKET
+      /// Fast-Packet additions
+      if (pc_iter->b_isFastPacket) {
+        const uint32_t cui32_mask = (0x3FFFF00UL);
+        const uint32_t cui32_filter = (static_cast<MASK_TYPE>(pc_iter->ui32_pgn << 8));
+        /** @todo determine when to set the PS field of the pgn to "rui8_cachedClientAddress" */
+        __IsoAgLib::getCanInstance4Comm().deleteFilter( *this, cui32_mask, cui32_filter, __IsoAgLib::Ident_c::ExtendedIdent);
+      }
+      #endif
+      pc_iter = list_clients.erase (pc_iter);
+    } else {
+      pc_iter++;
+    }
+  }
+}
 
 // //////////////////////////////// +X2C Operation 845 : createStream
 //! Parameter:

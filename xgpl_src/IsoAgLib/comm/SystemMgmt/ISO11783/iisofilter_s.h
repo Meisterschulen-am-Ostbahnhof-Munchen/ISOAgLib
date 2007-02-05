@@ -57,16 +57,18 @@
 
 #include <IsoAgLib/util/icancustomer_c.h>
 #include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofiltermanager_c.h>
+#include <IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h>
 
-namespace __IsoAgLib {
-
-class ProprietaryMessageHandler_c;
+namespace __IsoAgLib
+{ // forward declarations
+  class ProprietaryMessageHandler_c;
 }
 
-namespace IsoAgLib {
 
-class iIdent_c;
-class iISOName_c;
+namespace IsoAgLib
+{ // forward declarations
+  class iIdent_c;
+
 
 struct iISOFilter_s : private __IsoAgLib::ISOFilter_s
 {
@@ -76,8 +78,10 @@ struct iISOFilter_s : private __IsoAgLib::ISOFilter_s
       rpc_isoNameDa, rpc_isoNameSa,
       ri8_dlcForce, rt_identType) {}
 
-  uint32_t getMask()   const { return __IsoAgLib::ISOFilter_s::getMask(); }
-  uint32_t getFilter() const { return __IsoAgLib::ISOFilter_s::getFilter(); }
+  uint32_t          getMask()      const { return ISOFilter_s::getMask(); }
+  uint32_t          getFilter()    const { return ISOFilter_s::getFilter(); }
+  const iISOName_c& getIsoNameDa() const { return static_cast<const iISOName_c&>(ISOFilter_s::getIsoNameDa()); }
+  const iISOName_c& getIsoNameSa() const { return static_cast<const iISOName_c&>(ISOFilter_s::getIsoNameSa()); }
 
   bool operator == (const iISOFilter_s rrefcs_isoFilter) const { return __IsoAgLib::ISOFilter_s::operator == (rrefcs_isoFilter); }
   bool operator != (const iISOFilter_s rrefcs_isoFilter) const { return __IsoAgLib::ISOFilter_s::operator != (rrefcs_isoFilter); }
