@@ -851,21 +851,6 @@ function create_filelist( )
 	done
 	APP_SEARCH_HDR_TYPE_PART="$APP_SEARCH_HDR_TYPE_PART \)"
 
-#  if [ -n "$APP_NAME" ] ; then
-#  	if [ $USE_TARGET_SYSTEM == "pc_linux" ] ; then
-#			echo "find ../$ISO_AG_LIB_PATH/$REL_APP_PATH/ -name "$APP_NAME" -printf 'SOURCES += %h/%f\n' >> $FILELIST_LIBRARY_QMAKE" >> .exec.tmp
-#  	fi
-# 		echo "find ../$ISO_AG_LIB_PATH/$REL_APP_PATH/ -name "$APP_NAME" -printf '%h/%f\n' >> $FILELIST_LIBRARY_PURE" >> .exec.tmp
-#	else
-#  	if [ $USE_TARGET_SYSTEM == "pc_linux" ] ; then
-#			echo "find ../$ISO_AG_LIB_PATH/$REL_APP_PATH/ $APP_SEARCH_SRC_CONDITION -printf 'SOURCES += %h/%f\n' >> $FILELIST_LIBRARY_QMAKE" >> .exec.tmp
-#			echo "find ../$ISO_AG_LIB_PATH/$REL_APP_PATH/ $APP_SEARCH_HDR_CONDITION -printf 'HEADERS += %h/%f\n' >> $FILELIST_LIBRARY_QMAKE" >> .exec.tmp
-#		fi
-
-# 		echo "find ../$ISO_AG_LIB_PATH/$REL_APP_PATH/ $APP_SEARCH_SRC_CONDITION -printf '%h/%f\n' >> $FILELIST_LIBRARY_PURE" >> .exec.tmp
-#  	echo "find ../$ISO_AG_LIB_PATH/$REL_APP_PATH/ $APP_SEARCH_HDR_CONDITION -printf '%h/%f\n' >> $FILELIST_LIBRARY_HDR" >> .exec.tmp
-#  fi
-
 	if [ $USE_TARGET_SYSTEM == "pc_linux" ] ; then
 		for EACH_REL_APP_PATH in $REL_APP_PATH ; do
 			echo "find ../$ISO_AG_LIB_PATH/$EACH_REL_APP_PATH/ $APP_SEARCH_SRC_TYPE_PART $APP_SRC_PART $EXCLUDE_PATH_PART $EXCLUDE_SRC_PART -printf 'SOURCES += %h/%f\n' >> $FILELIST_APP_QMAKE" >> .exec.tmp
@@ -1304,14 +1289,6 @@ function create_makefile()
 	echo -e "\n" >> $MakefileNameLong
 
 
-#	InternalFiles=`grep -E "/impl/" $MakefileFilelistLibrary | grep "\.h"`
-#echo -e "InternalFiles $InternalFiles"
-#	InternalFiles="$InternalFiles\n"`grep '/hal/' $MakefileFilelistLibrary`
-#echo -e "InternalFiles $InternalFiles"
-##	InterfaceFiles=`cat grep -v '/impl/' $MakefileFilelistLibrary | grep -v /hal/ | grep -v '.cpp'`
-#	InterfaceFiles=`cat $MakefileFilelistLibrary | grep -v '/impl/' | grep -v /hal/ | grep -v '.cpp'`
-#	echo -e "interface Dateien\n\n$InterfaceFiles"
-
 rm -f FileListInterface.txt FileListInterface4Eval.txt FileListInternal.txt FileListInterface4EvalPre.txt
 
 cat "$MakefileFilelistLibraryHdr" | grep    "/impl/" > FileListInternal.txt
@@ -1340,13 +1317,6 @@ while [ $DoRepeat == "TRUE" ] ; do
 				CntInterface=`grep -c "/$BaseName" FileListInterface.txt`
 				CntInternal=`grep -c "/$BaseName" FileListInternal.txt`
 
-				#if test $CntInterface -lt 1 -a $CntInternal -lt 1 ; then
-				#	echo "Lookup missing header $BaseName with path ../$ISO_AG_LIB_PATH for interface $InterfaceFile"
-				#	for FindHeader in `find ../$ISO_AG_LIB_PATH \( -path "*/$BaseName" -a -name "*.h" \)` ; do
-				#		echo $FindHeader >> FileListInterface.txt
-				#		echo $FindHeader >> FileListInterface4EvalPre.txt
-				#		echo "found missing header: $FindHeader for $BaseName"
-				#	done
 	      #echo "Include Datei $BaseName kommt $CntInterface mal im Interface und $CntInternal mal intern vor";
 				if test $CntInterface -lt 1 -a $CntInternal -gt 0 ; then
 	#echo "Header $BaseName existiert noch nicht in Interface --> hinzufügen"
@@ -1359,8 +1329,8 @@ while [ $DoRepeat == "TRUE" ] ; do
 	done
 	if [ $DoRepeat == "TRUE" ] ; then
 		Iteration=`expr $Iteration + 1`
-		cp -a -f FileListInterface4EvalPre.txt FileListInterface4EvalPre.$Iteration.txt
-		cp -a -f FileListInterface4EvalPre.txt FileListInterface4Eval.txt
+		cp -a FileListInterface4EvalPre.txt FileListInterface4EvalPre.$Iteration.txt
+		cp -a FileListInterface4EvalPre.txt FileListInterface4Eval.txt
 		rm -f FileListInterface4EvalPre.txt
 	fi
 done
