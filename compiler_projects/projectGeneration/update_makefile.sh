@@ -85,6 +85,7 @@ APP_SEARCH_HDR_CONDITION="*.h *.hpp"
 APP_PATH_EXLCUDE=""
 APP_SRC_EXCLUDE=""
 
+ISOAGLIB_INSTALL_PATH="/usr/local"
 
 USE_SYSTEM_DEFINE=""
 
@@ -219,6 +220,10 @@ if [ "A$CAN_BUS_CNT" = "A" ] ; then
   if [ "A$APP_NAME" = "A" ] ; then
   	APP_NAME=""
   fi
+
+	if [ "A$PRJ_PROPRIETARY_CAN_INTERFACE" = "A" ] ; then
+		PRJ_PROPRIETARY_CAN_INTERFACE=0
+	fi
 
   if [ "A$PRJ_ISO11783" = "A" ] ; then
   	PRJ_ISO11783=0
@@ -406,13 +411,13 @@ function create_filelist( )
     if [ -n "$COMM_PROC_FEATURES" ] ; then
       COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o "
     fi
-    COMM_PROC_FEATURES="$COMM_PROC_FEATURES -name 'processdatachangehandler_c.*' -o -name 'iprocess_c.*' -o -name 'proc_c.h' -o -path '*/Process/impl/proc*' -o -path '*/Process/impl/generalcommand*'"
+    COMM_PROC_FEATURES="$COMM_PROC_FEATURES -name 'processdatachangehandler_c.*' -o -name 'iprocess_c.*' -o -name 'elementddi_s.h' -o -name 'proc_c.h' -o -path '*/Process/impl/proc*' -o -path '*/Process*/generalcommand*' -o -path '*/Process/*procdata*base_c.h'"
 
 		if [ $PRJ_ISO11783 -gt 0 -a $PROC_LOCAL -gt 0 ] ; then
 			# allow DevPropertyHandler
-			COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*/Process/impl/dev*'"
+			COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*/Process/i*devproperty*'"
 		else
-			COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o \( -path '*/Process/impl/dev*' -a -not -name 'devproperty*' \)"
+			COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o \( -path '*/Process/i*devproperty*' -a -not -name 'devproperty*' \)"
 		fi
 
     if [ $PROC_LOCAL -gt 0 ] ; then
@@ -563,6 +568,10 @@ function create_filelist( )
     COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -name '*timeposgps*' \)"
   fi
 
+	if [ $PRJ_PROPRIETARY_CAN_INTERFACE -gt 0 ] ; then
+		COMM_FEATURES="$COMM_FEATURES -o -path '*/ProprietaryCan/*'"
+	fi
+
   if [ $PRJ_ISO_TERMINAL_SERVER -gt 0 ] ; then
     PRJ_MULTIPACKET=1
   fi
@@ -582,7 +591,7 @@ function create_filelist( )
   if test $PRJ_MULTIPACKET -gt 0 -o $PROC_LOCAL -gt 0   ; then
   	PRJ_MULTIPACKET=1
   	if [ $PRJ_ISO11783 -gt 0 ] ; then
-			COMM_FEATURES="$COMM_FEATURES -o -path '*/Multipacket/i*multi*' -o -path '*/Multipacket/impl/stream_c.*' -o -path '*/Multipacket/istream_c.*'"
+			COMM_FEATURES="$COMM_FEATURES -o -path '*/Multipacket/i*multi*' -o -path '*/Multipacket/impl/stream_c.*' -o -path '*/Multipacket/istream_c.*' -o -path '*/supplementary_driver/driver/datastreams/streaminput_c.h'  -o -path '*/IsoAgLib/convert.h'"
 			if [ $PRJ_MULTIPACKET_STREAM_CHUNK -gt 0 ] ; then
 				COMM_FEATURES="$COMM_FEATURES -o -path '*/Multipacket/impl/streamchunk_c.*' -o -path '*/Multipacket/impl/chunk_c.*'"
 			else
@@ -652,7 +661,7 @@ function create_filelist( )
     DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/sensor/*' -o -name '*sensorbase_c.*' -o -name '*sensor_c.*' -o -name '*sensori_c.*' -o -path '*/hal/sensor.h'"
 	fi
   if [ $PRJ_RS232 -gt 0 ] ; then
-    DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/driver/rs232/*' -o -path '*/hal/rs232.h'"
+    DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/driver/rs232/*' -o -path '*/hal/rs232.h' -o -path '*/hal/"$HAL_PATH"/rs232/rs232.h'"
 		if [ $PRJ_RS232_OVER_CAN -gt 0 ] ; then
 			DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/virtualDrivers/rs232/*'"
 		else
@@ -716,9 +725,10 @@ function create_filelist( )
 	fi
 
 
-  rm -f "$FILELIST_LIBRARY_PURE" "$FILELIST_LIBRARY_QMAKE"
-	rm -f "$FILELIST_APP_PURE" "$FILELIST_APP_QMAKE"
-	rm -f "$FILELIST_COMBINED_PURE" "$FILELIST_COMBINED_QMAKE"
+  rm -f "$FILELIST_LIBRARY_PURE" "$FILELIST_LIBRARY_QMAKE" "$FILELIST_LIBRARY_HDR"
+	rm -f "$FILELIST_APP_PURE" "$FILELIST_APP_QMAKE" "$FILELIST_APP_HDR"
+	rm -f "$FILELIST_COMBINED_PURE" "$FILELIST_COMBINED_QMAKE" "$FILELIST_COMBINED_HDR"
+
   touch "$FILELIST_LIBRARY_PURE" "$FILELIST_APP_PURE" "$FILELIST_COMBINED_PURE"
 	if [ $USE_TARGET_SYSTEM == "pc_linux" ] ; then
 		touch "$FILELIST_LIBRARY_QMAKE"
@@ -1194,6 +1204,8 @@ function create_makefile()
   cd $DEV_PRJ_DIR
   mkdir -p "objects_library" "objects_app"
   MakefileFilelistLibrary="$1/$PROJECT/$FILELIST_LIBRARY_PURE"
+  MakefileFilelistLibraryHdr="$1/$PROJECT/$FILELIST_LIBRARY_HDR"
+
   MakefileFilelistApp="$1/$PROJECT/$FILELIST_APP_PURE"
 
 	MakefileName="Makefile"
@@ -1202,7 +1214,6 @@ function create_makefile()
 	if [ "A$MAKEFILE_SKELETON_FILE" = "A" ] ; then
   	MAKEFILE_SKELETON_FILE="$DEV_PRJ_DIR/../$ISO_AG_LIB_PATH/compiler_projects/projectGeneration/MakefileSkeleton.txt"
   fi
-
 
 	# create Makefile Header
 	echo "#############################################################################" > $MakefileNameLong
@@ -1213,6 +1224,7 @@ function create_makefile()
 	echo "####### Project specific variables" >> $MakefileNameLong
 	echo "TARGET = $PROJECT" >> $MakefileNameLong
 	echo "ISOAGLIB_PATH = ../$ISO_AG_LIB_PATH" >> $MakefileNameLong
+	echo "INSTALL_PATH = $ISOAGLIB_INSTALL_PATH" >> $MakefileNameLong
 	echo -n "APP_INC = " >> $MakefileNameLong
 	KDEVELOP_INCLUDE_PATH="../$ISO_AG_LIB_PATH/xgpl_src;"
   for EACH_REL_APP_PATH in $REL_APP_PATH ; do
@@ -1292,6 +1304,83 @@ function create_makefile()
 	echo -e "\n" >> $MakefileNameLong
 
 
+#	InternalFiles=`grep -E "/impl/" $MakefileFilelistLibrary | grep "\.h"`
+#echo -e "InternalFiles $InternalFiles"
+#	InternalFiles="$InternalFiles\n"`grep '/hal/' $MakefileFilelistLibrary`
+#echo -e "InternalFiles $InternalFiles"
+##	InterfaceFiles=`cat grep -v '/impl/' $MakefileFilelistLibrary | grep -v /hal/ | grep -v '.cpp'`
+#	InterfaceFiles=`cat $MakefileFilelistLibrary | grep -v '/impl/' | grep -v /hal/ | grep -v '.cpp'`
+#	echo -e "interface Dateien\n\n$InterfaceFiles"
+
+rm -f FileListInterface.txt FileListInterface4Eval.txt FileListInternal.txt FileListInterface4EvalPre.txt
+
+cat "$MakefileFilelistLibraryHdr" | grep    "/impl/" > FileListInternal.txt
+cat "$MakefileFilelistLibraryHdr" | grep    "/hal/"  >> FileListInternal.txt
+cat "$MakefileFilelistLibraryHdr" | grep -v "/impl/" | grep -v /hal/ | grep -v ".cpp" > FileListInterface.txt
+
+# it's a good idea to get the several typedef.h headers to the install set
+grep typedef.h FileListInternal.txt >> FileListInterface.txt
+grep -E "driver/*/i*.h" FileListInternal.txt >> FileListInterface.txt
+
+cp -a FileListInterface.txt FileListInterfaceStart.txt
+cp -a FileListInterface.txt FileListInterface4Eval.txt
+
+DoRepeat="TRUE";
+Iteration=0
+while [ $DoRepeat == "TRUE" ] ; do
+	DoRepeat="FALSE";
+	for InterfaceFile in $(cat FileListInterface4Eval.txt); do
+		for IncludeLine in $(grep "#include" $InterfaceFile | sed -e 's/.*#include[ \t\<\"]*\([^\>\"\t ]*\).*/\1/g'); do
+			#BaseName=`basename $IncludeLine`;
+			BaseName=`echo $IncludeLine | sed -e 's#.*xgpl_src/IsoAgLib/\(.*\)#\1#g' | sed -e 's#\.\./##g'`
+			CntHeader=`echo $BaseName | grep -c '\.h'`;
+	#echo "CntHeader $CntHeader";
+			if [ $CntHeader -gt 0 ] ; then
+	#      echo "Include Line fuer $IncludeLine mit Datei $BaseName";
+				CntInterface=`grep -c "/$BaseName" FileListInterface.txt`
+				CntInternal=`grep -c "/$BaseName" FileListInternal.txt`
+
+				#if test $CntInterface -lt 1 -a $CntInternal -lt 1 ; then
+				#	echo "Lookup missing header $BaseName with path ../$ISO_AG_LIB_PATH for interface $InterfaceFile"
+				#	for FindHeader in `find ../$ISO_AG_LIB_PATH \( -path "*/$BaseName" -a -name "*.h" \)` ; do
+				#		echo $FindHeader >> FileListInterface.txt
+				#		echo $FindHeader >> FileListInterface4EvalPre.txt
+				#		echo "found missing header: $FindHeader for $BaseName"
+				#	done
+	      #echo "Include Datei $BaseName kommt $CntInterface mal im Interface und $CntInternal mal intern vor";
+				if test $CntInterface -lt 1 -a $CntInternal -gt 0 ; then
+	#echo "Header $BaseName existiert noch nicht in Interface --> hinzufügen"
+					grep $BaseName FileListInternal.txt >> FileListInterface.txt
+					grep $BaseName FileListInternal.txt >> FileListInterface4EvalPre.txt
+					DoRepeat="TRUE";
+				fi
+			fi
+		done
+	done
+	if [ $DoRepeat == "TRUE" ] ; then
+		Iteration=`expr $Iteration + 1`
+		cp -a -f FileListInterface4EvalPre.txt FileListInterface4EvalPre.$Iteration.txt
+		cp -a -f FileListInterface4EvalPre.txt FileListInterface4Eval.txt
+		rm -f FileListInterface4EvalPre.txt
+	fi
+done
+
+	echo -n "INSTALL_FILES_LIBRARY = " >> $MakefileNameLong
+	FIRST_LOOP="YES"
+	for InterfaceFile in `cat FileListInterface.txt` ; do
+		if [ $FIRST_LOOP != "YES" ] ; then
+			echo -e -n ' \\' >> $MakefileNameLong
+			echo -e -n "\n\t\t" >> $MakefileNameLong
+		else
+			FIRST_LOOP="NO"
+		fi
+		echo -e -n "$InterfaceFile" >> $MakefileNameLong
+	done
+	echo -e "\n" >> $MakefileNameLong
+
+rm -f FileListInterface.txt FileListInterface4Eval.txt FileListInternal.txt FileListInterface4EvalPre.txt
+
+
 	# build special target for CAN server
 	if [ $USE_CAN_DRIVER = "linux_server_client" ] ; then
 		mkdir -p objects_server
@@ -1333,6 +1422,96 @@ function create_makefile()
 	# create a symbolic link to get this individual MakefileNameLong referred as "Makefile"
 	rm -f "Makefile"
 	ln -s $MakefileNameLong "Makefile"
+
+	# now create pure application makefile which is based upon an installed library
+	MakefileName="MakefileApp"
+	MakefileNameLong="MakefileApp"'__'"$USE_CAN_DRIVER"'__'"$USE_RS232_DRIVER"
+
+	if [ "A$MAKEFILE_APP_SKELETON_FILE" = "A" ] ; then
+  	MAKEFILE_APP_SKELETON_FILE="$DEV_PRJ_DIR/../$ISO_AG_LIB_PATH/compiler_projects/projectGeneration/MakefileAppSkeleton.txt"
+  fi
+
+
+	# create Makefile Header
+	echo "#############################################################################" > $MakefileNameLong
+	echo "# Makefile for building: $PROJECT" >> $MakefileNameLong
+	echo "# Project:               $PROJECT" >> $MakefileNameLong
+	echo "#############################################################################" >> $MakefileNameLong
+	echo ""  >> $MakefileNameLong
+	echo "####### Project specific variables" >> $MakefileNameLong
+	echo "TARGET = $PROJECT" >> $MakefileNameLong
+	echo "ISOAGLIB_INSTALL_PATH = $ISOAGLIB_INSTALL_PATH" >> $MakefileNameLong
+	echo -n "APP_INC = " >> $MakefileNameLong
+	KDEVELOP_INCLUDE_PATH="../$ISO_AG_LIB_PATH/xgpl_src;"
+  for EACH_REL_APP_PATH in $REL_APP_PATH ; do
+		echo -n "-I../$ISO_AG_LIB_PATH/$EACH_REL_APP_PATH " >> $MakefileNameLong
+		KDEVELOP_INCLUDE_PATH="$KDEVELOP_INCLUDE_PATH ../$ISO_AG_LIB_PATH/$EACH_REL_APP_PATH;"
+  done
+	for SingleInclPath in $PRJ_INCLUDE_PATH ; do
+		echo -n " -I../$ISO_AG_LIB_PATH/$SingleInclPath" >> $MakefileNameLong
+		KDEVELOP_INCLUDE_PATH="$KDEVELOP_INCLUDE_PATH ../$ISO_AG_LIB_PATH/$SingleInclPath;"
+	done
+	echo "" >> $MakefileNameLong
+
+	echo -e "\n####### Include a version definition file into the Makefile context - when this file exists"  >> $MakefileNameLong
+	echo    "-include versions.mk" >> $MakefileNameLong
+
+
+	echo "" >> $MakefileNameLong
+
+	echo -n -e "\nPROJ_DEFINES = \$(VERSION_DEFINES) -D$USE_SYSTEM_DEFINE -DPRJ_USE_AUTOGEN_CONFIG=config_$PROJECT.h" >> $MakefileNameLong
+	for SinglePrjDefine in $PRJ_DEFINES ; do
+		echo -n " -D$SinglePrjDefine" >> $MakefileNameLong
+	done
+
+	echo -e "\n\n####### Definition of compiler binary prefix corresponding to selected target" >> $MakefileNameLong
+	if [ "A$PRJ_COMPILER_BINARY_PRE" != "A" ] ; then
+		echo "COMPILER_BINARY_PRE = \"$PRJ_COMPILER_BINARY_PRE\"" >> $MakefileNameLong
+
+	else
+		case $PRJ_DEFINES in
+			*SYSTEM_A1*)
+				echo "COMPILER_BINARY_PRE = /opt/hardhat/devkit/arm/xscale_le/bin/xscale_le-" >> $MakefileNameLong
+				echo "SYSTEM_A1"
+				;;
+			*SYSTEM_MCC*)
+				echo "COMPILER_BINARY_PRE = /opt/eldk/usr/bin/ppc_6xx-" >> $MakefileNameLong
+				echo "SYSTEM_MCC"
+				;;
+			*)
+				echo "COMPILER_BINARY_PRE = " >> $MakefileNameLong
+				;;
+		esac
+	fi
+
+	echo -e "\n\nfirst: all\n" >> $MakefileNameLong
+	echo "####### Files" >> $MakefileNameLong
+	echo -n "SOURCES_APP = " >> $MakefileNameLong
+	FIRST_LOOP="YES"
+	for CcFile in `grep -E "\.cc|\.cpp|\.c" $MakefileFilelistApp` ; do
+		if [ $FIRST_LOOP != "YES" ] ; then
+			echo -e -n '\\' >> $MakefileNameLong
+			echo -e -n "\n\t\t" >> $MakefileNameLong
+		else
+			FIRST_LOOP="NO"
+		fi
+		echo -e -n "$CcFile  " >> $MakefileNameLong
+	done
+	echo -e "\n" >> $MakefileNameLong
+
+	cat $MAKEFILE_APP_SKELETON_FILE >> $MakefileNameLong
+
+	# add can_server creation to target "all"
+	if [ $USE_CAN_DRIVER = "linux_server_client" ] ; then
+		sed -e 's#all:#all: can_server#g'  $MakefileNameLong > $MakefileNameLong.1
+		sed -e 's#LFLAGS   =#LFLAGS   = -pthread#g' $MakefileNameLong.1 > $MakefileNameLong
+	fi
+	rm -f $MakefileNameLong.1
+	# create a symbolic link to get this individual MakefileNameLong referred as "Makefile"
+	rm -f "MakefileApp"
+	ln -s $MakefileNameLong "MakefileApp"
+
+
 
 	# now create a Kdevelop3 project file
 	cp -a $DEV_PRJ_DIR/../$ISO_AG_LIB_PATH/compiler_projects/projectGeneration/kdevelop3Generic.kdevelop $PROJECT.kdevelop
@@ -1936,6 +2115,10 @@ for option in "$@"; do
 		--with-makefile-skeleton=*)
 			RootDir=`pwd`
 			MAKEFILE_SKELETON_FILE=$RootDir/`echo "$option" | sed 's/--with-makefile-skeleton=//'`
+			;;
+		--with-makefile-app-skeleton=*)
+			RootDir=`pwd`
+			MAKEFILE_APP_SKELETON_FILE=$RootDir/`echo "$option" | sed 's/--with-makefile-app-skeleton=//'`
 			;;
 		-*)
 			echo "Unrecognized option $option'" 1>&2

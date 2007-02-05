@@ -110,8 +110,22 @@ FORCE:
 
 
 ####### Install
-
-install:
+install_library: $(INSTALL_FILES_LIBRARY)
+	mkdir -p /$(INSTALL_PATH)/lib;
+	@for INSTITEM in $(INSTALL_FILES_LIBRARY); do \
+		SEARCH=$(ISOAGLIB_PATH)/xgpl_src; \
+		REPLACE=$(INSTALL_PATH)/include; \
+		#echo "Search $$SEARCH -> replace $$REPLACE"; \
+		VAR_TEST=`echo $$INSTITEM | sed -e "s#$$SEARCH#$$REPLACE#g"`; \
+		#echo "INSTITEM $$INSTITEM , ISOAGLIB_PATH $(ISOAGLIB_PATH) , INSTALL_PATH $(INSTALL_PATH) -> VAR_TEST $$VAR_TEST"; \
+		DEST_PATH=`dirname $$VAR_TEST`; \
+		#echo "DestPath $$DEST_PATH" ; \
+		mkdir -p $$DEST_PATH; \
+		install  -m 0755 $$INSTITEM $$DEST_PATH; \
+		done && \
+		install  -m 0755 $(OBJ_DIR_LIBRARY)/libisoaglib.a $(INSTALL_PATH)/lib/; \
+		install  -m 0755 $(OBJ_DIR_LIBRARY)/libisoaglib.so "$(INSTALL_PATH)/lib/" ; \
+		echo Finished installing binaries to directory \"$(INSTALL_PATH)\"
 
 uninstall:
 
