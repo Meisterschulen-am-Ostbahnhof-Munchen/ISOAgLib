@@ -850,8 +850,6 @@ vt2iso_c::getID (const char* objName, bool b_isMacro, bool b_wishingID, unsigned
 signed long int
 vt2iso_c::setID (const char* objName, unsigned int wishID)
 {
-  bool isThere = false;
-  unsigned int foundID = 0;
   b_hasUnknownAttributes = false;
 
   // Added the following check. This is necessary so that objects like input lists which can contain lists of the NULL object ID (65535)
