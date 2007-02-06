@@ -484,54 +484,33 @@ unsigned int auxfunctiontyptetoi(char *text_auxFunctionType);
 /// < rectangle color='green' color='12'  // muss man unterscheiden zw String-Zahl und String-Wort
 
 unsigned int getacoustsignfromstring (char *text_acousticsignal);
-
 unsigned int getarchbargraphoptfromstring (char *text_options);
-
 unsigned int getauxfunctyptefromstring(char *text_auxFuncType);
-
 unsigned int getboolfromstring (char *text_boolstr);
-
 unsigned int getcolordepthfromstring (char* text_colordepth);
-
 unsigned int getcolorfromstring (char *text_backgrndcol);
-
-unsigned int  getellipsetypefromstring (char *text_ellipsetype);
-
+unsigned int getellipsetypefromstring (char *text_ellipsetype);
 unsigned int geteventfromstring (char *text_eventName);
-
 unsigned int getformatfromstring (char *text_formatstr);
-
 unsigned int getfontsizefromstring (char *text_fontsize);
-
 unsigned int getfonttypefromstring (char* text_fonttype);
-
 unsigned int getfontstylefromstring (char *text_fontstyle);
-
 unsigned int getfilltypefromstring (char *text_filltype);
-
 unsigned int gethorizjustifyfromstring (char *text_horizstr);
-
 unsigned int getlinebargraphoptionfromstring (char *text_options);
-
 unsigned int getlinedirectfromstring (char *text_linedirect);
-
 unsigned int getlinesuppresfromstring (char *text_linesupprstr);
-
 unsigned int getmeteroptionsfromstring (char *text_options);
-
 unsigned int getoptionsfromstring (char *text_options);
-
 unsigned int getoutnumoptionsfromstring (char *text_options);
-
 unsigned int getpolygontypefromstring (char *text_polygontype);
-
 unsigned int getpicgraphoptionfromstring (char *text_options);
-
 unsigned int getpriorityfromstring (char *text_priority);
-
 unsigned int getvalidtypefromstring (char *text_validtype);
 
+unsigned int getlineartfromstring (char *text_lineart);
 std::string getobjectnamefromint (unsigned int iObjTypeId);
+unsigned int getpicturegraphicrlefromstring (char *text_pictrle);
 
 // uint16_t getStartUidOfObjType(ObjectType_t type);
 // 
@@ -540,6 +519,7 @@ std::string getobjectnamefromint (unsigned int iObjTypeId);
 
 
 //###__XML Extension for VtGuiBuilder ###-END ##########################################################
+
 
 
 #endif
