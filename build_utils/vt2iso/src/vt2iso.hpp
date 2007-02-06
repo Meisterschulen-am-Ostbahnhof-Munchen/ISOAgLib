@@ -192,12 +192,16 @@ public:
 
   const char* getXmlFile (int index) { return xmlFiles[index]; }
 
+  const char* getAttributeValue (DOMNode* pc_node, const char* attributeName);
+
 private:
   signed int strlenUnescaped (const char* pcc_string);
 
   bool copyWithQuoteAndLength (char *dest, const char *src, unsigned int len);
 
   signed long int getID (const char* objName, bool b_isMacro, bool b_wishingID, unsigned int wishID);
+
+  signed long int setID (const char* objName, unsigned int wishID);
 
   signed long int idOrName_toi (char* rpc_string, bool rb_isMacro);
 
@@ -296,6 +300,8 @@ private:
   bool is_objName;
   unsigned int objID;
   bool is_objID;
+
+  bool b_hasUnknownAttributes;
 
 #ifdef USE_SPECIAL_PARSING_PROP
   SpecialParsingUsePropTag_c* pc_specialParsingPropTag;

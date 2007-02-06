@@ -475,9 +475,6 @@ vt2iso_c::clean_exit (char* error_message)
   FILE* partFile_direct = NULL;
   char partFileName [1024+1]; partFileName [1024+1-1] = 0x00;
 
-  if (error_message != NULL)
-    std::cout << error_message;
-
   char* pc_lastDirectoryBackslash, *pc_lastDirectorySlash;
   char xmlFileWithoutPath[255];
   pc_lastDirectoryBackslash = strrchr( xmlFileGlobal, '\\' );
@@ -713,6 +710,9 @@ vt2iso_c::clean_exit (char* error_message)
   if (partFile_defines)          fclose (partFile_defines);
   if (partFile_functions)        fclose (partFile_functions);
   if (partFile_functions_origin) fclose (partFile_functions_origin);
+
+  if (error_message != NULL)
+    std::cout << error_message;
 }
 
 signed int
@@ -786,7 +786,7 @@ vt2iso_c::getID (const char* objName, bool b_isMacro, bool b_wishingID, unsigned
   bool isThere = false;
   unsigned int foundID = 0;
 
-  // Added the following check. This is necessary so that objects like input lists which can contain lists of the NULL  object ID (65535)
+  // Added the following check. This is necessary so that objects like input lists which can contain lists of the NULL object ID (65535)
   // do not assign object ids for this, and as a result count an additional object unnecessarily by incrementing objCount.
   if (wishID == 65535)
   {
@@ -814,7 +814,7 @@ vt2iso_c::getID (const char* objName, bool b_isMacro, bool b_wishingID, unsigned
         if (objIDTable [i] == wishID)
         {
           if (pc_specialParsing)
-            std::cout << "DOUBLE USE OF RESOURCE NAME '" << pc_specialParsing->getResourceName (wishID) << "' WITH ID '"<< wishID << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
+            std::cout << "DOUBLE USE OF RESOURCE NAME '" << pc_specialParsing->getResourceName (wishID) << "' WITH ID '"<< (uint16_t)wishID << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
           else
             std::cout << "DOUBLE USE OF OBJECT ID '" << wishID << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
           return -1;
@@ -843,8 +843,38 @@ vt2iso_c::getID (const char* objName, bool b_isMacro, bool b_wishingID, unsigned
       objCount++;
     }
   }
-  // else { take ID found }
+
   return (foundID);
+}
+
+signed long int
+vt2iso_c::setID (const char* objName, unsigned int wishID)
+{
+  bool isThere = false;
+  unsigned int foundID = 0;
+  b_hasUnknownAttributes = false;
+
+  // Added the following check. This is necessary so that objects like input lists which can contain lists of the NULL object ID (65535)
+  // do not assign object ids for this, and as a result count an additional object unnecessarily by incrementing objCount.
+  if (wishID == 65535)
+  {
+    return wishID;
+  }
+
+  // first check if object is there already
+  for (unsigned int i=0; i<objCount; i++)
+  {
+    // std::cout << "comparing " << objName << " with " << &objNameTable [i*(stringLength+1)] << "\n";
+    if (strncmp (objName, &objNameTable [i*(stringLength+1)], stringLength) == 0)
+    {
+      if (objIDTable [i] != wishID) // only set ID if different from wishID
+        objIDTable [i] = wishID;
+
+      return (wishID);
+    }
+  }
+
+  return getID (objName, false, true, wishID);
 }
 
 signed long int
@@ -1257,6 +1287,8 @@ vt2iso_c::getAttributesFromNode(DOMNode *n, bool treatSpecial)
 
         if (pc_specialParsingPropTag)
           pc_specialParsingPropTag->setUnknownAttributes (true);
+
+        b_hasUnknownAttributes = true;
       }
       else if (l == maxAttributeNames)
       {
@@ -1576,13 +1608,19 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
         }
       }
     }
+    if (pc_specialParsing && (objType == otIncludeobject))
+    {
+      sprintf (objName, "%s%s", pcch_poolIdent, getAttributeValue (n, "name"));
+      if (!pc_specialParsing->parseKnownTag(n, objType, objName, &objID, &is_objID))
+        return false;
+    }
   }
   else
   {
     if ( objType < maxObjectTypes && ( ( (uint64_t(1)<<objType) & ombType) == 0 ) )
     {
       // ERROR: Unallowed <TAG> here?!
-      std::cout << "\n\nENCOUNTERED WRONG TAG AT THIS POSITION!\nENCOUNTERED: <" << node_name << "> objType: "
+      std::cout << "\n\nENCOUNTERED WRONG TAG AT THIS POSITION!\nENCOUNTERED: <" << node_name << "> '" << getAttributeValue (n, "name") << "'objType: "
                 << objType << " ombType: " << ombType << "\nPOSSIBLE TAGS HERE WOULD BE: ";
       for (int j=0; j<maxObjectTypesToCompare; j++) {
         if ((uint64_t(1)<<j) & ombType) {
@@ -1648,6 +1686,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
       {
         if (!pc_specialParsing->parseUnknownTag(n, objType, &is_objID, objID))
           return false;
+        b_hasUnknownAttributes = false;
       }
       else
       {
@@ -1671,9 +1710,11 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             break;
         }
       }
+      if (b_hasUnknownAttributes)
+      // set object ID here to ensure that the resource ID is used as object ID
+        setID (objName, objID);
     }
-
-    // get a new ID for this object is not yet done
+    // get a new ID for this object if not yet done
     signed long int checkObjID = getID (objName, (objType == otMacro) ? true: false, is_objID, objID);
 
     if (checkObjID == -1)
@@ -4173,7 +4214,10 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
   return true;
 }
 
-vt2iso_c::vt2iso_c(std::basic_string<char>* pch_fileName, char* pch_poolIdent, std::basic_string<char>* dictionary): amountXmlFiles(0), pcch_poolIdent (pch_poolIdent)
+vt2iso_c::vt2iso_c(std::basic_string<char>* pch_fileName, char* pch_poolIdent, std::basic_string<char>* dictionary)
+  : amountXmlFiles(0)
+  , pcch_poolIdent (pch_poolIdent)
+  , b_hasUnknownAttributes (false)
 {
   prepareFileNameAndDirectory(pch_fileName);
 
@@ -4218,6 +4262,27 @@ vt2iso_c::skRelatedFileOutput()
   fprintf (partFile_defines, "#define vtObjectPoolDimension %d\n", getOPDimension());
   fprintf (partFile_defines, "#define vtObjectPoolSoftKeyWidth %d\n", getSKWidth());
   fprintf (partFile_defines, "#define vtObjectPoolSoftKeyHeight %d\n", getSKHeight());
+}
+
+const char*
+vt2iso_c::getAttributeValue (DOMNode* pc_node, const char* attributeName)
+{
+  /// get attributes of node and compare all attributes with given params or until match
+  DOMNamedNodeMap *pAttributes = pc_node->getAttributes();
+  int nodeSize = pAttributes->getLength();
+  for (int index=0; index<nodeSize; ++index)
+  {
+    DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(index);
+    utf16convert ((char*)pAttributeNode->getName(), attr_name, 1024);
+
+    if (strncmp (attr_name, attributeName, stringLength) == 0)
+    { /// correct attribute found, now compare the given vale with attribute's value
+      utf16convert ((char*)pAttributeNode->getValue(), attr_value, 1024);
+      return attr_value;
+    }
+  }
+
+  return "";
 }
 
 void

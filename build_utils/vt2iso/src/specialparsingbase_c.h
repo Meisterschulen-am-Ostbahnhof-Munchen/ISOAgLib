@@ -116,9 +116,6 @@ class SpecialParsingBase_c
   */
   virtual bool checkUseOfResourceID (unsigned int objID) { return true; }
 
-  /** set rui_objID and pb_isObjID appropriate if a resource ID should be used as object ID */
-  virtual bool setResourceID (DOMNode* pc_node, const char* pcch_objName, bool* pb_isObjID, signed long int* pli_objID) = 0;
-
   /// returns if the current parsing module contains proprietary object types which can be handled like basic object types
   virtual bool checkForProprietaryOrBasicObjTypes() = 0;
 
