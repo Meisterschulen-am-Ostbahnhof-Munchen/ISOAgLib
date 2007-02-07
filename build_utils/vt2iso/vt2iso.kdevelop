@@ -160,7 +160,7 @@
     <qt>
       <used>false</used>
       <version>3</version>
-      <root></root>
+      <root/>
       <includestyle>3</includestyle>
       <designerintegration>EmbeddedKDevDesigner</designerintegration>
       <qmake>/usr/bin/qmake-qt3</qmake>

@@ -1696,14 +1696,9 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             if (!pc_specialParsing->parseKnownTag(n, objType, objName, &objID, &is_objID, attrString[attrSoft_key_mask]))
               return false;
             break;
-          case otOutputnumber:
+          default:
             /// attribute for variable reference
             if (!pc_specialParsing->parseKnownTag(n, objType, objName, &objID, &is_objID, "NULL", attrString[attrVariable_reference]))
-              return false;
-            break;
-          default:
-            /// no attribute for variable reference
-            if (!pc_specialParsing->parseKnownTag(n, objType, objName, &objID, &is_objID))
               return false;
             break;
         }
