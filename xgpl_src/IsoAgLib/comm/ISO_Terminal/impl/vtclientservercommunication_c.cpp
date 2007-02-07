@@ -406,11 +406,11 @@ VtClientServerCommunication_c::VtClientServerCommunication_c (IdentItem_c& ref_w
   // now let all clients know which client they belong to
   if (ui8_clientId > 0) // the iVtObjects are initialised with 0 as default index
   {
-    for (uint8_t ui8_objIndex = 0; ui8_objIndex < c_streamer.refc_pool.getNumObjects(); ui8_objIndex++)
-      c_streamer.refc_pool.getIVtObjects()[0][ui8_objIndex]->setClientID (ui8_clientId);
+    for (uint16_t ui16_objIndex = 0; ui16_objIndex < c_streamer.refc_pool.getNumObjects(); ui16_objIndex++)
+      c_streamer.refc_pool.getIVtObjects()[0][ui16_objIndex]->setClientID (ui8_clientId);
     for (uint8_t ui8_objLangIndex = 0; ui8_objLangIndex < c_streamer.refc_pool.getNumLang(); ui8_objLangIndex++)
-      for (uint8_t ui8_objIndex = 0; ui8_objIndex < c_streamer.refc_pool.getNumObjectsLang(); ui8_objIndex++)
-        c_streamer.refc_pool.getIVtObjects()[ui8_objLangIndex+1][ui8_objIndex]->setClientID (ui8_clientId);
+      for (uint16_t ui16_objIndex = 0; ui16_objIndex < c_streamer.refc_pool.getNumObjectsLang(); ui16_objIndex++)
+        c_streamer.refc_pool.getIVtObjects()[ui8_objLangIndex+1][ui16_objIndex]->setClientID (ui8_clientId);
   }
 
   if (rpc_versionLabel)
