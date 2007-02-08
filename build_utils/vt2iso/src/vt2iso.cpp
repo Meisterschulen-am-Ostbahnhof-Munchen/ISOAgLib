@@ -1659,6 +1659,17 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
     // set all non-set attributes to default values (as long as sensible, like bg_colour etc.)
     defaultAttributes (objType);
 
+    // get a new ID for this object if not yet done
+    signed long int checkObjID = getID (objName, (objType == otMacro) ? true: false, is_objID, objID);
+
+    if (checkObjID == -1)
+    {
+      std::cout << "Error in getID() from object <" << node_name << "> '" << objName << "'! STOP PARSER! bye.\n\n";
+      return false;
+    }
+    else
+      objID = (unsigned int)checkObjID;
+
     if (pc_specialParsingPropTag && (objType >= maxObjectTypes))
     {
       if (!pc_specialParsingPropTag->parseUnknownTag (n, objType, objName))
@@ -1707,16 +1718,6 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
       // set object ID here to ensure that the resource ID is used as object ID
         setID (objName, objID);
     }
-    // get a new ID for this object if not yet done
-    signed long int checkObjID = getID (objName, (objType == otMacro) ? true: false, is_objID, objID);
-
-    if (checkObjID == -1)
-    {
-      std::cout << "Error in getID() from object <" << node_name << "> '" << objName << "'! STOP PARSER! bye.\n\n";
-      return false;
-    }
-    else
-      objID = (unsigned int)checkObjID;
 
     // Completely parsed <tag ...> now, start writing out to the files!
     // ______________________________________________________________________________________________________________________________
