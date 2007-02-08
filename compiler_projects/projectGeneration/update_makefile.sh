@@ -1389,6 +1389,12 @@ rm -f FileListInterface.txt FileListInterface4Eval.txt FileListInternal.txt File
 		sed -e 's#LFLAGS   =#LFLAGS   = -pthread#g' $MakefileNameLong.1 > $MakefileNameLong
 	fi
 	rm -f $MakefileNameLong.1
+	
+	# replace the install rules for version.h and the app config file
+	sed -e "s#_PROJECT_CONFIG_REPLACE_#$CONFIG_NAME#g"  $MakefileNameLong > $MakefileNameLong.1
+	sed -e "s#_PROJECT_VERSION_REPLACE_#$VERSION_FILE_NAME#g" $MakefileNameLong.1 > $MakefileNameLong
+	rm -f $MakefileNameLong.1
+	
 	# create a symbolic link to get this individual MakefileNameLong referred as "Makefile"
 	rm -f "Makefile"
 	ln -s $MakefileNameLong "Makefile"
@@ -1477,6 +1483,7 @@ rm -f FileListInterface.txt FileListInterface4Eval.txt FileListInternal.txt File
 		sed -e 's#LFLAGS   =#LFLAGS   = -pthread#g' $MakefileNameLong.1 > $MakefileNameLong
 	fi
 	rm -f $MakefileNameLong.1
+	
 	# create a symbolic link to get this individual MakefileNameLong referred as "Makefile"
 	rm -f "MakefileApp"
 	ln -s $MakefileNameLong "MakefileApp"
