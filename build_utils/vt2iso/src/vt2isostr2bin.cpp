@@ -9,6 +9,7 @@
 
 #include "vt2isostr2bin.h"
 //#include "vt2iso-defines.hpp"
+#include <isoterminalserver_c.h>
 
 using namespace std;
 
