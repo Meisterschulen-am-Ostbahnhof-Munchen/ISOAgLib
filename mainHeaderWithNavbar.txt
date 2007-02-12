@@ -9,9 +9,9 @@
 <li> \ref IndexNews
 <li> \ref IndexChanges
 <li> \ref IndexMainFeatures
-<li> \ref IndexMemoryUsage
 <li> \ref IndexStructuralOverview
 <li> \ref IndexLicenseConditions
+<li> \ref IndexMemoryUsage
 <li> \ref IndexAchnowledgements
 <li> \ref IndexInitialSupport
 <li> \ref IndexIsoVtExtension
