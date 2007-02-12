@@ -232,7 +232,7 @@ int ca_InitCanCard_1 (uint32_t channel, int wBitrate, server_c* pc_serverData)
     case 250: { btr0 = 0xc1; btr1 = 0x3a;} break;
     case 500: { btr0 = 0xc0; btr1 = 0x3a;} break;
   }
-            
+
   if( !canBusIsOpen[channel] ) {
     DEBUG_PRINT1("Opening CAN BUS channel=%d\n", channel);
 
@@ -281,7 +281,11 @@ int ca_InitCanCard_1 (uint32_t channel, int wBitrate, server_c* pc_serverData)
 // NOTES: In this case, we will simply return 1
 //
 /////////////////////////////////////////////////////////////////////////
+#ifndef SIMULATE_BUS_MODE
 int ca_TransmitCanCard_1(tSend* ptSend, uint8_t ui8_bus, server_c* pc_serverData)
+#else
+int ca_TransmitCanCard_1(tSend* ptSend, uint8_t /* ui8_bus */, server_c* /* pc_serverData */)
+#endif
 {
 // Always Transmit to this format:
 //  the letter 'm', extended/standard ID, CAN ID, Data Length, data bytes, timestamp
@@ -391,7 +395,7 @@ int ca_ReceiveCanCard_1(can_recv_data* receiveData, uint8_t ui8_bus, server_c* p
     receiveData->msg.i32_time = msg.time;
     memcpy( receiveData->msg.pb_data, msg.data, msg.len );
   }
-    
+
   return 1;
 
 }
