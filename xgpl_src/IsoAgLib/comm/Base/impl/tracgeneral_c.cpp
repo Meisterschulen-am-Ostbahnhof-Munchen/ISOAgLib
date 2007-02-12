@@ -295,11 +295,11 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
         b_result = true;
         break;
       case MAINTAIN_POWER_REQUEST_PGN: // maintain power request
-        if ( ( (data().getUint8Data( 0 ) >> 4) & 3) == 1)
+        if ( ( (data().getUint8Data( 0 ) >> 6) & 3) == 1)
           b_maintainEcuPower = true;
         else
           b_maintainEcuPower = false;
-        if ( ( (data().getUint8Data( 0 ) >> 6) & 3) == 1)
+        if ( ( (data().getUint8Data( 0 ) >> 4) & 3) == 1)
           b_maintainActuatorPower = true;
         else
           b_maintainActuatorPower = false;
