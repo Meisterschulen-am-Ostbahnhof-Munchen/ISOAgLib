@@ -654,7 +654,7 @@ Some examples:
 \section IndexMaintainers Some information on the maintainers
 The ISO<i><sub>AgLib</sub></i> was initially created by <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a> who is now
 working for the company <b><a href="http://www.osb-ag.de">OSB AG</a></b>. This company started business at the beginning of 2003, and has
-already more than 160 engineers working in the five locations Munich, Stuttgart, Krefeld, Hamburg and Berlin ( all in Germany; <b>state Februrary 2007</b> ).<br>
+already more than 160 engineers working in the five locations Munich, Stuttgart, Krefeld, Hamburg and Berlin ( all in Germany; <b>state February 2007</b> ).<br>
 The main business focus is project support at the customer location in software, electronic and mechanical engineering.<br>
 Some of the <b><a href="http://www.osb-ag.de">OSB AG</a></b> customers are:
 	- AGCO GmbH / Fendt
