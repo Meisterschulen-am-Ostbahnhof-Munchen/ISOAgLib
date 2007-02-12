@@ -1173,7 +1173,10 @@ doc/html/Diagramme/service_network_conflict.gif -text
 doc/html/Diagramme/service_network_connection.gif -text
 doc/html/Diagramme/service_network_flexibility.gif -text
 doc/html/Images/IsoAgLib_logo.png -text svneol=unset#image/png
+doc/html/Images/background-hill.gif -text
 doc/html/Images/ikb_logo.gif -text
+doc/html/Images/isoaglib_logo.gif -text
+doc/html/Images/isoaglib_osb.gif -text
 doc/html/Images/osb_logo.gif -text
 doc/html/Images/tum_logo.gif -text
 doc/stylesheet.css -text
