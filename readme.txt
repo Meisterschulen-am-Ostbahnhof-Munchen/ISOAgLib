@@ -617,13 +617,12 @@ interested developers.
 \subsection IndexHalAdaptation Support for Adaptation to Individual Target Platform
 Even if the adaptation of the ISO<i><sub>AgLib</sub></i> to an individual target platform ( OS or BIOS ) is eased
 by the compact HAL definition, <a href="http://www.osb-ag.de">OSB AG</a> can offer support for this adaptation or can perform the
-complete adaptation. Please contact <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a> for details.
+complete adaptation. Please use our <a href="http://www.isoaglib.com/contact.html">commercial project contact page</a> for more details.
 
 \subsection IndexSupportContract Support Contract
 Like other Open Source projects, the maintainers can provide some free support, which is restricted by
 the spare free time of the developers and other experts in the user community. For commercial users, who need a predefined
-reaction time for each issue ( question or bug report ), might contact <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a>
-for individual service contracts.
+reaction time for each issue ( question or bug report ), should check our <a href="http://www.isoaglib.com/contact.html">commercial project contact page</a>.
 
 \subsection IndexCommercialEdition Commercial Editions
 The business model of ISO<i><sub>AgLib</sub></i> is comparable to <b>Red Hat</b> with their <i>free</i>
@@ -631,7 +630,7 @@ The business model of ISO<i><sub>AgLib</sub></i> is comparable to <b>Red Hat</b>
 <b><a href="http://www.redhat.com/">Red Hat Enterprise</a></b> edition.
 While the versions of the free ISO<i><sub>AgLib</sub></i> edition are good working snapshots of the ongoing development,
 the commercial edition provides thoroughly tested and maintained (including bug fixes for older revisions) versions.
-Please contact <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a> for more information.
+Please check our <a href="http://www.isoaglib.com/contact.html">commercial project contact page</a> to retrieve more information.
 
 \subsection IndexFeaturesOnRequest Integration of Requested Features
 As long as <a href="http://www.osb-ag.de">OSB AG</a> maintains the ISO<i><sub>AgLib</sub></i>, all received
@@ -655,7 +654,7 @@ Some examples:
 \section IndexMaintainers Some information on the maintainers
 The ISO<i><sub>AgLib</sub></i> was initially created by <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a> who is now
 working for the company <b><a href="http://www.osb-ag.de">OSB AG</a></b>. This company started business at the beginning of 2003, and has
-already more than 160 engineers working in the five locations Munich, Stuttgart, Krefeld, Hamburg and Berlin ( all in Germany; <b>state Feburary 2007</b> ).<br>
+already more than 160 engineers working in the five locations Munich, Stuttgart, Krefeld, Hamburg and Berlin ( all in Germany; <b>state Februrary 2007</b> ).<br>
 The main business focus is project support at the customer location in software, electronic and mechanical engineering.<br>
 Some of the <b><a href="http://www.osb-ag.de">OSB AG</a></b> customers are:
 	- AGCO GmbH / Fendt
