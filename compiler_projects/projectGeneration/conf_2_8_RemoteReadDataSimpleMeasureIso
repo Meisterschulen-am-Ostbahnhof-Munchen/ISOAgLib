@@ -117,7 +117,7 @@ USE_TARGET_SYSTEM="pc_linux"
 # targets other than pc_linux or pc_win32 can only use "sys"
 # only target "pc_win32" can use the driver "vector_canlib"|"vector_xl_drv_lib"
 # only target "pc_linux" can us the driver "rte"|"linux_server_client"
-USE_CAN_DRIVER="simulating"
+USE_CAN_DRIVER="linux_server_client"
 
 # especially the Linux linux_server_client driver type is available for different can cards,
 # where all of them use some common files and just one individual file.

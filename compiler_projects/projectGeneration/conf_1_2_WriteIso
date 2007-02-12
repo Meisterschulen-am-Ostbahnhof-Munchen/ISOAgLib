@@ -117,7 +117,7 @@ PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
 # targets other than pc_linux or pc_win32 can only use "sys"
 # only target "pc_win32" can use the driver "vector_canlib"|"vector_xl_drv_lib"
 # only target "pc_linux" can us the driver "rte"|"linux_server_client"
-USE_CAN_DRIVER="simulating"
+USE_CAN_DRIVER="linux_server_client"
 
 # especially the Linux linux_server_client driver type is available for different can cards,
 # where all of them use some common files and just one individual file.
@@ -328,7 +328,7 @@ PRJ_BASE=1
 
 # select iRS232IO_c for RS232 output which can be used like the
 # standard C++ iostreams
-# PRJ_RS232=0
+PRJ_RS232=1
 
 # select special RS232 virtual driver HAL for RS232_over_CAN
 # activating this implicitly activates PRJ_RS232 with this special

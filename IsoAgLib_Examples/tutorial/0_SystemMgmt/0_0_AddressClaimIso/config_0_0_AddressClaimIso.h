@@ -82,10 +82,13 @@
 // #define CONFIG_CAN_BUF_INCREASE_ON_OVERLOAD 5
 
 /// define list of CAN filters where large buffers are needed due to high load
-// #define CONFIG_CAN_HIGH_LOAD_IDENT_LIST { 0x100, 0x200, 0x500 }
+// #define CONFIG_CAN_HIGH_LOAD_IDENT_LIST { 0xc70000, 0xc80000, 0xcb0000, 0xeb0000, 0xec0000  }
 
 /// define amount of list entries in CONFIG_CAN_HIGH_LOAD_IDENT_LIST
-// #define CONFIG_CAN_HIGH_LOAD_IDENT_CNT 3
+// #define CONFIG_CAN_HIGH_LOAD_IDENT_CNT 5
+
+/// define mask for compare with ident
+// #define CONFIG_CAN_HIGH_LOAD_IDENT_MASK 0xff0000
 
 /// Max amount of Filters which can be connected to a CAN MsgObj for ISO
 // #define CONFIG_CAN_ISO_FILTER_BOX_PER_MSG_OBJ 15

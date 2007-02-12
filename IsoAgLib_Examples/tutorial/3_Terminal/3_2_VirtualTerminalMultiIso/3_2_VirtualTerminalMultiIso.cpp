@@ -222,7 +222,6 @@
 #include "MaskDefinition1/simpleVTIsoPool_direct.h"
 #include "MaskDefinition2/simpleVTIsoPool2_direct.h"
 
-
 // the interface objects of the IsoAgLib are placed in the IsoAgLib namespace
 // -> include all elements of this area for easy access
 // with this command the text part "IsoAgLib::" can be avoided, which
@@ -630,7 +629,8 @@ static iObjectPool_simpleVTIsoPool2_c Tutorial_3_2_Pool_2_c;
 /* End Example Code */
 /********************/
 
-int main()
+int
+main()
 {
   getIcanInstance().init (0); // CAN-Bus 0 (with defaulting 250 kbit)
 
