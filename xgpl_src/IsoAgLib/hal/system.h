@@ -80,6 +80,8 @@
 	#include "esxu/system/system.h"
 #elif defined(SYSTEM_C2C)
 	#include "c2c/system/system.h"
+#elif defined(SYSTEM_DJ1)
+	#include "Dj1/system/system.h"
 #elif defined(SYSTEM_IMI)
 	#include "imi/system/system.h"
 #elif defined(SYSTEM_PM167)

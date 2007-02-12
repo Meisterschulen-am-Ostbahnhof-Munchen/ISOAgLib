@@ -81,8 +81,13 @@
  *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
-#ifdef SYSTEM_PC
-  #include <iostream>
+#if defined(DEBUG)
+  #ifdef SYSTEM_PC
+    #include <iostream>
+  #else
+    #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
+  #endif
+  #include <IsoAgLib/util/impl/util_funcs.h>
 #endif
 
 
@@ -117,8 +122,8 @@ SchedulerEntry_c::timeEventExec(int32_t ri32_demandedExecEnd)
 
   #ifdef DEBUG
     if(!cb_result)  {
-        EXTERNAL_DEBUG_DEVICE << pc_taskInstance->getTaskName() << ".timeEvent() returned false."
-        << EXTERNAL_DEBUG_DEVICE_ENDL;
+        INTERNAL_DEBUG_DEVICE << pc_taskInstance->getTaskName() << ".timeEvent() returned false."
+        << INTERNAL_DEBUG_DEVICE_ENDL;
     }
   #endif
   return cb_result;

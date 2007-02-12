@@ -1349,6 +1349,14 @@ xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgnhandler_c.h -text
 xgpl_src/IsoAgLib/convert.h -text
 xgpl_src/IsoAgLib/driver/can/icanio_c.h -text
 xgpl_src/IsoAgLib/driver/can/impl/canio_c.cpp -text
+xgpl_src/IsoAgLib/hal/Dj1/can/can.h -text
+xgpl_src/IsoAgLib/hal/Dj1/can/hal_can_interface.cpp -text
+xgpl_src/IsoAgLib/hal/Dj1/can/hal_can_interface.h -text
+xgpl_src/IsoAgLib/hal/Dj1/config.h -text
+xgpl_src/IsoAgLib/hal/Dj1/eeprom/eeprom.h -text
+xgpl_src/IsoAgLib/hal/Dj1/errcodes.h -text
+xgpl_src/IsoAgLib/hal/Dj1/system/system.h -text
+xgpl_src/IsoAgLib/hal/Dj1/typedef.h -text
 xgpl_src/IsoAgLib/hal/a2/can/can.h -text
 xgpl_src/IsoAgLib/hal/a2/can/can_target_extension_a2.cpp -text
 xgpl_src/IsoAgLib/hal/a2/can/can_target_extensions.h -text
@@ -1407,6 +1415,9 @@ xgpl_src/IsoAgLib/util/impl/schedulerentry_c.cpp -text
 xgpl_src/IsoAgLib/util/impl/schedulerentry_c.h -text
 xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.cpp -text
 xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.h -text
+xgpl_src/supplementary_driver/hal/Dj1/actor/actor.h -text
+xgpl_src/supplementary_driver/hal/Dj1/rs232/rs232.h -text
+xgpl_src/supplementary_driver/hal/Dj1/sensor/sensor.h -text
 xgpl_src/supplementary_driver/hal/a2/rs232/rs232.h -text
 xgpl_src/supplementary_driver/hal/a2/rs232/rs232_a2.c -text
 xgpl_src/supplementary_driver/hal/c2c/actor/actor.h -text

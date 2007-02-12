@@ -101,6 +101,8 @@ typedef enum
 	#include "esxu/can/can.h"
 #elif defined(SYSTEM_C2C)
 	#include "c2c/can/can.h"
+#elif defined(SYSTEM_DJ1)
+	#include "Dj1/can/can.h"
 #elif defined(SYSTEM_IMI)
 	#include "imi/can/can.h"
 #elif defined(SYSTEM_PM167)

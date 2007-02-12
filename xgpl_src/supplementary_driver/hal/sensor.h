@@ -78,6 +78,8 @@
 	#include "esxu/sensor/sensor.h"
 #elif defined(SYSTEM_C2C)
 	#include "c2c/sensor/sensor.h"
+#elif defined(SYSTEM_DJ1)
+	#include "Dj1/sensor/sensor.h"
 #elif defined(SYSTEM_IMI)
 	#include "imi/sensor/sensor.h"
 #elif defined(SYSTEM_PM167)

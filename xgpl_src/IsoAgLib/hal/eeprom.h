@@ -78,6 +78,8 @@
 	#include "esxu/eeprom/eeprom.h"
 #elif defined(SYSTEM_C2C)
 	#include "c2c/eeprom/eeprom.h"
+#elif defined(SYSTEM_DJ1)
+	#include "Dj1/eeprom/eeprom.h"
 #elif defined(SYSTEM_IMI)
 	#include "imi/eeprom/eeprom.h"
 #elif defined(SYSTEM_PM167)

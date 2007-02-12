@@ -84,6 +84,8 @@
 		#include "esxu/rs232/rs232.h"
 	#elif defined(SYSTEM_C2C)
 		#include "c2c/rs232/rs232.h"
+	#elif defined(SYSTEM_DJ1)
+		#include "Dj1/rs232/rs232.h"
 	#elif defined(SYSTEM_IMI)
 		#include "imi/rs232/rs232.h"
 	#elif defined(SYSTEM_PM167)

@@ -79,8 +79,8 @@
 #define HAL_CAN_MAX_REC_OBJ 14
 
 /// define list of allowed speed settings
-#define HAL_RS232_BAUDRATE_LIST {75, 600, 1200, 2400, 4800, 9600, 19200}
-#define HAL_RS232_BITRATE_CNT 7
+#define HAL_RS232_BAUDRATE_LIST {75, 600, 1200, 2400, 4800, 9600, 19200, 38400, 57600}
+#define HAL_RS232_BITRATE_CNT 9                                          
 
 // now include dependent on used target the suitable header
 #if defined(SYSTEM_PC)
@@ -95,6 +95,8 @@
 	#include "esxu/config.h"
 #elif defined(SYSTEM_C2C)
 	#include "c2c/config.h"
+#elif defined(SYSTEM_DJ1)
+	#include "Dj1/config.h"
 #elif defined(SYSTEM_IMI)
 	#include "imi/config.h"
 #elif defined(SYSTEM_PM167)
