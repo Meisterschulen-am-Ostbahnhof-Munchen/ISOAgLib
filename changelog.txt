@@ -21,7 +21,7 @@ INCLUDE_mainHeaderWithNavbar.txt_INCLUDE
           1_3_WriteDin
           1_5_WriteFlexibleDin
           3_1_LBSTerminalDin
-  - removed the not more needed conf-files in projectGeneration/
+  - removed the no more needed conf-files in projectGeneration/
   - removed IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.cpp
             IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.h
     and adapted all affected classes
@@ -36,6 +36,27 @@ INCLUDE_mainHeaderWithNavbar.txt_INCLUDE
   - MultiSend rewritten to use ISOName instead of SA
   - removed classes devKey_c.h and idevKey_c and replaced this classes by isoname_c.h/iisoname_c.h
   - cleanup of LibErr_c
+  - enhancement and cleanup of process data
+  - big cleanup of IdentItem_c , as no more dual use for DIN9684 and ISO11783
+  - fixed INTERNAL/EXTERNAL debug-device use
+  - all interface class do now strictly derive <b>private</b> from the internal base class, so that no application can
+    access internal items by accident without directly refering to internal class
+  - optimize merging of CAN receive filters to get more selective CAN message receive
+  - Fixed Font-Downscaling. Now using more generic, simple (and faster) scaling.
+  - Avoid compile errors with stricter checking c++ compilers
+  - vt2iso now utilizing color-palette of BMP files. If BMP is palettized, it HAS to have the correct ISO-palette now. NOT supported by PAINTLIB wrapper class RIGHT NOW.
+     --> Please use FREEIMAGE for now.
+  - <u>ISO VT Revision 3</u>: getAttribute() , new Button styles , select input focus command can activate input dialog on demand
+  - Added HUGE_MEM for objects now, too. (Not only PictureGraphic-RAW-Data anymore now)
+  - <u>proc2iso</u>: do not add _"Nr" to DPD designator if only one DeviceProcessDataCombination is defined
+  - change problematic source codes (esp. too big inline functions) which were indicated by the stricter warning level of gcc
+  - add sending of Broadcast-TP with iMultiSendStreamer_c
+  - add parallel receive of Broadcast-TP to FastPacket, so that all flavours of NMEA2000 senders should be matched by TimePosGps_c,
+    the sending of FastPacket can be controlled with #define SEND_NMEA2000_FAST_PACKET
+  - add IsoFilterBox_c to define receive filters based on ISONAME instead of SA
+  - Now only enqueueing commands if pool is already uploaded
+  - get support for PEAK CAN cards at Linux development hosts
+  - integrate option to add application specific include paths in conf_xy file
 
 \subsection Change_L 1.2.1 to 1.2.2(unofficial)
 

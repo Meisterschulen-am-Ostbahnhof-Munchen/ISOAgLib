@@ -53,6 +53,9 @@ as there not only the maintainers can try to help you out. Please <a href="http:
 \section IndexNews News
 
 \subsection IndexNewsForBigRelease New for the 2.0 release
+  - <b>December 2006:</b> Support of PEAK CAN cards for Linux development hosts
+  - <b>October 2006:</b> Integrate enhanced scheduler, which plans exact reschedule times for all periodic subtasks of ISO<i><sub>AgLib</sub></i>, so that other program items
+     exactly know when the timeEvent() function of ISO<i><sub>AgLib</sub></i> has to be called again.
   - <b>September 2006:</b> <b>ISO<i><sub>AgLib</sub></i></b> now is a real ISO library! Complete removal of all DIN-related or DIN-dependent code, classes and preprocessor directives.
     The following steps had to be done:
     + remove all unneeded DIN9684 and all its #ifdefs
@@ -67,6 +70,10 @@ as there not only the maintainers can try to help you out. Please <a href="http:
       were only needed for the DIN way of life
     + optimize the TP send and receive classes, as several action flows were
       only needed for the parallel support of DIN, ISO and Fieldstar/LBS+ TP
+
+\subsection IndexNewsForNextIncrementalRelease Planned changes for 2.0.1 release
+  - there are currently no planned changes on interface side for 2.0.1 release
+  - CAN HAL will get its own central message FIFO implementation, to get better load balancing and message processing in order as received
 
 \subsection IndexCurrentAdditionNews News for the 1.2.1 release
   - <b>February 2006:</b> Enhance modularization of base information (Not-ProcessData parts from 11783-7) - this will be finished for release 1.2.2
@@ -546,7 +553,7 @@ working domain.
 
 \section IndexUsingProjects List of Known Projects which use IsoAgLib
 As the used license <i>GPL with exception</i> requires from each user to accompany any distributed Program
-( or a work based on it - see GPL §3 ) with some information on the used library, it would be quite kind to
+( or a work based on it - see GPL &sect;3 ) with some information on the used library, it would be quite kind to
 inform additionally the authors of your project, so that each using project can be listed here.
 This list can also serve as a prominent place for showing all contributing ( by money and/or code ) users.<br>
 
@@ -556,34 +563,9 @@ sensors, task controllers, core control units ( expert system ) and tractor buil
 interaction networks with all sorts of dependencies. Here ISO<i><sub>AgLib</sub></i> can provide common patterns for the
 management of such interactions. This list can then help to identify well supported device combinations.<br>
 
-<table width="100%" border="0" cellspacing="0" cellpadding="2" bgcolor="aqua">
-<tr><td><b>Project</b></td><td><b>Organization</b></td><td><b>Contribution</b></td></td>
-<tr>
-	<td>Automated process data recording system "Task-Controller" which detects all connected implements and starts the recording of
-		device type dependent process data ( e.g. application rate for spreaders ). It combines this information with some tractor information
-		( e.g. fuel consumption, speed, hitch position ) and GPS positioning data. All data sets are stored at a PCMCIA memory card.
-		The recorded data set can be configured by EEPROM settings, so that the firmware itself needn't be changed.
-	</td>
-	<td><a href="http://www.tec.wzw.tum.de/pflanztech/englisch/index.html">Department of Bio Resources and Land Use Technology - Crop Production Engineering</a> and
-			funding organization DFG
-	</td>
-	<td>Initial development of ISO<i><sub>AgLib</sub></i> ( previously named LBS<i><sub>Lib</sub></i> )
-	</td>
-</tr>
-<tr>
-	<td><a href="http://www.fritzmeier.com/engl/frameset_engl.htm?/engl/environment/environment_miniveg.htm">Chlorophyll Sensor <b>MiniVeg N</b></a>
-			which can be used in combination with AGCO Fendt Vario Tractors ( with Varioterminals ) or any tractor with an ISO 11783 virtual terminal.
-			It can control by process data setting each standard conformant ISO 11783 fertilizer spreader which enables control by process data
-			( several implements like spreader can be only controlled by the corresponding terminal ). An ISO<i><sub>AgLib</sub></i> powered PROXY is used
-			to provide standard conformant process data control access for spreaders which can be at least controlled with some documented RS232 or CAN connection.
-	</td>
-	<td><a href="http://www.fritzmeier.com">Fritzmeier</a>
-	</td>
-	<td>Several optimization work for ISO<i><sub>AgLib</sub></i> was enabled by this project. This is especially important for the complete new part of
-			virtual terminal ( ISO 11783 )
-	</td>
-</tr>
-</table>
+The <a href="http://www.isoaglib.com/">Commercial Overview Page</a> of ISO<i><sub>AgLib</sub></i> has a
+<a href="http://www.isoaglib.com/customer-agco.html">list of commercial products which use ISO<i><sub>AgLib</sub></i></a>.
+
 
 The ISO<i><sub>AgLib</sub></i> will be actively maintained by <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a> at <a href="http://www.osb-ag.de">OSB AG</a>
 as long as the invested time is affordable in relation to corresponding projects and support contracts.<br>
@@ -613,9 +595,8 @@ important starting information, the learning afford to get a running tutorial ex
 requires at least some time ). Additionally the <b>object oriented</b> development style might be new to most of the potential users.<br>
 
 \subsection IndexWorkshop Tutorial Workshops for Development with IsoAgLib
-The <a href="mailto:a.spangler@osb-ag:de">maintainers</a> can offer workshops in co-operation with
-<a href="http://www.tec.wzw.tum.de/pflanztech/englisch/index.html">Department of Bio Resources and Land Use Technology - Crop Production Engineering</a>
-where all members can learn:
+Please visit our <a href="http://www.isoaglib.com/contact.html">commercial project contact page</a> to
+request and plan workshops where all members can learn:
 	- <b>XML</b> design and definition of <b>ISO 11783 Virtual Terminal</b> mask pools
 	- possibilities to create flexible mask definitions which can be automatically adapted by the ISO<i><sub>AgLib</sub></i> to the properties of the connected terminal:
 		- multi-language string handling
@@ -631,10 +612,7 @@ where all members can learn:
 	- ...
 
 The exact topics of a tutorial workshop can be defined corresponding to the request of
-interested developers. These workshops can be performed at the
-<a href="http://www.tec.wzw.tum.de/pflanztech/englisch/index.html">Department of Bio Resources and Land Use Technology - Crop Production Engineering</a>
- location, or at any location of choice. <a href="http://www.osb-ag.de">OSB AG</a> can also offer closed workshops for the developers of one
-company.
+interested developers.
 
 \subsection IndexHalAdaptation Support for Adaptation to Individual Target Platform
 Even if the adaptation of the ISO<i><sub>AgLib</sub></i> to an individual target platform ( OS or BIOS ) is eased
