@@ -413,10 +413,10 @@ HR { height: 1px;
 .directory img { vertical-align: -30%; }
 
 
-
 .navText {
   font:10px arial;
   color: #333300;
   letter-spacing:.1em;
-  text-align: right;
+  position:relative;
+  left:40px;
   }
