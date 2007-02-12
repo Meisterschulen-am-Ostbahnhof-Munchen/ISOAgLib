@@ -1247,7 +1247,7 @@ VtClientServerCommunication_c::processMsg()
          )
       {
       #ifdef DEBUG
-        std::cout << "\n%% proprietary command received!! %%%\n" << std::endl;
+        INTERNAL_DEBUG_DEVICE << "\n%% Proprietary command received!! %%%\n" << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
         MACRO_setStateDependantOnError( c_streamer.refc_pool.eventProprietaryCommand( pc_vtServerInstance->getIsoName().toConstIisoName_c() ) )
       }

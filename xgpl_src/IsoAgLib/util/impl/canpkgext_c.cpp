@@ -86,6 +86,16 @@
 #include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h>
 #include "canpkgext_c.h"
 
+#if defined(DEBUG_CAN)
+//  #include <IsoAgLib/util/impl/util_funcs.h>
+  #ifdef SYSTEM_PC
+    #include <iostream>
+  #else
+    #include <supplementary_driver/driver/rs232/irs232io_c.h>
+  #endif
+//  #include <IsoAgLib/util/impl/util_funcs.h>
+#endif
+
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 

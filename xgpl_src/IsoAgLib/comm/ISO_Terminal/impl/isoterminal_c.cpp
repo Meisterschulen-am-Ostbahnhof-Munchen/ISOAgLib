@@ -232,7 +232,7 @@ ISOTerminal_c::initAndRegisterIsoObjectPool (IdentItem_c& refc_identItem, IsoAgL
   { // most likely due to wrong version label
     /// Error already registered in the VtClientServerCommunication_c(..) constructor!
     #if defined (DEBUG)
-    std::cerr << "Wrong version label (too long!)" << std::endl;
+    INTERNAL_DEBUG_DEVICE << "Wrong version label (too long!)" << INTERNAL_DEBUG_DEVICE_ENDL;
     #if defined (SYSTEM_PC)
     abort();
     #endif

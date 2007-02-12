@@ -941,6 +941,16 @@
     #define SYSTEM_C2C
   #endif
 
+/** @def SYSTEM_DJ1_YN
+  * set this define to YES if IsoAgLib is used for the ECU "TECU" of DICKEY-john
+  */
+  #ifndef SYSTEM_DJ1_YN
+    #define SYSTEM_DJ1_YN NO
+  #endif
+  #if SYSTEM_DJ1_YN == YES && !defined(SYSTEM_DJ1)
+    #define SYSTEM_DJ1
+  #endif
+
 /** @def SYSTEM_IMI_YN
   * set this define to YES if IsoAgLib is used for the computing unit "IMI" of STW
   */
@@ -1050,6 +1060,9 @@
 #elif defined(SYSTEM_C2C)
   /// set subdirectory name to "c2c" for C2C platform
   #define HAL_SUBDIR c2c
+#elif defined(SYSTEM_DJ1)
+  /// set subdirectory name to "Dj1" for DICKEY-john TECU platform
+  #define HAL_SUBDIR Dj1
 #elif defined(SYSTEM_IMI)
   /// set subdirectory name to "imi" for IMI platform
   #define HAL_SUBDIR imi
