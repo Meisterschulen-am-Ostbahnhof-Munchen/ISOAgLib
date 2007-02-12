@@ -354,8 +354,8 @@ HR { height: 1px;
   font-size: 80%;
   color: #606060;
   font-weight: normal;
-} 
-.memnav { 
+}
+.memnav {
   background-color: #e8eef2;
   border: 1px solid #84b0c7;
   text-align: center;
@@ -418,4 +418,5 @@ HR { height: 1px;
   font:10px arial;
   color: #333300;
   letter-spacing:.1em;
+  text-align: center;
   }
