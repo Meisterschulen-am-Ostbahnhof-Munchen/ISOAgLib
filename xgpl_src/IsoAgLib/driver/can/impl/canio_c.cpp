@@ -862,7 +862,54 @@ bool CANIO_c::deleteFilter(const __IsoAgLib::CANCustomer_c& rref_customer,
   return b_result;
 }
 
-/** initiate processing of all received msg
+
+
+
+
+bool CANIO_c::deleteAllFiltersForCustomer (const __IsoAgLib::CANCustomer_c& rref_customer)
+{
+  bool b_result = false;
+
+  // iterator for quick access to all array elements
+  ArrFilterBox::iterator pc_iter = arrFilterBox.begin();
+
+  for (; pc_iter != arrFilterBox.end();)
+  {
+    if ( pc_iter->deleteFilter (rref_customer) )
+    { // returned TRUE, so complete filterbox got empty -> delete complete filterbox
+      pc_iter = arrFilterBox.erase (pc_iter);
+      b_result = true;
+    }
+    else
+    { // returned FALSE, so still some filters in that filterbox -> keep it
+      pc_iter++;
+    }
+/** @todo According to another function, this has been done - but what's the sense of it in ENHANCED_CAN_HAL and do we need to care here, too?
+      #ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
+      //to be deleted filterbox is set to idle
+      while( arrFilterBox.back().isIdle() )
+      { //remove idle filterBox if at the end of vector
+        arrFilterBox.pop_back();
+      }
+      #else
+      arrFilterBox.erase(pc_iter);
+      #endif
+*/
+  }
+
+  if (b_result)
+  { // at least one filter/customer was removed
+    #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
+    reconfigureMsgObj();
+    #endif
+  }
+
+  return b_result;
+}
+
+
+/**
+  initiate processing of all received msg
   check all active MsgObj_c for received CAN msg and
   initiate their processing
   @return <0 --> not enough time to process all messages.

@@ -368,7 +368,10 @@ bool init(uint8_t rui8_busNumber, uint16_t rui16_bitrate,
       MASK_TYPE rui32_mask, MASK_TYPE rui32_filter,
       const Ident_c::identType_t rt_identType = DEFAULT_IDENT_TYPE);
 
-  /** initiate processing of all received msg
+  bool deleteAllFiltersForCustomer (const __IsoAgLib::CANCustomer_c& rref_customer);
+
+/**
+    initiate processing of all received msg
     check all active MsgObj_c for received CAN msg and
     initiate their processing
     @return <0 --> not enough time to process all messages.

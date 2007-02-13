@@ -261,6 +261,8 @@ class iCANIO_c : private __IsoAgLib::CANIO_c {
       const Ident_c::identType_t rt_identType = DEFAULT_IDENT_TYPE)
   {return CANIO_c::deleteFilter(rref_customer, rui32_mask, rui32_filter, rt_identType);};
 
+  bool deleteAllFiltersForCustomer (const __IsoAgLib::CANCustomer_c& rref_customer)
+  { return CANIO_c::deleteAllFiltersForCustomer (rref_customer); }
 
 
   /**
