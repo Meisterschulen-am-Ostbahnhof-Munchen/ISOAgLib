@@ -253,7 +253,7 @@ bool ProcIdent_c::matchISO( const ISOName_c& rrefc_isoNameSender,
 {
   // check wether current element/DDI combination matches one list element in process data element/DDI list
   if (rui16_element != element()) return false;
-  std::list<IsoAgLib::ElementDDI_s>::const_iterator iter = l_elementDDI.end();
+  std::list<IsoAgLib::ElementDDI_s>::const_iterator iter;
   for (iter = l_elementDDI.begin(); iter != l_elementDDI.end(); iter++)
     if ( iter->ui16_DDI == rui16_DDI )
       break;
@@ -280,7 +280,7 @@ bool ProcIdent_c::matchISO( const ISOName_c& rrefc_isoNameSender,
 /** check if this ProcIdent_c has the given DDI as element */
 bool ProcIdent_c::hasDDI( uint16_t rui16_checkDDI ) const
 {
-  std::list<IsoAgLib::ElementDDI_s>::const_iterator iter = l_elementDDI.end();
+  std::list<IsoAgLib::ElementDDI_s>::const_iterator iter;
   for (iter = l_elementDDI.begin(); iter != l_elementDDI.end(); iter++)
     if (iter->ui16_DDI == rui16_checkDDI)
       break;
@@ -291,7 +291,7 @@ bool ProcIdent_c::hasDDI( uint16_t rui16_checkDDI ) const
 
 bool ProcIdent_c::hasType(bool rb_isSetpoint, GeneralCommand_c::ValueGroup_t t_ddiType) const
 {
-  std::list<IsoAgLib::ElementDDI_s>::const_iterator iter = l_elementDDI.end();
+  std::list<IsoAgLib::ElementDDI_s>::const_iterator iter;
   for (iter = l_elementDDI.begin(); iter != l_elementDDI.end(); iter++)
     if ((iter->en_valueGroup == t_ddiType) && (iter->b_isSetpoint == rb_isSetpoint))
       break;
