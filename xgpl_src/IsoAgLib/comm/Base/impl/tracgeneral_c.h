@@ -157,24 +157,24 @@ public: // Public methods
   @param rb_val uint8_t value to store as position of rear hitch [%]
    */
   void setHitchRear(uint8_t rb_val)
-  { b_hitchRear = rb_val;}
+  { ui8_hitchRear = rb_val;}
 
   /**
   set front hitch
   @param rb_val uint8_t value to store as position of front hitch [%]
    */
   void setHitchFront(uint8_t rb_val)
-  { b_hitchFront = rb_val;}
+  { ui8_hitchFront = rb_val;}
 
   /** set front hitch draft
     * @return front hitch draft [-320.000N;322.550N]; 1N/bit
     */
-  void setHitchFrontDraft(int32_t ri32_val) { i16_frontDraft = ((ri32_val + 320000) / 10);}
+  void setHitchFrontDraft(int32_t ri32_val) { ui16_frontDraft = ((ri32_val + 320000) / 10);}
 
   /** set rear hitch draft
     * @return rear hitch draft [-320.000N;322.550N]; 1N/bit
     */
-  void setHitchRearDraft(int32_t ri32_val) { i16_rearDraft = ((ri32_val + 320000) / 10);}
+  void setHitchRearDraft(int32_t ri32_val) { ui16_rearDraft = ((ri32_val + 320000) / 10);}
 
   /** set front hitch nominal link force
     * @return front nominal link force [-100%;100%]; 1 promille per bit
@@ -229,22 +229,22 @@ public: // Public methods
   /** get rear hitch
       @return actual position of rear hitch [%]
     */
-  uint8_t hitchRear() const {return b_hitchRear;}
+  uint8_t hitchRear() const {return ui8_hitchRear;}
 
   /** get front hitch
       @return actual position of front hitch [%]
     */
-  uint8_t hitchFront() const {return b_hitchFront;}
+  uint8_t hitchFront() const {return ui8_hitchFront;}
 
   /** deliver front hitch draft
     * @return front hitch draft [-320.000N;322.550N]; 1N/bit
     */
-  int32_t hitchFrontDraft() const { return ((i16_frontDraft * 10) - 320000);}
+  int32_t hitchFrontDraft() const { return static_cast<int32_t>( (ui16_frontDraft * 10) - 320000 );}
 
   /** deliver rear hitch draft
     * @return rear hitch draft [-320.000N;322.550N]; 1N/bit
     */
-  int32_t hitchRearDraft() const { return ((i16_rearDraft * 10) - 320000);}
+  int32_t hitchRearDraft() const { return static_cast<int32_t>( (ui16_rearDraft * 10) - 320000 );}
 
   /** deliver front hitch nominal link force
     * @return front nominal link force [-100%;100%]; 1 promille per bit
@@ -365,10 +365,10 @@ private:
   int16_t i16_engine;
 
   /** front hitch data */
-  uint8_t b_hitchFront;
+  uint8_t ui8_hitchFront;
 
   /** rear hitch data */
-  uint8_t b_hitchRear;
+  uint8_t ui8_hitchRear;
 
 
   /** VT language information */
@@ -395,10 +395,10 @@ private:
   uint8_t ui8_maxPowerTime;
 
   /** front hitch draft [-320.000;322.550N], res: 10N/bit, offset: -320.000N  */
-  int16_t i16_frontDraft;
+  uint16_t ui16_frontDraft;
 
   /** rear hitch draft [-320.000;322.550N], res: 10N/bit, offset: -320.000N  */
-  int16_t i16_rearDraft;
+  uint16_t ui16_rearDraft;
 
   /** front nominal lower link force [-100%;100%], res: 0.8%/bit, offset: -100% */
   uint8_t ui8_frontLinkForce;

@@ -132,17 +132,17 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     setTimePeriod( (uint16_t) 100   );
 
 
-    // set distance value to 0
-    ui32_distReal = ui32_distTheor = 0;
+    // set distance value to NO_VAL codes
+    ui32_distReal = ui32_distTheor = NO_VAL_32;
 
     // set the member msg value vars to NO_VAL codes
-    i32_speedReal = i32_speedTheor = NO_VAL_16;
+    i32_speedReal = i32_speedTheor = NO_VAL_32S;
 
     t_operatorDirectionReversed = IsoAgLib::IsoNotAvailableReversed;
     t_startStopState = IsoAgLib::IsoNotAvailable;
 
     ui32_selectedDistance = 0xFFFFFFFF;
-    i32_selectedSpeed = NO_VAL_16;
+    i32_selectedSpeed = NO_VAL_32S;
     t_selectedDirection = t_directionReal = t_directionTheor = IsoAgLib::IsoNotAvailableDirection;
     t_selectedSpeedSource = IsoAgLib::IsoNotAvailableSpeed;
     t_selectedSpeedLimitStatus = IsoAgLib::IsoNotAvailableLimit;

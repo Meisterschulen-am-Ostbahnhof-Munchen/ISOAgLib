@@ -134,7 +134,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     else  setTimePeriod( (uint16_t) TIMEOUT_PTO_DISENGAGED   );
 
     // set the member base msg value vars to NO_VAL codes
-    t_ptoFront.ui16_pto8DigitPerRpm = t_ptoRear.ui16_pto8DigitPerRpm = NO_VAL_16S;
+    t_ptoFront.ui16_pto8DigitPerRpm = t_ptoRear.ui16_pto8DigitPerRpm = NO_VAL_16;
     // set the timestamps to 0
     t_ptoFront.i32_lastPto = t_ptoRear.i32_lastPto = 0;
 

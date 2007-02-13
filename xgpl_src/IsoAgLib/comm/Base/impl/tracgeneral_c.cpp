@@ -172,7 +172,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
 
     t_keySwitch = IsoAgLib::IsoNotAvailable; // mark as not available
     ui8_maxPowerTime = ui8_frontLinkForce = ui8_rearLinkForce = NO_VAL_8;
-    i16_frontDraft = i16_rearDraft = NO_VAL_16S;
+    ui16_frontDraft = ui16_rearDraft = NO_VAL_16;
     ui32_lastMaintainPowerRequest = 0;
     b_maintainEcuPower = b_maintainActuatorPower = false;
     implState.inPark =      IsoAgLib::IsoNotAvailablePark;
@@ -263,7 +263,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
               ui8_tempHitch |= 0x80;
               break;
             case 2: // Error
-              ui8_tempHitch = ERROR_VAL_8S;
+              ui8_tempHitch = ERROR_VAL_8;
               break;
             case 3: // Not available
               ui8_tempHitch = NO_VAL_8;
@@ -274,14 +274,14 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
           { // front hitch
             setHitchFront(ui8_tempHitch);
             ui8_frontLinkForce = data().getUint8Data( 2 );
-            i16_frontDraft = static_cast<int16_t>(data().getUint8Data( 3 ) ) + (static_cast<int16_t>(data().getUint8Data( 4 ) ) << 8);
+            ui16_frontDraft = static_cast<uint16_t>(data().getUint8Data( 3 ) ) + (static_cast<uint16_t>(data().getUint8Data( 4 ) ) << 8);
             t_frontHitchPosLimitStatus = IsoAgLib::IsoLimitFlag_t( ( data().getUint8Data(1) >> 3 ) & 3 );
           }
           else
           { // back hitch
             setHitchRear(ui8_tempHitch);
             ui8_rearLinkForce = data().getUint8Data( 2 );
-            i16_rearDraft = static_cast<int16_t>(data().getUint8Data( 3 ) ) + (static_cast<int16_t>(data().getUint8Data( 4 )) << 8);
+            ui16_rearDraft = static_cast<uint16_t>(data().getUint8Data( 3 ) ) + (static_cast<uint16_t>(data().getUint8Data( 4 )) << 8);
             t_rearHitchPosLimitStatus = IsoAgLib::IsoLimitFlag_t( ( data().getUint8Data(1) >> 3 ) & 3 );
           }
           setSelectedDataSourceISOName(c_tempISOName);
@@ -369,14 +369,15 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     setSelectedDataSourceISOName( *getISOName() );
     CANIO_c& c_can = getCanInstance4Comm();
     data().setIsoPgn(FRONT_HITCH_STATE_PGN);
-    uint8_t ui8_temp = t_frontHitchPosLimitStatus << 3;
+    uint8_t ui8_temp = 0x7;  /* Pre-load the reserved bits */
+    ui8_temp |= t_frontHitchPosLimitStatus << 3;
     switch (hitchFront()) {
-      case ERROR_VAL_16S:
+      case ERROR_VAL_8:
         data().setUint8Data(0, hitchFront());
         ui8_temp |= ( IsoAgLib::IsoError << 6 );
         data().setUint8Data(1, ui8_temp);
         break;
-      case NO_VAL_16S:
+      case NO_VAL_8:
         data().setUint8Data(0, hitchFront());
         ui8_temp |= ( IsoAgLib::IsoNotAvailable << 6 );
         data().setUint8Data(1, ui8_temp);
@@ -396,24 +397,27 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
         break;
     }
     data().setUint8Data(2, ui8_frontLinkForce);
-    data().setUint8Data(3, i16_frontDraft& 0xFF);
-    data().setUint8Data(4, (i16_frontDraft >> 8) );
+    data().setUint8Data(3, ui16_frontDraft& 0xFF);
+    data().setUint8Data(4, (ui16_frontDraft >> 8) );
+
+    /* Reserved Bytes */
     data().setUint8Data(5, 0xFF );
     data().setUint16Data(6, 0xFFFF );
+
     // CANIO_c::operator<< retreives the information with the help of CANPkg_c::getData
     // then it sends the data
     c_can << data();
 
     data().setIsoPgn(REAR_HITCH_STATE_PGN);
-    ui8_temp = 0;
+    ui8_temp = 0x7;  /* Pre-load the reserved bits */
     ui8_temp = t_rearHitchPosLimitStatus << 3;
     switch (hitchRear()) {
-      case ERROR_VAL_16S:
+      case ERROR_VAL_8:
         data().setUint8Data(0, hitchRear());
         ui8_temp |= ( IsoAgLib::IsoError << 6 );
         data().setUint8Data(1, ui8_temp);
         break;
-      case NO_VAL_16S:
+      case NO_VAL_8:
         data().setUint8Data(0, hitchRear());
         ui8_temp |= ( IsoAgLib::IsoNotAvailable << 6 );
         data().setUint8Data(1, ui8_temp);
@@ -433,8 +437,10 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
         break;
     }
     data().setUint8Data(2, ui8_rearLinkForce);
-    data().setUint8Data(3, (i16_rearDraft& 0xFF) );
-    data().setUint8Data(4, i16_rearDraft >> 8);
+    data().setUint8Data(3, (ui16_rearDraft& 0xFF) );
+    data().setUint8Data(4, ui16_rearDraft >> 8);
+
+    /* Reserved Bytes*/
     data().setUint8Data(5, 0xFF );
     data().setUint16Data(6, 0xFFFF );
 
