@@ -300,6 +300,7 @@ private:
   bool is_objName;
   unsigned int objID;
   bool is_objID;
+  unsigned int objType;
 
   bool b_hasUnknownAttributes;
 

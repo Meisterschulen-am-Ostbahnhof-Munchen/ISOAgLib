@@ -823,7 +823,7 @@ vt2iso_c::getID (const char* objName, bool b_isMacro, bool b_wishingID, unsigned
       // if we reach here that wishID is not assigned yet, so we can use it!
       foundID = wishID;
     } else if ( checkForAllowedExecution() ) {
-      /// only auot-decrement if the current object has a basic or proprietary object type
+      /// only auto-decrement if the current object has a basic or proprietary object type
       if (b_isMacro) {
         foundID = objNextMacroAutoID;
         objNextMacroAutoID--;
@@ -1448,7 +1448,7 @@ vt2iso_c::checkForAllowedExecution() const
     return true;
 
   // if parsing for lookup tables is wished, check here for correct additional types
-  if (pc_specialParsing && pc_specialParsing->checkForProprietaryOrBasicObjTypes())
+  if (pc_specialParsing && pc_specialParsing->checkForProprietaryOrBasicObjTypes (objType))
     return true;
 
   return false;
@@ -1478,7 +1478,6 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
   bool is_objChildY=false; //init for happy compiler
   unsigned int objBlockRow=0; //init for happy compiler
   unsigned int objBlockCol=0; //init for happy compiler
-  unsigned int objType=0; //init for happy compiler
   unsigned int commandType=0; //init for happy compiler
   unsigned int objChildObjects=0; //init for happy compiler
 
