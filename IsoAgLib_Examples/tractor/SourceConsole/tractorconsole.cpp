@@ -1,5 +1,5 @@
 /* *************************************************************************
-                          tractor.cpp - example for tractor ECU (work-in-progress)
+        tractorconsole.cpp - example for tractor ECU (work-in-progress)
                              -------------------
     begin                : Sun Dec 19 20:00:00 CEST 2004
 
@@ -35,7 +35,7 @@
  * Copyright (C) 1999 - 2004 Dipl.-Inform. Achim Spangler                  *
  *                                                                         *
  * The "IsoAgLib" is free software; you can redistribute it and/or         *
- * modify it under the terms of the GNU Lesser General Public License as   *std::cout<< getITracMoveInstance().speedTheor()/36 *100UL << "\n" << std::endl;
+ * modify it under the terms of the GNU Lesser General Public License as   *
  * published by the Free Software Foundation; either version 2 of the      *
  * License, or (at your option) any later version.                         *
  *                                                                         *
@@ -49,31 +49,149 @@
  * Inc., 59 Temple Place, Suite 330, Boston, MA  02111_1307  USA           *
  ***************************************************************************/
 
+/* *********************************************************************** */
+/** \example tractorconsole.cpp
+ * This example application of ISO<i><sub>AgLib</sub></i>is a work-in-progress
+ * of a tractor ECU. It receives the tractor data from internal CAN, and
+ * provides them as ISO 11783 tractor data on external BUS.
+ *
+ * <H1>What is demonstrated</H1>
+ * <ol>
+ * <li>Trigger periodic activities of ISO<i><sub>AgLib</sub></i>
+ *  <ul>
+ *  <li>Core class IsoAgLib::iScheduler_c for scheduling of all periodic activities
+ *  <li>Method IsoAgLib::iScheduler_c::timeEvent() which can<ul>
+ *    <li>Perform activities until defined rl_endTime is reached, which is important
+ *      for scheduling purposes of whole system - call by IsoAgLib::iScheduler_c::timeEvent( rl_endTime )
+ *    <li>Process all received CAN messages until all receive buffers are empty
+ *      -> simple call, but can lead to deadlock on to high CAN load
+ *    </ul>
+ *  </ul>
+ * <li>Create local identity, for which the ISO<i><sub>AgLib</sub></i> performs an address claim,
+ *    so that the ECU can access the <b><i>ISO11783</i></b> BUS with IsoAgLib::iIdentItem_c
+ *    and its constructor IsoAgLib::iIdentItem_c::iIdentItem_c
+ * </ol>
+ * <H1>Where to look for further information</H1>
+ * <ol>
+ * <li>Overview information on Scheduling at \ref SchedulerPage
+ * <li>Overview on System Management at \ref SystemMgmtPage
+ * <li>Overview on global communication functions at \ref CommOverPage
+ * </ol>
+ *
+ * <H1>Howto compile this example</H1>
+ * <ol>
+ * <li>Call the script update_makefile.sh with the spec file
+ *     conf_tractor from the directory where the spec file
+ *     and the script are located<br>
+ *     <i>#> update_makefile.sh conf_tractor</i>
+ * <li><b>Only Linux:</b><ul>
+ *     <li><i>#>cd tractor</i> to go to the subdirectory tractor
+ *     <li><i>#> make</i><br>
+ *     <li>GNU make will then use the fresh created Makefile to create the executable tractor in this directory
+ *     </ul>
+ * <li><b>Other Development Environments:</b><ul>
+ *     <li>import the file list in filelist-tractor.txt into the IDE of your choice
+ *     <li>set <i>-DPRJ_USE_AUTOGEN_CONFIG=config_tractor</i> as global project parameter
+ *     <li>add target specific headers, sources or libraries to the project
+ *     <li>let your IDE build the project
+ *   </ul>
+ * </ol>
+ *
+ * <H1>Needed Project Specification</H1>
+ * The project specification, which is needed as input for
+ * the generation script update_makefile.sh is described in
+ * \ref PrjSpectractor__pc_linux__simulating__simulating .
+ *
+ * The adapted project specifications for different setups:
+ * <ul>
+ * <li>Configuration Setups for Linux on PC:
+ * <ul>
+ *    <li> \ref PrjSpectractor__pc_linux__rte__rte
+ *    <li> \ref PrjSpectractor__pc_linux__rte__simulating
+ *    <li> \ref PrjSpectractor__pc_linux__rte__sys
+ *    <li> \ref PrjSpectractor__pc_linux__simulating__rte
+ *    <li> \ref PrjSpectractor__pc_linux__simulating__simulating
+ *    <li> \ref PrjSpectractor__pc_linux__simulating__sys
+ *  </ul>
+ * <li>Configuration Setups for Win32 on PC:
+ * <ul>
+ *    <li> \ref PrjSpectractor__pc_win32__vector_canlib__simulating
+ *    <li> \ref PrjSpectractor__pc_win32__vector_xl_drv_lib__simulating
+ *    <li> \ref PrjSpectractor__pc_win32__vector_canlib__sys
+ *    <li> \ref PrjSpectractor__pc_win32__vector_xl_drv_lib__sys
+ *    <li> \ref PrjSpectractor__pc_win32__simulating__simulating
+ *    <li> \ref PrjSpectractor__pc_win32__simulating__sys
+ *  </ul>
+ * <li>Configuration Setupts for some embedded targets:
+ * <ul>
+ *    <li> \ref PrjSpectractor__esx__sys__sys
+ *    <li> \ref PrjSpectractor__imi__sys__sys
+ *    <li> \ref PrjSpectractor__pm167__sys__sys
+ *  </ul>
+ * </ul>
+ *
+ * <H1>Resulting Project File List</H1>
+ * See \ref FileListstractor__pc_linux__simulating__simulating for needed files
+ * ( filelist-tractor-doxygen_import.txt ),
+ *  with \ref SrcListtractor__pc_linux__simulating__simulating containing the needed sources
+ *  and with \ref HdrListtractor__pc_linux__simulating__simulating containing the needed headers.
+ *
+ * The resulting file lists for different setups:
+ * <ul>
+ * <li>Configuration Setups for Linux on PC:
+ * <ul>
+ *    <li> \ref FileListstractor__pc_linux__rte__rte
+ *    <li> \ref FileListstractor__pc_linux__rte__simulating
+ *    <li> \ref FileListstractor__pc_linux__rte__sys
+ *    <li> \ref FileListstractor__pc_linux__simulating__rte
+ *    <li> \ref FileListstractor__pc_linux__simulating__simulating
+ *    <li> \ref FileListstractor__pc_linux__simulating__sys
+ *  </ul>
+ * <li>Configuration Setups for Win32 on PC:
+ * <ul>
+ *    <li> \ref FileListstractor__pc_win32__vector_canlib__simulating
+ *    <li> \ref FileListstractor__pc_win32__vector_xl_drv_lib__simulating
+ *    <li> \ref FileListstractor__pc_win32__vector_canlib__sys
+ *    <li> \ref FileListstractor__pc_win32__vector_xl_drv_lib__sys
+ *    <li> \ref FileListstractor__pc_win32__simulating__simulating
+ *    <li> \ref FileListstractor__pc_win32__simulating__sys
+ *  </ul>
+ * <li>Configuration Setupts for some embedded targets:
+ * <ul>
+ *    <li> \ref FileListstractor__esx__sys__sys
+ *    <li> \ref FileListstractor__imi__sys__sys
+ *    <li> \ref FileListstractor__pm167__sys__sys
+ *  </ul>
+ * </ul>
+ *
+ * <H1>Resulting Project Configuration Header</H1>
+ * This header is automatically included by xgpl_src/Application_Config/isoaglib_config.h
+ * if the #define PRJ_USE_AUTOGEN_CONFIG is set to
+ * config_tractorconsole ( see also at \ref PrjConfigtractor ).
+ *                                                                         */
+/* *************************************************************************/
+
 /** the define PRJ_USE_AUTOGEN_CONFIG is used by xgpl_src/Application_Config/isoaglib_config.h
     to include project specific configuration settings.
     Set this define in the project file or Makefile of the whole
     project, so that each source file is compiled with this setting
   */
 #ifndef PRJ_USE_AUTOGEN_CONFIG
-#define PRJ_USE_AUTOGEN_CONFIG config_tractor_can_server.h
+  #define PRJ_USE_AUTOGEN_CONFIG config_tractor_can_server.h
 #endif
 
 // include the central interface header for the hardware adaption layer part
 // of the "IsoAgLib"
 #ifdef SYSTEM_PC
-#include <stddef.h>
-#include <unistd.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <termios.h>
+  #include <stddef.h>
+  #include <unistd.h>
+  #include <stdio.h>
+  #include <stdlib.h>
+  #include <termios.h>
 #endif
-
-/* include some needed util headers */
-//#include <IsoAgLib/util/config.h>
 
 /* include headers for the needed drivers */
 #include <IsoAgLib/driver/system/isystem_c.h>
-
 #include <IsoAgLib/driver/can/icanio_c.h>
 #include <IsoAgLib/driver/can/iident_c.h>
 #include <IsoAgLib/util/icanpkgext_c.h>
@@ -87,12 +205,7 @@
 #include <IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h>
 #include <IsoAgLib/comm/Base/itracmove_c.h>
 #include <IsoAgLib/comm/Base/itracpto_c.h>
-#include <supplementary_driver/driver/sensor/isensori_c.h>
-#include <supplementary_driver/driver/actor/idigitalo_c.h>
 #include <IsoAgLib/comm/Scheduler/ischeduler_c.h>
-#include <supplementary_driver/driver/sensor/idigitali_c.h>
-#include <supplementary_driver/driver/actor/impl/digitalo_c.h>
-
 
 /** the following #define should be activated when a ECU based tractor shall take sensor signals as
  *  source of simulated speed and PTO
@@ -107,11 +220,6 @@
  #define USE_KEYBOARD_FOR_SPEED_PTO 1
 #endif
 
-#include <supplementary_driver/driver/sensor/isensori_c.h>
-#include <supplementary_driver/driver/sensor/ianalogi_c.h>
-
-  // Eing�ge zu Jobrechner
-
 struct termios saved_attrib;
 void reset_input_mode(void)
 {
@@ -121,20 +229,16 @@ void reset_input_mode(void)
 {
   struct termios attrib;
 
-  /* check stdin is a terminal */
-
   if (!isatty(STDIN_FILENO)) {
     fprintf(stderr, "Not a terminal!\n");
     exit(EXIT_FAILURE);
   }
 
   /* save original attributes */
-
   tcgetattr(STDIN_FILENO, &saved_attrib);
   atexit(reset_input_mode);
 
   /* make the changes */
-
   tcgetattr(STDIN_FILENO, &attrib);
   attrib.c_lflag &= ~(ICANON|ECHO); /* disables canonical mode, echo */
   attrib.c_cc[VMIN] = 0; /* non-blocking input */
@@ -142,33 +246,34 @@ void reset_input_mode(void)
   tcsetattr(STDIN_FILENO, TCSAFLUSH, &attrib);
 }
 
-// variable for DEV_KEY ( device type, device type instance )
-// default with tractor device type
-//IsoAgLib::iISOName_c myIsoName(1,0);
-
 int main()
 { // Initialize the CAN BUS at channel 0 to 250 kbaud
   IsoAgLib::getIcanInstance().init( 0,250 );
 
   set_input_mode();
   std::cout
-      << "v -> langsamer Fahren; V -> schneller Fahren\n"
-      << "d -> Strecke kuerzer;  D -> Strecke laenger\n"
-      << "e -> Motor langsamer;  E -> Motor schneller\n"
-      << "z -> PTO langsamer;    Z -> PTO schneller\n"
-      << "q -> EXIT"
+      << "v -> decrease velocity;       V -> increase velocity\n"
+      << "d -> decrease distance;       D -> increase distance\n"
+      << "z -> decrease PTO;            Z -> increase PTO\n"
+      << "q -> quit tractor simulation"
       << std::endl;
-  int speed = 0, distance = 0, engine = 0, pto = 0;
 
-    // Start address claim of the local identity/member
+  ssize_t size;
+  // initialize some neede variables
+  int16_t speed              = 0;
+  int16_t distance           = 0;
+  int16_t pto                = 0;
+  int32_t i32_now            = 0;
+  unsigned char ch;
+
+  // Start address claim of the local identity/member
   IsoAgLib::iIdentItem_c c_myIdent (2,     // rui8_indGroup
-                          2,     // rui8_devClass
-                          0,     // rui8_devClassInst
-                          25,    // rb_func
-                          0x7FF, // rui16_manufCode
-                          27);   // rui32_serNo
-                          // further parameters use the default values as given in the constructor
-
+                                    2,     // rui8_devClass
+                                    0,     // rui8_devClassInst
+                                    25,    // rb_func
+                                    0x7FF, // rui16_manufCode
+                                    27);   // rui32_serNo
+                                           // further parameters use the default values as given in the constructor
 
   IsoAgLib::iTracMove_c& c_tracMove = IsoAgLib::getITracMoveInstance();
   IsoAgLib::iTracPTO_c& c_tracPto = IsoAgLib::getITracPtoInstance();
@@ -179,15 +284,7 @@ int main()
     - BaseDataCalendar: calendar data
   */
   c_tracMove.config(&c_myIdent.isoName(), IsoAgLib::IdentModeTractor);
-  c_tracPto.config(&c_myIdent.isoName(), IsoAgLib::IdentModeTractor);
-
-  int32_t i32_nextDebugSend = 0;
-  int32_t i32_distance = 0;
-  int32_t i32_lastLoop = 0;
-  int32_t i32_now = 0;
-  unsigned char ch;
-  ssize_t size;
-  int32_t i32_idleTimeSpread = 0;
+  c_tracPto.config (&c_myIdent.isoName(), IsoAgLib::IdentModeTractor);
 
   while ( IsoAgLib::iSystem_c::canEn() )
   { // run main loop
@@ -204,25 +301,25 @@ int main()
       {
         case 'v':
           speed -= 100;
-          std::cout << "Geschwindigkeit: " << speed << "[mm/s]" << std::endl;
+          std::cout << "velocity decreased to: " << speed << "[mm/s]" << std::endl;
           c_tracMove.setSpeedReal(speed);
           c_tracMove.setSpeedTheor(speed);
           break;
         case 'V':
           speed += 100;
-          std::cout << "Geschwindigkeit: " << speed << "[mm/s] "<< std::endl;
+          std::cout << "velocity increased to: " << speed << "[mm/s] "<< std::endl;
           c_tracMove.setSpeedReal(speed);
           c_tracMove.setSpeedTheor(speed);
           break;
         case 'd':
           distance -= 500;
-          std::cout << "Distanz " << distance << "[mm]" << std::endl;
+          std::cout << "distance decreased to: " << distance << "[mm]" << std::endl;
           c_tracMove.setDistReal( distance  );
           c_tracMove.setDistTheor( distance  );
           break;
         case 'D':
           distance += 500;
-          std::cout << "Distanz " << distance << "[mm]" << std::endl;
+          std::cout << "distance increased to: " << distance << "[mm]" << std::endl;
           c_tracMove.setDistReal( distance  );
           c_tracMove.setDistTheor( distance  );
           break;
@@ -232,7 +329,7 @@ int main()
           {
             pto = 0;
           }
-          std::cout << "PTO auf " << pto << "[1/s]" << std::endl;
+          std::cout << "PTO decreased to: " << pto << "[1/s]" << std::endl;
           c_tracPto.setPtoFront(        pto );
           c_tracPto.setPtoFrontEngaged( IsoAgLib::IsoActive );
           c_tracPto.setPtoFront1000(    IsoAgLib::IsoActive );
@@ -245,7 +342,7 @@ int main()
           break;
         case 'Z':
           pto += 50;
-          std::cout << "PTO auf " << pto << "[1/s]" << std::endl;
+          std::cout << "PTO increased to: " << pto << "[1/s]" << std::endl;
           c_tracPto.setPtoFront(        pto );
           c_tracPto.setPtoFrontEngaged( IsoAgLib::IsoActive );
           c_tracPto.setPtoFront1000(    IsoAgLib::IsoActive );
@@ -258,24 +355,11 @@ int main()
           break;
         case 'q':
           reset_input_mode();
-          std::cout << "Exit" << std::endl;
+          std::cout << "quit tractor simulation" << std::endl;
           exit(1);
-          break;
-        case 'n':
-          //c_tracPto.setPtoFront(        pto );
-          c_tracPto.setPtoRearEngaged( IsoAgLib::IsoInactive );
-          c_tracPto.setPtoFront1000(    IsoAgLib::IsoInactive );
-          c_tracPto.setPtoFrontEconomy( IsoAgLib::IsoInactive );
-
-          //c_tracPto.setPtoRear(        pto );
-          c_tracPto.setPtoFrontEngaged( IsoAgLib::IsoInactive );
-          c_tracPto.setPtoFront1000(    IsoAgLib::IsoInactive );
-          c_tracPto.setPtoFrontEconomy( IsoAgLib::IsoInactive );
-
           break;
       }
     }
-     //if ( i32_idleTimeSpread > 0 ) Sleep( i32_idleTimeSpread );
      IsoAgLib::iCANIO_c::waitUntilCanReceiveOrTimeout( 50 );
   }
   return 1;
