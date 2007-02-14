@@ -1,0 +1,1 @@
+../../../IsoAgLib_Examples/tutorial/2_ProcessData/2_6_LocalWriteSetpointSimpleSetpointIso/2_6_LocalWriteSetpointSimpleSetpointIso.cpp

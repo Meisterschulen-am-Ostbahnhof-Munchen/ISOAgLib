@@ -1,0 +1,1 @@
+SOURCES += ../../../IsoAgLib_Examples/tutorial/2_ProcessData/2_4_LocalWriteSetpointStdIso/2_4_LocalWriteSetpointStdIso.cpp

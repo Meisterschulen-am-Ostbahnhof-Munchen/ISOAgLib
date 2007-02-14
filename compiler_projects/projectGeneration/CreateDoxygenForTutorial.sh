@@ -2,8 +2,8 @@
 DOXYGEN_EXPORT_DIR="../../IsoAgLib_Examples/tutorial"
 
 #EXAMPLE_LIST="conf_imi_iso"
-#EXAMPLE_LIST=`ls conf_3_* | grep -v "~" | sed -e 's/[ \t\n]+/:/g'`
-EXAMPLE_LIST=`ls conf_* | grep -v "~" | sed -e 's/[ \t\n]+/:/g'`
+EXAMPLE_LIST=`ls conf_tractor* | grep -v "~" | sed -e 's/[ \t\n]+/:/g'`
+#EXAMPLE_LIST=`ls conf_* | grep -v "~" | sed -e 's/[ \t\n]+/:/g'`
 TARGET_LIST="pc_win32:pc_linux:esx:c2c:imi:pm167"
 #TARGET_LIST="pc_linux"
 CAN_LIST="simulating:sys:vector_canlib:vector_xl_drv_lib:sontheim:rte:linux_server_client"

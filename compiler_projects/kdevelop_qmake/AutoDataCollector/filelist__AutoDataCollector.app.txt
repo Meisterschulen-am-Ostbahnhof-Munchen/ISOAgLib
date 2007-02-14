@@ -1,0 +1,8 @@
+../../../IsoAgLib_Examples/AutoDataCollector_Classes/defaultrecordconfig_c.cpp
+../../../IsoAgLib_Examples/AutoDataCollector_Classes/getyflexmanager_c.cpp
+../../../IsoAgLib_Examples/AutoDataCollector_Classes/gpsmanager_c.cpp
+../../../IsoAgLib_Examples/AutoDataCollector_Classes/procdatamanager_c.cpp
+../../../IsoAgLib_Examples/AutoDataCollector_Classes/specificrecordconfig_c.cpp
+../../../IsoAgLib_Examples/tractor/SourceInternalCan/tractorinternalcan.cpp
+../../../IsoAgLib_Examples/tractor/SourceConsole/tractorconsole.cpp
+../../../IsoAgLib_Examples/autodatacollector.cpp
