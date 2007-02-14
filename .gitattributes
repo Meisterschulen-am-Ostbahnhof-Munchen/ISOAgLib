@@ -1159,7 +1159,8 @@ compiler_projects/projectGeneration/conf_4_2_Pwm -text
 compiler_projects/projectGeneration/conf_5_0_InternalCan -text
 compiler_projects/projectGeneration/conf_AutoDataCollector -text
 compiler_projects/projectGeneration/conf_imi_iso -text
-compiler_projects/projectGeneration/conf_tractor -text
+compiler_projects/projectGeneration/conf_tractorconsole -text
+compiler_projects/projectGeneration/conf_tractorinternalcan -text
 compiler_projects/projectGeneration/kdevelop3Generic.kdevelop -text
 compiler_projects/projectGeneration/qmake_stub.pro -text
 compiler_projects/projectGeneration/vc6_prj_base.dsp eol=crlf

@@ -106,7 +106,7 @@ USE_TARGET_SYSTEM="pc_linux"
 # CAN architectures, wher the OS/BIOS does already provide selective
 # receive with individual <filters, mask> combinations
 # default: off
-# PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=0
+PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
 
 # select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"linux_server_client"|"vector_canlib"|"vector_xl_drv_lib"
 # targets other than pc_linux or pc_win32 can only use "sys"

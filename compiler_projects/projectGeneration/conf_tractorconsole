@@ -1,4 +1,4 @@
-# Filename: conf_tractor
+# Filename: conf_tractorconsole
 # Configuration setting for tutorial example tractor
 # in the tutorial group 5_CanFeatures
 
@@ -7,7 +7,7 @@
 # ###############################################################
 
 # define project name - used for directory with makefile
-PROJECT=tractor
+PROJECT=tractorconsole
 
 # define the project author
 # - used for IDE project file types, where the author is stored in the project file
@@ -22,12 +22,12 @@ PROJECT_AUTHOR_EMAIL=MyEmail@Location
 # ( in relation to the root of the IsoAgLib
 #    - ONLY RELATIVE PATH )
 # seperate files by whitespace
-REL_APP_PATH="IsoAgLib_Examples/tractor/SourceInternalCan"
+REL_APP_PATH="IsoAgLib_Examples/tractor/SourceConsole"
 # define the name of the app
 # ( if this variable is not set, then
 #   all files of the selected directories are used )
 # seperate files by whitespace
-APP_SRC_FILE="tractor.cpp"
+APP_SRC_FILE="tractorconsole.cpp"
 # define the file extensions to include for the
 # application source file search ( default: *.c *.cc *.cpp *.h *.hpp )
 # APP_SEARCH_SRC_CONDITION="*.cc *.c *.cpp"
@@ -106,7 +106,7 @@ USE_TARGET_SYSTEM="pc_linux"
 # CAN architectures, wher the OS/BIOS does already provide selective
 # receive with individual <filters, mask> combinations
 # default: off
-# PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=0
+PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
 
 # select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"linux_server_client"|"vector_canlib"|"vector_xl_drv_lib"
 # targets other than pc_linux or pc_win32 can only use "sys"

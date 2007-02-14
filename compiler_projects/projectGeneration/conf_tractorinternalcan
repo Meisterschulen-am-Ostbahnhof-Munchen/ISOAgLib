@@ -1,13 +1,13 @@
-# Filename: conf_2_0_LocalReadDataStdIso
-# Configuration setting for tutorial example 2_0_LocalReadDataStdIso
-# in the tutorial group 2_ProcessData
+# Filename: conf_tractorinternalcan
+# Configuration setting for tutorial example tractor
+# in the tutorial group 5_CanFeatures
 
 # ###############################################################
 # Project Identification
 # ###############################################################
 
 # define project name - used for directory with makefile
-PROJECT=2_0_LocalReadDataStdIso
+PROJECT=tractorinternalcan
 
 # define the project author
 # - used for IDE project file types, where the author is stored in the project file
@@ -21,13 +21,13 @@ PROJECT_AUTHOR_EMAIL=MyEmail@Location
 # define the path where the aplication can be found
 # ( in relation to the root of the IsoAgLib
 #    - ONLY RELATIVE PATH )
-# seperate directories by whitespace
-REL_APP_PATH="IsoAgLib_Examples/tutorial/2_ProcessData/2_0_LocalReadDataStdIso"
+# seperate files by whitespace
+REL_APP_PATH="IsoAgLib_Examples/tractor/SourceInternalCan"
 # define the name of the app
 # ( if this variable is not set, then
 #   all files of the selected directories are used )
 # seperate files by whitespace
-APP_SRC_FILE="2_0_LocalReadDataStdIso.cpp"
+APP_SRC_FILE="tractorinternalcan.cpp"
 # define the file extensions to include for the
 # application source file search ( default: *.c *.cc *.cpp *.h *.hpp )
 # APP_SEARCH_SRC_CONDITION="*.cc *.c *.cpp"
@@ -43,11 +43,6 @@ APP_SRC_FILE="2_0_LocalReadDataStdIso.cpp"
 # define filenames which shall be excluded in all directories
 # ( jokers like "*" are allowed - example "test*.cpp" )
 # APP_SRC_EXCLUDE=""
-
-# the directories of REL_APP_PATH are already integrated into the compiler list of
-# header include search paths. But a project might need some additional paths.
-# seperate directories by whitespace
-# PRJ_INCLUDE_PATH=""
 
 # ###############################################################
 # Selection of Basic Project Settings
@@ -84,7 +79,7 @@ ISO_AG_LIB_PATH="../.."
 # default is FALSE as far as possible
 # ( this has an impact on process data, RS232 output,
 #   GPS decode )
-USE_FLOAT_DATA_TYPE=1
+# USE_FLOAT_DATA_TYPE=0
 
 # select if HEAP usage should reduce size in favour of speed
 # ( default: maximize speed, which costs about 10KByte more HEAPSIZE,
@@ -118,13 +113,6 @@ PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
 # only target "pc_win32" can use the driver "vector_canlib"|"vector_xl_drv_lib"
 # only target "pc_linux" can us the driver "rte"|"linux_server_client"
 USE_CAN_DRIVER="linux_server_client"
-
-# especially the Linux linux_server_client driver type is available for different can cards,
-# where all of them use some common files and just one individual file.
-# the suffix of the individual CAN card has to be specified with
-# PRJ_CAN_DRIVER_SUFFIX=A1|pcan (default: A!)
-# PRJ_CAN_DRIVER_SUFFIX="A1"
-
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
 # targets other than pc_linux or pc_win32 can only use "sys"
 # only target "pc_linux" can us the driver "rte"
@@ -132,11 +120,11 @@ USE_RS232_DRIVER="simulating"
 
 # define the amount of available CAN BUSes at the ECU
 # ( default 1 )
-CAN_BUS_CNT=1
+CAN_BUS_CNT=2
 
 # define the amount of CAN instances to support
 # ( all values lower than 1 are overwritten by default 1 )
-CAN_INSTANCE_CNT=1
+CAN_INSTANCE_CNT=2
 
 if [ $CAN_INSTANCE_CNT -gt 1 ] ; then
 	# if more than one CAN BUS is defined, the selected
@@ -164,6 +152,8 @@ RS232_INSTANCE_CNT=1
 # unset or set to 0 if not wanted
 PRJ_ISO11783=1
 # PRJ_ISO_TERMINAL=0
+# PRJ_DIN9684=0
+# PRJ_DIN_TERMINAL=0
 
 # select stream receive strategy:
 # chunk (default): use list of chunks where each receive burst is stored in one chunk -> usefull when on-the-fly parsing is used
@@ -177,27 +167,16 @@ PRJ_ISO11783=1
 # if only special BASE data should be used select one or more of the following parts
 # PRJ_BASE=0
 
-# only incorporate parts from BASE that provide tractor hitch and RPM information
-# PRJ_TRACTOR_GENERAL=0
+# only incorporate parts from BASE that provide tractor hitch and DIN9684-engine RPM information
+PRJ_TRACTOR_GENERAL=1
 
 # only incorporate parts from BASE that provide tractor moving (distance, speed, direction, ...) information
-# the following project setting includes only measurement of tractor data.
-# i.e. NO SETTING OF COMMANDS
-# PRJ_TRACTOR_MOVE=0
-
-# additionally integrate sending of tractor move commands
-# PRJ_TRACTOR_MOVE_SETPOINT=0
-
+PRJ_TRACTOR_MOVE=1
 
 # only incorporate parts from BASE that provide tractor PTO information
 # this part includes tractor pto set point data which is not available in the
 # free ISOAgLib edition. If you are interested in this feature please contact OSB AG
-# the following project setting includes only measurement of tractor data.
-# i.e. NO SETTING OF COMMANDS
-# PRJ_TRACTOR_PTO=0
-
-# additionally integrate sending of tractor PTO commands
-# PRJ_TRACTOR_PTO_SETPOINT=0
+PRJ_TRACTOR_PTO=1
 
 # only incorporate parts from BASE that provide tractor lighting information
 # this part is only defined for ISO 11783
@@ -210,7 +189,7 @@ PRJ_ISO11783=1
 # PRJ_TRACTOR_AUX=0
 
 # only incorporate parts from BASE that provide time and GPS information
-# PRJ_TIME_GPS=0
+PRJ_TIME_GPS=1
 
 # only incorporate parts from BASE that provide tractor guidance information
 # this part is only defined for ISO 11783
@@ -227,16 +206,22 @@ PRJ_ISO11783=1
 # ###############################################################
 
 # activate globally the use of process data
-PRJ_PROCESS=1
+# PRJ_PROCESS=0
+
+# for DIN 9684 the process data system can be used
+# to decode GPS information from Fieldstar or LBS+ extension
+# ( if this and DIN9684 is activated, but PRJ_PROCESS is not
+#   then the value of PRJ_PROCESS is overwritten with 1 to activate it )
+# PRJ_FIELDSTAR_GPS=0
 
 # decide if local process data are wanted
-PROC_LOCAL=1
+# PROC_LOCAL=0
 
 # select the feature set of the wanted local process data
 
 # select standard local process data iProcDataLocal_c with
 # measure programs and enhanced management of received setpoints
-PROC_LOCAL_STD=1
+# PROC_LOCAL_STD=0
 
 # select iProcDataLocalSimpleMeasure_c for
 # local process data without measure programs to reduce
@@ -328,7 +313,7 @@ PROC_LOCAL_STD=1
 
 # select iRS232IO_c for RS232 output which can be used like the
 # standard C++ iostreams
-# PRJ_RS232=0
+PRJ_RS232=1
 
 # select special RS232 virtual driver HAL for RS232_over_CAN
 # activating this implicitly activates PRJ_RS232 with this special
@@ -370,6 +355,7 @@ PROC_LOCAL_STD=1
 # refering to a general system path like "/usr/local/include"
 # and "/usr/local/lib".
 # ISOAGLIB_INSTALL_PATH="/usr/local/"
+
 
 
 # ###############################################################
@@ -480,14 +466,4 @@ PROC_LOCAL_STD=1
 #   if the XL driver is selected --> DONT'T set the XL_ here again
 #   ==> this allows simpler switch between different CAN driver libs )
 # USE_WIN32_CAN_HW_TYPE="HWTYPE_AUTO"
-
-# ###############################################################
-# Build System Configuration for gcc based cross compilers and the like
-# ###############################################################
-
-# typical development systems have a host compiler version of gcc
-# in the application execution path as "gcc".
-# the appropriate cross-compiler gcc is often placed in a separate directory
-# with a special prefix. This can be specified by PRJ_COMPILER_BINARY_PRE
-# PRJ_COMPILER_BINARY_PRE="/opt/hardhat/devkit/arm/xscale_le/bin/xscale_le-"
 
