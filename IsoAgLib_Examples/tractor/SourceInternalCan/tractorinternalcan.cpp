@@ -1,5 +1,5 @@
 /* *************************************************************************
-                          tractor.cpp - example for tractor ECU (work-in-progress)
+    tractorinternalcan.cpp - example for tractor ECU (work-in-progress)
                              -------------------
     begin                : Sun Dec 19 20:00:00 CEST 2004
 
