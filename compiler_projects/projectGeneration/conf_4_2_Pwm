@@ -491,4 +491,3 @@ PRJ_ACTOR=1
 # the appropriate cross-compiler gcc is often placed in a separate directory
 # with a special prefix. This can be specified by PRJ_COMPILER_BINARY_PRE
 # PRJ_COMPILER_BINARY_PRE="/opt/hardhat/devkit/arm/xscale_le/bin/xscale_le-"
-

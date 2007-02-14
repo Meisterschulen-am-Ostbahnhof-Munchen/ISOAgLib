@@ -467,4 +467,3 @@ PRJ_EEPROM=1
 #   if the XL driver is selected --> DONT'T set the XL_ here again
 #   ==> this allows simpler switch between different CAN driver libs )
 # USE_WIN32_CAN_HW_TYPE="HWTYPE_AUTO"
-
