@@ -1431,7 +1431,7 @@ MultiReceive_c::reactOnMonitorListAdd( const __IsoAgLib::ISOName_c& refc_isoName
 
   // Notify all running streams
   for (std::list<DEF_Stream_c_IMPL>::iterator i_list_streams = list_streams.begin();
-       i_list_streams != list_streams.end();)
+       i_list_streams != list_streams.end(); i_list_streams++)
   { // Adapt the SA also for kept streams - the application should only use the isoname anyway!
     const IsoAgLib::ReceiveStreamIdentifier_c& refc_rsi = i_list_streams->getIdent();
     // re-vitalize the Addresses, so that following packets using this address will get processed again...
@@ -1471,7 +1471,7 @@ refc_isoName
 
   // Notify all running streams
   for (std::list<DEF_Stream_c_IMPL>::iterator i_list_streams = list_streams.begin();
-       i_list_streams != list_streams.end();)
+       i_list_streams != list_streams.end(); i_list_streams++)
   { // Adapt the SA also for kept streams - the application should only use the isoname anyway!
     const IsoAgLib::ReceiveStreamIdentifier_c& refc_rsi = i_list_streams->getIdent();
     // unset the Addresses, so that a following packet using this address does NOT get processed here!
