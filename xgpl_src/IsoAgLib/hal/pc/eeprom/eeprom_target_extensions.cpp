@@ -113,14 +113,14 @@ int16_t eepromWrite(uint16_t wAddress,uint16_t wNumber,uint8_t *pbData){
   int32_t i32_temp;
   uint8_t* pByte;
 //  printf("schreibe Daten von %i mit Daten :", wAddress);
-  eepromDat = fopen(EEPROM_DAT_FILE, "r+b");
+  eepromDat = fopen(EEPROM_DAT_FILE, "a+b");
 
-//  // BEGIN: Added by M.Wodok 6.12.04
-//  if (eepromDat == NULL) {
-//    // try again in current directory
-//    eepromDat = fopen("eeprom.dat", "r+b");
-//  }
-//  // END: Added by M.Wodok 6.12.04
+  // BEGIN: Added by M.Wodok 6.12.04
+  if (eepromDat == NULL) {
+    // try again in current directory
+    eepromDat = fopen("eeprom.dat", "a+b");
+  }
+  // END: Added by M.Wodok 6.12.04
   fseek(eepromDat, wAddress, 0);
 
   switch (wNumber)
@@ -176,13 +176,13 @@ int16_t eepromWrite(uint16_t wAddress,uint16_t wNumber,uint8_t *pbData){
 /* write one uint8_t into the eeprom */
 int16_t eepromWriteByte(uint16_t wAddress,uint8_t bByte){
 //  printf("schreibe Daten von %i mit Daten %i\n", wAddress, uint16_t(bByte));
-  eepromDat = fopen(EEPROM_DAT_FILE, "r+b");
-//  // BEGIN: Added by M.Wodok 6.12.04
-//  if (eepromDat == NULL) {
-//    // try again in current directory
-//    eepromDat = fopen("eeprom.dat", "r+b");
-//  }
-//  // END: Added by M.Wodok 6.12.04
+  eepromDat = fopen(EEPROM_DAT_FILE, "a+b");
+  // BEGIN: Added by M.Wodok 6.12.04
+  if (eepromDat == NULL) {
+    // try again in current directory
+    eepromDat = fopen("eeprom.dat", "a+b");
+  }
+  // END: Added by M.Wodok 6.12.04
   fseek(eepromDat, wAddress, 0);
   fputc(bByte, eepromDat);
   fclose(eepromDat);
@@ -197,12 +197,12 @@ int16_t eepromRead(uint16_t wAddress,uint16_t wNumber,uint8_t *pbByte){
   int32_t i32_temp;
 //  printf("lese Daten von %i mit Daten als text:", wAddress);
   eepromDat = fopen(EEPROM_DAT_FILE, "a+b");
-//  // BEGIN: Added by M.Wodok 6.12.04
-//  if (eepromDat == NULL) {
-//    // try again in current directory
-//    eepromDat = fopen("eeprom.dat", "a+b");
-//  }
-//  // END: Added by M.Wodok 6.12.04
+  // BEGIN: Added by M.Wodok 6.12.04
+  if (eepromDat == NULL) {
+    // try again in current directory
+    eepromDat = fopen("eeprom.dat", "a+b");
+  }
+  // END: Added by M.Wodok 6.12.04
   fseek(eepromDat, wAddress, 0);
 
   switch (wNumber)
