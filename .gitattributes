@@ -8,8 +8,12 @@ IsoAgLib_Examples/config_AutoDataCollector.h -text
 IsoAgLib_Examples/config_imi_iso.h -text
 IsoAgLib_Examples/config_tractor.h -text
 IsoAgLib_Examples/imi_iso/TutPrjDescimi_iso.txt -text
+IsoAgLib_Examples/tractor/SourceConsole/config_tractorconsole.h -text
 IsoAgLib_Examples/tractor/SourceConsole/tractorconsole.cpp -text
+IsoAgLib_Examples/tractor/SourceConsole/version.h -text
 IsoAgLib_Examples/tractor/SourceInternalCan/TutPrjDesctractor.txt -text
+IsoAgLib_Examples/tractor/SourceInternalCan/config_tractorinternalcan.h -text
+IsoAgLib_Examples/tractor/SourceInternalCan/version.h -text
 IsoAgLib_Examples/tutorial/0_SystemMgmt/0_0_AddressClaimIso/TutPrjDesc0_0_AddressClaimIso.txt -text
 IsoAgLib_Examples/tutorial/0_SystemMgmt/0_0_AddressClaimIso/config_0_0_AddressClaimIso.h -text
 IsoAgLib_Examples/tutorial/0_SystemMgmt/0_0_AddressClaimIso/version.h -text
@@ -164,6 +168,7 @@ IsoAgLib_Examples/tutorial/3_Terminal/3_3_VirtualTerminalPhase3/MaskDefinition/s
 IsoAgLib_Examples/tutorial/3_Terminal/3_3_VirtualTerminalPhase3/MaskDefinition/simpleVTIsoPool1_Mask1Data.xml -text
 IsoAgLib_Examples/tutorial/3_Terminal/3_3_VirtualTerminalPhase3/MaskDefinition/simpleVTIsoPool2_Mask2Alarm.xml -text
 IsoAgLib_Examples/tutorial/3_Terminal/3_3_VirtualTerminalPhase3/TutPrjDesc3_3_VirtualTerminalIso.txt -text
+IsoAgLib_Examples/tutorial/3_Terminal/3_3_VirtualTerminalPhase3/TutPrjDesc3_3_VirtualTerminalPhase3.txt -text
 IsoAgLib_Examples/tutorial/3_Terminal/3_3_VirtualTerminalPhase3/config_3_3_VirtualTerminalPhase3.h -text
 IsoAgLib_Examples/tutorial/3_Terminal/3_3_VirtualTerminalPhase3/run.sh -text
 IsoAgLib_Examples/tutorial/3_Terminal/3_3_VirtualTerminalPhase3/version.h -text

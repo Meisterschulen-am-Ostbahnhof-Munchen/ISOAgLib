@@ -30,8 +30,6 @@
 
 // #define CONFIG_DO_NOT_START_RELAIS_ON_STARTUP
 
-#define SYSTEM_WITH_ENHANCED_CAN_HAL
-
 // Decide if HEAP allocation strategy shall reduce size about 5K to 10K in favour of speed
 // Strong Advice: Don't activate this, as long your target has not too tight memory restrictions
 // Initialization of CAN filters and of local process data might get too slow under worst case conditions
@@ -88,10 +86,10 @@
 // #define CONFIG_CAN_BUF_INCREASE_ON_OVERLOAD 5
 
 /// define list of CAN filters where large buffers are needed due to high load
-// #define CONFIG_CAN_HIGH_LOAD_IDENT_LIST { 0xcb0000 }
+// #define CONFIG_CAN_HIGH_LOAD_IDENT_LIST { 0xc70000, 0xc80000, 0xcb0000, 0xeb0000, 0xec0000  }
 
 /// define amount of list entries in CONFIG_CAN_HIGH_LOAD_IDENT_LIST
-// #define CONFIG_CAN_HIGH_LOAD_IDENT_CNT 1
+// #define CONFIG_CAN_HIGH_LOAD_IDENT_CNT 5
 
 /// define mask for compare with ident
 // #define CONFIG_CAN_HIGH_LOAD_IDENT_MASK 0xff0000

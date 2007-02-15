@@ -1,20 +1,20 @@
-// File: config_imi_iso.h
+// File: config_tractorinternalcan.h
 // IMPORTANT: Never change the first block of this header manually!!!
-//            All manual changes are overwritten by the next call of "update_makefile.sh conf_imi_iso" 
-//            Perform changes direct in the feature and project setup file conf_imi_iso
+//            All manual changes are overwritten by the next call of "update_makefile.sh conf_tractorinternalcan" 
+//            Perform changes direct in the feature and project setup file conf_tractorinternalcan
 //  ALLOWED ADAPTATION: Move the to be adapted defines from the middle block to the end after
 //                      the line START_INDIVIDUAL_PROJECT_CONFIG and remove the comment indication there.
-//                      All commented out defines in the middle block will be upated on next "update_makefile.sh conf_imi_iso" call,
+//                      All commented out defines in the middle block will be upated on next "update_makefile.sh conf_tractorinternalcan" call,
 //                      if the corresponding value in isoaglib_config.h changed
 
 
 // include an external file for definition of pool and firmware versions
 #include "version.h"
-#define CAN_BUS_CNT 1 
+#define CAN_BUS_CNT 2 
 
 #define CAN_BUS_USED 0 
 
-#define CAN_INSTANCE_CNT 1 
+#define CAN_INSTANCE_CNT 2 
 
 #define PRT_INSTANCE_CNT 1 
 
@@ -30,8 +30,17 @@
 
 // #define CONFIG_DO_NOT_START_RELAIS_ON_STARTUP
 
-#ifndef USE_PROC_DATA_DESCRIPTION_POOL 
-	#define USE_PROC_DATA_DESCRIPTION_POOL 
+#ifndef USE_TRACTOR_GENERAL 
+	#define USE_TRACTOR_GENERAL 
+#endif
+#ifndef USE_TRACTOR_MOVE 
+	#define USE_TRACTOR_MOVE 
+#endif
+#ifndef USE_TRACTOR_PTO 
+	#define USE_TRACTOR_PTO 
+#endif
+#ifndef USE_TIME_GPS 
+	#define USE_TIME_GPS 
 #endif
 // Decide if HEAP allocation strategy shall reduce size about 5K to 10K in favour of speed
 // Strong Advice: Don't activate this, as long your target has not too tight memory restrictions
@@ -46,26 +55,17 @@
 #ifndef NO
   #define NO 0
 #endif
-#ifndef USE_PROCESS 
-  #define USE_PROCESS 
+#ifndef USE_PROCESS_YN 
+	#define USE_PROCESS_YN NO 
 #endif
-#ifndef USE_PROC_REMOTE_STD 
-  #define USE_PROC_REMOTE_STD 
+#ifndef USE_EEPROM_IO_YN 
+	#define USE_EEPROM_IO_YN NO 
 #endif
-#ifndef USE_EEPROM_IO 
-	#define USE_EEPROM_IO 
-#endif
-#ifndef USE_DATASTREAMS_IO_YN 
-	#define USE_DATASTREAMS_IO_YN NO 
+#ifndef USE_DATASTREAMS_IO 
+	#define USE_DATASTREAMS_IO 
 #endif
 #ifndef USE_ISO_11783 
 	#define USE_ISO_11783 
-#endif
-#ifndef DEF_Stream_IMPL   
-	#define DEF_Stream_IMPL   StreamChunk   
-#endif
-#ifndef DEF_Stream_c_IMPL 
-	#define DEF_Stream_c_IMPL StreamChunk_c 
 #endif
 
 // The following configuration values can be overwritten.
