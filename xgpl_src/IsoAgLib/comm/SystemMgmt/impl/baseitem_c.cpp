@@ -147,7 +147,6 @@ BaseItem_c& BaseItem_c::operator=(const BaseItem_c& src){
   calculates time between now and last set of i32_lastTime;
   if called with time parameter, the difference to this is calculated,
   otherwise the system time is retreived and used
-  @param ri32_time optional time to use for calculating the difference time to last update (default use actual System_c::getTime() )
   @return lasted time between last update and the compare time [msec.]
 */
 int32_t BaseItem_c::lastedTime( void ) const {
@@ -156,7 +155,10 @@ int32_t BaseItem_c::lastedTime( void ) const {
 
 /**
   check if given time intervall is lasted
-  @param ri32_time optional timestamp in [msec]
+  INFO: Interval is only an uint16. That's because of SPEED reasons
+        for 16-bit platforms and of the not existing need to check
+        for more than a minute and 5 seconds (65535 msec)
+  @param rui16_timeInterval time intervall in msec
   @return true -> time last timestamp older than intervall
 */
 bool BaseItem_c::checkTime(uint16_t rui16_timeInterval) const  {
@@ -166,6 +168,9 @@ bool BaseItem_c::checkTime(uint16_t rui16_timeInterval) const  {
 /**
   check if given time intervall is lasted;
   if time intervall is lasted - update time
+  INFO: Interval is only an uint16. That's because of SPEED reasons
+        for 16-bit platforms and of the not existing need to check
+        for more than a minute and 5 seconds (65535 msec)
   @param rui16_timeInterval time intervall in msec
   @return true -> time last timestamp older than intervall
 */
