@@ -23,7 +23,7 @@ PROJECT_NAME           = IsoAgLib
 # This could be handy for archiving the generated documentation or 
 # if some version control system is used.
 
-PROJECT_NUMBER         = 1.2.1
+PROJECT_NUMBER         = 2.0.0
 
 # The OUTPUT_DIRECTORY tag is used to specify the (relative or absolute) 
 # base path where the generated documentation will be put. 
@@ -130,7 +130,7 @@ STRIP_FROM_INC_PATH    =
 # (but less readable) file names. This can be useful is your file systems 
 # doesn't support long names like on DOS, Mac, or CD-ROM.
 
-SHORT_NAMES            = YES
+SHORT_NAMES            = NO
 
 # If the JAVADOC_AUTOBRIEF tag is set to YES then Doxygen 
 # will interpret the first line (until the first dot) of a JavaDoc-style 
@@ -1040,9 +1040,15 @@ INCLUDE_FILE_PATTERNS  =
 PREDEFINED             = SYSTEM_ESX \
                          DEBUG \
                          USE_ISO_11783 \
-                         USE_DIN_9684 \
                          USE_ISO_TERMINAL \
-                         USE_DIN_TERMINAL
+                         USE_TRACTOR_LIGHT \
+                         USE_TRACTOR_GENERAL \
+												 USE_TRACTOR_MOVE \
+												 USE_TIME_GPS \
+												 USE_TRACTOR_AUX \
+												 USE_TRACTOR_PTO \
+												 USE_TRACTOR_CERTIFICATION \
+												 USE_TRACTOR_GUIDANCE
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then 
 # this tag can be used to specify a list of macro names that should be expanded. 
