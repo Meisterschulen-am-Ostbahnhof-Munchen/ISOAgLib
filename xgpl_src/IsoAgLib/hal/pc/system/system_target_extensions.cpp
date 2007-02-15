@@ -70,7 +70,7 @@
 #include <string.h>
 #include <time.h>
 #ifndef PC_OS_Linux
-#include <conio.h>
+  #include <conio.h>
 #else
   #include <unistd.h>
 #endif
@@ -83,11 +83,12 @@
     #include <MMSYSTEM.H>
   #else
     #include <time.h>
-#endif
+  #endif
 #else
   #include <sys/time.h>
   #include <sys/times.h>
   #include <unistd.h>
+  #include <linux/version.h>
 #endif
 
 #ifdef DEBUG
@@ -114,9 +115,13 @@ static tSystem t_biosextSysdata = { 0,0,0,0,0,0};
 #define msecPerClock 10LL
 #endif
 
-static clock_t st_startup4Times = 0;
+#ifndef LINUX_VERSION_CODE
+#error "LINUX_VERSION_CODE is not defined"
+#endif
+
 clock_t getStartUpTime()
 {
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0))
   if ( msecPerClock != (1000 / sysconf(_SC_CLK_TCK)) )
   { // BIG PROBLEM -> THE DEFINE DURING COMPILE TIME DOES NOT MATCH THE RUNTIME
     std::cerr << "\n\nVERY BIG PROBLEM!!!\nThis program was compiled with\n#define msecPerClock " << msecPerClock
@@ -126,7 +131,16 @@ clock_t getStartUpTime()
         << std::endl;
     abort();
   }
-  st_startup4Times = times(NULL);
+  static clock_t st_startup4Times = times(NULL);
+#else
+  static clock_t st_startup4Times = -1;
+  if (st_startup4Times < 0)
+  {
+    timespec ts;
+    clock_gettime(CLOCK_MONOTONIC, &ts);
+    st_startup4Times = int32_t(ts.tv_sec)*1000 + int32_t(ts.tv_nsec/1000000);
+  }
+#endif
   return st_startup4Times;
 }
 #endif
@@ -138,11 +152,8 @@ clock_t getStartUpTime()
 */
 int16_t open_system()
 { // init system start time
-  #ifdef WIN32
   getTime();
-  #else
-  getStartUpTime();
-  #endif
+
   t_biosextSysdata.wRAMSize = 1000;
   DEBUG_PRINT("open_esx aufgerufen\n");
   DEBUG_PRINT("\n\nPRESS RETURN TO STOP PROGRAM!!!\n\n");
@@ -227,13 +238,14 @@ int16_t configWatchdog()
 
  // use gettimeofday for native LINUX system
 int32_t getTime()
-{ // sysconf(_SC_CLK_TCK) provides clock_t ticks per second
+{
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0))
+  // sysconf(_SC_CLK_TCK) provides clock_t ticks per second
   //  static const int64_t ci64_mesecPerClock = 1000 / sysconf(_SC_CLK_TCK);
   static struct timeval now;
   gettimeofday(&now, 0);
   // fetch RAW - non normalized - time in scaling of gettimeofday()
   int64_t i64_time4Timeofday = int64_t(now.tv_sec)*1000LL + int64_t(now.tv_usec/1000);
-
 
   // store offset between gettimeofday() and system start
   static int64_t si64_systemStart4Timeofday = i64_time4Timeofday;
@@ -259,6 +271,13 @@ int32_t getTime()
   }
 
   return i64_time4Timeofday;
+#else
+  /** linux-2.6 */
+  static timespec ts;
+  clock_gettime(CLOCK_MONOTONIC, &ts);
+  const int32_t ci_now = int32_t(ts.tv_sec)*1000 + int32_t(ts.tv_nsec/1000000);
+  return ci_now - getStartUpTime();
+#endif
 }
 #endif
 

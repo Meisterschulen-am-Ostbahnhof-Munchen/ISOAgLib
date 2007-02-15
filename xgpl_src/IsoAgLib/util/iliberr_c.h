@@ -110,7 +110,8 @@ public:
     FIRSTWARNINDEX =24, /// this is only a dummy to identify at which index the first warning is located
     CanWarn=24,
     MultiSendWarn=25,
-    AllErrTypes=26,
+    CanTooSlowSend=26,
+    AllErrTypes=27,
   } iLibErrTypes_t;
 
   /** enum to identify the different error locations */

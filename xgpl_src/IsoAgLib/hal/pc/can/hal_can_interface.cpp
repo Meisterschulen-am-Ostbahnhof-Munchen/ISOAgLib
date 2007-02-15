@@ -840,4 +840,9 @@ int16_t can_useMsgobjClear(uint8_t rui8_busNr, uint8_t rui8_msgobjNr)
 {
   return clearCanObjBuf(rui8_busNr, rui8_msgobjNr);
 }
+
+int32_t can_getMaxSendDelay(uint8_t rui8_busNr)
+{
+  return getMaxSendDelay(rui8_busNr);
+}
 } // end of namespace

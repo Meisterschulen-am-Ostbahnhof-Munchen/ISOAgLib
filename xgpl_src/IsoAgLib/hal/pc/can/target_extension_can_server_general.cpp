@@ -131,61 +131,146 @@ server_c::server_c()
 {
   memset(f_canOutput, 0, sizeof(f_canOutput));
   memset(ui16_globalMask, 0, sizeof(ui16_globalMask));
+  for (int i=0; i<cui32_maxCanBusCnt; i++) i32_sendDelay[i] = 0;
 }
 
 
-/** define the amount of MSec per Clock_t, in case the project config didn't this before */
+namespace __HAL {
+
+
+#ifndef WIN32
+/** linux-begin */
+#ifndef LINUX_VERSION_CODE
+#error "LINUX_VERSION_CODE is not defined"
+#endif
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0))
+/** On Linux 2.4: Define the amount of MSec per Clock_t, in case the project config didn't this before */
 #ifndef msecPerClock
 #define msecPerClock 10
 #define clocksPer100Msec 10
 #endif
+#endif
+
+clock_t getStartUpTime()
+{
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0))
+  if ( msecPerClock != (1000 / sysconf(_SC_CLK_TCK)) )
+  { // BIG PROBLEM -> THE DEFINE DURING COMPILE TIME DOES NOT MATCH THE RUNTIME
+    std::cerr << "\n\nVERY BIG PROBLEM!!!\nThis program was compiled with\n#define msecPerClock " << msecPerClock
+        << "\nwhile the runtime system has " << (1000 / sysconf(_SC_CLK_TCK))
+        << "\n\nSO PLEASE add\n#define msecPerClock " << (1000 / sysconf(_SC_CLK_TCK))
+        << "\nto your project configuration header or Makefile, so that a matching binary is built. This program is aborted now, as none of any time calculations will match with this problem.\n\n"
+        << std::endl;
+    abort();
+  }
+  static clock_t st_startup4Times = times(NULL);
+#else
+  static clock_t st_startup4Times = -1;
+  if (st_startup4Times < 0)
+  {
+    timespec ts;
+    clock_gettime(CLOCK_MONOTONIC, &ts);
+    st_startup4Times = int32_t(ts.tv_sec)*1000 + int32_t(ts.tv_nsec/1000000);
+  }
+#endif
+  return st_startup4Times;
+}
+/** linux-end */
+#endif
 
 
-namespace __HAL {
+
+
+#ifdef WIN32
+#if defined( _MSC_VER )
+  // VC++ with native Win32 API provides very accurate
+  // msec timer - use that
+  int32_t getTime()
+  { // returns time in msec
+    return timeGetTime();
+  }
+#else
+  // MinGW has neither simple access to timeGetTime()
+  // nor to gettimeofday()
+  // - but beware: at least in LINUX clock() measures
+  //   only the times of the EXE in CPU core
+  int32_t getTime()
+  { // returns time in msec
+    return (clock()/(CLOCKS_PER_SEC/1000));
+  }
+#endif
+#else
+  /** linux-begin */
+  int32_t getTime()
+  {
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0))
+    // use gettimeofday for native LINUX 2.4 system
+    // sysconf(_SC_CLK_TCK) provides clock_t ticks per second
+    //  static const int64_t ci64_mesecPerClock = 1000 / sysconf(_SC_CLK_TCK);
+    static struct timeval now;
+    gettimeofday(&now, 0);
+    // fetch RAW - non normalized - time in scaling of gettimeofday()
+    int64_t i64_time4Timeofday = int64_t(now.tv_sec)*1000LL + int64_t(now.tv_usec/1000);
+
+
+    // store offset between gettimeofday() and system start
+    static int64_t si64_systemStart4Timeofday = i64_time4Timeofday;
+    // static store delta between times() normalization and gettimeofday() norm
+    static int64_t si64_deltaStartTimes = i64_time4Timeofday - int64_t(getStartUpTime()) * msecPerClock;
+
+    // derive change of the normalization delta
+    const int64_t ci64_deltaChange = i64_time4Timeofday - int64_t(times(NULL)) * msecPerClock - si64_deltaStartTimes;
+    if ( ( ci64_deltaChange >= 1000 ) || ( ci64_deltaChange <= -1000 ) )
+    { // user changed the system clock inbetween
+      si64_deltaStartTimes += ci64_deltaChange;
+      si64_systemStart4Timeofday += ci64_deltaChange;
+    }
+
+    // now calculate the real time in [msec] since startup
+    i64_time4Timeofday -= si64_systemStart4Timeofday;
+    // now derive the well define overflows
+    while ( i64_time4Timeofday > 0x7FFFFFFFLL )
+    {
+      i64_time4Timeofday         -= 0xFFFFFFFF;
+      si64_systemStart4Timeofday += 0xFFFFFFFF;
+      si64_deltaStartTimes       += 0xFFFFFFFF;
+    }
+
+    return i64_time4Timeofday;
+#else
+    /** linux-2.6 */
+    timespec ts;
+    clock_gettime(CLOCK_MONOTONIC, &ts);
+    const int32_t ci_now = int32_t(ts.tv_sec)*1000 + int32_t(ts.tv_nsec/1000000);
+    return ci_now - getStartUpTime();
+#endif
+  }
+  /** linux-end */
+#endif
+
+
 void initClientTime( client_s& ref_receiveClient, clock_t rt_startupClock )
 {
-  //  static const int64_t ci64_mesecPerClock = 1000 / sysconf(_SC_CLK_TCK);
-  struct timeval now;
-  gettimeofday(&now, 0);
-  // fetch RAW - non normalized - time in scaling of gettimeofday()
-  const int64_t i64_time4Timeofday = int64_t(now.tv_sec)*1000LL + int64_t(now.tv_usec/1000);
-
-  // store offset between gettimeofday() and system start
-  ref_receiveClient.i64_systemStart4Timeofday = i64_time4Timeofday;
-  // static store delta between times() normalization and gettimeofday() norm
-  ref_receiveClient.i64_deltaStartTimes = i64_time4Timeofday - int64_t(rt_startupClock) * msecPerClock;
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0))
+  ref_receiveClient.i32_msecStartDeltaClientMinusServer = (rt_startupClock - getStartUpTime())*msecPerClock;
+#else
+  ref_receiveClient.i32_msecStartDeltaClientMinusServer = (rt_startupClock - getStartUpTime()); // we get msec directly with Linux 2.6. upwards!
+#endif
+  DEBUG_PRINT1 ("Initialized ref_receiveClient.i32_msecStartDeltaClientMinusServer to %d\n", ref_receiveClient.i32_msecStartDeltaClientMinusServer);
 }
 
 int32_t getClientTime( client_s& ref_receiveClient )
-{ // sysconf(_SC_CLK_TCK) provides clock_t ticks per second
-  //  static const int64_t ci64_mesecPerClock = 1000 / sysconf(_SC_CLK_TCK);
-  static struct timeval now;
-  gettimeofday(&now, 0);
-  // fetch RAW - non normalized - time in scaling of gettimeofday()
-  int64_t i64_time4Timeofday = int64_t(now.tv_sec)*1000LL + int64_t(now.tv_usec/1000);
+{
+  return getTime() - ref_receiveClient.i32_msecStartDeltaClientMinusServer;
+}
 
-  // derive change of the normalization delta
-  const int64_t ci64_deltaChange = i64_time4Timeofday - int64_t(times(NULL)) * msecPerClock - ref_receiveClient.i64_deltaStartTimes;
-  if ( ( ci64_deltaChange >= 1000 ) || ( ci64_deltaChange <= -1000 ) )
-  { // user changed the system clock inbetween
-    ref_receiveClient.i64_deltaStartTimes       += ci64_deltaChange;
-    ref_receiveClient.i64_systemStart4Timeofday += ci64_deltaChange;
-  }
-
-  // now calculate the real time in [msec] since startup
-  i64_time4Timeofday -= ref_receiveClient.i64_systemStart4Timeofday;
-  // now derive the well define overflows
-  while ( i64_time4Timeofday > 0x7FFFFFFFLL )
-  {
-    i64_time4Timeofday                          -= 0xFFFFFFFF;
-    ref_receiveClient.i64_deltaStartTimes       += 0xFFFFFFFF;
-    ref_receiveClient.i64_systemStart4Timeofday += 0xFFFFFFFF;
-  }
-
-  return i64_time4Timeofday;
+int32_t getServerTimeFromClientTime( client_s& ref_receiveClient, int32_t ri32_clientTime )
+{
+  return ri32_clientTime + ref_receiveClient.i32_msecStartDeltaClientMinusServer;
 }
 
 } // end namespace
+
 
 static void enqueue_msg(uint32_t DLC, uint32_t ui32_id, uint32_t b_bus, uint8_t b_xtd, uint8_t* pui8_data, int32_t i32_clientID, server_c* pc_serverData)
 {
@@ -368,12 +453,14 @@ static void enqueue_msg(uint32_t DLC, uint32_t ui32_id, uint32_t b_bus, uint8_t 
 }
 
 
+std::list<int32_t> __HAL::list_sendTimeStamps;
+
 
 /////////////////////////////////////////////////////////////////////////
 static void* can_write_thread_func(void* ptr)
 {
   int16_t i16_rc;
-  int32_t i32_error = 0;
+  int32_t i32_error;
   msqWrite_s msqWriteBuf;
 
   int local_semaphore_id;
@@ -387,6 +474,8 @@ static void* can_write_thread_func(void* ptr)
 
   for (;;) {
 
+    i32_error = 0;
+
     if((i16_rc = msgrcv(pc_serverData->msqDataServer.i32_wrHandle, &msqWriteBuf, sizeof(msqWrite_s) - sizeof(int32_t), 0, 0)) == -1) {
       perror("msgrcv");
       usleep(1000);
@@ -399,25 +488,56 @@ static void* can_write_thread_func(void* ptr)
       exit(1);
     }
 
-    DEBUG_PRINT("+");
-    i16_rc = ca_TransmitCanCard_1(&(msqWriteBuf.s_sendData), msqWriteBuf.ui8_bus, pc_serverData);
-    DEBUG_PRINT1("send: %d\n", i16_rc);
+    client_s* ps_client = NULL;
+    // search client...
+    for (std::list<client_s>::iterator iter = pc_serverData->l_clients.begin(); iter != pc_serverData->l_clients.end(); iter++)
+    {
+      if (iter->i32_clientID == disassemble_client_id(msqWriteBuf.i32_mtype))
+      {
+        ps_client = &(*iter);
+        break;
+      }
+    }
+    if (ps_client != NULL)
+    {
+      list_sendTimeStamps.push_front (getServerTimeFromClientTime (*ps_client, msqWriteBuf.i32_sendTimeStamp));
 
-    if (pc_serverData->b_logMode) {
-      dumpCanMsg (msqWriteBuf.ui8_bus, msqWriteBuf.ui8_obj, &(msqWriteBuf.s_sendData), pc_serverData->f_canOutput[msqWriteBuf.ui8_bus]);
+      DEBUG_PRINT("+");
+      i16_rc = ca_TransmitCanCard_1(&(msqWriteBuf.s_sendData), msqWriteBuf.ui8_bus, pc_serverData);
+      DEBUG_PRINT1("send: %d\n", i16_rc);
+
+      if (pc_serverData->b_logMode)
+      { /** @todo shouldn't we only dump the message to the FILE if NO ERROR? Or at elast flag it like this in the can-log!! ? */
+        dumpCanMsg (msqWriteBuf.ui8_bus, msqWriteBuf.ui8_obj, &(msqWriteBuf.s_sendData), pc_serverData->f_canOutput[msqWriteBuf.ui8_bus]);
+      }
+
+      if (!i16_rc)
+        i32_error = HAL_OVERFLOW_ERR;
+      else
+      { // i16_rc != 0: send was ok
+        if (i16_rc == HAL_NEW_SEND_DELAY)
+        { // send was okay with "new send delay detected"!
+          for (std::list<client_s>::iterator iter = pc_serverData->l_clients.begin(); iter != pc_serverData->l_clients.end(); iter++)
+          {
+            iter->i32_sendDelay[msqWriteBuf.ui8_bus] = pc_serverData->i32_sendDelay[msqWriteBuf.ui8_bus];
+          }
+          i32_error = HAL_NEW_SEND_DELAY; // so it will be sent back with the ACK!
+        }
+        // in ANY okay case, do:
+        // message forwarding
+        // get clientID from msqWriteBuf.i32_mtype
+        enqueue_msg(msqWriteBuf.s_sendData.bDlc, msqWriteBuf.s_sendData.dwId, msqWriteBuf.ui8_bus, msqWriteBuf.s_sendData.bXtd, &msqWriteBuf.s_sendData.abData[0], disassemble_client_id(msqWriteBuf.i32_mtype), pc_serverData);
+      }
+
+      if (ps_client->i32_sendDelay[msqWriteBuf.ui8_bus] > 0)
+      { // report the send delay back until the client explicitly clears it (sets it to negative!)
+        i32_error = HAL_NEW_SEND_DELAY;
+      }
+
+      send_command_ack (disassemble_client_id(msqWriteBuf.i32_mtype), &(pc_serverData->msqDataServer), ACKNOWLEDGE_DATA_CONTENT_ERROR_VALUE, i32_error);
     }
 
-    // i16_rc == 1: send was ok
-    if (!i16_rc)
-      i32_error = HAL_OVERFLOW_ERR;
-    else
-      // message forwarding
-      // get clientID from msqWriteBuf.i32_mtype
-      enqueue_msg(msqWriteBuf.s_sendData.bDlc, msqWriteBuf.s_sendData.dwId, msqWriteBuf.ui8_bus, msqWriteBuf.s_sendData.bXtd, &msqWriteBuf.s_sendData.abData[0], disassemble_client_id(msqWriteBuf.i32_mtype), pc_serverData);
-
-    send_command_ack(disassemble_client_id(msqWriteBuf.i32_mtype), i32_error, &(pc_serverData->msqDataServer));
-
-    // release semaphore
+    // release semaphore (even if no client was found!
     if (get_semaphore(local_semaphore_id, 1) == -1) {
       perror("release semaphore error");
       exit(1);
@@ -434,7 +554,9 @@ static void can_read(server_c* pc_serverData)
 {
   can_recv_data receiveData;
   uint32_t DLC;
+#ifdef SIMULATE_BUS_MODE
   bool b_moreToRead = TRUE;
+#endif
   int local_semaphore_id;
 
   if ((local_semaphore_id = open_semaphore_set(SERVER_SEMAPHORE)) == -1) {
@@ -496,14 +618,12 @@ static void can_read(server_c* pc_serverData)
     }
 
     if (b_processMsg) {
-
       // acquire semaphore to prevent concurrent read/write to can driver
       if (get_semaphore(local_semaphore_id, -1) == -1) {
         perror("aquire semaphore error");
         exit(1);
       }
-
-    int16_t i16_rc = ca_ReceiveCanCard_1(&receiveData,channel_with_change, pc_serverData);
+      int16_t i16_rc = ca_ReceiveCanCard_1(&receiveData,channel_with_change, pc_serverData);
 
       if (i16_rc < 0) {
         /* nothing to read or interrupted system call */
@@ -558,10 +678,11 @@ static void can_read(server_c* pc_serverData)
       enqueue_msg(DLC, ui32_id, b_bus, b_xtd, &receiveData.msg.pb_data[0], 0, pc_serverData);
 
     // release semaphore
-    if (get_semaphore(local_semaphore_id, 1) == -1) {
+     if (get_semaphore(local_semaphore_id, 1) == -1) {
       perror("release semaphore error");
       exit(1);
     }
+
 
   }
 }
@@ -574,6 +695,8 @@ static void* command_thread_func(void* ptr)
 
   int16_t i16_rc;
   int32_t i32_error;
+  int32_t i32_dataContent;
+  int32_t i32_data;
   msqCommand_s msqCommandBuf;
   int local_semaphore_id;
   uint16_t ui16_busRefCnt[cui32_maxCanBusCnt];
@@ -615,70 +738,90 @@ static void* command_thread_func(void* ptr)
         break;
       }
 
-    switch (msqCommandBuf.i16_command) {
-
-      case COMMAND_REGISTER:
-      {
-        client_s s_tmpClient;
-        DEBUG_PRINT("command start driver\n");
-
-        // do check for dead clients before queueing any new message
-        for (std::list<client_s>::iterator iter_deadClient = pc_serverData->l_clients.begin(); iter_deadClient != pc_serverData->l_clients.end();) {
-
-          // send signal 0 (no signal is send, but error handling is done) to check is process is alive
-          if (kill(iter_deadClient->i32_clientID, 0) == -1) {
-            // client dead!
-            DEBUG_PRINT1("client with ID %d no longer alive!\n", iter_deadClient->i32_clientID);
-            // clear read/write queue for this client, close pipe, remove from client list, iter_deadClient is incremented
-            releaseClient(pc_serverData, iter_deadClient);
-          } else
-            // increment iter_deadClient manually (not in for statement)
-            iter_deadClient++;
-        }
-
-
-        // initialize all contents with ZERO
-        memset(&s_tmpClient, 0, sizeof(client_s));
-
-        // client process id is used as clientID
-        s_tmpClient.i32_clientID = msqCommandBuf.i32_mtype;
-
-        initClientTime( s_tmpClient, msqCommandBuf.s_startTimeClock.t_clock );
-
-        //DEBUG_PRINT1("client start up time (absolute value in clocks): %d\n", s_tmpClient.t_startTimeClock);
-
-        char pipe_name[255];
-        sprintf(pipe_name, "%s%d", PIPE_PATH, ++(pc_serverData->i32_lastPipeId));
-
-        umask(0);
-        // if not existing already
-        mknod(pipe_name, S_IFIFO|0666, 0);
-
-        // open pipe in read/write mode to allow read access to clean the pipe and to avoid SIGPIPE when client dies and this client was the only reader to the pipe
-        if ((s_tmpClient.i32_pipeHandle = open(pipe_name, O_NONBLOCK | O_RDWR, 0)) == -1)
-          i32_error = HAL_UNKNOWN_ERR;
-
-#ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
-        // used cui8_maxCanObj MsgObj
-        for (uint8_t j=0; j<cui32_maxCanBusCnt; j++)
-          s_tmpClient.arrMsgObj[j].resize(cui8_maxCanObj);
-#endif
-
-        if (!i32_error)
-          pc_serverData->l_clients.push_back(s_tmpClient);
-
-        // transmit current pipeId to client (for composition of pipe name)
-        send_command_ack(msqCommandBuf.i32_mtype, i32_error, &(pc_serverData->msqDataServer), pc_serverData->i32_lastPipeId);
-
-        break;
+    // default to simple ACK which returns the error.
+    // Overwrite if special answers needed like PIPE_ID or SEND_DELAY
+    i32_dataContent = ACKNOWLEDGE_DATA_CONTENT_ERROR_VALUE;
+    // in DATA_CONTENT_ERROR_VALUE case i32_error will be used as i32_data!!!
+    i32_error = 0; // default to no error
+    if (msqCommandBuf.i16_command != COMMAND_REGISTER)
+    { /// iter_client check needed, iter_client WILL be used and MUST be set!
+      if (iter_client == pc_serverData->l_clients.end())
+      { // client not found, but was required. return HAL_CONFIG_ERR
+        i32_error = HAL_CONFIG_ERR;
       }
-      case COMMAND_DEREGISTER:
+    }
 
-        DEBUG_PRINT("command stop driver\n");
+    // if still no error, evaluate command
+    if (!i32_error)
+    {
+      switch (msqCommandBuf.i16_command)
+      {
 
-        // @todo: is queue clearing necessary?
-        if (iter_client != pc_serverData->l_clients.end()) {
+        case COMMAND_REGISTER:
+        {
+          client_s s_tmpClient;
+          DEBUG_PRINT("command start driver\n");
 
+          // do check for dead clients before queueing any new message
+          for (std::list<client_s>::iterator iter_deadClient = pc_serverData->l_clients.begin(); iter_deadClient != pc_serverData->l_clients.end();) {
+
+            // send signal 0 (no signal is send, but error handling is done) to check is process is alive
+            if (kill(iter_deadClient->i32_clientID, 0) == -1) {
+              // client dead!
+              DEBUG_PRINT1("client with ID %d no longer alive!\n", iter_deadClient->i32_clientID);
+              // clear read/write queue for this client, close pipe, remove from client list, iter_deadClient is incremented
+              releaseClient(pc_serverData, iter_deadClient);
+            } else
+              // increment iter_deadClient manually (not in for statement)
+              iter_deadClient++;
+          }
+
+
+          // initialize all contents with ZERO
+          memset(&s_tmpClient, 0, sizeof(client_s));
+
+          // no need to set to 0, as everything got set to zero before!
+          // s_tmpClient.i32_sendDelay[all-buses] = 0;
+
+          // client process id is used as clientID
+          s_tmpClient.i32_clientID = msqCommandBuf.i32_mtype;
+
+          DEBUG_PRINT1 ("Client registering with startTimeClock_t from his REGISTER message as %d\n", msqCommandBuf.s_startTimeClock.t_clock);
+          initClientTime( s_tmpClient, msqCommandBuf.s_startTimeClock.t_clock );
+
+          //DEBUG_PRINT1("client start up time (absolute value in clocks): %d\n", s_tmpClient.t_startTimeClock);
+
+          char pipe_name[255];
+          sprintf(pipe_name, "%s%d", PIPE_PATH, ++(pc_serverData->i32_lastPipeId));
+
+          umask(0);
+          // if not existing already
+          mknod(pipe_name, S_IFIFO|0666, 0);
+
+          // open pipe in read/write mode to allow read access to clean the pipe and to avoid SIGPIPE when client dies and this client was the only reader to the pipe
+          if ((s_tmpClient.i32_pipeHandle = open(pipe_name, O_NONBLOCK | O_RDWR, 0)) == -1)
+            i32_error = HAL_UNKNOWN_ERR;
+
+  #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
+          // used cui8_maxCanObj MsgObj
+          for (uint8_t j=0; j<cui32_maxCanBusCnt; j++)
+            s_tmpClient.arrMsgObj[j].resize(cui8_maxCanObj);
+  #endif
+
+          if (!i32_error)
+          { // no error
+            pc_serverData->l_clients.push_back(s_tmpClient);
+            // transmit current pipeId to client (for composition of pipe name)
+            i32_dataContent = ACKNOWLEDGE_DATA_CONTENT_PIPE_ID;
+            i32_data = pc_serverData->i32_lastPipeId;
+          }
+        } break;
+
+
+        case COMMAND_DEREGISTER: {
+          DEBUG_PRINT("command stop driver\n");
+
+          // @todo: is queue clearing necessary?
           for (uint8_t j=0; j<cui32_maxCanBusCnt; j++)
             iter_client->arrMsgObj[j].clear();
 
@@ -686,29 +829,21 @@ static void* command_thread_func(void* ptr)
             close(iter_client->i32_pipeHandle);
 
           pc_serverData->l_clients.erase(iter_client);
-
-        } else
-          i32_error = HAL_CONFIG_ERR;
-
-        send_command_ack(msqCommandBuf.i32_mtype, i32_error, &(pc_serverData->msqDataServer));
-
-        break;
+          // i32_error will stay at 0 for "no error"
+        } break;
 
 
-      case COMMAND_INIT:
+        case COMMAND_INIT:
 
-        int fdata[16];
-        int16_t i16_init_rc;
+          int fdata[16];
+          int16_t i16_init_rc;
 
-        if (msqCommandBuf.s_config.ui8_bus > HAL_CAN_MAX_BUS_NR)
-          i32_error = HAL_RANGE_ERR;
+          if (msqCommandBuf.s_config.ui8_bus > HAL_CAN_MAX_BUS_NR)
+            i32_error = HAL_RANGE_ERR;
+          else if (!ui16_busRefCnt[msqCommandBuf.s_init.ui8_bus])
+          { // first init command for current bus
 
-        if (!i32_error && !ui16_busRefCnt[msqCommandBuf.s_init.ui8_bus]) {
-          // first init command for current bus
-
-          memset(fdata, 0, sizeof(fdata));
-
-          if (iter_client != pc_serverData->l_clients.end()) {
+            memset(fdata, 0, sizeof(fdata));
 
             // open log file only once per bus
             if (pc_serverData->b_logMode) {
@@ -721,105 +856,89 @@ static void* command_thread_func(void* ptr)
             }
 
             i16_init_rc = ca_InitCanCard_1(msqCommandBuf.s_init.ui8_bus,  // 0 for CANLPT/ICAN, else 1 for first BUS
-                                           msqCommandBuf.s_init.ui16_wBitrate,  // BTR0BTR1
-                                           pc_serverData);
+                                          msqCommandBuf.s_init.ui16_wBitrate,  // BTR0BTR1
+                                          pc_serverData);
 
             if (!i16_init_rc) {
               printf("can't initialize CAN\n");
               i32_error = HAL_CONFIG_ERR;
             }
+          }
 
-          } else
-            i32_error = HAL_CONFIG_ERR;
+          if (!i32_error)
+            ui16_busRefCnt[msqCommandBuf.s_init.ui8_bus]++;
 
-        }
+          // do rest of init handling in next case statement (no break!)
 
-        if (!i32_error)
-          ui16_busRefCnt[msqCommandBuf.s_init.ui8_bus]++;
-
-        // do rest of init handling in next case statement (no break!)
-
-     case COMMAND_CHG_GLOBAL_MASK:
-
-        if (!i32_error) {
-          iter_client->ui16_globalMask[msqCommandBuf.s_init.ui8_bus] = msqCommandBuf.s_init.ui16_wGlobMask;
-          iter_client->ui32_globalMask[msqCommandBuf.s_init.ui8_bus] = msqCommandBuf.s_init.ui32_dwGlobMask;
-          iter_client->ui32_lastMask[msqCommandBuf.s_init.ui8_bus] = msqCommandBuf.s_init.ui32_dwGlobMaskLastmsg;
-        }
-
-        send_command_ack(msqCommandBuf.i32_mtype, i32_error, &(pc_serverData->msqDataServer));
-
-        break;
+        case COMMAND_CHG_GLOBAL_MASK:
+          if (!i32_error) {
+            iter_client->ui16_globalMask[msqCommandBuf.s_init.ui8_bus] = msqCommandBuf.s_init.ui16_wGlobMask;
+            iter_client->ui32_globalMask[msqCommandBuf.s_init.ui8_bus] = msqCommandBuf.s_init.ui32_dwGlobMask;
+            iter_client->ui32_lastMask[msqCommandBuf.s_init.ui8_bus] = msqCommandBuf.s_init.ui32_dwGlobMaskLastmsg;
+          }
+          break;
 
 
-      case COMMAND_CLOSE:
-
-        if (msqCommandBuf.s_config.ui8_bus > HAL_CAN_MAX_BUS_NR )
-          i32_error = HAL_RANGE_ERR;
-        else {
-
-          if (iter_client != pc_serverData->l_clients.end()) {
-
+        case COMMAND_CLOSE:
+        {
+          if (msqCommandBuf.s_config.ui8_bus > HAL_CAN_MAX_BUS_NR )
+            i32_error = HAL_RANGE_ERR;
+          else
+          {
             if (ui16_busRefCnt[msqCommandBuf.s_init.ui8_bus])
               ui16_busRefCnt[msqCommandBuf.s_init.ui8_bus]--;
 
-#ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
+  #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
             for (uint8_t j=0; j<iter_client->arrMsgObj[msqCommandBuf.s_init.ui8_bus].size(); j++) {
               clearReadQueue(msqCommandBuf.s_init.ui8_bus, j, pc_serverData->msqDataServer.i32_rdHandle, iter_client->i32_clientID);
               clearWriteQueue(msqCommandBuf.s_init.ui8_bus, j, pc_serverData->msqDataServer.i32_wrHandle, iter_client->i32_clientID);
             }
-#else
+  #else
             clearReadQueue(msqCommandBuf.s_init.ui8_bus, COMMON_MSGOBJ_IN_QUEUE, pc_serverData->msqDataServer.i32_rdHandle, iter_client->i32_clientID);
             clearWriteQueue(msqCommandBuf.s_init.ui8_bus, COMMON_MSGOBJ_IN_QUEUE, pc_serverData->msqDataServer.i32_wrHandle, iter_client->i32_clientID);
-#endif
+  #endif
 
             if (!ui16_busRefCnt[msqCommandBuf.s_init.ui8_bus] && pc_serverData->b_logMode && pc_serverData->f_canOutput[msqCommandBuf.s_init.ui8_bus]) {
               fclose(pc_serverData->f_canOutput[msqCommandBuf.s_init.ui8_bus]);
               pc_serverData->f_canOutput[msqCommandBuf.s_init.ui8_bus] = 0;
             }
 
-#ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
+  #ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
             iter_client->arrMsgObj[msqCommandBuf.s_config.ui8_bus].clear();
-#endif
-
-          } else
-            i32_error = HAL_CONFIG_ERR;
-        }
-
-        send_command_ack(msqCommandBuf.i32_mtype, i32_error, &(pc_serverData->msqDataServer));
-
-        break;
+  #endif
+            // i32_error will stay at 0 for "no error"
+          }
+        } break;
 
 
-      case COMMAND_CONFIG:
-
-#ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
-        if (msqCommandBuf.s_config.ui8_obj >= iter_client->arrMsgObj[msqCommandBuf.s_config.ui8_bus].size()) {
+        case COMMAND_CONFIG:
+  #ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
+          if (msqCommandBuf.s_config.ui8_obj >= iter_client->arrMsgObj[msqCommandBuf.s_config.ui8_bus].size()) {
             // add new elements in the vector with resize
             iter_client->arrMsgObj[msqCommandBuf.s_config.ui8_bus].resize(msqCommandBuf.s_config.ui8_obj+1);
-        } else {
+          } else {
             // reconfigure element
-        }
-#endif
+          }
+          // break left out intentionally
+  #endif
 
-      case COMMAND_CHG_CONFIG:
+        case COMMAND_CHG_CONFIG:
 
-        if ((msqCommandBuf.s_config.ui8_bus > HAL_CAN_MAX_BUS_NR ) || ( msqCommandBuf.s_config.ui8_obj > iter_client->arrMsgObj[msqCommandBuf.s_config.ui8_bus].size()-1 ))
-          i32_error = HAL_RANGE_ERR;
-        else {
-          if (iter_client != pc_serverData->l_clients.end()) {
-
+          if ((msqCommandBuf.s_config.ui8_bus > HAL_CAN_MAX_BUS_NR ) || ( msqCommandBuf.s_config.ui8_obj > iter_client->arrMsgObj[msqCommandBuf.s_config.ui8_bus].size()-1 ))
+            i32_error = HAL_RANGE_ERR;
+          else
+          {
             iter_client->arrMsgObj[msqCommandBuf.s_config.ui8_bus][msqCommandBuf.s_config.ui8_obj].b_canObjConfigured = TRUE;
 
             iter_client->arrMsgObj[msqCommandBuf.s_config.ui8_bus][msqCommandBuf.s_config.ui8_obj].ui8_bufXtd = msqCommandBuf.s_config.ui8_bXtd;
             iter_client->arrMsgObj[msqCommandBuf.s_config.ui8_bus][msqCommandBuf.s_config.ui8_obj].ui32_filter = msqCommandBuf.s_config.ui32_dwId;
 
-#ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
+    #ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
             if (msqCommandBuf.s_config.ui8_bXtd)
                 iter_client->arrMsgObj[msqCommandBuf.s_config.ui8_bus][msqCommandBuf.s_config.ui8_obj].ui32_mask_xtd = msqCommandBuf.s_config.ui32_mask;
             else
                 iter_client->arrMsgObj[msqCommandBuf.s_config.ui8_bus][msqCommandBuf.s_config.ui8_obj].ui16_mask_std = msqCommandBuf.s_config.ui32_mask;
-#endif
+    #endif
 
             if (msqCommandBuf.i16_command == COMMAND_CONFIG) {
               clearReadQueue(msqCommandBuf.s_config.ui8_bus, msqCommandBuf.s_config.ui8_obj, pc_serverData->msqDataServer.i32_rdHandle, iter_client->i32_clientID);
@@ -829,22 +948,16 @@ static void* command_thread_func(void* ptr)
               iter_client->arrMsgObj[msqCommandBuf.s_config.ui8_bus][msqCommandBuf.s_config.ui8_obj].ui16_size = msqCommandBuf.s_config.ui16_wNumberMsgs;
               iter_client->arrMsgObj[msqCommandBuf.s_config.ui8_bus][msqCommandBuf.s_config.ui8_obj].b_canBufferLock = false;
             }
-          } else
-            i32_error = HAL_CONFIG_ERR;
-        }
-
-        send_command_ack(msqCommandBuf.i32_mtype, i32_error, &(pc_serverData->msqDataServer));
-
-        break;
+          }
+          break;
 
 
-      case COMMAND_LOCK:
-      case COMMAND_UNLOCK:
+        case COMMAND_LOCK:
+        case COMMAND_UNLOCK:
 
-        if ((msqCommandBuf.s_config.ui8_bus > HAL_CAN_MAX_BUS_NR ) || ( msqCommandBuf.s_config.ui8_obj > iter_client->arrMsgObj[msqCommandBuf.s_config.ui8_bus].size()-1 ))
-          i32_error = HAL_RANGE_ERR;
-        else {
-          if (iter_client != pc_serverData->l_clients.end()) {
+          if ((msqCommandBuf.s_config.ui8_bus > HAL_CAN_MAX_BUS_NR ) || ( msqCommandBuf.s_config.ui8_obj > iter_client->arrMsgObj[msqCommandBuf.s_config.ui8_bus].size()-1 ))
+            i32_error = HAL_RANGE_ERR;
+          else {
             if (msqCommandBuf.i16_command == COMMAND_LOCK) {
               iter_client->arrMsgObj[msqCommandBuf.s_config.ui8_bus][msqCommandBuf.s_config.ui8_obj].b_canBufferLock = TRUE;
               DEBUG_PRINT2("locked buf %d, obj %d\n", msqCommandBuf.s_config.ui8_bus, msqCommandBuf.s_config.ui8_obj);
@@ -852,38 +965,26 @@ static void* command_thread_func(void* ptr)
               iter_client->arrMsgObj[msqCommandBuf.s_config.ui8_bus][msqCommandBuf.s_config.ui8_obj].b_canBufferLock = FALSE;
               DEBUG_PRINT2("unlocked buf %d, obj %d\n", msqCommandBuf.s_config.ui8_bus, msqCommandBuf.s_config.ui8_obj);
             }
-          } else
-            i32_error = HAL_CONFIG_ERR;
-        }
-
-        send_command_ack(msqCommandBuf.i32_mtype, i32_error, &(pc_serverData->msqDataServer));
-
-        break;
+          }
+          break;
 
 
-      case COMMAND_QUERYLOCK:
+        case COMMAND_QUERYLOCK:
 
-        if ((msqCommandBuf.s_config.ui8_bus > HAL_CAN_MAX_BUS_NR ) || ( msqCommandBuf.s_config.ui8_obj > iter_client->arrMsgObj[msqCommandBuf.s_config.ui8_bus].size()-1 ))
-          i32_error = HAL_RANGE_ERR;
-        else {
-          if (iter_client != pc_serverData->l_clients.end()) {
-            msqCommandBuf.s_config.ui16_queryLockResult = iter_client->arrMsgObj[msqCommandBuf.s_config.ui8_bus][msqCommandBuf.s_config.ui8_obj].b_canBufferLock;
-          } else
-            i32_error = HAL_CONFIG_ERR;
-        }
-
-        send_command_ack(msqCommandBuf.i32_mtype, i32_error, &(pc_serverData->msqDataServer));
-
-        break;
+          if ((msqCommandBuf.s_config.ui8_bus > HAL_CAN_MAX_BUS_NR ) || ( msqCommandBuf.s_config.ui8_obj > iter_client->arrMsgObj[msqCommandBuf.s_config.ui8_bus].size()-1 ))
+            i32_error = HAL_RANGE_ERR;
+          else {
+            i32_dataContent = ACKNOWLEDGE_DATA_CONTENT_QUERY_LOCK;
+            i32_data = iter_client->arrMsgObj[msqCommandBuf.s_config.ui8_bus][msqCommandBuf.s_config.ui8_obj].b_canBufferLock;
+          }
+          break;
 
 
-      case COMMAND_CLOSEOBJ:
+        case COMMAND_CLOSEOBJ:
 
-        if ((msqCommandBuf.s_config.ui8_bus > HAL_CAN_MAX_BUS_NR ) || ( msqCommandBuf.s_config.ui8_obj > iter_client->arrMsgObj[msqCommandBuf.s_config.ui8_bus].size()-1 ))
-          i32_error = HAL_RANGE_ERR;
-        else {
-          if (iter_client != pc_serverData->l_clients.end()) {
-
+          if ((msqCommandBuf.s_config.ui8_bus > HAL_CAN_MAX_BUS_NR ) || ( msqCommandBuf.s_config.ui8_obj > iter_client->arrMsgObj[msqCommandBuf.s_config.ui8_bus].size()-1 ))
+            i32_error = HAL_RANGE_ERR;
+          else {
             iter_client->arrMsgObj[msqCommandBuf.s_config.ui8_bus][msqCommandBuf.s_config.ui8_obj].b_canObjConfigured = FALSE;
 
             iter_client->arrMsgObj[msqCommandBuf.s_config.ui8_bus][msqCommandBuf.s_config.ui8_obj].b_canBufferLock = FALSE;
@@ -891,25 +992,38 @@ static void* command_thread_func(void* ptr)
             clearReadQueue(msqCommandBuf.s_config.ui8_bus, msqCommandBuf.s_config.ui8_obj, pc_serverData->msqDataServer.i32_rdHandle, iter_client->i32_clientID);
             clearWriteQueue(msqCommandBuf.s_config.ui8_bus, msqCommandBuf.s_config.ui8_obj, pc_serverData->msqDataServer.i32_wrHandle, iter_client->i32_clientID);
 
-#ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
+  #ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
             // erase element if it is the last in the vector, otherwise it can stay there
             while (iter_client->arrMsgObj[msqCommandBuf.s_config.ui8_bus].back().b_canObjConfigured == FALSE)
                 iter_client->arrMsgObj[msqCommandBuf.s_config.ui8_bus].pop_back();
-#endif
-
-          } else
-            i32_error = HAL_CONFIG_ERR;
-        }
-
-        send_command_ack(msqCommandBuf.i32_mtype, i32_error, &(pc_serverData->msqDataServer));
-
-        break;
+  #endif
+          }
+          break;
 
 
-      default:
-        send_command_ack(msqCommandBuf.i32_mtype, HAL_UNKNOWN_ERR, &(pc_serverData->msqDataServer));
+        case COMMAND_SEND_DELAY:
+          if ( msqCommandBuf.s_config.ui8_bus > HAL_CAN_MAX_BUS_NR )
+          {
+            i32_error = HAL_RANGE_ERR;
+          } else {
+            i32_dataContent = ACKNOWLEDGE_DATA_CONTENT_SEND_DELAY;
+            i32_data = iter_client->i32_sendDelay [msqCommandBuf.s_config.ui8_bus];
+            if (i32_data < 0) i32_data = -i32_data; // so we always return a positive send delay!
+            else iter_client->i32_sendDelay [msqCommandBuf.s_config.ui8_bus] = -i32_data; // stamp a positive stored delay as READ by negating it!
+          }
+          break;
 
-    } // end switch
+
+        default:
+          i32_error = HAL_UNKNOWN_ERR;
+          break;
+      } // end switch
+    } // end error check
+
+
+    // do centralized error-answering here
+    if (i32_dataContent == ACKNOWLEDGE_DATA_CONTENT_ERROR_VALUE) i32_data = i32_error;
+    send_command_ack(msqCommandBuf.i32_mtype, &(pc_serverData->msqDataServer), i32_dataContent, i32_data);
 
 
     // release semaphore
@@ -990,6 +1104,7 @@ int main(int argc, char *argv[])
     }
   }
 
+  getTime();
 
   apiversion = ca_InitApi_1();
   if ( apiversion == 0 ) { // failure - nothing found

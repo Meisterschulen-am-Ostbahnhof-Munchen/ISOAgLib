@@ -183,6 +183,13 @@ typedef struct
   DWORD    dwTime;       // a timestamp in msec, read only
 } TPCANRdMsg;            // for PCAN_READ_MSG
 
+typedef struct 
+{
+  WORD  wErrorFlag;      // same as in TPDIAG, is cleared in driver after access
+  int   nLastError;      // is cleared in driver after access
+  int   nPendingReads;   // count of unread telegrams
+  int   nPendingWrites;  // count of unsent telegrams
+} TPEXTENDEDSTATUS;      // for PCAN_GET_ESTATUS
 
 
 
@@ -285,7 +292,7 @@ int ca_InitCanCard_1 (uint32_t channel, int wBitrate, server_c* pc_serverData)
     pc_serverData->can_device[channel] = open(fname, O_RDWR | O_NONBLOCK);
 
     if (pc_serverData->can_device[channel] == -1) {
-      DEBUG_PRINT1("Could not open CAN bus%d\n",channel);
+      DEBUG_PRINT1("Could not open CAN bus %d\n",channel);
       return 0;
     }
 
@@ -424,7 +431,40 @@ int ca_TransmitCanCard_1(tSend* ptSend, uint8_t ui8_bus, server_c* pc_serverData
     // perror("ca_TransmitCanCard_1 ioctl");
     /* nothing to read or interrupted system call */
   }
-
+  /// NEW:
+  else
+  {
+    // get amount of waiting-to-be-sent-out can-msgs in can-controller
+    TPEXTENDEDSTATUS extstat;
+    if ((ioctl(pc_serverData->can_device[ui8_bus], PCAN_GET_EXT_STATUS, &extstat)) < 0)
+      return 1; // Well, if we shouldn't get the information about pendingMsg, well, it's okay, sending was fine, so return true.
+    int i_pendingMsgs = extstat.nPendingWrites;
+    DEBUG_PRINT1 ("peak-can's number of pending msgs is %d\n", i_pendingMsgs);
+    if ((i_pendingMsgs > 0) && (list_sendTimeStamps.size() >= (i_pendingMsgs)))
+    { // something pending!
+      std::list<int32_t>::iterator pc_iter = list_sendTimeStamps.begin();
+      i_pendingMsgs--; // we're >0 at the beginning!
+      while (i_pendingMsgs)
+      {
+        pc_iter++;
+        i_pendingMsgs--;
+      }
+      const int ci_delay = getTime() - (*pc_iter);
+      pc_iter++; // go to the one that's been already sent and remove from list!
+      while (pc_iter != list_sendTimeStamps.end())
+      { // remove all the timestamps of the already sent messages!
+        pc_iter = list_sendTimeStamps.erase (pc_iter);
+      }
+      // do we have a new max for this bus?
+      DEBUG_PRINT3 ("target_extension_can_server_pcan::ca_TransmitCanCard_1: SEND_DELAY WAS: %d    -- max for bus %d is: %d\n", ci_delay, ui8_bus, pc_serverData->i32_sendDelay[ui8_bus]);
+      if (ci_delay > pc_serverData->i32_sendDelay[ui8_bus])
+      { // yes we do, so set it!
+        pc_serverData->i32_sendDelay[ui8_bus] = ci_delay;
+        DEBUG_PRINT ("target_extension_can_server_pcan::ca_TransmitCanCard_1: reporting back HAL_NEW_SEND_DELAY");
+        return HAL_NEW_SEND_DELAY;
+      }
+    }
+  }
   return 1;
 }
 

@@ -164,6 +164,14 @@ class iCANIO_c : private __IsoAgLib::CANIO_c {
   void sendCanClearbuf(Ident_c::identType_t ren_identType = DEFAULT_IDENT_TYPE)
   {CANIO_c::sendCanClearbuf(ren_identType);};
 
+
+  /** set the new maximum send delay
+      @param ri32_maxSendDelay new maximum send delay in milli-seconds
+   */
+  void setMaxSendDelay (int32_t ri32_maxSendDelay)
+  { CANIO_c::setMaxSendDelay (ri32_maxSendDelay); }
+
+
   /**
     test if a FilterBox_c definition already exist
     (version expecial for standard ident, chosen at compile time)
@@ -240,7 +248,7 @@ class iCANIO_c : private __IsoAgLib::CANIO_c {
                      const Ident_c::identType_t rt_identType = DEFAULT_IDENT_TYPE)
   {return CANIO_c::insertFilter
       (static_cast<CANCustomer_c&>(rref_customer),
-	  rt_mask, rt_filter, rb_reconfigImmediate, rt_identType) ? true : false;
+       rt_mask, rt_filter, rb_reconfigImmediate, rt_identType) ? true : false;
   };
   /**
     reconfigure the MsgObj after insert/delete of FilterBox

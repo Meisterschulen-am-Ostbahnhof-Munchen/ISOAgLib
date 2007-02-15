@@ -117,8 +117,16 @@ int16_t can_startDriver()
 
   if (i16_rc == HAL_NO_ERR) {
 
+    if (msqCommandBuf.s_acknowledge.i32_dataContent != ACKNOWLEDGE_DATA_CONTENT_PIPE_ID)
+    {
+      if (msqCommandBuf.s_acknowledge.i32_dataContent == ACKNOWLEDGE_DATA_CONTENT_ERROR_VALUE)
+        return msqCommandBuf.s_acknowledge.i32_data; // this is the error-code!
+      else
+        return HAL_UNKNOWN_ERR;
+    }
+    // else: PIPE_ID
     char pipe_name[255];
-    sprintf(pipe_name, "%s%d", PIPE_PATH, msqCommandBuf.s_startAck.i32_pipeId);
+    sprintf(pipe_name, "%s%d", PIPE_PATH, msqCommandBuf.s_acknowledge.i32_data); // == i32_pipeId
 
     // pipe is already created by can server!
 
@@ -374,7 +382,12 @@ bool getCanMsgObjLocked( uint8_t rui8_busNr, uint8_t rui8_msgobjNr )
     i16_rc = send_command(&msqCommandBuf, &msqDataClient);
 
     if (!i16_rc)
-      return msqCommandBuf.s_config.ui16_queryLockResult;
+    {
+      if (msqCommandBuf.s_acknowledge.i32_dataContent != ACKNOWLEDGE_DATA_CONTENT_QUERY_LOCK)
+        return false;
+      else
+        return msqCommandBuf.s_acknowledge.i32_data;
+    }
     else
       return false;
   }
@@ -520,7 +533,6 @@ int16_t getCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tReceive * ptReceive )
 
 int16_t sendCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tSend* ptSend )
 {
-
   int16_t i16_rc;
 
   //DEBUG_PRINT2("sendCanMsg, bus %d, obj %d\n", bBusNumber, bMsgObj);
@@ -539,6 +551,7 @@ int16_t sendCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tSend* ptSend )
   msqWriteBuf.ui8_bus = bBusNumber;
   msqWriteBuf.ui8_obj = bMsgObj;
   memcpy(&(msqWriteBuf.s_sendData), ptSend, sizeof(tSend));
+  msqWriteBuf.i32_sendTimeStamp = getTime();
 
   if (msgsnd(msqDataClient.i32_wrHandle, &msqWriteBuf, sizeof(msqWrite_s) - sizeof(int32_t), 0) == -1) {
     perror("msgsnd");
@@ -549,18 +562,49 @@ int16_t sendCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tSend* ptSend )
   if((i16_rc = msgrcv(msqDataClient.i32_cmdAckHandle, &msqCommandBuf, sizeof(msqCommand_s) - sizeof(int32_t), msqDataClient.i32_pid, 0)) == -1)
     return HAL_UNKNOWN_ERR;
 
-  if (msqCommandBuf.i16_command == COMMAND_ACK ) {
-    return HAL_NO_ERR;
+  if (msqCommandBuf.i16_command == COMMAND_ACKNOWLEDGE )
+  {
+    if (msqCommandBuf.s_acknowledge.i32_dataContent == ACKNOWLEDGE_DATA_CONTENT_ERROR_VALUE)
+    {
+#ifdef DEBUG
+      if ((msqCommandBuf.s_acknowledge.i32_data != HAL_NO_ERR) && (msqCommandBuf.s_acknowledge.i32_data != HAL_NEW_SEND_DELAY)) // == i32_error
+      {
+        printf("acknowledge-error received in sendCanMsg\n");
+      }
+#endif
+      return msqCommandBuf.s_acknowledge.i32_data;
+    }
   }
-
-  if (msqCommandBuf.i16_command == COMMAND_NACK ) {
-    printf("nack received in sendCanMsg\n");
-    return msqCommandBuf.s_error.i32_error;
-  }
-
+  // other unexpected answer - shouldn't occur!
   return HAL_UNKNOWN_ERR;
-
 };
 
+/** @todo maybe make return code the error code and pass the ref to the value as parameter?
+ * for now, simply no error code is generated! */
+int32_t getMaxSendDelay(uint8_t rui8_busNr)
+{
+  msqCommand_s msqCommandBuf;
+
+  DEBUG_PRINT1("getMaxSendDelay called, bus %d\n", rui8_busNr);
+
+/*  if ( bBusNumber > HAL_CAN_MAX_BUS_NR ) return HAL_RANGE_ERR; */
+
+  msqCommandBuf.i32_mtype = msqDataClient.i32_pid;
+  msqCommandBuf.i16_command = COMMAND_SEND_DELAY;
+  msqCommandBuf.s_config.ui8_bus = rui8_busNr;
+  // the other fields of the s_config struct are NOT of interest here!
+
+  int i16_rc = send_command(&msqCommandBuf, &msqDataClient);
+  if (i16_rc == HAL_NO_ERR)
+  { // we got an answer - see if it was ACKNOWLEDGE_DATA_CONTENT_SEND_DELAY
+    if (msqCommandBuf.s_acknowledge.i32_dataContent == ACKNOWLEDGE_DATA_CONTENT_SEND_DELAY)
+    { // yihaa, we got what we wanted!
+      return msqCommandBuf.s_acknowledge.i32_data;
+    }
+  }
+
+  perror("msgsnd");
+  return 0; // we don't have no error code, we can just return some error-maxDelay instead
+}
 
 }; // end namespace __HAL

@@ -29,9 +29,8 @@ typedef struct {
 // client specific data
 typedef struct {
   int32_t  i32_clientID;
-  int64_t i64_systemStart4Timeofday;
-  int64_t i64_deltaStartTimes;
-  
+  int32_t  i32_msecStartDeltaClientMinusServer;
+
   //typedef STL_NAMESPACE::vector<tMsgObj> ArrMsgObj;
   //ArrMsgObj arrMsgObj[cui32_maxCanBusCnt];
   std::vector<tMsgObj> arrMsgObj[cui32_maxCanBusCnt];
@@ -40,6 +39,7 @@ typedef struct {
   uint32_t ui32_globalMask[cui32_maxCanBusCnt];
   uint32_t ui32_lastMask[cui32_maxCanBusCnt];
   int32_t  i32_pipeHandle;
+  int32_t  i32_sendDelay[cui32_maxCanBusCnt];
 } client_s;
 
 
@@ -67,8 +67,11 @@ public:
 
   int32_t  i32_lastPipeId;
   int16_t  can_device[cui32_maxCanBusCnt];
+  int32_t  i32_sendDelay[cui32_maxCanBusCnt];
 };
 
+extern std::list<int32_t> list_sendTimeStamps;
+int32_t getTime();
 
 void usage();
 int open_semaphore_set(int sema_proj_id);

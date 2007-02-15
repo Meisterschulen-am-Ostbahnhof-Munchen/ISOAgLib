@@ -93,6 +93,8 @@ int16_t chgCanObjPause ( uint8_t bBusNumber, uint8_t bMsgObj, uint16_t wPause);
 int16_t getCanMsgBufCount(uint8_t bBusNumber,uint8_t bMsgObj);
 bool getCanMsgObjLocked(uint8_t bBusNumber,uint8_t bMsgObj);
 
+int32_t getMaxSendDelay(uint8_t rui8_busNr);
+
 /* Typ CAN-Nachrichtenobjekt */
 #define  RX                             0
 #define  TX                             1

@@ -388,6 +388,8 @@ void can_useMsgobjPopFront(uint8_t rui8_busNr, uint8_t rui8_msgobjNr);
           HAL_RANGE_ERR == wrong BUS or MsgObj number
 */
 int16_t can_useMsgobjClear(uint8_t rui8_busNr, uint8_t rui8_msgobjNr);
+
+int32_t can_getMaxSendDelay(uint8_t rui8_busNr);
 /*@}*/
 
 }

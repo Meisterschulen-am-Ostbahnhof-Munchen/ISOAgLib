@@ -424,6 +424,11 @@ bool init(uint8_t rui8_busNumber, uint16_t rui16_bitrate,
     */
   bool stopSendRetryOnErr();
 
+  /** set the new maximum send delay
+      @param ri32_maxSendDelay new maximum send delay in milli-seconds
+   */
+  void setMaxSendDelay (int32_t ri32_maxSendDelay);
+
  protected: // Protected methods
 #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
   /** evaluate common bits of all defined filterBox
@@ -561,6 +566,9 @@ bool init(uint8_t rui8_busNumber, uint16_t rui16_bitrate,
       @see FilterBox
     */
   FilterBox_c c_tempFilterBox;
+
+  /** maximum send delay - value of < 0 indicates that no send-delay check is requested*/
+  int32_t i32_maxSendDelay;
 
   /** begin of an CAN error period */
   int32_t i32_canErrStart;

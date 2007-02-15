@@ -27,8 +27,7 @@ namespace __HAL {
 #define MSQ_KEY_PATH     "/root"
 #define PIPE_PATH        "/tmp/can_server_"
 
-#define COMMAND_ACK             1
-#define COMMAND_NACK            2
+#define COMMAND_ACKNOWLEDGE     1
 #define COMMAND_REGISTER        10
 #define COMMAND_DEREGISTER      11
 #define COMMAND_INIT            20
@@ -40,6 +39,7 @@ namespace __HAL {
 #define COMMAND_UNLOCK          41
 #define COMMAND_QUERYLOCK       42
 #define COMMAND_CLOSEOBJ        50
+#define COMMAND_SEND_DELAY      60
 
 
 struct can_data {
@@ -81,25 +81,27 @@ typedef struct {
 } msqData_s;
 
 
+#define ACKNOWLEDGE_DATA_CONTENT_ERROR_VALUE 0
+#define ACKNOWLEDGE_DATA_CONTENT_PIPE_ID     1
+#define ACKNOWLEDGE_DATA_CONTENT_SEND_DELAY  2
+#define ACKNOWLEDGE_DATA_CONTENT_QUERY_LOCK  3
+
 typedef struct {
   int32_t i32_mtype;
   int16_t i16_command;
   union {
     struct {
       clock_t t_clock;
+      int32_t i32_fill1;
+      int32_t i32_fill2;
+      int32_t i32_fill3;
     } s_startTimeClock;
     struct {
-      int32_t i32_pipeId;
-      int32_t i32_fill1;
+      int32_t i32_dataContent; // set to DATA_CONTENT_xxx
+      int32_t i32_data; // depends on dataContent
       int32_t i32_fill2;
       int32_t i32_fill3;
-    } s_startAck;
-    struct {
-      int32_t i32_error;
-      int32_t i32_fill1;
-      int32_t i32_fill2;
-      int32_t i32_fill3;
-    } s_error;
+    } s_acknowledge;
     struct {
       // byte 0-3
       uint8_t  ui8_bus;
@@ -143,10 +145,11 @@ typedef struct {
   uint8_t  ui8_obj;
   uint16_t ui16_fill;
   tSend    s_sendData;
+  int32_t  i32_sendTimeStamp;
 } msqWrite_s;
 
 
-void send_command_ack(int32_t i32_mtype, int32_t i32_error, msqData_s* p_msqDataServer, int32_t i32_lastPipeId = 0);
+void send_command_ack(int32_t ri32_mtype, msqData_s* p_msqDataServer, int32_t ri32_dataContent, int32_t ri32_data);
 
 int32_t send_command(msqCommand_s* p_msqCommandBuf, msqData_s* p_msqDataClient);
 

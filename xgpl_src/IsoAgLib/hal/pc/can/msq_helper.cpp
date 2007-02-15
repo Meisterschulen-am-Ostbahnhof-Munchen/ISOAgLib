@@ -66,22 +66,15 @@
 
 namespace __HAL {
 
-void send_command_ack(int32_t i32_mtype, int32_t i32_error, msqData_s* p_msqDataServer, int32_t i32_lastPipeId)
+void send_command_ack(int32_t ri32_mtype, msqData_s* p_msqDataServer, int32_t ri32_dataContent, int32_t ri32_data)
 {
   msqCommand_s msqCommandBuf;
 
-  msqCommandBuf.i32_mtype = i32_mtype;
+  msqCommandBuf.i32_mtype = ri32_mtype;
+  msqCommandBuf.i16_command = COMMAND_ACKNOWLEDGE;
+  msqCommandBuf.s_acknowledge.i32_dataContent = ri32_dataContent;
+  msqCommandBuf.s_acknowledge.i32_data = ri32_data;
 
-  // send ACK/NACK
-  if (!i32_error) {
-    msqCommandBuf.i16_command = COMMAND_ACK;
-    // transmit current pipeId to client (for composition of pipe name, only needed for start driver ack)
-    msqCommandBuf.s_startAck.i32_pipeId = i32_lastPipeId;
-  } else {
-    // inform client about troubles with can bus init
-    msqCommandBuf.i16_command = COMMAND_NACK;
-    msqCommandBuf.s_error.i32_error = i32_error;
-  }
   msgsnd(p_msqDataServer->i32_cmdAckHandle, &msqCommandBuf, sizeof(msqCommand_s) - sizeof(int32_t), IPC_NOWAIT);
 }
 
@@ -89,7 +82,7 @@ void send_command_ack(int32_t i32_mtype, int32_t i32_error, msqData_s* p_msqData
 int32_t send_command(msqCommand_s* p_msqCommandBuf, msqData_s* p_msqDataClient)
 {
   int16_t i16_rc;
-  
+
   if ((i16_rc = msgsnd(p_msqDataClient->i32_cmdHandle, p_msqCommandBuf, sizeof(msqCommand_s) - sizeof(int32_t), 0)) == -1)
     return HAL_UNKNOWN_ERR;
 
@@ -97,16 +90,23 @@ int32_t send_command(msqCommand_s* p_msqCommandBuf, msqData_s* p_msqDataClient)
   if((i16_rc = msgrcv(p_msqDataClient->i32_cmdAckHandle, p_msqCommandBuf, sizeof(msqCommand_s) - sizeof(int32_t), p_msqDataClient->i32_pid, 0)) == -1)
     return HAL_UNKNOWN_ERR;
 
-  if (p_msqCommandBuf->i16_command == COMMAND_ACK ) {
-    return HAL_NO_ERR;
+  if (p_msqCommandBuf->i16_command == COMMAND_ACKNOWLEDGE)
+  {
+    if ( (p_msqCommandBuf->s_acknowledge.i32_dataContent == ACKNOWLEDGE_DATA_CONTENT_ERROR_VALUE)
+      && (p_msqCommandBuf->s_acknowledge.i32_data != 0) )
+    { // error!
+      printf("nack received in send_command\n");
+      return p_msqCommandBuf->s_acknowledge.i32_data;
+    }
+    else
+    { // either ACK with NO error OR ACK with PIPE_ID, SEND_DELAY, etc.etc. which is okay!
+      return HAL_NO_ERR;
+    }
   }
-
-  if (p_msqCommandBuf->i16_command == COMMAND_NACK ) {
-    printf("nack received in send_command\n");
-    return p_msqCommandBuf->s_error.i32_error;
+  else
+  { // wrong answer to a COMMAND. Must be COMMAND_ACKNOWLEDGE!
+    return HAL_UNKNOWN_ERR;
   }
-  
-  return HAL_UNKNOWN_ERR;
 }
 
 

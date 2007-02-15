@@ -141,6 +141,9 @@ CANIO_c::singletonInit()
   /// Settings taken form constructor
   ui8_busNumber = 0xFF;
 
+  /// Default to NO maximum send delay detection
+  i32_maxSendDelay = -1;
+
   /// singletonInit stuff
   init(0xFF, DEFAULT_BITRATE, DEFAULT_CONFIG_IDENT_TYPE, CONFIG_CAN_DEFAULT_MIN_OBJ_NR, CONFIG_CAN_DEFAULT_MAX_OBJ_NR);
 }
@@ -522,7 +525,7 @@ bool CANIO_c::existFilter(const __IsoAgLib::CANCustomer_c& rref_customer,
                           Ident_c::identType_t ren_identType, ArrFilterBox::iterator* rpc_iter)
 {
   // check if filter/t_mask are already inserted
-  // return false if this setting isn´t unique
+  // return false if this setting isnt unique
   Ident_c c_compFilter = Ident_c(rt_filter, ren_identType);
   Ident_c c_compMask = Ident_c(rt_mask, ren_identType);
   c_compFilter.set(rt_filter, ren_identType);
@@ -544,7 +547,7 @@ bool CANIO_c::existFilter(const __IsoAgLib::CANCustomer_c& rref_customer,
                           Ident_c::identType_t ren_identType, ArrFilterBox::iterator* rpc_iter)
 {
   // check if filter/t_mask are already inserted
-  // return false if this setting isn´t unique
+  // return false if this setting isnt unique
   Ident_c c_compFilter = Ident_c(rt_filter, ren_identType);
   Ident_c c_compMask = Ident_c(rt_mask, ren_identType);
   c_compFilter.set(rt_filter, ren_identType);
@@ -1181,6 +1184,26 @@ CANIO_c& CANIO_c::operator<<(CANPkg_c& refc_src)
       INTERNAL_DEBUG_DEVICE << "BUS " << uint16_t(ui8_busNumber) << " in WARN STATE" << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
       getILibErrInstance().registerError( iLibErr_c::CanWarn, iLibErr_c::Can );
+      break;
+    case HAL_NEW_SEND_DELAY:
+      #if defined(DEBUG)
+      INTERNAL_DEBUG_DEVICE << "BUS " << uint16_t(ui8_busNumber) << " encountered new Maximum Send Delay.. \n";
+      #endif
+      if (i32_maxSendDelay >= 0)
+      { // we're in mode: Test-MaxSendDelay
+        if (HAL::can_getMaxSendDelay(ui8_busNumber) > i32_maxSendDelay)
+        { // this is way too max, register an error!
+          getILibErrInstance().registerError( iLibErr_c::CanTooSlowSend, iLibErr_c::Can );
+      #ifdef DEBUG
+          INTERNAL_DEBUG_DEVICE << ".. which has now registered an ERROR as it was higher (it was "<< HAL::can_getMaxSendDelay(ui8_busNumber) <<") than our trigger!" << INTERNAL_DEBUG_DEVICE_ENDL;
+        }
+        else INTERNAL_DEBUG_DEVICE << ".. but this " << HAL::can_getMaxSendDelay(ui8_busNumber) << " was not yet higher than our trigger!" << INTERNAL_DEBUG_DEVICE_ENDL;
+      }
+      else INTERNAL_DEBUG_DEVICE << ".. but ignored, as app didn't define a maxDelay-Trigger! " << INTERNAL_DEBUG_DEVICE_ENDL;
+      #else
+        }
+      }
+      #endif
       break;
   } //switch
 
@@ -1942,6 +1965,16 @@ bool CANIO_c::stopSendRetryOnErr()
   }
   return b_result;
 }
+
+
+/** set the new maximum send delay
+    @param ri32_maxSendDelay new maximum send delay. negative values (like -1) for NOT using this feature!
+ */
+void CANIO_c::setMaxSendDelay (int32_t ri32_maxSendDelay)
+{
+  i32_maxSendDelay = ri32_maxSendDelay;
+}
+
 
 #ifdef DEBUG
 void CANIO_c::doDebug(uint8_t ui8_busNr, uint8_t ui8_sendObjNr)
