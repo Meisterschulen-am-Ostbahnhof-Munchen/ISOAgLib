@@ -1010,7 +1010,9 @@ function create_autogen_project_config()
   fi
 
   if [ $PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL -gt 0 ] ; then
-    echo -e "#define SYSTEM_WITH_ENHANCED_CAN_HAL$ENDLINE" >> $CONFIG_NAME
+		echo -e "#ifndef SYSTEM_WITH_ENHANCED_CAN_HAL$ENDLINE" >> $CONFIG_NAME
+    echo -e "  #define SYSTEM_WITH_ENHANCED_CAN_HAL$ENDLINE" >> $CONFIG_NAME
+		echo -e "#endif$ENDLINE" >> $CONFIG_NAME
   fi
 
 
@@ -1237,6 +1239,9 @@ function create_makefile()
 	for SinglePrjDefine in $PRJ_DEFINES ; do
 		echo -n " -D$SinglePrjDefine" >> $MakefileNameLong
 	done
+	if [ $PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL -gt 0 ] ; then
+		echo -n " -DSYSTEM_WITH_ENHANCED_CAN_HAL" >> $MakefileNameLong
+	fi
 
 	echo -e "\n\n####### Definition of compiler binary prefix corresponding to selected target" >> $MakefileNameLong
 	if [ "A$PRJ_COMPILER_BINARY_PRE" != "A" ] ; then
@@ -1389,12 +1394,12 @@ rm -f FileListInterface.txt FileListInterface4Eval.txt FileListInternal.txt File
 		sed -e 's#LFLAGS   =#LFLAGS   = -pthread#g' $MakefileNameLong.1 > $MakefileNameLong
 	fi
 	rm -f $MakefileNameLong.1
-	
+
 	# replace the install rules for version.h and the app config file
 	sed -e "s#_PROJECT_CONFIG_REPLACE_#$CONFIG_NAME#g"  $MakefileNameLong > $MakefileNameLong.1
 	sed -e "s#_PROJECT_VERSION_REPLACE_#$VERSION_FILE_NAME#g" $MakefileNameLong.1 > $MakefileNameLong
 	rm -f $MakefileNameLong.1
-	
+
 	# create a symbolic link to get this individual MakefileNameLong referred as "Makefile"
 	rm -f "Makefile"
 	ln -s $MakefileNameLong "Makefile"
@@ -1483,7 +1488,7 @@ rm -f FileListInterface.txt FileListInterface4Eval.txt FileListInternal.txt File
 		sed -e 's#LFLAGS   =#LFLAGS   = -pthread#g' $MakefileNameLong.1 > $MakefileNameLong
 	fi
 	rm -f $MakefileNameLong.1
-	
+
 	# create a symbolic link to get this individual MakefileNameLong referred as "Makefile"
 	rm -f "MakefileApp"
 	ln -s $MakefileNameLong "MakefileApp"

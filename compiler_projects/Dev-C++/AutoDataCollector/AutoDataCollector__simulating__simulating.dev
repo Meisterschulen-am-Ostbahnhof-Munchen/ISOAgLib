@@ -1,7 +1,7 @@
 [Project]
 FileName=AutoDataCollector__simulating__simulating.dev
 Name=AutoDataCollector
-UnitCount=167
+UnitCount=169
 Type=1
 Ver=1
 ObjFiles=
@@ -568,7 +568,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit53]
-FileName=../../../IsoAgLib_Examples/tractor/SourceInternalCan/tractorinternalcan.cpp
+FileName=../../../IsoAgLib_Examples/tractor/tractorconsole/tractorconsole.cpp
 CompileCpp=1
 Folder=AutoDataCollector
 Compile=1
@@ -578,7 +578,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit54]
-FileName=../../../IsoAgLib_Examples/tractor/SourceConsole/tractorconsole.cpp
+FileName=../../../IsoAgLib_Examples/tractor/tractorinternalcan/tractorinternalcan.cpp
 CompileCpp=1
 Folder=AutoDataCollector
 Compile=1
@@ -1658,7 +1658,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit162]
-FileName=../../../IsoAgLib_Examples/tractor/SourceInternalCan/version.h
+FileName=../../../IsoAgLib_Examples/tractor/tractorconsole/version.h
 CompileCpp=1
 Folder=AutoDataCollector
 Compile=1
@@ -1668,7 +1668,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit163]
-FileName=../../../IsoAgLib_Examples/tractor/SourceInternalCan/config_tractor.h
+FileName=../../../IsoAgLib_Examples/tractor/tractorconsole/config_tractorconsole.h
 CompileCpp=1
 Folder=AutoDataCollector
 Compile=1
@@ -1678,7 +1678,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit164]
-FileName=../../../IsoAgLib_Examples/config_imi_iso.h
+FileName=../../../IsoAgLib_Examples/tractor/tractorinternalcan/version.h
 CompileCpp=1
 Folder=AutoDataCollector
 Compile=1
@@ -1688,7 +1688,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit165]
-FileName=../../../IsoAgLib_Examples/version.h
+FileName=../../../IsoAgLib_Examples/tractor/tractorinternalcan/config_tractorinternalcan.h
 CompileCpp=1
 Folder=AutoDataCollector
 Compile=1
@@ -1698,7 +1698,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit166]
-FileName=../../../IsoAgLib_Examples/config_AutoDataCollector.h
+FileName=../../../IsoAgLib_Examples/config_imi_iso.h
 CompileCpp=1
 Folder=AutoDataCollector
 Compile=1
@@ -1708,6 +1708,26 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit167]
+FileName=../../../IsoAgLib_Examples/version.h
+CompileCpp=1
+Folder=AutoDataCollector
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit168]
+FileName=../../../IsoAgLib_Examples/config_AutoDataCollector.h
+CompileCpp=1
+Folder=AutoDataCollector
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit169]
 FileName=../../../IsoAgLib_Examples/config_tractor.h
 CompileCpp=1
 Folder=AutoDataCollector

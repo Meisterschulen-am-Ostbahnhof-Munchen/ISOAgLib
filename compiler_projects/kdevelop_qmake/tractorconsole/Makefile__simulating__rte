@@ -7,7 +7,7 @@
 TARGET = tractorconsole
 ISOAGLIB_PATH = ../../..
 INSTALL_PATH = /usr/local
-APP_INC = -I../../../IsoAgLib_Examples/tractor/SourceConsole 
+APP_INC = -I../../../IsoAgLib_Examples/tractor/tractorconsole 
 
 ####### Include a version definition file into the Makefile context - when this file exists
 -include versions.mk
@@ -58,7 +58,7 @@ SOURCES_LIBRARY = ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cp
 		../../../xgpl_src/IsoAgLib/driver/can/impl/canio_c.cpp  \
 		../../../xgpl_src/IsoAgLib/driver/system/impl/system_c.cpp  
 
-SOURCES_APP = ../../../IsoAgLib_Examples/tractor/SourceConsole/tractorconsole.cpp  
+SOURCES_APP = ../../../IsoAgLib_Examples/tractor/tractorconsole/tractorconsole.cpp  
 
 INSTALL_FILES_LIBRARY = ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h \
 		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoitem_c.h \
@@ -258,8 +258,8 @@ install_library: $(INSTALL_FILES_LIBRARY)
 		mkdir -p $$DEST_PATH; \
 		install  -m 0755 $$INSTITEM $$DEST_PATH; \
 		done && \
-		install  -m 0755 ../../../IsoAgLib_Examples/tractor/SourceConsole/config_tractorconsole.h $(INSTALL_PATH)/include; \
-		install  -m 0755 ../../../IsoAgLib_Examples/tractor/SourceConsole/version.h $(INSTALL_PATH)/include; \
+		install  -m 0755 ../../../IsoAgLib_Examples/tractor/tractorconsole/config_tractorconsole.h $(INSTALL_PATH)/include; \
+		install  -m 0755 ../../../IsoAgLib_Examples/tractor/tractorconsole/version.h $(INSTALL_PATH)/include; \
 		install  -m 0755 $(OBJ_DIR_LIBRARY)/libisoaglib.a $(INSTALL_PATH)/lib/; \
 		install  -m 0755 $(OBJ_DIR_LIBRARY)/libisoaglib.so "$(INSTALL_PATH)/lib/" ; \
 		echo Finished installing binaries to directory \"$(INSTALL_PATH)\"

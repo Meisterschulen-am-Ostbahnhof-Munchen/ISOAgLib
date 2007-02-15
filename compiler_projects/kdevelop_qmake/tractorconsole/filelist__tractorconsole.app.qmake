@@ -1,1 +1,1 @@
-SOURCES += ../../../IsoAgLib_Examples/tractor/SourceConsole/tractorconsole.cpp
+SOURCES += ../../../IsoAgLib_Examples/tractor/tractorconsole/tractorconsole.cpp

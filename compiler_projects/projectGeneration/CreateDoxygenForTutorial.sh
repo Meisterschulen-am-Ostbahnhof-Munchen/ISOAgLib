@@ -2,8 +2,8 @@
 DOXYGEN_EXPORT_DIR="../../IsoAgLib_Examples/tutorial"
 
 #EXAMPLE_LIST="conf_imi_iso"
-EXAMPLE_LIST=`ls conf_tractor* | grep -v "~" | sed -e 's/[ \t\n]+/:/g'`
-#EXAMPLE_LIST=`ls conf_* | grep -v "~" | sed -e 's/[ \t\n]+/:/g'`
+#EXAMPLE_LIST=`ls conf_tractor* | grep -v "~" | sed -e 's/[ \t\n]+/:/g'`
+EXAMPLE_LIST=`ls conf_* | grep -v "~" | sed -e 's/[ \t\n]+/:/g'`
 TARGET_LIST="pc_win32:pc_linux:esx:c2c:imi:pm167"
 #TARGET_LIST="pc_linux"
 CAN_LIST="simulating:sys:vector_canlib:vector_xl_drv_lib:sontheim:rte:linux_server_client"
@@ -19,6 +19,7 @@ for conf_example in $EXAMPLE_LIST ; do
     conf_3*) EXAMPLE_DIR="3_Terminal" ;;
 		conf_4*) EXAMPLE_DIR="4_SupplementaryDriver" ;;
 		conf_5*) EXAMPLE_DIR="5_CanFeatures" ;;
+		conf_tractor*) DOXYGEN_EXPORT_DIR="../../IsoAgLib_Examples";EXAMPLE_DIR="tractor" ;;
 		*) EXAMPLE_DIR=".." ;;
   esac
   EXAMPLE=`echo $conf_example | sed -e 's/conf_//g'`

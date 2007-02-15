@@ -107,4 +107,4 @@ HEADERS += ../../../xgpl_src/IsoAgLib/driver/can/icanio_c.h
 HEADERS += ../../../xgpl_src/IsoAgLib/driver/can/iident_c.h
 HEADERS += ../../../xgpl_src/IsoAgLib/driver/system/impl/system_c.h
 HEADERS += ../../../xgpl_src/IsoAgLib/driver/system/isystem_c.h
-SOURCES += ../../../IsoAgLib_Examples/tractor/SourceInternalCan/tractorinternalcan.cpp
+SOURCES += ../../../IsoAgLib_Examples/tractor/tractorinternalcan/tractorinternalcan.cpp

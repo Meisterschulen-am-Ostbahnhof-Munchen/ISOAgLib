@@ -14,7 +14,7 @@ APP_INC = -I../../../IsoAgLib_Examples
 
 BIOS_LIB = /usr/local/lib/librte_client.a /usr/local/lib/libfevent.a
 BIOS_INC =
-PROJ_DEFINES = $(VERSION_DEFINES) -DSYSTEM_PC -DPRJ_USE_AUTOGEN_CONFIG=config_AutoDataCollector.h -DUSE_CAN_EEPROM_EDITOR
+PROJ_DEFINES = $(VERSION_DEFINES) -DSYSTEM_PC -DPRJ_USE_AUTOGEN_CONFIG=config_AutoDataCollector.h -DUSE_CAN_EEPROM_EDITOR -DSYSTEM_WITH_ENHANCED_CAN_HAL
 
 ####### Definition of compiler binary prefix corresponding to selected target
 COMPILER_BINARY_PRE = 
@@ -76,8 +76,8 @@ SOURCES_APP = ../../../IsoAgLib_Examples/AutoDataCollector_Classes/defaultrecord
 		../../../IsoAgLib_Examples/AutoDataCollector_Classes/gpsmanager_c.cpp  \
 		../../../IsoAgLib_Examples/AutoDataCollector_Classes/procdatamanager_c.cpp  \
 		../../../IsoAgLib_Examples/AutoDataCollector_Classes/specificrecordconfig_c.cpp  \
-		../../../IsoAgLib_Examples/tractor/SourceInternalCan/tractorinternalcan.cpp  \
-		../../../IsoAgLib_Examples/tractor/SourceConsole/tractorconsole.cpp  \
+		../../../IsoAgLib_Examples/tractor/tractorconsole/tractorconsole.cpp  \
+		../../../IsoAgLib_Examples/tractor/tractorinternalcan/tractorinternalcan.cpp  \
 		../../../IsoAgLib_Examples/autodatacollector.cpp  
 
 INSTALL_FILES_LIBRARY = ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h \

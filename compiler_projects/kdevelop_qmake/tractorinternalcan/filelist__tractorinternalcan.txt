@@ -32,7 +32,7 @@
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/canio_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/system/impl/system_c.cpp
-../../../IsoAgLib_Examples/tractor/SourceInternalCan/tractorinternalcan.cpp
+../../../IsoAgLib_Examples/tractor/tractorinternalcan/tractorinternalcan.cpp
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h

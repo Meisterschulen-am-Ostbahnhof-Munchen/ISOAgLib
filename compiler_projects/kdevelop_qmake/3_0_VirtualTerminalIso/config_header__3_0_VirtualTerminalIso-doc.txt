@@ -39,7 +39,11 @@
 
 // #define CONFIG_DO_NOT_START_RELAIS_ON_STARTUP
 
-#define SYSTEM_WITH_ENHANCED_CAN_HAL
+#ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
+
+  #define SYSTEM_WITH_ENHANCED_CAN_HAL
+
+#endif
 
 // Decide if HEAP allocation strategy shall reduce size about 5K to 10K in favour of speed
 // Strong Advice: Don't activate this, as long your target has not too tight memory restrictions

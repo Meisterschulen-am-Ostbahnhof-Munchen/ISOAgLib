@@ -120,7 +120,7 @@
       <alwaysParseInBackground>true</alwaysParseInBackground>
       <usePermanentCaching>true</usePermanentCaching>
       <alwaysIncludeNamespaces>true</alwaysIncludeNamespaces>
-      <includePaths>.;../../../xgpl_src; ../../../IsoAgLib_Examples/tractor/SourceInternalCan;</includePaths>
+      <includePaths>.;../../../xgpl_src; ../../../IsoAgLib_Examples/tractor/tractorinternalcan;</includePaths>
     </codecompletion>
     <references/>
     <qt>

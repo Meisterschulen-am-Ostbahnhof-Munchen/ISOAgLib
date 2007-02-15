@@ -289,11 +289,11 @@ SOURCE=..\..\..\IsoAgLib_Examples\AutoDataCollector_Classes\specificrecordconfig
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\IsoAgLib_Examples\tractor\SourceInternalCan\tractorinternalcan.cpp
+SOURCE=..\..\..\IsoAgLib_Examples\tractor\tractorconsole\tractorconsole.cpp
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\IsoAgLib_Examples\tractor\SourceConsole\tractorconsole.cpp
+SOURCE=..\..\..\IsoAgLib_Examples\tractor\tractorinternalcan\tractorinternalcan.cpp
 # End Source File
 
 # Begin Source File
@@ -726,11 +726,19 @@ SOURCE=..\..\..\IsoAgLib_Examples\AutoDataCollector_Classes\gpsmanager_c.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\IsoAgLib_Examples\tractor\SourceInternalCan\version.h
+SOURCE=..\..\..\IsoAgLib_Examples\tractor\tractorconsole\version.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\IsoAgLib_Examples\tractor\SourceInternalCan\config_tractor.h
+SOURCE=..\..\..\IsoAgLib_Examples\tractor\tractorconsole\config_tractorconsole.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\IsoAgLib_Examples\tractor\tractorinternalcan\version.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\IsoAgLib_Examples\tractor\tractorinternalcan\config_tractorinternalcan.h
 # End Source File
 
 # Begin Source File

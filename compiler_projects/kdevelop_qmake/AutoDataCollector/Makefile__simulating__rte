@@ -76,8 +76,8 @@ SOURCES_APP = ../../../IsoAgLib_Examples/AutoDataCollector_Classes/defaultrecord
 		../../../IsoAgLib_Examples/AutoDataCollector_Classes/gpsmanager_c.cpp  \
 		../../../IsoAgLib_Examples/AutoDataCollector_Classes/procdatamanager_c.cpp  \
 		../../../IsoAgLib_Examples/AutoDataCollector_Classes/specificrecordconfig_c.cpp  \
-		../../../IsoAgLib_Examples/tractor/SourceInternalCan/tractorinternalcan.cpp  \
-		../../../IsoAgLib_Examples/tractor/SourceConsole/tractorconsole.cpp  \
+		../../../IsoAgLib_Examples/tractor/tractorconsole/tractorconsole.cpp  \
+		../../../IsoAgLib_Examples/tractor/tractorinternalcan/tractorinternalcan.cpp  \
 		../../../IsoAgLib_Examples/autodatacollector.cpp  
 
 INSTALL_FILES_LIBRARY = ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h \

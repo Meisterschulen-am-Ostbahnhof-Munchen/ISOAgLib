@@ -45,8 +45,8 @@
 ..\..\..\IsoAgLib_Examples\AutoDataCollector_Classes\gpsmanager_c.cpp
 ..\..\..\IsoAgLib_Examples\AutoDataCollector_Classes\procdatamanager_c.cpp
 ..\..\..\IsoAgLib_Examples\AutoDataCollector_Classes\specificrecordconfig_c.cpp
-..\..\..\IsoAgLib_Examples\tractor\SourceInternalCan\tractorinternalcan.cpp
-..\..\..\IsoAgLib_Examples\tractor\SourceConsole\tractorconsole.cpp
+..\..\..\IsoAgLib_Examples\tractor\tractorconsole\tractorconsole.cpp
+..\..\..\IsoAgLib_Examples\tractor\tractorinternalcan\tractorinternalcan.cpp
 ..\..\..\IsoAgLib_Examples\autodatacollector.cpp
 ..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\impl\baseitem_c.h
 ..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\impl\istate_c.h
@@ -146,8 +146,10 @@
 ..\..\..\IsoAgLib_Examples\AutoDataCollector_Classes\specificrecordconfig_c.h
 ..\..\..\IsoAgLib_Examples\AutoDataCollector_Classes\getyflexmanager_c.h
 ..\..\..\IsoAgLib_Examples\AutoDataCollector_Classes\gpsmanager_c.h
-..\..\..\IsoAgLib_Examples\tractor\SourceInternalCan\version.h
-..\..\..\IsoAgLib_Examples\tractor\SourceInternalCan\config_tractor.h
+..\..\..\IsoAgLib_Examples\tractor\tractorconsole\version.h
+..\..\..\IsoAgLib_Examples\tractor\tractorconsole\config_tractorconsole.h
+..\..\..\IsoAgLib_Examples\tractor\tractorinternalcan\version.h
+..\..\..\IsoAgLib_Examples\tractor\tractorinternalcan\config_tractorinternalcan.h
 ..\..\..\IsoAgLib_Examples\config_imi_iso.h
 ..\..\..\IsoAgLib_Examples\version.h
 ..\..\..\IsoAgLib_Examples\config_AutoDataCollector.h

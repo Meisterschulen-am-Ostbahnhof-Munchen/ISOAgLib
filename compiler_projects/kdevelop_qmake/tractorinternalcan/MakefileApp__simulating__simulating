@@ -6,7 +6,7 @@
 ####### Project specific variables
 TARGET = tractorinternalcan
 ISOAGLIB_INSTALL_PATH = /usr/local
-APP_INC = -I../../../IsoAgLib_Examples/tractor/SourceInternalCan 
+APP_INC = -I../../../IsoAgLib_Examples/tractor/tractorinternalcan 
 
 ####### Include a version definition file into the Makefile context - when this file exists
 -include versions.mk
@@ -21,7 +21,7 @@ COMPILER_BINARY_PRE =
 first: all
 
 ####### Files
-SOURCES_APP = ../../../IsoAgLib_Examples/tractor/SourceInternalCan/tractorinternalcan.cpp  
+SOURCES_APP = ../../../IsoAgLib_Examples/tractor/tractorinternalcan/tractorinternalcan.cpp  
 
 ####### Some Standard Rules
 CC       = $(COMPILER_BINARY_PRE)gcc

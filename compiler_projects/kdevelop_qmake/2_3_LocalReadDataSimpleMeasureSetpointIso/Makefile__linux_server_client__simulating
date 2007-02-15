@@ -13,7 +13,7 @@ APP_INC = -I../../../IsoAgLib_Examples/tutorial/2_ProcessData/2_3_LocalReadDataS
 -include versions.mk
 
 
-PROJ_DEFINES = $(VERSION_DEFINES) -DSYSTEM_PC -DPRJ_USE_AUTOGEN_CONFIG=config_2_3_LocalReadDataSimpleMeasureSetpointIso.h
+PROJ_DEFINES = $(VERSION_DEFINES) -DSYSTEM_PC -DPRJ_USE_AUTOGEN_CONFIG=config_2_3_LocalReadDataSimpleMeasureSetpointIso.h -DSYSTEM_WITH_ENHANCED_CAN_HAL
 
 ####### Definition of compiler binary prefix corresponding to selected target
 COMPILER_BINARY_PRE = 

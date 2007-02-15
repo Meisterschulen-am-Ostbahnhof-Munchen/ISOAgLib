@@ -6,7 +6,7 @@
 ####### Project specific variables
 TARGET = tractorconsole
 ISOAGLIB_INSTALL_PATH = /usr/local
-APP_INC = -I../../../IsoAgLib_Examples/tractor/SourceConsole 
+APP_INC = -I../../../IsoAgLib_Examples/tractor/tractorconsole 
 
 ####### Include a version definition file into the Makefile context - when this file exists
 -include versions.mk
@@ -21,7 +21,7 @@ COMPILER_BINARY_PRE =
 first: all
 
 ####### Files
-SOURCES_APP = ../../../IsoAgLib_Examples/tractor/SourceConsole/tractorconsole.cpp  
+SOURCES_APP = ../../../IsoAgLib_Examples/tractor/tractorconsole/tractorconsole.cpp  
 
 ####### Some Standard Rules
 CC       = $(COMPILER_BINARY_PRE)gcc
