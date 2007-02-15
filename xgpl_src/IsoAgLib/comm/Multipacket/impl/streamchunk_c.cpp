@@ -270,17 +270,17 @@ StreamChunk_c::getNextNotParsed()
 //! The 'address' is specified by the current parsed-counter and the given offset
 //! The parsed-counter is not modified
 //! Parameter:
-//! @param ui16_notParsedRelativeOffset: address-offset for the parsed-counter
+//! @param ui32_notParsedRelativeOffset: address-offset for the parsed-counter
 //! @return byte to be parsed or 0xff (if the address is out of range)
 uint8_t
-StreamChunk_c::getNotParsed (uint16_t ui16_notParsedRelativeOffset)
+StreamChunk_c::getNotParsed (uint32_t ui32_notParsedRelativeOffset)
 {
   std::list<Chunk_c>::iterator pc_iterTmpChunk = pc_iterParsedChunk;
   uint16_t chunkLen = sui8_pkgBurst * 7;
   uint16_t chunkCnt = ui32_parsedCnt % chunkLen;
-  uint16_t chunkCntReq = chunkCnt + ui16_notParsedRelativeOffset;
+  uint16_t chunkCntReq = chunkCnt + ui32_notParsedRelativeOffset;
 
-  if ((ui32_parsedCnt + ui16_notParsedRelativeOffset) >= ui32_writeCnt) return 0xff;
+  if ((ui32_parsedCnt + ui32_notParsedRelativeOffset) >= ui32_writeCnt) return 0xff;
 
   if (chunkCntReq >= chunkLen)
   {

@@ -200,7 +200,7 @@ public:
 
   virtual uint8_t getNextNotParsed()=0;
 
-  virtual uint8_t getNotParsed(uint16_t ui16_notParsedRelativeOffset)=0;
+  virtual uint8_t getNotParsed(uint32_t ui32_notParsedRelativeOffset)=0;
 
   virtual uint32_t getByteTotalSize() const=0;
 

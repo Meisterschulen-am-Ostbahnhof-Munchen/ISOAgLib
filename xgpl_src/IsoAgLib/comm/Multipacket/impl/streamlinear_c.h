@@ -132,7 +132,7 @@ public:
   inline uint32_t getNotParsedSize();
 
   //  Operation: getNotParsed
-  inline uint8_t getNotParsed(uint16_t ui16_notParsedRelativeOffset);
+  inline uint8_t getNotParsed(uint32_t ui32_notParsedRelativeOffset);
 
   //  Operation: getLinearBuffer
   inline uint8_t* getLinearBuffer();
@@ -188,9 +188,9 @@ StreamLinear_c::getNotParsedSize()
 // //////////////////////////////// +X2C Operation : getNotParsed
 //! be sure to NOT read from an offset which overflows the unparsed buffer!
 inline uint8_t
-StreamLinear_c::getNotParsed (uint16_t ui16_notParsedRelativeOffset)
+StreamLinear_c::getNotParsed (uint32_t ui32_notParsedRelativeOffset)
 {
-  return vui8_buffer[ui32_parsedCnt + ui16_notParsedRelativeOffset];
+  return vui8_buffer[ui32_parsedCnt + ui32_notParsedRelativeOffset];
 }
 
 

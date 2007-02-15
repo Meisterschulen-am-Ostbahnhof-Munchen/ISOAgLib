@@ -139,7 +139,7 @@ public:
   uint32_t getNotParsedSize();
 
   //  Operation: getNotParsed
-  uint8_t getNotParsed(uint16_t ui16_notParsedRelativeOffset);
+  uint8_t getNotParsed(uint32_t ui32_notParsedRelativeOffset);
 
   bool eof() const;
 
