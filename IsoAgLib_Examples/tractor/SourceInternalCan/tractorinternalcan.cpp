@@ -50,7 +50,7 @@
  ***************************************************************************/
 
 /* *********************************************************************** */
-/** \example tractor.cpp
+/** \example tractorinternalcan.cpp
  * This example application of ISO<i><sub>AgLib</sub></i>is a work-in-progress
  * of a tractor ECU. It receives the tractor data from internal CAN, and
  * provides them as ISO 11783 tractor data on external BUS.
@@ -81,17 +81,17 @@
  * <H1>Howto compile this example</H1>
  * <ol>
  * <li>Call the script update_makefile.sh with the spec file
- *     conf_tractor from the directory where the spec file
+ *     conf_tractorinternalcan from the directory where the spec file
  *     and the script are located<br>
- *     <i>#> update_makefile.sh conf_tractor</i>
+ *     <i>#> update_makefile.sh conf_tractorinternalcan</i>
  * <li><b>Only Linux:</b><ul>
- *     <li><i>#>cd tractor</i> to go to the subdirectory tractor
+ *     <li><i>#>cd tractorinternalcan</i> to go to the subdirectory tractorinternalcan
  *     <li><i>#> make</i><br>
- *     <li>GNU make will then use the fresh created Makefile to create the executable tractor in this directory
+ *     <li>GNU make will then use the fresh created Makefile to create the executable tractorinternalcan in this directory
  *     </ul>
  * <li><b>Other Development Environments:</b><ul>
- *     <li>import the file list in filelist-tractor.txt into the IDE of your choice
- *     <li>set <i>-DPRJ_USE_AUTOGEN_CONFIG=config_tractor</i> as global project parameter
+ *     <li>import the file list in filelist-tractorinternalcan.txt into the IDE of your choice
+ *     <li>set <i>-DPRJ_USE_AUTOGEN_CONFIG=config_tractorinternalcan</i> as global project parameter
  *     <li>add target specific headers, sources or libraries to the project
  *     <li>let your IDE build the project
  *   </ul>
@@ -100,74 +100,74 @@
  * <H1>Needed Project Specification</H1>
  * The project specification, which is needed as input for
  * the generation script update_makefile.sh is described in
- * \ref PrjSpectractor__pc_linux__simulating__simulating .
+ * \ref PrjSpectractorinternalcan__pc_linux__simulating__simulating .
  *
  * The adapted project specifications for different setups:
  * <ul>
  * <li>Configuration Setups for Linux on PC:
  * <ul>
- *    <li> \ref PrjSpectractor__pc_linux__rte__rte
- *    <li> \ref PrjSpectractor__pc_linux__rte__simulating
- *    <li> \ref PrjSpectractor__pc_linux__rte__sys
- *    <li> \ref PrjSpectractor__pc_linux__simulating__rte
- *    <li> \ref PrjSpectractor__pc_linux__simulating__simulating
- *    <li> \ref PrjSpectractor__pc_linux__simulating__sys
+ *    <li> \ref PrjSpectractorinternalcan__pc_linux__rte__rte
+ *    <li> \ref PrjSpectractorinternalcan__pc_linux__rte__simulating
+ *    <li> \ref PrjSpectractorinternalcan__pc_linux__rte__sys
+ *    <li> \ref PrjSpectractorinternalcan__pc_linux__simulating__rte
+ *    <li> \ref PrjSpectractorinternalcan__pc_linux__simulating__simulating
+ *    <li> \ref PrjSpectractorinternalcan__pc_linux__simulating__sys
  *  </ul>
  * <li>Configuration Setups for Win32 on PC:
  * <ul>
- *    <li> \ref PrjSpectractor__pc_win32__vector_canlib__simulating
- *    <li> \ref PrjSpectractor__pc_win32__vector_xl_drv_lib__simulating
- *    <li> \ref PrjSpectractor__pc_win32__vector_canlib__sys
- *    <li> \ref PrjSpectractor__pc_win32__vector_xl_drv_lib__sys
- *    <li> \ref PrjSpectractor__pc_win32__simulating__simulating
- *    <li> \ref PrjSpectractor__pc_win32__simulating__sys
+ *    <li> \ref PrjSpectractorinternalcan__pc_win32__vector_canlib__simulating
+ *    <li> \ref PrjSpectractorinternalcan__pc_win32__vector_xl_drv_lib__simulating
+ *    <li> \ref PrjSpectractorinternalcan__pc_win32__vector_canlib__sys
+ *    <li> \ref PrjSpectractorinternalcan__pc_win32__vector_xl_drv_lib__sys
+ *    <li> \ref PrjSpectractorinternalcan__pc_win32__simulating__simulating
+ *    <li> \ref PrjSpectractorinternalcan__pc_win32__simulating__sys
  *  </ul>
  * <li>Configuration Setupts for some embedded targets:
  * <ul>
- *    <li> \ref PrjSpectractor__esx__sys__sys
- *    <li> \ref PrjSpectractor__imi__sys__sys
- *    <li> \ref PrjSpectractor__pm167__sys__sys
+ *    <li> \ref PrjSpectractorinternalcan__esx__sys__sys
+ *    <li> \ref PrjSpectractorinternalcan__imi__sys__sys
+ *    <li> \ref PrjSpectractorinternalcan__pm167__sys__sys
  *  </ul>
  * </ul>
  *
  * <H1>Resulting Project File List</H1>
- * See \ref FileListstractor__pc_linux__simulating__simulating for needed files
- * ( filelist-tractor-doxygen_import.txt ),
- *  with \ref SrcListtractor__pc_linux__simulating__simulating containing the needed sources
- *  and with \ref HdrListtractor__pc_linux__simulating__simulating containing the needed headers.
+ * See \ref FileListstractorinternalcan__pc_linux__simulating__simulating for needed files
+ * ( filelist-tractorinternalcan-doxygen_import.txt ),
+ *  with \ref SrcListtractorinternalcan__pc_linux__simulating__simulating containing the needed sources
+ *  and with \ref HdrListtractorinternalcan__pc_linux__simulating__simulating containing the needed headers.
  *
  * The resulting file lists for different setups:
  * <ul>
  * <li>Configuration Setups for Linux on PC:
  * <ul>
- *    <li> \ref FileListstractor__pc_linux__rte__rte
- *    <li> \ref FileListstractor__pc_linux__rte__simulating
- *    <li> \ref FileListstractor__pc_linux__rte__sys
- *    <li> \ref FileListstractor__pc_linux__simulating__rte
- *    <li> \ref FileListstractor__pc_linux__simulating__simulating
- *    <li> \ref FileListstractor__pc_linux__simulating__sys
+ *    <li> \ref FileListstractorinternalcan__pc_linux__rte__rte
+ *    <li> \ref FileListstractorinternalcan__pc_linux__rte__simulating
+ *    <li> \ref FileListstractorinternalcan__pc_linux__rte__sys
+ *    <li> \ref FileListstractorinternalcan__pc_linux__simulating__rte
+ *    <li> \ref FileListstractorinternalcan__pc_linux__simulating__simulating
+ *    <li> \ref FileListstractorinternalcan__pc_linux__simulating__sys
  *  </ul>
  * <li>Configuration Setups for Win32 on PC:
  * <ul>
- *    <li> \ref FileListstractor__pc_win32__vector_canlib__simulating
- *    <li> \ref FileListstractor__pc_win32__vector_xl_drv_lib__simulating
- *    <li> \ref FileListstractor__pc_win32__vector_canlib__sys
- *    <li> \ref FileListstractor__pc_win32__vector_xl_drv_lib__sys
- *    <li> \ref FileListstractor__pc_win32__simulating__simulating
- *    <li> \ref FileListstractor__pc_win32__simulating__sys
+ *    <li> \ref FileListstractorinternalcan__pc_win32__vector_canlib__simulating
+ *    <li> \ref FileListstractorinternalcan__pc_win32__vector_xl_drv_lib__simulating
+ *    <li> \ref FileListstractorinternalcan__pc_win32__vector_canlib__sys
+ *    <li> \ref FileListstractorinternalcan__pc_win32__vector_xl_drv_lib__sys
+ *    <li> \ref FileListstractorinternalcan__pc_win32__simulating__simulating
+ *    <li> \ref FileListstractorinternalcan__pc_win32__simulating__sys
  *  </ul>
  * <li>Configuration Setupts for some embedded targets:
  * <ul>
- *    <li> \ref FileListstractor__esx__sys__sys
- *    <li> \ref FileListstractor__imi__sys__sys
- *    <li> \ref FileListstractor__pm167__sys__sys
+ *    <li> \ref FileListstractorinternalcan__esx__sys__sys
+ *    <li> \ref FileListstractorinternalcan__imi__sys__sys
+ *    <li> \ref FileListstractorinternalcan__pm167__sys__sys
  *  </ul>
  * </ul>
  *
  * <H1>Resulting Project Configuration Header</H1>
  * This header is automatically included by xgpl_src/Application_Config/isoaglib_config.h
  * if the #define PRJ_USE_AUTOGEN_CONFIG is set to
- * config_tractor ( see also at \ref PrjConfigtractor ).
+ * config_tractor ( see also at \ref PrjConfigtractorinternalcan ).
  *                                                                         */
 /* *************************************************************************/
 
@@ -177,7 +177,7 @@
     project, so that each source file is compiled with this setting
   */
 #ifndef PRJ_USE_AUTOGEN_CONFIG
-  #define PRJ_USE_AUTOGEN_CONFIG config_tractor.h
+  #define PRJ_USE_AUTOGEN_CONFIG config_tractorinternalcan.h
 #endif
 
 // include the central interface header for the hardware adaptation layer part

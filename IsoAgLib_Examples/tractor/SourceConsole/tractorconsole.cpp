@@ -81,17 +81,17 @@
  * <H1>Howto compile this example</H1>
  * <ol>
  * <li>Call the script update_makefile.sh with the spec file
- *     conf_tractor from the directory where the spec file
+ *     conf_tractorconsole from the directory where the spec file
  *     and the script are located<br>
- *     <i>#> update_makefile.sh conf_tractor</i>
+ *     <i>#> update_makefile.sh conf_tractorconsole</i>
  * <li><b>Only Linux:</b><ul>
- *     <li><i>#>cd tractor</i> to go to the subdirectory tractor
+ *     <li><i>#>cd tractorconsole</i> to go to the subdirectory tractor
  *     <li><i>#> make</i><br>
- *     <li>GNU make will then use the fresh created Makefile to create the executable tractor in this directory
+ *     <li>GNU make will then use the fresh created Makefile to create the executable tractorconsole in this directory
  *     </ul>
  * <li><b>Other Development Environments:</b><ul>
- *     <li>import the file list in filelist-tractor.txt into the IDE of your choice
- *     <li>set <i>-DPRJ_USE_AUTOGEN_CONFIG=config_tractor</i> as global project parameter
+ *     <li>import the file list in filelist-tractorconsole.txt into the IDE of your choice
+ *     <li>set <i>-DPRJ_USE_AUTOGEN_CONFIG=config_tractorconsole</i> as global project parameter
  *     <li>add target specific headers, sources or libraries to the project
  *     <li>let your IDE build the project
  *   </ul>
@@ -100,74 +100,74 @@
  * <H1>Needed Project Specification</H1>
  * The project specification, which is needed as input for
  * the generation script update_makefile.sh is described in
- * \ref PrjSpectractor__pc_linux__simulating__simulating .
+ * \ref PrjSpectractorconsole__pc_linux__simulating__simulating .
  *
  * The adapted project specifications for different setups:
  * <ul>
  * <li>Configuration Setups for Linux on PC:
  * <ul>
- *    <li> \ref PrjSpectractor__pc_linux__rte__rte
- *    <li> \ref PrjSpectractor__pc_linux__rte__simulating
- *    <li> \ref PrjSpectractor__pc_linux__rte__sys
- *    <li> \ref PrjSpectractor__pc_linux__simulating__rte
- *    <li> \ref PrjSpectractor__pc_linux__simulating__simulating
- *    <li> \ref PrjSpectractor__pc_linux__simulating__sys
+ *    <li> \ref PrjSpectractorconsole__pc_linux__rte__rte
+ *    <li> \ref PrjSpectractorconsole__pc_linux__rte__simulating
+ *    <li> \ref PrjSpectractorconsole__pc_linux__rte__sys
+ *    <li> \ref PrjSpectractorconsole__pc_linux__simulating__rte
+ *    <li> \ref PrjSpectractorconsole__pc_linux__simulating__simulating
+ *    <li> \ref PrjSpectractorconsole__pc_linux__simulating__sys
  *  </ul>
  * <li>Configuration Setups for Win32 on PC:
  * <ul>
- *    <li> \ref PrjSpectractor__pc_win32__vector_canlib__simulating
- *    <li> \ref PrjSpectractor__pc_win32__vector_xl_drv_lib__simulating
- *    <li> \ref PrjSpectractor__pc_win32__vector_canlib__sys
- *    <li> \ref PrjSpectractor__pc_win32__vector_xl_drv_lib__sys
- *    <li> \ref PrjSpectractor__pc_win32__simulating__simulating
- *    <li> \ref PrjSpectractor__pc_win32__simulating__sys
+ *    <li> \ref PrjSpectractorconsole__pc_win32__vector_canlib__simulating
+ *    <li> \ref PrjSpectractorconsole__pc_win32__vector_xl_drv_lib__simulating
+ *    <li> \ref PrjSpectractorconsole__pc_win32__vector_canlib__sys
+ *    <li> \ref PrjSpectractorconsole__pc_win32__vector_xl_drv_lib__sys
+ *    <li> \ref PrjSpectractorconsole__pc_win32__simulating__simulating
+ *    <li> \ref PrjSpectractorconsole__pc_win32__simulating__sys
  *  </ul>
  * <li>Configuration Setupts for some embedded targets:
  * <ul>
- *    <li> \ref PrjSpectractor__esx__sys__sys
- *    <li> \ref PrjSpectractor__imi__sys__sys
- *    <li> \ref PrjSpectractor__pm167__sys__sys
+ *    <li> \ref PrjSpectractorconsole__esx__sys__sys
+ *    <li> \ref PrjSpectractorconsole__imi__sys__sys
+ *    <li> \ref PrjSpectractorconsole__pm167__sys__sys
  *  </ul>
  * </ul>
  *
  * <H1>Resulting Project File List</H1>
- * See \ref FileListstractor__pc_linux__simulating__simulating for needed files
- * ( filelist-tractor-doxygen_import.txt ),
- *  with \ref SrcListtractor__pc_linux__simulating__simulating containing the needed sources
- *  and with \ref HdrListtractor__pc_linux__simulating__simulating containing the needed headers.
+ * See \ref FileListstractorconsole__pc_linux__simulating__simulating for needed files
+ * ( filelist-tractorconsole-doxygen_import.txt ),
+ *  with \ref SrcListtractorconsole__pc_linux__simulating__simulating containing the needed sources
+ *  and with \ref HdrListtractorconsole__pc_linux__simulating__simulating containing the needed headers.
  *
  * The resulting file lists for different setups:
  * <ul>
  * <li>Configuration Setups for Linux on PC:
  * <ul>
- *    <li> \ref FileListstractor__pc_linux__rte__rte
- *    <li> \ref FileListstractor__pc_linux__rte__simulating
- *    <li> \ref FileListstractor__pc_linux__rte__sys
- *    <li> \ref FileListstractor__pc_linux__simulating__rte
- *    <li> \ref FileListstractor__pc_linux__simulating__simulating
- *    <li> \ref FileListstractor__pc_linux__simulating__sys
+ *    <li> \ref FileListstractorconsole__pc_linux__rte__rte
+ *    <li> \ref FileListstractorconsole__pc_linux__rte__simulating
+ *    <li> \ref FileListstractorconsole__pc_linux__rte__sys
+ *    <li> \ref FileListstractorconsole__pc_linux__simulating__rte
+ *    <li> \ref FileListstractorconsole__pc_linux__simulating__simulating
+ *    <li> \ref FileListstractorconsole__pc_linux__simulating__sys
  *  </ul>
  * <li>Configuration Setups for Win32 on PC:
  * <ul>
- *    <li> \ref FileListstractor__pc_win32__vector_canlib__simulating
- *    <li> \ref FileListstractor__pc_win32__vector_xl_drv_lib__simulating
- *    <li> \ref FileListstractor__pc_win32__vector_canlib__sys
- *    <li> \ref FileListstractor__pc_win32__vector_xl_drv_lib__sys
- *    <li> \ref FileListstractor__pc_win32__simulating__simulating
- *    <li> \ref FileListstractor__pc_win32__simulating__sys
+ *    <li> \ref FileListstractorconsole__pc_win32__vector_canlib__simulating
+ *    <li> \ref FileListstractorconsole__pc_win32__vector_xl_drv_lib__simulating
+ *    <li> \ref FileListstractorconsole__pc_win32__vector_canlib__sys
+ *    <li> \ref FileListstractorconsole__pc_win32__vector_xl_drv_lib__sys
+ *    <li> \ref FileListstractorconsole__pc_win32__simulating__simulating
+ *    <li> \ref FileListstractorconsole__pc_win32__simulating__sys
  *  </ul>
  * <li>Configuration Setupts for some embedded targets:
  * <ul>
- *    <li> \ref FileListstractor__esx__sys__sys
- *    <li> \ref FileListstractor__imi__sys__sys
- *    <li> \ref FileListstractor__pm167__sys__sys
+ *    <li> \ref FileListstractorconsole__esx__sys__sys
+ *    <li> \ref FileListstractorconsole__imi__sys__sys
+ *    <li> \ref FileListstractorconsole__pm167__sys__sys
  *  </ul>
  * </ul>
  *
  * <H1>Resulting Project Configuration Header</H1>
  * This header is automatically included by xgpl_src/Application_Config/isoaglib_config.h
  * if the #define PRJ_USE_AUTOGEN_CONFIG is set to
- * config_tractorconsole ( see also at \ref PrjConfigtractor ).
+ * config_tractorconsole ( see also at \ref PrjConfigtractorconsole ).
  *                                                                         */
 /* *************************************************************************/
 
@@ -177,7 +177,7 @@
     project, so that each source file is compiled with this setting
   */
 #ifndef PRJ_USE_AUTOGEN_CONFIG
-  #define PRJ_USE_AUTOGEN_CONFIG config_tractor_can_server.h
+  #define PRJ_USE_AUTOGEN_CONFIG config_tractorconsole_can_server.h
 #endif
 
 // include the central interface header for the hardware adaption layer part
