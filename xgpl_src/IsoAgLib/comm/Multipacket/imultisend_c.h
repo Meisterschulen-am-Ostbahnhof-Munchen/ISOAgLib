@@ -119,6 +119,11 @@ public:
   /** check if at least one multisend stream is running */
   bool isMultiSendRunning() const { return MultiSend_c::isMultiSendRunning(); }
 
+  /** user function for explicit abort of any running matching stream. */
+  void abortSend (const iISOName_c& rrefc_isoNameSender, const iISOName_c& rrefc_isoNameReceiver)
+    { MultiSend_c::abortSend (rrefc_isoNameSender, rrefc_isoNameReceiver); }
+
+
 private:
   /** allow getIMultiSendInstance() access to shielded base class.
       otherwise __IsoAgLib::getMultiSendInstance() wouldn't be accepted by compiler

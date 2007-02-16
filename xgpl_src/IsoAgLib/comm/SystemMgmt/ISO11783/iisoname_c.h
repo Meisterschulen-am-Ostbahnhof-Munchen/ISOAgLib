@@ -98,11 +98,11 @@ public:
     static const iISOName_c iISONameInitialProcessData;
 
     /** default constructor
-        @param rui8_devClass  optional initial DEVCLASS (device type)
-        @param rui8_pos       optional initial device class instance
-      */
-    iISOName_c( uint8_t rui8_devClass, uint8_t rui8_pos = 0xF )
-  : ISOName_c( rui8_devClass, rui8_pos ) {}
+    @param rui8_devClass     initial DEVCLASS (device type)
+    @param rui8_devClassInst initial DEVCLASSINST (instance). As "unknown" use 0xF
+     */
+    iISOName_c( uint8_t rui8_devClass, uint8_t rui8_devClassInst)
+  : ISOName_c( rui8_devClass, rui8_devClassInst ) {}
 
   /** constructor which format data string from series of input flags
     @param rb_selfConf true -> indicate sefl configuring ECU

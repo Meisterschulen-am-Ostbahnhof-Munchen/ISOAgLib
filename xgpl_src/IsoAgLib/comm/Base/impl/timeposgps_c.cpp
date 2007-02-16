@@ -90,7 +90,7 @@
 #include <IsoAgLib/driver/can/impl/canio_c.h>
 #include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h>
 // IsoAgLib_Extension
-#include <IsoAgLib/comm/Multipacket/impl/multireceive_c.h>
+#include <IsoAgLib/comm/Multipacket/imultireceive_c.h>
 #include <IsoAgLib/comm/Multipacket/istream_c.h>
 #include <IsoAgLib/comm/Multipacket/impl/multisendpkg_c.h>
 #include <IsoAgLib/util/iutil_funcs.h>
@@ -439,9 +439,9 @@ namespace __IsoAgLib {
     { // GPS send from now on
       // because wer are in tractor mode the rpc_isoName cannot be NULL
       c_sendGpsISOName = *rpc_isoName;
-      #ifdef NMEA_2000_FAST_PACKET
       // also remove any previously registered MultiReceive connections
       getMultiReceiveInstance4Comm().deregisterClient( *this );
+      #ifdef NMEA_2000_FAST_PACKET
       c_nmea2000Streamer.reset();
       c_nmea2000Streamer.vec_data.resize(0);
       #endif // END of NMEA_2000_FAST_PACKET
@@ -449,14 +449,16 @@ namespace __IsoAgLib {
     else
     { // IdentModeImplement
       c_sendGpsISOName.setUnspecified();
-			// register Broadcast-TP receive of NMEA 2000 data
-      #ifdef NMEA_2000_FAST_PACKET
+      // register Broadcast-TP/FP receive of NMEA 2000 data
       // make sure that the needed multi receive are registered
-      getMultiReceiveInstance4Comm().registerClient(*this, NMEA_GPS_POSITON_DATA_PGN,   0xFF, true, false, false);
-      getMultiReceiveInstance4Comm().registerClient(*this, NMEA_GPS_DIRECTION_DATA_PGN, 0xFF, true, false, false);
-
-      getMultiReceiveInstance4Comm().registerClient(*this ,NMEA_GPS_POSITON_DATA_PGN,   0xFF, true, false, true);
-      getMultiReceiveInstance4Comm().registerClient(*this ,NMEA_GPS_DIRECTION_DATA_PGN, 0xFF, true, false, true);
+      #ifndef NMEA_2000_FAST_PACKET
+      getMultiReceiveInstance4Comm().registerClient(*this, __IsoAgLib::ISOName_c::ISONameUnspecified, NMEA_GPS_POSITON_DATA_PGN,   0x3FFFF00, true, false);
+      getMultiReceiveInstance4Comm().registerClient(*this, __IsoAgLib::ISOName_c::ISONameUnspecified, NMEA_GPS_DIRECTION_DATA_PGN, 0x3FFFF00, true, false);
+      #else
+      getMultiReceiveInstance4Comm().registerClient(*this, __IsoAgLib::ISOName_c::ISONameUnspecified, NMEA_GPS_POSITON_DATA_PGN,   0x3FFFF00, true, false, false);
+      getMultiReceiveInstance4Comm().registerClient(*this, __IsoAgLib::ISOName_c::ISONameUnspecified, NMEA_GPS_DIRECTION_DATA_PGN, 0x3FFFF00, true, false, false);
+      getMultiReceiveInstance4Comm().registerClient(*this, __IsoAgLib::ISOName_c::ISONameUnspecified, NMEA_GPS_POSITON_DATA_PGN,   0x3FFFF00, true, false, true);
+      getMultiReceiveInstance4Comm().registerClient(*this, __IsoAgLib::ISOName_c::ISONameUnspecified, NMEA_GPS_DIRECTION_DATA_PGN, 0x3FFFF00, true, false, true);
       c_nmea2000Streamer.vec_data.reserve(51); // GNSS Position Data with TWO reference stations
       #endif // END of NMEA_2000_FAST_PACKET
     }
@@ -953,7 +955,6 @@ namespace __IsoAgLib {
   void TimePosGPS_c::isoSendDirectionStream( void )
   {
     const int32_t ci32_now = getLastRetriggerTime();
-    ISOMonitor_c& c_iso_monitor = getIsoMonitorInstance4Comm();
     // set data in Nmea2000SendStreamer_c
     c_nmea2000Streamer.reset();
     std::vector<uint8_t>& writeRef = c_nmea2000Streamer.vec_data;
@@ -970,12 +971,10 @@ namespace __IsoAgLib {
     number2LittleEndianString( ui16_driftSpeedCmSec, writeRef );              /// not init'ed  /// NOT there in the RAPID UPDATE one
 
     //now trigger sending
-    // retreive the actual dynamic sender no of the member with the registered isoName
-    const uint8_t b_send = c_iso_monitor.isoMemberISOName(c_sendGpsISOName, true).nr();
     #ifdef SEND_NMEA2000_FAST_PACKET
-    if ( getMultiSendInstance4Comm().sendIsoFastPacket(b_send, 0xFF, &c_nmea2000Streamer, NMEA_GPS_DIRECTION_DATA_PGN, t_multiSendSuccessState) )
+    if ( getMultiSendInstance4Comm().sendIsoFastPacket(c_sendGpsISOName, &c_nmea2000Streamer, NMEA_GPS_DIRECTION_DATA_PGN, t_multiSendSuccessState) )
     #else
-    if ( getMultiSendInstance4Comm().sendIsoBroadcast(b_send, 0xFF, &c_nmea2000Streamer, NMEA_GPS_DIRECTION_DATA_PGN, t_multiSendSuccessState) )
+    if ( getMultiSendInstance4Comm().sendIsoBroadcast(c_sendGpsISOName, &c_nmea2000Streamer, NMEA_GPS_DIRECTION_DATA_PGN, t_multiSendSuccessState) )
     #endif
     { // update time
       i32_lastIsoDirectionStream = ci32_now;
@@ -1021,7 +1020,6 @@ namespace __IsoAgLib {
   void TimePosGPS_c::isoSendPositionStream( void )
   {
     const int32_t ci32_now = getLastRetriggerTime();
-    ISOMonitor_c& c_iso_monitor = getIsoMonitorInstance4Comm();
     // set data in Nmea2000SendStreamer_c
     c_nmea2000Streamer.reset();
     std::vector<uint8_t>& writeRef = c_nmea2000Streamer.vec_data;
@@ -1084,12 +1082,10 @@ namespace __IsoAgLib {
     }
 
     //now trigger sending
-    // retreive the actual dynamic sender no of the member with the registered isoName
-    const uint8_t b_send = c_iso_monitor.isoMemberISOName(c_sendGpsISOName, true).nr();
     #ifdef SEND_NMEA2000_FAST_PACKET
-    if ( getMultiSendInstance4Comm().sendIsoFastPacket(b_send, 0xFF, &c_nmea2000Streamer, NMEA_GPS_POSITON_DATA_PGN, t_multiSendSuccessState) )
+    if ( getMultiSendInstance4Comm().sendIsoFastPacket(c_sendGpsISOName, &c_nmea2000Streamer, NMEA_GPS_POSITON_DATA_PGN, t_multiSendSuccessState) )
     #else
-    if ( getMultiSendInstance4Comm().sendIsoBroadcast(b_send, 0xFF, &c_nmea2000Streamer, NMEA_GPS_POSITON_DATA_PGN, t_multiSendSuccessState) )
+      if ( getMultiSendInstance4Comm().sendIsoBroadcast(c_sendGpsISOName, &c_nmea2000Streamer, NMEA_GPS_POSITON_DATA_PGN, t_multiSendSuccessState) )
     #endif
     { // update time
       i32_lastIsoPositionStream = ci32_now;
