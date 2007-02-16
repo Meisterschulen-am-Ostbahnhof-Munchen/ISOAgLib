@@ -260,6 +260,7 @@ INSTALL_FILES_LIBRARY = ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iiso
 		../../../xgpl_src/IsoAgLib/hal/pc/eeprom/pc_eeditor_can.h
 
 ####### Some Standard Rules
+SUBLIBS  = -lrt
 CC       = $(COMPILER_BINARY_PRE)gcc
 CXX      = $(COMPILER_BINARY_PRE)g++
 STRIP	 = $(COMPILER_BINARY_PRE)strip

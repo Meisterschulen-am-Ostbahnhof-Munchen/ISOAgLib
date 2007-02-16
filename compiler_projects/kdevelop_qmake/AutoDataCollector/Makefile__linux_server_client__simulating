@@ -200,6 +200,7 @@ include $(DEPS_SERVER)
 can_server: $(OBJECTS_SERVER)
 	$(LINK) $(LFLAGS) -o can_server $(OBJECTS_SERVER) $(LIBS)
 ####### Some Standard Rules
+SUBLIBS  = -lrt
 CC       = $(COMPILER_BINARY_PRE)gcc
 CXX      = $(COMPILER_BINARY_PRE)g++
 STRIP	 = $(COMPILER_BINARY_PRE)strip

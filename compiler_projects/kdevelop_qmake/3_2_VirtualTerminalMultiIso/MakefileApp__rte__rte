@@ -24,6 +24,7 @@ first: all
 SOURCES_APP = ../../../IsoAgLib_Examples/tutorial/3_Terminal/3_2_VirtualTerminalMultiIso/3_2_VirtualTerminalMultiIso.cpp  
 
 ####### Some Standard Rules
+SUBLIBS  = -lrt
 CC       = $(COMPILER_BINARY_PRE)gcc
 CXX      = $(COMPILER_BINARY_PRE)g++
 STRIP	 = $(COMPILER_BINARY_PRE)strip

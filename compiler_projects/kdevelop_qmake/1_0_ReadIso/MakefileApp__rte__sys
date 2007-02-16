@@ -24,6 +24,7 @@ first: all
 SOURCES_APP = ../../../IsoAgLib_Examples/tutorial/1_BaseData/1_0_ReadIso/1_0_ReadIso.cpp  
 
 ####### Some Standard Rules
+SUBLIBS  = -lrt
 CC       = $(COMPILER_BINARY_PRE)gcc
 CXX      = $(COMPILER_BINARY_PRE)g++
 STRIP	 = $(COMPILER_BINARY_PRE)strip

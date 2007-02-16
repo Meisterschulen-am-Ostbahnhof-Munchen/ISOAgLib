@@ -24,6 +24,7 @@ first: all
 SOURCES_APP = ../../../IsoAgLib_Examples/tutorial/2_ProcessData/2_4_LocalWriteSetpointStdIso/2_4_LocalWriteSetpointStdIso.cpp  
 
 ####### Some Standard Rules
+SUBLIBS  = -lrt
 CC       = $(COMPILER_BINARY_PRE)gcc
 CXX      = $(COMPILER_BINARY_PRE)g++
 STRIP	 = $(COMPILER_BINARY_PRE)strip

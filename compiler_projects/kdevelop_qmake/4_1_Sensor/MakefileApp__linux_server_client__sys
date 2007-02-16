@@ -24,6 +24,7 @@ first: all
 SOURCES_APP = ../../../IsoAgLib_Examples/tutorial/4_SupplementaryDriver//4_1_Sensor/4_1_Sensor.cpp  
 
 ####### Some Standard Rules
+SUBLIBS  = -lrt
 CC       = $(COMPILER_BINARY_PRE)gcc
 CXX      = $(COMPILER_BINARY_PRE)g++
 STRIP	 = $(COMPILER_BINARY_PRE)strip
