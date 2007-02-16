@@ -1,4 +1,5 @@
 ####### Some Standard Rules
+SUBLIBS  = -lrt
 CC       = $(COMPILER_BINARY_PRE)gcc
 CXX      = $(COMPILER_BINARY_PRE)g++
 STRIP	 = $(COMPILER_BINARY_PRE)strip
@@ -11,7 +12,7 @@ YACCFLAGS= -d
 INCPATH  = -I. -I$(ISOAGLIB_INSTALL_PATH)/include $(APP_INC) $(BIOS_INC)
 LINK     = $(COMPILER_BINARY_PRE)g++
 LFLAGS   =
-LIBS     = $(SUBLIBS)  $(BIOS_LIB)
+LIBS     = $(BIOS_LIB) $(SUBLIBS)
 AR       = ar cqs
 RANLIB   =
 TAR      = tar -cf
@@ -58,8 +59,8 @@ deps : $(DEPS_APP)
 
 all: Makefile $(TARGET)
 $(TARGET):  $(OBJECTS_APP)
-	$(LINK) $(LFLAGS) -o $(TARGET)_static $(OBJECTS_APP) $(LIBS) -static -L$(ISOAGLIB_INSTALL_PATH)/lib -lisoaglib
-	$(LINK) $(LFLAGS) -o $(TARGET)_dynamic $(OBJECTS_APP) $(LIBS) -L$(ISOAGLIB_INSTALL_PATH)/lib -lisoaglib
+	$(LINK) $(LFLAGS) -o $(TARGET)_static $(OBJECTS_APP) -static -L$(ISOAGLIB_INSTALL_PATH)/lib -lisoaglib $(LIBS)
+	$(LINK) $(LFLAGS) -o $(TARGET)_dynamic $(OBJECTS_APP) -L$(ISOAGLIB_INSTALL_PATH)/lib -lisoaglib $(LIBS)
 	rm -f $(TARGET)
 	ln -s $(TARGET)_dynamic $(TARGET)
 
