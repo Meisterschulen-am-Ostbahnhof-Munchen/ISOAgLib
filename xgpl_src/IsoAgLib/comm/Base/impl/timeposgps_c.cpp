@@ -441,7 +441,7 @@ namespace __IsoAgLib {
       c_sendGpsISOName = *rpc_isoName;
       #ifdef NMEA_2000_FAST_PACKET
       // also remove any previously registered MultiReceive connections
-      getMultiReceiveInstance4Comm().deregisterClient( this );
+      getMultiReceiveInstance4Comm().deregisterClient( *this );
       c_nmea2000Streamer.reset();
       c_nmea2000Streamer.vec_data.resize(0);
       #endif // END of NMEA_2000_FAST_PACKET
@@ -452,11 +452,11 @@ namespace __IsoAgLib {
 			// register Broadcast-TP receive of NMEA 2000 data
       #ifdef NMEA_2000_FAST_PACKET
       // make sure that the needed multi receive are registered
-      getMultiReceiveInstance4Comm().registerClient(NMEA_GPS_POSITON_DATA_PGN,   0xFF, this, true, false, false);
-      getMultiReceiveInstance4Comm().registerClient(NMEA_GPS_DIRECTION_DATA_PGN, 0xFF, this, true, false, false);
+      getMultiReceiveInstance4Comm().registerClient(*this, NMEA_GPS_POSITON_DATA_PGN,   0xFF, true, false, false);
+      getMultiReceiveInstance4Comm().registerClient(*this, NMEA_GPS_DIRECTION_DATA_PGN, 0xFF, true, false, false);
 
-      getMultiReceiveInstance4Comm().registerClient(NMEA_GPS_POSITON_DATA_PGN,   0xFF, this, true, false, true);
-      getMultiReceiveInstance4Comm().registerClient(NMEA_GPS_DIRECTION_DATA_PGN, 0xFF, this, true, false, true);
+      getMultiReceiveInstance4Comm().registerClient(*this ,NMEA_GPS_POSITON_DATA_PGN,   0xFF, true, false, true);
+      getMultiReceiveInstance4Comm().registerClient(*this ,NMEA_GPS_DIRECTION_DATA_PGN, 0xFF, true, false, true);
       c_nmea2000Streamer.vec_data.reserve(51); // GNSS Position Data with TWO reference stations
       #endif // END of NMEA_2000_FAST_PACKET
     }
@@ -742,22 +742,22 @@ namespace __IsoAgLib {
   //! @param rc_ident:
   //! @param rb_isFirstChunk:
   //! @param rb_isLastChunkAndACKd:
-  bool TimePosGPS_c::processPartStreamDataChunk (IsoAgLib::iStream_c* rpc_stream,
+  bool TimePosGPS_c::processPartStreamDataChunk (IsoAgLib::iStream_c& rrefc_stream,
                                           bool /*rb_isFirstChunk*/,
                                           bool rb_isLastChunkAndACKd)
   {
-    IsoAgLib::ReceiveStreamIdentifier_c& rc_ident = rpc_stream->getIdent();
+    const IsoAgLib::ReceiveStreamIdentifier_c& rc_ident = rrefc_stream.getIdent();
 
     // >>>Last Chunk<<< Processing
     if (rb_isLastChunkAndACKd)
     {  /** let reactOnLastChunk decide whether the pool should be kept in memory */
-      return reactOnLastChunk(rc_ident, *rpc_stream);
+      return reactOnLastChunk(rc_ident, rrefc_stream);
     }
     // default - don't keep it
     return false;
   }
 
-  void TimePosGPS_c::reactOnAbort (IsoAgLib::iStream_c* /*rpc_stream*/)
+  void TimePosGPS_c::reactOnAbort (IsoAgLib::iStream_c& /*rrefc_stream*/)
   { // as we don't perform on-the-fly parse, there is nothing special to do
   }
 
