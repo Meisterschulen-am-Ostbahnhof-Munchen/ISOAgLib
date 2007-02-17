@@ -309,7 +309,7 @@ int main()
                 && ( ! getITimePosGpsInstance().isCalendarReceived() ) )
         { // still no calendar received -> start sending of calendar
           // first set config in BaseData_c
-          getITimePosGpsInstance().config(&c_myIdent.isoName(), IdentModeImplement );
+          getITimePosGpsInstance().config(&c_myIdent.isoName(), IdentModeTractor );
           b_sendCalendar = true;
         }
       }
