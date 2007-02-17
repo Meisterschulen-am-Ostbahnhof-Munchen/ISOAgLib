@@ -134,7 +134,7 @@ namespace __IsoAgLib {
   @param rpc_lb optional pointer to central Scheduler_c instance (default NULL -> the later set is needed)
 */
 ISOMonitor_c::ISOMonitor_c()
-  : SingletonISOMonitor_c(), vec_isoMember()
+  : SingletonISOMonitor_c(), vec_isoMember(), c_serviceTool( ISOName_c::ISONameUnspecified )
 {
   // functionality moved OUT of the constructor, as the constructor is NOT called in embedded systems for static class instances.
 }
@@ -164,6 +164,9 @@ void ISOMonitor_c::init( void )
     pc_isoMemberCache = vec_isoMember.end();
     i32_lastSaRequest = -1; // not yet requested. Do NOT use 0, as the first "setLastRequest()" could (and does randomly) occur at time0 as it's called at init() time.
     c_tempIsoMemberItem.set( 0, ISOName_c::ISONameUnspecified, 0xFE, IState_c::Active, getSingletonVecKey() );
+
+    // register no-service mode
+    c_serviceTool.setUnspecified();
 
     // clear state of b_alreadyClosed, so that close() is called one time AND no more init()s are performed!
     clearAlreadyClosed();
@@ -1193,6 +1196,19 @@ bool ISOMonitor_c::processMsg()
             *pc_itemSameISOName = NULL;
 
 
+  // decide whether the message should be processed
+  if ( c_serviceTool.isSpecified() )
+  { // we are in diagnostic mode --> check if the message sender is the diagnostic tool
+    if (  existIsoMemberNr(data().isoSa()) )
+    {
+      if ( isoMemberNr(data().isoSa()).isoName() != c_serviceTool ) return false;
+    }
+    else if ( data().isoName() != c_serviceTool ) return false;
+    // if we reach here, the received message has to be processed, as the sender is the
+    // diagnostic tool
+  }
+
+
   // Handle DESTINATION PGNs
   switch ((data().isoPgn() & 0x3FF00))
   {
@@ -1498,6 +1514,41 @@ ISOMonitor_c::notifyOnWsMasterLoss (ISOItem_c& rrefc_masterItem)
   }
 }
 #endif
+
+
+
+/** command switching to and from special service / diagnostic mode.
+    setting the flag c_serviceTool controls appropriate handling
+  */
+void ISOMonitor_c::setDiagnosticMode( const ISOName_c& rrefc_serviceTool)
+{
+  c_serviceTool = rrefc_serviceTool;
+  if ( c_serviceTool.isUnspecified() )
+  { // back to normal operation --> trigger send of Req4SaClaim
+    sendRequestForClaimedAddress( true );
+  }
+  else
+  { // switch from normal operation to diagnostic mode
+    Vec_ISOIterator pc_iter = vec_isoMember.begin();
+    while ( pc_iter != vec_isoMember.end() )
+    {
+      if ( ( pc_iter->isoName() == c_serviceTool ) || ( pc_iter->itemState(IState_c::Local) ) )
+      { // current item is service tool or is local
+        // --> increment iterator to next item
+        pc_iter++;
+      }
+      else
+      { // remove the item from the monitor list
+        // first inform SA-Claim handlers on SA-Loss
+        broadcastSaRemove2Clients( pc_iter->isoName(), pc_iter->nr() );
+        // then remove item
+        vec_isoMember.erase( pc_iter );
+        // reset iterator to begin
+        pc_iter = vec_isoMember.begin();
+      }
+    }
+  }
+}
 
 
 } // end of namespace __IsoAgLib

@@ -207,6 +207,12 @@ public:
   iISOItem_c& getActiveLocalIsoMember()
   {return static_cast<iISOItem_c&>(ISOMonitor_c::getActiveLocalIsoMember());}
 
+  /** command switching to and from special service / diagnostic mode.
+      setting the flag c_serviceTool controls appropriate handling
+    */
+  void setDiagnosticMode( const iISOName_c& rrefc_serviceTool = iISOName_c::iISONameUnspecified)
+  { ISOMonitor_c::setDiagnosticMode( rrefc_serviceTool );}
+
 private:
   /** allow getIisoMonitorInstance() access to shielded base class.
       otherwise __IsoAgLib::getIsoMonitorInstance() wouldn't be accepted by compiler
