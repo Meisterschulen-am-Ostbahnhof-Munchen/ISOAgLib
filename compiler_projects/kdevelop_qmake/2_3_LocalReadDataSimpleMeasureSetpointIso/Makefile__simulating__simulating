@@ -174,7 +174,7 @@ YACCFLAGS= -d
 INCPATH  = -I. -I$(ISOAGLIB_PATH)/xgpl_src $(APP_INC) $(BIOS_INC)
 LINK     = $(COMPILER_BINARY_PRE)g++
 LFLAGS   =
-LIBS     = $(SUBLIBS)  $(BIOS_LIB)
+LIBS     = $(BIOS_LIB) $(SUBLIBS)
 AR       = ar cqs
 RANLIB   =
 TAR      = tar -cf
@@ -246,8 +246,8 @@ dynamic_library:  $(OBJECTS_LIBRARY)
 
 all: Makefile static_library dynamic_library  $(TARGET)
 $(TARGET):  $(OBJECTS_APP) static_library dynamic_library
-	$(LINK) $(LFLAGS) -o $(TARGET)_static $(OBJECTS_APP) $(LIBS) $(OBJ_DIR_LIBRARY)/libisoaglib.a
-	$(LINK) $(LFLAGS) -o $(TARGET)_dynamic $(OBJECTS_APP) $(LIBS) $(OBJ_DIR_LIBRARY)/libisoaglib.so
+	$(LINK) $(LFLAGS) -o $(TARGET)_static $(OBJECTS_APP) $(OBJ_DIR_LIBRARY)/libisoaglib.a $(LIBS)
+	$(LINK) $(LFLAGS) -o $(TARGET)_dynamic $(OBJECTS_APP) $(OBJ_DIR_LIBRARY)/libisoaglib.so $(LIBS)
 	rm -f $(TARGET)
 	ln -s $(TARGET)_dynamic $(TARGET)
 
