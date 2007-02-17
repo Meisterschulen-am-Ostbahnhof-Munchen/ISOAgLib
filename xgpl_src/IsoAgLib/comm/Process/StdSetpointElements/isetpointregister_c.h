@@ -166,7 +166,7 @@ public:
     set isoName of commanding member
     @param rc_isoName ISOName of commanding member
   */
-  void setISOName(uint8_t rb_val){SetpointRegister_c::setISOName(rb_val);};
+  void setISOName(uint8_t rui8_devClass, uint8_t rui8_devClassInst){SetpointRegister_c::setISOName( rui8_devClass, rui8_devClassInst );}
   /**
     set the exact setpoint value
     @param ri32_val new exact setpoint value
