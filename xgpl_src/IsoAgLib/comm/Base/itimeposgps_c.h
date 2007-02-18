@@ -175,10 +175,13 @@ public:
   /** deliver raw GPS Longitude [degree] with scaling 10.0e-7 */
   int32_t getGpsLongitudeDegree10Minus7(void) const { return TimePosGPS_c::getGpsLongitudeDegree10Minus7();}
 
-  #if defined(USE_FLOAT_DATA_TYPE)
   /** check if an NMEA2000 position signal was received */
-  bool isPositionReceived() const { return TimePosGPS_c::isPositionReceived();}
+  bool isPositionReceived() const { return TimePosGPS_c::isPositionReceived(); }
 
+  /** check if an NMEA2000 direction signal was received */
+  bool isDirectionReceived() const { return TimePosGPS_c::isDirectionReceived(); }
+
+#if defined(USE_FLOAT_DATA_TYPE)
   /** deliver Minute GPS Latitude */
   float getGpsLatitudeMinute(void) const { return TimePosGPS_c::getGpsLatitudeMinute();}
 
@@ -192,7 +195,13 @@ public:
   float getGpsLongitudeDegree(void) const { return TimePosGPS_c::getGpsLongitudeDegree();}
   #endif // END of USE_FLOAT_DATA_TYPE
 
-  #ifdef NMEA_2000_FAST_PACKET
+  /** deliver GPS Speed Over Ground as [cm/s] */
+  uint16_t getGpsSpeedCmSec(void) const { return TimePosGPS_c::getGpsSpeedCmSec(); }
+  /** deliver GPS Course Over Ground [1x10E-4rad] */
+  uint16_t getGpsCourseRad10Minus4(void) const { return TimePosGPS_c::getGpsCourseRad10Minus4(); }
+
+
+#ifdef NMEA_2000_FAST_PACKET
   /** get the GPS UTC hour value
       @return actual GPS UTC hour value
    */
@@ -225,12 +234,6 @@ public:
   /** deliver GNSS type ( e.g. GPS, GLONASS or SBAS ) */
   IsoAgLib::IsoGnssType_t getGnssType(void) const { return TimePosGPS_c::getGnssType();}
 
-  /** deliver GPS speed as [cm/s] */
-  uint16_t getGpsSpeedCmSec(void) const { return TimePosGPS_c::getGpsSpeedCmSec();}
-
-  /** deliver GPS Heading [1x10E-4rad] */
-  uint16_t getGpsHeadingRad10Minus4(void) const { return TimePosGPS_c::getGpsHeadingRad10Minus4();}
-
   /** deliver number of received satellites */
   uint8_t satelliteCnt() const { return TimePosGPS_c::satelliteCnt();}
 
@@ -241,8 +244,11 @@ public:
   int16_t pdop10Minus2() const { return TimePosGPS_c::pdop10Minus2();}
   #endif // END NMEA_2000_FAST_PACKET
 
-  /** deliver age of last gps-update in milliseconds */
-  uint16_t getGpsUpdateAge(void) const { return TimePosGPS_c::getGpsUpdateAge();}
+  /** deliver age of last gps-position-update in milliseconds */
+  uint16_t getGpsPositionUpdateAge(void) const { return TimePosGPS_c::getGpsPositionUpdateAge(); }
+
+  /** deliver age of last gps-direction-update in milliseconds */
+  uint16_t getGpsDirectionUpdateAge(void) const { return TimePosGPS_c::getGpsDirectionUpdateAge(); }
 
   /* ******************************************* */
   /** \name Set Values */
@@ -283,7 +289,16 @@ public:
   void setGpsLongitudeDegree10Minus7(int32_t ri32_newVal)
   { return TimePosGPS_c::setGpsLongitudeDegree10Minus7(ri32_newVal);}
 
-  #if defined(NMEA_2000_FAST_PACKET)
+  /** deliver GPS Speed Over Ground as [cm/s] */
+  void setGpsSpeedCmSec(uint16_t rui16_newVal)
+  { return TimePosGPS_c::setGpsSpeedCmSec(rui16_newVal); }
+
+  /** deliver GPS Course Over Ground [1x10E-4rad] */
+  void setGpsCourseRad10Minus4(uint16_t rui16_newVal)
+  { return TimePosGPS_c::setGpsCourseRad10Minus4(rui16_newVal); }
+
+
+#if defined(NMEA_2000_FAST_PACKET)
   /** set the GPS time in UTC timezone.
    *  When no remote system is sending the 11783-7 PGN with date & time, the new UTC time is also set with
    *  setTimeUtc().
@@ -340,14 +355,6 @@ public:
   /** deliver GNSS type ( e.g. GPS, GLONASS or SBAS ) */
   void setGnssType( IsoAgLib::IsoGnssType_t rt_newVal )
   { return TimePosGPS_c::setGnssType(rt_newVal);}
-
-  /** deliver GPS speed as [cm/s] */
-  void setGpsSpeedCmSec(uint16_t rui16_newVal)
-  { return TimePosGPS_c::setGpsSpeedCmSec(rui16_newVal);}
-
-  /** deliver GPS Heading [1x10E-4rad] */
-  void setGpsHeadingRad10Minus4(uint16_t rui16_newVal)
-  { return TimePosGPS_c::setGpsHeadingRad10Minus4(rui16_newVal);}
 
   /** deliver number of received satellites */
   void setSatelliteCnt(uint8_t rui8_newVal)

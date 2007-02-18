@@ -226,13 +226,17 @@
 #else
   #define LOG_INFO getIrs232Instance()
 #endif
-
+#include <iostream>
 
 // the interface objects of the IsoAgLib are placed in the IsoAgLibAll namespace
 // -> include all elements of this area for easy access
 // with this command the text part "IsoAgLib::" can be avoided, which
 // is needed for the documentation generator
 using namespace IsoAgLib;
+
+
+//using namespace std;
+
 
 /** define channel to write:
  - access data from tutorial examples 2_0_xy to 2_6_nm which listen to requests on channel 0
@@ -600,3 +604,4 @@ int main()
   }
   return 1;
 }
+

@@ -491,6 +491,11 @@ public:
   /// ISOMonitor_c.timeEvent() should be called in 50 ms
   void changeRetriggerTime() { getSchedulerInstance4Comm().changeRetriggerTimeAndResort(this,System_c::getTime() + 50 ); };
 
+
+  /** command switching to and from special service / diagnostic mode.
+      setting the flag c_serviceTool controls appropriate handling
+    */
+  void setDiagnosticMode( const ISOName_c& rrefc_serviceTool = ISOName_c::ISONameUnspecified);
 protected: // Protected methods
   /** process system msg with informations which are
     important for managing of members
@@ -565,6 +570,10 @@ private: // Private attributes
   /** map of SaClaimHandler_c clients that want to be informed on monitor list changes */
 
   SaClaimHandlerVector_t vec_saClaimHandler;
+
+  /** flag to indicate service / diagnostic mode, where only connections to a dedicated ECU
+     should be maintained */
+  ISOName_c c_serviceTool;
 };
 
 #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )

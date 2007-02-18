@@ -36,7 +36,7 @@
     </run>
     <build>
       <buildtool>make</buildtool>
-      <builddir>.</builddir>
+      <builddir></builddir>
     </build>
     <make>
       <abortonerror>true</abortonerror>
