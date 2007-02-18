@@ -21,7 +21,7 @@
   </general>
   <kdevcustomproject>
     <run>
-      <mainprogram>././1_5_ReadGps</mainprogram>
+      <mainprogram>./1_5_ReadGps</mainprogram>
       <directoryradio>build</directoryradio>
       <customdirectory>/</customdirectory>
       <programargs></programargs>
@@ -36,7 +36,7 @@
     </run>
     <build>
       <buildtool>make</buildtool>
-      <builddir>/home/wodokm/Projects/IsoAgLib/compiler_projects/kdevelop_qmake/1_5_ReadGps</builddir>
+      <builddir></builddir>
     </build>
     <make>
       <abortonerror>true</abortonerror>
@@ -130,7 +130,7 @@
       <root>/usr/share/qt3</root>
       <designerintegration>EmbeddedKDevDesigner</designerintegration>
       <qmake>/usr/bin/qmake-qt3</qmake>
-      <designer></designer>
+      <designer>/usr/bin/designer</designer>
       <designerpluginpaths/>
     </qt>
     <creategettersetter>

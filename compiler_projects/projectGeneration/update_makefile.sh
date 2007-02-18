@@ -1294,7 +1294,7 @@ function create_makefile()
 	echo -e "\n" >> $MakefileNameLong
 
 
-rm -f FileListInterface.txt FileListInterface4Eval.txt FileListInternal.txt FileListInterface4EvalPre.txt
+rm -f FileListInterfaceStart.txt FileListInterface.txt FileListInterface4Eval.txt FileListInternal.txt FileListInterface4EvalPre.txt FileListInterface4EvalPre.*.txt
 
 cat "$MakefileFilelistLibraryHdr" | grep    "/impl/" > FileListInternal.txt
 cat "$MakefileFilelistLibraryHdr" | grep    "/hal/"  >> FileListInternal.txt
@@ -1353,7 +1353,7 @@ done
 	done
 	echo -e "\n" >> $MakefileNameLong
 
-rm -f FileListInterface.txt FileListInterface4Eval.txt FileListInternal.txt FileListInterface4EvalPre.txt
+rm -f FileListInterfaceStart.txt FileListInterface.txt FileListInterface4Eval.txt FileListInternal.txt FileListInterface4EvalPre.txt FileListInterface4EvalPre.*.txt
 
 
 	# build special target for CAN server
@@ -1494,7 +1494,6 @@ rm -f FileListInterface.txt FileListInterface4Eval.txt FileListInternal.txt File
 	ln -s $MakefileNameLong "MakefileApp"
 
 
-
 	# now create a Kdevelop3 project file
 	cp -a $DEV_PRJ_DIR/../$ISO_AG_LIB_PATH/compiler_projects/projectGeneration/kdevelop3Generic.kdevelop $PROJECT.kdevelop
 
@@ -1545,6 +1544,9 @@ function create_DevCCPrj() {
   # echo "Create Projekt file for Dev-C++ in $DEV_PRJ_DIR"
   mkdir -p $DEV_PRJ_DIR/objects
   cd $DEV_PRJ_DIR
+	# remove some file lists, which are not used for Dev-C++
+	rm $FILELIST_LIBRARY_PURE $FILELIST_APP_PURE
+
   # org test
 	PROJECT_FILE_NAME="$PROJECT"'__'"$USE_CAN_DRIVER"'__'"$USE_RS232_DRIVER.dev"
   DevCcPrjFilelist="$1/$PROJECT/$FILELIST_COMBINED_PURE"
@@ -1743,6 +1745,9 @@ function create_EdePrj()
 	USE_DEFINES=`echo "$USE_DEFINES" | sed -e 's#/#=_=_#g'`
 	USE_EMBED_COMPILER_DIR=`echo "$USE_EMBED_COMPILER_DIR" | sed -e 's#/#=_=_#g'`
 
+	# remove some file lists, which are not used for Dev-C++
+	rm "$1/$PROJECT/$FILELIST_LIBRARY_PURE" "$1/$PROJECT/$FILELIST_APP_PURE"
+
 
 	# Build Tasking Project File by: a) first stub part; b) file list c) second stub part
 	cp -a $DEV_PRJ_DIR/../$ISO_AG_LIB_PATH/compiler_projects/projectGeneration/EDE.part1.pjt $DEV_PRJ_DIR/$PROJECT_FILE_NAME
@@ -1795,6 +1800,8 @@ function create_VCPrj()
   DspPrjFilelist="$1/$PROJECT/$FILELIST_COMBINED_PURE"
   CONFIG_HDR_NAME="config_""$PROJECT.h"
 
+	# remove some file lists, which are not used for Dev-C++
+	rm "$1/$PROJECT/$FILELIST_LIBRARY_PURE" "$1/$PROJECT/$FILELIST_APP_PURE"
 
 
 

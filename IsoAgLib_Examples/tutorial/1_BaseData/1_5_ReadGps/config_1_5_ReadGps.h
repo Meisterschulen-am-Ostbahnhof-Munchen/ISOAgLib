@@ -30,12 +30,6 @@
 
 // #define CONFIG_DO_NOT_START_RELAIS_ON_STARTUP
 
-#ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
-
-  #define SYSTEM_WITH_ENHANCED_CAN_HAL
-
-#endif
-
 #ifndef USE_TIME_GPS 
 	#define USE_TIME_GPS 
 #endif

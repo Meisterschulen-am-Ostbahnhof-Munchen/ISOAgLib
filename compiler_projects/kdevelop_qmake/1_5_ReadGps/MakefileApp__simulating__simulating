@@ -36,7 +36,7 @@ LEXFLAGS =
 YACCFLAGS= -d
 INCPATH  = -I. -I$(ISOAGLIB_INSTALL_PATH)/include $(APP_INC) $(BIOS_INC)
 LINK     = $(COMPILER_BINARY_PRE)g++
-LFLAGS   = -pthread
+LFLAGS   =
 LIBS     = $(BIOS_LIB) $(SUBLIBS)
 AR       = ar cqs
 RANLIB   =
@@ -82,7 +82,7 @@ $(OBJ_DIR_APP)/%.o : $(filter %/$(patsubst $(OBJ_DIR_APP)/%.d,%,$@).cpp,$(SOURCE
 ####### Build rules
 deps : $(DEPS_APP)
 
-all: can_server Makefile $(TARGET)
+all: Makefile $(TARGET)
 $(TARGET):  $(OBJECTS_APP)
 	$(LINK) $(LFLAGS) -o $(TARGET)_static $(OBJECTS_APP) -static -L$(ISOAGLIB_INSTALL_PATH)/lib -lisoaglib $(LIBS)
 	$(LINK) $(LFLAGS) -o $(TARGET)_dynamic $(OBJECTS_APP) -L$(ISOAGLIB_INSTALL_PATH)/lib -lisoaglib $(LIBS)
@@ -109,5 +109,5 @@ FORCE:
 
 ####### Install
 
-uninstall: can_server
+uninstall:
 
