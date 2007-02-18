@@ -256,20 +256,22 @@ namespace __IsoAgLib {
       bit_calendar.year = bit_calendar.hour = bit_calendar.minute = bit_calendar.second = 0;
       bit_calendar.month = bit_calendar.day = 1;
     }
+    /** @todo differentiate what to clear! separate them! */
     if ( checkModeGps(IsoAgLib::IdentModeImplement)
       #ifdef NMEA_2000_FAST_PACKET
       && ( ( ci32_now - i32_lastIsoPositionStream  ) >= TIMEOUT_SENDING_NODE  )
-      && ( ( ci32_now - i32_lastIsoDirectionStream ) >= TIMEOUT_SENDING_NODE  )
       #endif
+      && ( ( ci32_now - i32_lastIsoDirection       ) >= TIMEOUT_SENDING_NODE  )
       && ( ( ci32_now - i32_lastIsoPositionSimple  ) >= TIMEOUT_SENDING_NODE  )
       && ( c_sendGpsISOName.isSpecified()                      ) )
     { // the previously sending node didn't send the information for 3 seconds -> give other items a chance
       c_sendGpsISOName.setUnspecified();
       i32_latitudeDegree10Minus7 = i32_longitudeDegree10Minus7 = 0x7FFFFFFF;
-      #ifdef NMEA_2000_FAST_PACKET
-      ui8_satelliteCnt = 0;
+      ui16_speedOverGroundCmSec = ui16_courseOverGroundRad10Minus4 = 0xFFFF;
       t_gnssMethod = IsoAgLib::IsoNoGps;
+      #ifdef NMEA_2000_FAST_PACKET
       t_gnssType = IsoAgLib::IsoGnssGps;
+      ui8_satelliteCnt = 0;
       ui32_altitudeCm = 0;
       #endif
     }
@@ -295,19 +297,9 @@ namespace __IsoAgLib {
     { // check if needed receive filters for ISO are active
       setFilterCreated();
 
-      // create FilterBox_c for PGN TIME_DATE_PGN, PF 254 - mask for DP, PF and PS
-      // mask: (0x3FFFF << 8) filter: (TIME_DATE_PGN << 8)
-      c_can.insertFilter(*this, 0x3FFFF00UL,
-                        (static_cast<MASK_TYPE>(TIME_DATE_PGN) << 8), false, Ident_c::ExtendedIdent);
-      // *************************************************************************************************
-      // Added by Brad Cox to accomodate NMEA 2000 GPS Messages:
-
-      // GNSS Position Rapid Update
-      // mask: (0x3FFFF << 8) filter: (NMEA_GPS_POSITON_RAPID_UPDATE_PGN << 8)
-      c_can.insertFilter(*this, 0x3FFFF00UL,
-                    (static_cast<MASK_TYPE>(NMEA_GPS_POSITON_RAPID_UPDATE_PGN) << 8), true, Ident_c::ExtendedIdent);
-
-      // *************************************************************************************************
+      c_can.insertFilter(*this, 0x3FFFF00UL, (static_cast<MASK_TYPE>(TIME_DATE_PGN) << 8),                      false, Ident_c::ExtendedIdent);
+      c_can.insertFilter(*this, 0x3FFFF00UL, (static_cast<MASK_TYPE>(NMEA_GPS_POSITION_RAPID_UPDATE_PGN) << 8), false, Ident_c::ExtendedIdent);
+      c_can.insertFilter(*this, 0x3FFFF00UL, (static_cast<MASK_TYPE>(NMEA_GPS_COG_SOG_RAPID_UPDATE_PGN) << 8),  true,  Ident_c::ExtendedIdent);
     }
   }
 
@@ -356,11 +348,10 @@ namespace __IsoAgLib {
     if ( !BaseCommon_c::config_base (rpc_isoName, rt_identMode) ) return false;
 
     ///setTimePeriod for Scheduler_c 100ms is minimal periode in GPSmodul up to now
-    setTimePeriod( (uint16_t) 100   );
+    setTimePeriod( (uint16_t) 100 );
 
     if (t_oldMode == IsoAgLib::IdentModeImplement && rt_identMode == IsoAgLib::IdentModeTractor)
     {  // a change from Implement mode to Tractor mode occured
-      // create FilterBox_c for REQUEST_PGN_MSG_PGN, TIME_DATE_PGN
       getIsoRequestPgnInstance4Comm().registerPGN (*this, TIME_DATE_PGN); // request for time and date
     }
 
@@ -422,18 +413,20 @@ namespace __IsoAgLib {
     }
     //set configure values
     i32_lastIsoPositionSimple = 0;
+    i32_lastIsoDirection = 0;
+#ifdef NMEA_2000_FAST_PACKET
+    i32_lastIsoPositionStream = 0;
+    t_multiSendSuccessState = MultiSend_c::SendSuccess;
+    ui32_altitudeCm = 0;
+
+    ui8_satelliteCnt = 0;
+#endif // END of NMEA_2000_FAST_PACKET
 
     pc_isoNameGps = rpc_isoName;
     t_identModeGps = rt_identModeGps;
 
     i32_latitudeDegree10Minus7 = i32_longitudeDegree10Minus7 = 0x7FFFFFFF;
-    #ifdef NMEA_2000_FAST_PACKET
-    i32_lastIsoPositionStream = i32_lastIsoDirectionStream = 0;
-    t_multiSendSuccessState = MultiSend_c::SendSuccess;
-    ui32_altitudeCm = 0;
-
-    ui8_satelliteCnt = 0;
-    #endif // END of NMEA_2000_FAST_PACKET
+    ui16_speedOverGroundCmSec = ui16_courseOverGroundRad10Minus4 = 0xFFFF;
 
     if ( rt_identModeGps == IsoAgLib::IdentModeTractor )
     { // GPS send from now on
@@ -452,12 +445,12 @@ namespace __IsoAgLib {
       // register Broadcast-TP/FP receive of NMEA 2000 data
       // make sure that the needed multi receive are registered
       #ifndef NMEA_2000_FAST_PACKET
-      getMultiReceiveInstance4Comm().registerClient(*this, __IsoAgLib::ISOName_c::ISONameUnspecified, NMEA_GPS_POSITON_DATA_PGN,   0x3FFFF00, true, false);
+      getMultiReceiveInstance4Comm().registerClient(*this, __IsoAgLib::ISOName_c::ISONameUnspecified, NMEA_GPS_POSITION_DATA_PGN,  0x3FFFF00, true, false);
       getMultiReceiveInstance4Comm().registerClient(*this, __IsoAgLib::ISOName_c::ISONameUnspecified, NMEA_GPS_DIRECTION_DATA_PGN, 0x3FFFF00, true, false);
       #else
-      getMultiReceiveInstance4Comm().registerClient(*this, __IsoAgLib::ISOName_c::ISONameUnspecified, NMEA_GPS_POSITON_DATA_PGN,   0x3FFFF00, true, false, false);
+      getMultiReceiveInstance4Comm().registerClient(*this, __IsoAgLib::ISOName_c::ISONameUnspecified, NMEA_GPS_POSITION_DATA_PGN,  0x3FFFF00, true, false, false);
       getMultiReceiveInstance4Comm().registerClient(*this, __IsoAgLib::ISOName_c::ISONameUnspecified, NMEA_GPS_DIRECTION_DATA_PGN, 0x3FFFF00, true, false, false);
-      getMultiReceiveInstance4Comm().registerClient(*this, __IsoAgLib::ISOName_c::ISONameUnspecified, NMEA_GPS_POSITON_DATA_PGN,   0x3FFFF00, true, false, true);
+      getMultiReceiveInstance4Comm().registerClient(*this, __IsoAgLib::ISOName_c::ISONameUnspecified, NMEA_GPS_POSITION_DATA_PGN,  0x3FFFF00, true, false, true);
       getMultiReceiveInstance4Comm().registerClient(*this, __IsoAgLib::ISOName_c::ISONameUnspecified, NMEA_GPS_DIRECTION_DATA_PGN, 0x3FFFF00, true, false, true);
       c_nmea2000Streamer.vec_data.reserve(51); // GNSS Position Data with TWO reference stations
       #endif // END of NMEA_2000_FAST_PACKET
@@ -549,29 +542,53 @@ namespace __IsoAgLib {
         else
         { // there is a sender conflict
           getILibErrInstance().registerError( iLibErr_c::BaseSenderConflict, iLibErr_c::Base );
-          return false;
+          return false; /** @todo why not return true here?! */
         }
         break;
-      // **********************************************************
-      // Added by Brad Cox for NMEA 2000 GPS Messages:
-      case NMEA_GPS_POSITON_RAPID_UPDATE_PGN:
+
+      case NMEA_GPS_POSITION_RAPID_UPDATE_PGN:
         if ( checkParseReceived( c_tempISOName ) )
         { // sender is allowed to send
-          i32_lastIsoPositionSimple = ci32_now;
           i32_latitudeDegree10Minus7  = data().getInt32Data( 0 );
           i32_longitudeDegree10Minus7 = data().getInt32Data( 4 );
-          // set last time
           i32_lastIsoPositionSimple = ci32_now;
           c_sendGpsISOName = c_tempISOName;
           setUpdateTime( ci32_now );
-
-          #if defined (USE_TRACTOR_MOVE) || defined (USE_BASE)
-          IsoAgLib::iTracMove_c& c_tracmove = IsoAgLib::getITracMoveInstance();
-          c_tracmove.updateSpeed(IsoAgLib::GpsBasedSpeed);
-          #endif
+          if (getGnssMode() == IsoAgLib::IsoNoGps)
+          { /// @todo Allow Rapid Update without Complete Position TP/FP before? Is is just an update or can it be standalone?
+              /// for now, allow it as standalone and set GpsMethod simply to IsoGnssFix
+            t_gnssMethod = IsoAgLib::IsoGnssFix;
+          }
         }
         return true;
-      // **********************************************************
+
+      case NMEA_GPS_COG_SOG_RAPID_UPDATE_PGN:
+        if ( checkParseReceived( c_tempISOName ) )
+        { // sender is allowed to send
+          ui8_directionSequenceID          = data().getUint8Data ( 0 );
+          ui8_courseOverGroundReference    = data().getUint8Data ( 1 ) & 0x03;
+          ui16_courseOverGroundRad10Minus4 = data().getUint16Data( 2 );
+          ui16_speedOverGroundCmSec        = data().getUint16Data( 4 );
+          // always update values to know if the information is there or not!
+
+          // set last time (also always, because if the sender's sending it's sending so we can't send!!
+          i32_lastIsoDirection = ci32_now;
+          c_sendGpsISOName = c_tempISOName;
+          setUpdateTime( ci32_now );
+
+          if ( (ui16_courseOverGroundRad10Minus4 <= (62855)) /// @todo check for the REAL max, 62855 is a little bigger than 62831 or alike that could be calculated. but anyway...
+            && (ui16_speedOverGroundCmSec        <= (65532))
+             )
+          {
+#if defined (USE_TRACTOR_MOVE) || defined (USE_BASE)
+            IsoAgLib::iTracMove_c& c_tracmove = IsoAgLib::getITracMoveInstance();
+            c_tracmove.updateSpeed(IsoAgLib::GpsBasedSpeed);
+#endif
+          }
+          // else: Regard this as NO (valid) COG/SOG, so it's just like nothing meaningful got received!
+        }
+    break;
+
     }
     return false;
   }
@@ -588,25 +605,37 @@ namespace __IsoAgLib {
     return true;
   };
 
-  #if defined(USE_FLOAT_DATA_TYPE)
-  /** check if an NMEA2000 position signal was received */
+  /** check if an NMEA2000 position signal was received - it does NOT indicate that this is an up2date signal */
   bool TimePosGPS_c::isPositionReceived() const
   {
-    if ( ( i32_latitudeDegree10Minus7 == 0x7FFFFFFF  )
-      && ( i32_longitudeDegree10Minus7 == 0x7FFFFFFF )
-      #ifdef NMEA_2000_FAST_PACKET
-      && ( ui32_altitudeCm == 0                      )
-      #endif // END of NMEA_2000_FAST_PACKET
+    if ( (i32_latitudeDegree10Minus7  >= ( -90*10000000)) && (i32_latitudeDegree10Minus7  <= ( 90*10000000))
+      && (i32_longitudeDegree10Minus7 >= (-180*10000000)) && (i32_longitudeDegree10Minus7 <= (180*10000000))
+      && (t_gnssMethod != IsoAgLib::IsoNoGps) /// @todo improve the checking on what's valid!
       )
+    { // yep, valid GPS information
+      return true;
+    }
+    else
     { // there is no valid GPS information
       return false;
     }
-    else
-    {
+  }
+
+  /** check if an NMEA2000 direction signal was received - it does NOT indicate that this is an up2date signal */
+  bool TimePosGPS_c::isDirectionReceived() const
+  {
+    if ( (ui16_courseOverGroundRad10Minus4 <= 62855) /// @todo check for the REAL max, 62855 is a little bigger than 62831 or alike that could be calculated. but anyway...
+      && (ui16_speedOverGroundCmSec        <= 65532)
+       )
+    { // yep, valid GPS-direction information
       return true;
     }
+    else
+    { // there is no valid GPS-direction information
+      return false;
+    }
   }
-  #endif // END of USE_FLOAT_DATA_TYPE
+
 
   #ifdef NMEA_2000_FAST_PACKET
   /** set the GPS time in UTC timezone.
@@ -691,6 +720,9 @@ namespace __IsoAgLib {
   void TimePosGPS_c::setGnssMode( IsoAgLib::IsoGnssMethod_t rt_newVal )
   {
     if(rt_newVal<=IsoAgLib::IsoGnssMethodMAX) t_gnssMethod = rt_newVal;
+/**
+ * not using data-mode anymore as we changed from PGN 130577 to 129026
+ *
     // set the upper 4 bits to unused as the Set/COG/Heading Ref is not used
     ui8_dataModeAndHeadingReference = 0xF0;
     switch ( rt_newVal )
@@ -720,17 +752,18 @@ namespace __IsoAgLib {
         // let the lower 4 bits at value "0" as currently initialized --> Autonomous Mode
         break;
     }
+*/
   }
 
   //! Parameter:
   //! @param rc_ident:
   //! @param rui32_totalLen:
   bool TimePosGPS_c::reactOnStreamStart (const IsoAgLib::ReceiveStreamIdentifier_c& rc_ident,
-                                  uint32_t /*rui32_totalLen */)
+                                         uint32_t /*rui32_totalLen */)
   {
-    if ( ( ( rc_ident.getPgn() == NMEA_GPS_POSITON_DATA_PGN   )
-            || ( rc_ident.getPgn() == NMEA_GPS_DIRECTION_DATA_PGN ) )
-            &&  checkModeGps(IsoAgLib::IdentModeImplement) )
+    if ( ( ( rc_ident.getPgn() == NMEA_GPS_POSITION_DATA_PGN  )
+        || ( rc_ident.getPgn() == NMEA_GPS_DIRECTION_DATA_PGN ) )
+        &&  checkModeGps(IsoAgLib::IdentModeImplement) )
     { // this a NMEA multi stream of interest where we don't send it
       return true;
     }
@@ -794,7 +827,7 @@ namespace __IsoAgLib {
 
     switch ( rc_ident.getPgn() )
     {
-      case NMEA_GPS_POSITON_DATA_PGN: // 0x01F805LU -> 129 029
+      case NMEA_GPS_POSITION_DATA_PGN: // 0x01F805LU -> 129029
       {
         i32_lastIsoPositionStream = data().time();
         // fetch sequence number from Byte1
@@ -866,22 +899,36 @@ namespace __IsoAgLib {
         #endif
       }
       break;
+
       case NMEA_GPS_DIRECTION_DATA_PGN: // 0x01FE11LU - 130577 with Heading and Speed
-        i32_lastIsoDirectionStream = data().time();
-        IsoAgLib::convertIstream( refc_stream, ui8_dataModeAndHeadingReference );
-        ui8_dataModeAndHeadingReference &= 0x3F;
+        uint8_t ui8_dummy;
+        uint16_t ui16_newCOG, ui16_newSOG;
+        IsoAgLib::convertIstream( refc_stream, ui8_dummy ); //ui8_dataModeAndHeadingReference ); //ui8_dataModeAndHeadingReferenceDUMMY &= 0x3F;
         IsoAgLib::convertIstream( refc_stream, ui8_directionSequenceID );
-        IsoAgLib::convertIstream( refc_stream, ui16_courseOverGroundRad10Minus4 );
-        IsoAgLib::convertIstream( refc_stream, ui16_speedOverGroundCmSec );
-        IsoAgLib::convertIstream( refc_stream, ui16_headingRad10Minus4 );
-        IsoAgLib::convertIstream( refc_stream, ui16_speedCmSec );
-        IsoAgLib::convertIstream( refc_stream, ui16_flowDirectionRad10Minus4 );
-        IsoAgLib::convertIstream( refc_stream, ui16_driftSpeedCmSec );
+        IsoAgLib::convertIstream( refc_stream, ui16_newCOG );
+        IsoAgLib::convertIstream( refc_stream, ui16_newSOG );
+      //IsoAgLib::convertIstream( refc_stream, ui16_dummy ); //ui16_headingRad10Minus4 );
+      //IsoAgLib::convertIstream( refc_stream, ui16_dummy ); //ui16_speedCmSec );
+      //IsoAgLib::convertIstream( refc_stream, ui16_dummy ); //ui16_flowDirectionRad10Minus4 );
+      //IsoAgLib::convertIstream( refc_stream, ui16_dummy ); //ui16_driftSpeedCmSec );
+        /** @todo Do we need those valus above?? */
+
+        if ( (ui16_newCOG <= (62855)) /// @todo check for the REAL max, 62855 is a little bigger than 62831 or alike that could be calculated. but anyway...
+          && (ui16_newSOG <= (65532))
+           )
+        {
+          ui16_courseOverGroundRad10Minus4 = ui16_newCOG;
+          ui16_speedOverGroundCmSec = ui16_newSOG;
+          i32_lastIsoDirection = data().time();
+#if defined (USE_TRACTOR_MOVE) || defined (USE_BASE)
+          IsoAgLib::iTracMove_c& c_tracmove = IsoAgLib::getITracMoveInstance();
+          c_tracmove.updateSpeed(IsoAgLib::GpsBasedSpeed);
+#endif
+        }
+
         #ifdef DEBUG
         INTERNAL_DEBUG_DEVICE << "process NMEA_GPS_DIRECTION_DATA_PGN: CourseOverGround: " << ui16_courseOverGroundRad10Minus4
           << ", SpeedOverGround [cm/sec]: " << ui16_speedOverGroundCmSec
-          << ", Heading: " << ui16_headingRad10Minus4
-          << ", Speed [cm/sec]: " << ui16_speedCmSec
           << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
         break;
@@ -909,19 +956,18 @@ namespace __IsoAgLib {
         sendPositionRapidUpdate();
       }
 
+      if ( ( ci32_now - i32_lastIsoDirection ) >= 250 )
+      {
+        if ( getAvailableExecTime() == 0 ) return false;
+        isoSendDirection();
+      }
+
       #ifdef NMEA_2000_FAST_PACKET
       if ( ( ( ci32_now - i32_lastIsoPositionStream ) >= 1000 )
         && ( t_multiSendSuccessState != MultiSend_c::Running  ) )
       {
         if ( getAvailableExecTime() == 0 ) return false;
         isoSendPositionStream();
-      }
-
-      if ( ( ( ci32_now - i32_lastIsoDirectionStream ) >= 1000 )
-        && ( t_multiSendSuccessState != MultiSend_c::Running   ) )
-      {
-        if ( getAvailableExecTime() == 0 ) return false;
-        isoSendDirectionStream();
       }
       #endif // END of NMEA_2000_FAST_PACKET
     }
@@ -934,11 +980,11 @@ namespace __IsoAgLib {
     // retreive the actual dynamic sender no of the member with the registered isoName
     uint8_t b_sa = getIsoMonitorInstance4Comm().isoMemberISOName(*pc_isoNameGps, true).nr();
     data().setIdentType(Ident_c::ExtendedIdent);
-    data().setIsoPri(3);
+    data().setIsoPri(2);
     data().setLen(8);
     data().setIsoSa(b_sa);
 
-    data().setIsoPgn(NMEA_GPS_POSITON_RAPID_UPDATE_PGN);
+    data().setIsoPgn(NMEA_GPS_POSITION_RAPID_UPDATE_PGN);
     data().setInt32Data(0, i32_latitudeDegree10Minus7 );
     data().setInt32Data(4, i32_longitudeDegree10Minus7);
 
@@ -950,8 +996,10 @@ namespace __IsoAgLib {
     i32_lastIsoPositionSimple = getLastRetriggerTime();
   }
 
-  #if defined(NMEA_2000_FAST_PACKET)
-  /** send direction as detailed stream */
+/** send COG and SOG as 250ms rapid update, but with single packet only */
+/**
+** not using anymore as we changed from PGN 130577 to 129026
+**
   void TimePosGPS_c::isoSendDirectionStream( void )
   {
     const int32_t ci32_now = getLastRetriggerTime();
@@ -981,7 +1029,35 @@ namespace __IsoAgLib {
       ui8_directionSequenceID++;
     }
   }
+*/
 
+void TimePosGPS_c::isoSendDirection( void )
+{
+  // little pre-Setup
+  ui8_directionSequenceID = 0xFF; // not using tied-together-packaging right now
+  ui8_courseOverGroundReference = 0; // for now, we only send TRUE NORTH
+
+  data().setIdentType(Ident_c::ExtendedIdent);
+  data().setIsoPri(2);
+  data().setISONameForSA(*pc_isoNameGps);
+
+  data().setIsoPgn (NMEA_GPS_COG_SOG_RAPID_UPDATE_PGN);
+  data().setUint8Data (0, ui8_directionSequenceID );
+  data().setUint8Data (1, ui8_courseOverGroundReference);
+  data().setUint16Data(2, ui16_courseOverGroundRad10Minus4 );
+  data().setUint16Data(4, ui16_speedOverGroundCmSec );
+  data().setUint16Data(6, 0xFFFF );
+
+  // CANIO_c::operator<< retreives the information with the help of CANPkg_c::getData
+  // then it sends the data
+  getCanInstance4Comm() << data();
+
+  // update time
+  i32_lastIsoDirection = Scheduler_c::getLastTimeEventTrigger();
+}
+
+
+#if defined(NMEA_2000_FAST_PACKET)
   void setDegree10Minus7ToStream( const int32_t& refi32_src, std::vector<uint8_t>& writeRef )
   {
     #if SIZEOF_INT == 4
@@ -1019,6 +1095,9 @@ namespace __IsoAgLib {
   /** send position as detailed stream */
   void TimePosGPS_c::isoSendPositionStream( void )
   {
+    // little pre-Setup
+    ui8_positionSequenceID = 0xFF; // not using tied-together-packaging right now
+
     const int32_t ci32_now = getLastRetriggerTime();
     // set data in Nmea2000SendStreamer_c
     c_nmea2000Streamer.reset();
@@ -1083,14 +1162,13 @@ namespace __IsoAgLib {
 
     //now trigger sending
     #ifdef SEND_NMEA2000_FAST_PACKET
-    if ( getMultiSendInstance4Comm().sendIsoFastPacket(c_sendGpsISOName, &c_nmea2000Streamer, NMEA_GPS_POSITON_DATA_PGN, t_multiSendSuccessState) )
+    if ( getMultiSendInstance4Comm().sendIsoFastPacket(c_sendGpsISOName, &c_nmea2000Streamer, NMEA_GPS_POSITION_DATA_PGN, t_multiSendSuccessState) )
     #else
-      if ( getMultiSendInstance4Comm().sendIsoBroadcast(c_sendGpsISOName, &c_nmea2000Streamer, NMEA_GPS_POSITON_DATA_PGN, t_multiSendSuccessState) )
+    if ( getMultiSendInstance4Comm().sendIsoBroadcast(c_sendGpsISOName, &c_nmea2000Streamer, NMEA_GPS_POSITION_DATA_PGN, t_multiSendSuccessState) )
     #endif
     { // update time
       i32_lastIsoPositionStream = ci32_now;
-      ui8_positionSequenceID++;
-    }
+   }
   }
   #endif // END OF NMEA_2000_FAST_PACKET
 

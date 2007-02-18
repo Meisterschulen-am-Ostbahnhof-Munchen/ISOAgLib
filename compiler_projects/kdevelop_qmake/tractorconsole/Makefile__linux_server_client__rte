@@ -156,6 +156,7 @@ include $(DEPS_SERVER)
 can_server: $(OBJECTS_SERVER)
 	$(LINK) $(LFLAGS) -o can_server $(OBJECTS_SERVER) $(LIBS)
 ####### Some Standard Rules
+SUBLIBS  = -lrt
 CC       = $(COMPILER_BINARY_PRE)gcc
 CXX      = $(COMPILER_BINARY_PRE)g++
 STRIP	 = $(COMPILER_BINARY_PRE)strip
@@ -168,7 +169,7 @@ YACCFLAGS= -d
 INCPATH  = -I. -I$(ISOAGLIB_PATH)/xgpl_src $(APP_INC) $(BIOS_INC)
 LINK     = $(COMPILER_BINARY_PRE)g++
 LFLAGS   = -pthread
-LIBS     = $(SUBLIBS)  $(BIOS_LIB)
+LIBS     = $(BIOS_LIB) $(SUBLIBS)
 AR       = ar cqs
 RANLIB   =
 TAR      = tar -cf
@@ -240,10 +241,10 @@ dynamic_library:  $(OBJECTS_LIBRARY)
 
 all: can_server Makefile static_library dynamic_library  $(TARGET)
 $(TARGET):  $(OBJECTS_APP) static_library dynamic_library
-	$(LINK) $(LFLAGS) -o $(TARGET)_static $(OBJECTS_APP) $(LIBS) $(OBJ_DIR_LIBRARY)/libisoaglib.a
-	$(LINK) $(LFLAGS) -o $(TARGET)_dynamic $(OBJECTS_APP) $(LIBS) $(OBJ_DIR_LIBRARY)/libisoaglib.so
+	$(LINK) $(LFLAGS) -o $(TARGET)_static $(OBJECTS_APP) $(OBJ_DIR_LIBRARY)/libisoaglib.a $(LIBS)
+	$(LINK) $(LFLAGS) -o $(TARGET)_dynamic $(OBJECTS_APP) $(OBJ_DIR_LIBRARY)/libisoaglib.so $(LIBS)
 	rm -f $(TARGET)
-	ln -s $(TARGET)_dynamic $(TARGET)
+	ln -s $(TARGET)_static $(TARGET)
 
 dist:
 	@mkdir -p objects/$(TARGET) && $(COPY_FILE) --parents $(SOURCES) $(HEADERS) $(FORMS) $(DIST) objects/$(TARGET)/ && ( cd `dirname objects/$(TARGET)` && $(TAR) vtserver_rte.tar vtserver_rte && $(GZIP) vtserver_rte.tar ) && $(MOVE) `dirname objects/vtserver_rte`/vtserver_rte.tar.gz . && $(DEL_FILE) -r objects/vtserver_rte

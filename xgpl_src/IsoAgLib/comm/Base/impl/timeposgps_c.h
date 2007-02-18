@@ -299,12 +299,16 @@ public:
   /** set the actual calendar year value */
   void setYearUtc(uint16_t rui16_year){i32_lastCalendarSet = System_c::getTime();bit_calendar.year = rui16_year; t_cachedLocalSeconds1970AtLastSet = 0;};
 
-  /** deliver raw GPS Latitude [degree] with scaling 10.0e-7 */
+  /** set raw GPS Latitude [degree] with scaling 10.0e-7 */
   void setGpsLatitudeDegree10Minus7( int32_t ri32_newVal ) { i32_latitudeDegree10Minus7 = ri32_newVal; }
 
-  /** deliver raw GPS Longitude [degree] with scaling 10.0e-7 */
+  /** set raw GPS Longitude [degree] with scaling 10.0e-7 */
   void setGpsLongitudeDegree10Minus7( int32_t ri32_newVal ) { i32_longitudeDegree10Minus7 = ri32_newVal; }
 
+  /** deliver GPS Speed Over Ground as [cm/s] */
+  void setGpsSpeedCmSec( uint16_t rui16_newVal ) { ui16_speedOverGroundCmSec = rui16_newVal; }
+  /** deliver GPS Course Over Ground [1x10E-4rad] */
+  void setGpsCourseRad10Minus4( uint16_t rui16_newVal ) { ui16_courseOverGroundRad10Minus4 = rui16_newVal; };
 
   #if defined(NMEA_2000_FAST_PACKET)
   /** set the GPS time in UTC timezone.
@@ -351,28 +355,22 @@ public:
    */
   void setMillisecondUtcGps(uint16_t rui16_millisecond);
 
-  /** deliver GPS altitude - [cm] */
+  /** set GPS altitude - [cm] */
   void setGpsAltitudeCm( uint32_t rui32_newVal ) { ui32_altitudeCm = rui32_newVal; }
 
-  /** deliver GPS receive qualitiy */
+  /** set GPS receive qualitiy */
   void setGnssMode( IsoAgLib::IsoGnssMethod_t rt_newVal );
 
-  /** deliver GNSS type ( e.g. GPS, GLONASS or SBAS ) */
+  /** set GNSS type ( e.g. GPS, GLONASS or SBAS ) */
   void setGnssType( IsoAgLib::IsoGnssType_t rt_newVal )   { if(rt_newVal<=IsoAgLib::IsoGnssTypeMAX) t_gnssType = rt_newVal;}
 
-  /** deliver GPS speed as [cm/s] */
-  void setGpsSpeedCmSec( uint16_t rui16_newVal ) { ui16_speedCmSec = rui16_newVal;}
-
-  /** deliver GPS Heading [1x10E-4rad] */
-  void setGpsHeadingRad10Minus4( uint16_t rui16_newVal ) { ui16_headingRad10Minus4 = rui16_newVal; }
-
-  /** deliver number of received satellites */
+  /** set number of received satellites */
   void setSatelliteCnt( uint8_t rui8_newVal ) { ui8_satelliteCnt = rui8_newVal;}
 
-  /** deliver HDOP with scaling [1x10E-2] */
+  /** set HDOP with scaling [1x10E-2] */
   void setHdop10Minus2( uint16_t rui16_newVal ) { i16_hdop = rui16_newVal;}
 
-  /** PDOP with scaling [1x10E-2] */
+  /** set PDOP with scaling [1x10E-2] */
   void setPdop10Minus2( uint16_t rui16_newVal ) { i16_pdop = rui16_newVal;}
   #endif // END of NMEA_2000_FAST_PACKET
 
@@ -486,10 +484,10 @@ public:
   /** deliver raw GPS Longitude [degree] with scaling 10.0e-7 */
   int32_t getGpsLongitudeDegree10Minus7( void ) const { return i32_longitudeDegree10Minus7; }
 
-  #if defined(USE_FLOAT_DATA_TYPE)
   /** check if an NMEA2000 position signal was received */
   bool isPositionReceived() const;
 
+  #if defined(USE_FLOAT_DATA_TYPE)
   /** deliver Minute GPS Latitude */
   float getGpsLatitudeMinute( void ) const { return ( i32_latitudeDegree10Minus7 * 6.0e-4  ); }
 
@@ -502,6 +500,17 @@ public:
   /** deliver Degree GPS Longitude */
   float getGpsLongitudeDegree( void ) const { return ( float(i32_longitudeDegree10Minus7) * 1.0e-7 ); }
   #endif // END of USE_FLOAT_DATA_TYPE
+
+  /** deliver GPS Speed Over Ground as [cm/s] */
+  uint16_t getGpsSpeedCmSec( void ) const { return ui16_speedOverGroundCmSec; }
+  /** deliver GPS Course Over Ground [1x10E-4rad] */
+  uint16_t getGpsCourseRad10Minus4( void ) const { return ui16_courseOverGroundRad10Minus4; }
+
+  /** check if an NMEA2000 direction signal was received */
+  bool isDirectionReceived() const;
+
+  /** deliver GPS receive qualitiy - also needed to see if we have valid GPS-positioning!!! */
+  IsoAgLib::IsoGnssMethod_t getGnssMode( void ) const { return t_gnssMethod; }
 
   #ifdef NMEA_2000_FAST_PACKET
   /** get the GPS UTC hour value
@@ -527,41 +536,44 @@ public:
   /** deliver GPS altitude - [cm] */
   uint32_t getGpsAltitudeCm( void ) const { return ui32_altitudeCm; }
 
-  /** deliver GPS receive qualitiy */
-  IsoAgLib::IsoGnssMethod_t getGnssMode( void ) const { return t_gnssMethod;}
-
   /** simply check for some sort of Differential signal */
   bool hasDifferentialPosition() const { return ( ( t_gnssMethod > IsoAgLib::IsoGnssFix ) && ( t_gnssMethod < IsoAgLib::IsoDrEstimated ) )?true:false;}
 
   /** deliver GNSS type ( e.g. GPS, GLONASS or SBAS ) */
-  IsoAgLib::IsoGnssType_t getGnssType(void) const { return t_gnssType;}
-
-  /** deliver GPS speed as [cm/s] */
-  uint16_t getGpsSpeedCmSec( void ) const { return ui16_speedCmSec;}
-
-  /** deliver GPS Heading [1x10E-4rad] */
-  uint16_t getGpsHeadingRad10Minus4( void ) const { return ui16_headingRad10Minus4; }
+  IsoAgLib::IsoGnssType_t getGnssType(void) const { return t_gnssType; }
 
   /** deliver number of received satellites */
-  uint8_t satelliteCnt() const { return ui8_satelliteCnt;}
+  uint8_t satelliteCnt() const { return ui8_satelliteCnt; }
 
   /** deliver HDOP with scaling [1x10E-2] */
-  int16_t hdop10Minus2() const { return i16_hdop;}
+  int16_t hdop10Minus2() const { return i16_hdop; }
 
   /** PDOP with scaling [1x10E-2] */
-  int16_t pdop10Minus2() const { return i16_pdop;}
-  #endif // END NMEA_2000_FAST_PACKET
+  int16_t pdop10Minus2() const { return i16_pdop; }
 
-#if defined (NMEA_2000_FAST_PACKET)
-  /** deliver age of last gps-update in milliseconds */
-  uint16_t getGpsUpdateAge( void ) const
+  /** deliver age of last gps-position-update in milliseconds
+      please use in conjunction with isPositionReceived() first,
+      as else the uint16_t would wrap the result around into 0..x areas
+      which would indicate you a not too old position you would use! */
+  uint16_t getGpsPositionUpdateAge( void ) const
   { if ( i32_lastIsoPositionStream > i32_lastIsoPositionSimple) return (System_c::getTime() - i32_lastIsoPositionStream);
     else                                                        return (System_c::getTime() - i32_lastIsoPositionSimple);}
 #else
-  /** deliver age of last gps-update in milliseconds */
-  uint16_t getGpsUpdateAge( void ) const
-  { return (System_c::getTime() - i32_lastIsoPositionSimple);}
+  /** deliver age of last gps-position-update in milliseconds
+      please use in conjunction with isPositionReceived() first,
+      as else the uint16_t would wrap the result around into 0..x areas
+      which would indicate you a not too old position you would use! */
+  uint16_t getGpsPositionUpdateAge( void ) const
+  { return (System_c::getTime() - i32_lastIsoPositionSimple); }
 #endif
+
+  /** deliver age of last gps-direction-update in milliseconds
+      please use in conjunction with isPositionReceived() first,
+      as else the uint16_t would wrap the result around into 0..x areas
+      which would indicate you a not too old position you would use! */
+  uint16_t getGpsDirectionUpdateAge( void ) const
+  { return (System_c::getTime() - i32_lastIsoDirection); }
+
 
   ///  Used for Debugging Tasks in Scheduler_c
   virtual const char* getTaskName() const;
@@ -608,13 +620,13 @@ private:
     */
   bool processMsg();
 
-  #if defined(NMEA_2000_FAST_PACKET)
+  /** send direction as detailed stream */
+  void isoSendDirection( void );
+
+#if defined(NMEA_2000_FAST_PACKET)
   /** send position as detailed stream */
   void isoSendPositionStream( void );
-
-  /** send direction as detailed stream */
-  void isoSendDirectionStream( void );
-  #endif // END NMEA_2000_FAST_PACKET
+#endif // END NMEA_2000_FAST_PACKET
 
 private:
   // Private attributes
@@ -649,11 +661,48 @@ private:
   /** raw GPS longitude [degree]; Long_Min < 0 --> West */
   int32_t i32_longitudeDegree10Minus7;
 
+
   /// General
-  /** last time of ISO GPS msg [msec] */
+  /** last time of ISO GPS msg [msec] Position */
   int32_t i32_lastIsoPositionSimple;
 
-  #ifdef NMEA_2000_FAST_PACKET
+  /** last time of ISO GPS msg [msec] Direction */
+  int32_t i32_lastIsoDirection;
+
+  /** course over ground reference */
+  uint8_t ui8_courseOverGroundReference;
+
+  /** sequence ID of direction data */
+  uint8_t ui8_directionSequenceID;
+
+  /** course over ground */
+  uint16_t ui16_courseOverGroundRad10Minus4;
+
+  /** speed over ground */
+  uint16_t ui16_speedOverGroundCmSec;
+
+/** not using anymore as we changed from PGN 130577 to 129026
+  // data mode and Set/COG/Heading Ref. of Direction Data PGN 130577
+  uint8_t ui8_dataModeAndHeadingReference;
+
+  // GPS heading [1x10E-4rad]
+  uint16_t ui16_headingRad10Minus4;
+
+  // GPS speed - [cm/s]
+  uint16_t ui16_speedCmSec;
+
+  // flow direction
+  uint16_t ui16_flowDirectionRad10Minus4;
+
+  // drift speed
+  uint16_t ui16_driftSpeedCmSec;
+*/
+
+
+  /** GNSS Method and Quality - not only in NMEA_2000_FAST_PACKET as we need to know if GPS inf. is valid! */
+  IsoAgLib::IsoGnssMethod_t t_gnssMethod;
+
+#ifdef NMEA_2000_FAST_PACKET
   /** GPS time in UTC */
   struct {
     uint16_t hour : 6;
@@ -665,14 +714,8 @@ private:
   /** last time of ISO GPS msg [msec] */
   int32_t i32_lastIsoPositionStream;
 
-  /** last time of ISO GPS msg [msec] */
-  int32_t i32_lastIsoDirectionStream;
-
   /** GPS altitude - [cm] */
   uint32_t ui32_altitudeCm;
-
-  /** GNSS Method and Quality */
-  IsoAgLib::IsoGnssMethod_t t_gnssMethod;
 
   /** GNSS Type */
   IsoAgLib::IsoGnssType_t t_gnssType;
@@ -695,30 +738,6 @@ private:
   uint8_t ui8_noRefStations;
   std::vector<uint16_t> vec_refStationTypeAndStation;
   std::vector<uint16_t> vec_refStationDifferentialAge10Msec;
-
-  /** data mode and Set/COG/Heading Ref. of Direction Data PGN 130577 */
-  uint8_t ui8_dataModeAndHeadingReference;
-
-  /** sequence ID of direction data */
-  uint8_t ui8_directionSequenceID;
-
-  /** course over ground */
-  uint16_t ui16_courseOverGroundRad10Minus4;
-
-  /** speed over ground */
-  uint16_t ui16_speedOverGroundCmSec;
-
-  /** GPS heading [1x10E-4rad] */
-  uint16_t ui16_headingRad10Minus4;
-
-  /** GPS speed - [cm/s] */
-  uint16_t ui16_speedCmSec;
-
-  /** flow direction */
-  uint16_t ui16_flowDirectionRad10Minus4;
-
-  /** drift speed */
-  uint16_t ui16_driftSpeedCmSec;
 
   /** buffer class for sending data streams */
   Nmea2000SendStreamer_c c_nmea2000Streamer;
