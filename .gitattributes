@@ -1703,6 +1703,7 @@ compiler_projects/projectGeneration/conf_0_3_LookupIso -text
 compiler_projects/projectGeneration/conf_1_0_ReadIso -text
 compiler_projects/projectGeneration/conf_1_2_WriteIso -text
 compiler_projects/projectGeneration/conf_1_4_WriteFlexibleIso -text
+compiler_projects/projectGeneration/conf_1_5_ReadGps -text
 compiler_projects/projectGeneration/conf_2_0_LocalReadDataStdIso -text
 compiler_projects/projectGeneration/conf_2_10_RemoteWriteSetpointSimpleSetpointIso -text
 compiler_projects/projectGeneration/conf_2_1_LocalReadDataSimpleMeasureIso -text
