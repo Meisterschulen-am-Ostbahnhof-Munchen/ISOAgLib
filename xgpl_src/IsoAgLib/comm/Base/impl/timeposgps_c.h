@@ -478,6 +478,10 @@ public:
   */
   struct CNAMESPACE::tm* currentUtcTm();
 
+
+
+  /** *** Position ** **/
+
   /** deliver raw GPS Latitude [degree] with scaling 10.0e-7 */
   int32_t getGpsLatitudeDegree10Minus7( void ) const { return i32_latitudeDegree10Minus7; }
 
@@ -487,7 +491,16 @@ public:
   /** check if an NMEA2000 position signal was received */
   bool isPositionReceived() const;
 
-  #if defined(USE_FLOAT_DATA_TYPE)
+  /** check if we have valid Position data, so the information should be sent out in timeEventTracMode */
+  bool isPositionSimpleToSend() const
+    { return ( (i32_latitudeDegree10Minus7  >= ( -90*10000000)) && (i32_latitudeDegree10Minus7  <= ( 90*10000000))
+            && (i32_longitudeDegree10Minus7 >= (-180*10000000)) && (i32_longitudeDegree10Minus7 <= (180*10000000))); }
+
+  bool isPositionStreamToSend() const
+    { return isPositionSimpleToSend() && (ui32_altitudeCm != 0xFFFFFFFF); }
+
+
+#if defined(USE_FLOAT_DATA_TYPE)
   /** deliver Minute GPS Latitude */
   float getGpsLatitudeMinute( void ) const { return ( i32_latitudeDegree10Minus7 * 6.0e-4  ); }
 
@@ -499,7 +512,11 @@ public:
 
   /** deliver Degree GPS Longitude */
   float getGpsLongitudeDegree( void ) const { return ( float(i32_longitudeDegree10Minus7) * 1.0e-7 ); }
-  #endif // END of USE_FLOAT_DATA_TYPE
+#endif // END of USE_FLOAT_DATA_TYPE
+
+
+
+  /** *** Direction *** **/
 
   /** deliver GPS Speed Over Ground as [cm/s] */
   uint16_t getGpsSpeedCmSec( void ) const { return ui16_speedOverGroundCmSec; }
@@ -509,8 +526,17 @@ public:
   /** check if an NMEA2000 direction signal was received */
   bool isDirectionReceived() const;
 
+  /** check if we have valid Direction data, so the information should be sent out in timeEventTracMode */
+  bool isDirectionToSend() const
+    { return ( (ui16_courseOverGroundRad10Minus4 <= 62855) /// @todo check for the REAL max, 62855 is a little bigger than 62831 or alike that could be calculated. but anyway...
+            && (ui16_speedOverGroundCmSec <= 65532)); }
+
   /** deliver GPS receive qualitiy - also needed to see if we have valid GPS-positioning!!! */
   IsoAgLib::IsoGnssMethod_t getGnssMode( void ) const { return t_gnssMethod; }
+
+
+
+
 
   #ifdef NMEA_2000_FAST_PACKET
   /** get the GPS UTC hour value
