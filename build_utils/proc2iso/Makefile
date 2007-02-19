@@ -89,7 +89,7 @@ APP_NAME=proc2iso
 
 OUTDIR= bin/obj
 EXEC=	bin
-OBJS=	${OUTDIR}/proc2iso.o ${OUTDIR}/isoname_c.o ${OUTDIR}/util_funcs.o ${OUTDIR}/liberr_c.o
+OBJS=	${OUTDIR}/proc2iso.o ${OUTDIR}/isoname_c.o ${OUTDIR}/util_funcs.o ${OUTDIR}/iliberr_c.o
 myLIBRARY_NAMES = ${LIBRARY_NAMES} -lpthread
 
 ## OS390BATCH
@@ -117,8 +117,8 @@ $(OUTDIR)/isoname_c.o:: ../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/is
 ${OUTDIR}/util_funcs.o:: ../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
 	${CC} ${INCLUDES} ${CMP} -o $(OUTDIR)/util_funcs.o ../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
 
-${OUTDIR}/liberr_c.o:: ../../xgpl_src/IsoAgLib/util/liberr_c.cpp
-	${CC} ${INCLUDES} ${CMP} -o $(OUTDIR)/liberr_c.o ../../xgpl_src/IsoAgLib/util/liberr_c.cpp
+${OUTDIR}/iliberr_c.o:: ../../xgpl_src/IsoAgLib/util/iliberr_c.cpp
+	${CC} ${INCLUDES} ${CMP} -o $(OUTDIR)/iliberr_c.o ../../xgpl_src/IsoAgLib/util/iliberr_c.cpp
 
 clean::
 	rm -f ${OBJS} ${EXEC}/${APP_NAME}
