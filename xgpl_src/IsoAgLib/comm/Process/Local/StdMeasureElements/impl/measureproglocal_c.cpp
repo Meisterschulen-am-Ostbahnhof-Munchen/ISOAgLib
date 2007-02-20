@@ -380,7 +380,7 @@ bool MeasureProgLocal_c::start(Proc_c::type_t ren_type,
   if (processData().valType() != float_val) return start(ren_type, ren_doSend, i32_lastMasterVal);
   else return start(ren_type, ren_doSend, f_lastMasterVal);
 #else
-  return start(ren_doSend, i32_lastMasterVal);
+  return start(ren_type, ren_doSend, i32_lastMasterVal);
 #endif
 }
 

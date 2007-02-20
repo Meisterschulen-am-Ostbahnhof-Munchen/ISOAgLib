@@ -245,7 +245,7 @@ bool SetpointLocal_c::existUnhandledMaster() {
   while (pc_registerCache != vec_register.end())
   {
     if ( ( ((existMaster()) && (pc_registerCache->isoName() == masterConst().isoName()))
-        || ((existMaster()) && (masterConst().isoName() == 0xFF) )
+        || ((existMaster()) && (masterConst().isoName().isUnspecified()) )
         || ((pc_registerCache->master()) )
          )
       && (!pc_registerCache->handled())
@@ -370,7 +370,7 @@ void SetpointLocal_c::setMasterMeasurementVal( int32_t ri32_val)
   master().setExact( ri32_val);
   master().setHandled( true);
   master().setValid( true);
-  master().setISOName( 0xFF);
+  master().setISOName(ISOName_c::ISONameUnspecified);
 
 #ifdef USE_FLOAT_DATA_TYPE
   setValType( i32_val);
