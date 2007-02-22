@@ -3,7 +3,7 @@
 
 INCLUDE_mainHeaderWithNavbar.txt_INCLUDE
 
-\section IndexChanges Changes
+\section Changes Changes
 
 \subsection Change_M 1.2.2(unofficial) to 2.0
   - removed DIN-related code, adapted proc2iso and rebuild all tutorials and their device descriptions

@@ -1,0 +1,6 @@
+/*! \page PageSitemap Sitemap of IsoAgLib
+
+INCLUDE_mainHeaderWithNavbar.txt_INCLUDE
+\section Sitemap Sitemap
+INCLUDE_menu-list.txt_INCLUDE
+*/

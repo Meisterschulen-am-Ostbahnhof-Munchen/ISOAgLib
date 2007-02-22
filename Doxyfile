@@ -459,11 +459,26 @@ WARN_LOGFILE           =
 # directories like "/usr/src/myproject". Separate the files or directories 
 # with spaces.
 
-INPUT                  = IsoAgLib_Examples \
-                         xgpl_src \
-                         build_utils \
+INPUT                  = xgpl_src \
                          readme.txt \
+                         build_utils \
                          changelog.txt \
+                         where-to-start.txt \
+                         main-features.txt \
+                         structural-overview.txt \
+                         license-conditions.txt \
+                         memory-usage.txt \
+                         todo.txt \
+                         using-projects.txt \
+                         support.txt \
+                         maintainers.txt \
+                         howto-download.txt \
+                         getting-installed.txt \
+                         information.txt \
+                         outlook.txt \
+                         gpl-with-exception.txt \
+                         disc-further.txt \
+                         sitemap.txt \
                          oldNews.txt \
                          README_LICENSED_PARTS.txt
 
@@ -473,6 +488,11 @@ INPUT                  = IsoAgLib_Examples \
 # blank the following patterns are tested: 
 # *.c *.cc *.cxx *.cpp *.c++ *.java *.ii *.ixx *.ipp *.i++ *.inl *.h *.hh *.hxx 
 # *.hpp *.h++ *.idl *.odl *.cs *.php *.php3 *.inc *.m *.mm *.py
+
+## temporaer absichtlich zuwenig, um schneller zu generieren:
+#FILE_PATTERNS          = *.txt \
+#                         *.html \
+#                         *.dox
 
 FILE_PATTERNS          = *.c \
                          *.cc \
