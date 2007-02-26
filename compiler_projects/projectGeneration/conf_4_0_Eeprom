@@ -302,7 +302,7 @@ PRJ_ISO11783=1
 
 # Decide to activate an interface for handling of proprietary CAN identifiers
 # as defined by ISO 11783
-# PRJ_PROPRIETARY_CAN_INTERFACE=0
+# PRJ_PROPRIETARY_PGN_INTERFACE=0
 
 
 # ###############################################################

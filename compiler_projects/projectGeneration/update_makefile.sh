@@ -221,8 +221,8 @@ if [ "A$CAN_BUS_CNT" = "A" ] ; then
   	APP_NAME=""
   fi
 
-	if [ "A$PRJ_PROPRIETARY_CAN_INTERFACE" = "A" ] ; then
-		PRJ_PROPRIETARY_CAN_INTERFACE=0
+	if [ "A$PRJ_PROPRIETARY_PGN_INTERFACE" = "A" ] ; then
+		PRJ_PROPRIETARY_PGN_INTERFACE=0
 	fi
 
   if [ "A$PRJ_ISO11783" = "A" ] ; then
@@ -568,7 +568,7 @@ function create_filelist( )
     COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -name '*timeposgps*' \)"
   fi
 
-	if [ $PRJ_PROPRIETARY_CAN_INTERFACE -gt 0 ] ; then
+	if [ $PRJ_PROPRIETARY_PGN_INTERFACE -gt 0 ] ; then
 		COMM_FEATURES="$COMM_FEATURES -o -path '*/ProprietaryCan/*'"
 	fi
 
@@ -583,6 +583,9 @@ function create_filelist( )
 		fi
     PRJ_MULTIPACKET=1
   fi
+	if [ $PRJ_PROPRIETARY_PGN_INTERFACE -gt 0 ] ; then
+    PRJ_MULTIPACKET=1
+	fi
   if [ $PRJ_DATASTREAMS -lt 1 ] ; then
 		if test $PRJ_ISO_TERMINAL -gt 0 -o $PRJ_TIME_GPS -gt 0 ; then
 	    COMM_FEATURES="$COMM_FEATURES -o -path '*/driver/datastreams/volatilememory_c.cpp'"
