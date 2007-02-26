@@ -1,4 +1,4 @@
-/** \page TutPrjDesc2_0_LocalReadDataStdIso Tutorial project description for build of Tutorial 2_0_LocalReadDataStdIso
+/** \page TutPrjDesc5_1_ProprietaryPgn Tutorial project description for build of Tutorial 5_1_ProprietaryPgn
   This page contains the needed project specification and the resulting project file lists
   and configuration header contents to build the project.
 -e 
@@ -6,20 +6,20 @@
 
 
 
- \section PrjSpec2_0_LocalReadDataStdIso__pc_win32__sontheim__simulating List of configuration settings for 2_0_LocalReadDataStdIso with CAN Driver sontheim and RS232 Driver simulating
+ \section PrjSpec5_1_ProprietaryPgn__pc_win32__sontheim__simulating List of configuration settings for 5_1_ProprietaryPgn with CAN Driver sontheim and RS232 Driver simulating
  This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
- Use the file conf_2_0_LocalReadDataStdIso in this directory as input file for ./update_makefile.sh to create the project generation files.
+ Use the file conf_5_1_ProprietaryPgn in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
-# Filename: conf_2_0_LocalReadDataStdIso
-# Configuration setting for tutorial example 2_0_LocalReadDataStdIso
-# in the tutorial group 2_ProcessData
+# Filename: conf_5_1_ProprietaryPgn
+# Configuration setting for tutorial example 5_1_ProprietaryPgn
+# in the tutorial group 5_CanFeatures
 
 # ###############################################################
 # Project Identification
 # ###############################################################
 
 # define project name - used for directory with makefile
-PROJECT=2_0_LocalReadDataStdIso
+PROJECT=5_1_ProprietaryPgn
 
 # define the project author
 # - used for IDE project file types, where the author is stored in the project file
@@ -34,12 +34,12 @@ PROJECT_AUTHOR_EMAIL=MyEmail@Location
 # ( in relation to the root of the IsoAgLib
 #    - ONLY RELATIVE PATH )
 # seperate directories by whitespace
-REL_APP_PATH="IsoAgLib_Examples/tutorial/2_ProcessData/2_0_LocalReadDataStdIso"
+REL_APP_PATH="IsoAgLib_Examples/tutorial/5_CanFeatures/5_1_ProprietaryPgn"
 # define the name of the app
 # ( if this variable is not set, then
 #   all files of the selected directories are used )
 # seperate files by whitespace
-APP_SRC_FILE="2_0_LocalReadDataStdIso.cpp"
+APP_SRC_FILE="5_1_ProprietaryPgn.cpp"
 # define the file extensions to include for the
 # application source file search ( default: *.c *.cc *.cpp *.h *.hpp )
 # APP_SEARCH_SRC_CONDITION="*.cc *.c *.cpp"
@@ -96,7 +96,7 @@ ISO_AG_LIB_PATH="../.."
 # default is FALSE as far as possible
 # ( this has an impact on process data, RS232 output,
 #   GPS decode )
-USE_FLOAT_DATA_TYPE=1
+# USE_FLOAT_DATA_TYPE=0
 
 # select if HEAP usage should reduce size in favour of speed
 # ( default: maximize speed, which costs about 10KByte more HEAPSIZE,
@@ -144,7 +144,7 @@ USE_RS232_DRIVER="simulating"
 
 # define the amount of available CAN BUSes at the ECU
 # ( default 1 )
-CAN_BUS_CNT=1
+# CAN_BUS_CNT=1
 
 # define the amount of CAN instances to support
 # ( all values lower than 1 are overwritten by default 1 )
@@ -239,16 +239,16 @@ PRJ_ISO11783=1
 # ###############################################################
 
 # activate globally the use of process data
-PRJ_PROCESS=1
+# PRJ_PROCESS=0
 
 # decide if local process data are wanted
-PROC_LOCAL=1
+# PROC_LOCAL=0
 
 # select the feature set of the wanted local process data
 
 # select standard local process data iProcDataLocal_c with
 # measure programs and enhanced management of received setpoints
-PROC_LOCAL_STD=1
+# PROC_LOCAL_STD=0
 
 # select iProcDataLocalSimpleMeasure_c for
 # local process data without measure programs to reduce
@@ -314,8 +314,7 @@ PROC_LOCAL_STD=1
 
 # Decide to activate an interface for handling of proprietary PGN messages
 # as defined by ISO 11783
-# PRJ_PROPRIETARY_PGN_INTERFACE=0
-
+PRJ_PROPRIETARY_PGN_INTERFACE=1
 
 # ###############################################################
 # Optional Driver Selection
@@ -340,7 +339,7 @@ PROC_LOCAL_STD=1
 
 # select iRS232IO_c for RS232 output which can be used like the
 # standard C++ iostreams
-# PRJ_RS232=0
+PRJ_RS232=1
 
 # select special RS232 virtual driver HAL for RS232_over_CAN
 # activating this implicitly activates PRJ_RS232 with this special
@@ -505,20 +504,20 @@ PROC_LOCAL_STD=1
 \endcode
 
 
- \section PrjSpec2_0_LocalReadDataStdIso__pc_win32__sontheim__sys List of configuration settings for 2_0_LocalReadDataStdIso with CAN Driver sontheim and RS232 Driver sys
+ \section PrjSpec5_1_ProprietaryPgn__pc_win32__sontheim__sys List of configuration settings for 5_1_ProprietaryPgn with CAN Driver sontheim and RS232 Driver sys
  This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
- Use the file conf_2_0_LocalReadDataStdIso in this directory as input file for ./update_makefile.sh to create the project generation files.
+ Use the file conf_5_1_ProprietaryPgn in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
-# Filename: conf_2_0_LocalReadDataStdIso
-# Configuration setting for tutorial example 2_0_LocalReadDataStdIso
-# in the tutorial group 2_ProcessData
+# Filename: conf_5_1_ProprietaryPgn
+# Configuration setting for tutorial example 5_1_ProprietaryPgn
+# in the tutorial group 5_CanFeatures
 
 # ###############################################################
 # Project Identification
 # ###############################################################
 
 # define project name - used for directory with makefile
-PROJECT=2_0_LocalReadDataStdIso
+PROJECT=5_1_ProprietaryPgn
 
 # define the project author
 # - used for IDE project file types, where the author is stored in the project file
@@ -533,12 +532,12 @@ PROJECT_AUTHOR_EMAIL=MyEmail@Location
 # ( in relation to the root of the IsoAgLib
 #    - ONLY RELATIVE PATH )
 # seperate directories by whitespace
-REL_APP_PATH="IsoAgLib_Examples/tutorial/2_ProcessData/2_0_LocalReadDataStdIso"
+REL_APP_PATH="IsoAgLib_Examples/tutorial/5_CanFeatures/5_1_ProprietaryPgn"
 # define the name of the app
 # ( if this variable is not set, then
 #   all files of the selected directories are used )
 # seperate files by whitespace
-APP_SRC_FILE="2_0_LocalReadDataStdIso.cpp"
+APP_SRC_FILE="5_1_ProprietaryPgn.cpp"
 # define the file extensions to include for the
 # application source file search ( default: *.c *.cc *.cpp *.h *.hpp )
 # APP_SEARCH_SRC_CONDITION="*.cc *.c *.cpp"
@@ -595,7 +594,7 @@ ISO_AG_LIB_PATH="../.."
 # default is FALSE as far as possible
 # ( this has an impact on process data, RS232 output,
 #   GPS decode )
-USE_FLOAT_DATA_TYPE=1
+# USE_FLOAT_DATA_TYPE=0
 
 # select if HEAP usage should reduce size in favour of speed
 # ( default: maximize speed, which costs about 10KByte more HEAPSIZE,
@@ -643,7 +642,7 @@ USE_RS232_DRIVER="sys"
 
 # define the amount of available CAN BUSes at the ECU
 # ( default 1 )
-CAN_BUS_CNT=1
+# CAN_BUS_CNT=1
 
 # define the amount of CAN instances to support
 # ( all values lower than 1 are overwritten by default 1 )
@@ -738,16 +737,16 @@ PRJ_ISO11783=1
 # ###############################################################
 
 # activate globally the use of process data
-PRJ_PROCESS=1
+# PRJ_PROCESS=0
 
 # decide if local process data are wanted
-PROC_LOCAL=1
+# PROC_LOCAL=0
 
 # select the feature set of the wanted local process data
 
 # select standard local process data iProcDataLocal_c with
 # measure programs and enhanced management of received setpoints
-PROC_LOCAL_STD=1
+# PROC_LOCAL_STD=0
 
 # select iProcDataLocalSimpleMeasure_c for
 # local process data without measure programs to reduce
@@ -813,8 +812,7 @@ PROC_LOCAL_STD=1
 
 # Decide to activate an interface for handling of proprietary PGN messages
 # as defined by ISO 11783
-# PRJ_PROPRIETARY_PGN_INTERFACE=0
-
+PRJ_PROPRIETARY_PGN_INTERFACE=1
 
 # ###############################################################
 # Optional Driver Selection
@@ -839,7 +837,7 @@ PROC_LOCAL_STD=1
 
 # select iRS232IO_c for RS232 output which can be used like the
 # standard C++ iostreams
-# PRJ_RS232=0
+PRJ_RS232=1
 
 # select special RS232 virtual driver HAL for RS232_over_CAN
 # activating this implicitly activates PRJ_RS232 with this special
@@ -1007,20 +1005,20 @@ PROC_LOCAL_STD=1
 
 
 
- \section PrjConfig2_0_LocalReadDataStdIso List of configuration settings for 2_0_LocalReadDataStdIso
- This is only a copy with doxygen ready comment blocks from the original file ../../../IsoAgLib_Examples/tutorial/2_ProcessData/2_0_LocalReadDataStdIso/config_2_0_LocalReadDataStdIso.h 
+ \section PrjConfig5_1_ProprietaryPgn List of configuration settings for 5_1_ProprietaryPgn
+ This is only a copy with doxygen ready comment blocks from the original file ../../../IsoAgLib_Examples/tutorial/5_CanFeatures/5_1_ProprietaryPgn/config_5_1_ProprietaryPgn.h 
  This header is included by <IsoAgLib/xgpl_src/Application_Config/isoaglib_config.h> based on the
- project define #define PRJ_USE_AUTOGEN_CONFIG config_2_0_LocalReadDataStdIso.h ( Important: place the directory of the application source files in the include search path )
+ project define #define PRJ_USE_AUTOGEN_CONFIG config_5_1_ProprietaryPgn.h ( Important: place the directory of the application source files in the include search path )
 
- Use the file conf_2_0_LocalReadDataStdIso in the directory /home/spangler/Projekte/IsoAgLib/compiler_projects/Dev-C++/ as input file for ./update_makefile.sh to create the project generation files.
+ Use the file conf_5_1_ProprietaryPgn in the directory /home/spangler/Projekte/IsoAgLib/compiler_projects/Dev-C++/ as input file for ./update_makefile.sh to create the project generation files.
 \code
-// File: config_2_0_LocalReadDataStdIso.h
+// File: config_5_1_ProprietaryPgn.h
 // IMPORTANT: Never change the first block of this header manually!!!
-//            All manual changes are overwritten by the next call of "update_makefile.sh conf_2_0_LocalReadDataStdIso" 
-//            Perform changes direct in the feature and project setup file conf_2_0_LocalReadDataStdIso
+//            All manual changes are overwritten by the next call of "update_makefile.sh conf_5_1_ProprietaryPgn" 
+//            Perform changes direct in the feature and project setup file conf_5_1_ProprietaryPgn
 //  ALLOWED ADAPTATION: Move the to be adapted defines from the middle block to the end after
 //                      the line START_INDIVIDUAL_PROJECT_CONFIG and remove the comment indication there.
-//                      All commented out defines in the middle block will be upated on next "update_makefile.sh conf_2_0_LocalReadDataStdIso" call,
+//                      All commented out defines in the middle block will be upated on next "update_makefile.sh conf_5_1_ProprietaryPgn" call,
 //                      if the corresponding value in isoaglib_config.h changed
 
 
@@ -1046,9 +1044,6 @@ PROC_LOCAL_STD=1
 
 // #define CONFIG_DO_NOT_START_RELAIS_ON_STARTUP
 
-#ifndef USE_PROC_DATA_DESCRIPTION_POOL 
-	#define USE_PROC_DATA_DESCRIPTION_POOL 
-#endif
 // Decide if HEAP allocation strategy shall reduce size about 5K to 10K in favour of speed
 // Strong Advice: Don't activate this, as long your target has not too tight memory restrictions
 // Initialization of CAN filters and of local process data might get too slow under worst case conditions
@@ -1062,11 +1057,8 @@ PROC_LOCAL_STD=1
 #ifndef NO
   #define NO 0
 #endif
-// Decide if float shall be used for the project
-#define USE_FLOAT_DATA_TYPE
-
-#ifndef USE_PROCESS 
-  #define USE_PROCESS 
+#ifndef USE_PROCESS_YN 
+	#define USE_PROCESS_YN NO 
 #endif
 #ifndef USE_EEPROM_IO_YN 
 	#define USE_EEPROM_IO_YN NO 
@@ -1228,10 +1220,10 @@ PROC_LOCAL_STD=1
 
 
 
- \section FileLists2_0_LocalReadDataStdIso__pc_win32__sontheim__simulating List of Files for 2_0_LocalReadDataStdIso with CAN Driver sontheim and RS232 Driver simulating
+ \section FileLists5_1_ProprietaryPgn__pc_win32__sontheim__simulating List of Files for 5_1_ProprietaryPgn with CAN Driver sontheim and RS232 Driver simulating
 
 
- \section SrcList2_0_LocalReadDataStdIso__pc_win32__sontheim__simulating List of Sourcefiles for 2_0_LocalReadDataStdIso with CAN Driver sontheim and RS232 Driver simulating
+ \section SrcList5_1_ProprietaryPgn__pc_win32__sontheim__simulating List of Sourcefiles for 5_1_ProprietaryPgn with CAN Driver sontheim and RS232 Driver simulating
 
 \code
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp
@@ -1252,29 +1244,17 @@ PROC_LOCAL_STD=1
 ../../../xgpl_src/IsoAgLib/util/impl/schedulerentry_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/elementbase_c.cpp
 ../../../xgpl_src/IsoAgLib/util/iliberr_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Process/impl/generalcommand_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Process/impl/process_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Process/impl/processpkg_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Process/impl/devpropertyhandler_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Process/impl/processelementbase_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Process/impl/procident_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Process/StdMeasureElements/impl/measureprogbase_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Process/StdMeasureElements/impl/measuresubprog_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Process/Local/impl/procdatalocalbase_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Process/Local/StdMeasureElements/impl/managemeasureproglocal_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Process/Local/StdMeasureElements/impl/measureproglocal_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Process/Local/Std/impl/procdatalocal_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Process/Local/StdSetpointElements/impl/setpointlocal_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointregister_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointbase_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Process/processdatachangehandler_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multireceive_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamchunk_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisend_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendpkg_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/chunk_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/stream_c.cpp
+../../../xgpl_src/IsoAgLib/comm/ext/ProprietaryCan/impl/proprietarymessagehandler_c.cpp
+../../../xgpl_src/IsoAgLib/comm/ext/ProprietaryCan/impl/proprietarymessageclient_c.cpp
+../../../xgpl_src/IsoAgLib/comm/ext/ProprietaryCan/igenericdata_c.cpp
+../../../xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_simulating.cpp
+../../../xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_w32_sontheim_canlpt.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp
@@ -1283,12 +1263,12 @@ PROC_LOCAL_STD=1
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/canio_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/system/impl/system_c.cpp
-../../../IsoAgLib_Examples/tutorial/2_ProcessData/2_0_LocalReadDataStdIso/2_0_LocalReadDataStdIso.cpp
+../../../IsoAgLib_Examples/tutorial/5_CanFeatures/5_1_ProprietaryPgn/5_1_ProprietaryPgn.cpp
 \endcode
 
 
 
- \section HdrList2_0_LocalReadDataStdIso__pc_win32__sontheim__simulating List of Headers for 2_0_LocalReadDataStdIso with CAN Driver sontheim and RS232 Driver simulating
+ \section HdrList5_1_ProprietaryPgn__pc_win32__sontheim__simulating List of Headers for 5_1_ProprietaryPgn with CAN Driver sontheim and RS232 Driver simulating
 
 \code
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.h
@@ -1328,35 +1308,6 @@ PROC_LOCAL_STD=1
 ../../../xgpl_src/IsoAgLib/util/icanpkgext_c.h
 ../../../xgpl_src/IsoAgLib/util/iliberr_c.h
 ../../../xgpl_src/IsoAgLib/util/iutil_funcs.h
-../../../xgpl_src/IsoAgLib/comm/Process/impl/procident_c.h
-../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.h
-../../../xgpl_src/IsoAgLib/comm/Process/impl/proc_c.h
-../../../xgpl_src/IsoAgLib/comm/Process/impl/processwsmtaskmsghandler_c.h
-../../../xgpl_src/IsoAgLib/comm/Process/impl/generalcommand_c.h
-../../../xgpl_src/IsoAgLib/comm/Process/impl/process_c.h
-../../../xgpl_src/IsoAgLib/comm/Process/impl/processpkg_c.h
-../../../xgpl_src/IsoAgLib/comm/Process/impl/devpropertyhandler_c.h
-../../../xgpl_src/IsoAgLib/comm/Process/impl/processelementbase_c.h
-../../../xgpl_src/IsoAgLib/comm/Process/StdMeasureElements/impl/measuresubprog_c.h
-../../../xgpl_src/IsoAgLib/comm/Process/StdMeasureElements/impl/measureprogbase_c.h
-../../../xgpl_src/IsoAgLib/comm/Process/Local/impl/procdatalocalbase_c.h
-../../../xgpl_src/IsoAgLib/comm/Process/Local/StdMeasureElements/impl/managemeasureproglocal_c.h
-../../../xgpl_src/IsoAgLib/comm/Process/Local/StdMeasureElements/impl/measureproglocal_c.h
-../../../xgpl_src/IsoAgLib/comm/Process/Local/StdMeasureElements/imeasureproglocal_c.h
-../../../xgpl_src/IsoAgLib/comm/Process/Local/Std/impl/procdatalocal_c.h
-../../../xgpl_src/IsoAgLib/comm/Process/Local/Std/iprocdatalocal_c.h
-../../../xgpl_src/IsoAgLib/comm/Process/Local/StdSetpointElements/impl/setpointlocal_c.h
-../../../xgpl_src/IsoAgLib/comm/Process/Local/StdSetpointElements/isetpointlocal_c.h
-../../../xgpl_src/IsoAgLib/comm/Process/Remote/impl/procdataremotebase_c.h
-../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointregister_c.h
-../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointbase_c.h
-../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/isetpointregister_c.h
-../../../xgpl_src/IsoAgLib/comm/Process/elementddi_s.h
-../../../xgpl_src/IsoAgLib/comm/Process/iprocess_c.h
-../../../xgpl_src/IsoAgLib/comm/Process/proc_c.h
-../../../xgpl_src/IsoAgLib/comm/Process/idevpropertyhandler_c.h
-../../../xgpl_src/IsoAgLib/comm/Process/generalcommand_c.h
-../../../xgpl_src/IsoAgLib/comm/Process/processdatachangehandler_c.h
 ../../../xgpl_src/supplementary_driver/driver/datastreams/streaminput_c.h
 ../../../xgpl_src/Application_Config/isoaglib_config.h
 ../../../xgpl_src/IsoAgLib/hal/pc/typedef.h
@@ -1371,8 +1322,18 @@ PROC_LOCAL_STD=1
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/imultisendstreamer_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/istream_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/imultireceive_c.h
+../../../xgpl_src/IsoAgLib/comm/ext/ProprietaryCan/impl/proprietarymessagehandler_c.h
+../../../xgpl_src/IsoAgLib/comm/ext/ProprietaryCan/impl/proprietarymessageclient_c.h
+../../../xgpl_src/IsoAgLib/comm/ext/ProprietaryCan/igenericdata_c.h
+../../../xgpl_src/IsoAgLib/comm/ext/ProprietaryCan/iproprietarymessagehandler_c.h
+../../../xgpl_src/IsoAgLib/comm/ext/ProprietaryCan/iproprietarymessageclient_c.h
 ../../../xgpl_src/IsoAgLib/convert.h
 ../../../xgpl_src/IsoAgLib/typedef.h
+../../../xgpl_src/supplementary_driver/hal/pc/rs232/rs232.h
+../../../xgpl_src/supplementary_driver/hal/pc/rs232/rs232_target_extensions.h
+../../../xgpl_src/supplementary_driver/hal/rs232.h
+../../../xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.h
+../../../xgpl_src/supplementary_driver/driver/rs232/irs232io_c.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can_typedef.h
@@ -1396,10 +1357,10 @@ PROC_LOCAL_STD=1
 \endcode
 
 
- \section FileLists2_0_LocalReadDataStdIso__pc_win32__sontheim__sys List of Files for 2_0_LocalReadDataStdIso with CAN Driver sontheim and RS232 Driver sys
+ \section FileLists5_1_ProprietaryPgn__pc_win32__sontheim__sys List of Files for 5_1_ProprietaryPgn with CAN Driver sontheim and RS232 Driver sys
 
 
- \section SrcList2_0_LocalReadDataStdIso__pc_win32__sontheim__sys List of Sourcefiles for 2_0_LocalReadDataStdIso with CAN Driver sontheim and RS232 Driver sys
+ \section SrcList5_1_ProprietaryPgn__pc_win32__sontheim__sys List of Sourcefiles for 5_1_ProprietaryPgn with CAN Driver sontheim and RS232 Driver sys
 
 \code
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp
@@ -1420,29 +1381,17 @@ PROC_LOCAL_STD=1
 ../../../xgpl_src/IsoAgLib/util/impl/schedulerentry_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/elementbase_c.cpp
 ../../../xgpl_src/IsoAgLib/util/iliberr_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Process/impl/generalcommand_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Process/impl/process_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Process/impl/processpkg_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Process/impl/devpropertyhandler_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Process/impl/processelementbase_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Process/impl/procident_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Process/StdMeasureElements/impl/measureprogbase_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Process/StdMeasureElements/impl/measuresubprog_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Process/Local/impl/procdatalocalbase_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Process/Local/StdMeasureElements/impl/managemeasureproglocal_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Process/Local/StdMeasureElements/impl/measureproglocal_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Process/Local/Std/impl/procdatalocal_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Process/Local/StdSetpointElements/impl/setpointlocal_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointregister_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointbase_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Process/processdatachangehandler_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multireceive_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamchunk_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisend_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendpkg_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/chunk_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/stream_c.cpp
+../../../xgpl_src/IsoAgLib/comm/ext/ProprietaryCan/impl/proprietarymessagehandler_c.cpp
+../../../xgpl_src/IsoAgLib/comm/ext/ProprietaryCan/impl/proprietarymessageclient_c.cpp
+../../../xgpl_src/IsoAgLib/comm/ext/ProprietaryCan/igenericdata_c.cpp
+../../../xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_w32_sys.cpp
+../../../xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_w32_sontheim_canlpt.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp
@@ -1451,12 +1400,12 @@ PROC_LOCAL_STD=1
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/canio_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/system/impl/system_c.cpp
-../../../IsoAgLib_Examples/tutorial/2_ProcessData/2_0_LocalReadDataStdIso/2_0_LocalReadDataStdIso.cpp
+../../../IsoAgLib_Examples/tutorial/5_CanFeatures/5_1_ProprietaryPgn/5_1_ProprietaryPgn.cpp
 \endcode
 
 
 
- \section HdrList2_0_LocalReadDataStdIso__pc_win32__sontheim__sys List of Headers for 2_0_LocalReadDataStdIso with CAN Driver sontheim and RS232 Driver sys
+ \section HdrList5_1_ProprietaryPgn__pc_win32__sontheim__sys List of Headers for 5_1_ProprietaryPgn with CAN Driver sontheim and RS232 Driver sys
 
 \code
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.h
@@ -1496,35 +1445,6 @@ PROC_LOCAL_STD=1
 ../../../xgpl_src/IsoAgLib/util/icanpkgext_c.h
 ../../../xgpl_src/IsoAgLib/util/iliberr_c.h
 ../../../xgpl_src/IsoAgLib/util/iutil_funcs.h
-../../../xgpl_src/IsoAgLib/comm/Process/impl/procident_c.h
-../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.h
-../../../xgpl_src/IsoAgLib/comm/Process/impl/proc_c.h
-../../../xgpl_src/IsoAgLib/comm/Process/impl/processwsmtaskmsghandler_c.h
-../../../xgpl_src/IsoAgLib/comm/Process/impl/generalcommand_c.h
-../../../xgpl_src/IsoAgLib/comm/Process/impl/process_c.h
-../../../xgpl_src/IsoAgLib/comm/Process/impl/processpkg_c.h
-../../../xgpl_src/IsoAgLib/comm/Process/impl/devpropertyhandler_c.h
-../../../xgpl_src/IsoAgLib/comm/Process/impl/processelementbase_c.h
-../../../xgpl_src/IsoAgLib/comm/Process/StdMeasureElements/impl/measuresubprog_c.h
-../../../xgpl_src/IsoAgLib/comm/Process/StdMeasureElements/impl/measureprogbase_c.h
-../../../xgpl_src/IsoAgLib/comm/Process/Local/impl/procdatalocalbase_c.h
-../../../xgpl_src/IsoAgLib/comm/Process/Local/StdMeasureElements/impl/managemeasureproglocal_c.h
-../../../xgpl_src/IsoAgLib/comm/Process/Local/StdMeasureElements/impl/measureproglocal_c.h
-../../../xgpl_src/IsoAgLib/comm/Process/Local/StdMeasureElements/imeasureproglocal_c.h
-../../../xgpl_src/IsoAgLib/comm/Process/Local/Std/impl/procdatalocal_c.h
-../../../xgpl_src/IsoAgLib/comm/Process/Local/Std/iprocdatalocal_c.h
-../../../xgpl_src/IsoAgLib/comm/Process/Local/StdSetpointElements/impl/setpointlocal_c.h
-../../../xgpl_src/IsoAgLib/comm/Process/Local/StdSetpointElements/isetpointlocal_c.h
-../../../xgpl_src/IsoAgLib/comm/Process/Remote/impl/procdataremotebase_c.h
-../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointregister_c.h
-../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointbase_c.h
-../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/isetpointregister_c.h
-../../../xgpl_src/IsoAgLib/comm/Process/elementddi_s.h
-../../../xgpl_src/IsoAgLib/comm/Process/iprocess_c.h
-../../../xgpl_src/IsoAgLib/comm/Process/proc_c.h
-../../../xgpl_src/IsoAgLib/comm/Process/idevpropertyhandler_c.h
-../../../xgpl_src/IsoAgLib/comm/Process/generalcommand_c.h
-../../../xgpl_src/IsoAgLib/comm/Process/processdatachangehandler_c.h
 ../../../xgpl_src/supplementary_driver/driver/datastreams/streaminput_c.h
 ../../../xgpl_src/Application_Config/isoaglib_config.h
 ../../../xgpl_src/IsoAgLib/hal/pc/typedef.h
@@ -1539,8 +1459,18 @@ PROC_LOCAL_STD=1
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/imultisendstreamer_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/istream_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/imultireceive_c.h
+../../../xgpl_src/IsoAgLib/comm/ext/ProprietaryCan/impl/proprietarymessagehandler_c.h
+../../../xgpl_src/IsoAgLib/comm/ext/ProprietaryCan/impl/proprietarymessageclient_c.h
+../../../xgpl_src/IsoAgLib/comm/ext/ProprietaryCan/igenericdata_c.h
+../../../xgpl_src/IsoAgLib/comm/ext/ProprietaryCan/iproprietarymessagehandler_c.h
+../../../xgpl_src/IsoAgLib/comm/ext/ProprietaryCan/iproprietarymessageclient_c.h
 ../../../xgpl_src/IsoAgLib/convert.h
 ../../../xgpl_src/IsoAgLib/typedef.h
+../../../xgpl_src/supplementary_driver/hal/pc/rs232/rs232.h
+../../../xgpl_src/supplementary_driver/hal/pc/rs232/rs232_target_extensions.h
+../../../xgpl_src/supplementary_driver/hal/rs232.h
+../../../xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.h
+../../../xgpl_src/supplementary_driver/driver/rs232/irs232io_c.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can_typedef.h

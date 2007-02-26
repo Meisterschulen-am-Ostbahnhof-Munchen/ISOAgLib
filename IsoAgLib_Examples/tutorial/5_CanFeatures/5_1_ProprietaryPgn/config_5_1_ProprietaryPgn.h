@@ -30,12 +30,6 @@
 
 // #define CONFIG_DO_NOT_START_RELAIS_ON_STARTUP
 
-#ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
-
-  #define SYSTEM_WITH_ENHANCED_CAN_HAL
-
-#endif
-
 // Decide if HEAP allocation strategy shall reduce size about 5K to 10K in favour of speed
 // Strong Advice: Don't activate this, as long your target has not too tight memory restrictions
 // Initialization of CAN filters and of local process data might get too slow under worst case conditions
@@ -204,4 +198,5 @@
 
 
 // DONT REMOVE THIS AND THE FOLLOWING LINE AS THEY ARE NEEDED TO DETECT YOUR PERSONAL PROJECT ADAPTATIONS!!!
+
 // START_INDIVIDUAL_PROJECT_CONFIG
