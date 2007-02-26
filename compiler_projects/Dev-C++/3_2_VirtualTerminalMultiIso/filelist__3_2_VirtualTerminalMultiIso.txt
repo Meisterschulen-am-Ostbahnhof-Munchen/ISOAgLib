@@ -69,6 +69,7 @@
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_w32_sontheim_canlpt.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp
+../../../xgpl_src/IsoAgLib/driver/can/impl/msgobj_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/canio_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/system/impl/system_c.cpp
@@ -224,9 +225,11 @@
 ../../../xgpl_src/IsoAgLib/hal/system.h
 ../../../xgpl_src/IsoAgLib/driver/can/impl/canio_c.h
 ../../../xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.h
+../../../xgpl_src/IsoAgLib/driver/can/impl/msgobj_c.h
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.h
 ../../../xgpl_src/IsoAgLib/driver/can/icanio_c.h
 ../../../xgpl_src/IsoAgLib/driver/can/iident_c.h
 ../../../xgpl_src/IsoAgLib/driver/system/impl/system_c.h
 ../../../xgpl_src/IsoAgLib/driver/system/isystem_c.h
 C:\Development\Sontheim=_=CANAPI.H
+C:\Development\Sontheim=_=Capitest=_=CANAPI.H

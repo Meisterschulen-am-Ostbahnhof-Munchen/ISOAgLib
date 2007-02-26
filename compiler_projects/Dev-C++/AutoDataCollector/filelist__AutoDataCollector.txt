@@ -40,6 +40,7 @@
 ../../../xgpl_src/IsoAgLib/hal/pc/eeprom/pc_eeditor_rs232.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/eeprom/eeprom_target_extensions.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp
+../../../xgpl_src/IsoAgLib/driver/can/impl/msgobj_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/canio_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/system/impl/system_c.cpp
@@ -145,6 +146,7 @@
 ../../../xgpl_src/IsoAgLib/hal/eeprom.h
 ../../../xgpl_src/IsoAgLib/driver/can/impl/canio_c.h
 ../../../xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.h
+../../../xgpl_src/IsoAgLib/driver/can/impl/msgobj_c.h
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.h
 ../../../xgpl_src/IsoAgLib/driver/can/icanio_c.h
 ../../../xgpl_src/IsoAgLib/driver/can/iident_c.h
@@ -166,3 +168,4 @@
 ../../../IsoAgLib_Examples/config_AutoDataCollector.h
 ../../../IsoAgLib_Examples/config_tractor.h
 C:\Development\Sontheim=_=CANAPI.H
+C:\Development\Sontheim=_=Capitest=_=CANAPI.H

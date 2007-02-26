@@ -285,7 +285,7 @@ PRJ_TIME_GPS=1
 # Special CAN features
 # ###############################################################
 
-# Decide to activate an interface for handling of proprietary CAN identifiers
+# Decide to activate an interface for handling of proprietary PGN messages
 # as defined by ISO 11783
 # PRJ_PROPRIETARY_PGN_INTERFACE=0
 

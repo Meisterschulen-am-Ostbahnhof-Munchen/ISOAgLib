@@ -35,11 +35,11 @@
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendpkg_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/chunk_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/stream_c.cpp
-../../../xgpl_src/IsoAgLib/hal/pc/can/msq_helper.cpp
-../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_client.cpp
+../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_simulating.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp
+../../../xgpl_src/IsoAgLib/driver/can/impl/msgobj_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/canio_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/system/impl/system_c.cpp
@@ -135,6 +135,7 @@
 ../../../xgpl_src/IsoAgLib/hal/system.h
 ../../../xgpl_src/IsoAgLib/driver/can/impl/canio_c.h
 ../../../xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.h
+../../../xgpl_src/IsoAgLib/driver/can/impl/msgobj_c.h
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.h
 ../../../xgpl_src/IsoAgLib/driver/can/icanio_c.h
 ../../../xgpl_src/IsoAgLib/driver/can/iident_c.h
