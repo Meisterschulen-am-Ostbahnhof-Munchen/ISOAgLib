@@ -1786,6 +1786,7 @@ compiler_projects/projectGeneration/conf_4_0_Eeprom -text
 compiler_projects/projectGeneration/conf_4_1_Sensor -text
 compiler_projects/projectGeneration/conf_4_2_Pwm -text
 compiler_projects/projectGeneration/conf_5_0_InternalCan -text
+compiler_projects/projectGeneration/conf_5_1_ProprietaryPgn -text
 compiler_projects/projectGeneration/conf_AutoDataCollector -text
 compiler_projects/projectGeneration/conf_imi_iso -text
 compiler_projects/projectGeneration/conf_tractorconsole -text
