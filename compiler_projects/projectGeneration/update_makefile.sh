@@ -138,7 +138,7 @@ GENERATE_FILES_ROOT_DIR=`pwd`
 # + PRJ_SENSOR_ANALOG ( specify if IsoAgLib extension for analog sensor data read should be used; provides several utility and diagnostic functions; default 0 )
 # + PRJ_RS232 ( specify if IsoAgLib extension for C++ stream oriented I/O should be used; default 0 )
 
-function check_set_correct_variables()
+check_set_correct_variables()
 {
 	if [ "A$ISO_AG_LIB_PATH" = "A" ] ; then
 		echo "ERROR! Please specify the path to the root directory of IsoAgLib - i.e. where xgpl_src and IsoAgLibExamples are located"
@@ -403,7 +403,7 @@ if [ "A$CAN_BUS_CNT" = "A" ] ; then
 # this function uses the "find" cmd
 # to derive based on the selected features the
 # corresponding file list into filelist_$PROJECT_PURE.txt
-function create_filelist( )
+create_filelist( )
  {
   COMM_PROC_FEATURES=""
 
@@ -675,7 +675,7 @@ function create_filelist( )
 			elif [ $USE_RS232_DRIVER = "rte" ] ; then
 				DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/rs232/target_extension_rs232_rte*'"
 			elif [ $USE_RS232_DRIVER = "sys" ] ; then
-			  if [ $USE_TARGET_SYSTEM == "pc_win32" ] ; then
+			  if [ $USE_TARGET_SYSTEM = "pc_win32" ] ; then
 					DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/rs232/target_extension_rs232_w32_sys*'"
 				else
 					DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/rs232/target_extension_rs232_linux_sys*'"
@@ -733,7 +733,7 @@ function create_filelist( )
 	rm -f "$FILELIST_COMBINED_PURE" "$FILELIST_COMBINED_QMAKE" "$FILELIST_COMBINED_HDR"
 
   touch "$FILELIST_LIBRARY_PURE" "$FILELIST_APP_PURE" "$FILELIST_COMBINED_PURE"
-	if [ $USE_TARGET_SYSTEM == "pc_linux" ] ; then
+	if [ $USE_TARGET_SYSTEM = "pc_linux" ] ; then
 		touch "$FILELIST_LIBRARY_QMAKE"
 	fi
   # find central elements
@@ -743,7 +743,7 @@ function create_filelist( )
 		EXCLUDE_FROM_SYSTEM_MGMT=""
 	fi
 	rm -f .exec.tmp
-	if [ $USE_TARGET_SYSTEM == "pc_linux" ] ; then
+	if [ $USE_TARGET_SYSTEM = "pc_linux" ] ; then
 		echo "find $LIB_ROOT $SRC_EXT -a \( -path '*/Scheduler/*' -o -path '*/SystemMgmt/*' -o -path '*/util/*' \) $EXCLUDE_FROM_SYSTEM_MGMT -printf 'SOURCES += %h/%f\n' >> $FILELIST_LIBRARY_QMAKE"  > .exec.tmp
 		echo "find $LIB_ROOT -name '*.h' -a \( -path '*/Scheduler/*' -o -path '*/SystemMgmt/*' -o -path '*/util/*' \) $EXCLUDE_FROM_SYSTEM_MGMT -printf 'HEADERS += %h/%f\n' >> $FILELIST_LIBRARY_QMAKE" >> .exec.tmp
   fi
@@ -752,7 +752,7 @@ function create_filelist( )
 
   # find wanted process data communication features
   if [ "$COMM_PROC_FEATURES" != "" ] ; then
-    if [ $USE_TARGET_SYSTEM == "pc_linux" ] ; then
+    if [ $USE_TARGET_SYSTEM = "pc_linux" ] ; then
 			echo "find $LIB_ROOT $SRC_EXT -a \( $COMM_PROC_FEATURES \) -printf 'SOURCES += %h/%f\n' >> $FILELIST_LIBRARY_QMAKE" >> .exec.tmp
 			echo "find $LIB_ROOT -name '*.h' -a \( $COMM_PROC_FEATURES \) -printf 'HEADERS += %h/%f\n' >> $FILELIST_LIBRARY_QMAKE" >> .exec.tmp
     fi
@@ -762,7 +762,7 @@ function create_filelist( )
 
   # find wanted other communication features
   if [ "$COMM_FEATURES" != "" ] ; then
-    if [ $USE_TARGET_SYSTEM == "pc_linux" ] ; then
+    if [ $USE_TARGET_SYSTEM = "pc_linux" ] ; then
 			echo "find $LIB_ROOT $SRC_EXT -a \( $COMM_FEATURES \) -printf 'SOURCES += %h/%f\n' >> $FILELIST_LIBRARY_QMAKE" >> .exec.tmp
     	echo "find $LIB_ROOT -name '*.h' -a \( $COMM_FEATURES \) -printf 'HEADERS += %h/%f\n' >> $FILELIST_LIBRARY_QMAKE" >> .exec.tmp
     fi
@@ -771,7 +771,7 @@ function create_filelist( )
   fi
 
   #find optional HW features
-  if [ $USE_TARGET_SYSTEM == "pc_linux" ] ; then
+  if [ $USE_TARGET_SYSTEM = "pc_linux" ] ; then
 		echo "find $LIB_ROOT $SRC_EXT  -a \( $DRIVER_FEATURES \) -printf 'SOURCES += %h/%f\n' >> $FILELIST_LIBRARY_QMAKE" >> .exec.tmp
   	echo "find $LIB_ROOT -name '*.h' -a \(  $DRIVER_FEATURES \) -printf 'HEADERS += %h/%f\n' >> $FILELIST_LIBRARY_QMAKE" >> .exec.tmp
   fi
@@ -854,7 +854,7 @@ function create_filelist( )
 	done
 	APP_SEARCH_HDR_TYPE_PART="$APP_SEARCH_HDR_TYPE_PART \)"
 
-	if [ $USE_TARGET_SYSTEM == "pc_linux" ] ; then
+	if [ $USE_TARGET_SYSTEM = "pc_linux" ] ; then
 		for EACH_REL_APP_PATH in $REL_APP_PATH ; do
 			echo "find ../$ISO_AG_LIB_PATH/$EACH_REL_APP_PATH/ $APP_SEARCH_SRC_TYPE_PART $APP_SRC_PART $EXCLUDE_PATH_PART $EXCLUDE_SRC_PART -printf 'SOURCES += %h/%f\n' >> $FILELIST_APP_QMAKE" >> .exec.tmp
 			echo "find ../$ISO_AG_LIB_PATH/$EACH_REL_APP_PATH/ $APP_SEARCH_HDR_TYPE_PART $APP_SRC_PART $EXCLUDE_PATH_PART $EXCLUDE_SRC_PART -printf 'HEADERS += %h/%f\n' >> $FILELIST_APP_QMAKE" >> .exec.tmp
@@ -869,7 +869,7 @@ function create_filelist( )
 
   sh .exec.tmp
 	cat $FILELIST_LIBRARY_PURE $FILELIST_APP_PURE > $FILELIST_COMBINED_PURE
-	if [ $USE_TARGET_SYSTEM == "pc_linux" ] ; then
+	if [ $USE_TARGET_SYSTEM = "pc_linux" ] ; then
 		cat $FILELIST_LIBRARY_QMAKE $FILELIST_APP_QMAKE > $FILELIST_COMBINED_QMAKE
 	fi
 	cat $FILELIST_LIBRARY_HDR $FILELIST_APP_HDR > $FILELIST_COMBINED_HDR
@@ -923,7 +923,7 @@ function create_filelist( )
 # function to create the project specific autogenerated
 # config header
 # autogen_project_config.h
-function create_autogen_project_config()
+create_autogen_project_config()
 {
   # go to project dir - below config dir
 	cd $1/$PROJECT
@@ -1187,7 +1187,7 @@ function create_autogen_project_config()
 	cd $1
 }
 
-function create_makefile()
+create_makefile()
 {
   # go to project dir - below config dir
   DEV_PRJ_DIR="$1/$PROJECT"
@@ -1312,7 +1312,7 @@ cp -a FileListInterface.txt FileListInterface4Eval.txt
 
 DoRepeat="TRUE";
 Iteration=0
-while [ $DoRepeat == "TRUE" ] ; do
+while [ $DoRepeat = "TRUE" ] ; do
 	DoRepeat="FALSE";
 	for InterfaceFile in $(cat FileListInterface4Eval.txt); do
 		for IncludeLine in $(grep "#include" $InterfaceFile | sed -e 's/.*#include[ \t\<\"]*\([^\>\"\t ]*\).*/\1/g'); do
@@ -1335,7 +1335,7 @@ while [ $DoRepeat == "TRUE" ] ; do
 			fi
 		done
 	done
-	if [ $DoRepeat == "TRUE" ] ; then
+	if [ $DoRepeat = "TRUE" ] ; then
 		Iteration=`expr $Iteration + 1`
 		cp -a FileListInterface4EvalPre.txt FileListInterface4EvalPre.$Iteration.txt
 		cp -a FileListInterface4EvalPre.txt FileListInterface4Eval.txt
@@ -1520,7 +1520,7 @@ rm -f FileListInterfaceStart.txt FileListInterface.txt FileListInterface4Eval.tx
   return
 }
 
-function create_rte_links()
+create_rte_links()
 {
   if [ $USE_CAN_DRIVER = "rte" -o $USE_RS232_DRIVER = "rte" ] ; then
     # PASSENDEN link erzeugen zu RTE
@@ -1542,7 +1542,7 @@ function create_rte_links()
 # Generate suitable project file for the Win32 IDE "Dev-C++"
 # which is OpenSource and is based on MinGW - i.e. gcc for Win32
 # URL http://www.bloodshed.net/dev/devcpp.html
-function create_DevCCPrj() {
+create_DevCCPrj() {
   DEV_PRJ_DIR="$1/../Dev-C++/$PROJECT"
   # echo "Create Projekt file for Dev-C++ in $DEV_PRJ_DIR"
   mkdir -p $DEV_PRJ_DIR/objects
@@ -1693,7 +1693,7 @@ function create_DevCCPrj() {
 	cd $1
 }
 
-function create_EdePrj()
+create_EdePrj()
 {
   DEV_PRJ_DIR="$1/$PROJECT"
   # echo "Create Projekt file for EDE in $DEV_PRJ_DIR"
@@ -1792,7 +1792,7 @@ function create_EdePrj()
 	mv $PROJECT_FILE_NAME.1 $PROJECT_FILE_NAME
 }
 
-function create_VCPrj()
+create_VCPrj()
 {
 
   DEV_PRJ_DIR=`echo "$1/$PROJECT" | sed -e 's/Dev-C++/VC6/g'`
@@ -1949,7 +1949,7 @@ function create_VCPrj()
   # org test
 }
 
-function perform_everything()
+perform_everything()
 {
 	# verify and correct the variables
   check_set_correct_variables $1 $2
@@ -1970,22 +1970,22 @@ function perform_everything()
 		#echo "Use Parameter value for rs232 driver: $PARAMETER_RS232_DRIVER"
 	fi
 
-  if [ $USE_TARGET_SYSTEM == "pc_win32" ] ; then
+  if [ $USE_TARGET_SYSTEM = "pc_win32" ] ; then
 	USE_SYSTEM_DEFINE="SYSTEM_PC"
   	GENERATE_FILES_ROOT_DIR="$1/../Dev-C++/"
-  elif [ $USE_TARGET_SYSTEM == "pc_linux" ] ; then
+  elif [ $USE_TARGET_SYSTEM = "pc_linux" ] ; then
 	USE_SYSTEM_DEFINE="SYSTEM_PC"
   	GENERATE_FILES_ROOT_DIR="$1/../kdevelop_qmake/"
-  elif [ $USE_TARGET_SYSTEM == "esx" ] ; then
+  elif [ $USE_TARGET_SYSTEM = "esx" ] ; then
 	USE_SYSTEM_DEFINE="SYSTEM_ESX"
   	GENERATE_FILES_ROOT_DIR="$1/../EDE/"
-  elif [ $USE_TARGET_SYSTEM == "c2c" ] ; then
+  elif [ $USE_TARGET_SYSTEM = "c2c" ] ; then
 	USE_SYSTEM_DEFINE="SYSTEM_C2C"
   	GENERATE_FILES_ROOT_DIR="$1/../EDE/"
-  elif [ $USE_TARGET_SYSTEM == "imi" ] ; then
+  elif [ $USE_TARGET_SYSTEM = "imi" ] ; then
 	USE_SYSTEM_DEFINE="SYSTEM_IMI"
   	GENERATE_FILES_ROOT_DIR="$1/../EDE/"
-  elif [ $USE_TARGET_SYSTEM == "pm167" ] ; then
+  elif [ $USE_TARGET_SYSTEM = "pm167" ] ; then
 	USE_SYSTEM_DEFINE="SYSTEM_PM167"
   	GENERATE_FILES_ROOT_DIR="$1/../EDE/"
   fi
@@ -2000,7 +2000,7 @@ function perform_everything()
 	# call function to create project specific config file
 	create_autogen_project_config $GENERATE_FILES_ROOT_DIR $2
 
-  if [ $USE_TARGET_SYSTEM == "pc_linux" ] ; then
+  if [ $USE_TARGET_SYSTEM = "pc_linux" ] ; then
     # call function to create the Makefile in the project dir
     create_makefile $GENERATE_FILES_ROOT_DIR $2
 
@@ -2008,7 +2008,7 @@ function perform_everything()
     create_rte_links $GENERATE_FILES_ROOT_DIR $2
 
 	  # check if a win32 project file whould be created
-  elif [ $USE_TARGET_SYSTEM == "pc_win32" ] ; then
+  elif [ $USE_TARGET_SYSTEM = "pc_win32" ] ; then
   	create_DevCCPrj $GENERATE_FILES_ROOT_DIR $2
     create_VCPrj $GENERATE_FILES_ROOT_DIR $2
   else
@@ -2025,7 +2025,7 @@ function perform_everything()
 
 # Usage: usage
 # Print the usage.
-function usage () {
+usage () {
     cat <<EOF
 Usage: $0 [OPTION] project_config_file
 Create filelist, Makefile and configuration settings for a IsoAgLib project.
@@ -2148,7 +2148,7 @@ cd $START_DIR
 # echo "ConfDir $CONF_DIR"
 
 # now import the config setting file
-. $CONF_FILE
+. ./$CONF_FILE
 
 # perform some checks based on user input
 # check for correct target system setting
@@ -2327,7 +2327,7 @@ fi
 
 # call the main function to create
 # Makefile for defined config setting
-perform_everything $CONF_DIR $SCRIPT_DIR $START_DIR
+perform_everything "$CONF_DIR" "$SCRIPT_DIR" "$START_DIR"
 
 
 if [ $USE_LITTLE_ENDIAN_CPU -lt 1 ] ; then
