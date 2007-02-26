@@ -101,12 +101,15 @@
 #endif
 #include "filterbox_c.h"
 
-// headers for string manipulation
-#if defined(SYSTEM_PC) && !defined(SYSTEM_PC_VC) && __GNUC__ >= 3
-  #include <ext/slist>
-  namespace std { using __gnu_cxx::slist;};
+#ifdef DO_USE_SLIST
+  #if defined(SYSTEM_PC) && !defined(SYSTEM_PC_VC) && !defined(SYSTEM_A1) && __GNUC__ >= 3
+    #include <ext/slist>
+    namespace std { using __gnu_cxx::slist;}
+  #else
+    #include <slist>
+  #endif
 #else
-  #include <slist>
+  #include <list>
 #endif
 
 // Begin Namespace __IsoAgLib
@@ -146,18 +149,18 @@ class CANIO_c : public SingletonCANIO_c {
   */
   #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
     #ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
-    typedef STL_NAMESPACE::slist<MsgObj_c,STL_NAMESPACE::__malloc_alloc_template<0> > ArrMsgObj;
+    typedef STL_NAMESPACE::USABLE_SLIST<MsgObj_c,STL_NAMESPACE::__malloc_alloc_template<0> > ArrMsgObj;
     #else
-    typedef STL_NAMESPACE::slist<MsgObj_c> ArrMsgObj;
+    typedef STL_NAMESPACE::USABLE_SLIST<MsgObj_c> ArrMsgObj;
     #endif
     /** define dynamic array of FilterBox_c instances;
       if a __IsoAgLib::CANCustomer_c creates one FilterBox_c definitions,
       one object instance is inserted in array
     */
     #ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
-    typedef STL_NAMESPACE::slist<FilterBox_c,STL_NAMESPACE::__malloc_alloc_template<0> > ArrFilterBox;
+    typedef STL_NAMESPACE::USABLE_SLIST<FilterBox_c,STL_NAMESPACE::__malloc_alloc_template<0> > ArrFilterBox;
     #else
-    typedef STL_NAMESPACE::slist<FilterBox_c> ArrFilterBox;
+    typedef STL_NAMESPACE::USABLE_SLIST<FilterBox_c> ArrFilterBox;
     #endif
   #else
    typedef STL_NAMESPACE::vector<FilterBox_c> ArrFilterBox;
