@@ -113,9 +113,9 @@ USE_TARGET_SYSTEM="pc_linux"
 # default: off
 PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
 
-# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"linux_server_client"|"vector_canlib"|"vector_xl_drv_lib"
+# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"linux_server_client"|"vector_canlib"|"vector_xl_drv_lib"|"sontheim"
 # targets other than pc_linux or pc_win32 can only use "sys"
-# only target "pc_win32" can use the driver "vector_canlib"|"vector_xl_drv_lib"
+# only target "pc_win32" can use the driver "vector_canlib"|"vector_xl_drv_lib"|"sontheim"
 # only target "pc_linux" can us the driver "rte"|"linux_server_client"
 #USE_CAN_DRIVER="rte"
 USE_CAN_DRIVER="linux_server_client"
