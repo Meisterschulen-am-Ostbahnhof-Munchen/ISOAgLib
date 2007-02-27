@@ -2179,10 +2179,13 @@ xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtclientservercommunication_c.cpp -text
 xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtclientservercommunication_c.h -text
 xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectgraphicscontext_c.cpp -text
 xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectgraphicscontext_c.h -text
+xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectoutputlist_c.cpp -text
+xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectoutputlist_c.h -text
 xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtserverinstance_c.cpp -text
 xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtserverinstance_c.h -text
 xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtclientservercommunication_c.h -text
 xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectgraphicscontext_c.h -text
+xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectoutputlist_c.h -text
 xgpl_src/IsoAgLib/comm/Multipacket/impl/chunk_c.cpp -text
 xgpl_src/IsoAgLib/comm/Multipacket/impl/chunk_c.h -text
 xgpl_src/IsoAgLib/comm/Multipacket/impl/multireceive_c.cpp -text

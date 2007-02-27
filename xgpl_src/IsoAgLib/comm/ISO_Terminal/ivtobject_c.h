@@ -319,6 +319,18 @@ public:
     iVtObject_c* value;
   } iVtObjectObjectPointer_s;
 
+  typedef struct iVtObjectOutputList_s {
+    uint16_t ID;
+    uint16_t width;
+    uint16_t height;
+    iVtObject_c* variableReference;
+    uint8_t value;
+    uint8_t numberOfObjectsToFollow;
+    const repeat_iVtObject_s* objectsToFollow;
+    uint8_t numberOfMacrosToFollow;
+    const repeat_event_iVtObjectMacro_s* macrosToFollow;
+  } iVtObjectOutputList_s;
+
   typedef struct iVtObjectOutputNumber_s {
     uint16_t ID;
     uint16_t width;

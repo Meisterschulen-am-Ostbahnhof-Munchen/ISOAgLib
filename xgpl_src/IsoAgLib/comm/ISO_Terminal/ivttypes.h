@@ -115,6 +115,7 @@ class iVtObjectInputNumber_c;
 class iVtObjectInputList_c;
 class iVtObjectOutputString_c;
 class iVtObjectOutputNumber_c;
+class iVtObjectOutputList_c;
 class iVtObjectLine_c;
 class iVtObjectMask_c;
 class iVtObjectRectangle_c;
