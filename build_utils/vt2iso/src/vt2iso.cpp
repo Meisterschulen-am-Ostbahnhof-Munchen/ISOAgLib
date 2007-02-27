@@ -1725,16 +1725,14 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
     bool objHasArrayEventMacro = false;
     switch (objType)
     {
-      case otWorkingset:   case otDatamask:  case otAlarmmask:   case otContainer: case otSoftkeymask: case otKey: case otButton:
-      case otInputboolean: case otInputstring:  case otInputnumber: case otInputlist:
-      case otOutputstring: case otOutputnumber:
-      case otLine:   case otRectangle:    case otEllipse:  case otPolygon:
-      case otMeter:     case otLinearbargraph:  case otArchedbargraph:
+      case otWorkingset:     case otDatamask:       case otAlarmmask:       case otContainer:  case otSoftkeymask:  case otKey:  case otButton:
+      case otInputboolean:   case otInputstring:    case otInputnumber:     case otInputlist:
+      case otOutputstring:   case otOutputnumber:   case otOutputlist:
+      case otLine:           case otRectangle:      case otEllipse:         case otPolygon:
+      case otMeter:          case otLinearbargraph: case otArchedbargraph:
       case otPicturegraphic:
-      // variables have no events/macros
-      case otFontattributes:  case otLineattributes:  case otFillattributes:  case otInputattributes:
-      // object pointer has no events/macros
-        objHasArrayEventMacro = true;
+      case otFontattributes: case otLineattributes:  case otFillattributes:  case otInputattributes:
+        objHasArrayEventMacro = true; // only variables and object pointer have no events/macros
         break;
     }
 
@@ -1743,6 +1741,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
     {
       case otSoftkeymask:
       case otInputlist:
+      case otOutputlist:
         objHasArrayObject = true;
         break;
     }
@@ -2225,7 +2224,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
                   }
                   fprintf (partFile_attributes, "{&iVtObject%s, %d, %d, %s ,%d, %d}", objChildName, objChildX, objChildY, objBlockFont, objBlockRow, objBlockCol);
                 } else {
-                  // Added this if statement to account for InputList objects who might have NULL Object IDs in their list of objects. (Which is legal per the standard!)
+                  // Added this if statement to account for InputList/OutputList objects who might have NULL Object IDs in their list of objects. (Which is legal per the standard!)
                   // Instead of inserting a faulty object name, just insert NULL into the array. -BAC 07-Jan-2005
                   if (objChildID == 65535)
                   {
@@ -2256,8 +2255,8 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           }
         }
         // all child-elements processed, now:
-        // special treatment for inputlist with NULL objects
-        if (objType == otInputlist && objChildObjects < (uint16_t)atoi(attrString [attrNumber_of_items]))
+        // special treatment for inputlist/outputlist with NULL objects
+        if (((objType == otInputlist) || (objType == otOutputlist)) && objChildObjects < (uint16_t)atoi(attrString [attrNumber_of_items]))
         {
           //only some items are NULL objects which were not counted in objChildObjects
           if (objChildObjects>0)
@@ -2270,12 +2269,12 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             objChildObjects=(uint16_t)atoi(attrString [attrNumber_of_items]);
           }
           else {
-            // no child-element at all in the inputlist (all items as NULL objects)
+            // no child-element at all in the inputlist/outputlist (all items as NULL objects)
             // fill the reference-list with {NULL}-elements --> so they could be replaced during runtime with NOT NULL objects
             if (objChildObjects == 0 && atoi(attrString [attrNumber_of_items]) > 0)
             {
               // objChildObjects has to be set to number_of_items otherwise
-              // it is set to 0 in the attributes of the inputlist
+              // it is set to 0 in the attributes of the inputlist/output
               objChildObjects = (uint16_t)atoi(attrString [attrNumber_of_items]);
               // create for all number_of_items a no-item placeholder
               fprintf (partFile_attributes, "const IsoAgLib::repeat_iVtObject_s iVtObject%s_aObject [] = {", objName);
@@ -3631,6 +3630,21 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           }
           fprintf (partFile_attributes, ", %s, %s, %s, %s, %d", attrString [attrWidth], attrString [attrHeight], attrString [attrVariable_reference],
                    attrString [attrValue], (unsigned int)retEnabled);
+          break;
+        }
+
+        case otOutputlist:
+        {
+          if (!(attrIsGiven [attrWidth] && attrIsGiven [attrHeight]))
+          {
+            std::cout << "YOU NEED TO SPECIFY THE width= AND height= ATTRIBUTES FOR THE <outputlist> OBJECT '" << objName << "'! STOPPING PARSER! bye.\n\n";
+            return false;
+          }
+          if (!attrIsGiven [attrValue])
+            sprintf (attrString [attrValue], "0");
+
+          fprintf (partFile_attributes, ", %s, %s, %s, %s", attrString [attrWidth], attrString [attrHeight], attrString [attrVariable_reference],
+                   attrString [attrValue]);
           break;
         }
 
