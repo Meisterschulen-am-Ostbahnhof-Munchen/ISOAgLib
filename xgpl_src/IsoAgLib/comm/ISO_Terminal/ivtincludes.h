@@ -77,6 +77,7 @@
 #include "ivtobjectobjectpointer_c.h"
 #include "ivtobjectoutputnumber_c.h"
 #include "ivtobjectoutputstring_c.h"
+#include "ivtobjectoutputlist_c.h"
 #include "ivtobjectpicturegraphic_c.h"
 #include "ivtobjectpolygon_c.h"
 #include "ivtobjectrectangle_c.h"
