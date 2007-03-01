@@ -117,10 +117,11 @@ public:
   static const ISOName_c ISONameInitialProcessData;
 
   /** default constructor
-      @param rui8_devClass     initial DEVCLASS (device type)
-      @param rui8_devClassInst initial DEVCLASSINST (instance). As "unknown" use 0xF
-    */
-  ISOName_c( uint8_t rui8_devClass, uint8_t rui8_devClassInst )
+    using "explicit" to avoid WRONG implicit cast from SA to ISONAME!
+    @param rui8_devClass     initial DEVCLASS (device type)
+    @param rui8_devClassInst initial DEVCLASSINST (instance). Defaults to "unknown" (=0xF)
+  */
+  explicit ISOName_c( uint8_t rui8_devClass, uint8_t rui8_devClassInst=0xF )
   { set( true, 2, rui8_devClass, rui8_devClassInst, 0xFF, 0x7FF, 0x1FFFFF, 0x1F, 0x7 ); }
 
   /** constructor which can read in initial data from uint8_t string
