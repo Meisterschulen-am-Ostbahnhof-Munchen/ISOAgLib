@@ -459,7 +459,8 @@ WARN_LOGFILE           =
 # directories like "/usr/src/myproject". Separate the files or directories 
 # with spaces.
 
-INPUT                  = xgpl_src \
+INPUT                  = IsoAgLib_Examples \
+                         xgpl_src \
                          readme.txt \
                          build_utils \
                          changelog.txt \
