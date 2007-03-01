@@ -78,9 +78,12 @@
 namespace __HAL {
 
 void usage() {
-  printf("usage: can_server_A1 [--log <log_file_name_base>] [--file-input <log_file_name>]\n\n");
-  printf("  --log         log can traffic into <log_file_name_base>_<bus_id>\n");
-  printf("  --file-input  read can data from file <log_fil_name>\n\n");
+  printf("usage: can_server_A1 [--log <log_file_name_base>] [--file-input <log_file_name>] [--high-prio-minimum <num_pending_writes>]\n\n");
+  printf("  --log                 log can traffic into <log_file_name_base>_<bus_id>\n");
+  printf("  --file-input          read can data from file <log_file_name>\n");
+  printf("  --high-prio-minimum   if 0: start normally without priority-handling (default - used if param not given!).\n");
+  printf("                        if >0: only clients with activated high-priority-send-mode can send messages if\n");
+  printf("                               can-controller has equal or more than <num_pending_writes> in its queue.\n\n");
 }
 
 
@@ -221,12 +224,12 @@ void releaseClient(server_c* pc_serverData, std::list<client_s>::iterator& iter_
   {
 #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
     for (uint8_t j=0; j<iter_delete->arrMsgObj[i].size(); j++) {
-      clearReadQueue(i, j, pc_serverData->msqDataServer.i32_rdHandle, iter_delete->i32_clientID);
+      clearReadQueue (i, j, pc_serverData->msqDataServer.i32_rdHandle, iter_delete->i32_clientID);
       clearWriteQueue(i, j, pc_serverData->msqDataServer.i32_wrHandle, iter_delete->i32_clientID);
     }
 #else
-    clearReadQueue(i, COMMON_MSGOBJ_IN_QUEUE, pc_serverData->msqDataServer.i32_rdHandle,iter_delete->i32_clientID);
-    clearWriteQueue(i, COMMON_MSGOBJ_IN_QUEUE, pc_serverData->msqDataServer.i32_wrHandle,iter_delete->i32_clientID);
+    clearReadQueue (i, COMMON_MSGOBJ_IN_QUEUE, pc_serverData->msqDataServer.i32_rdHandle,iter_delete->ui16_pID);
+//  clearWriteQueue(i, COMMON_MSGOBJ_IN_QUEUE, pc_serverData->msqDataServer.i32_wrHandle,iter_delete->ui16_pID);
 #endif
   }
 

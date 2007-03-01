@@ -135,6 +135,8 @@ namespace __IsoAgLib {
 /** definition of public element functions */
 /*******************************************/
 
+bool CANIO_c::sb_sendPrioritized=false;
+
 void
 CANIO_c::singletonInit()
 {
@@ -454,7 +456,7 @@ uint16_t CANIO_c::getBusLoad() const
 /** set the minimum delay in msec. between two sent CAN messages
   @param rui16_minDelay minimum time between two CAN messages [msec.]
 */
-void CANIO_c::setSendpause(uint16_t rui16_minDelay)const
+void CANIO_c::setSendpause(uint16_t rui16_minDelay) const
 { // set send MsgObj ID
   uint8_t ui8_sendObjNr = minHALMsgObjNr();
 
@@ -1973,6 +1975,15 @@ bool CANIO_c::stopSendRetryOnErr()
 void CANIO_c::setMaxSendDelay (int32_t ri32_maxSendDelay)
 {
   i32_maxSendDelay = ri32_maxSendDelay;
+}
+
+
+/** set this client to have send-priority
+  @param rb_sendPrioritized enable (true) or disable (false) sending in Prioritized Mode
+ */
+void CANIO_c::setSendPriority(bool rb_sendPrioritized)
+{ // set send MsgObj ID
+  sb_sendPrioritized = rb_sendPrioritized;
 }
 
 

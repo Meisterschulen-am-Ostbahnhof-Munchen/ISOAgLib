@@ -70,7 +70,7 @@ void send_command_ack(int32_t ri32_mtype, msqData_s* p_msqDataServer, int32_t ri
 {
   msqCommand_s msqCommandBuf;
 
-  msqCommandBuf.i32_mtype = ri32_mtype;
+  msqCommandBuf.i32_mtypePid = ri32_mtype;
   msqCommandBuf.i16_command = COMMAND_ACKNOWLEDGE;
   msqCommandBuf.s_acknowledge.i32_dataContent = ri32_dataContent;
   msqCommandBuf.s_acknowledge.i32_data = ri32_data;
@@ -140,33 +140,44 @@ int16_t ca_createMsqs(msqData_s& msqData)
   return 0;
 }
 
-
-uint32_t assemble_mtype(int32_t i32_pid, uint8_t bus, uint8_t obj)
+/// Only used in SERVER -> CLIENT direction
+int32_t assembleRead_mtype(uint16_t ui16_pid, uint8_t bus, uint8_t obj)
 {
-  return (i32_pid << 16 | bus << 8 | obj);
+  return (ui16_pid << 12 | bus << 8 | obj);
 }
 
-int32_t disassemble_client_id(int32_t i32_mtype)
+uint16_t disassembleRead_client_id(int32_t i32_mtype)
 {
-  return (i32_mtype >> 16);
+  return (i32_mtype >> 12);
 }
 
+/// Only used in CLIENT -> SERVER direction
+int32_t assembleWrite_mtype(bool rb_prio)
+{
+  return (rb_prio) ? (MTYPE_WRITE_PRIO_HIGH) : (MTYPE_WRITE_PRIO_NORMAL);
+}
 
-void clearReadQueue(uint8_t bBusNumber, uint8_t bMsgObj, int32_t i32_msqHandle, int32_t i32_pid)
+// NO MORE CLIENT ID IN <<WRITE>>'s MTYPE
+//uint16_t disassembleWrite_client_id(int32_t i32_mtype)
+//{ return (i32_mtype >> 1) & 0xFFFF; }
+
+
+void clearReadQueue(uint8_t bBusNumber, uint8_t bMsgObj, int32_t i32_msqHandle, uint16_t ui16_pid)
 {
   msqRead_s msqReadBuf;
 
-  while (msgrcv(i32_msqHandle, &msqReadBuf, sizeof(msqRead_s) - sizeof(int32_t), assemble_mtype(i32_pid, bBusNumber, bMsgObj), IPC_NOWAIT) > 0)
+  while (msgrcv(i32_msqHandle, &msqReadBuf, sizeof(msqRead_s) - sizeof(int32_t), assembleRead_mtype(ui16_pid, bBusNumber, bMsgObj), IPC_NOWAIT) > 0)
     ;
 }
 
-void clearWriteQueue(uint8_t bBusNumber, uint8_t bMsgObj, int32_t i32_msqHandle, int32_t i32_pid)
+/** we don't clear the write queue anymore now with the new MTYPE format, which only has the prio anymore
+void clearWriteQueue(bool rb_prio, int32_t i32_msqHandle, uint16_t ui16_pid)
 {
   msqWrite_s msqWriteBuf;
 
-  while (msgrcv(i32_msqHandle, &msqWriteBuf, sizeof(msqWrite_s) - sizeof(int32_t), assemble_mtype(i32_pid, bBusNumber, bMsgObj), IPC_NOWAIT) > 0)
+  while (msgrcv(i32_msqHandle, &msqWriteBuf, sizeof(msqWrite_s) - sizeof(int32_t), assembleWrite_mtype(ui16_pid, rb_prio), IPC_NOWAIT) > 0)
     ;
 }
-
+*/
 
 }; // end namespace __HAL

@@ -57,6 +57,7 @@
 #include "can_target_extensions.h"
 #include <IsoAgLib/hal/pc/system/system.h>
 #include <IsoAgLib/hal/pc/system/system_target_extensions.h>
+#include <IsoAgLib/driver/can/impl/canio_c.h>
 #include <cstring>
 #include <cstdio>
 #include <cctype>
@@ -106,7 +107,7 @@ int16_t can_startDriver()
   // client registration
 
   // use process id for own client id
-  msqCommandBuf.i32_mtype = msqDataClient.i32_pid;
+  msqCommandBuf.i32_mtypePid = msqDataClient.i32_pid;
   msqCommandBuf.i16_command = COMMAND_REGISTER;
   // call getTime just to be sure that start up time is set
   getTime();
@@ -148,7 +149,7 @@ int16_t can_stopDriver()
   if (msqDataClient.i32_pipeHandle)
     close(msqDataClient.i32_pipeHandle);
 
-  msqCommandBuf.i32_mtype = msqDataClient.i32_pid;
+  msqCommandBuf.i32_mtypePid = msqDataClient.i32_pid;
   msqCommandBuf.i16_command = COMMAND_DEREGISTER;
 
   return send_command(&msqCommandBuf, &msqDataClient);
@@ -164,7 +165,7 @@ int16_t init_can ( uint8_t bBusNumber,uint16_t wGlobMask,uint32_t dwGlobMask,uin
 
   if ( bBusNumber > HAL_CAN_MAX_BUS_NR ) return HAL_RANGE_ERR;
 
-  msqCommandBuf.i32_mtype = msqDataClient.i32_pid;
+  msqCommandBuf.i32_mtypePid = msqDataClient.i32_pid;
   msqCommandBuf.i16_command = COMMAND_INIT;
   msqCommandBuf.s_init.ui8_bus = bBusNumber;
   msqCommandBuf.s_init.ui16_wGlobMask = wGlobMask;
@@ -184,7 +185,7 @@ int16_t changeGlobalMask( uint8_t bBusNumber,uint16_t wGlobMask,uint32_t dwGlobM
 
   if ( bBusNumber > HAL_CAN_MAX_BUS_NR ) return HAL_RANGE_ERR;
 
-  msqCommandBuf.i32_mtype = msqDataClient.i32_pid;
+  msqCommandBuf.i32_mtypePid = msqDataClient.i32_pid;
   msqCommandBuf.i16_command = COMMAND_CHG_GLOBAL_MASK;
   msqCommandBuf.s_init.ui8_bus = bBusNumber;
   msqCommandBuf.s_init.ui16_wGlobMask = wGlobMask;
@@ -203,7 +204,7 @@ int16_t closeCan ( uint8_t bBusNumber )
 
   if ( bBusNumber > HAL_CAN_MAX_BUS_NR ) return HAL_RANGE_ERR;
 
-  msqCommandBuf.i32_mtype = msqDataClient.i32_pid;
+  msqCommandBuf.i32_mtypePid = msqDataClient.i32_pid;
   msqCommandBuf.i16_command = COMMAND_CLOSE;
   msqCommandBuf.s_init.ui8_bus = bBusNumber;
 
@@ -244,7 +245,7 @@ int16_t configCanObj ( uint8_t bBusNumber, uint8_t bMsgObj, tCanObjConfig* ptCon
   if ( ( bBusNumber > HAL_CAN_MAX_BUS_NR ) ) return HAL_RANGE_ERR;
 #endif
 
-  msqCommandBuf.i32_mtype = msqDataClient.i32_pid;
+  msqCommandBuf.i32_mtypePid = msqDataClient.i32_pid;
   msqCommandBuf.i16_command = COMMAND_CONFIG;
   msqCommandBuf.s_config.ui8_bus = bBusNumber;
   msqCommandBuf.s_config.ui8_obj = bMsgObj;
@@ -277,7 +278,7 @@ int16_t closeCanObj ( uint8_t bBusNumber,uint8_t bMsgObj )
   if ( ( bBusNumber > HAL_CAN_MAX_BUS_NR ) ) return HAL_RANGE_ERR;
 #endif
 
-  msqCommandBuf.i32_mtype = msqDataClient.i32_pid;
+  msqCommandBuf.i32_mtypePid = msqDataClient.i32_pid;
   msqCommandBuf.i16_command = COMMAND_CLOSEOBJ;
   msqCommandBuf.s_config.ui8_bus = bBusNumber;
   msqCommandBuf.s_config.ui8_obj = bMsgObj;
@@ -303,7 +304,7 @@ int16_t chgCanObjId ( uint8_t bBusNumber, uint8_t bMsgObj, uint32_t dwId, uint32
 
   msqCommand_s msqCommandBuf;
 
-  msqCommandBuf.i32_mtype = msqDataClient.i32_pid;
+  msqCommandBuf.i32_mtypePid = msqDataClient.i32_pid;
   msqCommandBuf.i16_command = COMMAND_CHG_CONFIG;
   msqCommandBuf.s_config.ui8_bus = bBusNumber;
   msqCommandBuf.s_config.ui8_obj = bMsgObj;
@@ -339,7 +340,7 @@ int16_t lockCanObj( uint8_t rui8_busNr, uint8_t rui8_msgobjNr, bool rb_doLock )
   if ( ( rui8_busNr > HAL_CAN_MAX_BUS_NR ) ) return HAL_RANGE_ERR;
 #endif
 
-  msqCommandBuf.i32_mtype = msqDataClient.i32_pid;
+  msqCommandBuf.i32_mtypePid = msqDataClient.i32_pid;
 
   if (rb_doLock)
     msqCommandBuf.i16_command = COMMAND_LOCK;
@@ -374,7 +375,7 @@ bool getCanMsgObjLocked( uint8_t rui8_busNr, uint8_t rui8_msgobjNr )
 #endif
   else {
 
-    msqCommandBuf.i32_mtype = msqDataClient.i32_pid;
+    msqCommandBuf.i32_mtypePid = msqDataClient.i32_pid;
     msqCommandBuf.i16_command = COMMAND_QUERYLOCK;
     msqCommandBuf.s_config.ui8_bus = rui8_busNr;
     msqCommandBuf.s_config.ui8_obj = rui8_msgobjNr;
@@ -407,7 +408,7 @@ int16_t clearCanObjBuf(uint8_t bBusNumber, uint8_t bMsgObj)
 #endif
 
   clearReadQueue(bBusNumber, bMsgObj, msqDataClient.i32_rdHandle, msqDataClient.i32_pid);
-  clearWriteQueue(bBusNumber, bMsgObj, msqDataClient.i32_wrHandle, msqDataClient.i32_pid);
+//clearWriteQueue(bBusNumber, bMsgObj, msqDataClient.i32_wrHandle, msqDataClient.i32_pid);
 
   return HAL_NO_ERR;
 }
@@ -425,8 +426,8 @@ int32_t can_lastReceiveTime()
 int16_t getCanMsgBufCount(uint8_t bBusNumber,uint8_t bMsgObj)
 {
   int16_t i16_rc;
-
-  if ((i16_rc = msgrcv(msqDataClient.i32_rdHandle, NULL, 0, assemble_mtype(msqDataClient.i32_pid, bBusNumber, bMsgObj), IPC_NOWAIT)) == -1)
+  // in this direction (server->client), the sendPrio-flag is NEVER set, so we need only to check for FALSE assembled mtypes!
+  if ((i16_rc = msgrcv(msqDataClient.i32_rdHandle, NULL, 0, assembleRead_mtype(msqDataClient.i32_pid, bBusNumber, bMsgObj), IPC_NOWAIT)) == -1)
     if (errno == E2BIG) {
       //DEBUG_PRINT("messages 1\n");
       return 1;
@@ -500,7 +501,8 @@ int16_t getCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tReceive * ptReceive )
 
   const uint8_t cui8_useMsgObj = bMsgObj;
 
-  if ((i16_rc = msgrcv(msqDataClient.i32_rdHandle, &msqReadBuf, sizeof(msqRead_s) - sizeof(int32_t), assemble_mtype(msqDataClient.i32_pid, bBusNumber, cui8_useMsgObj), IPC_NOWAIT)) == -1)
+  // we assemble the mtype with FALSE here, as we do NOT have sendPriorities in this direction!
+  if ((i16_rc = msgrcv(msqDataClient.i32_rdHandle, &msqReadBuf, sizeof(msqRead_s) - sizeof(int32_t), assembleRead_mtype(msqDataClient.i32_pid, bBusNumber, cui8_useMsgObj), IPC_NOWAIT)) == -1)
     return HAL_UNKNOWN_ERR;
   i32_lastReceiveTime = getTime();
 
@@ -547,7 +549,8 @@ int16_t sendCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tSend* ptSend )
 #endif
 
   memset(&msqWriteBuf, 0, sizeof(msqWrite_s));
-  msqWriteBuf.i32_mtype = assemble_mtype(msqDataClient.i32_pid, bBusNumber, bMsgObj);
+  msqWriteBuf.i32_mtypePrioAnd1 = assembleWrite_mtype(__IsoAgLib::CANIO_c::sb_sendPrioritized);
+  msqWriteBuf.ui16_pid = msqDataClient.i32_pid;
   msqWriteBuf.ui8_bus = bBusNumber;
   msqWriteBuf.ui8_obj = bMsgObj;
   memcpy(&(msqWriteBuf.s_sendData), ptSend, sizeof(tSend));
@@ -589,7 +592,7 @@ int32_t getMaxSendDelay(uint8_t rui8_busNr)
 
 /*  if ( bBusNumber > HAL_CAN_MAX_BUS_NR ) return HAL_RANGE_ERR; */
 
-  msqCommandBuf.i32_mtype = msqDataClient.i32_pid;
+  msqCommandBuf.i32_mtypePid = msqDataClient.i32_pid;
   msqCommandBuf.i16_command = COMMAND_SEND_DELAY;
   msqCommandBuf.s_config.ui8_bus = rui8_busNr;
   // the other fields of the s_config struct are NOT of interest here!

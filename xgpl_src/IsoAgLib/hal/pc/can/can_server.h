@@ -28,7 +28,7 @@ typedef struct {
 
 // client specific data
 typedef struct {
-  int32_t  i32_clientID;
+  uint16_t ui16_pID;
   int32_t  i32_msecStartDeltaClientMinusServer;
 
   //typedef STL_NAMESPACE::vector<tMsgObj> ArrMsgObj;
@@ -68,9 +68,11 @@ public:
   int32_t  i32_lastPipeId;
   int16_t  can_device[cui32_maxCanBusCnt];
   int32_t  i32_sendDelay[cui32_maxCanBusCnt];
+  int      i_pendingMsgs[cui32_maxCanBusCnt];
 };
 
 extern std::list<int32_t> list_sendTimeStamps;
+void updatePendingMsgs(server_c* rpc_server, int8_t i8_bus);
 int32_t getTime();
 
 void usage();
