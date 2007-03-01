@@ -2471,30 +2471,41 @@ void
 VtClientServerCommunication_c::finishUploadCommand()
 {
   en_uploadType = UploadIdle;
-  //dumpQueue(); /* to see all left queued cmds after every dequeued cmd */
-  #ifdef DEBUG
-  INTERNAL_DEBUG_DEVICE << "Dequeued (after success, timeout, whatever..): " << q_sendUpload.size() <<" -> ";
-  #endif
 
-  #ifdef USE_LIST_FOR_FIFO
-  // queueing with list: queue::push <-> list::push_back; queue::front<->list::front; queue::pop<->list::pop_front
-  q_sendUpload.pop_front();
-  #else
-  q_sendUpload.pop();
-  #endif
-  #ifdef DEBUG_HEAP_USEAGE
-  sui16_sendUploadQueueSize--;
-  #endif
+  if ( !q_sendUpload.empty() )
+  {
 
-  #ifdef DEBUG
-  INTERNAL_DEBUG_DEVICE << q_sendUpload.size() << "." << INTERNAL_DEBUG_DEVICE_ENDL;
-  #endif
+    //dumpQueue(); /* to see all left queued cmds after every dequeued cmd */
+    #ifdef DEBUG
+    INTERNAL_DEBUG_DEVICE << "Dequeued (after success, timeout, whatever..): " << q_sendUpload.size() <<" -> ";
+    #endif
 
-  // trigger fast reschedule if more messages are waiting
-  if ( ( getUploadBufferSize() > 0 ) && ( getIsoTerminalInstance4Comm().getTimePeriod() != 4 ) )
-  { // there is a command waiting
-    getSchedulerInstance().changeTimePeriodAndResortTask(&(getIsoTerminalInstance4Comm()), 4);
+    #ifdef USE_LIST_FOR_FIFO
+    // queueing with list: queue::push <-> list::push_back; queue::front<->list::front; queue::pop<->list::pop_front
+    q_sendUpload.pop_front();
+    #else
+    q_sendUpload.pop();
+    #endif
+    #ifdef DEBUG_HEAP_USEAGE
+    sui16_sendUploadQueueSize--;
+    #endif
+
+    #ifdef DEBUG
+    INTERNAL_DEBUG_DEVICE << q_sendUpload.size() << "." << INTERNAL_DEBUG_DEVICE_ENDL;
+    #endif
+
+    // trigger fast reschedule if more messages are waiting
+    if ( ( getUploadBufferSize() > 0 ) && ( getIsoTerminalInstance4Comm().getTimePeriod() != 4 ) )
+    { // there is a command waiting
+      getSchedulerInstance().changeTimePeriodAndResortTask(&(getIsoTerminalInstance4Comm()), 4);
+    }
   }
+#ifdef DEBUG
+  else
+  {
+    INTERNAL_DEBUG_DEVICE << "Attempt to Dequeue while empty!" << INTERNAL_DEBUG_DEVICE_ENDL;
+  }
+#endif
 }
 
 
