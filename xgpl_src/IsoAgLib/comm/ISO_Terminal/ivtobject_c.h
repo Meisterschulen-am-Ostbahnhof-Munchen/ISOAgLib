@@ -498,6 +498,13 @@ public:
 
   void setClientID (uint8_t ui8_clientID) { s_properties.clientId = ui8_clientID; }
 
+  /** return object type
+      !!! BE AWARE that this function is currently only overloaded for layoutManager specific, proprietary
+      objects (DataAlarmMaskConnector, SoftKeyMaskConnector, WorkingSetDescriptorConnector) !!!!
+      @return  object type ( default 0xFE -> one below the proprietary object_type_range as long as this type is not used)
+   */
+  virtual uint16_t getObjectType() { return 0xEF; }
+
 protected: // Attributes
   iVtObject_s* vtObject_a;
 

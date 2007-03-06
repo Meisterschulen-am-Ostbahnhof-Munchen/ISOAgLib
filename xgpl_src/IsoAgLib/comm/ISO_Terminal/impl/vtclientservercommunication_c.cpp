@@ -1247,7 +1247,7 @@ VtClientServerCommunication_c::processMsg()
          )
       {
       #ifdef DEBUG
-        INTERNAL_DEBUG_DEVICE << "\n%% Proprietary command received!! %%%\n" << INTERNAL_DEBUG_DEVICE_ENDL;
+        INTERNAL_DEBUG_DEVICE << "\n%% Proprietary command ";
       #endif
         MACRO_setStateDependantOnError( c_streamer.refc_pool.eventProprietaryCommand( pc_vtServerInstance->getIsoName().toConstIisoName_c() ) )
       }
@@ -2038,12 +2038,14 @@ VtClientServerCommunication_c::queueOrReplace (SendUpload_c& rref_sendUpload, bo
           if ( (ui8_offset<scui8_cmdCompareTableMin) || (ui8_offset > scui8_cmdCompareTableMax))
           {
               // only 0x12 is possible, but no need to override, it shouldn't occur anyway!
-            if (ui8_offset == 0x12)
+            if ((ui8_offset == 0x12) ||
+                ((ui8_offset >= 0x60) && (ui8_offset <= 0x7F)) ) /// no checking for Proprietary commands (we don't need the replace-feature here!)
               break;
 
             // the rest is not possible by definition, but for being sure :-)
 #ifdef DEBUG
             INTERNAL_DEBUG_DEVICE << "--INVALID COMMAND! SHOULDN'T HAPPEN!!--" << INTERNAL_DEBUG_DEVICE_ENDL;
+            INTERNAL_DEBUG_DEVICE << "commandByte " << (int)ui8_offset << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
             return false;
           }
@@ -2328,7 +2330,9 @@ VtClientServerCommunication_c::finalizeUploading() //bool rb_wasLanguageUpdate)
     c_streamer.i8_objectPoolUploadingLanguage = -2; // -2 indicated that the language-update while pool is up IS IDLE!
     c_streamer.ui16_objectPoolUploadingLanguageCode = 0x0000;
   #ifdef DEBUG
-    INTERNAL_DEBUG_DEVICE << "===> finalizeUploading () with language: "<<(int)c_streamer.i8_objectPoolUploadedLanguage<<" ["<<uint8_t(c_streamer.ui16_objectPoolUploadedLanguageCode>>8) <<uint8_t(c_streamer.ui16_objectPoolUploadedLanguageCode&0xFF)<<"]" << INTERNAL_DEBUG_DEVICE_ENDL;
+    INTERNAL_DEBUG_DEVICE << "===> finalizeUploading () with language: "<<(int)c_streamer.i8_objectPoolUploadedLanguage;
+    if (c_streamer.i8_objectPoolUploadedLanguage >= 0) INTERNAL_DEBUG_DEVICE <<" ["<<uint8_t(c_streamer.ui16_objectPoolUploadedLanguageCode>>8) <<uint8_t(c_streamer.ui16_objectPoolUploadedLanguageCode&0xFF)<<"]";
+    INTERNAL_DEBUG_DEVICE << INTERNAL_DEBUG_DEVICE_ENDL;
   #endif
     if (en_uploadPoolType == UploadPoolTypeLanguageUpdate)
     {
