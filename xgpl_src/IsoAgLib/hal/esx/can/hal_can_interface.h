@@ -389,5 +389,22 @@ void can_useMsgobjPopFront(uint8_t rui8_busNr, uint8_t rui8_msgobjNr);
 */
 int16_t can_useMsgobjClear(uint8_t rui8_busNr, uint8_t rui8_msgobjNr);
 /*@}*/
+
+int32_t can_getMaxSendDelay(void);
+
+/**
+  structure to save actual time stamp and Identifier
+*/
+struct can_timeStampAndId_t
+{
+  can_timeStampAndId_t (int32_t i32_ttimeStamp, __IsoAgLib::Ident_c& rrefc_ident): i32_timeStamp(i32_ttimeStamp),rt_ident(rrefc_ident) {}
+  int32_t i32_timeStamp;
+  __IsoAgLib::Ident_c rt_ident;
+};
+
+typedef std::list<can_timeStampAndId_t> list_sendTimeStamps;
+
+
+
 }
 #endif
