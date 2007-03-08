@@ -4,6 +4,9 @@
 /ChangeLog -text
 /Doxyfile -text
 IsoAgLib_Examples/AutoDataCollector/TutPrjDescAutoDataCollector.txt -text
+IsoAgLib_Examples/CanServerMessenger/CanServerMessenger.cpp -text
+IsoAgLib_Examples/CanServerMessenger/config_CanServerMessenger.h -text
+IsoAgLib_Examples/CanServerMessenger/version.h -text
 IsoAgLib_Examples/config_AutoDataCollector.h -text
 IsoAgLib_Examples/config_imi_iso.h -text
 IsoAgLib_Examples/config_tractor.h -text
@@ -2003,6 +2006,7 @@ compiler_projects/projectGeneration/conf_4_2_Pwm -text
 compiler_projects/projectGeneration/conf_5_0_InternalCan -text
 compiler_projects/projectGeneration/conf_5_1_ProprietaryPgn -text
 compiler_projects/projectGeneration/conf_AutoDataCollector -text
+compiler_projects/projectGeneration/conf_CanServerMessenger -text
 compiler_projects/projectGeneration/conf_imi_iso -text
 compiler_projects/projectGeneration/conf_tractorconsole -text
 compiler_projects/projectGeneration/conf_tractorinternalcan -text
