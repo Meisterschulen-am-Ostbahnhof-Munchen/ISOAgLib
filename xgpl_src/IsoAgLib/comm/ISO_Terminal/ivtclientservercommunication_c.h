@@ -97,6 +97,9 @@ public:
   bool sendCommandChangeLineAttributes (uint16_t rui16_objectUid, uint8_t newLineColour, uint8_t newLineWidth, uint16_t newLineArt, bool b_enableReplaceOfCmd=true)
     {return VtClientServerCommunication_c::sendCommandChangeLineAttributes(rui16_objectUid, newLineColour, newLineWidth, newLineArt, b_enableReplaceOfCmd);}
 
+  uint8_t  getClientId() const 
+    { return VtClientServerCommunication_c::getClientId(); }
+
 private:
   /** PRIVATE constructor to forbid instantiation of this interface class.
     * it can only be static_cast'ed to this class, not constructed!

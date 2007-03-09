@@ -390,7 +390,7 @@ VtClientServerCommunication_c::processPartStreamDataChunk (IsoAgLib::iStream_c& 
 /** default constructor, which can optional set the pointer to the containing
   Scheduler_c object instance
  */
-VtClientServerCommunication_c::VtClientServerCommunication_c (IdentItem_c& ref_wsMasterIdentItem, ISOTerminal_c &ref_isoTerminal, IsoAgLib::iIsoTerminalObjectPool_c& rrefc_pool, char* rpc_versionLabel, uint8_t ui8_clientId)
+VtClientServerCommunication_c::VtClientServerCommunication_c (IdentItem_c& ref_wsMasterIdentItem, ISOTerminal_c &ref_isoTerminal, IsoAgLib::iIsoTerminalObjectPool_c& rrefc_pool, char* rpc_versionLabel, uint8_t rui8_clientId)
   : b_vtAliveCurrent (false) // so we detect the rising edge when the VT gets connected!
   , b_checkSameCommand (true)
   , refc_wsMasterIdentItem (ref_wsMasterIdentItem)
@@ -400,6 +400,7 @@ VtClientServerCommunication_c::VtClientServerCommunication_c (IdentItem_c& ref_w
   pc_vtServerInstance = NULL;
   i8_vtLanguage = -1;
   b_receiveFilterCreated = false;
+  ui8_clientId = rui8_clientId;
 
   // the generated initAllObjectsOnce() has to ensure to be idempotent! (vt2iso-generated source does this!)
   c_streamer.refc_pool.initAllObjectsOnce (SINGLETON_VEC_KEY_PARAMETER_VAR);

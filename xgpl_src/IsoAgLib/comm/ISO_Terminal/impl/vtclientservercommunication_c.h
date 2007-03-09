@@ -283,7 +283,7 @@ public:
 
   /** constructor of VtClientServerCommunication_c
    */
-  VtClientServerCommunication_c (IdentItem_c& refc_wsMasterIdentItem, ISOTerminal_c &ref_isoTerminal, IsoAgLib::iIsoTerminalObjectPool_c& rrefc_pool, char* rpc_versionLabel, uint8_t ui8_clientId);
+  VtClientServerCommunication_c (IdentItem_c& refc_wsMasterIdentItem, ISOTerminal_c &ref_isoTerminal, IsoAgLib::iIsoTerminalObjectPool_c& rrefc_pool, char* rpc_versionLabel, uint8_t rui8_clientId);
 
 
   /** explicit conversion to reference of interface class type */
@@ -327,6 +327,7 @@ public:
   uint16_t getVtObjectPoolSoftKeyHeight();
   uint32_t getUploadBufferSize();
   uint8_t  getUserClippedColor (uint8_t colorValue, IsoAgLib::iVtObject_c* obj, IsoAgLib::e_vtColour whichColour);
+  uint8_t  getClientId() const { return ui8_clientId; }
 
   IdentItem_c& getIdentItem()            { return refc_wsMasterIdentItem; }
   VtServerInstance_c& getVtServerInst();
@@ -482,6 +483,8 @@ private: // attributes
 
   /** receive filters are already created */
   bool b_receiveFilterCreated;
+
+  uint8_t ui8_clientId;
 
   ISOTerminalPkg_c c_data;
 
