@@ -1207,7 +1207,6 @@ PRJ_RS232_OVER_CAN=1
 
 
 // DONT REMOVE THIS AND THE FOLLOWING LINE AS THEY ARE NEEDED TO DETECT YOUR PERSONAL PROJECT ADAPTATIONS!!!
-
 // START_INDIVIDUAL_PROJECT_CONFIG
 
 /// define consolidation time for CAN_EN loss detection - can be manually overridden in project config file
@@ -1222,7 +1221,6 @@ PRJ_RS232_OVER_CAN=1
 
 
  \section SrcList0_0_AddressClaimIso__pc_win32__sontheim__simulating List of Sourcefiles for 0_0_AddressClaimIso with CAN Driver sontheim and RS232 Driver simulating
-
 \code
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.cpp
@@ -1258,7 +1256,6 @@ PRJ_RS232_OVER_CAN=1
 
 
  \section HdrList0_0_AddressClaimIso__pc_win32__sontheim__simulating List of Headers for 0_0_AddressClaimIso with CAN Driver sontheim and RS232 Driver simulating
-
 \code
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.h
@@ -1334,7 +1331,6 @@ PRJ_RS232_OVER_CAN=1
 
 
  \section SrcList0_0_AddressClaimIso__pc_win32__sontheim__sys List of Sourcefiles for 0_0_AddressClaimIso with CAN Driver sontheim and RS232 Driver sys
-
 \code
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.cpp
@@ -1370,7 +1366,6 @@ PRJ_RS232_OVER_CAN=1
 
 
  \section HdrList0_0_AddressClaimIso__pc_win32__sontheim__sys List of Headers for 0_0_AddressClaimIso with CAN Driver sontheim and RS232 Driver sys
-
 \code
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.h

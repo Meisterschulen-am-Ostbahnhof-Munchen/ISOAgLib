@@ -1211,7 +1211,6 @@ PRJ_TIME_GPS=1
 
 
 // DONT REMOVE THIS AND THE FOLLOWING LINE AS THEY ARE NEEDED TO DETECT YOUR PERSONAL PROJECT ADAPTATIONS!!!
-
 // START_INDIVIDUAL_PROJECT_CONFIG
 \endcode
 -e 
@@ -1223,7 +1222,6 @@ PRJ_TIME_GPS=1
 
 
  \section SrcList1_4_WriteFlexibleIso__pc_win32__sontheim__simulating List of Sourcefiles for 1_4_WriteFlexibleIso with CAN Driver sontheim and RS232 Driver simulating
-
 \code
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.cpp
@@ -1260,7 +1258,6 @@ PRJ_TIME_GPS=1
 
 
  \section HdrList1_4_WriteFlexibleIso__pc_win32__sontheim__simulating List of Headers for 1_4_WriteFlexibleIso with CAN Driver sontheim and RS232 Driver simulating
-
 \code
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.h
@@ -1334,7 +1331,6 @@ PRJ_TIME_GPS=1
 
 
  \section SrcList1_4_WriteFlexibleIso__pc_win32__sontheim__sys List of Sourcefiles for 1_4_WriteFlexibleIso with CAN Driver sontheim and RS232 Driver sys
-
 \code
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.cpp
@@ -1371,7 +1367,6 @@ PRJ_TIME_GPS=1
 
 
  \section HdrList1_4_WriteFlexibleIso__pc_win32__sontheim__sys List of Headers for 1_4_WriteFlexibleIso with CAN Driver sontheim and RS232 Driver sys
-
 \code
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.h

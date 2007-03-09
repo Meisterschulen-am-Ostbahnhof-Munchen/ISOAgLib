@@ -1214,7 +1214,6 @@ PRJ_RS232=1
 
 
 // DONT REMOVE THIS AND THE FOLLOWING LINE AS THEY ARE NEEDED TO DETECT YOUR PERSONAL PROJECT ADAPTATIONS!!!
-
 // START_INDIVIDUAL_PROJECT_CONFIG
 \endcode
 -e 
@@ -1226,7 +1225,6 @@ PRJ_RS232=1
 
 
  \section SrcList2_8_RemoteReadDataSimpleMeasureIso__pc_win32__sontheim__simulating List of Sourcefiles for 2_8_RemoteReadDataSimpleMeasureIso with CAN Driver sontheim and RS232 Driver simulating
-
 \code
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.cpp
@@ -1275,7 +1273,6 @@ PRJ_RS232=1
 
 
  \section HdrList2_8_RemoteReadDataSimpleMeasureIso__pc_win32__sontheim__simulating List of Headers for 2_8_RemoteReadDataSimpleMeasureIso with CAN Driver sontheim and RS232 Driver simulating
-
 \code
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.h
@@ -1374,7 +1371,6 @@ PRJ_RS232=1
 
 
  \section SrcList2_8_RemoteReadDataSimpleMeasureIso__pc_win32__sontheim__sys List of Sourcefiles for 2_8_RemoteReadDataSimpleMeasureIso with CAN Driver sontheim and RS232 Driver sys
-
 \code
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.cpp
@@ -1423,7 +1419,6 @@ PRJ_RS232=1
 
 
  \section HdrList2_8_RemoteReadDataSimpleMeasureIso__pc_win32__sontheim__sys List of Headers for 2_8_RemoteReadDataSimpleMeasureIso with CAN Driver sontheim and RS232 Driver sys
-
 \code
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.h

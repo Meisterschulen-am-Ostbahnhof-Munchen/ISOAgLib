@@ -1210,7 +1210,6 @@ PRJ_ACTOR=1
 
 
 // DONT REMOVE THIS AND THE FOLLOWING LINE AS THEY ARE NEEDED TO DETECT YOUR PERSONAL PROJECT ADAPTATIONS!!!
-
 // START_INDIVIDUAL_PROJECT_CONFIG
 \endcode
 -e 
@@ -1222,7 +1221,6 @@ PRJ_ACTOR=1
 
 
  \section SrcList4_2_Pwm__pc_win32__sontheim__simulating List of Sourcefiles for 4_2_Pwm with CAN Driver sontheim and RS232 Driver simulating
-
 \code
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.cpp
@@ -1263,7 +1261,6 @@ PRJ_ACTOR=1
 
 
  \section HdrList4_2_Pwm__pc_win32__sontheim__simulating List of Headers for 4_2_Pwm with CAN Driver sontheim and RS232 Driver simulating
-
 \code
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.h
@@ -1348,7 +1345,6 @@ PRJ_ACTOR=1
 
 
  \section SrcList4_2_Pwm__pc_win32__sontheim__sys List of Sourcefiles for 4_2_Pwm with CAN Driver sontheim and RS232 Driver sys
-
 \code
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.cpp
@@ -1389,7 +1385,6 @@ PRJ_ACTOR=1
 
 
  \section HdrList4_2_Pwm__pc_win32__sontheim__sys List of Headers for 4_2_Pwm with CAN Driver sontheim and RS232 Driver sys
-
 \code
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.h

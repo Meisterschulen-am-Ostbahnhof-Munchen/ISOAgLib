@@ -5,6 +5,7 @@
 /Doxyfile -text
 IsoAgLib_Examples/AutoDataCollector/TutPrjDescAutoDataCollector.txt -text
 IsoAgLib_Examples/CanServerMessenger/CanServerMessenger.cpp -text
+IsoAgLib_Examples/CanServerMessenger/CanServerMessenger/TutPrjDescCanServerMessenger.txt -text
 IsoAgLib_Examples/CanServerMessenger/config_CanServerMessenger.h -text
 IsoAgLib_Examples/CanServerMessenger/version.h -text
 IsoAgLib_Examples/config_AutoDataCollector.h -text

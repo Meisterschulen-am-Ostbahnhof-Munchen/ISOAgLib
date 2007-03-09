@@ -191,7 +191,6 @@
 
 
 // DONT REMOVE THIS AND THE FOLLOWING LINE AS THEY ARE NEEDED TO DETECT YOUR PERSONAL PROJECT ADAPTATIONS!!!
-
 // START_INDIVIDUAL_PROJECT_CONFIG
 
 /// define consolidation time for CAN_EN loss detection - can be manually overridden in project config file

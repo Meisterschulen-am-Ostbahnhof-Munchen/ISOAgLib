@@ -1,4 +1,4 @@
-/** \page TutPrjDesc3_3_VirtualTerminalPhase3 Tutorial project description for build of Tutorial 3_3_VirtualTerminalPhase3
+/** \page TutPrjDescCanServerMessenger Tutorial project description for build of Tutorial CanServerMessenger
   This page contains the needed project specification and the resulting project file lists
   and configuration header contents to build the project.
 -e 
@@ -6,24 +6,24 @@
 
 
 
- \section PrjSpec3_3_VirtualTerminalPhase3__pc_win32__sontheim__simulating List of configuration settings for 3_3_VirtualTerminalPhase3 with CAN Driver sontheim and RS232 Driver simulating
+ \section PrjSpecCanServerMessenger__pc_win32__sontheim__simulating List of configuration settings for CanServerMessenger with CAN Driver sontheim and RS232 Driver simulating
  This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
- Use the file conf_3_3_VirtualTerminalPhase3 in this directory as input file for ./update_makefile.sh to create the project generation files.
+ Use the file conf_CanServerMessenger in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
-# Filename: conf_3_3_VirtualTerminalPhase3
-# Configuration setting for tutorial example 3_3_VirtualTerminalPhase3
-# in the tutorial group 3_Terminal
+# Filename: conf_5_0_InternalCan
+# Configuration setting for tutorial example 5_0_InternalCan
+# in the tutorial group 5_CanFeatures
 
 # ###############################################################
 # Project Identification
 # ###############################################################
 
 # define project name - used for directory with makefile
-PROJECT=3_3_VirtualTerminalPhase3
+PROJECT=CanServerMessenger
 
 # define the project author
 # - used for IDE project file types, where the author is stored in the project file
-PROJECT_AUTHOR=MyName
+PROJECT_AUTHOR=MartinWodok
 PROJECT_AUTHOR_EMAIL=MyEmail@Location
 
 # ###############################################################
@@ -34,12 +34,12 @@ PROJECT_AUTHOR_EMAIL=MyEmail@Location
 # ( in relation to the root of the IsoAgLib
 #    - ONLY RELATIVE PATH )
 # seperate directories by whitespace
-REL_APP_PATH="IsoAgLib_Examples/tutorial/3_Terminal/3_3_VirtualTerminalPhase3"
+REL_APP_PATH="IsoAgLib_Examples/CanServerMessenger/"
 # define the name of the app
 # ( if this variable is not set, then
 #   all files of the selected directories are used )
 # seperate files by whitespace
-APP_SRC_FILE="3_3_VirtualTerminalPhase3.cpp"
+APP_SRC_FILE="CanServerMessenger.cpp"
 # define the file extensions to include for the
 # application source file search ( default: *.c *.cc *.cpp *.h *.hpp )
 # APP_SEARCH_SRC_CONDITION="*.cc *.c *.cpp"
@@ -125,11 +125,10 @@ USE_TARGET_SYSTEM="pc_win32"
 # default: off
 PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
 
-# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"linux_server_client"|"vector_canlib"|"vector_xl_drv_lib"|"sontheim"
+# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"linux_server_client"|"vector_canlib"|"vector_xl_drv_lib"
 # targets other than pc_linux or pc_win32 can only use "sys"
-# only target "pc_win32" can use the driver "vector_canlib"|"vector_xl_drv_lib"|"sontheim"
+# only target "pc_win32" can use the driver "vector_canlib"|"vector_xl_drv_lib"
 # only target "pc_linux" can us the driver "rte"|"linux_server_client"
-#USE_CAN_DRIVER="sontheim"
 USE_CAN_DRIVER="sontheim"
 
 # especially the Linux linux_server_client driver type is available for different can cards,
@@ -145,9 +144,7 @@ USE_RS232_DRIVER="simulating"
 
 # define the amount of available CAN BUSes at the ECU
 # ( default 1 )
-CAN_BUS_CNT=1
-
-CAN_BUS_USED=0
+CAN_BUS_CNT=4
 
 # define the amount of CAN instances to support
 # ( all values lower than 1 are overwritten by default 1 )
@@ -178,7 +175,6 @@ RS232_INSTANCE_CNT=1
 # set value of feature to 1 if wanted
 # unset or set to 0 if not wanted
 PRJ_ISO11783=1
-PRJ_ISO_TERMINAL=1
 
 # select stream receive strategy:
 # chunk (default): use list of chunks where each receive burst is stored in one chunk -> usefull when on-the-fly parsing is used
@@ -315,7 +311,7 @@ PRJ_ISO_TERMINAL=1
 # Special CAN features
 # ###############################################################
 
-# Decide to activate an interface for handling of proprietary PGN messages
+# Decide to activate an interface for handling of proprietary CAN identifiers
 # as defined by ISO 11783
 # PRJ_PROPRIETARY_PGN_INTERFACE=0
 
@@ -336,14 +332,14 @@ PRJ_ISO_TERMINAL=1
 #   --> try to reuse SA os last working session on next system start.
 #       the application has only to specify to EEPROM address to handle the SA;
 #       IsoAgLib takes then care of storing and reloading the SA )
-PRJ_EEPROM=1
+# PRJ_EEPROM=0
 
 # select if the datastreams from HAL for file input and output shall be used
 # PRJ_DATASTREAMS=0
 
 # select iRS232IO_c for RS232 output which can be used like the
 # standard C++ iostreams
-# PRJ_RS232=0
+PRJ_RS232=1
 
 # select special RS232 virtual driver HAL for RS232_over_CAN
 # activating this implicitly activates PRJ_RS232 with this special
@@ -508,24 +504,24 @@ PRJ_EEPROM=1
 \endcode
 
 
- \section PrjSpec3_3_VirtualTerminalPhase3__pc_win32__sontheim__sys List of configuration settings for 3_3_VirtualTerminalPhase3 with CAN Driver sontheim and RS232 Driver sys
+ \section PrjSpecCanServerMessenger__pc_win32__sontheim__sys List of configuration settings for CanServerMessenger with CAN Driver sontheim and RS232 Driver sys
  This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
- Use the file conf_3_3_VirtualTerminalPhase3 in this directory as input file for ./update_makefile.sh to create the project generation files.
+ Use the file conf_CanServerMessenger in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
-# Filename: conf_3_3_VirtualTerminalPhase3
-# Configuration setting for tutorial example 3_3_VirtualTerminalPhase3
-# in the tutorial group 3_Terminal
+# Filename: conf_5_0_InternalCan
+# Configuration setting for tutorial example 5_0_InternalCan
+# in the tutorial group 5_CanFeatures
 
 # ###############################################################
 # Project Identification
 # ###############################################################
 
 # define project name - used for directory with makefile
-PROJECT=3_3_VirtualTerminalPhase3
+PROJECT=CanServerMessenger
 
 # define the project author
 # - used for IDE project file types, where the author is stored in the project file
-PROJECT_AUTHOR=MyName
+PROJECT_AUTHOR=MartinWodok
 PROJECT_AUTHOR_EMAIL=MyEmail@Location
 
 # ###############################################################
@@ -536,12 +532,12 @@ PROJECT_AUTHOR_EMAIL=MyEmail@Location
 # ( in relation to the root of the IsoAgLib
 #    - ONLY RELATIVE PATH )
 # seperate directories by whitespace
-REL_APP_PATH="IsoAgLib_Examples/tutorial/3_Terminal/3_3_VirtualTerminalPhase3"
+REL_APP_PATH="IsoAgLib_Examples/CanServerMessenger/"
 # define the name of the app
 # ( if this variable is not set, then
 #   all files of the selected directories are used )
 # seperate files by whitespace
-APP_SRC_FILE="3_3_VirtualTerminalPhase3.cpp"
+APP_SRC_FILE="CanServerMessenger.cpp"
 # define the file extensions to include for the
 # application source file search ( default: *.c *.cc *.cpp *.h *.hpp )
 # APP_SEARCH_SRC_CONDITION="*.cc *.c *.cpp"
@@ -627,11 +623,10 @@ USE_TARGET_SYSTEM="pc_win32"
 # default: off
 PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
 
-# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"linux_server_client"|"vector_canlib"|"vector_xl_drv_lib"|"sontheim"
+# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"linux_server_client"|"vector_canlib"|"vector_xl_drv_lib"
 # targets other than pc_linux or pc_win32 can only use "sys"
-# only target "pc_win32" can use the driver "vector_canlib"|"vector_xl_drv_lib"|"sontheim"
+# only target "pc_win32" can use the driver "vector_canlib"|"vector_xl_drv_lib"
 # only target "pc_linux" can us the driver "rte"|"linux_server_client"
-#USE_CAN_DRIVER="sontheim"
 USE_CAN_DRIVER="sontheim"
 
 # especially the Linux linux_server_client driver type is available for different can cards,
@@ -647,9 +642,7 @@ USE_RS232_DRIVER="sys"
 
 # define the amount of available CAN BUSes at the ECU
 # ( default 1 )
-CAN_BUS_CNT=1
-
-CAN_BUS_USED=0
+CAN_BUS_CNT=4
 
 # define the amount of CAN instances to support
 # ( all values lower than 1 are overwritten by default 1 )
@@ -680,7 +673,6 @@ RS232_INSTANCE_CNT=1
 # set value of feature to 1 if wanted
 # unset or set to 0 if not wanted
 PRJ_ISO11783=1
-PRJ_ISO_TERMINAL=1
 
 # select stream receive strategy:
 # chunk (default): use list of chunks where each receive burst is stored in one chunk -> usefull when on-the-fly parsing is used
@@ -817,7 +809,7 @@ PRJ_ISO_TERMINAL=1
 # Special CAN features
 # ###############################################################
 
-# Decide to activate an interface for handling of proprietary PGN messages
+# Decide to activate an interface for handling of proprietary CAN identifiers
 # as defined by ISO 11783
 # PRJ_PROPRIETARY_PGN_INTERFACE=0
 
@@ -838,14 +830,14 @@ PRJ_ISO_TERMINAL=1
 #   --> try to reuse SA os last working session on next system start.
 #       the application has only to specify to EEPROM address to handle the SA;
 #       IsoAgLib takes then care of storing and reloading the SA )
-PRJ_EEPROM=1
+# PRJ_EEPROM=0
 
 # select if the datastreams from HAL for file input and output shall be used
 # PRJ_DATASTREAMS=0
 
 # select iRS232IO_c for RS232 output which can be used like the
 # standard C++ iostreams
-# PRJ_RS232=0
+PRJ_RS232=1
 
 # select special RS232 virtual driver HAL for RS232_over_CAN
 # activating this implicitly activates PRJ_RS232 with this special
@@ -1013,26 +1005,26 @@ PRJ_EEPROM=1
 
 
 
- \section PrjConfig3_3_VirtualTerminalPhase3 List of configuration settings for 3_3_VirtualTerminalPhase3
- This is only a copy with doxygen ready comment blocks from the original file ../../../IsoAgLib_Examples/tutorial/3_Terminal/3_3_VirtualTerminalPhase3/config_3_3_VirtualTerminalPhase3.h 
+ \section PrjConfigCanServerMessenger List of configuration settings for CanServerMessenger
+ This is only a copy with doxygen ready comment blocks from the original file ../../../IsoAgLib_Examples/CanServerMessenger//config_CanServerMessenger.h 
  This header is included by <IsoAgLib/xgpl_src/Application_Config/isoaglib_config.h> based on the
- project define #define PRJ_USE_AUTOGEN_CONFIG config_3_3_VirtualTerminalPhase3.h ( Important: place the directory of the application source files in the include search path )
+ project define #define PRJ_USE_AUTOGEN_CONFIG config_CanServerMessenger.h ( Important: place the directory of the application source files in the include search path )
 
- Use the file conf_3_3_VirtualTerminalPhase3 in the directory /home/spangler/Projekte/IsoAgLib/compiler_projects/Dev-C++/ as input file for ./update_makefile.sh to create the project generation files.
+ Use the file conf_CanServerMessenger in the directory /home/spangler/Projekte/IsoAgLib/compiler_projects/Dev-C++/ as input file for ./update_makefile.sh to create the project generation files.
 \code
-// File: config_3_3_VirtualTerminalPhase3.h
+// File: config_CanServerMessenger.h
 // IMPORTANT: Never change the first block of this header manually!!!
-//            All manual changes are overwritten by the next call of "update_makefile.sh conf_3_3_VirtualTerminalPhase3" 
-//            Perform changes direct in the feature and project setup file conf_3_3_VirtualTerminalPhase3
+//            All manual changes are overwritten by the next call of "update_makefile.sh conf_CanServerMessenger" 
+//            Perform changes direct in the feature and project setup file conf_CanServerMessenger
 //  ALLOWED ADAPTATION: Move the to be adapted defines from the middle block to the end after
 //                      the line START_INDIVIDUAL_PROJECT_CONFIG and remove the comment indication there.
-//                      All commented out defines in the middle block will be upated on next "update_makefile.sh conf_3_3_VirtualTerminalPhase3" call,
+//                      All commented out defines in the middle block will be upated on next "update_makefile.sh conf_CanServerMessenger" call,
 //                      if the corresponding value in isoaglib_config.h changed
 
 
 // include an external file for definition of pool and firmware versions
 #include "version.h"
-#define CAN_BUS_CNT 1 
+#define CAN_BUS_CNT 4 
 
 #define CAN_BUS_USED 0 
 
@@ -1068,23 +1060,14 @@ PRJ_EEPROM=1
 #ifndef USE_PROCESS_YN 
 	#define USE_PROCESS_YN NO 
 #endif
-#ifndef USE_EEPROM_IO 
-	#define USE_EEPROM_IO 
+#ifndef USE_EEPROM_IO_YN 
+	#define USE_EEPROM_IO_YN NO 
 #endif
-#ifndef USE_DATASTREAMS_IO 
-	#define USE_DATASTREAMS_IO 
+#ifndef USE_DATASTREAMS_IO_YN 
+	#define USE_DATASTREAMS_IO_YN NO 
 #endif
 #ifndef USE_ISO_11783 
 	#define USE_ISO_11783 
-#endif
-#ifndef USE_ISO_TERMINAL 
-	#define USE_ISO_TERMINAL 
-#endif
-#ifndef DEF_Stream_IMPL   
-	#define DEF_Stream_IMPL   StreamChunk   
-#endif
-#ifndef DEF_Stream_c_IMPL 
-	#define DEF_Stream_c_IMPL StreamChunk_c 
 #endif
 
 // The following configuration values can be overwritten.
@@ -1230,10 +1213,10 @@ PRJ_EEPROM=1
 
 
 
- \section FileLists3_3_VirtualTerminalPhase3__pc_win32__sontheim__simulating List of Files for 3_3_VirtualTerminalPhase3 with CAN Driver sontheim and RS232 Driver simulating
+ \section FileListsCanServerMessenger__pc_win32__sontheim__simulating List of Files for CanServerMessenger with CAN Driver sontheim and RS232 Driver simulating
 
 
- \section SrcList3_3_VirtualTerminalPhase3__pc_win32__sontheim__simulating List of Sourcefiles for 3_3_VirtualTerminalPhase3 with CAN Driver sontheim and RS232 Driver simulating
+ \section SrcListCanServerMessenger__pc_win32__sontheim__simulating List of Sourcefiles for CanServerMessenger with CAN Driver sontheim and RS232 Driver simulating
 \code
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.cpp
@@ -1253,71 +1236,22 @@ PRJ_EEPROM=1
 ../../../xgpl_src/IsoAgLib/util/impl/schedulerentry_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/elementbase_c.cpp
 ../../../xgpl_src/IsoAgLib/util/iliberr_c.cpp
-../../../xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multireceive_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamchunk_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisend_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendpkg_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/chunk_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/stream_c.cpp
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectsoftkeymask_c.cpp
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectworkingset_c.cpp
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectellipse_c.cpp
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectgraphicscontext_c.cpp
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtclientservercommunication_c.cpp
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectpicturegraphic_c.cpp
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectlinearbargraph_c.cpp
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectinputstring_c.cpp
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectbutton_c.cpp
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectinputnumber_c.cpp
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectmeter_c.cpp
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectauxiliaryfunction_c.cpp
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectfontattributes_c.cpp
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobject_c.cpp
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectdatamask_c.cpp
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectauxiliaryinput_c.cpp
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectinputlist_c.cpp
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectarchedbargraph_c.cpp
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectmacro_c.cpp
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectalarmmask_c.cpp
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectstringvariable_c.cpp
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectline_c.cpp
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectoutputstring_c.cpp
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/isoterminalpkg_c.cpp
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectinputattributes_c.cpp
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectfillattributes_c.cpp
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectnumbervariable_c.cpp
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectlineattributes_c.cpp
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectinputboolean_c.cpp
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectrectangle_c.cpp
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtserverinstance_c.cpp
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectcontainer_c.cpp
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectstring_c.cpp
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/isoterminal_c.cpp
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectobjectpointer_c.cpp
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectoutputnumber_c.cpp
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectpolygon_c.cpp
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectkey_c.cpp
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectoutputlist_c.cpp
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobject_c.cpp
+../../../xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_simulating.cpp
+../../../xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_w32_sontheim_canlpt.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp
-../../../xgpl_src/IsoAgLib/hal/pc/eeprom/pc_eeditor_can.cpp
-../../../xgpl_src/IsoAgLib/hal/pc/eeprom/pc_eeditor_rs232.cpp
-../../../xgpl_src/IsoAgLib/hal/pc/eeprom/eeprom_target_extensions.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/msgobj_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/canio_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/system/impl/system_c.cpp
-../../../xgpl_src/IsoAgLib/driver/eeprom/impl/eepromio_c.cpp
-../../../IsoAgLib_Examples/tutorial/3_Terminal/3_3_VirtualTerminalPhase3/3_3_VirtualTerminalPhase3.cpp
+../../../IsoAgLib_Examples/CanServerMessenger//CanServerMessenger.cpp
 \endcode
 
 
 
- \section HdrList3_3_VirtualTerminalPhase3__pc_win32__sontheim__simulating List of Headers for 3_3_VirtualTerminalPhase3 with CAN Driver sontheim and RS232 Driver simulating
+ \section HdrListCanServerMessenger__pc_win32__sontheim__simulating List of Headers for CanServerMessenger with CAN Driver sontheim and RS232 Driver simulating
 \code
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.h
@@ -1356,104 +1290,15 @@ PRJ_EEPROM=1
 ../../../xgpl_src/IsoAgLib/util/icanpkgext_c.h
 ../../../xgpl_src/IsoAgLib/util/iliberr_c.h
 ../../../xgpl_src/IsoAgLib/util/iutil_funcs.h
-../../../xgpl_src/supplementary_driver/driver/datastreams/streaminput_c.h
 ../../../xgpl_src/Application_Config/isoaglib_config.h
 ../../../xgpl_src/IsoAgLib/hal/pc/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/config.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multireceive_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/chunk_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/stream_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisend_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamchunk_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendpkg_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/imultisend_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/imultisendstreamer_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/istream_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/imultireceive_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectinputstring_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectoutputstring_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectline_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/isoterminalpkg_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectfillattributes_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectinputboolean_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vttypes.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectobjectpointer_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectinputnumber_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectoutputnumber_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectmeter_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtclientservercommunication_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectalarmmask_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectpolygon_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectellipse_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectgraphicscontext_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectpicturegraphic_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectstringvariable_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectlinearbargraph_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/isoterminal_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectnumbervariable_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectlineattributes_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectrectangle_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtserverinstance_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectinputattributes_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectstring_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectcontainer_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectbutton_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobject_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectfontattributes_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectinputlist_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectdatamask_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectkey_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectauxiliaryinput_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectworkingset_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectarchedbargraph_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectsoftkeymask_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectmacro_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectauxiliaryfunction_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectoutputlist_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectmeter_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtincludes.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobject_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivttypes.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectauxiliaryfunction_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectfontattributes_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/iisoterminal_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectauxiliaryinput_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectdatamask_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectinputstring_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectarchedbargraph_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectworkingset_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectinputattributes_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectrectangle_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/iisoterminalobjectpool_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectobjectpointer_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectinputnumber_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectpicturegraphic_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtclientservercommunication_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectstringvariable_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectlinearbargraph_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectcontainer_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectline_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectoutputstring_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectpolygon_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectkey_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectmask_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectinputlist_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectellipse_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectfillattributes_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectnumbervariable_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectlineattributes_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectinputboolean_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectsoftkeymask_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectmacro_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectgraphicscontext_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectstring_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectalarmmask_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectoutputnumber_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectbutton_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectoutputlist_c.h
-../../../xgpl_src/IsoAgLib/convert.h
 ../../../xgpl_src/IsoAgLib/typedef.h
-../../../xgpl_src/Application_Config/eeprom_adr.h
+../../../xgpl_src/supplementary_driver/hal/pc/rs232/rs232.h
+../../../xgpl_src/supplementary_driver/hal/pc/rs232/rs232_target_extensions.h
+../../../xgpl_src/supplementary_driver/hal/rs232.h
+../../../xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.h
+../../../xgpl_src/supplementary_driver/driver/rs232/irs232io_c.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can_typedef.h
@@ -1462,15 +1307,10 @@ PRJ_EEPROM=1
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can_target_extensions.h
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system.h
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.h
-../../../xgpl_src/IsoAgLib/hal/pc/eeprom/pc_eeditor_can.h
-../../../xgpl_src/IsoAgLib/hal/pc/eeprom/eeprom.h
-../../../xgpl_src/IsoAgLib/hal/pc/eeprom/eeprom_target_extensions.h
-../../../xgpl_src/IsoAgLib/hal/pc/eeprom/pc_eeditor_rs232.h
 ../../../xgpl_src/IsoAgLib/hal/pc/config.h
 ../../../xgpl_src/IsoAgLib/hal/pc/errcodes.h
 ../../../xgpl_src/IsoAgLib/hal/can.h
 ../../../xgpl_src/IsoAgLib/hal/system.h
-../../../xgpl_src/IsoAgLib/hal/eeprom.h
 ../../../xgpl_src/IsoAgLib/driver/can/impl/canio_c.h
 ../../../xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.h
 ../../../xgpl_src/IsoAgLib/driver/can/impl/msgobj_c.h
@@ -1479,15 +1319,13 @@ PRJ_EEPROM=1
 ../../../xgpl_src/IsoAgLib/driver/can/iident_c.h
 ../../../xgpl_src/IsoAgLib/driver/system/impl/system_c.h
 ../../../xgpl_src/IsoAgLib/driver/system/isystem_c.h
-../../../xgpl_src/IsoAgLib/driver/eeprom/impl/eepromio_c.h
-../../../xgpl_src/IsoAgLib/driver/eeprom/ieepromio_c.h
 \endcode
 
 
- \section FileLists3_3_VirtualTerminalPhase3__pc_win32__sontheim__sys List of Files for 3_3_VirtualTerminalPhase3 with CAN Driver sontheim and RS232 Driver sys
+ \section FileListsCanServerMessenger__pc_win32__sontheim__sys List of Files for CanServerMessenger with CAN Driver sontheim and RS232 Driver sys
 
 
- \section SrcList3_3_VirtualTerminalPhase3__pc_win32__sontheim__sys List of Sourcefiles for 3_3_VirtualTerminalPhase3 with CAN Driver sontheim and RS232 Driver sys
+ \section SrcListCanServerMessenger__pc_win32__sontheim__sys List of Sourcefiles for CanServerMessenger with CAN Driver sontheim and RS232 Driver sys
 \code
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.cpp
@@ -1507,71 +1345,22 @@ PRJ_EEPROM=1
 ../../../xgpl_src/IsoAgLib/util/impl/schedulerentry_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/elementbase_c.cpp
 ../../../xgpl_src/IsoAgLib/util/iliberr_c.cpp
-../../../xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multireceive_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamchunk_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisend_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendpkg_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/chunk_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/stream_c.cpp
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectsoftkeymask_c.cpp
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectworkingset_c.cpp
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectellipse_c.cpp
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectgraphicscontext_c.cpp
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtclientservercommunication_c.cpp
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectpicturegraphic_c.cpp
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectlinearbargraph_c.cpp
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectinputstring_c.cpp
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectbutton_c.cpp
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectinputnumber_c.cpp
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectmeter_c.cpp
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectauxiliaryfunction_c.cpp
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectfontattributes_c.cpp
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobject_c.cpp
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectdatamask_c.cpp
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectauxiliaryinput_c.cpp
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectinputlist_c.cpp
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectarchedbargraph_c.cpp
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectmacro_c.cpp
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectalarmmask_c.cpp
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectstringvariable_c.cpp
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectline_c.cpp
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectoutputstring_c.cpp
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/isoterminalpkg_c.cpp
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectinputattributes_c.cpp
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectfillattributes_c.cpp
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectnumbervariable_c.cpp
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectlineattributes_c.cpp
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectinputboolean_c.cpp
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectrectangle_c.cpp
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtserverinstance_c.cpp
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectcontainer_c.cpp
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectstring_c.cpp
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/isoterminal_c.cpp
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectobjectpointer_c.cpp
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectoutputnumber_c.cpp
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectpolygon_c.cpp
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectkey_c.cpp
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectoutputlist_c.cpp
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobject_c.cpp
+../../../xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_w32_sys.cpp
+../../../xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_w32_sontheim_canlpt.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp
-../../../xgpl_src/IsoAgLib/hal/pc/eeprom/pc_eeditor_can.cpp
-../../../xgpl_src/IsoAgLib/hal/pc/eeprom/pc_eeditor_rs232.cpp
-../../../xgpl_src/IsoAgLib/hal/pc/eeprom/eeprom_target_extensions.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/msgobj_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/canio_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/system/impl/system_c.cpp
-../../../xgpl_src/IsoAgLib/driver/eeprom/impl/eepromio_c.cpp
-../../../IsoAgLib_Examples/tutorial/3_Terminal/3_3_VirtualTerminalPhase3/3_3_VirtualTerminalPhase3.cpp
+../../../IsoAgLib_Examples/CanServerMessenger//CanServerMessenger.cpp
 \endcode
 
 
 
- \section HdrList3_3_VirtualTerminalPhase3__pc_win32__sontheim__sys List of Headers for 3_3_VirtualTerminalPhase3 with CAN Driver sontheim and RS232 Driver sys
+ \section HdrListCanServerMessenger__pc_win32__sontheim__sys List of Headers for CanServerMessenger with CAN Driver sontheim and RS232 Driver sys
 \code
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.h
@@ -1610,104 +1399,15 @@ PRJ_EEPROM=1
 ../../../xgpl_src/IsoAgLib/util/icanpkgext_c.h
 ../../../xgpl_src/IsoAgLib/util/iliberr_c.h
 ../../../xgpl_src/IsoAgLib/util/iutil_funcs.h
-../../../xgpl_src/supplementary_driver/driver/datastreams/streaminput_c.h
 ../../../xgpl_src/Application_Config/isoaglib_config.h
 ../../../xgpl_src/IsoAgLib/hal/pc/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/config.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multireceive_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/chunk_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/stream_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisend_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamchunk_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendpkg_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/imultisend_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/imultisendstreamer_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/istream_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/imultireceive_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectinputstring_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectoutputstring_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectline_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/isoterminalpkg_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectfillattributes_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectinputboolean_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vttypes.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectobjectpointer_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectinputnumber_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectoutputnumber_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectmeter_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtclientservercommunication_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectalarmmask_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectpolygon_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectellipse_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectgraphicscontext_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectpicturegraphic_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectstringvariable_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectlinearbargraph_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/isoterminal_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectnumbervariable_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectlineattributes_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectrectangle_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtserverinstance_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectinputattributes_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectstring_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectcontainer_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectbutton_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobject_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectfontattributes_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectinputlist_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectdatamask_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectkey_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectauxiliaryinput_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectworkingset_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectarchedbargraph_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectsoftkeymask_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectmacro_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectauxiliaryfunction_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectoutputlist_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectmeter_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtincludes.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobject_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivttypes.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectauxiliaryfunction_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectfontattributes_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/iisoterminal_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectauxiliaryinput_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectdatamask_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectinputstring_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectarchedbargraph_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectworkingset_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectinputattributes_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectrectangle_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/iisoterminalobjectpool_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectobjectpointer_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectinputnumber_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectpicturegraphic_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtclientservercommunication_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectstringvariable_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectlinearbargraph_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectcontainer_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectline_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectoutputstring_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectpolygon_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectkey_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectmask_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectinputlist_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectellipse_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectfillattributes_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectnumbervariable_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectlineattributes_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectinputboolean_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectsoftkeymask_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectmacro_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectgraphicscontext_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectstring_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectalarmmask_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectoutputnumber_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectbutton_c.h
-../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectoutputlist_c.h
-../../../xgpl_src/IsoAgLib/convert.h
 ../../../xgpl_src/IsoAgLib/typedef.h
-../../../xgpl_src/Application_Config/eeprom_adr.h
+../../../xgpl_src/supplementary_driver/hal/pc/rs232/rs232.h
+../../../xgpl_src/supplementary_driver/hal/pc/rs232/rs232_target_extensions.h
+../../../xgpl_src/supplementary_driver/hal/rs232.h
+../../../xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.h
+../../../xgpl_src/supplementary_driver/driver/rs232/irs232io_c.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can_typedef.h
@@ -1716,15 +1416,10 @@ PRJ_EEPROM=1
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can_target_extensions.h
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system.h
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.h
-../../../xgpl_src/IsoAgLib/hal/pc/eeprom/pc_eeditor_can.h
-../../../xgpl_src/IsoAgLib/hal/pc/eeprom/eeprom.h
-../../../xgpl_src/IsoAgLib/hal/pc/eeprom/eeprom_target_extensions.h
-../../../xgpl_src/IsoAgLib/hal/pc/eeprom/pc_eeditor_rs232.h
 ../../../xgpl_src/IsoAgLib/hal/pc/config.h
 ../../../xgpl_src/IsoAgLib/hal/pc/errcodes.h
 ../../../xgpl_src/IsoAgLib/hal/can.h
 ../../../xgpl_src/IsoAgLib/hal/system.h
-../../../xgpl_src/IsoAgLib/hal/eeprom.h
 ../../../xgpl_src/IsoAgLib/driver/can/impl/canio_c.h
 ../../../xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.h
 ../../../xgpl_src/IsoAgLib/driver/can/impl/msgobj_c.h
@@ -1733,7 +1428,5 @@ PRJ_EEPROM=1
 ../../../xgpl_src/IsoAgLib/driver/can/iident_c.h
 ../../../xgpl_src/IsoAgLib/driver/system/impl/system_c.h
 ../../../xgpl_src/IsoAgLib/driver/system/isystem_c.h
-../../../xgpl_src/IsoAgLib/driver/eeprom/impl/eepromio_c.h
-../../../xgpl_src/IsoAgLib/driver/eeprom/ieepromio_c.h
 \endcode
  */

@@ -1223,7 +1223,6 @@ PRJ_PROPRIETARY_PGN_INTERFACE=1
 
 
 // DONT REMOVE THIS AND THE FOLLOWING LINE AS THEY ARE NEEDED TO DETECT YOUR PERSONAL PROJECT ADAPTATIONS!!!
-
 // START_INDIVIDUAL_PROJECT_CONFIG
 \endcode
 -e 
@@ -1235,7 +1234,6 @@ PRJ_PROPRIETARY_PGN_INTERFACE=1
 
 
  \section SrcList3_2_VirtualTerminalMultiIso__pc_win32__sontheim__simulating List of Sourcefiles for 3_2_VirtualTerminalMultiIso with CAN Driver sontheim and RS232 Driver simulating
-
 \code
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.cpp
@@ -1300,6 +1298,7 @@ PRJ_PROPRIETARY_PGN_INTERFACE=1
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectoutputnumber_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectpolygon_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectkey_c.cpp
+../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectoutputlist_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobject_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/ext/ProprietaryCan/impl/proprietarymessagehandler_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/ext/ProprietaryCan/impl/proprietarymessageclient_c.cpp
@@ -1318,7 +1317,6 @@ PRJ_PROPRIETARY_PGN_INTERFACE=1
 
 
  \section HdrList3_2_VirtualTerminalMultiIso__pc_win32__sontheim__simulating List of Headers for 3_2_VirtualTerminalMultiIso with CAN Driver sontheim and RS232 Driver simulating
-
 \code
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.h
@@ -1410,6 +1408,7 @@ PRJ_PROPRIETARY_PGN_INTERFACE=1
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectsoftkeymask_c.h
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectmacro_c.h
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectauxiliaryfunction_c.h
+../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectoutputlist_c.h
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectmeter_c.h
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtincludes.h
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobject_c.h
@@ -1450,6 +1449,7 @@ PRJ_PROPRIETARY_PGN_INTERFACE=1
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectalarmmask_c.h
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectoutputnumber_c.h
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectbutton_c.h
+../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectoutputlist_c.h
 ../../../xgpl_src/IsoAgLib/comm/ext/ProprietaryCan/impl/proprietarymessagehandler_c.h
 ../../../xgpl_src/IsoAgLib/comm/ext/ProprietaryCan/impl/proprietarymessageclient_c.h
 ../../../xgpl_src/IsoAgLib/comm/ext/ProprietaryCan/igenericdata_c.h
@@ -1484,7 +1484,6 @@ PRJ_PROPRIETARY_PGN_INTERFACE=1
 
 
  \section SrcList3_2_VirtualTerminalMultiIso__pc_win32__sontheim__sys List of Sourcefiles for 3_2_VirtualTerminalMultiIso with CAN Driver sontheim and RS232 Driver sys
-
 \code
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.cpp
@@ -1549,6 +1548,7 @@ PRJ_PROPRIETARY_PGN_INTERFACE=1
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectoutputnumber_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectpolygon_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectkey_c.cpp
+../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectoutputlist_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobject_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/ext/ProprietaryCan/impl/proprietarymessagehandler_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/ext/ProprietaryCan/impl/proprietarymessageclient_c.cpp
@@ -1567,7 +1567,6 @@ PRJ_PROPRIETARY_PGN_INTERFACE=1
 
 
  \section HdrList3_2_VirtualTerminalMultiIso__pc_win32__sontheim__sys List of Headers for 3_2_VirtualTerminalMultiIso with CAN Driver sontheim and RS232 Driver sys
-
 \code
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.h
@@ -1659,6 +1658,7 @@ PRJ_PROPRIETARY_PGN_INTERFACE=1
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectsoftkeymask_c.h
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectmacro_c.h
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectauxiliaryfunction_c.h
+../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectoutputlist_c.h
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectmeter_c.h
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtincludes.h
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobject_c.h
@@ -1699,6 +1699,7 @@ PRJ_PROPRIETARY_PGN_INTERFACE=1
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectalarmmask_c.h
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectoutputnumber_c.h
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectbutton_c.h
+../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectoutputlist_c.h
 ../../../xgpl_src/IsoAgLib/comm/ext/ProprietaryCan/impl/proprietarymessagehandler_c.h
 ../../../xgpl_src/IsoAgLib/comm/ext/ProprietaryCan/impl/proprietarymessageclient_c.h
 ../../../xgpl_src/IsoAgLib/comm/ext/ProprietaryCan/igenericdata_c.h
