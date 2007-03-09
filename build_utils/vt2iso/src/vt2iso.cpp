@@ -3341,10 +3341,9 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
       // if special parsing is active and the object type is greater than maxObjectType
       // the output to the files must be done separately
       if ( pc_specialParsingPropTag && (objType >= maxObjectTypes) )
-      {
-        // need to know the object id in special parsing when data is written to files
+      { // need to know the object id in special parsing when data is written to files
         pc_specialParsingPropTag->setObjID (objID);
-        bool b_outputOK = pc_specialParsingPropTag->outputData2FilesPiecewise(attrString, attrIsGiven);
+        bool b_outputOK = pc_specialParsingPropTag->outputData2FilesPiecewise(attrString, attrIsGiven, this);
         if ( !b_outputOK )
         {
           std::cout << "Error in outputData2FilesPiecewise() from object <" << node_name << "> '" << objName << "'! STOPPING PARSER! bye.\n\n";

@@ -37,6 +37,9 @@
  * along with IsoAgLib; if not, write to the Free Software Foundation,     *
  * Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA           *
  ***************************************************************************/
+#ifndef VT2ISO_H
+#define VT2ISO_H
+
 #include <xercesc/dom/DOMErrorHandler.hpp>
 #include <xercesc/util/XMLString.hpp>
 #include <iostream>
@@ -194,6 +197,7 @@ public:
 
   const char* getAttributeValue (DOMNode* pc_node, const char* attributeName);
 
+  void getKeyCode();
 private:
   signed int strlenUnescaped (const char* pcc_string);
 
@@ -204,8 +208,6 @@ private:
   signed long int setID (const char* objName, unsigned int wishID);
 
   signed long int idOrName_toi (char* rpc_string, bool rb_isMacro);
-
-  void getKeyCode();
 
   void defaultAttributes (unsigned int r_objType);
 
@@ -316,3 +318,5 @@ private:
   SpecialParsingBase_c* pc_specialParsing;
 #endif
 };
+
+#endif // VT2ISO_H
