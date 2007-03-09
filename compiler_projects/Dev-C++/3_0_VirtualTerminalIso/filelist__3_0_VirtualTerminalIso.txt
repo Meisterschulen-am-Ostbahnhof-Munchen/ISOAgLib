@@ -61,6 +61,7 @@
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectoutputnumber_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectpolygon_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectkey_c.cpp
+../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectoutputlist_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobject_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_w32_sontheim_canlpt.cpp
@@ -165,6 +166,7 @@
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectsoftkeymask_c.h
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectmacro_c.h
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectauxiliaryfunction_c.h
+../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectoutputlist_c.h
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectmeter_c.h
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtincludes.h
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobject_c.h
@@ -205,6 +207,7 @@
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectalarmmask_c.h
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectoutputnumber_c.h
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectbutton_c.h
+../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectoutputlist_c.h
 ../../../xgpl_src/IsoAgLib/convert.h
 ../../../xgpl_src/IsoAgLib/typedef.h
 ../../../xgpl_src/Application_Config/eeprom_adr.h

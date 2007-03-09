@@ -1,24 +1,24 @@
-# Microsoft Developer Studio Project File - Name="tractorconsole" - Package Owner=<4>
+# Microsoft Developer Studio Project File - Name="CanServerMessenger" - Package Owner=<4>
 # Microsoft Developer Studio Generated Build File, Format Version 6.00
 # ** NICHT BEARBEITEN **
 
 # TARGTYPE "Win32 (x86) Console Application" 0x0103
 
-CFG=tractorconsole - Win32 Debug
+CFG=CanServerMessenger - Win32 Debug
 !MESSAGE Dies ist kein gültiges Makefile. Zum Erstellen dieses Projekts mit NMAKE
 !MESSAGE verwenden Sie den Befehl "Makefile exportieren" und führen Sie den Befehl
 !MESSAGE
-!MESSAGE NMAKE /f "tractorconsole.mak".
+!MESSAGE NMAKE /f "CanServerMessenger.mak".
 !MESSAGE
 !MESSAGE Sie können beim Ausführen von NMAKE eine Konfiguration angeben
 !MESSAGE durch Definieren des Makros CFG in der Befehlszeile. Zum Beispiel:
 !MESSAGE
-!MESSAGE NMAKE /f "tractorconsole.mak" CFG="tractorconsole - Win32 Debug"
+!MESSAGE NMAKE /f "CanServerMessenger.mak" CFG="CanServerMessenger - Win32 Debug"
 !MESSAGE
 !MESSAGE Für die Konfiguration stehen zur Auswahl:
 !MESSAGE
-!MESSAGE "tractorconsole - Win32 Release" (basierend auf  "Win32 (x86) Console Application")
-!MESSAGE "tractorconsole - Win32 Debug" (basierend auf  "Win32 (x86) Console Application")
+!MESSAGE "CanServerMessenger - Win32 Release" (basierend auf  "Win32 (x86) Console Application")
+!MESSAGE "CanServerMessenger - Win32 Debug" (basierend auf  "Win32 (x86) Console Application")
 !MESSAGE
 
 # Begin Project
@@ -28,7 +28,7 @@ CFG=tractorconsole - Win32 Debug
 CPP=cl.exe
 RSC=rc.exe
 
-!IF  "$(CFG)" == "tractorconsole - Win32 Release"
+!IF  "$(CFG)" == "CanServerMessenger - Win32 Release"
 
 # PROP BASE Use_MFC 0
 # PROP BASE Use_Debug_Libraries 0
@@ -41,9 +41,9 @@ RSC=rc.exe
 # PROP Intermediate_Dir "Release"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /W3 /GX /O2 /I "C:\STLport\stlport" /I "..\..\.." /I "..\..\..\xgpl_src" /I "C:\Development\Sontheim" /I "C:\Development\Sontheim\Capitest" /I "..\..\..\IsoAgLib_Examples\tractor\tractorconsole" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS"  /D "SYSTEM_PC_VC" /D "PRJ_USE_AUTOGEN_CONFIG=config_tractorconsole.h" /D "XL_HWTYPE_VIRTUAL" /YX /FD /TP /c
-# ADD BASE RSC /l 0x407 /d "NDEBUG" /d "SYSTEM_PC_VC" /d "PRJ_USE_AUTOGEN_CONFIG=config_tractorconsole.h" /d "XL_HWTYPE_VIRTUAL"
-# ADD RSC /l 0x407 /d "NDEBUG" /d "SYSTEM_PC_VC" /d "PRJ_USE_AUTOGEN_CONFIG=config_tractorconsole.h" /d "XL_HWTYPE_VIRTUAL"
+# ADD CPP /nologo /W3 /GX /O2 /I "C:\STLport\stlport" /I "..\..\.." /I "..\..\..\xgpl_src" /I "C:\Development\Sontheim" /I "C:\Development\Sontheim\Capitest" /I "..\..\..\IsoAgLib_Examples\CanServerMessenger\" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS"  /D "SYSTEM_PC_VC" /D "PRJ_USE_AUTOGEN_CONFIG=config_CanServerMessenger.h" /D "XL_HWTYPE_VIRTUAL" /YX /FD /TP /c
+# ADD BASE RSC /l 0x407 /d "NDEBUG" /d "SYSTEM_PC_VC" /d "PRJ_USE_AUTOGEN_CONFIG=config_CanServerMessenger.h" /d "XL_HWTYPE_VIRTUAL"
+# ADD RSC /l 0x407 /d "NDEBUG" /d "SYSTEM_PC_VC" /d "PRJ_USE_AUTOGEN_CONFIG=config_CanServerMessenger.h" /d "XL_HWTYPE_VIRTUAL"
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
@@ -51,7 +51,7 @@ LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib  kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /machine:I386
 # ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib  kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib winmm.lib /nologo /subsystem:console /machine:I386  /libpath:"C:\Development\Sontheim" /libpath:"C:\Development\Sontheim\Capitest" /libpath:"C:\STLport\lib"
 
-!ELSEIF  "$(CFG)" == "tractorconsole - Win32 Debug"
+!ELSEIF  "$(CFG)" == "CanServerMessenger - Win32 Debug"
 
 # PROP BASE Use_MFC 0
 # PROP BASE Use_Debug_Libraries 1
@@ -65,9 +65,9 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /GZ  /c
-# ADD CPP /nologo /W3 /Gm /GX /ZI /Od /I "C:\STLport\stlport" /I "..\..\.." /I "..\..\..\xgpl_src" /I "C:\Development\Sontheim" /I "C:\Development\Sontheim\Capitest" /I "..\..\..\IsoAgLib_Examples\tractor\tractorconsole" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS"  /D "SYSTEM_PC_VC" /D "PRJ_USE_AUTOGEN_CONFIG=config_tractorconsole.h" /D "XL_HWTYPE_VIRTUAL" /YX /FD /TP /GZ /c
-# ADD BASE RSC /l 0x407 /d "_DEBUG" /d "SYSTEM_PC_VC" /d "PRJ_USE_AUTOGEN_CONFIG=config_tractorconsole.h" /d "XL_HWTYPE_VIRTUAL"
-# ADD RSC /l 0x407 /d "_DEBUG" /d "SYSTEM_PC_VC" /d "PRJ_USE_AUTOGEN_CONFIG=config_tractorconsole.h" /d "XL_HWTYPE_VIRTUAL"
+# ADD CPP /nologo /W3 /Gm /GX /ZI /Od /I "C:\STLport\stlport" /I "..\..\.." /I "..\..\..\xgpl_src" /I "C:\Development\Sontheim" /I "C:\Development\Sontheim\Capitest" /I "..\..\..\IsoAgLib_Examples\CanServerMessenger\" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS"  /D "SYSTEM_PC_VC" /D "PRJ_USE_AUTOGEN_CONFIG=config_CanServerMessenger.h" /D "XL_HWTYPE_VIRTUAL" /YX /FD /TP /GZ /c
+# ADD BASE RSC /l 0x407 /d "_DEBUG" /d "SYSTEM_PC_VC" /d "PRJ_USE_AUTOGEN_CONFIG=config_CanServerMessenger.h" /d "XL_HWTYPE_VIRTUAL"
+# ADD RSC /l 0x407 /d "_DEBUG" /d "SYSTEM_PC_VC" /d "PRJ_USE_AUTOGEN_CONFIG=config_CanServerMessenger.h" /d "XL_HWTYPE_VIRTUAL"
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
@@ -79,8 +79,8 @@ LINK32=link.exe
 
 # Begin Target
 
-# Name "tractorconsole - Win32 Release"
-# Name "tractorconsole - Win32 Debug"
+# Name "CanServerMessenger - Win32 Release"
+# Name "CanServerMessenger - Win32 Debug"
 # Begin Group "Quellcodedateien"
 
 # PROP Default_Filter "cc;cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
@@ -157,30 +157,6 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\util\iliberr_c.cpp
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\supplementary_driver\driver\datastreams\volatilememory_c.cpp
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Base\impl\tracgeneral_c.cpp
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Base\impl\tracpto_c.cpp
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Base\impl\tracmove_c.cpp
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Base\impl\basecommon_c.cpp
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Base\impl\timeposgps_c.cpp
-# End Source File
-
-# Begin Source File
 SOURCE=..\..\..\xgpl_src\supplementary_driver\hal\pc\rs232\target_extension_rs232_simulating.cpp
 # End Source File
 
@@ -221,7 +197,7 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\driver\system\impl\system_c.cpp
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\IsoAgLib_Examples\tractor\tractorconsole\tractorconsole.cpp
+SOURCE=..\..\..\IsoAgLib_Examples\CanServerMessenger\\CanServerMessenger.cpp
 # End Source File
 
 # End Group
@@ -387,46 +363,6 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\hal\pc\typedef.h
 
 # Begin Source File
 SOURCE=..\..\..\xgpl_src\IsoAgLib\hal\config.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Base\impl\tracgeneral_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Base\impl\timeposgps_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Base\impl\tracpto_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Base\impl\tracmove_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Base\impl\basecommon_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Base\itracmove_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Base\itracgeneral_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Base\itimeposgps_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Base\itracpto_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Base\ibasetypes.h
 # End Source File
 
 # Begin Source File

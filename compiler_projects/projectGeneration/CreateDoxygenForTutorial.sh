@@ -20,6 +20,7 @@ for conf_example in $EXAMPLE_LIST ; do
 		conf_4*) EXAMPLE_DIR="4_SupplementaryDriver" ;;
 		conf_5*) EXAMPLE_DIR="5_CanFeatures" ;;
 		conf_tractor*) DOXYGEN_EXPORT_DIR="../../IsoAgLib_Examples";EXAMPLE_DIR="tractor" ;;
+		conf_CanServerMessenger*) DOXYGEN_EXPORT_DIR="../../IsoAgLib_Examples";EXAMPLE_DIR="CanServerMessenger" ;;
 		*) EXAMPLE_DIR=".." ;;
   esac
   EXAMPLE=`echo $conf_example | sed -e 's/conf_//g'`

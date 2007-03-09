@@ -488,6 +488,11 @@ compiler_projects/Dev-C++/AutoDataCollector/AutoDataCollector__vector_canlib__si
 compiler_projects/Dev-C++/AutoDataCollector/AutoDataCollector__vector_canlib__sys.dev -text
 compiler_projects/Dev-C++/AutoDataCollector/AutoDataCollector__vector_xl_drv_lib__simulating.dev -text
 compiler_projects/Dev-C++/AutoDataCollector/AutoDataCollector__vector_xl_drv_lib__sys.dev -text
+compiler_projects/Dev-C++/CanServerMessenger/CanServerMessenger__sontheim__simulating.dev -text
+compiler_projects/Dev-C++/CanServerMessenger/CanServerMessenger__sontheim__sys.dev -text
+compiler_projects/Dev-C++/CanServerMessenger/filelist__.app.txt -text
+compiler_projects/Dev-C++/CanServerMessenger/filelist__.library.txt -text
+compiler_projects/Dev-C++/CanServerMessenger/filelist__CanServerMessenger.txt -text
 compiler_projects/Dev-C++/imi_iso/imi_iso__simulating__simulating.dev -text
 compiler_projects/Dev-C++/imi_iso/imi_iso__simulating__sys.dev -text
 compiler_projects/Dev-C++/imi_iso/imi_iso__sontheim__simulating.dev -text
@@ -881,6 +886,8 @@ compiler_projects/VC6/AutoDataCollector/AutoDataCollector__vector_canlib__simula
 compiler_projects/VC6/AutoDataCollector/AutoDataCollector__vector_canlib__sys.dsp eol=crlf
 compiler_projects/VC6/AutoDataCollector/AutoDataCollector__vector_xl_drv_lib__simulating.dsp eol=crlf
 compiler_projects/VC6/AutoDataCollector/AutoDataCollector__vector_xl_drv_lib__sys.dsp eol=crlf
+compiler_projects/VC6/CanServerMessenger/CanServerMessenger__sontheim__simulating.dsp -text
+compiler_projects/VC6/CanServerMessenger/CanServerMessenger__sontheim__sys.dsp -text
 compiler_projects/VC6/imi_iso/imi_iso__simulating__simulating.dsp eol=crlf
 compiler_projects/VC6/imi_iso/imi_iso__simulating__sys.dsp eol=crlf
 compiler_projects/VC6/imi_iso/imi_iso__sontheim__simulating.dsp eol=crlf
