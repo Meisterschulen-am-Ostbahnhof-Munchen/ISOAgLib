@@ -87,6 +87,11 @@ namespace __HAL {
   extern "C" {
     /** include the BIOS specific header into __HAL */
     #include <commercial_BIOS/bios_esx/Xos20esx.h>
+
+    #ifdef _INIT_BABYBOARD_
+    #include <commercial_BIOS/bios_esx/Module/xma20.h>
+    #endif
+
   }
   /**
     deliver channel number for checking/requesting of
@@ -142,7 +147,8 @@ namespace HAL
     else if (bOutputChannel < 12) return __HAL::set_pwm_freq(4, dwFrequency);
     // the BA_set_pwm_freq function counts the babyboard PWM channels beginning with 0
     // --> 12 channels on core ESX --> use offset 12
-    else return __HAL::BA_set_pwm_freq(POSITION_1, (bOutputChannel-12), dwFrequency);}
+    // the babyboard PWM Freq is given directly in Hz (and not mHz as for standard core PWMs)
+    else return __HAL::BA_set_pwm_freq(POSITION_1, (bOutputChannel-12), dwFrequency/100);}
     #endif
 
 
@@ -152,14 +158,22 @@ namespace HAL
     @return max possible PWM value
   */
   inline uint16_t getMaxPwmDigout(uint8_t rui8_channel)
-  { __HAL::tOutput tOutputstatus;
+  { 
     #ifndef _INIT_BABYBOARD_
+    __HAL::tOutput tOutputstatus;
     __HAL::get_digout_status(rui8_channel,&tOutputstatus);
     #else
-    if ( rui8_channel < 12 ) __HAL::get_digout_status(rui8_channel,&tOutputstatus);
-    else __HAL::BA_get_digout_status(POSITION_1, (rui8_channel-12),&tOutputstatus);
+    if ( rui8_channel < 12 )
+    { __HAL::tOutput tOutputstatus;
+      __HAL::get_digout_status(rui8_channel,&tOutputstatus);
+      return tOutputstatus.wMaxOutput;
+    }
+    else
+    { __HAL::tBAOutput tOutputstatus;
+      __HAL::BA_get_digout_status(POSITION_1, (rui8_channel-12),&tOutputstatus);
+      return tOutputstatus.wMaxOutput;
+    }
     #endif
-    return tOutputstatus.wMaxOutput;
   }
 
   /**
@@ -174,7 +188,12 @@ namespace HAL
     #else
     {
       if ( rui8_channel < 12 )return __HAL::set_digout(rui8_channel, wPWMValue);
-      else __HAL::BA_set_digout(POSITION_1, (rui8_channel-12), wPWMValue);
+      else 
+      { __HAL::tBAOutput tOutputstatus;
+        __HAL::BA_get_digout_status (POSITION_1, (rui8_channel-12), &tOutputstatus);
+        const uint16_t cui16_percent = ( uint32_t(wPWMValue) * 100UL ) / uint32_t(tOutputstatus.wOutputFreq);
+        return __HAL::BA_set_digout(POSITION_1, (rui8_channel-12), cui16_percent);
+      }
     }
     #endif
 
