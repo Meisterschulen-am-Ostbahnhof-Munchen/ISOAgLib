@@ -103,13 +103,9 @@ int16_t open_system()
    /************initialization of Babyboard at Position 1*********/
   BA_init(POSITION_1, VARIANT_MIX );
   BA_set_pwm_freq(POSITION_1, PIN_1, 500);
-  BA_set_digout (POSITION_1, PIN_1, 100);
   BA_set_pwm_freq(POSITION_1, PIN_2, 500);
-  BA_set_digout (POSITION_1, PIN_2, 100);
   BA_set_pwm_freq(POSITION_1, PIN_3, 500);
-  BA_set_digout (POSITION_1, PIN_3, 100);
   BA_set_pwm_freq(POSITION_1, PIN_4, 500);
-  BA_set_digout (POSITION_1, PIN_4, 100);
   #endif
 
   return i16_result;
