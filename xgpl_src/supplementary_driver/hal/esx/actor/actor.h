@@ -127,39 +127,62 @@ namespace HAL
 
   /**
     define the frequency of the pwm signal
-    @param bOutputGroup PWM output channel [0..11]
+    @param bOutputChannel PWM output channel [0..11] ([0..15] with babyboard)
         (4 sets for ESX equivalent freq for channels [4..11])
     @param dwFrequency PWM frequency in mHz [5x10^3..4,29x10^9]
     @return error state (C_NO_ERR == o.k.; C_RANGE == wrong channel OR frequency)
   */
-  inline int16_t setPwmFreq(uint8_t bOutputGroup, uint32_t dwFrequency)
+  inline int16_t setPwmFreq(uint8_t bOutputChannel, uint32_t dwFrequency)
   // ESX BIOS lets PWM channels 0 to 3 configure individual PWM FREQ
   // rest of PWM channels [4..11] use common PWM freq
-    {if (bOutputGroup < 4) return __HAL::set_pwm_freq(bOutputGroup, dwFrequency);
-     else return __HAL::set_pwm_freq(4, dwFrequency);};
+    {if (bOutputChannel < 4) return __HAL::set_pwm_freq(bOutputChannel, dwFrequency);
+    #ifndef _INIT_BABYBOARD_
+    else return __HAL::set_pwm_freq(4, dwFrequency);};
+    #else
+    else if (bOutputChannel < 12) return __HAL::set_pwm_freq(4, dwFrequency);
+    // the BA_set_pwm_freq function counts the babyboard PWM channels beginning with 0
+    // --> 12 channels on core ESX --> use offset 12
+    else return __HAL::BA_set_pwm_freq(POSITION_1, (bOutputChannel-12), dwFrequency);}
+    #endif
 
 
   /**
     retrieve maximal PWM frequency -> setting to this value results in maximal output
-    @param rui8_channel channel number of output [0..11]
+    @param rui8_channel channel number of output [0..11] ([0..15] with babyboard)
     @return max possible PWM value
   */
   inline uint16_t getMaxPwmDigout(uint8_t rui8_channel)
-  { __HAL::tOutput tOutputstatus; __HAL::get_digout_status(rui8_channel,&tOutputstatus);
+  { __HAL::tOutput tOutputstatus;
+    #ifndef _INIT_BABYBOARD_
+    __HAL::get_digout_status(rui8_channel,&tOutputstatus);
+    #else
+    if ( rui8_channel < 12 ) __HAL::get_digout_status(rui8_channel,&tOutputstatus);
+    else __HAL::BA_get_digout_status(POSITION_1, (rui8_channel-12),&tOutputstatus);
+    #endif
     return tOutputstatus.wMaxOutput;
   }
 
   /**
     set pwm value 0 ... 100 %
-    @param rui8_channel channel number of output [0..11]
+    @param rui8_channel channel number of output [0..11] ([0..15] with babyboard)
     @param wPWMValue Value to set; depends on configured PWM freq; [0..0xFFFF]
     @return error state (C_NO_ERR == o.k.; C_RANGE == wrong channel)
   */
   inline int16_t setDigout(uint8_t rui8_channel, uint16_t wPWMValue)
+    #ifndef _INIT_BABYBOARD_
     {return __HAL::set_digout(rui8_channel, wPWMValue);};
+    #else
+    {
+      if ( rui8_channel < 12 )return __HAL::set_digout(rui8_channel, wPWMValue);
+      else __HAL::BA_set_digout(POSITION_1, (rui8_channel-12), wPWMValue);
+    }
+    #endif
+
+
+
 
   /** deliver the actual current of the digital output
-    * @param rui8_channel channel to check
+    * @param rui8_channel channel to check [0..11] ([0..15] with babyboard)
     * @return current in [mA] ( if specified channel doesn't support current measurement, -1 is returned )
     */
   inline int16_t getDigoutCurrent( uint8_t rui8_channel )
@@ -179,7 +202,7 @@ namespace HAL
 		* if the PWM setting is >0 but has a very low value, so that even under normal
 		* conditions the voltage with connected consuming device is lower than to open
 		* connector state at low level.
-    * @param rui8_channel channel to check
+    * @param rui8_channel channel to check [0..11] ([0..15] with babyboard)
     * @param rui16_minCurrent minimal allowed current in [mA]
     * @param rui16_maxCurrent maximum allowed current in [mA]
     * @return HAL_NO_ERR, HAL_DIGOUT_OPEN, HAL_DIGOUT_SHORTCUT, HAL_DIGOUT_OVERTEMP,
