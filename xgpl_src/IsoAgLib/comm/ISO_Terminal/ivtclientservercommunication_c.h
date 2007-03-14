@@ -97,18 +97,18 @@ public:
   bool sendCommandChangeLineAttributes (uint16_t rui16_objectUid, uint8_t newLineColour, uint8_t newLineWidth, uint16_t newLineArt, bool b_enableReplaceOfCmd=true)
     {return VtClientServerCommunication_c::sendCommandChangeLineAttributes(rui16_objectUid, newLineColour, newLineWidth, newLineArt, b_enableReplaceOfCmd);}
 
-  uint8_t  getClientId() const 
+  uint8_t  getClientId() const
     { return VtClientServerCommunication_c::getClientId(); }
 
 private:
   /** PRIVATE constructor to forbid instantiation of this interface class.
     * it can only be static_cast'ed to this class, not constructed!
     */
-  iVtClientServerCommunication_c (iIdentItem_c& rrefc_wsMasterIdentItem,iISOTerminal_c& rref_isoTerminal,iIsoTerminalObjectPool_c& rrefc_pool,char* rpc_versionLabel, uint8_t ui8_clientId)
+  iVtClientServerCommunication_c (iIdentItem_c& rrefc_wsMasterIdentItem,iISOTerminal_c& rref_isoTerminal,iIsoTerminalObjectPool_c& rrefc_pool,char* rpc_versionLabel, uint8_t ui8_clientID)
   : __IsoAgLib::VtClientServerCommunication_c(
       static_cast<__IsoAgLib::IdentItem_c&>(rrefc_wsMasterIdentItem),
       static_cast<__IsoAgLib::ISOTerminal_c&>( rref_isoTerminal),
-      rrefc_pool,rpc_versionLabel, ui8_clientId )
+      rrefc_pool,rpc_versionLabel, ui8_clientID )
   {}
 
   friend class iISOTerminal_c;
