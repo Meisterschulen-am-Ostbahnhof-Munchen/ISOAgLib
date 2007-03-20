@@ -65,6 +65,10 @@ public:
   bool     b_inputFileMode;
   FILE*    f_canInput;
 
+  // if >0 => do not send messages with local destination address on the bus
+  int16_t  i16_reducedLoadOnIsoBus;
+  std::list<uint8_t> l_remoteDestinationAddress;
+
   int32_t  i32_lastPipeId;
   int16_t  can_device[cui32_maxCanBusCnt];
   int32_t  i32_sendDelay[cui32_maxCanBusCnt];

@@ -78,12 +78,14 @@
 namespace __HAL {
 
 void usage() {
-  printf("usage: can_server_A1 [--log <log_file_name_base>] [--file-input <log_file_name>] [--high-prio-minimum <num_pending_writes>]\n\n");
-  printf("  --log                 log can traffic into <log_file_name_base>_<bus_id>\n");
-  printf("  --file-input          read can data from file <log_file_name>\n");
-  printf("  --high-prio-minimum   if 0: start normally without priority-handling (default - used if param not given!).\n");
-  printf("                        if >0: only clients with activated high-priority-send-mode can send messages if\n");
-  printf("                               can-controller has equal or more than <num_pending_writes> in its queue.\n\n");
+  printf("usage: can_server_A1 [--log <log_file_name_base>] [--file-input <log_file_name>] [--high-prio-minimum <num_pending_writes>] [--reduced-load-iso-bus-no <bus_number>\n\n");
+  printf("  --log                      log can traffic into <log_file_name_base>_<bus_id>\n");
+  printf("  --file-input               read can data from file <log_file_name>\n");
+  printf("  --high-prio-minimum        if 0: start normally without priority-handling (default - used if param not given!).\n");
+  printf("                             if >0: only clients with activated high-priority-send-mode can send messages if\n");
+  printf("                                    can-controller has equal or more than <num_pending_writes> in its queue.\n");
+  printf("  --reduced-load-iso-bus-no  avoid unnecessary CAN bus load due to\n");
+  printf("                             messages with local destination addresses\n\n");
 }
 
 

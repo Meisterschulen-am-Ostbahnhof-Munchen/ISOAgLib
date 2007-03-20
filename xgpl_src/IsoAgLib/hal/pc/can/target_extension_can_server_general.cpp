@@ -127,7 +127,7 @@ const int32_t LptIsaIoAdr = 0x378;
 #define USE_CAN_CARD_TYPE c_CANA1BINARY
 
 server_c::server_c()
-  : b_logMode(FALSE), b_inputFileMode(FALSE), i32_lastPipeId(0)
+  : b_logMode(FALSE), b_inputFileMode(FALSE), i32_lastPipeId(0), i16_reducedLoadOnIsoBus(-1)
 {
   memset(f_canOutput, 0, sizeof(f_canOutput));
   memset(ui16_globalMask, 0, sizeof(ui16_globalMask));
@@ -541,16 +541,41 @@ static void* can_write_thread_func(void* ptr)
     {
       list_sendTimeStamps.push_front (getServerTimeFromClientTime (*ps_client, msqWriteBuf.i32_sendTimeStamp));
 
-      DEBUG_PRINT("+");
-      i16_rc = ca_TransmitCanCard_1(&(msqWriteBuf.s_sendData), msqWriteBuf.ui8_bus, pc_serverData);
-      DEBUG_PRINT1("send: %d\n", i16_rc);
+      bool b_sendOnBus = true;
+      // destination address check based on already collected source addresses from CAN bus messages
+      if ( (pc_serverData->i16_reducedLoadOnIsoBus == msqWriteBuf.ui8_bus) &&
+           (((msqWriteBuf.s_sendData.dwId >> 16) & 0xFF) < 0xF0) && // PDU1 check
+           (((msqWriteBuf.s_sendData.dwId >> 8) & 0xFF) != 0xFF) ) // no broadcast message (destination address != 0xFF)
+      {
+        b_sendOnBus = false;
+        std::list<uint8_t>::const_iterator iter = pc_serverData->l_remoteDestinationAddress.begin();
+        for (; iter != pc_serverData->l_remoteDestinationAddress.end(); iter++)
+        {
+          if (*iter == ((msqWriteBuf.s_sendData.dwId >> 8) & 0xFF))
+          {
+            b_sendOnBus = true;
+            break; // destination address matches collected source address
+          }
+        }
+      }
+
+      if (b_sendOnBus)
+      {
+        DEBUG_PRINT("+");
+        i16_rc = ca_TransmitCanCard_1(&(msqWriteBuf.s_sendData), msqWriteBuf.ui8_bus, pc_serverData);
+        DEBUG_PRINT1("send: %d\n", i16_rc);
+      }
+      else
+      { // no send => no error
+        i16_rc = 1; // successfull return value of ca_TransmitCanCard_1
+      }
 
       if (pc_serverData->b_logMode)
       { /** @todo shouldn't we only dump the message to the FILE if NO ERROR? Or at elast flag it like this in the can-log!! ? */
         dumpCanMsg (msqWriteBuf.ui8_bus, msqWriteBuf.ui8_obj, &(msqWriteBuf.s_sendData), pc_serverData->f_canOutput[msqWriteBuf.ui8_bus]);
       }
 
-      if (!i16_rc)
+      if (!i16_rc) 
         i32_error = HAL_OVERFLOW_ERR;
       else
       { // i16_rc != 0: send was ok
@@ -713,11 +738,30 @@ static void can_read(server_c* pc_serverData)
 
     if (ui32_id >= 0x7FFFFFFF) {
       DEBUG_PRINT1("!!Received of malformed message with undefined CAN ident: %x\n", ui32_id);
-    } else
+    }
+    else
+    { // check for new source address
+      if ( (pc_serverData->i16_reducedLoadOnIsoBus == b_bus) &&
+           (((ui32_id >> 16) & 0xFF) < 0xF0) ) // PDU1 check
+      {
+        std::list<uint8_t>::const_iterator iter = pc_serverData->l_remoteDestinationAddress.begin();
+        for (; iter != pc_serverData->l_remoteDestinationAddress.end(); iter++)
+        {
+          if (*iter == (ui32_id & 0xFF))
+            break; // same source address
+        }
+        if (iter == pc_serverData->l_remoteDestinationAddress.end() && ((ui32_id & 0xFF) != 0xFE)) // skip 0xFE source address
+        { // new, unknown source address
+          pc_serverData->l_remoteDestinationAddress.push_back(ui32_id & 0xFF);
+          DEBUG_PRINT1("Reduced ISO bus load: new source address added to list (%x)\n", ui32_id & 0xFF);
+        }
+      }
+
       enqueue_msg(DLC, ui32_id, b_bus, b_xtd, &receiveData.msg.pb_data[0], 0, pc_serverData);
+    }
 
     // release semaphore
-     if (get_semaphore(local_semaphore_id, 1) == -1) {
+    if (get_semaphore(local_semaphore_id, 1) == -1) {
       perror("release semaphore error");
       exit(1);
     }
@@ -1146,6 +1190,10 @@ int main(int argc, char *argv[])
     }
     if (strcmp(argv[i], "--high-prio-minimum") == 0) {
       si_highPrioModeIfMin = atoi (argv[i+1]); // 0 for no prio mode!
+    }
+    if (strcmp(argv[i], "--reduced-load-iso-bus-no") == 0) {
+      c_serverData.i16_reducedLoadOnIsoBus = atoi (argv[i+1]);
+      printf("reduced bus load on ISO bus no. %d\n", c_serverData.i16_reducedLoadOnIsoBus); fflush(0);
     }
   }
 
