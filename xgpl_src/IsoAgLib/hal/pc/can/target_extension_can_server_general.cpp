@@ -131,6 +131,7 @@ server_c::server_c()
 {
   memset(f_canOutput, 0, sizeof(f_canOutput));
   memset(ui16_globalMask, 0, sizeof(ui16_globalMask));
+  memset(arrb_remoteDestinationAddressInUse, 0, sizeof(arrb_remoteDestinationAddressInUse));
   for (int i=0; i<cui32_maxCanBusCnt; i++)
   {
     i32_sendDelay[i] = 0;
@@ -521,10 +522,23 @@ static void* can_write_thread_func(void* ptr)
       }
     }
 
+
     // acquire semaphore (prevents concurrent read/write access to can driver and modification of client list during execution of enqueue_msg
     if (get_semaphore(local_semaphore_id, -1) == -1) {
       perror("aquire semaphore error");
       exit(1);
+    }
+
+    // is the source address in the current message also set in arrb_remoteDestinationAddressInUse?
+    // => reset it (a previously remote address is now local)
+    if ( (pc_serverData->i16_reducedLoadOnIsoBus == msqWriteBuf.ui8_bus) &&
+          (((msqWriteBuf.s_sendData.dwId >> 16) & 0xFF) < 0xF0) ) // PDU1 check
+    {
+      if (pc_serverData->arrb_remoteDestinationAddressInUse[msqWriteBuf.s_sendData.dwId & 0xFF])
+      {
+        pc_serverData->arrb_remoteDestinationAddressInUse[msqWriteBuf.s_sendData.dwId & 0xFF] = false;
+        DEBUG_PRINT1("Reduced ISO bus load: source address 0x%x removed from list (is now used locally!)\n", msqWriteBuf.s_sendData.dwId & 0xFF);
+      }
     }
 
     client_s* ps_client = NULL;
@@ -548,14 +562,9 @@ static void* can_write_thread_func(void* ptr)
            (((msqWriteBuf.s_sendData.dwId >> 8) & 0xFF) != 0xFF) ) // no broadcast message (destination address != 0xFF)
       {
         b_sendOnBus = false;
-        std::list<uint8_t>::const_iterator iter = pc_serverData->l_remoteDestinationAddress.begin();
-        for (; iter != pc_serverData->l_remoteDestinationAddress.end(); iter++)
-        {
-          if (*iter == ((msqWriteBuf.s_sendData.dwId >> 8) & 0xFF))
-          {
-            b_sendOnBus = true;
-            break; // destination address matches collected source address
-          }
+        if (pc_serverData->arrb_remoteDestinationAddressInUse[(msqWriteBuf.s_sendData.dwId >> 8) & 0xFF])
+        { // destination address matches remotely received source address
+          b_sendOnBus = true;
         }
       }
 
@@ -744,16 +753,10 @@ static void can_read(server_c* pc_serverData)
       if ( (pc_serverData->i16_reducedLoadOnIsoBus == b_bus) &&
            (((ui32_id >> 16) & 0xFF) < 0xF0) ) // PDU1 check
       {
-        std::list<uint8_t>::const_iterator iter = pc_serverData->l_remoteDestinationAddress.begin();
-        for (; iter != pc_serverData->l_remoteDestinationAddress.end(); iter++)
-        {
-          if (*iter == (ui32_id & 0xFF))
-            break; // same source address
-        }
-        if (iter == pc_serverData->l_remoteDestinationAddress.end() && ((ui32_id & 0xFF) != 0xFE)) // skip 0xFE source address
+        if (!pc_serverData->arrb_remoteDestinationAddressInUse[ui32_id & 0xFF] && ((ui32_id & 0xFF) != 0xFE)) // skip 0xFE source address
         { // new, unknown source address
-          pc_serverData->l_remoteDestinationAddress.push_back(ui32_id & 0xFF);
-          DEBUG_PRINT1("Reduced ISO bus load: new source address added to list (%x)\n", ui32_id & 0xFF);
+          pc_serverData->arrb_remoteDestinationAddressInUse[ui32_id & 0xFF] = true;
+          DEBUG_PRINT1("Reduced ISO bus load: new source address 0x%x added to list\n", ui32_id & 0xFF);
         }
       }
 
