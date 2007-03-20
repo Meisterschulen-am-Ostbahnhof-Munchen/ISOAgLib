@@ -132,6 +132,8 @@ server_c::server_c()
   memset(f_canOutput, 0, sizeof(f_canOutput));
   memset(ui16_globalMask, 0, sizeof(ui16_globalMask));
   memset(arrb_remoteDestinationAddressInUse, 0, sizeof(arrb_remoteDestinationAddressInUse));
+  memset(ui16_busRefCnt, 0, sizeof(ui16_busRefCnt));
+
   for (int i=0; i<cui32_maxCanBusCnt; i++)
   {
     i32_sendDelay[i] = 0;
@@ -785,7 +787,6 @@ static void* command_thread_func(void* ptr)
   int32_t i32_data;
   msqCommand_s msqCommandBuf;
   int local_semaphore_id;
-  uint16_t ui16_busRefCnt[cui32_maxCanBusCnt];
 
   server_c* pc_serverData = static_cast<server_c*>(ptr);
 
@@ -793,8 +794,6 @@ static void* command_thread_func(void* ptr)
     perror("semaphore not available");
     exit(1);
   }
-
-  memset(ui16_busRefCnt, 0, sizeof(ui16_busRefCnt));
 
   for (;;) {
 
@@ -910,7 +909,11 @@ static void* command_thread_func(void* ptr)
 
           // @todo: is queue clearing necessary?
           for (uint8_t j=0; j<cui32_maxCanBusCnt; j++)
+          {
             iter_client->arrMsgObj[j].clear();
+            if (iter_client->b_initReceived[j] && (pc_serverData->ui16_busRefCnt[j] > 0))
+              pc_serverData->ui16_busRefCnt[j]--; // decrement ref count only when we received the INIT command before
+          }
 
           if (iter_client->i32_pipeHandle)
             close(iter_client->i32_pipeHandle);
@@ -924,7 +927,7 @@ static void* command_thread_func(void* ptr)
 
           if (msqCommandBuf.s_config.ui8_bus > HAL_CAN_MAX_BUS_NR)
             i32_error = HAL_RANGE_ERR;
-          else if (!ui16_busRefCnt[msqCommandBuf.s_init.ui8_bus])
+          else if (!pc_serverData->ui16_busRefCnt[msqCommandBuf.s_init.ui8_bus])
           { // first init command for current bus
             // open log file only once per bus
             if (pc_serverData->b_logMode) {
@@ -949,9 +952,10 @@ static void* command_thread_func(void* ptr)
             }
           }
 
-          if (!i32_error)
-            ui16_busRefCnt[msqCommandBuf.s_init.ui8_bus]++;
-
+          if (!i32_error) {
+            pc_serverData->ui16_busRefCnt[msqCommandBuf.s_init.ui8_bus]++;
+            iter_client->b_initReceived[msqCommandBuf.s_init.ui8_bus] = true; // when the CLOSE command is received => allow decrement of ref count
+          }
           // do rest of init handling in next case statement (no break!)
 
         case COMMAND_CHG_GLOBAL_MASK:
@@ -969,10 +973,14 @@ static void* command_thread_func(void* ptr)
             i32_error = HAL_RANGE_ERR;
           else
           {
-            if (ui16_busRefCnt[msqCommandBuf.s_init.ui8_bus])
-              ui16_busRefCnt[msqCommandBuf.s_init.ui8_bus]--;
+            if (iter_client->b_initReceived[msqCommandBuf.s_init.ui8_bus] && (pc_serverData->ui16_busRefCnt[msqCommandBuf.s_init.ui8_bus] > 0))
+            {
+              pc_serverData->ui16_busRefCnt[msqCommandBuf.s_init.ui8_bus]--; // decrement ref count only when we received the INIT command before
+            }
 
-            if (ui16_busRefCnt[msqCommandBuf.s_init.ui8_bus] == 0)
+            iter_client->b_initReceived[msqCommandBuf.s_init.ui8_bus] = false; // reset flag
+
+            if (pc_serverData->ui16_busRefCnt[msqCommandBuf.s_init.ui8_bus] == 0)
             { // last connection on bus closed, so reset pending msgs...
               pc_serverData->i_pendingMsgs[msqCommandBuf.s_init.ui8_bus] = 0;
             }
@@ -987,7 +995,7 @@ static void* command_thread_func(void* ptr)
 //          clearWriteQueue(msqCommandBuf.s_init.ui8_bus, COMMON_MSGOBJ_IN_QUEUE, pc_serverData->msqDataServer.i32_wrHandle, iter_client->ui16_pID);
   #endif
 
-            if (!ui16_busRefCnt[msqCommandBuf.s_init.ui8_bus] && pc_serverData->b_logMode && pc_serverData->f_canOutput[msqCommandBuf.s_init.ui8_bus]) {
+            if (!pc_serverData->ui16_busRefCnt[msqCommandBuf.s_init.ui8_bus] && pc_serverData->b_logMode && pc_serverData->f_canOutput[msqCommandBuf.s_init.ui8_bus]) {
               fclose(pc_serverData->f_canOutput[msqCommandBuf.s_init.ui8_bus]);
               pc_serverData->f_canOutput[msqCommandBuf.s_init.ui8_bus] = 0;
             }

@@ -233,6 +233,9 @@ void releaseClient(server_c* pc_serverData, std::list<client_s>::iterator& iter_
     clearReadQueue (i, COMMON_MSGOBJ_IN_QUEUE, pc_serverData->msqDataServer.i32_rdHandle,iter_delete->ui16_pID);
 //  clearWriteQueue(i, COMMON_MSGOBJ_IN_QUEUE, pc_serverData->msqDataServer.i32_wrHandle,iter_delete->ui16_pID);
 #endif
+
+    if (iter_delete->b_initReceived[i] && (pc_serverData->ui16_busRefCnt[i] > 0))
+      pc_serverData->ui16_busRefCnt[i]--; // decrement bus ref count when client dropped off
   }
 
   if (iter_delete->i32_pipeHandle)

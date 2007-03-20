@@ -40,6 +40,8 @@ typedef struct {
   uint32_t ui32_lastMask[cui32_maxCanBusCnt];
   int32_t  i32_pipeHandle;
   int32_t  i32_sendDelay[cui32_maxCanBusCnt];
+
+  bool     b_initReceived[cui32_maxCanBusCnt];
 } client_s;
 
 
@@ -73,6 +75,8 @@ public:
   int16_t  can_device[cui32_maxCanBusCnt];
   int32_t  i32_sendDelay[cui32_maxCanBusCnt];
   int      i_pendingMsgs[cui32_maxCanBusCnt];
+
+  uint16_t ui16_busRefCnt[cui32_maxCanBusCnt];
 };
 
 extern std::list<int32_t> list_sendTimeStamps;
