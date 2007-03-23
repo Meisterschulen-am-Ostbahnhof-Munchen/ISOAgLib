@@ -167,7 +167,7 @@ void MeasureSubprog_c::start(int32_t ri32_lastVal, int32_t ri32_increment){
   // if wanted store given values (in both cases 0 is interpreted as not wanted)
   if (ri32_increment != 0) i32_increment = ri32_increment;
   if (ri32_lastVal != 0) i32_lastVal = ri32_lastVal;
-  
+
   // register as started
   b_started = true;
 }
@@ -203,15 +203,16 @@ int32_t MeasureSubprog_c::nextTriggerTime(int32_t ri32_val)
     {
 #if defined(USE_BASE) || defined(USE_TRACTOR_MOVE)
       const int32_t ci32_restDistance = i32_lastVal + i32_increment - ri32_val;
-      const int32_t ci32_speed = CNAMESPACE::labs(getTracMoveInstance4Comm().speedTheor());  // speed can be negative
+      const int32_t ci32_speed = CNAMESPACE::labs(getTracMoveInstance4Comm().selectedSpeed());  // speed can be negative
 
       if (0 == ci32_speed)
         // speed == 0
         return 500;
 
-      if (ci32_speed >= 0xFAFF)
-        // invalid speed, no tractor available
+      if ( ! getTracMoveInstance4Comm().isSelectedSpeedUsable() )
+      { // invalid speed, no tractor available
         return 200;
+      }
 
       if (ci32_restDistance < 0)
         // should not happen if distance does only grow

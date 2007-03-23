@@ -102,11 +102,17 @@ namespace IsoAgLib {
   /** set the value of real speed (measured by radar)
       @param ri16_val value to store as real radar measured speed
     */
-  void setSpeedReal(const int32_t& ri32_val) {TracMove_c::setSpeedReal(ri32_val);}
+  void setSpeedReal(const int32_t& ri32_val)
+  {
+    TracMove_c::setSpeedReal(ri32_val);
+  }
   /** set the value of theoretical speed (calculated from gear)
       @param ri16_val value to store as theoretical gear calculated speed
     */
-  void setSpeedTheor(const int32_t& ri32_val) {TracMove_c::setSpeedTheor(ri32_val);}
+  void setSpeedTheor(const int32_t& ri32_val)
+  {
+    TracMove_c::setSpeedTheor(ri32_val);
+  }
   /** set the real (radar measured) driven distance with int32_t val
       @param rreflVal value to store as real radar measured distance
     */
@@ -168,10 +174,34 @@ namespace IsoAgLib {
     */
   int32_t speedReal() const {return TracMove_c::speedReal();}
 
+  /** is looking for a valid speed value
+      @return true if speed is valid otherwise false */
+  bool isRealSpeedUsable() const { return TracMove_c::isRealSpeedUsable();}
+
+  /** is looking for a missing speed value
+      @return true if speed is missing otherwise false */
+  bool isRealSpeedMissing() const { return  TracMove_c::isRealSpeedMissing();}
+
+  /** is looking for a erroneous speed value
+      @return true if speed is erroneous otherwise false */
+  bool isRealSpeedErroneous() const { return TracMove_c::isRealSpeedErroneous();}
+
   /** get the value of theoretical speed (calculated from gear)
       @return theoretical gear calculated speed value
     */
   int32_t speedTheor() const {return TracMove_c::speedTheor();}
+
+  /** is looking for a valid speed value
+      @return true if speed is valid otherwise false */
+  bool isTheorSpeedUsable() const { return TracMove_c::isTheorSpeedUsable();}
+
+  /** is looking for a missing speed value
+      @return true if speed is missing otherwise false */
+  bool isTheorSpeedMissing() const { return  TracMove_c::isTheorSpeedMissing();}
+
+  /** is looking for a erroneous speed value
+      @return true if speed is erroneous otherwise false */
+  bool isTheorSpeedErroneous() const { return TracMove_c::isTheorSpeedErroneous();}
 
   /** get the real driven distance with int32_t val
       @return actual radar measured driven distance value
@@ -211,7 +241,19 @@ namespace IsoAgLib {
   /** get current value of the speed as determined from a number of sources by the machine
       @return  current value of speed
     */
-  int32_t selectedSpeed() {return TracMove_c::selectedSpeed();}
+  int32_t selectedSpeed() { return TracMove_c::selectedSpeed();}
+
+  /** is looking for a valid speed value
+      @return true if speed is valid otherwise false */
+  bool isSelectedSpeedUsable() const { return TracMove_c::isSelectedSpeedUsable();}
+
+  /** is looking for a missing speed value
+      @return true if speed is missing otherwise false */
+  bool isSelectedSpeedMissing() const { return  TracMove_c::isSelectedSpeedMissing();}
+
+  /** is looking for a erroneous speed value
+      @return true if speed is erroneous otherwise false */
+  bool isSelectedSpeedErroneous() const { return TracMove_c::isSelectedSpeedErroneous();}
 
   /** get present limit status of selected speed
       @return  limit status
