@@ -1034,9 +1034,9 @@ bool ISOMonitor_c::unifyIsoISOName (ISOName_c& refc_isoName, bool rb_dontUnify)
       // store the pos part of given isoName
       int16_t tempPos = (refc_isoName.devClassInst()),
           diff = 1;
-      for (; diff < 8; diff++)
+      for (; diff < 16; diff++)
       {
-        if (tempPos + diff < 8)
+        if (tempPos + diff < 16)
         {  // (tempPos + diff) would be an allowed device class inst code
           c_tempISOName.setDevClassInst( tempPos + diff );
           if (!(existIsoMemberISOName(c_tempISOName)))
