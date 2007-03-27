@@ -582,7 +582,7 @@ vt2iso_c::clean_exit (char* error_message)
     fprintf (partFile_list, "\n};\n");
     int extraLanguageLists = (ui_languages>0)?arrs_language[0].count : 0;
     fprintf (partFile_list, "\niObjectPool_%s_c::iObjectPool_%s_c () : iIsoTerminalObjectPool_c (all_iVtObjectLists%s, %d, %d, %d, %d, %d) {};\n",
-             proName, proName, pcch_poolIdent, objCount - extraLanguageLists, extraLanguageLists, opDimension, skWidth, skHeight);
+             proName.c_str(), proName.c_str(), pcch_poolIdent, objCount - extraLanguageLists, extraLanguageLists, opDimension, skWidth, skHeight);
 
     fclose(partFile_list);
   }
@@ -603,9 +603,9 @@ vt2iso_c::clean_exit (char* error_message)
 
   if (partFile_handler_direct) { // handler class direct
   // NEW:
-    fprintf (partFile_handler_direct, "\n #ifndef DECL_direct_iObjectPool_%s_c", proName );
-    fprintf (partFile_handler_direct, "\n #define DECL_direct_iObjectPool_%s_c", proName );
-    fprintf (partFile_handler_direct, "\nclass iObjectPool_%s_c : public IsoAgLib::iIsoTerminalObjectPool_c {", proName);
+    fprintf (partFile_handler_direct, "\n #ifndef DECL_direct_iObjectPool_%s_c", proName.c_str() );
+    fprintf (partFile_handler_direct, "\n #define DECL_direct_iObjectPool_%s_c", proName.c_str() );
+    fprintf (partFile_handler_direct, "\nclass iObjectPool_%s_c : public IsoAgLib::iIsoTerminalObjectPool_c {", proName.c_str());
     fprintf (partFile_handler_direct, "\npublic:");
     fprintf (partFile_handler_direct, "\n  virtual void eventKeyCode (uint8_t keyActivationCode, uint16_t objId, uint16_t objIdMask, uint8_t keyCode, bool wasButton);");
     fprintf (partFile_handler_direct, "\n  /* Uncomment the following function if you want to use command-response handling! */");
@@ -630,19 +630,19 @@ vt2iso_c::clean_exit (char* error_message)
     fprintf (partFile_handler_direct, "\n  /* Uncomment the following function if you want to react on any incoming VT Get Attribute Value messages */");
     fprintf (partFile_handler_direct, "\n  //virtual void eventAttributeValue(IsoAgLib::iVtObject_c* obj, uint8_t ui8_attributeValue, uint8_t* pui8_value);");
     fprintf (partFile_handler_direct, "\n  void initAllObjectsOnce(SINGLETON_VEC_KEY_PARAMETER_DEF);");
-    fprintf (partFile_handler_direct, "\n  iObjectPool_%s_c ();", proName);
+    fprintf (partFile_handler_direct, "\n  iObjectPool_%s_c ();", proName.c_str());
     fprintf (partFile_handler_direct, "\n};\n");
     fprintf (partFile_handler_direct, "\n #endif\n" );
     fclose (partFile_handler_direct);
   }
   if (partFile_handler_derived) { // handler class derived
   // NEW:
-    fprintf (partFile_handler_derived, "\n #ifndef DECL_derived_iObjectPool_%s_c", proName );
-    fprintf (partFile_handler_derived, "\n #define DECL_derived_iObjectPool_%s_c", proName );
-    fprintf (partFile_handler_derived, "\nclass iObjectPool_%s_c : public IsoAgLib::iIsoTerminalObjectPool_c {", proName);
+    fprintf (partFile_handler_derived, "\n #ifndef DECL_derived_iObjectPool_%s_c", proName.c_str() );
+    fprintf (partFile_handler_derived, "\n #define DECL_derived_iObjectPool_%s_c", proName.c_str() );
+    fprintf (partFile_handler_derived, "\nclass iObjectPool_%s_c : public IsoAgLib::iIsoTerminalObjectPool_c {", proName.c_str());
     fprintf (partFile_handler_derived, "\npublic:");
     fprintf (partFile_handler_derived, "\n  void initAllObjectsOnce(SINGLETON_VEC_KEY_PARAMETER_DEF);");
-    fprintf (partFile_handler_derived, "\n  iObjectPool_%s_c ();", proName);
+    fprintf (partFile_handler_derived, "\n  iObjectPool_%s_c ();", proName.c_str());
     fprintf (partFile_handler_derived, "\n};\n");
     fprintf (partFile_handler_derived, "\n #endif\n" );
     fclose (partFile_handler_derived);
@@ -956,7 +956,6 @@ vt2iso_c::init (const char* xmlFile)
   strcat (partFileName, "-variables-extern.inc");
   partFile_variables_extern = fopen (partFileName,"wt");
 
-
   strncpy (partFileName, xmlFile, 1024);
   strcat (partFileName, "-attributes.inc");
   partFile_attributes = fopen (partFileName,"wt");
@@ -964,7 +963,7 @@ vt2iso_c::init (const char* xmlFile)
   strncpy (partFileName, xmlFile, 1024);
   strcat (partFileName, "-functions.inc");
   partFile_functions = fopen (partFileName,"wt");
-  fprintf (partFile_functions, "void iObjectPool_%s_c::initAllObjectsOnce (SINGLETON_VEC_KEY_PARAMETER_DEF)\n{\n", proName);
+  fprintf (partFile_functions, "void iObjectPool_%s_c::initAllObjectsOnce (SINGLETON_VEC_KEY_PARAMETER_DEF)\n{\n", proName.c_str());
   fprintf (partFile_functions, "  if (b_initAllObjects) return;   // so the pointer to the ROM structures are only getting set once on initialization!\n");
 
   strncpy (partFileName, xmlFile, 1024);
@@ -1074,7 +1073,7 @@ vt2iso_c::defaultAttributes (unsigned int r_objType)
       attrIsGiven [attrCursorY] = true;
     }
   }
-  if (!attrIsGiven [attrInputObjectOptions]) {
+  if ((r_objType == otInputnumber) && !attrIsGiven [attrInputObjectOptions]) {
     sprintf (attrString [attrInputObjectOptions], "enabled");
     attrIsGiven [attrInputObjectOptions] = true;
   }
@@ -1269,8 +1268,8 @@ vt2iso_c::getAttributesFromNode(DOMNode *n, bool treatSpecial)
           strncpy (attrString [l], attr_value, stringLength);
           attrIsGiven [l] = true;
     // DEBUG-OUT
-    //      std::cout << "FOUND ATTR: IND " << l << ":= " << attrNameTable [l] << " -> " << attrString[l] << ":"
-    //                << attrIsGiven [l] << "\n";
+//          std::cout << "FOUND ATTR: IND " << l << ":= " << attrNameTable [l] << " -> " << attrString[l] << ":"
+//                    << attrIsGiven [l] << "\n";
           break;
         }
       }
@@ -3590,13 +3589,13 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             fprintf (partFile_attributes, ", %sL", attrString [attrOffset] );
           }
 
-          signed int retEnabled = inputobjectoptiontoi (attrString [attrInputObjectOptions]);
+          signed int retInputOption = inputobjectoptiontoi (attrString [attrInputObjectOptions]);
           signed int retFormat = formattoi (attrString [attrFormat]);
           signed int retJust = horizontaljustificationtoi (attrString [attrHorizontal_justification]);
-          if ((retEnabled == -1) || (retFormat == -1) || (retJust == -1))
+          if ((retInputOption == -1) || (retFormat == -1) || (retJust == -1))
           {
-            if (retEnabled == -1)
-              std::cout << "Error in booltoi() from object <" << node_name << "> '" << objName << "'! STOPPING PARSER! bye.\n\n";
+            if (retInputOption == -1)
+              std::cout << "Error in inputobjectoptiontoi() from object <" << node_name << "> '" << objName << "'! STOPPING PARSER! bye.\n\n";
 
             if (retFormat == -1)
               std::cout << "Error in formattoi() from object <" << node_name << "> '" << objName << "'! STOPPING PARSER! bye.\n\n";
@@ -3607,7 +3606,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           }
 
           fprintf (partFile_attributes, ", %s, %s, %d, %d, %d", attrString [attrScale], attrString [attrNumber_of_decimals],
-                   (unsigned int)retFormat, (unsigned int)retJust, (unsigned int)retEnabled);
+                   (unsigned int)retFormat, (unsigned int)retJust, (unsigned int)retInputOption);
           break;
         }
 
@@ -4331,15 +4330,7 @@ vt2iso_c::prepareFileNameAndDirectory(std::basic_string<char>* pch_fileName)
   std::basic_string<char> c_directoryCompareItem;
   std::cerr << "--> Directory: " << c_directory << std::endl << "--> File:      " << c_project << std::endl;
 
-  strncpy (proName, c_project.c_str(), 1024);
-  proName [1024+1-1] = 0x00;
-  for (unsigned int i=0; i<strlen(proName); i++)
-  {
-    if (proName[i] == '.')
-    {
-      proName[i] = 0x00; break;
-    }
-  }
+  proName = c_project;
 
 #ifdef WIN32
   HANDLE hList;

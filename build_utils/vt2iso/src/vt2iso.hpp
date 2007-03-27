@@ -256,7 +256,7 @@ private:
   char fix_bitmap_path [1024+1];
   char spc_autoLanguage[1024+1];
 
-  char proName[1024+1];
+  std::string proName;
   std::basic_string<char> c_project;
 
   int amountXmlFiles;
