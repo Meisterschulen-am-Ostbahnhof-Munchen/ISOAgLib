@@ -281,7 +281,7 @@ public:
   */
   virtual void initAllObjectsOnce(SINGLETON_VEC_KEY_PARAMETER_DEF)=0;
 
-  iIsoTerminalObjectPool_c(iVtObject_c* HUGE_MEM ** r_iVtObjects, uint16_t r_numObjects, uint16_t r_numObjectsLang, uint16_t r_dimension, uint16_t r_skWidth=60, uint16_t r_skHeight=32)
+  iIsoTerminalObjectPool_c(iVtObject_c*HUGE_MEM** r_iVtObjects, uint16_t r_numObjects, uint16_t r_numObjectsLang, uint16_t r_dimension, uint16_t r_skWidth=60, uint16_t r_skHeight=32)
     : iVtObjects (r_iVtObjects)
     , numObjects (r_numObjects)
     , numObjectsLang (r_numObjectsLang)
@@ -291,7 +291,7 @@ public:
     , b_initAllObjects (false)
   {
     numLang=0;
-    iVtObject_c* HUGE_MEM ** iter = r_iVtObjects+1; // first entry should be the general object pool part!
+    iVtObject_c*HUGE_MEM** iter = r_iVtObjects+1; // first entry should be the general object pool part!
     while (*iter++ != NULL) numLang++;
   };
 
@@ -325,7 +325,7 @@ public:
   virtual void eventAttributeValue (IsoAgLib::iVtObject_c* /*obj*/, uint8_t /*ui8_attributeValue*/, uint8_t* /*pui8_value*/) {};
 
 protected:
-  iVtObject_c* HUGE_MEM ** iVtObjects;
+  iVtObject_c*HUGE_MEM** iVtObjects;
   uint16_t numObjects;
   uint16_t numObjectsLang;
   uint16_t dimension;
@@ -335,7 +335,7 @@ protected:
   uint8_t numLang;
 
 public:
-  iVtObject_c* HUGE_MEM **
+  iVtObject_c*HUGE_MEM**
             getIVtObjects()     const { return iVtObjects; }
   uint16_t  getNumObjects()     const { return numObjects; }
   uint16_t  getNumObjectsLang() const { return numObjectsLang; }
