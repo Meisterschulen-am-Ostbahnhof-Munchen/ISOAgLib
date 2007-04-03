@@ -162,6 +162,7 @@ namespace HAL
     #ifndef _INIT_BABYBOARD_
     __HAL::tOutput tOutputstatus;
     __HAL::get_digout_status(rui8_channel,&tOutputstatus);
+    return tOutputstatus.wMaxOutput;
     #else
     if ( rui8_channel < 12 )
     { __HAL::tOutput tOutputstatus;
