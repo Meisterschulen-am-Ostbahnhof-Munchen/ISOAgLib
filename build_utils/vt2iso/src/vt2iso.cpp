@@ -574,7 +574,7 @@ vt2iso_c::clean_exit (char* error_message)
     // write implementation of handler class constructor into list
     // as there the list must be known
     // -> the handler decleration can be included from everywhere
-    fprintf (partFile_list, "\nIsoAgLib::iVtObject_c** all_iVtObjectLists%s [] = {", pcch_poolIdent);
+    fprintf (partFile_list, "\nIsoAgLib::iVtObject_c* HUGE_MEM * all_iVtObjectLists%s [] = {", pcch_poolIdent);
     fprintf (partFile_list, "\n  all_iVtObjects%s,", pcch_poolIdent);
     for (unsigned int i=0; i<ui_languages; i++)
       fprintf (partFile_list, "\n  all_iVtObjects%s%d,", pcch_poolIdent, i);
