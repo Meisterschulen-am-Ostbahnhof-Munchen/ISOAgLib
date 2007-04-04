@@ -69,6 +69,7 @@
 #include <IsoAgLib/driver/can/impl/ident_c.h>
 #include <IsoAgLib/util/impl/canpkg_c.h>
 
+#include <list>
 
 namespace __HAL {
 extern "C" {
@@ -105,6 +106,20 @@ __IsoAgLib::Ident_c c_cinterfIdent;
 
 /** store size of each MsgObj - needed to answer the Free Item Cnt */
 static uint8_t ui8_cinterfBufSize[cui32_maxCanBusCnt][16];
+
+/**
+  structure to save actual time stamp and Identifier
+*/
+struct can_timeStampAndId_t
+{
+  can_timeStampAndId_t (int32_t i32_ttimeStamp, __IsoAgLib::Ident_c& rrefc_ident): i32_timeStamp(i32_ttimeStamp),rt_ident(rrefc_ident) {}
+  int32_t i32_timeStamp;
+  __IsoAgLib::Ident_c rt_ident;
+};
+
+static std::list<can_timeStampAndId_t> list_sendTimeStamps;
+
+
 
 extern "C" {
 /** bool array to control lock state for all MsgObj */
@@ -226,8 +241,8 @@ void updateSuccSendTimestamp(uint8_t rui8_busNr)
 */
 bool can_stateGlobalBlocked(uint8_t rui8_busNr)
 {
-/*  bool b_busBlocked = true;
-  int32_t i32_now = get_time();
+  bool b_busBlocked = true;
+/*  int32_t i32_now = get_time();
   // sett b_busBlocked to false, if sign for
   // correct work was detected
   // check if successful send was detected
@@ -527,7 +542,7 @@ int16_t can_configMsgobjInit(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgL
   pt_config->dwId = rrefc_ident.ident();
 
   // user defined IRQ Function
-  pt_config->pfIrqFunction = IRQ_TriggerSend();
+  pt_config->pfIrqFunction = IRQ_TriggerSend;
 
   if (rrefc_ident.identType() == __IsoAgLib::Ident_c::BothIdent)
     pt_config->bXtd = DEFAULT_IDENT_TYPE;
@@ -701,9 +716,13 @@ int16_t can_useMsgobjSend(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib:
 
   uint8_t b_count = ui8_cinterfLastSendBufCnt[rui8_busNr][rui8_msgobjNr];
 
-  /**
+  __IsoAgLib::Ident_c rt_ident (pt_send->dwId, (pt_send->bXtd == 1) ? __IsoAgLib::Ident_c::ExtendedIdent : __IsoAgLib::Ident_c::StandardIdent);
+
+  /**__HAL::get_time(), __IsoAgLib::Ident_c (pt_send->dwId, 
+    (pt_send->bXtd == 1) ? __IsoAgLib::Ident_c::ExtendedIdent 
+                         : __IsoAgLib::Ident_c::StandardIdent
   */
-  can_timeStampAndId_t t_can_timeStampAndId (get_time(), pt_send->dwId);
+  can_timeStampAndId_t t_can_timeStampAndId (__HAL::get_time(), rt_ident);
 
   list_sendTimeStamps.push_back(t_can_timeStampAndId);
 
