@@ -682,4 +682,163 @@ If you want to specify a colour, the attribute value is an index in the range of
 <tr><td> 'enable' </td><td> 'disable </td></tr>
 </table>
 
+\section CommandAndMacroMessages Command and Macro Messages
+
+The following table lists the available VT commands, most of which can be included in a macro.
+
+<table border="1" cellspacing="3" cellpadding="3">
+ <tr>
+ <th>Messages</th><th>Attributes</th><th>Description</th></tr>
+ <tr>
+ <tr>
+ <td>command_hide_show_object</td>
+ <td>&apsobject_id&aps<br>
+ &apshide_show&aps<p></td>
+ <td>Used to hide or show a container object.</td>
+ </tr>
+ <tr>
+ <td>command_enable_disable_object</td>
+ <td>&apsobject_id&aps<br>
+ &apsenable_disable&aps<p></td>
+ <td>Used to enable or disable an input field object.</td>
+ </tr>
+ <tr>
+ <td>command_select_input_object</td>
+ <td>&apsobject_id&aps</td>
+ <td>Used to force the selection of an input field object.</td>
+ </tr>
+ <tr>
+ <td>command_control_audio_device</td>
+ <td>&apsobject_id&aps<br>
+ &apsnumber_of_repetitions&aps<br>
+ &apsfrequency&aps<br>
+ &apson_time_duration&aps<br>
+ &apsoff_time_duration&aps<p></td>
+ <td>Used to control the audio on the VT.</td>
+ </tr>
+ <tr>
+ <td>command_set_audio_volume</td>
+ <td>&apspercentage&aps</td>
+ <td>Used to control the audio on the VT.</td>
+ </tr>
+ <tr>
+ <td>command_change_child_location</td>
+ <td>&apsparent_object_id&aps<br>
+ &apsobject_id&aps<br>
+ &apsx_pos_change&aps<br>
+ &apsy_pos_change&aps<p></td>
+ <td>Used for small position changes of an object.<br>
+ Position attributes have an offset of -127.<br>
+ (one packet)</td>
+ </tr>
+ <tr>
+ <td>command_change_child_position</td>
+ <td>&apsparent_object_id&aps<br>
+ &apsobject_id&aps<br>
+ &apsx_pos&aps<br>
+ &apsy_pos&aps<p></td>
+ <td>Used for large position changes of an object.<br>
+ (multi-packet)</td>
+ </tr>
+ <tr>
+ <td>command_change_size</td>
+ <td>&apsobject_id&aps<br>
+ &apsnew_width&aps<br>
+ &apsnew_height&aps<p></td>
+ <td>Used to change the size of an object./td>
+ </tr>
+ <tr>
+ <td>command_change_background_color</td>
+ <td>&apsobject_id&aps<br>
+ &apsnew_background_colour&aps<p></td>
+ <td>Used to change the background color of an object.</td>
+ </tr>
+ <tr>
+ <td>command_change_numeric_value</td>
+ <td>&apsobject_id&aps<br>
+ &apsnew_value&aps<p></td>
+ <td>Used to change the value attribute of an object.</td>
+ </tr>
+ <tr>
+ <td>command_change_string_value</td>
+ <td>&apsobject_id&aps<br>
+ &apsbytes_in_string&aps<br>
+ &apsnew_value&aps<p></td>
+ <td>Used to change the string of an object.<br>
+ (single or multi-packet, depends on length of new string)</td>
+ </tr>
+ <tr>
+ <td>command_change_end_point</td>
+ <td>&apsobject_id&aps<br>
+ &apsnew_width&aps<br>
+ &apsnew_height&aps<br>
+ &apsline_direction&aps<p></td>
+ <td>Used to modify the end point of a line object.</td>
+ </tr>
+ <tr>
+ <td>command_change_font_attributes</td>
+ <td>&apsobject_id&aps<br>
+ &apsfont_colour&aps<br>
+ &apsfont_size&aps<br>
+ &apsfont_type&aps<br>
+ &apsfont_style&aps<p></td>
+ <td>Used to modify the font attributes of a font attributes object.</td>
+ </tr>
+ <tr>
+ <td>command_change_line_attributes</td>
+ <td>&apsobject_id&aps<br>
+ &apsline_colour&aps<br>
+ &apsline_width&aps<br>
+ &apsline_art&aps<p></td>
+ <td>Used to modify the line attributes of a line attributes object.</td>
+ </tr>
+ <tr>
+ <td>command_change_fill_attributes</td>
+ <td>&apsobject_id&aps<br>
+ &apsfill_type&aps<br>
+ &apsfill_colour&aps<br>
+ &apsfill_pattern&aps<p></td>
+ <td>Used to modify the fill attributes of a fill attributes object.</td>
+ </tr>
+ <tr>
+ <td>command_change_active_mask</td>
+ <td>&apsworking_set_object_id&aps<br>
+ &apsnew_active_mask_object_id&aps<p></td>
+ <td>Used to change the active mask to a new data or alarm mask.</td>
+ </tr>
+ <tr>
+ <td>command_change_soft_key_mask</td>
+ <td>&apsmask_type&aps<br>
+ &apsmask_object_id&aps<br>
+ &apsnew_softkey_mask_object_id&aps<p></td>
+ <td>Used to change the active mask to a new data or alarm mask.</td>
+ </tr>
+ <tr>
+ <td>command_change_attribute</td>
+ <td>&apsobject_id&aps<br>
+ &apsattribute_id&aps<br>
+ &apsnew_value&aps<p></td>
+ <td>Used to change any attribute with a AID, except strings.</td>
+ </tr>
+ <tr>
+ <td>command_change_priority</td>
+ <td>&apsobject_id&aps<br>
+ &apsnew_priority&aps<p></td>
+ <td>Used to change the priority of an alarm mask.</td>
+ </tr>
+ <tr>
+ <td>command_change_list_item</td>
+ <td>&apsobject_id&aps<br>
+ &apslist_index&aps<br>
+ &apsnew_object_id&aps<p></td>
+ <td>Used to change a list item in an input list object.</td>
+ </tr>
+ <tr>
+ <td>command_delete_object_pool<br>
+ <b>CANNOT BE USED IN A MACRO</b></td>
+ <td></td>
+ <td>Used to delete the object pool from volatile storage.</td>
+ </tr>
+</table>
+
 */
