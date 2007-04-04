@@ -2703,7 +2703,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
                     setAttributeValue(attrNew_value);
                   }
                   signed long int ret = idOrName_toi(attrString [attrObjectID], /*macro?*/false);
-                  signed long int retNewValue = idOrName_toi(attrString [attrNew_value], /*macro?*/false);
+                  signed long int retNewValue = idOrName_toi(attrString [attrNew_value], /*macro?*/false); // "idOrName_toi" is okay here, because we could change an objectpointer to point to some other object!
                   if ((retNewValue == -1) || (ret == -1))
                   {
                     std::cout << "Error in idOrName_toi() from object <" << node_name << "> '" << objName << "'! STOP PARSER! bye.\n\n";
@@ -2723,7 +2723,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
                   int nSize = pAttributes->getLength();
 
                   cleanAttribute(attrObjectID);
-                  cleanAttribute(attrNumber_of_bytes);
+                  cleanAttribute(attrBytes_in_string);
                   cleanAttribute(attrNew_value);
 
                   for(int i=0;i<nSize;++i)
@@ -2737,6 +2737,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
                     setAttributeValue(attrNew_value);
                   }
                   // Need check for all attributes being present for this command -bac
+                  // Also need to replace the atoi below to some integertoi stuff so characters will register an error!
                   int strLength;
                   char *tempStrPtr;
 
@@ -2751,7 +2752,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
                     strcat(tempString2, tempString);
                   }
                   signed long int ret = idOrName_toi(attrString [attrObjectID], /*macro?*/false);
-                  signed long int retBytesInString = idOrName_toi(attrString [attrBytes_in_string], /*macro?*/false);
+                  signed long int retBytesInString = atoi(attrString [attrBytes_in_string]);
                   if ((ret == -1) || (retBytesInString == -1))
                   {
                     std::cout << "Error in idOrName_toi() from object <" << node_name << "> '" << objName << "'! STOP PARSER! bye.\n\n";
