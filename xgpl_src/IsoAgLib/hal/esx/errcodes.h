@@ -80,7 +80,7 @@ namespace HAL {
   #define HAL_DIGOUT_OVERTEMP    (int16_t)(-(22 * 0x0001))
   #define HAL_DIGOUT_UNDERVOLT   (int16_t)(-(23 * 0x0001))
   #define HAL_DIGOUT_OVERVOLT    (int16_t)(-(24 * 0x0001))
-  #define HAL_NEW_SEND_DELAY     (int16_t)(-(25 * 0x0001))
+  #define HAL_NEW_SEND_DELAY    (int16_t)(-(25 * 0x0001))
 } // end namespace __HAL
 #endif
 
