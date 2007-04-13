@@ -136,12 +136,16 @@ tCanMsgReg HUGE_MEM * IRQ_TriggerSend(byte bBus,byte bOjekt,tCanMsgReg HUGE_MEM 
 {
   int32_t i32_now = get_time();
 
-  if ( ( i32_now - list_sendTimeStamps.front().i32_timeStamp) > i32_maxSendDelay )
+  // Abfrage ob leer ist
+  if (!list_sendTimeStamps.empty())
   {
-    b_existNewSendDelayMax = true;
-    i32_maxSendDelay = i32_now - list_sendTimeStamps.front().i32_timeStamp;
+    if ( ( i32_now - list_sendTimeStamps.front().i32_timeStamp) > i32_maxSendDelay )
+    {
+      b_existNewSendDelayMax = true;
+      i32_maxSendDelay = i32_now - list_sendTimeStamps.front().i32_timeStamp;
+    }
+    list_sendTimeStamps.pop_front();
   }
-  list_sendTimeStamps.pop_front();
   return tCanregister;
 }
 
@@ -205,26 +209,6 @@ bool can_stateGlobalOff(uint8_t rui8_busNr)
 */
 void updateSuccSendTimestamp(uint8_t rui8_busNr)
 {
-//  int16_t i16_actCnt;
-//  int32_t i32_now = get_time();
-  // cnt 0xFF ist sign, that this MsgObj isn't configured for send
-  // loop from 0..13 and add offset 1 in BIOS call, as BIOS starts counting with 1
-  // whereas IsoAgLib starts with 0
-//  for (uint8_t ui8_ind = 0; ui8_ind < 14; ui8_ind++)
-//  {
-    // test if is given obj is configured for send
-//    if (ui8_cinterfLastSendBufCnt[rui8_busNr][ui8_ind] == 0xFF)
-//      break; // end this check if first not send obj is found
-//    i16_actCnt = get_can_msg_buf_count (rui8_busNr, (ui8_ind+1));
-//    if ((i16_actCnt >= 0) &&
-//        (i16_actCnt < ui8_cinterfLastSendBufCnt[rui8_busNr][ui8_ind])
-//        )
-//    { // since last send call at least one msg sent
-//      i32_cinterfMsgobjSuccSend[rui8_busNr][ui8_ind] = i32_now;
-//      i32_cinterfLastSuccSend[rui8_busNr] = i32_now;
-//      ui8_cinterfLastSendBufCnt[rui8_busNr][ui8_ind] = i16_actCnt;
-//    }
-//  }
 }
 
 /**
@@ -241,41 +225,7 @@ void updateSuccSendTimestamp(uint8_t rui8_busNr)
 */
 bool can_stateGlobalBlocked(uint8_t rui8_busNr)
 {
-  bool b_busBlocked = true;
-/*  int32_t i32_now = get_time();
-  // sett b_busBlocked to false, if sign for
-  // correct work was detected
-  // check if successful send was detected
-  updateSuccSendTimestamp(rui8_busNr);
-  if ((i32_now - i32_cinterfLastSuccSend[rui8_busNr]) < CONFIG_CAN_MAX_SEND_WAIT_TIME)
-  {
-    b_busBlocked = false;
-  }
-  // check if successful receive was detected
-  if ((i32_now - i32_cinterfLastSuccReceive[rui8_busNr])
-      < CONFIG_CAN_MAX_SEND_WAIT_TIME)
-    b_busBlocked = false;
-
-  // check if WARN or ERR was detected
-  //  updateCanStateTimestamps(rui8_busNr);
-  if (
-      (i32_cinterfBeginBusWarnOff[rui8_busNr] < 0)
-    ||((i32_now - i32_cinterfBeginBusWarnOff[rui8_busNr])
-        < CONFIG_CAN_MAX_CAN_ERR_TIME_BEFORE_SLOWERING)
-      )
-  { // no WARN or OFF state is active for defined time
-    b_busBlocked = false;
-  }
-  if (
-      (i32_cinterfBeginBit1err[rui8_busNr] < 0)
-    ||((i32_now - i32_cinterfBeginBit1err[rui8_busNr])
-        < CONFIG_CAN_MAX_CAN_ERR_TIME_BEFORE_SLOWERING)
-      )
-  { // no Bit1Error state is active for defined time
-    b_busBlocked = false;
-  }*/
-  b_busBlocked = false;
-  return b_busBlocked;
+  return false;
 }
 
 /**
@@ -541,9 +491,6 @@ int16_t can_configMsgobjInit(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgL
   tCanObjConfig* pt_config = &t_cinterfMsgobjConfig;
   pt_config->dwId = rrefc_ident.ident();
 
-  // user defined IRQ Function
-  pt_config->pfIrqFunction = IRQ_TriggerSend;
-
   if (rrefc_ident.identType() == __IsoAgLib::Ident_c::BothIdent)
     pt_config->bXtd = DEFAULT_IDENT_TYPE;
   else
@@ -571,7 +518,8 @@ int16_t can_configMsgobjInit(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgL
   { // send
     ui8_cinterfLastSendBufCnt[rui8_busNr][rui8_msgobjNr] = 0;
     pt_config->bMsgType = TX;
-    pt_config->pfIrqFunction = 0;
+    // user defined IRQ Function
+    pt_config->pfIrqFunction = IRQ_TriggerSend;
     pt_config->wNumberMsgs = CONFIG_CAN_SEND_BUFFER_SIZE;
   }
   ui8_cinterfBufSize[rui8_busNr][rui8_msgobjNr] = pt_config->wNumberMsgs;
@@ -718,12 +666,7 @@ int16_t can_useMsgobjSend(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib:
 
   __IsoAgLib::Ident_c rt_ident (pt_send->dwId, (pt_send->bXtd == 1) ? __IsoAgLib::Ident_c::ExtendedIdent : __IsoAgLib::Ident_c::StandardIdent);
 
-  /**__HAL::get_time(), __IsoAgLib::Ident_c (pt_send->dwId, 
-    (pt_send->bXtd == 1) ? __IsoAgLib::Ident_c::ExtendedIdent 
-                         : __IsoAgLib::Ident_c::StandardIdent
-  */
   can_timeStampAndId_t t_can_timeStampAndId (__HAL::get_time(), rt_ident);
-
   list_sendTimeStamps.push_back(t_can_timeStampAndId);
 
 //  updateSuccSendTimestamp(rui8_busNr);
