@@ -1169,6 +1169,9 @@ VtClientServerCommunication_c::processMsg()
         }
       }
       break;
+    case 0xBD: // Command: "Command", parameter "Lock/Unlock Mask Response"
+      MACRO_setStateDependantOnError (3)
+      break;
     case 0xC0: // Command: "Get Technical Data", parameter "Get Memory Size Response"
       pc_vtServerInstance->setVersion();
       if ((en_uploadType == UploadPool) && (en_uploadPoolState == UploadPoolWaitingForMemoryResponse))
@@ -1349,6 +1352,7 @@ VtClientServerCommunication_c::sendCommand (uint8_t byte1, uint8_t byte2, uint8_
 {
 #ifdef DEBUG
   INTERNAL_DEBUG_DEVICE << "Enqueued 8-bytes: " << q_sendUpload.size() << " -> ";
+  std::cout << "   and client sa = " << (int)dataBase().isoSa() << " and client id = " << (int)getClientId() << std::endl;
 #endif
 
   sc_tempSendUpload.set (byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8, ui32_timeout, rppc_vtObjects, rui16_numObjects);
@@ -1995,6 +1999,21 @@ VtClientServerCommunication_c::sendCommandGetAttributeValue( IsoAgLib::iVtObject
                       rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
                       cui8_attrID,
                       0xFF, 0xFF, 0xFF, 0xFF,
+                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
+}
+
+bool
+VtClientServerCommunication_c::sendCommandLockUnlockMask( IsoAgLib::iVtObject_c* rpc_object, bool b_lockMask, uint16_t ui16_lockTimeOut, bool b_enableReplaceOfCmd)
+{
+#ifdef DEBUG
+  std::cout << "\n LOCK *** LOCK *** send lock(1)/unlock(0) message. With b_lockMask = " << b_lockMask << std::endl;
+  std::cout << "   and client sa = " << (int)dataBase().isoSa() << " and client id = " << (int)getClientId() << std::endl;
+#endif
+  return sendCommand (189 /* Command: Command --- Parameter: Lock/Undlock Mask */,
+                      b_lockMask,
+                      rpc_object->getID() & 0xFF, rpc_object->getID() >> 8, /* object id of the data mask to lock */
+                      ui16_lockTimeOut & 0xFF, ui16_lockTimeOut >> 8, /* lock timeout on ms or zero for no timeout */
+                      0xFF, 0xFF,
                       DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
 }
 
