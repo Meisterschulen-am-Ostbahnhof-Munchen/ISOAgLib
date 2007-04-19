@@ -269,6 +269,12 @@ public:
     VT ESC.
    */
   virtual void eventVtESC() {};
+  
+  /**
+    hook function that gets called immediately after recognizing an incoming
+    Display Activation Msg or Vt Status Msg with display state change.
+   */
+  virtual void eventDisplayActivation() {}
 
   /**
      hook function that gets called after recognizing an incoming

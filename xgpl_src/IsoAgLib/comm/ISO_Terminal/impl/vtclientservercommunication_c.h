@@ -274,6 +274,12 @@ public:
     UploadPoolTypeUserPoolUpdate
   };
 
+  enum vtClientDisplayState_t {
+    VtClientDisplayStateHidden,
+    VtClientDisplayStateInactive,
+    VtClientDisplayStateActive
+  };
+
   // UploadCommandFailed is obsolete, as we're not retrying and error-responses any more.
   // UploadCommandResponseless is used for cmd:0x11 Object Pool Transfer, as there's NO response sent from the VT and it's a "special" upload...
 
@@ -313,7 +319,7 @@ public:
   void notifyOnVtsLanguagePgn();
 
   /** function that handles incoming Vt Status Message */
-  void notifyOnVtStatusMessage() { c_streamer.refc_pool.eventVtStatusMsg(); }
+  void notifyOnVtStatusMessage();
 
   /** function that handles incoming VT ESC */
   void notifyOnVtESC() { c_streamer.refc_pool.eventVtESC(); }
@@ -434,6 +440,15 @@ private:
   void vtOutOfMemory();
   void setObjectPoolUploadingLanguage();
 
+  /** set display state of vt client
+    @param b_isVtStatusMsg true: set display state from VT Status Msg
+                           false: set display state from Display Activation Msg
+    @param ui8_saOrDisplayState if b_isVtStatusMsg == true, it is the sa of the wsm
+                                if b_isVtStatusMsg == false, it is the display state of the Display Activation Msg
+    */
+  void setVtDisplayState (bool b_isVtStatusMsg, uint8_t ui8_saOrDisplayState);
+  vtClientDisplayState_t getVtDisplayState() { return en_displayState; }
+
 private: // attributes
   /** static instance to store temporarily before push_back into list */
   static SendUpload_c sc_tempSendUpload;
@@ -487,6 +502,8 @@ private: // attributes
   uint8_t ui8_clientId;
 
   ISOTerminalPkg_c c_data;
+
+  vtClientDisplayState_t en_displayState;
 
   #ifdef USE_LIST_FOR_FIFO
   // queueing with list: queue::push <-> list::push_back; queue::front<->list::front; queue::pop<->list::pop_front

@@ -395,6 +395,7 @@ VtClientServerCommunication_c::VtClientServerCommunication_c (IdentItem_c& ref_w
   , b_checkSameCommand (true)
   , refc_wsMasterIdentItem (ref_wsMasterIdentItem)
   , refc_isoTerminal (ref_isoTerminal)
+  , en_displayState (VtClientDisplayStateHidden)
   , c_streamer (rrefc_pool)
 {
   pc_vtServerInstance = NULL;
@@ -604,7 +605,7 @@ VtClientServerCommunication_c::timeEventPoolUpload()
       if (b_getVersionsSendTime == 0)
       { // send out get versions first
         c_data.setExtCanPkg8 (7, 0, ECU_TO_VT_PGN>>8,
-                              pc_vtServerInstance->getVtSourceAddress(), pc_wsMasterIdentItem->getIsoItem()->nr(),
+                              pc_vtServerInstance->getVtSourceAddress(), refc_wsMasterIdentItem.getIsoItem()->nr(),
                               223, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF);
         getCanInstance4Comm() << c_data;     // Command: Non Volatile Memory --- Parameter: Load Version
         b_getVersionsSendTime = HAL::getTime();
@@ -916,6 +917,15 @@ VtClientServerCommunication_c::notifyOnVtsLanguagePgn()
   }
 }
 
+void
+VtClientServerCommunication_c::notifyOnVtStatusMessage()
+{
+  // set client display state appropriately
+  setVtDisplayState (true, getVtServerInst().getVtState()->saOfActiveWorkingSetMaster);
+  
+  c_streamer.refc_pool.eventVtStatusMsg();
+}
+
 /** process received can messages
   @return true -> message was processed; else the received CAN message will be served to other matching CANCustomer_c
  */
@@ -923,7 +933,7 @@ bool
 VtClientServerCommunication_c::processMsg()
 {
 //  #ifdef DEBUG
-//  INTERNAL_DEBUG_DEVICE << "Incoming Message: c_data.isoPgn=" << c_data.isoPgn() << " - HAL::getTime()=" << HAL::getTime()<<" - data[0]="<<(uint16_t)c_data.getUint8Data (0)<<"...   ";;
+//  INTERNAL_DEBUG_DEVICE << "Incoming Message: c_data.isoPgn=" << c_data.isoPgn() << " - HAL::getTime()=" << HAL::getTime() << " - data[0]=" << (uint16_t)c_data.getUint8Data (0) << "...  ";
 //  #endif
 
   /** @todo check for can-pkg-length==8???? */
@@ -982,6 +992,15 @@ VtClientServerCommunication_c::processMsg()
                                                c_data.getUint8Data (3) /* total number of bytes */, c_vmString,
                                                c_data.getUint8Data (3) /* total number of bytes */, true, true);
       }
+      break;
+    case 0x09:  // Command: "Command", parameter "Display Activation"
+      setVtDisplayState (false, c_data.getUint8Data (1));
+
+      // replace PGN, DA, SA and send back as answer
+      c_data.setIsoPgn (ECU_TO_VT_PGN);
+      c_data.setIsoSa (refc_wsMasterIdentItem.getIsoItem()->nr());
+      c_data.setIsoPs (pc_vtServerInstance->getVtSourceAddress());
+      getCanInstance4Comm() << c_data; // Command: "Command", parameter "Display Activation Response"
       break;
 
     /***************************************************/
@@ -1043,7 +1062,7 @@ VtClientServerCommunication_c::processMsg()
     case 0x20:
     { // Command: "Auxiliary Control", parameter "Auxiliary Assignment"
       c_data.setIsoPgn (ECU_TO_VT_PGN);
-      c_data.setIsoSa (pc_wsMasterIdentItem->getIsoItem()->nr());
+      c_data.setIsoSa (refc_wsMasterIdentItem.getIsoItem()->nr());
       c_data.setIsoPs (pc_vtServerInstance->getVtSourceAddress());
       getCanInstance4Comm() << c_data;
             /// For now simply respond without doing anything else with this information. simply ack the assignment!
@@ -2227,6 +2246,9 @@ VtClientServerCommunication_c::doStop()
     // that case should be handles by the multisend itself
   }
   c_streamer.refc_pool.eventEnterSafeState();
+
+  // set display state of the client to a defined state
+  en_displayState = VtClientDisplayStateHidden;
 }
 
 
@@ -2541,6 +2563,61 @@ VtClientServerCommunication_c::vtOutOfMemory()
   en_objectPoolState = OPCannotBeUploaded;
   /// @todo for now allow parallel uploads
   ///refc_isoTerminal.resetFlagForPoolUpload (this);
+}
+
+/** set display state of vt client */
+void
+VtClientServerCommunication_c::setVtDisplayState (bool b_isVtStatusMsg, uint8_t ui8_saOrDisplayState)
+{
+  vtClientDisplayState_t newDisplayState;
+  if (b_isVtStatusMsg) // state change triggered from VT Status Msg
+  {
+//     if (getVtServerInst().getMultiViewMode())
+    {
+      if (ui8_saOrDisplayState == getIdentItem().getIsoItem()->nr())
+        newDisplayState = VtClientDisplayStateActive;
+      else
+      {
+        if (getVtDisplayState() == VtClientDisplayStateActive)
+          // only cause state change if currently displayed is active
+          newDisplayState = VtClientDisplayStateInactive;
+        else
+          newDisplayState = getVtDisplayState();
+      }
+    }
+//     else
+//     {
+//       if (ui8_saOrDisplayState == getIdentItem().getIsoItem()->nr())
+//         newDisplayState = VtClientDisplayStateActive;
+//       else
+//       {
+//         newDisplayState = VtClientDisplayStateHidden;
+//       }
+//     }
+  }
+  else // state change triggered from Display Activation Msg
+  {
+    if (ui8_saOrDisplayState) // display client but no input focus
+    {
+      if (getVtDisplayState() == VtClientDisplayStateHidden)
+        newDisplayState = VtClientDisplayStateInactive;
+      else
+        newDisplayState = getVtDisplayState(); // if already in state inactive or active, nothing to do
+    }
+    else // client is no longer displayed
+    {
+      if (getVtDisplayState() == VtClientDisplayStateInactive)
+        newDisplayState = VtClientDisplayStateHidden;
+      else
+        newDisplayState = getVtDisplayState(); // if already in state hidden or active, nothing to do
+    }
+  }
+
+  if (newDisplayState != getVtDisplayState())
+  {
+    en_displayState = newDisplayState;
+    c_streamer.refc_pool.eventDisplayActivation();
+  }
 }
 
 
