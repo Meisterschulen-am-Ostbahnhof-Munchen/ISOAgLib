@@ -1030,11 +1030,12 @@ bool ISOMonitor_c::unifyIsoISOName (ISOName_c& refc_isoName, bool rb_dontUnify)
     else
     { // we can try to unify, so search now with changed instances if one is available
       ISOName_c c_tempISOName = refc_isoName;
-      
-      // store the pos part of given isoName
-      int16_t tempPos = (refc_isoName.devClassInst());
 
-      for (int16_t diff=1; diff < 16; diff++)
+      // store the pos part of given isoName
+      int16_t tempPos = (refc_isoName.devClassInst()),
+              diff = 1;
+
+      for (; diff < 16; diff++)
       {
         c_tempISOName.setDevClassInst( (tempPos + diff) & 0x0F ); // modulo through all 16 instances
         if (!(existIsoMemberISOName(c_tempISOName)))
