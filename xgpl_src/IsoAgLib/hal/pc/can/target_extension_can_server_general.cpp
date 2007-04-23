@@ -531,16 +531,15 @@ static void* can_write_thread_func(void* ptr)
       exit(1);
     }
 
-    // is the source address in the current message also set in arrb_remoteDestinationAddressInUse?
-    // => reset it (a previously remote address is now local)
-    if ( (pc_serverData->i16_reducedLoadOnIsoBus == msqWriteBuf.ui8_bus) &&
-          (((msqWriteBuf.s_sendData.dwId >> 16) & 0xFF) < 0xF0) ) // PDU1 check
-    {
+    if (pc_serverData->i16_reducedLoadOnIsoBus == msqWriteBuf.ui8_bus)
+    { // We're on ISOBUS, so mark this SA as LOCAL (i.e. NOT REMOTE)
+      #ifdef DEBUG
       if (pc_serverData->arrb_remoteDestinationAddressInUse[msqWriteBuf.s_sendData.dwId & 0xFF])
       {
-        pc_serverData->arrb_remoteDestinationAddressInUse[msqWriteBuf.s_sendData.dwId & 0xFF] = false;
-        DEBUG_PRINT1("Reduced ISO bus load: source address 0x%x removed from list (is now used locally!)\n", msqWriteBuf.s_sendData.dwId & 0xFF);
+        DEBUG_PRINT1("Reduced ISO bus load: source address 0x%x is now LOCAL (has been REMOTE until now)\n", msqWriteBuf.s_sendData.dwId & 0xFF);
       }
+      #endif
+      pc_serverData->arrb_remoteDestinationAddressInUse[msqWriteBuf.s_sendData.dwId & 0xFF] = false;
     }
 
     client_s* ps_client = NULL;
@@ -561,12 +560,11 @@ static void* can_write_thread_func(void* ptr)
       // destination address check based on already collected source addresses from CAN bus messages
       if ( (pc_serverData->i16_reducedLoadOnIsoBus == msqWriteBuf.ui8_bus) &&
            (((msqWriteBuf.s_sendData.dwId >> 16) & 0xFF) < 0xF0) && // PDU1 check
-           (((msqWriteBuf.s_sendData.dwId >> 8) & 0xFF) != 0xFF) ) // no broadcast message (destination address != 0xFF)
+           (((msqWriteBuf.s_sendData.dwId >> 8) & 0xFF) < 0xFE) ) // no broadcast (0xFF) or invalid (0xFE) message
       {
-        b_sendOnBus = false;
-        if (pc_serverData->arrb_remoteDestinationAddressInUse[(msqWriteBuf.s_sendData.dwId >> 8) & 0xFF])
-        { // destination address matches remotely received source address
-          b_sendOnBus = true;
+        if (!pc_serverData->arrb_remoteDestinationAddressInUse[(msqWriteBuf.s_sendData.dwId >> 8) & 0xFF])
+        { // destination address matches LOCAL source address
+          b_sendOnBus = false; // ==> So DON'T send out on real ISOBUS.
         }
       }
 
@@ -752,14 +750,15 @@ static void can_read(server_c* pc_serverData)
     }
     else
     { // check for new source address
-      if ( (pc_serverData->i16_reducedLoadOnIsoBus == b_bus) &&
-           (((ui32_id >> 16) & 0xFF) < 0xF0) ) // PDU1 check
-      {
+      if (pc_serverData->i16_reducedLoadOnIsoBus == b_bus)
+      { // On ISOBUS, mark this SA as REMOTE
+        #ifdef DEBUG
         if (!pc_serverData->arrb_remoteDestinationAddressInUse[ui32_id & 0xFF] && ((ui32_id & 0xFF) != 0xFE)) // skip 0xFE source address
         { // new, unknown source address
-          pc_serverData->arrb_remoteDestinationAddressInUse[ui32_id & 0xFF] = true;
-          DEBUG_PRINT1("Reduced ISO bus load: new source address 0x%x added to list\n", ui32_id & 0xFF);
+          DEBUG_PRINT1("Reduced ISO bus load: new source address 0x%x is now marked as REMOTE (was LOCAL before).\n", ui32_id & 0xFF);
         }
+        #endif
+        pc_serverData->arrb_remoteDestinationAddressInUse[ui32_id & 0xFF] = true;
       }
 
       enqueue_msg(DLC, ui32_id, b_bus, b_xtd, &receiveData.msg.pb_data[0], 0, pc_serverData);
