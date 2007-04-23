@@ -137,6 +137,10 @@ public:
   */
   const iISOName_c& operator=(const iISOName_c& rrefc_src) { return ISOName_c::operator=( rrefc_src ).toConstIisoName_c();}
 
+  /** compare two iISOName_c values with operator< */
+  bool operator<( const iISOName_c& refc_right ) const
+  { return ISOName_c::operator < (refc_right);}
+
   /** compare two ISOName_c values with operator== */
   bool operator==( const iISOName_c& refc_right ) const
     { return ISOName_c::operator==(refc_right);}
