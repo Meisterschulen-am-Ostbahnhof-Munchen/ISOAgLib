@@ -1022,40 +1022,30 @@ bool ISOMonitor_c::unifyIsoISOName (ISOName_c& refc_isoName, bool rb_dontUnify)
 {
   bool b_result = true;
   if (existIsoMemberISOName (refc_isoName))
-  { // isoName exist -> search new with changed POS
-    // first, for now, we don't have it unified, we start with conflict.
-    b_result = false;
-
-    if (!rb_dontUnify)
-    {
-      /** @todo What algorithm to use for unifying the IsoName? Which isntance to increase? */
+  {
+    if (rb_dontUnify)
+    { // if we shouldn't unify, we're lost
+      b_result = false;
+    }
+    else
+    { // we can try to unify, so search now with changed instances if one is available
       ISOName_c c_tempISOName = refc_isoName;
-      b_result = false; // refc_isoName isn't unique
+      
       // store the pos part of given isoName
-      int16_t tempPos = (refc_isoName.devClassInst()),
-          diff = 1;
-      for (; diff < 16; diff++)
+      int16_t tempPos = (refc_isoName.devClassInst());
+
+      for (int16_t diff=1; diff < 16; diff++)
       {
-        if (tempPos + diff < 16)
-        {  // (tempPos + diff) would be an allowed device class inst code
-          c_tempISOName.setDevClassInst( tempPos + diff );
-          if (!(existIsoMemberISOName(c_tempISOName)))
-          {  // (tempPos + diff) can't be found in list -> it is unique
-            refc_isoName.setDevClassInst( tempPos + diff );
-            b_result = true;
-            break;
-          }
+        c_tempISOName.setDevClassInst( (tempPos + diff) & 0x0F ); // modulo through all 16 instances
+        if (!(existIsoMemberISOName(c_tempISOName)))
+        { // new instance can't be found in list -> it is unique
+          refc_isoName.setDevClassInst( (tempPos + diff) & 0x0F );
+          break;
         }
-        if (tempPos - diff >= 0)
-        { // (tempPos - diff) would be an allowed device class inst code
-          c_tempISOName.setDevClassInst( tempPos - diff );
-          if (!(existIsoMemberISOName(c_tempISOName)))
-          {  // (tempPos - diff) can't be found in list -> it is unique
-            refc_isoName.setDevClassInst( tempPos - diff );
-            b_result = true;
-            break;
-          }
-        }
+      }
+      if (diff == 16)
+      { // we tried all 16, but none was available!
+        b_result = false;
       }
     } // else: if we can't unify, we're lost here as such an IsoName is already claimed on the bus
   } // else: IsoName doesn't exist --> fine!
