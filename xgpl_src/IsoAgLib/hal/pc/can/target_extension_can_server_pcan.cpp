@@ -330,6 +330,32 @@ int ca_InitCanCard_1 (uint32_t channel, int wBitrate, server_c* pc_serverData)
     return 1; // already initialized and files are already open
 }
 
+void __HAL::updatePendingMsgs(server_c* pc_serverData, int8_t i8_bus)
+{
+  // get amount of waiting-to-be-sent-out can-msgs in can-controller
+  static TPEXTENDEDSTATUS extstat;
+  if (i8_bus < 0)
+  { // update all buses!
+    for (uint8_t ui8_bus=0; ui8_bus < cui32_maxCanBusCnt; ui8_bus++)
+    {
+      if (pc_serverData->i_pendingMsgs[ui8_bus] >= 5)
+      { // we only need to update those who could change from >= 5 to < 5...
+        if ((ioctl(pc_serverData->can_device[ui8_bus], PCAN_GET_EXT_STATUS, &extstat)) < 0)
+          continue;
+        pc_serverData->i_pendingMsgs[ui8_bus] = extstat.nPendingWrites;
+        DEBUG_PRINT1 ("peak-can's number of pending msgs is %d\n", pc_serverData->i_pendingMsgs[ui8_bus]);
+      }
+    }
+  }
+  else
+  { // update just the given bus!
+    if ((ioctl(pc_serverData->can_device[i8_bus], PCAN_GET_EXT_STATUS, &extstat)) < 0)
+      return;
+    pc_serverData->i_pendingMsgs[i8_bus] = extstat.nPendingWrites;
+    DEBUG_PRINT1 ("peak-can's number of pending msgs is %d\n", pc_serverData->i_pendingMsgs[i8_bus]);
+  }
+}
+
 /////////////////////////////////////////////////////////////////////////
 //
 // METHOD:  ca_TransmitCanCard_1
@@ -434,12 +460,8 @@ int ca_TransmitCanCard_1(tSend* ptSend, uint8_t ui8_bus, server_c* pc_serverData
   /// NEW:
   else
   {
-    // get amount of waiting-to-be-sent-out can-msgs in can-controller
-    TPEXTENDEDSTATUS extstat;
-    if ((ioctl(pc_serverData->can_device[ui8_bus], PCAN_GET_EXT_STATUS, &extstat)) < 0)
-      return 1; // Well, if we shouldn't get the information about pendingMsg, well, it's okay, sending was fine, so return true.
-    int i_pendingMsgs = extstat.nPendingWrites;
-    DEBUG_PRINT1 ("peak-can's number of pending msgs is %d\n", i_pendingMsgs);
+    updatePendingMsgs(pc_serverData, ui8_bus);
+    int i_pendingMsgs = pc_serverData->i_pendingMsgs[ui8_bus];
     if ((i_pendingMsgs > 0) && (list_sendTimeStamps.size() >= (i_pendingMsgs)))
     { // something pending!
       std::list<int32_t>::iterator pc_iter = list_sendTimeStamps.begin();

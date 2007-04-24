@@ -171,6 +171,12 @@ class iCANIO_c : private __IsoAgLib::CANIO_c {
   void setMaxSendDelay (int32_t ri32_maxSendDelay)
   { CANIO_c::setMaxSendDelay (ri32_maxSendDelay); }
 
+  /** set this client to have send-priority
+      @param rb_sendPrioritized enable (true) or disable (false) sending in Prioritized Mode
+   */
+  void setSendPriority(bool rb_sendPrioritized)
+  { CANIO_c::setSendPriority(rb_sendPrioritized); }
+
 
   /**
     test if a FilterBox_c definition already exist

@@ -73,14 +73,14 @@ char otCompTable [maxObjectTypesToCompare] [stringLength+1] = {
   "macro",
   "auxiliaryfunction",
   "auxiliaryinput",     // Object ID 30
-  "",
-  "",
-  "",
-  "",
-  "",
+  "auxiliaryfunction2",
+  "auxiliaryinput2",
+  "auxiliaryassignment",
+  "auxiliarycontroldesignatorobjectpointer",
+  "colourmap",
   "graphicscontext",    // Object ID 36
-  "",
-  "",
+  "outputlist",
+  "extendedinputattributes",
   "",
   "",
   "",
@@ -106,7 +106,7 @@ char otCompTable [maxObjectTypesToCompare] [stringLength+1] = {
 };
 
 uint64_t omcTypeTable [maxObjectTypesToCompare] = {
-  /* "workingset", */     ombMacro | ombOutputfield | ombOutputshape | ombPicturegraphic | ombGraphicsContext,
+  /* "workingset", */     ombMacro | ombOutputfield | ombOutputshape | ombPicturegraphic | ombGraphicsContext | ombContainer,
   /* "datamask", */       ombMacro | ombOutputfield | ombInputfield | ombOutputgraphic | ombOutputshape | ombPicturegraphic | ombButton | ombContainer | ombObjectpointer | ombGraphicsContext,
   /* "alarmmask", */      ombMacro | ombOutputfield | ombOutputgraphic | ombOutputshape | ombPicturegraphic | ombContainer | ombObjectpointer | ombGraphicsContext,
   /* "container", */      0, // same as the object that included the container
@@ -116,7 +116,7 @@ uint64_t omcTypeTable [maxObjectTypesToCompare] = {
   /* "inputboolean", */   ombMacro | 0,
   /* "inputstring", */    ombMacro | 0,
   /* "inputnumber", */    ombMacro | 0,
-  /* "inputlist", */      ombMacro | ombOutputfield | ombPicturegraphic | ombGraphicsContext,
+  /* "inputlist", */      ombMacro | ombContainer | ombOutputfield | ombOutputshape | ombOutputgraphic | ombPicturegraphic | ombGraphicsContext,
   /* "outputstring", */   ombMacro | 0,
   /* "outputnumber", */   ombMacro | 0,
   /* "line", */           ombMacro | 0,
@@ -143,7 +143,7 @@ uint64_t omcTypeTable [maxObjectTypesToCompare] = {
                           0,
                           0,
   /* "graphicscontext" */ 0,
-                          0,
+  /* "outputlist" */      ombMacro | ombOutputfield  | ombOutputshape | ombOutputgraphic | ombInputfield | ombPicturegraphic | ombGraphicsContext,
                           0,
                           0,
                           0,
@@ -201,12 +201,14 @@ char otClassnameTable [maxObjectTypes] [stringLength+1] = {
   "Macro",
   "AuxiliaryFunction",
   "AuxiliaryInput",
-  "",
-  "",
-  "",
-  "",
-  "",
+  "AuxiliaryFunction2",
+  "AuxiliaryInput2",
+  "AuxiliaryAssignment",
+  "AuxiliaryControlDesignatorObjectPointer",
+  "ColourMap",
   "GraphicsContext",
+  "OutputList",
+  "ExtendedInputAttributes"
 };
 
 char attrNameTable [maxAttributeNames] [stringLength+1] = {
@@ -324,8 +326,7 @@ char attrNameTable [maxAttributeNames] [stringLength+1] = {
   "viewport_zoom",
   "cursor_x",
   "cursor_y",
-  "inputobject_options",
-  "foreground_colour_from_font"
+  "inputobject_options"
 };
 
 // Table of possible Macro Commands

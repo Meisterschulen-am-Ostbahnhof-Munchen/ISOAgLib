@@ -87,21 +87,22 @@ class iEEPROMIO_c;
 class iISOName_c : private __IsoAgLib::ISOName_c
 {
 public:
-    /** constant for default parameters and initialization, where the device type is not yet spcified.
-        the instantiation of this constant variable is located in the module cancustomer_c.cpp
-      */
-    static const iISOName_c iISONameUnspecified;
+  /** constant for default parameters and initialization, where the device type is not yet spcified.
+      the instantiation of this constant variable is located in the module cancustomer_c.cpp
+    */
+  static const iISOName_c iISONameUnspecified;
 
-    /** constant for not yet spcified process data ident -> <device class, device class instance> := <0x0,0xF>
-        the instantiation of this constant variable is located in the module cancustomer_c.cpp
-      */
-    static const iISOName_c iISONameInitialProcessData;
+  /** constant for not yet spcified process data ident -> <device class, device class instance> := <0x0,0xF>
+      the instantiation of this constant variable is located in the module cancustomer_c.cpp
+    */
+  static const iISOName_c iISONameInitialProcessData;
 
-    /** default constructor
+  /** default constructor
+    using "explicit" to avoid WRONG implicit cast from SA to ISONAME!
     @param rui8_devClass     initial DEVCLASS (device type)
-    @param rui8_devClassInst initial DEVCLASSINST (instance). As "unknown" use 0xF
-     */
-    iISOName_c( uint8_t rui8_devClass, uint8_t rui8_devClassInst)
+    @param rui8_devClassInst initial DEVCLASSINST (instance). Defaults to "unknown" (=0xF)
+    */
+  explicit iISOName_c( uint8_t rui8_devClass, uint8_t rui8_devClassInst=0xF)
   : ISOName_c( rui8_devClass, rui8_devClassInst ) {}
 
   /** constructor which format data string from series of input flags
@@ -135,6 +136,10 @@ public:
     @param rrefc_src source ISOName_c object
   */
   const iISOName_c& operator=(const iISOName_c& rrefc_src) { return ISOName_c::operator=( rrefc_src ).toConstIisoName_c();}
+
+  /** compare two iISOName_c values with operator< */
+  bool operator<( const iISOName_c& refc_right ) const
+  { return ISOName_c::operator < (refc_right);}
 
   /** compare two ISOName_c values with operator== */
   bool operator==( const iISOName_c& refc_right ) const

@@ -97,19 +97,15 @@ static tSystem t_biosextSysdata =
 int16_t open_system()
 {
   int16_t i16_result = open_esx(&t_biosextSysdata);
-	
+
 
   #ifdef _INIT_BABYBOARD_
    /************initialization of Babyboard at Position 1*********/
   BA_init(POSITION_1, VARIANT_MIX );
   BA_set_pwm_freq(POSITION_1, PIN_1, 500);
-  BA_set_digout (POSITION_1, PIN_1, 100);
   BA_set_pwm_freq(POSITION_1, PIN_2, 500);
-  BA_set_digout (POSITION_1, PIN_2, 100);
   BA_set_pwm_freq(POSITION_1, PIN_3, 500);
-  BA_set_digout (POSITION_1, PIN_3, 100);
   BA_set_pwm_freq(POSITION_1, PIN_4, 500);
-  BA_set_digout (POSITION_1, PIN_4, 100);
   #endif
 
   return i16_result;
@@ -206,6 +202,12 @@ int16_t configWatchdog()
   };
   #endif
 
+   int iReturn = config_wd( &t_watchdogConf );
+   if ((iReturn == DATA_CHANGED) || (iReturn == C_CHECKSUM)) 
+   {  /* Daten wurden geaendert bzw. Checksummenfehler festgestellt -> RESET*/
+	  iReturn = wd_reset();
+   }
+
 	if ( ! sb_isWdTriggerTaskRunning )
 	{
 		init_task_call( TASKLEVEL_2A, 5, 5, taskTriggerWatchdog );
@@ -213,7 +215,8 @@ int16_t configWatchdog()
 		sb_isWdTriggerTaskRunning = true;
 	}
 
-  return config_wd(&t_watchdogConf);
+
+  return iReturn;
 }
 
 } // end namespace __HAL

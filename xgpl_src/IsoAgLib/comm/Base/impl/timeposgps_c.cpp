@@ -417,7 +417,7 @@ namespace __IsoAgLib {
 #ifdef NMEA_2000_FAST_PACKET
     i32_lastIsoPositionStream = 0;
     t_multiSendSuccessState = MultiSend_c::SendSuccess;
-    ui32_altitudeCm = 0;
+    ui32_altitudeCm = 0xFFFFFFFF;
 
     ui8_satelliteCnt = 0;
 #endif // END of NMEA_2000_FAST_PACKET
@@ -606,6 +606,7 @@ namespace __IsoAgLib {
   };
 
   /** check if an NMEA2000 position signal was received - it does NOT indicate that this is an up2date signal */
+  /** @todo improve with isPositionStreamReceived(), so we know that e.g. Altitude is there, too... */
   bool TimePosGPS_c::isPositionReceived() const
   {
     if ( (i32_latitudeDegree10Minus7  >= ( -90*10000000)) && (i32_latitudeDegree10Minus7  <= ( 90*10000000))
@@ -946,24 +947,25 @@ namespace __IsoAgLib {
   {
     const int32_t ci32_now = getLastRetriggerTime();
 
-    // time/date is only send on request
+    // time/date is only sent on request
 
     if ( checkModeGps(IsoAgLib::IdentModeTractor) )
     { // pc_isoNameGps must be != NULL, because we are in tractor mode
-      if ( ( ci32_now - i32_lastIsoPositionSimple ) >= 100 )
+      if ( isPositionSimpleToSend() && ((ci32_now - i32_lastIsoPositionSimple) >= 100) )
       {
         if ( getAvailableExecTime() == 0 ) return false;
         sendPositionRapidUpdate();
       }
 
-      if ( ( ci32_now - i32_lastIsoDirection ) >= 250 )
+      if ( isDirectionToSend() && ((ci32_now - i32_lastIsoDirection) >= 250) )
       {
         if ( getAvailableExecTime() == 0 ) return false;
         isoSendDirection();
       }
 
       #ifdef NMEA_2000_FAST_PACKET
-      if ( ( ( ci32_now - i32_lastIsoPositionStream ) >= 1000 )
+      if ( ( isPositionStreamToSend() )
+        && ( ( ci32_now - i32_lastIsoPositionStream ) >= 1000 )
         && ( t_multiSendSuccessState != MultiSend_c::Running  ) )
       {
         if ( getAvailableExecTime() == 0 ) return false;

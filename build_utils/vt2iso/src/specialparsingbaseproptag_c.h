@@ -52,6 +52,7 @@
 #include <xercesc/util/XMLUni.hpp>
 
 #include "vt2iso-defines.hpp"
+#include <vt2iso.hpp>
 
 #ifndef SYSTEM_PC_VC
 #include <stdint.h>
@@ -100,7 +101,7 @@ class SpecialParsingBasePropTag_c
   virtual void outputCollectedData2Files(const char attrString[maxAttributeNames] [stringLength+1], const bool attrIsGiven[maxAttributeNames]) {}
 
   /** that functions writes to already existing files and prints out a record during runtime of vt2iso */
-  virtual bool outputData2FilesPiecewise(const char attrString[maxAttributeNames] [stringLength+1], const bool attrIsGiven[maxAttributeNames]) {return true;}
+  virtual bool outputData2FilesPiecewise(const char attrString[maxAttributeNames] [stringLength+1], const bool attrIsGiven[maxAttributeNames], vt2iso_c* pc_vt2iso) {return true;}
 
   /// returns if the current parsing module contains proprietary object types which can be handled like basic object types
   virtual bool checkForProprietaryOrBasicObjTypes() = 0;

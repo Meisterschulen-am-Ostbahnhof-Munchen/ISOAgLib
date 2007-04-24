@@ -142,22 +142,26 @@ namespace __IsoAgLib {
     /** set the value of real speed (measured by radar)
         @param ri16_val value to store as real radar measured speed
       */
-    void setSpeedReal(const int32_t& ri32_val) {i32_speedReal = ri32_val;}
+    void setSpeedReal(const int32_t& ri32_val)
+			{i32_speedReal = ri32_val; if(t_selectedSpeedSource == IsoAgLib::IsoGroundBasedSpeed) i32_selectedSpeed = ri32_val;}
 
     /** set the value of theoretical speed (calculated from gear)
         @param ri16_val value to store as theoretical gear calculated speed
       */
-    void setSpeedTheor(const int32_t& ri32_val) {i32_speedTheor = ri32_val;}
-
-    /** set measured signal indicating either forward or reverse as the theoretical (gear calculated) direction of travel
-        @return  direction of travel
-      */
-    void setDirectionTheor(IsoAgLib::IsoDirectionFlag_t t_val) {t_directionTheor = t_val;}
+    void setSpeedTheor(const int32_t& ri32_val)
+			{i32_speedTheor = ri32_val; if(t_selectedSpeedSource == IsoAgLib::IsoWheelBasedSpeed) i32_selectedSpeed = ri32_val;}
 
     /** set measured signal indicating either forward or reverse as the real (radar measured) direction of travel
         @return  direction of travel
       */
-    void setDirectionReal(IsoAgLib::IsoDirectionFlag_t t_val) {t_directionReal = t_val;}
+    void setDirectionReal(IsoAgLib::IsoDirectionFlag_t t_val)
+			{t_directionReal = t_val; if(t_selectedSpeedSource == IsoAgLib::IsoGroundBasedSpeed) t_selectedDirection = t_val;}
+
+    /** set measured signal indicating either forward or reverse as the theoretical (gear calculated) direction of travel
+        @return  direction of travel
+      */
+    void setDirectionTheor(IsoAgLib::IsoDirectionFlag_t t_val)
+			{t_directionTheor = t_val; if(t_selectedSpeedSource == IsoAgLib::IsoWheelBasedSpeed) t_selectedDirection = t_val;}
 
     /** set parameter which indicates whetcher the reported direction is reversed from the perspective of the operator
         @param rt_val  indicates direction (IsoInactive = not reversed; IsoActive = reversed)
@@ -193,6 +197,7 @@ namespace __IsoAgLib {
     void setSelectedSpeedLimitStatus(const IsoAgLib::IsoLimitFlag_t t_val) {t_selectedSpeedLimitStatus = t_val;}
     /*@}*/
 
+
     /* ****************************************************** */
     /** \name Retrieve Values which are sent from other ECUs  */
     /*@{*/
@@ -211,10 +216,40 @@ namespace __IsoAgLib {
       */
     int32_t speedReal() const { return i32_speedReal;}
 
+    /** is looking for a valid speed value
+        @return true if speed is valid otherwise false
+      */
+    bool isRealSpeedUsable() const;
+
+    /** is looking for a missing speed value
+        @return true if speed is missing otherwise false
+      */
+    bool isRealSpeedMissing() const { return (i32_speedReal == NO_VAL_32S)?true:false;}
+
+    /** is looking for a erroneous speed value
+        @return true if speed is erroneous otherwise false
+      */
+    bool isRealSpeedErroneous() const { return (i32_speedReal == ERROR_VAL_32S)?true:false;}
+
     /** get the value of theoretical speed (calculated from gear)
         @return theoretical gear calculated speed value
       */
     int32_t speedTheor() const { return i32_speedTheor;}
+
+    /** is looking for a valid speed value
+        @return true if speed is valid otherwise false
+      */
+    bool isTheorSpeedUsable() const;
+
+    /** is looking for a missing speed value
+        @return true if speed is missing otherwise false
+      */
+    bool isTheorSpeedMissing() const { return (i32_speedTheor == NO_VAL_32S)?true:false;}
+
+    /** is looking for a erroneous speed value
+        @return true if speed is erroneous otherwise false
+      */
+    bool isTheorSpeedErroneous() const { return (i32_speedTheor == ERROR_VAL_32S)?true:false;}
 
     /** get measured signal indicating either forward or reverse as the theoretical (gear calculated) direction of travel
         @return  direction of travel
@@ -248,6 +283,21 @@ namespace __IsoAgLib {
         @return  current value of speed
       */
     int32_t selectedSpeed() const {return i32_selectedSpeed;}
+
+    /** is looking for a valid speed value
+        @return true if speed is valid otherwise false
+      */
+    bool isSelectedSpeedUsable() const;
+
+    /** is looking for a missing speed value
+        @return true if speed is missing otherwise false
+      */
+    bool isSelectedSpeedMissing() const { return (i32_selectedSpeed == NO_VAL_32S)?true:false; }
+
+    /** is looking for a erroneous speed value
+        @return true if speed is erroneous otherwise false
+      */
+    bool isSelectedSpeedErroneous() const { return (i32_selectedSpeed == ERROR_VAL_32S)?true:false; }
 
     /** present limit status of selected speed
         @return  limit status
@@ -284,6 +334,13 @@ namespace __IsoAgLib {
         @see  BaseCommon_c::timeEvent()
       */
     virtual bool timeEventTracMode();
+
+    /** send a ISO11783 moving information PGN.
+      * this is only called when sending ident is configured and it has already claimed an address
+        @pre  function is only called in implement mode
+        @see  BaseCommon_c::timeEvent()
+      */
+    virtual bool timeEventImplMode();
 
     /** process a ISO11783 base information PGN
         @pre  sender of message is existent in monitor list

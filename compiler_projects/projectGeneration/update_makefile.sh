@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # ####################################################################### #
 #                         update_makefile.sh  -
 #                          Script to create file list, configuration
@@ -59,6 +59,7 @@
 # settings. The vars are used to defined the features which are
 # needed by the application
 # ####################################################################### #
+alias echo=$(which echo)
 PARAMETER_TARGET_SYSTEM="UseConfigFile"
 PARAMETER_CAN_DRIVER="UseConfigFile"
 PARAMETER_RS232_DRIVER="UseConfigFile"
@@ -138,7 +139,7 @@ GENERATE_FILES_ROOT_DIR=`pwd`
 # + PRJ_SENSOR_ANALOG ( specify if IsoAgLib extension for analog sensor data read should be used; provides several utility and diagnostic functions; default 0 )
 # + PRJ_RS232 ( specify if IsoAgLib extension for C++ stream oriented I/O should be used; default 0 )
 
-function check_set_correct_variables()
+check_set_correct_variables()
 {
 	if [ "A$ISO_AG_LIB_PATH" = "A" ] ; then
 		echo "ERROR! Please specify the path to the root directory of IsoAgLib - i.e. where xgpl_src and IsoAgLibExamples are located"
@@ -221,8 +222,8 @@ if [ "A$CAN_BUS_CNT" = "A" ] ; then
   	APP_NAME=""
   fi
 
-	if [ "A$PRJ_PROPRIETARY_CAN_INTERFACE" = "A" ] ; then
-		PRJ_PROPRIETARY_CAN_INTERFACE=0
+	if [ "A$PRJ_PROPRIETARY_PGN_INTERFACE" = "A" ] ; then
+		PRJ_PROPRIETARY_PGN_INTERFACE=0
 	fi
 
   if [ "A$PRJ_ISO11783" = "A" ] ; then
@@ -403,7 +404,7 @@ if [ "A$CAN_BUS_CNT" = "A" ] ; then
 # this function uses the "find" cmd
 # to derive based on the selected features the
 # corresponding file list into filelist_$PROJECT_PURE.txt
-function create_filelist( )
+create_filelist( )
  {
   COMM_PROC_FEATURES=""
 
@@ -568,7 +569,7 @@ function create_filelist( )
     COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -name '*timeposgps*' \)"
   fi
 
-	if [ $PRJ_PROPRIETARY_CAN_INTERFACE -gt 0 ] ; then
+	if [ $PRJ_PROPRIETARY_PGN_INTERFACE -gt 0 ] ; then
 		COMM_FEATURES="$COMM_FEATURES -o -path '*/ProprietaryCan/*'"
 	fi
 
@@ -583,6 +584,9 @@ function create_filelist( )
 		fi
     PRJ_MULTIPACKET=1
   fi
+	if [ $PRJ_PROPRIETARY_PGN_INTERFACE -gt 0 ] ; then
+    PRJ_MULTIPACKET=1
+	fi
   if [ $PRJ_DATASTREAMS -lt 1 ] ; then
 		if test $PRJ_ISO_TERMINAL -gt 0 -o $PRJ_TIME_GPS -gt 0 ; then
 	    COMM_FEATURES="$COMM_FEATURES -o -path '*/driver/datastreams/volatilememory_c.cpp'"
@@ -672,7 +676,7 @@ function create_filelist( )
 			elif [ $USE_RS232_DRIVER = "rte" ] ; then
 				DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/rs232/target_extension_rs232_rte*'"
 			elif [ $USE_RS232_DRIVER = "sys" ] ; then
-			  if [ $USE_TARGET_SYSTEM == "pc_win32" ] ; then
+			  if [ $USE_TARGET_SYSTEM = "pc_win32" ] ; then
 					DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/rs232/target_extension_rs232_w32_sys*'"
 				else
 					DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/rs232/target_extension_rs232_linux_sys*'"
@@ -719,9 +723,9 @@ function create_filelist( )
 	FILELIST_COMBINED_PURE="filelist"'__'"$PROJECT.txt"
 
 	if [ "A$DOXYGEN_EXPORT_DIR" = "A" ] ; then
-		FILELIST_DOXYGEN_READY="filelist"'__'"$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$USE_CAN_DRIVER"'__'"$USE_RS232_DRIVER-doc.txt"
+		FILELIST_DOXYGEN_READY="filelist"'__'"$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER-doc.txt"
 	else
-		FILELIST_DOXYGEN_READY="$DOXYGEN_EXPORT_DIR/filelist"'__'"$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$USE_CAN_DRIVER"'__'"$USE_RS232_DRIVER-doc.txt"
+		FILELIST_DOXYGEN_READY="$DOXYGEN_EXPORT_DIR/filelist"'__'"$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER-doc.txt"
 	fi
 
 
@@ -730,7 +734,7 @@ function create_filelist( )
 	rm -f "$FILELIST_COMBINED_PURE" "$FILELIST_COMBINED_QMAKE" "$FILELIST_COMBINED_HDR"
 
   touch "$FILELIST_LIBRARY_PURE" "$FILELIST_APP_PURE" "$FILELIST_COMBINED_PURE"
-	if [ $USE_TARGET_SYSTEM == "pc_linux" ] ; then
+	if [ $USE_TARGET_SYSTEM = "pc_linux" ] ; then
 		touch "$FILELIST_LIBRARY_QMAKE"
 	fi
   # find central elements
@@ -740,7 +744,7 @@ function create_filelist( )
 		EXCLUDE_FROM_SYSTEM_MGMT=""
 	fi
 	rm -f .exec.tmp
-	if [ $USE_TARGET_SYSTEM == "pc_linux" ] ; then
+	if [ $USE_TARGET_SYSTEM = "pc_linux" ] ; then
 		echo "find $LIB_ROOT $SRC_EXT -a \( -path '*/Scheduler/*' -o -path '*/SystemMgmt/*' -o -path '*/util/*' \) $EXCLUDE_FROM_SYSTEM_MGMT -printf 'SOURCES += %h/%f\n' >> $FILELIST_LIBRARY_QMAKE"  > .exec.tmp
 		echo "find $LIB_ROOT -name '*.h' -a \( -path '*/Scheduler/*' -o -path '*/SystemMgmt/*' -o -path '*/util/*' \) $EXCLUDE_FROM_SYSTEM_MGMT -printf 'HEADERS += %h/%f\n' >> $FILELIST_LIBRARY_QMAKE" >> .exec.tmp
   fi
@@ -749,7 +753,7 @@ function create_filelist( )
 
   # find wanted process data communication features
   if [ "$COMM_PROC_FEATURES" != "" ] ; then
-    if [ $USE_TARGET_SYSTEM == "pc_linux" ] ; then
+    if [ $USE_TARGET_SYSTEM = "pc_linux" ] ; then
 			echo "find $LIB_ROOT $SRC_EXT -a \( $COMM_PROC_FEATURES \) -printf 'SOURCES += %h/%f\n' >> $FILELIST_LIBRARY_QMAKE" >> .exec.tmp
 			echo "find $LIB_ROOT -name '*.h' -a \( $COMM_PROC_FEATURES \) -printf 'HEADERS += %h/%f\n' >> $FILELIST_LIBRARY_QMAKE" >> .exec.tmp
     fi
@@ -759,7 +763,7 @@ function create_filelist( )
 
   # find wanted other communication features
   if [ "$COMM_FEATURES" != "" ] ; then
-    if [ $USE_TARGET_SYSTEM == "pc_linux" ] ; then
+    if [ $USE_TARGET_SYSTEM = "pc_linux" ] ; then
 			echo "find $LIB_ROOT $SRC_EXT -a \( $COMM_FEATURES \) -printf 'SOURCES += %h/%f\n' >> $FILELIST_LIBRARY_QMAKE" >> .exec.tmp
     	echo "find $LIB_ROOT -name '*.h' -a \( $COMM_FEATURES \) -printf 'HEADERS += %h/%f\n' >> $FILELIST_LIBRARY_QMAKE" >> .exec.tmp
     fi
@@ -768,7 +772,7 @@ function create_filelist( )
   fi
 
   #find optional HW features
-  if [ $USE_TARGET_SYSTEM == "pc_linux" ] ; then
+  if [ $USE_TARGET_SYSTEM = "pc_linux" ] ; then
 		echo "find $LIB_ROOT $SRC_EXT  -a \( $DRIVER_FEATURES \) -printf 'SOURCES += %h/%f\n' >> $FILELIST_LIBRARY_QMAKE" >> .exec.tmp
   	echo "find $LIB_ROOT -name '*.h' -a \(  $DRIVER_FEATURES \) -printf 'HEADERS += %h/%f\n' >> $FILELIST_LIBRARY_QMAKE" >> .exec.tmp
   fi
@@ -826,7 +830,7 @@ function create_filelist( )
 	APP_SEARCH_SRC_TYPE_PART="\( "
 
 	# remove the joker '*' from the file type spec, as this causes only trouble
-	APP_SEARCH_SRC_CONDITION=`echo "$APP_SEARCH_SRC_CONDITION" | sed -e 's/\*//g'`
+	APP_SEARCH_SRC_CONDITION=$(echo "$APP_SEARCH_SRC_CONDITION" |sed 's|\*||g')
 
 	for itemSrcType in $APP_SEARCH_SRC_CONDITION ; do
 		if [ $FIRST_LOOP != "YES" ] ; then
@@ -851,7 +855,7 @@ function create_filelist( )
 	done
 	APP_SEARCH_HDR_TYPE_PART="$APP_SEARCH_HDR_TYPE_PART \)"
 
-	if [ $USE_TARGET_SYSTEM == "pc_linux" ] ; then
+	if [ $USE_TARGET_SYSTEM = "pc_linux" ] ; then
 		for EACH_REL_APP_PATH in $REL_APP_PATH ; do
 			echo "find ../$ISO_AG_LIB_PATH/$EACH_REL_APP_PATH/ $APP_SEARCH_SRC_TYPE_PART $APP_SRC_PART $EXCLUDE_PATH_PART $EXCLUDE_SRC_PART -printf 'SOURCES += %h/%f\n' >> $FILELIST_APP_QMAKE" >> .exec.tmp
 			echo "find ../$ISO_AG_LIB_PATH/$EACH_REL_APP_PATH/ $APP_SEARCH_HDR_TYPE_PART $APP_SRC_PART $EXCLUDE_PATH_PART $EXCLUDE_SRC_PART -printf 'HEADERS += %h/%f\n' >> $FILELIST_APP_QMAKE" >> .exec.tmp
@@ -866,7 +870,7 @@ function create_filelist( )
 
   sh .exec.tmp
 	cat $FILELIST_LIBRARY_PURE $FILELIST_APP_PURE > $FILELIST_COMBINED_PURE
-	if [ $USE_TARGET_SYSTEM == "pc_linux" ] ; then
+	if [ $USE_TARGET_SYSTEM = "pc_linux" ] ; then
 		cat $FILELIST_LIBRARY_QMAKE $FILELIST_APP_QMAKE > $FILELIST_COMBINED_QMAKE
 	fi
 	cat $FILELIST_LIBRARY_HDR $FILELIST_APP_HDR > $FILELIST_COMBINED_HDR
@@ -875,17 +879,17 @@ function create_filelist( )
 	# create list with suitable block definition for doxygen import
 	# start main block for all files for project
 	#echo "/**" > $FILELIST_DOXYGEN_READY
-	#echo "* \section FileLists$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$USE_CAN_DRIVER"'__'"$USE_RS232_DRIVER List of Files for $PROJECT ." >> $FILELIST_DOXYGEN_READY
+	#echo "* \section FileLists$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER List of Files for $PROJECT ." >> $FILELIST_DOXYGEN_READY
 	#echo "*/" >> $FILELIST_DOXYGEN_READY
 	#echo "/*@{*/" >> $FILELIST_DOXYGEN_READY
-	echo -e "\n\n \section FileLists$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$USE_CAN_DRIVER"'__'"$USE_RS232_DRIVER List of Files for $PROJECT with CAN Driver $USE_CAN_DRIVER and RS232 Driver $USE_RS232_DRIVER" > $FILELIST_DOXYGEN_READY
+	echo -e "\n\n \section FileLists$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER List of Files for $PROJECT with CAN Driver $USE_CAN_DRIVER and RS232 Driver $USE_RS232_DRIVER" > $FILELIST_DOXYGEN_READY
 
 	# write block of source files
 	#echo "/**" >> $FILELIST_DOXYGEN_READY
-	#echo "* \section SrcList$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$USE_CAN_DRIVER"'__'"$USE_RS232_DRIVER List of Sourcefiles for $PROJECT ." >> $FILELIST_DOXYGEN_READY
+	#echo "* \section SrcList$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER List of Sourcefiles for $PROJECT ." >> $FILELIST_DOXYGEN_READY
 	#echo "*/" >> $FILELIST_DOXYGEN_READY
 	#echo "/*@{*/" >> $FILELIST_DOXYGEN_READY
-	echo -e "\n\n \section SrcList$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$USE_CAN_DRIVER"'__'"$USE_RS232_DRIVER List of Sourcefiles for $PROJECT with CAN Driver $USE_CAN_DRIVER and RS232 Driver $USE_RS232_DRIVER" >> $FILELIST_DOXYGEN_READY
+	echo -e "\n\n \section SrcList$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER List of Sourcefiles for $PROJECT with CAN Driver $USE_CAN_DRIVER and RS232 Driver $USE_RS232_DRIVER" >> $FILELIST_DOXYGEN_READY
 	echo "\code" >> $FILELIST_DOXYGEN_READY
   cat $FILELIST_COMBINED_PURE >> $FILELIST_DOXYGEN_READY
 	echo "\endcode" >> $FILELIST_DOXYGEN_READY
@@ -895,10 +899,10 @@ function create_filelist( )
 
 	# write block of header files
 	#echo "/**" >> $FILELIST_DOXYGEN_READY
-	#echo "* \section HdrList$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$USE_CAN_DRIVER"'__'"$USE_RS232_DRIVER List of Sourcefiles for $PROJECT ." >> $FILELIST_DOXYGEN_READY
+	#echo "* \section HdrList$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER List of Sourcefiles for $PROJECT ." >> $FILELIST_DOXYGEN_READY
 	#echo "*/" >> $FILELIST_DOXYGEN_READY
 	#echo "/*@{*/" >> $FILELIST_DOXYGEN_READY
-	echo -e "\n\n \section HdrList$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$USE_CAN_DRIVER"'__'"$USE_RS232_DRIVER List of Headers for $PROJECT with CAN Driver $USE_CAN_DRIVER and RS232 Driver $USE_RS232_DRIVER" >> $FILELIST_DOXYGEN_READY
+	echo -e "\n\n \section HdrList$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER List of Headers for $PROJECT with CAN Driver $USE_CAN_DRIVER and RS232 Driver $USE_RS232_DRIVER" >> $FILELIST_DOXYGEN_READY
 	echo "\code" >> $FILELIST_DOXYGEN_READY
 	cat $FILELIST_COMBINED_HDR >> $FILELIST_DOXYGEN_READY
 	echo "\endcode" >> $FILELIST_DOXYGEN_READY
@@ -920,7 +924,7 @@ function create_filelist( )
 # function to create the project specific autogenerated
 # config header
 # autogen_project_config.h
-function create_autogen_project_config()
+create_autogen_project_config()
 {
   # go to project dir - below config dir
 	cd $1/$PROJECT
@@ -1009,11 +1013,11 @@ function create_autogen_project_config()
     echo -e "#define USE_VT_UNICODE_SUPPORT$ENDLINE" >> $CONFIG_NAME
   fi
 
-  if [ $PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL -gt 0 ] ; then
-		echo -e "#ifndef SYSTEM_WITH_ENHANCED_CAN_HAL$ENDLINE" >> $CONFIG_NAME
-    echo -e "  #define SYSTEM_WITH_ENHANCED_CAN_HAL$ENDLINE" >> $CONFIG_NAME
-		echo -e "#endif$ENDLINE" >> $CONFIG_NAME
-  fi
+#  if [ $PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL -gt 0 ] ; then
+#		echo -e "#ifndef SYSTEM_WITH_ENHANCED_CAN_HAL$ENDLINE" >> $CONFIG_NAME
+#    echo -e "  #define SYSTEM_WITH_ENHANCED_CAN_HAL$ENDLINE" >> $CONFIG_NAME
+#		echo -e "#endif$ENDLINE" >> $CONFIG_NAME
+#  fi
 
 
 	if [ $PRJ_BASE -gt 0 ] ; then
@@ -1149,8 +1153,9 @@ function create_autogen_project_config()
 		INDIV_CNT=`grep -c $conf_name $CONFIG_NAME.bak`
 		if [ $INDIV_CNT -lt 1 ] ; then
 			grep -B1 "#define $conf_line" ../$ISO_AG_LIB_PATH/xgpl_src/Application_Config/isoaglib_config.h >> $CONFIG_NAME
-			CMDLINE=`echo "sed -e 's|#define $conf_name|// #define $conf_name|g' $CONFIG_NAME > $CONFIG_NAME.1"`
-			echo $CMDLINE | sh
+			sed "s|#define $conf_name|// #define $conf_name|g" $CONFIG_NAME > $CONFIG_NAME.1
+#			CMDLINE=`echo "sed -e 's|#define $conf_name|// #define $conf_name|g' $CONFIG_NAME > $CONFIG_NAME.1"`
+#			echo $CMDLINE | sh
 			mv $CONFIG_NAME.1 $CONFIG_NAME
 			echo -e -n "$ENDLINE" >> $CONFIG_NAME
 		fi
@@ -1184,7 +1189,7 @@ function create_autogen_project_config()
 	cd $1
 }
 
-function create_makefile()
+create_makefile()
 {
   # go to project dir - below config dir
   DEV_PRJ_DIR="$1/$PROJECT"
@@ -1196,7 +1201,7 @@ function create_makefile()
   MakefileFilelistApp="$1/$PROJECT/$FILELIST_APP_PURE"
 
 	MakefileName="Makefile"
-	MakefileNameLong="Makefile"'__'"$USE_CAN_DRIVER"'__'"$USE_RS232_DRIVER"
+	MakefileNameLong="Makefile"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER"
 
 	if [ "A$MAKEFILE_SKELETON_FILE" = "A" ] ; then
   	MAKEFILE_SKELETON_FILE="$DEV_PRJ_DIR/../$ISO_AG_LIB_PATH/compiler_projects/projectGeneration/MakefileSkeleton.txt"
@@ -1309,7 +1314,7 @@ cp -a FileListInterface.txt FileListInterface4Eval.txt
 
 DoRepeat="TRUE";
 Iteration=0
-while [ $DoRepeat == "TRUE" ] ; do
+while [ $DoRepeat = "TRUE" ] ; do
 	DoRepeat="FALSE";
 	for InterfaceFile in $(cat FileListInterface4Eval.txt); do
 		for IncludeLine in $(grep "#include" $InterfaceFile | sed -e 's/.*#include[ \t\<\"]*\([^\>\"\t ]*\).*/\1/g'); do
@@ -1324,7 +1329,7 @@ while [ $DoRepeat == "TRUE" ] ; do
 
 	      #echo "Include Datei $BaseName kommt $CntInterface mal im Interface und $CntInternal mal intern vor";
 				if test $CntInterface -lt 1 -a $CntInternal -gt 0 ; then
-	#echo "Header $BaseName existiert noch nicht in Interface --> hinzufügen"
+	#echo "Header $BaseName existiert noch nicht in Interface --> hinzufgen"
 					grep $BaseName FileListInternal.txt >> FileListInterface.txt
 					grep $BaseName FileListInternal.txt >> FileListInterface4EvalPre.txt
 					DoRepeat="TRUE";
@@ -1332,7 +1337,7 @@ while [ $DoRepeat == "TRUE" ] ; do
 			fi
 		done
 	done
-	if [ $DoRepeat == "TRUE" ] ; then
+	if [ $DoRepeat = "TRUE" ] ; then
 		Iteration=`expr $Iteration + 1`
 		cp -a FileListInterface4EvalPre.txt FileListInterface4EvalPre.$Iteration.txt
 		cp -a FileListInterface4EvalPre.txt FileListInterface4Eval.txt
@@ -1362,20 +1367,6 @@ rm -f FileListInterfaceStart.txt FileListInterface.txt FileListInterface4Eval.tx
 		echo -e "\n#Special Sources for CAN Server" >> $MakefileNameLong
 		echo "SOURCES_SERVER = ../$ISO_AG_LIB_PATH/xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_server_general.cpp \\" >> $MakefileNameLong
 
-		# make sure, that PRJ_CAN_DRIVER_SUFFIX is automatically set, when not yet defined
-		if [ "A$PRJ_CAN_DRIVER_SUFFIX" = "A" ] ; then
-			case $PRJ_DEFINES in
-				*SYSTEM_A1*)
-					PRJ_CAN_DRIVER_SUFFIX="A1"
-					;;
-				*SYSTEM_MCC*)
-					PRJ_CAN_DRIVER_SUFFIX="pcan"
-					;;
-				*)
-					PRJ_CAN_DRIVER_SUFFIX="A1"
-					;;
-			esac
-		fi
 		# now derive the source name of the specific CAN HAL module
 		echo -e "\t\t../$ISO_AG_LIB_PATH/xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_server_"$PRJ_CAN_DRIVER_SUFFIX".cpp \\" >> $MakefileNameLong
 
@@ -1406,7 +1397,7 @@ rm -f FileListInterfaceStart.txt FileListInterface.txt FileListInterface4Eval.tx
 
 	# now create pure application makefile which is based upon an installed library
 	MakefileName="MakefileApp"
-	MakefileNameLong="MakefileApp"'__'"$USE_CAN_DRIVER"'__'"$USE_RS232_DRIVER"
+	MakefileNameLong="MakefileApp"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER"
 
 	if [ "A$MAKEFILE_APP_SKELETON_FILE" = "A" ] ; then
   	MAKEFILE_APP_SKELETON_FILE="$DEV_PRJ_DIR/../$ISO_AG_LIB_PATH/compiler_projects/projectGeneration/MakefileAppSkeleton.txt"
@@ -1517,29 +1508,10 @@ rm -f FileListInterfaceStart.txt FileListInterface.txt FileListInterface4Eval.tx
   return
 }
 
-function create_rte_links()
-{
-  if [ $USE_CAN_DRIVER = "rte" -o $USE_RS232_DRIVER = "rte" ] ; then
-    # PASSENDEN link erzeugen zu RTE
-		# go to directory of script
-    cd $1/$PROJECT/$LIB_ROOT
-		cd ../commercial_BIOS/bios_pc.testserver
-    ln -sf ../../../../rte/sw/include
-    ln -sf ../../../../rte/sw/rte_client_lib
-    ln -sf ../../../../rte/sw/lib
-    ln -sf ../../../../rte/sw
-		# go back to config dir
-    cd $1
-  fi
-
-	return
-}
-
-
 # Generate suitable project file for the Win32 IDE "Dev-C++"
 # which is OpenSource and is based on MinGW - i.e. gcc for Win32
 # URL http://www.bloodshed.net/dev/devcpp.html
-function create_DevCCPrj() {
+create_DevCCPrj() {
   DEV_PRJ_DIR="$1/../Dev-C++/$PROJECT"
   # echo "Create Projekt file for Dev-C++ in $DEV_PRJ_DIR"
   mkdir -p $DEV_PRJ_DIR/objects
@@ -1548,11 +1520,11 @@ function create_DevCCPrj() {
 	rm $FILELIST_LIBRARY_PURE $FILELIST_APP_PURE
 
   # org test
-	PROJECT_FILE_NAME="$PROJECT"'__'"$USE_CAN_DRIVER"'__'"$USE_RS232_DRIVER.dev"
+	PROJECT_FILE_NAME="$PROJECT"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER.dev"
   DevCcPrjFilelist="$1/$PROJECT/$FILELIST_COMBINED_PURE"
 
   # echo "Erzeuge $PROJECT_FILE_NAME"
-  PROJECT_EXE_NAME="$PROJECT"'__'"$USE_CAN_DRIVER"'__'"$USE_RS232_DRIVER.exe"
+  PROJECT_EXE_NAME="$PROJECT"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER.exe"
   CONFIG_HDR_NAME="config_""$PROJECT.h"
 
   UNIT_CNT_CC=`grep -c -E "\.cc|\.cpp|\.c" $DevCcPrjFilelist`
@@ -1589,13 +1561,13 @@ function create_DevCCPrj() {
 		DEFINE_LINE="$DEFINE_LINE"'_@@_-DUSE_CAN_CARD_TYPE='"$USE_WIN32_CAN_HW_TYPE"'_@@_'
 	elif  [ $USE_CAN_DRIVER = "vector_xl_drv_lib" ] ; then
 		INCLUDE_DIR_LINE="$INCLUDE_DIR_LINE;\"$USE_WIN32_HEADER_DIRECTORY/XL Driver Library/bin\""
-		LIB_DIR_LINE="\"$USE_WIN32_LIB_DIRECTORY/XL Driver Library/bin\""
+		LIB_DIR_LINE="$USE_WIN32_LIB_DIRECTORY/XL Driver Library/bin"
 		LIB_FILE_LINE="-lvxlapi_@@_"
 		DEFINE_LINE="$DEFINE_LINE"'-D__GNUWIN32__ -W -DWIN32 -D_CONSOLE -D_MBCS_@@_-D_Windows_@@_'
 		DEFINE_LINE="$DEFINE_LINE"'_@@_-DUSE_CAN_CARD_TYPE=XL_'"$USE_WIN32_CAN_HW_TYPE"'_@@_'
 	elif  [ $USE_CAN_DRIVER = "sontheim" ] ; then
-		INCLUDE_DIR_LINE="$INCLUDE_DIR_LINE;\"$USE_WIN32_HEADER_DIRECTORY/Sontheim\""
-		LIB_DIR_LINE="\"$USE_WIN32_LIB_DIRECTORY/Sontheim\""
+		INCLUDE_DIR_LINE="$INCLUDE_DIR_LINE;\"$USE_WIN32_HEADER_DIRECTORY/Sontheim\";\"$USE_WIN32_HEADER_DIRECTORY/Sontheim/Capitest\""
+		LIB_DIR_LINE="$USE_WIN32_LIB_DIRECTORY/Sontheim;$USE_WIN32_LIB_DIRECTORY/Sontheim/Capitest"
 		LIB_FILE_LINE="-lvcanapi_@@_"
 		DEFINE_LINE="$DEFINE_LINE"'-D__GNUWIN32__ -W -DWIN32 -D_CONSOLE -D_MBCS_@@_-D_Windows_@@_'
 		DEFINE_LINE="$DEFINE_LINE"'_@@_-DUSE_CAN_CARD_TYPE='"$USE_WIN32_CAN_HW_TYPE"'_@@_'
@@ -1690,7 +1662,7 @@ function create_DevCCPrj() {
 	cd $1
 }
 
-function create_EdePrj()
+create_EdePrj()
 {
   DEV_PRJ_DIR="$1/$PROJECT"
   # echo "Create Projekt file for EDE in $DEV_PRJ_DIR"
@@ -1789,13 +1761,13 @@ function create_EdePrj()
 	mv $PROJECT_FILE_NAME.1 $PROJECT_FILE_NAME
 }
 
-function create_VCPrj()
+create_VCPrj()
 {
 
   DEV_PRJ_DIR=`echo "$1/$PROJECT" | sed -e 's/Dev-C++/VC6/g'`
   # echo "Create Projekt file for VC6 in $DEV_PRJ_DIR"
   mkdir -p $DEV_PRJ_DIR/Debug
-	PROJECT_FILE_NAME="$PROJECT"'__'"$USE_CAN_DRIVER"'__'"$USE_RS232_DRIVER.dsp"
+	PROJECT_FILE_NAME="$PROJECT"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER.dsp"
 
   DspPrjFilelist="$1/$PROJECT/$FILELIST_COMBINED_PURE"
   CONFIG_HDR_NAME="config_""$PROJECT.h"
@@ -1836,15 +1808,16 @@ function create_VCPrj()
 		USE_INCLUDE_PATHS='/I "'"$USE_STLPORT_HEADER_DIRECTORY"'" /I "'"$ISO_AG_LIB_PATH_WIN"'" /I "'"$ISO_AG_LIB_PATH_WIN=_=_xgpl_src"'" /I "'"$USE_WIN32_HEADER_DIRECTORY_WIN=_=_XL Driver Library=_=_bin"'"'
 		USE_DEFINES="$USE_DEFINES"' /D ''"'"XL_$USE_WIN32_CAN_HW_TYPE"'"'
 		USE_d_DEFINES="$USE_d_DEFINES"' /d ''"'"XL_$USE_WIN32_CAN_HW_TYPE"'"'
-		LIB_DIR_LINE="\"$USE_WIN32_LIB_DIRECTORY_WIN=_=_XL Driver Library=_=_bin\""
+		LIB_DIR_LINE="$USE_WIN32_LIB_DIRECTORY_WIN=_=_XL Driver Library=_=_bin"
 		echo "$USE_WIN32_LIB_DIRECTORY_WIN=_=_XL Driver Library=_=_bin=_=_vxlapi.lib" >> $DspPrjFilelist
 		echo "$USE_WIN32_LIB_DIRECTORY_WIN=_=_XL Driver Library=_=_bin=_=_vxlapi.h" >> $DspPrjFilelist
 	elif  [ $USE_CAN_DRIVER = "sontheim" ] ; then
-		USE_INCLUDE_PATHS='/I "'"$USE_STLPORT_HEADER_DIRECTORY"'" /I "'"$ISO_AG_LIB_PATH_WIN"'" /I "'"$ISO_AG_LIB_PATH_WIN=_=_xgpl_src"'" /I "'"$USE_WIN32_HEADER_DIRECTORY_WIN=_=_Sontheim"'"'
+		USE_INCLUDE_PATHS='/I "'"$USE_STLPORT_HEADER_DIRECTORY"'" /I "'"$ISO_AG_LIB_PATH_WIN"'" /I "'"$ISO_AG_LIB_PATH_WIN=_=_xgpl_src"'" /I "'"$USE_WIN32_HEADER_DIRECTORY_WIN=_=_Sontheim"'" /I "'"$USE_WIN32_HEADER_DIRECTORY_WIN=_=_Sontheim=_=_Capitest"'"'
 		USE_DEFINES="$USE_DEFINES"' /D ''"'"XL_$USE_WIN32_CAN_HW_TYPE"'"'
 		USE_d_DEFINES="$USE_d_DEFINES"' /d ''"'"XL_$USE_WIN32_CAN_HW_TYPE"'"'
-		LIB_DIR_LINE="\"$USE_WIN32_LIB_DIRECTORY_WIN=_=_Sontheim\""
+		LIB_DIR_LINE=' /libpath:"'"$USE_WIN32_LIB_DIRECTORY_WIN=_=_Sontheim"'" /libpath:"'"$USE_WIN32_LIB_DIRECTORY_WIN=_=_Sontheim=_=_Capitest"'"'
 		echo "$USE_WIN32_LIB_DIRECTORY_WIN=_=_Sontheim=_=CANAPI.H" >> $DspPrjFilelist
+		echo "$USE_WIN32_LIB_DIRECTORY_WIN=_=_Sontheim=_=Capitest=_=CANAPI.H" >> $DspPrjFilelist
 	fi
 
 	for SingleInclPath in $PRJ_INCLUDE_PATH_WIN ; do
@@ -1887,8 +1860,15 @@ function create_VCPrj()
 	CMDLINE=`echo "sed -e 's#INSERT_CAN_LIB_PATH#$LIB_DIR_LINE#g' $DEV_PRJ_DIR/$PROJECT_FILE_NAME > $DEV_PRJ_DIR/$PROJECT_FILE_NAME.1"`
 	echo $CMDLINE | sh
 
-  sed -e 's#=_=_#\\#g'  $DEV_PRJ_DIR/$PROJECT_FILE_NAME.1 > $DEV_PRJ_DIR/$PROJECT_FILE_NAME
-  rm -f $DEV_PRJ_DIR/$PROJECT_FILE_NAME.1
+	USE_STLPORT_LIB_DIRECTORY=$(echo "$USE_STLPORT_HEADER_DIRECTORY" |sed 's|stlport|lib|g')
+	CMDLINE=`echo "sed -e 's#INSERT_STLPORT_LIB_PATH#$USE_STLPORT_LIB_DIRECTORY#g' $DEV_PRJ_DIR/$PROJECT_FILE_NAME.1 > $DEV_PRJ_DIR/$PROJECT_FILE_NAME"`
+	echo $CMDLINE | sh
+
+
+
+  sed -e 's#=_=_#\\#g'  $DEV_PRJ_DIR/$PROJECT_FILE_NAME > $DEV_PRJ_DIR/$PROJECT_FILE_NAME.1
+#  rm -f $DEV_PRJ_DIR/$PROJECT_FILE_NAME.1
+  mv $DEV_PRJ_DIR/$PROJECT_FILE_NAME.1 $DEV_PRJ_DIR/$PROJECT_FILE_NAME
 
 
 	SOURCES=`grep -E "\.cc|\.cpp|\.c|\.lib" $DspPrjFilelist`
@@ -1906,7 +1886,7 @@ function create_VCPrj()
   		continue
   	fi
   	echo "# Begin Source File" >> $DEV_PRJ_DIR/$PROJECT_FILE_NAME
-		filename=`echo "$i" | sed -e 's#/#\\\#g'`
+		filename=$(echo "$i" |sed 's|/|\\|g')
   	echo "SOURCE=$filename" >> $DEV_PRJ_DIR/$PROJECT_FILE_NAME
   	echo "# End Source File" >> $DEV_PRJ_DIR/$PROJECT_FILE_NAME
 		echo "" >> $DEV_PRJ_DIR/$PROJECT_FILE_NAME
@@ -1926,7 +1906,7 @@ function create_VCPrj()
   		continue
   	fi
   	echo "# Begin Source File" >> $DEV_PRJ_DIR/$PROJECT_FILE_NAME
-		filename=`echo $i | sed -e 's#/#\\\#g'`
+		filename=$(echo "$i" |sed 's|/|\\|g')
   	echo "SOURCE=$filename" >> $DEV_PRJ_DIR/$PROJECT_FILE_NAME
   	echo "# End Source File" >> $DEV_PRJ_DIR/$PROJECT_FILE_NAME
 		echo "" >> $DEV_PRJ_DIR/$PROJECT_FILE_NAME
@@ -1946,7 +1926,7 @@ function create_VCPrj()
   # org test
 }
 
-function perform_everything()
+perform_everything()
 {
 	# verify and correct the variables
   check_set_correct_variables $1 $2
@@ -1967,22 +1947,22 @@ function perform_everything()
 		#echo "Use Parameter value for rs232 driver: $PARAMETER_RS232_DRIVER"
 	fi
 
-  if [ $USE_TARGET_SYSTEM == "pc_win32" ] ; then
+  if [ $USE_TARGET_SYSTEM = "pc_win32" ] ; then
 	USE_SYSTEM_DEFINE="SYSTEM_PC"
   	GENERATE_FILES_ROOT_DIR="$1/../Dev-C++/"
-  elif [ $USE_TARGET_SYSTEM == "pc_linux" ] ; then
+  elif [ $USE_TARGET_SYSTEM = "pc_linux" ] ; then
 	USE_SYSTEM_DEFINE="SYSTEM_PC"
   	GENERATE_FILES_ROOT_DIR="$1/../kdevelop_qmake/"
-  elif [ $USE_TARGET_SYSTEM == "esx" ] ; then
+  elif [ $USE_TARGET_SYSTEM = "esx" ] ; then
 	USE_SYSTEM_DEFINE="SYSTEM_ESX"
   	GENERATE_FILES_ROOT_DIR="$1/../EDE/"
-  elif [ $USE_TARGET_SYSTEM == "c2c" ] ; then
+  elif [ $USE_TARGET_SYSTEM = "c2c" ] ; then
 	USE_SYSTEM_DEFINE="SYSTEM_C2C"
   	GENERATE_FILES_ROOT_DIR="$1/../EDE/"
-  elif [ $USE_TARGET_SYSTEM == "imi" ] ; then
+  elif [ $USE_TARGET_SYSTEM = "imi" ] ; then
 	USE_SYSTEM_DEFINE="SYSTEM_IMI"
   	GENERATE_FILES_ROOT_DIR="$1/../EDE/"
-  elif [ $USE_TARGET_SYSTEM == "pm167" ] ; then
+  elif [ $USE_TARGET_SYSTEM = "pm167" ] ; then
 	USE_SYSTEM_DEFINE="SYSTEM_PM167"
   	GENERATE_FILES_ROOT_DIR="$1/../EDE/"
   fi
@@ -1997,15 +1977,12 @@ function perform_everything()
 	# call function to create project specific config file
 	create_autogen_project_config $GENERATE_FILES_ROOT_DIR $2
 
-  if [ $USE_TARGET_SYSTEM == "pc_linux" ] ; then
+  if [ $USE_TARGET_SYSTEM = "pc_linux" ] ; then
     # call function to create the Makefile in the project dir
     create_makefile $GENERATE_FILES_ROOT_DIR $2
 
-    # call function to create links to RTE
-    create_rte_links $GENERATE_FILES_ROOT_DIR $2
-
 	  # check if a win32 project file whould be created
-  elif [ $USE_TARGET_SYSTEM == "pc_win32" ] ; then
+  elif [ $USE_TARGET_SYSTEM = "pc_win32" ] ; then
   	create_DevCCPrj $GENERATE_FILES_ROOT_DIR $2
     create_VCPrj $GENERATE_FILES_ROOT_DIR $2
   else
@@ -2022,7 +1999,7 @@ function perform_everything()
 
 # Usage: usage
 # Print the usage.
-function usage () {
+usage () {
     cat <<EOF
 Usage: $0 [OPTION] project_config_file
 Create filelist, Makefile and configuration settings for a IsoAgLib project.
@@ -2145,7 +2122,7 @@ cd $START_DIR
 # echo "ConfDir $CONF_DIR"
 
 # now import the config setting file
-. $CONF_FILE
+. ./$CONF_FILE
 
 # perform some checks based on user input
 # check for correct target system setting
@@ -2164,7 +2141,15 @@ esac
 # check for corrext CAN driver - and automatically adapt to embedded targets
 if [ $PARAMETER_CAN_DRIVER != "UseConfigFile" ] ; then
 	USE_CAN_DRIVER=$PARAMETER_CAN_DRIVER
+	IS_CAN_SERVER=$(echo $PARAMETER_CAN_DRIVER | grep -c "linux_server_client_")
+	if [ $IS_CAN_SERVER -gt 0 ] ; then
+		PRJ_CAN_DRIVER_SUFFIX=$(echo $PARAMETER_CAN_DRIVER | sed 's/linux_server_client_//g')
+		USE_CAN_DRIVER="linux_server_client"
+		PARAMETER_CAN_DRIVER="linux_server_client"
+	fi
 fi
+#default for not-can_server
+CAN_SERVER_FILENAME=$PARAMETER_CAN_DRIVER
 case "$USE_CAN_DRIVER" in
 	simulating)
 		case "$USE_TARGET_SYSTEM" in
@@ -2187,6 +2172,8 @@ case "$USE_CAN_DRIVER" in
 			*)
 			;;
 		esac
+		# enhanced CAN HAL is not yet supported for the known embedded targets
+		PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=0
 	;;
 	rte)
 		case "$USE_TARGET_SYSTEM" in
@@ -2219,6 +2206,21 @@ case "$USE_CAN_DRIVER" in
 				PARAMETER_CAN_DRIVER="sys"
 			;;
 		esac
+		# make sure, that PRJ_CAN_DRIVER_SUFFIX is automatically set, when not yet defined
+		if [ "A$PRJ_CAN_DRIVER_SUFFIX" = "A" ] ; then
+			case $PRJ_DEFINES in
+				*SYSTEM_A1*)
+					PRJ_CAN_DRIVER_SUFFIX="A1"
+					;;
+				*SYSTEM_MCC*)
+					PRJ_CAN_DRIVER_SUFFIX="pcan"
+					;;
+				*)
+					PRJ_CAN_DRIVER_SUFFIX="A1"
+					;;
+			esac
+		fi
+		CAN_SERVER_FILENAME=${USE_CAN_DRIVER}_${PRJ_CAN_DRIVER_SUFFIX}
 	;;
 	vector_canlib)
 		case "$USE_TARGET_SYSTEM" in
@@ -2235,6 +2237,8 @@ case "$USE_CAN_DRIVER" in
 				PARAMETER_CAN_DRIVER="sys"
 			;;
 		esac
+		# enhanced CAN HAL is not yet supported for vector_canlib
+		PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=0
 	;;
 	vector_xl_drv_lib)
 		case "$USE_TARGET_SYSTEM" in
@@ -2251,6 +2255,8 @@ case "$USE_CAN_DRIVER" in
 				PARAMETER_CAN_DRIVER="sys"
 			;;
 		esac
+		# enhanced CAN HAL is not yet supported for vector_xl_drv_lib
+		PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=0
 	;;
 	sontheim)
 		case "$USE_TARGET_SYSTEM" in
@@ -2268,6 +2274,8 @@ case "$USE_CAN_DRIVER" in
 				PARAMETER_CAN_DRIVER="sys"
 			;;
 		esac
+		# enhanced CAN HAL is not yet supported for sontheim
+		PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=0
 	;;
 	*)
 		echo "Unknown CAN driver $USE_CAN_DRIVER" 1>&2
@@ -2324,7 +2332,7 @@ fi
 
 # call the main function to create
 # Makefile for defined config setting
-perform_everything $CONF_DIR $SCRIPT_DIR $START_DIR
+perform_everything "$CONF_DIR" "$SCRIPT_DIR" "$START_DIR"
 
 
 if [ $USE_LITTLE_ENDIAN_CPU -lt 1 ] ; then
@@ -2346,9 +2354,9 @@ echo "( Note: All this is already set for Win32 Dev-C++ and Visual C++ version 6
 if [ "A$DOXYGEN_EXPORT_DIR" != "A" ] ; then
 	# doxygen export is specified -> copy config file there with suitable doc block
 	CONF_BASE=`basename $CONF_FILE`
-	CONFIG_SPEC_DOXYGEN_READY="$DOXYGEN_EXPORT_DIR/spec"'__'"$CONF_BASE"'__'"$USE_TARGET_SYSTEM"'__'"$USE_CAN_DRIVER"'__'"$USE_RS232_DRIVER-doc.txt"
+	CONFIG_SPEC_DOXYGEN_READY="$DOXYGEN_EXPORT_DIR/spec"'__'"$CONF_BASE"'__'"$USE_TARGET_SYSTEM"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER-doc.txt"
 	#echo "/**" > $CONFIG_SPEC_DOXYGEN_READY
-	#echo "* \section PrjSpec$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$USE_CAN_DRIVER"'__'"$USE_RS232_DRIVER List of configuration settings for $PROJECT ." >> $CONFIG_SPEC_DOXYGEN_READY
+	#echo "* \section PrjSpec$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER List of configuration settings for $PROJECT ." >> $CONFIG_SPEC_DOXYGEN_READY
 	#echo "* This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ " >> $CONFIG_SPEC_DOXYGEN_READY
 	#echo "* Use the file $CONF_FILE in this directory as input file for $0 to create the project generation files." >> $CONFIG_SPEC_DOXYGEN_READY
 	#echo "*/" >> $CONFIG_SPEC_DOXYGEN_READY
@@ -2359,7 +2367,7 @@ if [ "A$DOXYGEN_EXPORT_DIR" != "A" ] ; then
 	#rm -f /tmp/$CONF_BASE
 	#echo "/*@}*/" >> $CONFIG_SPEC_DOXYGEN_READY
 
-	echo -e "$ENDLINE$ENDLINE \section PrjSpec$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$USE_CAN_DRIVER"'__'"$USE_RS232_DRIVER List of configuration settings for $PROJECT with CAN Driver $USE_CAN_DRIVER and RS232 Driver $USE_RS232_DRIVER" > $CONFIG_SPEC_DOXYGEN_READY
+	echo -e "$ENDLINE$ENDLINE \section PrjSpec$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER List of configuration settings for $PROJECT with CAN Driver $USE_CAN_DRIVER and RS232 Driver $USE_RS232_DRIVER" > $CONFIG_SPEC_DOXYGEN_READY
 	echo " This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ " >> $CONFIG_SPEC_DOXYGEN_READY
 	echo " Use the file $CONF_FILE in this directory as input file for $0 to create the project generation files." >> $CONFIG_SPEC_DOXYGEN_READY
 	echo "\code" >> $CONFIG_SPEC_DOXYGEN_READY

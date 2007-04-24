@@ -1,0 +1,27 @@
+/*! \page PageTodo Main TODO items
+
+INCLUDE_mainHeaderWithNavbar.txt_INCLUDE
+
+\section Todo Main TODO items
+The following items are at the TODO list. You are encouraged to
+help contributing for their implementation with source code.
+
+	- Calculate the RAM + ROM resource need of the ISO<i><sub>AgLib</sub></i> tutorial example programs
+		for some embedded architectures with different feature lists<br>
+		<b>Performed on request or in case somebody is volunteering</b>
+	- Extending documentation on virtual terminal support and driver adaptation architecture<br>
+		<b>Ongoing process</b>
+	- Extend tutorial examples<br>
+		<b>Ongoing process when need for some more practical demonstration is detected<br>
+			( Please have a close look on all <a href="examples.html">tutorial examples</a> before requesting further examples )</b>
+
+
+<b>Important</b>
+<table width="100%" border="0" cellspacing="0" cellpadding="2" bgcolor="aqua">
+<tr><td>
+Each email adress in this project is intentionally corrupted, to make SPAMMING a little bit more complicated. Each human reader will easily detect how to
+"fix" the email adress - this "manupulation" might change, if the maintainers detect that SPAM tools are able to derive automatically a
+working domain.
+</td></tr></table>
+
+*/

@@ -253,7 +253,7 @@ bool Process_c::timeEvent( void ){
 
   if ( l_filtersToDeleteISO.size() > 0)
   {
-    for (std::slist<uint32_t>::const_iterator iter = l_filtersToDeleteISO.begin();
+    for (std::USABLE_SLIST<uint32_t>::const_iterator iter = l_filtersToDeleteISO.begin();
          iter != l_filtersToDeleteISO.end();
          iter++)
     {

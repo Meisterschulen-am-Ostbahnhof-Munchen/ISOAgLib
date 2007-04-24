@@ -66,8 +66,7 @@
 #ifndef _HAL_ESX_CAN_INTERFACE_H_
 #define _HAL_ESX_CAN_INTERFACE_H_
 
-#include "../typedef.h"
-
+#include <IsoAgLib/hal/esx/typedef.h>
 
 namespace __IsoAgLib { class Ident_c; class CANPkg_c;}
 
@@ -389,5 +388,8 @@ void can_useMsgobjPopFront(uint8_t rui8_busNr, uint8_t rui8_msgobjNr);
 */
 int16_t can_useMsgobjClear(uint8_t rui8_busNr, uint8_t rui8_msgobjNr);
 /*@}*/
+
+int32_t can_getMaxSendDelay(void);
 }
 #endif
+

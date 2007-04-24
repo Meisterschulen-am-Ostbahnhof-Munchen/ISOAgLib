@@ -282,6 +282,7 @@ uint8_t getCurrentApplicationRate( void )
      i8_deviation = -1;
   else
     i8_deviation = 1;
+
  return ui32_localDummyApplicationRate + i8_deviation;
 };
 
@@ -364,6 +365,8 @@ int main()
 { // init CAN channel with 250kBaud at channel 0 ( count starts with 0 )
   IsoAgLib::getIcanInstance().init( 0, 250 );
 
+  ui32_localDummyApplicationRate = 10;
+
   /// Identity Number definition -> change Device Description xml file to used one of the following method.
   // Identity Number is represented by the last 21 bits of the workingset master name. It could be set :
   // - directly in the Device Description xml file. It could be the last 21 bit of attribut workingset_mastername <deviceelement>
@@ -387,7 +390,7 @@ int main()
   arr_procData[cui8_indexWorkState].init(
                                          s_workStateElementDDI,
                                          scui16_workStateElementNumber,
-                                         c_myIdent.isoName(), c_myIdent.isoName(), &(c_myIdent.isoName()), true,
+                                         c_myIdent.isoName(), c_myIdent.isoName(), &(c_myIdent.isoName()), false /*rb_cumulativeValue */,
   #ifdef USE_EEPROM_IO
                                          0xFFFF,
   #endif
@@ -397,7 +400,7 @@ int main()
   arr_procData[cui8_indexApplicationRate].init(
                                                s_applicationRateElementDDI,
                                                scui16_applicationRateElementNumber,
-                                               c_myIdent.isoName(), c_myIdent.isoName(), &(c_myIdent.isoName()), true,
+                                               c_myIdent.isoName(), c_myIdent.isoName(), &(c_myIdent.isoName()), false /*rb_cumulativeValue */,
   #ifdef USE_EEPROM_IO
                                                0xFFFF,
   #endif
@@ -498,6 +501,7 @@ int main()
         if ( i32_idleTimeSpread > 0 ) IsoAgLib::iCANIO_c::waitUntilCanReceiveOrTimeout( i32_idleTimeSpread );
       #endif
     #endif
+
   }
   return 1;
 }

@@ -390,16 +390,18 @@ VtClientServerCommunication_c::processPartStreamDataChunk (IsoAgLib::iStream_c& 
 /** default constructor, which can optional set the pointer to the containing
   Scheduler_c object instance
  */
-VtClientServerCommunication_c::VtClientServerCommunication_c (IdentItem_c& ref_wsMasterIdentItem, ISOTerminal_c &ref_isoTerminal, IsoAgLib::iIsoTerminalObjectPool_c& rrefc_pool, char* rpc_versionLabel, uint8_t ui8_clientId)
+VtClientServerCommunication_c::VtClientServerCommunication_c (IdentItem_c& ref_wsMasterIdentItem, ISOTerminal_c &ref_isoTerminal, IsoAgLib::iIsoTerminalObjectPool_c& rrefc_pool, char* rpc_versionLabel, uint8_t rui8_clientId)
   : b_vtAliveCurrent (false) // so we detect the rising edge when the VT gets connected!
   , b_checkSameCommand (true)
   , refc_wsMasterIdentItem (ref_wsMasterIdentItem)
   , refc_isoTerminal (ref_isoTerminal)
+  , en_displayState (VtClientDisplayStateHidden)
   , c_streamer (rrefc_pool)
 {
   pc_vtServerInstance = NULL;
   i8_vtLanguage = -1;
   b_receiveFilterCreated = false;
+  ui8_clientId = rui8_clientId;
 
   // the generated initAllObjectsOnce() has to ensure to be idempotent! (vt2iso-generated source does this!)
   c_streamer.refc_pool.initAllObjectsOnce (SINGLETON_VEC_KEY_PARAMETER_VAR);
@@ -603,7 +605,7 @@ VtClientServerCommunication_c::timeEventPoolUpload()
       if (b_getVersionsSendTime == 0)
       { // send out get versions first
         c_data.setExtCanPkg8 (7, 0, ECU_TO_VT_PGN>>8,
-                              pc_vtServerInstance->getVtSourceAddress(), pc_wsMasterIdentItem->getIsoItem()->nr(),
+                              pc_vtServerInstance->getVtSourceAddress(), refc_wsMasterIdentItem.getIsoItem()->nr(),
                               223, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF);
         getCanInstance4Comm() << c_data;     // Command: Non Volatile Memory --- Parameter: Load Version
         b_getVersionsSendTime = HAL::getTime();
@@ -915,6 +917,15 @@ VtClientServerCommunication_c::notifyOnVtsLanguagePgn()
   }
 }
 
+void
+VtClientServerCommunication_c::notifyOnVtStatusMessage()
+{
+  // set client display state appropriately
+  setVtDisplayState (true, getVtServerInst().getVtState()->saOfActiveWorkingSetMaster);
+  
+  c_streamer.refc_pool.eventVtStatusMsg();
+}
+
 /** process received can messages
   @return true -> message was processed; else the received CAN message will be served to other matching CANCustomer_c
  */
@@ -922,7 +933,7 @@ bool
 VtClientServerCommunication_c::processMsg()
 {
 //  #ifdef DEBUG
-//  INTERNAL_DEBUG_DEVICE << "Incoming Message: c_data.isoPgn=" << c_data.isoPgn() << " - HAL::getTime()=" << HAL::getTime()<<" - data[0]="<<(uint16_t)c_data.getUint8Data (0)<<"...   ";;
+//  INTERNAL_DEBUG_DEVICE << "Incoming Message: c_data.isoPgn=" << c_data.isoPgn() << " - HAL::getTime()=" << HAL::getTime() << " - data[0]=" << (uint16_t)c_data.getUint8Data (0) << "...  ";
 //  #endif
 
   /** @todo check for can-pkg-length==8???? */
@@ -981,6 +992,15 @@ VtClientServerCommunication_c::processMsg()
                                                c_data.getUint8Data (3) /* total number of bytes */, c_vmString,
                                                c_data.getUint8Data (3) /* total number of bytes */, true, true);
       }
+      break;
+    case 0x09:  // Command: "Command", parameter "Display Activation"
+      setVtDisplayState (false, c_data.getUint8Data (1));
+
+      // replace PGN, DA, SA and send back as answer
+      c_data.setIsoPgn (ECU_TO_VT_PGN);
+      c_data.setIsoSa (refc_wsMasterIdentItem.getIsoItem()->nr());
+      c_data.setIsoPs (pc_vtServerInstance->getVtSourceAddress());
+      getCanInstance4Comm() << c_data; // Command: "Command", parameter "Display Activation Response"
       break;
 
     /***************************************************/
@@ -1042,7 +1062,7 @@ VtClientServerCommunication_c::processMsg()
     case 0x20:
     { // Command: "Auxiliary Control", parameter "Auxiliary Assignment"
       c_data.setIsoPgn (ECU_TO_VT_PGN);
-      c_data.setIsoSa (pc_wsMasterIdentItem->getIsoItem()->nr());
+      c_data.setIsoSa (refc_wsMasterIdentItem.getIsoItem()->nr());
       c_data.setIsoPs (pc_vtServerInstance->getVtSourceAddress());
       getCanInstance4Comm() << c_data;
             /// For now simply respond without doing anything else with this information. simply ack the assignment!
@@ -1168,6 +1188,9 @@ VtClientServerCommunication_c::processMsg()
         }
       }
       break;
+    case 0xBD: // Command: "Command", parameter "Lock/Unlock Mask Response"
+      MACRO_setStateDependantOnError (3)
+      break;
     case 0xC0: // Command: "Get Technical Data", parameter "Get Memory Size Response"
       pc_vtServerInstance->setVersion();
       if ((en_uploadType == UploadPool) && (en_uploadPoolState == UploadPoolWaitingForMemoryResponse))
@@ -1247,7 +1270,7 @@ VtClientServerCommunication_c::processMsg()
          )
       {
       #ifdef DEBUG
-        INTERNAL_DEBUG_DEVICE << "\n%% Proprietary command received!! %%%\n" << INTERNAL_DEBUG_DEVICE_ENDL;
+        INTERNAL_DEBUG_DEVICE << "\n%% Proprietary command ";
       #endif
         MACRO_setStateDependantOnError( c_streamer.refc_pool.eventProprietaryCommand( pc_vtServerInstance->getIsoName().toConstIisoName_c() ) )
       }
@@ -1348,6 +1371,7 @@ VtClientServerCommunication_c::sendCommand (uint8_t byte1, uint8_t byte2, uint8_
 {
 #ifdef DEBUG
   INTERNAL_DEBUG_DEVICE << "Enqueued 8-bytes: " << q_sendUpload.size() << " -> ";
+  std::cout << "   and client sa = " << (int)dataBase().isoSa() << " and client id = " << (int)getClientId() << std::endl;
 #endif
 
   sc_tempSendUpload.set (byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8, ui32_timeout, rppc_vtObjects, rui16_numObjects);
@@ -1997,6 +2021,21 @@ VtClientServerCommunication_c::sendCommandGetAttributeValue( IsoAgLib::iVtObject
                       DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
 }
 
+bool
+VtClientServerCommunication_c::sendCommandLockUnlockMask( IsoAgLib::iVtObject_c* rpc_object, bool b_lockMask, uint16_t ui16_lockTimeOut, bool b_enableReplaceOfCmd)
+{
+#ifdef DEBUG
+  std::cout << "\n LOCK *** LOCK *** send lock(1)/unlock(0) message. With b_lockMask = " << b_lockMask << std::endl;
+  std::cout << "   and client sa = " << (int)dataBase().isoSa() << " and client id = " << (int)getClientId() << std::endl;
+#endif
+  return sendCommand (189 /* Command: Command --- Parameter: Lock/Undlock Mask */,
+                      b_lockMask,
+                      rpc_object->getID() & 0xFF, rpc_object->getID() >> 8, /* object id of the data mask to lock */
+                      ui16_lockTimeOut & 0xFF, ui16_lockTimeOut >> 8, /* lock timeout on ms or zero for no timeout */
+                      0xFF, 0xFF,
+                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
+}
+
 
 bool
 VtClientServerCommunication_c::queueOrReplace (SendUpload_c& rref_sendUpload, bool b_enableReplaceOfCmd)
@@ -2038,12 +2077,14 @@ VtClientServerCommunication_c::queueOrReplace (SendUpload_c& rref_sendUpload, bo
           if ( (ui8_offset<scui8_cmdCompareTableMin) || (ui8_offset > scui8_cmdCompareTableMax))
           {
               // only 0x12 is possible, but no need to override, it shouldn't occur anyway!
-            if (ui8_offset == 0x12)
+            if ((ui8_offset == 0x12) ||
+                ((ui8_offset >= 0x60) && (ui8_offset <= 0x7F)) ) /// no checking for Proprietary commands (we don't need the replace-feature here!)
               break;
 
             // the rest is not possible by definition, but for being sure :-)
 #ifdef DEBUG
             INTERNAL_DEBUG_DEVICE << "--INVALID COMMAND! SHOULDN'T HAPPEN!!--" << INTERNAL_DEBUG_DEVICE_ENDL;
+            INTERNAL_DEBUG_DEVICE << "commandByte " << (int)ui8_offset << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
             return false;
           }
@@ -2205,6 +2246,9 @@ VtClientServerCommunication_c::doStop()
     // that case should be handles by the multisend itself
   }
   c_streamer.refc_pool.eventEnterSafeState();
+
+  // set display state of the client to a defined state
+  en_displayState = VtClientDisplayStateHidden;
 }
 
 
@@ -2328,7 +2372,9 @@ VtClientServerCommunication_c::finalizeUploading() //bool rb_wasLanguageUpdate)
     c_streamer.i8_objectPoolUploadingLanguage = -2; // -2 indicated that the language-update while pool is up IS IDLE!
     c_streamer.ui16_objectPoolUploadingLanguageCode = 0x0000;
   #ifdef DEBUG
-    INTERNAL_DEBUG_DEVICE << "===> finalizeUploading () with language: "<<(int)c_streamer.i8_objectPoolUploadedLanguage<<" ["<<uint8_t(c_streamer.ui16_objectPoolUploadedLanguageCode>>8) <<uint8_t(c_streamer.ui16_objectPoolUploadedLanguageCode&0xFF)<<"]" << INTERNAL_DEBUG_DEVICE_ENDL;
+    INTERNAL_DEBUG_DEVICE << "===> finalizeUploading () with language: "<<(int)c_streamer.i8_objectPoolUploadedLanguage;
+    if (c_streamer.i8_objectPoolUploadedLanguage >= 0) INTERNAL_DEBUG_DEVICE <<" ["<<uint8_t(c_streamer.ui16_objectPoolUploadedLanguageCode>>8) <<uint8_t(c_streamer.ui16_objectPoolUploadedLanguageCode&0xFF)<<"]";
+    INTERNAL_DEBUG_DEVICE << INTERNAL_DEBUG_DEVICE_ENDL;
   #endif
     if (en_uploadPoolType == UploadPoolTypeLanguageUpdate)
     {
@@ -2471,30 +2517,41 @@ void
 VtClientServerCommunication_c::finishUploadCommand()
 {
   en_uploadType = UploadIdle;
-  //dumpQueue(); /* to see all left queued cmds after every dequeued cmd */
-  #ifdef DEBUG
-  INTERNAL_DEBUG_DEVICE << "Dequeued (after success, timeout, whatever..): " << q_sendUpload.size() <<" -> ";
-  #endif
 
-  #ifdef USE_LIST_FOR_FIFO
-  // queueing with list: queue::push <-> list::push_back; queue::front<->list::front; queue::pop<->list::pop_front
-  q_sendUpload.pop_front();
-  #else
-  q_sendUpload.pop();
-  #endif
-  #ifdef DEBUG_HEAP_USEAGE
-  sui16_sendUploadQueueSize--;
-  #endif
+  if ( !q_sendUpload.empty() )
+  {
 
-  #ifdef DEBUG
-  INTERNAL_DEBUG_DEVICE << q_sendUpload.size() << "." << INTERNAL_DEBUG_DEVICE_ENDL;
-  #endif
+    //dumpQueue(); /* to see all left queued cmds after every dequeued cmd */
+    #ifdef DEBUG
+    INTERNAL_DEBUG_DEVICE << "Dequeued (after success, timeout, whatever..): " << q_sendUpload.size() <<" -> ";
+    #endif
 
-  // trigger fast reschedule if more messages are waiting
-  if ( ( getUploadBufferSize() > 0 ) && ( getIsoTerminalInstance4Comm().getTimePeriod() != 4 ) )
-  { // there is a command waiting
-    getSchedulerInstance().changeTimePeriodAndResortTask(&(getIsoTerminalInstance4Comm()), 4);
+    #ifdef USE_LIST_FOR_FIFO
+    // queueing with list: queue::push <-> list::push_back; queue::front<->list::front; queue::pop<->list::pop_front
+    q_sendUpload.pop_front();
+    #else
+    q_sendUpload.pop();
+    #endif
+    #ifdef DEBUG_HEAP_USEAGE
+    sui16_sendUploadQueueSize--;
+    #endif
+
+    #ifdef DEBUG
+    INTERNAL_DEBUG_DEVICE << q_sendUpload.size() << "." << INTERNAL_DEBUG_DEVICE_ENDL;
+    #endif
+
+    // trigger fast reschedule if more messages are waiting
+    if ( ( getUploadBufferSize() > 0 ) && ( getIsoTerminalInstance4Comm().getTimePeriod() != 4 ) )
+    { // there is a command waiting
+      getSchedulerInstance().changeTimePeriodAndResortTask(&(getIsoTerminalInstance4Comm()), 4);
+    }
   }
+#ifdef DEBUG
+  else
+  {
+    INTERNAL_DEBUG_DEVICE << "Attempt to Dequeue while empty!" << INTERNAL_DEBUG_DEVICE_ENDL;
+  }
+#endif
 }
 
 
@@ -2506,6 +2563,61 @@ VtClientServerCommunication_c::vtOutOfMemory()
   en_objectPoolState = OPCannotBeUploaded;
   /// @todo for now allow parallel uploads
   ///refc_isoTerminal.resetFlagForPoolUpload (this);
+}
+
+/** set display state of vt client */
+void
+VtClientServerCommunication_c::setVtDisplayState (bool b_isVtStatusMsg, uint8_t ui8_saOrDisplayState)
+{
+  vtClientDisplayState_t newDisplayState;
+  if (b_isVtStatusMsg) // state change triggered from VT Status Msg
+  {
+//     if (getVtServerInst().getMultiViewMode())
+    {
+      if (ui8_saOrDisplayState == getIdentItem().getIsoItem()->nr())
+        newDisplayState = VtClientDisplayStateActive;
+      else
+      {
+        if (getVtDisplayState() == VtClientDisplayStateActive)
+          // only cause state change if currently displayed is active
+          newDisplayState = VtClientDisplayStateInactive;
+        else
+          newDisplayState = getVtDisplayState();
+      }
+    }
+//     else
+//     {
+//       if (ui8_saOrDisplayState == getIdentItem().getIsoItem()->nr())
+//         newDisplayState = VtClientDisplayStateActive;
+//       else
+//       {
+//         newDisplayState = VtClientDisplayStateHidden;
+//       }
+//     }
+  }
+  else // state change triggered from Display Activation Msg
+  {
+    if (ui8_saOrDisplayState) // display client but no input focus
+    {
+      if (getVtDisplayState() == VtClientDisplayStateHidden)
+        newDisplayState = VtClientDisplayStateInactive;
+      else
+        newDisplayState = getVtDisplayState(); // if already in state inactive or active, nothing to do
+    }
+    else // client is no longer displayed
+    {
+      if (getVtDisplayState() == VtClientDisplayStateInactive)
+        newDisplayState = VtClientDisplayStateHidden;
+      else
+        newDisplayState = getVtDisplayState(); // if already in state hidden or active, nothing to do
+    }
+  }
+
+  if (newDisplayState != getVtDisplayState())
+  {
+    en_displayState = newDisplayState;
+    c_streamer.refc_pool.eventDisplayActivation();
+  }
 }
 
 

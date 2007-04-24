@@ -126,3 +126,12 @@
 	*/
 	#define STL_NAMESPACE std
 #endif
+
+/** define whether to use SLIST or LIST */
+#if defined (__GNUC__) || defined(__TSW_CPP__)
+  /** both the GCC and Tasking Compiler support slist */
+  #define USABLE_SLIST slist
+  #define DO_USE_SLIST
+#else
+  #define USABLE_SLIST list
+#endif

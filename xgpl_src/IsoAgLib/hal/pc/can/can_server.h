@@ -28,7 +28,7 @@ typedef struct {
 
 // client specific data
 typedef struct {
-  int32_t  i32_clientID;
+  uint16_t ui16_pID;
   int32_t  i32_msecStartDeltaClientMinusServer;
 
   //typedef STL_NAMESPACE::vector<tMsgObj> ArrMsgObj;
@@ -40,6 +40,8 @@ typedef struct {
   uint32_t ui32_lastMask[cui32_maxCanBusCnt];
   int32_t  i32_pipeHandle;
   int32_t  i32_sendDelay[cui32_maxCanBusCnt];
+
+  bool     b_initReceived[cui32_maxCanBusCnt];
 } client_s;
 
 
@@ -65,12 +67,20 @@ public:
   bool     b_inputFileMode;
   FILE*    f_canInput;
 
+  // if >0 => do not send messages with local destination address on the bus
+  int16_t  i16_reducedLoadOnIsoBus;
+  bool     arrb_remoteDestinationAddressInUse[0x100];
+
   int32_t  i32_lastPipeId;
   int16_t  can_device[cui32_maxCanBusCnt];
   int32_t  i32_sendDelay[cui32_maxCanBusCnt];
+  int      i_pendingMsgs[cui32_maxCanBusCnt];
+
+  uint16_t ui16_busRefCnt[cui32_maxCanBusCnt];
 };
 
 extern std::list<int32_t> list_sendTimeStamps;
+void updatePendingMsgs(server_c* rpc_server, int8_t i8_bus);
 int32_t getTime();
 
 void usage();

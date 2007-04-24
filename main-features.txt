@@ -1,0 +1,38 @@
+/*! \page PageMainFeatures Main Features
+
+INCLUDE_mainHeaderWithNavbar.txt_INCLUDE
+
+\section MainFeatures Main Features
+The ISO<i><sub>AgLib</sub></i> is designed to provide the following main features
+(read \ref InfGeneralInformation for more information):
+- perform all tasks which can be automated in the background so that the application development is simplified
+		and different interpretation of low level communication (like message formatting) is avoided
+- provide <b>complete Open Source toolchain for ISO 11783 development - including virtual terminal</b> <br>
+	Masks are defined with XML notation, which is then converted to ROM-enabled variable arrays which are then
+	included in an object module of the project. ISO<i><sub>AgLib</sub></i> provides a simple function call
+	to register the mask pool. ISO<i><sub>AgLib</sub></i> performs then some runtime adaptation to terminal properties
+	( choose usable colour depth of bitmaps, scaling, including handling of cases where
+	layout properties like text alignment should be conserved even if no font of scaled size is available ) and finishes this process
+	by an automatic upload of the adapted pool. Already active pools can be handled with simple access functions for control,
+	and some easy handler functions for reaction on user input.<br>
+	<b>Core target of ISO<i><sub>AgLib</sub></i> Virtual Terminal design:</b><br>
+	- Enable creation of one single mask pool, that fits all terminal configurations
+	- Provide attributes for project specific control of the runtime adaptation
+	- Allow flexible addition of further attributes, if automatic layout control must be optimized for some terminal properties ( e.g. amount of softkeys )
+
+	All these actions are demonstrated in the tutorial example \ref 3_0_VirtualTerminalIso.cpp .<br>
+	&nbsp;<br>
+	Brad Cox developed a tool for his company, that is able to convert the project files of the WTK mask generator to the XML definition.
+	Please contact <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a> if you are interested in this tool for your own use, as Brad
+	Cox indicated already, that he might be willing to provide this undest some conditions. <br>
+	But this tool would only help to start the virtual mask definition with XML, as this method provides some additional attributes to
+	control the automatic runtime adaptation of the single core mask pool to the different terminal properties ( e.g. font size dependent spacing ).
+- provide flexible and capable process data implementation as backbone for all documenting and control interaction
+		(e.g. trigger dependent measurement value send, allow setpoint intervals with MIN / MAX,
+		enable N --&gt; 1 relation between user and provider of process data)
+- narrow hardware adaptation afford to small set of files with hardware adaptation layer
+- greatest part of ISO<i><sub>AgLib</sub></i> source code can be used without any changes for different platforms
+- enable project specific feature selection, source code maintenance and extension by strict modular design
+- facilitate development of application for ISO 11783
+- orientate design according to requirements of networks with more then two devices
+*/

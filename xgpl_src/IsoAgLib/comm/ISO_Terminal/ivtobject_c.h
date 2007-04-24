@@ -319,6 +319,18 @@ public:
     iVtObject_c* value;
   } iVtObjectObjectPointer_s;
 
+  typedef struct iVtObjectOutputList_s {
+    uint16_t ID;
+    uint16_t width;
+    uint16_t height;
+    iVtObject_c* variableReference;
+    uint8_t value;
+    uint8_t numberOfObjectsToFollow;
+    const repeat_iVtObject_s* objectsToFollow;
+    uint8_t numberOfMacrosToFollow;
+    const repeat_event_iVtObjectMacro_s* macrosToFollow;
+  } iVtObjectOutputList_s;
+
   typedef struct iVtObjectOutputNumber_s {
     uint16_t ID;
     uint16_t width;
@@ -485,6 +497,13 @@ public:
   virtual void setOriginBTN(iVtObjectButton_c* p_btn);
 
   void setClientID (uint8_t ui8_clientID) { s_properties.clientId = ui8_clientID; }
+
+  /** return object type
+      !!! BE AWARE that this function is currently NOT overloaded by the standard vt-objects
+      !!! It is until now only intended to be used by own proprietary objects
+      @return  object type ( default 0xEF -> one below the proprietary object_type_range as long as this type is not used)
+   */
+  virtual uint16_t getObjectType() { return 0xEF; }
 
 protected: // Attributes
   iVtObject_s* vtObject_a;

@@ -86,8 +86,12 @@ typedef struct {
 #define ACKNOWLEDGE_DATA_CONTENT_SEND_DELAY  2
 #define ACKNOWLEDGE_DATA_CONTENT_QUERY_LOCK  3
 
+#define MTYPE_ANY               0x0
+#define MTYPE_WRITE_PRIO_NORMAL 0x1
+#define MTYPE_WRITE_PRIO_HIGH   0x3
+
 typedef struct {
-  int32_t i32_mtype;
+  int32_t i32_mtypePid;
   int16_t i16_command;
   union {
     struct {
@@ -135,15 +139,15 @@ typedef struct {
 
 
 typedef struct {
-  int32_t i32_mtype;
+  int32_t i32_mtypePidBusObj;
   struct can_data s_canData;
 } msqRead_s;
 
 typedef struct {
-  int32_t  i32_mtype;
+  int32_t  i32_mtypePrioAnd1; // has now priority and Pid (PID is needed for clearing the queue :-()
+  int16_t  ui16_pid;
   uint8_t  ui8_bus;
   uint8_t  ui8_obj;
-  uint16_t ui16_fill;
   tSend    s_sendData;
   int32_t  i32_sendTimeStamp;
 } msqWrite_s;
@@ -155,12 +159,14 @@ int32_t send_command(msqCommand_s* p_msqCommandBuf, msqData_s* p_msqDataClient);
 
 int16_t ca_createMsqs(msqData_s& msqData);
 
-uint32_t assemble_mtype(int32_t i32_pid, uint8_t bus, uint8_t obj);
-int32_t disassemble_client_id(int32_t i32_mtype);
+int32_t assembleRead_mtype (uint16_t ui16_pid, uint8_t bus, uint8_t obj);
+int32_t assembleWrite_mtype(bool rb_prio);
 
-void clearReadQueue(uint8_t bBusNumber, uint8_t bMsgObj, int32_t i32_msqHandle, int32_t i32_pid);
+uint16_t disassembleRead_client_id (int32_t i32_mtype);
+uint16_t disassembleWrite_client_id(int32_t i32_mtype);
 
-void clearWriteQueue(uint8_t bBusNumber, uint8_t bMsgObj, int32_t i32_msqHandle, int32_t i32_pid);
+void clearReadQueue (uint8_t bBusNumber, uint8_t bMsgObj, int32_t i32_msqHandle, uint16_t ui16_pID);
+void clearWriteQueue(bool rb_prio, int32_t i32_msqHandle, uint16_t ui16_pID);
 
 } // end namespace
 

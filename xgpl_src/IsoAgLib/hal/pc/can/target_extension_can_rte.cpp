@@ -148,6 +148,9 @@ static FILE* canlogDat[cui32_maxCanBusCnt];
 // offset time
 // static rte_time_t t_rteOffset = RTE_NEVER;
 
+/** there's no send-delay recognition of RTE */
+int32_t getMaxSendDelay(uint8_t rui8_busNr) { return 0; }
+
 int16_t can_startDriver()
 {
 

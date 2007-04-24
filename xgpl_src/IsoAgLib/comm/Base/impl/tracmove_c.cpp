@@ -95,8 +95,10 @@
   #include <IsoAgLib/comm/Base/impl/timeposgps_c.h>
 #endif
 
-
 using namespace std;
+
+#define TIMEOUT_SPEED_LOST 3000
+#define MISSING_SPEED         0
 
 namespace __IsoAgLib { // Begin Namespace __IsoAglib
 
@@ -154,6 +156,36 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
 
     return true;
   };
+
+  /** is looking for a valid speed value
+      @return true if speed is valid otherwise false
+    */
+  bool TracMove_c::isSelectedSpeedUsable() const
+  {
+    if ( isSelectedSpeedMissing() ) return false;
+    else if ( isSelectedSpeedErroneous() ) return false;
+    else return true;
+  }
+
+  /** is looking for a valid speed value
+      @return true if speed is valid otherwise false
+    */
+  bool TracMove_c::isRealSpeedUsable() const
+  {
+    if ( isRealSpeedMissing() ) return false;
+    else if ( isRealSpeedErroneous() ) return false;
+    else return true;
+  }
+
+  /** is looking for a valid speed value
+      @return true if speed is valid otherwise false
+    */
+  bool TracMove_c::isTheorSpeedUsable() const
+  {
+    if ( isTheorSpeedMissing() ) return false;
+    else if ( isTheorSpeedErroneous() ) return false;
+    else return true;
+  }
 
   /** check if filter boxes shall be created - create only filters based
       on active local idents which has already claimed an address
@@ -214,51 +246,76 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
         if ( ( checkParseReceived( c_tempISOName ) ) )/*|| noch keine normale geschw empfangen */
         { // sender is allowed to send
           int32_t i32_tempSpeed = data().getUint16Data(0);
+          bool b_usableSpeed = true;
+          uint32_t ui32_tempDist = data().getUint32Data( 2 );
 
-          if ( ( (data().getUint8Data( 7 ) & 3 ) == IsoAgLib::IsoReverse) && (labs(i32_tempSpeed) <= 0xFAFF) )
+          // handle special values
+          switch (data().getUint16Data(0))
+          {
+            case NO_VAL_16: // missing signal --> match to NO_VAL_32S
+              i32_tempSpeed = NO_VAL_32S;
+              b_usableSpeed = false;
+              break;
+            case ERROR_VAL_16: // erroneous signal --> match to ERROR_VAL_32S
+              i32_tempSpeed = ERROR_VAL_32S;
+              b_usableSpeed = false;
+              break;
+            default: // handle too high value as erroneous signal
+              if ( i32_tempSpeed > 0xFAFF ) {
+                i32_tempSpeed = ERROR_VAL_32S;
+                b_usableSpeed = false;
+              }
+              break;
+          }
+
+          // if distance value is outside valid area, the special error state flag-value ERROR_VAL_32 should be used
+          // but if NO_VAL_32 indicates missing information, this information should NOT be overwritten
+          if ( ( ui32_tempDist > 0xFAFFFFFF ) && ( ui32_tempDist != NO_VAL_32 ) ) ui32_tempDist = ERROR_VAL_32;
+
+          if ( ( (data().getUint8Data( 7 ) & 3 ) == IsoAgLib::IsoReverse) && (b_usableSpeed) )
             //if direction is in error state this has no effect to the speed;
             //if direction is not available it is assumed that the speed is positive
             i32_tempSpeed *= -1; //driving reverse;
 
 
+          const uint32_t testTimeOutdatedSpeed = (data().time() - ui32_lastUpdateTimeSpeed);
+          const uint32_t testTimeOutdatedDist  = (data().time() - ui32_lastUpdateTimeDistDirec);
           if (data().isoPgn() == GROUND_BASED_SPEED_DIST_PGN)
           { // real speed
             setSpeedReal(i32_tempSpeed);
             // real dist
-            setDistReal( data().getUint32Data( 2 ) );
+            setDistReal( ui32_tempDist );
             t_directionReal = IsoAgLib::IsoDirectionFlag_t(data().getUint8Data(7) & 0x3 );
             #ifdef USE_RS232_FOR_DEBUG
             INTERNAL_DEBUG_DEVICE << "PROCESS GROUND(65097): " <<  static_cast<const int>(c_tempISOName.devClass() ) << INTERNAL_DEBUG_DEVICE_ENDL;
             #endif
-            uint32_t tempTime = (data().time() - ui32_lastUpdateTimeSpeed);
 
             //decide if ground based speed is actually the best available speed
-            if ( t_speedSource <= IsoAgLib::GroundBasedSpeed && labs(i32_speedReal) <= 0xFAFF
-                || (tempTime >= TIMEOUT_SENDING_NODE && tempTime < 4000)
+            if ( ( b_usableSpeed ) &&
+                 ( ( t_speedSource <= IsoAgLib::GroundBasedSpeed )
+                || ( testTimeOutdatedSpeed >= TIMEOUT_SENDING_NODE && testTimeOutdatedSpeed < 4000 )
+                 )
                )
-            {
+            { // speed information is usable and the current selected speed is at least not better or outdated
               updateSpeed(IsoAgLib::GroundBasedSpeed);
             }
-            //if selected speed is ground based but the speed has no valid value fall back to wheel based speed
-            if (t_speedSource == IsoAgLib::GroundBasedSpeed && labs(i32_speedReal) > 0xFAFF)
-              t_speedSource = IsoAgLib::WheelBasedSpeed;
 
-            tempTime = (data().time() - ui32_lastUpdateTimeDistDirec);
             //if ground based dist and direction is actually the best available
-            if ( t_distDirecSource <= IsoAgLib::GroundBasedDistDirec && ui32_distReal <= 0xFAFFFFFF
-                || (tempTime >= TIMEOUT_SENDING_NODE && tempTime < 4000)
+            if ( ( ui32_distReal <= 0xFAFFFFFF ) &&
+                 ( ( t_distDirecSource <= IsoAgLib::GroundBasedDistDirec )
+                || ( testTimeOutdatedDist >= TIMEOUT_SENDING_NODE && testTimeOutdatedDist < 4000 )
+                 )
                )
-            {
+            { // distance information is usable and the current selected distance is at least not better or outdated
               updateDistanceDirection(IsoAgLib::GroundBasedDistDirec);
-            } else
-              t_distDirecSource = IsoAgLib::WheelBasedDistDirec;
+            }
 
           }
           else
           { // wheel based speed
             setSpeedTheor(i32_tempSpeed);
             // wheel based dist
-            setDistTheor( data().getUint32Data( 2 ) );
+            setDistTheor( ui32_tempDist );
             #if defined(USE_BASE) || defined(USE_TRACTOR_GENERAL)
             // additionally scan for key switch and maximum power time
             c_tracgeneral.setKeySwitch(IsoAgLib::IsoActiveFlag_t( ( data().getUint8Data( 7 ) >> 2 ) & 0x3 ));
@@ -270,20 +327,23 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
             #ifdef USE_RS232_FOR_DEBUG
             INTERNAL_DEBUG_DEVICE << "PROCESS WHEEL(65096): " <<  static_cast<const int>(c_tempISOName.devClass() ) << INTERNAL_DEBUG_DEVICE_ENDL;
             #endif
-            if (t_speedSource <= IsoAgLib::WheelBasedSpeed
-                || ( (data().time() - ui32_lastUpdateTimeSpeed) >= TIMEOUT_SENDING_NODE)
+            if ( ( b_usableSpeed ) &&
+                 ( ( t_speedSource <= IsoAgLib::WheelBasedSpeed )
+                || ( testTimeOutdatedSpeed >= TIMEOUT_SENDING_NODE && testTimeOutdatedSpeed < 4000 )
+                 )
                )
-            {
+            { // speed information is usable and the current selected speed is at least not better or outdated
               updateSpeed(IsoAgLib::WheelBasedSpeed);
             }
-            if (t_distDirecSource <= IsoAgLib::WheelBasedDistDirec
-                || ( (data().time() - ui32_lastUpdateTimeDistDirec) >= TIMEOUT_SENDING_NODE)
+            if ( ( ui32_distReal <= 0xFAFFFFFF ) &&
+                 ( ( t_distDirecSource <= IsoAgLib::WheelBasedDistDirec )
+                || ( testTimeOutdatedDist >= TIMEOUT_SENDING_NODE && testTimeOutdatedDist < 4000 )
+                 )
                )
-            {
+            { // distance information is usable and the current selected distance is at least not better or outdated
               updateDistanceDirection(IsoAgLib::WheelBasedDistDirec);
             }
           }
-          setSelectedDataSourceISOName(c_tempISOName);
           setUpdateTime( ci32_now );
         }
         else
@@ -295,7 +355,12 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
       case SELECTED_SPEED_MESSAGE:
         // only take values, if i am not the regular sender
         // and if actual sender isn't in conflict to previous sender
-        if ( ( checkParseReceived( c_tempISOName ) ) )
+
+        // first check whether the received message indicates a valid speed source - and ignore the message totally,
+        // if speedSource == IsoNotAvailableSpeed
+        const IsoAgLib::IsoSpeedSourceFlag_t t_testSpeedSource = IsoAgLib::IsoSpeedSourceFlag_t( ( (data().getUint8Data(7) >> 2) & 0x7) );
+
+        if ( ( ( checkParseReceived( c_tempISOName ) ) ) && (t_testSpeedSource != IsoAgLib::IsoNotAvailableSpeed))
         {
           t_selectedSpeedLimitStatus = IsoAgLib::IsoLimitFlag_t( ( (data().getUint8Data(7) >> 5) & 0x7) );
           t_selectedDirection        = IsoAgLib::IsoDirectionFlag_t( data().getUint8Data(7) & 0x3);
@@ -306,7 +371,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
           if (data().getUint16Data(0) <= 0xFAFF) //valid selected speed?
           {
             i32_selectedSpeed = data().getUint16Data(0);
-            t_selectedSpeedSource =  IsoAgLib::IsoSpeedSourceFlag_t( ( (data().getUint8Data(7) >> 2) & 0x7) );
+            t_selectedSpeedSource =  t_testSpeedSource;
             updateSpeed(IsoAgLib::SelectedSpeed);
             if (t_selectedDirection == IsoAgLib::IsoReverse)
               i32_selectedSpeed *= -1; //driving reverse
@@ -317,6 +382,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
           if (data().getUint32Data(2) <= 0xFAFFFFFF) //valid selected distance?
           {
             ui32_selectedDistance = data().getUint32Data(2);
+            t_distDirecSource = IsoAgLib::SelectedDistDirec;
             t_selectedDirection = IsoAgLib::IsoDirectionFlag_t(   ( (data().getUint8Data(7) >> 0) & 0x3) );
             updateDistanceDirection(IsoAgLib::SelectedDistDirec);
           } else //fall back to ground based direction and distance
@@ -395,6 +461,37 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     ui32_lastUpdateTimeDistDirec = System_c::getTime();
   }
 
+  /** Detect stop of Speed update from tractor
+      @see  BaseCommon_c::timeEvent()
+    */
+  bool TracMove_c::timeEventImplMode()
+  {
+    const int32_t ci32_now = getLastRetriggerTime();
+    // checking for timeout of speed update
+    if ( ( (ci32_now - ui32_lastUpdateTimeSpeed)  >= TIMEOUT_SPEED_LOST || getSelectedDataSourceISONameConst().isUnspecified()  )
+      && ( !isSelectedSpeedMissing() ) )
+    { // TECU stoppped its Speed and doesn't send speed updates - as defined by ISO 11783
+      // --> switch value of selected speed to ZERO
+      i32_selectedSpeed = NO_VAL_32S;
+      setSelectedSpeed( i32_selectedSpeed );
+    }
+    if ( ( (ci32_now - ui32_lastUpdateTimeSpeed)  >= TIMEOUT_SPEED_LOST || getSelectedDataSourceISONameConst().isUnspecified()  )
+      && ( !isRealSpeedMissing() ) )
+    { // TECU stoppped its Speed and doesn't send speed updates - as defined by ISO 11783
+      // --> switch value of selected speed to ZERO
+      i32_speedReal = NO_VAL_32S;
+      setSpeedReal( i32_speedReal );
+    }
+    if ( ( (ci32_now - ui32_lastUpdateTimeSpeed)  >= TIMEOUT_SPEED_LOST || getSelectedDataSourceISONameConst().isUnspecified()  )
+      && ( !isTheorSpeedMissing() ) )
+    { // TECU stoppped its Speed and doesn't send speed updates - as defined by ISO 11783
+      // --> switch value of selected speed to ZERO
+      i32_speedTheor = NO_VAL_32S;
+      setSpeedTheor( i32_speedTheor );
+    }
+    return true;
+  }
+
   /** send a ISO11783 moving information PGN.
     * this is only called when sending ident is configured and it has already claimed an address
       @pre  function is only called in tractor mode
@@ -403,7 +500,6 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
   bool TracMove_c::timeEventTracMode( )
   { ///Timeperiod of 100ms is set in ::config
     sendMovingTracMode();
-
     return true;
   }
 

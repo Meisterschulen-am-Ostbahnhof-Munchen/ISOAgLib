@@ -103,11 +103,15 @@
 #include "devpropertyhandler_c.h"
 #include <IsoAgLib/comm/Process/impl/processwsmtaskmsghandler_c.h>
 
-#if defined(SYSTEM_PC) && !defined(SYSTEM_PC_VC) && __GNUC__ >= 3
-  #include <ext/slist>
-  namespace std { using __gnu_cxx::slist;};
+#ifdef DO_USE_SLIST
+  #if defined(SYSTEM_PC) && !defined(SYSTEM_PC_VC) && !defined(SYSTEM_A1) && __GNUC__ >= 3
+    #include <ext/slist>
+    namespace std { using __gnu_cxx::slist;}
+  #else
+    #include <slist>
+  #endif
 #else
-  #include <slist>
+  #include <list>
 #endif
 
 
@@ -472,7 +476,7 @@ private: // Private attributes
   /** last timestamp with FilterBox_c check */
   int32_t i32_lastFilterBoxTime;
 
-  std::slist<uint32_t> l_filtersToDeleteISO;
+  std::USABLE_SLIST<uint32_t> l_filtersToDeleteISO;
   bool b_needCallOfCheckCreateRemoteReceiveFilter;
   const ISOName_c* pc_tcISOName;
   uint8_t ui8_lastTcStatus;

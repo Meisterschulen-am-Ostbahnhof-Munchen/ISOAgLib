@@ -602,7 +602,10 @@ Scheduler_c::selectCallTaskAndUpdateQueue()
     pc_nextCallIter++; /// go one further
 
     ///get Last Execution Time of next in Queue and ADD to actualTime
-    const int32_t i32_nextTaskTriggerTimeSpread = pc_nextCallIter->getTimeToNextTrigger( LatestRetrigger );
+    int32_t i32_nextTaskTriggerTimeSpread = CONFIG_DEFAULT_MAX_SCHEDULER_TIME_EVENT_TIME;
+    if ( pc_nextCallIter != c_taskQueue.end() )
+      i32_nextTaskTriggerTimeSpread = pc_nextCallIter->getTimeToNextTrigger( LatestRetrigger );
+
     if(  i32_nextTaskTriggerTimeSpread   < 5 ){
     #ifdef DEBUG_SCHEDULER
     INTERNAL_DEBUG_DEVICE << "i32_endTime to small for " <<  pc_execIter->getTaskName() << "endTime "
@@ -631,7 +634,7 @@ Scheduler_c::selectCallTaskAndUpdateQueue()
     /// IF Client returns with false -> return i32_idleTime = -1
     /// because last Client could not finish in available TimeSpan
     const bool b_result = pc_execIter->timeEventExec( i32_endTime );
-    if ( !b_result && ElementBase_c::getDemandedExecEnd() != getCentralSchedulerExecEndTime() )
+    if ( ( !b_result && ElementBase_c::getDemandedExecEnd() != getCentralSchedulerExecEndTime() ) && (pc_nextCallIter != c_taskQueue.end() ) )
     { // the executed task had not enough time and the limit was NOT defined by the central
       // scheduler end time, that was defined by the APP
       // --> reschedule this task _after_ the following task

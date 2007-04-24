@@ -269,6 +269,12 @@ int ca_InitCanCard_1 (uint32_t channel, int wBitrate, server_c* pc_serverData)
     return 1; // already initialized and files are already open
 }
 
+
+void __HAL::updatePendingMsgs(server_c* pc_serverData, int8_t i8_bus)
+{
+/// @todo not implemented for right now on A1!
+}
+
 /////////////////////////////////////////////////////////////////////////
 //
 // METHOD:  ca_TransmitCanCard_1

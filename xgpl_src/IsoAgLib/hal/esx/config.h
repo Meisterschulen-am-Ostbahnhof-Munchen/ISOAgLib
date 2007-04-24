@@ -93,11 +93,11 @@
 #define WD_MAX_TIME   254
 // 255
 /* 0 ms                       */
-#define WD_MIN_TIME    50
+#define WD_MIN_TIME    0
 /* 16.7 V                     */
-#define UD_MAX        233
+#define UD_MAX        255
 /* 7.2 V                      */
-#define UD_MIN        100
+#define UD_MIN        85
 /* Relais wird bei allen Fehlern abgeschaltet */
 #define CONFIG_RELAIS 0x1F
 //#define CONFIG_RELAIS 0x0F

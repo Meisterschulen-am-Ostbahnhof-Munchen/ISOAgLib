@@ -1,0 +1,64 @@
+/*! \page outlook Further Development and Applications of IsoAgLib
+
+INCLUDE_mainHeaderWithNavbar.txt_INCLUDE
+
+
+\section FurtherDevelopment Further Development
+The ISO<i><sub>AgLib</sub></i> is published as Open Source according to the GPL license ( with exceptions ). Therefore everybody has the right
+to use, to analyse and to change the source code, as long as the changes to the ISO<i><sub>AgLib</sub></i> itself are provided
+to the public with the same license conditions. Thus the ISO<i><sub>AgLib</sub></i> could be used by a lot of manufacturers
+without the fear of monopolistic control. This would allow the compatible use of all sophisticated features of
+ISO 11783 for its machines. The author <a href="mailto:Achim.Spangler@gmx:de">Achim Spangler</a> who is now working for
+<a href="http://www.osb-ag.de/">OSB AG</a> can arrange service contracts to provide extensions and other service for the ISO<i><sub>AgLib</sub></i>.
+\image html Diagramme/IsoAgLib-further_develop.gif
+
+\section FurtherExamples Examples
+\image html Diagramme/IsoAgLib-imi.gif
+The ISO<i><sub>AgLib</sub></i> is used at the experimental station Dürnast to document the work of all tractor dependent work
+including simple soil cultivation implements. Small computing devices, which are called "Implement Indicator" (IMI) were
+developed for this purpose based on the ISO<i><sub>AgLib</sub></i>. A ISO<i><sub>AgLib</sub></i>
+ based Task-Controller records all available process data information from
+the connected implements, combines them with GPS time and position data,
+groups the data according to the areas farm, transport and field and stores
+everything on PCMCIA memory cards. <br clear="All">
+&nbsp;<br>
+&nbsp;<br>
+The work result with applicating implements like seeder can be optimized, if the ECU of the seeder can command the tractor
+\image html Diagramme/IsoAgLib-seed_power_harrow_interaction.gif
+ to drive not faster than the machine construction allows dependent on the
+wanted seed density and depth and environment conditions. A front mounted
+power harrow could indirectly control the loosening of soil compaction (work
+intensity), if it can define a relation between driving speed and RPM of
+the Power Take off Output Shaft (PTO). Damage could be avoided, if the tractor
+would additionally enable the definition of a maximum limit for the hubload
+on the PTO axle. If the tractor finally enables the control of the front
+EHR position, the power harrow can control the work depth. This can be used
+by the seeder to guarantee suitable soil conditions for the needed seeding
+depth.<br>
+The ISO<i><sub>AgLib</sub></i> supports this interactions with its capable process data implementation. Limits can be
+defined as MIN or MAX setpoint. Parallel setpoints for the driving speed can by handled by the tractor, if it is based on the
+ISO<i><sub>AgLib</sub></i>.
+<br clear="All">
+&nbsp;<br>
+&nbsp;<br>
+A modular extendable network for the fertilizer dosing can be also realized based on the process data features of the
+ISO<i><sub>AgLib</sub></i>. Most of the actual sold systems with LBS (DIN 9684) aware fertilizers consist only of functions
+\image html Diagramme/fertiliser_control_collaboration.gif
+to control the application rate with a standard terminal or with application maps. But the latter is derived from
+static information like yield maps, so that environmental conditions of the actual year are not integrated.<br>
+Some systems utilize a spectroscopic sensor to detect the amount of chlorophyll in the plants. As long as the shortage
+of chlorophyll is mainly caused by a shortage of nitrogen in the soil, the application rate dosing based on a standalone
+sensor is correct. But chlorophyll shortage can also be caused by water stress and other conditions.<br>
+Therefore additional moisture sensors and data bases have to be developed in future to avoid a false nitrogen dosing.
+All these information sources should be evaluated by a mobile expert system, which could send an ultimate
+nitrogen application rate setpoint to the fertilizer.<br>
+Most of these devices have to be developed in future. Therefore a farmer should have the possibility to simply
+integrate new devices in an existing network, without changing the existing elements.<br>
+This is possible, if some basic strategies are used by all devices:
+- use setpoint intervals in favour of exact values
+- provide sensored values as process data (e.g. a chlorophyll sensor which only sends application rate setpoints can't be
+		used by a mobile expert system as information source)
+- interprete setpoints which are sent by other devices
+- fertilizer&nbsp;should ask the driver for a priority ranking of different conflicting setpoint sender (this ranking should
+		be stored for future use)
+*/

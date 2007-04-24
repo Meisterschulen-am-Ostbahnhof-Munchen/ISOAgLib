@@ -183,6 +183,12 @@ public:
   */
   int32_t time() { return CANPkgExt_c::time(); }
 
+  void setExtCanPkg3(uint8_t pri, uint8_t dp, uint8_t pf, uint8_t ps, uint8_t sa, uint8_t d0, uint8_t d1, uint8_t d2)
+  { CANPkgExt_c::setExtCanPkg3(pri, dp, pf, ps, sa, d0, d1, d2); }
+
+  void setExtCanPkg8(uint8_t pri, uint8_t dp, uint8_t pf, uint8_t ps, uint8_t sa, uint8_t d0, uint8_t d1, uint8_t d2, uint8_t d3, uint8_t d4, uint8_t d5, uint8_t d6, uint8_t d7)
+  { CANPkgExt_c::setExtCanPkg8(pri, dp, pf, ps, sa, d0, d1, d2, d3, d4, d5, d6, d7); }
+
   /**
     put data into given reference to BIOS related data structure with data, len
     @param reft_ident     reference where the ident is placed for send

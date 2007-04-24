@@ -6,9 +6,9 @@ DOXYGEN_EXPORT_DIR="../../IsoAgLib_Examples/tutorial"
 EXAMPLE_LIST=`ls conf_* | grep -v "~" | sed -e 's/[ \t\n]+/:/g'`
 TARGET_LIST="pc_win32:pc_linux:esx:c2c:imi:pm167"
 #TARGET_LIST="pc_linux"
-CAN_LIST="simulating:sys:vector_canlib:vector_xl_drv_lib:sontheim:rte:linux_server_client"
+#CAN_LIST="simulating:sys:vector_canlib:vector_xl_drv_lib:sontheim:rte:linux_server_client_A1:linux_server_client_pcan"
 RS232_LIST="simulating:sys:rte"
-#CAN_LIST="sys"
+CAN_LIST="sontheim"
 #RS232_LIST="simulating"
 for conf_example in $EXAMPLE_LIST ; do
   EXAMPLE_DIR=""
@@ -20,6 +20,7 @@ for conf_example in $EXAMPLE_LIST ; do
 		conf_4*) EXAMPLE_DIR="4_SupplementaryDriver" ;;
 		conf_5*) EXAMPLE_DIR="5_CanFeatures" ;;
 		conf_tractor*) DOXYGEN_EXPORT_DIR="../../IsoAgLib_Examples";EXAMPLE_DIR="tractor" ;;
+		conf_CanServerMessenger*) DOXYGEN_EXPORT_DIR="../../IsoAgLib_Examples";EXAMPLE_DIR="CanServerMessenger" ;;
 		*) EXAMPLE_DIR=".." ;;
   esac
   EXAMPLE=`echo $conf_example | sed -e 's/conf_//g'`
@@ -55,7 +56,7 @@ for conf_example in $EXAMPLE_LIST ; do
       		  continue
           fi
         fi
-        if [ $can_drv = "linux_server_client" ] ; then
+        if test $can_drv = "linux_server_client_A1" -o  $can_drv = "linux_server_client_pcan" ; then
 	        if    [ $target != "pc_linux" ] ; then
       		  continue
           fi

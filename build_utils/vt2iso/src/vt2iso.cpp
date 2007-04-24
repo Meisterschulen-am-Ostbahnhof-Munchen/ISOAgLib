@@ -574,7 +574,7 @@ vt2iso_c::clean_exit (char* error_message)
     // write implementation of handler class constructor into list
     // as there the list must be known
     // -> the handler decleration can be included from everywhere
-    fprintf (partFile_list, "\nIsoAgLib::iVtObject_c** all_iVtObjectLists%s [] = {", pcch_poolIdent);
+    fprintf (partFile_list, "\nIsoAgLib::iVtObject_c* HUGE_MEM * all_iVtObjectLists%s [] = {", pcch_poolIdent);
     fprintf (partFile_list, "\n  all_iVtObjects%s,", pcch_poolIdent);
     for (unsigned int i=0; i<ui_languages; i++)
       fprintf (partFile_list, "\n  all_iVtObjects%s%d,", pcch_poolIdent, i);
@@ -582,7 +582,7 @@ vt2iso_c::clean_exit (char* error_message)
     fprintf (partFile_list, "\n};\n");
     int extraLanguageLists = (ui_languages>0)?arrs_language[0].count : 0;
     fprintf (partFile_list, "\niObjectPool_%s_c::iObjectPool_%s_c () : iIsoTerminalObjectPool_c (all_iVtObjectLists%s, %d, %d, %d, %d, %d) {};\n",
-             proName, proName, pcch_poolIdent, objCount - extraLanguageLists, extraLanguageLists, opDimension, skWidth, skHeight);
+             proName.c_str(), proName.c_str(), pcch_poolIdent, objCount - extraLanguageLists, extraLanguageLists, opDimension, skWidth, skHeight);
 
     fclose(partFile_list);
   }
@@ -603,9 +603,9 @@ vt2iso_c::clean_exit (char* error_message)
 
   if (partFile_handler_direct) { // handler class direct
   // NEW:
-    fprintf (partFile_handler_direct, "\n #ifndef DECL_direct_iObjectPool_%s_c", proName );
-    fprintf (partFile_handler_direct, "\n #define DECL_direct_iObjectPool_%s_c", proName );
-    fprintf (partFile_handler_direct, "\nclass iObjectPool_%s_c : public IsoAgLib::iIsoTerminalObjectPool_c {", proName);
+    fprintf (partFile_handler_direct, "\n #ifndef DECL_direct_iObjectPool_%s_c", proName.c_str() );
+    fprintf (partFile_handler_direct, "\n #define DECL_direct_iObjectPool_%s_c", proName.c_str() );
+    fprintf (partFile_handler_direct, "\nclass iObjectPool_%s_c : public IsoAgLib::iIsoTerminalObjectPool_c {", proName.c_str());
     fprintf (partFile_handler_direct, "\npublic:");
     fprintf (partFile_handler_direct, "\n  virtual void eventKeyCode (uint8_t keyActivationCode, uint16_t objId, uint16_t objIdMask, uint8_t keyCode, bool wasButton);");
     fprintf (partFile_handler_direct, "\n  /* Uncomment the following function if you want to use command-response handling! */");
@@ -630,19 +630,19 @@ vt2iso_c::clean_exit (char* error_message)
     fprintf (partFile_handler_direct, "\n  /* Uncomment the following function if you want to react on any incoming VT Get Attribute Value messages */");
     fprintf (partFile_handler_direct, "\n  //virtual void eventAttributeValue(IsoAgLib::iVtObject_c* obj, uint8_t ui8_attributeValue, uint8_t* pui8_value);");
     fprintf (partFile_handler_direct, "\n  void initAllObjectsOnce(SINGLETON_VEC_KEY_PARAMETER_DEF);");
-    fprintf (partFile_handler_direct, "\n  iObjectPool_%s_c ();", proName);
+    fprintf (partFile_handler_direct, "\n  iObjectPool_%s_c ();", proName.c_str());
     fprintf (partFile_handler_direct, "\n};\n");
     fprintf (partFile_handler_direct, "\n #endif\n" );
     fclose (partFile_handler_direct);
   }
   if (partFile_handler_derived) { // handler class derived
   // NEW:
-    fprintf (partFile_handler_derived, "\n #ifndef DECL_derived_iObjectPool_%s_c", proName );
-    fprintf (partFile_handler_derived, "\n #define DECL_derived_iObjectPool_%s_c", proName );
-    fprintf (partFile_handler_derived, "\nclass iObjectPool_%s_c : public IsoAgLib::iIsoTerminalObjectPool_c {", proName);
+    fprintf (partFile_handler_derived, "\n #ifndef DECL_derived_iObjectPool_%s_c", proName.c_str() );
+    fprintf (partFile_handler_derived, "\n #define DECL_derived_iObjectPool_%s_c", proName.c_str() );
+    fprintf (partFile_handler_derived, "\nclass iObjectPool_%s_c : public IsoAgLib::iIsoTerminalObjectPool_c {", proName.c_str());
     fprintf (partFile_handler_derived, "\npublic:");
     fprintf (partFile_handler_derived, "\n  void initAllObjectsOnce(SINGLETON_VEC_KEY_PARAMETER_DEF);");
-    fprintf (partFile_handler_derived, "\n  iObjectPool_%s_c ();", proName);
+    fprintf (partFile_handler_derived, "\n  iObjectPool_%s_c ();", proName.c_str());
     fprintf (partFile_handler_derived, "\n};\n");
     fprintf (partFile_handler_derived, "\n #endif\n" );
     fclose (partFile_handler_derived);
@@ -956,7 +956,6 @@ vt2iso_c::init (const char* xmlFile)
   strcat (partFileName, "-variables-extern.inc");
   partFile_variables_extern = fopen (partFileName,"wt");
 
-
   strncpy (partFileName, xmlFile, 1024);
   strcat (partFileName, "-attributes.inc");
   partFile_attributes = fopen (partFileName,"wt");
@@ -964,7 +963,7 @@ vt2iso_c::init (const char* xmlFile)
   strncpy (partFileName, xmlFile, 1024);
   strcat (partFileName, "-functions.inc");
   partFile_functions = fopen (partFileName,"wt");
-  fprintf (partFile_functions, "void iObjectPool_%s_c::initAllObjectsOnce (SINGLETON_VEC_KEY_PARAMETER_DEF)\n{\n", proName);
+  fprintf (partFile_functions, "void iObjectPool_%s_c::initAllObjectsOnce (SINGLETON_VEC_KEY_PARAMETER_DEF)\n{\n", proName.c_str());
   fprintf (partFile_functions, "  if (b_initAllObjects) return;   // so the pointer to the ROM structures are only getting set once on initialization!\n");
 
   strncpy (partFileName, xmlFile, 1024);
@@ -1074,7 +1073,7 @@ vt2iso_c::defaultAttributes (unsigned int r_objType)
       attrIsGiven [attrCursorY] = true;
     }
   }
-  if (!attrIsGiven [attrInputObjectOptions]) {
+  if ((r_objType == otInputnumber) && !attrIsGiven [attrInputObjectOptions]) {
     sprintf (attrString [attrInputObjectOptions], "enabled");
     attrIsGiven [attrInputObjectOptions] = true;
   }
@@ -1269,8 +1268,8 @@ vt2iso_c::getAttributesFromNode(DOMNode *n, bool treatSpecial)
           strncpy (attrString [l], attr_value, stringLength);
           attrIsGiven [l] = true;
     // DEBUG-OUT
-    //      std::cout << "FOUND ATTR: IND " << l << ":= " << attrNameTable [l] << " -> " << attrString[l] << ":"
-    //                << attrIsGiven [l] << "\n";
+//          std::cout << "FOUND ATTR: IND " << l << ":= " << attrNameTable [l] << " -> " << attrString[l] << ":"
+//                    << attrIsGiven [l] << "\n";
           break;
         }
       }
@@ -1725,16 +1724,14 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
     bool objHasArrayEventMacro = false;
     switch (objType)
     {
-      case otWorkingset:   case otDatamask:  case otAlarmmask:   case otContainer: case otSoftkeymask: case otKey: case otButton:
-      case otInputboolean: case otInputstring:  case otInputnumber: case otInputlist:
-      case otOutputstring: case otOutputnumber:
-      case otLine:   case otRectangle:    case otEllipse:  case otPolygon:
-      case otMeter:     case otLinearbargraph:  case otArchedbargraph:
+      case otWorkingset:     case otDatamask:       case otAlarmmask:       case otContainer:  case otSoftkeymask:  case otKey:  case otButton:
+      case otInputboolean:   case otInputstring:    case otInputnumber:     case otInputlist:
+      case otOutputstring:   case otOutputnumber:   case otOutputlist:
+      case otLine:           case otRectangle:      case otEllipse:         case otPolygon:
+      case otMeter:          case otLinearbargraph: case otArchedbargraph:
       case otPicturegraphic:
-      // variables have no events/macros
-      case otFontattributes:  case otLineattributes:  case otFillattributes:  case otInputattributes:
-      // object pointer has no events/macros
-        objHasArrayEventMacro = true;
+      case otFontattributes: case otLineattributes:  case otFillattributes:  case otInputattributes:
+        objHasArrayEventMacro = true; // only variables and object pointer have no events/macros
         break;
     }
 
@@ -1743,6 +1740,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
     {
       case otSoftkeymask:
       case otInputlist:
+      case otOutputlist:
         objHasArrayObject = true;
         break;
     }
@@ -2225,7 +2223,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
                   }
                   fprintf (partFile_attributes, "{&iVtObject%s, %d, %d, %s ,%d, %d}", objChildName, objChildX, objChildY, objBlockFont, objBlockRow, objBlockCol);
                 } else {
-                  // Added this if statement to account for InputList objects who might have NULL Object IDs in their list of objects. (Which is legal per the standard!)
+                  // Added this if statement to account for InputList/OutputList objects who might have NULL Object IDs in their list of objects. (Which is legal per the standard!)
                   // Instead of inserting a faulty object name, just insert NULL into the array. -BAC 07-Jan-2005
                   if (objChildID == 65535)
                   {
@@ -2256,8 +2254,8 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           }
         }
         // all child-elements processed, now:
-        // special treatment for inputlist with NULL objects
-        if (objType == otInputlist && objChildObjects < (uint16_t)atoi(attrString [attrNumber_of_items]))
+        // special treatment for inputlist/outputlist with NULL objects
+        if (((objType == otInputlist) || (objType == otOutputlist)) && objChildObjects < (uint16_t)atoi(attrString [attrNumber_of_items]))
         {
           //only some items are NULL objects which were not counted in objChildObjects
           if (objChildObjects>0)
@@ -2270,12 +2268,12 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             objChildObjects=(uint16_t)atoi(attrString [attrNumber_of_items]);
           }
           else {
-            // no child-element at all in the inputlist (all items as NULL objects)
+            // no child-element at all in the inputlist/outputlist (all items as NULL objects)
             // fill the reference-list with {NULL}-elements --> so they could be replaced during runtime with NOT NULL objects
             if (objChildObjects == 0 && atoi(attrString [attrNumber_of_items]) > 0)
             {
               // objChildObjects has to be set to number_of_items otherwise
-              // it is set to 0 in the attributes of the inputlist
+              // it is set to 0 in the attributes of the inputlist/output
               objChildObjects = (uint16_t)atoi(attrString [attrNumber_of_items]);
               // create for all number_of_items a no-item placeholder
               fprintf (partFile_attributes, "const IsoAgLib::repeat_iVtObject_s iVtObject%s_aObject [] = {", objName);
@@ -2705,7 +2703,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
                     setAttributeValue(attrNew_value);
                   }
                   signed long int ret = idOrName_toi(attrString [attrObjectID], /*macro?*/false);
-                  signed long int retNewValue = idOrName_toi(attrString [attrNew_value], /*macro?*/false);
+                  signed long int retNewValue = idOrName_toi(attrString [attrNew_value], /*macro?*/false); // "idOrName_toi" is okay here, because we could change an objectpointer to point to some other object!
                   if ((retNewValue == -1) || (ret == -1))
                   {
                     std::cout << "Error in idOrName_toi() from object <" << node_name << "> '" << objName << "'! STOP PARSER! bye.\n\n";
@@ -2725,7 +2723,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
                   int nSize = pAttributes->getLength();
 
                   cleanAttribute(attrObjectID);
-                  cleanAttribute(attrNumber_of_bytes);
+                  cleanAttribute(attrBytes_in_string);
                   cleanAttribute(attrNew_value);
 
                   for(int i=0;i<nSize;++i)
@@ -2739,6 +2737,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
                     setAttributeValue(attrNew_value);
                   }
                   // Need check for all attributes being present for this command -bac
+                  // Also need to replace the atoi below to some integertoi stuff so characters will register an error!
                   int strLength;
                   char *tempStrPtr;
 
@@ -2753,7 +2752,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
                     strcat(tempString2, tempString);
                   }
                   signed long int ret = idOrName_toi(attrString [attrObjectID], /*macro?*/false);
-                  signed long int retBytesInString = idOrName_toi(attrString [attrBytes_in_string], /*macro?*/false);
+                  signed long int retBytesInString = atoi(attrString [attrBytes_in_string]);
                   if ((ret == -1) || (retBytesInString == -1))
                   {
                     std::cout << "Error in idOrName_toi() from object <" << node_name << "> '" << objName << "'! STOP PARSER! bye.\n\n";
@@ -3342,10 +3341,9 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
       // if special parsing is active and the object type is greater than maxObjectType
       // the output to the files must be done separately
       if ( pc_specialParsingPropTag && (objType >= maxObjectTypes) )
-      {
-        // need to know the object id in special parsing when data is written to files
+      { // need to know the object id in special parsing when data is written to files
         pc_specialParsingPropTag->setObjID (objID);
-        bool b_outputOK = pc_specialParsingPropTag->outputData2FilesPiecewise(attrString, attrIsGiven);
+        bool b_outputOK = pc_specialParsingPropTag->outputData2FilesPiecewise(attrString, attrIsGiven, this);
         if ( !b_outputOK )
         {
           std::cout << "Error in outputData2FilesPiecewise() from object <" << node_name << "> '" << objName << "'! STOPPING PARSER! bye.\n\n";
@@ -3592,13 +3590,13 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             fprintf (partFile_attributes, ", %sL", attrString [attrOffset] );
           }
 
-          signed int retEnabled = inputobjectoptiontoi (attrString [attrInputObjectOptions]);
+          signed int retInputOption = inputobjectoptiontoi (attrString [attrInputObjectOptions]);
           signed int retFormat = formattoi (attrString [attrFormat]);
           signed int retJust = horizontaljustificationtoi (attrString [attrHorizontal_justification]);
-          if ((retEnabled == -1) || (retFormat == -1) || (retJust == -1))
+          if ((retInputOption == -1) || (retFormat == -1) || (retJust == -1))
           {
-            if (retEnabled == -1)
-              std::cout << "Error in booltoi() from object <" << node_name << "> '" << objName << "'! STOPPING PARSER! bye.\n\n";
+            if (retInputOption == -1)
+              std::cout << "Error in inputobjectoptiontoi() from object <" << node_name << "> '" << objName << "'! STOPPING PARSER! bye.\n\n";
 
             if (retFormat == -1)
               std::cout << "Error in formattoi() from object <" << node_name << "> '" << objName << "'! STOPPING PARSER! bye.\n\n";
@@ -3609,7 +3607,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           }
 
           fprintf (partFile_attributes, ", %s, %s, %d, %d, %d", attrString [attrScale], attrString [attrNumber_of_decimals],
-                   (unsigned int)retFormat, (unsigned int)retJust, (unsigned int)retEnabled);
+                   (unsigned int)retFormat, (unsigned int)retJust, (unsigned int)retInputOption);
           break;
         }
 
@@ -3631,6 +3629,21 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           }
           fprintf (partFile_attributes, ", %s, %s, %s, %s, %d", attrString [attrWidth], attrString [attrHeight], attrString [attrVariable_reference],
                    attrString [attrValue], (unsigned int)retEnabled);
+          break;
+        }
+
+        case otOutputlist:
+        {
+          if (!(attrIsGiven [attrWidth] && attrIsGiven [attrHeight]))
+          {
+            std::cout << "YOU NEED TO SPECIFY THE width= AND height= ATTRIBUTES FOR THE <outputlist> OBJECT '" << objName << "'! STOPPING PARSER! bye.\n\n";
+            return false;
+          }
+          if (!attrIsGiven [attrValue])
+            sprintf (attrString [attrValue], "0");
+
+          fprintf (partFile_attributes, ", %s, %s, %s, %s", attrString [attrWidth], attrString [attrHeight], attrString [attrVariable_reference],
+                   attrString [attrValue]);
           break;
         }
 
@@ -4318,15 +4331,7 @@ vt2iso_c::prepareFileNameAndDirectory(std::basic_string<char>* pch_fileName)
   std::basic_string<char> c_directoryCompareItem;
   std::cerr << "--> Directory: " << c_directory << std::endl << "--> File:      " << c_project << std::endl;
 
-  strncpy (proName, c_project.c_str(), 1024);
-  proName [1024+1-1] = 0x00;
-  for (unsigned int i=0; i<strlen(proName); i++)
-  {
-    if (proName[i] == '.')
-    {
-      proName[i] = 0x00; break;
-    }
-  }
+  proName = c_project;
 
 #ifdef WIN32
   HANDLE hList;

@@ -213,8 +213,8 @@ public:
   IsoAgLib::iVtObject_c** pc_userPoolUpdateObjects;
 
   /** pointers needed by MultiSendStreamer */
-  IsoAgLib::iVtObject_c* HUGE_MEM * pc_iterObjects;
-  IsoAgLib::iVtObject_c* HUGE_MEM * pc_iterObjectsStored;
+  IsoAgLib::iVtObject_c*HUGE_MEM* pc_iterObjects;
+  IsoAgLib::iVtObject_c*HUGE_MEM* pc_iterObjectsStored;
 
   IsoAgLib::iIsoTerminalObjectPool_c& refc_pool;
 #define ISO_VT_UPLOAD_BUFFER_SIZE 128
@@ -274,6 +274,12 @@ public:
     UploadPoolTypeUserPoolUpdate
   };
 
+  enum vtClientDisplayState_t {
+    VtClientDisplayStateHidden,
+    VtClientDisplayStateInactive,
+    VtClientDisplayStateActive
+  };
+
   // UploadCommandFailed is obsolete, as we're not retrying and error-responses any more.
   // UploadCommandResponseless is used for cmd:0x11 Object Pool Transfer, as there's NO response sent from the VT and it's a "special" upload...
 
@@ -283,7 +289,7 @@ public:
 
   /** constructor of VtClientServerCommunication_c
    */
-  VtClientServerCommunication_c (IdentItem_c& refc_wsMasterIdentItem, ISOTerminal_c &ref_isoTerminal, IsoAgLib::iIsoTerminalObjectPool_c& rrefc_pool, char* rpc_versionLabel, uint8_t ui8_clientId);
+  VtClientServerCommunication_c (IdentItem_c& refc_wsMasterIdentItem, ISOTerminal_c &ref_isoTerminal, IsoAgLib::iIsoTerminalObjectPool_c& rrefc_pool, char* rpc_versionLabel, uint8_t rui8_clientId);
 
 
   /** explicit conversion to reference of interface class type */
@@ -313,7 +319,7 @@ public:
   void notifyOnVtsLanguagePgn();
 
   /** function that handles incoming Vt Status Message */
-  void notifyOnVtStatusMessage() { c_streamer.refc_pool.eventVtStatusMsg(); }
+  void notifyOnVtStatusMessage();
 
   /** function that handles incoming VT ESC */
   void notifyOnVtESC() { c_streamer.refc_pool.eventVtESC(); }
@@ -327,6 +333,7 @@ public:
   uint16_t getVtObjectPoolSoftKeyHeight();
   uint32_t getUploadBufferSize();
   uint8_t  getUserClippedColor (uint8_t colorValue, IsoAgLib::iVtObject_c* obj, IsoAgLib::e_vtColour whichColour);
+  uint8_t  getClientId() const { return ui8_clientId; }
 
   IdentItem_c& getIdentItem()            { return refc_wsMasterIdentItem; }
   VtServerInstance_c& getVtServerInst();
@@ -398,7 +405,7 @@ public:
   bool sendCommandCopyViewport2PictureGraphic (IsoAgLib::iVtObject_c* rpc_object, const IsoAgLib::iVtObjectPictureGraphic_c* const pc_VtObjectPictureGraphic, bool b_enableReplaceOfCmd=true);
 
   bool sendCommandGetAttributeValue (IsoAgLib::iVtObject_c* rpc_object, const uint8_t cui8_attrID, bool b_enableReplaceOfCmd=true);
-
+  bool sendCommandLockUnlockMask( IsoAgLib::iVtObject_c* rpc_object, bool b_lockMask, uint16_t ui16_lockTimeOut, bool b_enableReplaceOfCmd = true);
 
   bool sendCommandDeleteObjectPool();
   bool sendCommandUpdateLanguagePool();
@@ -432,6 +439,15 @@ private:
   /** sets state to "OPCannotUpload"... */
   void vtOutOfMemory();
   void setObjectPoolUploadingLanguage();
+
+  /** set display state of vt client
+    @param b_isVtStatusMsg true: set display state from VT Status Msg
+                           false: set display state from Display Activation Msg
+    @param ui8_saOrDisplayState if b_isVtStatusMsg == true, it is the sa of the wsm
+                                if b_isVtStatusMsg == false, it is the display state of the Display Activation Msg
+    */
+  void setVtDisplayState (bool b_isVtStatusMsg, uint8_t ui8_saOrDisplayState);
+  vtClientDisplayState_t getVtDisplayState() { return en_displayState; }
 
 private: // attributes
   /** static instance to store temporarily before push_back into list */
@@ -483,7 +499,11 @@ private: // attributes
   /** receive filters are already created */
   bool b_receiveFilterCreated;
 
+  uint8_t ui8_clientId;
+
   ISOTerminalPkg_c c_data;
+
+  vtClientDisplayState_t en_displayState;
 
   #ifdef USE_LIST_FOR_FIFO
   // queueing with list: queue::push <-> list::push_back; queue::front<->list::front; queue::pop<->list::pop_front

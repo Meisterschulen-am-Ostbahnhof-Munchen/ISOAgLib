@@ -88,11 +88,15 @@
 #include <IsoAgLib/util/impl/singleton.h>
 #include <IsoAgLib/hal/can.h>
 
-#if defined(SYSTEM_PC) && !defined(SYSTEM_PC_VC) && __GNUC__ >= 3
-  #include <ext/slist>
-  namespace std { using __gnu_cxx::slist;};
+#ifdef DO_USE_SLIST
+  #if defined(SYSTEM_PC) && !defined(SYSTEM_PC_VC) && !defined(SYSTEM_A1) && __GNUC__ >= 3
+    #include <ext/slist>
+    namespace std { using __gnu_cxx::slist;}
+  #else
+    #include <slist>
+  #endif
 #else
-  #include <slist>
+  #include <list>
 #endif
 
 #include "filterbox_c.h"
@@ -116,9 +120,9 @@ class MsgObj_c {
 private:
   // private typedef alias names
 	#ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
-  typedef STL_NAMESPACE::slist<FilterBox_c,STL_NAMESPACE::__malloc_alloc_template<0> >::iterator FilterRef;
+  typedef STL_NAMESPACE::USABLE_SLIST<FilterBox_c,STL_NAMESPACE::__malloc_alloc_template<0> >::iterator FilterRef;
 	#else
-  typedef STL_NAMESPACE::slist<FilterBox_c>::iterator FilterRef;
+  typedef STL_NAMESPACE::USABLE_SLIST<FilterBox_c>::iterator FilterRef;
 	#endif
 public:
   /** default constructor for MsgObj_c which only init all member values defined start state */

@@ -92,11 +92,15 @@
 #include "../../../impl/processelementbase_c.h"
 #include "../../StdMeasureElements/impl/measureproglocal_c.h"
 
-#if defined(SYSTEM_PC) && !defined(SYSTEM_PC_VC) && !defined(SYSTEM_A1)
-  #include <ext/slist>
-  namespace std { using __gnu_cxx::slist;};
+#ifdef DO_USE_SLIST
+  #if defined(SYSTEM_PC) && !defined(SYSTEM_PC_VC) && !defined(SYSTEM_A1) && __GNUC__ >= 3
+    #include <ext/slist>
+    namespace std { using __gnu_cxx::slist;}
+  #else
+    #include <slist>
+  #endif
 #else
-  #include <slist>
+  #include <list>
 #endif
 
 // Begin Namespace IsoAgLib
@@ -113,11 +117,11 @@ class ManageMeasureProgLocal_c : public ProcessElementBase_c
 {
 private:
   #ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
-  typedef STL_NAMESPACE::slist<MeasureProgLocal_c,STL_NAMESPACE::__malloc_alloc_template<0> > Vec_MeasureProgLocal;
-  typedef STL_NAMESPACE::slist<MeasureProgLocal_c,STL_NAMESPACE::__malloc_alloc_template<0> >::iterator Vec_MeasureProgLocalIterator;
+  typedef STL_NAMESPACE::USABLE_SLIST<MeasureProgLocal_c,STL_NAMESPACE::__malloc_alloc_template<0> > Vec_MeasureProgLocal;
+  typedef STL_NAMESPACE::USABLE_SLIST<MeasureProgLocal_c,STL_NAMESPACE::__malloc_alloc_template<0> >::iterator Vec_MeasureProgLocalIterator;
   #else
-  typedef STL_NAMESPACE::slist<MeasureProgLocal_c> Vec_MeasureProgLocal;
-  typedef STL_NAMESPACE::slist<MeasureProgLocal_c>::iterator Vec_MeasureProgLocalIterator;
+  typedef STL_NAMESPACE::USABLE_SLIST<MeasureProgLocal_c> Vec_MeasureProgLocal;
+  typedef STL_NAMESPACE::USABLE_SLIST<MeasureProgLocal_c>::iterator Vec_MeasureProgLocalIterator;
   #endif
  public:
   /**

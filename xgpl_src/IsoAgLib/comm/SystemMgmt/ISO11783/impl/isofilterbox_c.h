@@ -92,14 +92,16 @@
 #include <IsoAgLib/driver/can/impl/ident_c.h>
 #include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h>
 
-// stl
-#if defined(SYSTEM_PC) && !defined(SYSTEM_PC_VC) && __GNUC__ >= 3
-  #include <ext/slist>
-  namespace std { using __gnu_cxx::slist;}
+#ifdef DO_USE_SLIST
+  #if defined(SYSTEM_PC) && !defined(SYSTEM_PC_VC) && !defined(SYSTEM_A1) && __GNUC__ >= 3
+    #include <ext/slist>
+    namespace std { using __gnu_cxx::slist;}
+  #else
+    #include <slist>
+  #endif
 #else
-  #include <slist>
+  #include <list>
 #endif
-
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
@@ -162,8 +164,8 @@ public:
     FilterBox_c* pc_filterBox;
   };
 
-  typedef STL_NAMESPACE::slist<ManagedISOFilter_s> ManagedISOFilter_slist;
-  typedef STL_NAMESPACE::slist<ManagedISOFilter_s>::iterator ManagedISOFilter_it;
+  typedef STL_NAMESPACE::USABLE_SLIST<ManagedISOFilter_s> ManagedISOFilter_slist;
+  typedef STL_NAMESPACE::USABLE_SLIST<ManagedISOFilter_s>::iterator ManagedISOFilter_it;
 
   /** empty constructor - everything has to be "constructed" with the "init"-function! */
   ISOFilterBox_c();

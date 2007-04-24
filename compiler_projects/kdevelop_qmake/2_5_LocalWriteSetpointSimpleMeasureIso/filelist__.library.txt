@@ -89,6 +89,7 @@
 ../../../xgpl_src/IsoAgLib/hal/system.h
 ../../../xgpl_src/IsoAgLib/driver/can/impl/canio_c.h
 ../../../xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.h
+../../../xgpl_src/IsoAgLib/driver/can/impl/msgobj_c.h
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.h
 ../../../xgpl_src/IsoAgLib/driver/can/icanio_c.h
 ../../../xgpl_src/IsoAgLib/driver/can/iident_c.h

@@ -239,6 +239,9 @@ int16_t loadDllFunctionAddresses(void)
   return HAL_NO_ERR;
 }
 
+/** there's no send-delay recognition of RTE */
+int32_t getMaxSendDelay(uint8_t rui8_busNr) { return 0; }
+
 int16_t can_startDriver()
 {
   #ifdef USE_CAN_CARD_TYPE

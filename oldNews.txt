@@ -3,8 +3,8 @@
 
 INCLUDE_mainHeaderWithNavbar.txt_INCLUDE
 
-\section IndexOldNews Archive of old news
-\subsection IndexNews_A News before the 1.1.0 release
+\section OldNews Archive of old news
+\subsection News_A News before the 1.1.0 release
 	- <b>2004-11-15:</b> Create new email list for email exchange within user community so that users can help each other, and
 		can discuss changes there, before somebody starts implementing the change<br>
 		- subscribe at <a href="http://linux90.idvnet.de/cgi-bin/mailman/listinfo/isoaglib">http://linux90.idvnet.de/cgi-bin/mailman/listinfo/isoaglib</a>
@@ -32,7 +32,7 @@ INCLUDE_mainHeaderWithNavbar.txt_INCLUDE
 			- rename example program Taskcontroller to AutoDataCollector, to avoid misleading interpretation as ISO 11783 conformant Task-Controller which it is <b>clearly NOT</b>
 
 
-\subsection IndexOldNews News before 1.0.0 release
+\subsection OldNews News before 1.0.0 release
 	- Complete Toolchain for ISO 11783 Virtual Terminal is integrated.
 	- <a href="http://www.fritzmeier.com/engl/frameset_engl.htm?/engl/environment/environment_miniveg.htm">Chlorophyll Sensor <b>MiniVeg N</b></a> -
 	    the first commercial application of <a href="www.fritzmeier.de">Fritzmeier</a>

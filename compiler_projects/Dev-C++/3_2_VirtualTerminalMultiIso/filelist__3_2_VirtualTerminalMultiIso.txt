@@ -61,6 +61,7 @@
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectoutputnumber_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectpolygon_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectkey_c.cpp
+../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectoutputlist_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobject_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/ext/ProprietaryCan/impl/proprietarymessagehandler_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/ext/ProprietaryCan/impl/proprietarymessageclient_c.cpp
@@ -69,6 +70,7 @@
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_w32_sontheim_canlpt.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp
+../../../xgpl_src/IsoAgLib/driver/can/impl/msgobj_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/canio_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/system/impl/system_c.cpp
@@ -163,6 +165,7 @@
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectsoftkeymask_c.h
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectmacro_c.h
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectauxiliaryfunction_c.h
+../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectoutputlist_c.h
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectmeter_c.h
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtincludes.h
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobject_c.h
@@ -203,6 +206,7 @@
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectalarmmask_c.h
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectoutputnumber_c.h
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectbutton_c.h
+../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectoutputlist_c.h
 ../../../xgpl_src/IsoAgLib/comm/ext/ProprietaryCan/impl/proprietarymessagehandler_c.h
 ../../../xgpl_src/IsoAgLib/comm/ext/ProprietaryCan/impl/proprietarymessageclient_c.h
 ../../../xgpl_src/IsoAgLib/comm/ext/ProprietaryCan/igenericdata_c.h
@@ -224,9 +228,11 @@
 ../../../xgpl_src/IsoAgLib/hal/system.h
 ../../../xgpl_src/IsoAgLib/driver/can/impl/canio_c.h
 ../../../xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.h
+../../../xgpl_src/IsoAgLib/driver/can/impl/msgobj_c.h
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.h
 ../../../xgpl_src/IsoAgLib/driver/can/icanio_c.h
 ../../../xgpl_src/IsoAgLib/driver/can/iident_c.h
 ../../../xgpl_src/IsoAgLib/driver/system/impl/system_c.h
 ../../../xgpl_src/IsoAgLib/driver/system/isystem_c.h
 C:\Development\Sontheim=_=CANAPI.H
+C:\Development\Sontheim=_=Capitest=_=CANAPI.H

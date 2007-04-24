@@ -76,9 +76,11 @@ $(OBJ_DIR_APP)/%.o : $(filter %/$(patsubst $(OBJ_DIR_APP)/%.d,%,$@).cpp,$(SOURCE
 deps : $(DEPS_LIBRARY) $(DEPS_APP)
 
 static_library:  $(OBJECTS_LIBRARY)
+	-$(DEL_FILE) $(OBJ_DIR_LIBRARY)/libisoaglib.a
 	ar rcs $(OBJ_DIR_LIBRARY)/libisoaglib.a $^
 
 dynamic_library:  $(OBJECTS_LIBRARY)
+	-$(DEL_FILE) $(OBJ_DIR_LIBRARY)/libisoaglib.so
 	$(CXX) -shared -o $(OBJ_DIR_LIBRARY)/libisoaglib.so $^
 
 
@@ -86,7 +88,7 @@ all: Makefile static_library dynamic_library  $(TARGET)
 $(TARGET):  $(OBJECTS_APP) static_library dynamic_library
 	$(LINK) $(LFLAGS) -o $(TARGET)_static $(OBJECTS_APP) $(OBJ_DIR_LIBRARY)/libisoaglib.a $(LIBS)
 	$(LINK) $(LFLAGS) -o $(TARGET)_dynamic $(OBJECTS_APP) $(OBJ_DIR_LIBRARY)/libisoaglib.so $(LIBS)
-	rm -f $(TARGET)
+	-$(DEL_FILE) $(TARGET)
 	ln -s $(TARGET)_static $(TARGET)
 
 dist:
@@ -96,6 +98,7 @@ yaccclean:
 lexclean:
 clean:
 	-$(DEL_FILE) $(OBJECTS_LIBRARY) $(DEPS_LIBRARY) $(OBJECTS_APP) $(DEPS_APP)
+	-$(DEL_FILE) $(OBJ_DIR_LIBRARY)/libisoaglib.a $(OBJ_DIR_LIBRARY)/libisoaglib.so
 	-$(DEL_FILE) *~ core *.core
 
 

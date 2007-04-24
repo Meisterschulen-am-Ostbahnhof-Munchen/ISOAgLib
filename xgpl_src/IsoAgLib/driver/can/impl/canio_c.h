@@ -101,12 +101,15 @@
 #endif
 #include "filterbox_c.h"
 
-// headers for string manipulation
-#if defined(SYSTEM_PC) && !defined(SYSTEM_PC_VC) && __GNUC__ >= 3
-  #include <ext/slist>
-  namespace std { using __gnu_cxx::slist;};
+#ifdef DO_USE_SLIST
+  #if defined(SYSTEM_PC) && !defined(SYSTEM_PC_VC) && !defined(SYSTEM_A1) && __GNUC__ >= 3
+    #include <ext/slist>
+    namespace std { using __gnu_cxx::slist;}
+  #else
+    #include <slist>
+  #endif
 #else
-  #include <slist>
+  #include <list>
 #endif
 
 // Begin Namespace __IsoAgLib
@@ -146,24 +149,31 @@ class CANIO_c : public SingletonCANIO_c {
   */
   #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
     #ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
-    typedef STL_NAMESPACE::slist<MsgObj_c,STL_NAMESPACE::__malloc_alloc_template<0> > ArrMsgObj;
+    typedef STL_NAMESPACE::USABLE_SLIST<MsgObj_c,STL_NAMESPACE::__malloc_alloc_template<0> > ArrMsgObj;
     #else
-    typedef STL_NAMESPACE::slist<MsgObj_c> ArrMsgObj;
+    typedef STL_NAMESPACE::USABLE_SLIST<MsgObj_c> ArrMsgObj;
     #endif
     /** define dynamic array of FilterBox_c instances;
       if a __IsoAgLib::CANCustomer_c creates one FilterBox_c definitions,
       one object instance is inserted in array
     */
     #ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
-    typedef STL_NAMESPACE::slist<FilterBox_c,STL_NAMESPACE::__malloc_alloc_template<0> > ArrFilterBox;
+    typedef STL_NAMESPACE::USABLE_SLIST<FilterBox_c,STL_NAMESPACE::__malloc_alloc_template<0> > ArrFilterBox;
     #else
-    typedef STL_NAMESPACE::slist<FilterBox_c> ArrFilterBox;
+    typedef STL_NAMESPACE::USABLE_SLIST<FilterBox_c> ArrFilterBox;
     #endif
   #else
    typedef STL_NAMESPACE::vector<FilterBox_c> ArrFilterBox;
   #endif //SYSTEM_WITH_ENHANCED_CAN_HAL
 
  public:
+
+   /** states if this Application should be prioritized over other applications.
+    * This is being set simply for this "can_server"-client.
+    * NOTE: This feature only works for applications running utilizing the "can_server"
+    */
+   static bool sb_sendPrioritized;
+
 
   /** Initialize the CAN hardware, and instantiate one msg object for
       sending of messages. Do configuration for BUS number, sending bitrate,
@@ -199,10 +209,7 @@ class CANIO_c : public SingletonCANIO_c {
       @see    HAL::configCanObj
       @see    Ident_c::t_identType
     */
-bool init(uint8_t rui8_busNumber, uint16_t rui16_bitrate,
-                   Ident_c::identType_t ren_identType, uint8_t rui8_minObjNr
-                   ,  uint8_t rui8_maxObjNr
-                  );
+  bool init(uint8_t rui8_busNumber, uint16_t rui16_bitrate, Ident_c::identType_t ren_identType, uint8_t rui8_minObjNr, uint8_t rui8_maxObjNr);
 
   /** check if this CANIO_c instance is configured so that it can be used to send */
   bool isReady2Send() const { return ( ui8_busNumber != 0xFF )?true:false;}
@@ -428,6 +435,11 @@ bool init(uint8_t rui8_busNumber, uint16_t rui16_bitrate,
       @param ri32_maxSendDelay new maximum send delay in milli-seconds
    */
   void setMaxSendDelay (int32_t ri32_maxSendDelay);
+
+  /** set this client to have send-priority
+      @param rb_sendPrioritized enable (true) or disable (false) sending in Prioritized Mode
+   */
+  void setSendPriority(bool rb_sendPrioritized);
 
  protected: // Protected methods
 #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL

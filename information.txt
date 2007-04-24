@@ -1,0 +1,230 @@
+/*! \page information Development Targets and Usage Preconditions of IsoAgLib
+
+INCLUDE_mainHeaderWithNavbar.txt_INCLUDE
+
+\section InfGeneralInformation General Information
+The ISO<i><sub>AgLib</sub></i> was primarily developed for massive automatic process data recording within the research group
+<a href="http://www.tec.wzw.tum.de/pflanztech/englisch/forschung/forschung.html">IKB-Dürnast</a>
+. Since publication of this project it is used for:
+	- Implement Indicator (IMI) which detects working state dependent on configuration and tractor base
+    data information (LBS-Base) and records process data:
+		- working state
+		- working width
+		- working time
+		- working distance
+		- working area
+		- whole time
+		- whole distance
+	- IMI for transport work, where no working width and area are point of interest
+	- simulated tractor which sets LBS-Base data according to settings of analog sensor inputs
+    and sends them on BUS, and which manages measuring programs for IMIs dependent on digital inputs (switch)
+- Task Controller which retrieves GPS information from a Fieldstar (TM) terminal, combines them
+    with dynamic detected process data of pre configured IMI types and polls the information
+		via RS232 to a PC or PCMCIA Flashdisk in simple table format. Last but not least it measures the hitch force
+		(with sensors of EHR) and the fuel consumption and polls them, too. The Task Controller
+		detects dependent on GPS, if the actual position is in one of the configured (EEPROM)
+		areas of type mounting, transport or field. With this it can gather the information
+		for each area type in its own subset.
+
+
+&nbsp;<br>
+
+The main basic design principles of the ISO<i><sub>AgLib</sub></i> are:
+	- use Hardware-Adaptation-Layer to restrict hardware dependent parts, to
+    ease adaptation to different ECU types
+	- use hardware independent Communication-Layer, which implements all interaction via ISO11783
+	- very capable and flexible design -&gt; e.g. it can handle received setpoints from a group of
+    different senders, so that the main application can decide, which sender to accept
+	- modularized structure to ease source code administration and to enable de/activation of
+    specific function groups (e.g. RS232, sensor, actor)
+
+
+&nbsp;<br>
+
+
+The ISO<i><sub>AgLib</sub></i> version <b>1.0.0rc1</b> is running stable, as it's already used for the
+<a href="http://www.fritzmeier.com/engl/frameset_engl.htm?/engl/environment/environment_miniveg.htm">Chlorophyll Sensor MiniVeg N</a>
+of the manufacturer <a href="http://www.fritzmeier.de">Fritzmeier</a> . As it's verified with automated tests, that the final device
+is fitting to all defined requirements, the ISO<i><sub>AgLib</sub></i> will at least provide a robust correct function at least for this application.
+
+In case the ISO<i><sub>AgLib</sub></i> would suffer some problems for other applications, you can be sure that the author
+<a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a> maintains this project actively.
+
+\section InfAgentNetwork Modelling as Network of Autonomous Agents
+
+The targeted flexible network, where devices of different manufacturers,
+models and built years are providing and using general services can be seen
+as a network of partial autonomous agents. Kühnel establishes the following
+criteria for the use of agents in the view of the whole system (book: "Agentenbasierte
+Softwareentwicklung", A.: Ralf Kühnel, V.: Addison-Wesley):
+- inherent&nbsp;distribution of data, competence and leadership
+- existence&nbsp;of specific software for sub tasks which should be integrated
+- complexity of algorithms which could be subdivided in distributed parts
+- tough or impossible design of global control
+Criteria for the modelling as agents are in the view of the single devices:- need for adaptation to frequently changing environments
+- partial and possibly erroneous information about environment
+- restricted prediction of environment
+- possibility of environment&nbsp;changes which are only partially induced  by own activities
+This matches the following properties of an ISO 11783 network:
+- single devices (resp. their ECU) must have the competence and leadership for security relevant tasks
+- controller software for single devices exists in many cases
+- manufacturer of a device knows best, how construction independent information and work services can be realized by a specific machine
+- global control would need a steadily increasing configuration management database to allow any desired combination of devices
+- frequently change of the (network) environment
+- a single implement or the tractor can't predict or control the work of the whole work combination
+Therefore the ISO<i><sub>AgLib</sub></i> provides the following services:<br>
+
+<table width="100%" border="0" cellspacing="0" cellpadding="2">
+<tr><td valign="Top"><b>Knowledge Management System</b></td>
+<td valign="Top">
+
+-# application can simply store and update local process data information
+-# optional&nbsp;periodic store of actual value in EEPROM<br>
+-# periodic or one time information requests from remote devices are handled in the background
+-# capable support for one time or periodic information request (including request of MIN or MAX on specific trigger events)
+-# several remote devices can independently reset the stored
+   value, if they have registered a measuring program (time or distance proportional
+   or value dependent triggered sending of values)<br>
+-# process data can be flexible created or deleted during runtime to adapt to actual information needs
+-# all information types are handled with the same API
+-# each information type (e.g. application rate) is addressed by an unique identifier
+   which contains the device type (e.g. spreader), mounting position and location
+   in the device specific dictionary so that dynamic source address or protocol
+   type (ISO 11783) is irrelevant for the application design<br></td></tr>
+
+<tr><td valign="Top"><b>Control Interaction</b><br></td>
+<td valign="Top">
+
+-# API of each process data has subgroups for measurement information and work control
+-# setpoints can be defined as exact values, MIN or MAX limits or intervals<br>
+-# information if sent setpoint was answered with accept or reject (differentiated by reason)
+-# information if previously rejected setpoint is still consistent with the actual measurement value<br>
+-# parallel received setpoints for the same process data are distinguished by sender
+   ident, so that selective accept and reject is possible
+-# accepted setpoint sender is marked as MASTER, so that
+   succeeding setpoints of the MASTER can be distinguished from setpoints of
+   other devices
+-# optional automatic information of setpoint MASTER, if actual measurement value exceeds the configurable admissible tolerance
+
+</td></tr></table>
+
+\section InfServiceNetwork Service Network
+The interactions between the devices of a ISO 11783 network can be modelled as
+the providing and using of construction  independent services. This is illustrated
+with the following diagrams.<br>
+\image html Diagramme/service_network_connection.gif
+&nbsp;<br>
+&nbsp;<br>
+&nbsp;<br>
+
+The devices of this network are using and providing services as process data. The correct function of the elements is only
+possible, if no device is dependent on a service of another not existent device.
+<br clear="All">
+<hr>
+\image html Diagramme/service_network_conflict.gif
+&nbsp;<br>
+&nbsp;<br>
+&nbsp;<br>Resource conflicts can occur, if several devices want to control the driving speed and RPM of PTO of the tractor.
+Therefore each implement should avoid the sending of exact setpoints in favour of intervals.
+
+<br clear="All">
+<hr>
+\image html Diagramme/service_network_flexibility.gif
+&nbsp;<br>
+&nbsp;<br>
+&nbsp;Several implements which want to control the work of the tractor are no problem, if they define intervals instead of
+exact values. Additionally they should use process data which are as abstract as possible. <br>
+The rotary harrow could
+define setpoints for driving speed and PTO of the tractor, so that the tractor would be fixed very tight to the needs
+of this one implement. This wouldn't allow the fertilizer to control the driving speed.<br>
+<br>
+If the rotary harrow defines alternatively the relation between driving speed and PTO, the tractor can realize this
+setting for different speeds (dependent on the transmission of the tractor). The tractor can
+regard the setpoint from the fertilizer in this case.
+
+<br clear="All">
+\section InfRequirements Requirements
+\subsection InfReqPlatform Platform
+The ISO<i><sub>AgLib</sub></i> is running on the following systems (state 05 April 2004):
+- ESX (based on Infineon C167) of <a href="http://www.sensor-technik.de">STW</a>
+- Processor Module PM167 based on Infineon C167) of <a href="http://www.sensor-technik.de">STW</a>
+- Implement Indicator (IMI) based on Infineon C167) of <a href="http://www.sensor-technik.de">STW</a>
+- PC running with LINUX with real RS232 and CAN IO based on the Realtime Test Environment (RTE)
+- PC running with LINUX with pure simulating ECU BIOS (CAN communication provided by file I/O)
+- PC running with WINDOWS with pure simulating ECU BIOS (CAN communication provided by file I/O or Vector CANcardX)
+
+\subsection InfReqCompiler Compiler
+The object oriented design of the ISO<i><sub>AgLib</sub></i> is implemented
+with C++ and uses the features <b>namespaces</b> and <b>templates</b>. The "Standard Template
+Library" (STL) is used as proven and high quality implementation of lists and corresponding standard
+algorithms, to avoid individual implementation of standard tasks which would be error prone and would
+cause a long work to find an optimal and efficient solution. Each STL element was chosen after a thorough
+analysis on runtime and RAM + ROM size overhead, so that an individual implementation would never be better.
+<br>
+The following parts of the STL are used:
+	- list ( list of nodes with <b>two</b> pointers overhead per stored data item, no reallocation needed,
+		navigation in both direction, direct access to first and last element, needed for FIFO buffer )
+	- slist ( list of nodes with <b>one</b> pointer overhead per stored data item, no reallocation needed,
+		navigation only from first to last element, direct access only to first; used for most cases as typical application is storage of
+		objects which are iterated from first to last element )
+	- vector ( array of items which must be reallocated as soon as the reserved capacity is used,
+		thus only used for storage of pointers where reallocation is relative cheap and one or two pointers per item would cause too much overhead )
+	- queue ( optional FIFO for spooling of items to ISO virtual terminal - could be activated at compile time by config setting )
+	- find ( standardized and optimized algorithm for search in the containers list, slist, vector )
+	- distance and advance ( algorithms for efficient placement of iterators during copy actions )
+
+The ISO<i><sub>AgLib</sub></i> <b>doesn't use:</b>
+	- multiple inheritance ( as of 2004-12-09 )
+	- runtime type identification ( RTTI )
+	- exception handling
+
+Thus compilers which support the so called <b>Extended EC++</b> specification can be used, as long as they provide an adapted
+version of the STL.
+List of known <b>Extended EC++</b> aware Compilers ( please inform <a href="mailto:a.spangler@osb-ag:de">me</a> if you know other
+<b>Extended EC++</b> compilers which match these requirements ):
+	- <a href="http://www.iar.com/">IAR</a>
+	- ... ?
+
+<b>Important note on some compiler specific language extensions - anachronisms:</b><br>
+Compilers like Tasking Version 7.56 instantiate implicitly <b>static const</b> variables, so that
+the linker is disturbed by multiple definition of the corresponding symbols. This is not C++ standard conformant,
+as <b>static const</b> is the typesafe replacement of C-style #define constants.<br>
+So please make shure that you don't activate options of your compiler that would also instantiate variables/symbols for
+<b>static const</b> variables.
+<br>
+
+Optimizing technologies of modern compilers allow program size and execution speed which
+is equivalent or better than comparable C implementations. This is also true for the the several dynamic lists,
+where a constant sized array would not be flexible enough or an individual implementation of a dynamic data structure
+wouldn't be smarter than the STL counterpart.
+<br>
+Suitable compilers exists for processors with at least 16 Bit (e.g. the C16x
+series). For quick process data management (which are standardized as 32
+Bit values) and more flexible heap memory access, a 32 Bit processor is appropriate.
+But as all research work is performed with the ECU <b>ESX</b> of <a href="http://www.sensor-technik.de">STW</a>
+ which uses the Infineon 16 Bit processor C167, a 32 Bit processor is not obligatory.<br>
+From spring 2002 on all three well known compiler manufacturers (<a href="http://www.tasking.com/products/C166-ST10/home.html">Tasking</a>
+, <a href="http://www.hightec-rt.com/">HighTec</a>
+ and <a href="http://www.keil.com">KEIL</a>
+) provide a suitable C++ compiler for C16x processors. The company <a href="http://www.comeaucomputing.com/">Comeau Computing</a>
+ creates a C++ extension for a C compiler on demand. Quick high quality integration
+of C++ into C compilers is possible with the help of the state of the art
+C++ front-end of <a href="http://www.edg.com">EDG</a>
+ which have a customer reference list of some <a href="http://www.edg.com/customers.html">well known brands</a>
+.<br>
+As soon as a project is compiled by a C++ aware compiler, a project can integrate
+parts written in C and C++ without any problems.<br>
+
+\subsection InfReqProgrammingSkills Programming Skills
+As long as the ISO<i><sub>AgLib</sub></i> should only be used as it is, without
+analysing or optimizing it, the needed additional C++ skills (in relation
+to C) are small. The <b>28</b> current <a href="examples.html">tutorial examples</a> and the three real
+research world examples provide a sufficient introduction in the usage of
+C++ and the ISO<i><sub>AgLib</sub></i>.<br>
+As soon as the internals of the ISO<i><sub>AgLib</sub></i> should be understood, the needed level of C++ skills is increased dependent on the configuration of the ISO<i><sub>AgLib</sub></i>. Companies who are interested in a reliable guarantee that needed bugfixes
+or extensions are realized by external developers (if local developers
+are not familiar with C++ and the ISO<i><sub>AgLib</sub></i>) should contact <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a>
+ to establish commercial support contracts including training, project attendance and ISO<i><sub>AgLib</sub></i> ISO 900x certification.<br>
+<br><b>
+Everybody who wants to get familiar with the ISO<i><sub>AgLib</sub></i> should start with the <a href="examples.html">tutorial examples</a>.</b><br>
+*/
