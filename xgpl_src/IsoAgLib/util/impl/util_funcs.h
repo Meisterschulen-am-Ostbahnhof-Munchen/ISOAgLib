@@ -196,7 +196,7 @@ template<class T> void convertLittleEndianString( const uint8_t* rpui8_src, T& r
   #ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
   std::memcpy( &ref_result, rpui8_src, sizeof(T) );
   #else
-  for ( unsigned int ind = sizeof(T)-1; ind >= 0; ind-- )
+  for ( int ind = sizeof(T)-1; ind >= 0; ind-- )
   {
     ref_result |= (T(rpui8_src[ind]) << (8*ind));
   }
