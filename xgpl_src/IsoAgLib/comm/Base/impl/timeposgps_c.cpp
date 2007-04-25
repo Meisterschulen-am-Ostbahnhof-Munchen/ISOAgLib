@@ -1164,7 +1164,7 @@ void TimePosGPS_c::isoSendDirection( void )
 
     //now trigger sending
     #ifdef SEND_NMEA2000_FAST_PACKET
-    if ( getMultiSendInstance4Comm().sendIsoFastPacket(c_sendGpsISOName, &c_nmea2000Streamer, NMEA_GPS_POSITION_DATA_PGN, t_multiSendSuccessState) )
+    if ( getMultiSendInstance4Comm().sendIsoFastPacketBroadcast(c_sendGpsISOName, &c_nmea2000Streamer, NMEA_GPS_POSITION_DATA_PGN, t_multiSendSuccessState) )
     #else
     if ( getMultiSendInstance4Comm().sendIsoBroadcast(c_sendGpsISOName, &c_nmea2000Streamer, NMEA_GPS_POSITION_DATA_PGN, t_multiSendSuccessState) )
     #endif

@@ -1085,12 +1085,12 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
           buffer.str("");
           bool b_test = checkifnumber(vecstr_attrString [attrWS_identity_number].c_str());
           if (b_test)
-            fprintf(partFileB, "IsoAgLib::iIdentItem_c c_myIdent(0x%x, 0x%x, %d, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, %d,%d,%s);\n\n",
+            fprintf(partFileB, "IsoAgLib::iIdentItem_c c_myIdent(0x%x, 0x%x, %d, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, %d,%d,%s\n #ifdef USE_ISO_TERMINAL \n , 0, NULL\n #endif\n);\n\n",
                   c_isoname.indGroup(), c_isoname.devClass(), c_isoname.devClassInst(), c_isoname.func(),
                   c_isoname.manufCode(), c_isoname.serNo(), atoi(vecstr_attrString[attrWanted_SA].c_str()), stringtonumber(vecstr_attrString[attrStore_SA_at_EEPROM_address].c_str(), 0, -1),
                   c_isoname.funcInst(), c_isoname.ecuInst(),c_isoname.selfConf()? "true" : "false");
           else
-            fprintf(partFileB, "IsoAgLib::iIdentItem_c c_myIdent(0x%x, 0x%x, %d, 0x%x, 0x%x, %s, 0x%x, 0x%x, %d,%d,%s);\n\n",
+            fprintf(partFileB, "IsoAgLib::iIdentItem_c c_myIdent(0x%x, 0x%x, %d, 0x%x, 0x%x, %s, 0x%x, 0x%x, %d,%d,%s\n #ifdef USE_ISO_TERMINAL \n , 0, NULL\n #endif\n);\n\n",
                     c_isoname.indGroup(), c_isoname.devClass(), c_isoname.devClassInst(), c_isoname.func(),
                     c_isoname.manufCode(), vecstr_attrString [attrWS_identity_number].c_str(), atoi(vecstr_attrString[attrWanted_SA].c_str()), stringtonumber(vecstr_attrString[attrStore_SA_at_EEPROM_address].c_str(), 0, -1),
                     c_isoname.funcInst(), c_isoname.ecuInst(),c_isoname.selfConf()? "true" : "false");
