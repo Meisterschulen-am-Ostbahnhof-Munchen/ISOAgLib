@@ -496,9 +496,6 @@ public:
     { return ( (i32_latitudeDegree10Minus7  >= ( -90*10000000)) && (i32_latitudeDegree10Minus7  <= ( 90*10000000))
             && (i32_longitudeDegree10Minus7 >= (-180*10000000)) && (i32_longitudeDegree10Minus7 <= (180*10000000))); }
 
-  bool isPositionStreamToSend() const
-    { return isPositionSimpleToSend() && (ui32_altitudeCm != 0xFFFFFFFF); }
-
 
 #if defined(USE_FLOAT_DATA_TYPE)
   /** deliver Minute GPS Latitude */
@@ -539,6 +536,9 @@ public:
 
 
   #ifdef NMEA_2000_FAST_PACKET
+  bool isPositionStreamToSend() const
+  { return isPositionSimpleToSend() && (ui32_altitudeCm != 0xFFFFFFFF); }
+
   /** get the GPS UTC hour value
     @return actual GPS UTC hour value
    */
