@@ -246,9 +246,9 @@ bool FilterBox_c::configCan(uint8_t rui8_busNumber, uint8_t rui8_FilterBoxNr)
   #endif // when amount of standardized prt instances is same as amount of CAN instances, no special check is needed
 
   #ifdef ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL
-  for ( std::vector<CANCustomer_c*>::const_iterator iter = vec_customer.begin(); iter != vec_customer.end(); iter++ )
+  for ( std::vector<CustomerLen_s>::const_iterator iter = vec_customer.begin(); iter != vec_customer.end(); iter++ )
   {
-    if ( (*iter)->isProprietaryMessageOnStandardizedCan() )
+    if ( (*iter).pc_customer->isProprietaryMessageOnStandardizedCan() )
     { // at least one CANCustomer_c uses a proprietary protocol at a normal ISOBUS CANIO_c instance
       b_performIsobusResolve = false;
     }
