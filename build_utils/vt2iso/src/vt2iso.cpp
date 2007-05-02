@@ -839,7 +839,7 @@ vt2iso_c::getID (const char* objName, bool b_isMacro, bool b_wishingID, unsigned
       // insert new name-id pair now!
       objIDTable [objCount] = foundID;
       strncpy (&objNameTable [objCount*(stringLength+1)], objName, stringLength); // so we have 0-termination in every case, as our strings are 128+1 bytes!
-  //     printf("newly added: objName: %s, objCount: %i\n", objName, objCount);
+      //printf("newly added: objName: %s, objCount: %i\n", objName, objCount);
       objCount++;
     }
   }
@@ -883,7 +883,7 @@ vt2iso_c::idOrName_toi(char* rpc_string, bool rb_isMacro)
     std::cout << "*** ERROR *** idOrName_toi: Empty 'object_id' attribute!\n\n";
     return -1;
   }
-  if (strstr (rpc_string, pcch_poolIdent) != 0) {
+  if (strstr (rpc_string, pcch_poolIdent) != rpc_string) {
     /** @todo check if all chars in the string are numbers, not only the first! */
     if ((rpc_string [0] >= '0') && (rpc_string [0] <= '9')) return atoi (rpc_string);
 
@@ -3579,7 +3579,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           if (!attrIsGiven [attrValue])
             sprintf (attrString [attrValue], "0");
           fprintf (partFile_attributes, ", %s, %s, %d, &iVtObject%s, %d, %s, %sUL, %sUL, %sUL", attrString [attrWidth], attrString [attrHeight],
-                   colortoi (attrString [attrBackground_colour]), getObjNameWithPoolIdent (attrString [attrFont_attributes]), numberoptionstoi (attrString [attrOptions]), attrString [attrVariable_reference],
+                   colortoi (attrString [attrBackground_colour]), getObjNameWithPoolIdent (attrString [attrFont_attributes]), inputobjectoptiontoi (attrString [attrOptions]), attrString [attrVariable_reference],
                    attrString [attrValue], attrString [attrMin_value], attrString [attrMax_value]);
           if ( strchr( attrString [attrOffset], 'L' ) != NULL )
           { // contains already a number type specifier
