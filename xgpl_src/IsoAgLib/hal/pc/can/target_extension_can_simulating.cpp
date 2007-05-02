@@ -131,6 +131,9 @@ int32_t can_lastReceiveTime()
   return i32_lastReceiveTime;
 }
 
+/** there's no send-delay recognition in SIMULATING */
+int32_t getMaxSendDelay(uint8_t rui8_busNr) { return 0; }
+
 int16_t getCanMsgBufCount(uint8_t bBusNumber,uint8_t bMsgObj)
 {
 #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
