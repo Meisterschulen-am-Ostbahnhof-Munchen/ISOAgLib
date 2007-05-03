@@ -128,8 +128,10 @@
 #endif
 
 static const uint8_t scui8_cmdCompareTableMin = 0x92;
-static const uint8_t scui8_cmdCompareTableMax = 0xB9;
+static const uint8_t scui8_cmdCompareTableMax = 0xBD;
 
+/// this table is used to identify if a command can override an earlier command of same function
+/// 1<<databyte to indicate which databytes to compaire to decide if command is replaced or not
 static const uint8_t scpui8_cmdCompareTable[(scui8_cmdCompareTableMax-scui8_cmdCompareTableMin)+1] = {
 /// (1<<0) means DO NOT OVERRIDE THESE COMMANDS AT ALL
 /* 0x92 */ (1<<0) , //NEVER OVERRIDE THIS COMMAND
@@ -171,7 +173,11 @@ static const uint8_t scpui8_cmdCompareTable[(scui8_cmdCompareTableMax-scui8_cmdC
 /* 0xB6 */ 0 , //invalid command
 /* 0xB7 */ 0 , //invalid command
 /* 0xB8 */ (1<<0) ,  //NEVER OVERRIDE THIS COMMAND (Graphics Context)
-/* 0xB9 */ (1<<1) | (1<<2) | (1<<3) | (1<<4) // (Get Attribute Value)
+/* 0xB9 */ (1<<1) | (1<<2) | (1<<3) | (1<<4), // (Get Attribute Value)
+/* 0xBA */ 0, //invalid command
+/* 0xBB */ 0, //invalid command
+/* 0xBC */ 0, //invalid command
+/* 0xBD */ (1<<0) //NEVER OVERRIDE THIS COMMAND (Lock/Unlock Mask)
 };
 
 
@@ -922,7 +928,7 @@ VtClientServerCommunication_c::notifyOnVtStatusMessage()
 {
   // set client display state appropriately
   setVtDisplayState (true, getVtServerInst().getVtState()->saOfActiveWorkingSetMaster);
-  
+
   c_streamer.refc_pool.eventVtStatusMsg();
 }
 
