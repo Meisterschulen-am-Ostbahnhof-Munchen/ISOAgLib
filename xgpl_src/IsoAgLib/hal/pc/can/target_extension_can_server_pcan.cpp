@@ -88,15 +88,20 @@
 
 #include <pthread.h>
 #include <linux/version.h>
-
-//
 #include <linux/types.h>
 
 #include "can_server.h"
 #include "can_msq.h"
 
+#ifdef USE_PCAN_LIB
+#include <libpcan.h>
+#endif
+
 using namespace __HAL;
 
+#ifdef USE_PCAN_LIB
+HANDLE driverHandle;
+#endif
 
 /////////////////////////////////////////////////////////////////////////
 // Globals
@@ -124,8 +129,10 @@ using namespace __HAL;
 
 //****************************************************************************
 // compatibilty defines
-#if defined(DWORD) || defined(WORD) || defined(BYTE)
-#error "double define for DWORD, WORD, BYTE found"
+#ifndef USE_PCAN_LIB
+#  if defined(DWORD) || defined(WORD) || defined(BYTE)
+#    error "double define for DWORD, WORD, BYTE found"
+#  endif
 #endif
 
 #ifdef __KERNEL__
@@ -138,6 +145,7 @@ using namespace __HAL;
 #define BYTE   __u8
 #endif
 
+#ifndef USE_PCAN_LIB
 //****************************************************************************
 // ioctls control codes
 #define PCAN_INIT           _IOWR(CAN_MAGIC_NUMBER, MYSEQ_START,     TPCANInit)
@@ -147,6 +155,7 @@ using namespace __HAL;
 #define PCAN_DIAG           _IOR (CAN_MAGIC_NUMBER, MYSEQ_START + 4, TPDIAG)
 #define PCAN_BTR0BTR1       _IOWR(CAN_MAGIC_NUMBER, MYSEQ_START + 5, TPBTR0BTR1)
 #define PCAN_GET_EXT_STATUS _IOR (CAN_MAGIC_NUMBER, MYSEQ_START + 6, TPEXTENDEDSTATUS)
+#endif
 
 // device nodes minor base. Must be the same as defined in the driver (file pcan_mpc5200.c).
 #ifndef PCAN_MSCAN_MINOR_BASE
@@ -154,6 +163,7 @@ using namespace __HAL;
 #endif
 
 
+#ifndef USE_PCAN_LIB
 //****************************************************************************
 // structures to communicate via ioctls
 typedef struct
@@ -190,8 +200,7 @@ typedef struct
   int   nPendingReads;   // count of unread telegrams
   int   nPendingWrites;  // count of unsent telegrams
 } TPEXTENDEDSTATUS;      // for PCAN_GET_ESTATUS
-
-
+#endif
 
 
 /////////////////////////////////////////////////////////////////////////
@@ -289,37 +298,46 @@ int ca_InitCanCard_1 (uint32_t channel, int wBitrate, server_c* pc_serverData)
 
     DEBUG_PRINT1("open( \"%s\", O_RDRWR)\n", fname);
 
+#ifdef USE_PCAN_LIB
+    //driverHandle = CAN_Open(HW_USB, 0);
+    driverHandle = LINUX_CAN_Open(fname, O_RDWR | O_NONBLOCK);
+    pc_serverData->can_device[channel] = LINUX_CAN_FileHandle(driverHandle);
+    if ( driverHandle == NULL ) std::cerr << "Open CAN Fault" << std::endl;
+#else
     pc_serverData->can_device[channel] = open(fname, O_RDWR | O_NONBLOCK);
-
     if (pc_serverData->can_device[channel] == -1) {
       DEBUG_PRINT1("Could not open CAN bus %d\n",channel);
       return 0;
     }
-
+#endif
 #ifndef SIMULATE_BUS_MODE
     ///////////////
     // pcan modification
     ///////////////
+#ifdef USE_PCAN_LIB
+    WORD useBtr = LINUX_CAN_BTR0BTR1(driverHandle, wBitrate*1000);
+    if (CAN_Init(driverHandle, useBtr, 2) < 0) { std::cerr << "Init Problem" << std::endl;return 0;}
+#else
+    TPBTR0BTR1 ratix;
+    TPCANInit init;
 
-      TPBTR0BTR1 ratix;
-      TPCANInit init;
-      
-      // init wBitrate
-      DEBUG_PRINT1("Init Bitrate with PCAN_BTR0BTR1 wBitrate =%d\n",wBitrate*1000);
-      ratix.dwBitRate = wBitrate * 1000;
-      ratix.wBTR0BTR1 = 0;
-      if ((ioctl(pc_serverData->can_device[channel], PCAN_BTR0BTR1, &ratix)) < 0)
-        return 0;
+    // init wBitrate
+    DEBUG_PRINT1("Init Bitrate with PCAN_BTR0BTR1 wBitrate =%d\n",wBitrate*1000);
+    ratix.dwBitRate = wBitrate * 1000;
+    ratix.wBTR0BTR1 = 0;
+    if ((ioctl(pc_serverData->can_device[channel], PCAN_BTR0BTR1, &ratix)) < 0)
+      return 0;
 
-      // init CanMsgType (if extended Can Msg of not)
-      DEBUG_PRINT1("Init CAN Driver with PCAN_INIT wBitrate =%x\n",ratix.wBTR0BTR1);
-      //default value = extended
-      init.wBTR0BTR1    = ratix.wBTR0BTR1;
-      init.ucCANMsgType = MSGTYPE_EXTENDED;  // 11 or 29 bits
-      init.ucListenOnly = 0;            // listen only mode when != 0
-      if ((ioctl(pc_serverData->can_device[channel], PCAN_INIT, &init)) < 0)
-        return 0;
-      
+
+    // init CanMsgType (if extended Can Msg of not)
+    DEBUG_PRINT1("Init CAN Driver with PCAN_INIT wBitrate =%x\n",ratix.wBTR0BTR1);
+    //default value = extended
+    init.wBTR0BTR1    = ratix.wBTR0BTR1;
+    init.ucCANMsgType = MSGTYPE_EXTENDED;  // 11 or 29 bits
+    init.ucListenOnly = 0;            // listen only mode when != 0
+    if ((ioctl(pc_serverData->can_device[channel], PCAN_INIT, &init)) < 0)
+      return 0;
+#endif
     ////////////////
 #endif
 
@@ -340,8 +358,11 @@ void __HAL::updatePendingMsgs(server_c* pc_serverData, int8_t i8_bus)
     {
       if (pc_serverData->i_pendingMsgs[ui8_bus] >= 5)
       { // we only need to update those who could change from >= 5 to < 5...
-        if ((ioctl(pc_serverData->can_device[ui8_bus], PCAN_GET_EXT_STATUS, &extstat)) < 0)
-          continue;
+#if 0 //def USE_PCAN_LIB
+        if (LINUX_CAN_Extended_Status(driverHandle, &(extstat.nPendingReads), &(extstat.nPendingWrites))) continue;
+#else
+        if ((ioctl(pc_serverData->can_device[ui8_bus], PCAN_GET_EXT_STATUS, &extstat)) < 0) continue;
+#endif
         pc_serverData->i_pendingMsgs[ui8_bus] = extstat.nPendingWrites;
         DEBUG_PRINT1 ("peak-can's number of pending msgs is %d\n", pc_serverData->i_pendingMsgs[ui8_bus]);
       }
@@ -349,8 +370,11 @@ void __HAL::updatePendingMsgs(server_c* pc_serverData, int8_t i8_bus)
   }
   else
   { // update just the given bus!
-    if ((ioctl(pc_serverData->can_device[i8_bus], PCAN_GET_EXT_STATUS, &extstat)) < 0)
-      return;
+#if 0 //def USE_PCAN_LIB
+    if (LINUX_CAN_Extended_Status(driverHandle, &(extstat.nPendingReads), &(extstat.nPendingWrites))) return;
+#else
+    if ((ioctl(pc_serverData->can_device[i8_bus], PCAN_GET_EXT_STATUS, &extstat)) < 0) return;
+#endif
     pc_serverData->i_pendingMsgs[i8_bus] = extstat.nPendingWrites;
     DEBUG_PRINT1 ("peak-can's number of pending msgs is %d\n", pc_serverData->i_pendingMsgs[i8_bus]);
   }
@@ -431,7 +455,12 @@ int ca_TransmitCanCard_1(tSend* ptSend, uint8_t ui8_bus, server_c* pc_serverData
   int ret = 0;
 
   if ((ui8_bus < HAL_CAN_MAX_BUS_NR) && canBusIsOpen[ui8_bus]) {
+#if 0 //def USE_PCAN_LIB
+    ret = CAN_Write(driverHandle, &msg);
+#else
     ret = ioctl(pc_serverData->can_device[ui8_bus], PCAN_WRITE_MSG, &msg);
+#endif
+
 
 #ifdef DEBUG_IOCTL
     if (ret < 0) {
@@ -494,7 +523,11 @@ int ca_ReceiveCanCard_1(can_recv_data* receiveData, uint8_t ui8_bus, server_c* p
 {
 
   TPCANRdMsg msg;
-  int ret = ioctl(pc_serverData->can_device[ui8_bus], PCAN_READ_MSG, &msg);
+#if 0 // def USE_PCAN_LIB
+   int ret = ioctl(pc_serverData->can_device[ui8_bus], PCAN_READ_MSG, &msg);
+#else
+   int ret = LINUX_CAN_Read(driverHandle, &msg);
+#endif
 
   if (ret < 0) {
     return ret;

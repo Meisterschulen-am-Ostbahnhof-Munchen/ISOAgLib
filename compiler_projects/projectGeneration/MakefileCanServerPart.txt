@@ -12,4 +12,4 @@ $(OBJ_DIR_SERVER)/%.o : $(filter %/$(patsubst $(OBJ_DIR_SERVER)/%.d,%,$@).cpp,$(
 include $(DEPS_SERVER)
 
 can_server: $(OBJECTS_SERVER)
-	$(LINK) $(LFLAGS) -o can_server $(OBJECTS_SERVER) $(LIBS)
+	$(LINK) $(LFLAGS) -o can_server $(OBJECTS_SERVER) $(LIBS) $(LIBS_CAN_SERVER)

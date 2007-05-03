@@ -161,7 +161,12 @@ check_set_correct_variables()
   	USE_LITTLE_ENDIAN_CPU=1
   fi
 
-# set default USE_BIG_ENDIAN_CPU, so that quick number variable to CAN string conversions are possible
+  # set default USE_PCAN_LIB, so that quick number variable to CAN string conversions are possible
+  if [ "A$USE_PCAN_LIB" = "A" ] ; then
+  	USE_PCAN_LIB=0
+  fi
+
+  # set default USE_BIG_ENDIAN_CPU, so that quick number variable to CAN string conversions are possible
   if [ "A$USE_BIG_ENDIAN_CPU" = "A" ] ; then
   	USE_BIG_ENDIAN_CPU=0
   fi
@@ -999,6 +1004,12 @@ create_autogen_project_config()
 		echo -e "// #define OPTIMIZE_NUMBER_CONVERSIONS_FOR_BIG_ENDIAN$ENDLINE" >> $CONFIG_NAME
 	fi
 
+	if [ $USE_PCAN_LIB -gt 0 ] ; then
+		echo -e "#define USE_PCAN_LIB$ENDLINE" >> $CONFIG_NAME
+	else
+		echo -e "// #define USE_PCAN_LIB$ENDLINE" >> $CONFIG_NAME
+	fi
+
 	if [ $PRJ_DO_NOT_START_RELAIS_ON_STARTUP -gt 0 ] ; then
 		echo -e "#define CONFIG_DO_NOT_START_RELAIS_ON_STARTUP$ENDLINE" >> $CONFIG_NAME
 	else
@@ -1375,6 +1386,10 @@ rm -f FileListInterfaceStart.txt FileListInterface.txt FileListInterface4Eval.tx
 		echo -e "\n#Special Rules for CAN Server" >> $MakefileNameLong
 
 		cat $DEV_PRJ_DIR/../$ISO_AG_LIB_PATH/compiler_projects/projectGeneration/MakefileCanServerPart.txt >> $MakefileNameLong
+		if [ $USE_PCAN_LIB -gt 0 ] ; then
+			echo -e "LIBS_CAN_SERVER	= -lpcan" >> $MakefileNameLong;
+		fi
+
 	fi
 
 	cat $MAKEFILE_SKELETON_FILE >> $MakefileNameLong

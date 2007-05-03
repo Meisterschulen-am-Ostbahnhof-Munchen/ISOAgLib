@@ -761,6 +761,15 @@ static void can_read(server_c* pc_serverData)
         pc_serverData->arrb_remoteDestinationAddressInUse[ui32_id & 0xFF] = true;
       }
 
+      if (pc_serverData->b_logMode)
+      { /** @todo shouldn't we only dump the message to the FILE if NO ERROR? Or at elast flag it like this in the can-log!! ? */
+        tSend tempSend;
+        tempSend.dwId = ui32_id;
+        tempSend.bXtd = b_xtd;
+        tempSend.bDlc = DLC;
+        memcpy (tempSend.abData, &receiveData.msg.pb_data, 8);
+        dumpCanMsg (b_bus, 0/* we don't have no msgobj when receiving .. msqWriteBuf.ui8_obj*/, &tempSend, pc_serverData->f_canOutput[b_bus]);
+      }
       enqueue_msg(DLC, ui32_id, b_bus, b_xtd, &receiveData.msg.pb_data[0], 0, pc_serverData);
     }
 
