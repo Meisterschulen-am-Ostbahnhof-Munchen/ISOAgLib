@@ -4308,7 +4308,7 @@ vt2iso_c::prepareFileNameAndDirectory(std::basic_string<char>* pch_fileName)
   std::basic_string<char> c_unwantedType6 = ".csv";
 
   // strip the ".xml" away!
-  if ((pch_fileName->length()-4) > 4)
+  if ((pch_fileName->length()-4) > 0)
   { // see if the user gave ".xml" !
     if ( (pch_fileName->substr( pch_fileName->length()-4 ) == c_expectedType)
           ||(pch_fileName->substr( pch_fileName->length()-4 ) == c_expectedType) )
