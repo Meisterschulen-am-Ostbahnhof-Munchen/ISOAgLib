@@ -523,10 +523,10 @@ int ca_ReceiveCanCard_1(can_recv_data* receiveData, uint8_t ui8_bus, server_c* p
 {
 
   TPCANRdMsg msg;
-#if 0 // def USE_PCAN_LIB
-   int ret = ioctl(pc_serverData->can_device[ui8_bus], PCAN_READ_MSG, &msg);
+#ifdef USE_PCAN_LIB
+  int ret = LINUX_CAN_Read(driverHandle, &msg);
 #else
-   int ret = LINUX_CAN_Read(driverHandle, &msg);
+  int ret = ioctl(pc_serverData->can_device[ui8_bus], PCAN_READ_MSG, &msg);
 #endif
 
   if (ret < 0) {
