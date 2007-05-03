@@ -212,6 +212,18 @@ public:
   */
   const iISOName_c& isoName() const {return IdentItem_c::isoName().toConstIisoName_c(); }
 
+  /**
+    retrieve a POINTER to the ISOName of this ident item
+    you can ONLY modify this item if an address is not yet claimed!
+    i.e. in this case you'd get a NULL-pointer
+    ATTENTION: So ALWAYS check for a NULL pointer return value before accessing!!
+    @return NULL if this ident item has already claimed an address on the ISOBUS
+            or
+            a POINTER to the ISOName of this ident item!
+   */
+  iISOName_c* modifyableIsoNameBeforeAddressClaimed() { if (!isClaimedAddress()) return &modifyableIsoName().toIisoName_c();
+                                                        else return NULL; }
+
 private:
   friend class iISOTerminal_c;
   friend class iVtClientServerCommunication_c;

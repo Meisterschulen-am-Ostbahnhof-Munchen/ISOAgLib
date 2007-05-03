@@ -214,8 +214,13 @@ public: // methods
   ISOItem_c* getIsoItem( void ) const { return pc_isoItem; }
 
   /** deliver const reference to contained ISOName_c of this IdentItem_c */
-  const ISOName_c& isoName() const { return c_isoName;}
+  const ISOName_c& isoName() const { return c_isoName; }
 
+  /** deliver reference to contained ISOName_c of this IdentItem_c
+    * ATTENTION: Use wisely!
+    *            Only modify an IdentItem's ISOName if an address is NOT yet claimed!!!!!
+    */
+  ISOName_c& modifyableIsoName() { return c_isoName; }
 
   /** reset the Addres Claim state by:
     * + reset IdentItem::IStat_c to IState_c::PreAddressClaim
