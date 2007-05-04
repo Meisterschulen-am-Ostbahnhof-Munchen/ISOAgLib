@@ -2575,6 +2575,8 @@ VtClientServerCommunication_c::vtOutOfMemory()
 void
 VtClientServerCommunication_c::setVtDisplayState (bool b_isVtStatusMsg, uint8_t ui8_saOrDisplayState)
 {
+  if (en_objectPoolState != OPUploadedSuccessfully) return;
+
   vtClientDisplayState_t newDisplayState;
   if (b_isVtStatusMsg) // state change triggered from VT Status Msg
   {
