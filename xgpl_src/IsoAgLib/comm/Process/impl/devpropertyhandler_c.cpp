@@ -199,7 +199,13 @@ const DevicePool_c& DevicePool_c::operator=(const DevicePool_c& c_devicePool)
 //===================================================================
 
 
-DevPropertyHandler_c::DevPropertyHandler_c() : ui16_currentSendPosition(0), ui16_storedSendPosition(0)
+DevPropertyHandler_c::DevPropertyHandler_c()
+   : ui16_currentSendPosition(0), ui16_storedSendPosition(0), i32_tcStateLastReceived(0), ui8_lastTcState(0), i32_timeStartWaitAfterAddrClaim(0), b_initDone(0), i32_timeWsTaskMsgSent(0),
+     b_setToDefault(false), tcAliveNew(false), b_receivedStructureLabel(false), b_receivedLocalizationLabel(false),
+     pc_data(NULL), tcSourceAddress(0), ui8_versionLabel(0), pc_devDefaultDeviceDescription(NULL), pc_devPoolForUpload(NULL),
+     pc_wsMasterIdentItem(NULL), en_poolState(OPNotRegistered), en_uploadState(StateIdle), en_uploadStep(UploadStart),
+     en_uploadCommand(UploadCommandWaitingForCommandResponse), ui32_uploadTimestamp(0), ui32_uploadTimeout(0), ui8_uploadRetry(0),
+     ui8_commandParameter(0), en_sendSuccess(__IsoAgLib::MultiSend_c::SendSuccess)
 {}
 
 
@@ -822,6 +828,9 @@ DevPropertyHandler_c::isTcAlive (int32_t i32_currentTime)
 void
 DevPropertyHandler_c::sendWorkingSetTaskMsg(int32_t i32_currentTime)
 {
+  if (pc_wsMasterIdentItem == 0 || !pc_wsMasterIdentItem->isClaimedAddress())
+    return;
+
   if (i32_currentTime - i32_timeWsTaskMsgSent >= 2000)
   {
     i32_timeWsTaskMsgSent = i32_currentTime;
@@ -840,6 +849,9 @@ DevPropertyHandler_c::sendWorkingSetTaskMsg(int32_t i32_currentTime)
 void
 DevPropertyHandler_c::checkInitState()
 {
+  if (pc_wsMasterIdentItem == 0)
+    return;
+
   if ( (NULL != pc_wsMasterIdentItem) && pc_wsMasterIdentItem->isClaimedAddress()
        && (-1 == i32_timeStartWaitAfterAddrClaim))
   {
