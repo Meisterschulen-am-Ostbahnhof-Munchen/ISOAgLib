@@ -77,7 +77,7 @@ FILE *partFileB;
 
 char xmlFileGlobal [1024+1];
 
-std::basic_string<char> c_project;
+std::string str_project;
 
 char objNameTable [(stringLength+1)*1000];
 unsigned int objIDTable [1000];
@@ -344,14 +344,20 @@ void init (const char* xmlFile)
   objNextAutoID = 65534;
   kcNextAutoID = 254; // for safety, 255 should also be okay though...
   objNextUnnamedName = 1;
-
+  
   strncpy (partFileName, xmlFile, 1024);
   strcat (partFileName, "-bytestream.inc");
   char FileName[200];
 #if defined(WIN32)
   char *tempFileName = strrchr(partFileName, '\\');
+  // delete leading backslash
+  if (strchr (tempFileName, '\\') == tempFileName)
+    tempFileName = tempFileName+1;
 #else
   char *tempFileName = strrchr(partFileName, '/');
+  // delete leading backslash
+  if (strchr (tempFileName, '/') == tempFileName)
+    tempFileName = tempFileName+1;
 #endif
 
   strcpy(FileName, tempFileName ? tempFileName : partFileName);
@@ -1598,12 +1604,13 @@ int main(int argC, char* argV[])
   std::basic_string<char> c_directory = c_fileName.substr(0, lastDirPos+1);
   if (c_directory == "") c_directory = "./";
   #endif
-  /* globally defined */  c_project = c_fileName.substr(lastDirPos+1);
+  /* globally defined */
+  str_project = c_fileName.substr(lastDirPos+1);
   std::basic_string<char> c_unwantedType = ".inc";
   std::basic_string<char> c_unwantedType2 = ".h";
   std::basic_string<char> c_directoryCompareItem;
-  std::cerr << "--> Directory: " << c_directory << std::endl << "--> File:      " << c_project << std::endl;
-  strncpy (proName, c_project.c_str(), 1024); proName [1024+1-1] = 0x00;
+  std::cerr << "--> Directory: " << c_directory << std::endl << "--> File:      " << str_project.c_str() << std::endl;
+  strncpy (proName, str_project.c_str(), 1024); proName [1024+1-1] = 0x00;
   for (unsigned int i=0; i<strlen(proName); i++) if (proName[i] == '.') { proName[i] = 0x00; break; }
 
   #ifdef WIN32
@@ -1678,7 +1685,7 @@ int main(int argC, char* argV[])
       if ((c_directoryCompareItem.length() > 4) && (c_directoryCompareItem.substr(c_directoryCompareItem.length()-4) == c_unwantedType )) continue;
       if ((c_directoryCompareItem.length() > 2) && (c_directoryCompareItem.substr(c_directoryCompareItem.length()-2) == c_unwantedType2)) continue;
 
-      if (c_directoryCompareItem.find(c_project) != std::string::npos)
+      if (c_directoryCompareItem.find(str_project) != std::string::npos)
       {
         c_directoryCompareItem.insert(0, "/");
         c_directoryCompareItem.insert(0, c_directory);
