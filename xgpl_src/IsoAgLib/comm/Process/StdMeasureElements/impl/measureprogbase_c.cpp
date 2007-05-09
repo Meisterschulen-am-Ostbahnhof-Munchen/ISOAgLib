@@ -274,7 +274,7 @@ MeasureProgBase_c::~MeasureProgBase_c(){
   // if start follows immedeately addSubprog timeEvent is not called yet => do it here
   // remote: virtual ProcDataRemote::commanderISOName() can give a value different to ISOName_c::ISONameUnspecified
   // local: virtual ProcDataLocal::commanderISOName() gives ISOName_c::ISONameUnspecified
-  if (pprocessDataConst()->commanderISOName() != ISOName_c::ISONameUnspecified)
+  if (pprocessDataConst()->commanderISOName().isSpecified())
     setISOName(pprocessDataConst()->commanderISOName());
 
   return true;

@@ -505,7 +505,7 @@ MultiSend_c::sendIntern (const ISOName_c& rrefc_isoNameSender, const ISOName_c& 
     // Force destination to be "ISONameUnspecified"
     /// - check if there's already a SA/DA pair active (in this case NULL is returned!)
     /// - if not NULL is returned, it points to the newly generated stream.
-    pc_newSendStream = addSendStream (rrefc_isoNameSender, ISOName_c::ISONameUnspecified);
+    pc_newSendStream = addSendStream (rrefc_isoNameSender, ISOName_c::ISONameUnspecified());
   }
   else
   { // destination specific - so the receiver must be registered!

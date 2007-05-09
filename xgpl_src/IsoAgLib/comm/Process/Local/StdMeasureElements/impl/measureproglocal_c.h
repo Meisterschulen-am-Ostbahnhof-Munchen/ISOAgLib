@@ -137,7 +137,7 @@ public:
     Proc_c::progType_t ren_progType = Proc_c::UndefinedProg,
     int32_t ri32_masterVal = 0,
     int32_t ri32_initialVal = 0,
-    const ISOName_c& rc_callerISOName = ISOName_c::ISONameUnspecified );
+    const ISOName_c& rc_callerISOName = ISOName_c::ISONameUnspecified() );
   /**
     initialise this MeasureProgLocal_c instance to a well defined initial state
     @param rpc_processData optional pointer to containing ProcDataLocal_c instance (def NULL)
@@ -151,7 +151,7 @@ public:
     Proc_c::progType_t ren_progType = Proc_c::UndefinedProg,
     int32_t ri32_masterVal = 0,
     int32_t ri32_initialVal = 0,
-    const ISOName_c& rc_callerISOName = ISOName_c::ISONameUnspecified );
+    const ISOName_c& rc_callerISOName = ISOName_c::ISONameUnspecified() );
 #ifdef USE_FLOAT_DATA_TYPE
   /**
     constructor which can optionally set most element vars of MeasureProgLocal
@@ -166,7 +166,7 @@ public:
     Proc_c::progType_t ren_progType,
     float rf_masterVal,
     float rf_eepromVal = 0.0F,
-    const ISOName_c& rc_callerISOName = ISOName_c::ISONameUnspecified)
+    const ISOName_c& rc_callerISOName = ISOName_c::ISONameUnspecified() )
     : MeasureProgBase_c(rpc_processData, ren_progType, 0, rc_callerISOName )
     {init(rpc_processData, ren_progType, rf_masterVal, rf_eepromVal, rc_callerISOName  );};
   /**
@@ -182,7 +182,7 @@ public:
     Proc_c::progType_t ren_progType,
     float rf_masterVal,
     float rf_eepromVal = 0.0F,
-    const ISOName_c& rc_callerISOName = ISOName_c::ISONameUnspecified );
+    const ISOName_c& rc_callerISOName = ISOName_c::ISONameUnspecified() );
 #endif
   /**
     assignment of MeasureProgLocal_c objects

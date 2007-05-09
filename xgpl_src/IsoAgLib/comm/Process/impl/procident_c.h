@@ -127,8 +127,8 @@ public:
   ProcIdent_c(
               const IsoAgLib::ElementDDI_s* ps_elementDDI = NULL,
               uint16_t ui16_element = 0xFFFF,
-              const ISOName_c& rc_isoName = ISOName_c::ISONameInitialProcessData,
-              const ISOName_c& rc_ownerISOName = ISOName_c::ISONameUnspecified,
+              const ISOName_c& rc_isoName = ISOName_c::ISONameInitialProcessData(),
+              const ISOName_c& rc_ownerISOName = ISOName_c::ISONameUnspecified(),
               const ISOName_c *rpc_ownerISOName = NULL,
               int ri_singletonVecKey = 0);
 
@@ -155,7 +155,7 @@ public:
             const IsoAgLib::ElementDDI_s* ps_elementDDI,
             uint16_t ui16_element,
             const ISOName_c& rc_isoName,
-            const ISOName_c& rc_ownerISOName = ISOName_c::ISONameUnspecified,
+            const ISOName_c& rc_ownerISOName = ISOName_c::ISONameUnspecified(),
             const ISOName_c *rpc_ownerISOName = NULL);
 
   /**

@@ -256,7 +256,7 @@ void IdentItem_c::init (ISOName_c* rpc_isoNameParam, uint8_t rui8_preferredSa, u
   {
     if (rpc_isoNameParam == NULL)
     { /// NO Parameter-IsoName is given AND NO EEPROM address given, so initialize this IdentItem empty to be initialized later with "init"
-      c_isoName = ISOName_c::ISONameUnspecified;
+      c_isoName.setUnspecified();
       b_setActive = false; // only case where we don't start the address-claim procedure!
     }
     else

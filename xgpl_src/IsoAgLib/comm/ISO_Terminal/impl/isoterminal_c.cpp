@@ -502,7 +502,7 @@ ISOTerminal_c::fakeVtProperties (uint16_t rui16_dimension, uint16_t rui16_skWidt
 {
   const ISOItem_c c_dummyIsoItem;
   // casting NULL to a reference is okay here, as the reference isn't used for any FAKE_VT case (iop_generator, etc.)
-  l_vtServerInst.push_back (VtServerInstance_c (c_dummyIsoItem, ISOName_c::ISONameUnspecified, (*this)));
+  l_vtServerInst.push_back (VtServerInstance_c (c_dummyIsoItem, ISOName_c::ISONameUnspecified(), (*this)));
   VtServerInstance_c& ref_vtServerInst = l_vtServerInst.back();
   ref_vtServerInst.fakeVtProperties (rui16_dimension, rui16_skWidth, rui16_skHeight, rui16_colorDepth, rui16_fontSizes);
 

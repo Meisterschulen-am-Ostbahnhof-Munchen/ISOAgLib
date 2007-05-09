@@ -218,12 +218,9 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     */
   bool TracPTO_c::processMsg()
   {
-
-    ISOName_c c_tempISOName( ISOName_c::ISONameUnspecified );
-
     // there is no need to check if sender exist in the monitor list because this is already done
     // in CANPkgExt_c -> resolveSendingInformation
-    c_tempISOName = data().getISONameForSA();
+    ISOName_c c_tempISOName( data().getISONameForSA() );
 
     if (((data().isoPgn() /*& 0x3FFFF*/) == FRONT_PTO_STATE_PGN) || ((data().isoPgn() /*& 0x3FFFF*/) == REAR_PTO_STATE_PGN))
     {

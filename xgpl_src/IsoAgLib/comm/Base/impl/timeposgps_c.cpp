@@ -445,13 +445,13 @@ namespace __IsoAgLib {
       // register Broadcast-TP/FP receive of NMEA 2000 data
       // make sure that the needed multi receive are registered
       #ifndef NMEA_2000_FAST_PACKET
-      getMultiReceiveInstance4Comm().registerClient(*this, __IsoAgLib::ISOName_c::ISONameUnspecified, NMEA_GPS_POSITION_DATA_PGN,  0x3FFFF00, true, false);
-      getMultiReceiveInstance4Comm().registerClient(*this, __IsoAgLib::ISOName_c::ISONameUnspecified, NMEA_GPS_DIRECTION_DATA_PGN, 0x3FFFF00, true, false);
+      getMultiReceiveInstance4Comm().registerClient(*this, __IsoAgLib::ISOName_c::ISONameUnspecified(), NMEA_GPS_POSITION_DATA_PGN,  0x3FFFF00, true, false);
+      getMultiReceiveInstance4Comm().registerClient(*this, __IsoAgLib::ISOName_c::ISONameUnspecified(), NMEA_GPS_DIRECTION_DATA_PGN, 0x3FFFF00, true, false);
       #else
-      getMultiReceiveInstance4Comm().registerClient(*this, __IsoAgLib::ISOName_c::ISONameUnspecified, NMEA_GPS_POSITION_DATA_PGN,  0x3FFFF00, true, false, false);
-      getMultiReceiveInstance4Comm().registerClient(*this, __IsoAgLib::ISOName_c::ISONameUnspecified, NMEA_GPS_DIRECTION_DATA_PGN, 0x3FFFF00, true, false, false);
-      getMultiReceiveInstance4Comm().registerClient(*this, __IsoAgLib::ISOName_c::ISONameUnspecified, NMEA_GPS_POSITION_DATA_PGN,  0x3FFFF00, true, false, true);
-      getMultiReceiveInstance4Comm().registerClient(*this, __IsoAgLib::ISOName_c::ISONameUnspecified, NMEA_GPS_DIRECTION_DATA_PGN, 0x3FFFF00, true, false, true);
+      getMultiReceiveInstance4Comm().registerClient(*this, __IsoAgLib::ISOName_c::ISONameUnspecified(), NMEA_GPS_POSITION_DATA_PGN,  0x3FFFF00, true, false, false);
+      getMultiReceiveInstance4Comm().registerClient(*this, __IsoAgLib::ISOName_c::ISONameUnspecified(), NMEA_GPS_DIRECTION_DATA_PGN, 0x3FFFF00, true, false, false);
+      getMultiReceiveInstance4Comm().registerClient(*this, __IsoAgLib::ISOName_c::ISONameUnspecified(), NMEA_GPS_POSITION_DATA_PGN,  0x3FFFF00, true, false, true);
+      getMultiReceiveInstance4Comm().registerClient(*this, __IsoAgLib::ISOName_c::ISONameUnspecified(), NMEA_GPS_DIRECTION_DATA_PGN, 0x3FFFF00, true, false, true);
       c_nmea2000Streamer.vec_data.reserve(51); // GNSS Position Data with TWO reference stations
       #endif // END of NMEA_2000_FAST_PACKET
     }
@@ -505,12 +505,11 @@ namespace __IsoAgLib {
     */
   bool TimePosGPS_c::processMsg()
   {
-    ISOName_c c_tempISOName( ISOName_c::ISONameUnspecified );
-    const int32_t ci32_now = data().time();
-
     // there is no need to check if sender exist in the monitor list because this is already done
     // in CANPkgExt_c -> resolveSendingInformation
-    c_tempISOName = data().getISONameForSA();
+    ISOName_c c_tempISOName( data().getISONameForSA() );
+
+    const int32_t ci32_now = data().time();
 
     switch (data().isoPgn() /*& 0x3FFFF*/) // don't need to &, we're interested in the whole PGN.
     {
@@ -803,12 +802,7 @@ namespace __IsoAgLib {
   bool TimePosGPS_c::reactOnLastChunk (const IsoAgLib::ReceiveStreamIdentifier_c& rc_ident,
                                        IsoAgLib::iStream_c& refc_stream)
   { // see if it's a pool upload, string upload or whatsoever! (First byte is already read by MultiReceive!)
-    const uint8_t cui8_sa = refc_stream.getIdent().getSa();
-    ISOName_c c_tempISOName( ISOName_c::ISONameUnspecified );
-    if (getIsoMonitorInstance4Comm().existIsoMemberNr(cui8_sa))
-    { // the corresponding sender entry exist in the monitor list
-      c_tempISOName = getIsoMonitorInstance4Comm().isoMemberNr(cui8_sa).isoName();
-    }
+    ISOName_c c_tempISOName( refc_stream.getIdent().getSaIsoName() );
 
     // check if we want to process the information
     if (

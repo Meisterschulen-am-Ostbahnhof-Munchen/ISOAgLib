@@ -70,6 +70,7 @@
 namespace __IsoAgLib
 { // forward declarations
   class ProprietaryMessageHandler_c;
+  class TimePosGPS_c;
 }
 
 // Begin Namespace IsoAgLib
@@ -90,12 +91,12 @@ public:
   /** constant for default parameters and initialization, where the device type is not yet spcified.
       the instantiation of this constant variable is located in the module cancustomer_c.cpp
     */
-  static const iISOName_c iISONameUnspecified;
+  static const iISOName_c& iISONameUnspecified() { return ISONameUnspecified().toConstIisoName_c(); }
 
   /** constant for not yet spcified process data ident -> <device class, device class instance> := <0x0,0xF>
       the instantiation of this constant variable is located in the module cancustomer_c.cpp
     */
-  static const iISOName_c iISONameInitialProcessData;
+  static const iISOName_c& iISONameInitialProcessData() { return ISONameInitialProcessData().toConstIisoName_c(); }
 
   /** default constructor
     using "explicit" to avoid WRONG implicit cast from SA to ISONAME!
@@ -316,6 +317,7 @@ private:
   friend class iISOFilter_s;
   friend class vtDocumentLayoutManager_c;
   friend class __IsoAgLib::ProprietaryMessageHandler_c;
+  friend class __IsoAgLib::TimePosGPS_c;
 };
 
 }

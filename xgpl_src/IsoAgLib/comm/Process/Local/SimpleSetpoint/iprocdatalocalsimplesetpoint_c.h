@@ -148,8 +148,8 @@ public:
     @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
   iProcDataLocalSimpleSetpoint_c(const IsoAgLib::ElementDDI_s* ps_elementDDI = NULL, uint16_t rui16_element = 0xFFFF,
-                                 const iISOName_c& rc_isoName = iISOName_c::iISONameInitialProcessData,
-                                 const iISOName_c& rc_ownerISOName = iISOName_c::iISONameUnspecified,
+                                 const iISOName_c& rc_isoName = iISOName_c::iISONameInitialProcessData(),
+                                 const iISOName_c& rc_ownerISOName = iISOName_c::iISONameUnspecified(),
                                  const iISOName_c *rpc_isoName = NULL,
                                  bool rb_cumulativeValue = false,
 #ifdef USE_EEPROM_IO
@@ -199,8 +199,8 @@ public:
     @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
   void init(const IsoAgLib::ElementDDI_s* ps_elementDDI, uint16_t rui16_element,
-            const iISOName_c& rc_isoName = iISOName_c::iISONameInitialProcessData,
-            const iISOName_c& rc_ownerISOName = iISOName_c::iISONameUnspecified,
+            const iISOName_c& rc_isoName = iISOName_c::iISONameInitialProcessData(),
+            const iISOName_c& rc_ownerISOName = iISOName_c::iISONameUnspecified(),
             const iISOName_c *rpc_isoName = NULL,
             bool rb_cumulativeValue = false,
 #ifdef USE_EEPROM_IO

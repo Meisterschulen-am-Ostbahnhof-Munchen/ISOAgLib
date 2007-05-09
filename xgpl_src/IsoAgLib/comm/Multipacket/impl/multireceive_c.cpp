@@ -622,7 +622,7 @@ MultiReceive_c::processMsg()
         { // First Frame => okay, create new Stream!
           /** @todo check for range of 0..223 */
           /** @todo determine when to set the PS field of the pgn to "rui8_cachedClientAddress" */
-          IsoAgLib::ReceiveStreamIdentifier_c c_fpRSI (data().isoPgn(), 0xFF /* Ps is destin adr in the (E)TP-PGNs*/, IsoAgLib::iISOName_c::iISONameUnspecified,
+          IsoAgLib::ReceiveStreamIdentifier_c c_fpRSI (data().isoPgn(), 0xFF /* Ps is destin adr in the (E)TP-PGNs*/, IsoAgLib::iISOName_c::iISONameUnspecified(),
                                                                         data().isoSa(),                               data().getISONameForSA().toConstIisoName_c());
           pc_streamFound = createStream (StreamFastPacket, c_fpRSI, data().getUint8Data (1));
         }

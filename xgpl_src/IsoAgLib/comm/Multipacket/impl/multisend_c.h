@@ -368,9 +368,9 @@ public: // methods
     @return true -> MultiSend_c was ready
   */
   bool sendIsoBroadcast (const ISOName_c& rrefc_isoNameSender, const HUGE_MEM uint8_t* rhpb_data, uint16_t rui16_dataSize, int32_t ri32_pgn, sendSuccess_t& rrefen_sendSuccessNotify)
-    { return sendIntern (rrefc_isoNameSender, ISOName_c::ISONameUnspecified, rhpb_data, rui16_dataSize, rrefen_sendSuccessNotify, ri32_pgn, NULL /* NOT "yet" supported */, IsoTPbroadcast); }
+    { return sendIntern (rrefc_isoNameSender, ISOName_c::ISONameUnspecified(), rhpb_data, rui16_dataSize, rrefen_sendSuccessNotify, ri32_pgn, NULL /* NOT "yet" supported */, IsoTPbroadcast); }
   bool sendIsoBroadcast(const ISOName_c& rrefc_isoNameSender, IsoAgLib::iMultiSendStreamer_c* rpc_mss, int32_t ri32_pgn, sendSuccess_t& rrefen_sendSuccessNotify)
-    { return sendIntern(rrefc_isoNameSender, ISOName_c::ISONameUnspecified, NULL, rpc_mss->getStreamSize(), rrefen_sendSuccessNotify, ri32_pgn, rpc_mss, IsoTPbroadcast);}
+    { return sendIntern(rrefc_isoNameSender, ISOName_c::ISONameUnspecified(), NULL, rpc_mss->getStreamSize(), rrefen_sendSuccessNotify, ri32_pgn, rpc_mss, IsoTPbroadcast);}
 
   #if defined(NMEA_2000_FAST_PACKET)
   bool sendIsoFastPacket (const ISOName_c& rrefc_isoNameSender, const ISOName_c& rrefc_isoNameReceiver, HUGE_MEM uint8_t* rhpb_data, uint16_t rui16_dataSize, int32_t ri32_pgn, sendSuccess_t& rrefen_sendSuccessNotify)
@@ -380,10 +380,10 @@ public: // methods
     { return sendIntern (rrefc_isoNameSender, rrefc_isoNameReceiver, NULL, rpc_mss->getStreamSize(), rrefen_sendSuccessNotify, ri32_pgn, rpc_mss, NmeaFastPacket); }
 
   bool sendIsoFastPacketBroadcast (const ISOName_c& rrefc_isoNameSender, HUGE_MEM uint8_t* rhpb_data, uint16_t rui16_dataSize, int32_t ri32_pgn, sendSuccess_t& rrefen_sendSuccessNotify)
-    { return sendIntern (rrefc_isoNameSender, ISOName_c::ISONameUnspecified, rhpb_data, rui16_dataSize, rrefen_sendSuccessNotify, ri32_pgn, NULL, NmeaFastPacket); }
+    { return sendIntern (rrefc_isoNameSender, ISOName_c::ISONameUnspecified(), rhpb_data, rui16_dataSize, rrefen_sendSuccessNotify, ri32_pgn, NULL, NmeaFastPacket); }
 
   bool sendIsoFastPacketBroadcast (const ISOName_c& rrefc_isoNameSender, IsoAgLib::iMultiSendStreamer_c* rpc_mss, int32_t ri32_pgn, sendSuccess_t& rrefen_sendSuccessNotify)
-    { return sendIntern (rrefc_isoNameSender, ISOName_c::ISONameUnspecified, NULL, rpc_mss->getStreamSize(), rrefen_sendSuccessNotify, ri32_pgn, rpc_mss, NmeaFastPacket); }
+    { return sendIntern (rrefc_isoNameSender, ISOName_c::ISONameUnspecified(), NULL, rpc_mss->getStreamSize(), rrefen_sendSuccessNotify, ri32_pgn, rpc_mss, NmeaFastPacket); }
   #endif
 
   /**

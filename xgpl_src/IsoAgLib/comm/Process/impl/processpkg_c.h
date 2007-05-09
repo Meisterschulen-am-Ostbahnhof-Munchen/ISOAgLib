@@ -401,7 +401,7 @@ public:
     @param rc_isoName ISOName of terminal, for which the ISOName of data is converted
     @param rui8_useProcISOName ISOName for process data (optional, default to terminal isoName)
   */
-  void useTermISONameForLocalProc(const ISOName_c& rc_isoName, const ISOName_c& rc_useProcISOName = ISOName_c::ISONameUnspecified);
+  void useTermISONameForLocalProc(const ISOName_c& rc_isoName, const ISOName_c& rc_useProcISOName = ISOName_c::ISONameUnspecified());
 
   /** stores the command in generalized form */
   GeneralCommand_c c_generalCommand;

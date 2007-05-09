@@ -159,9 +159,9 @@ class ProcDataRemoteSimpleSetpointSimpleMeasure_c : public ProcDataRemoteBase_c 
     @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
   ProcDataRemoteSimpleSetpointSimpleMeasure_c(const IsoAgLib::ElementDDI_s* ps_elementDDI = NULL,
-                                              const ISOName_c& rc_isoName = ISOName_c::ISONameInitialProcessData,
+                                              const ISOName_c& rc_isoName = ISOName_c::ISONameInitialProcessData(),
                                               uint8_t rui8_pri = 2,
-                                              const ISOName_c& rc_ownerISOName = ISOName_c::ISONameUnspecified,
+                                              const ISOName_c& rc_ownerISOName = ISOName_c::ISONameUnspecified(),
                                               const ISOName_c* rpc_commanderISOName = NULL,
                                               IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
                                               int ri_singletonVecKey = 0);
@@ -180,9 +180,9 @@ class ProcDataRemoteSimpleSetpointSimpleMeasure_c : public ProcDataRemoteBase_c 
     @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
   void init(const IsoAgLib::ElementDDI_s* ps_elementDDI,
-            const ISOName_c& rc_isoName = ISOName_c::ISONameInitialProcessData,
+            const ISOName_c& rc_isoName = ISOName_c::ISONameInitialProcessData(),
             uint8_t rui8_pri = 2,
-            const ISOName_c& rc_ownerISOName = ISOName_c::ISONameUnspecified,
+            const ISOName_c& rc_ownerISOName = ISOName_c::ISONameUnspecified(),
             const ISOName_c* rpc_commanderISOName = NULL,
             IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
             int ri_singletonVecKey = 0);

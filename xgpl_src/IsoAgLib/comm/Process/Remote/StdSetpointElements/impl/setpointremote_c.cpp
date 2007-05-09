@@ -100,9 +100,9 @@ void SetpointRemote_c::init( ProcDataBase_c *const rpc_processData )
 {
   SetpointBase_c::init( rpc_processData );
   i32_answeredTime = i32_commandedTime = 0;
-  c_answeredMaster.setISOName( ISOName_c::ISONameUnspecified );
-  c_answeredMe.setISOName( ISOName_c::ISONameUnspecified );
-  c_commanded.setISOName( ISOName_c::ISONameUnspecified );
+  c_answeredMaster.setISOName( ISOName_c::ISONameUnspecified() );
+  c_answeredMe.setISOName( ISOName_c::ISONameUnspecified() );
+  c_commanded.setISOName( ISOName_c::ISONameUnspecified() );
 
 
 }
@@ -538,7 +538,7 @@ void SetpointRemote_c::processSet(){
   if this action is allowed
 */
 void SetpointRemote_c::releaseMasterIntern(){
-  c_answeredMaster.setISOName( ISOName_c::ISONameUnspecified );
+  c_answeredMaster.setISOName( ISOName_c::ISONameUnspecified() );
   c_answeredMaster.setMaster( false);
 }
 
@@ -556,10 +556,10 @@ bool SetpointRemote_c::timeEvent( void )
   { // remote owner of this process data isn't active any more
     // -> reset all entries
     i32_answeredTime = i32_commandedTime = 0;
-    c_answeredMaster.setISOName( ISOName_c::ISONameUnspecified );
+    c_answeredMaster.setISOName( ISOName_c::ISONameUnspecified() );
     c_answeredMaster.setMaster( false);
-    c_answeredMe.setISOName( ISOName_c::ISONameUnspecified );
-    c_commanded.setISOName( ISOName_c::ISONameUnspecified );
+    c_answeredMe.setISOName( ISOName_c::ISONameUnspecified() );
+    c_commanded.setISOName( ISOName_c::ISONameUnspecified() );
   }
   return true;
 }

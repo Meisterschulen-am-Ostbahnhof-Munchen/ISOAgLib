@@ -100,13 +100,22 @@ namespace __IsoAgLib {
 
 
 /** constant for default parameters and initialization, where the device type is not yet spcified.
-    the instantiation of this constant variable is located in the module cancustomer_c.cpp
-  */
-const ISOName_c ISOName_c::ISONameUnspecified( 0x7F, 0xF );
+ */
+const ISOName_c&
+ISOName_c::ISONameUnspecified()
+{
+  static ISOName_c sc_isoNameUnspecified( 0x7F, 0xF );
+  return sc_isoNameUnspecified;
+}
+
 /** constant for not yet spcified process data ident -> <device class, device class instance> := <0x0,0xF>
-    the instantiation of this constant variable is located in the module cancustomer_c.cpp
   */
-const ISOName_c ISOName_c::ISONameInitialProcessData( 0x0, 0xF );
+const ISOName_c&
+ISOName_c::ISONameInitialProcessData()
+{
+  static ISOName_c sc_isoNameInitialProcessData( 0x00, 0xF );
+  return sc_isoNameInitialProcessData;
+}
 
 
 /** constructor which can read in initial data from uint8_t string

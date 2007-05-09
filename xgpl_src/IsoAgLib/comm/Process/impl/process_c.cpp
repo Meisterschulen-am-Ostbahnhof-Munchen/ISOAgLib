@@ -512,7 +512,7 @@ uint8_t Process_c::procDataLocalCnt( uint16_t rui16_DDI, uint16_t rui16_element,
        pc_iter++ )
   { // search for all local items which match the searched identity
     // don't check sender devClass => 0xFF
-    if ((*pc_iter)->matchISO(ISOName_c::ISONameUnspecified, rrefc_isoName, rui16_DDI, rui16_element))
+    if ((*pc_iter)->matchISO (ISOName_c::ISONameUnspecified(), rrefc_isoName, rui16_DDI, rui16_element))
       ui8_cnt++;
   }
   return ui8_cnt;
@@ -561,7 +561,7 @@ bool Process_c::updateLocalCache( uint16_t rui16_DDI, uint16_t rui16_element, co
     if ( pc_searchCacheC1 != c_arrClientC1.end() )
     {
       // don't check sender devClass => 0xFF
-      if ((*pc_searchCacheC1)->matchISO(ISOName_c::ISONameUnspecified, rrefc_isoNameReceiver, rui16_DDI, rui16_element)) return true;
+      if ((*pc_searchCacheC1)->matchISO (ISOName_c::ISONameUnspecified(), rrefc_isoNameReceiver, rui16_DDI, rui16_element)) return true;
     }
     //old cache doesn't match any more -> search new
     for ( cacheTypeC1_t pc_iter = c_arrClientC1.begin();
@@ -572,7 +572,7 @@ bool Process_c::updateLocalCache( uint16_t rui16_DDI, uint16_t rui16_element, co
       bool b_matched = false;
 
       // don't check sender devClass => 0xFF
-      if ((*pc_iter)->matchISO(ISOName_c::ISONameUnspecified, rrefc_isoNameReceiver, rui16_DDI, rui16_element))
+      if ((*pc_iter)->matchISO(ISOName_c::ISONameUnspecified(), rrefc_isoNameReceiver, rui16_DDI, rui16_element))
         b_matched = true;
 
       if (b_matched)
@@ -807,7 +807,7 @@ bool Process_c::checkCreateRemoteReceiveFilter()
   {
     pc_actisoName = &((*pc_iter)->ownerISOName());
 
-    if ( (*pc_actisoName != ISOName_c::ISONameUnspecified)
+    if ( (*pc_actisoName).isSpecified()
       && ( ( NULL == pc_lastFilterisoName ) || (*pc_actisoName != *pc_lastFilterisoName) )
        )
     { // last FilterBox_c call with other isoName
