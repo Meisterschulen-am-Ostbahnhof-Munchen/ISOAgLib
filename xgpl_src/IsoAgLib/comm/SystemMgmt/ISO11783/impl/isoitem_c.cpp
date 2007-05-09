@@ -107,7 +107,7 @@ ISOItem_c::ISOItem_c()
   , i8_slavesToClaimAddress (-2) // idle around and wait for this ISOItem_c to get initially initialized!
   #endif
   , ui8_nr(0xFE)
-  , c_isoName (ISOName_c::ISONameUnspecified)
+  , c_isoName (ISOName_c::ISONameUnspecified())
 {
 }
 

@@ -210,7 +210,7 @@ public:
   /** command switching to and from special service / diagnostic mode.
       setting the flag c_serviceTool controls appropriate handling
     */
-  void setDiagnosticMode( const iISOName_c& rrefc_serviceTool = iISOName_c::iISONameUnspecified)
+  void setDiagnosticMode( const iISOName_c& rrefc_serviceTool = iISOName_c::iISONameUnspecified())
   { ISOMonitor_c::setDiagnosticMode( rrefc_serviceTool );}
 
 private:

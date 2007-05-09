@@ -141,7 +141,7 @@ public:
     ProcDataBase_c *const rpc_processData = NULL,
     Proc_c::progType_t ren_progType = Proc_c::UndefinedProg,
     int32_t ri32_val = 0,
-    const ISOName_c& rc_isoName = ISOName_c::ISONameUnspecified ) : ProcessElementBase_c(rpc_processData),
+    const ISOName_c& rc_isoName = ISOName_c::ISONameUnspecified() ) : ProcessElementBase_c(rpc_processData),
       vec_measureSubprog() {init(rpc_processData, ren_progType, ri32_val, rc_isoName);}
 
   /**
@@ -155,7 +155,7 @@ public:
     ProcDataBase_c &rrefc_processData,
     Proc_c::progType_t ren_progType = Proc_c::UndefinedProg,
     int32_t ri32_val = 0,
-    const ISOName_c& rc_isoName = ISOName_c::ISONameUnspecified) : ProcessElementBase_c(rrefc_processData),
+    const ISOName_c& rc_isoName = ISOName_c::ISONameUnspecified()) : ProcessElementBase_c(rrefc_processData),
       vec_measureSubprog() {init(&rrefc_processData, ren_progType, ri32_val, rc_isoName);}
 
   /**
@@ -169,7 +169,7 @@ public:
     ProcDataBase_c *const rpc_processData,
     Proc_c::progType_t ren_progType = Proc_c::UndefinedProg,
     int32_t ri32_val = 0,
-    const ISOName_c& rc_isoName = ISOName_c::ISONameUnspecified);
+    const ISOName_c& rc_isoName = ISOName_c::ISONameUnspecified());
 
   /**
     assignment of MeasureProgBase_c objects
@@ -294,7 +294,7 @@ public:
     ProcDataBase_c *const rpc_processData,
     Proc_c::progType_t ren_progType,
     float rf_val,
-    const ISOName_c& rc_isoName = ISOName_c::ISONameUnspecified);
+    const ISOName_c& rc_isoName = ISOName_c::ISONameUnspecified());
 
   /**
     deliver actual last received value

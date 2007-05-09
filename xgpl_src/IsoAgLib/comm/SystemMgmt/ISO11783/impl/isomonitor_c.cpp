@@ -134,7 +134,7 @@ namespace __IsoAgLib {
   @param rpc_lb optional pointer to central Scheduler_c instance (default NULL -> the later set is needed)
 */
 ISOMonitor_c::ISOMonitor_c()
-  : SingletonISOMonitor_c(), vec_isoMember(), c_serviceTool( ISOName_c::ISONameUnspecified )
+  : SingletonISOMonitor_c(), vec_isoMember(), c_serviceTool( ISOName_c::ISONameUnspecified() )
 {
   // functionality moved OUT of the constructor, as the constructor is NOT called in embedded systems for static class instances.
 }
@@ -163,7 +163,7 @@ void ISOMonitor_c::init( void )
     vec_isoMember.clear();
     pc_isoMemberCache = vec_isoMember.end();
     i32_lastSaRequest = -1; // not yet requested. Do NOT use 0, as the first "setLastRequest()" could (and does randomly) occur at time0 as it's called at init() time.
-    c_tempIsoMemberItem.set( 0, ISOName_c::ISONameUnspecified, 0xFE, IState_c::Active, getSingletonVecKey() );
+    c_tempIsoMemberItem.set( 0, ISOName_c::ISONameUnspecified(), 0xFE, IState_c::Active, getSingletonVecKey() );
 
     // register no-service mode
     c_serviceTool.setUnspecified();

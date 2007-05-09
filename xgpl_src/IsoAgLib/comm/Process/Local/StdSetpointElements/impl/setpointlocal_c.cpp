@@ -370,7 +370,7 @@ void SetpointLocal_c::setMasterMeasurementVal( int32_t ri32_val)
   master().setExact( ri32_val);
   master().setHandled( true);
   master().setValid( true);
-  master().setISOName(ISOName_c::ISONameUnspecified);
+  master().setISOName(ISOName_c::ISONameUnspecified());
 
 #ifdef USE_FLOAT_DATA_TYPE
   setValType( i32_val);

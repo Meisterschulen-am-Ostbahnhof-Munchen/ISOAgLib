@@ -109,12 +109,12 @@ public:
   /** constant for default parameters and initialization, where the device type is not yet spcified.
       the instantiation of this constant variable is located in the module cancustomer_c.cpp
     */
-  static const ISOName_c ISONameUnspecified;
+  static const ISOName_c& ISONameUnspecified();
 
   /** constant for not yet spcified process data ident -> <device class, device class instance> := <0x0,0xF>
       the instantiation of this constant variable is located in the module cancustomer_c.cpp
     */
-  static const ISOName_c ISONameInitialProcessData;
+  static const ISOName_c& ISONameInitialProcessData();
 
   /** default constructor
     using "explicit" to avoid WRONG implicit cast from SA to ISONAME!

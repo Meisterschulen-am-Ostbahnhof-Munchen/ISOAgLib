@@ -105,8 +105,8 @@ bool CANPkgExt_c::b_runFlag2String = true;
 CANPkgExt_c::CANPkgExt_c( int ri_singletonVecKey )
   : CANPkg_c( ri_singletonVecKey )
 {
-  addrResolveResSA.p_isoName =  new ISOName_c(ISOName_c::ISONameUnspecified);
-  addrResolveResDA.p_isoName =  new ISOName_c(ISOName_c::ISONameUnspecified);
+  addrResolveResSA.p_isoName = new ISOName_c(ISOName_c::ISONameUnspecified());
+  addrResolveResDA.p_isoName = new ISOName_c(ISOName_c::ISONameUnspecified());
   addrResolveResSA.pc_monitorItem = NULL;
   addrResolveResDA.pc_monitorItem = NULL;
   addrResolveResSA.pui8_address = &identRef(0);

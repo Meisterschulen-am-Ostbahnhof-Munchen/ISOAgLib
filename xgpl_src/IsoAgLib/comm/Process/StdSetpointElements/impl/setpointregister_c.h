@@ -123,7 +123,7 @@ public:
     @param rb_master true -> this setpoint register instance represents the actual master setpoint
     @param rb_valid true -> this setpoint register instance is accepted as valid
   */
-  SetpointRegister_c(const ISOName_c& rc_isoName = ISOName_c::ISONameUnspecified, int32_t ri32_exact = NO_VAL_32S,
+  SetpointRegister_c(const ISOName_c& rc_isoName = ISOName_c::ISONameUnspecified(), int32_t ri32_exact = NO_VAL_32S,
       int32_t ri32_min = NO_VAL_32S, int32_t ri32_max = NO_VAL_32S, int32_t ri32_default = NO_VAL_32S,
       bool rb_handled = false, bool rb_master = false, bool rb_valid = true)
       {  init(rc_isoName, ri32_exact, ri32_min, ri32_max, ri32_default, rb_handled, rb_master, rb_valid);}
@@ -138,7 +138,7 @@ public:
     @param rb_master true -> this setpoint register instance represents the actual master setpoint
     @param rb_valid true -> this setpoint register instance is accepted as valid
   */
-  void init(const ISOName_c& rc_isoName = ISOName_c::ISONameUnspecified, int32_t ri32_exact = NO_VAL_32S,
+  void init(const ISOName_c& rc_isoName = ISOName_c::ISONameUnspecified(), int32_t ri32_exact = NO_VAL_32S,
       int32_t ri32_min = NO_VAL_32S, int32_t ri32_max = NO_VAL_32S, int32_t ri32_default = NO_VAL_32S,
       bool rb_handled = false, bool rb_master = false, bool rb_valid = true);
 

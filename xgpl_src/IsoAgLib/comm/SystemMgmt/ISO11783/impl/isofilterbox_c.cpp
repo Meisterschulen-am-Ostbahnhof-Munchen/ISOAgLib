@@ -114,10 +114,10 @@ ISOFilter_s::ISOFilter_s (CANCustomer_c& rrefc_canCustomer, uint32_t rui32_mask,
   , pc_canCustomer (&rrefc_canCustomer)
   , i8_dlcForce (ri8_dlcForce)
 {
-  if (rpc_isoNameDa) c_isoNameDa = *rpc_isoNameDa;                // operator =
-  else /* no name */ c_isoNameDa = ISOName_c::ISONameUnspecified; // operator =
-  if (rpc_isoNameSa) c_isoNameSa = *rpc_isoNameSa;                // operator =
-  else /* no name */ c_isoNameSa = ISOName_c::ISONameUnspecified; // operator =
+  if (rpc_isoNameDa) c_isoNameDa = *rpc_isoNameDa;                  // operator =
+  else /* no name */ c_isoNameDa.setUnspecified();
+  if (rpc_isoNameSa) c_isoNameSa = *rpc_isoNameSa;                  // operator =
+  else /* no name */ c_isoNameSa.setUnspecified();
 }
 
 ISOFilter_s::~ISOFilter_s() {}

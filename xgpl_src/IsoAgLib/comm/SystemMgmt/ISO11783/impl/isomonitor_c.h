@@ -499,7 +499,7 @@ public:
   /** command switching to and from special service / diagnostic mode.
       setting the flag c_serviceTool controls appropriate handling
     */
-  void setDiagnosticMode( const ISOName_c& rrefc_serviceTool = ISOName_c::ISONameUnspecified);
+  void setDiagnosticMode( const ISOName_c& rrefc_serviceTool = ISOName_c::ISONameUnspecified());
 protected: // Protected methods
   /** process system msg with informations which are
     important for managing of members

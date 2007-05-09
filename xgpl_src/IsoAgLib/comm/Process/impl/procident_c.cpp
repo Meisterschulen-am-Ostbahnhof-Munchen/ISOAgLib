@@ -137,8 +137,8 @@ namespace __IsoAgLib {
                             const ISOName_c *rpc_ownerISOName, int ri_singletonVecKey)
   : ClientBase( ri_singletonVecKey ),
     pc_ownerISOName(NULL),
-    c_ownerISOName(ISOName_c::ISONameUnspecified),
-		c_isoName(ISOName_c::ISONameUnspecified)
+    c_ownerISOName(ISOName_c::ISONameUnspecified()),
+		c_isoName(ISOName_c::ISONameUnspecified())
 {
   init( rps_elementDDI, rui16_element, rc_isoName, rc_ownerISOName, rpc_ownerISOName);
 }
@@ -261,14 +261,12 @@ bool ProcIdent_c::matchISO( const ISOName_c& rrefc_isoNameSender,
   if (iter == l_elementDDI.end())
     return false;
 
-  if (ISOName_c::ISONameUnspecified != rrefc_isoNameSender)
-  {
-    // check in remote case: check if devClass of ownerISOName in procident matches devClass of sender
+  if (rrefc_isoNameSender.isSpecified())
+  { // check in remote case: check if devClass of ownerISOName in procident matches devClass of sender
     if (ownerISOName() != rrefc_isoNameSender) return false;
   }
   else
-  {
-    // check in local case: check if procident devClass matches devClass of empf
+  { // check in local case: check if procident devClass matches devClass of empf
     if (ownerISOName() != rrefc_isoNameReceiver) return false;
   }
 

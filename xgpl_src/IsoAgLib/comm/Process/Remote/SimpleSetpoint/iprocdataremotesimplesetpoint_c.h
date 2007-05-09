@@ -134,8 +134,8 @@ public:
   */
   iProcDataRemoteSimpleSetpoint_c(const IsoAgLib::ElementDDI_s* ps_elementDDI = NULL,
                                   uint16_t rui16_element = 0xFFFF,
-                                  const iISOName_c& rc_isoName = iISOName_c::iISONameInitialProcessData,
-                                  const iISOName_c& rc_ownerISOName = iISOName_c::iISONameUnspecified,
+                                  const iISOName_c& rc_isoName = iISOName_c::iISONameInitialProcessData(),
+                                  const iISOName_c& rc_ownerISOName = iISOName_c::iISONameUnspecified(),
                                   const iISOName_c* rpc_commanderISOName = NULL,
                                   ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
                                   int ri_singletonVecKey = 0)
@@ -157,8 +157,8 @@ public:
   */
   void init(const IsoAgLib::ElementDDI_s* ps_elementDDI,
             uint16_t rui16_element,
-            const iISOName_c& rc_isoName = iISOName_c::iISONameInitialProcessData,
-            const iISOName_c& rc_ownerISOName = iISOName_c::iISONameUnspecified,
+            const iISOName_c& rc_isoName = iISOName_c::iISONameInitialProcessData(),
+            const iISOName_c& rc_ownerISOName = iISOName_c::iISONameUnspecified(),
             const iISOName_c* rpc_commanderISOName = NULL,
             ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
             int ri_singletonVecKey = 0)

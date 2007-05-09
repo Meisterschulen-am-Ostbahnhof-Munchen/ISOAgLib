@@ -220,16 +220,15 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     */
   bool TracMove_c::processMsg()
   {
+    // there is no need to check if sender exist in the monitor list because this is already done
+    // in CANPkgExt_c -> resolveSendingInformation
+    ISOName_c c_tempISOName( data().getISONameForSA() );
+
     #if defined(USE_BASE) || defined(USE_TRACTOR_GENERAL)
     TracGeneral_c& c_tracgeneral = getTracGeneralInstance4Comm();
     #endif
 
     const int32_t ci32_now = data().time();
-    ISOName_c c_tempISOName( ISOName_c::ISONameUnspecified );
-
-    // there is no need to check if sender exist in the monitor list because this is already done
-    // in CANPkgExt_c -> resolveSendingInformation
-    c_tempISOName = data().getISONameForSA();
 
     #ifdef USE_RS232_FOR_DEBUG
     INTERNAL_DEBUG_DEVICE << "c_tempISOName: " <<  static_cast<const int>(c_tempISOName.devClass() ) << INTERNAL_DEBUG_DEVICE_ENDL;

@@ -220,8 +220,8 @@ public:
   */
   ProcDataLocal_c(const IsoAgLib::ElementDDI_s* ps_elementDDI = NULL,
                   uint16_t rui16_element = 0xFFFF,
-                  const ISOName_c& rc_isoName = ISOName_c::ISONameInitialProcessData,
-                  const ISOName_c& rc_ownerISOName = ISOName_c::ISONameUnspecified,
+                  const ISOName_c& rc_isoName = ISOName_c::ISONameInitialProcessData(),
+                  const ISOName_c& rc_ownerISOName = ISOName_c::ISONameUnspecified(),
                   const ISOName_c *rpc_isoName = NULL,
                   bool rb_cumulativeValue = false,
 #ifdef USE_EEPROM_IO
@@ -265,8 +265,8 @@ public:
   */
   void init(const IsoAgLib::ElementDDI_s* ps_elementDDI = NULL,
             uint16_t rui16_element = 0xFFFF,
-            const ISOName_c& rc_isoName = ISOName_c::ISONameInitialProcessData,
-            const ISOName_c& rc_ownerISOName = ISOName_c::ISONameUnspecified,
+            const ISOName_c& rc_isoName = ISOName_c::ISONameInitialProcessData(),
+            const ISOName_c& rc_ownerISOName = ISOName_c::ISONameUnspecified(),
             const ISOName_c *rpc_isoName = NULL,
             bool rb_cumulativeValue = false,
 #ifdef USE_EEPROM_IO

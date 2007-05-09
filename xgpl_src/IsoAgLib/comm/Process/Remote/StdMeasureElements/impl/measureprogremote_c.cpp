@@ -98,7 +98,7 @@ namespace __IsoAgLib {
    */
   MeasureProgRemote_c::MeasureProgRemote_c(
       ProcDataBase_c *const rpc_processData )
-  : MeasureProgBase_c(rpc_processData, Proc_c::UndefinedProg, 0, ISOName_c::ISONameUnspecified )
+  : MeasureProgBase_c(rpc_processData, Proc_c::UndefinedProg, 0, ISOName_c::ISONameUnspecified() )
   {
     init( rpc_processData );
   }
@@ -110,7 +110,7 @@ namespace __IsoAgLib {
 */
 void MeasureProgRemote_c::init( ProcDataBase_c *const rpc_processData )
 {
-  MeasureProgBase_c::init( rpc_processData, Proc_c::UndefinedProg, int32_t(0), ISOName_c::ISONameUnspecified );
+  MeasureProgBase_c::init( rpc_processData, Proc_c::UndefinedProg, int32_t(0), ISOName_c::ISONameUnspecified() );
   b_receiveForeignMeasurement = false;
 }
 
