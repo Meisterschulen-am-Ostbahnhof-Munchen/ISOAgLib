@@ -90,7 +90,7 @@
 #define DATASTREAMS_H
 
 
-//#include "targetfilestreamoutput_c.h"
+#include "targetfilestreamoutput_c.h"
 #include "targetfilestreaminput_c.h"
 
 #endif // -X2C

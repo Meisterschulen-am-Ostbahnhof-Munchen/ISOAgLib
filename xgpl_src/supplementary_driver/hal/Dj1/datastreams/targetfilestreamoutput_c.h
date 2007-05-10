@@ -110,7 +110,7 @@ class TargetFileStreamOutput_c : public std::ofstream
 
 public:
 	//! open a output stream
-	bool open( std::string& filename, FileMode_t rt_mode ){ return open( filename.c_str(), rt_mode );};
+	bool open( std::string& filename, FileMode_t rt_mode ){ return true; };
 	//! open a output stream
 	bool open( const char* filename, FileMode_t rt_mode );
 	//! close a output stream
@@ -123,13 +123,13 @@ public:
   virtual TargetFileStreamOutput_c& operator<<(uint8_t ui8_data);
 
   //  Operation: eof
-  virtual bool eof() const { return static_cast<const std::ofstream*>(this)->eof();};
+  virtual bool eof() const { return false; };
 
   // Operation: fail
-  virtual bool fail() const { return static_cast<const std::ofstream*>(this)->fail();};
+  virtual bool fail() const { return false; };
 
   // Operation: good
-  virtual bool good() const { return static_cast<const std::ofstream*>(this)->good();};
+  virtual bool good() const { return true; };
 
 }; // ~X2C
 

@@ -91,39 +91,7 @@ using namespace std;
 //! open a output stream
 bool TargetFileStreamOutput_c::open( const char* filename, FileMode_t rt_mode )
 {
-#if __GNUC__ < 3
-	if ( ( rt_mode & StreamIn ) != 0 ) return false;
-
-	ios::openmode mode = ios::out;
-
-	if ( ( rt_mode & StreamAte    ) != 0 ) mode = ios::openmode( mode | ios::ate    );
-	if ( ( rt_mode & StreamApp    ) != 0 ) mode = ios::openmode( mode | ios::app    );
-	if ( ( rt_mode & StreamTrunc  ) != 0 ) mode = ios::openmode( mode | ios::trunc  );
-	if ( ( rt_mode & StreamBinary ) != 0 ) mode = ios::openmode( mode | ios::binary );
-
-	static_cast<ofstream*>(this)->open( filename, mode );
-
-	if ( ( static_cast<ofstream*>(this)->good() )
-		&& ( static_cast<ofstream*>(this)->is_open() ) ) return true;
-	else
-		return false;
-#else
-	if ( ( rt_mode & StreamIn ) != 0 ) return false;
-
-	std::ios_base::openmode mode = std::ios_base::out;
-
-	if ( ( rt_mode & StreamAte    ) != 0 ) mode = std::ios_base::openmode( mode | std::ios_base::ate    );
-	if ( ( rt_mode & StreamApp    ) != 0 ) mode = std::ios_base::openmode( mode | std::ios_base::app    );
-	if ( ( rt_mode & StreamTrunc  ) != 0 ) mode = std::ios_base::openmode( mode | std::ios_base::trunc  );
-	if ( ( rt_mode & StreamBinary ) != 0 ) mode = std::ios_base::openmode( mode | std::ios_base::binary );
-
-	static_cast<std::ofstream*>(this)->open( filename, mode );
-
-	if ( ( static_cast<std::ofstream*>(this)->good() )
-		&& ( static_cast<std::ofstream*>(this)->is_open() ) ) return true;
-	else
-		return false;
-#endif
+  return true;
 }
 
 //  Operation: operator>>
@@ -131,9 +99,6 @@ bool TargetFileStreamOutput_c::open( const char* filename, FileMode_t rt_mode )
 //! @param ui8_data:
 TargetFileStreamOutput_c& TargetFileStreamOutput_c::operator<<(uint8_t ui8_data)
 {
-//	(static_cast<std::ofstream*>(this))->put(ui8_data);
-	(static_cast<ofstream*>(this))->put(ui8_data);
-
 	return *this;
 }
 
@@ -142,21 +107,4 @@ TargetFileStreamOutput_c& TargetFileStreamOutput_c::operator<<(uint8_t ui8_data)
 //! @param pathname if pathname != NULL => sync file and path
 void TargetFileStreamOutput_c::close(const char* pathname)
 {
-  if (pathname)
-  {
-    (static_cast<std::ofstream*>(this))->flush();
-#if defined(__GNUC__) && __GNUC__ < 3
-    fsync((static_cast<std::ofstream*>(this))->rdbuf()->fd());
-    // sync also directory entry (not done by fsync!)
-    int fd = ::open(pathname, O_RDONLY);
-    if (-1 != fd)
-    {
-      fsync(fd);
-      ::close(fd);
-    }
-#else
-    (static_cast<std::ofstream*>(this))->rdbuf()->pubsync();
-#endif
-  }
-  static_cast<std::ofstream*>(this)->close();
 }
