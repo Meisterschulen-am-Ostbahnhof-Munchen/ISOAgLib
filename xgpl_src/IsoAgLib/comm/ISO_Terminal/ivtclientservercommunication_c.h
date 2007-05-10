@@ -58,6 +58,7 @@
 //include the declaration of the internal object
 #include "impl/vtclientservercommunication_c.h"
 #include "iisoterminal_c.h"
+#include "impl/vtserverinstance_c.h"
 
 // Begin Namespace IsoAgLib
 namespace IsoAgLib {
@@ -101,6 +102,8 @@ public:
     { return VtClientServerCommunication_c::getClientId(); }
 
   iIdentItem_c& getIdentItem() { return static_cast<IsoAgLib::iIdentItem_c&>(VtClientServerCommunication_c::getIdentItem()); }
+
+  const __IsoAgLib::VtServerInstance_c& getVtServerInst() { return VtClientServerCommunication_c::getVtServerInst(); }
 
 private:
   /** PRIVATE constructor to forbid instantiation of this interface class.
