@@ -178,42 +178,42 @@ int16_t setRs232Baudrate(uint16_t wBaudrate, uint8_t comport)
 
   return HAL_NO_ERR;
 }
-BOOL WriteABuffer(HANDLE &ref_hCom, const uint8_t * lpBuf, DWORD dwToWrite) 
-{ 
-     OVERLAPPED osWrite = {0}; 
-     DWORD dwWritten; 
-     DWORD dwRes; 
-     BOOL fRes; 
-     // Create this write operation's OVERLAPPED structure's hEvent. 
-     osWrite.hEvent = CreateEvent(NULL, TRUE, FALSE, NULL); 
-     if (osWrite.hEvent == NULL) // error creating overlapped event handle 
-       return FALSE; 
-     // Issue write. 
-     if (!WriteFile(ref_hCom, lpBuf, dwToWrite, &dwWritten, &osWrite)) 
-     { 
-       if (GetLastError() != ERROR_IO_PENDING) 
-       { // WriteFile failed, but isn't delayed. Report error and abort. 
-         fRes = FALSE; 
-       } 
-       else // Write is pending. 
-         dwRes = WaitForSingleObject(osWrite.hEvent, INFINITE); 
-       switch(dwRes) { // OVERLAPPED structure's event has been signaled. 
-         case WAIT_OBJECT_0: 
-           if (!GetOverlappedResult(ref_hCom, &osWrite, &dwWritten, FALSE)) fRes = FALSE; 
-           else // Write operation completed successfully. 
-             fRes = TRUE; 
-           break; 
-         default: // An error has occurred in WaitForSingleObject. 
-           // This usually indicates a problem with the 
-           // OVERLAPPED structure's event handle. 
-           fRes = FALSE; 
-           break; 
-       } 
+BOOL WriteABuffer(HANDLE &ref_hCom, const uint8_t * lpBuf, DWORD dwToWrite)
+{
+     OVERLAPPED osWrite = {0};
+     DWORD dwWritten;
+     DWORD dwRes;
+     BOOL fRes;
+     // Create this write operation's OVERLAPPED structure's hEvent.
+     osWrite.hEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
+     if (osWrite.hEvent == NULL) // error creating overlapped event handle
+       return FALSE;
+     // Issue write.
+     if (!WriteFile(ref_hCom, lpBuf, dwToWrite, &dwWritten, &osWrite))
+     {
+       if (GetLastError() != ERROR_IO_PENDING)
+       { // WriteFile failed, but isn't delayed. Report error and abort.
+         fRes = FALSE;
+       }
+       else // Write is pending.
+         dwRes = WaitForSingleObject(osWrite.hEvent, INFINITE);
+       switch(dwRes) { // OVERLAPPED structure's event has been signaled.
+         case WAIT_OBJECT_0:
+           if (!GetOverlappedResult(ref_hCom, &osWrite, &dwWritten, FALSE)) fRes = FALSE;
+           else // Write operation completed successfully.
+             fRes = TRUE;
+           break;
+         default: // An error has occurred in WaitForSingleObject.
+           // This usually indicates a problem with the
+           // OVERLAPPED structure's event handle.
+           fRes = FALSE;
+           break;
+       }
      }
-     else // WriteFile completed immediately. 
+     else // WriteFile completed immediately.
        fRes = TRUE;
-     CloseHandle(osWrite.hEvent); 
-     return fRes; 
+     CloseHandle(osWrite.hEvent);
+     return fRes;
 }
 /**
   send single uint8_t on RS232
@@ -285,7 +285,7 @@ int16_t getRs232String(uint8_t *pbRead,uint8_t ui8_terminateChar, uint8_t compor
 {
   if ( comport >= RS232_INSTANCE_CNT ) return 0;
   getRs232RxBufCount(comport);
-  if (deq_readPuff[comport].size() > 0)
+  if (! deq_readPuff[comport].empty())
   {
     for ( std::deque<int8_t>::iterator iter = deq_readPuff[comport].begin(); iter != deq_readPuff[comport].end(); iter++ )
     { // check if terminating char is found
@@ -317,7 +317,7 @@ int16_t getRs232Char(uint8_t *pbRead, uint8_t rui8_channel)
 {
   if ( rui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
   getRs232RxBufCount(rui8_channel);
-  if (deq_readPuff[rui8_channel].size() > 0)
+  if (! deq_readPuff[rui8_channel].empty())
   {
     pbRead[0] = deq_readPuff[rui8_channel].front();
     deq_readPuff[rui8_channel].pop_front();

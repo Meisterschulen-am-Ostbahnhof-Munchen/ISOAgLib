@@ -1090,7 +1090,7 @@ DevPropertyHandler_c::finishUploadCommandChangeDesignator()
   en_uploadStep = UploadNone;
 
   //delete first processed cmd of the queue
-  l_sendUpload.pop_front();
+  if (! l_sendUpload.empty() ) l_sendUpload.pop_front();
 }
 
 

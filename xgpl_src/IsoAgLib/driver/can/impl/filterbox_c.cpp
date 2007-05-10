@@ -407,26 +407,26 @@ bool FilterBox_c::deleteFilter( const __IsoAgLib::CANCustomer_c& rref_customer)
 */
 bool FilterBox_c::processMsg()
 {
-  for (uint8_t i=0; i < vec_customer.size(); i++)
+  for ( std::vector<CustomerLen_s>::iterator c_customerIterator = vec_customer.begin(); c_customerIterator != vec_customer.end(); c_customerIterator++ )
   {
-    if (vec_customer[i].pc_customer == NULL)
+    if (c_customerIterator->pc_customer == NULL)
     { // pointer to CANCustomer_c wasn't set
       // -> don't know who wants to process the msg
       getILibErrInstance().registerError( iLibErr_c::Precondition, iLibErr_c::Can );
       return false;
     }
     // ####################################################
-    // from here on the vec_customer[i] has a valid pointer
+    // from here on the c_customerIterator has a valid pointer
     // ####################################################
 
-    CANPkgExt_c* pc_target = &(vec_customer[i].pc_customer->dataBase());
+    CANPkgExt_c* pc_target = &(c_customerIterator->pc_customer->dataBase());
     #if defined SYSTEM_WITH_ENHANCED_CAN_HAL
       HAL::can_useMsgobjGet(ui8_busNumber, 0xFF, pc_target);
     #else
       HAL::can_useMsgobjGet(ui8_busNumber, ui8_filterBoxNr, pc_target);
     #endif
 
-    const int8_t ci8_vecCurstomerDlcForce = vec_customer[i].i8_dlcForce;
+    const int8_t ci8_vecCurstomerDlcForce = c_customerIterator->i8_dlcForce;
     const int8_t ci8_targetLen = pc_target->getLen();
 
     /// Check DataLengthCode (DLC) if required
@@ -446,7 +446,7 @@ bool FilterBox_c::processMsg()
       // have to be handled at the ISO 11783 BUS (e.g. some bootloader messages are sent on ISOBUS)
         #ifdef ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL
         // we have to decide based on the individual CANCustomer, whether it is a real ISOBUS message
-    if ( ( b_performIsobusResolve ) && ( !vec_customer[i].pc_customer->isProprietaryMessageOnStandardizedCan() ) )
+    if ( ( b_performIsobusResolve ) && ( !c_customerIterator->pc_customer->isProprietaryMessageOnStandardizedCan() ) )
         #else
         // the decision whether a FilterBox_c has to perform SA resolve is derived for _all_ messages which are routed through this FilterBox_c object
     if ( b_performIsobusResolve )
@@ -465,16 +465,16 @@ bool FilterBox_c::processMsg()
          )
       {
         #ifdef PROCESS_INVALID_PACKETS
-        if (vec_customer[i]->processInvalidMsg() )
+        if (c_customerIterator->pc_customer->processInvalidMsg() )
         { // customer indicated, that it processed the content of the received message
           // --> do not show this message to any other FilterBox_c that might be connected to the same MsgObj_c
           return true;
         }
         #endif
       }
-      else if ( ((pc_target->t_msgState & AdrResolveMask) == AdrValid) || (vec_customer[i].pc_customer->isNetworkMgmt()) )
+      else if ( ((pc_target->t_msgState & AdrResolveMask) == AdrValid) || (c_customerIterator->pc_customer->isNetworkMgmt()) )
       { // is either valid or OnlyNetworkMgmt with a CANCustomer which is of type NetworkMgmt
-        if ( vec_customer[i].pc_customer->processMsg() )
+        if ( c_customerIterator->pc_customer->processMsg() )
         { // customer indicated, that it processed the content of the received message
           //--> do not show this message to any other FilterBox_c that might be connected to the same MsgObj_c
           return true;
@@ -500,7 +500,7 @@ bool FilterBox_c::processMsg()
       if ((pc_target->t_msgState & DlcValidationMask) != DlcValid)
       {
         #ifdef PROCESS_INVALID_PACKETS
-        if (vec_customer[i]->processInvalidMsg() )
+        if (c_customerIterator->pc_customer->processInvalidMsg() )
         { // customer indicated, that it processed the content of the received message
           // --> do not show this message to any other FilterBox_c that might be connected to the same MsgObj_c
           return true;
@@ -509,7 +509,7 @@ bool FilterBox_c::processMsg()
       }
       else
       {
-        if ( vec_customer[i].pc_customer->processMsg() )
+        if ( c_customerIterator->pc_customer->processMsg() )
         { // customer indicated, that it processed the content of the received message
           //--> do not show this message to any other FilterBox_c that might be connected to the same MsgObj_c
           return true;

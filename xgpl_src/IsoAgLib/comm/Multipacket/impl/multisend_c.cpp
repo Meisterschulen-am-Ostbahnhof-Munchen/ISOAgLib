@@ -734,7 +734,7 @@ MultiSend_c::timeEvent()
     }
   }
 
-  if ((list_sendStream.size() == 0))
+  if (list_sendStream.empty())
   { // (re-)set the CAN send pause to 0, because not a single SendStream is active anymore.
     getCanInstance4Comm().setSendpause (0); /** @todo remove if there's no minimum between data-packets! */
   }

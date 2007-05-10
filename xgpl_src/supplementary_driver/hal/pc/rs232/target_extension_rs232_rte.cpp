@@ -254,7 +254,7 @@ int16_t getRs232String(uint8_t *pbRead,uint8_t bLastChar, uint8_t rui8_channel)
 {
   if ( rui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
   uint8_t ui8_test;
-  if (c_buffer[rui8_channel].size() > 0)
+  if (! c_buffer[rui8_channel].empty())
   {
     for ( STL_NAMESPACE::deque<uint8_t>::iterator iter = c_buffer[rui8_channel].begin(); iter != c_buffer[rui8_channel].end(); iter++ )
     { // check if terminating char is found

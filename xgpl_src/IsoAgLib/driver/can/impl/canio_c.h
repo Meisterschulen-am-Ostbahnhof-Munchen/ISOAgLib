@@ -506,7 +506,12 @@ class CANIO_c : public SingletonCANIO_c {
     */
   FilterBox_c* getFilterBox(Ident_c& rt_mask, Ident_c& rt_filter) const;
 
+  void setCntFilter(size_t rt_newSize ) { tm_filterBoxCnt = rt_newSize;}
+  size_t cntFilter() const { return tm_filterBoxCnt;}
+
 #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
+  void setCntMsgObj(size_t rt_newSize ) { tm_MsgObjCnt = rt_newSize;}
+  size_t cntMsgObj() const { return tm_MsgObjCnt;}
   /** deliver max msg obj nr
       @return max msg obj nr
     */
@@ -566,6 +571,7 @@ class CANIO_c : public SingletonCANIO_c {
       @see MsgObj
     */
   MsgObj_c c_lastMsgObj;
+  size_t tm_MsgObjCnt;
 #endif
 
   /** dynamic array of FilterBox_c instances which
@@ -573,6 +579,7 @@ class CANIO_c : public SingletonCANIO_c {
       @see FilterBox
     */
   ArrFilterBox arrFilterBox;
+  size_t tm_filterBoxCnt;
 
   /** temp filer box to avoid new/delete for each insert of a filterBox
       @see FilterBox

@@ -184,7 +184,7 @@ void Scheduler_c::init( void )
 
   // clear the scheduler queues
   while ( !c_taskQueue.empty() ) c_taskQueue.pop_front();
-
+  setCntClient( 0 );
 }
 
 /** simply close communicating clients */
@@ -202,6 +202,7 @@ void Scheduler_c::closeCommunication( void ) {
     iter->close();
     c_taskQueue.erase(iter);
   }
+  setCntClient( 0 );
 }
 
 
@@ -299,10 +300,11 @@ bool Scheduler_c::registerClient( ElementBase_c* pc_client)
 
   pc_client->startTaskTiming(si32_taskStartTime);
   /// put client in taskQueue
-  const uint16_t ui16_oldSize = c_taskQueue.size();
+  const uint16_t ui16_oldSize = cntClient();
   c_taskQueue.push_front( SchedulerEntry_c( pc_client ) );
   // check whether the task list grew as awaited
-  if ( c_taskQueue.size() <= ui16_oldSize ) return false;
+  setCntClient(c_taskQueue.size() );
+  if ( cntClient() <= ui16_oldSize ) return false;
   #ifdef DEBUG_HEAP_USEAGE
   sui16_clientPointerTotal++;
 
@@ -345,6 +347,7 @@ void Scheduler_c::unregisterClient( ElementBase_c* pc_client)
         << itc_task->getTaskName() << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
         itc_task = c_taskQueue.erase(itc_task);
+        setCntClient(c_taskQueue.size() );
       }
       else
       {
@@ -355,7 +358,7 @@ void Scheduler_c::unregisterClient( ElementBase_c* pc_client)
 
 
   // output client array in sync
-  if ( c_taskQueue.size() > 0 )
+  if ( ! c_taskQueue.empty() )
   { // delete last element
     #ifdef DEBUG_HEAP_USEAGE
     sui16_clientPointerTotal--;
@@ -520,7 +523,7 @@ int32_t Scheduler_c::timeEvent( int32_t ri32_demandedExecEndScheduler )
 void
 Scheduler_c::resortTaskList()
 {
-  if(c_taskQueue.size() <= 1) return ; //nothing to sort
+  if(cntClient() <= 1) return ; //nothing to sort
 
   std::list<SchedulerEntry_c>::iterator iterCompare = c_taskQueue.begin();
   // compare with the second item in list
@@ -533,21 +536,23 @@ Scheduler_c::resortTaskList()
   // now in any case the current front item
   // (i.e. the one that has previously been executed and should now be re-entered
   //  in right place) has to be removed from front
-  SchedulerEntry_c c_resortedFrontItem = c_taskQueue.front();
-  c_taskQueue.pop_front();
+  // move front item from c_taskQueue to the spare list - without any deletion and
+  // re-allocation of a task-node -> should be faster
+  c_spareQueue.splice( c_spareQueue.end(), c_taskQueue, c_taskQueue.begin() );
   for ( iterCompare = c_taskQueue.begin();
         iterCompare != c_taskQueue.end();
         ++iterCompare )
   {
-    if ( c_resortedFrontItem <= *iterCompare )
-    {
-      c_taskQueue.insert(iterCompare, c_resortedFrontItem);
+    if ( c_spareQueue.front() <= *iterCompare )
+    { // move first/single item from spare list in front of iterator iterCompare
+      c_taskQueue.splice( iterCompare, c_spareQueue, c_spareQueue.begin() );
       break;
     }
   }
   if ( iterCompare == c_taskQueue.end() )
   { // no other item in queue had later next retrigger time -> place c_resortedFrontItem at end
-    c_taskQueue.push_back( c_resortedFrontItem );
+    // move first item from spare list in front of end() --> add it as last item to list
+    c_taskQueue.splice( c_taskQueue.end(), c_spareQueue, c_spareQueue.begin() );
   }
 
 
@@ -837,7 +842,7 @@ bool Scheduler_c::changeTimePeriodAndResortTask(ElementBase_c * pc_client  , uin
 bool  Scheduler_c::changeRetriggerTimeAndResort(SchedulerEntry_c rc_client  , int32_t i32_newRetriggerTime, int16_t ri16_newTimePeriod)
 {
   if ( c_taskQueue.empty() ) return false;
-  else if (c_taskQueue.size() == 1) return true;
+  else if (cntClient() == 1) return true;
   else
   { // search iterator for the client of change
     std::list<SchedulerEntry_c>::iterator itc_task;
@@ -861,7 +866,7 @@ bool  Scheduler_c::changeRetriggerTimeAndResort(SchedulerEntry_c rc_client  , in
 bool  Scheduler_c::changeRetriggerTimeAndResort(ElementBase_c * pc_client  , int32_t i32_newRetriggerTime, int16_t ri16_newTimePeriod)
 {
   if ( c_taskQueue.empty() ) return false;
-  else if (c_taskQueue.size() == 1) return true;
+  else if (cntClient() == 1) return true;
   else
   { // search iterator for the client of change
     std::list<SchedulerEntry_c>::iterator itc_task;
@@ -929,9 +934,11 @@ bool  Scheduler_c::changeRetriggerTimeAndResort(std::list<SchedulerEntry_c>::ite
       if ( *itc_task <= *itc_greater )
       { // the item at itc_greater has late enough retrigger time, so that
         // itc_task can be inserted before
-        const SchedulerEntry_c c_move(*itc_task);
-        c_taskQueue.erase( itc_task );
-        c_taskQueue.insert( itc_greater, c_move );
+
+        // move itc_task from c_taskQueue to the c_spareQueue
+        c_spareQueue.splice( c_spareQueue.end(), c_taskQueue, itc_task );
+        // and move itc_task back from c_spareQueue in front of itc_greater in c_taskQueue
+        c_taskQueue.splice( itc_greater, c_spareQueue, c_spareQueue.begin() );
         #ifdef DEBUG_SCHEDULER
         printTaskList();
         #endif
@@ -940,9 +947,11 @@ bool  Scheduler_c::changeRetriggerTimeAndResort(std::list<SchedulerEntry_c>::ite
     }
     // we reach only here, when no other task in queue afterwards has later retrigger time
     // --> place it at end
-    const SchedulerEntry_c c_move(*itc_task);
-    c_taskQueue.erase( itc_task );
-    c_taskQueue.push_back( c_move );
+
+    // move itc_task from c_taskQueue to the c_spareQueue
+    c_spareQueue.splice( c_spareQueue.end(), c_taskQueue, itc_task );
+    // and move itc_task back from c_spareQueue in front of c_taskQueue.end() - i.e. at the end of the list
+    c_taskQueue.splice( c_taskQueue.end(), c_spareQueue, c_spareQueue.begin() );
     #ifdef DEBUG_SCHEDULER
     printTaskList();
     #endif
@@ -982,9 +991,11 @@ bool  Scheduler_c::changeRetriggerTimeAndResort(std::list<SchedulerEntry_c>::ite
       { // the item at itc_smaller has early enough retrigger time, so that
         // itc_task can be inserted afterwards
         ++itc_smaller; ///< the insertion can only take place _before_ an iterator
-        const SchedulerEntry_c c_move(*itc_task);
-        c_taskQueue.erase( itc_task );
-        c_taskQueue.insert( itc_smaller, c_move );
+
+        // move itc_task from c_taskQueue to the c_spareQueue
+        c_spareQueue.splice( c_spareQueue.end(), c_taskQueue, itc_task );
+        // and move itc_task back from c_spareQueue in front of itc_smaller
+        c_taskQueue.splice( itc_smaller, c_spareQueue, c_spareQueue.begin() );
         #ifdef DEBUG_SCHEDULER
         printTaskList();
         #endif
@@ -994,9 +1005,11 @@ bool  Scheduler_c::changeRetriggerTimeAndResort(std::list<SchedulerEntry_c>::ite
     if ( ( itc_smaller == c_taskQueue.begin() ) && (*itc_smaller <= *itc_task))
     { // the first item in list has earlier trigger
       ++itc_smaller; ///< the insertion can only take place _before_ an iterator
-      const SchedulerEntry_c c_move(*itc_task);
-      c_taskQueue.erase( itc_task );
-      c_taskQueue.insert( itc_smaller, c_move );
+
+      // move itc_task from c_taskQueue to the c_spareQueue
+      c_spareQueue.splice( c_spareQueue.end(), c_taskQueue, itc_task );
+      // and move itc_task back from c_spareQueue in front of itc_smaller
+      c_taskQueue.splice( itc_smaller, c_spareQueue, c_spareQueue.begin() );
       #ifdef DEBUG_SCHEDULER
       printTaskList();
       #endif
@@ -1004,9 +1017,11 @@ bool  Scheduler_c::changeRetriggerTimeAndResort(std::list<SchedulerEntry_c>::ite
     }
     // we reach only here, when no other item before changed task has earlier retrigger time
     // -> place it at front of list
-    const SchedulerEntry_c c_move(*itc_task);
-    c_taskQueue.erase( itc_task );
-    c_taskQueue.push_front( c_move );
+
+    // move itc_task from c_taskQueue to the c_spareQueue
+    c_spareQueue.splice( c_spareQueue.end(), c_taskQueue, itc_task );
+    // and move itc_task back from c_spareQueue in front (c_taskQueue.begin())++ - i.e. at begin of list
+    c_taskQueue.splice( c_taskQueue.begin(), c_spareQueue, c_spareQueue.begin() );
   } // end if shift forward
   #ifdef DEBUG_SCHEDULER
   printTaskList();

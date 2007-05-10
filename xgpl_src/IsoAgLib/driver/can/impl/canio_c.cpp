@@ -146,6 +146,11 @@ CANIO_c::singletonInit()
   /// Default to NO maximum send delay detection
   i32_maxSendDelay = -1;
 
+  tm_filterBoxCnt = 0;
+  #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
+  tm_MsgObjCnt = 0;
+  #endif
+
   /// singletonInit stuff
   init(0xFF, DEFAULT_BITRATE, DEFAULT_CONFIG_IDENT_TYPE, CONFIG_CAN_DEFAULT_MIN_OBJ_NR, CONFIG_CAN_DEFAULT_MAX_OBJ_NR);
 }
@@ -220,7 +225,7 @@ CANIO_c::singletonInit()
     if ( ui8_busNumber <= HAL_CAN_MAX_BUS_NR )
     {
       #ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
-      for (uint8_t i = 0; i < arrFilterBox.size(); i++)
+      for (uint8_t i = 0; i < cntFilter(); i++)
         arrFilterBox[i].closeHAL();
       #endif
       HAL::can_configGlobalClose(ui8_busNumber);
@@ -248,7 +253,7 @@ CANIO_c::singletonInit()
 
     // check if some FilterBox_c instances were already created, so that
     // we must call reconfigureMsgObj NOW
-    if ( arrFilterBox.size() > 0 )
+    if ( ! arrFilterBox.empty() )
     {
       b_callReconfigureMsgObj = true;
       #ifdef DEBUG
@@ -340,7 +345,7 @@ CANIO_c::singletonInit()
     #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
     reconfigureMsgObj();
     #else
-    for (uint8_t i = 0; i < arrFilterBox.size(); i++)
+    for (uint8_t i = 0; i < cntFilter(); i++)
       arrFilterBox[i].configCan(ui8_busNumber, i + minReceiveObjNr() );
     #endif
   }
@@ -356,7 +361,7 @@ void CANIO_c::close( void )
   }
 
   #if defined SYSTEM_WITH_ENHANCED_CAN_HAL
-  for (uint8_t i = 0; i < arrFilterBox.size(); i++)
+  for (uint8_t i = 0; i < cntFilter(); i++)
     arrFilterBox[i].closeHAL();
   #endif
 
@@ -377,14 +382,16 @@ void CANIO_c::close( void )
       break;
   }
   #ifdef DEBUG_HEAP_USEAGE
-  sui16_filterBoxTotal -= arrFilterBox.size();
+  sui16_filterBoxTotal -= cntFilter();
     #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
-    sui16_msgObjTotal -= arrMsgObj.size();
+    sui16_msgObjTotal -= cntMsgObj();
     #endif
   #endif
   arrFilterBox.clear();
+  setCntFilter( 0 );
   #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
   arrMsgObj.clear();
+  setCntMsgObj( 0 );
   #endif
   ui8_busNumber = 0xFF;
 }
@@ -665,13 +672,14 @@ FilterBox_c* CANIO_c::insertFilter(__IsoAgLib::CANCustomer_c& rref_customer,
   c_tempFilterBox.set(c_newMask, c_newFilter, &rref_customer, ri8_dlcForce, rpc_connectedFilterBox);
 
   // insert new FilterBox_c and exit function if no dyn array growth is reported
-  const uint8_t b_oldSize = arrFilterBox.size();
+  const uint8_t b_oldSize = cntFilter();
 
   #ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
   if ( ui8_busNumber == 0xFF )
   { //if insertFilter is called before canio_c init call, insertFilterBox without setting busnumber
     //and msgobj number -> this will be done in init call
     arrFilterBox.push_back(c_tempFilterBox);
+    setCntFilter( arrFilterBox.size() );
     #ifdef DEBUG
     INTERNAL_DEBUG_DEVICE << "---BEFORE CALL OF INIT---" << INTERNAL_DEBUG_DEVICE_ENDL;
     INTERNAL_DEBUG_DEVICE << "insertFilterBox with bus number: " << static_cast<int>(ui8_busNumber)  << " and FilterBoxNr: " << static_cast<int>(b_oldSize) << INTERNAL_DEBUG_DEVICE_ENDL;
@@ -689,7 +697,7 @@ FilterBox_c* CANIO_c::insertFilter(__IsoAgLib::CANCustomer_c& rref_customer,
   bool filterBoxOverwrite = false;
   //search array for a filterbox that is currently not in use and therefore idle
   uint8_t ui8_overwritenFilterBoxIndex = 0;
-  for(; ui8_overwritenFilterBoxIndex < arrFilterBox.size(); ui8_overwritenFilterBoxIndex++)
+  for(; ui8_overwritenFilterBoxIndex < cntFilter(); ui8_overwritenFilterBoxIndex++)
   {
     if ( arrFilterBox[ui8_overwritenFilterBoxIndex].isIdle() )
     { //if idle filterbox found overwrite it with the new filterbox
@@ -714,14 +722,16 @@ FilterBox_c* CANIO_c::insertFilter(__IsoAgLib::CANCustomer_c& rref_customer,
     INTERNAL_DEBUG_DEVICE << "                     mask: "  << std::hex << c_newMask.ident() << " filter: " << c_newFilter.ident() << std::dec << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
     arrFilterBox.push_back(c_tempFilterBox);
+    setCntFilter( arrFilterBox.size() );
     arrFilterBox.back().configCan(ui8_busNumber, tempMsgObjNr);
   }
   #else // SYSTEM_WITH_ENHANCED_CAN_HAL
   // insert temp object in vector arrFilterBox -> can cause badAlloc exception
   arrFilterBox.push_front(c_tempFilterBox);
+  setCntFilter( arrFilterBox.size() );
   #endif // SYSTEM_WITH_ENHANCED_CAN_HAL
 
-  if (b_oldSize >= arrFilterBox.size())
+  if (b_oldSize >= cntFilter())
   { // dynamic array didn't grow -> alloc error
     getILibErrInstance().registerError( iLibErr_c::BadAlloc, iLibErr_c::Can );
     return NULL; // exit the function
@@ -831,6 +841,12 @@ bool CANIO_c::deleteFilter(const __IsoAgLib::CANCustomer_c& rref_customer,
     if ( pc_iter->deleteFilter(rref_customer) )
     { //no more cancustomer exist for the filterbox -> delete
       #ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
+      // with SYSTEM_WITH_ENHANCED_CAN_HAL the FilterBox_c items are organized
+      // in std::vector<T>, so that removal of items in the middle should be avoided
+      // ==> a FilterBox_c where the last Customer has been deleted switches to IDLE
+      //     mode, so that it does nothing and can stay, until it is at the end of the
+      //     list
+      // ==>> ONLY POP FilterBox_c from BACK of std::vector<T> to AVOID chain of FilterBox_c movements in std::vector<T>
       //to be deleted filterbox is set to idle
       while( arrFilterBox.back().isIdle() )
       { //remove idle filterBox if at the end of vector
@@ -839,6 +855,7 @@ bool CANIO_c::deleteFilter(const __IsoAgLib::CANCustomer_c& rref_customer,
       #else
       arrFilterBox.erase(pc_iter);
       #endif
+      setCntFilter( arrFilterBox.size() );
     }
 
     #ifdef DEBUG_HEAP_USEAGE
@@ -875,32 +892,47 @@ bool CANIO_c::deleteAllFiltersForCustomer (const __IsoAgLib::CANCustomer_c& rref
 {
   bool b_result = false;
 
-  // iterator for quick access to all array elements
-  ArrFilterBox::iterator pc_iter = arrFilterBox.begin();
-
-  for (; pc_iter != arrFilterBox.end();)
+  for (ArrFilterBox::iterator pc_iter = arrFilterBox.begin(); pc_iter != arrFilterBox.end();
+  )
   {
-    if ( pc_iter->deleteFilter (rref_customer) )
-    { // returned TRUE, so complete filterbox got empty -> delete complete filterbox
-      pc_iter = arrFilterBox.erase (pc_iter);
+    if ( pc_iter->deleteFilter(rref_customer) )
+    { //no more cancustomer exist for the filterbox -> delete
       b_result = true;
-    }
-    else
-    { // returned FALSE, so still some filters in that filterbox -> keep it
-      pc_iter++;
-    }
-/** @todo According to another function, this has been done - but what's the sense of it in ENHANCED_CAN_HAL and do we need to care here, too?
-      #ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
-      //to be deleted filterbox is set to idle
-      while( arrFilterBox.back().isIdle() )
-      { //remove idle filterBox if at the end of vector
-        arrFilterBox.pop_back();
-      }
-      #else
+      #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
       arrFilterBox.erase(pc_iter);
       #endif
-*/
+    }
+    #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
+    // forward the iterator in NOT-SYSTEM_WITH_ENHANCED_CAN_HAL
+    // only if no item has been deleted with erase() during this loop run
+    //
+    // in SYSTEM_WITH_ENHANCED_CAN_HAL the iterator shall be incremented ALWAYS
+    // as erase() is never called in this compilation mode
+    else
+    #endif
+    {
+      // in case of NOT - SYSTEM_WITH_ENHANCED_CAN_HAL the erase() call moves the iterator already to the item
+      // that has been after the deleted one -> so only forward iterator when nothing has been deleted
+      pc_iter++;
+    }
   }
+
+  #ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
+  // with SYSTEM_WITH_ENHANCED_CAN_HAL the FilterBox_c items are organized
+  // in std::vector<T>, so that removal of items in the middle should be avoided
+  // ==> a FilterBox_c where the last Customer has been deleted switches to IDLE
+  //     mode, so that it does nothing and can stay, until it is at the end of the
+  //     list
+  // ==>> ONLY POP FilterBox_c from BACK of std::vector<T> to AVOID chain of FilterBox_c movements in std::vector<T>
+  //to be deleted filterbox is set to idle
+  while( arrFilterBox.back().isIdle() )
+  { //remove idle filterBox if at the end of vector
+    arrFilterBox.pop_back();
+  }
+  #endif
+
+  // update the cached FilterBox_c cnt
+  setCntFilter( arrFilterBox.size() );
 
   if (b_result)
   { // at least one filter/customer was removed
@@ -1330,10 +1362,11 @@ int16_t CANIO_c::FilterBox2MsgObj()
         c_tempObj.setFilter(c_tempIdent);
         c_tempObj.insertFilterBox(pc_iterFilterBox);
         // check if insertion try result in growed dyn array
-        const uint16_t ui16_oldSize = arrMsgObj.size();
+        const uint16_t ui16_oldSize = cntMsgObj();
         // insert obj in vector
         arrMsgObj.push_front(c_tempObj);
-        if (ui16_oldSize >= arrMsgObj.size())
+        setCntMsgObj( arrMsgObj.size() );
+        if (ui16_oldSize >= cntMsgObj())
         { // dyn array didn't grow -> set badAlloc error state
           getILibErrInstance().registerError( iLibErr_c::BadAlloc, iLibErr_c::Can );
         }
@@ -1359,17 +1392,18 @@ int16_t CANIO_c::FilterBox2MsgObj()
   if (pc_searchEnd!= arrMsgObj.end())
   {
     #ifdef DEBUG_HEAP_USEAGE
-    const uint16_t cui16_oldSize = arrMsgObj.size();
+    const uint16_t cui16_oldSize = cntMsgObj();
     #endif
     HAL::wdTriggern();
     arrMsgObj.erase(pc_searchEnd, arrMsgObj.end());
+    setCntMsgObj( arrMsgObj.size() );
     #ifdef DEBUG_HEAP_USEAGE
-    sui16_msgObjTotal -= ( cui16_oldSize - arrMsgObj.size() );
-    sui16_deconstructMsgObjCnt += (cui16_oldSize - arrMsgObj.size() );
+    sui16_msgObjTotal -= ( cui16_oldSize - cntMsgObj() );
+    sui16_deconstructMsgObjCnt += (cui16_oldSize - cntMsgObj() );
     #endif
   }
 
-  if ( i16_result >= 0) i16_result = arrMsgObj.size();
+  if ( i16_result >= 0) i16_result = cntMsgObj();
   #ifdef DEBUG_HEAP_USEAGE
   INTERNAL_DEBUG_DEVICE
     << "MsgObj: " << sui16_msgObjTotal << " -> ";
@@ -1401,7 +1435,7 @@ void CANIO_c::CheckSetCntMsgObj()
   unsigned int ui_lsbDiffTemp = 0;
 
   // before any preparation of further merge work - check whether we have to merge anyway
-  if (arrMsgObj.size() <= ui8_allowedSize) return;
+  if (cntMsgObj() <= ui8_allowedSize) return;
 
   // NOW WE HAVE TO MERGE AT LEAST TWO MsgObj_c together
 
@@ -1415,7 +1449,7 @@ void CANIO_c::CheckSetCntMsgObj()
   while (b_continueMerging)
   { // more objects than allowed are in arrMsgObj, because intervall between
     // min+1 and max is smaller than size -> shrink array
-    if (arrMsgObj.size() <= ui8_allowedSize) b_continueMerging = false;
+    if (cntMsgObj() <= ui8_allowedSize) b_continueMerging = false;
 
     // start a comparison(left_ind, right_ind) loop for all elements
     for (ArrMsgObj::iterator pc_leftInd = arrMsgObj.begin(); pc_leftInd != arrMsgObj.end(); pc_leftInd++)
@@ -1463,6 +1497,7 @@ void CANIO_c::CheckSetCntMsgObj()
 
       pc_minLeft->merge(*pc_minRight);
       arrMsgObj.erase(pc_minRight);
+      setCntMsgObj( arrMsgObj.size() );
       #ifdef DEBUG_HEAP_USEAGE
       sui16_msgObjTotal--;
       sui16_deconstructMsgObjCnt++;
@@ -1567,7 +1602,7 @@ bool CANIO_c::canMsg2FilterBox( uint32_t rui32_ident, Ident_c::identType_t rt_ty
 FilterBox_c* CANIO_c::getFilterBox(Ident_c& rt_mask, Ident_c& rt_filter) const
 {
   #ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
-  for(uint8_t i = 0; i < arrFilterBox.size(); i++)
+  for(uint8_t i = 0; i < cntFilter(); i++)
   {
     if( arrFilterBox[i].equalFilterMask(rt_mask, rt_filter) )
       return const_cast<FilterBox_c*>(&arrFilterBox[i]);
@@ -1800,7 +1835,7 @@ bool CANIO_c::baseCanInit(uint16_t rui16_bitrate)
     b_lastMsgObjWasOpen = true;
   }
   #else
-  for (uint8_t i = 0; i < arrFilterBox.size(); i++)
+  for (uint8_t i = 0; i < cntFilter(); i++)
     arrFilterBox[i].closeHAL();
   #endif
 
