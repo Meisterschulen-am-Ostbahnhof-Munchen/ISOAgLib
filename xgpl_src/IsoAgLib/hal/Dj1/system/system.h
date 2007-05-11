@@ -68,18 +68,21 @@
 #define _HAL_DJ1_SYSTEM_H_
 
 #include <cstdio>
-//#include "../config.h"
+#include "../config.h"
 #include "../typedef.h"
 #include "../errcodes.h"
 //#include "system_target_extensions.h"
+
+#include <IsoAgLib/util/impl/util_funcs.h>
 
 namespace __HAL 
 {
   extern "C" 
   {
     /** include the BIOS specific header into __HAL */
-    #include <commercial_BIOS/bios_DjBios1/DjBios1.h>
-  }
+    #include <commercial_BIOS/bios_minivt_dj/DjBiosMVT.h>
+    
+   }
 }
 
 /**
@@ -232,7 +235,7 @@ namespace HAL
       {
         /* only 6 characters truncate down to a 16-bit value */
         uint16_t SmSerNum = (uint16_t)SerNum;
-        if ( CNAMESPACE::sprintf( (char*)snrDat, "%u", SmSerNum ) <= 0 )
+        if ( sprintf( (char*)snrDat, "%u", SmSerNum ) <= 0 )
         {
           /* sprintf() error */
           retval = HAL_UNKNOWN_ERR;
@@ -491,10 +494,10 @@ namespace HAL
 #define _HAL_DJ1_SYSTEM_H_
 
 #include <cstdio>
-//#include "../config.h"
+#include "../config.h"
 #include "../typedef.h"
 #include "../errcodes.h"
-//#include "system_target_extensions.h"
+#include "system_target_extensions.h"
 
 namespace __HAL 
 {
@@ -519,8 +522,8 @@ namespace HAL
 /*@{*/
   inline int16_t printf(...){return 1;};
   inline int16_t scanf(...) {return 1;};
-  using CNAMESPACE::sprintf;
-  using CNAMESPACE::sscanf;
+//  using CNAMESPACE::sprintf;
+//  using CNAMESPACE::sscanf;
 
 
   /**
