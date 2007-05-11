@@ -127,6 +127,7 @@ bool TargetFileStreamInput_c::open( const char* filename, FileMode_t rt_mode )
   if ( ( rt_mode & StreamAte ) != 0 )
     fseek(fileDescr, 0, SEEK_END); // file position for reading at end
 
+  b_eofReached = feof(fileDescr);
 
   return true;
 };
@@ -141,6 +142,7 @@ TargetFileStreamInput_c& TargetFileStreamInput_c::operator>>(uint8_t &ui8_data)
   {
     ui16_bytesInBuffer = fread(ch_buf, 1, cui16_bufSize, fileDescr);
     ui16_currentReadIndexInBuffer = 0;
+    b_eofReached = feof(fileDescr);
   }
 
   if (ui16_currentReadIndexInBuffer < ui16_bytesInBuffer)
@@ -158,7 +160,7 @@ TargetFileStreamInput_c::eof() const
   if (!fileDescr)
     return true;
 
-  return (feof(fileDescr) & (ui16_currentReadIndexInBuffer >= ui16_bytesInBuffer));
+  return (b_eofReached & (ui16_currentReadIndexInBuffer >= ui16_bytesInBuffer));
 }
 
 void 
