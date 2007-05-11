@@ -90,65 +90,83 @@
 #include <stdio.h>
 #endif
 
+#include <fcntl.h>
+
 using namespace std;
 
 //! open a input stream
 bool TargetFileStreamInput_c::open( const char* filename, FileMode_t rt_mode )
 {
-#if __GNUC__ < 3
-	b_eofReached = false;
+  if ( ( rt_mode & StreamOut ) != 0 ) return false;
 
-	if ( ( rt_mode & StreamOut ) != 0 ) return false;
-
-	ios::openmode mode = ios::in;
-
-	if ( ( rt_mode & StreamAte   )  != 0 ) mode = ios::openmode( mode | ios::ate    );
-	if ( ( rt_mode & StreamApp   )  != 0 ) mode = ios::openmode( mode | ios::app    );
-	if ( ( rt_mode & StreamTrunc )  != 0 ) mode = ios::openmode( mode | ios::trunc  );
-	if ( ( rt_mode & StreamBinary ) != 0 ) mode = ios::openmode( mode | ios::binary );
-
-
-	static_cast<ifstream*>(this)->open( filename, mode );
-
-	if ( ( static_cast<ifstream*>(this)->good()    )
-		&& ( static_cast<ifstream*>(this)->is_open() ) ) return true;
-	else
-		return false;
-#else
-	b_eofReached = false;
-
-	if ( ( rt_mode & StreamOut ) != 0 ) return false;
-
-	std::ios_base::openmode mode = std::ios_base::in;
-
-	if ( ( rt_mode & StreamAte   )  != 0 ) mode = std::ios_base::openmode( mode | std::ios_base::ate    );
-	if ( ( rt_mode & StreamApp   )  != 0 ) mode = std::ios_base::openmode( mode | std::ios_base::app    );
-	if ( ( rt_mode & StreamTrunc )  != 0 ) mode = std::ios_base::openmode( mode | std::ios_base::trunc  );
-	if ( ( rt_mode & StreamBinary ) != 0 ) mode = std::ios_base::openmode( mode | std::ios_base::binary );
-
-
-	static_cast<std::ifstream*>(this)->open( filename, mode );
-
-	if ( ( static_cast<std::ifstream*>(this)->good()    )
-		&& ( static_cast<std::ifstream*>(this)->is_open() ) ) return true;
-	else
-		return false;
+#if 0
+  if ( ( rt_mode & StreamAte   )  != 0 ) mode = ios::openmode( mode | ios::ate    );
+  if ( ( rt_mode & StreamApp   )  != 0 ) mode = ios::openmode( mode | ios::app    );
+  if ( ( rt_mode & StreamTrunc )  != 0 ) mode = ios::openmode( mode | ios::trunc  );
+  if ( ( rt_mode & StreamBinary ) != 0 ) mode = ios::openmode( mode | ios::binary );
 #endif
+
+  if ( ( rt_mode & StreamTrunc ) != 0 )
+  {
+    fileDescr = fopen(filename, "w"); // Truncate  file  to  zero length
+    if (NULL == fileDescr)
+      return false;
+
+    fclose(fileDescr);
+    fileDescr = NULL;
+  }
+
+  if ( ( rt_mode & StreamApp ) != 0 )
+    fileDescr = fopen(filename, "a+"); // open for reading and appending, file position for reading at the begin
+  else
+    fileDescr = fopen(filename, "r"); // open for reading
+
+  if (NULL == fileDescr)
+    return false;
+
+  if ( ( rt_mode & StreamAte ) != 0 )
+    fseek(fileDescr, 0, SEEK_END); // file position for reading at end
+
+
+  return true;
 };
+
 
 //  Operation: operator>>
 //! Parameter:
 //! @param ui8_data:
 TargetFileStreamInput_c& TargetFileStreamInput_c::operator>>(uint8_t &ui8_data)
 {
-//	std::ifstream* isp_tmp = static_cast<std::ifstream*>(this);
-	std::ifstream* isp_tmp = static_cast<std::ifstream*>(this);
+  if (ui16_currentReadIndexInBuffer >= ui16_bytesInBuffer)
+  {
+    ui16_bytesInBuffer = fread(ch_buf, 1, cui16_bufSize, fileDescr);
+    ui16_currentReadIndexInBuffer = 0;
+  }
 
-	ui8_data = isp_tmp->get();
+  if (ui16_currentReadIndexInBuffer < ui16_bytesInBuffer)
+  {
+    ui8_data = ch_buf[ui16_currentReadIndexInBuffer];
+    ui16_currentReadIndexInBuffer++;
+  }
 
-	// check if next get returns EOF: nothing more to read
-	if ((isp_tmp->peek() == EOF) || (isp_tmp->eof()))
-		b_eofReached = true;
-
-	return *this;
+  return *this;
 }
+
+bool
+TargetFileStreamInput_c::eof() const
+{
+  if (!fileDescr)
+    return true;
+
+  return (feof(fileDescr) & (ui16_currentReadIndexInBuffer >= ui16_bytesInBuffer));
+}
+
+void 
+TargetFileStreamInput_c::close()
+{
+  if (fileDescr)
+    fclose(fileDescr);
+
+  fileDescr = NULL;
+}
+
