@@ -92,6 +92,7 @@
 #include <IsoAgLib/typedef.h>
 #include "streamoutput_c.h"
 #include <supplementary_driver/hal/datastreams.h>
+#include <string>
 
 // +X2C includes
 // ~X2C

@@ -17,6 +17,14 @@
 // ----------------------------------------------------------------------
 
 
+#if defined(DEBUG)
+  #ifdef SYSTEM_PC
+    #include <iostream>
+  #else
+    #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
+  #endif
+  #include <IsoAgLib/util/impl/util_funcs.h>
+#endif
 
 
 #include "elementbase_c.h"
