@@ -91,21 +91,24 @@
 
 
 #include <IsoAgLib/typedef.h>
-#include <fstream>
+//#include <fstream>
 #include <supplementary_driver/hal/datastreams.h>
 #include <string>
 
+#ifndef DJ_MINI_VT
 #ifndef WIN32
+
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 #endif
+#endif
 // +X2C includes
 // ~X2C
 
 //  +X2C Class 915 : FileTargetFileStreamOutput_c
-class TargetFileStreamOutput_c : public std::ofstream
+class TargetFileStreamOutput_c //: public std::ofstream
 {
 
 public:

@@ -91,7 +91,7 @@
 
 
 #include <IsoAgLib/typedef.h>
-#include <fstream>
+//#include <fstream>
 #include <supplementary_driver/hal/datastreams.h>
 #include <string>
 
@@ -99,7 +99,7 @@
 // ~X2C
 
 //  +X2C Class 915 : FileTargetFileStreamInput_c
-class TargetFileStreamInput_c : public std::ifstream
+class TargetFileStreamInput_c //: public std::ifstream
 {
 
 public:
@@ -119,7 +119,7 @@ public:
   //  Operation: eof
   //  b_eofReached is set to true when peek() returns EOF in operator>>: nothing more to read
 	//  b_eofReached is initialized to false in open()
-	virtual bool eof() const { return b_eofReached | static_cast<const std::ifstream*>(this)->eof();};
+	virtual bool eof() const {return true; }//return b_eofReached | static_cast<const std::ifstream*>(this)->eof();};
 	
 private:
 
