@@ -160,7 +160,7 @@ TargetFileStreamInput_c::eof() const
   if (!fileDescr)
     return true;
 
-  return (b_eofReached & (ui16_currentReadIndexInBuffer >= ui16_bytesInBuffer));
+  return (b_eofReached && (ui16_currentReadIndexInBuffer >= ui16_bytesInBuffer));
 }
 
 void 
