@@ -2137,7 +2137,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
                   pAttributes = patched_getAttributes(child);
                   int nSize = pAttributes->getLength();
 
-                  objChildName [stringLength+1-1] = 0x00; is_objChildName = false;
+                  is_objChildName = false; objChildName [stringLength+1-1] = 0x00;
                   is_objChildID = false;
                   is_objChildX = false;
                   is_objChildY = false;
@@ -2225,7 +2225,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
                 } else {
                   // Added this if statement to account for InputList/OutputList objects who might have NULL Object IDs in their list of objects. (Which is legal per the standard!)
                   // Instead of inserting a faulty object name, just insert NULL into the array. -BAC 07-Jan-2005
-                  if (objChildID == 65535)
+                  if (is_objChildID && (objChildID == 65535))
                   {
                     fprintf (partFile_attributes, "{NULL}");
                   }
