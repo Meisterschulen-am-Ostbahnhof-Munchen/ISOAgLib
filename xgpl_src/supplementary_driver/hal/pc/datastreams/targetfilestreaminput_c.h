@@ -91,7 +91,7 @@
 
 
 #include <IsoAgLib/typedef.h>
-#include <fstream>
+#include <stdio.h>
 #include <supplementary_driver/hal/datastreams.h>
 #include <string>
 
@@ -99,7 +99,7 @@
 // ~X2C
 
 //  +X2C Class 915 : FileTargetFileStreamInput_c
-class TargetFileStreamInput_c : public std::ifstream
+class TargetFileStreamInput_c // :public std::ifstream
 {
 
 public:
@@ -109,7 +109,7 @@ public:
 	//! open a input stream
 	bool open( const char* filename, FileMode_t rt_mode );
 	//! close a input stream
-	void close() { static_cast<std::ifstream*>(this)->close();};
+	void close();
 
 	//  Operation: operator>>
   //! Parameter:
@@ -119,12 +119,30 @@ public:
   //  Operation: eof
   //  b_eofReached is set to true when peek() returns EOF in operator>>: nothing more to read
 	//  b_eofReached is initialized to false in open()
-	virtual bool eof() const { return b_eofReached | static_cast<const std::ifstream*>(this)->eof();};
+	virtual bool eof() const;
+
+  TargetFileStreamInput_c() : fileDescr(NULL), b_eofReached(false), ui16_bytesInBuffer(0), ui16_currentReadIndexInBuffer(0)
+  {}
 	
+  ~TargetFileStreamInput_c() { close(); }
+
 private:
+
+  FILE *fileDescr;
+
+  #ifdef WIN32
+  #define cui16_bufSize 256
+  #else
+  static const uint16_t cui16_bufSize = 256;
+  #endif
+
+  char ch_buf[cui16_bufSize];
 
   //  does next get() fail?
   bool b_eofReached;
+
+  uint16_t ui16_bytesInBuffer;
+  uint16_t ui16_currentReadIndexInBuffer;
 }; // ~X2C
 
 // TargetFileStreamInput_c & operator>> (TargetFileStreamInput_c &, uint8_t &ui8_data);
