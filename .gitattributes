@@ -117,6 +117,7 @@ IsoAgLib_Examples/tutorial/3_Terminal/3_0_VirtualTerminalIso/MaskDefinition/simp
 IsoAgLib_Examples/tutorial/3_Terminal/3_0_VirtualTerminalIso/MaskDefinition/simpleVTIsoPool2_Mask2Alarm.xml -text
 IsoAgLib_Examples/tutorial/3_Terminal/3_0_VirtualTerminalIso/TutPrjDesc3_0_VirtualTerminalIso.txt -text
 IsoAgLib_Examples/tutorial/3_Terminal/3_0_VirtualTerminalIso/config_3_0_VirtualTerminalIso.h -text
+IsoAgLib_Examples/tutorial/3_Terminal/3_0_VirtualTerminalIso/config_3_0_VirtualTerminalIsoEsxu.h -text
 IsoAgLib_Examples/tutorial/3_Terminal/3_0_VirtualTerminalIso/version.h -text
 IsoAgLib_Examples/tutorial/3_Terminal/3_2_VirtualTerminalMultiIso/3_2_VirtualTerminalMultiIso.cpp -text
 IsoAgLib_Examples/tutorial/3_Terminal/3_2_VirtualTerminalMultiIso/MaskDefinition1/bitmaps/standard/simpleBitmap.bmp -text
