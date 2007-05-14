@@ -41,25 +41,25 @@ ToolAddCmd='$_custom_tool_$_1','API Database Editor',1342177312,'cwtedit.exe'
 TagSetCmd='"${HOME}${WTAGS}" -oc -d -t"${TAGFILE}.tag" -p"${TAGFILE}.ptg"',0x8000060
 BrowseSetFile='3_0_VirtualTerminalIsoEsxu.ptg'
 TagSetFile='3_0_VirtualTerminalIsoEsxu.tag'
-CompilerAddCmdEx='TASKING src','"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
+CompilerAddCmdEx='TASKING src','"c:\programme\tasking\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:\programme\tasking\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
 CompilerAddResponse='TASKING src',
-CompilerAddCmdEx='TASKING fle','"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
+CompilerAddCmdEx='TASKING fle','"c:\programme\tasking\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:\programme\tasking\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
 CompilerAddResponse='TASKING fle',
-CompilerAddCmdEx='TASKING cc','"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
+CompilerAddCmdEx='TASKING cc','"c:\programme\tasking\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:\programme\tasking\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
 CompilerAddResponse='TASKING cc',
-CompilerAddCmdEx='TASKING cxx','"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
+CompilerAddCmdEx='TASKING cxx','"c:\programme\tasking\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:\programme\tasking\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
 CompilerAddResponse='TASKING cxx',
-CompilerAddCmdEx='TASKING asm','"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'','','','%x%y.err','%v%p'
+CompilerAddCmdEx='TASKING asm','"c:\programme\tasking\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:\programme\tasking\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'','','','%x%y.err','%v%p'
 CompilerAddResponse='TASKING asm',
-CompilerAddCmdEx='TASKING cmp','"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
+CompilerAddCmdEx='TASKING cmp','"c:\programme\tasking\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:\programme\tasking\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
 CompilerAddResponse='TASKING cmp',
-CompilerAddCmdEx='$_cw_proj_hash_$','"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'!ExecuteBuild(\'"c:\programme\tasking\7.56\c166\bin\wmk.exe" -m "%x%y.opm"\')',1073742496,'${FTEE} nmake',0,'!ExecuteBuild(\'"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm"\')',1073742496,'${FTEE} nmake',0,'c:\programme\tasking\7.56\c166\bin\xfw166.exe 3_0_VirtualTerminalIsoEsxu.abs -f "%x_%y.xvo"',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
+CompilerAddCmdEx='$_cw_proj_hash_$','"c:\programme\tasking\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:\programme\tasking\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'!ExecuteBuild(\'"c:\programme\tasking\c166\bin\wmk.exe" -m "%x%y.opm"\')',1073742496,'${FTEE} nmake',0,'!ExecuteBuild(\'"c:\programme\tasking\c166\bin\wmk.exe" -a -m "%x%y.opm"\')',1073742496,'${FTEE} nmake',0,'c:\programme\tasking\c166\bin\xfw166.exe 3_0_VirtualTerminalIsoEsxu.abs -f "%x_%y.xvo"',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
 CompilerAddResponse='$_cw_proj_hash_$',
-CompilerAddCmdEx='TASKING ic','"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
+CompilerAddCmdEx='TASKING ic','"c:\programme\tasking\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:\programme\tasking\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
 CompilerAddResponse='TASKING ic',
-CompilerAddCmdEx='TASKING cpp','"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
+CompilerAddCmdEx='TASKING cpp','"c:\programme\tasking\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:\programme\tasking\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
 CompilerAddResponse='TASKING cpp',
-CompilerAddCmdEx='TASKING c','"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
+CompilerAddCmdEx='TASKING c','"c:\programme\tasking\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:\programme\tasking\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
 CompilerAddResponse='TASKING c',
 CompilerNewExt=.htm
 CompilerAssign='TASKING src','.src'
@@ -114,8 +114,8 @@ VCSSetCmd=VCS_ADD_ID,'vcs -i -t@"%Q" "%b%e"',0x8000040
 VCSSetCmd=VCS_REMOVE_ID,'del /f "%b%{??v|___}e"',0x8000040
 
 [Project]
-ConfigSetLinkDBFilename='c:\programme\tasking\7.56\c166\bin\cwright.ldb'
-ConfigSetMarkDBFilename='c:\programme\tasking\7.56\c166\bin\cwright.mrk'
+ConfigSetLinkDBFilename='c:\programme\tasking\c166\bin\cwright.ldb'
+ConfigSetMarkDBFilename='c:\programme\tasking\c166\bin\cwright.mrk'
 ConfigSetSymbolDBFilename='3_0_VirtualTerminalIsoEsxu.sbl'
 EditSetPath=''
 
@@ -356,14 +356,14 @@ EditSetPath=''
 
 
 [Directories]
-Executables=c:\programme\tasking\7.56\c166\bin
-Includes=c:\programme\tasking\7.56\c166\include.cpp;..\..\..\IsoAgLib_Examples\tutorial\3_Terminal\3_0_VirtualTerminalIso;..\..\..;..\..\../xgpl_src;..\..\..\commercial_BIOS\bios_esxu
-Libraries=c:\programme\tasking\7.56\c166\lib;..\..\..\commercial_BIOS\bios_esxu
+Executables=c:\programme\tasking\c166\bin
+Includes=c:\programme\tasking\c166\include.cpp;..\..\..\IsoAgLib_Examples\tutorial\3_Terminal\3_0_VirtualTerminalIso;..\..\..;..\..\../xgpl_src;..\..\..\commercial_BIOS\bios_esxu
+Libraries=c:\programme\tasking\c166\lib;..\..\..\commercial_BIOS\bios_esxu
 
 [Ede]
-Toolchain=c:\programme\tasking\7.56\c166\etc\c166.dol
+Toolchain=c:\programme\tasking\c166\etc\c166.dol
 ToolchainName=TASKING Tools for C166/ST10 v7.5 r6
-ProjectDir=\home\staub\Projekte\IsoFass\IsoAgLib\compiler_projects\EDE\\3_0_VirtualTerminalIsoEsxu
+ProjectDir=\home\staub\Projekte\IsoFass\IsoAgLib\compiler_projects\EDE\3_0_VirtualTerminalIsoEsxu
 UserMode=Expert
 EdeVersion=2.7r5 (094)
 CodeWrightVersion=6.5b
