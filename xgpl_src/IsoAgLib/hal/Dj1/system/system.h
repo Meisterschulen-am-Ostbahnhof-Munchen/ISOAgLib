@@ -68,6 +68,7 @@
 #define _HAL_DJ1_SYSTEM_H_
 
 #include <cstdio>
+
 #include "../config.h"
 #include "../typedef.h"
 #include "../errcodes.h"
