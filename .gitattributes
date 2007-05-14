@@ -664,6 +664,7 @@ compiler_projects/SIMU/XOS20LEE.HEX -text
 compiler_projects/SIMU/XOS20SIM.HEX -text
 compiler_projects/SIMU/Xos20emu.hex -text
 compiler_projects/SIMU/autodatacollector.cmm -text
+compiler_projects/SIMU/esx-micro-3_0.cmm -text
 compiler_projects/SIMU/imi.cmm -text
 compiler_projects/SIMU/isoaglib.cmm -text
 compiler_projects/SIMU/sim.cmm -text
