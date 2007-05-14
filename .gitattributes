@@ -601,6 +601,7 @@ compiler_projects/EDE/2_9_RemoteWriteSetpointStdIso/2_9_RemoteWriteSetpointStdIs
 compiler_projects/EDE/2_9_RemoteWriteSetpointStdIso/2_9_RemoteWriteSetpointStdIso_pm167.pjt -text
 compiler_projects/EDE/3_0_VirtualTerminalIso/3_0_VirtualTerminalIso_c2c.pjt -text
 compiler_projects/EDE/3_0_VirtualTerminalIso/3_0_VirtualTerminalIso_esx.pjt -text
+compiler_projects/EDE/3_0_VirtualTerminalIso/3_0_VirtualTerminalIso_esxu.pjt -text
 compiler_projects/EDE/3_0_VirtualTerminalIso/3_0_VirtualTerminalIso_imi.pjt -text
 compiler_projects/EDE/3_0_VirtualTerminalIso/3_0_VirtualTerminalIso_pm167.pjt -text
 compiler_projects/EDE/3_2_VirtualTerminalMultiIso/3_2_VirtualTerminalMultiIso_c2c.pjt -text
