@@ -86,7 +86,7 @@
  ***************************************************************************/
 #include "targetfilestreamoutput_c.h"
 
-using namespace std;
+//using namespace std;
 
 //! open a output stream
 bool TargetFileStreamOutput_c::open( const char* filename, FileMode_t rt_mode )

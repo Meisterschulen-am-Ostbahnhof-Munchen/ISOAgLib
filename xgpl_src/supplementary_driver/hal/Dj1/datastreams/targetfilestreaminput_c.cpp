@@ -86,8 +86,9 @@
  ***************************************************************************/
 
 #include "targetfilestreaminput_c.h"
+
 #ifdef WIN32
-#include <stdio.h>
+  #include <stdio.h>
 #endif
 
 using namespace std;

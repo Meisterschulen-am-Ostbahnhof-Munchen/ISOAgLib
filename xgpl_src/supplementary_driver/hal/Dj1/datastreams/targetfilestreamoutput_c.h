@@ -89,21 +89,21 @@
 #ifndef TARGETFILESTREAMOUTPUT_C_H
 #define TARGETFILESTREAMOUTPUT_C_H
 
-
+#include <supplementary_driver/hal/datastreams.h>
 #include <IsoAgLib/typedef.h>
 //#include <fstream>
-#include <supplementary_driver/hal/datastreams.h>
+//#include <cstring>
 #include <string>
 
-#ifndef DJ_MINI_VT
-#ifndef WIN32
+#ifndef SYSTEM_DJ1
+  #ifndef WIN32
+    #include <unistd.h>
+    #include <sys/types.h>
+    #include <sys/stat.h>
+    #include <fcntl.h>
+  #endif
+#endif
 
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#endif
-#endif
 // +X2C includes
 // ~X2C
 
@@ -113,7 +113,10 @@ class TargetFileStreamOutput_c //: public std::ofstream
 
 public:
 	//! open a output stream
-	bool open( std::string& filename, FileMode_t rt_mode ){ return true; };
+
+  //Sergej: not used for DjMiniVt
+ 	bool open( CNAMESPACE::string& filename, FileMode_t rt_mode ){ return true; };
+
 	//! open a output stream
 	bool open( const char* filename, FileMode_t rt_mode );
 	//! close a output stream
