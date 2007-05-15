@@ -246,34 +246,63 @@ namespace __IsoAgLib {
     const int32_t ci32_now = getLastRetriggerTime();
 
     // check for different base data types whether the previously
-    if ( checkMode(IsoAgLib::IdentModeImplement)
-      && ( (lastedTimeSinceUpdate() >= TIMEOUT_SENDING_NODE ) || ( yearUtc() == 0 ) )
-      && ( getSelectedDataSourceISOName().isSpecified()           )
-        )
-    { // the previously sending node didn't send the information for 3 seconds -> give other items a chance
-      getSelectedDataSourceISOName().setUnspecified();
+    if (checkMode(IsoAgLib::IdentModeImplement))
+    {
+      if ( ( getSelectedDataSourceISOName().isSpecified() )
+           &&
+           ( (lastedTimeSinceUpdate() >= TIMEOUT_SENDING_NODE) || (yearUtc() == 0) ) // yearUtc means ERROR and NOT year0/1900/1970/whatever...
+         )
+      { // the previously sending node didn't send the information for 3 seconds -> give other items a chance
+        getSelectedDataSourceISOName().setUnspecified();
 
-      bit_calendar.year = bit_calendar.hour = bit_calendar.minute = bit_calendar.second = 0;
-      bit_calendar.month = bit_calendar.day = 1;
-    }
-    /** @todo differentiate what to clear! separate them! */
-    if ( checkModeGps(IsoAgLib::IdentModeImplement)
-      #ifdef NMEA_2000_FAST_PACKET
-      && ( ( ci32_now - i32_lastIsoPositionStream  ) >= TIMEOUT_SENDING_NODE  )
-      #endif
-      && ( ( ci32_now - i32_lastIsoDirection       ) >= TIMEOUT_SENDING_NODE  )
-      && ( ( ci32_now - i32_lastIsoPositionSimple  ) >= TIMEOUT_SENDING_NODE  )
-      && ( c_sendGpsISOName.isSpecified()                      ) )
-    { // the previously sending node didn't send the information for 3 seconds -> give other items a chance
-      c_sendGpsISOName.setUnspecified();
-      i32_latitudeDegree10Minus7 = i32_longitudeDegree10Minus7 = 0x7FFFFFFF;
-      ui16_speedOverGroundCmSec = ui16_courseOverGroundRad10Minus4 = 0xFFFF;
-      t_gnssMethod = IsoAgLib::IsoNoGps;
-      #ifdef NMEA_2000_FAST_PACKET
-      t_gnssType = IsoAgLib::IsoGnssGps;
-      ui8_satelliteCnt = 0;
-      ui32_altitudeCm = 0;
-      #endif
+        /// Set date to NO_VAL, i.e. 01.01.0000
+        bit_calendar.year = 0;
+        bit_calendar.month = 1;
+        bit_calendar.day = 1;
+        /// There's no NO_VAL for time yet, so set it to 00:00:00
+        bit_calendar.hour = 0;
+        bit_calendar.minute = 0;
+        bit_calendar.second = 0;
+        // @todo maybe later also reset those values here, too...
+        //bit_calendar.msec = 0;
+        //bit_calendar.timezoneMinuteOffset = 0;
+        //bit_calendar.timezoneHourOffsetMinus24 = 24;
+      }
+
+      if ( c_sendGpsISOName.isSpecified() )
+      {
+        bool b_noPosition = false;
+        if (
+            ( (ci32_now - i32_lastIsoPositionSimple) >= TIMEOUT_SENDING_NODE )
+            #ifdef NMEA_2000_FAST_PACKET
+            &&
+            ( (ci32_now - i32_lastIsoPositionStream) >= TIMEOUT_SENDING_NODE )
+            #endif
+           )
+        { // the previously sending node didn't send POSITION information for 3 seconds -> give other items a chance
+          i32_latitudeDegree10Minus7 = i32_longitudeDegree10Minus7 = 0x7FFFFFFF;
+          t_gnssMethod = IsoAgLib::IsoNoGps;
+          #ifdef NMEA_2000_FAST_PACKET
+          t_gnssType = IsoAgLib::IsoGnssGps;
+          ui8_satelliteCnt = 0;
+          ui32_altitudeCm = 0;
+          #endif
+          b_noPosition = true;
+        }
+        if ( (ci32_now - i32_lastIsoDirection) >= TIMEOUT_SENDING_NODE )
+        { // the previously sending node didn't send the information for 3 seconds -> give other items a chance
+          ui16_speedOverGroundCmSec = ui16_courseOverGroundRad10Minus4 = 0xFFFF;
+
+          if (b_noPosition)
+          { // neither Pos nor Dir are specified, so kick the sender!
+            c_sendGpsISOName.setUnspecified();
+          }
+          /** @todo Maybe make it 2 GpsIsoNames: One for Position and one for Direction!
+           * Then we don't have to wait for both to be silent in order to kick the c_sendGpsISOName.
+           * Naming:       Gps for Position
+           *         Direction for Direction */
+        }
+      }
     }
 
     if ( ( ( getISOName() != NULL )  && (getIsoMonitorInstance4Comm().existIsoMemberISOName(*getISOName(), true))  && ( checkMode(IsoAgLib::IdentModeTractor) ) )
@@ -361,13 +390,15 @@ namespace __IsoAgLib {
       getIsoRequestPgnInstance4Comm().unregisterPGN (*this, TIME_DATE_PGN);
     }
 
-    // set the member base msg value vars to NO_VAL codes
+    /// Set date to NO_VAL, i.e. 01.01.0000
     bit_calendar.year = 0;
     bit_calendar.month = 1;
     bit_calendar.day = 1;
+    /// There's no NO_VAL for time yet, so set it to 00:00:00
     bit_calendar.hour = 0;
     bit_calendar.minute = 0;
     bit_calendar.second = 0;
+    // additionally set the other field, too...
     bit_calendar.msec = 0;
     bit_calendar.timezoneMinuteOffset = 0;
     bit_calendar.timezoneHourOffsetMinus24 = 24;
@@ -481,6 +512,19 @@ namespace __IsoAgLib {
     #endif
   }
 
+  /** Retrieve the last update time of the specified information type
+    */
+  int32_t TimePosGPS_c::lastedTimeSinceUpdateDirection() const
+  {
+    const int32_t ci32_now = getLastRetriggerTime();
+    return ( ci32_now - i32_lastIsoDirection);
+  }
+  /** Retrieve the time of last update */
+  int32_t TimePosGPS_c::lastUpdateTimeDirection() const
+  {
+    return i32_lastIsoDirection;
+  }
+
   #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
   /** C-style function, to get access to the unique Base_c singleton instance
     * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
@@ -552,7 +596,6 @@ namespace __IsoAgLib {
           i32_longitudeDegree10Minus7 = data().getInt32Data( 4 );
           i32_lastIsoPositionSimple = ci32_now;
           c_sendGpsISOName = c_tempISOName;
-          setUpdateTime( ci32_now );
           if (getGnssMode() == IsoAgLib::IsoNoGps)
           { /// @todo Allow Rapid Update without Complete Position TP/FP before? Is is just an update or can it be standalone?
               /// for now, allow it as standalone and set GpsMethod simply to IsoGnssFix
@@ -573,7 +616,6 @@ namespace __IsoAgLib {
           // set last time (also always, because if the sender's sending it's sending so we can't send!!
           i32_lastIsoDirection = ci32_now;
           c_sendGpsISOName = c_tempISOName;
-          setUpdateTime( ci32_now );
 
           if ( (ui16_courseOverGroundRad10Minus4 <= (62855)) /// @todo check for the REAL max, 62855 is a little bigger than 62831 or alike that could be calculated. but anyway...
             && (ui16_speedOverGroundCmSec        <= (65532))
@@ -1222,12 +1264,25 @@ void TimePosGPS_c::isoSendDirection( void )
     }
   }
 
-  /** check if a calendar information was received since init */
+  /** check if a calendar information was received since init 
+   */
   bool TimePosGPS_c::isCalendarReceived() const
-  { // check if default data from init is still in vars
-    return ( ( bit_calendar.day == 1 ) && ( bit_calendar.month == 1 ) && ( bit_calendar.year == 0 )
+  {
+    return ( ( bit_calendar.day == 1 ) && ( bit_calendar.month == 1 ) && ( bit_calendar.year == 0 ) // year 0 (absolute) indicates NO_VAL!
         && ( bit_calendar.second == 0 ) && ( bit_calendar.minute == 0 ) && ( bit_calendar.hour == 0 ) )?false:true;
   }
+
+  /** check if a calendar's DATE information that was received is VALID */
+  bool TimePosGPS_c::isCalendarDateValid() const
+  { // check if default data from init is still in vars
+    return ( (bit_calendar.day > 0) && (bit_calendar.month > 0) && (bit_calendar.year > 0) );
+  }
+
+  /** check if a calendar's TIME information that was received is VALID
+   * @todo Add this check if it's ensured everywhere that NO_VAL times
+   *       don't screw around (with some mktime() or whatever functions...)
+  bool TimePosGPS_c::isCalendarTimeValid() const
+   */
 
   /**
   set the calendar value

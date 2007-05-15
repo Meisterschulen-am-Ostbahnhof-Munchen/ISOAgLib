@@ -100,12 +100,17 @@ public:
 
   /** Retrieve the last update time of the specified information type
    */
-  int32_t lastedTimeSinceUpdateGps() const
-    {return TimePosGPS_c::lastedTimeSinceUpdateGps();}
+  int32_t lastedTimeSinceUpdateGps() const {return TimePosGPS_c::lastedTimeSinceUpdateGps();}
 
   /** Retrieve the time of last update */
-  int32_t lastUpdateTimeGps() const
-  {return TimePosGPS_c::lastUpdateTimeGps();}
+  int32_t lastUpdateTimeGps() const {return TimePosGPS_c::lastUpdateTimeGps();}
+
+  /** Retrieve the last update time of the specified information type
+   */
+  int32_t lastedTimeSinceUpdateDirection() const {return TimePosGPS_c::lastedTimeSinceUpdateDirection();}
+
+  /** Retrieve the time of last update */
+  int32_t lastUpdateTimeDirection() const {return TimePosGPS_c::lastUpdateTimeDirection();}
 
   /** return a sender which sends GPS commands as a tractor */
   iISOName_c& getSenderISONameGps() {return TimePosGPS_c::getSenderISONameGps().toIisoName_c();}
@@ -126,7 +131,10 @@ public:
   /** \name Get Values */
   /*@{*/
   /** check if a calendar information was received since init */
-  bool isCalendarReceived() const { return TimePosGPS_c::isCalendarReceived();}
+  bool isCalendarReceived() const { return TimePosGPS_c::isCalendarReceived(); }
+
+  /** check if a calendar information was received since init */
+  bool isCalendarDateValid() const { return TimePosGPS_c::isCalendarDateValid(); }
 
   /** get the calendar year value */
   int16_t yearLocal() { return TimePosGPS_c::yearLocal();}
