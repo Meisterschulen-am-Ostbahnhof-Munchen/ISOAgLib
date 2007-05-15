@@ -105,6 +105,43 @@ int16_t eepromWp(boolean /* bitMode */ ){
   return HAL_NO_ERR;
 }
 
+int16_t openDatFileAndSeek(long rl_position)
+{
+  eepromDat = fopen(EEPROM_DAT_FILE, "r+b");
+  if ( NULL == eepromDat )
+  { // try to create file with creation mode
+    eepromDat = fopen(EEPROM_DAT_FILE, "a+b");
+    if ( NULL != eepromDat )
+    { // we have to close the file, as the normal operation works only with a "r+b" opened FILE
+      // - at least on some targets
+      fclose( eepromDat );
+      // reopen now with "r+b"
+      eepromDat = fopen(EEPROM_DAT_FILE, "r+b");
+    }
+  }
+  if ( NULL == eepromDat )
+  { // have another try with file directly in calling directory
+    eepromDat = fopen("eeprom.dat", "r+b");
+    if ( NULL == eepromDat )
+    { // try to create file with creation mode
+      eepromDat = fopen("eeprom.dat", "a+b");
+      if ( NULL != eepromDat )
+      { // we have to close the file, as the normal operation works only with a "r+b" opened FILE
+        // - at least on some targets
+        fclose( eepromDat );
+        // reopen now with "r+b"
+        eepromDat = fopen("eeprom.dat", "r+b");
+      }
+    }
+  }
+  if ( NULL != eepromDat )
+  { // seek on success to the wanted position
+    fseek(eepromDat, rl_position, 0);
+    return HAL_NO_ERR;
+  }
+  else return HAL_CONFIG_ERR;
+}
+
 /* write one or more bytes into the eeprom*/
 int16_t eepromWrite(uint16_t wAddress,uint16_t wNumber,uint8_t *pbData){
   int16_t i = 0;
@@ -112,16 +149,9 @@ int16_t eepromWrite(uint16_t wAddress,uint16_t wNumber,uint8_t *pbData){
   int8_t c_temp;
   int32_t i32_temp;
   uint8_t* pByte;
-//  printf("schreibe Daten von %i mit Daten :", wAddress);
-  eepromDat = fopen(EEPROM_DAT_FILE, "r+b");
-
-  // BEGIN: Added by M.Wodok 6.12.04
-  if (eepromDat == NULL) {
-    // try again in current directory
-    eepromDat = fopen("eeprom.dat", "r+b");
-  }
-  // END: Added by M.Wodok 6.12.04
-  fseek(eepromDat, wAddress, 0);
+//  printf("schreibe Daten von %i mit Daten aus Datei %s\n", wAddress, EEPROM_DAT_FILE );fflush(0);
+  int16_t errCode = openDatFileAndSeek(wAddress);
+  if ( errCode  != HAL_NO_ERR ) return errCode;
 
   switch (wNumber)
   {
@@ -176,14 +206,9 @@ int16_t eepromWrite(uint16_t wAddress,uint16_t wNumber,uint8_t *pbData){
 /* write one uint8_t into the eeprom */
 int16_t eepromWriteByte(uint16_t wAddress,uint8_t bByte){
 //  printf("schreibe Daten von %i mit Daten %i\n", wAddress, uint16_t(bByte));
-  eepromDat = fopen(EEPROM_DAT_FILE, "r+b");
-  // BEGIN: Added by M.Wodok 6.12.04
-  if (eepromDat == NULL) {
-    // try again in current directory
-    eepromDat = fopen("eeprom.dat", "r+b");
-  }
-  // END: Added by M.Wodok 6.12.04
-  fseek(eepromDat, wAddress, 0);
+  int16_t errCode = openDatFileAndSeek(wAddress);
+  if ( errCode  != HAL_NO_ERR ) return errCode;
+
   fputc(bByte, eepromDat);
   fclose(eepromDat);
   return HAL_NO_ERR;
@@ -196,14 +221,8 @@ int16_t eepromRead(uint16_t wAddress,uint16_t wNumber,uint8_t *pbByte){
   int8_t c_temp;
   int32_t i32_temp;
 //  printf("lese Daten von %i mit Daten als text:", wAddress);
-  eepromDat = fopen(EEPROM_DAT_FILE, "r+b");
-  // BEGIN: Added by M.Wodok 6.12.04
-  if (eepromDat == NULL) {
-    // try again in current directory
-    eepromDat = fopen("eeprom.dat", "r+b");
-  }
-  // END: Added by M.Wodok 6.12.04
-  fseek(eepromDat, wAddress, 0);
+  int16_t errCode = openDatFileAndSeek(wAddress);
+  if ( errCode  != HAL_NO_ERR ) return errCode;
 
   switch (wNumber)
   {
