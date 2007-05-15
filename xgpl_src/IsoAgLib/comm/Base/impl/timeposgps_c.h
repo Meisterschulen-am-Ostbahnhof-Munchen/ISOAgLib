@@ -231,6 +231,14 @@ class TimePosGPS_c : public SingletonTimePosGps_c
   /** Retrieve the time of last update */
   int32_t lastUpdateTimeGps() const;
 
+
+  /** Retrieve the last update time of the specified information type*/
+  int32_t lastedTimeSinceUpdateDirection() const;
+
+  /** Retrieve the time of last update */
+  int32_t lastUpdateTimeDirection() const;
+
+
   /** return a sender which sends commands as a tractor */
   ISOName_c& getSenderISONameGps() {return c_sendGpsISOName;}
 
@@ -412,6 +420,12 @@ public:
   /// Getter functions
   /** check if a calendar information was received since init */
   bool isCalendarReceived() const;
+
+  /** check if a calendar's DATE information was received with valid value since init */
+  bool isCalendarDateValid() const;
+
+  /** check if a calendar's TIME information was received with valid value since init */
+  /// @todo ... bool isCalendarTimeValid() const;
 
   /** get the calendar year value
       @return actual calendar year value
