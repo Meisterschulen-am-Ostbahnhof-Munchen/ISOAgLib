@@ -1770,6 +1770,22 @@ create_EdePrj()
 	sed -e 's#=_=_#\\#g'  $PROJECT_FILE_NAME > $PROJECT_FILE_NAME.1
 	sed -e 's#=_=_#\\#g'  $EdePrjFilelist > $EdePrjFilelist.1
 	mv $EdePrjFilelist.1 $EdePrjFilelist
+
+	# now set the target CPU if this varies from default CpuC167CS
+	case "$USE_TARGET_SYSTEM" in
+		Dj1)
+			sed -e 's#CpuC167CS#CpuC167CR#g' $PROJECT_FILE_NAME.1 > $PROJECT_FILE_NAME
+			mv $PROJECT_FILE_NAME $PROJECT_FILE_NAME.1
+			;;
+		esxu)
+			sed -e 's#CpuC167CS#CpuF269#g' $PROJECT_FILE_NAME.1 > $PROJECT_FILE_NAME
+			mv $PROJECT_FILE_NAME $PROJECT_FILE_NAME.1
+			;;
+		*)
+		;;
+	esac
+
+
 	echo "Converted UNIX to Windows Linebreak in $PROJECT_FILE_NAME"
 	cat $PROJECT_FILE_NAME.1 | gawk '{ sub("\r", ""); print $0;}' > $PROJECT_FILE_NAME
 	cat $PROJECT_FILE_NAME | gawk '{ sub("$", "\r"); print $0;}' > $PROJECT_FILE_NAME.1
