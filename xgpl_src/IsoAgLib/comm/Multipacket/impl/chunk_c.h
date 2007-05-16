@@ -93,6 +93,7 @@
 #include <IsoAgLib/typedef.h>
 
 // stl
+#include <cstdlib>	// Include before vector or else CNAMESPACE stuff is screwed up for Tasking
 #include <vector>
 
 

@@ -60,6 +60,7 @@
        #include <windows.h>
 #endif
 
+#include <cstdlib>	// Include before vector or else CNAMESPACE stuff is screwed up for Tasking
 #include <vector>
 
 namespace __HAL {

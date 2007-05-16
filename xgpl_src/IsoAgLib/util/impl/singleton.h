@@ -300,7 +300,7 @@
 #include <new>
 #include <cstring>
 #include <cstdio>
-#include <cstdlib>
+#include <cstdlib>	// Include before vector or else CNAMESPACE stuff is screwed up for Tasking
 #include <vector>
 
 /** BaseSingleton class for classes which need only ONE instance per project

@@ -97,6 +97,7 @@
 #include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h>
 //#include "isoitem_c.h"
 
+#include <cstdlib>	// Include before vector or else CNAMESPACE stuff is screwed up for Tasking
 #include <vector>
 
 // Begin Namespace __IsoAgLib
