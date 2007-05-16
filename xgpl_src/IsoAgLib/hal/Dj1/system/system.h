@@ -163,7 +163,7 @@ namespace HAL
   */
   inline void wdTriggern ( void )
   {
-    return ( HAL_NO_ERR );
+//    return ( HAL_NO_ERR );
 //jtm    __HAL::trigger_wd();
   };
 
