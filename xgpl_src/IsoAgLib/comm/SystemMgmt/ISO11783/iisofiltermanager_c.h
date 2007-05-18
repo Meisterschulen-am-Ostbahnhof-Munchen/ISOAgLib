@@ -57,6 +57,7 @@
 #include "impl/isofiltermanager_c.h"
 #include "iisofilter_s.h"
 
+#include <cstdlib>	// Include before vector or else CNAMESPACE stuff is screwed up for Tasking
 #include <vector>
 
 

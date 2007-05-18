@@ -8,6 +8,7 @@
 #include <sys/time.h>
 #include <time.h>
 
+#include <cstdlib>	// Include before vector or else CNAMESPACE stuff is screwed up for Tasking
 #include <vector>
 
 using namespace __HAL;
