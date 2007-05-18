@@ -89,10 +89,10 @@
 #ifndef TARGETFILESTREAMOUTPUT_C_H
 #define TARGETFILESTREAMOUTPUT_C_H
 
-#include <supplementary_driver/hal/datastreams.h>
 #include <IsoAgLib/typedef.h>
+#include <supplementary_driver/hal/datastreams.h>
+
 //#include <fstream>
-//#include <cstring>
 #include <string>
 
 #ifndef SYSTEM_DJ1

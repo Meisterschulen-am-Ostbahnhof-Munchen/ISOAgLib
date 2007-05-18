@@ -598,8 +598,11 @@ namespace __IsoAgLib {
           c_sendGpsISOName = c_tempISOName;
           if (getGnssMode() == IsoAgLib::IsoNoGps)
           { /// @todo Allow Rapid Update without Complete Position TP/FP before? Is is just an update or can it be standalone?
-              /// for now, allow it as standalone and set GpsMethod simply to IsoGnssFix
-            t_gnssMethod = IsoAgLib::IsoGnssFix;
+              /// for now, allow it as standalone and set GpsMethod simply to IsoGnssNull as we don't have reception info...
+            t_gnssMethod = IsoAgLib::IsoGnssNull; // was IsoGnssFix before. Actually, noone knows what to set here ;-)
+            #ifdef NMEA_2000_FAST_PACKET
+            t_gnssType = IsoAgLib::IsoGnssGps;
+            #endif
           }
         }
         return true;

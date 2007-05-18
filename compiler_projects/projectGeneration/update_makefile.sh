@@ -1770,6 +1770,22 @@ create_EdePrj()
 	sed -e 's#=_=_#\\#g'  $PROJECT_FILE_NAME > $PROJECT_FILE_NAME.1
 	sed -e 's#=_=_#\\#g'  $EdePrjFilelist > $EdePrjFilelist.1
 	mv $EdePrjFilelist.1 $EdePrjFilelist
+
+	# now set the target CPU if this varies from default CpuC167CS
+	case "$USE_TARGET_SYSTEM" in
+		Dj1)
+			sed -e 's#CpuC167CS#CpuC167CR#g' $PROJECT_FILE_NAME.1 > $PROJECT_FILE_NAME
+			mv $PROJECT_FILE_NAME $PROJECT_FILE_NAME.1
+			;;
+		esxu)
+			sed -e 's#CpuC167CS#CpuF269#g' $PROJECT_FILE_NAME.1 > $PROJECT_FILE_NAME
+			mv $PROJECT_FILE_NAME $PROJECT_FILE_NAME.1
+			;;
+		*)
+		;;
+	esac
+
+
 	echo "Converted UNIX to Windows Linebreak in $PROJECT_FILE_NAME"
 	cat $PROJECT_FILE_NAME.1 | gawk '{ sub("\r", ""); print $0;}' > $PROJECT_FILE_NAME
 	cat $PROJECT_FILE_NAME | gawk '{ sub("$", "\r"); print $0;}' > $PROJECT_FILE_NAME.1
@@ -1963,25 +1979,28 @@ perform_everything()
 	fi
 
   if [ $USE_TARGET_SYSTEM = "pc_win32" ] ; then
-	USE_SYSTEM_DEFINE="SYSTEM_PC"
+		USE_SYSTEM_DEFINE="SYSTEM_PC"
   	GENERATE_FILES_ROOT_DIR="$1/../Dev-C++/"
   elif [ $USE_TARGET_SYSTEM = "pc_linux" ] ; then
-	USE_SYSTEM_DEFINE="SYSTEM_PC"
+		USE_SYSTEM_DEFINE="SYSTEM_PC"
   	GENERATE_FILES_ROOT_DIR="$1/../kdevelop_qmake/"
   elif [ $USE_TARGET_SYSTEM = "esx" ] ; then
-	USE_SYSTEM_DEFINE="SYSTEM_ESX"
+		USE_SYSTEM_DEFINE="SYSTEM_ESX"
   	GENERATE_FILES_ROOT_DIR="$1/../EDE/"
   elif [ $USE_TARGET_SYSTEM = "esxu" ] ; then
-	USE_SYSTEM_DEFINE="SYSTEM_ESXu"
+		USE_SYSTEM_DEFINE="SYSTEM_ESXu"
   	GENERATE_FILES_ROOT_DIR="$1/../EDE/"
   elif [ $USE_TARGET_SYSTEM = "c2c" ] ; then
-	USE_SYSTEM_DEFINE="SYSTEM_C2C"
+		USE_SYSTEM_DEFINE="SYSTEM_C2C"
   	GENERATE_FILES_ROOT_DIR="$1/../EDE/"
   elif [ $USE_TARGET_SYSTEM = "imi" ] ; then
-	USE_SYSTEM_DEFINE="SYSTEM_IMI"
+		USE_SYSTEM_DEFINE="SYSTEM_IMI"
   	GENERATE_FILES_ROOT_DIR="$1/../EDE/"
   elif [ $USE_TARGET_SYSTEM = "pm167" ] ; then
-	USE_SYSTEM_DEFINE="SYSTEM_PM167"
+		USE_SYSTEM_DEFINE="SYSTEM_PM167"
+  	GENERATE_FILES_ROOT_DIR="$1/../EDE/"
+  elif [ $USE_TARGET_SYSTEM = "Dj1" ] ; then
+		USE_SYSTEM_DEFINE="SYSTEM_DJ1"
   	GENERATE_FILES_ROOT_DIR="$1/../EDE/"
   fi
   GENERATE_FILES_ROOT_DIR=`echo "$GENERATE_FILES_ROOT_DIR" | sed -e 's/\/[0-9a-zA-Z_+\-]*\/\.\.//g' -e 's/\\[0-9a-zA-Z_+\-]*\\\.\.//g'`
@@ -2028,7 +2047,7 @@ Create filelist, Makefile and configuration settings for a IsoAgLib project.
   --IsoAgLib-root=DIR               use the given root directory instead of the entry in the selected configuration file.
   --target-system=TARGET            produce the project definition files for the selected TARGET instead of the
                                     target which is specified in the configuration file
-                                    ( "pc_linux"|"pc_win32"|"esx"|"esxu"|"c2c"|"imi"|"pm167"|"mitron167" ).
+                                    ( "pc_linux"|"pc_win32"|"esx"|"esxu"|"c2c"|"imi"|"pm167"|"Dj1"|"mitron167" ).
   --pc-can-driver=CAN_DRIVER        produce the project definition files for the selected CAN_DRIVER if the project shall run on PC
                                     ( "simulating"|"sys"|"rte"|"linux_server_client"|"vector_canlib"|"vector_xl_drv_lib"|"sontheim" ).
   --pc-rs232-driver=RS232_DRIVER    produce the project definition files for the selected RS232_DRIVER if the project shall run on PC
@@ -2148,7 +2167,7 @@ if [ $PARAMETER_TARGET_SYSTEM != "UseConfigFile" ] ; then
 	USE_TARGET_SYSTEM=$PARAMETER_TARGET_SYSTEM
 fi
 case "$USE_TARGET_SYSTEM" in
-	pc_linux | pc_win32 | esx | esxu | c2c | imi | pm167 | mitron167)
+	pc_linux | pc_win32 | esx | esxu | c2c | imi | pm167 | Dj1 | mitron167)
 	;;
 	*)
 	echo "Unknown target system $USE_TARGET_SYSTEM" 1>&2
