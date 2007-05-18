@@ -104,8 +104,9 @@ class TargetFileStreamInput_c //: public std::ifstream
 
 public:
 	//! open a input stream
-	bool open( std::string& filename, FileMode_t rt_mode )
-		{ n_data_read_ = 0; return true; };
+    //Sergej: not used for DjMiniVt
+ 	bool open( std::string& filename, FileMode_t rt_mode )
+ 		{ n_data_read_ = 0; return true; };
 	//! open a input stream
 	bool open( const char* filename, FileMode_t rt_mode );
 	//! close a input stream
