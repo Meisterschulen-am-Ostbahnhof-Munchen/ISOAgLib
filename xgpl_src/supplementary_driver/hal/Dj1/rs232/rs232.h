@@ -80,7 +80,8 @@ namespace __HAL
   extern "C" 
   {
     /** include the BIOS specific header into __HAL */
-    #include <commercial_BIOS/bios_DjBios1/DjBios1.h>
+    #include <commercial_BIOS/bios_minivt_dj/DjBiosMVT.h>
+    
   }
 }
 

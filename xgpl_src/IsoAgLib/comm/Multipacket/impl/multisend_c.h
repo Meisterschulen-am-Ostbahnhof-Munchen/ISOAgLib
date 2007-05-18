@@ -425,7 +425,7 @@ public: // methods
   void abortSend (const ISOName_c& rrefc_isoNameSender, const ISOName_c& rrefc_isoNameReceiver);
 
   /** check if at least one multisend stream is running */
-  bool isMultiSendRunning() const { return (list_sendStream.size() > 0); }
+  bool isMultiSendRunning() const { return (!list_sendStream.empty()); }
 
   ///  Used for Debugging Tasks in Scheduler_c
   virtual const char* getTaskName() const;

@@ -1,7 +1,7 @@
 /***************************************************************************
-                          filestreamoutput_c.h -
+                          datastreams.h -
                              -------------------
-    class                : ::FileStreamOutput_c
+    class                : ::TargetFileStreamInput_c
     project              : IsoAgLib
     begin                : Tue Jan 25 17:41:42 2005
     copyright            : (C) 2005 by Achim Spangler (a.spangler@osb-ag.de)
@@ -85,56 +85,14 @@
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 
-#ifndef FILESTREAMOUTPUT_C_H
-#define FILESTREAMOUTPUT_C_H
+
+#ifndef DATASTREAMS_H
+#define DATASTREAMS_H
 
 
-#include <IsoAgLib/typedef.h>
-#include "streamoutput_c.h"
-#include <supplementary_driver/hal/datastreams.h>
-#include <string>
+#include "targetfilestreamoutput_c.h"
+#include "targetfilestreaminput_c.h"
 
-// +X2C includes
-// ~X2C
 
-//  +X2C Class 915 : FileStreamOutput_c
-class FileStreamOutput_c : public StreamOutput_c
-{
-
-public:
-
-  //  Operation: open
-  //! open an output stream
-  bool open (std::string& filename, FileMode_t rt_mode);
-
-  //  Operation: open
-  //! open an output stream
-  bool open (const char* filename, FileMode_t rt_mode);
-
-  //  Operation: close
-  //! close an output stream
-  bool close (bool b_deleteFile=false, bool b_sync=false);
-
-  //  Operation: operator<<
-  //! write to output stream
-  virtual StreamOutput_c& operator<<(uint8_t ui8_data);
-
-  //  Operation: eof
-  //! check for end of output stream
-  virtual bool eof() const { return c_targetHandle.eof(); };
-
-  //  Operation: fail
-  //! check for failure of output stream
-  virtual bool fail() const { return c_targetHandle.fail(); };
-
-  //  Operation: good
-  //! check if output stream is good
-  virtual bool good() const { return c_targetHandle.good(); };
-
-private:
-  TargetFileStreamOutput_c c_targetHandle;
-
-  std::string str_openedFile;
-}; // ~X2C
 
 #endif // -X2C

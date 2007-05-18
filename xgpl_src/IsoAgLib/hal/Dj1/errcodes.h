@@ -83,6 +83,7 @@ namespace HAL
   #define HAL_DIGOUT_OVERTEMP    0xFFEF  //  (int16_t)(-(22 * 0x0001))
   #define HAL_DIGOUT_UNDERVOLT   0xFFEE  //  (int16_t)(-(23 * 0x0001))
   #define HAL_DIGOUT_OVERVOLT    0xFFED  //  (int16_t)(-(24 * 0x0001))
+  #define HAL_NEW_SEND_DELAY     0xFFEC  //  (int16_t)(-(25 * 0x0001))
 
   #define EE_READY   HAL_NO_ERR
 } // end namespace HAL

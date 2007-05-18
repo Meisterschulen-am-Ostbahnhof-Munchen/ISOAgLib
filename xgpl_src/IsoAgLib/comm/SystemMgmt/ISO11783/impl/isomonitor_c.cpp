@@ -219,7 +219,7 @@ void ISOMonitor_c::close( void )
     // avoid another call
     setAlreadyClosed();
 
-    while ( c_arrClientC1.size() > 0 )
+    while ( !c_arrClientC1.empty() )
     {
       (*c_arrClientC1.begin())->close();
     }

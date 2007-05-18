@@ -188,7 +188,7 @@ public:
     * this function is called within construction of new client instance
     */
   bool registerClient( ElementBase_c* pc_client);
-
+  size_t cntClient() const { return mt_clientCnt;}
   /** unregister pointer to a already registered client
     * this function is called within destruction of new client instance
     */
@@ -264,6 +264,8 @@ private: //Private methods
   //! @param  ri16_newTimePeriod otpional -> New Period will set for the Client by Scheduler_c
   bool  changeRetriggerTimeAndResort(std::list<SchedulerEntry_c>::iterator itc_task, int32_t i32_nextRetriggerTime, int16_t ri16_newTimePeriod = -1);
 
+  void setCntClient( size_t rt_newSize ) { mt_clientCnt = rt_newSize;}
+
 #ifdef DEBUG_SCHEDULER
   //!  Send debug messages with information on the
   //!  acfuracy of time behaviour.
@@ -314,6 +316,8 @@ private: // Private attributes
   //  Attribute: c_taskQueue
   //!  central priority queue for all tasks
   std::list<SchedulerEntry_c> c_taskQueue;
+  size_t mt_clientCnt;
+  std::list<SchedulerEntry_c> c_spareQueue;
 
 };
 

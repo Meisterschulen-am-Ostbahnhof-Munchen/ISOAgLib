@@ -308,7 +308,7 @@ int16_t getRs232Char(uint8_t *pbRead, uint8_t rui8_channel)
 {
   if ( rui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
   getRs232RxBufCount(rui8_channel);
-  if (deq_readPuff[rui8_channel].size() > 0)
+  if (! deq_readPuff[rui8_channel].empty())
   {
     pbRead[0] = deq_readPuff[rui8_channel].front();
     deq_readPuff[rui8_channel].pop_front();
@@ -330,7 +330,7 @@ int16_t getRs232String(uint8_t *pbRead,uint8_t bLastChar, uint8_t rui8_channel)
 {
   if ( rui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
   getRs232RxBufCount(rui8_channel);
-  if (deq_readPuff[rui8_channel].size() > 0)
+  if (! deq_readPuff[rui8_channel].empty())
   {
     for ( std::deque<int8_t>::iterator iter = deq_readPuff[rui8_channel].begin(); iter != deq_readPuff[rui8_channel].end(); iter++ )
     { // check if terminating char is found

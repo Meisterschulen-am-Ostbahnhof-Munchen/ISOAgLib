@@ -215,7 +215,7 @@ Chunk_c::getFreeCnt() const
 bool
 Chunk_c::free()
 { // ~X2C
-  return arr_data.size() == 0;
+  return arr_data.empty();
 } // -X2C
 
 

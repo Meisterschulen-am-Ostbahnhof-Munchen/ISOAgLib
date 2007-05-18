@@ -1,7 +1,7 @@
 /***************************************************************************
-                          filestreamoutput_c.h -
+                          targetfilestreamoutput_c.h -
                              -------------------
-    class                : ::FileStreamOutput_c
+    class                : ::TargetFileStreamOutput_c
     project              : IsoAgLib
     begin                : Tue Jan 25 17:41:42 2005
     copyright            : (C) 2005 by Achim Spangler (a.spangler@osb-ag.de)
@@ -85,56 +85,55 @@
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 
-#ifndef FILESTREAMOUTPUT_C_H
-#define FILESTREAMOUTPUT_C_H
+
+#ifndef TARGETFILESTREAMOUTPUT_C_H
+#define TARGETFILESTREAMOUTPUT_C_H
 
 
 #include <IsoAgLib/typedef.h>
-#include "streamoutput_c.h"
+//#include <fstream>
 #include <supplementary_driver/hal/datastreams.h>
 #include <string>
 
+#ifndef DJ_MINI_VT
+#ifndef WIN32
+
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#endif
+#endif
 // +X2C includes
 // ~X2C
 
-//  +X2C Class 915 : FileStreamOutput_c
-class FileStreamOutput_c : public StreamOutput_c
+//  +X2C Class 915 : FileTargetFileStreamOutput_c
+class TargetFileStreamOutput_c //: public std::ofstream
 {
 
 public:
-
-  //  Operation: open
-  //! open an output stream
-  bool open (std::string& filename, FileMode_t rt_mode);
-
-  //  Operation: open
-  //! open an output stream
-  bool open (const char* filename, FileMode_t rt_mode);
-
-  //  Operation: close
-  //! close an output stream
-  bool close (bool b_deleteFile=false, bool b_sync=false);
+	//! open a output stream
+	bool open( std::string& filename, FileMode_t rt_mode ){ return true; };
+	//! open a output stream
+	bool open( const char* filename, FileMode_t rt_mode );
+	//! close a output stream
+  //! @param pathname if pathname != NULL => sync file and path
+	void close( const char* pathname = NULL);
 
   //  Operation: operator<<
-  //! write to output stream
-  virtual StreamOutput_c& operator<<(uint8_t ui8_data);
+  //! Parameter:
+  //! @param ui8_data:
+  virtual TargetFileStreamOutput_c& operator<<(uint8_t ui8_data);
 
   //  Operation: eof
-  //! check for end of output stream
-  virtual bool eof() const { return c_targetHandle.eof(); };
+  virtual bool eof() const { return false; };
 
-  //  Operation: fail
-  //! check for failure of output stream
-  virtual bool fail() const { return c_targetHandle.fail(); };
+  // Operation: fail
+  virtual bool fail() const { return false; };
 
-  //  Operation: good
-  //! check if output stream is good
-  virtual bool good() const { return c_targetHandle.good(); };
+  // Operation: good
+  virtual bool good() const { return true; };
 
-private:
-  TargetFileStreamOutput_c c_targetHandle;
-
-  std::string str_openedFile;
 }; // ~X2C
 
 #endif // -X2C

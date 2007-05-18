@@ -150,9 +150,9 @@ public:
 
   VtClientServerCommunication_c& getClientByID (uint8_t ui8_clientIndex) { return *vec_vtClientServerComm[ui8_clientIndex]; }
 
-  VtClientServerCommunication_c* getClientPtrByID (uint8_t ui8_clientIndex) { return (vec_vtClientServerComm.size() > 0) ? vec_vtClientServerComm[ui8_clientIndex] : NULL; }
+  VtClientServerCommunication_c* getClientPtrByID (uint8_t ui8_clientIndex) { return (!vec_vtClientServerComm.empty()) ? vec_vtClientServerComm[ui8_clientIndex] : NULL; }
 
-  bool isAnyVtAvailable() { return l_vtServerInst.size()>0; }
+  bool isAnyVtAvailable() { return !l_vtServerInst.empty(); }
 
 
   /** for now allow multiple uploads

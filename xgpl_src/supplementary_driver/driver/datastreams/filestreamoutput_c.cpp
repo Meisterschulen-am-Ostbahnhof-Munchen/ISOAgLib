@@ -87,7 +87,16 @@
 
 #include "filestreamoutput_c.h"
 #include "stdio.h"
+#include <string>
 
+#if defined(DEBUG)
+  #ifdef SYSTEM_PC
+    #include <iostream>
+  #else
+    #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
+  #endif
+  #include <IsoAgLib/util/impl/util_funcs.h>
+#endif
 
 //  Operation: open
 bool
@@ -133,7 +142,7 @@ FileStreamOutput_c::close (bool b_deleteFile, bool b_sync)
   
   if (b_deleteFile) {
     #ifdef DEBUG
-    std::cout << "Removing file " << str_openedFile.c_str() << ".\n";
+    INTERNAL_DEBUG_DEVICE << "Removing file " << str_openedFile.c_str() << "." << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
     return (remove (str_openedFile.c_str()) == 0);
   }

@@ -1,7 +1,7 @@
 /***************************************************************************
-                          filestreamoutput_c.h -
+                          targetfilestreamoutput_c.cpp -
                              -------------------
-    class                : ::FileStreamOutput_c
+    class                : ::TargetFileStreamOutput_c
     project              : IsoAgLib
     begin                : Tue Jan 25 17:41:42 2005
     copyright            : (C) 2005 by Achim Spangler (a.spangler@osb-ag.de)
@@ -23,7 +23,7 @@
  * Everybody and every company is invited to use this library to make a    *
  * working plug and play standard out of the printed protocol standard.    *
  *                                                                         *
- * Copyright (C) 2000 - 2004 Dipl.-Inform. Achim Spangler                  *
+ * Copyright (C) 2000 - 2004 Dipl.-Outform. Achim Spangler                  *
  *                                                                         *
  * The IsoAgLib is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published          *
@@ -37,7 +37,7 @@
  *                                                                         *
  * You should have received a copy of the GNU General Public License       *
  * along with IsoAgLib; if not, write to the Free Software Foundation,     *
- * Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA           *
+ * Outc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA           *
  *                                                                         *
  * As a special exception, if other files instantiate templates or use     *
  * macros or inline functions from this file, or you compile this file and *
@@ -68,73 +68,43 @@
  * interface might be extended if your request is accepted.                *
  *                                                                         *
  * Definition of direct access:                                            *
- * - Instantiation of a variable with a datatype from internal namespace   *
+ * - Outstantiation of a variable with a datatype from internal namespace   *
  * - Call of a (member-) function                                          *
  * Allowed is:                                                             *
- * - Instatiation of a variable with a datatype from interface namespace,  *
+ * - Outstatiation of a variable with a datatype from interface namespace,  *
  *   even if this is derived from a base class inside an internal namespace*
  * - Call of member functions which are defined in the interface class     *
  *   definition ( header )                                                 *
  *                                                                         *
  * Pairing of internal and interface classes:                              *
- * - Internal implementation in an :impl: subdirectory                     *
- * - Interface in the parent directory of the corresponding internal class *
- * - Interface class name IsoAgLib::iFoo_c maps to the internal class      *
+ * - Outternal implementation in an :impl: subdirectory                     *
+ * - Outterface in the parent directory of the corresponding internal class *
+ * - Outterface class name IsoAgLib::iFoo_c maps to the internal class      *
  *   __IsoAgLib::Foo_c                                                     *
  *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
+#include "targetfilestreamoutput_c.h"
 
-#ifndef FILESTREAMOUTPUT_C_H
-#define FILESTREAMOUTPUT_C_H
+using namespace std;
 
-
-#include <IsoAgLib/typedef.h>
-#include "streamoutput_c.h"
-#include <supplementary_driver/hal/datastreams.h>
-#include <string>
-
-// +X2C includes
-// ~X2C
-
-//  +X2C Class 915 : FileStreamOutput_c
-class FileStreamOutput_c : public StreamOutput_c
+//! open a output stream
+bool TargetFileStreamOutput_c::open( const char* filename, FileMode_t rt_mode )
 {
+  return true;
+}
 
-public:
+//  Operation: operator>>
+//! Parameter:
+//! @param ui8_data:
+TargetFileStreamOutput_c& TargetFileStreamOutput_c::operator<<(uint8_t ui8_data)
+{
+	return *this;
+}
 
-  //  Operation: open
-  //! open an output stream
-  bool open (std::string& filename, FileMode_t rt_mode);
-
-  //  Operation: open
-  //! open an output stream
-  bool open (const char* filename, FileMode_t rt_mode);
-
-  //  Operation: close
-  //! close an output stream
-  bool close (bool b_deleteFile=false, bool b_sync=false);
-
-  //  Operation: operator<<
-  //! write to output stream
-  virtual StreamOutput_c& operator<<(uint8_t ui8_data);
-
-  //  Operation: eof
-  //! check for end of output stream
-  virtual bool eof() const { return c_targetHandle.eof(); };
-
-  //  Operation: fail
-  //! check for failure of output stream
-  virtual bool fail() const { return c_targetHandle.fail(); };
-
-  //  Operation: good
-  //! check if output stream is good
-  virtual bool good() const { return c_targetHandle.good(); };
-
-private:
-  TargetFileStreamOutput_c c_targetHandle;
-
-  std::string str_openedFile;
-}; // ~X2C
-
-#endif // -X2C
+//! close a output stream
+//! Parameter:
+//! @param pathname if pathname != NULL => sync file and path
+void TargetFileStreamOutput_c::close(const char* pathname)
+{
+}
