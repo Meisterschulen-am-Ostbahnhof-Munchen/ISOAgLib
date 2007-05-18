@@ -1971,6 +1971,9 @@ perform_everything()
   elif [ $USE_TARGET_SYSTEM = "esx" ] ; then
 	USE_SYSTEM_DEFINE="SYSTEM_ESX"
   	GENERATE_FILES_ROOT_DIR="$1/../EDE/"
+  elif [ $USE_TARGET_SYSTEM = "esxu" ] ; then
+	USE_SYSTEM_DEFINE="SYSTEM_ESXu"
+  	GENERATE_FILES_ROOT_DIR="$1/../EDE/"
   elif [ $USE_TARGET_SYSTEM = "c2c" ] ; then
 	USE_SYSTEM_DEFINE="SYSTEM_C2C"
   	GENERATE_FILES_ROOT_DIR="$1/../EDE/"
@@ -2025,7 +2028,7 @@ Create filelist, Makefile and configuration settings for a IsoAgLib project.
   --IsoAgLib-root=DIR               use the given root directory instead of the entry in the selected configuration file.
   --target-system=TARGET            produce the project definition files for the selected TARGET instead of the
                                     target which is specified in the configuration file
-                                    ( "pc_linux"|"pc_win32"|"esx"|"c2c"|"imi"|"pm167"|"mitron167" ).
+                                    ( "pc_linux"|"pc_win32"|"esx"|"esxu"|"c2c"|"imi"|"pm167"|"mitron167" ).
   --pc-can-driver=CAN_DRIVER        produce the project definition files for the selected CAN_DRIVER if the project shall run on PC
                                     ( "simulating"|"sys"|"rte"|"linux_server_client"|"vector_canlib"|"vector_xl_drv_lib"|"sontheim" ).
   --pc-rs232-driver=RS232_DRIVER    produce the project definition files for the selected RS232_DRIVER if the project shall run on PC
@@ -2145,7 +2148,7 @@ if [ $PARAMETER_TARGET_SYSTEM != "UseConfigFile" ] ; then
 	USE_TARGET_SYSTEM=$PARAMETER_TARGET_SYSTEM
 fi
 case "$USE_TARGET_SYSTEM" in
-	pc_linux | pc_win32 | esx | c2c | imi | pm167 | mitron167)
+	pc_linux | pc_win32 | esx | esxu | c2c | imi | pm167 | mitron167)
 	;;
 	*)
 	echo "Unknown target system $USE_TARGET_SYSTEM" 1>&2

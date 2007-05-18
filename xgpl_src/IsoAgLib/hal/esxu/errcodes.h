@@ -1,9 +1,9 @@
 /***************************************************************************
                           errcodes.h  - header for the ESXu
                                         error codes
-                             -------------------                                         
-    begin                : Wed Aug 4 1999                                           
-    copyright            : THIS HEADER IS DERIVED FROM ORIGNINAL STW HEADER                         
+                             -------------------
+    begin                : Wed Aug 4 1999
+    copyright            : THIS HEADER IS DERIVED FROM ORIGNINAL STW HEADER
 						 : This file was based on the corresponding file in
 						 : the ESX HAL and modified for the ESXu HAL.
     email                : a.spangler@osb-ag:de
@@ -75,15 +75,15 @@ namespace HAL {
   #define HAL_RD_WR             C_RD_WR
   #define HAL_COM               C_COM
   #define HAL_CHECKSUM          C_CHECKSUM
-  
+
   #define HAL_WD_DATA_CHANGED   1
-  
+
   #define HAL_DIGOUT_OPEN        (int16_t)(-(20 * 0x0001))
   #define HAL_DIGOUT_SHORTCUT    (int16_t)(-(21 * 0x0001))
   #define HAL_DIGOUT_OVERTEMP    (int16_t)(-(22 * 0x0001))
   #define HAL_DIGOUT_UNDERVOLT   (int16_t)(-(23 * 0x0001))
   #define HAL_DIGOUT_OVERVOLT    (int16_t)(-(24 * 0x0001))
-
+  #define HAL_NEW_SEND_DELAY     (int16_t)(-(25 * 0x0001))
 } // end namespace __HAL
 #endif
 

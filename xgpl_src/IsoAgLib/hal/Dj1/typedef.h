@@ -77,7 +77,11 @@ namespace std
 #define ON                1
 #define OFF               0
 
+#define FALSE false
+#define TRUE true
 
+
+typedef bool boolean;
 typedef unsigned char uint8_t;
 typedef unsigned char byte;
 typedef char int8_t;
