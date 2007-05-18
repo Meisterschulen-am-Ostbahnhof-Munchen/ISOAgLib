@@ -75,7 +75,7 @@ namespace __HAL
   extern "C" 
   {
     /** include the BIOS specific header with the part for CAN into __HAL */
-    #include <commercial_BIOS/bios_minivt_dj/DjBiosMVT.h>
+    #include <commercial_BIOS/bios_Dj1/DjBiosMVT.h>
   }
 
   /**
