@@ -53,16 +53,11 @@
 
 
 
-#if defined(__TSW_CPP__) 
-//////#if defined(__TSW_CPP_756__)
-//#include <stddef.h>     // Added for Tasking 8.6r1
-#include <cstdlib>
-#include <cstddef>
-#include <cstring>
-//#include <stream>
-//#include <string>
+#if defined(__TSW_CPP__)
+ #include <cstdlib>
+ #include <cstddef>
+ #include <cstring>
 typedef unsigned int size_t;
-
 #endif
 
 /*

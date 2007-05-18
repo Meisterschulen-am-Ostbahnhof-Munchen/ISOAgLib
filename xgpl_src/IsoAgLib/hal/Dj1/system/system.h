@@ -91,7 +91,7 @@ namespace __HAL
    inline function with call to orig BIOS function)
    functions between all IsoAgLib calls for BIOS and the corresponding BIOS functions
    --> simply replace the call to the corresponding BIOS function in this header
-       for adaption to new platform
+       for adaptation to new platform
  */
 namespace HAL
 {
@@ -163,7 +163,7 @@ namespace HAL
   */
   inline void wdTriggern ( void )
   {
-//    return ( HAL_NO_ERR );
+    return ( HAL_NO_ERR );
 //jtm    __HAL::trigger_wd();
   };
 
