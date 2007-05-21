@@ -84,6 +84,10 @@ namespace __HAL {
 static msqData_s msqDataClient = {-1,-1,-1,-1,-1,-1};
 static int32_t i32_lastReceiveTime = 0;
 
+int32_t getPipeHandleForCanRcvEvent()
+{
+  return msqDataClient.i32_pipeHandle;
+}
 
 /////////////////////////////////////////////////////////////////////////
 int16_t can_startDriver()

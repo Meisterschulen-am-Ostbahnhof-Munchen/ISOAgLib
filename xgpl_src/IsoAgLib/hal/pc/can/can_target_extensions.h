@@ -95,6 +95,8 @@ bool getCanMsgObjLocked(uint8_t bBusNumber,uint8_t bMsgObj);
 
 int32_t getMaxSendDelay(uint8_t rui8_busNr);
 
+int32_t getPipeHandleForCanRcvEvent();
+
 /* Typ CAN-Nachrichtenobjekt */
 #define  RX                             0
 #define  TX                             1
