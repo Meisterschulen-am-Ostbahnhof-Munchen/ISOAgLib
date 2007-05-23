@@ -87,24 +87,39 @@
 
 #include "targetfilestreaminput_c.h"
 #ifdef WIN32
-#include <stdio.h>
+  #include <stdio.h>
+#else
+  #include <fcntl.h>
 #endif
-
-#include <fcntl.h>
 
 using namespace std;
 
 //! open a input stream
 bool TargetFileStreamInput_c::open( const char* filename, FileMode_t rt_mode )
 {
+#ifdef WIN32
+  b_eofReached = false;
+
   if ( ( rt_mode & StreamOut ) != 0 ) return false;
 
-#if 0
-  if ( ( rt_mode & StreamAte   )  != 0 ) mode = ios::openmode( mode | ios::ate    );
-  if ( ( rt_mode & StreamApp   )  != 0 ) mode = ios::openmode( mode | ios::app    );
-  if ( ( rt_mode & StreamTrunc )  != 0 ) mode = ios::openmode( mode | ios::trunc  );
-  if ( ( rt_mode & StreamBinary ) != 0 ) mode = ios::openmode( mode | ios::binary );
-#endif
+  std::ios_base::openmode mode = std::ios_base::in;
+
+  if ( ( rt_mode & StreamAte   )  != 0 ) mode = std::ios_base::openmode( mode | std::ios_base::ate    );
+  if ( ( rt_mode & StreamApp   )  != 0 ) mode = std::ios_base::openmode( mode | std::ios_base::app    );
+  if ( ( rt_mode & StreamTrunc )  != 0 ) mode = std::ios_base::openmode( mode | std::ios_base::trunc  );
+  if ( ( rt_mode & StreamBinary ) != 0 ) mode = std::ios_base::openmode( mode | std::ios_base::binary );
+
+
+  static_cast<std::ifstream*>(this)->open( filename, mode );
+
+  if ( ( static_cast<std::ifstream*>(this)->good()    )
+    && ( static_cast<std::ifstream*>(this)->is_open() ) ) return true;
+  else
+    return false;
+
+#else
+
+  if ( ( rt_mode & StreamOut ) != 0 ) return false;
 
   if ( ( rt_mode & StreamTrunc ) != 0 )
   {
@@ -130,6 +145,7 @@ bool TargetFileStreamInput_c::open( const char* filename, FileMode_t rt_mode )
   b_eofReached = feof(fileDescr);
 
   return true;
+#endif
 };
 
 
@@ -138,6 +154,18 @@ bool TargetFileStreamInput_c::open( const char* filename, FileMode_t rt_mode )
 //! @param ui8_data:
 TargetFileStreamInput_c& TargetFileStreamInput_c::operator>>(uint8_t &ui8_data)
 {
+#ifdef WIN32
+
+  std::ifstream* isp_tmp = static_cast<std::ifstream*>(this);
+
+  ui8_data = isp_tmp->get();
+
+  // check if next get returns EOF: nothing more to read
+  if ((isp_tmp->peek() == EOF) || (isp_tmp->eof()))
+    b_eofReached = true;
+
+#else
+
   if (ui16_currentReadIndexInBuffer >= ui16_bytesInBuffer)
   {
     ui16_bytesInBuffer = fread(ch_buf, 1, cui16_bufSize, fileDescr);
@@ -150,6 +178,7 @@ TargetFileStreamInput_c& TargetFileStreamInput_c::operator>>(uint8_t &ui8_data)
     ui8_data = ch_buf[ui16_currentReadIndexInBuffer];
     ui16_currentReadIndexInBuffer++;
   }
+#endif
 
   return *this;
 }
@@ -157,18 +186,26 @@ TargetFileStreamInput_c& TargetFileStreamInput_c::operator>>(uint8_t &ui8_data)
 bool
 TargetFileStreamInput_c::eof() const
 {
+#ifdef WIN32
+  return b_eofReached | static_cast<const std::ifstream*>(this)->eof();
+#else
   if (!fileDescr)
     return true;
 
   return (b_eofReached && (ui16_currentReadIndexInBuffer >= ui16_bytesInBuffer));
+#endif
 }
 
-void 
+void
 TargetFileStreamInput_c::close()
 {
+#ifdef WIN32
+  static_cast<std::ifstream*>(this)->close();
+#else
   if (fileDescr)
     fclose(fileDescr);
 
   fileDescr = NULL;
+#endif
 }
 
