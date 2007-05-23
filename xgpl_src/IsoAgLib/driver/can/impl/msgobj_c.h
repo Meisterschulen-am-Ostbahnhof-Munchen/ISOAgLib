@@ -145,8 +145,6 @@ public:
 
     possible errors:
     * Err_c::range BUS or MsgObj numbers out of allowed limits
-    * Err_c::can_overflow amount of FilterBox_c of merged MsgObj_c is to big to store in one
-        MsgObj_c (max is defined by FILTER_BOX_PER_MSG_OBJ in isoaglib_config.h)
     * Err_c::hwConfig BUS not initialized or ID can't be changed
     @param rrefc_right reference to MsgObj_c which should be merged into this instance
     @return true -> successful merged; false -> too many FilterBox_c refs for one MsgObj_c
@@ -251,13 +249,6 @@ public:
     #endif
   }
 
-#if 0
-  /** delivers amount of insertable arrPfilterBox pointers
-    @return amount of references to FilterBox_c which could be inserted into/handled by this MsgObj_c
-  */
-  uint8_t getFilterBoxCapacity() { return (FILTER_BOX_PER_MSG_OBJ - cnt_filterBox()); }
-#endif
-
   /** start processing a received CAN msg
     (called by interrupt function)  (uses BIOS function)
 
@@ -304,7 +295,6 @@ private:
   /** array of pointer to appointed arrPfilterBox instances */
   std::vector<FilterRef> arrPfilterBox;
 
-//  FilterRef arrPfilterBox[FILTER_BOX_PER_MSG_OBJ];
   /** Ident_c filter for this msgObj */
   Ident_c c_filter;
 
