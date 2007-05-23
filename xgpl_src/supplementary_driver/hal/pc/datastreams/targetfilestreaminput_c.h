@@ -99,10 +99,15 @@
 // ~X2C
 
 //  +X2C Class 915 : FileTargetFileStreamInput_c
+#ifdef WIN32
+class TargetFileStreamInput_c :public std::ifstream
+#else
 class TargetFileStreamInput_c // :public std::ifstream
+#endif
 {
 
 public:
+
 	//! open a input stream
 	bool open( std::string& filename, FileMode_t rt_mode )
 		{ return open( filename.c_str(), rt_mode );};
