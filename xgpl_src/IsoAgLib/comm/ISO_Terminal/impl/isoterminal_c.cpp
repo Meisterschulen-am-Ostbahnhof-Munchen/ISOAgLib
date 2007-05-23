@@ -162,6 +162,19 @@ ISOTerminal_c::init()
     b_atLeastOneFilterAdded |= (getCanInstance4Comm().insertFilter (*this, (0x3FFFF00UL), (static_cast<MASK_TYPE>(LANGUAGE_PGN) << 8),        false, Ident_c::ExtendedIdent, 8) != NULL);
     if (b_atLeastOneFilterAdded) getCanInstance4Comm().reconfigureMsgObj();
 
+    // in case this "init()" isn't called directly at system-startup but indirectly through
+    // the singleton-chain, we may be later than e.g. some IdentItem instance that
+    // has already triggered a Req4AdrCl - and also e.g. a VT has answered.
+    // --> We might not receive this AdrClaim then in the SaClaim-handler
+    // ==> Collect all VTs already known NOW - Then we can ensure that NO VT slips away...
+    const uint8_t cui8_cntVt = getIsoMonitorInstance4Comm().isoMemberEcuTypeCnt (ISOName_c::ecuTypeVirtualTerminal, /*rb_forceClaimedAddress:*/true);
+    for (uint8_t ui8_i=0; (ui8_i < cui8_cntVt); ui8_i++)
+    { // walk through all claimed VTs
+      ISOItem_c& refc_vtIsoItem = getIsoMonitorInstance4Comm().isoMemberEcuTypeInd (ISOName_c::ecuTypeVirtualTerminal, ui8_i,  /*rb_forceClaimedAddress:*/true);
+      // check if adding is needed (and add if needed) through the generic "reactOnMonitorListAdd"
+      reactOnMonitorListAdd (refc_vtIsoItem.isoName(), &refc_vtIsoItem);
+    }
+
     /** for now allow parallel uploads
     sb_poolUploadInProgress = false;
     spc_vtcscForUpload = NULL;
@@ -396,6 +409,7 @@ ISOTerminal_c::sendCommandForDEBUG(IsoAgLib::iIdentItem_c& refc_wsMasterIdentIte
 }
 
 
+///! Attention: This function is also called from "init()", not only from ISOMonitor!
 void
 ISOTerminal_c::reactOnMonitorListAdd (const ISOName_c& refc_isoName, const ISOItem_c* rpc_newItem)
 {
