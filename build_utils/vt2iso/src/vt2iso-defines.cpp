@@ -447,9 +447,17 @@ char horizontalJustificationTable [maxHorizontalJustificationTable] [stringLengt
   "right"
 };
 
-char optionsTable [maxOptionsTable] [stringLength+1] = {
+char stringOptionsTable [maxStringOptionsTable] [stringLength+1] = {
   "transparent",
-  "autowrap"
+  "autowrap",
+  "wrap_on_hyphen"
+};
+
+char inputNumberOptionsTable [maxInputNumberOptionsTable] [stringLength+1] = {
+  "transparent",
+  "leadingzeros",
+  "blankzero",
+  "truncate"
 };
 
 char outputNumberOptionsTable [maxOutputNumberOptionsTable] [stringLength+1] = {

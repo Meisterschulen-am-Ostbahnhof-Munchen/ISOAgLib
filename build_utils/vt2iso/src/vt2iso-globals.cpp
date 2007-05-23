@@ -156,11 +156,23 @@ horizontaljustificationtoi (char *text_horiz)
 }
 
 unsigned int
-optionstoi (char *text_options)
+stringoptionstoi (char *text_options)
 {
   int l, retval=0;
-  for (l=0; l<maxOptionsTable; l++) {
-    if (strstr (text_options, optionsTable [l]) != 0) {
+  for (l=0; l<maxStringOptionsTable; l++) {
+    if (strstr (text_options, stringOptionsTable [l]) != 0) {
+      retval += (uint64_t(1)<<l);
+    }
+  }
+  return retval;
+}
+
+unsigned int
+inputnumberoptionstoi (char *text_options)
+{
+  int l, retval=0;
+  for (l=0; l<maxInputNumberOptionsTable; l++) {
+    if (strstr (text_options, inputNumberOptionsTable [l]) != 0) {
       retval += (uint64_t(1)<<l);
     }
   }
@@ -376,7 +388,7 @@ filltypetoi (char *text_filltype)
 }
 
 unsigned int
-eventToi (char *text_eventName)
+eventtoi (char *text_eventName)
 {
   int l, retval=0;
   for (l=0; l<maxEventTable; l++) {
