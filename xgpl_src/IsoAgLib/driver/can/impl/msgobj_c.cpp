@@ -106,10 +106,6 @@ MsgObj_c::MsgObj_c()
   : arrPfilterBox()
 {
   // set all member variables to initial values
-  #if 0
-  setCntFilterBox(0);
-  for (int16_t i = 0; i < FILTER_BOX_PER_MSG_OBJ; i++) arrPfilterBox[i] = NULL;
-  #endif
   c_filter.setEmpty(true);
   setBusNumber(0);
   setMsgObjNr(0);
@@ -159,21 +155,12 @@ MsgObj_c::~MsgObj_c()
 
   possible errors:
   * range BUS or MsgObj numbers out of allowed limits
-  * can_overflow amount of FilterBox_c of merged MsgObj_c is to big to store in one
-      Msg_Obj_c (max is defined by FILTER_BOX_PER_MSG_OBJ in isoaglib_config.h)
   * hwConfig BUS not initialized or ID can't be changed
   @param rrefc_right reference to MsgObj_c which should be merged into this instance
   @return true -> successful merged; false -> too many FilterBorefs for one MsgObj
 */
 bool MsgObj_c::merge(MsgObj_c& right)
 {
-  //check if amount of FilterBox_c references can be stored in on MsgObj
-  if ((cnt_filterBox() + right.cnt_filterBox()) > FILTER_BOX_PER_MSG_OBJ)
-  { // the FilterBox_c refs can't be stored in one MsgObj_c -> set range error
-    getILibErrInstance().registerError( iLibErr_c::CanOverflow, iLibErr_c::Can );
-    return false;
-  }
-
   // use only common bits for t_filter
   c_filter.ident_bitAnd(right.filter());
 
@@ -278,12 +265,7 @@ void MsgObj_c::close()
   // if needed
   closeCan();
 
-  #if 0
-  for (int16_t i = 0; i < FILTER_BOX_PER_MSG_OBJ; i++) arrPfilterBox[i] = NULL;
-  setCntFilterBox( 0 );
-  #else
   arrPfilterBox.clear();
-  #endif
 }
 
 /** insert pointer to FilterBox_c which receive
@@ -324,40 +306,6 @@ bool MsgObj_c::insertFilterBox(FilterRef rrefc_box)
       return true;
     }
   }
-  #if 0
-  if (cnt_filterBox() < FILTER_BOX_PER_MSG_OBJ)
-  { // insertion of pointer is possible -> register the pointer
-    // insert pointer in array
-    arrPfilterBox[cnt_filterBox()] = rrefc_box;
-
-    #if defined( DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION )
-    #ifdef SYSTEM_PC
-    std::cout.setf( std::ios_base::hex, std::ios_base::basefield );
-    #endif
-    INTERNAL_DEBUG_DEVICE << "add new FilterBox in insertFilterBox "
-      << "FilterBox: 0x"
-      << rrefc_box->filter().ident()
-      << ", Mask: 0x" << rrefc_box->mask().ident()
-      << ", IdentType: " << rrefc_box->identType()
-      << ", FilterBox instance: " << &(*rrefc_box)
-      << std::endl;
-    #ifdef SYSTEM_PC
-    std::cout.setf( std::ios_base::dec, std::ios_base::basefield );
-    #endif
-    #endif
-
-
-    // increment counter
-    setCntFilterBox(cnt_filterBox()+1);
-    // report success
-    return true;
-  }
-  else
-  { // report the insertion failure
-    getILibErrInstance().registerError( iLibErr_c::CanOverflow, iLibErr_c::Can );
-    return false;
-  }
-  #else
   const unsigned int cui_oldSize = arrPfilterBox.size();
   arrPfilterBox.push_back( rrefc_box );
   if ( arrPfilterBox.size() > cui_oldSize )
@@ -369,7 +317,6 @@ bool MsgObj_c::insertFilterBox(FilterRef rrefc_box)
     getILibErrInstance().registerError( iLibErr_c::CanOverflow, iLibErr_c::Can );
     return false;
   }
-  #endif
 }
 
 /** delete pointer to a Filter Box and move following pointers one position forward
