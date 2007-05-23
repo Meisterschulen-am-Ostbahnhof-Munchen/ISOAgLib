@@ -226,8 +226,8 @@ void releaseClient(server_c* pc_serverData, std::list<client_s>::iterator& iter_
   {
 #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
     for (uint8_t j=0; j<iter_delete->arrMsgObj[i].size(); j++) {
-      clearReadQueue (i, j, pc_serverData->msqDataServer.i32_rdHandle, iter_delete->i32_clientID);
-      clearWriteQueue(i, j, pc_serverData->msqDataServer.i32_wrHandle, iter_delete->i32_clientID);
+      clearReadQueue (i, j, pc_serverData->msqDataServer.i32_rdHandle, iter_delete->ui16_pID);
+//      clearWriteQueue(i, j, pc_serverData->msqDataServer.i32_wrHandle, iter_delete->ui16_pID);
     }
 #else
     clearReadQueue (i, COMMON_MSGOBJ_IN_QUEUE, pc_serverData->msqDataServer.i32_rdHandle,iter_delete->ui16_pID);
