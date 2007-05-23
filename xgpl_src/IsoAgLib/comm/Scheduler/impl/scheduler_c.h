@@ -220,7 +220,6 @@ public:
   //! @param  ri16_newTimePeriod otpional -> New Period will set for the Client by Scheduler_c
   bool  changeRetriggerTimeAndResort(SchedulerEntry_c rc_client  , int32_t i32_nextRetriggerTime, int16_t ri16_newTimePeriod = -1);
 
-
 private: //Private methods
   friend class SINGLETON( Scheduler_c );
   /** constructor for the central IsoAgLib object */
@@ -231,7 +230,7 @@ private: //Private methods
     this is called from singleton.h and should NOT be called from the user again.
     users please use init(...) instead.
   */
-  void singletonInit() { init(); };
+  void singletonInit();
 
   /** deliver available time for time event of SCHEDULER only
     * @param ri16_awaitedExecTime optional awaited execution time of planned next step
@@ -311,7 +310,6 @@ private: // Private attributes
 
   /** flag to detect, if other interrupting task forced immediated stop of Scheduler_c::timeEvent() */
   static bool b_execStopForced;
-
 
   //  Attribute: c_taskQueue
   //!  central priority queue for all tasks

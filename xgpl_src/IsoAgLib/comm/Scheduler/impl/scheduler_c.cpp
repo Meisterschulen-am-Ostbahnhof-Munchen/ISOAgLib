@@ -171,6 +171,19 @@ int32_t Scheduler_c::i32_demandedExecEndScheduler = 0;
 /** flag to detect, if other interrupting task forced immediated stop of Scheduler_c::timeEvent() */
 bool Scheduler_c::b_execStopForced = false;
 
+/**
+  initialize directly after the singleton instance is created.
+  this is called from singleton.h and should NOT be called from the user again.
+  users please use init(...) instead.
+*/
+void Scheduler_c::singletonInit()
+{ // static variables:
+  i32_lastTimeEventTime = 0;
+  i32_demandedExecEndScheduler = 0;
+  b_execStopForced = false;
+
+  init();
+};
 
 /** initialisation for the central IsoAgLib object */
 void Scheduler_c::init( void )
@@ -234,6 +247,7 @@ void Scheduler_c::startSystem()
     getILibErrInstance().init();
     getIsoMonitorInstance4Comm().init();
     getIsoFilterManagerInstance4Comm().init();
+
 #ifdef DEF_Stream_IMPL
     getMultiReceiveInstance4Comm().init();
     getMultiSendInstance4Comm().init();
