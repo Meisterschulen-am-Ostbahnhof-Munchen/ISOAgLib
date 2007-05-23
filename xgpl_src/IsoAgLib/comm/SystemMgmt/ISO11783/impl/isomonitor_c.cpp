@@ -1132,7 +1132,7 @@ bool ISOMonitor_c::sendRequestForClaimedAddress( bool rb_force )
   }
   bool b_sendOwnSa = false;
   // now it's needed to send
-  const int32_t i32_time = ElementBase_c::getLastRetriggerTime();
+  const int32_t i32_time = HAL::getTime();
 
 //  getRs232Instance() << "_time in sendReq4AdrCl: " << HAL::getTime() <<"_";
 
