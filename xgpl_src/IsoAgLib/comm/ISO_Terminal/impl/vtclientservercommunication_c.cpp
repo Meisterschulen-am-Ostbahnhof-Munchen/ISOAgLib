@@ -2576,6 +2576,9 @@ void
 VtClientServerCommunication_c::setVtDisplayState (bool b_isVtStatusMsg, uint8_t ui8_saOrDisplayState)
 {
   if (en_objectPoolState != OPUploadedSuccessfully) return;
+  // as we don't properly seem to reset "en_objectPoolState" at doStop(), we'll for now add the extra
+  // isAddress-Claimed-check here for safety:
+  if (!getIdentItem().isClaimedAddress()) return;
 
   vtClientDisplayState_t newDisplayState;
   if (b_isVtStatusMsg) // state change triggered from VT Status Msg
