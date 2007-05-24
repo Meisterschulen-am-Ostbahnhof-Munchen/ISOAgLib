@@ -460,7 +460,6 @@ static void enqueue_msg(uint32_t DLC, uint32_t ui32_id, uint32_t b_bus, uint8_t 
 
 }
 
-
 std::list<int32_t> __HAL::list_sendTimeStamps;
 
 // This thread ahndles the client's writes to the server (us).
@@ -554,7 +553,7 @@ static void* can_write_thread_func(void* ptr)
     }
     if (ps_client != NULL)
     {
-      list_sendTimeStamps.push_front (getServerTimeFromClientTime (*ps_client, msqWriteBuf.i32_sendTimeStamp));
+      addSendTimeStampToList(ps_client, msqWriteBuf.i32_sendTimeStamp);
 
       bool b_sendOnBus = true;
       // destination address check based on already collected source addresses from CAN bus messages

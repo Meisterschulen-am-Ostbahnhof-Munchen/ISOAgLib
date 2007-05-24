@@ -544,3 +544,10 @@ int ca_ReceiveCanCard_1(can_recv_data* receiveData, uint8_t ui8_bus, server_c* p
 
 }
 
+void addSendTimeStampToList(client_s *ps_client, int32_t i32_sendTimeStamp)
+{
+  list_sendTimeStamps.push_front (getServerTimeFromClientTime (*ps_client, i32_sendTimeStamp));
+}
+
+
+
