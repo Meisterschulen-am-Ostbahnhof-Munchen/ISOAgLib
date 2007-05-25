@@ -899,7 +899,8 @@ bool CANIO_c::deleteAllFiltersForCustomer (const __IsoAgLib::CANCustomer_c& rref
     { //no more cancustomer exist for the filterbox -> delete
       b_result = true;
       #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
-      arrFilterBox.erase(pc_iter);
+      // assign the iterator to the item after the erased item
+      pc_iter = arrFilterBox.erase(pc_iter);
       #endif
     }
     #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
