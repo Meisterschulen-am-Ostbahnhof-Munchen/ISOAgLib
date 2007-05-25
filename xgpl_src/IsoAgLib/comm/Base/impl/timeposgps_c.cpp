@@ -268,42 +268,45 @@ namespace __IsoAgLib {
         //bit_calendar.timezoneMinuteOffset = 0;
         //bit_calendar.timezoneHourOffsetMinus24 = 24;
       }
+    }
 
-      if ( c_sendGpsISOName.isSpecified() )
-      {
-        bool b_noPosition = false;
-        if (
-            ( (ci32_now - i32_lastIsoPositionSimple) >= TIMEOUT_SENDING_NODE )
-            #ifdef NMEA_2000_FAST_PACKET
-            &&
-            ( (ci32_now - i32_lastIsoPositionStream) >= TIMEOUT_SENDING_NODE )
-            #endif
-           )
-        { // the previously sending node didn't send POSITION information for 3 seconds -> give other items a chance
-          i32_latitudeDegree10Minus7 = i32_longitudeDegree10Minus7 = 0x7FFFFFFF;
-          t_gnssMethod = IsoAgLib::IsoNoGps;
+    if ( ( t_identModeGps != IsoAgLib::IdentModeTractor )
+      && ( c_sendGpsISOName.isSpecified() ) )
+    { // we are receiving GPS data -> check whether the old sender is still active
+      // and we were already receiving sometimes in past GPS data
+      bool b_noPosition = false;
+      if (
+          ( (ci32_now - i32_lastIsoPositionSimple) >= TIMEOUT_SENDING_NODE )
           #ifdef NMEA_2000_FAST_PACKET
-          t_gnssType = IsoAgLib::IsoGnssGps;
-          ui8_satelliteCnt = 0;
-          ui32_altitudeCm = 0;
+          &&
+          ( (ci32_now - i32_lastIsoPositionStream) >= TIMEOUT_SENDING_NODE )
           #endif
-          b_noPosition = true;
-        }
-        if ( (ci32_now - i32_lastIsoDirection) >= TIMEOUT_SENDING_NODE )
-        { // the previously sending node didn't send the information for 3 seconds -> give other items a chance
-          ui16_speedOverGroundCmSec = ui16_courseOverGroundRad10Minus4 = 0xFFFF;
+        )
+      { // the previously sending node didn't send POSITION information for 3 seconds -> give other items a chance
+        i32_latitudeDegree10Minus7 = i32_longitudeDegree10Minus7 = 0x7FFFFFFF;
+        t_gnssMethod = IsoAgLib::IsoNoGps;
+        #ifdef NMEA_2000_FAST_PACKET
+        t_gnssType = IsoAgLib::IsoGnssGps;
+        ui8_satelliteCnt = 0;
+        ui32_altitudeCm = 0;
+        #endif
+        b_noPosition = true;
+      }
+      if ( (ci32_now - i32_lastIsoDirection) >= TIMEOUT_SENDING_NODE )
+      { // the previously sending node didn't send the information for 3 seconds -> give other items a chance
+        ui16_speedOverGroundCmSec = ui16_courseOverGroundRad10Minus4 = 0xFFFF;
 
-          if (b_noPosition)
-          { // neither Pos nor Dir are specified, so kick the sender!
-            c_sendGpsISOName.setUnspecified();
-          }
-          /** @todo Maybe make it 2 GpsIsoNames: One for Position and one for Direction!
-           * Then we don't have to wait for both to be silent in order to kick the c_sendGpsISOName.
-           * Naming:       Gps for Position
-           *         Direction for Direction */
+        if (b_noPosition)
+        { // neither Pos nor Dir are specified, so kick the sender!
+          c_sendGpsISOName.setUnspecified();
         }
+        /** @todo Maybe make it 2 GpsIsoNames: One for Position and one for Direction!
+        * Then we don't have to wait for both to be silent in order to kick the c_sendGpsISOName.
+        * Naming:       Gps for Position
+        *         Direction for Direction */
       }
     }
+
 
     if ( ( ( getISOName() != NULL )  && (getIsoMonitorInstance4Comm().existIsoMemberISOName(*getISOName(), true))  && ( checkMode(IsoAgLib::IdentModeTractor) ) )
       || ( ( pc_isoNameGps != NULL ) && (getIsoMonitorInstance4Comm().existIsoMemberISOName(*pc_isoNameGps, true)) && (checkModeGps(IsoAgLib::IdentModeTractor) ) ) )
@@ -1267,7 +1270,7 @@ void TimePosGPS_c::isoSendDirection( void )
     }
   }
 
-  /** check if a calendar information was received since init 
+  /** check if a calendar information was received since init
    */
   bool TimePosGPS_c::isCalendarReceived() const
   {
