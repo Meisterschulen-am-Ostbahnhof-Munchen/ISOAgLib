@@ -161,7 +161,7 @@ vtObjectContainer_c::hideShow(uint8_t b_hideOrShow, bool b_updateObject, bool b_
   __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommand (160 /* Command: Command --- Parameter: Hide/Show Object */,
                                                    vtObject_a->ID & 0xFF, vtObject_a->ID >> 8,
                                                    b_hideOrShow,
-                                                   0xFF, 0xFF, 0xFF, 0xFF, 1000, b_enableReplaceOfCmd);
+                                                   0xFF, 0xFF, 0xFF, 0xFF, DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
 }
 
 void

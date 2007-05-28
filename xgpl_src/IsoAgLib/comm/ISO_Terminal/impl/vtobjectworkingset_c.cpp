@@ -153,7 +153,7 @@ vtObjectWorkingSet_c::changeActiveMask(IsoAgLib::iVtObjectMask_c* rpc_vtObjectMa
   __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommand (173 /* Command: Command --- Parameter: Change Active Mask */,
                                                    vtObject_a->ID & 0xFF, vtObject_a->ID >> 8,
                                                    rpc_vtObjectMask->getID() & 0xFF, rpc_vtObjectMask->getID() >> 8,
-                                                   0xFF, 0xFF, 0xFF, 2000, b_enableReplaceOfCmd);
+                                                   0xFF, 0xFF, 0xFF, DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
 }
 
 void

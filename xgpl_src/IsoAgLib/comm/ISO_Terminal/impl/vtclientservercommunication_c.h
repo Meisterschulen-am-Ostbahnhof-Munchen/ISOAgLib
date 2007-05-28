@@ -84,6 +84,16 @@
 #ifndef VT_CLIENT_SERVER_COMMUNICATION_H
 #define VT_CLIENT_SERVER_COMMUNICATION_H
 
+#define DEF_TimeOut_NormalCommand 1500       /* 1,5 seconds are stated in F.1 (page 96) */
+#define DEF_TimeOut_EndOfObjectPool 60000
+#define DEF_TimeOut_StoreVersion 60000
+#define DEF_TimeOut_LoadVersion 60000
+#define DEF_WaitFor_Reupload 5000
+#define DEF_WaitFor_FreeUpload 1000
+#define DEF_Retries_NormalCommands 2
+#define DEF_Retries_TPCommands 2
+#define DEF_TimeOut_ChangeStringValue 1500   /* 1,5 seconds are stated in F.1 (page 96) */
+
 #include <IsoAgLib/comm/ISO_Terminal/impl/isoterminalpkg_c.h>
 #include <IsoAgLib/comm/ISO_Terminal/iisoterminalobjectpool_c.h>
 #include <IsoAgLib/comm/Multipacket/impl/multisend_c.h>
