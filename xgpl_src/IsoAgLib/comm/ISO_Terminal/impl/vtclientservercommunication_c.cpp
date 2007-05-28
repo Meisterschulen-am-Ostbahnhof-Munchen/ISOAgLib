@@ -182,15 +182,6 @@ static const uint8_t scpui8_cmdCompareTable[(scui8_cmdCompareTableMax-scui8_cmdC
 
 
 namespace __IsoAgLib {
-#define DEF_TimeOut_NormalCommand 1500       /* 1,5 seconds are stated in F.1 (page 96) */
-#define DEF_TimeOut_EndOfObjectPool 60000
-#define DEF_TimeOut_StoreVersion 60000
-#define DEF_TimeOut_LoadVersion 60000
-#define DEF_WaitFor_Reupload 5000
-#define DEF_WaitFor_FreeUpload 1000
-#define DEF_Retries_NormalCommands 2
-#define DEF_Retries_TPCommands 2
-#define DEF_TimeOut_ChangeStringValue 1500   /* 1,5 seconds are stated in F.1 (page 96) */
 
 
 void SendUpload_c::set (vtObjectString_c* rpc_objectString)
