@@ -907,6 +907,24 @@ vt2iso_c::getKeyCode()
 void
 vt2iso_c::init (const char* xmlFile)
 {
+#ifdef USE_SPECIAL_PARSING_PROP
+  pc_specialParsingPropTag = new SpecialParsingUsePropTag_c (pc_projName,
+                                                             partFile_variables,
+                                                             partFile_variables_extern,
+                                                             partFile_attributes,
+                                                             partFile_functions,
+                                                             partFile_defines
+                                                            );
+#else
+  pc_specialParsingPropTag = NULL;
+#endif
+
+#ifdef USE_SPECIAL_PARSING
+  pc_specialParsing = new SpecialParsingUse_c (pc_projName, c_directory, dictionary, pcch_poolIdent);
+#else
+  pc_specialParsing = NULL;
+#endif
+  
   firstLineFileE = true;
   ui_languages=0;
 
@@ -3397,12 +3415,12 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
 
       if ((strcmp ("NULL", attrString [attrVariable_reference]) != 0) && (strncmp (attrString [attrVariable_reference], "&iVtObject", strlen ("&iVtObject")) != 0))
       { // != 0 means an object reference is given, so add the "&iVtObject" prefix!!
-        sprintf (tempString, "&iVtObject%s", getObjNameWithPoolIdent (attrString [attrVariable_reference]));
+        sprintf (tempString, "&iVtObject%s", getObjNameWithPoolIdent (attrString [attrVariable_reference]).c_str());
         sprintf (attrString [attrVariable_reference], "%s", tempString);
       }
       if ((strcmp ("NULL", attrString [attrTarget_value_variable_reference]) != 0) && (strncmp (attrString [attrTarget_value_variable_reference], "&iVtObject", strlen ("&iVtObject")) != 0))
       { // != 0 means an object reference is given, so add the "&iVtObject" prefix!!
-        sprintf (tempString, "&iVtObject%s", getObjNameWithPoolIdent (attrString [attrTarget_value_variable_reference]));
+        sprintf (tempString, "&iVtObject%s", getObjNameWithPoolIdent (attrString [attrTarget_value_variable_reference]).c_str());
         sprintf (attrString [attrTarget_value_variable_reference], "%s", tempString);
       }
 
@@ -3520,7 +3538,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             std::cout << "Error in booltoi() from object <" << node_name << "> '" << objName << "'! STOPPING PARSER! bye.\n\n";
             return false;
           }
-          fprintf (partFile_attributes, ", %d, %s, &iVtObject%s, %s, %s, %d", colortoi (attrString [attrBackground_colour]), attrString [attrWidth], getObjNameWithPoolIdent (attrString [attrForeground_colour]), attrString [attrVariable_reference], attrString [attrValue], (unsigned int)retEnabled);
+          fprintf (partFile_attributes, ", %d, %s, &iVtObject%s, %s, %s, %d", colortoi (attrString [attrBackground_colour]), attrString [attrWidth], getObjNameWithPoolIdent (attrString [attrForeground_colour]).c_str(), attrString [attrVariable_reference], attrString [attrValue], (unsigned int)retEnabled);
           break;
         }
 
@@ -3576,12 +3594,13 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           {
             sprintf (attrString [attrInput_attributes], "NULL");
 
-            fprintf (partFile_attributes, ", %s, %s, %d, &iVtObject%s, %s, %d, %s, %d, %s, %s, %d", attrString [attrWidth], attrString [attrHeight], colortoi (attrString [attrBackground_colour]), getObjNameWithPoolIdent (attrString [attrFont_attributes]), getObjNameWithPoolIdent (attrString [attrInput_attributes]), stringoptionstoi (attrString [attrOptions]), attrString [attrVariable_reference], (unsigned int)retJustification, attrString [attrLength], attrString [attrValue], (unsigned int)retEnabled );
+            fprintf (partFile_attributes, ", %s, %s, %d, &iVtObject%s, %s, %d, %s, %d, %s, %s, %d", attrString [attrWidth], attrString [attrHeight], colortoi (attrString [attrBackground_colour]), getObjNameWithPoolIdent (attrString [attrFont_attributes]).c_str(), getObjNameWithPoolIdent (attrString [attrInput_attributes]).c_str(), stringoptionstoi (attrString [attrOptions]), attrString [attrVariable_reference], (unsigned int)retJustification, attrString [attrLength], attrString [attrValue], (unsigned int)retEnabled );
           }
           else
           {
-            fprintf (partFile_attributes, ", %s, %s, %d, &iVtObject%s, &iVtObject%s, %d, %s, %d, %s, %s, %d", attrString [attrWidth], attrString [attrHeight], colortoi (attrString [attrBackground_colour]), getObjNameWithPoolIdent (attrString [attrFont_attributes]), getObjNameWithPoolIdent (attrString [attrInput_attributes]), stringoptionstoi (attrString [attrOptions]), attrString [attrVariable_reference], (unsigned int)retJustification, attrString [attrLength], attrString [attrValue], (unsigned int)retEnabled );
+            fprintf (partFile_attributes, ", %s, %s, %d, &iVtObject%s, &iVtObject%s, %d, %s, %d, %s, %s, %d", attrString [attrWidth], attrString [attrHeight], colortoi (attrString [attrBackground_colour]), getObjNameWithPoolIdent (attrString [attrFont_attributes]).c_str(), getObjNameWithPoolIdent (attrString [attrInput_attributes]).c_str(), stringoptionstoi (attrString [attrOptions]), attrString [attrVariable_reference], (unsigned int)retJustification, attrString [attrLength], attrString [attrValue], (unsigned int)retEnabled );
           }
+
           break;
         }
 
@@ -3598,8 +3617,9 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           if (!attrIsGiven [attrValue])
             sprintf (attrString [attrValue], "0");
           fprintf (partFile_attributes, ", %s, %s, %d, &iVtObject%s, %d, %s, %sUL, %sUL, %sUL", attrString [attrWidth], attrString [attrHeight],
-                   colortoi (attrString [attrBackground_colour]), getObjNameWithPoolIdent (attrString [attrFont_attributes]), inputobjectoptiontoi (attrString [attrOptions]), attrString [attrVariable_reference],
-                   attrString [attrValue], attrString [attrMin_value], attrString [attrMax_value]);
+                   colortoi (attrString [attrBackground_colour]), getObjNameWithPoolIdent (attrString [attrFont_attributes]).c_str(),
+                   inputobjectoptiontoi (attrString [attrOptions]), attrString [attrVariable_reference], attrString [attrValue],
+                   attrString [attrMin_value], attrString [attrMax_value]);
           if ( strchr( attrString [attrOffset], 'L' ) != NULL )
           { // contains already a number type specifier
             fprintf (partFile_attributes, ", %s", attrString [attrOffset] );
@@ -3709,7 +3729,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             return false;
           }
           fprintf (partFile_attributes, ", %s, %s, %d, &iVtObject%s, %d, %s, %d, %s, %s", attrString [attrWidth], attrString [attrHeight],
-                   colortoi (attrString [attrBackground_colour]), getObjNameWithPoolIdent (attrString [attrFont_attributes]),
+                   colortoi (attrString [attrBackground_colour]), getObjNameWithPoolIdent (attrString [attrFont_attributes]).c_str(),
                    stringoptionstoi (attrString [attrOptions]), attrString [attrVariable_reference],
                    (unsigned int)retJust, attrString [attrLength], attrString [attrValue]);
       //    printf ("%s --- %d\n", attrString [attrOptions], optionstoi (attrString [attrOptions]));
@@ -3727,7 +3747,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           if (!attrIsGiven [attrValue])
             sprintf (attrString [attrValue], "0");
           fprintf (partFile_attributes, ", %s, %s, %d, &iVtObject%s, %d, %s, %sUL", attrString [attrWidth], attrString [attrHeight],
-                   colortoi (attrString [attrBackground_colour]), getObjNameWithPoolIdent (attrString [attrFont_attributes]),
+                   colortoi (attrString [attrBackground_colour]), getObjNameWithPoolIdent (attrString [attrFont_attributes]).c_str(),
                    numberoptionstoi (attrString [attrOptions]), attrString [attrVariable_reference],
                    attrString [attrValue]);
           if ( strchr( attrString [attrOffset], 'L' ) != NULL )
@@ -3760,7 +3780,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             std::cout << "YOU NEED TO SPECIFY THE line_attributes= AND width= AND height= ATTRIBUTES FOR THE <line> OBJECT '" << objName << "'! STOPPING PARSER! bye.\n\n";
             return false;
           }
-          fprintf (partFile_attributes, ", &iVtObject%s, %s, %s, %d", getObjNameWithPoolIdent (attrString [attrLine_attributes]),
+          fprintf (partFile_attributes, ", &iVtObject%s, %s, %s, %d", getObjNameWithPoolIdent (attrString [attrLine_attributes]).c_str(),
                    attrString [attrWidth], attrString [attrHeight], linedirectiontoi (attrString [attrLine_direction]));
           break;
 
@@ -3777,13 +3797,13 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             sprintf (attrString [attrFill_attributes], "NULL");
           else
           {
-            sprintf (tempString, "&iVtObject%s", getObjNameWithPoolIdent (attrString[attrFill_attributes]));
+            sprintf (tempString, "&iVtObject%s", getObjNameWithPoolIdent (attrString[attrFill_attributes]).c_str());
             sprintf (attrString [attrFill_attributes], "%s", tempString);
           }
 
           //else
           // sprintf (attrString [attrFill_attributes], "&vtObject%s", attrString[attrFill_attributes]);
-          fprintf (partFile_attributes, ", &iVtObject%s, %s, %s, %d, %s", getObjNameWithPoolIdent (attrString [attrLine_attributes]),
+          fprintf (partFile_attributes, ", &iVtObject%s, %s, %s, %d, %s", getObjNameWithPoolIdent (attrString [attrLine_attributes]).c_str(),
                    attrString [attrWidth], attrString [attrHeight], linesuppressiontoi (attrString [attrLine_suppression]),
                    attrString[attrFill_attributes]);
           break;
@@ -3806,10 +3826,10 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             sprintf (attrString [attrFill_attributes], "NULL");
           else
           {
-            sprintf (tempString, "&iVtObject%s", getObjNameWithPoolIdent (attrString[attrFill_attributes]));
+            sprintf (tempString, "&iVtObject%s", getObjNameWithPoolIdent (attrString[attrFill_attributes]).c_str());
             sprintf (attrString [attrFill_attributes], "%s", tempString);
           }
-          fprintf (partFile_attributes, ", &iVtObject%s, %s, %s, %d, %s, %s, %s", getObjNameWithPoolIdent (attrString [attrLine_attributes]),
+          fprintf (partFile_attributes, ", &iVtObject%s, %s, %s, %d, %s, %s, %s", getObjNameWithPoolIdent (attrString [attrLine_attributes]).c_str(),
                    attrString [attrWidth], attrString [attrHeight], ellipsetypetoi (attrString [attrEllipse_type]),
                    attrString[attrStart_angle], attrString[attrEnd_angle], attrString[attrFill_attributes]);
           break;
@@ -3827,11 +3847,11 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             sprintf (attrString [attrFill_attributes], "NULL");
           else
           {
-            sprintf (tempString, "&iVtObject%s", getObjNameWithPoolIdent (attrString[attrFill_attributes]));
+            sprintf (tempString, "&iVtObject%s", getObjNameWithPoolIdent (attrString[attrFill_attributes]).c_str());
             sprintf (attrString [attrFill_attributes], "%s", tempString);
           }
           fprintf (partFile_attributes, ", %s, %s, &iVtObject%s, %s, %d", attrString [attrWidth], attrString [attrHeight],
-                   getObjNameWithPoolIdent (attrString [attrLine_attributes]), attrString[attrFill_attributes],
+                   getObjNameWithPoolIdent (attrString [attrLine_attributes]).c_str(), attrString[attrFill_attributes],
                    polygontypetoi (attrString [attrPolygon_type]));
           break;
 
@@ -4052,7 +4072,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           }
           if (strcmp ("NULL", attrString [attrValue]) != 0)
           { // != 0 means an object reference is given, so add the "&iVtObject" prefix!!
-            sprintf (tempString, "&iVtObject%s", getObjNameWithPoolIdent (attrString [attrValue]));
+            sprintf (tempString, "&iVtObject%s", getObjNameWithPoolIdent (attrString [attrValue]).c_str());
             sprintf (attrString [attrValue], "%s", tempString);
           }
           fprintf (partFile_attributes, ", %s", attrString [attrValue]);
@@ -4126,17 +4146,17 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           if (!attrIsGiven [attrFont_attributes])
             fprintf (partFile_attributes, ", NULL");
           else
-            fprintf (partFile_attributes, ", &iVtObject%s", getObjNameWithPoolIdent (attrString [attrFont_attributes]));
+            fprintf (partFile_attributes, ", &iVtObject%s", getObjNameWithPoolIdent (attrString [attrFont_attributes]).c_str());
 
           if (!attrIsGiven [attrLine_attributes])
             fprintf (partFile_attributes, ", NULL");
           else
-            fprintf (partFile_attributes, ", &iVtObject%s", getObjNameWithPoolIdent (attrString [attrLine_attributes]));
+            fprintf (partFile_attributes, ", &iVtObject%s", getObjNameWithPoolIdent (attrString [attrLine_attributes]).c_str());
 
           if (!attrIsGiven [attrFill_attributes])
             fprintf (partFile_attributes, ", NULL");
           else
-            fprintf (partFile_attributes, ", &iVtObject%s", getObjNameWithPoolIdent (attrString [attrFill_attributes]));
+            fprintf (partFile_attributes, ", &iVtObject%s", getObjNameWithPoolIdent (attrString [attrFill_attributes]).c_str());
 
           fprintf (partFile_attributes, ", %d, %d", colordepthtoi (attrString [attrFormat]), gcoptionstoi (attrString [attrOptions]));
 
@@ -4243,31 +4263,7 @@ vt2iso_c::vt2iso_c(std::basic_string<char>* pch_fileName, char* pch_poolIdent, s
   : amountXmlFiles(0)
   , pcch_poolIdent (pch_poolIdent)
   , b_hasUnknownAttributes (false)
-{
-  prepareFileNameAndDirectory(pch_fileName);
-
-  const char* pc_projName = pch_fileName->c_str();
-
-  init ( pc_projName );
-
-  #ifdef USE_SPECIAL_PARSING_PROP
-  pc_specialParsingPropTag = new SpecialParsingUsePropTag_c (pc_projName,
-                                                             partFile_variables,
-                                                             partFile_variables_extern,
-                                                             partFile_attributes,
-                                                             partFile_functions,
-                                                             partFile_defines
-                                                            );
-  #else
-  pc_specialParsingPropTag = NULL;
-  #endif
-
-  #ifdef USE_SPECIAL_PARSING
-  pc_specialParsing = new SpecialParsingUse_c (pc_projName, c_directory, dictionary, pcch_poolIdent);
-  #else
-  pc_specialParsing = NULL;
-  #endif
-}
+{}
 
 vt2iso_c::~vt2iso_c()
 {
@@ -4310,8 +4306,8 @@ vt2iso_c::getAttributeValue (DOMNode* pc_node, const char* attributeName)
   return "";
 }
 
-void
-vt2iso_c::prepareFileNameAndDirectory(std::basic_string<char>* pch_fileName)
+bool
+vt2iso_c::prepareFileNameAndDirectory (std::basic_string<char>* pch_fileName)
 {
   char xmlFileTemp [1024+1];
   int lastDirPos;
@@ -4373,7 +4369,7 @@ vt2iso_c::prepareFileNameAndDirectory(std::basic_string<char>* pch_fileName)
     sprintf(szBuf, "Open %s failed: GetLastError returned %u\n", szCurDir, dw);
     printf(szBuf);
     HRESULT_FROM_WIN32(dw);
-    return;
+    return false;
   }
 
   // Get the proper directory path
@@ -4409,7 +4405,7 @@ vt2iso_c::prepareFileNameAndDirectory(std::basic_string<char>* pch_fileName)
   else
   {
     std::cerr <<  "Couldn't open the directory.";
-    return;
+    return false;
   }
   SetCurrentDirectory(szCurDir);
 #else
@@ -4443,7 +4439,7 @@ vt2iso_c::prepareFileNameAndDirectory(std::basic_string<char>* pch_fileName)
   else
   {
     std::cerr <<  "Couldn't open the directory '" << c_directory.c_str() << "'." << std::endl;
-    return;
+    return false;
   }
 #endif
   // finished preparations on directory -> needed in processElement(...)
@@ -4466,20 +4462,22 @@ vt2iso_c::prepareFileNameAndDirectory(std::basic_string<char>* pch_fileName)
   std::cout << std::endl << "--> Sorted Filelist:" << std::endl;
   for (int dex=0; dex < amountXmlFiles; dex++) std::cout << xmlFiles [dex] << "\n";
   std::cout << "\n";
+
+  return true;
 }
 
-const char*
-vt2iso_c::getObjNameWithPoolIdent (char* pcch_objName)
+std::string
+vt2iso_c::getObjNameWithPoolIdent (const char* pcch_objName)
 {
   if (!pcch_objName || (strcmp (pcch_objName, "NULL") == 0) || (strcmp (pcch_objName, "") == 0))
-    return pcch_objName;
+    return "";
 
   std::string objName = std::string (pcch_objName);
   if (pcch_poolIdent && strstr (pcch_objName, pcch_poolIdent) != pcch_objName) {
     objName = std::string (pcch_poolIdent) + objName;
   }
 
-  return objName.c_str();
+  return objName;
 }
 
 // ---------------------------------------------------------------------------
@@ -4606,6 +4604,15 @@ int main(int argC, char* argV[])
 #else
   vt2iso_c* pc_vt2iso = new vt2iso_c(&c_fileName, poolIdentStr);
 #endif
+
+  if (!pc_vt2iso->prepareFileNameAndDirectory (&c_fileName))
+  {
+    pc_vt2iso->clean_exit("Error occurred. Terminating.\n");
+    delete pc_vt2iso;
+    exit (-1);
+  }
+
+  pc_vt2iso->init (c_fileName.c_str());
 
   for (indexXmlFile = 0; indexXmlFile < pc_vt2iso->getAmountXmlFiles(); indexXmlFile++)
   { // loop all xmlFiles!
@@ -4742,7 +4749,7 @@ int main(int argC, char* argV[])
   pc_vt2iso->skRelatedFileOutput();
 
   if (errorOccurred)
-    pc_vt2iso->clean_exit ("XML-Parsing error occured. Terminating.\n");
+    pc_vt2iso->clean_exit ("XML-Parsing error occurred. Terminating.\n");
   else
     pc_vt2iso->clean_exit ("All conversion done successfully.\n");
 
