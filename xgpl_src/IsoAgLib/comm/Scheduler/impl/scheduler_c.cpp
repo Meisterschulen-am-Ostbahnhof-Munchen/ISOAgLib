@@ -120,7 +120,7 @@
   #include <IsoAgLib/hal/eeprom.h>
 #endif
 
-#if defined(DEBUG_SCHEDULER) || defined(DEBUG_HEAP_USEAGE)
+#if defined(DEBUG_SCHEDULER) || defined(DEBUG_HEAP_USEAGE) || defined(TEST_TIMING)
   #include <IsoAgLib/util/impl/util_funcs.h>
   #ifdef SYSTEM_PC
     #include <iostream>
@@ -128,6 +128,10 @@
     #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
   #endif
   #include <IsoAgLib/util/impl/util_funcs.h>
+#endif
+
+#if defined(TEST_TIMING) && defined(SYSTEM_PC)
+  #include <ctime>
 #endif
 
 
@@ -435,8 +439,14 @@ int16_t Scheduler_c::getAvailableExecTime( int16_t ri16_awaitedExecTime )
 int32_t Scheduler_c::timeEvent( int32_t ri32_demandedExecEndScheduler )
 { // first check if demanded exec time allows execution
   // update last trigger time
-  int32_t i32_now = System_c::getTime();
-  int32_t i32_stepStartTime = i32_lastTimeEventTime = i32_now;
+  #if defined(TEST_TIMING) && defined(SYSTEM_PC)
+  static int32_t si32_globalTimeStart = 0;
+  static int32_t si32_cpuTimeStart = 0;
+  si32_globalTimeStart = HAL::getTime();
+  si32_cpuTimeStart = (std::clock() / ( CLOCKS_PER_SEC / 1000 ));
+  #endif
+
+  int32_t i32_stepStartTime = i32_lastTimeEventTime = System_c::getTime();
 
   i32_demandedExecEndScheduler = ri32_demandedExecEndScheduler;
   #ifdef CONFIG_DEFAULT_MAX_SCHEDULER_TIME_EVENT_TIME
@@ -526,6 +536,28 @@ int32_t Scheduler_c::timeEvent( int32_t ri32_demandedExecEndScheduler )
   }
    // trigger the watchdog
     System_c::triggerWd();
+
+
+    #if defined(TEST_TIMING) && defined(SYSTEM_PC)
+    const int32_t ci32_globalTimeEnd = HAL::getTime();
+    const int32_t ci32_cpuTimeEnd = (std::clock() / ( CLOCKS_PER_SEC / 1000 ));
+
+    const int32_t ci32_deltaGlobal = ci32_globalTimeEnd - si32_globalTimeStart;
+    const int32_t ci32_deltaCpu = ci32_cpuTimeEnd - si32_cpuTimeStart;
+
+    if ( ( ci32_deltaCpu > 0) && (ci32_deltaGlobal > 0))
+    {
+      const float cf_deltaPercent = 100.0 * float(ci32_deltaCpu) / float(ci32_deltaGlobal);
+
+      if ( cf_deltaPercent < TEST_TIMING )
+        INTERNAL_DEBUG_DEVICE << "\n\n#########\nProblem as CPU had only " << cf_deltaPercent
+          << " Percent usage of CPU during this IsoAgLib Scheduler run"
+          << ", delta Global: " << ci32_deltaGlobal
+          << ", delta GPU: " << ci32_deltaCpu
+          << "#########\n\n\n" << std::endl;
+    }
+    #endif
+
 
     ///return i32_idleTime to inform mainapplication when recall is needed;
     return i32_idleTime;
