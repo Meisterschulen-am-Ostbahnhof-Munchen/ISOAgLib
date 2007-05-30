@@ -4467,15 +4467,18 @@ vt2iso_c::prepareFileNameAndDirectory (std::basic_string<char>* pch_fileName)
 }
 
 std::string
-vt2iso_c::getObjNameWithPoolIdent (const char* pcch_objName)
+vt2iso_c::getObjNameWithPoolIdent (char* pcch_objName)
 {
-  if (!pcch_objName || (strcmp (pcch_objName, "NULL") == 0) || (strcmp (pcch_objName, "") == 0))
-    return "";
-
+  if (!pcch_objName || (strcmp (pcch_objName, "") == 0))
+    pcch_objName = "NULL";
+  
   std::string objName = std::string (pcch_objName);
-  if (pcch_poolIdent && strstr (pcch_objName, pcch_poolIdent) != pcch_objName) {
+  
+  if (strcmp (objName.c_str(), "NULL") == 0)
+    return objName;
+
+  if (pcch_poolIdent && strstr (objName.c_str(), pcch_poolIdent) != objName.c_str())
     objName = std::string (pcch_poolIdent) + objName;
-  }
 
   return objName;
 }

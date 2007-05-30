@@ -235,7 +235,7 @@ private:
 
   bool checkForAllowedExecution() const;
 
-  std::string getObjNameWithPoolIdent (const char* pcch_objName);
+  std::string getObjNameWithPoolIdent (char* pcch_objName);
 
 private:
   bool firstLineFileE;
