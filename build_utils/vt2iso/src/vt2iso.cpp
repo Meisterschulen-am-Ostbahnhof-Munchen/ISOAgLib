@@ -905,7 +905,7 @@ vt2iso_c::getKeyCode()
 }
 
 void
-vt2iso_c::init (const char* xmlFile)
+vt2iso_c::init (const char* xmlFile, std::basic_string<char>* dictionary)
 {
 #ifdef USE_SPECIAL_PARSING_PROP
   pc_specialParsingPropTag = new SpecialParsingUsePropTag_c (xmlFile,
@@ -4259,7 +4259,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
   return true;
 }
 
-vt2iso_c::vt2iso_c(std::basic_string<char>* pch_fileName, char* pch_poolIdent, std::basic_string<char>* dictionary)
+vt2iso_c::vt2iso_c(char* pch_poolIdent)
   : amountXmlFiles(0)
   , pcch_poolIdent (pch_poolIdent)
   , b_hasUnknownAttributes (false)
@@ -4600,9 +4600,9 @@ int main(int argC, char* argV[])
 
   // Do INITIALIZATION STUFF
 #ifdef USE_SPECIAL_PARSING
-  vt2iso_c* pc_vt2iso = new vt2iso_c(&c_fileName, poolIdentStr, &dictionary);
+  vt2iso_c* pc_vt2iso = new vt2iso_c(poolIdentStr);
 #else
-  vt2iso_c* pc_vt2iso = new vt2iso_c(&c_fileName, poolIdentStr);
+  vt2iso_c* pc_vt2iso = new vt2iso_c(poolIdentStr);
 #endif
 
   if (!pc_vt2iso->prepareFileNameAndDirectory (&c_fileName))
@@ -4612,7 +4612,7 @@ int main(int argC, char* argV[])
     exit (-1);
   }
 
-  pc_vt2iso->init (c_fileName.c_str());
+  pc_vt2iso->init (c_fileName.c_str(), &dictionary);
 
   for (indexXmlFile = 0; indexXmlFile < pc_vt2iso->getAmountXmlFiles(); indexXmlFile++)
   { // loop all xmlFiles!

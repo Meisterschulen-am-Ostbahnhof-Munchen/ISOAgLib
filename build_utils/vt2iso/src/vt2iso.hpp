@@ -165,7 +165,7 @@ inline bool DOMCountErrorHandler::getSawErrors() const
 class vt2iso_c
 {
 public:
-  vt2iso_c (std::basic_string<char>* xmlFile, char* poolIdent, std::basic_string<char>* dictionary = NULL);
+  vt2iso_c (char* poolIdent);
 
   ~vt2iso_c();
 
@@ -199,7 +199,7 @@ public:
 
   void getKeyCode();
 
-  void init (const char* xmlFile);
+  void init (const char* xmlFile, std::basic_string<char>* dictionary = NULL);
 
   bool prepareFileNameAndDirectory (std::basic_string<char>* pch_fileName);
   
