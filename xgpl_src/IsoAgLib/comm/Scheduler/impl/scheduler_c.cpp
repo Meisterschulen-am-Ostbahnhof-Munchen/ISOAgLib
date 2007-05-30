@@ -306,8 +306,12 @@ bool Scheduler_c::registerClient( ElementBase_c* pc_client)
 
   /// add 2ms to startTime of new Client to avoid crossing timestamps
   static int32_t si32_taskStartTime = 0;
-  if ( si32_taskStartTime == 0 ) si32_taskStartTime = System_c::getTime();
-  else si32_taskStartTime += 2;
+  if ( si32_taskStartTime == 0 ) si32_taskStartTime = System_c::getTime() + 50;
+  else
+  {
+    if ( ! c_taskQueue.empty() ) si32_taskStartTime -= pc_client->getForcedMinExecTime();
+    else si32_taskStartTime -= 2;
+  }
   //For Client that registers at later timepoint
   if ( System_c::getTime() > si32_taskStartTime ) si32_taskStartTime = System_c::getTime();;
 
@@ -661,12 +665,12 @@ Scheduler_c::selectCallTaskAndUpdateQueue()
     { // problem in scheduling --> use the absolute difference
       i32_nextTaskTriggerTimeSpread = abs( pc_nextCallIter->getNextTriggerTime() - pc_execIter->getNextTriggerTime() );
     }
-    if(  i32_nextTaskTriggerTimeSpread   < 5 ){
+    if(  i32_nextTaskTriggerTimeSpread   <  pc_execIter->getForcedMinExecTime() ){
     #ifdef DEBUG_SCHEDULER
     INTERNAL_DEBUG_DEVICE << "i32_endTime to small for " <<  pc_execIter->getTaskName() << "endTime "
-      << (int) i32_nextTaskTriggerTimeSpread  << " Set to 5ms" << INTERNAL_DEBUG_DEVICE_ENDL;
+      << (int) i32_nextTaskTriggerTimeSpread  << " Set to " << pc_execIter->getTaskName() << " << msec INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
-      i32_endTime += 5 ;  //add 5ms
+      i32_endTime += pc_execIter->getForcedMinExecTime() ;  //add getForcedMinExecTime()
     }
     else {
       //regular condition
@@ -693,7 +697,7 @@ Scheduler_c::selectCallTaskAndUpdateQueue()
     { // the executed task had not enough time and the limit was NOT defined by the central
       // scheduler end time, that was defined by the APP
       // --> reschedule this task _after_ the following task
-      int16_t i16_avgTime = (pc_nextCallIter->getAvgExecTime() > 2)?pc_nextCallIter->getAvgExecTime():2;
+      int16_t i16_avgTime = (pc_nextCallIter->getAvgExecTime() > pc_nextCallIter->getForcedMinExecTime())?pc_nextCallIter->getAvgExecTime():pc_nextCallIter->getForcedMinExecTime();
       if ( pc_nextCallIter->getExecTime() > i16_avgTime ) i16_avgTime = pc_nextCallIter->getExecTime();
       #ifdef DEBUG_SCHEDULER
       INTERNAL_DEBUG_DEVICE

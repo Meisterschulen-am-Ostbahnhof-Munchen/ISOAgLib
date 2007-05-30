@@ -218,6 +218,12 @@ public:
   //  Operation: timeEvent
   bool timeEvent( void );
 
+  //! virtual function which allows a scheduler client to define
+  //! a minimum execution time, that should be saved after this item in the
+  //! scheduler loop - some tasks might not be able to finish any sensible
+  //! work in the default min exec time of 5msec
+  virtual uint16_t getForcedMinExecTime() const;
+
   //  Operation: init
   void init();
 
