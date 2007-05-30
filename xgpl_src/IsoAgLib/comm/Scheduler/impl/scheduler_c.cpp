@@ -625,6 +625,10 @@ Scheduler_c::selectCallTaskAndUpdateQueue()
     if ( pc_nextCallIter != c_taskQueue.end() )
       i32_nextTaskTriggerTimeSpread = pc_nextCallIter->getTimeToNextTrigger( LatestRetrigger );
 
+    if ( i32_nextTaskTriggerTimeSpread < 0 )
+    { // problem in scheduling --> use the absolute difference
+      i32_nextTaskTriggerTimeSpread = abs( pc_nextCallIter->getNextTriggerTime() - pc_execIter->getNextTriggerTime() );
+    }
     if(  i32_nextTaskTriggerTimeSpread   < 5 ){
     #ifdef DEBUG_SCHEDULER
     INTERNAL_DEBUG_DEVICE << "i32_endTime to small for " <<  pc_execIter->getTaskName() << "endTime "
