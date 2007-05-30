@@ -908,7 +908,7 @@ void
 vt2iso_c::init (const char* xmlFile)
 {
 #ifdef USE_SPECIAL_PARSING_PROP
-  pc_specialParsingPropTag = new SpecialParsingUsePropTag_c (pc_projName,
+  pc_specialParsingPropTag = new SpecialParsingUsePropTag_c (xmlFile,
                                                              partFile_variables,
                                                              partFile_variables_extern,
                                                              partFile_attributes,
@@ -920,7 +920,7 @@ vt2iso_c::init (const char* xmlFile)
 #endif
 
 #ifdef USE_SPECIAL_PARSING
-  pc_specialParsing = new SpecialParsingUse_c (pc_projName, c_directory, dictionary, pcch_poolIdent);
+  pc_specialParsing = new SpecialParsingUse_c (xmlFile, c_directory, dictionary, pcch_poolIdent);
 #else
   pc_specialParsing = NULL;
 #endif
