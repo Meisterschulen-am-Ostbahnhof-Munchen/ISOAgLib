@@ -907,24 +907,6 @@ vt2iso_c::getKeyCode()
 void
 vt2iso_c::init (const char* xmlFile, std::basic_string<char>* dictionary)
 {
-#ifdef USE_SPECIAL_PARSING_PROP
-  pc_specialParsingPropTag = new SpecialParsingUsePropTag_c (xmlFile,
-                                                             partFile_variables,
-                                                             partFile_variables_extern,
-                                                             partFile_attributes,
-                                                             partFile_functions,
-                                                             partFile_defines
-                                                            );
-#else
-  pc_specialParsingPropTag = NULL;
-#endif
-
-#ifdef USE_SPECIAL_PARSING
-  pc_specialParsing = new SpecialParsingUse_c (xmlFile, c_directory, dictionary, pcch_poolIdent);
-#else
-  pc_specialParsing = NULL;
-#endif
-  
   firstLineFileE = true;
   ui_languages=0;
 
@@ -1016,6 +998,24 @@ vt2iso_c::init (const char* xmlFile, std::basic_string<char>* dictionary)
 
   for (int j=0; j<maxAttributeNames; j++)
     attrString [j] [stringLength+1-1] = 0x00;
+
+#ifdef USE_SPECIAL_PARSING_PROP
+  pc_specialParsingPropTag = new SpecialParsingUsePropTag_c (xmlFile,
+      partFile_variables,
+      partFile_variables_extern,
+      partFile_attributes,
+      partFile_functions,
+      partFile_defines
+                                                            );
+#else
+  pc_specialParsingPropTag = NULL;
+#endif
+
+#ifdef USE_SPECIAL_PARSING
+  pc_specialParsing = new SpecialParsingUse_c (xmlFile, c_directory, dictionary, pcch_poolIdent);
+#else
+  pc_specialParsing = NULL;
+#endif
 }
 
 void
@@ -1061,7 +1061,7 @@ vt2iso_c::defaultAttributes (unsigned int r_objType)
   //  sprintf (attrString [attrFormat], "8bit");
   //  attrIsGiven [attrFormat] = true;
   // }
-  
+
   // may the variable reference is given as 65535 (0xFFFF)
   if (attrIsGiven [attrVariable_reference] && (atoi (attrString [attrVariable_reference]) == 0xFFFF)) {
     sprintf (attrString [attrVariable_reference], "NULL");
