@@ -1115,9 +1115,22 @@ MultiReceive_c::sendCurrentCts(DEF_Stream_c_IMPL* rpc_stream)
 { // ~X2C
   // This function actually IS only called if in state "AwaitCtsSend" !
 
-  /** may also be 0, meaning HOLD CONNECTION OPEN, but we can handle multiple streams, can't we? ;-) */
+  /** may also be 0, meaning HOLD CONNECTION OPEN, but we can handle multiple streams... ;-)
+      and we don't want to hold connections open that are very short, so well........... */
 
-  uint8_t ui8_pkgsToExpect = rpc_stream->expectBurst(Stream_c::sui8_pkgBurst); // we wish e.g. 20 pkgs (as always), but there're only 6 more missing to complete the stream!
+  // the following "> 0" check shouldn't be needed because if we reach here, we shouldn't 
+  uint32_t ui32_allowPackets = (getStreamCount() > 0) ? ((CONFIG_MULTI_RECEIVE_MAX_OVERALL_PACKETS_ADDED_FROM_ALL_BURSTS) / getStreamCount()) : 1;
+  if (ui32_allowPackets == 0)
+  { // Don't allow 0 packets here as this would mean HOLD-CONNECTION OPEN and
+    // we'd have to take action and can not wait for the sender sending...
+    ui32_allowPackets = 1;
+  }
+  if (ui32_allowPackets > CONFIG_MULTI_RECEIVE_MAX_PER_CLIENT_BURST_IN_PACKETS)
+  { // limit the number of packets a single sender can send even if we could handle all those packets!
+    ui32_allowPackets = CONFIG_MULTI_RECEIVE_MAX_PER_CLIENT_BURST_IN_PACKETS;
+  }
+
+  uint8_t ui8_pkgsToExpect = rpc_stream->expectBurst (ui32_allowPackets); // we wish e.g. 20 pkgs (as always), but there're only 6 more missing to complete the stream!
   uint8_t pgn, cmdByte;
   uint8_t ui8_next2WriteLo =  ((rpc_stream->getPkgNextToWrite()) & 0xFF);
   uint8_t ui8_next2WriteMid= (((rpc_stream->getPkgNextToWrite()) >> 8) & 0xFF);

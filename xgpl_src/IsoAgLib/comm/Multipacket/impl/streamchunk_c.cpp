@@ -240,7 +240,7 @@ uint8_t
 //! @return next byte to be parsed or 0xff (parse-counter equals write-counter)
 StreamChunk_c::getNextNotParsed()
 { // ~X2C
-  uint16_t chunkLen = sui8_pkgBurst * 7;
+  const uint16_t chunkLen = Chunk_c::scui16_chunkSize;
   uint16_t chunkCnt = ui32_parsedCnt % chunkLen;
   uint8_t  chunkVal;
 
@@ -276,7 +276,7 @@ uint8_t
 StreamChunk_c::getNotParsed (uint32_t ui32_notParsedRelativeOffset)
 {
   std::list<Chunk_c>::iterator pc_iterTmpChunk = pc_iterParsedChunk;
-  uint16_t chunkLen = sui8_pkgBurst * 7;
+  const uint16_t chunkLen = Chunk_c::scui16_chunkSize;
   uint16_t chunkCnt = ui32_parsedCnt % chunkLen;
   uint16_t chunkCntReq = chunkCnt + ui32_notParsedRelativeOffset;
 
@@ -331,7 +331,7 @@ StreamChunk_c::testDisplay()
     printf( "%c ", ((pc_iterTmpChunk==pc_iterWriteChunk)?'W':' '));
     printf( "%c ", ((pc_iterTmpChunk==pc_iterParsedChunk)?'P':' '));
     printf( "Chunk %0.2d (%0.2d elements): ", iter++,
-             Stream_c::sui8_pkgBurst * 7 - pc_iterTmpChunk->getFreeCnt() );
+              Chunk_c::scui16_chunkSize - pc_iterTmpChunk->getFreeCnt() );
     idx=0;
     while ((nbr=pc_iterTmpChunk->getData(idx++)) != 0xffff)
       printf( "%d, ", nbr );

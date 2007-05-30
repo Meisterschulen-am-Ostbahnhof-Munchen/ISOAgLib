@@ -179,36 +179,53 @@
 #endif
 
 
-/** configure the amount of max filterBox instances to one msgObj instance
-    static array for better quicker access to data.
-
-    for ISO 11783 more FilterBox'es must be mapped into onte MsgObj
-    for the different PGN's which are mainly managed by Base_c,
-    and which are very similar)
+/** configure the MULTI-PACKET parameters (TP/ETP/FP/Chunks)
+    for RECEPTION, i.e. MultiReceive-related classes
 */
-#ifndef CONFIG_CAN_ISO_FILTER_BOX_PER_MSG_OBJ
-  /// Max amount of Filters which can be connected to a CAN MsgObj for ISO
-  #define CONFIG_CAN_ISO_FILTER_BOX_PER_MSG_OBJ 15
+#ifndef CONFIG_MULTI_RECEIVE_CHUNK_SIZE_IN_PACKETS
+  /// Multiply this SizeInPackets by 7 to get the size of ONE CHUNK (ONLY OF INTEREST IF STREAM IS CHUNKED)
+  #define CONFIG_MULTI_RECEIVE_CHUNK_SIZE_IN_PACKETS 16
 #endif
 
-/** configure the amount of max filterBox instances to one msgObj instance
-    static array for better quicker access to data.
-
-    DIN uses only some FilterBoxes which can be mapped
-    by 5 entries in one MsgObj
+/** configures the maximum amount of packets to be allowed by all "CTS" messages.
+    So you need to have at least a CAN-buffer for this many packets,
+    because the clients will burst them and you cannot guarantee to handle
+    them all immediately. Note that you of course need to have an even
+    larger CAN-buffer, because other packets are also being received,
+    like GPS data, Tractor data, network management, etc.etc.
+    Be aware: This is only the part for MULTI_RECEIVE!
 */
-#ifndef CONFIG_CAN_DIN_FILTER_BOX_PER_MSG_OBJ
-  /// Max amount of Filters which can be connected to a CAN MsgObj for DIN
-  #define CONFIG_CAN_DIN_FILTER_BOX_PER_MSG_OBJ 5
+#ifndef CONFIG_MULTI_RECEIVE_MAX_OVERALL_PACKETS_ADDED_FROM_ALL_BURSTS
+  /// Maximum amount of packets to be allowed to be CTS'd in parallel (this amount will be distributed among all running streams)
+  #define CONFIG_MULTI_RECEIVE_MAX_OVERALL_PACKETS_ADDED_FROM_ALL_BURSTS 16
 #endif
 
-#ifndef FILTER_BOX_PER_MSG_OBJ
-  #ifdef USE_ISO_11783
-    #define FILTER_BOX_PER_MSG_OBJ CONFIG_CAN_ISO_FILTER_BOX_PER_MSG_OBJ
-  #else
-    #define FILTER_BOX_PER_MSG_OBJ CONFIG_CAN_DIN_FILTER_BOX_PER_MSG_OBJ
-  #endif
+/** configures the maximum amount of packets to be allowed by a "CTS" message.
+    This is a maximum-cutoff value per client. MultiReceive will normally
+    CTS for "CONFIG_MULTI_RECEIVE_MAX_BURST_IN_PACKETS_OVERALL / Number of clients" packets
+    Use this value to limit if e.g. just one stream is running.
+    Example: CONFIG_MULTI_RECEIVE_MAX_BURST_IN_PACKETS_OVERALL is set to 80 because you want 5 clients
+    to be able to each send 16 packets, BUT you don't want if one single client
+    is connected to allow 80 packets to be sent at once!
+*/
+#ifndef CONFIG_MULTI_RECEIVE_MAX_PER_CLIENT_BURST_IN_PACKETS
+  /// Maximum amount of packets to be allowed by a "CTS" message.
+  #define CONFIG_MULTI_RECEIVE_MAX_PER_CLIENT_BURST_IN_PACKETS CONFIG_MULTI_RECEIVE_MAX_OVERALL_PACKETS_ADDED_FROM_ALL_BURSTS
 #endif
+
+/** This delay is being used if EXACTLY ONE stream (1) is being received! */
+#ifndef CONFIG_MULTI_RECEIVE_CTS_DELAY_AT_SINGLE_STREAM
+  /// defines the amount of msec. to be wait until sending out the next CTS to the sender IF ONE STREAM ONLY BEING RECEIVED
+  #define CONFIG_MULTI_RECEIVE_CTS_DELAY_AT_SINGLE_STREAM 0
+#endif
+
+/** This delay is being used if MORE THAN ONE stream (2, 3, 4, ...) is being received */
+#ifndef CONFIG_MULTI_RECEIVE_CTS_DELAY_AT_MULTI_STREAMS
+  /// defines the amount of msec. to be wait until sending out the next CTS to the sender IF MULTIPLE STREAMS BEING RECEIVED
+  #define CONFIG_MULTI_RECEIVE_CTS_DELAY_AT_MULTI_STREAMS 50
+#endif
+
+
 /*@}*/
 
 
@@ -324,24 +341,6 @@
   #define CONFIG_ISO_ITEM_MAX_AGE 3000
 #endif
 
-/** time to delete inactive member items in monitor list [msec]
-    - if CONFIG_DIN_ITEM_MAX_AGE is not defined, no items are deleted
-    - set to 0 to deactivate
-*/
-#ifndef CONFIG_DIN_ITEM_MAX_AGE
-  /// erase DIN 9684 devices from monitor list after given dead time ( 0 == no delete ) - can be manually overridden in project config file
-  #define CONFIG_DIN_ITEM_MAX_AGE 0
-#endif
-
-/** time to delete inactive service items in monitor list [msec]
-    - if CONFIG_DIN_SERVICE_MAX_AGE is not defined, no items are deleted
-    - set to 0 to deactivate
-*/
-#ifndef CONFIG_DIN_SERVICE_MAX_AGE
-  /// erase DIN 9684 services from monitor list after given dead time ( 0 == no delete ) - can be manually overridden in project config file
-  #define CONFIG_DIN_SERVICE_MAX_AGE 3000
-#endif
-
 /** interval in sec to store actual process data value for process datas which are
     permanent in EEPROM
 */
@@ -384,9 +383,6 @@
 /* ******************************************************** */
 /**
  * \name Config detection of CAN BUS off
- * For autosense of ISO 11783 and DIN 9684 an runtime error
- * can occur, if a system starts with 250kbaud
- * and later a simple DIN 9684 device is connected with 125kbaud
  * -> IsoAgLib must detect BUS OFF and interprete it as result
  * of differing CAN baudrates ==> IsoAgLib can switch baudrate
  * to fallback speed.
@@ -592,30 +588,6 @@
   #endif
 
 /**
-  * @def USE_DIN_9684_YN
-  * choose the use of DIN 9684
-  */
-  #ifndef USE_DIN_9684_YN
-    #define USE_DIN_9684_YN NO
-  #endif
-  #if USE_DIN_9684_YN == YES && !defined(USE_DIN_9684)
-    #define USE_DIN_9684
-  #endif
-
-/**
-  * @def USE_DIN_TERMINAL_YN
-  * choose the use of DIN TERMINAL
-  */
-  #ifndef USE_DIN_TERMINAL_YN
-    #define USE_DIN_TERMINAL_YN NO
-  #endif
-  #if USE_DIN_TERMINAL_YN == YES && !defined(USE_DIN_TERMINAL) && defined( USE_DIN_9684 )
-    #define USE_DIN_TERMINAL
-  #endif
-
-#define EXCLUDE_RARE_DIN_SYSTEM_CMD
-
-/**
   * @def USE_BASE_YN
   * activate module for base data ( periodic sent main tractor data like speed, PTO, Hitch )
   * ( even if IsoAgLib is mainly independent from this setting, the IsoItem_c::processMsg()
@@ -672,7 +644,7 @@
 /**
  * \name Definition of IsoAgLib managed CAN ports and dependent access macros
  * The several modules of the IsoAgLib have only one instance, as long
- * as only one CAN port is managed with IsoAgLib (DIN and/or ISO) protocol.
+ * as only one CAN port is managed with IsoAgLib protocol.
  * Even in case of two or more CAN ports, the so called "singleton" pattern
  * can be used to define a secure way to handle these objects as standalone
  * instances, which access the other object types by global accessible
@@ -706,11 +678,10 @@
   #define RS232_INSTANCE_CNT 1
 #endif
 
-/** count of CAN ports which are managed with IsoAgLib (DIN and/or ISO)
+/** count of CAN ports which are managed with IsoAgLib
     - in most cases just 1
-    - but if the ECU shall be used as gateway between two ISO 11783 or DIN 9684 subnets
-    - or if it should translate between a DIN 9684 devices and ISO 11783 network
-    - then select 2 ( or more )
+    - but if you want to bridge some other network to IsoBus
+      or have simply multiple ISOBUSses then select 2 (or more)
     ( all communication classes are designed to allow independent control of
       individual CAN instances per protocol instance set )
   */
@@ -719,13 +690,8 @@
 #endif
 
 #ifndef DEFAULT_BITRATE
-  #ifdef USE_DIN_9684
-    /// define DEFAULT BITRATE
-    #define DEFAULT_BITRATE 125
-  #else
-    /// define DEFAULT BITRATE
-    #define DEFAULT_BITRATE 250
-  #endif
+  /// define DEFAULT BITRATE to default ISOBUS bitrate
+  #define DEFAULT_BITRATE 250
 #endif
 
 

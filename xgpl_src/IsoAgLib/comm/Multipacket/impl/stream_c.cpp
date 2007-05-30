@@ -110,11 +110,6 @@ namespace __IsoAgLib {
 
 
 
-// helper consts
-uint8_t Stream_c::sui8_pkgBurst=0x10;
-
-
-
 Stream_c::Stream_c (StreamType_t rt_streamType, const IsoAgLib::ReceiveStreamIdentifier_c& rc_rsi, uint32_t rui32_msgSize, bool rb_skipCtsAwait)
   : iStream_c()
   , c_ident (rc_rsi)
@@ -276,7 +271,7 @@ Stream_c::handleDataPacket (const Flexible8ByteString_c* rpu_data)
     } else {
       // ---CTS--- go for more!
       // Calculate the send delay
-      const int32_t ci32_ctsSendDelay = (__IsoAgLib::getMultiReceiveInstance4Comm().getStreamCount() == 1) ? 0 : sci32_ctsSendDelay;
+      const int32_t ci32_ctsSendDelay = (__IsoAgLib::getMultiReceiveInstance4Comm().getStreamCount() == 1) ? sci32_ctsSendDelayOneStream : sci32_ctsSendDelayMoreStreams;
       awaitNextStep (AwaitCtsSend, ci32_ctsSendDelay); // no timeOut on own Send-Awaits (this is automatically done in awaitNextStep) - parameter is the send-delay!
     }
     // (A complete / The last) chunk is received, handling will be done after this function returns

@@ -95,31 +95,6 @@ namespace __IsoAgLib {
 
 
 
-// //////////////////////////////// +X2C Operation : Chunk_c
-//! Static member variable
-uint16_t
-Chunk_c::sui16_chunkSize = Stream_c::sui8_pkgBurst * 7;
-
-
-
-// //////////////////////////////// +X2C Operation : Chunk_c
-//! Constructor: Set the Chunk size. Does not create the Vector.
-Chunk_c::Chunk_c()
-{ // ~X2C
-  sui16_chunkSize = Stream_c::sui8_pkgBurst * 7;
-} // -X2C
-
-
-
-// //////////////////////////////// +X2C Operation : Chunk_c
-//! Destructor: Clears the Vector.
-Chunk_c::~Chunk_c()
-{
-  arr_data.clear();
-}
-
-
-
 // Copy constructor
 Chunk_c::Chunk_c( const Chunk_c& rrefc_src )
 {
@@ -135,9 +110,8 @@ Chunk_c::Chunk_c( const Chunk_c& rrefc_src )
 bool
 Chunk_c::init()
 { // ~X2C
-  sui16_chunkSize = Stream_c::sui8_pkgBurst * 7;
-  arr_data.reserve( sui16_chunkSize );
-  return arr_data.capacity() == sui16_chunkSize;
+  arr_data.reserve( scui16_chunkSize );
+  return arr_data.capacity() == scui16_chunkSize;
 } // -X2C
 
 

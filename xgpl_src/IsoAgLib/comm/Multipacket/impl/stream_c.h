@@ -102,16 +102,8 @@ namespace __IsoAgLib {
 
 // T1/T2 here are the same as in "multireceive_c.h"
 // T1/T2 here are the same as in "multireceive_c.h"
-static const int32_t sci32_ctsSendDelay=50;  // data -> cts
-#if 0
-static const int32_t sci32_timeOutT1=250;  // data -> data
-static const int32_t sci32_timeOutT2=1250; // cts -> data(TP)/dpo(ETP)
-static const int32_t sci32_timeOutT3=1250; // data/rts -> cts (not needed for checking here)
-static const int32_t sci32_timeOutT4=550;  // cts(0)<->cts
-static const int32_t sci32_timeOutT5=750;  // dpo -> data (ETP only, naming "T5" done by Martin)
-static const int32_t sci32_timeOutFP=750;  // FPdata <-> FPdata
-static const int32_t sci32_timeNever=-1;
-#else
+static const int32_t sci32_ctsSendDelayOneStream   = CONFIG_MULTI_RECEIVE_CTS_DELAY_AT_SINGLE_STREAM; // data -> cts
+static const int32_t sci32_ctsSendDelayMoreStreams = CONFIG_MULTI_RECEIVE_CTS_DELAY_AT_MULTI_STREAMS; // data -> cts
 static const int32_t sci32_timeOutT1=1000;  // data -> data
 static const int32_t sci32_timeOutT2=1250; // cts -> data(TP)/dpo(ETP)
 static const int32_t sci32_timeOutT3=1250; // data/rts -> cts (not needed for checking here)
@@ -119,8 +111,8 @@ static const int32_t sci32_timeOutT4=1100;  // cts(0)<->cts
 static const int32_t sci32_timeOutT5=1000;  // dpo -> data (ETP only, naming "T5" done by Martin)
 static const int32_t sci32_timeOutFP=1000;  // FPdata <-> FPdata
 static const int32_t sci32_timeNever=-1;
-#endif
-
+/** @todo The above should be adapted to the new revision of Part 3 - Data Link Layer >
+  * also limit number of retries to 2 (if retries are implemented, if not, do so ;-) */
 
 
 /** enum for Streaming state */
@@ -168,11 +160,6 @@ public:
   virtual ~Stream_c();
 
   bool timedOut();
-
-
-  /// Specify here how many packages a CTS requests from the sender in a burst!
-  static uint8_t sui8_pkgBurst;
-
 
   // Tell the stream what we wish to CTS, get as result how many can really be CTS'd.
   // Sets the internal state to expect (DPO and afterwards) the calculated amount of DATA commands next

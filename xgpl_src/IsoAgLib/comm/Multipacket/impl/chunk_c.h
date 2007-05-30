@@ -109,10 +109,12 @@ class Chunk_c
 public:
 
   //  Operation: Chunk_c
-  Chunk_c();
+  Chunk_c() {}
 
   //  Operation: ~Chunk_c
-  ~Chunk_c();
+  //! Destructor: Clears the Vector.
+  ~Chunk_c() { arr_data.clear(); }
+
 
   // Copy constructor
   Chunk_c( const Chunk_c& rrefc_src );
@@ -141,15 +143,15 @@ public:
   //  Operation: full
   bool full();
 
+  //  Attribute: sui16_chunkSize
+  static const uint16_t scui16_chunkSize = (CONFIG_MULTI_RECEIVE_CHUNK_SIZE_IN_PACKETS)*7;
+
 protected:
 
 private:
 
   //  Attribute: arr_data
   std::vector<uint8_t> arr_data;
-
-  //  Attribute: sui16_chunkSize
-  static uint16_t sui16_chunkSize;
 
 }; // ~X2C
 
