@@ -195,6 +195,12 @@ class ElementBase_c : public CANCustomer_c {
   //!  @return AVG of exec time
   inline uint16_t getAvgExecTime() const;
 
+  //! virtual function which allows a scheduler client to define
+  //! a minimum execution time, that should be saved after this item in the
+  //! scheduler loop - some tasks might not be able to finish any sensible
+  //! work in the default min exec time of 5msec
+  virtual uint16_t getForcedMinExecTime() const;
+
 #ifdef DEBUG_SCHEDULER
   //  Operation: getMaxExecTime
   //!  deliver the max exec time of this task (used only for debug based on ui16_maxTime)

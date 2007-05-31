@@ -218,7 +218,7 @@ ElementBase_c::setTimePeriod
   ui16_timePeriod = rui16_timePeriod;
   //call Function to calculate new intervals
   updateEarlierAndLatestInterval();
-  #ifdef DEBUG
+  #ifdef DEBUG_SCHEDULER
   INTERNAL_DEBUG_DEVICE
       << "ElementBase_c::setTimePeriod( " << rui16_timePeriod << ") zu Task "
       << getTaskName() << INTERNAL_DEBUG_DEVICE_ENDL;
@@ -250,6 +250,17 @@ ElementBase_c::updateEarlierAndLatestInterval(){
 ElementBase_c::~ElementBase_c()
 {
 	///b_isInitialized = false;
+}
+
+
+
+//! virtual function which allows a scheduler client to define
+//! a minimum execution time, that should be saved after this item in the
+//! scheduler loop - some tasks might not be able to finish any sensible
+//! work in the default min exec time of 5msec
+uint16_t ElementBase_c::getForcedMinExecTime() const
+{
+  return 5;
 }
 
 

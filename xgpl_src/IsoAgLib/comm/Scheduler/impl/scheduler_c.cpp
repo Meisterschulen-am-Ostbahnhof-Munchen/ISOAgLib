@@ -120,7 +120,7 @@
   #include <IsoAgLib/hal/eeprom.h>
 #endif
 
-#if defined(DEBUG_SCHEDULER) || defined(DEBUG_HEAP_USEAGE)
+#if defined(DEBUG_SCHEDULER) || defined(DEBUG_HEAP_USEAGE) || defined(TEST_TIMING)
   #include <IsoAgLib/util/impl/util_funcs.h>
   #ifdef SYSTEM_PC
     #include <iostream>
@@ -128,6 +128,10 @@
     #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
   #endif
   #include <IsoAgLib/util/impl/util_funcs.h>
+#endif
+
+#if defined(TEST_TIMING) && defined(SYSTEM_PC)
+  #include <ctime>
 #endif
 
 
@@ -302,8 +306,12 @@ bool Scheduler_c::registerClient( ElementBase_c* pc_client)
 
   /// add 2ms to startTime of new Client to avoid crossing timestamps
   static int32_t si32_taskStartTime = 0;
-  if ( si32_taskStartTime == 0 ) si32_taskStartTime = System_c::getTime();
-  else si32_taskStartTime += 2;
+  if ( si32_taskStartTime == 0 ) si32_taskStartTime = System_c::getTime() + 50;
+  else
+  {
+    if ( ! c_taskQueue.empty() ) si32_taskStartTime -= pc_client->getForcedMinExecTime();
+    else si32_taskStartTime -= 2;
+  }
   //For Client that registers at later timepoint
   if ( System_c::getTime() > si32_taskStartTime ) si32_taskStartTime = System_c::getTime();;
 
@@ -420,6 +428,19 @@ int16_t Scheduler_c::getAvailableExecTime( int16_t ri16_awaitedExecTime )
   return -1;
 }
 
+int16_t
+Scheduler_c::getCentralSchedulerAvailableExecTime()
+{
+  if ( i32_demandedExecEndScheduler == 0 ) return 0;
+  if ( i32_demandedExecEndScheduler == -1 ) return -1;
+
+  const int32_t i32_now = System_c::getTime();
+
+  if ( i32_now >= i32_demandedExecEndScheduler ) return 0;
+  else return ( i32_demandedExecEndScheduler - i32_now );
+}
+
+
 
 /**
   call the timeEvent for CANIO_c and all communication classes (derived from ElementBase_c) which
@@ -435,8 +456,14 @@ int16_t Scheduler_c::getAvailableExecTime( int16_t ri16_awaitedExecTime )
 int32_t Scheduler_c::timeEvent( int32_t ri32_demandedExecEndScheduler )
 { // first check if demanded exec time allows execution
   // update last trigger time
-  int32_t i32_now = System_c::getTime();
-  int32_t i32_stepStartTime = i32_lastTimeEventTime = i32_now;
+  #if defined(TEST_TIMING) && defined(SYSTEM_PC)
+  static int32_t si32_globalTimeStart = 0;
+  static int32_t si32_cpuTimeStart = 0;
+  si32_globalTimeStart = HAL::getTime();
+  si32_cpuTimeStart = (std::clock() / ( CLOCKS_PER_SEC / 1000 ));
+  #endif
+
+  int32_t i32_stepStartTime = i32_lastTimeEventTime = System_c::getTime();
 
   i32_demandedExecEndScheduler = ri32_demandedExecEndScheduler;
   #ifdef CONFIG_DEFAULT_MAX_SCHEDULER_TIME_EVENT_TIME
@@ -526,6 +553,28 @@ int32_t Scheduler_c::timeEvent( int32_t ri32_demandedExecEndScheduler )
   }
    // trigger the watchdog
     System_c::triggerWd();
+
+
+    #if defined(TEST_TIMING) && defined(SYSTEM_PC)
+    const int32_t ci32_globalTimeEnd = HAL::getTime();
+    const int32_t ci32_cpuTimeEnd = (std::clock() / ( CLOCKS_PER_SEC / 1000 ));
+
+    const int32_t ci32_deltaGlobal = ci32_globalTimeEnd - si32_globalTimeStart;
+    const int32_t ci32_deltaCpu = ci32_cpuTimeEnd - si32_cpuTimeStart;
+
+    if ( ( ci32_deltaCpu > 0) && (ci32_deltaGlobal > 0))
+    {
+      const float cf_deltaPercent = 100.0 * float(ci32_deltaCpu) / float(ci32_deltaGlobal);
+
+      if ( cf_deltaPercent < TEST_TIMING )
+        INTERNAL_DEBUG_DEVICE << "\n\n#########\nProblem as CPU had only " << cf_deltaPercent
+          << " Percent usage of CPU during this IsoAgLib Scheduler run"
+          << ", delta Global: " << ci32_deltaGlobal
+          << ", delta GPU: " << ci32_deltaCpu
+          << "#########\n\n\n" << std::endl;
+    }
+    #endif
+
 
     ///return i32_idleTime to inform mainapplication when recall is needed;
     return i32_idleTime;
@@ -624,17 +673,12 @@ Scheduler_c::selectCallTaskAndUpdateQueue()
     int32_t i32_nextTaskTriggerTimeSpread = CONFIG_DEFAULT_MAX_SCHEDULER_TIME_EVENT_TIME;
     if ( pc_nextCallIter != c_taskQueue.end() )
       i32_nextTaskTriggerTimeSpread = pc_nextCallIter->getTimeToNextTrigger( LatestRetrigger );
-
-    if ( i32_nextTaskTriggerTimeSpread < 0 )
-    { // problem in scheduling --> use the absolute difference
-      i32_nextTaskTriggerTimeSpread = abs( pc_nextCallIter->getNextTriggerTime() - pc_execIter->getNextTriggerTime() );
-    }
-    if(  i32_nextTaskTriggerTimeSpread   < 5 ){
+    if(  i32_nextTaskTriggerTimeSpread   <  pc_execIter->getForcedMinExecTime() ){
     #ifdef DEBUG_SCHEDULER
     INTERNAL_DEBUG_DEVICE << "i32_endTime to small for " <<  pc_execIter->getTaskName() << "endTime "
-      << (int) i32_nextTaskTriggerTimeSpread  << " Set to 5ms" << INTERNAL_DEBUG_DEVICE_ENDL;
+      << (int) i32_nextTaskTriggerTimeSpread  << " Set to " << pc_execIter->getTaskName() << " msec " << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
-      i32_endTime += 5 ;  //add 5ms
+      i32_endTime += pc_execIter->getForcedMinExecTime() ;  //add getForcedMinExecTime()
     }
     else {
       //regular condition
@@ -661,7 +705,7 @@ Scheduler_c::selectCallTaskAndUpdateQueue()
     { // the executed task had not enough time and the limit was NOT defined by the central
       // scheduler end time, that was defined by the APP
       // --> reschedule this task _after_ the following task
-      int16_t i16_avgTime = (pc_nextCallIter->getAvgExecTime() > 2)?pc_nextCallIter->getAvgExecTime():2;
+      int16_t i16_avgTime = (pc_nextCallIter->getAvgExecTime() > pc_nextCallIter->getForcedMinExecTime())?pc_nextCallIter->getAvgExecTime():pc_nextCallIter->getForcedMinExecTime();
       if ( pc_nextCallIter->getExecTime() > i16_avgTime ) i16_avgTime = pc_nextCallIter->getExecTime();
       #ifdef DEBUG_SCHEDULER
       INTERNAL_DEBUG_DEVICE
@@ -977,8 +1021,7 @@ bool  Scheduler_c::changeRetriggerTimeAndResort(std::list<SchedulerEntry_c>::ite
   /// decrease of TimePeriod task should be called EARLIER
   else if (i32_deltaRetrigger < 0){
     #ifdef DEBUG_SCHEDULER
-    INTERNAL_DEBUG_DEVICE << "task should be called EARLIER for ms: " << i32_deltaRetrigger
-      << INTERNAL_DEBUG_DEVICE_ENDL;
+    INTERNAL_DEBUG_DEVICE << "task should be called EARLIER for ms: " << i32_deltaRetrigger << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
     ///set new NextTriggerTime to now to avoid delay of following tasks
     if((i32_newRetriggerTime < System_c::getTime())   ) i32_newRetriggerTime = System_c::getTime();

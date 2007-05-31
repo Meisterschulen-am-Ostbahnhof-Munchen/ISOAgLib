@@ -151,6 +151,7 @@ public:
       individual task!
     */
   static int32_t getCentralSchedulerExecEndTime() { return i32_demandedExecEndScheduler;}
+  static int16_t getCentralSchedulerAvailableExecTime();
 
 
   /**

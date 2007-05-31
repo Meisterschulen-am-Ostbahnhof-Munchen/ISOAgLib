@@ -1083,6 +1083,17 @@ MultiReceive_c::timeEvent( void )
 
 
 
+//! virtual function which allows a scheduler client to define
+//! a minimum execution time, that should be saved after this item in the
+//! scheduler loop - some tasks might not be able to finish any sensible
+//! work in the default min exec time of 10msec
+uint16_t MultiReceive_c::getForcedMinExecTime() const
+{
+  return 30;
+}
+
+
+
 IsoAgLib::iStream_c*
 MultiReceive_c::getFinishedJustKeptStream (IsoAgLib::iStream_c* rpc_lastKeptStream)
 {
