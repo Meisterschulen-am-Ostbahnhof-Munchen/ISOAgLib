@@ -295,7 +295,7 @@ MultiReceive_c::processMsg()
           INTERNAL_DEBUG_DEVICE << "\n {CM: " << data().time() << "} ";
         #endif
 
-      {// to allow local variables
+      { // to allow local variables
         switch (cui8_dataByte0)
         {
 
@@ -823,6 +823,13 @@ MultiReceive_c::createStream(StreamType_t rt_streamType, IsoAgLib::ReceiveStream
   // Not there, so create!
   list_streams.push_back (DEF_Stream_c_IMPL (rt_streamType, rc_streamIdent, rui32_msgSize));
   list_streams.back().immediateInitAfterConstruction();
+
+  // notify the Scheduler that we want to a 100ms timeEvent now (as we have at least one stream!)
+  // this is yet to optimize because we can detect exactly how long to sleep, etc.etc.
+  /// THIS IS ALWAYS CALLED FROM ::processMsg, so we can't use setTimePeriod() here
+  if (getTimePeriod() != 100)
+    __IsoAgLib::getSchedulerInstance4Comm().changeRetriggerTimeAndResort(this, HAL::getTime()+100, 100);
+
   return &list_streams.back();
 } // -X2C
 
@@ -1063,6 +1070,14 @@ MultiReceive_c::timeEvent( void )
     // END timeEvent every Stream_c
     i_list_streams++; // standard weiterschaltung, im "erase" fall wird "continue" gemacht!
   }
+  if (list_streams.begin() == list_streams.end())
+  { // we have NO Streams - we got NOTHING to do..
+    setTimePeriod (5000);
+  }
+  else
+  { // we have at least on Stream in the list...
+    setTimePeriod (100);
+  }
   return true;
 } // -X2C
 
@@ -1252,6 +1267,7 @@ MultiReceive_c::init()
     MACRO_insertFilterIfNotYetExists_mask1FFFF00_setRef(ETP_CONN_MANAGE_PGN,0xFF,false,refFB,8)
     MACRO_insertFilterIfNotYetExists_mask1FFFF00_useRef(ETP_DATA_TRANSFER_PGN,0xFF,true,refFB,8)
 
+    setTimePeriod (5000); // nothing to do per default!
   }
 
 } // -X2C
