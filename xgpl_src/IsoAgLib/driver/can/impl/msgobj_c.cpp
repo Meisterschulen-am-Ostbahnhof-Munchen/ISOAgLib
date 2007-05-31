@@ -444,7 +444,7 @@ uint8_t MsgObj_c::processMsg(uint8_t rui8_busNumber, bool rb_forceProcessAll)
   // ( the time check is needed to avoid blocking of other important tasks if
   //   to much CAN msgs are received )
   while ( ( HAL::can_stateMsgobjBuffercnt(rui8_busNumber, msgObjNr()) > 0          )
-       && ( ( ElementBase_c::getAvailableExecTime() != 0 ) || ( b_forceProcessAll ) ) )
+       && ( ( Scheduler_c::getCentralSchedulerAvailableExecTime() != 0 ) || ( b_forceProcessAll ) ) )
   { // increment counter
     b_count++;
     b_processed = false;

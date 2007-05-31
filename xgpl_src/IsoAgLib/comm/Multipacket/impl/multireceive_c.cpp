@@ -1074,7 +1074,7 @@ MultiReceive_c::timeEvent( void )
 //! work in the default min exec time of 10msec
 uint16_t MultiReceive_c::getForcedMinExecTime() const
 {
-  return 10;
+  return 30;
 }
 
 

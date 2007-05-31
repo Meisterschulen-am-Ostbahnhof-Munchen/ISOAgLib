@@ -428,6 +428,19 @@ int16_t Scheduler_c::getAvailableExecTime( int16_t ri16_awaitedExecTime )
   return -1;
 }
 
+int16_t
+Scheduler_c::getCentralSchedulerAvailableExecTime()
+{
+  if ( i32_demandedExecEndScheduler == 0 ) return 0;
+  if ( i32_demandedExecEndScheduler == -1 ) return -1;
+
+  const int32_t i32_now = System_c::getTime();
+
+  if ( i32_now >= i32_demandedExecEndScheduler ) return 0;
+  else return ( i32_demandedExecEndScheduler - i32_now );
+}
+
+
 
 /**
   call the timeEvent for CANIO_c and all communication classes (derived from ElementBase_c) which
@@ -660,15 +673,10 @@ Scheduler_c::selectCallTaskAndUpdateQueue()
     int32_t i32_nextTaskTriggerTimeSpread = CONFIG_DEFAULT_MAX_SCHEDULER_TIME_EVENT_TIME;
     if ( pc_nextCallIter != c_taskQueue.end() )
       i32_nextTaskTriggerTimeSpread = pc_nextCallIter->getTimeToNextTrigger( LatestRetrigger );
-
-    if ( i32_nextTaskTriggerTimeSpread < 0 )
-    { // problem in scheduling --> use the absolute difference
-      i32_nextTaskTriggerTimeSpread = abs( pc_nextCallIter->getNextTriggerTime() - pc_execIter->getNextTriggerTime() );
-    }
     if(  i32_nextTaskTriggerTimeSpread   <  pc_execIter->getForcedMinExecTime() ){
     #ifdef DEBUG_SCHEDULER
     INTERNAL_DEBUG_DEVICE << "i32_endTime to small for " <<  pc_execIter->getTaskName() << "endTime "
-      << (int) i32_nextTaskTriggerTimeSpread  << " Set to " << pc_execIter->getTaskName() << " << msec INTERNAL_DEBUG_DEVICE_ENDL;
+      << (int) i32_nextTaskTriggerTimeSpread  << " Set to " << pc_execIter->getTaskName() << " msec " << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
       i32_endTime += pc_execIter->getForcedMinExecTime() ;  //add getForcedMinExecTime()
     }
@@ -1013,8 +1021,7 @@ bool  Scheduler_c::changeRetriggerTimeAndResort(std::list<SchedulerEntry_c>::ite
   /// decrease of TimePeriod task should be called EARLIER
   else if (i32_deltaRetrigger < 0){
     #ifdef DEBUG_SCHEDULER
-    INTERNAL_DEBUG_DEVICE << "task should be called EARLIER for ms: " << i32_deltaRetrigger
-      << INTERNAL_DEBUG_DEVICE_ENDL;
+    INTERNAL_DEBUG_DEVICE << "task should be called EARLIER for ms: " << i32_deltaRetrigger << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
     ///set new NextTriggerTime to now to avoid delay of following tasks
     if((i32_newRetriggerTime < System_c::getTime())   ) i32_newRetriggerTime = System_c::getTime();
