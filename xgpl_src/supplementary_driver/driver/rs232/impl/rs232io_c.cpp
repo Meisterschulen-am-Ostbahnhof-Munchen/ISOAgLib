@@ -344,7 +344,7 @@ bool RS232IO_c::setRecPufferSize(uint16_t rui16_pufferSize)
             ui8_restLen = rui8_len;
     while ( ui8_restLen > 0 )
     { // send max item
-      ui8_maxSendItemSize = CONFIG_RS232_DEFAULT_SND_PUF_SIZE - HAL::getRs232TxBufCount(RS232_CHANNEL_PARAM_SINGLE);
+      ui8_maxSendItemSize = ui16_sndPuf - HAL::getRs232TxBufCount(RS232_CHANNEL_PARAM_SINGLE);
       // restrict actual max item size to waiting chars to send
       if ( ui8_maxSendItemSize > ui8_restLen ) ui8_maxSendItemSize = ui8_restLen;
       // send actual item
