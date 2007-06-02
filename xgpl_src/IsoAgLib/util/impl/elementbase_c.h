@@ -258,6 +258,9 @@ class ElementBase_c : public CANCustomer_c {
   //! delay the next execution time by given period
   void delayNextTriggerTime( unsigned int ui_delay ) { i32_nextRetriggerTime += ui_delay;}
 
+  //! delay the next retrigger time to the given timestamp
+  void delayNextTriggerTimeToTime( int32_t ri32_newNextRetrigger ) { i32_nextRetriggerTime = ri32_newNextRetrigger;}
+
 
   //!  Virtual Destructor - just to avoid compiler warnings
   virtual ~ElementBase_c();
