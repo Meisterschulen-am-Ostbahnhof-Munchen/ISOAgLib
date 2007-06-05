@@ -96,6 +96,7 @@
 
 
 #include <IsoAgLib/typedef.h>
+#include <fstream>
 #include <cstdio>
 #include <supplementary_driver/hal/datastreams.h>
 #include <string>
