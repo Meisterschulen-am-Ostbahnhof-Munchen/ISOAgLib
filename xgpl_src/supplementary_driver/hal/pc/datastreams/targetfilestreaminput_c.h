@@ -89,9 +89,14 @@
 #ifndef TARGETFILESTREAMINPUT_C_H
 #define TARGETFILESTREAMINPUT_C_H
 
+#if defined(USE_BUFFERED_READ) && defined(WIN32)
+  #undef USE_BUFFERED_READ
+#endif
+
+
 
 #include <IsoAgLib/typedef.h>
-#include <stdio.h>
+#include <cstdio>
 #include <supplementary_driver/hal/datastreams.h>
 #include <string>
 
@@ -99,7 +104,7 @@
 // ~X2C
 
 //  +X2C Class 915 : FileTargetFileStreamInput_c
-#ifdef WIN32
+#ifndef USE_BUFFERED_READ
 class TargetFileStreamInput_c :public std::ifstream
 #else
 class TargetFileStreamInput_c // :public std::ifstream
@@ -128,14 +133,14 @@ public:
 
   TargetFileStreamInput_c() : fileDescr(NULL), b_eofReached(false), ui16_bytesInBuffer(0), ui16_currentReadIndexInBuffer(0)
   {}
-	
+
   ~TargetFileStreamInput_c() { close(); }
 
 private:
 
   FILE *fileDescr;
 
-  #ifdef WIN32
+  #ifndef USE_BUFFERED_READ
   #define cui16_bufSize 256
   #else
   static const uint16_t cui16_bufSize = 256;

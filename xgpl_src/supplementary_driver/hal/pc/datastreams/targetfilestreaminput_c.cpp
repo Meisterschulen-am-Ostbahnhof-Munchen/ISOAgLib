@@ -84,10 +84,9 @@
  *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
-
 #include "targetfilestreaminput_c.h"
-#ifdef WIN32
-  #include <stdio.h>
+#ifndef USE_BUFFERED_READ
+  #include <cstdio>
 #else
   #include <fcntl.h>
 #endif
@@ -97,7 +96,8 @@ using namespace std;
 //! open a input stream
 bool TargetFileStreamInput_c::open( const char* filename, FileMode_t rt_mode )
 {
-#ifdef WIN32
+#ifndef USE_BUFFERED_READ
+
   b_eofReached = false;
 
   if ( ( rt_mode & StreamOut ) != 0 ) return false;
@@ -154,7 +154,7 @@ bool TargetFileStreamInput_c::open( const char* filename, FileMode_t rt_mode )
 //! @param ui8_data:
 TargetFileStreamInput_c& TargetFileStreamInput_c::operator>>(uint8_t &ui8_data)
 {
-#ifdef WIN32
+#ifndef USE_BUFFERED_READ
 
   std::ifstream* isp_tmp = static_cast<std::ifstream*>(this);
 
@@ -186,7 +186,7 @@ TargetFileStreamInput_c& TargetFileStreamInput_c::operator>>(uint8_t &ui8_data)
 bool
 TargetFileStreamInput_c::eof() const
 {
-#ifdef WIN32
+#ifndef USE_BUFFERED_READ
   return b_eofReached | static_cast<const std::ifstream*>(this)->eof();
 #else
   if (!fileDescr)
@@ -199,7 +199,7 @@ TargetFileStreamInput_c::eof() const
 void
 TargetFileStreamInput_c::close()
 {
-#ifdef WIN32
+#ifndef USE_BUFFERED_READ
   static_cast<std::ifstream*>(this)->close();
 #else
   if (fileDescr)
