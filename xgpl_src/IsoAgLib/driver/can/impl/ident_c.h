@@ -229,6 +229,7 @@ public:
 #elif defined(  OPTIMIZE_NUMBER_CONVERSIONS_FOR_BIG_ENDIAN )
     return pb_ident[sizeof(MASK_TYPE) - 1 - rb_pos];
 #else
+#error "PLEASE set either USE_BIG_ENDIAN_CPU=1 or USE_LITTLE_ENDIAN_CPU=1 in your project's conf_xxx file. If you have your own Makefile, be sure to set either the OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN or OPTIMIZE_NUMBER_CONVERSIONS_FOR_BIG_ENDIAN define (either in your IDE's project-settings or in the config_xxx.h file at the end."
      static uint8_t sui8_buffer;
      sui8_buffer = ((t_ident >> (rb_pos*8)) & 0xFF);
     // this bitshift operation is independent of the big/little endianess of the CPU
