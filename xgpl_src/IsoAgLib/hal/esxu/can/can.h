@@ -432,6 +432,8 @@ namespace HAL
   inline int16_t can_useMsgobjClear(uint8_t rui8_busNr, uint8_t rui8_msgobjNr)
     {return __HAL::can_useMsgobjClear(rui8_busNr, rui8_msgobjNr);};
 
+  inline int32_t can_getMaxSendDelay(uint8_t rui8_busNr)
+  {return __HAL::can_getMaxSendDelay(); }
   /*@}*/
 }
 #endif
