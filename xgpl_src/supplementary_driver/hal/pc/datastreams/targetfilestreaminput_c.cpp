@@ -87,6 +87,7 @@
 #include "targetfilestreaminput_c.h"
 #ifndef USE_BUFFERED_READ
   #include <cstdio>
+  #include <fstream>
 #else
   #include <fcntl.h>
 #endif
@@ -94,7 +95,7 @@
 #if __GNUC__ < 3
   #define MACRO_IOS ios
 #else
-  #define MACRO_IOS std::MACRO_IOS
+  #define MACRO_IOS std::ios_base
 #endif
 
 using namespace std;
