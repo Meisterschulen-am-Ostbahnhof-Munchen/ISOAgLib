@@ -84,12 +84,18 @@
  *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
-
 #include "targetfilestreaminput_c.h"
-#ifdef WIN32
-  #include <stdio.h>
+#ifndef USE_BUFFERED_READ
+  #include <cstdio>
+  #include <fstream>
 #else
   #include <fcntl.h>
+#endif
+
+#if __GNUC__ < 3
+  #define MACRO_IOS ios
+#else
+  #define MACRO_IOS std::ios_base
 #endif
 
 using namespace std;
@@ -97,23 +103,24 @@ using namespace std;
 //! open a input stream
 bool TargetFileStreamInput_c::open( const char* filename, FileMode_t rt_mode )
 {
-#ifdef WIN32
+#ifndef USE_BUFFERED_READ
+
   b_eofReached = false;
 
   if ( ( rt_mode & StreamOut ) != 0 ) return false;
 
-  std::ios_base::openmode mode = std::ios_base::in;
+  MACRO_IOS::openmode mode = MACRO_IOS::in;
 
-  if ( ( rt_mode & StreamAte   )  != 0 ) mode = std::ios_base::openmode( mode | std::ios_base::ate    );
-  if ( ( rt_mode & StreamApp   )  != 0 ) mode = std::ios_base::openmode( mode | std::ios_base::app    );
-  if ( ( rt_mode & StreamTrunc )  != 0 ) mode = std::ios_base::openmode( mode | std::ios_base::trunc  );
-  if ( ( rt_mode & StreamBinary ) != 0 ) mode = std::ios_base::openmode( mode | std::ios_base::binary );
+  if ( ( rt_mode & StreamAte   )  != 0 ) mode = MACRO_IOS::openmode( mode | MACRO_IOS::ate    );
+  if ( ( rt_mode & StreamApp   )  != 0 ) mode = MACRO_IOS::openmode( mode | MACRO_IOS::app    );
+  if ( ( rt_mode & StreamTrunc )  != 0 ) mode = MACRO_IOS::openmode( mode | MACRO_IOS::trunc  );
+  if ( ( rt_mode & StreamBinary ) != 0 ) mode = MACRO_IOS::openmode( mode | MACRO_IOS::binary );
 
 
-  static_cast<std::ifstream*>(this)->open( filename, mode );
+  static_cast<ifstream*>(this)->open( filename, mode );
 
-  if ( ( static_cast<std::ifstream*>(this)->good()    )
-    && ( static_cast<std::ifstream*>(this)->is_open() ) ) return true;
+  if ( ( static_cast<ifstream*>(this)->good()    )
+    && ( static_cast<ifstream*>(this)->is_open() ) ) return true;
   else
     return false;
 
@@ -154,9 +161,9 @@ bool TargetFileStreamInput_c::open( const char* filename, FileMode_t rt_mode )
 //! @param ui8_data:
 TargetFileStreamInput_c& TargetFileStreamInput_c::operator>>(uint8_t &ui8_data)
 {
-#ifdef WIN32
+#ifndef USE_BUFFERED_READ
 
-  std::ifstream* isp_tmp = static_cast<std::ifstream*>(this);
+  ifstream* isp_tmp = static_cast<ifstream*>(this);
 
   ui8_data = isp_tmp->get();
 
@@ -186,8 +193,8 @@ TargetFileStreamInput_c& TargetFileStreamInput_c::operator>>(uint8_t &ui8_data)
 bool
 TargetFileStreamInput_c::eof() const
 {
-#ifdef WIN32
-  return b_eofReached | static_cast<const std::ifstream*>(this)->eof();
+#ifndef USE_BUFFERED_READ
+  return b_eofReached | static_cast<const ifstream*>(this)->eof();
 #else
   if (!fileDescr)
     return true;
@@ -199,8 +206,8 @@ TargetFileStreamInput_c::eof() const
 void
 TargetFileStreamInput_c::close()
 {
-#ifdef WIN32
-  static_cast<std::ifstream*>(this)->close();
+#ifndef USE_BUFFERED_READ
+  static_cast<ifstream*>(this)->close();
 #else
   if (fileDescr)
     fclose(fileDescr);
