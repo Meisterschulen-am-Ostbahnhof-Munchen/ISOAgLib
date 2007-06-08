@@ -248,7 +248,6 @@ CANPkgExt_c& Process_c::dataBase()
 */
 bool Process_c::timeEvent( void ){
   bool b_result = true;
-  if ( getAvailableExecTime() == 0 ) return false;
   int32_t i32_time = ElementBase_c::getLastRetriggerTime();
 
   if ( l_filtersToDeleteISO.size() > 0)
@@ -314,7 +313,6 @@ bool Process_c::timeEvent( void ){
         ( pc_iter != c_arrClientC1.end() );
         pc_iter++ )
   { // delete item at pc_timeIter, if pc_searchCacheC1 points to pc_client
-    if ( getAvailableExecTime() == 0 ) return false;
     if ( !(*pc_iter)->timeEvent( &ui16_nextTimePeriod ) ) b_result = false; /** @todo seemded to segfault here, although this is REALLY STRANGE! */
   }
 

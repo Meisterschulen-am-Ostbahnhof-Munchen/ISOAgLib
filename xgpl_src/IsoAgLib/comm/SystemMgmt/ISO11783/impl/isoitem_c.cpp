@@ -261,8 +261,6 @@ bool ISOItem_c::timeEvent( void )
   ISOMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
   int32_t i32_time = ElementBase_c::getLastRetriggerTime();
 
-  if ( ElementBase_c::getAvailableExecTime() == 0 ) return false;
-
   ISOSystemPkg_c& c_pkg = c_isoMonitor.data();
   if (itemState(IState_c::PreAddressClaim))
   { // this item is in prepare address claim state -> wait for sending first adress claim
