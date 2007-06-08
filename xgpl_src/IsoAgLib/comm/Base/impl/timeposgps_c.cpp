@@ -241,36 +241,32 @@ namespace __IsoAgLib {
   bool TimePosGPS_c::timeEvent(  )
   {
     checkCreateReceiveFilter();
-    if ( getAvailableExecTime() == 0 ) return false;
 
     const int32_t ci32_now = getLastRetriggerTime();
 
     // check for different base data types whether the previously
-    if (checkMode(IsoAgLib::IdentModeImplement))
-    {
-      if ( ( getSelectedDataSourceISOName().isSpecified() )
-           &&
-           ( (lastedTimeSinceUpdate() >= TIMEOUT_SENDING_NODE) || (yearUtc() == 0) ) // yearUtc means ERROR and NOT year0/1900/1970/whatever...
-         )
-      { // the previously sending node didn't send the information for 3 seconds -> give other items a chance
-        getSelectedDataSourceISOName().setUnspecified();
+    if ( ( checkMode(IsoAgLib::IdentModeImplement)      )
+      && ( getSelectedDataSourceISOName().isSpecified() )
+      && ( (lastedTimeSinceUpdate() >= TIMEOUT_SENDING_NODE) || (yearUtc() == 0) ) // yearUtc means ERROR and NOT year0/1900/1970/whatever...
+       )
+    { // the previously sending node didn't send the information for 3 seconds -> give other items a chance
+      getSelectedDataSourceISOName().setUnspecified();
 
-        /// Set date to NO_VAL, i.e. 01.01.0000
-        bit_calendar.year = 0;
-        bit_calendar.month = 1;
-        bit_calendar.day = 1;
-        /// There's no NO_VAL for time yet, so set it to 00:00:00
-        bit_calendar.hour = 0;
-        bit_calendar.minute = 0;
-        bit_calendar.second = 0;
-        // @todo maybe later also reset those values here, too...
-        //bit_calendar.msec = 0;
-        //bit_calendar.timezoneMinuteOffset = 0;
-        //bit_calendar.timezoneHourOffsetMinus24 = 24;
-      }
+      /// Set date to NO_VAL, i.e. 01.01.0000
+      bit_calendar.year = 0;
+      bit_calendar.month = 1;
+      bit_calendar.day = 1;
+      /// There's no NO_VAL for time yet, so set it to 00:00:00
+      bit_calendar.hour = 0;
+      bit_calendar.minute = 0;
+      bit_calendar.second = 0;
+      // @todo maybe later also reset those values here, too...
+      //bit_calendar.msec = 0;
+      //bit_calendar.timezoneMinuteOffset = 0;
+      //bit_calendar.timezoneHourOffsetMinus24 = 24;
     }
 
-    if ( ( t_identModeGps != IsoAgLib::IdentModeTractor )
+    if ( ( checkModeGps(IsoAgLib::IdentModeImplement) )
       && ( c_sendGpsISOName.isSpecified() ) )
     { // we are receiving GPS data -> check whether the old sender is still active
       // and we were already receiving sometimes in past GPS data
@@ -379,8 +375,17 @@ namespace __IsoAgLib {
     //if something went wrong leave function before something is configured
     if ( !BaseCommon_c::config_base (rpc_isoName, rt_identMode) ) return false;
 
-    ///setTimePeriod for Scheduler_c 100ms is minimal periode in GPSmodul up to now
-    setTimePeriod( (uint16_t) 100 );
+
+    if ( checkMode( IsoAgLib::IdentModeTractor ) || checkModeGps( IsoAgLib::IdentModeTractor ) )
+    { // we are in sending state for at least one type
+      ///setTimePeriod for Scheduler_c 100ms is minimal periode in GPSmodul up to now
+      setTimePeriod( (uint16_t) 100 );
+    }
+    else
+    { // we are only in receiving mode for all types
+      setTimePeriod( 1000 );
+    }
+
 
     if (t_oldMode == IsoAgLib::IdentModeImplement && rt_identMode == IsoAgLib::IdentModeTractor)
     {  // a change from Implement mode to Tractor mode occured
@@ -489,6 +494,17 @@ namespace __IsoAgLib {
       c_nmea2000Streamer.vec_data.reserve(51); // GNSS Position Data with TWO reference stations
       #endif // END of NMEA_2000_FAST_PACKET
     }
+
+    if ( checkMode( IsoAgLib::IdentModeTractor ) || checkModeGps( IsoAgLib::IdentModeTractor ) )
+    { // we are in sending state for at least one type
+      ///setTimePeriod for Scheduler_c 100ms is minimal periode in GPSmodul up to now
+      setTimePeriod( (uint16_t) 100 );
+    }
+    else
+    { // we are only in receiving mode for all types
+      setTimePeriod( 1000 );
+    }
+
     return true;
   }
 
@@ -995,13 +1011,11 @@ namespace __IsoAgLib {
     { // pc_isoNameGps must be != NULL, because we are in tractor mode
       if ( isPositionSimpleToSend() && ((ci32_now - i32_lastIsoPositionSimple) >= 100) )
       {
-        if ( getAvailableExecTime() == 0 ) return false;
         sendPositionRapidUpdate();
       }
 
       if ( isDirectionToSend() && ((ci32_now - i32_lastIsoDirection) >= 250) )
       {
-        if ( getAvailableExecTime() == 0 ) return false;
         isoSendDirection();
       }
 

@@ -226,8 +226,6 @@ bool BaseCommon_c::timeEvent()
 {
   checkCreateReceiveFilter();
 
-  if (getAvailableExecTime() == 0) return false;
-
   // check for different base data types whether the previously
   // sending node stopped sending -> other nodes can now step in
   if (  checkMode(IsoAgLib::IdentModeImplement)
