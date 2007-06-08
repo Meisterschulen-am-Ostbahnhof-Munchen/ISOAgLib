@@ -691,21 +691,24 @@ Scheduler_c::selectCallTaskAndUpdateQueue()
     /// IF Client returns with false -> return i32_idleTime = -1
     /// because last Client could not finish in available TimeSpan
     const bool b_result = pc_execIter->timeEventExec( i32_endTime );
-    if ( ( !b_result && ElementBase_c::getDemandedExecEnd() != getCentralSchedulerExecEndTime() ) && (pc_nextCallIter != c_taskQueue.end() ) )
-    { // the executed task had not enough time and the limit was NOT defined by the central
-      // scheduler end time, that was defined by the APP
-      // --> reschedule this task _after_ the following task
-      int16_t i16_avgTime = (pc_nextCallIter->getAvgExecTime() > pc_nextCallIter->getForcedMinExecTime())?pc_nextCallIter->getAvgExecTime():pc_nextCallIter->getForcedMinExecTime();
-      if ( pc_nextCallIter->getExecTime() > i16_avgTime ) i16_avgTime = pc_nextCallIter->getExecTime();
-      #ifdef DEBUG_SCHEDULER
-      INTERNAL_DEBUG_DEVICE
-        << "+++++++++++++++++++++\nretrigger tie breaked task: " << pc_execIter->getTaskName() << " for time: "
-        << (i16_avgTime+pc_nextCallIter->getNextTriggerTime()) << " so that task "
-        << pc_nextCallIter->getTaskName()
-        << " with AVG exect time of: " << pc_nextCallIter->getAvgExecTime()
-        << " can start as planned\n" << INTERNAL_DEBUG_DEVICE_ENDL;
-      #endif
-      changeRetriggerTimeAndResort( pc_execIter, i16_avgTime+pc_nextCallIter->getNextTriggerTime() );
+    if ( !b_result && (pc_nextCallIter != c_taskQueue.end() ) )
+    { // time was not enough and more than one client is managed - check whether the next item
+      // needs also to be executed
+      if ( pc_nextCallIter->getTimeToNextTrigger( LatestRetrigger ) <= 0 )
+      { // the executed task had not enough time and the next task needs to be called immediately
+        // --> reschedule this task _after_ the following task
+        int16_t i16_avgTime = (pc_nextCallIter->getAvgExecTime() > pc_nextCallIter->getForcedMinExecTime())?pc_nextCallIter->getAvgExecTime():pc_nextCallIter->getForcedMinExecTime();
+        if ( pc_nextCallIter->getExecTime() > i16_avgTime ) i16_avgTime = pc_nextCallIter->getExecTime();
+        #ifdef DEBUG_SCHEDULER
+        INTERNAL_DEBUG_DEVICE
+          << "+++++++++++++++++++++\nretrigger tie breaked task: " << pc_execIter->getTaskName() << " for time: "
+          << (i16_avgTime+pc_nextCallIter->getNextTriggerTime()) << " so that task "
+          << pc_nextCallIter->getTaskName()
+          << " with AVG exect time of: " << pc_nextCallIter->getAvgExecTime()
+          << " can start as planned\n" << INTERNAL_DEBUG_DEVICE_ENDL;
+        #endif
+        changeRetriggerTimeAndResort( pc_execIter, i16_avgTime+pc_nextCallIter->getNextTriggerTime() );
+      }
     }
     else if (b_result)
     { // executed task finished its work -> reschedule it by resort of task list
