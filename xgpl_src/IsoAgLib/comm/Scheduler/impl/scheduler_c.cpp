@@ -477,14 +477,6 @@ int32_t Scheduler_c::timeEvent( int32_t ri32_demandedExecEndScheduler )
   // trigger the watchdog
   System_c::triggerWd();
 
-  // check if immediate return is needed
-  if ( getAvailableExecTime( i16_canExecTime ) == 0 )
-  {
-     // reset awaited can processing execution time to prevent dead lock
-     i16_canExecTime = 0;
-     return -1; //Client could not do his Job
-  }
-
   // process CAN messages
   if ( getCanInstance4Comm().timeEvent() )
   { // all CAN_IO activities ready -> update statistic for CAN_IO
@@ -496,11 +488,9 @@ int32_t Scheduler_c::timeEvent( int32_t ri32_demandedExecEndScheduler )
   /* call EEEditor Process */
   #if defined(USE_CAN_EEPROM_EDITOR)
     // check if immediate return is needed
-    if ( getAvailableExecTime() == 0 ) return -1; //Client could not do his Job
     HAL::ProcessCANEEEditorMsg();
   #elif defined(USE_RS232_EEPROM_EDITOR)
     // check if immediate return is needed
-    if ( getAvailableExecTime() == 0 ) return -1; //Client could not do his Job
     HAL::ProcessRS232EEEditorMsg();
   #endif
 
