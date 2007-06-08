@@ -733,7 +733,7 @@ VtClientServerCommunication_c::timeEvent(void)
   // which include sending or starting of TP sessions and the like
   // - and the most time critical ALIVE has already been sent
   // ---> stop continuation, if execution time end is reached
-  if ( getAvailableExecTime() == 0 ) return false;
+  if ( ElementBase_c::getAvailableExecTime() == 0 ) return false;
 
 
 
