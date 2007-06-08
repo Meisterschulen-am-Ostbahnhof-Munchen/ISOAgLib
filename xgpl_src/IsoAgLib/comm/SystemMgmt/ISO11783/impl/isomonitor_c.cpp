@@ -1449,7 +1449,7 @@ ISOMonitor_c::updateEarlierAndLatestInterval()
   else
   { // use SOFT-Timing (using jitter for earlier/after
     ui16_earlierInterval = ( (getTimePeriod() * 3) / 4);
-    ui16_latestInterval  =   (getTimePeriod() / 2);
+    ui16_latestInterval  =    getTimePeriod();
   }
 }
 
