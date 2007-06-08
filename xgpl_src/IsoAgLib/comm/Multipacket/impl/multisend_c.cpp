@@ -770,7 +770,8 @@ MultiSend_c::updateEarlierAndLatestInterval()
   }
   else
   { // use SOFT-Timing (using jitter for earlier/after)
-    ui16_earlierInterval = ui16_latestInterval = ( (getTimePeriod() * 1) / 4);
+    ui16_earlierInterval = ( (getTimePeriod() * 1) / 4);
+    ui16_latestInterval =     getTimePeriod();
   }
 }
 
