@@ -528,7 +528,7 @@ bool MeasureProgLocal_c::processMsg(){
       b_result = true;
       // call handler function if handler class is registered
       if ( processDataConst().getProcessDataChangeHandler() != NULL )
-        processDataConst().getProcessDataChangeHandler()->processMeasurementReset( pprocessData(), 0, c_pkg.memberSend().isoName().toConstIisoName_c());
+        processDataConst().getProcessDataChangeHandler()->processMeasurementReset( pprocessData(), ci32_val, c_pkg.memberSend().isoName().toConstIisoName_c());
     } // write
     else
     { // read -> answer wanted value
