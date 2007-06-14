@@ -664,7 +664,6 @@ VtClientServerCommunication_c::timeEventPoolUpload()
 bool
 VtClientServerCommunication_c::timeEvent(void)
 {
-  if (ElementBase_c::getAvailableExecTime() == 0) return false;
 #ifdef DEBUG_HEAP_USEAGE
   if ((sui16_lastPrintedSendUploadQueueSize < sui16_sendUploadQueueSize)
   || (sui16_lastPrintedMaxSendUploadQueueSize < sui16_maxSendUploadQueueSize))
@@ -729,6 +728,14 @@ VtClientServerCommunication_c::timeEvent(void)
 
   if (en_objectPoolState == OPCannotBeUploaded)
     return true; /** @todo is this correctly assumed? -> if it couldn't be uploaded, only disconnecting/connecting VT helps! */
+
+  // from HERE ON potential longer command sequences might be started
+  // which include sending or starting of TP sessions and the like
+  // - and the most time critical ALIVE has already been sent
+  // ---> stop continuation, if execution time end is reached
+  if ( ElementBase_c::getAvailableExecTime() == 0 ) return false;
+
+
 
   /// Now from here on the Pool's state is: "OPInitial" or "OPUploadedSuccessfully"
   /// UPLOADING --> OBJECT-POOL<--

@@ -149,7 +149,16 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     //if something went wrong leave function before something is configured
     if ( !BaseCommon_c::config_base (rpc_isoName, rt_identMode) ) return false;
 
-    setTimePeriod( (uint16_t) 100   );
+    ///Set time Period for Scheduler_c
+    if (rt_identMode == IsoAgLib::IdentModeTractor)
+    { // SEND data with short period
+      setTimePeriod( (uint16_t) 100);
+    }
+    else
+    { // check with long period for timeout after loss of sending node
+      setTimePeriod( (uint16_t) 1000 );
+    }
+
     // set the member base msg value vars to NO_VAL codes
     setHitchRear(NO_VAL_8);
     setHitchFront(NO_VAL_8);

@@ -310,8 +310,6 @@ ISOTerminal_c::deregisterIsoObjectPoolInd (uint8_t rui8_index)
 bool
 ISOTerminal_c::timeEvent(void)
 {
-  if (getAvailableExecTime() == 0) return false;
-
   System_c::triggerWd(); /** @todo what to do with those calls? */
 
   bool b_allActivitiesPerformed = true;

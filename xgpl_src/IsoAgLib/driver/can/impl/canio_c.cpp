@@ -974,11 +974,6 @@ int16_t CANIO_c::processMsg(){
 
   for (ArrMsgObj::iterator pc_iter = arrMsgObj.begin(); pc_iter != arrMsgObj.end(); pc_iter++)
   { // stop processing of message buffers, if not enough time
-    if ( Scheduler_c::getCentralSchedulerAvailableExecTime() == 0 )
-    { // switch the flag back, so that further processings are enabled
-      b_runningCanProcess = false;
-      return -1;
-    }
     System_c::triggerWd();
     ui8_processedMsgCnt += pc_iter->processMsg(ui8_busNumber);
   }

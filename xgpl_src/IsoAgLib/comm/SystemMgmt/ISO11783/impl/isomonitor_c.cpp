@@ -260,8 +260,6 @@ CANPkgExt_c& ISOMonitor_c::dataBase()
 */
 bool ISOMonitor_c::timeEvent( void )
 {
-  if ( getAvailableExecTime() == 0 ) return false;
-
   int32_t i32_checkPeriod = 3000;
   for ( STL_NAMESPACE::vector<__IsoAgLib::IdentItem_c*>::iterator pc_iter = c_arrClientC1.begin(); ( pc_iter != c_arrClientC1.end() ); pc_iter++ )
   { // call timeEvent for each registered client -> if timeEvent of item returns false
@@ -306,10 +304,11 @@ bool ISOMonitor_c::timeEvent( void )
   /// @todo improve later to have the IdentItems give back fix timestamps. If you, use Hard-Timing and wait for exactly this timestamp
   ///       if not so, use soft-timing and idle around...
 
-
+#if CONFIG_ISO_ITEM_MAX_AGE > 0
+  // the following activities are optional for cleanup
+  // --> do NOT execute them, if execution time is limited
   if ( getAvailableExecTime() == 0 ) return false;
 
-#if CONFIG_ISO_ITEM_MAX_AGE > 0
   if ( existActiveLocalIsoMember() )
   { // use the SA of the already active node
     data().setIsoSa(getActiveLocalIsoMember().nr());
@@ -1450,7 +1449,7 @@ ISOMonitor_c::updateEarlierAndLatestInterval()
   else
   { // use SOFT-Timing (using jitter for earlier/after
     ui16_earlierInterval = ( (getTimePeriod() * 3) / 4);
-    ui16_latestInterval  =   (getTimePeriod() / 2);
+    ui16_latestInterval  =    getTimePeriod();
   }
 }
 

@@ -384,8 +384,6 @@ void IdentItem_c::close( void )
   */
 bool IdentItem_c::timeEvent( void )
 {
-   if ( ElementBase_c::getAvailableExecTime() == 0 ) return false;
-
    if (!itemState(IState_c::Off))
    { // the system is not switched to off state
     // and last timed action is 1sec lasted

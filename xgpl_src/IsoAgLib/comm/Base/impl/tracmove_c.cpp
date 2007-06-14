@@ -130,9 +130,16 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     //call config for handling which is base data independent
     //if something went wrong leave function before something is configured
     if ( !BaseCommon_c::config_base (rpc_isoName, rt_identMode) ) return false;
-    // set Time Period in ms for Scheduler_c
-    setTimePeriod( (uint16_t) 100   );
 
+    ///Set time Period for Scheduler_c
+    if (rt_identMode == IsoAgLib::IdentModeTractor)
+    { // SEND data with short period
+      setTimePeriod( (uint16_t) 100);
+    }
+    else
+    { // check with long period for timeout after loss of sending node
+      setTimePeriod( (uint16_t) 1000 );
+    }
 
     // set distance value to NO_VAL codes
     ui32_distReal = ui32_distTheor = NO_VAL_32;
