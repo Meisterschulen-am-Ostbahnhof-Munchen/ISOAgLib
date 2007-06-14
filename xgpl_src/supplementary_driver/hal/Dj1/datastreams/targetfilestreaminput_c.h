@@ -109,7 +109,7 @@ public:
 	//! open a input stream
 	bool open( const char* filename, FileMode_t rt_mode );
 	//! close a input stream
-	void close() { };
+	void close();
 
 	//  Operation: operator>>
   //! Parameter:
@@ -117,15 +117,14 @@ public:
   virtual TargetFileStreamInput_c& operator>>(uint8_t &ui8_data);
 
   //  Operation: eof
-  //  b_eofReached is set to true when peek() returns EOF in operator>>: nothing more to read
-	//  b_eofReached is initialized to false in open()
-	virtual bool eof() const {return true; }//return b_eofReached | static_cast<const std::ifstream*>(this)->eof();};
+	virtual bool eof() const;
 	
 private:
 
   //  does next get() fail?
   bool b_eofReached;
   size_t n_data_read_;
+  void *file_handle_;
 }; // ~X2C
 
 // TargetFileStreamInput_c & operator>> (TargetFileStreamInput_c &, uint8_t &ui8_data);
