@@ -99,7 +99,7 @@
 #define _huge
 #endif
 
-namespace __HAL 
+namespace __HAL
 {
 extern "C" 
 {
@@ -147,7 +147,17 @@ enum_Bool DjBios_IOP_Close_dummy ( void const *Handle )
 
 using namespace std;
 
-//! open a input stream
+TargetFileStreamInput_c::TargetFileStreamInput_c() :
+  file_handle_(0), n_data_read_(0)
+{
+}
+
+TargetFileStreamInput_c::~TargetFileStreamInput_c()
+{
+  close();
+}
+
+//! open an input stream
 bool TargetFileStreamInput_c::open( const char* filename, FileMode_t rt_mode )
 {
   string mode_string;

@@ -102,10 +102,12 @@ class TargetFileStreamInput_c //: public std::ifstream
 {
 
 public:
+  TargetFileStreamInput_c();
+  ~TargetFileStreamInput_c();
+
 	//! open a input stream
-    //Sergej: not used for DjMiniVt
- 	bool open( std::string& filename, FileMode_t rt_mode )
- 		{ n_data_read_ = 0; return true; };
+	bool open( std::string& filename, FileMode_t rt_mode )
+		{ return open( filename.c_str(), rt_mode ); }
 	//! open a input stream
 	bool open( const char* filename, FileMode_t rt_mode );
 	//! close a input stream
@@ -121,8 +123,6 @@ public:
 	
 private:
 
-  //  does next get() fail?
-  bool b_eofReached;
   size_t n_data_read_;
   void *file_handle_;
 }; // ~X2C
