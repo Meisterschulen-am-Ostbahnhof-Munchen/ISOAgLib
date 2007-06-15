@@ -91,7 +91,21 @@
 //! open a output stream
 bool TargetFileStreamOutput_c::open( const char* filename, FileMode_t rt_mode )
 {
-  return true;
+  CNAMESPACE::string mode_string;
+
+  if (StreamIn & rt_mode) {
+    mode_string.push_back('w');
+  }
+  
+  if (mode_string.empty()) {
+    return false;
+  }
+
+  file_handle_ = DjBiosEpromInterface_c::OpenIop(filename, mode_string.c_str());
+
+  bool result = (NULL != file_handle_);
+  return result;
+
 }
 
 //  Operation: operator>>
@@ -107,4 +121,5 @@ TargetFileStreamOutput_c& TargetFileStreamOutput_c::operator<<(uint8_t ui8_data)
 //! @param pathname if pathname != NULL => sync file and path
 void TargetFileStreamOutput_c::close(const char* pathname)
 {
+  (void)DjBiosEpromInterface_c::CloseIop(file_handle_);
 }

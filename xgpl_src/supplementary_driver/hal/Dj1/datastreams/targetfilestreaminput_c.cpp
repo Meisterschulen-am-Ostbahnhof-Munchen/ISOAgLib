@@ -86,6 +86,7 @@
  ***************************************************************************/
 
 #include "targetfilestreaminput_c.h"
+#include "djbioseprominterface_c.h"
 
 #ifdef WIN32
 #include <stdio.h>
@@ -99,53 +100,55 @@
 #define _huge
 #endif
 
-namespace __HAL
-{
-extern "C" 
-{
-  /** include the BIOS specific header into __HAL */
-#ifdef SYSTEM_PC
-#include <../../IsoAgLib/commercial_BIOS/bios_Dj1/DjBiosMVT.h>
-#else
-#include <commercial_BIOS/bios_Dj1/DjBiosMVT.h>
-#endif
-}
+// namespace __HAL
+// {
+// extern "C" 
+// {
+//   /** include the BIOS specific header into __HAL */
+// #ifdef SYSTEM_PC
+// #include <../../IsoAgLib/commercial_BIOS/bios_Dj1/DjBiosMVT.h>
+// #else
+// #include <commercial_BIOS/bios_Dj1/DjBiosMVT.h>
+// #endif
+// }
+// 
+// // static const char dummy_file_data[] = "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
+// // static const char *dummy_file_pointer = dummy_file_data;
+// 
+// void *DjBios_IOP_Open_dummy ( char const *Filename, char const *Mode )
+// {
+//   dummy_file_pointer = dummy_file_data;
+//   return (void*)&dummy_file_pointer;
+// }
+// 
+// enum_Bool DjBios_IOP_EoF_dummy ( void const *handle )
+// {
+//   if (NULL == handle || &dummy_file_pointer != handle || 0 == *dummy_file_pointer)
+//     return BIOS_TRUE;
+//   else
+//     return BIOS_FALSE;
+// }
+// 
+// uword DjBios_IOP_Read_dummy ( void const *handle, uword Size, uword NumObj, void *Data )
+// {
+//   if (&dummy_file_pointer != handle || 0 == *dummy_file_pointer) {
+//     return 0;
+//   }
+//   *((char *)Data) = *dummy_file_pointer;
+//   ++dummy_file_pointer;
+//   return 1;
+// }
+// 
+// enum_Bool DjBios_IOP_Close_dummy ( void const *Handle )
+// {
+//   return BIOS_TRUE;
+// }
+// 
+// } // Namespace HAL
+// 
+// using namespace std;
 
-static const char dummy_file_data[] = "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
-static const char *dummy_file_pointer = dummy_file_data;
 
-void *DjBios_IOP_Open_dummy ( char const *Filename, char const *Mode )
-{
-  dummy_file_pointer = dummy_file_data;
-  return (void*)&dummy_file_pointer;
-}
-
-enum_Bool DjBios_IOP_EoF_dummy ( void const *handle )
-{
-  if (NULL == handle || &dummy_file_pointer != handle || 0 == *dummy_file_pointer)
-    return BIOS_TRUE;
-  else
-    return BIOS_FALSE;
-}
-
-uword DjBios_IOP_Read_dummy ( void const *handle, uword Size, uword NumObj, void *Data )
-{
-  if (&dummy_file_pointer != handle || 0 == *dummy_file_pointer) {
-    return 0;
-  }
-  *((char *)Data) = *dummy_file_pointer;
-  ++dummy_file_pointer;
-  return 1;
-}
-
-enum_Bool DjBios_IOP_Close_dummy ( void const *Handle )
-{
-  return BIOS_TRUE;
-}
-
-} // Namespace HAL
-
-using namespace std;
 
 TargetFileStreamInput_c::TargetFileStreamInput_c() :
   file_handle_(0), n_data_read_(0)
@@ -160,7 +163,7 @@ TargetFileStreamInput_c::~TargetFileStreamInput_c()
 //! open an input stream
 bool TargetFileStreamInput_c::open( const char* filename, FileMode_t rt_mode )
 {
-  string mode_string;
+  CNAMESPACE::string mode_string;
 
   if (StreamIn & rt_mode) {
     mode_string.push_back('r');
@@ -170,7 +173,7 @@ bool TargetFileStreamInput_c::open( const char* filename, FileMode_t rt_mode )
     return false;
   }
 
-  file_handle_ = __HAL::DjBios_IOP_Open_dummy(filename, mode_string.c_str());
+  file_handle_ = DjBiosEpromInterface_c::OpenIop(filename, mode_string.c_str());
 
   bool result = (NULL != file_handle_);
   return result;
@@ -178,7 +181,7 @@ bool TargetFileStreamInput_c::open( const char* filename, FileMode_t rt_mode )
 
 bool TargetFileStreamInput_c::eof() const
 {
-  __HAL::enum_Bool bios_result = __HAL::DjBios_IOP_EoF_dummy(file_handle_);
+  __HAL::enum_Bool bios_result = DjBiosEpromInterface_c::EofIop(file_handle_);
   bool result = (__HAL::BIOS_FALSE != bios_result);
   return result;
 }
@@ -191,7 +194,7 @@ TargetFileStreamInput_c& TargetFileStreamInput_c::operator>>(uint8_t &ui8_data)
   if (eof()) {
     ui8_data = 0;
   } else {
-    ui8_data = __HAL::DjBios_IOP_Read_dummy(file_handle_, 1, 1, &ui8_data);
+    ui8_data = DjBiosEpromInterface_c::ReadIop(file_handle_, 1, 1, &ui8_data);
     ++n_data_read_;
   }
 	return *this;
@@ -199,5 +202,5 @@ TargetFileStreamInput_c& TargetFileStreamInput_c::operator>>(uint8_t &ui8_data)
 
 void TargetFileStreamInput_c::close()
 {
-  (void)__HAL::DjBios_IOP_Close_dummy(file_handle_);
+  (void)DjBiosEpromInterface_c::CloseIop(file_handle_);
 }

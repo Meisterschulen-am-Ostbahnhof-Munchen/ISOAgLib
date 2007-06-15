@@ -112,14 +112,20 @@ public:
 	bool open( const char* filename, FileMode_t rt_mode );
 	//! close a input stream
 	void close();
+  
+  //  Operation: eof
+  virtual bool eof() const;
+
+  // Operation: fail
+  virtual bool fail() const { return false; };
+
+  // Operation: good
+  virtual bool good() const { return (!eof() && !fail()); };
 
 	//  Operation: operator>>
   //! Parameter:
   //! @param ui8_data:
   virtual TargetFileStreamInput_c& operator>>(uint8_t &ui8_data);
-
-  //  Operation: eof
-	virtual bool eof() const;
 	
 private:
 
