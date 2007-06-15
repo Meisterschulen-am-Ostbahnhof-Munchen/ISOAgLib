@@ -85,6 +85,7 @@
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 #include "targetfilestreamoutput_c.h"
+#include "djbioseprominterface_c.h"
 
 //using namespace std;
 
@@ -113,7 +114,12 @@ bool TargetFileStreamOutput_c::open( const char* filename, FileMode_t rt_mode )
 //! @param ui8_data:
 TargetFileStreamOutput_c& TargetFileStreamOutput_c::operator<<(uint8_t ui8_data)
 {
-	return *this;
+  uint16_t err = DjBiosEpromInterface_c::WriteIop(file_handle_, 1, 1, &ui8_data);
+  if (err == 0) {
+      ++n_data_write_;
+  }
+  return *this;
+
 }
 
 //! close a output stream

@@ -137,6 +137,11 @@ public:
   // Operation: good
   virtual bool good() const { return true; };
 
+  private:
+  
+  size_t n_data_write_;
+  void *file_handle_;
+
 }; // ~X2C
 
 #endif // -X2C
