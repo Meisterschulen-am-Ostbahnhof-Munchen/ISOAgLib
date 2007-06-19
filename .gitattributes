@@ -2300,7 +2300,6 @@ xgpl_src/IsoAgLib/util/impl/schedulerentry_c.h -text
 xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.cpp -text
 xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.h -text
 xgpl_src/supplementary_driver/hal/Dj1/actor/actor.h -text
-xgpl_src/supplementary_driver/hal/Dj1/datastreams/djbioseprominterface_c.h -text
 xgpl_src/supplementary_driver/hal/Dj1/rs232/rs232.h -text
 xgpl_src/supplementary_driver/hal/Dj1/sensor/sensor.h -text
 xgpl_src/supplementary_driver/hal/a2/rs232/rs232.h -text

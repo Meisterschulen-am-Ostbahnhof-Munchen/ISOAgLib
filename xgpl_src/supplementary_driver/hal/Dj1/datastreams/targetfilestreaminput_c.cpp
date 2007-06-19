@@ -86,7 +86,14 @@
  ***************************************************************************/
 
 #include "targetfilestreaminput_c.h"
-#include "djbioseprominterface_c.h"
+namespace __HAL
+{
+  extern "C"
+  {
+    /** include the BIOS specific header into __HAL */
+    #include <commercial_BIOS/bios_Dj1/DjBiosMVT.h>
+  }
+}
 
 #ifdef WIN32
 #include <stdio.h>
@@ -173,7 +180,7 @@ bool TargetFileStreamInput_c::open( const char* filename, FileMode_t rt_mode )
     return false;
   }
 
-  file_handle_ = DjBiosEpromInterface_c::OpenIop(filename, mode_string.c_str());
+  file_handle_ = __HAL::DjBios_IOP_Open(filename, mode_string.c_str());
 
   bool result = (NULL != file_handle_);
   return result;
@@ -181,7 +188,7 @@ bool TargetFileStreamInput_c::open( const char* filename, FileMode_t rt_mode )
 
 bool TargetFileStreamInput_c::eof() const
 {
-  __HAL::enum_Bool bios_result = DjBiosEpromInterface_c::EofIop(file_handle_);
+  __HAL::enum_Bool bios_result = __HAL::DjBios_IOP_EoF(file_handle_);
   bool result = (__HAL::BIOS_FALSE != bios_result);
   return result;
 }
@@ -194,7 +201,7 @@ TargetFileStreamInput_c& TargetFileStreamInput_c::operator>>(uint8_t &ui8_data)
   if (eof()) {
     ui8_data = 0;
   } else {
-    ui8_data = DjBiosEpromInterface_c::ReadIop(file_handle_, 1, 1, &ui8_data);
+    ui8_data = __HAL::DjBios_IOP_Read(file_handle_, 1, 1, &ui8_data);
     ++n_data_read_;
   }
 	return *this;
@@ -202,5 +209,5 @@ TargetFileStreamInput_c& TargetFileStreamInput_c::operator>>(uint8_t &ui8_data)
 
 void TargetFileStreamInput_c::close()
 {
-  (void)DjBiosEpromInterface_c::CloseIop(file_handle_);
+  (void)__HAL::DjBios_IOP_Close(file_handle_);
 }
