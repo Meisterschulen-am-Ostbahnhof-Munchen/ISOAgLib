@@ -421,6 +421,9 @@ public:
   bool sendCommandUpdateLanguagePool();
   bool sendCommandUpdateObjectPool (IsoAgLib::iVtObject_c** rppc_vtObjects, uint16_t rui16_numObjects);
 
+  bool sendCommandHideShow (uint16_t rui16_objectUid, uint8_t b_hideOrShow, bool b_enableReplaceOfCmd=true);
+  bool sendCommandHideShow( IsoAgLib::iVtObject_c* rpc_object, uint8_t b_hideOrShow, bool b_enableReplaceOfCmd=true);
+
   bool queueOrReplace (SendUpload_c& rref_sendUpload, bool b_enableReplaceOfCmd=true);
   void dumpQueue();
 

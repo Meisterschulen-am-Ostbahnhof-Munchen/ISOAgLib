@@ -2036,6 +2036,23 @@ VtClientServerCommunication_c::sendCommandLockUnlockMask( IsoAgLib::iVtObject_c*
                       DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
 }
 
+bool
+VtClientServerCommunication_c::sendCommandHideShow( IsoAgLib::iVtObject_c* rpc_object, uint8_t b_hideOrShow, bool b_enableReplaceOfCmd)
+{
+  return sendCommand (160 /* Command: Command --- Parameter: Hide/Show Object */,
+                      rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
+                      b_hideOrShow,
+                      0xFF, 0xFF, 0xFF, 0xFF, DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
+}
+
+bool
+VtClientServerCommunication_c::sendCommandHideShow (uint16_t rui16_objectUid, uint8_t b_hideOrShow, bool b_enableReplaceOfCmd)
+{
+  return sendCommand (160 /* Command: Command --- Parameter: Hide/Show Object */,
+                      rui16_objectUid & 0xFF, rui16_objectUid >> 8,
+                      b_hideOrShow,
+                      0xFF, 0xFF, 0xFF, 0xFF, DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
+}
 
 bool
 VtClientServerCommunication_c::queueOrReplace (SendUpload_c& rref_sendUpload, bool b_enableReplaceOfCmd)
