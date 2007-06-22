@@ -429,6 +429,8 @@ public:
 
   bool isVtActive();
 
+  vtClientDisplayState_t getVtDisplayState() { return en_displayState; }
+
 private:
   friend class ISOTerminal_c;
 
@@ -457,7 +459,6 @@ private:
                                 if b_isVtStatusMsg == false, it is the display state of the Display Activation Msg
     */
   void setVtDisplayState (bool b_isVtStatusMsg, uint8_t ui8_saOrDisplayState);
-  vtClientDisplayState_t getVtDisplayState() { return en_displayState; }
 
 private: // attributes
   /** static instance to store temporarily before push_back into list */

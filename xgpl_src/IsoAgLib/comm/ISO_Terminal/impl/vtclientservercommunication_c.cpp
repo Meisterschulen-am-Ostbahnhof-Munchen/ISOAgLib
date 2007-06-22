@@ -924,10 +924,10 @@ VtClientServerCommunication_c::notifyOnVtsLanguagePgn()
 void
 VtClientServerCommunication_c::notifyOnVtStatusMessage()
 {
+  c_streamer.refc_pool.eventVtStatusMsg();
+  
   // set client display state appropriately
   setVtDisplayState (true, getVtServerInst().getVtState()->saOfActiveWorkingSetMaster);
-
-  c_streamer.refc_pool.eventVtStatusMsg();
 }
 
 /** process received can messages
@@ -1273,9 +1273,6 @@ VtClientServerCommunication_c::processMsg()
            && c_data.getUint8Data (0) <= 0x7F
          )
       {
-      #ifdef DEBUG
-        INTERNAL_DEBUG_DEVICE << "\n%% Proprietary command ";
-      #endif
         MACRO_setStateDependantOnError( c_streamer.refc_pool.eventProprietaryCommand( pc_vtServerInstance->getIsoName().toConstIisoName_c() ) )
       }
       break;
@@ -2580,28 +2577,16 @@ VtClientServerCommunication_c::setVtDisplayState (bool b_isVtStatusMsg, uint8_t 
   vtClientDisplayState_t newDisplayState;
   if (b_isVtStatusMsg) // state change triggered from VT Status Msg
   {
-//     if (getVtServerInst().getMultiViewMode())
+    if (ui8_saOrDisplayState == getIdentItem().getIsoItem()->nr())
+      newDisplayState = VtClientDisplayStateActive;
+    else
     {
-      if (ui8_saOrDisplayState == getIdentItem().getIsoItem()->nr())
-        newDisplayState = VtClientDisplayStateActive;
+      if (getVtDisplayState() == VtClientDisplayStateActive)
+        // only cause state change if currently displayed is active
+        newDisplayState = VtClientDisplayStateInactive;
       else
-      {
-        if (getVtDisplayState() == VtClientDisplayStateActive)
-          // only cause state change if currently displayed is active
-          newDisplayState = VtClientDisplayStateInactive;
-        else
-          newDisplayState = getVtDisplayState();
-      }
+        newDisplayState = getVtDisplayState();
     }
-//     else
-//     {
-//       if (ui8_saOrDisplayState == getIdentItem().getIsoItem()->nr())
-//         newDisplayState = VtClientDisplayStateActive;
-//       else
-//       {
-//         newDisplayState = VtClientDisplayStateHidden;
-//       }
-//     }
   }
   else // state change triggered from Display Activation Msg
   {
