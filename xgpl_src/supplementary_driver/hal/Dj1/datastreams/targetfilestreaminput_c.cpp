@@ -158,7 +158,7 @@ namespace __HAL
 
 
 TargetFileStreamInput_c::TargetFileStreamInput_c() :
-  file_handle_(0), n_data_read_(0)
+  file_handle_(NULL), n_data_read_(0)
 {
 }
 
@@ -209,5 +209,8 @@ TargetFileStreamInput_c& TargetFileStreamInput_c::operator>>(uint8_t &ui8_data)
 
 void TargetFileStreamInput_c::close()
 {
-  (void)__HAL::DjBios_IOP_Close(file_handle_);
+  if (NULL != file_handle_) {
+    (void)__HAL::DjBios_IOP_Close(file_handle_);
+	file_handle_ = NULL;
+  }
 }
