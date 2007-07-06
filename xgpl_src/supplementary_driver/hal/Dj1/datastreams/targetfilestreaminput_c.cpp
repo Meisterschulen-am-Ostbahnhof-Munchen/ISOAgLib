@@ -88,11 +88,11 @@
 #include "targetfilestreaminput_c.h"
 namespace __HAL
 {
-  extern "C"
-  {
-    /** include the BIOS specific header into __HAL */
-    #include <commercial_BIOS/bios_Dj1/DjBiosMVT.h>
-  }
+extern "C"
+{
+  /** include the BIOS specific header into __HAL */
+#include <commercial_BIOS/bios_Dj1/DjBiosMVT.h>
+}
 }
 
 #ifdef WIN32
@@ -100,7 +100,17 @@ namespace __HAL
 #endif
 
 
-//	#include "../djbiosdrawinterface.h"
+
+#ifdef DEBUG
+#ifdef SYSTEM_PC
+#include <iostream>
+#else
+#include <supplementary_driver/driver/rs232/irs232io_c.h>     
+#endif
+#endif
+
+
+//  #include "../djbiosdrawinterface.h"
 #include <IsoAgLib/typedef.h>
 
 #ifndef _huge
@@ -201,16 +211,18 @@ TargetFileStreamInput_c& TargetFileStreamInput_c::operator>>(uint8_t &ui8_data)
   if (eof()) {
     ui8_data = 0;
   } else {
-    ui8_data = __HAL::DjBios_IOP_Read(file_handle_, 1, 1, &ui8_data);
-    ++n_data_read_;
+    unsigned n_read = __HAL::DjBios_IOP_Read(file_handle_, 1, 1, &ui8_data);
+    if (n_read) {
+      ++n_data_read_;
+    }
   }
-	return *this;
+  return *this;
 }
 
 void TargetFileStreamInput_c::close()
 {
   if (NULL != file_handle_) {
     (void)__HAL::DjBios_IOP_Close(file_handle_);
-	file_handle_ = NULL;
+    file_handle_ = NULL;
   }
 }
