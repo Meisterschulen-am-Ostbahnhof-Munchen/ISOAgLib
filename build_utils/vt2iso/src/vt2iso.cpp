@@ -4323,7 +4323,7 @@ vt2iso_c::prepareFileNameAndDirectory (std::basic_string<char>* pch_fileName)
   std::basic_string<char> c_unwantedType6 = ".csv";
 
   // strip the ".xml" away!
-  if ((pch_fileName->length()-4) > 0)
+  if (pch_fileName->length() > 4)
   { // see if the user gave ".xml" !
     if ( (pch_fileName->substr( pch_fileName->length()-4 ) == c_expectedType)
           ||(pch_fileName->substr( pch_fileName->length()-4 ) == c_expectedType) )
@@ -4449,7 +4449,7 @@ vt2iso_c::prepareFileNameAndDirectory (std::basic_string<char>* pch_fileName)
   bool stillSorting;
   do {
     stillSorting=false;
-    for (int a=1; a< amountXmlFiles; a++) {
+    for (int a=1; a < amountXmlFiles; a++) {
       if (strcmp (xmlFiles [a-1], xmlFiles [a]) > 0) {
         strcpy (xmlFileTemp, xmlFiles [a]);
         strcpy (xmlFiles [a], xmlFiles [a-1]);
@@ -4471,9 +4471,9 @@ vt2iso_c::getObjNameWithPoolIdent (char* pcch_objName)
 {
   if (!pcch_objName || (strcmp (pcch_objName, "") == 0))
     pcch_objName = "NULL";
-  
+
   std::string objName = std::string (pcch_objName);
-  
+
   if (strcmp (objName.c_str(), "NULL") == 0)
     return objName;
 
