@@ -4023,15 +4023,15 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           if (!attrIsGiven [attrFill_type])
             sprintf (attrString [attrFill_type], "0");
 
-          if(!attrIsGiven [attrFill_pattern])
+          if(!attrIsGiven [attrFill_pattern] || (strcmp (attrString[attrFill_pattern], "65535") == 0))
           {
-            sprintf (attrString [attrFill_pattern], "NULL");
+            sprintf (attrString[attrFill_pattern], "NULL");
             fprintf (partFile_attributes, ",%d, %d, %s", filltypetoi (attrString[attrFill_type]), colortoi (attrString [attrFill_colour]),
-                     attrString [attrFill_pattern]);
+                     getObjNameWithPoolIdent (attrString [attrFill_pattern]).c_str());
           }
           else
             fprintf (partFile_attributes, ",%d, %d, &iVtObject%s", filltypetoi (attrString[attrFill_type]),
-                     colortoi (attrString [attrFill_colour]), attrString [attrFill_pattern]);
+                     colortoi (attrString[attrFill_colour]), getObjNameWithPoolIdent (attrString [attrFill_pattern]).c_str());
           break;
 
         case otInputattributes:
