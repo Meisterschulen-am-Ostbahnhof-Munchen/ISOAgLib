@@ -123,20 +123,20 @@ namespace __IsoAgLib {
 /*******************************************/
 
 RS232IO_c::RS232IO_c( void )
-  : ui16_baudrate (0xFFFF)
+  : ui16_baudrate (BAUDERATE_CONTRUCTOR_DEFAULT_VALUE)
   , en_dataMode (_8_N_1)
   , b_xon_xoff (false)
   , ui16_sndPuf (0)
   , ui16_recPuf (0)
   #ifdef USE_RS232_CHANNEL
-  ,ui8_channel (0xFF)
+  ,ui8_channel (CHANNEL_CONTRUCTOR_DEFAULT_VALUE)
   #endif
 {};
 
 /** destructor has nothing to destruct */
 RS232IO_c::~RS232IO_c(){
   #ifdef USE_RS232_CHANNEL
-  if ( ui8_channel != 0xFF ) HAL::close_rs232( ui8_channel );
+  if ( ui8_channel != CHANNEL_CONTRUCTOR_DEFAULT_VALUE ) HAL::close_rs232( ui8_channel );
   #else
   HAL::close_rs232();
   #endif
@@ -165,13 +165,14 @@ bool RS232IO_c::init(uint16_t rui16_baudrate, t_dataMode ren_dataMode, bool rb_x
         #endif
         )
 {
+  
   bool b_result;
   // check the configuration informations
   bool b_baudAllowed = false,
        b_dataModeAllowed = false;
 
   // check if rui16_baudrate is one of the allowed settings
-  int16_t pi16_allowed[] = HAL_RS232_BAUDRATE_LIST;
+  uint16_t pi16_allowed[] = HAL_RS232_BAUDRATE_LIST;
   for (uint8_t ui8_index = 0; ui8_index < HAL_RS232_BITRATE_CNT; ui8_index++)
   {
     if (pi16_allowed[ui8_index] == rui16_baudrate)
@@ -189,10 +190,10 @@ bool RS232IO_c::init(uint16_t rui16_baudrate, t_dataMode ren_dataMode, bool rb_x
     b_dataModeAllowed = ((b_stopBit == 1) || (b_stopBit == 2))?true:false;
   }
   // stop RS232 interface if configured before
-  if ( ui16_baudrate != 0xFFFF )
+  if ( ui16_baudrate != BAUDERATE_CONTRUCTOR_DEFAULT_VALUE )
   { // no more initial value
     #ifdef USE_RS232_CHANNEL
-    if ( ui8_channel != 0xFF ) HAL::close_rs232( ui8_channel );
+    if ( ui8_channel != CHANNEL_CONTRUCTOR_DEFAULT_VALUE ) HAL::close_rs232( ui8_channel );
     #else
     HAL::close_rs232();
     #endif
@@ -205,27 +206,38 @@ bool RS232IO_c::init(uint16_t rui16_baudrate, t_dataMode ren_dataMode, bool rb_x
       )
   { // o.k.
     // store configuration values
-    ui16_baudrate = rui16_baudrate;
+    
     en_dataMode = ren_dataMode;
     b_xon_xoff = rb_xonXoff;
     ui16_sndPuf = rui16_sndPuf;
     ui16_recPuf = rui16_recPuf;
-    #ifdef USE_RS232_CHANNEL
-    ui8_channel = rui8_channel;
-    #endif
+    
 
     b_result = true;
     // now init puffers
     if (HAL::configRs232TxObj(ui16_sndPuf, NULL, NULL RS232_CHANNEL_CALL_PARAM_LAST) != HAL_NO_ERR) b_result = false;
     if (HAL::configRs232RxObj(ui16_recPuf, NULL RS232_CHANNEL_CALL_PARAM_LAST) != HAL_NO_ERR) b_result = false;
 
-    if (!b_result) getILibErrInstance().registerError( iLibErr_c::BadAlloc, iLibErr_c::Rs232 );
+    if (!b_result) 
+	    getILibErrInstance().registerError( iLibErr_c::BadAlloc, iLibErr_c::Rs232 );
+    else
+    {
+	    // Only here do we store the values, as these two fields help us know whether the device is already initialized
+	    ui16_baudrate = rui16_baudrate;
+#ifdef USE_RS232_CHANNEL
+	    ui8_channel = rui8_channel;
+#endif
+    }
+
+
   }
   else
   { //wrong values given
     b_result = false;
     getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Rs232 ); // something is still wrong
   }
+
+  
   return b_result;
 }
 
@@ -256,7 +268,7 @@ bool RS232IO_c::setBaudrate(uint16_t rui16_baudrate)
   bool b_baudAllowed = false;
 
   // check if rui16_baudrate is one of the allowed settings
-  int16_t pi16_allowed[] = HAL_RS232_BAUDRATE_LIST;
+  uint16_t pi16_allowed[] = HAL_RS232_BAUDRATE_LIST;
   for (uint8_t ui8_index = 0; ui8_index < HAL_RS232_BITRATE_CNT; ui8_index++)
   {
     if (pi16_allowed[ui8_index] == rui16_baudrate)
@@ -339,23 +351,28 @@ bool RS232IO_c::setRecPufferSize(uint16_t rui16_pufferSize)
   */
   void RS232IO_c::send(const uint8_t* rpb_data, uint8_t rui8_len)
   {
-    uint8_t ui8_maxSendItemSize;
-    uint8_t ui8_startSendPos = 0,
-            ui8_restLen = rui8_len;
-    while ( ui8_restLen > 0 )
+    if (! isInitialized() ) return;
+
+    uint16_t ui16_maxSendItemSize;
+    uint16_t ui16_startSendPos = 0,
+            ui16_restLen = rui8_len;  
+
+    while ( ui16_restLen > 0 )
     { // send max item
-      ui8_maxSendItemSize = ui16_sndPuf - HAL::getRs232TxBufCount(RS232_CHANNEL_PARAM_SINGLE);
+
+      ui16_maxSendItemSize = ui16_sndPuf - HAL::getRs232TxBufCount(RS232_CHANNEL_PARAM_SINGLE);    
+
       // restrict actual max item size to waiting chars to send
-      if ( ui8_maxSendItemSize > ui8_restLen ) ui8_maxSendItemSize = ui8_restLen;
+      if ( ui16_maxSendItemSize > ui16_restLen ) ui16_maxSendItemSize = ui16_restLen;
       // send actual item
-      if (HAL::put_rs232NChar((rpb_data + ui8_startSendPos), ui8_maxSendItemSize RS232_CHANNEL_PARAM_LAST) != HAL_NO_ERR)
+      if (HAL::put_rs232NChar((rpb_data + ui16_startSendPos), ui16_maxSendItemSize RS232_CHANNEL_PARAM_LAST) != HAL_NO_ERR)
       {
         getILibErrInstance().registerError( iLibErr_c::Rs232Overflow, iLibErr_c::Rs232 );
       }
       // update ui8_restLen
-      ui8_restLen -= ui8_maxSendItemSize;
+      ui16_restLen -= ui16_maxSendItemSize;
       // update start send pos
-      ui8_startSendPos += ui8_maxSendItemSize;
+      ui16_startSendPos += ui16_maxSendItemSize;
       // triger watchdog
       HAL::wdTriggern();
     }
@@ -399,6 +416,7 @@ bool RS232IO_c::setRecPufferSize(uint16_t rui16_pufferSize)
   */
   RS232IO_c& RS232IO_c::operator<<(uint8_t rb_data)
   {
+	if (! isInitialized() ) return *this;
     if (HAL::put_rs232Char(rb_data RS232_CHANNEL_PARAM_LAST) != HAL_NO_ERR)
     {
       getILibErrInstance().registerError( iLibErr_c::Rs232Overflow, iLibErr_c::Rs232 );
@@ -540,6 +558,9 @@ RS232IO_c& RS232IO_c::operator<<(float rf_data)
 */
 void RS232IO_c::receive(uint8_t* pData, uint16_t rui16_len)
 {
+	if (! isInitialized()) return;
+
+
   uint8_t* pb_writer = pData;
   uint16_t ui16_ind = 0;
   for (; ui16_ind < rui16_len; ui16_ind++)

@@ -100,6 +100,9 @@ namespace __IsoAgLib {
 //! @param ri32_demandedExecEnd: available execution time. timeEvent() MUST be finished before the time, to avoid scheduling problems.
 //!                              default value -1 == unrestricted time for execution.
 //!  @return  false-> Client could not finish job; true-> Client finish job correctly
+
+#define DEBUG_SCHEDULER
+
 bool
 SchedulerEntry_c::timeEventExec(int32_t ri32_demandedExecEnd)
 {
@@ -120,7 +123,7 @@ SchedulerEntry_c::timeEventExec(int32_t ri32_demandedExecEnd)
   /// so Client keep old nextRetriggerTime and stay as FIRST in TaskQueue
   if( cb_result )pc_taskInstance->timeEventPostUpdateStatistics();
 
-  #ifdef DEBUG
+  #if defined (DEBUG) && defined( DEBUG_SCHEDULER)
     if(!cb_result)  {
         INTERNAL_DEBUG_DEVICE << pc_taskInstance->getTaskName() << ".timeEvent() returned false."
         << INTERNAL_DEBUG_DEVICE_ENDL;
