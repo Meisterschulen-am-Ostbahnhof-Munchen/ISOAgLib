@@ -133,7 +133,8 @@ void
 ElementBase_c::timeEventPostUpdateStatistics()
 {
 
-  ui16_approxExecTime = uint16_t(System_c::getTime() - i32_retriggerTime);
+  const int32_t ci32_now = System_c::getTime();
+  ui16_approxExecTime = uint16_t(ci32_now - i32_retriggerTime);
   // update DBUG time values
   ui32_callCnt++;
   if ( ui32_callCnt != 0 )
@@ -169,6 +170,11 @@ ElementBase_c::timeEventPostUpdateStatistics()
   // amount of calls is very high
   i32_nextRetriggerTime += ui16_timePeriod;
 
+  if ( ci32_now > i32_nextRetriggerTime )
+  { //the last execution was too much delayed, so that the next execution timestamp would be in future
+    // --> replace next retrigger time with now+period
+    i32_nextRetriggerTime = ci32_now + ui16_timePeriod;
+  }
 }
 
 // ////////////////////////////// Operation 2727 : getAvailableExecTime
