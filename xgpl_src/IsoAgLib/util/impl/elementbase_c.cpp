@@ -170,7 +170,7 @@ ElementBase_c::timeEventPostUpdateStatistics()
   // amount of calls is very high
   i32_nextRetriggerTime += ui16_timePeriod;
 
-  if ( ci32_now > i32_nextRetriggerTime )
+  if ( ci32_now >= i32_nextRetriggerTime )
   { //the last execution was too much delayed, so that the next execution timestamp would be in future
     // --> replace next retrigger time with now+period
     i32_nextRetriggerTime = ci32_now + ui16_timePeriod;
