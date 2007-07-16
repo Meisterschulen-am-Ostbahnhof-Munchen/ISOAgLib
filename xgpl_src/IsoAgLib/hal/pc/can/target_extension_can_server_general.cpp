@@ -139,6 +139,9 @@ server_c::server_c()
     i32_sendDelay[i] = 0;
     i_pendingMsgs[i] = 0;
   }
+
+  pthread_mutex_init(&m_protectClientList, NULL);
+
 }
 
 
@@ -286,7 +289,7 @@ static void enqueue_msg(uint32_t DLC, uint32_t ui32_id, uint32_t b_bus, uint8_t 
   can_data* pc_data;
   std::list<client_s>::iterator iter, iter_delete = pc_serverData->l_clients.end();
 
-  // semaphore to prevent client list modification already set in calling function
+  // mutex to prevent client list modification already got in calling function
 
   // prepare msqRead_s for each potential broadcast send
   msqRead_s msqReadBuf;
@@ -470,14 +473,7 @@ static void* can_write_thread_func(void* ptr)
   int32_t i32_error;
   msqWrite_s msqWriteBuf;
 
-  int local_semaphore_id;
-
   server_c* pc_serverData = static_cast<server_c*>(ptr);
-
-  if ((local_semaphore_id = open_semaphore_set(SERVER_SEMAPHORE)) == -1) {
-    perror("semaphore not available");
-    exit(1);
-  }
 
   bool b_highPrioMode=false; // default to FALSE until some bus reports >= 5 pending msgs.
   for (;;) {
@@ -524,11 +520,8 @@ static void* can_write_thread_func(void* ptr)
     }
 
 
-    // acquire semaphore (prevents concurrent read/write access to can driver and modification of client list during execution of enqueue_msg
-    if (get_semaphore(local_semaphore_id, -1) == -1) {
-      perror("aquire semaphore error");
-      exit(1);
-    }
+    // acquire mutex (prevents concurrent read/write access to can driver and modification of client list during execution of enqueue_msg
+    pthread_mutex_lock( &(pc_serverData->m_protectClientList) );
 
     if (pc_serverData->i16_reducedLoadOnIsoBus == msqWriteBuf.ui8_bus)
     { // We're on ISOBUS, so mark this SA as LOCAL (i.e. NOT REMOTE)
@@ -609,11 +602,7 @@ static void* can_write_thread_func(void* ptr)
       send_command_ack (msqWriteBuf.ui16_pid, &(pc_serverData->msqDataServer), ACKNOWLEDGE_DATA_CONTENT_ERROR_VALUE, i32_error); // not used any more, we have now direct fields in: disassemble_client_id(msqWriteBuf.i32_mtype)
     }
 
-    // release semaphore (even if no client was found!
-    if (get_semaphore(local_semaphore_id, 1) == -1) {
-      perror("release semaphore error");
-      exit(1);
-    }
+    pthread_mutex_unlock( &(pc_serverData->m_protectClientList) );
 
   }
 
@@ -629,12 +618,6 @@ static void can_read(server_c* pc_serverData)
 #ifdef SIMULATE_BUS_MODE
   bool b_moreToRead = TRUE;
 #endif
-  int local_semaphore_id;
-
-  if ((local_semaphore_id = open_semaphore_set(SERVER_SEMAPHORE)) == -1) {
-    perror("semaphore not available");
-    exit(1);
-  }
 
   for (;;) {
 
@@ -690,11 +673,9 @@ static void can_read(server_c* pc_serverData)
     }
 
     if (b_processMsg) {
-      // acquire semaphore to prevent concurrent read/write to can driver
-      if (get_semaphore(local_semaphore_id, -1) == -1) {
-        perror("aquire semaphore error");
-        exit(1);
-      }
+      // acquire mutex to prevent concurrent read/write to can driver
+      pthread_mutex_lock( &(pc_serverData->m_protectClientList) );
+
       int16_t i16_rc = ca_ReceiveCanCard_1(&receiveData,channel_with_change, pc_serverData);
 
       if (i16_rc < 0) {
@@ -705,11 +686,8 @@ static void can_read(server_c* pc_serverData)
         DEBUG_PRINT1("CANRead error: %i\n", i16_rc);
         b_processMsg = FALSE;
 
-        // release semaphore
-        if (get_semaphore(local_semaphore_id, 1) == -1) {
-          perror("release semaphore error");
-          exit(1);
-        }
+        // unlock mutex (b_processMsg == FALSE => continue)
+        pthread_mutex_unlock( &(pc_serverData->m_protectClientList) );
 
       }
     }
@@ -720,11 +698,8 @@ static void can_read(server_c* pc_serverData)
       b_moreToRead = readCanDataFile(pc_serverData, &receiveData);
       b_processMsg = TRUE;
 
-      // acquire semaphore to prevent modification of client list during execution of enqueue_msg
-      if (get_semaphore(local_semaphore_id, -1) == -1) {
-        perror("aquire semaphore error");
-        exit(1);
-      }
+      // acquire mutex to prevent modification of client list during execution of enqueue_msg
+      pthread_mutex_lock( &(pc_serverData->m_protectClientList) );
 
     } else
       for (;;)
@@ -772,12 +747,8 @@ static void can_read(server_c* pc_serverData)
       enqueue_msg(DLC, ui32_id, b_bus, b_xtd, &receiveData.msg.pb_data[0], 0, pc_serverData);
     }
 
-    // release semaphore
-    if (get_semaphore(local_semaphore_id, 1) == -1) {
-      perror("release semaphore error");
-      exit(1);
-    }
-
+    // release mutex
+    pthread_mutex_unlock( &(pc_serverData->m_protectClientList) );
 
   }
 }
@@ -793,14 +764,8 @@ static void* command_thread_func(void* ptr)
   int32_t i32_dataContent;
   int32_t i32_data;
   msqCommand_s msqCommandBuf;
-  int local_semaphore_id;
 
   server_c* pc_serverData = static_cast<server_c*>(ptr);
-
-  if ((local_semaphore_id = open_semaphore_set(SERVER_SEMAPHORE)) == -1) {
-    perror("semaphore not available");
-    exit(1);
-  }
 
   for (;;) {
 
@@ -816,11 +781,8 @@ static void* command_thread_func(void* ptr)
 
     i32_error = 0;
 
-    // acquire semaphore
-    if (get_semaphore(local_semaphore_id, -1) == -1) {
-      perror("aquire semaphore error");
-      exit(1);
-    }
+    // acquire mutex
+    pthread_mutex_lock( &(pc_serverData->m_protectClientList) );
 
     // get client
     std::list<client_s>::iterator iter_client = pc_serverData->l_clients.end(), tmp_iter;
@@ -1130,11 +1092,8 @@ static void* command_thread_func(void* ptr)
     send_command_ack(msqCommandBuf.i32_mtypePid, &(pc_serverData->msqDataServer), i32_dataContent, i32_data);
 
 
-    // release semaphore
-    if (get_semaphore(local_semaphore_id, 1) == -1) {
-      perror("release semaphore error");
-      exit(1);
-    }
+    // release mutex
+    pthread_mutex_unlock( &(pc_serverData->m_protectClientList) );
 
   } // end for
 

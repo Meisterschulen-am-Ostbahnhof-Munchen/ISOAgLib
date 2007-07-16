@@ -89,45 +89,6 @@ void usage() {
 }
 
 
-int open_semaphore_set(int sema_proj_id)
-{
-  int sid;
-  key_t  semkey;
-
-  union semun {
-    int val;
-    struct semid_ds *buf;
-    unsigned short int *array;
-    struct seminfo *__buf;
-  } semopts;
-
-  /* Generate our IPC key value */
-  semkey = ftok(MSQ_KEY_PATH, sema_proj_id);
-
-  if((sid = semget( semkey, 1, IPC_CREAT | 0660 )) == -1) {
-    return(-1);
-  }
-
-  semopts.val = 1;  /* initial value: resource free */
-  if (semctl( sid, 0, SETVAL, semopts) == -1) {
-    return(-1);
-  }
-
-  return(sid);
-}
-
-
-int get_semaphore(int sid, int operation ) {
-
-  struct sembuf sem_command = { 0, operation, 0 };
-
-  if (semop(sid, &sem_command, 1) == -1)
-    return(-1);
-
-  return 1;
-
-}
-
 void dumpCanMsg (uint8_t bBusNumber, uint8_t bMsgObj, tSend* ptSend, FILE* f_handle)
 {
   uint8_t data[8] = {0,0,0,0,0,0,0,0};

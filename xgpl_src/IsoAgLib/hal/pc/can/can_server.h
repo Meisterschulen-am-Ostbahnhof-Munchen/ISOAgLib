@@ -78,6 +78,9 @@ public:
   int      i_pendingMsgs[cui32_maxCanBusCnt];
 
   uint16_t ui16_busRefCnt[cui32_maxCanBusCnt];
+
+  pthread_mutex_t m_protectClientList;
+
 };
 
 extern std::list<int32_t> list_sendTimeStamps;
@@ -85,8 +88,6 @@ void updatePendingMsgs(server_c* rpc_server, int8_t i8_bus);
 int32_t getTime();
 
 void usage();
-int open_semaphore_set(int sema_proj_id);
-int get_semaphore(int sid, int operation);
 void dumpCanMsg (uint8_t bBusNumber, uint8_t bMsgObj, tSend* ptSend, FILE* f_handle);
 bool readCanDataFile(server_c* pc_serverData, can_recv_data* ps_receiveData);
 // iterator reference because releaseClient erases client

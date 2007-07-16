@@ -22,8 +22,6 @@ namespace __HAL {
 #define MSQ_CLIENT_READ  'o'
 #define MSQ_CLIENT_WRITE 'p'
 
-#define SERVER_SEMAPHORE 'u'
-
 #define MSQ_KEY_PATH     "/root"
 #define PIPE_PATH        "/tmp/can_server_"
 
