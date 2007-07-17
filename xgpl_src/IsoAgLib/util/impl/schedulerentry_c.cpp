@@ -101,7 +101,7 @@ namespace __IsoAgLib {
 //!                              default value -1 == unrestricted time for execution.
 //!  @return  false-> Client could not finish job; true-> Client finish job correctly
 
-#define DEBUG_SCHEDULER
+//#define DEBUG_SCHEDULER
 
 bool
 SchedulerEntry_c::timeEventExec(int32_t ri32_demandedExecEnd)

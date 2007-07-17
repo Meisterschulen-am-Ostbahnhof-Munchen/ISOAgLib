@@ -171,9 +171,13 @@ ElementBase_c::timeEventPostUpdateStatistics()
   i32_nextRetriggerTime += ui16_timePeriod;
 
   if ( ci32_now >= i32_nextRetriggerTime )
-  { //the last execution was too much delayed, so that the next execution timestamp would be in future
-    // --> replace next retrigger time with now+period
-    i32_nextRetriggerTime = ci32_now + ui16_timePeriod;
+  { //the last execution was too much delayed, so that the next execution timestamp would be in future (calculated from the "planned" time!!)
+    i32_nextRetriggerTime = i32_retriggerTime + ui16_timePeriod;
+    if ( ci32_now >= i32_nextRetriggerTime )
+    { // now try with the REAL time the task was started and not with the PLANNED time!
+      // --> replace next retrigger time with now+period
+      i32_nextRetriggerTime = ci32_now + ui16_timePeriod;
+    }
   }
 }
 
