@@ -275,10 +275,10 @@ int32_t getClientTime( client_s& ref_receiveClient )
   return getTime() - ref_receiveClient.i32_msecStartDeltaClientMinusServer;
 }
 
-int32_t getServerTimeFromClientTime( client_s& ref_receiveClient, int32_t ri32_clientTime )
-{
-  return ri32_clientTime + ref_receiveClient.i32_msecStartDeltaClientMinusServer;
-}
+//int32_t getServerTimeFromClientTime( client_s& ref_receiveClient, int32_t ri32_clientTime )
+//{
+//  return ri32_clientTime + ref_receiveClient.i32_msecStartDeltaClientMinusServer;
+//}
 
 } // end namespace
 

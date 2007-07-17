@@ -544,6 +544,12 @@ int ca_ReceiveCanCard_1(can_recv_data* receiveData, uint8_t ui8_bus, server_c* p
 
 }
 
+int32_t getServerTimeFromClientTime( client_s& ref_receiveClient, int32_t ri32_clientTime )
+{
+  return ri32_clientTime + ref_receiveClient.i32_msecStartDeltaClientMinusServer;
+}
+
+
 void addSendTimeStampToList(client_s *ps_client, int32_t i32_sendTimeStamp)
 {
   list_sendTimeStamps.push_front (getServerTimeFromClientTime (*ps_client, i32_sendTimeStamp));
