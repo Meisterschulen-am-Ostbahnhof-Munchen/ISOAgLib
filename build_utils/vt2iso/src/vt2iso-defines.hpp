@@ -399,8 +399,11 @@ extern char formatTable [maxFormatTable] [stringLength+1];
 #define maxHorizontalJustificationTable 3
 extern char horizontalJustificationTable [maxHorizontalJustificationTable] [stringLength+1];
 
-#define maxOptionsTable 2
-extern char optionsTable [maxOptionsTable] [stringLength+1];
+#define maxStringOptionsTable 3
+extern char stringOptionsTable [maxStringOptionsTable] [stringLength+1];
+
+#define maxInputNumberOptionsTable 4
+extern char inputNumberOptionsTable [maxInputNumberOptionsTable] [stringLength+1];
 
 #define maxOutputNumberOptionsTable 3
 extern char outputNumberOptionsTable [maxOutputNumberOptionsTable] [stringLength+1];

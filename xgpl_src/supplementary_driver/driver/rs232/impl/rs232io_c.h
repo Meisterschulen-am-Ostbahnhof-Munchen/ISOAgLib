@@ -132,6 +132,10 @@ typedef RS232_SINGLETON(RS232IO_c) SingletonRS232_c;
   @author Dipl.-Inform. Achim Spangler
 */
 class RS232IO_c : public SingletonRS232_c {
+
+#define BAUDERATE_CONTRUCTOR_DEFAULT_VALUE 0xFFFF
+#define CHANNEL_CONTRUCTOR_DEFAULT_VALUE 0xFF
+
 public:
 
   /**
@@ -168,6 +172,13 @@ public:
           ,uint8_t rui8_channel = 0
           #endif
           );
+
+
+  /**
+    checks whether the the BIOS RS232 is correctly initialized
+  */
+  const bool isInitialized () const {return (ui16_baudrate != BAUDERATE_CONTRUCTOR_DEFAULT_VALUE && ui8_channel != CHANNEL_CONTRUCTOR_DEFAULT_VALUE ); }
+
   /** every subsystem of IsoAgLib has explicit function for controlled shutdown
     */
   void close( void ){};
@@ -476,9 +487,11 @@ private: //Private methods
     read a token (eat whitespace in front of, end stop before next whitespace or at end og buf)
   */
   void readToken();
+  
 
 private:
   // Private attributes
+  
   uint16_t ui16_baudrate;
   t_dataMode en_dataMode;
   bool b_xon_xoff;

@@ -1159,7 +1159,7 @@ bool ISOMonitor_c::sendRequestForClaimedAddress( bool rb_force )
   // now send own SA in case at least one local ident has yet claimed adress
   if (b_sendOwnSa)
   {
-    #ifdef DEBUG
+    #ifdef DEBUG_CAN
     INTERNAL_DEBUG_DEVICE << "Send checking SA request (sendRequestForClaimedAddress())" << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
     const uint8_t cui8_localCnt = localIsoMemberCnt();
@@ -1377,8 +1377,7 @@ ISOMonitor_c::processMsgRequestPGN (uint32_t rui32_pgn, ISOItem_c* /*rpc_isoItem
       { // ISORequestPGN ensured that the Item exists and is local: Let it process!
         return rpc_isoItemReceiver->sendSaClaim();
       }
-      break;
-
+    
 #ifdef USE_WORKING_SET
     case WORKING_SET_MASTER_PGN: // break intentionally left out - react on both PGNs with sending out the complete ws-announce sequence!
     case WORKING_SET_MEMBER_PGN:
@@ -1419,8 +1418,7 @@ ISOMonitor_c::processMsgRequestPGN (uint32_t rui32_pgn, ISOItem_c* /*rpc_isoItem
           return false; // let it get NACKed
         }
       }
-      break; // actually not needed, but for safety...
-#endif
+     #endif
 
     default:
       // shouldn't happen as we only registered for the above handled PGNs

@@ -187,10 +187,23 @@ namespace HAL
     @param rui8_msgobjNr number of the MsgObj to check
     @return true -> longer than CONFIG_CAN_MAX_SEND_WAIT_TIME no msg sent on BUS
   */
+
+
   inline bool can_stateMsgobjSendproblem ( uint8_t rui8_busNr, uint8_t rui8_msgobjNr )
   {
-    return ( (__HAL::Can_TxObjElapseTime(rui8_busNr, rui8_msgobjNr) > CONFIG_CAN_MAX_SEND_WAIT_TIME) ? true : false);
-  };
+   return (  
+              (  
+                (__HAL::DjBios_CanGetTxDelay( 
+                /*  Can_TxObjElapseTime(*/rui8_busNr/*, rui8_msgobjNr*/) > CONFIG_CAN_MAX_SEND_WAIT_TIME) 
+                &&  
+                (__HAL::DjBios_CanObjBufCount(rui8_busNr, rui8_msgobjNr) > 0 )  
+              )?  true : false
+              
+           );
+
+
+
+  }
 
 
   /**

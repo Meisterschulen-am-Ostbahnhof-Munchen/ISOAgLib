@@ -421,6 +421,9 @@ public:
   bool sendCommandUpdateLanguagePool();
   bool sendCommandUpdateObjectPool (IsoAgLib::iVtObject_c** rppc_vtObjects, uint16_t rui16_numObjects);
 
+  bool sendCommandHideShow (uint16_t rui16_objectUid, uint8_t b_hideOrShow, bool b_enableReplaceOfCmd=true);
+  bool sendCommandHideShow( IsoAgLib::iVtObject_c* rpc_object, uint8_t b_hideOrShow, bool b_enableReplaceOfCmd=true);
+
   bool queueOrReplace (SendUpload_c& rref_sendUpload, bool b_enableReplaceOfCmd=true);
   void dumpQueue();
 
@@ -428,6 +431,8 @@ public:
   void disableSameCommandCheck() { b_checkSameCommand = false; }
 
   bool isVtActive();
+
+  vtClientDisplayState_t getVtDisplayState() { return en_displayState; }
 
 private:
   friend class ISOTerminal_c;
@@ -457,7 +462,6 @@ private:
                                 if b_isVtStatusMsg == false, it is the display state of the Display Activation Msg
     */
   void setVtDisplayState (bool b_isVtStatusMsg, uint8_t ui8_saOrDisplayState);
-  vtClientDisplayState_t getVtDisplayState() { return en_displayState; }
 
 private: // attributes
   /** static instance to store temporarily before push_back into list */

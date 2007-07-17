@@ -315,7 +315,6 @@ private:
   friend iEEPROMIO_c& operator<<(iEEPROMIO_c& refc_stream, const iISOName_c& refc_data );
   friend iEEPROMIO_c& operator>>(iEEPROMIO_c& refc_stream, iISOName_c& refc_data );
   friend class iISOFilter_s;
-  friend class vtDocumentLayoutManager_c;
   friend class __IsoAgLib::ProprietaryMessageHandler_c;
   friend class __IsoAgLib::TimePosGPS_c;
 };

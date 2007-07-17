@@ -102,30 +102,35 @@ class TargetFileStreamInput_c //: public std::ifstream
 {
 
 public:
+  TargetFileStreamInput_c();
+  ~TargetFileStreamInput_c();
+
 	//! open a input stream
-    //Sergej: not used for DjMiniVt
- 	bool open( std::string& filename, FileMode_t rt_mode )
- 		{ n_data_read_ = 0; return true; };
+	bool open( std::string& filename, FileMode_t rt_mode )
+		{ return open( filename.c_str(), rt_mode ); }
 	//! open a input stream
 	bool open( const char* filename, FileMode_t rt_mode );
 	//! close a input stream
-	void close() { };
+	void close();
+  
+  //  Operation: eof
+  virtual bool eof() const;
+
+  // Operation: fail
+  virtual bool fail() const { return false; };
+
+  // Operation: good
+  virtual bool good() const { return (!eof() && !fail()); };
 
 	//  Operation: operator>>
   //! Parameter:
   //! @param ui8_data:
   virtual TargetFileStreamInput_c& operator>>(uint8_t &ui8_data);
-
-  //  Operation: eof
-  //  b_eofReached is set to true when peek() returns EOF in operator>>: nothing more to read
-	//  b_eofReached is initialized to false in open()
-	virtual bool eof() const {return true; }//return b_eofReached | static_cast<const std::ifstream*>(this)->eof();};
 	
 private:
 
-  //  does next get() fail?
-  bool b_eofReached;
   size_t n_data_read_;
+  void *file_handle_;
 }; // ~X2C
 
 // TargetFileStreamInput_c & operator>> (TargetFileStreamInput_c &, uint8_t &ui8_data);

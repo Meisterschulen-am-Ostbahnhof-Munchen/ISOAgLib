@@ -165,7 +165,7 @@ inline bool DOMCountErrorHandler::getSawErrors() const
 class vt2iso_c
 {
 public:
-  vt2iso_c (std::basic_string<char>* xmlFile, char* poolIdent, std::basic_string<char>* dictionary = NULL);
+  vt2iso_c (char* poolIdent);
 
   ~vt2iso_c();
 
@@ -198,6 +198,11 @@ public:
   const char* getAttributeValue (DOMNode* pc_node, const char* attributeName);
 
   void getKeyCode();
+
+  void init (const char* xmlFile, std::basic_string<char>* dictionary = NULL);
+
+  bool prepareFileNameAndDirectory (std::basic_string<char>* pch_fileName);
+  
 private:
   signed int strlenUnescaped (const char* pcc_string);
 
@@ -230,11 +235,7 @@ private:
 
   bool checkForAllowedExecution() const;
 
-  void init (const char* xmlFile);
-
-  void prepareFileNameAndDirectory(std::basic_string<char>* pch_fileName);
-
-  const char* getObjNameWithPoolIdent (char* pcch_objName);
+  std::string getObjNameWithPoolIdent (char* pcch_objName);
 
 private:
   bool firstLineFileE;

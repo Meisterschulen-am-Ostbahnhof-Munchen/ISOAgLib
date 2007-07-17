@@ -924,10 +924,10 @@ VtClientServerCommunication_c::notifyOnVtsLanguagePgn()
 void
 VtClientServerCommunication_c::notifyOnVtStatusMessage()
 {
+  c_streamer.refc_pool.eventVtStatusMsg();
+  
   // set client display state appropriately
   setVtDisplayState (true, getVtServerInst().getVtState()->saOfActiveWorkingSetMaster);
-
-  c_streamer.refc_pool.eventVtStatusMsg();
 }
 
 /** process received can messages
@@ -1273,9 +1273,6 @@ VtClientServerCommunication_c::processMsg()
            && c_data.getUint8Data (0) <= 0x7F
          )
       {
-      #ifdef DEBUG
-        INTERNAL_DEBUG_DEVICE << "\n%% Proprietary command ";
-      #endif
         MACRO_setStateDependantOnError( c_streamer.refc_pool.eventProprietaryCommand( pc_vtServerInstance->getIsoName().toConstIisoName_c() ) )
       }
       break;
@@ -1374,8 +1371,7 @@ bool
 VtClientServerCommunication_c::sendCommand (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint32_t ui32_timeout, bool b_enableReplaceOfCmd, IsoAgLib::iVtObject_c** rppc_vtObjects, uint16_t rui16_numObjects)
 {
 #ifdef DEBUG
-  INTERNAL_DEBUG_DEVICE << "Enqueued 8-bytes: " << q_sendUpload.size() << " -> ";
-  std::cout << "   and client sa = " << (int)dataBase().isoSa() << " and client id = " << (int)getClientId() << std::endl;
+  INTERNAL_DEBUG_DEVICE << "Enqueued 8-bytes: " << q_sendUpload.size() << " -> " << std::endl;
 #endif
 
   sc_tempSendUpload.set (byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8, ui32_timeout, rppc_vtObjects, rui16_numObjects);
@@ -2040,6 +2036,23 @@ VtClientServerCommunication_c::sendCommandLockUnlockMask( IsoAgLib::iVtObject_c*
                       DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
 }
 
+bool
+VtClientServerCommunication_c::sendCommandHideShow( IsoAgLib::iVtObject_c* rpc_object, uint8_t b_hideOrShow, bool b_enableReplaceOfCmd)
+{
+  return sendCommand (160 /* Command: Command --- Parameter: Hide/Show Object */,
+                      rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
+                      b_hideOrShow,
+                      0xFF, 0xFF, 0xFF, 0xFF, DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
+}
+
+bool
+VtClientServerCommunication_c::sendCommandHideShow (uint16_t rui16_objectUid, uint8_t b_hideOrShow, bool b_enableReplaceOfCmd)
+{
+  return sendCommand (160 /* Command: Command --- Parameter: Hide/Show Object */,
+                      rui16_objectUid & 0xFF, rui16_objectUid >> 8,
+                      b_hideOrShow,
+                      0xFF, 0xFF, 0xFF, 0xFF, DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
+}
 
 bool
 VtClientServerCommunication_c::queueOrReplace (SendUpload_c& rref_sendUpload, bool b_enableReplaceOfCmd)
@@ -2581,28 +2594,16 @@ VtClientServerCommunication_c::setVtDisplayState (bool b_isVtStatusMsg, uint8_t 
   vtClientDisplayState_t newDisplayState;
   if (b_isVtStatusMsg) // state change triggered from VT Status Msg
   {
-//     if (getVtServerInst().getMultiViewMode())
+    if (ui8_saOrDisplayState == getIdentItem().getIsoItem()->nr())
+      newDisplayState = VtClientDisplayStateActive;
+    else
     {
-      if (ui8_saOrDisplayState == getIdentItem().getIsoItem()->nr())
-        newDisplayState = VtClientDisplayStateActive;
+      if (getVtDisplayState() == VtClientDisplayStateActive)
+        // only cause state change if currently displayed is active
+        newDisplayState = VtClientDisplayStateInactive;
       else
-      {
-        if (getVtDisplayState() == VtClientDisplayStateActive)
-          // only cause state change if currently displayed is active
-          newDisplayState = VtClientDisplayStateInactive;
-        else
-          newDisplayState = getVtDisplayState();
-      }
+        newDisplayState = getVtDisplayState();
     }
-//     else
-//     {
-//       if (ui8_saOrDisplayState == getIdentItem().getIsoItem()->nr())
-//         newDisplayState = VtClientDisplayStateActive;
-//       else
-//       {
-//         newDisplayState = VtClientDisplayStateHidden;
-//       }
-//     }
   }
   else // state change triggered from Display Activation Msg
   {

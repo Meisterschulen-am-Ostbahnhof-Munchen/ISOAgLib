@@ -85,13 +85,34 @@
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 #include "targetfilestreamoutput_c.h"
+namespace __HAL
+{
+  extern "C"
+  {
+    /** include the BIOS specific header into __HAL */
+    #include <commercial_BIOS/bios_Dj1/DjBiosMVT.h>
+  }
+}
 
 //using namespace std;
 
 //! open a output stream
 bool TargetFileStreamOutput_c::open( const char* filename, FileMode_t rt_mode )
 {
-  return true;
+  CNAMESPACE::string mode_string;
+
+  if (StreamIn & rt_mode) {
+    mode_string.push_back('w');
+  }
+  
+  if (mode_string.empty()) {
+    return false;
+  }
+
+  file_handle_ = __HAL::DjBios_IOP_Open(filename, mode_string.c_str());
+
+  bool result = (NULL != file_handle_);
+  return result;
 }
 
 //  Operation: operator>>
@@ -99,7 +120,12 @@ bool TargetFileStreamOutput_c::open( const char* filename, FileMode_t rt_mode )
 //! @param ui8_data:
 TargetFileStreamOutput_c& TargetFileStreamOutput_c::operator<<(uint8_t ui8_data)
 {
-	return *this;
+  uint16_t err = __HAL::DjBios_IOP_Write(file_handle_, 1, 1, &ui8_data);
+  if (err == 0) {
+      ++n_data_write_;
+  }
+  return *this;
+
 }
 
 //! close a output stream
@@ -107,4 +133,5 @@ TargetFileStreamOutput_c& TargetFileStreamOutput_c::operator<<(uint8_t ui8_data)
 //! @param pathname if pathname != NULL => sync file and path
 void TargetFileStreamOutput_c::close(const char* pathname)
 {
+  (void)__HAL::DjBios_IOP_Close(file_handle_);
 }
