@@ -106,7 +106,7 @@ char otCompTable [maxObjectTypesToCompare] [stringLength+1] = {
 };
 
 uint64_t omcTypeTable [maxObjectTypesToCompare] = {
-  /* "workingset", */     ombMacro | ombOutputfield | ombOutputshape | ombPicturegraphic | ombGraphicsContext | ombContainer,
+  /* "workingset", */     ombMacro | ombOutputfield | ombOutputshape | ombPicturegraphic | ombGraphicsContext | ombContainer | ombObjectpointer,
   /* "datamask", */       ombMacro | ombOutputfield | ombInputfield | ombOutputgraphic | ombOutputshape | ombPicturegraphic | ombButton | ombContainer | ombObjectpointer | ombGraphicsContext,
   /* "alarmmask", */      ombMacro | ombOutputfield | ombOutputgraphic | ombOutputshape | ombPicturegraphic | ombContainer | ombObjectpointer | ombGraphicsContext,
   /* "container", */      0, // same as the object that included the container
