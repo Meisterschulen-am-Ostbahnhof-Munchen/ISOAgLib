@@ -202,7 +202,9 @@ public:
   void init (const char* xmlFile, std::basic_string<char>* dictionary = NULL);
 
   bool prepareFileNameAndDirectory (std::basic_string<char>* pch_fileName);
-  
+
+  void convertIdReferenceToNameReference (int ri_attrType);
+
 private:
   signed int strlenUnescaped (const char* pcc_string);
 
@@ -215,8 +217,6 @@ private:
   signed long int idOrName_toi (char* rpc_string, bool rb_isMacro);
 
   void defaultAttributes (unsigned int r_objType);
-
-  void convertIdReferenceToNameReference (int ri_attrType);
 
   void convertIdReferencesToNameReferences();
 
@@ -236,6 +236,8 @@ private:
   bool checkForAllowedExecution() const;
 
   std::string getObjNameWithPoolIdent (char* pcch_objName);
+
+
 
 private:
   bool firstLineFileE;

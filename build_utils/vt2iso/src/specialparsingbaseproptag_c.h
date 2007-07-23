@@ -52,7 +52,7 @@
 #include <xercesc/util/XMLUni.hpp>
 
 #include "vt2iso-defines.hpp"
-#include <vt2iso.hpp>
+#include "vt2iso.hpp"
 
 #ifndef SYSTEM_PC_VC
 #include <stdint.h>
