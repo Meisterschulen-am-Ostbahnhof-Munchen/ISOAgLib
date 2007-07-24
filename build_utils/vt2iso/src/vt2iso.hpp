@@ -205,6 +205,8 @@ public:
 
   void convertIdReferenceToNameReference (int ri_attrType);
 
+  signed long int idOrName_toi (char* rpc_string, bool rb_isMacro);
+
 private:
   signed int strlenUnescaped (const char* pcc_string);
 
@@ -213,8 +215,6 @@ private:
   signed long int getID (const char* objName, bool b_isMacro, bool b_wishingID, unsigned int wishID);
 
   signed long int setID (const char* objName, unsigned int wishID);
-
-  signed long int idOrName_toi (char* rpc_string, bool rb_isMacro);
 
   void defaultAttributes (unsigned int r_objType);
 
