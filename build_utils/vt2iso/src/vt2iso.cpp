@@ -883,10 +883,11 @@ vt2iso_c::idOrName_toi(char* rpc_string, bool rb_isMacro)
     std::cout << "*** ERROR *** idOrName_toi: Empty 'object_id' attribute!\n\n";
     return -1;
   }
-  if (strstr (rpc_string, pcch_poolIdent) != rpc_string) {
-    /** @todo check if all chars in the string are numbers, not only the first! */
-    if ((rpc_string [0] >= '0') && (rpc_string [0] <= '9')) return atoi (rpc_string);
+  /** @todo check if all chars in the string are numbers, not only the first! */
+  if ((rpc_string [0] >= '0') && (rpc_string [0] <= '9')) return atoi (rpc_string);
 
+  if (strstr (rpc_string, pcch_poolIdent) != rpc_string)
+  {
     // add the pool_ident to the name
     std::string fullName = std::string(pcch_poolIdent) + std::string(rpc_string);
     // Starting with a letter, so look up id!
@@ -951,33 +952,41 @@ vt2iso_c::init (const char* xmlFile, std::basic_string<char>* dictionary)
   strncpy (partFileName, xmlFile, 1024);
   strcat (partFileName, "-variables.inc");
   partFile_variables = fopen (partFileName,"wt");
+  if (partFile_variables == NULL) clean_exit ("Couldn't create -variables.inc.");
 
   strncpy (partFileName, xmlFile, 1024);
   strcat (partFileName, "-variables-extern.inc");
   partFile_variables_extern = fopen (partFileName,"wt");
+  if (partFile_variables_extern == NULL) clean_exit ("Couldn't create -variables-extern.inc.");
 
   strncpy (partFileName, xmlFile, 1024);
   strcat (partFileName, "-attributes.inc");
   partFile_attributes = fopen (partFileName,"wt");
+  if (partFile_attributes == NULL) clean_exit ("Couldn't create -attributes.inc.");
 
   strncpy (partFileName, xmlFile, 1024);
   strcat (partFileName, "-functions.inc");
   partFile_functions = fopen (partFileName,"wt");
+  if (partFile_functions == NULL) clean_exit ("Couldn't create -functions.inc.");
+
   fprintf (partFile_functions, "void iObjectPool_%s_c::initAllObjectsOnce (SINGLETON_VEC_KEY_PARAMETER_DEF)\n{\n", proName.c_str());
   fprintf (partFile_functions, "  if (b_initAllObjects) return;   // so the pointer to the ROM structures are only getting set once on initialization!\n");
 
   strncpy (partFileName, xmlFile, 1024);
   strcat (partFileName, "-functions-origin.inc");
   partFile_functions_origin = fopen (partFileName,"wt");
+  if (partFile_functions_origin == NULL) clean_exit ("Couldn't create -functions-origin.inc.");
 
   strncpy (partFileName, xmlFile, 1024);
   strcat (partFileName, "-defines.inc");
   partFile_defines = fopen (partFileName,"wt");
+  if (partFile_defines == NULL) clean_exit ("Couldn't create -defines.inc.");
 
   strncpy (partFileName, xmlFile, 1024);
   strcat (partFileName, "-list.inc");
   partFile_list = fopen (partFileName,"wt");
   fprintf (partFile_list, "IsoAgLib::iVtObject_c* HUGE_MEM all_iVtObjects%s [] = {", pcch_poolIdent);
+  if (partFile_list == NULL) clean_exit ("Couldn't create -list.inc.");
 
   strncpy (partFileName, xmlFile, 1024);
   strcat (partFileName, "-handler-direct.inc");
@@ -991,10 +1000,12 @@ vt2iso_c::init (const char* xmlFile, std::basic_string<char>* dictionary)
     // file couldn't be opened, so create it, simply write to it...
   }
   partFile_handler_direct = fopen (partFileName,"wt");
+  if (partFile_handler_direct == NULL) clean_exit ("Couldn't create -handler_direct.inc.");
 
   strncpy (partFileName, xmlFile, 1024);
   strcat (partFileName, "-handler-derived.inc");
   partFile_handler_derived = fopen (partFileName,"wt");
+  if (partFile_handler_derived == NULL) clean_exit ("Couldn't create -handler_derived.inc.");
 
   for (int j=0; j<maxAttributeNames; j++)
     attrString [j] [stringLength+1-1] = 0x00;
@@ -2336,6 +2347,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
 
               attrString [attrEvent] [stringLength+1-1] = 0x00; attrIsGiven [attrEvent] = false;
               objChildName [stringLength+1-1] = 0x00; is_objChildName = false;
+              is_objChildID = false;
 
               for(int i=0;i<nSize;++i) {
                 DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
