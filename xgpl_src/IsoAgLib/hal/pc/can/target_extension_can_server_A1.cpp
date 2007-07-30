@@ -112,9 +112,6 @@ using namespace __HAL;
 ////////////////////////////////////////////////////////////////////////////////////////
 // Wachendorff stuff...
 
-#define MSGTYPE_EXTENDED        0x02            /* extended frame */
-#define MSGTYPE_STANDARD        0x00            /* standard frame */
-
 /* ioctl request codes */
 #define CAN_MAGIC_NUMBER        'z'
 #define MYSEQ_START             0x80
@@ -127,17 +124,6 @@ using namespace __HAL;
 #define CAN_WRITE_MSG   _IOW(CAN_MAGIC_NUMBER, MYSEQ_START + 1, canmsg)
 #define CAN_READ_MSG    _IOR(CAN_MAGIC_NUMBER, MYSEQ_START + 2, canmsg)
 #endif
-
-struct CANmsg {
-        unsigned        id;
-        int             msg_type;
-        int             len;
-        unsigned char   data[8];
-        unsigned long   time;           /* timestamp in msec, at read only */
-};
-typedef struct CANmsg canmsg;
-
-
 
 
 
@@ -270,7 +256,7 @@ int ca_InitCanCard_1 (uint32_t channel, int wBitrate, server_c* pc_serverData)
 }
 
 
-void __HAL::updatePendingMsgs(server_c* pc_serverData, int8_t i8_bus)
+void __HAL::updatePendingMsgs(server_c* /* pc_serverData */, int8_t /* i8_bus */)
 {
 /// @todo not implemented for right now on A1!
 }
@@ -385,28 +371,14 @@ int ca_TransmitCanCard_1(tSend* ptSend, uint8_t /* ui8_bus */, server_c* /* pc_s
   return 1;
 }
 
-int ca_ReceiveCanCard_1(can_recv_data* receiveData, uint8_t ui8_bus, server_c* pc_serverData)
+int ca_ReceiveCanCard_1(uint8_t ui8_bus, server_c* pc_serverData, CANmsg *ps_canMsg)
 {
+  int ret = ioctl(pc_serverData->can_device[ui8_bus], CAN_READ_MSG, ps_canMsg);
 
-  CANmsg msg;
-  int ret = ioctl(pc_serverData->can_device[ui8_bus], CAN_READ_MSG, &msg);
-
-  if (ret < 0) {
-    return ret;
-  } else {
-    receiveData->b_bus = ui8_bus;
-    receiveData->msg.i32_ident = msg.id;
-    receiveData->msg.b_xtd = (msg.msg_type & MSGTYPE_EXTENDED) == MSGTYPE_EXTENDED;
-    receiveData->msg.b_dlc = msg.len;
-    receiveData->msg.i32_time = msg.time;
-    memcpy( receiveData->msg.pb_data, msg.data, msg.len );
-  }
-
-  return 1;
-
+  return ret;
 }
 
-void addSendTimeStampToList(client_s *ps_client, int32_t i32_sendTimeStamp)
+void addSendTimeStampToList(client_c * /*ps_client*/, int32_t /*i32_sendTimeStamp*/)
 {
   // until now: disabled for A1!
   //list_sendTimeStamps.push_front (getServerTimeFromClientTime (*ps_client, i32_sendTimeStamp));

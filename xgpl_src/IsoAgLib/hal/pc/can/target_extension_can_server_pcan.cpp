@@ -519,7 +519,7 @@ int ca_TransmitCanCard_1(tSend* ptSend, uint8_t ui8_bus, server_c* pc_serverData
   return 1;
 }
 
-int ca_ReceiveCanCard_1(can_recv_data* receiveData, uint8_t ui8_bus, server_c* pc_serverData)
+int ca_ReceiveCanCard_1(uint8_t ui8_bus, server_c* pc_serverData, CANmsg *ps_canMsg)
 {
 
   TPCANRdMsg msg;
@@ -529,28 +529,26 @@ int ca_ReceiveCanCard_1(can_recv_data* receiveData, uint8_t ui8_bus, server_c* p
   int ret = ioctl(pc_serverData->can_device[ui8_bus], PCAN_READ_MSG, &msg);
 #endif
 
-  if (ret < 0) {
+  if (ret < 0)
     return ret;
-  } else {
-    receiveData->b_bus = ui8_bus;
-    receiveData->msg.i32_ident = msg.Msg.ID;
-    receiveData->msg.b_xtd = (msg.Msg.MSGTYPE & MSGTYPE_EXTENDED) == MSGTYPE_EXTENDED;
-    receiveData->msg.b_dlc = msg.Msg.LEN;
-    receiveData->msg.i32_time = msg.dwTime;
-    memcpy( receiveData->msg.pb_data, msg.Msg.DATA, msg.Msg.LEN );
-  }
 
-  return 1;
+  ps_canMsg->id = msg.Msg.ID;
+  ps_canMsg->msg_type = msg.Msg.MSGTYPE;
+  ps_canMsg->len = msg.Msg.LEN;
+  ps_canMsg->time = msg.dwTime;
 
+  memcpy( ps_canMsg->data, msg.Msg.DATA, msg.Msg.LEN );
+
+  return ret;
 }
 
-int32_t getServerTimeFromClientTime( client_s& ref_receiveClient, int32_t ri32_clientTime )
+int32_t getServerTimeFromClientTime( client_c& ref_receiveClient, int32_t ri32_clientTime )
 {
   return ri32_clientTime + ref_receiveClient.i32_msecStartDeltaClientMinusServer;
 }
 
 
-void addSendTimeStampToList(client_s *ps_client, int32_t i32_sendTimeStamp)
+void addSendTimeStampToList(client_c *ps_client, int32_t i32_sendTimeStamp)
 {
   list_sendTimeStamps.push_front (getServerTimeFromClientTime (*ps_client, i32_sendTimeStamp));
 }

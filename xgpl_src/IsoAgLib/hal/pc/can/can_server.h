@@ -11,9 +11,22 @@
 #include <cstdlib>	// Include before vector or else CNAMESPACE stuff is screwed up for Tasking
 #include <vector>
 
+#define MSGTYPE_EXTENDED        0x02            /* extended frame */
+#define MSGTYPE_STANDARD        0x00            /* standard frame */
+
 using namespace __HAL;
 
 namespace __HAL {
+
+struct CANmsg {
+        unsigned        id;
+        int             msg_type;
+        int             len;
+        unsigned char   data[8];
+        unsigned long   time;           /* timestamp in msec, at read only */
+};
+typedef struct CANmsg canmsg;
+
 
 typedef struct {
   bool     b_canBufferLock;
@@ -28,14 +41,20 @@ typedef struct {
 } tMsgObj;
 
 // client specific data
-typedef struct {
+struct client_c 
+{
+public:
+  client_c();
+
   uint16_t ui16_pID;
   int32_t  i32_msecStartDeltaClientMinusServer;
 
   //typedef STL_NAMESPACE::vector<tMsgObj> ArrMsgObj;
   //ArrMsgObj arrMsgObj[cui32_maxCanBusCnt];
   std::vector<tMsgObj> arrMsgObj[cui32_maxCanBusCnt];
-  
+
+  bool     b_busUsed[cui32_maxCanBusCnt];
+
   uint16_t ui16_globalMask[cui32_maxCanBusCnt];
   uint32_t ui32_globalMask[cui32_maxCanBusCnt];
   uint32_t ui32_lastMask[cui32_maxCanBusCnt];
@@ -43,7 +62,7 @@ typedef struct {
   int32_t  i32_sendDelay[cui32_maxCanBusCnt];
 
   bool     b_initReceived[cui32_maxCanBusCnt];
-} client_s;
+};
 
 
 
@@ -57,7 +76,7 @@ public:
 //      memset(ui16_globalMask, 0, sizeof(ui16_globalMask));
 //  }
   msqData_s msqDataServer;
-  std::list<client_s> l_clients;
+  std::list<client_c> l_clients;
   std::string logFileBase;
   std::string inputFile;
   uint16_t ui16_globalMask[cui32_maxCanBusCnt];
@@ -68,11 +87,12 @@ public:
   bool     b_inputFileMode;
   FILE*    f_canInput;
 
-  // if >0 => do not send messages with local destination address on the bus
-  int16_t  i16_reducedLoadOnIsoBus;
   bool     arrb_remoteDestinationAddressInUse[0x100];
 
   int32_t  i32_lastPipeId;
+  // if >0 => do not send messages with local destination address on the bus
+  int16_t  i16_reducedLoadOnIsoBus;
+
   int16_t  can_device[cui32_maxCanBusCnt];
   int32_t  i32_sendDelay[cui32_maxCanBusCnt];
   int      i_pendingMsgs[cui32_maxCanBusCnt];
@@ -91,7 +111,7 @@ void usage();
 void dumpCanMsg (uint8_t bBusNumber, uint8_t bMsgObj, tSend* ptSend, FILE* f_handle);
 bool readCanDataFile(server_c* pc_serverData, can_recv_data* ps_receiveData);
 // iterator reference because releaseClient erases client
-void releaseClient(server_c* pc_serverData, std::list<client_s>::iterator& iter_delete);
+void releaseClient(server_c* pc_serverData, std::list<client_c>::iterator& iter_delete);
 
 
 } // end namespace
@@ -103,9 +123,9 @@ int ca_InitApi_1 ();
 int ca_ResetCanCard_1(void);
 int ca_InitCanCard_1 (uint32_t channel, int wBitrate, server_c* pc_serverData);
 int ca_TransmitCanCard_1(tSend* ptSend, uint8_t ui8_bus, server_c* pc_serverData);
-int ca_ReceiveCanCard_1(can_recv_data* receiveData, uint8_t ui8_bus, server_c* pc_serverData);
+int ca_ReceiveCanCard_1(uint8_t ui8_bus, server_c* pc_serverData, CANmsg *ps_canMsg);
 bool ca_GetcanBusIsOpen_1 (int busId);
 
-void addSendTimeStampToList(client_s *ps_client, int32_t i32_sendTimeStamp);
+void addSendTimeStampToList(client_c *ps_client, int32_t i32_sendTimeStamp);
 
 #endif

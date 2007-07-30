@@ -134,7 +134,7 @@ server_c::server_c()
   memset(arrb_remoteDestinationAddressInUse, 0, sizeof(arrb_remoteDestinationAddressInUse));
   memset(ui16_busRefCnt, 0, sizeof(ui16_busRefCnt));
 
-  for (int i=0; i<cui32_maxCanBusCnt; i++)
+  for (uint32_t i=0; i<cui32_maxCanBusCnt; i++)
   {
     i32_sendDelay[i] = 0;
     i_pendingMsgs[i] = 0;
@@ -142,6 +142,17 @@ server_c::server_c()
 
   pthread_mutex_init(&m_protectClientList, NULL);
 
+}
+
+client_c::client_c() 
+  : ui16_pID(0), i32_msecStartDeltaClientMinusServer(0), i32_pipeHandle(0)
+{
+  memset(b_busUsed, 0, sizeof(b_busUsed));
+  memset(ui16_globalMask, 0, sizeof(ui16_globalMask));
+  memset(ui32_globalMask, 0, sizeof(ui32_globalMask));
+  memset(ui32_lastMask, 0, sizeof(ui32_lastMask));
+  memset(i32_sendDelay, 0, sizeof(i32_sendDelay));
+  memset(b_initReceived, 0, sizeof(b_initReceived));
 }
 
 
@@ -260,7 +271,7 @@ clock_t getStartUpTime()
 #endif
 
 
-void initClientTime( client_s& ref_receiveClient, clock_t rt_startupClock )
+void initClientTime( client_c& ref_receiveClient, clock_t rt_startupClock )
 {
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0))
   ref_receiveClient.i32_msecStartDeltaClientMinusServer = (rt_startupClock - getStartUpTime())*msecPerClock;
@@ -270,12 +281,12 @@ void initClientTime( client_s& ref_receiveClient, clock_t rt_startupClock )
   DEBUG_PRINT1 ("Initialized ref_receiveClient.i32_msecStartDeltaClientMinusServer to %d\n", ref_receiveClient.i32_msecStartDeltaClientMinusServer);
 }
 
-int32_t getClientTime( client_s& ref_receiveClient )
+int32_t getClientTime( client_c& ref_receiveClient )
 {
   return getTime() - ref_receiveClient.i32_msecStartDeltaClientMinusServer;
 }
 
-//int32_t getServerTimeFromClientTime( client_s& ref_receiveClient, int32_t ri32_clientTime )
+//int32_t getServerTimeFromClientTime( client_c& ref_receiveClient, int32_t ri32_clientTime )
 //{
 //  return ri32_clientTime + ref_receiveClient.i32_msecStartDeltaClientMinusServer;
 //}
@@ -287,7 +298,7 @@ static void enqueue_msg(uint32_t DLC, uint32_t ui32_id, uint32_t b_bus, uint8_t 
 {
 
   can_data* pc_data;
-  std::list<client_s>::iterator iter, iter_delete = pc_serverData->l_clients.end();
+  std::list<client_c>::iterator iter, iter_delete = pc_serverData->l_clients.end();
 
   // mutex to prevent client list modification already got in calling function
 
@@ -301,6 +312,9 @@ static void enqueue_msg(uint32_t DLC, uint32_t ui32_id, uint32_t b_bus, uint8_t 
   memcpy( pc_data->pb_data, pui8_data, DLC );
 
   for (iter = pc_serverData->l_clients.begin(); iter != pc_serverData->l_clients.end(); iter++) {
+
+    if (!iter->b_busUsed[b_bus])
+      continue;
 
     // send signal 0 (no signal is send, but error handling is done) to check is process is alive
     if (kill(iter->ui16_pID, 0) == -1) {
@@ -317,20 +331,22 @@ static void enqueue_msg(uint32_t DLC, uint32_t ui32_id, uint32_t b_bus, uint8_t 
 
     // now search for MsgObj queue on this b_bus, where new message from b_bus maps
     // start with 1 since MsgObj with id 0 is anyway planned for sending
-    for (int32_t i32_obj = 1; i32_obj < int32_t(iter->arrMsgObj[b_bus].size()); i32_obj++) {
-
-      if (!iter->arrMsgObj[b_bus][i32_obj].b_canObjConfigured)
-        continue;
-
-      if ( iter->arrMsgObj[b_bus][i32_obj].b_canBufferLock ) {
-        // don't even check this MsgObj as it shall not receive messages
-        DEBUG_PRINT2("lock bus %d, obj %d\n", b_bus, i32_obj);
-        continue;
-      }
+    const int32_t i32_maxObj = iter->arrMsgObj[b_bus].size();
+    for (int32_t i32_obj = 1; i32_obj < i32_maxObj; i32_obj++) {
 
       if ( (iter->arrMsgObj[b_bus][i32_obj].ui8_bMsgType != RX )
         || (iter->arrMsgObj[b_bus][i32_obj].ui16_size == 0     ) )
       { // this MsgObj is no candidate for message receive
+        continue;
+      }
+
+      if (!iter->arrMsgObj[b_bus][i32_obj].b_canObjConfigured) {
+        continue;
+      }
+
+      if ( iter->arrMsgObj[b_bus][i32_obj].b_canBufferLock ) {
+        // don't even check this MsgObj as it shall not receive messages
+        DEBUG_PRINT2("lock bus %d, obj %d\n", b_bus, i32_obj);
         continue;
       }
 
@@ -454,6 +470,7 @@ static void enqueue_msg(uint32_t DLC, uint32_t ui32_id, uint32_t b_bus, uint8_t 
           break;
 
         } // if fit
+
     } // for objNr
   }// for iter
 
@@ -462,6 +479,7 @@ static void enqueue_msg(uint32_t DLC, uint32_t ui32_id, uint32_t b_bus, uint8_t 
     releaseClient(pc_serverData, iter_delete);
 
 }
+
 
 std::list<int32_t> __HAL::list_sendTimeStamps;
 
@@ -534,9 +552,9 @@ static void* can_write_thread_func(void* ptr)
       pc_serverData->arrb_remoteDestinationAddressInUse[msqWriteBuf.s_sendData.dwId & 0xFF] = false;
     }
 
-    client_s* ps_client = NULL;
+    client_c* ps_client = NULL;
     // search client...
-    for (std::list<client_s>::iterator iter = pc_serverData->l_clients.begin(); iter != pc_serverData->l_clients.end(); iter++)
+    for (std::list<client_c>::iterator iter = pc_serverData->l_clients.begin(); iter != pc_serverData->l_clients.end(); iter++)
     {
       if (iter->ui16_pID == msqWriteBuf.ui16_pid) // not used any more in write thread!!! directly having the variables now! disassemble_client_id(msqWriteBuf.i32_mtype))
       {
@@ -582,7 +600,7 @@ static void* can_write_thread_func(void* ptr)
       { // i16_rc != 0: send was ok
         if (i16_rc == HAL_NEW_SEND_DELAY)
         { // send was okay with "new send delay detected"!
-          for (std::list<client_s>::iterator iter = pc_serverData->l_clients.begin(); iter != pc_serverData->l_clients.end(); iter++)
+          for (std::list<client_c>::iterator iter = pc_serverData->l_clients.begin(); iter != pc_serverData->l_clients.end(); iter++)
           {
             iter->i32_sendDelay[msqWriteBuf.ui8_bus] = pc_serverData->i32_sendDelay[msqWriteBuf.ui8_bus];
           }
@@ -619,6 +637,17 @@ static void can_read(server_c* pc_serverData)
   bool b_moreToRead = TRUE;
 #endif
 
+  static CANmsg s_canMsg;
+
+#ifndef SIMULATE_BUS_MODE
+  fd_set rfds;
+  int retval;
+  int maxfd = 0;
+  uint32_t channel;
+#endif
+
+  uint32_t channel_with_change;
+
   for (;;) {
 
     DEBUG_PRINT(".");
@@ -627,17 +656,12 @@ static void can_read(server_c* pc_serverData)
 
 #ifndef SIMULATE_BUS_MODE
 
-    fd_set rfds;
-    int retval;
-    uint32_t channel, channel_with_change;
-    int maxfd = 0;
-
+    maxfd = 0;
     // get maxfd
     for (channel=0; channel<cui32_maxCanBusCnt; channel++ ) {
       if (ca_GetcanBusIsOpen_1(channel) && pc_serverData->can_device[channel]>maxfd)
         maxfd=pc_serverData->can_device[channel];
     }
-
     maxfd++;
 
     FD_ZERO(&rfds);
@@ -676,7 +700,7 @@ static void can_read(server_c* pc_serverData)
       // acquire mutex to prevent concurrent read/write to can driver
       pthread_mutex_lock( &(pc_serverData->m_protectClientList) );
 
-      int16_t i16_rc = ca_ReceiveCanCard_1(&receiveData,channel_with_change, pc_serverData);
+      int16_t i16_rc = ca_ReceiveCanCard_1(channel_with_change, pc_serverData, &s_canMsg);
 
       if (i16_rc < 0) {
         /* nothing to read or interrupted system call */
@@ -686,10 +710,12 @@ static void can_read(server_c* pc_serverData)
         DEBUG_PRINT1("CANRead error: %i\n", i16_rc);
         b_processMsg = FALSE;
 
-        // unlock mutex (b_processMsg == FALSE => continue)
+        // unlock mutex
         pthread_mutex_unlock( &(pc_serverData->m_protectClientList) );
 
+        continue;
       }
+
     }
 
 #else
@@ -711,40 +737,39 @@ static void can_read(server_c* pc_serverData)
       continue;
     }
 
-    DLC = ( receiveData.msg.b_dlc & 0xF );
+    DLC = ( s_canMsg.len & 0xF );
     if ( DLC > 8 ) DLC = 8;
-    const uint32_t ui32_id = receiveData.msg.i32_ident;
-    const uint32_t b_bus = receiveData.b_bus;
-    const uint8_t b_xtd = receiveData.msg.b_xtd;
 
-    DEBUG_PRINT4("DLC %d, ui32_id 0x%08x, b_bus %d, b_xtd %d\n", DLC, ui32_id, b_bus, b_xtd);
+    const uint8_t b_xtd = (s_canMsg.msg_type & MSGTYPE_EXTENDED) == MSGTYPE_EXTENDED;
 
-    if (ui32_id >= 0x7FFFFFFF) {
-      DEBUG_PRINT1("!!Received of malformed message with undefined CAN ident: %x\n", ui32_id);
+    DEBUG_PRINT4("DLC %d, ui32_id 0x%08x, b_bus %d, b_xtd %d\n", DLC, s_canMsg.id, channel_with_change, b_xtd);
+
+    if (s_canMsg.id >= 0x7FFFFFFF) {
+      DEBUG_PRINT1("!!Received of malformed message with undefined CAN ident: %x\n", s_canMsg.id);
     }
     else
     { // check for new source address
-      if (pc_serverData->i16_reducedLoadOnIsoBus == b_bus)
+      if (pc_serverData->i16_reducedLoadOnIsoBus == (int16_t)channel_with_change)
       { // On ISOBUS, mark this SA as REMOTE
         #ifdef DEBUG
-        if (!pc_serverData->arrb_remoteDestinationAddressInUse[ui32_id & 0xFF] && ((ui32_id & 0xFF) != 0xFE)) // skip 0xFE source address
+        if (!pc_serverData->arrb_remoteDestinationAddressInUse[s_canMsg.id & 0xFF] && ((s_canMsg.id & 0xFF) != 0xFE)) // skip 0xFE source address
         { // new, unknown source address
-          DEBUG_PRINT1("Reduced ISO bus load: new source address 0x%x is now marked as REMOTE (was LOCAL before).\n", ui32_id & 0xFF);
+          DEBUG_PRINT1("Reduced ISO bus load: new source address 0x%x is now marked as REMOTE (was LOCAL before).\n", s_canMsg.id & 0xFF);
         }
         #endif
-        pc_serverData->arrb_remoteDestinationAddressInUse[ui32_id & 0xFF] = true;
+        pc_serverData->arrb_remoteDestinationAddressInUse[s_canMsg.id & 0xFF] = true;
       }
 
       if (pc_serverData->b_logMode)
       { /** @todo shouldn't we only dump the message to the FILE if NO ERROR? Or at elast flag it like this in the can-log!! ? */
         tSend tempSend;
-        tempSend.dwId = ui32_id;
+        tempSend.dwId = s_canMsg.id;
         tempSend.bXtd = b_xtd;
         tempSend.bDlc = DLC;
         memcpy (tempSend.abData, &receiveData.msg.pb_data, 8);
-        dumpCanMsg (b_bus, 0/* we don't have no msgobj when receiving .. msqWriteBuf.ui8_obj*/, &tempSend, pc_serverData->f_canOutput[b_bus]);
+        dumpCanMsg (channel_with_change, 0/* we don't have no msgobj when receiving .. msqWriteBuf.ui8_obj*/, &tempSend, pc_serverData->f_canOutput[channel_with_change]);
       }
-      enqueue_msg(DLC, ui32_id, b_bus, b_xtd, &receiveData.msg.pb_data[0], 0, pc_serverData);
+      enqueue_msg(DLC, s_canMsg.id, channel_with_change, b_xtd, &s_canMsg.data[0], 0, pc_serverData);
     }
 
     // release mutex
@@ -785,7 +810,7 @@ static void* command_thread_func(void* ptr)
     pthread_mutex_lock( &(pc_serverData->m_protectClientList) );
 
     // get client
-    std::list<client_s>::iterator iter_client = pc_serverData->l_clients.end(), tmp_iter;
+    std::list<client_c>::iterator iter_client = pc_serverData->l_clients.end(), tmp_iter;
     for (tmp_iter = pc_serverData->l_clients.begin(); tmp_iter != pc_serverData->l_clients.end(); tmp_iter++)
       if (tmp_iter->ui16_pID == msqCommandBuf.i32_mtypePid) // here the mtype is the PID without any disassembling needed!
       {
@@ -814,11 +839,11 @@ static void* command_thread_func(void* ptr)
 
         case COMMAND_REGISTER:
         {
-          client_s s_tmpClient;
+          client_c s_tmpClient; // constructor initialize values to zero
           DEBUG_PRINT("command start driver\n");
 
           // do check for dead clients before queueing any new message
-          for (std::list<client_s>::iterator iter_deadClient = pc_serverData->l_clients.begin(); iter_deadClient != pc_serverData->l_clients.end();) {
+          for (std::list<client_c>::iterator iter_deadClient = pc_serverData->l_clients.begin(); iter_deadClient != pc_serverData->l_clients.end();) {
 
             // send signal 0 (no signal is send, but error handling is done) to check is process is alive
             if (kill(iter_deadClient->ui16_pID, 0) == -1) {
@@ -830,10 +855,6 @@ static void* command_thread_func(void* ptr)
               // increment iter_deadClient manually (not in for statement)
               iter_deadClient++;
           }
-
-
-          // initialize all contents with ZERO
-          memset(&s_tmpClient, 0, sizeof(client_s));
 
           // no need to set to 0, as everything got set to zero before!
           // s_tmpClient.i32_sendDelay[all-buses] = 0;
@@ -924,6 +945,7 @@ static void* command_thread_func(void* ptr)
           if (!i32_error) {
             pc_serverData->ui16_busRefCnt[msqCommandBuf.s_init.ui8_bus]++;
             iter_client->b_initReceived[msqCommandBuf.s_init.ui8_bus] = true; // when the CLOSE command is received => allow decrement of ref count
+            iter_client->b_busUsed[msqCommandBuf.s_init.ui8_bus] = true; // when the CLOSE command is received => allow decrement of ref count
           }
           // do rest of init handling in next case statement (no break!)
 

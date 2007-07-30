@@ -181,7 +181,7 @@ bool readCanDataFile(server_c* pc_serverData, can_recv_data* ps_receiveData)
   return TRUE;
 }
 
-void releaseClient(server_c* pc_serverData, std::list<client_s>::iterator& iter_delete) {
+void releaseClient(server_c* pc_serverData, std::list<client_c>::iterator& iter_delete) {
 
   for (uint8_t i=0; i<cui32_maxCanBusCnt; i++)
   {
