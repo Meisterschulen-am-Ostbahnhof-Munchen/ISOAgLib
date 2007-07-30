@@ -178,6 +178,12 @@ TargetFileStreamInput_c& TargetFileStreamInput_c::operator>>(uint8_t &ui8_data)
     ui16_bytesInBuffer = fread(ch_buf, 1, cui16_bufSize, fileDescr);
     ui16_currentReadIndexInBuffer = 0;
     b_eofReached = feof(fileDescr);
+    if (!b_eofReached)
+    {
+      ungetc(fgetc(fileDescr), fileDescr); // do peek
+      // stream state is still EOF after fgetc/ungetc in case fgetc yields EOF
+      b_eofReached = feof(fileDescr);
+    }
   }
 
   if (ui16_currentReadIndexInBuffer < ui16_bytesInBuffer)
