@@ -131,6 +131,16 @@ public:
     vtObjectButton_c::setKeyCode (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
 
+#ifdef REVISION3_CLIENT
+  //  Operation: setOptions
+  //! Parameter:
+  //! @param newValue:
+  //! @param b_updateObject:
+  void setOptions(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
+    vtObjectButton_c::setOptions (newValue, b_updateObject, b_enableReplaceOfCmd);
+  }
+#endif
+
   //  Operation: moveChildLocation
   //! Parameter:
   //! @param rpc_childObject:

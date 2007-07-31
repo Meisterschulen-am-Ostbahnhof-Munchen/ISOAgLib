@@ -145,6 +145,12 @@ public:
 
   void setOriginBTN(IsoAgLib::iVtObjectButton_c* p_btn);
 
+#ifdef REVISION3_CLIENT
+  void setOptions (uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
+    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectButton_a(), options) : 0, sizeof(iVtObjectButton_s), 6, newValue, newValue, b_enableReplaceOfCmd);
+  }
+#endif
+
     // ///////////////////////// getter for attributes
   /** that attribute is in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const { return 6; }
