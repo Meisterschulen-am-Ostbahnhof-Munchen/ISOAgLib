@@ -110,7 +110,7 @@
 
 using namespace std;
 
-#ifdef NMEA_2000_FAST_PACKET
+#ifdef ENABLE_NMEA_2000_MULTI_PACKET
 // Off-class/namespace c-style helper functions
 void getDegree10Minus7FromStream( IsoAgLib::iStream_c& refc_stream, int32_t& refi32_result )
 {
@@ -156,11 +156,11 @@ void getAltitude10Minus2FromStream( IsoAgLib::iStream_c& refc_stream, uint32_t& 
   refui32_result = int32_t( d_temp );
   #endif
 }
-#endif // END of NMEA_2000_FAST_PACKET
+#endif // END of ENABLE_NMEA_2000_MULTI_PACKET
 
 namespace __IsoAgLib {
 
-  #if defined(NMEA_2000_FAST_PACKET)
+  #if defined(ENABLE_NMEA_2000_MULTI_PACKET)
   /** place next data to send direct into send buffer of pointed
     stream send package - MultiSend_c will send this
     buffer afterwards
@@ -210,7 +210,7 @@ namespace __IsoAgLib {
   {
     return *(vec_data.begin());
   }
-  #endif // END of NMEA_2000_FAST_PACKET
+  #endif // END of ENABLE_NMEA_2000_MULTI_PACKET
 
 
   /** HIDDEN constructor for a TimePosGPS_c object instance which can optional
@@ -220,11 +220,9 @@ namespace __IsoAgLib {
   only access TimePosGPS_c via getTimePosGpsInstance() or getTimePosGpsInstance( int riLbsBusNr ) in case more than one ISO11783 or DIN9684 BUS is used for IsoAgLib
    */
   TimePosGPS_c::TimePosGPS_c()
-#ifdef USE_ISO_11783
   : c_sendGpsISOName(),
   pc_isoNameGps(NULL),
   t_identModeGps( IsoAgLib::IdentModeImplement )
-#endif
   {}
 
 
@@ -273,7 +271,7 @@ namespace __IsoAgLib {
       bool b_noPosition = false;
       if (
           ( (ci32_now - i32_lastIsoPositionSimple) >= TIMEOUT_SENDING_NODE )
-          #ifdef NMEA_2000_FAST_PACKET
+          #ifdef ENABLE_NMEA_2000_MULTI_PACKET
           &&
           ( (ci32_now - i32_lastIsoPositionStream) >= TIMEOUT_SENDING_NODE )
           #endif
@@ -281,7 +279,7 @@ namespace __IsoAgLib {
       { // the previously sending node didn't send POSITION information for 3 seconds -> give other items a chance
         i32_latitudeDegree10Minus7 = i32_longitudeDegree10Minus7 = 0x7FFFFFFF;
         t_gnssMethod = IsoAgLib::IsoNoGps;
-        #ifdef NMEA_2000_FAST_PACKET
+        #ifdef ENABLE_NMEA_2000_MULTI_PACKET
         t_gnssType = IsoAgLib::IsoGnssGps;
         ui8_satelliteCnt = 0;
         ui32_altitudeCm = 0;
@@ -453,13 +451,13 @@ namespace __IsoAgLib {
     //set configure values
     i32_lastIsoPositionSimple = 0;
     i32_lastIsoDirection = 0;
-#ifdef NMEA_2000_FAST_PACKET
+#ifdef ENABLE_NMEA_2000_MULTI_PACKET
     i32_lastIsoPositionStream = 0;
     t_multiSendSuccessState = MultiSend_c::SendSuccess;
     ui32_altitudeCm = 0xFFFFFFFF;
 
     ui8_satelliteCnt = 0;
-#endif // END of NMEA_2000_FAST_PACKET
+#endif // END of ENABLE_NMEA_2000_MULTI_PACKET
 
     pc_isoNameGps = rpc_isoName;
     t_identModeGps = rt_identModeGps;
@@ -471,28 +469,25 @@ namespace __IsoAgLib {
     { // GPS send from now on
       // because wer are in tractor mode the rpc_isoName cannot be NULL
       c_sendGpsISOName = *rpc_isoName;
+      #ifdef ENABLE_NMEA_2000_MULTI_PACKET
       // also remove any previously registered MultiReceive connections
       getMultiReceiveInstance4Comm().deregisterClient( *this );
-      #ifdef NMEA_2000_FAST_PACKET
       c_nmea2000Streamer.reset();
       c_nmea2000Streamer.vec_data.resize(0);
-      #endif // END of NMEA_2000_FAST_PACKET
+      #endif // END of ENABLE_NMEA_2000_MULTI_PACKET
     }
     else
     { // IdentModeImplement
       c_sendGpsISOName.setUnspecified();
       // register Broadcast-TP/FP receive of NMEA 2000 data
       // make sure that the needed multi receive are registered
-      #ifndef NMEA_2000_FAST_PACKET
-      getMultiReceiveInstance4Comm().registerClient(*this, __IsoAgLib::ISOName_c::ISONameUnspecified(), NMEA_GPS_POSITION_DATA_PGN,  0x3FFFF00, true, false);
-      getMultiReceiveInstance4Comm().registerClient(*this, __IsoAgLib::ISOName_c::ISONameUnspecified(), NMEA_GPS_DIRECTION_DATA_PGN, 0x3FFFF00, true, false);
-      #else
+      #ifdef ENABLE_NMEA_2000_MULTI_PACKET
       getMultiReceiveInstance4Comm().registerClient(*this, __IsoAgLib::ISOName_c::ISONameUnspecified(), NMEA_GPS_POSITION_DATA_PGN,  0x3FFFF00, true, false, false);
       getMultiReceiveInstance4Comm().registerClient(*this, __IsoAgLib::ISOName_c::ISONameUnspecified(), NMEA_GPS_DIRECTION_DATA_PGN, 0x3FFFF00, true, false, false);
       getMultiReceiveInstance4Comm().registerClient(*this, __IsoAgLib::ISOName_c::ISONameUnspecified(), NMEA_GPS_POSITION_DATA_PGN,  0x3FFFF00, true, false, true);
       getMultiReceiveInstance4Comm().registerClient(*this, __IsoAgLib::ISOName_c::ISONameUnspecified(), NMEA_GPS_DIRECTION_DATA_PGN, 0x3FFFF00, true, false, true);
       c_nmea2000Streamer.vec_data.reserve(51); // GNSS Position Data with TWO reference stations
-      #endif // END of NMEA_2000_FAST_PACKET
+      #endif // END of ENABLE_NMEA_2000_MULTI_PACKET
     }
 
     if ( checkMode( IsoAgLib::IdentModeTractor ) || checkModeGps( IsoAgLib::IdentModeTractor ) )
@@ -513,7 +508,7 @@ namespace __IsoAgLib {
   int32_t TimePosGPS_c::lastedTimeSinceUpdateGps() const
   {
     const int32_t ci32_now = getLastRetriggerTime();
-    #ifdef NMEA_2000_FAST_PACKET
+    #ifdef ENABLE_NMEA_2000_MULTI_PACKET
     if ( i32_lastIsoPositionStream > i32_lastIsoPositionSimple ) return ( ci32_now - i32_lastIsoPositionStream);
     else return ( ci32_now - i32_lastIsoPositionSimple);
     #else
@@ -523,7 +518,7 @@ namespace __IsoAgLib {
   /** Retrieve the time of last update */
   int32_t TimePosGPS_c::lastUpdateTimeGps() const
   {
-    #ifdef NMEA_2000_FAST_PACKET
+    #ifdef ENABLE_NMEA_2000_MULTI_PACKET
     if ( i32_lastIsoPositionStream > i32_lastIsoPositionSimple ) return i32_lastIsoPositionStream;
     else return i32_lastIsoPositionSimple;
     #else
@@ -619,7 +614,7 @@ namespace __IsoAgLib {
           { /// @todo Allow Rapid Update without Complete Position TP/FP before? Is is just an update or can it be standalone?
               /// for now, allow it as standalone and set GpsMethod simply to IsoGnssNull as we don't have reception info...
             t_gnssMethod = IsoAgLib::IsoGnssNull; // was IsoGnssFix before. Actually, noone knows what to set here ;-)
-            #ifdef NMEA_2000_FAST_PACKET
+            #ifdef ENABLE_NMEA_2000_MULTI_PACKET
             t_gnssType = IsoAgLib::IsoGnssGps;
             #endif
           }
@@ -701,7 +696,7 @@ namespace __IsoAgLib {
   }
 
 
-  #ifdef NMEA_2000_FAST_PACKET
+  #ifdef ENABLE_NMEA_2000_MULTI_PACKET
   /** set the GPS time in UTC timezone.
   *  When no remote system is sending the 11783-7 PGN with date & time, the new UTC time is also set with
   *  setTimeUtc().
@@ -994,7 +989,7 @@ namespace __IsoAgLib {
     }
     return false;
   }
-  #endif // END NMEA_2000_FAST_PACKET
+  #endif // END ENABLE_NMEA_2000_MULTI_PACKET
 
   /** send a ISO11783 base information PGN.
     * this is only called when sending ident is configured and it has already claimed an address
@@ -1019,7 +1014,7 @@ namespace __IsoAgLib {
         isoSendDirection();
       }
 
-      #ifdef NMEA_2000_FAST_PACKET
+      #ifdef ENABLE_NMEA_2000_MULTI_PACKET
       if ( ( isPositionStreamToSend() )
         && ( ( ci32_now - i32_lastIsoPositionStream ) >= 1000 )
         && ( t_multiSendSuccessState != MultiSend_c::Running  ) )
@@ -1027,7 +1022,7 @@ namespace __IsoAgLib {
         if ( getAvailableExecTime() == 0 ) return false;
         isoSendPositionStream();
       }
-      #endif // END of NMEA_2000_FAST_PACKET
+      #endif // END of ENABLE_NMEA_2000_MULTI_PACKET
     }
     return true;
   }
@@ -1115,7 +1110,7 @@ void TimePosGPS_c::isoSendDirection( void )
 }
 
 
-#if defined(NMEA_2000_FAST_PACKET)
+#if defined(ENABLE_NMEA_2000_MULTI_PACKET)
   void setDegree10Minus7ToStream( const int32_t& refi32_src, std::vector<uint8_t>& writeRef )
   {
     #if SIZEOF_INT == 4
@@ -1228,7 +1223,7 @@ void TimePosGPS_c::isoSendDirection( void )
       i32_lastIsoPositionStream = ci32_now;
    }
   }
-  #endif // END OF NMEA_2000_FAST_PACKET
+  #endif // END OF ENABLE_NMEA_2000_MULTI_PACKET
 
   /** send ISO11783 calendar PGN
       @param rc_isoName ISOName code off calling item which wants to send
@@ -1540,7 +1535,7 @@ void TimePosGPS_c::isoSendDirection( void )
                             0,0,-1
                             #if defined(__USE_BSD) || defined(__GNU_LIBRARY__) || defined(__GLIBC__) || defined(__GLIBC_MINOR__)
                             , 0, NULL
-                                  #endif
+                            #endif
                             };
       t_cachedLocalSeconds1970AtLastSet = mktime( &testTime );
       if (-1 == t_cachedLocalSeconds1970AtLastSet) return NULL;

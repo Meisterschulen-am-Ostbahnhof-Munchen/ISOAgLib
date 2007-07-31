@@ -419,6 +419,16 @@
   /// BUS problem, if no message received in this time
   #define CONFIG_CAN_MAX_CAN_IDLE 3000
 #endif
+
+/** define interval for detection of incoming message loss.
+    -> should normally NOT be changed by the user/app.
+       keep it as is!
+*/
+#ifndef TIMEOUT_TRACTOR_DATA
+  /// Message reception lost if no message received in this time
+  #define TIMEOUT_TRACTOR_DATA 3000
+#endif
+
 /*@}*/
 
 /* ******************************************************** */
@@ -747,14 +757,12 @@
 #define DEFAULT_CAN_MASK_LASTMSG 0x00000000
 /*@}*/
 
+
 /* ******************************************************** */
 /**
  * \name Define PGN codes of ISO 11783 messages
- * As the ISO 11783 is not yet published during implementation
- * the PGN codes can change -> centralised definition
  */
 /*@{*/
-
 
 // <DESTINATION> PGNs
 #define CLIENT_TO_FS_PGN        0x00AA00LU

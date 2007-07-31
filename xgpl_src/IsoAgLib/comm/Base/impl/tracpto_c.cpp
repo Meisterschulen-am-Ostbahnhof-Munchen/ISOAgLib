@@ -93,8 +93,6 @@
 
 using namespace std;
 
-#define TIMEOUT_PTO_DISENGAGED 3000
-
 namespace __IsoAgLib { // Begin Namespace __IsoAgLib
 
   #if defined(PRT_INSTANCE_CNT) && (PRT_INSTANCE_CNT > 1)
@@ -131,7 +129,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
 
     ///Set time Period for Scheduler_c
     if (rt_identMode == IsoAgLib::IdentModeTractor) setTimePeriod( (uint16_t) 100);
-    else  setTimePeriod( (uint16_t) TIMEOUT_PTO_DISENGAGED   );
+    else  setTimePeriod( (uint16_t) TIMEOUT_TRACTOR_DATA   );
 
     // set the member base msg value vars to NO_VAL codes
     t_ptoFront.ui16_pto8DigitPerRpm = t_ptoRear.ui16_pto8DigitPerRpm = NO_VAL_16;
@@ -258,7 +256,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
         setUpdateTime( pt_ptoData->i32_lastPto );
 
         //msg from Tractor received do tell Scheduler_c next call not until  3000ms
-        getSchedulerInstance4Comm().changeRetriggerTimeAndResort(this,data().time() + TIMEOUT_PTO_DISENGAGED);
+        getSchedulerInstance4Comm().changeRetriggerTimeAndResort(this,data().time() + TIMEOUT_TRACTOR_DATA);
       }
 
       else
@@ -300,7 +298,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     const int32_t ci32_now = getLastRetriggerTime();
     // check for different pto data types whether the previously
     // sending node stopped sending -> other nodes can now step in
-    if ( ( (ci32_now - t_ptoFront.i32_lastPto)  >= TIMEOUT_PTO_DISENGAGED
+    if ( ( (ci32_now - t_ptoFront.i32_lastPto)  >= TIMEOUT_TRACTOR_DATA
            || getSelectedDataSourceISOName().isUnspecified()
          )
          && ( t_ptoFront.ui16_pto8DigitPerRpm != 0 && t_ptoFront.t_ptoEngaged != IsoAgLib::IsoInactive)
@@ -310,7 +308,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
       t_ptoFront.ui16_pto8DigitPerRpm = 0;
       t_ptoFront.t_ptoEngaged = IsoAgLib::IsoInactive;
     }
-    if ( ( ( ci32_now - t_ptoRear.i32_lastPto ) >= TIMEOUT_PTO_DISENGAGED
+    if ( ( ( ci32_now - t_ptoRear.i32_lastPto ) >= TIMEOUT_TRACTOR_DATA
            || (getSelectedDataSourceISOName().isUnspecified() )
          )
          && ( t_ptoRear.ui16_pto8DigitPerRpm != 0 && t_ptoRear.t_ptoEngaged != IsoAgLib::IsoInactive )

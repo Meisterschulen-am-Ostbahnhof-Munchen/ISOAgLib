@@ -92,7 +92,7 @@
 #include <IsoAgLib/comm/Base/impl/basecommon_c.h>
 #include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgnhandler_c.h>
 
-#if defined(NMEA_2000_FAST_PACKET)
+#if defined(ENABLE_NMEA_2000_MULTI_PACKET)
 #include <IsoAgLib/comm/Multipacket/imultisendstreamer_c.h>
 #include <IsoAgLib/comm/Multipacket/impl/multisend_c.h>
 #endif
@@ -100,7 +100,7 @@
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
-#if defined(NMEA_2000_FAST_PACKET)
+#if defined(ENABLE_NMEA_2000_MULTI_PACKET)
 
 class MultiSendPkg_c;
 class Nmea2000SendStreamer_c : public IsoAgLib::iMultiSendStreamer_c
@@ -142,7 +142,7 @@ class Nmea2000SendStreamer_c : public IsoAgLib::iMultiSendStreamer_c
     uint16_t ui16_currentSendPosition;
     uint16_t ui16_storedSendPosition;
 };
-#endif // END of NMEA_2000_FAST_PACKET
+#endif // END of ENABLE_NMEA_2000_MULTI_PACKET
 
 class TimePosGPS_c;
 typedef SINGLETON_DERIVED(TimePosGPS_c,BaseCommon_c) SingletonTimePosGps_c;
@@ -248,7 +248,7 @@ class TimePosGPS_c : public SingletonTimePosGps_c
   /* ********************************************* */
   /** \name MultiReceive functions for TimePosGPS_c  */
   /*@{*/
-  #if defined(NMEA_2000_FAST_PACKET)
+  #if defined(ENABLE_NMEA_2000_MULTI_PACKET)
 public:
   //! @param rc_ident:
   //! @param rui32_totalLen:
@@ -268,7 +268,7 @@ private:
   //! @param rc_ident:
   //! @param rpc_stream:
   bool reactOnLastChunk (const IsoAgLib::ReceiveStreamIdentifier_c& rc_ident, IsoAgLib::iStream_c& rpc_stream);
-  #endif // END of NMEA_2000_FAST_PACKET
+  #endif // END of ENABLE_NMEA_2000_MULTI_PACKET
 
 public:
   /// Setter functions /////////////////////////////////////////////////////////////////////////////////
@@ -318,7 +318,7 @@ public:
   /** deliver GPS Course Over Ground [1x10E-4rad] */
   void setGpsCourseRad10Minus4( uint16_t rui16_newVal ) { ui16_courseOverGroundRad10Minus4 = rui16_newVal; };
 
-  #if defined(NMEA_2000_FAST_PACKET)
+  #if defined(ENABLE_NMEA_2000_MULTI_PACKET)
   /** set the GPS time in UTC timezone.
    *  When no remote system is sending the 11783-7 PGN with date & time, the new UTC time is also set with
    *  setTimeUtc().
@@ -380,7 +380,7 @@ public:
 
   /** set PDOP with scaling [1x10E-2] */
   void setPdop10Minus2( uint16_t rui16_newVal ) { i16_pdop = rui16_newVal;}
-  #endif // END of NMEA_2000_FAST_PACKET
+  #endif // END of ENABLE_NMEA_2000_MULTI_PACKET
 
   /** set the calendar month value
     @param rb_month actual calendar month value
@@ -549,7 +549,7 @@ public:
 
 
 
-  #ifdef NMEA_2000_FAST_PACKET
+  #ifdef ENABLE_NMEA_2000_MULTI_PACKET
   bool isPositionStreamToSend() const
   { return isPositionSimpleToSend() && (ui32_altitudeCm != 0xFFFFFFFF); }
 
@@ -663,10 +663,10 @@ private:
   /** send direction as detailed stream */
   void isoSendDirection( void );
 
-#if defined(NMEA_2000_FAST_PACKET)
+#if defined(ENABLE_NMEA_2000_MULTI_PACKET)
   /** send position as detailed stream */
   void isoSendPositionStream( void );
-#endif // END NMEA_2000_FAST_PACKET
+#endif // END ENABLE_NMEA_2000_MULTI_PACKET
 
 private:
   // Private attributes
@@ -739,10 +739,10 @@ private:
 */
 
 
-  /** GNSS Method and Quality - not only in NMEA_2000_FAST_PACKET as we need to know if GPS inf. is valid! */
+  /** GNSS Method and Quality - not only in ENABLE_NMEA_2000_MULTI_PACKET as we need to know if GPS inf. is valid! */
   IsoAgLib::IsoGnssMethod_t t_gnssMethod;
 
-#ifdef NMEA_2000_FAST_PACKET
+#ifdef ENABLE_NMEA_2000_MULTI_PACKET
   /** GPS time in UTC */
   struct {
     uint16_t hour : 6;
@@ -785,7 +785,7 @@ private:
   /** sending success state */
   MultiSend_c::sendSuccess_t t_multiSendSuccessState;
 
-  #endif // END of NMEA_2000_FAST_PACKET
+  #endif // END of ENABLE_NMEA_2000_MULTI_PACKET
   /** ISOName of GPS data sender */
   ISOName_c c_sendGpsISOName;
 
