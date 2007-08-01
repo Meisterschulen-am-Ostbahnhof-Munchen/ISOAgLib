@@ -112,10 +112,12 @@ class TargetFileStreamOutput_c //: public std::ofstream
 {
 
 public:
+  TargetFileStreamOutput_c();
+  ~TargetFileStreamOutput_c();
+
 	//! open a output stream
 
-  //Sergej: not used for DjMiniVt
- 	bool open( CNAMESPACE::string& filename, FileMode_t rt_mode ){ return true; };
+ 	bool open( CNAMESPACE::string& filename, FileMode_t rt_mode );
 
 	//! open a output stream
 	bool open( const char* filename, FileMode_t rt_mode );
@@ -132,15 +134,15 @@ public:
   virtual bool eof() const { return false; };
 
   // Operation: fail
-  virtual bool fail() const { return false; };
+  virtual bool fail() const { return is_failed_; };
 
   // Operation: good
-  virtual bool good() const { return true; };
+  virtual bool good() const { return !fail(); };
 
   private:
   
-  size_t n_data_write_;
   void *file_handle_;
+  bool is_failed_;
 
 }; // ~X2C
 

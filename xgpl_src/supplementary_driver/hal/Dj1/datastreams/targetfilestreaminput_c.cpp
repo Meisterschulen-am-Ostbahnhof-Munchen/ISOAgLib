@@ -117,58 +117,8 @@ extern "C"
 #define _huge
 #endif
 
-// namespace __HAL
-// {
-// extern "C" 
-// {
-//   /** include the BIOS specific header into __HAL */
-// #ifdef SYSTEM_PC
-// #include <../../IsoAgLib/commercial_BIOS/bios_Dj1/DjBiosMVT.h>
-// #else
-// #include <commercial_BIOS/bios_Dj1/DjBiosMVT.h>
-// #endif
-// }
-// 
-// // static const char dummy_file_data[] = "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
-// // static const char *dummy_file_pointer = dummy_file_data;
-// 
-// void *DjBios_IOP_Open_dummy ( char const *Filename, char const *Mode )
-// {
-//   dummy_file_pointer = dummy_file_data;
-//   return (void*)&dummy_file_pointer;
-// }
-// 
-// enum_Bool DjBios_IOP_EoF_dummy ( void const *handle )
-// {
-//   if (NULL == handle || &dummy_file_pointer != handle || 0 == *dummy_file_pointer)
-//     return BIOS_TRUE;
-//   else
-//     return BIOS_FALSE;
-// }
-// 
-// uword DjBios_IOP_Read_dummy ( void const *handle, uword Size, uword NumObj, void *Data )
-// {
-//   if (&dummy_file_pointer != handle || 0 == *dummy_file_pointer) {
-//     return 0;
-//   }
-//   *((char *)Data) = *dummy_file_pointer;
-//   ++dummy_file_pointer;
-//   return 1;
-// }
-// 
-// enum_Bool DjBios_IOP_Close_dummy ( void const *Handle )
-// {
-//   return BIOS_TRUE;
-// }
-// 
-// } // Namespace HAL
-// 
-// using namespace std;
-
-
-
 TargetFileStreamInput_c::TargetFileStreamInput_c() :
-  file_handle_(NULL), n_data_read_(0)
+  file_handle_(NULL), is_failed_(false)
 {
 }
 
@@ -180,6 +130,10 @@ TargetFileStreamInput_c::~TargetFileStreamInput_c()
 //! open an input stream
 bool TargetFileStreamInput_c::open( const char* filename, FileMode_t rt_mode )
 {
+  if (NULL != file_handle_) {
+    return false;
+  }
+
   CNAMESPACE::string mode_string;
 
   if (StreamIn & rt_mode) {
@@ -208,14 +162,19 @@ bool TargetFileStreamInput_c::eof() const
 //! @param ui8_data:
 TargetFileStreamInput_c& TargetFileStreamInput_c::operator>>(uint8_t &ui8_data)
 {
+  // TODO: check if call to eof() can be omitted. (If DjBios_IOP_Read
+  // behaves like standard fread, then this should be the case.)
   if (eof()) {
-    ui8_data = 0;
-  } else {
-    unsigned n_read = __HAL::DjBios_IOP_Read(file_handle_, 1, 1, &ui8_data);
-    if (n_read) {
-      ++n_data_read_;
-    }
+    is_failed_ = true;
+    return *this;
   }
+
+  bool is_wrong_amount = (1 != __HAL::DjBios_IOP_Read(
+                              file_handle_, 1, 1, &ui8_data));
+  if (is_wrong_amount) {
+    is_failed_ = true;
+  }
+
   return *this;
 }
 
@@ -225,4 +184,5 @@ void TargetFileStreamInput_c::close()
     (void)__HAL::DjBios_IOP_Close(file_handle_);
     file_handle_ = NULL;
   }
+  is_failed_ = false;
 }

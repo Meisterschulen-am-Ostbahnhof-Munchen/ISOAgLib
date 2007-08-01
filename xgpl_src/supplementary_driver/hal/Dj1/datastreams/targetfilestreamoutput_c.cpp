@@ -96,9 +96,23 @@ namespace __HAL
 
 //using namespace std;
 
+TargetFileStreamOutput_c::TargetFileStreamOutput_c() :
+  file_handle_(NULL), is_failed_(false)
+{
+}
+
+TargetFileStreamOutput_c::~TargetFileStreamOutput_c()
+{
+  close();
+}
+
 //! open a output stream
 bool TargetFileStreamOutput_c::open( const char* filename, FileMode_t rt_mode )
 {
+  if (NULL != file_handle_) {
+    return false;
+  }
+
   CNAMESPACE::string mode_string;
 
   if (StreamIn & rt_mode) {
@@ -120,12 +134,12 @@ bool TargetFileStreamOutput_c::open( const char* filename, FileMode_t rt_mode )
 //! @param ui8_data:
 TargetFileStreamOutput_c& TargetFileStreamOutput_c::operator<<(uint8_t ui8_data)
 {
-  uint16_t err = __HAL::DjBios_IOP_Write(file_handle_, 1, 1, &ui8_data);
-  if (err == 0) {
-      ++n_data_write_;
+  bool is_wrong_amount = (1 != __HAL::DjBios_IOP_Write(
+                              file_handle_, 1, 1, &ui8_data));
+  if (is_wrong_amount) {
+    is_failed_ = true;
   }
   return *this;
-
 }
 
 //! close a output stream
@@ -133,5 +147,9 @@ TargetFileStreamOutput_c& TargetFileStreamOutput_c::operator<<(uint8_t ui8_data)
 //! @param pathname if pathname != NULL => sync file and path
 void TargetFileStreamOutput_c::close(const char* pathname)
 {
-  (void)__HAL::DjBios_IOP_Close(file_handle_);
+  if (NULL != file_handle_) {
+    (void)__HAL::DjBios_IOP_Close(file_handle_);
+    file_handle_ = NULL;
+  }
+  is_failed_ = false;
 }

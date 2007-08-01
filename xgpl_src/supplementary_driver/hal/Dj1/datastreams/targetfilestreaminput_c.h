@@ -117,10 +117,10 @@ public:
   virtual bool eof() const;
 
   // Operation: fail
-  virtual bool fail() const { return false; };
+  virtual bool fail() const { return is_failed_; };
 
   // Operation: good
-  virtual bool good() const { return (!eof() && !fail()); };
+  virtual bool good() const { return !eof() && !fail(); };
 
 	//  Operation: operator>>
   //! Parameter:
@@ -129,8 +129,8 @@ public:
 	
 private:
 
-  size_t n_data_read_;
   void *file_handle_;
+  bool is_failed_;
 }; // ~X2C
 
 // TargetFileStreamInput_c & operator>> (TargetFileStreamInput_c &, uint8_t &ui8_data);
