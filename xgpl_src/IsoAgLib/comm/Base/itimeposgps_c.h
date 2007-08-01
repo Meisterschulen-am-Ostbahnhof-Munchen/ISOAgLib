@@ -209,7 +209,7 @@ public:
   uint16_t getGpsCourseRad10Minus4(void) const { return TimePosGPS_c::getGpsCourseRad10Minus4(); }
 
 
-#ifdef NMEA_2000_FAST_PACKET
+#ifdef ENABLE_NMEA_2000_MULTI_PACKET
   /** get the GPS UTC hour value
       @return actual GPS UTC hour value
    */
@@ -306,7 +306,7 @@ public:
   { return TimePosGPS_c::setGpsCourseRad10Minus4(rui16_newVal); }
 
 
-#if defined(NMEA_2000_FAST_PACKET)
+#if defined(ENABLE_NMEA_2000_MULTI_PACKET)
   /** set the GPS time in UTC timezone.
    *  When no remote system is sending the 11783-7 PGN with date & time, the new UTC time is also set with
    *  setTimeUtc().
