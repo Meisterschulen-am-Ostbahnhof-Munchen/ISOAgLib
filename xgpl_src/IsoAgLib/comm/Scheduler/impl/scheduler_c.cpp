@@ -573,25 +573,34 @@ int32_t Scheduler_c::timeEvent( int32_t ri32_demandedExecEndScheduler )
 //!  resort from start of task list by swapping neighbour elements.
 //!  Stop execution, if compared elements are in correct order.
 //!  Avoid complex complete sort of list, if only the previously executed task must be placed in the correct position again - the rest of the list is still correct sorted.
+//!  @param rpc_sort ptr to currently executed SchedulerEntry_c
 void
-Scheduler_c::resortTaskList()
+Scheduler_c::resortTaskList(const SchedulerEntry_c* rpc_sort)
 {
   if(cntClient() <= 1) return ; //nothing to sort
 
-  std::list<SchedulerEntry_c>::iterator iterCompare = c_taskQueue.begin();
-  // compare with the second item in list
+  std::list<SchedulerEntry_c>::iterator iterExecuted = c_taskQueue.begin();
+  for ( ; iterExecuted != c_taskQueue.end(); iterExecuted++ )
+  {
+    if (rpc_sort == &(*iterExecuted) ) break;
+  }
+  if ( iterExecuted == c_taskQueue.end() ) return;
+
+  std::list<SchedulerEntry_c>::iterator iterCompare = iterExecuted;
+
+  // compare with the next item in list
   ++iterCompare;
-  if ( c_taskQueue.front() <= *iterCompare )
-  { // the first item is still having lower retrigger time -> no resort needed
+  if ( *iterExecuted <= *iterCompare )
+  { // the current item is still having lower retrigger time -> no resort needed
     return;
   }
 
-  // now in any case the current front item
+  // now in any case the current item
   // (i.e. the one that has previously been executed and should now be re-entered
-  //  in right place) has to be removed from front
-  // move front item from c_taskQueue to the spare list - without any deletion and
+  //  in right place) has to be removed
+  // move current item from c_taskQueue to the spare list - without any deletion and
   // re-allocation of a task-node -> should be faster
-  c_spareQueue.splice( c_spareQueue.end(), c_taskQueue, c_taskQueue.begin() );
+  c_spareQueue.splice( c_spareQueue.end(), c_taskQueue, iterExecuted );
   for ( iterCompare = c_taskQueue.begin();
         iterCompare != c_taskQueue.end();
         ++iterCompare )
@@ -690,6 +699,7 @@ Scheduler_c::selectCallTaskAndUpdateQueue()
     ///Call Clients timeEvent() via SchedulerEntry_c::timeEventExec()
     /// IF Client returns with false -> return i32_idleTime = -1
     /// because last Client could not finish in available TimeSpan
+    SchedulerEntry_c* pc_execute = &(*pc_execIter);
     const bool b_result = pc_execIter->timeEventExec( i32_endTime );
     if ( !b_result && (pc_nextCallIter != c_taskQueue.end() ) )
     { // time was not enough and more than one client is managed - check whether the next item
@@ -712,7 +722,7 @@ Scheduler_c::selectCallTaskAndUpdateQueue()
     }
     else if (b_result)
     { // executed task finished its work -> reschedule it by resort of task list
-      resortTaskList();
+      resortTaskList(pc_execute);
     }
     IsoAgLib::iSystem_c::triggerWd();
 

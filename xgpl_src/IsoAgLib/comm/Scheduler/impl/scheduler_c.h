@@ -252,7 +252,8 @@ private: //Private methods
   //!  resort from start of task list by swapping neighbour elements.
   //!  Stop execution, if compared elements are in correct order.
   //!  Avoid complex complete sort of list, if only the previously executed task must be placed in the correct position again - the rest of the list is still correct sorted.
-  void resortTaskList();
+  //!  @param rpc_sort ptr to currently executed SchedulerEntry_c
+  void resortTaskList(const SchedulerEntry_c* rpc_sort);
 
 
   //!  Uses Delta from TimePeriod of a Client
