@@ -271,13 +271,13 @@ void Vt2IsoImageBase_c::getOptimalBwThreshold( void )
   // now decide about optimal threshold -> use 128 if optimum is not BETTER
   if ( ( thresholdOptimalAllWhite + thresholdOptimalAllBlack ) < ( threshold128AllWhite + threshold128AllBlack ) ) {
   // optimal threshold is really better
-    std::cerr << "Found Optimal Threshold: " << optimalThreshold << " which has only " << thresholdOptimalAllWhite << " all white and "
+    std::cout << "Found Optimal Threshold: " << optimalThreshold << " which has only " << thresholdOptimalAllWhite << " all white and "
       << thresholdOptimalAllBlack << " all black entries" << std::endl;
   i_currentThreshold = optimalThreshold;
   }
   else {
   // no better threshold than standard 128 found
-  std::cerr << "Default 128 Threshold is optimal as it has only " << threshold128AllWhite << " all white and "
+  std::cout << "Default 128 Threshold is optimal as it has only " << threshold128AllWhite << " all white and "
       << threshold128AllBlack << " all black entries\n"
       << "Optimal Threshold has " << thresholdOptimalAllWhite << " allWhite and " << thresholdOptimalAllBlack
       << " all black"

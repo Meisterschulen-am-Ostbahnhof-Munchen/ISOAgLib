@@ -237,7 +237,7 @@ private:
 
   std::string getObjNameWithPoolIdent (char* pcch_objName);
 
-
+  void autoDetectLanguage (DOMNode *n);
 
 private:
   bool firstLineFileE;

@@ -444,13 +444,16 @@ void DOMCountErrorHandler::resetErrors()
 // ---------------------------------------------------------------------------
 static void usage()
 {
-  std::cout << "\nvt2iso BUILD DATE: 14-Jan-2005\n\n"
+  std::cout << "\nvt2iso BUILD DATE: 02-Aug-2007\n\n"
     "Usage:\n"
     " vt2iso [options] <XML file>\n\n"
     "This program invokes the DOMBuilder, builds the DOM tree,\n"
     "and then converts the tree to ISO Virtual Terminal cpp-files.\n\n"
     "Input files are all files starting with <XML file>,\nsorted by alphabetical order.\n"
     "This has been done to give the possibility to split \nlarge XML files into several ones.\n\n"
+    "Features:\n"
+    " - auto_language=\"..\" attribute\n"
+    " - support for auto-detecting language=\"..\" attribute if the value is given in the .values.xx.txt files.\n\n"
     "Options:\n"
     " -v=xxx Validation scheme [always | never | auto]. Defaults to auto\n"
     " -n     Enable namespace processing. Defaults to off.\n"
@@ -1349,7 +1352,7 @@ vt2iso_c::getAttributesFromNode(DOMNode *n, bool treatSpecial)
 bool
 vt2iso_c::openDecodePrintOut (const char* workDir, char* _bitmap_path, unsigned int &options, int fixNr)
 {
-  std::cout << "Bitmappath: " << _bitmap_path << std::endl;
+  //std::cout << "Bitmappath: " << _bitmap_path << std::endl;
   if (attrIsGiven [attrRle]) {
     // set rle stuff
     unsigned int rle = picturegraphicrletoi (attrString [attrRle]);
@@ -1376,7 +1379,7 @@ vt2iso_c::openDecodePrintOut (const char* workDir, char* _bitmap_path, unsigned 
 
     // Open Bitmap
     std::cout << std::endl; // Opening text is printed out by openBitmap
-    if ( c_Bitmap.openBitmap( filename ) ) std::cout << "Loaded successfully!\n";
+    if ( c_Bitmap.openBitmap( filename ) ) std::cout << "Loaded successfully! ";
     else
     {
       std::cout << "Loading failed!\n";
@@ -1415,9 +1418,9 @@ vt2iso_c::openDecodePrintOut (const char* workDir, char* _bitmap_path, unsigned 
       // If RLE-size is larger than uncompressed size, clear the RLE1/4/8 flag!
       if (rleBytes >= c_Bitmap.objRawBitmapBytes [actDepth]) {
         options &= -1-(uint64_t(1)<<(2+actDepth));
-        std::cout << "++INFORMATION++: <picturegraphic name='" << objName << "' actDepth012='" << actDepth
-            << "'... /> has RLE-compressed bitmap-size of " << rleBytes << " bytes but uncompressed bitmap-size of "
-            << c_Bitmap.objRawBitmapBytes [actDepth] << " bytes. Turning RLE-Encoding off for that object!\n";
+        std::cout << objName << "' actDepth012='" << actDepth
+            << "' has RLE size of " << rleBytes << " but uncompressed size of "
+            << c_Bitmap.objRawBitmapBytes [actDepth] << ". Turning RLE off!"<<std::endl;
       }
     }
 
@@ -1438,11 +1441,11 @@ vt2iso_c::openDecodePrintOut (const char* workDir, char* _bitmap_path, unsigned 
         rleBytes += 2;
         PixelCount += cnt;
       }
-      std::cout << "information: <picturegraphic name='" << objName << "' actDepth012='" << actDepth
-          << "'... /> has RLE-compressed bitmap-size of " << rleBytes
-          << " bytes and uncompressed bitmap-size of " << c_Bitmap.objRawBitmapBytes [actDepth] << " bytes.\n"
-          << "Bitmap PixelCount: " << PixelCount << ", Width: " << c_Bitmap.getWidth() << ", Height: "
-          << c_Bitmap.getHeight() << "\n\n";
+      std::cout << objName << "' actDepth012='" << actDepth
+          << "' has RLE size of " << rleBytes << " but uncompressed size of "
+          << c_Bitmap.objRawBitmapBytes [actDepth]
+          << "#Pixels: " << PixelCount << ", Width: " << c_Bitmap.getWidth() << ", Height: "
+          << c_Bitmap.getHeight() << std::endl;
       c_Bitmap.objRawBitmapBytes [actDepth] = rleBytes;
       if (rleBytes > 65000) b_largeObject = true; // normally 65535-restAttributesSize would be enough, but don't care, go save!
     } else {
@@ -1488,6 +1491,87 @@ vt2iso_c::checkForAllowedExecution() const
     return true;
 
   return false;
+}
+
+void
+vt2iso_c::autoDetectLanguage (DOMNode *n)
+{
+  static char newLanguageValue[136*2+1];
+  newLanguageValue[0] = 0x00;
+
+  static char searchName[1024+1];
+  strcpy (searchName, getAttributeValue (n, "name"));
+
+  if (searchName[0] == 0x00)
+  { // no name, so we can't search for the
+    strcpy (searchName, getAttributeValue (n, "id"));
+  }
+
+  if (searchName[0] == 0x00)
+  { // no id, so we can't search for the value...
+    return;
+  }
+
+  if (getAttributeValue (n, "language")[0] != 0x00)
+  { // language found, no need to auto-detection
+#ifdef DEBUG_LANGUAGE_AUTO_DETECT
+    std::cout << "AUTO-DETECT-LANGUAGE: language=\""<< getAttributeValue (n, "language") << "\" already specified for ["<< searchName <<"].\n";
+#endif
+    return;
+  }
+
+// #ifdef DEBUG_LANGUAGE_AUTO_DETECT
+//   std::cout << "AUTO-DETECT-LANGUAGE: searching language file for ["<<searchName<<"]... ";
+// #endif
+
+  // language not explicitly given, check if it should be given implicitly
+  for (unsigned int curLang=0; curLang<ui_languages; curLang++)
+  {
+      /// Check if object is in language-value-file
+    if (arrs_language[curLang].valueBuffer != NULL)
+    {
+      char* bufferCur = arrs_language[curLang].valueBuffer;
+      char* bufferEnd = bufferCur + arrs_language[curLang].valueBufferLen;
+      while (bufferCur < bufferEnd)
+      { // check this line (\n and \r has been previously converted to 0x00
+        char pc_id [1024+1];
+        char* firstChar=bufferCur;
+        while (*firstChar == ' ') firstChar++;
+        if ( (*firstChar == 0x00)
+              || (strstr (bufferCur, "//") && (strstr (bufferCur, "//") == firstChar))
+          )
+        { // ignore line
+        }
+        else
+        {
+          char* comma = strchr (bufferCur, ',');
+          if (comma)
+          {
+            *comma = 0x00;
+            strcpy (pc_id, bufferCur);
+            *comma = ','; // revert comma-separator
+            if (strcmp (pc_id, searchName) == 0)
+            { /// add this language to the language=".." attribute!
+              strcat (newLanguageValue, arrs_language [curLang].code);
+              break;
+            }
+          }
+          else
+          { // no comma found, although it was not a commentary line :(
+            std::cout << "No COMMA in a non-comment line in the language file!\n";
+            return;
+          }
+        }
+          // advance to next line
+        int lineLen = strlen (bufferCur)+1; // include terminating 0x00
+        bufferCur += lineLen;
+      }
+    }
+  }
+  ((DOMElement *)n)->setAttribute (X("language"), X(newLanguageValue));
+  if (newLanguageValue[0] != 0x00)
+    std::cout << "AUTO-DETECT-LANGUAGE: FOUND: ["<<newLanguageValue <<"] for "<<searchName<<"."<<std::endl;
+
 }
 
 // ---------------------------------------------------------------------------
@@ -1688,7 +1772,8 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
       sb_firstObject = false; // check is only valid for first element!
     }
 
-    if (!getAttributesFromNode(n, true))
+    autoDetectLanguage (n);
+    if (!getAttributesFromNode (n, true))
       return false; // true: read name= and id=
 
     // set all non-set attributes to default values (as long as sensible, like bg_colour etc.)
@@ -1830,27 +1915,26 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
     }
 
     static char duplicateForLanguages[(136*2)+1]; // max for all languages
-    char* dupLangNext=NULL;
-    bool b_dupMode=false;
 
     /// Backup as those values are overriden by the multilanguage processing when getting values from the .xx.txt
     char backupAttrStringValue [stringLength+1];
-
     strcpy (backupAttrStringValue, attrString [attrValue]);
-
     bool backupAttrIsGivenValue = attrIsGiven [attrValue];
+
     char backupAttrStringLength [stringLength+1];
-
     strcpy (backupAttrStringLength, attrString [attrLength]);
-
     bool backupAttrIsGivenLength = attrIsGiven [attrLength];
 
+    autoDetectLanguage (n);
+
     // ************* NEW: Language duplicates!! ************
-    if (attrIsGiven [attrLanguage] && (strlen (attrString [attrLanguage]) > 0) && (strlen (attrString [attrLanguage]) != 2))
+    duplicateForLanguages [0] = 0x00;
+    char* dupLangNext=duplicateForLanguages; // if dup, then start with first one of course...
+    bool b_dupMode=false;
+    if ((attrIsGiven [attrLanguage]) && ((strlen (attrString [attrLanguage]) > 0) && (strlen (attrString [attrLanguage]) != 2)))
     { // "*" or multiple languages, so we need to loop!
       if (strcmp (attrString [attrLanguage], "*") == 0)
       { // build all languages we have defined in the working set
-        duplicateForLanguages [0] = 0x00;
         for (unsigned int ui=0; ui<ui_languages; ui++)
           strcat (duplicateForLanguages, arrs_language [ui].code);
       }
@@ -1858,7 +1942,6 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
         strcpy (duplicateForLanguages, attrString [attrLanguage]);
 
       b_dupMode=true;
-      dupLangNext=duplicateForLanguages;
     }
 
     do // language duplication loop!
@@ -1891,6 +1974,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
         {
           if ( (child->getNodeType() == DOMNode::ELEMENT_NODE) && (0 == strcmp (XMLString::transcode(child->getNodeName()), otCompTable [otLanguage])) )
           {
+            /// Here we're in one <language code="xx"> element!!!
             // get 'code=' out of child
             if(child->hasAttributes())
             {
@@ -1972,6 +2056,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
               arrs_language [ui_languages].valueBuffer[length+1-1] = 0x00;
               char *iterate=arrs_language [ui_languages].valueBuffer;
               char *iterateEnd=iterate+length;
+              // terminate all the lines with an 0x00 char.
               while (iterate < iterateEnd)
               {
                 if ((*iterate == '\n') || (*iterate == '\r')) *iterate = 0x00;
@@ -2080,6 +2165,8 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
                   )
              )
           {
+            autoDetectLanguage (child);
+
             bool b_foundLanguageAttribute=false; // default: none found in this element!
 
             if ( (strlen (spc_autoLanguage) > 0) &&

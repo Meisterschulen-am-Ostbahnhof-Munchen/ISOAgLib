@@ -82,7 +82,7 @@ bool Vt2IsoImageFreeImage_c::openBitmap( const char* filename )
  reset();
  i_curScanLineY = -1;
 
- std::cout << "Opening " << filename << std::endl;
+ std::cout << "Opening " << filename;
  FREE_IMAGE_FORMAT fif = FIF_UNKNOWN;
 
  // check the file signature and deduce its format
@@ -150,12 +150,12 @@ bool Vt2IsoImageFreeImage_c::openBitmap( const char* filename )
      }
    }
    mb_palettized = true;
-   std::cout << "--loaded palettized - depth="<<FreeImage_GetBPP(bitmap)<<"--";
+   std::cout << " palettized (depth="<<FreeImage_GetBPP(bitmap)<<"). ";
    return true;
  }
  else
  {
-   std::cout << "--loaded as RGB - depth="<<FreeImage_GetBPP(bitmap)<<"--";
+   std::cout << " as RGB (depth="<<FreeImage_GetBPP(bitmap)<<"). ";
    return true;
  }
 }
