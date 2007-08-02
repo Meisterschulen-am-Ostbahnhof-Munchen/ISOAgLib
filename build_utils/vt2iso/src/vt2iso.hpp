@@ -40,6 +40,8 @@
 #ifndef VT2ISO_H
 #define VT2ISO_H
 
+#define DEF_MAX_OBJECTS (10000)
+
 #include <xercesc/dom/DOMErrorHandler.hpp>
 #include <xercesc/util/XMLString.hpp>
 #include <iostream>
@@ -199,7 +201,7 @@ public:
 
   void getKeyCode();
 
-  void init (const char* xmlFile, std::basic_string<char>* dictionary = NULL);
+  void init (const char* xmlFile, std::basic_string<char>* dictionary = NULL, bool rb_externalize=false);
 
   bool prepareFileNameAndDirectory (std::basic_string<char>* pch_fileName);
 
@@ -239,18 +241,23 @@ private:
 
   void autoDetectLanguage (DOMNode *n);
 
+  void splitFunction (bool rb_onlyClose);
+
 private:
   bool firstLineFileE;
 
   FILE *partFile_variables;
   FILE *partFile_variables_extern;
   FILE *partFile_attributes;
+  FILE *partFile_attributes_extern;
   FILE *partFile_functions;
   FILE *partFile_functions_origin;
   FILE *partFile_defines;
   FILE *partFile_list;
+//  FILE *partFile_list_extern;
   FILE *partFile_handler_direct;
   FILE *partFile_handler_derived;
+  FILE *partFile_split_function;
 
   unsigned int ui_languages;
 
@@ -268,8 +275,8 @@ private:
   char xmlFiles [256] [1024+1];
   const char* pcch_poolIdent;
 
-  char objNameTable [(stringLength+1)*4000];
-  unsigned int objIDTable [4000];
+  char objNameTable [(stringLength+1)*DEF_MAX_OBJECTS];
+  unsigned int objIDTable [DEF_MAX_OBJECTS];
   unsigned int objNextAutoID;
   unsigned int objNextMacroAutoID;
   unsigned int kcNextAutoID;
@@ -281,6 +288,8 @@ private:
   bool is_opDimension;
   bool is_skWidth;
   bool is_skHeight;
+
+  bool b_externalize;
 
   char attrString [maxAttributeNames] [stringLength+1];
   bool attrIsGiven [maxAttributeNames];

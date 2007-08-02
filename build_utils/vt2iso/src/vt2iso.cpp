@@ -460,7 +460,8 @@ static void usage()
     " -s     Enable schema processing. Defaults to off.\n"
     " -f     Enable full schema constraint checking. Defaults to off.\n"
     " -locale=ll_CC  specify the locale. Defaults to en_US.\n"
-    " -p    Output ISO11783-VT Palette to act-file.\n";
+    " -p     Output ISO11783-VT Palette to act-file.\n"
+    " -e     Externalize. If you need to use the split-up version of the generated files, use this option.\n";
 
 #ifdef USE_SPECIAL_PARSING
     std::cout <<
@@ -589,6 +590,9 @@ vt2iso_c::clean_exit (char* error_message)
 
     fclose(partFile_list);
   }
+//   if (partFile_list_extern);
+//     fclose(partFile_list_extern);
+
 
   for (unsigned int i=0; i<ui_languages; i++)
   {
@@ -651,6 +655,12 @@ vt2iso_c::clean_exit (char* error_message)
     fclose (partFile_handler_derived);
   }
 
+  char extension [32+1];
+  if (b_externalize)
+    strcpy (extension, "-extern");
+  else
+    strcpy (extension, "");
+
 // Write Direct Includes
   strncpy (partFileName, xmlFileGlobal, 1024);
   strcat (partFileName, "_direct.h");
@@ -658,8 +668,8 @@ vt2iso_c::clean_exit (char* error_message)
 
   fprintf (partFile_direct, "#include <IsoAgLib/comm/ISO_Terminal/ivtincludes.h>\n");
   fprintf (partFile_direct, "#include \"%s-handler-direct.inc\"\n", xmlFileWithoutPath);
-  fprintf (partFile_direct, "#include \"%s-variables.inc\"\n", xmlFileWithoutPath);
-  fprintf (partFile_direct, "#include \"%s-attributes.inc\"\n", xmlFileWithoutPath);
+  fprintf (partFile_direct, "#include \"%s-variables%s.inc\"\n", xmlFileWithoutPath, extension);
+  fprintf (partFile_direct, "#include \"%s-attributes%s.inc\"\n", xmlFileWithoutPath, extension);
   for (unsigned int i=0; i<ui_languages; i++)
   {
     fprintf (partFile_direct, "#include \"%s-list%02d.inc\"\n", xmlFileWithoutPath, i);
@@ -678,15 +688,15 @@ vt2iso_c::clean_exit (char* error_message)
   strcat (partFileName, "_derived-cpp.h");
   partFile_direct = fopen (partFileName,"wt");
 
-  fprintf (partFile_direct, "#include \"%s-variables.inc\"\n", xmlFileWithoutPath);
-  fprintf (partFile_direct, "#include \"%s-attributes.inc\"\n", xmlFileWithoutPath);
+  fprintf (partFile_direct, "#include \"%s-variables%s.inc\"\n", xmlFileWithoutPath, extension);
+  fprintf (partFile_direct, "#include \"%s-attributes%s.inc\"\n", xmlFileWithoutPath, extension);
   for (unsigned int i=0; i<ui_languages; i++)
   {
     fprintf (partFile_direct, "#include \"%s-list%02d.inc\"\n", xmlFileWithoutPath, i);
   }
   fprintf (partFile_direct, "#include \"%s-list.inc\"\n", xmlFileWithoutPath);
   fprintf (partFile_direct, "#include \"%s-defines.inc\"\n", xmlFileWithoutPath);
-  fprintf (partFile_direct, "#include \"%s-functions.inc\"\n", xmlFileWithoutPath);
+  fprintf (partFile_direct, "#include \"%s-functions%s.inc\"\n", xmlFileWithoutPath, extension);
 
   if (pc_specialParsing)
   {
@@ -710,9 +720,12 @@ vt2iso_c::clean_exit (char* error_message)
   if (partFile_direct)           fclose (partFile_direct);
   if (partFile_variables_extern) fclose (partFile_variables_extern);
   if (partFile_attributes)       fclose (partFile_attributes);
+  if (partFile_attributes_extern) fclose (partFile_attributes_extern);
   if (partFile_defines)          fclose (partFile_defines);
   if (partFile_functions)        fclose (partFile_functions);
   if (partFile_functions_origin) fclose (partFile_functions_origin);
+
+  splitFunction (true);
 
   if (error_message != NULL)
     std::cout << error_message;
@@ -909,8 +922,36 @@ vt2iso_c::getKeyCode()
 }
 
 void
-vt2iso_c::init (const char* xmlFile, std::basic_string<char>* dictionary)
+vt2iso_c::splitFunction (bool rb_onlyClose=false)
 {
+  static int splitFunctionPart = 0;
+  char partFileName [1024+1]; partFileName [1024+1-1] = 0x00;
+
+  if (partFile_split_function)
+  {
+    fprintf (partFile_split_function, "}\n");
+    fclose (partFile_split_function);
+    partFile_split_function = NULL;
+    splitFunctionPart++;
+  }
+  if (!rb_onlyClose)
+  {
+    sprintf (partFileName, "%s-function%d.cpp", xmlFileGlobal, splitFunctionPart);
+    partFile_split_function = fopen (partFileName, "wt");
+    fprintf (partFile_split_function, "#include <IsoAgLib/comm/ISO_Terminal/ivtincludes.h>\n");
+    fprintf (partFile_split_function, "#include \"%s-variables-extern.inc\"\n", xmlFileGlobal);
+    fprintf (partFile_split_function, "#include \"%s-variables-attributes.inc\"\n", xmlFileGlobal);
+    fprintf (partFile_split_function, "void initAllObjectsOnce%d(SINGLETON_VEC_KEY_PARAMETER_DEF)\n", splitFunctionPart);
+    fprintf (partFile_split_function, "{\n");
+    fprintf (partFile_functions,      "  initAllObjectsOnce%d(SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);\n", splitFunctionPart);
+  }
+}
+
+void
+vt2iso_c::init (const char* xmlFile, std::basic_string<char>* dictionary, bool rb_externalize)
+{
+  b_externalize = rb_externalize;
+
   firstLineFileE = true;
   ui_languages=0;
 
@@ -921,6 +962,7 @@ vt2iso_c::init (const char* xmlFile, std::basic_string<char>* dictionary)
   partFile_variables = NULL;
   partFile_variables_extern = NULL;
   partFile_attributes = NULL;
+  partFile_attributes_extern = NULL;
   partFile_functions = NULL;
   partFile_functions_origin = NULL;
   partFile_defines = NULL;
@@ -968,10 +1010,22 @@ vt2iso_c::init (const char* xmlFile, std::basic_string<char>* dictionary)
   if (partFile_attributes == NULL) clean_exit ("Couldn't create -attributes.inc.");
 
   strncpy (partFileName, xmlFile, 1024);
+  strcat (partFileName, "-attributes-extern.inc");
+  partFile_attributes_extern = fopen (partFileName,"wt");
+  if (partFile_attributes_extern == NULL) clean_exit ("Couldn't create -attributes_extern.inc.");
+
+  strncpy (partFileName, xmlFile, 1024);
   strcat (partFileName, "-functions.inc");
   partFile_functions = fopen (partFileName,"wt");
   if (partFile_functions == NULL) clean_exit ("Couldn't create -functions.inc.");
 
+  if (b_externalize)
+  {
+    for (int i=0; i<20; i++)
+    {
+      fprintf (partFile_functions, "extern void initAllObjectsOnce%d (SINGLETON_VEC_KEY_PARAMETER_DEF);\n", i);
+    }
+  }
   fprintf (partFile_functions, "void iObjectPool_%s_c::initAllObjectsOnce (SINGLETON_VEC_KEY_PARAMETER_DEF)\n{\n", proName.c_str());
   fprintf (partFile_functions, "  if (b_initAllObjects) return;   // so the pointer to the ROM structures are only getting set once on initialization!\n");
 
@@ -1012,6 +1066,34 @@ vt2iso_c::init (const char* xmlFile, std::basic_string<char>* dictionary)
 
   for (int j=0; j<maxAttributeNames; j++)
     attrString [j] [stringLength+1-1] = 0x00;
+
+  FILE* partFileTmp;
+
+  if (b_externalize)
+  {
+    strncpy (partFileName, xmlFile, 1024);
+    strcat (partFileName, "-variables.cpp");
+    partFileTmp = fopen (partFileName, "wt");
+    fprintf (partFileTmp, "#include <IsoAgLib/comm/ISO_Terminal/ivtincludes.h>\n");
+    fprintf (partFileTmp, "#include \"%s-variables.inc\"\n", xmlFile);
+    fclose (partFileTmp);
+
+    strncpy (partFileName, xmlFile, 1024);
+    strcat (partFileName, "-attributes.cpp");
+    partFileTmp = fopen (partFileName, "wt");
+    fprintf (partFileTmp, "#include <IsoAgLib/comm/ISO_Terminal/ivtincludes.h>\n");
+    fprintf (partFileTmp, "#include \"%s-variables-extern.inc\"\n", xmlFile);
+    fprintf (partFileTmp, "#include \"%s-attributes-extern.inc\"\n", xmlFile);
+    fprintf (partFileTmp, "#include \"%s-attributes.inc\"\n", xmlFile);
+    fclose (partFileTmp);
+
+    strncpy (partFileName, xmlFile, 1024);
+    strcat (partFileName, "-list.cpp");
+    partFileTmp = fopen (partFileName, "wt");
+    fprintf (partFileTmp, "#include <IsoAgLib/comm/ISO_Terminal/ivtincludes.h>\n");
+    fprintf (partFileTmp, "#include \"%s-list.inc\"\n", xmlFile);
+    fclose (partFileTmp);
+  }
 
 #ifdef USE_SPECIAL_PARSING_PROP
   pc_specialParsingPropTag = new SpecialParsingUsePropTag_c (xmlFile,
@@ -3488,10 +3570,21 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
       }
       else if (objType < maxObjectTypes)
       {
-        fprintf (partFile_variables, "IsoAgLib::iVtObject%s_c iVtObject%s%s;\n", otClassnameTable [objType], objName, pc_postfix);
-        fprintf (partFile_variables_extern, "extern IsoAgLib::iVtObject%s_c iVtObject%s%s;\n", otClassnameTable [objType], objName, pc_postfix);
-        fprintf (partFile_attributes, "const IsoAgLib::iVtObject_c::iVtObject%s_s iVtObject%s%s_sROM = {%d", otClassnameTable [objType], objName, pc_postfix, objID);
-        fprintf (partFile_functions, "  iVtObject%s%s.init (&iVtObject%s%s_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);\n", objName, pc_postfix, objName, pc_postfix);
+        fprintf (partFile_variables,                "IsoAgLib::iVtObject%s_c iVtObject%s%s;\n", otClassnameTable [objType], objName, pc_postfix);
+        fprintf (partFile_variables_extern,  "extern IsoAgLib::iVtObject%s_c iVtObject%s%s;\n", otClassnameTable [objType], objName, pc_postfix);
+        fprintf (partFile_attributes,               "const IsoAgLib::iVtObject_c::iVtObject%s_s iVtObject%s%s_sROM = {%d", otClassnameTable [objType], objName, pc_postfix, objID);
+        fprintf (partFile_attributes_extern, "extern const IsoAgLib::iVtObject_c::iVtObject%s_s iVtObject%s%s_sROM;\n"   , otClassnameTable [objType], objName, pc_postfix);
+        if (b_externalize)
+        {
+          static int splitCount=0;
+          if ((splitCount & 0x1FF) == 0) splitFunction();
+          splitCount++;
+          fprintf (partFile_split_function,    "  iVtObject%s%s.init (&iVtObject%s%s_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);\n", objName, pc_postfix, objName, pc_postfix);
+        }
+        else
+        {
+          fprintf (partFile_functions,         "  iVtObject%s%s.init (&iVtObject%s%s_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);\n", objName, pc_postfix, objName, pc_postfix);
+        }
         fprintf (partFile_defines, "#define iVtObjectID%s%s %d\n", objName, pc_postfix, objID);
       }
 
@@ -4420,6 +4513,8 @@ vt2iso_c::prepareFileNameAndDirectory (std::basic_string<char>* pch_fileName)
   std::basic_string<char> c_unwantedType4 = ".iop";
   std::basic_string<char> c_unwantedType5 = ".txt";
   std::basic_string<char> c_unwantedType6 = ".csv";
+  std::basic_string<char> c_unwantedType7 = ".cpp";
+  std::basic_string<char> c_unwantedType8 = ".bak";
 
   // strip the ".xml" away!
   if (pch_fileName->length() > 4)
@@ -4489,6 +4584,8 @@ vt2iso_c::prepareFileNameAndDirectory (std::basic_string<char>* pch_fileName)
         if ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-4 ) == c_unwantedType4 ) continue;
         if ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-4 ) == c_unwantedType5 ) continue;
         if ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-4 ) == c_unwantedType6 ) continue;
+        if ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-4 ) == c_unwantedType7 ) continue;
+        if ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-4 ) == c_unwantedType8 ) continue;
 
         if ( c_directoryCompareItem.find( c_project ) != std::string::npos ) {
           c_directoryCompareItem.insert(0, "\\" );
@@ -4524,6 +4621,8 @@ vt2iso_c::prepareFileNameAndDirectory (std::basic_string<char>* pch_fileName)
       if ( (c_directoryCompareItem.length() > 4  ) && ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-4  ) == c_unwantedType4 ) ) continue;
       if ( (c_directoryCompareItem.length() > 4  ) && ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-4  ) == c_unwantedType5 ) ) continue;
       if ( (c_directoryCompareItem.length() > 4  ) && ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-4  ) == c_unwantedType6 ) ) continue;
+      if ( (c_directoryCompareItem.length() > 4  ) && ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-4  ) == c_unwantedType7 ) ) continue;
+      if ( (c_directoryCompareItem.length() > 4  ) && ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-4  ) == c_unwantedType8 ) ) continue;
 
       if ( c_directoryCompareItem.find( c_project ) != std::string::npos ) {
         c_directoryCompareItem.insert(0, "/" );
@@ -4604,6 +4703,7 @@ int main(int argC, char* argV[])
   int  indexXmlFile;
 
   bool generatePalette = false;
+  bool externalize = false;
 
   memset(localeStr, 0, sizeof localeStr);
 
@@ -4658,9 +4758,14 @@ int main(int argC, char* argV[])
       strcpy(localeStr, &(argV[argInd][8]));
     }
     else if (!strcmp(argV[argInd], "-p")
-      ||  !strcmp(argV[argInd], "-P"))
+              ||  !strcmp(argV[argInd], "-P"))
     {
       generatePalette = true;
+    }
+    else if (!strcmp(argV[argInd], "-e")
+              ||  !strcmp(argV[argInd], "-E"))
+    {
+      externalize = true;
     }
     else if (!strncmp(argV[argInd], "-i=", 3)
               ||  !strncmp(argV[argInd], "-I=", 3))
@@ -4714,7 +4819,7 @@ int main(int argC, char* argV[])
     exit (-1);
   }
 
-  pc_vt2iso->init (c_fileName.c_str(), &dictionary);
+  pc_vt2iso->init (c_fileName.c_str(), &dictionary, externalize);
 
   for (indexXmlFile = 0; indexXmlFile < pc_vt2iso->getAmountXmlFiles(); indexXmlFile++)
   { // loop all xmlFiles!
