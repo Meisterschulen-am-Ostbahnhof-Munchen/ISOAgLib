@@ -3523,12 +3523,12 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             if (attrIsGiven [attrValue]) std::cout <<"\n\nOverriding value & length from ["<< objName <<"]!!" << std::endl;
 
             // anyway, override attrValue and clear length (so it gets auto-calculated below!)
-            attrIsGiven [attrValue] = true;
-            strcpy (attrString [attrValue], pc_foundValue);
+              attrIsGiven [attrValue] = true;
+              strcpy (attrString [attrValue], pc_foundValue);
             attrIsGiven [attrLength] = false;
+            }
           }
         }
-      }
       else
       {
         if ( checkForAllowedExecution() )
@@ -4451,6 +4451,7 @@ vt2iso_c::vt2iso_c(char* pch_poolIdent)
   : amountXmlFiles(0)
   , pcch_poolIdent (pch_poolIdent)
   , b_hasUnknownAttributes (false)
+  , partFile_split_function( NULL )
 {}
 
 vt2iso_c::~vt2iso_c()
