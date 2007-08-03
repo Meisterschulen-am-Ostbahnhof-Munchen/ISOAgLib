@@ -106,6 +106,15 @@ TargetFileStreamOutput_c::~TargetFileStreamOutput_c()
   close();
 }
 
+
+// @todo : I just added this function to be able to compile.
+// Thomas u have to check 
+bool TargetFileStreamOutput_c::open( CNAMESPACE::string& filename, FileMode_t rt_mode )
+{
+	return open(filename.c_str(), rt_mode);
+}
+
+
 //! open a output stream
 bool TargetFileStreamOutput_c::open( const char* filename, FileMode_t rt_mode )
 {
