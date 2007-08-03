@@ -256,6 +256,7 @@ build_utils/vt2iso/src/vt2isostr2bin.h -text
 build_utils/vt2iso/version.incl -text
 build_utils/vt2iso/vt2iso.kdevelop -text
 build_utils/vt2iso/vt2iso.kdevelop.filelist -text
+build_utils/vt2iso/vt2iso.vcproj -text
 build_utils/vt2iso/xerces-c_2_5_0.dll -text
 commercial_BIOS.dummy/bios_esx/README -text
 commercial_BIOS.dummy/bios_pm167/README -text
