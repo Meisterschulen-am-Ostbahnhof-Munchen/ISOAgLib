@@ -444,7 +444,7 @@ void DOMCountErrorHandler::resetErrors()
 // ---------------------------------------------------------------------------
 static void usage()
 {
-  std::cout << "\nvt2iso BUILD DATE: 02-Aug-2007\n\n"
+  std::cout << "\nvt2iso BUILD DATE: 03-Aug-2007\n\n"
     "Usage:\n"
     " vt2iso [options] <XML file>\n\n"
     "This program invokes the DOMBuilder, builds the DOM tree,\n"
@@ -3519,17 +3519,13 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
 
           if (b_foundValue)
           {
-            /// Do we have conflicting 'value='s now?
-            if (attrIsGiven [attrValue])
-            {
-              std::cout <<"\n\nConflicting values in ["<< objName <<"]!! Someone put more debug output here, please ;) STOPPING PARSER! bye.\n\n";
-              return false;
-            }
-            else
-            { // override attrValue
-              attrIsGiven [attrValue] = true;
-              strcpy (attrString [attrValue], pc_foundValue);
-            }
+            /// Do we have conflicting 'value='s now? Just put out a warning!
+            if (attrIsGiven [attrValue]) std::cout <<"\n\nOverriding value & length from ["<< objName <<"]!!" << std::endl;
+
+            // anyway, override attrValue and clear length (so it gets auto-calculated below!)
+            attrIsGiven [attrValue] = true;
+            strcpy (attrString [attrValue], pc_foundValue);
+            attrIsGiven [attrLength] = false;
           }
         }
       }
@@ -3737,7 +3733,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
         case otInputstring:
         {
           if (!attrIsGiven [attrValue])
-          {
+          { // no value given
             if (!(attrIsGiven [attrWidth] && attrIsGiven [attrHeight] && attrIsGiven [attrFont_attributes] && attrIsGiven [attrLength] && attrIsGiven [attrEnabled]))
             {
               std::cout << "YOU NEED TO SPECIFY THE width= AND height= AND font_attributes= AND length= AND enabled= ATTRIBUTES FOR THE <inputstring> OBJECT '" << objName << "' IF NO VALUE IS GIVEN! STOPPING PARSER! bye.\n\n";
@@ -3753,7 +3749,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             sprintf (attrString [attrValue], "NULL");
           }
           else
-          {
+          { // value given
             signed int ret = strlenUnescaped (attrString [attrValue]);
             if (ret == -1)
             {
@@ -4956,9 +4952,9 @@ int main(int argC, char* argV[])
   pc_vt2iso->skRelatedFileOutput();
 
   if (errorOccurred)
-    pc_vt2iso->clean_exit ("XML-Parsing error occurred. Terminating.\n");
+    pc_vt2iso->clean_exit ("XML-Parsing error occurred. Terminating.\n\n");
   else
-    pc_vt2iso->clean_exit ("All conversion done successfully.\n");
+    pc_vt2iso->clean_exit ("All conversion done successfully.\n\n");
 
   delete pc_vt2iso;
   return 0; /// everything well done
