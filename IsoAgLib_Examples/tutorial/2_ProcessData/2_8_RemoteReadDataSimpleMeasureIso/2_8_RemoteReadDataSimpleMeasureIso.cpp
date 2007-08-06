@@ -51,19 +51,26 @@
 
 /* *********************************************************************** */
 /** \example 2_8_RemoteReadDataSimpleMeasureIso.cpp
- * This tutorial shall provide a simple base program, which creates some
- * remote process data, for which only single shot value request are sent.
- * Demonstrate optional usage of handler class with a method which is automatically
- * called on each measurement value receive.
+ * In section 2 tutorial examples the provision and distribution of process 
+ * values is demonstrated. This communication is done over CAN-BUS. An 
+ * example consists of a pair of two applications. One 
+ * application is ment as local process (*_Local*), another is ment as remote 
+ * process (*_Remote*). If an example provides sole measurment values it is 
+ * grouped in a read example (*Read*). If the remote application sets values
+ * in a local application, it is gouped in a write example (*Write*).
  *
  * <H1>What is demonstrated</H1>
  * <ol>
- * <li>Create some remote standard process data and request measurement data from remote device
+ * <li>This example ("2_8_RemoteReadDataSimpleMeasureIso") shows how to request and react on
+ * single, one shot data from a distant process over CAN-BUS communication. A remote connection is used
+ * for this data request. This example includes the demonstration of an optional handler class with a method that
+ * is automatically called for each measurement value that is received. An example 
+ * for data provisioning can be fount in 2_1_LocalReadDataSimpleMeasureIso. Important used concepts are:
  * <ul>
- *  <li>Standard remote process data class IsoAgLib::iProcDataRemote_c
- *  <li>Use constructor IsoAgLib::iProcDataRemote_c::iProcDataRemote_c to create variable with defined property
- *  <li>Use IsoAgLib::iProcDataRemote_c::init to define process data properties independent from instantiation ( needed especially for arrays of process data )
- *  <li>USe IsoAgLib::iProcDataRemote_c::masterVal to access current measurement value
+ *  <li>Standard remote process data class IsoAgLib::iProcDataRemoteSimpleMeasure_c
+ *  <li>Use constructor IsoAgLib::iProcDataRemote_c::iProcDataRemoteSimpleMeasure_c to create variable with defined property
+ *  <li>Use IsoAgLib::iProcDataRemoteSimpleMeasure_c::init to define process data properties independent from instantiation ( needed especially for arrays of process data )
+ *  <li>Use IsoAgLib::iProcDataRemoteSimpleMeasure_c::masterMeasurementVal to access current measurement value
  * </ul>
  * <li>Trigger periodic activities of ISO<i><sub>AgLib</sub></i>
  *  <ul>
