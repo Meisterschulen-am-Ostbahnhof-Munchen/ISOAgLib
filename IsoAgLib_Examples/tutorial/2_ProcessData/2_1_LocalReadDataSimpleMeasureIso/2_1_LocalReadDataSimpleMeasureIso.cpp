@@ -51,19 +51,27 @@
 
 /* *********************************************************************** */
 /** \example 2_1_LocalReadDataSimpleMeasureIso.cpp
- * This tutorial shall provide the simples base program, which creates some
- * local process data, which value is regularly updated.
- * Remote ECUs can only request single values, as this variant uses the
- * simple process data type iProcDataLocalSimpleMeasure_c.
- * This variant is enough if other remote ECUs don't start measurement programs
- * and reduction of memory need is important.
+ * In section 2 tutorial examples the provision and distribution of process 
+ * values is demonstrated. This communication is done over CAN-BUS. An 
+ * example consists of a pair of two applications. One 
+ * application is ment as local process (*_Local*), another is ment as remote 
+ * process (*_Remote*). If an example provides sole measurment values it is 
+ * grouped in a read example (*Read*). If the remote application sets values
+ * in a local application, it is gouped in a write example (*Write*).
+ *
+ * 
  *
  * <H1>What is demonstrated</H1>
  * <ol>
- * <li>Create some local process data which don't support measurement programs
- *    and update their data so that remote device can only perform one shot
- *    data requests ( start of a periodical send of data isn't supported -
- *    look at IsoAgLib::iProcDataLocal_c for this )
+ * <li>This example ("2_1_LocalReadDataSimpleMeasureIso") creates some examplary 
+ * local process data. This process data is regualarly updated. The values are 
+ * stored in an IsoAgLib::iProcDataLocalSimpleMeasure_c object. These values 
+ * can be requested by remote processes over CAN-BUS communication. This stored data
+ * does not support measurement programs. Remote devices can only perform one 
+ * shot data requests ( start of a periodical send of data isn't supported -
+ *    look at IsoAgLib::iProcDataLocal_c for this ). 
+ * An example for this request can be fount in 2_8_RemoteReadDataSimpleMeasureIso.
+ * Important used concepts are:
  * <ul>
  *  <li>Local process data class IsoAgLib::iProcDataLocalSimpleMeasure_c without measurement programs
  *  <li>Use constructor IsoAgLib::iProcDataLocalSimpleMeasure_c::iProcDataLocalSimpleMeasure_c
