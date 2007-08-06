@@ -199,6 +199,7 @@
 #include <IsoAgLib/driver/can/icanio_c.h>
 #include <IsoAgLib/driver/eeprom/ieepromio_c.h>
 #include <supplementary_driver/driver/rs232/irs232io_c.h>
+#include <IsoAgLib/util/iliberr_c.h>
 
 /* include the central interface header for the communication layer part
    of the "IsoAgLib" */
@@ -305,20 +306,20 @@ int main()
         << "\r\n";
       if ( c_eeprom.eofp() ) IsoAgLib::getIrs232Instance() << "Lifetime was written at end of EEPROM\r\n";
       else IsoAgLib::getIrs232Instance() << "End of EEPROM isn't reached after write of lifetime\r\n";
-      if ( IsoAgLib::getLibErrInstance().getErrCnt( LibErr_c::Eeprom ) > 0 )
+      if ( IsoAgLib::getILibErrInstance().getErrCnt( iLibErr_c::Eeprom ) > 0 )
       { // at least one EEPROM location error detected
         IsoAgLib::getIrs232Instance()
-          << "IsoAgLib detected " << IsoAgLib::getLibErrInstance().getErrCnt( LibErr_c::Eeprom )
+          << "IsoAgLib detected " << IsoAgLib::getILibErrInstance().getErrCnt( iLibErr_c::Eeprom )
           << " EEPROM access errors\r\n";
-        if ( IsoAgLib::getLibErrInstance().getErrCnt( LibErr_c::EepromSegment ) > 0 )
+        if ( IsoAgLib::getILibErrInstance().getErrCnt( iLibErr_c::EepromSegment ) > 0 )
         {
           IsoAgLib::getIrs232Instance() << "EEPROM segment error occured\r\n";
         }
-        else if ( IsoAgLib::getLibErrInstance().getErrCnt( LibErr_c::EepromWriteError ) > 0 )
+        else if ( IsoAgLib::getILibErrInstance().getErrCnt( iLibErr_c::EepromWriteError ) > 0 )
         {
           IsoAgLib::getIrs232Instance() << "EEPROM write error occured\r\n";
         }
-        IsoAgLib::getLibErrInstance().clear( LibErr_c::Eeprom );
+        IsoAgLib::getILibErrInstance().clear( iLibErr_c::Eeprom );
       }
     }
 
