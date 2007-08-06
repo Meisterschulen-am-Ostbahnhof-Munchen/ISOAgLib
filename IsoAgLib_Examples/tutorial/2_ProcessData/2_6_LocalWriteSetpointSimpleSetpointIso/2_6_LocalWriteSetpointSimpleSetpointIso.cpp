@@ -51,25 +51,28 @@
 
 /* *********************************************************************** */
 /** \example 2_6_LocalWriteSetpointSimpleSetpointIso.cpp
- * This tutorial shall provide the simples base program, which creates some
- * local process data, which value is regularly updated.
- * Remote ECUs can request single values or can start measurement programs.
- * This variant reduces ressources need by exclusion of the sophisticted
- * setpoint management. Received setpoints are simply stored and an ACK
- * is automatically sent on receive. So this variant shouldn't be used
- * for ECUs which must decide on acceptable setpoints.
- * In case an ECU uses several process data with different requirements,
- * it is useful to use the suitable feature set for each process data type.
- * A sophisticated setpoint or measurement type needs some heap memory for the
- * data management.
- * This example demonstrates the features which are provided by this restricted
- * type of setpoint handling.
+ * In section 2 tutorial examples the provision and distribution of process 
+ * values is demonstrated. This communication is done over CAN-BUS. An 
+ * example consists of a pair of two applications. One 
+ * application is ment as local process (*_Local*), another is ment as remote 
+ * process (*_Remote*). If an example provides sole measurment values it is 
+ * grouped in a read example (*Read*). If the remote application sets values
+ * in a local application, it is gouped in a write example (*Write*).
+ *
  *
  * <H1>What is demonstrated</H1>
  * <ol>
- * <li>Create some local standard process data and handle received setpoints
- * <li>Use the posibility to check for device type of setpoints sender to decide on
- *     accept or deny of setpoint value
+ * <li>
+ * This example ("2_6_LocalWriteSetpointSimpleSetpointIso") creates some examplary 
+ * local process data. This process data is regualarly updated. The values are 
+ * stored in an IsoAgLib::iProcDataLocalSimpleSetpoint_c object. These values 
+ * can be requested by remote processes over CAN-BUS communication.  Remote 
+ * ECUs can request single values or start measurement programs. Furthermore this application 
+ * allowes remote processes to define setpoints. This variant 
+ * reduces ressources needs by exclusion of the sophisticted
+ * setpoint management. This example demonstrates the features which are provided by this restricted
+ * type of setpoint handling. An example for this request 
+ * can be fount in 2_9_RemoteWriteSetpointStdIso. Important used concepts are:
  * <ul>
  *  <li>Standard local process data class IsoAgLib::iProcDataLocalSimpleSetpoint_c
  *  <li>Use constructor IsoAgLib::iProcDataLocalSimpleSetpoint_c::iProcDataLocalSimpleSetpoint_c to create variable with defined property
