@@ -52,32 +52,37 @@
 
 /* *********************************************************************** */
 /** \example 2_3_LocalReadDataSimpleMeasureSetpointIso.cpp
- * This tutorial shall provide the simples base program, which creates some
- * local process data, which value is regularly updated.
- * Remote ECUs can only request single values, as this variant uses the
- * simple process data type iProcDataLocalSimpleMeasure_c.
-
- * Remote ECUs can request single values or start measurement programs.
- * This variant reduces ressources need by exclusion of the sophisticted
- * setpoint management. Received setpoints are simply stored and an ACK
- * is automatically sent on receive. So this variant shouldn't be used
- * for ECUs which must decide on acceptable setpoints.
- * In case an ECU uses several process data with different requirements,
- * it is useful to use the suitable feature set for each process data type.
- * A sophisticated setpoint or measurement type needs some heap memory for the
- * data management.
+ * In section 2 tutorial examples the provision and distribution of process 
+ * values is demonstrated. This communication is done over CAN-BUS. An 
+ * example consists of a pair of two applications. One 
+ * application is ment as local process (*_Local*), another is ment as remote 
+ * process (*_Remote*). If an example provides sole measurment values it is 
+ * grouped in a read example (*Read*). If the remote application sets values
+ * in a local application, it is gouped in a write example (*Write*).
+ *
+ * 
  *
  * <H1>What is demonstrated</H1>
  * <ol>
- * <li>Create some local process data which can't distinguish setpoints from
- *		different senders ad which can only accept automatically received
- *		setpoints ( look for IsoAgLib::iProcDataLocal_c to get possibility for explicit
- *		decision on implementation of received setpoints based on value,
- *		time and sender )
- *	<li>These process data type additionally don't support measurement programs
- *		so that remote device can only perform one shot
- *		data requests ( start of a periodical send of data isn't supported -
- *		look at IsoAgLib::iProcDataLocal_c for this )
+ * <li>This example ("2_3_LocalReadDataSimpleMeasureSetpointIso") creates some examplary 
+ * local process data. This process data is regualarly updated. The values are 
+ * stored in an IsoAgLib::iProcDataLocalSimpleSetpointSimpleMeasure_c object. These values 
+ * can be requested by remote processes over CAN-BUS communication.  Remote 
+ * ECUs can request single values. This variant reduces ressources needs 
+ * by exclusion of the sophisticted measurement and setpoint management. 
+ * Received setpoints are simply stored and an ACK is automatically sent 
+ * on receive. Different setpoint-senders cannot be 
+ * distinguished. Only automatically received setpoints can be accepted 
+ * ( look for IsoAgLib::iProcDataLocal_c to get possibility for explicit 
+ * decision on implementation of received setpoints based on value, 
+ * time and sender ).So this variant shouldn't be used
+ * for ECUs which must decide on acceptable setpoints or which need
+ * measurement capabilities. In case an ECU uses several process data 
+ * with different requirements, it is useful to use the suitable feature 
+ * set for each process data type. A sophisticated setpoint or measurement 
+ * type needs some heap memory for the data management.
+ * Important used concepts are:
+ *
  * <ul>
  *	<li>Local process data class IsoAgLib::iProcDataLocalSimpleSetpointSimpleMeasure_c with simple setpoint handling
  *	<li>Use constructor IsoAgLib::iProcDataLocalSimpleSetpointSimpleMeasure_c::iProcDataLocalSimpleSetpointSimpleMeasure_c
