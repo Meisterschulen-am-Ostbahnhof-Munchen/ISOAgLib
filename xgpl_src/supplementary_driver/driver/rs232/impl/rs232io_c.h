@@ -177,7 +177,13 @@ public:
   /**
     checks whether the the BIOS RS232 is correctly initialized
   */
-  const bool isInitialized () const {return (ui16_baudrate != BAUDERATE_CONTRUCTOR_DEFAULT_VALUE && ui8_channel != CHANNEL_CONTRUCTOR_DEFAULT_VALUE ); }
+  const bool isInitialized () const 
+  {return 
+  (ui16_baudrate != BAUDERATE_CONTRUCTOR_DEFAULT_VALUE 
+ #if defined(USE_RS232_CHANNEL) 
+  && ui8_channel != CHANNEL_CONTRUCTOR_DEFAULT_VALUE 
+ #endif
+  ); }
 
   /** every subsystem of IsoAgLib has explicit function for controlled shutdown
     */
