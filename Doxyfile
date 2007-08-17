@@ -506,7 +506,7 @@ INPUT                  = IsoAgLib_Examples \
 # input encoding. Doxygen uses libiconv (or the iconv built into libc) for the transcoding. 
 # See http://www.gnu.org/software/libiconv for the list of possible encodings.
 
-INPUT_ENCODING         = UTF-8
+INPUT_ENCODING         = ISO-8859-15
 
 # If the value of the INPUT tag contains directories, you can use the 
 # FILE_PATTERNS tag to specify one or more wildcard pattern (like *.cpp 
