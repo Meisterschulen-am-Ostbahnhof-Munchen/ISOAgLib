@@ -925,10 +925,77 @@ void
 VtClientServerCommunication_c::notifyOnVtStatusMessage()
 {
   c_streamer.refc_pool.eventVtStatusMsg();
-  
+
   // set client display state appropriately
   setVtDisplayState (true, getVtServerInst().getVtState()->saOfActiveWorkingSetMaster);
 }
+
+
+void
+VtClientServerCommunication_c::notifyOnAuxInputStatus()
+{
+  const ISOName_c& rc_inputIsoName = c_data.getISONameForSA();
+  uint8_t const cui8_inputNumber = c_data.getUint8Data(2-1);
+
+  // Look for all Functions that are controlled by this Input right now!
+  for (STL_NAMESPACE::list<AuxAssignment_s>::iterator it = mlist_auxAssignments.begin(); it != mlist_auxAssignments.end(); )
+  {
+    if ( (it->mui8_inputNumber == cui8_inputNumber)
+      && (it->mc_inputIsoName == rc_inputIsoName) )
+    { // notify application on this new Input Status!
+      uint16_t const cui16_inputValueAnalog = c_data.getUint16Data (3-1);
+      uint16_t const cui16_inputValueTransitions = c_data.getUint16Data (5-1);
+      uint8_t const cui8_inputValueDigital = c_data.getUint8Data (7-1);
+//      c_streamer.refc_pool.eventAuxFunctionValue (mui16_functionUid, cui16_inputValueAnalog, cui16_inputValueTransitions, cui8_inputValueDigital);
+    }
+  }
+}
+
+
+bool
+VtClientServerCommunication_c::storeAuxAssignment()
+{
+  uint8_t const cui8_inputSaNew = c_data.getUint8Data (2-1);
+  uint8_t const cui8_inputNrNew = c_data.getUint8Data (3-1); /// 0xFF means unassign!
+  uint16_t const cui16_functionUidNew = c_data.getUint16Data (4-1);
+  if (!getIsoMonitorInstance().existIsoMemberNr (cui8_inputSaNew) && (cui8_inputNrNew != 0xFF))
+    return false;
+
+  for (STL_NAMESPACE::list<AuxAssignment_s>::iterator it = mlist_auxAssignments.begin(); it != mlist_auxAssignments.end(); )
+  {
+    if (it->mui16_functionUid == cui16_functionUidNew)
+    { // we already have an assignment for this function
+      // do we have to replace OR unassign?
+      if (cui8_inputNrNew == 0xFF)
+      { /// Unassign
+        it = mlist_auxAssignments.erase (it);
+        continue; // look through all assignments anyway, although we shouldn't have any doubles in there...
+      }
+      else
+      { /// Reassign
+        const ISOName_c& rc_inputIsoNameNew = getIsoMonitorInstance().isoMemberNr (cui8_inputSaNew).isoName();
+        it->mc_inputIsoName = rc_inputIsoNameNew;
+        it->mui8_inputNumber = cui8_inputNrNew;
+        return true;
+      }
+    }
+    it++;
+  }
+
+  // Function not found, so we need to add (in case it was NOT an unassignment)
+  if (cui8_inputNrNew == 0xFF)
+    return true; // unassignment is always okay!
+
+  AuxAssignment_s s_newAuxAssignment;
+  const ISOName_c& rc_inputIsoNameNew = getIsoMonitorInstance().isoMemberNr (cui8_inputSaNew).isoName();
+  s_newAuxAssignment.mc_inputIsoName = rc_inputIsoNameNew;
+  s_newAuxAssignment.mui8_inputNumber = cui8_inputNrNew;
+  s_newAuxAssignment.mui16_functionUid = cui16_functionUidNew;
+
+  mlist_auxAssignments.push_back (s_newAuxAssignment);
+  return true;
+}
+
 
 /** process received can messages
   @return true -> message was processed; else the received CAN message will be served to other matching CANCustomer_c
@@ -1060,18 +1127,22 @@ VtClientServerCommunication_c::processMsg()
       }
       break;
 
-#ifdef USE_SIMPLE_AUX_RESPONSE
     /***************************************/
     /*** ### AUX Assignment Messages ### ***/
     case 0x20:
     { // Command: "Auxiliary Control", parameter "Auxiliary Assignment"
-      c_data.setIsoPgn (ECU_TO_VT_PGN);
-      c_data.setIsoSa (refc_wsMasterIdentItem.getIsoItem()->nr());
-      c_data.setIsoPs (pc_vtServerInstance->getVtSourceAddress());
-      getCanInstance4Comm() << c_data;
-            /// For now simply respond without doing anything else with this information. simply ack the assignment!
+      /** @todo If we can't assign because WE don't know this SA, should we anyway answer the assignment?
+       * for now we don't answer if we can't take the assignment - VTs have to handle this anyway... */
+      bool const cb_assignmentOkay = storeAuxAssignment();
+
+      if (cb_assignmentOkay)
+      { /// For now simply respond without doing anything else with this information. simply ack the assignment!
+        c_data.setIsoPgn (ECU_TO_VT_PGN);
+        c_data.setIsoSa (refc_wsMasterIdentItem.getIsoItem()->nr());
+        c_data.setIsoPs (pc_vtServerInstance->getVtSourceAddress());
+        getCanInstance4Comm() << c_data;
+      }
     } break;
-#endif
 
     /***************************************************/
     /*** ### ECU Initiated Messages (=Responses) ### ***/

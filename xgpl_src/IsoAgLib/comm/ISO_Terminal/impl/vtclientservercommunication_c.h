@@ -249,6 +249,14 @@ class ISOTerminal_c;
 /** class for managing the communication between vt client and server */
 class VtClientServerCommunication_c : public CANCustomer_c
 {
+private:
+  struct AuxAssignment_s
+  {
+    ISOName_c mc_inputIsoName;
+    uint8_t mui8_inputNumber;
+    uint16_t mui16_functionUid;
+  };
+
 public:
   enum objectPoolState_t {
     OPInitial,
@@ -333,6 +341,8 @@ public:
 
   /** function that handles incoming VT ESC */
   void notifyOnVtESC() { c_streamer.refc_pool.eventVtESC(); }
+
+  void notifyOnAuxInputStatus();
 
   virtual bool processMsg();
 
@@ -437,6 +447,9 @@ public:
 private:
   friend class ISOTerminal_c;
 
+  //! @return true for successful assignment, false if SA couldn't be found.
+  bool storeAuxAssignment();
+
   void doStart();
   void doStop();
 
@@ -536,6 +549,8 @@ private: // attributes
   #else
   STL_NAMESPACE::queue<SendUpload_c> q_sendUpload;
   #endif
+
+  STL_NAMESPACE::list<AuxAssignment_s> mlist_auxAssignments;
 
   VtClientServerCommStreamer_c c_streamer;
 };

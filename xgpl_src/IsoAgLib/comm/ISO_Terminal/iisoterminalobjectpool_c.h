@@ -185,7 +185,7 @@ public:
     @param rui16_xPosition of where the user has clicked (besides buttons and input objects) or touched
     @param rui16_yPosition of where the user has clicked (besides buttons and input objects) or touched
   */
-  virtual void eventPointingEvent (uint16_t /*rui16_xPosition*/, uint16_t /*rui16_yPosition*/) {};
+  virtual void eventPointingEvent (uint16_t /*rui16_xPosition*/, uint16_t /*rui16_yPosition*/) {}
 
   /**
     hook function that gets called after the ISO_Terminal_c instance
@@ -212,7 +212,7 @@ public:
     the abort function is implemented empty by default because
     it is only needed for on-the-fly parsing of the string value
   */
-  virtual void eventStringValueAbort() {};
+  virtual void eventStringValueAbort() {}
 
   /**
     hook function that gets called immediately after the
@@ -234,7 +234,7 @@ public:
                              0..(n-1) for the index to the supported languages. 0 is the first (=default) language. 1 the second, etc.
     @param rui16_languageCode the language code of the afterwards being uploaded language (one of your supported languages!)
   */
-  virtual void eventPrepareForLanguageChange (int8_t /*ri8_languageIndex*/, uint16_t /*rui16_languageCode*/) {};
+  virtual void eventPrepareForLanguageChange (int8_t /*ri8_languageIndex*/, uint16_t /*rui16_languageCode*/) {}
 
   /**
     hook function that gets called immediately after recognizing
@@ -247,7 +247,7 @@ public:
     of a command-response message. please keep the implementation short as
     this is directly called from IsoTerminal_c's processMsg();
   */
-  virtual void eventCommandResponse(uint8_t /*rui8_responseCommandError*/, const uint8_t /*rpui8_responseDataBytes*/[8]) {};
+  virtual void eventCommandResponse(uint8_t /*rui8_responseCommandError*/, const uint8_t /*rpui8_responseDataBytes*/[8]) {}
 
   /**
     hook function that gets called immediately after recognizing an incoming LANGUAGE_PGN.
@@ -256,20 +256,29 @@ public:
     for changing the LANGUAGE please refer to "eventObjectPoolUploadedSuccessfully".
     VERY IMPORTANT: THIS FUNCTION CALL MAY OCCUR PRIOR TO AN SUCCESSFULLY UPLOADED POOL !!!!!!!
   */
-  virtual void eventLanguagePgn(const localSettings_s& /*rrefs_localSettings*/) {};
+  virtual void eventLanguagePgn(const localSettings_s& /*rrefs_localSettings*/) {}
 
   /**
     hook function that gets called immediately after recognizing an incoming
     VT status message.
   */
-  virtual void eventVtStatusMsg() {};
+  virtual void eventVtStatusMsg() {}
 
   /**
     hook function that gets called immediately after recognizing an incoming
     VT ESC.
    */
-  virtual void eventVtESC() {};
-  
+  virtual void eventVtESC() {}
+
+  /**
+    hook function that gets called immediately after recognizing an incoming
+    Auxiliary Input Status message - but only if you have a function assigned to it!
+   */
+  virtual void eventAuxFunctionValue (uint16_t mui16_functionUid,
+                                      uint16_t cui16_inputValueAnalog,
+                                      uint16_t cui16_inputValueTransitions,
+                                      uint8_t  cui8_inputValueDigital) {}
+
   /**
     hook function that gets called immediately after recognizing an incoming
     Display Activation Msg or Vt Status Msg with display state change.
@@ -301,7 +310,7 @@ public:
     while (*iter++ != NULL) numLang++;
   };
 
-   virtual ~iIsoTerminalObjectPool_c(){};
+   virtual ~iIsoTerminalObjectPool_c() {}
 
   /**
     hook function that gets called every time a color-value
@@ -328,7 +337,7 @@ public:
     hook function that gets called immediately after recognizing the success of a command-response message
     for Get Attribute Value command
   */
-  virtual void eventAttributeValue (IsoAgLib::iVtObject_c* /*obj*/, uint8_t /*ui8_attributeValue*/, uint8_t* /*pui8_value*/) {};
+  virtual void eventAttributeValue (IsoAgLib::iVtObject_c* /*obj*/, uint8_t /*ui8_attributeValue*/, uint8_t* /*pui8_value*/) {}
 
 protected:
   iVtObject_c*HUGE_MEM** iVtObjects;

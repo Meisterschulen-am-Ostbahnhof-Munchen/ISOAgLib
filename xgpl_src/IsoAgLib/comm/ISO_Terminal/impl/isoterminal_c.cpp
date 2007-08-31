@@ -341,11 +341,12 @@ ISOTerminal_c::processMsg()
   /// -->VT_TO_GLOBAL_PGN<-- ///
   if ((data().isoPgn() & 0x3FFFF) == VT_TO_GLOBAL_PGN)
   { // iterate through all registered VtServerInstances and process msg if vtSourceAddress == isoSa
-    for (lit_vtServerInst = l_vtServerInst.begin(); lit_vtServerInst != l_vtServerInst.end(); lit_vtServerInst++)
+    uint8_t const cui8_cmdByte = data().getUint8Data (1-1);
+    if (cui8_cmdByte == 0xFE) // Command: "Status", Parameter: "VT Status Message"
     {
-      if (lit_vtServerInst->getVtSourceAddress() == data().isoSa()) // getVtSourceAddress gets the SA from the IsoItem, so it's the current one...
+      for (lit_vtServerInst = l_vtServerInst.begin(); lit_vtServerInst != l_vtServerInst.end(); lit_vtServerInst++)
       {
-        if (data().getUint8Data (0) == 0xFE) // Command: "Status", Parameter: "VT Status Message"
+        if (lit_vtServerInst->getVtSourceAddress() == data().isoSa()) // getVtSourceAddress gets the SA from the IsoItem, so it's the current one...
         {
           lit_vtServerInst->setLatestVtStatusData();
 
@@ -362,11 +363,19 @@ ISOTerminal_c::processMsg()
           }
           return true; // VT Status Message is NOT of interest for anyone else!
         }
-        else
-          break;
       }
     }
-    return false; // VT_TO_GLOBAL IS of interest for anyone else, because of AUX Assignment, etc...
+    else if (cui8_cmdByte == 0x21) // Command: "Auxiliary Control", Parameter: "Auxiliary Input Status"
+    { // iterate through all registered VtClientServerCommunication and notify them, maybe they have functions that need that input status!
+      for (ui8_index = 0; ui8_index < vec_vtClientServerComm.size(); ui8_index++)
+      {
+        if (vec_vtClientServerComm[ui8_index])
+        {
+          vec_vtClientServerComm[ui8_index]->notifyOnAuxInputStatus();
+        }
+      }
+    }
+    return true; // CHANGED! - VT_TO_GLOBAL is NOT of interest for anyone else anymore as we're handlign Aux Assignment here now!
   }
 
 

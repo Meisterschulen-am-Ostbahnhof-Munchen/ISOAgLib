@@ -634,6 +634,8 @@ vt2iso_c::clean_exit (char* error_message)
     fprintf (partFile_handler_direct, "\n  //virtual void eventVtStatusMsg();");
     fprintf (partFile_handler_direct, "\n  /* Uncomment the following function if you want to react on any incoming VT ESC */");
     fprintf (partFile_handler_direct, "\n  //virtual void eventVtESC();");
+    fprintf (partFile_handler_direct, "\n  /* Uncomment the following function if you want to react on any incoming Auxiliary Input Status messages */");
+    fprintf (partFile_handler_direct, "\n  //virtual void eventAuxFunctionValue (uint16_t mui16_functionUid, uint16_t cui16_inputValueAnalog, uint16_t cui16_inputValueTransitions, uint8_t cui8_inputValueDigital);");
     fprintf (partFile_handler_direct, "\n  /* Uncomment the following function if you want to react on any incoming VT Get Attribute Value messages */");
     fprintf (partFile_handler_direct, "\n  //virtual void eventAttributeValue(IsoAgLib::iVtObject_c* obj, uint8_t ui8_attributeValue, uint8_t* pui8_value);");
     fprintf (partFile_handler_direct, "\n  void initAllObjectsOnce(SINGLETON_VEC_KEY_PARAMETER_DEF);");
