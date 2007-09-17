@@ -339,7 +339,7 @@ ISOFilterBox_c::updateOnRemove (const ISOName_c* rpc_isoName)
     (some isonames may not be claimed right now..).
     @todo Maybe optimize to not touch the FilterBoxes that are INdependent of any ISONames? */
 void
-ISOFilterBox_c::syncFiltersToCan()
+ISOFilterBox_c::syncFiltersToCan(const ISOName_c* rpc_isoName)
 {
   bool b_reconfigFilter=false;
 
@@ -375,7 +375,8 @@ ISOFilterBox_c::syncFiltersToCan()
 
       if (it_managedIsoFilter->s_isoFilter.c_isoNameSa.isSpecified())
       { // see if it's in the monitorlist!
-        if (getIsoMonitorInstance4Comm().existIsoMemberISOName (it_managedIsoFilter->s_isoFilter.c_isoNameSa, true))
+        if ( (!(rpc_isoName && *rpc_isoName == it_managedIsoFilter->s_isoFilter.c_isoNameSa)) && 
+          (getIsoMonitorInstance4Comm().existIsoMemberISOName (it_managedIsoFilter->s_isoFilter.c_isoNameSa, true)) )
         { // retrieve current address
           const uint8_t cui8_adr = getIsoMonitorInstance4Comm().isoMemberISOName (it_managedIsoFilter->s_isoFilter.c_isoNameSa).nr();
           c_filter.set (cui8_adr, 0, Ident_c::ExtendedIdent);
@@ -388,7 +389,8 @@ ISOFilterBox_c::syncFiltersToCan()
       }
       if (it_managedIsoFilter->s_isoFilter.c_isoNameDa.isSpecified())
       { // see if it's in the monitorlist!
-        if (getIsoMonitorInstance4Comm().existIsoMemberISOName (it_managedIsoFilter->s_isoFilter.c_isoNameDa, true))
+        if ( (!(rpc_isoName && *rpc_isoName == it_managedIsoFilter->s_isoFilter.c_isoNameDa)) &&
+	(getIsoMonitorInstance4Comm().existIsoMemberISOName (it_managedIsoFilter->s_isoFilter.c_isoNameDa, true)) )
         { // retrieve current address
           const uint8_t cui8_adr = getIsoMonitorInstance4Comm().isoMemberISOName (it_managedIsoFilter->s_isoFilter.c_isoNameDa).nr();
           c_filter.set (cui8_adr, 1, Ident_c::ExtendedIdent);
@@ -410,6 +412,9 @@ ISOFilterBox_c::syncFiltersToCan()
         ui8_filtersSetUp++;
         b_reconfigFilter = true;
         it_managedIsoFilter->pc_filterBox = cpc_insertedFilter;
+        it_managedIsoFilter->s_isoFilter.c_identMask = c_mask;
+        it_managedIsoFilter->s_isoFilter.c_identFilter = c_filter;
+      	
         if (pc_firstFilter == NULL) pc_firstFilter = cpc_insertedFilter;
       }
     }
@@ -489,7 +494,7 @@ ISOFilterBox_c::updateOnRemove (const ISOName_c& rrefc_isoName)
             ||
            (it_managedIsoFilter->s_isoFilter.c_isoNameDa == rrefc_isoName) )
       {
-        syncFiltersToCan();
+        syncFiltersToCan(&rrefc_isoName);
       }
     }
   }

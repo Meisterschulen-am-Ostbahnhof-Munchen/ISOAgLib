@@ -191,7 +191,7 @@ public:
   void updateOnAdd    (const ISOName_c& rpc_isoName);
   void updateOnRemove (const ISOName_c& rpc_isoName);
 
-  void syncFiltersToCan();
+  void syncFiltersToCan(const ISOName_c* rpc_isoName=NULL);
 
   //! Here could come another constructor that takes a variable list of filters and
   //! keeps them all connected. Yet to be done, but not important right now...
