@@ -95,6 +95,13 @@
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
+#define MAINTAIN_POWER_REQUEST_PGN_DISABLE_MASK        0x0001LU
+#define LANGUAGE_PGN_DISABLE_MASK                      0x0002LU
+#define REAR_HITCH_STATE_PGN_DISABLE_MASK              0x0004LU
+#define FRONT_HITCH_STATE_PGN_DISABLE_MASK             0x0008LU
+
+
+
 typedef struct
 {
   /** indicates the transport state of an implement connected to a tractor or power unit */
@@ -137,7 +144,7 @@ public: // Public methods
       @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       @return true -> configuration was successfull
     */
-  virtual bool config_base (const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode);
+  virtual bool config_base (const ISOName_c* rpc_isoName, uint16_t rui16_suppressMask, IsoAgLib::IdentMode_t rt_identMode);
 
   /** destructor for TracGeneral_c which has nothing to do */
   virtual ~TracGeneral_c() { BaseCommon_c::close();};

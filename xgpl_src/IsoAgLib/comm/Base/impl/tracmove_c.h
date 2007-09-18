@@ -89,8 +89,14 @@
 
 #include <IsoAgLib/comm/Base/impl/basecommon_c.h>
 
+
+
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
+
+#define GROUND_BASED_SPEED_DIST_PGN_DISABLE_MASK       0x0001LU
+#define WHEEL_BASED_SPEED_DIST_PGN_DISABLE_MASK        0x0002LU
+#define SELECTED_SPEED_MESSAGE_DISABLE_MASK            0x0004LU
 
   class TracMove_c;
   typedef SINGLETON_DERIVED(TracMove_c,BaseCommon_c) SingletonTracMove_c;
@@ -111,7 +117,7 @@ namespace __IsoAgLib {
         @param rpc_isoName pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
         @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       */
-    virtual bool config_base (const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode);
+    virtual bool config_base (const ISOName_c* rpc_isoName, uint16_t rui16_suppressMask, IsoAgLib::IdentMode_t rt_identMode);
 
     /** update selected speed with actually best available speed
         @param t_speedSrc  from which source is the speed available

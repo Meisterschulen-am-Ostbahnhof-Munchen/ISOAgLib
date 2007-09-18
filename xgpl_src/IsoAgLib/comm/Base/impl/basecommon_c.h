@@ -115,7 +115,8 @@ namespace __IsoAgLib
     /** constructor */
     BaseCommon_c() : t_identMode(IsoAgLib::IdentModeImplement),
                      i32_lastMsgReceived(0),
-                     pc_isoName(),
+                     mui16_suppressMask(0),
+                     pc_isoName(),                    
                      c_selectedDataSourceISOName()
                    {}
     /** destructor */
@@ -140,7 +141,7 @@ namespace __IsoAgLib
         @param rpc_isoName pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
         @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       */
-    virtual bool config_base (const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode = IsoAgLib::IdentModeImplement);
+    virtual bool config_base (const ISOName_c* rpc_isoName, uint16_t rui16_suppressMask, IsoAgLib::IdentMode_t rt_identMode = IsoAgLib::IdentModeImplement);
 
      /** deliver reference to data pkg
          @return reference to the member CanPkg, which encapsulates the CAN send structure
@@ -228,6 +229,10 @@ namespace __IsoAgLib
     /** if a message is not send after 3 seconds it is expected that the sending node stopped sending */
     static const uint16_t TIMEOUT_SENDING_NODE = 3000;
 
+  protected:
+    /** flags that disable PGNs individually */
+    uint16_t mui16_suppressMask;
+  
   private:
 
     // private methods

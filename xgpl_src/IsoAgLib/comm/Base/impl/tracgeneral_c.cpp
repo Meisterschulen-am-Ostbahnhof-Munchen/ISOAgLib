@@ -140,14 +140,15 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
       @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       @return true -> configuration was successfull
     */
-  bool TracGeneral_c::config_base (const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode)
+  bool TracGeneral_c::config_base (const ISOName_c* rpc_isoName, uint16_t rui16_suppressMask, IsoAgLib::IdentMode_t rt_identMode)
   { // set configure values
     //store old mode to decide to register or unregister to request for pgn
     IsoAgLib::IdentMode_t t_oldMode = getMode();
 
     //call config for handling which is base data independent
     //if something went wrong leave function before something is configured
-    if ( !BaseCommon_c::config_base (rpc_isoName, rt_identMode) ) return false;
+    if ( !BaseCommon_c::config_base (rpc_isoName,rui16_suppressMask, rt_identMode) ) return false;
+
 
     ///Set time Period for Scheduler_c
     if (rt_identMode == IsoAgLib::IdentModeTractor)
@@ -375,85 +376,93 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
 
     setSelectedDataSourceISOName( *getISOName() );
     CANIO_c& c_can = getCanInstance4Comm();
-    data().setIsoPgn(FRONT_HITCH_STATE_PGN);
+
     uint8_t ui8_temp = 0x7;  /* Pre-load the reserved bits */
-    ui8_temp |= t_frontHitchPosLimitStatus << 3;
-    switch (hitchFront()) {
-      case ERROR_VAL_8:
-        data().setUint8Data(0, hitchFront());
-        ui8_temp |= ( IsoAgLib::IsoError << 6 );
-        data().setUint8Data(1, ui8_temp);
-        break;
-      case NO_VAL_8:
-        data().setUint8Data(0, hitchFront());
-        ui8_temp |= ( IsoAgLib::IsoNotAvailable << 6 );
-        data().setUint8Data(1, ui8_temp);
-        break;
-      default:
-        data().setUint8Data(0, ((hitchFront() & 0x7F)*10/4));
-        if ((hitchFront() & 0x80) != 0)
-        {
-          ui8_temp |= IsoAgLib::IsoActive << 6;
-          data().setUint8Data(1, ui8_temp ); // work
-        }
-        else
-        {
-          ui8_temp |= IsoAgLib::IsoInactive << 6;
+
+    if (mui16_suppressMask & FRONT_HITCH_STATE_PGN_DISABLE_MASK == 0)
+    {
+      data().setIsoPgn(FRONT_HITCH_STATE_PGN);
+
+      ui8_temp |= t_frontHitchPosLimitStatus << 3;
+      switch (hitchFront()) {
+        case ERROR_VAL_8:
+          data().setUint8Data(0, hitchFront());
+          ui8_temp |= ( IsoAgLib::IsoError << 6 );
           data().setUint8Data(1, ui8_temp);
-        }
-        break;
-    }
-    data().setUint8Data(2, ui8_frontLinkForce);
-    data().setUint8Data(3, ui16_frontDraft& 0xFF);
-    data().setUint8Data(4, (ui16_frontDraft >> 8) );
-
-    /* Reserved Bytes */
-    data().setUint8Data(5, 0xFF );
-    data().setUint16Data(6, 0xFFFF );
-
-    // CANIO_c::operator<< retreives the information with the help of CANPkg_c::getData
-    // then it sends the data
-    c_can << data();
-
-    data().setIsoPgn(REAR_HITCH_STATE_PGN);
-    ui8_temp = 0x7;  /* Pre-load the reserved bits */
-    ui8_temp = t_rearHitchPosLimitStatus << 3;
-    switch (hitchRear()) {
-      case ERROR_VAL_8:
-        data().setUint8Data(0, hitchRear());
-        ui8_temp |= ( IsoAgLib::IsoError << 6 );
-        data().setUint8Data(1, ui8_temp);
-        break;
-      case NO_VAL_8:
-        data().setUint8Data(0, hitchRear());
-        ui8_temp |= ( IsoAgLib::IsoNotAvailable << 6 );
-        data().setUint8Data(1, ui8_temp);
-        break;
-      default:
-        data().setUint8Data(0, ((hitchRear() & 0x7F)*10/4));
-        if ((hitchRear() & 0x80) != 0)
-        {
-          ui8_temp |= IsoAgLib::IsoActive << 6;
-          data().setUint8Data(1, ui8_temp ); // work
-        }
-        else
-        {
-          ui8_temp |= IsoAgLib::IsoInactive << 6;
+          break;
+        case NO_VAL_8:
+          data().setUint8Data(0, hitchFront());
+          ui8_temp |= ( IsoAgLib::IsoNotAvailable << 6 );
           data().setUint8Data(1, ui8_temp);
-        }
-        break;
+          break;
+        default:
+          data().setUint8Data(0, ((hitchFront() & 0x7F)*10/4));
+          if ((hitchFront() & 0x80) != 0)
+          {
+            ui8_temp |= IsoAgLib::IsoActive << 6;
+            data().setUint8Data(1, ui8_temp ); // work
+          }
+          else
+          {
+            ui8_temp |= IsoAgLib::IsoInactive << 6;
+            data().setUint8Data(1, ui8_temp);
+          }
+          break;
+      }
+      data().setUint8Data(2, ui8_frontLinkForce);
+      data().setUint8Data(3, ui16_frontDraft& 0xFF);
+      data().setUint8Data(4, (ui16_frontDraft >> 8) );
+
+      /* Reserved Bytes */
+      data().setUint8Data(5, 0xFF );
+      data().setUint16Data(6, 0xFFFF );
+
+      // CANIO_c::operator<< retreives the information with the help of CANPkg_c::getData
+      // then it sends the data
+      c_can << data();
     }
-    data().setUint8Data(2, ui8_rearLinkForce);
-    data().setUint8Data(3, (ui16_rearDraft& 0xFF) );
-    data().setUint8Data(4, ui16_rearDraft >> 8);
+    if (mui16_suppressMask & REAR_HITCH_STATE_PGN_DISABLE_MASK == 0)
+    {
+      data().setIsoPgn(REAR_HITCH_STATE_PGN);
+      ui8_temp = 0x7;  /* Pre-load the reserved bits */
+      ui8_temp = t_rearHitchPosLimitStatus << 3;
+      switch (hitchRear()) {
+        case ERROR_VAL_8:
+          data().setUint8Data(0, hitchRear());
+          ui8_temp |= ( IsoAgLib::IsoError << 6 );
+          data().setUint8Data(1, ui8_temp);
+          break;
+        case NO_VAL_8:
+          data().setUint8Data(0, hitchRear());
+          ui8_temp |= ( IsoAgLib::IsoNotAvailable << 6 );
+          data().setUint8Data(1, ui8_temp);
+          break;
+        default:
+          data().setUint8Data(0, ((hitchRear() & 0x7F)*10/4));
+          if ((hitchRear() & 0x80) != 0)
+          {
+            ui8_temp |= IsoAgLib::IsoActive << 6;
+            data().setUint8Data(1, ui8_temp ); // work
+          }
+          else
+          {
+            ui8_temp |= IsoAgLib::IsoInactive << 6;
+            data().setUint8Data(1, ui8_temp);
+          }
+          break;
+      }
+      data().setUint8Data(2, ui8_rearLinkForce);
+      data().setUint8Data(3, (ui16_rearDraft& 0xFF) );
+      data().setUint8Data(4, ui16_rearDraft >> 8);
 
-    /* Reserved Bytes*/
-    data().setUint8Data(5, 0xFF );
-    data().setUint16Data(6, 0xFFFF );
+      /* Reserved Bytes */
+      data().setUint8Data(5, 0xFF );
+      data().setUint16Data(6, 0xFFFF );
 
-    // CANIO_c::operator<< retreives the information with the help of CANPkg_c::getData
-    // then it sends the data
-    c_can << data();
+      // CANIO_c::operator<< retreives the information with the help of CANPkg_c::getData
+      // then it sends the data
+      c_can << data();
+    }
   }
 
   /** send iso language data msg
@@ -464,6 +473,8 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
   {
     //language is only send in tractor mode
     if ( checkMode(IsoAgLib::IdentModeImplement) ) return;
+    
+    if (mui16_suppressMask & LANGUAGE_PGN_DISABLE_MASK != 0) return;
 
     if (  !b_languageVtReceived
        || ( getISOName()->isUnspecified()  )
@@ -506,7 +517,9 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
      @param rt_implState in which state is the implement (transport, park, work)
    */
   void TracGeneral_c::forceMaintainPower( bool rb_ecuPower, bool rb_actuatorPower, IsoAgLib::IsoMaintainPower_t rt_implState)
-  { // as BaseCommon_c timeEvent() checks only for adr claimed state in TractorMode, we have to perform those checks here,
+  { 
+    if (mui16_suppressMask & MAINTAIN_POWER_REQUEST_PGN_DISABLE_MASK != 0) return;
+    // as BaseCommon_c timeEvent() checks only for adr claimed state in TractorMode, we have to perform those checks here,
     // as we reach this function mostly for ImplementMode, where getISOName() might report NULL at least during init time
     if ( ( NULL == getISOName() ) || ( ! getIsoMonitorInstance4Comm().existIsoMemberISOName( *getISOName(), true ) ) )
       return;

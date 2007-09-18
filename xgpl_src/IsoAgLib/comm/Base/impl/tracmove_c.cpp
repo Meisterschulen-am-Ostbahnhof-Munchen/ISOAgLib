@@ -125,11 +125,11 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
       @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       @return true -> configuration was successfull
     */
-  bool TracMove_c::config_base (const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode)
+  bool TracMove_c::config_base (const ISOName_c* rpc_isoName, uint16_t rui16_suppressMask, IsoAgLib::IdentMode_t rt_identMode)
   {
     //call config for handling which is base data independent
     //if something went wrong leave function before something is configured
-    if ( !BaseCommon_c::config_base (rpc_isoName, rt_identMode) ) return false;
+    if ( !BaseCommon_c::config_base (rpc_isoName, rui16_suppressMask, rt_identMode) ) return false;
 
     ///Set time Period for Scheduler_c
     if (rt_identMode == IsoAgLib::IdentModeTractor)
@@ -533,69 +533,76 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     #endif
 
     setSelectedDataSourceISOName(*getISOName());
-
-    data().setIsoPgn(GROUND_BASED_SPEED_DIST_PGN);
-  #ifdef SYSTEM_PC_VC
-    data().setUint16Data( 0, labs(i32_speedReal));
-  #else
-    uint16_t temp = CNAMESPACE::labs(i32_speedReal);
-    data().setUint16Data(0, CNAMESPACE::labs(i32_speedReal));
-  #endif
-    data().setUint32Data(2 ,ui32_distReal);
     uint8_t b_val8 = 0;
-    b_val8 |= t_directionReal;
-    data().setUint8Data(7, b_val8);
-    //reserved fields
-    data().setUint8Data(6, 0xFF);
+    uint16_t temp = 0;
 
-    // CANIO_c::operator<< retreives the information with the help of CANPkg_c::getData
-    // then it sends the data
-    c_can << data();
+    if (mui16_suppressMask & GROUND_BASED_SPEED_DIST_PGN_DISABLE_MASK == 0)
+    {
+      data().setIsoPgn(GROUND_BASED_SPEED_DIST_PGN);
+      #ifdef SYSTEM_PC_VC
+      data().setUint16Data( 0, labs(i32_speedReal));
+      #else
+      data().setUint16Data(0, CNAMESPACE::labs(i32_speedReal));
+      #endif
+      data().setUint32Data(2, ui32_distReal);
 
-    data().setIsoPgn(WHEEL_BASED_SPEED_DIST_PGN);
-  #ifdef SYSTEM_PC_VC
-    data().setUint16Data(0, labs(i32_speedTheor));
-  #else
-    data().setUint16Data(0, CNAMESPACE::labs(i32_speedTheor));
-  #endif
-    data().setUint32Data(2, ui32_distTheor);
+      b_val8 |= t_directionReal;
+      data().setUint8Data(7, b_val8);
+      //reserved fields
+      data().setUint8Data(6, 0xFF);
 
-    b_val8 = 0;
-    //data().setUint8Data(7, b_val8);
-    #if defined(USE_BASE) || defined(USE_TRACTOR_GENERAL)
-    // additionally scan for key switch and maximum power time
-    data().setUint8Data(6, c_tracgeneral.maxPowerTime() );
-    b_val8 |= (c_tracgeneral.keySwitch() << 2);
-    #endif
-    b_val8 |= (t_operatorDirectionReversed << 6);
-    b_val8 |= (t_startStopState << 4);
-    b_val8 |= t_directionTheor;
-    data().setUint8Data(7, b_val8);
+      // CANIO_c::operator<< retreives the information with the help of CANPkg_c::getData
+      // then it sends the data
+      c_can << data();
+    }
+    if (mui16_suppressMask & WHEEL_BASED_SPEED_DIST_PGN_DISABLE_MASK == 0)
+    {
+      data().setIsoPgn(WHEEL_BASED_SPEED_DIST_PGN);
+      #ifdef SYSTEM_PC_VC
+      data().setUint16Data(0, labs(i32_speedTheor));
+      #else
+      data().setUint16Data(0, CNAMESPACE::labs(i32_speedTheor));
+      #endif
+      data().setUint32Data(2, ui32_distTheor);
 
-    // CANIO_c::operator<< retreives the information with the help of CANPkg_c::getData
-    // then it sends the data
-    c_can << data();
+      b_val8 = 0;
+      //data().setUint8Data(7, b_val8);
+      #if defined(USE_BASE) || defined(USE_TRACTOR_GENERAL)
+      // additionally scan for key switch and maximum power time
+      data().setUint8Data(6, c_tracgeneral.maxPowerTime() );
+      b_val8 |= (c_tracgeneral.keySwitch() << 2);
+      #endif
+      b_val8 |= (t_operatorDirectionReversed << 6);
+      b_val8 |= (t_startStopState << 4);
+      b_val8 |= t_directionTheor;
+      data().setUint8Data(7, b_val8);
 
-    data().setIsoPgn(SELECTED_SPEED_MESSAGE);
-    uint8_t ui8_temp = 0;
+      // CANIO_c::operator<< retreives the information with the help of CANPkg_c::getData
+      // then it sends the data
+      c_can << data();
+    }
+    if (mui16_suppressMask & SELECTED_SPEED_MESSAGE_DISABLE_MASK == 0)
+    {
+      data().setIsoPgn(SELECTED_SPEED_MESSAGE);
+      uint8_t ui8_temp = 0;
 
-    #ifdef SYSTEM_PC_VC
-    data().setUint16Data(0, labs(i32_selectedSpeed));
-    #else
-    temp = CNAMESPACE::labs(i32_selectedSpeed);
-    data().setUint16Data(0, CNAMESPACE::labs(i32_selectedSpeed));
-    #endif
-    data().setUint32Data(2, ui32_selectedDistance);
-    ui8_temp |= (t_selectedSpeedLimitStatus << 5);
-    ui8_temp |= (t_selectedSpeedSource      << 2);
-    ui8_temp |= (t_selectedDirection        << 0);
-    data().setUint8Data(7, ui8_temp);
-    //reserved fields
-    data().setUint8Data(6, 0xFF);
+      #ifdef SYSTEM_PC_VC
+      data().setUint16Data(0, labs(i32_selectedSpeed));
+      #else
+      data().setUint16Data(0, CNAMESPACE::labs(i32_selectedSpeed));
+      #endif
+      data().setUint32Data(2, ui32_selectedDistance);
+      ui8_temp |= (t_selectedSpeedLimitStatus << 5);
+      ui8_temp |= (t_selectedSpeedSource      << 2);
+      ui8_temp |= (t_selectedDirection        << 0);
+      data().setUint8Data(7, ui8_temp);
+      //reserved fields
+      data().setUint8Data(6, 0xFF);
 
-    // CANIO_c::operator<< retreives the information with the help of CANPkg_c::getData
-    // then it sends the data
-    c_can << data();
+      // CANIO_c::operator<< retreives the information with the help of CANPkg_c::getData
+      // then it sends the data
+      c_can << data();
+    }
   }
 ///  Used for Debugging Tasks in Scheduler_c
 const char*

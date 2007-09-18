@@ -150,7 +150,9 @@ void BaseCommon_c::init_base (const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_
   }
 
   // set configure values with call for config
-  config_base (rpc_isoName, rt_identMode);
+  config_base (rpc_isoName
+                           , 0 // No individual PGN disabling
+                           , rt_identMode);
 
   // clear state of b_alreadyClosed, so that close() is called one time
   clearAlreadyClosed();
@@ -161,8 +163,9 @@ void BaseCommon_c::init_base (const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_
     @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
     @return true -> configuration was successfull
   */
-bool BaseCommon_c::config_base (const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode)
+bool BaseCommon_c::config_base (const ISOName_c* rpc_isoName, uint16_t rui16_suppressMask, IsoAgLib::IdentMode_t rt_identMode)
 {
+  mui16_suppressMask = rui16_suppressMask;
   if (   rt_identMode == IsoAgLib::IdentModeTractor
       && rpc_isoName == NULL
      )
