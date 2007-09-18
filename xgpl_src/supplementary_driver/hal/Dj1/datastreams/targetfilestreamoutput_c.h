@@ -89,6 +89,9 @@
 #ifndef TARGETFILESTREAMOUTPUT_C_H
 #define TARGETFILESTREAMOUTPUT_C_H
 
+
+
+#include <compilerswitches.h>
 #include <IsoAgLib/typedef.h>
 #include <supplementary_driver/hal/datastreams.h>
 
@@ -116,7 +119,6 @@ public:
   ~TargetFileStreamOutput_c();
 
 	//! open a output stream
-
  	bool open( CNAMESPACE::string& filename, FileMode_t rt_mode );
 
 	//! open a output stream
@@ -140,6 +142,12 @@ public:
   virtual bool good() const { return !fail(); };
 
   private:
+
+  #if defined(DEBUG) && DEBUG_FILESTREAMOUTPUT
+  uint32_t mui32_byteCount;
+  uint8_t debugData[DEBUG_ARRAY_SIZE];
+  #endif
+
   
   void *file_handle_;
   bool is_failed_;

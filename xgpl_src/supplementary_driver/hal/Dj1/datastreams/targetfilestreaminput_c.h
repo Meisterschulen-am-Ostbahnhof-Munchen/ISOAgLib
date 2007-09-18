@@ -91,8 +91,13 @@
 
 
 #include <IsoAgLib/typedef.h>
+
+#include <compilerswitches.h>
+
+
 #include <string>
 #include <supplementary_driver/hal/datastreams.h>
+
 
 // +X2C includes
 // ~X2C
@@ -128,6 +133,10 @@ public:
   virtual TargetFileStreamInput_c& operator>>(uint8_t &ui8_data);
 	
 private:
+  #if defined(DEBUG) && DEBUG_FILESTREAMINPUT
+  uint32_t mui32_byteCount;
+  uint8_t debugData[DEBUG_ARRAY_SIZE];
+  #endif
 
   void *file_handle_;
   bool is_failed_;

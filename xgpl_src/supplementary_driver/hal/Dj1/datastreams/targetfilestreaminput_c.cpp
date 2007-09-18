@@ -85,33 +85,51 @@
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 
+
+
 #include "targetfilestreaminput_c.h"
+
+
+
+#if defined(DEBUG)
+  #ifdef SYSTEM_PC
+    #include <iostream>
+  #else
+    #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
+  #endif
+  #include <IsoAgLib/util/impl/util_funcs.h>
+#endif
+
+
+
 namespace __HAL
 {
-extern "C"
-{
-  /** include the BIOS specific header into __HAL */
-#include <commercial_BIOS/bios_Dj1/DjBiosMVT.h>
-}
+	extern "C"
+	{
+		  /** include the BIOS specific header into __HAL */
+		#include <commercial_BIOS/bios_Dj1/DjBiosMVT.h>
+	}
 }
 
 #ifdef WIN32
 #include <stdio.h>
 #endif
 
+#include <generalhelpers.h>
 
 
-#ifdef DEBUG
-#ifdef SYSTEM_PC
-#include <iostream>
-#else
-#include <supplementary_driver/driver/rs232/irs232io_c.h>     
-#endif
-#endif
+//
 
 
+	  
 //  #include "../djbiosdrawinterface.h"
-#include <IsoAgLib/typedef.h>
+//#include <IsoAgLib/typedef.h>
+
+
+
+//#include <djbiostypedefs.h>
+
+
 
 #ifndef _huge
 #define _huge
@@ -130,8 +148,23 @@ TargetFileStreamInput_c::~TargetFileStreamInput_c()
 //! open an input stream
 bool TargetFileStreamInput_c::open( const char* filename, FileMode_t rt_mode )
 {
+
+  #if defined(DEBUG) && DEBUG_FILESTREAMINPUT
+	INTERNAL_DEBUG_DEVICE
+	<< "Filestreaminput: trying to open the file " <<  filename  
+	<< " in mode 0x" 
+	//<< CNAMESPACE::hex 
+	<< rt_mode 
+	//<< CNAMESPACE::dec 
+	<< INTERNAL_DEBUG_DEVICE_ENDL;
+  #endif
+		
   if (NULL != file_handle_) {
-    return false;
+	#if defined(DEBUG) && DEBUG_FILESTREAMINPUT
+		INTERNAL_DEBUG_DEVICE
+		<< "Filestreaminput: Error: file_handle is already not NULL!" << INTERNAL_DEBUG_DEVICE_ENDL;
+	#endif
+      return false;
   }
 
   CNAMESPACE::string mode_string;
@@ -145,6 +178,12 @@ bool TargetFileStreamInput_c::open( const char* filename, FileMode_t rt_mode )
   }
 
   file_handle_ = __HAL::DjBios_IOP_Open(filename, mode_string.c_str());
+	#if defined(DEBUG) && DEBUG_FILESTREAMINPUT
+	mui32_byteCount = 0;
+	if (NULL == file_handle_)
+		INTERNAL_DEBUG_DEVICE
+		<< "Filestreaminput: failed fiel open" << INTERNAL_DEBUG_DEVICE_ENDL;
+	#endif
 
   bool result = (NULL != file_handle_);
   return result;
@@ -166,6 +205,9 @@ TargetFileStreamInput_c& TargetFileStreamInput_c::operator>>(uint8_t &ui8_data)
   // behaves like standard fread, then this should be the case.)
   if (eof()) {
     is_failed_ = true;
+	#if defined(DEBUG) && DEBUG_FILESTREAMINPUT
+	INTERNAL_DEBUG_DEVICE << "Error reading EOF - bytes read : " << mui32_byteCount <<	INTERNAL_DEBUG_DEVICE_ENDL;
+	#endif
     return *this;
   }
 
@@ -173,7 +215,25 @@ TargetFileStreamInput_c& TargetFileStreamInput_c::operator>>(uint8_t &ui8_data)
                               file_handle_, 1, 1, &ui8_data));
   if (is_wrong_amount) {
     is_failed_ = true;
+	#if defined(DEBUG) && DEBUG_FILESTREAMINPUT
+	INTERNAL_DEBUG_DEVICE << "Error reading EOF - bytes read : " << mui32_byteCount <<	INTERNAL_DEBUG_DEVICE_ENDL;
+	#endif
   }
+
+	#if defined(DEBUG) && DEBUG_FILESTREAMINPUT
+//		INTERNAL_DEBUG_DEVICE << " >> 0x" << getHex(ui8_data); 
+//		debugData[mui32_byteCount % DEBUG_ARRAY_SIZE] = ui8_data;
+		mui32_byteCount++;
+		if (mui32_byteCount % DEBUG_ARRAY_SIZE == 0)
+		{
+			INTERNAL_DEBUG_DEVICE << mui32_byteCount << " bytes read " ;
+			//for (int i=0; i< DEBUG_ARRAY_SIZE; i++)
+			//{
+			//	INTERNAL_DEBUG_DEVICE << getHex(debugData[i]);
+			//}
+			INTERNAL_DEBUG_DEVICE << INTERNAL_DEBUG_DEVICE_ENDL;
+		}
+	#endif
 
   return *this;
 }
@@ -182,6 +242,17 @@ void TargetFileStreamInput_c::close()
 {
   if (NULL != file_handle_) {
     (void)__HAL::DjBios_IOP_Close(file_handle_);
+	#if defined(DEBUG) && DEBUG_FILESTREAMINPUT
+//		INTERNAL_DEBUG_DEVICE << mui32_byteCount << " bytes read " ;
+//			for (int i=0; i< mui32_byteCount % DEBUG_ARRAY_SIZE; i++)
+//			{
+//				INTERNAL_DEBUG_DEVICE << getHex(debugData[i]);
+//			}
+//		INTERNAL_DEBUG_DEVICE << INTERNAL_DEBUG_DEVICE_ENDL;
+
+		INTERNAL_DEBUG_DEVICE << "Filestreaminput: closing file => bytes read : "  << mui32_byteCount << INTERNAL_DEBUG_DEVICE_ENDL;
+	#endif
+
     file_handle_ = NULL;
   }
   is_failed_ = false;

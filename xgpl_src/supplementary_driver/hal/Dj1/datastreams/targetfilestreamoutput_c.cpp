@@ -84,7 +84,15 @@
  *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
+
+
 #include "targetfilestreamoutput_c.h"
+#include <djbiostypedefs.h>
+
+
+#include <generalhelpers.h>
+ 
+
 namespace __HAL
 {
   extern "C"
@@ -93,6 +101,15 @@ namespace __HAL
     #include <commercial_BIOS/bios_Dj1/DjBiosMVT.h>
   }
 }
+
+#if defined(DEBUG)
+  #ifdef SYSTEM_PC
+    #include <iostream>
+  #else
+    #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
+  #endif
+  #include <IsoAgLib/util/impl/util_funcs.h>
+#endif
 
 //using namespace std;
 
@@ -107,32 +124,53 @@ TargetFileStreamOutput_c::~TargetFileStreamOutput_c()
 }
 
 
-// @todo : I just added this function to be able to compile.
-// Thomas u have to check 
 bool TargetFileStreamOutput_c::open( CNAMESPACE::string& filename, FileMode_t rt_mode )
 {
-	return open(filename.c_str(), rt_mode);
+	return open( filename.c_str() ,  rt_mode );
 }
-
 
 //! open a output stream
 bool TargetFileStreamOutput_c::open( const char* filename, FileMode_t rt_mode )
 {
-  if (NULL != file_handle_) {
-    return false;
-  }
 
-  CNAMESPACE::string mode_string;
+	#if defined(DEBUG) && DEBUG_FILESTREAMOUTPUT
+		INTERNAL_DEBUG_DEVICE
+		<< "Filestreamoutput: trying to open the file " <<  filename  
+		<< " in mode " 
+		//<< CNAMESPACE::hex 
+		<< rt_mode 
+		//<< CNAMESPACE::dec 
+		<< INTERNAL_DEBUG_DEVICE_ENDL;
+	#endif
 
-  if (StreamIn & rt_mode) {
-    mode_string.push_back('w');
-  }
-  
-  if (mode_string.empty()) {
-    return false;
-  }
+	if (NULL != file_handle_) 
+	{
+		#if defined(DEBUG) && DEBUG_FILESTREAMOUTPUT
+			INTERNAL_DEBUG_DEVICE
+			<< "Filestreamoutput: Error : file_handle is already not NULL !!!!!!" << INTERNAL_DEBUG_DEVICE_ENDL;
+		#endif
+		return false;
+	}
 
-  file_handle_ = __HAL::DjBios_IOP_Open(filename, mode_string.c_str());
+	CNAMESPACE::string mode_string;
+
+	if (StreamOut & rt_mode) {
+	mode_string.push_back('w');
+	}
+
+	if (mode_string.empty()) {
+	return false;
+	}
+
+	file_handle_ = __HAL::DjBios_IOP_Open(filename, mode_string.c_str());
+	#if defined(DEBUG) && DEBUG_FILESTREAMOUTPUT
+		mui32_byteCount = 0;
+		if (NULL == file_handle_)
+		INTERNAL_DEBUG_DEVICE
+		<< "Filestreamoutput: failed file open " << INTERNAL_DEBUG_DEVICE_ENDL;
+	#endif
+	
+
 
   bool result = (NULL != file_handle_);
   return result;
@@ -148,6 +186,21 @@ TargetFileStreamOutput_c& TargetFileStreamOutput_c::operator<<(uint8_t ui8_data)
   if (is_wrong_amount) {
     is_failed_ = true;
   }
+
+	#if defined(DEBUG) && DEBUG_FILESTREAMINPUT
+//		debugData[mui32_byteCount % DEBUG_ARRAY_SIZE] = ui8_data;
+		mui32_byteCount++;
+		if (mui32_byteCount % DEBUG_ARRAY_SIZE == 0)
+		{
+			INTERNAL_DEBUG_DEVICE << mui32_byteCount << " bytes written " ;
+//			for (int i=0; i< DEBUG_ARRAY_SIZE; i++)
+//			{
+//				INTERNAL_DEBUG_DEVICE << getHex(debugData[i]);
+//			}
+			INTERNAL_DEBUG_DEVICE << INTERNAL_DEBUG_DEVICE_ENDL;
+		}
+	#endif
+
   return *this;
 }
 
@@ -156,8 +209,20 @@ TargetFileStreamOutput_c& TargetFileStreamOutput_c::operator<<(uint8_t ui8_data)
 //! @param pathname if pathname != NULL => sync file and path
 void TargetFileStreamOutput_c::close(const char* pathname)
 {
-  if (NULL != file_handle_) {
+  if (NULL != file_handle_) 
+  {
     (void)__HAL::DjBios_IOP_Close(file_handle_);
+	#if defined(DEBUG) && DEBUG_FILESTREAMOUTPUT
+//		INTERNAL_DEBUG_DEVICE << mui32_byteCount << " bytes written " ;
+//			for (int i=0; i< mui32_byteCount % DEBUG_ARRAY_SIZE; i++)
+//			{
+//				INTERNAL_DEBUG_DEVICE << getHex(debugData[i]);
+//			}
+//		INTERNAL_DEBUG_DEVICE << INTERNAL_DEBUG_DEVICE_ENDL;
+
+		INTERNAL_DEBUG_DEVICE << "Filestreamoutput: closing file => bytes written : "  << mui32_byteCount << INTERNAL_DEBUG_DEVICE_ENDL;
+	#endif
+
     file_handle_ = NULL;
   }
   is_failed_ = false;
