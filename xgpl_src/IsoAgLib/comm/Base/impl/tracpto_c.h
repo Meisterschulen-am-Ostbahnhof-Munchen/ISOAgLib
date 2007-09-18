@@ -147,7 +147,7 @@ typedef struct
         @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
         @return true -> configuration was successfull
       */
-    virtual bool config_base (const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_IdentMode);
+    virtual bool config_base (const ISOName_c* rpc_isoName, uint16_t rui16_suppressMask, IsoAgLib::IdentMode_t rt_IdentMode);
 
     /** destructor for Base_c which has nothing to do */
     virtual ~TracPTO_c() { BaseCommon_c::close();};

@@ -117,7 +117,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
       @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       @return true -> configuration was successfull
    */
-  bool TracPTO_c::config_base (const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode)
+  bool TracPTO_c::config_base (const ISOName_c* rpc_isoName, uint16_t rui16_suppressMask, IsoAgLib::IdentMode_t rt_identMode)
   {
     //store old mode to decide to register or unregister from request for pgn
     //and set Periode for Scheduler_c
@@ -125,7 +125,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
 
     //call config for handling which is base data independent
     //if something went wrong leave function before something is configured
-    if ( !BaseCommon_c::config_base (rpc_isoName, rt_identMode) ) return false;
+    if ( !BaseCommon_c::config_base (rpc_isoName, rui16_suppressMask, rt_identMode) ) return false;
 
     ///Set time Period for Scheduler_c
     if (rt_identMode == IsoAgLib::IdentModeTractor) setTimePeriod( (uint16_t) 100);
