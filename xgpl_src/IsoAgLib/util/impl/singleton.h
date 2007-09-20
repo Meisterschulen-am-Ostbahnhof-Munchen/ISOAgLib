@@ -94,13 +94,23 @@
     * to get a corresponding class instance, which is delegated to the same BUS
     */
   #define autoInstance()                    instance( ClientBase::getSingletonVecKey() )
-  #define SINGLETON_PARENT_CONSTRUCTOR      ClientBase( ri_singletonVecKey ),
-  #define SINGLETON_VEC_KEY_USE4CALL        , getSingletonVecKey()
-  #define SINGLETON_VEC_KEY_PARAMETER_DEF   int ri_singletonVecKey
-  #define SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA  , int ri_singletonVecKey
-  #define SINGLETON_VEC_KEY_PARAMETER_VAR   getSingletonVecKey()
-  #define SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA , ri_singletonVecKey
-  #define SINGLETON_VEC_KEY_INIT_CALL       setSingletonKey( ri_singletonVecKey );
+
+  #define SINGLETON_VEC_KEY_PARAMETER_DEF               int ai_singletonVecKey
+  #define SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA  , int ai_singletonVecKey
+  #define SINGLETON_VEC_KEY_PARAMETER_USE               ai_singletonVecKey
+  #define SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA  , ai_singletonVecKey
+
+  #define SINGLETON_C_DATA_DEF                      int getSingletonVecKey() const { return c_data.getSingletonVecKey(); }
+  #define SINGLETON_MEMBER_DEF               ClientBase c_clientBase; \
+                                                    int getSingletonVecKey() const { return c_clientBase.getSingletonVecKey(); }
+  #define SINGLETON_MEMBER_ASSIGN(PAR)     c_clientBase.setSingletonKey (PAR.c_clientBase.getSingletonVecKey());
+  #define SINGLETON_MEMBER_CONSTRUCTOR    c_clientBase( ai_singletonVecKey ),
+  #define SINGLETON_PARENT_CONSTRUCTOR      ClientBase( ai_singletonVecKey ),
+  #define SINGLETON_VEC_KEY_INIT_CALL                   setSingletonKey( ai_singletonVecKey );
+
+  #define SINGLETON_VEC_KEY                             getSingletonVecKey()
+  #define SINGLETON_VEC_KEY_WITH_COMMA                , getSingletonVecKey()
+
   #define getCanInstance4Comm()             getCanInstance( getSingletonVecKey() )
   #define getSchedulerInstance4Comm()       getSchedulerInstance( getSingletonVecKey() )
   #define getTimePosGpsInstance4Comm()      getTimePosGpsInstance( getSingletonVecKey() )
@@ -125,16 +135,16 @@
     */
   class ClientBase {
    public:
-    ClientBase( int ri_singletonVecKey = 0 ) : ri_singletonVecKey(ri_singletonVecKey){};
+    ClientBase( int ai_singletonVecKey = 0 ) : mi_singletonVecKey(ai_singletonVecKey){};
     ClientBase( const ClientBase& refc_src )
-      : ri_singletonVecKey(refc_src.ri_singletonVecKey) { };
-    int getSingletonVecKey() const { return ri_singletonVecKey;};
-    void setSingletonKey( int riKey ) { ri_singletonVecKey = riKey;};
+      : mi_singletonVecKey(refc_src.mi_singletonVecKey) { };
+    int getSingletonVecKey() const { return mi_singletonVecKey;};
+    void setSingletonKey( int aiKey ) { mi_singletonVecKey = aiKey;};
    protected:
     const ClientBase& operator=( const ClientBase& rrefc_src )
-    { ri_singletonVecKey = rrefc_src.ri_singletonVecKey; return *this;};
+    { mi_singletonVecKey = rrefc_src.mi_singletonVecKey; return *this;};
    private:
-    int ri_singletonVecKey;
+    int mi_singletonVecKey;
   };
 #else
   /** the macro SINGLETON allows to define classes independent from the value
@@ -218,13 +228,22 @@
     * as the more usual case is only one BUS, this solution creates no unneeded overhead
     */
   #define autoInstance()                  instance()
-  #define SINGLETON_PARENT_CONSTRUCTOR
-  #define SINGLETON_VEC_KEY_USE4CALL
+
   #define SINGLETON_VEC_KEY_PARAMETER_DEF
   #define SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA
-  #define SINGLETON_VEC_KEY_PARAMETER_VAR
-  #define SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA
+  #define SINGLETON_VEC_KEY_PARAMETER_USE
+  #define SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA
+
+  #define SINGLETON_C_DATA_DEF
+  #define SINGLETON_MEMBER_DEF
+  #define SINGLETON_MEMBER_ASSIGN(PAR)
+  #define SINGLETON_MEMBER_CONSTRUCTOR
+  #define SINGLETON_PARENT_CONSTRUCTOR
   #define SINGLETON_VEC_KEY_INIT_CALL
+
+  #define SINGLETON_VEC_KEY
+  #define SINGLETON_VEC_KEY_WITH_COMMA
+
   #define getCanInstance4Comm()           getCanInstance()
   #define getSchedulerInstance4Comm()     getSchedulerInstance()
   #define getTimePosGpsInstance4Comm()    getTimePosGpsInstance()
@@ -677,5 +696,8 @@ template<class T, class B, int SIZE> T & SingletonDerivedVec<T,B,SIZE>::instance
 /* by multiple inclusion of singleton_container.h the suitable template class can be generated */
 #include "singleton_container.h"
 
+/// @todo REMOVE! This is just to be compatible with older versionen vt2iso generated files.
+/// This can be removed after some migration time. State now is 20 Sep 2007.
+#define SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA
 
 #endif

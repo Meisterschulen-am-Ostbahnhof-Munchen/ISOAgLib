@@ -74,7 +74,7 @@ public:
   //! @param vtObjectAlarmMaskSROM:
   //! @param b_initPointer:
   void init(const iVtObjectAlarmMask_s* vtObjectAlarmMaskSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) {
-    vtObjectAlarmMask_c::init (vtObjectAlarmMaskSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
+    vtObjectAlarmMask_c::init (vtObjectAlarmMaskSROM SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA);
   }
   ~iVtObjectAlarmMask_c(){}
   //  Operation: get_vtObjectAlarmMask_a

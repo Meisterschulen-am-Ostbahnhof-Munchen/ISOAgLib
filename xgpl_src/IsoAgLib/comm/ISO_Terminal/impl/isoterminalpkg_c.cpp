@@ -84,13 +84,6 @@
 
 namespace __IsoAgLib {
 
-/** default constructor */
-ISOTerminalPkg_c::ISOTerminalPkg_c(){
-}
-/** default destructor */
-ISOTerminalPkg_c::~ISOTerminalPkg_c(){
-}
-
 /**
   overloaded virtual function to translate the string data into flag values;
   needed for assigning informations from another CANPkg_c or CANPkgExt

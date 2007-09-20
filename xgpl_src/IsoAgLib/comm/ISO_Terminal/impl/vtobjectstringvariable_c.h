@@ -103,7 +103,7 @@ public:
   //! @param vtObjectStringVariableSROM:
   //! @param b_initPointer:
   void init(const iVtObjectStringVariable_s* vtObjectStringVariableSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA)
-  { vtObject_c::init ((iVtObject_s*) vtObjectStringVariableSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA); }
+  { vtObject_c::init ((iVtObject_s*) vtObjectStringVariableSROM SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA); }
 
   //  Operation: get_vtObjectStringVariable_a
   iVtObjectStringVariable_s* get_vtObjectStringVariable_a() { return (iVtObjectStringVariable_s *)&(get_vtObject_a()); }

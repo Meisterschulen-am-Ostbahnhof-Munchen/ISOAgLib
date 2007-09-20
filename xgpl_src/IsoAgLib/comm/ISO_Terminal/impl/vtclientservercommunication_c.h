@@ -307,7 +307,7 @@ public:
 
   /** constructor of VtClientServerCommunication_c
    */
-  VtClientServerCommunication_c (IdentItem_c& refc_wsMasterIdentItem, ISOTerminal_c &ref_isoTerminal, IsoAgLib::iIsoTerminalObjectPool_c& rrefc_pool, char* rpc_versionLabel, uint8_t rui8_clientId);
+  VtClientServerCommunication_c (IdentItem_c& refc_wsMasterIdentItem, ISOTerminal_c &ref_isoTerminal, IsoAgLib::iIsoTerminalObjectPool_c& rrefc_pool, char* rpc_versionLabel, uint8_t rui8_clientId SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA);
 
 
   /** explicit conversion to reference of interface class type */
@@ -475,6 +475,9 @@ private:
                                 if b_isVtStatusMsg == false, it is the display state of the Display Activation Msg
     */
   void setVtDisplayState (bool b_isVtStatusMsg, uint8_t ui8_saOrDisplayState);
+
+  /// Using the singletonVecKey from c_data (-->ISOTerminalPkg_c)
+  SINGLETON_C_DATA_DEF
 
 private: // attributes
   /** static instance to store temporarily before push_back into list */

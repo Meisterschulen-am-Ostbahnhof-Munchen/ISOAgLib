@@ -74,7 +74,7 @@ public:
   //! @param vtObjectmeterSROM:
   //! @param b_initPointer:
   void init(const iVtObjectMeter_s* vtObjectMeterSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) {
-    vtObjectMeter_c::init (vtObjectMeterSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
+    vtObjectMeter_c::init (vtObjectMeterSROM SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA);
   }
 
   //  Operation: get_vtObjectMeter_a

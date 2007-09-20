@@ -217,7 +217,7 @@ void CANPkgExt_c::setIsoPgn(uint32_t rui32_val)
     @param  addressResolveResults  address to resolve
     @return true -> address could be resolved
   */
-bool resolveAddress( AddressResolveResults& addressResolveResults )
+bool CANPkgExt_c::resolveAddress( AddressResolveResults& addressResolveResults )
 {
   if (   ( *addressResolveResults.pui8_address <= 0xFD )
       && ( getIsoMonitorInstance4Comm().existIsoMemberNr( *addressResolveResults.pui8_address ) )
@@ -636,7 +636,7 @@ void CANPkgExt_c::setISONameForDA( const ISOName_c& p_isoName )
 /** check if an adddress could be resolved with monitorItem and isoName
     @param  addressResolveResults  address to resolve
 */
-uint8_t checkMonitorItemISOName( const AddressResolveResults& addressResolveResults )
+uint8_t CANPkgExt_c::checkMonitorItemISOName( const AddressResolveResults& addressResolveResults ) const
 {
   // check if monitoritem exist and if not resolve it with isoName
   if ( addressResolveResults.pc_monitorItem == NULL )

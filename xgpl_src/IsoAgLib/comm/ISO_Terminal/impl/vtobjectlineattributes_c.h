@@ -104,7 +104,7 @@ public:
   //! @param vtObjectLineAttributesSROM:
   //! @param b_initPointer:
   void init(const iVtObjectLineAttributes_s* vtObjectLineAttributesSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA)
-  { vtObject_c::init ((iVtObject_s*) vtObjectLineAttributesSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA); }
+  { vtObject_c::init ((iVtObject_s*) vtObjectLineAttributesSROM SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA); }
 
   //  Operation: get_vtObjectLineAtrtibutes_a
   iVtObjectLineAttributes_s* get_vtObjectLineAttributes_a() { return (iVtObjectLineAttributes_s *)&(get_vtObject_a()); }

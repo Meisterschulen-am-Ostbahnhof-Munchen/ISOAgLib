@@ -150,12 +150,14 @@ typedef enum {
 
 
 //  +X2C Class 754 : Stream_c
-class Stream_c : public IsoAgLib::iStream_c
+class Stream_c : public IsoAgLib::iStream_c //, public ClientBase --> for single inheritance this is now a member variable
 {
 
 public:
 
-  Stream_c (StreamType_t rt_streamType, const IsoAgLib::ReceiveStreamIdentifier_c& rc_rsi, uint32_t rui32_msgSize, bool rb_skipCtsAwait=false);
+  Stream_c (StreamType_t rt_streamType, const IsoAgLib::ReceiveStreamIdentifier_c& rc_rsi, uint32_t rui32_msgSize SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA , bool rb_skipCtsAwait=false);
+
+  Stream_c& operator= (const Stream_c&);
 
   virtual ~Stream_c();
 
@@ -228,6 +230,8 @@ private:
 
 protected:
 
+  SINGLETON_MEMBER_DEF
+
 private:
 
   //  Attribute: c_ident
@@ -265,6 +269,7 @@ private:
   //  Attribute: t:StreamType
   StreamType_t t_streamType;
 
+  /// Don't forget to enhance the assignment-operator when adding new member-variables!
 }; // ~X2C
 
 } // end namespace __IsoAgLib

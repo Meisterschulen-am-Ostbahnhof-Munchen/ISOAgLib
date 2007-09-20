@@ -102,7 +102,7 @@ public:
   //! @param vtObjectpolygonSROM:
   //! @param b_initPointer:
   void init(const iVtObjectPolygon_s* vtObjectPolygonSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA)
-  { vtObject_c::init ((iVtObject_s*) vtObjectPolygonSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA); }
+  { vtObject_c::init ((iVtObject_s*) vtObjectPolygonSROM SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA); }
 
   //  Operation: get_vtObjectPolygon_a
   iVtObjectPolygon_s* get_vtObjectPolygon_a() { return (iVtObjectPolygon_s *)&(get_vtObject_a()); }

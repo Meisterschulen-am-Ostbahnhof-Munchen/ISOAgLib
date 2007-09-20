@@ -110,9 +110,10 @@ namespace __IsoAgLib {
 
 
 
-Stream_c::Stream_c (StreamType_t rt_streamType, const IsoAgLib::ReceiveStreamIdentifier_c& rc_rsi, uint32_t rui32_msgSize, bool rb_skipCtsAwait)
-  : iStream_c()
-  , c_ident (rc_rsi)
+Stream_c::Stream_c (StreamType_t rt_streamType, const IsoAgLib::ReceiveStreamIdentifier_c& rc_rsi, uint32_t rui32_msgSize SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA , bool rb_skipCtsAwait)
+  : iStream_c(),
+    SINGLETON_MEMBER_CONSTRUCTOR
+    c_ident (rc_rsi)
   , t_streamState (StreamRunning)
   , t_awaitStep (AwaitCtsSend) // so next timeEvent will send out the CTS!
   , i32_delayCtsUntil (sci32_timeNever) // means send out IMMEDIATELY (the initial CTS, afterwards delay some time!)
@@ -146,6 +147,32 @@ Stream_c::Stream_c (StreamType_t rt_streamType, const IsoAgLib::ReceiveStreamIde
 
 Stream_c::~Stream_c()
 {
+}
+
+
+Stream_c&
+Stream_c::operator= (const Stream_c& ref)
+{
+  SINGLETON_MEMBER_ASSIGN(ref)
+
+  c_ident = ref.c_ident;
+  t_streamState = ref.t_streamState;
+  t_awaitStep = ref.t_awaitStep;
+  i32_delayCtsUntil = ref.i32_delayCtsUntil;
+  ui32_byteTotalSize = ref.ui32_byteTotalSize;
+  ui32_byteAlreadyReceived = ref.ui32_byteAlreadyReceived;
+
+  ui32_pkgNextToWrite = ref.ui32_pkgNextToWrite;
+  ui32_pkgTotalSize = ref.ui32_pkgTotalSize;
+  ui8_pkgRemainingInBurst = ref.ui8_pkgRemainingInBurst;
+  ui32_burstCurrent = ref.ui32_burstCurrent;
+  ui8_streamFirstByte = ref.ui8_streamFirstByte;
+  ui32_dataPageOffset = ref.ui32_dataPageOffset;
+
+  i32_timeoutLimit = ref.i32_timeoutLimit;
+  t_streamType = ref.t_streamType;
+
+  return *this;
 }
 
 

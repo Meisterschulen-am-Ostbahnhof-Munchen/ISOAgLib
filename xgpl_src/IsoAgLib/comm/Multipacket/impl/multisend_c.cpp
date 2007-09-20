@@ -462,7 +462,7 @@ MultiSend_c::addSendStream(const ISOName_c& rrefc_isoNameSender, const ISOName_c
   }
 
   if (list_sendStream.empty()) {
-    list_sendStream.push_back (SendStream_c(*this SINGLETON_VEC_KEY_USE4CALL ));
+    list_sendStream.push_back (SendStream_c(*this SINGLETON_VEC_KEY_WITH_COMMA ));
     getCanInstance4Comm().setSendpause (scui8_isoCanPkgDelay + 1); /** @todo remove if there's no minimum between data-packets! */
   } else {
     list_sendStream.insert (list_sendStream.end(), list_sendStream.back()); // insert a copy of the first element (for performance reasons)

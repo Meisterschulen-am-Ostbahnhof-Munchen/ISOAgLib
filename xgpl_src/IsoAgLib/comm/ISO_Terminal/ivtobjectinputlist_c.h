@@ -73,7 +73,7 @@ public:
   //! @param vtObjectInputListSROM:
   //! @param b_initPointer:
   void init(const iVtObjectInputList_s* vtObjectInputListSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) {
-    vtObjectInputList_c::init (vtObjectInputListSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
+    vtObjectInputList_c::init (vtObjectInputListSROM SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA);
   }
 
   //  Operation: get_vtObjectInputList_a

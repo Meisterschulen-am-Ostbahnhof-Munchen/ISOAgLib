@@ -142,7 +142,7 @@ void BaseCommon_c::close( )
 void BaseCommon_c::init_base (const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode)
 {
   getSchedulerInstance4Comm().registerClient( this );
-  c_data.setSingletonKey( c_data.getSingletonVecKey() );
+  c_data.setSingletonKey( getSingletonVecKey() );
 
   if (checkAlreadyClosed())
   {
@@ -150,9 +150,8 @@ void BaseCommon_c::init_base (const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_
   }
 
   // set configure values with call for config
-  config_base (rpc_isoName
-                           , 0 // No individual PGN disabling
-                           , rt_identMode);
+  config_base (rpc_isoName, 0 // No individual PGN disabling
+                          , rt_identMode);
 
   // clear state of b_alreadyClosed, so that close() is called one time
   clearAlreadyClosed();

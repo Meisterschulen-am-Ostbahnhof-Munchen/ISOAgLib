@@ -146,7 +146,7 @@ private:
 };
 
 
-class ISOFilterBox_c
+class ISOFilterBox_c : public ClientBase
 {
 public:
   enum RemoveAnswer_en
@@ -168,10 +168,10 @@ public:
   typedef STL_NAMESPACE::USABLE_SLIST<ManagedISOFilter_s>::iterator ManagedISOFilter_it;
 
   /** empty constructor - everything has to be "constructed" with the "init"-function! */
-  ISOFilterBox_c();
+  ISOFilterBox_c (SINGLETON_VEC_KEY_PARAMETER_DEF);
 
   /** copy constructor, as implicit one was too large to be inlined! */
-  ISOFilterBox_c(const ISOFilterBox_c&);
+  ISOFilterBox_c (const ISOFilterBox_c&);
 
   /** initialization for one simple ISOFilterBox_c
     @param rrefc_customer reference to the CANCustomer_c instance, which creates this ISOFilterBox_c instance

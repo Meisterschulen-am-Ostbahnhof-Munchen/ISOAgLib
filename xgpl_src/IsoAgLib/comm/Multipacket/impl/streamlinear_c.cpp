@@ -95,8 +95,8 @@ namespace __IsoAgLib {
 
 
 
-StreamLinear_c::StreamLinear_c (StreamType_t rt_streamType, const IsoAgLib::ReceiveStreamIdentifier_c& rc_rsi, uint32_t rui32_msgSize)
-  : Stream_c (rt_streamType, rc_rsi, rui32_msgSize)
+  StreamLinear_c::StreamLinear_c (StreamType_t rt_streamType, const IsoAgLib::ReceiveStreamIdentifier_c& rc_rsi, uint32_t rui32_msgSize SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA)
+  : Stream_c (rt_streamType, rc_rsi, rui32_msgSize SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA)
   , ui32_parsedCnt (0)
 {
   vui8_buffer.reserve (rui32_msgSize); // as reactOnStreamStart told we have enough memory!

@@ -104,7 +104,7 @@ public:
   //! @param vtObjectOutputNumberSROM:
   //! @param b_initPointer:
   void init(const iVtObjectOutputNumber_s* vtObjectOutputNumberSROMs SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA)
-  { vtObject_c::init ((iVtObject_s*) vtObjectOutputNumberSROMs SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);}
+  { vtObject_c::init ((iVtObject_s*) vtObjectOutputNumberSROMs SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA);}
 
   //  Operation: get_vtObjectOutputNumber_a
   iVtObjectOutputNumber_s* get_vtObjectOutputNumber_a() { return (iVtObjectOutputNumber_s *)&(get_vtObject_a()); }

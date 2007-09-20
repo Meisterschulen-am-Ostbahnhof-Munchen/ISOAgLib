@@ -91,12 +91,14 @@ namespace __IsoAgLib {
 
 
 /** empty constructor - everything has to be "constructed" with the "init"-function! */
-ISOFilterBox_c::ISOFilterBox_c()
-: ui8_filtersSetUp (0)
+ISOFilterBox_c::ISOFilterBox_c (SINGLETON_VEC_KEY_PARAMETER_DEF)
+: SINGLETON_PARENT_CONSTRUCTOR
+  ui8_filtersSetUp (0)
 {}
 
 ISOFilterBox_c::ISOFilterBox_c(const ISOFilterBox_c& rrefcc_refFB)
-: slist_managedISOFilter (rrefcc_refFB.slist_managedISOFilter)
+: ClientBase (rrefcc_refFB)
+, slist_managedISOFilter (rrefcc_refFB.slist_managedISOFilter)
 , ui8_filtersSetUp (rrefcc_refFB.ui8_filtersSetUp)
 {}
 
@@ -376,7 +378,7 @@ ISOFilterBox_c::syncFiltersToCan(const ISOName_c* rpc_isoName)
       if (it_managedIsoFilter->s_isoFilter.c_isoNameSa.isSpecified())
       { // see if it's in the monitorlist!
         if ( (!(rpc_isoName && *rpc_isoName == it_managedIsoFilter->s_isoFilter.c_isoNameSa)) && 
-          (getIsoMonitorInstance4Comm().existIsoMemberISOName (it_managedIsoFilter->s_isoFilter.c_isoNameSa, true)) )
+             (getIsoMonitorInstance4Comm().existIsoMemberISOName (it_managedIsoFilter->s_isoFilter.c_isoNameSa, true)) )
         { // retrieve current address
           const uint8_t cui8_adr = getIsoMonitorInstance4Comm().isoMemberISOName (it_managedIsoFilter->s_isoFilter.c_isoNameSa).nr();
           c_filter.set (cui8_adr, 0, Ident_c::ExtendedIdent);
@@ -390,7 +392,7 @@ ISOFilterBox_c::syncFiltersToCan(const ISOName_c* rpc_isoName)
       if (it_managedIsoFilter->s_isoFilter.c_isoNameDa.isSpecified())
       { // see if it's in the monitorlist!
         if ( (!(rpc_isoName && *rpc_isoName == it_managedIsoFilter->s_isoFilter.c_isoNameDa)) &&
-	(getIsoMonitorInstance4Comm().existIsoMemberISOName (it_managedIsoFilter->s_isoFilter.c_isoNameDa, true)) )
+             (getIsoMonitorInstance4Comm().existIsoMemberISOName (it_managedIsoFilter->s_isoFilter.c_isoNameDa, true)) )
         { // retrieve current address
           const uint8_t cui8_adr = getIsoMonitorInstance4Comm().isoMemberISOName (it_managedIsoFilter->s_isoFilter.c_isoNameDa).nr();
           c_filter.set (cui8_adr, 1, Ident_c::ExtendedIdent);

@@ -102,9 +102,9 @@ namespace __IsoAgLib {
 class ISOTerminalPkg_c : public CANPkgExt_c  {
 public:
   /** default constructor */
-  ISOTerminalPkg_c();
+  ISOTerminalPkg_c (int ri_singletonVecKey = 0) : CANPkgExt_c (ri_singletonVecKey) {}
   /** default destructor */
-  ~ISOTerminalPkg_c();
+  ~ISOTerminalPkg_c() {}
 
   /* ************************** */
   /* ***retreiving of values*** */

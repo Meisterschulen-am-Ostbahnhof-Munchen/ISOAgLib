@@ -684,7 +684,7 @@ MultiReceive_c::registerClient(CANCustomer_c& rrefc_client, const ISOName_c& rre
                                                        #ifdef NMEA_2000_FAST_PACKET
                                                        , rb_isFastPacket
                                                        #endif
-                                                       SINGLETON_VEC_KEY_USE4CALL
+                                                       SINGLETON_VEC_KEY_WITH_COMMA
                                                       )
                          );
 
@@ -821,7 +821,7 @@ MultiReceive_c::createStream(StreamType_t rt_streamType, IsoAgLib::ReceiveStream
   }
 */
   // Not there, so create!
-  list_streams.push_back (DEF_Stream_c_IMPL (rt_streamType, rc_streamIdent, rui32_msgSize));
+  list_streams.push_back (DEF_Stream_c_IMPL (rt_streamType, rc_streamIdent, rui32_msgSize SINGLETON_VEC_KEY_WITH_COMMA));
   list_streams.back().immediateInitAfterConstruction();
 
   // notify the Scheduler that we want to a 100ms timeEvent now (as we have at least one stream!)

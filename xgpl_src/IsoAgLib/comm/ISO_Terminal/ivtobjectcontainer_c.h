@@ -75,7 +75,7 @@ public:
   //! @param vtObjectContainer_sROM:
   //! @param b_initPointer:
   void init(const iVtObjectContainer_s* vtObjectContainer_sROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) {
-    vtObjectContainer_c::init (vtObjectContainer_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
+    vtObjectContainer_c::init (vtObjectContainer_sROM SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA);
   }
 
   //  Operation: get_vtObjectContainer_a

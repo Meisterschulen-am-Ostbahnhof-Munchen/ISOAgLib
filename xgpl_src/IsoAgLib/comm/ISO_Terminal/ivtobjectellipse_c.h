@@ -74,7 +74,7 @@ public:
   //! @param vtObjectellipseSROM:
   //! @param b_initPointer:
   void init(const iVtObjectEllipse_s* vtObjectellipseSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) {
-    vtObjectEllipse_c::init (vtObjectellipseSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
+    vtObjectEllipse_c::init (vtObjectellipseSROM SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA);
   }
 
   //  Operation: get_vtObjectmeter_a

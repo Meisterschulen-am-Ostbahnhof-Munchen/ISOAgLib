@@ -312,6 +312,8 @@ class CANPkgExt_c : public CANPkg_c
   */
   void setIsoPgn(uint32_t rui32_val);
 
+  bool resolveAddress(AddressResolveResults& addressResolveResults);
+
   /**
     set the value of the ISO11783 ident field DP
     @return data page
@@ -417,6 +419,8 @@ class CANPkgExt_c : public CANPkg_c
       @param p_isoName        needed isoName
     */
   void setISONameForDA( const ISOName_c& p_isoName );
+
+  uint8_t checkMonitorItemISOName( const AddressResolveResults& addressResolveResults ) const;
 
   /** short inline function for setting the Destination address (PS) to global (0xFF)
     */

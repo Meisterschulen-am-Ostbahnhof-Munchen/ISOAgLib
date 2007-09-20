@@ -146,7 +146,7 @@ ISOFilterManager_c::insertIsoFilter (const ISOFilter_s& rrefcs_isoFilter)
   // Check if ISOFilter does yet exist in some ISOFilterBox
   if (!existIsoFilter (rrefcs_isoFilter))
   { // insert an empty ISOFilterBox. initialized then in list right after
-    vec_isoFilterBox.push_back (ISOFilterBox_c());
+    vec_isoFilterBox.push_back (ISOFilterBox_c (SINGLETON_VEC_KEY));
 
     // now get the inserted ISOFilterBox
     ISOFilterBox_c& refc_isoFilterBox = vec_isoFilterBox.back();
@@ -167,7 +167,7 @@ ISOFilterManager_c::insertIsoFilterConnected (const ISOFilter_s& rrefcs_isoFilte
   // Check if ISOFilter does yet exist in some ISOFilterBox
   if ( (!existIsoFilter (rrefcs_isoFilter)) && (!existIsoFilter (rrefcs_isoFilter2)) )
   { // insert an empty ISOFilterBox. initialized then in list right after
-    vec_isoFilterBox.push_back (ISOFilterBox_c());
+    vec_isoFilterBox.push_back (ISOFilterBox_c (SINGLETON_VEC_KEY));
 
     // now get the inserted ISOFilterBox
     ISOFilterBox_c& refc_isoFilterBox = vec_isoFilterBox.back();
@@ -267,7 +267,7 @@ ISOFilterManager_c::reactOnMonitorListRemove (const ISOName_c& refc_isoName, uin
  * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS */
 ISOFilterManager_c& getIsoFilterManagerInstance (uint8_t rui8_instance)
 { // if > 1 singleton instance is used, no static reference can be used
-  return ISOFilterManager::instance(rui8_instance);
+  return ISOFilterManager_c::instance(rui8_instance);
 };
 #else
 /** C-style function, to get access to the unique ISOFilterManager_c singleton instance */

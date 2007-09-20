@@ -124,7 +124,7 @@ public:
 
 
 class MultiSendPkg_c;
-class DevPropertyHandler_c : public IsoAgLib::iMultiSendStreamer_c,  ClientBase
+class DevPropertyHandler_c : public IsoAgLib::iMultiSendStreamer_c, ClientBase
 {
   public:
     DevPropertyHandler_c();

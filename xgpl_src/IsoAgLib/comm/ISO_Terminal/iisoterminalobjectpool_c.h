@@ -274,10 +274,10 @@ public:
     hook function that gets called immediately after recognizing an incoming
     Auxiliary Input Status message - but only if you have a function assigned to it!
    */
-  virtual void eventAuxFunctionValue (uint16_t mui16_functionUid,
-                                      uint16_t cui16_inputValueAnalog,
-                                      uint16_t cui16_inputValueTransitions,
-                                      uint8_t  cui8_inputValueDigital) {}
+  virtual void eventAuxFunctionValue (uint16_t /*mui16_functionUid*/,
+                                      uint16_t /*cui16_inputValueAnalog*/,
+                                      uint16_t /*cui16_inputValueTransitions*/,
+                                      uint8_t  /*cui8_inputValueDigital*/) {}
 
   /**
     hook function that gets called immediately after recognizing an incoming

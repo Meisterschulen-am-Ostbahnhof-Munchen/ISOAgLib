@@ -348,7 +348,7 @@ VtClientServerCommunication_c::reactOnStreamStart (const IsoAgLib::ReceiveStream
   if ((rc_ident.getSaIsoName()) != (pc_vtServerInstance->getIsoName().toConstIisoName_c())) return false;
   //handling string value >= 9 Bytes
   if (rui32_totalLen > (4 /* H.18 byte 1-4 */ + 255 /* max string length */))
-    return false;
+    return false; /** @todo Should we really ConnAbort such a stream in advance? */
   return true;
 }
 
@@ -387,12 +387,13 @@ VtClientServerCommunication_c::processPartStreamDataChunk (IsoAgLib::iStream_c& 
 /** default constructor, which can optional set the pointer to the containing
   Scheduler_c object instance
  */
-VtClientServerCommunication_c::VtClientServerCommunication_c (IdentItem_c& ref_wsMasterIdentItem, ISOTerminal_c &ref_isoTerminal, IsoAgLib::iIsoTerminalObjectPool_c& rrefc_pool, char* rpc_versionLabel, uint8_t rui8_clientId)
+VtClientServerCommunication_c::VtClientServerCommunication_c (IdentItem_c& ref_wsMasterIdentItem, ISOTerminal_c &ref_isoTerminal, IsoAgLib::iIsoTerminalObjectPool_c& rrefc_pool, char* rpc_versionLabel, uint8_t rui8_clientId SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA)
   : b_vtAliveCurrent (false) // so we detect the rising edge when the VT gets connected!
   , b_checkSameCommand (true)
   , refc_wsMasterIdentItem (ref_wsMasterIdentItem)
   , refc_isoTerminal (ref_isoTerminal)
   , en_displayState (VtClientDisplayStateHidden)
+  , c_data (SINGLETON_VEC_KEY_PARAMETER_USE)
   , c_streamer (rrefc_pool)
 {
   pc_vtServerInstance = NULL;
@@ -401,7 +402,7 @@ VtClientServerCommunication_c::VtClientServerCommunication_c (IdentItem_c& ref_w
   ui8_clientId = rui8_clientId;
 
   // the generated initAllObjectsOnce() has to ensure to be idempotent! (vt2iso-generated source does this!)
-  c_streamer.refc_pool.initAllObjectsOnce (SINGLETON_VEC_KEY_PARAMETER_VAR);
+  c_streamer.refc_pool.initAllObjectsOnce (SINGLETON_VEC_KEY);
   // now let all clients know which client they belong to
   if (ui8_clientId > 0) // the iVtObjects are initialised with 0 as default index
   {
@@ -446,8 +447,8 @@ VtClientServerCommunication_c::VtClientServerCommunication_c (IdentItem_c& ref_w
 VtClientServerCommunication_c::~VtClientServerCommunication_c()
 {
   getMultiReceiveInstance4Comm().deregisterClient (*this);
-  getIsoFilterManagerInstance().removeIsoFilter (ISOFilter_s (*this, (0x3FFFF00UL), (VT_TO_ECU_PGN << 8),       &getIdentItem().isoName(), NULL, 8));
-  getIsoFilterManagerInstance().removeIsoFilter (ISOFilter_s (*this, (0x3FFFF00UL), (ACKNOWLEDGEMENT_PGN << 8), &getIdentItem().isoName(), NULL, 8));
+  getIsoFilterManagerInstance4Comm().removeIsoFilter (ISOFilter_s (*this, (0x3FFFF00UL), (VT_TO_ECU_PGN << 8),       &getIdentItem().isoName(), NULL, 8));
+  getIsoFilterManagerInstance4Comm().removeIsoFilter (ISOFilter_s (*this, (0x3FFFF00UL), (ACKNOWLEDGEMENT_PGN << 8), &getIdentItem().isoName(), NULL, 8));
 }
 
 
@@ -686,8 +687,8 @@ VtClientServerCommunication_c::timeEvent(void)
   if (!b_receiveFilterCreated)
   { /*** MultiReceive/IsoFilterManager Registration ***/
     getMultiReceiveInstance4Comm().registerClient (*this, getIdentItem().isoName(), VT_TO_ECU_PGN);
-    getIsoFilterManagerInstance().insertIsoFilter (ISOFilter_s (*this, (0x3FFFF00UL), (VT_TO_ECU_PGN << 8),       &getIdentItem().isoName(), NULL, 8));
-    getIsoFilterManagerInstance().insertIsoFilter (ISOFilter_s (*this, (0x3FFFF00UL), (ACKNOWLEDGEMENT_PGN << 8), &getIdentItem().isoName(), NULL, 8));
+    getIsoFilterManagerInstance4Comm().insertIsoFilter (ISOFilter_s (*this, (0x3FFFF00UL), (VT_TO_ECU_PGN << 8),       &getIdentItem().isoName(), NULL, 8));
+    getIsoFilterManagerInstance4Comm().insertIsoFilter (ISOFilter_s (*this, (0x3FFFF00UL), (ACKNOWLEDGEMENT_PGN << 8), &getIdentItem().isoName(), NULL, 8));
 
     b_receiveFilterCreated = true;
   }
@@ -856,7 +857,7 @@ VtClientServerCommunication_c::processMsgAck()
   bool b_ignoreNack = false; // normally DO NOT ignore NACK
   if (getIsoMonitorInstance4Comm().existIsoMemberNr (c_data.isoSa()))
   { // sender exists in isomonitor, so query its Manufacturer Code
-    const uint16_t cui16_manufCode = getIsoMonitorInstance().isoMemberNr (c_data.isoSa()).isoName().manufCode();
+    const uint16_t cui16_manufCode = getIsoMonitorInstance4Comm().isoMemberNr (c_data.isoSa()).isoName().manufCode();
     if (((cui16_manufCode == 98) /*Mller Elektronik*/ || (cui16_manufCode == 103) /*Agrocom*/) &&
           ((pc_vtServerInstance->getVtCapabilities()->lastReceivedVersion == 0) ||
           (pc_vtServerInstance->getVtCapabilities()->iso11783version < 3)))
@@ -946,7 +947,7 @@ VtClientServerCommunication_c::notifyOnAuxInputStatus()
       uint16_t const cui16_inputValueAnalog = c_data.getUint16Data (3-1);
       uint16_t const cui16_inputValueTransitions = c_data.getUint16Data (5-1);
       uint8_t const cui8_inputValueDigital = c_data.getUint8Data (7-1);
-//      c_streamer.refc_pool.eventAuxFunctionValue (mui16_functionUid, cui16_inputValueAnalog, cui16_inputValueTransitions, cui8_inputValueDigital);
+      c_streamer.refc_pool.eventAuxFunctionValue (it->mui16_functionUid, cui16_inputValueAnalog, cui16_inputValueTransitions, cui8_inputValueDigital);
     }
   }
 }
@@ -958,7 +959,7 @@ VtClientServerCommunication_c::storeAuxAssignment()
   uint8_t const cui8_inputSaNew = c_data.getUint8Data (2-1);
   uint8_t const cui8_inputNrNew = c_data.getUint8Data (3-1); /// 0xFF means unassign!
   uint16_t const cui16_functionUidNew = c_data.getUint16Data (4-1);
-  if (!getIsoMonitorInstance().existIsoMemberNr (cui8_inputSaNew) && (cui8_inputNrNew != 0xFF))
+  if (!getIsoMonitorInstance4Comm().existIsoMemberNr (cui8_inputSaNew) && (cui8_inputNrNew != 0xFF))
     return false;
 
   for (STL_NAMESPACE::list<AuxAssignment_s>::iterator it = mlist_auxAssignments.begin(); it != mlist_auxAssignments.end(); )
@@ -973,7 +974,7 @@ VtClientServerCommunication_c::storeAuxAssignment()
       }
       else
       { /// Reassign
-        const ISOName_c& rc_inputIsoNameNew = getIsoMonitorInstance().isoMemberNr (cui8_inputSaNew).isoName();
+        const ISOName_c& rc_inputIsoNameNew = getIsoMonitorInstance4Comm().isoMemberNr (cui8_inputSaNew).isoName();
         it->mc_inputIsoName = rc_inputIsoNameNew;
         it->mui8_inputNumber = cui8_inputNrNew;
         return true;
@@ -987,7 +988,7 @@ VtClientServerCommunication_c::storeAuxAssignment()
     return true; // unassignment is always okay!
 
   AuxAssignment_s s_newAuxAssignment;
-  const ISOName_c& rc_inputIsoNameNew = getIsoMonitorInstance().isoMemberNr (cui8_inputSaNew).isoName();
+  const ISOName_c& rc_inputIsoNameNew = getIsoMonitorInstance4Comm().isoMemberNr (cui8_inputSaNew).isoName();
   s_newAuxAssignment.mc_inputIsoName = rc_inputIsoNameNew;
   s_newAuxAssignment.mui8_inputNumber = cui8_inputNrNew;
   s_newAuxAssignment.mui16_functionUid = cui16_functionUidNew;
