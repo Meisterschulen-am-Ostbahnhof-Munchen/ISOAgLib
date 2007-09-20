@@ -60,6 +60,11 @@
 //    ( i.e. direct in the BIOS/OS call)
 #define HAL_CAN_MAX_BUS_NR 1
 
+// If not allready defined in compiler_adaptation.h ...
+#ifndef STL_NAMESPACE
+  #define STL_NAMESPACE std
+#endif
+
 /** decide if ESX has a babyboard, which should also be init at startup */
 //#define _INIT_BABYBOARD_
 

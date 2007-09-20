@@ -60,6 +60,11 @@
 //    ( i.e. direct in the BIOS/OS call)
 #define HAL_CAN_MAX_BUS_NR 2
 
+// If not allready defined in compiler_adaptation.h ...
+#ifndef STL_NAMESPACE
+  #define STL_NAMESPACE std
+#endif
+
 /** define uint16_t order of float: WORD_LO_HI, WORD_HI_LO */
 #define FLOAT_WORD_ORDER WORD_HI_LO
 
