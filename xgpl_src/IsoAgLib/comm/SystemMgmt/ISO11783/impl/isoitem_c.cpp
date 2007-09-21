@@ -107,6 +107,7 @@ ISOItem_c::ISOItem_c()
   , i8_slavesToClaimAddress (-2) // idle around and wait for this ISOItem_c to get initially initialized!
   #endif
   , ui8_nr(0xFE)
+  , b_repeatClaim (false) // wouldn't be needed to be set here as it's set when entering AddressClaim
   , c_isoName (ISOName_c::ISONameUnspecified())
 {
 }
@@ -293,6 +294,7 @@ bool ISOItem_c::timeEvent( void )
         else
         { // success -> start address claim mode
           setItemState(IState_c::AddressClaim);
+          b_repeatClaim = false;
         }
 
         // now nr() has now suitable value
@@ -335,6 +337,12 @@ bool ISOItem_c::timeEvent( void )
       {
         // no conflict since sent of adress claim since 250ms
         setItemState(IState_c::ClaimedAddress);
+        // if there has been a REQUEST_PGN:ADDRESS_CLAIMED_PGN while being in the 250ms-AddressClaim-phase, answer it NOW
+        if (b_repeatClaim)
+        { // note: this HAS to be done AFTER setting to ClaimedAddress!
+          sendSaClaim();
+          b_repeatClaim = false;
+        }
         // now inform the ISO monitor list change clients on NEW client use
         getIsoMonitorInstance4Comm().broadcastSaAdd2Clients( isoName(), this );
         #ifdef USE_WORKING_SET
@@ -451,6 +459,8 @@ bool ISOItem_c::processMsg()
   */
 bool ISOItem_c::sendSaClaim()
 {
+  // If we're still in AddressClaim, delay the saSending until we're ClaimedAddress
+  if (   itemState(IState_c::AddressClaim) ) { b_repeatClaim = true; return false; }
   if ( ! itemState(IState_c::ClaimedAddress) ) return false; ///< send no answer, if not yet ready claimed
   if ( ! itemState(IState_c::Local) ) return false;
   // now this ISOItem should/can send a SA claim

@@ -406,6 +406,8 @@ private:
   /** number of element */
   uint8_t ui8_nr : 8;
 
+  bool b_repeatClaim;
+
   /** ISOName of element */
   ISOName_c c_isoName;
 };

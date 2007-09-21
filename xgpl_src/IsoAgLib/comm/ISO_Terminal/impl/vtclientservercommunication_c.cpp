@@ -392,8 +392,8 @@ VtClientServerCommunication_c::VtClientServerCommunication_c (IdentItem_c& ref_w
   , b_checkSameCommand (true)
   , refc_wsMasterIdentItem (ref_wsMasterIdentItem)
   , refc_isoTerminal (ref_isoTerminal)
-  , en_displayState (VtClientDisplayStateHidden)
   , c_data (SINGLETON_VEC_KEY_PARAMETER_USE)
+  , en_displayState (VtClientDisplayStateHidden)
   , c_streamer (rrefc_pool)
 {
   pc_vtServerInstance = NULL;
