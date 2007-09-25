@@ -35,6 +35,7 @@ DEL_DIR  = rmdir
 MOVE     = mv -f
 CHK_DIR_EXISTS= test -d
 MKDIR    = mkdir -p
+UTESTFLAGS= -DUNITTEST
 
 ####### Output directory
 
@@ -69,6 +70,70 @@ $(OBJ_DIR_APP)/%.d :
 
 include $(DEPS_APP)
 
+####### Test-Files
+
+SOURCES_UTEST = $(patsubst %.h,%.cpp,$(HEADERS_UTEST))
+SOURCES_UTEST_MOCKS = $(patsubst %.h,%.cpp,$(HEADERS_UTEST_MOCKS))
+SOURCES_UTEST_MOD_SUT = $(patsubst %.h,%.cpp,$(HEADERS_UTEST_MOD_SUT))
+
+# Special Rules for Unit-Tests
+OBJ_DIR_UTEST  = objects_utest
+OBJECTS_UTEST = $(patsubst %.cpp,$(OBJ_DIR_UTEST)/%.o,$(notdir $(SOURCES_UTEST))) $(patsubst %.cpp,$(OBJ_DIR_UTEST)/%.o,$(notdir $(SOURCES_UTEST_MOCKS))) $(patsubst %.cpp,$(OBJ_DIR_UTEST)/%-modsut.o,$(notdir $(SOURCES_UTEST_MOD_SUT)))
+DEPS_UTEST := $(patsubst %.o,%.d,$(OBJECTS_UTEST))
+
+# Set additional searchpath for dependencies
+VPATH = $(dir $(SOURCES_UTEST)) $(dir $(SOURCES_UTEST_MOCKS)) $(dir $(SOURCES_UTEST_MOD_SUT))
+
+$(OBJ_DIR_UTEST)/%-test.cpp : %-test.h
+	cxxtestgen.pl --part -o $@ $<
+
+$(OBJ_DIR_UTEST)/%-modsut.d :
+	$(CXX) -c $(CXXFLAGS) $(UTESTFLAGS) $(INCPATH) -MM $(filter %/$(notdir $(patsubst %-modsut.d,%.cpp,$@)),$(SOURCES_UTEST_MOD_SUT)) 2>/dev/null | \
+	perl -p -e 's!(.*)\.o:!$(OBJ_DIR_UTEST)/$$1-modsut.o:!' > $@
+
+$(OBJ_DIR_UTEST)/%-test.d :
+	cxxtestgen.pl --part -o $(patsubst %.d,%.cpp,$@) $(filter %/$(notdir $(patsubst %.d,%.h,$@)),$(HEADERS_UTEST))
+	$(CXX) -c $(CXXFLAGS) $(UTESTFLAGS) $(INCPATH) -MM $(patsubst %.d,%.cpp,$@) 2>/dev/null | \
+	perl -p -e 's!^([^:]+:)!$(OBJ_DIR_UTEST)/$$1!' > $@
+
+$(OBJ_DIR_UTEST)/%-mock.d :
+	$(CXX) -c $(CXXFLAGS) $(UTESTFLAGS) $(INCPATH) -MM $(filter %/$(notdir $(patsubst %.d,%.cpp,$@)),$(SOURCES_UTEST_MOCKS)) 2>/dev/null | \
+	perl -p -e 's!^([^:]+:)!$(OBJ_DIR_UTEST)/$$1!' > $@
+
+$(OBJ_DIR_UTEST)/%-modsut.o : $(OBJ_DIR_UTEST)/%-modsut.d
+	$(CXX) $(CXXFLAGS) $(UTESTFLAGS) $(INCPATH)  -o $@ -c $(filter %/$(notdir $(patsubst %-modsut.o,%.cpp,$@)),$(SOURCES_UTEST_MOD_SUT))
+
+$(OBJ_DIR_UTEST)/%-test.o : $(filter %/$(patsubst $(OBJ_DIR_UTEST)/%.o,%,$@).cpp,$(SOURCES_UTEST)) $(OBJ_DIR_UTEST)/%-test.d
+	$(CXX) $(CXXFLAGS) $(UTESTFLAGS) $(INCPATH)  -o $@ -c $(OBJ_DIR_UTEST)/$(notdir $(filter %/$(patsubst $(OBJ_DIR_UTEST)/%.o,%,$@).cpp,$(SOURCES_UTEST)))
+
+$(OBJ_DIR_UTEST)/%-mock.o : $(filter %/$(notdir $(patsubst %.o,%.cpp,$@)),$(SOURCES_UTEST_MOCKS)) $(OBJ_DIR_UTEST)/%-mock.d
+	$(CXX) $(CXXFLAGS) $(UTESTFLAGS) $(INCPATH)  -o $@ -c $(filter %/$(notdir $(patsubst %.o,%.cpp,$@)),$(SOURCES_UTEST_MOCKS))
+
+include $(DEPS_UTEST)
+
+####### TestRunner-Files
+
+# Special Rules for Unit-Tests (test runner)
+OBJ_DIR_TESTRUNNER = objects_testrunner
+OBJECTS_TESTRUNNER = $(patsubst %.cpp,$(OBJ_DIR_TESTRUNNER)/%.o,$(notdir $(TESTRUNNER_SOURCES)))
+DEPS_TESTRUNNER := $(patsubst %.o,%.d,$(OBJECTS_TESTRUNNER))
+
+$(OBJ_DIR_TESTRUNNER)/%.d :
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -MM $(filter %/$(patsubst $(OBJ_DIR_TESTRUNNER)/%.d,%,$@).cpp,$(TESTRUNNER_SOURCES)) 2>/dev/null | \
+	perl -p -e 's!^([^:]+:)!$(OBJ_DIR_TESTRUNNER)/$$1!' > $@
+
+$(OBJ_DIR_TESTRUNNER)/%.o : $(filter %/$(patsubst $(OBJ_DIR_TESTRUNNER)/%.d,%,$@).cpp,$(TESTRUNNER_SOURCES)) $(OBJ_DIR_TESTRUNNER)/%.d
+	$(CXX) $(CXXFLAGS) $(INCPATH)  -o $@ -c $(filter %/$(patsubst $(OBJ_DIR_TESTRUNNER)/%.o,%,$@).cpp,$(TESTRUNNER_SOURCES))
+
+include $(DEPS_TESTRUNNER)
+
+testrunner: $(OBJECTS_TESTRUNNER) $(OBJECTS_UTEST)
+ifeq ($(TESTRUNNER_SOURCES),)
+	@echo "No testrunner build because of no testrunner.cpp is set!"
+else
+	$(LINK) $(LFLAGS) -o testrunner $(OBJECTS_TESTRUNNER) $(OBJECTS_UTEST) $(LIBS) $(WX_LIBS)
+endif
+
 ####### Implicit rules
 
 .SUFFIXES: .c .o .cpp .cc .cxx .C
@@ -80,7 +145,7 @@ $(OBJ_DIR_APP)/%.o : $(filter %/$(patsubst $(OBJ_DIR_APP)/%.d,%,$@).cpp,$(SOURCE
 	$(CXX) $(CXXFLAGS) $(INCPATH)  -o $@ -c $(filter %/$(patsubst $(OBJ_DIR_APP)/%.o,%,$@).cpp,$(SOURCES_APP))
 
 ####### Build rules
-deps : $(DEPS_LIBRARY) $(DEPS_APP)
+deps : $(DEPS_LIBRARY) $(DEPS_APP) $(DEPS_UTEST) $(DEPS_TESTRUNNER)
 
 static_library:  $(OBJECTS_LIBRARY)
 	-$(DEL_FILE) $(OBJ_DIR_LIBRARY)/libisoaglib.a
@@ -91,7 +156,7 @@ dynamic_library:  $(OBJECTS_LIBRARY)
 	$(CXX) -shared -o $(OBJ_DIR_LIBRARY)/libisoaglib.so $^
 
 
-all: Makefile static_library dynamic_library  $(TARGET)
+all: Makefile static_library dynamic_library  $(TARGET) testrunner
 $(TARGET):  $(OBJECTS_APP) static_library dynamic_library
 	$(LINK) $(LFLAGS) -o $(TARGET)_static $(OBJECTS_APP) $(OBJ_DIR_LIBRARY)/libisoaglib.a $(LIBS)
 	$(LINK) $(LFLAGS) -o $(TARGET)_dynamic $(OBJECTS_APP) $(OBJ_DIR_LIBRARY)/libisoaglib.so $(LIBS)
@@ -104,7 +169,7 @@ dist:
 yaccclean:
 lexclean:
 clean:
-	-$(DEL_FILE) $(OBJECTS_LIBRARY) $(DEPS_LIBRARY) $(OBJECTS_APP) $(DEPS_APP)
+	-$(DEL_FILE) $(OBJECTS_LIBRARY) $(DEPS_LIBRARY) $(OBJECTS_APP) $(DEPS_APP) $(OBJECTS_UTEST) $(OBJECTS_TESTRUNNER)
 	-$(DEL_FILE) $(OBJ_DIR_LIBRARY)/libisoaglib.a $(OBJ_DIR_LIBRARY)/libisoaglib.so
 	-$(DEL_FILE) *~ core *.core
 
@@ -112,7 +177,8 @@ clean:
 ####### Sub-libraries
 
 distclean: clean
-	-$(DEL_FILE) $(TARGET)_static $(TARGET)_dynamic $(TARGET)
+	-$(DEL_FILE) $(TARGET)_static $(TARGET)_dynamic $(TARGET) testrunner
+	-$(DEL_FILE) $(OBJ_DIR_UTEST)/* $(OBJ_DIR_TESTRUNNER)/*
 
 
 FORCE:
