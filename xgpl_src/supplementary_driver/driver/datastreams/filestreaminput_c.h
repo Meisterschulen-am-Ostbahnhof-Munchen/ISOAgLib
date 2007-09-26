@@ -104,7 +104,7 @@ public:
 
   //  Operation: open
   //! open an input stream
-  bool open (std::string& filename, FileMode_t rt_mode);
+  bool open (STL_NAMESPACE::string& filename, FileMode_t rt_mode);
 
   //  Operation: open
   //! open an input stream
@@ -124,12 +124,12 @@ public:
 
   //  Operation: getFileName
   //! get file name
-  const std::string& getFileName() const { return str_openedFile; };
+  const STL_NAMESPACE::string& getFileName() const { return str_openedFile; };
 
 private:
   TargetFileStreamInput_c c_targetHandle;
 
-  std::string str_openedFile;
+  STL_NAMESPACE::string str_openedFile;
 }; // ~X2C
 
 

@@ -105,12 +105,12 @@
 // ~X2C
 
 //  +X2C Class 915 : FileTargetFileStreamOutput_c
-class TargetFileStreamOutput_c : public std::ofstream
+class TargetFileStreamOutput_c : public STL_NAMESPACE::ofstream
 {
 
 public:
 	//! open a output stream
-	bool open( std::string& filename, FileMode_t rt_mode ){ return open( filename.c_str(), rt_mode );};
+	bool open( STL_NAMESPACE::string& filename, FileMode_t rt_mode ){ return open( filename.c_str(), rt_mode );};
 	//! open a output stream
 	bool open( const char* filename, FileMode_t rt_mode );
 	//! close a output stream
@@ -123,13 +123,13 @@ public:
   virtual TargetFileStreamOutput_c& operator<<(uint8_t ui8_data);
 
   //  Operation: eof
-  virtual bool eof() const { return static_cast<const std::ofstream*>(this)->eof();};
+  virtual bool eof() const { return static_cast<const STL_NAMESPACE::ofstream*>(this)->eof();};
 
   // Operation: fail
-  virtual bool fail() const { return static_cast<const std::ofstream*>(this)->fail();};
+  virtual bool fail() const { return static_cast<const STL_NAMESPACE::ofstream*>(this)->fail();};
 
   // Operation: good
-  virtual bool good() const { return static_cast<const std::ofstream*>(this)->good();};
+  virtual bool good() const { return static_cast<const STL_NAMESPACE::ofstream*>(this)->good();};
 
 }; // ~X2C
 

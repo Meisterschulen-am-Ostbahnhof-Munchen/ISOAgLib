@@ -113,11 +113,13 @@
 	#else
 	 #define CNAMESPACE std
 	#endif
+#elif defined( __IAR_SYSTEMS_ICC__ )
+	#define CNAMESPACE
 #else
  #define CNAMESPACE std
 #endif
 
-#ifdef IAR_COMPILER
+#ifdef __IAR_SYSTEMS_ICC__
 	#define STL_NAMESPACE
 #else
 	/** usually the STL containers and algorithms are placed in std,

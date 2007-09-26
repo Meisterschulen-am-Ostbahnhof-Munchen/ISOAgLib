@@ -214,7 +214,7 @@ void Scheduler_c::closeCommunication( void ) {
     getCanInstance( ind ).close();
   }
   #endif
-  for ( std::list<SchedulerEntry_c>::iterator iter = c_taskQueue.begin(); ! c_taskQueue.empty(); iter = c_taskQueue.begin())
+  for ( STL_NAMESPACE::list<SchedulerEntry_c>::iterator iter = c_taskQueue.begin(); ! c_taskQueue.empty(); iter = c_taskQueue.begin())
   { // call close for each registered client
     iter->close();
     c_taskQueue.erase(iter);
@@ -299,7 +299,7 @@ void Scheduler_c::registerAccessFlt( void )
 bool Scheduler_c::registerClient( ElementBase_c* pc_client)
 {
   // first check whether this client is already registered
-  for ( std::list<SchedulerEntry_c>::const_iterator iter = c_taskQueue.begin(); iter != c_taskQueue.end(); iter++ )
+  for ( STL_NAMESPACE::list<SchedulerEntry_c>::const_iterator iter = c_taskQueue.begin(); iter != c_taskQueue.end(); iter++ )
   {
     if (iter->isTask( pc_client ) ) return false;
   }
@@ -460,7 +460,7 @@ int32_t Scheduler_c::timeEvent( int32_t ri32_demandedExecEndScheduler )
   static int32_t si32_globalTimeStart = 0;
   static int32_t si32_cpuTimeStart = 0;
   si32_globalTimeStart = HAL::getTime();
-  si32_cpuTimeStart = (std::clock() / ( CLOCKS_PER_SEC / 1000 ));
+  si32_cpuTimeStart = (STL_NAMESPACE::clock() / ( CLOCKS_PER_SEC / 1000 ));
   #endif
 
   int32_t i32_stepStartTime = i32_lastTimeEventTime = System_c::getTime();
@@ -547,7 +547,7 @@ int32_t Scheduler_c::timeEvent( int32_t ri32_demandedExecEndScheduler )
 
     #if defined(TEST_TIMING) && defined(SYSTEM_PC)
     const int32_t ci32_globalTimeEnd = HAL::getTime();
-    const int32_t ci32_cpuTimeEnd = (std::clock() / ( CLOCKS_PER_SEC / 1000 ));
+    const int32_t ci32_cpuTimeEnd = (STL_NAMESPACE::clock() / ( CLOCKS_PER_SEC / 1000 ));
 
     const int32_t ci32_deltaGlobal = ci32_globalTimeEnd - si32_globalTimeStart;
     const int32_t ci32_deltaCpu = ci32_cpuTimeEnd - si32_cpuTimeStart;
@@ -561,7 +561,7 @@ int32_t Scheduler_c::timeEvent( int32_t ri32_demandedExecEndScheduler )
           << " Percent usage of CPU during this IsoAgLib Scheduler run"
           << ", delta Global: " << ci32_deltaGlobal
           << ", delta GPU: " << ci32_deltaCpu
-          << "#########\n\n\n" << std::endl;
+          << "#########\n\n\n" << INTERNAL_DEBUG_DEVICE_ENDL;
     }
     #endif
 
@@ -579,14 +579,14 @@ Scheduler_c::resortTaskList(const SchedulerEntry_c* rpc_sort)
 {
   if(cntClient() <= 1) return ; //nothing to sort
 
-  std::list<SchedulerEntry_c>::iterator iterExecuted = c_taskQueue.begin();
+  STL_NAMESPACE::list<SchedulerEntry_c>::iterator iterExecuted = c_taskQueue.begin();
   for ( ; iterExecuted != c_taskQueue.end(); iterExecuted++ )
   {
     if (rpc_sort == &(*iterExecuted) ) break;
   }
   if ( iterExecuted == c_taskQueue.end() ) return;
 
-  std::list<SchedulerEntry_c>::iterator iterCompare = iterExecuted;
+  STL_NAMESPACE::list<SchedulerEntry_c>::iterator iterCompare = iterExecuted;
 
   // compare with the next item in list
   ++iterCompare;
@@ -910,7 +910,7 @@ bool  Scheduler_c::changeRetriggerTimeAndResort(SchedulerEntry_c rc_client  , in
   else if (cntClient() == 1) return true;
   else
   { // search iterator for the client of change
-    std::list<SchedulerEntry_c>::iterator itc_task;
+    STL_NAMESPACE::list<SchedulerEntry_c>::iterator itc_task;
     for(itc_task = c_taskQueue.begin(); itc_task != c_taskQueue.end(); itc_task++)
     {
       if (*itc_task == rc_client)
@@ -934,7 +934,7 @@ bool  Scheduler_c::changeRetriggerTimeAndResort(ElementBase_c * pc_client  , int
   else if (cntClient() == 1) return true;
   else
   { // search iterator for the client of change
-    std::list<SchedulerEntry_c>::iterator itc_task;
+    STL_NAMESPACE::list<SchedulerEntry_c>::iterator itc_task;
     for(itc_task = c_taskQueue.begin(); itc_task != c_taskQueue.end(); itc_task++)
     {
       if(itc_task->isTask(pc_client))
@@ -952,7 +952,7 @@ bool  Scheduler_c::changeRetriggerTimeAndResort(ElementBase_c * pc_client  , int
 //! @param itc_task -> iterator to the task that should be changed
 //! @param i32_nextRetriggerTime -> New i32_nextRetriggerTime set for Client by Scheduler_c
 //! @param  ri16_newTimePeriod optional -> New Period will set for the Client by Scheduler_c
-bool  Scheduler_c::changeRetriggerTimeAndResort(std::list<SchedulerEntry_c>::iterator itc_task, int32_t i32_newRetriggerTime, int16_t ri16_newTimePeriod)
+bool  Scheduler_c::changeRetriggerTimeAndResort(STL_NAMESPACE::list<SchedulerEntry_c>::iterator itc_task, int32_t i32_newRetriggerTime, int16_t ri16_newTimePeriod)
 {
   #ifdef DEBUG_SCHEDULER
   printTaskList();

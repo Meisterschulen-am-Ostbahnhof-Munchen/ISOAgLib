@@ -87,6 +87,7 @@
 
 #include <IsoAgLib/util/impl/elementbase_c.h>
 #include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h>
+#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgnhandler_c.h>
 #include <IsoAgLib/util/impl/singleton.h>
 #include <IsoAgLib/driver/system/impl/system_c.h>
 #include <IsoAgLib/comm/Base/ibasetypes.h>
@@ -113,10 +114,10 @@ namespace __IsoAgLib
     void init() {}
 
     /** constructor */
-    BaseCommon_c() : t_identMode(IsoAgLib::IdentModeImplement),
+    BaseCommon_c() : mui16_suppressMask(0),
+		                 t_identMode(IsoAgLib::IdentModeImplement),
                      i32_lastMsgReceived(0),
-                     mui16_suppressMask(0),
-                     pc_isoName(),                    
+                     pc_isoName(),
                      c_selectedDataSourceISOName()
                    {}
     /** destructor */
@@ -130,9 +131,10 @@ namespace __IsoAgLib
         possible errors:
           * dependant error in CANIO_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
         @param rpc_isoName optional pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
+        @param ai_singletonVecKey singleton vector key in case PRT_INSTANCE_CNT > 1
         @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       */
-    virtual void init_base (const ISOName_c*, IsoAgLib::IdentMode_t rt_identMode = IsoAgLib::IdentModeImplement);
+    virtual void init_base (const ISOName_c*, int ai_singletonVecKey, IsoAgLib::IdentMode_t rt_identMode = IsoAgLib::IdentModeImplement);
 
     /** tractor object after init --> store isoName and mode
         this function was originally named "config", but to avoid warnings with the interface classes'
@@ -141,7 +143,7 @@ namespace __IsoAgLib
         @param rpc_isoName pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
         @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       */
-    virtual bool config_base (const ISOName_c* rpc_isoName, uint16_t rui16_suppressMask, IsoAgLib::IdentMode_t rt_identMode = IsoAgLib::IdentModeImplement);
+    virtual bool config_base (const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode = IsoAgLib::IdentModeImplement, uint16_t rui16_suppressMask = 0);
 
      /** deliver reference to data pkg
          @return reference to the member CanPkg, which encapsulates the CAN send structure
@@ -232,7 +234,7 @@ namespace __IsoAgLib
   protected:
     /** flags that disable PGNs individually */
     uint16_t mui16_suppressMask;
-  
+
   private:
 
     // private methods

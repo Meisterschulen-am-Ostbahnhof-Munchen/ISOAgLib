@@ -219,7 +219,7 @@ MultiReceive_c::notifyError (const IsoAgLib::ReceiveStreamIdentifier_c& rrefc_st
 {
   if (rrefc_streamIdent.getDa() == 0xFF)
   { // BAM
-    for (std::list<MultiReceiveClientWrapper_s>::iterator i_list_clients = list_clients.begin(); i_list_clients != list_clients.end(); i_list_clients++)
+    for (STL_NAMESPACE::list<MultiReceiveClientWrapper_s>::iterator i_list_clients = list_clients.begin(); i_list_clients != list_clients.end(); i_list_clients++)
     { // // inform all clients that want Broadcast-TP-Messages
       MultiReceiveClientWrapper_s& curClientWrapper = *i_list_clients;
       if (curClientWrapper.b_alsoBroadcast) {
@@ -236,7 +236,7 @@ MultiReceive_c::notifyError (const IsoAgLib::ReceiveStreamIdentifier_c& rrefc_st
     else
     {
       // global notify for clients who want notification on global errors (which noone else can take ;-))
-      for (std::list<MultiReceiveClientWrapper_s>::iterator i_list_clients = list_clients.begin(); i_list_clients != list_clients.end(); i_list_clients++)
+      for (STL_NAMESPACE::list<MultiReceiveClientWrapper_s>::iterator i_list_clients = list_clients.begin(); i_list_clients != list_clients.end(); i_list_clients++)
       { // // inform all clients that want Broadcast-TP-Messages
         MultiReceiveClientWrapper_s& curClientWrapper = *i_list_clients;
         if (curClientWrapper.b_alsoGlobalErrors) {
@@ -604,7 +604,7 @@ MultiReceive_c::processMsg()
   return false;
   #else
   // Check if it's registered for fast-packet receive
-  for (std::list<MultiReceiveClientWrapper_s>::iterator pc_iter = list_clients.begin(); pc_iter != list_clients.end(); pc_iter++)
+  for (STL_NAMESPACE::list<MultiReceiveClientWrapper_s>::iterator pc_iter = list_clients.begin(); pc_iter != list_clients.end(); pc_iter++)
   { // is it fast-packet, and is it this pgn?
     /** @todo determine when to set the PS field of the pgn to "rui8_cachedClientAddress" */
     if ((pc_iter->b_isFastPacket) && (pc_iter->ui32_pgn == data().isoPgn()))
@@ -667,7 +667,7 @@ MultiReceive_c::registerClient(CANCustomer_c& rrefc_client, const ISOName_c& rre
                                #endif
                               )
 { // ~X2C
-  std::list<MultiReceiveClientWrapper_s>::iterator list_clients_i = list_clients.begin();
+  STL_NAMESPACE::list<MultiReceiveClientWrapper_s>::iterator list_clients_i = list_clients.begin();
   // Already in list?
   while (list_clients_i != list_clients.end()) {
     MultiReceiveClientWrapper_s iterMRCW = *list_clients_i;
@@ -713,7 +713,7 @@ void
 MultiReceive_c::deregisterClient (CANCustomer_c& rrefc_client)
 {
   // first of all remove all streams that are for this client!
-  for (std::list<DEF_Stream_c_IMPL>::iterator pc_iter = list_streams.begin(); pc_iter != list_streams.end(); )
+  for (STL_NAMESPACE::list<DEF_Stream_c_IMPL>::iterator pc_iter = list_streams.begin(); pc_iter != list_streams.end(); )
   {
     // do also erase "kept" streams!!
     if (getClient (pc_iter->getIdent()) == &rrefc_client)
@@ -725,7 +725,7 @@ MultiReceive_c::deregisterClient (CANCustomer_c& rrefc_client)
   }
 
   // then remove all MultiReceiveClientWrappers for this client
-  for (std::list<MultiReceiveClientWrapper_s>::iterator pc_iter = list_clients.begin(); pc_iter != list_clients.end(); )
+  for (STL_NAMESPACE::list<MultiReceiveClientWrapper_s>::iterator pc_iter = list_clients.begin(); pc_iter != list_clients.end(); )
   {
     if (pc_iter->pc_client == &rrefc_client)
     { // remove MultiReceiveClientWrapper_s
@@ -752,10 +752,10 @@ MultiReceive_c::deregisterClient(CANCustomer_c& rrefc_client, const ISOName_c& r
                                  uint32_t rui32_pgn, uint32_t rui32_pgnMask)
 {
   // first of all remove all streams that are for this client with this filter/mask/isoname tuple
-  for (std::list<DEF_Stream_c_IMPL>::iterator pc_iter = list_streams.begin(); pc_iter != list_streams.end(); )
+  for (STL_NAMESPACE::list<DEF_Stream_c_IMPL>::iterator pc_iter = list_streams.begin(); pc_iter != list_streams.end(); )
   {
     // do also erase "kept" streams!!
-    std::list<MultiReceiveClientWrapper_s>::iterator i_list_clients = list_clients.begin();
+    STL_NAMESPACE::list<MultiReceiveClientWrapper_s>::iterator i_list_clients = list_clients.begin();
     while (i_list_clients != list_clients.end())
     {
       if (pc_iter->getIdent().matchDaPgnWithMask (i_list_clients->ui8_cachedClientAddress, i_list_clients->ui32_pgn, i_list_clients->ui32_pgnMask))
@@ -779,7 +779,7 @@ MultiReceive_c::deregisterClient(CANCustomer_c& rrefc_client, const ISOName_c& r
   }
 
   // then remove all MultiReceiveClientWrappers for this client
-  for (std::list<MultiReceiveClientWrapper_s>::iterator pc_iter = list_clients.begin(); pc_iter != list_clients.end(); )
+  for (STL_NAMESPACE::list<MultiReceiveClientWrapper_s>::iterator pc_iter = list_clients.begin(); pc_iter != list_clients.end(); )
   {
     if ( (pc_iter->pc_client == &rrefc_client)
       && (pc_iter->c_isoName == rrefc_isoName)
@@ -812,7 +812,7 @@ MultiReceive_c::createStream(StreamType_t rt_streamType, IsoAgLib::ReceiveStream
 { // ~X2C
 /**
   // check if not already there?? not any more!
-  for (std::list<DEF_Stream_c_IMPL>::iterator i_list_streams = list_streams.begin();
+  for (STL_NAMESPACE::list<DEF_Stream_c_IMPL>::iterator i_list_streams = list_streams.begin();
        i_list_streams != list_streams.end();
        i_list_streams++) {
     DEF_Stream_c_IMPL* curStream = &*i_list_streams;
@@ -845,7 +845,7 @@ MultiReceive_c::getStream(IsoAgLib::ReceiveStreamIdentifier_c rc_streamIdent
                           #endif
                           )
 { // ~X2C
-  std::list<DEF_Stream_c_IMPL>::iterator i_list_streams = list_streams.begin();
+  STL_NAMESPACE::list<DEF_Stream_c_IMPL>::iterator i_list_streams = list_streams.begin();
   while (i_list_streams != list_streams.end())
   {
     DEF_Stream_c_IMPL& curStream = *i_list_streams;
@@ -876,7 +876,7 @@ Stream_c* MultiReceive_c::getStream(uint8_t sa, uint8_t da
                                     #endif
                                     )
 {
-  std::list<DEF_Stream_c_IMPL>::iterator i_list_streams = list_streams.begin();
+  STL_NAMESPACE::list<DEF_Stream_c_IMPL>::iterator i_list_streams = list_streams.begin();
   while (i_list_streams != list_streams.end()) {
     DEF_Stream_c_IMPL& curStream = *i_list_streams;
     #ifdef NMEA_2000_FAST_PACKET
@@ -916,7 +916,7 @@ Stream_c* MultiReceive_c::getStream(uint8_t sa, uint8_t da
 void
 MultiReceive_c::removeStream(Stream_c* rpc_stream)
 { // ~X2C
-  for (std::list<DEF_Stream_c_IMPL>::iterator i_list_streams = list_streams.begin();
+  for (STL_NAMESPACE::list<DEF_Stream_c_IMPL>::iterator i_list_streams = list_streams.begin();
        i_list_streams != list_streams.end();
        i_list_streams++) {
     if (rpc_stream == (&*i_list_streams))
@@ -962,7 +962,7 @@ MultiReceive_c::finishStream (DEF_Stream_c_IMPL& rrefc_stream)
   if (rrefc_stream.getIdent().getDa() == 0xFF)
   { // BAM
   #endif
-    for (std::list<MultiReceiveClientWrapper_s>::iterator i_list_clients = list_clients.begin(); i_list_clients != list_clients.end(); i_list_clients++)
+    for (STL_NAMESPACE::list<MultiReceiveClientWrapper_s>::iterator i_list_clients = list_clients.begin(); i_list_clients != list_clients.end(); i_list_clients++)
     { // // inform all clients that want Broadcast-TP-Messages
       MultiReceiveClientWrapper_s& curClientWrapper = *i_list_clients;
       if (curClientWrapper.ui32_pgn == rrefc_stream.getIdent().getPgn())
@@ -1006,7 +1006,7 @@ MultiReceive_c::finishStream (DEF_Stream_c_IMPL& rrefc_stream)
 bool
 MultiReceive_c::timeEvent( void )
 { // ~X2C
-  std::list<DEF_Stream_c_IMPL>::iterator i_list_streams = list_streams.begin();
+  STL_NAMESPACE::list<DEF_Stream_c_IMPL>::iterator i_list_streams = list_streams.begin();
   while(i_list_streams != list_streams.end())
   {
     DEF_Stream_c_IMPL& refc_stream = *i_list_streams;
@@ -1100,7 +1100,7 @@ MultiReceive_c::getFinishedJustKeptStream (IsoAgLib::iStream_c* rpc_lastKeptStre
   // If "last==NULL", take the first to get, else wait for last to occur and take next!
   bool b_takeIt = (rpc_lastKeptStream == NULL);
 
-  for (std::list<DEF_Stream_c_IMPL>::iterator i_list_streams = list_streams.begin(); i_list_streams != list_streams.end(); i_list_streams++)
+  for (STL_NAMESPACE::list<DEF_Stream_c_IMPL>::iterator i_list_streams = list_streams.begin(); i_list_streams != list_streams.end(); i_list_streams++)
   {
     DEF_Stream_c_IMPL* pc_stream = &*i_list_streams;
     if (pc_stream->getStreamingState() == StreamFinishedJustKept)
@@ -1118,7 +1118,7 @@ MultiReceive_c::getFinishedJustKeptStream (IsoAgLib::iStream_c* rpc_lastKeptStre
 void
 MultiReceive_c::removeKeptStream(IsoAgLib::iStream_c* rpc_keptStream)
 {
-  for (std::list<DEF_Stream_c_IMPL>::iterator i_list_streams = list_streams.begin(); i_list_streams != list_streams.end(); i_list_streams++)
+  for (STL_NAMESPACE::list<DEF_Stream_c_IMPL>::iterator i_list_streams = list_streams.begin(); i_list_streams != list_streams.end(); i_list_streams++)
   {
     if ((&*i_list_streams) == rpc_keptStream)
     { // delete it. it's a justKept one, as we checked that before!
@@ -1308,7 +1308,7 @@ MultiReceive_c::close( void )
 CANCustomer_c*
 MultiReceive_c::getClient (IsoAgLib::ReceiveStreamIdentifier_c rc_streamIdent)
 {
-  for (std::list<MultiReceiveClientWrapper_s>::iterator i_list_clients = list_clients.begin();
+  for (STL_NAMESPACE::list<MultiReceiveClientWrapper_s>::iterator i_list_clients = list_clients.begin();
        i_list_clients != list_clients.end();
        i_list_clients++)
   {
@@ -1326,7 +1326,7 @@ MultiReceive_c::anyMultiReceiveClientRegisteredForThisDa (uint8_t ui8_da)
   if (ui8_da == 0xFF) return true;
   /** @todo extend this function, so it checks if any of the clients want BAMs!
             -- do we need this check anyway????? costs us more than just processing the message I guess... */
-  for (std::list<MultiReceiveClientWrapper_s>::iterator i_list_clients = list_clients.begin();
+  for (STL_NAMESPACE::list<MultiReceiveClientWrapper_s>::iterator i_list_clients = list_clients.begin();
        i_list_clients != list_clients.end();
        i_list_clients++)
   {
@@ -1357,7 +1357,7 @@ MultiReceive_c::getStreamFirstByte (uint32_t ui32_index) const
 {
   uint32_t ui32_curIndex=0;
   if (ui32_index < list_streams.size()) {
-    for (std::list<DEF_Stream_c_IMPL>::const_iterator pc_iter = list_streams.begin(); pc_iter != list_streams.end(); pc_iter++)
+    for (STL_NAMESPACE::list<DEF_Stream_c_IMPL>::const_iterator pc_iter = list_streams.begin(); pc_iter != list_streams.end(); pc_iter++)
     {
       if (ui32_curIndex == ui32_index) {
         if ((*pc_iter).getByteAlreadyReceived() > 0)
@@ -1376,7 +1376,7 @@ bool
 MultiReceive_c::isAtLeastOneWithFirstByte(uint8_t firstByte)
 {
 //  INTERNAL_DEBUG_DEVICE << "\nisAtLeastOneWithFirstByte dez:" << (uint32_t) firstByte << ": ";
-  for (std::list<DEF_Stream_c_IMPL>::const_iterator pc_iter = list_streams.begin(); pc_iter != list_streams.end(); pc_iter++) {
+  for (STL_NAMESPACE::list<DEF_Stream_c_IMPL>::const_iterator pc_iter = list_streams.begin(); pc_iter != list_streams.end(); pc_iter++) {
     if ((*pc_iter).getByteAlreadyReceived() > 0)  {
       if ((*pc_iter).getFirstByte() == firstByte) {
         return true;
@@ -1393,7 +1393,7 @@ MultiReceive_c::getStreamCompletion1000 (uint32_t ui32_index, bool b_checkFirstB
   uint32_t ui32_curIndex=0;
   if (ui32_index < list_streams.size()) {
     // retrieve completion in 1/10..100%
-    for (std::list<DEF_Stream_c_IMPL>::const_iterator pc_iter = list_streams.begin(); pc_iter != list_streams.end(); pc_iter++)
+    for (STL_NAMESPACE::list<DEF_Stream_c_IMPL>::const_iterator pc_iter = list_streams.begin(); pc_iter != list_streams.end(); pc_iter++)
     {
       if (ui32_curIndex == ui32_index) {
         if ((b_checkFirstByte) && ((*pc_iter).getFirstByte() != ui8_returnNullIfThisIsFirstByte))
@@ -1417,7 +1417,7 @@ MultiReceive_c::getMaxStreamCompletion1000 (bool b_checkFirstByte, uint8_t ui8_r
   uint32_t ui32_maxStreamCompletion1000=0;
   uint32_t ui32_currentCompletion1000;
   // retrieve completion in 1/10..100%
-  for (std::list<DEF_Stream_c_IMPL>::const_iterator pc_iter = list_streams.begin(); pc_iter != list_streams.end(); pc_iter++)
+  for (STL_NAMESPACE::list<DEF_Stream_c_IMPL>::const_iterator pc_iter = list_streams.begin(); pc_iter != list_streams.end(); pc_iter++)
   {
     if ((b_checkFirstByte) && ((*pc_iter).getFirstByte() != ui8_returnNullIfThisIsFirstByte))
       ui32_currentCompletion1000=0; // don't care for this stream
@@ -1458,7 +1458,7 @@ MultiReceive_c::reactOnMonitorListAdd( const __IsoAgLib::ISOName_c& refc_isoName
 
   // rpc_newItem is always != NULL
   const uint8_t cui8_nr = rpc_newItem->nr();
-  for (std::list<MultiReceiveClientWrapper_s>::iterator i_list_clients = list_clients.begin();
+  for (STL_NAMESPACE::list<MultiReceiveClientWrapper_s>::iterator i_list_clients = list_clients.begin();
        i_list_clients != list_clients.end();
        i_list_clients++)
   {
@@ -1471,7 +1471,7 @@ MultiReceive_c::reactOnMonitorListAdd( const __IsoAgLib::ISOName_c& refc_isoName
   }
 
   // Notify all running streams
-  for (std::list<DEF_Stream_c_IMPL>::iterator i_list_streams = list_streams.begin();
+  for (STL_NAMESPACE::list<DEF_Stream_c_IMPL>::iterator i_list_streams = list_streams.begin();
        i_list_streams != list_streams.end(); i_list_streams++)
   { // Adapt the SA also for kept streams - the application should only use the isoname anyway!
     const IsoAgLib::ReceiveStreamIdentifier_c& refc_rsi = i_list_streams->getIdent();
@@ -1501,7 +1501,7 @@ refc_isoName
 #endif
 
   // Notify all registered clients
-  for (std::list<MultiReceiveClientWrapper_s>::iterator i_list_clients = list_clients.begin();
+  for (STL_NAMESPACE::list<MultiReceiveClientWrapper_s>::iterator i_list_clients = list_clients.begin();
        i_list_clients != list_clients.end();
        i_list_clients++)
   { // @todo can we assume this is safe/consistent? or should we check our ISOName instead to be 100% sure */
@@ -1511,7 +1511,7 @@ refc_isoName
   }
 
   // Notify all running streams
-  for (std::list<DEF_Stream_c_IMPL>::iterator i_list_streams = list_streams.begin();
+  for (STL_NAMESPACE::list<DEF_Stream_c_IMPL>::iterator i_list_streams = list_streams.begin();
        i_list_streams != list_streams.end(); i_list_streams++)
   { // Adapt the SA also for kept streams - the application should only use the isoname anyway!
     const IsoAgLib::ReceiveStreamIdentifier_c& refc_rsi = i_list_streams->getIdent();

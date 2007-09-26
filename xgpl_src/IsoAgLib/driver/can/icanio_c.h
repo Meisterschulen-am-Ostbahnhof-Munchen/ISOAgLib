@@ -75,7 +75,7 @@ namespace IsoAgLib {
 class iCANIO_c : private __IsoAgLib::CANIO_c {
  private:
   // private typedef alias names
-  typedef std::bad_alloc bad_alloc;
+  typedef STL_NAMESPACE::bad_alloc bad_alloc;
   typedef __IsoAgLib::CANCustomer_c CANCustomer_c;
   typedef __IsoAgLib::CANPkg_c CANPkg_c;
   typedef __IsoAgLib::Ident_c Ident_c;

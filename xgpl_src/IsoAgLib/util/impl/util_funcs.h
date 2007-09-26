@@ -195,7 +195,7 @@ uint16_t sizeVectorTWithChunk( uint16_t rui16_sizeT, uint16_t rui16_capacity );
 template<class T> void convertLittleEndianString( const uint8_t* rpui8_src, T& ref_result )
 {
   #ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
-  std::memcpy( &ref_result, rpui8_src, sizeof(T) );
+  STL_NAMESPACE::memcpy( &ref_result, rpui8_src, sizeof(T) );
   #else
   for ( int ind = sizeof(T)-1; ind >= 0; ind-- )
   {
@@ -224,7 +224,7 @@ float convertLittleEndianStringFloat( const uint8_t* rpui8_src );
 template<class T> void numberRef2LittleEndianString( const T& refc_src, uint8_t* pui8_target )
 {
   #ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
-  std::memcpy( pui8_target, &refc_src, sizeof(T) );
+  STL_NAMESPACE::memcpy( pui8_target, &refc_src, sizeof(T) );
   #else
   const unsigned int BitSize = sizeof(T) * 8;
   for ( unsigned int ind = 0; ( ind < BitSize ); ind += 8 )
@@ -238,7 +238,7 @@ template<class T> void numberRef2LittleEndianString( const T& refc_src, uint8_t*
 template<class T> void number2LittleEndianString( const T rt_src, uint8_t* pui8_target )
 {
   #ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
-  std::memcpy( pui8_target, &rt_src, sizeof(T) );
+  STL_NAMESPACE::memcpy( pui8_target, &rt_src, sizeof(T) );
   #else
   const unsigned int BitSize = sizeof(T) * 8;
   for ( unsigned int ind = 0; ( ind < BitSize ); ind += 8 )
@@ -253,7 +253,7 @@ template<class T> void number2LittleEndianString( const T rt_src, uint8_t* pui8_
 /** convert number reference variable to little endian byte string
  * @return iterator so that write can be continued directly after last written position
 */
-template<class T> void numberRef2LittleEndianString( const T& refc_src, std::vector<uint8_t>& refc_target )
+template<class T> void numberRef2LittleEndianString( const T& refc_src, STL_NAMESPACE::vector<uint8_t>& refc_target )
 {
 #ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
   const uint8_t* pui8_src = &refc_src;
@@ -273,7 +273,7 @@ template<class T> void numberRef2LittleEndianString( const T& refc_src, std::vec
 /** convert number call-by-val variable to little endian byte string
  * @return iterator so that write can be continued directly after last written position
 */
-template<class T> void number2LittleEndianString( const T rt_src, std::vector<uint8_t>& refc_target )
+template<class T> void number2LittleEndianString( const T rt_src, STL_NAMESPACE::vector<uint8_t>& refc_target )
 {
 #ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
   const uint8_t* pui8_src = (const uint8_t*)(&rt_src);
@@ -294,7 +294,7 @@ template<class T> void number2LittleEndianString( const T rt_src, std::vector<ui
 /** convert number call-by-val variable to little endian byte string
  * @return iterator so that write can be continued directly after last written position
 */
-template<class T> void number2LittleEndianString( const T rt_src, std::vector<uint8_t>& refc_target, uint16_t rui16_bytePos)
+template<class T> void number2LittleEndianString( const T rt_src, STL_NAMESPACE::vector<uint8_t>& refc_target, uint16_t rui16_bytePos)
 {
 #ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
   const uint8_t* pui8_src = (const uint8_t*)(&rt_src);
@@ -644,7 +644,7 @@ class Flexible8ByteString_c {
   uint8_t* getUint8DataPointer() { return uint8;};
 
 
-  #if SIZEOF_INT >= 4
+#if (SIZEOF_INT >= 4) && !defined( __IAR_SYSTEMS_ICC__ )
   /** assignment */
   const Flexible8ByteString_c& operator=( const Flexible8ByteString_c& rrefc_src )
   { uint64[0] = rrefc_src.uint64[0]; return *this; };
@@ -931,7 +931,7 @@ class Flexible8ByteString_c {
     int16_t   int16[4];
     uint32_t uint32[2];
     int32_t   int32[2];
-    #if SIZEOF_INT >= 4
+    #if (SIZEOF_INT >= 4) && !defined( __IAR_SYSTEMS_ICC__ )
     uint64_t uint64[1];
     int64_t   int64[1];
     #endif
@@ -1004,9 +1004,9 @@ int32_t convertIstreamI32( StreamInput_c& refc_stream );
     return DEF_ISO8859_REPLACEMENT_CHAR; // default to iso8859-Replacement Character in case the char's not found;
   }
 
-  void convertString8859ToUnicode (const std::string& rrefstr_iso8859, std::string& rrefstr_unicode, uint8_t rui8_encoding);
+  void convertString8859ToUnicode (const STL_NAMESPACE::string& rrefstr_iso8859, STL_NAMESPACE::string& rrefstr_unicode, uint8_t rui8_encoding);
   void convertStringUnicodeTo8859 (const char* rpui8_stringUnicode, uint16_t rui16_stringUnicodeLength, char* rpui8_iso8859buffer, uint8_t rui8_encoding);
-  void push_backUTF8 (std::string& rrefstr_string, uint16_t rui16_unicode);
+  void push_backUTF8 (STL_NAMESPACE::string& rrefstr_string, uint16_t rui16_unicode);
 #endif
 
 } // end of namespace __IsoAgLib

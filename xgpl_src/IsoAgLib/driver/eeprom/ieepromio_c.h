@@ -57,9 +57,9 @@
 
 #include "impl/eepromio_c.h"
 #include <IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h>
-// #include <string>
+#include <string>
 
-using std::basic_string;
+//using STL_NAMESPACE::string;
 
 // Begin Namespace IsoAgLib
 namespace IsoAgLib {
@@ -155,6 +155,23 @@ public:
   /* ************** writing **************** */
   /* *************************************** */
 
+
+  /**
+    write a text string value to EEPROM from actual write position on (tellp() )
+
+    possible errors:
+        * Err_c::range writing position exceeds end of EEPROM
+        * Err_c::hwBusy the EEPROM was busy with another action
+        * Err_c::eepromSegment low level writing caused segment error
+
+    @see iEEPROMIO_c::tellp
+    @see iEEPROMIO_c::setp
+    @param rrefc_val string to write into EEPROM
+    @return reference to this iEEPROMIO_c instance (for chains like "eeprom << val1 << val2 << ... << val_n;")
+  */
+  iEEPROMIO_c& operator<<(STL_NAMESPACE::string& rrefc_val)
+    {return static_cast<iEEPROMIO_c&>(EEPROMIO_c::operator<<(rrefc_val));};
+
   /**
     write a value to EEPROM from actual write position on (tellp() )
     by use of template mechanism the correct write implementation is generted
@@ -172,23 +189,7 @@ public:
   */
   template<class T>
   iEEPROMIO_c& operator<<(const T& rTemplateVal)
-    {return static_cast<iEEPROMIO_c&>(EEPROMIO_c::operator<<(rTemplateVal));}
-
-  /**
-    write a text string value to EEPROM from actual write position on (tellp() )
-
-    possible errors:
-        * Err_c::range writing position exceeds end of EEPROM
-        * Err_c::hwBusy the EEPROM was busy with another action
-        * Err_c::eepromSegment low level writing caused segment error
-
-    @see iEEPROMIO_c::tellp
-    @see iEEPROMIO_c::setp
-    @param rrefc_val string to write into EEPROM
-    @return reference to this iEEPROMIO_c instance (for chains like "eeprom << val1 << val2 << ... << val_n;")
-  */
-  iEEPROMIO_c& operator<<(basic_string<int8_t>& rrefc_val)
-    {return static_cast<iEEPROMIO_c&>(EEPROMIO_c::operator<<(rrefc_val));};
+    {return static_cast<iEEPROMIO_c&>(EEPROMIO_c::operator<<(rTemplateVal));};
 
   /**
     write a uint8_t string value to EEPROM from actual write position on (tellp() )

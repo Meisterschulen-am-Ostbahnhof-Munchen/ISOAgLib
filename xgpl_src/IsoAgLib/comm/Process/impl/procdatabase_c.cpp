@@ -318,7 +318,7 @@ void ProcDataBase_c::setBasicSendFlags() const
   c_data.set_Element(0xFFFF);
   c_data.set_DDI(0);
 
-  std::list<IsoAgLib::ElementDDI_s>::const_iterator iter_elementDDI;
+  STL_NAMESPACE::list<IsoAgLib::ElementDDI_s>::const_iterator iter_elementDDI;
 
   if (elementDDI().size() == 1)
   {

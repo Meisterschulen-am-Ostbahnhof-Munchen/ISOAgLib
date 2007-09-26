@@ -165,7 +165,6 @@ public:
 class MultiSend_c;
 typedef SINGLETON_DERIVED(MultiSend_c, ElementBase_c) SingletonMultiSend_c;
 class MultiSend_c : public SingletonMultiSend_c
-                  , public __IsoAgLib::SaClaimHandler_c
 {
 public:
   enum sendState_t   { AwaitCts, SendData, SendPauseTillCts, AwaitEndofmsgack };
@@ -499,7 +498,7 @@ private: // Private attributes
   /** msg object for CAN I/O */
   MultiSendPkg_c c_data;
 
-  std::list<SendStream_c> list_sendStream;
+  STL_NAMESPACE::list<SendStream_c> list_sendStream;
 };
 
 

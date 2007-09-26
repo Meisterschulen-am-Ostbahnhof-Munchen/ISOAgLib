@@ -99,7 +99,7 @@
 
 //  Operation: open
 bool
-FileStreamInput_c::open (std::string& filename, FileMode_t rt_mode)
+FileStreamInput_c::open (STL_NAMESPACE::string& filename, FileMode_t rt_mode)
 {
   bool b_result = c_targetHandle.open( filename, rt_mode );
   if (b_result) str_openedFile = filename;

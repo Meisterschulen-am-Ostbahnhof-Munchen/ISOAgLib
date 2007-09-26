@@ -77,7 +77,7 @@
 
 // Tasking C++ compiler v7.0r1
 // includes C-Lib functions in namespace
-// std:: , if the header like <cstring> is
+// STL_NAMESPACE:: , if the header like <cstring> is
 // directly included into a *.cc file;
 // if a header like <cstring> is indirectly included
 // functions like memcpy are inserted into global namespace

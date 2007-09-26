@@ -94,7 +94,7 @@
 #else
   #include <cctype>
   #if !defined(__TSW_CPP_756__) && !defined(SYSTEM_PC_VC)
-  using std::isspace;
+//  using STL_NAMESPACE::isspace;
   #endif
 #endif
 
@@ -386,7 +386,7 @@ bool RS232IO_c::setRecPufferSize(uint16_t rui16_pufferSize)
     @param rc_data sent data string
     @return refernce to RS232IO_c for cmd like "rs232 << data1 << data2;"
   */
-  RS232IO_c& RS232IO_c::operator<<(const std::basic_string<char>& rrefc_data)
+  RS232IO_c& RS232IO_c::operator<<(const STL_NAMESPACE::string& rrefc_data)
   {
     send(((uint8_t*)(rrefc_data.c_str())), (uint8_t)rrefc_data.size());
     return *this;
@@ -592,7 +592,7 @@ int16_t RS232IO_c::getLine( uint8_t* pui8_data, uint8_t ui8_lastChar )
   @param refc_data reference to data string for receive
   @return refernce to RS232IO_c for cmd like "rs232 >> data1 >> data2;"
 */
-RS232IO_c& RS232IO_c::operator>>(std::basic_string<char>& refc_data)
+RS232IO_c& RS232IO_c::operator>>(STL_NAMESPACE::string& refc_data)
 {
   uint8_t b_data;
 //  char pc_tempArray[50];
@@ -628,7 +628,7 @@ RS232IO_c& RS232IO_c::operator>>(std::basic_string<char>& refc_data)
   @param refc_data reference to data deque for receive
   @return refernce to RS232IO_c for cmd like "rs232 >> data1 >> data2;"
   */
-RS232IO_c& RS232IO_c::operator>>(std::deque<char>& refc_data)
+RS232IO_c& RS232IO_c::operator>>(STL_NAMESPACE::deque<char>& refc_data)
 {
   uint8_t b_data;
 

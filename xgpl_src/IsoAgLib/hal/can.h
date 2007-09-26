@@ -109,6 +109,8 @@ typedef enum
 	#include "pm167/can/can.h"
 #elif defined(SYSTEM_MITRON167)
 	#include "mitron167/can/can.h"
+#elif defined(SYSTEM_AMS5)
+	#include "ams5/can/can.h"
 #endif
 
 

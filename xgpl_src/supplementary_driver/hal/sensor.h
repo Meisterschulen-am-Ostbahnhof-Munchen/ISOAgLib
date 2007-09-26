@@ -84,6 +84,8 @@
 	#include "imi/sensor/sensor.h"
 #elif defined(SYSTEM_PM167)
 	#include "pm167/sensor/sensor.h"
+#elif defined(SYSTEM_AMS5)
+	#include "ams5/sensor/sensor.h"
 #endif
 
 

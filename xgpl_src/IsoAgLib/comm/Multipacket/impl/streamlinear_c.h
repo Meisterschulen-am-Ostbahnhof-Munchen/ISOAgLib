@@ -145,7 +145,7 @@ protected:
 
 private:
 
-  std::vector<uint8_t> vui8_buffer; // linearBuffer
+  STL_NAMESPACE::vector<uint8_t> vui8_buffer; // linearBuffer
 
   //  Attribute: ui32_parsedCnt
   uint32_t ui32_parsedCnt;

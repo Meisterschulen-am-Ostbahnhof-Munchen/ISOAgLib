@@ -111,7 +111,7 @@
 // ~X2C
 
 //  +X2C Class 915 : FileTargetFileStreamOutput_c
-class TargetFileStreamOutput_c //: public std::ofstream
+class TargetFileStreamOutput_c //: public STL_NAMESPACE::ofstream
 {
 
 public:

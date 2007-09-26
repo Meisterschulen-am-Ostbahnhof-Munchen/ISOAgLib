@@ -97,6 +97,8 @@ typedef enum
 //	#include "imi/datastreams/datastreams.h"
 #elif defined(SYSTEM_PM167)
 //	#include "pm167/datastreams/datastreams.h"
+#elif defined(SYSTEM_AMS5)
+	#include "ams5/datastreams/datastreams.h"
 #endif
 
 

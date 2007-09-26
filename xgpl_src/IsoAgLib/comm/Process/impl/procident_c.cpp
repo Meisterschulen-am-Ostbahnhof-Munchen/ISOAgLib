@@ -253,7 +253,7 @@ bool ProcIdent_c::matchISO( const ISOName_c& rrefc_isoNameSender,
 {
   // check wether current element/DDI combination matches one list element in process data element/DDI list
   if (rui16_element != element()) return false;
-  std::list<IsoAgLib::ElementDDI_s>::const_iterator iter;
+  STL_NAMESPACE::list<IsoAgLib::ElementDDI_s>::const_iterator iter;
   for (iter = l_elementDDI.begin(); iter != l_elementDDI.end(); iter++)
     if ( iter->ui16_DDI == rui16_DDI )
       break;
@@ -278,7 +278,7 @@ bool ProcIdent_c::matchISO( const ISOName_c& rrefc_isoNameSender,
 /** check if this ProcIdent_c has the given DDI as element */
 bool ProcIdent_c::hasDDI( uint16_t rui16_checkDDI ) const
 {
-  std::list<IsoAgLib::ElementDDI_s>::const_iterator iter;
+  STL_NAMESPACE::list<IsoAgLib::ElementDDI_s>::const_iterator iter;
   for (iter = l_elementDDI.begin(); iter != l_elementDDI.end(); iter++)
     if (iter->ui16_DDI == rui16_checkDDI)
       break;
@@ -289,7 +289,7 @@ bool ProcIdent_c::hasDDI( uint16_t rui16_checkDDI ) const
 
 bool ProcIdent_c::hasType(bool rb_isSetpoint, GeneralCommand_c::ValueGroup_t t_ddiType) const
 {
-  std::list<IsoAgLib::ElementDDI_s>::const_iterator iter;
+  STL_NAMESPACE::list<IsoAgLib::ElementDDI_s>::const_iterator iter;
   for (iter = l_elementDDI.begin(); iter != l_elementDDI.end(); iter++)
     if ((iter->en_valueGroup == t_ddiType) && (iter->b_isSetpoint == rb_isSetpoint))
       break;
@@ -306,7 +306,7 @@ bool ProcIdent_c::check4GroupMatch(uint16_t rui16_DDI, uint16_t rui16_element, c
 
   if (rui16_element != element()) return b_foundPair;
 
-  for (std::list<IsoAgLib::ElementDDI_s>::const_iterator iter = l_elementDDI.begin(); iter != l_elementDDI.end(); iter++)
+  for (STL_NAMESPACE::list<IsoAgLib::ElementDDI_s>::const_iterator iter = l_elementDDI.begin(); iter != l_elementDDI.end(); iter++)
   {
     b_foundPair = isPair((*iter).ui16_DDI, rui16_DDI);
     if (b_foundPair) break;
@@ -334,7 +334,7 @@ bool ProcIdent_c::checkProprietary4GroupMatch(uint16_t rui16_element, const ISON
   // if it is not the same device element continue
   if (rui16_element != element()) return b_foundPair;
 
-  std::list<IsoAgLib::ElementDDI_s>::const_iterator iter = l_elementDDI.begin();
+  STL_NAMESPACE::list<IsoAgLib::ElementDDI_s>::const_iterator iter = l_elementDDI.begin();
   if (iter != l_elementDDI.end())
   {
     // device element was found
@@ -373,7 +373,7 @@ bool ProcIdent_c::add2Group(uint16_t rui16_DDI)
 {
   bool b_foundPair = false;
 
-  for (std::list<IsoAgLib::ElementDDI_s>::const_iterator iter = l_elementDDI.begin(); iter != l_elementDDI.end(); iter++)
+  for (STL_NAMESPACE::list<IsoAgLib::ElementDDI_s>::const_iterator iter = l_elementDDI.begin(); iter != l_elementDDI.end(); iter++)
   {
     b_foundPair = isPair(iter->ui16_DDI, rui16_DDI);
 
@@ -507,12 +507,12 @@ void ProcIdent_c::setElementDDI(const IsoAgLib::ElementDDI_s* ps_elementDDI)
   }
 }
 
-void ProcIdent_c::setElementDDI(const std::list<IsoAgLib::ElementDDI_s>* pl_elementDDI)
+void ProcIdent_c::setElementDDI(const STL_NAMESPACE::list<IsoAgLib::ElementDDI_s>* pl_elementDDI)
 {
   l_elementDDI.clear();
   // check if pointer to struct (array) is set (constructor call with NULL possible!)
   if (pl_elementDDI) {
-    for (std::list<IsoAgLib::ElementDDI_s>::const_iterator iter = pl_elementDDI->begin();
+    for (STL_NAMESPACE::list<IsoAgLib::ElementDDI_s>::const_iterator iter = pl_elementDDI->begin();
          iter != pl_elementDDI->end(); iter++)
         l_elementDDI.push_back(*iter);
   }

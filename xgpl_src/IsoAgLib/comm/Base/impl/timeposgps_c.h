@@ -137,7 +137,7 @@ class Nmea2000SendStreamer_c : public IsoAgLib::iMultiSendStreamer_c
     void reset() { ui16_currentSendPosition = ui16_storedSendPosition = 0; vec_data.clear();};
 
     /** public send buffer */
-    std::vector<uint8_t> vec_data;
+    STL_NAMESPACE::vector<uint8_t> vec_data;
   private:
     uint16_t ui16_currentSendPosition;
     uint16_t ui16_storedSendPosition;
@@ -156,7 +156,6 @@ typedef SINGLETON_DERIVED(TimePosGPS_c,BaseCommon_c) SingletonTimePosGps_c;
   */
 
 class TimePosGPS_c : public SingletonTimePosGps_c
-                   , public ISORequestPGNHandler_c
 {
  public:
   // Public methods
@@ -175,22 +174,22 @@ class TimePosGPS_c : public SingletonTimePosGps_c
     */
   virtual bool timeEvent(  );
 
+  /** initialise element which can't be done during construct;
+      above all create the needed FilterBox_c instances
+      possible errors:
+        * dependant error in CANIO_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
+      @param rpc_isoName optional pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
+      @param ai_singletonVecKey singleton vector key in case PRT_INSTANCE_CNT > 1
+      @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
+    */
+  virtual void init_base (const ISOName_c*, int ai_singletonVecKey, IsoAgLib::IdentMode_t rt_identMode = IsoAgLib::IdentModeImplement);
   /** config the Base_c object after init -> set pointer to isoName and
       config send/receive of different base msg types
       @param rpc_isoName pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
       @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       @return true -> configuration was successfull
     */
-  bool config_base (const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode);
-
-  /** initialise element which can't be done during construct;
-      above all create the needed FilterBox_c instances
-      possible errors:
-        * dependant error in CANIO_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
-      @param rpc_isoName optional pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
-      @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
-    */
-  virtual void init_base (const ISOName_c*, IsoAgLib::IdentMode_t rt_identMode = IsoAgLib::IdentModeImplement);
+  bool config_base (const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode, uint16_t rui16_suppressMask = 0);
 
   /** destructor for Base_c which has nothing to do */
   virtual ~TimePosGPS_c() { BaseCommon_c::close();}
@@ -510,7 +509,6 @@ public:
     { return ( (i32_latitudeDegree10Minus7  >= ( -90*10000000)) && (i32_latitudeDegree10Minus7  <= ( 90*10000000))
             && (i32_longitudeDegree10Minus7 >= (-180*10000000)) && (i32_longitudeDegree10Minus7 <= (180*10000000))); }
 
-
 #if defined(USE_FLOAT_DATA_TYPE)
   /** deliver Minute GPS Latitude */
   float getGpsLatitudeMinute( void ) const { return ( i32_latitudeDegree10Minus7 * 6.0e-4  ); }
@@ -776,8 +774,8 @@ private:
   uint8_t ui8_positionSequenceID;
   int32_t i32_geoidalSeparation;
   uint8_t ui8_noRefStations;
-  std::vector<uint16_t> vec_refStationTypeAndStation;
-  std::vector<uint16_t> vec_refStationDifferentialAge10Msec;
+  STL_NAMESPACE::vector<uint16_t> vec_refStationTypeAndStation;
+  STL_NAMESPACE::vector<uint16_t> vec_refStationDifferentialAge10Msec;
 
   /** buffer class for sending data streams */
   Nmea2000SendStreamer_c c_nmea2000Streamer;

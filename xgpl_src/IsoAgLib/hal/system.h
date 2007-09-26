@@ -88,6 +88,8 @@
 	#include "pm167/system/system.h"
 #elif defined(SYSTEM_MITRON167)
 	#include "mitron167/system/system.h"
+#elif defined(SYSTEM_AMS5)
+	#include "ams5/system/system.h"
 #endif
 
 

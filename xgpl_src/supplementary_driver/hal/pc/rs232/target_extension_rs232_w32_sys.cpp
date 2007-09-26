@@ -11,7 +11,7 @@
 namespace __HAL {
 HANDLE hCom[RS232_INSTANCE_CNT];
 DCB oldConfig[RS232_INSTANCE_CNT];
-std::deque<int8_t> deq_readPuff[RS232_INSTANCE_CNT];
+STL_NAMESPACE::deque<int8_t> deq_readPuff[RS232_INSTANCE_CNT];
 
 int8_t c_read;
 
@@ -287,7 +287,7 @@ int16_t getRs232String(uint8_t *pbRead,uint8_t ui8_terminateChar, uint8_t compor
   getRs232RxBufCount(comport);
   if (! deq_readPuff[comport].empty())
   {
-    for ( std::deque<int8_t>::iterator iter = deq_readPuff[comport].begin(); iter != deq_readPuff[comport].end(); iter++ )
+    for ( STL_NAMESPACE::deque<int8_t>::iterator iter = deq_readPuff[comport].begin(); iter != deq_readPuff[comport].end(); iter++ )
     { // check if terminating char is found
       if ( *iter == ui8_terminateChar )
       { // found -> copy area from begin to iterator

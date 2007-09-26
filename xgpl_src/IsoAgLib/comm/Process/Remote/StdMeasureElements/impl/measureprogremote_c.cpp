@@ -160,18 +160,18 @@ MeasureProgRemote_c::~MeasureProgRemote_c(){
 */
 bool MeasureProgRemote_c::start(Proc_c::doSend_t ren_doSend){
   // retrieve the ren_type from the matching registered subprog
-  Proc_c::type_t en_type = Proc_c::NullType;
+  Proc_c::type_t en_typeLocal = Proc_c::NullType;
 
   for (Vec_MeasureSubprog::iterator pc_subprog = vec_measureSubprog.begin();
        pc_subprog != vec_measureSubprog.end(); pc_subprog++)
   {
     // take type of measurement prog only from that subprog with the same en_doSend! (no combination!)
     if (pc_subprog->doSend() == ren_doSend)
-      en_type = pc_subprog->type();
+      en_typeLocal = pc_subprog->type();
   }
 
   // now call other start with en_combinedType
-  return start(en_type, ren_doSend);
+  return start(en_typeLocal, ren_doSend);
 }
 
 /**

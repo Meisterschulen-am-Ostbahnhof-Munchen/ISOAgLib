@@ -653,7 +653,7 @@ FilterBox_c* CANIO_c::insertFilter(__IsoAgLib::CANCustomer_c& rref_customer,
     #ifdef DEBUG
     INTERNAL_DEBUG_DEVICE << "filterbox mask/filter already exist -> insert cancustomer" << INTERNAL_DEBUG_DEVICE_ENDL;
     #ifdef SYSTEM_PC
-    INTERNAL_DEBUG_DEVICE << "mask: " << std::hex << c_newMask.ident() << " filter: " << c_newFilter.ident() << std::dec << INTERNAL_DEBUG_DEVICE_ENDL;
+    INTERNAL_DEBUG_DEVICE << "mask: " << STL_NAMESPACE::hex << c_newMask.ident() << " filter: " << c_newFilter.ident() << STL_NAMESPACE::dec << INTERNAL_DEBUG_DEVICE_ENDL;
     #else
     INTERNAL_DEBUG_DEVICE << "mask: " << c_newMask.ident() << " filter: " << c_newFilter.ident() << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
@@ -683,7 +683,7 @@ FilterBox_c* CANIO_c::insertFilter(__IsoAgLib::CANCustomer_c& rref_customer,
     #ifdef DEBUG
     INTERNAL_DEBUG_DEVICE << "---BEFORE CALL OF INIT---" << INTERNAL_DEBUG_DEVICE_ENDL;
     INTERNAL_DEBUG_DEVICE << "insertFilterBox with bus number: " << static_cast<int>(ui8_busNumber)  << " and FilterBoxNr: " << static_cast<int>(b_oldSize) << INTERNAL_DEBUG_DEVICE_ENDL;
-    INTERNAL_DEBUG_DEVICE << "                     mask: " << std::hex << c_newMask.ident() << " filter: " << c_newFilter.ident() << std::dec << INTERNAL_DEBUG_DEVICE_ENDL;
+    INTERNAL_DEBUG_DEVICE << "                     mask: " << STL_NAMESPACE::hex << c_newMask.ident() << " filter: " << c_newFilter.ident() << STL_NAMESPACE::dec << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
     return &arrFilterBox.back();
   }
@@ -706,7 +706,7 @@ FilterBox_c* CANIO_c::insertFilter(__IsoAgLib::CANCustomer_c& rref_customer,
       filterBoxOverwrite = true;
       #ifdef DEBUG
       INTERNAL_DEBUG_DEVICE << "overwrite FilterBox[" << int(ui8_overwritenFilterBoxIndex) << "] with busnumber: " << static_cast<int>(ui8_busNumber) << INTERNAL_DEBUG_DEVICE_ENDL;
-      INTERNAL_DEBUG_DEVICE << "                    mask: " << std::hex << c_newMask.ident() << " filter: " << c_newFilter.ident() << std::dec << INTERNAL_DEBUG_DEVICE_ENDL;
+      INTERNAL_DEBUG_DEVICE << "                    mask: " << STL_NAMESPACE::hex << c_newMask.ident() << " filter: " << c_newFilter.ident() << STL_NAMESPACE::dec << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
       break;
     }
@@ -719,7 +719,7 @@ FilterBox_c* CANIO_c::insertFilter(__IsoAgLib::CANCustomer_c& rref_customer,
     uint8_t tempMsgObjNr = minReceiveObjNr() + b_oldSize;
     #ifdef DEBUG
     INTERNAL_DEBUG_DEVICE << "insertFilterBox with bus number: " << static_cast<int>(ui8_busNumber)  << " and FilterBoxNr: " << static_cast<int>(b_oldSize) << INTERNAL_DEBUG_DEVICE_ENDL;
-    INTERNAL_DEBUG_DEVICE << "                     mask: "  << std::hex << c_newMask.ident() << " filter: " << c_newFilter.ident() << std::dec << INTERNAL_DEBUG_DEVICE_ENDL;
+    INTERNAL_DEBUG_DEVICE << "                     mask: "  << STL_NAMESPACE::hex << c_newMask.ident() << " filter: " << c_newFilter.ident() << STL_NAMESPACE::dec << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
     arrFilterBox.push_back(c_tempFilterBox);
     setCntFilter( arrFilterBox.size() );
@@ -842,11 +842,11 @@ bool CANIO_c::deleteFilter(const __IsoAgLib::CANCustomer_c& rref_customer,
     { //no more cancustomer exist for the filterbox -> delete
       #ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
       // with SYSTEM_WITH_ENHANCED_CAN_HAL the FilterBox_c items are organized
-      // in std::vector<T>, so that removal of items in the middle should be avoided
+      // in STL_NAMESPACE::vector<T>, so that removal of items in the middle should be avoided
       // ==> a FilterBox_c where the last Customer has been deleted switches to IDLE
       //     mode, so that it does nothing and can stay, until it is at the end of the
       //     list
-      // ==>> ONLY POP FilterBox_c from BACK of std::vector<T> to AVOID chain of FilterBox_c movements in std::vector<T>
+      // ==>> ONLY POP FilterBox_c from BACK of STL_NAMESPACE::vector<T> to AVOID chain of FilterBox_c movements in STL_NAMESPACE::vector<T>
       //to be deleted filterbox is set to idle
       while( arrFilterBox.back().isIdle() )
       { //remove idle filterBox if at the end of vector
@@ -892,8 +892,7 @@ bool CANIO_c::deleteAllFiltersForCustomer (const __IsoAgLib::CANCustomer_c& rref
 {
   bool b_result = false;
 
-  for (ArrFilterBox::iterator pc_iter = arrFilterBox.begin(); pc_iter != arrFilterBox.end();
-  )
+  for (ArrFilterBox::iterator pc_iter = arrFilterBox.begin(); pc_iter != arrFilterBox.end();  )
   {
     if ( pc_iter->deleteFilter(rref_customer) )
     { //no more cancustomer exist for the filterbox -> delete
@@ -920,11 +919,11 @@ bool CANIO_c::deleteAllFiltersForCustomer (const __IsoAgLib::CANCustomer_c& rref
 
   #ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
   // with SYSTEM_WITH_ENHANCED_CAN_HAL the FilterBox_c items are organized
-  // in std::vector<T>, so that removal of items in the middle should be avoided
+  // in STL_NAMESPACE::vector<T>, so that removal of items in the middle should be avoided
   // ==> a FilterBox_c where the last Customer has been deleted switches to IDLE
   //     mode, so that it does nothing and can stay, until it is at the end of the
   //     list
-  // ==>> ONLY POP FilterBox_c from BACK of std::vector<T> to AVOID chain of FilterBox_c movements in std::vector<T>
+  // ==>> ONLY POP FilterBox_c from BACK of STL_NAMESPACE::vector<T> to AVOID chain of FilterBox_c movements in STL_NAMESPACE::vector<T>
   //to be deleted filterbox is set to idle
   while( arrFilterBox.back().isIdle() )
   { //remove idle filterBox if at the end of vector

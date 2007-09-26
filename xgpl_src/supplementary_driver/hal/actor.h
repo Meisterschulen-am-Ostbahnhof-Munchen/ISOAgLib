@@ -84,7 +84,7 @@
 	#include "imi/actor/actor.h"
 #elif defined(SYSTEM_PM167)
 	#include "pm167/actor/actor.h"
+#elif defined(SYSTEM_AMS5)
+	#include "ams5/actor/actor.h"
 #endif
-
-
 #endif

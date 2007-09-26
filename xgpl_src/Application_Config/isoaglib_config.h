@@ -889,6 +889,13 @@
     #define SYSTEM_PC
   #endif
 
+  #ifndef SYSTEM_AMS5_YN
+    #define SYSTEM_AMS5_YN YES
+  #endif
+  #if SYSTEM_AMS5_YN == YES && !defined(SYSTEM_AMS5)
+    #define SYSTEM_AMS5
+  #endif
+
 /** @def SYSTEM_ESX_YN
   * set this define to YES if IsoAgLib is used for the ECU "ESX" of STW
   */
@@ -983,8 +990,8 @@
     #include <iostream>
     #include <fstream>
     #include "stdio.h"
-    #define INTERNAL_DEBUG_DEVICE std::cout
-  	#define INTERNAL_DEBUG_DEVICE_ENDL std::endl
+    #define INTERNAL_DEBUG_DEVICE STL_NAMESPACE::cout
+  	#define INTERNAL_DEBUG_DEVICE_ENDL STL_NAMESPACE::endl
   	#define INTERNAL_DEBUG_DEVICE_NEWLINE "\r\n"
     #define INTERNAL_DEBUG_FLUSH fflush(0);
   #else
@@ -999,8 +1006,8 @@
   #ifdef SYSTEM_PC
     #include <iostream>
     #include <fstream>
-    #define EXTERNAL_DEBUG_DEVICE std::cout
-  	#define EXTERNAL_DEBUG_DEVICE_ENDL std::endl
+    #define EXTERNAL_DEBUG_DEVICE STL_NAMESPACE::cout
+  	#define EXTERNAL_DEBUG_DEVICE_ENDL STL_NAMESPACE::endl
   	#define EXTERNAL_DEBUG_DEVICE_NEWLINE "\r\n"
     #define EXTERNAL_DEBUG_FLUSH fflush(0);
   #else
@@ -1024,6 +1031,9 @@
 #if defined(SYSTEM_PC)
   /// set subdirectory name to "pc" for PC platform
   #define HAL_SUBDIR pc
+#elif defined(SYSTEM_AMS5)
+  /// set subdirectory name to "pc_mfc" for PC_MFC platform
+  #define HAL_SUBDIR ams5
 #elif defined(SYSTEM_PC_MFC)
   /// set subdirectory name to "pc_mfc" for PC_MFC platform
   #define HAL_SUBDIR pc_mfc
@@ -1071,6 +1081,7 @@
   #define gluemacs4(a, b, c, d)  gluetoks4(a, b, c, d)
   #define gluemacs5(a, b, c, d, e)  gluetoks5(a, b, c, d, e)
 #endif
+
 
 #define HAL_PATH gluemacs( <IsoAgLib/hal/, HAL_SUBDIR )
 /*@}*/

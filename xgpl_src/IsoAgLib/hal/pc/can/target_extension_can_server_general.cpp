@@ -178,11 +178,11 @@ clock_t getStartUpTime()
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0))
   if ( msecPerClock != (1000 / sysconf(_SC_CLK_TCK)) )
   { // BIG PROBLEM -> THE DEFINE DURING COMPILE TIME DOES NOT MATCH THE RUNTIME
-    std::cerr << "\n\nVERY BIG PROBLEM!!!\nThis program was compiled with\n#define msecPerClock " << msecPerClock
+    INTERNAL_DEBUG_DEVICE << "\n\nVERY BIG PROBLEM!!!\nThis program was compiled with\n#define msecPerClock " << msecPerClock
         << "\nwhile the runtime system has " << (1000 / sysconf(_SC_CLK_TCK))
         << "\n\nSO PLEASE add\n#define msecPerClock " << (1000 / sysconf(_SC_CLK_TCK))
         << "\nto your project configuration header or Makefile, so that a matching binary is built. This program is aborted now, as none of any time calculations will match with this problem.\n\n"
-        << std::endl;
+        << INTERNAL_DEBUG_DEVICE_ENDL;
     abort();
   }
   static clock_t st_startup4Times = times(NULL);
@@ -298,7 +298,7 @@ static void enqueue_msg(uint32_t DLC, uint32_t ui32_id, uint32_t b_bus, uint8_t 
 {
 
   can_data* pc_data;
-  std::list<client_c>::iterator iter, iter_delete = pc_serverData->l_clients.end();
+  STL_NAMESPACE::list<client_c>::iterator iter, iter_delete = pc_serverData->l_clients.end();
 
   // mutex to prevent client list modification already got in calling function
 
@@ -415,8 +415,8 @@ static void enqueue_msg(uint32_t DLC, uint32_t ui32_id, uint32_t b_bus, uint8_t 
             int error = errno;
             DEBUG_PRINT2("error in msgsnd (errno: %d) %s\n", error, strerror(error));
             #ifdef CAN_SERVER_LOG_PATH
-            std::ofstream logging( CAN_SERVER_LOG_PATH );
-            logging << "error in msgsnd (errno: " << errno << ")" << std::endl;
+            STL_NAMESPACE::ofstream logging( CAN_SERVER_LOG_PATH );
+            logging << "error in msgsnd (errno: " << errno << ")" << INTERNAL_DEBUG_DEVICE_ENDL;
             #endif
             if (error == EAGAIN)
             { // queue is full => remove oldest msg and try again
@@ -432,21 +432,21 @@ static void enqueue_msg(uint32_t DLC, uint32_t ui32_id, uint32_t b_bus, uint8_t 
               logging << "message queue for CAN Ident: " << ui32_id << " with Filter: "
                 << iter->arrMsgObj[b_bus][i32_obj].ui32_filter << ", global Mask: " << iter->ui32_globalMask[b_bus]
                 << " for MsgObj NR: " << i32_obj
-                << " is full => try to remove oldest msg and send again!!" << std::endl;
+                << " is full => try to remove oldest msg and send again!!" << INTERNAL_DEBUG_DEVICE_ENDL;
               #endif
               int i_rcRcv = msgrcv(pc_serverData->msqDataServer.i32_rdHandle, &msqWriteBuf, sizeof(msqWrite_s) - sizeof(int32_t), 0,IPC_NOWAIT);
               if ( i_rcRcv > 0 )
               { // number of received bytes > 0 => msgrcv successfull => try again
                 DEBUG_PRINT("oldest msg from queue removed!!\n");
                 #ifdef CAN_SERVER_LOG_PATH
-                logging << "oldest msg from queue removed!!" << std::endl;
+                logging << "oldest msg from queue removed!!" << INTERNAL_DEBUG_DEVICE_ENDL;
                 #endif
                 i_rcSnd=msgsnd(pc_serverData->msqDataServer.i32_rdHandle, &msqReadBuf, sizeof(msqRead_s) - sizeof(int32_t), IPC_NOWAIT);
                 if (i_rcSnd == 0)
                 {
                   DEBUG_PRINT("message sent again after queue full!!\n");
                   #ifdef CAN_SERVER_LOG_PATH
-                  logging << "message sent again after queue full!!" << std::endl;
+                  logging << "message sent again after queue full!!" << INTERNAL_DEBUG_DEVICE_ENDL;
                   #endif
                 }
               }
@@ -481,7 +481,7 @@ static void enqueue_msg(uint32_t DLC, uint32_t ui32_id, uint32_t b_bus, uint8_t 
 }
 
 
-std::list<int32_t> __HAL::list_sendTimeStamps;
+STL_NAMESPACE::list<int32_t> __HAL::list_sendTimeStamps;
 
 // This thread ahndles the client's writes to the server (us).
 /////////////////////////////////////////////////////////////////////////
@@ -554,7 +554,7 @@ static void* can_write_thread_func(void* ptr)
 
     client_c* ps_client = NULL;
     // search client...
-    for (std::list<client_c>::iterator iter = pc_serverData->l_clients.begin(); iter != pc_serverData->l_clients.end(); iter++)
+    for (STL_NAMESPACE::list<client_c>::iterator iter = pc_serverData->l_clients.begin(); iter != pc_serverData->l_clients.end(); iter++)
     {
       if (iter->ui16_pID == msqWriteBuf.ui16_pid) // not used any more in write thread!!! directly having the variables now! disassemble_client_id(msqWriteBuf.i32_mtype))
       {
@@ -600,7 +600,7 @@ static void* can_write_thread_func(void* ptr)
       { // i16_rc != 0: send was ok
         if (i16_rc == HAL_NEW_SEND_DELAY)
         { // send was okay with "new send delay detected"!
-          for (std::list<client_c>::iterator iter = pc_serverData->l_clients.begin(); iter != pc_serverData->l_clients.end(); iter++)
+          for (STL_NAMESPACE::list<client_c>::iterator iter = pc_serverData->l_clients.begin(); iter != pc_serverData->l_clients.end(); iter++)
           {
             iter->i32_sendDelay[msqWriteBuf.ui8_bus] = pc_serverData->i32_sendDelay[msqWriteBuf.ui8_bus];
           }
@@ -810,7 +810,7 @@ static void* command_thread_func(void* ptr)
     pthread_mutex_lock( &(pc_serverData->m_protectClientList) );
 
     // get client
-    std::list<client_c>::iterator iter_client = pc_serverData->l_clients.end(), tmp_iter;
+    STL_NAMESPACE::list<client_c>::iterator iter_client = pc_serverData->l_clients.end(), tmp_iter;
     for (tmp_iter = pc_serverData->l_clients.begin(); tmp_iter != pc_serverData->l_clients.end(); tmp_iter++)
       if (tmp_iter->ui16_pID == msqCommandBuf.i32_mtypePid) // here the mtype is the PID without any disassembling needed!
       {
@@ -843,7 +843,7 @@ static void* command_thread_func(void* ptr)
           DEBUG_PRINT("command start driver\n");
 
           // do check for dead clients before queueing any new message
-          for (std::list<client_c>::iterator iter_deadClient = pc_serverData->l_clients.begin(); iter_deadClient != pc_serverData->l_clients.end();) {
+          for (STL_NAMESPACE::list<client_c>::iterator iter_deadClient = pc_serverData->l_clients.begin(); iter_deadClient != pc_serverData->l_clients.end();) {
 
             // send signal 0 (no signal is send, but error handling is done) to check is process is alive
             if (kill(iter_deadClient->ui16_pID, 0) == -1) {

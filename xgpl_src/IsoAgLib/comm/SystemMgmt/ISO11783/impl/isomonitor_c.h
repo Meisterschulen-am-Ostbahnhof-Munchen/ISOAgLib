@@ -98,6 +98,7 @@
 #include <IsoAgLib/driver/system/impl/system_c.h>
 #include "isosystempkg_c.h"
 #include "isoitem_c.h"
+#include "saclaimhandler_c.h"
 #include "isorequestpgnhandler_c.h"
 #include "../../impl/identitem_c.h"
 
@@ -118,30 +119,10 @@ namespace IsoAgLib { class iISOMonitor_c;}
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
-/** Handler class which can be used to react on SA claims and esp. conflicts */
-class SaClaimHandler_c
-{
- public:
-   SaClaimHandler_c() {}
-   virtual ~SaClaimHandler_c() {}
-
-   /** this function is called by ISOMonitor_c when a new CLAIMED ISOItem_c is registered.
-     * @param refc_isoName const reference to the item which ISOItem_c state is changed
-     * @param rpc_newItem pointer to the currently corresponding ISOItem_c
-     */
-   virtual void reactOnMonitorListAdd( const ISOName_c& refc_isoName, const ISOItem_c* rpc_newItem ) = 0;
-
-   /** this function is called by ISOMonitor_c when a device looses its ISOItem_c.
-    * @param refc_isoName const reference to the item which ISOItem_c state is changed
-    * @param rui8_oldSa previously used SA which is NOW LOST -> clients which were connected to this item can react explicitly
-    */
-   virtual void reactOnMonitorListRemove( const ISOName_c& refc_isoName, uint8_t rui8_oldSa ) = 0;
-};
-
 /** type of map which is used to store SaClaimHandler_c clients corresponding to a ISOName_c reference */
-typedef std::vector<SaClaimHandler_c*> SaClaimHandlerVector_t;
-typedef std::vector<SaClaimHandler_c*>::iterator SaClaimHandlerVectorIterator_t;
-typedef std::vector<SaClaimHandler_c*>::const_iterator SaClaimHandlerVectorConstIterator_t;
+typedef STL_NAMESPACE::vector<SaClaimHandler_c*> SaClaimHandlerVector_t;
+typedef STL_NAMESPACE::vector<SaClaimHandler_c*>::iterator SaClaimHandlerVectorIterator_t;
+typedef STL_NAMESPACE::vector<SaClaimHandler_c*>::const_iterator SaClaimHandlerVectorConstIterator_t;
 
 class ISOMonitor_c;
 typedef SINGLETON_DERIVED_CLIENT1(ISOMonitor_c, ElementBase_c, IdentItem_c, ISOName_c) SingletonISOMonitor_c;
@@ -153,7 +134,7 @@ typedef SINGLETON_DERIVED_CLIENT1(ISOMonitor_c, ElementBase_c, IdentItem_c, ISON
   @see ISOItem
   @author Dipl.-Inform. Achim Spangler
 */
-class ISOMonitor_c : public SingletonISOMonitor_c, public ISORequestPGNHandler_c
+class ISOMonitor_c : public SingletonISOMonitor_c
 {
 private:
   // private typedef alias names
@@ -493,7 +474,7 @@ public:
   /// Function notify Scheduler_c to set new retriggerTime
   /// will be called from IdentItem_c and registerClient
   /// ISOMonitor_c.timeEvent() should be called in 50 ms
-  void changeRetriggerTime() { getSchedulerInstance4Comm().changeRetriggerTimeAndResort(this,System_c::getTime() + 50 ); };
+  void changeRetriggerTime() { getSchedulerInstance4Comm().changeRetriggerTimeAndResort(this,System_c::getTime() + 50 );};
 
 
   /** command switching to and from special service / diagnostic mode.

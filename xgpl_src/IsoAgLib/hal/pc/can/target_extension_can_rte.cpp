@@ -108,7 +108,7 @@ uint16_t ui16_mask_std;
 
 //typedef STL_NAMESPACE::vector<tMsgObj> ArrMsgObj;
 //ArrMsgObj arrMsgObj[cui32_maxCanBusCnt];
-typedef std::vector<tMsgObj>  ArrMsgOb_t;
+typedef STL_NAMESPACE::vector<tMsgObj>  ArrMsgOb_t;
 static ArrMsgOb_t* arrMsgObj;
 
 int32_t i32_lastReceiveTime;
@@ -671,7 +671,7 @@ static int send(rtd_handler_para_t* para, rtd_can_type_t type, uint32_t id, uint
     )
     { // received msg fits actual filter
 #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
-      if ( i16_obj == 14 ) std::cout << "\n\n Put MSG in LAST-MSG-OBJ\n" << std::endl;
+      if ( i16_obj == 14 ) INTERNAL_DEBUG_DEVICE << "\n\n Put MSG in LAST-MSG-OBJ\n" << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
       i16_in = arrMsgObj[b_bus][i16_obj].rec_bufIn;
       arrMsgObj[b_bus][i16_obj].rec_bufIn = ((i16_in + 1) % arrMsgObj[b_bus][i16_obj].rec_bufSize);

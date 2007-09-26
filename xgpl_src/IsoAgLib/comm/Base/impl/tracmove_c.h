@@ -112,12 +112,21 @@ namespace __IsoAgLib {
   {
   public:// Public methods
 
+    /** initialise element which can't be done during construct;
+        above all create the needed FilterBox_c instances
+        possible errors:
+          * dependant error in CANIO_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
+        @param rpc_isoName optional pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
+        @param ai_singletonVecKey singleton vector key in case PRT_INSTANCE_CNT > 1
+        @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
+      */
+    virtual void init_base (const ISOName_c*, int ai_singletonVecKey, IsoAgLib::IdentMode_t rt_identMode = IsoAgLib::IdentModeImplement);
     /** config the TracMove_c object after init -> set pointer to isoName and
         config send/receive of a moving msg type
         @param rpc_isoName pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
         @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       */
-    virtual bool config_base (const ISOName_c* rpc_isoName, uint16_t rui16_suppressMask, IsoAgLib::IdentMode_t rt_identMode);
+    virtual bool config_base (const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode, uint16_t rui16_suppressMask = 0);
 
     /** update selected speed with actually best available speed
         @param t_speedSrc  from which source is the speed available
@@ -317,6 +326,8 @@ namespace __IsoAgLib {
 
 
   virtual const char* getTaskName() const;
+  /** dummy implementation */
+  virtual bool processMsgRequestPGN (uint32_t rui32_pgn, ISOItem_c* rpc_isoItemSender, ISOItem_c* rpc_isoItemReceiver);
 
   private:
     // Private methods

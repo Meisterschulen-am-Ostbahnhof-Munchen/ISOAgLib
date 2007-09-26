@@ -67,7 +67,7 @@
 #include "../config.h"
 #include "../typedef.h"
 #include "../errcodes.h"
-#ifndef WIN32
+#if !defined( WIN32 ) && !defined( __IAR_SYSTEMS_ICC__ )
 #include <sys/time.h>
 #include <time.h>
 #endif
@@ -102,7 +102,7 @@ bool isSystemOpened( void );
 int16_t configWatchdog();
 
 int32_t getTime();
-#ifndef WIN32
+#if !defined( WIN32 ) && !defined( __IAR_SYSTEMS_ICC__ )
 clock_t getStartUpTime();
 #endif
 int16_t getSnr(uint8_t *snrDat);               /* serial number of target */

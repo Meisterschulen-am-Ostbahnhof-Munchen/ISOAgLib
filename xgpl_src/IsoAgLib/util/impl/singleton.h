@@ -310,7 +310,7 @@
     Official STL headers like "c166/include.cpp/stl_algobase.h"
     where the C-Header <string.h> is imported into the global namespace, prevent
     a later include of <cstring> ( the correct C++ standard method ) to get
-    functions like memmove into "std::" namespace.
+    functions like memmove into "STL_NAMESPACE::" namespace.
     To avoid comparable problems with other compilers, and to avoid any compatibility
     problems with other correct compilers, but which are not used by the maintainers,
     these includes are used for ALL compiler types ( there is only a small impact on

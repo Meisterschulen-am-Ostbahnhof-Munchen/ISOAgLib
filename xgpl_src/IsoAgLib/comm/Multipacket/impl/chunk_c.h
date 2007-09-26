@@ -151,7 +151,7 @@ protected:
 private:
 
   //  Attribute: arr_data
-  std::vector<uint8_t> arr_data;
+  STL_NAMESPACE::vector<uint8_t> arr_data;
 
 }; // ~X2C
 

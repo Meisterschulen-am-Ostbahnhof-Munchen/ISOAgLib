@@ -204,7 +204,7 @@ bool MsgObj_c::merge(MsgObj_c& right)
   #endif
   {
     #ifdef SYSTEM_PC
-    std::cout.setf( std::ios_base::hex, std::ios_base::basefield );
+    INTERNAL_DEBUG_DEVICE.setf( STL_NAMESPACE::ios_base::hex, STL_NAMESPACE::ios_base::basefield );
     #endif
     INTERNAL_DEBUG_DEVICE << "existing FilterBox in merge nr: " << i
       << "FilterBox: 0x"
@@ -213,7 +213,7 @@ bool MsgObj_c::merge(MsgObj_c& right)
       << ", IdentType: " << arrPfilterBox[i]->identType()
       << INTERNAL_DEBUG_DEVICE_ENDL;
     #ifdef SYSTEM_PC
-    std::cout.setf( std::ios_base::dec, std::ios_base::basefield );
+    INTERNAL_DEBUG_DEVICE.setf( STL_NAMESPACE::ios_base::dec, STL_NAMESPACE::ios_base::basefield );
     #endif
   }
   #endif
@@ -282,7 +282,7 @@ bool MsgObj_c::insertFilterBox(FilterRef rrefc_box)
   {
     #if defined( DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION )
     #ifdef SYSTEM_PC
-    std::cout.setf( std::ios_base::hex, std::ios_base::basefield );
+    INTERNAL_DEBUG_DEVICE.setf( STL_NAMESPACE::ios_base::hex, STL_NAMESPACE::ios_base::basefield );
     #endif
     INTERNAL_DEBUG_DEVICE << "existing FilterBox in insertFilterBox nr: " << i
       << "FilterBox: 0x"
@@ -290,9 +290,9 @@ bool MsgObj_c::insertFilterBox(FilterRef rrefc_box)
       << ", Mask: 0x" << arrPfilterBox[i]->mask().ident()
       << ", IdentType: " << arrPfilterBox[i]->identType()
       << ", FilterBox instance: " << &(*arrPfilterBox[i])
-      << std::endl;
+      << INTERNAL_DEBUG_DEVICE_ENDL;
     #ifdef SYSTEM_PC
-    std::cout.setf( std::ios_base::dec, std::ios_base::basefield );
+    INTERNAL_DEBUG_DEVICE.setf( STL_NAMESPACE::ios_base::dec, STL_NAMESPACE::ios_base::basefield );
     #endif
     #endif
 
@@ -301,7 +301,7 @@ bool MsgObj_c::insertFilterBox(FilterRef rrefc_box)
     {
       #if defined( DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION )
       INTERNAL_DEBUG_DEVICE << "Reject try to insert the same FilterBox a second time"
-        << &(*arrPfilterBox[i]) << std::endl;
+        << &(*arrPfilterBox[i]) << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
       return true;
     }
@@ -353,7 +353,7 @@ bool MsgObj_c::deleteFilterBox(FilterRef rrefc_box)
     getILibErrInstance().registerError( iLibErr_c::ElNonexistent, iLibErr_c::Can );
   }
   #else
-  for ( std::vector<FilterRef>::iterator iter = arrPfilterBox.begin() ; iter != arrPfilterBox.end(); iter++ )
+  for ( STL_NAMESPACE::vector<FilterRef>::iterator iter = arrPfilterBox.begin() ; iter != arrPfilterBox.end(); iter++ )
   {
     if ( *iter == rrefc_box )
     { // to be deleted iterator is found
@@ -492,7 +492,7 @@ uint8_t MsgObj_c::processMsg(uint8_t rui8_busNumber, bool rb_forceProcessAll)
         if ( ! b_detectedOverflow )
         {
           char temp[200];
-          std::sprintf( temp, "\r\nALARM!!!!!! CAN Buffer Overflow at MsgObj: %d at BUS: %d with Ident: 0x%lx, \r\nBufer-Filling: %d, Free: %d",
+          STL_NAMESPACE::sprintf( temp, "\r\nALARM!!!!!! CAN Buffer Overflow at MsgObj: %d at BUS: %d with Ident: 0x%lx, \r\nBufer-Filling: %d, Free: %d",
             uint16_t(msgObjNr()), uint16_t(rui8_busNumber), c_filter.ident(), HAL::can_stateMsgobjBuffercnt(rui8_busNumber, msgObjNr() ),
             HAL::can_stateMsgobjFreecnt(rui8_busNumber, msgObjNr() ) );
           INTERNAL_DEBUG_DEVICE << temp << INTERNAL_DEBUG_DEVICE_ENDL;

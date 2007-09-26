@@ -112,7 +112,7 @@ typedef SINGLETON_DERIVED(ISORequestPGN_c, CANCustomer_c) SingletonISORequestPGN
     @short Manager for handling of Requests for PGN
     @see
     @author Dipl.-Inf. (FH) Martina Winkler */
-class ISORequestPGN_c : public SingletonISORequestPGN_c, public __IsoAgLib::SaClaimHandler_c
+class ISORequestPGN_c : public SingletonISORequestPGN_c
 {
 private:
   struct PGN_s
@@ -122,16 +122,16 @@ private:
   };
 
 public:
-   /** this function is called by ISOMonitor_c when a new CLAIMED ISOItem_c is registered.
-   * @param refc_isoName const reference to the item which ISOItem_c state is changed
-   * @param rpc_newItem pointer to the currently corresponding ISOItem_c
+  /** register an ISOName_c of a local device, so that RequestPGN messages that are directed to this
+      ISOName_c are received and handled.
+      This function has to be called during initialisation of a local ISOItem_c / IdentItem_c
     */
-  virtual void reactOnMonitorListAdd( const __IsoAgLib::ISOName_c& refc_isoName, const __IsoAgLib::ISOItem_c* rpc_newItem );
-   /** this function is called by ISOMonitor_c when a device looses its ISOItem_c.
-   * @param refc_isoName const reference to the item which ISOItem_c state is changed
-   * @param rui8_oldSa previously used SA which is NOW LOST -> clients which were connected to this item can react explicitly
+  void registerLocalDevice( const __IsoAgLib::ISOName_c& refc_isoName );
+  /** unregister an ISOName_c of a local device, so that ISOFilterManager_c stops receiving
+      messages for the corresponding ISOName_c.
+      This function has to be called during destruction of a local ISOItem_c / IdentItem_c
     */
-  virtual void reactOnMonitorListRemove( const __IsoAgLib::ISOName_c& /*refc_isoName*/, uint8_t /*rui8_oldSa*/ ) {}
+  void unregisterLocalDevice( const __IsoAgLib::ISOName_c& refc_isoName );
 
   /** initialisation for ISORequestPGN_c */
   void init (void);

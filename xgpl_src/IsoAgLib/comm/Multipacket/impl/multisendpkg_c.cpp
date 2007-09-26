@@ -128,9 +128,9 @@ void MultiSendPkg_c::setDataPart(const HUGE_MEM uint8_t* rpb_source, int32_t ri3
   @param ri32_pos uint8_t position in data string to start
   @param rb_partSize optional amount of bytes of data stream for actual pkg (default 7)
   */
-void MultiSendPkg_c::setDataPart(const std::vector<uint8_t>& refc_vecSource, int32_t ri32_pos, uint8_t rb_partSize)
+void MultiSendPkg_c::setDataPart(const STL_NAMESPACE::vector<uint8_t>& refc_vecSource, int32_t ri32_pos, uint8_t rb_partSize)
 {
-  std::vector<uint8_t>::const_iterator iter = refc_vecSource.begin()+ri32_pos;
+  STL_NAMESPACE::vector<uint8_t>::const_iterator iter = refc_vecSource.begin()+ri32_pos;
   // fist assign is performed with index:=1, so that last assign should be performed with
   // ind == rb_partSize (e.g. rb_partSize:=7 ==> last written index:=7 == Byt8 of CANPkg_c)
   for ( uint8_t ind = 1; ind <= rb_partSize; ind++ )
@@ -185,9 +185,9 @@ void MultiSendPkg_c::setFastPacketDataPart(const HUGE_MEM uint8_t* rpb_source, i
   @param ri32_pos uint8_t position in data string to start
   @param rb_partSize optional amount of bytes of data stream for actual pkg (default 7)
   */
-void MultiSendPkg_c::setFastPacketDataPart(const std::vector<uint8_t>& refc_vecSource, int32_t ri32_pos, uint8_t rb_partSize, uint8_t rui8_offset )
+void MultiSendPkg_c::setFastPacketDataPart(const STL_NAMESPACE::vector<uint8_t>& refc_vecSource, int32_t ri32_pos, uint8_t rb_partSize, uint8_t rui8_offset )
 {
-  std::vector<uint8_t>::const_iterator iter = refc_vecSource.begin()+ri32_pos;
+  STL_NAMESPACE::vector<uint8_t>::const_iterator iter = refc_vecSource.begin()+ri32_pos;
   // examples:
   // rb_partSize:=7, rui8_offset:=1 ==> cui8_endCondition:=8
   // ==> first assign should match target byte index rui8_offset:=1

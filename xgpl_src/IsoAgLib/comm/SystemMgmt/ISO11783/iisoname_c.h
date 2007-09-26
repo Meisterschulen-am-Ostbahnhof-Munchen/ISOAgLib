@@ -85,7 +85,12 @@ class iEEPROMIO_c;
   flags
   @author Dipl.-Inform. Achim Spangler
 */
+#ifdef __IAR_SYSTEMS_ICC__
+// Using IAR it is not allowed to static_cast from private or protected base.
+class iISOName_c : public __IsoAgLib::ISOName_c
+#else
 class iISOName_c : private __IsoAgLib::ISOName_c
+#endif
 {
 public:
   /** constant for default parameters and initialization, where the device type is not yet spcified.

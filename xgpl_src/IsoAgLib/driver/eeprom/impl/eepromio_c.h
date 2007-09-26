@@ -117,8 +117,7 @@ class ISOName_c;
 */
 class EEPROMIO_c : public Singleton<EEPROMIO_c> {
 public:
-//  typedef std::basic_string<char> cc_string;
-  typedef std::basic_string<char> cc_string;
+  typedef STL_NAMESPACE::string cc_string;
   /** default initialisation */
   void init();
   /** every subsystem of IsoAgLib has explicit function for controlled shutdown

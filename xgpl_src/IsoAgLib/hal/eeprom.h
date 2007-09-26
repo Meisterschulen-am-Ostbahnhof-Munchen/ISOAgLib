@@ -84,6 +84,8 @@
 	#include "imi/eeprom/eeprom.h"
 #elif defined(SYSTEM_PM167)
 	#include "pm167/eeprom/eeprom.h"
+#elif defined(SYSTEM_AMS5)
+	#include "ams5/eeprom/eeprom.h"
 #endif
 
 

@@ -108,8 +108,27 @@ void
 ISOFilterManager_c::singletonInit ()
 {
   b_alreadyInitialized = false; // so init() will init!
+  // set very long execution period as this singleton has no periodic jobs
+  setTimePeriod( 10000 );
 }
 
+
+/** just a dummy implementation of virtual abstract functions in ElementBase_c */
+bool ISOFilterManager_c::timeEvent( void )
+{
+  return true;
+}
+
+/** just a dummy implementation of virtual abstract functions in ElementBase_c */
+void ISOFilterManager_c::close( void )
+{
+}
+
+/** just a dummy implementation of virtual abstract functions in ElementBase_c */
+const char* ISOFilterManager_c::getTaskName() const
+{
+  return "ISOFilterManager_c";
+}
 
 void
 ISOFilterManager_c::init()

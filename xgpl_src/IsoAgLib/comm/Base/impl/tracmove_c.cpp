@@ -119,17 +119,32 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
   };
   #endif
 
+
+  /** initialise element which can't be done during construct;
+      above all create the needed FilterBox_c instances
+      possible errors:
+        * dependant error in CANIO_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
+      @param rpc_isoName optional pointer to the ISOName variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
+      @param ai_singletonVecKey singleton vector key in case PRT_INSTANCE_CNT > 1
+      @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
+    */
+  void TracMove_c::init_base (const ISOName_c* rpc_isoName, int /*ai_singletonVecKey*/, IsoAgLib::IdentMode_t rt_identMode)
+  {
+    //call init for handling which is base data independent
+    BaseCommon_c::init_base (rpc_isoName, getSingletonVecKey(), rt_identMode);
+  };
+
   /** config the TracMove_c object after init -> set pointer to isoName and
       config send/receive of a moving msg type
       @param rpc_isoName pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
       @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       @return true -> configuration was successfull
     */
-  bool TracMove_c::config_base (const ISOName_c* rpc_isoName, uint16_t rui16_suppressMask, IsoAgLib::IdentMode_t rt_identMode)
+  bool TracMove_c::config_base (const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode, uint16_t rui16_suppressMask)
   {
     //call config for handling which is base data independent
     //if something went wrong leave function before something is configured
-    if ( !BaseCommon_c::config_base (rpc_isoName, rui16_suppressMask, rt_identMode) ) return false;
+    if ( !BaseCommon_c::config_base (rpc_isoName, rt_identMode, rui16_suppressMask) ) return false;
 
     ///Set time Period for Scheduler_c
     if (rt_identMode == IsoAgLib::IdentModeTractor)
@@ -608,5 +623,13 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
 const char*
 TracMove_c::getTaskName() const
 {   return "TracMove_c"; }
+
+/** dummy implementation
+    @todo shouldn't this PGN be also answered?
+  */
+bool TracMove_c::processMsgRequestPGN (uint32_t rui32_pgn, ISOItem_c* rpc_isoItemSender, ISOItem_c* rpc_isoItemReceiver)
+{
+  return false;
+}
 
 } // End Namespace __IsoAglib

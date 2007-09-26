@@ -509,7 +509,7 @@ DevPropertyHandler_c::timeEvent( void )
         #endif
         startUpload();
       }
-      //else std::cout << "still waiting for timeout or response..." << INTERNAL_DEBUG_DEVICE_ENDL;
+      //else INTERNAL_DEBUG_DEVICE << "still waiting for timeout or response..." << INTERNAL_DEBUG_DEVICE_ENDL;
       break;
     case UploadWaitForStructureLabelResponse:
       //Timed out???
@@ -774,7 +774,7 @@ DevPropertyHandler_c::queuePoolInMap (const HUGE_MEM uint8_t* rpc_devicePoolByte
   DevicePool_c devicePool (rpc_devicePoolByteArray, rui32_bytestreamlength);
 
   langLabel = &(rpc_devicePoolByteArray[getLabelOffset(rpc_devicePoolByteArray)]);
-  std::map<LanguageLabel_c, DevicePool_c>::iterator c_iterNew = map_deviceDescription.insert(map_deviceDescription.begin(), std::pair<LanguageLabel_c, DevicePool_c>(langLabel, devicePool));
+  STL_NAMESPACE::map<LanguageLabel_c, DevicePool_c>::iterator c_iterNew = map_deviceDescription.insert(map_deviceDescription.begin(), STL_NAMESPACE::pair<LanguageLabel_c, DevicePool_c>(langLabel, devicePool));
 
   //set DeviceDescription to default
   //if nothing is default, take the first mapped pointer
@@ -782,7 +782,7 @@ DevPropertyHandler_c::queuePoolInMap (const HUGE_MEM uint8_t* rpc_devicePoolByte
   {
     pc_devDefaultDeviceDescription = &(c_iterNew->second);
     #if 0
-    std::map<LanguageLabel_c, DevicePool_c>::iterator it_default;
+    STL_NAMESPACE::map<LanguageLabel_c, DevicePool_c>::iterator it_default;
     it_default = map_deviceDescription.begin();
     pc_devDefaultDeviceDescription = &it_default->second;
     #endif
@@ -925,7 +925,7 @@ DevPropertyHandler_c::getPoolForUpload()
     pc_langCode[0] = ((__IsoAgLib::getIsoTerminalInstance4Comm().getClientByID(0).getVtServerInst().getLocalSettings()->languageCode) >> 8) & 0xFF;
     pc_langCode[1] = (__IsoAgLib::getIsoTerminalInstance4Comm().getClientByID(0).getVtServerInst().getLocalSettings()->languageCode) & 0xFF;
     //compare with all stored pools -> take the first found pool
-    std::map<LanguageLabel_c, DevicePool_c>::iterator it_maps;
+    STL_NAMESPACE::map<LanguageLabel_c, DevicePool_c>::iterator it_maps;
     for (it_maps = map_deviceDescription.begin();it_maps !=map_deviceDescription.end(); it_maps++)
     {
       if (CNAMESPACE::strncmp(it_maps->first.get(), pc_langCode, 2) == 0)
@@ -1039,7 +1039,7 @@ DevPropertyHandler_c::sendCommandChangeDesignator(uint16_t rui16_objectID, const
     return true;
   }
   //DEBUG OUT
-  //std::cout << "New Designator value exceeds a length of 32 characters! Choose a shorter name!"
+  //INTERNAL_DEBUG_DEVICE << "New Designator value exceeds a length of 32 characters! Choose a shorter name!"
   return false;
 }
 

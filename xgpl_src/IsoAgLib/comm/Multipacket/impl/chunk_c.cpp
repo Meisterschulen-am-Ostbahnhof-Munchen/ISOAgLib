@@ -99,7 +99,7 @@ namespace __IsoAgLib {
 Chunk_c::Chunk_c( const Chunk_c& rrefc_src )
 {
   arr_data.reserve (rrefc_src.arr_data.capacity());
-  std::copy(rrefc_src.arr_data.begin(), rrefc_src.arr_data.end(), arr_data.begin());
+  STL_NAMESPACE::copy(rrefc_src.arr_data.begin(), rrefc_src.arr_data.end(), arr_data.begin());
 }
 
 

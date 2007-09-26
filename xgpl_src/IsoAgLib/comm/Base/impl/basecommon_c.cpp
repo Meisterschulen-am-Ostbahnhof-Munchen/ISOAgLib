@@ -109,7 +109,7 @@ namespace __IsoAgLib {
 void BaseCommon_c::singletonInit()
 {
   setAlreadyClosed();
-  init_base (NULL);
+  init_base (NULL, 0);
 }
 
 /**
@@ -137,12 +137,13 @@ void BaseCommon_c::close( )
     possible errors:
       * dependant error in CANIO_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
     @param rpc_isoName optional pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
+    @param ai_singletonVecKey singleton vector key in case PRT_INSTANCE_CNT > 1
     @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
   */
-void BaseCommon_c::init_base (const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode)
+void BaseCommon_c::init_base (const ISOName_c* rpc_isoName, int ai_singletonVecKey, IsoAgLib::IdentMode_t rt_identMode)
 {
   getSchedulerInstance4Comm().registerClient( this );
-  c_data.setSingletonKey( getSingletonVecKey() );
+  c_data.setSingletonKey( ai_singletonVecKey );
 
   if (checkAlreadyClosed())
   {
@@ -150,8 +151,9 @@ void BaseCommon_c::init_base (const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_
   }
 
   // set configure values with call for config
-  config_base (rpc_isoName, 0 // No individual PGN disabling
-                          , rt_identMode);
+  config_base (rpc_isoName, rt_identMode
+                           , 0 // No individual PGN disabling
+                           );
 
   // clear state of b_alreadyClosed, so that close() is called one time
   clearAlreadyClosed();
@@ -162,7 +164,7 @@ void BaseCommon_c::init_base (const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_
     @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
     @return true -> configuration was successfull
   */
-bool BaseCommon_c::config_base (const ISOName_c* rpc_isoName, uint16_t rui16_suppressMask, IsoAgLib::IdentMode_t rt_identMode)
+bool BaseCommon_c::config_base (const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode, uint16_t rui16_suppressMask)
 {
   mui16_suppressMask = rui16_suppressMask;
   if (   rt_identMode == IsoAgLib::IdentModeTractor

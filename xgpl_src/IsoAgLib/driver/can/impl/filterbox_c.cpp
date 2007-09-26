@@ -246,7 +246,7 @@ bool FilterBox_c::configCan(uint8_t rui8_busNumber, uint8_t rui8_FilterBoxNr)
   #endif // when amount of standardized prt instances is same as amount of CAN instances, no special check is needed
 
   #ifdef ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL
-  for ( std::vector<CustomerLen_s>::const_iterator iter = vec_customer.begin(); iter != vec_customer.end(); iter++ )
+  for ( STL_NAMESPACE::vector<CustomerLen_s>::const_iterator iter = vec_customer.begin(); iter != vec_customer.end(); iter++ )
   {
     if ( (*iter).pc_customer->isProprietaryMessageOnStandardizedCan() )
     { // at least one CANCustomer_c uses a proprietary protocol at a normal ISOBUS CANIO_c instance
@@ -331,7 +331,7 @@ void FilterBox_c::set (const Ident_c& rrefc_mask,
   c_filter = rrefc_filter;
   c_mask = rrefc_mask;
 
-  std::vector<CustomerLen_s>::iterator pc_iter = vec_customer.begin();
+  STL_NAMESPACE::vector<CustomerLen_s>::iterator pc_iter = vec_customer.begin();
   for (; pc_iter != vec_customer.end(); pc_iter++)
   {
     if (rpc_customer == pc_iter->pc_customer)
@@ -352,7 +352,7 @@ void FilterBox_c::set (const Ident_c& rrefc_mask,
 
 bool FilterBox_c::equalCustomer( const __IsoAgLib::CANCustomer_c& rref_customer ) const
 {
-  std::vector<CustomerLen_s>::const_iterator pc_iter;
+  STL_NAMESPACE::vector<CustomerLen_s>::const_iterator pc_iter;
   for(pc_iter = vec_customer.begin(); pc_iter != vec_customer.end(); pc_iter++)
     if( &rref_customer == pc_iter->pc_customer)
       return true;
@@ -367,7 +367,7 @@ bool FilterBox_c::equalCustomer( const __IsoAgLib::CANCustomer_c& rref_customer 
   */
 bool FilterBox_c::deleteFilter( const __IsoAgLib::CANCustomer_c& rref_customer)
 {
-  for (std::vector<CustomerLen_s>::iterator pc_iter = vec_customer.begin();
+  for (STL_NAMESPACE::vector<CustomerLen_s>::iterator pc_iter = vec_customer.begin();
         pc_iter != vec_customer.end(); pc_iter++)
   {
     if (&rref_customer == pc_iter->pc_customer)
@@ -407,7 +407,7 @@ bool FilterBox_c::deleteFilter( const __IsoAgLib::CANCustomer_c& rref_customer)
 */
 bool FilterBox_c::processMsg()
 {
-  for ( std::vector<CustomerLen_s>::iterator c_customerIterator = vec_customer.begin(); c_customerIterator != vec_customer.end(); c_customerIterator++ )
+  for ( STL_NAMESPACE::vector<CustomerLen_s>::iterator c_customerIterator = vec_customer.begin(); c_customerIterator != vec_customer.end(); c_customerIterator++ )
   {
     if (c_customerIterator->pc_customer == NULL)
     { // pointer to CANCustomer_c wasn't set

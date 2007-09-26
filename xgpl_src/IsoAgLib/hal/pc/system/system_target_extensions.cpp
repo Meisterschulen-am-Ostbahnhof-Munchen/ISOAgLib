@@ -124,11 +124,11 @@ clock_t getStartUpTime()
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0))
   if ( msecPerClock != (1000 / sysconf(_SC_CLK_TCK)) )
   { // BIG PROBLEM -> THE DEFINE DURING COMPILE TIME DOES NOT MATCH THE RUNTIME
-    std::cerr << "\n\nVERY BIG PROBLEM!!!\nThis program was compiled with\n#define msecPerClock " << msecPerClock
+    INTERNAL_DEBUG_DEVICE << "\n\nVERY BIG PROBLEM!!!\nThis program was compiled with\n#define msecPerClock " << msecPerClock
         << "\nwhile the runtime system has " << (1000 / sysconf(_SC_CLK_TCK))
         << "\n\nSO PLEASE add\n#define msecPerClock " << (1000 / sysconf(_SC_CLK_TCK))
         << "\nto your project configuration header or Makefile, so that a matching binary is built. This program is aborted now, as none of any time calculations will match with this problem.\n\n"
-        << std::endl;
+        << INTERNAL_DEBUG_DEVICE_ENDL;
     abort();
   }
   static clock_t st_startup4Times = times(NULL);
@@ -380,7 +380,7 @@ int16_t  getOn_offSwitch(void)
   #else
     // use std C++ cin function to check for unprocessed input
     // -> as soon as RETURN is hit, the programm stops
-    if ( std::cin.rdbuf()->in_avail() > 0 ) return 0;
+    if ( STL_NAMESPACE::cin.rdbuf()->in_avail() > 0 ) return 0;
     else return 1;
   #endif
 }

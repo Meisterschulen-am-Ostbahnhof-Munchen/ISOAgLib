@@ -103,7 +103,7 @@
 // ~X2C
 
 //  +X2C Class 915 : FileTargetFileStreamInput_c
-class TargetFileStreamInput_c //: public std::ifstream
+class TargetFileStreamInput_c //: public STL_NAMESPACE::ifstream
 {
 
 public:
@@ -111,7 +111,7 @@ public:
   ~TargetFileStreamInput_c();
 
 	//! open a input stream
-	bool open( std::string& filename, FileMode_t rt_mode )
+	bool open( STL_NAMESPACE::string& filename, FileMode_t rt_mode )
 		{ return open( filename.c_str(), rt_mode ); }
 	//! open a input stream
 	bool open( const char* filename, FileMode_t rt_mode );

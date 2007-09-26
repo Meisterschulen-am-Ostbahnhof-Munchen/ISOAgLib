@@ -108,7 +108,7 @@ class ISOTerminal_c;
 typedef SINGLETON_DERIVED(ISOTerminal_c,ElementBase_c) SingletonISOTerminal_c;
 
 /** central IsoAgLib terminal management object */
-class ISOTerminal_c : public SingletonISOTerminal_c, public __IsoAgLib::SaClaimHandler_c {
+class ISOTerminal_c : public SingletonISOTerminal_c {
 public:
   /** default destructor
   @see ISOTerminal_c::~ISOTerminal_c

@@ -293,7 +293,7 @@ public:
 private:
   // Private attributes
   /** array of pointer to appointed arrPfilterBox instances */
-  std::vector<FilterRef> arrPfilterBox;
+  STL_NAMESPACE::vector<FilterRef> arrPfilterBox;
 
   /** Ident_c filter for this msgObj */
   Ident_c c_filter;

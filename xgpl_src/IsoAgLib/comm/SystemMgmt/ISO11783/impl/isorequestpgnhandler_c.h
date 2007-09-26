@@ -56,8 +56,7 @@
 #define ISO_REQUEST_PGN_HANDLER_C_H
 
 #include <IsoAgLib/typedef.h>
-#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.h>
-
+#include <IsoAgLib/util/impl/cancustomer_c.h>
 /* *************************************** */
 /* ********** include headers ************ */
 /* *************************************** */
@@ -65,17 +64,18 @@
 namespace __IsoAgLib {
 
 
+class ISOItem_c;
 /**
   This class implements the handling of Request_For_PGN
 
   @author Dipl.-Inf.(FH) Martina Winkler
 */
-class ISORequestPGNHandler_c
+class ISORequestPGNHandler_c : public CANCustomer_c
 {
 
 public:
   virtual ~ISORequestPGNHandler_c() {};
-  virtual bool processMsgRequestPGN (uint32_t rui32_pgn, ISOItem_c* rpc_isoItemSender, ISOItem_c* rpc_isoItemReceiver)=0;
+  virtual bool processMsgRequestPGN (uint32_t /*rui32_pgn*/, ISOItem_c* /*rpc_isoItemSender*/, ISOItem_c* /*rpc_isoItemReceiver*/){return false;};
 };
 
 }

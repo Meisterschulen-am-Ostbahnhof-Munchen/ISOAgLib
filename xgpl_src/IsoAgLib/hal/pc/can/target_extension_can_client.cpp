@@ -471,14 +471,14 @@ bool waitUntilCanReceiveOrTimeout( uint16_t rui16_timeoutInterval )
 
   return cb_result;
   /*
-  if ( getTime() < i32_endWait ) std::cout << "#";
-  else std::cout << ".";
+  if ( getTime() < i32_endWait ) INTERNAL_DEBUG_DEVICE << "#";
+  else INTERNAL_DEBUG_DEVICE << ".";
   static int dbgCnt = 0;
   static int32_t i32_lastDebugLinefeed = 0;
   dbgCnt++;
   if ( ( dbgCnt % 50 ) == 0 )
   {
-    std::cout << (getTime() - i32_lastDebugLinefeed)/50 << std::endl;
+    INTERNAL_DEBUG_DEVICE << (getTime() - i32_lastDebugLinefeed)/50 << INTERNAL_DEBUG_DEVICE_ENDL;
     i32_lastDebugLinefeed = getTime();
   }
   */

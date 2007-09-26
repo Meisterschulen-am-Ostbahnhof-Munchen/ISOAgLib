@@ -425,7 +425,7 @@ void MultiSend_c::close()
 MultiSend_c::SendStream_c*
 MultiSend_c::getSendStream(const ISOName_c& rrefc_isoNameSender, const ISOName_c& rrefc_isoNameReceiver)
 {
-  for (std::list<SendStream_c>::iterator pc_iter=list_sendStream.begin(); pc_iter != list_sendStream.end(); pc_iter++)
+  for (STL_NAMESPACE::list<SendStream_c>::iterator pc_iter=list_sendStream.begin(); pc_iter != list_sendStream.end(); pc_iter++)
   {
     if (pc_iter->matchSaDa(rrefc_isoNameSender, rrefc_isoNameReceiver))
       return &*pc_iter;
@@ -712,7 +712,7 @@ MultiSend_c::timeEvent()
   int32_t i32_nextRetriggerNeeded = -1; // default to: "no retriggering needed"
 
   // Call each SendStream_c's timeEvent()
-  for (std::list<SendStream_c>::iterator pc_iter=list_sendStream.begin(); pc_iter != list_sendStream.end();)
+  for (STL_NAMESPACE::list<SendStream_c>::iterator pc_iter=list_sendStream.begin(); pc_iter != list_sendStream.end();)
   { // only call a SendStream when its time has come!
     if ( pc_iter->isFinished () ||
         (pc_iter->timeHasCome() && (pc_iter->timeEvent (cui8_pkgCntForEach))) )
@@ -931,7 +931,7 @@ void
 MultiSend_c::calcAndSetNextTriggerTime()
 {
   int32_t i32_nextRetriggerNeeded = -1;
-  for (std::list<SendStream_c>::iterator pc_iter=list_sendStream.begin(); pc_iter != list_sendStream.end();)
+  for (STL_NAMESPACE::list<SendStream_c>::iterator pc_iter=list_sendStream.begin(); pc_iter != list_sendStream.end();)
   {
     /** @todo We could remove any finished send-streams here now
               as we're iterating through now because of the next trigger time... */

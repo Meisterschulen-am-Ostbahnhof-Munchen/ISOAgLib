@@ -101,9 +101,6 @@ ISORequestPGN_c::init (void)
     // clear state of b_alreadyClosed, so that close() is called one time AND no more init()s are performed!
     clearAlreadyClosed();
 
-    // register to get ISO monitor list changes
-    __IsoAgLib::getIsoMonitorInstance4Comm().registerSaClaimHandler( this );
-
     getCanInstance4Comm().insertFilter( *this, 0x3FFFF00UL, MASK_TYPE(static_cast<MASK_TYPE>(REQUEST_PGN_MSG_PGN | 0xFF) << 8), true, Ident_c::ExtendedIdent);
   }
 }
@@ -279,12 +276,26 @@ ISORequestPGN_c::sendAcknowledgePGN (ISOItem_c& rrefc_isoItemSender, uint8_t rui
 }
 
 
-void
-ISORequestPGN_c::reactOnMonitorListAdd( const __IsoAgLib::ISOName_c& refc_isoName, const __IsoAgLib::ISOItem_c* /*rpc_newItem*/ )
+/** register an ISOName_c of a local device, so that RequestPGN messages that are directed to this
+    ISOName_c are received and handled.
+    This function has to be called during initialisation of a local ISOItem_c / IdentItem_c
+  */
+void ISORequestPGN_c::registerLocalDevice( const __IsoAgLib::ISOName_c& refc_isoName )
 {
   if ( getIsoMonitorInstance4Comm().existLocalIsoMemberISOName(refc_isoName) )
   { // local ISOItem_c has finished adr claim
-    getIsoFilterManagerInstance4Comm().insertIsoFilter (ISOFilter_s (*this, (0x3FFFF00UL), (REQUEST_PGN_MSG_PGN << 8), &refc_isoName, NULL, 3));
+    getIsoFilterManagerInstance4Comm().insertIsoFilter (ISOFilter_s (*this, (0x3FFFF00UL), (REQUEST_PGN_MSG_PGN << 8), &refc_isoName, (const ISOName_c*)NULL, int8_t(3)));
+  }
+}
+/** unregister an ISOName_c of a local device, so that ISOFilterManager_c stops receiving
+    messages for the corresponding ISOName_c.
+    This function has to be called during destruction of a local ISOItem_c / IdentItem_c
+  */
+void ISORequestPGN_c::unregisterLocalDevice( const __IsoAgLib::ISOName_c& refc_isoName )
+{
+  if ( getIsoMonitorInstance4Comm().existLocalIsoMemberISOName(refc_isoName) )
+  { // local ISOItem_c has finished adr claim
+    getIsoFilterManagerInstance4Comm().removeIsoFilter (ISOFilter_s (*this, (0x3FFFF00UL), (REQUEST_PGN_MSG_PGN << 8), &refc_isoName, NULL, 3));
   }
 }
 

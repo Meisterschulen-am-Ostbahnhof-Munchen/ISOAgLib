@@ -98,6 +98,7 @@
 #include <IsoAgLib/hal/config.h>
 #include <IsoAgLib/util/impl/cancustomer_c.h>
 #include <IsoAgLib/driver/system/isystem_c.h>
+#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/saclaimhandler_c.h>
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
@@ -112,7 +113,7 @@ namespace __IsoAgLib {
   typedef enum { StandardRetrigger = 1, EarliestRetrigger = 2, LatestRetrigger = 4 } retriggerType_t;
 
 
-class ElementBase_c : public CANCustomer_c {
+class ElementBase_c : public SaClaimHandler_c {
  public:
 
   //Constructor

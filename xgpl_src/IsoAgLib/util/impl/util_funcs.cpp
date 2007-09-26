@@ -92,7 +92,7 @@
 #endif
 
 
-using namespace std;
+//using namespace std;
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
@@ -700,7 +700,7 @@ void bigEndianHexNumberText2CanStringUint64( const char* rc_src, uint8_t* pui8_t
     pui8_target[(ind*4)+3] = ( ( temp[ind] >> 24 ) & 0xFF );
   }
   #endif
-#elif SIZEOF_INT == 4
+#elif (SIZEOF_INT == 4) && !defined( __IAR_SYSTEMS_ICC__ )
   uint64_t temp;
 #ifdef SYSTEM_PC_VC
   sscanf( rc_src, "%16I64x", &temp );
@@ -763,7 +763,7 @@ void Flexible4ByteString_c::setFlexible4DataValueInd(uint8_t rui8_ind, const Fle
 
 Flexible8ByteString_c::Flexible8ByteString_c( const Flexible8ByteString_c& rrefc_src )
 {
-  #if SIZEOF_INT < 4
+  #if SIZEOF_INT < 4 || defined( __IAR_SYSTEMS_ICC__ )
   uint32[1] = rrefc_src.uint32[1];
   uint32[0] = rrefc_src.uint32[0];
   #else
@@ -787,7 +787,7 @@ Flexible8ByteString_c::Flexible8ByteString_c( const uint8_t* rpui8_srcStream )
 { if (rpui8_srcStream != NULL) CNAMESPACE::memcpy(uint8, rpui8_srcStream, 8 );
   else
   {
-    #if SIZEOF_INT < 4
+    #if (SIZEOF_INT < 4) || defined( __IAR_SYSTEMS_ICC__ )
     uint32[0] = uint32[1] = 0UL;
     #else
     uint64[0] = 0ULL;
@@ -1475,9 +1475,9 @@ const uint16_t* pp96ui16_8859s [8] =
 };
 
 
-void convertString8859ToUnicode (const std::string& rrefstr_iso8859, std::string& rrefstr_unicode, uint8_t rui8_encoding)
+void convertString8859ToUnicode (const STL_NAMESPACE::string& rrefstr_iso8859, STL_NAMESPACE::string& rrefstr_unicode, uint8_t rui8_encoding)
 {
-  std::string::const_iterator cit_str8859;
+  STL_NAMESPACE::string::const_iterator cit_str8859;
   rrefstr_unicode.erase ();
   for (cit_str8859=rrefstr_iso8859.begin(); cit_str8859 != rrefstr_iso8859.end(); cit_str8859++)
   {
@@ -1559,7 +1559,7 @@ void convertStringUnicodeTo8859 (const char* rpui8_stringUnicode, uint16_t rui16
 
 
 // only supports 2-byte UTF-8 encodings, but this should be enough for us...
-void push_backUTF8 (std::string& rrefstr_string, uint16_t rui16_unicode)
+void push_backUTF8 (STL_NAMESPACE::string& rrefstr_string, uint16_t rui16_unicode)
 {
   if (rui16_unicode < 0x80)
   {

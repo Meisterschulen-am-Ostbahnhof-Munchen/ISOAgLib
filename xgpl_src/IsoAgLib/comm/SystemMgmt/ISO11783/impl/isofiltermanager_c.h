@@ -105,7 +105,7 @@ namespace __IsoAgLib {
 // forward declaration
 
 class ISOFilterManager_c;
-typedef SINGLETON_DERIVED(ISOFilterManager_c, SaClaimHandler_c) SingletonISOFilterManager_c;
+typedef SINGLETON_DERIVED(ISOFilterManager_c, ElementBase_c) SingletonISOFilterManager_c;
 /** this object manages ISO-Filters - those may contain references
     to ISOName's and are initelligent self-adapting can-filters
     @short Manager for handling of inserting/adapting FilterBox_c-instances
@@ -135,6 +135,11 @@ public:
   /** constructor for ISOFilterManager_c */
   ISOFilterManager_c (void);
 
+  virtual bool timeEvent( void );
+  virtual void close( void );
+  virtual const char* getTaskName() const;
+
+
 private: // Private methods
 
   /** initialize directly after the singleton instance is created.
@@ -159,7 +164,7 @@ private: // Private attributes
 
   ISOFilterBox_vec vec_isoFilterBox;
 
-  friend class SINGLETON_DERIVED (ISOFilterManager_c,SaClaimHandler_c);
+  friend class SINGLETON_DERIVED (ISOFilterManager_c,ElementBase_c);
 
   bool b_alreadyInitialized;
 };

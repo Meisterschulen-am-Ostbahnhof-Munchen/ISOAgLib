@@ -180,7 +180,7 @@ void
 StreamChunk_c::insert7Bytes(const uint8_t* pui8_data)
 { // ~X2C
   uint16_t nbr;
-  std::list<Chunk_c>::iterator pc_iterTmpChunk = pc_iterWriteChunk;
+  STL_NAMESPACE::list<Chunk_c>::iterator pc_iterTmpChunk = pc_iterWriteChunk;
 
   // 1) write bytes into current writeChunk
   nbr = pc_iterWriteChunk->insert7Bytes( pui8_data );
@@ -276,7 +276,7 @@ StreamChunk_c::getNextNotParsed()
 uint8_t
 StreamChunk_c::getNotParsed (uint32_t ui32_notParsedRelativeOffset)
 {
-  std::list<Chunk_c>::iterator pc_iterTmpChunk = pc_iterParsedChunk;
+  STL_NAMESPACE::list<Chunk_c>::iterator pc_iterTmpChunk = pc_iterParsedChunk;
   const uint16_t chunkLen = Chunk_c::scui16_chunkSize;
   uint16_t chunkCnt = ui32_parsedCnt % chunkLen;
   uint16_t chunkCntReq = chunkCnt + ui32_notParsedRelativeOffset;
@@ -322,7 +322,7 @@ void
 StreamChunk_c::testDisplay()
 {
   uint16_t nbr, idx, iter=1;
-  std::list<Chunk_c>::iterator pc_iterTmpChunk;
+  STL_NAMESPACE::list<Chunk_c>::iterator pc_iterTmpChunk;
 
   printf( "-------------\n" );
   printf( "Write-Cnt: %d \n", ui32_writeCnt );

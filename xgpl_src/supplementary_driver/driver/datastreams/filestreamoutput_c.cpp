@@ -100,7 +100,7 @@
 
 //  Operation: open
 bool
-FileStreamOutput_c::open (std::string& filename, FileMode_t rt_mode)
+FileStreamOutput_c::open (STL_NAMESPACE::string& filename, FileMode_t rt_mode)
 {
   bool b_result = c_targetHandle.open( filename, rt_mode );
   if (b_result) str_openedFile = filename;
@@ -126,9 +126,9 @@ FileStreamOutput_c::close (bool b_deleteFile, bool b_sync)
 {
   if (b_sync)
   { // get path name from file name
-    const std::string::size_type size = str_openedFile.rfind('/');
-    std::string str_path; 
-    if (std::string::npos == size)
+    const STL_NAMESPACE::string::size_type size = str_openedFile.rfind('/');
+    STL_NAMESPACE::string str_path; 
+    if (STL_NAMESPACE::string::npos == size)
       // no path in file name
       str_path = ".";
     else

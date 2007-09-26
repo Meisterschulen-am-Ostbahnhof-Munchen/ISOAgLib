@@ -59,6 +59,9 @@ typedef int int16_t;
 typedef unsigned long uint32_t;
 typedef long int32_t;
 
-typedef unsigned long long int uint64_t;
-typedef long long int int64_t;
+
+// NOTE: The pm167 can NOT compile this because it does NOT understand what a long long is.
+//       At least this was the case with Tasking version 7.5 r 6.
+//typedef unsigned long long int uint64_t;
+//typedef long long int int64_t;
 #endif

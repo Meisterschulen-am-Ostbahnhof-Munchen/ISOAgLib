@@ -106,7 +106,7 @@ bool b_canObjConfigured;
 
 //typedef STL_NAMESPACE::vector<tMsgObj> ArrMsgObj;
 //ArrMsgObj arrMsgObj[cui32_maxCanBusCnt];
-static std::vector<tHalCan> arrHalCan[cui32_maxCanBusCnt];
+static STL_NAMESPACE::vector<tHalCan> arrHalCan[cui32_maxCanBusCnt];
 
 /* ******************************************************* */
 /* ***************** Status Checking ********************* */

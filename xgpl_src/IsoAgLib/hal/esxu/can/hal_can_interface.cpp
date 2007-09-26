@@ -129,7 +129,7 @@ struct can_timeStampAndId_t
   __IsoAgLib::Ident_c rt_ident;
 };
 
-static std::list<can_timeStampAndId_t> list_sendTimeStamps;
+static STL_NAMESPACE::list<can_timeStampAndId_t> list_sendTimeStamps;
 
 extern "C" {
 /** bool array to control lock state for all MsgObj */
@@ -521,7 +521,7 @@ int16_t can_configMsgobjInit(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgL
         pt_config->wNumberMsgs = CONFIG_CAN_HIGH_LOAD_REC_BUF_SIZE_MIN;
         #ifdef DEBUG_CAN_BUFFER_FILLING
         char temp[100];
-        std::sprintf( temp, "High-Load MsgObj: Bus %hd, MsgObj: %hd, GlobalMask: 0x%lx, Filter: 0x%lx\r\n",
+        STL_NAMESPACE::sprintf( temp, "High-Load MsgObj: Bus %hd, MsgObj: %hd, GlobalMask: 0x%lx, Filter: 0x%lx\r\n",
           rui8_busNr, rui8_msgobjNr, ui32_globalMask, pt_config->dwId );
         INTERNAL_DEBUG_DEVICE << temp << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
@@ -548,7 +548,7 @@ int16_t can_configMsgobjInit(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgL
 
   #ifdef DEBUG_CAN_BUFFER_FILLING
   char temp[100];
-  std::sprintf( temp, "Init CAN MsgObj with: Bus %hd, MsgObj: %hd, Filter: 0x%lx, FIFO-Size: %d\r\n",
+  STL_NAMESPACE::sprintf( temp, "Init CAN MsgObj with: Bus %hd, MsgObj: %hd, Filter: 0x%lx, FIFO-Size: %d\r\n",
     rui8_busNr, rui8_msgobjNr, pt_config->dwId, pt_config->wNumberMsgs );
   INTERNAL_DEBUG_DEVICE << temp << INTERNAL_DEBUG_DEVICE_ENDL;
   #endif
@@ -591,7 +591,7 @@ int16_t can_configMsgobjLock( uint8_t rui8_busNr, uint8_t rui8_msgobjNr, bool rb
 
   #ifdef DEBUG
   char temp[30];
-  std::sprintf( temp, "Lock: %d, Bus %hd, MsgObj: %hd\r\n", rb_doLock, rui8_busNr, rui8_msgobjNr );
+  STL_NAMESPACE::sprintf( temp, "Lock: %d, Bus %hd, MsgObj: %hd\r\n", rb_doLock, rui8_busNr, rui8_msgobjNr );
   __HAL::put_rs232_string( (uint8_t*)temp );
   #endif
 

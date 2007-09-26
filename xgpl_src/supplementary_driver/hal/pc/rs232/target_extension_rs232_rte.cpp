@@ -94,18 +94,18 @@ int rs232_send_handler(rtd_handler_para_t* para, uint8_t size, const uint8_t *da
     if ( para->rtd_msg->channel != testInd ) continue;
     // append received string in puffer
     #if 0
-    std::cerr << hex << "RS232 Receive Handler: #";
+    INTERNAL_DEBUG_DEVICE << hex << "RS232 Receive Handler: #";
     #endif
-//    std::cerr << "\nRS232 Empfang:";
+//    INTERNAL_DEBUG_DEVICE << "\nRS232 Empfang:";
     for ( uint16_t ind = 0; ind < size; ind++ ) {
       c_buffer[testInd].push_back( data[ind] );
-//      std::cerr << data[ind];
-//      std::cerr << "0x" << int ( data[ind] ) << ", ";
+//      INTERNAL_DEBUG_DEVICE << data[ind];
+//      INTERNAL_DEBUG_DEVICE << "0x" << int ( data[ind] ) << ", ";
     }
-//    std::cerr << std::endl;
+//    INTERNAL_DEBUG_DEVICE << INTERNAL_DEBUG_DEVICE_ENDL;
 //    #endif
     #if 0
-    std::cerr << "#" << dec << std::endl;
+    INTERNAL_DEBUG_DEVICE << "#" << dec << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
     return 0;
   }

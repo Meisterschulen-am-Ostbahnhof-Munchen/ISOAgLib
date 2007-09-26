@@ -103,7 +103,7 @@ boolean pb_bXtd;
 #else
   //typedef STL_NAMESPACE::vector<tMsgObj> ArrMsgObj;
   //ArrMsgObj arrMsgObj[cui32_maxCanBusCnt];
-  std::vector<tMsgObj> arrMsgObj[cui32_maxCanBusCnt];
+  STL_NAMESPACE::vector<tMsgObj> arrMsgObj[cui32_maxCanBusCnt];
 #endif
  
 ///////////////

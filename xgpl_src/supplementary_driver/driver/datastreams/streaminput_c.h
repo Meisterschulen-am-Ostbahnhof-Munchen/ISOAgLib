@@ -143,12 +143,12 @@ public:
 
 #if defined(_BASIC_STRING_H) || defined(__BASTRING__)
   //! Read string up to given size or up to eof() if less.
-  void get( std::string& c_str, int i_size ) {
+  void get( STL_NAMESPACE::string& c_str, int i_size ) {
     for (;(i_size > 0) && (!eof());--i_size) c_str.push_back( get() );
   }
 
   //! Read string up to eof
-  void get( std::string& c_str ) {
+  void get( STL_NAMESPACE::string& c_str ) {
     while (!eof()) c_str.push_back( get() );
   }
 #endif

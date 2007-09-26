@@ -202,9 +202,9 @@ public:
 
   /**
      deliver list of ElementDDI_s
-     @return std::list<IsoAgLib::ElementDDI_s>
+     @return STL_NAMESPACE::list<IsoAgLib::ElementDDI_s>
   */
-  const std::list<IsoAgLib::ElementDDI_s>& elementDDI()const {return l_elementDDI;}
+  const STL_NAMESPACE::list<IsoAgLib::ElementDDI_s>& elementDDI()const {return l_elementDDI;}
 
   /** check if this ProcIdent_c has the given DDI as element */
   bool hasDDI( uint16_t rui16_checkDDI ) const;
@@ -268,7 +268,7 @@ public:
     set DDI, value group and setpoint/measure type of process msg (used in assignFromSource)
     @param pl_elementDDI
   */
-  void setElementDDI(const std::list<IsoAgLib::ElementDDI_s>* pl_elementDDI);
+  void setElementDDI(const STL_NAMESPACE::list<IsoAgLib::ElementDDI_s>* pl_elementDDI);
 
   /** set device element number
     * @param  rui16_element */
@@ -370,7 +370,7 @@ private: // Private attributes
   ISOName_c c_isoName;
 
 
-   std::list<IsoAgLib::ElementDDI_s> l_elementDDI;
+   STL_NAMESPACE::list<IsoAgLib::ElementDDI_s> l_elementDDI;
    uint16_t ui16_element;
 
 private: // Private methods

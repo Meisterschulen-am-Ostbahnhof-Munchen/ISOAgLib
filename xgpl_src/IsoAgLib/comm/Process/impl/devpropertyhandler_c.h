@@ -124,8 +124,9 @@ public:
 
 
 class MultiSendPkg_c;
-class DevPropertyHandler_c : public IsoAgLib::iMultiSendStreamer_c, ClientBase
+class DevPropertyHandler_c : public IsoAgLib::iMultiSendStreamer_c
 {
+
   public:
     DevPropertyHandler_c();
     virtual ~DevPropertyHandler_c()  {};
@@ -250,7 +251,7 @@ class DevPropertyHandler_c : public IsoAgLib::iMultiSendStreamer_c, ClientBase
 
     ProcessPkg_c* pc_data;
 
-    std::map<LanguageLabel_c, DevicePool_c> map_deviceDescription; //map with language label and related bytestream
+    STL_NAMESPACE::map<LanguageLabel_c, DevicePool_c> map_deviceDescription; //map with language label and related bytestream
 
     uint8_t tcSourceAddress;
 

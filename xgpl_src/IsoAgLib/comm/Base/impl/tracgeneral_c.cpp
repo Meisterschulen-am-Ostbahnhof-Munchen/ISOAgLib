@@ -117,9 +117,10 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
       possible errors:
         * dependant error in CANIO_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
       @param rpc_isoName optional pointer to the ISOName variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
+      @param ai_singletonVecKey singleton vector key in case PRT_INSTANCE_CNT > 1
       @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
     */
-  void TracGeneral_c::init_base (const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode)
+  void TracGeneral_c::init_base (const ISOName_c* rpc_isoName, int /*ai_singletonVecKey*/, IsoAgLib::IdentMode_t rt_identMode)
   {
     if ( checkAlreadyClosed() )
     {
@@ -131,7 +132,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     }
 
     //call init for handling which is base data independent
-    BaseCommon_c::init_base (rpc_isoName, rt_identMode);
+    BaseCommon_c::init_base (rpc_isoName, getSingletonVecKey(), rt_identMode);
   };
 
   /** config the TracGeneral_c object after init -> set pointer to isoName and
@@ -140,14 +141,14 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
       @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       @return true -> configuration was successfull
     */
-  bool TracGeneral_c::config_base (const ISOName_c* rpc_isoName, uint16_t rui16_suppressMask, IsoAgLib::IdentMode_t rt_identMode)
+  bool TracGeneral_c::config_base (const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode, uint16_t rui16_suppressMask)
   { // set configure values
     //store old mode to decide to register or unregister to request for pgn
     IsoAgLib::IdentMode_t t_oldMode = getMode();
 
     //call config for handling which is base data independent
     //if something went wrong leave function before something is configured
-    if ( !BaseCommon_c::config_base (rpc_isoName,rui16_suppressMask, rt_identMode) ) return false;
+    if ( !BaseCommon_c::config_base (rpc_isoName, rt_identMode, rui16_suppressMask) ) return false;
 
 
     ///Set time Period for Scheduler_c
@@ -473,7 +474,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
   {
     //language is only send in tractor mode
     if ( checkMode(IsoAgLib::IdentModeImplement) ) return;
-    
+
     if (mui16_suppressMask & LANGUAGE_PGN_DISABLE_MASK != 0) return;
 
     if (  !b_languageVtReceived
@@ -517,7 +518,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
      @param rt_implState in which state is the implement (transport, park, work)
    */
   void TracGeneral_c::forceMaintainPower( bool rb_ecuPower, bool rb_actuatorPower, IsoAgLib::IsoMaintainPower_t rt_implState)
-  { 
+  {
     if (mui16_suppressMask & MAINTAIN_POWER_REQUEST_PGN_DISABLE_MASK != 0) return;
     // as BaseCommon_c timeEvent() checks only for adr claimed state in TractorMode, we have to perform those checks here,
     // as we reach this function mostly for ImplementMode, where getISOName() might report NULL at least during init time

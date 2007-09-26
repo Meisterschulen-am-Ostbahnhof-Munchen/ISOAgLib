@@ -284,9 +284,9 @@ public:
   bool hasType(bool rb_isSetpoint, GeneralCommand_c::ValueGroup_t t_ddiType) const { return ProcIdent_c::hasType(rb_isSetpoint, t_ddiType); }
 
   /** deliver elementDDI list
-    @return std::list<ElementDDI_s>
+    @return STL_NAMESPACE::list<ElementDDI_s>
   */
-  const std::list<ElementDDI_s>& elementDDI() const {return ProcDataRemote_c::elementDDI();}
+  const STL_NAMESPACE::list<ElementDDI_s>& elementDDI() const {return ProcDataRemote_c::elementDDI();}
 
   /** deliver value DDI (only possible if only one elementDDI in list)
     @return DDI

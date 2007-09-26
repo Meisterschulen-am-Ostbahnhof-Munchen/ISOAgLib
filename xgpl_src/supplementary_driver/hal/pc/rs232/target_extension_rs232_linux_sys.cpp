@@ -25,7 +25,7 @@ struct T_BAUD { uint32_t rate; uint32_t flag; } t_baud[] = {
 
 struct termios t_com[RS232_INSTANCE_CNT];
 int32_t f_com[RS232_INSTANCE_CNT];
-std::deque<int8_t> deq_readPuff[RS232_INSTANCE_CNT];
+STL_NAMESPACE::deque<int8_t> deq_readPuff[RS232_INSTANCE_CNT];
 
 static bool arr_usedPort[RS232_INSTANCE_CNT] = {
 #if RS232_INSTANCE_CNT > 0
@@ -332,7 +332,7 @@ int16_t getRs232String(uint8_t *pbRead,uint8_t bLastChar, uint8_t rui8_channel)
   getRs232RxBufCount(rui8_channel);
   if (! deq_readPuff[rui8_channel].empty())
   {
-    for ( std::deque<int8_t>::iterator iter = deq_readPuff[rui8_channel].begin(); iter != deq_readPuff[rui8_channel].end(); iter++ )
+    for ( STL_NAMESPACE::deque<int8_t>::iterator iter = deq_readPuff[rui8_channel].begin(); iter != deq_readPuff[rui8_channel].end(); iter++ )
     { // check if terminating char is found
       if ( *iter == bLastChar )
       { // found -> copy area from begin to iterator

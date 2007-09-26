@@ -160,11 +160,11 @@ class MultiReceiveClientWrapper_s : public ClientBase {
 
 
 class MultiReceive_c;
-typedef SINGLETON_DERIVED(MultiReceive_c,__IsoAgLib::ElementBase_c) SingletonMultiReceive_c;
+typedef SINGLETON_DERIVED(MultiReceive_c,ElementBase_c) SingletonMultiReceive_c;
 
 //  +X2C Class 192 : MultiReceive_c
 //!  Stereotype: 76
-class MultiReceive_c : public SingletonMultiReceive_c, public __IsoAgLib::SaClaimHandler_c
+class MultiReceive_c : public SingletonMultiReceive_c
 {
 
 public:
@@ -205,12 +205,12 @@ public:
    * @param refc_isoName const reference to the item which ISOItem_c state is changed
    * @param rpc_newItem pointer to the currently corresponding ISOItem_c
     */
-  virtual void reactOnMonitorListAdd( const __IsoAgLib::ISOName_c& refc_isoName, const __IsoAgLib::ISOItem_c* rpc_newItem );
+  virtual void reactOnMonitorListAdd( const ISOName_c& refc_isoName, const ISOItem_c* rpc_newItem );
    /** this function is called by ISOMonitor_c when a device looses its ISOItem_c.
    * @param refc_isoName const reference to the item which ISOItem_c state is changed
    * @param rui8_oldSa previously used SA which is NOW LOST -> clients which were connected to this item can react explicitly
     */
-  virtual void reactOnMonitorListRemove( const __IsoAgLib::ISOName_c& refc_isoName, uint8_t rui8_oldSa );
+  virtual void reactOnMonitorListRemove( const ISOName_c& refc_isoName, uint8_t rui8_oldSa );
 
   /// Use to remove a "kept"-stream after it is gotten by "getFinishedJustKeptStream" and processed.
   void removeKeptStream(IsoAgLib::iStream_c* rpc_keptStream);
@@ -234,13 +234,13 @@ public:
     deliver reference to data pkg
     @return reference to the member BasePkg_c, which encapsulates the CAN send structure
   */
-  __IsoAgLib::CANPkgExt_c& data() { return c_data; };
+  CANPkgExt_c& data() { return c_data; };
 
   /**
     deliver reference to data pkg as reference to CANPkgExt_c
     to implement the base virtual function correct
   */
-  virtual __IsoAgLib::CANPkgExt_c& dataBase();
+  virtual CANPkgExt_c& dataBase();
 
   //! return 0x00-0xFF: first byte of the stream!
   //! return 0x100: first byte not yet known!
@@ -261,7 +261,7 @@ public:
 protected:
 
 private:
-  friend class SINGLETON_DERIVED(MultiReceive_c,__IsoAgLib::ElementBase_c);
+  friend class SINGLETON_DERIVED(MultiReceive_c,ElementBase_c);
 
   /**
     initialize directly after the singleton instance is created.
@@ -271,7 +271,7 @@ private:
   void singletonInit();
 
   /** temp data where received data is put */
-  __IsoAgLib::CANPkgExt_c c_data;
+  CANPkgExt_c c_data;
 
   //  Operation: getStream
   //! Parameter:
@@ -318,9 +318,9 @@ private:
 
 private: // attributes
 
-  std::list<DEF_Stream_c_IMPL> list_streams;
+  STL_NAMESPACE::list<DEF_Stream_c_IMPL> list_streams;
 
-  std::list<MultiReceiveClientWrapper_s> list_clients;
+  STL_NAMESPACE::list<MultiReceiveClientWrapper_s> list_clients;
 
 }; // ~X2C
 

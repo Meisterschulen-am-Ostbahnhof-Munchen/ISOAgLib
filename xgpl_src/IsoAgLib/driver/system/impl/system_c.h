@@ -188,7 +188,7 @@ public:
   @param
   @return serial nr of the device
    */
-  static inline uint32_t serialNo( void ) {return HAL::getSerialNr();};
+//  static inline uint32_t serialNo( void ) {return HAL::getSerialNr();};
 
 protected:
 private:

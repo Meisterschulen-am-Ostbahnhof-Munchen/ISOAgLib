@@ -56,10 +56,53 @@
 #ifndef _ILIB_ERR_H
 #define _ILIB_ERR_H
 
-#include "../typedef.h"
+#include <IsoAgLib/typedef.h>
 #include <IsoAgLib/util/impl/singleton.h>
-#include "compiler_adaptation.h"
-#include <bitset>
+
+#include <vector>
+
+template <unsigned N> class IsoaglibBitset {
+  private:
+    STL_NAMESPACE::vector<uint32_t> _v;
+  public:
+    IsoaglibBitset( void ): _v((N+31)>>10, uint32_t(0) ) {}
+		IsoaglibBitset( const IsoaglibBitset& ar_src ) : _v(ar_src._v){};
+
+    IsoaglibBitset<N>& set( void ) {
+      STL_NAMESPACE::vector<uint32_t>::iterator i;
+      for (i=_v.begin(); i!=_v.end(); ++i) *i = 0xFFFFFFFFUL;
+      return *this;
+    }
+
+    IsoaglibBitset<N>& reset( void ) {
+      STL_NAMESPACE::vector<uint32_t>::iterator i;
+      for (i=_v.begin(); i!=_v.end(); ++i) *i = 0;
+      return *this;
+    }
+
+    bool test(unsigned n) const {
+      return bool(_v[n>>10] & (uint32_t(1)<<(n%32)));
+    }
+
+    IsoaglibBitset<N>& set( unsigned n, int val = 1 ) {
+      if (0 == val)
+        _v[n>>10] &= ~(uint32_t(1)<<(n%32));
+      else
+        _v[n>>10] |=  (uint32_t(1)<<(n%32));
+      return *this;
+    }
+
+    IsoaglibBitset<N>& reset( unsigned n ) {
+      return set(n,0);
+    }
+
+    unsigned count( void ) const {
+      unsigned n,c=0;
+      for (n=0; n<N; ++n) if (test(n)) ++c;
+      return c;
+    }
+
+};
 
 
 #define ERR_FIELD_COUNTER_SIZE 2
@@ -237,7 +280,7 @@ private:
   */
   void singletonInit() { init(); };
 
-  std::bitset<AllErrTypes> errTypeAtLoc [AllErrLocations];
+  IsoaglibBitset<AllErrTypes> errTypeAtLoc [AllErrLocations];
 };
 
 } // end of namespace IsoAgLib

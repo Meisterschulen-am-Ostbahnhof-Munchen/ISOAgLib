@@ -206,7 +206,7 @@ public:
     @param rrefc_data sent data string
     @return refernce to RS232IO_c for cmd like "rs232 << data1 << data2;"
   */
-  iRS232IO_c& operator<<( const std::basic_string<char>& rrefc_data )
+  iRS232IO_c& operator<<( const STL_NAMESPACE::string& rrefc_data )
     {return static_cast<iRS232IO_c&>(RS232IO_c::operator<<(rrefc_data));};
   /**
     send NULL terminated string on RS232 (terminating NULL isn't sent)
@@ -320,7 +320,7 @@ public:
     @param refc_data reference to data string for receive
     @return refernce to RS232IO_c for cmd like "rs232 >> data1 >> data2;"
   */
-  iRS232IO_c& operator>>( std::basic_string<char>& refc_data)
+  iRS232IO_c& operator>>( STL_NAMESPACE::string& refc_data)
     {return static_cast<iRS232IO_c&>(RS232IO_c::operator>>(refc_data));};
   /**
     read the received RS232 string into a deque.
@@ -328,7 +328,7 @@ public:
     @param refc_data reference to data deque for receive
     @return refernce to RS232IO_c for cmd like "rs232 >> data1 >> data2;"
    */
-  RS232IO_c& operator>>(std::deque<char>& refc_data)
+  RS232IO_c& operator>>(STL_NAMESPACE::deque<char>& refc_data)
   { return static_cast<iRS232IO_c&>(RS232IO_c::operator>>(refc_data)); };
   /**
     receive '\n' (or puffer end) terminated string on RS232

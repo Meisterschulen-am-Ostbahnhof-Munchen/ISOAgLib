@@ -86,8 +86,8 @@ public:
       @param rt_identMode set mode to either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       @return true -> configuration was successfull
     */
-  bool config (const iISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode = IsoAgLib::IdentModeImplement)
-  { return TimePosGPS_c::config_base( rpc_isoName, rt_identMode ); }
+  bool config (const iISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode = IsoAgLib::IdentModeImplement, uint16_t rui16_suppressMask = 0)
+  { return TimePosGPS_c::config_base( rpc_isoName, rt_identMode, rui16_suppressMask ); }
 
   /** config the Base_c object after init -> set pointer to isoName and
       config send/receive of different base msg types

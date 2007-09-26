@@ -103,10 +103,10 @@ namespace HAL
     */
   /*@{*/
 #ifndef SYSTEM_PC_VC
-  using std::printf;
-  using std::scanf;
-  using std::sscanf;
-  using std::sprintf;
+  using CNAMESPACE::printf;
+  using CNAMESPACE::scanf;
+  using CNAMESPACE::sscanf;
+  using CNAMESPACE::sprintf;
 #endif
   /**
     open the system with system specific function call

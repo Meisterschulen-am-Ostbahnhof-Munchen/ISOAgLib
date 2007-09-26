@@ -103,6 +103,8 @@
 	#include "pm167/config.h"
 #elif defined(SYSTEM_MITRON167)
 	#include "mitron167/config.h"
+#elif defined(SYSTEM_AMS5)
+	#include "ams5/config.h"
 #endif
 
 

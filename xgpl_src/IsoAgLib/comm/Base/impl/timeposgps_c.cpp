@@ -334,11 +334,12 @@ namespace __IsoAgLib {
       possible errors:
         * dependant error in CANIO_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
       @param rpc_isoName optional pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
+      @param ai_singletonVecKey singleton vector key in case PRT_INSTANCE_CNT > 1
       @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
     */
-  void TimePosGPS_c::init_base (const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode)
+  void TimePosGPS_c::init_base (const ISOName_c* rpc_isoName, int /*ai_singletonVecKey*/, IsoAgLib::IdentMode_t rt_identMode)
   {
-    BaseCommon_c::init_base( rpc_isoName, rt_identMode );
+    BaseCommon_c::init_base( rpc_isoName, getSingletonVecKey(), rt_identMode );
 
     pc_isoNameGps = NULL;
     // set the GPS mode always to non-sending
@@ -364,14 +365,14 @@ namespace __IsoAgLib {
       @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       @return true -> configuration was successfull
     */
-  bool TimePosGPS_c::config_base (const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode)
+  bool TimePosGPS_c::config_base (const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode, uint16_t rui16_suppressMask)
   {
     //store old mode to decide to register or unregister to request for pgn
     IsoAgLib::IdentMode_t t_oldMode = getMode();
 
     //call config for handling which is base data independent
     //if something went wrong leave function before something is configured
-    if ( !BaseCommon_c::config_base (rpc_isoName, rt_identMode) ) return false;
+    if ( !BaseCommon_c::config_base (rpc_isoName, rt_identMode, rui16_suppressMask) ) return false;
 
 
     if ( checkMode( IsoAgLib::IdentModeTractor ) || checkModeGps( IsoAgLib::IdentModeTractor ) )
@@ -1058,7 +1059,7 @@ namespace __IsoAgLib {
     const int32_t ci32_now = getLastRetriggerTime();
     // set data in Nmea2000SendStreamer_c
     c_nmea2000Streamer.reset();
-    std::vector<uint8_t>& writeRef = c_nmea2000Streamer.vec_data;
+    STL_NAMESPACE::vector<uint8_t>& writeRef = c_nmea2000Streamer.vec_data;
     // use helper function to transfer value to the byte vector
     number2LittleEndianString( uint8_t (ui8_dataModeAndHeadingReference|0xC0), writeRef );     /// NOT there in the RAPID UPDATE one
     number2LittleEndianString( ui8_directionSequenceID, writeRef );
@@ -1111,7 +1112,7 @@ void TimePosGPS_c::isoSendDirection( void )
 
 
 #if defined(ENABLE_NMEA_2000_MULTI_PACKET)
-  void setDegree10Minus7ToStream( const int32_t& refi32_src, std::vector<uint8_t>& writeRef )
+  void setDegree10Minus7ToStream( const int32_t& refi32_src, STL_NAMESPACE::vector<uint8_t>& writeRef )
   {
     #if SIZEOF_INT == 4
     // use 64 bit variable
@@ -1127,7 +1128,7 @@ void TimePosGPS_c::isoSendDirection( void )
     #endif
   }
 
-  void setAltitude10Minus2ToStream( const uint32_t& refui32_result, std::vector<uint8_t>& writeRef )
+  void setAltitude10Minus2ToStream( const uint32_t& refui32_result, STL_NAMESPACE::vector<uint8_t>& writeRef )
   {
     #if SIZEOF_INT == 4
     // use 64 bit variable
@@ -1154,7 +1155,7 @@ void TimePosGPS_c::isoSendDirection( void )
     const int32_t ci32_now = getLastRetriggerTime();
     // set data in Nmea2000SendStreamer_c
     c_nmea2000Streamer.reset();
-    std::vector<uint8_t>& writeRef = c_nmea2000Streamer.vec_data;
+    STL_NAMESPACE::vector<uint8_t>& writeRef = c_nmea2000Streamer.vec_data;
     // use helper function to transfer value to the byte vector
     number2LittleEndianString( ui8_positionSequenceID, writeRef );
 

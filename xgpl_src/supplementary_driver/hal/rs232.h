@@ -92,7 +92,10 @@
 		#include "pm167/rs232/rs232.h"
 	#elif defined(SYSTEM_MITRON167)
 		#include "mitron167/rs232/rs232.h"
-	#endif
+	#elif defined(SYSTEM_AMS5)
+		#include "ams5/rs232/rs232.h"
+#endif
+
 #endif
 
 

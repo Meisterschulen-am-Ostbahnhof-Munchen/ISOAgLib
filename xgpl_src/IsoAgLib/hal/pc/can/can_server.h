@@ -51,7 +51,7 @@ public:
 
   //typedef STL_NAMESPACE::vector<tMsgObj> ArrMsgObj;
   //ArrMsgObj arrMsgObj[cui32_maxCanBusCnt];
-  std::vector<tMsgObj> arrMsgObj[cui32_maxCanBusCnt];
+  STL_NAMESPACE::vector<tMsgObj> arrMsgObj[cui32_maxCanBusCnt];
 
   bool     b_busUsed[cui32_maxCanBusCnt];
 
@@ -76,9 +76,9 @@ public:
 //      memset(ui16_globalMask, 0, sizeof(ui16_globalMask));
 //  }
   msqData_s msqDataServer;
-  std::list<client_c> l_clients;
-  std::string logFileBase;
-  std::string inputFile;
+  STL_NAMESPACE::list<client_c> l_clients;
+  STL_NAMESPACE::string logFileBase;
+  STL_NAMESPACE::string inputFile;
   uint16_t ui16_globalMask[cui32_maxCanBusCnt];
   // logging
   bool     b_logMode;
@@ -103,7 +103,7 @@ public:
 
 };
 
-extern std::list<int32_t> list_sendTimeStamps;
+extern STL_NAMESPACE::list<int32_t> list_sendTimeStamps;
 void updatePendingMsgs(server_c* rpc_server, int8_t i8_bus);
 int32_t getTime();
 
@@ -111,7 +111,7 @@ void usage();
 void dumpCanMsg (uint8_t bBusNumber, uint8_t bMsgObj, tSend* ptSend, FILE* f_handle);
 bool readCanDataFile(server_c* pc_serverData, can_recv_data* ps_receiveData);
 // iterator reference because releaseClient erases client
-void releaseClient(server_c* pc_serverData, std::list<client_c>::iterator& iter_delete);
+void releaseClient(server_c* pc_serverData, STL_NAMESPACE::list<client_c>::iterator& iter_delete);
 
 
 } // end namespace

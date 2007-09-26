@@ -263,7 +263,7 @@ private: //Private methods
   //! @param itc_task -> iterator to the task that should be changed
   //! @param i32_nextRetriggerTime -> New i32_nextRetriggerTime set for Client by Scheduler_c
   //! @param  ri16_newTimePeriod otpional -> New Period will set for the Client by Scheduler_c
-  bool  changeRetriggerTimeAndResort(std::list<SchedulerEntry_c>::iterator itc_task, int32_t i32_nextRetriggerTime, int16_t ri16_newTimePeriod = -1);
+  bool  changeRetriggerTimeAndResort(STL_NAMESPACE::list<SchedulerEntry_c>::iterator itc_task, int32_t i32_nextRetriggerTime, int16_t ri16_newTimePeriod = -1);
 
   void setCntClient( size_t rt_newSize ) { mt_clientCnt = rt_newSize;}
 
@@ -315,10 +315,9 @@ private: // Private attributes
 
   //  Attribute: c_taskQueue
   //!  central priority queue for all tasks
-  std::list<SchedulerEntry_c> c_taskQueue;
+  STL_NAMESPACE::list<SchedulerEntry_c> c_taskQueue;
   size_t mt_clientCnt;
-  std::list<SchedulerEntry_c> c_spareQueue;
-
+  STL_NAMESPACE::list<SchedulerEntry_c> c_spareQueue;
 };
 
 #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )

@@ -302,7 +302,7 @@ int ca_InitCanCard_1 (uint32_t channel, int wBitrate, server_c* pc_serverData)
     //driverHandle = CAN_Open(HW_USB, 0);
     driverHandle = LINUX_CAN_Open(fname, O_RDWR | O_NONBLOCK);
     pc_serverData->can_device[channel] = LINUX_CAN_FileHandle(driverHandle);
-    if ( driverHandle == NULL ) std::cerr << "Open CAN Fault" << std::endl;
+    if ( driverHandle == NULL ) INTERNAL_DEBUG_DEVICE << "Open CAN Fault" << INTERNAL_DEBUG_DEVICE_ENDL;
 #else
     pc_serverData->can_device[channel] = open(fname, O_RDWR | O_NONBLOCK);
     if (pc_serverData->can_device[channel] == -1) {
@@ -316,7 +316,7 @@ int ca_InitCanCard_1 (uint32_t channel, int wBitrate, server_c* pc_serverData)
     ///////////////
 #ifdef USE_PCAN_LIB
     WORD useBtr = LINUX_CAN_BTR0BTR1(driverHandle, wBitrate*1000);
-    if (CAN_Init(driverHandle, useBtr, 2) < 0) { std::cerr << "Init Problem" << std::endl;return 0;}
+    if (CAN_Init(driverHandle, useBtr, 2) < 0) { INTERNAL_DEBUG_DEVICE << "Init Problem" << INTERNAL_DEBUG_DEVICE_ENDL;return 0;}
 #else
     TPBTR0BTR1 ratix;
     TPCANInit init;
@@ -493,7 +493,7 @@ int ca_TransmitCanCard_1(tSend* ptSend, uint8_t ui8_bus, server_c* pc_serverData
     int i_pendingMsgs = pc_serverData->i_pendingMsgs[ui8_bus];
     if ((i_pendingMsgs > 0) && (list_sendTimeStamps.size() >= (i_pendingMsgs)))
     { // something pending!
-      std::list<int32_t>::iterator pc_iter = list_sendTimeStamps.begin();
+      STL_NAMESPACE::list<int32_t>::iterator pc_iter = list_sendTimeStamps.begin();
       i_pendingMsgs--; // we're >0 at the beginning!
       while (i_pendingMsgs)
       {

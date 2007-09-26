@@ -75,7 +75,7 @@ extern "C" {
   #include <reg167cs.h>
 }
 
-extern "C" std::time_t _time( std::time_t *pt );
+extern "C" STL_NAMESPACE::time_t _time( STL_NAMESPACE::time_t *pt );
 static uint32_t sui32_detectStart = 0x1234;
 
 /**
@@ -84,7 +84,7 @@ static uint32_t sui32_detectStart = 0x1234;
 */
 int16_t open_system()
 {
-  std::memcpy((void*)0x0000,(void*)0x90000,0x200); 	// vector table moved to start from 0h on RAM
+  STL_NAMESPACE::memcpy((void*)0x0000,(void*)0x90000,0x200); 	// vector table moved to start from 0h on RAM
   sui32_detectStart = 0x9876;
   //   globally enable interrupts
   IEN = 1;      // defined in reg167cs.h

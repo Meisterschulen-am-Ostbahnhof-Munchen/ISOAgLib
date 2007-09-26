@@ -117,7 +117,7 @@ struct can_timeStampAndId_t
   __IsoAgLib::Ident_c rt_ident;
 };
 
-static std::list<can_timeStampAndId_t> list_sendTimeStamps;
+static STL_NAMESPACE::list<can_timeStampAndId_t> list_sendTimeStamps;
 
 
 
@@ -565,7 +565,7 @@ int16_t can_configMsgobjLock( uint8_t rui8_busNr, uint8_t rui8_msgobjNr, bool rb
 
   #ifdef DEBUG
   char temp[30];
-  std::sprintf( temp, "Lock: %d, Bus %hd, MsgObj: %hd\r\n", rb_doLock, rui8_busNr, rui8_msgobjNr );
+  STL_NAMESPACE::sprintf( temp, "Lock: %d, Bus %hd, MsgObj: %hd\r\n", rb_doLock, rui8_busNr, rui8_msgobjNr );
   __HAL::put_rs232_string( (uint8_t*)temp );
   #endif
 
@@ -711,23 +711,23 @@ int16_t can_useMsgobjSend(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib:
   if ( ( lastSendLen[rui8_busNr][rui8_msgobjNr] == pt_send->bDlc )
     && ( lastSendIdent[rui8_busNr][rui8_msgobjNr] == pt_send->dwId )
     && ( lastSendXtd[rui8_busNr][rui8_msgobjNr] == pt_send->bXtd )
-    && ( std::memcmp( lastSendData[rui8_busNr][rui8_msgobjNr], pt_send->abData, pt_send->bDlc ) == 0 ) )
+    && ( STL_NAMESPACE::memcmp( lastSendData[rui8_busNr][rui8_msgobjNr], pt_send->abData, pt_send->bDlc ) == 0 ) )
   { // gleich
     static char temp[100];
     const int32_t ci_deltaTime = ( __HAL::get_time() - lastSendTime[rui8_busNr][rui8_msgobjNr] );
-    std::sprintf( temp, "Same Msg at Bus %hd, MsgObj %hd, Ident: 0x%lx,  TimeDelta %ld, DLC: %hd\r\n",
+    STL_NAMESPACE::sprintf( temp, "Same Msg at Bus %hd, MsgObj %hd, Ident: 0x%lx,  TimeDelta %ld, DLC: %hd\r\n",
       rui8_busNr, rui8_msgobjNr, pt_send->dwId,
       ci_deltaTime, pt_send->bDlc );
-    while ( ( 1000 - __HAL::get_rs232_tx_buf_count() ) < std::strlen( temp ) ) __HAL::wd_triggern();
+    while ( ( 1000 - __HAL::get_rs232_tx_buf_count() ) < STL_NAMESPACE::strlen( temp ) ) __HAL::wd_triggern();
     __HAL::put_rs232_string( (uint8_t*)temp );
-    std::sprintf( temp, "0x%hx, 0x%hx, 0x%hx, 0x%hx, 0x%hx, 0x%hx, 0x%hx, 0x%hx\r\n",
+    STL_NAMESPACE::sprintf( temp, "0x%hx, 0x%hx, 0x%hx, 0x%hx, 0x%hx, 0x%hx, 0x%hx, 0x%hx\r\n",
       pt_send->abData[0], pt_send->abData[1], pt_send->abData[2], pt_send->abData[3],
       pt_send->abData[4], pt_send->abData[5], pt_send->abData[6], pt_send->abData[7] );
-    while ( ( 1000 - __HAL::get_rs232_tx_buf_count() ) < std::strlen( temp ) ) __HAL::wd_triggern();
+    while ( ( 1000 - __HAL::get_rs232_tx_buf_count() ) < STL_NAMESPACE::strlen( temp ) ) __HAL::wd_triggern();
     __HAL::put_rs232_string( (uint8_t*)temp );
   }
   // copy
-  std::memcpy( lastSendData[rui8_busNr][rui8_msgobjNr], pt_send->abData, pt_send->bDlc );
+  STL_NAMESPACE::memcpy( lastSendData[rui8_busNr][rui8_msgobjNr], pt_send->abData, pt_send->bDlc );
   lastSendLen[rui8_busNr][rui8_msgobjNr] = pt_send->bDlc;
   lastSendIdent[rui8_busNr][rui8_msgobjNr] = pt_send->dwId;
   lastSendXtd[rui8_busNr][rui8_msgobjNr] = pt_send->bXtd;
@@ -753,9 +753,9 @@ int16_t can_useMsgobjSend(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib:
   {
     static char temp[100];
     minFreeSendItem[rui8_busNr][rui8_msgobjNr] = freeItems;
-    std::sprintf( temp, "New Min Send FreeBuf Bus %hd, MsgObj %hd, Free %d\r\n",
+    STL_NAMESPACE::sprintf( temp, "New Min Send FreeBuf Bus %hd, MsgObj %hd, Free %d\r\n",
       rui8_busNr, rui8_msgobjNr, freeItems );
-    while ( ( 1000 - __HAL::get_rs232_tx_buf_count() ) < std::strlen( temp ) ) __HAL::wd_triggern();
+    while ( ( 1000 - __HAL::get_rs232_tx_buf_count() ) < STL_NAMESPACE::strlen( temp ) ) __HAL::wd_triggern();
     __HAL::put_rs232_string( (uint8_t*)temp );
   }
   #endif // end of DEBUG

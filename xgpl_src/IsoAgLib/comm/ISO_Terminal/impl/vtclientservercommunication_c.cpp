@@ -1443,7 +1443,7 @@ bool
 VtClientServerCommunication_c::sendCommand (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint32_t ui32_timeout, bool b_enableReplaceOfCmd, IsoAgLib::iVtObject_c** rppc_vtObjects, uint16_t rui16_numObjects)
 {
 #ifdef DEBUG
-  INTERNAL_DEBUG_DEVICE << "Enqueued 8-bytes: " << q_sendUpload.size() << " -> " << std::endl;
+  INTERNAL_DEBUG_DEVICE << "Enqueued 8-bytes: " << q_sendUpload.size() << " -> " << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
 
   sc_tempSendUpload.set (byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8, ui32_timeout, rppc_vtObjects, rui16_numObjects);
@@ -2097,8 +2097,8 @@ bool
 VtClientServerCommunication_c::sendCommandLockUnlockMask( IsoAgLib::iVtObject_c* rpc_object, bool b_lockMask, uint16_t ui16_lockTimeOut, bool b_enableReplaceOfCmd)
 {
 #ifdef DEBUG
-  std::cout << "\n LOCK *** LOCK *** send lock(1)/unlock(0) message. With b_lockMask = " << b_lockMask << std::endl;
-  std::cout << "   and client sa = " << (int)dataBase().isoSa() << " and client id = " << (int)getClientId() << std::endl;
+  INTERNAL_DEBUG_DEVICE << "\n LOCK *** LOCK *** send lock(1)/unlock(0) message. With b_lockMask = " << b_lockMask << INTERNAL_DEBUG_DEVICE_ENDL;
+  INTERNAL_DEBUG_DEVICE << "   and client sa = " << (int)dataBase().isoSa() << " and client id = " << (int)getClientId() << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
   return sendCommand (189 /* Command: Command --- Parameter: Lock/Undlock Mask */,
                       b_lockMask,
@@ -2140,12 +2140,12 @@ VtClientServerCommunication_c::queueOrReplace (SendUpload_c& rref_sendUpload, bo
   uint8_t i = 0;
 #ifdef USE_LIST_FOR_FIFO
 #ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
-  std::list<SendUpload_c,std::__malloc_alloc_template<0> >::iterator i_sendUpload;
+  STL_NAMESPACE::list<SendUpload_c,STL_NAMESPACE::__malloc_alloc_template<0> >::iterator i_sendUpload;
 #else
-  std::list<SendUpload_c>::iterator i_sendUpload;
+  STL_NAMESPACE::list<SendUpload_c>::iterator i_sendUpload;
 #endif
 #else
-  std::queue<SendUpload_c>::iterator i_sendUpload;
+  STL_NAMESPACE::queue<SendUpload_c>::iterator i_sendUpload;
 #endif
   if (b_checkSameCommand && b_enableReplaceOfCmd)
   {
@@ -2251,12 +2251,12 @@ VtClientServerCommunication_c::dumpQueue()
 {
 #ifdef USE_LIST_FOR_FIFO
 #ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
-  std::list<SendUpload_c,std::__malloc_alloc_template<0> >::iterator i_sendUpload;
+  STL_NAMESPACE::list<SendUpload_c,STL_NAMESPACE::__malloc_alloc_template<0> >::iterator i_sendUpload;
 #else
-  std::list<SendUpload_c>::iterator i_sendUpload;
+  STL_NAMESPACE::list<SendUpload_c>::iterator i_sendUpload;
 #endif
 #else
-  std::queue<SendUpload_c>::iterator i_sendUpload;
+  STL_NAMESPACE::queue<SendUpload_c>::iterator i_sendUpload;
 #endif
 
   for (i_sendUpload = q_sendUpload.begin(); i_sendUpload != q_sendUpload.end(); i_sendUpload++)

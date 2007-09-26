@@ -57,6 +57,7 @@
 #define IMULTI_SEND_STREAMER_C_H
 
 #include <IsoAgLib/typedef.h>
+#include <IsoAgLib/util/impl/singleton.h>
 
 /* *************************************** */
 /* ********** include headers ************ */
@@ -75,7 +76,7 @@ namespace IsoAgLib {
 
   @author Dipl.-Inform. Achim Spangler
 */
-class iMultiSendStreamer_c
+class iMultiSendStreamer_c : public ClientBase
 {
 public:
   virtual ~iMultiSendStreamer_c(){};

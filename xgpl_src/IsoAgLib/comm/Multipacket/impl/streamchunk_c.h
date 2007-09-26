@@ -144,18 +144,18 @@ public:
   bool eof() const;
 
 private: // function
-  inline void copyIterator (const std::list<Chunk_c>& refc_listSource, const std::list<Chunk_c>::iterator& refc_iterSource, std::list<Chunk_c>& refc_listDestin, std::list<Chunk_c>::iterator& refc_iterDestin);
+  inline void copyIterator (const STL_NAMESPACE::list<Chunk_c>& refc_listSource, const STL_NAMESPACE::list<Chunk_c>::iterator& refc_iterSource, STL_NAMESPACE::list<Chunk_c>& refc_listDestin, STL_NAMESPACE::list<Chunk_c>::iterator& refc_iterDestin);
 
 
 private:
   //  Attribute: list_chunks
-  std::list<Chunk_c> list_chunks;
+  STL_NAMESPACE::list<Chunk_c> list_chunks;
 
   //  Attribute: pc_iterWriteChunk
-  std::list<Chunk_c>::iterator pc_iterWriteChunk;
+  STL_NAMESPACE::list<Chunk_c>::iterator pc_iterWriteChunk;
 
   //  Attribute: pc_iterParsedChunk
-  std::list<Chunk_c>::iterator pc_iterParsedChunk;
+  STL_NAMESPACE::list<Chunk_c>::iterator pc_iterParsedChunk;
 
   //  Attribute: ui32_writeCnt
   uint32_t ui32_writeCnt;
@@ -168,9 +168,9 @@ private:
 
 
 inline void
-StreamChunk_c::copyIterator (const std::list<Chunk_c>& refc_listSource, const std::list<Chunk_c>::iterator& refc_iterSource, std::list<Chunk_c>& refc_listDestin, std::list<Chunk_c>::iterator& refc_iterDestin)
+StreamChunk_c::copyIterator (const STL_NAMESPACE::list<Chunk_c>& refc_listSource, const STL_NAMESPACE::list<Chunk_c>::iterator& refc_iterSource, STL_NAMESPACE::list<Chunk_c>& refc_listDestin, STL_NAMESPACE::list<Chunk_c>::iterator& refc_iterDestin)
 {
-  std::list<Chunk_c>::const_iterator pc_iterSource = refc_listSource.begin();
+  STL_NAMESPACE::list<Chunk_c>::const_iterator pc_iterSource = refc_listSource.begin();
                                    refc_iterDestin = refc_listDestin.begin();
   while (pc_iterSource != refc_listSource.end())
   {

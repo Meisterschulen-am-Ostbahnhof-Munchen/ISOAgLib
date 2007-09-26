@@ -95,7 +95,7 @@ iLibErr_c::iLibErr_c() : errTypeAtLoc() // : ui32_lastErrorTime(0)
 iLibErr_c::iLibErr_c(const iLibErr_c& rrefc_src)
 {
   for (int i=0; i<AllErrLocations; i++)
-  { // copy all std::bitset for all locations!
+  { // copy all IsoaglibBitset for all locations!
     errTypeAtLoc [i] = rrefc_src.errTypeAtLoc [i];
   }
 }

@@ -291,7 +291,7 @@ private:
   Ident_c c_additionalMask;
 
   /**vector of pointer to pc_customer CANCustomer_c which works with the received CAN data */
-  std::vector<CustomerLen_s> vec_customer;
+  STL_NAMESPACE::vector<CustomerLen_s> vec_customer;
 
   /** number of message object */
   uint8_t ui8_filterBoxNr; //use like ui8_msgObjNr from msgobj_c class

@@ -149,7 +149,7 @@ namespace __IsoAgLib
 #elif defined(  OPTIMIZE_NUMBER_CONVERSIONS_FOR_BIG_ENDIAN )
     pb_ident[sizeof(MASK_TYPE) - 1 - rb_pos] = rb_val;
 #else
-    const uint bitCount = (rb_pos*8);
+    const uint8_t bitCount = (rb_pos*8);
     MASK_TYPE clearMask = ~(0xFF << bitCount);
     t_ident &= clearMask;
     t_ident |= (MASK_TYPE(rb_val) << (rb_pos*8));

@@ -154,8 +154,6 @@ typedef SINGLETON_DERIVED_CLIENT2(Process_c, ElementBase_c, ProcDataLocalBase_c,
   @author Dipl.-Inform. Achim Spangler
 */
 class Process_c : public SingletonProcess_c
-                , public __IsoAgLib::SaClaimHandler_c
-
 {
 public:
   /** initialisation for Process_c
@@ -476,7 +474,7 @@ private: // Private attributes
   /** last timestamp with FilterBox_c check */
   int32_t i32_lastFilterBoxTime;
 
-  std::USABLE_SLIST<uint32_t> l_filtersToDeleteISO;
+  STL_NAMESPACE::USABLE_SLIST<uint32_t> l_filtersToDeleteISO;
   bool b_needCallOfCheckCreateRemoteReceiveFilter;
   const ISOName_c* pc_tcISOName;
   uint8_t ui8_lastTcStatus;

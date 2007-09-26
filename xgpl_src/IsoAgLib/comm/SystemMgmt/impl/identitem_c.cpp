@@ -177,7 +177,7 @@ void IdentItem_c::init (ISOName_c* rpc_isoNameParam, uint8_t rui8_preferredSa, u
   { // For init again, you'd first have to stop the identity - this feature is to come somewhen (when needed)...
     getILibErrInstance().registerError( iLibErr_c::Precondition, iLibErr_c::System );
     #if defined(DEBUG) && defined(SYSTEM_PC)
-    std::cout << "ERROR: Double initialization of IdentItem_c detected!!!!" << std::endl;
+    INTERNAL_DEBUG_DEVICE << "ERROR: Double initialization of IdentItem_c detected!!!!" << INTERNAL_DEBUG_DEVICE_ENDL;
     abort();
     #else
     return;
@@ -243,7 +243,7 @@ void IdentItem_c::init (ISOName_c* rpc_isoNameParam, uint8_t rui8_preferredSa, u
     // ERROR: Using EEPROM Address but IsoAgLib is NOT compiled with USE_EEPROM_IO !!!!
     getILibErrInstance().registerError( iLibErr_c::ElNonexistent, iLibErr_c::Eeprom );
     #if defined(DEBUG) && defined(SYSTEM_PC)
-    std::cout << "ERROR: Using EEPROM Address in IdentItem_c() construction but IsoAgLib is NOT compiled with USE_EEPROM_IO !!!!" << std::endl;
+    INTERNAL_DEBUG_DEVICE << "ERROR: Using EEPROM Address in IdentItem_c() construction but IsoAgLib is NOT compiled with USE_EEPROM_IO !!!!" << INTERNAL_DEBUG_DEVICE_ENDL;
     abort();
     #else
     b_useParameters = true; // fallback because we can't read out the eeprom!
@@ -340,6 +340,7 @@ void IdentItem_c::restartAddressClaim()
      )
   { // item has claimed address -> send unregister cmd
     // delete item from memberList
+    getIsoRequestPgnInstance4Comm().unregisterLocalDevice( isoName() );
     getIsoMonitorInstance4Comm().deleteIsoMemberISOName (isoName());
     pc_isoItem = NULL;
   }
@@ -429,6 +430,9 @@ bool IdentItem_c::timeEventPreAddressClaim( void )
       pc_isoItem->setItemState
         (IState_c::itemState_t(IState_c::Member | IState_c::Local | IState_c::PreAddressClaim));
 
+      // register the new item for ISORequestPGN
+      getIsoRequestPgnInstance4Comm().registerLocalDevice( isoName() );
+
       #ifdef USE_WORKING_SET
       // insert all slave ISOItem objects (if not yet there) and set me as their master
       setToMaster ();
@@ -511,10 +515,10 @@ bool IdentItem_c::timeEventActive( void )
         refc_eeprom << ui8_globalRunState << ui8_preferredSa;
         refc_eeprom.writeString (pcui8_isoName, 8);
         #else
-        // ERROR: Using EEPROM Address in IdentItem_c()'s timeEventActive but IsoAgLib is NOT compiled with USE_EEPROM_IO !!!!" << std::endl;
+        // ERROR: Using EEPROM Address in IdentItem_c()'s timeEventActive but IsoAgLib is NOT compiled with USE_EEPROM_IO !!!!" << INTERNAL_DEBUG_DEVICE_ENDL;
         getILibErrInstance().registerError( iLibErr_c::ElNonexistent, iLibErr_c::Eeprom );
         #if defined(DEBUG) && defined(SYSTEM_PC)
-        std::cout << "ERROR: Using EEPROM Address in IdentItem_c()'s timeEventActive but IsoAgLib is NOT compiled with USE_EEPROM_IO !!!!" << std::endl;
+        INTERNAL_DEBUG_DEVICE << "ERROR: Using EEPROM Address in IdentItem_c()'s timeEventActive but IsoAgLib is NOT compiled with USE_EEPROM_IO !!!!" << INTERNAL_DEBUG_DEVICE_ENDL;
         abort();
         #endif
         #endif
@@ -537,6 +541,9 @@ bool IdentItem_c::timeEventActive( void )
         pc_isoItem->setItemState
           (IState_c::itemState_t(IState_c::Member | IState_c::Local | IState_c::PreAddressClaim));
 
+        // register the new item for ISORequestPGN
+        getIsoRequestPgnInstance4Comm().registerLocalDevice( isoName() );
+
         #ifdef USE_WORKING_SET
         // insert all slave ISOItem objects (if not yet there) and set me as their master
         setToMaster ();
@@ -553,7 +560,7 @@ bool IdentItem_c::timeEventActive( void )
       { // now the ISOName is used by some other member on the BUS
         pc_isoItem = &refc_foundIsoItemSameIsoName; // seems to be our IsoItem although it's a case that shouldn't occur!
         #if defined(SYSTEM_PC) && defined(DEBUG)
-        std::cout << "ERROR: IsoName stolen by other local member, take this IsoItem then, although this shouldn't happen!" << std::endl;
+        INTERNAL_DEBUG_DEVICE << "ERROR: IsoName stolen by other local member, take this IsoItem then, although this shouldn't happen!" << INTERNAL_DEBUG_DEVICE_ENDL;
         abort();
         #endif
       }
@@ -562,7 +569,7 @@ bool IdentItem_c::timeEventActive( void )
         // ==> conflict
         setItemState (Off); // zurückzeiehn, für immer maul halten
         #if defined(SYSTEM_PC) && defined(DEBUG)
-        std::cout << "WARNING: IsoName stolen by other member on the bus (remote), so we have to shut off forever!" << std::endl;
+        INTERNAL_DEBUG_DEVICE << "WARNING: IsoName stolen by other member on the bus (remote), so we have to shut off forever!" << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
       }
     }
@@ -623,6 +630,10 @@ void IdentItem_c::setToMaster (int8_t ri8_slaveCount, const ISOName_c* rpc_slave
           // set item as member and as own identity and overwrite old value
           pc_slaveIsoItem->setItemState
           (IState_c::itemState_t(IState_c::Member | IState_c::PreAddressClaim));
+
+          // register the new item for ISORequestPGN
+          getIsoRequestPgnInstance4Comm().registerLocalDevice( pc_slaveIsoNameList[i] );
+
         } else {
           // there is neither a corresponding IsoItem_c in monitor list, nor is there the possibility to
           // create a new ( memory problem, as insert of new member failed in IsoMonitor_c::insertIsoMember()
