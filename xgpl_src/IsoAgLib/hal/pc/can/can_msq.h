@@ -89,7 +89,7 @@ typedef struct {
 #define MTYPE_WRITE_PRIO_HIGH   0x3
 
 typedef struct {
-  int32_t i32_mtypePid;
+  long    i32_mtypePid;
   int16_t i16_command;
   union {
     struct {
