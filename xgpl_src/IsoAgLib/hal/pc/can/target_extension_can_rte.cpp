@@ -67,6 +67,8 @@
 #include <iomanip.h>
 
 #include <list>
+#include <cstdlib>
+
 
 namespace __HAL {
 /////////////////////////////////////////////////////////////////////////
@@ -174,13 +176,15 @@ int16_t can_startDriver()
 #endif
   }
 
-//  cout << "Trying to connect to rte1... ";
   if ( ! rte_is_init() ) {
-    if (rte_connect( "rte1" ) < 0) {
-      cerr << "Unable to connect RTE1 server." << endl;
+    std::string c_rteServer = HAL_PC_RTE_DEFAULT_SERVER;
+    if ( getenv( "RTE_HOST" ) != NULL ) c_rteServer = getenv( "RTE_HOST" );
+
+    if (rte_connect( c_rteServer.c_str() ) < 0) {
+      cerr << "Unable to connect " << c_rteServer << " server." << endl;
       exit(1);
     } else {
-      cout << "Connected to RTE1" << endl;
+      cout << "Connected to " << c_rteServer << " server." << endl;
     }
   }
 
@@ -213,7 +217,7 @@ int16_t can_stopDriver()
 
   delete[] arrMsgObj;
   arrMsgObj = NULL;
-  
+
   return HAL_NO_ERR;
 }
 

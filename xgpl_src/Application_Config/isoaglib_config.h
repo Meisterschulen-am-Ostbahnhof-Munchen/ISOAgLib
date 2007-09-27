@@ -1087,4 +1087,15 @@
 /*@}*/
 
 
+
+/* ******************************************************** */
+/**
+ * \name Define miscelaneous parameters for HAL modules
+ */
+/*@{*/
+#ifndef HAL_PC_RTE_DEFAULT_SERVER
+  #define HAL_PC_RTE_DEFAULT_SERVER "rte4"
+#endif
+/*@}*/
+
 #endif
