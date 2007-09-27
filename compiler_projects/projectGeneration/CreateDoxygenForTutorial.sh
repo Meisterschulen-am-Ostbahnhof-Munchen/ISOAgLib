@@ -6,9 +6,9 @@ DOXYGEN_EXPORT_DIR="../../IsoAgLib_Examples/tutorial"
 EXAMPLE_LIST=`ls conf_* | grep -v "~" | sed -e 's/[ \t\n]+/:/g'`
 TARGET_LIST="pc_win32:pc_linux:esx:c2c:imi:pm167"
 #TARGET_LIST="pc_linux"
-#CAN_LIST="simulating:sys:vector_canlib:vector_xl_drv_lib:sontheim:rte:linux_server_client_A1:linux_server_client_pcan"
+CAN_LIST="simulating:sys:vector_canlib:vector_xl_drv_lib:sontheim:rte:linux_server_client_A1:linux_server_client_pcan"
 RS232_LIST="simulating:sys:rte"
-CAN_LIST="sontheim"
+#CAN_LIST="sontheim"
 #RS232_LIST="simulating"
 for conf_example in $EXAMPLE_LIST ; do
   EXAMPLE_DIR=""

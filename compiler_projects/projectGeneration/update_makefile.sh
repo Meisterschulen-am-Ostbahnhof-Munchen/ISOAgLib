@@ -719,15 +719,12 @@ create_filelist( )
   # mkdir tmpdir
   mkdir -p $PROJECT
   cd $PROJECT
-	FILELIST_LIBRARY_QMAKE="filelist"'__'"$PROJECT.library.qmake"
 	FILELIST_LIBRARY_HDR="filelist"'__'"$PROJECT_hdr.library.txt"
 	FILELIST_LIBRARY_PURE="filelist"'__'"$PROJECT.library.txt"
 
-	FILELIST_APP_QMAKE="filelist"'__'"$PROJECT.app.qmake"
 	FILELIST_APP_HDR="filelist"'__'"$PROJECT_hdr.app.txt"
 	FILELIST_APP_PURE="filelist"'__'"$PROJECT.app.txt"
 
-	FILELIST_COMBINED_QMAKE="filelist"'__'"$PROJECT.qmake"
 	FILELIST_COMBINED_HDR="filelist"'__'"$PROJECT_hdr.txt"
 	FILELIST_COMBINED_PURE="filelist"'__'"$PROJECT.txt"
 
@@ -738,14 +735,11 @@ create_filelist( )
 	fi
 
 
-  rm -f "$FILELIST_LIBRARY_PURE" "$FILELIST_LIBRARY_QMAKE" "$FILELIST_LIBRARY_HDR"
-	rm -f "$FILELIST_APP_PURE" "$FILELIST_APP_QMAKE" "$FILELIST_APP_HDR"
-	rm -f "$FILELIST_COMBINED_PURE" "$FILELIST_COMBINED_QMAKE" "$FILELIST_COMBINED_HDR"
+  rm -f "$FILELIST_LIBRARY_PURE" "$FILELIST_LIBRARY_HDR"
+	rm -f "$FILELIST_APP_PURE" "$FILELIST_APP_HDR"
+	rm -f "$FILELIST_COMBINED_PURE" "$FILELIST_COMBINED_HDR"
 
   touch "$FILELIST_LIBRARY_PURE" "$FILELIST_APP_PURE" "$FILELIST_COMBINED_PURE"
-	if [ $USE_TARGET_SYSTEM = "pc_linux" ] ; then
-		touch "$FILELIST_LIBRARY_QMAKE"
-	fi
   # find central elements
   if [ $PRJ_ISO11783 -lt 1 ] ; then
 		EXCLUDE_FROM_SYSTEM_MGMT="-a -not -path '*/ISO11783/*'"
@@ -753,38 +747,22 @@ create_filelist( )
 		EXCLUDE_FROM_SYSTEM_MGMT=""
 	fi
 	rm -f .exec.tmp
-	if [ $USE_TARGET_SYSTEM = "pc_linux" ] ; then
-		echo "find $LIB_ROOT -follow $SRC_EXT -a \( -path '*/Scheduler/*' -o -path '*/SystemMgmt/*' -o -path '*/util/*' \) $EXCLUDE_FROM_SYSTEM_MGMT -printf 'SOURCES += %h/%f\n' >> $FILELIST_LIBRARY_QMAKE"  > .exec.tmp
-		echo "find $LIB_ROOT -follow -name '*.h' -a \( -path '*/Scheduler/*' -o -path '*/SystemMgmt/*' -o -path '*/util/*' \) $EXCLUDE_FROM_SYSTEM_MGMT -printf 'HEADERS += %h/%f\n' >> $FILELIST_LIBRARY_QMAKE" >> .exec.tmp
-  fi
 	echo "find $LIB_ROOT -follow $SRC_EXT -a \( -path '*/Scheduler/*' -o -path '*/SystemMgmt/*' -o -path '*/util/*' \) $EXCLUDE_FROM_SYSTEM_MGMT -printf '%h/%f\n' >> $FILELIST_LIBRARY_PURE" >> .exec.tmp
   echo "find $LIB_ROOT -follow -name '*.h' -a \( -path '*/Scheduler/*' -o -path '*/SystemMgmt/*' -o -path '*/util/*' \) $EXCLUDE_FROM_SYSTEM_MGMT -printf '%h/%f\n' >> $FILELIST_LIBRARY_HDR" >> .exec.tmp
 
   # find wanted process data communication features
   if [ "$COMM_PROC_FEATURES" != "" ] ; then
-    if [ $USE_TARGET_SYSTEM = "pc_linux" ] ; then
-			echo "find $LIB_ROOT -follow $SRC_EXT -a \( $COMM_PROC_FEATURES \) -printf 'SOURCES += %h/%f\n' >> $FILELIST_LIBRARY_QMAKE" >> .exec.tmp
-			echo "find $LIB_ROOT -follow -name '*.h' -a \( $COMM_PROC_FEATURES \) -printf 'HEADERS += %h/%f\n' >> $FILELIST_LIBRARY_QMAKE" >> .exec.tmp
-    fi
 		echo "find $LIB_ROOT -follow $SRC_EXT -a \( $COMM_PROC_FEATURES \) -printf '%h/%f\n' >> $FILELIST_LIBRARY_PURE" >> .exec.tmp
     echo "find $LIB_ROOT -follow -name '*.h' -a \( $COMM_PROC_FEATURES \) -printf '%h/%f\n' >> $FILELIST_LIBRARY_HDR" >> .exec.tmp
   fi
 
   # find wanted other communication features
   if [ "$COMM_FEATURES" != "" ] ; then
-    if [ $USE_TARGET_SYSTEM = "pc_linux" ] ; then
-			echo "find $LIB_ROOT -follow $SRC_EXT -a \( $COMM_FEATURES \) -printf 'SOURCES += %h/%f\n' >> $FILELIST_LIBRARY_QMAKE" >> .exec.tmp
-    	echo "find $LIB_ROOT -follow -name '*.h' -a \( $COMM_FEATURES \) -printf 'HEADERS += %h/%f\n' >> $FILELIST_LIBRARY_QMAKE" >> .exec.tmp
-    fi
 		echo "find $LIB_ROOT -follow $SRC_EXT -a \( $COMM_FEATURES \) -printf '%h/%f\n' >> $FILELIST_LIBRARY_PURE" >> .exec.tmp
     echo "find $LIB_ROOT -follow -name '*.h' -a \( $COMM_FEATURES \) -printf '%h/%f\n' >> $FILELIST_LIBRARY_HDR" >> .exec.tmp
   fi
 
   #find optional HW features
-  if [ $USE_TARGET_SYSTEM = "pc_linux" ] ; then
-		echo "find $LIB_ROOT -follow $SRC_EXT  -a \( $DRIVER_FEATURES \) -printf 'SOURCES += %h/%f\n' >> $FILELIST_LIBRARY_QMAKE" >> .exec.tmp
-  	echo "find $LIB_ROOT -follow -name '*.h' -a \(  $DRIVER_FEATURES \) -printf 'HEADERS += %h/%f\n' >> $FILELIST_LIBRARY_QMAKE" >> .exec.tmp
-  fi
 	echo "find $LIB_ROOT -follow $SRC_EXT -a \( $DRIVER_FEATURES \) -printf '%h/%f\n' >> $FILELIST_LIBRARY_PURE" >> .exec.tmp
   echo "find $LIB_ROOT -follow -name '*.h' -a \(  $DRIVER_FEATURES \) -printf '%h/%f\n' >> $FILELIST_LIBRARY_HDR" >> .exec.tmp
 
@@ -864,13 +842,6 @@ create_filelist( )
 	done
 	APP_SEARCH_HDR_TYPE_PART="$APP_SEARCH_HDR_TYPE_PART \)"
 
-	if [ $USE_TARGET_SYSTEM = "pc_linux" ] ; then
-		for EACH_REL_APP_PATH in $REL_APP_PATH ; do
-			echo "find ../$ISO_AG_LIB_PATH/$EACH_REL_APP_PATH/ -follow $APP_SEARCH_SRC_TYPE_PART $APP_SRC_PART $EXCLUDE_PATH_PART $EXCLUDE_SRC_PART -printf 'SOURCES += %h/%f\n' >> $FILELIST_APP_QMAKE" >> .exec.tmp
-			echo "find ../$ISO_AG_LIB_PATH/$EACH_REL_APP_PATH/ -follow $APP_SEARCH_HDR_TYPE_PART $APP_SRC_PART $EXCLUDE_PATH_PART $EXCLUDE_SRC_PART -printf 'HEADERS += %h/%f\n' >> $FILELIST_APP_QMAKE" >> .exec.tmp
-		done
-	fi
-
 	for EACH_REL_APP_PATH in $REL_APP_PATH ; do
 		echo "find ../$ISO_AG_LIB_PATH/$EACH_REL_APP_PATH/ -follow $APP_SEARCH_SRC_TYPE_PART $APP_SRC_PART $EXCLUDE_PATH_PART $EXCLUDE_SRC_PART -printf '%h/%f\n' >> $FILELIST_APP_PURE" >> .exec.tmp
 		echo "find ../$ISO_AG_LIB_PATH/$EACH_REL_APP_PATH/ -follow $APP_SEARCH_HDR_TYPE_PART $APP_SRC_PART $EXCLUDE_PATH_PART $EXCLUDE_SRC_PART -printf '%h/%f\n' >> $FILELIST_APP_HDR" >> .exec.tmp
@@ -879,9 +850,6 @@ create_filelist( )
 
   sh .exec.tmp
 	cat $FILELIST_LIBRARY_PURE $FILELIST_APP_PURE > $FILELIST_COMBINED_PURE
-	if [ $USE_TARGET_SYSTEM = "pc_linux" ] ; then
-		cat $FILELIST_LIBRARY_QMAKE $FILELIST_APP_QMAKE > $FILELIST_COMBINED_QMAKE
-	fi
 	cat $FILELIST_LIBRARY_HDR $FILELIST_APP_HDR > $FILELIST_COMBINED_HDR
   rm -f .exec.tmp
 
