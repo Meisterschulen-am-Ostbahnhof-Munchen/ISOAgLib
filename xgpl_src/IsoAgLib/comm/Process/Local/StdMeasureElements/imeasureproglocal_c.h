@@ -158,7 +158,7 @@ public:
     return the c_isoName code for this measureProg
     @return ISOName of this measureProg
   */
-  const iISOName_c& isoName(){return MeasureProgLocal_c::isoName().toConstIisoName_c();};
+  const iIsoName_c& isoName(){return MeasureProgLocal_c::isoName().toConstIisoName_c();};
   /**
     deliver the type of the active increment types
     @return actual Bit-OR combined increment types

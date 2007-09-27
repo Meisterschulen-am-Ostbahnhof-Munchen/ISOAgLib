@@ -55,15 +55,15 @@ public:
   bool operator!=(const DevClassFlexManager_c& rrefc_comp)const{return (c_remoteISOName != rrefc_comp.c_remoteISOName)?true:false;};
   bool operator<(const DevClassFlexManager_c& rrefc_comp)const{return (c_remoteISOName < rrefc_comp.c_remoteISOName)?true:false;};
 
-  bool operator==(const IsoAgLib::iISOName_c& rc_comp)const{return (c_remoteISOName == rc_comp)?true:false;};
-  bool operator!=(const IsoAgLib::iISOName_c& rc_comp)const{return (c_remoteISOName != rc_comp)?true:false;};
-  bool operator<(const IsoAgLib::iISOName_c& rc_comp)const{return (c_remoteISOName < rc_comp)?true:false;};
+  bool operator==(const IsoAgLib::iIsoName_c& rc_comp)const{return (c_remoteISOName == rc_comp)?true:false;};
+  bool operator!=(const IsoAgLib::iIsoName_c& rc_comp)const{return (c_remoteISOName != rc_comp)?true:false;};
+  bool operator<(const IsoAgLib::iIsoName_c& rc_comp)const{return (c_remoteISOName < rc_comp)?true:false;};
   /**
     activate with creating the needed ProcessData
     @param rpc_monitor pointer to member_item of data delivering member
     @param rpc_localISOName pointer to local member DEVKEY for sending of commands
   */
-  void activate(IsoAgLib::iDINItem_c* rpc_monitor, IsoAgLib::iISOName_c* rpc_localISOName);
+  void activate(IsoAgLib::iDINItem_c* rpc_monitor, IsoAgLib::iIsoName_c* rpc_localISOName);
   /** deactivate with deleting the created ProcessDatas */
   void deactivate();
   /**

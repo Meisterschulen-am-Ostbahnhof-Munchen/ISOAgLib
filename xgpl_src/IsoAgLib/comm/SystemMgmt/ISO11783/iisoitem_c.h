@@ -71,153 +71,156 @@ namespace IsoAgLib {
 
 /** item class for ISO 11783 members monitor list to manage
   local (with address claim) and remote (statistic information)
-  systems; utilizes ISOItem_c for basic MonitorList
-  management and ISOName_c for management of the 64bit NAME field
+  systems; utilizes IsoItem_c for basic MonitorList
+  management and IsoName_c for management of the 64bit NAME field
   @short Item with services needed for ISO11783 monitor lists.
   @author Dipl.-Inform. Achim Spangler
   @see iMonitorItem
 */
-class iISOItem_c : private __IsoAgLib::ISOItem_c {
+class iIsoItem_c : private __IsoAgLib::IsoItem_c {
 private:
   friend class iIdentItem_c;
   friend class iSystemMgmt_c;
-  friend class iISOMonitor_c;
-  friend class iCANPkgExt_c;
+  friend class iIsoMonitor_c;
+  friend class iCanPkgExt_c;
   friend class __IsoAgLib::ProprietaryMessageHandler_c;
 
 public:
   /** deliver the ISOName code of this item
     @return ISOName code
   */
-  const iISOName_c& isoName()const{return ISOItem_c::isoName().toConstIisoName_c();}
+  const iIsoName_c& isoName()const{return IsoItem_c::isoName().toConstIisoName_c();}
   /** deliver the number/adress of this item
     @return number
   */
-  uint8_t nr() const {return ISOItem_c::nr();}
+  uint8_t nr() const {return IsoItem_c::nr();}
 
   /** deliver name
     @return pointer to the name uint8_t string (7byte)
   */
-  virtual const uint8_t* name() const { return ISOItem_c::name();}
+  virtual const uint8_t* name() const { return IsoItem_c::name();}
 
   /** get self config mode
     @return self configuration adress state
   */
-  uint8_t selfConf() const {return ISOItem_c::selfConf();}
+  uint8_t selfConf() const {return IsoItem_c::selfConf();}
 
   /** get industry group code
     @return industry group of device
   */
-  uint8_t indGroup() const {return ISOItem_c::indGroup();}
+  uint8_t indGroup() const {return IsoItem_c::indGroup();}
 
   /** get device class instance number
     @return:device class instance number
   */
-  uint8_t devClassInst() const {return ISOItem_c::devClassInst();}
+  uint8_t devClassInst() const {return IsoItem_c::devClassInst();}
 
   /** get device class code
     @return:device class
   */
-  uint8_t devClass() const {return ISOItem_c::devClass();}
+  uint8_t devClass() const {return IsoItem_c::devClass();}
 
   /** get function code
     @return function code
   */
-  uint8_t func() const {return ISOItem_c::func();}
+  uint8_t func() const {return IsoItem_c::func();}
 
   /** get function instance code
     @return function instance code
   */
-  uint8_t funcInst() const {return ISOItem_c::funcInst();}
+  uint8_t funcInst() const {return IsoItem_c::funcInst();}
 
   /** get ECU instance code
     @return ECU instance code
   */
-  uint8_t ecuInst() const {return ISOItem_c::ecuInst();}
+  uint8_t ecuInst() const {return IsoItem_c::ecuInst();}
 
   /** get manufactor code
     @return manufactor code
   */
-  uint16_t manufCode() const {return ISOItem_c::manufCode();}
+  uint16_t manufCode() const {return IsoItem_c::manufCode();}
 
   /** get serial number
     @return serial number
   */
-  uint32_t serNo() const {return ISOItem_c::serNo();}
+  uint32_t serNo() const {return IsoItem_c::serNo();}
 
   /** check if specific state is set
     @param ren_itemState state information to check
     @return true -> the given state is set
   */
-  bool itemState(itemState_t ren_itemState) const {return ISOItem_c::itemState(ren_itemState);}
+  bool itemState(itemState_t ren_itemState) const {return IsoItem_c::itemState(ren_itemState);}
 
   /** deliver the state information
     @return state information of type itemState_t (with state informations coded by OR in enum)
   */
-  const itemState_t itemState() const {return ISOItem_c::itemState();}
+  const itemState_t itemState() const {return IsoItem_c::itemState();}
 
   /** set the state of a local memberItem and send optional the new state, if
     Item::off, Item::standby or Item::active was set
     @param ren_itemState wante new state (independent old values aren't changed)
     @return resulting state
   */
-  itemState_t setItemState(itemState_t ren_itemState) {return ISOItem_c::setItemState(ren_itemState, false);}
+  itemState_t setItemState(itemState_t ren_itemState) {return IsoItem_c::setItemState(ren_itemState, false);}
 
   /** set self config mode
     @param rb_selfConf true -> indicate sefl configuring ECU
   */
-  void setSelfConf(bool rb_selfConf) {ISOItem_c::setSelfConf(rb_selfConf);}
+  void setSelfConf(bool rb_selfConf) {IsoItem_c::setSelfConf(rb_selfConf);}
 
   /** set industry group code
     @param rui8_indGroup industry group of device (2 for agriculture)
   */
-  void setIndGroup(uint8_t rui8_indGroup) {ISOItem_c::setIndGroup(rui8_indGroup);}
+  void setIndGroup(uint8_t rui8_indGroup) {IsoItem_c::setIndGroup(rui8_indGroup);}
 
   /** set device class instance number
     @param rui8_devClassInst instance number of ECU with same devClass in the network
   */
-  void setDevClassInst(uint8_t rui8_devClassInst) {ISOItem_c::setDevClassInst(rui8_devClassInst);}
+  void setDevClassInst(uint8_t rui8_devClassInst) {IsoItem_c::setDevClassInst(rui8_devClassInst);}
 
   /** set device class code
     @param rui8_devClass device class of ECU
   */
-  void setDevClass(uint8_t rui8_devClass) {ISOItem_c::setDevClass(rui8_devClass);}
+  void setDevClass(uint8_t rui8_devClass) {IsoItem_c::setDevClass(rui8_devClass);}
 
   /** set function code
     @param rb_func function of the ECU (usual 25 for network interconnect)
   */
-  void setFunc(uint8_t rb_func) {ISOItem_c::setFunc(rb_func);}
+  void setFunc(uint8_t rb_func) {IsoItem_c::setFunc(rb_func);}
 
   /** set function instance code
     @param rb_funcInst instance number of ECU with same function and device class
         (default 0 - normally)
   */
-  void setFuncInst(uint8_t rb_funcInst) {ISOItem_c::setFuncInst(rb_funcInst);}
+  void setFuncInst(uint8_t rb_funcInst) {IsoItem_c::setFuncInst(rb_funcInst);}
 
   /** set ECU instance code
     @param rb_funcInst instance number of ECU with same function, device class and function instance
         (default 0 - normally)
   */
-  void setEcuInst(uint8_t rb_ecuInst) {ISOItem_c::setEcuInst(rb_ecuInst);}
+  void setEcuInst(uint8_t rb_ecuInst) {IsoItem_c::setEcuInst(rb_ecuInst);}
 
   /** set manufactor code
     @param rui16_manufCode code of manufactor (11bit)
   */
-  void setManufCode(uint16_t rui16_manufCode) {ISOItem_c::setManufCode(rui16_manufCode);}
+  void setManufCode(uint16_t rui16_manufCode) {IsoItem_c::setManufCode(rui16_manufCode);}
 
   /** set serial number (Identity Number)
     @param rui32_serNo serial no of specific device (21bit)
   */
-  void setSerNo(uint32_t rui32_serNo) {ISOItem_c::setSerNo(rui32_serNo);}
+  void setSerNo(uint32_t rui32_serNo) {IsoItem_c::setSerNo(rui32_serNo);}
 
 
 #ifdef USE_WORKING_SET
   /** check if item has announced its working-set description
       normally just use for WorkingSet-Master!
       if called for anything else, it is simply returned if this item has successfully claimed its address! */
-  bool isWsAnnounced() const { return ISOItem_c::isClaimedAndWsAnnounced(); }
+  bool isWsAnnounced() const { return IsoItem_c::isClaimedAndWsAnnounced(); }
 #endif
 };
+
+/** this typedef is only for some time to provide backward compatibility at API level */
+typedef iIsoItem_c iISOItem_c;
 
 }
 

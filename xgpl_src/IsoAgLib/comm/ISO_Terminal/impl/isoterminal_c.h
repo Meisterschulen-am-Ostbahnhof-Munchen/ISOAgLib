@@ -104,16 +104,16 @@ namespace __IsoAgLib {
 // forward declarations
 class VtClientServerCommunication_c;
 class iIdentItem_c;
-class ISOTerminal_c;
-typedef SINGLETON_DERIVED(ISOTerminal_c,ElementBase_c) SingletonISOTerminal_c;
+class IsoTerminal_c;
+typedef SINGLETON_DERIVED(IsoTerminal_c,ElementBase_c) SingletonIsoTerminal_c;
 
 /** central IsoAgLib terminal management object */
-class ISOTerminal_c : public SingletonISOTerminal_c {
+class IsoTerminal_c : public SingletonIsoTerminal_c {
 public:
   /** default destructor
-  @see ISOTerminal_c::~ISOTerminal_c
+  @see IsoTerminal_c::~IsoTerminal_c
   */
-  virtual ~ISOTerminal_c();
+  virtual ~IsoTerminal_c();
 
   /** initialise element which can't be done during construct and registerIsoObjectPool
     possible errors:
@@ -138,14 +138,14 @@ public:
   bool sendCommandForDEBUG(IsoAgLib::iIdentItem_c& rpc_wsMasterIdentItem, uint8_t* rpui8_buffer, uint32_t ui32_size);
 
   /** deliver reference to data pkg
-    @return reference to the member ISOTerminalPkg_c, which encapsulates the CAN send structure
+    @return reference to the member IsoTerminalPkg_c, which encapsulates the CAN send structure
   */
-  CANPkgExt_c& data(){return c_data;};
+  CanPkgExt_c& data(){return c_data;};
 
-  /** deliver reference to data pkg as reference to CANPkgExt_c
+  /** deliver reference to data pkg as reference to CanPkgExt_c
     to implement the base virtual function correct
   */
-  virtual CANPkgExt_c& dataBase();
+  virtual CanPkgExt_c& dataBase();
 
 
   VtClientServerCommunication_c& getClientByID (uint8_t ui8_clientIndex) { return *vec_vtClientServerComm[ui8_clientIndex]; }
@@ -171,11 +171,11 @@ public:
  virtual const char* getTaskName() const;
 
 private:
-  friend class SINGLETON_DERIVED(ISOTerminal_c, ElementBase_c);
+  friend class SINGLETON_DERIVED(IsoTerminal_c, ElementBase_c);
   /** private constructor which prevents direct instantiation in user application
-    * NEVER define instance of ISOTerminal_c within application
+    * NEVER define instance of IsoTerminal_c within application
     */
-  ISOTerminal_c();
+  IsoTerminal_c();
 
   /**
     initialize directly after the singleton instance is created.
@@ -184,16 +184,16 @@ private:
   */
   void singletonInit();
 
-  /** this function is called by ISOMonitor_c when a new CLAIMED ISOItem_c is registered.
-   * @param refc_isoName const reference to the item which ISOItem_c state is changed
-   * @param rpc_newItem pointer to the currently corresponding ISOItem_c
+  /** this function is called by IsoMonitor_c when a new CLAIMED IsoItem_c is registered.
+   * @param refc_isoName const reference to the item which IsoItem_c state is changed
+   * @param rpc_newItem pointer to the currently corresponding IsoItem_c
    */
-  void reactOnMonitorListAdd (const ISOName_c& refc_isoName, const ISOItem_c* rpc_newItem);
-   /** this function is called by ISOMonitor_c when a device looses its ISOItem_c.
-   * @param refc_isoName const reference to the item which ISOItem_c state is changed
+  void reactOnMonitorListAdd (const IsoName_c& refc_isoName, const IsoItem_c* rpc_newItem);
+   /** this function is called by IsoMonitor_c when a device looses its IsoItem_c.
+   * @param refc_isoName const reference to the item which IsoItem_c state is changed
    * @param rui8_oldSa previously used SA which is NOW LOST -> clients which were connected to this item can react explicitly
     */
-  void reactOnMonitorListRemove (const ISOName_c& refc_isoName, uint8_t rui8_oldSa);
+  void reactOnMonitorListRemove (const IsoName_c& refc_isoName, uint8_t rui8_oldSa);
 
   // helper function to shield removal access to vtCSC-list
   void deregisterIsoObjectPoolInd (uint8_t rui8_index);
@@ -207,7 +207,7 @@ protected:
 private: // attributes
 
   /** temp data where received data is put */
-  CANPkgExt_c c_data;
+  CanPkgExt_c c_data;
 
   STL_NAMESPACE::list<VtServerInstance_c> l_vtServerInst;
 
@@ -218,11 +218,14 @@ private: // attributes
   /** C-style function, to get access to the unique Scheduler_c singleton instance
     * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
     */
-  ISOTerminal_c& getIsoTerminalInstance(uint8_t rui8_instance = 0);
+  IsoTerminal_c& getIsoTerminalInstance(uint8_t rui8_instance = 0);
 #else
   /** C-style function, to get access to the unique Scheduler_c singleton instance */
-  ISOTerminal_c& getIsoTerminalInstance(void);
+  IsoTerminal_c& getIsoTerminalInstance(void);
 #endif
+
+/** this typedef is only for some time to provide backward compatibility at API level */
+typedef IsoTerminal_c ISOTerminal_c;
 
 }
 #endif

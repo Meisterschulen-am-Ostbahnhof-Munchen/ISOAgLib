@@ -60,7 +60,7 @@
  * <ol>
  * <li>Interaction with virtual ISO 11783 Terminal
  * <ul>
- *  <li>Register Mask Pool at IsoAgLib::iISOTerminal_c with IsoAgLib::iISOTerminal_c::registerIsoObjectPool()
+ *  <li>Register Mask Pool at IsoAgLib::iIsoTerminal_c with IsoAgLib::iIsoTerminal_c::registerIsoObjectPool()
  *  <li>Use event handler which are derived from IsoAgLib::iIsoTerminalObjectPool_c
  *  <li>Implementation of abstract IsoAgLib::iIsoTerminalObjectPool_c::eventNumericValue
  *    to react on received numeric value which was selected at terminal
@@ -585,7 +585,7 @@ int main()
   // the following line can be used to retrieve the reference to the used ISOName.
   // Attention: while not announced, some instance fields can change!
   // That's why you get a reference to the ISOName!
-  /// IsoAgLib::iISOName_c const &myISOName = c_myIdent.isoName();
+  /// IsoAgLib::iIsoName_c const &myISOName = c_myIdent.isoName();
 
   // Call to init iIsoTerminal instance and initialize object pool!
   spc_tut30csc = getIisoTerminalInstance().initAndRegisterIsoObjectPool (c_myIdent, Tutorial_3_0_Pool_c, "T30v2"); // PoolName: Tutorial 3.0 Version 2
@@ -638,7 +638,7 @@ int main()
      #ifdef WIN32
      if ( i32_idleTimeSpread > 0 ) Sleep( i32_idleTimeSpread );
      #else
-     if ( i32_idleTimeSpread > 0 ) IsoAgLib::iCANIO_c::waitUntilCanReceiveOrTimeout( i32_idleTimeSpread );
+     if ( i32_idleTimeSpread > 0 ) IsoAgLib::iCanIo_c::waitUntilCanReceiveOrTimeout( i32_idleTimeSpread );
      #endif
     #endif
   }

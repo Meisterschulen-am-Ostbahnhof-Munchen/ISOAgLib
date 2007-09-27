@@ -1,5 +1,5 @@
 /***************************************************************************
-                          canpkg_c.cpp - source for CANPkg_c, the
+                          canpkg_c.cpp - source for CanPkg_c, the
                                         encapsulation of CAN telegrams
                              -------------------
     begin                : Sun Aug 1 1999
@@ -86,31 +86,31 @@
 namespace __IsoAgLib {
 
 /** max 8 data bytes defined as union */
-Flexible8ByteString_c CANPkg_c::c_data;
+Flexible8ByteString_c CanPkg_c::c_data;
 
 /** receive time of CAN message */
-int32_t CANPkg_c::i32_time = 0;
+int32_t CanPkg_c::i32_time = 0;
 
 /** identifier of CAN msg */
-__IsoAgLib::Ident_c CANPkg_c::c_ident;
+__IsoAgLib::Ident_c CanPkg_c::c_ident;
 
 /** state of the received can-message */
-MessageState_t CANPkg_c::t_msgState = MessageValid; // no default value is needed, but anyway..
+MessageState_t CanPkg_c::t_msgState = MessageValid; // no default value is needed, but anyway..
 
 /** size of data */
-uint8_t CANPkg_c::ui8_len = 0;
+uint8_t CanPkg_c::ui8_len = 0;
 
 /**
   default constructor, which does nothing for the base class,
   but can do something in derived classes
 */
-CANPkg_c::CANPkg_c( int ri_singletonVecKey )
+CanPkg_c::CanPkg_c( int ri_singletonVecKey )
   : ClientBase( ri_singletonVecKey )
  {
 }
 
 /** virtual destructor, which can be overloaded in derived classes */
-CANPkg_c::~CANPkg_c(){
+CanPkg_c::~CanPkg_c(){
 }
 
 /**
@@ -118,13 +118,13 @@ CANPkg_c::~CANPkg_c(){
   ==> REACTIVATE if some NON-STATIC member vars will be added!
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-  assign operator to insert informations from one CANPkg_c into another
+  assign operator to insert informations from one CanPkg_c into another
   @see __IsoAgLib::FilterBox_c::operator>>
-  @see CANPkgExt_c::operator=
-  @see CANPkgExt_c::getData
-  @param rrefc_right reference to the source CANPkg_c on the right
-  @return reference to the source CANPkg_c to enable assign chains like "pkg1 = pkg2 = pkg3 = pkg4;"
-const CANPkg_c& CANPkg_c::operator=(const CANPkg_c& rrefc_right)
+  @see CanPkgExt_c::operator=
+  @see CanPkgExt_c::getData
+  @param rrefc_right reference to the source CanPkg_c on the right
+  @return reference to the source CanPkg_c to enable assign chains like "pkg1 = pkg2 = pkg3 = pkg4;"
+const CanPkg_c& CanPkg_c::operator=(const CanPkg_c& rrefc_right)
 {
   c_ident = rrefc_right.c_ident;
   ui8_len = rrefc_right.ui8_len;
@@ -142,7 +142,7 @@ const CANPkg_c& CANPkg_c::operator=(const CANPkg_c& rrefc_right)
   @param refb_dlcTarget reference to the DLC field of the target
   @param pb_dataTarget pointer to the data string of the target
 */
-void CANPkg_c::getData(uint32_t& reft_ident, uint8_t& refui8_identType,
+void CanPkg_c::getData(uint32_t& reft_ident, uint8_t& refui8_identType,
                      uint8_t& refb_dlcTarget, uint8_t* pb_dataTarget)
 {
   reft_ident = ident();
@@ -159,7 +159,7 @@ void CANPkg_c::getData(uint32_t& reft_ident, uint8_t& refui8_identType,
   @param rui8_len amount of bytes in the data string
   @param ri32_time optional timestamp of CAN telegram in [msec.] since system start
 */
-void CANPkg_c::set(MASK_TYPE rt_ident, const uint8_t* rpb_data, uint8_t rui8_len, int32_t ri32_time, Ident_c::identType_t rt_type)
+void CanPkg_c::set(MASK_TYPE rt_ident, const uint8_t* rpb_data, uint8_t rui8_len, int32_t ri32_time, Ident_c::identType_t rt_type)
 {
   c_ident.set(rt_ident, rt_type);
   ui8_len = (rui8_len<9)?rui8_len:8;
@@ -173,7 +173,7 @@ void CANPkg_c::set(MASK_TYPE rt_ident, const uint8_t* rpb_data, uint8_t rui8_len
   @param rb_data pointer to source data uint8_t array
   @param rui8_len amount/len of the source data string
 */
-void CANPkg_c::setDataFromString(const uint8_t* rpb_data, uint8_t rui8_len)
+void CanPkg_c::setDataFromString(const uint8_t* rpb_data, uint8_t rui8_len)
 {
   if ( rui8_len > 0 )
   { // there is something to set - this function might be called from some generic algorithms which rely
@@ -191,7 +191,7 @@ void CANPkg_c::setDataFromString(const uint8_t* rpb_data, uint8_t rui8_len)
   @param rb_data pointer to source data uint8_t array
   @param rui8_len amount/len of the source data string
 */
-void CANPkg_c::setDataFromString(uint8_t rui8_targetPositionOffset, const uint8_t* rpb_data, uint8_t rui8_len)
+void CanPkg_c::setDataFromString(uint8_t rui8_targetPositionOffset, const uint8_t* rpb_data, uint8_t rui8_len)
 {
   if ( rui8_len > 0 )
   { // there is something to set - this function might be called from some generic algorithms which rely
@@ -209,8 +209,8 @@ void CANPkg_c::setDataFromString(uint8_t rui8_targetPositionOffset, const uint8_
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   compare for equality with other CANPkg
   @param rrefc_cmp reference to the to be compared CANPkg
-  @return true -> both CANPkg_c have the same data
-bool CANPkg_c::operator==(const CANPkg_c& rrefc_cmp) const
+  @return true -> both CanPkg_c have the same data
+bool CanPkg_c::operator==(const CanPkg_c& rrefc_cmp) const
 {
   bool b_result = true;
   if (c_data != rrefc_cmp.c_data) b_result = false;
@@ -228,8 +228,8 @@ bool CANPkg_c::operator==(const CANPkg_c& rrefc_cmp) const
 
   compare for difference to other CANPkg
   @param rrefc_cmp reference to the to be compared CANPkg
-  @return true -> both CANPkg_c have different data
-bool CANPkg_c::operator!=(const CANPkg_c& rrefc_cmp) const
+  @return true -> both CanPkg_c have different data
+bool CanPkg_c::operator!=(const CanPkg_c& rrefc_cmp) const
 {
   ANYWAY I THINK THIS LOGIC IS WRONG!!!!!!!!!!!!!!!!!!!!!!!!
 

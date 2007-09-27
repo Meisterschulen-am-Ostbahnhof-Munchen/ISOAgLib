@@ -1,5 +1,5 @@
 /***************************************************************************
-                          canpkg_c.h - header for CANPkg_c, the
+                          canpkg_c.h - header for CanPkg_c, the
                                       encapsulation of CAN telegrams
                              -------------------
     begin                : Sun Aug 1 1999
@@ -127,16 +127,16 @@ typedef enum { MessageValid        = 0,
   other objects and data structures.
   @author Dipl.-Inform. Achim Spangler
 */
-class CANPkg_c : public ClientBase {
+class CanPkg_c : public ClientBase {
 public:
   /**
     default constructor, which does nothing for the base class,
     but can do something in derived classes
   */
-  CANPkg_c( int ri_singletonVecKey = 0 );
+  CanPkg_c( int ri_singletonVecKey = 0 );
 
   /** virtual destructor, which can be overloaded in derived classes */
-  virtual ~CANPkg_c();
+  virtual ~CanPkg_c();
 
   /**
     set ident for the telegram
@@ -298,14 +298,14 @@ public:
     ==> REACTIVATE if some NON-STATIC member vars will be added!
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    assign operator to insert informations from one CANPkg_c into another
+    assign operator to insert informations from one CanPkg_c into another
     @see __IsoAgLib::FilterBox_c::operator>>
-    @see CANPkgExt_c::operator=
-    @see CANPkgExt_c::getData
-    @param rrefc_right reference to the source CANPkg_c on the right
-    @return reference to the source CANPkg_c to enable assign chains like
+    @see CanPkgExt_c::operator=
+    @see CanPkgExt_c::getData
+    @param rrefc_right reference to the source CanPkg_c on the right
+    @return reference to the source CanPkg_c to enable assign chains like
         "pkg1 = pkg2 = pkg3 = pkg4;"
-  virtual const CANPkg_c& operator=(const CANPkg_c& rrefc_right);
+  virtual const CanPkg_c& operator=(const CanPkg_c& rrefc_right);
   */
 
   /**
@@ -318,14 +318,14 @@ public:
   virtual void getData(uint32_t& reft_ident, uint8_t& refui8_identType,
                        uint8_t& refb_dlcTarget, uint8_t* pb_dataTarget);
 
-  /** copy the data bytes from the CANPkg_c to the given uint8_t* pointer.
+  /** copy the data bytes from the CanPkg_c to the given uint8_t* pointer.
       the pointed array must be at least 8 byte in size.
       This function copies as many byte as are defined by ui8_len.
     */
   static void getDataToString( uint8_t* pui8_targetData )
     { c_data.getDataToString( pui8_targetData, ui8_len  ); }
 
-  /** copy the data bytes from the CANPkg_c to the given uint8_t* pointer.
+  /** copy the data bytes from the CanPkg_c to the given uint8_t* pointer.
       the amount of copied data can be restricted by the last parameter.
       The first parameter defines the index of the first copied data byte.
     */
@@ -338,8 +338,8 @@ public:
 
     compare for equality with other CANPkg
     @param rrefc_cmp reference to the to be compared CANPkg
-    @return true -> both CANPkg_c have the same data
-  bool operator==(const CANPkg_c& rrefc_cmp) const;
+    @return true -> both CanPkg_c have the same data
+  bool operator==(const CanPkg_c& rrefc_cmp) const;
   */
 
   /**
@@ -349,8 +349,8 @@ public:
 
     compare for difference to other CANPkg
     @param rrefc_cmp reference to the to be compared CANPkg
-    @return true -> both CANPkg_c have different data
-  bool operator!=(const CANPkg_c& rrefc_cmp) const;
+    @return true -> both CanPkg_c have different data
+  bool operator!=(const CanPkg_c& rrefc_cmp) const;
   */
 
 //protected: // Protected attributes
@@ -369,6 +369,9 @@ public:
   /** size of data */
   static uint8_t ui8_len;
 };
+
+/** this typedef is only for some time to provide backward compatibility at API level */
+typedef CanPkg_c CANPkg_c;
 
 }
 #endif

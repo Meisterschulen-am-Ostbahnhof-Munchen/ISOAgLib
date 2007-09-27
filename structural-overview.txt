@@ -51,8 +51,8 @@ The layered structure is described by the following diagram:
 			rs232_drv			[label="RS232\nSupplementary Driver\nwith IOSTREAMS Like\nRead/Write Access", color="white", URL="\ref IsoAgLib::iRS232IO_c"];
 			sensor_drv		[label="Sensor\nSupplementary Driver\nwith Scaling and Range-Check", color="white", URL="\ref IsoAgLib::iAnalogIRangeCheck_c"];
 			actor_drv			[label="Actor\nSupplementary Driver\nwith State Monitoring Functions", color="white", URL="\ref IsoAgLib::iDigitalO_c"];
-			can_drv				[label="CAN\nIndividual Mask/Filter Settings\nfor Each Filterbox", color="yellow", URL="\ref IsoAgLib::iCANIO_c"];
-			eeprom_drv		[label="EEPROM\nIOSTREAMS Like Read/Write Access", color="yellow", URL="\ref IsoAgLib::iEEPROMIO_c"];
+			can_drv				[label="CAN\nIndividual Mask/Filter Settings\nfor Each Filterbox", color="yellow", URL="\ref IsoAgLib::iCanIo_c"];
+			eeprom_drv		[label="EEPROM\nIOSTREAMS Like Read/Write Access", color="yellow", URL="\ref IsoAgLib::iEepromIo_c"];
 			common_drv		[label="Common System Access\nGlobally Used", color="yellow", URL="\ref IsoAgLib::iSystem_c"];
 			drv_doc				[label="Provide Driver Features wich are\nnot part of most Platforms",width=3.5];
 		}

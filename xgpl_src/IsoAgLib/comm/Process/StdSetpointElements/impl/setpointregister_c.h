@@ -123,7 +123,7 @@ public:
     @param rb_master true -> this setpoint register instance represents the actual master setpoint
     @param rb_valid true -> this setpoint register instance is accepted as valid
   */
-  SetpointRegister_c(const ISOName_c& rc_isoName = ISOName_c::ISONameUnspecified(), int32_t ri32_exact = NO_VAL_32S,
+  SetpointRegister_c(const IsoName_c& rc_isoName = IsoName_c::IsoNameUnspecified(), int32_t ri32_exact = NO_VAL_32S,
       int32_t ri32_min = NO_VAL_32S, int32_t ri32_max = NO_VAL_32S, int32_t ri32_default = NO_VAL_32S,
       bool rb_handled = false, bool rb_master = false, bool rb_valid = true)
       {  init(rc_isoName, ri32_exact, ri32_min, ri32_max, ri32_default, rb_handled, rb_master, rb_valid);}
@@ -138,7 +138,7 @@ public:
     @param rb_master true -> this setpoint register instance represents the actual master setpoint
     @param rb_valid true -> this setpoint register instance is accepted as valid
   */
-  void init(const ISOName_c& rc_isoName = ISOName_c::ISONameUnspecified(), int32_t ri32_exact = NO_VAL_32S,
+  void init(const IsoName_c& rc_isoName = IsoName_c::IsoNameUnspecified(), int32_t ri32_exact = NO_VAL_32S,
       int32_t ri32_min = NO_VAL_32S, int32_t ri32_max = NO_VAL_32S, int32_t ri32_default = NO_VAL_32S,
       bool rb_handled = false, bool rb_master = false, bool rb_valid = true);
 
@@ -172,7 +172,7 @@ public:
     deliver isoName of commanding member
     @return ISOName of setpoint commander
   */
-  const ISOName_c& isoName()const{return c_requestISOName;}
+  const IsoName_c& isoName()const{return c_requestISOName;}
   /**
     deliver the exact setpoint
     @return exact setpoint value
@@ -286,7 +286,7 @@ public:
     set isoName of cammanding member
     @param rc_isoName ISOName of commanding member
   */
-  void setISOName(const ISOName_c& rc_val){c_requestISOName = rc_val;}
+  void setISOName(const IsoName_c& rc_val){c_requestISOName = rc_val;}
   /**
     set isoName of cammanding member
     @param rc_isoName ISOName of commanding member
@@ -397,7 +397,7 @@ private: // Private attributes
   /** tiemstamp of last setXx operation */
   int32_t i32_lastHandledTime;
   /** isoName code of requester */
-  ISOName_c c_requestISOName;
+  IsoName_c c_requestISOName;
   struct {
     /** master state == the setpoint requester can change the value if needed */
     bool b_master : 1;

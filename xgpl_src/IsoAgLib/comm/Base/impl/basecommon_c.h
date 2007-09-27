@@ -129,12 +129,12 @@ namespace __IsoAgLib
     /** initialise element which can't be done during construct;
         above all create the needed FilterBox_c instances
         possible errors:
-          * dependant error in CANIO_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
+          * dependant error in CanIo_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
         @param rpc_isoName optional pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
         @param ai_singletonVecKey singleton vector key in case PRT_INSTANCE_CNT > 1
         @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       */
-    virtual void init_base (const ISOName_c*, int ai_singletonVecKey, IsoAgLib::IdentMode_t rt_identMode = IsoAgLib::IdentModeImplement);
+    virtual void init_base (const IsoName_c*, int ai_singletonVecKey, IsoAgLib::IdentMode_t rt_identMode = IsoAgLib::IdentModeImplement);
 
     /** tractor object after init --> store isoName and mode
         this function was originally named "config", but to avoid warnings with the interface classes'
@@ -143,27 +143,27 @@ namespace __IsoAgLib
         @param rpc_isoName pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
         @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       */
-    virtual bool config_base (const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode = IsoAgLib::IdentModeImplement, uint16_t rui16_suppressMask = 0);
+    virtual bool config_base (const IsoName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode = IsoAgLib::IdentModeImplement, uint16_t rui16_suppressMask = 0);
 
      /** deliver reference to data pkg
          @return reference to the member CanPkg, which encapsulates the CAN send structure
         */
-    CANPkgExt_c& data() {return c_data;};
+    CanPkgExt_c& data() {return c_data;};
 
     /**
       virtual function which delivers a pointer to the CANCustomer
-      specific CANPkgExt_c instance
+      specific CanPkgExt_c instance
     */
-    virtual CANPkgExt_c& dataBase();
+    virtual CanPkgExt_c& dataBase();
 
     /** functions with actions, which must be performed periodically
         -> called periodically by Scheduler_c
         ==> sends base msg if configured in the needed rates
         possible errors:
-          * dependant error in CANIO_c on CAN send problems
-        @see CANPkg_c::getData
-        @see CANPkgExt_c::getData
-        @see CANIO_c::operator<<
+          * dependant error in CanIo_c on CAN send problems
+        @see CanPkg_c::getData
+        @see CanPkgExt_c::getData
+        @see CanIo_c::operator<<
         @return true -> all planned activities performed in allowed time
       */
     virtual bool timeEvent(void);
@@ -174,7 +174,7 @@ namespace __IsoAgLib
     /** check if preconditions for request for pgn are fullfilled
         @return  true -> the request for pgn can be send
       */
-    virtual bool check4ReqForPgn(uint32_t rui32_pgn, ISOItem_c* rpc_isoItemSender, ISOItem_c* rpc_isoItemReceiver);
+    virtual bool check4ReqForPgn(uint32_t rui32_pgn, IsoItem_c* rpc_isoItemSender, IsoItem_c* rpc_isoItemReceiver);
 
     /** send a ISO11783 base information PGN.
       * this is only called when sending ident is configured and it has already claimed an address
@@ -196,7 +196,7 @@ namespace __IsoAgLib
     void setUpdateTime(int32_t updateTime) {i32_lastMsgReceived = updateTime;}
 
     /** check if a received message should be parsed */
-    bool checkParseReceived(const ISOName_c& rrefc_currentSender) const;
+    bool checkParseReceived(const IsoName_c& rrefc_currentSender) const;
 
     /** return if you currently are in implement mode or tractor mode*/
     bool checkMode(IsoAgLib::IdentMode_t rt_identMode) const {return (t_identMode == rt_identMode);}
@@ -211,13 +211,13 @@ namespace __IsoAgLib
     void clearFilterCreated() {b_filterCreated = false;}
 
     /** return sender of a msg*/
-    const ISOName_c* getISOName() const {return pc_isoName;}
+    const IsoName_c* getISOName() const {return pc_isoName;}
 
     /** get evkey of data source (e.g. tractor, terminal) from which commands are send exclusively */
-    ISOName_c& getSelectedDataSourceISOName() {return c_selectedDataSourceISOName;}
+    IsoName_c& getSelectedDataSourceISOName() {return c_selectedDataSourceISOName;}
 
     /** get Devkey of data source (e.g. tractor, terminal) from which commands are send exclusively */
-    const ISOName_c& getSelectedDataSourceISONameConst() const {return c_selectedDataSourceISOName;}
+    const IsoName_c& getSelectedDataSourceISONameConst() const {return c_selectedDataSourceISOName;}
 
     /** get actual mode */
     IsoAgLib::IdentMode_t getMode() const {return t_identMode;}
@@ -226,7 +226,7 @@ namespace __IsoAgLib
     void setMode(IsoAgLib::IdentMode_t rt_identMode) {t_identMode = rt_identMode;}
 
     /** set Devkey of data source (e.g. tractor, terminal) which sends commands exclusively */
-    void setSelectedDataSourceISOName(const ISOName_c& rc_dataSourceISOName){c_selectedDataSourceISOName = rc_dataSourceISOName;}
+    void setSelectedDataSourceISOName(const IsoName_c& rc_dataSourceISOName){c_selectedDataSourceISOName = rc_dataSourceISOName;}
 
     /** if a message is not send after 3 seconds it is expected that the sending node stopped sending */
     static const uint16_t TIMEOUT_SENDING_NODE = 3000;
@@ -245,7 +245,7 @@ namespace __IsoAgLib
     virtual void checkCreateReceiveFilter() = 0;
 
     /** set sender of a msg*/
-    void setISOName(const ISOName_c* isoName) {pc_isoName = isoName;}
+    void setISOName(const IsoName_c* isoName) {pc_isoName = isoName;}
 
 
     // private attributes
@@ -261,13 +261,13 @@ namespace __IsoAgLib
     /** isoName which act as sender of a msg: either responses on behalf of implement or commands as tractor.
         This pointer is set in config function
       */
-    const ISOName_c* pc_isoName;
+    const IsoName_c* pc_isoName;
 
     /** Devkey of data source (e.g. tractor, terminal) from which commands are send exclusively */
-    ISOName_c c_selectedDataSourceISOName;
+    IsoName_c c_selectedDataSourceISOName;
 
     /** temp data where received data is put */
-    CANPkgExt_c c_data;
+    CanPkgExt_c c_data;
   };
 
 }// end namespace __IsoAgLib

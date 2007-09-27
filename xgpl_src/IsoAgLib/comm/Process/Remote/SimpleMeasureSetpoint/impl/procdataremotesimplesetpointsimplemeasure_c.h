@@ -126,7 +126,7 @@ namespace __IsoAgLib {
   iProcDataRemoteSimpleSetpoint_c c_workState;
   // init for LIS=0, remote device type/subtype=5/0, complete work width=0xFF,
   // target process data/PRI=2, pointer to my local device type ( to resolve dynamic SA at time of cmd send )
-  c_workState.init( 0, IsoAgLib::ISOName_c( 0x5, 0 ), 0x5, 0x0, 0xFF, 2, IsoAgLib::ISOName_c( 0x5, 0 ), &c_myISOName );
+  c_workState.init( 0, IsoAgLib::IsoName_c( 0x5, 0 ), 0x5, 0x0, 0xFF, 2, IsoAgLib::IsoName_c( 0x5, 0 ), &c_myISOName );
 
   // request current measurement value ( real value, which can differ from commanded value ); triger update request
   int lastReceivedMeasureState = c_workState.masterVal( true );
@@ -148,8 +148,8 @@ class ProcDataRemoteSimpleSetpointSimpleMeasure_c : public ProcDataRemoteBase_c 
   /**
     constructor which can set all element vars
     ISO parameter
-    @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
-                         (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
+    @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDdi_s which contains DDI, element, isSetpoint and ValueGroup
+                         (array is terminated by ElementDdi_s.ui16_element == 0xFFFF)
 
     @param rc_isoName optional ISOName code of this instance
     @param rui8_pri PRI code of messages with this process data instance (default 2)
@@ -158,19 +158,19 @@ class ProcDataRemoteSimpleSetpointSimpleMeasure_c : public ProcDataRemoteBase_c 
     @param rpc_processDataChangeHandler optional pointer to handler class of application
     @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
-  ProcDataRemoteSimpleSetpointSimpleMeasure_c(const IsoAgLib::ElementDDI_s* ps_elementDDI = NULL,
-                                              const ISOName_c& rc_isoName = ISOName_c::ISONameInitialProcessData(),
+  ProcDataRemoteSimpleSetpointSimpleMeasure_c(const IsoAgLib::ElementDdi_s* ps_elementDDI = NULL,
+                                              const IsoName_c& rc_isoName = IsoName_c::IsoNameInitialProcessData(),
                                               uint8_t rui8_pri = 2,
-                                              const ISOName_c& rc_ownerISOName = ISOName_c::ISONameUnspecified(),
-                                              const ISOName_c* rpc_commanderISOName = NULL,
+                                              const IsoName_c& rc_ownerISOName = IsoName_c::IsoNameUnspecified(),
+                                              const IsoName_c* rpc_commanderISOName = NULL,
                                               IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
                                               int ri_singletonVecKey = 0);
 
   /**
     initialise this SimpleManageMeasureProgRemote_c instance to a well defined initial state
     ISO parameter
-    @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
-                         (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
+    @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDdi_s which contains DDI, element, isSetpoint and ValueGroup
+                         (array is terminated by ElementDdi_s.ui16_element == 0xFFFF)
 
     @param rc_isoName optional ISOName code of this instance
     @param rui8_pri PRI code of messages with this process data instance (default 2)
@@ -179,11 +179,11 @@ class ProcDataRemoteSimpleSetpointSimpleMeasure_c : public ProcDataRemoteBase_c 
     @param rpc_processDataChangeHandler optional pointer to handler class of application
     @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
-  void init(const IsoAgLib::ElementDDI_s* ps_elementDDI,
-            const ISOName_c& rc_isoName = ISOName_c::ISONameInitialProcessData(),
+  void init(const IsoAgLib::ElementDdi_s* ps_elementDDI,
+            const IsoName_c& rc_isoName = IsoName_c::IsoNameInitialProcessData(),
             uint8_t rui8_pri = 2,
-            const ISOName_c& rc_ownerISOName = ISOName_c::ISONameUnspecified(),
-            const ISOName_c* rpc_commanderISOName = NULL,
+            const IsoName_c& rc_ownerISOName = IsoName_c::IsoNameUnspecified(),
+            const IsoName_c* rpc_commanderISOName = NULL,
             IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
             int ri_singletonVecKey = 0);
 

@@ -900,7 +900,7 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
     // ###########################################
     uint8_t i = 0;
     const uint8_t *mastername;
-    __IsoAgLib::ISOName_c c_isoname;
+    __IsoAgLib::IsoName_c c_isoname;
     switch (objType)
     {
       case otDevice:
@@ -1348,7 +1348,7 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
           ui8_amount = (ui8_amount-2) / 3;
           // output to header-file
           fprintf(partFileB, "static const uint16_t scui16_%sElementNumber = %i;\n", vecstr_dataForCombination[1].c_str(), stringtonumber(vecstr_dataForCombination[0].c_str(), 0, -1));
-          fprintf(partFileB, "const IsoAgLib::ElementDDI_s s_%sElementDDI[] =\n{\n", vecstr_dataForCombination[1].c_str());
+          fprintf(partFileB, "const IsoAgLib::ElementDdi_s s_%sElementDDI[] =\n{\n", vecstr_dataForCombination[1].c_str());
           uint8_t index=0;
           for (; index<ui8_amount; index++)
           {

@@ -119,8 +119,8 @@ namespace __IsoAgLib {
 /**
   constructor which can optional set all member values
     ISO parameter
-    @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, isSetpoint and ValueGroup
-                         (array is terminated by ElementDDI_s.ddi == 0xFFFF)
+    @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDdi_s which contains DDI, isSetpoint and ValueGroup
+                         (array is terminated by ElementDdi_s.ddi == 0xFFFF)
     @param ui16_element device element number
 
     common parameter
@@ -132,13 +132,13 @@ namespace __IsoAgLib {
     @param rpc_ownerISOName pointer to the optional ISOName var of the owner (for automatic update as soon
             as corresponding device is registered as having claimed address in monitor table list)
   */
-  ProcIdent_c::ProcIdent_c( const IsoAgLib::ElementDDI_s* rps_elementDDI, uint16_t rui16_element,
-                            const ISOName_c& rc_isoName, const ISOName_c& rc_ownerISOName,
-                            const ISOName_c *rpc_ownerISOName, int ri_singletonVecKey)
+  ProcIdent_c::ProcIdent_c( const IsoAgLib::ElementDdi_s* rps_elementDDI, uint16_t rui16_element,
+                            const IsoName_c& rc_isoName, const IsoName_c& rc_ownerISOName,
+                            const IsoName_c *rpc_ownerISOName, int ri_singletonVecKey)
   : ClientBase( ri_singletonVecKey ),
     pc_ownerISOName(NULL),
-    c_ownerISOName(ISOName_c::ISONameUnspecified()),
-		c_isoName(ISOName_c::ISONameUnspecified())
+    c_ownerISOName(IsoName_c::IsoNameUnspecified()),
+		c_isoName(IsoName_c::IsoNameUnspecified())
 {
   init( rps_elementDDI, rui16_element, rc_isoName, rc_ownerISOName, rpc_ownerISOName);
 }
@@ -157,8 +157,8 @@ ProcIdent_c::ProcIdent_c( const ProcIdent_c& rrefc_src )
 /**
     initialisation which can set this process data instance to a defined intial state
     ISO parameter
-    @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, isSetpoint and ValueGroup
-                         (array is terminated by ElementDDI_s.ddi == 0xFFFF)
+    @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDdi_s which contains DDI, isSetpoint and ValueGroup
+                         (array is terminated by ElementDdi_s.ddi == 0xFFFF)
     @param ui16_element device element number
 
     common parameter
@@ -170,9 +170,9 @@ ProcIdent_c::ProcIdent_c( const ProcIdent_c& rrefc_src )
     @param rpc_ownerISOName pointer to the optional ISOName var of the owner (for automatic update as soon
             as corresponding device is registered as having claimed address in monitor table list)
 */
-void ProcIdent_c::init( const IsoAgLib::ElementDDI_s* rps_elementDDI, uint16_t rui16_element,
-                        const ISOName_c& rc_isoName, const ISOName_c& rc_ownerISOName,
-                        const ISOName_c *rpc_ownerISOName)
+void ProcIdent_c::init( const IsoAgLib::ElementDdi_s* rps_elementDDI, uint16_t rui16_element,
+                        const IsoName_c& rc_isoName, const IsoName_c& rc_ownerISOName,
+                        const IsoName_c *rpc_ownerISOName)
 {
   setElementDDI(rps_elementDDI);
   setElementNumber(rui16_element);
@@ -221,7 +221,7 @@ ProcIdent_c::~ProcIdent_c(){
   set DEVCLASS and _instance_ of owner by giving pointer to owner ISOName
   @param rpc_val pointer to owner ISOName
 */
-void ProcIdent_c::setOwnerISOName(const ISOName_c* rpc_val)
+void ProcIdent_c::setOwnerISOName(const IsoName_c* rpc_val)
 {
   pc_ownerISOName = rpc_val;
   c_ownerISOName = *rpc_val;
@@ -245,15 +245,15 @@ void ProcIdent_c::setOwnerISOName(const ISOName_c* rpc_val)
 
    @return true -> this instance has same Process-Data identity
 */
-bool ProcIdent_c::matchISO( const ISOName_c& rrefc_isoNameSender,
-                            const ISOName_c& rrefc_isoNameReceiver,
+bool ProcIdent_c::matchISO( const IsoName_c& rrefc_isoNameSender,
+                            const IsoName_c& rrefc_isoNameReceiver,
                             uint16_t rui16_DDI,
                             uint16_t rui16_element
                           ) const
 {
   // check wether current element/DDI combination matches one list element in process data element/DDI list
   if (rui16_element != element()) return false;
-  STL_NAMESPACE::list<IsoAgLib::ElementDDI_s>::const_iterator iter;
+  STL_NAMESPACE::list<IsoAgLib::ElementDdi_s>::const_iterator iter;
   for (iter = l_elementDDI.begin(); iter != l_elementDDI.end(); iter++)
     if ( iter->ui16_DDI == rui16_DDI )
       break;
@@ -278,7 +278,7 @@ bool ProcIdent_c::matchISO( const ISOName_c& rrefc_isoNameSender,
 /** check if this ProcIdent_c has the given DDI as element */
 bool ProcIdent_c::hasDDI( uint16_t rui16_checkDDI ) const
 {
-  STL_NAMESPACE::list<IsoAgLib::ElementDDI_s>::const_iterator iter;
+  STL_NAMESPACE::list<IsoAgLib::ElementDdi_s>::const_iterator iter;
   for (iter = l_elementDDI.begin(); iter != l_elementDDI.end(); iter++)
     if (iter->ui16_DDI == rui16_checkDDI)
       break;
@@ -289,7 +289,7 @@ bool ProcIdent_c::hasDDI( uint16_t rui16_checkDDI ) const
 
 bool ProcIdent_c::hasType(bool rb_isSetpoint, GeneralCommand_c::ValueGroup_t t_ddiType) const
 {
-  STL_NAMESPACE::list<IsoAgLib::ElementDDI_s>::const_iterator iter;
+  STL_NAMESPACE::list<IsoAgLib::ElementDdi_s>::const_iterator iter;
   for (iter = l_elementDDI.begin(); iter != l_elementDDI.end(); iter++)
     if ((iter->en_valueGroup == t_ddiType) && (iter->b_isSetpoint == rb_isSetpoint))
       break;
@@ -298,7 +298,7 @@ bool ProcIdent_c::hasType(bool rb_isSetpoint, GeneralCommand_c::ValueGroup_t t_d
   else return true;
 }
 
-bool ProcIdent_c::check4GroupMatch(uint16_t rui16_DDI, uint16_t rui16_element, const ISOName_c& rc_isoName)
+bool ProcIdent_c::check4GroupMatch(uint16_t rui16_DDI, uint16_t rui16_element, const IsoName_c& rc_isoName)
 {
   bool b_foundPair = false;
   // first check if ISOName matches
@@ -306,7 +306,7 @@ bool ProcIdent_c::check4GroupMatch(uint16_t rui16_DDI, uint16_t rui16_element, c
 
   if (rui16_element != element()) return b_foundPair;
 
-  for (STL_NAMESPACE::list<IsoAgLib::ElementDDI_s>::const_iterator iter = l_elementDDI.begin(); iter != l_elementDDI.end(); iter++)
+  for (STL_NAMESPACE::list<IsoAgLib::ElementDdi_s>::const_iterator iter = l_elementDDI.begin(); iter != l_elementDDI.end(); iter++)
   {
     b_foundPair = isPair((*iter).ui16_DDI, rui16_DDI);
     if (b_foundPair) break;
@@ -314,7 +314,7 @@ bool ProcIdent_c::check4GroupMatch(uint16_t rui16_DDI, uint16_t rui16_element, c
   return b_foundPair;
 }
 
-bool ProcIdent_c::check4GroupMatchExisting(uint16_t rui16_DDI, uint16_t rui16_element, const ISOName_c& rc_isoName)
+bool ProcIdent_c::check4GroupMatchExisting(uint16_t rui16_DDI, uint16_t rui16_element, const IsoName_c& rc_isoName)
 {
   bool b_foundPair = false;
   // first check if ISOName matches
@@ -325,7 +325,7 @@ bool ProcIdent_c::check4GroupMatchExisting(uint16_t rui16_DDI, uint16_t rui16_el
   return hasDDI(rui16_DDI);
 }
 
-bool ProcIdent_c::checkProprietary4GroupMatch(uint16_t rui16_element, const ISOName_c& rc_isoName)
+bool ProcIdent_c::checkProprietary4GroupMatch(uint16_t rui16_element, const IsoName_c& rc_isoName)
 {
   bool b_foundPair = false;
   // first check if DevClass is the same like ownerISOName's DevClass
@@ -334,7 +334,7 @@ bool ProcIdent_c::checkProprietary4GroupMatch(uint16_t rui16_element, const ISON
   // if it is not the same device element continue
   if (rui16_element != element()) return b_foundPair;
 
-  STL_NAMESPACE::list<IsoAgLib::ElementDDI_s>::const_iterator iter = l_elementDDI.begin();
+  STL_NAMESPACE::list<IsoAgLib::ElementDdi_s>::const_iterator iter = l_elementDDI.begin();
   if (iter != l_elementDDI.end())
   {
     // device element was found
@@ -373,7 +373,7 @@ bool ProcIdent_c::add2Group(uint16_t rui16_DDI)
 {
   bool b_foundPair = false;
 
-  for (STL_NAMESPACE::list<IsoAgLib::ElementDDI_s>::const_iterator iter = l_elementDDI.begin(); iter != l_elementDDI.end(); iter++)
+  for (STL_NAMESPACE::list<IsoAgLib::ElementDdi_s>::const_iterator iter = l_elementDDI.begin(); iter != l_elementDDI.end(); iter++)
   {
     b_foundPair = isPair(iter->ui16_DDI, rui16_DDI);
 
@@ -384,7 +384,7 @@ bool ProcIdent_c::add2Group(uint16_t rui16_DDI)
       getDDIType(rui16_DDI, ddiType, b_isSetpoint);
       if (ddiType != GeneralCommand_c::noValue)
       {
-        IsoAgLib::ElementDDI_s s_DDIToAdd = {rui16_DDI, b_isSetpoint, ddiType};
+        IsoAgLib::ElementDdi_s s_DDIToAdd = {rui16_DDI, b_isSetpoint, ddiType};
         l_elementDDI.push_back(s_DDIToAdd);
       }
       break;
@@ -396,7 +396,7 @@ bool ProcIdent_c::add2Group(uint16_t rui16_DDI)
 
 bool ProcIdent_c::addProprietary2Group(uint16_t rui16_DDI, bool b_isSetpoint, GeneralCommand_c::ValueGroup_t ddiType)
 {
-  IsoAgLib::ElementDDI_s s_DDIToAdd = {rui16_DDI, b_isSetpoint, ddiType};
+  IsoAgLib::ElementDdi_s s_DDIToAdd = {rui16_DDI, b_isSetpoint, ddiType};
   l_elementDDI.push_back(s_DDIToAdd);
 
   return true;
@@ -496,7 +496,7 @@ bool ProcIdent_c::hasDDIType (uint16_t rui16_DDI, GeneralCommand_c::ValueGroup_t
 
 
 
-void ProcIdent_c::setElementDDI(const IsoAgLib::ElementDDI_s* ps_elementDDI)
+void ProcIdent_c::setElementDDI(const IsoAgLib::ElementDdi_s* ps_elementDDI)
 {
   l_elementDDI.clear();
   // check if pointer to strcut (array) is set (constructor call with NULL possible!)
@@ -507,12 +507,12 @@ void ProcIdent_c::setElementDDI(const IsoAgLib::ElementDDI_s* ps_elementDDI)
   }
 }
 
-void ProcIdent_c::setElementDDI(const STL_NAMESPACE::list<IsoAgLib::ElementDDI_s>* pl_elementDDI)
+void ProcIdent_c::setElementDDI(const STL_NAMESPACE::list<IsoAgLib::ElementDdi_s>* pl_elementDDI)
 {
   l_elementDDI.clear();
   // check if pointer to struct (array) is set (constructor call with NULL possible!)
   if (pl_elementDDI) {
-    for (STL_NAMESPACE::list<IsoAgLib::ElementDDI_s>::const_iterator iter = pl_elementDDI->begin();
+    for (STL_NAMESPACE::list<IsoAgLib::ElementDdi_s>::const_iterator iter = pl_elementDDI->begin();
          iter != pl_elementDDI->end(); iter++)
         l_elementDDI.push_back(*iter);
   }

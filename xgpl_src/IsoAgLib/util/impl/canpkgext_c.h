@@ -1,5 +1,5 @@
 /***************************************************************************
-                          canpkgext_c.h - header for extended CANPkg_c object,
+                          canpkgext_c.h - header for extended CanPkg_c object,
                                           which calls data flag converting
                                           functions on assign operations
                              -------------------
@@ -94,21 +94,21 @@
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
-class ISOName_c;
-class ISOItem_c;
+class IsoName_c;
+class IsoItem_c;
 
 
 /** structure which will be filled when an address is resolved */
 typedef struct
 { // IMPORTANT:
-  // the ISOName_c instance should be handled as if it would be a fixed
+  // the IsoName_c instance should be handled as if it would be a fixed
   // _part_ of the struct --> the constructor allocates an instance, the destructur frees it
   //                          and all other operations just operate on the allocated instance.
-  ISOName_c* p_isoName;
+  IsoName_c* p_isoName;
   // IMPORTANT:
-  // in contrast to ISOName_c, the MonitorItem_c _POINTER_ is always set to NULL or to an instance, that
+  // in contrast to IsoName_c, the MonitorItem_c _POINTER_ is always set to NULL or to an instance, that
   // is located somewhere else (thus do NEVER NEVER NEVER call new or delete for this entry!!!!!!!!)
-  ISOItem_c* pc_monitorItem;
+  IsoItem_c* pc_monitorItem;
   //can be source or destination address
   uint8_t* pui8_address;
 } AddressResolveResults;
@@ -122,34 +122,34 @@ typedef enum
 } Scope;
 
 
-/** extended version of CANPkg_c which overwrites the
+/** extended version of CanPkg_c which overwrites the
     assign and getData functions
     with call for data flag converting functions
   *@author Dipl.-Inform. Achim Spangler
   */
-class CANPkgExt_c : public CANPkg_c
+class CanPkgExt_c : public CanPkg_c
 {
  private:
-  CANPkgExt_c( const CANPkgExt_c&);           //!< prevent copy constructor use: do not code this method
-  CANPkgExt_c& operator=(const CANPkgExt_c&); //!< prevent copy operator use: do not code this method
+  CanPkgExt_c( const CanPkgExt_c&);           //!< prevent copy constructor use: do not code this method
+  CanPkgExt_c& operator=(const CanPkgExt_c&); //!< prevent copy operator use: do not code this method
  public:
   /** default constructor, which has nothing to do */
-  CANPkgExt_c( int ri_singletonVecKey = 0 );
+  CanPkgExt_c( int ri_singletonVecKey = 0 );
 
   /** virtual default destructor, which has nothing to do */
-  virtual ~CANPkgExt_c();
+  virtual ~CanPkgExt_c();
 
   /**
     ==> REACTIVATE if some NON-STATIC member vars will be added!
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    assign operator to insert informations from one CANPkg_c into another
+    assign operator to insert informations from one CanPkg_c into another
     @see __IsoAgLib::FilterBox_c::operator>>
-    @see CANPkgExt_c::operator=
-    @see CANPkgExt_c::getData
-    @param rrefc_right reference to the source CANPkg_c on the right
-    @return reference to the source CANPkg_c to enable assign chains like
+    @see CanPkgExt_c::operator=
+    @see CanPkgExt_c::getData
+    @param rrefc_right reference to the source CanPkg_c on the right
+    @return reference to the source CanPkg_c to enable assign chains like
         "pkg1 = pkg2 = pkg3 = pkg4;"
-  virtual const CANPkg_c& operator=(const CANPkg_c& rrefc_right);
+  virtual const CanPkg_c& operator=(const CanPkg_c& rrefc_right);
   */
 
   /**
@@ -339,7 +339,7 @@ class CANPkgExt_c : public CANPkg_c
   void setIsoPri(uint8_t rui8_val){setIdent( ((ident(3)&1) | (rui8_val << 2)), 3, Ident_c::ExtendedIdent);}
 
   void setExtCanPkg(uint8_t pri, uint8_t dp, uint8_t pf, uint8_t ps, uint8_t sa, uint8_t len) {
-    CANPkg_c::setIdentType(Ident_c::ExtendedIdent);
+    CanPkg_c::setIdentType(Ident_c::ExtendedIdent);
     setIsoPri(pri);
     setIsoDp(dp);
     setIsoPf(pf);
@@ -350,7 +350,7 @@ class CANPkgExt_c : public CANPkg_c
   }
 
   void setExtCanPkg3(uint8_t pri, uint8_t dp, uint8_t pf, uint8_t ps, uint8_t sa, uint8_t d0, uint8_t d1, uint8_t d2) {
-    CANPkg_c::setIdentType(Ident_c::ExtendedIdent);
+    CanPkg_c::setIdentType(Ident_c::ExtendedIdent);
     setIsoPri(pri);
     setIsoDp(dp);
     setIsoPf(pf);
@@ -364,7 +364,7 @@ class CANPkgExt_c : public CANPkg_c
   }
 
   void setExtCanPkg8(uint8_t pri, uint8_t dp, uint8_t pf, uint8_t ps, uint8_t sa, uint8_t d0, uint8_t d1, uint8_t d2, uint8_t d3, uint8_t d4, uint8_t d5, uint8_t d6, uint8_t d7) {
-    CANPkg_c::setIdentType(Ident_c::ExtendedIdent);
+    CanPkg_c::setIdentType(Ident_c::ExtendedIdent);
     setIsoPri(pri);
     setIsoDp(dp);
     setIsoPf(pf);
@@ -392,7 +392,7 @@ class CANPkgExt_c : public CANPkg_c
   MessageState_t resolveReceivingInformation();
 
   /** check if source and destination address are valid
-      @see     CANPkgExt_c::operator<<
+      @see     CanPkgExt_c::operator<<
       @pre     we want to send a message
       @return  Valid -> both addresses are valid
                Invalid -> one or both addresses are invalid
@@ -403,22 +403,22 @@ class CANPkgExt_c : public CANPkg_c
   /** set the monitoritem for resolve SA
       @param pc_monitorItem  needed monitoritem
     */
-  void setMonitorItemForSA( ISOItem_c* pc_monitorItem );
+  void setMonitorItemForSA( IsoItem_c* pc_monitorItem );
 
   /** set the isoName for resolve SA
       @param p_isoName        needed isoName
     */
-  void setISONameForSA( const ISOName_c& p_isoName );
+  void setISONameForSA( const IsoName_c& p_isoName );
 
   /** set the monitoritem for resolve SA
       @param pc_monitorItem  needed monitoritem
     */
-  void setMonitorItemForDA( ISOItem_c* pc_monitorItem );
+  void setMonitorItemForDA( IsoItem_c* pc_monitorItem );
 
   /** set the isoName for resolve SA
       @param p_isoName        needed isoName
     */
-  void setISONameForDA( const ISOName_c& p_isoName );
+  void setISONameForDA( const IsoName_c& p_isoName );
 
   uint8_t checkMonitorItemISOName( const AddressResolveResults& addressResolveResults ) const;
 
@@ -428,24 +428,24 @@ class CANPkgExt_c : public CANPkg_c
 
   /** get the monitoritem for resolved SA
     */
-  ISOItem_c* getMonitorItemForSA() { return addrResolveResSA.pc_monitorItem; }
+  IsoItem_c* getMonitorItemForSA() { return addrResolveResSA.pc_monitorItem; }
 
   /** get the isoName for resolved SA
     */
-  const ISOName_c& getISONameForSA() { return *addrResolveResSA.p_isoName; }
+  const IsoName_c& getISONameForSA() { return *addrResolveResSA.p_isoName; }
 
   /** set the monitoritem for resolved SA
     */
-  ISOItem_c* getMonitorItemForDA() { return addrResolveResDA.pc_monitorItem; }
+  IsoItem_c* getMonitorItemForDA() { return addrResolveResDA.pc_monitorItem; }
 
   /** set the isoName for resolved DA
     */
-  const ISOName_c& getISONameForDA() { return *addrResolveResDA.p_isoName; }
+  const IsoName_c& getISONameForDA() { return *addrResolveResDA.p_isoName; }
 
 
   #ifdef ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL
     /** this virtual function can be used to detect CAnCustomer_c derived CAN message handlers, which
-        want to send/receive proprietary messages on a CANIO_c instance, which is used to transport
+        want to send/receive proprietary messages on a CanIo_c instance, which is used to transport
         standardized protocol ISO 11783.
         Any proprietary derived CAN message handler should overload this function to return true in this function.
     */
@@ -456,8 +456,8 @@ class CANPkgExt_c : public CANPkg_c
     abstract function to transform the string data into flag values
     => derived class must implement suitable data conversion function
 
-    needed for assigning informations from another CANPkg_c or CANPkgExt
-    @see CANPkgExt_c::operator=
+    needed for assigning informations from another CanPkg_c or CANPkgExt
+    @see CanPkgExt_c::operator=
   */
   virtual void string2Flags();
 
@@ -491,11 +491,11 @@ private:
     abstract transform flag values to data string
     => derived class must implement suitable data converting function
 
-    needed for sending informations from this object via CANIO_c on CAN BUS,
-    because CANIO_c doesn't know anything about the data format of this type of msg
+    needed for sending informations from this object via CanIo_c on CAN BUS,
+    because CanIo_c doesn't know anything about the data format of this type of msg
     so that it can only use an unformated data string from CANPkg
-    @see CANPkgExt_c::getData
-    @see __IsoAgLib::CANIO_c::operator<<
+    @see CanPkgExt_c::getData
+    @see __IsoAgLib::CanIo_c::operator<<
   */
   virtual void flags2String();
 
@@ -510,6 +510,9 @@ private:
   /** variable which holds the results for a resolved destination address */
   AddressResolveResults addrResolveResDA;
 };
+
+/** this typedef is only for some time to provide backward compatibility at API level */
+typedef CanPkgExt_c CANPkgExt_c;
 
 }
 #endif

@@ -2,7 +2,7 @@
                     timeposgps_c.h  - working on GPS data
                                       and Calendar; stores, updates  and
                                       delivers all information
-                                      from CANCustomer_c derived for CAN
+                                      from CanCustomer_c derived for CAN
                                       sending and receiving interaction;
                                       from BaseCommon_c derived for
                                       interaction with other IsoAgLib objects
@@ -150,7 +150,7 @@ typedef SINGLETON_DERIVED(TimePosGPS_c,BaseCommon_c) SingletonTimePosGps_c;
 /** working on GPS data and Calendar;
   stores, updates  and delivers all base data informations;
   Derive from ElementBase_c to register in Scheduler_c for timeEvent trigger
-  Derive from CANCustomer to register FilterBox'es in CANIO_c to receive CAN messages
+  Derive from CANCustomer to register FilterBox'es in CanIo_c to receive CAN messages
   Derive from SINGLETON to create a Singleton which manages one global accessible singleton
   per IsoAgLib instance (if only one IsoAgLib instance is defined in application config, no overhead is produced).
   */
@@ -166,10 +166,10 @@ class TimePosGPS_c : public SingletonTimePosGps_c
       -> called periodically by Scheduler_c
       ==> sends base msg if configured in the needed rates
       possible errors:
-        * dependant error in CANIO_c on CAN send problems
-      @see CANPkg_c::getData
-      @see CANPkgExt_c::getData
-      @see CANIO_c::operator<<
+        * dependant error in CanIo_c on CAN send problems
+      @see CanPkg_c::getData
+      @see CanPkgExt_c::getData
+      @see CanIo_c::operator<<
       @return true -> all planned activities performed in allowed time
     */
   virtual bool timeEvent(  );
@@ -177,19 +177,19 @@ class TimePosGPS_c : public SingletonTimePosGps_c
   /** initialise element which can't be done during construct;
       above all create the needed FilterBox_c instances
       possible errors:
-        * dependant error in CANIO_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
+        * dependant error in CanIo_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
       @param rpc_isoName optional pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
       @param ai_singletonVecKey singleton vector key in case PRT_INSTANCE_CNT > 1
       @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
     */
-  virtual void init_base (const ISOName_c*, int ai_singletonVecKey, IsoAgLib::IdentMode_t rt_identMode = IsoAgLib::IdentModeImplement);
+  virtual void init_base (const IsoName_c*, int ai_singletonVecKey, IsoAgLib::IdentMode_t rt_identMode = IsoAgLib::IdentModeImplement);
   /** config the Base_c object after init -> set pointer to isoName and
       config send/receive of different base msg types
       @param rpc_isoName pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
       @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       @return true -> configuration was successfull
     */
-  bool config_base (const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode, uint16_t rui16_suppressMask = 0);
+  bool config_base (const IsoName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode, uint16_t rui16_suppressMask = 0);
 
   /** destructor for Base_c which has nothing to do */
   virtual ~TimePosGPS_c() { BaseCommon_c::close();}
@@ -199,7 +199,7 @@ class TimePosGPS_c : public SingletonTimePosGps_c
       @param  rui8_sa    source address
       @param  rui8_da    destination address
     */
-  bool processMsgRequestPGN (uint32_t rui32_pgn, ISOItem_c* rpc_isoItemSender, ISOItem_c* rpc_isoItemReceiver);
+  bool processMsgRequestPGN (uint32_t rui32_pgn, IsoItem_c* rpc_isoItemSender, IsoItem_c* rpc_isoItemReceiver);
 
   /** force a request for pgn for time/date information */
   bool sendRequestUpdateTimeDate();
@@ -210,19 +210,19 @@ class TimePosGPS_c : public SingletonTimePosGps_c
       @param rt_identModeGps either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       @return true -> configuration was successfull
     */
-  bool configGps(const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identModeGps);
+  bool configGps(const IsoName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identModeGps);
 
   /** return if you currently are in gps mode*/
   bool checkModeGps(IsoAgLib::IdentMode_t rt_identModeGps) const {return (t_identModeGps == rt_identModeGps);}
 
   /** send ISO11783 calendar PGN
     possible errors:
-      * dependant error in CANIO_c on CAN send problems
-    @see CANPkg_c::getData
-    @see CANPkgExt_c::getData
-    @see CANIO_c::operator<<
+      * dependant error in CanIo_c on CAN send problems
+    @see CanPkg_c::getData
+    @see CanPkgExt_c::getData
+    @see CanIo_c::operator<<
     */
-  void sendCalendar(const ISOName_c& rpc_isoName);
+  void sendCalendar(const IsoName_c& rpc_isoName);
 
   /** Retrieve the last update time of the specified information type*/
   int32_t lastedTimeSinceUpdateGps() const;
@@ -239,10 +239,10 @@ class TimePosGPS_c : public SingletonTimePosGps_c
 
 
   /** return a sender which sends commands as a tractor */
-  ISOName_c& getSenderISONameGps() {return c_sendGpsISOName;}
+  IsoName_c& getSenderISONameGps() {return c_sendGpsISOName;}
 
   /** return a sender which sends commands as a tractor */
-  const ISOName_c& getSenderISONameGpsConst() const {return c_sendGpsISOName;}
+  const IsoName_c& getSenderISONameGpsConst() const {return c_sendGpsISOName;}
 
   /* ********************************************* */
   /** \name MultiReceive functions for TimePosGPS_c  */
@@ -654,7 +654,7 @@ private:
 
   /** process a ISO11783 base information PGN
       @pre  sender of message is existent in monitor list
-      @see  CANPkgExt_c::resolveSendingInformation()
+      @see  CanPkgExt_c::resolveSendingInformation()
     */
   bool processMsg();
 
@@ -785,12 +785,12 @@ private:
 
   #endif // END of ENABLE_NMEA_2000_MULTI_PACKET
   /** ISOName of GPS data sender */
-  ISOName_c c_sendGpsISOName;
+  IsoName_c c_sendGpsISOName;
 
   /** isoName which act as sender of a msg: either responses on behalf of implement or commands as tractor.
       This pointer is set in config function
     */
-  const ISOName_c* pc_isoNameGps;
+  const IsoName_c* pc_isoNameGps;
   IsoAgLib::IdentMode_t  t_identModeGps;
 };
 

@@ -2,7 +2,7 @@
                 itimeposgps_c.h  - working on Base Data Msg Type NMEA 200 GPS
                                   and Calendar; stores, updates  and
                                   delivers all base data informations
-                                  from CANCustomer_c derived for CAN
+                                  from CanCustomer_c derived for CAN
                                   sending and receiving interaction;
                                   from ElementBase_c derived for
                                   interaction with other IsoAgLib objects
@@ -71,7 +71,7 @@ namespace IsoAgLib {
   working on Base Data Msg Type 1, 2 and Calendar;
   stores, updates  and delivers all base data informations;
   Derive from ElementBase_c to register in Scheduler_c for timeEvent trigger
-  Derive from CANCustomer to register FilterBox'es in CANIO_c to receive CAN messages
+  Derive from CANCustomer to register FilterBox'es in CanIo_c to receive CAN messages
   Derive from SINGLETON to create a Singleton which manages one global accessible singleton
    per IsoAgLib instance (if only one IsoAgLib instance is defined in application config, no overhead is produced).
   *@author Dipl.-Inform. Achim Spangler
@@ -86,7 +86,7 @@ public:
       @param rt_identMode set mode to either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       @return true -> configuration was successfull
     */
-  bool config (const iISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode = IsoAgLib::IdentModeImplement, uint16_t rui16_suppressMask = 0)
+  bool config (const iIsoName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode = IsoAgLib::IdentModeImplement, uint16_t rui16_suppressMask = 0)
   { return TimePosGPS_c::config_base( rpc_isoName, rt_identMode, rui16_suppressMask ); }
 
   /** config the Base_c object after init -> set pointer to isoName and
@@ -95,7 +95,7 @@ public:
       @param rt_identModeGps either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       @return true -> configuration was successfull
     */
-  bool configGps(const iISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identModeGps)
+  bool configGps(const iIsoName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identModeGps)
   {return TimePosGPS_c::configGps( rpc_isoName, rt_identModeGps);}
 
   /** Retrieve the last update time of the specified information type
@@ -113,10 +113,10 @@ public:
   int32_t lastUpdateTimeDirection() const {return TimePosGPS_c::lastUpdateTimeDirection();}
 
   /** return a sender which sends GPS commands as a tractor */
-  iISOName_c& getSenderISONameGps() {return TimePosGPS_c::getSenderISONameGps().toIisoName_c();}
+  iIsoName_c& getSenderISONameGps() {return TimePosGPS_c::getSenderISONameGps().toIisoName_c();}
 
   /** return a sender which sends GPS commands as a tractor */
-  const iISOName_c& getSenderISONameGpsConst() const {return TimePosGPS_c::getSenderISONameGpsConst().toConstIisoName_c();}
+  const iIsoName_c& getSenderISONameGpsConst() const {return TimePosGPS_c::getSenderISONameGpsConst().toConstIisoName_c();}
 
   /** force a request for pgn for time/date information */
   bool sendRequestUpdateTimeDate() { return TimePosGPS_c::sendRequestUpdateTimeDate(); }
@@ -125,7 +125,7 @@ public:
   bool checkDataSourceSpecified() { return TimePosGPS_c::getSelectedDataSourceISONameConst().isSpecified();}
 
   /** get Devkey of data source (e.g. tractor, terminal) from which commands are send exclusively */
-  const iISOName_c& getSelectedDataSourceISONameConst() const {return TimePosGPS_c::getSelectedDataSourceISONameConst().toConstIisoName_c();}
+  const iIsoName_c& getSelectedDataSourceISONameConst() const {return TimePosGPS_c::getSelectedDataSourceISONameConst().toConstIisoName_c();}
 
   /* ******************************************* */
   /** \name Get Values */

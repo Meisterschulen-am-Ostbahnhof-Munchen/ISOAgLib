@@ -80,7 +80,7 @@ public:
 
     possible errors:
         * dependant error in ProcessDataRemote_c if comanded remote system not found in Monitor List
-        * dependant error in CANIO_c on CAN send problems
+        * dependant error in CanIo_c on CAN send problems
     @return new exact setpoint to command
   */
   void setExact(int32_t ri32_val) {SetpointRemote_c::setExact(ri32_val);};
@@ -89,7 +89,7 @@ public:
 
     possible errors:
         * dependant error in ProcessDataRemote_c if comanded remote system not found in Monitor List
-        * dependant error in CANIO_c on CAN send problems
+        * dependant error in CanIo_c on CAN send problems
     @return new minimum setpoint to command
   */
   void setMin(int32_t ri32_val) {SetpointRemote_c::setMin(ri32_val);};
@@ -98,7 +98,7 @@ public:
 
     possible errors:
         * dependant error in ProcessDataRemote_c if comanded remote system not found in Monitor List
-        * dependant error in CANIO_c on CAN send problems
+        * dependant error in CanIo_c on CAN send problems
     @return new maximum setpoint to command
   */
   void setMax(int32_t ri32_val) {SetpointRemote_c::setMax(ri32_val);};
@@ -107,7 +107,7 @@ public:
 
     possible errors:
         * dependant error in ProcessDataRemote_c if comanded remote system not found in Monitor List
-        * dependant error in CANIO_c on CAN send problems
+        * dependant error in CanIo_c on CAN send problems
     @return new default setpoint to command
   */
   void setDefault(int32_t ri32_val) {SetpointRemote_c::setDefault(ri32_val);};
@@ -157,7 +157,7 @@ public:
     possible errors:
         * Err_c::precondition I'm not the master -> can't release master
         * dependant error in ProcessDataRemote_c if comanded remote system not found in Monitor List
-        * dependant error in CANIO_c on CAN send problems
+        * dependant error in CanIo_c on CAN send problems
   */
   void releaseMaster() {SetpointRemote_c::releaseMaster();};
  /**

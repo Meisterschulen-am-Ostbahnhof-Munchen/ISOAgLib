@@ -1,5 +1,5 @@
 /***************************************************************************
-                          eepromio_c.cpp -  header for EEPROMIO_c object
+                          eepromio_c.cpp -  header for EepromIo_c object
                                           for communication with EEPROM
                              -------------------
     begin                : Mon Oct 25 1999
@@ -88,14 +88,14 @@
 #include <IsoAgLib/driver/system/impl/system_c.h>
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
-/** C-style function, to get access to the unique EEPROMIO_c singleton instance */
-EEPROMIO_c& getEepromInstance( void ) { return EEPROMIO_c::instance();};
+/** C-style function, to get access to the unique EepromIo_c singleton instance */
+EepromIo_c& getEepromInstance( void ) { return EepromIo_c::instance();};
 
 /*******************************************/
 /** definition of public element functions */
 /*******************************************/
 /** default initialisation */
-void EEPROMIO_c::init()
+void EepromIo_c::init()
 { // set the segment size
   ui16_segmentSize = HAL::getEepromSegmentSize();
   // set read/write positions to beginning
@@ -103,7 +103,7 @@ void EEPROMIO_c::init()
 }
 
 /** destructor has nothing to destruct */
-EEPROMIO_c::~EEPROMIO_c(){
+EepromIo_c::~EepromIo_c(){
 }
 
 
@@ -112,7 +112,7 @@ EEPROMIO_c::~EEPROMIO_c(){
   this is called from singleton.h and should NOT be called from the user again.
   users please use init(...) instead.
 */
-void EEPROMIO_c::singletonInit()
+void EepromIo_c::singletonInit()
 {
   // verify that System is int
   getSystemInstance().init();
@@ -134,7 +134,7 @@ void EEPROMIO_c::singletonInit()
   @param rui16_adress position of write mark [uint8_t]
   @return true -> setting of write mark without errors
 */
-bool EEPROMIO_c::setp(uint16_t rui16_adress)
+bool EepromIo_c::setp(uint16_t rui16_adress)
 {
   if (eepromSize() > rui16_adress)
   { // wanted position is in EEPROM range
@@ -158,7 +158,7 @@ bool EEPROMIO_c::setp(uint16_t rui16_adress)
   @param rui16_adress position of read mark [uint8_t]
   @return true -> setting of read mark without errors
 */
-bool EEPROMIO_c::setg(uint16_t rui16_adress)
+bool EepromIo_c::setg(uint16_t rui16_adress)
 {
   if (eepromSize() > rui16_adress)
   { // wanted position is in EEPROM range
@@ -183,7 +183,7 @@ bool EEPROMIO_c::setg(uint16_t rui16_adress)
   @param rui8_length optional size of uint8_t, which must fit into EEPROM from actual position on (default 0 -> only write mark position tested)
   @return false -> write marker is more than rui8_length uint8_t ahead end of EEPROM
 */
-bool EEPROMIO_c::eofp(uint8_t rui8_length, bool rb_setState)
+bool EepromIo_c::eofp(uint8_t rui8_length, bool rb_setState)
 { // compare (write position + length of wanted data) with size of EEPROM memory
   if ((ui16_wPosition + rui8_length) >= eepromSize())
   { // actual or end position of write access exceeds EEPROM memory
@@ -207,7 +207,7 @@ bool EEPROMIO_c::eofp(uint8_t rui8_length, bool rb_setState)
   @param rui8_length optional size of uint8_t, which must fit into EEPROM from actual position on (default 0 -> only read mark position tested)
   @return false -> read marker is more than rui8_length uint8_t ahead end of EEPROM
 */
-bool EEPROMIO_c::eofg(uint8_t rui8_length, bool rb_setState)
+bool EepromIo_c::eofg(uint8_t rui8_length, bool rb_setState)
 { // compare (read position + length of wanted data) with size of EEPROM memory
   if ((ui16_rPosition + rui8_length) >= eepromSize())
   { // actual or end position of read access exceeds EEPROM memory
@@ -234,13 +234,13 @@ bool EEPROMIO_c::eofg(uint8_t rui8_length, bool rb_setState)
       * busy the EEPROM was busy with another action
       * eepromSegment low level writing caused segment error
 
-  @see EEPROMIO_c::tellp
-  @see EEPROMIO_c::setp
+  @see EepromIo_c::tellp
+  @see EepromIo_c::setp
   @param rpb_string string to write into EEPROM
   @param rui16_number length of the string to write
-  @return reference to this EEPROMIO_c instance (for chains like "eeprom << val1 << val2 << ... << val_n;")
+  @return reference to this EepromIo_c instance (for chains like "eeprom << val1 << val2 << ... << val_n;")
 */
-EEPROMIO_c& EEPROMIO_c::writeString(const uint8_t *const rpb_string, uint16_t rui16_number)
+EepromIo_c& EepromIo_c::writeString(const uint8_t *const rpb_string, uint16_t rui16_number)
 { // check if enough space for string is after actual write position
   // second parameter true -> set Err_c::range if end is reached
   if (!eofp(rui16_number, true))
@@ -253,13 +253,13 @@ EEPROMIO_c& EEPROMIO_c::writeString(const uint8_t *const rpb_string, uint16_t ru
 
 /**
   read operator for strings with given length; uses BIOS function
-  @see EEPROMIO_c::tellg
-  @see EEPROMIO_c::setg
+  @see EepromIo_c::tellg
+  @see EepromIo_c::setg
   @param rpb_string pointer to uint8_t string, which should be read from actual EEPROM read position on
   @param rui16_number number of uint8_t to read into string
   @return true -> read with success
 */
-bool EEPROMIO_c::readString(uint8_t *const rpb_string, uint16_t rui16_number)
+bool EepromIo_c::readString(uint8_t *const rpb_string, uint16_t rui16_number)
 { // check if enough space for string is after actual read position
   // second parameter true -> set Err_c::range if end is reached
   if (!eofg(rui16_number), true)
@@ -298,7 +298,7 @@ bool EEPROMIO_c::readString(uint8_t *const rpb_string, uint16_t rui16_number)
   @param rpb_data pointer to string of uint8_t to write to EEPROM
   @return true -> write successful
 */
-bool EEPROMIO_c::write(uint16_t rui16_adress, uint16_t rui16_number, const uint8_t* rpb_data){
+bool EepromIo_c::write(uint16_t rui16_adress, uint16_t rui16_number, const uint8_t* rpb_data){
   uint16_t ui16_restNumber = rui16_number,
        ui16_actualStart = rui16_adress,
        ui16_actualSize;
@@ -377,7 +377,7 @@ bool EEPROMIO_c::write(uint16_t rui16_adress, uint16_t rui16_number, const uint8
   init for single write operation, check if write is possible; uses BIOS function
   @return true -> EEPROM is ready for write operations
 */
-bool EEPROMIO_c::writeInit(){
+bool EepromIo_c::writeInit(){
   // clear the BIOS state
   getILibErrInstance().clear( iLibErr_c::Eeprom );
 
@@ -404,7 +404,7 @@ bool EEPROMIO_c::writeInit(){
 
   @return true -> EEPROM is ready for next operation
 */
-int16_t EEPROMIO_c::wait_eepromReady( void )
+int16_t EepromIo_c::wait_eepromReady( void )
 { // test if EEPROM is ready for up to 1000msec.
   // don't builf timestamps, if EEPROM immediately ready
   if(HAL::eepromReady() == EE_READY) return EE_READY;
@@ -425,7 +425,7 @@ int16_t EEPROMIO_c::wait_eepromReady( void )
   @param rui16_adress wanted write position
   @return amount of bytes between write position and end of EEPROM
 */
-uint16_t EEPROMIO_c::maxSize(uint16_t rui16_adress){
+uint16_t EepromIo_c::maxSize(uint16_t rui16_adress){
   uint16_t ui16_segmentEnd = ((rui16_adress/ui16_segmentSize + 1)*ui16_segmentSize) -1;
   return ((ui16_segmentEnd - rui16_adress)+1);
 }
@@ -435,7 +435,7 @@ uint16_t EEPROMIO_c::maxSize(uint16_t rui16_adress){
   set error flags dependent on BIOS return value
   @param ri16_biosReturn BIOS return value which should be translated in error state of EEPROM_IO
 */
-void EEPROMIO_c::setState4BiosReturn(int16_t ri16_biosReturn)
+void EepromIo_c::setState4BiosReturn(int16_t ri16_biosReturn)
 {
   switch (ri16_biosReturn)
   {
@@ -469,7 +469,7 @@ void EEPROMIO_c::setState4BiosReturn(int16_t ri16_biosReturn)
   @param rui8_len lenght of data
   @return reference to this object for chains
 */
-EEPROMIO_c& EEPROMIO_c::writeIntern(const uint8_t* rpb_data, uint8_t rui8_len)
+EepromIo_c& EepromIo_c::writeIntern(const uint8_t* rpb_data, uint8_t rui8_len)
 { // check if enough space for type T is after actual write position
   // second parameter true -> set Err_c::range if end is reached
   if (!eofp(rui8_len, true))
@@ -492,7 +492,7 @@ EEPROMIO_c& EEPROMIO_c::writeIntern(const uint8_t* rpb_data, uint8_t rui8_len)
   @param rui8_len lenght of data
   @return reference to this object for chains
 */
-EEPROMIO_c& EEPROMIO_c::readIntern(uint8_t* rpb_data, uint8_t rui8_len) {
+EepromIo_c& EepromIo_c::readIntern(uint8_t* rpb_data, uint8_t rui8_len) {
   // check if enough space for string is after actual read position
   // second parameter true -> set Err_c::range if end is reached
   if (!eofg(rui8_len, true))
@@ -505,12 +505,12 @@ EEPROMIO_c& EEPROMIO_c::readIntern(uint8_t* rpb_data, uint8_t rui8_len) {
   return *this;
 }
 
-EEPROMIO_c& operator<<(EEPROMIO_c& refc_stream, const ISOName_c& refc_data )
+EepromIo_c& operator<<(EepromIo_c& refc_stream, const IsoName_c& refc_data )
 {
   refc_stream.writeIntern(refc_data.outputString(), 8);
   return refc_stream;
 }
-EEPROMIO_c& operator>>(EEPROMIO_c& refc_stream, ISOName_c& refc_data )
+EepromIo_c& operator>>(EepromIo_c& refc_stream, IsoName_c& refc_data )
 {
   uint8_t tempName[8];
   refc_stream.readIntern(tempName, sizeof(8));

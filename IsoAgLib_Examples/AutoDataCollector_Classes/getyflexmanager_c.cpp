@@ -113,7 +113,7 @@ void DevClassFlexManager_c::init(DefaultRecordConfig_c* rpc_defaultRecordConfig)
   @param rpc_monitor pointer to member_item of data delivering member
   @param rpc_localISOName pointer to local member ISOName for sending of commands
 */
-void DevClassFlexManager_c::activate(IsoAgLib::iDINItem_c* rpc_monitor, IsoAgLib::iISOName_c* rpc_localISOName)
+void DevClassFlexManager_c::activate(IsoAgLib::iDINItem_c* rpc_monitor, IsoAgLib::iIsoName_c* rpc_localISOName)
 {
   ProcDataManager_c::activate(rpc_monitor);
   // read specific device config from EEPROM
@@ -167,7 +167,7 @@ void DevClassFlexManager_c::activate(IsoAgLib::iDINItem_c* rpc_monitor, IsoAgLib
   c_flexibleHeader = "";
 
 
-  IsoAgLib::iISOName_c c_remoteWorkDataISOName = rpc_monitor->isoName(),
+  IsoAgLib::iIsoName_c c_remoteWorkDataISOName = rpc_monitor->isoName(),
                        c_remoteTimedistDataISOName = rpc_monitor->isoName();
   uint8_t ui8_remoteTimedistDataDevClass = c_specificRecordConfig.timeDistDevClass();
 
@@ -200,7 +200,7 @@ void DevClassFlexManager_c::activate(IsoAgLib::iDINItem_c* rpc_monitor, IsoAgLib
   if (pc_defaultRecordConfig->accumulatedTimeDist())
   { // remote process data for "whole time" [sec] (LIS=0, DEVCLASS=2, WERT=0xA, INST=0)
     uint8_t bTime_inst = (configField.timeWert == 0xA)?0:0xB;
-    IsoAgLib::iISOName_c c_specRemoteTimeDistISOName = c_remoteTimedistDataISOName;
+    IsoAgLib::iIsoName_c c_specRemoteTimeDistISOName = c_remoteTimedistDataISOName;
     c_specRemoteTimeDistISOName.setDevClass( ui8_remoteTimedistDataDevClass );
 
     pc_data[b_proc_ind].init(0, c_specRemoteTimeDistISOName, configField.timeWert,

@@ -130,7 +130,7 @@ class ProcessDataChangeHandler_c {
    * @param rc_callerISOName ISOName of calling device - i.e. which sent new setpoint
    * @return true -> handler class reacted on change event
    */
- virtual bool processSetpointSet( EventSource_c rc_src, int32_t ri32_val, const iISOName_c& rc_callerISOName, bool rb_change );
+ virtual bool processSetpointSet( EventSource_c rc_src, int32_t ri32_val, const iIsoName_c& rc_callerISOName, bool rb_change );
 
  /** react on measurement reset from external system for local process data
    * @param rc_src general event source class, which provides conversion functions to get needed event source class
@@ -138,7 +138,7 @@ class ProcessDataChangeHandler_c {
    * @param rc_callerISOName ISOName of calling device - i.e. which sent new setpoint
    * @return true -> handler class reacted on change event
    */
- virtual bool processMeasurementReset( EventSource_c rc_src, int32_t ri32_val, const iISOName_c& rc_callerISOName );
+ virtual bool processMeasurementReset( EventSource_c rc_src, int32_t ri32_val, const iIsoName_c& rc_callerISOName );
 
  /** react on new received measurement update for remote process data
    * (remote system which manages the process data sent new value on request or
@@ -148,7 +148,7 @@ class ProcessDataChangeHandler_c {
    * @param rc_callerISOName ISOName of calling device - i.e. which sent new setpoint
    * @return true -> handler class reacted on change event
    */
- virtual bool processMeasurementUpdate( IsoAgLib::EventSource_c rc_src, int32_t ri32_val, const IsoAgLib::iISOName_c& rc_callerISOName, bool rb_change );
+ virtual bool processMeasurementUpdate( IsoAgLib::EventSource_c rc_src, int32_t ri32_val, const IsoAgLib::iIsoName_c& rc_callerISOName, bool rb_change );
 
 #ifdef USE_FLOAT_DATA_TYPE
  /** react on new received measurement update for remote process data
@@ -159,7 +159,7 @@ class ProcessDataChangeHandler_c {
    * @param rc_callerISOName ISOName of calling device - i.e. which sent new setpoint
    * @return true -> handler class reacted on change event
    */
- virtual bool processMeasurementUpdate( EventSource_c rc_src, float rf_val, const iISOName_c& rc_callerISOName, bool rb_change );
+ virtual bool processMeasurementUpdate( EventSource_c rc_src, float rf_val, const iIsoName_c& rc_callerISOName, bool rb_change );
 #endif
 
  /** react on received setpoint ACK or NACK upon previous setpoint set for remote process data
@@ -170,7 +170,7 @@ class ProcessDataChangeHandler_c {
    * @param rc_callerISOName ISOName of calling device - i.e. which sent new setpoint
    * @return true -> handler class reacted on change event
    */
- virtual bool processSetpointResponse( EventSource_c rc_src, int32_t ri32_val, const iISOName_c& rc_callerISOName );
+ virtual bool processSetpointResponse( EventSource_c rc_src, int32_t ri32_val, const iIsoName_c& rc_callerISOName );
 
  /** react on received value request for default data logging (DDI 0xDFFF)
    * (can be used to start measurement programms in local process data instances)
@@ -179,14 +179,14 @@ class ProcessDataChangeHandler_c {
    * @param rc_callerISOName ISOName of calling device - i.e. which sent new setpoint
    * @return true -> handler class reacted on change event
    */
- virtual bool processDefaultLoggingStart( EventSource_c rc_src, int32_t ri32_val, const iISOName_c& rc_callerISOName );
+ virtual bool processDefaultLoggingStart( EventSource_c rc_src, int32_t ri32_val, const iIsoName_c& rc_callerISOName );
 
  /** react on received value for TC status message
    * @param rb_taskRunning
    * @param rc_callerISOName ISONameof calling device - i.e. TC
    * @return true -> handler class reacted on change event
    */
- virtual bool processTcStatusMessage(bool rb_taskRunning, const iISOName_c& rc_callerISOName );
+ virtual bool processTcStatusMessage(bool rb_taskRunning, const iIsoName_c& rc_callerISOName );
 };
 }
 #endif

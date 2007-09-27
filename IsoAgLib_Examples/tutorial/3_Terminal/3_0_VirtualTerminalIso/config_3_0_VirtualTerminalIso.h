@@ -28,6 +28,8 @@
 
 // #define OPTIMIZE_NUMBER_CONVERSIONS_FOR_BIG_ENDIAN
 
+// #define USE_PCAN_LIB
+
 // #define CONFIG_DO_NOT_START_RELAIS_ON_STARTUP
 
 // Decide if HEAP allocation strategy shall reduce size about 5K to 10K in favour of speed
@@ -97,11 +99,20 @@
 /// define mask for compare with ident
 // #define CONFIG_CAN_HIGH_LOAD_IDENT_MASK 0xff0000
 
-/// Max amount of Filters which can be connected to a CAN MsgObj for ISO
-// #define CONFIG_CAN_ISO_FILTER_BOX_PER_MSG_OBJ 15
+/// Multiply this SizeInPackets by 7 to get the size of ONE CHUNK (ONLY OF INTEREST IF STREAM IS CHUNKED)
+// #define CONFIG_MULTI_RECEIVE_CHUNK_SIZE_IN_PACKETS 16
 
-/// Max amount of Filters which can be connected to a CAN MsgObj for DIN
-// #define CONFIG_CAN_DIN_FILTER_BOX_PER_MSG_OBJ 5
+/// Maximum amount of packets to be allowed to be CTS'd in parallel (this amount will be distributed among all running streams)
+// #define CONFIG_MULTI_RECEIVE_MAX_OVERALL_PACKETS_ADDED_FROM_ALL_BURSTS 16
+
+/// Maximum amount of packets to be allowed by a "CTS" message.
+// #define CONFIG_MULTI_RECEIVE_MAX_PER_CLIENT_BURST_IN_PACKETS CONFIG_MULTI_RECEIVE_MAX_OVERALL_PACKETS_ADDED_FROM_ALL_BURSTS
+
+/// defines the amount of msec. to be wait until sending out the next CTS to the sender IF ONE STREAM ONLY BEING RECEIVED
+// #define CONFIG_MULTI_RECEIVE_CTS_DELAY_AT_SINGLE_STREAM 0
+
+/// defines the amount of msec. to be wait until sending out the next CTS to the sender IF MULTIPLE STREAMS BEING RECEIVED
+// #define CONFIG_MULTI_RECEIVE_CTS_DELAY_AT_MULTI_STREAMS 50
 
 /// define default RS232 baudrate - can be manually overridden in project config file
 // #define CONFIG_RS232_DEFAULT_BAUDRATE 19200
@@ -138,12 +149,6 @@
 
 /// erase ISO 11783 items after time (>0), on missing address claim after request - can be manually overridden in project config file
 // #define CONFIG_ISO_ITEM_MAX_AGE 3000
-
-/// erase DIN 9684 devices from monitor list after given dead time ( 0 == no delete ) - can be manually overridden in project config file
-// #define CONFIG_DIN_ITEM_MAX_AGE 0
-
-/// erase DIN 9684 services from monitor list after given dead time ( 0 == no delete ) - can be manually overridden in project config file
-// #define CONFIG_DIN_SERVICE_MAX_AGE 3000
 
 /// interval [ms] for value update in EEPROM for local process data - can be manually overridden in project config file
 // #define CONFIG_PROC_STORE_EEPROM_INTERVAL 5000

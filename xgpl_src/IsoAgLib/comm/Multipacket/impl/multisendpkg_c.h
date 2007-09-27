@@ -106,7 +106,7 @@ namespace __IsoAgLib {
   CAN uint8_t string
   @author Dipl.-Inform. Achim Spangler
 */
-class MultiSendPkg_c : public CANPkgExt_c  {
+class MultiSendPkg_c : public CanPkgExt_c  {
 private:
   // private typedef alias names
 public:

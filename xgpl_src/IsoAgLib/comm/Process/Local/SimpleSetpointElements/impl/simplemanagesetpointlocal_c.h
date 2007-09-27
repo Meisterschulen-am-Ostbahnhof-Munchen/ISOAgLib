@@ -160,7 +160,7 @@ class SimpleManageSetpointLocal_c : public ProcessElementBase_c
     @param rc_targetISOName ISOName of target
     @return true -> successful sent
   */
-  bool sendMasterSetpointVal( const ISOName_c& rc_targetISOName ) const
+  bool sendMasterSetpointVal( const IsoName_c& rc_targetISOName ) const
    { return sendSetpointMod( rc_targetISOName, GeneralCommand_c::exactValue, GeneralCommand_c::setValue );};
   /**
     send a sub-setpoint (selected by MOD) to a specified target (selected by GPT)
@@ -170,7 +170,7 @@ class SimpleManageSetpointLocal_c : public ProcessElementBase_c
     @param en_command
     @return true -> successful sent
   */
-  bool sendSetpointMod(const ISOName_c& rc_targetISOName,
+  bool sendSetpointMod(const IsoName_c& rc_targetISOName,
                        GeneralCommand_c::ValueGroup_t en_valueGroup,
                        GeneralCommand_c::CommandType_t en_command ) const;
   /**

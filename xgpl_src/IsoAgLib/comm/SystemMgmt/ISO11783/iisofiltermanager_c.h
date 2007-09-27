@@ -67,46 +67,46 @@ namespace IsoAgLib {
 /** this object manages iISO-Filters - those may contain references
     to iISOName's and are initelligent self-adapting can-filters
     @short Manager for handling of inserting/adapting FilterBox_c-instances
-    @see __IsoAgLib::ISOFilterManager_c
+    @see __IsoAgLib::IsoFilterManager_c
     @author Dipl.-Inf. Martin Wodok */
-class iISOFilterManager_c : private __IsoAgLib::ISOFilterManager_c
+class iIsoFilterManager_c : private __IsoAgLib::IsoFilterManager_c
 {
 public:
 
   /** @return true on success */
-  bool insertIsoFilter (const iISOFilter_s& rrefcs_isoFilter)
-  { ISOFilterManager_c::insertIsoFilter (rrefcs_isoFilter); return true; }
+  bool insertIsoFilter (const iIsoFilter_s& rrefcs_isoFilter)
+  { IsoFilterManager_c::insertIsoFilter (rrefcs_isoFilter); return true; }
 
-  bool addToIsoFilter (const iISOFilter_s& rrefcs_isoFilterExisting, const iISOFilter_s& rrefcs_isoFilterToAdd)
-  { return ISOFilterManager_c::addToIsoFilter (rrefcs_isoFilterExisting, rrefcs_isoFilterToAdd); }
+  bool addToIsoFilter (const iIsoFilter_s& rrefcs_isoFilterExisting, const iIsoFilter_s& rrefcs_isoFilterToAdd)
+  { return IsoFilterManager_c::addToIsoFilter (rrefcs_isoFilterExisting, rrefcs_isoFilterToAdd); }
 
-   void removeIsoFilter (const iISOFilter_s& rrefcs_isoFilter)
-   { ISOFilterManager_c::removeIsoFilter (rrefcs_isoFilter); }
+   void removeIsoFilter (const iIsoFilter_s& rrefcs_isoFilter)
+   { IsoFilterManager_c::removeIsoFilter (rrefcs_isoFilter); }
 
 private: // Private methods/attributes
-  /** HIDDEN constructor for an iISOFilterManager_c object instance
-    NEVER instantiate a variable of type iISOMonitor_c within application
-    only access iISOFilterManager_c via getIisoFilterManagerInstance() or
+  /** HIDDEN constructor for an iIsoFilterManager_c object instance
+    NEVER instantiate a variable of type iIsoMonitor_c within application
+    only access iIsoFilterManager_c via getIisoFilterManagerInstance() or
     getIisoFilterManagerInstance (int riLbsBusNr) in case more than one ISO11783 BUS is used for IsoAgLib
     */
-  iISOFilterManager_c() : ISOFilterManager_c() {}
+  iIsoFilterManager_c() : IsoFilterManager_c() {}
 
   #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
-  friend iISOFilterManager_c& getIisoFilterManagerInstance( uint8_t rui8_instance );
+  friend iIsoFilterManager_c& getIisoFilterManagerInstance( uint8_t rui8_instance );
   #else
-  friend iISOFilterManager_c& getIisoFilterManagerInstance( void );
+  friend iIsoFilterManager_c& getIisoFilterManagerInstance( void );
   #endif
 };
 
 #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
-  /** C-style function, to get access to the unique ISOFilterManager_c singleton instance
+  /** C-style function, to get access to the unique IsoFilterManager_c singleton instance
       if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS */
-  inline iISOFilterManager_c& getIisoFilterManagerInstance (uint8_t rui8_instance = 0)
-  { return static_cast<iISOFilterManager_c&>(__IsoAgLib::getIsoFilterManagerInstance (rui8_instance)); }
+  inline iIsoFilterManager_c& getIisoFilterManagerInstance (uint8_t rui8_instance = 0)
+  { return static_cast<iIsoFilterManager_c&>(__IsoAgLib::getIsoFilterManagerInstance (rui8_instance)); }
 #else
-  /** C-style function, to get access to the unique ISOFilterManager_c singleton instance */
-  inline iISOFilterManager_c& getIisoFilterManagerInstance (void)
-  { return static_cast<iISOFilterManager_c&>(__IsoAgLib::getIsoFilterManagerInstance()); }
+  /** C-style function, to get access to the unique IsoFilterManager_c singleton instance */
+  inline iIsoFilterManager_c& getIisoFilterManagerInstance (void)
+  { return static_cast<iIsoFilterManager_c&>(__IsoAgLib::getIsoFilterManagerInstance()); }
 #endif
 
 }

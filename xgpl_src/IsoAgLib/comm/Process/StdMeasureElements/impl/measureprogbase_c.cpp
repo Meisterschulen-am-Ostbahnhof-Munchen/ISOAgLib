@@ -112,7 +112,7 @@ namespace __IsoAgLib {
   */
 void MeasureProgBase_c::init( ProcDataBase_c *const rpc_processData,
   Proc_c::progType_t ren_progType, int32_t ri32_val,
-  const ISOName_c& rc_isoName)
+  const IsoName_c& rc_isoName)
 { // set the dynamic list to a well defined cleared starting condition
   #ifdef DEBUG_HEAP_USEAGE
   static bool b_doPrint = true;
@@ -272,8 +272,8 @@ MeasureProgBase_c::~MeasureProgBase_c(){
 
   // setting of isoName in MeasureProg is normally done via ProcDataRemote_c::timeEvent( void )
   // if start follows immedeately addSubprog timeEvent is not called yet => do it here
-  // remote: virtual ProcDataRemote::commanderISOName() can give a value different to ISOName_c::ISONameUnspecified
-  // local: virtual ProcDataLocal::commanderISOName() gives ISOName_c::ISONameUnspecified
+  // remote: virtual ProcDataRemote::commanderISOName() can give a value different to IsoName_c::IsoNameUnspecified
+  // local: virtual ProcDataLocal::commanderISOName() gives IsoName_c::IsoNameUnspecified
   if (pprocessDataConst()->commanderISOName().isSpecified())
     setISOName(pprocessDataConst()->commanderISOName());
 
@@ -449,7 +449,7 @@ void MeasureProgBase_c::init(
   ProcDataBase_c *const rpc_processData,
   Proc_c::progType_t ren_progType,
   float rf_val,
-  const ISOName_c& rc_isoName)
+  const IsoName_c& rc_isoName)
 { // set the dynamic list to a well defined cleared starting condition
   #ifdef DEBUG_HEAP_USEAGE
   static bool b_doPrint = true;

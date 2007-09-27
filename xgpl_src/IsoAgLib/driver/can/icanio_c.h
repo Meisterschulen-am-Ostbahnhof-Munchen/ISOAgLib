@@ -66,18 +66,18 @@
 namespace IsoAgLib {
 
 /** Main Object for CAN communication;
-  act as interface for CANIO_c of the __IsoAgLib namespace. Manages
+  act as interface for CanIo_c of the __IsoAgLib namespace. Manages
   dynamic amount of FilterBox_c which can have individual filter/mask settings
   (means no global mask needed).
   Inhertis virtual from Shared::Err_c to allow easy access to status checking functions.
   @author Dipl.-Inform. Achim Spangler
   */
-class iCANIO_c : private __IsoAgLib::CANIO_c {
+class iCanIo_c : private __IsoAgLib::CanIo_c {
  private:
   // private typedef alias names
   typedef STL_NAMESPACE::bad_alloc bad_alloc;
-  typedef __IsoAgLib::CANCustomer_c CANCustomer_c;
-  typedef __IsoAgLib::CANPkg_c CANPkg_c;
+  typedef __IsoAgLib::CanCustomer_c CanCustomer_c;
+  typedef __IsoAgLib::CanPkg_c CanPkg_c;
   typedef __IsoAgLib::Ident_c Ident_c;
 
  public:
@@ -116,11 +116,11 @@ class iCANIO_c : private __IsoAgLib::CANIO_c {
         Ident_c::identType_t ren_identType = DEFAULT_CONFIG_IDENT_TYPE,
         uint8_t rui8_minObjNr = CONFIG_CAN_DEFAULT_MIN_OBJ_NR,
         uint8_t rui8_maxObjNr = CONFIG_CAN_DEFAULT_MAX_OBJ_NR
-        ) {return CANIO_c::init(rui8_busNumber, rui16_bitrate,
+        ) {return CanIo_c::init(rui8_busNumber, rui16_bitrate,
           ren_identType, rui8_minObjNr, rui8_maxObjNr);};
 
-  /** check if this CANIO_c instance is configured so that it can be used to send */
-  bool isReady2Send() const { return CANIO_c::isReady2Send();};
+  /** check if this CanIo_c instance is configured so that it can be used to send */
+  bool isReady2Send() const { return CanIo_c::isReady2Send();};
   /**
     initiate processing of all received msg
     check all active MsgObj_c for received CAN msg and
@@ -128,25 +128,25 @@ class iCANIO_c : private __IsoAgLib::CANIO_c {
     @return <0 --> not enough time to process all messages.
            ==0 --> no messages were received.
            >0  --> all messages are processed, number of messages  */
-  int16_t processMsg() { return CANIO_c::processMsg();};
+  int16_t processMsg() { return CanIo_c::processMsg();};
   /**
     deliver actual BUS load in baud
     @return baudrate in [baud] on used CAN BUS
   */
-  int16_t getBusLoad() const {return CANIO_c::getBusLoad();};
+  int16_t getBusLoad() const {return CanIo_c::getBusLoad();};
 
   /** wait until specified timeout or until next CAN message receive
    *  @return true -> there are CAN messages waiting for process. else: return due to timeout
    */
   static bool waitUntilCanReceiveOrTimeout( uint16_t rui16_timeoutInterval )
-  { return CANIO_c::waitUntilCanReceiveOrTimeout( rui16_timeoutInterval );};
+  { return CanIo_c::waitUntilCanReceiveOrTimeout( rui16_timeoutInterval );};
 
 
   /**
     set the minimum delay in msec. between two sent CAN messages
     @param rui16_minDelay minimum time between two CAN messages [msec.]
   */
-  void setSendpause(uint16_t rui16_minDelay) const { CANIO_c::setSendpause(rui16_minDelay);};
+  void setSendpause(uint16_t rui16_minDelay) const { CanIo_c::setSendpause(rui16_minDelay);};
 
   /**
     deliver the numbers which can be placed at the moment in the send puffer
@@ -155,27 +155,27 @@ class iCANIO_c : private __IsoAgLib::CANIO_c {
     @return number of msgs which fit into send buffer
   */
   uint8_t sendCanFreecnt(Ident_c::identType_t ren_identType = DEFAULT_IDENT_TYPE)
-  {return CANIO_c::sendCanFreecnt(ren_identType);};
+  {return CanIo_c::sendCanFreecnt(ren_identType);};
   /**
     clear the send buffer
     @param ren_identType type of searched ident: standard 11bit or extended 29bit
       (default DEFAULT_IDENT_TYPE set in isoaglib_config.h)
   */
   void sendCanClearbuf(Ident_c::identType_t ren_identType = DEFAULT_IDENT_TYPE)
-  {CANIO_c::sendCanClearbuf(ren_identType);};
+  {CanIo_c::sendCanClearbuf(ren_identType);};
 
 
   /** set the new maximum send delay
       @param ri32_maxSendDelay new maximum send delay in milli-seconds
    */
   void setMaxSendDelay (int32_t ri32_maxSendDelay)
-  { CANIO_c::setMaxSendDelay (ri32_maxSendDelay); }
+  { CanIo_c::setMaxSendDelay (ri32_maxSendDelay); }
 
   /** set this client to have send-priority
       @param rb_sendPrioritized enable (true) or disable (false) sending in Prioritized Mode
    */
   void setSendPriority(bool rb_sendPrioritized)
-  { CANIO_c::setSendPriority(rb_sendPrioritized); }
+  { CanIo_c::setSendPriority(rb_sendPrioritized); }
 
 
   /**
@@ -188,11 +188,11 @@ class iCANIO_c : private __IsoAgLib::CANIO_c {
       (default DEFAULT_IDENT_TYPE set in isoaglib_config.h)
     @return true -> same FilterBox_c already exist
   */
-  bool existFilter(const __IsoAgLib::CANCustomer_c& rref_customer,
+  bool existFilter(const __IsoAgLib::CanCustomer_c& rref_customer,
     uint16_t rui32_mask, uint16_t rui32_filter,
     Ident_c::identType_t ren_identType = DEFAULT_IDENT_TYPE,
       ArrFilterBox::iterator* rpc_iter = NULL)
-  { return CANIO_c::existFilter(rref_customer, rui32_mask, rui32_filter,
+  { return CanIo_c::existFilter(rref_customer, rui32_mask, rui32_filter,
     ren_identType, rpc_iter);};
   /**
     test if a FilterBox_c definition already exist
@@ -204,11 +204,11 @@ class iCANIO_c : private __IsoAgLib::CANIO_c {
       (default DEFAULT_IDENT_TYPE set in isoaglib_config.h)
     @return true -> same FilterBox_c already exist
   */
-  bool existFilter(const __IsoAgLib::CANCustomer_c& rref_customer,
+  bool existFilter(const __IsoAgLib::CanCustomer_c& rref_customer,
       uint32_t rui32_mask, uint32_t rui32_filter,
       Ident_c::identType_t ren_identType = DEFAULT_IDENT_TYPE,
       ArrFilterBox::iterator* rpc_iter = NULL)
-  {return CANIO_c::existFilter( rref_customer, rui32_mask, rui32_filter, ren_identType, rpc_iter);};
+  {return CanIo_c::existFilter( rref_customer, rui32_mask, rui32_filter, ren_identType, rpc_iter);};
   /**
     test if a FilterBox_c definition already exist
     (version with comper items as Ident_c class instances, chosen by compiler)
@@ -217,10 +217,10 @@ class iCANIO_c : private __IsoAgLib::CANIO_c {
     @param rc_compFilter individual filter
     @return true -> same FilterBox_c already exist
   */
-  bool existFilter(const __IsoAgLib::CANCustomer_c& rref_customer,
+  bool existFilter(const __IsoAgLib::CanCustomer_c& rref_customer,
       const Ident_c& rc_compMask, const Ident_c& rc_compFilter,
       ArrFilterBox::iterator* rpc_iter = NULL)
-  {return CANIO_c::existFilter(rref_customer, rc_compMask, rc_compFilter, rpc_iter);};
+  {return CanIo_c::existFilter(rref_customer, rc_compMask, rc_compFilter, rpc_iter);};
 
   /**
     create a Filter Box with specified rt_mask/rt_filter
@@ -228,7 +228,7 @@ class iCANIO_c : private __IsoAgLib::CANIO_c {
     rb_reconfigImmediate == true -> useful for
     avoiding unneeded reconfiguration during
     sequence of FilterBox_c insertions;
-    by rref_customer iCANIO_c (FilterBox_c) can start direct processing
+    by rref_customer iCanIo_c (FilterBox_c) can start direct processing
     of received data in dedicated customer object (no search);
     uses BIOS functions
 
@@ -236,7 +236,7 @@ class iCANIO_c : private __IsoAgLib::CANIO_c {
         * Err_c::badAlloc on not enough memory for new FilterBox
           instance or for new configured MsgObj_c's
     @see IsoAgLib::iCANCustomer
-    @param rref_customer reference to IsoAgLib::iCANCustomer_c which needs
+    @param rref_customer reference to IsoAgLib::iCanCustomer_c which needs
            filtered messages (-> on received msg call
            rref_customer.processMsg())
     @param rt_mask individual mask for this filter box
@@ -249,17 +249,17 @@ class iCANIO_c : private __IsoAgLib::CANIO_c {
           performed without errors
     @exception badAlloc
   */
-  inline bool insertFilter(IsoAgLib::iCANCustomer_c& rref_customer, MASK_TYPE rt_mask,
+  inline bool insertFilter(IsoAgLib::iCanCustomer_c& rref_customer, MASK_TYPE rt_mask,
        MASK_TYPE rt_filter, bool rb_reconfigImmediate = true,
                      const Ident_c::identType_t rt_identType = DEFAULT_IDENT_TYPE)
-  {return CANIO_c::insertFilter
-      (static_cast<CANCustomer_c&>(rref_customer),
+  {return CanIo_c::insertFilter
+      (static_cast<CanCustomer_c&>(rref_customer),
        rt_mask, rt_filter, rb_reconfigImmediate, rt_identType) ? true : false;
   };
   /**
     reconfigure the MsgObj after insert/delete of FilterBox
   */
-  bool reconfigureMsgObj() {return CANIO_c::reconfigureMsgObj();};
+  bool reconfigureMsgObj() {return CanIo_c::reconfigureMsgObj();};
 
   /**
     delete a FilerBox definition
@@ -270,13 +270,13 @@ class iCANIO_c : private __IsoAgLib::CANIO_c {
         (defualt DEFAULT_IDENT_TYPE defined in isoaglib_config.h)
     @return true -> FilterBox_c found and deleted
   */
-  bool deleteFilter(const __IsoAgLib::CANCustomer_c& rref_customer,
+  bool deleteFilter(const __IsoAgLib::CanCustomer_c& rref_customer,
       MASK_TYPE rui32_mask, MASK_TYPE rui32_filter,
       const Ident_c::identType_t rt_identType = DEFAULT_IDENT_TYPE)
-  {return CANIO_c::deleteFilter(rref_customer, rui32_mask, rui32_filter, rt_identType);};
+  {return CanIo_c::deleteFilter(rref_customer, rui32_mask, rui32_filter, rt_identType);};
 
-  bool deleteAllFiltersForCustomer (const __IsoAgLib::CANCustomer_c& rref_customer)
-  { return CANIO_c::deleteAllFiltersForCustomer (rref_customer); }
+  bool deleteAllFiltersForCustomer (const __IsoAgLib::CanCustomer_c& rref_customer)
+  { return CanIo_c::deleteAllFiltersForCustomer (rref_customer); }
 
 
   /**
@@ -290,13 +290,13 @@ class iCANIO_c : private __IsoAgLib::CANIO_c {
         * Err_c::range on undef BUS or BIOS send obj nr
         * Err_c::can_warn on physical CAN-BUS problems
         * Err_c::can_off on physical CAN-BUS off state
-    @see iCANPkg_c
-    @param rrefc_src iCANPkg_c which holds the to be sent data
-    @return reference to this iCANIO_c instance ==>
+    @see iCanPkg_c
+    @param rrefc_src iCanPkg_c which holds the to be sent data
+    @return reference to this iCanIo_c instance ==>
           needed by commands like "c_can_io << pkg_1 << pkg_2 ... << pkg_n;"
   */
-  iCANIO_c& operator<<(iCANPkg_c& rrefc_src)
-    {return static_cast<iCANIO_c&>(CANIO_c::operator<<(static_cast<iCANPkg_c&>(rrefc_src)));};
+  iCanIo_c& operator<<(iCanPkg_c& rrefc_src)
+    {return static_cast<iCanIo_c&>(CanIo_c::operator<<(static_cast<iCanPkg_c&>(rrefc_src)));};
   /**
     function for sending data out of iCANPkg
     if send puffer is full a local loop waits till puffer has enough space
@@ -308,34 +308,38 @@ class iCANIO_c : private __IsoAgLib::CANIO_c {
         * Err_c::range on undef BUS or BIOS send obj nr
         * Err_c::can_warn on physical CAN-BUS problems
         * Err_c::can_off on physical CAN-BUS off state
-    @see iCANPkg_c
-    @param rrefc_src iCANPkg_c which holds the to be sent data
-    @return reference to this iCANIO_c instance ==>
+    @see iCanPkg_c
+    @param rrefc_src iCanPkg_c which holds the to be sent data
+    @return reference to this iCanIo_c instance ==>
           needed by commands like "c_can_io << pkg_1 << pkg_2 ... << pkg_n;"
   */
-  iCANIO_c& operator<<(iCANPkgExt_c& rrefc_src)
-    {return static_cast<iCANIO_c&>(CANIO_c::operator<<(static_cast<__IsoAgLib::CANPkgExt_c&>(rrefc_src)));};
+  iCanIo_c& operator<<(iCanPkgExt_c& rrefc_src)
+    {return static_cast<iCanIo_c&>(CanIo_c::operator<<(static_cast<__IsoAgLib::CanPkgExt_c&>(rrefc_src)));};
 
  private:
   /** allow getIcanInstance() access to shielded base class.
       otherwise __IsoAgLib::getCanInstance() wouldn't be accepted by compiler
     */
   #if defined( CAN_INSTANCE_CNT ) && ( CAN_INSTANCE_CNT > 1 )
-  friend iCANIO_c& getIcanInstance( uint8_t rui8_instance );
+  friend iCanIo_c& getIcanInstance( uint8_t rui8_instance );
   #else
-  friend iCANIO_c& getIcanInstance( void );
+  friend iCanIo_c& getIcanInstance( void );
   #endif
 };
 #if defined( CAN_INSTANCE_CNT ) && ( CAN_INSTANCE_CNT > 1 )
-  /** C-style function, to get access to the unique iCANIO_c singleton instance
+  /** C-style function, to get access to the unique iCanIo_c singleton instance
     * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
     */
-  inline iCANIO_c& getIcanInstance( uint8_t rui8_instance = 0 )
-  { return static_cast<iCANIO_c&>(__IsoAgLib::getCanInstance(rui8_instance));};
+  inline iCanIo_c& getIcanInstance( uint8_t rui8_instance = 0 )
+  { return static_cast<iCanIo_c&>(__IsoAgLib::getCanInstance(rui8_instance));};
 #else
-  /** C-style function, to get access to the unique iCANIO_c singleton instance */
-  inline iCANIO_c& getIcanInstance( void )
-  { return static_cast<iCANIO_c&>(__IsoAgLib::getCanInstance());};
+  /** C-style function, to get access to the unique iCanIo_c singleton instance */
+  inline iCanIo_c& getIcanInstance( void )
+  { return static_cast<iCanIo_c&>(__IsoAgLib::getCanInstance());};
 #endif
+
+
+/** this typedef is only for some time to provide backward compatibility at API level */
+typedef iCanIo_c iCANIO_c;
 }
 #endif

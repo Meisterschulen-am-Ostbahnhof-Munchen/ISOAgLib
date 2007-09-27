@@ -111,8 +111,8 @@ public:
   /**
     constructor which can optional set all member values
     ISO parameter
-    @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, isSetpoint and ValueGroup
-                         (array is terminated by ElementDDI_s.ddi == 0xFFFF)
+    @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDdi_s which contains DDI, isSetpoint and ValueGroup
+                         (array is terminated by ElementDdi_s.ddi == 0xFFFF)
     @param ui16_element device element number
 
     common parameter
@@ -125,11 +125,11 @@ public:
             as corresponding device is registered as having claimed address in monitor table list)
   */
   ProcIdent_c(
-              const IsoAgLib::ElementDDI_s* ps_elementDDI = NULL,
+              const IsoAgLib::ElementDdi_s* ps_elementDDI = NULL,
               uint16_t ui16_element = 0xFFFF,
-              const ISOName_c& rc_isoName = ISOName_c::ISONameInitialProcessData(),
-              const ISOName_c& rc_ownerISOName = ISOName_c::ISONameUnspecified(),
-              const ISOName_c *rpc_ownerISOName = NULL,
+              const IsoName_c& rc_isoName = IsoName_c::IsoNameInitialProcessData(),
+              const IsoName_c& rc_ownerISOName = IsoName_c::IsoNameUnspecified(),
+              const IsoName_c *rpc_ownerISOName = NULL,
               int ri_singletonVecKey = 0);
 
   /** copy constructor */
@@ -138,8 +138,8 @@ public:
   /**
     initialisation which can set this process data instance to a defined intial state
     ISO parameter
-    @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, isSetpoint and ValueGroup
-                         (array is terminated by ElementDDI_s.ddi == 0xFFFF)
+    @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDdi_s which contains DDI, isSetpoint and ValueGroup
+                         (array is terminated by ElementDdi_s.ddi == 0xFFFF)
     @param ui16_element device element number
 
     common parameter
@@ -152,11 +152,11 @@ public:
             as corresponding device is registered as having claimed address in monitor table list)
   */
   void init(
-            const IsoAgLib::ElementDDI_s* ps_elementDDI,
+            const IsoAgLib::ElementDdi_s* ps_elementDDI,
             uint16_t ui16_element,
-            const ISOName_c& rc_isoName,
-            const ISOName_c& rc_ownerISOName = ISOName_c::ISONameUnspecified(),
-            const ISOName_c *rpc_ownerISOName = NULL);
+            const IsoName_c& rc_isoName,
+            const IsoName_c& rc_ownerISOName = IsoName_c::IsoNameUnspecified(),
+            const IsoName_c *rpc_ownerISOName = NULL);
 
   /**
     copy constructor for class instance
@@ -201,10 +201,10 @@ public:
   // member variable access
 
   /**
-     deliver list of ElementDDI_s
-     @return STL_NAMESPACE::list<IsoAgLib::ElementDDI_s>
+     deliver list of ElementDdi_s
+     @return STL_NAMESPACE::list<IsoAgLib::ElementDdi_s>
   */
-  const STL_NAMESPACE::list<IsoAgLib::ElementDDI_s>& elementDDI()const {return l_elementDDI;}
+  const STL_NAMESPACE::list<IsoAgLib::ElementDdi_s>& elementDDI()const {return l_elementDDI;}
 
   /** check if this ProcIdent_c has the given DDI as element */
   bool hasDDI( uint16_t rui16_checkDDI ) const;
@@ -241,7 +241,7 @@ public:
     stored value
     @return ISOName
   */
-  const ISOName_c& isoName() const {return ownerISOName();}
+  const IsoName_c& isoName() const {return ownerISOName();}
 
   /**
     deliver value _instance_ (important if more than one machine with equal _device_class_ are active)
@@ -255,20 +255,20 @@ public:
     deliver the owner isoName (retrieved from pointed isoName value, if valid pointer)
     @return actual ISOName of owner
   */
-  const ISOName_c& ownerISOName() const
+  const IsoName_c& ownerISOName() const
     { return ((pc_ownerISOName != 0)?(*pc_ownerISOName):(c_ownerISOName));}
 
   /**
     set DDI, value group and setpoint/measure type of process msg
     @param rl_elementDDI
   */
-  void setElementDDI(const IsoAgLib::ElementDDI_s* ps_elementDDI);
+  void setElementDDI(const IsoAgLib::ElementDdi_s* ps_elementDDI);
 
   /**
     set DDI, value group and setpoint/measure type of process msg (used in assignFromSource)
     @param pl_elementDDI
   */
-  void setElementDDI(const STL_NAMESPACE::list<IsoAgLib::ElementDDI_s>* pl_elementDDI);
+  void setElementDDI(const STL_NAMESPACE::list<IsoAgLib::ElementDdi_s>* pl_elementDDI);
 
   /** set device element number
     * @param  rui16_element */
@@ -284,7 +284,7 @@ public:
     set value ISOName (machine type specific table of process data types)
     @param rc_val new ISOName val
   */
-  void setISOName(const ISOName_c& rc_val){c_isoName = rc_val;}
+  void setISOName(const IsoName_c& rc_val){c_isoName = rc_val;}
 
   /**
     set value _instance_ (important if more than one machine with equal _device_class_ are active)
@@ -297,7 +297,7 @@ public:
     set the owner isoName
     @param rc_val new ISOName of owner
   */
-  void setOwnerISOName(const ISOName_c& rc_val){c_ownerISOName = rc_val;}
+  void setOwnerISOName(const IsoName_c& rc_val){c_ownerISOName = rc_val;}
 
   /**
     set the DEVCLASS of the owner
@@ -309,7 +309,7 @@ public:
     set DEVCLASS and _instance_ of owner by giving pointer to owner ISOName
     @param rpc_val pointer to owner ISOName
   */
-  void setOwnerISOName(const ISOName_c* rpc_val);
+  void setOwnerISOName(const IsoName_c* rpc_val);
 
   /**
     check if this item has the same identity as defined by the parameters,
@@ -329,17 +329,17 @@ public:
 
     @return true -> this instance has same Process-Data identity
   */
-  bool matchISO( const ISOName_c& rrefc_isoNameSender,
-                 const ISOName_c& rrefc_isoNameReceiver,
+  bool matchISO( const IsoName_c& rrefc_isoNameSender,
+                 const IsoName_c& rrefc_isoNameReceiver,
                  uint16_t rui16_DDI,
                  uint16_t rui16_element
                ) const;
 
-  bool check4GroupMatch(uint16_t rui16_DDI, uint16_t rui16_element, const ISOName_c& rc_isoName);
+  bool check4GroupMatch(uint16_t rui16_DDI, uint16_t rui16_element, const IsoName_c& rc_isoName);
 
-  bool check4GroupMatchExisting(uint16_t rui16_DDI, uint16_t rui16_element, const ISOName_c& rc_isoName);
+  bool check4GroupMatchExisting(uint16_t rui16_DDI, uint16_t rui16_element, const IsoName_c& rc_isoName);
 
-  bool checkProprietary4GroupMatch(uint16_t rui_deviceElement, const ISOName_c& rc_isoName);
+  bool checkProprietary4GroupMatch(uint16_t rui_deviceElement, const IsoName_c& rc_isoName);
 
   static bool isPair(uint16_t rui16_ElementDDI, uint16_t rui16_DDI);
 
@@ -356,21 +356,21 @@ private: // Private attributes
   void assignFromSource( const ProcIdent_c& rrefc_src );
 
   /** DEVCLASS code of process data identity */
-  const ISOName_c* pc_ownerISOName; // only defined for own local data, otherwise NULL
+  const IsoName_c* pc_ownerISOName; // only defined for own local data, otherwise NULL
   /**
     in most cases equivalent with ((devClass << 3) | pos);
     for data with ident devClass==0 this is mostly NOT the same as the devClass of the owner,
     because then this value is of the general base data table
   */
-  ISOName_c c_ownerISOName;
-  /** ISOName_c information for this instance
+  IsoName_c c_ownerISOName;
+  /** IsoName_c information for this instance
       ( the _instance_ part is important if more ECU of same _device_class_ are
       parallel active on the BUS)
     */
-  ISOName_c c_isoName;
+  IsoName_c c_isoName;
 
 
-   STL_NAMESPACE::list<IsoAgLib::ElementDDI_s> l_elementDDI;
+   STL_NAMESPACE::list<IsoAgLib::ElementDdi_s> l_elementDDI;
    uint16_t ui16_element;
 
 private: // Private methods

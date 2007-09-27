@@ -136,7 +136,7 @@ int main()
   getIcanInstance().init( 0, 250 );
   // variable for ISOName
   // default with primary cultivation mounted back
-  iISOName_c myISOName( 2, 0 );
+  iIsoName_c myISOName( 2, 0 );
   // uint8_t string for name of this IMI (7 characters + '\0')
   uint8_t myName[12] = "IMI Tes";
   // address claim state of the IMI
@@ -146,7 +146,7 @@ int main()
   // variable for working width defaultedwith 3000mm
   int32_t myWidth = 15000; //3000;
   // DEVKEY of task controller which delivers EHR of tractor
-  iISOName_c c_autodatacollectorISOName( 1, 3 );
+  iIsoName_c c_autodatacollectorISOName( 1, 3 );
   // lower limit for PTO in working state (0 == work state independent from PTO)
   uint16_t ui16_workMinPtoRear = 0;
   uint16_t ui16_workMinPtoFront = 0;
@@ -159,7 +159,7 @@ int main()
 
 
 #ifdef USE_EEPROM_IO
-  iEEPROMIO_c& c_eeprom = getIeepromInstance();
+  iEepromIo_c& c_eeprom = getIeepromInstance();
 #endif
 
 #if READ_EEPROM_IDENT_YN ==  YES

@@ -112,8 +112,8 @@ namespace IsoAgLib {
 */
 class ReceiveStreamIdentifier_c {
 public:
-  ReceiveStreamIdentifier_c (uint32_t rui32_pgn, uint8_t rui8_da, const iISOName_c& rrefc_daIsoName,
-                                                 uint8_t rui8_sa, const iISOName_c& rrefc_saIsoName)
+  ReceiveStreamIdentifier_c (uint32_t rui32_pgn, uint8_t rui8_da, const iIsoName_c& rrefc_daIsoName,
+                                                 uint8_t rui8_sa, const iIsoName_c& rrefc_saIsoName)
                           : ui32_pgn (rui32_pgn)
                           , ui8_da (rui8_da)
                           , ui8_sa (rui8_sa)
@@ -149,8 +149,8 @@ public:
 
 
   uint32_t          getPgn()       const { return ui32_pgn; }
-  const iISOName_c& getDaIsoName() const { return c_daIsoName; }
-  const iISOName_c& getSaIsoName() const { return c_saIsoName; }
+  const iIsoName_c& getDaIsoName() const { return c_daIsoName; }
+  const iIsoName_c& getSaIsoName() const { return c_saIsoName; }
 
   // public for direct access to the CACHED addresses.
   //! Be aware that SA/DA can CHANGE while the system is running, so
@@ -181,10 +181,10 @@ private:
   mutable uint8_t ui8_sa;
 
   /** Destination ISOName */
-  iISOName_c c_daIsoName;
+  iIsoName_c c_daIsoName;
 
   /** Source ISOName */
-  iISOName_c c_saIsoName;
+  iIsoName_c c_saIsoName;
 };
 
 

@@ -133,8 +133,8 @@ namespace __IsoAgLib {
 /** struct for client definition */
 class MultiReceiveClientWrapper_s : public ClientBase {
   public:
-  MultiReceiveClientWrapper_s( CANCustomer_c& rpc_client,
-                               const ISOName_c& rrefc_isoNameClient,
+  MultiReceiveClientWrapper_s( CanCustomer_c& rpc_client,
+                               const IsoName_c& rrefc_isoNameClient,
                                uint32_t rui32_pgn,
                                uint32_t rui32_pgnMask,
                                bool rb_alsoBroadcast,
@@ -145,8 +145,8 @@ class MultiReceiveClientWrapper_s : public ClientBase {
                               SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA
                              );
 
-  CANCustomer_c* pc_client;
-  ISOName_c c_isoName;
+  CanCustomer_c* pc_client;
+  IsoName_c c_isoName;
   uint32_t ui32_pgn;
   uint32_t ui32_pgnMask;
   uint8_t ui8_cachedClientAddress; // kinda "cached" (normally clients register for receiving multi-packages to their own SA)
@@ -176,7 +176,7 @@ public:
   bool processMsg();
 
   //  Operation: (de)registerClient
-  void registerClient   (CANCustomer_c& rrefc_client, const ISOName_c& rrefc_isoName,
+  void registerClient   (CanCustomer_c& rrefc_client, const IsoName_c& rrefc_isoName,
                          uint32_t rui32_pgn, uint32_t rui32_pgnMask=0x3FFFF,
                          bool b_alsoBroadcast=false, bool rb_alsoGlobalErrors=false
                          #ifdef NMEA_2000_FAST_PACKET
@@ -184,8 +184,8 @@ public:
                          #endif
                          );
 
-  void deregisterClient (CANCustomer_c& rpc_client);
-  void deregisterClient (CANCustomer_c& rrefc_client, const ISOName_c& rrefc_isoName, uint32_t rui32_pgn, uint32_t rui32_pgnMask);
+  void deregisterClient (CanCustomer_c& rpc_client);
+  void deregisterClient (CanCustomer_c& rrefc_client, const IsoName_c& rrefc_isoName, uint32_t rui32_pgn, uint32_t rui32_pgnMask);
 
   //  Operation: createStream
   //! Parameter:
@@ -201,16 +201,16 @@ public:
   #endif
   );
 
-   /** this function is called by ISOMonitor_c when a new CLAIMED ISOItem_c is registered.
-   * @param refc_isoName const reference to the item which ISOItem_c state is changed
-   * @param rpc_newItem pointer to the currently corresponding ISOItem_c
+   /** this function is called by IsoMonitor_c when a new CLAIMED IsoItem_c is registered.
+   * @param refc_isoName const reference to the item which IsoItem_c state is changed
+   * @param rpc_newItem pointer to the currently corresponding IsoItem_c
     */
-  virtual void reactOnMonitorListAdd( const ISOName_c& refc_isoName, const ISOItem_c* rpc_newItem );
-   /** this function is called by ISOMonitor_c when a device looses its ISOItem_c.
-   * @param refc_isoName const reference to the item which ISOItem_c state is changed
+  virtual void reactOnMonitorListAdd( const IsoName_c& refc_isoName, const IsoItem_c* rpc_newItem );
+   /** this function is called by IsoMonitor_c when a device looses its IsoItem_c.
+   * @param refc_isoName const reference to the item which IsoItem_c state is changed
    * @param rui8_oldSa previously used SA which is NOW LOST -> clients which were connected to this item can react explicitly
     */
-  virtual void reactOnMonitorListRemove( const ISOName_c& refc_isoName, uint8_t rui8_oldSa );
+  virtual void reactOnMonitorListRemove( const IsoName_c& refc_isoName, uint8_t rui8_oldSa );
 
   /// Use to remove a "kept"-stream after it is gotten by "getFinishedJustKeptStream" and processed.
   void removeKeptStream(IsoAgLib::iStream_c* rpc_keptStream);
@@ -234,13 +234,13 @@ public:
     deliver reference to data pkg
     @return reference to the member BasePkg_c, which encapsulates the CAN send structure
   */
-  CANPkgExt_c& data() { return c_data; };
+  CanPkgExt_c& data() { return c_data; };
 
   /**
-    deliver reference to data pkg as reference to CANPkgExt_c
+    deliver reference to data pkg as reference to CanPkgExt_c
     to implement the base virtual function correct
   */
-  virtual CANPkgExt_c& dataBase();
+  virtual CanPkgExt_c& dataBase();
 
   //! return 0x00-0xFF: first byte of the stream!
   //! return 0x100: first byte not yet known!
@@ -271,7 +271,7 @@ private:
   void singletonInit();
 
   /** temp data where received data is put */
-  CANPkgExt_c c_data;
+  CanPkgExt_c c_data;
 
   //  Operation: getStream
   //! Parameter:
@@ -288,8 +288,8 @@ private:
   //  Operation: getClient
   //! Parameter:
   //! @param rc_streamIdent:
-  //! @return NULL for "doesn't exist", otherwise valid "CANCustomer_c*"
-  CANCustomer_c* getClient (IsoAgLib::ReceiveStreamIdentifier_c rc_streamIdent);
+  //! @return NULL for "doesn't exist", otherwise valid "CanCustomer_c*"
+  CanCustomer_c* getClient (IsoAgLib::ReceiveStreamIdentifier_c rc_streamIdent);
 
   //  Operation: sendCurrentCts
   //! Parameter:

@@ -3,7 +3,7 @@
 IsoAgLib::iIdentItem_c c_myIdent(0x2, 0x5, 0, 0x19, 0x7ff, 0x1b, 0x80, 0xffff, 0,0,true);
 
 static const uint16_t scui16_myOnoffElementNumber = 0;
-const IsoAgLib::ElementDDI_s s_myOnoffElementDDI[] =
+const IsoAgLib::ElementDdi_s s_myOnoffElementDDI[] =
 {
 	{0x008D, true, IsoAgLib::GeneralCommand_c::exactValue},
 	// termination entry
@@ -18,7 +18,7 @@ scui16_myOnoffElementNumber, c_myIdent.isoName(), c_myIdent.isoName(), &c_myIden
 );
 
 static const uint16_t scui16_myWorkWidthElementNumber = 0;
-const IsoAgLib::ElementDDI_s s_myWorkWidthElementDDI[] =
+const IsoAgLib::ElementDdi_s s_myWorkWidthElementDDI[] =
 {
 	{0x0043, true, IsoAgLib::GeneralCommand_c::exactValue},
 	// termination entry
@@ -33,7 +33,7 @@ scui16_myWorkWidthElementNumber, c_myIdent.isoName(), c_myIdent.isoName(), &c_my
 );
 
 static const uint16_t scui16_myApplicationRateElementNumber = 0;
-const IsoAgLib::ElementDDI_s s_myApplicationRateElementDDI[] =
+const IsoAgLib::ElementDdi_s s_myApplicationRateElementDDI[] =
 {
 	{0x0007, true, IsoAgLib::GeneralCommand_c::exactValue},
 	// termination entry

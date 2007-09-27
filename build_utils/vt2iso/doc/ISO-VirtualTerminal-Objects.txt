@@ -62,7 +62,7 @@ Generally, there are two ways you can implement your generated objectpool into y
 In all cases init the ISO-Terminal the following way (If no WorkingSet-Name is given (NULL), the pool won't be saved in nv-storage from the VT!):
 \code
 getIisoTerminalInstance().init (&c_myIdent, &MyPool_c, "WS-Name");
-// Refer to IsoAgLib::iISOTerminal_c::init(...) for more information.
+// Refer to IsoAgLib::iIsoTerminal_c::init(...) for more information.
 \endcode
 <p>
 \subsection Function Control Flow

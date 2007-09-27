@@ -58,8 +58,8 @@
 		subgraph cluster_level312 {
 			style="invis";
 			rank=same;
-			can         [label="Extended CAN driver\nobligatory", color="green2", URL="\ref IsoAgLib::iCANIO_c"];
-			eeprom      [label="Extended EEPROM driver\noptional; needed for features of process data and ISO 11783", color="greenyellow", URL="\ref IsoAgLib::iEEPROMIO_c"];
+			can         [label="Extended CAN driver\nobligatory", color="green2", URL="\ref IsoAgLib::iCanIo_c"];
+			eeprom      [label="Extended EEPROM driver\noptional; needed for features of process data and ISO 11783", color="greenyellow", URL="\ref IsoAgLib::iEepromIo_c"];
 			system      [label="Extended Access to System Information\nobligatory", color="green2", URL="\ref IsoAgLib::iSystem_c"];
 		}
 		subgraph cluster_level32 {

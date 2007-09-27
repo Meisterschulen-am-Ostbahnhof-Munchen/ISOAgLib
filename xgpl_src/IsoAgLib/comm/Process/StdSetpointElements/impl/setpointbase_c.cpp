@@ -172,7 +172,7 @@ void SetpointBase_c::processMsg(){
 
   possible errors:
       * dependant error in ProcDataBase_c commander of this setpoint isn't found in Monitor List
-      * dependant error in CANIO_c on CAN send problems
+      * dependant error in CanIo_c on CAN send problems
   @param rrefc_src reference to SetpointRegister_c with registered setpoints
   @param rb_override true -> override registered setpoint with ri32_overrideVal
   @param ri32_overrideVal value which can override registered setpoint on rb_override == true

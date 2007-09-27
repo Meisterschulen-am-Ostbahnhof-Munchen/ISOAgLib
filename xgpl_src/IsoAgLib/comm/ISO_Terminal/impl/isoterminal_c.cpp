@@ -89,28 +89,28 @@
 
 namespace __IsoAgLib {
 #if defined(PRT_INSTANCE_CNT) && (PRT_INSTANCE_CNT > 1)
-  /** C-style function, to get access to the unique ISOTerminal_c singleton instance
+  /** C-style function, to get access to the unique IsoTerminal_c singleton instance
     * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
     */
-  ISOTerminal_c& getIsoTerminalInstance(uint8_t rui8_instance)
+  IsoTerminal_c& getIsoTerminalInstance(uint8_t rui8_instance)
   { // if > 1 singleton instance is used, no static reference can be used
-    return ISOTerminal_c::instance(rui8_instance);
+    return IsoTerminal_c::instance(rui8_instance);
   };
 #else
-  /** C-style function, to get access to the unique ISOTerminal_c singleton instance */
-  ISOTerminal_c& getIsoTerminalInstance(void)
+  /** C-style function, to get access to the unique IsoTerminal_c singleton instance */
+  IsoTerminal_c& getIsoTerminalInstance(void)
   {
-    static ISOTerminal_c& c_isoTerminal = ISOTerminal_c::instance();
+    static IsoTerminal_c& c_isoTerminal = IsoTerminal_c::instance();
     return c_isoTerminal;
   };
 #endif
 
 
 
-/** deliver reference to data pkg as reference to CANPkgExt_c
+/** deliver reference to data pkg as reference to CanPkgExt_c
   to implement the base virtual function correct
  */
-CANPkgExt_c& ISOTerminal_c::dataBase()
+CanPkgExt_c& IsoTerminal_c::dataBase()
 {
   return c_data;
 }
@@ -118,7 +118,7 @@ CANPkgExt_c& ISOTerminal_c::dataBase()
 
 /** default constructor
  */
-ISOTerminal_c::ISOTerminal_c()
+IsoTerminal_c::IsoTerminal_c()
 {
   /// all variable initialization moved to singletonInit!
 }
@@ -126,14 +126,14 @@ ISOTerminal_c::ISOTerminal_c()
 
 /** default destructor
 */
-ISOTerminal_c::~ISOTerminal_c()
+IsoTerminal_c::~IsoTerminal_c()
 {
   close();
 }
 
 
 void
-ISOTerminal_c::singletonInit()
+IsoTerminal_c::singletonInit()
 {
   // clear state of b_alreadyClosed, so that close() is called one time
   setAlreadyClosed();
@@ -145,7 +145,7 @@ ISOTerminal_c::singletonInit()
 
 /** initialise element which can't be done during construct */
 void
-ISOTerminal_c::init()
+IsoTerminal_c::init()
 {
   if (checkAlreadyClosed())
   { // avoid another call
@@ -156,7 +156,7 @@ ISOTerminal_c::init()
     // register to get ISO monitor list changes
     getIsoMonitorInstance4Comm().registerSaClaimHandler(this);
 
-    // register Filter in CANIO_c
+    // register Filter in CanIo_c
     bool b_atLeastOneFilterAdded=false;
     b_atLeastOneFilterAdded |= (getCanInstance4Comm().insertFilter (*this, (0x3FFFF00UL), (static_cast<MASK_TYPE>(VT_TO_GLOBAL_PGN) << 8),    false, Ident_c::ExtendedIdent, 8) != NULL);
     b_atLeastOneFilterAdded |= (getCanInstance4Comm().insertFilter (*this, (0x3FFFF00UL), (static_cast<MASK_TYPE>(LANGUAGE_PGN) << 8),        false, Ident_c::ExtendedIdent, 8) != NULL);
@@ -167,10 +167,10 @@ ISOTerminal_c::init()
     // has already triggered a Req4AdrCl - and also e.g. a VT has answered.
     // --> We might not receive this AdrClaim then in the SaClaim-handler
     // ==> Collect all VTs already known NOW - Then we can ensure that NO VT slips away...
-    const uint8_t cui8_cntVt = getIsoMonitorInstance4Comm().isoMemberEcuTypeCnt (ISOName_c::ecuTypeVirtualTerminal, /*rb_forceClaimedAddress:*/true);
+    const uint8_t cui8_cntVt = getIsoMonitorInstance4Comm().isoMemberEcuTypeCnt (IsoName_c::ecuTypeVirtualTerminal, /*rb_forceClaimedAddress:*/true);
     for (uint8_t ui8_i=0; (ui8_i < cui8_cntVt); ui8_i++)
     { // walk through all claimed VTs
-      ISOItem_c& refc_vtIsoItem = getIsoMonitorInstance4Comm().isoMemberEcuTypeInd (ISOName_c::ecuTypeVirtualTerminal, ui8_i,  /*rb_forceClaimedAddress:*/true);
+      IsoItem_c& refc_vtIsoItem = getIsoMonitorInstance4Comm().isoMemberEcuTypeInd (IsoName_c::ecuTypeVirtualTerminal, ui8_i,  /*rb_forceClaimedAddress:*/true);
       // check if adding is needed (and add if needed) through the generic "reactOnMonitorListAdd"
       reactOnMonitorListAdd (refc_vtIsoItem.isoName(), &refc_vtIsoItem);
     }
@@ -185,7 +185,7 @@ ISOTerminal_c::init()
 
 /** every subsystem of IsoAgLib has explicit function for controlled shutdown */
 void
-ISOTerminal_c::close()
+IsoTerminal_c::close()
 {
   if (!checkAlreadyClosed())
   { // avoid another call
@@ -193,7 +193,7 @@ ISOTerminal_c::close()
 
     // deregister in Scheduler_c
     getSchedulerInstance4Comm().unregisterClient(this);
-    // deregister in ISOMonitor_c
+    // deregister in IsoMonitor_c
     getIsoMonitorInstance4Comm().deregisterSaClaimHandler(this);
 
     getCanInstance4Comm().deleteFilter(*this, (0x3FFFF00UL), (static_cast<MASK_TYPE>(VT_TO_GLOBAL_PGN) << 8),    Ident_c::ExtendedIdent);
@@ -220,7 +220,7 @@ ISOTerminal_c::close()
           or if you already registered an object-pool for this IdentItem
  */
 VtClientServerCommunication_c*
-ISOTerminal_c::initAndRegisterIsoObjectPool (IdentItem_c& refc_identItem, IsoAgLib::iIsoTerminalObjectPool_c& rrefc_pool, char* rpc_versionLabel)
+IsoTerminal_c::initAndRegisterIsoObjectPool (IdentItem_c& refc_identItem, IsoAgLib::iIsoTerminalObjectPool_c& rrefc_pool, char* rpc_versionLabel)
 {
   uint8_t ui8_index = 0;
   // add new instance of VtClientServerCommunication
@@ -268,7 +268,7 @@ ISOTerminal_c::initAndRegisterIsoObjectPool (IdentItem_c& refc_identItem, IsoAgL
 
 /** De-Register the registered object pool and versionLabel string (if one was copied) */
 bool
-ISOTerminal_c::deregisterIsoObjectPool (IdentItem_c& ref_identItem)
+IsoTerminal_c::deregisterIsoObjectPool (IdentItem_c& ref_identItem)
 {
   /* what states the IdentItem could have we have to interrupt???
   * - IState_c::ClaimedAddress -> that item is Active and Member on ISOBUS
@@ -295,7 +295,7 @@ ISOTerminal_c::deregisterIsoObjectPool (IdentItem_c& ref_identItem)
 
 
 void
-ISOTerminal_c::deregisterIsoObjectPoolInd (uint8_t rui8_index)
+IsoTerminal_c::deregisterIsoObjectPoolInd (uint8_t rui8_index)
 {
   delete vec_vtClientServerComm[rui8_index];
   vec_vtClientServerComm[rui8_index] = NULL;
@@ -308,7 +308,7 @@ ISOTerminal_c::deregisterIsoObjectPoolInd (uint8_t rui8_index)
   @return true -> all planned activities from all vtClientServerCommuniactions were performed in allowed time
  */
 bool
-ISOTerminal_c::timeEvent(void)
+IsoTerminal_c::timeEvent(void)
 {
   System_c::triggerWd(); /** @todo what to do with those calls? */
 
@@ -329,10 +329,10 @@ ISOTerminal_c::timeEvent(void)
 
 
 /** process received can messages
-  @return true -> message was processed; else the received CAN message will be served to other matching CANCustomer_c
+  @return true -> message was processed; else the received CAN message will be served to other matching CanCustomer_c
  */
 bool
-ISOTerminal_c::processMsg()
+IsoTerminal_c::processMsg()
 {
   // VT_TO_GLOBAL is the only PGN we accept without VT being active, because it marks the VT active!!
   STL_NAMESPACE::list<VtServerInstance_c>::iterator lit_vtServerInst;
@@ -405,7 +405,7 @@ ISOTerminal_c::processMsg()
 
 
 bool
-ISOTerminal_c::sendCommandForDEBUG(IsoAgLib::iIdentItem_c& refc_wsMasterIdentItem, uint8_t* rpui8_buffer, uint32_t ui32_size)
+IsoTerminal_c::sendCommandForDEBUG(IsoAgLib::iIdentItem_c& refc_wsMasterIdentItem, uint8_t* rpui8_buffer, uint32_t ui32_size)
 {
   for (uint8_t ui8_index = 0; ui8_index < vec_vtClientServerComm.size(); ui8_index++)
   {
@@ -418,10 +418,10 @@ ISOTerminal_c::sendCommandForDEBUG(IsoAgLib::iIdentItem_c& refc_wsMasterIdentIte
 
 ///! Attention: This function is also called from "init()", not only from ISOMonitor!
 void
-ISOTerminal_c::reactOnMonitorListAdd (const ISOName_c& refc_isoName, const ISOItem_c* rpc_newItem)
+IsoTerminal_c::reactOnMonitorListAdd (const IsoName_c& refc_isoName, const IsoItem_c* rpc_newItem)
 {
   // we only care for the VTs
-  if (refc_isoName.getEcuType() != ISOName_c::ecuTypeVirtualTerminal) return;
+  if (refc_isoName.getEcuType() != IsoName_c::ecuTypeVirtualTerminal) return;
 
   STL_NAMESPACE::list<VtServerInstance_c>::iterator lit_vtServerInst;
 
@@ -450,10 +450,10 @@ ISOTerminal_c::reactOnMonitorListAdd (const ISOName_c& refc_isoName, const ISOIt
 
 
 void
-ISOTerminal_c::reactOnMonitorListRemove (const ISOName_c& refc_isoName, uint8_t /*rui8_oldSa*/)
+IsoTerminal_c::reactOnMonitorListRemove (const IsoName_c& refc_isoName, uint8_t /*rui8_oldSa*/)
 {
   // we only care for the VTs
-  if (refc_isoName.getEcuType() != ISOName_c::ecuTypeVirtualTerminal) return;
+  if (refc_isoName.getEcuType() != IsoName_c::ecuTypeVirtualTerminal) return;
 
   // check if it is mine???
   STL_NAMESPACE::list<VtServerInstance_c>::iterator lit_vtServerInst;
@@ -487,10 +487,10 @@ ISOTerminal_c::reactOnMonitorListRemove (const ISOName_c& refc_isoName, uint8_t 
 
 /** @todo do we really need these functions??? -> for now allow multiple upload
 
-bool ISOTerminal_c::sb_poolUploadInProgress;
-const VtClientServerCommunication_c* ISOTerminal_c::spc_vtcscForUpload;
+bool IsoTerminal_c::sb_poolUploadInProgress;
+const VtClientServerCommunication_c* IsoTerminal_c::spc_vtcscForUpload;
 
-bool ISOTerminal_c::getFlagForPoolUpload(const VtClientServerCommunication_c* pc_vtCSC)
+bool IsoTerminal_c::getFlagForPoolUpload(const VtClientServerCommunication_c* pc_vtCSC)
 {
   if (sb_poolUploadInProgress) // someone else is uploading its pool -> wait
     return false;
@@ -503,7 +503,7 @@ bool ISOTerminal_c::getFlagForPoolUpload(const VtClientServerCommunication_c* pc
 }
 
 
-void ISOTerminal_c::resetFlagForPoolUpload(const VtClientServerCommunication_c* pc_vtCSC)
+void IsoTerminal_c::resetFlagForPoolUpload(const VtClientServerCommunication_c* pc_vtCSC)
 {
   if (sb_poolUploadInProgress && (pc_vtCSC == spc_vtcscForUpload))
   { // only the VtClientServerCommunication_c which has set the uploadFlag could only reset the flag
@@ -519,11 +519,11 @@ void ISOTerminal_c::resetFlagForPoolUpload(const VtClientServerCommunication_c* 
 /// FAKE_VT_PROPERTIES IS ONLY NEEDED FOR ***IOP_GENERATOR**
 #ifdef FAKE_VT_PROPERTIES
 void
-ISOTerminal_c::fakeVtProperties (uint16_t rui16_dimension, uint16_t rui16_skWidth, uint16_t rui16_skHeight, uint8_t rui16_colorDepth, uint16_t rui16_fontSizes)
+IsoTerminal_c::fakeVtProperties (uint16_t rui16_dimension, uint16_t rui16_skWidth, uint16_t rui16_skHeight, uint8_t rui16_colorDepth, uint16_t rui16_fontSizes)
 {
-  const ISOItem_c c_dummyIsoItem;
+  const IsoItem_c c_dummyIsoItem;
   // casting NULL to a reference is okay here, as the reference isn't used for any FAKE_VT case (iop_generator, etc.)
-  l_vtServerInst.push_back (VtServerInstance_c (c_dummyIsoItem, ISOName_c::ISONameUnspecified(), (*this)));
+  l_vtServerInst.push_back (VtServerInstance_c (c_dummyIsoItem, IsoName_c::IsoNameUnspecified(), (*this)));
   VtServerInstance_c& ref_vtServerInst = l_vtServerInst.back();
   ref_vtServerInst.fakeVtProperties (rui16_dimension, rui16_skWidth, rui16_skHeight, rui16_colorDepth, rui16_fontSizes);
 
@@ -537,8 +537,8 @@ ISOTerminal_c::fakeVtProperties (uint16_t rui16_dimension, uint16_t rui16_skWidt
 #endif
 ///  Used for Debugging Tasks in Scheduler_c
 const char*
-ISOTerminal_c::getTaskName() const
-{ return "ISOTerminal_c()"; }
+IsoTerminal_c::getTaskName() const
+{ return "IsoTerminal_c()"; }
 
 
 } // end namespace __IsoAgLib

@@ -125,7 +125,7 @@ namespace __IsoAgLib {
 
 
 /** default constructor which has nothing to do */
-ProcessPkg_c::ProcessPkg_c( int ri_singletonVecKey ) : CANPkgExt_c( ri_singletonVecKey ) {
+ProcessPkg_c::ProcessPkg_c( int ri_singletonVecKey ) : CanPkgExt_c( ri_singletonVecKey ) {
   c_specialTermISOName.setUnspecified();
   c_specialTermUseProcISOName.setUnspecified();
 }
@@ -422,9 +422,9 @@ void ProcessPkg_c::setData(float rf_val, proc_valType_t ren_procValType)
 
 /**
   overloaded virtual function to translate the string data into flag values;
-  needed for assigning informations from another CANPkg_c or CANPkgExt
-  @see CANPkg_c::operator=
-  @see CANPkgExt_c::operator=
+  needed for assigning informations from another CanPkg_c or CANPkgExt
+  @see CanPkg_c::operator=
+  @see CanPkgExt_c::operator=
 */
 void ProcessPkg_c::string2Flags()
 {
@@ -434,7 +434,7 @@ void ProcessPkg_c::string2Flags()
   setSend(isoSa());
   setIdentType(Ident_c::ExtendedIdent);
 
-  // bit_data.b_valType = static_cast<proc_valType_t>((CANPkg_c::c_data[0] >> 5) & 0x3);
+  // bit_data.b_valType = static_cast<proc_valType_t>((CanPkg_c::c_data[0] >> 5) & 0x3);
 
   // Not sure if this is needed at this point. May need the GPS portion but not the Float Data Type stuff since this is not really used in Part 10 now. -bac
   #if defined(USE_FLOAT_DATA_TYPE)
@@ -445,9 +445,9 @@ void ProcessPkg_c::string2Flags()
 
   //Need to replace this call with the getpos from the monitor item. ISOName no longer encapsulated in the message data itself
   //See new line added below that uses c_isoMonitor. -bac
-  //setISOName( ISOName_c(((CANPkg_c::c_data[2] >> 4) & 0xF), (CANPkg_c::c_data[2] & 0xF) ) );
+  //setISOName( IsoName_c(((CanPkg_c::c_data[2] >> 4) & 0xF), (CanPkg_c::c_data[2] & 0xF) ) );
 
-  ISOMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
+  IsoMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
 
   // isoName in ProcessPkg_c is no longer used in ISO
   //setISOName(c_isoMonitor.isoMemberNr(send()).isoName());  // Get the devClass and pos (Device Class, Device Class Instance -bac
@@ -455,7 +455,7 @@ void ProcessPkg_c::string2Flags()
   // now set pc_monitorSend and pc_monitorEmpf
   if (c_isoMonitor.existIsoMemberNr(empf()))
   { // ISO targeted process msg with empf as defined ISO member
-    pc_monitorEmpf = static_cast<ISOItem_c*>(&(c_isoMonitor.isoMemberNr(empf())));
+    pc_monitorEmpf = static_cast<IsoItem_c*>(&(c_isoMonitor.isoMemberNr(empf())));
   }
   else
   { // either no target process msg or empf no defined member
@@ -463,35 +463,35 @@ void ProcessPkg_c::string2Flags()
   }
   if (c_isoMonitor.existIsoMemberNr(send()))
   { // sender SEND registered as
-    pc_monitorSend = static_cast<ISOItem_c*>(&(c_isoMonitor.isoMemberNr(send())));
+    pc_monitorSend = static_cast<IsoItem_c*>(&(c_isoMonitor.isoMemberNr(send())));
   }
   else
   { // send is no defined member
     pc_monitorSend = NULL;
   }
 
-  set_Cmd(CANPkg_c::c_data[0] & 0xf);
+  set_Cmd(CanPkg_c::c_data[0] & 0xf);
   uint16_t ui16_element = 0;
-  ui16_element = uint16_t(CANPkg_c::c_data[1]) << 4;
-  ui16_element |= ((CANPkg_c::c_data[0] & 0xF0)>>4);
+  ui16_element = uint16_t(CanPkg_c::c_data[1]) << 4;
+  ui16_element |= ((CanPkg_c::c_data[0] & 0xF0)>>4);
   set_Element(ui16_element);
 
   uint16_t newDDI = 0;
-  newDDI |= CANPkg_c::c_data[3];
+  newDDI |= CanPkg_c::c_data[3];
   newDDI = newDDI << 8;
-  newDDI |= CANPkg_c::c_data[2];
+  newDDI |= CanPkg_c::c_data[2];
   set_DDI(newDDI);
 
-  c_flex4Data.setFlexible4DataValueInd( 1, CANPkg_c::c_data );
+  c_flex4Data.setFlexible4DataValueInd( 1, CanPkg_c::c_data );
 };
 
 /**
   overloaded virtual function to translate flag values to data string;
-  needed for sending informations from this object via CANIO_c on CAN BUS,
-  because CANIO_c doesn't know anything about the data format of this type of msg
+  needed for sending informations from this object via CanIo_c on CAN BUS,
+  because CanIo_c doesn't know anything about the data format of this type of msg
   so that it can only use an unformated data string from CANPkg
-  @see CANPkg_c::getData
-  @see CANPkgExt_c::getData
+  @see CanPkg_c::getData
+  @see CanPkgExt_c::getData
 */
 void ProcessPkg_c::flags2String()
 {
@@ -514,25 +514,25 @@ void ProcessPkg_c::flags2String()
     default: ui8_cmd = 0xFF;
   }
 
-  CANPkg_c::c_data.setUint8Data(0, (ui8_cmd & 0xf) | ( (element() & 0xf) << 4) );
-  CANPkg_c::c_data.setUint8Data(1, element() >> 4 );
-  CANPkg_c::c_data.setUint8Data(2, DDI() & 0x00FF );
-  CANPkg_c::c_data.setUint8Data(3, (DDI()& 0xFF00) >> 8 );
+  CanPkg_c::c_data.setUint8Data(0, (ui8_cmd & 0xf) | ( (element() & 0xf) << 4) );
+  CanPkg_c::c_data.setUint8Data(1, element() >> 4 );
+  CanPkg_c::c_data.setUint8Data(2, DDI() & 0x00FF );
+  CanPkg_c::c_data.setUint8Data(3, (DDI()& 0xFF00) >> 8 );
   // for ISO the ident is directly read and written
 
-  CANPkg_c::c_data.setFlexible4DataValueInd( 1, c_flex4Data );
+  CanPkg_c::c_data.setFlexible4DataValueInd( 1, c_flex4Data );
 
   setLen(8);
 };
 
 /**
-  deliver reference to ISOItem_c of EMPF member (ISOItem_c is base class for ISOItem_c)
+  deliver reference to IsoItem_c of EMPF member (IsoItem_c is base class for IsoItem_c)
   (check with existMemberEmpf before access to not defined item)
 
-  @return reference to ISOItem_c of member which is addressed by EMPF
+  @return reference to IsoItem_c of member which is addressed by EMPF
   @exception containerElementNonexistant
 */
-ISOItem_c& ProcessPkg_c::memberEmpf() const
+IsoItem_c& ProcessPkg_c::memberEmpf() const
 { // check if pc_monitorEmpf is set
   if (pc_monitorEmpf == NULL)
   { // throw exception by constant -> if no exception configured no command is created
@@ -547,13 +547,13 @@ ISOItem_c& ProcessPkg_c::memberEmpf() const
   }
 }
 /**
-  deliver reference to ISOItem_c of SEND member (ISOItem_c is base class for ISOItem_c)
+  deliver reference to IsoItem_c of SEND member (IsoItem_c is base class for IsoItem_c)
   (check with existMemberSend before access to not defined item)
 
-  @return reference to ISOItem_c of member which is addressed by SEND
+  @return reference to IsoItem_c of member which is addressed by SEND
   @exception containerElementNonexistant
 */
-ISOItem_c& ProcessPkg_c::memberSend() const
+IsoItem_c& ProcessPkg_c::memberSend() const
 { // check if pc_monitorSend is set
   if (pc_monitorSend == NULL)
   { // throw exception by constant -> if no exception configured no command is created
@@ -573,7 +573,7 @@ ISOItem_c& ProcessPkg_c::memberSend() const
   @param rc_isoName ISOName of terminal, for which the ISOName of data is converted
   @param rc_useProcISOName ISOName for process data (optional, default to terminal isoName)
 */
-void ProcessPkg_c::useTermISONameForLocalProc(const ISOName_c& rc_isoName, const ISOName_c& rc_useProcISOName)
+void ProcessPkg_c::useTermISONameForLocalProc(const IsoName_c& rc_isoName, const IsoName_c& rc_useProcISOName)
 {
   c_specialTermISOName = rc_isoName;
   if (rc_useProcISOName.isSpecified())c_specialTermUseProcISOName = rc_useProcISOName;
@@ -584,7 +584,7 @@ void ProcessPkg_c::useTermISONameForLocalProc(const ISOName_c& rc_isoName, const
   extract data from ISO commands and save it to member class
   @param refl_elementDDI
 */
-bool ProcessPkg_c::resolveCommandTypeForISO(const IsoAgLib::ElementDDI_s& refl_elementDDI)
+bool ProcessPkg_c::resolveCommandTypeForISO(const IsoAgLib::ElementDdi_s& refl_elementDDI)
 {
   bool b_isSetpoint = false;
   bool b_isRequest = false;

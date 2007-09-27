@@ -130,8 +130,8 @@ namespace __IsoAgLib {
   possible errors:
       * Err_c::badAlloc not enough memory to insert first  MeasureProgLocal
   ISO parameter
-  @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
-                       (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
+  @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDdi_s which contains DDI, element, isSetpoint and ValueGroup
+                       (array is terminated by ElementDdi_s.ui16_element == 0xFFFF)
 
   @param rc_isoName optional ISOName code of this instance
   @param rc_ownerISOName optional ISOName of the owner
@@ -156,10 +156,10 @@ namespace __IsoAgLib {
   @param rpc_processDataChangeHandler optional pointer to handler class of application
   @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
-ProcDataLocalSimpleMeasure_c::ProcDataLocalSimpleMeasure_c(const IsoAgLib::ElementDDI_s* ps_elementDDI, uint16_t rui16_element,
-                                                           const ISOName_c& rc_isoName,
-                                                           const ISOName_c& rc_ownerISOName,
-                                                           const ISOName_c *rpc_isoName,
+ProcDataLocalSimpleMeasure_c::ProcDataLocalSimpleMeasure_c(const IsoAgLib::ElementDdi_s* ps_elementDDI, uint16_t rui16_element,
+                                                           const IsoName_c& rc_isoName,
+                                                           const IsoName_c& rc_ownerISOName,
+                                                           const IsoName_c *rpc_isoName,
                                                            bool rb_cumulativeValue,
 #ifdef USE_EEPROM_IO
                                                            uint16_t rui16_eepromAdr,
@@ -185,8 +185,8 @@ ProcDataLocalSimpleMeasure_c::ProcDataLocalSimpleMeasure_c(const IsoAgLib::Eleme
   possible errors:
       * Err_c::badAlloc not enough memory to insert first  MeasureProgLocal
   ISO parameter
-  @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
-                       (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
+  @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDdi_s which contains DDI, element, isSetpoint and ValueGroup
+                       (array is terminated by ElementDdi_s.ui16_element == 0xFFFF)
 
   @param rc_isoName optional ISOName code of this instance
   @param rc_ownerISOName optional ISOName of the owner
@@ -211,11 +211,11 @@ ProcDataLocalSimpleMeasure_c::ProcDataLocalSimpleMeasure_c(const IsoAgLib::Eleme
   @param rpc_processDataChangeHandler optional pointer to handler class of application
   @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
-void ProcDataLocalSimpleMeasure_c::init(const IsoAgLib::ElementDDI_s* ps_elementDDI,
+void ProcDataLocalSimpleMeasure_c::init(const IsoAgLib::ElementDdi_s* ps_elementDDI,
                                         uint16_t rui16_element,
-                                        const ISOName_c& rc_isoName,
-                                        const ISOName_c& rc_ownerISOName,
-                                        const ISOName_c *rpc_isoName,
+                                        const IsoName_c& rc_isoName,
+                                        const IsoName_c& rc_ownerISOName,
+                                        const IsoName_c *rpc_isoName,
                                         bool rb_cumulativeValue,
 #ifdef USE_EEPROM_IO
                                         uint16_t rui16_eepromAdr,

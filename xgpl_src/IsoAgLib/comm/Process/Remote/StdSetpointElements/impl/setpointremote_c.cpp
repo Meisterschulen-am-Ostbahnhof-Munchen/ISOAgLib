@@ -100,9 +100,9 @@ void SetpointRemote_c::init( ProcDataBase_c *const rpc_processData )
 {
   SetpointBase_c::init( rpc_processData );
   i32_answeredTime = i32_commandedTime = 0;
-  c_answeredMaster.setISOName( ISOName_c::ISONameUnspecified() );
-  c_answeredMe.setISOName( ISOName_c::ISONameUnspecified() );
-  c_commanded.setISOName( ISOName_c::ISONameUnspecified() );
+  c_answeredMaster.setISOName( IsoName_c::IsoNameUnspecified() );
+  c_answeredMe.setISOName( IsoName_c::IsoNameUnspecified() );
+  c_commanded.setISOName( IsoName_c::IsoNameUnspecified() );
 
 
 }
@@ -150,7 +150,7 @@ SetpointRemote_c::~SetpointRemote_c(){
 
   possible errors:
       * dependant error in ProcDataRemoteBase_c if comanded remote system not found in Monitor List
-      * dependant error in CANIO_c on CAN send problems
+      * dependant error in CanIo_c on CAN send problems
   @return new exact setpoint to command
 */
 void SetpointRemote_c::setExact(float rf_val)
@@ -177,7 +177,7 @@ void SetpointRemote_c::setExact(float rf_val)
 
   possible errors:
       * dependant error in ProcDataRemoteBase_c if comanded remote system not found in Monitor List
-      * dependant error in CANIO_c on CAN send problems
+      * dependant error in CanIo_c on CAN send problems
   @return new exact setpoint to command
 */
 void SetpointRemote_c::setExact( int32_t ri32_val){
@@ -202,7 +202,7 @@ void SetpointRemote_c::setExact( int32_t ri32_val){
 
   possible errors:
       * dependant error in ProcDataRemoteBase_c if comanded remote system not found in Monitor List
-      * dependant error in CANIO_c on CAN send problems
+      * dependant error in CanIo_c on CAN send problems
   @return new minimum setpoint to command
 */
 void SetpointRemote_c::setMin( int32_t ri32_val){
@@ -226,7 +226,7 @@ void SetpointRemote_c::setMin( int32_t ri32_val){
 
   possible errors:
       * dependant error in ProcDataRemoteBase_c if comanded remote system not found in Monitor List
-      * dependant error in CANIO_c on CAN send problems
+      * dependant error in CanIo_c on CAN send problems
   @return new maximum setpoint to command
 */
 void SetpointRemote_c::setMax( int32_t ri32_val){
@@ -250,7 +250,7 @@ void SetpointRemote_c::setMax( int32_t ri32_val){
 
   possible errors:
       * dependant error in ProcDataRemoteBase_c if comanded remote system not found in Monitor List
-      * dependant error in CANIO_c on CAN send problems
+      * dependant error in CanIo_c on CAN send problems
   @return new default setpoint to command
 */
 void SetpointRemote_c::setDefault( int32_t ri32_val){
@@ -349,7 +349,7 @@ bool SetpointRemote_c::existMaster() const {
   possible errors:
       * Err_c::precondition I'm not the master -> can't release master
       * dependant error in ProcDataRemoteBase_c if comanded remote system not found in Monitor List
-      * dependant error in CANIO_c on CAN send problems
+      * dependant error in CanIo_c on CAN send problems
 */
 void SetpointRemote_c::releaseMaster(){
   // if my lst command was accepted as master -> send release command
@@ -442,8 +442,8 @@ void SetpointRemote_c::processSet(){
   bool b_change = false;
 
   // retreive the isoName of send and empf
-  const ISOName_c& c_empfISOName = c_pkg.memberEmpf().isoName();
-  const ISOName_c& c_sendISOName = c_pkg.memberSend().isoName();
+  const IsoName_c& c_empfISOName = c_pkg.memberEmpf().isoName();
+  const IsoName_c& c_sendISOName = c_pkg.memberSend().isoName();
 
   if (c_sendISOName == processData().ownerISOName())
   { // the owner sent the value
@@ -538,7 +538,7 @@ void SetpointRemote_c::processSet(){
   if this action is allowed
 */
 void SetpointRemote_c::releaseMasterIntern(){
-  c_answeredMaster.setISOName( ISOName_c::ISONameUnspecified() );
+  c_answeredMaster.setISOName( IsoName_c::IsoNameUnspecified() );
   c_answeredMaster.setMaster( false);
 }
 
@@ -551,15 +551,15 @@ void SetpointRemote_c::releaseMasterIntern(){
 bool SetpointRemote_c::timeEvent( void )
 {
   if ( ElementBase_c::getAvailableExecTime() == 0 ) return false;
-  const ISOName_c& c_ownerISOName = processData().ownerISOName();
+  const IsoName_c& c_ownerISOName = processData().ownerISOName();
   if ( !getIsoMonitorInstance4Comm().existIsoMemberISOName( c_ownerISOName, true) )
   { // remote owner of this process data isn't active any more
     // -> reset all entries
     i32_answeredTime = i32_commandedTime = 0;
-    c_answeredMaster.setISOName( ISOName_c::ISONameUnspecified() );
+    c_answeredMaster.setISOName( IsoName_c::IsoNameUnspecified() );
     c_answeredMaster.setMaster( false);
-    c_answeredMe.setISOName( ISOName_c::ISONameUnspecified() );
-    c_commanded.setISOName( ISOName_c::ISONameUnspecified() );
+    c_answeredMe.setISOName( IsoName_c::IsoNameUnspecified() );
+    c_commanded.setISOName( IsoName_c::IsoNameUnspecified() );
   }
   return true;
 }

@@ -243,7 +243,7 @@ int main()
 
   // retrieve reference to EEPROM access class
   // to avoid multiple call of operator
-  IsoAgLib::iEEPROMIO_c& c_eeprom = IsoAgLib::getIeepromInstance();
+  IsoAgLib::iEepromIo_c& c_eeprom = IsoAgLib::getIeepromInstance();
 
   // EEPROM addres of lifetime information
   static const uint16_t cui16_lifetimeAddress = 0x500;
@@ -327,7 +327,7 @@ int main()
       #ifdef WIN32
         if ( i32_idleTimeSpread > 0 ) Sleep(i32_idleTimeSpread);
       #else
-        if ( i32_idleTimeSpread > 0 ) IsoAgLib::iCANIO_c::waitUntilCanReceiveOrTimeout( i32_idleTimeSpread );
+        if ( i32_idleTimeSpread > 0 ) IsoAgLib::iCanIo_c::waitUntilCanReceiveOrTimeout( i32_idleTimeSpread );
       #endif
     #endif
   }

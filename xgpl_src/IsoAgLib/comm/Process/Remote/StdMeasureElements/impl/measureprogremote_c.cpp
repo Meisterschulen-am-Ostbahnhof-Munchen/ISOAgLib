@@ -98,7 +98,7 @@ namespace __IsoAgLib {
    */
   MeasureProgRemote_c::MeasureProgRemote_c(
       ProcDataBase_c *const rpc_processData )
-  : MeasureProgBase_c(rpc_processData, Proc_c::UndefinedProg, 0, ISOName_c::ISONameUnspecified() )
+  : MeasureProgBase_c(rpc_processData, Proc_c::UndefinedProg, 0, IsoName_c::IsoNameUnspecified() )
   {
     init( rpc_processData );
   }
@@ -110,7 +110,7 @@ namespace __IsoAgLib {
 */
 void MeasureProgRemote_c::init( ProcDataBase_c *const rpc_processData )
 {
-  MeasureProgBase_c::init( rpc_processData, Proc_c::UndefinedProg, int32_t(0), ISOName_c::ISONameUnspecified() );
+  MeasureProgBase_c::init( rpc_processData, Proc_c::UndefinedProg, int32_t(0), IsoName_c::IsoNameUnspecified() );
   b_receiveForeignMeasurement = false;
 }
 
@@ -780,7 +780,7 @@ void MeasureProgRemote_c::receiveForeignMeasurement(bool rb_useForeign)
 */
 bool MeasureProgRemote_c::verifySetRemoteISOName()
 { // if ownerISOName is specified, check if it's still valid
-  ISOMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
+  IsoMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
   if ( processData().ownerISOName().isSpecified()
     && (c_isoMonitor.existIsoMemberISOName(processData().ownerISOName(), true)))
     return true; // change nothing and return success
@@ -792,7 +792,7 @@ bool MeasureProgRemote_c::verifySetRemoteISOName()
 
   // if both tests were false look for member with claimed address with DEVCLASS of this process
   // data to update dev class inst of this instance
-  ISOName_c c_tempISOName = processData().ownerISOName();
+  IsoName_c c_tempISOName = processData().ownerISOName();
   uint8_t b_tempPos;
   for (b_tempPos = 0; b_tempPos < 8; b_tempPos++)
   {

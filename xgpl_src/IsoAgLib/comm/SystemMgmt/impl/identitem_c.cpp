@@ -141,7 +141,7 @@ IdentItem_c::IdentItem_c (uint16_t rui16_eepromAdr, int ri_singletonVecKey)
     @param ri8_slaveCount       amount of attached slave devices; default -1 == no master state;
                                 in case an address claim for the slave devices shall be sent by this ECU, they
                                 must get their own IdentItem_c instance ( then with default value -1 for ri8_slaveCount )
-    @param rpc_slaveIsoNameList pointer to list of ISOName_c values, where the slave devices are defined.
+    @param rpc_slaveIsoNameList pointer to list of IsoName_c values, where the slave devices are defined.
                                 IsoAgLib will then send the needed "master indicates its slaves" messages on BUS
     @param ri_singletonVecKey   optional key for selection of IsoAgLib instance (default 0)
   */
@@ -149,7 +149,7 @@ IdentItem_c::IdentItem_c (uint8_t rui8_indGroup, uint8_t rui8_devClass, uint8_t 
   uint8_t rb_func, uint16_t rui16_manufCode, uint32_t rui32_serNo, uint8_t rui8_preferredSa, uint16_t rui16_eepromAdr,
   uint8_t rb_funcInst, uint8_t rb_ecuInst, bool rb_selfConf,
   #ifdef USE_WORKING_SET
-  int8_t ri8_slaveCount, const ISOName_c* rpc_slaveIsoNameList,
+  int8_t ri8_slaveCount, const IsoName_c* rpc_slaveIsoNameList,
   #endif
   int ri_singletonVecKey)
   : BaseItem_c (System_c::getTime(), IState_c::IstateNull, ri_singletonVecKey) /// needs to be init'ed, so double "init()" can be detected!
@@ -166,9 +166,9 @@ IdentItem_c::IdentItem_c (uint8_t rui8_indGroup, uint8_t rui8_devClass, uint8_t 
 
 
 // private
-void IdentItem_c::init (ISOName_c* rpc_isoNameParam, uint8_t rui8_preferredSa, uint16_t rui16_eepromAdr,
+void IdentItem_c::init (IsoName_c* rpc_isoNameParam, uint8_t rui8_preferredSa, uint16_t rui16_eepromAdr,
   #ifdef USE_WORKING_SET
-  int8_t ri8_slaveCount, const ISOName_c* rpc_slaveIsoNameList,
+  int8_t ri8_slaveCount, const IsoName_c* rpc_slaveIsoNameList,
   #endif
   int ri_singletonVecKey)
 {
@@ -202,12 +202,12 @@ void IdentItem_c::init (ISOName_c* rpc_isoNameParam, uint8_t rui8_preferredSa, u
   { // Using EEPROM
    #ifdef USE_EEPROM_IO
     /// FIRST, default to EEPROM values
-    EEPROMIO_c& refc_eeprom = getEepromInstance();
+    EepromIo_c& refc_eeprom = getEepromInstance();
     uint8_t p8ui8_isoNameEeprom [8];
     refc_eeprom.setg (ui16_eepromAdr);
     refc_eeprom >> ui8_globalRunState >> ui8_preferredSa;
     refc_eeprom.readString (p8ui8_isoNameEeprom, 8);
-    c_isoName = ISOName_c (p8ui8_isoNameEeprom);
+    c_isoName = IsoName_c (p8ui8_isoNameEeprom);
 
     // use fallback to free definition, when the EEPROM has only invalid SA
     if ( ui8_preferredSa == 0xFF ) ui8_preferredSa = 0xFE;
@@ -263,7 +263,7 @@ void IdentItem_c::init (ISOName_c* rpc_isoNameParam, uint8_t rui8_preferredSa, u
     { /// Parameter-IsoName is given and should be used: use it!
       c_isoName = *rpc_isoNameParam;
     }
-    ui8_preferredSa = rui8_preferredSa; // 0xFF in case of "c_isoName = ISOName_c::ISONameUnspecified;"
+    ui8_preferredSa = rui8_preferredSa; // 0xFF in case of "c_isoName = IsoName_c::IsoNameUnspecified;"
     ui8_globalRunState = GlobalRunStateNeverClaimed; // 0
   }
 
@@ -300,7 +300,7 @@ void IdentItem_c::init (ISOName_c* rpc_isoNameParam, uint8_t rui8_preferredSa, u
     @param ri8_slaveCount       amount of attached slave devices; default -1 == no master state;
                                 in case an address claim for the slave devices shall be sent by this ECU, they
                                 must get their own IdentItem_c instance ( then with default value -1 for ri8_slaveCount )
-    @param rpc_slaveIsoNameList pointer to list of ISOName_c values, where the slave devices are defined.
+    @param rpc_slaveIsoNameList pointer to list of IsoName_c values, where the slave devices are defined.
                                 IsoAgLib will then send the needed "master indicates its slaves" messages on BUS
     @param ri_singletonVecKey   optional key for selection of IsoAgLib instance (DEFAULTS HERE TO -1 which will NOT modify the instance set construction time!!)
   */
@@ -308,12 +308,12 @@ void IdentItem_c::init(
   uint8_t rui8_indGroup, uint8_t rui8_devClass, uint8_t rui8_devClassInst, uint8_t rb_func, uint16_t rui16_manufCode,
   uint32_t rui32_serNo, uint8_t rui8_preferredSa, uint16_t rui16_eepromAdr, uint8_t rb_funcInst, uint8_t rb_ecuInst, bool rb_selfConf,
   #ifdef USE_WORKING_SET
-  int8_t ri8_slaveCount, const ISOName_c* rpc_slaveIsoNameList,
+  int8_t ri8_slaveCount, const IsoName_c* rpc_slaveIsoNameList,
   #endif
   int ri_singletonVecKey)
 {
   // temporary to assemble the single parameters to one IsoName so it gets better handled in the following function call
-  ISOName_c c_isoNameParam (rb_selfConf, rui8_indGroup, rui8_devClass, rui8_devClassInst,
+  IsoName_c c_isoNameParam (rb_selfConf, rui8_indGroup, rui8_devClass, rui8_devClassInst,
                             rb_func, rui16_manufCode, rui32_serNo, rb_funcInst, rb_ecuInst);
 
   init (&c_isoNameParam, rui8_preferredSa, rui16_eepromAdr,
@@ -327,8 +327,8 @@ void IdentItem_c::init(
 
 /** reset the Addres Claim state by:
   * + reset IdentItem::IStat_c to IState_c::PreAddressClaim
-  * + remove pointed ISOItem_c nodes and the respective pointer
-  * @return true -> there was an item with given ISOName_c that has been resetted to IState_c::PreAddressClaim
+  * + remove pointed IsoItem_c nodes and the respective pointer
+  * @return true -> there was an item with given IsoName_c that has been resetted to IState_c::PreAddressClaim
   */
 void IdentItem_c::restartAddressClaim()
 {
@@ -364,10 +364,10 @@ IdentItem_c::~IdentItem_c()
   * -> IdentItem_c::close() send address release for identities
   */
 void IdentItem_c::close( void )
-{ // delete the corresponding ISOItem_c instances
+{ // delete the corresponding IsoItem_c instances
   // in the respective monitoring lists and set the state to IState_c::PreAddressClaim
   restartAddressClaim();
-  // unregister in ISOMonitor_c
+  // unregister in IsoMonitor_c
   getIsoMonitorInstance4Comm().unregisterClient( this );
 }
 
@@ -379,7 +379,7 @@ void IdentItem_c::close( void )
     possible errors:
         * dependant memory error in SystemMgmt_c caused by inserting item in monitor list
     @see Scheduler_c::timeEvent()
-    @see ISOMonitor_c::timeEvent()
+    @see IsoMonitor_c::timeEvent()
     @see System_c::getTime()
     @return true -> all planned activities performed
   */
@@ -510,7 +510,7 @@ bool IdentItem_c::timeEventActive( void )
       {
         #ifdef USE_EEPROM_IO
         const uint8_t* pcui8_isoName = c_isoName.outputString();
-        EEPROMIO_c& refc_eeprom = getEepromInstance();
+        EepromIo_c& refc_eeprom = getEepromInstance();
         refc_eeprom.setp (ui16_eepromAdr);
         refc_eeprom << ui8_globalRunState << ui8_preferredSa;
         refc_eeprom.writeString (pcui8_isoName, 8);
@@ -529,7 +529,7 @@ bool IdentItem_c::timeEventActive( void )
   { // remote ISO item has overwritten local item
     // ->see if we can still live with our IsoName
     // ->if not, we'lost because we can't change our IsoName
-    ISOMonitor_c& refc_isoMonitor = getIsoMonitorInstance4Comm();
+    IsoMonitor_c& refc_isoMonitor = getIsoMonitorInstance4Comm();
     const bool cb_isoNameStillAvailable = !refc_isoMonitor.existIsoMemberISOName (c_isoName);
 
     if (cb_isoNameStillAvailable)
@@ -555,7 +555,7 @@ bool IdentItem_c::timeEventActive( void )
     else
     { /// IsoName now already used on the bus - we can't claim an address now anymore!
       getILibErrInstance().registerError( iLibErr_c::Busy, iLibErr_c::System ); /** @todo insert new error-location/type for thsoe cases! */
-      ISOItem_c& refc_foundIsoItemSameIsoName = refc_isoMonitor.isoMemberISOName (c_isoName);
+      IsoItem_c& refc_foundIsoItemSameIsoName = refc_isoMonitor.isoMemberISOName (c_isoName);
       if (refc_foundIsoItemSameIsoName.itemState (IState_c::Local))
       { // now the ISOName is used by some other member on the BUS
         pc_isoItem = &refc_foundIsoItemSameIsoName; // seems to be our IsoItem although it's a case that shouldn't occur!
@@ -598,9 +598,9 @@ bool IdentItem_c::equalNr(uint8_t rui8_nr)
 
 
 #ifdef USE_WORKING_SET
-void IdentItem_c::setToMaster (int8_t ri8_slaveCount, const ISOName_c* rpc_slaveIsoNameList)
+void IdentItem_c::setToMaster (int8_t ri8_slaveCount, const IsoName_c* rpc_slaveIsoNameList)
 {
-  ISOItem_c* pc_slaveIsoItem;
+  IsoItem_c* pc_slaveIsoItem;
 
   // if given, override list of slaves as given in constructor
   if ((ri8_slaveCount != -1) && (rpc_slaveIsoNameList != NULL)) {

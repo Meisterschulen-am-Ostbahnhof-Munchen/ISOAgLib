@@ -108,17 +108,17 @@ namespace __IsoAgLib {
   @see __IsoAgLib::FilterBox
   *@author Dipl.-Inform. Achim Spangler
   */
-class CANCustomer_c  {
+class CanCustomer_c  {
 public:
 
   /**
     virtual function which delivers a pointer to the CANCustomer
-    specific CANPkgExt_c instance
+    specific CanPkgExt_c instance
   */
-  virtual CANPkgExt_c& dataBase();
+  virtual CanPkgExt_c& dataBase();
 
   /** virtual destructor */
-  virtual ~CANCustomer_c();
+  virtual ~CanCustomer_c();
 
 
 /// SINGLE-PACKET METHODS
@@ -126,17 +126,17 @@ public:
 
   /**
     process a message -> the specialized/derived version of this virtual
-    function is called during processing of received CAN telegrams in CANIO_c::processMsg
+    function is called during processing of received CAN telegrams in CanIo_c::processMsg
     @param rpc_box pointer to the FilterBox_c instances which received the telegram (i.e. which has the telegram in its puffer)
-    @see __IsoAgLib::CANIO_c::processMsg
+    @see __IsoAgLib::CanIo_c::processMsg
   */
   virtual bool processMsg();
 
   /**
     process a message -> the specialized/derived version of this virtual
-    function can be called during processing of received CAN telegrams in CANIO_c::processMsg
+    function can be called during processing of received CAN telegrams in CanIo_c::processMsg
     @param rpc_box pointer to the FilterBox_c instances which received the telegram (i.e. which has the telegram in its puffer)
-    @see __IsoAgLib::CANIO_c::processMsg
+    @see __IsoAgLib::CanIo_c::processMsg
   */
   virtual bool processInvalidMsg() { return false; }
 
@@ -168,13 +168,17 @@ public:
 
 #if defined(ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL)
   /** this virtual function can be used to detect CAnCustomer_c derived CAN message handlers, which
-      want to send/receive proprietary messages on a CANIO_c instance, which is used to transport
+      want to send/receive proprietary messages on a CanIo_c instance, which is used to transport
       standardized protocol ISO 11783.
       Any proprietary derived CAN message handler should overload this function to return true in this function.
   */
   virtual bool isProprietaryMessageOnStandardizedCan() const { return false; }
 #endif
 };
+
+/** this typedef is only for some time to provide backward compatibility at API level */
+typedef CanCustomer_c CANCustomer_c;
+
 
 } // end of namespace __IsoAgLib
 #endif //CAN_CUSTOMER_H

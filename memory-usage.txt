@@ -14,7 +14,7 @@ memory as possible. Thus the current ISO<i><sub>AgLib</sub></i> uses HEAP only f
     <b>this HEAP usage takes only place, if process data are used</b>
   - lists of measurement programs per local process data ( only for  IsoAgLib::ProcDataLocal_c or IsoAgLib::ProcDataLocalSimpleSetpoint_c instances )
   - lists for automatic CAN filter management
-  - list of entries in ISO monitor list ( IsoAgLib::ISOItem_c )
+  - list of entries in ISO monitor list ( IsoAgLib::IsoItem_c )
   - vector for global lookup of sensor or actor I/O instances with one <b>pointer</b> per instance ( <b> only present if the corresponding I/O feaure is used </b> )
 
 \subsection HeapDerive Derive Needed HEAPSIZE
@@ -65,7 +65,7 @@ The following table present some exact numbers for the needed HEAP memory, so th
 <tr><td>Scheduler Entry</td><td>12 x scheduled items -> 56</td><td>160</td><td>104</td><td>Vector of pointers to 12 scheduled part tasks</td></tr>
 <tr><td>Scheduled Times</td><td>12 x scheduled items -> 32</td><td>80</td><td>48</td><td>Vector of uint16_t execution times of scheduled part tasks</td></tr>
 
-<tr><td>ISO 11783 Monitor List Entry ( IsoAgLib::ISOItem_c )</td><td>10 x 52 ISO -> 520</td><td>1768</td><td>1248</td><td>Calculated for 10 ECU nodes on monitored BUS</td></tr>
+<tr><td>ISO 11783 Monitor List Entry ( IsoAgLib::IsoItem_c )</td><td>10 x 52 ISO -> 520</td><td>1768</td><td>1248</td><td>Calculated for 10 ECU nodes on monitored BUS</td></tr>
 
 <tr><td>CAN Filter IsoAgLib::MsgObj_c</td><td>10 x 82 -> 820</td><td>2960</td><td>2140</td><td>Depends on used protocol parts -> CAN idents to receive</td></tr>
 <tr><td>CAN Filter IsoAgLib::FilterBox_c</td><td>10 x 28 -> 280</td><td>800</td><td>520</td><td>Depends on used protocol parts -> CAN idents to receive</td></tr>

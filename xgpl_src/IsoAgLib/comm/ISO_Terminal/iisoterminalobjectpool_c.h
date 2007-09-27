@@ -289,7 +289,7 @@ public:
      hook function that gets called after recognizing an incoming
      VT proprietary message.
    */
-  virtual uint8_t eventProprietaryCommand(iISOName_c /*cc_isoname*/) { return 0; };
+  virtual uint8_t eventProprietaryCommand(iIsoName_c /*cc_isoname*/) { return 0; };
 
   /**
     this init function has to be idempotent! use "b_initAllObjects" for this reason, it's initialized to false at construction time.

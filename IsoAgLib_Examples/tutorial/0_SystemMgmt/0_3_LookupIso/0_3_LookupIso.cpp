@@ -53,7 +53,7 @@
 /** \example 0_3_LookupIso.cpp
  * This tutorial presents how to check for the existance of another
  * member on the BUS. This lookup can be based independent from the
- * active protocol on the device type specification with IsoAgLib::iISOName_c .
+ * active protocol on the device type specification with IsoAgLib::iIsoName_c .
  * Provide option to send result of lookup on RS232 - this is dependent on
  * define USE_RS232_FOR_DEBUG .
  *
@@ -66,7 +66,7 @@
  *    to look for other device ( optionally require that the
  *    other device has already claimed an address, or alternatively allow it
  *    to be currently in the process of claiming and address )
- *  <li>Alternativaly use IsoAgLib::iISOMonitor_c::existIsoMemberISOName() to restrict
+ *  <li>Alternativaly use IsoAgLib::iIsoMonitor_c::existIsoMemberISOName() to restrict
  *    search on ISO 11783 members ( but the other method is more flexible )
  * </ul>
  * <li>Use RS232 for C++ iostream like text output with class IsoAgLib::iRS232IO_c
@@ -237,8 +237,8 @@ int main()
                                     27);   // rui32_serNo
                                     // further parameters use the default values as given in the constructor
 
-  /** IsoAgLib::iISOName_c of the other remote ECU to lookup */
-  IsoAgLib::iISOName_c lookupISOName( 2, 0 );
+  /** IsoAgLib::iIsoName_c of the other remote ECU to lookup */
+  IsoAgLib::iIsoName_c lookupISOName( 2, 0 );
 
   /** IMPORTANT:
     - The following loop could be replaced of any repeating call of
@@ -298,7 +298,7 @@ int main()
       #ifdef WIN32
         if ( i32_idleTimeSpread > 0 ) Sleep(i32_idleTimeSpread);
       #else
-        if ( i32_idleTimeSpread > 0 ) IsoAgLib::iCANIO_c::waitUntilCanReceiveOrTimeout( i32_idleTimeSpread );
+        if ( i32_idleTimeSpread > 0 ) IsoAgLib::iCanIo_c::waitUntilCanReceiveOrTimeout( i32_idleTimeSpread );
       #endif
     #endif
   }

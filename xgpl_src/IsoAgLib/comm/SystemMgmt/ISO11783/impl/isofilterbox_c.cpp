@@ -91,12 +91,12 @@ namespace __IsoAgLib {
 
 
 /** empty constructor - everything has to be "constructed" with the "init"-function! */
-ISOFilterBox_c::ISOFilterBox_c (SINGLETON_VEC_KEY_PARAMETER_DEF)
+IsoFilterBox_c::IsoFilterBox_c (SINGLETON_VEC_KEY_PARAMETER_DEF)
 : SINGLETON_PARENT_CONSTRUCTOR
   ui8_filtersSetUp (0)
 {}
 
-ISOFilterBox_c::ISOFilterBox_c(const ISOFilterBox_c& rrefcc_refFB)
+IsoFilterBox_c::IsoFilterBox_c(const IsoFilterBox_c& rrefcc_refFB)
 : ClientBase (rrefcc_refFB)
 , slist_managedISOFilter (rrefcc_refFB.slist_managedISOFilter)
 , ui8_filtersSetUp (rrefcc_refFB.ui8_filtersSetUp)
@@ -104,13 +104,13 @@ ISOFilterBox_c::ISOFilterBox_c(const ISOFilterBox_c& rrefcc_refFB)
 
 
 // void
-// ISOFilterBox_c::init (CANCustomer_c& rrefc_canCustomer)
+// IsoFilterBox_c::init (CanCustomer_c& rrefc_canCustomer)
 // {
 // }
 
 
 // dlcForce == -1: don't check dlc. value of 0..8: force to be exactly this dlc!
-ISOFilter_s::ISOFilter_s (CANCustomer_c& rrefc_canCustomer, uint32_t rui32_mask, uint32_t rui32_filter, const ISOName_c* rpc_isoNameDa, const ISOName_c* rpc_isoNameSa, int8_t ri8_dlcForce, Ident_c::identType_t rt_identType)
+IsoFilter_s::IsoFilter_s (CanCustomer_c& rrefc_canCustomer, uint32_t rui32_mask, uint32_t rui32_filter, const IsoName_c* rpc_isoNameDa, const IsoName_c* rpc_isoNameSa, int8_t ri8_dlcForce, Ident_c::identType_t rt_identType)
   : c_identMask (rui32_mask, rt_identType)
   , c_identFilter (rui32_filter, rt_identType)
   , pc_canCustomer (&rrefc_canCustomer)
@@ -122,11 +122,11 @@ ISOFilter_s::ISOFilter_s (CANCustomer_c& rrefc_canCustomer, uint32_t rui32_mask,
   else /* no name */ c_isoNameSa.setUnspecified();
 }
 
-ISOFilter_s::~ISOFilter_s() {}
+IsoFilter_s::~IsoFilter_s() {}
 
 
 bool
-ISOFilter_s::equalMaskAndFilter (const ISOFilter_s& rrefc_isoFilter) const
+IsoFilter_s::equalMaskAndFilter (const IsoFilter_s& rrefc_isoFilter) const
 {
   return ((c_identMask   == rrefc_isoFilter.c_identMask)
        && (c_identFilter == rrefc_isoFilter.c_identFilter)
@@ -137,7 +137,7 @@ ISOFilter_s::equalMaskAndFilter (const ISOFilter_s& rrefc_isoFilter) const
 
 
 bool
-ISOFilterBox_c::addIsoFilter (const ISOFilter_s& rrefcs_isoFilter)
+IsoFilterBox_c::addIsoFilter (const IsoFilter_s& rrefcs_isoFilter)
 {
   slist_managedISOFilter.push_front (rrefcs_isoFilter); // operator = (not overwritten, but mem-copy is okay!)
 
@@ -145,8 +145,8 @@ ISOFilterBox_c::addIsoFilter (const ISOFilter_s& rrefcs_isoFilter)
 }
 
 
-ISOFilterBox_c::RemoveAnswer_en
-ISOFilterBox_c::removeIsoFilter (const ISOFilter_s& rrefcs_isoFilter)
+IsoFilterBox_c::RemoveAnswer_en
+IsoFilterBox_c::removeIsoFilter (const IsoFilter_s& rrefcs_isoFilter)
 {
   for (ManagedISOFilter_it it_managedIsoFilter = slist_managedISOFilter.begin();
        it_managedIsoFilter != slist_managedISOFilter.end();
@@ -155,7 +155,7 @@ ISOFilterBox_c::removeIsoFilter (const ISOFilter_s& rrefcs_isoFilter)
     if (it_managedIsoFilter->s_isoFilter == rrefcs_isoFilter) // yes, compare all - including canCustomer (but NOT dlcForce!!!)
     {
       if (it_managedIsoFilter->pc_filterBox)
-      { // filter was created in CANIO_c - remove filter
+      { // filter was created in CanIo_c - remove filter
         /** @todo Optimize with a (to be implemented) "deleteFilter (FilterBox_c*);" function */
         getCanInstance4Comm().deleteFilter (*it_managedIsoFilter->s_isoFilter.pc_canCustomer,
                                             it_managedIsoFilter->s_isoFilter.c_identMask.ident(),
@@ -174,7 +174,7 @@ ISOFilterBox_c::removeIsoFilter (const ISOFilter_s& rrefcs_isoFilter)
 
 
 bool
-ISOFilterBox_c::hasIsoFilterWithCustomer (const ISOFilter_s& rrefcs_isoFilter)
+IsoFilterBox_c::hasIsoFilterWithCustomer (const IsoFilter_s& rrefcs_isoFilter)
 {
   for (ManagedISOFilter_it it_managedIsoFilter = slist_managedISOFilter.begin();
        it_managedIsoFilter != slist_managedISOFilter.end();
@@ -188,7 +188,7 @@ ISOFilterBox_c::hasIsoFilterWithCustomer (const ISOFilter_s& rrefcs_isoFilter)
 
 
 bool
-ISOFilterBox_c::hasIsoFilterWithoutCustomer (const ISOFilter_s& rrefcs_isoFilter)
+IsoFilterBox_c::hasIsoFilterWithoutCustomer (const IsoFilter_s& rrefcs_isoFilter)
 {
   for (ManagedISOFilter_it it_managedIsoFilter = slist_managedISOFilter.begin();
        it_managedIsoFilter != slist_managedISOFilter.end();
@@ -202,12 +202,12 @@ ISOFilterBox_c::hasIsoFilterWithoutCustomer (const ISOFilter_s& rrefcs_isoFilter
 
 
 #if 0
-/** @param rpc_isoName NULL: Check all "ISOItem_c"s because this filter is initially created
+/** @param rpc_isoName NULL: Check all "IsoItem_c"s because this filter is initially created
                     != NULL: Only exactly this item was claimed right now, check if we can now
-                             create the FilterBox_c in CANIO_c (if not already created!)
+                             create the FilterBox_c in CanIo_c (if not already created!)
  */
 void
-ISOFilterBox_c::updateOnAdd (const ISOName_c* rpc_isoName)
+IsoFilterBox_c::updateOnAdd (const IsoName_c* rpc_isoName)
 {
   if (ui8_filtersSetUp == slist_managedISOFilter.size())
   { // all filters set up, nothing more to do until "updateOnRemove" comes to play..
@@ -299,7 +299,7 @@ ISOFilterBox_c::updateOnAdd (const ISOName_c* rpc_isoName)
                     != NULL: only exactly this item was removed!
  */
 void
-ISOFilterBox_c::updateOnRemove (const ISOName_c* rpc_isoName)
+IsoFilterBox_c::updateOnRemove (const IsoName_c* rpc_isoName)
 {
   if (ui8_filtersSetUp == 0)
   { // no filters set up, nothing more to do until "updateOnAdd" comes to play..
@@ -341,7 +341,7 @@ ISOFilterBox_c::updateOnRemove (const ISOName_c* rpc_isoName)
     (some isonames may not be claimed right now..).
     @todo Maybe optimize to not touch the FilterBoxes that are INdependent of any ISONames? */
 void
-ISOFilterBox_c::syncFiltersToCan(const ISOName_c* rpc_isoName)
+IsoFilterBox_c::syncFiltersToCan(const IsoName_c* rpc_isoName)
 {
   bool b_reconfigFilter=false;
 
@@ -430,7 +430,7 @@ ISOFilterBox_c::syncFiltersToCan(const ISOName_c* rpc_isoName)
 
 
 void
-ISOFilterBox_c::updateOnAdd (const ISOName_c& rrefc_isoName)
+IsoFilterBox_c::updateOnAdd (const IsoName_c& rrefc_isoName)
 {
   if (ui8_filtersSetUp == slist_managedISOFilter.size())
   { // all filters set up, nothing more to do until "updateOnRemove" comes to play..
@@ -479,7 +479,7 @@ ISOFilterBox_c::updateOnAdd (const ISOName_c& rrefc_isoName)
 
 
 void
-ISOFilterBox_c::updateOnRemove (const ISOName_c& rrefc_isoName)
+IsoFilterBox_c::updateOnRemove (const IsoName_c& rrefc_isoName)
 {
   if (ui8_filtersSetUp == 0)
   { // no filters set up, nothing more to do until "updateOnAdd" comes to play..

@@ -566,7 +566,7 @@ namespace __HAL
    
    /**
       send a message via a MsgObj;
-      CANPkg_c (or derived object) must provide (virtual)
+      CanPkg_c (or derived object) must provide (virtual)
       functions:
       * Ident_c& getIdent() -> deliver ident of msg to send
       * void getData(MASK_TYPE& reft_ident, uint8_t& refui8_identType,
@@ -574,14 +574,14 @@ namespace __HAL
         -> put DLC in referenced ref_dlc and insert data in uint8_t string pb_data
       @param rui8_busNr number of the BUS to config
       @param rui8_msgobjNr number of the MsgObj to config
-      @param rpc_data pointer to CANPkg_c instance with data to send
+      @param rpc_data pointer to CanPkg_c instance with data to send
       @return HAL_NO_ERR == no error;
               HAL_CONFIG_ERR == BUS not initialised, MsgObj is no send object
               HAL_NOACT_ERR == BUS OFF
               HAL_OVERFLOW_ERR == send buffer overflowed
               HAL_RANGE_ERR == wrong BUS or MsgObj number
    */
-   int16_t can_useMsgobjSend(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib::CANPkg_c* rpc_data)
+   int16_t can_useMsgobjSend(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib::CanPkg_c* rpc_data)
    {
      // check if some msg were sent from buffer
       canBuffer_pt pt_send = &gt_cinterfMsgobjSend;
@@ -594,13 +594,13 @@ namespace __HAL
       can_timeStampAndId_t t_can_timeStampAndId (HAL::getTime(), rt_ident);
       list_sendTimeStamps.push_back(t_can_timeStampAndId);
 
-      // CANPkgExt_c::getData transforms flag data to ident and 8byte string
+      // CanPkgExt_c::getData transforms flag data to ident and 8byte string
       rpc_data->getData(pt_send->dwId, pt_send->idType, pt_send->dlc, pt_send->data);
 
       // pt_send->id = rpc_data->ident();
       // if (rpc_data->identType() == 1)
-      // CANPkg_c::ident() and CANPkg_c::identType() changed to static
-      // pt_send->id = __IsoAgLib::CANPkg_c::ident();
+      // CanPkg_c::ident() and CanPkg_c::identType() changed to static
+      // pt_send->id = __IsoAgLib::CanPkg_c::ident();
 
       if (pt_send->idType == 1)
       { // extended 29bit ident
@@ -647,17 +647,17 @@ namespace __HAL
    };
    
    /**
-      transfer front element in buffer into the pointed CANPkg_c;
+      transfer front element in buffer into the pointed CanPkg_c;
       DON'T clear this item from buffer.
       @see can_useMsgobjPopFront for explicit clear of this front item
       functions:
       * setIdent(Ident_c& rrefc_ident)
         -> set ident rrefc_ident of received msg in CANPkg
       * uint8_t setDataFromString(uint8_t* rpb_data, uint8_t rb_dlc)
-        -> set DLC in CANPkg_c from rb_dlc and insert data from uint8_t string rpb_data
+        -> set DLC in CanPkg_c from rb_dlc and insert data from uint8_t string rpb_data
       @param rui8_busNr number of the BUS to config
       @param rui8_msgobjNr number of the MsgObj to config
-      @param rpc_data pointer to CANPkg_c instance with data to send
+      @param rpc_data pointer to CanPkg_c instance with data to send
       @return HAL_NO_ERR == no error;
               HAL_CONFIG_ERR == BUS not initialised, MsgObj is no RX object
               HAL_NOACT_ERR == BUS OFF
@@ -665,7 +665,7 @@ namespace __HAL
               HAL_RANGE_ERR == wrong BUS or MsgObj number
               HAL_WARN_ERR == BUS WARN or no received message
    */
-   int16_t can_useMsgobjGet(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib::CANPkg_c* rpc_data)
+   int16_t can_useMsgobjGet(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib::CanPkg_c* rpc_data)
    {
       int16_t i16_retVal = HAL_NO_ERR;
       canBuffer_pt pt_receive = NULL;
@@ -674,7 +674,7 @@ namespace __HAL
 
       if ((i16_retVal == HAL_NO_ERR) || (HAL_OVERFLOW_ERR) || (HAL_WARN_ERR))
       {
-         __IsoAgLib::CANPkg_c::setTime(pt_receive->timestamp);
+         __IsoAgLib::CanPkg_c::setTime(pt_receive->timestamp);
          __IsoAgLib::Ident_c::identType_t IDType;
 
          if (pt_receive->idType == true)
@@ -688,8 +688,8 @@ namespace __HAL
             updateCanBusLoad(rui8_busNr, (pt_receive->dlc + 2));
          }
          // rpc_data->setIdent(pt_receive->dwId, idType);
-         // CANPkg_c::setIdent changed to static member function
-         __IsoAgLib::CANPkg_c::setIdent(pt_receive->dwId, IDType);
+         // CanPkg_c::setIdent changed to static member function
+         __IsoAgLib::CanPkg_c::setIdent(pt_receive->dwId, IDType);
          rpc_data->setDataFromString(pt_receive->data, pt_receive->dlc);
       }
       return i16_retVal;
@@ -699,7 +699,7 @@ namespace __HAL
       Either register the currenct front item of buffer as not relevant,
       or just pop the front item, as it was processed.
       This explicit pop is needed, as one CAN message shall be served to
-      several CANCustomer_c instances, as long as one of them indicates a
+      several CanCustomer_c instances, as long as one of them indicates a
       succesfull process of the received message.
       @param rui8_busNr number of the BUS to config
       @param rui8_msgobjNr number of the MsgObj to config

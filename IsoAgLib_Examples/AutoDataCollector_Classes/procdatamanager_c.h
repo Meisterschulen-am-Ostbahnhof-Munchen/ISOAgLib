@@ -91,7 +91,7 @@ public:
     deliver remote isoName of this recording set
     @return c_remoteISOName
   */
-  const IsoAgLib::iISOName_c& isoName() const { return c_remoteISOName;};
+  const IsoAgLib::iIsoName_c& isoName() const { return c_remoteISOName;};
 protected: // Protected attributes
   /** set activated mode of this instance  */
   void setActivated(bool rb_state = true){b_activated = rb_state;};
@@ -105,7 +105,7 @@ protected: // Protected attributes
   /** amount of managed process data */
   uint8_t ui8_cnt;
   /** isoName of remote item */
-  IsoAgLib::iISOName_c c_remoteISOName;
+  IsoAgLib::iIsoName_c c_remoteISOName;
 };
 
 #endif

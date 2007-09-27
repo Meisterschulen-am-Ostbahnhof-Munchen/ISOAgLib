@@ -69,7 +69,7 @@
 #include "../typedef.h"
 
 
-namespace __IsoAgLib { class Ident_c; class CANPkg_c;}
+namespace __IsoAgLib { class Ident_c; class CanPkg_c;}
 
 namespace __HAL {
 
@@ -315,7 +315,7 @@ int16_t can_configMsgobjClose(uint8_t rui8_busNr, uint8_t rui8_msgobjNr);
 
 /**
   send a message via a MsgObj;
-  CANPkg_c (or derived object) must provide (virtual)
+  CanPkg_c (or derived object) must provide (virtual)
   functions:
   * Ident_c& getIdent() -> deliver ident of msg to send
   * void getData(MASK_TYPE& reft_ident, uint8_t& refui8_identType,
@@ -323,14 +323,14 @@ int16_t can_configMsgobjClose(uint8_t rui8_busNr, uint8_t rui8_msgobjNr);
     -> put DLC in referenced ref_dlc and insert data in uint8_t string pb_data
   @param rui8_busNr number of the BUS to config
   @param rui8_msgobjNr number of the MsgObj to config
-  @param rpc_data pointer to CANPkg_c instance with data to send
+  @param rpc_data pointer to CanPkg_c instance with data to send
   @return HAL_NO_ERR == no error;
           HAL_CONFIG_ERR == BUS not initialised, MsgObj is no send object
           HAL_NOACT_ERR == BUS OFF
           HAL_OVERFLOW_ERR == send buffer overflowed
           HAL_RANGE_ERR == wrong BUS or MsgObj number
 */
-int16_t can_useMsgobjSend(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib::CANPkg_c* rpc_data);
+int16_t can_useMsgobjSend(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib::CanPkg_c* rpc_data);
 
 /**
   get the ident of a received message to decide about the further
@@ -349,17 +349,17 @@ int16_t can_useMsgobjSend(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib:
 int32_t can_useMsgobjReceivedIdent(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, int32_t &reflIdent);
 
 /**
-  transfer front element in buffer into the pointed CANPkg_c;
+  transfer front element in buffer into the pointed CanPkg_c;
   DON'T clear this item from buffer.
   @see can_useMsgobjPopFront for explicit clear of this front item
   functions:
   * setIdent(Ident_c& rrefc_ident)
     -> set ident rrefc_ident of received msg in CANPkg
   * uint8_t setDataFromString(uint8_t* rpb_data, uint8_t rb_dlc)
-    -> set DLC in CANPkg_c from rb_dlc and insert data from uint8_t string rpb_data
+    -> set DLC in CanPkg_c from rb_dlc and insert data from uint8_t string rpb_data
   @param rui8_busNr number of the BUS to config
   @param rui8_msgobjNr number of the MsgObj to config
-  @param rpc_data pointer to CANPkg_c instance with data to send
+  @param rpc_data pointer to CanPkg_c instance with data to send
   @return HAL_NO_ERR == no error;
           HAL_CONFIG_ERR == BUS not initialised, MsgObj is no RX object
           HAL_NOACT_ERR == BUS OFF
@@ -367,12 +367,12 @@ int32_t can_useMsgobjReceivedIdent(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, in
           HAL_RANGE_ERR == wrong BUS or MsgObj number
           HAL_WARN_ERR == BUS WARN or no received message
 */
-int16_t can_useMsgobjGet(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib::CANPkg_c* rpc_data);
+int16_t can_useMsgobjGet(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib::CanPkg_c* rpc_data);
 /**
   Either register the currenct front item of buffer as not relevant,
   or just pop the front item, as it was processed.
   This explicit pop is needed, as one CAN message shall be served to
-  several CANCustomer_c instances, as long as one of them indicates a
+  several CanCustomer_c instances, as long as one of them indicates a
   succesfull process of the received message.
   @param rui8_busNr number of the BUS to config
   @param rui8_msgobjNr number of the MsgObj to config

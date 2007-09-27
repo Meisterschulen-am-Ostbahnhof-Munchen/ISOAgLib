@@ -292,7 +292,7 @@ int main(int argc, char** argv)
       #ifdef WIN32
         if ( i32_idleTimeSpread > 0 ) Sleep(i32_idleTimeSpread);
       #else
-        if ( i32_idleTimeSpread > 0 ) IsoAgLib::iCANIO_c::waitUntilCanReceiveOrTimeout( i32_idleTimeSpread );
+        if ( i32_idleTimeSpread > 0 ) IsoAgLib::iCanIo_c::waitUntilCanReceiveOrTimeout( i32_idleTimeSpread );
       #endif
     #endif
   }

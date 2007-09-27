@@ -360,7 +360,7 @@ int main()
           break;
       }
     }
-     IsoAgLib::iCANIO_c::waitUntilCanReceiveOrTimeout( 50 );
+     IsoAgLib::iCanIo_c::waitUntilCanReceiveOrTimeout( 50 );
   }
   return 1;
 }

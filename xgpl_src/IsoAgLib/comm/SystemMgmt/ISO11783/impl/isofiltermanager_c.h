@@ -104,36 +104,36 @@ namespace __IsoAgLib {
 
 // forward declaration
 
-class ISOFilterManager_c;
-typedef SINGLETON_DERIVED(ISOFilterManager_c, ElementBase_c) SingletonISOFilterManager_c;
+class IsoFilterManager_c;
+typedef SINGLETON_DERIVED(IsoFilterManager_c, ElementBase_c) SingletonIsoFilterManager_c;
 /** this object manages ISO-Filters - those may contain references
     to ISOName's and are initelligent self-adapting can-filters
     @short Manager for handling of inserting/adapting FilterBox_c-instances
     @see __IsoAgLib::SaClaimHandler_c
     @author Dipl.-Inf. Martin Wodok */
-class ISOFilterManager_c : public SingletonISOFilterManager_c
+class IsoFilterManager_c : public SingletonIsoFilterManager_c
 {
 public:
-  typedef STL_NAMESPACE::vector<ISOFilterBox_c> ISOFilterBox_vec;
-  typedef STL_NAMESPACE::vector<ISOFilterBox_c>::iterator ISOFilterBox_it;
+  typedef STL_NAMESPACE::vector<IsoFilterBox_c> IsoFilterBox_vec;
+  typedef STL_NAMESPACE::vector<IsoFilterBox_c>::iterator IsoFilterBox_it;
 
-  /** initialisation for ISOFilterManager_c */
+  /** initialisation for IsoFilterManager_c */
   void init();
 
   /** default destructor which has nothing to do */
-  ~ISOFilterManager_c ();
+  ~IsoFilterManager_c ();
 
-  bool existIsoFilter (const ISOFilter_s& rrefcs_isoFilter);
+  bool existIsoFilter (const IsoFilter_s& rrefcs_isoFilter);
 
-  void insertIsoFilter (const ISOFilter_s& rrefcs_isoFilter);
-  void insertIsoFilterConnected (const ISOFilter_s& rrefcs_isoFilter, const ISOFilter_s& rrefcs_isoFilter2);
+  void insertIsoFilter (const IsoFilter_s& rrefcs_isoFilter);
+  void insertIsoFilterConnected (const IsoFilter_s& rrefcs_isoFilter, const IsoFilter_s& rrefcs_isoFilter2);
 
-  bool addToIsoFilter (const ISOFilter_s& rrefcs_isoFilterExisting, const ISOFilter_s& rrefcs_isoFilterToAdd);
+  bool addToIsoFilter (const IsoFilter_s& rrefcs_isoFilterExisting, const IsoFilter_s& rrefcs_isoFilterToAdd);
 
-  bool removeIsoFilter (const ISOFilter_s& rrefcs_isoFilter);
+  bool removeIsoFilter (const IsoFilter_s& rrefcs_isoFilter);
 
-  /** constructor for ISOFilterManager_c */
-  ISOFilterManager_c (void);
+  /** constructor for IsoFilterManager_c */
+  IsoFilterManager_c (void);
 
   virtual bool timeEvent( void );
   virtual void close( void );
@@ -148,34 +148,34 @@ private: // Private methods
   void singletonInit ();
 
 
-  /** this function is called by ISOMonitor_c when a new CLAIMED ISOItem_c is registered.
-   * @param refc_isoName const reference to the item which ISOItem_c state is changed
-   * @param rpc_newItem pointer to the currently corresponding ISOItem_c
+  /** this function is called by IsoMonitor_c when a new CLAIMED IsoItem_c is registered.
+   * @param refc_isoName const reference to the item which IsoItem_c state is changed
+   * @param rpc_newItem pointer to the currently corresponding IsoItem_c
    */
-  void reactOnMonitorListAdd (const ISOName_c& refc_isoName, const ISOItem_c* rpc_newItem);
-   /** this function is called by ISOMonitor_c when a device looses its ISOItem_c.
-   * @param refc_isoName const reference to the item which ISOItem_c state is changed
+  void reactOnMonitorListAdd (const IsoName_c& refc_isoName, const IsoItem_c* rpc_newItem);
+   /** this function is called by IsoMonitor_c when a device looses its IsoItem_c.
+   * @param refc_isoName const reference to the item which IsoItem_c state is changed
    * @param rui8_oldSa previously used SA which is NOW LOST -> clients which were connected to this item can react explicitly
     */
-  void reactOnMonitorListRemove (const ISOName_c& refc_isoName, uint8_t rui8_oldSa);
+  void reactOnMonitorListRemove (const IsoName_c& refc_isoName, uint8_t rui8_oldSa);
 
 private: // Private attributes
   /// holds all
 
-  ISOFilterBox_vec vec_isoFilterBox;
+  IsoFilterBox_vec vec_isoFilterBox;
 
-  friend class SINGLETON_DERIVED (ISOFilterManager_c,ElementBase_c);
+  friend class SINGLETON_DERIVED (IsoFilterManager_c,ElementBase_c);
 
   bool b_alreadyInitialized;
 };
 
 #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
-  /** C-style function, to get access to the unique ISOFilterManager_c singleton instance
+  /** C-style function, to get access to the unique IsoFilterManager_c singleton instance
       if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS */
-  ISOFilterManager_c& getIsoFilterManagerInstance (uint8_t rui8_instance = 0);
+  IsoFilterManager_c& getIsoFilterManagerInstance (uint8_t rui8_instance = 0);
 #else
-  /** C-style function, to get access to the unique ISOFilterManager_c singleton instance */
-  ISOFilterManager_c& getIsoFilterManagerInstance (void);
+  /** C-style function, to get access to the unique IsoFilterManager_c singleton instance */
+  IsoFilterManager_c& getIsoFilterManagerInstance (void);
 #endif
 
 }

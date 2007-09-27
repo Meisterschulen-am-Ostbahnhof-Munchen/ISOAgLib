@@ -92,7 +92,7 @@
 #include <IsoAgLib/util/impl/canpkg_c.h>
 
 namespace IsoAgLib {
-  class iISOName_c;
+  class iIsoName_c;
 }
 
 // Begin Namespace __IsoAgLib
@@ -103,36 +103,36 @@ namespace __IsoAgLib {
   flags
   @author Dipl.-Inform. Achim Spangler
 */
-class ISOName_c {
+class IsoName_c {
 private:
 public:
   /** constant for default parameters and initialization, where the device type is not yet spcified.
       the instantiation of this constant variable is located in the module cancustomer_c.cpp
     */
-  static const ISOName_c& ISONameUnspecified();
+  static const IsoName_c& IsoNameUnspecified();
 
   /** constant for not yet spcified process data ident -> <device class, device class instance> := <0x0,0xF>
       the instantiation of this constant variable is located in the module cancustomer_c.cpp
     */
-  static const ISOName_c& ISONameInitialProcessData();
+  static const IsoName_c& IsoNameInitialProcessData();
 
   /** default constructor
     using "explicit" to avoid WRONG implicit cast from SA to ISONAME!
     @param rui8_devClass     initial DEVCLASS (device type)
     @param rui8_devClassInst initial DEVCLASSINST (instance). Defaults to "unknown" (=0xF)
   */
-  explicit ISOName_c( uint8_t rui8_devClass, uint8_t rui8_devClassInst=0xF )
+  explicit IsoName_c( uint8_t rui8_devClass, uint8_t rui8_devClassInst=0xF )
   { set( true, 2, rui8_devClass, rui8_devClassInst, 0xFF, 0x7FF, 0x1FFFFF, 0x1F, 0x7 ); }
 
   /** constructor which can read in initial data from uint8_t string
     @param rpb_src 64bit input data string
   */
-  ISOName_c(const uint8_t* rpb_src = NULL);
+  IsoName_c(const uint8_t* rpb_src = NULL);
 
   /** constructor which can read in initial data from uint8_t string
     @param rpb_src 64bit input data string
   */
-  ISOName_c(const Flexible8ByteString_c* rpu_src);
+  IsoName_c(const Flexible8ByteString_c* rpu_src);
 
   /** constructor which format data string from series of input flags
     @param rb_selfConf true -> indicate sefl configuring ECU
@@ -147,20 +147,20 @@ public:
     @param rb_funcInst instance number of ECU with same function, device class and function instance
         (default 0 - normally)
   */
-  ISOName_c(bool rb_selfConf, uint8_t rui8_indGroup, uint8_t rui8_devClass, uint8_t rui8_devClassInst,
+  IsoName_c(bool rb_selfConf, uint8_t rui8_indGroup, uint8_t rui8_devClass, uint8_t rui8_devClassInst,
         uint8_t rb_func, uint16_t rui16_manufCode, uint32_t rui32_serNo, uint8_t rb_funcInst = 0, uint8_t rb_ecuInst = 0);
   /** copy constructor for ISOName
-    @param rrefc_src source ISOName_c instance
+    @param rrefc_src source IsoName_c instance
   */
-  ISOName_c(const ISOName_c& rrefc_src);
+  IsoName_c(const IsoName_c& rrefc_src);
 
   /** assign constructor for ISOName
-    @param rrefc_src source ISOName_c object
+    @param rrefc_src source IsoName_c object
   */
-  const ISOName_c& operator=(const ISOName_c& rrefc_src);
+  const IsoName_c& operator=(const IsoName_c& rrefc_src);
 
   /** default destructor */
-  ~ISOName_c();
+  ~IsoName_c();
 
   /** set data string with all flags with one call
     @param rb_selfConf true -> indicate sefl configuring ECU
@@ -326,34 +326,37 @@ public:
   /** Check if all Non-Instance fields of both ISONames match
     @return true if equal, false if one non-inst field differs!
   */
-  bool isEqualRegardingNonInstFields (const ISOName_c& rrefc_isoName) const;
+  bool isEqualRegardingNonInstFields (const IsoName_c& rrefc_isoName) const;
 
-  /** compare two ISOName_c values with operator== */
-  bool operator==( const ISOName_c& refc_right ) const
+  /** compare two IsoName_c values with operator== */
+  bool operator==( const IsoName_c& refc_right ) const
     { return (higherPriThanPar( refc_right.outputUnion() ) == 0)?true:false;}
 
-  /** compare two ISOName_c values with operator!= */
-  bool operator!=( const ISOName_c& refc_right ) const
+  /** compare two IsoName_c values with operator!= */
+  bool operator!=( const IsoName_c& refc_right ) const
     { return (higherPriThanPar( refc_right.outputUnion() ) != 0)?true:false;}
 
-  /** compare ISOName_c value and Flexible8ByteString_c with operator!= */
+  /** compare IsoName_c value and Flexible8ByteString_c with operator!= */
   bool operator!=( const Flexible8ByteString_c& rrefc_right ) const
     { return (higherPriThanPar( &rrefc_right ) != 0)?true:false;}
 
-  /** compare two ISOName_c values with operator< */
-  bool operator<( const ISOName_c& refc_right ) const
+  /** compare two IsoName_c values with operator< */
+  bool operator<( const IsoName_c& refc_right ) const
     { return (higherPriThanPar( refc_right.outputUnion() ) == -1)?true:false;}
 
   /** convert function */
-  IsoAgLib::iISOName_c& toIisoName_c();
+  IsoAgLib::iIsoName_c& toIisoName_c();
 
   /** convert function */
-  const IsoAgLib::iISOName_c& toConstIisoName_c() const;
+  const IsoAgLib::iIsoName_c& toConstIisoName_c() const;
 
 private:
   /** ISO 8-uint8_t NAME field */
   Flexible8ByteString_c u_data;
 };
+
+/** this typedef is only for some time to provide backward compatibility at API level */
+typedef IsoName_c ISOName_c;
 
 }
 #endif

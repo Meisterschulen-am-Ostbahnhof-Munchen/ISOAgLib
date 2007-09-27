@@ -47,10 +47,10 @@
   *
   * @subsection SchedulerCanProcess Processing of Received CAN Messages
   * All received CAN messages, which should be stored by the target specific HAL implementation in
-  * ( circular ) puffers, are interpreted by the __IsoAgLib::CANIO_c::timeEvent() and the internal called
-  * __IsoAgLib::CANIO_c::processMsg() function.
+  * ( circular ) puffers, are interpreted by the __IsoAgLib::CanIo_c::timeEvent() and the internal called
+  * __IsoAgLib::CanIo_c::processMsg() function.
   * After delegating each message to the corresponding communication class, the individual reaction is performed.
-  * - Update of monitor lists for ISO 11783 ( IsoAgLib::iISOMonitor_c ) on receive of adress claims, alive messages, etc.
+  * - Update of monitor lists for ISO 11783 ( IsoAgLib::iIsoMonitor_c ) on receive of adress claims, alive messages, etc.
   * - Answer request for claimed adress for local ISO 11783 identities
   * - Update data structures in IsoAgLib::iTimePosGps_c, IsoAgLib::iTracGeneral_c, IsoAgLib::iTracMove_c and IsoAgLib::iTracPto_c
   *   where several important base data are stored
@@ -64,7 +64,7 @@
   *
   * @subsection SystemMgmt_cMgmt Periodic Activities for Local Identities and the ISO Monitor List
   * All dead node entires are erased from the monitor lists, if they didn't send their alive message for more than three seconds.
-  * The ISO monitor IsoAgLib::iISOMonitor_c can optionally erase all nodes from the monitor list, which
+  * The ISO monitor IsoAgLib::iIsoMonitor_c can optionally erase all nodes from the monitor list, which
   * didn't answer the last "request for claimed adress" call within the standard time interval.
   *
   * @subsection Base_c Periodic Send of Base Data

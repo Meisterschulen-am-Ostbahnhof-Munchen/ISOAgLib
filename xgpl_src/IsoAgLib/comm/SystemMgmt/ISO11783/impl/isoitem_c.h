@@ -97,36 +97,36 @@ namespace __IsoAgLib {
 /** item class for ISO 11783 members monitor list to manage
   local (with address claim) and remote (statistic information)
   systems; utilizes BaseItem_c for basic MonitorList
-  management and ISOName_c for management of the 64bit NAME field
+  management and IsoName_c for management of the 64bit NAME field
   @short Item with services needed for ISO11783 monitor lists.
   @author Dipl.-Inform. Achim Spangler
   @see MonitorItem
   @see ISOName
 */
-class ISOItem_c : public BaseItem_c  {
+class IsoItem_c : public BaseItem_c  {
 private:
   // private typedef alias names
 public:
   /** default constructor - all data has to be initialized with a call to "set(..)"
   */
-  ISOItem_c();
+  IsoItem_c();
 
   /** copy constructor for ISOItem.
     The copy constructor checks if the source item is
     a master ( i.e. the pc_masterItem pointer points to this )
     -> it doesn't simply copy the pointer, but sets its
     own pointer also to the this-pointer of the new instance
-    @param rrefc_src source ISOItem_c instance
+    @param rrefc_src source IsoItem_c instance
   */
-  ISOItem_c(const ISOItem_c& rrefc_src);
+  IsoItem_c(const IsoItem_c& rrefc_src);
 
   /** assign constructor for ISOItem
-    @param rrefc_src source ISOItem_c object
+    @param rrefc_src source IsoItem_c object
   */
-  ISOItem_c& operator=(const ISOItem_c& rrefc_src);
+  IsoItem_c& operator=(const IsoItem_c& rrefc_src);
 
   /** default destructor */
-  virtual ~ISOItem_c();
+  virtual ~IsoItem_c();
 
   /** deliver the data NAME string as pointer to 8byte string
     @return const pointer to Flexible8ByteString_c union with NAME
@@ -237,18 +237,18 @@ public:
     @param rui16_saEepromAdr EEPROM adress to store actual SA -> next boot with same adr
     @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
-  void set(int32_t ri32_time, const ISOName_c& rc_isoName, uint8_t rui8_nr,
+  void set(int32_t ri32_time, const IsoName_c& rc_isoName, uint8_t rui8_nr,
            itemState_t ren_status = IState_c::Active, int riSingletonKey = 0 );
 
   /** set ISOName code of this item
     @param rc_isoName ISOName
   */
-  void setISOName(const ISOName_c& rc_isoName) {c_isoName = rc_isoName;}
+  void setISOName(const IsoName_c& rc_isoName) {c_isoName = rc_isoName;}
 
   /** deliver ISOName code of this item
     @return ISOName
   */
-  const ISOName_c& isoName() const {return c_isoName;}
+  const IsoName_c& isoName() const {return c_isoName;}
 
   /** deliver name
     @return pointer to the name uint8_t string (7byte)
@@ -270,7 +270,7 @@ public:
       * find free SA or check if last SA is available
       * send adress claim
     possible errors:
-      * dependant error in CANIO_c during send
+      * dependant error in CanIo_c during send
     @return true -> all planned time event activitie performed
   */
   bool timeEvent( void );
@@ -296,10 +296,10 @@ public:
   bool sendWsAnnounce();
 
   // returns NULL if standalone, SELF if it is master itself, or the master ISOItem otherwise.
-  ISOItem_c* getMaster () const;
+  IsoItem_c* getMaster () const;
 
   // attach to a master
-  void setMaster ( ISOItem_c* rpc_masterItem );
+  void setMaster ( IsoItem_c* rpc_masterItem );
 
   // check if this item is a master (i.e. the master pointer points to itself)
   bool isMaster () const { return (this == pc_masterItem); }
@@ -331,43 +331,43 @@ public:
   uint8_t nr()const{return ui8_nr;}
 
   /**
-    lower comparison with another ISOItem_c on the rigth (compare the ISOName)
+    lower comparison with another IsoItem_c on the rigth (compare the ISOName)
     @param rrefc_right rigth parameter for lower compare
   */
-  bool operator<(const ISOItem_c& rrefc_right) const
+  bool operator<(const IsoItem_c& rrefc_right) const
     {return (isoName() < rrefc_right.isoName())?true:false;}
 
   /**
     lower comparison with ISOName uint8_t on the rigth
     @param rrefc_right rigth parameter for lower compare
   */
-  bool operator<(const ISOName_c& rc_isoName)const{return (isoName() < rc_isoName)?true:false;}
+  bool operator<(const IsoName_c& rc_isoName)const{return (isoName() < rc_isoName)?true:false;}
 
   /**
     lower comparison between left ISOName uint8_t and right MonitorItem
     @param rb_left ISOName uint8_t left parameter
     @param rrefc_right rigth ServiceItem_c parameter
   */
-  friend bool operator<(const ISOName_c& rc_left, const ISOItem_c& rrefc_right);
+  friend bool operator<(const IsoName_c& rc_left, const IsoItem_c& rrefc_right);
 
   /**
-    lower comparison between left ISOItem_c and right ISOName uint8_t
+    lower comparison between left IsoItem_c and right ISOName uint8_t
     @param rrefc_left left ServiceItem_c parameter
     @param rb_right ISOName uint8_t right parameter
   */
-  friend bool lessThan(const ISOItem_c& rrefc_left, const ISOName_c& rc_right);
+  friend bool lessThan(const IsoItem_c& rrefc_left, const IsoName_c& rc_right);
 
   /**
     equality comparison with ISOName uint8_t on the rigth
     @param rrefc_right rigth parameter for lower compare
   */
-  bool operator==(const ISOName_c& rc_right)const { return (isoName() == rc_right)?true:false;}
+  bool operator==(const IsoName_c& rc_right)const { return (isoName() == rc_right)?true:false;}
 
   /**
     difference comparison with ISOName uint8_t on the rigth
     @param rrefc_right rigth parameter for lower compare
   */
-  bool operator!=(const ISOName_c& rc_right) const{ return (isoName() != rc_right)?true:false;}
+  bool operator!=(const IsoName_c& rc_right) const{ return (isoName() != rc_right)?true:false;}
 
   /**
     compare given number to nr of this item and return result
@@ -390,10 +390,10 @@ private: // private methods
 
 private:
 #ifdef USE_WORKING_SET
-  /** pointer to the master ISOItem_c (if == this, then i'm master myself)
+  /** pointer to the master IsoItem_c (if == this, then i'm master myself)
     NULL if not part of a master/slave setup
   */
-  ISOItem_c* pc_masterItem;
+  IsoItem_c* pc_masterItem;
 
   /** i8_slavesToClaimAddress
     * == -2  idle - wait until app triggers ws-sending by setting this variable to "-1" by calling triggerWsAnnounce()
@@ -409,15 +409,18 @@ private:
   bool b_repeatClaim;
 
   /** ISOName of element */
-  ISOName_c c_isoName;
+  IsoName_c c_isoName;
 };
 
+/** this typedef is only for some time to provide backward compatibility at API level */
+typedef IsoItem_c ISOItem_c;
+
 /**
-  lower comparison between left ISOItem_c and right ISOName uint8_t
+  lower comparison between left IsoItem_c and right ISOName uint8_t
   @param rrefc_left left ServiceItem_c parameter
   @param rb_right ISOName uint8_t right parameter
 */
-bool lessThan(const ISOItem_c& rrefc_left, const ISOName_c& rc_right);
+bool lessThan(const IsoItem_c& rrefc_left, const IsoName_c& rc_right);
 
 }
 #endif

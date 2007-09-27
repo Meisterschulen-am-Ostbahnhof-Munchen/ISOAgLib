@@ -96,8 +96,8 @@ namespace __IsoAgLib {
   /**
       constructor which can set all element vars
       ISO parameter
-      @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, isSetpoint and ValueGroup
-                          (array is terminated by ElementDDI_s.ddi == 0xFFFF)
+      @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDdi_s which contains DDI, isSetpoint and ValueGroup
+                          (array is terminated by ElementDdi_s.ddi == 0xFFFF)
       @param rui16_element device element number
 
       common parameter
@@ -107,10 +107,10 @@ namespace __IsoAgLib {
       @param rpc_processDataChangeHandler optional pointer to handler class of application
       @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
     */
-ProcDataRemote_c::ProcDataRemote_c( const IsoAgLib::ElementDDI_s* ps_elementDDI,
-                                    uint16_t rui16_element, const ISOName_c& rc_isoName,
-                                    const ISOName_c& rc_ownerISOName,
-                                    const ISOName_c* rpc_commanderISOName,
+ProcDataRemote_c::ProcDataRemote_c( const IsoAgLib::ElementDdi_s* ps_elementDDI,
+                                    uint16_t rui16_element, const IsoName_c& rc_isoName,
+                                    const IsoName_c& rc_ownerISOName,
+                                    const IsoName_c* rpc_commanderISOName,
                                     IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler,
                                     int ri_singletonVecKey)
 
@@ -124,8 +124,8 @@ ProcDataRemote_c::ProcDataRemote_c( const IsoAgLib::ElementDDI_s* ps_elementDDI,
   /**
       initialise this ProcDataRemote_c instance to a well defined initial state
       ISO parameter
-      @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, isSetpoint and ValueGroup
-                          (array is terminated by ElementDDI_s.ddi == 0xFFFF)
+      @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDdi_s which contains DDI, isSetpoint and ValueGroup
+                          (array is terminated by ElementDdi_s.ddi == 0xFFFF)
       @param rui16_element device element number
 
       common parameter
@@ -135,8 +135,8 @@ ProcDataRemote_c::ProcDataRemote_c( const IsoAgLib::ElementDDI_s* ps_elementDDI,
       @param rpc_processDataChangeHandler optional pointer to handler class of application
       @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
     */
-void ProcDataRemote_c::init(const IsoAgLib::ElementDDI_s* ps_elementDDI, uint16_t rui16_element,
-                            const ISOName_c& rc_isoName, const ISOName_c& rc_ownerISOName, const ISOName_c* rpc_commanderISOName,
+void ProcDataRemote_c::init(const IsoAgLib::ElementDdi_s* ps_elementDDI, uint16_t rui16_element,
+                            const IsoName_c& rc_isoName, const IsoName_c& rc_ownerISOName, const IsoName_c* rpc_commanderISOName,
                             IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler,
                             int ri_singletonVecKey)
 {

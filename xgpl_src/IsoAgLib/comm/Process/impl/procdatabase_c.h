@@ -133,8 +133,8 @@ public:
 
   /** constructor which can set all element vars
     ISO parameters:
-    @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
-                         (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
+    @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDdi_s which contains DDI, element, isSetpoint and ValueGroup
+                         (array is terminated by ElementDdi_s.ui16_element == 0xFFFF)
     @param ui16_element  device element number
     common parameters:
     @param rc_isoName optional ISOName code of Process-Data
@@ -143,9 +143,9 @@ public:
     @param rpc_processDataChangeHandler optional pointer to handler class of application
     @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
-  ProcDataBase_c( const IsoAgLib::ElementDDI_s* rps_elementDDI = NULL, uint16_t rui16_element = 0xFFFF,
-                 const ISOName_c& rc_isoName = ISOName_c::ISONameInitialProcessData(),
-                 const ISOName_c& rc_ownerISOName = ISOName_c::ISONameUnspecified(), const ISOName_c *rpc_isoName = NULL,
+  ProcDataBase_c( const IsoAgLib::ElementDdi_s* rps_elementDDI = NULL, uint16_t rui16_element = 0xFFFF,
+                 const IsoName_c& rc_isoName = IsoName_c::IsoNameInitialProcessData(),
+                 const IsoName_c& rc_ownerISOName = IsoName_c::IsoNameUnspecified(), const IsoName_c *rpc_isoName = NULL,
                  IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
                  int ri_singletonVecKey = 0)
 
@@ -158,8 +158,8 @@ public:
 
   /** initialise this ProcDataBase_c instance to a well defined initial state
     ISO parameters:
-    @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
-                         (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
+    @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDdi_s which contains DDI, element, isSetpoint and ValueGroup
+                         (array is terminated by ElementDdi_s.ui16_element == 0xFFFF)
     @param ui16_element  device element number
     common parameters:
     @param rc_isoName optional ISOName code of Process-Data
@@ -168,9 +168,9 @@ public:
     @param rpc_processDataChangeHandler optional pointer to handler class of application
     @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
     */
-  void init( const IsoAgLib::ElementDDI_s* ps_elementDDI, uint16_t rui16_element,
-            const ISOName_c& rc_isoName = ISOName_c::ISONameInitialProcessData(),
-            const ISOName_c& rc_ownerISOName = ISOName_c::ISONameUnspecified(), const ISOName_c *rpc_isoName = NULL,
+  void init( const IsoAgLib::ElementDdi_s* ps_elementDDI, uint16_t rui16_element,
+            const IsoName_c& rc_isoName = IsoName_c::IsoNameInitialProcessData(),
+            const IsoName_c& rc_ownerISOName = IsoName_c::IsoNameUnspecified(), const IsoName_c *rpc_isoName = NULL,
             IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
             int ri_singletonVecKey = 0);
 
@@ -256,7 +256,7 @@ public:
   */
   virtual bool timeEvent( uint16_t *pui16_nextTimePeriod = NULL );
 
-  virtual const ISOName_c& commanderISOName() const { return ISOName_c::ISONameUnspecified(); }
+  virtual const IsoName_c& commanderISOName() const { return IsoName_c::IsoNameUnspecified(); }
 
 
   /** deliver DDI from last received can pkg
@@ -273,7 +273,7 @@ protected: // Protected methods
     set general command before sendValISOName !
     possible errors:
         * Err_c::elNonexistent one of resolved EMPF/SEND isn't registered with claimed address in Monitor
-        * dependant error in CANIO_c on CAN send problems
+        * dependant error in CanIo_c on CAN send problems
 
     @param rc_varISOName variable ISOName
     @param ri32_val int32_t value to send
@@ -281,7 +281,7 @@ protected: // Protected methods
     @param en_command
     @return true -> sendIntern set successful EMPF and SEND
   */
-  virtual bool sendValISOName(const ISOName_c& rc_varISOName, int32_t ri32_val = 0) const;
+  virtual bool sendValISOName(const IsoName_c& rc_varISOName, int32_t ri32_val = 0) const;
 
 #ifdef USE_FLOAT_DATA_TYPE
   /** send the given float value with variable ISOName rc_varISOName;
@@ -292,7 +292,7 @@ protected: // Protected methods
     set general command before sendValISOName !
     possible errors:
         * Err_c::elNonexistent one of resolved EMPF/SEND isn't registered with claimed address in Monitor
-        * dependant error in CANIO_c on CAN send problems
+        * dependant error in CanIo_c on CAN send problems
 
     @param rc_varISOName variable ISOName
     @param rb_pd PD code for the msg
@@ -300,7 +300,7 @@ protected: // Protected methods
     @param ri32_val float value to send
     @return true -> sendIntern set successful EMPF and SEND
   */
-  virtual bool sendValISOName(const ISOName_c& rc_varISOName, float rf_val = 0.0F) const;
+  virtual bool sendValISOName(const IsoName_c& rc_varISOName, float rf_val = 0.0F) const;
 #endif
 
   void setBasicSendFlags() const;

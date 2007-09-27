@@ -105,7 +105,7 @@ void MeasureProgLocal_c::init(
   Proc_c::progType_t ren_progType,
   int32_t ri32_masterVal,
   int32_t ri32_initialVal,
-  const ISOName_c& rc_callerISOName)
+  const IsoName_c& rc_callerISOName)
 {
   MeasureProgBase_c::init( rpc_processData, ren_progType, ri32_initialVal, rc_callerISOName  );
 
@@ -135,7 +135,7 @@ void MeasureProgLocal_c::init(
 void MeasureProgLocal_c::init(
   ProcDataBase_c *const rpc_processData,
   Proc_c::progType_t ren_progType, float rf_masterVal,
-  float rf_eepromVal, const ISOName_c& rc_callerISOName)
+  float rf_eepromVal, const IsoName_c& rc_callerISOName)
 {
   MeasureProgBase_c::init( rpc_processData, ren_progType, rf_eepromVal, rc_callerISOName  );
 
@@ -195,7 +195,7 @@ MeasureProgLocal_c::~MeasureProgLocal_c(){
 
     possible errors:
         * dependant error in ProcDataLocal_c if EMPF or SEND not valid
-        * dependant error in CANIO_c on send problems
+        * dependant error in CanIo_c on send problems
 
     @param ren_type used increment types: Proc_c::TimeProp, Proc_c::DistProp, Proc_c::ValIncr
     @param ren_doSend value types to send on trigger of subprog: Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...
@@ -289,7 +289,7 @@ bool MeasureProgLocal_c::start(Proc_c::type_t ren_type,
 
     possible errors:
         * dependant error in ProcDataLocal_c if EMPF or SEND not valid
-        * dependant error in CANIO_c on send problems
+        * dependant error in CanIo_c on send problems
 
     @param ren_type used increment types: Proc_c::TimeProp, Proc_c::DistProp, Proc_c::ValIncr
     @param ren_doSend value types to send on trigger of subprog: Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...
@@ -368,7 +368,7 @@ bool MeasureProgLocal_c::start(Proc_c::type_t ren_type, Proc_c::doSend_t ren_doS
 
     possible errors:
         * dependant error in ProcDataLocal_c if EMPF or SEND not valid
-        * dependant error in CANIO_c on send problems
+        * dependant error in CanIo_c on send problems
 
     @param ren_type used increment types: Proc_c::TimeProp, Proc_c::DistProp, Proc_c::ValIncr
     @param ren_doSend value types to send on trigger of subprog: Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...
@@ -389,7 +389,7 @@ bool MeasureProgLocal_c::start(Proc_c::type_t ren_type,
 
     possible errors:
         * dependant error in ProcDataLocal_c if EMPF or SEND not valid
-        * dependant error in CANIO_c on send problems
+        * dependant error in CanIo_c on send problems
     @param b_deleteSubProgs is only needed for remote ISO case (but is needed due to overloading here also)
     @param ren_type wanted increment type (Proc_c::TimeProp, Proc_c::DistProp, Proc_c::ValIncr)
     @param ren_doSend set process data subtype to stop (Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...)
@@ -439,7 +439,7 @@ bool MeasureProgLocal_c::stop(bool /* b_deleteSubProgs */, Proc_c::type_t ren_ty
     @param rc_targetISOName ISOName of target
     @return true -> successful sent
   */
-bool MeasureProgLocal_c::sendValMod( GeneralCommand_c::ValueGroup_t en_valueGroup, const ISOName_c& rc_targetISOName) const {
+bool MeasureProgLocal_c::sendValMod( GeneralCommand_c::ValueGroup_t en_valueGroup, const IsoName_c& rc_targetISOName) const {
   // prepare general command in process pkg
   getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false, /* isRequest */
                                                               en_valueGroup, GeneralCommand_c::setValue);
@@ -458,7 +458,7 @@ bool MeasureProgLocal_c::sendValMod( GeneralCommand_c::ValueGroup_t en_valueGrou
     @param rc_targetISOName ISOName of target
     @return true -> successful sent
   */
-bool MeasureProgLocal_c::sendSetpointValMod( GeneralCommand_c::ValueGroup_t en_valueGroup, const ISOName_c& rc_targetISOName) const {
+bool MeasureProgLocal_c::sendSetpointValMod( GeneralCommand_c::ValueGroup_t en_valueGroup, const IsoName_c& rc_targetISOName) const {
   // prepare general command in process pkg
   getProcessInstance4Comm().data().c_generalCommand.setValues(TRUE /* isSetpoint */, false, /* isRequest */
                                                               en_valueGroup, GeneralCommand_c::setValue);
@@ -501,7 +501,7 @@ int32_t MeasureProgLocal_c::setpointValMod(GeneralCommand_c::ValueGroup_t en_val
 
     possible errors:
       * dependant error in ProcDataLocal_c if EMPF or SEND not valid
-      * dependant error in CANIO_c on send problems
+      * dependant error in CanIo_c on send problems
     @return true -> received msg processed by this instance
   */
 bool MeasureProgLocal_c::processMsg(){
@@ -560,7 +560,7 @@ MeasureProgLocal_c::MeasureProgLocal_c(
   Proc_c::progType_t ren_progType,
   int32_t ri32_masterVal,
   int32_t ri32_initialVal,
-  const ISOName_c& rc_callerISOName)
+  const IsoName_c& rc_callerISOName)
 : MeasureProgBase_c(rpc_processData, ren_progType, ri32_initialVal, rc_callerISOName )
 {
   init( rpc_processData, ren_progType, ri32_masterVal, ri32_initialVal, rc_callerISOName );
@@ -572,7 +572,7 @@ MeasureProgLocal_c::MeasureProgLocal_c(
     possible errors:
 
         * dependant error in ProcDataLocal_c if EMPF or SEND not valid
-        * dependant error in CANIO_c on send problems
+        * dependant error in CanIo_c on send problems
     @param ri32_val new measure value
   */
 void MeasureProgLocal_c::setVal(int32_t ri32_val){
@@ -680,7 +680,7 @@ void MeasureProgLocal_c::setVal(int32_t ri32_val){
 
     possible errors:
         * dependant error in ProcDataLocal_c if EMPF or SEND not valid
-        * dependant error in CANIO_c on send problems
+        * dependant error in CanIo_c on send problems
     @param rf_val new measure value
   */
 void MeasureProgLocal_c::setVal(float rf_val){
@@ -789,7 +789,7 @@ void MeasureProgLocal_c::setVal(float rf_val){
 
     possible errors:
       * dependant error in ProcDataLocal_c if EMPF or SEND not valid
-      * dependant error in CANIO_c on send problems
+      * dependant error in CanIo_c on send problems
     @param ren_doSend value types to send on trigger of subprog: Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...
     @return true -> value send triggered and performed with success
   */
@@ -853,7 +853,7 @@ void MeasureProgLocal_c::initVal(float rf_val){
 
     possible errors:
       * dependant error in ProcDataLocal_c if EMPF or SEND not valid
-      * dependant error in CANIO_c on send problems
+      * dependant error in CanIo_c on send problems
     @param ri32_val reset measure value to this value (ISO only)
     @return true -> reseted measure val sent with success
   */
@@ -896,7 +896,7 @@ bool MeasureProgLocal_c::resetVal(int32_t ri32_val){
 
     possible errors:
       * dependant error in ProcDataLocal_c if EMPF or SEND not valid
-      * dependant error in CANIO_c on send problems
+      * dependant error in CanIo_c on send problems
     @return true -> reseted integ val sent with success
   */
 bool MeasureProgLocal_c::resetInteg(){
@@ -925,7 +925,7 @@ bool MeasureProgLocal_c::resetInteg(){
 
     possible errors:
       * dependant error in ProcDataLocal_c if EMPF or SEND not valid
-      * dependant error in CANIO_c on send problems
+      * dependant error in CanIo_c on send problems
     @return true -> reseted medium val sent with success
   */
 bool MeasureProgLocal_c::resetMed(){
@@ -955,7 +955,7 @@ bool MeasureProgLocal_c::resetMed(){
 
     possible errors:
       * dependant error in ProcDataLocal_c if EMPF or SEND not valid
-      * dependant error in CANIO_c on send problems
+      * dependant error in CanIo_c on send problems
     @return true -> reseted minimum val sent with success
   */
 bool MeasureProgLocal_c::resetMin(){
@@ -985,7 +985,7 @@ bool MeasureProgLocal_c::resetMin(){
 
     possible errors:
       * dependant error in ProcDataLocal_c if EMPF or SEND not valid
-      * dependant error in CANIO_c on send problems
+      * dependant error in CanIo_c on send problems
     @return true -> reseted maximum val sent with success
   */
 bool MeasureProgLocal_c::resetMax(){
@@ -1016,7 +1016,7 @@ bool MeasureProgLocal_c::resetMax(){
 
     possible errors:
       * dependant error in ProcDataLocal_c if EMPF or SEND not valid
-      * dependant error in CANIO_c on send problems
+      * dependant error in CanIo_c on send problems
     @param pui16_nextTimePeriod calculated new time period, based on current measure progs (only for local proc data)
     @return true -> all planned activities performed in available time
   */

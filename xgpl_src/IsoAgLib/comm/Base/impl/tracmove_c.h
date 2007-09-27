@@ -1,6 +1,6 @@
 /***************************************************************************
                  tracmove_c.h -   stores, updates and delivers all moving
-                                  data information from CANCustomer_c
+                                  data information from CanCustomer_c
                                   derived for CAN sending and receiving
                                   interaction;
                                   from BaseCommon_c derived for
@@ -103,7 +103,7 @@ namespace __IsoAgLib {
   /** stores, updates  and delivers all moving data information;
       Derive from BaseCommon_c some fundamental funktionality for all base data
       Derive from ElementBase_c to register in Scheduler_c for timeEvent trigger
-      Derive from CANCustomer to register FilterBox'es in CANIO_c to receive CAN messages
+      Derive from CANCustomer to register FilterBox'es in CanIo_c to receive CAN messages
       Derive from SINGLETON to create a Singleton which manages one global accessible singleton
       per IsoAgLib instance (if only one IsoAgLib instance is defined in application config, no overhead is produced).
     */
@@ -115,18 +115,18 @@ namespace __IsoAgLib {
     /** initialise element which can't be done during construct;
         above all create the needed FilterBox_c instances
         possible errors:
-          * dependant error in CANIO_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
+          * dependant error in CanIo_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
         @param rpc_isoName optional pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
         @param ai_singletonVecKey singleton vector key in case PRT_INSTANCE_CNT > 1
         @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       */
-    virtual void init_base (const ISOName_c*, int ai_singletonVecKey, IsoAgLib::IdentMode_t rt_identMode = IsoAgLib::IdentModeImplement);
+    virtual void init_base (const IsoName_c*, int ai_singletonVecKey, IsoAgLib::IdentMode_t rt_identMode = IsoAgLib::IdentModeImplement);
     /** config the TracMove_c object after init -> set pointer to isoName and
         config send/receive of a moving msg type
         @param rpc_isoName pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
         @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       */
-    virtual bool config_base (const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode, uint16_t rui16_suppressMask = 0);
+    virtual bool config_base (const IsoName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode, uint16_t rui16_suppressMask = 0);
 
     /** update selected speed with actually best available speed
         @param t_speedSrc  from which source is the speed available
@@ -327,7 +327,7 @@ namespace __IsoAgLib {
 
   virtual const char* getTaskName() const;
   /** dummy implementation */
-  virtual bool processMsgRequestPGN (uint32_t rui32_pgn, ISOItem_c* rpc_isoItemSender, ISOItem_c* rpc_isoItemReceiver);
+  virtual bool processMsgRequestPGN (uint32_t rui32_pgn, IsoItem_c* rpc_isoItemSender, IsoItem_c* rpc_isoItemReceiver);
 
   private:
     // Private methods
@@ -361,12 +361,12 @@ namespace __IsoAgLib {
 
     /** process a ISO11783 base information PGN
         @pre  sender of message is existent in monitor list
-        @see  CANPkgExt_c::resolveSendingInformation()
+        @see  CanPkgExt_c::resolveSendingInformation()
       */
     virtual bool processMsg();
 
     /** send moving data with ground&theor speed&dist
-        @see  CANIO_c::operator<<
+        @see  CanIo_c::operator<<
       */
     void sendMovingTracMode( );
 

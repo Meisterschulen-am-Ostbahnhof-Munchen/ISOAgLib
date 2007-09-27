@@ -162,7 +162,7 @@ private:
     @param rc_isoName DEVCLASS code of searched measure program
     @return true -> found item
   */
-  bool existProg(const ISOName_c& rc_isoName)
+  bool existProg(const IsoName_c& rc_isoName)
       {return updateProgCache(rc_isoName, false);}
 
   /**
@@ -175,7 +175,7 @@ private:
     @param rc_isoName DEVCLASS code of searched measure program
     @param rb_doCreated true -> create suitable measure program if not found
   */
-  MeasureProgLocal_c& prog(const ISOName_c& rc_isoName, bool rb_doCreate);
+  MeasureProgLocal_c& prog(const IsoName_c& rc_isoName, bool rb_doCreate);
 
   /** initialise value for all registered Measure Progs */
   void initGlobalVal( int32_t ri32_val );
@@ -200,12 +200,12 @@ private:
     @return true -> rpc_receiverDevice is set
   */
   bool startDataLogging(Proc_c::type_t ren_type /* Proc_c::TimeProp, Proc_c::DistProp, ... */,
-                        int32_t ri32_increment, const ISOName_c* rpc_receiverDevice );
+                        int32_t ri32_increment, const IsoName_c* rpc_receiverDevice );
   /**
     stop all measurement progs in all local process instances, started with given isoName
     @param refc_isoName
   */
-  void stopRunningMeasurement(const ISOName_c& refc_isoName);
+  void stopRunningMeasurement(const IsoName_c& refc_isoName);
 
 
  protected:
@@ -231,7 +231,7 @@ private:
 
     @param rc_isoName commanding ISOName
   */
-  void insertMeasureprog(const ISOName_c& rc_isoName);
+  void insertMeasureprog(const IsoName_c& rc_isoName);
   /**
     update the programm cache, create an programm item, if wanted
 
@@ -242,7 +242,7 @@ private:
     @param rb_createIfNotFound true -> create new item if not found
     @return true -> instance found
   */
-  bool updateProgCache(const ISOName_c& rc_isoName, bool rb_createIfNotFound);
+  bool updateProgCache(const IsoName_c& rc_isoName, bool rb_createIfNotFound);
  protected:
   /** container of objects for managing jobs of local measure programs */
   Vec_MeasureProgLocal c_vec_prog;

@@ -114,9 +114,9 @@ void BaseCommon_c::singletonInit()
 
 /**
   virtual function which delivers a pointer to the CANCustomer
-  specific CANPkgExt_c instance
+  specific CanPkgExt_c instance
 */
-CANPkgExt_c& BaseCommon_c::dataBase()
+CanPkgExt_c& BaseCommon_c::dataBase()
 {
   return c_data;
 }
@@ -135,12 +135,12 @@ void BaseCommon_c::close( )
 /** initialise element which can't be done during construct;
     above all create the needed FilterBox_c instances
     possible errors:
-      * dependant error in CANIO_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
+      * dependant error in CanIo_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
     @param rpc_isoName optional pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
     @param ai_singletonVecKey singleton vector key in case PRT_INSTANCE_CNT > 1
     @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
   */
-void BaseCommon_c::init_base (const ISOName_c* rpc_isoName, int ai_singletonVecKey, IsoAgLib::IdentMode_t rt_identMode)
+void BaseCommon_c::init_base (const IsoName_c* rpc_isoName, int ai_singletonVecKey, IsoAgLib::IdentMode_t rt_identMode)
 {
   getSchedulerInstance4Comm().registerClient( this );
   c_data.setSingletonKey( ai_singletonVecKey );
@@ -164,7 +164,7 @@ void BaseCommon_c::init_base (const ISOName_c* rpc_isoName, int ai_singletonVecK
     @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
     @return true -> configuration was successfull
   */
-bool BaseCommon_c::config_base (const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode, uint16_t rui16_suppressMask)
+bool BaseCommon_c::config_base (const IsoName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode, uint16_t rui16_suppressMask)
 {
   mui16_suppressMask = rui16_suppressMask;
   if (   rt_identMode == IsoAgLib::IdentModeTractor
@@ -204,7 +204,7 @@ bool BaseCommon_c::config_base (const ISOName_c* rpc_isoName, IsoAgLib::IdentMod
 }
 
 /** check if a received message should be parsed */
-bool BaseCommon_c::checkParseReceived(const ISOName_c& rrefc_currentSender) const
+bool BaseCommon_c::checkParseReceived(const IsoName_c& rrefc_currentSender) const
 {
   return ( checkMode(IsoAgLib::IdentModeImplement) // I'm not the sender
             && ( // one of the following conditions must be true
@@ -219,11 +219,11 @@ bool BaseCommon_c::checkParseReceived(const ISOName_c& rrefc_currentSender) cons
     -> called periodically by Scheduler_c
     ==> sends base data msg if configured in the needed rates
     possible errors:
-      * dependant error in CANIO_c on CAN send problems
+      * dependant error in CanIo_c on CAN send problems
     @param ri32_demandedExecEnd optional timestamp, where timeEvent shall return execution to calling function
-    @see CANPkg_c::getData
-    @see CANPkgExt_c::getData
-    @see CANIO_c::operator<<
+    @see CanPkg_c::getData
+    @see CanPkgExt_c::getData
+    @see CanIo_c::operator<<
     @return true -> all planned activities performed in allowed time
   */
 bool BaseCommon_c::timeEvent()
@@ -285,7 +285,7 @@ bool BaseCommon_c::sendPgnRequest(uint32_t ui32_requestedPGN)
   // set PGN first, as this might overwrite the PS field
   data().setIsoPgn(REQUEST_PGN_MSG_PGN);
 
-  /// if the ISOItem_c is not in the monitor list, ignore this request
+  /// if the IsoItem_c is not in the monitor list, ignore this request
   if ( getIsoMonitorInstance4Comm().existActiveLocalIsoMember() )
   { // use the SA of the already active node
     data().setMonitorItemForSA( &getIsoMonitorInstance4Comm().getActiveLocalIsoMember() );
@@ -309,7 +309,7 @@ bool BaseCommon_c::sendPgnRequest(uint32_t ui32_requestedPGN)
   // built request data string
   data().setUint32Data( 0 , ui32_requestedPGN );
   data().setLen( 3 );
-  // now CANPkgExt_c has right data -> send
+  // now CanPkgExt_c has right data -> send
   getCanInstance4Comm() << data();
   return true;
 }
@@ -318,7 +318,7 @@ bool BaseCommon_c::sendPgnRequest(uint32_t ui32_requestedPGN)
 /** check if preconditions for request for pgn are fullfilled
     @return  true -> the request for pgn can be send
   */
-bool BaseCommon_c::check4ReqForPgn(uint32_t /* rui32_pgn */, ISOItem_c* /*rpc_isoItemSender*/, ISOItem_c* rpc_isoItemReceiver)
+bool BaseCommon_c::check4ReqForPgn(uint32_t /* rui32_pgn */, IsoItem_c* /*rpc_isoItemSender*/, IsoItem_c* rpc_isoItemReceiver)
 {
   if ( NULL == getISOName() ) return false; // not configured for Send
   if ( ! getIsoMonitorInstance4Comm().existIsoMemberISOName( *getISOName(), true ) ) return false;
@@ -328,7 +328,7 @@ bool BaseCommon_c::check4ReqForPgn(uint32_t /* rui32_pgn */, ISOItem_c* /*rpc_is
   if ( ( rpc_isoItemReceiver == NULL ) ||
   ( &getIsoMonitorInstance4Comm().isoMemberISOName( *getISOName() ) == rpc_isoItemReceiver ) )
   { // the REQUEST was directed to GLOBAL or to the SA that belongs to the
-    // tractor IdentItem_c that is matched by the registrated ISOName_c (getISOName())
+    // tractor IdentItem_c that is matched by the registrated IsoName_c (getISOName())
     return true;
   }
   else

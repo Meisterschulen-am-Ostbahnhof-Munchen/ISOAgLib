@@ -2,7 +2,7 @@
              timeposgps_c.cpp - working on Base Data Msg Type NMEA 2000 GPS
                                 and Calendar; stores, updates  and
                                 delivers all base data informations
-                                from CANCustomer_c derived for CAN
+                                from CanCustomer_c derived for CAN
                                 sending and receiving interaction;
                                 from BaseCommon_c derived for
                                 interaction with other IsoAgLib objects
@@ -230,10 +230,10 @@ namespace __IsoAgLib {
       -> called periodically by Scheduler_c
       ==> sends base msg if configured in the needed rates
       possible errors:
-          * dependant error in CANIO_c on CAN send problems
-      @see CANPkg_c::getData
-      @see CANPkgExt_c::getData
-      @see CANIO_c::operator<<
+          * dependant error in CanIo_c on CAN send problems
+      @see CanPkg_c::getData
+      @see CanPkgExt_c::getData
+      @see CanIo_c::operator<<
       @return true -> all planned activities performed in allowed time
     */
   bool TimePosGPS_c::timeEvent(  )
@@ -316,8 +316,8 @@ namespace __IsoAgLib {
     */
   void TimePosGPS_c::checkCreateReceiveFilter( )
   {
-    ISOMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
-    CANIO_c &c_can = getCanInstance4Comm();
+    IsoMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
+    CanIo_c &c_can = getCanInstance4Comm();
 
     if ( ( ! checkFilterCreated() ) && ( c_isoMonitor.existActiveLocalIsoMember() ) )
     { // check if needed receive filters for ISO are active
@@ -332,12 +332,12 @@ namespace __IsoAgLib {
   /** initialise element which can't be done during construct;
       above all create the needed FilterBox_c instances
       possible errors:
-        * dependant error in CANIO_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
+        * dependant error in CanIo_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
       @param rpc_isoName optional pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
       @param ai_singletonVecKey singleton vector key in case PRT_INSTANCE_CNT > 1
       @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
     */
-  void TimePosGPS_c::init_base (const ISOName_c* rpc_isoName, int /*ai_singletonVecKey*/, IsoAgLib::IdentMode_t rt_identMode)
+  void TimePosGPS_c::init_base (const IsoName_c* rpc_isoName, int /*ai_singletonVecKey*/, IsoAgLib::IdentMode_t rt_identMode)
   {
     BaseCommon_c::init_base( rpc_isoName, getSingletonVecKey(), rt_identMode );
 
@@ -365,7 +365,7 @@ namespace __IsoAgLib {
       @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       @return true -> configuration was successfull
     */
-  bool TimePosGPS_c::config_base (const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode, uint16_t rui16_suppressMask)
+  bool TimePosGPS_c::config_base (const IsoName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode, uint16_t rui16_suppressMask)
   {
     //store old mode to decide to register or unregister to request for pgn
     IsoAgLib::IdentMode_t t_oldMode = getMode();
@@ -431,7 +431,7 @@ namespace __IsoAgLib {
       @param rb_implementMode implement mode (true) or tractor mode (false)!!!
       @return true -> configuration was successfull
     */
-  bool TimePosGPS_c::configGps(const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_t  rt_identModeGps)
+  bool TimePosGPS_c::configGps(const IsoName_c* rpc_isoName, IsoAgLib::IdentMode_t  rt_identModeGps)
   {
     if (   rt_identModeGps == IsoAgLib::IdentModeTractor
         && rpc_isoName == NULL
@@ -483,10 +483,10 @@ namespace __IsoAgLib {
       // register Broadcast-TP/FP receive of NMEA 2000 data
       // make sure that the needed multi receive are registered
       #ifdef ENABLE_NMEA_2000_MULTI_PACKET
-      getMultiReceiveInstance4Comm().registerClient(*this, __IsoAgLib::ISOName_c::ISONameUnspecified(), NMEA_GPS_POSITION_DATA_PGN,  0x3FFFF00, true, false, false);
-      getMultiReceiveInstance4Comm().registerClient(*this, __IsoAgLib::ISOName_c::ISONameUnspecified(), NMEA_GPS_DIRECTION_DATA_PGN, 0x3FFFF00, true, false, false);
-      getMultiReceiveInstance4Comm().registerClient(*this, __IsoAgLib::ISOName_c::ISONameUnspecified(), NMEA_GPS_POSITION_DATA_PGN,  0x3FFFF00, true, false, true);
-      getMultiReceiveInstance4Comm().registerClient(*this, __IsoAgLib::ISOName_c::ISONameUnspecified(), NMEA_GPS_DIRECTION_DATA_PGN, 0x3FFFF00, true, false, true);
+      getMultiReceiveInstance4Comm().registerClient(*this, __IsoAgLib::IsoName_c::IsoNameUnspecified(), NMEA_GPS_POSITION_DATA_PGN,  0x3FFFF00, true, false, false);
+      getMultiReceiveInstance4Comm().registerClient(*this, __IsoAgLib::IsoName_c::IsoNameUnspecified(), NMEA_GPS_DIRECTION_DATA_PGN, 0x3FFFF00, true, false, false);
+      getMultiReceiveInstance4Comm().registerClient(*this, __IsoAgLib::IsoName_c::IsoNameUnspecified(), NMEA_GPS_POSITION_DATA_PGN,  0x3FFFF00, true, false, true);
+      getMultiReceiveInstance4Comm().registerClient(*this, __IsoAgLib::IsoName_c::IsoNameUnspecified(), NMEA_GPS_DIRECTION_DATA_PGN, 0x3FFFF00, true, false, true);
       c_nmea2000Streamer.vec_data.reserve(51); // GNSS Position Data with TWO reference stations
       #endif // END of ENABLE_NMEA_2000_MULTI_PACKET
     }
@@ -560,13 +560,13 @@ namespace __IsoAgLib {
 
   /** process a ISO11783 base information PGN
       @pre  sender of message is existent in monitor list
-      @see  CANPkgExt_c::resolveSendingInformation()
+      @see  CanPkgExt_c::resolveSendingInformation()
     */
   bool TimePosGPS_c::processMsg()
   {
     // there is no need to check if sender exist in the monitor list because this is already done
-    // in CANPkgExt_c -> resolveSendingInformation
-    ISOName_c c_tempISOName( data().getISONameForSA() );
+    // in CanPkgExt_c -> resolveSendingInformation
+    IsoName_c c_tempISOName( data().getISONameForSA() );
 
     const int32_t ci32_now = data().time();
 
@@ -652,7 +652,7 @@ namespace __IsoAgLib {
     return false;
   }
 
-  bool TimePosGPS_c::processMsgRequestPGN (uint32_t rui32_pgn, ISOItem_c* rpc_isoItemSender, ISOItem_c* rpc_isoItemReceiver)
+  bool TimePosGPS_c::processMsgRequestPGN (uint32_t rui32_pgn, IsoItem_c* rpc_isoItemSender, IsoItem_c* rpc_isoItemReceiver)
   {
     // check if we are allowed to send a request for pgn
     if ( ! BaseCommon_c::check4ReqForPgn(rui32_pgn, rpc_isoItemSender, rpc_isoItemReceiver) ) return false;
@@ -862,7 +862,7 @@ namespace __IsoAgLib {
   bool TimePosGPS_c::reactOnLastChunk (const IsoAgLib::ReceiveStreamIdentifier_c& rc_ident,
                                        IsoAgLib::iStream_c& refc_stream)
   { // see if it's a pool upload, string upload or whatsoever! (First byte is already read by MultiReceive!)
-    ISOName_c c_tempISOName( refc_stream.getIdent().getSaIsoName() );
+    IsoName_c c_tempISOName( refc_stream.getIdent().getSaIsoName() );
 
     // check if we want to process the information
     if (
@@ -1042,7 +1042,7 @@ namespace __IsoAgLib {
     data().setInt32Data(0, i32_latitudeDegree10Minus7 );
     data().setInt32Data(4, i32_longitudeDegree10Minus7);
 
-    // CANIO_c::operator<< retreives the information with the help of CANPkg_c::getData
+    // CanIo_c::operator<< retreives the information with the help of CanPkg_c::getData
     // then it sends the data
     getCanInstance4Comm() << data();
 
@@ -1102,7 +1102,7 @@ void TimePosGPS_c::isoSendDirection( void )
   data().setUint16Data(4, ui16_speedOverGroundCmSec );
   data().setUint16Data(6, 0xFFFF );
 
-  // CANIO_c::operator<< retreives the information with the help of CANPkg_c::getData
+  // CanIo_c::operator<< retreives the information with the help of CanPkg_c::getData
   // then it sends the data
   getCanInstance4Comm() << data();
 
@@ -1229,12 +1229,12 @@ void TimePosGPS_c::isoSendDirection( void )
   /** send ISO11783 calendar PGN
       @param rc_isoName ISOName code off calling item which wants to send
       possible errors:
-          * dependant error in CANIO_c on CAN send problems
-      @see CANPkg_c::getData
-      @see CANPkgExt_c::getData
-      @see CANIO_c::operator<<
+          * dependant error in CanIo_c on CAN send problems
+      @see CanPkg_c::getData
+      @see CanPkgExt_c::getData
+      @see CanIo_c::operator<<
     */
-  void TimePosGPS_c::sendCalendar(const ISOName_c& rc_isoName)
+  void TimePosGPS_c::sendCalendar(const IsoName_c& rc_isoName)
   {
     if (!getIsoMonitorInstance4Comm().existIsoMemberISOName(rc_isoName, true)) return;
 
@@ -1271,7 +1271,7 @@ void TimePosGPS_c::isoSendDirection( void )
       data().setUint8Data(6, bit_calendar.timezoneMinuteOffset );
       data().setUint8Data(7, bit_calendar.timezoneHourOffsetMinus24 );
 
-      // CANIO_c::operator<< retreives the information with the help of CANPkg_c::getData
+      // CanIo_c::operator<< retreives the information with the help of CanPkg_c::getData
       // then it sends the data
       getCanInstance4Comm() << data();
 

@@ -64,7 +64,7 @@ class iScheduler_c;
 
   For how to specify an ISO VT Object Pool please refer to \ref XMLspec .
   */
-class iISOTerminal_c : private __IsoAgLib::ISOTerminal_c {
+class iIsoTerminal_c : private __IsoAgLib::IsoTerminal_c {
 public:
   // Public methods
   /**
@@ -73,7 +73,7 @@ public:
     possible errors:
   */
   void init ()
-  { ISOTerminal_c::init(); }
+  { IsoTerminal_c::init(); }
 
   /**
     register given object pool for uploading when possible.
@@ -85,24 +85,24 @@ public:
     @param rpc_vtEventHandler pointer to an instance of IsoAgLib::iIsoTerminalEventHandler_c so the hook funtions for key activation, input values and successfull objectpool upload can be invoked
   */
   iVtClientServerCommunication_c* initAndRegisterIsoObjectPool (iIdentItem_c& rrefc_wsMasterIdentItem, iIsoTerminalObjectPool_c& rrefc_pool, char* rpc_versionLabel)
-  { return ISOTerminal_c::initAndRegisterIsoObjectPool (static_cast<__IsoAgLib::IdentItem_c&>(rrefc_wsMasterIdentItem), rrefc_pool, rpc_versionLabel)->toInterfacePointer(); }
+  { return IsoTerminal_c::initAndRegisterIsoObjectPool (static_cast<__IsoAgLib::IdentItem_c&>(rrefc_wsMasterIdentItem), rrefc_pool, rpc_versionLabel)->toInterfacePointer(); }
 
   bool deregisterIsoObjectPool (iIdentItem_c& rrefc_wsMasterIdentItem)
-  { return ISOTerminal_c::deregisterIsoObjectPool (rrefc_wsMasterIdentItem); }
+  { return IsoTerminal_c::deregisterIsoObjectPool (rrefc_wsMasterIdentItem); }
 
   iVtClientServerCommunication_c& getClientByID (uint8_t ui8_clientIndex)
-  { return ISOTerminal_c::getClientByID (ui8_clientIndex).toInterfaceReference(); }
+  { return IsoTerminal_c::getClientByID (ui8_clientIndex).toInterfaceReference(); }
 
   iVtClientServerCommunication_c* getClientPtrByID (uint8_t ui8_clientIndex)
-  { return ISOTerminal_c::getClientPtrByID (ui8_clientIndex)->toInterfacePointer(); }
+  { return IsoTerminal_c::getClientPtrByID (ui8_clientIndex)->toInterfacePointer(); }
 
   bool isAnyVtAvailable()
-  { return ISOTerminal_c::isAnyVtAvailable(); }
+  { return IsoTerminal_c::isAnyVtAvailable(); }
 
 // the following define should be globally defined in the project settings...
 #ifdef FAKE_VT_PROPERTIES
   void fakeVtProperties (uint16_t rui16_dimension, uint16_t rui16_skWidth, uint16_t rui16_skHeight, uint8_t rui16_colorDepth, uint16_t rui16_fontSizes)
-{ ISOTerminal_c::fakeVtProperties (rui16_dimension, rui16_skWidth, rui16_skHeight, rui16_colorDepth, rui16_fontSizes); }
+{ IsoTerminal_c::fakeVtProperties (rui16_dimension, rui16_skWidth, rui16_skHeight, rui16_colorDepth, rui16_fontSizes); }
 #endif
 
  private:
@@ -110,24 +110,27 @@ public:
       otherwise __IsoAgLib::getIsoTerminalInstance() wouldn't be accepted by compiler
     */
   #if defined(PRT_INSTANCE_CNT) && (PRT_INSTANCE_CNT > 1)
-  friend iISOTerminal_c& getIisoTerminalInstance (uint8_t rui8_instance);
+  friend iIsoTerminal_c& getIisoTerminalInstance (uint8_t rui8_instance);
   #else
-  friend iISOTerminal_c& getIisoTerminalInstance (void);
+  friend iIsoTerminal_c& getIisoTerminalInstance (void);
   #endif
   friend class iVtClientServerCommunication_c;
 };
 
 #if defined(PRT_INSTANCE_CNT) && (PRT_INSTANCE_CNT > 1)
-  /** C-style function, to get access to the unique ISOTerminal_c singleton instance
+  /** C-style function, to get access to the unique IsoTerminal_c singleton instance
     * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
     */
-  inline iISOTerminal_c& getIisoTerminalInstance (uint8_t rui8_instance = 0)
-  { return static_cast<iISOTerminal_c&>(__IsoAgLib::getIsoTerminalInstance(rui8_instance)); }
+  inline iIsoTerminal_c& getIisoTerminalInstance (uint8_t rui8_instance = 0)
+  { return static_cast<iIsoTerminal_c&>(__IsoAgLib::getIsoTerminalInstance(rui8_instance)); }
 #else
   /** C-style function, to get access to the unique Process_c singleton instance */
-  inline iISOTerminal_c& getIisoTerminalInstance (void)
-  { return static_cast<iISOTerminal_c&>(__IsoAgLib::getIsoTerminalInstance()); }
+  inline iIsoTerminal_c& getIisoTerminalInstance (void)
+  { return static_cast<iIsoTerminal_c&>(__IsoAgLib::getIsoTerminalInstance()); }
 #endif
+
+/** this typedef is only for some time to provide backward compatibility at API level */
+typedef iIsoTerminal_c iISOTerminal_c;
 
 }
 #endif

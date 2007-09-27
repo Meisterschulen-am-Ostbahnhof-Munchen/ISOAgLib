@@ -228,7 +228,7 @@ bool SpecificRecordConfig_c::init(uint16_t rui16_eepromAdr, DefaultRecordConfig_
 	int	i_val;
 
 	bool b_device_found = false;
-	IsoAgLib::iEEPROMIO_c& c_eeprom = IsoAgLib::getIeepromInstance();
+	IsoAgLib::iEepromIo_c& c_eeprom = IsoAgLib::getIeepromInstance();
 	c_eeprom.setg(ui16_eepromAdr);
 
 	for (uint8_t b_compare_ind = 0; ((b_compare_ind < b_stored_devices_cnt) && (b_device_found == false));b_compare_ind++)
@@ -370,7 +370,7 @@ bool SpecificRecordConfig_c::init(uint16_t rui16_eepromAdr, DefaultRecordConfig_
 void SpecificRecordConfig_c::readIdentData()
 {
 	int16_t i_val;
-	IsoAgLib::iEEPROMIO_c& c_eeprom = IsoAgLib::getIeepromInstance();
+	IsoAgLib::iEepromIo_c& c_eeprom = IsoAgLib::getIeepromInstance();
 	for (uint8_t b_tag_ind = 0; b_tag_ind < 5; b_tag_ind++)
 	{ // inner search loop to identifying read data from one device
 		c_eeprom.readString(pui8_cachedTagName, TAG_NAME_LEN);
@@ -455,7 +455,7 @@ void SpecificRecordConfig_c::readIdentData()
 bool SpecificRecordConfig_c::findProcInd(int ri_ind)
 {
 	bool b_result = false;
-	IsoAgLib::iEEPROMIO_c& c_eeprom = IsoAgLib::getIeepromInstance();
+	IsoAgLib::iEepromIo_c& c_eeprom = IsoAgLib::getIeepromInstance();
 	// check if wanted proc def can be found
 	if (ri_ind >= ui8_procCnt) return false;
 
@@ -515,7 +515,7 @@ bool SpecificRecordConfig_c::findProcInd(int ri_ind)
 bool SpecificRecordConfig_c::getProcIndString(uint8_t rui8_ind, const char* rpui8_tagName)
 {
 	bool b_result = false;
-	IsoAgLib::iEEPROMIO_c& c_eeprom = IsoAgLib::getIeepromInstance();
+	IsoAgLib::iEepromIo_c& c_eeprom = IsoAgLib::getIeepromInstance();
 	if ((rui8_ind == i16_cachedProcInd) && (strstr((const char*)rpui8_tagName, (const char*)pui8_cachedTagName) != NULL))
 	{ // wanted tag already cached
 		return true;

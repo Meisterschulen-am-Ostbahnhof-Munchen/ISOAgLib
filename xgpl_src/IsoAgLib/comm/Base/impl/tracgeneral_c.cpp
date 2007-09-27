@@ -1,6 +1,6 @@
 /***************************************************************************
               tracgeneral_c.cpp - stores, updates  and delivers all base
-                                  data informations from CANCustomer_c
+                                  data informations from CanCustomer_c
                                   derived for CAN sending and receiving
                                   interaction;
                                   from ElementBase_c derived for
@@ -115,12 +115,12 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
   /** initialise element which can't be done during construct;
       above all create the needed FilterBox_c instances
       possible errors:
-        * dependant error in CANIO_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
+        * dependant error in CanIo_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
       @param rpc_isoName optional pointer to the ISOName variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
       @param ai_singletonVecKey singleton vector key in case PRT_INSTANCE_CNT > 1
       @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
     */
-  void TracGeneral_c::init_base (const ISOName_c* rpc_isoName, int /*ai_singletonVecKey*/, IsoAgLib::IdentMode_t rt_identMode)
+  void TracGeneral_c::init_base (const IsoName_c* rpc_isoName, int /*ai_singletonVecKey*/, IsoAgLib::IdentMode_t rt_identMode)
   {
     if ( checkAlreadyClosed() )
     {
@@ -141,7 +141,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
       @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       @return true -> configuration was successfull
     */
-  bool TracGeneral_c::config_base (const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode, uint16_t rui16_suppressMask)
+  bool TracGeneral_c::config_base (const IsoName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode, uint16_t rui16_suppressMask)
   { // set configure values
     //store old mode to decide to register or unregister to request for pgn
     IsoAgLib::IdentMode_t t_oldMode = getMode();
@@ -200,8 +200,8 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     */
   void TracGeneral_c::checkCreateReceiveFilter( )
   {
-    ISOMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
-    CANIO_c &c_can = getCanInstance4Comm();
+    IsoMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
+    CanIo_c &c_can = getCanInstance4Comm();
 
     if ( ( !checkFilterCreated() ) && ( c_isoMonitor.existActiveLocalIsoMember() ) )
     { // check if needed receive filters for ISO are active
@@ -245,14 +245,14 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
 
   /** process a ISO11783 base information PGN
       @pre  sender of message is existent in monitor list
-      @see  CANPkgExt_c::resolveSendingInformation()
+      @see  CanPkgExt_c::resolveSendingInformation()
     */
   bool TracGeneral_c::processMsg()
   {
     bool b_result = false;
     // there is no need to check if sender exist in the monitor list because this is already done
-    // in CANPkgExt_c -> resolveSendingInformation
-    ISOName_c c_tempISOName( data().getISONameForSA() );
+    // in CanPkgExt_c -> resolveSendingInformation
+    IsoName_c c_tempISOName( data().getISONameForSA() );
 
     switch (data().isoPgn() /* & 0x3FFFF */) // don't need to &0x3FFFF, as this is the whole PGN...
     {
@@ -349,7 +349,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     return b_result;
   }
 
-  bool TracGeneral_c::processMsgRequestPGN (uint32_t rui32_pgn, ISOItem_c* rpc_isoItemSender, ISOItem_c* rpc_isoItemReceiver)
+  bool TracGeneral_c::processMsgRequestPGN (uint32_t rui32_pgn, IsoItem_c* rpc_isoItemSender, IsoItem_c* rpc_isoItemReceiver)
   {
     // check if we are allowed to send a request for pgn
     if ( ! BaseCommon_c::check4ReqForPgn(rui32_pgn, rpc_isoItemSender, rpc_isoItemReceiver) ) return false;
@@ -362,7 +362,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
   };
 
   /** send front hitch and rear hitch data msg
-      @see  CANIO_c::operator<<
+      @see  CanIo_c::operator<<
     */
   void TracGeneral_c::sendMessage()
   { //check for isoName and if address claim has yet occured, because this function can also bo called
@@ -376,7 +376,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     data().setLen(8);
 
     setSelectedDataSourceISOName( *getISOName() );
-    CANIO_c& c_can = getCanInstance4Comm();
+    CanIo_c& c_can = getCanInstance4Comm();
 
     uint8_t ui8_temp = 0x7;  /* Pre-load the reserved bits */
 
@@ -418,7 +418,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
       data().setUint8Data(5, 0xFF );
       data().setUint16Data(6, 0xFFFF );
 
-      // CANIO_c::operator<< retreives the information with the help of CANPkg_c::getData
+      // CanIo_c::operator<< retreives the information with the help of CanPkg_c::getData
       // then it sends the data
       c_can << data();
     }
@@ -460,7 +460,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
       data().setUint8Data(5, 0xFF );
       data().setUint16Data(6, 0xFFFF );
 
-      // CANIO_c::operator<< retreives the information with the help of CANPkg_c::getData
+      // CanIo_c::operator<< retreives the information with the help of CanPkg_c::getData
       // then it sends the data
       c_can << data();
     }
@@ -468,7 +468,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
 
   /** send iso language data msg
       @see  TracGeneral_c::processMsgRequestPGN
-      @see  CANIO_c::operator<<
+      @see  CanIo_c::operator<<
     */
   void TracGeneral_c::sendLanguage()
   {
@@ -491,7 +491,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
       data().setLen(8);
 
       setSelectedDataSourceISOName( *getISOName() );
-      CANIO_c& c_can = getCanInstance4Comm();
+      CanIo_c& c_can = getCanInstance4Comm();
       data().setIsoPgn(LANGUAGE_PGN);
       //Bytes 1,2: language command
       data().setUint16Data(0, (p8ui8_languageVt[0] | (p8ui8_languageVt[1] << 8)) );
@@ -512,7 +512,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
   }
 
  /** force maintain power from tractor
-     @see  CANIO_c::operator<<
+     @see  CanIo_c::operator<<
      @param rb_ecuPower true -> maintain ECU power
      @param rb_actuatorPower true-> maintain actuator power
      @param rt_implState in which state is the implement (transport, park, work)
@@ -564,7 +564,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     data().setUint32Data(4, 0xFFFFFFFFUL);
     data().setLen(8);
 
-    // CANIO_c::operator<< retrieves the information with the help of CANPkg_c::getData
+    // CanIo_c::operator<< retrieves the information with the help of CanPkg_c::getData
     // then it sends the data
     getCanInstance4Comm() << data();
   }

@@ -133,7 +133,7 @@ public:
   void startSystem();
 
   /**
-    call the timeEvent for CANIO_c and all communication classes (derived from ElementBase_c) which
+    call the timeEvent for CanIo_c and all communication classes (derived from ElementBase_c) which
     registered within Scheduler_c for periodic timeEvent.
     Define common trigger timestamp, so that distributed activities can be performed with
     common time base.
@@ -304,7 +304,7 @@ private: // Private attributes
   /** average execution time for Scheduler_c::timeEvent */
   int32_t i32_averageExecTime;
 
-  /** execution time of last call of CANIO_c::timeEvent() */
+  /** execution time of last call of CanIo_c::timeEvent() */
   int16_t i16_canExecTime;
 
   /** was system started already? */

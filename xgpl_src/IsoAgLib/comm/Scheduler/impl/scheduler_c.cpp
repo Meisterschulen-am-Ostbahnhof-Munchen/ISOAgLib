@@ -206,7 +206,7 @@ void Scheduler_c::init( void )
 
 /** simply close communicating clients */
 void Scheduler_c::closeCommunication( void ) {
-  // as soon as all communicating IsoAgLib clients are closed, CANIO_c can be closed
+  // as soon as all communicating IsoAgLib clients are closed, CanIo_c can be closed
   getCanInstance4Comm().close();
   #if defined( CAN_INSTANCE_CNT ) && ( CAN_INSTANCE_CNT > 1 )
   for ( uint8_t ind = 1; ind < CAN_INSTANCE_CNT; ind++ )
@@ -228,7 +228,7 @@ void Scheduler_c::closeCommunication( void ) {
 void Scheduler_c::close( void )
 { // call close for each registered client system
   closeCommunication();
-  // as soon as all communicating IsoAgLib clients are closed, CANIO_c can be closed
+  // as soon as all communicating IsoAgLib clients are closed, CanIo_c can be closed
   getCanInstance4Comm().close();
   #if defined( CAN_INSTANCE_CNT ) && ( CAN_INSTANCE_CNT > 1 )
   for ( uint8_t ind = 1; ind < CAN_INSTANCE_CNT; ind++ )
@@ -443,7 +443,7 @@ Scheduler_c::getCentralSchedulerAvailableExecTime()
 
 
 /**
-  call the timeEvent for CANIO_c and all communication classes (derived from ElementBase_c) which
+  call the timeEvent for CanIo_c and all communication classes (derived from ElementBase_c) which
   registered within Scheduler_c for periodic timeEvent.
   Define common trigger timestamp, so that distributed activities can be performed with
   common time base.
@@ -514,7 +514,7 @@ int32_t Scheduler_c::timeEvent( int32_t ri32_demandedExecEndScheduler )
 
   // check if all tasks are called
   if ( i32_idleTime > 0 )
-  { // as we are in time, call CANIO_c::processMsg() if last CANIO_c::timeEvent
+  { // as we are in time, call CanIo_c::processMsg() if last CanIo_c::timeEvent
     System_c::triggerWd();
     // was used to process received messages
     // ==> allows to cope wiht high BUS loads

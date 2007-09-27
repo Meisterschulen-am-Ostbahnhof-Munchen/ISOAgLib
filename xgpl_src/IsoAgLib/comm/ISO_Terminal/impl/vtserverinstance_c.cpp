@@ -101,7 +101,7 @@ namespace __IsoAgLib {
 /** default constructor, which can optional set the pointer to the containing
   Scheduler_c object instance
 */
-VtServerInstance_c::VtServerInstance_c(const ISOItem_c& ref_newItem, ISOName_c c_newISOName, ISOTerminal_c& ref_isoTerminal)
+VtServerInstance_c::VtServerInstance_c(const IsoItem_c& ref_newItem, IsoName_c c_newISOName, IsoTerminal_c& ref_isoTerminal)
   : pcc_isoItem (&ref_newItem)
   , c_isoName (c_newISOName)
   , refc_isoTerminal (ref_isoTerminal)
@@ -147,7 +147,7 @@ VtServerInstance_c::isVtActive ()
 }
 
 /** process received vt status message
-  @return true -> message was processed; else the received CAN message will be served to other matching CANCustomer_c
+  @return true -> message was processed; else the received CAN message will be served to other matching CanCustomer_c
 */
 void
 VtServerInstance_c::setLatestVtStatusData()
@@ -161,7 +161,7 @@ VtServerInstance_c::setLatestVtStatusData()
 }
 
 /** process received language messages
-  @return true -> message was processed; else the received CAN message will be served to other matching CANCustomer_c
+  @return true -> message was processed; else the received CAN message will be served to other matching CanCustomer_c
  */
 void
 VtServerInstance_c::setLocalSettings()

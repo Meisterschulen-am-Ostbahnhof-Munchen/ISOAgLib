@@ -259,7 +259,7 @@ uint8_t ui8_localDummyWorkState;
 uint32_t ui32_localDummyApplicationRate;
 
 /** dummy function to decide on acceptance of received setpoint */
-bool localIsAcceptableWorkState( const IsoAgLib::iISOName_c& rc_deviceType, uint32_t rui32_setpointValue )
+bool localIsAcceptableWorkState( const IsoAgLib::iIsoName_c& rc_deviceType, uint32_t rui32_setpointValue )
 { // just for demo - accept from other than device type 1 only values smaller than 255
 
   if ( rc_deviceType.devClass() < 2 )
@@ -273,7 +273,7 @@ bool localIsAcceptableWorkState( const IsoAgLib::iISOName_c& rc_deviceType, uint
   }
 }
 
-bool localIsAcceptableApplicationRate( const IsoAgLib::iISOName_c& rc_deviceType, uint32_t rui32_setpointValue )
+bool localIsAcceptableApplicationRate( const IsoAgLib::iIsoName_c& rc_deviceType, uint32_t rui32_setpointValue )
 { // just for demo - accept from other than device type 1 only values smaller than 255
   if ( ( rc_deviceType.devClass() == 1 ) || ( rui32_setpointValue < 255 ) )
   {
@@ -311,11 +311,11 @@ class MyProcDataHandler_c : public IsoAgLib::ProcessDataChangeHandler_c
     //! @param rb_change display if value change or if just new msg arrived, which could be important for handling
     virtual bool processSetpointSet(IsoAgLib::EventSource_c rc_src,
                                     int32_t ri32_val,
-                                    const IsoAgLib::iISOName_c& rc_setpointSender,
+                                    const IsoAgLib::iIsoName_c& rc_setpointSender,
                                     bool rb_change);
 };
 
-bool MyProcDataHandler_c::processSetpointSet(IsoAgLib::EventSource_c rc_src, int32_t ri32_val, const IsoAgLib::iISOName_c& rc_setpointSender, bool rb_change)
+bool MyProcDataHandler_c::processSetpointSet(IsoAgLib::EventSource_c rc_src, int32_t ri32_val, const IsoAgLib::iIsoName_c& rc_setpointSender, bool rb_change)
 {
 
   if ( ! rb_change )
@@ -501,7 +501,7 @@ int main()
       #ifdef WIN32
         if ( i32_idleTimeSpread > 0 ) Sleep(i32_idleTimeSpread);
       #else
-        if ( i32_idleTimeSpread > 0 ) IsoAgLib::iCANIO_c::waitUntilCanReceiveOrTimeout( i32_idleTimeSpread );
+        if ( i32_idleTimeSpread > 0 ) IsoAgLib::iCanIo_c::waitUntilCanReceiveOrTimeout( i32_idleTimeSpread );
       #endif
     #endif
   }

@@ -22,7 +22,7 @@
   * The IsoAgLib places on each call of __IsoAgLib::Scheduler_c::timeEvent() and the succeding call of
   * __IsoAgLib::MultiSend_c::timeEvent() a bunch of CAN messages into the buffer of the CAN driver.
   * The correct time distance between the CAN messages is realized by setting the minimum send pause between
-  * CAN messages with the call of IsoAgLib::iCANIO_c::setSendpause(). If this function is not supported by
+  * CAN messages with the call of IsoAgLib::iCanIo_c::setSendpause(). If this function is not supported by
   * the CAN implementation of the HAL ( HAL::can_configMsgobjSendpause() ), the CAN messages of each timeEvent()
   * call are sent as one burst of data. As long as the receiver can puffer the messages of one burst, the
   * data transfere shouldn't be disturbed. The application can control the size of the data bunch by setting

@@ -63,15 +63,15 @@
 #include "ISO11783/iisoname_c.h"
 
 namespace __IsoAgLib {
-  class ISOTerminal_c;
+  class IsoTerminal_c;
   class DevPropertyHandler_c;
 }
 
 // Begin Namespace IsoAgLib
 namespace IsoAgLib {
-// predeclare iISOTerminal_c, as this class is allowed to access private ( hidden )
+// predeclare iIsoTerminal_c, as this class is allowed to access private ( hidden )
 // elements of this class exclusively ( see friend declaration at end of this file )
-class iISOTerminal_c;
+class iIsoTerminal_c;
 
 /**
   class for identity/ies which are managed by the actual ECU;
@@ -85,7 +85,7 @@ class iISOTerminal_c;
   Example:
   \code
   IsoAgLib::iIdentItem_c c_itemLaterAddressClaim;
-  IsoAgLib::iISOName_c c_myType( 2, 0 );
+  IsoAgLib::iIsoName_c c_myType( 2, 0 );
   // ...
   // now start as DIN
   c_itemLaterAddressClaim.start( &c_myType, "Hi-You" );
@@ -114,7 +114,7 @@ public:
     @param ri8_slaveCount       amount of attached slave devices; default -1 == no master state;
                                 in case an address claim for the slave devices shall be sent by this ECU, they
                                 must get their own IdentItem_c instance ( then with default value -1 for ri8_slaveCount )
-    @param rpc_slaveIsoNameList pointer to list of ISOName_c values, where the slave devices are defined.
+    @param rpc_slaveIsoNameList pointer to list of IsoName_c values, where the slave devices are defined.
                                 IsoAgLib will then send the needed "master indicates its slaves" messages on BUS
     @param ri_singletonVecKey   optional key for selection of IsoAgLib instance (default 0)
   */
@@ -138,7 +138,7 @@ public:
     @param ri8_slaveCount       amount of attached slave devices; default -1 == no master state;
                                 in case an address claim for the slave devices shall be sent by this ECU, they
                                 must get their own IdentItem_c instance ( then with default value -1 for ri8_slaveCount )
-    @param rpc_slaveIsoNameList pointer to list of iISOName_c values, where the slave devices are defined.
+    @param rpc_slaveIsoNameList pointer to list of iIsoName_c values, where the slave devices are defined.
                                 IsoAgLib will then send the needed "master indicates its slaves" messages on BUS
     @param ri_singletonVecKey   optional key for selection of IsoAgLib instance (default 0)
   */
@@ -147,7 +147,7 @@ public:
     uint16_t rui16_manufCode, uint32_t rui32_serNo, uint8_t rb_preferredSa = 254, uint16_t rui16_eepromAdr = 0xFFFF,
     uint8_t rb_funcInst = 0, uint8_t rb_ecuInst = 0, bool rb_selfConf = true,
     #ifdef USE_WORKING_SET
-    int8_t ri8_slaveCount = -1, const iISOName_c* rpc_slaveIsoNameList = NULL,
+    int8_t ri8_slaveCount = -1, const iIsoName_c* rpc_slaveIsoNameList = NULL,
     #endif
     int ri_singletonVecKey = 0)
     : IdentItem_c (rui8_indGroup, rui8_devClass, rui8_devClassInst, rb_func, rui16_manufCode, rui32_serNo,
@@ -172,7 +172,7 @@ public:
       @param ri8_slaveCount       amount of attached slave devices; default -1 == no master state;
                                   in case an address claim for the slave devices shall be sent by this ECU, they
                                   must get their own IdentItem_c instance ( then with default value -1 for ri8_slaveCount )
-      @param rpc_slaveIsoNameList pointer to list of ISOName_c values, where the slave devices are defined.
+      @param rpc_slaveIsoNameList pointer to list of IsoName_c values, where the slave devices are defined.
                                   IsoAgLib will then send the needed "master indicates its slaves" messages on BUS
       @param ri_singletonVecKey   optional key for selection of IsoAgLib instance (default 0)
     */
@@ -180,7 +180,7 @@ public:
     uint8_t rui8_indGroup, uint8_t rui8_devClass, uint8_t rui8_devClassInst, uint8_t rb_func, uint16_t rui16_manufCode,
     uint32_t rui32_serNo, uint8_t rb_preferredSa, uint16_t rui16_saEepromAdr, uint8_t rb_funcInst = 0, uint8_t rb_ecuInst = 0, bool rb_selfConf = true,
     #ifdef USE_WORKING_SET
-    int8_t ri8_slaveCount = -1, const iISOName_c* rpc_slaveIsoNameList = NULL,
+    int8_t ri8_slaveCount = -1, const iIsoName_c* rpc_slaveIsoNameList = NULL,
     #endif
     int ri_singletonVecKey = 0)
   { IdentItem_c::init (rui8_indGroup, rui8_devClass, rui8_devClassInst, rb_func, rui16_manufCode,
@@ -193,10 +193,10 @@ public:
 
 
 
-  /** deliver pointer to ISOItem_c in ISOMonitor_c
-      @return NULL -> either no ISO item or not yet registered in ISOMonitor_c
+  /** deliver pointer to IsoItem_c in IsoMonitor_c
+      @return NULL -> either no ISO item or not yet registered in IsoMonitor_c
     */
-  iISOItem_c* getIsoItem( void ) const { return static_cast<iISOItem_c*>(IdentItem_c::getIsoItem()); }
+  iIsoItem_c* getIsoItem( void ) const { return static_cast<iIsoItem_c*>(IdentItem_c::getIsoItem()); }
 
   /** send address release for DIN identities and perform other stop actions at end of lifetime
     * of a local ident
@@ -210,7 +210,7 @@ public:
     retreive the actual ISOName value of this ident item
     @return ISOName code of this ident item instance
   */
-  const iISOName_c& isoName() const {return IdentItem_c::isoName().toConstIisoName_c(); }
+  const iIsoName_c& isoName() const {return IdentItem_c::isoName().toConstIisoName_c(); }
 
   /**
     retrieve a POINTER to the ISOName of this ident item
@@ -221,13 +221,13 @@ public:
             or
             a POINTER to the ISOName of this ident item!
    */
-  iISOName_c* modifyableIsoNameBeforeAddressClaimed() { if (!isClaimedAddress()) return &modifyableIsoName().toIisoName_c();
+  iIsoName_c* modifyableIsoNameBeforeAddressClaimed() { if (!isClaimedAddress()) return &modifyableIsoName().toIisoName_c();
                                                         else return NULL; }
 
 private:
-  friend class iISOTerminal_c;
+  friend class iIsoTerminal_c;
   friend class iVtClientServerCommunication_c;
-  friend class __IsoAgLib::ISOTerminal_c;
+  friend class __IsoAgLib::IsoTerminal_c;
   friend class __IsoAgLib::DevPropertyHandler_c;
 };
 

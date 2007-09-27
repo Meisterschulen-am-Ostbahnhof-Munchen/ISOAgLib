@@ -64,18 +64,18 @@
 namespace __IsoAgLib {
 
 
-class ISOItem_c;
+class IsoItem_c;
 /**
   This class implements the handling of Request_For_PGN
 
   @author Dipl.-Inf.(FH) Martina Winkler
 */
-class ISORequestPGNHandler_c : public CANCustomer_c
+class IsoRequestPgnHandler_c : public CanCustomer_c
 {
 
 public:
-  virtual ~ISORequestPGNHandler_c() {};
-  virtual bool processMsgRequestPGN (uint32_t /*rui32_pgn*/, ISOItem_c* /*rpc_isoItemSender*/, ISOItem_c* /*rpc_isoItemReceiver*/){return false;};
+  virtual ~IsoRequestPgnHandler_c() {};
+  virtual bool processMsgRequestPGN (uint32_t /*rui32_pgn*/, IsoItem_c* /*rpc_isoItemSender*/, IsoItem_c* /*rpc_isoItemReceiver*/){return false;};
 };
 
 }

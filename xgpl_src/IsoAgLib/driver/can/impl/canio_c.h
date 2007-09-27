@@ -125,15 +125,15 @@ namespace __IsoAgLib {
 /* ********* class definition ************ */
 /* *************************************** */
 
-class CANIO_c;
-typedef CAN_SINGLETON(CANIO_c) SingletonCANIO_c;
+class CanIo_c;
+typedef CAN_SINGLETON(CanIo_c) SingletonCanIo_c;
 /**
   Encapsulation of CAN IO with MsgObj_c instances in dynamic array.
   Initialization of CAN hardware, with default setting of one send object.
 
-  An __IsoAgLib::CANCustomer_c can create a FilterBox_c object with its own Filter/Mask
+  An __IsoAgLib::CanCustomer_c can create a FilterBox_c object with its own Filter/Mask
   combination, and with automatic direct processMsg() call on received CAN
-  telegram. Direct access via pointer to __IsoAgLib::CANCustomer_c instances on FilterBox
+  telegram. Direct access via pointer to __IsoAgLib::CanCustomer_c instances on FilterBox
   insertion. Uses dynamic array of MsgObj_c, FilterBox_c and for receive
   notification dyn. array of pointer to FilterBox_c.
 
@@ -142,7 +142,7 @@ typedef CAN_SINGLETON(CANIO_c) SingletonCANIO_c;
   @author Dipl.-Inform. Achim Spangler
   @see FilterBox_c MsgObj
 */
-class CANIO_c : public SingletonCANIO_c {
+class CanIo_c : public SingletonCanIo_c {
  public: // changed from protected to work with the access from MsgObj_c
   /** define dynamic array of MsgObj_c instances for each hardware
     MsgObj_c one object instances in array
@@ -154,7 +154,7 @@ class CANIO_c : public SingletonCANIO_c {
     typedef STL_NAMESPACE::USABLE_SLIST<MsgObj_c> ArrMsgObj;
     #endif
     /** define dynamic array of FilterBox_c instances;
-      if a __IsoAgLib::CANCustomer_c creates one FilterBox_c definitions,
+      if a __IsoAgLib::CanCustomer_c creates one FilterBox_c definitions,
       one object instance is inserted in array
     */
     #ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
@@ -211,16 +211,16 @@ class CANIO_c : public SingletonCANIO_c {
     */
   bool init(uint8_t rui8_busNumber, uint16_t rui16_bitrate, Ident_c::identType_t ren_identType, uint8_t rui8_minObjNr, uint8_t rui8_maxObjNr);
 
-  /** check if this CANIO_c instance is configured so that it can be used to send */
+  /** check if this CanIo_c instance is configured so that it can be used to send */
   bool isReady2Send() const { return ( ui8_busNumber != 0xFF )?true:false;}
 
   /** every subsystem of IsoAgLib has explicit function for controlled shutdown */
   void close( void );
 
-  /** destructor of CANIO_c calls BIOS function for closing hardware CAN controller
+  /** destructor of CanIo_c calls BIOS function for closing hardware CAN controller
     @see HAL::closeCan
   */
-  ~CANIO_c(){close();}
+  ~CanIo_c(){close();}
 
   /** periodically called function which does
     periodically needed actions; f.e. trigger watch
@@ -271,7 +271,7 @@ class CANIO_c : public SingletonCANIO_c {
     @param rpc_iter optional pointer Iterator to result FilterBox
     @return true -> same FilterBox_c already exist
   */
-  bool existFilter(const __IsoAgLib::CANCustomer_c& rref_customer,
+  bool existFilter(const __IsoAgLib::CanCustomer_c& rref_customer,
     uint16_t rui16_mask, uint16_t rui16_filter,
     Ident_c::identType_t ren_identType = DEFAULT_IDENT_TYPE,
     ArrFilterBox::iterator* rpc_iter = NULL);
@@ -286,7 +286,7 @@ class CANIO_c : public SingletonCANIO_c {
     @param rpc_iter optional pointer Iterator to result FilterBox
     @return true -> same FilterBox_c already exist
   */
-  bool existFilter(const __IsoAgLib::CANCustomer_c& rref_customer,
+  bool existFilter(const __IsoAgLib::CanCustomer_c& rref_customer,
       uint32_t rui32_mask, uint32_t rui32_filter,
       Ident_c::identType_t ren_identType = DEFAULT_IDENT_TYPE,
       ArrFilterBox::iterator* rpc_iter = NULL);
@@ -299,7 +299,7 @@ class CANIO_c : public SingletonCANIO_c {
     @param rpc_iter optional pointer Iterator to result FilterBox
     @return true -> same FilterBox_c already exist
   */
-  bool existFilter(const __IsoAgLib::CANCustomer_c& rref_customer,
+  bool existFilter(const __IsoAgLib::CanCustomer_c& rref_customer,
       const Ident_c& rc_compMask, const Ident_c& rc_compFilter,
       ArrFilterBox::iterator* rpc_iter = NULL);
 
@@ -308,7 +308,7 @@ class CANIO_c : public SingletonCANIO_c {
     rb_reconfigImmediate == true -> useful for
     avoiding unneeded reconfiguration during
     sequence of FilterBox_c insertions;
-    by rref_customer CANIO_c (FilterBox_c) can start direct processing
+    by rref_customer CanIo_c (FilterBox_c) can start direct processing
     of received data in dedicated customer object (no search);
     uses BIOS functions
 
@@ -316,7 +316,7 @@ class CANIO_c : public SingletonCANIO_c {
         * Err_c::badAlloc on not enough memory for new FilterBox
         instance or for new configured MsgObj_c's
     @see __IsoAgLib::CANCustomer
-    @param rref_customer reference to __IsoAgLib::CANCustomer_c which needs
+    @param rref_customer reference to __IsoAgLib::CanCustomer_c which needs
          filtered messages (-> on received msg call
        rref_customer.processMsg())
     @param rui32_mask individual mask for this filter box
@@ -329,13 +329,13 @@ class CANIO_c : public SingletonCANIO_c {
       a reference to the created FilterBox is returned
    @exception badAlloc
   */
-  FilterBox_c* insertFilter(__IsoAgLib::CANCustomer_c& rref_customer, uint32_t rui32_mask,
+  FilterBox_c* insertFilter(__IsoAgLib::CanCustomer_c& rref_customer, uint32_t rui32_mask,
                             uint32_t rui32_filter, bool rb_reconfigImmediate = true,
                             const Ident_c::identType_t rt_identType = DEFAULT_IDENT_TYPE,
                             int8_t ri8_dlcForce = -1,
                             FilterBox_c* rpc_connectedFilterBox = NULL);
 
-  FilterBox_c* insertFilter(__IsoAgLib::CANCustomer_c& rref_customer, uint32_t rui32_mask,
+  FilterBox_c* insertFilter(__IsoAgLib::CanCustomer_c& rref_customer, uint32_t rui32_mask,
                             uint32_t rui32_filter, bool rb_reconfigImmediate,
                             const Ident_c::identType_t rt_identType,
                             uint32_t rt_connectedMask, uint32_t rt_connectedFilter, const Ident_c::identType_t rt_connectedIdentType,
@@ -371,11 +371,11 @@ class CANIO_c : public SingletonCANIO_c {
         (defualt DEFAULT_IDENT_TYPE defined in isoaglib_config.h)
     @return true -> FilterBox_c found and deleted
   */
-  bool deleteFilter(const __IsoAgLib::CANCustomer_c& rref_customer,
+  bool deleteFilter(const __IsoAgLib::CanCustomer_c& rref_customer,
       MASK_TYPE rui32_mask, MASK_TYPE rui32_filter,
       const Ident_c::identType_t rt_identType = DEFAULT_IDENT_TYPE);
 
-  bool deleteAllFiltersForCustomer (const __IsoAgLib::CANCustomer_c& rref_customer);
+  bool deleteAllFiltersForCustomer (const __IsoAgLib::CanCustomer_c& rref_customer);
 
 /**
     initiate processing of all received msg
@@ -388,12 +388,12 @@ class CANIO_c : public SingletonCANIO_c {
   int16_t processMsg();
 
   /** deliver count of CAN messages which were processed during last timeEvent() / processMsg() call
-    * this helps Scheduler_c to decide about needed double retrigger of CANIO_c::processMsg()
+    * this helps Scheduler_c to decide about needed double retrigger of CanIo_c::processMsg()
     * at high CAN BUS load (important to avoid overflow of CAN buffers in HAL
     */
   uint8_t getProcessedMsgCnt( void ) const { return ui8_processedMsgCnt;}
 
-  /** function for sending data out of CANPkg_c (uses BIOS function)
+  /** function for sending data out of CanPkg_c (uses BIOS function)
       if send puffer is full a local loop waits till puffer has enough space
       (every 100ms the watchdog is triggered, to avoid watchdog reset)
 
@@ -405,13 +405,13 @@ class CANIO_c : public SingletonCANIO_c {
           * Err_c::can_off on physical CAN-BUS off state
       @see CANPkg
       @see HAL::sendCanMsg
-      @param rrefc_src CANPkg_c which holds the to be sent data
-      @return reference to this CANIO_c instance ==>
+      @param rrefc_src CanPkg_c which holds the to be sent data
+      @return reference to this CanIo_c instance ==>
             needed by commands like "c_can_io << pkg_1 << pkg_2 ... << pkg_n;"
     */
-  CANIO_c& operator<<(CANPkg_c& rrefc_src);
+  CanIo_c& operator<<(CanPkg_c& rrefc_src);
 
-  /** function for sending data out of CANPkgExt_c (uses BIOS function)
+  /** function for sending data out of CanPkgExt_c (uses BIOS function)
       if send puffer is full a local loop waits till puffer has enough space
       (every 100ms the watchdog is triggered, to avoid watchdog reset)
 
@@ -420,10 +420,10 @@ class CANIO_c : public SingletonCANIO_c {
           * Err_c::range on undef BUS or BIOS send obj nr
           * Err_c::can_warn on physical CAN-BUS problems
           * Err_c::can_off on physical CAN-BUS off state
-      @param rrefc_src CANPkgExt_c which holds the to be sent data
+      @param rrefc_src CanPkgExt_c which holds the to be sent data
       @return reference to this CANIOExt_c instance ==> needed by commands like "c_can_io << pkg_1 << pkg_2 ... << pkg_n;"
     */
-  CANIO_c& operator<<(CANPkgExt_c& refc_src);
+  CanIo_c& operator<<(CanPkgExt_c& refc_src);
 
   /** check for can send conflict error and stop send retry on error
       (thus avoid BUS OFF)
@@ -476,12 +476,12 @@ class CANIO_c : public SingletonCANIO_c {
 #endif //SYSTEM_WITH_ENHANCED_CAN_HAL
 
  private: // private methods
-  friend class CAN_SINGLETON( CANIO_c );
+  friend class CAN_SINGLETON( CanIo_c );
   /** private constructor which prevents direct instantiation in user application
-    * NEVER define instance of CANIO_c within application
+    * NEVER define instance of CanIo_c within application
     * (set ui8_busNumber to 0xFF so that init() detects first call after constructor)
     */
-  CANIO_c( void );
+  CanIo_c( void );
 
   /** initialize directly after the singleton instance is created.
       this is called from singleton.h and should NOT be called from the user again.
@@ -613,18 +613,18 @@ class CANIO_c : public SingletonCANIO_c {
   Ident_c c_maskLastmsg;
 
 
-  /** identifier type  CANIO_c::S, CANIO_c::extendendIdent
-      or CANIO_c::B (CANIO_c should send both standard and extended ident msg
+  /** identifier type  CanIo_c::S, CanIo_c::extendendIdent
+      or CanIo_c::B (CanIo_c should send both standard and extended ident msg
       --> two send obj are created)
     */
   Ident_c::identType_t en_identType;
 
   /** BUS Number for systems with more than one BUS
-      (for each BUS one  CANIO_c instance)
+      (for each BUS one  CanIo_c instance)
     */
   uint8_t ui8_busNumber;
 
-  /** min limit of allowed msgObj numbers for this CANIO_c instance
+  /** min limit of allowed msgObj numbers for this CanIo_c instance
       (important for multithreading environments where different
       Processes must share one BUS)
     */
@@ -634,7 +634,7 @@ class CANIO_c : public SingletonCANIO_c {
   uint8_t ui8_minReceiveObjNr;
 
 #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
-  /** max limit of allowed msgObj numbers for this CANIO_c instance
+  /** max limit of allowed msgObj numbers for this CanIo_c instance
       (important for multithreading environments where different
       Processes must share one BUS)
     */
@@ -642,7 +642,7 @@ class CANIO_c : public SingletonCANIO_c {
 #endif
 
   /** count of CAN messages which were processed during last timeEvent() / processMsg() call
-    * this helps Scheduler_c to decide about needed double retrigger of CANIO_c::processMsg()
+    * this helps Scheduler_c to decide about needed double retrigger of CanIo_c::processMsg()
     * at high CAN BUS load (important to avoid overflow of CAN buffers in HAL
     */
   uint8_t ui8_processedMsgCnt;
@@ -659,14 +659,18 @@ class CANIO_c : public SingletonCANIO_c {
 };
 
 #if defined( CAN_INSTANCE_CNT ) && ( CAN_INSTANCE_CNT > 1 )
-  /** C-style function, to get access to the unique CANIO_c singleton instance
+  /** C-style function, to get access to the unique CanIo_c singleton instance
     * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
     */
-  CANIO_c& getCanInstance( uint8_t rui8_instance = 0 );
+  CanIo_c& getCanInstance( uint8_t rui8_instance = 0 );
 #else
-  /** C-style function, to get access to the unique CANIO_c singleton instance */
-  CANIO_c& getCanInstance( void );
+  /** C-style function, to get access to the unique CanIo_c singleton instance */
+  CanIo_c& getCanInstance( void );
 #endif
+
+
+/** this typedef is only for some time to provide backward compatibility at API level */
+typedef CanIo_c CANIO_c;
 };
 
 #endif

@@ -70,10 +70,10 @@ namespace IsoAgLib {
   manages operations cross segment boundaries
   *@author Dipl.-Inform. Achim Spangler
 */
-class iEEPROMIO_c : private __IsoAgLib::EEPROMIO_c {
+class iEepromIo_c : private __IsoAgLib::EepromIo_c {
 public:
   /** destructor has nothing to destruct */
-  ~iEEPROMIO_c() {};
+  ~iEepromIo_c() {};
 
   // ++++++++++++++++++++++++++++++++++++
   // ++++ EEPROM managing operations ++++
@@ -84,7 +84,7 @@ public:
     uses BIOS function (which delivers KB -> mult with 1024)
     @return size of EEPROM in BYTE
   */
-  static uint16_t eepromSize(){return EEPROMIO_c::eepromSize();};
+  static uint16_t eepromSize(){return EepromIo_c::eepromSize();};
 
   /**
     set the write position in EEPROM (in Byte); answer if possible
@@ -96,7 +96,7 @@ public:
     @param rui16_adress position of write mark [uint8_t]
     @return true -> setting of write mark without errors
   */
-  bool setp(uint16_t rui16_adress) {return EEPROMIO_c::setp(rui16_adress);};
+  bool setp(uint16_t rui16_adress) {return EepromIo_c::setp(rui16_adress);};
 
   /**
     set the read position in EEPROM (in Byte); answer if possible
@@ -108,19 +108,19 @@ public:
     @param rui16_adress position of read mark [uint8_t]
     @return true -> setting of read mark without errors
   */
-  bool setg(uint16_t rui16_adress) {return EEPROMIO_c::setg(rui16_adress);};
+  bool setg(uint16_t rui16_adress) {return EepromIo_c::setg(rui16_adress);};
 
   /**
     get the write position in EEPROM (in Byte)
     @return position of write mark [uint8_t]
   */
-  uint16_t tellp(){return EEPROMIO_c::tellp();};
+  uint16_t tellp(){return EepromIo_c::tellp();};
 
   /**
     get the read position in EEPROM (in Byte)
     @return position of read mark [uint8_t]
   */
-  uint16_t tellg(){return EEPROMIO_c::tellg();};
+  uint16_t tellg(){return EepromIo_c::tellg();};
 
   /**
     check if write position is at end of EEPROM
@@ -134,7 +134,7 @@ public:
     @return false -> write marker is more than rui8_length uint8_t ahead end of EEPROM
   */
   bool eofp(uint8_t rui8_length = 0, bool rb_setState = false)
-   {return EEPROMIO_c::eofp(rui8_length, rb_setState);};
+   {return EepromIo_c::eofp(rui8_length, rb_setState);};
 
   /**
     check if read position is at end of EEPROM
@@ -148,7 +148,7 @@ public:
     @return false -> read marker is more than rui8_length uint8_t ahead end of EEPROM
   */
   bool eofg(uint8_t rui8_length = 0, bool rb_setState = false)
-    {return EEPROMIO_c::eofg(rui8_length, rb_setState);};
+    {return EepromIo_c::eofg(rui8_length, rb_setState);};
 
   /* *************************************** */
   /* *** EEPROM data operation functions *** */
@@ -164,13 +164,13 @@ public:
         * Err_c::hwBusy the EEPROM was busy with another action
         * Err_c::eepromSegment low level writing caused segment error
 
-    @see iEEPROMIO_c::tellp
-    @see iEEPROMIO_c::setp
+    @see iEepromIo_c::tellp
+    @see iEepromIo_c::setp
     @param rrefc_val string to write into EEPROM
-    @return reference to this iEEPROMIO_c instance (for chains like "eeprom << val1 << val2 << ... << val_n;")
+    @return reference to this iEepromIo_c instance (for chains like "eeprom << val1 << val2 << ... << val_n;")
   */
-  iEEPROMIO_c& operator<<(STL_NAMESPACE::string& rrefc_val)
-    {return static_cast<iEEPROMIO_c&>(EEPROMIO_c::operator<<(rrefc_val));};
+  iEepromIo_c& operator<<(STL_NAMESPACE::string& rrefc_val)
+    {return static_cast<iEepromIo_c&>(EepromIo_c::operator<<(rrefc_val));};
 
   /**
     write a value to EEPROM from actual write position on (tellp() )
@@ -182,14 +182,14 @@ public:
         * Err_c::hwBusy the EEPROM was busy with another action
         * Err_c::eepromSegment low level writing caused segment error
 
-    @see iEEPROMIO_c::tellp
-    @see iEEPROMIO_c::setp
+    @see iEepromIo_c::tellp
+    @see iEepromIo_c::setp
     @param rTemplateVal value of any type to write into EEPROM from actual write position on
-    @return reference to this iEEPROMIO_c instance (for chains like "eeprom << val1 << val2 << ... << val_n;")
+    @return reference to this iEepromIo_c instance (for chains like "eeprom << val1 << val2 << ... << val_n;")
   */
   template<class T>
-  iEEPROMIO_c& operator<<(const T& rTemplateVal)
-    {return static_cast<iEEPROMIO_c&>(EEPROMIO_c::operator<<(rTemplateVal));};
+  iEepromIo_c& operator<<(const T& rTemplateVal)
+    {return static_cast<iEepromIo_c&>(EepromIo_c::operator<<(rTemplateVal));};
 
   /**
     write a uint8_t string value to EEPROM from actual write position on (tellp() )
@@ -199,14 +199,14 @@ public:
         * Err_c::busy the EEPROM was busy with another action
         * Err_c::eepromSegment low level writing caused segment error
 
-    @see EEPROMIO_c::tellp
-    @see EEPROMIO_c::setp
+    @see EepromIo_c::tellp
+    @see EepromIo_c::setp
     @param rpb_string string to write into EEPROM
     @param rui16_number length of the string to write
-    @return reference to this EEPROMIO_c instance (for chains like "eeprom << val1 << val2 << ... << val_n;")
+    @return reference to this EepromIo_c instance (for chains like "eeprom << val1 << val2 << ... << val_n;")
   */
-  inline iEEPROMIO_c& writeString(const uint8_t *const rpb_string, uint16_t rui16_number)
-    {return static_cast<iEEPROMIO_c&>(EEPROMIO_c::writeString(rpb_string, rui16_number));};
+  inline iEepromIo_c& writeString(const uint8_t *const rpb_string, uint16_t rui16_number)
+    {return static_cast<iEepromIo_c&>(EepromIo_c::writeString(rpb_string, rui16_number));};
 
   /* *************************************** */
   /* *** EEPROM data operation functions *** */
@@ -222,14 +222,14 @@ public:
         * Err_c::hwBusy the EEPROM was busy with another action
         * Err_c::eepromSegment low level reading caused segment error
 
-    @see iEEPROMIO_c::tellg
-    @see iEEPROMIO_c::setg
+    @see iEepromIo_c::tellg
+    @see iEepromIo_c::setg
     @param rTemplateVal EERPOM data is read into rTemplateVal from actual read position on
-    @return reference to this iEEPROMIO_c instance (for chains like "eeprom >> val1 >> val2 >> ... >> val_n;")
+    @return reference to this iEepromIo_c instance (for chains like "eeprom >> val1 >> val2 >> ... >> val_n;")
   */
   template<class T>
-  iEEPROMIO_c& operator>>(T& rTemplateVal)
-    {return static_cast<iEEPROMIO_c&>(EEPROMIO_c::operator>>(rTemplateVal));}
+  iEepromIo_c& operator>>(T& rTemplateVal)
+    {return static_cast<iEepromIo_c&>(EepromIo_c::operator>>(rTemplateVal));}
 
   /**
     read operator for strings with given length; uses BIOS function
@@ -239,29 +239,33 @@ public:
         * Err_c::hwBusy the EEPROM was busy with another reading action
         * Err_c::eepromSegment low level reading caused segment error
 
-    @see iEEPROMIO_c::tellg
-    @see iEEPROMIO_c::setg
+    @see iEepromIo_c::tellg
+    @see iEepromIo_c::setg
     @param rpb_string pointer to uint8_t string, which should be read from actual EEPROM read position on
     @param rui16_number number of uint8_t to read into string
     @return true -> read with success
   */
   bool readString(uint8_t *const rpb_string, uint16_t rui16_number)
-    {return EEPROMIO_c::readString(rpb_string, rui16_number);};
+    {return EepromIo_c::readString(rpb_string, rui16_number);};
 private:
   /** allow getIeepromInstance() access to shielded base class.
       otherwise __IsoAgLib::getEepromInstance() wouldn't be accepted by compiler
     */
-  friend iEEPROMIO_c& getIeepromInstance( void );
-  friend iEEPROMIO_c& operator<<(iEEPROMIO_c& refc_stream, const iISOName_c& refc_data );
-  friend iEEPROMIO_c& operator>>(iEEPROMIO_c& refc_stream, iISOName_c& refc_data );
+  friend iEepromIo_c& getIeepromInstance( void );
+  friend iEepromIo_c& operator<<(iEepromIo_c& refc_stream, const iIsoName_c& refc_data );
+  friend iEepromIo_c& operator>>(iEepromIo_c& refc_stream, iIsoName_c& refc_data );
 };
 
-/** C-style function, to get access to the unique EEPROMIO_c singleton instance */
-inline iEEPROMIO_c& getIeepromInstance( void ) { return static_cast<iEEPROMIO_c&>(__IsoAgLib::getEepromInstance());};
-inline iEEPROMIO_c& operator<<(iEEPROMIO_c& refc_stream, const iISOName_c& refc_data )
-  { return static_cast<iEEPROMIO_c&>(operator<<(static_cast<__IsoAgLib::EEPROMIO_c&>(refc_stream), refc_data ) );};
-inline iEEPROMIO_c& operator>>(iEEPROMIO_c& refc_stream, iISOName_c& refc_data )
-  { return static_cast<iEEPROMIO_c&>(operator>>(static_cast<__IsoAgLib::EEPROMIO_c&>(refc_stream), refc_data ) );};
+/** C-style function, to get access to the unique EepromIo_c singleton instance */
+inline iEepromIo_c& getIeepromInstance( void ) { return static_cast<iEepromIo_c&>(__IsoAgLib::getEepromInstance());};
+inline iEepromIo_c& operator<<(iEepromIo_c& refc_stream, const iIsoName_c& refc_data )
+  { return static_cast<iEepromIo_c&>(operator<<(static_cast<__IsoAgLib::EepromIo_c&>(refc_stream), refc_data ) );};
+inline iEepromIo_c& operator>>(iEepromIo_c& refc_stream, iIsoName_c& refc_data )
+  { return static_cast<iEepromIo_c&>(operator>>(static_cast<__IsoAgLib::EepromIo_c&>(refc_stream), refc_data ) );};
+
+
+/** this typedef is only for some time to provide backward compatibility at API level */
+typedef iEepromIo_c iEEPROMIO_c;
 
 } // end of IsoAgLibInterafce namespace
 #endif

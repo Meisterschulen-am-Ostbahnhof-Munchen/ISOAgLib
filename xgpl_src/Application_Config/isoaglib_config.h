@@ -671,7 +671,7 @@
   #define CAN_BUS_CNT 1
 #endif
 
-/** set the amount of CANIO_c instanes managed by System_c
+/** set the amount of CanIo_c instanes managed by System_c
   * normaly one, but if more CAN BUS'es should be managed
   * System_c can manage them seperate f.e. one for IsoAgLib and the other
   * for system/machine internal CAN communication
@@ -732,10 +732,10 @@
 #define DEFAULT_IDENT_TYPE __IsoAgLib::Ident_c::StandardIdent
 
 #ifdef USE_ISO_11783
-  /// config CANIO_c to handle both 11bit and 29bit ident types if ISO 11783 is active
+  /// config CanIo_c to handle both 11bit and 29bit ident types if ISO 11783 is active
   #define DEFAULT_CONFIG_IDENT_TYPE __IsoAgLib::Ident_c::BothIdent
 #else
-  /// config CANIO_c to only 11bit ident type if ISO 11783 is NOT active
+  /// config CanIo_c to only 11bit ident type if ISO 11783 is NOT active
   #define DEFAULT_CONFIG_IDENT_TYPE __IsoAgLib::Ident_c::StandardIdent
 #endif
 

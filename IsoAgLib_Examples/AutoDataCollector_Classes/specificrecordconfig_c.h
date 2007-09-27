@@ -160,7 +160,7 @@ public:
         e.g. TeeJet ECU used for fertiilzer instead of spreader
     @return DEV_KEY which should be used for storing information
   */
-  const IsoAgLib::iISOName_c& recordAsISOName() const {return c_recordAsISOName;};
+  const IsoAgLib::iIsoName_c& recordAsISOName() const {return c_recordAsISOName;};
   /**
     deliver the amount of specific process data for this device
     @return amount of specific process data for this device in EEPROM
@@ -270,7 +270,7 @@ private:
 
   /** some devices has a ECU which is implemented for another DEVCLASS than used;
       e.g. TeeJet ECU used for fertiilzer instead of spreader */
-  IsoAgLib::iISOName_c c_recordAsISOName;
+  IsoAgLib::iIsoName_c c_recordAsISOName;
   /** amount of device specific process data */
   uint8_t ui8_procCnt;
 };

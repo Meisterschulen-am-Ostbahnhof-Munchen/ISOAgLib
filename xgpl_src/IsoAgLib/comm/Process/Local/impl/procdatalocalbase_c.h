@@ -138,8 +138,8 @@ class ProcDataLocalBase_c : public ProcDataBase_c
     possible errors:
         * Err_c::badAlloc not enough memory to insert first  MeasureProgLocal
     ISO parameter
-    @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
-                         (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
+    @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDdi_s which contains DDI, element, isSetpoint and ValueGroup
+                         (array is terminated by ElementDdi_s.ui16_element == 0xFFFF)
     common parameter
     @param rc_isoName optional ISOName code of Process-Data
     @param rc_ownerISOName optional ISOName of the owner
@@ -164,10 +164,10 @@ class ProcDataLocalBase_c : public ProcDataBase_c
     @param rpc_processDataChangeHandler optional pointer to handler class of application
     @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
-  ProcDataLocalBase_c( const IsoAgLib::ElementDDI_s* rps_elementDDI = NULL, uint16_t rui16_element = 0xFFFF,
-                       const ISOName_c& rc_isoName = ISOName_c::ISONameInitialProcessData(),
-                       const ISOName_c& rc_ownerISOName = ISOName_c::ISONameUnspecified(),
-                       const ISOName_c *rpc_isoName = NULL,
+  ProcDataLocalBase_c( const IsoAgLib::ElementDdi_s* rps_elementDDI = NULL, uint16_t rui16_element = 0xFFFF,
+                       const IsoName_c& rc_isoName = IsoName_c::IsoNameInitialProcessData(),
+                       const IsoName_c& rc_ownerISOName = IsoName_c::IsoNameUnspecified(),
+                       const IsoName_c *rpc_isoName = NULL,
                        bool rb_cumulativeValue = false
 #ifdef USE_EEPROM_IO
                        , uint16_t rui16_eepromAdr = 0xFFFF
@@ -192,8 +192,8 @@ class ProcDataLocalBase_c : public ProcDataBase_c
     possible errors:
         * Err_c::badAlloc not enough memory to insert first  MeasureProgLocal
     ISO parameter
-    @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
-                         (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
+    @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDdi_s which contains DDI, element, isSetpoint and ValueGroup
+                         (array is terminated by ElementDdi_s.ui16_element == 0xFFFF)
     common parameter
     @param rc_isoName optional ISOName code of Process-Data
     @param rc_ownerISOName optional ISOName of the owner
@@ -218,10 +218,10 @@ class ProcDataLocalBase_c : public ProcDataBase_c
     @param rpc_processDataChangeHandler optional pointer to handler class of application
     @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
-  void init(const IsoAgLib::ElementDDI_s* ps_elementDDI, uint16_t rui16_element,
-            const ISOName_c& rc_isoName = ISOName_c::ISONameInitialProcessData(),
-            const ISOName_c& rc_ownerISOName = ISOName_c::ISONameUnspecified(),
-            const ISOName_c *rpc_isoName = NULL,
+  void init(const IsoAgLib::ElementDdi_s* ps_elementDDI, uint16_t rui16_element,
+            const IsoName_c& rc_isoName = IsoName_c::IsoNameInitialProcessData(),
+            const IsoName_c& rc_ownerISOName = IsoName_c::IsoNameUnspecified(),
+            const IsoName_c *rpc_isoName = NULL,
             bool rb_cumulativeValue = false
 #ifdef USE_EEPROM_IO
             , uint16_t rui16_eepromAdr = 0xFFFF
@@ -247,7 +247,7 @@ class ProcDataLocalBase_c : public ProcDataBase_c
 
   /** set the eeprom adr for the value, read in value from EEPROM
     possible errors:
-        * dependent error in EEPROMIO_c on problems during read
+        * dependent error in EepromIo_c on problems during read
     @param rui16_eepromAdr new EEPROM adress
   */
   virtual void setEepromAdr(uint16_t rui16_eepromAdr);
@@ -301,7 +301,7 @@ class ProcDataLocalBase_c : public ProcDataBase_c
     @param rc_targetISOName ISOName of target
     @return true -> successful sent
   */
-  bool sendMasterMeasurementVal( const ISOName_c& rc_targetISOName ) const;
+  bool sendMasterMeasurementVal( const IsoName_c& rc_targetISOName ) const;
 
   /** check if a setpoint master exists
     (used for accessing setpoint values from measure progs)
@@ -333,7 +333,7 @@ class ProcDataLocalBase_c : public ProcDataBase_c
     (not used for simple measurement)
     @param refc_isoName
   */
-  virtual void stopRunningMeasurement(const ISOName_c& /* refc_isoName */) {}
+  virtual void stopRunningMeasurement(const IsoName_c& /* refc_isoName */) {}
 
   /** send the given int32_t value with variable ISOName rc_varISOName;
       set the int32_t value with conversion (according to central data type) in message
@@ -341,7 +341,7 @@ class ProcDataLocalBase_c : public ProcDataBase_c
       (other parameter fixed by ident of process data)
         possible errors:
       * Err_c::elNonexistent one of resolved EMPF/SEND isn't registered with claimed address in Monitor
-      * dependant error in CANIO_c on CAN send problems
+      * dependant error in CanIo_c on CAN send problems
 
       @param rc_varISOName variable ISOName
       @param ri32_val int32_t value to send
@@ -349,7 +349,7 @@ class ProcDataLocalBase_c : public ProcDataBase_c
       @param en_command
       @return true -> sendIntern set successful EMPF and SEND
   */
-  bool sendValISOName( const ISOName_c& rc_varISOName, int32_t ri32_val = 0) const;
+  bool sendValISOName( const IsoName_c& rc_varISOName, int32_t ri32_val = 0) const;
 
 #ifdef USE_FLOAT_DATA_TYPE
   /** send the given float value with variable ISOName rc_varISOName;
@@ -358,7 +358,7 @@ class ProcDataLocalBase_c : public ProcDataBase_c
       (other parameter fixed by ident of process data)
       possible errors:
   * Err_c::elNonexistent one of resolved EMPF/SEND isn't registered with claimed address in Monitor
-  * dependant error in CANIO_c on CAN send problems
+  * dependant error in CanIo_c on CAN send problems
 
       @param rc_varISOName variable ISOName
       @param rb_pd PD code for the msg
@@ -366,7 +366,7 @@ class ProcDataLocalBase_c : public ProcDataBase_c
       @param ri32_val float value to send
       @return true -> sendIntern set successful EMPF and SEND
   */
-  bool sendValISOName (const ISOName_c& rc_varISOName, float rf_val = 0.0F) const;
+  bool sendValISOName (const IsoName_c& rc_varISOName, float rf_val = 0.0F) const;
 #endif
 
  protected:
@@ -412,13 +412,13 @@ private:
   /** called from MeasureProg item -> if this item is first in list
     reset eeprom val
     possible errors:
-        * dependent error in EEPROMIO_c on problems during read
+        * dependent error in EepromIo_c on problems during read
     @param pc_progItem MeasureProgLocal_c instance which wants to reset EEPROM val
   */
   void resetEeprom( void );
 #endif
 
-  void setLocalSendFlags (const ISOName_c& rc_varISOName) const;
+  void setLocalSendFlags (const IsoName_c& rc_varISOName) const;
 
  private:
    /** allow explicit MeasureProgLocal_c the access to private elements */

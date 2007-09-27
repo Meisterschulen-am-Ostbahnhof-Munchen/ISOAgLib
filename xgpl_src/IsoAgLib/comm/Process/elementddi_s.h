@@ -97,11 +97,16 @@ namespace IsoAgLib {
   struct for defining ISO element/DDI pairs (with additional info about sepoint/measurement and value group (min, max, exact, default)
   @author Dipl.-Inform. Achim Spangler
 */
-struct ElementDDI_s {
+struct ElementDdi_s {
   uint16_t ui16_DDI;
   bool b_isSetpoint;
   GeneralCommand_c::ValueGroup_t en_valueGroup;
 };
+
+
+/** this typedef is only for some time to provide backward compatibility at API level */
+typedef ElementDdi_s ElementDDI_s;
+
 
 }
 #endif

@@ -1,5 +1,5 @@
 /***************************************************************************
-                          canpkgext_c.cpp - header for extended CANPkg_c object,
+                          canpkgext_c.cpp - header for extended CanPkg_c object,
                                            which calls data flag converting
                                            functions on assign operations
                              -------------------
@@ -99,14 +99,14 @@
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
-bool CANPkgExt_c::b_runFlag2String = true;
+bool CanPkgExt_c::b_runFlag2String = true;
 
 /** default constructor, which has nothing to do */
-CANPkgExt_c::CANPkgExt_c( int ri_singletonVecKey )
-  : CANPkg_c( ri_singletonVecKey )
+CanPkgExt_c::CanPkgExt_c( int ri_singletonVecKey )
+  : CanPkg_c( ri_singletonVecKey )
 {
-  addrResolveResSA.p_isoName = new ISOName_c(ISOName_c::ISONameUnspecified());
-  addrResolveResDA.p_isoName = new ISOName_c(ISOName_c::ISONameUnspecified());
+  addrResolveResSA.p_isoName = new IsoName_c(IsoName_c::IsoNameUnspecified());
+  addrResolveResDA.p_isoName = new IsoName_c(IsoName_c::IsoNameUnspecified());
   addrResolveResSA.pc_monitorItem = NULL;
   addrResolveResDA.pc_monitorItem = NULL;
   addrResolveResSA.pui8_address = &identRef(0);
@@ -114,7 +114,7 @@ CANPkgExt_c::CANPkgExt_c( int ri_singletonVecKey )
 }
 
 /** virtual default destructor, which has nothing to do */
-CANPkgExt_c::~CANPkgExt_c()
+CanPkgExt_c::~CanPkgExt_c()
 {
   delete addrResolveResSA.p_isoName;
   delete addrResolveResDA.p_isoName;
@@ -125,16 +125,16 @@ CANPkgExt_c::~CANPkgExt_c()
   ==> REACTIVATE if some NON-STATIC member vars will be added!
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-  assign operator to insert informations from one CANPkg_c into another
+  assign operator to insert informations from one CanPkg_c into another
   @see __IsoAgLib::FilterBox_c::operator>>
-  @see CANPkgExt_c::operator=
-  @see CANPkgExt_c::getData
-  @param rrefc_right reference to the source CANPkg_c on the right
-  @return reference to the source CANPkg_c to enable assign chains like
+  @see CanPkgExt_c::operator=
+  @see CanPkgExt_c::getData
+  @param rrefc_right reference to the source CanPkg_c on the right
+  @return reference to the source CanPkg_c to enable assign chains like
       "pkg1 = pkg2 = pkg3 = pkg4;"
-const CANPkg_c& CANPkgExt_c::operator=(const CANPkg_c& rrefc_right)
+const CanPkg_c& CanPkgExt_c::operator=(const CanPkg_c& rrefc_right)
 {
-  return CANPkg_c::operator =( rrefc_right );
+  return CanPkg_c::operator =( rrefc_right );
 }
 */
 
@@ -143,10 +143,10 @@ const CANPkg_c& CANPkgExt_c::operator=(const CANPkg_c& rrefc_right)
   abstract function to transform the string data into flag values
   => derived class must implement suitable data conversion function
 
-  needed for assigning informations from another CANPkg_c or CANPkgExt
-  @see CANPkgExt_c::operator=
+  needed for assigning informations from another CanPkg_c or CANPkgExt
+  @see CanPkgExt_c::operator=
 */
-void CANPkgExt_c::string2Flags()
+void CanPkgExt_c::string2Flags()
 { // dummy body - normally NOT called
 }
 
@@ -154,13 +154,13 @@ void CANPkgExt_c::string2Flags()
   abstract transform flag values to data string
   => derived class must implement suitable data converting function
 
-  needed for sending informations from this object via CANIO_c on CAN BUS,
-  because CANIO_c doesn't know anything about the data format of this type of msg
+  needed for sending informations from this object via CanIo_c on CAN BUS,
+  because CanIo_c doesn't know anything about the data format of this type of msg
   so that it can only use an unformated data string from CANPkg
-  @see CANPkgExt_c::getData
-  @see __IsoAgLib::CANIO_c::operator<<
+  @see CanPkgExt_c::getData
+  @see __IsoAgLib::CanIo_c::operator<<
 */
-void CANPkgExt_c::flags2String()
+void CanPkgExt_c::flags2String()
 { // dummy body - normally NOT called
 };
 
@@ -171,7 +171,7 @@ void CANPkgExt_c::flags2String()
   @param refb_dlcTarget reference to the DLC field of the target
   @param pb_dataTarget pointer to the data string of the target
 */
-void CANPkgExt_c::getData(uint32_t& reft_ident, uint8_t& refui8_identType,
+void CanPkgExt_c::getData(uint32_t& reft_ident, uint8_t& refui8_identType,
                      uint8_t& refb_dlcTarget, uint8_t* pb_dataTarget)
 {
   if ( ! b_runFlag2String )
@@ -182,7 +182,7 @@ void CANPkgExt_c::getData(uint32_t& reft_ident, uint8_t& refui8_identType,
   {
     flags2String();
   }
-  CANPkg_c::getData(reft_ident, refui8_identType, refb_dlcTarget, pb_dataTarget);
+  CanPkg_c::getData(reft_ident, refui8_identType, refb_dlcTarget, pb_dataTarget);
 }
 
 
@@ -191,7 +191,7 @@ void CANPkgExt_c::getData(uint32_t& reft_ident, uint8_t& refui8_identType,
   @todo optimize DP/PF setting in one operation
   @return parameter group number
 */
-void CANPkgExt_c::setIsoPgn(uint32_t rui32_val)
+void CanPkgExt_c::setIsoPgn(uint32_t rui32_val)
 {
   const uint8_t cui8_dp = static_cast<uint8_t>((rui32_val >> 16) & 0x03); // now extended to 2 bits (added R/EDP)
   const uint8_t cui8_pf = static_cast<uint8_t>(rui32_val >> 8);
@@ -217,7 +217,7 @@ void CANPkgExt_c::setIsoPgn(uint32_t rui32_val)
     @param  addressResolveResults  address to resolve
     @return true -> address could be resolved
   */
-bool CANPkgExt_c::resolveAddress( AddressResolveResults& addressResolveResults )
+bool CanPkgExt_c::resolveAddress( AddressResolveResults& addressResolveResults )
 {
   if (   ( *addressResolveResults.pui8_address <= 0xFD )
       && ( getIsoMonitorInstance4Comm().existIsoMemberNr( *addressResolveResults.pui8_address ) )
@@ -251,7 +251,7 @@ bool CANPkgExt_c::resolveAddress( AddressResolveResults& addressResolveResults )
              Invalid -> one or both addresses are invalid
              OnlyNetworkMgmt -> one or both addresses are only useable for network management
   */
-MessageState_t CANPkgExt_c::resolveReceivingInformation()
+MessageState_t CanPkgExt_c::resolveReceivingInformation()
 {
   #ifdef DEBUG_CAN
   INTERNAL_DEBUG_DEVICE << "*-*-*-* PROCESS MESSAGE *-*-*-*" << INTERNAL_DEBUG_DEVICE_ENDL;
@@ -294,7 +294,7 @@ MessageState_t CANPkgExt_c::resolveReceivingInformation()
 /** report if the combination of address and scope is valid in context of message processing
     @return  true -> address, scope combination is valid
   */
-MessageState_t CANPkgExt_c::address2IdentLocalDa()
+MessageState_t CanPkgExt_c::address2IdentLocalDa()
 {
   //we are shure that we have PDU1 format and therefore we have a destination address
   #ifdef DEBUG_CAN
@@ -352,7 +352,7 @@ MessageState_t CANPkgExt_c::address2IdentLocalDa()
 /** report if the combination of address and scope is valid in context of message processing
     @return  true -> address, scope combination is valid
   */
-MessageState_t CANPkgExt_c::address2IdentRemoteSa()
+MessageState_t CanPkgExt_c::address2IdentRemoteSa()
 {
   #ifdef DEBUG_CAN
     INTERNAL_DEBUG_DEVICE << "Scope remote(SA) with sa-field = " << int( *addrResolveResSA.pui8_address ) << INTERNAL_DEBUG_DEVICE_ENDL;
@@ -412,7 +412,7 @@ MessageState_t CANPkgExt_c::address2IdentRemoteSa()
     @return true -> monitoritem could be resolved
             false -> nothing more to be done
   */
-bool CANPkgExt_c::resolveMonitorItem( AddressResolveResults& addressResolveResults )
+bool CanPkgExt_c::resolveMonitorItem( AddressResolveResults& addressResolveResults )
 {
   //check if monitoritem exist
   if ( addressResolveResults.pc_monitorItem == NULL )
@@ -470,13 +470,13 @@ bool CANPkgExt_c::resolveMonitorItem( AddressResolveResults& addressResolveResul
 }
 
 /** check if source and destination address are valid
-    @see     CANPkgExt_c::operator<<
+    @see     CanPkgExt_c::operator<<
     @pre     we want to send a message
     @return  Valid -> both addresses are valid
              Invalid -> one or both addresses are invalid
              OnlyNetworkMgmt -> one or both addresses are only useable for network management
   */
-bool CANPkgExt_c::resolveSendingInformation()
+bool CanPkgExt_c::resolveSendingInformation()
 {
   #ifdef DEBUG_CAN
   INTERNAL_DEBUG_DEVICE << "*-*-*-* SEND MESSAGE *-*-*-*" << INTERNAL_DEBUG_DEVICE_ENDL;
@@ -565,7 +565,7 @@ bool CANPkgExt_c::resolveSendingInformation()
 /** set the value of the ISO11783 ident field PS
     @return PDU Specific
   */
-void CANPkgExt_c::setIsoPs(uint8_t rui8_val)
+void CanPkgExt_c::setIsoPs(uint8_t rui8_val)
 {
   *addrResolveResDA.pui8_address = rui8_val;
   addrResolveResDA.p_isoName->setUnspecified();
@@ -577,7 +577,7 @@ void CANPkgExt_c::setIsoPs(uint8_t rui8_val)
     set the value of the ISO11783 ident field SA
     @return source adress
   */
-void CANPkgExt_c::setIsoSa(uint8_t rui8_val)
+void CanPkgExt_c::setIsoSa(uint8_t rui8_val)
 {
   *addrResolveResSA.pui8_address = rui8_val;
   addrResolveResSA.p_isoName->setUnspecified();
@@ -588,7 +588,7 @@ void CANPkgExt_c::setIsoSa(uint8_t rui8_val)
 /** set the structure for resolve results DA
     @param pc_monitorItem  needed monitoritem
   */
-void CANPkgExt_c::setMonitorItemForSA( ISOItem_c* pc_monitorItem )
+void CanPkgExt_c::setMonitorItemForSA( IsoItem_c* pc_monitorItem )
 {
   addrResolveResSA.pc_monitorItem = pc_monitorItem;
   // p_isoName will not be needed -> set to unspecified
@@ -600,7 +600,7 @@ void CANPkgExt_c::setMonitorItemForSA( ISOItem_c* pc_monitorItem )
 /** set the isoName for resolve SA
     @param p_isoName  needed isoName
   */
-void CANPkgExt_c::setISONameForSA( const ISOName_c& p_isoName )
+void CanPkgExt_c::setISONameForSA( const IsoName_c& p_isoName )
 {
   *addrResolveResSA.p_isoName = p_isoName;
   // pc_monitorItem will be set over p_isoName -> reset pc_monitorItem
@@ -612,7 +612,7 @@ void CANPkgExt_c::setISONameForSA( const ISOName_c& p_isoName )
 /** set the structure for resolve results DA
     @param pc_monitorItem  needed monitoritem
   */
-void CANPkgExt_c::setMonitorItemForDA( ISOItem_c* pc_monitorItem )
+void CanPkgExt_c::setMonitorItemForDA( IsoItem_c* pc_monitorItem )
 {
   addrResolveResDA.pc_monitorItem = pc_monitorItem;
   // p_isoName will not be needed -> set to unspecified
@@ -624,7 +624,7 @@ void CANPkgExt_c::setMonitorItemForDA( ISOItem_c* pc_monitorItem )
 /** set the isoName for resolve DA
     @param p_isoName  needed isoName
   */
-void CANPkgExt_c::setISONameForDA( const ISOName_c& p_isoName )
+void CanPkgExt_c::setISONameForDA( const IsoName_c& p_isoName )
 {
   *addrResolveResDA.p_isoName = p_isoName;
   // pc_monitorItem will be set over p_isoName -> reset pc_monitorItem
@@ -636,7 +636,7 @@ void CANPkgExt_c::setISONameForDA( const ISOName_c& p_isoName )
 /** check if an adddress could be resolved with monitorItem and isoName
     @param  addressResolveResults  address to resolve
 */
-uint8_t CANPkgExt_c::checkMonitorItemISOName( const AddressResolveResults& addressResolveResults ) const
+uint8_t CanPkgExt_c::checkMonitorItemISOName( const AddressResolveResults& addressResolveResults ) const
 {
   // check if monitoritem exist and if not resolve it with isoName
   if ( addressResolveResults.pc_monitorItem == NULL )
@@ -658,7 +658,7 @@ uint8_t CANPkgExt_c::checkMonitorItemISOName( const AddressResolveResults& addre
   get the value of the ISO11783 ident field PS
   @return PDU Specific
 */
-uint8_t CANPkgExt_c::isoPs() const
+uint8_t CanPkgExt_c::isoPs() const
 {
   // destination address is already valid
   if (*addrResolveResDA.pui8_address != 0xFF ) return *addrResolveResDA.pui8_address;
@@ -672,7 +672,7 @@ uint8_t CANPkgExt_c::isoPs() const
   get the value of the ISO11783 ident field SA
   @return source adress
 */
-uint8_t CANPkgExt_c::isoSa() const
+uint8_t CanPkgExt_c::isoSa() const
 {
   // source address is already valid
   if (*addrResolveResSA.pui8_address != 0xFF ) return *addrResolveResSA.pui8_address;

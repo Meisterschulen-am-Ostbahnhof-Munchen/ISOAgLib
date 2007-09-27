@@ -28,8 +28,8 @@ INCLUDE_mainHeaderWithNavbar.txt_INCLUDE
   - removed IsoAgLib/comm/SystemMgmt/impl/systemmgmt_c.cpp
             IsoAgLib/comm/SystemMgmt/impl/systemmgmt_c.h
             IsoAgLib/comm/SystemMgmt/isystemmgmt_c.h
-    and replaced all missing function calls with appropriate function calls from the ISOMonitor_c
-  - partly renaming of ISOMonitor_c functions
+    and replaced all missing function calls with appropriate function calls from the IsoMonitor_c
+  - partly renaming of IsoMonitor_c functions
   - removed var2empfSend() and replaced with sendValDevKey() in ProcDataLocalBase_c and ProcDataRemoteBase_c
   - added LibErr_c::good() for test on errLocation AND errType
   - updated proc2iso documentation
@@ -63,7 +63,7 @@ INCLUDE_mainHeaderWithNavbar.txt_INCLUDE
   - support for proc2iso XML schema: new mandatory parameter -s=xxx.xsd for personalized path to xsd-file (see proc2iso --help).
     former only -s with a default path
   - support for processdata designators up to 30 chars to enable a differentiation between the deviceprocessdatacombination (DDI groups)
-  - added special class ISORequestPGN_c to answer REQUEST_PGN_MSG_PGN appropriate if any other class registered for that filter could not answer
+  - added special class IsoRequestPgn_c to answer REQUEST_PGN_MSG_PGN appropriate if any other class registered for that filter could not answer
 
 \subsection Change_K 1.2.0 to 1.2.1
 
@@ -110,7 +110,7 @@ INCLUDE_mainHeaderWithNavbar.txt_INCLUDE
 	- Adapted many items (timeouts, font-encoding, Positions now SIGNED integer) to FIRST EDITION of 11783-Part 6 (Virtual Terminal)
 	- "vtKeyCodeESC" is now "vtKeyCodeACK"
 	- vt2iso: Filename-parameter doesn't need "./" prefixed any more if XML file is in current directory
-	- minor fixes in ISOTerminal_c's close(), changeNumericValue's reserved byte changed to 0xFF
+	- minor fixes in IsoTerminal_c's close(), changeNumericValue's reserved byte changed to 0xFF
 	- NACK-recognition implemented (eventEnterSafeState), although it needs some more testing
 	- reaction on language (change) PGN now possible via hook-function
 	- old class Base_c is subdivided into smaller classes, so that a project can better select the wanted information types.

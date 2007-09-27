@@ -67,23 +67,23 @@ namespace __IsoAgLib {
 
 
 /** Handler class which can be used to react on SA claims and esp. conflicts */
-class SaClaimHandler_c : public ISORequestPGNHandler_c
+class SaClaimHandler_c : public IsoRequestPgnHandler_c
 {
  public:
    SaClaimHandler_c() {}
    virtual ~SaClaimHandler_c() {}
 
-   /** this function is called by ISOMonitor_c when a new CLAIMED ISOItem_c is registered.
-     * @param refc_isoName const reference to the item which ISOItem_c state is changed
-     * @param rpc_newItem pointer to the currently corresponding ISOItem_c
+   /** this function is called by IsoMonitor_c when a new CLAIMED IsoItem_c is registered.
+     * @param refc_isoName const reference to the item which IsoItem_c state is changed
+     * @param rpc_newItem pointer to the currently corresponding IsoItem_c
      */
-   virtual void reactOnMonitorListAdd( const ISOName_c& /*refc_isoName*/, const ISOItem_c* /*rpc_newItem*/ ) {};
+   virtual void reactOnMonitorListAdd( const IsoName_c& /*refc_isoName*/, const IsoItem_c* /*rpc_newItem*/ ) {};
 
-   /** this function is called by ISOMonitor_c when a device looses its ISOItem_c.
-    * @param refc_isoName const reference to the item which ISOItem_c state is changed
+   /** this function is called by IsoMonitor_c when a device looses its IsoItem_c.
+    * @param refc_isoName const reference to the item which IsoItem_c state is changed
     * @param rui8_oldSa previously used SA which is NOW LOST -> clients which were connected to this item can react explicitly
     */
-   virtual void reactOnMonitorListRemove( const ISOName_c& /*refc_isoName*/, uint8_t /*rui8_oldSa*/ ) {};
+   virtual void reactOnMonitorListRemove( const IsoName_c& /*refc_isoName*/, uint8_t /*rui8_oldSa*/ ) {};
 };
 
 }

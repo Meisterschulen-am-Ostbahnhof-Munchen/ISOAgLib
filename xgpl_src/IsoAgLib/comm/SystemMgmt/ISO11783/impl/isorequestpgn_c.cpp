@@ -1,6 +1,6 @@
 /***************************************************************************
                           isomonitor_c.cpp - object for monitoring members
-                                              (list of ISOItem_c)
+                                              (list of IsoItem_c)
                              -------------------
     begin                : Fri Apr 07 2000
     copyright            : (C) 2000 - 2004 by Dipl.-Inform. Achim Spangler
@@ -91,9 +91,9 @@
 
 namespace __IsoAgLib {
 
-/** initialisation for ISORequestPGN_c */
+/** initialisation for IsoRequestPgn_c */
 void
-ISORequestPGN_c::init (void)
+IsoRequestPgn_c::init (void)
 {
   // only init if closed (constructor "closes" it so it gets init'ed initially!
   if (checkAlreadyClosed ())
@@ -108,7 +108,7 @@ ISORequestPGN_c::init (void)
 
 /** every subsystem of IsoAgLib has explicit function for controlled shutdown */
 void
-ISORequestPGN_c::close (void)
+IsoRequestPgn_c::close (void)
 {
   if (!checkAlreadyClosed ())
   {
@@ -119,7 +119,7 @@ ISORequestPGN_c::close (void)
 
 
 /** default destructor which has nothing to do */
-ISORequestPGN_c::~ISORequestPGN_c ()
+IsoRequestPgn_c::~IsoRequestPgn_c ()
 {
   close();
 }
@@ -127,7 +127,7 @@ ISORequestPGN_c::~ISORequestPGN_c ()
 
 /** adds the PGN to the list */
 bool
-ISORequestPGN_c::registerPGN (ISORequestPGNHandler_c &ref_PGNHandler, const uint32_t cui32_pgnToRegister)
+IsoRequestPgn_c::registerPGN (IsoRequestPgnHandler_c &ref_PGNHandler, const uint32_t cui32_pgnToRegister)
 {
   if (checkIfAlreadyRegistered (ref_PGNHandler, cui32_pgnToRegister))
     return false; // false could also mean that the PGN - client pair is already inserted in list
@@ -141,7 +141,7 @@ ISORequestPGN_c::registerPGN (ISORequestPGNHandler_c &ref_PGNHandler, const uint
 
 /** adds n PGN for the client to the list */
 bool
-ISORequestPGN_c::registerPGN (ISORequestPGNHandler_c &ref_PGNHandler, const uint8_t cui8_pgnCount, const uint32_t *pcui32_pgnToRegister)
+IsoRequestPgn_c::registerPGN (IsoRequestPgnHandler_c &ref_PGNHandler, const uint8_t cui8_pgnCount, const uint32_t *pcui32_pgnToRegister)
 {
   uint8_t ui8_index = 0;
   bool b_msgProcessed = false;
@@ -157,7 +157,7 @@ ISORequestPGN_c::registerPGN (ISORequestPGNHandler_c &ref_PGNHandler, const uint
 
 /** remove PGN from the list */
 void
-ISORequestPGN_c::unregisterPGN (ISORequestPGNHandler_c &ref_PGNHandler, const uint32_t cui32_pgnToRegister)
+IsoRequestPgn_c::unregisterPGN (IsoRequestPgnHandler_c &ref_PGNHandler, const uint32_t cui32_pgnToRegister)
 {
   for (STL_NAMESPACE::vector<PGN_s>::iterator regPGN_it = registeredClientsWithPGN.begin();
        regPGN_it != registeredClientsWithPGN.end();
@@ -186,7 +186,7 @@ ISORequestPGN_c::unregisterPGN (ISORequestPGNHandler_c &ref_PGNHandler, const ui
 
 /** removes n PGN for the client from the list */
 void
-ISORequestPGN_c::unregisterPGN (ISORequestPGNHandler_c &ref_PGNHandler, const uint8_t cui8_pgnCount, const uint32_t *pcui32_pgnToUnregister)
+IsoRequestPgn_c::unregisterPGN (IsoRequestPgnHandler_c &ref_PGNHandler, const uint8_t cui8_pgnCount, const uint32_t *pcui32_pgnToUnregister)
 {
   if (cui8_pgnCount == 0) return;
 
@@ -198,7 +198,7 @@ ISORequestPGN_c::unregisterPGN (ISORequestPGNHandler_c &ref_PGNHandler, const ui
 
 /** before adding any further PGN - RequestPGNHandler pair, check if not already existing */
 bool
-ISORequestPGN_c::checkIfAlreadyRegistered (ISORequestPGNHandler_c &ref_PGNHandler, const uint32_t cui32_pgn)
+IsoRequestPgn_c::checkIfAlreadyRegistered (IsoRequestPgnHandler_c &ref_PGNHandler, const uint32_t cui32_pgn)
 {
   for (STL_NAMESPACE::vector<PGN_s>::iterator regPGN_it=registeredClientsWithPGN.begin();
        regPGN_it != registeredClientsWithPGN.end();
@@ -216,9 +216,9 @@ ISORequestPGN_c::checkIfAlreadyRegistered (ISORequestPGNHandler_c &ref_PGNHandle
 /** process REQUEST_PGN_MSG_PGN message
     Since we only insertFilter for REQUEST_PGN_MSG_PGN we don't need further checking
     a la "if ((data().isoPgn() & 0x3FF00) == REQUEST_PGN_MSG_PGN)"
-  * @return true -> message processed by ISORequestPGN_c (also possible is NACK); false -> let others process */
+  * @return true -> message processed by IsoRequestPgn_c (also possible is NACK); false -> let others process */
 bool
-ISORequestPGN_c::processMsg ()
+IsoRequestPgn_c::processMsg ()
 {
   /// Store incoming information for possible later user-triggered "sendAcknowledgePGN()"
   pc_isoItemSA = data().getMonitorItemForSA();
@@ -251,7 +251,7 @@ ISORequestPGN_c::processMsg ()
 
 
 void
-ISORequestPGN_c::sendAcknowledgePGN (ISOItem_c& rrefc_isoItemSender, uint8_t rui8_ackType)
+IsoRequestPgn_c::sendAcknowledgePGN (IsoItem_c& rrefc_isoItemSender, uint8_t rui8_ackType)
 {
   uint32_t ui32_purePgn = ui32_requestedPGN;
   if (((ui32_purePgn >> 8) & 0xFF) < 0xF0)
@@ -276,33 +276,33 @@ ISORequestPGN_c::sendAcknowledgePGN (ISOItem_c& rrefc_isoItemSender, uint8_t rui
 }
 
 
-/** register an ISOName_c of a local device, so that RequestPGN messages that are directed to this
-    ISOName_c are received and handled.
-    This function has to be called during initialisation of a local ISOItem_c / IdentItem_c
+/** register an IsoName_c of a local device, so that RequestPGN messages that are directed to this
+    IsoName_c are received and handled.
+    This function has to be called during initialisation of a local IsoItem_c / IdentItem_c
   */
-void ISORequestPGN_c::registerLocalDevice( const __IsoAgLib::ISOName_c& refc_isoName )
+void IsoRequestPgn_c::registerLocalDevice( const __IsoAgLib::IsoName_c& refc_isoName )
 {
   if ( getIsoMonitorInstance4Comm().existLocalIsoMemberISOName(refc_isoName) )
-  { // local ISOItem_c has finished adr claim
-    getIsoFilterManagerInstance4Comm().insertIsoFilter (ISOFilter_s (*this, (0x3FFFF00UL), (REQUEST_PGN_MSG_PGN << 8), &refc_isoName, (const ISOName_c*)NULL, int8_t(3)));
+  { // local IsoItem_c has finished adr claim
+    getIsoFilterManagerInstance4Comm().insertIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL), (REQUEST_PGN_MSG_PGN << 8), &refc_isoName, (const IsoName_c*)NULL, int8_t(3)));
   }
 }
-/** unregister an ISOName_c of a local device, so that ISOFilterManager_c stops receiving
-    messages for the corresponding ISOName_c.
-    This function has to be called during destruction of a local ISOItem_c / IdentItem_c
+/** unregister an IsoName_c of a local device, so that IsoFilterManager_c stops receiving
+    messages for the corresponding IsoName_c.
+    This function has to be called during destruction of a local IsoItem_c / IdentItem_c
   */
-void ISORequestPGN_c::unregisterLocalDevice( const __IsoAgLib::ISOName_c& refc_isoName )
+void IsoRequestPgn_c::unregisterLocalDevice( const __IsoAgLib::IsoName_c& refc_isoName )
 {
   if ( getIsoMonitorInstance4Comm().existLocalIsoMemberISOName(refc_isoName) )
-  { // local ISOItem_c has finished adr claim
-    getIsoFilterManagerInstance4Comm().removeIsoFilter (ISOFilter_s (*this, (0x3FFFF00UL), (REQUEST_PGN_MSG_PGN << 8), &refc_isoName, NULL, 3));
+  { // local IsoItem_c has finished adr claim
+    getIsoFilterManagerInstance4Comm().removeIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL), (REQUEST_PGN_MSG_PGN << 8), &refc_isoName, NULL, 3));
   }
 }
 
 
-/** constructor for ISORequestPGN_c */
-ISORequestPGN_c::ISORequestPGN_c ()
-  : SingletonISORequestPGN_c ()
+/** constructor for IsoRequestPgn_c */
+IsoRequestPgn_c::IsoRequestPgn_c ()
+  : SingletonIsoRequestPgn_c ()
   , registeredClientsWithPGN ()
 {
 // functionality moved OUT of the constructor, as the constructor is NOT called in embedded systems for static class instances.
@@ -313,7 +313,7 @@ ISORequestPGN_c::ISORequestPGN_c ()
   * this is called from singleton.h and should NOT be called from the user again.
   * users please use init(...) instead. */
 void
-ISORequestPGN_c::singletonInit ()
+IsoRequestPgn_c::singletonInit ()
 {
   setAlreadyClosed (); // so init() will init ;-) (but only once!)
   init();
@@ -321,24 +321,24 @@ ISORequestPGN_c::singletonInit ()
 
 // Funktion for Debugging in Scheduler_c
 const char*
-ISORequestPGN_c::getTaskName() const
+IsoRequestPgn_c::getTaskName() const
 {
-  return "ISORequestPGN_c";
+  return "IsoRequestPgn_c";
 }
 
 
 #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
-/** C-style function, to get access to the unique ISORequestPGN_c singleton instance
+/** C-style function, to get access to the unique IsoRequestPgn_c singleton instance
  * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS */
-ISORequestPGN_c& getIsoRequestPgnInstance (uint8_t rui8_instance)
+IsoRequestPgn_c& getIsoRequestPgnInstance (uint8_t rui8_instance)
 { // if > 1 singleton instance is used, no static reference can be used
-  return ISORequestPGN_c::instance(rui8_instance);
+  return IsoRequestPgn_c::instance(rui8_instance);
 };
 #else
-/** C-style function, to get access to the unique ISORequestPGN_c singleton instance */
-ISORequestPGN_c& getIsoRequestPgnInstance (void)
+/** C-style function, to get access to the unique IsoRequestPgn_c singleton instance */
+IsoRequestPgn_c& getIsoRequestPgnInstance (void)
 {
-  static ISORequestPGN_c& c_isoRequestPgn = ISORequestPGN_c::instance ();
+  static IsoRequestPgn_c& c_isoRequestPgn = IsoRequestPgn_c::instance ();
   return c_isoRequestPgn;
 };
 #endif

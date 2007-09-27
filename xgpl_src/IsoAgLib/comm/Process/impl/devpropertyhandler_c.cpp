@@ -210,7 +210,7 @@ DevPropertyHandler_c::DevPropertyHandler_c()
 
 
 /** process received can messages
-    @return true -> message was processed; else the received CAN message will be served to other matching CANCustomer_c
+    @return true -> message was processed; else the received CAN message will be served to other matching CanCustomer_c
   */
 bool
 DevPropertyHandler_c::processMsg()

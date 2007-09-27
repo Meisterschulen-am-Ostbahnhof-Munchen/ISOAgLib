@@ -33,7 +33,7 @@ All elements with names without "i" at the beginning and which are grouped to th
 But please be warned, that this stuff seems rather complicated if you are not familiar with object oriented design. You can be assured, that not only the authors of
 the architecture accept the high quality of design. Some parts might look strange at the first sight - but then you will detect that such elements are very helpful
 for reduction of code duplication and ease of code maintenance. One example is the Singleton Pattern, which is used for global, but well defined to core service classes
-like IsoAgLib::ISOTerminal_c. The use of this template guarantees that event the first access is always performed at a correct initialised instance. Even if the initialisation of a core
+like IsoAgLib::IsoTerminal_c. The use of this template guarantees that event the first access is always performed at a correct initialised instance. Even if the initialisation of a core
 service class depends of the previous initialisation of one or more other classes, the correct order of initialisation is realized.<br>
 Please contact the maintainers <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a> and <a href="mailto:Martin.Wodok@osb-ag:de">Martin Wodok</a> if you do not understand
 some parts, even after reading the presented documentation.

@@ -70,24 +70,24 @@ namespace IsoAgLib
   class iIdent_c;
 
 
-struct iISOFilter_s : private __IsoAgLib::ISOFilter_s
+struct iIsoFilter_s : private __IsoAgLib::IsoFilter_s
 {
-  iISOFilter_s (iCANCustomer_c& rrefc_canCustomer, uint32_t rui32_mask, uint32_t rui32_filter, const iISOName_c* rpc_isoNameDa = NULL, const iISOName_c* rpc_isoNameSa = NULL, int8_t ri8_dlcForce=-1, iIdent_c::identType_t rt_identType=iIdent_c::ExtendedIdent)
-    : ISOFilter_s (static_cast<__IsoAgLib::CANCustomer_c&>(rrefc_canCustomer),
+  iIsoFilter_s (iCanCustomer_c& rrefc_canCustomer, uint32_t rui32_mask, uint32_t rui32_filter, const iIsoName_c* rpc_isoNameDa = NULL, const iIsoName_c* rpc_isoNameSa = NULL, int8_t ri8_dlcForce=-1, iIdent_c::identType_t rt_identType=iIdent_c::ExtendedIdent)
+    : IsoFilter_s (static_cast<__IsoAgLib::CanCustomer_c&>(rrefc_canCustomer),
       rui32_mask, rui32_filter,
       rpc_isoNameDa, rpc_isoNameSa,
       ri8_dlcForce, rt_identType) {}
 
-  uint32_t          getMask()      const { return ISOFilter_s::getMask(); }
-  uint32_t          getFilter()    const { return ISOFilter_s::getFilter(); }
-  const iISOName_c& getIsoNameDa() const { return static_cast<const iISOName_c&>(ISOFilter_s::getIsoNameDa()); }
-  const iISOName_c& getIsoNameSa() const { return static_cast<const iISOName_c&>(ISOFilter_s::getIsoNameSa()); }
+  uint32_t          getMask()      const { return IsoFilter_s::getMask(); }
+  uint32_t          getFilter()    const { return IsoFilter_s::getFilter(); }
+  const iIsoName_c& getIsoNameDa() const { return static_cast<const iIsoName_c&>(IsoFilter_s::getIsoNameDa()); }
+  const iIsoName_c& getIsoNameSa() const { return static_cast<const iIsoName_c&>(IsoFilter_s::getIsoNameSa()); }
 
-  bool operator == (const iISOFilter_s rrefcs_isoFilter) const { return __IsoAgLib::ISOFilter_s::operator == (rrefcs_isoFilter); }
-  bool operator != (const iISOFilter_s rrefcs_isoFilter) const { return __IsoAgLib::ISOFilter_s::operator != (rrefcs_isoFilter); }
+  bool operator == (const iIsoFilter_s rrefcs_isoFilter) const { return __IsoAgLib::IsoFilter_s::operator == (rrefcs_isoFilter); }
+  bool operator != (const iIsoFilter_s rrefcs_isoFilter) const { return __IsoAgLib::IsoFilter_s::operator != (rrefcs_isoFilter); }
 
 private:
-  friend class iISOFilterManager_c;
+  friend class iIsoFilterManager_c;
   friend class __IsoAgLib::ProprietaryMessageHandler_c;
 };
 

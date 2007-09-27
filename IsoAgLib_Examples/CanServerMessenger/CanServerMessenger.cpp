@@ -145,7 +145,7 @@ int main( int argc, char *argv[] )
   // Initialize CAN-Bus
   getIcanInstance().init (params.i_channel); // CAN-Bus (with defaulting 250 kbit)
 
-  iCANPkg_c pkg;
+  iCanPkg_c pkg;
 
   pkg.setIdent(params.i_id, (params.b_ext ? iIdent_c::ExtendedIdent : iIdent_c::StandardIdent));
   pkg.setDataFromString(0, params.pui8_databytes, params.i_databytes);

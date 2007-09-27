@@ -74,26 +74,29 @@ namespace IsoAgLib {
   @see __IsoAgLib::FilterBox
   *@author Dipl.-Inform. Achim Spangler
   */
-class iCANCustomer_c : private __IsoAgLib::CANCustomer_c
+class iCanCustomer_c : private __IsoAgLib::CanCustomer_c
 {
 public:
   /**
     virtual function which delivers a pointer to the iCANCustomer
-    specific iCANPkgExt_c instance
+    specific iCanPkgExt_c instance
   */
-  virtual iCANPkgExt_c& iDataBase()=0;
+  virtual iCanPkgExt_c& iDataBase()=0;
 
 private:
   /**
     virtual function which delivers a pointer to the CANCustomer
-    specific CANPkgExt_c instance
+    specific CanPkgExt_c instance
   */
-  virtual __IsoAgLib::CANPkgExt_c& dataBase() { return static_cast<__IsoAgLib::CANPkgExt_c&>(iDataBase()); }
+  virtual __IsoAgLib::CanPkgExt_c& dataBase() { return static_cast<__IsoAgLib::CanPkgExt_c&>(iDataBase()); }
 
-  friend class iCANIO_c;
-  friend class iISOFilter_s;
+  friend class iCanIo_c;
+  friend class iIsoFilter_s;
   friend class __IsoAgLib::ProprietaryMessageHandler_c;
 };
+
+/** this typedef is only for some time to provide backward compatibility at API level */
+typedef iCanCustomer_c iCANCustomer_c;
 
 } // namespace
 #endif

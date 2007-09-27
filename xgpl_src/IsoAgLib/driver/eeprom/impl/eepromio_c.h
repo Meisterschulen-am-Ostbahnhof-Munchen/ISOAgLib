@@ -105,7 +105,7 @@
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
-class ISOName_c;
+class IsoName_c;
 
 /**
   object for communication with the EEPROM,
@@ -115,7 +115,7 @@ class ISOName_c;
   @short Simple data communication with EEPROM.
   @author Dipl.-Inform. Achim Spangler
 */
-class EEPROMIO_c : public Singleton<EEPROMIO_c> {
+class EepromIo_c : public Singleton<EepromIo_c> {
 public:
   typedef STL_NAMESPACE::string cc_string;
   /** default initialisation */
@@ -125,7 +125,7 @@ public:
   void close( void ){};
 
   /** destructor has nothing to destruct */
-  ~EEPROMIO_c();
+  ~EepromIo_c();
 
   // ++++++++++++++++++++++++++++++++++++
   // ++++ EEPROM managing operations ++++
@@ -216,13 +216,13 @@ public:
         * busy the EEPROM was busy with another action
         * eepromSegment low level writing caused segment error
 
-    @see EEPROMIO_c::tellp
-    @see EEPROMIO_c::setp
+    @see EepromIo_c::tellp
+    @see EepromIo_c::setp
     @param rTemplateVal value of any type to write into EEPROM from actual write position on
-    @return reference to this EEPROMIO_c instance (for chains like "eeprom << val1 << val2 << ... << val_n;")
+    @return reference to this EepromIo_c instance (for chains like "eeprom << val1 << val2 << ... << val_n;")
   */
   template<class T>
-    EEPROMIO_c& operator<<(const T& rTemlpateVal){return writeIntern(((const uint8_t*)(&rTemlpateVal)), sizeof(T));}
+    EepromIo_c& operator<<(const T& rTemlpateVal){return writeIntern(((const uint8_t*)(&rTemlpateVal)), sizeof(T));}
   /**
     write a text string value to EEPROM from actual write position on (tellp() )
 
@@ -231,12 +231,12 @@ public:
         * busy the EEPROM was busy with another action
         * eepromSegment low level writing caused segment error
 
-    @see EEPROMIO_c::tellp
-    @see EEPROMIO_c::setp
+    @see EepromIo_c::tellp
+    @see EepromIo_c::setp
     @param rrefc_val string to write into EEPROM
-    @return reference to this EEPROMIO_c instance (for chains like "eeprom << val1 << val2 << ... << val_n;")
+    @return reference to this EepromIo_c instance (for chains like "eeprom << val1 << val2 << ... << val_n;")
   */
-  inline EEPROMIO_c& operator<<(const cc_string& rrefc_val);
+  inline EepromIo_c& operator<<(const cc_string& rrefc_val);
   /**
     write a uint8_t string value to EEPROM from actual write position on (tellp() )
 
@@ -245,13 +245,13 @@ public:
         * busy the EEPROM was busy with another action
         * eepromSegment low level writing caused segment error
 
-    @see EEPROMIO_c::tellp
-    @see EEPROMIO_c::setp
+    @see EepromIo_c::tellp
+    @see EepromIo_c::setp
     @param rpb_string string to write into EEPROM
     @param rui16_number length of the string to write
-    @return reference to this EEPROMIO_c instance (for chains like "eeprom << val1 << val2 << ... << val_n;")
+    @return reference to this EepromIo_c instance (for chains like "eeprom << val1 << val2 << ... << val_n;")
   */
-  EEPROMIO_c& writeString(const uint8_t *const rpb_string, uint16_t rui16_number);
+  EepromIo_c& writeString(const uint8_t *const rpb_string, uint16_t rui16_number);
 
   /* *************************************** */
   /* *** EEPROM data operation functions *** */
@@ -267,13 +267,13 @@ public:
         * busy the EEPROM was busy with another action
         * eepromSegment low level reading caused segment error
 
-    @see EEPROMIO_c::tellg
-    @see EEPROMIO_c::setg
+    @see EepromIo_c::tellg
+    @see EepromIo_c::setg
     @param rTemplateVal EERPOM data is read into rTemplateVal from actual read position on
-    @return reference to this EEPROMIO_c instance (for chains like "eeprom >> val1 >> val2 >> ... >> val_n;")
+    @return reference to this EepromIo_c instance (for chains like "eeprom >> val1 >> val2 >> ... >> val_n;")
   */
   template<class T>
-  EEPROMIO_c& operator>>(T& rTemlpateVal){return readIntern(((uint8_t*)(&rTemlpateVal)), sizeof(T));}
+  EepromIo_c& operator>>(T& rTemlpateVal){return readIntern(((uint8_t*)(&rTemlpateVal)), sizeof(T));}
 
   /**
     read operator for strings with given length; uses BIOS function
@@ -283,8 +283,8 @@ public:
         * busy the EEPROM was busy with another reading action
         * eepromSegment low level reading caused segment error
 
-    @see EEPROMIO_c::tellg
-    @see EEPROMIO_c::setg
+    @see EepromIo_c::tellg
+    @see EepromIo_c::setg
     @param rpb_string pointer to uint8_t string, which should be read from actual EEPROM read position on
     @param rui16_number number of uint8_t to read into string
     @return true -> read with success
@@ -293,14 +293,14 @@ public:
 
 private:
 // Private methods
-  friend class Singleton<EEPROMIO_c>;
-  friend EEPROMIO_c& operator<<(EEPROMIO_c& refc_stream, const ISOName_c& refc_data );
-  friend EEPROMIO_c& operator>>(EEPROMIO_c& refc_stream, ISOName_c& refc_data );
+  friend class Singleton<EepromIo_c>;
+  friend EepromIo_c& operator<<(EepromIo_c& refc_stream, const IsoName_c& refc_data );
+  friend EepromIo_c& operator>>(EepromIo_c& refc_stream, IsoName_c& refc_data );
 
   /** private constructor which prevents direct instantiation in user application
-    * NEVER define instance of EEPROMIO_c within application
+    * NEVER define instance of EepromIo_c within application
     */
-  EEPROMIO_c( void ) {};
+  EepromIo_c( void ) {};
   /**
     initialize directly after the singleton instance is created.
     this is called from singleton.h and should NOT be called from the user again.
@@ -381,7 +381,7 @@ private:
     @param rui8_len lenght of data
     @return reference to this object for chains
   */
-  EEPROMIO_c& writeIntern(const uint8_t* rpb_data, uint8_t rui8_len);
+  EepromIo_c& writeIntern(const uint8_t* rpb_data, uint8_t rui8_len);
   /**
     read from actual read position wanted amount of data in to pointer
 
@@ -395,7 +395,7 @@ private:
     @param rui8_len lenght of data
     @return reference to this object for chains
   */
-  EEPROMIO_c& readIntern(uint8_t* rpb_data, uint8_t rui8_len);
+  EepromIo_c& readIntern(uint8_t* rpb_data, uint8_t rui8_len);
 
 private:
 // Private attributes
@@ -424,12 +424,12 @@ private:
       * busy the EEPROM was busy with another action
       * eepromSegment low level writing caused segment error
 
-  @see __IsoAgLib::EEPROMIO_c::tellp
-  @see __IsoAgLib::EEPROMIO_c::setp
+  @see __IsoAgLib::EepromIo_c::tellp
+  @see __IsoAgLib::EepromIo_c::setp
   @param rrefc_val string to write into EEPROM
-  @return reference to this EEPROMIO_c instance (for chains like "eeprom << val1 << val2 << ... << val_n;")
+  @return reference to this EepromIo_c instance (for chains like "eeprom << val1 << val2 << ... << val_n;")
 */
-inline EEPROMIO_c& EEPROMIO_c::operator<<(const cc_string& rrefc_val)
+inline EepromIo_c& EepromIo_c::operator<<(const cc_string& rrefc_val)
 { // check if enough space for string is after actual write position
   // second parameter true -> set range if end is reached
   if (!eofp(rrefc_val.size() * sizeof(int8_t), true))
@@ -456,7 +456,7 @@ inline EEPROMIO_c& EEPROMIO_c::operator<<(const cc_string& rrefc_val)
   @return true -> write successful
 */
 template<class T>
-bool EEPROMIO_c::write(uint16_t rui16_adress, T rTemplateVal)
+bool EepromIo_c::write(uint16_t rui16_adress, T rTemplateVal)
 {
   bool b_result = false;
   if ((rui16_adress + sizeof(T)) < eepromSize())
@@ -472,12 +472,14 @@ bool EEPROMIO_c::write(uint16_t rui16_adress, T rTemplateVal)
   return b_result;
 };
 
-/** C-style function, to get access to the unique EEPROMIO_c singleton instance */
-EEPROMIO_c& getEepromInstance( void );
-EEPROMIO_c& operator<<(EEPROMIO_c& refc_stream, const ISOName_c& refc_data );
-EEPROMIO_c& operator>>(EEPROMIO_c& refc_stream, ISOName_c& refc_data );
+/** C-style function, to get access to the unique EepromIo_c singleton instance */
+EepromIo_c& getEepromInstance( void );
+EepromIo_c& operator<<(EepromIo_c& refc_stream, const IsoName_c& refc_data );
+EepromIo_c& operator>>(EepromIo_c& refc_stream, IsoName_c& refc_data );
 
 
+/** this typedef is only for some time to provide backward compatibility at API level */
+typedef EepromIo_c EEPROMIO_c;
 }
 
 #endif

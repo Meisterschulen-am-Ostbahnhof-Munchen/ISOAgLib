@@ -632,7 +632,7 @@ void updateCanBusLoad(uint8_t rui8_busNr, uint8_t rb_dlc)
 
 /**
   send a message via a MsgObj;
-  CANPkg_c (or derived object) must provide (virtual)
+  CanPkg_c (or derived object) must provide (virtual)
   functions:
   * MASK_TYPE ident() -> deliver ident value
   * __IsoAgLib::Ident_c::identType_t identType() -> deliver type of ident
@@ -641,14 +641,14 @@ void updateCanBusLoad(uint8_t rui8_busNr, uint8_t rb_dlc)
     -> put DLC in referenced ref_dlc and insert data in uint8_t string pb_data
   @param rui8_busNr number of the BUS to config
   @param rui8_msgobjNr number of the MsgObj to config
-  @param rpc_data pointer to CANPkg_c instance with data to send
+  @param rpc_data pointer to CanPkg_c instance with data to send
   @return HAL_NO_ERR == no error;
           HAL_CONFIG_ERR == BUS not initialised, MsgObj is no send object
           HAL_NOACT_ERR == BUS OFF
           HAL_OVERFLOW_ERR == send buffer overflowed
           HAL_RANGE_ERR == wrong BUS or MsgObj number
 */
-int16_t can_useMsgobjSend(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib::CANPkg_c* rpc_data)
+int16_t can_useMsgobjSend(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib::CanPkg_c* rpc_data)
 { // check if some msg were sent from buffer
 
   tSend* pt_send = &t_cinterfMsgobjSend;
@@ -656,13 +656,13 @@ int16_t can_useMsgobjSend(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib:
 
   updateSuccSendTimestamp(rui8_busNr);
   b_count = arrHalCan[rui8_busNr][(rui8_msgobjNr)].ui8_cinterfLastSendBufCnt;
-  // CANPkgExt_c::getData transforms flag data to ident and 8byte string
+  // CanPkgExt_c::getData transforms flag data to ident and 8byte string
   rpc_data->getData(pt_send->dwId, pt_send->bXtd, pt_send->bDlc, pt_send->abData);
   // pt_send->dwId = rpc_data->ident();
   // if (rpc_data->identType() == 1)
-  // CANPkg_c::ident() and CANPkg_c::identType() changed to static
-  // pt_send->dwId = __IsoAgLib::CANPkg_c::ident();
-  // if (__IsoAgLib::CANPkg_c::identType() == 1)
+  // CanPkg_c::ident() and CanPkg_c::identType() changed to static
+  // pt_send->dwId = __IsoAgLib::CanPkg_c::ident();
+  // if (__IsoAgLib::CanPkg_c::identType() == 1)
   if (pt_send->bXtd == 1)
   { // extended 29bit ident
     updateCanBusLoad(rui8_busNr, (pt_send->bDlc + 4));
@@ -743,18 +743,18 @@ int32_t can_useNextMsgobjNumber(uint8_t rui8_busNr, int32_t &refMsgobjNr)
 
 
 /**
-  transfer front element in buffer into the pointed CANPkg_c;
+  transfer front element in buffer into the pointed CanPkg_c;
   DON'T clear this item from buffer.
   @see can_useMsgobjPopFront for explicit clear of this front item
   functions:
   * void setIdent(MASK_TYPE rt_ident, Ident_c::identType_t rt_type)
-    -> set ident rrefc_ident of received msg in CANPkg_c
+    -> set ident rrefc_ident of received msg in CanPkg_c
   * uint8_t setDataFromString(uint8_t* rpb_data, uint8_t rb_dlc)
-    -> set DLC in CANPkg_c from rb_dlc and insert data from uint8_t string rpb_data
+    -> set DLC in CanPkg_c from rb_dlc and insert data from uint8_t string rpb_data
   * void setTime(int32_t ri32_time) -> set receive time
   @param rui8_busNr number of the BUS to config
   @param rui8_msgobjNr number of the MsgObj to config
-  @param rpc_data pointer to CANPkg_c instance with data to send
+  @param rpc_data pointer to CanPkg_c instance with data to send
   @return HAL_NO_ERR == no error;
           HAL_CONFIG_ERR == BUS not initialised, MsgObj is no RX object
           HAL_NOACT_ERR == BUS OFF
@@ -762,7 +762,7 @@ int32_t can_useNextMsgobjNumber(uint8_t rui8_busNr, int32_t &refMsgobjNr)
           HAL_RANGE_ERR == wrong BUS or MsgObj number
           HAL_WARN_ERR == BUS WARN or no received message
 */
-int16_t can_useMsgobjGet(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib::CANPkg_c* rpc_data)
+int16_t can_useMsgobjGet(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib::CanPkg_c* rpc_data)
 {
   tReceive* pt_receive = &t_cinterfMsgobjReceive;
   int16_t i16_retVal = HAL_NO_ERR;
@@ -780,15 +780,15 @@ int16_t can_useMsgobjGet(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib::
     {
       i32_cinterfLastSuccReceive[rui8_busNr] = getTime();
       // rpc_data->setTime(i32_cinterfLastSuccReceive[rui8_busNr]);
-      // CANPkg_c::setTime changed to static
-      __IsoAgLib::CANPkg_c::setTime(i32_cinterfLastSuccReceive[rui8_busNr]);
+      // CanPkg_c::setTime changed to static
+      __IsoAgLib::CanPkg_c::setTime(i32_cinterfLastSuccReceive[rui8_busNr]);
     }
     else
     {
       i32_cinterfLastSuccReceive[rui8_busNr] = pt_receive->tReceiveTime.l1ms;
       // rpc_data->setTime(pt_receive->tReceiveTime.l1ms);
-      // CANPkg_c::setTime changed to static
-      __IsoAgLib::CANPkg_c::setTime(pt_receive->tReceiveTime.l1ms);
+      // CanPkg_c::setTime changed to static
+      __IsoAgLib::CanPkg_c::setTime(pt_receive->tReceiveTime.l1ms);
     }
 
     __IsoAgLib::Ident_c::identType_t idType;
@@ -804,7 +804,7 @@ int16_t can_useMsgobjGet(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib::
     }
     // rpc_data->setIdent(pt_receive->dwId, idType);
     // setIdent changed to static member function
-    __IsoAgLib::CANPkg_c::setIdent(pt_receive->dwId, idType);
+    __IsoAgLib::CanPkg_c::setIdent(pt_receive->dwId, idType);
     rpc_data->setDataFromString(pt_receive->abData, pt_receive->bDlc);
   }
   return i16_retVal;
@@ -814,7 +814,7 @@ int16_t can_useMsgobjGet(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib::
   Either register the currenct front item of buffer as not relevant,
   or just pop the front item, as it was processed.
   This explicit pop is needed, as one CAN message shall be served to
-  several CANCustomer_c instances, as long as one of them indicates a
+  several CanCustomer_c instances, as long as one of them indicates a
   succesfull process of the received message.
   @param rui8_busNr number of the BUS to config
   @param rui8_msgobjNr number of the MsgObj to config

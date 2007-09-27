@@ -99,7 +99,7 @@ namespace __IsoAgLib {
   @param rb_master true -> this setpoint register instance represents the actual master setpoint
   @param rb_valid true -> this setpoint register instance is accepted as valid
 */
-void SetpointRegister_c::init(const ISOName_c& rc_isoName, int32_t ri32_exact, int32_t ri32_min, int32_t ri32_max, int32_t ri32_default,
+void SetpointRegister_c::init(const IsoName_c& rc_isoName, int32_t ri32_exact, int32_t ri32_min, int32_t ri32_max, int32_t ri32_default,
         bool rb_handled, bool rb_master, bool rb_valid)
 { // direct value set to avoid special functions of equivalent set functions
   setExact(ri32_exact);

@@ -175,7 +175,7 @@ public:
 
 
 /** helper class for low level streaming.
-  This function was excluded from ISOTerminal_c,
+  This function was excluded from IsoTerminal_c,
   as some STL aware compilers don't support multiple inheritance
   ( e.g. IAR ). So this helper construction was defined.
 */
@@ -245,14 +245,14 @@ public:
 
 // forward declaration
 class VtServerInstance_c;
-class ISOTerminal_c;
+class IsoTerminal_c;
 /** class for managing the communication between vt client and server */
-class VtClientServerCommunication_c : public CANCustomer_c
+class VtClientServerCommunication_c : public CanCustomer_c
 {
 private:
   struct AuxAssignment_s
   {
-    ISOName_c mc_inputIsoName;
+    IsoName_c mc_inputIsoName;
     uint8_t mui8_inputNumber;
     uint16_t mui16_functionUid;
   };
@@ -307,7 +307,7 @@ public:
 
   /** constructor of VtClientServerCommunication_c
    */
-  VtClientServerCommunication_c (IdentItem_c& refc_wsMasterIdentItem, ISOTerminal_c &ref_isoTerminal, IsoAgLib::iIsoTerminalObjectPool_c& rrefc_pool, char* rpc_versionLabel, uint8_t rui8_clientId SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA);
+  VtClientServerCommunication_c (IdentItem_c& refc_wsMasterIdentItem, IsoTerminal_c &ref_isoTerminal, IsoAgLib::iIsoTerminalObjectPool_c& rrefc_pool, char* rpc_versionLabel, uint8_t rui8_clientId SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA);
 
 
   /** explicit conversion to reference of interface class type */
@@ -346,7 +346,7 @@ public:
 
   virtual bool processMsg();
 
-  virtual CANPkgExt_c& dataBase() { return c_data; }
+  virtual CanPkgExt_c& dataBase() { return c_data; }
 
   uint16_t getVtObjectPoolDimension();
   uint16_t getVtObjectPoolSoftKeyWidth();
@@ -445,7 +445,7 @@ public:
   vtClientDisplayState_t getVtDisplayState() { return en_displayState; }
 
 private:
-  friend class ISOTerminal_c;
+  friend class IsoTerminal_c;
 
   //! @return true for successful assignment, false if SA couldn't be found.
   bool storeAuxAssignment();
@@ -476,7 +476,7 @@ private:
     */
   void setVtDisplayState (bool b_isVtStatusMsg, uint8_t ui8_saOrDisplayState);
 
-  /// Using the singletonVecKey from c_data (-->ISOTerminalPkg_c)
+  /// Using the singletonVecKey from c_data (-->IsoTerminalPkg_c)
   SINGLETON_C_DATA_DEF
 
 private: // attributes
@@ -490,7 +490,7 @@ private: // attributes
   */
   IdentItem_c& refc_wsMasterIdentItem;
 
-  ISOTerminal_c& refc_isoTerminal; // back ref.
+  IsoTerminal_c& refc_isoTerminal; // back ref.
 
   VtServerInstance_c* pc_vtServerInstance;  // back p.
 
@@ -531,7 +531,7 @@ private: // attributes
 
   uint8_t ui8_clientId;
 
-  ISOTerminalPkg_c c_data;
+  IsoTerminalPkg_c c_data;
 
   vtClientDisplayState_t en_displayState;
 

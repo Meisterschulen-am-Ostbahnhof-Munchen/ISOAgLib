@@ -370,7 +370,7 @@ void SetpointLocal_c::setMasterMeasurementVal( int32_t ri32_val)
   master().setExact( ri32_val);
   master().setHandled( true);
   master().setValid( true);
-  master().setISOName(ISOName_c::ISONameUnspecified());
+  master().setISOName(IsoName_c::IsoNameUnspecified());
 
 #ifdef USE_FLOAT_DATA_TYPE
   setValType( i32_val);
@@ -466,7 +466,7 @@ SetpointRegister_c& SetpointLocal_c::unhandledFirst(){
 
   possible errors:
       * dependant error in ProcDataLocal_c commander of some setpoint isn't found in Monitor List
-      * dependant error in CANIO_c on CAN send problems
+      * dependant error in CanIo_c on CAN send problems
 */
 void SetpointLocal_c::respondAckNack(){
   // now send NO_VAL_32S for all other unhandled setpoints
@@ -601,7 +601,7 @@ bool SetpointLocal_c::timeEvent( void ){
       }
       else if (!b_staticMaster)
       { // pc_iter is master -> check if isoName is valid
-        const ISOName_c& c_testISOName = pc_iter->isoName();
+        const IsoName_c& c_testISOName = pc_iter->isoName();
         if ( ( !getIsoMonitorInstance4Comm().existIsoMemberISOName( c_testISOName, true) ) )
         { // isoName of caller not in Monitor-List or inactive since >3sec -> delete entry
           vec_register.erase( pc_iter);
@@ -633,7 +633,7 @@ bool SetpointLocal_c::timeEvent( void ){
   @param en_command
   @return true -> successful sent
 */
-bool SetpointLocal_c::sendSetpointMod(const ISOName_c& rc_targetISOName,
+bool SetpointLocal_c::sendSetpointMod(const IsoName_c& rc_targetISOName,
                                       GeneralCommand_c::ValueGroup_t en_valueGroup,
                                       GeneralCommand_c::CommandType_t en_command) const {
   // prepare general command in process pkg
@@ -678,7 +678,7 @@ void SetpointLocal_c::processSet(){
   // detect if something was changed
   bool b_change = false;
 
-  const ISOName_c& c_callerISOName = c_pkg.memberSend().isoName();
+  const IsoName_c& c_callerISOName = c_pkg.memberSend().isoName();
   for (pc_callerIter = vec_register.begin(); pc_callerIter != vec_register.end(); pc_callerIter++)
   { // check if c_callerISOName already set the item at ui8_callerIndex
     // ignore item of actual acepted master, as this should be handled as new

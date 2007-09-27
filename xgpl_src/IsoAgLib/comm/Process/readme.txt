@@ -253,7 +253,7 @@
   * the overhead of protocol specific details.
   * This is achieved by the CAN data formating and low-level processing class __IsoAgLib::ProcessPkg_c, which
   * detects dependent on the receiver ( for send of msg ) and/or sender ( for receive of msg )
-  * and its protocol state, which protocol format to use. This is achieved by IsoAgLib::iISOMonitor_c
+  * and its protocol state, which protocol format to use. This is achieved by IsoAgLib::iIsoMonitor_c
   * which provides functions to derive the protocol type of a ECU based on it DevKey == device_type/_instance setting.
   *
   * @subsection ApplicationPrinciple Principles for the use of Process Data

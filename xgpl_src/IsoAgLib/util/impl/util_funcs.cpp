@@ -146,7 +146,7 @@ int32_t mul1Div1Mul2Div2(int32_t ri32_mul_1, int32_t ri32_div_1, int32_t ri32_mu
   copy 4 uint8_t data string into pointer to float value;
   use e.g. to access uint8_t memory representation of
   int32_t value as float value;
-  often needed for CANPkg_c formating
+  often needed for CanPkg_c formating
   @param pvFrom source data string
   @param pf_to target float value
 */
@@ -213,7 +213,7 @@ void littleEndianStream2FloatVar(const void *const pvFrom, float *const pf_to)
   copy float value to 4 uint8_t data string into pointer;
   use e.g. to access uint8_t memory representation of
   float value as int32_t value;
-  often needed for CANPkg_c formating
+  often needed for CanPkg_c formating
   @param pf_from source float value
   @param pvTo target data string
 */

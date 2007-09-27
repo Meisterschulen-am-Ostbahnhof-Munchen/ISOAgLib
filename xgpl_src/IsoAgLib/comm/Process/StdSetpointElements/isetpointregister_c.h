@@ -81,7 +81,7 @@ public:
     deliver isoName of commanding member
     @return ISOName of setpoint commander
   */
-  const iISOName_c& isoName()const
+  const iIsoName_c& isoName()const
   {return SetpointRegister_c::isoName().toConstIisoName_c();};
   /**
     deliver the exact setpoint

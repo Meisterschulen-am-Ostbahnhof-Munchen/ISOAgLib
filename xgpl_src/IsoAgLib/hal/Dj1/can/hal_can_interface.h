@@ -69,7 +69,7 @@
 #include "../typedef.h"
 
 
-namespace __IsoAgLib { class Ident_c; class CANPkg_c; }
+namespace __IsoAgLib { class Ident_c; class CanPkg_c; }
 
 namespace __HAL 
 {
@@ -196,14 +196,14 @@ namespace __HAL
 
   /**
     send a message via a MsgObj;
-    CANPkg_c (or derived object) must provide (virtual)
+    CanPkg_c (or derived object) must provide (virtual)
     functions:
     * Ident_c& getIdent() -> deliver ident of msg to send
     * uint8_t getData(uint8_t& refb_dlc, uint8_t* pb_data)
       -> put DLC in referenced ref_dlc and insert data in uint8_t string pb_data
     @param rui8_busNr number of the BUS to config
     @param rui8_msgobjNr number of the MsgObj to config
-    @param rpc_data pointer to CANPkg_c instance with data to send
+    @param rpc_data pointer to CanPkg_c instance with data to send
     @return HAL_NO_ERR == no error;
             HAL_CONFIG_ERR == BUS not initialised, MsgObj is no send object
             HAL_NOACT_ERR == BUS OFF
@@ -211,7 +211,7 @@ namespace __HAL
             HAL_RANGE_ERR == wrong BUS or MsgObj number
   */
   extern int16_t Can_ObjSend ( uint8_t rui8_busNr, uint8_t rui8_msgobjNr,
-                                               __IsoAgLib::CANPkg_c* rpc_data );
+                                               __IsoAgLib::CanPkg_c* rpc_data );
 
 
   /**
@@ -232,17 +232,17 @@ namespace __HAL
 
 
   /**
-    transfer front element in buffer into the pointed CANPkg_c;
+    transfer front element in buffer into the pointed CanPkg_c;
     DON'T clear this item from buffer.
     @see can_useMsgobjPopFront for explicit clear of this front item
     functions:
     * setIdent(Ident_c& rrefc_ident)
       -> set ident rrefc_ident of received msg in CANPkg
     * uint8_t setData(uint8_t rb_dlc, uint8_t* rpb_data)
-      -> set DLC in CANPkg_c from rb_dlc and insert data from uint8_t string rpb_data
+      -> set DLC in CanPkg_c from rb_dlc and insert data from uint8_t string rpb_data
     @param rui8_busNr number of the BUS to config
     @param rui8_msgobjNr number of the MsgObj to config
-    @param rpc_data pointer to CANPkg_c instance with data to send
+    @param rpc_data pointer to CanPkg_c instance with data to send
     @return HAL_NO_ERR       == no error;
             HAL_CONFIG_ERR   == BUS not initialised, MsgObj is no RX object
             HAL_NOACT_ERR    == BUS OFF
@@ -251,7 +251,7 @@ namespace __HAL
             HAL_WARN_ERR     == BUS WARN or no received message
   */
   extern int16_t Can_ReadObjRx ( uint8_t rui8_busNr, uint8_t rui8_msgobjNr, 
-                                              __IsoAgLib::CANPkg_c* rpc_data );
+                                              __IsoAgLib::CanPkg_c* rpc_data );
 
 
   /**

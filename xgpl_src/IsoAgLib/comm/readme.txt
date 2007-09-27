@@ -51,9 +51,9 @@
 	*
 	* @subsection CommOverIsoSystem Overview on ISO 11783 Monitor List
 	* <b>Detailed Description:</b> \ref SystemMgmtAnnIso
-	* The class IsoAgLib::iISOMonitor_c has a monitor list of all ISO 11783 network nodes.
+	* The class IsoAgLib::iIsoMonitor_c has a monitor list of all ISO 11783 network nodes.
 	* It is mostly used by the application to search for a device by its device type - and to get its SA.
-	* It is also used internally to claim address and manage local ISO 11783 identities ( \ref IsoAgLib::iISOItem_c ).
+	* It is also used internally to claim address and manage local ISO 11783 identities ( \ref IsoAgLib::iIsoItem_c ).
 	* If EEPROM store and reload ( \ref USE_EEPROM_IO_YN ) is activated and compiled in the project, a
 	* dynamic aquired SA is automatically stred and reloaded at specified EEPROM address - as suggested by the standard.
 	*

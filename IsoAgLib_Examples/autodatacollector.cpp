@@ -262,7 +262,7 @@ bool check_for_imi();
 void writeData();
 
 // DEVKEY of other devices
-IsoAgLib::iISOName_c pc_otherGdevKey[10];
+IsoAgLib::iIsoName_c pc_otherGdevKey[10];
 uint8_t ui8_cntOtherISOName = 0;
 uint8_t ui8_rearEhrVal;
 
@@ -287,7 +287,7 @@ DefaultRecordConfig_c c_defaultRecordConfig;
 #endif
 
 // variable for DEV_KEY
-IsoAgLib::iISOName_c c_myISOName( 1, 5 );
+IsoAgLib::iIsoName_c c_myISOName( 1, 5 );
 
 int main()
 { // simply call startImi
@@ -305,7 +305,7 @@ int main()
   c_rs232.init( 19200, IsoAgLib::iRS232IO_c::_8_N_1, false, 80, 10 );
 
   #if READ_EEPROM_IDENT_YN == YES
-  iEEPROMIO_c& c_eeprom = getIeepromInstance();
+  iEepromIo_c& c_eeprom = getIeepromInstance();
 
   // read preconfigured data from EEPROM
   // read DEV_KEY
@@ -573,7 +573,7 @@ bool check_for_imi()
 {
   bool b_writeHeader = false;
   uint8_t ui8_cntAnnounced = getIdinMonitorInstance().dinMemberCnt(true);
-  IsoAgLib::iISOName_c c_testISOName;
+  IsoAgLib::iIsoName_c c_testISOName;
   IsoAgLib::iDINItem_c *p_member;
   iterator_device_data pc_iter;
 
@@ -597,7 +597,7 @@ bool check_for_imi()
       //  cehck if this device was active during last task -> continue
       uint8_t ui8_lastTaskMonth, ui8_lastTaskDay;
       uint16_t ui16_eepromOffsetAdr = 0xFFFF;
-      iEEPROMIO_c& c_eeprom = getIeepromInstance();
+      iEepromIo_c& c_eeprom = getIeepromInstance();
 
       c_eeprom.setg(ADR_TASK_CONTROLLER_DATE_DAY);
       c_eeprom >> ui8_lastTaskDay;
@@ -691,7 +691,7 @@ bool check_for_imi()
 
   // check for other devices
   uint8_t ui8_memberCnt = getIdinMonitorInstance().dinMemberCnt(true);
-  IsoAgLib::iISOName_c c_checkedISOName;
+  IsoAgLib::iIsoName_c c_checkedISOName;
   ui8_cntOtherISOName = 0;
   for (uint8_t ui8_ind = 0; ui8_ind < ui8_memberCnt ; ui8_ind++)
   {
@@ -752,7 +752,7 @@ void writeData()
   // control to read tractor offsets one time before first
   // write access
   static bool b_tractor_offset_eeprom_updated = false;
-  iEEPROMIO_c& c_eeprom = getIeepromInstance();
+  iEepromIo_c& c_eeprom = getIeepromInstance();
 
   // this process might last longer -> trigger watchdog
   IsoAgLib::iSystem_c::triggerWd();

@@ -100,15 +100,15 @@ namespace __IsoAgLib {
 
 /** default constructor - all data has to be initialized with a call to "set(..)"
 */
-ISOItem_c::ISOItem_c()
+IsoItem_c::IsoItem_c()
   : BaseItem_c(0, IState_c::IstateNull, 0)
   #ifdef USE_WORKING_SET
   , pc_masterItem (NULL)
-  , i8_slavesToClaimAddress (-2) // idle around and wait for this ISOItem_c to get initially initialized!
+  , i8_slavesToClaimAddress (-2) // idle around and wait for this IsoItem_c to get initially initialized!
   #endif
   , ui8_nr(0xFE)
   , b_repeatClaim (false) // wouldn't be needed to be set here as it's set when entering AddressClaim
-  , c_isoName (ISOName_c::ISONameUnspecified())
+  , c_isoName (IsoName_c::IsoNameUnspecified())
 {
 }
 
@@ -117,9 +117,9 @@ ISOItem_c::ISOItem_c()
   a master ( i.e. the pc_masterItem pointer points to this )
   -> it doesn't simply copy the pointer, but sets its
   own pointer also to the this-pointer of the new instance
-  @param rrefc_src source ISOItem_c instance
+  @param rrefc_src source IsoItem_c instance
 */
-ISOItem_c::ISOItem_c(const ISOItem_c& rrefc_src)
+IsoItem_c::IsoItem_c(const IsoItem_c& rrefc_src)
   : BaseItem_c(rrefc_src), ui8_nr(rrefc_src.ui8_nr), c_isoName(rrefc_src.c_isoName)
 {// mark this item as prepare address claim if local
   setItemState (IState_c::Member);
@@ -150,9 +150,9 @@ ISOItem_c::ISOItem_c(const ISOItem_c& rrefc_src)
 }
 
 /** assign constructor for ISOItem
-  @param rrefc_src source ISOItem_c object
+  @param rrefc_src source IsoItem_c object
 */
-ISOItem_c& ISOItem_c::operator=(const ISOItem_c& rrefc_src)
+IsoItem_c& IsoItem_c::operator=(const IsoItem_c& rrefc_src)
 {
 //   MonitorItem_c::operator=(rrefc_src);
   BaseItem_c::operator=(rrefc_src);
@@ -179,13 +179,13 @@ ISOItem_c& ISOItem_c::operator=(const ISOItem_c& rrefc_src)
   @param rb_left ISOName uint8_t left parameter
   @param rrefc_right rigth ServiceItem_c parameter
 */
-bool operator<(const ISOName_c& rc_left, const ISOItem_c& rrefc_right)
+bool operator<(const IsoName_c& rc_left, const IsoItem_c& rrefc_right)
 {
   return (rc_left < rrefc_right.isoName())?true:false;
 }
 
 /** default destructor */
-ISOItem_c::~ISOItem_c()
+IsoItem_c::~IsoItem_c()
 {
   if ( itemState(IState_c::ClaimedAddress ) )
   { // broadcast to handler classes the event of LOSS of this SA
@@ -203,7 +203,7 @@ ISOItem_c::~ISOItem_c()
 /** deliver name
   @return pointer to the name uint8_t string (8byte)
 */
-const uint8_t* ISOItem_c::name() const
+const uint8_t* IsoItem_c::name() const
 {
   return isoName(). outputString();
 }
@@ -211,7 +211,7 @@ const uint8_t* ISOItem_c::name() const
 /** check if the name field is empty (no name received)
   @return true -> no name received
 */
-bool ISOItem_c::isEmptyName() const
+bool IsoItem_c::isEmptyName() const
 {
   return false;
 }
@@ -220,7 +220,7 @@ bool ISOItem_c::isEmptyName() const
   @param pc_name string where ASCII string is inserted
   @param rui8_maxLen max length for name
 */
-void ISOItem_c::getPureAsciiName(int8_t *pc_asciiName, uint8_t rui8_maxLen)
+void IsoItem_c::getPureAsciiName(int8_t *pc_asciiName, uint8_t rui8_maxLen)
 {
   char c_temp[30];
   const uint8_t* pb_src = name();
@@ -240,7 +240,7 @@ void ISOItem_c::getPureAsciiName(int8_t *pc_asciiName, uint8_t rui8_maxLen)
   @param rb_status state of this ident (off, claimed address, ...)
   @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
-void ISOItem_c::set(int32_t ri32_time, const ISOName_c& rc_isoName, uint8_t rui8_nr,
+void IsoItem_c::set(int32_t ri32_time, const IsoName_c& rc_isoName, uint8_t rui8_nr,
         itemState_t ren_status, int ri_singletonVecKey )
 {
   BaseItem_c::set( ri32_time, ren_status, ri_singletonVecKey );
@@ -253,16 +253,16 @@ void ISOItem_c::set(int32_t ri32_time, const ISOName_c& rc_isoName, uint8_t rui8
     * find free SA or check if last SA is available
     * send adress claim
   possible errors:
-    * dependant error in CANIO_c during send
+    * dependant error in CanIo_c during send
   @return true -> all planned time event activitie performed
 */
-bool ISOItem_c::timeEvent( void )
+bool IsoItem_c::timeEvent( void )
 {
-  CANIO_c& c_can = getCanInstance4Comm();
-  ISOMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
+  CanIo_c& c_can = getCanInstance4Comm();
+  IsoMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
   int32_t i32_time = ElementBase_c::getLastRetriggerTime();
 
-  ISOSystemPkg_c& c_pkg = c_isoMonitor.data();
+  IsoSystemPkg_c& c_pkg = c_isoMonitor.data();
   if (itemState(IState_c::PreAddressClaim))
   { // this item is in prepare address claim state -> wait for sending first adress claim
     int32_t i32_lastAdrRequestTime = c_isoMonitor.lastIsoSaRequest();
@@ -270,7 +270,7 @@ bool ISOItem_c::timeEvent( void )
     {
       int32_t i32_wait = 1250 + calc_randomWait();
       if ( ( c_isoMonitor.isoMemberCnt( true ) < 1 ) && (i32_wait < 2500))
-      { // no claimed ISOItem_c nodes in the monitor list --> i.e. we received no adr claim
+      { // no claimed IsoItem_c nodes in the monitor list --> i.e. we received no adr claim
         // --> when we are the only ECU on ISOBUS, it doesn't hurt to wait at least 2500 msec after last Req
         i32_wait = 2500;
       }
@@ -304,14 +304,14 @@ bool ISOItem_c::timeEvent( void )
         c_pkg.setMonitorItemForSA( this ); // free SA or NACK flag
         // set NAME to CANPkg
         c_pkg.setDataUnion( outputNameUnion() );
-        // now ISOSystemPkg_c has right data -> send
+        // now IsoSystemPkg_c has right data -> send
         // if (!(c_pkg.identType() == Ident_c::ExtendedIdent))
-        // CANPkg_c::identType() changed to static
-        if (!(CANPkg_c::identType() == Ident_c::ExtendedIdent))
+        // CanPkg_c::identType() changed to static
+        if (!(CanPkg_c::identType() == Ident_c::ExtendedIdent))
         {
           // c_pkg.setIdentType(Ident_c::ExtendedIdent);
-          // CANPkg_c::setIdentType changed to static
-          CANPkg_c::setIdentType(Ident_c::ExtendedIdent);
+          // CanPkg_c::setIdentType changed to static
+          CanPkg_c::setIdentType(Ident_c::ExtendedIdent);
         }
         c_can << c_pkg;
         // update timestamp
@@ -401,10 +401,10 @@ bool ISOItem_c::timeEvent( void )
   * react on adress claims or request for adress claims for local items
   @return true -> a reaction on the received/processed msg was sent
 */
-bool ISOItem_c::processMsg()
+bool IsoItem_c::processMsg()
 {
   bool b_result = false;
-  ISOSystemPkg_c& c_pkg = getIsoMonitorInstance4Comm().data();
+  IsoSystemPkg_c& c_pkg = getIsoMonitorInstance4Comm().data();
   int32_t i32_pkgTime = c_pkg.time(),
       i32_now = ElementBase_c::getLastRetriggerTime();
   if ((i32_now - i32_pkgTime) > 100) updateTime(i32_now);
@@ -415,7 +415,7 @@ bool ISOItem_c::processMsg()
     case ADRESS_CLAIM_PGN: // adress claim
       // check if this item is local
       if ( itemState(IState_c::Local ) )
-      { // ISOItem_c::processMsg() is only called for local item, when
+      { // IsoItem_c::processMsg() is only called for local item, when
         // this item has higher PRIO, so that we shall reject the SA steal
         // by resending OUR SA CLAIM
         c_pkg.setMonitorItemForSA( this );
@@ -424,12 +424,12 @@ bool ISOItem_c::processMsg()
         c_pkg.setIsoPs(255); // global information
           // set NAME to CANPkg
         c_pkg.setDataUnion(outputNameUnion());
-          // now ISOSystemPkg_c has right data -> send
+          // now IsoSystemPkg_c has right data -> send
         getCanInstance4Comm() << c_pkg;
       }
       else
-      { // remote item (( the case with change of isoName should NO MORE HAPPEN as ISOMonitor_c
-        // simply removes ISOItem_c instances with same SA and different ISOName_c ))
+      { // remote item (( the case with change of isoName should NO MORE HAPPEN as IsoMonitor_c
+        // simply removes IsoItem_c instances with same SA and different IsoName_c ))
         const bool b_isChange = ( ( c_pkg.isoSa() != nr() ) || ( isoName() != *(c_pkg.getDataUnionConst()) ) );
         const bool b_wasClaimed = itemState(IState_c::ClaimedAddress);
         if ( b_wasClaimed &&  b_isChange )
@@ -457,7 +457,7 @@ bool ISOItem_c::processMsg()
   * - also needed when a local ident triggers a periodic request for SA
   * @return true -> this item has already a claimed SA -> it sent its SA; false -> didn't send SA, as not yet claimed or not local
   */
-bool ISOItem_c::sendSaClaim()
+bool IsoItem_c::sendSaClaim()
 {
   // If we're still in AddressClaim, delay the saSending until we're ClaimedAddress
   if (   itemState(IState_c::AddressClaim) ) { b_repeatClaim = true; return false; }
@@ -467,21 +467,21 @@ bool ISOItem_c::sendSaClaim()
   #ifdef DEBUG
   INTERNAL_DEBUG_DEVICE << "Send SA claim (sendSaClaim())" << INTERNAL_DEBUG_DEVICE_ENDL;
   #endif
-  ISOSystemPkg_c& c_pkg = getIsoMonitorInstance4Comm().data();
+  IsoSystemPkg_c& c_pkg = getIsoMonitorInstance4Comm().data();
   c_pkg.setIsoPri(6);
   c_pkg.setIsoPgn(ADRESS_CLAIM_PGN);
   c_pkg.setIsoPs(255); // global information
   c_pkg.setMonitorItemForSA( this );
   // set NAME to CANPkg
   c_pkg.setDataUnion(outputNameUnion());
-  // now ISOSystemPkg_c has right data -> send
+  // now IsoSystemPkg_c has right data -> send
   getCanInstance4Comm() << c_pkg;
   return true;
 }
 
 
 #ifdef USE_WORKING_SET
-bool ISOItem_c::sendWsAnnounce()
+bool IsoItem_c::sendWsAnnounce()
 {
   if ((i8_slavesToClaimAddress == -2) || // -2: Waiting for user-trigger
       (i8_slavesToClaimAddress ==  0))   //  0: Finished ws-ann. so it can be triggered again!
@@ -499,7 +499,7 @@ bool ISOItem_c::sendWsAnnounce()
 /** calculate random wait time between 0 and 153msec. from NAME and time
   @return wait offset in msec. [0..153]
 */
-uint8_t ISOItem_c::calc_randomWait()
+uint8_t IsoItem_c::calc_randomWait()
 { // perform some calculation from NAME
   uint16_t ui16_result = outputNameUnion()->getUint8Data(0) * outputNameUnion()->getUint8Data(1);
   if ( ( (outputNameUnion()->getUint8Data(2) +1) != 0 )
@@ -517,7 +517,7 @@ uint8_t ISOItem_c::calc_randomWait()
 
 #ifdef USE_WORKING_SET
 /** returns a pointer to the referenced master ISOItem */
-ISOItem_c* ISOItem_c::getMaster () const
+IsoItem_c* IsoItem_c::getMaster () const
 {
   return pc_masterItem;
 }
@@ -525,18 +525,18 @@ ISOItem_c* ISOItem_c::getMaster () const
 /** attaches to a working set master and become slave hereby
   if called with NULL the ISOItem loses working-set membership and becomes STANDALONE again!
 */
-void ISOItem_c::setMaster ( ISOItem_c* rpc_masterItem )
+void IsoItem_c::setMaster ( IsoItem_c* rpc_masterItem )
 {
   pc_masterItem = rpc_masterItem;
 }
 #endif
 
 /**
-  lower comparison between left ISOItem_c and right ISOName uint8_t
+  lower comparison between left IsoItem_c and right ISOName uint8_t
   @param rrefc_left left ServiceItem_c parameter
   @param rb_right ISOName uint8_t right parameter
 */
-bool lessThan(const ISOItem_c& rrefc_left, const ISOName_c& rc_right)
+bool lessThan(const IsoItem_c& rrefc_left, const IsoName_c& rc_right)
 {
   return (rrefc_left.isoName() < rc_right)?true:false;
 }

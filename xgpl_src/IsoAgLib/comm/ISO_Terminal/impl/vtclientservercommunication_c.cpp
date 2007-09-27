@@ -387,7 +387,7 @@ VtClientServerCommunication_c::processPartStreamDataChunk (IsoAgLib::iStream_c& 
 /** default constructor, which can optional set the pointer to the containing
   Scheduler_c object instance
  */
-VtClientServerCommunication_c::VtClientServerCommunication_c (IdentItem_c& ref_wsMasterIdentItem, ISOTerminal_c &ref_isoTerminal, IsoAgLib::iIsoTerminalObjectPool_c& rrefc_pool, char* rpc_versionLabel, uint8_t rui8_clientId SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA)
+VtClientServerCommunication_c::VtClientServerCommunication_c (IdentItem_c& ref_wsMasterIdentItem, IsoTerminal_c &ref_isoTerminal, IsoAgLib::iIsoTerminalObjectPool_c& rrefc_pool, char* rpc_versionLabel, uint8_t rui8_clientId SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA)
   : b_vtAliveCurrent (false) // so we detect the rising edge when the VT gets connected!
   , b_checkSameCommand (true)
   , refc_wsMasterIdentItem (ref_wsMasterIdentItem)
@@ -447,8 +447,8 @@ VtClientServerCommunication_c::VtClientServerCommunication_c (IdentItem_c& ref_w
 VtClientServerCommunication_c::~VtClientServerCommunication_c()
 {
   getMultiReceiveInstance4Comm().deregisterClient (*this);
-  getIsoFilterManagerInstance4Comm().removeIsoFilter (ISOFilter_s (*this, (0x3FFFF00UL), (VT_TO_ECU_PGN << 8),       &getIdentItem().isoName(), NULL, 8));
-  getIsoFilterManagerInstance4Comm().removeIsoFilter (ISOFilter_s (*this, (0x3FFFF00UL), (ACKNOWLEDGEMENT_PGN << 8), &getIdentItem().isoName(), NULL, 8));
+  getIsoFilterManagerInstance4Comm().removeIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL), (VT_TO_ECU_PGN << 8),       &getIdentItem().isoName(), NULL, 8));
+  getIsoFilterManagerInstance4Comm().removeIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL), (ACKNOWLEDGEMENT_PGN << 8), &getIdentItem().isoName(), NULL, 8));
 }
 
 
@@ -687,8 +687,8 @@ VtClientServerCommunication_c::timeEvent(void)
   if (!b_receiveFilterCreated)
   { /*** MultiReceive/IsoFilterManager Registration ***/
     getMultiReceiveInstance4Comm().registerClient (*this, getIdentItem().isoName(), VT_TO_ECU_PGN);
-    getIsoFilterManagerInstance4Comm().insertIsoFilter (ISOFilter_s (*this, (0x3FFFF00UL), (VT_TO_ECU_PGN << 8),       &getIdentItem().isoName(), NULL, 8));
-    getIsoFilterManagerInstance4Comm().insertIsoFilter (ISOFilter_s (*this, (0x3FFFF00UL), (ACKNOWLEDGEMENT_PGN << 8), &getIdentItem().isoName(), NULL, 8));
+    getIsoFilterManagerInstance4Comm().insertIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL), (VT_TO_ECU_PGN << 8),       &getIdentItem().isoName(), NULL, 8));
+    getIsoFilterManagerInstance4Comm().insertIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL), (ACKNOWLEDGEMENT_PGN << 8), &getIdentItem().isoName(), NULL, 8));
 
     b_receiveFilterCreated = true;
   }
@@ -840,7 +840,7 @@ VtClientServerCommunication_c::timeEvent(void)
 
 
 /** process received ack messages
-  @return true -> message was processed; else the received CAN message will be served to other matching CANCustomer_c */
+  @return true -> message was processed; else the received CAN message will be served to other matching CanCustomer_c */
 bool
 VtClientServerCommunication_c::processMsgAck()
 {
@@ -899,7 +899,7 @@ VtClientServerCommunication_c::processMsgAck()
 
 
 /** process received language pgn
-  @return true -> message was processed; else the received CAN message will be served to other matching CANCustomer_c
+  @return true -> message was processed; else the received CAN message will be served to other matching CanCustomer_c
  */
 void
 VtClientServerCommunication_c::notifyOnVtsLanguagePgn()
@@ -935,7 +935,7 @@ VtClientServerCommunication_c::notifyOnVtStatusMessage()
 void
 VtClientServerCommunication_c::notifyOnAuxInputStatus()
 {
-  const ISOName_c& rc_inputIsoName = c_data.getISONameForSA();
+  const IsoName_c& rc_inputIsoName = c_data.getISONameForSA();
   uint8_t const cui8_inputNumber = c_data.getUint8Data(2-1);
 
   // Look for all Functions that are controlled by this Input right now!
@@ -974,7 +974,7 @@ VtClientServerCommunication_c::storeAuxAssignment()
       }
       else
       { /// Reassign
-        const ISOName_c& rc_inputIsoNameNew = getIsoMonitorInstance4Comm().isoMemberNr (cui8_inputSaNew).isoName();
+        const IsoName_c& rc_inputIsoNameNew = getIsoMonitorInstance4Comm().isoMemberNr (cui8_inputSaNew).isoName();
         it->mc_inputIsoName = rc_inputIsoNameNew;
         it->mui8_inputNumber = cui8_inputNrNew;
         return true;
@@ -988,7 +988,7 @@ VtClientServerCommunication_c::storeAuxAssignment()
     return true; // unassignment is always okay!
 
   AuxAssignment_s s_newAuxAssignment;
-  const ISOName_c& rc_inputIsoNameNew = getIsoMonitorInstance4Comm().isoMemberNr (cui8_inputSaNew).isoName();
+  const IsoName_c& rc_inputIsoNameNew = getIsoMonitorInstance4Comm().isoMemberNr (cui8_inputSaNew).isoName();
   s_newAuxAssignment.mc_inputIsoName = rc_inputIsoNameNew;
   s_newAuxAssignment.mui8_inputNumber = cui8_inputNrNew;
   s_newAuxAssignment.mui16_functionUid = cui16_functionUidNew;
@@ -999,7 +999,7 @@ VtClientServerCommunication_c::storeAuxAssignment()
 
 
 /** process received can messages
-  @return true -> message was processed; else the received CAN message will be served to other matching CANCustomer_c
+  @return true -> message was processed; else the received CAN message will be served to other matching CanCustomer_c
  */
 bool
 VtClientServerCommunication_c::processMsg()

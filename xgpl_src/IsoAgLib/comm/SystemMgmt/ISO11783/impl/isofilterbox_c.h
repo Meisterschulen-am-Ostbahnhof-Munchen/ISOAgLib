@@ -108,45 +108,45 @@ namespace __IsoAgLib {
 
 // forward declarations
 class FilterBox_c;
-class CANCustomer_c;
+class CanCustomer_c;
 
-struct ISOFilter_s
+struct IsoFilter_s
 {
   // dlcForce == -1: don't check dlc. value of 0..8: force to be exactly this dlc!
-  ISOFilter_s (CANCustomer_c& rrefc_canCustomer, uint32_t rui32_mask, uint32_t rui32_filter, const ISOName_c* rpc_isoNameDa = NULL, const ISOName_c* rpc_isoNameSa = NULL, int8_t ri8_dlcForce=-1, Ident_c::identType_t rt_identType=Ident_c::ExtendedIdent);
-  ~ISOFilter_s();
+  IsoFilter_s (CanCustomer_c& rrefc_canCustomer, uint32_t rui32_mask, uint32_t rui32_filter, const IsoName_c* rpc_isoNameDa = NULL, const IsoName_c* rpc_isoNameSa = NULL, int8_t ri8_dlcForce=-1, Ident_c::identType_t rt_identType=Ident_c::ExtendedIdent);
+  ~IsoFilter_s();
 
   uint32_t         getMask()      const { return c_identMask.ident(); }
   uint32_t         getFilter()    const { return c_identFilter.ident(); }
-  const ISOName_c& getIsoNameDa() const { return c_isoNameDa; }
-  const ISOName_c& getIsoNameSa() const { return c_isoNameSa; }
+  const IsoName_c& getIsoNameDa() const { return c_isoNameDa; }
+  const IsoName_c& getIsoNameSa() const { return c_isoNameSa; }
 
   /** operator== does INTENTIONALLY NOT compare the dlcForce field as you can't have the same filter for
       the same customer just with another dlcForce! do NEVER do this! */
-  bool operator == (const ISOFilter_s& rrefc_isoFilter) const
+  bool operator == (const IsoFilter_s& rrefc_isoFilter) const
   { return equalMaskAndFilter (rrefc_isoFilter) && (pc_canCustomer == rrefc_isoFilter.pc_canCustomer) /*&& (i8_dlcForce == rrefc_isoFilter.i8_dlcForce) */;}
-  bool operator != (const ISOFilter_s& rrefc_isoFilter) const
+  bool operator != (const IsoFilter_s& rrefc_isoFilter) const
   { return !operator == (rrefc_isoFilter); }
 
 private:
-  bool equalMaskAndFilter (const ISOFilter_s& rrefc_isoFilter) const;
+  bool equalMaskAndFilter (const IsoFilter_s& rrefc_isoFilter) const;
 
 private:
   Ident_c c_identMask;
   Ident_c c_identFilter;
-  ISOName_c c_isoNameDa;
-  ISOName_c c_isoNameSa;
+  IsoName_c c_isoNameDa;
+  IsoName_c c_isoNameSa;
 
-  /** Pointer to a CANCustomer_c instance. Assume this like a reference to be always valid! */
-  CANCustomer_c* pc_canCustomer;
+  /** Pointer to a CanCustomer_c instance. Assume this like a reference to be always valid! */
+  CanCustomer_c* pc_canCustomer;
 
   int8_t i8_dlcForce; // 0..8 to force the DLC, -1 to X (don't care)
 
-  friend class ISOFilterBox_c;
+  friend class IsoFilterBox_c;
 };
 
 
-class ISOFilterBox_c : public ClientBase
+class IsoFilterBox_c : public ClientBase
 {
 public:
   enum RemoveAnswer_en
@@ -156,52 +156,55 @@ public:
     RemoveAnswerSuccessBoxNotEmpty
   };
 
-  struct ManagedISOFilter_s
+  struct ManagedIsoFilter_s
   {
-    ManagedISOFilter_s (const ISOFilter_s& rrefs_isoFilter) : s_isoFilter (rrefs_isoFilter), pc_filterBox (NULL) {}
+    ManagedIsoFilter_s (const IsoFilter_s& rrefs_isoFilter) : s_isoFilter (rrefs_isoFilter), pc_filterBox (NULL) {}
 
-    ISOFilter_s s_isoFilter;
+    IsoFilter_s s_isoFilter;
     FilterBox_c* pc_filterBox;
   };
 
-  typedef STL_NAMESPACE::USABLE_SLIST<ManagedISOFilter_s> ManagedISOFilter_slist;
-  typedef STL_NAMESPACE::USABLE_SLIST<ManagedISOFilter_s>::iterator ManagedISOFilter_it;
+  typedef STL_NAMESPACE::USABLE_SLIST<ManagedIsoFilter_s> ManagedIsoFilter_slist;
+  typedef STL_NAMESPACE::USABLE_SLIST<ManagedIsoFilter_s>::iterator ManagedISOFilter_it;
 
   /** empty constructor - everything has to be "constructed" with the "init"-function! */
-  ISOFilterBox_c (SINGLETON_VEC_KEY_PARAMETER_DEF);
+  IsoFilterBox_c (SINGLETON_VEC_KEY_PARAMETER_DEF);
 
   /** copy constructor, as implicit one was too large to be inlined! */
-  ISOFilterBox_c (const ISOFilterBox_c&);
+  IsoFilterBox_c (const IsoFilterBox_c&);
 
-  /** initialization for one simple ISOFilterBox_c
-    @param rrefc_customer reference to the CANCustomer_c instance, which creates this ISOFilterBox_c instance
+  /** initialization for one simple IsoFilterBox_c
+    @param rrefc_customer reference to the CanCustomer_c instance, which creates this IsoFilterBox_c instance
    */
-//  void init (CANCustomer_c& rrefc_canCustomer);
+//  void init (CanCustomer_c& rrefc_canCustomer);
 
   /** add ISOFilter
     @return true on success
    */
-  bool addIsoFilter (const ISOFilter_s& rrefcs_isoFilter);
+  bool addIsoFilter (const IsoFilter_s& rrefcs_isoFilter);
 
-  bool hasIsoFilterWithoutCustomer (const ISOFilter_s& rrefcs_isoFilter);
-  bool hasIsoFilterWithCustomer    (const ISOFilter_s& rrefcs_isoFilter);
+  bool hasIsoFilterWithoutCustomer (const IsoFilter_s& rrefcs_isoFilter);
+  bool hasIsoFilterWithCustomer    (const IsoFilter_s& rrefcs_isoFilter);
 
-  RemoveAnswer_en removeIsoFilter (const ISOFilter_s& rrefcs_isoFilter);
+  RemoveAnswer_en removeIsoFilter (const IsoFilter_s& rrefcs_isoFilter);
 
-  void updateOnAdd    (const ISOName_c& rpc_isoName);
-  void updateOnRemove (const ISOName_c& rpc_isoName);
+  void updateOnAdd    (const IsoName_c& rpc_isoName);
+  void updateOnRemove (const IsoName_c& rpc_isoName);
 
-  void syncFiltersToCan(const ISOName_c* rpc_isoName=NULL);
+  void syncFiltersToCan(const IsoName_c* rpc_isoName=NULL);
 
   //! Here could come another constructor that takes a variable list of filters and
   //! keeps them all connected. Yet to be done, but not important right now...
 
 private:
-  ManagedISOFilter_slist slist_managedISOFilter;
+  ManagedIsoFilter_slist slist_managedISOFilter;
 
   // management information about the state of this instance
   uint8_t ui8_filtersSetUp;
 };
+
+/** this typedef is only for some time to provide backward compatibility at API level */
+typedef IsoFilter_s ISOFilter_s;
 
 } // End Namespace __IsoAgLib
 #endif

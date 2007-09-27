@@ -55,11 +55,11 @@
 #define IISO_NAME_H
 
 /// The following define is only to be used in Variable-definitions when
-/// "IsoAgLib::iISOName_c(IsoAgLib::iISOName_c::iISONameUnspecified)"
-/// does NOT work as "iISONameUnspecified" itself is (probably!!) not yet
+/// "IsoAgLib::iIsoName_c(IsoAgLib::iIsoName_c::iIsoNameUnspecified)"
+/// does NOT work as "iIsoNameUnspecified" itself is (probably!!) not yet
 /// constructed. This may be the case if the variable-definition order
 /// indicates that it gets initialized later then it's being used.
-#define IISONAME_UNSPECIFIED_CONSTRUCTOR IsoAgLib::iISOName_c(0x7F, 0xF)
+#define IISONAME_UNSPECIFIED_CONSTRUCTOR IsoAgLib::iIsoName_c(0x7F, 0xF)
 
 /* *************************************** */
 /* ********** include headers ************ */
@@ -77,7 +77,7 @@ namespace __IsoAgLib
 namespace IsoAgLib {
 
 // forward declarations
-class iEEPROMIO_c;
+class iEepromIo_c;
 
 /** handle the 64bit ISO11783 NAME field
   with input/output from/to 8byte string
@@ -87,29 +87,41 @@ class iEEPROMIO_c;
 */
 #ifdef __IAR_SYSTEMS_ICC__
 // Using IAR it is not allowed to static_cast from private or protected base.
-class iISOName_c : public __IsoAgLib::ISOName_c
+class iIsoName_c : public __IsoAgLib::IsoName_c
 #else
-class iISOName_c : private __IsoAgLib::ISOName_c
+class iIsoName_c : private __IsoAgLib::IsoName_c
 #endif
 {
 public:
   /** constant for default parameters and initialization, where the device type is not yet spcified.
       the instantiation of this constant variable is located in the module cancustomer_c.cpp
     */
-  static const iISOName_c& iISONameUnspecified() { return ISONameUnspecified().toConstIisoName_c(); }
+  static const iIsoName_c& iIsoNameUnspecified() { return IsoNameUnspecified().toConstIisoName_c(); }
 
   /** constant for not yet spcified process data ident -> <device class, device class instance> := <0x0,0xF>
       the instantiation of this constant variable is located in the module cancustomer_c.cpp
     */
-  static const iISOName_c& iISONameInitialProcessData() { return ISONameInitialProcessData().toConstIisoName_c(); }
+  static const iIsoName_c& iIsoNameInitialProcessData() { return IsoNameInitialProcessData().toConstIisoName_c(); }
+
+  /** constant for default parameters and initialization, where the device type is not yet spcified.
+      the instantiation of this constant variable is located in the module cancustomer_c.cpp
+      THIS VARIANT IS ONLY FOR BACKWARD COMPATIBILITY AT API LEVEL
+    */
+  static const iIsoName_c& iISONameUnspecified() { return iIsoNameUnspecified(); }
+
+  /** constant for not yet spcified process data ident -> <device class, device class instance> := <0x0,0xF>
+      the instantiation of this constant variable is located in the module cancustomer_c.cpp
+      THIS VARIANT IS ONLY FOR BACKWARD COMPATIBILITY AT API LEVEL
+    */
+  static const iIsoName_c& iISONameInitialProcessData() { return iIsoNameInitialProcessData(); }
 
   /** default constructor
     using "explicit" to avoid WRONG implicit cast from SA to ISONAME!
     @param rui8_devClass     initial DEVCLASS (device type)
     @param rui8_devClassInst initial DEVCLASSINST (instance). Defaults to "unknown" (=0xF)
     */
-  explicit iISOName_c( uint8_t rui8_devClass, uint8_t rui8_devClassInst=0xF)
-  : ISOName_c( rui8_devClass, rui8_devClassInst ) {}
+  explicit iIsoName_c( uint8_t rui8_devClass, uint8_t rui8_devClassInst=0xF)
+  : IsoName_c( rui8_devClass, rui8_devClassInst ) {}
 
   /** constructor which format data string from series of input flags
     @param rb_selfConf true -> indicate sefl configuring ECU
@@ -124,36 +136,36 @@ public:
     @param rb_funcInst instance number of ECU with same function, device class and function instance
         (default 0 - normally)
   */
-  iISOName_c(bool rb_selfConf, uint8_t rui8_indGroup, uint8_t rui8_devClass, uint8_t rui8_devClassInst,
+  iIsoName_c(bool rb_selfConf, uint8_t rui8_indGroup, uint8_t rui8_devClass, uint8_t rui8_devClassInst,
         uint8_t rb_func, uint16_t rui16_manufCode, uint32_t rui32_serNo, uint8_t rb_funcInst = 0, uint8_t rb_ecuInst = 0)
-        : ISOName_c( rb_selfConf, rui8_indGroup, rui8_devClass, rui8_devClassInst, rb_func, rui16_manufCode, rui32_serNo, rb_funcInst, rb_ecuInst ) {}
+        : IsoName_c( rb_selfConf, rui8_indGroup, rui8_devClass, rui8_devClassInst, rb_func, rui16_manufCode, rui32_serNo, rb_funcInst, rb_ecuInst ) {}
 
   /** constructor which can read in initial data from uint8_t string
     @param rpb_src 64bit input data string
   */
-  iISOName_c(const uint8_t* rpb_src = NULL) : ISOName_c(rpb_src) {}
+  iIsoName_c(const uint8_t* rpb_src = NULL) : IsoName_c(rpb_src) {}
 
   /** copy constructor for ISOName
-    @param rrefc_src source ISOName_c instance
+    @param rrefc_src source IsoName_c instance
   */
-    iISOName_c(const iISOName_c& rrefc_src) : ISOName_c( rrefc_src ) {}
+    iIsoName_c(const iIsoName_c& rrefc_src) : IsoName_c( rrefc_src ) {}
 
   /** assign constructor for ISOName
-    @param rrefc_src source ISOName_c object
+    @param rrefc_src source IsoName_c object
   */
-  const iISOName_c& operator=(const iISOName_c& rrefc_src) { return ISOName_c::operator=( rrefc_src ).toConstIisoName_c();}
+  const iIsoName_c& operator=(const iIsoName_c& rrefc_src) { return IsoName_c::operator=( rrefc_src ).toConstIisoName_c();}
 
-  /** compare two iISOName_c values with operator< */
-  bool operator<( const iISOName_c& refc_right ) const
-  { return ISOName_c::operator < (refc_right);}
+  /** compare two iIsoName_c values with operator< */
+  bool operator<( const iIsoName_c& refc_right ) const
+  { return IsoName_c::operator < (refc_right);}
 
-  /** compare two ISOName_c values with operator== */
-  bool operator==( const iISOName_c& refc_right ) const
-    { return ISOName_c::operator==(refc_right);}
+  /** compare two IsoName_c values with operator== */
+  bool operator==( const iIsoName_c& refc_right ) const
+    { return IsoName_c::operator==(refc_right);}
 
-  /** compare two ISOName_c values with operator!= */
-  bool operator!=( const iISOName_c& refc_right ) const
-    { return ISOName_c::operator!=(refc_right);}
+  /** compare two IsoName_c values with operator!= */
+  bool operator!=( const iIsoName_c& refc_right ) const
+    { return IsoName_c::operator!=(refc_right);}
 
   /** set data string with all flags with one call
     @param rb_selfConf true -> indicate sefl configuring ECU
@@ -170,126 +182,126 @@ public:
   */
   void set(bool rb_selfConf, uint8_t rui8_indGroup, uint8_t rui8_devClass, uint8_t rui8_devClassInst,
         uint8_t rb_func, uint16_t rui16_manufCode, uint32_t rui32_serNo, uint8_t rb_funcInst = 0, uint8_t rb_ecuInst = 0)
-    { ISOName_c::set( rb_selfConf, rui8_indGroup, rui8_devClass, rui8_devClassInst, rb_func, rui16_manufCode, rui32_serNo, rb_funcInst, rb_ecuInst );}
+    { IsoName_c::set( rb_selfConf, rui8_indGroup, rui8_devClass, rui8_devClassInst, rb_func, rui16_manufCode, rui32_serNo, rb_funcInst, rb_ecuInst );}
 
 
   /** deliver the data NAME string as pointer to 8byte string
     @return const pointer to 8 uint8_t string with NAME
   */
-  const uint8_t* outputString() const {return ISOName_c::outputString();}
+  const uint8_t* outputString() const {return IsoName_c::outputString();}
 
   /** get self config mode
     @return self configuration adress state
   */
-  uint8_t selfConf() const { return ISOName_c::selfConf();}
+  uint8_t selfConf() const { return IsoName_c::selfConf();}
 
   /** get industry group code
     @return industry group of device
   */
-  uint8_t indGroup() const { return ISOName_c::indGroup();}
+  uint8_t indGroup() const { return IsoName_c::indGroup();}
 
   /** get device class instance number
     @return:device class instance number
   */
-  uint8_t devClassInst() const { return ISOName_c::devClassInst();}
+  uint8_t devClassInst() const { return IsoName_c::devClassInst();}
 
   /** get device class code
     @return:device class
   */
-  uint8_t devClass() const { return ISOName_c::devClass();}
+  uint8_t devClass() const { return IsoName_c::devClass();}
 
   /** get function code
     @return function code
   */
-  uint8_t func() const { return ISOName_c::func();}
+  uint8_t func() const { return IsoName_c::func();}
 
   /** get function instance code
     @return function instance code
   */
-  uint8_t funcInst() const { return ISOName_c::funcInst();}
+  uint8_t funcInst() const { return IsoName_c::funcInst();}
 
   /** get ECU instance code
     @return ECU instance code
   */
-  uint8_t ecuInst() const { return ISOName_c::ecuInst();}
+  uint8_t ecuInst() const { return IsoName_c::ecuInst();}
 
   /** get manufactor code
     @return manufactor code
   */
-  uint16_t manufCode() const { return ISOName_c::manufCode();}
+  uint16_t manufCode() const { return IsoName_c::manufCode();}
 
   /** get serial number
     @return serial number
   */
-  uint32_t serNo() const { return ISOName_c::serNo();}
+  uint32_t serNo() const { return IsoName_c::serNo();}
 
   /** set the NAME data from 8 uint8_t string
     @param rpb_src pointer to 8byte source string
   */
-  void inputString(const uint8_t* rpb_src) { ISOName_c::inputString( rpb_src );}
+  void inputString(const uint8_t* rpb_src) { IsoName_c::inputString( rpb_src );}
 
   /** set self config mode
     @param rb_selfConf true -> indicate sefl configuring ECU
   */
-  void setSelfConf(bool rb_selfConf) { ISOName_c::setSelfConf( rb_selfConf );}
+  void setSelfConf(bool rb_selfConf) { IsoName_c::setSelfConf( rb_selfConf );}
 
   /** set industry group code
     @param rui8_indGroup industry group of device (2 for agriculture)
   */
-  void setIndGroup(uint8_t rui8_indGroup) { ISOName_c::setIndGroup( rui8_indGroup );}
+  void setIndGroup(uint8_t rui8_indGroup) { IsoName_c::setIndGroup( rui8_indGroup );}
 
   /** set device class instance number
     @param rui8_devClassInst instance number of ECU with same devClass
           in the network
   */
-  void setDevClassInst(uint8_t rui8_devClassInst) { ISOName_c::setDevClassInst( rui8_devClassInst );}
+  void setDevClassInst(uint8_t rui8_devClassInst) { IsoName_c::setDevClassInst( rui8_devClassInst );}
 
   /** set device class code
     @param rui8_devClass device class of ECU
   */
-  void setDevClass(uint8_t rui8_devClass) { ISOName_c::setDevClass( rui8_devClass );}
+  void setDevClass(uint8_t rui8_devClass) { IsoName_c::setDevClass( rui8_devClass );}
 
   /** set function code
     @param rb_func function of the ECU (usual 25 for network interconnect)
   */
-  void setFunc(uint8_t rb_func) { ISOName_c::setFunc( rb_func );}
+  void setFunc(uint8_t rb_func) { IsoName_c::setFunc( rb_func );}
 
   /** set function instance code
     @param rb_funcInst instance number of ECU with same function and device class
         (default 0 - normally)
   */
-  void setFuncInst(uint8_t rb_funcInst) { ISOName_c::setFuncInst( rb_funcInst );}
+  void setFuncInst(uint8_t rb_funcInst) { IsoName_c::setFuncInst( rb_funcInst );}
 
   /** set ECU instance code
     @param rb_funcInst instance number of ECU with same function, device class and function instance
         (default 0 - normally)
   */
-  void setEcuInst(uint8_t rb_ecuInst) { ISOName_c::setEcuInst( rb_ecuInst );}
+  void setEcuInst(uint8_t rb_ecuInst) { IsoName_c::setEcuInst( rb_ecuInst );}
 
   /** set manufactor code
     @param rui16_manufCode code of manufactor (11bit)
   */
-  void setManufCode(uint16_t rui16_manufCode) { ISOName_c::setManufCode( rui16_manufCode );}
+  void setManufCode(uint16_t rui16_manufCode) { IsoName_c::setManufCode( rui16_manufCode );}
 
   /** set serial number (Identity Number)
     @param rui32_serNo serial no of specific device (21bit)
   */
-  void setSerNo(uint32_t rui32_serNo) { ISOName_c::setSerNo( rui32_serNo );}
+  void setSerNo(uint32_t rui32_serNo) { IsoName_c::setSerNo( rui32_serNo );}
 
   /** set this instance to indicator for unspecified value */
-  void setUnspecified( void ) { ISOName_c::setUnspecified( );}
+  void setUnspecified( void ) { IsoName_c::setUnspecified( );}
 
   /** check if this instance has specified value (different from default) */
-  bool isSpecified( void ) const { return ISOName_c::isSpecified( );}
+  bool isSpecified( void ) const { return IsoName_c::isSpecified( );}
 
   /** check if this instance has unspecified value (match default) */
-  bool isUnspecified( void ) const { return ISOName_c::isUnspecified( );}
+  bool isUnspecified( void ) const { return IsoName_c::isUnspecified( );}
 
 private:
-  friend class iISOItem_c;
+  friend class iIsoItem_c;
   friend class iIdentItem_c;
-  friend class iCANPkgExt_c;
-  friend class iISOMonitor_c;
+  friend class iCanPkgExt_c;
+  friend class iIsoMonitor_c;
   friend class iMultiSend_c;
   friend class iMultiReceive_c;
   friend class iTimePosGPS_c;
@@ -303,7 +315,7 @@ private:
   friend class iTracCert_c;
   friend class iTracGuidance_c;
   friend class iTracGuidanceCommand_c;
-  friend class ISOName_c;
+  friend class IsoName_c;
   friend class iProcess_c;
   friend class iProcDataLocal_c;
   friend class iProcDataRemote_c;
@@ -317,12 +329,16 @@ private:
   friend class iProcDataRemoteSimpleSetpointSimpleMeasure_c;
   friend class iProcDataRemoteSimpleSetpointSimpleMeasureCombined_c;
   friend class iMeasureProgRemote_c;
-  friend iEEPROMIO_c& operator<<(iEEPROMIO_c& refc_stream, const iISOName_c& refc_data );
-  friend iEEPROMIO_c& operator>>(iEEPROMIO_c& refc_stream, iISOName_c& refc_data );
-  friend class iISOFilter_s;
+  friend iEepromIo_c& operator<<(iEepromIo_c& refc_stream, const iIsoName_c& refc_data );
+  friend iEepromIo_c& operator>>(iEepromIo_c& refc_stream, iIsoName_c& refc_data );
+  friend class iIsoFilter_s;
   friend class __IsoAgLib::ProprietaryMessageHandler_c;
   friend class __IsoAgLib::TimePosGPS_c;
 };
+
+/** this typedef is only for some time to provide backward compatibility at API level */
+typedef iIsoName_c iISOName_c;
+
 
 }
 #endif

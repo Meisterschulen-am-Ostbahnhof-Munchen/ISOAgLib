@@ -126,8 +126,8 @@ namespace __IsoAgLib {
 /**
    initialise this ProcDataBase_c instance to a well defined initial state
    ISO parameters:
-   @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
-                        (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
+   @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDdi_s which contains DDI, element, isSetpoint and ValueGroup
+                        (array is terminated by ElementDdi_s.ui16_element == 0xFFFF)
    @param ui16_element  device element number
 
    common parameters:
@@ -137,9 +137,9 @@ namespace __IsoAgLib {
    @param rpc_processDataChangeHandler optional pointer to handler class of application
    @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
-  void ProcDataBase_c::init( const IsoAgLib::ElementDDI_s* ps_elementDDI, uint16_t rui16_element,
-                             const ISOName_c& rc_isoName,
-                             const ISOName_c& rc_ownerISOName, const ISOName_c *rpc_isoName,
+  void ProcDataBase_c::init( const IsoAgLib::ElementDdi_s* ps_elementDDI, uint16_t rui16_element,
+                             const IsoName_c& rc_isoName,
+                             const IsoName_c& rc_ownerISOName, const IsoName_c *rpc_isoName,
                              IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler,
                              int ri_singletonVecKey)
   {
@@ -242,13 +242,13 @@ bool ProcDataBase_c::timeEvent( uint16_t* /* pui16_nextTimePeriod */ )
 
   possible errors:
       * Err_c::elNonexistent one of resolved EMPF/SEND isn't registered with claimed address in Monitor
-      * dependant error in CANIO_c on CAN send problems
+      * dependant error in CanIo_c on CAN send problems
 
   @param rc_varISOName variable ISOName
   @param ri32_val int32_t value to send
   @return true -> sendIntern set successful EMPF and SEND
 */
-bool ProcDataBase_c::sendValISOName( const ISOName_c& /*rc_varISOName*/, int32_t ri32_val) const
+bool ProcDataBase_c::sendValISOName( const IsoName_c& /*rc_varISOName*/, int32_t ri32_val) const
 {
   setBasicSendFlags();
 
@@ -276,13 +276,13 @@ bool ProcDataBase_c::sendValISOName( const ISOName_c& /*rc_varISOName*/, int32_t
 
   possible errors:
       * Err_c::elNonexistent one of resolved EMPF/SEND isn't registered with claimed address in Monitor
-      * dependant error in CANIO_c on CAN send problems
+      * dependant error in CanIo_c on CAN send problems
 
   @param rc_varISOName variable ISOName
   @param ri32_val float value to send
   @return true -> sendIntern set successful EMPF and SEND
 */
-bool ProcDataBase_c::sendValISOName(const ISOName_c& /*rc_varISOName*/, float rf_val) const
+bool ProcDataBase_c::sendValISOName(const IsoName_c& /*rc_varISOName*/, float rf_val) const
 {
   setBasicSendFlags();
 
@@ -318,12 +318,12 @@ void ProcDataBase_c::setBasicSendFlags() const
   c_data.set_Element(0xFFFF);
   c_data.set_DDI(0);
 
-  STL_NAMESPACE::list<IsoAgLib::ElementDDI_s>::const_iterator iter_elementDDI;
+  STL_NAMESPACE::list<IsoAgLib::ElementDdi_s>::const_iterator iter_elementDDI;
 
   if (elementDDI().size() == 1)
   {
     // we have only one DDI/element pair
-    // interface process data init was possibly called with parameter DDI and element and not with ElementDDI_s
+    // interface process data init was possibly called with parameter DDI and element and not with ElementDdi_s
     // => we don't have reliable infos about en_valueGroup and b_isSetpoint
     // => don't check for en_valueGroup and b_isSetpoint but use this single entry in list
     iter_elementDDI = elementDDI().begin();

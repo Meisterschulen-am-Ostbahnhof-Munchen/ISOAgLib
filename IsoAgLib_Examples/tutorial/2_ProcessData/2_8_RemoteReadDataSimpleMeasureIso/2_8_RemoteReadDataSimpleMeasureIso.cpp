@@ -274,10 +274,10 @@ class MyProcDataHandler_c : public IsoAgLib::ProcessDataChangeHandler_c
       * @param rc_callerISOName ISOName of calling device - i.e. which sent new setpoint
       * @return true -> handler class reacted on change event
       */
-    virtual bool processMeasurementUpdate( EventSource_c rc_src, int32_t ri32_val, const IsoAgLib::iISOName_c& rc_callerISOName, bool rb_change );
+    virtual bool processMeasurementUpdate( EventSource_c rc_src, int32_t ri32_val, const IsoAgLib::iIsoName_c& rc_callerISOName, bool rb_change );
 };
 
-bool MyProcDataHandler_c::processMeasurementUpdate( EventSource_c rc_src, int32_t ri32_val, const IsoAgLib::iISOName_c& /* rc_callerISOName */, bool rb_change )
+bool MyProcDataHandler_c::processMeasurementUpdate( EventSource_c rc_src, int32_t ri32_val, const IsoAgLib::iIsoName_c& /* rc_callerISOName */, bool rb_change )
 {
   if ( ! rb_change )
   { // don't handle values which don't contain new value - maybe still relevant for other applications
@@ -309,7 +309,7 @@ int main()
   getIcanInstance().init( cui32_canChannel, 250 );
   // variable for ISOName
   // default with primary cultivation mounted back
-  IsoAgLib::iISOName_c c_myISOName( 2, 0 );
+  IsoAgLib::iIsoName_c c_myISOName( 2, 0 );
 
   // start address claim of the local member "IMI"
   // if ISOName conflicts forces change of device class instance, the
@@ -335,16 +335,16 @@ int main()
     b_func, ui16_manufCode, ui32_serNo, b_wantedSa, 0xFFFF, b_funcInst, b_ecuInst, b_selfConf );
   
   // device type of remote ECU
-  IsoAgLib::iISOName_c c_remoteDeviceType( 0x5, 0 );
+  IsoAgLib::iIsoName_c c_remoteDeviceType( 0x5, 0 );
 
-  const ElementDDI_s s_WorkStateElementDDI[2] =
+  const ElementDdi_s s_WorkStateElementDDI[2] =
   {
     // DDI 141
     {141, true, GeneralCommand_c::exactValue},
     // termination entry
     {0xFFFF, false, GeneralCommand_c::noValue}
   };
-  const ElementDDI_s s_ApplicationRateElementDDI[3] =
+  const ElementDdi_s s_ApplicationRateElementDDI[3] =
   {
     // DDI 1
     {1, true, GeneralCommand_c::exactValue},
@@ -449,7 +449,7 @@ int main()
       #ifdef WIN32
         if ( i32_idleTimeSpread > 0 ) Sleep(i32_idleTimeSpread);
       #else
-        if ( i32_idleTimeSpread > 0 ) IsoAgLib::iCANIO_c::waitUntilCanReceiveOrTimeout( i32_idleTimeSpread );
+        if ( i32_idleTimeSpread > 0 ) IsoAgLib::iCanIo_c::waitUntilCanReceiveOrTimeout( i32_idleTimeSpread );
       #endif
     #endif
   }

@@ -87,15 +87,15 @@ namespace __IsoAgLib {
 
 
 /** default destructor which has nothing to do */
-ISOFilterManager_c::~ISOFilterManager_c ()
+IsoFilterManager_c::~IsoFilterManager_c ()
 {
 //  close();
 }
 
 
-/** constructor for ISORequestPGN_c */
-ISOFilterManager_c::ISOFilterManager_c ()
-  : SingletonISOFilterManager_c ()
+/** constructor for IsoRequestPgn_c */
+IsoFilterManager_c::IsoFilterManager_c ()
+  : SingletonIsoFilterManager_c ()
 {
 // functionality moved OUT of the constructor, as the constructor is NOT called in embedded systems for static class instances.
 }
@@ -105,7 +105,7 @@ ISOFilterManager_c::ISOFilterManager_c ()
   * this is called from singleton.h and should NOT be called from the user again.
   * users please use init(...) instead. */
 void
-ISOFilterManager_c::singletonInit ()
+IsoFilterManager_c::singletonInit ()
 {
   b_alreadyInitialized = false; // so init() will init!
   // set very long execution period as this singleton has no periodic jobs
@@ -114,24 +114,24 @@ ISOFilterManager_c::singletonInit ()
 
 
 /** just a dummy implementation of virtual abstract functions in ElementBase_c */
-bool ISOFilterManager_c::timeEvent( void )
+bool IsoFilterManager_c::timeEvent( void )
 {
   return true;
 }
 
 /** just a dummy implementation of virtual abstract functions in ElementBase_c */
-void ISOFilterManager_c::close( void )
+void IsoFilterManager_c::close( void )
 {
 }
 
 /** just a dummy implementation of virtual abstract functions in ElementBase_c */
-const char* ISOFilterManager_c::getTaskName() const
+const char* IsoFilterManager_c::getTaskName() const
 {
-  return "ISOFilterManager_c";
+  return "IsoFilterManager_c";
 }
 
 void
-ISOFilterManager_c::init()
+IsoFilterManager_c::init()
 {
   if (!b_alreadyInitialized)
   { // avoid double initialization. for now now close needed, only init once! ==> see Scheduler_c::startupSystem()
@@ -144,9 +144,9 @@ ISOFilterManager_c::init()
 
 //! Checks WITH CANCustomer!
 bool
-ISOFilterManager_c::existIsoFilter (const ISOFilter_s& rrefcs_isoFilter)
+IsoFilterManager_c::existIsoFilter (const IsoFilter_s& rrefcs_isoFilter)
 {
-  for (ISOFilterBox_it it_isoFilterBox = vec_isoFilterBox.begin();
+  for (IsoFilterBox_it it_isoFilterBox = vec_isoFilterBox.begin();
        it_isoFilterBox != vec_isoFilterBox.end();
        it_isoFilterBox++)
   { // Search for existing ISOFilterBox
@@ -160,15 +160,15 @@ ISOFilterManager_c::existIsoFilter (const ISOFilter_s& rrefcs_isoFilter)
 
 
 void
-ISOFilterManager_c::insertIsoFilter (const ISOFilter_s& rrefcs_isoFilter)
+IsoFilterManager_c::insertIsoFilter (const IsoFilter_s& rrefcs_isoFilter)
 {
   // Check if ISOFilter does yet exist in some ISOFilterBox
   if (!existIsoFilter (rrefcs_isoFilter))
   { // insert an empty ISOFilterBox. initialized then in list right after
-    vec_isoFilterBox.push_back (ISOFilterBox_c (SINGLETON_VEC_KEY));
+    vec_isoFilterBox.push_back (IsoFilterBox_c (SINGLETON_VEC_KEY));
 
     // now get the inserted ISOFilterBox
-    ISOFilterBox_c& refc_isoFilterBox = vec_isoFilterBox.back();
+    IsoFilterBox_c& refc_isoFilterBox = vec_isoFilterBox.back();
 
     // add the filter(s)
     refc_isoFilterBox.addIsoFilter (rrefcs_isoFilter);
@@ -181,15 +181,15 @@ ISOFilterManager_c::insertIsoFilter (const ISOFilter_s& rrefcs_isoFilter)
 
 /** @todo use vararg list somewhen! */
 void
-ISOFilterManager_c::insertIsoFilterConnected (const ISOFilter_s& rrefcs_isoFilter, const ISOFilter_s& rrefcs_isoFilter2)
+IsoFilterManager_c::insertIsoFilterConnected (const IsoFilter_s& rrefcs_isoFilter, const IsoFilter_s& rrefcs_isoFilter2)
 {
   // Check if ISOFilter does yet exist in some ISOFilterBox
   if ( (!existIsoFilter (rrefcs_isoFilter)) && (!existIsoFilter (rrefcs_isoFilter2)) )
   { // insert an empty ISOFilterBox. initialized then in list right after
-    vec_isoFilterBox.push_back (ISOFilterBox_c (SINGLETON_VEC_KEY));
+    vec_isoFilterBox.push_back (IsoFilterBox_c (SINGLETON_VEC_KEY));
 
     // now get the inserted ISOFilterBox
-    ISOFilterBox_c& refc_isoFilterBox = vec_isoFilterBox.back();
+    IsoFilterBox_c& refc_isoFilterBox = vec_isoFilterBox.back();
 
     // add the filter(s)
     refc_isoFilterBox.addIsoFilter (rrefcs_isoFilter);
@@ -202,9 +202,9 @@ ISOFilterManager_c::insertIsoFilterConnected (const ISOFilter_s& rrefcs_isoFilte
 
 
 bool
-ISOFilterManager_c::addToIsoFilter (const ISOFilter_s& rrefcs_isoFilterExisting, const ISOFilter_s& rrefcs_isoFilterToAdd)
+IsoFilterManager_c::addToIsoFilter (const IsoFilter_s& rrefcs_isoFilterExisting, const IsoFilter_s& rrefcs_isoFilterToAdd)
 {
-  for (ISOFilterBox_it it_isoFilterBox = vec_isoFilterBox.begin();
+  for (IsoFilterBox_it it_isoFilterBox = vec_isoFilterBox.begin();
        it_isoFilterBox != vec_isoFilterBox.end();
        it_isoFilterBox++)
   { // Search for existing ISOFilterBox
@@ -229,19 +229,19 @@ ISOFilterManager_c::addToIsoFilter (const ISOFilter_s& rrefcs_isoFilterExisting,
 
 
 bool
-ISOFilterManager_c::removeIsoFilter (const ISOFilter_s& rrefcs_isoFilter)
+IsoFilterManager_c::removeIsoFilter (const IsoFilter_s& rrefcs_isoFilter)
 {
-  for (ISOFilterBox_it it_isoFilterBox = vec_isoFilterBox.begin();
+  for (IsoFilterBox_it it_isoFilterBox = vec_isoFilterBox.begin();
        it_isoFilterBox != vec_isoFilterBox.end();
        it_isoFilterBox++)
   { // Search for existing ISOFilterBox
     switch (it_isoFilterBox->removeIsoFilter (rrefcs_isoFilter))
     {
-      case ISOFilterBox_c::RemoveAnswerFailureNonExistent: break;
-      case ISOFilterBox_c::RemoveAnswerSuccessBoxEmpty:
+      case IsoFilterBox_c::RemoveAnswerFailureNonExistent: break;
+      case IsoFilterBox_c::RemoveAnswerSuccessBoxEmpty:
         it_isoFilterBox = vec_isoFilterBox.erase(it_isoFilterBox);
         // break; left out intentionally
-      case ISOFilterBox_c::RemoveAnswerSuccessBoxNotEmpty:
+      case IsoFilterBox_c::RemoveAnswerSuccessBoxNotEmpty:
         return true;
     }
   }
@@ -250,14 +250,14 @@ ISOFilterManager_c::removeIsoFilter (const ISOFilter_s& rrefcs_isoFilter)
   return false;
 }
 
-/** this function is called by ISOMonitor_c when a new CLAIMED ISOItem_c is registered.
-  * @param refc_isoName const reference to the item which ISOItem_c state is changed
-  * @param rpc_newItem pointer to the currently corresponding ISOItem_c
+/** this function is called by IsoMonitor_c when a new CLAIMED IsoItem_c is registered.
+  * @param refc_isoName const reference to the item which IsoItem_c state is changed
+  * @param rpc_newItem pointer to the currently corresponding IsoItem_c
   */
 void
-ISOFilterManager_c::reactOnMonitorListAdd (const ISOName_c& refc_isoName, const ISOItem_c* /*rpc_newItem*/)
+IsoFilterManager_c::reactOnMonitorListAdd (const IsoName_c& refc_isoName, const IsoItem_c* /*rpc_newItem*/)
 {
-  for (ISOFilterBox_it it_isoFilterBox = vec_isoFilterBox.begin();
+  for (IsoFilterBox_it it_isoFilterBox = vec_isoFilterBox.begin();
        it_isoFilterBox != vec_isoFilterBox.end();
        it_isoFilterBox++)
   { // the ISOFilterBoxes will take care if they have to do anything at all or not...
@@ -265,14 +265,14 @@ ISOFilterManager_c::reactOnMonitorListAdd (const ISOName_c& refc_isoName, const 
   }
 }
 
-/** this function is called by ISOMonitor_c when a device looses its ISOItem_c.
-* @param refc_isoName const reference to the item which ISOItem_c state is changed
+/** this function is called by IsoMonitor_c when a device looses its IsoItem_c.
+* @param refc_isoName const reference to the item which IsoItem_c state is changed
 * @param rui8_oldSa previously used SA which is NOW LOST -> clients which were connected to this item can react explicitly
 */
 void
-ISOFilterManager_c::reactOnMonitorListRemove (const ISOName_c& refc_isoName, uint8_t /*rui8_oldSa*/)
+IsoFilterManager_c::reactOnMonitorListRemove (const IsoName_c& refc_isoName, uint8_t /*rui8_oldSa*/)
 {
-  for (ISOFilterBox_it it_isoFilterBox = vec_isoFilterBox.begin();
+  for (IsoFilterBox_it it_isoFilterBox = vec_isoFilterBox.begin();
        it_isoFilterBox != vec_isoFilterBox.end();
        it_isoFilterBox++)
   { // the ISOFilterBoxes will take care if they have to do anything at all or not...
@@ -282,17 +282,17 @@ ISOFilterManager_c::reactOnMonitorListRemove (const ISOName_c& refc_isoName, uin
 
 
 #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
-/** C-style function, to get access to the unique ISOFilterManager_c singleton instance
+/** C-style function, to get access to the unique IsoFilterManager_c singleton instance
  * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS */
-ISOFilterManager_c& getIsoFilterManagerInstance (uint8_t rui8_instance)
+IsoFilterManager_c& getIsoFilterManagerInstance (uint8_t rui8_instance)
 { // if > 1 singleton instance is used, no static reference can be used
-  return ISOFilterManager_c::instance(rui8_instance);
+  return IsoFilterManager_c::instance(rui8_instance);
 };
 #else
-/** C-style function, to get access to the unique ISOFilterManager_c singleton instance */
-ISOFilterManager_c& getIsoFilterManagerInstance (void)
+/** C-style function, to get access to the unique IsoFilterManager_c singleton instance */
+IsoFilterManager_c& getIsoFilterManagerInstance (void)
 {
-  static ISOFilterManager_c& c_isoFilterManager = ISOFilterManager_c::instance ();
+  static IsoFilterManager_c& c_isoFilterManager = IsoFilterManager_c::instance ();
   return c_isoFilterManager;
 };
 #endif

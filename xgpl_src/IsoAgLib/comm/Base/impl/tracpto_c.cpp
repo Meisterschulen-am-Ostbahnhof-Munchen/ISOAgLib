@@ -1,7 +1,7 @@
 /***************************************************************************
                     tracpto_c.cpp - working on PTO data;
                                     stores, updates  and delivers all base
-                                    data informations from CANCustomer_c
+                                    data informations from CanCustomer_c
                                     derived for CAN sending and receiving
                                     interaction;
                                     from BaseCommon_c derived for
@@ -115,12 +115,12 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
   /** initialise element which can't be done during construct;
       above all create the needed FilterBox_c instances
       possible errors:
-        * dependant error in CANIO_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
+        * dependant error in CanIo_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
       @param rpc_isoName optional pointer to the ISOName variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
       @param ai_singletonVecKey singleton vector key in case PRT_INSTANCE_CNT > 1
       @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
     */
-  void TracPTO_c::init_base (const ISOName_c* rpc_isoName, int /*ai_singletonVecKey*/, IsoAgLib::IdentMode_t rt_identMode)
+  void TracPTO_c::init_base (const IsoName_c* rpc_isoName, int /*ai_singletonVecKey*/, IsoAgLib::IdentMode_t rt_identMode)
   {
     //call init for handling which is base data independent
     BaseCommon_c::init_base (rpc_isoName, getSingletonVecKey(), rt_identMode);
@@ -132,7 +132,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
       @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       @return true -> configuration was successfull
    */
-  bool TracPTO_c::config_base (const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode, uint16_t rui16_suppressMask)
+  bool TracPTO_c::config_base (const IsoName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode, uint16_t rui16_suppressMask)
   {
     //store old mode to decide to register or unregister from request for pgn
     //and set Periode for Scheduler_c
@@ -189,8 +189,8 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     */
   void TracPTO_c::checkCreateReceiveFilter( )
   {
-    ISOMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
-    CANIO_c &c_can = getCanInstance4Comm();
+    IsoMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
+    CanIo_c &c_can = getCanInstance4Comm();
 
     if ( ( !checkFilterCreated() ) && ( c_isoMonitor.existActiveLocalIsoMember() ) )
     { // check if needed receive filters for ISO are active
@@ -206,7 +206,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     }
   }
 
-  bool TracPTO_c::processMsgRequestPGN (uint32_t rui32_pgn, ISOItem_c* rpc_isoItemSender, ISOItem_c* rpc_isoItemReceiver)
+  bool TracPTO_c::processMsgRequestPGN (uint32_t rui32_pgn, IsoItem_c* rpc_isoItemSender, IsoItem_c* rpc_isoItemReceiver)
   {
     // check if we are allowed to send a request for pgn
     if ( ! BaseCommon_c::check4ReqForPgn(rui32_pgn, rpc_isoItemSender, rpc_isoItemReceiver) ) return false;
@@ -227,13 +227,13 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
 
   /** process a ISO11783 base information PGN
       @pre  sender of message is existent in monitor list
-      @see  CANPkgExt_c::resolveSendingInformation()
+      @see  CanPkgExt_c::resolveSendingInformation()
     */
   bool TracPTO_c::processMsg()
   {
     // there is no need to check if sender exist in the monitor list because this is already done
-    // in CANPkgExt_c -> resolveSendingInformation
-    ISOName_c c_tempISOName( data().getISONameForSA() );
+    // in CanPkgExt_c -> resolveSendingInformation
+    IsoName_c c_tempISOName( data().getISONameForSA() );
 
     if (((data().isoPgn() /*& 0x3FFFF*/) == FRONT_PTO_STATE_PGN) || ((data().isoPgn() /*& 0x3FFFF*/) == REAR_PTO_STATE_PGN))
     {
@@ -339,14 +339,14 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
   /** send pto data message
       @param t_sendptodata  send pto front or pto rear
       @see  TracCert_c::processMsgRequestPGN
-      @see  CANIO_c::operator<<
+      @see  CanIo_c::operator<<
     */
   void TracPTO_c::sendMessage(SendPtoData_t t_sendptodata)
   {
     if ( getISOName() == NULL ) return;
     if (!getIsoMonitorInstance4Comm().existIsoMemberISOName(*getISOName(), true)) return;
 
-    CANIO_c& c_can = getCanInstance4Comm();
+    CanIo_c& c_can = getCanInstance4Comm();
 
     data().setISONameForSA( *getISOName() );
     data().setIdentType(Ident_c::ExtendedIdent);
@@ -383,7 +383,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     //reserved fields
     data().setUint16Data(6, 0xFFFF);
 
-    // CANIO_c::operator<< retreives the information with the help of CANPkg_c::getData
+    // CanIo_c::operator<< retreives the information with the help of CanPkg_c::getData
     // then it sends the data
     c_can << data();
 

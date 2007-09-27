@@ -95,33 +95,33 @@ namespace __IsoAgLib {
 
 /**
   process a message -> the specialized/derived version of this virtual
-  function is called during processing of received CAN telegrams in CANIO_c::processMsg
+  function is called during processing of received CAN telegrams in CanIo_c::processMsg
   @param rpc_box pointer to the FilterBox_c instances which received the telegram (i.e. which has the telegram in its puffer)
-  @see __IsoAgLib::CANIO_c::processMsg
-  @return true -> message was processed; else the received CAN message will be served to other matching CANCustomer_c
+  @see __IsoAgLib::CanIo_c::processMsg
+  @return true -> message was processed; else the received CAN message will be served to other matching CanCustomer_c
 */
-bool CANCustomer_c::processMsg()
+bool CanCustomer_c::processMsg()
 { // dummy function - just to allow classes to (indirectly) derive from
-  // CANCustomer_c without the need to implement this function
+  // CanCustomer_c without the need to implement this function
   return false;
 }
 
 /**
   virtual function which delivers a pointer to the CANCustomer
-  specific CANPkgExt_c instance
+  specific CanPkgExt_c instance
     YOU SHOULD NEVER CALL THIS BASE FUNCTION!
 */
-CANPkgExt_c& CANCustomer_c::dataBase()
+CanPkgExt_c& CanCustomer_c::dataBase()
 { // dummy function - just to allow classes to (indirectly) derive from
-  // CANCustomer_c without the need to implement this function
-  static CANPkgExt_c c_dummyPkg;
+  // CanCustomer_c without the need to implement this function
+  static CanPkgExt_c c_dummyPkg;
   return c_dummyPkg;
 }
 
 /** virtual destructor */
-CANCustomer_c::~CANCustomer_c()
+CanCustomer_c::~CanCustomer_c()
 { // dummy function - just to allow classes to (indirectly) derive from
-  // CANCustomer_c without the need to implement this function
+  // CanCustomer_c without the need to implement this function
 }
 
 } // end of namespace __IsoAgLib

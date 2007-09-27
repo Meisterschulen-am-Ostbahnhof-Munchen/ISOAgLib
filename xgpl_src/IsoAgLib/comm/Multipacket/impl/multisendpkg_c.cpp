@@ -103,9 +103,9 @@ void MultiSendPkg_c::setDataPart(const HUGE_MEM uint8_t* rpb_source, int32_t ri3
   #ifdef USE_HUGE_MEM
   const HUGE_MEM uint8_t* pb_source = rpb_source + ri32_pos;
   // fist assign is performed with index:=1, so that last assign should be performed with
-  // ind == rb_partSize (e.g. rb_partSize:=7 ==> last written index:=7 == Byt8 of CANPkg_c)
+  // ind == rb_partSize (e.g. rb_partSize:=7 ==> last written index:=7 == Byt8 of CanPkg_c)
   for ( uint8_t ind = 1; ind <= rb_partSize; ind++ )
-  { // the ind matches already to the appropriate CANPkg_c data string position,
+  { // the ind matches already to the appropriate CanPkg_c data string position,
     // while the pb_source pointer is also set to the start of the source data
     setUint8Data( ind, *pb_source );
     // now increment the source pointer for next access
@@ -132,9 +132,9 @@ void MultiSendPkg_c::setDataPart(const STL_NAMESPACE::vector<uint8_t>& refc_vecS
 {
   STL_NAMESPACE::vector<uint8_t>::const_iterator iter = refc_vecSource.begin()+ri32_pos;
   // fist assign is performed with index:=1, so that last assign should be performed with
-  // ind == rb_partSize (e.g. rb_partSize:=7 ==> last written index:=7 == Byt8 of CANPkg_c)
+  // ind == rb_partSize (e.g. rb_partSize:=7 ==> last written index:=7 == Byt8 of CanPkg_c)
   for ( uint8_t ind = 1; ind <= rb_partSize; ind++ )
-  { // the ind matches already to the appropriate CANPkg_c data string position,
+  { // the ind matches already to the appropriate CanPkg_c data string position,
     // while the iter iterator is also set to the start of the source data
     setUint8Data( ind, *iter );
     // now increment the iterator for next access
@@ -165,7 +165,7 @@ void MultiSendPkg_c::setFastPacketDataPart(const HUGE_MEM uint8_t* rpb_source, i
   //     and last index should be <8 -> i.e. index:=7
   const uint8_t cui8_endCondition = rb_partSize + rui8_offset;
   for ( uint8_t ind = rui8_offset; ind < cui8_endCondition; ind++ )
-  { // the ind matches already to the appropriate CANPkg_c data string position,
+  { // the ind matches already to the appropriate CanPkg_c data string position,
     // while the pb_source pointer is also set to the start of the source data
     setUint8Data( ind, *pb_source );
     // now increment the source pointer for next access
@@ -194,7 +194,7 @@ void MultiSendPkg_c::setFastPacketDataPart(const STL_NAMESPACE::vector<uint8_t>&
   //     and last index should be <8 -> i.e. index:=7
   const uint8_t cui8_endCondition = rb_partSize + rui8_offset;
   for ( uint8_t ind = rui8_offset; ind < cui8_endCondition; ind++ )
-  { // the ind matches already to the appropriate CANPkg_c data string position,
+  { // the ind matches already to the appropriate CanPkg_c data string position,
     // while the iter iterator is also set to the start of the source data
     setUint8Data( ind, *iter );
     // now increment the iterator for next access

@@ -221,13 +221,13 @@ iIdentItem_c c_myIdent (2,     // rui8_indGroup
   define class for decode/encode of propietary CAN messages
   on internal BUS
   */
-class MyInternalPkg_c : public IsoAgLib::iCANPkgExt_c
+class MyInternalPkg_c : public IsoAgLib::iCanPkgExt_c
 {
  public:
   /**
     Operation: flags2String
     Called on each CAN send from IsoAgLib base functions.
-    Must be overloaded, as base class iCANPkgExt_c defines
+    Must be overloaded, as base class iCanPkgExt_c defines
     only abstract function.
     Target: transfer information from flags to the max 8 Byte
     data string and the corresponding ident. Perform here some
@@ -241,7 +241,7 @@ class MyInternalPkg_c : public IsoAgLib::iCANPkgExt_c
     transfer received data string to the corresponding data flags.
     Don't rely on data consistence of the underlying data string, as this
     is modelled as static, so that all class instances which are derived from
-    iCANPkgExt_c will share that buffer. Even if no parallel processes are used,
+    iCanPkgExt_c will share that buffer. Even if no parallel processes are used,
     you can shoot in your foot, if your application reacts on a message with another
     message, before it tries so send an ACK, where simply some bytes are changed. Here
     the intermediate send of the other messages will invalidate the static data buffer,
@@ -271,7 +271,7 @@ class MyInternalPkg_c : public IsoAgLib::iCANPkgExt_c
 /**
   Operation: flags2String
   Called on each CAN send from IsoAgLib base functions.
-  Must be overloaded, as base class iCANPkgExt_c defines
+  Must be overloaded, as base class iCanPkgExt_c defines
   only abstract function.
 */
 void MyInternalPkg_c::flags2String()
@@ -339,8 +339,8 @@ void MyInternalPkg_c::setMyDummyData( uint16_t rui16_flag1, uint16_t rui16_flag2
   ui16_flag3 = rui16_flag3;
 }
 
-/** define class which is derived from iCANCustomer_c which will handle the internal CAN data */
-class MyInternalCanHandler_c : public IsoAgLib::iCANCustomer_c
+/** define class which is derived from iCanCustomer_c which will handle the internal CAN data */
+class MyInternalCanHandler_c : public IsoAgLib::iCanCustomer_c
 {
  public:
   MyInternalCanHandler_c(){init();};
@@ -356,12 +356,12 @@ class MyInternalCanHandler_c : public IsoAgLib::iCANCustomer_c
   virtual bool processMsg();
 
   /**  Operation: dataBase
-    This function is needed by IsoAgLib to get handle for the iCANPkgExt_c
+    This function is needed by IsoAgLib to get handle for the iCanPkgExt_c
     derived class. This way IsoAgLib has already called string2Flags()
     before processMsg() is executed -> processMsg() can immediately work on the
     received data
   */
-  virtual IsoAgLib::iCANPkgExt_c& iDataBase();
+  virtual IsoAgLib::iCanPkgExt_c& iDataBase();
   /** perform dummy send */
   void doSendTest( uint16_t rui16_flag1, uint16_t rui16_flag2, uint16_t rui16_flag3 );
   /** just make compiler happy */
@@ -375,7 +375,7 @@ void MyInternalCanHandler_c::init()
 { // init second internal CAN at channel 1 ( counting [0..n] )
   getIcanInstance( 1 ).init( 1, 250 );
   // register FilterBoxes to receive some exact ident settings
-  IsoAgLib::iCANIO_c &c_can = IsoAgLib::getIcanInstance( 1 );
+  IsoAgLib::iCanIo_c &c_can = IsoAgLib::getIcanInstance( 1 );
   // if more different filter settings are wanted, copy first line, as fourth parameter >false<
   // avoids immediate reconfiguration of CAN filter settings - this is a time expensive opteration
   c_can.insertFilter(*this, static_cast<MASK_TYPE>(0xFF00),
@@ -391,7 +391,7 @@ void MyInternalCanHandler_c::init()
   This will happen as one of the part actions, if you call getISchedulerInstance().timeEvent();
   So as it's no IRQ, you can safely trigger direct response within this function.
   Just plan enough time for getISchedulerInstance().timeEvent()
-  @return true -> message was processed; else the received CAN message will be served to other matching CANCustomer_c
+  @return true -> message was processed; else the received CAN message will be served to other matching CanCustomer_c
 */
 bool MyInternalCanHandler_c::processMsg()
 {
@@ -414,12 +414,12 @@ bool MyInternalCanHandler_c::processMsg()
 }
 
 /**  Operation: dataBase
-  This function is needed by IsoAgLib to get handle for the iCANPkgExt_c
+  This function is needed by IsoAgLib to get handle for the iCanPkgExt_c
   derived class. This way IsoAgLib has already called string2Flags()
   before processMsg() is executed -> processMsg() can immediately work on the
   received data
 */
-IsoAgLib::iCANPkgExt_c& MyInternalCanHandler_c::iDataBase()
+IsoAgLib::iCanPkgExt_c& MyInternalCanHandler_c::iDataBase()
 {
   return c_myData;
 }
@@ -427,7 +427,7 @@ IsoAgLib::iCANPkgExt_c& MyInternalCanHandler_c::iDataBase()
 void MyInternalCanHandler_c::doSendTest( uint16_t rui16_flag1, uint16_t rui16_flag2, uint16_t rui16_flag3 )
 { // place data in MyInternalPkg_c
   c_myData.setMyDummyData( rui16_flag1, rui16_flag2, rui16_flag3 );
-  // call CANIO_c send function - it does automatically call flags2string to get the data string
+  // call CanIo_c send function - it does automatically call flags2string to get the data string
   IsoAgLib::getIcanInstance( 1 ) << c_myData;
 }
 
@@ -486,7 +486,7 @@ int main()
       #ifdef WIN32
         if ( i32_idleTimeSpread > 0 ) Sleep(i32_idleTimeSpread);
       #else
-        if ( i32_idleTimeSpread > 0 ) IsoAgLib::iCANIO_c::waitUntilCanReceiveOrTimeout( i32_idleTimeSpread );
+        if ( i32_idleTimeSpread > 0 ) IsoAgLib::iCanIo_c::waitUntilCanReceiveOrTimeout( i32_idleTimeSpread );
       #endif
     #endif
   }

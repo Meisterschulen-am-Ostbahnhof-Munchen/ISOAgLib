@@ -101,19 +101,19 @@ namespace __IsoAgLib {
 
 /** constant for default parameters and initialization, where the device type is not yet spcified.
  */
-const ISOName_c&
-ISOName_c::ISONameUnspecified()
+const IsoName_c&
+IsoName_c::IsoNameUnspecified()
 {
-  static ISOName_c sc_isoNameUnspecified( 0x7F, 0xF );
+  static IsoName_c sc_isoNameUnspecified( 0x7F, 0xF );
   return sc_isoNameUnspecified;
 }
 
 /** constant for not yet spcified process data ident -> <device class, device class instance> := <0x0,0xF>
   */
-const ISOName_c&
-ISOName_c::ISONameInitialProcessData()
+const IsoName_c&
+IsoName_c::IsoNameInitialProcessData()
 {
-  static ISOName_c sc_isoNameInitialProcessData( 0x00, 0xF );
+  static IsoName_c sc_isoNameInitialProcessData( 0x00, 0xF );
   return sc_isoNameInitialProcessData;
 }
 
@@ -121,7 +121,7 @@ ISOName_c::ISONameInitialProcessData()
 /** constructor which can read in initial data from uint8_t string
   @param rpb_src 64bit input data string
 */
-ISOName_c::ISOName_c(const uint8_t* rpb_src)
+IsoName_c::IsoName_c(const uint8_t* rpb_src)
 : u_data(rpb_src)
 { // simply copy 8byte string
 }
@@ -129,7 +129,7 @@ ISOName_c::ISOName_c(const uint8_t* rpb_src)
 /** constructor which can read in initial data from uint8_t string
   @param rpu_src  64bit input data string
 */
-ISOName_c::ISOName_c(const Flexible8ByteString_c* rpu_src)
+IsoName_c::IsoName_c(const Flexible8ByteString_c* rpu_src)
 : u_data(*rpu_src)
 {}
 
@@ -146,7 +146,7 @@ ISOName_c::ISOName_c(const Flexible8ByteString_c* rpu_src)
   @param rb_ecuInst instance number of ECU with same function, device class and function instance
       (default 0 - normally)
 */
-ISOName_c::ISOName_c(bool rb_selfConf, uint8_t rui8_indGroup, uint8_t rui8_devClass, uint8_t rui8_devClassInst,
+IsoName_c::IsoName_c(bool rb_selfConf, uint8_t rui8_indGroup, uint8_t rui8_devClass, uint8_t rui8_devClassInst,
       uint8_t rb_func, uint16_t rui16_manufCode, uint32_t rui32_serNo, uint8_t rb_funcInst, uint8_t rb_ecuInst)
 { // call the set function for the single flags
   set(rb_selfConf, rui8_indGroup, rui8_devClass, rui8_devClassInst, rb_func, rui16_manufCode, rui32_serNo,
@@ -154,24 +154,24 @@ ISOName_c::ISOName_c(bool rb_selfConf, uint8_t rui8_indGroup, uint8_t rui8_devCl
 }
 
 /** copy constructor for ISOName
-  @param rrefc_src source ISOName_c instance
+  @param rrefc_src source IsoName_c instance
 */
-ISOName_c::ISOName_c(const ISOName_c& rrefc_src)
+IsoName_c::IsoName_c(const IsoName_c& rrefc_src)
 : u_data( rrefc_src.u_data )
 { // simply copy data string
 }
 
 /** assign constructor for ISOName
-  @param rrefc_src source ISOName_c object
+  @param rrefc_src source IsoName_c object
 */
-const ISOName_c& ISOName_c::operator=(const ISOName_c& rrefc_src)
+const IsoName_c& IsoName_c::operator=(const IsoName_c& rrefc_src)
 { // simply copy data string
   u_data = rrefc_src.u_data;
   return rrefc_src;
 }
 
 /** default destructor */
-ISOName_c::~ISOName_c() {}
+IsoName_c::~IsoName_c() {}
 
 /** set data string with all flags with one call
   @param rb_selfConf true -> indicate sefl configuring ECU
@@ -186,7 +186,7 @@ ISOName_c::~ISOName_c() {}
   @param rb_funcInst instance number of ECU with same function, device class and function instance
       (default 0 - normally)
 */
-void ISOName_c::set(bool rb_selfConf, uint8_t rui8_indGroup, uint8_t rui8_devClass, uint8_t rui8_devClassInst,
+void IsoName_c::set(bool rb_selfConf, uint8_t rui8_indGroup, uint8_t rui8_devClass, uint8_t rui8_devClassInst,
       uint8_t rb_func, uint16_t rui16_manufCode, uint32_t rui32_serNo, uint8_t rb_funcInst, uint8_t rb_ecuInst)
 { // call the set function for the single flags
   setSelfConf(rb_selfConf);
@@ -201,9 +201,9 @@ void ISOName_c::set(bool rb_selfConf, uint8_t rui8_indGroup, uint8_t rui8_devCla
 }
 
 /** set device class & instance with two seperate parameters */
-void ISOName_c::set( uint8_t rui8_devClass, uint8_t rui8_pos ) { setDevClass( rui8_devClass); setDevClassInst( rui8_pos ); }
+void IsoName_c::set( uint8_t rui8_devClass, uint8_t rui8_pos ) { setDevClass( rui8_devClass); setDevClassInst( rui8_pos ); }
 
-ISOName_c::ecuType_t ISOName_c::getEcuType() const
+IsoName_c::ecuType_t IsoName_c::getEcuType() const
 {
   const uint8_t cui8_func = func();
   switch (cui8_func)
@@ -235,7 +235,7 @@ ISOName_c::ecuType_t ISOName_c::getEcuType() const
 /** get self config mode
   @return self configuration adress state
 */
-uint8_t ISOName_c::selfConf() const
+uint8_t IsoName_c::selfConf() const
 {
   return ( u_data[7] >> 7);
 }
@@ -243,7 +243,7 @@ uint8_t ISOName_c::selfConf() const
 /** get industry group code
   @return industry group of device
 */
-uint8_t ISOName_c::indGroup() const
+uint8_t IsoName_c::indGroup() const
 {
   return ((u_data[7] >> 4) & 0x7) ;
 }
@@ -251,7 +251,7 @@ uint8_t ISOName_c::indGroup() const
 /** get device class instance number
   @return:device class instance number
 */
-uint8_t ISOName_c::devClassInst() const
+uint8_t IsoName_c::devClassInst() const
 {
   return (u_data[7] & 0xF);
 }
@@ -259,7 +259,7 @@ uint8_t ISOName_c::devClassInst() const
 /** get device class code
   @return:device class
 */
-uint8_t ISOName_c::devClass() const
+uint8_t IsoName_c::devClass() const
 {
   return (u_data[6] >> 1);
 }
@@ -267,7 +267,7 @@ uint8_t ISOName_c::devClass() const
 /** get function code
   @return function code
 */
-uint8_t ISOName_c::func() const
+uint8_t IsoName_c::func() const
 {
   return u_data[5];
 }
@@ -275,7 +275,7 @@ uint8_t ISOName_c::func() const
 /** get function instance code
   @return function instance code
 */
-uint8_t ISOName_c::funcInst() const
+uint8_t IsoName_c::funcInst() const
 {
   return (u_data[4] >> 3);
 }
@@ -283,7 +283,7 @@ uint8_t ISOName_c::funcInst() const
 /** get ECU instance code
   @return ECU instance code
 */
-uint8_t ISOName_c::ecuInst() const
+uint8_t IsoName_c::ecuInst() const
 {
   return (u_data[4] & 0x7);
 }
@@ -291,7 +291,7 @@ uint8_t ISOName_c::ecuInst() const
 /** get manufactor code
   @return manufactor code
 */
-uint16_t ISOName_c::manufCode() const
+uint16_t IsoName_c::manufCode() const
 {
   return ((u_data[3] << 3) | (u_data[2] >> 5));
 }
@@ -299,7 +299,7 @@ uint16_t ISOName_c::manufCode() const
 /** get serial number
   @return serial number
 */
-uint32_t ISOName_c::serNo() const
+uint32_t IsoName_c::serNo() const
 {
   return ((static_cast<uint32_t>(u_data[2] & 0x1F) << 16) | (static_cast<uint32_t>(u_data[1]) << 8) | u_data[0]);
 }
@@ -307,7 +307,7 @@ uint32_t ISOName_c::serNo() const
 /** set the NAME data from 8 uint8_t string
   @param rpb_src pointer to 8byte source string
 */
-void ISOName_c::inputString(const uint8_t* rpb_src)
+void IsoName_c::inputString(const uint8_t* rpb_src)
 {
   if (NULL != rpb_src) u_data.setDataFromString( rpb_src );
 }
@@ -315,7 +315,7 @@ void ISOName_c::inputString(const uint8_t* rpb_src)
 /** set the NAME data from 8 uint8_t string
   @param rpb_src pointer to 8byte source string
 */
-void ISOName_c::inputUnion(const Flexible8ByteString_c* rpu_src)
+void IsoName_c::inputUnion(const Flexible8ByteString_c* rpu_src)
 {
   if (rpu_src == NULL) return;
   // when we reach here, the source pointer is valid
@@ -325,7 +325,7 @@ void ISOName_c::inputUnion(const Flexible8ByteString_c* rpu_src)
 /** set self config mode
   @param rb_selfConf true -> indicate sefl configuring ECU
 */
-void ISOName_c::setSelfConf(bool rb_selfConf)
+void IsoName_c::setSelfConf(bool rb_selfConf)
 {
   u_data.setUint8Data( 7, ((u_data[7] & 0x7F) | (rb_selfConf << 7)) );
 }
@@ -333,7 +333,7 @@ void ISOName_c::setSelfConf(bool rb_selfConf)
 /** set industry group code
   @param rui8_indGroup industry group of device (2 for agriculture)
 */
-void ISOName_c::setIndGroup(uint8_t rui8_indGroup)
+void IsoName_c::setIndGroup(uint8_t rui8_indGroup)
 {
   u_data.setUint8Data( 7, ((u_data[7] & 0x8F) | ((rui8_indGroup & 0x7) << 4)) );
 }
@@ -341,7 +341,7 @@ void ISOName_c::setIndGroup(uint8_t rui8_indGroup)
 /** set device class instance number
   @param rui8_devClassInst instance number of ECU with same devClass in the network
 */
-void ISOName_c::setDevClassInst(uint8_t rui8_devClassInst)
+void IsoName_c::setDevClassInst(uint8_t rui8_devClassInst)
 {
   u_data.setUint8Data( 7, ((u_data[7] & 0xF0) | (rui8_devClassInst)) );
 }
@@ -349,7 +349,7 @@ void ISOName_c::setDevClassInst(uint8_t rui8_devClassInst)
 /** set device class code
   @param rui8_devClass device class of ECU
 */
-void ISOName_c::setDevClass(uint8_t rui8_devClass)
+void IsoName_c::setDevClass(uint8_t rui8_devClass)
 {
   u_data.setUint8Data( 6, ((0 /* reserved bit set to zero!*/) | (rui8_devClass << 1)) );
 /* old version, which would be right if the reserved bit would have been set somewhere else.
@@ -360,7 +360,7 @@ void ISOName_c::setDevClass(uint8_t rui8_devClass)
 /** set function code
   @param rb_func function of the ECU (usual 25 for network interconnect)
 */
-void ISOName_c::setFunc(uint8_t rb_func)
+void IsoName_c::setFunc(uint8_t rb_func)
 {
   u_data.setUint8Data( 5, rb_func );
 }
@@ -369,7 +369,7 @@ void ISOName_c::setFunc(uint8_t rb_func)
   @param rb_funcInst instance number of ECU with same function and device class
       (default 0 - normally)
 */
-void ISOName_c::setFuncInst(uint8_t rb_funcInst)
+void IsoName_c::setFuncInst(uint8_t rb_funcInst)
 {
   u_data.setUint8Data( 4, ((u_data[4] & 0x7) | (rb_funcInst << 3)) );
 }
@@ -378,7 +378,7 @@ void ISOName_c::setFuncInst(uint8_t rb_funcInst)
   @param rb_funcInst instance number of ECU with same function, device class and function instance
       (default 0 - normally)
 */
-void ISOName_c::setEcuInst(uint8_t rb_ecuInst)
+void IsoName_c::setEcuInst(uint8_t rb_ecuInst)
 {
   u_data.setUint8Data( 4, ((u_data[4] & 0xF8) | (rb_ecuInst & 0x7)) );
 }
@@ -386,7 +386,7 @@ void ISOName_c::setEcuInst(uint8_t rb_ecuInst)
 /** set manufactor code
   @param rui16_manufCode code of manufactor (11bit)
 */
-void ISOName_c::setManufCode(uint16_t rui16_manufCode)
+void IsoName_c::setManufCode(uint16_t rui16_manufCode)
 {
   u_data.setUint8Data( 3, (rui16_manufCode >> 3) );
   u_data.setUint8Data( 2, ((u_data[2] & 0x1F) | ((rui16_manufCode & 0x7) << 5)) );
@@ -395,7 +395,7 @@ void ISOName_c::setManufCode(uint16_t rui16_manufCode)
 /** set serial number (Identity Number)
   @param rui32_serNo serial no of specific device (21bit)
 */
-void ISOName_c::setSerNo(uint32_t rui32_serNo)
+void IsoName_c::setSerNo(uint32_t rui32_serNo)
 {
   u_data.setUint16Data( 0, uint16_t(rui32_serNo & 0xFFFFU) );
   u_data.setUint8Data( 2, ( (u_data[2] & 0xE0) | ((rui32_serNo >> 16) & 0x1F) ) );
@@ -406,7 +406,7 @@ void ISOName_c::setSerNo(uint32_t rui32_serNo)
   @param rpb_compare
   @return 0 == equal; -1 == this has lower prio than par; +1 == this item has higher prio than par
 */
-int8_t ISOName_c::higherPriThanPar(const Flexible8ByteString_c* rpu_compare) const
+int8_t IsoName_c::higherPriThanPar(const Flexible8ByteString_c* rpu_compare) const
 {
 #if defined(DEBUG) && !defined(SYSTEM_A1) && defined(SYSTEM_PC)
   if ( rpu_compare == NULL )
@@ -416,7 +416,7 @@ int8_t ISOName_c::higherPriThanPar(const Flexible8ByteString_c* rpu_compare) con
     // So output suitable debug information in DEBUG mode and trigger than an abort() to get a clear indication on this failure.
     // In real production version, we would have to decide on WHAT to do for this case in such a lowlevel comparison function - what return value, .....
     INTERNAL_DEBUG_DEVICE
-      << "ERRORR!! ISOName_c::higherPriThanPar() was called with parameter == NULL!!" << INTERNAL_DEBUG_DEVICE_ENDL
+      << "ERRORR!! IsoName_c::higherPriThanPar() was called with parameter == NULL!!" << INTERNAL_DEBUG_DEVICE_ENDL
       << "The this adress was " << (int)this << INTERNAL_DEBUG_DEVICE_ENDL
       << "The program will be aborted now for explicit detection of this erroneous call. Fix the CALLING function - and not this function,"
       << " as this function makes never sense when called with NULL!!"
@@ -463,7 +463,7 @@ int8_t ISOName_c::higherPriThanPar(const Flexible8ByteString_c* rpu_compare) con
   @return true if equal, false if one non-inst field differs!
 */
 bool
-ISOName_c::isEqualRegardingNonInstFields (const ISOName_c& rrefc_isoName) const
+IsoName_c::isEqualRegardingNonInstFields (const IsoName_c& rrefc_isoName) const
 {
   return ( (devClass()  == rrefc_isoName.devClass() )
         && (indGroup()  == rrefc_isoName.indGroup() )
@@ -475,23 +475,23 @@ ISOName_c::isEqualRegardingNonInstFields (const ISOName_c& rrefc_isoName) const
 }
 
 /** convert function - avoids lots of explicit static_casts */
-IsoAgLib::iISOName_c& ISOName_c::toIisoName_c()
+IsoAgLib::iIsoName_c& IsoName_c::toIisoName_c()
 {
-  return static_cast<IsoAgLib::iISOName_c&>(*this);
-  //return static_cast<IsoAgLib::iISOName_c&>(*static_cast<IsoAgLib::iISOName_c*>((void *)(this)));
+  return static_cast<IsoAgLib::iIsoName_c&>(*this);
+  //return static_cast<IsoAgLib::iIsoName_c&>(*static_cast<IsoAgLib::iIsoName_c*>((void *)(this)));
   // doing it the ugly way, as some compiler do a recursive call of this operator at the "correct" 
-  // "return static_cast<IsoAgLib::iISOName_c&>(*this);" statement - some do not.
+  // "return static_cast<IsoAgLib::iIsoName_c&>(*this);" statement - some do not.
   // with the above way we can get absolutely sure that there are no recursive uses of this operator
   // as those would overflow the stack and hence cause a system-crash
 }
 
 /** convert function - avoids lots of explicit static_casts */
-const IsoAgLib::iISOName_c& ISOName_c::toConstIisoName_c() const
+const IsoAgLib::iIsoName_c& IsoName_c::toConstIisoName_c() const
 {
-  return static_cast<const IsoAgLib::iISOName_c&>(*this);
-//  return static_cast<const IsoAgLib::iISOName_c&>(*static_cast<const IsoAgLib::iISOName_c*>((void *)(this)));
+  return static_cast<const IsoAgLib::iIsoName_c&>(*this);
+//  return static_cast<const IsoAgLib::iIsoName_c&>(*static_cast<const IsoAgLib::iIsoName_c*>((void *)(this)));
   // doing it the ugly way, as some compiler do a recursive call of this operator at the "correct" 
-  // "return static_cast<const IsoAgLib::iISOName_c&>(*this);" statement - some do not.
+  // "return static_cast<const IsoAgLib::iIsoName_c&>(*this);" statement - some do not.
   // with the above way we can get absolutely sure that there are no recursive uses of this operator
   // as those would overflow the stack and hence cause a system-crash
 }

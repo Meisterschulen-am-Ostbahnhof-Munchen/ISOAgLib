@@ -269,21 +269,21 @@ public:
 
 	/** lock the corresponding hardware MsgObj to avoid receiving further CAN messages.
 		This important for handling of the LastMsgObj, as it should only receive messages
-		during process of CANIO_c::reconfigureMsgObj() - but as the messages shall be processed
-		within normal CANIO_c::processMsg(), nu furhter messages shall be placed in the receive queue
-		of the BIOS/OS. A immediate process wihtin execution of CANIO_c::reconfigureMsgObj() can cause
+		during process of CanIo_c::reconfigureMsgObj() - but as the messages shall be processed
+		within normal CanIo_c::processMsg(), nu furhter messages shall be placed in the receive queue
+		of the BIOS/OS. A immediate process wihtin execution of CanIo_c::reconfigureMsgObj() can cause
 		deadlocks when the reconfig is initiated as a result of:
 		-# Singleton_c::instance() -> Singleton_c::init()
 		-# -> partialClass_c::init()
-		-# -> CANIO_c::reconfigureMsgObj()
+		-# -> CanIo_c::reconfigureMsgObj()
 		-# -> MsgObj_c::processMsg()
 		-# -> partialClass_c::processMsg()
 		-# -> trigger update/reaction by Singleton_c::update() !!! undefined result, as Singleton_c::instance()
 					has not yet finished, so that this type of circular access on the same Singleton_c::instance()
 					is blocked by returning the signal value 0x1
 
-		Thus CANIO_c::reconfigureMsgObj() locks the lastMessageObject at the end, so that the buffer content is
-		simply conserved until normal CANIO_c::processMsg() is called.
+		Thus CanIo_c::reconfigureMsgObj() locks the lastMessageObject at the end, so that the buffer content is
+		simply conserved until normal CanIo_c::processMsg() is called.
 	*/
 	void lock( bool rb_lock = true );
 

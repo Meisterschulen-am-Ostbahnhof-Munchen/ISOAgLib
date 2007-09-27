@@ -96,30 +96,30 @@
 namespace __IsoAgLib {
 
 /**
-  ISOSystemPkg_c transforms informations from CAN uint8_t string
+  IsoSystemPkg_c transforms informations from CAN uint8_t string
   to and from data structure for Scheduler_c SystemMgmt_c messages
   @author Dipl.-Inform. Achim Spangler
 */
 
-class ISOSystemPkg_c : public CANPkgExt_c  {
+class IsoSystemPkg_c : public CanPkgExt_c  {
 public:
   /** default constructor */
-  ISOSystemPkg_c();
+  IsoSystemPkg_c();
   /** default destructor */
-  ~ISOSystemPkg_c();
+  ~IsoSystemPkg_c();
   /**
     ==> OBSOLETE, because now all can-pkg-data is STATIC!
     ==> REACTIVATE if some NON-STATIC member vars will be added!
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    assign operator to insert informations from one CANPkg_c into another
+    assign operator to insert informations from one CanPkg_c into another
     @see __IsoAgLib::FilterBox_c::operator>>
-    @see CANPkgExt_c::operator=
-    @see CANPkgExt_c::getData
-    @param rrefc_right reference to the source CANPkg_c on the right
-    @return reference to the source CANPkg_c to enable assign chains like
+    @see CanPkgExt_c::operator=
+    @see CanPkgExt_c::getData
+    @param rrefc_right reference to the source CanPkg_c on the right
+    @return reference to the source CanPkg_c to enable assign chains like
         "pkg1 = pkg2 = pkg3 = pkg4;"
-  virtual const CANPkg_c& operator=(const CANPkg_c& rrefc_right) { return CANPkg_c::operator=(rrefc_right);};
+  virtual const CanPkg_c& operator=(const CanPkg_c& rrefc_right) { return CanPkg_c::operator=(rrefc_right);};
   */
 
   /* ************************** */
@@ -129,7 +129,7 @@ public:
     deliver ISOName of sender
     @return ISOName of sender
   */
-  const ISOName_c& isoName() const
+  const IsoName_c& isoName() const
   { // read on extended ident ISO msg the ISOName from NAME setting
     return c_isoISOName;
   };
@@ -139,9 +139,9 @@ public:
 
   /**
     overloaded virtual function to translate the string data into flag values;
-    needed for assigning informations from another CANPkg_c or CANPkgExt
-    @see CANPkg_c::operator=
-    @see CANPkgExt_c::operator=
+    needed for assigning informations from another CanPkg_c or CANPkgExt
+    @see CanPkg_c::operator=
+    @see CanPkgExt_c::operator=
   */
   virtual void string2Flags();
 
@@ -150,16 +150,19 @@ protected: // protected methods
 
   /**
     overloaded virtual function to translate flag values to data string;
-    needed for sending informations from this object via CANIO_c on CAN BUS,
-    because CANIO_c doesn't know anything about the data format of this type of msg
+    needed for sending informations from this object via CanIo_c on CAN BUS,
+    because CanIo_c doesn't know anything about the data format of this type of msg
     so that it can only use an unformated data string from CANPkg
-    @see CANPkg_c::getData
-    @see CANPkgExt_c::getData
+    @see CanPkg_c::getData
+    @see CanPkgExt_c::getData
   */
   virtual void flags2String();
   private:
-    ISOName_c c_isoISOName;
+    IsoName_c c_isoISOName;
 };
+
+/** this typedef is only for some time to provide backward compatibility at API level */
+typedef IsoSystemPkg_c ISOSystemPkg_c;
 
 }
 #endif

@@ -553,7 +553,7 @@ int16_t sendCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tSend* ptSend )
 #endif
 
   memset(&msqWriteBuf, 0, sizeof(msqWrite_s));
-  msqWriteBuf.i32_mtypePrioAnd1 = assembleWrite_mtype(__IsoAgLib::CANIO_c::sb_sendPrioritized);
+  msqWriteBuf.i32_mtypePrioAnd1 = assembleWrite_mtype(__IsoAgLib::CanIo_c::sb_sendPrioritized);
   msqWriteBuf.ui16_pid = msqDataClient.i32_pid;
   msqWriteBuf.ui8_bus = bBusNumber;
   msqWriteBuf.ui8_obj = bMsgObj;

@@ -839,7 +839,7 @@ int main()
       EXTERNAL_DEBUG_DEVICE << "Minimum ECU:                           " << getIsoCertTypeFlag(getITracCertInstance().minimumECU() ) << "\n";
 
       //request for new Certification info
-      IsoAgLib::iCANPkgExt_c c_myCanExt;
+      IsoAgLib::iCanPkgExt_c c_myCanExt;
       c_myCanExt.setIsoPgn(REQUEST_PGN_MSG_PGN);
       c_myCanExt.setMonitorItemForDA(NULL);
       c_myCanExt.setISONameForSA(c_myIdent.isoName());
@@ -877,7 +877,7 @@ int main()
       #ifdef WIN32
         if ( i32_idleTimeSpread > 0 ) Sleep(i32_idleTimeSpread);
       #else
-        if ( i32_idleTimeSpread > 0 ) IsoAgLib::iCANIO_c::waitUntilCanReceiveOrTimeout( i32_idleTimeSpread );
+        if ( i32_idleTimeSpread > 0 ) IsoAgLib::iCanIo_c::waitUntilCanReceiveOrTimeout( i32_idleTimeSpread );
       #endif
     #endif
 

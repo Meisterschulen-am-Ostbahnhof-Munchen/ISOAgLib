@@ -1,6 +1,6 @@
 /***************************************************************************
                  tracmove_c.cpp - stores, updates and delivers all moving
-                                  data information from CANCustomer_c
+                                  data information from CanCustomer_c
                                   derived for CAN sending and receiving
                                   interaction;
                                   from BaseCommon_c derived for
@@ -123,12 +123,12 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
   /** initialise element which can't be done during construct;
       above all create the needed FilterBox_c instances
       possible errors:
-        * dependant error in CANIO_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
+        * dependant error in CanIo_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
       @param rpc_isoName optional pointer to the ISOName variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
       @param ai_singletonVecKey singleton vector key in case PRT_INSTANCE_CNT > 1
       @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
     */
-  void TracMove_c::init_base (const ISOName_c* rpc_isoName, int /*ai_singletonVecKey*/, IsoAgLib::IdentMode_t rt_identMode)
+  void TracMove_c::init_base (const IsoName_c* rpc_isoName, int /*ai_singletonVecKey*/, IsoAgLib::IdentMode_t rt_identMode)
   {
     //call init for handling which is base data independent
     BaseCommon_c::init_base (rpc_isoName, getSingletonVecKey(), rt_identMode);
@@ -140,7 +140,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
       @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       @return true -> configuration was successfull
     */
-  bool TracMove_c::config_base (const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode, uint16_t rui16_suppressMask)
+  bool TracMove_c::config_base (const IsoName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode, uint16_t rui16_suppressMask)
   {
     //call config for handling which is base data independent
     //if something went wrong leave function before something is configured
@@ -215,8 +215,8 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     */
   void TracMove_c::checkCreateReceiveFilter()
   {
-    ISOMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
-    CANIO_c &c_can = getCanInstance4Comm();
+    IsoMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
+    CanIo_c &c_can = getCanInstance4Comm();
 
     if ( ( !checkFilterCreated() ) && ( c_isoMonitor.existActiveLocalIsoMember() ) )
     { // check if needed receive filters for ISO are active
@@ -238,13 +238,13 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
 
   /** process a ISO11783 base information PGN
       @pre  sender of message is existent in monitor list
-      @see  CANPkgExt_c::resolveSendingInformation()
+      @see  CanPkgExt_c::resolveSendingInformation()
     */
   bool TracMove_c::processMsg()
   {
     // there is no need to check if sender exist in the monitor list because this is already done
-    // in CANPkgExt_c -> resolveSendingInformation
-    ISOName_c c_tempISOName( data().getISONameForSA() );
+    // in CanPkgExt_c -> resolveSendingInformation
+    IsoName_c c_tempISOName( data().getISONameForSA() );
 
     #if defined(USE_BASE) || defined(USE_TRACTOR_GENERAL)
     TracGeneral_c& c_tracgeneral = getTracGeneralInstance4Comm();
@@ -526,7 +526,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
 
   /** send moving data with ground&theor speed&dist
       @pre  function is only called in tractor mode and only from timeEventTracMode
-      @see  CANIO_c::operator<<
+      @see  CanIo_c::operator<<
     */
   void TracMove_c::sendMovingTracMode( )
   { // there is no need to check for address claim because this is already done in the timeEvent
@@ -535,7 +535,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     #if defined(USE_BASE) || defined(USE_TRACTOR_GENERAL)
     TracGeneral_c& c_tracgeneral = getTracGeneralInstance4Comm();
     #endif
-    CANIO_c& c_can = getCanInstance4Comm();
+    CanIo_c& c_can = getCanInstance4Comm();
 
     data().setISONameForSA( *getISOName() );
     data().setIdentType(Ident_c::ExtendedIdent);
@@ -566,7 +566,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
       //reserved fields
       data().setUint8Data(6, 0xFF);
 
-      // CANIO_c::operator<< retreives the information with the help of CANPkg_c::getData
+      // CanIo_c::operator<< retreives the information with the help of CanPkg_c::getData
       // then it sends the data
       c_can << data();
     }
@@ -592,7 +592,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
       b_val8 |= t_directionTheor;
       data().setUint8Data(7, b_val8);
 
-      // CANIO_c::operator<< retreives the information with the help of CANPkg_c::getData
+      // CanIo_c::operator<< retreives the information with the help of CanPkg_c::getData
       // then it sends the data
       c_can << data();
     }
@@ -614,7 +614,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
       //reserved fields
       data().setUint8Data(6, 0xFF);
 
-      // CANIO_c::operator<< retreives the information with the help of CANPkg_c::getData
+      // CanIo_c::operator<< retreives the information with the help of CanPkg_c::getData
       // then it sends the data
       c_can << data();
     }
@@ -627,7 +627,7 @@ TracMove_c::getTaskName() const
 /** dummy implementation
     @todo shouldn't this PGN be also answered?
   */
-bool TracMove_c::processMsgRequestPGN (uint32_t rui32_pgn, ISOItem_c* rpc_isoItemSender, ISOItem_c* rpc_isoItemReceiver)
+bool TracMove_c::processMsgRequestPGN (uint32_t rui32_pgn, IsoItem_c* rpc_isoItemSender, IsoItem_c* rpc_isoItemReceiver)
 {
   return false;
 }

@@ -132,8 +132,8 @@ namespace __IsoAgLib {
   possible errors:
       * Err_c::badAlloc not enough memory to insert first  MeasureProgLocal
   ISO parameter
-  @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
-                       (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
+  @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDdi_s which contains DDI, element, isSetpoint and ValueGroup
+                       (array is terminated by ElementDdi_s.ui16_element == 0xFFFF)
 
   @param rc_isoName optional ISOName code of Process-Data
   @param rc_ownerISOName optional ISOName of the owner
@@ -158,9 +158,9 @@ namespace __IsoAgLib {
   @param rpc_processDataChangeHandler optional pointer to handler class of application
   @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
-void ProcDataLocalBase_c::init(const IsoAgLib::ElementDDI_s* ps_elementDDI, uint16_t rui16_element,
-                               const ISOName_c& rc_isoName, const ISOName_c& rc_ownerISOName,
-                               const ISOName_c *rpc_isoName, bool rb_cumulativeValue,
+void ProcDataLocalBase_c::init(const IsoAgLib::ElementDdi_s* ps_elementDDI, uint16_t rui16_element,
+                               const IsoName_c& rc_isoName, const IsoName_c& rc_ownerISOName,
+                               const IsoName_c *rpc_isoName, bool rb_cumulativeValue,
 #ifdef USE_EEPROM_IO
                                uint16_t rui16_eepromAdr,
 #endif // USE_EEPROM_IO
@@ -220,7 +220,7 @@ ProcDataLocalBase_c::~ProcDataLocalBase_c(){
   set the eeprom adr for the value, read in value from EEPROM
 
   possible errors:
-      * dependent error in EEPROMIO_c on problems during read
+      * dependent error in EepromIo_c on problems during read
   @param rui16_eepromAdr new EEPROM adress
 */
 void ProcDataLocalBase_c::setEepromAdr(uint16_t rui16_eepromAdr)
@@ -370,7 +370,7 @@ bool ProcDataLocalBase_c::timeEvent( uint16_t* /* pui16_nextTimePeriod */){
   @param rc_targetISOName ISOName of target
   @return true -> successful sent
 */
-bool ProcDataLocalBase_c::sendMasterMeasurementVal( const ISOName_c& rc_targetISOName) const {
+bool ProcDataLocalBase_c::sendMasterMeasurementVal( const IsoName_c& rc_targetISOName) const {
 
     // prepare general command in process pkg
     getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false, /* isRequest */
@@ -446,7 +446,7 @@ void ProcDataLocalBase_c::processSetpoint()
   reset eeprom val
 
   possible errors:
-      * dependent error in EEPROMIO_c on problems during read
+      * dependent error in EepromIo_c on problems during read
   @param pc_progItem MeasureProgLocal_c instance which wants to reset EEPROM val
 */
 void ProcDataLocalBase_c::resetEeprom( void ){
@@ -469,7 +469,7 @@ void ProcDataLocalBase_c::resetEeprom( void ){
 }
 #endif // USE_EEPROM_IO
 
-bool ProcDataLocalBase_c::sendValISOName(const ISOName_c& rc_varISOName, int32_t ri32_val) const
+bool ProcDataLocalBase_c::sendValISOName(const IsoName_c& rc_varISOName, int32_t ri32_val) const
 {
   setLocalSendFlags (rc_varISOName);
 
@@ -477,7 +477,7 @@ bool ProcDataLocalBase_c::sendValISOName(const ISOName_c& rc_varISOName, int32_t
 }
 
 #ifdef USE_FLOAT_DATA_TYPE
-bool ProcDataLocalBase_c::sendValISOName(const ISOName_c& rc_varISOName, float rf_val) const
+bool ProcDataLocalBase_c::sendValISOName(const IsoName_c& rc_varISOName, float rf_val) const
 {
   setLocalSendFlags (rc_varISOName);
 
@@ -485,7 +485,7 @@ bool ProcDataLocalBase_c::sendValISOName(const ISOName_c& rc_varISOName, float r
 }
 #endif
 
-void ProcDataLocalBase_c::setLocalSendFlags(const ISOName_c& rc_varISOName) const
+void ProcDataLocalBase_c::setLocalSendFlags(const IsoName_c& rc_varISOName) const
 {
   ProcessPkg_c& c_data = getProcessPkg();
 

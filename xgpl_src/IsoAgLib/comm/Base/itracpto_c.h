@@ -2,7 +2,7 @@
                 itracpto_c.h  - working on Base Data Msg Type NMEA 200 GPS
                                   and Calendar; stores, updates  and
                                   delivers all base data informations
-                                  from CANCustomer_c derived for CAN
+                                  from CanCustomer_c derived for CAN
                                   sending and receiving interaction;
                                   from ElementBase_c derived for
                                   interaction with other IsoAgLib objects
@@ -70,7 +70,7 @@ namespace IsoAgLib {
   /** working on Base Data Msg Type 1;
       stores, updates  and delivers all base data informations;
       Derive from ElementBase_c to register in Scheduler_c for timeEvent trigger
-      Derive from CANCustomer to register FilterBox'es in CANIO_c to receive CAN messages
+      Derive from CANCustomer to register FilterBox'es in CanIo_c to receive CAN messages
       Derive from SINGLETON to create a Singleton which manages one global accessible singleton
       per IsoAgLib instance (if only one IsoAgLib instance is defined in application config, no overhead is produced).
     */
@@ -84,7 +84,7 @@ namespace IsoAgLib {
       @param rt_identMode set mode to either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       @return true -> configuration was successfull
     */
-  bool config (const iISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode = IsoAgLib::IdentModeImplement, uint16_t rui16_suppressMask = 0)
+  bool config (const iIsoName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode = IsoAgLib::IdentModeImplement, uint16_t rui16_suppressMask = 0)
   { return TracPTO_c::config_base (rpc_isoName, rt_identMode, rui16_suppressMask ); }
 
 /* ******************************************* */

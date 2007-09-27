@@ -141,7 +141,7 @@ public:
     ProcDataBase_c *const rpc_processData = NULL,
     Proc_c::progType_t ren_progType = Proc_c::UndefinedProg,
     int32_t ri32_val = 0,
-    const ISOName_c& rc_isoName = ISOName_c::ISONameUnspecified() ) : ProcessElementBase_c(rpc_processData),
+    const IsoName_c& rc_isoName = IsoName_c::IsoNameUnspecified() ) : ProcessElementBase_c(rpc_processData),
       vec_measureSubprog() {init(rpc_processData, ren_progType, ri32_val, rc_isoName);}
 
   /**
@@ -155,7 +155,7 @@ public:
     ProcDataBase_c &rrefc_processData,
     Proc_c::progType_t ren_progType = Proc_c::UndefinedProg,
     int32_t ri32_val = 0,
-    const ISOName_c& rc_isoName = ISOName_c::ISONameUnspecified()) : ProcessElementBase_c(rrefc_processData),
+    const IsoName_c& rc_isoName = IsoName_c::IsoNameUnspecified()) : ProcessElementBase_c(rrefc_processData),
       vec_measureSubprog() {init(&rrefc_processData, ren_progType, ri32_val, rc_isoName);}
 
   /**
@@ -169,7 +169,7 @@ public:
     ProcDataBase_c *const rpc_processData,
     Proc_c::progType_t ren_progType = Proc_c::UndefinedProg,
     int32_t ri32_val = 0,
-    const ISOName_c& rc_isoName = ISOName_c::ISONameUnspecified());
+    const IsoName_c& rc_isoName = IsoName_c::IsoNameUnspecified());
 
   /**
     assignment of MeasureProgBase_c objects
@@ -294,7 +294,7 @@ public:
     ProcDataBase_c *const rpc_processData,
     Proc_c::progType_t ren_progType,
     float rf_val,
-    const ISOName_c& rc_isoName = ISOName_c::ISONameUnspecified());
+    const IsoName_c& rc_isoName = IsoName_c::IsoNameUnspecified());
 
   /**
     deliver actual last received value
@@ -352,7 +352,7 @@ public:
     return the c_isoName code for this measureprog
     @return ISOName of this measureprog
   */
-  const ISOName_c& isoName() const{return c_isoName;}
+  const IsoName_c& isoName() const{return c_isoName;}
 
   /**
     deliver the type of the active increment types
@@ -462,7 +462,7 @@ public:
     @param rc_isoName ISOName for exact specification of partner system
   */
   // This has something to do with the init failing for the iProcDataRemote_c object. -bac
-  void setISOName(const ISOName_c& rc_isoName){c_isoName = rc_isoName;}
+  void setISOName(const IsoName_c& rc_isoName){c_isoName = rc_isoName;}
 
   /**
     process a message;
@@ -766,7 +766,7 @@ private: // Private attributes
   */
   Proc_c::accumProp_t en_accumProp;
   /** isoName value of caller of program */
-  ISOName_c c_isoName;
+  IsoName_c c_isoName;
 };
 
 }

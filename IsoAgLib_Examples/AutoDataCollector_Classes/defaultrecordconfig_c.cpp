@@ -115,7 +115,7 @@ void DefaultRecordConfig_c::init(uint16_t rui16_eepromAdr)
 
 	// now read data
 	uint8_t ui8_data;
-	IsoAgLib::iEEPROMIO_c& c_eeprom = IsoAgLib::getIeepromInstance();
+	IsoAgLib::iEepromIo_c& c_eeprom = IsoAgLib::getIeepromInstance();
 	c_eeprom.setg(ui16_eepromAdr);
 
 	c_eeprom >> ui8_data;

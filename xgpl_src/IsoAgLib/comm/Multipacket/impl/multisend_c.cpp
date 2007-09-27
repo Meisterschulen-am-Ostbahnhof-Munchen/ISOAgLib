@@ -157,7 +157,7 @@ void SendUploadBase_c::set (uint8_t* rpui8_buffer, uint32_t rui32_bufferSize)
   if ( vec_uploadBuffer.capacity() != sui16_lastPrintedBufferCapacity )
   {
     sui16_lastPrintedBufferCapacity = vec_uploadBuffer.capacity();
-    getRs232Instance() << "ISOTerminal_c Buffer-Capa: " << sui16_lastPrintedBufferCapacity << INTERNAL_DEBUG_DEVICE_ENDL;
+    getRs232Instance() << "IsoTerminal_c Buffer-Capa: " << sui16_lastPrintedBufferCapacity << INTERNAL_DEBUG_DEVICE_ENDL;
   }
   #endif
 }
@@ -201,7 +201,7 @@ void SendUploadBase_c::set (uint16_t rui16_objId, const char* rpc_string, uint16
   if ( vec_uploadBuffer.capacity() != sui16_lastPrintedBufferCapacity )
   {
     sui16_lastPrintedBufferCapacity = vec_uploadBuffer.capacity();
-    getRs232Instance() << "ISOTerminal_c Buffer-Capa: " << sui16_lastPrintedBufferCapacity << INTERNAL_DEBUG_DEVICE_ENDL;
+    getRs232Instance() << "IsoTerminal_c Buffer-Capa: " << sui16_lastPrintedBufferCapacity << INTERNAL_DEBUG_DEVICE_ENDL;
   }
   #endif
 }
@@ -285,7 +285,7 @@ SendUploadBase_c::SendUploadBase_c (const SendUploadBase_c& ref_source)
   this init() function immediately sends out the first package (RTS or FpFirstFrame
   */
 void
-MultiSend_c::SendStream_c::init (const ISOName_c& rrefc_isoNameSender, const ISOName_c& rrefc_isoNameReceiver, const HUGE_MEM uint8_t* rhpb_data, uint32_t rui32_dataSize, sendSuccess_t& rrefen_sendSuccessNotify, uint32_t rui32_pgn, IsoAgLib::iMultiSendStreamer_c* rpc_mss, msgType_t ren_msgType)
+MultiSend_c::SendStream_c::init (const IsoName_c& rrefc_isoNameSender, const IsoName_c& rrefc_isoNameReceiver, const HUGE_MEM uint8_t* rhpb_data, uint32_t rui32_dataSize, sendSuccess_t& rrefen_sendSuccessNotify, uint32_t rui32_pgn, IsoAgLib::iMultiSendStreamer_c* rpc_mss, msgType_t ren_msgType)
 {
   ui32_pgn = rui32_pgn;
   if ((ui32_pgn & 0x0FF00) < 0x0F000) ui32_pgn &= 0x3FF00;
@@ -423,7 +423,7 @@ void MultiSend_c::close()
   @return an "in-progress" stream or NULL if none active for this sa/da-key
 */
 MultiSend_c::SendStream_c*
-MultiSend_c::getSendStream(const ISOName_c& rrefc_isoNameSender, const ISOName_c& rrefc_isoNameReceiver)
+MultiSend_c::getSendStream(const IsoName_c& rrefc_isoNameSender, const IsoName_c& rrefc_isoNameReceiver)
 {
   for (STL_NAMESPACE::list<SendStream_c>::iterator pc_iter=list_sendStream.begin(); pc_iter != list_sendStream.end(); pc_iter++)
   {
@@ -441,7 +441,7 @@ MultiSend_c::getSendStream(const ISOName_c& rrefc_isoNameSender, const ISOName_c
   @return reference to added SendStream ==> HAS TO BE INITIALIZED, because it may be a copy of the first (to avoid stack creation of new object)
 */
 MultiSend_c::SendStream_c*
-MultiSend_c::addSendStream(const ISOName_c& rrefc_isoNameSender, const ISOName_c& rrefc_isoNameReceiver)
+MultiSend_c::addSendStream(const IsoName_c& rrefc_isoNameSender, const IsoName_c& rrefc_isoNameReceiver)
 {
   /** @todo check if sender is unspecified!
             receiver may be - that indicated broadcast!?!?! */
@@ -492,7 +492,7 @@ MultiSend_c::addSendStream(const ISOName_c& rrefc_isoNameSender, const ISOName_c
   @return true -> MultiSend_c was ready -> mask is spooled to target
 */
 bool
-MultiSend_c::sendIntern (const ISOName_c& rrefc_isoNameSender, const ISOName_c& rrefc_isoNameReceiver, const HUGE_MEM uint8_t* rhpb_data, int32_t ri32_dataSize, sendSuccess_t& rrefen_sendSuccessNotify, int32_t ri32_pgn, IsoAgLib::iMultiSendStreamer_c* rpc_mss, msgType_t ren_msgType)
+MultiSend_c::sendIntern (const IsoName_c& rrefc_isoNameSender, const IsoName_c& rrefc_isoNameReceiver, const HUGE_MEM uint8_t* rhpb_data, int32_t ri32_dataSize, sendSuccess_t& rrefen_sendSuccessNotify, int32_t ri32_pgn, IsoAgLib::iMultiSendStreamer_c* rpc_mss, msgType_t ren_msgType)
 {
   /// first check if new transfer can be started
   /// - is the sender correct?
@@ -502,10 +502,10 @@ MultiSend_c::sendIntern (const ISOName_c& rrefc_isoNameSender, const ISOName_c& 
   /// - is the receiver correct?
   if ((ren_msgType == IsoTPbroadcast) || (ren_msgType == NmeaFastPacket))
   { // no destination-isoname checks needed for broadcast messages!
-    // Force destination to be "ISONameUnspecified"
+    // Force destination to be "IsoNameUnspecified"
     /// - check if there's already a SA/DA pair active (in this case NULL is returned!)
     /// - if not NULL is returned, it points to the newly generated stream.
-    pc_newSendStream = addSendStream (rrefc_isoNameSender, ISOName_c::ISONameUnspecified());
+    pc_newSendStream = addSendStream (rrefc_isoNameSender, IsoName_c::IsoNameUnspecified());
   }
   else
   { // destination specific - so the receiver must be registered!
@@ -905,7 +905,7 @@ MultiSend_c::SendStream_c::processMsg()
 
   possible errors:
     * Err_c::elNonexistent on SEND/EMPF not registered in Monitor-List
-  @return true -> message was processed; else the received CAN message will be served to other matching CANCustomer_c
+  @return true -> message was processed; else the received CAN message will be served to other matching CanCustomer_c
 */
 bool
 MultiSend_c::processMsg()
@@ -972,28 +972,28 @@ MultiSend_c::SendStream_c::abortSend()
 }
 
 
-/** this function is called by ISOMonitor_c when a new CLAIMED ISOItem_c is registered.
- * @param refc_isoName const reference to the item which ISOItem_c state is changed
- * @param rpc_newItem pointer to the currently corresponding ISOItem_c
+/** this function is called by IsoMonitor_c when a new CLAIMED IsoItem_c is registered.
+ * @param refc_isoName const reference to the item which IsoItem_c state is changed
+ * @param rpc_newItem pointer to the currently corresponding IsoItem_c
  */
-void MultiSend_c::reactOnMonitorListAdd( const ISOName_c& refc_isoName, const ISOItem_c* /*rpc_newItem*/ )
+void MultiSend_c::reactOnMonitorListAdd( const IsoName_c& refc_isoName, const IsoItem_c* /*rpc_newItem*/ )
 {
   if ( getIsoMonitorInstance4Comm().existLocalIsoMemberISOName(refc_isoName) )
-  { // local ISOItem_c has finished adr claim
+  { // local IsoItem_c has finished adr claim
     #ifdef DEBUG
     INTERNAL_DEBUG_DEVICE << "MultiSend_c added receive filter for LocalIsoMember as it's now active (=claimed)." << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
-    getIsoFilterManagerInstance().insertIsoFilter (ISOFilter_s (*this, (0x3FFFF00UL),  (TP_CONN_MANAGE_PGN << 8), &refc_isoName, NULL, 8));
-    getIsoFilterManagerInstance().insertIsoFilter (ISOFilter_s (*this, (0x3FFFF00UL), (ETP_CONN_MANAGE_PGN << 8), &refc_isoName, NULL, 8));
+    getIsoFilterManagerInstance().insertIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL),  (TP_CONN_MANAGE_PGN << 8), &refc_isoName, NULL, 8));
+    getIsoFilterManagerInstance().insertIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL), (ETP_CONN_MANAGE_PGN << 8), &refc_isoName, NULL, 8));
   }
 }
 
 
-/** this function is called by ISOMonitor_c when a device looses its ISOItem_c.
- * @param refc_isoName const reference to the item which ISOItem_c state is changed
+/** this function is called by IsoMonitor_c when a device looses its IsoItem_c.
+ * @param refc_isoName const reference to the item which IsoItem_c state is changed
  * @param rui8_oldSa previously used SA which is NOW LOST -> clients which were connected to this item can react explicitly
  */
-void MultiSend_c::reactOnMonitorListRemove( const ISOName_c& /*refc_isoName*/, uint8_t /*rui8_oldSa*/ )
+void MultiSend_c::reactOnMonitorListRemove( const IsoName_c& /*refc_isoName*/, uint8_t /*rui8_oldSa*/ )
 { // not needed anymore, as IsoFilterManager_c handles all this
 }
 
@@ -1058,7 +1058,7 @@ MultiSend_c::SendStream_c::prepareSendMsg(uint8_t &ui8_nettoDataCnt)
 
 /** user function for explicit abort of any running matching stream. */
 void
-MultiSend_c::abortSend (const ISOName_c& rrefc_isoNameSender, const ISOName_c& rrefc_isoNameReceiver)
+MultiSend_c::abortSend (const IsoName_c& rrefc_isoNameSender, const IsoName_c& rrefc_isoNameReceiver)
 {
   SendStream_c* pc_sendStream = getSendStream (rrefc_isoNameSender, rrefc_isoNameReceiver);
   if (pc_sendStream) pc_sendStream->abortSend();

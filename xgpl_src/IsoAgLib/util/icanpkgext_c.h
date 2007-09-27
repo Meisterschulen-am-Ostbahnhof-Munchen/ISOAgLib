@@ -1,5 +1,5 @@
 /***************************************************************************
-                          icanpkgext_c.h - header for extended iCANPkg_c object,
+                          icanpkgext_c.h - header for extended iCanPkg_c object,
                                           which calls data flag converting
                                           functions on assign operations
                              -------------------
@@ -69,19 +69,19 @@
 // Begin Namespace IsoAgLib
 namespace IsoAgLib {
 
-/** extended version of CANPkg_c which overwrites the
+/** extended version of CanPkg_c which overwrites the
     assign and getData functions
     with call for data flag converting functions
   *@author Dipl.-Inform. Achim Spangler
   */
 
-class iCANPkgExt_c : private __IsoAgLib::CANPkgExt_c {
+class iCanPkgExt_c : private __IsoAgLib::CanPkgExt_c {
 public:
   /**
     deliver the ident
     @return ident setting as MASK_TYPE
   */
-  MASK_TYPE ident() const {return CANPkgExt_c::ident(); }
+  MASK_TYPE ident() const {return CanPkgExt_c::ident(); }
   /**
     deliver the uint8_t value of ident at wanted position
     (position 0 is least significant position -> nearest to DLC field of
@@ -89,105 +89,105 @@ public:
     @param rb_pos
     @return ident value
   */
-  MASK_TYPE ident(uint8_t rb_pos) const {return CANPkgExt_c::ident(rb_pos); }
+  MASK_TYPE ident(uint8_t rb_pos) const {return CanPkgExt_c::ident(rb_pos); }
 
-  void setIdent(MASK_TYPE rt_ident, IsoAgLib::iIdent_c::identType_t rt_type = DEFAULT_IDENT_TYPE) { CANPkgExt_c::setIdent(rt_ident, rt_type); }
+  void setIdent(MASK_TYPE rt_ident, IsoAgLib::iIdent_c::identType_t rt_type = DEFAULT_IDENT_TYPE) { CanPkgExt_c::setIdent(rt_ident, rt_type); }
 
   /**
     set type of ident
     @param rt_type type of Ident_c: 11bit Ident_c::S or 29bit Ident_c::E
   */
-  void setIdentType(IsoAgLib::iIdent_c::identType_t rt_type){CANPkgExt_c::setIdentType(rt_type);}
+  void setIdentType(IsoAgLib::iIdent_c::identType_t rt_type){CanPkgExt_c::setIdentType(rt_type);}
 
   /**
     deliver type of Ident_c: 11bit standard or 29bit extended
     @return: Ident_c::S or Ident_c::E
   */
-  IsoAgLib::iIdent_c::identType_t identType() {return CANPkgExt_c::identType();}
+  IsoAgLib::iIdent_c::identType_t identType() {return CanPkgExt_c::identType();}
 
   /** retrieve len of last received CAN message */
-  uint8_t getLen() { return CANPkgExt_c::getLen(); }
+  uint8_t getLen() { return CanPkgExt_c::getLen(); }
 
   /**
     simply deliver a uint8_t from a specific position with operator[]
     @param rb_pos position of dellivered uint8_t [0..7]
     @return uint8_t balue in CAN data string at pos rb_pos
   */
-  uint8_t operator[](uint8_t rb_pos) const {return CANPkgExt_c::operator[](rb_pos); }
+  uint8_t operator[](uint8_t rb_pos) const {return CanPkgExt_c::operator[](rb_pos); }
 
   /**
     set an uint8_t value at specified position in string
     @param rui8_pos position [0..7]
     @param rui8_val uint8_t value to set
   */
-  void setUint8Data( uint8_t rui8_pos, uint8_t rui8_val) { CANPkgExt_c::setUint8Data( rui8_pos, rui8_val ); }
+  void setUint8Data( uint8_t rui8_pos, uint8_t rui8_val) { CanPkgExt_c::setUint8Data( rui8_pos, rui8_val ); }
   /**
     set an uint16_t value at specified position in string
     @param rui8_pos position [0..6]
     @param rui16_val uint16_t value to set
   */
-  void setUint16Data( uint8_t rui8_pos, uint16_t rui16_val) { CANPkgExt_c::setUint16Data( rui8_pos, rui16_val ); }
+  void setUint16Data( uint8_t rui8_pos, uint16_t rui16_val) { CanPkgExt_c::setUint16Data( rui8_pos, rui16_val ); }
   /**
     set an int16_t value at specified position in string
     @param rui8_pos position [0..6]
     @param ri16_val int16_t value to set
   */
-  void setInt16Data( uint8_t rui8_pos, int16_t ri16_val) { CANPkgExt_c::setInt16Data( rui8_pos, ri16_val ); }
+  void setInt16Data( uint8_t rui8_pos, int16_t ri16_val) { CanPkgExt_c::setInt16Data( rui8_pos, ri16_val ); }
   /**
     set an uint32_t value at specified position in string
     @param rui8_pos position [0..4]
     @param rui32_val uint32_t value to set
   */
-  void setUint32Data( uint8_t rui8_pos, uint32_t rui32_val) { CANPkgExt_c::setUint32Data( rui8_pos, rui32_val ); }
+  void setUint32Data( uint8_t rui8_pos, uint32_t rui32_val) { CanPkgExt_c::setUint32Data( rui8_pos, rui32_val ); }
   /**
     set an int32_t value at specified position in string
     @param rui8_pos position [0..4]
     @param ri32_val int32_t value to set
   */
-  void setInt32Data( uint8_t rui8_pos, int32_t ri32_val) { CANPkgExt_c::setInt32Data( rui8_pos, ri32_val ); }
+  void setInt32Data( uint8_t rui8_pos, int32_t ri32_val) { CanPkgExt_c::setInt32Data( rui8_pos, ri32_val ); }
 
   /**
     simply deliver a uint8_t from a specific position with
     @param rb_pos position of dellivered uint8_t [0..7]
     @return uint8_t balue in CAN data string at pos rb_pos
   */
-  uint8_t getUint8Data(uint8_t rb_pos) const {return CANPkgExt_c::getUint8Data( rb_pos ); }
+  uint8_t getUint8Data(uint8_t rb_pos) const {return CanPkgExt_c::getUint8Data( rb_pos ); }
   /**
     simply deliver a uint16_t from a specific starting position with
     @param rb_pos position of dellivered uint16_t [0..6]
     @return uint16_t balue in CAN data string at pos (rb_pos, rb_pos+1) read Low/High order
   */
-  uint16_t getUint16Data(uint8_t rb_pos) const {return CANPkgExt_c::getUint16Data( rb_pos ); }
+  uint16_t getUint16Data(uint8_t rb_pos) const {return CanPkgExt_c::getUint16Data( rb_pos ); }
   /**
     simply deliver a int16_t from a specific starting position with
     @param rb_pos position of dellivered int16_t [0..6]
     @return int16_t balue in CAN data string at pos (rb_pos, rb_pos+1) read Low/High order
   */
-  int16_t getInt16Data(uint8_t rb_pos) const {return CANPkgExt_c::getInt16Data( rb_pos ); }
+  int16_t getInt16Data(uint8_t rb_pos) const {return CanPkgExt_c::getInt16Data( rb_pos ); }
   /**
     simply deliver a uint32_t from a specific starting position with
     @param rb_pos position of dellivered uint32_t [0..4]
     @return uint32_t balue in CAN data string at pos (rb_pos, rb_pos+1) read Low/High order
   */
-  uint32_t getUint32Data(uint8_t rb_pos) const {return CANPkgExt_c::getUint32Data( rb_pos ); }
+  uint32_t getUint32Data(uint8_t rb_pos) const {return CanPkgExt_c::getUint32Data( rb_pos ); }
   /**
     simply deliver a int32_t from a specific starting position with
     @param rb_pos position of dellivered int32_t [0..4]
     @return int32_t balue in CAN data string at pos (rb_pos, rb_pos+1) read Low/High order
   */
-  int32_t getInt32Data(uint8_t rb_pos) const {return CANPkgExt_c::getInt32Data( rb_pos ); }
+  int32_t getInt32Data(uint8_t rb_pos) const {return CanPkgExt_c::getInt32Data( rb_pos ); }
 
   /**
     deliver time
     @return timestamp of the CAN telegram in [msec.] since system start
   */
-  int32_t time() { return CANPkgExt_c::time(); }
+  int32_t time() { return CanPkgExt_c::time(); }
 
   void setExtCanPkg3(uint8_t pri, uint8_t dp, uint8_t pf, uint8_t ps, uint8_t sa, uint8_t d0, uint8_t d1, uint8_t d2)
-  { CANPkgExt_c::setExtCanPkg3(pri, dp, pf, ps, sa, d0, d1, d2); }
+  { CanPkgExt_c::setExtCanPkg3(pri, dp, pf, ps, sa, d0, d1, d2); }
 
   void setExtCanPkg8(uint8_t pri, uint8_t dp, uint8_t pf, uint8_t ps, uint8_t sa, uint8_t d0, uint8_t d1, uint8_t d2, uint8_t d3, uint8_t d4, uint8_t d5, uint8_t d6, uint8_t d7)
-  { CANPkgExt_c::setExtCanPkg8(pri, dp, pf, ps, sa, d0, d1, d2, d3, d4, d5, d6, d7); }
+  { CanPkgExt_c::setExtCanPkg8(pri, dp, pf, ps, sa, d0, d1, d2, d3, d4, d5, d6, d7); }
 
   /**
     put data into given reference to BIOS related data structure with data, len
@@ -198,121 +198,124 @@ public:
   */
   virtual void getData(MASK_TYPE& reft_ident, uint8_t& refui8_identType,
                        uint8_t& refb_dlcTarget, uint8_t* pb_dataTarget)
-    {CANPkgExt_c::getData(reft_ident, refui8_identType, refb_dlcTarget, pb_dataTarget); }
+    {CanPkgExt_c::getData(reft_ident, refui8_identType, refb_dlcTarget, pb_dataTarget); }
 
   /**
     get the value of the ISO11783 ident field SA
     @return source adress
   */
-  uint8_t isoSa() const {return CANPkgExt_c::isoSa(); }
+  uint8_t isoSa() const {return CanPkgExt_c::isoSa(); }
   /**
     get the value of the ISO11783 ident field PGN
     @return parameter group number
   */
-  uint32_t isoPgn() const {return CANPkgExt_c::isoPgn(); }
+  uint32_t isoPgn() const {return CanPkgExt_c::isoPgn(); }
   /**
     get the value of the ISO11783 ident field DP
     @return data page
   */
-  uint8_t isoDp() const {return CANPkgExt_c::isoDp(); }
+  uint8_t isoDp() const {return CanPkgExt_c::isoDp(); }
   /**
     get the value of the ISO11783 ident field PF
     @return PDU Format
   */
-  uint8_t isoPf() const {return CANPkgExt_c::isoPf(); }
+  uint8_t isoPf() const {return CanPkgExt_c::isoPf(); }
   /**
     get the value of the ISO11783 ident field PS
     @return PDU Specific
   */
-  uint8_t isoPs() const {return CANPkgExt_c::isoPs(); }
+  uint8_t isoPs() const {return CanPkgExt_c::isoPs(); }
   /**
     get the value of the ISO11783 ident field PRI
     @return priority
   */
-  uint8_t isoPri() const {return CANPkgExt_c::isoPri(); }
+  uint8_t isoPri() const {return CanPkgExt_c::isoPri(); }
 
   /**
     set the value of the ISO11783 ident field SA
     @return source adress
   */
-  void setIsoSa(uint8_t rb_val){CANPkgExt_c::setIsoSa(rb_val); }
+  void setIsoSa(uint8_t rb_val){CanPkgExt_c::setIsoSa(rb_val); }
   /**
     set the value of the ISO11783 ident field PGN
     @return parameter group number
   */
-  void setIsoPgn(uint32_t rui32_val){CANPkgExt_c::setIsoPgn(rui32_val); }
+  void setIsoPgn(uint32_t rui32_val){CanPkgExt_c::setIsoPgn(rui32_val); }
   /**
     set the value of the ISO11783 ident field DP
     @return data page
   */
-  void setIsoDp(uint8_t rb_val){CANPkgExt_c::setIsoDp(rb_val); }
+  void setIsoDp(uint8_t rb_val){CanPkgExt_c::setIsoDp(rb_val); }
   /**
     set the value of the ISO11783 ident field PF
     @return PDU Format
   */
-  void setIsoPf(uint8_t rb_val){CANPkgExt_c::setIsoPf(rb_val); }
+  void setIsoPf(uint8_t rb_val){CanPkgExt_c::setIsoPf(rb_val); }
   /**
     set the value of the ISO11783 ident field PS
     @return PDU Specific
   */
-  void setIsoPs(uint8_t rb_val){CANPkgExt_c::setIsoPs(rb_val); }
+  void setIsoPs(uint8_t rb_val){CanPkgExt_c::setIsoPs(rb_val); }
   /**
     set the value of the ISO11783 ident field PRI
     @return priority
   */
-  void setIsoPri(uint8_t rb_val){CANPkgExt_c::setIsoPri(rb_val); }
+  void setIsoPri(uint8_t rb_val){CanPkgExt_c::setIsoPri(rb_val); }
 
   /**
     set the data len of CAN pkg (if rb_val is greater than 8, 8 is stored)
     @param rb_val length/amount of uint8_t in data string
   */
-  void setLen(uint8_t rb_val){CANPkgExt_c::setLen(rb_val); }
+  void setLen(uint8_t rb_val){CanPkgExt_c::setLen(rb_val); }
 
 
   /** set the monitoritem for resolve SA
       @param pc_monitorItem  needed monitoritem
     */
-  void setMonitorItemForSA (iISOItem_c* pc_monitorItem) { CANPkgExt_c::setMonitorItemForSA (pc_monitorItem); }
+  void setMonitorItemForSA (iIsoItem_c* pc_monitorItem) { CanPkgExt_c::setMonitorItemForSA (pc_monitorItem); }
 
   /** set the isoName for resolve SA
       @param p_isoName        needed isoName
     */
-  void setISONameForSA (const iISOName_c& refc_isoName) { CANPkgExt_c::setISONameForSA (refc_isoName); }
+  void setISONameForSA (const iIsoName_c& refc_isoName) { CanPkgExt_c::setISONameForSA (refc_isoName); }
 
   /** set the monitoritem for resolve SA
       @param pc_monitorItem  needed monitoritem
     */
-  void setMonitorItemForDA (iISOItem_c* pc_monitorItem) { CANPkgExt_c::setMonitorItemForDA (pc_monitorItem); }
+  void setMonitorItemForDA (iIsoItem_c* pc_monitorItem) { CanPkgExt_c::setMonitorItemForDA (pc_monitorItem); }
 
   /** set the isoName for resolve SA
       @param p_isoName        needed isoName
     */
-  void setISONameForDA (const iISOName_c& refc_isoName) { CANPkgExt_c::setISONameForDA (refc_isoName); }
+  void setISONameForDA (const iIsoName_c& refc_isoName) { CanPkgExt_c::setISONameForDA (refc_isoName); }
 
   /** short inline function for setting the Destination address (PS) to global (0xFF)
     */
-  void setGlobalDA() { CANPkgExt_c::setGlobalDA(); }
+  void setGlobalDA() { CanPkgExt_c::setGlobalDA(); }
 
   /** get the monitoritem for resolved SA
     */
-  const iISOItem_c* getMonitorItemForSA() { return static_cast<const iISOItem_c*>(CANPkgExt_c::getMonitorItemForSA()); }
+  const iIsoItem_c* getMonitorItemForSA() { return static_cast<const iIsoItem_c*>(CanPkgExt_c::getMonitorItemForSA()); }
 
   /** set the isoName for resolved SA
     */
-  const iISOName_c& getISONameForSA() { return CANPkgExt_c::getISONameForSA().toConstIisoName_c(); }
+  const iIsoName_c& getISONameForSA() { return CanPkgExt_c::getISONameForSA().toConstIisoName_c(); }
 
   /** set the monitoritem for resolved SA
     */
-  const iISOItem_c* getMonitorItemForDA() { return static_cast<const iISOItem_c*>(getMonitorItemForDA()); }
+  const iIsoItem_c* getMonitorItemForDA() { return static_cast<const iIsoItem_c*>(getMonitorItemForDA()); }
 
   /** set the isoName for resolved SA
     */
-  const iISOName_c& getISONameForDA() { return CANPkgExt_c::getISONameForDA().toConstIisoName_c(); }
+  const iIsoName_c& getISONameForDA() { return CanPkgExt_c::getISONameForDA().toConstIisoName_c(); }
 
 private:
-  friend class iCANIO_c;
-  friend class iCANCustomer_c;
+  friend class iCanIo_c;
+  friend class iCanCustomer_c;
 };
+
+/** this typedef is only for some time to provide backward compatibility at API level */
+typedef iCanPkgExt_c iCANPkgExt_c;
 
 } // namespace
 #endif

@@ -1,5 +1,5 @@
 /***************************************************************************
-                          iCANPkg_c.h - header for iCANPkg_c, the
+                          iCanPkg_c.h - header for iCanPkg_c, the
                                       encapsulation of CAN telegrams
                              -------------------
     begin                : Sun Aug 1 1999
@@ -68,7 +68,7 @@ namespace IsoAgLib {
   other objects and data structures.
   @author Dipl.-Inform. Achim Spangler
 */
-class iCANPkg_c : private __IsoAgLib::CANPkg_c
+class iCanPkg_c : private __IsoAgLib::CanPkg_c
 {
 public:
 
@@ -79,7 +79,7 @@ public:
       default defined in isoaglib_config.h
   */
   void setIdent (MASK_TYPE rt_ident, iIdent_c::identType_t rt_type = DEFAULT_IDENT_TYPE)
-    { CANPkg_c::setIdent (rt_ident, rt_type); }
+    { CanPkg_c::setIdent (rt_ident, rt_type); }
 
   /**
     set specific uint8_t of ident for the telegram
@@ -91,26 +91,26 @@ public:
       default defined in isoaglib_config.h
   */
   static void setIdent (uint8_t rb_val, uint8_t rb_pos, iIdent_c::identType_t rt_type = DEFAULT_IDENT_TYPE)
-    { CANPkg_c::setIdent (rb_val, rb_pos, rt_type); }
+    { CanPkg_c::setIdent (rb_val, rb_pos, rt_type); }
 
   /**
     set type of ident
     @param rt_type type of Ident_c: 11bit Ident_c::S or 29bit Ident_c::E
   */
-  static void setIdentType(iIdent_c::identType_t rt_type) { CANPkg_c::setIdentType (rt_type); }
+  static void setIdentType(iIdent_c::identType_t rt_type) { CanPkg_c::setIdentType (rt_type); }
 
 
   /**
     deliver type of Ident_c: 11bit standard or 29bit extended
     @return: Ident_c::S or Ident_c::E
   */
-  static iIdent_c::identType_t identType() { return CANPkg_c::identType(); }
+  static iIdent_c::identType_t identType() { return CanPkg_c::identType(); }
 
   /**
     deliver the ident
     @return ident setting as MASK_TYPE
   */
-  static MASK_TYPE ident() { return CANPkg_c::ident(); }
+  static MASK_TYPE ident() { return CanPkg_c::ident(); }
 
   /**
     deliver the uint8_t value of ident at wanted position
@@ -119,7 +119,7 @@ public:
     @param rb_pos
     @return ident value
   */
-  static MASK_TYPE ident(uint8_t rb_pos) { return CANPkg_c::ident(rb_pos); }
+  static MASK_TYPE ident(uint8_t rb_pos) { return CanPkg_c::ident(rb_pos); }
 
   /**
     deliver the uint8_t value of ident at wanted position
@@ -128,27 +128,27 @@ public:
     @param rb_pos
     @return ident value
   */
-  static uint8_t& identRef(uint8_t rb_pos) { return CANPkg_c::identRef(rb_pos); }
+  static uint8_t& identRef(uint8_t rb_pos) { return CanPkg_c::identRef(rb_pos); }
 
   /** retrieve CAN data bytes represented by pointer to Union8ByteString_u */
-  static __IsoAgLib::Flexible8ByteString_c* getDataUnion() { return CANPkg_c::getDataUnion(); }
+  static __IsoAgLib::Flexible8ByteString_c* getDataUnion() { return CanPkg_c::getDataUnion(); }
 
   /** retrieve CAN data bytes represented by CONST pointer to Union8ByteString_u */
-  static const __IsoAgLib::Flexible8ByteString_c* getDataUnionConst() { return CANPkg_c::getDataUnionConst(); }
+  static const __IsoAgLib::Flexible8ByteString_c* getDataUnionConst() { return CanPkg_c::getDataUnionConst(); }
 
   /** retrieve a raw const pointer to uint8_t data string from given offset position onwards */
   static const uint8_t* getUint8DataConstPointer( uint8_t rui8_positionOffset )
-    { return CANPkg_c::getUint8DataConstPointer (rui8_positionOffset); }
+    { return CanPkg_c::getUint8DataConstPointer (rui8_positionOffset); }
 
   /** retrieve a raw const pointer to uint8_t data string */
-  static const uint8_t* getUint8DataConstPointer() { return CANPkg_c::getUint8DataConstPointer();}
+  static const uint8_t* getUint8DataConstPointer() { return CanPkg_c::getUint8DataConstPointer();}
 
   /** retrieve a raw const pointer to uint8_t data string from given offset position onwards */
   static uint8_t* getUint8DataPointer (uint8_t rui8_positionOffset)
-    { return CANPkg_c::getUint8DataPointer (rui8_positionOffset); }
+    { return CanPkg_c::getUint8DataPointer (rui8_positionOffset); }
 
   /** retrieve a raw const pointer to uint8_t data string */
-  static uint8_t* getUint8DataPointer() { return CANPkg_c::getUint8DataPointer(); }
+  static uint8_t* getUint8DataPointer() { return CanPkg_c::getUint8DataPointer(); }
 
   /**
     set data with size bytes from source array;
@@ -157,7 +157,7 @@ public:
     @param rui8_len amount/len of the source data string
   */
   static void setDataFromString(const uint8_t* rpb_data, uint8_t rui8_len)
-    { CANPkg_c::setDataFromString(rpb_data, rui8_len); }
+    { CanPkg_c::setDataFromString(rpb_data, rui8_len); }
 
   /**
     set data with size bytes from source array;
@@ -168,7 +168,7 @@ public:
     @param rui8_len amount/len of the source data string
   */
   static void setDataFromString(uint8_t rui8_targetPositionOffset, const uint8_t* rpb_data, uint8_t rui8_len)
-    { CANPkg_c::setDataFromString(rui8_targetPositionOffset, rpb_data, rui8_len); }
+    { CanPkg_c::setDataFromString(rui8_targetPositionOffset, rpb_data, rui8_len); }
 
   /**
     set a complete 8-Byte data string from source type Union8ByteString_u.
@@ -176,7 +176,7 @@ public:
     @param rpc_data pointer to source data Flexible8ByteString_c
   */
   static void setDataUnion(const __IsoAgLib::Flexible8ByteString_c* rpc_data)
-    { CANPkg_c::setDataUnion(rpc_data); }
+    { CanPkg_c::setDataUnion(rpc_data); }
 
   /**
     set a complete 8-Byte data string from source type Union8ByteString_u.
@@ -184,28 +184,28 @@ public:
     @param rpc_data pointer to source data Flexible8ByteString_c
   */
   static void setDataUnion(uint8_t rui8_ind, const __IsoAgLib::Flexible4ByteString_c* rpc_data)
-    { CANPkg_c::setDataUnion(rui8_ind, rpc_data); }
+    { CanPkg_c::setDataUnion(rui8_ind, rpc_data); }
 
   /** retrieve len of last received CAN message */
-  static uint8_t getLen( void ) { return CANPkg_c::getLen(); }
+  static uint8_t getLen( void ) { return CanPkg_c::getLen(); }
 
   /**
     set the data len of CAN pkg (if rb_val is greater than 8, 8 is stored)
     @param rb_val length/amount of uint8_t in data string
   */
-  static void setLen(uint8_t rb_val) { CANPkg_c::setLen (rb_val); }
+  static void setLen(uint8_t rb_val) { CanPkg_c::setLen (rb_val); }
 
   /**
     set receive time
     @param ri32_time time stamp of CAN telegram in [msec.] from system start
   */
-  static void setTime(int32_t ri32_time) { CANPkg_c::setTime (ri32_time); }
+  static void setTime(int32_t ri32_time) { CanPkg_c::setTime (ri32_time); }
 
   /**
     deliver time
     @return timestamp of the CAN telegram in [msec.] since system start
   */
-  static int32_t time() { return CANPkg_c::time(); }
+  static int32_t time() { return CanPkg_c::time(); }
 
   /**
     set complete CAN msg with one function call
@@ -217,7 +217,7 @@ public:
   */
   static void set(MASK_TYPE rt_ident, const uint8_t* rpb_data, uint8_t rui8_len, int32_t ri32_time = 0,
     iIdent_c::identType_t rt_type = DEFAULT_IDENT_TYPE)
-    { CANPkg_c::set (rt_ident, rpb_data, rui8_len, ri32_time, rt_type); }
+    { CanPkg_c::set (rt_ident, rpb_data, rui8_len, ri32_time, rt_type); }
 
   /**
     set complete CAN msg with one function call
@@ -229,7 +229,7 @@ public:
   */
   static void set(MASK_TYPE rt_ident, const __IsoAgLib::Flexible8ByteString_c* rpc_data, int32_t ri32_time = 0,
     iIdent_c::identType_t rt_type = DEFAULT_IDENT_TYPE)
-    { CANPkg_c::set(rt_ident, rpc_data, ri32_time, rt_type); }
+    { CanPkg_c::set(rt_ident, rpc_data, ri32_time, rt_type); }
 
 
   /**
@@ -241,25 +241,28 @@ public:
   */
   virtual void getData(uint32_t& reft_ident, uint8_t& refui8_identType,
                        uint8_t& refb_dlcTarget, uint8_t* pb_dataTarget)
-    { CANPkg_c::getData (reft_ident, refui8_identType, refb_dlcTarget, pb_dataTarget); }
+    { CanPkg_c::getData (reft_ident, refui8_identType, refb_dlcTarget, pb_dataTarget); }
 
-  /** copy the data bytes from the CANPkg_c to the given uint8_t* pointer.
+  /** copy the data bytes from the CanPkg_c to the given uint8_t* pointer.
       the pointed array must be at least 8 byte in size.
       This function copies as many byte as are defined by ui8_len.
     */
   static void getDataToString( uint8_t* pui8_targetData )
-    { CANPkg_c::getDataToString (pui8_targetData); }
+    { CanPkg_c::getDataToString (pui8_targetData); }
 
-  /** copy the data bytes from the CANPkg_c to the given uint8_t* pointer.
+  /** copy the data bytes from the CanPkg_c to the given uint8_t* pointer.
       the amount of copied data can be restricted by the last parameter.
       The first parameter defines the index of the first copied data byte.
     */
   static void getDataToString( uint8_t rui8_positionOffset, uint8_t* pui8_targetData, uint8_t rui8_maxSize )
-    { CANPkg_c::getDataToString (rui8_positionOffset, pui8_targetData, rui8_maxSize); }
+    { CanPkg_c::getDataToString (rui8_positionOffset, pui8_targetData, rui8_maxSize); }
 
 private:
-  friend class iCANIO_c;
+  friend class iCanIo_c;
 };
+
+/** this typedef is only for some time to provide backward compatibility at API level */
+typedef iCanPkg_c iCANPkg_c;
 
 }
 #endif

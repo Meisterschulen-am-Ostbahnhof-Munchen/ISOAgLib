@@ -183,7 +183,7 @@ int main()
   int32_t i32_checkIdent;
   // set CAN data
   uint8_t ui8_data[] = { 1, 2, 3, 4, 5, 6, 7, 8 };
-  __IsoAgLib::CANPkg_c c_pkg[2];
+  __IsoAgLib::CanPkg_c c_pkg[2];
 
   c_pkg[0].setIdent( 0x123, t_initType[0] );
   c_pkg[0].setDataString( ui8_data, 8 );

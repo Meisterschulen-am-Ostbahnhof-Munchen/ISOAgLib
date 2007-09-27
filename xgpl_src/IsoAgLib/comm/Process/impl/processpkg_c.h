@@ -107,7 +107,7 @@ namespace __IsoAgLib {
   CAN uint8_t string
   @author Dipl.-Inform. Achim Spangler
 */
-class ProcessPkg_c : public CANPkgExt_c  {
+class ProcessPkg_c : public CanPkgExt_c  {
 private:
 public:
   /** default constructor which has nothing to do */
@@ -245,22 +245,22 @@ public:
   bool existMemberEmpf() const {return (pc_monitorEmpf != NULL)?true:false;}
 
   /**
-    deliver reference to ISOItem_c of EMPF member (ISOItem_c is base class for ISOItem_c)
+    deliver reference to IsoItem_c of EMPF member (IsoItem_c is base class for IsoItem_c)
     (check with existMemberEmpf before access to not defined item)
 
-    @return reference to ISOItem_c of member which is addressed by EMPF
+    @return reference to IsoItem_c of member which is addressed by EMPF
      @exception containerElementNonexistant
   */
-  ISOItem_c& memberEmpf()const;
+  IsoItem_c& memberEmpf()const;
 
   /**
-    deliver reference to ISOItem_c of SEND member (ISOItem_c is base class for ISOItem_c)
+    deliver reference to IsoItem_c of SEND member (IsoItem_c is base class for IsoItem_c)
     (check with existMemberSend before access to not defined item)
 
-    @return reference to ISOItem_c of member which is addressed by SEND
+    @return reference to IsoItem_c of member which is addressed by SEND
      @exception containerElementNonexistant
   */
-  ISOItem_c& memberSend()const;
+  IsoItem_c& memberSend()const;
 
 
   /* *********************** */
@@ -385,13 +385,13 @@ public:
     extract data from ISO commands and save it to member class
     @param refl_elementDDI
   */
-  bool resolveCommandTypeForISO(const IsoAgLib::ElementDDI_s& refl_elementDDI);
+  bool resolveCommandTypeForISO(const IsoAgLib::ElementDdi_s& refl_elementDDI);
 
   /**
     overloaded virtual function to translate the string data into flag values;
-    needed for assigning informations from another CANPkg_c or CANPkgExt
-    @see CANPkg_c::operator=
-    @see CANPkgExt_c::operator=
+    needed for assigning informations from another CanPkg_c or CANPkgExt
+    @see CanPkg_c::operator=
+    @see CanPkgExt_c::operator=
   */
   virtual void string2Flags();
 
@@ -401,7 +401,7 @@ public:
     @param rc_isoName ISOName of terminal, for which the ISOName of data is converted
     @param rui8_useProcISOName ISOName for process data (optional, default to terminal isoName)
   */
-  void useTermISONameForLocalProc(const ISOName_c& rc_isoName, const ISOName_c& rc_useProcISOName = ISOName_c::ISONameUnspecified());
+  void useTermISONameForLocalProc(const IsoName_c& rc_isoName, const IsoName_c& rc_useProcISOName = IsoName_c::IsoNameUnspecified());
 
   /** stores the command in generalized form */
   GeneralCommand_c c_generalCommand;
@@ -410,11 +410,11 @@ private: // Private methods
 
   /**
     overloaded virtual function to translate flag values to data string;
-    needed for sending informations from this object via CANIO_c on CAN BUS,
-    because CANIO_c doesn't know anything about the data format of this type of msg
+    needed for sending informations from this object via CanIo_c on CAN BUS,
+    because CanIo_c doesn't know anything about the data format of this type of msg
     so that it can only use an unformated data string from CANPkg
-    @see CANPkg_c::getData
-    @see CANPkgExt_c::getData
+    @see CanPkg_c::getData
+    @see CanPkgExt_c::getData
   */
   virtual void flags2String();
 
@@ -444,21 +444,21 @@ private: // Private attributes
   } bit_data;
 
   /** pointer to monitor list item of sender "SEND" (NULL if not claimed address) */
-  ISOItem_c* pc_monitorSend;
+  IsoItem_c* pc_monitorSend;
 
   /** pointer to monitor list item of receiver "EMPF" (NULL if not claimed address) */
-  ISOItem_c* pc_monitorEmpf;
+  IsoItem_c* pc_monitorEmpf;
   /**
     some terminal wants to use ISOName of terminal even for local process
     data for communication on CAN BUS (default 0xFF for off)
   */
-  ISOName_c c_specialTermISOName;
+  IsoName_c c_specialTermISOName;
 
   /**
     some terminal wants to use ISOName of terminal even for local process
     data for communication on CAN BUS (default 0xFF for off)
   */
-  ISOName_c c_specialTermUseProcISOName;
+  IsoName_c c_specialTermUseProcISOName;
 
 };
 

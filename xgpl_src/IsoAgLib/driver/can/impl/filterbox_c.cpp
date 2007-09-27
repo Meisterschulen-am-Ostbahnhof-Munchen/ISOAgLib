@@ -118,16 +118,16 @@ FilterBox_c::FilterBox_c()
 
 /**
   constructor with parameter values setting specific start state with
-  setting pointer to the root CANIO_c and to the according CANCustomer
+  setting pointer to the root CanIo_c and to the according CANCustomer
   instance; even define specific mask and filter setting
 
-  @param rpc_customer  pointer to the CANCustomer_c instance, which creates this FilterBox_c instance
+  @param rpc_customer  pointer to the CanCustomer_c instance, which creates this FilterBox_c instance
   @param rt_mask       mask for this Filer_Box (MASK_TYPE defined in isoaglib_config.h)
   @param rt_filter     filter for this Filer_Box (MASK_TYPE defined in isoaglib_config.h)
   @param ren_E         select if FilterBox_c is used for standard 11bit or extended 29bit ident
   @param rpc_filterBox optional parameter for getting to filterboxes connected together into the same MsgObj!
   @exception badAlloc
-FilterBox_c::FilterBox_c(CANCustomer_c* rrpc_customer,
+FilterBox_c::FilterBox_c(CanCustomer_c* rrpc_customer,
                          MASK_TYPE rt_mask, MASK_TYPE rt_filter,
                          Ident_c::identType_t ren_identType, FilterBox_c* rpc_filterBox)
   : c_filter(rt_filter, ren_identType),
@@ -249,11 +249,11 @@ bool FilterBox_c::configCan(uint8_t rui8_busNumber, uint8_t rui8_FilterBoxNr)
   for ( STL_NAMESPACE::vector<CustomerLen_s>::const_iterator iter = vec_customer.begin(); iter != vec_customer.end(); iter++ )
   {
     if ( (*iter).pc_customer->isProprietaryMessageOnStandardizedCan() )
-    { // at least one CANCustomer_c uses a proprietary protocol at a normal ISOBUS CANIO_c instance
+    { // at least one CanCustomer_c uses a proprietary protocol at a normal ISOBUS CanIo_c instance
       b_performIsobusResolve = false;
     }
     else
-    { // this FilterBox_c has at least one CANCustomer_c which performs real ISOBUS
+    { // this FilterBox_c has at least one CanCustomer_c which performs real ISOBUS
       // --> set b_performIsobusResolve to default TRUE
       b_performIsobusResolve = true;
       break;
@@ -318,13 +318,13 @@ void FilterBox_c::closeHAL()
   set the mask (t_mask) and filter (t_filter) of this FilterBox
   @param rt_mask mask for this Filer_Box (MASK_TYPE defined in isoaglib_config.h)
   @param rt_filter filter for this Filer_Box (MASK_TYPE defined in isoaglib_config.h)
-  @param rpc_customer pointer to the CANCustomer_c instance, which creates this FilterBox_c instance
+  @param rpc_customer pointer to the CanCustomer_c instance, which creates this FilterBox_c instance
   @param ri8_dlcForce force the DLC to be exactly this long (0 to 8 bytes). use -1 for NO FORCING and accepting any length can-pkg
   @param ren_E select if FilterBox_c is used for standard 11bit or extended 29bit ident
 */
 void FilterBox_c::set (const Ident_c& rrefc_mask,
                        const Ident_c& rrefc_filter,
-                       CANCustomer_c* rpc_customer,
+                       CanCustomer_c* rpc_customer,
                        int8_t ri8_dlcForce,
                        FilterBox_c* rpc_filterBox)
 {
@@ -350,7 +350,7 @@ void FilterBox_c::set (const Ident_c& rrefc_mask,
   else c_additionalMask.set (~(rpc_filterBox->c_filter.ident() ^ c_filter.ident()), c_mask.identType());
 };
 
-bool FilterBox_c::equalCustomer( const __IsoAgLib::CANCustomer_c& rref_customer ) const
+bool FilterBox_c::equalCustomer( const __IsoAgLib::CanCustomer_c& rref_customer ) const
 {
   STL_NAMESPACE::vector<CustomerLen_s>::const_iterator pc_iter;
   for(pc_iter = vec_customer.begin(); pc_iter != vec_customer.end(); pc_iter++)
@@ -360,12 +360,12 @@ bool FilterBox_c::equalCustomer( const __IsoAgLib::CANCustomer_c& rref_customer 
   return false;
 }
 
-/** delete CANCustomer_c instance from array or set FilterBox_c to idle
-    if CANCustomer_c is the only customer for this FilterBox_c instance
+/** delete CanCustomer_c instance from array or set FilterBox_c to idle
+    if CanCustomer_c is the only customer for this FilterBox_c instance
     @param  rref_customer  CANCustomer to delete
     @return                true -> no more cancustomers exist, whole filterbox can be deleted
   */
-bool FilterBox_c::deleteFilter( const __IsoAgLib::CANCustomer_c& rref_customer)
+bool FilterBox_c::deleteFilter( const __IsoAgLib::CanCustomer_c& rref_customer)
 {
   for (STL_NAMESPACE::vector<CustomerLen_s>::iterator pc_iter = vec_customer.begin();
         pc_iter != vec_customer.end(); pc_iter++)
@@ -392,17 +392,17 @@ bool FilterBox_c::deleteFilter( const __IsoAgLib::CANCustomer_c& rref_customer)
 }
 
 /* ************************************************** */
-/* ***** insert/get/process puffered CANPkg_c ******** */
+/* ***** insert/get/process puffered CanPkg_c ******** */
 /* ************************************************** */
 
 /**
   control the processing of a received message
   (MsgObj_c::processMsg inserted data directly in CANCustomer
    -> FilterBox_c::processMsg() initiates conversion of CAN string
-      to data flags and starts processing in CANCustomer_c)
+      to data flags and starts processing in CanCustomer_c)
 
   possible errors:
-      * precondition no valid CANCustomer_c (or derived) is registered
+      * precondition no valid CanCustomer_c (or derived) is registered
   @return true -> FilterBox_c was able to inform registered CANCustomer
 */
 bool FilterBox_c::processMsg()
@@ -410,7 +410,7 @@ bool FilterBox_c::processMsg()
   for ( STL_NAMESPACE::vector<CustomerLen_s>::iterator c_customerIterator = vec_customer.begin(); c_customerIterator != vec_customer.end(); c_customerIterator++ )
   {
     if (c_customerIterator->pc_customer == NULL)
-    { // pointer to CANCustomer_c wasn't set
+    { // pointer to CanCustomer_c wasn't set
       // -> don't know who wants to process the msg
       getILibErrInstance().registerError( iLibErr_c::Precondition, iLibErr_c::Can );
       return false;
@@ -419,7 +419,7 @@ bool FilterBox_c::processMsg()
     // from here on the c_customerIterator has a valid pointer
     // ####################################################
 
-    CANPkgExt_c* pc_target = &(c_customerIterator->pc_customer->dataBase());
+    CanPkgExt_c* pc_target = &(c_customerIterator->pc_customer->dataBase());
     #if defined SYSTEM_WITH_ENHANCED_CAN_HAL
       HAL::can_useMsgobjGet(ui8_busNumber, 0xFF, pc_target);
     #else

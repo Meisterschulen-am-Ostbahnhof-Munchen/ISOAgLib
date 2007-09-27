@@ -111,7 +111,7 @@ public:// Public methods
   virtual ~ProprietaryCanClient_c() {};
 
   /** initialize proprietary Can client */
-  void init(const IsoAgLib::iIdentItem_c& rrefc_ident, const IsoAgLib::iISOName_c& rrefc_rremoteECU);
+  void init(const IsoAgLib::iIdentItem_c& rrefc_ident, const IsoAgLib::iIsoName_c& rrefc_rremoteECU);
 
   /** main (time) event is sending the data */
   void mainEvent();

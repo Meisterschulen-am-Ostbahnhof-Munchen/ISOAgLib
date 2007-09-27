@@ -108,7 +108,7 @@ namespace __IsoAgLib {
   Example:
   \code
   __IsoAgLib::IdentItem_c c_itemLaterAddressClaim;
-  __IsoAgLib::ISOName_c c_myType( 2, 0 );
+  __IsoAgLib::IsoName_c c_myType( 2, 0 );
   // ...
   // now start as DIN
   c_itemLaterAddressClaim.start( &c_myType, "Hi-You" );
@@ -159,7 +159,7 @@ public: // methods
       @param ri8_slaveCount       amount of attached slave devices; default -1 == no master state;
                                   in case an address claim for the slave devices shall be sent by this ECU, they
                                   must get their own IdentItem_c instance ( then with default value -1 for ri8_slaveCount )
-      @param rpc_slaveIsoNameList pointer to list of ISOName_c values, where the slave devices are defined.
+      @param rpc_slaveIsoNameList pointer to list of IsoName_c values, where the slave devices are defined.
                                   IsoAgLib will then send the needed "master indicates its slaves" messages on BUS
       @param ri_singletonVecKey   optional key for selection of IsoAgLib instance (default 0)
     */
@@ -167,7 +167,7 @@ public: // methods
     uint8_t rui8_indGroup, uint8_t rui8_devClass, uint8_t rui8_devClassInst, uint8_t rb_func, uint16_t rui16_manufCode,
     uint32_t rui32_serNo, uint8_t rui8_preferredSa = 254, uint16_t rui16_eepromAdr = 0xFFFF, uint8_t rb_funcInst = 0, uint8_t rb_ecuInst = 0, bool rb_selfConf = true,
     #ifdef USE_WORKING_SET
-    int8_t ri8_slaveCount = -1, const ISOName_c* rpc_slaveIsoNameList = NULL,
+    int8_t ri8_slaveCount = -1, const IsoName_c* rpc_slaveIsoNameList = NULL,
     #endif
     int ri_singletonVecKey = 0);
 
@@ -186,7 +186,7 @@ public: // methods
       @param ri8_slaveCount       amount of attached slave devices; default -1 == no master state;
                                   in case an address claim for the slave devices shall be sent by this ECU, they
                                   must get their own IdentItem_c instance ( then with default value -1 for ri8_slaveCount )
-      @param rpc_slaveIsoNameList pointer to list of ISOName_c values, where the slave devices are defined.
+      @param rpc_slaveIsoNameList pointer to list of IsoName_c values, where the slave devices are defined.
                                   IsoAgLib will then send the needed "master indicates its slaves" messages on BUS
       @param ri_singletonVecKey   optional key for selection of IsoAgLib instance (default 0)
     */
@@ -194,38 +194,38 @@ public: // methods
     uint8_t rui8_indGroup, uint8_t rui8_devClass, uint8_t rui8_devClassInst, uint8_t rb_func, uint16_t rui16_manufCode,
     uint32_t rui32_serNo, uint8_t rb_preferredSa, uint16_t rui16_saEepromAdr, uint8_t rb_funcInst = 0, uint8_t rb_ecuInst = 0, bool rb_selfConf = true,
     #ifdef USE_WORKING_SET
-    int8_t ri8_slaveCount = -1, const ISOName_c* rpc_slaveIsoNameList = NULL,
+    int8_t ri8_slaveCount = -1, const IsoName_c* rpc_slaveIsoNameList = NULL,
     #endif
     int ri_singletonVecKey = 0);
 
 
 #ifdef USE_WORKING_SET
-  /** set this Ident as Working Set Master, create all ISOItem_c slave items
-      and set them to prepare address claim with master set to the responding master ISOItem_c
+  /** set this Ident as Working Set Master, create all IsoItem_c slave items
+      and set them to prepare address claim with master set to the responding master IsoItem_c
       @param rb_slaveCount how many slaves does the master have?
       @param rpc_listSlaves the ISONames or whatever of all the slaves
     */
-  void setToMaster (int8_t ri8_slaveCount=-1, const ISOName_c* rpc_slaveIsoNameList=NULL);
+  void setToMaster (int8_t ri8_slaveCount=-1, const IsoName_c* rpc_slaveIsoNameList=NULL);
 #endif
 
-  /** deliver pointer to ISOItem_c in ISOMonitor_c
-      @return NULL -> either no ISO item or not yet registered in ISOMonitor_c
+  /** deliver pointer to IsoItem_c in IsoMonitor_c
+      @return NULL -> either no ISO item or not yet registered in IsoMonitor_c
     */
-  ISOItem_c* getIsoItem( void ) const { return pc_isoItem; }
+  IsoItem_c* getIsoItem( void ) const { return pc_isoItem; }
 
-  /** deliver const reference to contained ISOName_c of this IdentItem_c */
-  const ISOName_c& isoName() const { return c_isoName; }
+  /** deliver const reference to contained IsoName_c of this IdentItem_c */
+  const IsoName_c& isoName() const { return c_isoName; }
 
-  /** deliver reference to contained ISOName_c of this IdentItem_c
+  /** deliver reference to contained IsoName_c of this IdentItem_c
     * ATTENTION: Use wisely!
     *            Only modify an IdentItem's ISOName if an address is NOT yet claimed!!!!!
     */
-  ISOName_c& modifyableIsoName() { return c_isoName; }
+  IsoName_c& modifyableIsoName() { return c_isoName; }
 
   /** reset the Addres Claim state by:
     * + reset IdentItem::IStat_c to IState_c::PreAddressClaim
-    * + remove pointed ISOItem_c nodes and the respective pointer
-    * @return true -> there was an item with given ISOName_c that has been resetted to IState_c::PreAddressClaim
+    * + remove pointed IsoItem_c nodes and the respective pointer
+    * @return true -> there was an item with given IsoName_c that has been resetted to IState_c::PreAddressClaim
     */
   void restartAddressClaim();
 
@@ -258,7 +258,7 @@ public: // methods
       @param rc_isoName compared ISOName
       @return true -> item has same ISOName
     */
-  bool operator==(const ISOName_c& rc_isoName) const {return (c_isoName == rc_isoName); }
+  bool operator==(const IsoName_c& rc_isoName) const {return (c_isoName == rc_isoName); }
 
   /** check for difference to another item
       @param rrefc_src compared IdentItem_c element
@@ -270,7 +270,7 @@ public: // methods
       @param rc_isoName compared ISOName
       @return true -> other item has different ISOName
     */
-  bool operator!=(const ISOName_c& rc_isoName) const {return (c_isoName != rc_isoName); }
+  bool operator!=(const IsoName_c& rc_isoName) const {return (c_isoName != rc_isoName); }
 
   /** check if this item has lower ISOName than another one
       @param rrefc_src compared IdentItem_c element
@@ -282,7 +282,7 @@ public: // methods
       @param rc_isoName compared ISOName
       @return true -> this item has lower ISOName than compared one
     */
-  bool operator<(const ISOName_c& rc_isoName) const {return (c_isoName < rc_isoName); }
+  bool operator<(const IsoName_c& rc_isoName) const {return (c_isoName < rc_isoName); }
 
   /** check if given number is equal to member number of this item
       @param rui8_nr compared number
@@ -332,9 +332,9 @@ protected: // methods
 
 private: // methods
 
-  void init (ISOName_c* rpc_isoNameParam, uint8_t rui8_preferredSa, uint16_t rui16_eepromAdr,
+  void init (IsoName_c* rpc_isoNameParam, uint8_t rui8_preferredSa, uint16_t rui16_eepromAdr,
     #ifdef USE_WORKING_SET
-    int8_t ri8_slaveCount, const ISOName_c* rpc_slaveIsoNameList,
+    int8_t ri8_slaveCount, const IsoName_c* rpc_slaveIsoNameList,
     #endif
     int ri_singletonVecKey);
 
@@ -362,7 +362,7 @@ private: // attributes
                            GlobalRunStateAlreadyClaimed = 1 };
 
   /** pointer to associated IsoItem */
-  ISOItem_c* pc_isoItem;
+  IsoItem_c* pc_isoItem;
 
   /** "pointer" to EEPROM where the following block of data (10 bytes) are stored/retrieved */
   uint16_t ui16_eepromAdr;
@@ -372,10 +372,10 @@ private: // attributes
   /** Preferred-SA of this identity */
   uint8_t ui8_preferredSa;
   /** IsoName code of this identity */
-  ISOName_c c_isoName;
+  IsoName_c c_isoName;
 
   #ifdef USE_WORKING_SET
-  const ISOName_c* pc_slaveIsoNameList;
+  const IsoName_c* pc_slaveIsoNameList;
   int8_t i8_slaveCount;
   #endif
 

@@ -173,7 +173,7 @@ public:
 
     possible errors:
         * dependant error in ProcessDataLocal_c commander of some setpoint isn't found in Monitor List
-        * dependant error in CANIO_c on CAN send problems
+        * dependant error in CanIo_c on CAN send problems
   */
   void respondAckNack() {SetpointLocal_c::respondAckNack();};
   /**

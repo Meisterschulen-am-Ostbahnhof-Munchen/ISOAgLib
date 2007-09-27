@@ -99,7 +99,7 @@
 // is needed for the documentation generator
 using namespace IsoAgLib;
 
-iISOName_c c_remoteECU (true, // rb_selfConf
+iIsoName_c c_remoteECU (true, // rb_selfConf
                         2,    // rui8_indGroup
                         7,    // rui8_devClass
                         0,    // rui8_devClassInst
@@ -200,7 +200,7 @@ iISOName_c c_remoteECU (true, // rb_selfConf
 
 
   /** initialize proprietary Can client Application */
-  void ProprietaryCanClient_c::init( const IsoAgLib::iIdentItem_c& rrefc_item, const IsoAgLib::iISOName_c& rrefc_rremoteECU )
+  void ProprietaryCanClient_c::init( const IsoAgLib::iIdentItem_c& rrefc_item, const IsoAgLib::iIsoName_c& rrefc_rremoteECU )
   {
     /** pc_identItem is used in main event */
     pc_identItem = &rrefc_item;
@@ -278,7 +278,7 @@ int main()
      #ifdef WIN32
      if ( i32_idleTimeSpread > 0 ) Sleep( i32_idleTimeSpread );
      #else
-     if ( i32_idleTimeSpread > 0 ) iCANIO_c::waitUntilCanReceiveOrTimeout( i32_idleTimeSpread );
+     if ( i32_idleTimeSpread > 0 ) iCanIo_c::waitUntilCanReceiveOrTimeout( i32_idleTimeSpread );
      #endif
     #endif
   }

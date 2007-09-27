@@ -95,16 +95,16 @@
 namespace __IsoAgLib {
 
 /**
-  ISOTerminalPkg_c
+  IsoTerminalPkg_c
   @author Dipl.-Inform. Achim Spangler
 */
 
-class ISOTerminalPkg_c : public CANPkgExt_c  {
+class IsoTerminalPkg_c : public CanPkgExt_c  {
 public:
   /** default constructor */
-  ISOTerminalPkg_c (int ri_singletonVecKey = 0) : CANPkgExt_c (ri_singletonVecKey) {}
+  IsoTerminalPkg_c (int ri_singletonVecKey = 0) : CanPkgExt_c (ri_singletonVecKey) {}
   /** default destructor */
-  ~ISOTerminalPkg_c() {}
+  ~IsoTerminalPkg_c() {}
 
   /* ************************** */
   /* ***retreiving of values*** */
@@ -116,20 +116,20 @@ public:
 
   /**
     overloaded virtual function to translate the string data into flag values;
-    needed for assigning informations from another CANPkg_c or CANPkgExt
-    @see CANPkg_c::operator=
-    @see CANPkgExt_c::operator=
+    needed for assigning informations from another CanPkg_c or CANPkgExt
+    @see CanPkg_c::operator=
+    @see CanPkgExt_c::operator=
   */
   virtual void string2Flags();
 protected: // protected methods
 
   /**
     overloaded virtual function to translate flag values to data string;
-    needed for sending informations from this object via CANIO_c on CAN BUS,
-    because CANIO_c doesn't know anything about the data format of this type of msg
+    needed for sending informations from this object via CanIo_c on CAN BUS,
+    because CanIo_c doesn't know anything about the data format of this type of msg
     so that it can only use an unformated data string from CANPkg
-    @see CANPkg_c::getData
-    @see CANPkgExt_c::getData
+    @see CanPkg_c::getData
+    @see CanPkgExt_c::getData
   */
   virtual void flags2String();
 };

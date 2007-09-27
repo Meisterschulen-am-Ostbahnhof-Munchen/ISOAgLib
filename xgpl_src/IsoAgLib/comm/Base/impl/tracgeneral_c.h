@@ -1,7 +1,7 @@
 /***************************************************************************
                tracgeneral_c.h  - stores, updates  and
                                   delivers all base data informations
-                                  from CANCustomer_c derived for CAN
+                                  from CanCustomer_c derived for CAN
                                   sending and receiving interaction;
                                   from BaseCommon_c derived for
                                   interaction with other IsoAgLib objects
@@ -117,7 +117,7 @@ typedef SINGLETON_DERIVED (TracGeneral_c, BaseCommon_c) SingletonTracGeneral_c;
 /** stores, updates  and delivers all base data informations;
     Derive from BaseCommon_c some fundamental funktionality for all base data
     Derive from ElementBase_c to register in Scheduler_c for timeEvent trigger
-    Derive from CANCustomer to register FilterBox'es in CANIO_c to receive CAN messages
+    Derive from CANCustomer to register FilterBox'es in CanIo_c to receive CAN messages
     Derive from SINGLETON to create a Singleton which manages one global accessible singleton
     per IsoAgLib instance (if only one IsoAgLib instance is defined in application config, no overhead is produced).
   */
@@ -131,12 +131,12 @@ public: // Public methods
   /** initialise element which can't be done during construct;
       above all create the needed FilterBox_c instances
       possible errors:
-        * dependant error in CANIO_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
+        * dependant error in CanIo_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
       @param rpc_isoName optional pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
       @param ai_singletonVecKey singleton vector key in case PRT_INSTANCE_CNT > 1
       @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
     */
-  virtual void init_base (const ISOName_c* rpc_isoName, int ai_singletonVecKey = NULL, IsoAgLib::IdentMode_t rt_identMode = IsoAgLib::IdentModeImplement);
+  virtual void init_base (const IsoName_c* rpc_isoName, int ai_singletonVecKey = NULL, IsoAgLib::IdentMode_t rt_identMode = IsoAgLib::IdentModeImplement);
 
   /** config the TracGeneral_c object after init -> set pointer to isoName and
       config send/receive of different general base msg types
@@ -144,12 +144,12 @@ public: // Public methods
       @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       @return true -> configuration was successfull
     */
-  virtual bool config_base (const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode, uint16_t rui16_suppressMask = 0);
+  virtual bool config_base (const IsoName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode, uint16_t rui16_suppressMask = 0);
 
   /** destructor for TracGeneral_c which has nothing to do */
   virtual ~TracGeneral_c() { BaseCommon_c::close();};
 
-  bool processMsgRequestPGN (uint32_t rui32_pgn, ISOItem_c* rpc_isoItemSender, ISOItem_c* rpc_isoItemReceiver);
+  bool processMsgRequestPGN (uint32_t rui32_pgn, IsoItem_c* rpc_isoItemSender, IsoItem_c* rpc_isoItemReceiver);
 
   /** force a request for pgn for language information */
   bool sendRequestUpdateLanguage();
@@ -314,7 +314,7 @@ public: // Public methods
 
   /** send iso language data msg
       @see  TracGeneral_c::processMsgRequestPGN
-      @see  CANIO_c::operator<<
+      @see  CanIo_c::operator<<
     */
   void sendLanguage();
 
@@ -323,7 +323,7 @@ public: // Public methods
 
 
   /** force maintain power from tractor
-      @see  CANIO_c::operator<<
+      @see  CanIo_c::operator<<
       @param rb_ecuPower true -> maintain ECU power
       @param rb_actuatorPower true-> maintain actuator power
       @param rt_implState in which state is the implement (transport, park, work)
@@ -357,12 +357,12 @@ private:
 
   /** process a ISO11783 base information PGN
       @pre  sender of message is existent in monitor list
-      @see  CANPkgExt_c::resolveSendingInformation()
+      @see  CanPkgExt_c::resolveSendingInformation()
     */
   bool processMsg();
 
   /** send front hitch and rear hitch data msg
-      @see  CANIO_c::operator<<
+      @see  CanIo_c::operator<<
     */
   void sendMessage();
 

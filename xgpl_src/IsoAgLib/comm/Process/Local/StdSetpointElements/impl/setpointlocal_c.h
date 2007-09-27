@@ -316,7 +316,7 @@ public:
 
     possible errors:
         * dependant error in ProcDataLocalBase_c commander of some setpoint isn't found in Monitor List
-        * dependant error in CANIO_c on CAN send problems
+        * dependant error in CanIo_c on CAN send problems
   */
   void respondAckNack();
   /**
@@ -358,7 +358,7 @@ public:
      @param en_command
      @return true -> successful sent
   */
-  bool sendSetpointMod(const ISOName_c& rc_targetISOName,
+  bool sendSetpointMod(const IsoName_c& rc_targetISOName,
                        GeneralCommand_c::ValueGroup_t en_valueGroup = GeneralCommand_c::noValue,
                        GeneralCommand_c::CommandType_t en_command = GeneralCommand_c::noCommand) const;
 
@@ -367,7 +367,7 @@ public:
     @param rc_targetISOName ISOName of target
     @return true -> successful sent
   */
-  bool sendMasterSetpointVal( const ISOName_c& rc_targetISOName) const
+  bool sendMasterSetpointVal( const IsoName_c& rc_targetISOName) const
    { return sendSetpointMod(rc_targetISOName, GeneralCommand_c::exactValue, GeneralCommand_c::setValue );};
 
 private: // Private methods

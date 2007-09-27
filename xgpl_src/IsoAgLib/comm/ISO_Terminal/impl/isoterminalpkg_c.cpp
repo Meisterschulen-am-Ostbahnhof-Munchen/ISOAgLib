@@ -86,24 +86,24 @@ namespace __IsoAgLib {
 
 /**
   overloaded virtual function to translate the string data into flag values;
-  needed for assigning informations from another CANPkg_c or CANPkgExt
-  @see CANPkg_c::operator=
-  @see CANPkgExt_c::operator=
+  needed for assigning informations from another CanPkg_c or CANPkgExt
+  @see CanPkg_c::operator=
+  @see CanPkgExt_c::operator=
 */
-void ISOTerminalPkg_c::string2Flags()
+void IsoTerminalPkg_c::string2Flags()
 {
   // for ISO use direct read access with isoPgn, indGroup, etc
 };
 
 /**
   overloaded virtual function to translate flag values to data string;
-  needed for sending informations from this object via CANIO_c on CAN BUS,
-  because CANIO_c doesn't know anything about the data format of this type of msg
+  needed for sending informations from this object via CanIo_c on CAN BUS,
+  because CanIo_c doesn't know anything about the data format of this type of msg
   so that it can only use an unformated data string from CANPkg
-  @see CANPkg_c::getData
-  @see CANPkgExt_c::getData
+  @see CanPkg_c::getData
+  @see CanPkgExt_c::getData
 */
-void ISOTerminalPkg_c::flags2String()
+void IsoTerminalPkg_c::flags2String()
 {
   // for ISO use direct write access with setIsoPgn, setIndGroup, etc
 };

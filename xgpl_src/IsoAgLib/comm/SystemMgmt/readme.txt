@@ -93,7 +93,7 @@
   *
   * // claim address for master device with list of slaves
   * uint8_t ui8_slaveCnt = 2;
-  * IsoAgLib::iISOName_c c_slaveArray[2];
+  * IsoAgLib::iIsoName_c c_slaveArray[2];
   * // read NAME settings for slaves
   * // ...
   * // now start address claim with attached slave list
@@ -147,7 +147,7 @@
   * \endcode
   *
   * @section SystemMgmtInform Retrieve Information from ISO 11783 List
-  * The global accessible instance of IsoAgLib::iISOMonitor_c is best suited,
+  * The global accessible instance of IsoAgLib::iIsoMonitor_c is best suited,
   * if exclusive ISO 11783 devices shall be reported on a request.
   * \code
   * #include \<xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h\>

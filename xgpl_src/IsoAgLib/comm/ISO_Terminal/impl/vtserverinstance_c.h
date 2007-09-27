@@ -117,7 +117,7 @@ typedef struct localSettings_s{
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 //forward declarations
-class ISOTerminal_c;
+class IsoTerminal_c;
 class VtClientServerCommunication_c;
 
 /** class for wrapping one vtserver instance */
@@ -172,14 +172,14 @@ public:
   void resetVtAlive();
 
   /** getter */
-  const ISOName_c&           getIsoName()            { return c_isoName; }
+  const IsoName_c&           getIsoName()            { return c_isoName; }
   uint8_t                    getVtSourceAddress()     { return (pcc_isoItem != NULL)? pcc_isoItem->nr() : 0xfe; }
   uint32_t                   getVtHardwareDimension();
   uint16_t                   getVtFontSizes();
   vtCapabilities_s*          getVtCapabilities()      { return &vtCapabilities_a; }
   const IsoAgLib::vtState_s* getVtState() const       { return &vtState_a; }
   localSettings_s*           getLocalSettings()       { return &localSettings_a; }
-  const ISOItem_c*           getIsoItem()             { return pcc_isoItem; }
+  const IsoItem_c*           getIsoItem()             { return pcc_isoItem; }
 
 // the following define should be globally defined in the project settings...
 #ifdef FAKE_VT_PROPERTIES
@@ -194,18 +194,18 @@ public:
 #endif
 
 private:
-  friend class ISOTerminal_c;
+  friend class IsoTerminal_c;
   /** private constructor which prevents direct instantiation in user application
-    * NEVER define instance of ISOTerminal_c within application
+    * NEVER define instance of IsoTerminal_c within application
     */
-  VtServerInstance_c(const ISOItem_c& ref_newItem, ISOName_c c_newISOName, ISOTerminal_c& ref_isoTerminal);
+  VtServerInstance_c(const IsoItem_c& ref_newItem, IsoName_c c_newISOName, IsoTerminal_c& ref_isoTerminal);
 
 private: // attributes
-  const ISOItem_c* pcc_isoItem;
+  const IsoItem_c* pcc_isoItem;
 
-  ISOName_c c_isoName;
+  IsoName_c c_isoName;
 
-  ISOTerminal_c& refc_isoTerminal; // back ref.
+  IsoTerminal_c& refc_isoTerminal; // back ref.
 
   /** stores the last "VT Status Message" */
   IsoAgLib::vtState_s vtState_a;

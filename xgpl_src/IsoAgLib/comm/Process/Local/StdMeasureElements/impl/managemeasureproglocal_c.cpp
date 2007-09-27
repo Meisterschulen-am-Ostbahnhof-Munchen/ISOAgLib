@@ -256,10 +256,10 @@ ManageMeasureProgLocal_c::~ManageMeasureProgLocal_c()
   @return true -> all planned executions performed
 */
 bool ManageMeasureProgLocal_c::timeEvent( uint16_t *pui16_nextTimePeriod ){
-  ISOMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
+  IsoMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
 
   if ( ElementBase_c::getAvailableExecTime() == 0 ) return false;
-  const ISOName_c *pc_callerISOName;
+  const IsoName_c *pc_callerISOName;
 
   #ifdef DEBUG_HEAP_USEAGE
   if ( ( sui16_lastPrintedMeasureProgLocalTotal != sui16_MeasureProgLocalTotal  )
@@ -366,7 +366,7 @@ bool ManageMeasureProgLocal_c::timeEvent( uint16_t *pui16_nextTimePeriod ){
 /** process a measure prog message for local process data */
 void ManageMeasureProgLocal_c::processProg(){
   ProcessPkg_c& c_pkg = getProcessInstance4Comm().data();
-  const ISOName_c& c_callerISOName =  c_pkg.memberSend().isoName();
+  const IsoName_c& c_callerISOName =  c_pkg.memberSend().isoName();
   GeneralCommand_c::CommandType_t en_command = c_pkg.c_generalCommand.getCommand();
 
   // call updateProgCache with createIfNeeded if this is a writing action, otherwise don't create if none found
@@ -423,7 +423,7 @@ void ManageMeasureProgLocal_c::processProg(){
   @param rc_isoName DEVCLASS code of searched measure program
   @param rb_doCreated true -> create suitable measure program if not found
 */
-MeasureProgLocal_c& ManageMeasureProgLocal_c::prog(const ISOName_c& rc_isoName, bool rb_doCreate){
+MeasureProgLocal_c& ManageMeasureProgLocal_c::prog(const IsoName_c& rc_isoName, bool rb_doCreate){
   // update the prog cache
   if (!updateProgCache(rc_isoName, rb_doCreate) && (!rb_doCreate))
   { // not found and no creation wanted
@@ -474,7 +474,7 @@ void ManageMeasureProgLocal_c::setGlobalVal( float rf_val )
 
   @param rc_isoName commanding ISOName
 */
-void ManageMeasureProgLocal_c::insertMeasureprog(const ISOName_c& rc_isoName){
+void ManageMeasureProgLocal_c::insertMeasureprog(const IsoName_c& rc_isoName){
 // only create new item if first isn't undefined
   const uint8_t b_oldSize = vec_prog().size();
 
@@ -564,7 +564,7 @@ void ManageMeasureProgLocal_c::insertMeasureprog(const ISOName_c& rc_isoName){
   @param rb_createIfNotFound true -> create new item if not found
   @return true -> instance found
 */
-bool ManageMeasureProgLocal_c::updateProgCache(const ISOName_c& rc_isoName, bool rb_createIfNotFound)
+bool ManageMeasureProgLocal_c::updateProgCache(const IsoName_c& rc_isoName, bool rb_createIfNotFound)
 {
   bool b_result = false;
   // insert first default element, if list is empty
@@ -616,7 +616,7 @@ bool ManageMeasureProgLocal_c::updateProgCache(const ISOName_c& rc_isoName, bool
   @return true -> rpc_receiverDevice is set
 */
 bool ManageMeasureProgLocal_c::startDataLogging(Proc_c::type_t ren_type /* Proc_c::TimeProp, Proc_c::DistProp, ... */,
-                                                int32_t ri32_increment, const ISOName_c* rpc_receiverDevice )
+                                                int32_t ri32_increment, const IsoName_c* rpc_receiverDevice )
 {
   if ( !rpc_receiverDevice )
     return FALSE;
@@ -640,7 +640,7 @@ bool ManageMeasureProgLocal_c::startDataLogging(Proc_c::type_t ren_type /* Proc_
   stop all measurement progs in all local process instances, started with given isoName
   @param refc_isoName
 */
-void ManageMeasureProgLocal_c::stopRunningMeasurement(const ISOName_c& refc_isoName)
+void ManageMeasureProgLocal_c::stopRunningMeasurement(const IsoName_c& refc_isoName)
 {
   Vec_MeasureProgLocalIterator pc_iter = vec_prog().begin();
   for (pc_iter = vec_prog().begin(); pc_iter != vec_prog().end(); pc_iter++)

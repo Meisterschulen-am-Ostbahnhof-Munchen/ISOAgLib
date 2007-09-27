@@ -128,8 +128,8 @@ namespace __IsoAgLib {
   possible errors:
       * Err_c::badAlloc not enough memory to insert first  MeasureProgLocal
   ISO parameter
-  @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
-                       (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
+  @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDdi_s which contains DDI, element, isSetpoint and ValueGroup
+                       (array is terminated by ElementDdi_s.ui16_element == 0xFFFF)
 
   @param rc_isoName optional ISOName code of Process-Data
   @param rc_ownerISOName optional ISOName of the owner
@@ -154,9 +154,9 @@ namespace __IsoAgLib {
   @param rpc_processDataChangeHandler optional pointer to handler class of application
   @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
-ProcDataLocal_c::ProcDataLocal_c( const IsoAgLib::ElementDDI_s* ps_elementDDI, uint16_t rui16_element,
-                                  const ISOName_c& rc_isoName, const ISOName_c& rc_ownerISOName,
-                                  const ISOName_c *rpc_isoName, bool rb_cumulativeValue,
+ProcDataLocal_c::ProcDataLocal_c( const IsoAgLib::ElementDdi_s* ps_elementDDI, uint16_t rui16_element,
+                                  const IsoName_c& rc_isoName, const IsoName_c& rc_ownerISOName,
+                                  const IsoName_c *rpc_isoName, bool rb_cumulativeValue,
 #ifdef USE_EEPROM_IO
                   uint16_t rui16_eepromAdr,
 #endif
@@ -181,8 +181,8 @@ ProcDataLocal_c::ProcDataLocal_c( const IsoAgLib::ElementDDI_s* ps_elementDDI, u
   possible errors:
       * Err_c::badAlloc not enough memory to insert first  MeasureProgLocal
   ISO parameter
-  @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
-                       (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
+  @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDdi_s which contains DDI, element, isSetpoint and ValueGroup
+                       (array is terminated by ElementDdi_s.ui16_element == 0xFFFF)
 
   @param rc_isoName optional ISOName code of Process-Data
   @param rc_ownerISOName optional ISOName of the owner
@@ -207,9 +207,9 @@ ProcDataLocal_c::ProcDataLocal_c( const IsoAgLib::ElementDDI_s* ps_elementDDI, u
   @param rpc_processDataChangeHandler optional pointer to handler class of application
   @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
-void ProcDataLocal_c::init( const IsoAgLib::ElementDDI_s* ps_elementDDI, uint16_t rui16_element,
-                            const ISOName_c& rc_isoName, const ISOName_c& rc_ownerISOName,
-                            const ISOName_c *rpc_isoName, bool rb_cumulativeValue,
+void ProcDataLocal_c::init( const IsoAgLib::ElementDdi_s* ps_elementDDI, uint16_t rui16_element,
+                            const IsoName_c& rc_isoName, const IsoName_c& rc_ownerISOName,
+                            const IsoName_c *rpc_isoName, bool rb_cumulativeValue,
 #ifdef USE_EEPROM_IO
                            uint16_t rui16_eepromAdr,
 #endif
@@ -240,7 +240,7 @@ ProcDataLocal_c::~ProcDataLocal_c(){
   set the eeprom adr for the value, read in value from EEPROM
 
   possible errors:
-      * dependent error in EEPROMIO_c on problems during read
+      * dependent error in EepromIo_c on problems during read
   @param rui16_eepromAdr new EEPROM adress
 */
 void ProcDataLocal_c::setEepromAdr(uint16_t rui16_eepromAdr)
@@ -319,7 +319,7 @@ bool ProcDataLocal_c::timeEvent( uint16_t *pui16_nextTimePeriod ){
   reset eeprom val
 
   possible errors:
-      * dependent error in EEPROMIO_c on problems during read
+      * dependent error in EepromIo_c on problems during read
   @param pc_progItem MeasureProgLocal_c instance which wants to reset EEPROM val
 */
 void ProcDataLocal_c::resetEeprom( MeasureProgLocal_c* pc_progItem )
@@ -357,7 +357,7 @@ void ProcDataLocal_c::processProg(){
   @return true -> measurement started
 */
 bool ProcDataLocal_c::startDataLogging(Proc_c::type_t ren_type /* Proc_c::TimeProp, Proc_c::DistProp, ... */,
-                                       int32_t ri32_increment, const ISOName_c* rpc_receiverDevice )
+                                       int32_t ri32_increment, const IsoName_c* rpc_receiverDevice )
 {
   if ( !rpc_receiverDevice )
     // get isoName of TC from last TC status message
@@ -366,7 +366,7 @@ bool ProcDataLocal_c::startDataLogging(Proc_c::type_t ren_type /* Proc_c::TimePr
   // if still no rpc_receiverDevice => get it from ISO monitor list
   if ( !rpc_receiverDevice )
   {  // get TC dev key (device class 0)
-    const ISOItem_c& c_tcISOItem = getIsoMonitorInstance4Comm().isoMemberDevClassInd(0 /* rui8_devClass */, 0 /* rui8_ind */, TRUE /* rb_forceClaimedAddress */);
+    const IsoItem_c& c_tcISOItem = getIsoMonitorInstance4Comm().isoMemberDevClassInd(0 /* rui8_devClass */, 0 /* rui8_ind */, TRUE /* rb_forceClaimedAddress */);
     rpc_receiverDevice = &(c_tcISOItem.isoName());
   }
 
@@ -377,7 +377,7 @@ bool ProcDataLocal_c::startDataLogging(Proc_c::type_t ren_type /* Proc_c::TimePr
   stop all measurement progs in all local process instances, started with given isoName
   @param refc_isoName
 */
-void ProcDataLocal_c::stopRunningMeasurement(const ISOName_c& refc_isoName)
+void ProcDataLocal_c::stopRunningMeasurement(const IsoName_c& refc_isoName)
 {
   c_measureprog.stopRunningMeasurement(refc_isoName);
 }

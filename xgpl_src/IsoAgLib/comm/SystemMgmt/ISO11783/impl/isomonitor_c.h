@@ -1,6 +1,6 @@
 /***************************************************************************
                           isomonitor_c.h - object for monitoring members
-                                             (list of ISOItem_c)
+                                             (list of IsoItem_c)
                              -------------------
     begin                : Fri Apr 07 2000
     copyright            : (C) 2000 - 2004 by Dipl.-Inform. Achim Spangler
@@ -114,40 +114,40 @@
 #else
   #include <list>
 #endif
-namespace IsoAgLib { class iISOMonitor_c;}
+namespace IsoAgLib { class iIsoMonitor_c;}
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
-/** type of map which is used to store SaClaimHandler_c clients corresponding to a ISOName_c reference */
+/** type of map which is used to store SaClaimHandler_c clients corresponding to a IsoName_c reference */
 typedef STL_NAMESPACE::vector<SaClaimHandler_c*> SaClaimHandlerVector_t;
 typedef STL_NAMESPACE::vector<SaClaimHandler_c*>::iterator SaClaimHandlerVectorIterator_t;
 typedef STL_NAMESPACE::vector<SaClaimHandler_c*>::const_iterator SaClaimHandlerVectorConstIterator_t;
 
-class ISOMonitor_c;
-typedef SINGLETON_DERIVED_CLIENT1(ISOMonitor_c, ElementBase_c, IdentItem_c, ISOName_c) SingletonISOMonitor_c;
+class IsoMonitor_c;
+typedef SINGLETON_DERIVED_CLIENT1(IsoMonitor_c, ElementBase_c, IdentItem_c, IsoName_c) SingletonIsoMonitor_c;
 // NEU SINGLETON TYPEDEF, wenn ISOMonitor auch IdentItem_c liste verwalten soll
-// typedef SINGLETON_DERIVED1(ISOMonitor_c, ElementBase_c, IdentItem_c, ISOName_c) SingletonISOMonitor_c;
+// typedef SINGLETON_DERIVED1(IsoMonitor_c, ElementBase_c, IdentItem_c, IsoName_c) SingletonIsoMonitor_c;
 /** this object manages a monitor list of all
   ISO members including inserting and administration of local own members.
-  @short Manager for members of Scheduler_c (ISOItem_c)
+  @short Manager for members of Scheduler_c (IsoItem_c)
   @see ISOItem
   @author Dipl.-Inform. Achim Spangler
 */
-class ISOMonitor_c : public SingletonISOMonitor_c
+class IsoMonitor_c : public SingletonIsoMonitor_c
 {
 private:
   // private typedef alias names
   #ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
-  typedef STL_NAMESPACE::USABLE_SLIST<ISOItem_c,STL_NAMESPACE::__malloc_alloc_template<0> > Vec_ISO;
-  typedef STL_NAMESPACE::USABLE_SLIST<ISOItem_c,STL_NAMESPACE::__malloc_alloc_template<0> >::iterator Vec_ISOIterator;
+  typedef STL_NAMESPACE::USABLE_SLIST<IsoItem_c,STL_NAMESPACE::__malloc_alloc_template<0> > Vec_ISO;
+  typedef STL_NAMESPACE::USABLE_SLIST<IsoItem_c,STL_NAMESPACE::__malloc_alloc_template<0> >::iterator Vec_ISOIterator;
   #else
-  typedef STL_NAMESPACE::USABLE_SLIST<ISOItem_c> Vec_ISO;
-  typedef STL_NAMESPACE::USABLE_SLIST<ISOItem_c>::iterator Vec_ISOIterator;
+  typedef STL_NAMESPACE::USABLE_SLIST<IsoItem_c> Vec_ISO;
+  typedef STL_NAMESPACE::USABLE_SLIST<IsoItem_c>::iterator Vec_ISOIterator;
   #endif
 
 public:
-  /** initialisation for ISOMonitor_c which can store optional pointer to central Scheduler_c instance */
+  /** initialisation for IsoMonitor_c which can store optional pointer to central Scheduler_c instance */
   void init( void );
 
   /** every subsystem of IsoAgLib has explicit function for controlled shutdown */
@@ -163,18 +163,18 @@ public:
   virtual bool isNetworkMgmt() const { return true; }
 
   /** default destructor which has nothing to do */
-  virtual ~ISOMonitor_c();
+  virtual ~IsoMonitor_c();
 
   /** deliver reference to data pkg
-    @return reference to the CAN communication member object c_data (ISOSystemPkg_c)
+    @return reference to the CAN communication member object c_data (IsoSystemPkg_c)
     @see CANPkgExt
   */
-  ISOSystemPkg_c& data() {return c_data;}
+  IsoSystemPkg_c& data() {return c_data;}
 
-  /** deliver reference to data pkg as reference to CANPkgExt_c
+  /** deliver reference to data pkg as reference to CanPkgExt_c
     to implement the base virtual function correct
   */
-  virtual CANPkgExt_c& dataBase();
+  virtual CanPkgExt_c& dataBase();
 
   /** deliver amount of ISO members in monitor list which optional (!!)
     match the condition of address claim state
@@ -199,7 +199,7 @@ public:
           (optional, default false)
     @return reference to searched element
   */
-  ISOItem_c& isoMemberInd(uint8_t rui8_ind, bool rb_forceClaimedAddress = false)
+  IsoItem_c& isoMemberInd(uint8_t rui8_ind, bool rb_forceClaimedAddress = false)
     {return isoMemberDevClassInd(0xFF, rui8_ind, rb_forceClaimedAddress);}
 
   /** deliver the count of members in the Monitor-List with given ECU-Type (which is an own IsoAgLib-definition!)
@@ -209,7 +209,7 @@ public:
           (optional, default false)
     @return count of members in Monitor-List with ECU-Type == rui8_ecuType
   */
-  uint8_t isoMemberEcuTypeCnt (ISOName_c::ecuType_t r_ecuType, bool rb_forceClaimedAddress = false);
+  uint8_t isoMemberEcuTypeCnt (IsoName_c::ecuType_t r_ecuType, bool rb_forceClaimedAddress = false);
 
   /** deliver one of the members with specific ECU_Type (which is an own IsoAgLib-definition!)
     which optional (!!) match the condition of address claim state
@@ -225,7 +225,7 @@ public:
           (optional, default false)
     @return reference to searched element
   */
-  ISOItem_c& isoMemberEcuTypeInd (ISOName_c::ecuType_t r_ecuType, uint8_t rui8_ind, bool rb_forceClaimedAddress = false);
+  IsoItem_c& isoMemberEcuTypeInd (IsoName_c::ecuType_t r_ecuType, uint8_t rui8_ind, bool rb_forceClaimedAddress = false);
 
   /** deliver the count of members in the Monitor-List with given DEVCLASS (variable POS)
     which optional (!!) match the condition of address claim state
@@ -250,7 +250,7 @@ public:
          (optional, default false)
    @return reference to searched element
   */
-  ISOItem_c& isoMemberDevClassInd(uint8_t rui8_devClass, uint8_t rui8_ind, bool rb_forceClaimedAddress = false);
+  IsoItem_c& isoMemberDevClassInd(uint8_t rui8_devClass, uint8_t rui8_ind, bool rb_forceClaimedAddress = false);
 
   /** check if a memberItem with given ISOName exist
     which optional (!!) match the condition of address claim state
@@ -260,7 +260,7 @@ public:
           (optional, default false)
     @return true -> searched member exist
   */
-  bool existIsoMemberISOName(const ISOName_c& rc_isoName, bool rb_forceClaimedAddress = false);
+  bool existIsoMemberISOName(const IsoName_c& rc_isoName, bool rb_forceClaimedAddress = false);
 
   /** check if a member with given number exist
     which optional (!!) match the condition of address claim state
@@ -276,20 +276,20 @@ public:
     @param refc_isoName ISOName to search (-> it's updated if member with claimed address with other dev class inst is found)
     @return true -> member with claimed address with given DEVCLASS found (and refc_isoName has now its ISOName)
   */
-  bool isoDevClass2ISONameClaimedAddress(ISOName_c &refc_isoName);
+  bool isoDevClass2ISONameClaimedAddress(IsoName_c &refc_isoName);
 
-  /** insert a new ISOItem_c in the list; with unset rui8_nr the member is initiated as
+  /** insert a new IsoItem_c in the list; with unset rui8_nr the member is initiated as
     address claim state; otherwise the given state can be given or state Active is used
     possible errors:
-      * Err_c::badAlloc not enough memory to insert new ISOItem_c isntance
+      * Err_c::badAlloc not enough memory to insert new IsoItem_c isntance
       * Err_c::busy another member with same ident exists already in the list
     @param rc_isoName ISOName of the member
     @param rui8_nr member number
     @param rui16_saEepromAdr EEPROM adress to store actual SA -> next boot with same adr
     @param ren_status wanted status
-    @return pointer to new ISOItem_c or NULL if not succeeded
+    @return pointer to new IsoItem_c or NULL if not succeeded
   */
-  ISOItem_c* insertIsoMember(const ISOName_c& rc_isoName, uint8_t rui8_nr = 0xFF,
+  IsoItem_c* insertIsoMember(const IsoName_c& rc_isoName, uint8_t rui8_nr = 0xFF,
                      IState_c::itemState_t ren_state = IState_c::Active);
 
 
@@ -302,9 +302,9 @@ public:
       @see localMemberCnt
       @param rui8_ind index of wanted member (first item == 0)
       @return pointer to wanted local member (NULL if no suitable MonitorItem_c found)
-      (MonitorItem_c is base class of ISOItem_c which serves address, isoName, itemState)
+      (MonitorItem_c is base class of IsoItem_c which serves address, isoName, itemState)
      */
-  ISOItem_c& localIsoMemberInd( uint8_t rui8_ind );
+  IsoItem_c& localIsoMemberInd( uint8_t rui8_ind );
 
   /** check if one of the own local members is active with claimed address at ISO11783
       @return true -> at least one of the own iso identities is active with claimed address at ISO11783
@@ -319,11 +319,11 @@ public:
           possible errors:
       * Err_c::lbsSysNoActiveLocalMember on missing own active ident
       @return reference to the MonitorItem_c of the first active local member
-      (MonitorItem_c is baes class of ISOItem_c which serves
+      (MonitorItem_c is baes class of IsoItem_c which serves
       adress, isoName, itemState)
       @exception preconditionViolation
      */
-  ISOItem_c& getActiveLocalIsoMember();
+  IsoItem_c& getActiveLocalIsoMember();
 
   /** check for own ident with given member no
       @param rui8_nr member no to search for
@@ -337,16 +337,16 @@ public:
       (optional, default false)
       @return true -> one of the own identities has the wanted ISOName
      */
-  bool existLocalIsoMemberISOName (const ISOName_c& rc_isoName, bool rb_forceClaimedAddress = false);
+  bool existLocalIsoMemberISOName (const IsoName_c& rc_isoName, bool rb_forceClaimedAddress = false);
 
   /**
       * reset the Address Claim state by:
       * + reset IdentItem::IStat_c to IState_c::PreAddressClaim
-      * + remove pointed ISOItem_c nodes and the respective pointer
+      * + remove pointed IsoItem_c nodes and the respective pointer
       * @param rc_isoName  ISOName
-      * @return true -> there was an item with given ISOName_c that has been resetted to IState_c::PreAddressClaim
+      * @return true -> there was an item with given IsoName_c that has been resetted to IState_c::PreAddressClaim
      */
-  bool restartAddressClaim( const ISOName_c& rrefc_isoName );
+  bool restartAddressClaim( const IsoName_c& rrefc_isoName );
 
   /** register a SaClaimHandler_c */
   bool registerSaClaimHandler (SaClaimHandler_c* rpc_client);
@@ -356,10 +356,10 @@ public:
 
 
   /** this function is used to broadcast a ISO monitor list change to all registered clients */
-  void broadcastSaAdd2Clients( const ISOName_c& rc_isoName, const ISOItem_c* rpc_isoItem ) const;
+  void broadcastSaAdd2Clients( const IsoName_c& rc_isoName, const IsoItem_c* rpc_isoItem ) const;
 
   /** this function is used to broadcast a ISO monitor list change to all registered clients */
-  void broadcastSaRemove2Clients( const ISOName_c& rc_isoName, uint8_t rui8_oldSa ) const;
+  void broadcastSaRemove2Clients( const IsoName_c& rc_isoName, uint8_t rui8_oldSa ) const;
 
   /**
     deliver member item with given isoName
@@ -370,7 +370,7 @@ public:
     @return reference to searched ISOItem
      @exception containerElementNonexistant
   */
-  ISOItem_c& isoMemberISOName(const ISOName_c& rc_isoName, bool rb_forceClaimedAddress = false);
+  IsoItem_c& isoMemberISOName(const IsoName_c& rc_isoName, bool rb_forceClaimedAddress = false);
 
   /** deliver member item with given nr
     (check with existIsoMemberNr before access to not defined item)
@@ -380,16 +380,16 @@ public:
     @return reference to searched ISOItem
      @exception containerElementNonexistant
   */
-  ISOItem_c& isoMemberNr(uint8_t rui8_nr);
+  IsoItem_c& isoMemberNr(uint8_t rui8_nr);
 
   /** deliver member item with given ISOName, set pointed bool var to true on success
     and set a Member Array Iterator to the result
     @param rc_isoName searched ISOName
     @param pb_success bool pointer to store the success (true on success)
-    @param pbc_iter optional member array iterator which points to searched ISOItem_c on success
+    @param pbc_iter optional member array iterator which points to searched IsoItem_c on success
     @return reference to the searched item
   */
-  ISOItem_c& isoMemberISOName(const ISOName_c& rc_isoName, bool *const pb_success, bool rb_forceClaimedAddress = false, Vec_ISOIterator *const pbc_iter = NULL);
+  IsoItem_c& isoMemberISOName(const IsoName_c& rc_isoName, bool *const pb_success, bool rb_forceClaimedAddress = false, Vec_ISOIterator *const pbc_iter = NULL);
 
   /**
     delete item with specified isoName
@@ -397,7 +397,7 @@ public:
       * Err_c::elNonexistent no member with given ISOName exists
     @param rc_isoName ISOName of to be deleted member
   */
-  bool deleteIsoMemberISOName(const ISOName_c& rc_isoName);
+  bool deleteIsoMemberISOName(const IsoName_c& rc_isoName);
 
   /** delete item with specified member number
     possible errors:
@@ -406,15 +406,15 @@ public:
   */
   bool deleteIsoMemberNr(uint8_t rui8_nr);
 
-  /** check if SA of an announcing ISOItem_c is unique and deliver
+  /** check if SA of an announcing IsoItem_c is unique and deliver
     another free SA if not yet unique (else deliver its actual
     SA if unique yet)
-    @param rpc_isoItem pointer to announcing ISOItem_c
+    @param rpc_isoItem pointer to announcing IsoItem_c
     @return free unique SA (if possible the actual SA of the pointed item)
       (if wanted SA is not free for NOT-self-conf item or if no free SA is available
        254 is answered -> special flag for NACK)
   */
-  uint8_t unifyIsoSa(const ISOItem_c* rpc_isoItem);
+  uint8_t unifyIsoSa(const IsoItem_c* rpc_isoItem);
 
   /**
     change isoName if actual isoName isn't unique
@@ -424,7 +424,7 @@ public:
     @param refc_isoName reference to ISOName var (is changed directly if needed!!)
     @return true -> referenced ISOName is now unique
   */
-  bool unifyIsoISOName (ISOName_c& refc_isoName, bool rb_dontUnify);
+  bool unifyIsoISOName (IsoName_c& refc_isoName, bool rb_dontUnify);
 
   /** deliver timestamp of last ISO request for SA claim msg
     @return time of last Request PG for Adress Claim on BUS
@@ -451,12 +451,12 @@ public:
     @param xth tells which slave of the working set to get
     @param rpc_masterItem this is the master of which we want all the slaves
   */
-  ISOItem_c* getSlave (uint8_t index, ISOItem_c* rpc_masterItem);
+  IsoItem_c* getSlave (uint8_t index, IsoItem_c* rpc_masterItem);
 
   /** get the number of slaves attached to the given working set master
     @param rpc_masterItem this is the master of which we want to know how many slaves he has
   */
-  uint8_t getSlaveCount (ISOItem_c* rpc_masterItem);
+  uint8_t getSlaveCount (IsoItem_c* rpc_masterItem);
 
   /** notify that a ws-master is in destruction,
     so that all slaves can be notified and can set their master to NULL,
@@ -464,28 +464,28 @@ public:
     @param xth tells which slave of the working set to get
     @param rpc_masterItem this is the master of which we want all the slaves
   */
-  void notifyOnWsMasterLoss (ISOItem_c& rrefc_masterItem);
+  void notifyOnWsMasterLoss (IsoItem_c& rrefc_masterItem);
 
-  bool processMsgRequestPGN (uint32_t rui32_pgn, ISOItem_c* rpc_isoItemSender, ISOItem_c* rpc_isoItemReceiver);
+  bool processMsgRequestPGN (uint32_t rui32_pgn, IsoItem_c* rpc_isoItemSender, IsoItem_c* rpc_isoItemReceiver);
 
   ///  Operation: // Function for Debugging in Scheduler_c
   virtual const char* getTaskName() const;
 
   /// Function notify Scheduler_c to set new retriggerTime
   /// will be called from IdentItem_c and registerClient
-  /// ISOMonitor_c.timeEvent() should be called in 50 ms
+  /// IsoMonitor_c.timeEvent() should be called in 50 ms
   void changeRetriggerTime() { getSchedulerInstance4Comm().changeRetriggerTimeAndResort(this,System_c::getTime() + 50 );};
 
 
   /** command switching to and from special service / diagnostic mode.
       setting the flag c_serviceTool controls appropriate handling
     */
-  void setDiagnosticMode( const ISOName_c& rrefc_serviceTool = ISOName_c::ISONameUnspecified());
+  void setDiagnosticMode( const IsoName_c& rrefc_serviceTool = IsoName_c::IsoNameUnspecified());
 protected: // Protected methods
   /** process system msg with informations which are
     important for managing of members
     (this function is only called if NO conflict is detected)
-    @return true -> message processed by ISOMonitor_c; false -> process msg by ServiceMonitor
+    @return true -> message processed by IsoMonitor_c; false -> process msg by ServiceMonitor
   */
   bool processMsg();
 
@@ -502,7 +502,7 @@ private:
    */
   bool registerClient( IdentItem_c* pc_client)
   {
-    /// ISOMonitor_c.timeEvent() should be called from Scheduler_c in 50 ms
+    /// IsoMonitor_c.timeEvent() should be called from Scheduler_c in 50 ms
     changeRetriggerTime();
     return registerC1 ( pc_client );
   }
@@ -517,10 +517,10 @@ private:
      */
   void registerAccessFlt( void ) {getILibErrInstance().registerError( iLibErr_c::ElNonexistent, iLibErr_c::System );}
 
-  friend class SINGLETON_DERIVED(ISOMonitor_c,ElementBase_c);
+  friend class SINGLETON_DERIVED(IsoMonitor_c,ElementBase_c);
 
-  /** constructor for ISOMonitor_c which can store optional pointer to central Scheduler_c instance */
-  ISOMonitor_c( void );
+  /** constructor for IsoMonitor_c which can store optional pointer to central Scheduler_c instance */
+  IsoMonitor_c( void );
 
   /** initialize directly after the singleton instance is created.
     this is called from singleton.h and should NOT be called from the user again.
@@ -529,15 +529,15 @@ private:
   void singletonInit();
 
 private: // Private attributes
-  friend class IsoAgLib::iISOMonitor_c;
+  friend class IsoAgLib::iIsoMonitor_c;
 
   /** Cache pointer to speedup access to first active
     MonitorItem_c local member after check for existance
      */
-  ISOItem_c* pc_activeLocalMember;
+  IsoItem_c* pc_activeLocalMember;
 
   /** temp data where received and to be sent data is put */
-  ISOSystemPkg_c c_data;
+  IsoSystemPkg_c c_data;
 
   /** dynamic array of memberItems for handling
       of single member informations
@@ -548,7 +548,7 @@ private: // Private attributes
   int32_t i32_lastSaRequest;
 
   /** temporary memberItem instance for better inserting of new elements */
-  ISOItem_c c_tempIsoMemberItem;
+  IsoItem_c c_tempIsoMemberItem;
 
   /** cache pointer to speed serial of access to the same ISOItem */
   Vec_ISOIterator pc_isoMemberCache;
@@ -558,18 +558,21 @@ private: // Private attributes
 
   /** flag to indicate service / diagnostic mode, where only connections to a dedicated ECU
      should be maintained */
-  ISOName_c c_serviceTool;
+  IsoName_c c_serviceTool;
 };
 
 #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
-  /** C-style function, to get access to the unique ISOMonitor_c singleton instance
+  /** C-style function, to get access to the unique IsoMonitor_c singleton instance
     * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
     */
-  ISOMonitor_c& getIsoMonitorInstance( uint8_t rui8_instance = 0 );
+  IsoMonitor_c& getIsoMonitorInstance( uint8_t rui8_instance = 0 );
 #else
-  /** C-style function, to get access to the unique ISOMonitor_c singleton instance */
-  ISOMonitor_c& getIsoMonitorInstance( void );
+  /** C-style function, to get access to the unique IsoMonitor_c singleton instance */
+  IsoMonitor_c& getIsoMonitorInstance( void );
 #endif
+
+/** this typedef is only for some time to provide backward compatibility at API level */
+typedef IsoMonitor_c ISOMonitor_c;
 
 }
 #endif

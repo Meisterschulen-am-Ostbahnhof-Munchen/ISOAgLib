@@ -286,7 +286,7 @@ class MyProcDataHandler_c : public IsoAgLib::ProcessDataChangeHandler_c
       * @param rc_callerISOName ISOName of calling device - i.e. which sent new setpoint
       * @return true -> handler class reacted on change event
       */
-    virtual bool processMeasurementUpdate( EventSource_c rc_src, int32_t ri32_val, const iISOName_c& rc_callerISOName, bool rb_change );
+    virtual bool processMeasurementUpdate( EventSource_c rc_src, int32_t ri32_val, const iIsoName_c& rc_callerISOName, bool rb_change );
 
     /** react on received setpoint ACK or NACK upon previous setpoint set for remote process data
       * (remote system which manages the process data, local or other system sent previously a
@@ -296,10 +296,10 @@ class MyProcDataHandler_c : public IsoAgLib::ProcessDataChangeHandler_c
       * @param rc_callerISOName ISOName of calling device - i.e. which sent new setpoint
       * @return true -> handler class reacted on change event
     */
-    virtual bool processSetpointResponse( EventSource_c rc_src, int32_t ri32_val, const iISOName_c& rc_callerISOName );
+    virtual bool processSetpointResponse( EventSource_c rc_src, int32_t ri32_val, const iIsoName_c& rc_callerISOName );
 };
 
-bool MyProcDataHandler_c::processMeasurementUpdate( EventSource_c rc_src, int32_t ri32_val, const iISOName_c& /* rc_callerISOName */, bool rb_change )
+bool MyProcDataHandler_c::processMeasurementUpdate( EventSource_c rc_src, int32_t ri32_val, const iIsoName_c& /* rc_callerISOName */, bool rb_change )
 {
   if ( ! rb_change )
   { // don't handle values which don't contain new value - maybe still relevant for other applications
@@ -323,7 +323,7 @@ bool MyProcDataHandler_c::processMeasurementUpdate( EventSource_c rc_src, int32_
   return true;
 }
 
-bool MyProcDataHandler_c::processSetpointResponse( EventSource_c /* rc_src */, int32_t ri32_val, const iISOName_c& /* rc_callerISOName */)
+bool MyProcDataHandler_c::processSetpointResponse( EventSource_c /* rc_src */, int32_t ri32_val, const iIsoName_c& /* rc_callerISOName */)
 {
   LOG_INFO << "new setpoint response value received: " << ri32_val << "\r\n";
   // answer to IsoAgLib that this new setpoint is handled
@@ -340,10 +340,10 @@ int main()
   getIcanInstance().init( cui32_canChannel, 250 );
   // variable for ISOName
   // default with primary cultivation mounted back
-  IsoAgLib::iISOName_c c_myISOName( 2, 0 );
+  IsoAgLib::iIsoName_c c_myISOName( 2, 0 );
 
   // device type of remote ECU
-  IsoAgLib::iISOName_c c_remoteDeviceType( 0x5, 0 );
+  IsoAgLib::iIsoName_c c_remoteDeviceType( 0x5, 0 );
 
   // start address claim of the local member "IMI"
   // if ISOName conflicts forces change of device class instance, the
@@ -369,19 +369,19 @@ int main()
   IsoAgLib::iIdentItem_c c_myIdent(ui8_indGroup, c_myISOName.devClass(), c_myISOName.devClassInst(),
     b_func, ui16_manufCode, ui32_serNo, b_wantedSa, 0xFFFF, b_funcInst, b_ecuInst, b_selfConf );
 
-  const ElementDDI_s s_workStateElementDDI[] =
+  const ElementDdi_s s_workStateElementDDI[] =
   {
     // DDI 141,
     {141, true, GeneralCommand_c::exactValue},
     // termination entry
     {0xFFFF, false, GeneralCommand_c::noValue}
   };
-  const ElementDDI_s s_applicationRateElementDDI[] =
+  const ElementDdi_s s_applicationRateElementDDI[] =
   {
     // DDI 1,
     {1, true, GeneralCommand_c::exactValue},
     // DDI 2,
-//     {2, false, GeneralCommand_c::exactValue}, // -> that ElementDDI_s is commented out to demonstrate how to add a DDI dynamically
+//     {2, false, GeneralCommand_c::exactValue}, // -> that ElementDdi_s is commented out to demonstrate how to add a DDI dynamically
     // DDI 3,
     {3, true, GeneralCommand_c::defaultValue},
     // DDI 4,
@@ -608,7 +608,7 @@ int main()
       #ifdef WIN32
         if ( i32_idleTimeSpread > 0 ) Sleep(i32_idleTimeSpread);
       #else
-        if ( i32_idleTimeSpread > 0 ) IsoAgLib::iCANIO_c::waitUntilCanReceiveOrTimeout( i32_idleTimeSpread );
+        if ( i32_idleTimeSpread > 0 ) IsoAgLib::iCanIo_c::waitUntilCanReceiveOrTimeout( i32_idleTimeSpread );
       #endif
     #endif
   }

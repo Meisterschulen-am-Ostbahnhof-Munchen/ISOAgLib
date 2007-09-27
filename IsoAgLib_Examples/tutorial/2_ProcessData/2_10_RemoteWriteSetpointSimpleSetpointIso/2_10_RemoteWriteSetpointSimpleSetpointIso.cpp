@@ -294,10 +294,10 @@ class MyProcDataHandler_c : public IsoAgLib::ProcessDataChangeHandler_c
       * @param rc_callerISOName ISOName of calling device - i.e. which sent new setpoint
       * @return true -> handler class reacted on change event
       */
-    virtual bool processSetpointResponse( EventSource_c rc_src, int32_t ri32_val, const iISOName_c& rc_callerISOName );
+    virtual bool processSetpointResponse( EventSource_c rc_src, int32_t ri32_val, const iIsoName_c& rc_callerISOName );
 };
 
-bool MyProcDataHandler_c::processSetpointResponse( EventSource_c rc_src, int32_t ri32_val,  const iISOName_c& /* rc_callerISOName */ )
+bool MyProcDataHandler_c::processSetpointResponse( EventSource_c rc_src, int32_t ri32_val,  const iIsoName_c& /* rc_callerISOName */ )
 {
   // use helper function to get automatically casted pointer to used process data type
   uint16_t ui16_index = rc_src.makeIProcDataRemoteSimpleSetpoint() - arr_procData;
@@ -333,9 +333,9 @@ MyProcDataHandler_c c_myMeasurementHandler;
 #endif
 
 // default with primary cultivation mounted back
-IsoAgLib::iISOName_c c_myISOName( 2, 0 );
+IsoAgLib::iIsoName_c c_myISOName( 2, 0 );
 // device type of remote ECU
-IsoAgLib::iISOName_c c_remoteDeviceType( 0x5, 0 );
+IsoAgLib::iIsoName_c c_remoteDeviceType( 0x5, 0 );
 
 int main()
 { // init CAN channel with 250kBaud at needed channel ( count starts with 0 )
@@ -364,14 +364,14 @@ int main()
   IsoAgLib::iIdentItem_c c_myIdent(ui8_indGroup, c_myISOName.devClass(), c_myISOName.devClassInst(),
     b_func, ui16_manufCode, ui32_serNo, b_wantedSa, 0xFFFF, b_funcInst, b_ecuInst, b_selfConf );
 
-  const ElementDDI_s s_WorkStateElementDDI[2] =
+  const ElementDdi_s s_WorkStateElementDDI[2] =
   {
     // DDI 141
     {141, true, GeneralCommand_c::exactValue},
     // termination entry
     {0xFFFF, false, GeneralCommand_c::noValue}
   };
-  const ElementDDI_s s_ApplicationRateElementDDI[3] =
+  const ElementDdi_s s_ApplicationRateElementDDI[3] =
   {
     //  DDI 1
     {1, true, GeneralCommand_c::exactValue},
@@ -466,7 +466,7 @@ int main()
       #ifdef WIN32
         if ( i32_idleTimeSpread > 0 ) Sleep(i32_idleTimeSpread);
       #else
-        if ( i32_idleTimeSpread > 0 ) IsoAgLib::iCANIO_c::waitUntilCanReceiveOrTimeout( i32_idleTimeSpread );
+        if ( i32_idleTimeSpread > 0 ) IsoAgLib::iCanIo_c::waitUntilCanReceiveOrTimeout( i32_idleTimeSpread );
       #endif
     #endif
   }

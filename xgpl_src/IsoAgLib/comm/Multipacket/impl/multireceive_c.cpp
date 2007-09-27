@@ -172,8 +172,8 @@ static const uint8_t scui8_tpPriority=6;
 #endif
 
 
-MultiReceiveClientWrapper_s::MultiReceiveClientWrapper_s( CANCustomer_c& rrefc_client,
-                                                          const ISOName_c& rrefc_isoNameClient,
+MultiReceiveClientWrapper_s::MultiReceiveClientWrapper_s( CanCustomer_c& rrefc_client,
+                                                          const IsoName_c& rrefc_isoNameClient,
                                                           uint32_t rui32_pgn,
                                                           uint32_t rui32_pgnMask,
                                                           bool rb_alsoBroadcast,
@@ -250,7 +250,7 @@ MultiReceive_c::notifyError (const IsoAgLib::ReceiveStreamIdentifier_c& rrefc_st
 
 
 // //////////////////////////////// +X2C Operation 193 : processMsg
-//! @return true -> message was processed; else the received CAN message will be served to other matching CANCustomer_c
+//! @return true -> message was processed; else the received CAN message will be served to other matching CanCustomer_c
 bool
 MultiReceive_c::processMsg()
 { // ~X2C
@@ -349,7 +349,7 @@ MultiReceive_c::processMsg()
               }
 
               // First of all, is there a client registered that handles those PGNs via (E)TP-Messages?
-              CANCustomer_c* pc_clientFound = getClient(c_tmpRSI);
+              CanCustomer_c* pc_clientFound = getClient(c_tmpRSI);
               if (pc_clientFound == NULL)
               { // There's no client registered to take this PGN->thisAddress! */
                 notifyError(c_tmpRSI, 115);
@@ -622,7 +622,7 @@ MultiReceive_c::processMsg()
         { // First Frame => okay, create new Stream!
           /** @todo check for range of 0..223 */
           /** @todo determine when to set the PS field of the pgn to "rui8_cachedClientAddress" */
-          IsoAgLib::ReceiveStreamIdentifier_c c_fpRSI (data().isoPgn(), 0xFF /* Ps is destin adr in the (E)TP-PGNs*/, IsoAgLib::iISOName_c::iISONameUnspecified(),
+          IsoAgLib::ReceiveStreamIdentifier_c c_fpRSI (data().isoPgn(), 0xFF /* Ps is destin adr in the (E)TP-PGNs*/, IsoAgLib::iIsoName_c::iIsoNameUnspecified(),
                                                                         data().isoSa(),                               data().getISONameForSA().toConstIisoName_c());
           pc_streamFound = createStream (StreamFastPacket, c_fpRSI, data().getUint8Data (1));
         }
@@ -659,7 +659,7 @@ MultiReceive_c::processMsg()
 
 // Operation: registerClient
 void
-MultiReceive_c::registerClient(CANCustomer_c& rrefc_client, const ISOName_c& rrefc_isoName,
+MultiReceive_c::registerClient(CanCustomer_c& rrefc_client, const IsoName_c& rrefc_isoName,
                                uint32_t rui32_pgn, uint32_t rui32_pgnMask,
                                bool rb_alsoBroadcast, bool rb_alsoGlobalErrors
                                #ifdef NMEA_2000_FAST_PACKET
@@ -706,11 +706,11 @@ MultiReceive_c::registerClient(CANCustomer_c& rrefc_client, const ISOName_c& rre
 
 
 //  Operation: deregisterClient
-//! Will kick all the MR-Clients registered by a CANCustomer_c.
+//! Will kick all the MR-Clients registered by a CanCustomer_c.
 //! Mainly to be used when shutting down a class-instance
 //! that just wants to notify MR that it's gone!
 void
-MultiReceive_c::deregisterClient (CANCustomer_c& rrefc_client)
+MultiReceive_c::deregisterClient (CanCustomer_c& rrefc_client)
 {
   // first of all remove all streams that are for this client!
   for (STL_NAMESPACE::list<DEF_Stream_c_IMPL>::iterator pc_iter = list_streams.begin(); pc_iter != list_streams.end(); )
@@ -748,7 +748,7 @@ MultiReceive_c::deregisterClient (CANCustomer_c& rrefc_client)
 
 // Operation: deregisterClient
 void
-MultiReceive_c::deregisterClient(CANCustomer_c& rrefc_client, const ISOName_c& rrefc_isoName,
+MultiReceive_c::deregisterClient(CanCustomer_c& rrefc_client, const IsoName_c& rrefc_isoName,
                                  uint32_t rui32_pgn, uint32_t rui32_pgnMask)
 {
   // first of all remove all streams that are for this client with this filter/mask/isoname tuple
@@ -1205,7 +1205,7 @@ MultiReceive_c::connAbortTellClient(bool rb_sendConnAbort, Stream_c* rpc_stream)
   if (rpc_stream->getIdent().getDa() != 0xFF)
   {
     // search Client and tell about connAbort
-    CANCustomer_c* pc_clientFound = getClient (rpc_stream->getIdent());
+    CanCustomer_c* pc_clientFound = getClient (rpc_stream->getIdent());
     if (pc_clientFound) {
       pc_clientFound->reactOnAbort (*rpc_stream);
     }
@@ -1304,8 +1304,8 @@ MultiReceive_c::close( void )
 //  Operation: getClient
 //! Parameter:
 //! @param rc_streamIdent:
-//! @return NULL for "doesn't exist", otherwise valid "CANCustomer_c*"
-CANCustomer_c*
+//! @return NULL for "doesn't exist", otherwise valid "CanCustomer_c*"
+CanCustomer_c*
 MultiReceive_c::getClient (IsoAgLib::ReceiveStreamIdentifier_c rc_streamIdent)
 {
   for (STL_NAMESPACE::list<MultiReceiveClientWrapper_s>::iterator i_list_clients = list_clients.begin();
@@ -1339,10 +1339,10 @@ MultiReceive_c::anyMultiReceiveClientRegisteredForThisDa (uint8_t ui8_da)
 
 
 /**
-  deliver reference to data pkg as reference to CANPkgExt_c
+  deliver reference to data pkg as reference to CanPkgExt_c
   to implement the base virtual function correct
 */
-__IsoAgLib::CANPkgExt_c&
+__IsoAgLib::CanPkgExt_c&
 MultiReceive_c::dataBase()
 {
   return c_data;
@@ -1434,26 +1434,26 @@ MultiReceive_c::getMaxStreamCompletion1000 (bool b_checkFirstByte, uint8_t ui8_r
 
 
 
-/** this function is called by ISOMonitor_c when a new CLAIMED ISOItem_c is registered.
-  * @param refc_isoName const reference to the item which ISOItem_c state is changed
-  * @param rpc_newItem pointer to the currently corresponding ISOItem_c
+/** this function is called by IsoMonitor_c when a new CLAIMED IsoItem_c is registered.
+  * @param refc_isoName const reference to the item which IsoItem_c state is changed
+  * @param rpc_newItem pointer to the currently corresponding IsoItem_c
     */
 void
-MultiReceive_c::reactOnMonitorListAdd( const __IsoAgLib::ISOName_c& refc_isoName, const __IsoAgLib::ISOItem_c* rpc_newItem )
+MultiReceive_c::reactOnMonitorListAdd( const __IsoAgLib::IsoName_c& refc_isoName, const __IsoAgLib::IsoItem_c* rpc_newItem )
 {
 #ifdef DEBUG
-  INTERNAL_DEBUG_DEVICE << "reactOnMonitorListAdd() handles CLAIM of ISOItem_c for device with DevClass: " << int(refc_isoName.devClass())
+  INTERNAL_DEBUG_DEVICE << "reactOnMonitorListAdd() handles CLAIM of IsoItem_c for device with DevClass: " << int(refc_isoName.devClass())
       << ", Instance: " << int(refc_isoName.devClassInst()) << ", and manufacturer ID: " << int(refc_isoName.manufCode())
       << "NOW use SA: " << int(rpc_newItem->nr()) << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_NEWLINE
       << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
   if ( getIsoMonitorInstance4Comm().existLocalIsoMemberISOName(refc_isoName) )
-  { // lcoal ISOItem_c has finished adr claim
+  { // lcoal IsoItem_c has finished adr claim
     // put CONN/DATA in ONE CONNECTED FILTERBOX!
-    getIsoFilterManagerInstance().insertIsoFilterConnected (ISOFilter_s (*this, (0x3FFFF00UL), (TP_CONN_MANAGE_PGN << 8),   &refc_isoName, NULL, 8),
-                                                            ISOFilter_s (*this, (0x3FFFF00UL), (TP_DATA_TRANSFER_PGN << 8), &refc_isoName, NULL, 8));
-    getIsoFilterManagerInstance().insertIsoFilterConnected (ISOFilter_s (*this, (0x3FFFF00UL), (ETP_CONN_MANAGE_PGN << 8),  &refc_isoName, NULL, 8),
-                                                            ISOFilter_s (*this, (0x3FFFF00UL), (ETP_DATA_TRANSFER_PGN << 8),&refc_isoName, NULL, 8));
+    getIsoFilterManagerInstance().insertIsoFilterConnected (IsoFilter_s (*this, (0x3FFFF00UL), (TP_CONN_MANAGE_PGN << 8),   &refc_isoName, NULL, 8),
+                                                            IsoFilter_s (*this, (0x3FFFF00UL), (TP_DATA_TRANSFER_PGN << 8), &refc_isoName, NULL, 8));
+    getIsoFilterManagerInstance().insertIsoFilterConnected (IsoFilter_s (*this, (0x3FFFF00UL), (ETP_CONN_MANAGE_PGN << 8),  &refc_isoName, NULL, 8),
+                                                            IsoFilter_s (*this, (0x3FFFF00UL), (ETP_DATA_TRANSFER_PGN << 8),&refc_isoName, NULL, 8));
   }
 
   // rpc_newItem is always != NULL
@@ -1482,19 +1482,19 @@ MultiReceive_c::reactOnMonitorListAdd( const __IsoAgLib::ISOName_c& refc_isoName
 }
 
 
-/** this function is called by ISOMonitor_c when a device looses its ISOItem_c.
-  * @param refc_isoName const reference to the item which ISOItem_c state is changed
+/** this function is called by IsoMonitor_c when a device looses its IsoItem_c.
+  * @param refc_isoName const reference to the item which IsoItem_c state is changed
   * @param rui8_oldSa previously used SA which is NOW LOST -> clients which were connected to this item can react explicitly
   */
 void
-MultiReceive_c::reactOnMonitorListRemove( const __IsoAgLib::ISOName_c&
+MultiReceive_c::reactOnMonitorListRemove( const __IsoAgLib::IsoName_c&
 #ifdef DEBUG
 refc_isoName
 #endif
 , uint8_t rui8_oldSa )
 {
 #ifdef DEBUG
-  INTERNAL_DEBUG_DEVICE << "MR::reactOnMonitorListRemove() handles LOSS of ISOItem_c for device with DevClass: " << int(refc_isoName.devClass())
+  INTERNAL_DEBUG_DEVICE << "MR::reactOnMonitorListRemove() handles LOSS of IsoItem_c for device with DevClass: " << int(refc_isoName.devClass())
       << ", Instance: " << int(refc_isoName.devClassInst()) << ", and manufacturer ID: " << int(refc_isoName.manufCode())
       << " and PREVIOUSLY used SA: " << int(rui8_oldSa) << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_NEWLINE
       << INTERNAL_DEBUG_DEVICE_ENDL;

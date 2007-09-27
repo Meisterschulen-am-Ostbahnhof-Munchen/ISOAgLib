@@ -94,8 +94,8 @@ namespace __IsoAgLib {
 
 /** initialise this ProcDataRemoteBase_c instance to a well defined initial state
     ISO parameter
-    @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
-                         (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
+    @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDdi_s which contains DDI, element, isSetpoint and ValueGroup
+                         (array is terminated by ElementDdi_s.ui16_element == 0xFFFF)
     common parameter
     @param rc_isoName optional ISOName code of this instance
     @param rc_ownerISOName optional ISOName of the owner
@@ -103,9 +103,9 @@ namespace __IsoAgLib {
     @param rpc_processDataChangeHandler optional pointer to handler class of application
     @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
-void ProcDataRemoteBase_c::init(  const IsoAgLib::ElementDDI_s* ps_elementDDI, uint16_t rui16_element,
-                                  const ISOName_c& rc_isoName, const ISOName_c& rc_ownerISOName,
-                                  const ISOName_c* rpc_commanderISOName,
+void ProcDataRemoteBase_c::init(  const IsoAgLib::ElementDdi_s* ps_elementDDI, uint16_t rui16_element,
+                                  const IsoName_c& rc_isoName, const IsoName_c& rc_ownerISOName,
+                                  const IsoName_c* rpc_commanderISOName,
                                   IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler,
                                   int ri_singletonVecKey)
 {
@@ -151,7 +151,7 @@ ProcDataRemoteBase_c::~ProcDataRemoteBase_c(){
   @param rpbisoName pointer to ISOName var of local member used for
               sending commands to remote owner member
 */
-void ProcDataRemoteBase_c::setCommanderISOName(const ISOName_c* rpc_isoName)
+void ProcDataRemoteBase_c::setCommanderISOName(const IsoName_c* rpc_isoName)
 {
     pc_isoName = rpc_isoName;
 }
@@ -168,7 +168,7 @@ bool ProcDataRemoteBase_c::timeEvent( uint16_t *pui16_nextTimePeriod )
   return true;
 }
 
-bool ProcDataRemoteBase_c::sendValISOName(const ISOName_c& rc_varISOName, int32_t ri32_val) const
+bool ProcDataRemoteBase_c::sendValISOName(const IsoName_c& rc_varISOName, int32_t ri32_val) const
 {
   setRemoteSendFlags (rc_varISOName);
 
@@ -176,7 +176,7 @@ bool ProcDataRemoteBase_c::sendValISOName(const ISOName_c& rc_varISOName, int32_
 }
 
 #ifdef USE_FLOAT_DATA_TYPE
-bool ProcDataRemoteBase_c::sendValISOName(const ISOName_c& rc_varISOName, float rf_val) const
+bool ProcDataRemoteBase_c::sendValISOName(const IsoName_c& rc_varISOName, float rf_val) const
 {
   setRemoteSendFlags (rc_varISOName);
 
@@ -184,7 +184,7 @@ bool ProcDataRemoteBase_c::sendValISOName(const ISOName_c& rc_varISOName, float 
 }
 #endif
 
-void ProcDataRemoteBase_c::setRemoteSendFlags(const ISOName_c& rc_varISOName) const
+void ProcDataRemoteBase_c::setRemoteSendFlags(const IsoName_c& rc_varISOName) const
 {
   ProcessPkg_c& c_data = getProcessPkg();
 
