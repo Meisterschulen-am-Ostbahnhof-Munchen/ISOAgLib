@@ -1785,6 +1785,24 @@ create_EdePrj()
   EdePrjFilelist="$1/$PROJECT/$FILELIST_COMBINED_PURE"
   CONFIG_HDR_NAME="config_""$PROJECT.h"
 
+
+	if [ $USE_EMBED_LIB_DIRECTORY = "commercial_BIOS/bios_esx" ] ; then
+		## adopt the BIOS file, if $USE_EMBED_LIB_DIRECTORY and
+		## and $USE_EMBED_HEADER_DIRECTORY reflect default value which doesn't match to defined target
+		case "$USE_TARGET_SYSTEM" in
+		esx)
+			;;
+		pc*)
+			;;
+		*)
+			USE_EMBED_LIB_DIRECTORY="commercial_BIOS/bios_$USE_TARGET_SYSTEM"
+			USE_EMBED_HEADER_DIRECTORY="commercial_BIOS/bios_$USE_TARGET_SYSTEM"
+			;;
+		esac
+	fi
+
+
+
 ### @todo
   for EACH_REL_APP_PATH in $REL_APP_PATH ; do
 	  if [ "M$USE_APP_PATH" = "M" ] ; then
@@ -1871,6 +1889,8 @@ create_EdePrj()
 	mv $EdePrjFilelist.1 $EdePrjFilelist
 
 	# now set the target CPU if this varies from default CpuC167CS
+	## also adopt the BIOS file, if $USE_EMBED_LIB_DIRECTORY and
+  ## and $USE_EMBED_HEADER_DIRECTORY reflect default value which doesn't match to defined target
 	case "$USE_TARGET_SYSTEM" in
 		Dj1)
 			sed -e 's#CpuC167CS#CpuC167CR#g' $PROJECT_FILE_NAME.1 > $PROJECT_FILE_NAME
@@ -1880,8 +1900,9 @@ create_EdePrj()
 			sed -e 's#CpuC167CS#CpuF269#g' $PROJECT_FILE_NAME.1 > $PROJECT_FILE_NAME
 			mv $PROJECT_FILE_NAME $PROJECT_FILE_NAME.1
 			;;
-		*)
-		;;
+		esx)
+			# do nothing here
+			;;
 	esac
 
 
