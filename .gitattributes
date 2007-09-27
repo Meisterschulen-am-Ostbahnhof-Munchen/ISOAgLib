@@ -928,6 +928,12 @@ compiler_projects/VC6/tractorinternalcan/tractorinternalcan__vector_xl_drv_lib__
 compiler_projects/VC6/tractorinternalcan/tractorinternalcan__vector_xl_drv_lib__sys.dsp -text
 compiler_projects/VCNet/0_0_AddressClaimIso/0_0_AddressClaimIso__simulating__simulating.vcproj -text
 compiler_projects/VCNet/0_0_AddressClaimIso/0_0_AddressClaimIso__sontheim__simulating.vcproj -text
+compiler_projects/iar_renesas/isoaglib.dep -text
+compiler_projects/iar_renesas/isoaglib.ewp -text
+compiler_projects/iar_renesas/isoaglib.eww -text
+compiler_projects/iar_renesas/settings/isoaglib.dbgdt -text
+compiler_projects/iar_renesas/settings/isoaglib.dni -text
+compiler_projects/iar_renesas/settings/isoaglib.wsdt -text
 compiler_projects/kdevelop_qmake/0_0_AddressClaimIso/0_0_AddressClaimIso.kdevelop -text
 compiler_projects/kdevelop_qmake/0_0_AddressClaimIso/0_0_AddressClaimIso.kdevelop.filelist -text
 compiler_projects/kdevelop_qmake/0_0_AddressClaimIso/0_0_AddressClaimIso.pro -text
