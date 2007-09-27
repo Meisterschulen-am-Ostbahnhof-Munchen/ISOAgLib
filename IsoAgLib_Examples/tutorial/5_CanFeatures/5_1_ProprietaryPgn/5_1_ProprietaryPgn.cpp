@@ -131,15 +131,15 @@ iISOName_c c_remoteECU (true, // rb_selfConf
 
         #ifdef SYSTEM_PC
         CNAMESPACE::cout << "received A PGN" << CNAMESPACE::endl;
-        CNAMESPACE::cout << "received ident from message: " << std::hex << getDataReceive().getIdent() << CNAMESPACE::endl;
+        CNAMESPACE::cout << "received ident from message: " << STL_NAMESPACE::hex << getDataReceive().getIdent() << CNAMESPACE::endl;
         CNAMESPACE::cout << "(when received thru (E)TP, there's no PRIO in the Ident!)" << CNAMESPACE::endl;
-        CNAMESPACE::cout << "my address is: 0x" << std::hex << ( (getDataReceive().getIdent() & 0x00FF00) >> 8 ) << CNAMESPACE::endl;
-        CNAMESPACE::cout << "sender address is: 0x" << std::hex << ( (getDataReceive().getIdent() & 0x0000FF) ) << CNAMESPACE::endl;
+        CNAMESPACE::cout << "my address is: 0x" << STL_NAMESPACE::hex << ( (getDataReceive().getIdent() & 0x00FF00) >> 8 ) << CNAMESPACE::endl;
+        CNAMESPACE::cout << "sender address is: 0x" << STL_NAMESPACE::hex << ( (getDataReceive().getIdent() & 0x0000FF) ) << CNAMESPACE::endl;
         CNAMESPACE::cout << "received bytes: ";
         const uint32_t ui32_datacnt = getDataReceive().getLen();
         for (uint32_t ui32_loopcnt = 0; ui32_loopcnt < ui32_datacnt; ui32_loopcnt++)
         {
-          CNAMESPACE::cout << std::hex << ( int )( getDataReceive().getDataUi8( ui32_loopcnt ) )<< " ";
+          CNAMESPACE::cout << STL_NAMESPACE::hex << ( int )( getDataReceive().getDataUi8( ui32_loopcnt ) )<< " ";
         }
         CNAMESPACE::cout << CNAMESPACE::endl;
         #endif

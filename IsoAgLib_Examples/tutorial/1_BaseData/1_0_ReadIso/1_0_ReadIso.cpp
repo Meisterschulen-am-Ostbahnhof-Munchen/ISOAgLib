@@ -292,7 +292,7 @@ using namespace IsoAgLib;
 
 #if defined TEST_TRACTOR_LIGHTING || defined TEST_TRACPTO || defined TEST_TRACGUIDANCE || defined TEST_TRACTOR_GENERAL
 /**interpret the IsoActiveFlag_t values as strings when output on console */
-std::string getIsoActiveFlag(IsoAgLib::IsoActiveFlag_t t_val)
+STL_NAMESPACE::string getIsoActiveFlag(IsoAgLib::IsoActiveFlag_t t_val)
 {
   switch ( t_val )
   {
@@ -306,7 +306,7 @@ std::string getIsoActiveFlag(IsoAgLib::IsoActiveFlag_t t_val)
 }
 
 /**interpret the IsoDataReq_t values as strings when output on console */
-std::string getIsoDataReq(IsoAgLib::IsoDataReq_t t_val)
+STL_NAMESPACE::string getIsoDataReq(IsoAgLib::IsoDataReq_t t_val)
 {
   switch ( t_val )
   {
@@ -322,7 +322,7 @@ std::string getIsoDataReq(IsoAgLib::IsoDataReq_t t_val)
 
 #ifdef TEST_TRACPTO
 /**interpret the IsoReqFlag values as strings when output on console */
-std::string getIsoReqFlag(IsoAgLib::IsoReqFlag_t t_val)
+STL_NAMESPACE::string getIsoReqFlag(IsoAgLib::IsoReqFlag_t t_val)
 {
   switch ( t_val )
   {
@@ -340,7 +340,7 @@ std::string getIsoReqFlag(IsoAgLib::IsoReqFlag_t t_val)
 /**interpret the getIsoCertRevisionFlag values as strings when output on console*/
 
 /**interpret the IsoAuxFlag values as strings when output on console*/
-std::string getIsoAuxFlag(IsoAgLib::IsoAuxFlag_t t_val)
+STL_NAMESPACE::string getIsoAuxFlag(IsoAgLib::IsoAuxFlag_t t_val)
 {
   switch ( t_val )
   {
@@ -353,7 +353,7 @@ std::string getIsoAuxFlag(IsoAgLib::IsoAuxFlag_t t_val)
 }
 
 /**interpret the IsoAuxFlagExtended values as strings when output on console*/
-std::string getIsoAuxFlagExtended(IsoAgLib::IsoAuxFlagExtended_t t_val)
+STL_NAMESPACE::string getIsoAuxFlagExtended(IsoAgLib::IsoAuxFlagExtended_t t_val)
 {
   switch ( t_val )
   {
@@ -370,7 +370,7 @@ std::string getIsoAuxFlagExtended(IsoAgLib::IsoAuxFlagExtended_t t_val)
 
 #ifdef TEST_TRACCERT
 /**interpret the IsoCertLabTypeFlag values as strings when output on console*/
-std::string getIsoCertLabTypeFlag(IsoAgLib::IsoCertLabTypeFlag_t t_val)
+STL_NAMESPACE::string getIsoCertLabTypeFlag(IsoAgLib::IsoCertLabTypeFlag_t t_val)
 {
   switch ( t_val )
   {
@@ -382,7 +382,7 @@ std::string getIsoCertLabTypeFlag(IsoAgLib::IsoCertLabTypeFlag_t t_val)
   }
 }
 
-std::string getIsoCertRevisionFlag(IsoAgLib::IsoCertRevisionFlag_t t_val)
+STL_NAMESPACE::string getIsoCertRevisionFlag(IsoAgLib::IsoCertRevisionFlag_t t_val)
 {
   switch ( t_val )
   {
@@ -396,7 +396,7 @@ std::string getIsoCertRevisionFlag(IsoAgLib::IsoCertRevisionFlag_t t_val)
 }
 
 /**interpret the IsoCertTypeFlag values as strings when output on console*/
-std::string getIsoCertTypeFlag(IsoAgLib::IsoCertTypeFlag_t t_val)
+STL_NAMESPACE::string getIsoCertTypeFlag(IsoAgLib::IsoCertTypeFlag_t t_val)
 {
   switch ( t_val )
   {
@@ -409,7 +409,7 @@ std::string getIsoCertTypeFlag(IsoAgLib::IsoCertTypeFlag_t t_val)
 
 #ifdef TEST_TRACGUIDANCE
 /**interpret the IsoSteerPosFlag values as strings when output on console*/
-std::string getIsoSteerPosFlag(IsoAgLib::IsoSteerPosFlag_t t_val)
+STL_NAMESPACE::string getIsoSteerPosFlag(IsoAgLib::IsoSteerPosFlag_t t_val)
 {
   switch ( t_val )
   {
@@ -422,7 +422,7 @@ std::string getIsoSteerPosFlag(IsoAgLib::IsoSteerPosFlag_t t_val)
 }
 
 /**interpret the IsoSteerReadinessFlag values as strings when output on console*/
-std::string getIsoSteerReadinessFlag(IsoAgLib::IsoSteerReadinessFlag_t t_val)
+STL_NAMESPACE::string getIsoSteerReadinessFlag(IsoAgLib::IsoSteerReadinessFlag_t t_val)
 {
   switch ( t_val )
   {
@@ -435,7 +435,7 @@ std::string getIsoSteerReadinessFlag(IsoAgLib::IsoSteerReadinessFlag_t t_val)
 }
 
 /**interpret the IsoResetFlag values as strings when output on console*/
-std::string getIsoResetFlag(IsoAgLib::IsoResetFlag_t t_val)
+STL_NAMESPACE::string getIsoResetFlag(IsoAgLib::IsoResetFlag_t t_val)
 {
   switch ( t_val )
   {
@@ -450,7 +450,7 @@ std::string getIsoResetFlag(IsoAgLib::IsoResetFlag_t t_val)
 
 #ifdef TEST_TRACTOR_MOVING
 /**interpret the IsoDirectionFlag values as strings when output on console*/
-std::string getIsoDirectionFlag(IsoAgLib::IsoDirectionFlag_t t_val)
+STL_NAMESPACE::string getIsoDirectionFlag(IsoAgLib::IsoDirectionFlag_t t_val)
 {
   switch ( t_val )
   {
@@ -463,7 +463,7 @@ std::string getIsoDirectionFlag(IsoAgLib::IsoDirectionFlag_t t_val)
 }
 
 /**interpret the IsoSpeedSourceFlag values as strings when output on console*/
-std::string getIsoSpeedSourceFlag(IsoAgLib::IsoSpeedSourceFlag_t t_val)
+STL_NAMESPACE::string getIsoSpeedSourceFlag(IsoAgLib::IsoSpeedSourceFlag_t t_val)
 {
   switch ( t_val )
   {
@@ -478,7 +478,7 @@ std::string getIsoSpeedSourceFlag(IsoAgLib::IsoSpeedSourceFlag_t t_val)
 }
 
 /**interpret the IsoOperatorDirectionFlag values as strings when output on console*/
-std::string getIsoOperatorDirectionFlag(IsoAgLib::IsoOperatorDirectionFlag_t t_val)
+STL_NAMESPACE::string getIsoOperatorDirectionFlag(IsoAgLib::IsoOperatorDirectionFlag_t t_val)
 {
   switch ( t_val )
   {
@@ -493,7 +493,7 @@ std::string getIsoOperatorDirectionFlag(IsoAgLib::IsoOperatorDirectionFlag_t t_v
 
 #if defined TEST_TRACTOR_MOVING || defined TEST_TRACAUX || defined TEST_TRACPTO || defined TEST_TRACTOR_GENERAL
 /**interpret the IsoLimitFlag values as strings when output on console*/
-std::string getIsoLimitFlag(IsoAgLib::IsoLimitFlag_t t_val)
+STL_NAMESPACE::string getIsoLimitFlag(IsoAgLib::IsoLimitFlag_t t_val)
 {
   switch ( t_val )
   {

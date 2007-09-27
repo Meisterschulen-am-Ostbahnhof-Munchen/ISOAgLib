@@ -99,7 +99,7 @@ extern "C" {
 // with this command the text part "IsoAgLib::" can be avoided, which
 // is needed for the documentation generator
 // using namespace IsoAgLib;
-extern "C" std::time_t _time( std::time_t *pt );
+extern "C" STL_NAMESPACE::time_t _time( STL_NAMESPACE::time_t *pt );
 
 int main()
 { // simply call startImi

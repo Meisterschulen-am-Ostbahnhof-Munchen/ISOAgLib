@@ -251,12 +251,12 @@ int main()
   IsoAgLib::getIcanInstance().init( 0,250 );
 
   set_input_mode();
-  std::cout
+  STL_NAMESPACE::cout
       << "v -> decrease velocity;       V -> increase velocity\n"
       << "d -> decrease distance;       D -> increase distance\n"
       << "z -> decrease PTO;            Z -> increase PTO\n"
       << "q -> quit tractor simulation"
-      << std::endl;
+      << STL_NAMESPACE::endl;
 
   ssize_t size;
   // initialize some neede variables
@@ -301,25 +301,25 @@ int main()
       {
         case 'v':
           speed -= 100;
-          std::cout << "velocity decreased to: " << speed << "[mm/s]" << std::endl;
+          STL_NAMESPACE::cout << "velocity decreased to: " << speed << "[mm/s]" << STL_NAMESPACE::endl;
           c_tracMove.setSpeedReal(speed);
           c_tracMove.setSpeedTheor(speed);
           break;
         case 'V':
           speed += 100;
-          std::cout << "velocity increased to: " << speed << "[mm/s] "<< std::endl;
+          STL_NAMESPACE::cout << "velocity increased to: " << speed << "[mm/s] "<< STL_NAMESPACE::endl;
           c_tracMove.setSpeedReal(speed);
           c_tracMove.setSpeedTheor(speed);
           break;
         case 'd':
           distance -= 500;
-          std::cout << "distance decreased to: " << distance << "[mm]" << std::endl;
+          STL_NAMESPACE::cout << "distance decreased to: " << distance << "[mm]" << STL_NAMESPACE::endl;
           c_tracMove.setDistReal( distance  );
           c_tracMove.setDistTheor( distance  );
           break;
         case 'D':
           distance += 500;
-          std::cout << "distance increased to: " << distance << "[mm]" << std::endl;
+          STL_NAMESPACE::cout << "distance increased to: " << distance << "[mm]" << STL_NAMESPACE::endl;
           c_tracMove.setDistReal( distance  );
           c_tracMove.setDistTheor( distance  );
           break;
@@ -329,7 +329,7 @@ int main()
           {
             pto = 0;
           }
-          std::cout << "PTO decreased to: " << pto << "[1/s]" << std::endl;
+          STL_NAMESPACE::cout << "PTO decreased to: " << pto << "[1/s]" << STL_NAMESPACE::endl;
           c_tracPto.setPtoFront(        pto );
           c_tracPto.setPtoFrontEngaged( IsoAgLib::IsoActive );
           c_tracPto.setPtoFront1000(    IsoAgLib::IsoActive );
@@ -342,7 +342,7 @@ int main()
           break;
         case 'Z':
           pto += 50;
-          std::cout << "PTO increased to: " << pto << "[1/s]" << std::endl;
+          STL_NAMESPACE::cout << "PTO increased to: " << pto << "[1/s]" << STL_NAMESPACE::endl;
           c_tracPto.setPtoFront(        pto );
           c_tracPto.setPtoFrontEngaged( IsoAgLib::IsoActive );
           c_tracPto.setPtoFront1000(    IsoAgLib::IsoActive );
@@ -355,7 +355,7 @@ int main()
           break;
         case 'q':
           reset_input_mode();
-          std::cout << "quit tractor simulation" << std::endl;
+          STL_NAMESPACE::cout << "quit tractor simulation" << STL_NAMESPACE::endl;
           exit(1);
           break;
       }

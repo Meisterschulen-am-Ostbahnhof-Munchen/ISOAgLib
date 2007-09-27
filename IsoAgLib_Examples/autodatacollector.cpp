@@ -266,8 +266,8 @@ IsoAgLib::iISOName_c pc_otherGdevKey[10];
 uint8_t ui8_cntOtherISOName = 0;
 uint8_t ui8_rearEhrVal;
 
-typedef std::list<DevClassFlexManager_c> list_device_data;
-typedef std::list<DevClassFlexManager_c>::iterator iterator_device_data;
+typedef STL_NAMESPACE::list<DevClassFlexManager_c> list_device_data;
+typedef STL_NAMESPACE::list<DevClassFlexManager_c>::iterator iterator_device_data;
 list_device_data c_listDeviceData;
 
 

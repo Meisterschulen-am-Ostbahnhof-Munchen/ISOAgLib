@@ -228,7 +228,7 @@
 #endif
 
 #ifdef WIN32
-  #define LOG_INFO std::cout
+  #define LOG_INFO STL_NAMESPACE::cout
   #include <iostream>
 #else
   #define LOG_INFO getIrs232Instance()
@@ -463,13 +463,13 @@ int main()
 
     if (!b_done1 && (__HAL::getTime() > 3000)) {
       controlRemoteWorkState(true);
-      std::cout << "SetSetpoint command\n";
+      STL_NAMESPACE::cout << "SetSetpoint command\n";
       b_done1=true;
     }
 
     if (!b_done2 && (__HAL::getTime() > 4000) ) {
       arr_procData[cui8_indexWorkState].setpointMasterVal(true);
-      std::cout << "request setpoint value command\n";
+      STL_NAMESPACE::cout << "request setpoint value command\n";
       b_done2=true;
     }
 

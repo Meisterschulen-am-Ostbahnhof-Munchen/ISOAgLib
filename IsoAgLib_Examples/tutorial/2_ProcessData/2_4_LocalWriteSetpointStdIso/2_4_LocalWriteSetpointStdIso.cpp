@@ -327,7 +327,7 @@ bool MyProcDataHandler_c::processSetpointSet(IsoAgLib::EventSource_c rc_src, int
     return false; // indicate that this information is not again handled - just ignored
   }
 
-  std::cout << "processSetpointSet called for DDI " << rc_src.makeIProcDataLocal()->getDDIfromCANPkg() << std::endl;
+  STL_NAMESPACE::cout << "processSetpointSet called for DDI " << rc_src.makeIProcDataLocal()->getDDIfromCANPkg() << STL_NAMESPACE::endl;
 
   // use helper function to get automatically casted pointer to used process data type
   uint16_t ui16_index = rc_src.makeIProcDataLocal() - arr_procData;

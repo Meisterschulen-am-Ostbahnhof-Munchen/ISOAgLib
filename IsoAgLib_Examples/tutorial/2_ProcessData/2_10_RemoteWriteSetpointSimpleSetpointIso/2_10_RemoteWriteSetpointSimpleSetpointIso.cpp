@@ -228,7 +228,7 @@
 #endif
 
 #ifdef WIN32
-  #define LOG_INFO std::cout
+  #define LOG_INFO STL_NAMESPACE::cout
   #include <iostream>
 #else
   #define LOG_INFO getIrs232Instance()

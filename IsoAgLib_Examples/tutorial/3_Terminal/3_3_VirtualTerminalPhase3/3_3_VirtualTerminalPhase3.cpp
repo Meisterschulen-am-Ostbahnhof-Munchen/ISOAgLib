@@ -378,7 +378,7 @@ void iObjectPool_simpleVTIsoPool_c::eventKeyCode ( uint8_t keyActivationCode, ui
       case vtKeyCodeKeyReset:
     #ifdef USERPOOLUPDATE_TEST
         {
-          std::cout << "Reset pressed. Triggering Pool update."<<std::endl;
+          STL_NAMESPACE::cout << "Reset pressed. Triggering Pool update."<<STL_NAMESPACE::endl;
 
           /// We should wait until a previous partial update has finished, as else we would
           /// modify the buffer while it's being used for the pool update!
@@ -392,7 +392,7 @@ void iObjectPool_simpleVTIsoPool_c::eventKeyCode ( uint8_t keyActivationCode, ui
 
           __IsoAgLib::VtClientServerCommunication_c& refc_vtCSC = __IsoAgLib::getIsoTerminalInstance().getClientByID(0);
           refc_vtCSC.sendCommandUpdateObjectPool(arrpc_vtObjectsToUpdate, sizeof(arrpc_vtObjectsToUpdate)/sizeof(iVtObject_c*));
-          std::cout << "Triggered Pool update."<<std::endl;
+          STL_NAMESPACE::cout << "Triggered Pool update."<<STL_NAMESPACE::endl;
         }
     #else
         valSpeed = 0;
@@ -534,7 +534,7 @@ void iObjectPool_simpleVTIsoPool_c::eventObjectPoolUploadedSuccessfully (bool rb
     /// The update takes place very fast here, so we don't need to perform anything here. Normally one would switch back to normal operation mask
     /// when it was switched on update to some "Wait while updating language..:" screen!
     #ifdef DEBUG
-    std::cout << "-->eventObjectPoolUploadedSuccessfully: LANGUAGE UPDATE TO Index "<<int(ri8_languageIndex)<<". User tried to select ["<<uint8_t(rui16_languageCode>>8)<<uint8_t(rui16_languageCode&0xFF)<<"] <--\n";
+    STL_NAMESPACE::cout << "-->eventObjectPoolUploadedSuccessfully: LANGUAGE UPDATE TO Index "<<int(ri8_languageIndex)<<". User tried to select ["<<uint8_t(rui16_languageCode>>8)<<uint8_t(rui16_languageCode&0xFF)<<"] <--\n";
     #else
     rui16_languageCode = rui16_languageCode;  // Just prevent from warning
     ri8_languageIndex = ri8_languageIndex;    // Just prevent from warning
@@ -550,7 +550,7 @@ void iObjectPool_simpleVTIsoPool_c::eventObjectPoolUploadedSuccessfully (bool rb
       updateMiles(valMiles);
     iVtObjectValSpeed.setValue (valSpeed+10000);
     #ifdef DEBUG
-    std::cout << "-->eventObjectPoolUploadedSuccessfully: INITIAL UPLOAD TO Index "<<int(ri8_languageIndex)<<". User tried to select ["<<uint8_t(rui16_languageCode>>8)<<uint8_t(rui16_languageCode&0xFF)<<"] <--\n";
+    STL_NAMESPACE::cout << "-->eventObjectPoolUploadedSuccessfully: INITIAL UPLOAD TO Index "<<int(ri8_languageIndex)<<". User tried to select ["<<uint8_t(rui16_languageCode>>8)<<uint8_t(rui16_languageCode&0xFF)<<"] <--\n";
     #endif
   }
 }
@@ -561,7 +561,7 @@ void iObjectPool_simpleVTIsoPool_c::eventEnterSafeState ()
   // As it's a simple Tutorial example there's nothing in real danger!
   // But take care of this function if using for real!!!
   #ifdef DEBUG
-  std::cout << "-->eventEnterSafeState<--\n";
+  STL_NAMESPACE::cout << "-->eventEnterSafeState<--\n";
   #endif
 }
 
@@ -570,14 +570,14 @@ void iObjectPool_simpleVTIsoPool_c::eventStringValue (uint16_t /*rui16_objId*/, 
   if (b_isLast)
   {
     // buffer anlegen mit length + 1
-    std::string c_buffer;
+    STL_NAMESPACE::string c_buffer;
     for (uint8_t ind = 0;ind < rui8_length;ind++)
     {
       c_buffer.push_back( refc_streaminput.get() );
     }
     iVtObjectOSresonible.setValueCopy(c_buffer.c_str());
     #ifdef DEBUG
-    std::cout << "String: " << c_buffer << ".\n";
+    STL_NAMESPACE::cout << "String: " << c_buffer << ".\n";
     fflush(0);
     #endif
   }
@@ -593,7 +593,7 @@ iObjectPool_simpleVTIsoPool_c::eventLanguagePgn(const localSettings_s& rrefs_loc
   languageCode[0] = rrefs_localSettings.languageCode >> 8;
   languageCode[1] = rrefs_localSettings.languageCode & 0xFF;
   #ifdef DEBUG
-  std::cout << "-->eventLanguagePgn("<<languageCode<<")<--\n";
+  STL_NAMESPACE::cout << "-->eventLanguagePgn("<<languageCode<<")<--\n";
   #endif
   iVtObjectOSlanguage.setValueCopy (languageCode);
 }

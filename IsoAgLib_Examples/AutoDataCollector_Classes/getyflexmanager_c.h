@@ -128,7 +128,7 @@ private:
     uint8_t requestSingleVals : 1;
   } configField;
 
-  std::basic_string<char> c_flexibleHeader;
+  STL_NAMESPACE::basic_string<char> c_flexibleHeader;
   DefaultRecordConfig_c* pc_defaultRecordConfig;
 };
 

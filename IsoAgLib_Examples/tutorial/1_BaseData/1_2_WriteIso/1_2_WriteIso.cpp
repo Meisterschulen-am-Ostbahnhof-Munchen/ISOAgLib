@@ -304,7 +304,7 @@ int32_t localGetRealDist() { return (iSystem_c::getTime()*localGetRealSpeed()/10
 int32_t localGetTheorDist() { return (iSystem_c::getTime()*localGetTheorSpeed()/1000);}
 
 /**interpret the IsoDirectionFlag values as strings when output on console*/
-std::string getIsoDirectionFlag(IsoAgLib::IsoDirectionFlag_t t_val)
+STL_NAMESPACE::string getIsoDirectionFlag(IsoAgLib::IsoDirectionFlag_t t_val)
 {
   switch ( t_val )
   {
@@ -319,7 +319,7 @@ std::string getIsoDirectionFlag(IsoAgLib::IsoDirectionFlag_t t_val)
 
 #ifdef TEST_TRACAUX
 /**interpret the IsoAuxFlagExtended values as strings when output on console*/
-std::string getIsoAuxFlagExtended(IsoAgLib::IsoAuxFlagExtended_t t_val)
+STL_NAMESPACE::string getIsoAuxFlagExtended(IsoAgLib::IsoAuxFlagExtended_t t_val)
 {
   switch ( t_val )
   {
@@ -333,7 +333,7 @@ std::string getIsoAuxFlagExtended(IsoAgLib::IsoAuxFlagExtended_t t_val)
   }
 }
 /**interpret the IsoAuxFlag values as strings when output on console*/
-std::string getIsoAuxFlag(IsoAgLib::IsoAuxFlag_t t_val)
+STL_NAMESPACE::string getIsoAuxFlag(IsoAgLib::IsoAuxFlag_t t_val)
 {
   switch ( t_val )
   {
@@ -348,7 +348,7 @@ std::string getIsoAuxFlag(IsoAgLib::IsoAuxFlag_t t_val)
 
 #ifdef TEST_TRACGUIDANCE
 /**interpret IsoSteerFlag values as strings when output on console*/
-std::string IsoSteerFlag(IsoAgLib::IsoSteerFlag_t t_val)
+STL_NAMESPACE::string IsoSteerFlag(IsoAgLib::IsoSteerFlag_t t_val)
 {
   switch ( t_val )
   {
@@ -363,7 +363,7 @@ std::string IsoSteerFlag(IsoAgLib::IsoSteerFlag_t t_val)
 
 #ifdef TEST_TRACTOR_GENERAL
 /**interpret IsoImplWorkFlag values as strings when output on console*/
-std::string getIsoImplWorkFlag(IsoAgLib::IsoImplWorkFlag_t t_val)
+STL_NAMESPACE::string getIsoImplWorkFlag(IsoAgLib::IsoImplWorkFlag_t t_val)
 {
   switch ( t_val )
   {
@@ -376,7 +376,7 @@ std::string getIsoImplWorkFlag(IsoAgLib::IsoImplWorkFlag_t t_val)
 }
 
 /**interpret IsoImplTransportFlag values as strings when output on console*/
-std::string getIsoImplTransportFlag(IsoAgLib::IsoImplTransportFlag_t t_val)
+STL_NAMESPACE::string getIsoImplTransportFlag(IsoAgLib::IsoImplTransportFlag_t t_val)
 {
   switch ( t_val )
   {
@@ -389,7 +389,7 @@ std::string getIsoImplTransportFlag(IsoAgLib::IsoImplTransportFlag_t t_val)
 }
 
 /**interpret IsoImplParkFlag values as strings when output on console*/
-std::string getIsoImplParkFlag(IsoAgLib::IsoImplParkFlag_t t_val)
+STL_NAMESPACE::string getIsoImplParkFlag(IsoAgLib::IsoImplParkFlag_t t_val)
 {
   switch ( t_val )
   {

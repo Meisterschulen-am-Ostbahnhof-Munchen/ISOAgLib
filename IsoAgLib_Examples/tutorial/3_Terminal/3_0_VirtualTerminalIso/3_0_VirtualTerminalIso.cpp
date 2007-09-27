@@ -529,7 +529,7 @@ void iObjectPool_simpleVTIsoPool_c::eventStringValue (uint16_t rui16_objId, uint
   if (b_isLast)
   {
     // buffer anlegen mit length + 1
-    std::string c_buffer;
+    STL_NAMESPACE::string c_buffer;
     for (uint8_t ind = 0;ind < rui8_length;ind++)
     {
       c_buffer.push_back( refc_streaminput.get() );

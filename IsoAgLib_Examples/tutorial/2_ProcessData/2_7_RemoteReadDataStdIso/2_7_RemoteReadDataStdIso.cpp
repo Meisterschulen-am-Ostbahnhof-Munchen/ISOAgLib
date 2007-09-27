@@ -231,7 +231,7 @@
 #endif
 
 #if defined(WIN32) || defined(SYSTEM_PC)
-  #define LOG_INFO std::cout
+  #define LOG_INFO STL_NAMESPACE::cout
   #include <iostream>
 #else
   #define LOG_INFO getIrs232Instance()
