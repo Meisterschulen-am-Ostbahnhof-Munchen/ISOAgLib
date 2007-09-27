@@ -85,67 +85,7 @@ LINK32=link.exe
 
 # PROP Default_Filter "cc;cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\impl\identitem_c.cpp
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\impl\baseitem_c.cpp
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\impl\istate_c.cpp
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\impl\isosystempkg_c.cpp
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\impl\isomonitor_c.cpp
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\impl\isorequestpgn_c.cpp
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\impl\isoitem_c.cpp
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\impl\isoname_c.cpp
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\impl\isofiltermanager_c.cpp
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\impl\isofilterbox_c.cpp
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Scheduler\impl\scheduler_c.cpp
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\util\impl\cancustomer_c.cpp
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\util\impl\canpkg_c.cpp
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\util\impl\canpkgext_c.cpp
-# End Source File
-
-# Begin Source File
 SOURCE=..\..\..\xgpl_src\IsoAgLib\util\impl\util_funcs.cpp
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\util\impl\schedulerentry_c.cpp
 # End Source File
 
 # Begin Source File
@@ -153,7 +93,87 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\util\impl\elementbase_c.cpp
 # End Source File
 
 # Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\util\impl\cancustomer_c.cpp
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\util\impl\canpkgext_c.cpp
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\util\impl\canpkg_c.cpp
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\util\impl\schedulerentry_c.cpp
+# End Source File
+
+# Begin Source File
 SOURCE=..\..\..\xgpl_src\IsoAgLib\util\iliberr_c.cpp
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\impl\istate_c.cpp
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\impl\baseitem_c.cpp
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\impl\identitem_c.cpp
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\impl\isoname_c.cpp
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\impl\isoitem_c.cpp
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\impl\isomonitor_c.cpp
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\impl\isofiltermanager_c.cpp
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\impl\isosystempkg_c.cpp
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\impl\isofilterbox_c.cpp
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\impl\isorequestpgn_c.cpp
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Scheduler\impl\scheduler_c.cpp
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\StdSetpointElements\impl\setpointbase_c.cpp
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\StdSetpointElements\impl\setpointregister_c.cpp
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\impl\procident_c.cpp
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\impl\processelementbase_c.cpp
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\impl\processpkg_c.cpp
 # End Source File
 
 # Begin Source File
@@ -165,19 +185,11 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\impl\process_c.cpp
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\impl\processpkg_c.cpp
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\impl\processelementbase_c.cpp
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\impl\procident_c.cpp
-# End Source File
-
-# Begin Source File
 SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\impl\procdatabase_c.cpp
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\Remote\StdSetpointElements\impl\setpointremote_c.cpp
 # End Source File
 
 # Begin Source File
@@ -193,39 +205,7 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\Remote\SimpleMeasure\impl\procdat
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\Remote\StdSetpointElements\impl\setpointremote_c.cpp
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\StdSetpointElements\impl\setpointregister_c.cpp
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\StdSetpointElements\impl\setpointbase_c.cpp
-# End Source File
-
-# Begin Source File
 SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\processdatachangehandler_c.cpp
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\supplementary_driver\hal\pc\rs232\target_extension_rs232_simulating.cpp
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\supplementary_driver\driver\rs232\impl\rs232io_c.cpp
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\hal\pc\can\hal_can_interface.cpp
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\hal\pc\can\target_extension_can_w32_sontheim_canlpt.cpp
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\hal\pc\system\system_target_extensions.cpp
 # End Source File
 
 # Begin Source File
@@ -249,6 +229,26 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\driver\system\impl\system_c.cpp
 # End Source File
 
 # Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\hal\pc\can\hal_can_interface.cpp
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\hal\pc\can\target_extension_can_w32_sontheim_canlpt.cpp
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\hal\pc\system\system_target_extensions.cpp
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\supplementary_driver\driver\rs232\impl\rs232io_c.cpp
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\supplementary_driver\hal\pc\rs232\target_extension_rs232_simulating.cpp
+# End Source File
+
+# Begin Source File
 SOURCE=..\..\..\IsoAgLib_Examples\tutorial\2_ProcessData\2_8_RemoteReadDataSimpleMeasureIso\2_8_RemoteReadDataSimpleMeasureIso.cpp
 # End Source File
 
@@ -258,11 +258,67 @@ SOURCE=..\..\..\IsoAgLib_Examples\tutorial\2_ProcessData\2_8_RemoteReadDataSimpl
 
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\impl\baseitem_c.h
+SOURCE=..\..\..\xgpl_src\IsoAgLib\util\icanpkg_c.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\impl\istate_c.h
+SOURCE=..\..\..\xgpl_src\IsoAgLib\util\config.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\util\iutil_funcs.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\util\icanpkgext_c.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\util\impl\schedulerentry_c.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\util\impl\singleton.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\util\impl\singleton_container_decl.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\util\impl\cancustomer_c.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\util\impl\singleton_container.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\util\impl\canpkgext_c.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\util\impl\util_funcs.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\util\impl\canpkg_c.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\util\impl\elementbase_c.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\util\icancustomer_c.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\util\compiler_adaptation.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\util\iliberr_c.h
 # End Source File
 
 # Begin Source File
@@ -270,59 +326,11 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\impl\identitem_c.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\impl\isorequestpgnhandler_c.h
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\impl\istate_c.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\impl\isorequestpgn_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\impl\isoitem_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\impl\isoname_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\impl\isosystempkg_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\impl\isomonitor_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\impl\saclaimhandler_c_interface.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\impl\isofiltermanager_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\impl\isofilterbox_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\iisomonitor_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\iisoitem_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\iisoname_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\iisofilter_s.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\iisofiltermanager_c.h
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\impl\baseitem_c.h
 # End Source File
 
 # Begin Source File
@@ -334,7 +342,63 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\istate_c.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Scheduler\impl\scheduler_c.h
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\iisofilter_s.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\impl\isomonitor_c.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\impl\isofilterbox_c.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\impl\saclaimhandler_c.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\impl\isoitem_c.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\impl\saclaimhandler_c_interface.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\impl\isorequestpgnhandler_c.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\impl\isosystempkg_c.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\impl\isorequestpgn_c.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\impl\isoname_c.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\impl\isofiltermanager_c.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\iisoname_c.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\iisoitem_c.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\iisomonitor_c.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\iisofiltermanager_c.h
 # End Source File
 
 # Begin Source File
@@ -342,75 +406,39 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Scheduler\ischeduler_c.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\util\impl\singleton_container_decl.h
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Scheduler\impl\scheduler_c.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\util\impl\util_funcs.h
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\proc_c.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\util\impl\singleton.h
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\processdatachangehandler_c.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\util\impl\singleton_container.h
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\idevpropertyhandler_c.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\util\impl\cancustomer_c.h
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\StdSetpointElements\isetpointregister_c.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\util\impl\canpkg_c.h
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\StdSetpointElements\impl\setpointregister_c.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\util\impl\canpkgext_c.h
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\StdSetpointElements\impl\setpointbase_c.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\util\impl\elementbase_c.h
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\iprocess_c.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\util\impl\schedulerentry_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\util\icancustomer_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\util\config.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\util\compiler_adaptation.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\util\icanpkg_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\util\icanpkgext_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\util\iliberr_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\util\iutil_funcs.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\impl\procident_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\impl\procdatabase_c.h
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\elementddi_s.h
 # End Source File
 
 # Begin Source File
@@ -418,11 +446,19 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\impl\proc_c.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\impl\processwsmtaskmsghandler_c.h
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\impl\procdatabase_c.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\impl\procident_c.h
 # End Source File
 
 # Begin Source File
 SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\impl\generalcommand_c.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\impl\processwsmtaskmsghandler_c.h
 # End Source File
 
 # Begin Source File
@@ -442,6 +478,18 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\Local\impl\procdatalocalbase_c.h
 # End Source File
 
 # Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\generalcommand_c.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\Remote\StdSetpointElements\impl\setpointremote_c.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\Remote\StdSetpointElements\isetpointremote_c.h
+# End Source File
+
+# Begin Source File
 SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\Remote\impl\procdataremotebase_c.h
 # End Source File
 
@@ -458,55 +506,11 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\Remote\SimpleMeasure\iprocdatarem
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\Remote\StdSetpointElements\impl\setpointremote_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\Remote\StdSetpointElements\isetpointremote_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\StdSetpointElements\impl\setpointregister_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\StdSetpointElements\impl\setpointbase_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\StdSetpointElements\isetpointregister_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\elementddi_s.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\iprocess_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\proc_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\idevpropertyhandler_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\generalcommand_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\processdatachangehandler_c.h
-# End Source File
-
-# Begin Source File
 SOURCE=..\..\..\xgpl_src\Application_Config\isoaglib_config.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\hal\pc\typedef.h
+SOURCE=..\..\..\xgpl_src\IsoAgLib\typedef.h
 # End Source File
 
 # Begin Source File
@@ -514,7 +518,99 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\hal\config.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\typedef.h
+SOURCE=..\..\..\xgpl_src\IsoAgLib\hal\pc\typedef.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\driver\can\iident_c.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\driver\can\icanio_c.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\driver\can\impl\msgobj_c.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\driver\can\impl\canio_c.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\driver\can\impl\ident_c.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\driver\can\impl\filterbox_c.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\driver\system\isystem_c.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\driver\system\impl\system_c.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\hal\pc\config.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\hal\pc\can\hal_can_interface.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\hal\pc\can\can_msq.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\hal\pc\can\can_typedef.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\hal\pc\can\can_target_extensions.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\hal\pc\can\can.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\hal\pc\can\can_server.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\hal\pc\system\system_target_extensions.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\hal\pc\system\system.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\hal\pc\errcodes.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\hal\system.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\hal\can.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\supplementary_driver\driver\rs232\irs232io_c.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\supplementary_driver\driver\rs232\impl\rs232io_c.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\supplementary_driver\hal\rs232.h
 # End Source File
 
 # Begin Source File
@@ -523,98 +619,6 @@ SOURCE=..\..\..\xgpl_src\supplementary_driver\hal\pc\rs232\rs232.h
 
 # Begin Source File
 SOURCE=..\..\..\xgpl_src\supplementary_driver\hal\pc\rs232\rs232_target_extensions.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\supplementary_driver\hal\rs232.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\supplementary_driver\driver\rs232\impl\rs232io_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\supplementary_driver\driver\rs232\irs232io_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\hal\pc\can\hal_can_interface.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\hal\pc\can\can.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\hal\pc\can\can_typedef.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\hal\pc\can\can_msq.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\hal\pc\can\can_server.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\hal\pc\can\can_target_extensions.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\hal\pc\system\system.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\hal\pc\system\system_target_extensions.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\hal\pc\config.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\hal\pc\errcodes.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\hal\can.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\hal\system.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\driver\can\impl\canio_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\driver\can\impl\filterbox_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\driver\can\impl\msgobj_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\driver\can\impl\ident_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\driver\can\icanio_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\driver\can\iident_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\driver\system\impl\system_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\driver\system\isystem_c.h
 # End Source File
 
 # End Group
