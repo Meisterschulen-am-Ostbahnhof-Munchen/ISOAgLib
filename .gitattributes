@@ -659,7 +659,9 @@ compiler_projects/EDE/0_0_AddressClaimIso/filelist__0_0_AddressClaimIso.utest.mo
 compiler_projects/EDE/0_0_AddressClaimIso/filelist__0_0_AddressClaimIso.utest.modsut.txt -text
 compiler_projects/EDE/0_0_AddressClaimIso/filelist__0_0_AddressClaimIso.utest.runner.txt -text
 compiler_projects/EDE/0_0_AddressClaimIso/filelist__0_0_AddressClaimIso.utest.txt -text
+compiler_projects/EDE/0_0_AddressClaimIso/filelist__0_0_AddressClaimIso__Dj1__sys_A1__sys-doc.txt -text
 compiler_projects/EDE/0_0_AddressClaimIso/filelist__0_0_AddressClaimIso__esx__sys__sys-doc.txt -text
+compiler_projects/EDE/0_0_AddressClaimIso/filelist__0_0_AddressClaimIso__pm167__sys_A1__sys-doc.txt -text
 compiler_projects/EDE/0_3_LookupIso/0_3_LookupIso_c2c.pjt -text
 compiler_projects/EDE/0_3_LookupIso/0_3_LookupIso_esx.pjt -text
 compiler_projects/EDE/0_3_LookupIso/0_3_LookupIso_imi.pjt -text
