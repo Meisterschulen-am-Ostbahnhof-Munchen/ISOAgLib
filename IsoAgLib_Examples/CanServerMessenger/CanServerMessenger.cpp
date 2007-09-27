@@ -20,7 +20,7 @@ public:
   , i_id (0)
   , i_channel (0)
   , i_period (0)
-  , b_ext (true)
+  , b_ext (false)
   {}
 
   int i_repeat;
@@ -113,6 +113,7 @@ void cmdline_c::parse (int argc, char *argv[])
         case 'c': i_channel = atoi (argv[i]); break;
         case 's': i_databytes = databytes(argv[i], pui8_databytes); break;
         case 'p': i_period = atoi (argv[i]); break;
+				case 'x': b_ext = true; i--; break;
         default: printf ("Unsupported parameter!\n"); exit(1); break;
       }
       nextup[2-1] = ' '; // free to await next parameter-pair

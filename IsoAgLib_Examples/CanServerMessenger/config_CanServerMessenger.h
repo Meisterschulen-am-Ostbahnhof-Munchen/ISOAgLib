@@ -28,6 +28,8 @@
 
 // #define OPTIMIZE_NUMBER_CONVERSIONS_FOR_BIG_ENDIAN
 
+// #define USE_PCAN_LIB
+
 // #define CONFIG_DO_NOT_START_RELAIS_ON_STARTUP
 
 // Decide if HEAP allocation strategy shall reduce size about 5K to 10K in favour of speed
