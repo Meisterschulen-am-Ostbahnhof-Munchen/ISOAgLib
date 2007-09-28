@@ -141,9 +141,11 @@ private:
   #ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
   typedef STL_NAMESPACE::USABLE_SLIST<IsoItem_c,STL_NAMESPACE::__malloc_alloc_template<0> > Vec_ISO;
   typedef STL_NAMESPACE::USABLE_SLIST<IsoItem_c,STL_NAMESPACE::__malloc_alloc_template<0> >::iterator Vec_ISOIterator;
+  typedef STL_NAMESPACE::USABLE_SLIST<IsoItem_c,STL_NAMESPACE::__malloc_alloc_template<0> >::const_iterator Vec_ISOIteratorConst;
   #else
   typedef STL_NAMESPACE::USABLE_SLIST<IsoItem_c> Vec_ISO;
   typedef STL_NAMESPACE::USABLE_SLIST<IsoItem_c>::iterator Vec_ISOIterator;
+  typedef STL_NAMESPACE::USABLE_SLIST<IsoItem_c>::const_iterator Vec_ISOIteratorConst;
   #endif
 
 public:

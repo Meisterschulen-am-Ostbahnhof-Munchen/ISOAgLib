@@ -838,6 +838,12 @@ bool IsoMonitor_c::registerSaClaimHandler( SaClaimHandler_c* rpc_client )
   // if this position is reached, a new item must be inserted
   vec_saClaimHandler.push_back( rpc_client );
 
+  // now: trigger suitable SaClaimHandler_c calls for all already known IsoNames in the list
+  for ( Vec_ISOIteratorConst iter = vec_isoMember.begin(); iter != vec_isoMember.end(); iter++)
+  { // inform this SaClaimHandler_c on existance of the ISONAME node at iter
+    rpc_client->reactOnMonitorListAdd( iter->isoName(), &(*iter) );
+  }
+
   return ( vec_saClaimHandler.size() > oldSize )?true:false;
 }
 
@@ -1377,7 +1383,7 @@ IsoMonitor_c::processMsgRequestPGN (uint32_t rui32_pgn, IsoItem_c* /*rpc_isoItem
       { // ISORequestPGN ensured that the Item exists and is local: Let it process!
         return rpc_isoItemReceiver->sendSaClaim();
       }
-    
+
 #ifdef USE_WORKING_SET
     case WORKING_SET_MASTER_PGN: // break intentionally left out - react on both PGNs with sending out the complete ws-announce sequence!
     case WORKING_SET_MEMBER_PGN:
