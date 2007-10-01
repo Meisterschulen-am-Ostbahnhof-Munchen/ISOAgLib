@@ -52,7 +52,7 @@
 #define __TYPEDEF_H__
 
 // include interface aplication relevant configuration settings
-//#include <Application_Config/isoaglib_config.h>
+#include <Application_Config/isoaglib_config.h>
 #include <IsoAgLib/hal/config.h>
 #include <IsoAgLib/util/compiler_adaptation.h>
 
