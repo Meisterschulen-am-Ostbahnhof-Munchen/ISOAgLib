@@ -81,14 +81,14 @@ template <unsigned N> class IsoaglibBitset {
     }
 
     bool test(unsigned n) const {
-      return bool(_v[n>>5] & (uint32_t(1)<<(n%32)));
+      return bool(_v[n>>5] & (uint32_t(1)<<(n&0x1F)));
     }
 
     IsoaglibBitset<N>& set( unsigned n, int val = 1 ) {
       if (0 == val)
-        _v[n>>5] &= ~(uint32_t(1)<<(n%32));
+        _v[n>>5] &= ~(uint32_t(1)<<(n&0x1F));
       else
-        _v[n>>5] |=  (uint32_t(1)<<(n%32));
+        _v[n>>5] |=  (uint32_t(1)<<(n&0x1F));
       return *this;
     }
 
