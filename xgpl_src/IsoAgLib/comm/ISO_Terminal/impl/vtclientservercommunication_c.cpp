@@ -2147,10 +2147,15 @@ VtClientServerCommunication_c::queueOrReplace (SendUpload_c& rref_sendUpload, bo
 #else
   STL_NAMESPACE::queue<SendUpload_c>::iterator i_sendUpload;
 #endif
-  if (b_checkSameCommand && b_enableReplaceOfCmd)
-  {
-      //get first equal command in queue
-    for (i_sendUpload = q_sendUpload.begin(); (p_queue == NULL) && (i_sendUpload != q_sendUpload.end()); i_sendUpload++)
+  if (b_checkSameCommand && b_enableReplaceOfCmd && !q_sendUpload.empty())
+  { //get first equal command in queue
+    i_sendUpload = q_sendUpload.begin();
+    if ( en_uploadType == UploadCommand )
+    { // the first item in the queue is currently in upload process - so do NOT use this for replacement, as the next action
+      // after receive of the awaited ACK is simple erase of the first command
+      i_sendUpload++;
+    }
+    for (; (p_queue == NULL) && (i_sendUpload != q_sendUpload.end()); i_sendUpload++)
     { //first check if multisendstreamer is used!
       /* four cases:
       1. both use buffer
