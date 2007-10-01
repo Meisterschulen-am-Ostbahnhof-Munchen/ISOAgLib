@@ -65,7 +65,7 @@ template <unsigned N> class IsoaglibBitset {
   private:
     STL_NAMESPACE::vector<uint32_t> _v;
   public:
-    IsoaglibBitset( void ): _v((N+31)>>10, uint32_t(0) ) {}
+    IsoaglibBitset( void ): _v((N+31)>>5, uint32_t(0) ) {}
 		IsoaglibBitset( const IsoaglibBitset& ar_src ) : _v(ar_src._v){};
 
     IsoaglibBitset<N>& set( void ) {
@@ -81,14 +81,14 @@ template <unsigned N> class IsoaglibBitset {
     }
 
     bool test(unsigned n) const {
-      return bool(_v[n>>10] & (uint32_t(1)<<(n%32)));
+      return bool(_v[n>>5] & (uint32_t(1)<<(n%32)));
     }
 
     IsoaglibBitset<N>& set( unsigned n, int val = 1 ) {
       if (0 == val)
-        _v[n>>10] &= ~(uint32_t(1)<<(n%32));
+        _v[n>>5] &= ~(uint32_t(1)<<(n%32));
       else
-        _v[n>>10] |=  (uint32_t(1)<<(n%32));
+        _v[n>>5] |=  (uint32_t(1)<<(n%32));
       return *this;
     }
 
