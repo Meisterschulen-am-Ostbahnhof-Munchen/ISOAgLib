@@ -417,7 +417,7 @@ int8_t IsoName_c::higherPriThanPar(const Flexible8ByteString_c* rpu_compare) con
     // In real production version, we would have to decide on WHAT to do for this case in such a lowlevel comparison function - what return value, .....
     INTERNAL_DEBUG_DEVICE
       << "ERRORR!! IsoName_c::higherPriThanPar() was called with parameter == NULL!!" << INTERNAL_DEBUG_DEVICE_ENDL
-      << "The this adress was " << (int)this << INTERNAL_DEBUG_DEVICE_ENDL
+      << "The this adress was " << this << INTERNAL_DEBUG_DEVICE_ENDL
       << "The program will be aborted now for explicit detection of this erroneous call. Fix the CALLING function - and not this function,"
       << " as this function makes never sense when called with NULL!!"
       << INTERNAL_DEBUG_DEVICE_ENDL;
@@ -479,7 +479,7 @@ IsoAgLib::iIsoName_c& IsoName_c::toIisoName_c()
 {
   return static_cast<IsoAgLib::iIsoName_c&>(*this);
   //return static_cast<IsoAgLib::iIsoName_c&>(*static_cast<IsoAgLib::iIsoName_c*>((void *)(this)));
-  // doing it the ugly way, as some compiler do a recursive call of this operator at the "correct" 
+  // doing it the ugly way, as some compiler do a recursive call of this operator at the "correct"
   // "return static_cast<IsoAgLib::iIsoName_c&>(*this);" statement - some do not.
   // with the above way we can get absolutely sure that there are no recursive uses of this operator
   // as those would overflow the stack and hence cause a system-crash
@@ -490,7 +490,7 @@ const IsoAgLib::iIsoName_c& IsoName_c::toConstIisoName_c() const
 {
   return static_cast<const IsoAgLib::iIsoName_c&>(*this);
 //  return static_cast<const IsoAgLib::iIsoName_c&>(*static_cast<const IsoAgLib::iIsoName_c*>((void *)(this)));
-  // doing it the ugly way, as some compiler do a recursive call of this operator at the "correct" 
+  // doing it the ugly way, as some compiler do a recursive call of this operator at the "correct"
   // "return static_cast<const IsoAgLib::iIsoName_c&>(*this);" statement - some do not.
   // with the above way we can get absolutely sure that there are no recursive uses of this operator
   // as those would overflow the stack and hence cause a system-crash

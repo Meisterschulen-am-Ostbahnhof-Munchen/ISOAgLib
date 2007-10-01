@@ -275,7 +275,7 @@ CanIo_c::singletonInit()
       firstDefaultInitCallEnd = false;
       INTERNAL_DEBUG_DEVICE
           << "Ende CanIo_c::init() mit Default Werten bei spc_instance == "
-          << uint32_t( spc_instance )
+          << spc_instance
           << INTERNAL_DEBUG_DEVICE_ENDL;
     }
     #endif
