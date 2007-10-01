@@ -3331,72 +3331,8 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
       // ### Print out point array for a Polygon Object
       if (objHasArrayPoints)
       {
-        // Process all Child-Elements
-        bool firstElement = true;
-        objChildPoints = 0;
-        for (child = n->getFirstChild(); child != 0; child=child->getNextSibling())
-        {
-          if ( (child->getNodeType() == DOMNode::ELEMENT_NODE) && (0 == strcmp (XMLString::transcode(child->getNodeName()), otCompTable [otPoint]) ))
-          {
-            // get 'event=' and 'name=' out of child
-            if(child->hasAttributes()) {
-              // parse through all attributes
-              pAttributes = patched_getAttributes(child);
-              int nSize = pAttributes->getLength();
-
-              attrString [attrPos_x] [stringLength+1-1] = 0x00; attrIsGiven [attrPos_x] = false;
-              attrString [attrPos_y] [stringLength+1-1] = 0x00; attrIsGiven [attrPos_y] = false;
-              objChildName [stringLength+1-1] = 0x00; is_objChildName = false;
-
-              for(int i=0;i<nSize;++i) {
-                DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
-                utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
-                utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
-
-                if (strncmp (attr_name, "pos_x", stringLength) == 0)
-                {
-                  strncpy (attrString [attrPos_x], attr_value, stringLength);
-                  attrIsGiven [attrPos_x] = true;
-                }
-                if (strncmp (attr_name, "pos_y", stringLength) == 0)
-                {
-                  strncpy (attrString [attrPos_y], attr_value, stringLength);
-                  attrIsGiven [attrPos_y] = true;
-                }
-              }
-            }
-
-            if (firstElement) {
-              fprintf (partFile_attributes, "const IsoAgLib::repeat_x_y_s iVtObject%s_aPoints [] = {", objName);
-            } else {
-              fprintf (partFile_attributes, ", ");
-            }
-            if (!(attrIsGiven [attrPos_x])) {
-              std::cout << "\n\npos_x ATTRIBUTE NEEDED IN <point ...>  from object <" << node_name << "> '" << objName << "'! STOPPING PARSER! bye.\n\n";
-              return false;
-            }
-            if (!(attrIsGiven [attrPos_y])) {
-              std::cout << "\n\npos_y ATTRIBUTE NEEDED IN <point ...>  from object <" << node_name << "> '" << objName << "'! STOPPING PARSER! bye.\n\n";
-              return false;
-            }
-            fprintf (partFile_attributes, "{%d, %d}", atoi(attrString [attrPos_x]), atoi(attrString [attrPos_y]));
-            objChildPoints++;
-            firstElement = false;
-          }
-        }
-        if (objChildPoints < 3)
-        {
-          std::cout << "\n\nYOU NEED TO SPECIFY AT LEAST 3 <point ...> elements for object <" << node_name << "> '" << objName << "'! STOPPING PARSER! bye.\n\n";
+        if ( !processChildElements(objChildPoints, n) )
           return false;
-        }
-        else
-        {
-          sprintf (attrString [attrNumber_of_points], "%i", objChildPoints);
-          if (!attrIsGiven [attrNumber_of_points])
-            attrIsGiven [attrNumber_of_points] = true;
-        }
-        if (firstElement == false)
-          fprintf (partFile_attributes, "};\n");
       }
       //*************************************************************************************************************************************************************
       //******************** End of code added by Brad Cox **********************************************************************************************************
@@ -4449,11 +4385,92 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
   return true;
 }
 
+
+bool vt2iso_c::processChildElements(unsigned int& ref_objChildPoints, DOMNode *ref_n)
+{ // Process all Child-Elements
+  DOMNode *child;
+  DOMNamedNodeMap *pAttributes;
+
+  bool firstElement = true;
+  bool is_objChildName = false;
+  char objChildName [stringLength+1];
+  ref_objChildPoints = 0;
+
+  char *node_name = XMLString::transcode(ref_n->getNodeName());
+
+  for (child = ref_n->getFirstChild(); child != 0; child=child->getNextSibling())
+  {
+    if ( (child->getNodeType() == DOMNode::ELEMENT_NODE) && (0 == strcmp (XMLString::transcode(child->getNodeName()), otCompTable [otPoint]) ))
+    {
+      // get 'event=' and 'name=' out of child
+      if(child->hasAttributes()) {
+              // parse through all attributes
+        pAttributes = patched_getAttributes(child);
+        int nSize = pAttributes->getLength();
+
+        attrString [attrPos_x] [stringLength+1-1] = 0x00; attrIsGiven [attrPos_x] = false;
+        attrString [attrPos_y] [stringLength+1-1] = 0x00; attrIsGiven [attrPos_y] = false;
+        objChildName [stringLength+1-1] = 0x00; is_objChildName = false;
+
+        for(int i=0;i<nSize;++i) {
+          DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
+          utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
+          utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
+
+          if (strncmp (attr_name, "pos_x", stringLength) == 0)
+          {
+            strncpy (attrString [attrPos_x], attr_value, stringLength);
+            attrIsGiven [attrPos_x] = true;
+          }
+          if (strncmp (attr_name, "pos_y", stringLength) == 0)
+          {
+            strncpy (attrString [attrPos_y], attr_value, stringLength);
+            attrIsGiven [attrPos_y] = true;
+          }
+        }
+      }
+
+      if (firstElement) {
+        fprintf (partFile_attributes, "const IsoAgLib::repeat_x_y_s iVtObject%s_aPoints [] = {", objName);
+      } else {
+        fprintf (partFile_attributes, ", ");
+      }
+      if (!(attrIsGiven [attrPos_x])) {
+        std::cout << "\n\npos_x ATTRIBUTE NEEDED IN <point ...>  from object <" << node_name << "> '" << objName << "'! STOPPING PARSER! bye.\n\n";
+        return false;
+      }
+      if (!(attrIsGiven [attrPos_y])) {
+        std::cout << "\n\npos_y ATTRIBUTE NEEDED IN <point ...>  from object <" << node_name << "> '" << objName << "'! STOPPING PARSER! bye.\n\n";
+        return false;
+      }
+      fprintf (partFile_attributes, "{%d, %d}", atoi(attrString [attrPos_x]), atoi(attrString [attrPos_y]));
+      ref_objChildPoints++;
+      firstElement = false;
+    }
+  }
+  if (ref_objChildPoints < 3)
+  {
+    std::cout << "\n\nYOU NEED TO SPECIFY AT LEAST 3 <point ...> elements for object <" << node_name << "> '" << objName << "'! STOPPING PARSER! bye.\n\n";
+    return false;
+  }
+  else
+  {
+    sprintf (attrString [attrNumber_of_points], "%i", ref_objChildPoints);
+    if (!attrIsGiven [attrNumber_of_points])
+      attrIsGiven [attrNumber_of_points] = true;
+  }
+  if (firstElement == false)
+    fprintf (partFile_attributes, "};\n");
+
+  return true;
+}
+
+
 vt2iso_c::vt2iso_c(char* pch_poolIdent)
-  : amountXmlFiles(0)
+  : partFile_split_function( NULL )
+  , amountXmlFiles(0)
   , pcch_poolIdent (pch_poolIdent)
   , b_hasUnknownAttributes (false)
-  , partFile_split_function( NULL )
 {}
 
 vt2iso_c::~vt2iso_c()
@@ -4628,7 +4645,7 @@ vt2iso_c::prepareFileNameAndDirectory (std::basic_string<char>* pch_fileName)
         c_directoryCompareItem.insert(0, c_directory );
         strcpy (xmlFiles [amountXmlFiles], c_directoryCompareItem.c_str() );
         amountXmlFiles++;
-    //    std::cout << "found: " << ep->d_name << "\n";
+//        std::cout << "found: " << ep->d_name << "\n";
       }
     }
     closedir(dp);

@@ -173,6 +173,8 @@ public:
 
   bool processElement (DOMNode *n, uint64_t ombType/* const char* rpcc_inKey, const char* rpcc_inButton, */);
 
+  bool processChildElements(unsigned int& ref_objChildPoints, DOMNode *ref_n);
+
   void clean_exit(char* error_message = NULL);
 
   bool getIsOPDimension() const { return is_opDimension; }
