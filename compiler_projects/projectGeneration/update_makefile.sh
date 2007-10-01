@@ -994,6 +994,19 @@ create_autogen_project_config()
 	echo -e "\n\n// include an external file for definition of pool and firmware versions" >> $CONFIG_NAME
 	echo    "#include \"version.h\""  >> $CONFIG_NAME
 
+	echo -e "$ENDLINE" >> $CONFIG_NAME
+	echo    "#ifndef "$USE_SYSTEM_DEFINE     >> $CONFIG_NAME
+	echo    "#define "$USE_SYSTEM_DEFINE     >> $CONFIG_NAME
+	echo    "#endif // "$USE_SYSTEM_DEFINE     >> $CONFIG_NAME
+	echo    "#define PRJ_USE_AUTOGEN_CONFIG config_$PROJECT.h" >> $CONFIG_NAME
+	for SinglePrjDefine in $PRJ_DEFINES ; do
+		echo "#ifndef $SinglePrjDefine" >> $CONFIG_NAME
+		echo "#define $SinglePrjDefine" >> $CONFIG_NAME
+		echo "#endif // $SinglePrjDefine" >> $CONFIG_NAME
+	done
+	echo -e "$ENDLINE" >> $CONFIG_NAME
+
+
 	echo -e "#define CAN_BUS_CNT $CAN_BUS_CNT $ENDLINE" >> $CONFIG_NAME
 	echo -e "#define CAN_BUS_USED $CAN_BUS_USED $ENDLINE" >> $CONFIG_NAME
 	echo -e "#define CAN_INSTANCE_CNT $CAN_INSTANCE_CNT $ENDLINE" >> $CONFIG_NAME
@@ -1035,11 +1048,11 @@ create_autogen_project_config()
     echo -e "#define USE_VT_UNICODE_SUPPORT$ENDLINE" >> $CONFIG_NAME
   fi
 
-#  if [ $PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL -gt 0 ] ; then
-#		echo -e "#ifndef SYSTEM_WITH_ENHANCED_CAN_HAL$ENDLINE" >> $CONFIG_NAME
-#    echo -e "  #define SYSTEM_WITH_ENHANCED_CAN_HAL$ENDLINE" >> $CONFIG_NAME
-#		echo -e "#endif$ENDLINE" >> $CONFIG_NAME
-#  fi
+  if [ $PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL -gt 0 ] ; then
+		echo -e "#ifndef SYSTEM_WITH_ENHANCED_CAN_HAL$ENDLINE" >> $CONFIG_NAME
+    echo -e "  #define SYSTEM_WITH_ENHANCED_CAN_HAL$ENDLINE" >> $CONFIG_NAME
+		echo -e "#endif // SYSTEM_WITH_ENHANCED_CAN_HAL$ENDLINE" >> $CONFIG_NAME
+  fi
 
 
 	if [ $PRJ_BASE -gt 0 ] ; then
