@@ -200,7 +200,7 @@ iIsoName_c c_remoteECU (true, // rb_selfConf
 
 
   /** initialize proprietary Can client Application */
-  void ProprietaryCanClient_c::init( const IsoAgLib::iIdentItem_c& rrefc_item, const IsoAgLib::iIsoName_c& rrefc_rremoteECU )
+  void ProprietaryCanClient_c::init( const IsoAgLib::iIdentItem_c& rrefc_item, const IsoAgLib::iIsoName_c& rrefc_rremoteECU SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA)
   {
     /** pc_identItem is used in main event */
     pc_identItem = &rrefc_item;
@@ -209,7 +209,7 @@ iIsoName_c c_remoteECU (true, // rb_selfConf
     /** Mask for Proprietary A1 */
     uint32_t ui32_mask   = 0x3FF0000;
     /** define receive filter. Note: ident only for proprietary A, A1 PGN, otherwise NULL */
-    defineReceiveFilter( ui32_mask,  ui32_filter, rrefc_rremoteECU, &rrefc_item);
+    defineReceiveFilter( ui32_mask,  ui32_filter, rrefc_rremoteECU, &rrefc_item SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA);
 
     #ifndef PROP_CLIENT_B
     /** CLIENT A uses periodically sending! */
@@ -221,9 +221,9 @@ iIsoName_c c_remoteECU (true, // rb_selfConf
     /** set to proprietary A PGN */
     refs_sendDataCan.setIdent (PROPRIETARY_A_PGN << 8);
     /** set periodic sending to 500 msec */
-    setSendPeriodMsec(500);
+    setSendPeriodMsec(500 SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA);
     /** sends the data to the proprietary message handler NOW and also starts periodic activity! */
-    sendDataToHandler();
+    sendDataToHandler(SINGLETON_VEC_KEY_PARAMETER_USE);
     #endif
 
   }
@@ -232,7 +232,11 @@ iIsoName_c c_remoteECU (true, // rb_selfConf
 int main()
 {
   // init CAN-Bus
-  getIcanInstance().init( 0, 250 );
+  int i_proprietaryCanBus = 0;
+  #if PRT_INSTANCE_CNT > 1
+  int ai_singletonVecKey = 0;
+  #endif
+  getIcanInstance(SINGLETON_VEC_KEY_PARAMETER_USE).init( i_proprietaryCanBus, 250 );
 
   // start address claim of the local identity/member
   iIdentItem_c c_myIdent (2,    // rui8_indGroup
@@ -253,10 +257,14 @@ int main()
                           // further parameters use the default: -1 /* no workingset at all */, NULL /* so no list given either */, 0 /* singletonVecKey */
 
   /** create Application */
+  #if PRT_INSTANCE_CNT > 1
+  ProprietaryCanClient_c c_ProprietaryApp( SINGLETON_VEC_KEY_PARAMETER_USE );
+  #else
   ProprietaryCanClient_c c_ProprietaryApp;
+  #endif
 
   /** initialize Application */
-  c_ProprietaryApp.init (c_myIdent, c_remoteECU);
+  c_ProprietaryApp.init (c_myIdent, c_remoteECU SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA);
 
   /** run main loop */
   int32_t i32_idleTimeSpread;

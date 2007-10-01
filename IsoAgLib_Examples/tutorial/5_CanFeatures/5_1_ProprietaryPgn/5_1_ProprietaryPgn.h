@@ -102,7 +102,8 @@ class ProprietaryCanClient_c : public IsoAgLib::iProprietaryMessageClient_c
 {
 public:// Public methods
 
-  ProprietaryCanClient_c()
+  ProprietaryCanClient_c(SINGLETON_VEC_KEY_PARAMETER_DEF)
+  : iProprietaryMessageClient_c(SINGLETON_VEC_KEY_PARAMETER_USE)
   {
     i32_lastReceived = 0;
   }
@@ -111,7 +112,7 @@ public:// Public methods
   virtual ~ProprietaryCanClient_c() {};
 
   /** initialize proprietary Can client */
-  void init(const IsoAgLib::iIdentItem_c& rrefc_ident, const IsoAgLib::iIsoName_c& rrefc_rremoteECU);
+  void init(const IsoAgLib::iIdentItem_c& rrefc_ident, const IsoAgLib::iIsoName_c& rrefc_rremoteECU SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA);
 
   /** main (time) event is sending the data */
   void mainEvent();
