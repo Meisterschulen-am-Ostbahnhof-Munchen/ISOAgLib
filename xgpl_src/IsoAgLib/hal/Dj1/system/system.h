@@ -61,7 +61,7 @@
    functions and CAN must be adopted to a new platform.
    If a simple name mapping is not possible for a specific
    function, the module targetExtensions can be used to implement
-   the needed activity. 
+   the needed activity.
 */
 /* ************************************************************ */
 #ifndef _HAL_DJ1_SYSTEM_H_
@@ -78,13 +78,13 @@
 
 #include <IsoAgLib/util/impl/util_funcs.h>
 
-namespace __HAL 
+namespace __HAL
 {
-  extern "C" 
+  extern "C"
   {
     /** include the BIOS specific header into __HAL */
     #include <commercial_BIOS/bios_Dj1/DjBiosMVT.h>
-    
+
    }
 }
 
@@ -130,8 +130,8 @@ namespace HAL
 
 
   /** check if open_System() has already been called */
-  inline bool isSystemOpened ( void ) 
-  { 
+  inline bool isSystemOpened ( void )
+  {
     return ( __HAL::DjBios_SysIsOpen() == __HAL::BIOS_YES ? true : false );
   };
 
@@ -154,19 +154,18 @@ namespace HAL
     reset the watchdog to use new configured watchdog settings
   */
   inline int16_t  wdReset ( void )
-  { 
+  {
     return ( HAL_NO_ERR );
-//jtm    return __HAL::reset_wd(); 
+//jtm    return __HAL::reset_wd();
   };
 
 
-  /** 
-    trigger the watchdog 
+  /**
+    trigger the watchdog
   */
   inline void wdTriggern ( void )
   {
-//    return ( HAL_NO_ERR );
-//jtm    __HAL::trigger_wd();
+    __HAL::DjBios_SysKickTheDog();
   };
 
 
@@ -256,14 +255,14 @@ namespace HAL
   inline int16_t getLokalId(uint8_t *Dat)
   {
 //jtm      int16_t retval = __HAL::get_lokal_id(Dat);
-//jtm  
+//jtm
 //jtm    #if defined( DEBUG_HAL )
 //jtm    //IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
 //jtm    //<< "getLokalId( "
 //jtm    //<< (uint16_t) *Dat
 //jtm    //<< " ) returns  "
 //jtm    //<< retval << "\r";
-//jtm  
+//jtm
 //jtm    uint8_t buf[128];
 //jtm    CNAMESPACE::sprintf( (char*)buf, "%u ms - get_lokal_id( %u ) returns %i\r"
 //jtm    , (uint16_t)__HAL::get_time()
@@ -271,7 +270,7 @@ namespace HAL
 //jtm    , (int16_t) retval );
 //jtm    HAL::put_rs232NChar( buf, CNAMESPACE::strlen( (char*)buf ), 0 /*HAL::RS232_over_can_busnum*/ );
 //jtm    #endif
-//jtm  
+//jtm
 //jtm      return retval;
 
     return ( 0 );
@@ -283,13 +282,13 @@ namespace HAL
   inline void startTaskTimer ( void )
   {
 //jtm      __HAL::start_task_timer ( T_TASK_BASIC );
-//jtm  
+//jtm
 //jtm  #if defined( DEBUG_HAL )
 //jtm  //IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
 //jtm  //<< "start_task_timer( "
 //jtm  //<< (uint16_t) T_TASK_BASIC
 //jtm  //<< " )\r";
-//jtm  
+//jtm
 //jtm  uint8_t buf[128];
 //jtm  CNAMESPACE::sprintf( (char*)buf, "%u ms - start_task_timer( %u )\r"
 //jtm  , (uint16_t)__HAL::get_time()
@@ -297,22 +296,22 @@ namespace HAL
 //jtm  );
 //jtm  HAL::put_rs232NChar( buf, CNAMESPACE::strlen( (char*)buf ), 0 /*HAL::RS232_over_can_busnum*/ );
 //jtm  #endif
-     
+
   }
 
   /**
     init the Task Call
-  This function permits cyclic and/or delayed calls of user functions. If 0 is tranferred as parameter 
+  This function permits cyclic and/or delayed calls of user functions. If 0 is tranferred as parameter
   for wInterval, the function call will occur only once. (For starting the tasks start task timer
-  (word wBasicTick) has to be queried.) 
+  (word wBasicTick) has to be queried.)
   The ordering of the task into the interrupt system uses the transfer parameter wHandle. If a zero-pointer
-  is used in the user function parameter, the function will stop when the handle is called. 
-  The maximum number of tasks is limited to 4. 
+  is used in the user function parameter, the function will stop when the handle is called.
+  The maximum number of tasks is limited to 4.
   */
   inline int16_t initTaskCall( uint16_t wHandle, uint16_t wInterval, uint16_t wOffset, void (* pfFunction)(void) )
   {
 //jtm      int16_t retval = __HAL::init_task_call( wHandle, wInterval, wOffset, pfFunction );
-//jtm  
+//jtm
 //jtm  #if defined( DEBUG_HAL )
 //jtm  uint8_t buf[128];
 //jtm  CNAMESPACE::sprintf( (char*)buf, "%u ms - init_task_call( %u, %u, %u, %s ) returns %i\r"
@@ -331,12 +330,12 @@ namespace HAL
 //jtm      Get Task Overload
 //jtm    If a task has already been running and is called up a second time by a timer interrupt,
 //jtm    a flag is set. The function get_task_overload returns the condition of this flag.
-//jtm    With reset_task_overload this flag can be deleted. 
+//jtm    With reset_task_overload this flag can be deleted.
 //jtm    */
 //jtm    inline int16_t getTaskOverload ( uint16_t /*wHandle*/ )
 //jtm      {
 //jtm      int16_t retval = __HAL::get_task_overload ();
-//jtm  
+//jtm
 //jtm  #if defined( DEBUG_HAL )
 //jtm  uint8_t buf[128];
 //jtm  CNAMESPACE::sprintf( (char*)buf, "%u ms - get_task_overload( %u ) returns %i\r"
@@ -346,7 +345,7 @@ namespace HAL
 //jtm  );
 //jtm  HAL::put_rs232NChar( buf, CNAMESPACE::strlen( (char*)buf ), 0 /*HAL::RS232_over_can_busnum*/ );
 //jtm  #endif
-//jtm  
+//jtm
 //jtm    return retval;
     return ( 0 );
   };
@@ -377,7 +376,7 @@ namespace HAL
 
   /**
     check if Ignition Sense/CAN_EN is active
-      (if NO_CAN_EN_CHECK is defined (in hal\dj1\config.h) this function return 
+      (if NO_CAN_EN_CHECK is defined (in hal\dj1\config.h) this function return
        always return ON)
     @return ON(1) or OFF(0)
   */
@@ -415,7 +414,7 @@ namespace HAL
     switch relais on or off
     @param bitState true -> Relais ON
   */
-  inline void setRelais(bool bitState) 
+  inline void setRelais(bool bitState)
   {
     /* ON during system Initialization and off during close */
     __HAL::DjBios_PowerHold ( bitState ? __HAL::BIOS_TRUE: __HAL::BIOS_FALSE );
