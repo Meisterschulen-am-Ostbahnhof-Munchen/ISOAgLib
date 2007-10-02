@@ -1,5 +1,5 @@
 /***************************************************************************
-              sensor.h - definition of Hardware Abstraction 
+              sensor.h - definition of Hardware Abstraction
                          Layer for sensor functions for Dj Hardware
                  -------------------
     begin    : 29 Jun 2006
@@ -93,9 +93,9 @@
 #define COUNTER_INPUT_MAX 17
 
 
-namespace __HAL 
+namespace __HAL
 {
-  extern "C" 
+  extern "C"
   {
     /** include the BIOS specific header into __HAL */
     #include <commercial_BIOS/bios_Dj1/DjBiosMVT.h>
@@ -156,7 +156,7 @@ namespace HAL
       @param pfFunctionName adress of function which is called on input events (NULL -> none)
       @return error state (HAL_NO_ERR == o.k.)
   */
-  inline int16_t init_digin ( uint8_t rb_channel, uint8_t bMode, 
+  inline int16_t init_digin ( uint8_t rb_channel, uint8_t bMode,
                               uint8_t bAktivhighlow, void (*pfFunctionName)() )
   {
     __HAL::enum_DigMode eMode;
@@ -177,8 +177,8 @@ namespace HAL
     {
       eMode = __HAL::BIOS_DIG_IO;
     } /* end else() */
-    return ( (__HAL::DjBios_DigInit ( rb_channel, eMode, 
-           (bAktivhighlow == HIGH_ACTIV)? __HAL::BIOS_DIG_HIGH : __HAL::BIOS_DIG_LOW, 
+    return ( (__HAL::DjBios_DigInit ( rb_channel, eMode,
+           (bAktivhighlow == HIGH_ACTIV)? __HAL::BIOS_DIG_HIGH : __HAL::BIOS_DIG_LOW,
       pfFunctionName) == __HAL::BIOS_DIG_NO_ERR) ? HAL_NO_ERR : HAL_CONFIG_ERR );
   }
 
@@ -194,11 +194,11 @@ namespace HAL
       @param rb_risingEdge true -> counter triggers on rising edge; else on falling edge
       @return C_NO_ERR if no error occured
   */
-  inline int16_t init_counter ( uint8_t rb_channel, uint16_t rui16_timebase, 
+  inline int16_t init_counter ( uint8_t rb_channel, uint16_t rui16_timebase,
                                     bool rb_activHigh, bool rb_risingEdge )
   {
-    return ( (__HAL::DjBios_CounterInit ( rb_channel, rui16_timebase, 
-                             rb_activHigh ? __HAL::BIOS_DIG_HIGH : __HAL::BIOS_DIG_LOW, 
+    return ( (__HAL::DjBios_CounterInit ( rb_channel, rui16_timebase,
+                             rb_activHigh ? __HAL::BIOS_DIG_HIGH : __HAL::BIOS_DIG_LOW,
                              rb_risingEdge? __HAL::BIOS_DIG_HIGH : __HAL::BIOS_DIG_LOW) == __HAL::BIOS_DIG_NO_ERR) ? HAL_NO_ERR : HAL_CONFIG_ERR );
   };
 
@@ -209,7 +209,7 @@ namespace HAL
       @return counter events since init or last reset
   */
   inline uint32_t getCounter ( uint8_t rb_channel )
-  {  
+  {
     return ( __HAL::DjBios_CounterGetValue(rb_channel) );
   };
 
@@ -228,7 +228,7 @@ namespace HAL
   /**
     get period of counter channel
       @param rb_channel channel of counter [0..15]
-      @return time between last two signals or 0xFFFF if time is longer than 
+      @return time between last two signals or 0xFFFF if time is longer than
             initially given timebase
   */
   inline uint16_t getCounterPeriod ( uint8_t rb_channel )
@@ -244,7 +244,7 @@ namespace HAL
             or 0 if time is longer than initially given timebase
   */
   inline uint16_t getCounterFrequency ( uint8_t rb_channel )
-  {  
+  {
     return ( __HAL::DjBios_CounterGetFreq(rb_channel) );
   };
 
@@ -255,7 +255,7 @@ namespace HAL
       @return time since last signal [msec.]
   */
   inline uint32_t getCounterLastSignalAge(uint8_t rb_channel)
-  {  
+  {
     return ( __HAL::DjBios_CounterGetAge(rb_channel) );
   };
 
@@ -305,7 +305,7 @@ namespace HAL
     @return current [4000..20000] [uA] or HAL_RANGE_ERR on wrong input channel number
   */
   inline int16_t getAdcCurrent ( uint8_t rb_channel )
-  { 
+  {
     return HAL_RANGE_ERR;  /* Not supported */
   };
 
@@ -316,7 +316,7 @@ namespace HAL
     @return current [4000..20000] [uA] or HAL_RANGE_ERR on wrong input channel number
   */
   inline int16_t  getAdcMeanCurrent ( uint8_t rb_channel )
-  { 
+  {
     return HAL_RANGE_ERR;   /* Not supported */
   };
 
@@ -327,7 +327,7 @@ namespace HAL
     @return ADC diagnose voltage [ or HAL_RANGE_ERR on wrong input channel number
   */
   inline int16_t  getDiginDiagnoseAdc ( uint8_t rb_channel )
-  { 
+  {
     return HAL_RANGE_ERR;   /* Not supported */
   };
 
@@ -337,7 +337,7 @@ namespace HAL
     @return temperature in degree [-40..85]
   */
   inline int16_t  getAdcTemp ( void )
-  { 
+  {
     return ( 0 );
   };
 
@@ -357,107 +357,57 @@ namespace HAL
        Use Counter configuration.  Channel may be configured for counter and
        digital at the same time.  This does not seem to be called from IsoAgLib */
     return ( 0 );  /* Not supported */
-    };
+  };
 
 
 
 
-/**
-
-deliver state of digital input based on Activ-High/Low setting
-
-(evalutation of sensor signals independent from switching type)
-
-@param rb_channelNumber input channel number [DIN1..DIN16]
-
-@return ON, OFF or HAL_RANGE_ERR
-
-*/
-
-inline int16_t getDiginOnoff ( uint8_t rb_channelNumber )
-
-{
-
-__HAL::enum_DigActive Value = __HAL::DjBios_DigGetState ( rb_channelNumber
-);
-
-if ( Value == __HAL::BIOS_DIG_ACTIVE )
-
-{
-
-return ( ON );
-
-} /* end if() */
-
-if ( Value == __HAL::BIOS_DIG_INACTIVE )
-
-{
-
-return ( OFF );
-
-} /* end if() */
-
-else /* if ( Value == BIOS_DIG_BAD_CHAN ) */
-
-{
-
-return ( HAL_RANGE_ERR );
-
-} /* end if() */
-
-};
+  /**
+    deliver state of digital input based on Activ-High/Low setting
+    (evalutation of sensor signals independent from switching type)
+    @param rb_channelNumber input channel number [DIN1..DIN16]
+    @return ON, OFF or HAL_RANGE_ERR
+  */
+  inline int16_t getDiginOnoff ( uint8_t rb_channelNumber )
+  {
+    __HAL::enum_DigActive Value = __HAL::DjBios_DigGetState ( rb_channelNumber );
+    if ( Value == __HAL::BIOS_DIG_ACTIVE )
+    {
+      return ( ON );
+    } /* end if() */
+    else if ( Value == __HAL::BIOS_DIG_INACTIVE )
+    {
+      return ( OFF );
+    } /* end if() */
+    else /* if ( Value == BIOS_DIG_BAD_CHAN ) */
+    {
+      return ( HAL_RANGE_ERR );
+    } /* end if() */
+  };
 
 
-
-
-
-/**
-
-deliver debounced state of digital input based on Activ-High/Low
-setting
-
-(evalutation of sensor signals independent from switching type)
-
-@param rb_channelNumber input channel number [DIN1..DIN16]
-
-@return ON, OFF or HAL_RANGE_ERR
-
-*/
-
-inline int16_t getDiginOnoffStatic ( uint8_t rb_channelNumber )
-
-{
-
-__HAL::enum_DigActive Value = __HAL::DjBios_DigGetStateDebounce (
-rb_channelNumber );
-
-if ( Value == __HAL::BIOS_DIG_ACTIVE )
-
-{
-
-return ( ON );
-
-} /* end if() */
-
-if ( Value == __HAL::BIOS_DIG_INACTIVE )
-
-{
-
-return ( OFF );
-
-} /* end if() */
-
-else /* if ( Value == BIOS_DIG_BAD_CHAN ) */
-
-{
-
-return ( HAL_RANGE_ERR );
-
-} /* end if() */
-
-};
-
-
+  /**
+    deliver debounced state of digital input based on Activ-High/Low setting
+    (evalutation of sensor signals independent from switching type)
+      @param rb_channelNumber input channel number [DIN1..DIN16]
+      @return ON, OFF or HAL_RANGE_ERR
+  */
+  inline int16_t getDiginOnoffStatic ( uint8_t rb_channelNumber )
+  {
+    __HAL::enum_DigActive Value = __HAL::DjBios_DigGetStateDebounce ( rb_channelNumber );
+    if ( Value == __HAL::BIOS_DIG_ACTIVE )
+    {
+      return ( ON );
+    } /* end if() */
+    else if ( Value == __HAL::BIOS_DIG_INACTIVE )
+    {
+      return ( OFF );
+    } /* end if() */
+    else /* if ( Value == BIOS_DIG_BAD_CHAN ) */
+    {
+      return ( HAL_RANGE_ERR );
+    } /* end if() */
+  };
 
   /*@}*/
 }
