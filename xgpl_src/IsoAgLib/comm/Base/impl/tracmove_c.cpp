@@ -551,7 +551,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     uint8_t b_val8 = 0;
     uint16_t temp = 0;
 
-    if (mui16_suppressMask & GROUND_BASED_SPEED_DIST_PGN_DISABLE_MASK == 0)
+    if ( (mui16_suppressMask & GROUND_BASED_SPEED_DIST_PGN_DISABLE_MASK) == 0 )
     {
       data().setIsoPgn(GROUND_BASED_SPEED_DIST_PGN);
       #ifdef SYSTEM_PC_VC
@@ -570,7 +570,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
       // then it sends the data
       c_can << data();
     }
-    if (mui16_suppressMask & WHEEL_BASED_SPEED_DIST_PGN_DISABLE_MASK == 0)
+    if ( (mui16_suppressMask & WHEEL_BASED_SPEED_DIST_PGN_DISABLE_MASK) == 0 )
     {
       data().setIsoPgn(WHEEL_BASED_SPEED_DIST_PGN);
       #ifdef SYSTEM_PC_VC
@@ -596,7 +596,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
       // then it sends the data
       c_can << data();
     }
-    if (mui16_suppressMask & SELECTED_SPEED_MESSAGE_DISABLE_MASK == 0)
+    if ( (mui16_suppressMask & SELECTED_SPEED_MESSAGE_DISABLE_MASK) == 0 )
     {
       data().setIsoPgn(SELECTED_SPEED_MESSAGE);
       uint8_t ui8_temp = 0;

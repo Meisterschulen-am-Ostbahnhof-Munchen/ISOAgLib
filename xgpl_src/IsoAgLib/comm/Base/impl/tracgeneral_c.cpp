@@ -115,12 +115,11 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
   /** initialise element which can't be done during construct;
       above all create the needed FilterBox_c instances
       possible errors:
-        * dependant error in CanIo_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
+        * dependant error in CANIO_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
       @param rpc_isoName optional pointer to the ISOName variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
-      @param ai_singletonVecKey singleton vector key in case PRT_INSTANCE_CNT > 1
       @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
     */
-  void TracGeneral_c::init_base (const IsoName_c* rpc_isoName, int /*ai_singletonVecKey*/, IsoAgLib::IdentMode_t rt_identMode)
+  void TracGeneral_c::init_base (const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode)
   {
     if ( checkAlreadyClosed() )
     {
@@ -132,7 +131,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     }
 
     //call init for handling which is base data independent
-    BaseCommon_c::init_base (rpc_isoName, getSingletonVecKey(), rt_identMode);
+    BaseCommon_c::init_base (rpc_isoName, rt_identMode);
   };
 
   /** config the TracGeneral_c object after init -> set pointer to isoName and
@@ -141,14 +140,14 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
       @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       @return true -> configuration was successfull
     */
-  bool TracGeneral_c::config_base (const IsoName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode, uint16_t rui16_suppressMask)
+  bool TracGeneral_c::config_base (const ISOName_c* rpc_isoName, uint16_t rui16_suppressMask, IsoAgLib::IdentMode_t rt_identMode)
   { // set configure values
     //store old mode to decide to register or unregister to request for pgn
     IsoAgLib::IdentMode_t t_oldMode = getMode();
 
     //call config for handling which is base data independent
     //if something went wrong leave function before something is configured
-    if ( !BaseCommon_c::config_base (rpc_isoName, rt_identMode, rui16_suppressMask) ) return false;
+    if ( !BaseCommon_c::config_base (rpc_isoName,rui16_suppressMask, rt_identMode) ) return false;
 
 
     ///Set time Period for Scheduler_c
@@ -200,8 +199,8 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     */
   void TracGeneral_c::checkCreateReceiveFilter( )
   {
-    IsoMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
-    CanIo_c &c_can = getCanInstance4Comm();
+    ISOMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
+    CANIO_c &c_can = getCanInstance4Comm();
 
     if ( ( !checkFilterCreated() ) && ( c_isoMonitor.existActiveLocalIsoMember() ) )
     { // check if needed receive filters for ISO are active
@@ -245,14 +244,14 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
 
   /** process a ISO11783 base information PGN
       @pre  sender of message is existent in monitor list
-      @see  CanPkgExt_c::resolveSendingInformation()
+      @see  CANPkgExt_c::resolveSendingInformation()
     */
   bool TracGeneral_c::processMsg()
   {
     bool b_result = false;
     // there is no need to check if sender exist in the monitor list because this is already done
-    // in CanPkgExt_c -> resolveSendingInformation
-    IsoName_c c_tempISOName( data().getISONameForSA() );
+    // in CANPkgExt_c -> resolveSendingInformation
+    ISOName_c c_tempISOName( data().getISONameForSA() );
 
     switch (data().isoPgn() /* & 0x3FFFF */) // don't need to &0x3FFFF, as this is the whole PGN...
     {
@@ -349,7 +348,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     return b_result;
   }
 
-  bool TracGeneral_c::processMsgRequestPGN (uint32_t rui32_pgn, IsoItem_c* rpc_isoItemSender, IsoItem_c* rpc_isoItemReceiver)
+  bool TracGeneral_c::processMsgRequestPGN (uint32_t rui32_pgn, ISOItem_c* rpc_isoItemSender, ISOItem_c* rpc_isoItemReceiver)
   {
     // check if we are allowed to send a request for pgn
     if ( ! BaseCommon_c::check4ReqForPgn(rui32_pgn, rpc_isoItemSender, rpc_isoItemReceiver) ) return false;
@@ -380,7 +379,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
 
     uint8_t ui8_temp = 0x7;  /* Pre-load the reserved bits */
 
-    if (mui16_suppressMask & FRONT_HITCH_STATE_PGN_DISABLE_MASK == 0)
+    if ( (mui16_suppressMask & FRONT_HITCH_STATE_PGN_DISABLE_MASK) == 0 )
     {
       data().setIsoPgn(FRONT_HITCH_STATE_PGN);
 
@@ -422,7 +421,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
       // then it sends the data
       c_can << data();
     }
-    if (mui16_suppressMask & REAR_HITCH_STATE_PGN_DISABLE_MASK == 0)
+    if ( (mui16_suppressMask & REAR_HITCH_STATE_PGN_DISABLE_MASK) == 0)
     {
       data().setIsoPgn(REAR_HITCH_STATE_PGN);
       ui8_temp = 0x7;  /* Pre-load the reserved bits */
@@ -475,7 +474,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     //language is only send in tractor mode
     if ( checkMode(IsoAgLib::IdentModeImplement) ) return;
 
-    if (mui16_suppressMask & LANGUAGE_PGN_DISABLE_MASK != 0) return;
+    if ( (mui16_suppressMask & LANGUAGE_PGN_DISABLE_MASK) != 0) return;
 
     if (  !b_languageVtReceived
        || ( getISOName()->isUnspecified()  )
@@ -519,7 +518,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
    */
   void TracGeneral_c::forceMaintainPower( bool rb_ecuPower, bool rb_actuatorPower, IsoAgLib::IsoMaintainPower_t rt_implState)
   {
-    if (mui16_suppressMask & MAINTAIN_POWER_REQUEST_PGN_DISABLE_MASK != 0) return;
+    if ( (mui16_suppressMask & MAINTAIN_POWER_REQUEST_PGN_DISABLE_MASK) != 0) return;
     // as BaseCommon_c timeEvent() checks only for adr claimed state in TractorMode, we have to perform those checks here,
     // as we reach this function mostly for ImplementMode, where getISOName() might report NULL at least during init time
     if ( ( NULL == getISOName() ) || ( ! getIsoMonitorInstance4Comm().existIsoMemberISOName( *getISOName(), true ) ) )
