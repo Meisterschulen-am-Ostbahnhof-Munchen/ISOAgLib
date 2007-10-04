@@ -119,7 +119,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
       @param rpc_isoName optional pointer to the ISOName variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
       @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
     */
-  void TracGeneral_c::init_base (const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode)
+  void TracGeneral_c::init_base (const ISOName_c* rpc_isoName, int , IsoAgLib::IdentMode_t rt_identMode)
   {
     if ( checkAlreadyClosed() )
     {
@@ -140,14 +140,14 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
       @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       @return true -> configuration was successfull
     */
-  bool TracGeneral_c::config_base (const ISOName_c* rpc_isoName, uint16_t rui16_suppressMask, IsoAgLib::IdentMode_t rt_identMode)
+  bool TracGeneral_c::config_base (const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode, uint16_t rui16_suppressMask)
   { // set configure values
     //store old mode to decide to register or unregister to request for pgn
     IsoAgLib::IdentMode_t t_oldMode = getMode();
 
     //call config for handling which is base data independent
     //if something went wrong leave function before something is configured
-    if ( !BaseCommon_c::config_base (rpc_isoName,rui16_suppressMask, rt_identMode) ) return false;
+    if ( !BaseCommon_c::config_base (rpc_isoName,rt_identMode,rui16_suppressMask) ) return false;
 
 
     ///Set time Period for Scheduler_c
