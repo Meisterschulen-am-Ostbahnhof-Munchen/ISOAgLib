@@ -707,6 +707,10 @@ create_filelist( )
 
   LIB_ROOT="../$ISO_AG_LIB_PATH/xgpl_src"
   SRC_EXT="\( -name '*.c' -o -name '*.cc' -o -name '*.cpp' \)"
+  HDR_UTEST_EXT="\( -name '*-test.h' \)"
+  HDR_UTEST_MOCK_EXT="\( -name '*-mock.h' \)"
+  TESTRUNNER_EXT="\( -name 'testrunner.cpp' \)"
+
 
   # go back to directory where config file resides
   mkdir -p $1
@@ -750,39 +754,39 @@ create_filelist( )
 	fi
 	rm -f .exec.tmp
 	if [ $USE_TARGET_SYSTEM = "pc_linux" ] ; then
-		echo "find $LIB_ROOT $SRC_EXT -a \( -path '*/Scheduler/*' -o -path '*/SystemMgmt/*' -o -path '*/util/*' \) $EXCLUDE_FROM_SYSTEM_MGMT -printf 'SOURCES += %h/%f\n' >> $FILELIST_LIBRARY_QMAKE"  > .exec.tmp
-		echo "find $LIB_ROOT -name '*.h' -a \( -path '*/Scheduler/*' -o -path '*/SystemMgmt/*' -o -path '*/util/*' \) $EXCLUDE_FROM_SYSTEM_MGMT -printf 'HEADERS += %h/%f\n' >> $FILELIST_LIBRARY_QMAKE" >> .exec.tmp
+		echo "find $LIB_ROOT -follow $SRC_EXT -a \( -path '*/Scheduler/*' -o -path '*/SystemMgmt/*' -o -path '*/util/*' \) $EXCLUDE_FROM_SYSTEM_MGMT -printf 'SOURCES += %h/%f\n' >> $FILELIST_LIBRARY_QMAKE"  > .exec.tmp
+		echo "find $LIB_ROOT -follow -name '*.h' -a \( -path '*/Scheduler/*' -o -path '*/SystemMgmt/*' -o -path '*/util/*' \) $EXCLUDE_FROM_SYSTEM_MGMT -printf 'HEADERS += %h/%f\n' >> $FILELIST_LIBRARY_QMAKE" >> .exec.tmp
   fi
-	echo "find $LIB_ROOT $SRC_EXT -a \( -path '*/Scheduler/*' -o -path '*/SystemMgmt/*' -o -path '*/util/*' \) $EXCLUDE_FROM_SYSTEM_MGMT -printf '%h/%f\n' >> $FILELIST_LIBRARY_PURE" >> .exec.tmp
-  echo "find $LIB_ROOT -name '*.h' -a \( -path '*/Scheduler/*' -o -path '*/SystemMgmt/*' -o -path '*/util/*' \) $EXCLUDE_FROM_SYSTEM_MGMT -printf '%h/%f\n' >> $FILELIST_LIBRARY_HDR" >> .exec.tmp
+	echo "find $LIB_ROOT -follow $SRC_EXT -a \( -path '*/Scheduler/*' -o -path '*/SystemMgmt/*' -o -path '*/util/*' \) $EXCLUDE_FROM_SYSTEM_MGMT -printf '%h/%f\n' >> $FILELIST_LIBRARY_PURE" >> .exec.tmp
+  echo "find $LIB_ROOT -follow -name '*.h' -a \( -path '*/Scheduler/*' -o -path '*/SystemMgmt/*' -o -path '*/util/*' \) $EXCLUDE_FROM_SYSTEM_MGMT -printf '%h/%f\n' >> $FILELIST_LIBRARY_HDR" >> .exec.tmp
 
   # find wanted process data communication features
   if [ "$COMM_PROC_FEATURES" != "" ] ; then
     if [ $USE_TARGET_SYSTEM = "pc_linux" ] ; then
-			echo "find $LIB_ROOT $SRC_EXT -a \( $COMM_PROC_FEATURES \) -printf 'SOURCES += %h/%f\n' >> $FILELIST_LIBRARY_QMAKE" >> .exec.tmp
-			echo "find $LIB_ROOT -name '*.h' -a \( $COMM_PROC_FEATURES \) -printf 'HEADERS += %h/%f\n' >> $FILELIST_LIBRARY_QMAKE" >> .exec.tmp
+			echo "find $LIB_ROOT -follow $SRC_EXT -a \( $COMM_PROC_FEATURES \) -printf 'SOURCES += %h/%f\n' >> $FILELIST_LIBRARY_QMAKE" >> .exec.tmp
+			echo "find $LIB_ROOT -follow -name '*.h' -a \( $COMM_PROC_FEATURES \) -printf 'HEADERS += %h/%f\n' >> $FILELIST_LIBRARY_QMAKE" >> .exec.tmp
     fi
-		echo "find $LIB_ROOT $SRC_EXT -a \( $COMM_PROC_FEATURES \) -printf '%h/%f\n' >> $FILELIST_LIBRARY_PURE" >> .exec.tmp
-    echo "find $LIB_ROOT -name '*.h' -a \( $COMM_PROC_FEATURES \) -printf '%h/%f\n' >> $FILELIST_LIBRARY_HDR" >> .exec.tmp
+		echo "find $LIB_ROOT -follow $SRC_EXT -a \( $COMM_PROC_FEATURES \) -printf '%h/%f\n' >> $FILELIST_LIBRARY_PURE" >> .exec.tmp
+    echo "find $LIB_ROOT -follow -name '*.h' -a \( $COMM_PROC_FEATURES \) -printf '%h/%f\n' >> $FILELIST_LIBRARY_HDR" >> .exec.tmp
   fi
 
   # find wanted other communication features
   if [ "$COMM_FEATURES" != "" ] ; then
     if [ $USE_TARGET_SYSTEM = "pc_linux" ] ; then
-			echo "find $LIB_ROOT $SRC_EXT -a \( $COMM_FEATURES \) -printf 'SOURCES += %h/%f\n' >> $FILELIST_LIBRARY_QMAKE" >> .exec.tmp
-    	echo "find $LIB_ROOT -name '*.h' -a \( $COMM_FEATURES \) -printf 'HEADERS += %h/%f\n' >> $FILELIST_LIBRARY_QMAKE" >> .exec.tmp
+			echo "find $LIB_ROOT -follow $SRC_EXT -a \( $COMM_FEATURES \) -printf 'SOURCES += %h/%f\n' >> $FILELIST_LIBRARY_QMAKE" >> .exec.tmp
+    	echo "find $LIB_ROOT -follow -name '*.h' -a \( $COMM_FEATURES \) -printf 'HEADERS += %h/%f\n' >> $FILELIST_LIBRARY_QMAKE" >> .exec.tmp
     fi
-		echo "find $LIB_ROOT $SRC_EXT -a \( $COMM_FEATURES \) -printf '%h/%f\n' >> $FILELIST_LIBRARY_PURE" >> .exec.tmp
-    echo "find $LIB_ROOT -name '*.h' -a \( $COMM_FEATURES \) -printf '%h/%f\n' >> $FILELIST_LIBRARY_HDR" >> .exec.tmp
+		echo "find $LIB_ROOT -follow $SRC_EXT -a \( $COMM_FEATURES \) -printf '%h/%f\n' >> $FILELIST_LIBRARY_PURE" >> .exec.tmp
+    echo "find $LIB_ROOT -follow -name '*.h' -a \( $COMM_FEATURES \) -printf '%h/%f\n' >> $FILELIST_LIBRARY_HDR" >> .exec.tmp
   fi
 
   #find optional HW features
   if [ $USE_TARGET_SYSTEM = "pc_linux" ] ; then
-		echo "find $LIB_ROOT $SRC_EXT  -a \( $DRIVER_FEATURES \) -printf 'SOURCES += %h/%f\n' >> $FILELIST_LIBRARY_QMAKE" >> .exec.tmp
-  	echo "find $LIB_ROOT -name '*.h' -a \(  $DRIVER_FEATURES \) -printf 'HEADERS += %h/%f\n' >> $FILELIST_LIBRARY_QMAKE" >> .exec.tmp
+		echo "find $LIB_ROOT -follow $SRC_EXT  -a \( $DRIVER_FEATURES \) -printf 'SOURCES += %h/%f\n' >> $FILELIST_LIBRARY_QMAKE" >> .exec.tmp
+  	echo "find $LIB_ROOT -follow -name '*.h' -a \(  $DRIVER_FEATURES \) -printf 'HEADERS += %h/%f\n' >> $FILELIST_LIBRARY_QMAKE" >> .exec.tmp
   fi
-	echo "find $LIB_ROOT $SRC_EXT -a \( $DRIVER_FEATURES \) -printf '%h/%f\n' >> $FILELIST_LIBRARY_PURE" >> .exec.tmp
-  echo "find $LIB_ROOT -name '*.h' -a \(  $DRIVER_FEATURES \) -printf '%h/%f\n' >> $FILELIST_LIBRARY_HDR" >> .exec.tmp
+	echo "find $LIB_ROOT -follow $SRC_EXT -a \( $DRIVER_FEATURES \) -printf '%h/%f\n' >> $FILELIST_LIBRARY_PURE" >> .exec.tmp
+  echo "find $LIB_ROOT -follow -name '*.h' -a \(  $DRIVER_FEATURES \) -printf '%h/%f\n' >> $FILELIST_LIBRARY_HDR" >> .exec.tmp
 
   # find application files
 	FIRST_LOOP="YES"
@@ -862,14 +866,14 @@ create_filelist( )
 
 	if [ $USE_TARGET_SYSTEM = "pc_linux" ] ; then
 		for EACH_REL_APP_PATH in $REL_APP_PATH ; do
-			echo "find ../$ISO_AG_LIB_PATH/$EACH_REL_APP_PATH/ $APP_SEARCH_SRC_TYPE_PART $APP_SRC_PART $EXCLUDE_PATH_PART $EXCLUDE_SRC_PART -printf 'SOURCES += %h/%f\n' >> $FILELIST_APP_QMAKE" >> .exec.tmp
-			echo "find ../$ISO_AG_LIB_PATH/$EACH_REL_APP_PATH/ $APP_SEARCH_HDR_TYPE_PART $APP_SRC_PART $EXCLUDE_PATH_PART $EXCLUDE_SRC_PART -printf 'HEADERS += %h/%f\n' >> $FILELIST_APP_QMAKE" >> .exec.tmp
+			echo "find ../$ISO_AG_LIB_PATH/$EACH_REL_APP_PATH/ -follow $APP_SEARCH_SRC_TYPE_PART $APP_SRC_PART $EXCLUDE_PATH_PART $EXCLUDE_SRC_PART -printf 'SOURCES += %h/%f\n' >> $FILELIST_APP_QMAKE" >> .exec.tmp
+			echo "find ../$ISO_AG_LIB_PATH/$EACH_REL_APP_PATH/ -follow $APP_SEARCH_HDR_TYPE_PART $APP_SRC_PART $EXCLUDE_PATH_PART $EXCLUDE_SRC_PART -printf 'HEADERS += %h/%f\n' >> $FILELIST_APP_QMAKE" >> .exec.tmp
 		done
 	fi
 
 	for EACH_REL_APP_PATH in $REL_APP_PATH ; do
-		echo "find ../$ISO_AG_LIB_PATH/$EACH_REL_APP_PATH/ $APP_SEARCH_SRC_TYPE_PART $APP_SRC_PART $EXCLUDE_PATH_PART $EXCLUDE_SRC_PART -printf '%h/%f\n' >> $FILELIST_APP_PURE" >> .exec.tmp
-		echo "find ../$ISO_AG_LIB_PATH/$EACH_REL_APP_PATH/ $APP_SEARCH_HDR_TYPE_PART $APP_SRC_PART $EXCLUDE_PATH_PART $EXCLUDE_SRC_PART -printf '%h/%f\n' >> $FILELIST_APP_HDR" >> .exec.tmp
+		echo "find ../$ISO_AG_LIB_PATH/$EACH_REL_APP_PATH/ -follow $APP_SEARCH_SRC_TYPE_PART $APP_SRC_PART $EXCLUDE_PATH_PART $EXCLUDE_SRC_PART -printf '%h/%f\n' >> $FILELIST_APP_PURE" >> .exec.tmp
+		echo "find ../$ISO_AG_LIB_PATH/$EACH_REL_APP_PATH/ -follow $APP_SEARCH_HDR_TYPE_PART $APP_SRC_PART $EXCLUDE_PATH_PART $EXCLUDE_SRC_PART -printf '%h/%f\n' >> $FILELIST_APP_HDR" >> .exec.tmp
 	done
 
 
@@ -924,6 +928,45 @@ create_filelist( )
 	cd $1
 
   return
+}
+
+# this function uses the "find" cmd
+# to derive based on the selected features the
+# corresponding file list into filelist_$FILELIST_UTEST_PURE.txt
+# and filelist_$FILELIST_UTEST_MOCK_PURE.txt
+create_utest_filelist()
+{
+	FILELIST_UTEST_PURE="filelist"'__'"$PROJECT.utest.txt"
+	FILELIST_UTEST_MOCK_PURE="filelist"'__'"$PROJECT.utest.mock.txt"
+	FILELIST_UTEST_MODSUT_PURE="filelist"'__'"$PROJECT.utest.modsut.txt"
+	FILELIST_UTEST_RUNNER_PURE="filelist"'__'"$PROJECT.utest.runner.txt"
+
+	# go to project directory
+	cd $PROJECT
+
+	# create new files containing the file lists
+	rm -f "$FILELIST_UTEST_PURE" "$FILELIST_UTEST_MOCK_PURE" "$FILELIST_UTEST_MODSUT_PURE" "$FILELIST_UTEST_RUNNER_PURE"
+	touch "$FILELIST_UTEST_PURE" "$FILELIST_UTEST_MOCK_PURE" "$FILELIST_UTEST_MODSUT_PURE" "$FILELIST_UTEST_RUNNER_PURE"
+
+	# find unit test files (*-test.h)
+	rm -f .exec.tmp
+	echo "find ../../../ $HDR_UTEST_EXT -printf '%h/%f\n' >> $FILELIST_UTEST_PURE" > .exec.tmp
+	sh .exec.tmp
+
+	# find mock object files (*-mock.h)
+	rm -f .exec.tmp
+	echo "find ../../../ $HDR_UTEST_MOCK_EXT -printf '%h/%f\n' >> $FILELIST_UTEST_MOCK_PURE" > .exec.tmp
+	sh .exec.tmp
+
+	# determine modified software under test (MOD-SUT) files
+	cat $FILELIST_UTEST_PURE | perl -p -e 's!(.*)/utest/(.*)-test\.h!$1/$2_c.h!' >> $FILELIST_UTEST_MODSUT_PURE
+
+	# find the testrunner (testrunner.cpp)
+	rm -f .exec.tmp
+	echo "find ../../../ $TESTRUNNER_EXT -printf '%h/%f\n' >> $FILELIST_UTEST_RUNNER_PURE" > .exec.tmp
+	sh .exec.tmp
+
+	rm -f .exec.tmp
 }
 
 # function to create the project specific autogenerated
@@ -1211,6 +1254,11 @@ create_makefile()
 
   MakefileFilelistApp="$1/$PROJECT/$FILELIST_APP_PURE"
 
+	MakefileFileListUTest="$1/$PROJECT/$FILELIST_UTEST_PURE"
+	MakefileFileListUTestMock="$1/$PROJECT/$FILELIST_UTEST_MOCK_PURE"
+	MakefileFileListUTestMODSUT="$1/$PROJECT/$FILELIST_UTEST_MODSUT_PURE"
+	MakefileFileListUTestRunner="$1/$PROJECT/$FILELIST_UTEST_RUNNER_PURE"
+
 	MakefileName="Makefile"
 	MakefileNameLong="Makefile"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER"
 
@@ -1309,6 +1357,57 @@ create_makefile()
 	done
 	echo -e "\n" >> $MakefileNameLong
 
+	echo -n "HEADERS_UTEST = " >> $MakefileNameLong
+	FIRST_LOOP="YES"
+	for CcFile in `grep -E "\.h" $MakefileFileListUTest` ; do
+		if [ $FIRST_LOOP != "YES" ] ; then
+			echo -e -n '\\' >> $MakefileNameLong
+			echo -e -n "\n\t\t" >> $MakefileNameLong
+		else
+			FIRST_LOOP="NO"
+		fi
+		echo -e -n "$CcFile  " >> $MakefileNameLong
+	done
+	echo -e "\n" >> $MakefileNameLong
+
+	echo -n "HEADERS_UTEST_MOCKS = " >> $MakefileNameLong
+	FIRST_LOOP="YES"
+	for CcFile in `grep -E "\.h" $MakefileFileListUTestMock` ; do
+		if [ $FIRST_LOOP != "YES" ] ; then
+			echo -e -n '\\' >> $MakefileNameLong
+			echo -e -n "\n\t\t" >> $MakefileNameLong
+		else
+			FIRST_LOOP="NO"
+		fi
+		echo -e -n "$CcFile  " >> $MakefileNameLong
+	done
+	echo -e "\n" >> $MakefileNameLong
+
+	echo -n "HEADERS_UTEST_MOD_SUT = " >> $MakefileNameLong
+	FIRST_LOOP="YES"
+	for CcFile in `grep -E "\.h" $MakefileFileListUTestMODSUT` ; do
+		if [ $FIRST_LOOP != "YES" ] ; then
+			echo -e -n '\\' >> $MakefileNameLong
+			echo -e -n "\n\t\t" >> $MakefileNameLong
+		else
+			FIRST_LOOP="NO"
+		fi
+		echo -e -n "$CcFile  " >> $MakefileNameLong
+	done
+	echo -e "\n" >> $MakefileNameLong
+
+	echo -n "TESTRUNNER_SOURCES = " >> $MakefileNameLong
+	FIRST_LOOP="YES"
+	for CcFile in `grep -E "\.cpp" $MakefileFileListUTestRunner` ; do
+		if [ $FIRST_LOOP != "YES" ] ; then
+			echo -e -n '\\' >> $MakefileNameLong
+			echo -e -n "\n\t\t" >> $MakefileNameLong
+		else
+			FIRST_LOOP="NO"
+		fi
+		echo -e -n "$CcFile  " >> $MakefileNameLong
+	done
+	echo -e "\n" >> $MakefileNameLong
 
 rm -f FileListInterfaceStart.txt FileListInterface.txt FileListInterface4Eval.txt FileListInternal.txt FileListInterface4EvalPre.txt FileListInterface4EvalPre.*.txt
 
@@ -2010,6 +2109,9 @@ perform_everything()
   # the file list based on the varibles defined above
   create_filelist $GENERATE_FILES_ROOT_DIR $2
 
+  # call function which build the file list for the unit
+  # tests
+  create_utest_filelist
 
 	# call function to create project specific config file
 	create_autogen_project_config $GENERATE_FILES_ROOT_DIR $2
