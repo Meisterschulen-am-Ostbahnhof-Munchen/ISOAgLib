@@ -363,6 +363,17 @@ class CanPkgExt_c : public CanPkg_c
     b_runFlag2String = false;
   }
 
+  // This function sets the DLC to 8 and fills up
+  // the databytes AFTER lenActualData with 0xFF
+  // Example: WS-Master has only first databyte used, rest is filled with 0xFFs
+  //          call setLen8FillUpWithReserved(1)
+  void setLen8FillUpWithReserved (uint8_t lenActualData)
+  {
+    for (; lenActualData < 8; lenActualData++)
+      setUint8Data(lenActualData, 0xFF);
+    setLen(8);
+  }
+
   void setExtCanPkg8(uint8_t pri, uint8_t dp, uint8_t pf, uint8_t ps, uint8_t sa, uint8_t d0, uint8_t d1, uint8_t d2, uint8_t d3, uint8_t d4, uint8_t d5, uint8_t d6, uint8_t d7) {
     CanPkg_c::setIdentType(Ident_c::ExtendedIdent);
     setIsoPri(pri);

@@ -206,6 +206,8 @@ public: // methods
       @param rpc_listSlaves the ISONames or whatever of all the slaves
     */
   void setToMaster (int8_t ri8_slaveCount=-1, const IsoName_c* rpc_slaveIsoNameList=NULL);
+
+  bool isMaster() const { return (i8_slaveCount >= 0); }
 #endif
 
   /** deliver pointer to IsoItem_c in IsoMonitor_c

@@ -84,14 +84,12 @@
 
 #include <IsoAgLib/comm/Scheduler/impl/scheduler_c.h>
 #include <IsoAgLib/driver/can/impl/canio_c.h>
-#include <IsoAgLib/comm/Multipacket/imultisend_c.h>
 #include <IsoAgLib/comm/Multipacket/impl/multisend_c.h>
 #include <IsoAgLib/comm/Multipacket/impl/multireceive_c.h>
 #include <IsoAgLib/comm/Multipacket/istream_c.h>
 #include <IsoAgLib/comm/Multipacket/impl/multisendpkg_c.h>
 #include <IsoAgLib/util/impl/singleton.h>
 #include <supplementary_driver/driver/rs232/irs232io_c.h>
-
 #include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.h>
 #include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h>
 
@@ -205,7 +203,7 @@ DevPropertyHandler_c::DevPropertyHandler_c()
      pc_data(NULL), tcSourceAddress(0), ui8_versionLabel(0), pc_devDefaultDeviceDescription(NULL), pc_devPoolForUpload(NULL),
      pc_wsMasterIdentItem(NULL), en_poolState(OPNotRegistered), en_uploadState(StateIdle), en_uploadStep(UploadStart),
      en_uploadCommand(UploadCommandWaitingForCommandResponse), ui32_uploadTimestamp(0), ui32_uploadTimeout(0), ui8_uploadRetry(0),
-     ui8_commandParameter(0), en_sendSuccess(__IsoAgLib::MultiSend_c::SendSuccess)
+     ui8_commandParameter(0), en_sendSuccess(__IsoAgLib::MultiSend_c::SendSuccess), i32_timeWsAnnounceKey(-1)
 {}
 
 
@@ -308,8 +306,8 @@ DevPropertyHandler_c::processMsg()
         if (data().getUint8Data(1) == 0)
         {
           en_uploadStep = UploadUploading;
-          IsoAgLib::getIMultiSendInstance().sendIsoTarget(pc_wsMasterIdentItem->isoName(),
-            getIsoMonitorInstance4Comm().isoMemberNr(tcSourceAddress).isoName().toConstIisoName_c(),
+          getMultiSendInstance().sendIsoTarget(pc_wsMasterIdentItem->isoName(),
+            getIsoMonitorInstance4Comm().isoMemberNr(tcSourceAddress).isoName(),
             this, PROCESS_DATA_PGN, en_sendSuccess);
         }
         else
@@ -435,7 +433,7 @@ DevPropertyHandler_c::init(ProcessPkg_c *rpc_data)
 
   if (!b_basicInit)
   {
-    i32_tcStateLastReceived = i32_timeStartWaitAfterAddrClaim = i32_timeWsTaskMsgSent = -1;
+    i32_tcStateLastReceived = i32_timeStartWaitAfterAddrClaim = i32_timeWsTaskMsgSent = i32_timeWsAnnounceKey = -1;
     ui8_lastTcState = 0;
     b_initDone = FALSE;
     tcSourceAddress = 0x7F;
@@ -456,32 +454,55 @@ bool
 DevPropertyHandler_c::timeEvent( void )
 {
   if (!b_initDone)
-  {
+  { /// Handling 6.4.2.b) here: Wait 6s after successful Address-Claimed
     checkInitState();
     return TRUE;
   }
 
-  const int32_t i32_currentTime = HAL::getTime();
-  sendWorkingSetTaskMsg(i32_currentTime);
+  // Just getting sure that we really do always have a valid pointer
+  if (pc_wsMasterIdentItem == NULL) return true;
 
+  /// Address is initially claimed successfully. Check now if we're still "online"
+  /// This could be a problem is someone stole our SA and we're currently not having one...
+  if (!pc_wsMasterIdentItem->isClaimedAddress()) return true;
+
+  const int32_t i32_currentTime = HAL::getTime();
+
+  // get new TC alive state
   bool tcAliveOld = tcAliveNew;
   tcAliveNew = isTcAlive(i32_currentTime);
 
-  if (tcAliveOld != tcAliveNew) {
-    // react on vt alive change "false->true"
-    if (tcAliveNew == true) {
-      if (en_poolState != OPNotRegistered) {
-        en_poolState = OPRegistered;
-      }
-      en_uploadState = StatePresettings;
-      en_uploadStep = UploadStart;
-    }
+  if ((tcAliveOld == true) && (tcAliveNew == false))
+  { // TC going offline
+    // no need to set the i32_timeWsAnnounceKey to -1 on "true->false".
+    // -> if false, TC is not active, so it's gettinged "return"ed.
+    // -> if true again, the rising edge (false->true) was detected above and i32_timeWsAnnounceKey was set using "startWsAnnounce".
+    // actually not needed to be reset here, because if TC not active it's not checked and if TC gets active we restart the sending.
+    i32_timeWsAnnounceKey = -1;
   }
 
-  // ### Do nothing if there's no TC alive ###
-  if (!isTcAlive(i32_currentTime)) return true;
+  /// Handling 6.4.2.c) here: Wait until TC transmits the TC Status Message
+  if (!tcAliveNew) return true;
 
-  if (! getIsoMonitorInstance4Comm().existActiveLocalIsoMember()) return true;
+  if ((tcAliveOld == false) && (tcAliveNew == true))
+  { // TC coming online
+    if (en_poolState != OPNotRegistered) {
+      en_poolState = OPRegistered;
+    }
+    en_uploadState = StatePresettings;
+    en_uploadStep = UploadStart;
+    /// Handling 6.4.2.d) here: Identify itself and its members
+    #ifndef USE_WORKING_SET
+    #error "Need to define USE_WORKING_SET when utilizing a TaskController-Client."
+    #endif
+    i32_timeWsAnnounceKey = pc_wsMasterIdentItem->getIsoItem()->startWsAnnounce();
+  }
+
+  /// Wait until 6.4.2.d) has finished (WS is completely announced)
+  if (!pc_wsMasterIdentItem->getIsoItem()->isWsAnnounced (i32_timeWsAnnounceKey)) return true;
+
+  /// Handling 6.4.2.e) here: Begin transmission of the working-set task message
+  sendWorkingSetTaskMsg(i32_currentTime);
 
   if ((en_poolState == OPNotRegistered) || (en_poolState == OPCannotBeUploaded)) return true;
 
@@ -792,11 +813,16 @@ DevPropertyHandler_c::queuePoolInMap (const HUGE_MEM uint8_t* rpc_devicePoolByte
 
 
 /** every possible device description is stored in a maps
+    @param rpc_wsMasterIdentItem (of type const IdentItem_c*) must be a WorkingSetMASTER!
     @return true => if pool was successfully stored
   */
 bool
-DevPropertyHandler_c::registerDevicePool(const IsoAgLib::iIdentItem_c* rpc_wsMasterIdentItem, const HUGE_MEM uint8_t* rpc_devicePoolByteArray, const uint32_t rui32_bytestreamlength, bool rb_setToDefault)
+DevPropertyHandler_c::registerDevicePool(const IdentItem_c* rpc_wsMasterIdentItem, const HUGE_MEM uint8_t* rpc_devicePoolByteArray, const uint32_t rui32_bytestreamlength, bool rb_setToDefault)
 {
+  if (rpc_wsMasterIdentItem == NULL) return false;
+
+  if (!rpc_wsMasterIdentItem->isMaster()) return false;
+
   //no double registration for one device description
   if (en_poolState != OPNotRegistered) return false;
 
@@ -858,7 +884,7 @@ DevPropertyHandler_c::checkInitState()
     i32_timeStartWaitAfterAddrClaim = HAL::getTime();
   }
 
-  if ( (HAL::getTime() - i32_timeStartWaitAfterAddrClaim >= 6000) && (-1 != i32_tcStateLastReceived))
+  if ( (i32_timeStartWaitAfterAddrClaim >= 0) && (HAL::getTime() - i32_timeStartWaitAfterAddrClaim >= 6000) && (-1 != i32_tcStateLastReceived))
   { // init is finished when more then 6sec after addr claim and at least one TC status message was received
     b_initDone = TRUE;
   }
@@ -1073,8 +1099,8 @@ DevPropertyHandler_c::startUploadCommandChangeDesignator()
   else
   {
     /// Use multi CAN-Pkgs [(E)TP], doesn't fit into a single CAN-Pkg!
-    IsoAgLib::getIMultiSendInstance().sendIsoTarget(pc_wsMasterIdentItem->isoName(),
-      getIsoMonitorInstance4Comm().isoMemberNr(tcSourceAddress).isoName().toConstIisoName_c(),
+    getMultiSendInstance().sendIsoTarget(pc_wsMasterIdentItem->isoName(),
+      getIsoMonitorInstance4Comm().isoMemberNr(tcSourceAddress).isoName(),
       &actSend->vec_uploadBuffer.front(), actSend->vec_uploadBuffer.size(), PROCESS_DATA_PGN, en_sendSuccess);
     en_uploadCommand = UploadMultiSendCommandWaitingForCommandResponse;
   }

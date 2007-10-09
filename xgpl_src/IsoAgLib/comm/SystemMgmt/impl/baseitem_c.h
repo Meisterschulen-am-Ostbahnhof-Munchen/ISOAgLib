@@ -99,8 +99,8 @@ namespace __IsoAgLib {
 /**
   base class for member lists; stores access time
   and pointer to root Scheduler_c object
-  Derive from CloientBase to get management of IsoAgLib instance, in case more than one
-  CAN BUS is used for IsoAgLib.
+  Derived indirectly from ClientBase to get management of IsoAgLib instance,
+  in case more than one CAN BUS is used for IsoAgLib.
   @author Dipl.-Inform. Achim Spangler
 */
 class BaseItem_c  : public IStateExt_c {

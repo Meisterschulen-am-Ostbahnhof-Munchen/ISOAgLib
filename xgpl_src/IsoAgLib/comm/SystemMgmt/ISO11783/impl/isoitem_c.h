@@ -100,7 +100,7 @@ namespace __IsoAgLib {
   management and IsoName_c for management of the 64bit NAME field
   @short Item with services needed for ISO11783 monitor lists.
   @author Dipl.-Inform. Achim Spangler
-  @see MonitorItem
+  @see BaseItem
   @see ISOName
 */
 class IsoItem_c : public BaseItem_c  {
@@ -290,10 +290,10 @@ public:
   bool sendSaClaim();
 
 #ifdef USE_WORKING_SET
-  /** send the Working-Set announce message
-   * @return false -> couldn't send out because we're currently in sending out! => try again later!
+  /** (Re-)Start sending the Working-Set Announce sequence
+   * @return time-announce-started (=announce_key). You need this key to check for "isAnnounced(announce_key)".
    */
-  bool sendWsAnnounce();
+  int32_t startWsAnnounce();
 
   // returns NULL if standalone, SELF if it is master itself, or the master ISOItem otherwise.
   IsoItem_c* getMaster () const;
@@ -304,19 +304,11 @@ public:
   // check if this item is a master (i.e. the master pointer points to itself)
   bool isMaster () const { return (this == pc_masterItem); }
 
-  // this triggers that the ws-master/slave maint. stuff is getting sent out!
-  // if it is already in between sending, it is started all over again, we won't wait and re-send from beginning..
-  void triggerWsAnnounce() { i8_slavesToClaimAddress = -1; }
+  /// For checking if the WS-Announce is completed use the "announce key" returned from "startWsAnnounce()".
+  bool isWsAnnounced (int32_t ri32_timeAnnounceStarted);
 
-  /** check if item has announced its working-set description
-    * Only returns TRUE if the Item has also finished AddressClaiming!
-    * Note: If this is NOT a workingset-master, then TRUE is returned here.
-    * BUT: This function should not be called if it's not a master anyway! */
-  bool isClaimedAndWsAnnounced() const { return isMaster() ? (itemState(IState_c::ClaimedAddress) && (i8_slavesToClaimAddress==0))
-                                                           : (itemState(IState_c::ClaimedAddress)); }
+  bool isWsAnnouncing() { return (i8_slavesToClaimAddress != 0); }
 #endif
-
-// FROM MONITORITEM_C
 
   /**
     set number of this item
@@ -377,18 +369,15 @@ public:
   bool equalNr(const uint8_t rui8_nr)const{return (nr() == rui8_nr)?true:false;}
 
 
-// !FROM MONITORITEM_C
+protected: // methods
 
-protected:
-// Protected Methods
-
-private: // private methods
+private: // methods
   /** calculate random wait time between 0 and 153msec. from NAME and time
     @return wait offset in msec. [0..153]
   */
   uint8_t calc_randomWait();
 
-private:
+private: // members
 #ifdef USE_WORKING_SET
   /** pointer to the master IsoItem_c (if == this, then i'm master myself)
     NULL if not part of a master/slave setup
@@ -396,13 +385,18 @@ private:
   IsoItem_c* pc_masterItem;
 
   /** i8_slavesToClaimAddress
-    * == -2  idle - wait until app triggers ws-sending by setting this variable to "-1" by calling triggerWsAnnounce()
     * == -1  waiting to announce WS-master message
     *  >  0  still so many slaves to announce..
-    * ==  0  announcing complete!
+    * ==  0  idle / announcing complete
     */
   int8_t i8_slavesToClaimAddress;
+
+  int32_t i32_timeLastCompletedAnnounceStarted;
+  int32_t i32_timeCurrentAnnounceStarted;
+
+  bool b_repeatAnnounce;
 #endif
+
   /** number of element */
   uint8_t ui8_nr : 8;
 

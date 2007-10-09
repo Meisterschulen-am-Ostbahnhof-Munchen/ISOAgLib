@@ -395,6 +395,7 @@ VtClientServerCommunication_c::VtClientServerCommunication_c (IdentItem_c& ref_w
   , c_data (SINGLETON_VEC_KEY_PARAMETER_USE)
   , en_displayState (VtClientDisplayStateHidden)
   , c_streamer (rrefc_pool)
+  , i32_timeWsAnnounceKey (-1) // no announce tries started yet...
 {
   pc_vtServerInstance = NULL;
   i8_vtLanguage = -1;
@@ -698,13 +699,15 @@ VtClientServerCommunication_c::timeEvent(void)
   System_c::triggerWd();
 
   // VT Alive checks
+  // Will trigger "doStart" / "doStop"
+  // doStart will also take care for announcing the working-set
   checkVtStateChange();
 
   // Do nothing if there's no VT active
   if (!isVtActive()) return true;
 
-  // be kind and wait until WSMaster-/Slave-Announce have finished (AddressClaim is already checked above!!), do NOTHING else before.
-  if (!refc_wsMasterIdentItem.getIsoItem()->isClaimedAndWsAnnounced()) return true;
+  // Check if the working-set is completely announced
+  if (!refc_wsMasterIdentItem.getIsoItem()->isWsAnnounced (i32_timeWsAnnounceKey)) return true;
 
   // Check if WS-Maintenance is needed
   if ((i32_nextWsMaintenanceMsg <= 0) || (HAL::getTime() >= i32_nextWsMaintenanceMsg))
@@ -2300,7 +2303,8 @@ void
 VtClientServerCommunication_c::doStart()
 {
   /// First, trigger sending of WS-Announce
-  refc_wsMasterIdentItem.getIsoItem()->triggerWsAnnounce();
+  i32_timeWsAnnounceKey = refc_wsMasterIdentItem.getIsoItem()->startWsAnnounce();
+
   i32_nextWsMaintenanceMsg = 0; // send out ws maintenance message immediately after ws has been announced.
 
   if (en_objectPoolState == OPInitial)
@@ -2319,6 +2323,9 @@ VtClientServerCommunication_c::doStart()
 void
 VtClientServerCommunication_c::doStop()
 {
+  // actually not needed to be reset here, because if VT not active it's not checked and if VT gets active we restart the sending.
+  i32_timeWsAnnounceKey = -1;
+
   // VT has left the system - clear all queues now, don't wait until next re-entering (for memory reasons)
 #ifdef DEBUG_HEAP_USEAGE
   sui16_sendUploadQueueSize -= q_sendUpload.size();

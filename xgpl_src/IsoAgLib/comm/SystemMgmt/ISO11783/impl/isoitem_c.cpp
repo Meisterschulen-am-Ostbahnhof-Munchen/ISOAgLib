@@ -104,7 +104,10 @@ IsoItem_c::IsoItem_c()
   : BaseItem_c(0, IState_c::IstateNull, 0)
   #ifdef USE_WORKING_SET
   , pc_masterItem (NULL)
-  , i8_slavesToClaimAddress (-2) // idle around and wait for this IsoItem_c to get initially initialized!
+  , i8_slavesToClaimAddress (0) // idle around
+  , i32_timeLastCompletedAnnounceStarted (-1)
+  , i32_timeCurrentAnnounceStarted (-1)
+  , b_repeatAnnounce (false)
   #endif
   , ui8_nr(0xFE)
   , b_repeatClaim (false) // wouldn't be needed to be set here as it's set when entering AddressClaim
@@ -120,13 +123,26 @@ IsoItem_c::IsoItem_c()
   @param rrefc_src source IsoItem_c instance
 */
 IsoItem_c::IsoItem_c(const IsoItem_c& rrefc_src)
-  : BaseItem_c(rrefc_src), ui8_nr(rrefc_src.ui8_nr), c_isoName(rrefc_src.c_isoName)
-{// mark this item as prepare address claim if local
+  : BaseItem_c (rrefc_src)
+#ifdef USE_WORKING_SET
+  //, pc_masterItem (NULL) // handled in code below!
+  , i8_slavesToClaimAddress (rrefc_src.i8_slavesToClaimAddress)
+  , i32_timeLastCompletedAnnounceStarted (rrefc_src.i32_timeLastCompletedAnnounceStarted)
+  , i32_timeCurrentAnnounceStarted (rrefc_src.i32_timeCurrentAnnounceStarted)
+  , b_repeatAnnounce (rrefc_src.b_repeatAnnounce)
+#endif
+  , ui8_nr (rrefc_src.ui8_nr)
+  , b_repeatClaim (rrefc_src.b_repeatClaim)
+  , c_isoName (rrefc_src.c_isoName)
+
+{
+  // mark this item as prepare address claim if local
   setItemState (IState_c::Member);
 
   #ifdef USE_WORKING_SET
   // no need of setting "i8_slavesToClaimAddress", as it will be set when setting state to CleaimedAddress!
-
+  /// @todo Check if this constructor is really needed and what it should do!
+  /// @todo Check if we need to copy the new 3 member variables, too. Also for the below constructors!!!
   // check if the master item pointer of the source item
   // is pointing to itself, as then this new created instance shall
   // not copy the pointer, but set the pointer to itself, as this
@@ -163,6 +179,10 @@ IsoItem_c& IsoItem_c::operator=(const IsoItem_c& rrefc_src)
   #ifdef USE_WORKING_SET
   // no need of setting "i8_slavesToClaimAddress" here as it will be set when setting state to ClaimedAddress
   /** @todo What to do with the pc_masterItem? */
+  i8_slavesToClaimAddress = rrefc_src.i8_slavesToClaimAddress;
+  i32_timeLastCompletedAnnounceStarted = rrefc_src.i32_timeLastCompletedAnnounceStarted;
+  i32_timeCurrentAnnounceStarted = rrefc_src.i32_timeCurrentAnnounceStarted;
+  b_repeatAnnounce = rrefc_src.b_repeatAnnounce;
   #endif
   updateTime (/*get current time due to default parameter*/);
   // mark this item as prepare address claim if local
@@ -205,7 +225,7 @@ IsoItem_c::~IsoItem_c()
 */
 const uint8_t* IsoItem_c::name() const
 {
-  return isoName(). outputString();
+  return isoName().outputString();
 }
 
 /** check if the name field is empty (no name received)
@@ -345,48 +365,60 @@ bool IsoItem_c::timeEvent( void )
         }
         // now inform the ISO monitor list change clients on NEW client use
         getIsoMonitorInstance4Comm().broadcastSaAdd2Clients( isoName(), this );
-        #ifdef USE_WORKING_SET
-        if (isMaster())
-        {  /** @todo To discuss what makes more sense: for now announce working-set directly after address claimed */
-          #if 1
-          triggerWsAnnounce(); // start WS Announce/MaintenanceMsg'ing in case we're master and announced
-          #else
-          // we HAVE something to announce (MASTER + *MAYBE* SLAVES), but don't announce anything right now - let the app do by hand!
-          i8_slavesToClaimAddress = -2; // indicate that nothing is announced until some "application" triggers announcing!
-          #endif
-        }
-        #endif
       }
     }
   }
   #ifdef USE_WORKING_SET
   else if ( itemState(IState_c::ClaimedAddress) )
-  { // do stuff if completely announced
-    if (isMaster() && (i8_slavesToClaimAddress > -2)) // -2 means wait, wait, wait.. until the app triggers sending
-    { // only master needs to send stuff out after address-claiming
-      if ( i8_slavesToClaimAddress == -1 )
-      { // Announce WS-Master
-        i8_slavesToClaimAddress = getIsoMonitorInstance4Comm().getSlaveCount (this); // slavesToClaimAddress will be 0..numberOfSlaves hopefully
-
-        c_pkg.setExtCanPkg8(7, 0, (WORKING_SET_MASTER_PGN>>8), (WORKING_SET_MASTER_PGN&0xFF), nr(), i8_slavesToClaimAddress+1, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
-        c_can << c_pkg;     // send out "Working Set Master" message on CAN bus
-
-        updateTime();
+  { // do stuff if completely announced only
+    if (isMaster())
+    { // We're master, so check if something has to be done..
+      if ( i8_slavesToClaimAddress == 0 )
+      { // 0 means successfully sent out the ws-announce.
+        // So Wait. Nothing to be done here...
       }
-      else if ( (i8_slavesToClaimAddress > 0) && ( checkTime(100) ) )
-      { // Announce WS-Slave(s)
-        // claim address for next slave
-        c_pkg.setIsoPri(7);
-        c_pkg.setIsoPgn(WORKING_SET_MEMBER_PGN);
-        c_pkg.setMonitorItemForSA( this ); // free SA or NACK flag
-        // set NAME to CANPkg
-        c_pkg.setDataUnion(getIsoMonitorInstance4Comm().getSlave (getIsoMonitorInstance4Comm().getSlaveCount(this)-i8_slavesToClaimAddress, this)->outputNameUnion());
-        c_can << c_pkg;
+      else
+      { // <0 or >0
+        bool b_sendOutWsMessage=true;
+        if ( i8_slavesToClaimAddress < 0 ) // should be -1, but simply catch all <0 for ws-master sending
+        { // Announce WS-Master
+          i8_slavesToClaimAddress = getIsoMonitorInstance4Comm().getSlaveCount (this); // slavesToClaimAddress will be 0..numberOfSlaves hopefully
 
-        // claimed address for one...
-        i8_slavesToClaimAddress--;
+          c_pkg.setIsoPgn (WORKING_SET_MASTER_PGN);
+          c_pkg.setUint8Data (0, (i8_slavesToClaimAddress+1));
+          c_pkg.setLen8FillUpWithReserved (1);
+        }
+        else // it must be > 0 here now, so omit: if (i8_slavesToClaimAddress > 0)
+        { // Slave announcing needs 100ms interspace!
+          if (!checkTime(100))
+            b_sendOutWsMessage = false;
+          else
+          { // Announce WS-Slave(s)
+            c_pkg.setIsoPgn (WORKING_SET_MEMBER_PGN);
+            c_pkg.setDataUnion (getIsoMonitorInstance4Comm().getSlave (getIsoMonitorInstance4Comm().getSlaveCount(this)-i8_slavesToClaimAddress, this)->outputNameUnion());
+            i8_slavesToClaimAddress--; // claimed address for one...
+          }
+        }
+        if (b_sendOutWsMessage)
+        { // Really send it out on the bus now!
+          c_pkg.setIsoPri (7);
+          c_pkg.setMonitorItemForSA (this);
+          c_can << c_pkg;
+          updateTime();
 
-        updateTime();
+          // did we send the last message of the announce sequence?
+          if (i8_slavesToClaimAddress == 0)
+          { // yes, announcing finished!
+            i32_timeLastCompletedAnnounceStarted = i32_timeCurrentAnnounceStarted;
+            i32_timeCurrentAnnounceStarted = -1; // no announce running right now.
+            // now see if we have to repeat the sequence because it was requested while it was sent...
+            if (b_repeatAnnounce)
+            { // repeat the announce-sequence
+              b_repeatAnnounce = false;
+              (void) startWsAnnounce();
+            }
+          }
+        }
       }
     }
   }
@@ -395,6 +427,7 @@ bool IsoItem_c::timeEvent( void )
   // nothing to be done
   return true;
 }
+
 
 /** process received CAN pkg to update data and react if needed
   * update settings for remote members (e.g. change of SA)
@@ -480,21 +513,6 @@ bool IsoItem_c::sendSaClaim()
 }
 
 
-#ifdef USE_WORKING_SET
-bool IsoItem_c::sendWsAnnounce()
-{
-  if ((i8_slavesToClaimAddress == -2) || // -2: Waiting for user-trigger
-      (i8_slavesToClaimAddress ==  0))   //  0: Finished ws-ann. so it can be triggered again!
-  { // can trigger wsAnnounce
-    triggerWsAnnounce();
-    return true;
-  }
-  else
-  { // can't trigger wsAnnounce
-    return false;
-  }
-}
-#endif
 
 /** calculate random wait time between 0 and 153msec. from NAME and time
   @return wait offset in msec. [0..153]
@@ -515,21 +533,6 @@ uint8_t IsoItem_c::calc_randomWait()
   return uint8_t(ui16_result & 0xFF );
 }
 
-#ifdef USE_WORKING_SET
-/** returns a pointer to the referenced master ISOItem */
-IsoItem_c* IsoItem_c::getMaster () const
-{
-  return pc_masterItem;
-}
-
-/** attaches to a working set master and become slave hereby
-  if called with NULL the ISOItem loses working-set membership and becomes STANDALONE again!
-*/
-void IsoItem_c::setMaster ( IsoItem_c* rpc_masterItem )
-{
-  pc_masterItem = rpc_masterItem;
-}
-#endif
 
 /**
   lower comparison between left IsoItem_c and right ISOName uint8_t
@@ -540,5 +543,57 @@ bool lessThan(const IsoItem_c& rrefc_left, const IsoName_c& rc_right)
 {
   return (rrefc_left.isoName() < rc_right)?true:false;
 }
+
+
+#ifdef USE_WORKING_SET
+int32_t IsoItem_c::startWsAnnounce()
+{
+  int32_t const ci32_timeNow = HAL::getTime();
+
+  if (i32_timeCurrentAnnounceStarted < 0)
+  { // no announce currently running, so start it!
+    i32_timeCurrentAnnounceStarted = ci32_timeNow;
+    i8_slavesToClaimAddress = -1; // start with announcing the master!
+  }
+  else
+  { // we're right in announcing, so delay a second one till after this one ran through
+    b_repeatAnnounce = true;
+  }
+
+  // return the Announce-Key
+  return ci32_timeNow; // which is the NOW-time!
+}
+
+
+/** returns a pointer to the referenced master ISOItem */
+IsoItem_c* IsoItem_c::getMaster() const
+{
+  return pc_masterItem;
+}
+
+
+/** attaches to a working set master and become slave hereby
+  if called with NULL the ISOItem loses working-set membership and becomes STANDALONE again!
+ */
+void
+IsoItem_c::setMaster (IsoItem_c* rpc_masterItem)
+{
+  pc_masterItem = rpc_masterItem;
+}
+
+
+/// For checking if the WS-Announce is completed use the "announce key" returned from "startWsAnnounce()".
+/// Only check for valid announce keys (i.e. ri32_timeAnnounceStarted).
+/// Init your announce key to -1, then you're always fine with calling this function!
+bool
+IsoItem_c::isWsAnnounced (int32_t ri32_timeAnnounceStarted)
+{
+  if (ri32_timeAnnounceStarted < 0)
+    return false;
+  else
+    return (i32_timeLastCompletedAnnounceStarted >= ri32_timeAnnounceStarted);
+}
+#endif
+
 
 } // end of namespace __IsoAgLib

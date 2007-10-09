@@ -139,7 +139,7 @@ class DevPropertyHandler_c : public IsoAgLib::iMultiSendStreamer_c
 
     bool timeEvent( void );
 
-    bool registerDevicePool (const IsoAgLib::iIdentItem_c* rpc_wsMasterIdentItem, const HUGE_MEM uint8_t* rpc_devicePoolByteArray, const uint32_t rui32_bytestreamLength, bool b_setToDefault);
+    bool registerDevicePool (const IdentItem_c* rpc_wsMasterIdentItem, const HUGE_MEM uint8_t* rpc_devicePoolByteArray, const uint32_t rui32_bytestreamLength, bool b_setToDefault);
     bool sendCommandChangeDesignator(uint16_t rpui16_objectID, const char* rpc_newString, uint8_t stringLength);
 
     ProcessPkg_c& data(){return *pc_data;};
@@ -265,7 +265,7 @@ class DevPropertyHandler_c : public IsoAgLib::iMultiSendStreamer_c
 
     /** has to be set using registerDevicePool (...) so that DevPropertyHandler_c
         can interact in the name of the wsMaster */
-    const IsoAgLib::iIdentItem_c* pc_wsMasterIdentItem;
+    const IdentItem_c* pc_wsMasterIdentItem;
 
     /** Upload-State & Variables */
     PoolState_t en_poolState;
@@ -283,6 +283,7 @@ class DevPropertyHandler_c : public IsoAgLib::iMultiSendStreamer_c
 
     MultiSend_c::sendSuccess_t en_sendSuccess;
 
+    int32_t i32_timeWsAnnounceKey;
 };
 
 }

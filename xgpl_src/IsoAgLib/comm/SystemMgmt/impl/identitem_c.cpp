@@ -611,6 +611,8 @@ void IdentItem_c::setToMaster (int8_t ri8_slaveCount, const IsoName_c* rpc_slave
   { // item wasn't created with explicit config for master item
     return;
   }
+
+  /// @todo What if the IsoItem is currently set to NULL?
   // set our own ISOItem
   pc_isoItem->setMaster (pc_isoItem);
 

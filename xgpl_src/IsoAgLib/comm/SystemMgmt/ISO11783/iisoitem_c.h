@@ -210,12 +210,9 @@ public:
   */
   void setSerNo(uint32_t rui32_serNo) {IsoItem_c::setSerNo(rui32_serNo);}
 
-
 #ifdef USE_WORKING_SET
-  /** check if item has announced its working-set description
-      normally just use for WorkingSet-Master!
-      if called for anything else, it is simply returned if this item has successfully claimed its address! */
-  bool isWsAnnounced() const { return IsoItem_c::isClaimedAndWsAnnounced(); }
+  /// For checking if the WS-Announce is completed use the
+  bool isWsAnnounced (int32_t ri32_timeAnnounceStarted) { return IsoItem_c::isWsAnnounced (ri32_timeAnnounceStarted); }
 #endif
 };
 

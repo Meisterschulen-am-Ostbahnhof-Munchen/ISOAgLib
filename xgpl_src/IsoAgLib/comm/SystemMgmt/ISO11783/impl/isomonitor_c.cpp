@@ -273,7 +273,7 @@ bool IsoMonitor_c::timeEvent( void )
 
     case IState_c::ClaimedAddress | IState_c::Active:
       #ifdef USE_WORKING_SET
-      if (!(*pc_iter)->getIsoItem()->isClaimedAndWsAnnounced())
+      if ((*pc_iter)->getIsoItem()->isWsAnnouncing())
       { // we need 100ms for WS-Announce Sequence!
         if (i32_checkPeriod > 100) i32_checkPeriod = 100;
         break;
@@ -1388,18 +1388,15 @@ IsoMonitor_c::processMsgRequestPGN (uint32_t rui32_pgn, IsoItem_c* /*rpc_isoItem
     case WORKING_SET_MASTER_PGN: // break intentionally left out - react on both PGNs with sending out the complete ws-announce sequence!
     case WORKING_SET_MEMBER_PGN:
       if (rpc_isoItemReceiver == NULL)
-      { // Let ALL local item answer
+      { // No specific destination so it's broadcast: Let all local item answer!
         for (Vec_ISOIterator pc_iterItem = vec_isoMember.begin();
               pc_iterItem != vec_isoMember.end(); pc_iterItem++)
         { // let all local pc_iterItem process process this request
           if (pc_iterItem->itemState (IState_c::Local))
           {
             if (pc_iterItem->isMaster())
-            { // is Master, so can it send out the ws-announce?
-              if (!pc_iterItem->sendWsAnnounce())
-              { // couldn't send right now, so answer with ACK-BUSY!
-                __IsoAgLib::getIsoRequestPgnInstance4Comm().answerRequestPGNwithCannotRespondNow (*pc_iterItem);
-              }
+            { // is Master, so send out the ws-announce. If it's busy now, it will enqueue the request
+              (void) pc_iterItem->startWsAnnounce(); // so it's definitely being sent out.
             }
             else
             { // no master, can't send out these PGNs
@@ -1413,10 +1410,7 @@ IsoMonitor_c::processMsgRequestPGN (uint32_t rui32_pgn, IsoItem_c* /*rpc_isoItem
       { // Let the given local item answer
         if (rpc_isoItemReceiver->isMaster())
         { // is Master, so can it send out the ws-announce?
-          if (!rpc_isoItemReceiver->sendWsAnnounce())
-          { // couldn't send right now, so answer with ACK-BUSY!
-            __IsoAgLib::getIsoRequestPgnInstance4Comm().answerRequestPGNwithCannotRespondNow(*rpc_isoItemReceiver);
-          }
+          (void) rpc_isoItemReceiver->startWsAnnounce();
           return true;
         }
         else
@@ -1424,7 +1418,7 @@ IsoMonitor_c::processMsgRequestPGN (uint32_t rui32_pgn, IsoItem_c* /*rpc_isoItem
           return false; // let it get NACKed
         }
       }
-     #endif
+#endif
 
     default:
       // shouldn't happen as we only registered for the above handled PGNs

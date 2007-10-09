@@ -227,8 +227,8 @@ public:
 private:
   friend class iIsoTerminal_c;
   friend class iVtClientServerCommunication_c;
+  friend class iDevPropertyHandler_c;
   friend class __IsoAgLib::IsoTerminal_c;
-  friend class __IsoAgLib::DevPropertyHandler_c;
 };
 
 }// End Namespace IsoAgLib

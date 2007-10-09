@@ -556,6 +556,8 @@ private: // attributes
   STL_NAMESPACE::list<AuxAssignment_s> mlist_auxAssignments;
 
   VtClientServerCommStreamer_c c_streamer;
+
+  int32_t i32_timeWsAnnounceKey;
 };
 
 }
