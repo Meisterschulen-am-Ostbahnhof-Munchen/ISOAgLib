@@ -408,7 +408,7 @@ DevPropertyHandler_c::processMsg()
      */
     case procCmdPar_ChangeDesignatorRespMsg:
       if (en_uploadState == StateUploadCommand &&
-         (en_uploadCommand == UploadCommandWaitingForCommandResponse || UploadMultiSendCommandWaitingForCommandResponse))
+         ((en_uploadCommand == UploadCommandWaitingForCommandResponse) || (en_uploadCommand == UploadMultiSendCommandWaitingForCommandResponse)))
       {
         //no matter if successful or faulty, finish upload command
         finishUploadCommandChangeDesignator();
