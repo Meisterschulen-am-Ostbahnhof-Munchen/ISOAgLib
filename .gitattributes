@@ -2624,6 +2624,7 @@ xgpl_src/IsoAgLib/hal/pc/can/msq_helper.cpp -text
 xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_A1_ASCII.cpp -text
 xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_A1_binary.cpp -text
 xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_client.cpp -text
+xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_client_socket.cpp -text
 xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_server_A1.cpp -text
 xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_server_general.cpp -text
 xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_server_pcan.cpp -text
