@@ -1188,7 +1188,7 @@ CanIo_c& CanIo_c::operator<<(CanPkg_c& refc_src)
       // on init of this object
       // (and is done if timeEvent notices that CAN wasn't configured by init)
       #if defined(DEBUG)
-        INTERNAL_DEBUG_DEVICE << "\r\nBUS " << uint16_t(ui8_busNumber) << " not initialized or MsgObj: " << uint16_t(ui8_sendObjNr) << " no send obj" << INTERNAL_DEBUG_DEVICE_ENDL;
+      INTERNAL_DEBUG_DEVICE << "\r\nBUS " << uint16_t(ui8_busNumber) << " not initialized or MsgObj: " << uint16_t(ui8_sendObjNr) << " no send obj" << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
       getILibErrInstance().registerError( iLibErr_c::HwConfig, iLibErr_c::Can );
       break;
@@ -1202,6 +1202,9 @@ CanIo_c& CanIo_c::operator<<(CanPkg_c& refc_src)
     case HAL_OVERFLOW_ERR:
       // overflow of send puffer
       getILibErrInstance().registerError( iLibErr_c::CanOverflow, iLibErr_c::Can );
+      #if defined(DEBUG)
+      INTERNAL_DEBUG_DEVICE << "\r\nBUS " << uint16_t(ui8_busNumber) << " overflown send-queue of MsgObj: " << uint16_t(ui8_sendObjNr) << INTERNAL_DEBUG_DEVICE_ENDL;
+      #endif
       break;
     case HAL_RANGE_ERR:
       // BUS nr or obj nr outer allowed limits (shouldn't be the case after successful init call)
