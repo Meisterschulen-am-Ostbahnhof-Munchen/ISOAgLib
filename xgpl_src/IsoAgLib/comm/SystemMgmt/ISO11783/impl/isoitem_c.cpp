@@ -120,20 +120,20 @@ IsoItem_c::IsoItem_c()
   a master ( i.e. the pc_masterItem pointer points to this )
   -> it doesn't simply copy the pointer, but sets its
   own pointer also to the this-pointer of the new instance
-  @param rrefc_src source IsoItem_c instance
+  @param arc_src source IsoItem_c instance
 */
-IsoItem_c::IsoItem_c(const IsoItem_c& rrefc_src)
-  : BaseItem_c (rrefc_src)
+IsoItem_c::IsoItem_c(const IsoItem_c& arc_src)
+  : BaseItem_c (arc_src)
 #ifdef USE_WORKING_SET
   //, pc_masterItem (NULL) // handled in code below!
-  , i8_slavesToClaimAddress (rrefc_src.i8_slavesToClaimAddress)
-  , i32_timeLastCompletedAnnounceStarted (rrefc_src.i32_timeLastCompletedAnnounceStarted)
-  , i32_timeCurrentAnnounceStarted (rrefc_src.i32_timeCurrentAnnounceStarted)
-  , b_repeatAnnounce (rrefc_src.b_repeatAnnounce)
+  , i8_slavesToClaimAddress (arc_src.i8_slavesToClaimAddress)
+  , i32_timeLastCompletedAnnounceStarted (arc_src.i32_timeLastCompletedAnnounceStarted)
+  , i32_timeCurrentAnnounceStarted (arc_src.i32_timeCurrentAnnounceStarted)
+  , b_repeatAnnounce (arc_src.b_repeatAnnounce)
 #endif
-  , ui8_nr (rrefc_src.ui8_nr)
-  , b_repeatClaim (rrefc_src.b_repeatClaim)
-  , c_isoName (rrefc_src.c_isoName)
+  , ui8_nr (arc_src.ui8_nr)
+  , b_repeatClaim (arc_src.b_repeatClaim)
+  , c_isoName (arc_src.c_isoName)
 
 {
   // mark this item as prepare address claim if local
@@ -147,13 +147,13 @@ IsoItem_c::IsoItem_c(const IsoItem_c& rrefc_src)
   // is pointing to itself, as then this new created instance shall
   // not copy the pointer, but set the pointer to itself, as this
   // indicates the Master State
-  if ( rrefc_src.isMaster() )
+  if ( arc_src.isMaster() )
   { // set our pc_masterItem also to this, to indicate master state
     pc_masterItem = this;
   }
   else
   { // just copy the master pointer from source
-    pc_masterItem = rrefc_src.getMaster ();
+    pc_masterItem = arc_src.getMaster ();
   }
   #endif
 
@@ -166,23 +166,23 @@ IsoItem_c::IsoItem_c(const IsoItem_c& rrefc_src)
 }
 
 /** assign constructor for ISOItem
-  @param rrefc_src source IsoItem_c object
+  @param arc_src source IsoItem_c object
 */
-IsoItem_c& IsoItem_c::operator=(const IsoItem_c& rrefc_src)
+IsoItem_c& IsoItem_c::operator=(const IsoItem_c& arc_src)
 {
-//   MonitorItem_c::operator=(rrefc_src);
-  BaseItem_c::operator=(rrefc_src);
-  setISOName(rrefc_src.isoName());
-  setNr(rrefc_src.nr());
+//   MonitorItem_c::operator=(arc_src);
+  BaseItem_c::operator=(arc_src);
+  setISOName(arc_src.isoName());
+  setNr(arc_src.nr());
 
   setItemState (IState_c::Member);
   #ifdef USE_WORKING_SET
   // no need of setting "i8_slavesToClaimAddress" here as it will be set when setting state to ClaimedAddress
   /** @todo What to do with the pc_masterItem? */
-  i8_slavesToClaimAddress = rrefc_src.i8_slavesToClaimAddress;
-  i32_timeLastCompletedAnnounceStarted = rrefc_src.i32_timeLastCompletedAnnounceStarted;
-  i32_timeCurrentAnnounceStarted = rrefc_src.i32_timeCurrentAnnounceStarted;
-  b_repeatAnnounce = rrefc_src.b_repeatAnnounce;
+  i8_slavesToClaimAddress = arc_src.i8_slavesToClaimAddress;
+  i32_timeLastCompletedAnnounceStarted = arc_src.i32_timeLastCompletedAnnounceStarted;
+  i32_timeCurrentAnnounceStarted = arc_src.i32_timeCurrentAnnounceStarted;
+  b_repeatAnnounce = arc_src.b_repeatAnnounce;
   #endif
   updateTime (/*get current time due to default parameter*/);
   // mark this item as prepare address claim if local
@@ -196,12 +196,12 @@ IsoItem_c& IsoItem_c::operator=(const IsoItem_c& rrefc_src)
 
 /**
   lower comparison between left ISOName uint8_t and right MonitorItem
-  @param rb_left ISOName uint8_t left parameter
-  @param rrefc_right rigth ServiceItem_c parameter
+  @param ab_left ISOName uint8_t left parameter
+  @param arc_right rigth ServiceItem_c parameter
 */
-bool operator<(const IsoName_c& rc_left, const IsoItem_c& rrefc_right)
+bool operator<(const IsoName_c& ac_left, const IsoItem_c& arc_right)
 {
-  return (rc_left < rrefc_right.isoName())?true:false;
+  return (ac_left < arc_right.isoName())?true:false;
 }
 
 /** default destructor */
@@ -238,9 +238,9 @@ bool IsoItem_c::isEmptyName() const
 
 /** deliver name as pure ASCII string
   @param pc_name string where ASCII string is inserted
-  @param rui8_maxLen max length for name
+  @param aui8_maxLen max length for name
 */
-void IsoItem_c::getPureAsciiName(int8_t *pc_asciiName, uint8_t rui8_maxLen)
+void IsoItem_c::getPureAsciiName(int8_t *pc_asciiName, uint8_t aui8_maxLen)
 {
   char c_temp[30];
   const uint8_t* pb_src = name();
@@ -248,24 +248,24 @@ void IsoItem_c::getPureAsciiName(int8_t *pc_asciiName, uint8_t rui8_maxLen)
       pb_src[4],pb_src[5],pb_src[6],pb_src[7]);
 
   uint8_t ui8_len = CNAMESPACE::strlen(c_temp);
-  if (rui8_maxLen < ui8_len) ui8_len = rui8_maxLen;
+  if (aui8_maxLen < ui8_len) ui8_len = aui8_maxLen;
   CNAMESPACE::memcpy(pc_asciiName, c_temp, ui8_len );
   pc_asciiName[ui8_len-1] = '\0';
 }
 
 /** set all element data with one call
-  @param ri32_time creation time of this item instance
-  @param rc_isoName ISOName code of this item ((deviceClass << 3) | devClInst )
-  @param rui8_nr number of this item
-  @param rb_status state of this ident (off, claimed address, ...)
-  @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
+  @param ai32_time creation time of this item instance
+  @param ac_isoName ISOName code of this item ((deviceClass << 3) | devClInst )
+  @param aui8_nr number of this item
+  @param ab_status state of this ident (off, claimed address, ...)
+  @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
-void IsoItem_c::set(int32_t ri32_time, const IsoName_c& rc_isoName, uint8_t rui8_nr,
-        itemState_t ren_status, int ri_singletonVecKey )
+void IsoItem_c::set(int32_t ai32_time, const IsoName_c& ac_isoName, uint8_t aui8_nr,
+        itemState_t ren_status, int ai_singletonVecKey )
 {
-  BaseItem_c::set( ri32_time, ren_status, ri_singletonVecKey );
-  setISOName(rc_isoName);
-  setNr(rui8_nr);
+  BaseItem_c::set( ai32_time, ren_status, ai_singletonVecKey );
+  setISOName(ac_isoName);
+  setNr(aui8_nr);
 }
 
 
@@ -536,12 +536,12 @@ uint8_t IsoItem_c::calc_randomWait()
 
 /**
   lower comparison between left IsoItem_c and right ISOName uint8_t
-  @param rrefc_left left ServiceItem_c parameter
-  @param rb_right ISOName uint8_t right parameter
+  @param arc_left left ServiceItem_c parameter
+  @param ab_right ISOName uint8_t right parameter
 */
-bool lessThan(const IsoItem_c& rrefc_left, const IsoName_c& rc_right)
+bool lessThan(const IsoItem_c& arc_left, const IsoName_c& ac_right)
 {
-  return (rrefc_left.isoName() < rc_right)?true:false;
+  return (arc_left.isoName() < ac_right)?true:false;
 }
 
 
@@ -576,22 +576,22 @@ IsoItem_c* IsoItem_c::getMaster() const
   if called with NULL the ISOItem loses working-set membership and becomes STANDALONE again!
  */
 void
-IsoItem_c::setMaster (IsoItem_c* rpc_masterItem)
+IsoItem_c::setMaster (IsoItem_c* apc_masterItem)
 {
-  pc_masterItem = rpc_masterItem;
+  pc_masterItem = apc_masterItem;
 }
 
 
 /// For checking if the WS-Announce is completed use the "announce key" returned from "startWsAnnounce()".
-/// Only check for valid announce keys (i.e. ri32_timeAnnounceStarted).
+/// Only check for valid announce keys (i.e. ai32_timeAnnounceStarted).
 /// Init your announce key to -1, then you're always fine with calling this function!
 bool
-IsoItem_c::isWsAnnounced (int32_t ri32_timeAnnounceStarted)
+IsoItem_c::isWsAnnounced (int32_t ai32_timeAnnounceStarted)
 {
-  if (ri32_timeAnnounceStarted < 0)
+  if (ai32_timeAnnounceStarted < 0)
     return false;
   else
-    return (i32_timeLastCompletedAnnounceStarted >= ri32_timeAnnounceStarted);
+    return (i32_timeLastCompletedAnnounceStarted >= ai32_timeAnnounceStarted);
 }
 #endif
 

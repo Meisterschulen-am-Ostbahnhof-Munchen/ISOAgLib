@@ -105,7 +105,7 @@ public:
   int32_t getDefault()const{return SetpointRegister_c::getDefault();};
   /**
     deliver the setpoint according to the mod type
-    @param rb_mod MOD code of wanted setpoint (exact 0, min 2, max 3, default)
+    @param ab_mod MOD code of wanted setpoint (exact 0, min 2, max 3, default)
     @return setpoint selected by MOD
   */
   int32_t valMod(GeneralCommand_c::ValueGroup_t en_valueGroup)const
@@ -149,8 +149,8 @@ public:
   */
   bool existDefault()const {return SetpointRegister_c::existDefault();};
   /**
-    checks if setpoint with type rb_mod exists
-    @param rb_mod MOD code of tested setpoint type (exact 0, min 2, max 3, default)
+    checks if setpoint with type ab_mod exists
+    @param ab_mod MOD code of tested setpoint type (exact 0, min 2, max 3, default)
     @return true -> a MOD type setpoint exist
   */
   bool existValMod(GeneralCommand_c::ValueGroup_t en_valueGroup) const {
@@ -164,56 +164,56 @@ public:
 
   /**
     set isoName of commanding member
-    @param rc_isoName ISOName of commanding member
+    @param ac_isoName ISOName of commanding member
   */
-  void setISOName(uint8_t rui8_devClass, uint8_t rui8_devClassInst){SetpointRegister_c::setISOName( rui8_devClass, rui8_devClassInst );}
+  void setISOName(uint8_t aui8_devClass, uint8_t aui8_devClassInst){SetpointRegister_c::setISOName( aui8_devClass, aui8_devClassInst );}
   /**
     set the exact setpoint value
-    @param ri32_val new exact setpoint value
+    @param ai32_val new exact setpoint value
   */
-  void setExact(int32_t ri32_val){SetpointRegister_c::setExact(ri32_val);};
+  void setExact(int32_t ai32_val){SetpointRegister_c::setExact(ai32_val);};
   /**
     set the minimum setpoint value
-    @param ri32_val new minimum setpoint value
+    @param ai32_val new minimum setpoint value
   */
-  void setMin(int32_t ri32_val){SetpointRegister_c::setMin(ri32_val);};
+  void setMin(int32_t ai32_val){SetpointRegister_c::setMin(ai32_val);};
   /**
     set the maximum setpoint value
-    @param ri32_val new maximum setpoint value
+    @param ai32_val new maximum setpoint value
   */
-  void setMax(int32_t ri32_val){SetpointRegister_c::setMax(ri32_val);};
+  void setMax(int32_t ai32_val){SetpointRegister_c::setMax(ai32_val);};
   /**
     set the default setpoint value
-    @param ri32_val new default setpoint value
+    @param ai32_val new default setpoint value
   */
-  void setDefault(int32_t ri32_val){SetpointRegister_c::setDefault(ri32_val);};
+  void setDefault(int32_t ai32_val){SetpointRegister_c::setDefault(ai32_val);};
 
   /**
     set the handled state; return if state was changed
-    @param rb_state true -> mark this setpoint as handled
+    @param ab_state true -> mark this setpoint as handled
     @return true -> this call caused a state change for handled state
   */
-  bool setHandled(bool rb_state = true){return SetpointRegister_c::setHandled(rb_state);};
+  bool setHandled(bool ab_state = true){return SetpointRegister_c::setHandled(ab_state);};
   /**
     set the master state; return if state was changed
-    @param rb_state true -> mark this setpoint as master
+    @param ab_state true -> mark this setpoint as master
     @return true -> this call caused a state change for master state
   */
-  bool setMaster(bool rb_state = true){return SetpointRegister_c::setMaster(rb_state);};
+  bool setMaster(bool ab_state = true){return SetpointRegister_c::setMaster(ab_state);};
   /**
     set the valid state; return if state was changed
-    @param rb_state true -> mark this setpoint as valid (accepted)
+    @param ab_state true -> mark this setpoint as valid (accepted)
     @return true -> this call caused a state change for valid state
   */
-  bool setValid(bool rb_state = true){return SetpointRegister_c::setValid(rb_state);};
+  bool setValid(bool ab_state = true){return SetpointRegister_c::setValid(ab_state);};
   /**
-    set a limit val for type given by rb_mod
-    @param ri32_val new setpoint value
-    @param rb_mod MOD code of setpoint type to set (exact 0, min 2, max 3, default)
+    set a limit val for type given by ab_mod
+    @param ai32_val new setpoint value
+    @param ab_mod MOD code of setpoint type to set (exact 0, min 2, max 3, default)
   */
-  void setValMod(int32_t ri32_val, GeneralCommand_c::ValueGroup_t en_valueGroup)
+  void setValMod(int32_t ai32_val, GeneralCommand_c::ValueGroup_t en_valueGroup)
   {
-    SetpointRegister_c::setValMod(ri32_val, en_valueGroup);
+    SetpointRegister_c::setValMod(ai32_val, en_valueGroup);
   };
 };
 

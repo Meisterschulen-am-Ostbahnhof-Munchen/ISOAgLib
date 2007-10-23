@@ -108,7 +108,7 @@ public:
   //! @param ui8_data:
   virtual StreamOutput_c& operator<<(uint8_t ui8_data)=0;
 
-  void put(uint8_t rui8_data) { operator<<(rui8_data); };
+  void put(uint8_t aui8_data) { operator<<(aui8_data); };
 
   //  Operation: eof
   virtual bool eof() const=0;

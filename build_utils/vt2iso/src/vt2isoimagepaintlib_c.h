@@ -68,15 +68,15 @@ class Vt2IsoImagePaintlib_c : public Vt2IsoImageBase_c
 	virtual bool openBitmap( const char* filename );
  protected:
 	/** deliver R-value of bitmap at given position */
-	virtual unsigned int getR( unsigned int rui_x, unsigned int rui_y );
+	virtual unsigned int getR( unsigned int aui_x, unsigned int aui_y );
 	/** deliver G-value of bitmap at given position */
-	virtual unsigned int getG( unsigned int rui_x, unsigned int rui_y );
+	virtual unsigned int getG( unsigned int aui_x, unsigned int aui_y );
 	/** deliver B-value of bitmap at given position */
-	virtual unsigned int getB( unsigned int rui_x, unsigned int rui_y );
+	virtual unsigned int getB( unsigned int aui_x, unsigned int aui_y );
 
  private:
 	/** check and adapt scanline */
-	void checkUpdateScanline( unsigned int rui_y );
+	void checkUpdateScanline( unsigned int aui_y );
 
 	// Paintlib Stuff
 	PLAnyPicDecoder plDecoder;

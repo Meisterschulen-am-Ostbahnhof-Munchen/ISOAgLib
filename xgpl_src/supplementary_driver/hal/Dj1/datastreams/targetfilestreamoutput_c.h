@@ -119,10 +119,10 @@ public:
   ~TargetFileStreamOutput_c();
 
 	//! open a output stream
- 	bool open( CNAMESPACE::string& filename, FileMode_t rt_mode );
+ 	bool open( CNAMESPACE::string& filename, FileMode_t at_mode );
 
 	//! open a output stream
-	bool open( const char* filename, FileMode_t rt_mode );
+	bool open( const char* filename, FileMode_t at_mode );
 	//! close a output stream
   //! @param pathname if pathname != NULL => sync file and path
 	void close( const char* pathname = NULL);

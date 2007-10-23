@@ -94,11 +94,11 @@
 namespace __IsoAgLib {
 /**
   initialise this SetpointRemote_c to a well defined starting condition
-  @param rpc_processData pointer to containing ProcessData instance
+  @param apc_processData pointer to containing ProcessData instance
 */
-void SetpointRemote_c::init( ProcDataBase_c *const rpc_processData )
+void SetpointRemote_c::init( ProcDataBase_c *const apc_processData )
 {
-  SetpointBase_c::init( rpc_processData );
+  SetpointBase_c::init( apc_processData );
   i32_answeredTime = i32_commandedTime = 0;
   c_answeredMaster.setISOName( IsoName_c::IsoNameUnspecified() );
   c_answeredMe.setISOName( IsoName_c::IsoNameUnspecified() );
@@ -109,14 +109,14 @@ void SetpointRemote_c::init( ProcDataBase_c *const rpc_processData )
 
 /**
   assginment from another object
-  @param rrefc_src source SetpointRemote_c instance
+  @param arc_src source SetpointRemote_c instance
   @return reference to source for cmd like "setp1 = setp2 = setp3;"
 */
-const SetpointRemote_c& SetpointRemote_c::operator=( const SetpointRemote_c& rrefc_src ){
+const SetpointRemote_c& SetpointRemote_c::operator=( const SetpointRemote_c& arc_src ){
   //first call base function
-  SetpointBase_c::operator=( rrefc_src );
+  SetpointBase_c::operator=( arc_src );
 
-  assignFromSource( rrefc_src );
+  assignFromSource( arc_src );
 
   // return reference to source
   return *this;
@@ -124,20 +124,20 @@ const SetpointRemote_c& SetpointRemote_c::operator=( const SetpointRemote_c& rre
 
 /**
   copy constructor for SetpointRemote
-  @param rrefc_src source SetpointRemote_c instance
+  @param arc_src source SetpointRemote_c instance
 */
-SetpointRemote_c::SetpointRemote_c( const SetpointRemote_c& rrefc_src)
-  : SetpointBase_c( rrefc_src){
-  assignFromSource( rrefc_src );
+SetpointRemote_c::SetpointRemote_c( const SetpointRemote_c& arc_src)
+  : SetpointBase_c( arc_src){
+  assignFromSource( arc_src );
 }
 /** base function for assignment of element vars for copy constructor and operator= */
-void SetpointRemote_c::assignFromSource( const SetpointRemote_c& rrefc_src )
+void SetpointRemote_c::assignFromSource( const SetpointRemote_c& arc_src )
 { // now copy the elements
-  c_answeredMaster = rrefc_src.c_answeredMaster;
-  c_answeredMe = rrefc_src.c_answeredMe;
-  c_commanded = rrefc_src.c_commanded;
-  i32_answeredTime = rrefc_src.i32_answeredTime;
-  i32_commandedTime = rrefc_src.i32_commandedTime;
+  c_answeredMaster = arc_src.c_answeredMaster;
+  c_answeredMe = arc_src.c_answeredMe;
+  c_commanded = arc_src.c_commanded;
+  i32_answeredTime = arc_src.i32_answeredTime;
+  i32_commandedTime = arc_src.i32_commandedTime;
 }
 
 /** default destructor which has nothing to do */
@@ -153,9 +153,9 @@ SetpointRemote_c::~SetpointRemote_c(){
       * dependant error in CanIo_c on CAN send problems
   @return new exact setpoint to command
 */
-void SetpointRemote_c::setExact(float rf_val)
+void SetpointRemote_c::setExact(float af_val)
 { // set value in c_commanded
-  c_commanded.setExact( rf_val);
+  c_commanded.setExact( af_val);
   c_commanded.setISOName( processData().commanderISOName());
 
   // set time of command
@@ -167,7 +167,7 @@ void SetpointRemote_c::setExact(float rf_val)
                                                               GeneralCommand_c::exactValue,
                                                               GeneralCommand_c::setValue);
 
-  processData().sendValISOName(processData().commanderISOName(), rf_val);
+  processData().sendValISOName(processData().commanderISOName(), af_val);
 }
 
 #endif
@@ -180,9 +180,9 @@ void SetpointRemote_c::setExact(float rf_val)
       * dependant error in CanIo_c on CAN send problems
   @return new exact setpoint to command
 */
-void SetpointRemote_c::setExact( int32_t ri32_val){
+void SetpointRemote_c::setExact( int32_t ai32_val){
   // set value in c_commanded
-  c_commanded.setExact( ri32_val);
+  c_commanded.setExact( ai32_val);
   c_commanded.setISOName( processData().commanderISOName());
 
   // set time of command
@@ -193,7 +193,7 @@ void SetpointRemote_c::setExact( int32_t ri32_val){
                                                               GeneralCommand_c::exactValue,
                                                               GeneralCommand_c::setValue);
 
-  processData().sendValISOName(processData().commanderISOName(), ri32_val);
+  processData().sendValISOName(processData().commanderISOName(), ai32_val);
 }
 
 
@@ -205,9 +205,9 @@ void SetpointRemote_c::setExact( int32_t ri32_val){
       * dependant error in CanIo_c on CAN send problems
   @return new minimum setpoint to command
 */
-void SetpointRemote_c::setMin( int32_t ri32_val){
+void SetpointRemote_c::setMin( int32_t ai32_val){
   // set value in c_commanded
-  c_commanded.setMin( ri32_val);
+  c_commanded.setMin( ai32_val);
   c_commanded.setISOName( processData().commanderISOName());
 
   // set time of command
@@ -218,7 +218,7 @@ void SetpointRemote_c::setMin( int32_t ri32_val){
                                                               GeneralCommand_c::minValue,
                                                               GeneralCommand_c::setValue);
 
-  processData().sendValISOName(processData().commanderISOName(), ri32_val);
+  processData().sendValISOName(processData().commanderISOName(), ai32_val);
 }
 
 /**
@@ -229,9 +229,9 @@ void SetpointRemote_c::setMin( int32_t ri32_val){
       * dependant error in CanIo_c on CAN send problems
   @return new maximum setpoint to command
 */
-void SetpointRemote_c::setMax( int32_t ri32_val){
+void SetpointRemote_c::setMax( int32_t ai32_val){
   // set value in c_commanded
-  c_commanded.setMax( ri32_val);
+  c_commanded.setMax( ai32_val);
   c_commanded.setISOName( processData().commanderISOName());
 
   // set time of command
@@ -242,7 +242,7 @@ void SetpointRemote_c::setMax( int32_t ri32_val){
                                                               GeneralCommand_c::maxValue,
                                                               GeneralCommand_c::setValue);
   // send command to owner: PD=0, MOD=3
-  processData().sendValISOName(processData().commanderISOName(), ri32_val);
+  processData().sendValISOName(processData().commanderISOName(), ai32_val);
 }
 
 /**
@@ -253,9 +253,9 @@ void SetpointRemote_c::setMax( int32_t ri32_val){
       * dependant error in CanIo_c on CAN send problems
   @return new default setpoint to command
 */
-void SetpointRemote_c::setDefault( int32_t ri32_val){
+void SetpointRemote_c::setDefault( int32_t ai32_val){
   // set value in c_commanded
-  c_commanded.setDefault( ri32_val);
+  c_commanded.setDefault( ai32_val);
   c_commanded.setISOName( processData().commanderISOName());
 
   // set time of command
@@ -266,7 +266,7 @@ void SetpointRemote_c::setDefault( int32_t ri32_val){
                                                               GeneralCommand_c::defaultValue,
                                                               GeneralCommand_c::setValue);
   // send command to owner:
-  processData().sendValISOName(processData().commanderISOName(), ri32_val);
+  processData().sendValISOName(processData().commanderISOName(), ai32_val);
 }
 
 /**

@@ -173,7 +173,7 @@ public:
 
   bool processElement (DOMNode *n, uint64_t ombType/* const char* rpcc_inKey, const char* rpcc_inButton, */);
 
-  bool processChildElements(unsigned int& ref_objChildPoints, DOMNode *ref_n);
+  bool processChildElements(unsigned int& r_objChildPoints, DOMNode *r_n);
 
   void clean_exit(char* error_message = NULL);
 
@@ -203,13 +203,13 @@ public:
 
   void getKeyCode();
 
-  void init (const char* xmlFile, std::basic_string<char>* dictionary = NULL, bool rb_externalize=false);
+  void init (const char* xmlFile, std::basic_string<char>* dictionary = NULL, bool ab_externalize=false);
 
   bool prepareFileNameAndDirectory (std::basic_string<char>* pch_fileName);
 
-  void convertIdReferenceToNameReference (int ri_attrType);
+  void convertIdReferenceToNameReference (int ai_attrType);
 
-  signed long int idOrName_toi (char* rpc_string, bool rb_isMacro);
+  signed long int idOrName_toi (char* apc_string, bool ab_isMacro);
 
 private:
   signed int strlenUnescaped (const char* pcc_string);
@@ -220,7 +220,7 @@ private:
 
   signed long int setID (const char* objName, unsigned int wishID);
 
-  void defaultAttributes (unsigned int r_objType);
+  void defaultAttributes (unsigned int a_objType);
 
   void convertIdReferencesToNameReferences();
 
@@ -243,7 +243,7 @@ private:
 
   void autoDetectLanguage (DOMNode *n);
 
-  void splitFunction (bool rb_onlyClose);
+  void splitFunction (bool ab_onlyClose);
 
 private:
   bool firstLineFileE;
@@ -273,7 +273,7 @@ private:
 
   int amountXmlFiles;
   std::basic_string<char> c_directory;
-  const char* rc_workDir;
+  const char* ac_workDir;
   char xmlFiles [256] [1024+1];
   const char* pcch_poolIdent;
 

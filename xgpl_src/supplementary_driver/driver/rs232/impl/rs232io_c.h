@@ -108,8 +108,8 @@
 #if defined(USE_RS232_CHANNEL)
   #define RS232_CHANNEL_PARAM_SINGLE ui8_channel
   #define RS232_CHANNEL_PARAM_LAST , ui8_channel
-  #define RS232_CHANNEL_CALL_PARAM_SINGLE rui8_channel
-  #define RS232_CHANNEL_CALL_PARAM_LAST , rui8_channel
+  #define RS232_CHANNEL_CALL_PARAM_SINGLE aui8_channel
+  #define RS232_CHANNEL_CALL_PARAM_LAST , aui8_channel
 #else
   #define RS232_CHANNEL_PARAM_SINGLE
   #define RS232_CHANNEL_PARAM_LAST
@@ -154,22 +154,22 @@ public:
 
   /**
     init function which initialises the BIOS RS232
-    @param rui16_baudrate baudrate {75, 600, 1200, 2400, 4800, 9600, 19200}
+    @param aui16_baudrate baudrate {75, 600, 1200, 2400, 4800, 9600, 19200}
     @param ren_dataMode data mode setting of {7,8}_{N,O,E}_{1,2}
-    @param rb_xonXoff use XON/XOFF sw handshake (true, false)
-    @param rui16_sndPuf sending puffer size
-    @param rui16_recPuf recieving puffer size
+    @param ab_xonXoff use XON/XOFF sw handshake (true, false)
+    @param aui16_sndPuf sending puffer size
+    @param aui16_recPuf recieving puffer size
 
     possible errors:
         * Err_c::badAlloc not enough memory for allocating the puffers
         * Err_c::range one of the configuration vals is not in allowed ranges
   */
-  bool init(uint16_t rui16_baudrate,
+  bool init(uint16_t aui16_baudrate,
           t_dataMode ren_dataMode,
-          bool rb_xonXoff = CONFIG_RS232_DEFAULT_XON_XOFF,
-          uint16_t rui16_sndPuf = CONFIG_RS232_DEFAULT_SND_PUF_SIZE, uint16_t rui16_recPuf = CONFIG_RS232_DEFAULT_REC_PUF_SIZE
+          bool ab_xonXoff = CONFIG_RS232_DEFAULT_XON_XOFF,
+          uint16_t aui16_sndPuf = CONFIG_RS232_DEFAULT_SND_PUF_SIZE, uint16_t aui16_recPuf = CONFIG_RS232_DEFAULT_REC_PUF_SIZE
           #ifdef USE_RS232_CHANNEL
-          ,uint8_t rui8_channel = 0
+          ,uint8_t aui8_channel = 0
           #endif
           );
 
@@ -191,13 +191,13 @@ public:
 
   /**
     set the baudrate to a new value
-    @param rui16_baudrate baudrate {75, 600, 1200, 2400, 4800, 9600, 19200}
+    @param aui16_baudrate baudrate {75, 600, 1200, 2400, 4800, 9600, 19200}
 
     possible errors:
         * Err_c::range the wanted baudrate is not allowed
     @return true -> setting successful
   */
-  bool setBaudrate(uint16_t rui16_baudrate);
+  bool setBaudrate(uint16_t aui16_baudrate);
 
   /**
     deliver the actual baudrate
@@ -212,13 +212,13 @@ public:
 
   /**
     set send puffer size
-    @param rui16_sndPuf sending puffer size
+    @param aui16_sndPuf sending puffer size
 
     possible errors:
         * Err_c::badAlloc not enough memory for allocating the puffer
     @return true -> allocating of puffer successful
   */
-  bool setSndPufferSize(uint16_t rui16_pufferSize);
+  bool setSndPufferSize(uint16_t aui16_pufferSize);
   /**
     deliver the actual send puffer size
     @return send puffer size
@@ -230,13 +230,13 @@ public:
   void clearSndPuffer()const{HAL::clearRs232TxBuffer(RS232_CHANNEL_PARAM_SINGLE);};
   /**
     set receive puffer size
-    @param rui16_recPuf receiving puffer size
+    @param aui16_recPuf receiving puffer size
 
     possible errors:
         * Err_c::badAlloc not enough memory for allocating the puffer
     @return true -> allocating of puffer successful
   */
-  bool setRecPufferSize(uint16_t rui16_pufferSize);
+  bool setRecPufferSize(uint16_t aui16_pufferSize);
   /**
     deliver the actual receive puffer size
     @return receive puffer size
@@ -272,92 +272,92 @@ public:
 
     possible errors:
         * Err_c::rs232_overflow send buffer puffer overflow during send
-    @param rpb_data pointer to data string
-    @param rui8_len length of data string
+    @param apb_data pointer to data string
+    @param aui8_len length of data string
   */
-  void send(const uint8_t* rpData, uint8_t rui8_len);
+  void send(const uint8_t* rpData, uint8_t aui8_len);
   /**
     send string on RS232
 
     possible errors:
         * Err_c::rs232_overflow send buffer puffer overflow during send
-    @param rrefc_data sent data string
+    @param arc_data sent data string
     @return refernce to RS232IO_c for cmd like "rs232 << data1 << data2;"
   */
-  RS232IO_c& operator<<(const STL_NAMESPACE::string& rrefc_data);
+  RS232IO_c& operator<<(const STL_NAMESPACE::string& arc_data);
   /**
     send NULL terminated string on RS232 (terminating NULL isn't sent)
 
     possible errors:
         * Err_c::rs232_overflow send buffer puffer overflow during send
-    @param rpc_data pointer to NULL terminated string to send
+    @param apc_data pointer to NULL terminated string to send
     @return refernce to RS232IO_c for cmd like "rs232 << data1 << data2;"
   */
-  RS232IO_c& operator<<(const char *const rpc_data);
+  RS232IO_c& operator<<(const char *const apc_data);
   /**
     send single uint8_t on RS232
 
     possible errors:
         * Err_c::rs232_overflow send buffer puffer overflow during send
-    @param rb_data sent data byte
+    @param ab_data sent data byte
     @return refernce to RS232IO_c for cmd like "rs232 << data1 << data2;"
   */
-  RS232IO_c& operator<<(uint8_t rb_data);
+  RS232IO_c& operator<<(uint8_t ab_data);
   /**
     send single int8_t on RS232
 
     possible errors:
         * Err_c::rs232_overflow send buffer puffer overflow during send
-    @param rc_data sent data char
+    @param ac_data sent data char
     @return refernce to RS232IO_c for cmd like "rs232 << data1 << data2;"
   */
-  RS232IO_c& operator<<(int8_t rc_data);
+  RS232IO_c& operator<<(int8_t ac_data);
   /**
     send uint16_t (2byte unsigned) value as text on RS232
 
     possible errors:
         * Err_c::rs232_overflow send buffer puffer overflow during send
-    @param rui16_data sent data byte
+    @param aui16_data sent data byte
     @return refernce to RS232IO_c for cmd like "rs232 << data1 << data2;"
   */
-  RS232IO_c& operator<<(uint16_t rui16_data);
+  RS232IO_c& operator<<(uint16_t aui16_data);
   /**
     send int16_t (2 uint8_t unsigned) value as text on RS232
 
     possible errors:
         * Err_c::rs232_overflow send buffer puffer overflow during send
-    @param ri16_data sent data byte
+    @param ai16_data sent data byte
     @return refernce to RS232IO_c for cmd like "rs232 << data1 << data2;"
   */
-  RS232IO_c& operator<<(int16_t ri16_data);
+  RS232IO_c& operator<<(int16_t ai16_data);
   /**
     send uint32_t (4 uint8_t unsigned) value as text on RS232
 
     possible errors:
         * Err_c::rs232_overflow send buffer puffer overflow during send
-    @param rui32_data sent data byte
+    @param aui32_data sent data byte
     @return refernce to RS232IO_c for cmd like "rs232 << data1 << data2;"
   */
-  RS232IO_c& operator<<(uint32_t rui32_data);
+  RS232IO_c& operator<<(uint32_t aui32_data);
   /**
     send int32_t (4 uint8_t signed) value as text on RS232
 
     possible errors:
         * Err_c::rs232_overflow send buffer puffer overflow during send
-    @param ri32_data sent data byte
+    @param ai32_data sent data byte
     @return refernce to RS232IO_c for cmd like "rs232 << data1 << data2;"
   */
-  RS232IO_c& operator<<(int32_t ri32_data);
+  RS232IO_c& operator<<(int32_t ai32_data);
   #ifdef USE_FLOAT_DATA_TYPE
   /**
     send float value as text on RS232
 
     possible errors:
         * Err_c::rs232_overflow send buffer puffer overflow during send
-    @param ri32_data sent data byte
+    @param ai32_data sent data byte
     @return refernce to RS232IO_c for cmd like "rs232 << data1 << data2;"
   */
-  RS232IO_c& operator<<(float rf_data);
+  RS232IO_c& operator<<(float af_data);
   #endif
 
   /* ******************************** */
@@ -371,9 +371,9 @@ public:
     possible errors:
         * Err_c::rs232_underflow receive puffer underflow during receive
     @param pb_data pointer to data string
-    @param rui16_len length of data string
+    @param aui16_len length of data string
   */
-  void receive(uint8_t* pData, uint16_t rui16_len);
+  void receive(uint8_t* pData, uint16_t aui16_len);
   /** read a line to the next apperance of '\n'.
       read nothing if the delimiter isn't found.
     @param pui8_data    pointer to puffer for writing the data
@@ -385,17 +385,17 @@ public:
 
   /**
     receive whitespace (or puffer end) terminated string on RS232
-    @param refc_data reference to data string for receive
+    @param rc_data reference to data string for receive
     @return refernce to RS232IO_c for cmd like "rs232 >> data1 >> data2;"
   */
-  RS232IO_c& operator>>(STL_NAMESPACE::string& refc_data);
+  RS232IO_c& operator>>(STL_NAMESPACE::string& rc_data);
   /**
     read the received RS232 string into a deque.
     read until the end of the buffer.
-    @param refc_data reference to data deque for receive
+    @param rc_data reference to data deque for receive
     @return refernce to RS232IO_c for cmd like "rs232 >> data1 >> data2;"
    */
-  RS232IO_c& operator>>(STL_NAMESPACE::deque<char>& refc_data);
+  RS232IO_c& operator>>(STL_NAMESPACE::deque<char>& rc_data);
   /**
     receive '\n' (or puffer end) terminated string on RS232
     @param pb_data pointer to string to receive
@@ -515,7 +515,7 @@ private:
   /** C-style function, to get access to the unique RS232IO_c singleton instance
     * if more than one RS232 channel is used for IsoAgLib, an index must be given to select the wanted channel
     */
-  RS232IO_c& getRs232Instance( uint8_t rui8_instance = 0 );
+  RS232IO_c& getRs232Instance( uint8_t aui8_instance = 0 );
 #else
   /** C-style function, to get access to the unique RS232IO_c singleton instance */
   RS232IO_c& getRs232Instance( void );

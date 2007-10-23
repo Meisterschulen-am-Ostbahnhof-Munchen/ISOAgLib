@@ -25,10 +25,10 @@ namespace __HAL
 
       Use symbolic output channels form "config.h"!
  
-      @param rui8_channel channel number of output
+      @param aui8_channel channel number of output
       @return max possible value
    */
-   uint16_t getMaxDigout(uint8_t rui8_channel);
+   uint16_t getMaxDigout(uint8_t aui8_channel);
 
    /**
       set outputs by channel
@@ -36,13 +36,13 @@ namespace __HAL
       No AMS5-BIOS channel is a "PWM" channel!
       Use symbolic output channels form "config.h"!
 
-      @param  rui8_channel channel number of output
+      @param  aui8_channel channel number of output
       @param  wValue range depends on channel!
       @return HAL_NO_ERR
               HAL_RANGE_ERR  value is out of range
               HAL_CONFIG_ERR channel is not availabel 
    */
-   int16_t setDigout(uint8_t rui8_channel, uint16_t wValue);
+   int16_t setDigout(uint8_t aui8_channel, uint16_t wValue);
 
    /*@}*/
 }

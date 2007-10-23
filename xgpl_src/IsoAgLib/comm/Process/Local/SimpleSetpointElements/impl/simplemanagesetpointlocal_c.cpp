@@ -128,29 +128,29 @@ namespace __IsoAgLib {
 
 /**
   initialise this SimpleManageSetpointLocal_c instance to a well defined initial state
-  @param rpc_processData optional pointer to containing ProcessData instance
+  @param apc_processData optional pointer to containing ProcessData instance
 */
-void SimpleManageSetpointLocal_c::init( ProcDataBase_c *const rpc_processData )
+void SimpleManageSetpointLocal_c::init( ProcDataBase_c *const apc_processData )
 {
-  ProcessElementBase_c::set( rpc_processData );
+  ProcessElementBase_c::set( apc_processData );
   #if !defined(HANDLE_SETPOINT_MEASURE_EQUIVALENT)
     i32_setpointMasterVal = 0;
   #endif
 }
 /** copy constructor */
-SimpleManageSetpointLocal_c::SimpleManageSetpointLocal_c( const SimpleManageSetpointLocal_c& rrefc_src )
-: ProcessElementBase_c( rrefc_src )
+SimpleManageSetpointLocal_c::SimpleManageSetpointLocal_c( const SimpleManageSetpointLocal_c& arc_src )
+: ProcessElementBase_c( arc_src )
 {
   #if !defined(HANDLE_SETPOINT_MEASURE_EQUIVALENT)
-    i32_setpointMasterVal = rrefc_src.i32_setpointMasterVal;
+    i32_setpointMasterVal = arc_src.i32_setpointMasterVal;
   #endif
 }
 /** assignment operator */
-const SimpleManageSetpointLocal_c& SimpleManageSetpointLocal_c::operator=( const SimpleManageSetpointLocal_c& rrefc_src )
+const SimpleManageSetpointLocal_c& SimpleManageSetpointLocal_c::operator=( const SimpleManageSetpointLocal_c& arc_src )
 {
-  ProcessElementBase_c::operator=( rrefc_src );
+  ProcessElementBase_c::operator=( arc_src );
   #if !defined(HANDLE_SETPOINT_MEASURE_EQUIVALENT)
-    i32_setpointMasterVal = rrefc_src.i32_setpointMasterVal;
+    i32_setpointMasterVal = arc_src.i32_setpointMasterVal;
   #endif
 
   return *this;
@@ -206,27 +206,27 @@ void SimpleManageSetpointLocal_c::processSetpoint(){
 
 /**
   send a sub-setpoint (selected by MOD) to a specified target (selected by GPT)
-  @param rui8_mod select sub-type of setpoint
-  @param rc_targetISOName ISOName of target
+  @param aui8_mod select sub-type of setpoint
+  @param ac_targetISOName ISOName of target
   @param ren_type optional PRI specifier of the message (default Proc_c::Target )
   @param en_valueGroup: min/max/exact/default
   @param en_command
   @return true -> successful sent
 */
-bool SimpleManageSetpointLocal_c::sendSetpointMod(const IsoName_c& rc_targetISOName,
+bool SimpleManageSetpointLocal_c::sendSetpointMod(const IsoName_c& ac_targetISOName,
                                                   GeneralCommand_c::ValueGroup_t en_valueGroup,
                                                   GeneralCommand_c::CommandType_t en_command ) const {
   // prepare general command in process pkg
   getProcessInstance4Comm().data().c_generalCommand.setValues(true /* isSetpoint */, false, /* isRequest */
                                                               en_valueGroup, en_command);
-  //if ( rui8_mod != 1 ) {
+  //if ( aui8_mod != 1 ) {
     // not percent
     #ifdef USE_FLOAT_DATA_TYPE
     if (valType() == float_val)
-      return processDataConst().sendValISOName(rc_targetISOName, setpointMasterValFloat());
+      return processDataConst().sendValISOName(ac_targetISOName, setpointMasterValFloat());
     else
     #endif
-      return processDataConst().sendValISOName(rc_targetISOName, setpointMasterVal());
+      return processDataConst().sendValISOName(ac_targetISOName, setpointMasterVal());
   //}
 }
 
@@ -264,31 +264,31 @@ return f_masterVal;
 
 /**
   set the setpoint value
-  @param ri32_val new setpoint value
+  @param ai32_val new setpoint value
 */
-void SimpleManageSetpointLocal_c::setSetpointMasterVal(int32_t ri32_val)
+void SimpleManageSetpointLocal_c::setSetpointMasterVal(int32_t ai32_val)
 {
 #ifndef HANDLE_SETPOINT_MEASURE_EQUIVALENT
 processData().setValType(i32_val);
-i32_setpointMasterVal = ri32_val;
+i32_setpointMasterVal = ai32_val;
 #else // HANDLE_SETPOINT_MEASURE_EQUIVALENT
 ProcDataLocalBase_c& c_localProcBase = static_cast<ProcDataLocalBase_c&>(processData());
-c_localProcBase.setMasterMeasurementVal( ri32_val );
+c_localProcBase.setMasterMeasurementVal( ai32_val );
 #endif // HANDLE_SETPOINT_MEASURE_EQUIVALENT
 }
 #ifdef USE_FLOAT_DATA_TYPE
 /**
   set the setpoint value as float value
-  @param rf_val new setpoint value
+  @param af_val new setpoint value
 */
-void SimpleManageSetpointLocal_c::setSetpointMasterVal(float rf_val)
+void SimpleManageSetpointLocal_c::setSetpointMasterVal(float af_val)
 {
 #ifndef HANDLE_SETPOINT_MEASURE_EQUIVALENT
 processData().setValType(float_val);
-f_setpointMasterVal = rf_val;
+f_setpointMasterVal = af_val;
 #else // HANDLE_SETPOINT_MEASURE_EQUIVALEN
 ProcDataLocalBase_c& c_localProcBase = static_cast<ProcDataLocalBase_c&>(processData());
-c_localProcBase.setMasterMeasurementVal( rf_val );
+c_localProcBase.setMasterMeasurementVal( af_val );
 #endif // HANDLE_SETPOINT_MEASURE_EQUIVALEN
 }
 #endif // USE_FLOAT_DATA_TYPE

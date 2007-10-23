@@ -75,7 +75,7 @@ class SpecialParsingBasePropTag_c
 {
  public:
   /** check if found tag is invalid at this position */
-  virtual bool checkTag(DOMNode* rp_Node, unsigned int rui_objectType, uint64_t r_ui64_ombType) = 0;
+  virtual bool checkTag(DOMNode* ap_Node, unsigned int aui_objectType, uint64_t a_ui64_ombType) = 0;
 
   /** that function tries to parse an unknown tag from vt2iso
     * @return returns 0 if successful else anything unequal to 0
@@ -83,7 +83,7 @@ class SpecialParsingBasePropTag_c
     * @param objectType object type of pNode
     * @param pb_isObjID pointer to boolean
   */
-  virtual bool parseUnknownTag (DOMNode* rp_Node, unsigned int rui_objectType, char* rpcch_objName) = 0;
+  virtual bool parseUnknownTag (DOMNode* ap_Node, unsigned int aui_objectType, char* rpcch_objName) = 0;
 
   /// returns the object type from a given DOMNode if type is known and sets it
   virtual uint16_t getObjType (const char* node_name) { return ui8_objType; }
@@ -92,10 +92,10 @@ class SpecialParsingBasePropTag_c
   virtual void setUnknownAttributes (bool b_hasUnknownAttr) {}
 
   /// simple setter function to set the object type
-  void setObjType (uint8_t rui8_objType) { ui8_objType = rui8_objType; }
+  void setObjType (uint8_t aui8_objType) { ui8_objType = aui8_objType; }
 
   /// set the object id for the current handled tag element
-  virtual void setObjID (uint16_t rui16_objID) = 0;
+  virtual void setObjID (uint16_t aui16_objID) = 0;
 
   /** that functions creates all necessary files and prints out all collected data */
   virtual void outputCollectedData2Files(const char attrString[maxAttributeNames] [stringLength+1], const bool attrIsGiven[maxAttributeNames]) {}

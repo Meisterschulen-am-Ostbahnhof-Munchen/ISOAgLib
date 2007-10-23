@@ -101,20 +101,20 @@
 using namespace std;
 
 //! open a input stream
-bool TargetFileStreamInput_c::open( const char* filename, FileMode_t rt_mode )
+bool TargetFileStreamInput_c::open( const char* filename, FileMode_t at_mode )
 {
 #ifndef USE_BUFFERED_READ
 
   b_eofReached = false;
 
-  if ( ( rt_mode & StreamOut ) != 0 ) return false;
+  if ( ( at_mode & StreamOut ) != 0 ) return false;
 
   MACRO_IOS::openmode mode = MACRO_IOS::in;
 
-  if ( ( rt_mode & StreamAte   )  != 0 ) mode = MACRO_IOS::openmode( mode | MACRO_IOS::ate    );
-  if ( ( rt_mode & StreamApp   )  != 0 ) mode = MACRO_IOS::openmode( mode | MACRO_IOS::app    );
-  if ( ( rt_mode & StreamTrunc )  != 0 ) mode = MACRO_IOS::openmode( mode | MACRO_IOS::trunc  );
-  if ( ( rt_mode & StreamBinary ) != 0 ) mode = MACRO_IOS::openmode( mode | MACRO_IOS::binary );
+  if ( ( at_mode & StreamAte   )  != 0 ) mode = MACRO_IOS::openmode( mode | MACRO_IOS::ate    );
+  if ( ( at_mode & StreamApp   )  != 0 ) mode = MACRO_IOS::openmode( mode | MACRO_IOS::app    );
+  if ( ( at_mode & StreamTrunc )  != 0 ) mode = MACRO_IOS::openmode( mode | MACRO_IOS::trunc  );
+  if ( ( at_mode & StreamBinary ) != 0 ) mode = MACRO_IOS::openmode( mode | MACRO_IOS::binary );
 
 
   static_cast<ifstream*>(this)->open( filename, mode );
@@ -126,9 +126,9 @@ bool TargetFileStreamInput_c::open( const char* filename, FileMode_t rt_mode )
 
 #else
 
-  if ( ( rt_mode & StreamOut ) != 0 ) return false;
+  if ( ( at_mode & StreamOut ) != 0 ) return false;
 
-  if ( ( rt_mode & StreamTrunc ) != 0 )
+  if ( ( at_mode & StreamTrunc ) != 0 )
   {
     fileDescr = fopen(filename, "w"); // Truncate  file  to  zero length
     if (NULL == fileDescr)
@@ -138,7 +138,7 @@ bool TargetFileStreamInput_c::open( const char* filename, FileMode_t rt_mode )
     fileDescr = NULL;
   }
 
-  if ( ( rt_mode & StreamApp ) != 0 )
+  if ( ( at_mode & StreamApp ) != 0 )
     fileDescr = fopen(filename, "a+"); // open for reading and appending, file position for reading at the begin
   else
     fileDescr = fopen(filename, "r"); // open for reading
@@ -146,7 +146,7 @@ bool TargetFileStreamInput_c::open( const char* filename, FileMode_t rt_mode )
   if (NULL == fileDescr)
     return false;
 
-  if ( ( rt_mode & StreamAte ) != 0 )
+  if ( ( at_mode & StreamAte ) != 0 )
     fseek(fileDescr, 0, SEEK_END); // file position for reading at end
 
   b_eofReached = feof(fileDescr);

@@ -85,31 +85,31 @@ class Vt2IsoImageBase_c
 	/** deliver the b/w thresholded value at given bitmap position
 		( calculate the optimal bitmap threshold if not yet defined )
 	 */
-	unsigned int get1BitPixel( unsigned int rui_x, unsigned int rui_y );
+	unsigned int get1BitPixel( unsigned int aui_x, unsigned int aui_y );
 	/** get the ISO virtual table indexed bitmap value for 4Bit ( 16color ) target bitmap */
-	unsigned int get4BitPixel( unsigned int rui_x, unsigned int rui_y );
+	unsigned int get4BitPixel( unsigned int aui_x, unsigned int aui_y );
 	/** get the ISO virtual table indexed bitmap value for 8Bit ( 256color ) target bitmap */
-	unsigned int get8BitPixel( unsigned int rui_x, unsigned int rui_y );
+	unsigned int get8BitPixel( unsigned int aui_x, unsigned int aui_y );
 
 	/** write the Bitmap to the given buffer and return amount of written Bytes */
-	unsigned int write1BitBitmap( unsigned char* pui_bitmap, unsigned int rui_maxSize = ( 480 * 480 ) );
+	unsigned int write1BitBitmap( unsigned char* pui_bitmap, unsigned int aui_maxSize = ( 480 * 480 ) );
 	/** write the Bitmap to the given buffer and return amount of written Bytes */
-	unsigned int write4BitBitmap( unsigned char* pui_bitmap, unsigned int rui_maxSize = ( 480 * 480 ) );
+	unsigned int write4BitBitmap( unsigned char* pui_bitmap, unsigned int aui_maxSize = ( 480 * 480 ) );
 	/** write the Bitmap to the given buffer and return amount of written Bytes */
-	unsigned int write8BitBitmap( unsigned char* pui_bitmap, unsigned int rui_maxSize = ( 480 * 480 ) );
+	unsigned int write8BitBitmap( unsigned char* pui_bitmap, unsigned int aui_maxSize = ( 480 * 480 ) );
 	unsigned int objRawBitmapBytes [3];
  protected:
 	/** deliver R-value of bitmap at given position */
-	virtual unsigned int getR( unsigned int rui_x, unsigned int rui_y ) = 0;
+	virtual unsigned int getR( unsigned int aui_x, unsigned int aui_y ) = 0;
 	/** deliver G-value of bitmap at given position */
-	virtual unsigned int getG( unsigned int rui_x, unsigned int rui_y ) = 0;
+	virtual unsigned int getG( unsigned int aui_x, unsigned int aui_y ) = 0;
 	/** deliver B-value of bitmap at given position */
-	virtual unsigned int getB( unsigned int rui_x, unsigned int rui_y ) = 0;
+	virtual unsigned int getB( unsigned int aui_x, unsigned int aui_y ) = 0;
 
   /** deliver Palette-Index of bitmap
    @return -1 for NOT IN PALETTE MODE
    @return 0..255 for PALETTE INDEX */
-  virtual int getPaletteIndex (unsigned int rui_x, unsigned int rui_y) = 0;
+  virtual int getPaletteIndex (unsigned int aui_x, unsigned int aui_y) = 0;
 
 	/** calculate the optimal threshold for conversion to b/w */
 	void getOptimalBwThreshold( void );
@@ -123,9 +123,9 @@ class Vt2IsoImageBase_c
 
 	#if 0
 	/** get 4Bit palette pixel value for selected pixel */
-	unsigned int get4BitPalettePixel( unsigned int rui_x, unsigned int rui_y ) = 0;
+	unsigned int get4BitPalettePixel( unsigned int aui_x, unsigned int aui_y ) = 0;
 	/** get 8Bit palette pixel value for selected pixel */
-	unsigned int get8BitPalettePixel( unsigned int rui_x, unsigned int rui_y ) = 0;
+	unsigned int get8BitPalettePixel( unsigned int aui_x, unsigned int aui_y ) = 0;
 	#endif
 	/** current threshold for b/w derive - default -1 == not yet calculated */
 	int i_currentThreshold;

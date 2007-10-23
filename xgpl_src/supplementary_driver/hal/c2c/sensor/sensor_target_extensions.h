@@ -78,13 +78,13 @@ namespace __HAL {
 /**
   init counter for trigger events on digital input;
   rising edges are counted;
-  @param rui16_timebase timebase to calculate periods, frequency
+  @param aui16_timebase timebase to calculate periods, frequency
                      should be at least longer than longest
                      awaited signal period [msec.]
-  @param rb_risingEdge true -> counter triggers on rising edge; else on falling edge
+  @param ab_risingEdge true -> counter triggers on rising edge; else on falling edge
   @return C_NO_ERR if no error occured
 */
-int16_t init_counter(uint16_t rui16_timebase, bool rb_risingEdge);
+int16_t init_counter(uint16_t aui16_timebase, bool ab_risingEdge);
 /**
   get counter value of an digital counter input
   @return counter events since init or last reset

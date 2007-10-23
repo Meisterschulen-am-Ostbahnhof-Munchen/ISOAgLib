@@ -470,13 +470,13 @@ unsigned int objectIsType (char* lookup_name)
 };
 
 
-unsigned int idOrName_toi(const char* rpc_string, unsigned int parentObjType, bool b_skipParentCheck = FALSE)
+unsigned int idOrName_toi(const char* apc_string, unsigned int parentObjType, bool b_skipParentCheck = FALSE)
 {
-  if (rpc_string [0] == 0x00) clean_exit (-1, "*** ERROR *** idOrName_toi: Empty 'object_id' attribute!\n\n");
+  if (apc_string [0] == 0x00) clean_exit (-1, "*** ERROR *** idOrName_toi: Empty 'object_id' attribute!\n\n");
   /** @todo check if all chars in the string are numbers, not only the first! */
-  if ((rpc_string [0] >= '0') && (rpc_string [0] <= '9')) return atoi (rpc_string);
+  if ((apc_string [0] >= '0') && (apc_string [0] <= '9')) return atoi (apc_string);
   // Starting with a letter, so look up id!
-  return getID (rpc_string, false, 0, parentObjType, b_skipParentCheck);
+  return getID (apc_string, false, 0, parentObjType, b_skipParentCheck);
 };
 
 
@@ -742,14 +742,14 @@ uint8_t cntNodeChild(DOMNode *node, unsigned int objType)
 
 // ---------------------------------------------------------------------------
 //
-//  static void processElement (DOMNode *n, unsigned int omb, const char* rc_workDir, signed int parentObjType) --- Recursively process all ELEMENT XML-Tags...
+//  static void processElement (DOMNode *n, unsigned int omb, const char* ac_workDir, signed int parentObjType) --- Recursively process all ELEMENT XML-Tags...
 // we're in an element here, not text or something else...
 //
 // ---------------------------------------------------------------------------
 #ifdef WIN32
-void processElement (DOMNode *node, uint64_t ombType, const char* rc_workDir, signed int parentObjType = -1, std::vector<uint16_t>* pvec_ID = NULL, std::stringstream* p_buffer = NULL)
+void processElement (DOMNode *node, uint64_t ombType, const char* ac_workDir, signed int parentObjType = -1, std::vector<uint16_t>* pvec_ID = NULL, std::stringstream* p_buffer = NULL)
 #else
-static void processElement (DOMNode *node, uint64_t ombType, const char* rc_workDir, signed int parentObjType = -1, std::vector<uint16_t>* pvec_ID = NULL, std::stringstream* p_buffer = NULL)
+static void processElement (DOMNode *node, uint64_t ombType, const char* ac_workDir, signed int parentObjType = -1, std::vector<uint16_t>* pvec_ID = NULL, std::stringstream* p_buffer = NULL)
 #endif
 {
   DOMNode *child;
@@ -1129,7 +1129,7 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
         for (child = node->getFirstChild(); child != 0; child=child->getNextSibling())
         {
           if (child->getNodeType() == DOMNode::ELEMENT_NODE)
-            processElement (child, omcType, rc_workDir, objType,&vec_EltchildID,&childBuffer);
+            processElement (child, omcType, ac_workDir, objType,&vec_EltchildID,&childBuffer);
         }
 
         // retrive Device Element Attributes which were overwritten during reccurssive call
@@ -1501,7 +1501,7 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
   for (child = node->getFirstChild(); child != 0; child=child->getNextSibling())
   {
     if (child->getNodeType() == DOMNode::ELEMENT_NODE)
-      processElement (child, omcType, rc_workDir, objType);
+      processElement (child, omcType, ac_workDir, objType);
   }
 }
 

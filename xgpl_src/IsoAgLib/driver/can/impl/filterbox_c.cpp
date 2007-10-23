@@ -121,24 +121,24 @@ FilterBox_c::FilterBox_c()
   setting pointer to the root CanIo_c and to the according CANCustomer
   instance; even define specific mask and filter setting
 
-  @param rpc_customer  pointer to the CanCustomer_c instance, which creates this FilterBox_c instance
-  @param rt_mask       mask for this Filer_Box (MASK_TYPE defined in isoaglib_config.h)
-  @param rt_filter     filter for this Filer_Box (MASK_TYPE defined in isoaglib_config.h)
+  @param apc_customer  pointer to the CanCustomer_c instance, which creates this FilterBox_c instance
+  @param at_mask       mask for this Filer_Box (MASK_TYPE defined in isoaglib_config.h)
+  @param at_filter     filter for this Filer_Box (MASK_TYPE defined in isoaglib_config.h)
   @param ren_E         select if FilterBox_c is used for standard 11bit or extended 29bit ident
-  @param rpc_filterBox optional parameter for getting to filterboxes connected together into the same MsgObj!
+  @param apc_filterBox optional parameter for getting to filterboxes connected together into the same MsgObj!
   @exception badAlloc
 FilterBox_c::FilterBox_c(CanCustomer_c* rrpc_customer,
-                         MASK_TYPE rt_mask, MASK_TYPE rt_filter,
-                         Ident_c::identType_t ren_identType, FilterBox_c* rpc_filterBox)
-  : c_filter(rt_filter, ren_identType),
-    c_mask(rt_mask, ren_identType),
-    c_additionalMask( (rpc_filterBox == NULL) ? (~0) : (~(rpc_filterBox->c_filter.ident() ^ rt_filter)), ren_identType),
+                         MASK_TYPE at_mask, MASK_TYPE at_filter,
+                         Ident_c::identType_t ren_identType, FilterBox_c* apc_filterBox)
+  : c_filter(at_filter, ren_identType),
+    c_mask(at_mask, ren_identType),
+    c_additionalMask( (apc_filterBox == NULL) ? (~0) : (~(apc_filterBox->c_filter.ident() ^ at_filter)), ren_identType),
     vec_customer(1,rrpc_customer),
-    ui8_filterBoxNr( (rpc_filterBox == NULL) ? (IdleState) : (rpc_filterBox->ui8_filterBoxNr) ),
-    ui8_busNumber( (rpc_filterBox == NULL) ? (IdleState) : (rpc_filterBox->ui8_busNumber) )
+    ui8_filterBoxNr( (apc_filterBox == NULL) ? (IdleState) : (apc_filterBox->ui8_filterBoxNr) ),
+    ui8_busNumber( (apc_filterBox == NULL) ? (IdleState) : (apc_filterBox->ui8_busNumber) )
 #if ((defined( USE_ISO_11783)) \
      && ((CAN_INSTANCE_CNT > PRT_INSTANCE_CNT) || defined(ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL)))
-    , b_performIsobusResolve(rpc_filterBox->b_performIsobusResolve)
+    , b_performIsobusResolve(apc_filterBox->b_performIsobusResolve)
   #endif
 {}
 */
@@ -146,19 +146,19 @@ FilterBox_c::FilterBox_c(CanCustomer_c* rrpc_customer,
 /**
   copy constructor which uses data of another FilterBox_c instance
 
-  @param rrefc_src reference to the source FilterBox_c instance for copying
+  @param arc_src reference to the source FilterBox_c instance for copying
    @exception badAlloc
 */
-FilterBox_c::FilterBox_c(const FilterBox_c& rrefc_src)
-  : c_filter(rrefc_src.c_filter),
-    c_mask(rrefc_src.c_mask),
-    c_additionalMask(rrefc_src.c_additionalMask),
-    vec_customer(rrefc_src.vec_customer),
-    ui8_filterBoxNr(rrefc_src.ui8_filterBoxNr),
-    ui8_busNumber(rrefc_src.ui8_busNumber)
+FilterBox_c::FilterBox_c(const FilterBox_c& arc_src)
+  : c_filter(arc_src.c_filter),
+    c_mask(arc_src.c_mask),
+    c_additionalMask(arc_src.c_additionalMask),
+    vec_customer(arc_src.vec_customer),
+    ui8_filterBoxNr(arc_src.ui8_filterBoxNr),
+    ui8_busNumber(arc_src.ui8_busNumber)
 #if ((defined( USE_ISO_11783)) \
 		    && ((CAN_INSTANCE_CNT > PRT_INSTANCE_CNT) || defined(ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL)))
-    , b_performIsobusResolve(rrefc_src.b_performIsobusResolve)
+    , b_performIsobusResolve(arc_src.b_performIsobusResolve)
   #endif
 {}
 
@@ -171,25 +171,25 @@ FilterBox_c::~FilterBox_c()
 }
 
 /**
-  copy values of rrefc_src FilterBox_c object to this instance
+  copy values of arc_src FilterBox_c object to this instance
 
   possible errors:
       * badAlloc on not enough memory for copying puffed CAN msg from source
 
-  @param rrefc_src FilterBox_c instance with data to assign to this instance
+  @param arc_src FilterBox_c instance with data to assign to this instance
   @return reference to this instance for chains like "box_1 = box_2 = ... = box_n;"
 */
-FilterBox_c& FilterBox_c::operator=(const FilterBox_c& rrefc_src){
-  if ( this != &rrefc_src)
+FilterBox_c& FilterBox_c::operator=(const FilterBox_c& arc_src){
+  if ( this != &arc_src)
   {
-    // rrefc_src and self are different object instances
-    vec_customer = rrefc_src.vec_customer;
+    // arc_src and self are different object instances
+    vec_customer = arc_src.vec_customer;
 
-    c_filter = rrefc_src.c_filter;
-    c_mask = rrefc_src.c_mask;
-    c_additionalMask = rrefc_src.c_additionalMask;
-    ui8_busNumber = rrefc_src.ui8_busNumber;
-    ui8_filterBoxNr = rrefc_src.ui8_filterBoxNr;
+    c_filter = arc_src.c_filter;
+    c_mask = arc_src.c_mask;
+    c_additionalMask = arc_src.c_additionalMask;
+    ui8_busNumber = arc_src.ui8_busNumber;
+    ui8_filterBoxNr = arc_src.ui8_filterBoxNr;
   }
   return *this;
 }
@@ -215,15 +215,15 @@ void FilterBox_c::clearData()
       * range given BUS or FilterBox number not in allowed area
       * hwBusy wanted FilterBox already in use
       * unspecified some other error
-  @param rui8_busNumber BUS number, where this instance should act
-  @param rui8_FilterBoxNr CAN hardware msg number for BIOS interaction
+  @param aui8_busNumber BUS number, where this instance should act
+  @param aui8_FilterBoxNr CAN hardware msg number for BIOS interaction
   @return true -> BIOS CAN object without errors configured
  */
-bool FilterBox_c::configCan(uint8_t rui8_busNumber, uint8_t rui8_FilterBoxNr)
+bool FilterBox_c::configCan(uint8_t aui8_busNumber, uint8_t aui8_FilterBoxNr)
 {
   // store ui8_busNumber for later close of can
-  ui8_busNumber = rui8_busNumber;
-  ui8_filterBoxNr = rui8_FilterBoxNr;
+  ui8_busNumber = aui8_busNumber;
+  ui8_filterBoxNr = aui8_FilterBoxNr;
 
 #if ((defined(USE_ISO_11783)) \
      && ((CAN_INSTANCE_CNT > PRT_INSTANCE_CNT) || defined(ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL)))
@@ -266,7 +266,7 @@ bool FilterBox_c::configCan(uint8_t rui8_busNumber, uint8_t rui8_FilterBoxNr)
   #ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
   if (c_filter.identType() == Ident_c::BothIdent) c_filter.setIdentType(DEFAULT_IDENT_TYPE);
   if (c_filter.empty() || c_mask.empty() ) return false;
-  switch (HAL::can_configMsgobjInit(rui8_busNumber, rui8_FilterBoxNr, c_filter, c_mask, 0))
+  switch (HAL::can_configMsgobjInit(aui8_busNumber, aui8_FilterBoxNr, c_filter, c_mask, 0))
   {
     case HAL_NO_ERR:
       return true;
@@ -316,45 +316,45 @@ void FilterBox_c::closeHAL()
 
 /**
   set the mask (t_mask) and filter (t_filter) of this FilterBox
-  @param rt_mask mask for this Filer_Box (MASK_TYPE defined in isoaglib_config.h)
-  @param rt_filter filter for this Filer_Box (MASK_TYPE defined in isoaglib_config.h)
-  @param rpc_customer pointer to the CanCustomer_c instance, which creates this FilterBox_c instance
-  @param ri8_dlcForce force the DLC to be exactly this long (0 to 8 bytes). use -1 for NO FORCING and accepting any length can-pkg
+  @param at_mask mask for this Filer_Box (MASK_TYPE defined in isoaglib_config.h)
+  @param at_filter filter for this Filer_Box (MASK_TYPE defined in isoaglib_config.h)
+  @param apc_customer pointer to the CanCustomer_c instance, which creates this FilterBox_c instance
+  @param ai8_dlcForce force the DLC to be exactly this long (0 to 8 bytes). use -1 for NO FORCING and accepting any length can-pkg
   @param ren_E select if FilterBox_c is used for standard 11bit or extended 29bit ident
 */
-void FilterBox_c::set (const Ident_c& rrefc_mask,
-                       const Ident_c& rrefc_filter,
-                       CanCustomer_c* rpc_customer,
-                       int8_t ri8_dlcForce,
-                       FilterBox_c* rpc_filterBox)
+void FilterBox_c::set (const Ident_c& arc_mask,
+                       const Ident_c& arc_filter,
+                       CanCustomer_c* apc_customer,
+                       int8_t ai8_dlcForce,
+                       FilterBox_c* apc_filterBox)
 {
-  c_filter = rrefc_filter;
-  c_mask = rrefc_mask;
+  c_filter = arc_filter;
+  c_mask = arc_mask;
 
   STL_NAMESPACE::vector<CustomerLen_s>::iterator pc_iter = vec_customer.begin();
   for (; pc_iter != vec_customer.end(); pc_iter++)
   {
-    if (rpc_customer == pc_iter->pc_customer)
+    if (apc_customer == pc_iter->pc_customer)
     { // overwrite the DLC of the one found!
-      pc_iter->i8_dlcForce = ri8_dlcForce;
+      pc_iter->i8_dlcForce = ai8_dlcForce;
       break;
     }
   }
   if (pc_iter == vec_customer.end())
   { // push back new
-    vec_customer.push_back (CustomerLen_s (rpc_customer, ri8_dlcForce));
+    vec_customer.push_back (CustomerLen_s (apc_customer, ai8_dlcForce));
   }
 
-  if (rpc_filterBox == NULL)
+  if (apc_filterBox == NULL)
        c_additionalMask.set (~0, c_mask.identType());
-  else c_additionalMask.set (~(rpc_filterBox->c_filter.ident() ^ c_filter.ident()), c_mask.identType());
+  else c_additionalMask.set (~(apc_filterBox->c_filter.ident() ^ c_filter.ident()), c_mask.identType());
 };
 
-bool FilterBox_c::equalCustomer( const __IsoAgLib::CanCustomer_c& rref_customer ) const
+bool FilterBox_c::equalCustomer( const __IsoAgLib::CanCustomer_c& ar_customer ) const
 {
   STL_NAMESPACE::vector<CustomerLen_s>::const_iterator pc_iter;
   for(pc_iter = vec_customer.begin(); pc_iter != vec_customer.end(); pc_iter++)
-    if( &rref_customer == pc_iter->pc_customer)
+    if( &ar_customer == pc_iter->pc_customer)
       return true;
 
   return false;
@@ -362,15 +362,15 @@ bool FilterBox_c::equalCustomer( const __IsoAgLib::CanCustomer_c& rref_customer 
 
 /** delete CanCustomer_c instance from array or set FilterBox_c to idle
     if CanCustomer_c is the only customer for this FilterBox_c instance
-    @param  rref_customer  CANCustomer to delete
+    @param  ar_customer  CANCustomer to delete
     @return                true -> no more cancustomers exist, whole filterbox can be deleted
   */
-bool FilterBox_c::deleteFilter( const __IsoAgLib::CanCustomer_c& rref_customer)
+bool FilterBox_c::deleteFilter( const __IsoAgLib::CanCustomer_c& ar_customer)
 {
   for (STL_NAMESPACE::vector<CustomerLen_s>::iterator pc_iter = vec_customer.begin();
         pc_iter != vec_customer.end(); pc_iter++)
   {
-    if (&rref_customer == pc_iter->pc_customer)
+    if (&ar_customer == pc_iter->pc_customer)
     { // the to-be-deleted customer is found and now pointed by pc_iter
       vec_customer.erase(pc_iter);
       break;
@@ -523,48 +523,48 @@ bool FilterBox_c::processMsg()
 
 #ifdef DEBUG_CAN_BUFFER_FILLING
 /** some debug messages */
-void FilterBox_c::doDebug(uint8_t rui8_busNumber)
+void FilterBox_c::doDebug(uint8_t aui8_busNumber)
 {
   bool b_detectedOverflow = false;
   #if CAN_INSTANCE_CNT == 1
   static uint16_t sui16_maxBufferUseage = 0;
-  uint16_t &ref_maxCnt = sui16_maxBufferUseage;
+  uint16_t &r_maxCnt = sui16_maxBufferUseage;
 
   static uint16_t sui16_minBufferFree = 0xFFFF;
-  uint16_t &ref_minFree = sui16_minBufferFree;
+  uint16_t &r_minFree = sui16_minBufferFree;
   #elif CAN_INSTANCE_CNT == 2
   static uint16_t sui16_maxBufferUseage[2] = {0, 0};
-  uint16_t &ref_maxCnt = sui16_maxBufferUseage[rui8_busNumber];
+  uint16_t &r_maxCnt = sui16_maxBufferUseage[aui8_busNumber];
 
   static uint16_t sui16_minBufferFree[2] = {0xFFFF,0xFFFF};
-  uint16_t &ref_minFree = sui16_minBufferFree[rui8_busNumber];
+  uint16_t &r_minFree = sui16_minBufferFree[aui8_busNumber];
   #else
   static uint16_t sui16_maxBufferUseage[CAN_INSTANCE_CNT];
-  uint16_t &ref_maxCnt = sui16_maxBufferUseage[rui8_busNumber];
+  uint16_t &r_maxCnt = sui16_maxBufferUseage[aui8_busNumber];
 
   static uint16_t sui16_minBufferFree[CAN_INSTANCE_CNT];
-  uint16_t &ref_minFree = sui16_minBufferFree[rui8_busNumber];
+  uint16_t &r_minFree = sui16_minBufferFree[aui8_busNumber];
   if ( ( sui16_maxBufferUseage[0] == 0 ) && ( sui16_maxBufferUseage[1] == 0 ) )
   {
     for ( uint16_t ind = 0; ind < CAN_INSTANCE_CNT; ind++) sui16_minBufferFree[ind] = 0xFFFF;
   }
   #endif
-  if ( HAL::can_stateMsgobjBuffercnt(rui8_busNumber, ui8_filterBoxNr) > ref_maxCnt )
+  if ( HAL::can_stateMsgobjBuffercnt(aui8_busNumber, ui8_filterBoxNr) > r_maxCnt )
   { // new MAX detected -> update and print
-    ref_maxCnt = HAL::can_stateMsgobjBuffercnt(rui8_busNumber, ui8_filterBoxNr);
-    INTERNAL_DEBUG_DEVICE << "\r\nNew Max buffer filling: " << ref_maxCnt
+    r_maxCnt = HAL::can_stateMsgobjBuffercnt(aui8_busNumber, ui8_filterBoxNr);
+    INTERNAL_DEBUG_DEVICE << "\r\nNew Max buffer filling: " << r_maxCnt
       << " at Filterbox Nr: " << uint16_t(ui8_filterBoxNr)
       << " with Filter: " << c_filter.ident()
-      << " at BUS: " << uint16_t(rui8_busNumber)
+      << " at BUS: " << uint16_t(aui8_busNumber)
       << INTERNAL_DEBUG_DEVICE_ENDL;
   }
-  if ( HAL::can_stateMsgobjFreecnt(rui8_busNumber, ui8_filterBoxNr) < ref_minFree )
+  if ( HAL::can_stateMsgobjFreecnt(aui8_busNumber, ui8_filterBoxNr) < r_minFree )
   { // new MIN detected -> update and print
-    ref_minFree = HAL::can_stateMsgobjFreecnt(rui8_busNumber, ui8_filterBoxNr);
-    INTERNAL_DEBUG_DEVICE << "\r\nNew Min buffer free: " << ref_minFree
+    r_minFree = HAL::can_stateMsgobjFreecnt(aui8_busNumber, ui8_filterBoxNr);
+    INTERNAL_DEBUG_DEVICE << "\r\nNew Min buffer free: " << r_minFree
       << " at Filterbox Nr: " << uint16_t(ui8_filterBoxNr)
       << " with Filter: " << c_filter.ident()
-      << " at BUS: " << uint16_t(rui8_busNumber)
+      << " at BUS: " << uint16_t(aui8_busNumber)
       << INTERNAL_DEBUG_DEVICE_ENDL;
   }
 }

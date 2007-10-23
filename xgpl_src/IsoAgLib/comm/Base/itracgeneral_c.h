@@ -81,69 +81,69 @@ namespace IsoAgLib {
   /**
       config the iTracGeneral_c object after init -> set pointer to isoName and
       config send/receive of different base msg types
-      @param rpc_isoName pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
-      @param rt_identMode set mode to either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
+      @param apc_isoName pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
+      @param at_identMode set mode to either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       @return true -> configuration was successfull
     */
-  bool config (const iIsoName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode = IsoAgLib::IdentModeImplement, uint16_t rui16_suppressMask = 0)
-  { return TracGeneral_c::config_base( rpc_isoName, rt_identMode, rui16_suppressMask ); }
+  bool config (const iIsoName_c* apc_isoName, IsoAgLib::IdentMode_t at_identMode = IsoAgLib::IdentModeImplement, uint16_t aui16_suppressMask = 0)
+  { return TracGeneral_c::config_base( apc_isoName, at_identMode, aui16_suppressMask ); }
 
 
   /* ******************************************* */
   /** \name Set Values for periodic send on BUS  */
   /*@{*/
   /** set rear hitch */
-  void setHitchRear(uint8_t rb_val) { TracGeneral_c::setHitchRear(rb_val);}
+  void setHitchRear(uint8_t ab_val) { TracGeneral_c::setHitchRear(ab_val);}
 
   /** set front hitch */
-  void setHitchFront(uint8_t rb_val) { TracGeneral_c::setHitchFront(rb_val);}
+  void setHitchFront(uint8_t ab_val) { TracGeneral_c::setHitchFront(ab_val);}
 
   /** set front hitch draft */
-  void setHitchFrontDraft(int32_t ri32_val) { TracGeneral_c::setHitchFrontDraft(ri32_val);}
+  void setHitchFrontDraft(int32_t ai32_val) { TracGeneral_c::setHitchFrontDraft(ai32_val);}
 
   /** set rear hitch draft */
-  void setHitchRearDraft(int32_t ri32_val) { TracGeneral_c::setHitchRearDraft(ri32_val);}
+  void setHitchRearDraft(int32_t ai32_val) { TracGeneral_c::setHitchRearDraft(ai32_val);}
 
   /** set front hitch nominal link force */
-  void setHitchFrontLowerLinkForce(int16_t ri16_val) { TracGeneral_c::setHitchFrontLowerLinkForce(ri16_val);}
+  void setHitchFrontLowerLinkForce(int16_t ai16_val) { TracGeneral_c::setHitchFrontLowerLinkForce(ai16_val);}
 
   /** set rear hitch nominal link force */
-  void setHitchRearLowerLinkForce(int16_t ri16_val) { TracGeneral_c::setHitchRearLowerLinkForce(ri16_val);}
+  void setHitchRearLowerLinkForce(int16_t ai16_val) { TracGeneral_c::setHitchRearLowerLinkForce(ai16_val);}
 
   /** set the ISO key switch state of the tractor */
-  void setKeySwitch(IsoAgLib::IsoActiveFlag_t rt_val) { TracGeneral_c::setKeySwitch(rt_val);}
+  void setKeySwitch(IsoAgLib::IsoActiveFlag_t at_val) { TracGeneral_c::setKeySwitch(at_val);}
 
   /** set the maximum power time of the tractor in [min] */
-  void setMaxPowerTime(uint8_t rui8_val) { TracGeneral_c::setMaxPowerTime(rui8_val);}
+  void setMaxPowerTime(uint8_t aui8_val) { TracGeneral_c::setMaxPowerTime(aui8_val);}
 
   /** force maintain power from tractor */
-  void forceMaintainPower(bool rb_ecuPower, bool rb_actuatorPower, IsoAgLib::IsoMaintainPower_t rt_implState)
-  { TracGeneral_c::forceMaintainPower(rb_ecuPower, rb_actuatorPower, rt_implState);}
+  void forceMaintainPower(bool ab_ecuPower, bool ab_actuatorPower, IsoAgLib::IsoMaintainPower_t at_implState)
+  { TracGeneral_c::forceMaintainPower(ab_ecuPower, ab_actuatorPower, at_implState);}
 
   /** set present limit status of the front hitch position
-        @param rt_val  limit status of the front hitch position
+        @param at_val  limit status of the front hitch position
       */
-  void setFrontHitchPosLimitStatus(const IsoAgLib::IsoLimitFlag_t rt_val) {TracGeneral_c::setFrontHitchPosLimitStatus(rt_val);}
+  void setFrontHitchPosLimitStatus(const IsoAgLib::IsoLimitFlag_t at_val) {TracGeneral_c::setFrontHitchPosLimitStatus(at_val);}
 
   /** set present limit status of the rear hitch position
-      @param rt_val  limit status of the rear hitch position
+      @param at_val  limit status of the rear hitch position
     */
-  void setRearHitchPosLimitStatus(const IsoAgLib::IsoLimitFlag_t rt_val) {TracGeneral_c::setRearHitchPosLimitStatus(rt_val);}
+  void setRearHitchPosLimitStatus(const IsoAgLib::IsoLimitFlag_t at_val) {TracGeneral_c::setRearHitchPosLimitStatus(at_val);}
 
   /** set state of implement in transport state
-      * @param rt_val state of implement in transport state
+      * @param at_val state of implement in transport state
       */
-  void setMaintainPowerForImplInTransport(IsoAgLib::IsoImplTransportFlag_t rt_val) { TracGeneral_c::setMaintainPowerForImplInTransport(rt_val); }
+  void setMaintainPowerForImplInTransport(IsoAgLib::IsoImplTransportFlag_t at_val) { TracGeneral_c::setMaintainPowerForImplInTransport(at_val); }
 
     /** set state of implement in park state
-      * @param rt_val state of implement in park state
+      * @param at_val state of implement in park state
       */
-  void setMaintainPowerForImplInPark(IsoAgLib::IsoImplParkFlag_t rt_val) { TracGeneral_c::setMaintainPowerForImplInPark(rt_val);}
+  void setMaintainPowerForImplInPark(IsoAgLib::IsoImplParkFlag_t at_val) { TracGeneral_c::setMaintainPowerForImplInPark(at_val);}
 
     /** set state of implement in work
-      * @param rt_val state of implement in work state
+      * @param at_val state of implement in work state
       */
-  void setMaintainPowerForImplInWork(IsoAgLib::IsoImplWorkFlag_t rt_val) { TracGeneral_c::setMaintainPowerForImplInWork(rt_val);}
+  void setMaintainPowerForImplInWork(IsoAgLib::IsoImplWorkFlag_t at_val) { TracGeneral_c::setMaintainPowerForImplInWork(at_val);}
   /*@}*/
 
   /* ****************************************************** */
@@ -222,7 +222,7 @@ namespace IsoAgLib {
       otherwise __IsoAgLib::getTracGeneralInstance() wouldn't be accepted by compiler
     */
     #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
-    friend iTracGeneral_c& getITracGeneralInstance( uint8_t rui8_instance );
+    friend iTracGeneral_c& getITracGeneralInstance( uint8_t aui8_instance );
     #else
     friend iTracGeneral_c& getITracGeneralInstance( void );
     #endif
@@ -232,8 +232,8 @@ namespace IsoAgLib {
   /** C-style function, to get access to the unique Base_c singleton instance
     * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
     */
-  inline iTracGeneral_c& getITracGeneralInstance( uint8_t rui8_instance = 0 )
-  { return static_cast<iTracGeneral_c&>(__IsoAgLib::getTracGeneralInstance(rui8_instance));}
+  inline iTracGeneral_c& getITracGeneralInstance( uint8_t aui8_instance = 0 )
+  { return static_cast<iTracGeneral_c&>(__IsoAgLib::getTracGeneralInstance(aui8_instance));}
   #else
   /** C-style function, to get access to the unique Base_c singleton instance */
   inline iTracGeneral_c& getITracGeneralInstance( void )

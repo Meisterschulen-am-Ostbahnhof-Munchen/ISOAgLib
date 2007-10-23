@@ -108,54 +108,54 @@ class SimpleManageSetpointRemote_c : public ProcessElementBase_c
  public:
   /**
     constructor which initialse both pointers if given
-    @param rpc_processData optional pointer to containing ProcessData instance
+    @param apc_processData optional pointer to containing ProcessData instance
   */
-  SimpleManageSetpointRemote_c( ProcDataBase_c *const rpc_processData = NULL )
-  : ProcessElementBase_c( rpc_processData )
-  { init( rpc_processData );};
+  SimpleManageSetpointRemote_c( ProcDataBase_c *const apc_processData = NULL )
+  : ProcessElementBase_c( apc_processData )
+  { init( apc_processData );};
   /**
     initialise this SimpleManageSetpointRemote_c instance to a well defined initial state
-    @param rpc_processData optional pointer to containing ProcessData instance
+    @param apc_processData optional pointer to containing ProcessData instance
   */
-  void init( ProcDataBase_c *const rpc_processData = NULL );
+  void init( ProcDataBase_c *const apc_processData = NULL );
   /** copy constructor */
-  SimpleManageSetpointRemote_c( const SimpleManageSetpointRemote_c& rrefc_src );
+  SimpleManageSetpointRemote_c( const SimpleManageSetpointRemote_c& arc_src );
   /** assignment operator */
-  const SimpleManageSetpointRemote_c& operator=( const SimpleManageSetpointRemote_c& rrefc_src );
+  const SimpleManageSetpointRemote_c& operator=( const SimpleManageSetpointRemote_c& arc_src );
 
 
   /**
     deliver the actual master setpoint
-    @param rb_sendRequest true -> send request for actual value
+    @param ab_sendRequest true -> send request for actual value
     @return setpoint value as long
   */
-  int32_t setpointMasterVal(bool rb_sendRequest = false);
+  int32_t setpointMasterVal(bool ab_sendRequest = false);
   /**
     send a setpoint cmd with given exact setpoint
-    @param ri32_val commanded setpoint value as long
-    @param rb_onlyStoreOnResponse true -> the given value is only stored if response arrives
+    @param ai32_val commanded setpoint value as long
+    @param ab_onlyStoreOnResponse true -> the given value is only stored if response arrives
   */
-  void setSetpointMasterVal(int32_t ri32_val, bool rb_onlyStoreOnResponse = true);
+  void setSetpointMasterVal(int32_t ai32_val, bool ab_onlyStoreOnResponse = true);
   #ifdef USE_FLOAT_DATA_TYPE
   /**
     deliver the actual master setpoint
-    @param rb_sendRequest true -> send request for actual value
+    @param ab_sendRequest true -> send request for actual value
     @return setpoint value as float
   */
-  float setpointMasterValFloat(bool rb_sendRequest = false);
+  float setpointMasterValFloat(bool ab_sendRequest = false);
   /**
     send a setpoint cmd with given exact setpoint
-    @param rf_val commanded setpoint value as float
-    @param rb_onlyStoreOnResponse true -> the given value is only stored if response arrives
+    @param af_val commanded setpoint value as float
+    @param ab_onlyStoreOnResponse true -> the given value is only stored if response arrives
   */
-  void setSetpointMasterVal(float rf_val, bool rb_onlyStoreOnResponse = true);
+  void setSetpointMasterVal(float af_val, bool ab_onlyStoreOnResponse = true);
   #endif
 
  private:
   /** processing of a setpoint message */
   void processSetpoint();
   /** base function for assignment of element vars for copy constructor and operator= */
-  void assignFromSource( const SimpleManageSetpointRemote_c& rrefc_src );
+  void assignFromSource( const SimpleManageSetpointRemote_c& arc_src );
 
   #ifdef USE_FLOAT_DATA_TYPE
   /** define simple setpoint master value */

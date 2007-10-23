@@ -137,13 +137,13 @@ public:
     registered within Scheduler_c for periodic timeEvent.
     Define common trigger timestamp, so that distributed activities can be performed with
     common time base.
-    @param ri32_demandedExecEndScheduler optional timestamp, where timeEvent shall return execution to calling function
+    @param ai32_demandedExecEndScheduler optional timestamp, where timeEvent shall return execution to calling function
            -> allow tight integration of IsoAgLib into application specific scheduler, as In-Time execution is
            guaranteed (default -1 -> no execution stop defined)
   @return idleTime for main application (> 0 wait for next call; == 0 call function again)
           idleTime == -1 One Client could not finish his Job
   */
-  int32_t timeEvent( int32_t ri32_demandedExecEndScheduler = -1);
+  int32_t timeEvent( int32_t ai32_demandedExecEndScheduler = -1);
 
   /** deliver the global execution time event for the central IsoAgLib Scheduler_c.
       This end time is defined by the application which calls Scheduler_c::timeEvent().
@@ -199,8 +199,8 @@ public:
   //!  Scheduler_c set (NOW + TimePeriod) as New Retrigger for Client
   //!  and sort Task to the right Position in the TaskQueue
   //! @param p_client -> Client in Scheduler_c TaskQueue
-  //! @param ri16_newTimePeriod -> New Period will set for the Client by Scheduler_c
-  bool changeTimePeriodAndResortTask(ElementBase_c * pc_client  , uint16_t rui16_newTimePeriod );
+  //! @param ai16_newTimePeriod -> New Period will set for the Client by Scheduler_c
+  bool changeTimePeriodAndResortTask(ElementBase_c * pc_client  , uint16_t aui16_newTimePeriod );
 
 
   //!  Uses Delta from TimePeriod of a Client
@@ -209,17 +209,17 @@ public:
   //!  for call of timevent.-> so add e.g. an TimePeriod for an later call
   //! @param p_client -> Client in Scheduler_c TaskQueue
   //! @param i32_nextRetriggerTime -> New i32_nextRetriggerTime set for Client by Scheduler_c
-  //! @param  ri16_newTimePeriod otpional -> New Period will set for the Client by Scheduler_c
-  bool  changeRetriggerTimeAndResort(ElementBase_c * pc_client  , int32_t i32_nextRetriggerTime, int16_t ri16_newTimePeriod = -1);
+  //! @param  ai16_newTimePeriod otpional -> New Period will set for the Client by Scheduler_c
+  bool  changeRetriggerTimeAndResort(ElementBase_c * pc_client  , int32_t i32_nextRetriggerTime, int16_t ai16_newTimePeriod = -1);
 
   //!  Uses Delta from TimePeriod of a Client
   //!  to put a Task to the right Position in the TaskQueue
   //!  ATTENTION parameter nextRetriggerTime will exactly used from Scheduler_c
   //!  for call of timevent.-> so add e.g. an TimePeriod for an later call
-  //! @param rc_client -> Client in Scheduler_c TaskQueue
+  //! @param ac_client -> Client in Scheduler_c TaskQueue
   //! @param i32_nextRetriggerTime -> New i32_nextRetriggerTime set for Client by Scheduler_c
-  //! @param  ri16_newTimePeriod otpional -> New Period will set for the Client by Scheduler_c
-  bool  changeRetriggerTimeAndResort(SchedulerEntry_c rc_client  , int32_t i32_nextRetriggerTime, int16_t ri16_newTimePeriod = -1);
+  //! @param  ai16_newTimePeriod otpional -> New Period will set for the Client by Scheduler_c
+  bool  changeRetriggerTimeAndResort(SchedulerEntry_c ac_client  , int32_t i32_nextRetriggerTime, int16_t ai16_newTimePeriod = -1);
 
 private: //Private methods
   friend class SINGLETON( Scheduler_c );
@@ -234,10 +234,10 @@ private: //Private methods
   void singletonInit();
 
   /** deliver available time for time event of SCHEDULER only
-    * @param ri16_awaitedExecTime optional awaited execution time of planned next step
+    * @param ai16_awaitedExecTime optional awaited execution time of planned next step
              ==> answer of this function tells, if planned step will fit into time frame
   */
-  int16_t getAvailableExecTime( int16_t ri16_awaitedExecTime = 0 );
+  int16_t getAvailableExecTime( int16_t ai16_awaitedExecTime = 0 );
 
   //!  This function implements the main scheduler work defined in UC15 Scheduler. It selects the next task, executes it and updates the task-list.
   //!  If no task can be immediately started with EarliestRetrigger-option,
@@ -252,8 +252,8 @@ private: //Private methods
   //!  resort from start of task list by swapping neighbour elements.
   //!  Stop execution, if compared elements are in correct order.
   //!  Avoid complex complete sort of list, if only the previously executed task must be placed in the correct position again - the rest of the list is still correct sorted.
-  //!  @param rpc_sort ptr to currently executed SchedulerEntry_c
-  void resortTaskList(const SchedulerEntry_c* rpc_sort);
+  //!  @param apc_sort ptr to currently executed SchedulerEntry_c
+  void resortTaskList(const SchedulerEntry_c* apc_sort);
 
 
   //!  Uses Delta from TimePeriod of a Client
@@ -262,10 +262,10 @@ private: //Private methods
   //!  for call of timevent.-> so add e.g. an TimePeriod for an later call
   //! @param itc_task -> iterator to the task that should be changed
   //! @param i32_nextRetriggerTime -> New i32_nextRetriggerTime set for Client by Scheduler_c
-  //! @param  ri16_newTimePeriod otpional -> New Period will set for the Client by Scheduler_c
-  bool  changeRetriggerTimeAndResort(STL_NAMESPACE::list<SchedulerEntry_c>::iterator itc_task, int32_t i32_nextRetriggerTime, int16_t ri16_newTimePeriod = -1);
+  //! @param  ai16_newTimePeriod otpional -> New Period will set for the Client by Scheduler_c
+  bool  changeRetriggerTimeAndResort(STL_NAMESPACE::list<SchedulerEntry_c>::iterator itc_task, int32_t i32_nextRetriggerTime, int16_t ai16_newTimePeriod = -1);
 
-  void setCntClient( size_t rt_newSize ) { mt_clientCnt = rt_newSize;}
+  void setCntClient( size_t at_newSize ) { mt_clientCnt = at_newSize;}
 
 #ifdef DEBUG_SCHEDULER
   //!  Send debug messages with information on the
@@ -276,16 +276,16 @@ private: //Private methods
   //!  As long as latest execution would allow some idle time,
   //!  the timing is acceptable.
   //! Parameter:
-  //! @param refc_selectedTask: reference to the next executed task
-  void setDebugTimeAccuracy(SchedulerEntry_c& refc_selectedTask);
+  //! @param rc_selectedTask: reference to the next executed task
+  void setDebugTimeAccuracy(SchedulerEntry_c& rc_selectedTask);
 
 
   //!  Send debug messages with information on the idletime
   //!  This is important to check whether the time
   //!  restrictions are fullfilled.
   //! Parameter:
-  //! @param rui16_idleTime:
-  void setDebugIdleInformation(uint16_t rui16_idleTime);
+  //! @param aui16_idleTime:
+  void setDebugIdleInformation(uint16_t aui16_idleTime);
 
   //! Debug function to print current list of tasks in the scheduler with
   //! the single retrigger times
@@ -324,7 +324,7 @@ private: // Private attributes
   /** C-style function, to get access to the unique Scheduler_c singleton instance
     * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
     */
-  Scheduler_c& getSchedulerInstance( uint8_t rui8_instance = 0 );
+  Scheduler_c& getSchedulerInstance( uint8_t aui8_instance = 0 );
 #else
   /** C-style function, to get access to the unique Scheduler_c singleton instance */
   Scheduler_c& getSchedulerInstance( void );

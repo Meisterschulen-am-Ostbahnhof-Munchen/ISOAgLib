@@ -114,55 +114,55 @@ class SetpointRegister_c {
 public:
   /**
     constructor which can set all element variables (all parameters are optional)
-    @param rc_isoName device key of commander of this setpoint register set
-    @param ri32_exact exact setpoint value
-    @param ri32_min minimum setpoint value
-    @param ri32_max maximum setpoint value
-    @param ri32_default default setpoint value
-    @param rb_handled true -> this setpoint register nistance was handled by main application
-    @param rb_master true -> this setpoint register instance represents the actual master setpoint
-    @param rb_valid true -> this setpoint register instance is accepted as valid
+    @param ac_isoName device key of commander of this setpoint register set
+    @param ai32_exact exact setpoint value
+    @param ai32_min minimum setpoint value
+    @param ai32_max maximum setpoint value
+    @param ai32_default default setpoint value
+    @param ab_handled true -> this setpoint register nistance was handled by main application
+    @param ab_master true -> this setpoint register instance represents the actual master setpoint
+    @param ab_valid true -> this setpoint register instance is accepted as valid
   */
-  SetpointRegister_c(const IsoName_c& rc_isoName = IsoName_c::IsoNameUnspecified(), int32_t ri32_exact = NO_VAL_32S,
-      int32_t ri32_min = NO_VAL_32S, int32_t ri32_max = NO_VAL_32S, int32_t ri32_default = NO_VAL_32S,
-      bool rb_handled = false, bool rb_master = false, bool rb_valid = true)
-      {  init(rc_isoName, ri32_exact, ri32_min, ri32_max, ri32_default, rb_handled, rb_master, rb_valid);}
+  SetpointRegister_c(const IsoName_c& ac_isoName = IsoName_c::IsoNameUnspecified(), int32_t ai32_exact = NO_VAL_32S,
+      int32_t ai32_min = NO_VAL_32S, int32_t ai32_max = NO_VAL_32S, int32_t ai32_default = NO_VAL_32S,
+      bool ab_handled = false, bool ab_master = false, bool ab_valid = true)
+      {  init(ac_isoName, ai32_exact, ai32_min, ai32_max, ai32_default, ab_handled, ab_master, ab_valid);}
   /**
     initialise this SetpointRegister_c to a well defined starting condition
-    @param rc_isoName device key of commander of this setpoint register set
-    @param ri32_exact exact setpoint value
-    @param ri32_min minimum setpoint value
-    @param ri32_max maximum setpoint value
-    @param ri32_default default setpoint value
-    @param rb_handled true -> this setpoint register nistance was handled by main application
-    @param rb_master true -> this setpoint register instance represents the actual master setpoint
-    @param rb_valid true -> this setpoint register instance is accepted as valid
+    @param ac_isoName device key of commander of this setpoint register set
+    @param ai32_exact exact setpoint value
+    @param ai32_min minimum setpoint value
+    @param ai32_max maximum setpoint value
+    @param ai32_default default setpoint value
+    @param ab_handled true -> this setpoint register nistance was handled by main application
+    @param ab_master true -> this setpoint register instance represents the actual master setpoint
+    @param ab_valid true -> this setpoint register instance is accepted as valid
   */
-  void init(const IsoName_c& rc_isoName = IsoName_c::IsoNameUnspecified(), int32_t ri32_exact = NO_VAL_32S,
-      int32_t ri32_min = NO_VAL_32S, int32_t ri32_max = NO_VAL_32S, int32_t ri32_default = NO_VAL_32S,
-      bool rb_handled = false, bool rb_master = false, bool rb_valid = true);
+  void init(const IsoName_c& ac_isoName = IsoName_c::IsoNameUnspecified(), int32_t ai32_exact = NO_VAL_32S,
+      int32_t ai32_min = NO_VAL_32S, int32_t ai32_max = NO_VAL_32S, int32_t ai32_default = NO_VAL_32S,
+      bool ab_handled = false, bool ab_master = false, bool ab_valid = true);
 
   /**
     operator= for SetpointRegister_c class
-    @param rrefc_src source SetpointRegister_c instance
+    @param arc_src source SetpointRegister_c instance
     @return reference to source instance for cmd like "setp1 = setp2 = setp3;"
   */
-  const SetpointRegister_c& operator=(const SetpointRegister_c& rrefc_src);
+  const SetpointRegister_c& operator=(const SetpointRegister_c& arc_src);
   /**
     copy constructor for SetpointRegister_c class
-    @param rrefc_src source SetpointRegister_c instance
+    @param arc_src source SetpointRegister_c instance
   */
-  SetpointRegister_c(const SetpointRegister_c& rrefc_src);
+  SetpointRegister_c(const SetpointRegister_c& arc_src);
 
   /** default destructor which has nothing to do */
   ~SetpointRegister_c();
 
   /**
     compare two Setpoint Register items by value
-    @param rrefc_src compared instance
+    @param arc_src compared instance
     @return true -> both setpoint sets are equal
   */
-  bool operator==(const SetpointRegister_c& rrefc_src)const;
+  bool operator==(const SetpointRegister_c& arc_src)const;
 
   /* ************************************ */
   /* ***reading member variable access*** */
@@ -271,7 +271,7 @@ public:
   */
   bool existDefault()const{return ((data.en_definedSetpoints & defaultType) != 0)?true:false;}
   /**
-    checks if setpoint with type rb_mod exists
+    checks if setpoint with type ab_mod exists
     @param en_valueGroup value group of tested setpoint type (exact 0, min 2, max 3, default)
     @return true -> a MOD type setpoint exist
   */
@@ -284,91 +284,91 @@ public:
 
   /**
     set isoName of cammanding member
-    @param rc_isoName ISOName of commanding member
+    @param ac_isoName ISOName of commanding member
   */
-  void setISOName(const IsoName_c& rc_val){c_requestISOName = rc_val;}
+  void setISOName(const IsoName_c& ac_val){c_requestISOName = ac_val;}
   /**
     set isoName of cammanding member
-    @param rc_isoName ISOName of commanding member
+    @param ac_isoName ISOName of commanding member
   */
-  void setISOName(uint8_t rui8_devClass, uint8_t rui8_devClassInst){c_requestISOName.set( rui8_devClass, rui8_devClassInst );}
+  void setISOName(uint8_t aui8_devClass, uint8_t aui8_devClassInst){c_requestISOName.set( aui8_devClass, aui8_devClassInst );}
   /**
     set the exact setpoint value
-    @param ri32_val new exact setpoint value
+    @param ai32_val new exact setpoint value
   */
-  void setExact(int32_t ri32_val);
+  void setExact(int32_t ai32_val);
   /**
     set the minimum setpoint value
-    @param ri32_val new minimum setpoint value
+    @param ai32_val new minimum setpoint value
   */
-  void setMin(int32_t ri32_val);
+  void setMin(int32_t ai32_val);
   /**
     set the maximum setpoint value
-    @param ri32_val new maximum setpoint value
+    @param ai32_val new maximum setpoint value
   */
-  void setMax(int32_t ri32_val);
+  void setMax(int32_t ai32_val);
   /**
     set the default setpoint value
-    @param ri32_val new default setpoint value
+    @param ai32_val new default setpoint value
   */
-  void setDefault(int32_t ri32_val);
+  void setDefault(int32_t ai32_val);
 #ifdef USE_FLOAT_DATA_TYPE
   /**
     set the exact setpoint value
-    @param rf_val new exact setpoint value
+    @param af_val new exact setpoint value
   */
-  void setExact(float rf_val);
+  void setExact(float af_val);
   /**
     set the minimum setpoint value
-    @param rf_val new minimum setpoint value
+    @param af_val new minimum setpoint value
   */
-  void setMin(float rf_val);
+  void setMin(float af_val);
   /**
     set the maximum setpoint value
-    @param rf_val new maximum setpoint value
+    @param af_val new maximum setpoint value
   */
-  void setMax(float rf_val);
+  void setMax(float af_val);
   /**
     set the default setpoint value
-    @param rf_val new default setpoint value
+    @param af_val new default setpoint value
   */
-  void setDefault(float rf_val);
+  void setDefault(float af_val);
   /**
-    set a limit val for type given by rb_mod
-    @param rf_val new setpoint value
+    set a limit val for type given by ab_mod
+    @param af_val new setpoint value
     @param en_valueGroup code of setpoint type to set (exact 0, min 2, max 3, default)
   */
-  void setValMod(float rf_val, GeneralCommand_c::ValueGroup_t en_valueGroup);
+  void setValMod(float af_val, GeneralCommand_c::ValueGroup_t en_valueGroup);
 #endif
   /**
     set the handled state; return if state was changed
-    @param rb_state true -> mark this setpoint as handled
-    @param ri32_handledTime timestamp for detecting the last setHandle event
+    @param ab_state true -> mark this setpoint as handled
+    @param ai32_handledTime timestamp for detecting the last setHandle event
     @return true -> this call caused a state change for handled state
   */
-  bool setHandled(bool rb_state = true, int32_t ri32_handledTime = -1);
+  bool setHandled(bool ab_state = true, int32_t ai32_handledTime = -1);
   /**
     set the master state; return if state was changed
-    @param rb_state true -> mark this setpoint as master
+    @param ab_state true -> mark this setpoint as master
     @return true -> this call caused a state change for master state
   */
-  bool setMaster(bool rb_state = true);
+  bool setMaster(bool ab_state = true);
   /**
     set the valid state; return if state was changed
-    @param rb_state true -> mark this setpoint as valid (accepted)
+    @param ab_state true -> mark this setpoint as valid (accepted)
     @return true -> this call caused a state change for valid state
   */
-  bool setValid(bool rb_state = true);
+  bool setValid(bool ab_state = true);
   /**
-    set a limit val for type given by rb_mod
-    @param ri32_val new setpoint value
+    set a limit val for type given by ab_mod
+    @param ai32_val new setpoint value
     @param en_valueGroup code of setpoint type to set (exact 0, min 2, max 3, default)
   */
-  void setValMod(int32_t ri32_val, GeneralCommand_c::ValueGroup_t en_valueGroup);
+  void setValMod(int32_t ai32_val, GeneralCommand_c::ValueGroup_t en_valueGroup);
 
 private: // Private methods
   /** base function for assignment of element vars for copy constructor and operator= */
-  void assignFromSource( const SetpointRegister_c& rrefc_src );
+  void assignFromSource( const SetpointRegister_c& arc_src );
 private: // Private attributes
 #ifdef USE_FLOAT_DATA_TYPE
   union {

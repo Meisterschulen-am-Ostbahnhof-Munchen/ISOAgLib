@@ -112,27 +112,27 @@ class SimpleManageMeasureProgRemote_c : public ProcessElementBase_c
   friend class ProcDataRemoteSimpleMeasure_c;
   /**
     constructor which initialse both pointers if given
-    @param rpc_processData optional pointer to containing ProcessData instance
+    @param apc_processData optional pointer to containing ProcessData instance
   */
-  SimpleManageMeasureProgRemote_c( ProcDataBase_c *const rpc_processData = NULL )
-  : ProcessElementBase_c( rpc_processData )
-  { init( rpc_processData );};
+  SimpleManageMeasureProgRemote_c( ProcDataBase_c *const apc_processData = NULL )
+  : ProcessElementBase_c( apc_processData )
+  { init( apc_processData );};
   /**
     initialise this SimpleManageMeasureProgRemote_c instance to a well defined initial state
-    @param rpc_processData optional pointer to containing ProcessData instance
+    @param apc_processData optional pointer to containing ProcessData instance
   */
-  void init( ProcDataBase_c *const rpc_processData = NULL );
+  void init( ProcDataBase_c *const apc_processData = NULL );
   /** copy constructor */
-  SimpleManageMeasureProgRemote_c( const SimpleManageMeasureProgRemote_c& rrefc_src );
+  SimpleManageMeasureProgRemote_c( const SimpleManageMeasureProgRemote_c& arc_src );
   /** assignment operator */
-  const SimpleManageMeasureProgRemote_c& operator=( const SimpleManageMeasureProgRemote_c& rrefc_src );
+  const SimpleManageMeasureProgRemote_c& operator=( const SimpleManageMeasureProgRemote_c& arc_src );
 
 
   /**
     deliver actual measurement value as long
-    @param rb_sendRequest true -> request for new value is sent (optional, default false)
+    @param ab_sendRequest true -> request for new value is sent (optional, default false)
   */
-  int32_t masterMeasurementVal(bool rb_sendRequest = false);
+  int32_t masterMeasurementVal(bool ab_sendRequest = false);
   /**
     send reset cmd for the measurement value
   */
@@ -140,9 +140,9 @@ class SimpleManageMeasureProgRemote_c : public ProcessElementBase_c
   #ifdef USE_FLOAT_DATA_TYPE
   /**
     deliver actual measurement value as float
-    @param rb_sendRequest true -> request for new value is sent (optional, default false)
+    @param ab_sendRequest true -> request for new value is sent (optional, default false)
   */
-  float masterValFloat(bool rb_sendRequest = false);
+  float masterValFloat(bool ab_sendRequest = false);
   #endif
  private:
   /** process a measure prog message for remote process data */

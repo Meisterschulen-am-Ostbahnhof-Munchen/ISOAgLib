@@ -107,33 +107,33 @@ public:
     default constructor which can optionally set increment type, increment and running state
     @param ren_type optional increment type (default time proportional)
     @param ren_doSend set process data subtype to send (Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...)
-    @param ri32_increment optional increment value of ren_type (default 0)
-    @param rb_started optional running state (default off)
-    @param ri32_lastVal optional value of last trigger event (default 0)
+    @param ai32_increment optional increment value of ren_type (default 0)
+    @param ab_started optional running state (default off)
+    @param ai32_lastVal optional value of last trigger event (default 0)
   */
-  MeasureSubprog_c(Proc_c::type_t ren_type = Proc_c::TimeProp, Proc_c::doSend_t ren_doSend = Proc_c::DoVal, int32_t ri32_increment = 0, bool rb_started = false, int32_t ri32_lastVal = 0);
+  MeasureSubprog_c(Proc_c::type_t ren_type = Proc_c::TimeProp, Proc_c::doSend_t ren_doSend = Proc_c::DoVal, int32_t ai32_increment = 0, bool ab_started = false, int32_t ai32_lastVal = 0);
 #ifdef USE_FLOAT_DATA_TYPE
   /**
     default constructor which can optionally set increment type, increment and running state
     @param ren_type increment type
     @param ren_doSend set process data subtype to send (Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...)
-    @param rf_increment increment value of ren_type
-    @param rb_started optional running state (default off)
-    @param rf_lastVal optional value of last trigger event (default 0)
+    @param af_increment increment value of ren_type
+    @param ab_started optional running state (default off)
+    @param af_lastVal optional value of last trigger event (default 0)
   */
-  MeasureSubprog_c(Proc_c::type_t ren_type, Proc_c::doSend_t ren_doSend, float rf_increment, bool rb_started = false, float rf_lastVal = 0.0);
+  MeasureSubprog_c(Proc_c::type_t ren_type, Proc_c::doSend_t ren_doSend, float af_increment, bool ab_started = false, float af_lastVal = 0.0);
 #endif
   /**
     operator= for Subprogs
-    @param rrefc_src source instance
+    @param arc_src source instance
     @return reference to source instance for commands like "subp1 = subp2 = subp3;"
   */
-  const MeasureSubprog_c& operator=(const MeasureSubprog_c& rrefc_src);
+  const MeasureSubprog_c& operator=(const MeasureSubprog_c& arc_src);
   /**
     copy constructor for Subprogs
-    @param rrefc_src source instance
+    @param arc_src source instance
   */
-   MeasureSubprog_c(const MeasureSubprog_c& rrefc_src);
+   MeasureSubprog_c(const MeasureSubprog_c& arc_src);
   
   /** default destructor which has nothing to do */
   ~MeasureSubprog_c();
@@ -168,24 +168,24 @@ public:
   int32_t increment() const {return i32_increment;};
   /**
     set increment value
-    @param ri32_val wanted increment value
+    @param ai32_val wanted increment value
   */
-  void setIncrement(int32_t ri32_val){i32_increment = ri32_val;};
+  void setIncrement(int32_t ai32_val){i32_increment = ai32_val;};
 
   /**
     start a measuring subprogramm, potentially with increment and lastVal definition
-    @param ri32_increment optional increment value (default old increment value used)
-    @param ri32_lastVal last trigger value (default 0)
+    @param ai32_increment optional increment value (default old increment value used)
+    @param ai32_lastVal last trigger value (default 0)
   */
-  void start(int32_t ri32_increment = 0, int32_t ri32_lastVal = 0);
+  void start(int32_t ai32_increment = 0, int32_t ai32_lastVal = 0);
   /**
     delivers if given value forces trigger of send of registered informations
-    @param ri32_val actual increment relevant value (time for TimeProp, distance for DistProp, ...)
+    @param ai32_val actual increment relevant value (time for TimeProp, distance for DistProp, ...)
     @return true -> this subprog triggers (e.g. send actual value)
   */
-  bool updateTrigger(int32_t ri32_val);
+  bool updateTrigger(int32_t ai32_val);
 
-  int32_t nextTriggerTime(int32_t ri32_val);
+  int32_t nextTriggerTime(int32_t ai32_val);
 
 #ifdef USE_FLOAT_DATA_TYPE
   /**
@@ -195,62 +195,62 @@ public:
   float incrementFloat() const {return f_increment;};
   /**
     set increment value
-    @param ri32_val wanted increment value
+    @param ai32_val wanted increment value
   */
-  void setIncrement(float rf_val){f_increment = rf_val;};
+  void setIncrement(float af_val){f_increment = af_val;};
 
   /**
     start a measuring subprogramm, potentially with increment and lastVal definition
-    @param rf_increment increment value
-    @param rf_lastVal last trigger value (default 0)
+    @param af_increment increment value
+    @param af_lastVal last trigger value (default 0)
   */
-  void start(float rf_increment, float rf_lastVal = 0);
+  void start(float af_increment, float af_lastVal = 0);
   /**
     delivers if given value forces trigger of send of registered informations
-    @param rf_val actual increment relevant value (time for TimeProp, distance for DistProp, ...)
+    @param af_val actual increment relevant value (time for TimeProp, distance for DistProp, ...)
     @return true -> this subprog triggers (e.g. send actual value)
   */
-  bool updateTrigger(float rf_val);
+  bool updateTrigger(float af_val);
 #endif
   /** stop a measuring subprogram  */
   void stop(){b_started = false;};
 
   /**
     compare two Subprogs with ==
-    @param rrefc_right compared MeasureSubprog_c instance
+    @param arc_right compared MeasureSubprog_c instance
     @return true -> this instance is equal to the other
   */
-  bool operator==(const MeasureSubprog_c& rrefc_right)const;
+  bool operator==(const MeasureSubprog_c& arc_right)const;
   /**
     compare two Subprogs with !=
-    @param rrefc_right compared MeasureSubprog_c instance
+    @param arc_right compared MeasureSubprog_c instance
     @return true -> this instance is different to the other
   */
-  bool operator!=(const MeasureSubprog_c& rrefc_right)const;
+  bool operator!=(const MeasureSubprog_c& arc_right)const;
   /**
     compare two Subprogs with <
-    @param rrefc_right compared MeasureSubprog_c instance
+    @param arc_right compared MeasureSubprog_c instance
     @return true -> this instance is < than the other
   */
-  bool operator<(const MeasureSubprog_c& rrefc_right)const;
+  bool operator<(const MeasureSubprog_c& arc_right)const;
   /**
     compare two Subprogs with <=
-    @param rrefc_right compared MeasureSubprog_c instance
+    @param arc_right compared MeasureSubprog_c instance
     @return true -> this instance is <= than the other
   */
-  bool operator<=(const MeasureSubprog_c& rrefc_right)const;
+  bool operator<=(const MeasureSubprog_c& arc_right)const;
   /**
     compare two Subprogs with >
-    @param rrefc_right compared MeasureSubprog_c instance
+    @param arc_right compared MeasureSubprog_c instance
     @return true -> this instance is > than the other
   */
-  bool operator>(const MeasureSubprog_c& rrefc_right)const;
+  bool operator>(const MeasureSubprog_c& arc_right)const;
   /**
     compare two Subprogs with >=
-    @param rrefc_right compared MeasureSubprog_c instance
+    @param arc_right compared MeasureSubprog_c instance
     @return true -> this instance is >= than the other
   */
-  bool operator>=(const MeasureSubprog_c& rrefc_right)const;
+  bool operator>=(const MeasureSubprog_c& arc_right)const;
 
   /**
     compare two Subprogs with ==

@@ -95,11 +95,11 @@ namespace __IsoAgLib {
 
 
 
-  StreamLinear_c::StreamLinear_c (StreamType_t rt_streamType, const IsoAgLib::ReceiveStreamIdentifier_c& rc_rsi, uint32_t rui32_msgSize SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA)
-  : Stream_c (rt_streamType, rc_rsi, rui32_msgSize SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA)
+  StreamLinear_c::StreamLinear_c (StreamType_t at_streamType, const IsoAgLib::ReceiveStreamIdentifier_c& ac_rsi, uint32_t aui32_msgSize SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA)
+  : Stream_c (at_streamType, ac_rsi, aui32_msgSize SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA)
   , ui32_parsedCnt (0)
 {
-  vui8_buffer.reserve (rui32_msgSize); // as reactOnStreamStart told we have enough memory!
+  vui8_buffer.reserve (aui32_msgSize); // as reactOnStreamStart told we have enough memory!
 };
 
 StreamLinear_c::~StreamLinear_c()

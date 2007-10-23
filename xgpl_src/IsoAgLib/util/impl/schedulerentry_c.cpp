@@ -97,14 +97,14 @@
 namespace __IsoAgLib {
 //!  This function is called by the central scheduler to stimulate periodic activities for each task.
 //!  The parameter tells the task the available time for execution.
-//! @param ri32_demandedExecEnd: available execution time. timeEvent() MUST be finished before the time, to avoid scheduling problems.
+//! @param ai32_demandedExecEnd: available execution time. timeEvent() MUST be finished before the time, to avoid scheduling problems.
 //!                              default value -1 == unrestricted time for execution.
 //!  @return  false-> Client could not finish job; true-> Client finish job correctly
 
 //#define DEBUG_SCHEDULER
 
 bool
-SchedulerEntry_c::timeEventExec(int32_t ri32_demandedExecEnd)
+SchedulerEntry_c::timeEventExec(int32_t ai32_demandedExecEnd)
 {
   #ifdef DEBUG
   if  ( pc_taskInstance == NULL )
@@ -116,7 +116,7 @@ SchedulerEntry_c::timeEventExec(int32_t ri32_demandedExecEnd)
     return true;
   }
   #endif
-  pc_taskInstance->timeEventPre(ri32_demandedExecEnd);
+  pc_taskInstance->timeEventPre(ai32_demandedExecEnd);
   const bool cb_result = pc_taskInstance->timeEvent();
   /// call only if client returns true caused by  nextRetriggerTime
   /// should NOT be Updated in  timeEventPostUpdateStatistics()

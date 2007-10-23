@@ -75,7 +75,7 @@ class IsoRequestPgnHandler_c : public CanCustomer_c
 
 public:
   virtual ~IsoRequestPgnHandler_c() {};
-  virtual bool processMsgRequestPGN (uint32_t /*rui32_pgn*/, IsoItem_c* /*rpc_isoItemSender*/, IsoItem_c* /*rpc_isoItemReceiver*/){return false;};
+  virtual bool processMsgRequestPGN (uint32_t /*aui32_pgn*/, IsoItem_c* /*apc_isoItemSender*/, IsoItem_c* /*apc_isoItemReceiver*/){return false;};
 };
 
 }

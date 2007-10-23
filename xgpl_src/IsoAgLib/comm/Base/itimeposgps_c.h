@@ -82,21 +82,21 @@ public:
   /**
       config the Base_c object after init -> set pointer to isoName and
       config send/receive of different base msg types
-      @param rpc_isoName pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
-      @param rt_identMode set mode to either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
+      @param apc_isoName pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
+      @param at_identMode set mode to either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       @return true -> configuration was successfull
     */
-  bool config (const iIsoName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode = IsoAgLib::IdentModeImplement, uint16_t rui16_suppressMask = 0)
-  { return TimePosGPS_c::config_base( rpc_isoName, rt_identMode, rui16_suppressMask ); }
+  bool config (const iIsoName_c* apc_isoName, IsoAgLib::IdentMode_t at_identMode = IsoAgLib::IdentModeImplement, uint16_t aui16_suppressMask = 0)
+  { return TimePosGPS_c::config_base( apc_isoName, at_identMode, aui16_suppressMask ); }
 
   /** config the Base_c object after init -> set pointer to isoName and
       config send/receive of different base msg types
-      @param rpc_isoName pointer to the ISOName variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
-      @param rt_identModeGps either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
+      @param apc_isoName pointer to the ISOName variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
+      @param at_identModeGps either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       @return true -> configuration was successfull
     */
-  bool configGps(const iIsoName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identModeGps)
-  {return TimePosGPS_c::configGps( rpc_isoName, rt_identModeGps);}
+  bool configGps(const iIsoName_c* apc_isoName, IsoAgLib::IdentMode_t at_identModeGps)
+  {return TimePosGPS_c::configGps( apc_isoName, at_identModeGps);}
 
   /** Retrieve the last update time of the specified information type
    */
@@ -263,47 +263,47 @@ public:
   /*@{*/
 
   /** set the calendar value */
-  void setCalendarUtc(int16_t ri16_year, uint8_t rb_month, uint8_t rb_day, uint8_t rb_hour, uint8_t rb_minute, uint8_t rb_second, uint16_t rui16_msec = 0)
-  { return TimePosGPS_c::setCalendarUtc(ri16_year, rb_month, rb_day, rb_hour, rb_minute, rb_second, rui16_msec);}
+  void setCalendarUtc(int16_t ai16_year, uint8_t ab_month, uint8_t ab_day, uint8_t ab_hour, uint8_t ab_minute, uint8_t ab_second, uint16_t aui16_msec = 0)
+  { return TimePosGPS_c::setCalendarUtc(ai16_year, ab_month, ab_day, ab_hour, ab_minute, ab_second, aui16_msec);}
 
   /** set the calendar value as local time ( take local time offsets into account ) */
-  void setCalendarLocal(int16_t ri16_year, uint8_t rb_month, uint8_t rb_day, uint8_t rb_hour, uint8_t rb_minute, uint8_t rb_second, uint16_t rui16_msec = 0)
-  { return TimePosGPS_c::setCalendarLocal(ri16_year, rb_month, rb_day, rb_hour, rb_minute, rb_second, rui16_msec);}
+  void setCalendarLocal(int16_t ai16_year, uint8_t ab_month, uint8_t ab_day, uint8_t ab_hour, uint8_t ab_minute, uint8_t ab_second, uint16_t aui16_msec = 0)
+  { return TimePosGPS_c::setCalendarLocal(ai16_year, ab_month, ab_day, ab_hour, ab_minute, ab_second, aui16_msec);}
 
   /** set the date in local timezone */
-  void setDateLocal(int16_t ri16_year, uint8_t rb_month, uint8_t rb_day)
-  { return TimePosGPS_c::setDateLocal(ri16_year, rb_month, rb_day);}
+  void setDateLocal(int16_t ai16_year, uint8_t ab_month, uint8_t ab_day)
+  { return TimePosGPS_c::setDateLocal(ai16_year, ab_month, ab_day);}
 
   /** set the date in UTC timezone */
-  void setDateUtc(int16_t ri16_year, uint8_t rb_month, uint8_t rb_day)
-  { return TimePosGPS_c::setDateUtc(ri16_year, rb_month, rb_day);}
+  void setDateUtc(int16_t ai16_year, uint8_t ab_month, uint8_t ab_day)
+  { return TimePosGPS_c::setDateUtc(ai16_year, ab_month, ab_day);}
 
   /** set the time in local timezone */
-  void setTimeLocal(uint8_t rb_hour, uint8_t rb_minute, uint8_t rb_second, uint16_t rui16_msec = 0)
-  { return TimePosGPS_c::setTimeLocal(rb_hour, rb_minute, rb_second, rui16_msec);}
+  void setTimeLocal(uint8_t ab_hour, uint8_t ab_minute, uint8_t ab_second, uint16_t aui16_msec = 0)
+  { return TimePosGPS_c::setTimeLocal(ab_hour, ab_minute, ab_second, aui16_msec);}
 
   /** set the time in UTC timezone */
-  void setTimeUtc(uint8_t rb_hour, uint8_t rb_minute, uint8_t rb_second, uint16_t rui16_msec = 0, bool b_updateDate = FALSE)
-  { return TimePosGPS_c::setTimeUtc(rb_hour, rb_minute, rb_second, rui16_msec, b_updateDate);};
+  void setTimeUtc(uint8_t ab_hour, uint8_t ab_minute, uint8_t ab_second, uint16_t aui16_msec = 0, bool b_updateDate = FALSE)
+  { return TimePosGPS_c::setTimeUtc(ab_hour, ab_minute, ab_second, aui16_msec, b_updateDate);};
   /** set the actual calendar year value */
-  void setYearUtc(uint16_t rui16_year)
-  { return TimePosGPS_c::setYearUtc(rui16_year);}
+  void setYearUtc(uint16_t aui16_year)
+  { return TimePosGPS_c::setYearUtc(aui16_year);}
 
   /** deliver raw GPS Latitude [degree] with scaling 10.0e-7 */
-  void setGpsLatitudeDegree10Minus7( int32_t ri32_newVal )
-  { return TimePosGPS_c::setGpsLatitudeDegree10Minus7(ri32_newVal);}
+  void setGpsLatitudeDegree10Minus7( int32_t ai32_newVal )
+  { return TimePosGPS_c::setGpsLatitudeDegree10Minus7(ai32_newVal);}
 
   /** deliver raw GPS Longitude [degree] with scaling 10.0e-7 */
-  void setGpsLongitudeDegree10Minus7(int32_t ri32_newVal)
-  { return TimePosGPS_c::setGpsLongitudeDegree10Minus7(ri32_newVal);}
+  void setGpsLongitudeDegree10Minus7(int32_t ai32_newVal)
+  { return TimePosGPS_c::setGpsLongitudeDegree10Minus7(ai32_newVal);}
 
   /** deliver GPS Speed Over Ground as [cm/s] */
-  void setGpsSpeedCmSec(uint16_t rui16_newVal)
-  { return TimePosGPS_c::setGpsSpeedCmSec(rui16_newVal); }
+  void setGpsSpeedCmSec(uint16_t aui16_newVal)
+  { return TimePosGPS_c::setGpsSpeedCmSec(aui16_newVal); }
 
   /** deliver GPS Course Over Ground [1x10E-4rad] */
-  void setGpsCourseRad10Minus4(uint16_t rui16_newVal)
-  { return TimePosGPS_c::setGpsCourseRad10Minus4(rui16_newVal); }
+  void setGpsCourseRad10Minus4(uint16_t aui16_newVal)
+  { return TimePosGPS_c::setGpsCourseRad10Minus4(aui16_newVal); }
 
 
 #if defined(ENABLE_NMEA_2000_MULTI_PACKET)
@@ -313,97 +313,97 @@ public:
    *  In case another system is sending TIME_DATE_PGN, this time could be out-of-sync with GPS time.
    *  To avoid a jumping back and forth Non-GPS UTC time, those two UTC time sources are then not to be synced.
    */
-  void setTimeUtcGps(uint8_t rb_hour, uint8_t rb_minute, uint8_t rb_second, uint16_t rui16_msec = 0)
-    {TimePosGPS_c::setTimeUtcGps( rb_hour, rb_minute, rb_second, rui16_msec );}
+  void setTimeUtcGps(uint8_t ab_hour, uint8_t ab_minute, uint8_t ab_second, uint16_t aui16_msec = 0)
+    {TimePosGPS_c::setTimeUtcGps( ab_hour, ab_minute, ab_second, aui16_msec );}
 
   /** set the calendar hour value
    *  When no remote system is sending the 11783-7 PGN with date & time, the new UTC time is also set with
    *  setTimeUtc().
    *  In case another system is sending TIME_DATE_PGN, this time could be out-of-sync with GPS time.
    *  To avoid a jumping back and forth Non-GPS UTC time, those two UTC time sources are then not to be synced.
-   *  @param rb_hour actual calendar hour value
+   *  @param ab_hour actual calendar hour value
    */
-  void setHourUtcGps(uint8_t rb_hour) {TimePosGPS_c::setHourUtcGps( rb_hour );}
+  void setHourUtcGps(uint8_t ab_hour) {TimePosGPS_c::setHourUtcGps( ab_hour );}
 
   /** set the calendar minute value
    *  When no remote system is sending the 11783-7 PGN with date & time, the new UTC time is also set with
    *  setTimeUtc().
    *  In case another system is sending TIME_DATE_PGN, this time could be out-of-sync with GPS time.
    *  To avoid a jumping back and forth Non-GPS UTC time, those two UTC time sources are then not to be synced.
-   *  @param rb_minute actual calendar minute value
+   *  @param ab_minute actual calendar minute value
    */
-  void setMinuteUtcGps(uint8_t rb_minute) {TimePosGPS_c::setMinuteUtcGps( rb_minute );}
+  void setMinuteUtcGps(uint8_t ab_minute) {TimePosGPS_c::setMinuteUtcGps( ab_minute );}
 
   /** set the calendar second value
    *  When no remote system is sending the 11783-7 PGN with date & time, the new UTC time is also set with
    *  setTimeUtc().
    *  In case another system is sending TIME_DATE_PGN, this time could be out-of-sync with GPS time.
    *  To avoid a jumping back and forth Non-GPS UTC time, those two UTC time sources are then not to be synced.
-   *  @param rb_second actual calendar second value
+   *  @param ab_second actual calendar second value
    */
-  void setSecondUtcGps(uint8_t rb_second) {TimePosGPS_c::setSecondUtcGps( rb_second );}
+  void setSecondUtcGps(uint8_t ab_second) {TimePosGPS_c::setSecondUtcGps( ab_second );}
 
   /** set the calendar millisecond value
    *  When no remote system is sending the 11783-7 PGN with date & time, the new UTC time is also set with
    *  setTimeUtc().
    *  In case another system is sending TIME_DATE_PGN, this time could be out-of-sync with GPS time.
    *  To avoid a jumping back and forth Non-GPS UTC time, those two UTC time sources are then not to be synced.
-   *  @param rb_millisecond actual calendar second value
+   *  @param ab_millisecond actual calendar second value
    */
-  void setMillisecondUtcGps(uint16_t rui16_millisecond) {TimePosGPS_c::setMillisecondUtcGps( rui16_millisecond );}
+  void setMillisecondUtcGps(uint16_t aui16_millisecond) {TimePosGPS_c::setMillisecondUtcGps( aui16_millisecond );}
 
   /** deliver GPS altitude - [cm] */
-  void setGpsAltitudeCm( uint32_t rui32_newVal )
-  { return TimePosGPS_c::setGpsAltitudeCm(rui32_newVal);}
+  void setGpsAltitudeCm( uint32_t aui32_newVal )
+  { return TimePosGPS_c::setGpsAltitudeCm(aui32_newVal);}
 
   /** deliver GPS receive qualitiy */
-  void setGnssMode(IsoAgLib::IsoGnssMethod_t rt_newVal)
-  { return TimePosGPS_c::setGnssMode(rt_newVal);}
+  void setGnssMode(IsoAgLib::IsoGnssMethod_t at_newVal)
+  { return TimePosGPS_c::setGnssMode(at_newVal);}
 
   /** deliver GNSS type ( e.g. GPS, GLONASS or SBAS ) */
-  void setGnssType( IsoAgLib::IsoGnssType_t rt_newVal )
-  { return TimePosGPS_c::setGnssType(rt_newVal);}
+  void setGnssType( IsoAgLib::IsoGnssType_t at_newVal )
+  { return TimePosGPS_c::setGnssType(at_newVal);}
 
   /** deliver number of received satellites */
-  void setSatelliteCnt(uint8_t rui8_newVal)
-  { return TimePosGPS_c::setSatelliteCnt(rui8_newVal);}
+  void setSatelliteCnt(uint8_t aui8_newVal)
+  { return TimePosGPS_c::setSatelliteCnt(aui8_newVal);}
 
   /** deliver HDOP with scaling [1x10E-2] */
-  void setHdop10Minus2(uint16_t rui16_newVal)
-  { return TimePosGPS_c::setHdop10Minus2(rui16_newVal);}
+  void setHdop10Minus2(uint16_t aui16_newVal)
+  { return TimePosGPS_c::setHdop10Minus2(aui16_newVal);}
 
   /** PDOP with scaling [1x10E-2] */
-  void setPdop10Minus2(uint16_t rui16_newVal)
-  { return TimePosGPS_c::setPdop10Minus2(rui16_newVal);}
+  void setPdop10Minus2(uint16_t aui16_newVal)
+  { return TimePosGPS_c::setPdop10Minus2(aui16_newVal);}
   #endif // END of NMEA_2000_FAST_PACKET
 
   /** set the calendar month value */
-  void setMonthUtc(uint8_t rb_month)
-  { return TimePosGPS_c::setMonthUtc(rb_month);}
+  void setMonthUtc(uint8_t ab_month)
+  { return TimePosGPS_c::setMonthUtc(ab_month);}
 
   /** set the calendar day value */
-  void setDayUtc(uint8_t rb_day)
-  { return TimePosGPS_c::setDayUtc(rb_day);}
+  void setDayUtc(uint8_t ab_day)
+  { return TimePosGPS_c::setDayUtc(ab_day);}
 
   /** set the calendar hour value */
-  void setHourUtc(uint8_t rb_hour)
-  { return TimePosGPS_c::setHourUtc(rb_hour);}
+  void setHourUtc(uint8_t ab_hour)
+  { return TimePosGPS_c::setHourUtc(ab_hour);}
 
   /** set the calendar minute value */
-  void setMinuteUtc(uint8_t rb_minute)
-  { return TimePosGPS_c::setMinuteUtc(rb_minute);}
+  void setMinuteUtc(uint8_t ab_minute)
+  { return TimePosGPS_c::setMinuteUtc(ab_minute);}
 
   /** set the calendar second value */
-  void setSecond(uint8_t rb_second)
-  { return TimePosGPS_c::setSecond(rb_second);}
+  void setSecond(uint8_t ab_second)
+  { return TimePosGPS_c::setSecond(ab_second);}
 
   /** set the calendar millisecond value */
-  void setMillisecond(uint16_t rui16_millisecond)
-  { return TimePosGPS_c::setMillisecond(rui16_millisecond);}
+  void setMillisecond(uint16_t aui16_millisecond)
+  { return TimePosGPS_c::setMillisecond(aui16_millisecond);}
 
   /** set the local time to UTC time offsets */
-  void setLocalTimeOffsets(int16_t ri16_hourOffset, uint16_t rui16_minuteOffset)
-  { return TimePosGPS_c::setLocalTimeOffsets(ri16_hourOffset, rui16_minuteOffset);}
+  void setLocalTimeOffsets(int16_t ai16_hourOffset, uint16_t aui16_minuteOffset)
+  { return TimePosGPS_c::setLocalTimeOffsets(ai16_hourOffset, aui16_minuteOffset);}
 
 
   /* ****************************************************** */
@@ -414,7 +414,7 @@ public:
     * otherwise __IsoAgLib::getTimePosGpsInstance() wouldn't be accepted by compiler
     */
   #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
-  friend iTimePosGPS_c& getITimePosGpsInstance( uint8_t rui8_instance );
+  friend iTimePosGPS_c& getITimePosGpsInstance( uint8_t aui8_instance );
   #else
   friend iTimePosGPS_c& getITimePosGpsInstance( void );
   #endif
@@ -424,8 +424,8 @@ public:
   /** C-style function, to get access to the unique Base_c singleton instance
     * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
     */
-  inline iTimePosGPS_c& getITimePosGpsInstance( uint8_t rui8_instance = 0 )
-  { return static_cast<iTimePosGPS_c&>(__IsoAgLib::getTimePosGpsInstance(rui8_instance));}
+  inline iTimePosGPS_c& getITimePosGpsInstance( uint8_t aui8_instance = 0 )
+  { return static_cast<iTimePosGPS_c&>(__IsoAgLib::getTimePosGpsInstance(aui8_instance));}
 #else
   /** C-style function, to get access to the unique Base_c singleton instance */
   inline iTimePosGPS_c& getITimePosGpsInstance( void )

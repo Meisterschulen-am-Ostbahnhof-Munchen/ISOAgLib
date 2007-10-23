@@ -79,11 +79,11 @@ public:
   /**
     set if master setpoint should be preserved even if caller
     isoName is no more active (default false)
-    @param rb_static choose if master setpoint should be preserved
+    @param ab_static choose if master setpoint should be preserved
           if caller isn't acitve
   */
-  void setStaticMaster(bool rb_static = true)
-    {SetpointLocal_c::setStaticMaster(rb_static);};
+  void setStaticMaster(bool ab_static = true)
+    {SetpointLocal_c::setStaticMaster(ab_static);};
   /**
     check if actual a master setpoint item is defined
     @see master
@@ -126,17 +126,17 @@ public:
         * Err_c::elNonexistent no master setpoint found
     @see existUnhandledMaster
     @see unhandledMaster
-    @param rb_accept true ( default ) -> new setpoint of master is accepted -> send positive notify
+    @param ab_accept true ( default ) -> new setpoint of master is accepted -> send positive notify
   */
-  void acceptNewMaster(bool rb_accept = true ) {SetpointLocal_c::acceptNewMaster(rb_accept);};
+  void acceptNewMaster(bool ab_accept = true ) {SetpointLocal_c::acceptNewMaster(ab_accept);};
   /**
     set the master setpoint manually
     (in some cases remote systems request informations
      through process data setpoints)
-    @param ri32_val wanted setpoint value
+    @param ai32_val wanted setpoint value
   */
-  void setMasterMeasurementVal(int32_t ri32_val)
-    {SetpointLocal_c::setMasterMeasurementVal(ri32_val);};
+  void setMasterMeasurementVal(int32_t ai32_val)
+    {SetpointLocal_c::setMasterMeasurementVal(ai32_val);};
 
   /**
     deliver the count of unhandled setpoints
@@ -144,17 +144,17 @@ public:
   */
   uint8_t unhandledCnt() {return SetpointLocal_c::unhandledCnt();};
   /**
-    deliver the rui8_ind of the unhandled setpoints
-    @param rui8_ind position of the wanted setpoint entry in list of unhandled setpoints
-      (first entry: rui8_ind == 0!!)
+    deliver the aui8_ind of the unhandled setpoints
+    @param aui8_ind position of the wanted setpoint entry in list of unhandled setpoints
+      (first entry: aui8_ind == 0!!)
 
     possible errors:
-        * Err_c::range there are less than rui8_ind unhandled setpoints found
+        * Err_c::range there are less than aui8_ind unhandled setpoints found
     @see unhandledCnt
     @return wanted unhandled setpoint
   */
-  iSetpointRegister_c& unhandledInd(uint8_t rui8_ind)
-    {return ((iSetpointRegister_c&)(SetpointLocal_c::unhandledInd(rui8_ind)));};
+  iSetpointRegister_c& unhandledInd(uint8_t aui8_ind)
+    {return ((iSetpointRegister_c&)(SetpointLocal_c::unhandledInd(aui8_ind)));};
   /**
     deliver the first unhandled entry
 
@@ -179,10 +179,10 @@ public:
   /**
     set the allowed percentual deviation between actual measurement and
     existing master setpoint
-    @param rb_percent allowed percantual deviation
+    @param ab_percent allowed percantual deviation
   */
-  void setAllowedDeltaPercent(uint8_t rb_percent)
-    {SetpointLocal_c::setAllowedDeltaPercent(rb_percent);};
+  void setAllowedDeltaPercent(uint8_t ab_percent)
+    {SetpointLocal_c::setAllowedDeltaPercent(ab_percent);};
   /**
     get the allowed percentual deviation between actual measurement and
     existing master setpoint
@@ -193,14 +193,14 @@ public:
   /**
     check if the given measuremet value is correct for the actual
     master setpoint;
-    @param ri32_val measured value
-    @param rb_sendIfError true -> if actual value exceeds setpoint limits
+    @param ai32_val measured value
+    @param ab_sendIfError true -> if actual value exceeds setpoint limits
            the actual value is sent as notification (default true)
     @return 0 -> correct; (n<0) -> measurement is delta n to low;
             (n>0) -> measurement is delta n to high
   */
-  int32_t checkMeasurement(int32_t ri32_val, bool rb_sendIfError = true)
-    {return SetpointLocal_c::checkMeasurement(ri32_val, rb_sendIfError);};
+  int32_t checkMeasurement(int32_t ai32_val, bool ab_sendIfError = true)
+    {return SetpointLocal_c::checkMeasurement(ai32_val, ab_sendIfError);};
  private:
   friend class iProcDataLocal_c;
   friend class iProcDataLocalSimpleMeasure_c;

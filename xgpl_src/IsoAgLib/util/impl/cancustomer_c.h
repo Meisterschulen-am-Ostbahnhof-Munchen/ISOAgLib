@@ -127,7 +127,7 @@ public:
   /**
     process a message -> the specialized/derived version of this virtual
     function is called during processing of received CAN telegrams in CanIo_c::processMsg
-    @param rpc_box pointer to the FilterBox_c instances which received the telegram (i.e. which has the telegram in its puffer)
+    @param apc_box pointer to the FilterBox_c instances which received the telegram (i.e. which has the telegram in its puffer)
     @see __IsoAgLib::CanIo_c::processMsg
   */
   virtual bool processMsg();
@@ -135,7 +135,7 @@ public:
   /**
     process a message -> the specialized/derived version of this virtual
     function can be called during processing of received CAN telegrams in CanIo_c::processMsg
-    @param rpc_box pointer to the FilterBox_c instances which received the telegram (i.e. which has the telegram in its puffer)
+    @param apc_box pointer to the FilterBox_c instances which received the telegram (i.e. which has the telegram in its puffer)
     @see __IsoAgLib::CanIo_c::processMsg
   */
   virtual bool processInvalidMsg() { return false; }
@@ -148,22 +148,22 @@ public:
 
   //  Operation: reactOnStreamStart
   //! Parameter:
-  //! @param rc_ident:
-  //! @param rui32_totalLen:
-  virtual bool reactOnStreamStart (const IsoAgLib::ReceiveStreamIdentifier_c& /*rc_ident*/, uint32_t /*rui32_totalLen*/) { return false; }
+  //! @param ac_ident:
+  //! @param aui32_totalLen:
+  virtual bool reactOnStreamStart (const IsoAgLib::ReceiveStreamIdentifier_c& /*ac_ident*/, uint32_t /*aui32_totalLen*/) { return false; }
 
   //  Operation: reactOnAbort
-  virtual void reactOnAbort (IsoAgLib::iStream_c& /*rrefc_stream*/) {}
+  virtual void reactOnAbort (IsoAgLib::iStream_c& /*arc_stream*/) {}
 
   //  Operation: processPartStreamDataChunk
   //! Parameter:
-  //! @param rrefc_stream: stream that is to be processed
-  //! @param rb_isFirstChunk: is it the first chunk? do we have to perform some decision action?
-  //! @param rb_isLastChunk: this also indicates that the MultiPacket-Message has been acknowledged via "End Of Message Acknowledge"!
+  //! @param arc_stream: stream that is to be processed
+  //! @param ab_isFirstChunk: is it the first chunk? do we have to perform some decision action?
+  //! @param ab_isLastChunk: this also indicates that the MultiPacket-Message has been acknowledged via "End Of Message Acknowledge"!
   //! @return .... keep stuff @todo describe here
-  virtual bool processPartStreamDataChunk (IsoAgLib::iStream_c& /*rpc_stream*/, bool /*rb_isFirstChunk*/, bool /*rb_isLastChunk*/) { return false; }
+  virtual bool processPartStreamDataChunk (IsoAgLib::iStream_c& /*apc_stream*/, bool /*ab_isFirstChunk*/, bool /*ab_isLastChunk*/) { return false; }
 
-  virtual void notificationOnMultiReceiveError (const IsoAgLib::ReceiveStreamIdentifier_c& /*rc_streamIdent*/, uint8_t /*rui8_multiReceiveError*/, bool /*rb_isGlobal*/) {} // needs not to be overwritten
+  virtual void notificationOnMultiReceiveError (const IsoAgLib::ReceiveStreamIdentifier_c& /*ac_streamIdent*/, uint8_t /*aui8_multiReceiveError*/, bool /*ab_isGlobal*/) {} // needs not to be overwritten
 
 
 #if defined(ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL)

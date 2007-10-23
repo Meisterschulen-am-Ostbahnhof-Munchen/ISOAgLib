@@ -127,17 +127,17 @@ class RteCanPkg {
     uint8_t  size;
     uint8_t  data[8];
   public:
-    RteCanPkg( uint32_t rui32_id = 0, uint8_t rui8_xtd = 0, uint8_t rui8_size = 0, const uint8_t* rpui8_data = NULL )
-      { id = rui32_id; b_xtd = rui8_xtd; size = ( rui8_size <= 8 )?rui8_size:8; memcpy( data, rpui8_data, size ); };
+    RteCanPkg( uint32_t aui32_id = 0, uint8_t aui8_xtd = 0, uint8_t aui8_size = 0, const uint8_t* apui8_data = NULL )
+      { id = aui32_id; b_xtd = aui8_xtd; size = ( aui8_size <= 8 )?aui8_size:8; memcpy( data, apui8_data, size ); };
 
-    bool operator==( const RteCanPkg& rrefc_src ) const
-      { return ( ( id == rrefc_src.id ) && ( b_xtd == rrefc_src.b_xtd ) && ( size == rrefc_src.size ) && ( memcmp( data, rrefc_src.data, size ) == 0 ) )?true:false; } ;
+    bool operator==( const RteCanPkg& arc_src ) const
+      { return ( ( id == arc_src.id ) && ( b_xtd == arc_src.b_xtd ) && ( size == arc_src.size ) && ( memcmp( data, arc_src.data, size ) == 0 ) )?true:false; } ;
 
-    bool operator!=( const RteCanPkg& rrefc_src ) const
-      { return ( ( id != rrefc_src.id ) || ( b_xtd != rrefc_src.b_xtd ) || ( size != rrefc_src.size ) || ( memcmp( data, rrefc_src.data, size ) != 0 ) )?true:false; } ;
+    bool operator!=( const RteCanPkg& arc_src ) const
+      { return ( ( id != arc_src.id ) || ( b_xtd != arc_src.b_xtd ) || ( size != arc_src.size ) || ( memcmp( data, arc_src.data, size ) != 0 ) )?true:false; } ;
 
-    const RteCanPkg& operator=( const RteCanPkg& rrefc_src )
-      { id = rrefc_src.id; b_xtd = rrefc_src.b_xtd; size = rrefc_src.size; memcpy( data, rrefc_src.data, size ); return *this;};
+    const RteCanPkg& operator=( const RteCanPkg& arc_src )
+      { id = arc_src.id; b_xtd = arc_src.b_xtd; size = arc_src.size; memcpy( data, arc_src.data, size ); return *this;};
 };
 
 static STL_NAMESPACE::list<RteCanPkg> arr_canQueue[cui32_maxCanBusCnt];
@@ -151,7 +151,7 @@ static FILE* canlogDat[cui32_maxCanBusCnt];
 // static rte_time_t t_rteOffset = RTE_NEVER;
 
 /** there's no send-delay recognition of RTE */
-int32_t getMaxSendDelay(uint8_t rui8_busNr) { return 0; }
+int32_t getMaxSendDelay(uint8_t aui8_busNr) { return 0; }
 
 int16_t can_startDriver()
 {
@@ -235,7 +235,7 @@ int16_t getCanMsgBufCount(uint8_t bBusNumber,uint8_t bMsgObj)
   return ((bBusNumber < cui32_maxCanBusCnt)&&(bMsgObj < arrMsgObj[bBusNumber].size()))?arrMsgObj[bBusNumber][bMsgObj].rec_bufCnt:0;
 };
 
-bool waitUntilCanReceiveOrTimeout( uint16_t rui16_timeoutInterval )
+bool waitUntilCanReceiveOrTimeout( uint16_t aui16_timeoutInterval )
 {
   unsigned int busInd = 0;
   int openBus = -1;
@@ -251,12 +251,12 @@ bool waitUntilCanReceiveOrTimeout( uint16_t rui16_timeoutInterval )
   { // an open CAN BUS found
     uint32_t n = 1;
     /** @todo how to handle TWO open BUSSes -> how can wait be called then */
-    if ( rteCan_c[openBus]->wait( &n, RTE_ONE_MILLISECOND*rte_time_t(rui16_timeoutInterval), false ) == rte_ret_error( timeout ) ) return false;
+    if ( rteCan_c[openBus]->wait( &n, RTE_ONE_MILLISECOND*rte_time_t(aui16_timeoutInterval), false ) == rte_ret_error( timeout ) ) return false;
     else return true;
   }
   else
   { // no CAN BUS opened
-    usleep( rui16_timeoutInterval * 1000 );
+    usleep( aui16_timeoutInterval * 1000 );
     return false;
   }
 }
@@ -264,14 +264,14 @@ bool waitUntilCanReceiveOrTimeout( uint16_t rui16_timeoutInterval )
 
 /**
   check if MsgObj is currently locked
-  @param rui8_busNr number of the BUS to check
-  @param rui8_msgobjNr number of the MsgObj to check
+  @param aui8_busNr number of the BUS to check
+  @param aui8_msgobjNr number of the MsgObj to check
   @return true -> MsgObj is currently locked
 */
-bool getCanMsgObjLocked( uint8_t rui8_busNr, uint8_t rui8_msgobjNr )
+bool getCanMsgObjLocked( uint8_t aui8_busNr, uint8_t aui8_msgobjNr )
 {
-  if ( ( rui8_busNr > 1 ) || ( rui8_msgobjNr> arrMsgObj[rui8_busNr].size()-1 ) ) return true;
-  else if ( arrMsgObj[rui8_busNr][rui8_msgobjNr].b_canBufferLock ) return true;
+  if ( ( aui8_busNr > 1 ) || ( aui8_msgobjNr> arrMsgObj[aui8_busNr].size()-1 ) ) return true;
+  else if ( arrMsgObj[aui8_busNr][aui8_msgobjNr].b_canBufferLock ) return true;
   else return false;
 }
 
@@ -418,21 +418,21 @@ int16_t chgCanObjId ( uint8_t bBusNumber, uint8_t bMsgObj, uint32_t dwId, uint32
 
 /**
   lock a MsgObj to avoid further placement of messages into buffer.
-  @param rui8_busNr number of the BUS to config
-  @param rui8_msgobjNr number of the MsgObj to config
-  @param rb_doLock true==lock(default); false==unlock
+  @param aui8_busNr number of the BUS to config
+  @param aui8_msgobjNr number of the MsgObj to config
+  @param ab_doLock true==lock(default); false==unlock
   @return HAL_NO_ERR == no error;
           HAL_CONFIG_ERR == BUS not initialised or ident can't be changed
           HAL_RANGE_ERR == wrong BUS or MsgObj number
   */
-int16_t lockCanObj( uint8_t rui8_busNr, uint8_t rui8_msgobjNr, bool rb_doLock )
+int16_t lockCanObj( uint8_t aui8_busNr, uint8_t aui8_msgobjNr, bool ab_doLock )
 { // first get waiting messages
   rte_poll();
-//  if (b_busOpened[rui8_busNr])
+//  if (b_busOpened[aui8_busNr])
 //  {
-//    rteCan_c [rui8_busNr]->poll ();
+//    rteCan_c [aui8_busNr]->poll ();
 //  }
-  arrMsgObj[rui8_busNr][rui8_msgobjNr].b_canBufferLock = rb_doLock;
+  arrMsgObj[aui8_busNr][aui8_msgobjNr].b_canBufferLock = ab_doLock;
   return HAL_NO_ERR;
 }
 

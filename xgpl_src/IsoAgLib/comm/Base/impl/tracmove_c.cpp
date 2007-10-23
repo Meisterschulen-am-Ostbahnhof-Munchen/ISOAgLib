@@ -106,9 +106,9 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
   /** C-style function, to get access to the unique TracMove_c singleton instance
     * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
     */
-  TracMove_c& getTracMoveInstance( uint8_t rui8_instance )
+  TracMove_c& getTracMoveInstance( uint8_t aui8_instance )
   { // if > 1 singleton instance is used, no static reference can be used
-    return TracMove_c::instance( rui8_instance );
+    return TracMove_c::instance( aui8_instance );
   };
   #else
   /** C-style function, to get access to the unique Base_c singleton instance */
@@ -124,30 +124,30 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
       above all create the needed FilterBox_c instances
       possible errors:
         * dependant error in CanIo_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
-      @param rpc_isoName optional pointer to the ISOName variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
+      @param apc_isoName optional pointer to the ISOName variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
       @param ai_singletonVecKey singleton vector key in case PRT_INSTANCE_CNT > 1
-      @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
+      @param at_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
     */
-  void TracMove_c::init_base (const IsoName_c* rpc_isoName, int /*ai_singletonVecKey*/, IsoAgLib::IdentMode_t rt_identMode)
+  void TracMove_c::init_base (const IsoName_c* apc_isoName, int /*ai_singletonVecKey*/, IsoAgLib::IdentMode_t at_identMode)
   {
     //call init for handling which is base data independent
-    BaseCommon_c::init_base (rpc_isoName, getSingletonVecKey(), rt_identMode);
+    BaseCommon_c::init_base (apc_isoName, getSingletonVecKey(), at_identMode);
   };
 
   /** config the TracMove_c object after init -> set pointer to isoName and
       config send/receive of a moving msg type
-      @param rpc_isoName pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
-      @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
+      @param apc_isoName pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
+      @param at_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       @return true -> configuration was successfull
     */
-  bool TracMove_c::config_base (const IsoName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode, uint16_t rui16_suppressMask)
+  bool TracMove_c::config_base (const IsoName_c* apc_isoName, IsoAgLib::IdentMode_t at_identMode, uint16_t aui16_suppressMask)
   {
     //call config for handling which is base data independent
     //if something went wrong leave function before something is configured
-    if ( !BaseCommon_c::config_base (rpc_isoName, rt_identMode, rui16_suppressMask) ) return false;
+    if ( !BaseCommon_c::config_base (apc_isoName, at_identMode, aui16_suppressMask) ) return false;
 
     ///Set time Period for Scheduler_c
-    if (rt_identMode == IsoAgLib::IdentModeTractor)
+    if (at_identMode == IsoAgLib::IdentModeTractor)
     { // SEND data with short period
       setTimePeriod( (uint16_t) 100);
     }
@@ -627,7 +627,7 @@ TracMove_c::getTaskName() const
 /** dummy implementation
     @todo shouldn't this PGN be also answered?
   */
-bool TracMove_c::processMsgRequestPGN (uint32_t rui32_pgn, IsoItem_c* rpc_isoItemSender, IsoItem_c* rpc_isoItemReceiver)
+bool TracMove_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver)
 {
   return false;
 }

@@ -324,35 +324,35 @@ int16_t chgCanObjId ( uint8_t bBusNumber, uint8_t bMsgObj, uint32_t dwId, uint32
 }
 /**
        lock a MsgObj to avoid further placement of messages into buffer.
-  @param rui8_busNr number of the BUS to config
-  @param rui8_msgobjNr number of the MsgObj to config
-       @param rb_doLock true==lock(default); false==unlock
+  @param aui8_busNr number of the BUS to config
+  @param aui8_msgobjNr number of the MsgObj to config
+       @param ab_doLock true==lock(default); false==unlock
   @return HAL_NO_ERR == no error;
           HAL_CONFIG_ERR == BUS not initialised or ident can't be changed
           HAL_RANGE_ERR == wrong BUS or MsgObj number
        */
-int16_t lockCanObj( uint8_t rui8_busNr, uint8_t rui8_msgobjNr, bool rb_doLock )
+int16_t lockCanObj( uint8_t aui8_busNr, uint8_t aui8_msgobjNr, bool ab_doLock )
 {
 
   msqCommand_s msqCommandBuf;
 
-  DEBUG_PRINT3("lockCanObj, bus %d, obj %d, lock %d\n", rui8_busNr, rui8_msgobjNr, rb_doLock);
+  DEBUG_PRINT3("lockCanObj, bus %d, obj %d, lock %d\n", aui8_busNr, aui8_msgobjNr, ab_doLock);
 
 #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
-  if ( ( rui8_busNr > HAL_CAN_MAX_BUS_NR ) || ( rui8_msgobjNr > cui8_maxCanObj-1 ) ) return HAL_RANGE_ERR;
+  if ( ( aui8_busNr > HAL_CAN_MAX_BUS_NR ) || ( aui8_msgobjNr > cui8_maxCanObj-1 ) ) return HAL_RANGE_ERR;
 #else
-  if ( ( rui8_busNr > HAL_CAN_MAX_BUS_NR ) ) return HAL_RANGE_ERR;
+  if ( ( aui8_busNr > HAL_CAN_MAX_BUS_NR ) ) return HAL_RANGE_ERR;
 #endif
 
   msqCommandBuf.i32_mtypePid = msqDataClient.i32_pid;
 
-  if (rb_doLock)
+  if (ab_doLock)
     msqCommandBuf.i16_command = COMMAND_LOCK;
   else
     msqCommandBuf.i16_command = COMMAND_UNLOCK;
 
-  msqCommandBuf.s_config.ui8_bus = rui8_busNr;
-  msqCommandBuf.s_config.ui8_obj = rui8_msgobjNr;
+  msqCommandBuf.s_config.ui8_bus = aui8_busNr;
+  msqCommandBuf.s_config.ui8_obj = aui8_msgobjNr;
 
   return send_command(&msqCommandBuf, &msqDataClient);
 
@@ -360,29 +360,29 @@ int16_t lockCanObj( uint8_t rui8_busNr, uint8_t rui8_msgobjNr, bool rb_doLock )
 
 /**
        check if MsgObj is currently locked
-  @param rui8_busNr number of the BUS to check
-  @param rui8_msgobjNr number of the MsgObj to check
+  @param aui8_busNr number of the BUS to check
+  @param aui8_msgobjNr number of the MsgObj to check
        @return true -> MsgObj is currently locked
 */
-bool getCanMsgObjLocked( uint8_t rui8_busNr, uint8_t rui8_msgobjNr )
+bool getCanMsgObjLocked( uint8_t aui8_busNr, uint8_t aui8_msgobjNr )
 {
 
   int16_t i16_rc;
   msqCommand_s msqCommandBuf;
 
-  DEBUG_PRINT2("getCanMsgObjLocked, bus %d, obj %d\n", rui8_busNr, rui8_msgobjNr);
+  DEBUG_PRINT2("getCanMsgObjLocked, bus %d, obj %d\n", aui8_busNr, aui8_msgobjNr);
 
 #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
-  if ( ( rui8_busNr > HAL_CAN_MAX_BUS_NR ) || ( rui8_msgobjNr > cui8_maxCanObj-1 ) ) return true;
+  if ( ( aui8_busNr > HAL_CAN_MAX_BUS_NR ) || ( aui8_msgobjNr > cui8_maxCanObj-1 ) ) return true;
 #else
-  if ( ( rui8_busNr > HAL_CAN_MAX_BUS_NR ) ) return true;
+  if ( ( aui8_busNr > HAL_CAN_MAX_BUS_NR ) ) return true;
 #endif
   else {
 
     msqCommandBuf.i32_mtypePid = msqDataClient.i32_pid;
     msqCommandBuf.i16_command = COMMAND_QUERYLOCK;
-    msqCommandBuf.s_config.ui8_bus = rui8_busNr;
-    msqCommandBuf.s_config.ui8_obj = rui8_msgobjNr;
+    msqCommandBuf.s_config.ui8_bus = aui8_busNr;
+    msqCommandBuf.s_config.ui8_obj = aui8_msgobjNr;
 
     i16_rc = send_command(&msqCommandBuf, &msqDataClient);
 
@@ -442,10 +442,10 @@ int16_t getCanMsgBufCount(uint8_t bBusNumber,uint8_t bMsgObj)
 };
 
 
-bool waitUntilCanReceiveOrTimeout( uint16_t rui16_timeoutInterval )
+bool waitUntilCanReceiveOrTimeout( uint16_t aui16_timeoutInterval )
 {
   // for debug only
-  //int32_t i32_endWait = getTime() + rui16_timeoutInterval;
+  //int32_t i32_endWait = getTime() + aui16_timeoutInterval;
 
   int16_t i16_rc;
   fd_set rfds;
@@ -456,7 +456,7 @@ bool waitUntilCanReceiveOrTimeout( uint16_t rui16_timeoutInterval )
   FD_SET(msqDataClient.i32_pipeHandle, &rfds);
 
   s_timeout.tv_sec = 0;
-  s_timeout.tv_usec = rui16_timeoutInterval * 1000;
+  s_timeout.tv_usec = aui16_timeoutInterval * 1000;
 
   i16_rc = select(msqDataClient.i32_pipeHandle+1, &rfds, NULL, NULL, &s_timeout);
 
@@ -588,17 +588,17 @@ int16_t sendCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tSend* ptSend )
 
 /** @todo maybe make return code the error code and pass the ref to the value as parameter?
  * for now, simply no error code is generated! */
-int32_t getMaxSendDelay(uint8_t rui8_busNr)
+int32_t getMaxSendDelay(uint8_t aui8_busNr)
 {
   msqCommand_s msqCommandBuf;
 
-  DEBUG_PRINT1("getMaxSendDelay called, bus %d\n", rui8_busNr);
+  DEBUG_PRINT1("getMaxSendDelay called, bus %d\n", aui8_busNr);
 
 /*  if ( bBusNumber > HAL_CAN_MAX_BUS_NR ) return HAL_RANGE_ERR; */
 
   msqCommandBuf.i32_mtypePid = msqDataClient.i32_pid;
   msqCommandBuf.i16_command = COMMAND_SEND_DELAY;
-  msqCommandBuf.s_config.ui8_bus = rui8_busNr;
+  msqCommandBuf.s_config.ui8_bus = aui8_busNr;
   // the other fields of the s_config struct are NOT of interest here!
 
   int i16_rc = send_command(&msqCommandBuf, &msqDataClient);

@@ -153,9 +153,9 @@ namespace __IsoAgLib {
   /** C-style function, to get access to the unique Scheduler_c singleton instance
     * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
     */
-  Scheduler_c& getSchedulerInstance( uint8_t rui8_instance )
+  Scheduler_c& getSchedulerInstance( uint8_t aui8_instance )
   { // if > 1 singleton instance is used, no static reference can be used
-    return Scheduler_c::instance( rui8_instance );
+    return Scheduler_c::instance( aui8_instance );
   }
 #else
   /** C-style function, to get access to the unique Scheduler_c singleton instance */
@@ -408,10 +408,10 @@ void Scheduler_c::unregisterClient( ElementBase_c* pc_client)
 }
 
 /** deliver available time for time event
-  * @param ri16_awaitedExecTime optional awaited execution time of planned next step
+  * @param ai16_awaitedExecTime optional awaited execution time of planned next step
            ==> answer of this function tells, if planned step will fit into time frame
   */
-int16_t Scheduler_c::getAvailableExecTime( int16_t ri16_awaitedExecTime )
+int16_t Scheduler_c::getAvailableExecTime( int16_t ai16_awaitedExecTime )
 { // check if b_execStopForced is set
   //if ( b_execStopForced ) return 0;
   if ( b_execStopForced ) return 0 ;
@@ -421,7 +421,7 @@ int16_t Scheduler_c::getAvailableExecTime( int16_t ri16_awaitedExecTime )
     const int32_t ci32_now = System_c::getTime();
     const int32_t ci32_result = i32_demandedExecEndScheduler - ci32_now;
     if ( ci32_result < 0 ) return 0; ///< we are too late
-    else if ( ci32_result < ri16_awaitedExecTime ) return 0; ///< indicate that awaited time for next step is too long
+    else if ( ci32_result < ai16_awaitedExecTime ) return 0; ///< indicate that awaited time for next step is too long
     else if ( ci32_result > 0x7FFF ) return 0x7FFF; ///< limit to the biggest int16_t time
     else return ci32_result;
   }
@@ -447,13 +447,13 @@ Scheduler_c::getCentralSchedulerAvailableExecTime()
   registered within Scheduler_c for periodic timeEvent.
   Define common trigger timestamp, so that distributed activities can be performed with
   common time base.
-  @param ri32_demandedExecEndScheduler optional timestamp, where timeEvent shall return execution to calling function
+  @param ai32_demandedExecEndScheduler optional timestamp, where timeEvent shall return execution to calling function
          -> allow tight integration of IsoAgLib into application specific scheduler, as In-Time execution is
          guaranteed (default -1 -> no execution stop defined)
   @return idleTime for main application (> 0 wait for next call; == 0 call function again)
           idleTime < 0  One Client could not finish his Job
 */
-int32_t Scheduler_c::timeEvent( int32_t ri32_demandedExecEndScheduler )
+int32_t Scheduler_c::timeEvent( int32_t ai32_demandedExecEndScheduler )
 { // first check if demanded exec time allows execution
   // update last trigger time
   #if defined(TEST_TIMING) && defined(SYSTEM_PC)
@@ -465,9 +465,9 @@ int32_t Scheduler_c::timeEvent( int32_t ri32_demandedExecEndScheduler )
 
   int32_t i32_stepStartTime = i32_lastTimeEventTime = System_c::getTime();
 
-  i32_demandedExecEndScheduler = ri32_demandedExecEndScheduler;
+  i32_demandedExecEndScheduler = ai32_demandedExecEndScheduler;
   #ifdef CONFIG_DEFAULT_MAX_SCHEDULER_TIME_EVENT_TIME
-  if ( ri32_demandedExecEndScheduler < 0 )
+  if ( ai32_demandedExecEndScheduler < 0 )
   { // limit execution time, even if no limit was defined by caller - avoid deadlock due to overload
     i32_demandedExecEndScheduler = i32_stepStartTime + CONFIG_DEFAULT_MAX_SCHEDULER_TIME_EVENT_TIME;
     //i32_demandedExecEndScheduler = i32_stepStartTime + 250;
@@ -573,16 +573,16 @@ int32_t Scheduler_c::timeEvent( int32_t ri32_demandedExecEndScheduler )
 //!  resort from start of task list by swapping neighbour elements.
 //!  Stop execution, if compared elements are in correct order.
 //!  Avoid complex complete sort of list, if only the previously executed task must be placed in the correct position again - the rest of the list is still correct sorted.
-//!  @param rpc_sort ptr to currently executed SchedulerEntry_c
+//!  @param apc_sort ptr to currently executed SchedulerEntry_c
 void
-Scheduler_c::resortTaskList(const SchedulerEntry_c* rpc_sort)
+Scheduler_c::resortTaskList(const SchedulerEntry_c* apc_sort)
 {
   if(cntClient() <= 1) return ; //nothing to sort
 
   STL_NAMESPACE::list<SchedulerEntry_c>::iterator iterExecuted = c_taskQueue.begin();
   for ( ; iterExecuted != c_taskQueue.end(); iterExecuted++ )
   {
-    if (rpc_sort == &(*iterExecuted) ) break;
+    if (apc_sort == &(*iterExecuted) ) break;
   }
   if ( iterExecuted == c_taskQueue.end() ) return;
 
@@ -749,16 +749,16 @@ Scheduler_c::selectCallTaskAndUpdateQueue()
 //!  As long as latest execution would allow some idle time,
 //!  the timing is acceptable.
 //! Parameter:
-//! @param refc_selectedTask: reference to the next executed task
+//! @param rc_selectedTask: reference to the next executed task
 void
-Scheduler_c::setDebugTimeAccuracy(SchedulerEntry_c& refc_selectedTask)
+Scheduler_c::setDebugTimeAccuracy(SchedulerEntry_c& rc_selectedTask)
 { // ~X2C
   static uint32_t sui32_lastDebugOutput = 0;
   static int16_t si16_maxDeviation = -32767,
                  si16_minDeviation = +32767;
 
-  int16_t i16_timeDeviation = refc_selectedTask.getStdTimeToNextTrigger();
-  bool b_correctTimeManagement = ( refc_selectedTask.getTimeToNextTrigger( LatestRetrigger ) >= 0  )?true:false;
+  int16_t i16_timeDeviation = rc_selectedTask.getStdTimeToNextTrigger();
+  bool b_correctTimeManagement = ( rc_selectedTask.getTimeToNextTrigger( LatestRetrigger ) >= 0  )?true:false;
   int32_t i32_now = System_c::getTime();
   // update extreme times
   if ( i16_timeDeviation > si16_maxDeviation ) si16_maxDeviation = i16_timeDeviation;
@@ -770,7 +770,7 @@ Scheduler_c::setDebugTimeAccuracy(SchedulerEntry_c& refc_selectedTask)
     sui32_lastDebugOutput = i32_now;
     INTERNAL_DEBUG_DEVICE << "setDebugTimeAccuracy()\n"
       << "Actual time: " << i32_now
-      << " for Task: " << refc_selectedTask.getTaskName() /// todo implente  Taskschilds
+      << " for Task: " << rc_selectedTask.getTaskName() /// todo implente  Taskschilds
       << ",\tMax earlier execution: " << si16_maxDeviation
       << ",\tMin earlier execution: " << si16_minDeviation << ",\tCorrect Time Management: "
     << "idle time of FRONT: " << c_taskQueue.front().getNextTriggerTime()
@@ -780,32 +780,32 @@ Scheduler_c::setDebugTimeAccuracy(SchedulerEntry_c& refc_selectedTask)
     { // everything is good
       INTERNAL_DEBUG_DEVICE << "GOOD System state with task called "
         << i16_timeDeviation << "[ms] before the standard retrigger time (still not earlier than allowed)"
-        << ", with typical exec time: " << refc_selectedTask.getExecTime()
-        << ", and period: " << refc_selectedTask.getTimePeriod() << INTERNAL_DEBUG_DEVICE_ENDL;
+        << ", with typical exec time: " << rc_selectedTask.getExecTime()
+        << ", and period: " << rc_selectedTask.getTimePeriod() << INTERNAL_DEBUG_DEVICE_ENDL;
     }
     else if ( b_correctTimeManagement )
     { // real deviation -> a task is executed after the standard retrigger time
       // but before the latest allowed time
       INTERNAL_DEBUG_DEVICE << "Critical Scheduling state, as a task is called "
         << -1*i16_timeDeviation << "[ms] after the standard retrigger time (bot not later than allowed)."
-        << ", with typical exec time: " << refc_selectedTask.getExecTime()
-        << ", and period: " << refc_selectedTask.getTimePeriod() << INTERNAL_DEBUG_DEVICE_ENDL;
+        << ", with typical exec time: " << rc_selectedTask.getExecTime()
+        << ", and period: " << rc_selectedTask.getTimePeriod() << INTERNAL_DEBUG_DEVICE_ENDL;
     }
     else
     { // bad state
       INTERNAL_DEBUG_DEVICE << "BAD System state, as  "
         << i16_timeDeviation << "[ms] after the standard and latest allowed retrigger time, with typical exec time: "
-        << refc_selectedTask.getExecTime()
-        << ", and period: " << refc_selectedTask.getTimePeriod() << INTERNAL_DEBUG_DEVICE_ENDL;
+        << rc_selectedTask.getExecTime()
+        << ", and period: " << rc_selectedTask.getTimePeriod() << INTERNAL_DEBUG_DEVICE_ENDL;
     }
     // print timing fingerprint of actual task
     INTERNAL_DEBUG_DEVICE
-      << "AVG exec time: " << refc_selectedTask.getAvgExecTime()
-      << ", MIN exec time: " << refc_selectedTask.getMinExecTime()
-      << ", MAX exec time: " << refc_selectedTask.getMaxExecTime()
-      << "\nAVG timing accuracy: " << refc_selectedTask.getAvgTimingAccuracy()
-      << ", MIN timing accuracy: " << refc_selectedTask.getMinTimingAccuracy()
-      << ", MAX timing accuracy: " << refc_selectedTask.getMaxTimingAccuracy()
+      << "AVG exec time: " << rc_selectedTask.getAvgExecTime()
+      << ", MIN exec time: " << rc_selectedTask.getMinExecTime()
+      << ", MAX exec time: " << rc_selectedTask.getMaxExecTime()
+      << "\nAVG timing accuracy: " << rc_selectedTask.getAvgTimingAccuracy()
+      << ", MIN timing accuracy: " << rc_selectedTask.getMinTimingAccuracy()
+      << ", MAX timing accuracy: " << rc_selectedTask.getMaxTimingAccuracy()
       << INTERNAL_DEBUG_DEVICE_ENDL;
 
     // reset extreme values, to compensate short max idle times (e.g. if a lot of debug messages are sent)
@@ -820,8 +820,8 @@ Scheduler_c::setDebugTimeAccuracy(SchedulerEntry_c& refc_selectedTask)
 //!  restrictions are fullfilled.
 //!  Use shortest period (now 25ms) of mainapplication for test
 //!  Parameter:
-//! @param rui16_idleTime:
-void Scheduler_c::setDebugIdleInformation(uint16_t rui16_idleTime){
+//! @param aui16_idleTime:
+void Scheduler_c::setDebugIdleInformation(uint16_t aui16_idleTime){
 
   static int32_t si32_lastRs232Send = 0;
   static uint16_t sui16_maxIdle = 0,
@@ -829,8 +829,8 @@ void Scheduler_c::setDebugIdleInformation(uint16_t rui16_idleTime){
 
   int32_t i32_now = System_c::getTime();
   // update extreme times
-  if ( rui16_idleTime > sui16_maxIdle ) sui16_maxIdle = rui16_idleTime;
-  if ( rui16_idleTime < sui16_minIdle ) sui16_minIdle = rui16_idleTime;
+  if ( aui16_idleTime > sui16_maxIdle ) sui16_maxIdle = aui16_idleTime;
+  if ( aui16_idleTime < sui16_minIdle ) sui16_minIdle = aui16_idleTime;
 
   // debug msg every 30sec. (30.000 msec)
   if ( ( i32_now - si32_lastRs232Send ) > 30000 )
@@ -840,15 +840,15 @@ void Scheduler_c::setDebugIdleInformation(uint16_t rui16_idleTime){
     INTERNAL_DEBUG_DEVICE << "setDebugIdleInformation()\n"
       << "Actual time: " << i32_now << ",\tMax IDLE time: " << sui16_maxIdle
       << ",\tMin IDLE time: " << sui16_minIdle
-      << ",\tactual IDLE time: " << rui16_idleTime
+      << ",\tactual IDLE time: " << aui16_idleTime
       << "idle time of FRONT: " << c_taskQueue.front().getNextTriggerTime()
       //<< "idle time of BACK: " << c_taskQueue.back().getNextTriggerTime()
       << INTERNAL_DEBUG_DEVICE_ENDL;
   }
   /// send debug msg if idle time is higher than allowed (longer than shortest period)
-  if ( rui16_idleTime > 1001 )
+  if ( aui16_idleTime > 1001 )
   { // problem with scheduling
-    INTERNAL_DEBUG_DEVICE << "setDebugIdleInformation() with too long idle of " << rui16_idleTime
+    INTERNAL_DEBUG_DEVICE << "setDebugIdleInformation() with too long idle of " << aui16_idleTime
       << ", TOP Task: " << c_taskQueue.front().getTaskName()
       << ", Now: " << System_c::getTime()
       << ", Retrigger Time: " << c_taskQueue.front().getNextTriggerTime()
@@ -879,19 +879,19 @@ void Scheduler_c::printTaskList()
 //!  Scheduler_c set (NOW + delta of TimePeriod) as New Retrigger for Client
 //!  and sort Task to the right Position in the TaskQueue
 //! @param p_client -> Client in Scheduler_c TaskQueue
-//! @param ri16_newTimePeriod -> New Period will set for the Client by Scheduler_c
-bool Scheduler_c::changeTimePeriodAndResortTask(ElementBase_c * pc_client  , uint16_t rui16_newTimePeriod ){
+//! @param ai16_newTimePeriod -> New Period will set for the Client by Scheduler_c
+bool Scheduler_c::changeTimePeriodAndResortTask(ElementBase_c * pc_client  , uint16_t aui16_newTimePeriod ){
 
   //Now calculate Delta and nextTriggerTime for Client
-  int16_t i_deltaTime = rui16_newTimePeriod - pc_client->getTimePeriod()  ;
+  int16_t i_deltaTime = aui16_newTimePeriod - pc_client->getTimePeriod()  ;
   int32_t i32_newTriggerTime = pc_client->getNextTriggerTime() + i_deltaTime;
   #ifdef DEBUG_SCHEDULER
-    INTERNAL_DEBUG_DEVICE << "New TimePeriod:" << (int) rui16_newTimePeriod
+    INTERNAL_DEBUG_DEVICE << "New TimePeriod:" << (int) aui16_newTimePeriod
     << " Old TimePeriod: "<<  pc_client->getTimePeriod() <<" Name"
     << pc_client->getTaskName() << INTERNAL_DEBUG_DEVICE_ENDL;
   #endif
   ///Now lets do the resort  and update new TimePeriod in client
-  return changeRetriggerTimeAndResort(pc_client,i32_newTriggerTime ,rui16_newTimePeriod);
+  return changeRetriggerTimeAndResort(pc_client,i32_newTriggerTime ,aui16_newTimePeriod);
 
 }
 
@@ -901,10 +901,10 @@ bool Scheduler_c::changeTimePeriodAndResortTask(ElementBase_c * pc_client  , uin
 //!  to put a Task to the right Position in the TaskQueue
 //!  ATTENTION parameter nextRetriggerTime will exactly used from Scheduler_c
 //!  for call of timevent.-> so add e.g. an TimePeriod for an later call
-//! @param rc_client -> Client in Scheduler_c TaskQueue
+//! @param ac_client -> Client in Scheduler_c TaskQueue
 //! @param i32_nextRetriggerTime -> New i32_nextRetriggerTime set for Client by Scheduler_c
-//! @param  ri16_newTimePeriod otpional -> New Period will set for the Client by Scheduler_c
-bool  Scheduler_c::changeRetriggerTimeAndResort(SchedulerEntry_c rc_client  , int32_t i32_newRetriggerTime, int16_t ri16_newTimePeriod)
+//! @param  ai16_newTimePeriod otpional -> New Period will set for the Client by Scheduler_c
+bool  Scheduler_c::changeRetriggerTimeAndResort(SchedulerEntry_c ac_client  , int32_t i32_newRetriggerTime, int16_t ai16_newTimePeriod)
 {
   if ( c_taskQueue.empty() ) return false;
   else if (cntClient() == 1) return true;
@@ -913,8 +913,8 @@ bool  Scheduler_c::changeRetriggerTimeAndResort(SchedulerEntry_c rc_client  , in
     STL_NAMESPACE::list<SchedulerEntry_c>::iterator itc_task;
     for(itc_task = c_taskQueue.begin(); itc_task != c_taskQueue.end(); itc_task++)
     {
-      if (*itc_task == rc_client)
-        return changeRetriggerTimeAndResort(itc_task, i32_newRetriggerTime, ri16_newTimePeriod);
+      if (*itc_task == ac_client)
+        return changeRetriggerTimeAndResort(itc_task, i32_newRetriggerTime, ai16_newTimePeriod);
     }
     // not found
     return false;
@@ -927,8 +927,8 @@ bool  Scheduler_c::changeRetriggerTimeAndResort(SchedulerEntry_c rc_client  , in
 //!  for call of timevent.-> so add e.g. an TimePeriod for an later call
 //! @param p_client -> Client in Scheduler_c TaskQueue
 //! @param i32_nextRetriggerTime -> New i32_nextRetriggerTime set for Client by Scheduler_c
-//! @param  ri16_newTimePeriod optional -> New Period will set for the Client by Scheduler_c
-bool  Scheduler_c::changeRetriggerTimeAndResort(ElementBase_c * pc_client  , int32_t i32_newRetriggerTime, int16_t ri16_newTimePeriod)
+//! @param  ai16_newTimePeriod optional -> New Period will set for the Client by Scheduler_c
+bool  Scheduler_c::changeRetriggerTimeAndResort(ElementBase_c * pc_client  , int32_t i32_newRetriggerTime, int16_t ai16_newTimePeriod)
 {
   if ( c_taskQueue.empty() ) return false;
   else if (cntClient() == 1) return true;
@@ -938,7 +938,7 @@ bool  Scheduler_c::changeRetriggerTimeAndResort(ElementBase_c * pc_client  , int
     for(itc_task = c_taskQueue.begin(); itc_task != c_taskQueue.end(); itc_task++)
     {
       if(itc_task->isTask(pc_client))
-        return changeRetriggerTimeAndResort(itc_task, i32_newRetriggerTime, ri16_newTimePeriod);
+        return changeRetriggerTimeAndResort(itc_task, i32_newRetriggerTime, ai16_newTimePeriod);
     }
     // not found
     return false;
@@ -951,8 +951,8 @@ bool  Scheduler_c::changeRetriggerTimeAndResort(ElementBase_c * pc_client  , int
 //!  for call of timevent.-> so add e.g. an TimePeriod for an later call
 //! @param itc_task -> iterator to the task that should be changed
 //! @param i32_nextRetriggerTime -> New i32_nextRetriggerTime set for Client by Scheduler_c
-//! @param  ri16_newTimePeriod optional -> New Period will set for the Client by Scheduler_c
-bool  Scheduler_c::changeRetriggerTimeAndResort(STL_NAMESPACE::list<SchedulerEntry_c>::iterator itc_task, int32_t i32_newRetriggerTime, int16_t ri16_newTimePeriod)
+//! @param  ai16_newTimePeriod optional -> New Period will set for the Client by Scheduler_c
+bool  Scheduler_c::changeRetriggerTimeAndResort(STL_NAMESPACE::list<SchedulerEntry_c>::iterator itc_task, int32_t i32_newRetriggerTime, int16_t ai16_newTimePeriod)
 {
   #ifdef DEBUG_SCHEDULER
   printTaskList();
@@ -966,7 +966,7 @@ bool  Scheduler_c::changeRetriggerTimeAndResort(STL_NAMESPACE::list<SchedulerEnt
   int32_t i32_deltaRetrigger = i32_newRetriggerTime - itc_task->getNextTriggerTime();
 
   //set New TimePeriod
-  if(ri16_newTimePeriod > -1 ) itc_task->setTimePeriod(ri16_newTimePeriod);
+  if(ai16_newTimePeriod > -1 ) itc_task->setTimePeriod(ai16_newTimePeriod);
 
 
   /// increase of RetriggerTime task should be called LATER

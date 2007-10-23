@@ -117,9 +117,9 @@ namespace __IsoAgLib {
   /** C-style function, to get access to the unique IsoMonitor_c singleton instance
     * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
     */
-  IsoMonitor_c& getIsoMonitorInstance( uint8_t rui8_instance )
+  IsoMonitor_c& getIsoMonitorInstance( uint8_t aui8_instance )
   { // if > 1 singleton instance is used, no static reference can be used
-    return IsoMonitor_c::instance( rui8_instance );
+    return IsoMonitor_c::instance( aui8_instance );
   }
 #else
   /** C-style function, to get access to the unique IsoMonitor_c singleton instance */
@@ -131,7 +131,7 @@ namespace __IsoAgLib {
 #endif
 
 /** constructor for IsoMonitor_c which can store optional pointer to central Scheduler_c instance
-  @param rpc_lb optional pointer to central Scheduler_c instance (default NULL -> the later set is needed)
+  @param apc_lb optional pointer to central Scheduler_c instance (default NULL -> the later set is needed)
 */
 IsoMonitor_c::IsoMonitor_c()
   : SingletonIsoMonitor_c(), vec_isoMember(), c_serviceTool( IsoName_c::IsoNameUnspecified() )
@@ -383,18 +383,18 @@ bool IsoMonitor_c::timeEvent( void )
 
 /** deliver the count of members in the Monitor-List with given ECU-Type (which is an own IsoAgLib-definition!)
   which optional (!!) match the condition of address claim state
-  @param rui8_ecuType searched ECU-Type code
-  @param rb_forceClaimedAddress true -> only members with claimed address are used
+  @param aui8_ecuType searched ECU-Type code
+  @param ab_forceClaimedAddress true -> only members with claimed address are used
         (optional, default false)
-  @return count of members in Monitor-List with ECU-Type == rui8_ecuType
+  @return count of members in Monitor-List with ECU-Type == aui8_ecuType
 */
-uint8_t IsoMonitor_c::isoMemberEcuTypeCnt (IsoName_c::ecuType_t r_ecuType, bool rb_forceClaimedAddress)
+uint8_t IsoMonitor_c::isoMemberEcuTypeCnt (IsoName_c::ecuType_t a_ecuType, bool ab_forceClaimedAddress)
 {
   uint8_t b_result = 0;
   for (Vec_ISOIterator pc_iter = vec_isoMember.begin() ; pc_iter != vec_isoMember.end(); pc_iter++)
   {
-    if ( ((pc_iter->isoName(). getEcuType() == r_ecuType))
-      && (!rb_forceClaimedAddress || pc_iter->itemState(IState_c::ClaimedAddress)) )
+    if ( ((pc_iter->isoName(). getEcuType() == a_ecuType))
+      && (!ab_forceClaimedAddress || pc_iter->itemState(IState_c::ClaimedAddress)) )
     {
       b_result++;
       pc_isoMemberCache = pc_iter; // set member cache to member  with searched devClass
@@ -409,33 +409,33 @@ uint8_t IsoMonitor_c::isoMemberEcuTypeCnt (IsoName_c::ecuType_t r_ecuType, bool 
   optional (!!) property are registered in Monitor-List
   @see isoMemberEcuTypeCnt
   possible errors:
-    * Err_c::range there exist less than rui8_ind members with ECU-Type rui8_ecuType
-  @param rui8_ecuType searched ECU-Type code
-  @param rui8_ind position of the wanted member in the
-                sublist of member with given ECU-Type (first item has rui8_ind == 0 !!)
-  @param rb_forceClaimedAddress true -> only members with claimed address are used
+    * Err_c::range there exist less than aui8_ind members with ECU-Type aui8_ecuType
+  @param aui8_ecuType searched ECU-Type code
+  @param aui8_ind position of the wanted member in the
+                sublist of member with given ECU-Type (first item has aui8_ind == 0 !!)
+  @param ab_forceClaimedAddress true -> only members with claimed address are used
         (optional, default false)
   @return reference to searched element
 */
-IsoItem_c& IsoMonitor_c::isoMemberEcuTypeInd (IsoName_c::ecuType_t r_ecuType, uint8_t rui8_ind, bool rb_forceClaimedAddress)
+IsoItem_c& IsoMonitor_c::isoMemberEcuTypeInd (IsoName_c::ecuType_t a_ecuType, uint8_t aui8_ind, bool ab_forceClaimedAddress)
 {
   int8_t c_cnt = -1;
   for (Vec_ISOIterator pc_iter  = vec_isoMember.begin() ; pc_iter != vec_isoMember.end(); pc_iter++)
   {
-    if ( ((pc_iter->isoName(). getEcuType()) == r_ecuType)
-      && (!rb_forceClaimedAddress || pc_iter->itemState(IState_c::ClaimedAddress)) )
+    if ( ((pc_iter->isoName(). getEcuType()) == a_ecuType)
+      && (!ab_forceClaimedAddress || pc_iter->itemState(IState_c::ClaimedAddress)) )
     {
       c_cnt++;
-      if (c_cnt == rui8_ind)
+      if (c_cnt == aui8_ind)
       {
         pc_isoMemberCache = pc_iter; // set member cache to member  with searched devClass
         break; //searched Item found (first element has 0)break; //searched Item found (first element has 0)
       }
     }
   }
-  // check if rui8_ind was in correct range
-  if (rui8_ind != c_cnt)
-  { // wrong range of rui8_ind
+  // check if aui8_ind was in correct range
+  if (aui8_ind != c_cnt)
+  { // wrong range of aui8_ind
     getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::System );
   }
   return *pc_isoMemberCache;
@@ -443,19 +443,19 @@ IsoItem_c& IsoMonitor_c::isoMemberEcuTypeInd (IsoName_c::ecuType_t r_ecuType, ui
 
 /** deliver the count of members in the Monitor-List with given DEVCLASS (variable POS)
   which optional (!!) match the condition of address claim state
-  @param rui8_devClass searched DEVCLASS code
-  @param rb_forceClaimedAddress true -> only members with claimed address are used
+  @param aui8_devClass searched DEVCLASS code
+  @param ab_forceClaimedAddress true -> only members with claimed address are used
         (optional, default false)
-  @return count of members in Monitor-List with DEVCLASS == rui8_devClass
+  @return count of members in Monitor-List with DEVCLASS == aui8_devClass
 */
-uint8_t IsoMonitor_c::isoMemberDevClassCnt(uint8_t rui8_devClass, bool rb_forceClaimedAddress)
+uint8_t IsoMonitor_c::isoMemberDevClassCnt(uint8_t aui8_devClass, bool ab_forceClaimedAddress)
 {
   uint8_t b_result = 0;
   for (Vec_ISOIterator pc_iter = vec_isoMember.begin() ; pc_iter != vec_isoMember.end(); pc_iter++)
   {
 //    cerr << "Tested Member DevClass: " << int( pc_iter->isoName().devClass() ) << endl;
-    if ( ( ((pc_iter->isoName().devClass()) == rui8_devClass) || (rui8_devClass == 0xFF))
-      && (!rb_forceClaimedAddress || pc_iter->itemState(IState_c::ClaimedAddress)) )
+    if ( ( ((pc_iter->isoName().devClass()) == aui8_devClass) || (aui8_devClass == 0xFF))
+      && (!ab_forceClaimedAddress || pc_iter->itemState(IState_c::ClaimedAddress)) )
     {
       b_result++;
       pc_isoMemberCache = pc_iter; // set member cache to member  with searched devClass
@@ -470,33 +470,33 @@ uint8_t IsoMonitor_c::isoMemberDevClassCnt(uint8_t rui8_devClass, bool rb_forceC
   optional (!!) property are registered in Monitor-List
   @see isoMemberDevClassCnt
   possible errors:
-    * range there exist less than rui8_ind members with DEVCLASS rui8_devClass
- @param rui8_devClass searched DEVCLASS
- @param rui8_ind position of the wanted member in the
-               sublist of member with given DEVCLASS (first item has rui8_ind == 0 !!)
- @param rb_forceClaimedAddress true -> only members with claimed address are used
+    * range there exist less than aui8_ind members with DEVCLASS aui8_devClass
+ @param aui8_devClass searched DEVCLASS
+ @param aui8_ind position of the wanted member in the
+               sublist of member with given DEVCLASS (first item has aui8_ind == 0 !!)
+ @param ab_forceClaimedAddress true -> only members with claimed address are used
        (optional, default false)
  @return reference to searched element
 */
-IsoItem_c& IsoMonitor_c::isoMemberDevClassInd(uint8_t rui8_devClass, uint8_t rui8_ind, bool rb_forceClaimedAddress)
+IsoItem_c& IsoMonitor_c::isoMemberDevClassInd(uint8_t aui8_devClass, uint8_t aui8_ind, bool ab_forceClaimedAddress)
 {
   int8_t c_cnt = -1;
   for (Vec_ISOIterator pc_iter  = vec_isoMember.begin() ; pc_iter != vec_isoMember.end(); pc_iter++)
   {
-    if ( ( ((pc_iter->isoName().devClass()) == rui8_devClass) || (rui8_devClass == 0xFF))
-      && (!rb_forceClaimedAddress || pc_iter->itemState(IState_c::ClaimedAddress)) )
+    if ( ( ((pc_iter->isoName().devClass()) == aui8_devClass) || (aui8_devClass == 0xFF))
+      && (!ab_forceClaimedAddress || pc_iter->itemState(IState_c::ClaimedAddress)) )
     {
       c_cnt++;
-      if (c_cnt == rui8_ind)
+      if (c_cnt == aui8_ind)
       {
         pc_isoMemberCache = pc_iter; // set member cache to member  with searched devClass
         break; //searched Item found (first element has 0)break; //searched Item found (first element has 0)
       }
     }
   }
-  // check if rui8_ind was in correct range
-  if (rui8_ind != c_cnt)
-  { // wrong range of rui8_ind
+  // check if aui8_ind was in correct range
+  if (aui8_ind != c_cnt)
+  { // wrong range of aui8_ind
     getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::System );
   }
   return *pc_isoMemberCache;
@@ -505,25 +505,25 @@ IsoItem_c& IsoMonitor_c::isoMemberDevClassInd(uint8_t rui8_devClass, uint8_t rui
 /** check if a memberItem with given ISOName exist
   which optional (!!) match the condition of address claim state
   and update local pc_isoMemberCache
-  @param rc_isoName searched ISOName
-  @param rb_forceClaimedAddress true -> only members with claimed address are used
+  @param ac_isoName searched ISOName
+  @param ab_forceClaimedAddress true -> only members with claimed address are used
         (optional, default false)
   @return true -> searched member exist
 */
-bool IsoMonitor_c::existIsoMemberISOName(const IsoName_c& rc_isoName, bool rb_forceClaimedAddress)
+bool IsoMonitor_c::existIsoMemberISOName(const IsoName_c& ac_isoName, bool ab_forceClaimedAddress)
 {
   if (!vec_isoMember.empty() && (pc_isoMemberCache != vec_isoMember.end()))
   {
-    if ( (pc_isoMemberCache->isoName() == rc_isoName )
-      && (!rb_forceClaimedAddress || pc_isoMemberCache->itemState(IState_c::ClaimedAddress))
+    if ( (pc_isoMemberCache->isoName() == ac_isoName )
+      && (!ab_forceClaimedAddress || pc_isoMemberCache->itemState(IState_c::ClaimedAddress))
         )  return true;
   }
   for (pc_isoMemberCache = vec_isoMember.begin();
        pc_isoMemberCache != vec_isoMember.end();
        pc_isoMemberCache++)
   {
-    if ( (pc_isoMemberCache->isoName() == rc_isoName )
-      && (!rb_forceClaimedAddress || pc_isoMemberCache->itemState(IState_c::ClaimedAddress))
+    if ( (pc_isoMemberCache->isoName() == ac_isoName )
+      && (!ab_forceClaimedAddress || pc_isoMemberCache->itemState(IState_c::ClaimedAddress))
         )  return true;
   }
   // if reaching here -> nothing found
@@ -533,46 +533,46 @@ bool IsoMonitor_c::existIsoMemberISOName(const IsoName_c& rc_isoName, bool rb_fo
 /** check if a member with given number exist
   which optional (!!) match the condition of address claim state
   and update local pc_isoMemberCache
-  @param rui8_nr searched member number
+  @param aui8_nr searched member number
   @return true -> item found
 */
-bool IsoMonitor_c::existIsoMemberNr(uint8_t rui8_nr)
+bool IsoMonitor_c::existIsoMemberNr(uint8_t aui8_nr)
 {
   if (!vec_isoMember.empty() && (pc_isoMemberCache != vec_isoMember.end()))
   {
-    if ( pc_isoMemberCache->nr() == rui8_nr ) return true;
+    if ( pc_isoMemberCache->nr() == aui8_nr ) return true;
   }
   for (pc_isoMemberCache = vec_isoMember.begin();
        pc_isoMemberCache != vec_isoMember.end();
        pc_isoMemberCache++)
   {
-    if (pc_isoMemberCache->equalNr(rui8_nr)) return true;
+    if (pc_isoMemberCache->equalNr(aui8_nr)) return true;
   }
   return false;
 }
 
 /** check if member is in member list with wanted ISOName,
   adapt instance if member with claimed address with other device class inst exist
-  @param refc_isoName ISOName to search (-> it's updated if member with claimed address with other dev class inst is found)
-  @return true -> member with claimed address with given DEVCLASS found (and refc_isoName has now its ISOName)
+  @param rc_isoName ISOName to search (-> it's updated if member with claimed address with other dev class inst is found)
+  @return true -> member with claimed address with given DEVCLASS found (and rc_isoName has now its ISOName)
 */
-bool IsoMonitor_c::isoDevClass2ISONameClaimedAddress(IsoName_c &refc_isoName)
+bool IsoMonitor_c::isoDevClass2ISONameClaimedAddress(IsoName_c &rc_isoName)
 {
-  if (existIsoMemberISOName(refc_isoName, true))
+  if (existIsoMemberISOName(rc_isoName, true))
   { // there exists a device with exact NAME in claimed address state
     return true;
   }
   else
   { // no item with ISOName found -> adapt POS
     // search for member with claimed address with same DEVCLASS
-    if (isoMemberDevClassCnt(refc_isoName.devClass(), true) > 0)
+    if (isoMemberDevClassCnt(rc_isoName.devClass(), true) > 0)
     { // member with wanted device class exists -> store the ISOName
-      refc_isoName = isoMemberDevClassInd(refc_isoName.devClass(), 0, true).isoName();
+      rc_isoName = isoMemberDevClassInd(rc_isoName.devClass(), 0, true).isoName();
       return true;
     }
-    else if (isoMemberDevClassCnt(refc_isoName.devClass(), false) > 0)
+    else if (isoMemberDevClassCnt(rc_isoName.devClass(), false) > 0)
     { // member with wanted device class exists -> store the ISOName
-      refc_isoName = isoMemberDevClassInd(refc_isoName.devClass(), 0, false).isoName();
+      rc_isoName = isoMemberDevClassInd(rc_isoName.devClass(), 0, false).isoName();
       // even if a device with wanted ISOName exist - it is not claimed
       return false;
     }
@@ -583,23 +583,23 @@ bool IsoMonitor_c::isoDevClass2ISONameClaimedAddress(IsoName_c &refc_isoName)
   }
 }
 
-/** insert a new IsoItem_c in the list; with unset rui8_nr the member is initiated as
+/** insert a new IsoItem_c in the list; with unset aui8_nr the member is initiated as
   address claim state; otherwise the given state can be given or state Active is used
   possible errors:
     * badAlloc not enough memory to insert new IsoItem_c isntance
     * busy another member with same ident exists already in the list
-  @param rc_isoName ISOName of the member
-  @param rui8_nr member number
+  @param ac_isoName ISOName of the member
+  @param aui8_nr member number
   @param ren_status wanted status
   @return pointer to new IsoItem_c or NULL if not succeeded
 */
-IsoItem_c* IsoMonitor_c::insertIsoMember(const IsoName_c& rc_isoName,
-      uint8_t rui8_nr, IState_c::itemState_t ren_state)
+IsoItem_c* IsoMonitor_c::insertIsoMember(const IsoName_c& ac_isoName,
+      uint8_t aui8_nr, IState_c::itemState_t ren_state)
 {
   IsoItem_c* pc_result = NULL;
 
   // check if another IsoItem_c with same ISOName already exist
-  if (existIsoMemberISOName(rc_isoName))
+  if (existIsoMemberISOName(ac_isoName))
   { // another member with same ISOName found
     getILibErrInstance().registerError( iLibErr_c::Busy, iLibErr_c::System );
     return NULL; // don't insert
@@ -608,7 +608,7 @@ IsoItem_c* IsoMonitor_c::insertIsoMember(const IsoName_c& rc_isoName,
   // FROM NOW ON WE DECIDE TO (TRY TO) CREATE A NEW IsoItem_c
   // prepare temp item with wanted data
   c_tempIsoMemberItem.set (System_c::getTime(), // Actually this value/time can be anything. The time is NOT used in PreAddressClaim and when entering AddressClaim it is being set correctly!
-    rc_isoName, rui8_nr, IState_c::itemState_t(ren_state | IState_c::Member | IState_c::Active), getSingletonVecKey() );
+    ac_isoName, aui8_nr, IState_c::itemState_t(ren_state | IState_c::Member | IState_c::Active), getSingletonVecKey() );
 
   // now insert element
   const uint8_t b_oldSize = vec_isoMember.size();
@@ -653,13 +653,13 @@ uint8_t IsoMonitor_c::localIsoMemberCnt()
 
 /** deliver reference to local member by index
     @see localMemberCnt
-    @param rui8_ind index of wanted member (first item == 0)
+    @param aui8_ind index of wanted member (first item == 0)
     @return reference to wanted local member MonitorItem
       (MonitorItem_c is base class of IsoItem_c which serves
       adress, isoName, itemState)
     @return pointer to wanted local iso member (NULL if no suitable IsoItem_c found)
  */
-IsoItem_c& IsoMonitor_c::localIsoMemberInd(uint8_t rui8_ind)
+IsoItem_c& IsoMonitor_c::localIsoMemberInd(uint8_t aui8_ind)
 {
   IsoItem_c* pc_result = NULL;
   uint8_t b_count = 0;
@@ -667,7 +667,7 @@ IsoItem_c& IsoMonitor_c::localIsoMemberInd(uint8_t rui8_ind)
   {  // increase reult count if local ident is already registered in MemberList
     if ( existIsoMemberISOName( (*pc_searchCacheC1)->isoName(), false ) )
     {
-      if (b_count == rui8_ind)
+      if (b_count == aui8_ind)
       { // wanted item found
         pc_result = &( isoMemberISOName( (*pc_searchCacheC1)->isoName(), false ) );
         break;
@@ -761,14 +761,14 @@ IsoItem_c& IsoMonitor_c::getActiveLocalIsoMember()
 }
 
 /** check for own din ident with given member no
-    @param rui8_nr member no to search for
+    @param aui8_nr member no to search for
     @return true -> one of the own din identities has the wanted member no
  */
-bool IsoMonitor_c::existLocalIsoMemberNr(uint8_t rui8_nr)
+bool IsoMonitor_c::existLocalIsoMemberNr(uint8_t aui8_nr)
 {
   if ( !c_arrClientC1.empty()
         && ( pc_searchCacheC1 != c_arrClientC1.end() )
-        && (*pc_searchCacheC1)->equalNr(rui8_nr )
+        && (*pc_searchCacheC1)->equalNr(aui8_nr )
      )
   {
     return true;
@@ -777,7 +777,7 @@ bool IsoMonitor_c::existLocalIsoMemberNr(uint8_t rui8_nr)
   {
     for (pc_searchCacheC1 = c_arrClientC1.begin(); pc_searchCacheC1 != c_arrClientC1.end(); pc_searchCacheC1++)
     {
-      if ( (*pc_searchCacheC1)->equalNr(rui8_nr) )
+      if ( (*pc_searchCacheC1)->equalNr(aui8_nr) )
         break;
     }
     return (pc_searchCacheC1 != c_arrClientC1.end())?true:false;
@@ -785,23 +785,23 @@ bool IsoMonitor_c::existLocalIsoMemberNr(uint8_t rui8_nr)
 }
 
 /** check for own din ident with given ISOName
-    @param rc_isoName ISOName to search for
+    @param ac_isoName ISOName to search for
     @return true -> one of the own din identities has the wanted ISOName
  */
-bool IsoMonitor_c::existLocalIsoMemberISOName (const IsoName_c& rc_isoName, bool rb_forceClaimedAddress)
+bool IsoMonitor_c::existLocalIsoMemberISOName (const IsoName_c& ac_isoName, bool ab_forceClaimedAddress)
 {
   if ( (!c_arrClientC1.empty()) && (pc_searchCacheC1 != c_arrClientC1.end()) )
   { // try to use current cache as it points to valid entry
-    if ( ((*pc_searchCacheC1)->isoName() == rc_isoName )
-            && (!rb_forceClaimedAddress || (*pc_searchCacheC1)->itemState(IState_c::ClaimedAddress))
+    if ( ((*pc_searchCacheC1)->isoName() == ac_isoName )
+            && (!ab_forceClaimedAddress || (*pc_searchCacheC1)->itemState(IState_c::ClaimedAddress))
        )  return true;
   }
   // if last cache is still vald the function is exited -> start new search
   for (pc_searchCacheC1 = c_arrClientC1.begin();
        pc_searchCacheC1 != c_arrClientC1.end(); pc_searchCacheC1++)
   {
-    if ( ((*pc_searchCacheC1)->isoName() == rc_isoName )
-            && (!rb_forceClaimedAddress || (*pc_searchCacheC1)->itemState(IState_c::ClaimedAddress))
+    if ( ((*pc_searchCacheC1)->isoName() == ac_isoName )
+            && (!ab_forceClaimedAddress || (*pc_searchCacheC1)->itemState(IState_c::ClaimedAddress))
        )  return true;
   }
   // if reaching here -> nothing found
@@ -813,9 +813,9 @@ bool IsoMonitor_c::existLocalIsoMemberISOName (const IsoName_c& rc_isoName, bool
   * + remove pointed IsoItem_c and DINItem_c nodes and the respective pointer
   * @return true -> there was an item with given IsoName_c that has been resetted to IState_c::PreAddressClaim
  */
-bool IsoMonitor_c::restartAddressClaim( const IsoName_c& rrefc_isoName )
+bool IsoMonitor_c::restartAddressClaim( const IsoName_c& arc_isoName )
 {
-  if ( existLocalIsoMemberISOName( rrefc_isoName, false ) )
+  if ( existLocalIsoMemberISOName( arc_isoName, false ) )
   { // there exists a local IdentItem_c with the given IsoName_c
     // -> forward the function call
     (*pc_searchCacheC1)->restartAddressClaim();
@@ -828,20 +828,20 @@ bool IsoMonitor_c::restartAddressClaim( const IsoName_c& rrefc_isoName )
 }
 
 /** register a SaClaimHandler_c */
-bool IsoMonitor_c::registerSaClaimHandler( SaClaimHandler_c* rpc_client )
+bool IsoMonitor_c::registerSaClaimHandler( SaClaimHandler_c* apc_client )
 {
   for ( SaClaimHandlerVectorConstIterator_t iter = vec_saClaimHandler.begin(); iter != vec_saClaimHandler.end(); iter++ )
   { // check if it points to the same client
-    if ( *iter == rpc_client ) return true; // already in multimap -> don't insert again
+    if ( *iter == apc_client ) return true; // already in multimap -> don't insert again
   }
   const unsigned int oldSize = vec_saClaimHandler.size();
   // if this position is reached, a new item must be inserted
-  vec_saClaimHandler.push_back( rpc_client );
+  vec_saClaimHandler.push_back( apc_client );
 
   // now: trigger suitable SaClaimHandler_c calls for all already known IsoNames in the list
   for ( Vec_ISOIteratorConst iter = vec_isoMember.begin(); iter != vec_isoMember.end(); iter++)
   { // inform this SaClaimHandler_c on existance of the ISONAME node at iter
-    rpc_client->reactOnMonitorListAdd( iter->isoName(), &(*iter) );
+    apc_client->reactOnMonitorListAdd( iter->isoName(), &(*iter) );
   }
 
   return ( vec_saClaimHandler.size() > oldSize )?true:false;
@@ -849,12 +849,12 @@ bool IsoMonitor_c::registerSaClaimHandler( SaClaimHandler_c* rpc_client )
 
 /** deregister a SaClaimHandler */
 bool
-IsoMonitor_c::deregisterSaClaimHandler (SaClaimHandler_c* rpc_client)
+IsoMonitor_c::deregisterSaClaimHandler (SaClaimHandler_c* apc_client)
 {
   const unsigned int oldSize = vec_saClaimHandler.size();
   for ( SaClaimHandlerVectorIterator_t iter = vec_saClaimHandler.begin(); iter != vec_saClaimHandler.end(); iter++ )
   { // check if it points to the same client
-    if ( *iter == rpc_client )
+    if ( *iter == apc_client )
     {
       vec_saClaimHandler.erase (iter); // in multimap -> so delete it
       break;
@@ -864,20 +864,20 @@ IsoMonitor_c::deregisterSaClaimHandler (SaClaimHandler_c* rpc_client)
 }
 
 /** this function is used to broadcast a ISO monitor list change to all registered clients */
-void IsoMonitor_c::broadcastSaAdd2Clients( const IsoName_c& rc_isoName, const IsoItem_c* rpc_isoItem ) const
+void IsoMonitor_c::broadcastSaAdd2Clients( const IsoName_c& ac_isoName, const IsoItem_c* apc_isoItem ) const
 {
   for ( SaClaimHandlerVectorConstIterator_t iter = vec_saClaimHandler.begin(); iter != vec_saClaimHandler.end(); iter++ )
   { // call the handler function of the client
-    (*iter)->reactOnMonitorListAdd( rc_isoName, rpc_isoItem );
+    (*iter)->reactOnMonitorListAdd( ac_isoName, apc_isoItem );
   }
 }
 
 /** this function is used to broadcast a ISO monitor list change to all registered clients */
-void IsoMonitor_c::broadcastSaRemove2Clients( const IsoName_c& rc_isoName, uint8_t rui8_oldSa ) const
+void IsoMonitor_c::broadcastSaRemove2Clients( const IsoName_c& ac_isoName, uint8_t aui8_oldSa ) const
 {
   for ( SaClaimHandlerVectorConstIterator_t iter = vec_saClaimHandler.begin(); iter != vec_saClaimHandler.end(); iter++ )
   { // call the handler function of the client
-    (*iter)->reactOnMonitorListRemove( rc_isoName, rui8_oldSa );
+    (*iter)->reactOnMonitorListRemove( ac_isoName, aui8_oldSa );
   }
 }
 
@@ -886,13 +886,13 @@ void IsoMonitor_c::broadcastSaRemove2Clients( const IsoName_c& rc_isoName, uint8
   (check with existIsoMemberISOName before access to not defined item)
   possible errors:
     * elNonexistent on failed search
-  @param rc_isoName searched ISOName
+  @param ac_isoName searched ISOName
   @return reference to searched ISOItem
   @exception containerElementNonexistant
 */
-IsoItem_c& IsoMonitor_c::isoMemberISOName(const IsoName_c& rc_isoName, bool rb_forceClaimedAddress)
+IsoItem_c& IsoMonitor_c::isoMemberISOName(const IsoName_c& ac_isoName, bool ab_forceClaimedAddress)
 {
-  if (existIsoMemberISOName(rc_isoName, rb_forceClaimedAddress))
+  if (existIsoMemberISOName(ac_isoName, ab_forceClaimedAddress))
   { // no error
     return static_cast<IsoItem_c&>(*pc_isoMemberCache);
   }
@@ -912,13 +912,13 @@ IsoItem_c& IsoMonitor_c::isoMemberISOName(const IsoName_c& rc_isoName, bool rb_f
   (check with existIsoMemberNr before access to not defined item)
   possible errors:
     * elNonexistent on failed search
-  @param rui8_nr searched number
+  @param aui8_nr searched number
   @return reference to searched ISOItem
   @exception containerElementNonexistant
 */
-IsoItem_c& IsoMonitor_c::isoMemberNr(uint8_t rui8_nr)
+IsoItem_c& IsoMonitor_c::isoMemberNr(uint8_t aui8_nr)
 {
-  if (existIsoMemberNr(rui8_nr))
+  if (existIsoMemberNr(aui8_nr))
   { // no error
     return static_cast<IsoItem_c&>(*pc_isoMemberCache);
   }
@@ -936,14 +936,14 @@ IsoItem_c& IsoMonitor_c::isoMemberNr(uint8_t rui8_nr)
 
 /** deliver member item with given ISOName, set pointed bool var to true on success
   and set a Member Array Iterator to the result
-  @param rc_isoName searched ISOName
+  @param ac_isoName searched ISOName
   @param pb_success bool pointer to store the success (true on success)
   @param pbc_iter optional member array iterator which points to searched IsoItem_c on success
   @return reference to the searched item
 */
-IsoItem_c& IsoMonitor_c::isoMemberISOName(const IsoName_c& rc_isoName, bool *const pb_success, bool rb_forceClaimedAddress, Vec_ISOIterator *const pbc_iter)
+IsoItem_c& IsoMonitor_c::isoMemberISOName(const IsoName_c& ac_isoName, bool *const pb_success, bool ab_forceClaimedAddress, Vec_ISOIterator *const pbc_iter)
 {
-  *pb_success = (existIsoMemberISOName(rc_isoName, rb_forceClaimedAddress))?true:false;
+  *pb_success = (existIsoMemberISOName(ac_isoName, ab_forceClaimedAddress))?true:false;
 
   if (pbc_iter != NULL)
   {
@@ -956,11 +956,11 @@ IsoItem_c& IsoMonitor_c::isoMemberISOName(const IsoName_c& rc_isoName, bool *con
   delete item with specified isoName
   possible errors:
     * elNonexistent no member with given ISOName exists
-  @param rc_isoName ISOName of to be deleted member
+  @param ac_isoName ISOName of to be deleted member
 */
-bool IsoMonitor_c::deleteIsoMemberISOName(const IsoName_c& rc_isoName)
+bool IsoMonitor_c::deleteIsoMemberISOName(const IsoName_c& ac_isoName)
 {
-  if (existIsoMemberISOName(rc_isoName))
+  if (existIsoMemberISOName(ac_isoName))
   { // set correct state
 
     #ifdef USE_WORKING_SET
@@ -997,11 +997,11 @@ bool IsoMonitor_c::deleteIsoMemberISOName(const IsoName_c& rc_isoName)
 /** delete item with specified member number
   possible errors:
     * elNonexistent no member with given ISOName exists
-  @param rui8_nr SA of to be deleted member
+  @param aui8_nr SA of to be deleted member
 */
-bool IsoMonitor_c::deleteIsoMemberNr(uint8_t rui8_nr)
+bool IsoMonitor_c::deleteIsoMemberNr(uint8_t aui8_nr)
 {
-  if (existIsoMemberNr(rui8_nr))
+  if (existIsoMemberNr(aui8_nr))
   { // use deleteIsoMemberISOName
     return deleteIsoMemberISOName(pc_isoMemberCache->isoName());
   }
@@ -1018,26 +1018,26 @@ bool IsoMonitor_c::deleteIsoMemberNr(uint8_t rui8_nr)
   (search possible free instance to given device class)
   possible errors:
     * busy no other device class inst code leads to unique ISOName code
-  @param refc_isoName reference to ISOName var (is changed directly if needed!!)
-  @param rb_dontUnify don't touch the IsoName because it most likely has already (at least once) claimed
+  @param rc_isoName reference to ISOName var (is changed directly if needed!!)
+  @param ab_dontUnify don't touch the IsoName because it most likely has already (at least once) claimed
                       an SA with this IsoName, so it can't change away, it has to keep its identity
   @return true -> referenced ISOName is now unique
 */
-bool IsoMonitor_c::unifyIsoISOName (IsoName_c& refc_isoName, bool rb_dontUnify)
+bool IsoMonitor_c::unifyIsoISOName (IsoName_c& rc_isoName, bool ab_dontUnify)
 {
   bool b_result = true;
-  if (existIsoMemberISOName (refc_isoName))
+  if (existIsoMemberISOName (rc_isoName))
   {
-    if (rb_dontUnify)
+    if (ab_dontUnify)
     { // if we shouldn't unify, we're lost
       b_result = false;
     }
     else
     { // we can try to unify, so search now with changed instances if one is available
-      IsoName_c c_tempISOName = refc_isoName;
+      IsoName_c c_tempISOName = rc_isoName;
 
       // store the pos part of given isoName
-      int16_t tempPos = (refc_isoName.devClassInst()),
+      int16_t tempPos = (rc_isoName.devClassInst()),
               diff = 1;
 
       for (; diff < 16; diff++)
@@ -1045,7 +1045,7 @@ bool IsoMonitor_c::unifyIsoISOName (IsoName_c& refc_isoName, bool rb_dontUnify)
         c_tempISOName.setDevClassInst( (tempPos + diff) & 0x0F ); // modulo through all 16 instances
         if (!(existIsoMemberISOName(c_tempISOName)))
         { // new instance can't be found in list -> it is unique
-          refc_isoName.setDevClassInst( (tempPos + diff) & 0x0F );
+          rc_isoName.setDevClassInst( (tempPos + diff) & 0x0F );
           break;
         }
       }
@@ -1063,15 +1063,15 @@ bool IsoMonitor_c::unifyIsoISOName (IsoName_c& refc_isoName, bool rb_dontUnify)
 /** check if SA of an announcing IsoItem_c is unique and deliver
   another free SA if not yet unique (else deliver its actual
   SA if unique yet)
-  @param rpc_isoItem pointer to announcing IsoItem_c
+  @param apc_isoItem pointer to announcing IsoItem_c
   @return free unique SA (if possible the actual SA of the pointed item)
     (if wanted SA is not free for NOT-self-conf item or if no free SA is available
      254 is answered -> special flag for NACK)
 */
-uint8_t IsoMonitor_c::unifyIsoSa(const IsoItem_c* rpc_isoItem)
+uint8_t IsoMonitor_c::unifyIsoSa(const IsoItem_c* apc_isoItem)
 {
-  uint8_t ui8_wishSa = rpc_isoItem->nr();
-  const bool cb_selfConf = rpc_isoItem->selfConf();
+  uint8_t ui8_wishSa = apc_isoItem->nr();
+  const bool cb_selfConf = apc_isoItem->selfConf();
 
   if (ui8_wishSa >= 254) // also include 255
   { // no preferred SA
@@ -1093,7 +1093,7 @@ uint8_t IsoMonitor_c::unifyIsoSa(const IsoItem_c* rpc_isoItem)
           pc_iterItem != vec_isoMember.end(); pc_iterItem++)
     {
       if ((pc_iterItem->nr() == ui8_wishSa)
-           && (&(*pc_iterItem) != rpc_isoItem)
+           && (&(*pc_iterItem) != apc_isoItem)
          )
       { // the tried SA is already used by this item
         // -> break this search loop and try another ui8_wishSa
@@ -1123,15 +1123,15 @@ uint8_t IsoMonitor_c::unifyIsoSa(const IsoItem_c* rpc_isoItem)
 
 
 /** trigger a request for claimed addreses
-  @param rb_force false -> send request only if no request was detected until now
+  @param ab_force false -> send request only if no request was detected until now
   @return true -> request was sent
   */
-bool IsoMonitor_c::sendRequestForClaimedAddress( bool rb_force )
+bool IsoMonitor_c::sendRequestForClaimedAddress( bool ab_force )
 { // trigger an initial request for claimed address
   // send no request if CanIo_c is not yet ready for send
   if ( ! getCanInstance4Comm().isReady2Send() ) return false;
   // ( only if no request was detected )
-  if ( ( lastIsoSaRequest() != -1 ) && ( ! rb_force ) )
+  if ( ( lastIsoSaRequest() != -1 ) && ( ! ab_force ) )
   { // at least one request was already detected
     return false;
   }
@@ -1360,15 +1360,15 @@ bool IsoMonitor_c::processMsg()
 }
 
 bool
-IsoMonitor_c::processMsgRequestPGN (uint32_t rui32_pgn, IsoItem_c* /*rpc_isoItemSender*/, IsoItem_c* rpc_isoItemReceiver)
+IsoMonitor_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* /*apc_isoItemSender*/, IsoItem_c* apc_isoItemReceiver)
 {
-  switch (rui32_pgn)
+  switch (aui32_pgn)
   {
     case ADRESS_CLAIM_PGN:
       // update time of last adress claim request
       setLastIsoSaRequest (getIsoRequestPgnInstance4Comm().getTimeOfLastRequest()); // Now using CAN-Pkg-Times, see header for "setLastIsoSaRequest" for more information!
 
-      if (rpc_isoItemReceiver == NULL)
+      if (apc_isoItemReceiver == NULL)
       { // No specific destination so it's broadcast: Let all local item answer!
         bool b_processedRequestPGN = false;
         for (Vec_ISOIterator pc_iterItem = vec_isoMember.begin();
@@ -1381,13 +1381,13 @@ IsoMonitor_c::processMsgRequestPGN (uint32_t rui32_pgn, IsoItem_c* /*rpc_isoItem
       }
       else
       { // ISORequestPGN ensured that the Item exists and is local: Let it process!
-        return rpc_isoItemReceiver->sendSaClaim();
+        return apc_isoItemReceiver->sendSaClaim();
       }
 
 #ifdef USE_WORKING_SET
     case WORKING_SET_MASTER_PGN: // break intentionally left out - react on both PGNs with sending out the complete ws-announce sequence!
     case WORKING_SET_MEMBER_PGN:
-      if (rpc_isoItemReceiver == NULL)
+      if (apc_isoItemReceiver == NULL)
       { // No specific destination so it's broadcast: Let all local item answer!
         for (Vec_ISOIterator pc_iterItem = vec_isoMember.begin();
               pc_iterItem != vec_isoMember.end(); pc_iterItem++)
@@ -1408,9 +1408,9 @@ IsoMonitor_c::processMsgRequestPGN (uint32_t rui32_pgn, IsoItem_c* /*rpc_isoItem
       }
       else
       { // Let the given local item answer
-        if (rpc_isoItemReceiver->isMaster())
+        if (apc_isoItemReceiver->isMaster())
         { // is Master, so can it send out the ws-announce?
-          (void) rpc_isoItemReceiver->startWsAnnounce();
+          (void) apc_isoItemReceiver->startWsAnnounce();
           return true;
         }
         else
@@ -1453,7 +1453,7 @@ IsoMonitor_c::updateEarlierAndLatestInterval()
 
 
 #ifdef USE_WORKING_SET
-uint8_t IsoMonitor_c::getSlaveCount (IsoItem_c* rpc_masterItem)
+uint8_t IsoMonitor_c::getSlaveCount (IsoItem_c* apc_masterItem)
 {
   uint8_t slaveCount;
   IsoItem_c* pc_iterMaster;
@@ -1463,14 +1463,14 @@ uint8_t IsoMonitor_c::getSlaveCount (IsoItem_c* rpc_masterItem)
   for(Vec_ISOIterator pc_iter = vec_isoMember.begin(); pc_iter != vec_isoMember.end(); pc_iter++)
   {
     pc_iterMaster = pc_iter->getMaster ();
-    if ((& (*pc_iter) != rpc_masterItem) && (pc_iterMaster == rpc_masterItem)) {
+    if ((& (*pc_iter) != apc_masterItem) && (pc_iterMaster == apc_masterItem)) {
       slaveCount++;
     }
   }
   return slaveCount;
 }
 
-IsoItem_c* IsoMonitor_c::getSlave (uint8_t index, IsoItem_c* rpc_masterItem)
+IsoItem_c* IsoMonitor_c::getSlave (uint8_t index, IsoItem_c* apc_masterItem)
 {
   uint8_t slaveCount;
   IsoItem_c* pc_iterMaster;
@@ -1480,7 +1480,7 @@ IsoItem_c* IsoMonitor_c::getSlave (uint8_t index, IsoItem_c* rpc_masterItem)
   for(Vec_ISOIterator pc_iter = vec_isoMember.begin(); pc_iter != vec_isoMember.end(); pc_iter++)
   {
     pc_iterMaster = pc_iter->getMaster ();
-    if ((& (*pc_iter) != rpc_masterItem) && (pc_iterMaster == rpc_masterItem)) {
+    if ((& (*pc_iter) != apc_masterItem) && (pc_iterMaster == apc_masterItem)) {
       if (slaveCount == index) return & (*pc_iter);
       slaveCount++;
     }
@@ -1489,13 +1489,13 @@ IsoItem_c* IsoMonitor_c::getSlave (uint8_t index, IsoItem_c* rpc_masterItem)
 }
 
 void
-IsoMonitor_c::notifyOnWsMasterLoss (IsoItem_c& rrefc_masterItem)
+IsoMonitor_c::notifyOnWsMasterLoss (IsoItem_c& arc_masterItem)
 {
   // iterate through all items and check if they are slaves to the given master
   for(Vec_ISOIterator pc_iter = vec_isoMember.begin(); pc_iter != vec_isoMember.end(); pc_iter++)
   { // ALSO notify the master, as this function is NOT ONLY called from ~IsoItem_c(), but also
     // intentionally from vtDocument_c to get the document NACKed!
-    if (pc_iter->getMaster() == (&rrefc_masterItem))
+    if (pc_iter->getMaster() == (&arc_masterItem))
     { // this ISOItem has the given MasterIsoItem as Master, so set it free now ;)
       pc_iter->setMaster (NULL); // for ALL WS-Members (Master AND Slave)
     }
@@ -1508,9 +1508,9 @@ IsoMonitor_c::notifyOnWsMasterLoss (IsoItem_c& rrefc_masterItem)
 /** command switching to and from special service / diagnostic mode.
     setting the flag c_serviceTool controls appropriate handling
   */
-void IsoMonitor_c::setDiagnosticMode( const IsoName_c& rrefc_serviceTool)
+void IsoMonitor_c::setDiagnosticMode( const IsoName_c& arc_serviceTool)
 {
-  c_serviceTool = rrefc_serviceTool;
+  c_serviceTool = arc_serviceTool;
   if ( c_serviceTool.isUnspecified() )
   { // back to normal operation --> trigger send of Req4SaClaim
     sendRequestForClaimedAddress( true );

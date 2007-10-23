@@ -217,7 +217,7 @@ public:
 private:
   //  Operation: updateEnable
   //! @param b_enableOrDisable:
-  void updateEnable(uint8_t rui8_enOrDis);
+  void updateEnable(uint8_t aui8_enOrDis);
 };
 
 } // end of namespace __IsoAgLib

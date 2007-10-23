@@ -123,9 +123,9 @@ public:
   /** every subsystem of IsoAgLib has explicit function for controlled shutdown */
   void close();
 
-  VtClientServerCommunication_c* initAndRegisterIsoObjectPool (IdentItem_c& rpc_wsMasterIdentItem, IsoAgLib::iIsoTerminalObjectPool_c& rrefc_pool, char* rpc_versionLabel);
+  VtClientServerCommunication_c* initAndRegisterIsoObjectPool (IdentItem_c& apc_wsMasterIdentItem, IsoAgLib::iIsoTerminalObjectPool_c& arc_pool, char* apc_versionLabel);
 
-  bool deregisterIsoObjectPool (IdentItem_c& rpc_wsMasterIdentItem);
+  bool deregisterIsoObjectPool (IdentItem_c& apc_wsMasterIdentItem);
 
   /** periodically event -> call timeEvent for all  identities and parent objects
     @return true -> all planned activities performed in allowed time
@@ -135,7 +135,7 @@ public:
   /** function that handles incoming can messages */
   virtual bool processMsg();
 
-  bool sendCommandForDEBUG(IsoAgLib::iIdentItem_c& rpc_wsMasterIdentItem, uint8_t* rpui8_buffer, uint32_t ui32_size);
+  bool sendCommandForDEBUG(IsoAgLib::iIdentItem_c& apc_wsMasterIdentItem, uint8_t* apui8_buffer, uint32_t ui32_size);
 
   /** deliver reference to data pkg
     @return reference to the member IsoTerminalPkg_c, which encapsulates the CAN send structure
@@ -164,7 +164,7 @@ public:
   ////////////////////////
 // the following define should be globally defined in the project settings...
 #ifdef FAKE_VT_PROPERTIES
-  void fakeVtProperties (uint16_t rui16_dimension, uint16_t rui16_skWidth, uint16_t rui16_skHeight, uint8_t rui16_colorDepth, uint16_t rui16_fontSizes);
+  void fakeVtProperties (uint16_t aui16_dimension, uint16_t aui16_skWidth, uint16_t aui16_skHeight, uint8_t aui16_colorDepth, uint16_t aui16_fontSizes);
 #endif
 
  ///  Used for Debugging Tasks in Scheduler_c
@@ -185,18 +185,18 @@ private:
   void singletonInit();
 
   /** this function is called by IsoMonitor_c when a new CLAIMED IsoItem_c is registered.
-   * @param refc_isoName const reference to the item which IsoItem_c state is changed
-   * @param rpc_newItem pointer to the currently corresponding IsoItem_c
+   * @param rc_isoName const reference to the item which IsoItem_c state is changed
+   * @param apc_newItem pointer to the currently corresponding IsoItem_c
    */
-  void reactOnMonitorListAdd (const IsoName_c& refc_isoName, const IsoItem_c* rpc_newItem);
+  void reactOnMonitorListAdd (const IsoName_c& rc_isoName, const IsoItem_c* apc_newItem);
    /** this function is called by IsoMonitor_c when a device looses its IsoItem_c.
-   * @param refc_isoName const reference to the item which IsoItem_c state is changed
-   * @param rui8_oldSa previously used SA which is NOW LOST -> clients which were connected to this item can react explicitly
+   * @param rc_isoName const reference to the item which IsoItem_c state is changed
+   * @param aui8_oldSa previously used SA which is NOW LOST -> clients which were connected to this item can react explicitly
     */
-  void reactOnMonitorListRemove (const IsoName_c& refc_isoName, uint8_t rui8_oldSa);
+  void reactOnMonitorListRemove (const IsoName_c& rc_isoName, uint8_t aui8_oldSa);
 
   // helper function to shield removal access to vtCSC-list
-  void deregisterIsoObjectPoolInd (uint8_t rui8_index);
+  void deregisterIsoObjectPoolInd (uint8_t aui8_index);
 
 protected:
   /** for now allow parallel uploads
@@ -218,7 +218,7 @@ private: // attributes
   /** C-style function, to get access to the unique Scheduler_c singleton instance
     * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
     */
-  IsoTerminal_c& getIsoTerminalInstance(uint8_t rui8_instance = 0);
+  IsoTerminal_c& getIsoTerminalInstance(uint8_t aui8_instance = 0);
 #else
   /** C-style function, to get access to the unique Scheduler_c singleton instance */
   IsoTerminal_c& getIsoTerminalInstance(void);

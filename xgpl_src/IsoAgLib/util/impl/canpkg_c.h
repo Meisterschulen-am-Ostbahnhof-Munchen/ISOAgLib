@@ -133,37 +133,37 @@ public:
     default constructor, which does nothing for the base class,
     but can do something in derived classes
   */
-  CanPkg_c( int ri_singletonVecKey = 0 );
+  CanPkg_c( int ai_singletonVecKey = 0 );
 
   /** virtual destructor, which can be overloaded in derived classes */
   virtual ~CanPkg_c();
 
   /**
     set ident for the telegram
-    @param rt_ident ident for the telegram
-    @param rt_type type of Ident_c: 11bit Ident_c::S or 29bit Ident_c::E
+    @param at_ident ident for the telegram
+    @param at_type type of Ident_c: 11bit Ident_c::S or 29bit Ident_c::E
       default defined in isoaglib_config.h
   */
-  static void setIdent(MASK_TYPE rt_ident, __IsoAgLib::Ident_c::identType_t rt_type = DEFAULT_IDENT_TYPE)
-    {c_ident.set(rt_ident, rt_type);}
+  static void setIdent(MASK_TYPE at_ident, __IsoAgLib::Ident_c::identType_t at_type = DEFAULT_IDENT_TYPE)
+    {c_ident.set(at_ident, at_type);}
 
   /**
     set specific uint8_t of ident for the telegram
     (position 0 is least significant position -> nearest to DLC field of
     CAN frame)
-    @param rb_val value for ident at wanted position for the telegram
-    @param rb_pos position for wanted value for ident for the telegram
-    @param rt_type type of Ident_c: 11bit Ident_c::S or 29bit Ident_c::E
+    @param ab_val value for ident at wanted position for the telegram
+    @param ab_pos position for wanted value for ident for the telegram
+    @param at_type type of Ident_c: 11bit Ident_c::S or 29bit Ident_c::E
       default defined in isoaglib_config.h
   */
-  static void setIdent(uint8_t rb_val, uint8_t rb_pos, __IsoAgLib::Ident_c::identType_t rt_type = DEFAULT_IDENT_TYPE)
-    {c_ident.set(rb_val, rb_pos, rt_type);}
+  static void setIdent(uint8_t ab_val, uint8_t ab_pos, __IsoAgLib::Ident_c::identType_t at_type = DEFAULT_IDENT_TYPE)
+    {c_ident.set(ab_val, ab_pos, at_type);}
 
   /**
     set type of ident
-    @param rt_type type of Ident_c: 11bit Ident_c::S or 29bit Ident_c::E
+    @param at_type type of Ident_c: 11bit Ident_c::S or 29bit Ident_c::E
   */
-  static void setIdentType(__IsoAgLib::Ident_c::identType_t rt_type){c_ident.setIdentType(rt_type);}
+  static void setIdentType(__IsoAgLib::Ident_c::identType_t at_type){c_ident.setIdentType(at_type);}
 
 
   /**
@@ -182,19 +182,19 @@ public:
     deliver the uint8_t value of ident at wanted position
     (position 0 is least significant position -> nearest to DLC field of
     CAN frame)
-    @param rb_pos
+    @param ab_pos
     @return ident value
   */
-  static MASK_TYPE ident(uint8_t rb_pos) {return c_ident.ident(rb_pos);}
+  static MASK_TYPE ident(uint8_t ab_pos) {return c_ident.ident(ab_pos);}
 
   /**
     deliver the uint8_t value of ident at wanted position
     (position 0 is least significant position -> nearest to DLC field of
     CAN frame)
-    @param rb_pos
+    @param ab_pos
     @return ident value
   */
-  static uint8_t& identRef(uint8_t rb_pos) {return c_ident.identRef(rb_pos);}
+  static uint8_t& identRef(uint8_t ab_pos) {return c_ident.identRef(ab_pos);}
 
   /** retrieve CAN data bytes represented by pointer to Union8ByteString_u */
   static Flexible8ByteString_c* getDataUnion() { return &c_data;}
@@ -203,67 +203,67 @@ public:
   static const Flexible8ByteString_c* getDataUnionConst() { return &c_data;}
 
   /** retrieve a raw const pointer to uint8_t data string from given offset position onwards */
-  static const uint8_t* getUint8DataConstPointer( uint8_t rui8_positionOffset )
-    { return c_data.getUint8DataConstPointer( rui8_positionOffset );}
+  static const uint8_t* getUint8DataConstPointer( uint8_t aui8_positionOffset )
+    { return c_data.getUint8DataConstPointer( aui8_positionOffset );}
 
   /** retrieve a raw const pointer to uint8_t data string */
   static const uint8_t* getUint8DataConstPointer() { return c_data.getUint8DataConstPointer();}
 
   /** retrieve a raw const pointer to uint8_t data string from given offset position onwards */
-  static uint8_t* getUint8DataPointer( uint8_t rui8_positionOffset )
-    { return c_data.getUint8DataPointer( rui8_positionOffset );}
+  static uint8_t* getUint8DataPointer( uint8_t aui8_positionOffset )
+    { return c_data.getUint8DataPointer( aui8_positionOffset );}
 
   /** retrieve a raw const pointer to uint8_t data string */
   static uint8_t* getUint8DataPointer() { return c_data.getUint8DataPointer();}
 
   /**
     set data with size bytes from source array;
-    if rui8_len is greater than 8 (max data length of CAN) than max 8 bytes are transfered
-    @param rb_data pointer to source data uint8_t array
-    @param rui8_len amount/len of the source data string
+    if aui8_len is greater than 8 (max data length of CAN) than max 8 bytes are transfered
+    @param ab_data pointer to source data uint8_t array
+    @param aui8_len amount/len of the source data string
   */
-  static void setDataFromString(const uint8_t* rpb_data, uint8_t rui8_len);
+  static void setDataFromString(const uint8_t* apb_data, uint8_t aui8_len);
 
   /**
     set data with size bytes from source array;
-    if rui8_len is greater than 8 (max data length of CAN) than max 8 bytes are transfered.
+    if aui8_len is greater than 8 (max data length of CAN) than max 8 bytes are transfered.
     this variant of the setDataFromString allows to set the CAN data from specified offset position onwards.
-    @param rui8_targetPositionOffset
-    @param rb_data pointer to source data uint8_t array
-    @param rui8_len amount/len of the source data string
+    @param aui8_targetPositionOffset
+    @param ab_data pointer to source data uint8_t array
+    @param aui8_len amount/len of the source data string
   */
-  static void setDataFromString(uint8_t rui8_targetPositionOffset, const uint8_t* rpb_data, uint8_t rui8_len);
+  static void setDataFromString(uint8_t aui8_targetPositionOffset, const uint8_t* apb_data, uint8_t aui8_len);
 
   /**
     set a complete 8-Byte data string from source type Union8ByteString_u.
     The length of this package is automatically set to length 8.
-    @param rpc_data pointer to source data Flexible8ByteString_c
+    @param apc_data pointer to source data Flexible8ByteString_c
   */
-  static void setDataUnion(const Flexible8ByteString_c* rpc_data)
-    { ui8_len = 8; c_data = *rpc_data; }
+  static void setDataUnion(const Flexible8ByteString_c* apc_data)
+    { ui8_len = 8; c_data = *apc_data; }
 
   /**
     set a complete 8-Byte data string from source type Union8ByteString_u.
     The length of this package is automatically set to length 8.
-    @param rpc_data pointer to source data Flexible8ByteString_c
+    @param apc_data pointer to source data Flexible8ByteString_c
   */
-  static void setDataUnion(uint8_t rui8_ind, const Flexible4ByteString_c* rpc_data)
-    { c_data.setFlexible4DataValueInd( rui8_ind, *rpc_data ); }
+  static void setDataUnion(uint8_t aui8_ind, const Flexible4ByteString_c* apc_data)
+    { c_data.setFlexible4DataValueInd( aui8_ind, *apc_data ); }
 
   /** retrieve len of last received CAN message */
   static uint8_t getLen( void ) { return ui8_len;}
 
   /**
-    set the data len of CAN pkg (if rb_val is greater than 8, 8 is stored)
-    @param rb_val length/amount of uint8_t in data string
+    set the data len of CAN pkg (if ab_val is greater than 8, 8 is stored)
+    @param ab_val length/amount of uint8_t in data string
   */
-  static void setLen(uint8_t rb_val){ui8_len = (rb_val<9)?rb_val:8;}
+  static void setLen(uint8_t ab_val){ui8_len = (ab_val<9)?ab_val:8;}
 
   /**
     set receive time
-    @param ri32_time time stamp of CAN telegram in [msec.] from system start
+    @param ai32_time time stamp of CAN telegram in [msec.] from system start
   */
-  static void setTime(int32_t ri32_time){i32_time = ri32_time;}
+  static void setTime(int32_t ai32_time){i32_time = ai32_time;}
 
   /**
     deliver time
@@ -273,25 +273,25 @@ public:
 
   /**
     set complete CAN msg with one function call
-    (if rui8_len is greater than 8, than max 8 is used)
-    @param rt_ident ident of the CAN telegram
-    @param rpb_data pointer to the source data uint8_t string
-    @param rui8_len amount of bytes in the data string
-    @param ri32_time optional timestamp of CAN telegram in [msec.] since system start
+    (if aui8_len is greater than 8, than max 8 is used)
+    @param at_ident ident of the CAN telegram
+    @param apb_data pointer to the source data uint8_t string
+    @param aui8_len amount of bytes in the data string
+    @param ai32_time optional timestamp of CAN telegram in [msec.] since system start
   */
-  static void set(MASK_TYPE rt_ident, const uint8_t* rpb_data, uint8_t rui8_len, int32_t ri32_time = 0,
-    __IsoAgLib::Ident_c::identType_t rt_type = DEFAULT_IDENT_TYPE);
+  static void set(MASK_TYPE at_ident, const uint8_t* apb_data, uint8_t aui8_len, int32_t ai32_time = 0,
+    __IsoAgLib::Ident_c::identType_t at_type = DEFAULT_IDENT_TYPE);
 
   /**
     set complete CAN msg with one function call
     where exactly 8 data bytes are retrieved from pointer to Union8ByteString_u.
     As the union represents exactly 8-Data Byte, the message length is set to 8.
-    @param rt_ident ident of the CAN telegram
-    @param rpc_data pointer to the source data Flexible8ByteString_c string
-    @param ri32_time optional timestamp of CAN telegram in [msec.] since system start
+    @param at_ident ident of the CAN telegram
+    @param apc_data pointer to the source data Flexible8ByteString_c string
+    @param ai32_time optional timestamp of CAN telegram in [msec.] since system start
   */
-  static void set(MASK_TYPE rt_ident, const Flexible8ByteString_c* rpc_data, int32_t ri32_time = 0,
-    __IsoAgLib::Ident_c::identType_t rt_type = DEFAULT_IDENT_TYPE);
+  static void set(MASK_TYPE at_ident, const Flexible8ByteString_c* apc_data, int32_t ai32_time = 0,
+    __IsoAgLib::Ident_c::identType_t at_type = DEFAULT_IDENT_TYPE);
 
   /**
     ==> OBSOLETE, because now all pkg-data is STATIC!
@@ -302,21 +302,21 @@ public:
     @see __IsoAgLib::FilterBox_c::operator>>
     @see CanPkgExt_c::operator=
     @see CanPkgExt_c::getData
-    @param rrefc_right reference to the source CanPkg_c on the right
+    @param arc_right reference to the source CanPkg_c on the right
     @return reference to the source CanPkg_c to enable assign chains like
         "pkg1 = pkg2 = pkg3 = pkg4;"
-  virtual const CanPkg_c& operator=(const CanPkg_c& rrefc_right);
+  virtual const CanPkg_c& operator=(const CanPkg_c& arc_right);
   */
 
   /**
     put data into given reference to BIOS related data structure with data, len
-    @param reft_ident     reference where the ident is placed for send
-    @param refui8_identType reference to the ident type val: 0==std, 1==ext
-    @param refb_dlcTarget reference to the DLC field of the target
+    @param rt_ident     reference where the ident is placed for send
+    @param rui8_identType reference to the ident type val: 0==std, 1==ext
+    @param rb_dlcTarget reference to the DLC field of the target
     @param pb_dataTarget pointer to the data string of the target
   */
-  virtual void getData(uint32_t& reft_ident, uint8_t& refui8_identType,
-                       uint8_t& refb_dlcTarget, uint8_t* pb_dataTarget);
+  virtual void getData(uint32_t& rt_ident, uint8_t& rui8_identType,
+                       uint8_t& rb_dlcTarget, uint8_t* pb_dataTarget);
 
   /** copy the data bytes from the CanPkg_c to the given uint8_t* pointer.
       the pointed array must be at least 8 byte in size.
@@ -329,17 +329,17 @@ public:
       the amount of copied data can be restricted by the last parameter.
       The first parameter defines the index of the first copied data byte.
     */
-  static void getDataToString( uint8_t rui8_positionOffset, uint8_t* pui8_targetData, uint8_t rui8_maxSize )
-    {c_data.getDataToString( rui8_positionOffset, pui8_targetData, rui8_maxSize );}
+  static void getDataToString( uint8_t aui8_positionOffset, uint8_t* pui8_targetData, uint8_t aui8_maxSize )
+    {c_data.getDataToString( aui8_positionOffset, pui8_targetData, aui8_maxSize );}
   /**
     ==> OBSOLETE, because now all pkg-data is STATIC!
     ==> REACTIVATE if some NON-STATIC member vars will be added!
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     compare for equality with other CANPkg
-    @param rrefc_cmp reference to the to be compared CANPkg
+    @param arc_cmp reference to the to be compared CANPkg
     @return true -> both CanPkg_c have the same data
-  bool operator==(const CanPkg_c& rrefc_cmp) const;
+  bool operator==(const CanPkg_c& arc_cmp) const;
   */
 
   /**
@@ -348,9 +348,9 @@ public:
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     compare for difference to other CANPkg
-    @param rrefc_cmp reference to the to be compared CANPkg
+    @param arc_cmp reference to the to be compared CANPkg
     @return true -> both CanPkg_c have different data
-  bool operator!=(const CanPkg_c& rrefc_cmp) const;
+  bool operator!=(const CanPkg_c& arc_cmp) const;
   */
 
 //protected: // Protected attributes

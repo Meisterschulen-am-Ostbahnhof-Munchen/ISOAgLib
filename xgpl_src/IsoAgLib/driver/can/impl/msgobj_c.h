@@ -129,9 +129,9 @@ public:
   MsgObj_c();
 
   /** copy constructor for this class, which gets data from another MsgObj_c instance
-    @param rrefc_src source MsgObj_c instance which should be cloned by this instance
+    @param arc_src source MsgObj_c instance which should be cloned by this instance
   */
-  MsgObj_c(const MsgObj_c& rrefc_src);
+  MsgObj_c(const MsgObj_c& arc_src);
 
   /** destructor of MsgObj_c instance, which closes the hardware MsgObj_c */
   ~MsgObj_c();
@@ -139,17 +139,17 @@ public:
   //+++++++++++++++++++++++++++++++++++
   // help functions for work on MsgObj_c
   //+++++++++++++++++++++++++++++++++++
-  /** merge two msgObj instances rrefc_left and rrefc_right and tell with rb_extendedType
+  /** merge two msgObj instances arc_left and arc_right and tell with ab_extendedType
     if 11bit or 29 bit identifiers are used
     (uses BIOS function)
 
     possible errors:
     * Err_c::range BUS or MsgObj numbers out of allowed limits
     * Err_c::hwConfig BUS not initialized or ID can't be changed
-    @param rrefc_right reference to MsgObj_c which should be merged into this instance
+    @param arc_right reference to MsgObj_c which should be merged into this instance
     @return true -> successful merged; false -> too many FilterBox_c refs for one MsgObj_c
   */
-  bool merge(MsgObj_c& rrefc_right);
+  bool merge(MsgObj_c& arc_right);
 
   /** close the t_data of this instance and close hardware CAN Msg Obj if it's open
     possible errors:
@@ -173,16 +173,16 @@ public:
   // functions for configuring MsgObj_c
   //+++++++++++++++++++++++++++++++++++
   /** checks wether the filter of the given MsgObj_c is the same
-    @param rrefc_other reference to MsgObj_c whoose filter should be compared with local filter
+    @param arc_other reference to MsgObj_c whoose filter should be compared with local filter
     @return true -> other MsgObj_c has same filter
   */
-  inline bool operator==(const MsgObj_c& rrefc_other)const
-    {return (rrefc_other.filter() == c_filter);}
+  inline bool operator==(const MsgObj_c& arc_other)const
+    {return (arc_other.filter() == c_filter);}
 
   /** set t_filter of this MsgObj_c
-    @param rrefc_val filter to set for this MsgObj_c
+    @param arc_val filter to set for this MsgObj_c
   */
-  inline void setFilter(const Ident_c& rrefc_val){c_filter = rrefc_val;}
+  inline void setFilter(const Ident_c& arc_val){c_filter = arc_val;}
 
   /** get the t_filter of this MsgObj_c
     @return filter of this MsgObj_c instance
@@ -191,19 +191,19 @@ public:
   /** update the ident value with the given mask --> clear any bit in ident, which are not set in given mask.
       Update the mask only, when the ident type of the referenced mask is the same.
     */
-  void updateFilterWithMask( const Ident_c& rrefc_mask )
-    { c_filter.updateWithMask( rrefc_mask );}
+  void updateFilterWithMask( const Ident_c& arc_mask )
+    { c_filter.updateWithMask( arc_mask );}
 
   /** get the common filter part of all merged FilterBox instances
     @return common filter of all FilterBoxes in this MsgObj_c instance
   */
-  void commonFilterAfterMerge( Ident_c& rrefc_globalMask );
+  void commonFilterAfterMerge( Ident_c& arc_globalMask );
 
   /** check if actual filter with specific filter type are equal to given combination
-    @param rrefc_filter compared filter setting
+    @param arc_filter compared filter setting
   */
-  bool equalFilter(const Ident_c& rrefc_filter) const
-    {return (rrefc_filter == c_filter)?true:false;}
+  bool equalFilter(const Ident_c& arc_filter) const
+    {return (arc_filter == c_filter)?true:false;}
 
   /** configures the CAN hardware of given Msg Object (uses BIOS function)
     possible errors:
@@ -211,11 +211,11 @@ public:
         * Err_c::range given BUS or MsgObj number not in allowed area
         * Err_c::busy wanted MsgObj already in use
         * Err_c::unspecified some other error
-    @param rui8_busNumber BUS number, where this instance should act
-    @param rui8_msgNr CAN hardware msg number for BIOS interaction
+    @param aui8_busNumber BUS number, where this instance should act
+    @param aui8_msgNr CAN hardware msg number for BIOS interaction
     @return true -> BIOS CAN object without errors configured
   */
-  bool configCan(uint8_t rui8_busNumber, uint8_t rui8_msgNr);
+  bool configCan(uint8_t aui8_busNumber, uint8_t aui8_msgNr);
 
   //+++++++++++++++++++++++++++++++++++++++
   // manage what to do with received t_data
@@ -224,18 +224,18 @@ public:
     CAN messages by this msgObj and reports success with true
     possible errors:
         * Err_c::can_overflow to many references to FilterBox_c instances for this MsgObj_c
-    @param rrefc_box reference to FilterBox_c which should be inserted as possible processing instance of msg received by this instance
+    @param arc_box reference to FilterBox_c which should be inserted as possible processing instance of msg received by this instance
     @return true -> this reference could be stored in this MsgObj_c (limited amount)
   */
-  bool insertFilterBox(FilterRef rrefc_box);
+  bool insertFilterBox(FilterRef arc_box);
 
   /** delete pointer to a FilterBox_c and move following pointers one position forward
     possible errors:
         * Err_c::elNonexistant to be deleted FilterBox_c reference not registered for this MsgObj_c
-    @param rrefc_box reference to FilterBox_c which should be deleted from reference array
+    @param arc_box reference to FilterBox_c which should be deleted from reference array
     @return true -> given FilterBox_c was deleted from local reference array
   */
-  bool deleteFilterBox(FilterRef rrefc_box);
+  bool deleteFilterBox(FilterRef arc_box);
 
   /** deliver count of contained FilterBox_c pointers
     @return count of references to FilterBox_c instances
@@ -260,12 +260,12 @@ public:
       * Err_c::can_overflow receive puffer overflow during receive
           (not likely because processing is called by receive IRQ)
       * dependant error if insertion in registered FilterBox_c causes error
-    @param rui8_busNumber BUS number to check for received msg
-		@param rb_forceProcessAll true -> process all CAN messages in HAL buffer, even if timeEvent would force stop
+    @param aui8_busNumber BUS number to check for received msg
+		@param ab_forceProcessAll true -> process all CAN messages in HAL buffer, even if timeEvent would force stop
 															( this important to process all buffered messages before FilterBoxes are reconfigured )
     @return number of received messages
   */
-  uint8_t processMsg(uint8_t rui8_busNumber, bool rb_forceProcessAll = false );
+  uint8_t processMsg(uint8_t aui8_busNumber, bool ab_forceProcessAll = false );
 
 	/** lock the corresponding hardware MsgObj to avoid receiving further CAN messages.
 		This important for handling of the LastMsgObj, as it should only receive messages
@@ -285,7 +285,7 @@ public:
 		Thus CanIo_c::reconfigureMsgObj() locks the lastMessageObject at the end, so that the buffer content is
 		simply conserved until normal CanIo_c::processMsg() is called.
 	*/
-	void lock( bool rb_lock = true );
+	void lock( bool ab_lock = true );
 
 	/** check if this given MsgObj_c is locked */
 	bool isLocked() const { return bit_data.isLocked;}
@@ -312,16 +312,16 @@ private:
 // Private methods
   #if 0
   /** set counter for appointed arrPfilterBox instances
-    @param rb_val wanted counter for appointed arrPfilterBox instances
+    @param ab_val wanted counter for appointed arrPfilterBox instances
   */
-  void setCntFilterBox(uint8_t rb_val) { bit_data.cnt_filterBox = rb_val; }
+  void setCntFilterBox(uint8_t ab_val) { bit_data.cnt_filterBox = ab_val; }
   #endif
 
   /** set if a CAN msg object is open for this instance
     -> if the close function must be called in destructor
-    @param rb_state wanted state
+    @param ab_state wanted state
   */
-  void setIsOpen(bool rb_state){bit_data.isOpen = (rb_state)?1:0;}
+  void setIsOpen(bool ab_state){bit_data.isOpen = (ab_state)?1:0;}
 
   /** deliver Bus Number of this MsgObj_c
     @return bus number
@@ -329,9 +329,9 @@ private:
   uint8_t busNumber()const{return bit_data.busNumber;}
 
   /** set Bus Number of this MsgObj_c
-    @param rb_val wanted bus number
+    @param ab_val wanted bus number
   */
-  void setBusNumber(uint8_t rb_val){bit_data.busNumber = (rb_val<8)?rb_val:0;}
+  void setBusNumber(uint8_t ab_val){bit_data.busNumber = (ab_val<8)?ab_val:0;}
 
   /** deliver msgObj number for BIOS interaction
     @return msgObj number
@@ -339,20 +339,20 @@ private:
   uint8_t msgObjNr()const{return bit_data.ui8_msgObjNr;}
 
   /** set msgObj number for BIOS interaction
-    @param rb_val wanted msgObj number
+    @param ab_val wanted msgObj number
   */
-  void setMsgObjNr(uint8_t rb_val){bit_data.ui8_msgObjNr = rb_val;}
+  void setMsgObjNr(uint8_t ab_val){bit_data.ui8_msgObjNr = ab_val;}
 
   /** verify given BUS number and MsgObj number, if they are within allowed
     limits (defined in isoaglib_config.h)
     if called withoutparameter values (default -1) the actual configured are
     checked -> if these are incorrect Err_c::range is set
     (mostly used by MsgObj_c to verify itself)
-    @param rc_busNr number of the BUS (default the actual stored number is checked)
-    @param rc_msgobjNr number of the MsgObj (default the actual stored number is checked)
+    @param ac_busNr number of the BUS (default the actual stored number is checked)
+    @param ac_msgobjNr number of the MsgObj (default the actual stored number is checked)
     @return true -> values are correct
   */
-  bool verifyBusMsgobjNr(int8_t rc_busNr = -1, int8_t rc_msgobjNr = -1);
+  bool verifyBusMsgobjNr(int8_t ac_busNr = -1, int8_t ac_msgobjNr = -1);
 };
 } // end of __IsoAgLib namespace
 #endif

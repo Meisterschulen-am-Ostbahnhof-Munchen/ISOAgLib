@@ -105,7 +105,7 @@ int16_t eepromWp(boolean /* bitMode */ ){
   return HAL_NO_ERR;
 }
 
-int16_t openDatFileAndSeek(long rl_position)
+int16_t openDatFileAndSeek(long al_position)
 {
   eepromDat = fopen(EEPROM_DAT_FILE, "r+b");
   if ( NULL == eepromDat )
@@ -136,7 +136,7 @@ int16_t openDatFileAndSeek(long rl_position)
   }
   if ( NULL != eepromDat )
   { // seek on success to the wanted position
-    fseek(eepromDat, rl_position, 0);
+    fseek(eepromDat, al_position, 0);
     return HAL_NO_ERR;
   }
   else return HAL_CONFIG_ERR;

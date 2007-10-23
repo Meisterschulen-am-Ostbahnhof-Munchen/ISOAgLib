@@ -81,13 +81,13 @@ public:
     possible errors:
         * Err_c::range wrong input number
     @see iActorO_c::createDigital
-    @param rui8_channel default-argument for setting hardware channel for this input
+    @param aui8_channel default-argument for setting hardware channel for this input
   */
-  iDigitalO_c(uint8_t rui8_channel = 0) : DigitalO_c(rui8_channel){};
+  iDigitalO_c(uint8_t aui8_channel = 0) : DigitalO_c(aui8_channel){};
   /** init this instance
-    @param rui8_channel default-argument for setting hardware channel for this input
+    @param aui8_channel default-argument for setting hardware channel for this input
   */
-  void init(uint8_t rui8_channel) { DigitalO_c::init( rui8_channel );};
+  void init(uint8_t aui8_channel) { DigitalO_c::init( aui8_channel );};
   /**  destructor of the input object which can close explicit the hardware input */
   virtual ~iDigitalO_c() {};
   /**
@@ -96,26 +96,26 @@ public:
 
     possible errors:
        * Err_c::range wrong output channel number or wrong frequency
-    @param rui32_val value to use as PWM frequency in [mHz]
+    @param aui32_val value to use as PWM frequency in [mHz]
   */
-  void setFreq(uint32_t rui32_val){DigitalO_c::setFreq(rui32_val);};
+  void setFreq(uint32_t aui32_val){DigitalO_c::setFreq(aui32_val);};
   /**
     set the output PWM value
 
     possible errors:
         * Err_c::range wrong output channel number
-    @param rui16_val value to set for the output channel
+    @param aui16_val value to set for the output channel
   */
-  void set(uint16_t rui16_val) {DigitalO_c::set(rui16_val);};
+  void set(uint16_t aui16_val) {DigitalO_c::set(aui16_val);};
   /**
     switch PWM to total OFF or ON (simple switch function)
     (uses BIOS function)
 
     possible errors:
        * Err_c::range wrong output channel number
-    @param rb_state
+    @param ab_state
   */
-  void set(bool rb_state) {DigitalO_c::set(rb_state);};
+  void set(bool ab_state) {DigitalO_c::set(ab_state);};
 
   /**
     deliver actual set value
@@ -124,11 +124,11 @@ public:
   uint16_t get()const{return DigitalO_c::get();};
   /**
     * set the allowed current limits for active state
-    * @param rui16_minActiveCurrent minimal allowed current in active state
-    * @param rui16_maxActiveCurrent maximum allowed current in active state
+    * @param aui16_minActiveCurrent minimal allowed current in active state
+    * @param aui16_maxActiveCurrent maximum allowed current in active state
     */
-  void setActiveCurrentLimits( uint16_t rui16_minActiveCurrent, uint16_t rui16_maxActiveCurrent )
-  {DigitalO_c::setActiveCurrentLimits(rui16_minActiveCurrent,rui16_maxActiveCurrent );};
+  void setActiveCurrentLimits( uint16_t aui16_minActiveCurrent, uint16_t aui16_maxActiveCurrent )
+  {DigitalO_c::setActiveCurrentLimits(aui16_minActiveCurrent,aui16_maxActiveCurrent );};
   /** deliver the actual current of the digital output
     * @return current in [mA] ( if this digital out instance doesn't support current measurement, -1 is returned )
     */
@@ -168,17 +168,17 @@ private:
     ONLY copy pointers to the wanted instance!!!
     ==> the copy constructor is defined as private, so that compiler
         detects this fault, and shows you this WARNING!!
-    @param rrefc_src source
+    @param arc_src source
   */
-  iDigitalO_c(const iDigitalO_c& /*rrefc_src*/) : DigitalO_c() {};
+  iDigitalO_c(const iDigitalO_c& /*arc_src*/) : DigitalO_c() {};
   /**
     HIDDEN! assignment for Digital_O
     NEVER assign a iDigitalO_c to another instance!!!!
     ==> the asignment is defined as private, so that compiler
         detects this fault, and shows you this WARNING!!
-    @param rrefc_src source
+    @param arc_src source
   */
-  iDigitalO_c& operator=(const iDigitalO_c& /*rrefc_src*/){ return *this;};
+  iDigitalO_c& operator=(const iDigitalO_c& /*arc_src*/){ return *this;};
 };
 
 }

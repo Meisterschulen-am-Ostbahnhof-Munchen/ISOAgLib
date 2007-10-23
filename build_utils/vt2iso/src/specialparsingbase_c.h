@@ -97,7 +97,7 @@ class SpecialParsingBase_c
     * @param objectType object type of pNode
     * @param pb_isObjID pointer to boolean
   */
-  virtual bool parseUnknownTag (DOMNode* pNode, unsigned int objectType, bool* pb_isObjID, unsigned int rui_objID) = 0;
+  virtual bool parseUnknownTag (DOMNode* pNode, unsigned int objectType, bool* pb_isObjID, unsigned int aui_objID) = 0;
 
   /// returns the object type from a given DOMNode if type is known and sets it
   virtual uint16_t getObjType (const char* node_name) { return 0xFFFF; }

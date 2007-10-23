@@ -112,13 +112,13 @@ public:
         * iLibErr_c::Precondition wrong input type
     @see SensorI_c::createAnalog
     @see Sensor_c::t_analogType
-    @param rb_channel default-argument for the hardware channel of the input
+    @param ab_channel default-argument for the hardware channel of the input
     @param ren_analogType default-argument for choosing Sensor_c::voltage(default) or Sensor_c::current as input type
-    @param rb_useMean default-argument for setting the calculation of mean value on true (false as default)
-    @param rb_fastAdc default-argument for setting fast ADC method (false as default)
+    @param ab_useMean default-argument for setting the calculation of mean value on true (false as default)
+    @param ab_fastAdc default-argument for setting fast ADC method (false as default)
   */
-  AnalogI_c(uint8_t rb_channel = 0xFF, Sensor_c::analogType_t ren_analogType = Sensor_c::voltage, bool rb_useMean = false,
-             bool rb_fastAdc = false);
+  AnalogI_c(uint8_t ab_channel = 0xFF, Sensor_c::analogType_t ren_analogType = Sensor_c::voltage, bool ab_useMean = false,
+             bool ab_fastAdc = false);
   /**
     internal called constructor which creates a new input channel,initialize the hardware and configures conversion calculation
     (uses BIOS function)
@@ -128,13 +128,13 @@ public:
         * iLibErr_c::Precondition wrong input type
     @see SensorI_c::createAnalog
     @see Sensor_c::t_analogType
-    @param rb_channel default-argument for the hardware channel of the input
+    @param ab_channel default-argument for the hardware channel of the input
     @param ren_analogType default-argument for choosing Sensor_c::voltage(default) or Sensor_c::current as input type
-    @param rb_useMean default-argument for setting the calculation of mean value on true (false as default)
-    @param rb_fastAdc default-argument for setting fast ADC method (false as default)
+    @param ab_useMean default-argument for setting the calculation of mean value on true (false as default)
+    @param ab_fastAdc default-argument for setting fast ADC method (false as default)
   */
-  void init(uint8_t rb_channel, Sensor_c::analogType_t ren_analogType = Sensor_c::voltage, bool rb_useMean = false,
-             bool rb_fastAdc = false);
+  void init(uint8_t ab_channel, Sensor_c::analogType_t ren_analogType = Sensor_c::voltage, bool ab_useMean = false,
+             bool ab_fastAdc = false);
   /** destructor which can close the hardware input channel */
   virtual ~AnalogI_c();
   /**
@@ -156,10 +156,10 @@ public:
   /**
     configure fast ADC gathering
     (uses BIOS function)
-    @param rb_useFast default-argument for setting fast ADC (true as default)
+    @param ab_useFast default-argument for setting fast ADC (true as default)
   */
-  void setFastAdc(bool rb_useFast=true);
-  bool operator==( uint8_t rui8_key ) const { return ( rui8_key == channelNr() )?true:false;};
+  void setFastAdc(bool ab_useFast=true);
+  bool operator==( uint8_t aui8_key ) const { return ( aui8_key == channelNr() )?true:false;};
 protected:
   /**
     HIDDEN! copy constructor for AnalogI_c
@@ -167,17 +167,17 @@ protected:
     ONLY copy pointers to the wanted instance!!!
     ==> the copy constructor is defined as private, so that compiler
         detects this fault, and shows you this WARNING!!
-    @param rrefc_src source
+    @param arc_src source
   */
-  AnalogI_c(const AnalogI_c& rrefc_src) : SensorBase_c(rrefc_src) {};
+  AnalogI_c(const AnalogI_c& arc_src) : SensorBase_c(arc_src) {};
   /**
     HIDDEN! assignment for AnalogI_c
     NEVER assign a AnalogI_c to another instance!!!!
     ==> the asignment is defined as private, so that compiler
         detects this fault, and shows you this WARNING!!
-    @param rrefc_src source
+    @param arc_src source
   */
-  AnalogI_c& operator=(const AnalogI_c& /*rrefc_src*/){ return *this;};
+  AnalogI_c& operator=(const AnalogI_c& /*arc_src*/){ return *this;};
 private: // Private attributes
   /**
     input type: voltage or current

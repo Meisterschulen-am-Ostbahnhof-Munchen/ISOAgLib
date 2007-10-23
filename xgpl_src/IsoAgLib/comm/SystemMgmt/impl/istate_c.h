@@ -131,19 +131,19 @@ public:
     constructor of IState_c which can set the state to given initial value
     @param ren_itemState optional wanted state information (default Active value)
   */
-  IState_c(itemState_t ren_itemState = Active, int ri_singletonVecKey = 0);
+  IState_c(itemState_t ren_itemState = Active, int ai_singletonVecKey = 0);
 
   /**
     constructor of IState_c which can set the state to given initial value
     @param ren_itemState optional wanted state information (default <empty> value)
   */
-  IState_c(uint8_t rb_state, int ri_singletonVecKey = 0);
+  IState_c(uint8_t ab_state, int ai_singletonVecKey = 0);
 
   /**
     copy constructor for IState_c
-    @param rrefc_src source for this new instance
+    @param arc_src source for this new instance
   */
-  IState_c(const IState_c& rrefc_src);
+  IState_c(const IState_c& arc_src);
 
   /**
     set the state of an monitor list item and
@@ -156,10 +156,10 @@ public:
 
     set: Off, Standby, Active exclusive
     @param ren_itemState state information
-    @param rb_clearOld optional clear old value for complete new set (default no clear)
+    @param ab_clearOld optional clear old value for complete new set (default no clear)
     @return resulting state information
   */
-  itemState_t setItemState(itemState_t ren_itemState, bool rb_clearOld = false);
+  itemState_t setItemState(itemState_t ren_itemState, bool ab_clearOld = false);
 
   /**
     check if specific state is exactly set
@@ -218,26 +218,26 @@ public:
     constructor of IStateExt_c which can set the state to given initial value
     @param ren_itemState optional wanted state information (default Off value)
   */
-  IStateExt_c(itemState_t ren_itemState = Off, int ri_singletonVecKey = 0);
+  IStateExt_c(itemState_t ren_itemState = Off, int ai_singletonVecKey = 0);
 
   /**
     constructor of IState_c which can set the state to given initial value
     @param ren_itemState optional wanted state information (default <empty> value)
   */
-  IStateExt_c(uint8_t rb_state, int ri_singletonVecKey = 0);
+  IStateExt_c(uint8_t ab_state, int ai_singletonVecKey = 0);
 
   /**
     copy constructor for IState_c
-    @param rrefc_src source for this new instance
+    @param arc_src source for this new instance
   */
-  IStateExt_c(const IStateExt_c& rrefc_src);
+  IStateExt_c(const IStateExt_c& arc_src);
 
   /**
     set and/or retreive the AddressClaim counter
-    @param rc_cnt optional new AddressClaim counter  (default only Request)
+    @param ac_cnt optional new AddressClaim counter  (default only Request)
     @return actual or resulting AddressClaim cnt
   */
-  uint8_t addressClaimCnt(int8_t rc_cnt = Request);
+  uint8_t addressClaimCnt(int8_t ac_cnt = Request);
 
   /**
     retreive the counter of false alive msgs
@@ -247,10 +247,10 @@ public:
 
   /**
     set the counter of false alive msgs
-    @param rc_cnt new false alive counter  (default only Request)
+    @param ac_cnt new false alive counter  (default only Request)
     @return actual or resulting false alive cnt
   */
-  uint8_t falseAliveCnt(int8_t rc_cnt);
+  uint8_t falseAliveCnt(int8_t ac_cnt);
 
   /**
     retreive the counter of caused conflicts
@@ -260,10 +260,10 @@ public:
 
   /**
     set the counter of false alive msgs
-    @param rc_cnt new false alive counter  (default only Request)
+    @param ac_cnt new false alive counter  (default only Request)
     @return actual or resulting false alive cnt
   */
-  uint8_t causedConflictCnt(int8_t rc_cnt, int32_t ri32_time = -1);
+  uint8_t causedConflictCnt(int8_t ac_cnt, int32_t ai32_time = -1);
 
   /**
     retreive the counter of Affected conflicts
@@ -273,10 +273,10 @@ public:
 
   /**
     set the counter of false alive msgs
-    @param rc_cnt new false alive counter  (default only Request)
+    @param ac_cnt new false alive counter  (default only Request)
     @return actual or resulting false alive cnt
   */
-  uint8_t affectedConflictCnt(int8_t rc_cnt, int32_t ri32_time = -1);
+  uint8_t affectedConflictCnt(int8_t ac_cnt, int32_t ai32_time = -1);
 
 private:
   /** last timestamp (in seconds) of caused conflict */

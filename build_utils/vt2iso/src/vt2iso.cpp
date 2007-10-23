@@ -616,20 +616,20 @@ vt2iso_c::clean_exit (char* error_message)
     fprintf (partFile_handler_direct, "\npublic:");
     fprintf (partFile_handler_direct, "\n  virtual void eventKeyCode (uint8_t keyActivationCode, uint16_t objId, uint16_t objIdMask, uint8_t keyCode, bool wasButton);");
     fprintf (partFile_handler_direct, "\n  /* Uncomment the following function if you want to use command-response handling! */");
-    fprintf (partFile_handler_direct, "\n  //virtual void eventPointingEvent (uint16_t rui16_xPosition, uint16_t rui16_yPosition);");
+    fprintf (partFile_handler_direct, "\n  //virtual void eventPointingEvent (uint16_t aui16_xPosition, uint16_t aui16_yPosition);");
     fprintf (partFile_handler_direct, "\n  virtual void eventNumericValue (uint16_t objId, uint8_t ui8_value, uint32_t ui32_value);");
-    fprintf (partFile_handler_direct, "\n  virtual void eventStringValue (uint16_t rui16_objId, uint8_t rui8_length, StreamInput_c &refc_streaminput, uint8_t rui8_unparsedBytes, bool b_isFirst, bool b_isLast);");
+    fprintf (partFile_handler_direct, "\n  virtual void eventStringValue (uint16_t aui16_objId, uint8_t aui8_length, StreamInput_c &rc_streaminput, uint8_t aui8_unparsedBytes, bool b_isFirst, bool b_isLast);");
     fprintf (partFile_handler_direct, "\n  /* Uncomment the following function if you want to use input value string on-the-fly parsing/handling! */");
     fprintf (partFile_handler_direct, "\n  //virtual void eventStringValueAbort();");
-    fprintf (partFile_handler_direct, "\n  virtual void eventObjectPoolUploadedSuccessfully (bool rb_wasLanguageUpdate, int8_t ri8_languageIndex, uint16_t rui16_languageCode);");
-    fprintf (partFile_handler_direct, "\n  //virtual void eventPrepareForLanguageChange (int8_t ri8_languageIndex, uint16_t rui16_languageCode);");
+    fprintf (partFile_handler_direct, "\n  virtual void eventObjectPoolUploadedSuccessfully (bool ab_wasLanguageUpdate, int8_t ai8_languageIndex, uint16_t aui16_languageCode);");
+    fprintf (partFile_handler_direct, "\n  //virtual void eventPrepareForLanguageChange (int8_t ai8_languageIndex, uint16_t aui16_languageCode);");
     fprintf (partFile_handler_direct, "\n  virtual void eventEnterSafeState ();");
     fprintf (partFile_handler_direct, "\n  /* Uncomment the following function if you want to use command-response handling! */");
-    fprintf (partFile_handler_direct, "\n  //virtual void eventCommandResponse (uint8_t rui8_responseCommandError, const uint8_t rpui8_responseDataBytes[8]);");
+    fprintf (partFile_handler_direct, "\n  //virtual void eventCommandResponse (uint8_t aui8_responseCommandError, const uint8_t apui8_responseDataBytes[8]);");
     fprintf (partFile_handler_direct, "\n  /* Uncomment the following function if you want to use a special colour-conversion! */");
     fprintf (partFile_handler_direct, "\n  //virtual uint8_t convertColour (uint8_t colourValue, uint8_t colourDepth, IsoAgLib::iVtObject_c* obj, IsoAgLib::e_vtColour whichColour);");
     fprintf (partFile_handler_direct, "\n  /* Uncomment the following function if you want to react on any incoming LANGUAGE_PGN */");
-    fprintf (partFile_handler_direct, "\n  //virtual void eventLanguagePgn (const localSettings_s& rrefs_localSettings);");
+    fprintf (partFile_handler_direct, "\n  //virtual void eventLanguagePgn (const localSettings_s& ars_localSettings);");
     fprintf (partFile_handler_direct, "\n  /* Uncomment the following function if you want to react on any incoming VT Status messages */");
     fprintf (partFile_handler_direct, "\n  //virtual void eventVtStatusMsg();");
     fprintf (partFile_handler_direct, "\n  /* Uncomment the following function if you want to react on any incoming VT ESC */");
@@ -894,25 +894,25 @@ vt2iso_c::setID (const char* objName, unsigned int wishID)
 }
 
 signed long int
-vt2iso_c::idOrName_toi(char* rpc_string, bool rb_isMacro)
+vt2iso_c::idOrName_toi(char* apc_string, bool ab_isMacro)
 {
-  if (rpc_string [0] == 0x00)
+  if (apc_string [0] == 0x00)
   {
     std::cout << "*** ERROR *** idOrName_toi: Empty 'object_id' attribute!\n\n";
     return -1;
   }
   /** @todo check if all chars in the string are numbers, not only the first! */
-  if ((rpc_string [0] >= '0') && (rpc_string [0] <= '9')) return atoi (rpc_string);
+  if ((apc_string [0] >= '0') && (apc_string [0] <= '9')) return atoi (apc_string);
 
-  if (strstr (rpc_string, pcch_poolIdent) != rpc_string)
+  if (strstr (apc_string, pcch_poolIdent) != apc_string)
   {
     // add the pool_ident to the name
-    std::string fullName = std::string(pcch_poolIdent) + std::string(rpc_string);
+    std::string fullName = std::string(pcch_poolIdent) + std::string(apc_string);
     // Starting with a letter, so look up id!
-    return getID (fullName.c_str(), rb_isMacro, false, 0);
+    return getID (fullName.c_str(), ab_isMacro, false, 0);
   }
   else
-    return getID (rpc_string, rb_isMacro, false, 0);
+    return getID (apc_string, ab_isMacro, false, 0);
 }
 
 void
@@ -924,7 +924,7 @@ vt2iso_c::getKeyCode()
 }
 
 void
-vt2iso_c::splitFunction (bool rb_onlyClose=false)
+vt2iso_c::splitFunction (bool ab_onlyClose=false)
 {
   static int splitFunctionPart = 0;
   char partFileName [1024+1]; partFileName [1024+1-1] = 0x00;
@@ -936,7 +936,7 @@ vt2iso_c::splitFunction (bool rb_onlyClose=false)
     partFile_split_function = NULL;
     splitFunctionPart++;
   }
-  if (!rb_onlyClose)
+  if (!ab_onlyClose)
   {
     sprintf (partFileName, "%s-function%d.cpp", xmlFileGlobal, splitFunctionPart);
     partFile_split_function = fopen (partFileName, "wt");
@@ -950,9 +950,9 @@ vt2iso_c::splitFunction (bool rb_onlyClose=false)
 }
 
 void
-vt2iso_c::init (const char* xmlFile, std::basic_string<char>* dictionary, bool rb_externalize)
+vt2iso_c::init (const char* xmlFile, std::basic_string<char>* dictionary, bool ab_externalize)
 {
-  b_externalize = rb_externalize;
+  b_externalize = ab_externalize;
 
   firstLineFileE = true;
   ui_languages=0;
@@ -1117,9 +1117,9 @@ vt2iso_c::init (const char* xmlFile, std::basic_string<char>* dictionary, bool r
 }
 
 void
-vt2iso_c::defaultAttributes (unsigned int r_objType)
+vt2iso_c::defaultAttributes (unsigned int a_objType)
 {
-  if (r_objType != otGraphicsContext)
+  if (a_objType != otGraphicsContext)
   {
     if (!attrIsGiven [attrBackground_colour]) {
       sprintf (attrString [attrBackground_colour], "white");
@@ -1142,7 +1142,7 @@ vt2iso_c::defaultAttributes (unsigned int r_objType)
     sprintf (attrString [attrBorder_colour], "black");
     attrIsGiven [attrBorder_colour] = true;
   }
-  if ((r_objType == otButton) && !attrIsGiven [attrOptions]) {
+  if ((a_objType == otButton) && !attrIsGiven [attrOptions]) {
     sprintf (attrString [attrOptions], "0");
     attrIsGiven [attrOptions] = true;
   }
@@ -1179,14 +1179,14 @@ vt2iso_c::defaultAttributes (unsigned int r_objType)
     sprintf (attrString [attrEnabled], "yes");
     attrIsGiven [attrEnabled] = true;
   }
-  if ((r_objType == otStringvariable) || (r_objType == otOutputstring))
+  if ((a_objType == otStringvariable) || (a_objType == otOutputstring))
   {
     if (!attrIsGiven [attrLanguage] && (strlen (spc_autoLanguage) >0)) {
       sprintf (attrString [attrLanguage], spc_autoLanguage);
       attrIsGiven [attrLanguage] = true;
     }
   }
-  if (r_objType == otGraphicsContext)
+  if (a_objType == otGraphicsContext)
   {
     if (!attrIsGiven [attrCursorX]) {
       sprintf (attrString [attrCursorX], "0");
@@ -1197,7 +1197,7 @@ vt2iso_c::defaultAttributes (unsigned int r_objType)
       attrIsGiven [attrCursorY] = true;
     }
   }
-  if ((r_objType == otInputnumber) && !attrIsGiven [attrInputObjectOptions]) {
+  if ((a_objType == otInputnumber) && !attrIsGiven [attrInputObjectOptions]) {
     sprintf (attrString [attrInputObjectOptions], "enabled");
     attrIsGiven [attrInputObjectOptions] = true;
   }
@@ -1208,22 +1208,22 @@ vt2iso_c::defaultAttributes (unsigned int r_objType)
 }
 
 void
-vt2iso_c::convertIdReferenceToNameReference(int ri_attrType)
+vt2iso_c::convertIdReferenceToNameReference(int ai_attrType)
 {
-  if (attrIsGiven [ri_attrType])
+  if (attrIsGiven [ai_attrType])
   {
-    int len = strlen (attrString [ri_attrType]);
+    int len = strlen (attrString [ai_attrType]);
     if (len == 0) return; // do nothing if string empty
 
-    char firstChar = attrString [ri_attrType][0];
+    char firstChar = attrString [ai_attrType][0];
     if (firstChar >= '0' && firstChar <= '9')
     { // ID is given, so lookup the name for it!
-      int uid = atoi (attrString [ri_attrType]);
+      int uid = atoi (attrString [ai_attrType]);
       // first check if ID has an associated name
       for (unsigned int i=0; i<objCount; i++)
       {
         if (int(objIDTable[i]) == uid)
-          strcpy (attrString [ri_attrType], &objNameTable [i*(stringLength+1)]);
+          strcpy (attrString [ai_attrType], &objNameTable [i*(stringLength+1)]);
       }
     }
   }
@@ -2175,7 +2175,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
         checkForFileOrFile148 ("picturegraphic");
 
         objBitmapOptions = picturegraphicoptionstoi (attrString [attrOptions]);
-        if (!openDecodePrintOut (rc_workDir, std_bitmap_path, objBitmapOptions)) return false;
+        if (!openDecodePrintOut (ac_workDir, std_bitmap_path, objBitmapOptions)) return false;
 
         // copy values from c_Bitmap somewhere to have them when Print'ing out the array afterwards...
         deXwidth = atoi (attrString [attrWidth]);
@@ -2199,7 +2199,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             checkForFileOrFile148 ("fixedbitmap");
 
             fixBitmapOptions [fixNr] = objBitmapOptions & 0x3; // keep flashing/transparency information from <pictureobject>
-            if (!openDecodePrintOut (rc_workDir, fix_bitmap_path, fixBitmapOptions[fixNr], fixNr)) return false;
+            if (!openDecodePrintOut (ac_workDir, fix_bitmap_path, fixBitmapOptions[fixNr], fixNr)) return false;
 
             // copy values from c_Bitmap somewhere in a temp array that will be printed afterwards............
             //fiXtransCol [fixNr] = colortoi (attrString [attrTransparency_colour]);
@@ -4386,7 +4386,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
 }
 
 
-bool vt2iso_c::processChildElements(unsigned int& ref_objChildPoints, DOMNode *ref_n)
+bool vt2iso_c::processChildElements(unsigned int& r_objChildPoints, DOMNode *r_n)
 { // Process all Child-Elements
   DOMNode *child;
   DOMNamedNodeMap *pAttributes;
@@ -4394,11 +4394,11 @@ bool vt2iso_c::processChildElements(unsigned int& ref_objChildPoints, DOMNode *r
   bool firstElement = true;
   bool is_objChildName = false;
   char objChildName [stringLength+1];
-  ref_objChildPoints = 0;
+  r_objChildPoints = 0;
 
-  char *node_name = XMLString::transcode(ref_n->getNodeName());
+  char *node_name = XMLString::transcode(r_n->getNodeName());
 
-  for (child = ref_n->getFirstChild(); child != 0; child=child->getNextSibling())
+  for (child = r_n->getFirstChild(); child != 0; child=child->getNextSibling())
   {
     if ( (child->getNodeType() == DOMNode::ELEMENT_NODE) && (0 == strcmp (XMLString::transcode(child->getNodeName()), otCompTable [otPoint]) ))
     {
@@ -4444,18 +4444,18 @@ bool vt2iso_c::processChildElements(unsigned int& ref_objChildPoints, DOMNode *r
         return false;
       }
       fprintf (partFile_attributes, "{%d, %d}", atoi(attrString [attrPos_x]), atoi(attrString [attrPos_y]));
-      ref_objChildPoints++;
+      r_objChildPoints++;
       firstElement = false;
     }
   }
-  if (ref_objChildPoints < 3)
+  if (r_objChildPoints < 3)
   {
     std::cout << "\n\nYOU NEED TO SPECIFY AT LEAST 3 <point ...> elements for object <" << node_name << "> '" << objName << "'! STOPPING PARSER! bye.\n\n";
     return false;
   }
   else
   {
-    sprintf (attrString [attrNumber_of_points], "%i", ref_objChildPoints);
+    sprintf (attrString [attrNumber_of_points], "%i", r_objChildPoints);
     if (!attrIsGiven [attrNumber_of_points])
       attrIsGiven [attrNumber_of_points] = true;
   }
@@ -4657,7 +4657,7 @@ vt2iso_c::prepareFileNameAndDirectory (std::basic_string<char>* pch_fileName)
   }
 #endif
   // finished preparations on directory -> needed in processElement(...)
-  rc_workDir = c_directory.c_str();
+  ac_workDir = c_directory.c_str();
 
   // now sort this list
   bool stillSorting;

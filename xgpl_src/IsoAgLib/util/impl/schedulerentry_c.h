@@ -106,28 +106,28 @@ public:
   //  Operation: SchedulerEntry_c
   //!  Constructor which takes a pointer to the managed from ElementBase_c derived class.
   //! Parameter:
-  //! @param rpc_entry: Pointer to the instance of the represented ElementBase_c derived instance.
-  inline SchedulerEntry_c(ElementBase_c* rpc_entry= NULL);
+  //! @param apc_entry: Pointer to the instance of the represented ElementBase_c derived instance.
+  inline SchedulerEntry_c(ElementBase_c* apc_entry= NULL);
 
   //  Operation: operator<=
   //!  Compare retriger time of this item by operator<= with parameter
   //!  @return true -> this item should be triggered first (retrigger times can ba equal)
   //! Parameter:
-  //! @param rrefc_rightSide: Reference to the right side for the lower-comparison
-  inline bool operator<=(const SchedulerEntry_c& rrefc_rightSide) const;
+  //! @param arc_rightSide: Reference to the right side for the lower-comparison
+  inline bool operator<=(const SchedulerEntry_c& arc_rightSide) const;
 
   //  Operation: operator==
   //! Parameter:
-  //! @param rrefc_rightSide: Reference to the compared instance
-  inline bool operator==(const SchedulerEntry_c& rrefc_rightSide) const;
+  //! @param arc_rightSide: Reference to the compared instance
+  inline bool operator==(const SchedulerEntry_c& arc_rightSide) const;
 
   //  Operation: isTask
   //!  this function compares the stored task object pointer to a given pointer.
   //!  This is used for scheduler queue find operations
   //!  (e.g. erase item with pointer to specific Task)
   //! Parameter:
-  //! @param rpc_cmpTask: pointer to task object, which should be compared
-  inline bool isTask(const ElementBase_c* rpc_cmpTask) const;
+  //! @param apc_cmpTask: pointer to task object, which should be compared
+  inline bool isTask(const ElementBase_c* apc_cmpTask) const;
 
   //  Operation: getTimeToNextTrigger
   //!  deliver the time [msec] to the next awaited retrigger of this task. The central scheduler can use the parameter to deduce the possible time
@@ -144,25 +144,25 @@ public:
   //  Operation: timeEventExec
   //!  This function is called by the central scheduler to stimulate periodic activities for each task.
   //!  The parameter tells the task the available time for execution.
-  //! @param ri32_demandedExecEnd: available execution time. functon timeEvent() of ElementBase_c Childs
+  //! @param ai32_demandedExecEnd: available execution time. functon timeEvent() of ElementBase_c Childs
   //!                              MUST be finished before the time, to avoid scheduling problems.
   //!                              default value -1 == unrestricted time for execution.
   //! @return true if client could finish his job else false
-  bool timeEventExec(int32_t ri32_demandedExecEnd= -1);
+  bool timeEventExec(int32_t ai32_demandedExecEnd= -1);
 
   //  Operation: operator=
   //!  Assign pointer to task from source item to this item.
   //! Parameter:
-  //! @param rrefc_rightSide: Reference to the right side for the lower-comparison
-  inline SchedulerEntry_c& operator=(const SchedulerEntry_c& rrefc_rightSide);
+  //! @param arc_rightSide: Reference to the right side for the lower-comparison
+  inline SchedulerEntry_c& operator=(const SchedulerEntry_c& arc_rightSide);
 
   //  Operation: operator<
   //!  Compare retriger time of this item by operator< with parameter
-  //!  @return true -> this item must be triggered first  //! @param ri32_demandedExecEnd: available execution time. timeEvent() MUST be finished before the time, to avoid scheduling problems.
+  //!  @return true -> this item must be triggered first  //! @param ai32_demandedExecEnd: available execution time. timeEvent() MUST be finished before the time, to avoid scheduling problems.
   //!                              default value -1 == unrestricted time for execution.
   //! Parameter:
-  //! @param rrefc_rightSide: Reference to the right side for the lower-comparison
-  inline bool operator<(const SchedulerEntry_c& rrefc_rightSide) const;
+  //! @param arc_rightSide: Reference to the right side for the lower-comparison
+  inline bool operator<(const SchedulerEntry_c& arc_rightSide) const;
 
   //  Operation: getTaskName
   inline const char* getTaskName() const;
@@ -214,10 +214,10 @@ public:
   inline int32_t getNextTriggerTime() const;
 
   //!  Allows Scheduler_c to set new TimePeriod
-  inline bool setTimePeriod(uint16_t rui16_timePeriod) const;
+  inline bool setTimePeriod(uint16_t aui16_timePeriod) const;
 
 //!  Allows Scheduler_c to change next retriggerTime
-inline bool changeNextTriggerTime(int32_t ri32_nextRetriggerTime);
+inline bool changeNextTriggerTime(int32_t ai32_nextRetriggerTime);
 
   void close() { if (NULL != pc_taskInstance) pc_taskInstance->close();}
 
@@ -233,32 +233,32 @@ private:
 // //////////////////////////////// +X2C Operation 2692 : SchedulerEntry_c
 //!  Constructor which takes a pointer to the managed from ElementBase_c derived class.
 //! Parameter:
-//! @param rpc_entry: Pointer to the instance of the represented ElementBase_c derived instance.
+//! @param apc_entry: Pointer to the instance of the represented ElementBase_c derived instance.
 inline
 
-SchedulerEntry_c::SchedulerEntry_c(ElementBase_c* rpc_entry)
-: pc_taskInstance( rpc_entry )
+SchedulerEntry_c::SchedulerEntry_c(ElementBase_c* apc_entry)
+: pc_taskInstance( apc_entry )
 {
 }
 
 //!  Compare retriger time of this item by operator<= with parameter
 //!  @return true -> this item should be triggered first (retrigger times can ba equal)
 //! Parameter:
-//! @param rrefc_rightSide: Reference to the right side for the lower-comparison
+//! @param arc_rightSide: Reference to the right side for the lower-comparison
 inline
 bool
-SchedulerEntry_c::operator<=(const SchedulerEntry_c& rrefc_rightSide) const
+SchedulerEntry_c::operator<=(const SchedulerEntry_c& arc_rightSide) const
 {
-  return ( pc_taskInstance->getNextTriggerTime() <= rrefc_rightSide.pc_taskInstance->getNextTriggerTime() )?true:false;
+  return ( pc_taskInstance->getNextTriggerTime() <= arc_rightSide.pc_taskInstance->getNextTriggerTime() )?true:false;
 }
 
 //! Parameter:
-//! @param rrefc_rightSide: Reference to the compared instance
+//! @param arc_rightSide: Reference to the compared instance
 inline
 bool
-SchedulerEntry_c::operator==(const SchedulerEntry_c& rrefc_rightSide) const
+SchedulerEntry_c::operator==(const SchedulerEntry_c& arc_rightSide) const
 {
-  return ( pc_taskInstance->getNextTriggerTime() == rrefc_rightSide.pc_taskInstance->getNextTriggerTime() )?true:false;
+  return ( pc_taskInstance->getNextTriggerTime() == arc_rightSide.pc_taskInstance->getNextTriggerTime() )?true:false;
 }
 
 
@@ -266,12 +266,12 @@ SchedulerEntry_c::operator==(const SchedulerEntry_c& rrefc_rightSide) const
 //!  This is used for scheduler queue find operations
 //!  (e.g. erase item with pointer to specific Task)
 //! Parameter:
-//! @param rpc_cmpTask: pointer to task object, which should be compared
+//! @param apc_cmpTask: pointer to task object, which should be compared
 inline
 bool
-SchedulerEntry_c::isTask(const ElementBase_c* rpc_cmpTask) const
+SchedulerEntry_c::isTask(const ElementBase_c* apc_cmpTask) const
 {
-  return ( pc_taskInstance == rpc_cmpTask )?true:false;
+  return ( pc_taskInstance == apc_cmpTask )?true:false;
 }
 
 //!  deliver the time [msec] to the next awaited retrigger of this task. The central scheduler can use the parameter to deduce the possible time
@@ -298,24 +298,24 @@ SchedulerEntry_c::getExecTime() const
 
 //!  Assign pointer to task from source item to this item.
 //! Parameter:
-//! @param rrefc_rightSide: Reference to the right side for the lower-comparison
+//! @param arc_rightSide: Reference to the right side for the lower-comparison
 inline
 SchedulerEntry_c&
-SchedulerEntry_c::operator=(const SchedulerEntry_c& rrefc_rightSide)
+SchedulerEntry_c::operator=(const SchedulerEntry_c& arc_rightSide)
 {
-  pc_taskInstance = rrefc_rightSide.pc_taskInstance;
+  pc_taskInstance = arc_rightSide.pc_taskInstance;
   return *this;
 }
 
 //!  Compare retriger time of this item by operator< with parameter
 //!  @return true -> this item must be triggered first
 //! Parameter:
-//! @param rrefc_rightSide: Reference to the right side for the lower-comparison
+//! @param arc_rightSide: Reference to the right side for the lower-comparison
 inline
 bool
-SchedulerEntry_c::operator<(const SchedulerEntry_c& rrefc_rightSide) const
+SchedulerEntry_c::operator<(const SchedulerEntry_c& arc_rightSide) const
 {
-  return ( pc_taskInstance->getNextTriggerTime() < rrefc_rightSide.pc_taskInstance->getNextTriggerTime() )?true:false;
+  return ( pc_taskInstance->getNextTriggerTime() < arc_rightSide.pc_taskInstance->getNextTriggerTime() )?true:false;
 }
 
 //!  Return ClassName for Scheduler_c
@@ -430,25 +430,25 @@ SchedulerEntry_c::getNextTriggerTime() const
 }
 
 //!  Allows Scheduler_c to set new TimePeriod
-//! @param uint16_t rui16_timePeriod
+//! @param uint16_t aui16_timePeriod
 inline
 bool
-SchedulerEntry_c::setTimePeriod(uint16_t rui16_timePeriod) const
+SchedulerEntry_c::setTimePeriod(uint16_t aui16_timePeriod) const
 {
   if ( pc_taskInstance == NULL ) return false;
-  pc_taskInstance->setTimePeriod(rui16_timePeriod);
+  pc_taskInstance->setTimePeriod(aui16_timePeriod);
   return true;
 }
 
 //!  Allows Scheduler_c to change next retriggerTime
-//! @param int32_t ri32_nextRetriggerTime
+//! @param int32_t ai32_nextRetriggerTime
 //!  @return bool -> change was done
 inline
 bool
-SchedulerEntry_c::changeNextTriggerTime(int32_t ri32_nextRetriggerTime)
+SchedulerEntry_c::changeNextTriggerTime(int32_t ai32_nextRetriggerTime)
 {
   if ( pc_taskInstance == NULL ) return false;
-  pc_taskInstance->changeNextTriggerTime(ri32_nextRetriggerTime);
+  pc_taskInstance->changeNextTriggerTime(ai32_nextRetriggerTime);
   return true;
 }
 

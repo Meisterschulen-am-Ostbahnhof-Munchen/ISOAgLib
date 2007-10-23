@@ -119,11 +119,11 @@ public:
 
     possible errors:
         * Err_c::range given limits are not possible
-    @param rb_digitalFirst smallest allowed digital output channel number (DIGITAL_OUTPUT_MIN)
-    @param rb_digitalLast greatest allowed digital output channel number (DIGITAL_OUTPUT_MAX)
+    @param ab_digitalFirst smallest allowed digital output channel number (DIGITAL_OUTPUT_MIN)
+    @param ab_digitalLast greatest allowed digital output channel number (DIGITAL_OUTPUT_MAX)
     @see masterHeader
   */
-  void init(uint8_t rb_digitalFirst = DIGITAL_OUTPUT_MIN, uint8_t rb_digitalLast = DIGITAL_OUTPUT_MAX);
+  void init(uint8_t ab_digitalFirst = DIGITAL_OUTPUT_MIN, uint8_t ab_digitalLast = DIGITAL_OUTPUT_MAX);
   /** every subsystem of IsoAgLib has explicit function for controlled shutdown
     */
   void close( void ){};
@@ -132,23 +132,23 @@ public:
 
     possible errors:
         * Err_c::range given limits are not possible
-    @param rb_digitalFirst number of the smallest allowed digital output channel
-    @param rb_digitalLast number of the greatest allowed digital output channel
+    @param ab_digitalFirst number of the smallest allowed digital output channel
+    @param ab_digitalLast number of the greatest allowed digital output channel
   */
-  void setDigitalLimits(uint8_t rb_digitalFirst, uint8_t rb_digitalLast);
+  void setDigitalLimits(uint8_t ab_digitalFirst, uint8_t ab_digitalLast);
   /** handler function for access to undefined client.
     * the base Singleton calls this function, if it detects an error
     */
   static void registerAccessFlt( void );
 
   /**
-    check if digital output object to given rb_channel exist
+    check if digital output object to given ab_channel exist
     @see ActorO_c::createDigital
     @see ActorO_c::deleteDigital
-    @param rb_channel number of the tested output channel
+    @param ab_channel number of the tested output channel
     @return true -> searched output object exist
   */
-  bool existDigital(uint8_t rb_channel) { return existC1( rb_channel );};
+  bool existDigital(uint8_t ab_channel) { return existC1( ab_channel );};
   /**
     deliver reference to requested digital channel object to access this actor output;
     IMPORTANT: an digital output channel object with the wanted number must exist
@@ -160,11 +160,11 @@ public:
     @see ActorO_c::createDigital
     @see ActorO_c::existDigital
     @see DigitalO_c::Digital_O
-    @param rb_channel channel of the digital sensor output
+    @param ab_channel channel of the digital sensor output
     @return reference to the wanted digital actor output channel
     @exception containerElementNonexistant
   */
-  DigitalO_c& digital(uint8_t rb_channel) { return getC1( rb_channel );};
+  DigitalO_c& digital(uint8_t ab_channel) { return getC1( ab_channel );};
 private:
 //private methods
   friend class DigitalO_c;
@@ -195,14 +195,14 @@ private:
   uint8_t maxDigitalLimit() const {return b_maxDigitalLimit;};
   /**
     set min channel no limit
-    @param rb_minLimit min channel no limit
+    @param ab_minLimit min channel no limit
   */
-  void setMinDigitalLimit(uint8_t rb_minLimit) {b_min_digitalLimit = rb_minLimit;};
+  void setMinDigitalLimit(uint8_t ab_minLimit) {b_min_digitalLimit = ab_minLimit;};
   /**
     set max channel no limit
-    @param rb_maxLimit max channel no limit
+    @param ab_maxLimit max channel no limit
   */
-  void setMaxDigitalLimit(uint8_t rb_maxLimit) {b_maxDigitalLimit = rb_maxLimit;};
+  void setMaxDigitalLimit(uint8_t ab_maxLimit) {b_maxDigitalLimit = ab_maxLimit;};
 
 private: // Private attributes
   /** min digital channel limit */

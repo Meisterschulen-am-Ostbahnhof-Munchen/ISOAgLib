@@ -120,7 +120,7 @@ System_c::singletonInit()
       * Err_c::unspecified Bios calls for TaskTimer, Relais or StayAlive caused an error
   @return true -> everything without errors initialised
 */
-bool System_c::init( bool rb_forceReinit, IsoAgLib::SystemPowerdownStrategy_t rt_strategy ){
+bool System_c::init( bool ab_forceReinit, IsoAgLib::SystemPowerdownStrategy_t at_strategy ){
   bool b_result = true;
   static bool b_firstCall = true;
 
@@ -144,7 +144,7 @@ bool System_c::init( bool rb_forceReinit, IsoAgLib::SystemPowerdownStrategy_t rt
       b_result = false;
     }
   }
-  if ( rb_forceReinit || b_firstCall )
+  if ( ab_forceReinit || b_firstCall )
   { // init and config the Watchdog
     if (!initWd())
     {  // init of watchdog without success
@@ -154,7 +154,7 @@ bool System_c::init( bool rb_forceReinit, IsoAgLib::SystemPowerdownStrategy_t rt
     // start the task timer (also needed for CAN)
     HAL::startTaskTimer();
     // configure POWER HOLD after loss of CAN_EN
-		setPowerdownStrategy( rt_strategy );
+		setPowerdownStrategy( at_strategy );
 #ifdef CONFIG_DO_NOT_START_RELAIS_ON_STARTUP
     // set Relais to ON
     HAL::setRelais(ON);
@@ -165,9 +165,9 @@ bool System_c::init( bool rb_forceReinit, IsoAgLib::SystemPowerdownStrategy_t rt
   return b_result;
 }
 /** control the relay which is responsible for activation of the PWM output */
-void System_c::setRelais( bool rb_activateRelaisForPwm )
+void System_c::setRelais( bool ab_activateRelaisForPwm )
 {
-  if ( rb_activateRelaisForPwm ) HAL::setRelais(ON);
+  if ( ab_activateRelaisForPwm ) HAL::setRelais(ON);
   else                           HAL::setRelais(OFF);
 }
 
@@ -176,12 +176,12 @@ void System_c::setRelais( bool rb_activateRelaisForPwm )
 	the application can decide on its own, if a CAN_EN loss shall cause
 	a power down of the target. This allows to inhibit stop of application
 	on short power supply voltage low bursts.
-	@param rt_strategy PowerdownByExplcitCall -> stop system only on explicit call of System_c::close()
+	@param at_strategy PowerdownByExplcitCall -> stop system only on explicit call of System_c::close()
 											PowerdownOnCanEnLoss   -> let BIOS/OS automatically switch off on CAN_EN loss
 */
-void System_c::setPowerdownStrategy( IsoAgLib::SystemPowerdownStrategy_t rt_strategy )
+void System_c::setPowerdownStrategy( IsoAgLib::SystemPowerdownStrategy_t at_strategy )
 {
-	switch ( rt_strategy )
+	switch ( at_strategy )
 	{
 		case IsoAgLib::PowerdownByExplcitCall:
 			HAL::stayingAlive();

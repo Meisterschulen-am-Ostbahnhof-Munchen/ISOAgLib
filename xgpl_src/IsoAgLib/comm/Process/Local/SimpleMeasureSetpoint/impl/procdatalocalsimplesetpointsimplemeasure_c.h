@@ -146,10 +146,10 @@ public:
     @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDdi_s which contains DDI, element, isSetpoint and ValueGroup
                          (array is terminated by ElementDdi_s.ui16_element == 0xFFFF)
 
-    @param rc_isoName optional ISOName code of Process-Data
-    @param rc_ownerISOName optional ISOName of the owner
-    @param rpc_isoName pointer to updated ISOName variable of owner
-    @param rb_cumulativeValue
+    @param ac_isoName optional ISOName code of Process-Data
+    @param ac_ownerISOName optional ISOName of the owner
+    @param apc_isoName pointer to updated ISOName variable of owner
+    @param ab_cumulativeValue
              -# for process data like distance, time, area
                  the value of the measure prog data sets is updated
                  on master value update dependent on the value increment
@@ -165,21 +165,21 @@ public:
                   -> if this data is saved in EEPROM, the stored value is loaded
                      as initial master value, and is initially propagated to all
                      measure prog data sets
-    @param rui16_eepromAdr optional adress where value is stored in EEPROM
-    @param rpc_processDataChangeHandler optional pointer to handler class of application
-    @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
+    @param aui16_eepromAdr optional adress where value is stored in EEPROM
+    @param apc_processDataChangeHandler optional pointer to handler class of application
+    @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
   ProcDataLocalSimpleSetpointSimpleMeasure_c(const IsoAgLib::ElementDdi_s* ps_elementDDI = NULL,
-                                             uint16_t rui16_element = 0xFFFF,
-                                             const IsoName_c& rc_isoName = IsoName_c::IsoNameInitialProcessData(),
-                                             const IsoName_c& rc_ownerISOName = IsoName_c::IsoNameUnspecified(),
-                                             const IsoName_c *rpc_isoName = NULL,
-                                             bool rb_cumulativeValue = false,
+                                             uint16_t aui16_element = 0xFFFF,
+                                             const IsoName_c& ac_isoName = IsoName_c::IsoNameInitialProcessData(),
+                                             const IsoName_c& ac_ownerISOName = IsoName_c::IsoNameUnspecified(),
+                                             const IsoName_c *apc_isoName = NULL,
+                                             bool ab_cumulativeValue = false,
 #ifdef USE_EEPROM_IO
-                                             uint16_t rui16_eepromAdr = 0xFFFF,
+                                             uint16_t aui16_eepromAdr = 0xFFFF,
 #endif
-                                             IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
-                                             int ri_singletonVecKey = 0
+                                             IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler = NULL,
+                                             int ai_singletonVecKey = 0
       );
 
   /**
@@ -192,10 +192,10 @@ public:
     @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDdi_s which contains DDI, element, isSetpoint and ValueGroup
                          (array is terminated by ElementDdi_s.ui16_element == 0xFFFF)
 
-    @param rc_isoName optional ISOName code of Process-Data
-    @param rc_ownerISOName optional ISOName of the owner
-    @param rpc_isoName pointer to updated ISOName variable of owner
-    @param rb_cumulativeValue
+    @param ac_isoName optional ISOName code of Process-Data
+    @param ac_ownerISOName optional ISOName of the owner
+    @param apc_isoName pointer to updated ISOName variable of owner
+    @param ab_cumulativeValue
              -# for process data like distance, time, area
                  the value of the measure prog data sets is updated
                  on master value update dependent on the value increment
@@ -211,27 +211,27 @@ public:
                   -> if this data is saved in EEPROM, the stored value is loaded
                      as initial master value, and is initially propagated to all
                      measure prog data sets
-    @param rui16_eepromAdr optional adress where value is stored in EEPROM
-    @param rpc_processDataChangeHandler optional pointer to handler class of application
-    @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
+    @param aui16_eepromAdr optional adress where value is stored in EEPROM
+    @param apc_processDataChangeHandler optional pointer to handler class of application
+    @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
   void init(const IsoAgLib::ElementDdi_s* ps_elementDDI,
-            uint16_t rui16_element,
-            const IsoName_c& rc_isoName = IsoName_c::IsoNameInitialProcessData(),
-            const IsoName_c& rc_ownerISOName = IsoName_c::IsoNameUnspecified(),
-            const IsoName_c *rpc_isoName = NULL,
-            bool rb_cumulativeValue = false,
+            uint16_t aui16_element,
+            const IsoName_c& ac_isoName = IsoName_c::IsoNameInitialProcessData(),
+            const IsoName_c& ac_ownerISOName = IsoName_c::IsoNameUnspecified(),
+            const IsoName_c *apc_isoName = NULL,
+            bool ab_cumulativeValue = false,
 #ifdef USE_EEPROM_IO
-            uint16_t rui16_eepromAdr = 0xFFFF,
+            uint16_t aui16_eepromAdr = 0xFFFF,
 #endif
-            IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
-            int ri_singletonVecKey = 0
+            IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler = NULL,
+            int ai_singletonVecKey = 0
       );
 
   /** copy constructor */
-  ProcDataLocalSimpleSetpointSimpleMeasure_c( const ProcDataLocalSimpleSetpointSimpleMeasure_c& rrefc_src );
+  ProcDataLocalSimpleSetpointSimpleMeasure_c( const ProcDataLocalSimpleSetpointSimpleMeasure_c& arc_src );
   /** assignment operator */
-  const ProcDataLocalSimpleSetpointSimpleMeasure_c& operator=( const ProcDataLocalSimpleSetpointSimpleMeasure_c& rrefc_src );
+  const ProcDataLocalSimpleSetpointSimpleMeasure_c& operator=( const ProcDataLocalSimpleSetpointSimpleMeasure_c& arc_src );
   /** default destructor which has nothing to do */
   ~ProcDataLocalSimpleSetpointSimpleMeasure_c();
 

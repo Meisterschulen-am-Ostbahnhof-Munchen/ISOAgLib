@@ -121,39 +121,39 @@ namespace HAL
 
   /**
     retrieve maximal PWM frequency -> setting to this value results in maximal output
-      @param rui8_channel channel number of output [0..1]
+      @param aui8_channel channel number of output [0..1]
       @return max possible PWM value
   */
-  inline uint16_t getMaxPwmDigout ( uint8_t rui8_channel )
+  inline uint16_t getMaxPwmDigout ( uint8_t aui8_channel )
   { 
 //jtm      __HAL::tOutput tOutputstatus; 
-//jtm      __HAL::get_digout_status (rui8_channel, &tOutputstatus );
+//jtm      __HAL::get_digout_status (aui8_channel, &tOutputstatus );
 //jtm      return tOutputstatus.wMaxOutput;
-    return ( __HAL::DjBios_OutGetMaxTimerCount ( rui8_channel ) );
+    return ( __HAL::DjBios_OutGetMaxTimerCount ( aui8_channel ) );
 //    return ( 0xffff );
   }
 
 
   /**
     set pwm value 0 ... 100 %
-      @param rui8_channel channel number of output [0..1]
+      @param aui8_channel channel number of output [0..1]
       @param wPWMValue Value to set; depends on configured PWM freq; [0..0xFFFF]
       @return error state (HAL_NO_ERR == o.k.; HAL_RANGE_ERR == wrong channel)
   */
-  inline int16_t setDigout(uint8_t rui8_channel, uint16_t wPWMValue)
+  inline int16_t setDigout(uint8_t aui8_channel, uint16_t wPWMValue)
   {
-//jtm      return __HAL::set_digout(rui8_channel, wPWMValue);
-    return ( __HAL::DjBios_OutSetPWMCount ( rui8_channel, wPWMValue ) == __HAL::BIOS_OUT_NO_ERR ? HAL_NO_ERR : HAL_RANGE_ERR );
+//jtm      return __HAL::set_digout(aui8_channel, wPWMValue);
+    return ( __HAL::DjBios_OutSetPWMCount ( aui8_channel, wPWMValue ) == __HAL::BIOS_OUT_NO_ERR ? HAL_NO_ERR : HAL_RANGE_ERR );
 //    return ( HAL_NO_ERR );
   };
 
   
   /** 
     deliver the actual current of the digital output
-      @param rui8_channel channel to check
+      @param aui8_channel channel to check
       @return current in [mA] ( if specified channel doesn't support current measurement, -1 is returned )
   */
-  inline int16_t getDigoutCurrent( uint8_t rui8_channel )
+  inline int16_t getDigoutCurrent( uint8_t aui8_channel )
   {
     return -1;
   };
@@ -166,17 +166,17 @@ namespace HAL
       if the PWM setting is >0 but has a very low value, so that even under normal
       conditions the voltage with connected consuming device is lower than to open
       connector state at low level.
-      @param rui8_channel channel to check
-      @param rui16_minCurrent minimal allowed current in [mA]
-      @param rui16_maxCurrent maximum allowed current in [mA]
+      @param aui8_channel channel to check
+      @param aui16_minCurrent minimal allowed current in [mA]
+      @param aui16_maxCurrent maximum allowed current in [mA]
       @return HAL_NO_ERR, HAL_DIGOUT_OPEN, HAL_DIGOUT_SHORTCUT, HAL_DIGOUT_OVERTEMP,
               HAL_DIGOUT_UNDERVOLT, HAL_DIGOUT_OVERVOLT
   */
-//jtm    int16_t getDigoutDiagnose(uint8_t rui8_channel, uint16_t rui16_minCurrent, uint16_t rui16_maxCurrent);
-  inline int16_t getDigoutDiagnose ( uint8_t rui8_channel, 
-                         uint16_t rui16_minCurrent, uint16_t rui16_maxCurrent)
+//jtm    int16_t getDigoutDiagnose(uint8_t aui8_channel, uint16_t aui16_minCurrent, uint16_t aui16_maxCurrent);
+  inline int16_t getDigoutDiagnose ( uint8_t aui8_channel, 
+                         uint16_t aui16_minCurrent, uint16_t aui16_maxCurrent)
   {
-    switch ( __HAL::DjBios_OutGetStatus(rui8_channel) )
+    switch ( __HAL::DjBios_OutGetStatus(aui8_channel) )
     {
       default:
       case __HAL::BIOS_OUT_NO_ERR:
@@ -209,8 +209,8 @@ namespace HAL
     getDigoutDiagnose function can go wrong.
       @return voltage at PWM channel [mV]
   */
-//jtm    int16_t getDigoutAdc( uint8_t rui8_channel );
-  inline int16_t getDigoutAdc( uint8_t rui8_channel )
+//jtm    int16_t getDigoutAdc( uint8_t aui8_channel );
+  inline int16_t getDigoutAdc( uint8_t aui8_channel )
   {
     return ( 0 );
   };
@@ -341,39 +341,39 @@ namespace HAL
 
   /**
     retrieve maximal PWM frequency -> setting to this value results in maximal output
-      @param rui8_channel channel number of output [0..1]
+      @param aui8_channel channel number of output [0..1]
       @return max possible PWM value
   */
-  inline uint16_t getMaxPwmDigout ( uint8_t rui8_channel )
+  inline uint16_t getMaxPwmDigout ( uint8_t aui8_channel )
   { 
 //jtm      __HAL::tOutput tOutputstatus; 
-//jtm      __HAL::get_digout_status (rui8_channel, &tOutputstatus );
+//jtm      __HAL::get_digout_status (aui8_channel, &tOutputstatus );
 //jtm      return tOutputstatus.wMaxOutput;
-    return ( __HAL::DjBios_OutGetMaxTimerCount ( rui8_channel ) );
+    return ( __HAL::DjBios_OutGetMaxTimerCount ( aui8_channel ) );
 //    return ( 0xffff );
   }
 
 
   /**
     set pwm value 0 ... 100 %
-      @param rui8_channel channel number of output [0..1]
+      @param aui8_channel channel number of output [0..1]
       @param wPWMValue Value to set; depends on configured PWM freq; [0..0xFFFF]
       @return error state (HAL_NO_ERR == o.k.; HAL_RANGE_ERR == wrong channel)
   */
-  inline int16_t setDigout(uint8_t rui8_channel, uint16_t wPWMValue)
+  inline int16_t setDigout(uint8_t aui8_channel, uint16_t wPWMValue)
   {
-//jtm      return __HAL::set_digout(rui8_channel, wPWMValue);
-    return ( __HAL::DjBios_OutSetPWMCount ( rui8_channel, wPWMValue ) == __HAL::BIOS_OUT_NO_ERR ? HAL_NO_ERR : HAL_RANGE_ERR );
+//jtm      return __HAL::set_digout(aui8_channel, wPWMValue);
+    return ( __HAL::DjBios_OutSetPWMCount ( aui8_channel, wPWMValue ) == __HAL::BIOS_OUT_NO_ERR ? HAL_NO_ERR : HAL_RANGE_ERR );
 //    return ( HAL_NO_ERR );
   };
 
   
   /** 
     deliver the actual current of the digital output
-      @param rui8_channel channel to check
+      @param aui8_channel channel to check
       @return current in [mA] ( if specified channel doesn't support current measurement, -1 is returned )
   */
-  inline int16_t getDigoutCurrent( uint8_t rui8_channel )
+  inline int16_t getDigoutCurrent( uint8_t aui8_channel )
   {
     return -1;
   };
@@ -386,17 +386,17 @@ namespace HAL
       if the PWM setting is >0 but has a very low value, so that even under normal
       conditions the voltage with connected consuming device is lower than to open
       connector state at low level.
-      @param rui8_channel channel to check
-      @param rui16_minCurrent minimal allowed current in [mA]
-      @param rui16_maxCurrent maximum allowed current in [mA]
+      @param aui8_channel channel to check
+      @param aui16_minCurrent minimal allowed current in [mA]
+      @param aui16_maxCurrent maximum allowed current in [mA]
       @return HAL_NO_ERR, HAL_DIGOUT_OPEN, HAL_DIGOUT_SHORTCUT, HAL_DIGOUT_OVERTEMP,
               HAL_DIGOUT_UNDERVOLT, HAL_DIGOUT_OVERVOLT
   */
-//jtm    int16_t getDigoutDiagnose(uint8_t rui8_channel, uint16_t rui16_minCurrent, uint16_t rui16_maxCurrent);
-  inline int16_t getDigoutDiagnose ( uint8_t rui8_channel, 
-                         uint16_t rui16_minCurrent, uint16_t rui16_maxCurrent)
+//jtm    int16_t getDigoutDiagnose(uint8_t aui8_channel, uint16_t aui16_minCurrent, uint16_t aui16_maxCurrent);
+  inline int16_t getDigoutDiagnose ( uint8_t aui8_channel, 
+                         uint16_t aui16_minCurrent, uint16_t aui16_maxCurrent)
   {
-    switch ( __HAL::DjBios_OutGetStatus(rui8_channel) )
+    switch ( __HAL::DjBios_OutGetStatus(aui8_channel) )
     {
       default:
       case __HAL::BIOS_OUT_NO_ERR:
@@ -429,8 +429,8 @@ namespace HAL
     getDigoutDiagnose function can go wrong.
       @return voltage at PWM channel [mV]
   */
-//jtm    int16_t getDigoutAdc( uint8_t rui8_channel );
-  inline int16_t getDigoutAdc( uint8_t rui8_channel )
+//jtm    int16_t getDigoutAdc( uint8_t aui8_channel );
+  inline int16_t getDigoutAdc( uint8_t aui8_channel )
   {
     return ( 0 );
   };

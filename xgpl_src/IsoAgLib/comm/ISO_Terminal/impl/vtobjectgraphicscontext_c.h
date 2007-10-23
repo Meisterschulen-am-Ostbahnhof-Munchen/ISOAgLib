@@ -144,7 +144,7 @@ public:
 
   // //////////////////////////////////
   // All special Attribute-Set methods
-  void setGraphicsCursor(const IsoAgLib::iVtPoint_c& rc_point,
+  void setGraphicsCursor(const IsoAgLib::iVtPoint_c& ac_point,
        bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
   void setForegroundColour(uint8_t newValue,
@@ -162,34 +162,34 @@ public:
   void setFontAttributes(const IsoAgLib::iVtObjectFontAttributes_c* const newFontAttributes,
        bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
-  void eraseRectangle(const IsoAgLib::iVtPoint_c& rc_point,
+  void eraseRectangle(const IsoAgLib::iVtPoint_c& ac_point,
        bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
   void drawPoint(
        bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
-  void drawLine(const IsoAgLib::iVtPoint_c& rc_point,
+  void drawLine(const IsoAgLib::iVtPoint_c& ac_point,
        bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
-  void drawRectangle(const IsoAgLib::iVtPoint_c& rc_point,
+  void drawRectangle(const IsoAgLib::iVtPoint_c& ac_point,
        bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
-  void drawClosedEllipse(const IsoAgLib::iVtPoint_c& rc_point,
+  void drawClosedEllipse(const IsoAgLib::iVtPoint_c& ac_point,
        bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
-  void drawPolygon(uint16_t cnt, const IsoAgLib::iVtPoint_c* const rps_data,
+  void drawPolygon(uint16_t cnt, const IsoAgLib::iVtPoint_c* const aps_data,
        bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
-  void drawText(uint8_t type, uint8_t cnt, const char* rpc_string,
+  void drawText(uint8_t type, uint8_t cnt, const char* apc_string,
        bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
-  void panViewport(const IsoAgLib::iVtPoint_c& rc_point,
+  void panViewport(const IsoAgLib::iVtPoint_c& ac_point,
        bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
   void zoomViewport(int8_t newValue,
        bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
-  void panAndZoomViewport(const IsoAgLib::iVtPoint_c& rc_point, int8_t newValue,
+  void panAndZoomViewport(const IsoAgLib::iVtPoint_c& ac_point, int8_t newValue,
        bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
   void changeViewportSize(uint16_t newWidth, uint16_t newHeight,

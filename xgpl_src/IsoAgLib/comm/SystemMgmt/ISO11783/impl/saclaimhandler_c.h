@@ -74,16 +74,16 @@ class SaClaimHandler_c : public IsoRequestPgnHandler_c
    virtual ~SaClaimHandler_c() {}
 
    /** this function is called by IsoMonitor_c when a new CLAIMED IsoItem_c is registered.
-     * @param refc_isoName const reference to the item which IsoItem_c state is changed
-     * @param rpc_newItem pointer to the currently corresponding IsoItem_c
+     * @param rc_isoName const reference to the item which IsoItem_c state is changed
+     * @param apc_newItem pointer to the currently corresponding IsoItem_c
      */
-   virtual void reactOnMonitorListAdd( const IsoName_c& /*refc_isoName*/, const IsoItem_c* /*rpc_newItem*/ ) {};
+   virtual void reactOnMonitorListAdd( const IsoName_c& /*rc_isoName*/, const IsoItem_c* /*apc_newItem*/ ) {};
 
    /** this function is called by IsoMonitor_c when a device looses its IsoItem_c.
-    * @param refc_isoName const reference to the item which IsoItem_c state is changed
-    * @param rui8_oldSa previously used SA which is NOW LOST -> clients which were connected to this item can react explicitly
+    * @param rc_isoName const reference to the item which IsoItem_c state is changed
+    * @param aui8_oldSa previously used SA which is NOW LOST -> clients which were connected to this item can react explicitly
     */
-   virtual void reactOnMonitorListRemove( const IsoName_c& /*refc_isoName*/, uint8_t /*rui8_oldSa*/ ) {};
+   virtual void reactOnMonitorListRemove( const IsoName_c& /*rc_isoName*/, uint8_t /*aui8_oldSa*/ ) {};
 };
 
 }

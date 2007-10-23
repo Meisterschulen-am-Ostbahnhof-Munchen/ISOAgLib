@@ -69,8 +69,8 @@
  *  <ul>
  *  <li>Core class IsoAgLib::iScheduler_c for scheduling of all periodic activities
  *  <li>Method IsoAgLib::iScheduler_c::timeEvent() which can<ul>
- *    <li>Perform activities until defined rl_endTime is reached, which is important
- *      for scheduling purposes of whole system - call by IsoAgLib::iScheduler_c::timeEvent( rl_endTime )
+ *    <li>Perform activities until defined al_endTime is reached, which is important
+ *      for scheduling purposes of whole system - call by IsoAgLib::iScheduler_c::timeEvent( al_endTime )
  *    <li>Process all received CAN messages until all receive buffers are empty
  *      -> simple call, but can lead to deadlock on to high CAN load
  *    </ul>
@@ -419,12 +419,12 @@ int main()
   getIcanInstance().init (cui32_canChannel); // CAN-Bus "cui32_canChannel" (with defaulting 250 kbit)
 
   // Start address claim of the local identity/member
-  iIdentItem_c c_myIdent (2,     // rui8_indGroup
-                          1,     // rui8_devClass
-                          0,     // rui8_devClassInst
-                          25,    // rb_func
-                          0x7FF, // rui16_manufCode
-                          27);   // rui32_serNo
+  iIdentItem_c c_myIdent (2,     // aui8_indGroup
+                          1,     // aui8_devClass
+                          0,     // aui8_devClassInst
+                          25,    // ab_func
+                          0x7FF, // aui16_manufCode
+                          27);   // aui32_serNo
                           // further parameters use the default values as given in the constructor
 
   #ifdef TEST_TRACTOR_LIGHTING

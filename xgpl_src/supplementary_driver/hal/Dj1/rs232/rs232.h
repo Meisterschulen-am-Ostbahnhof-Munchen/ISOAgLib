@@ -111,19 +111,19 @@ namespace HAL
     @return HAL_NO_ERR -> o.k. else one of settings incorrect
   */
   inline int16_t init_rs232 ( uint16_t wBaudrate, uint8_t bMode, uint8_t bStoppbits, 
-                              bool bitSoftwarehandshake, uint8_t rui8_channel )
+                              bool bitSoftwarehandshake, uint8_t aui8_channel )
   {
-    return ( (__HAL::DjBios_UartOpen(rui8_channel, wBaudrate, __HAL::BIOS_UART_8N) == __HAL::BIOS_UART_NO_ERR) ? HAL_NO_ERR : HAL_CONFIG_ERR);
-//    return ( __HAL::init_rs232 ( rui8_channel,wBaudrate,bMode,bStoppbits,bitSoftwarehandshake ) );
+    return ( (__HAL::DjBios_UartOpen(aui8_channel, wBaudrate, __HAL::BIOS_UART_8N) == __HAL::BIOS_UART_NO_ERR) ? HAL_NO_ERR : HAL_CONFIG_ERR);
+//    return ( __HAL::init_rs232 ( aui8_channel,wBaudrate,bMode,bStoppbits,bitSoftwarehandshake ) );
   };
 
 
   /** close the RS232 interface. */
-  inline int16_t close_rs232 ( uint8_t rui8_channel )
+  inline int16_t close_rs232 ( uint8_t aui8_channel )
   {
-    return ( (__HAL::DjBios_UartClose(rui8_channel) == __HAL::BIOS_UART_NO_ERR) ? HAL_NO_ERR : HAL_CONFIG_ERR);
-//    __HAL::config_rs232_rx_obj(rui8_channel,0,NULL); 
-//    return __HAL::config_rs232_tx_obj(rui8_channel,0,NULL,NULL);
+    return ( (__HAL::DjBios_UartClose(aui8_channel) == __HAL::BIOS_UART_NO_ERR) ? HAL_NO_ERR : HAL_CONFIG_ERR);
+//    __HAL::config_rs232_rx_obj(aui8_channel,0,NULL); 
+//    return __HAL::config_rs232_tx_obj(aui8_channel,0,NULL,NULL);
   };
 
 
@@ -132,10 +132,10 @@ namespace HAL
     @param wBaudrate wanted baudrate
     @return HAL_NO_ERR -> o.k. else baudrate setting incorrect
   */
-  inline int16_t setRs232Baudrate ( uint16_t wBaudrate, uint8_t rui8_channel )
+  inline int16_t setRs232Baudrate ( uint16_t wBaudrate, uint8_t aui8_channel )
   {
-    return ( (__HAL::DjBios_UartChangeBaud(rui8_channel, wBaudrate) == __HAL::BIOS_UART_NO_ERR) ? HAL_NO_ERR : HAL_CONFIG_ERR);
-//    return __HAL::set_rs232_baudrate(rui8_channel,wBaudrate) ;
+    return ( (__HAL::DjBios_UartChangeBaud(aui8_channel, wBaudrate) == __HAL::BIOS_UART_NO_ERR) ? HAL_NO_ERR : HAL_CONFIG_ERR);
+//    return __HAL::set_rs232_baudrate(aui8_channel,wBaudrate) ;
   };
 
 
@@ -143,10 +143,10 @@ namespace HAL
     get the amount of data [uint8_t] in receive puffer
     @return receive puffer data byte
   */
-  inline int16_t getRs232RxBufCount ( uint8_t rui8_channel )
+  inline int16_t getRs232RxBufCount ( uint8_t aui8_channel )
   {
-    return ( __HAL::DjBios_UartRxBufCount(rui8_channel) );
-//    return __HAL::get_rs232_rx_buf_count(rui8_channel);
+    return ( __HAL::DjBios_UartRxBufCount(aui8_channel) );
+//    return __HAL::get_rs232_rx_buf_count(aui8_channel);
   };
 
 
@@ -154,10 +154,10 @@ namespace HAL
     get the amount of data [uint8_t] in send puffer
     @return send puffer data byte
   */
-  inline int16_t getRs232TxBufCount ( uint8_t rui8_channel )
+  inline int16_t getRs232TxBufCount ( uint8_t aui8_channel )
   { 
-    return ( __HAL::DjBios_UartTxBufCount(rui8_channel) );
-//    return __HAL::get_rs232_tx_buf_count(rui8_channel);
+    return ( __HAL::DjBios_UartTxBufCount(aui8_channel) );
+//    return __HAL::get_rs232_tx_buf_count(aui8_channel);
   };
 
 
@@ -174,10 +174,10 @@ namespace HAL
 
   #else
 
-  inline int16_t configRs232RxObj ( uint16_t wBuffersize,void (*pFunction)(byte *bByte), uint8_t rui8_channel )
+  inline int16_t configRs232RxObj ( uint16_t wBuffersize,void (*pFunction)(byte *bByte), uint8_t aui8_channel )
   {
-    return ( (__HAL::DjBios_UartRxConfig ( rui8_channel, wBuffersize) == __HAL::BIOS_UART_NO_ERR) ? HAL_NO_ERR : HAL_CONFIG_ERR );
-//    return __HAL::config_rs232_rx_obj(rui8_channel,wBuffersize,pFunction) ;
+    return ( (__HAL::DjBios_UartRxConfig ( aui8_channel, wBuffersize) == __HAL::BIOS_UART_NO_ERR) ? HAL_NO_ERR : HAL_CONFIG_ERR );
+//    return __HAL::config_rs232_rx_obj(aui8_channel,wBuffersize,pFunction) ;
   };
   #endif
 
@@ -197,10 +197,10 @@ namespace HAL
   #else
 
   inline int16_t configRs232TxObj ( uint16_t wBuffersize, void (*funktionAfterTransmit)(byte *bByte),
-                                  void (*funktionBeforTransmit)(byte *bByte), uint8_t rui8_channel)
+                                  void (*funktionBeforTransmit)(byte *bByte), uint8_t aui8_channel)
   {
-    return ( (__HAL::DjBios_UartTxConfig ( rui8_channel, wBuffersize) == __HAL::BIOS_UART_NO_ERR) ? HAL_NO_ERR : HAL_CONFIG_ERR );
-//    return __HAL::config_rs232_tx_obj(rui8_channel,wBuffersize,funktionAfterTransmit,funktionBeforTransmit);
+    return ( (__HAL::DjBios_UartTxConfig ( aui8_channel, wBuffersize) == __HAL::BIOS_UART_NO_ERR) ? HAL_NO_ERR : HAL_CONFIG_ERR );
+//    return __HAL::config_rs232_tx_obj(aui8_channel,wBuffersize,funktionAfterTransmit,funktionBeforTransmit);
   };
   #endif
 
@@ -209,10 +209,10 @@ namespace HAL
     get errr code of BIOS
     @return 0=parity, 1=stopbit framing error, 2=overflow
   */
-  inline int16_t getRs232Error ( uint8_t *Errorcode, uint8_t rui8_channel )
+  inline int16_t getRs232Error ( uint8_t *Errorcode, uint8_t aui8_channel )
   {
     return ( HAL_NO_ERR );
-//    return __HAL::get_rs232_error ( rui8_channel,Errorcode );
+//    return __HAL::get_rs232_error ( aui8_channel,Errorcode );
   };
 
 
@@ -221,10 +221,10 @@ namespace HAL
     @param pbRead pointer to target data
     @return HAL_NO_ERR -> o.k. else puffer underflow
   */
-  inline int16_t getRs232Char ( uint8_t *pbRead, uint8_t rui8_channel )
+  inline int16_t getRs232Char ( uint8_t *pbRead, uint8_t aui8_channel )
   {
-    return ( (__HAL::DjBios_UartGetByte(rui8_channel, pbRead) == __HAL::BIOS_UART_NO_ERR) ? HAL_NO_ERR : HAL_NOACT_ERR );
-//    return __HAL::get_rs232_char(rui8_channel,pbRead);
+    return ( (__HAL::DjBios_UartGetByte(aui8_channel, pbRead) == __HAL::BIOS_UART_NO_ERR) ? HAL_NO_ERR : HAL_NOACT_ERR );
+//    return __HAL::get_rs232_char(aui8_channel,pbRead);
   };
 
 
@@ -234,10 +234,10 @@ namespace HAL
     @param bLastChar terminating char
     @return HAL_NO_ERR -> o.k. else puffer underflow
   */
-  inline int16_t getRs232String ( uint8_t *pbRead, uint8_t bLastChar, uint8_t rui8_channel )
+  inline int16_t getRs232String ( uint8_t *pbRead, uint8_t bLastChar, uint8_t aui8_channel )
   {
-    return ( (__HAL::DjBios_UartGetStr(rui8_channel, pbRead, bLastChar) == __HAL::BIOS_UART_NO_ERR) ? HAL_NO_ERR : HAL_NOACT_ERR );
-//    return __HAL::get_rs232_string(rui8_channel,pbRead,bLastChar);
+    return ( (__HAL::DjBios_UartGetStr(aui8_channel, pbRead, bLastChar) == __HAL::BIOS_UART_NO_ERR) ? HAL_NO_ERR : HAL_NOACT_ERR );
+//    return __HAL::get_rs232_string(aui8_channel,pbRead,bLastChar);
   };
 
   /**
@@ -245,10 +245,10 @@ namespace HAL
     @param bByte data uint8_t to send
     @return HAL_NO_ERR -> o.k. else send puffer overflow
   */
-  inline int16_t put_rs232Char ( uint8_t bByte, uint8_t rui8_channel )
+  inline int16_t put_rs232Char ( uint8_t bByte, uint8_t aui8_channel )
   {
-    return ( (__HAL::DjBios_UartSendByte(rui8_channel, bByte) == __HAL::BIOS_UART_NO_ERR) ? HAL_NO_ERR : HAL_OVERFLOW_ERR );
-//    return __HAL::put_rs232_char(rui8_channel,bByte);
+    return ( (__HAL::DjBios_UartSendByte(aui8_channel, bByte) == __HAL::BIOS_UART_NO_ERR) ? HAL_NO_ERR : HAL_OVERFLOW_ERR );
+//    return __HAL::put_rs232_char(aui8_channel,bByte);
   };
 
 
@@ -258,10 +258,10 @@ namespace HAL
     @param wNumber number of data uint8_t to send
     @return HAL_NO_ERR -> o.k. else send puffer overflow
   */
-  inline int16_t put_rs232NChar ( const uint8_t *bpWrite, uint16_t wNumber, uint8_t rui8_channel )
+  inline int16_t put_rs232NChar ( const uint8_t *bpWrite, uint16_t wNumber, uint8_t aui8_channel )
   {
-    return ( (__HAL::DjBios_UartSendByteN(rui8_channel, bpWrite, wNumber) == __HAL::BIOS_UART_NO_ERR) ? HAL_NO_ERR : HAL_OVERFLOW_ERR );
-//    return __HAL::put_rs232_n_char(rui8_channel,(uint8_t*)bpWrite,wNumber);
+    return ( (__HAL::DjBios_UartSendByteN(aui8_channel, bpWrite, wNumber) == __HAL::BIOS_UART_NO_ERR) ? HAL_NO_ERR : HAL_OVERFLOW_ERR );
+//    return __HAL::put_rs232_n_char(aui8_channel,(uint8_t*)bpWrite,wNumber);
   };
 
 
@@ -270,30 +270,30 @@ namespace HAL
     @param pbString pointer to '\0' terminated (!) source data string
     @return HAL_NO_ERR -> o.k. else send puffer overflow
   */
-  inline int16_t put_rs232String ( const uint8_t *pbString, uint8_t rui8_channel )
+  inline int16_t put_rs232String ( const uint8_t *pbString, uint8_t aui8_channel )
   {
-    return ( (__HAL:: DjBios_UartSendStr(rui8_channel, (const char *)pbString) == __HAL::BIOS_UART_NO_ERR) ? HAL_NO_ERR : HAL_OVERFLOW_ERR );
-//    return __HAL::put_rs232_string(rui8_channel,(uint8_t*)pbString);
+    return ( (__HAL:: DjBios_UartSendStr(aui8_channel, (const char *)pbString) == __HAL::BIOS_UART_NO_ERR) ? HAL_NO_ERR : HAL_OVERFLOW_ERR );
+//    return __HAL::put_rs232_string(aui8_channel,(uint8_t*)pbString);
   };
 
 
   /**
     clear receive puffer
   */
-  inline void clearRs232RxBuffer ( uint8_t rui8_channel )
+  inline void clearRs232RxBuffer ( uint8_t aui8_channel )
   {
-    __HAL::DjBios_UartRxPurge ( rui8_channel );
-//    __HAL::clear_rs232_rx_buffer(rui8_channel);
+    __HAL::DjBios_UartRxPurge ( aui8_channel );
+//    __HAL::clear_rs232_rx_buffer(aui8_channel);
   };
 
 
   /**
     clear send puffer
   */
-  inline void clearRs232TxBuffer ( uint8_t rui8_channel )
+  inline void clearRs232TxBuffer ( uint8_t aui8_channel )
   {
-    __HAL::DjBios_UartTxPurge ( rui8_channel );
-//    __HAL::clear_rs232_tx_buffer(rui8_channel);
+    __HAL::DjBios_UartTxPurge ( aui8_channel );
+//    __HAL::clear_rs232_tx_buffer(aui8_channel);
   };
   /*@}*/
 }

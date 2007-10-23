@@ -102,7 +102,7 @@ class LanguageLabel_c {
   char str[2];
 public:
   LanguageLabel_c (const HUGE_MEM char* label = "de");
-  LanguageLabel_c (const LanguageLabel_c& rref_str);
+  LanguageLabel_c (const LanguageLabel_c& ar_str);
 
   const LanguageLabel_c& operator=(const LanguageLabel_c& c_langLabel);
   const LanguageLabel_c& operator=(const HUGE_MEM uint8_t* ui8_str);
@@ -132,15 +132,15 @@ class DevPropertyHandler_c : public IsoAgLib::iMultiSendStreamer_c
     virtual ~DevPropertyHandler_c()  {};
 
     /** initialisation for DevPropertyHandler_c */
-    void init( ProcessPkg_c *rpc_data);
+    void init( ProcessPkg_c *apc_data);
 
     /** start processing of a process msg */
     bool processMsg();
 
     bool timeEvent( void );
 
-    bool registerDevicePool (const IdentItem_c* rpc_wsMasterIdentItem, const HUGE_MEM uint8_t* rpc_devicePoolByteArray, const uint32_t rui32_bytestreamLength, bool b_setToDefault);
-    bool sendCommandChangeDesignator(uint16_t rpui16_objectID, const char* rpc_newString, uint8_t stringLength);
+    bool registerDevicePool (const IdentItem_c* apc_wsMasterIdentItem, const HUGE_MEM uint8_t* apc_devicePoolByteArray, const uint32_t aui32_bytestreamLength, bool b_setToDefault);
+    bool sendCommandChangeDesignator(uint16_t apui16_objectID, const char* apc_newString, uint8_t stringLength);
 
     ProcessPkg_c& data(){return *pc_data;};
 
@@ -166,7 +166,7 @@ class DevPropertyHandler_c : public IsoAgLib::iMultiSendStreamer_c
 
     void reset() { ui16_currentSendPosition = ui16_storedSendPosition = 0; };
 
-    void updateTcStateReceived(uint8_t rui8_lastTcState) { ui8_lastTcState = rui8_lastTcState; i32_tcStateLastReceived = HAL::getTime();};
+    void updateTcStateReceived(uint8_t aui8_lastTcState) { ui8_lastTcState = aui8_lastTcState; i32_tcStateLastReceived = HAL::getTime();};
     void setTcSourceAddress(uint8_t rtcSourceAddress) { tcSourceAddress = rtcSourceAddress;};
 
   private:
@@ -227,7 +227,7 @@ class DevPropertyHandler_c : public IsoAgLib::iMultiSendStreamer_c
 
     uint8_t getTcSourceAddress () { return tcSourceAddress; };
 
-    bool queuePoolInMap(const HUGE_MEM uint8_t* rpc_devicePoolByteArray, uint32_t rui32_bytestreamlength, bool b_setToDefault);
+    bool queuePoolInMap(const HUGE_MEM uint8_t* apc_devicePoolByteArray, uint32_t aui32_bytestreamlength, bool b_setToDefault);
 
     void initUploading();
     void getPoolForUpload();

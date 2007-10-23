@@ -135,77 +135,77 @@ public: // methods
 
   /** A) default constructor:  will not do anything, create a not-yet-initialized identity. use "init" afterwards!
     * B) EEPROM address given: will read WantedSA/ISOName from EEPROM and start address claim for this identity
-    * @param rui16_eepromAdr Address of EEPROM where the following 10 bytes have to be stored stored:
+    * @param aui16_eepromAdr Address of EEPROM where the following 10 bytes have to be stored stored:
                              8 byte ISO-Name stored in LITTLE ENDIAN
                              1 byte preferred/last-used SA (0xFE for no preference)
                              1 byte flags, set to 0x00 initially (so the ISO-Name has a chance to change some of its
                                     instance(s) to avoid ISO-Name-conflicts on the bus BEFORE doing its initial address-claim
-      @param ri_singletonVecKey optional key for selection of IsoAgLib instance, defaults to 0 at construction time!
+      @param ai_singletonVecKey optional key for selection of IsoAgLib instance, defaults to 0 at construction time!
     */
-  IdentItem_c (uint16_t rui16_eepromAdr = 0xFFFF, int ri_singletonVecKey = 0);
+  IdentItem_c (uint16_t aui16_eepromAdr = 0xFFFF, int ai_singletonVecKey = 0);
 
   /** constructor for ISO identity, which starts address claim for this identity
-      @param rui8_indGroup        select the industry group, 2 == agriculture
-      @param rb_func              function code of the member (25 = network interconnect)
-      @param rui16_manufCode      11bit manufactor code
-      @param rui32_serNo          21bit serial number
-      @param rui8_preferredSa     preferred source adress (SA) of the ISO item (fixed SA or last time
+      @param aui8_indGroup        select the industry group, 2 == agriculture
+      @param ab_func              function code of the member (25 = network interconnect)
+      @param aui16_manufCode      11bit manufactor code
+      @param aui32_serNo          21bit serial number
+      @param aui8_preferredSa     preferred source adress (SA) of the ISO item (fixed SA or last time
                                   SA for self conf ISO device) (default 254 for no special wish)
-      @param rui16_eepromAdr      EEPROM adress, where the used IsoName / SA / flags are stored
+      @param aui16_eepromAdr      EEPROM adress, where the used IsoName / SA / flags are stored
                                   (default 0xFFFF for NO EEPROM store)
-      @param rb_funcInst          function instance of this member (default 0)
-      @param rb_ecuInst           ECU instance of this member (default 0)
-      @param rb_selfConf          true -> this member as a self configurable source adress
-      @param ri8_slaveCount       amount of attached slave devices; default -1 == no master state;
+      @param ab_funcInst          function instance of this member (default 0)
+      @param ab_ecuInst           ECU instance of this member (default 0)
+      @param ab_selfConf          true -> this member as a self configurable source adress
+      @param ai8_slaveCount       amount of attached slave devices; default -1 == no master state;
                                   in case an address claim for the slave devices shall be sent by this ECU, they
-                                  must get their own IdentItem_c instance ( then with default value -1 for ri8_slaveCount )
-      @param rpc_slaveIsoNameList pointer to list of IsoName_c values, where the slave devices are defined.
+                                  must get their own IdentItem_c instance ( then with default value -1 for ai8_slaveCount )
+      @param apc_slaveIsoNameList pointer to list of IsoName_c values, where the slave devices are defined.
                                   IsoAgLib will then send the needed "master indicates its slaves" messages on BUS
-      @param ri_singletonVecKey   optional key for selection of IsoAgLib instance (default 0)
+      @param ai_singletonVecKey   optional key for selection of IsoAgLib instance (default 0)
     */
   IdentItem_c(
-    uint8_t rui8_indGroup, uint8_t rui8_devClass, uint8_t rui8_devClassInst, uint8_t rb_func, uint16_t rui16_manufCode,
-    uint32_t rui32_serNo, uint8_t rui8_preferredSa = 254, uint16_t rui16_eepromAdr = 0xFFFF, uint8_t rb_funcInst = 0, uint8_t rb_ecuInst = 0, bool rb_selfConf = true,
+    uint8_t aui8_indGroup, uint8_t aui8_devClass, uint8_t aui8_devClassInst, uint8_t ab_func, uint16_t aui16_manufCode,
+    uint32_t aui32_serNo, uint8_t aui8_preferredSa = 254, uint16_t aui16_eepromAdr = 0xFFFF, uint8_t ab_funcInst = 0, uint8_t ab_ecuInst = 0, bool ab_selfConf = true,
     #ifdef USE_WORKING_SET
-    int8_t ri8_slaveCount = -1, const IsoName_c* rpc_slaveIsoNameList = NULL,
+    int8_t ai8_slaveCount = -1, const IsoName_c* apc_slaveIsoNameList = NULL,
     #endif
-    int ri_singletonVecKey = 0);
+    int ai_singletonVecKey = 0);
 
   /** init function for later start of address claim of an ISO identity (this can be only called once upon a default-constructed object)
-      @param rui8_indGroup        select the industry group, 2 == agriculture
-      @param rb_func              function code of the member (25 = network interconnect)
-      @param rui16_manufCode      11bit manufactor code
-      @param rui32_serNo          21bit serial number
-      @param rui8_preferredSa      preferred source adress (SA) of the ISO item (fixed SA or last time
+      @param aui8_indGroup        select the industry group, 2 == agriculture
+      @param ab_func              function code of the member (25 = network interconnect)
+      @param aui16_manufCode      11bit manufactor code
+      @param aui32_serNo          21bit serial number
+      @param aui8_preferredSa      preferred source adress (SA) of the ISO item (fixed SA or last time
                                   SA for self conf ISO device) (default 254 for no special wish)
-      @param rui16_eepromAdr      EEPROM adress, where the used IsoName / SA / flags are stored
+      @param aui16_eepromAdr      EEPROM adress, where the used IsoName / SA / flags are stored
                                   (default 0xFFFF for NO EEPROM store)
-      @param rb_funcInst          function instance of this member (default 0)
-      @param rb_ecuInst           ECU instance of this member (default 0)
-      @param rb_selfConf          defaults to true -> this member as a self configurable source adress
-      @param ri8_slaveCount       amount of attached slave devices; default -1 == no master state;
+      @param ab_funcInst          function instance of this member (default 0)
+      @param ab_ecuInst           ECU instance of this member (default 0)
+      @param ab_selfConf          defaults to true -> this member as a self configurable source adress
+      @param ai8_slaveCount       amount of attached slave devices; default -1 == no master state;
                                   in case an address claim for the slave devices shall be sent by this ECU, they
-                                  must get their own IdentItem_c instance ( then with default value -1 for ri8_slaveCount )
-      @param rpc_slaveIsoNameList pointer to list of IsoName_c values, where the slave devices are defined.
+                                  must get their own IdentItem_c instance ( then with default value -1 for ai8_slaveCount )
+      @param apc_slaveIsoNameList pointer to list of IsoName_c values, where the slave devices are defined.
                                   IsoAgLib will then send the needed "master indicates its slaves" messages on BUS
-      @param ri_singletonVecKey   optional key for selection of IsoAgLib instance (default 0)
+      @param ai_singletonVecKey   optional key for selection of IsoAgLib instance (default 0)
     */
   void init(
-    uint8_t rui8_indGroup, uint8_t rui8_devClass, uint8_t rui8_devClassInst, uint8_t rb_func, uint16_t rui16_manufCode,
-    uint32_t rui32_serNo, uint8_t rb_preferredSa, uint16_t rui16_saEepromAdr, uint8_t rb_funcInst = 0, uint8_t rb_ecuInst = 0, bool rb_selfConf = true,
+    uint8_t aui8_indGroup, uint8_t aui8_devClass, uint8_t aui8_devClassInst, uint8_t ab_func, uint16_t aui16_manufCode,
+    uint32_t aui32_serNo, uint8_t ab_preferredSa, uint16_t aui16_saEepromAdr, uint8_t ab_funcInst = 0, uint8_t ab_ecuInst = 0, bool ab_selfConf = true,
     #ifdef USE_WORKING_SET
-    int8_t ri8_slaveCount = -1, const IsoName_c* rpc_slaveIsoNameList = NULL,
+    int8_t ai8_slaveCount = -1, const IsoName_c* apc_slaveIsoNameList = NULL,
     #endif
-    int ri_singletonVecKey = 0);
+    int ai_singletonVecKey = 0);
 
 
 #ifdef USE_WORKING_SET
   /** set this Ident as Working Set Master, create all IsoItem_c slave items
       and set them to prepare address claim with master set to the responding master IsoItem_c
-      @param rb_slaveCount how many slaves does the master have?
-      @param rpc_listSlaves the ISONames or whatever of all the slaves
+      @param ab_slaveCount how many slaves does the master have?
+      @param apc_listSlaves the ISONames or whatever of all the slaves
     */
-  void setToMaster (int8_t ri8_slaveCount=-1, const IsoName_c* rpc_slaveIsoNameList=NULL);
+  void setToMaster (int8_t ai8_slaveCount=-1, const IsoName_c* apc_slaveIsoNameList=NULL);
 
   bool isMaster() const { return (i8_slaveCount >= 0); }
 #endif
@@ -251,46 +251,46 @@ public: // methods
   bool timeEvent( void );
 
   /** check for equality with another item
-      @param rrefc_src compared IdentItem_c element
+      @param arc_src compared IdentItem_c element
       @return true -> other item has same ISOName
     */
-  bool operator==(IdentItem_c& rrefc_src) const {return (c_isoName == rrefc_src.c_isoName); }
+  bool operator==(IdentItem_c& arc_src) const {return (c_isoName == arc_src.c_isoName); }
 
   /** check for equality with given ISOName
-      @param rc_isoName compared ISOName
+      @param ac_isoName compared ISOName
       @return true -> item has same ISOName
     */
-  bool operator==(const IsoName_c& rc_isoName) const {return (c_isoName == rc_isoName); }
+  bool operator==(const IsoName_c& ac_isoName) const {return (c_isoName == ac_isoName); }
 
   /** check for difference to another item
-      @param rrefc_src compared IdentItem_c element
+      @param arc_src compared IdentItem_c element
       @return true -> other item has different ISOName
     */
-  bool operator!=(IdentItem_c& rrefc_src) const {return (c_isoName != rrefc_src.c_isoName); }
+  bool operator!=(IdentItem_c& arc_src) const {return (c_isoName != arc_src.c_isoName); }
 
   /** check for difference to given ISOName
-      @param rc_isoName compared ISOName
+      @param ac_isoName compared ISOName
       @return true -> other item has different ISOName
     */
-  bool operator!=(const IsoName_c& rc_isoName) const {return (c_isoName != rc_isoName); }
+  bool operator!=(const IsoName_c& ac_isoName) const {return (c_isoName != ac_isoName); }
 
   /** check if this item has lower ISOName than another one
-      @param rrefc_src compared IdentItem_c element
+      @param arc_src compared IdentItem_c element
       @return true -> this item has lower ISOName than compared one
     */
-  bool operator<(IdentItem_c& rrefc_src) const {return (c_isoName < rrefc_src.c_isoName); }
+  bool operator<(IdentItem_c& arc_src) const {return (c_isoName < arc_src.c_isoName); }
 
   /** check if this item has lower ISOName than given ISOName
-      @param rc_isoName compared ISOName
+      @param ac_isoName compared ISOName
       @return true -> this item has lower ISOName than compared one
     */
-  bool operator<(const IsoName_c& rc_isoName) const {return (c_isoName < rc_isoName); }
+  bool operator<(const IsoName_c& ac_isoName) const {return (c_isoName < ac_isoName); }
 
   /** check if given number is equal to member number of this item
-      @param rui8_nr compared number
+      @param aui8_nr compared number
       @return true -> this item has same number
     */
-  bool equalNr(uint8_t rui8_nr);
+  bool equalNr(uint8_t aui8_nr);
 
   /** check if the ident has claimed address */
   bool isClaimedAddress( void ) const { return (getIsoItem() != NULL) ? (getIsoItem()->itemState (IState_c::ClaimedAddress)) : (itemState (IState_c::ClaimedAddress)); }
@@ -334,28 +334,28 @@ protected: // methods
 
 private: // methods
 
-  void init (IsoName_c* rpc_isoNameParam, uint8_t rui8_preferredSa, uint16_t rui16_eepromAdr,
+  void init (IsoName_c* apc_isoNameParam, uint8_t aui8_preferredSa, uint16_t aui16_eepromAdr,
     #ifdef USE_WORKING_SET
-    int8_t ri8_slaveCount, const IsoName_c* rpc_slaveIsoNameList,
+    int8_t ai8_slaveCount, const IsoName_c* apc_slaveIsoNameList,
     #endif
-    int ri_singletonVecKey);
+    int ai_singletonVecKey);
 
   /** HIDDEN! copy constructor for IdentItem_c
       NEVER copy a IdentItem_c around!!!!
       ONLY copy pointers to the wanted instance!!!
       ==> the copy constructor is defined as private, so that compiler
           detects this fault, and shows you this WARNING!!
-      @param rrefc_src source
+      @param arc_src source
     */
-  IdentItem_c(const IdentItem_c& rrefc_src) : BaseItem_c(rrefc_src) {}
+  IdentItem_c(const IdentItem_c& arc_src) : BaseItem_c(arc_src) {}
 
   /** HIDDEN! assignment for IdentItem_c
       NEVER assign a IdentItem_c to another instance!!!!
       ==> the asignment is defined as private, so that compiler
           detects this fault, and shows you this WARNING!!
-      @param rrefc_src source
+      @param arc_src source
     */
-  IdentItem_c& operator=(const IdentItem_c& /* rrefc_src */){return *this; }
+  IdentItem_c& operator=(const IdentItem_c& /* arc_src */){return *this; }
 
 
 private: // attributes

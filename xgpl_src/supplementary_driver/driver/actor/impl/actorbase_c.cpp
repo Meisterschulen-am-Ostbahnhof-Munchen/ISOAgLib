@@ -87,10 +87,10 @@ namespace __IsoAgLib {
 
 /**
   Basic constructor for an input channel object (only internal accessed)
-  @param rui8_channelNr hardware channel of this input object
+  @param aui8_channelNr hardware channel of this input object
 */
-ActorBase_c::ActorBase_c(uint8_t rui8_channelNr){
-  ui8_channelNr = rui8_channelNr;
+ActorBase_c::ActorBase_c(uint8_t aui8_channelNr){
+  ui8_channelNr = aui8_channelNr;
 }
 
 /** basic destructor of sensor input object with no function at the moment (only internal accessed) */
@@ -106,9 +106,9 @@ uint8_t ActorBase_c::channelNr() const{
 
 /**
   set the output PWM value
-  @param rui16_val value to set in ouput channel
+  @param aui16_val value to set in ouput channel
 */
-void ActorBase_c::set(uint16_t /* rui16_val is intentionally unused in this baseclass */ )
+void ActorBase_c::set(uint16_t /* aui16_val is intentionally unused in this baseclass */ )
 {  // normally this function should be abstract,
    // but the Tasking Linker needs this
 }

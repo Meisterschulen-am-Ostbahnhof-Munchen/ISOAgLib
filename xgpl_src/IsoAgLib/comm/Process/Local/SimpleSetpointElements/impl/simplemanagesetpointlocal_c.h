@@ -139,38 +139,38 @@ class SimpleManageSetpointLocal_c : public ProcessElementBase_c
  public:
   /**
     constructor which initialse both pointers if given
-    @param rpc_processData optional pointer to containing ProcessData instance
+    @param apc_processData optional pointer to containing ProcessData instance
   */
-  SimpleManageSetpointLocal_c( ProcDataBase_c *const rpc_processData = NULL )
-  : ProcessElementBase_c( rpc_processData )
-  { init( rpc_processData );};
+  SimpleManageSetpointLocal_c( ProcDataBase_c *const apc_processData = NULL )
+  : ProcessElementBase_c( apc_processData )
+  { init( apc_processData );};
   /**
     initialise this SimpleManageSetpointLocal_c instance to a well defined initial state
-    @param rpc_processData optional pointer to containing ProcessData instance
+    @param apc_processData optional pointer to containing ProcessData instance
   */
-  void init( ProcDataBase_c *const rpc_processData = NULL );
+  void init( ProcDataBase_c *const apc_processData = NULL );
   /** copy constructor */
-  SimpleManageSetpointLocal_c( const SimpleManageSetpointLocal_c& rrefc_src );
+  SimpleManageSetpointLocal_c( const SimpleManageSetpointLocal_c& arc_src );
   /** assignment operator */
-  const SimpleManageSetpointLocal_c& operator=( const SimpleManageSetpointLocal_c& rrefc_src );
+  const SimpleManageSetpointLocal_c& operator=( const SimpleManageSetpointLocal_c& arc_src );
   /** processing of a setpoint message */
   void processSetpoint();
   /**
     send a exact-setpoint to a specified target (selected by GPT)
-    @param rc_targetISOName ISOName of target
+    @param ac_targetISOName ISOName of target
     @return true -> successful sent
   */
-  bool sendMasterSetpointVal( const IsoName_c& rc_targetISOName ) const
-   { return sendSetpointMod( rc_targetISOName, GeneralCommand_c::exactValue, GeneralCommand_c::setValue );};
+  bool sendMasterSetpointVal( const IsoName_c& ac_targetISOName ) const
+   { return sendSetpointMod( ac_targetISOName, GeneralCommand_c::exactValue, GeneralCommand_c::setValue );};
   /**
     send a sub-setpoint (selected by MOD) to a specified target (selected by GPT)
-    @param rui8_mod select sub-type of setpoint
-    @param rc_targetISOName ISOName of target
+    @param aui8_mod select sub-type of setpoint
+    @param ac_targetISOName ISOName of target
     @param en_valueGroup: min/max/exact/default
     @param en_command
     @return true -> successful sent
   */
-  bool sendSetpointMod(const IsoName_c& rc_targetISOName,
+  bool sendSetpointMod(const IsoName_c& ac_targetISOName,
                        GeneralCommand_c::ValueGroup_t en_valueGroup,
                        GeneralCommand_c::CommandType_t en_command ) const;
   /**
@@ -187,15 +187,15 @@ class SimpleManageSetpointLocal_c : public ProcessElementBase_c
     #endif
   /**
     set the setpoint value
-    @param ri32_val new setpoint value
+    @param ai32_val new setpoint value
   */
-  void setSetpointMasterVal(int32_t ri32_val);
+  void setSetpointMasterVal(int32_t ai32_val);
   #ifdef USE_FLOAT_DATA_TYPE
   /**
     set the setpoint value as float value
-    @param rf_val new setpoint value
+    @param af_val new setpoint value
   */
-  void setSetpointMasterVal(float rf_val);
+  void setSetpointMasterVal(float af_val);
   #endif
  protected:
   #if !defined(HANDLE_SETPOINT_MEASURE_EQUIVALENT)

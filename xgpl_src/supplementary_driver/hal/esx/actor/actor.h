@@ -101,12 +101,12 @@ namespace __HAL {
     @param channel number from interval [0..maxNo]
     @return according channel number for __HAL call
   */
-  inline uint8_t getPwmoutAdcCheckNr(uint8_t rb_channel)
+  inline uint8_t getPwmoutAdcCheckNr(uint8_t ab_channel)
     {
-    if (rb_channel < 4) return (43 - (rb_channel * 2));
-    else if (rb_channel == 4) return 44;
-    else if (rb_channel < 8) return ((47+5) - rb_channel);
-    else return ((93+8) - rb_channel);
+    if (ab_channel < 4) return (43 - (ab_channel * 2));
+    else if (ab_channel == 4) return 44;
+    else if (ab_channel < 8) return ((47+5) - ab_channel);
+    else return ((93+8) - ab_channel);
     };
   /**
     deliver channel number for checking/requesting of
@@ -114,8 +114,8 @@ namespace __HAL {
     @param channel number from interval [0..maxNo]
     @return according channel number for __HAL call
   */
-  inline uint8_t getPwmCurrentCheckNr(uint8_t rb_channel)
-    {return (42 - (2 * rb_channel));};
+  inline uint8_t getPwmCurrentCheckNr(uint8_t ab_channel)
+    {return (42 - (2 * ab_channel));};
 }
 /**
    namespace with layer of inline (cost NO overhead -> compiler replaces
@@ -154,24 +154,24 @@ namespace HAL
 
   /**
     retrieve maximal PWM frequency -> setting to this value results in maximal output
-    @param rui8_channel channel number of output [0..11] ([0..15] with babyboard)
+    @param aui8_channel channel number of output [0..11] ([0..15] with babyboard)
     @return max possible PWM value
   */
-  inline uint16_t getMaxPwmDigout(uint8_t rui8_channel)
+  inline uint16_t getMaxPwmDigout(uint8_t aui8_channel)
   { 
     #ifndef _INIT_BABYBOARD_
     __HAL::tOutput tOutputstatus;
-    __HAL::get_digout_status(rui8_channel,&tOutputstatus);
+    __HAL::get_digout_status(aui8_channel,&tOutputstatus);
     return tOutputstatus.wMaxOutput;
     #else
-    if ( rui8_channel < 12 )
+    if ( aui8_channel < 12 )
     { __HAL::tOutput tOutputstatus;
-      __HAL::get_digout_status(rui8_channel,&tOutputstatus);
+      __HAL::get_digout_status(aui8_channel,&tOutputstatus);
       return tOutputstatus.wMaxOutput;
     }
     else
     { __HAL::tBAOutput tOutputstatus;
-      __HAL::BA_get_digout_status(POSITION_1, (rui8_channel-12),&tOutputstatus);
+      __HAL::BA_get_digout_status(POSITION_1, (aui8_channel-12),&tOutputstatus);
       return tOutputstatus.wMaxOutput;
     }
     #endif
@@ -179,21 +179,21 @@ namespace HAL
 
   /**
     set pwm value 0 ... 100 %
-    @param rui8_channel channel number of output [0..11] ([0..15] with babyboard)
+    @param aui8_channel channel number of output [0..11] ([0..15] with babyboard)
     @param wPWMValue Value to set; depends on configured PWM freq; [0..0xFFFF]
     @return error state (C_NO_ERR == o.k.; C_RANGE == wrong channel)
   */
-  inline int16_t setDigout(uint8_t rui8_channel, uint16_t wPWMValue)
+  inline int16_t setDigout(uint8_t aui8_channel, uint16_t wPWMValue)
     #ifndef _INIT_BABYBOARD_
-    {return __HAL::set_digout(rui8_channel, wPWMValue);};
+    {return __HAL::set_digout(aui8_channel, wPWMValue);};
     #else
     {
-      if ( rui8_channel < 12 )return __HAL::set_digout(rui8_channel, wPWMValue);
+      if ( aui8_channel < 12 )return __HAL::set_digout(aui8_channel, wPWMValue);
       else 
       { __HAL::tBAOutput tOutputstatus;
-        __HAL::BA_get_digout_status (POSITION_1, (rui8_channel-12), &tOutputstatus);
+        __HAL::BA_get_digout_status (POSITION_1, (aui8_channel-12), &tOutputstatus);
         const uint16_t cui16_percent = ( uint32_t(wPWMValue) * 100UL ) / uint32_t(tOutputstatus.wOutputFreq);
-        return __HAL::BA_set_digout(POSITION_1, (rui8_channel-12), cui16_percent);
+        return __HAL::BA_set_digout(POSITION_1, (aui8_channel-12), cui16_percent);
       }
     }
     #endif
@@ -202,14 +202,14 @@ namespace HAL
 
 
   /** deliver the actual current of the digital output
-    * @param rui8_channel channel to check [0..11] ([0..15] with babyboard)
+    * @param aui8_channel channel to check [0..11] ([0..15] with babyboard)
     * @return current in [mA] ( if specified channel doesn't support current measurement, -1 is returned )
     */
-  inline int16_t getDigoutCurrent( uint8_t rui8_channel )
+  inline int16_t getDigoutCurrent( uint8_t aui8_channel )
   {
-    if ( rui8_channel < 5 )
+    if ( aui8_channel < 5 )
     {
-      int16_t i16_currentTemp = __HAL::get_adc( __HAL::getPwmCurrentCheckNr( rui8_channel ));
+      int16_t i16_currentTemp = __HAL::get_adc( __HAL::getPwmCurrentCheckNr( aui8_channel ));
       int16_t i16_current = ((i16_currentTemp * 3) + ((i16_currentTemp * 5)/100));
       return i16_current;
     }
@@ -222,20 +222,20 @@ namespace HAL
 		* if the PWM setting is >0 but has a very low value, so that even under normal
 		* conditions the voltage with connected consuming device is lower than to open
 		* connector state at low level.
-    * @param rui8_channel channel to check [0..11] ([0..15] with babyboard)
-    * @param rui16_minCurrent minimal allowed current in [mA]
-    * @param rui16_maxCurrent maximum allowed current in [mA]
+    * @param aui8_channel channel to check [0..11] ([0..15] with babyboard)
+    * @param aui16_minCurrent minimal allowed current in [mA]
+    * @param aui16_maxCurrent maximum allowed current in [mA]
     * @return HAL_NO_ERR, HAL_DIGOUT_OPEN, HAL_DIGOUT_SHORTCUT, HAL_DIGOUT_OVERTEMP,
               HAL_DIGOUT_UNDERVOLT, HAL_DIGOUT_OVERVOLT
     */
-  int16_t getDigoutDiagnose(uint8_t rui8_channel, uint16_t rui16_minCurrent, uint16_t rui16_maxCurrent);
+  int16_t getDigoutDiagnose(uint8_t aui8_channel, uint16_t aui16_minCurrent, uint16_t aui16_maxCurrent);
 
 	/** deliver the measure voltage at the PWM output.
 		Use this for application specific state evaluation for cases, where the standard
 		getDigoutDiagnose function can go wrong.
 		@return voltage at PWM channel [mV]
 	*/
-	int16_t getDigoutAdc( uint8_t rui8_channel );
+	int16_t getDigoutAdc( uint8_t aui8_channel );
 
   /*@}*/
 }

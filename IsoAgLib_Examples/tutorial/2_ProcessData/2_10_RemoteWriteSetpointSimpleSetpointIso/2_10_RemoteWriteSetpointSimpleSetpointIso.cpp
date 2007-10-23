@@ -80,8 +80,8 @@
  *  <ul>
  *  <li>Core class IsoAgLib::iScheduler_c for scheduling of all periodic activities
  *  <li>Method IsoAgLib::iScheduler_c::timeEvent() which can<ul>
- *    <li>Perform activities until defined rl_endTime is reached, which is important
- *      for scheduling purposes of whole system - call by IsoAgLib::iScheduler_c::timeEvent( rl_endTime )
+ *    <li>Perform activities until defined al_endTime is reached, which is important
+ *      for scheduling purposes of whole system - call by IsoAgLib::iScheduler_c::timeEvent( al_endTime )
  *    <li>Process all received CAN messages until all receive buffers are empty
  *      -> simple call, but can lead to deadlock on to high CAN load
  *    </ul>
@@ -251,9 +251,9 @@ static const int32_t cui32_canChannel = 1;
 
 
 /** dummy function which can be called from some other module to control the remote work state */
-void controlRemoteWorkState( bool rb_isWorking );
+void controlRemoteWorkState( bool ab_isWorking );
 /** dummy function which can be called from some other module to control the remote application rate */
-void controlRemoteApplicationRate( int32_t ri32_applicationRate );
+void controlRemoteApplicationRate( int32_t ai32_applicationRate );
 
 /** last wanted setpoint for work state */
 uint8_t ui8_mySetpointWorkState = 0;
@@ -263,17 +263,17 @@ int32_t i32_mySetpointApplicationRate = 0;
 /** dummy function which is called upon reaction from to be controlled remote device
     - for work state
   */
-void indicateRemoteWorkStateResponse( bool rb_work )
+void indicateRemoteWorkStateResponse( bool ab_work )
 { // perform some reaction based on result
-  if ( rb_work ) LOG_INFO << "Remote ECU switched to WORK-STATE\r\n";
+  if ( ab_work ) LOG_INFO << "Remote ECU switched to WORK-STATE\r\n";
   else LOG_INFO << "Remote ECU switched to NO-WORK\r\n";
 }
 /** dummy function which is called upon reaction from to be controlled remote device
     - for Application Rate
   */
-void indicateRemoteApplicationRateResponse( bool rb_accepted )
+void indicateRemoteApplicationRateResponse( bool ab_accepted )
 { // perform some reaction based on result
-  if ( rb_accepted ) LOG_INFO << "FINE - Remote ECU accepted our last setpoint\r\n";
+  if ( ab_accepted ) LOG_INFO << "FINE - Remote ECU accepted our last setpoint\r\n";
   else LOG_INFO << "SAD - Remote ECU didn't accept our last setpoint\r\n";
 }
 
@@ -289,22 +289,22 @@ class MyProcDataHandler_c : public IsoAgLib::ProcessDataChangeHandler_c
     /** react on received setpoint ACK or NACK upon previous setpoint set for remote process data
       * (remote system which manages the process data, local or other system sent previously a
       *  new setpoint; commanded manager of process data sent the response with ACK/NACK)
-      * @param rc_src general event source class, which provides conversion functions to get needed event source class
-      * @param ri32_val new value, which caused the event (for immediate access)
-      * @param rc_callerISOName ISOName of calling device - i.e. which sent new setpoint
+      * @param ac_src general event source class, which provides conversion functions to get needed event source class
+      * @param ai32_val new value, which caused the event (for immediate access)
+      * @param ac_callerISOName ISOName of calling device - i.e. which sent new setpoint
       * @return true -> handler class reacted on change event
       */
-    virtual bool processSetpointResponse( EventSource_c rc_src, int32_t ri32_val, const iIsoName_c& rc_callerISOName );
+    virtual bool processSetpointResponse( EventSource_c ac_src, int32_t ai32_val, const iIsoName_c& ac_callerISOName );
 };
 
-bool MyProcDataHandler_c::processSetpointResponse( EventSource_c rc_src, int32_t ri32_val,  const iIsoName_c& /* rc_callerISOName */ )
+bool MyProcDataHandler_c::processSetpointResponse( EventSource_c ac_src, int32_t ai32_val,  const iIsoName_c& /* ac_callerISOName */ )
 {
   // use helper function to get automatically casted pointer to used process data type
-  uint16_t ui16_index = rc_src.makeIProcDataRemoteSimpleSetpoint() - arr_procData;
+  uint16_t ui16_index = ac_src.makeIProcDataRemoteSimpleSetpoint() - arr_procData;
   switch ( ui16_index )
   {
     case cui8_indexWorkState:
-      if ( ui8_mySetpointWorkState == ri32_val )
+      if ( ui8_mySetpointWorkState == ai32_val )
       { // FINE!! - maybe trigger positive reaction here
         indicateRemoteWorkStateResponse( true );
       }
@@ -314,7 +314,7 @@ bool MyProcDataHandler_c::processSetpointResponse( EventSource_c rc_src, int32_t
       }
       break;
     case cui8_indexApplicationRate:
-      if ( i32_mySetpointApplicationRate == ri32_val )
+      if ( i32_mySetpointApplicationRate == ai32_val )
       { // FINE!! - maybe trigger positive reaction here
         indicateRemoteApplicationRateResponse( true );
       }
@@ -474,12 +474,12 @@ int main()
 }
 
 /** dummy function which can be called from some other module to control the remote work state */
-void controlRemoteWorkState( bool rb_isWorking )
+void controlRemoteWorkState( bool ab_isWorking )
 {
   if ( ! getIisoMonitorInstance().existIsoMemberISOName(c_myISOName, true) ) return;
   if ( ! getIisoMonitorInstance().existIsoMemberISOName(c_remoteDeviceType, true) ) return;
 
-  if ( rb_isWorking ) ui8_mySetpointWorkState = 100;
+  if ( ab_isWorking ) ui8_mySetpointWorkState = 100;
   else ui8_mySetpointWorkState = 0;
 
   #ifndef USE_PROC_HANDLER
@@ -490,16 +490,16 @@ void controlRemoteWorkState( bool rb_isWorking )
   #endif
 }
 /** dummy function which can be called from some other module to control the remote application rate */
-void controlRemoteApplicationRate( int32_t ri32_applicationRate )
+void controlRemoteApplicationRate( int32_t ai32_applicationRate )
 {
   if ( ! getIisoMonitorInstance().existIsoMemberISOName(c_myISOName, true) ) return;
   if ( ! getIisoMonitorInstance().existIsoMemberISOName(c_remoteDeviceType, true) ) return;
 
-  i32_mySetpointApplicationRate = ri32_applicationRate;
+  i32_mySetpointApplicationRate = ai32_applicationRate;
   #ifndef USE_PROC_HANDLER
   b_waitingRespApplicationRate = true;
-  c_applicationRate.setSetpointMasterVal( ri32_applicationRate );
+  c_applicationRate.setSetpointMasterVal( ai32_applicationRate );
   #else
-  arr_procData[cui8_indexApplicationRate].setSetpointMasterVal( ri32_applicationRate );
+  arr_procData[cui8_indexApplicationRate].setSetpointMasterVal( ai32_applicationRate );
   #endif
 }

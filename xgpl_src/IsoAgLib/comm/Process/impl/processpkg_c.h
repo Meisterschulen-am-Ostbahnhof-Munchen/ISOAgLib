@@ -111,7 +111,7 @@ class ProcessPkg_c : public CanPkgExt_c  {
 private:
 public:
   /** default constructor which has nothing to do */
-  ProcessPkg_c( int ri_singletonVecKey = 0 );
+  ProcessPkg_c( int ai_singletonVecKey = 0 );
   /** default constructor which has nothing to do */
   ~ProcessPkg_c();
 
@@ -225,10 +225,10 @@ public:
 #endif
 
   /**
-    deliver data value as single uint8_t from position rb_pos
+    deliver data value as single uint8_t from position ab_pos
     @return uint8_t of wanted data position of message
   */
-  uint8_t data(uint8_t rb_pos)const{return c_flex4Data.getUint8Data(rb_pos);}
+  uint8_t data(uint8_t ab_pos)const{return c_flex4Data.getUint8Data(ab_pos);}
 
   /**
     check if SEND member number is valid (e.g. there has claimed address member in
@@ -268,67 +268,67 @@ public:
   /* *********************** */
   /**
     set value EMPF of process msg
-    @param rb_val new EMPF value for message
+    @param ab_val new EMPF value for message
   */
-  void setEmpf(uint8_t rb_val) {
-    bit_data.b_empf = rb_val;
+  void setEmpf(uint8_t ab_val) {
+    bit_data.b_empf = ab_val;
     setIdentType(Ident_c::StandardIdent);
   }
 
   /**
     set value SEND of process msg
-    @param rb_val new SEND value for message
+    @param ab_val new SEND value for message
   */
-  void setSend(uint8_t rb_val) {
-    bit_data.b_send = rb_val;
+  void setSend(uint8_t ab_val) {
+    bit_data.b_send = ab_val;
     setIdentType(Ident_c::StandardIdent);
   }
 
   /**
     set value PD of process msg
-    @param rb_val new PD value for message
+    @param ab_val new PD value for message
   */
-  void setPd(uint8_t rb_val){bit_data.b_pd = rb_val;}
+  void setPd(uint8_t ab_val){bit_data.b_pd = ab_val;}
 
   /**
     set value MOD of process msg
-    @param rb_val new MOD value for message
+    @param ab_val new MOD value for message
   */
-  void setMod(uint8_t rb_val){bit_data.b_mod = rb_val;}
+  void setMod(uint8_t ab_val){bit_data.b_mod = ab_val;}
 
   /**
     set value D of process msg
-    @param rb_val new D value for message
+    @param ab_val new D value for message
   */
-  void set_d(uint8_t rb_val){bit_data.b_d = rb_val;}
+  void set_d(uint8_t ab_val){bit_data.b_d = ab_val;}
 
    /**
     set command of process msg
-    @param rb_cmd command value of process data message
+    @param ab_cmd command value of process data message
   */
-  void set_Cmd(uint8_t rb_cmd){bit_data.ui8_Command = rb_cmd;}
+  void set_Cmd(uint8_t ab_cmd){bit_data.ui8_Command = ab_cmd;}
 
    /**
     set DDI of process msg
-    @param rb_DDI Data dictionary Itendifier
+    @param ab_DDI Data dictionary Itendifier
   */
-  void set_DDI(uint16_t rb_DDI){bit_data.ui16_DDI = rb_DDI;}
+  void set_DDI(uint16_t ab_DDI){bit_data.ui16_DDI = ab_DDI;}
 
    /**
     set Element Number of Process Data Message
-    @param rb_Element command value of process data message
+    @param ab_Element command value of process data message
   */
-  void set_Element(uint16_t rb_Element){bit_data.ui16_Element = rb_Element;}
+  void set_Element(uint16_t ab_Element){bit_data.ui16_Element = ab_Element;}
 
   /**
     set the 4byte data as int32_t val without any conversion
     for cmd's like measurement program increment, meas prog start/stop,
     etc.
     (4 uint8_t signed integer defined by int32_t in masterHeader)
-    @param ri32_val new cmd value for message
+    @param ai32_val new cmd value for message
     @param ren_procValType data type for message string (default i32_val)
   */
-  void setDataRawCmd(int32_t ri32_val, proc_valType_t ren_procValType = i32_val);
+  void setDataRawCmd(int32_t ai32_val, proc_valType_t ren_procValType = i32_val);
 
   /**
     set data value as with int32_t value parameter
@@ -336,10 +336,10 @@ public:
     (if parameter and send type are different,
      a conversion by assignment is performed; %e.g. int32_t val 3
      can be sent as float 3.0)
-    @param ri32_val new data value for message
+    @param ai32_val new data value for message
     @param ren_procValType data type for message string (default i32_val)
   */
-  void setData(int32_t ri32_val, proc_valType_t ren_procValType = i32_val);
+  void setData(int32_t ai32_val, proc_valType_t ren_procValType = i32_val);
 
   /**
     set data value as with uint32_t value parameter
@@ -347,10 +347,10 @@ public:
     (if parameter and send type are different,
      a conversion by assignment is performed; %e.g. int32_t val 3
      can be sent as float 3.0)
-    @param ri32_val new data value for message
+    @param ai32_val new data value for message
     @param ren_procValType data type for message string (default ui32_val)
   */
-  void setData(uint32_t ri32_val, proc_valType_t ren_procValType = ui32_val);
+  void setData(uint32_t ai32_val, proc_valType_t ren_procValType = ui32_val);
 
   /**
     set one of the special commands of type proc_specCmd_t:
@@ -368,24 +368,24 @@ public:
     (if parameter and send type are different,
      a conversion by assignment is performed; %e.g. int32_t val 3
      can be sent as float 3.0)
-    @param ri32_val new data value for message
+    @param ai32_val new data value for message
     @param ren_procValType data type for message string (default float_val)
   */
-  void setData(float rf_val, proc_valType_t ren_procValType = float_val);
+  void setData(float af_val, proc_valType_t ren_procValType = float_val);
 #endif
 
   /**
-    set value data value as single uint8_t on position rb_pos
-    @param rb_pos position of written uint8_t in data string
-    @param rb_val uint8_t data value
+    set value data value as single uint8_t on position ab_pos
+    @param ab_pos position of written uint8_t in data string
+    @param ab_val uint8_t data value
   */
-  void setData(uint8_t rb_pos, uint8_t rb_val){c_flex4Data.setUint8Data(rb_pos, rb_val);}
+  void setData(uint8_t ab_pos, uint8_t ab_val){c_flex4Data.setUint8Data(ab_pos, ab_val);}
 
   /**
     extract data from ISO commands and save it to member class
-    @param refl_elementDDI
+    @param rl_elementDDI
   */
-  bool resolveCommandTypeForISO(const IsoAgLib::ElementDdi_s& refl_elementDDI);
+  bool resolveCommandTypeForISO(const IsoAgLib::ElementDdi_s& rl_elementDDI);
 
   /**
     overloaded virtual function to translate the string data into flag values;
@@ -398,10 +398,10 @@ public:
   /**
     some LBS+ terminals wants process data interaction for syncronisation of
     terminal mask with ISOName of terminal even for local process data
-    @param rc_isoName ISOName of terminal, for which the ISOName of data is converted
-    @param rui8_useProcISOName ISOName for process data (optional, default to terminal isoName)
+    @param ac_isoName ISOName of terminal, for which the ISOName of data is converted
+    @param aui8_useProcISOName ISOName for process data (optional, default to terminal isoName)
   */
-  void useTermISONameForLocalProc(const IsoName_c& rc_isoName, const IsoName_c& rc_useProcISOName = IsoName_c::IsoNameUnspecified());
+  void useTermISONameForLocalProc(const IsoName_c& ac_isoName, const IsoName_c& ac_useProcISOName = IsoName_c::IsoNameUnspecified());
 
   /** stores the command in generalized form */
   GeneralCommand_c c_generalCommand;

@@ -97,20 +97,20 @@ namespace __IsoAgLib {
   possible errors:
      * Err_c::range wrong output channel number
   @see ActorO_c::createDigital
-  @param rui8_channel default-argument for setting hardware channel for this input
+  @param aui8_channel default-argument for setting hardware channel for this input
 */
-DigitalO_c::DigitalO_c(uint8_t rui8_channel)
-  : ActorBase_c(rui8_channel){
-  init( rui8_channel );
+DigitalO_c::DigitalO_c(uint8_t aui8_channel)
+  : ActorBase_c(aui8_channel){
+  init( aui8_channel );
 }
 /** init this instance
-  @param rui8_channel default-argument for setting hardware channel for this input
+  @param aui8_channel default-argument for setting hardware channel for this input
 */
-void DigitalO_c::init(uint8_t rui8_channel)
+void DigitalO_c::init(uint8_t aui8_channel)
 {
-  ActorBase_c::init( rui8_channel );
+  ActorBase_c::init( aui8_channel );
   // config the PWM freq with BIOS call
-  if (HAL::setPwmFreq(rui8_channel, CONFIG_PWM_DEFAULT_FREQUENCY) == HAL_RANGE_ERR)
+  if (HAL::setPwmFreq(aui8_channel, CONFIG_PWM_DEFAULT_FREQUENCY) == HAL_RANGE_ERR)
   { // wrong channel or PWM
 	ui16_maxOutputPwmFreq = 0xFFFF;
     getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Actor );
@@ -118,7 +118,7 @@ void DigitalO_c::init(uint8_t rui8_channel)
   else
   { // correct channel and PWM - now register the valid new analog input into ActorO_c
     // retrieve max allowed PWM freq
-    ui16_maxOutputPwmFreq = HAL::getMaxPwmDigout( rui8_channel );
+    ui16_maxOutputPwmFreq = HAL::getMaxPwmDigout( aui8_channel );
 
     getActorInstance().registerClient( this );
   }
@@ -135,11 +135,11 @@ DigitalO_c::~DigitalO_c(){
 
   possible errors:
      * Err_c::range wrong output channel number or wrong frequency
-  @param rui32_val value to use as PWM frequency in [mHz]
+  @param aui32_val value to use as PWM frequency in [mHz]
 */
-void DigitalO_c::setFreq(uint32_t rui32_val){
+void DigitalO_c::setFreq(uint32_t aui32_val){
   // set output PWM frequency with BIOS call
-  if (HAL::setPwmFreq(channelNr(), rui32_val) == HAL_RANGE_ERR)
+  if (HAL::setPwmFreq(channelNr(), aui32_val) == HAL_RANGE_ERR)
   { // wrong channel number or wrong frequency
 	ui16_maxOutputPwmFreq = 0xFFFF;
     getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Actor );
@@ -157,17 +157,17 @@ void DigitalO_c::setFreq(uint32_t rui32_val){
 
   possible errors:
      * Err_c::range wrong output channel number
-  @param rui16_val value to set for the output channel [0..0xffff]
+  @param aui16_val value to set for the output channel [0..0xffff]
 */
-void DigitalO_c::set(uint16_t rui16_val){
+void DigitalO_c::set(uint16_t aui16_val){
   // set output PWM signal with BIOS call
-  if (HAL::setDigout(channelNr(), rui16_val) == HAL_RANGE_ERR)
+  if (HAL::setDigout(channelNr(), aui16_val) == HAL_RANGE_ERR)
   { // wrong channel number
     getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Actor );
   }
   else
   { // correct channel number
-    ui16_value = rui16_val;
+    ui16_value = aui16_val;
   }
 }
 /**
@@ -176,10 +176,10 @@ void DigitalO_c::set(uint16_t rui16_val){
 
   possible errors:
      * Err_c::range wrong output channel number
-  @param rb_state
+  @param ab_state
 */
-void DigitalO_c::set(bool rb_state){
-  if ( rb_state ) set( ui16_maxOutputPwmFreq );
+void DigitalO_c::set(bool ab_state){
+  if ( ab_state ) set( ui16_maxOutputPwmFreq );
   else set( uint16_t(0) );
 }
 /** check if this digital output channel is in GOOD condition

@@ -137,22 +137,22 @@ public:
                          (array is terminated by ElementDdi_s.ui16_element == 0xFFFF)
     @param ui16_element  device element number
     common parameters:
-    @param rc_isoName optional ISOName code of Process-Data
-    @param rc_ownerISOName optional ISOName of the owner
-    @param rpc_isoName pointer to updated ISOName variable of owner
-    @param rpc_processDataChangeHandler optional pointer to handler class of application
-    @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
+    @param ac_isoName optional ISOName code of Process-Data
+    @param ac_ownerISOName optional ISOName of the owner
+    @param apc_isoName pointer to updated ISOName variable of owner
+    @param apc_processDataChangeHandler optional pointer to handler class of application
+    @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
-  ProcDataBase_c( const IsoAgLib::ElementDdi_s* rps_elementDDI = NULL, uint16_t rui16_element = 0xFFFF,
-                 const IsoName_c& rc_isoName = IsoName_c::IsoNameInitialProcessData(),
-                 const IsoName_c& rc_ownerISOName = IsoName_c::IsoNameUnspecified(), const IsoName_c *rpc_isoName = NULL,
-                 IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
-                 int ri_singletonVecKey = 0)
+  ProcDataBase_c( const IsoAgLib::ElementDdi_s* aps_elementDDI = NULL, uint16_t aui16_element = 0xFFFF,
+                 const IsoName_c& ac_isoName = IsoName_c::IsoNameInitialProcessData(),
+                 const IsoName_c& ac_ownerISOName = IsoName_c::IsoNameUnspecified(), const IsoName_c *apc_isoName = NULL,
+                 IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler = NULL,
+                 int ai_singletonVecKey = 0)
 
-    : ProcIdent_c( rps_elementDDI, rui16_element, rc_isoName, rc_ownerISOName, rpc_isoName, ri_singletonVecKey)
+    : ProcIdent_c( aps_elementDDI, aui16_element, ac_isoName, ac_ownerISOName, apc_isoName, ai_singletonVecKey)
     {
-      init( rps_elementDDI, rui16_element, rc_isoName, rc_ownerISOName, rpc_isoName,
-            rpc_processDataChangeHandler, ri_singletonVecKey );
+      init( aps_elementDDI, aui16_element, ac_isoName, ac_ownerISOName, apc_isoName,
+            apc_processDataChangeHandler, ai_singletonVecKey );
     }
 
 
@@ -162,37 +162,37 @@ public:
                          (array is terminated by ElementDdi_s.ui16_element == 0xFFFF)
     @param ui16_element  device element number
     common parameters:
-    @param rc_isoName optional ISOName code of Process-Data
-    @param rc_ownerISOName optional ISOName of the owner
-    @param rpc_isoName pointer to updated ISOName variable of owner
-    @param rpc_processDataChangeHandler optional pointer to handler class of application
-    @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
+    @param ac_isoName optional ISOName code of Process-Data
+    @param ac_ownerISOName optional ISOName of the owner
+    @param apc_isoName pointer to updated ISOName variable of owner
+    @param apc_processDataChangeHandler optional pointer to handler class of application
+    @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
     */
-  void init( const IsoAgLib::ElementDdi_s* ps_elementDDI, uint16_t rui16_element,
-            const IsoName_c& rc_isoName = IsoName_c::IsoNameInitialProcessData(),
-            const IsoName_c& rc_ownerISOName = IsoName_c::IsoNameUnspecified(), const IsoName_c *rpc_isoName = NULL,
-            IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
-            int ri_singletonVecKey = 0);
+  void init( const IsoAgLib::ElementDdi_s* ps_elementDDI, uint16_t aui16_element,
+            const IsoName_c& ac_isoName = IsoName_c::IsoNameInitialProcessData(),
+            const IsoName_c& ac_ownerISOName = IsoName_c::IsoNameUnspecified(), const IsoName_c *apc_isoName = NULL,
+            IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler = NULL,
+            int ai_singletonVecKey = 0);
 
   /** assignment operator for this base object
-    @param rrefc_src source instance
+    @param arc_src source instance
     @return reference to source instance for cmd like "prog1 = prog2 = prog3;"
   */
-  const ProcDataBase_c& operator=(const ProcDataBase_c& rrefc_src);
+  const ProcDataBase_c& operator=(const ProcDataBase_c& arc_src);
 
   /** copy constructor for ProcDataBase_c
-    @param rrefc_src source instance
+    @param arc_src source instance
   */
-  ProcDataBase_c(const ProcDataBase_c& rrefc_src);
+  ProcDataBase_c(const ProcDataBase_c& arc_src);
 
   /** default destructor which has nothing to do */
   virtual ~ProcDataBase_c();
 
   /** set the pointer to the handler class
-    * @param rpc_processDataChangeHandler pointer to handler class of application
+    * @param apc_processDataChangeHandler pointer to handler class of application
     */
-  void setProcessDataChangeHandler( IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler )
-   { pc_processDataChangeHandler = rpc_processDataChangeHandler; }
+  void setProcessDataChangeHandler( IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler )
+   { pc_processDataChangeHandler = apc_processDataChangeHandler; }
 
   /** deliver the poitner to the handler class
     * @return pointer to handler class of application (or NULL if not defined by application)
@@ -265,7 +265,7 @@ public:
   uint16_t getDDIfromCANPkg( void ) const;
 
 protected: // Protected methods
-  /** send the given int32_t value with variable ISOName rc_varISOName;
+  /** send the given int32_t value with variable ISOName ac_varISOName;
     set the int32_t value with conversion (according to central data type) in message
     string and set data format flags corresponding to central data type of this process data
     (local: receiver; remote: sender)
@@ -275,16 +275,16 @@ protected: // Protected methods
         * Err_c::elNonexistent one of resolved EMPF/SEND isn't registered with claimed address in Monitor
         * dependant error in CanIo_c on CAN send problems
 
-    @param rc_varISOName variable ISOName
-    @param ri32_val int32_t value to send
+    @param ac_varISOName variable ISOName
+    @param ai32_val int32_t value to send
     @param en_valueGroup: min/max/exact/default
     @param en_command
     @return true -> sendIntern set successful EMPF and SEND
   */
-  virtual bool sendValISOName(const IsoName_c& rc_varISOName, int32_t ri32_val = 0) const;
+  virtual bool sendValISOName(const IsoName_c& ac_varISOName, int32_t ai32_val = 0) const;
 
 #ifdef USE_FLOAT_DATA_TYPE
-  /** send the given float value with variable ISOName rc_varISOName;
+  /** send the given float value with variable ISOName ac_varISOName;
     set the float value with conversion (according to central data type) in message
     string and set data format flags corresponding to central data type of this process data
     (local: receiver; remote: sender)
@@ -294,13 +294,13 @@ protected: // Protected methods
         * Err_c::elNonexistent one of resolved EMPF/SEND isn't registered with claimed address in Monitor
         * dependant error in CanIo_c on CAN send problems
 
-    @param rc_varISOName variable ISOName
-    @param rb_pd PD code for the msg
-    @param rb_mod MOD code for the msg
-    @param ri32_val float value to send
+    @param ac_varISOName variable ISOName
+    @param ab_pd PD code for the msg
+    @param ab_mod MOD code for the msg
+    @param ai32_val float value to send
     @return true -> sendIntern set successful EMPF and SEND
   */
-  virtual bool sendValISOName(const IsoName_c& rc_varISOName, float rf_val = 0.0F) const;
+  virtual bool sendValISOName(const IsoName_c& ac_varISOName, float af_val = 0.0F) const;
 #endif
 
   void setBasicSendFlags() const;
@@ -310,7 +310,7 @@ protected: // Protected methods
 
 private: // Private methods
   /** base function for assignment of element vars for copy constructor and operator= */
-  void assignFromSource( const ProcDataBase_c& rrefc_src );
+  void assignFromSource( const ProcDataBase_c& arc_src );
 
   /** process a measure prog message
     -> fully dependent on children type local/remote

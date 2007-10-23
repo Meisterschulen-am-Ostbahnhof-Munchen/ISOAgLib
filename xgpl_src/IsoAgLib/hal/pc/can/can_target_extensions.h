@@ -78,7 +78,7 @@ int16_t getCanBusStatus(uint8_t bBusNumber, tCanBusStatus* ptStatus);
 int16_t clearCanObjBuf(uint8_t bBusNumber, uint8_t bMsgObj);
 int16_t configCanObj ( uint8_t bBusNumber, uint8_t bMsgObj, tCanObjConfig * ptConfig );
 int16_t closeCanObj ( uint8_t bBusNumber,uint8_t bMsgObj );
-bool waitUntilCanReceiveOrTimeout( uint16_t rui16_timeoutInterval );
+bool waitUntilCanReceiveOrTimeout( uint16_t aui16_timeoutInterval );
 int16_t sendCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tSend * ptSend );
 int16_t checkMsg();
 int16_t getCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tReceive * ptReceive );
@@ -87,13 +87,13 @@ int16_t chgCanObjId ( uint8_t bBusNumber, uint8_t bMsgObj, uint32_t dwId, uint8_
 #else
 int16_t chgCanObjId ( uint8_t bBusNumber, uint8_t bMsgObj, uint32_t dwId, uint32_t mask, uint8_t bXtd );
 #endif
-int16_t lockCanObj( uint8_t rui8_busNr, uint8_t rui8_msgobjNr, bool rb_doLock );
+int16_t lockCanObj( uint8_t aui8_busNr, uint8_t aui8_msgobjNr, bool ab_doLock );
 
 int16_t chgCanObjPause ( uint8_t bBusNumber, uint8_t bMsgObj, uint16_t wPause);
 int16_t getCanMsgBufCount(uint8_t bBusNumber,uint8_t bMsgObj);
 bool getCanMsgObjLocked(uint8_t bBusNumber,uint8_t bMsgObj);
 
-int32_t getMaxSendDelay(uint8_t rui8_busNr);
+int32_t getMaxSendDelay(uint8_t aui8_busNr);
 
 int32_t getPipeHandleForCanRcvEvent();
 

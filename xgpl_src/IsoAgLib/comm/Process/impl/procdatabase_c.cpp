@@ -131,36 +131,36 @@ namespace __IsoAgLib {
    @param ui16_element  device element number
 
    common parameters:
-   @param rc_isoName optional ISOName code of Process-Data
-   @param rc_ownerISOName optional ISOName of the owner
-   @param rpc_isoName pointer to updated ISOName variable of owner
-   @param rpc_processDataChangeHandler optional pointer to handler class of application
-   @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
+   @param ac_isoName optional ISOName code of Process-Data
+   @param ac_ownerISOName optional ISOName of the owner
+   @param apc_isoName pointer to updated ISOName variable of owner
+   @param apc_processDataChangeHandler optional pointer to handler class of application
+   @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
-  void ProcDataBase_c::init( const IsoAgLib::ElementDdi_s* ps_elementDDI, uint16_t rui16_element,
-                             const IsoName_c& rc_isoName,
-                             const IsoName_c& rc_ownerISOName, const IsoName_c *rpc_isoName,
-                             IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler,
-                             int ri_singletonVecKey)
+  void ProcDataBase_c::init( const IsoAgLib::ElementDdi_s* ps_elementDDI, uint16_t aui16_element,
+                             const IsoName_c& ac_isoName,
+                             const IsoName_c& ac_ownerISOName, const IsoName_c *apc_isoName,
+                             IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler,
+                             int ai_singletonVecKey)
   {
-    ProcIdent_c::init( ps_elementDDI, rui16_element, rc_isoName, rc_ownerISOName, rpc_isoName);
+    ProcIdent_c::init( ps_elementDDI, aui16_element, ac_isoName, ac_ownerISOName, apc_isoName);
 
-    setSingletonKey(ri_singletonVecKey);
+    setSingletonKey(ai_singletonVecKey);
     en_procValType = i32_val;
-    pc_processDataChangeHandler = rpc_processDataChangeHandler;
+    pc_processDataChangeHandler = apc_processDataChangeHandler;
   }
 
 
 /**
   assignment operator for this base object
-  @param rrefc_src source instance
+  @param arc_src source instance
   @return reference to source instance for cmd like "prog1 = prog2 = prog3;"
 */
-const ProcDataBase_c& ProcDataBase_c::operator=(const ProcDataBase_c& rrefc_src)
+const ProcDataBase_c& ProcDataBase_c::operator=(const ProcDataBase_c& arc_src)
 { // call base class operator
-  ProcIdent_c::operator=(rrefc_src);
+  ProcIdent_c::operator=(arc_src);
 
-  assignFromSource(rrefc_src);
+  assignFromSource(arc_src);
 
   // return source reference
   return *this;
@@ -169,20 +169,20 @@ const ProcDataBase_c& ProcDataBase_c::operator=(const ProcDataBase_c& rrefc_src)
 
 /**
   copy constructor for ProcDataBase_c
-  @param rrefc_src source instance
+  @param arc_src source instance
 */
-ProcDataBase_c::ProcDataBase_c(const ProcDataBase_c& rrefc_src)
-   : ProcIdent_c(rrefc_src)
+ProcDataBase_c::ProcDataBase_c(const ProcDataBase_c& arc_src)
+   : ProcIdent_c(arc_src)
 {
-  assignFromSource(rrefc_src);
+  assignFromSource(arc_src);
 }
 
 
 /** base function for assignment of element vars for copy constructor and operator= */
-void ProcDataBase_c::assignFromSource( const ProcDataBase_c& rrefc_src )
+void ProcDataBase_c::assignFromSource( const ProcDataBase_c& arc_src )
 { // copy element vars
-  en_procValType = rrefc_src.en_procValType;
-  pc_processDataChangeHandler = rrefc_src.pc_processDataChangeHandler;
+  en_procValType = arc_src.en_procValType;
+  pc_processDataChangeHandler = arc_src.pc_processDataChangeHandler;
 }
 
 
@@ -234,7 +234,7 @@ bool ProcDataBase_c::timeEvent( uint16_t* /* pui16_nextTimePeriod */ )
 
 
 /**
-  send the given int32_t value with variable ISOName rc_varISOName
+  send the given int32_t value with variable ISOName ac_varISOName
   (local: receiver; remote: sender)
   (other paramter fixed by ident of process data)
 
@@ -244,15 +244,15 @@ bool ProcDataBase_c::timeEvent( uint16_t* /* pui16_nextTimePeriod */ )
       * Err_c::elNonexistent one of resolved EMPF/SEND isn't registered with claimed address in Monitor
       * dependant error in CanIo_c on CAN send problems
 
-  @param rc_varISOName variable ISOName
-  @param ri32_val int32_t value to send
+  @param ac_varISOName variable ISOName
+  @param ai32_val int32_t value to send
   @return true -> sendIntern set successful EMPF and SEND
 */
-bool ProcDataBase_c::sendValISOName( const IsoName_c& /*rc_varISOName*/, int32_t ri32_val) const
+bool ProcDataBase_c::sendValISOName( const IsoName_c& /*ac_varISOName*/, int32_t ai32_val) const
 {
   setBasicSendFlags();
 
-  getProcessPkg().setData( ri32_val, en_procValType);
+  getProcessPkg().setData( ai32_val, en_procValType);
 
   // send the msg
   getCanInstance4Comm() << getProcessPkg();
@@ -268,7 +268,7 @@ bool ProcDataBase_c::sendValISOName( const IsoName_c& /*rc_varISOName*/, int32_t
 
 #ifdef USE_FLOAT_DATA_TYPE
 /**
-  send the given float value with variable ISOName rc_varISOName
+  send the given float value with variable ISOName ac_varISOName
   (local: receiver; remote: sender)
   (other paramter fixed by ident of process data)
 
@@ -278,15 +278,15 @@ bool ProcDataBase_c::sendValISOName( const IsoName_c& /*rc_varISOName*/, int32_t
       * Err_c::elNonexistent one of resolved EMPF/SEND isn't registered with claimed address in Monitor
       * dependant error in CanIo_c on CAN send problems
 
-  @param rc_varISOName variable ISOName
-  @param ri32_val float value to send
+  @param ac_varISOName variable ISOName
+  @param ai32_val float value to send
   @return true -> sendIntern set successful EMPF and SEND
 */
-bool ProcDataBase_c::sendValISOName(const IsoName_c& /*rc_varISOName*/, float rf_val) const
+bool ProcDataBase_c::sendValISOName(const IsoName_c& /*ac_varISOName*/, float af_val) const
 {
   setBasicSendFlags();
 
-  getProcessPkg().setData( rf_val, en_procValType);
+  getProcessPkg().setData( af_val, en_procValType);
 
   // send the msg
   getCanInstance4Comm() << getProcessPkg();

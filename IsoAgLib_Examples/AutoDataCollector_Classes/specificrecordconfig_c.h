@@ -59,25 +59,25 @@ public:
   /**
     constructor which initialises all data and can call init to read
     config data from EEPROM (if eeprom adress is given)
-    @param rui16_eepromAdr adress in EEPROM where config data is stored
+    @param aui16_eepromAdr adress in EEPROM where config data is stored
   */
-  SpecificRecordConfig_c( uint16_t rui16_eepromAdr = 0, DefaultRecordConfig_c* rpc_defaultConfig = NULL, IsoAgLib::iDINItem_c* rpc_memberItem = NULL);
+  SpecificRecordConfig_c( uint16_t aui16_eepromAdr = 0, DefaultRecordConfig_c* apc_defaultConfig = NULL, IsoAgLib::iDINItem_c* apc_memberItem = NULL);
   /**
     copy Constructor
-    @param rrefc_src reference to source instance
+    @param arc_src reference to source instance
   */
-  SpecificRecordConfig_c(const SpecificRecordConfig_c& rrefc_src);
+  SpecificRecordConfig_c(const SpecificRecordConfig_c& arc_src);
   /**
     destructor
   */
   ~SpecificRecordConfig_c();
   /**
     initialise with reading the config data from EEPROM in flags
-    @param rui16_eepromAdr adress in EEPROM where config data begins
+    @param aui16_eepromAdr adress in EEPROM where config data begins
     @return true-> parameters valid
   */
-  bool init( uint16_t rui16_eepromAdr,
-            DefaultRecordConfig_c* rpc_defaultConfig, IsoAgLib::iDINItem_c* rpc_memberItem);
+  bool init( uint16_t aui16_eepromAdr,
+            DefaultRecordConfig_c* apc_defaultConfig, IsoAgLib::iDINItem_c* apc_memberItem);
 
   /**
     deliver WERT of process data for time informations
@@ -167,33 +167,33 @@ public:
   */
   uint8_t procDataCnt() const {return ui8_procCnt;};
   /**
-    deliver the wert_inst of the rui8_ind'th specific process data of
+    deliver the wert_inst of the aui8_ind'th specific process data of
     this device
-    @param rui8_ind number of the wanted specific process data
+    @param aui8_ind number of the wanted specific process data
     @return wert_inst or -1 if proc data wasn't found
   */
-  int16_t procDataIndWertinst(uint8_t rui8_ind);
+  int16_t procDataIndWertinst(uint8_t aui8_ind);
   /**
-    deliver the header of the rui8_ind'th specific process data of
+    deliver the header of the aui8_ind'th specific process data of
     this device
-    @param rui8_ind number of the wanted specific process data
+    @param aui8_ind number of the wanted specific process data
     @return pointer to header or NULL if proc data wasn't found
   */
-  const uint8_t* procDataIndHeader(uint8_t rui8_ind);
+  const uint8_t* procDataIndHeader(uint8_t aui8_ind);
   /**
-    deliver the LIS of the rui8_ind'th specific process data of
+    deliver the LIS of the aui8_ind'th specific process data of
     this device (default is 0)
-    @param rui8_ind number of the wanted specific process data
+    @param aui8_ind number of the wanted specific process data
     @return LIS or the default value 0 if proc data wasn't found
   */
-  uint8_t procDataIndLis(uint8_t rui8_ind);
+  uint8_t procDataIndLis(uint8_t aui8_ind);
   /**
-    deliver the PRI of the rui8_ind'th specific process data of
+    deliver the PRI of the aui8_ind'th specific process data of
     this device (default is 2)
-    @param rui8_ind number of the wanted specific process data
+    @param aui8_ind number of the wanted specific process data
     @return PRI or the default value 2 if proc data wasn't found
   */
-  uint8_t procDataIndPri(uint8_t rui8_ind);
+  uint8_t procDataIndPri(uint8_t aui8_ind);
 
 private:
   /**
@@ -205,11 +205,11 @@ private:
   /**
     utility function to get a tag value for a proc data info
   */
-  bool getProcIndString(uint8_t rui8_ind, const char* rpui8_tagName);
+  bool getProcIndString(uint8_t aui8_ind, const char* apui8_tagName);
   /**
     utility function to find data for a proc data info
   */
-  bool findProcInd(int ri_ind);
+  bool findProcInd(int ai_ind);
   /**
     deliver the search end in EEPROM belonging to the
     actual device

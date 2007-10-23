@@ -101,10 +101,10 @@ namespace __IsoAgLib {
 /** default constructor, which can optional set the pointer to the containing
   Scheduler_c object instance
 */
-VtServerInstance_c::VtServerInstance_c(const IsoItem_c& ref_newItem, IsoName_c c_newISOName, IsoTerminal_c& ref_isoTerminal)
-  : pcc_isoItem (&ref_newItem)
+VtServerInstance_c::VtServerInstance_c(const IsoItem_c& r_newItem, IsoName_c c_newISOName, IsoTerminal_c& r_isoTerminal)
+  : pcc_isoItem (&r_newItem)
   , c_isoName (c_newISOName)
-  , refc_isoTerminal (ref_isoTerminal)
+  , rc_isoTerminal (r_isoTerminal)
 {
   /// init all variables to an initial upload state (Upload will not start before ws-announcing is due
   vtCapabilities_a.lastReceivedSoftkeys = 0; // not yet (queried and) got answer about vt's capabilities yet
@@ -152,12 +152,12 @@ VtServerInstance_c::isVtActive ()
 void
 VtServerInstance_c::setLatestVtStatusData()
 {
-  vtState_a.lastReceived = refc_isoTerminal.data().time();
-  vtState_a.saOfActiveWorkingSetMaster = refc_isoTerminal.data().getUint8Data (1);
-  vtState_a.dataAlarmMask = refc_isoTerminal.data().getUint8Data (2) | (refc_isoTerminal.data().getUint8Data (3) << 8);
-  vtState_a.softKeyMask = refc_isoTerminal.data().getUint8Data (4) | (refc_isoTerminal.data().getUint8Data (5) << 8);
-  vtState_a.busyCodes = refc_isoTerminal.data().getUint8Data (6);
-  vtState_a.functionBusy = refc_isoTerminal.data().getUint8Data (7);
+  vtState_a.lastReceived = rc_isoTerminal.data().time();
+  vtState_a.saOfActiveWorkingSetMaster = rc_isoTerminal.data().getUint8Data (1);
+  vtState_a.dataAlarmMask = rc_isoTerminal.data().getUint8Data (2) | (rc_isoTerminal.data().getUint8Data (3) << 8);
+  vtState_a.softKeyMask = rc_isoTerminal.data().getUint8Data (4) | (rc_isoTerminal.data().getUint8Data (5) << 8);
+  vtState_a.busyCodes = rc_isoTerminal.data().getUint8Data (6);
+  vtState_a.functionBusy = rc_isoTerminal.data().getUint8Data (7);
 }
 
 /** process received language messages
@@ -166,19 +166,19 @@ VtServerInstance_c::setLatestVtStatusData()
 void
 VtServerInstance_c::setLocalSettings()
 {
-  localSettings_a.lastReceived =  refc_isoTerminal.data().time();
-  localSettings_a.languageCode = (refc_isoTerminal.data().getUint8Data (0) << 8) | refc_isoTerminal.data().getUint8Data (1);
-  localSettings_a.nDecimalPoint = refc_isoTerminal.data().getUint8Data (2) >> 6;
-  localSettings_a.nTimeFormat =  (refc_isoTerminal.data().getUint8Data (2) >> 4) & 0x03;
-  localSettings_a.dFormat =       refc_isoTerminal.data().getUint8Data (3);
-  localSettings_a.uDistance =     refc_isoTerminal.data().getUint8Data (4) >> 6;
-  localSettings_a.uArea =        (refc_isoTerminal.data().getUint8Data (4) >> 4) & 0x03;
-  localSettings_a.uVolume =      (refc_isoTerminal.data().getUint8Data (4) >> 2) & 0x03;
-  localSettings_a.uMass =         refc_isoTerminal.data().getUint8Data (4)       & 0x03;
-  localSettings_a.uTemperature =  refc_isoTerminal.data().getUint8Data (5) >> 6;
-  localSettings_a.uPressure =    (refc_isoTerminal.data().getUint8Data (5) >> 4) & 0x03;
-  localSettings_a.uForce =       (refc_isoTerminal.data().getUint8Data (5) >> 2) & 0x03;
-  localSettings_a.uUnitsSystem =  refc_isoTerminal.data().getUint8Data (5)       & 0x03;
+  localSettings_a.lastReceived =  rc_isoTerminal.data().time();
+  localSettings_a.languageCode = (rc_isoTerminal.data().getUint8Data (0) << 8) | rc_isoTerminal.data().getUint8Data (1);
+  localSettings_a.nDecimalPoint = rc_isoTerminal.data().getUint8Data (2) >> 6;
+  localSettings_a.nTimeFormat =  (rc_isoTerminal.data().getUint8Data (2) >> 4) & 0x03;
+  localSettings_a.dFormat =       rc_isoTerminal.data().getUint8Data (3);
+  localSettings_a.uDistance =     rc_isoTerminal.data().getUint8Data (4) >> 6;
+  localSettings_a.uArea =        (rc_isoTerminal.data().getUint8Data (4) >> 4) & 0x03;
+  localSettings_a.uVolume =      (rc_isoTerminal.data().getUint8Data (4) >> 2) & 0x03;
+  localSettings_a.uMass =         rc_isoTerminal.data().getUint8Data (4)       & 0x03;
+  localSettings_a.uTemperature =  rc_isoTerminal.data().getUint8Data (5) >> 6;
+  localSettings_a.uPressure =    (rc_isoTerminal.data().getUint8Data (5) >> 4) & 0x03;
+  localSettings_a.uForce =       (rc_isoTerminal.data().getUint8Data (5) >> 2) & 0x03;
+  localSettings_a.uUnitsSystem =  rc_isoTerminal.data().getUint8Data (5)       & 0x03;
   // The other fields are reserved. (yet ;-)
 }
 
@@ -186,36 +186,36 @@ void
 VtServerInstance_c::setVersion()
 {
   vtCapabilities_a.lastReceivedVersion = HAL::getTime();
-  vtCapabilities_a.iso11783version = refc_isoTerminal.data().getUint8Data (1);
+  vtCapabilities_a.iso11783version = rc_isoTerminal.data().getUint8Data (1);
 }
 
 void
 VtServerInstance_c::setSoftKeyData()
 {
   vtCapabilities_a.lastReceivedSoftkeys = HAL::getTime();
-  vtCapabilities_a.skWidth = refc_isoTerminal.data().getUint8Data (4);
-  vtCapabilities_a.skHeight = refc_isoTerminal.data().getUint8Data (5);
-  vtCapabilities_a.skVirtual = refc_isoTerminal.data().getUint8Data (6);
-  vtCapabilities_a.skPhysical = refc_isoTerminal.data().getUint8Data (7);
+  vtCapabilities_a.skWidth = rc_isoTerminal.data().getUint8Data (4);
+  vtCapabilities_a.skHeight = rc_isoTerminal.data().getUint8Data (5);
+  vtCapabilities_a.skVirtual = rc_isoTerminal.data().getUint8Data (6);
+  vtCapabilities_a.skPhysical = rc_isoTerminal.data().getUint8Data (7);
 }
 
 void
 VtServerInstance_c::setTextFontData()
 {
   vtCapabilities_a.lastReceivedFont = HAL::getTime();
-  vtCapabilities_a.fontSizes = (refc_isoTerminal.data().getUint8Data (5) << 1) | 0x01;
-  vtCapabilities_a.fontSizes += refc_isoTerminal.data().getUint8Data (6) << 8;
-  vtCapabilities_a.fontTypes = refc_isoTerminal.data().getUint8Data (7);
+  vtCapabilities_a.fontSizes = (rc_isoTerminal.data().getUint8Data (5) << 1) | 0x01;
+  vtCapabilities_a.fontSizes += rc_isoTerminal.data().getUint8Data (6) << 8;
+  vtCapabilities_a.fontTypes = rc_isoTerminal.data().getUint8Data (7);
 }
 
 void
 VtServerInstance_c::setHardwareData()
 {
   vtCapabilities_a.lastReceivedHardware = HAL::getTime();
-  vtCapabilities_a.hwGraphicType = refc_isoTerminal.data().getUint8Data (2);
-  vtCapabilities_a.hwHardware = refc_isoTerminal.data().getUint8Data (3);
-  vtCapabilities_a.hwWidth = refc_isoTerminal.data().getUint8Data (4) + (refc_isoTerminal.data().getUint8Data (5) << 8);
-  vtCapabilities_a.hwHeight = refc_isoTerminal.data().getUint8Data (6) + (refc_isoTerminal.data().getUint8Data (7) << 8);
+  vtCapabilities_a.hwGraphicType = rc_isoTerminal.data().getUint8Data (2);
+  vtCapabilities_a.hwHardware = rc_isoTerminal.data().getUint8Data (3);
+  vtCapabilities_a.hwWidth = rc_isoTerminal.data().getUint8Data (4) + (rc_isoTerminal.data().getUint8Data (5) << 8);
+  vtCapabilities_a.hwHeight = rc_isoTerminal.data().getUint8Data (6) + (rc_isoTerminal.data().getUint8Data (7) << 8);
 }
 
 void

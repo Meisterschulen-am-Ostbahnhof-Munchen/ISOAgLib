@@ -100,15 +100,15 @@ ActorO_c& getActorInstance( void ) { return ActorO_c::instance();};
 
   possible errors:
       * Err_c::range given limits are not possible
-  @param rb_digitalFirst smallest allowed digital output channel number (DIGITAL_OUTPUT_MIN)
-  @param rb_digitalLast greatest allowed digital output channel number (DIGITAL_OUTPUT_MAX)
+  @param ab_digitalFirst smallest allowed digital output channel number (DIGITAL_OUTPUT_MIN)
+  @param ab_digitalLast greatest allowed digital output channel number (DIGITAL_OUTPUT_MAX)
   @see masterHeader
 */
-void ActorO_c::init(uint8_t rb_digitalFirst, uint8_t rb_digitalLast)
+void ActorO_c::init(uint8_t ab_digitalFirst, uint8_t ab_digitalLast)
 { // store the channel limits for dig and analog
   // verify that System is int
   getSystemInstance().init();
-  setDigitalLimits(rb_digitalFirst, rb_digitalLast);
+  setDigitalLimits(ab_digitalFirst, ab_digitalLast);
 }
 
 /** destructor for the actor output manager object */
@@ -120,22 +120,22 @@ ActorO_c::~ActorO_c(){
 
   possible errors:
       * Err_c::range given limits are not possible
-  @param rb_digitalFirst number of the smallest allowed digital output channel
-  @param rb_digitalLast number of the greatest allowed digital output channel
+  @param ab_digitalFirst number of the smallest allowed digital output channel
+  @param ab_digitalLast number of the greatest allowed digital output channel
 */
-void ActorO_c::setDigitalLimits(uint8_t rb_digitalFirst, uint8_t rb_digitalLast){
+void ActorO_c::setDigitalLimits(uint8_t ab_digitalFirst, uint8_t ab_digitalLast){
   // check if output values are correct
   if (
-       (rb_digitalFirst <= DIGITAL_OUTPUT_MAX)
+       (ab_digitalFirst <= DIGITAL_OUTPUT_MAX)
 #ifdef DIGITAL_OUTPUT_MIN_GREATER_ZERO
-     &&(rb_digitalFirst >= DIGITAL_OUTPUT_MIN)
-     &&(rb_digitalLast >= DIGITAL_OUTPUT_MIN)
+     &&(ab_digitalFirst >= DIGITAL_OUTPUT_MIN)
+     &&(ab_digitalLast >= DIGITAL_OUTPUT_MIN)
 #endif
-     &&(rb_digitalLast <= DIGITAL_OUTPUT_MAX)
+     &&(ab_digitalLast <= DIGITAL_OUTPUT_MAX)
      )
   { // correct range
-    setMinDigitalLimit(rb_digitalFirst);
-    setMaxDigitalLimit(rb_digitalLast);
+    setMinDigitalLimit(ab_digitalFirst);
+    setMaxDigitalLimit(ab_digitalLast);
   }
   else
   { // wrong range

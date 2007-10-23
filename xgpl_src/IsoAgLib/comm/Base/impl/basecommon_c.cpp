@@ -136,11 +136,11 @@ void BaseCommon_c::close( )
     above all create the needed FilterBox_c instances
     possible errors:
       * dependant error in CanIo_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
-    @param rpc_isoName optional pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
+    @param apc_isoName optional pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
     @param ai_singletonVecKey singleton vector key in case PRT_INSTANCE_CNT > 1
-    @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
+    @param at_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
   */
-void BaseCommon_c::init_base (const IsoName_c* rpc_isoName, int ai_singletonVecKey, IsoAgLib::IdentMode_t rt_identMode)
+void BaseCommon_c::init_base (const IsoName_c* apc_isoName, int ai_singletonVecKey, IsoAgLib::IdentMode_t at_identMode)
 {
   getSchedulerInstance4Comm().registerClient( this );
   c_data.setSingletonKey( ai_singletonVecKey );
@@ -151,7 +151,7 @@ void BaseCommon_c::init_base (const IsoName_c* rpc_isoName, int ai_singletonVecK
   }
 
   // set configure values with call for config
-  config_base (rpc_isoName, rt_identMode
+  config_base (apc_isoName, at_identMode
                            , 0 // No individual PGN disabling
                            );
 
@@ -160,15 +160,15 @@ void BaseCommon_c::init_base (const IsoName_c* rpc_isoName, int ai_singletonVecK
 };
 
 /** config tractor object after init --> store isoName and mode
-    @param rpc_isoName pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
-    @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
+    @param apc_isoName pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
+    @param at_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
     @return true -> configuration was successfull
   */
-bool BaseCommon_c::config_base (const IsoName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode, uint16_t rui16_suppressMask)
+bool BaseCommon_c::config_base (const IsoName_c* apc_isoName, IsoAgLib::IdentMode_t at_identMode, uint16_t aui16_suppressMask)
 {
-  mui16_suppressMask = rui16_suppressMask;
-  if (   rt_identMode == IsoAgLib::IdentModeTractor
-      && rpc_isoName == NULL
+  mui16_suppressMask = aui16_suppressMask;
+  if (   at_identMode == IsoAgLib::IdentModeTractor
+      && apc_isoName == NULL
      )
   { // the application is in tractor mode but has no valid isoName
     // IMPORTANT: if we are in tractor mode we MUST have a valid isoName otherwise the configuration makes no sense
@@ -185,16 +185,16 @@ bool BaseCommon_c::config_base (const IsoName_c* rpc_isoName, IsoAgLib::IdentMod
     return false;
   }
   // set configure values
-  pc_isoName = rpc_isoName; // store the pointer in any case
-  setMode(rt_identMode);
+  pc_isoName = apc_isoName; // store the pointer in any case
+  setMode(at_identMode);
 
   // set the timestamps to 0
   i32_lastMsgReceived = 0;
 
   //setSelectedDataSourceISOName is only used in tractor mode
-  if (rt_identMode == IsoAgLib::IdentModeTractor)
+  if (at_identMode == IsoAgLib::IdentModeTractor)
   {
-    c_selectedDataSourceISOName = *rpc_isoName;
+    c_selectedDataSourceISOName = *apc_isoName;
   }
   else
   { //implement mode
@@ -204,11 +204,11 @@ bool BaseCommon_c::config_base (const IsoName_c* rpc_isoName, IsoAgLib::IdentMod
 }
 
 /** check if a received message should be parsed */
-bool BaseCommon_c::checkParseReceived(const IsoName_c& rrefc_currentSender) const
+bool BaseCommon_c::checkParseReceived(const IsoName_c& arc_currentSender) const
 {
   return ( checkMode(IsoAgLib::IdentModeImplement) // I'm not the sender
             && ( // one of the following conditions must be true
-                   (c_selectedDataSourceISOName == rrefc_currentSender  ) // actual sender equivalent to last
+                   (c_selectedDataSourceISOName == arc_currentSender  ) // actual sender equivalent to last
                 || (c_selectedDataSourceISOName.isUnspecified()         ) // last sender has not correctly claimed address member
                )
           )?true:false;
@@ -220,7 +220,7 @@ bool BaseCommon_c::checkParseReceived(const IsoName_c& rrefc_currentSender) cons
     ==> sends base data msg if configured in the needed rates
     possible errors:
       * dependant error in CanIo_c on CAN send problems
-    @param ri32_demandedExecEnd optional timestamp, where timeEvent shall return execution to calling function
+    @param ai32_demandedExecEnd optional timestamp, where timeEvent shall return execution to calling function
     @see CanPkg_c::getData
     @see CanPkgExt_c::getData
     @see CanIo_c::operator<<
@@ -318,15 +318,15 @@ bool BaseCommon_c::sendPgnRequest(uint32_t ui32_requestedPGN)
 /** check if preconditions for request for pgn are fullfilled
     @return  true -> the request for pgn can be send
   */
-bool BaseCommon_c::check4ReqForPgn(uint32_t /* rui32_pgn */, IsoItem_c* /*rpc_isoItemSender*/, IsoItem_c* rpc_isoItemReceiver)
+bool BaseCommon_c::check4ReqForPgn(uint32_t /* aui32_pgn */, IsoItem_c* /*apc_isoItemSender*/, IsoItem_c* apc_isoItemReceiver)
 {
   if ( NULL == getISOName() ) return false; // not configured for Send
   if ( ! getIsoMonitorInstance4Comm().existIsoMemberISOName( *getISOName(), true ) ) return false;
 
   // now we can be sure, that we are in tractor mode, and the registered tractor isoname
   // belongs to an already claimed IsoItem_c --> we are allowed to send
-  if ( ( rpc_isoItemReceiver == NULL ) ||
-  ( &getIsoMonitorInstance4Comm().isoMemberISOName( *getISOName() ) == rpc_isoItemReceiver ) )
+  if ( ( apc_isoItemReceiver == NULL ) ||
+  ( &getIsoMonitorInstance4Comm().isoMemberISOName( *getISOName() ) == apc_isoItemReceiver ) )
   { // the REQUEST was directed to GLOBAL or to the SA that belongs to the
     // tractor IdentItem_c that is matched by the registrated IsoName_c (getISOName())
     return true;

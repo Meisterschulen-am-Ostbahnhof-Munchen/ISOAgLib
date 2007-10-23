@@ -150,13 +150,13 @@ namespace HAL
 
   /**
     initialize one of the [0..0] digital input channels
-      @param rb_channel number of the digital input channel
+      @param ab_channel number of the digital input channel
       @param bMode input mode {DIGIN, RISING_EDGE, FALLING_EDGE, BOTH_EDGE}
       @param bAktivhighlow {HIGH_ACTIV, LOW_ACTIV}
       @param pfFunctionName adress of function which is called on input events (NULL -> none)
       @return error state (HAL_NO_ERR == o.k.)
   */
-  inline int16_t init_digin ( uint8_t rb_channel, uint8_t bMode,
+  inline int16_t init_digin ( uint8_t ab_channel, uint8_t bMode,
                               uint8_t bAktivhighlow, void (*pfFunctionName)() )
   {
     __HAL::enum_DigMode eMode;
@@ -177,7 +177,7 @@ namespace HAL
     {
       eMode = __HAL::BIOS_DIG_IO;
     } /* end else() */
-    return ( (__HAL::DjBios_DigInit ( rb_channel, eMode,
+    return ( (__HAL::DjBios_DigInit ( ab_channel, eMode,
            (bAktivhighlow == HIGH_ACTIV)? __HAL::BIOS_DIG_HIGH : __HAL::BIOS_DIG_LOW,
       pfFunctionName) == __HAL::BIOS_DIG_NO_ERR) ? HAL_NO_ERR : HAL_CONFIG_ERR );
   }
@@ -186,77 +186,77 @@ namespace HAL
   /**
     init counter for trigger events on digital input;
     rising edges are counted;
-      @param rb_channel input channel to use [0..15]
-      @param rui16_timebase timebase to calculate periods, frequency
+      @param ab_channel input channel to use [0..15]
+      @param aui16_timebase timebase to calculate periods, frequency
                          should be at least longer than longest
                          awaited signal period [msec.]
-      @param rb_activHigh true -> counter input is configured fo ACTIV_HIGH; else ACTIV_LOW
-      @param rb_risingEdge true -> counter triggers on rising edge; else on falling edge
+      @param ab_activHigh true -> counter input is configured fo ACTIV_HIGH; else ACTIV_LOW
+      @param ab_risingEdge true -> counter triggers on rising edge; else on falling edge
       @return C_NO_ERR if no error occured
   */
-  inline int16_t init_counter ( uint8_t rb_channel, uint16_t rui16_timebase,
-                                    bool rb_activHigh, bool rb_risingEdge )
+  inline int16_t init_counter ( uint8_t ab_channel, uint16_t aui16_timebase,
+                                    bool ab_activHigh, bool ab_risingEdge )
   {
-    return ( (__HAL::DjBios_CounterInit ( rb_channel, rui16_timebase,
-                             rb_activHigh ? __HAL::BIOS_DIG_HIGH : __HAL::BIOS_DIG_LOW,
-                             rb_risingEdge? __HAL::BIOS_DIG_HIGH : __HAL::BIOS_DIG_LOW) == __HAL::BIOS_DIG_NO_ERR) ? HAL_NO_ERR : HAL_CONFIG_ERR );
+    return ( (__HAL::DjBios_CounterInit ( ab_channel, aui16_timebase,
+                             ab_activHigh ? __HAL::BIOS_DIG_HIGH : __HAL::BIOS_DIG_LOW,
+                             ab_risingEdge? __HAL::BIOS_DIG_HIGH : __HAL::BIOS_DIG_LOW) == __HAL::BIOS_DIG_NO_ERR) ? HAL_NO_ERR : HAL_CONFIG_ERR );
   };
 
 
   /**
     get counter value of an digital counter input
-      @param rb_channel channel of counter [0..15]
+      @param ab_channel channel of counter [0..15]
       @return counter events since init or last reset
   */
-  inline uint32_t getCounter ( uint8_t rb_channel )
+  inline uint32_t getCounter ( uint8_t ab_channel )
   {
-    return ( __HAL::DjBios_CounterGetValue(rb_channel) );
+    return ( __HAL::DjBios_CounterGetValue(ab_channel) );
   };
 
 
   /**
     reset the given counter
-      @param rb_channel channel of counter [0..15]
-      @return C_NO_ERR ; C_RANGE if counter for rb_channel isn´t configured properly
+      @param ab_channel channel of counter [0..15]
+      @return C_NO_ERR ; C_RANGE if counter for ab_channel isn´t configured properly
   */
-  inline int16_t resetCounter ( uint8_t rb_channel )
+  inline int16_t resetCounter ( uint8_t ab_channel )
   {
-    return ( (__HAL::DjBios_CounterReset(rb_channel) == __HAL::BIOS_DIG_NO_ERR) ? HAL_NO_ERR : HAL_CONFIG_ERR );
+    return ( (__HAL::DjBios_CounterReset(ab_channel) == __HAL::BIOS_DIG_NO_ERR) ? HAL_NO_ERR : HAL_CONFIG_ERR );
   };
 
 
   /**
     get period of counter channel
-      @param rb_channel channel of counter [0..15]
+      @param ab_channel channel of counter [0..15]
       @return time between last two signals or 0xFFFF if time is longer than
             initially given timebase
   */
-  inline uint16_t getCounterPeriod ( uint8_t rb_channel )
+  inline uint16_t getCounterPeriod ( uint8_t ab_channel )
   {
-    return ( __HAL::DjBios_CounterGetPeriod(rb_channel) );
+    return ( __HAL::DjBios_CounterGetPeriod(ab_channel) );
   };
 
 
   /**
     get frequency of counter channel
-      @param rb_channel channel of counter [0..15]
+      @param ab_channel channel of counter [0..15]
       @return frequency calculated from time between last two signals
             or 0 if time is longer than initially given timebase
   */
-  inline uint16_t getCounterFrequency ( uint8_t rb_channel )
+  inline uint16_t getCounterFrequency ( uint8_t ab_channel )
   {
-    return ( __HAL::DjBios_CounterGetFreq(rb_channel) );
+    return ( __HAL::DjBios_CounterGetFreq(ab_channel) );
   };
 
 
   /**
     get time since last signal
-      @param rb_channel channel of counter
+      @param ab_channel channel of counter
       @return time since last signal [msec.]
   */
-  inline uint32_t getCounterLastSignalAge(uint8_t rb_channel)
+  inline uint32_t getCounterLastSignalAge(uint8_t ab_channel)
   {
-    return ( __HAL::DjBios_CounterGetAge(rb_channel) );
+    return ( __HAL::DjBios_CounterGetAge(ab_channel) );
   };
 
   /**
@@ -271,14 +271,14 @@ namespace HAL
 
   /**
     get the measured voltage value of a channel in [mV]
-      @param rb_channel measured channel
+      @param ab_channel measured channel
       @return voltage [0..18000] [mV] or HAL_RANGE_ERR on wrong input channel number
   */
-  inline int16_t  getAdcVoltage ( uint8_t rb_channel )
+  inline int16_t  getAdcVoltage ( uint8_t ab_channel )
   {
     int16_t Value;
 
-    Value = __HAL::DjBios_AnalogGetVolts ( rb_channel );
+    Value = __HAL::DjBios_AnalogGetVolts ( ab_channel );
     return ( Value < 0 ? HAL_RANGE_ERR : Value );
 //    return ( 0 );                               /* TBD - Not yet supported */
   };
@@ -286,14 +286,14 @@ namespace HAL
 
   /**
     get the MEDIUM of measured voltage value of a channel in [mV]
-      @param rb_channel measured channel
+      @param ab_channel measured channel
       @return voltage [0..18000] [mV] or HAL_RANGE_ERR on wrong input channel number
   */
-  inline int16_t  getAdcMeanVoltage ( uint8_t rb_channel )
+  inline int16_t  getAdcMeanVoltage ( uint8_t ab_channel )
   {
     int16_t Value;
 
-    Value = __HAL::DjBios_AnalogGetVoltsFilter ( rb_channel );
+    Value = __HAL::DjBios_AnalogGetVoltsFilter ( ab_channel );
     return ( Value < 0 ? HAL_RANGE_ERR : Value );
 //    return ( 0 );                      /* TBD - Not yet supported (c2c) 1ms scan, 5ms Avg */
   };
@@ -301,10 +301,10 @@ namespace HAL
 
   /**
     get the measured current value of a channel in [uA]
-    @param rb_channel measured channel
+    @param ab_channel measured channel
     @return current [4000..20000] [uA] or HAL_RANGE_ERR on wrong input channel number
   */
-  inline int16_t getAdcCurrent ( uint8_t rb_channel )
+  inline int16_t getAdcCurrent ( uint8_t ab_channel )
   {
     return HAL_RANGE_ERR;  /* Not supported */
   };
@@ -312,10 +312,10 @@ namespace HAL
 
   /**
     get the MEDIUM of measured current value of a channel in [uA]
-    @param rb_channel measured channel
+    @param ab_channel measured channel
     @return current [4000..20000] [uA] or HAL_RANGE_ERR on wrong input channel number
   */
-  inline int16_t  getAdcMeanCurrent ( uint8_t rb_channel )
+  inline int16_t  getAdcMeanCurrent ( uint8_t ab_channel )
   {
     return HAL_RANGE_ERR;   /* Not supported */
   };
@@ -323,10 +323,10 @@ namespace HAL
 
   /**
     get the diagnose ADC value from specified DIGITAL INPUT channel
-    @param rb_channel channel number [0..15]
+    @param ab_channel channel number [0..15]
     @return ADC diagnose voltage [ or HAL_RANGE_ERR on wrong input channel number
   */
-  inline int16_t  getDiginDiagnoseAdc ( uint8_t rb_channel )
+  inline int16_t  getDiginDiagnoseAdc ( uint8_t ab_channel )
   {
     return HAL_RANGE_ERR;   /* Not supported */
   };
@@ -345,13 +345,13 @@ namespace HAL
 
   /**
     deliver frequency of digital interrupt channel
-      @param rb_channelNumber input channel number [DIN1..DIN16]
+      @param ab_channelNumber input channel number [DIN1..DIN16]
       @param b_useVirtual (default false) use virtual calculated
              value, if last trigger is lasted longer than last period
              -> virt_val uses time from last trigger to actual time
       @return frequency of triggered events [mHz] or BIOS_WARN on too less impulses
   */
-  inline uint16_t getDiginFreq ( uint8_t rb_channelNumber, bool b_useVirtual = false )
+  inline uint16_t getDiginFreq ( uint8_t ab_channelNumber, bool b_useVirtual = false )
   {
     /* Frequency Estimation on inputs configured for Digital is not supported.
        Use Counter configuration.  Channel may be configured for counter and
@@ -365,12 +365,12 @@ namespace HAL
   /**
     deliver state of digital input based on Activ-High/Low setting
     (evalutation of sensor signals independent from switching type)
-    @param rb_channelNumber input channel number [DIN1..DIN16]
+    @param ab_channelNumber input channel number [DIN1..DIN16]
     @return ON, OFF or HAL_RANGE_ERR
   */
-  inline int16_t getDiginOnoff ( uint8_t rb_channelNumber )
+  inline int16_t getDiginOnoff ( uint8_t ab_channelNumber )
   {
-    __HAL::enum_DigActive Value = __HAL::DjBios_DigGetState ( rb_channelNumber );
+    __HAL::enum_DigActive Value = __HAL::DjBios_DigGetState ( ab_channelNumber );
     if ( Value == __HAL::BIOS_DIG_ACTIVE )
     {
       return ( ON );
@@ -389,12 +389,12 @@ namespace HAL
   /**
     deliver debounced state of digital input based on Activ-High/Low setting
     (evalutation of sensor signals independent from switching type)
-      @param rb_channelNumber input channel number [DIN1..DIN16]
+      @param ab_channelNumber input channel number [DIN1..DIN16]
       @return ON, OFF or HAL_RANGE_ERR
   */
-  inline int16_t getDiginOnoffStatic ( uint8_t rb_channelNumber )
+  inline int16_t getDiginOnoffStatic ( uint8_t ab_channelNumber )
   {
-    __HAL::enum_DigActive Value = __HAL::DjBios_DigGetStateDebounce ( rb_channelNumber );
+    __HAL::enum_DigActive Value = __HAL::DjBios_DigGetStateDebounce ( ab_channelNumber );
     if ( Value == __HAL::BIOS_DIG_ACTIVE )
     {
       return ( ON );

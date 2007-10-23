@@ -79,16 +79,16 @@ public:
         * Err_c::unspecified Bios calls for TaskTimer, Relais or StayAlive caused an error
     @return true -> everything without errors initialised
   */
-  bool init( bool rb_forceReinit = false, SystemPowerdownStrategy_t rt_strategy = CONFIG_DEFAULT_POWERDOWN_STRATEGY ) { return System_c::init(rb_forceReinit, rt_strategy);};
+  bool init( bool ab_forceReinit = false, SystemPowerdownStrategy_t at_strategy = CONFIG_DEFAULT_POWERDOWN_STRATEGY ) { return System_c::init(ab_forceReinit, at_strategy);};
 	/**
 		default behaviour of IsoAgLib is to activate power hold, so that
 		the application can decide on its own, if a CAN_EN loss shall cause
 		a power down of the target. This allows to inhibit stop of application
 		on short power supply voltage low bursts.
-		@param rt_strategy PowerdownByExplcitCall -> stop system only on explicit call of System_c::close()
+		@param at_strategy PowerdownByExplcitCall -> stop system only on explicit call of System_c::close()
 		                   PowerdownOnCanEnLoss   -> let BIOS/OS automatically switch off on CAN_EN loss
 	*/
-	void setPowerdownStrategy( SystemPowerdownStrategy_t rt_strategy ) { System_c::setPowerdownStrategy( rt_strategy );};
+	void setPowerdownStrategy( SystemPowerdownStrategy_t at_strategy ) { System_c::setPowerdownStrategy( at_strategy );};
   /** every subsystem of IsoAgLib has explicit function for controlled shutdown
     * the call of System_c::close() stimulates final shutdown of power
     */

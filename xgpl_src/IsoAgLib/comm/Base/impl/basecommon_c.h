@@ -130,20 +130,20 @@ namespace __IsoAgLib
         above all create the needed FilterBox_c instances
         possible errors:
           * dependant error in CanIo_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
-        @param rpc_isoName optional pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
+        @param apc_isoName optional pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
         @param ai_singletonVecKey singleton vector key in case PRT_INSTANCE_CNT > 1
-        @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
+        @param at_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       */
-    virtual void init_base (const IsoName_c*, int ai_singletonVecKey, IsoAgLib::IdentMode_t rt_identMode = IsoAgLib::IdentModeImplement);
+    virtual void init_base (const IsoName_c*, int ai_singletonVecKey, IsoAgLib::IdentMode_t at_identMode = IsoAgLib::IdentModeImplement);
 
     /** tractor object after init --> store isoName and mode
         this function was originally named "config", but to avoid warnings with the interface classes'
         "config" function this one is now named "config_base". It's simply not clean to name interface
         functions to virtual functions the same!
-        @param rpc_isoName pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
-        @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
+        @param apc_isoName pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
+        @param at_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       */
-    virtual bool config_base (const IsoName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode = IsoAgLib::IdentModeImplement, uint16_t rui16_suppressMask = 0);
+    virtual bool config_base (const IsoName_c* apc_isoName, IsoAgLib::IdentMode_t at_identMode = IsoAgLib::IdentModeImplement, uint16_t aui16_suppressMask = 0);
 
      /** deliver reference to data pkg
          @return reference to the member CanPkg, which encapsulates the CAN send structure
@@ -174,7 +174,7 @@ namespace __IsoAgLib
     /** check if preconditions for request for pgn are fullfilled
         @return  true -> the request for pgn can be send
       */
-    virtual bool check4ReqForPgn(uint32_t rui32_pgn, IsoItem_c* rpc_isoItemSender, IsoItem_c* rpc_isoItemReceiver);
+    virtual bool check4ReqForPgn(uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver);
 
     /** send a ISO11783 base information PGN.
       * this is only called when sending ident is configured and it has already claimed an address
@@ -196,10 +196,10 @@ namespace __IsoAgLib
     void setUpdateTime(int32_t updateTime) {i32_lastMsgReceived = updateTime;}
 
     /** check if a received message should be parsed */
-    bool checkParseReceived(const IsoName_c& rrefc_currentSender) const;
+    bool checkParseReceived(const IsoName_c& arc_currentSender) const;
 
     /** return if you currently are in implement mode or tractor mode*/
-    bool checkMode(IsoAgLib::IdentMode_t rt_identMode) const {return (t_identMode == rt_identMode);}
+    bool checkMode(IsoAgLib::IdentMode_t at_identMode) const {return (t_identMode == at_identMode);}
 
     /** check if iso filters have alread been created*/
     bool checkFilterCreated() const {return b_filterCreated;}
@@ -223,10 +223,10 @@ namespace __IsoAgLib
     IsoAgLib::IdentMode_t getMode() const {return t_identMode;}
 
     /** set mode to implement or tractor*/
-    void setMode(IsoAgLib::IdentMode_t rt_identMode) {t_identMode = rt_identMode;}
+    void setMode(IsoAgLib::IdentMode_t at_identMode) {t_identMode = at_identMode;}
 
     /** set Devkey of data source (e.g. tractor, terminal) which sends commands exclusively */
-    void setSelectedDataSourceISOName(const IsoName_c& rc_dataSourceISOName){c_selectedDataSourceISOName = rc_dataSourceISOName;}
+    void setSelectedDataSourceISOName(const IsoName_c& ac_dataSourceISOName){c_selectedDataSourceISOName = ac_dataSourceISOName;}
 
     /** if a message is not send after 3 seconds it is expected that the sending node stopped sending */
     static const uint16_t TIMEOUT_SENDING_NODE = 3000;

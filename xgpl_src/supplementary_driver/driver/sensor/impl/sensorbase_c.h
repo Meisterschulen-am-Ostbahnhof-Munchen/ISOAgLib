@@ -107,20 +107,20 @@ class SensorBase_c {
 public:
   /**
     Basic constructor for an input channel object (only internal accessed)
-    @param rui8_channelNr hardware channel of this input object
+    @param aui8_channelNr hardware channel of this input object
     @param ren_inputType input type, which is needed because of the relation
            of config number and gathering number which vary dependent on input type
     @see Sensor_c::input_type
   */
-  SensorBase_c(uint8_t rui8_channelNr, Sensor_c::inputType_t ren_inputType = Sensor_c::undef_input);
+  SensorBase_c(uint8_t aui8_channelNr, Sensor_c::inputType_t ren_inputType = Sensor_c::undef_input);
   /**
     Basic constructor for an input channel object (only internal accessed)
-    @param rui8_channelNr hardware channel of this input object
+    @param aui8_channelNr hardware channel of this input object
     @param ren_inputType input type, which is needed because of the relation
            of config number and gathering number which vary dependent on input type
     @see Sensor_c::input_type
   */
-  void init(uint8_t rui8_channelNr, Sensor_c::inputType_t ren_inputType = Sensor_c::undef_input);
+  void init(uint8_t aui8_channelNr, Sensor_c::inputType_t ren_inputType = Sensor_c::undef_input);
   /** basic destructor of sensor input object with no function at the moment (only internal accessed) */
   virtual ~SensorBase_c();
   /**

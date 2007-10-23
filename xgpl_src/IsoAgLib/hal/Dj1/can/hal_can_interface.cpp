@@ -81,19 +81,19 @@ namespace __HAL
   /**
     Get the Elaped time since the last sent message for the given 
     message object
-      @param rui8_busNr number of the BUS to check
-      @param rui8_msgobjNr number of the MsgObj to check
+      @param aui8_busNr number of the BUS to check
+      @param aui8_msgobjNr number of the MsgObj to check
       @return elapse_time  number of ms since last message on object
   */
-  int32_t Can_TxObjElapseTime ( uint8_t rui8_busNr, uint8_t rui8_msgobjNr )
+  int32_t Can_TxObjElapseTime ( uint8_t aui8_busNr, uint8_t aui8_msgobjNr )
   {
-    int32_t LastTime = __HAL::DjBios_CanObjTxTimeStamp ( rui8_busNr, rui8_msgobjNr );
+    int32_t LastTime = __HAL::DjBios_CanObjTxTimeStamp ( aui8_busNr, aui8_msgobjNr );
     int32_t Now = __HAL::DjBios_TimeGetNow();
 
     /* If there is nothing in the Queue waiting to be sent, the time must be 
        zero.  This is really a time that the message has been waiting in 
        the queue */
-    if ( DjBios_CanObjBufCount(rui8_busNr, rui8_msgobjNr) > 0 )
+    if ( DjBios_CanObjBufCount(aui8_busNr, aui8_msgobjNr) > 0 )
     {
       if ( Now >= LastTime )
       {
@@ -114,15 +114,15 @@ namespace __HAL
   /**
     deliver amount of messages in buffer
     (interesting for RX objects)
-    @param rui8_busNr number of the BUS to check
-    @param rui8_msgobjNr number of the MsgObj to check
+    @param aui8_busNr number of the BUS to check
+    @param aui8_msgobjNr number of the MsgObj to check
     @return number of messages in buffer or negative error code:
       HAL_CONFIG_ERR == BUS not initialised
       HAL_RANGE_ERR == wrong BUS or MsgObj number
   */
-  uint16_t Can_ObjBufferCount ( uint8_t rui8_busNr, uint8_t rui8_msgobjNr )
+  uint16_t Can_ObjBufferCount ( uint8_t aui8_busNr, uint8_t aui8_msgobjNr )
   {
-    uint16_t Count = __HAL::DjBios_CanObjBufCount ( rui8_busNr, rui8_msgobjNr );
+    uint16_t Count = __HAL::DjBios_CanObjBufCount ( aui8_busNr, aui8_msgobjNr );
 
     if ( Count == (uint16_t)BIOS_CAN_BAD_BUS || Count == (uint16_t)BIOS_CAN_BAD_OBJ )
     {
@@ -141,15 +141,15 @@ namespace __HAL
   /**
     deliver amount of messages which can be placed in buffer
     (interesting for TX objects)
-    @param rui8_busNr number of the BUS to check
-    @param rui8_msgobjNr number of the MsgObj to check
+    @param aui8_busNr number of the BUS to check
+    @param aui8_msgobjNr number of the MsgObj to check
     @return number of messages which can be placed in buffer or negative error code:
       HAL_CONFIG_ERR == BUS not initialised
       HAL_RANGE_ERR == wrong BUS or MsgObj number
   */
-  int16_t Can_ObjBufferSpace ( uint8_t rui8_busNr, uint8_t rui8_msgobjNr )
+  int16_t Can_ObjBufferSpace ( uint8_t aui8_busNr, uint8_t aui8_msgobjNr )
   {
-    uint16_t Count = __HAL::DjBios_CanObjBufSpace ( rui8_busNr, rui8_msgobjNr );
+    uint16_t Count = __HAL::DjBios_CanObjBufSpace ( aui8_busNr, aui8_msgobjNr );
 
     if ( Count == (uint16_t)BIOS_CAN_BAD_BUS || Count == (uint16_t)BIOS_CAN_BAD_OBJ )
     {
@@ -167,20 +167,20 @@ namespace __HAL
   /**
     init CAN BUS with given baudrate and masks
     (11bit, 29bit and last msg mask)
-    @param rui8_busNr number of the BUS to init (default 0)
-    @param rb_baudrate baudrate in [kbaud]
-    @param rui16_maskStd 11bit global mask
-    @param rui32_maskExt 29bit global mask
-    @param rui32_maskLastmsg mask of last CAN msg
+    @param aui8_busNr number of the BUS to init (default 0)
+    @param ab_baudrate baudrate in [kbaud]
+    @param aui16_maskStd 11bit global mask
+    @param aui32_maskExt 29bit global mask
+    @param aui32_maskLastmsg mask of last CAN msg
     @return HAL_NO_ERR == no error;
             HAL_RANGE_ERR == wrong BUS nr or wrong baudrate;
             HAL_WARN_ERR == BUS previously initialised - no problem if only masks had to be changed
   */
-  int16_t Can_GlobalInit  ( uint8_t rui8_busNr, uint16_t rb_baudrate, 
-              uint16_t rb_maskStd, uint32_t rui32_maskExt, uint32_t rui32_maskLastmsg )
+  int16_t Can_GlobalInit  ( uint8_t aui8_busNr, uint16_t ab_baudrate, 
+              uint16_t ab_maskStd, uint32_t aui32_maskExt, uint32_t aui32_maskLastmsg )
   { 
-    int16_t Code = __HAL::DjBios_CanOpen ( rui8_busNr, rb_baudrate, rb_maskStd,
-                                     rui32_maskExt, rui32_maskLastmsg );
+    int16_t Code = __HAL::DjBios_CanOpen ( aui8_busNr, ab_baudrate, ab_maskStd,
+                                     aui32_maskExt, aui32_maskLastmsg );
 
     if ( Code == BIOS_CAN_BAD_BUS || Code == BIOS_CAN_BAD_RATE )
     {
@@ -202,18 +202,18 @@ namespace __HAL
   /**
     set the global masks
     (11bit, 29bit and last msg mask)
-    @param rui8_busNr number of the BUS to config (default 0)
-    @param rui16_maskStd 11bit global mask
-    @param rui32_maskExt 29bit global mask
-    @param rui32_maskLastmsg mask of last CAN msg
+    @param aui8_busNr number of the BUS to config (default 0)
+    @param aui16_maskStd 11bit global mask
+    @param aui32_maskExt 29bit global mask
+    @param aui32_maskLastmsg mask of last CAN msg
     @return HAL_NO_ERR == no error
             HAL_RANGE_ERR == wrong BUS number
   */
-  int16_t Can_GlobalMask ( uint8_t rui8_busNr, uint16_t rb_maskStd, 
-                           uint32_t rui32_maskExt, uint32_t rui32_maskLastmsg )
+  int16_t Can_GlobalMask ( uint8_t aui8_busNr, uint16_t ab_maskStd, 
+                           uint32_t aui32_maskExt, uint32_t aui32_maskLastmsg )
   {
-    int16_t Code = __HAL::DjBios_CanConfig ( rui8_busNr, rb_maskStd,
-                                          rui32_maskExt, rui32_maskLastmsg );
+    int16_t Code = __HAL::DjBios_CanConfig ( aui8_busNr, ab_maskStd,
+                                          aui32_maskExt, aui32_maskLastmsg );
 
     if ( Code == BIOS_CAN_BAD_BUS )
     {
@@ -235,14 +235,14 @@ namespace __HAL
   /**
     close CAN BUS
     (important to close BUS before re-init with other baudrate)
-    @param rui8_busNr number of the BUS to close (default 0)
+    @param aui8_busNr number of the BUS to close (default 0)
     @return HAL_NO_ERR == no error
             HAL_RANGE_ERR == wrong BUS number
             HAL_CONFIG_ERR == BUS previously not initialised
   */
-  int16_t Can_Close ( uint8_t rui8_busNr )
+  int16_t Can_Close ( uint8_t aui8_busNr )
   {
-    int16_t Code = __HAL::DjBios_CanClose ( rui8_busNr );
+    int16_t Code = __HAL::DjBios_CanClose ( aui8_busNr );
 
     if ( Code == BIOS_CAN_BAD_BUS )
     {
@@ -266,32 +266,32 @@ namespace __HAL
     (buffer size is defined locally in implementation of this interface;
     all received msgs should get a time stamp;
     class Ident_c has ident and type 11/29bit)
-    @param rui8_busNr number of the BUS to config
-    @param rui8_msgobjNr number of the MsgObj to config
+    @param aui8_busNr number of the BUS to config
+    @param aui8_msgobjNr number of the MsgObj to config
     @param Ident filter ident value of this MsgObj
     @param Type  0=Std, 1=Ext, 2=Both  (Both goes to extended)
-    @param rb_rxtx 0==RX receive; 1==TX transmit
+    @param ab_rxtx 0==RX receive; 1==TX transmit
     @return HAL_NO_ERR == no error;
             HAL_BUSY_ERR == this MsgObj is already used
             HAL_CONFIG_ERR == BUS not initialised or error during buffer allocation
             HAL_RANGE_ERR == wrong BUS or MsgObj number
   */
-  int16_t Can_ObjectInit ( uint8_t rui8_busNr, uint8_t rui8_msgobjNr, 
-                            __IsoAgLib::Ident_c& rrefc_ident, uint8_t rb_rxtx )
+  int16_t Can_ObjectInit ( uint8_t aui8_busNr, uint8_t aui8_msgobjNr, 
+                            __IsoAgLib::Ident_c& arc_ident, uint8_t ab_rxtx )
   {
 
-//  if (rrefc_ident.identType() == __IsoAgLib::Ident_c::BothIdent)
+//  if (arc_ident.identType() == __IsoAgLib::Ident_c::BothIdent)
 //    pt_config->bXtd = DEFAULT_IDENT_TYPE;
 //  else 
-//    pt_config->bXtd = rrefc_ident.identType();
+//    pt_config->bXtd = arc_ident.identType();
 
 
-    uint32_t Ident = rrefc_ident.ident();
-    uint8_t  Type  = rrefc_ident.identType();
+    uint32_t Ident = arc_ident.ident();
+    uint8_t  Type  = arc_ident.identType();
 
-    int16_t Code = __HAL::DjBios_CanObjConfig ( rui8_busNr, rui8_msgobjNr, Ident, 
-                                         (Type==0)?BIOS_FALSE:BIOS_TRUE, (rb_rxtx==1)?BIOS_TRUE:BIOS_FALSE,
-                                         (rb_rxtx==1)?CONFIG_CAN_SEND_BUFFER_SIZE:CONFIG_CAN_HIGH_LOAD_REC_BUF_SIZE_MIN );
+    int16_t Code = __HAL::DjBios_CanObjConfig ( aui8_busNr, aui8_msgobjNr, Ident, 
+                                         (Type==0)?BIOS_FALSE:BIOS_TRUE, (ab_rxtx==1)?BIOS_TRUE:BIOS_FALSE,
+                                         (ab_rxtx==1)?CONFIG_CAN_SEND_BUFFER_SIZE:CONFIG_CAN_HIGH_LOAD_REC_BUF_SIZE_MIN );
 
     if ( Code == BIOS_CAN_BAD_BUS || Code == BIOS_CAN_BAD_OBJ )
     {
@@ -317,20 +317,20 @@ namespace __HAL
   /**
     change the Ident_c of an already initialised MsgObj
     (class __IsoAgLib::Ident_c has ident and type 11/29bit)
-    @param rui8_busNr number of the BUS to config
-    @param rui8_msgobjNr number of the MsgObj to config
+    @param aui8_busNr number of the BUS to config
+    @param aui8_msgobjNr number of the MsgObj to config
     @param Ident filter ident value of this MsgObj
     @param Type  0=Std, 1=Ext, 2=Both  (Both goes to extended)
     @return HAL_NO_ERR == no error;
             HAL_CONFIG_ERR == BUS not initialised or ident can't be changed
             HAL_RANGE_ERR == wrong BUS or MsgObj number
   */
-  int16_t Can_ObjectChange ( uint8_t rui8_busNr, uint8_t rui8_msgobjNr, 
-                                              __IsoAgLib::Ident_c& rrefc_ident )
+  int16_t Can_ObjectChange ( uint8_t aui8_busNr, uint8_t aui8_msgobjNr, 
+                                              __IsoAgLib::Ident_c& arc_ident )
   {
-    uint32_t Ident = rrefc_ident.ident();
-    uint8_t  Type  = rrefc_ident.identType();
-    int16_t Code = __HAL::DjBios_CanObjChangeIdent ( rui8_busNr, rui8_msgobjNr, Ident, 
+    uint32_t Ident = arc_ident.ident();
+    uint8_t  Type  = arc_ident.identType();
+    int16_t Code = __HAL::DjBios_CanObjChangeIdent ( aui8_busNr, aui8_msgobjNr, Ident, 
                                                (Type==0)?BIOS_FALSE:BIOS_TRUE);
 
     if ( Code == BIOS_CAN_BAD_BUS || Code == BIOS_CAN_BAD_OBJ )
@@ -353,15 +353,15 @@ namespace __HAL
 
   /**
     close a MsgObj
-    @param rui8_busNr number of the BUS to config
-    @param rui8_msgobjNr number of the MsgObj to config
+    @param aui8_busNr number of the BUS to config
+    @param aui8_msgobjNr number of the MsgObj to config
     @return HAL_NO_ERR == no error;
             HAL_CONFIG_ERR == BUS not initialised, MsgObj previously not used or buffer memory not freed
             HAL_RANGE_ERR == wrong BUS or MsgObj number
   */
-  int16_t Can_ObjClose ( uint8_t rui8_busNr, uint8_t rui8_msgobjNr )
+  int16_t Can_ObjClose ( uint8_t aui8_busNr, uint8_t aui8_msgobjNr )
   {
-    int16_t Code = __HAL::DjBios_CanObjClose ( rui8_busNr, rui8_msgobjNr );
+    int16_t Code = __HAL::DjBios_CanObjClose ( aui8_busNr, aui8_msgobjNr );
 
     if ( Code == BIOS_CAN_BAD_BUS || Code == BIOS_CAN_BAD_OBJ )
     {
@@ -385,25 +385,25 @@ namespace __HAL
     CanPkg_c (or derived object) must provide (virtual)
     functions:
     * Ident_c& getIdent() -> deliver ident of msg to send
-    * uint8_t getData(uint8_t& refb_dlc, uint8_t* pb_data)
-      -> put DLC in referenced ref_dlc and insert data in uint8_t string pb_data
-    @param rui8_busNr number of the BUS to config
-    @param rui8_msgobjNr number of the MsgObj to config
-    @param rpc_data pointer to CanPkg_c instance with data to send
+    * uint8_t getData(uint8_t& rb_dlc, uint8_t* pb_data)
+      -> put DLC in referenced r_dlc and insert data in uint8_t string pb_data
+    @param aui8_busNr number of the BUS to config
+    @param aui8_msgobjNr number of the MsgObj to config
+    @param apc_data pointer to CanPkg_c instance with data to send
     @return HAL_NO_ERR == no error;
             HAL_CONFIG_ERR == BUS not initialised, MsgObj is no send object
             HAL_NOACT_ERR == BUS OFF
             HAL_OVERFLOW_ERR == send buffer overflowed
             HAL_RANGE_ERR == wrong BUS or MsgObj number
   */
-  int16_t Can_ObjSend ( uint8_t rui8_busNr, uint8_t rui8_msgobjNr, 
-                                             __IsoAgLib::CanPkg_c* rpc_data )
+  int16_t Can_ObjSend ( uint8_t aui8_busNr, uint8_t aui8_msgobjNr, 
+                                             __IsoAgLib::CanPkg_c* apc_data )
   {
     static struct_CanMsg Msg;
 
-    rpc_data->getData(Msg.ID, Msg.Ext, Msg.Length, Msg.Data);
+    apc_data->getData(Msg.ID, Msg.Ext, Msg.Length, Msg.Data);
 
-    int16_t Code = __HAL::DjBios_CanObjSend ( rui8_busNr, rui8_msgobjNr, &Msg );
+    int16_t Code = __HAL::DjBios_CanObjSend ( aui8_busNr, aui8_msgobjNr, &Msg );
 
     if ( Code == BIOS_CAN_BAD_BUS || Code == BIOS_CAN_BAD_OBJ )
     {
@@ -433,8 +433,8 @@ namespace __HAL
   /**
     get the ident of a received message to decide about the further
     processing before the whole data string is retreived
-    @param rui8_busNr number of the BUS to config
-    @param rui8_msgobjNr number of the MsgObj to config
+    @param aui8_busNr number of the BUS to config
+    @param aui8_msgobjNr number of the MsgObj to config
     @param reflIdent reference to the var, where the ident should be inserted
     @return HAL_NO_ERR       == No problem
             HAL_CONFIG_ERR   == BUS not initialised, MsgObj is no RX object
@@ -443,13 +443,13 @@ namespace __HAL
             HAL_RANGE_ERR    == wrong BUS or MsgObj number
             HAL_WARN_ERR     == BUS WARN or no received message
   */
-  int32_t Can_ReadObjRxIdent ( uint8_t rui8_busNr, uint8_t rui8_msgobjNr, 
+  int32_t Can_ReadObjRxIdent ( uint8_t aui8_busNr, uint8_t aui8_msgobjNr, 
                                                           int32_t &reflIdent )
   {
     static struct_CanMsg Msg;
 
     /* Get the message and leave it in the buffer */
-    int16_t Code = __HAL::DjBios_CanObjRead ( rui8_busNr, rui8_msgobjNr, &Msg );
+    int16_t Code = __HAL::DjBios_CanObjRead ( aui8_busNr, aui8_msgobjNr, &Msg );
 
     if ( Code == BIOS_CAN_NO_ERR || 
          Code == BIOS_CAN_Q_OVERFLOW || 
@@ -493,13 +493,13 @@ namespace __HAL
     DON'T clear this item from buffer.
     @see can_useMsgobjPopFront for explicit clear of this front item
     functions:
-    * setIdent(Ident_c& rrefc_ident)
-      -> set ident rrefc_ident of received msg in CANPkg
-    * uint8_t setData(uint8_t rb_dlc, uint8_t* rpb_data)
-      -> set DLC in CanPkg_c from rb_dlc and insert data from uint8_t string rpb_data
-    @param rui8_busNr number of the BUS to config
-    @param rui8_msgobjNr number of the MsgObj to config
-    @param rpc_data pointer to CanPkg_c instance with data to send
+    * setIdent(Ident_c& arc_ident)
+      -> set ident arc_ident of received msg in CANPkg
+    * uint8_t setData(uint8_t ab_dlc, uint8_t* apb_data)
+      -> set DLC in CanPkg_c from ab_dlc and insert data from uint8_t string apb_data
+    @param aui8_busNr number of the BUS to config
+    @param aui8_msgobjNr number of the MsgObj to config
+    @param apc_data pointer to CanPkg_c instance with data to send
     @return HAL_NO_ERR       == no error;
             HAL_CONFIG_ERR   == BUS not initialised, MsgObj is no RX object
             HAL_NOACT_ERR    == BUS OFF
@@ -507,12 +507,12 @@ namespace __HAL
             HAL_RANGE_ERR    == wrong BUS or MsgObj number
             HAL_WARN_ERR     == BUS WARN or no received message
   */
-  int16_t Can_ReadObjRx ( uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib::CanPkg_c* rpc_data )
+  int16_t Can_ReadObjRx ( uint8_t aui8_busNr, uint8_t aui8_msgobjNr, __IsoAgLib::CanPkg_c* apc_data )
   {
     static struct_CanMsg Msg;
 
     /* Get the message and leave it in the buffer */
-    int16_t Code = __HAL::DjBios_CanObjRead ( rui8_busNr, rui8_msgobjNr, &Msg );
+    int16_t Code = __HAL::DjBios_CanObjRead ( aui8_busNr, aui8_msgobjNr, &Msg );
 
     /* return Message values */
 
@@ -521,19 +521,19 @@ namespace __HAL
          Code == BIOS_CAN_BUS_WARN )
     {
       /* load the message */
-      // rpc_data->setTime(Msg.Time);
+      // apc_data->setTime(Msg.Time);
       // CanPkg_c::setTime changed to static
       __IsoAgLib::CanPkg_c::setTime(Msg.Time);
 
       __IsoAgLib::Ident_c::identType_t idType;
       idType = (Msg.Ext == 1) ? __IsoAgLib::Ident_c::ExtendedIdent : __IsoAgLib::Ident_c::StandardIdent;
 
-      // rpc_data->setIdent(Msg.ID, idType);
+      // apc_data->setIdent(Msg.ID, idType);
       // CanPkg_c::setIdent changed to static member function
       __IsoAgLib::CanPkg_c::setIdent(Msg.ID, idType);
 
-// IsoAgLib Update 28Sept      rpc_data->setDataString(Msg.Data, Msg.Length);
-      rpc_data->setDataFromString(Msg.Data, Msg.Length);
+// IsoAgLib Update 28Sept      apc_data->setDataString(Msg.Data, Msg.Length);
+      apc_data->setDataFromString(Msg.Data, Msg.Length);
     } /* end if() */
 
     if ( Code == BIOS_CAN_BAD_BUS || Code == BIOS_CAN_BAD_OBJ )
@@ -562,16 +562,16 @@ namespace __HAL
 
   /**
     clear the buffer of a MsgObj (e.g. to stop sending retries)
-    @param rui8_busNr number of the BUS to config
-    @param rui8_msgobjNr number of the MsgObj to config
+    @param aui8_busNr number of the BUS to config
+    @param aui8_msgobjNr number of the MsgObj to config
     @return HAL_NO_ERR == no error;
             HAL_CONFIG_ERR == BUS not initialised
             HAL_RANGE_ERR == wrong BUS or MsgObj number
   */
-  int16_t Can_PurgeObj ( uint8_t rui8_busNr, uint8_t rui8_msgobjNr )
+  int16_t Can_PurgeObj ( uint8_t aui8_busNr, uint8_t aui8_msgobjNr )
   {
     /* Clear the recieve buffer */
-    int16_t Code = __HAL::DjBios_CanObjPurge ( rui8_busNr, rui8_msgobjNr );
+    int16_t Code = __HAL::DjBios_CanObjPurge ( aui8_busNr, aui8_msgobjNr );
 
     if ( Code == BIOS_CAN_BAD_BUS || Code == BIOS_CAN_BAD_OBJ )
     {
@@ -589,7 +589,7 @@ namespace __HAL
     return ( Code );
   }
 
-  int32_t can_getMaxSendDelay ( uint8_t rui8_busNr )
+  int32_t can_getMaxSendDelay ( uint8_t aui8_busNr )
   {
     /* Clear the recieve buffer */
     int32_t Code = 0;

@@ -116,9 +116,9 @@ public:
   uint32_t fitTerminal() const;
 
   //  Operation: setValue
-  //! @param rpc_newObject:
+  //! @param apc_newObject:
   //! @param b_updateObject:
-  void setValue(IsoAgLib::iVtObject_c* rpc_newObject, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
+  void setValue(IsoAgLib::iVtObject_c* apc_newObject, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
 
   //  Operation: setOriginSKM
   //! @param b_SKM:

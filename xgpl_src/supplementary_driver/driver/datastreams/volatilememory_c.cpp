@@ -101,10 +101,10 @@ VolatileMemory_c::operator >>(uint8_t& ui8_data)
 
 
 const VolatileMemory_c&
-VolatileMemory_c::operator = (const VolatileMemory_c& rrefc_src)
+VolatileMemory_c::operator = (const VolatileMemory_c& arc_src)
 {
-  p_volatileMemory = rrefc_src.p_volatileMemory;
-  return rrefc_src;
+  p_volatileMemory = arc_src.p_volatileMemory;
+  return arc_src;
 }
 
 

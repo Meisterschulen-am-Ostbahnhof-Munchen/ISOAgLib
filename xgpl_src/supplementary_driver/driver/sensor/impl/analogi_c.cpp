@@ -97,14 +97,14 @@ namespace __IsoAgLib {
       * iLibErr_c::Precondition wrong input type
   @see SensorI_c::createAnalog
   @see Sensor_c::t_analogType
-  @param rb_channel default-argument for the hardware channel of the input
+  @param ab_channel default-argument for the hardware channel of the input
   @param ren_analogType default-argument for choosing Sensor_c::voltage(default) or Sensor_c::current as input type
-  @param rb_useMean default-argument for setting the calculation of mean value on true (false as default)
-  @param rb_fastAdc default-argument for setting fast ADC method (false as default)
+  @param ab_useMean default-argument for setting the calculation of mean value on true (false as default)
+  @param ab_fastAdc default-argument for setting fast ADC method (false as default)
 */
-AnalogI_c::AnalogI_c(uint8_t rb_channel, Sensor_c::analogType_t ren_analogType, bool rb_useMean, bool rb_fastAdc )
-  : SensorBase_c(rb_channel, Sensor_c::analog) {
-  if ( rb_channel != 0xFF ) init( rb_channel, ren_analogType, rb_useMean, rb_fastAdc );
+AnalogI_c::AnalogI_c(uint8_t ab_channel, Sensor_c::analogType_t ren_analogType, bool ab_useMean, bool ab_fastAdc )
+  : SensorBase_c(ab_channel, Sensor_c::analog) {
+  if ( ab_channel != 0xFF ) init( ab_channel, ren_analogType, ab_useMean, ab_fastAdc );
 }
 /**
   internal called constructor which creates a new input channel,initialize the hardware and configures conversion calculation
@@ -115,18 +115,18 @@ AnalogI_c::AnalogI_c(uint8_t rb_channel, Sensor_c::analogType_t ren_analogType, 
       * iLibErr_c::Precondition wrong input type
   @see SensorI_c::createAnalog
   @see Sensor_c::t_analogType
-  @param rb_channel default-argument for the hardware channel of the input
+  @param ab_channel default-argument for the hardware channel of the input
   @param ren_analogType default-argument for choosing Sensor_c::voltage(default) or Sensor_c::current as input type
-  @param rb_useMean default-argument for setting the calculation of mean value on true (false as default)
-  @param rb_fastAdc default-argument for setting fast ADC method (false as default)
+  @param ab_useMean default-argument for setting the calculation of mean value on true (false as default)
+  @param ab_fastAdc default-argument for setting fast ADC method (false as default)
 */
-void AnalogI_c::init(uint8_t rb_channel, Sensor_c::analogType_t ren_analogType, bool rb_useMean, bool rb_fastAdc)
+void AnalogI_c::init(uint8_t ab_channel, Sensor_c::analogType_t ren_analogType, bool ab_useMean, bool ab_fastAdc)
 {
-  SensorBase_c::init(rb_channel, Sensor_c::analog);
+  SensorBase_c::init(ab_channel, Sensor_c::analog);
   // store given values
   en_analogType = ren_analogType;
-  b_useMean = rb_useMean;
-  b_fastAdc = rb_fastAdc;
+  b_useMean = ab_useMean;
+  b_fastAdc = ab_fastAdc;
 
   // now configure the input with BIOS call
   int16_t iResult = ( ren_analogType == Sensor_c::voltage )
@@ -135,7 +135,7 @@ void AnalogI_c::init(uint8_t rb_channel, Sensor_c::analogType_t ren_analogType, 
   {
     case HAL_NO_ERR:
       // everything o.k. -> set fast analogin if wanted
-      if (rb_fastAdc) HAL::setFastAnalogin(true);
+      if (ab_fastAdc) HAL::setFastAnalogin(true);
       // now register the valid new analog input into SensorI_c
       getSensorInstance().registerClient( this );
       break;
@@ -187,12 +187,12 @@ int16_t AnalogI_c::val()const{
 /**
   configure fast ADC gathering
   (uses BIOS function)
-  @param rb_useFast default-argument for setting fast ADC (true as default)
+  @param ab_useFast default-argument for setting fast ADC (true as default)
 */
-void AnalogI_c::setFastAdc(bool rb_useFast){
-  b_fastAdc = rb_useFast;
+void AnalogI_c::setFastAdc(bool ab_useFast){
+  b_fastAdc = ab_useFast;
   // configure the BIOS
-  HAL::setFastAnalogin(rb_useFast);
+  HAL::setFastAnalogin(ab_useFast);
 }
 /**
   check if value is greater than 0

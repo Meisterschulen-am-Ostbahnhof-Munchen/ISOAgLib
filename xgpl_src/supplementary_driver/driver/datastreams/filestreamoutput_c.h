@@ -105,11 +105,11 @@ public:
 
   //  Operation: open
   //! open an output stream
-  bool open (STL_NAMESPACE::string& filename, FileMode_t rt_mode);
+  bool open (STL_NAMESPACE::string& filename, FileMode_t at_mode);
 
   //  Operation: open
   //! open an output stream
-  bool open (const char* filename, FileMode_t rt_mode);
+  bool open (const char* filename, FileMode_t at_mode);
 
   //  Operation: close
   //! close an output stream

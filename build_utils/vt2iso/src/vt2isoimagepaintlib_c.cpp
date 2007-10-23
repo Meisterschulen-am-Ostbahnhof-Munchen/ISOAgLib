@@ -82,7 +82,7 @@ void Vt2IsoImagePaintlib_c::close( void )
 }
 
 
-int Vt2IsoImagePaintlib_c::getPaletteIndex (unsigned int rui_x, unsigned int rui_y)
+int Vt2IsoImagePaintlib_c::getPaletteIndex (unsigned int aui_x, unsigned int aui_y)
 {
   /** @todo See if we can retrieve the palette index via paintlib, too.. */
   return -1;
@@ -90,33 +90,33 @@ int Vt2IsoImagePaintlib_c::getPaletteIndex (unsigned int rui_x, unsigned int rui
 
 
 /** check and adapt scanline */
-void Vt2IsoImagePaintlib_c::checkUpdateScanline( unsigned int rui_y )
+void Vt2IsoImagePaintlib_c::checkUpdateScanline( unsigned int aui_y )
 {
-	if ( i_curScanLineY != rui_y )
+	if ( i_curScanLineY != aui_y )
 	{ // read scanline for given y
-		pLine = pLineArray[rui_y];
+		pLine = pLineArray[aui_y];
 	}
 }
 /** deliver R-value of bitmap at given position */
-unsigned int Vt2IsoImagePaintlib_c::getR( unsigned int rui_x, unsigned int rui_y )
+unsigned int Vt2IsoImagePaintlib_c::getR( unsigned int aui_x, unsigned int aui_y )
 {
-	if ( ( rui_x >= ui_width ) || ( rui_y >= ui_height ) ) return 0;
-	checkUpdateScanline( rui_y );
-	return pLine[ rui_x ].GetR();
+	if ( ( aui_x >= ui_width ) || ( aui_y >= ui_height ) ) return 0;
+	checkUpdateScanline( aui_y );
+	return pLine[ aui_x ].GetR();
 }
 
 /** deliver G-value of bitmap at given position */
-unsigned int Vt2IsoImagePaintlib_c::getG( unsigned int rui_x, unsigned int rui_y )
+unsigned int Vt2IsoImagePaintlib_c::getG( unsigned int aui_x, unsigned int aui_y )
 {
-	if ( ( rui_x >= ui_width ) || ( rui_y >= ui_height ) ) return 0;
-	checkUpdateScanline( rui_y );
-	return pLine[ rui_x ].GetG();
+	if ( ( aui_x >= ui_width ) || ( aui_y >= ui_height ) ) return 0;
+	checkUpdateScanline( aui_y );
+	return pLine[ aui_x ].GetG();
 }
 
 /** deliver B-value of bitmap at given position */
-unsigned int Vt2IsoImagePaintlib_c::getB( unsigned int rui_x, unsigned int rui_y )
+unsigned int Vt2IsoImagePaintlib_c::getB( unsigned int aui_x, unsigned int aui_y )
 {
-	if ( ( rui_x >= ui_width ) || ( rui_y >= ui_height ) ) return 0;
-	checkUpdateScanline( rui_y );
-	return pLine[ rui_x ].GetB();
+	if ( ( aui_x >= ui_width ) || ( aui_y >= ui_height ) ) return 0;
+	checkUpdateScanline( aui_y );
+	return pLine[ aui_x ].GetB();
 }

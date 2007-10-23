@@ -108,10 +108,10 @@ public:
     set if this MeasureProgRemote_c instance should store
     target/partner process data messages not direct addressed
     to a local member (default store not)
-    @param rb_useForeign wanted mode (default true)
+    @param ab_useForeign wanted mode (default true)
   */
-  void receiveForeignMeasurement(bool rb_useForegin = true)
-    {MeasureProgRemote_c::receiveForeignMeasurement(rb_useForegin);};
+  void receiveForeignMeasurement(bool ab_useForegin = true)
+    {MeasureProgRemote_c::receiveForeignMeasurement(ab_useForegin);};
 
   /**
     check if this measure prog is running
@@ -145,10 +145,10 @@ public:
     possible errors:
         * Err_c::elNonexistent no remote member with claimed address with given DEVCLASS found
         * dependant error in CAN_IO
-    @param ri32_val reset measure value to this value (ISO only)
+    @param ai32_val reset measure value to this value (ISO only)
     @return true -> command successful sent
   */
-  bool resetVal(int32_t ri32_val = 0) {return MeasureProgRemote_c::resetVal(ri32_val);};
+  bool resetVal(int32_t ai32_val = 0) {return MeasureProgRemote_c::resetVal(ai32_val);};
 
   /**
     send reset command for medium value
@@ -194,48 +194,48 @@ public:
     possible errors:
         * Err_c::badAlloc not enough memory to add new subprog
     @param ren_type increment type: Proc_c::TimeProp, Proc_c::DistProp, Proc_c::ValIncr
-    @param ri32_increment increment value
+    @param ai32_increment increment value
     @param ren_doSend set process data subtype to send (Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...)
     @return always true; only relevant for overoaded methods in derived classes
   */
-  bool addSubprog(Proc_c::type_t ren_type, int32_t ri32_increment, Proc_c::doSend_t ren_doSend = Proc_c::DoVal)
-      {return MeasureProgRemote_c::addSubprog(ren_type, ri32_increment, ren_doSend);};
+  bool addSubprog(Proc_c::type_t ren_type, int32_t ai32_increment, Proc_c::doSend_t ren_doSend = Proc_c::DoVal)
+      {return MeasureProgRemote_c::addSubprog(ren_type, ai32_increment, ren_doSend);};
 
   /**
     deliver value
-    @param rb_sendRequest choose wether a request for value update should be
+    @param ab_sendRequest choose wether a request for value update should be
         sent (default false == send no request)
     @return measure val for this prog (can differ from master measure val)
   */
-  int32_t val(bool rb_sendRequest = false){return MeasureProgRemote_c::val(rb_sendRequest);};
+  int32_t val(bool ab_sendRequest = false){return MeasureProgRemote_c::val(ab_sendRequest);};
   /**
     deliver integ val
-    @param rb_sendRequest choose wether a request for value update should be
+    @param ab_sendRequest choose wether a request for value update should be
         sent (default false == send no request)
     @return integral val for this measure prog
   */
-  int32_t integ(bool rb_sendRequest = false){return MeasureProgRemote_c::integ(rb_sendRequest);};
+  int32_t integ(bool ab_sendRequest = false){return MeasureProgRemote_c::integ(ab_sendRequest);};
   /**
     deliver med val
-    @param rb_sendRequest choose wether a request for value update should be
+    @param ab_sendRequest choose wether a request for value update should be
         sent (default false == send no request)
     @return actual medium value
   */
-  int32_t med(bool rb_sendRequest = false) const {return MeasureProgRemote_c::med(rb_sendRequest);};
+  int32_t med(bool ab_sendRequest = false) const {return MeasureProgRemote_c::med(ab_sendRequest);};
   /**
     deliver min val
-    @param rb_sendRequest choose wether a request for value update should be
+    @param ab_sendRequest choose wether a request for value update should be
         sent (default false == send no request)
     @return MIN val for this measure prog
   */
-  int32_t min(bool rb_sendRequest = false){return MeasureProgRemote_c::min(rb_sendRequest);};
+  int32_t min(bool ab_sendRequest = false){return MeasureProgRemote_c::min(ab_sendRequest);};
   /**
     deliver max val
-    @param rb_sendRequest choose wether a request for value update should be
+    @param ab_sendRequest choose wether a request for value update should be
         sent (default false == send no request)
     @return MAX val for this measure prog
   */
-  int32_t max(bool rb_sendRequest = false){return MeasureProgRemote_c::max(rb_sendRequest);};
+  int32_t max(bool ab_sendRequest = false){return MeasureProgRemote_c::max(ab_sendRequest);};
   /**
     deliver the delta
     @return:delta between the last two measure vals [1/sec]
@@ -249,39 +249,39 @@ public:
 #ifdef USE_FLOAT_DATA_TYPE
   /**
     deliver value
-    @param rb_sendRequest choose wether a request for value update should be
+    @param ab_sendRequest choose wether a request for value update should be
         sent (default false == send no request)
     @return measure val for this prog (can differ from master measure val)
   */
-  float valFloat(bool rb_sendRequest = false){return MeasureProgRemote_c::valFloat(rb_sendRequest);};
+  float valFloat(bool ab_sendRequest = false){return MeasureProgRemote_c::valFloat(ab_sendRequest);};
   /**
     deliver integ val
-    @param rb_sendRequest choose wether a request for value update should be
+    @param ab_sendRequest choose wether a request for value update should be
         sent (default false == send no request)
     @return integral val for this measure prog
   */
-  float integFloat(bool rb_sendRequest = false){return MeasureProgRemote_c::integFloat(rb_sendRequest);};
+  float integFloat(bool ab_sendRequest = false){return MeasureProgRemote_c::integFloat(ab_sendRequest);};
   /**
     deliver med val
-    @param rb_sendRequest choose wether a request for value update should be
+    @param ab_sendRequest choose wether a request for value update should be
         sent (default false == send no request)
     @return actual medium value
   */
-  float medFloat(bool rb_sendRequest = false) const {return MeasureProgRemote_c::medFloat(rb_sendRequest);};
+  float medFloat(bool ab_sendRequest = false) const {return MeasureProgRemote_c::medFloat(ab_sendRequest);};
   /**
     deliver min val
-    @param rb_sendRequest choose wether a request for value update should be
+    @param ab_sendRequest choose wether a request for value update should be
         sent (default false == send no request)
     @return MIN val for this measure prog
   */
-  float minFloat(bool rb_sendRequest = false){return MeasureProgRemote_c::minFloat(rb_sendRequest);};
+  float minFloat(bool ab_sendRequest = false){return MeasureProgRemote_c::minFloat(ab_sendRequest);};
   /**
     deliver max val
-    @param rb_sendRequest choose wether a request for value update should be
+    @param ab_sendRequest choose wether a request for value update should be
         sent (default false == send no request)
     @return MAX val for this measure prog
   */
-  float maxFloat(bool rb_sendRequest = false){return MeasureProgRemote_c::maxFloat(rb_sendRequest);};
+  float maxFloat(bool ab_sendRequest = false){return MeasureProgRemote_c::maxFloat(ab_sendRequest);};
   /**
     deliver the delta
     @return:delta between the last two measure vals [1/sec]
@@ -332,9 +332,9 @@ public:
 
   /**
     set the programm type of the item
-    @param rb_type wanted ProgType: Proc_c::UndefinedProg, Proc_c::Base, Proc_c::Target
+    @param ab_type wanted ProgType: Proc_c::UndefinedProg, Proc_c::Base, Proc_c::Target
   */
-  void setProgType(uint8_t rb_type) {MeasureProgRemote_c::setProgType(rb_type);};
+  void setProgType(uint8_t ab_type) {MeasureProgRemote_c::setProgType(ab_type);};
   /**
     set the type of the active increment types
     @param ren_type Bit-OR combined increment type(s)
@@ -342,9 +342,9 @@ public:
   void setType(Proc_c::type_t ren_type) {MeasureProgRemote_c::setType(ren_type);};
   /**
     set the c_isoName code for this measureProg
-    @param rc_isoName ISOName for exact specification of partner system
+    @param ac_isoName ISOName for exact specification of partner system
   */
-  void setISOName(const iIsoName_c& rc_isoName) {MeasureProgRemote_c::setISOName(rc_isoName);};
+  void setISOName(const iIsoName_c& ac_isoName) {MeasureProgRemote_c::setISOName(ac_isoName);};
  private:
   friend class iProcDataRemote_c;
   friend class iProcDataRemoteSimpleMeasure_c;

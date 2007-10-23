@@ -133,14 +133,14 @@ namespace __IsoAgLib {
 /** struct for client definition */
 class MultiReceiveClientWrapper_s : public ClientBase {
   public:
-  MultiReceiveClientWrapper_s( CanCustomer_c& rpc_client,
-                               const IsoName_c& rrefc_isoNameClient,
-                               uint32_t rui32_pgn,
-                               uint32_t rui32_pgnMask,
-                               bool rb_alsoBroadcast,
-                               bool rb_alsoGlobalErrors
+  MultiReceiveClientWrapper_s( CanCustomer_c& apc_client,
+                               const IsoName_c& arc_isoNameClient,
+                               uint32_t aui32_pgn,
+                               uint32_t aui32_pgnMask,
+                               bool ab_alsoBroadcast,
+                               bool ab_alsoGlobalErrors
                               #ifdef NMEA_2000_FAST_PACKET
-                              ,bool rb_isFastPacket
+                              ,bool ab_isFastPacket
                               #endif
                               SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA
                              );
@@ -176,44 +176,44 @@ public:
   bool processMsg();
 
   //  Operation: (de)registerClient
-  void registerClient   (CanCustomer_c& rrefc_client, const IsoName_c& rrefc_isoName,
-                         uint32_t rui32_pgn, uint32_t rui32_pgnMask=0x3FFFF,
-                         bool b_alsoBroadcast=false, bool rb_alsoGlobalErrors=false
+  void registerClient   (CanCustomer_c& arc_client, const IsoName_c& arc_isoName,
+                         uint32_t aui32_pgn, uint32_t aui32_pgnMask=0x3FFFF,
+                         bool b_alsoBroadcast=false, bool ab_alsoGlobalErrors=false
                          #ifdef NMEA_2000_FAST_PACKET
-                         , bool rb_isFastPacket=false
+                         , bool ab_isFastPacket=false
                          #endif
                          );
 
-  void deregisterClient (CanCustomer_c& rpc_client);
-  void deregisterClient (CanCustomer_c& rrefc_client, const IsoName_c& rrefc_isoName, uint32_t rui32_pgn, uint32_t rui32_pgnMask);
+  void deregisterClient (CanCustomer_c& apc_client);
+  void deregisterClient (CanCustomer_c& arc_client, const IsoName_c& arc_isoName, uint32_t aui32_pgn, uint32_t aui32_pgnMask);
 
   //  Operation: createStream
   //! Parameter:
-  //! @param rc_streamIdent:
-  Stream_c* createStream(StreamType_t rt_streamType, IsoAgLib::ReceiveStreamIdentifier_c rc_streamIdent, uint32_t rui32_msgSize);
+  //! @param ac_streamIdent:
+  Stream_c* createStream(StreamType_t at_streamType, IsoAgLib::ReceiveStreamIdentifier_c ac_streamIdent, uint32_t aui32_msgSize);
 
   //  Operation: getStream
   //! Parameter:
-  //! @param rc_streamIdent:
-  Stream_c* getStream(IsoAgLib::ReceiveStreamIdentifier_c rc_streamIdent
+  //! @param ac_streamIdent:
+  Stream_c* getStream(IsoAgLib::ReceiveStreamIdentifier_c ac_streamIdent
   #ifdef NMEA_2000_FAST_PACKET
-  , bool rb_fastPacket=false
+  , bool ab_fastPacket=false
   #endif
   );
 
    /** this function is called by IsoMonitor_c when a new CLAIMED IsoItem_c is registered.
-   * @param refc_isoName const reference to the item which IsoItem_c state is changed
-   * @param rpc_newItem pointer to the currently corresponding IsoItem_c
+   * @param rc_isoName const reference to the item which IsoItem_c state is changed
+   * @param apc_newItem pointer to the currently corresponding IsoItem_c
     */
-  virtual void reactOnMonitorListAdd( const IsoName_c& refc_isoName, const IsoItem_c* rpc_newItem );
+  virtual void reactOnMonitorListAdd( const IsoName_c& rc_isoName, const IsoItem_c* apc_newItem );
    /** this function is called by IsoMonitor_c when a device looses its IsoItem_c.
-   * @param refc_isoName const reference to the item which IsoItem_c state is changed
-   * @param rui8_oldSa previously used SA which is NOW LOST -> clients which were connected to this item can react explicitly
+   * @param rc_isoName const reference to the item which IsoItem_c state is changed
+   * @param aui8_oldSa previously used SA which is NOW LOST -> clients which were connected to this item can react explicitly
     */
-  virtual void reactOnMonitorListRemove( const IsoName_c& refc_isoName, uint8_t rui8_oldSa );
+  virtual void reactOnMonitorListRemove( const IsoName_c& rc_isoName, uint8_t aui8_oldSa );
 
   /// Use to remove a "kept"-stream after it is gotten by "getFinishedJustKeptStream" and processed.
-  void removeKeptStream(IsoAgLib::iStream_c* rpc_keptStream);
+  void removeKeptStream(IsoAgLib::iStream_c* apc_keptStream);
 
   //  Operation: timeEvent
   bool timeEvent( void );
@@ -253,7 +253,7 @@ public:
 
   bool isAtLeastOneWithFirstByte(uint8_t firstByte);
 
-  IsoAgLib::iStream_c* getFinishedJustKeptStream (IsoAgLib::iStream_c* rpc_lastKeptStream);
+  IsoAgLib::iStream_c* getFinishedJustKeptStream (IsoAgLib::iStream_c* apc_lastKeptStream);
 
   ///  Used for Debugging Tasks in Scheduler_c
   virtual const char* getTaskName() const;
@@ -275,11 +275,11 @@ private:
 
   //  Operation: getStream
   //! Parameter:
-  //! @param rc_streamIdent:
+  //! @param ac_streamIdent:
   //! @return NULL for "doesn't exist", otherwise valid "Stream_c*"
   Stream_c* getStream(uint8_t sa, uint8_t da
   #ifdef NMEA_2000_FAST_PACKET
-  , bool rb_fastPacket
+  , bool ab_fastPacket
   #endif
   );
 
@@ -287,33 +287,33 @@ private:
 
   //  Operation: getClient
   //! Parameter:
-  //! @param rc_streamIdent:
+  //! @param ac_streamIdent:
   //! @return NULL for "doesn't exist", otherwise valid "CanCustomer_c*"
-  CanCustomer_c* getClient (IsoAgLib::ReceiveStreamIdentifier_c rc_streamIdent);
+  CanCustomer_c* getClient (IsoAgLib::ReceiveStreamIdentifier_c ac_streamIdent);
 
   //  Operation: sendCurrentCts
   //! Parameter:
-  //! @param rpc_stream:
-  void sendCurrentCts(DEF_Stream_c_IMPL* rpc_stream);
+  //! @param apc_stream:
+  void sendCurrentCts(DEF_Stream_c_IMPL* apc_stream);
 
-  bool finishStream (DEF_Stream_c_IMPL& refc_stream);
+  bool finishStream (DEF_Stream_c_IMPL& rc_stream);
 
   //  Operation: sendEndOfMessageAck
   //! Parameter:
-  //! @param rpc_stream:
-  void sendEndOfMessageAck(DEF_Stream_c_IMPL* rpc_stream);
+  //! @param apc_stream:
+  void sendEndOfMessageAck(DEF_Stream_c_IMPL* apc_stream);
 
 
-  bool processStreamDataChunk_ofMatchingClient (Stream_c& rrefc_stream, bool b_lastChunk);
+  bool processStreamDataChunk_ofMatchingClient (Stream_c& arc_stream, bool b_lastChunk);
 
 
-  void sendConnAbort(StreamType_t rt_streamType, IsoAgLib::ReceiveStreamIdentifier_c rc_streamIdent);
-  void connAbortTellClient(bool rb_sendConnAbort, Stream_c* rpc_stream);
-  void connAbortTellClientRemoveStream(bool rb_sendConnAbort, Stream_c* rpc_stream);
-  void removeStream(Stream_c* rpc_stream);
+  void sendConnAbort(StreamType_t at_streamType, IsoAgLib::ReceiveStreamIdentifier_c ac_streamIdent);
+  void connAbortTellClient(bool ab_sendConnAbort, Stream_c* apc_stream);
+  void connAbortTellClientRemoveStream(bool ab_sendConnAbort, Stream_c* apc_stream);
+  void removeStream(Stream_c* apc_stream);
 
 
-  void notifyError (const IsoAgLib::ReceiveStreamIdentifier_c& rc_streamIdent, uint8_t rui8_multiReceiveErrorCode);
+  void notifyError (const IsoAgLib::ReceiveStreamIdentifier_c& ac_streamIdent, uint8_t aui8_multiReceiveErrorCode);
 
 
 private: // attributes
@@ -328,7 +328,7 @@ private: // attributes
   /** C-style function, to get access to the unique MultiReceive_c singleton instance
     * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
     */
-  MultiReceive_c& getMultiReceiveInstance( uint8_t rui8_instance = 0 );
+  MultiReceive_c& getMultiReceiveInstance( uint8_t aui8_instance = 0 );
 #else
   /** C-style function, to get access to the unique MultiReceive_c singleton instance */
   MultiReceive_c& getMultiReceiveInstance( void );

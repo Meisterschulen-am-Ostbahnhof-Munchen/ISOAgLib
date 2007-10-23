@@ -102,21 +102,21 @@ namespace __IsoAgLib {
   @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDdi_s which contains DDI, element, isSetpoint and ValueGroup
                        (array is terminated by ElementDdi_s.ui16_element == 0xFFFF)
 
-  @param rc_isoName optional ISOName code of this instance
-  @param rc_ownerISOName optional ISOName of the owner
-  @param rpc_commanderISOName pointer to updated ISOName variable of commander
-  @param rpc_processDataChangeHandler optional pointer to handler class of application
-  @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
+  @param ac_isoName optional ISOName code of this instance
+  @param ac_ownerISOName optional ISOName of the owner
+  @param apc_commanderISOName pointer to updated ISOName variable of commander
+  @param apc_processDataChangeHandler optional pointer to handler class of application
+  @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
 ProcDataRemoteSimpleMeasure_c::ProcDataRemoteSimpleMeasure_c(const IsoAgLib::ElementDdi_s* ps_elementDDI,
-                                                             uint16_t rui16_element, const IsoName_c& rc_isoName,
-                                                             const IsoName_c& rc_ownerISOName,
-                                                             const IsoName_c* rpc_commanderISOName,
-                                                             IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler,
-                                                             int ri_singletonVecKey)
-  : ProcDataRemoteBase_c(ps_elementDDI, rui16_element,
-                         rc_isoName, rc_ownerISOName, rpc_commanderISOName,
-                         rpc_processDataChangeHandler, ri_singletonVecKey)
+                                                             uint16_t aui16_element, const IsoName_c& ac_isoName,
+                                                             const IsoName_c& ac_ownerISOName,
+                                                             const IsoName_c* apc_commanderISOName,
+                                                             IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler,
+                                                             int ai_singletonVecKey)
+  : ProcDataRemoteBase_c(ps_elementDDI, aui16_element,
+                         ac_isoName, ac_ownerISOName, apc_commanderISOName,
+                         apc_processDataChangeHandler, ai_singletonVecKey)
   , c_setpoint(this)
   , c_measure(this)
 {
@@ -128,48 +128,48 @@ ProcDataRemoteSimpleMeasure_c::ProcDataRemoteSimpleMeasure_c(const IsoAgLib::Ele
   @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDdi_s which contains DDI, element, isSetpoint and ValueGroup
                        (array is terminated by ElementDdi_s.ui16_element == 0xFFFF)
 
-  @param rc_isoName optional ISOName code of this instance
-  @param rc_ownerISOName optional ISOName of the owner
-  @param rpc_commanderISOName pointer to updated ISOName variable of commander
-  @param rpc_processDataChangeHandler optional pointer to handler class of application
-  @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
+  @param ac_isoName optional ISOName code of this instance
+  @param ac_ownerISOName optional ISOName of the owner
+  @param apc_commanderISOName pointer to updated ISOName variable of commander
+  @param apc_processDataChangeHandler optional pointer to handler class of application
+  @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
-void ProcDataRemoteSimpleMeasure_c::init(const IsoAgLib::ElementDdi_s* ps_elementDDI,uint16_t rui16_element,
-                                         const IsoName_c& rc_isoName,
-                                         const IsoName_c& rc_ownerISOName,
-                                         const IsoName_c* rpc_commanderISOName,
-                                         IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler,
-                                         int ri_singletonVecKey)
+void ProcDataRemoteSimpleMeasure_c::init(const IsoAgLib::ElementDdi_s* ps_elementDDI,uint16_t aui16_element,
+                                         const IsoName_c& ac_isoName,
+                                         const IsoName_c& ac_ownerISOName,
+                                         const IsoName_c* apc_commanderISOName,
+                                         IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler,
+                                         int ai_singletonVecKey)
 {
-  ProcDataRemoteBase_c::init(ps_elementDDI, rui16_element,
-                             rc_isoName, rc_ownerISOName, rpc_commanderISOName,
-                             rpc_processDataChangeHandler, ri_singletonVecKey);
+  ProcDataRemoteBase_c::init(ps_elementDDI, aui16_element,
+                             ac_isoName, ac_ownerISOName, apc_commanderISOName,
+                             apc_processDataChangeHandler, ai_singletonVecKey);
   c_setpoint.init( this );
   c_measure.init( this );
 }
 /**
   assignment operator for this object
-  @param rrefc_src source instance
+  @param arc_src source instance
   @return reference to source instance for cmd like "prog1 = prog2 = prog3;"
 */
-const ProcDataRemoteSimpleMeasure_c& ProcDataRemoteSimpleMeasure_c::operator=(const ProcDataRemoteSimpleMeasure_c& rrefc_src){
+const ProcDataRemoteSimpleMeasure_c& ProcDataRemoteSimpleMeasure_c::operator=(const ProcDataRemoteSimpleMeasure_c& arc_src){
   // call the assignment operator for the base class
-  ProcDataRemoteBase_c::operator=(rrefc_src);
+  ProcDataRemoteBase_c::operator=(arc_src);
   // now copy the element var
-  c_setpoint = rrefc_src.c_setpoint;
-  c_measure = rrefc_src.c_measure;
+  c_setpoint = arc_src.c_setpoint;
+  c_measure = arc_src.c_measure;
   // return reference to source
-  return rrefc_src;
+  return arc_src;
 }
 
 /**
   copy constructor for IsoAgLibProcDataRemote
-  @param rrefc_src source instance
+  @param arc_src source instance
 */
-ProcDataRemoteSimpleMeasure_c::ProcDataRemoteSimpleMeasure_c(const ProcDataRemoteSimpleMeasure_c& rrefc_src)
-  : ProcDataRemoteBase_c(rrefc_src),
-    c_setpoint(rrefc_src.c_setpoint),
-    c_measure(rrefc_src.c_measure)
+ProcDataRemoteSimpleMeasure_c::ProcDataRemoteSimpleMeasure_c(const ProcDataRemoteSimpleMeasure_c& arc_src)
+  : ProcDataRemoteBase_c(arc_src),
+    c_setpoint(arc_src.c_setpoint),
+    c_measure(arc_src.c_measure)
 {
 }
 

@@ -121,36 +121,36 @@ public:
 
   /**
     set the 7 uint8_t data part of transfer message
-    @param rpb_source source data pointer
-    @param ri32_pos uint8_t position in data string to start
-    @param rb_partSize optional amount of bytes of data stream for actual pkg (default 7)
+    @param apb_source source data pointer
+    @param ai32_pos uint8_t position in data string to start
+    @param ab_partSize optional amount of bytes of data stream for actual pkg (default 7)
   */
-  void setDataPart(const HUGE_MEM uint8_t* rpb_source, int32_t ri32_pos, uint8_t rb_partSize = 7);
+  void setDataPart(const HUGE_MEM uint8_t* apb_source, int32_t ai32_pos, uint8_t ab_partSize = 7);
 
   /**
     set the 7 uint8_t data part of transfer message
-    @param rpb_source source data pointer
-    @param ri32_pos uint8_t position in data string to start
-    @param rb_partSize optional amount of bytes of data stream for actual pkg (default 7)
+    @param apb_source source data pointer
+    @param ai32_pos uint8_t position in data string to start
+    @param ab_partSize optional amount of bytes of data stream for actual pkg (default 7)
    */
-  void setDataPart(const STL_NAMESPACE::vector<uint8_t>& refc_vecSource, int32_t ri32_pos, uint8_t rb_partSize = 7);
+  void setDataPart(const STL_NAMESPACE::vector<uint8_t>& rc_vecSource, int32_t ai32_pos, uint8_t ab_partSize = 7);
 
   #if defined(NMEA_2000_FAST_PACKET)
   /**
     set the 7 uint8_t data part of transfer message
-    @param rpb_source source data pointer
-    @param ri32_pos uint8_t position in data string to start
-    @param rb_partSize optional amount of bytes of data stream for actual pkg (default 7)
+    @param apb_source source data pointer
+    @param ai32_pos uint8_t position in data string to start
+    @param ab_partSize optional amount of bytes of data stream for actual pkg (default 7)
    */
-  void setFastPacketDataPart(const HUGE_MEM uint8_t* rpb_source, int32_t ri32_pos, uint8_t rb_partSize = 7, uint8_t rui8_offset = 0);
+  void setFastPacketDataPart(const HUGE_MEM uint8_t* apb_source, int32_t ai32_pos, uint8_t ab_partSize = 7, uint8_t aui8_offset = 0);
 
   /**
     set the 7 uint8_t data part of transfer message
-    @param rpb_source source data pointer
-    @param ri32_pos uint8_t position in data string to start
-    @param rb_partSize optional amount of bytes of data stream for actual pkg (default 7)
+    @param apb_source source data pointer
+    @param ai32_pos uint8_t position in data string to start
+    @param ab_partSize optional amount of bytes of data stream for actual pkg (default 7)
    */
-  void setFastPacketDataPart(const STL_NAMESPACE::vector<uint8_t>& refc_vecSource, int32_t ri32_pos, uint8_t rb_partSize = 7, uint8_t rui8_offset = 0);
+  void setFastPacketDataPart(const STL_NAMESPACE::vector<uint8_t>& rc_vecSource, int32_t ai32_pos, uint8_t ab_partSize = 7, uint8_t aui8_offset = 0);
   #endif
 };
 

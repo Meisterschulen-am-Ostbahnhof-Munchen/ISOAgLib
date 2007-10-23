@@ -184,11 +184,11 @@ static const uint8_t scpui8_cmdCompareTable[(scui8_cmdCompareTableMax-scui8_cmdC
 namespace __IsoAgLib {
 
 
-void SendUpload_c::set (vtObjectString_c* rpc_objectString)
+void SendUpload_c::set (vtObjectString_c* apc_objectString)
 {
   ppc_vtObjects = NULL;
 
-  mssObjectString = rpc_objectString;
+  mssObjectString = apc_objectString;
 
   if (mssObjectString->getStreamer()->getStreamSize() < 9)
     ui8_retryCount = DEF_Retries_NormalCommands;
@@ -198,28 +198,28 @@ void SendUpload_c::set (vtObjectString_c* rpc_objectString)
   ui32_uploadTimeout = DEF_TimeOut_ChangeStringValue;
 }
 
-void SendUpload_c::set (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint8_t byte9, uint32_t rui32_timeout)
-{ SendUploadBase_c::set(byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8, byte9, rui32_timeout);
+void SendUpload_c::set (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint8_t byte9, uint32_t aui32_timeout)
+{ SendUploadBase_c::set(byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8, byte9, aui32_timeout);
   mssObjectString = NULL;
   ppc_vtObjects = NULL; /// Use BUFFER - NOT MultiSendStreamer!
   ui16_numObjects = 0;
 }
-void SendUpload_c::set (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint32_t rui32_timeout, IsoAgLib::iVtObject_c** rppc_vtObjects, uint16_t rui16_numObjects)
+void SendUpload_c::set (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint32_t aui32_timeout, IsoAgLib::iVtObject_c** rppc_vtObjects, uint16_t aui16_numObjects)
 {
-  SendUploadBase_c::set( byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8, rui32_timeout );
+  SendUploadBase_c::set( byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8, aui32_timeout );
   mssObjectString = NULL;  /// Use BUFFER - NOT MultiSendStreamer!
   ppc_vtObjects = rppc_vtObjects;
-  ui16_numObjects = rui16_numObjects;
+  ui16_numObjects = aui16_numObjects;
 }
-void SendUpload_c::set (uint16_t rui16_objId, const char* rpc_string, uint16_t overrideSendLength, uint8_t ui8_cmdByte)
+void SendUpload_c::set (uint16_t aui16_objId, const char* apc_string, uint16_t overrideSendLength, uint8_t ui8_cmdByte)
 {
-  SendUploadBase_c::set( rui16_objId, rpc_string, overrideSendLength, ui8_cmdByte );
+  SendUploadBase_c::set( aui16_objId, apc_string, overrideSendLength, ui8_cmdByte );
   mssObjectString = NULL;  /// Use BUFFER - NOT MultiSendStreamer!
   ppc_vtObjects = NULL;
 }
-void SendUpload_c::set (uint8_t* rpui8_buffer, uint32_t bufferSize)
+void SendUpload_c::set (uint8_t* apui8_buffer, uint32_t bufferSize)
 {
-  SendUploadBase_c::set (rpui8_buffer, bufferSize);
+  SendUploadBase_c::set (apui8_buffer, bufferSize);
   mssObjectString = NULL;  /// Use BUFFER - NOT MultiSendStreamer!
   ppc_vtObjects = NULL;
 }
@@ -279,7 +279,7 @@ VtClientServerCommStreamer_c::resetDataNextStreamPart()
       const int8_t ci8_realUploadingLanguage = (i8_objectPoolUploadingLanguage < 0) ? 0 : i8_objectPoolUploadingLanguage;
       ui8_streamOffset = ci8_realUploadingLanguage + 1; // skip general pool
     }
-    pc_iterObjects = refc_pool.getIVtObjects()[ui8_streamOffset];
+    pc_iterObjects = rc_pool.getIVtObjects()[ui8_streamOffset];
   }
   ui32_objectStreamPosition = 0;
   uploadBufferPosition = 0;
@@ -287,7 +287,7 @@ VtClientServerCommStreamer_c::resetDataNextStreamPart()
   uploadBuffer [0] = 0x11; // Upload Object Pool!
 
   // ! ui32_streamSize is constant and is initialized in "StartObjectPoolUploading"
-  // ! refc_pool       is constant and is initialized in "StartObjectPoolUploading"
+  // ! rc_pool       is constant and is initialized in "StartObjectPoolUploading"
 
   // following should not be needed to be reset, as this set by "saveDataNextStreamPart"
   // ? ui32_objectStreamPositionStored
@@ -334,46 +334,46 @@ SendUpload_c VtClientServerCommunication_c::sc_tempSendUpload;
 
 
 void
-VtClientServerCommunication_c::reactOnAbort (IsoAgLib::iStream_c& /*rrefc_stream*/)
+VtClientServerCommunication_c::reactOnAbort (IsoAgLib::iStream_c& /*arc_stream*/)
 {
-  c_streamer.refc_pool.eventStringValueAbort();
+  c_streamer.rc_pool.eventStringValueAbort();
 }
 
 
 // handle all string values between length of 9 and 259 bytes
 bool
-VtClientServerCommunication_c::reactOnStreamStart (const IsoAgLib::ReceiveStreamIdentifier_c& rc_ident, uint32_t rui32_totalLen)
+VtClientServerCommunication_c::reactOnStreamStart (const IsoAgLib::ReceiveStreamIdentifier_c& ac_ident, uint32_t aui32_totalLen)
 {
   // if SA is not the address from the vt -> don't react on stream
-  if ((rc_ident.getSaIsoName()) != (pc_vtServerInstance->getIsoName().toConstIisoName_c())) return false;
+  if ((ac_ident.getSaIsoName()) != (pc_vtServerInstance->getIsoName().toConstIisoName_c())) return false;
   //handling string value >= 9 Bytes
-  if (rui32_totalLen > (4 /* H.18 byte 1-4 */ + 255 /* max string length */))
+  if (aui32_totalLen > (4 /* H.18 byte 1-4 */ + 255 /* max string length */))
     return false; /** @todo Should we really ConnAbort such a stream in advance? */
   return true;
 }
 
 
 bool
-VtClientServerCommunication_c::processPartStreamDataChunk (IsoAgLib::iStream_c& rrefc_stream, bool rb_isFirstChunk, bool rb_isLastChunk)
+VtClientServerCommunication_c::processPartStreamDataChunk (IsoAgLib::iStream_c& arc_stream, bool ab_isFirstChunk, bool ab_isLastChunk)
 {
-  if (rrefc_stream.getStreamInvalid()) return false;
+  if (arc_stream.getStreamInvalid()) return false;
 
-  switch ( rrefc_stream.getFirstByte() )
+  switch ( arc_stream.getFirstByte() )
   {
     case 0x8:
-      if (rb_isFirstChunk)  // check for command input string value H.18
+      if (ab_isFirstChunk)  // check for command input string value H.18
       {
-        ui16_inputStringId = rrefc_stream.getNextNotParsed() | (rrefc_stream.getNextNotParsed() << 8);
-        ui8_inputStringLength = rrefc_stream.getNextNotParsed();
+        ui16_inputStringId = arc_stream.getNextNotParsed() | (arc_stream.getNextNotParsed() << 8);
+        ui8_inputStringLength = arc_stream.getNextNotParsed();
 
-        const uint16_t ui16_totalstreamsize = rrefc_stream.getByteTotalSize();
+        const uint16_t ui16_totalstreamsize = arc_stream.getByteTotalSize();
         if (ui16_totalstreamsize != (ui8_inputStringLength + 4))
         {
-          rrefc_stream.setStreamInvalid();
+          arc_stream.setStreamInvalid();
           return false;
         }
       }
-      c_streamer.refc_pool.eventStringValue (ui16_inputStringId, ui8_inputStringLength, rrefc_stream, rrefc_stream.getNotParsedSize(), rb_isFirstChunk, rb_isLastChunk);
+      c_streamer.rc_pool.eventStringValue (ui16_inputStringId, ui8_inputStringLength, arc_stream, arc_stream.getNotParsedSize(), ab_isFirstChunk, ab_isLastChunk);
       break;
 
     default:
@@ -387,38 +387,38 @@ VtClientServerCommunication_c::processPartStreamDataChunk (IsoAgLib::iStream_c& 
 /** default constructor, which can optional set the pointer to the containing
   Scheduler_c object instance
  */
-VtClientServerCommunication_c::VtClientServerCommunication_c (IdentItem_c& ref_wsMasterIdentItem, IsoTerminal_c &ref_isoTerminal, IsoAgLib::iIsoTerminalObjectPool_c& rrefc_pool, char* rpc_versionLabel, uint8_t rui8_clientId SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA)
+VtClientServerCommunication_c::VtClientServerCommunication_c (IdentItem_c& r_wsMasterIdentItem, IsoTerminal_c &r_isoTerminal, IsoAgLib::iIsoTerminalObjectPool_c& arc_pool, char* apc_versionLabel, uint8_t aui8_clientId SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA)
   : b_vtAliveCurrent (false) // so we detect the rising edge when the VT gets connected!
   , b_checkSameCommand (true)
-  , refc_wsMasterIdentItem (ref_wsMasterIdentItem)
-  , refc_isoTerminal (ref_isoTerminal)
+  , rc_wsMasterIdentItem (r_wsMasterIdentItem)
+  , rc_isoTerminal (r_isoTerminal)
   , c_data (SINGLETON_VEC_KEY_PARAMETER_USE)
   , en_displayState (VtClientDisplayStateHidden)
-  , c_streamer (rrefc_pool)
+  , c_streamer (arc_pool)
   , i32_timeWsAnnounceKey (-1) // no announce tries started yet...
 {
   pc_vtServerInstance = NULL;
   i8_vtLanguage = -1;
   b_receiveFilterCreated = false;
-  ui8_clientId = rui8_clientId;
+  ui8_clientId = aui8_clientId;
 
   // the generated initAllObjectsOnce() has to ensure to be idempotent! (vt2iso-generated source does this!)
-  c_streamer.refc_pool.initAllObjectsOnce (SINGLETON_VEC_KEY);
+  c_streamer.rc_pool.initAllObjectsOnce (SINGLETON_VEC_KEY);
   // now let all clients know which client they belong to
   if (ui8_clientId > 0) // the iVtObjects are initialised with 0 as default index
   {
-    for (uint16_t ui16_objIndex = 0; ui16_objIndex < c_streamer.refc_pool.getNumObjects(); ui16_objIndex++)
-      c_streamer.refc_pool.getIVtObjects()[0][ui16_objIndex]->setClientID (ui8_clientId);
-    for (uint8_t ui8_objLangIndex = 0; ui8_objLangIndex < c_streamer.refc_pool.getNumLang(); ui8_objLangIndex++)
-      for (uint16_t ui16_objIndex = 0; ui16_objIndex < c_streamer.refc_pool.getNumObjectsLang(); ui16_objIndex++)
-        c_streamer.refc_pool.getIVtObjects()[ui8_objLangIndex+1][ui16_objIndex]->setClientID (ui8_clientId);
+    for (uint16_t ui16_objIndex = 0; ui16_objIndex < c_streamer.rc_pool.getNumObjects(); ui16_objIndex++)
+      c_streamer.rc_pool.getIVtObjects()[0][ui16_objIndex]->setClientID (ui8_clientId);
+    for (uint8_t ui8_objLangIndex = 0; ui8_objLangIndex < c_streamer.rc_pool.getNumLang(); ui8_objLangIndex++)
+      for (uint16_t ui16_objIndex = 0; ui16_objIndex < c_streamer.rc_pool.getNumObjectsLang(); ui16_objIndex++)
+        c_streamer.rc_pool.getIVtObjects()[ui8_objLangIndex+1][ui16_objIndex]->setClientID (ui8_clientId);
   }
 
-  if (rpc_versionLabel)
+  if (apc_versionLabel)
   {
-    const uint32_t cui_len = CNAMESPACE::strlen (rpc_versionLabel);
-    if ( ((c_streamer.refc_pool.getNumLang() == 0) && (cui_len > 7))
-      || ((c_streamer.refc_pool.getNumLang()  > 0) && (cui_len > 5))
+    const uint32_t cui_len = CNAMESPACE::strlen (apc_versionLabel);
+    if ( ((c_streamer.rc_pool.getNumLang() == 0) && (cui_len > 7))
+      || ((c_streamer.rc_pool.getNumLang()  > 0) && (cui_len > 5))
        )
     { // too long, fail!
       getILibErrInstance().registerError (iLibErr_c::Precondition, iLibErr_c::IsoTerminal);
@@ -426,7 +426,7 @@ VtClientServerCommunication_c::VtClientServerCommunication_c (IdentItem_c& ref_w
       return;
     }
     unsigned int i=0;
-    for (; i<cui_len; i++) p7c_versionLabel [i] = rpc_versionLabel [i];
+    for (; i<cui_len; i++) p7c_versionLabel [i] = apc_versionLabel [i];
     for (; i<7;       i++) p7c_versionLabel [i] = ' '; // ASCII: Space
     b_usingVersionLabel = true;
   }
@@ -458,7 +458,7 @@ VtClientServerCommunication_c::timeEventSendLanguagePGN()
 {
   // Get Local Settings (may not be reached, when terminal is switched on after ECU, as VT sends LNAGUAGE Info on startup!
   c_data.setExtCanPkg3 (6, 0, REQUEST_PGN_MSG_PGN>>8,
-                        pc_vtServerInstance->getVtSourceAddress(), refc_wsMasterIdentItem.getIsoItem()->nr(),
+                        pc_vtServerInstance->getVtSourceAddress(), rc_wsMasterIdentItem.getIsoItem()->nr(),
                         (LANGUAGE_PGN & 0xFF), ((LANGUAGE_PGN >> 8)& 0xFF), ((LANGUAGE_PGN >> 16)& 0xFF));
   getCanInstance4Comm() << c_data;      // Command: REQUEST_PGN_MSG_PGN
   pc_vtServerInstance->getLocalSettings()->lastRequested = HAL::getTime();
@@ -481,7 +481,7 @@ VtClientServerCommunication_c::timeEventUploadPoolTimeoutCheck()
     }
     /// @todo for now we allow parallel uploads
     /// in both cases (time out or success) we need to reset the upload pool flag to enable other clients to upload their pools
-    /// refc_isoTerminal.resetFlagForPoolUpload (this);
+    /// rc_isoTerminal.resetFlagForPoolUpload (this);
   }
 
   if (en_uploadPoolState == UploadPoolWaitingForStoreVersionResponse)
@@ -505,7 +505,7 @@ VtClientServerCommunication_c::timeEventUploadPoolTimeoutCheck()
       case __IsoAgLib::MultiSend_c::SendAborted:
       { // aborted sending
         /// re-send the current stream!
-        getMultiSendInstance4Comm().sendIsoTarget (refc_wsMasterIdentItem.isoName(), pc_vtServerInstance->getIsoName(), &c_streamer, ECU_TO_VT_PGN, en_sendSuccess);
+        getMultiSendInstance4Comm().sendIsoTarget (rc_wsMasterIdentItem.isoName(), pc_vtServerInstance->getIsoName(), &c_streamer, ECU_TO_VT_PGN, en_sendSuccess);
       } break;
       case __IsoAgLib::MultiSend_c::SendSuccess:
       { // see what part we just finished
@@ -514,7 +514,7 @@ VtClientServerCommunication_c::timeEventUploadPoolTimeoutCheck()
           c_streamer.ui32_streamSize = 0; // indicate completion of GENERAL upload!
           if (c_streamer.ui32_streamSizeLang > 0)
           { // start LANGUAGE part upload!
-            getMultiSendInstance4Comm().sendIsoTarget (refc_wsMasterIdentItem.isoName(), pc_vtServerInstance->getIsoName(), &c_streamer, ECU_TO_VT_PGN, en_sendSuccess);
+            getMultiSendInstance4Comm().sendIsoTarget (rc_wsMasterIdentItem.isoName(), pc_vtServerInstance->getIsoName(), &c_streamer, ECU_TO_VT_PGN, en_sendSuccess);
             break; // we're uploading, do not indicate pool completion ;)
           }
         } // else we just finished streaming the LANGUAGE part, so upload is finished now!
@@ -534,7 +534,7 @@ VtClientServerCommunication_c::timeEventPrePoolUpload()
        || ((HAL::getTime()-pc_vtServerInstance->getVtCapabilities()->lastRequestedSoftkeys) > 1000)))
   { // Get Number Of Soft Keys
     c_data.setExtCanPkg8 (7, 0, ECU_TO_VT_PGN>>8,
-                          pc_vtServerInstance->getVtSourceAddress(), refc_wsMasterIdentItem.getIsoItem()->nr(),
+                          pc_vtServerInstance->getVtSourceAddress(), rc_wsMasterIdentItem.getIsoItem()->nr(),
                           194, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
     getCanInstance4Comm() << c_data;      // Command: Get Technical Data --- Parameter: Get Number Of Soft Keys
     pc_vtServerInstance->getVtCapabilities()->lastRequestedSoftkeys = HAL::getTime();
@@ -548,7 +548,7 @@ VtClientServerCommunication_c::timeEventPrePoolUpload()
       && ((pc_vtServerInstance->getVtCapabilities()->lastRequestedFont == 0) || ((HAL::getTime()-pc_vtServerInstance->getVtCapabilities()->lastRequestedFont) > 1000)))
   { // Get Text Font Data
     c_data.setExtCanPkg8 (7, 0, ECU_TO_VT_PGN>>8,
-                          pc_vtServerInstance->getVtSourceAddress(), refc_wsMasterIdentItem.getIsoItem()->nr(),
+                          pc_vtServerInstance->getVtSourceAddress(), rc_wsMasterIdentItem.getIsoItem()->nr(),
                           195, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
     getCanInstance4Comm() << c_data;      // Command: Get Technical Data --- Parameter: Get Text Font Data
     pc_vtServerInstance->getVtCapabilities()->lastRequestedFont = HAL::getTime();
@@ -564,7 +564,7 @@ VtClientServerCommunication_c::timeEventPrePoolUpload()
       || ((HAL::getTime()-pc_vtServerInstance->getVtCapabilities()->lastRequestedHardware) > 1000)))
   { // Get Hardware
     c_data.setExtCanPkg8 (7, 0, ECU_TO_VT_PGN>>8,
-                          pc_vtServerInstance->getVtSourceAddress(), refc_wsMasterIdentItem.getIsoItem()->nr(),
+                          pc_vtServerInstance->getVtSourceAddress(), rc_wsMasterIdentItem.getIsoItem()->nr(),
                           199, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
     getCanInstance4Comm() << c_data;      // Command: Get Technical Data --- Parameter: Get Hardware
     pc_vtServerInstance->getVtCapabilities()->lastRequestedHardware = HAL::getTime();
@@ -583,7 +583,7 @@ VtClientServerCommunication_c::timeEventPoolUpload()
         || (en_uploadPoolState == UploadPoolInit))
   {
     /** @todo for now allow parallel uploads
-    if (!refc_isoTerminal.getFlagForPoolUpload (this))
+    if (!rc_isoTerminal.getFlagForPoolUpload (this))
     { // any other client is already uploading its pool, so wait!
       en_uploadPoolState = UploadPoolFailed;
       ui32_uploadTimestamp = HAL::getTime();
@@ -604,7 +604,7 @@ VtClientServerCommunication_c::timeEventPoolUpload()
       if (b_getVersionsSendTime == 0)
       { // send out get versions first
         c_data.setExtCanPkg8 (7, 0, ECU_TO_VT_PGN>>8,
-                              pc_vtServerInstance->getVtSourceAddress(), refc_wsMasterIdentItem.getIsoItem()->nr(),
+                              pc_vtServerInstance->getVtSourceAddress(), rc_wsMasterIdentItem.getIsoItem()->nr(),
                               223, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF);
         getCanInstance4Comm() << c_data;     // Command: Non Volatile Memory --- Parameter: Load Version
         b_getVersionsSendTime = HAL::getTime();
@@ -627,7 +627,7 @@ VtClientServerCommunication_c::timeEventPoolUpload()
       }
 
       // Try to "Non Volatile Memory - Load Version" first!
-      c_data.setExtCanPkg8 (7, 0, ECU_TO_VT_PGN>>8, pc_vtServerInstance->getVtSourceAddress(), refc_wsMasterIdentItem.getIsoItem()->nr(),
+      c_data.setExtCanPkg8 (7, 0, ECU_TO_VT_PGN>>8, pc_vtServerInstance->getVtSourceAddress(), rc_wsMasterIdentItem.getIsoItem()->nr(),
 #ifdef LOESCHE_POOL
                             210,
 #else
@@ -683,7 +683,7 @@ VtClientServerCommunication_c::timeEvent(void)
 #endif
 
   // do further activities only if registered ident is initialised as ISO and already successfully address-claimed...
-  if (!refc_wsMasterIdentItem.isClaimedAddress()) return true;
+  if (!rc_wsMasterIdentItem.isClaimedAddress()) return true;
 
   if (!b_receiveFilterCreated)
   { /*** MultiReceive/IsoFilterManager Registration ***/
@@ -707,12 +707,12 @@ VtClientServerCommunication_c::timeEvent(void)
   if (!isVtActive()) return true;
 
   // Check if the working-set is completely announced
-  if (!refc_wsMasterIdentItem.getIsoItem()->isWsAnnounced (i32_timeWsAnnounceKey)) return true;
+  if (!rc_wsMasterIdentItem.getIsoItem()->isWsAnnounced (i32_timeWsAnnounceKey)) return true;
 
   // Check if WS-Maintenance is needed
   if ((i32_nextWsMaintenanceMsg <= 0) || (HAL::getTime() >= i32_nextWsMaintenanceMsg))
   { // Do periodically WS-Maintenance sending (every second)
-    c_data.setExtCanPkg8 (7, 0, ECU_TO_VT_PGN>>8, pc_vtServerInstance->getVtSourceAddress(), refc_wsMasterIdentItem.getIsoItem()->nr(),
+    c_data.setExtCanPkg8 (7, 0, ECU_TO_VT_PGN>>8, pc_vtServerInstance->getVtSourceAddress(), rc_wsMasterIdentItem.getIsoItem()->nr(),
                           0xFF, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
     getCanInstance4Comm() << c_data;     // G.2: Function: 255 / 0xFF Working Set Maintenance Message
 
@@ -778,7 +778,7 @@ VtClientServerCommunication_c::timeEvent(void)
     setObjectPoolUploadingLanguage();
     /// NOTIFY THE APPLICATION so it can enqueue some commands that are processed BEFORE the update is done
     /// e.g. switch to a "Wait while changing language..." datamask.
-    c_streamer.refc_pool.eventPrepareForLanguageChange (c_streamer.i8_objectPoolUploadingLanguage, c_streamer.ui16_objectPoolUploadingLanguageCode);
+    c_streamer.rc_pool.eventPrepareForLanguageChange (c_streamer.i8_objectPoolUploadingLanguage, c_streamer.ui16_objectPoolUploadingLanguageCode);
 
     sendCommandUpdateLanguagePool();
     // we keep (c_streamer.i8_objectPoolUploadingLanguage != -2), so a change in between doesn't care and won't happen!!
@@ -890,7 +890,7 @@ VtClientServerCommunication_c::processMsgAck()
         INTERNAL_DEBUG_DEVICE << "\n==========================================================================================="
                               << "\n=== VT NACKed "<<cui32_pgn<<", starting all over again -> faking VT loss in the following: ===";
 #endif
-        refc_wsMasterIdentItem.getIsoItem()->sendSaClaim(); // optional, but better do this: Repeat address claim!
+        rc_wsMasterIdentItem.getIsoItem()->sendSaClaim(); // optional, but better do this: Repeat address claim!
         checkVtStateChange(); // will also notify application by "eventEnterSafeState"
         break;
     } // switch
@@ -911,24 +911,24 @@ VtClientServerCommunication_c::notifyOnVtsLanguagePgn()
 
   if (pc_vtServerInstance)
   {
-    const uint8_t cui8_languages = c_streamer.refc_pool.getWorkingSetObject().get_vtObjectWorkingSet_a().numberOfLanguagesToFollow;
+    const uint8_t cui8_languages = c_streamer.rc_pool.getWorkingSetObject().get_vtObjectWorkingSet_a().numberOfLanguagesToFollow;
     for (int i=0; i<cui8_languages; i++)
     {
-      const uint8_t* lang = c_streamer.refc_pool.getWorkingSetObject().get_vtObjectWorkingSet_a().languagesToFollow[i].language;
+      const uint8_t* lang = c_streamer.rc_pool.getWorkingSetObject().get_vtObjectWorkingSet_a().languagesToFollow[i].language;
       if (pc_vtServerInstance->getLocalSettings()->languageCode == ((lang[0] << 8) | lang[1]))
       {
         i8_vtLanguage = i; // yes, VT's language is directly supported by this workingset
         break;
       }
     }
-    c_streamer.refc_pool.eventLanguagePgn (*pc_vtServerInstance->getLocalSettings());
+    c_streamer.rc_pool.eventLanguagePgn (*pc_vtServerInstance->getLocalSettings());
   }
 }
 
 void
 VtClientServerCommunication_c::notifyOnVtStatusMessage()
 {
-  c_streamer.refc_pool.eventVtStatusMsg();
+  c_streamer.rc_pool.eventVtStatusMsg();
 
   // set client display state appropriately
   setVtDisplayState (true, getVtServerInst().getVtState()->saOfActiveWorkingSetMaster);
@@ -938,19 +938,19 @@ VtClientServerCommunication_c::notifyOnVtStatusMessage()
 void
 VtClientServerCommunication_c::notifyOnAuxInputStatus()
 {
-  const IsoName_c& rc_inputIsoName = c_data.getISONameForSA();
+  const IsoName_c& ac_inputIsoName = c_data.getISONameForSA();
   uint8_t const cui8_inputNumber = c_data.getUint8Data(2-1);
 
   // Look for all Functions that are controlled by this Input right now!
   for (STL_NAMESPACE::list<AuxAssignment_s>::iterator it = mlist_auxAssignments.begin(); it != mlist_auxAssignments.end(); )
   {
     if ( (it->mui8_inputNumber == cui8_inputNumber)
-      && (it->mc_inputIsoName == rc_inputIsoName) )
+      && (it->mc_inputIsoName == ac_inputIsoName) )
     { // notify application on this new Input Status!
       uint16_t const cui16_inputValueAnalog = c_data.getUint16Data (3-1);
       uint16_t const cui16_inputValueTransitions = c_data.getUint16Data (5-1);
       uint8_t const cui8_inputValueDigital = c_data.getUint8Data (7-1);
-      c_streamer.refc_pool.eventAuxFunctionValue (it->mui16_functionUid, cui16_inputValueAnalog, cui16_inputValueTransitions, cui8_inputValueDigital);
+      c_streamer.rc_pool.eventAuxFunctionValue (it->mui16_functionUid, cui16_inputValueAnalog, cui16_inputValueTransitions, cui8_inputValueDigital);
     }
   }
 }
@@ -977,8 +977,8 @@ VtClientServerCommunication_c::storeAuxAssignment()
       }
       else
       { /// Reassign
-        const IsoName_c& rc_inputIsoNameNew = getIsoMonitorInstance4Comm().isoMemberNr (cui8_inputSaNew).isoName();
-        it->mc_inputIsoName = rc_inputIsoNameNew;
+        const IsoName_c& ac_inputIsoNameNew = getIsoMonitorInstance4Comm().isoMemberNr (cui8_inputSaNew).isoName();
+        it->mc_inputIsoName = ac_inputIsoNameNew;
         it->mui8_inputNumber = cui8_inputNrNew;
         return true;
       }
@@ -991,8 +991,8 @@ VtClientServerCommunication_c::storeAuxAssignment()
     return true; // unassignment is always okay!
 
   AuxAssignment_s s_newAuxAssignment;
-  const IsoName_c& rc_inputIsoNameNew = getIsoMonitorInstance4Comm().isoMemberNr (cui8_inputSaNew).isoName();
-  s_newAuxAssignment.mc_inputIsoName = rc_inputIsoNameNew;
+  const IsoName_c& ac_inputIsoNameNew = getIsoMonitorInstance4Comm().isoMemberNr (cui8_inputSaNew).isoName();
+  s_newAuxAssignment.mc_inputIsoName = ac_inputIsoNameNew;
   s_newAuxAssignment.mui8_inputNumber = cui8_inputNrNew;
   s_newAuxAssignment.mui16_functionUid = cui16_functionUidNew;
 
@@ -1037,25 +1037,25 @@ VtClientServerCommunication_c::processMsg()
     /*** ### VT Initiated Messages ### ***/
     case 0x00: // Command: "Control Element Function", parameter "Soft Key"
     case 0x01: // Command: "Control Element Function", parameter "Button"
-      c_streamer.refc_pool.eventKeyCode (c_data.getUint8Data (1) /* key activation code (pressed, released, held) */,
+      c_streamer.rc_pool.eventKeyCode (c_data.getUint8Data (1) /* key activation code (pressed, released, held) */,
                                          c_data.getUint8Data (2) | (c_data.getUint8Data (3) << 8) /* objID of key object */,
                                          c_data.getUint8Data (4) | (c_data.getUint8Data (5) << 8) /* objID of visible mask */,
                                          c_data.getUint8Data (6) /* key code */,
                                          c_data.getUint8Data (0) /* 0 for sk, 1 for button -- matches wasButton? boolean */ );
       break;
     case 0x02: // Command: "Control Element Function", parameter "Pointing Event"
-      c_streamer.refc_pool.eventPointingEvent (c_data.getUint8Data (1) | (c_data.getUint8Data (2) << 8) /* X position in pixels */,
+      c_streamer.rc_pool.eventPointingEvent (c_data.getUint8Data (1) | (c_data.getUint8Data (2) << 8) /* X position in pixels */,
                                               c_data.getUint8Data (3) | (c_data.getUint8Data (4) << 8) /* Y position in pixels */);
       break;
     case 0x04: // Command: "Control Element Function", parameter "VT ESC"
         /// if no error occured, that ESC is for an opened input dialog!!! Do not handle here!!!
         if (c_data.getUint8Data (3) != 0x0)
         {
-          c_streamer.refc_pool.eventVtESC();
+          c_streamer.rc_pool.eventVtESC();
         }
         break;
     case 0x05: // Command: "Control Element Function", parameter "VT Change Numeric Value"
-      c_streamer.refc_pool.eventNumericValue (uint16_t(c_data.getUint8Data (1)) | (uint16_t(c_data.getUint8Data (2)) << 8) /* objID */,
+      c_streamer.rc_pool.eventNumericValue (uint16_t(c_data.getUint8Data (1)) | (uint16_t(c_data.getUint8Data (2)) << 8) /* objID */,
                                               c_data.getUint8Data (4) /* 1 byte value */,
                                               uint32_t(c_data.getUint8Data (4)) | (uint32_t(c_data.getUint8Data (5)) << 8) | (uint32_t(c_data.getUint8Data (6)) << 16)| (uint32_t(c_data.getUint8Data (7)) << 24) /* 4 byte value */);
       break;
@@ -1063,7 +1063,7 @@ VtClientServerCommunication_c::processMsg()
       if (c_data.getUint8Data (3) <= 4) //within a 8 byte long cmd can be only a 4 char long string
       {
         VolatileMemory_c c_vmString (c_data.getUint8DataConstPointer(4));
-        c_streamer.refc_pool.eventStringValue (uint16_t(c_data.getUint8Data (1)) | (uint16_t(c_data.getUint8Data (2)) << 8) /* objID */,
+        c_streamer.rc_pool.eventStringValue (uint16_t(c_data.getUint8Data (1)) | (uint16_t(c_data.getUint8Data (2)) << 8) /* objID */,
                                                c_data.getUint8Data (3) /* total number of bytes */, c_vmString,
                                                c_data.getUint8Data (3) /* total number of bytes */, true, true);
       }
@@ -1073,7 +1073,7 @@ VtClientServerCommunication_c::processMsg()
 
       // replace PGN, DA, SA and send back as answer
       c_data.setIsoPgn (ECU_TO_VT_PGN);
-      c_data.setIsoSa (refc_wsMasterIdentItem.getIsoItem()->nr());
+      c_data.setIsoSa (rc_wsMasterIdentItem.getIsoItem()->nr());
       c_data.setIsoPs (pc_vtServerInstance->getVtSourceAddress());
       getCanInstance4Comm() << c_data; // Command: "Command", parameter "Display Activation Response"
       break;
@@ -1100,7 +1100,7 @@ VtClientServerCommunication_c::processMsg()
               lang1 = p7c_versionLabel [5];
               lang2 = p7c_versionLabel [6];
             }
-            c_data.setExtCanPkg8 (7, 0, ECU_TO_VT_PGN>>8, pc_vtServerInstance->getVtSourceAddress(), refc_wsMasterIdentItem.getIsoItem()->nr(),
+            c_data.setExtCanPkg8 (7, 0, ECU_TO_VT_PGN>>8, pc_vtServerInstance->getVtSourceAddress(), rc_wsMasterIdentItem.getIsoItem()->nr(),
                                   208 /* D0 */, p7c_versionLabel [0], p7c_versionLabel [1], p7c_versionLabel [2], p7c_versionLabel [3], p7c_versionLabel [4], lang1, lang2);
             getCanInstance4Comm() << c_data;     // Command: Non Volatile Memory --- Parameter: Store Version
 
@@ -1121,7 +1121,7 @@ VtClientServerCommunication_c::processMsg()
           en_objectPoolState = OPCannotBeUploaded;
           ui8_uploadError = c_data.getUint8Data (2);
           /// @todo for now allow parallel uploads
-          ///refc_isoTerminal.resetFlagForPoolUpload (this);
+          ///rc_isoTerminal.resetFlagForPoolUpload (this);
         }
       }
       else if ((en_uploadType == UploadCommand) && (en_uploadCommandState == UploadCommandWaitingForCommandResponse))
@@ -1142,7 +1142,7 @@ VtClientServerCommunication_c::processMsg()
       if (cb_assignmentOkay)
       { /// For now simply respond without doing anything else with this information. simply ack the assignment!
         c_data.setIsoPgn (ECU_TO_VT_PGN);
-        c_data.setIsoSa (refc_wsMasterIdentItem.getIsoItem()->nr());
+        c_data.setIsoSa (rc_wsMasterIdentItem.getIsoItem()->nr());
         c_data.setIsoPs (pc_vtServerInstance->getVtSourceAddress());
         getCanInstance4Comm() << c_data;
       }
@@ -1211,14 +1211,14 @@ VtClientServerCommunication_c::processMsg()
         bool b_objectFound = false;
 
         // first check if first item is the requested one -> working is the first item list no matter what objectID it has
-        if (ui16_objID == c_streamer.refc_pool.getIVtObjects()[ui8_arrIndex][0]->getID())
-          c_streamer.refc_pool.eventAttributeValue(c_streamer.refc_pool.getIVtObjects()[ui8_arrIndex][0],
+        if (ui16_objID == c_streamer.rc_pool.getIVtObjects()[ui8_arrIndex][0]->getID())
+          c_streamer.rc_pool.eventAttributeValue(c_streamer.rc_pool.getIVtObjects()[ui8_arrIndex][0],
                                                   c_data.getUint8Data(3),
                                                   c_data.getUint8DataPointer()+4);
         else
         {
           // if last item of the list was reached or the requested object was found
-          while (c_streamer.refc_pool.getIVtObjects()[ui8_arrIndex] != NULL)
+          while (c_streamer.rc_pool.getIVtObjects()[ui8_arrIndex] != NULL)
           {
             uint16_t ui16_arrBegin = 1;
             uint16_t ui16_arrMiddle;
@@ -1226,13 +1226,13 @@ VtClientServerCommunication_c::processMsg()
 
             // first item in list contains all fix objects of the pool (when language changes, these object stay the same)
             if (ui8_arrIndex == 0)
-              ui16_arrEnd = c_streamer.refc_pool.getNumObjects() - 1;
+              ui16_arrEnd = c_streamer.rc_pool.getNumObjects() - 1;
             else
-              ui16_arrEnd = c_streamer.refc_pool.getNumObjectsLang() - 1;
+              ui16_arrEnd = c_streamer.rc_pool.getNumObjectsLang() - 1;
 
             // if object is among these we can leave the while-loop
-            if ((ui16_objID < c_streamer.refc_pool.getIVtObjects()[ui8_arrIndex][ui16_arrBegin]->getID())
-                || (ui16_objID > c_streamer.refc_pool.getIVtObjects()[ui8_arrIndex][ui16_arrEnd]->getID())) // range check
+            if ((ui16_objID < c_streamer.rc_pool.getIVtObjects()[ui8_arrIndex][ui16_arrBegin]->getID())
+                || (ui16_objID > c_streamer.rc_pool.getIVtObjects()[ui8_arrIndex][ui16_arrEnd]->getID())) // range check
             {
               ui8_arrIndex++;
               continue; // try next object list, the requested object could not be found in the current list
@@ -1242,17 +1242,17 @@ VtClientServerCommunication_c::processMsg()
             {
               ui16_arrMiddle = ui16_arrBegin + ((ui16_arrEnd - ui16_arrBegin) / 2);
 
-              if (c_streamer.refc_pool.getIVtObjects()[ui8_arrIndex][ui16_arrMiddle]->getID() == ui16_objID) // objID found?
+              if (c_streamer.rc_pool.getIVtObjects()[ui8_arrIndex][ui16_arrMiddle]->getID() == ui16_objID) // objID found?
               {
                 b_objectFound = true;
-                c_streamer.refc_pool.eventAttributeValue(c_streamer.refc_pool.getIVtObjects()[ui8_arrIndex][ui16_arrMiddle],
+                c_streamer.rc_pool.eventAttributeValue(c_streamer.rc_pool.getIVtObjects()[ui8_arrIndex][ui16_arrMiddle],
                                                         c_data.getUint8Data(3),
                                                         c_data.getUint8DataPointer()+4);
                 break;
               }
               else
               {
-                if (c_streamer.refc_pool.getIVtObjects()[ui8_arrIndex][ui16_arrMiddle]->getID() > ui16_objID)
+                if (c_streamer.rc_pool.getIVtObjects()[ui8_arrIndex][ui16_arrMiddle]->getID() > ui16_objID)
                   ui16_arrEnd = ui16_arrMiddle - 1;
                 else
                   ui16_arrBegin = ui16_arrMiddle + 1;
@@ -1277,7 +1277,7 @@ VtClientServerCommunication_c::processMsg()
         if (c_data.getUint8Data (2) == 0)
         { // start uploading, there MAY BE enough memory
           en_uploadPoolState = UploadPoolUploading;
-          getMultiSendInstance4Comm().sendIsoTarget (refc_wsMasterIdentItem.isoName(), pc_vtServerInstance->getIsoName(), &c_streamer, ECU_TO_VT_PGN, en_sendSuccess);
+          getMultiSendInstance4Comm().sendIsoTarget (rc_wsMasterIdentItem.isoName(), pc_vtServerInstance->getIsoName(), &c_streamer, ECU_TO_VT_PGN, en_sendSuccess);
         }
         else
           vtOutOfMemory();
@@ -1348,7 +1348,7 @@ VtClientServerCommunication_c::processMsg()
            && c_data.getUint8Data (0) <= 0x7F
          )
       {
-        MACRO_setStateDependantOnError( c_streamer.refc_pool.eventProprietaryCommand( pc_vtServerInstance->getIsoName().toConstIisoName_c() ) )
+        MACRO_setStateDependantOnError( c_streamer.rc_pool.eventProprietaryCommand( pc_vtServerInstance->getIsoName().toConstIisoName_c() ) )
       }
       break;
 
@@ -1369,7 +1369,7 @@ VtClientServerCommunication_c::processMsg()
           else
             ui8_uploadCommandError = c_data.getUint8Data (ui8_errByte-1);
           /// Inform user on success/error of this command
-          c_streamer.refc_pool.eventCommandResponse (ui8_uploadCommandError, c_data.getUint8DataConstPointer()); // pass "ui8_uploadCommandError" in case it's only important if it's an error or not. get Cmd and all databytes from "c_data.name()"
+          c_streamer.rc_pool.eventCommandResponse (ui8_uploadCommandError, c_data.getUint8DataConstPointer()); // pass "ui8_uploadCommandError" in case it's only important if it's an error or not. get Cmd and all databytes from "c_data.name()"
 #ifdef DEBUG
           if (ui8_uploadCommandError != 0)
           { /* error */
@@ -1403,25 +1403,25 @@ VtClientServerCommunication_c::getUserClippedColor (uint8_t colorValue, IsoAgLib
   {
     uint8_t colorDepth = pc_vtServerInstance->getVtCapabilities()->hwGraphicType;
     if (((colorDepth == 0) && (colorValue > 1)) || ((colorDepth == 1) && (colorValue > 16)))
-      return c_streamer.refc_pool.convertColour (colorValue, colorDepth, obj, whichColour);
+      return c_streamer.rc_pool.convertColour (colorValue, colorDepth, obj, whichColour);
   }
   return colorValue;
 }
 
 
 void
-VtClientServerCommunication_c::notifyOnNewVtServerInstance (VtServerInstance_c& ref_newVtServerInst)
+VtClientServerCommunication_c::notifyOnNewVtServerInstance (VtServerInstance_c& r_newVtServerInst)
 {
   if (pc_vtServerInstance) return;
 
-  pc_vtServerInstance = &ref_newVtServerInst;
+  pc_vtServerInstance = &r_newVtServerInst;
 }
 
 
 void
-VtClientServerCommunication_c::notifyOnVtServerInstanceLoss (VtServerInstance_c& ref_oldVtServerInst)
+VtClientServerCommunication_c::notifyOnVtServerInstanceLoss (VtServerInstance_c& r_oldVtServerInst)
 {
-  if (&ref_oldVtServerInst == pc_vtServerInstance)
+  if (&r_oldVtServerInst == pc_vtServerInstance)
     pc_vtServerInstance = NULL;
 }
 
@@ -1443,88 +1443,88 @@ VtClientServerCommunication_c::sendCommand (uint8_t byte1, uint8_t byte2, uint8_
 
 /** @returns true if there was place in the SendUpload-Buffer (should always be the case now) */
 bool
-VtClientServerCommunication_c::sendCommand (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint32_t ui32_timeout, bool b_enableReplaceOfCmd, IsoAgLib::iVtObject_c** rppc_vtObjects, uint16_t rui16_numObjects)
+VtClientServerCommunication_c::sendCommand (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint32_t ui32_timeout, bool b_enableReplaceOfCmd, IsoAgLib::iVtObject_c** rppc_vtObjects, uint16_t aui16_numObjects)
 {
 #ifdef DEBUG
   INTERNAL_DEBUG_DEVICE << "Enqueued 8-bytes: " << q_sendUpload.size() << " -> " << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
 
-  sc_tempSendUpload.set (byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8, ui32_timeout, rppc_vtObjects, rui16_numObjects);
+  sc_tempSendUpload.set (byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8, ui32_timeout, rppc_vtObjects, aui16_numObjects);
 
   return queueOrReplace (sc_tempSendUpload, b_enableReplaceOfCmd);
 }
 
 bool
-VtClientServerCommunication_c::sendCommandForDEBUG (uint8_t* rpui8_buffer, uint32_t ui32_size)
+VtClientServerCommunication_c::sendCommandForDEBUG (uint8_t* apui8_buffer, uint32_t ui32_size)
 {
 #ifdef DEBUG
   INTERNAL_DEBUG_DEVICE << "Enqueued Debug-TP-bytes: " << q_sendUpload.size() << " -> ";
 #endif
 
-  sc_tempSendUpload.set (rpui8_buffer, ui32_size);
+  sc_tempSendUpload.set (apui8_buffer, ui32_size);
 
   return queueOrReplace (sc_tempSendUpload, false);
 }
 
 bool
-VtClientServerCommunication_c::sendCommandChangeNumericValue (IsoAgLib::iVtObject_c* rpc_object, uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, bool b_enableReplaceOfCmd)
+VtClientServerCommunication_c::sendCommandChangeNumericValue (IsoAgLib::iVtObject_c* apc_object, uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, bool b_enableReplaceOfCmd)
 {
   return sendCommand (168 /* Command: Command --- Parameter: Change Numeric Value */,
-                      rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
+                      apc_object->getID() & 0xFF, apc_object->getID() >> 8,
                       0xFF, byte1, byte2, byte3, byte4,
                       DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
 }
 
 bool
-VtClientServerCommunication_c::sendCommandChangeAttribute (IsoAgLib::iVtObject_c* rpc_object, uint8_t attrId, uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, bool b_enableReplaceOfCmd)
+VtClientServerCommunication_c::sendCommandChangeAttribute (IsoAgLib::iVtObject_c* apc_object, uint8_t attrId, uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, bool b_enableReplaceOfCmd)
 {
   return sendCommand (175 /* Command: Command --- Parameter: Change Attribute */,
-                      rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
+                      apc_object->getID() & 0xFF, apc_object->getID() >> 8,
                       attrId, byte1, byte2, byte3, byte4,
                       DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
 }
 
 bool
-VtClientServerCommunication_c::sendCommandChangeSoftKeyMask (IsoAgLib::iVtObject_c* rpc_object, uint8_t maskType, uint16_t newSoftKeyMask, bool b_enableReplaceOfCmd)
+VtClientServerCommunication_c::sendCommandChangeSoftKeyMask (IsoAgLib::iVtObject_c* apc_object, uint8_t maskType, uint16_t newSoftKeyMask, bool b_enableReplaceOfCmd)
 {
   return sendCommand (174 /* Command: Command --- Parameter: Change Soft Key Mask */,
                       maskType,
-                      rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
+                      apc_object->getID() & 0xFF, apc_object->getID() >> 8,
                       newSoftKeyMask & 0xFF, newSoftKeyMask >> 8,
                       0xFF, 0xFF,
                       DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
 }
 
 bool
-VtClientServerCommunication_c::sendCommandChangeStringValue (IsoAgLib::iVtObject_c* rpc_object, const char* rpc_newValue, uint16_t overrideSendLength, bool b_enableReplaceOfCmd)
+VtClientServerCommunication_c::sendCommandChangeStringValue (IsoAgLib::iVtObject_c* apc_object, const char* apc_newValue, uint16_t overrideSendLength, bool b_enableReplaceOfCmd)
 {
 #ifdef DEBUG
   INTERNAL_DEBUG_DEVICE << "Enqueued string-ref: " << q_sendUpload.size() << " -> ";
 #endif
 
-  sc_tempSendUpload.set (rpc_object->getID(), rpc_newValue, overrideSendLength);
+  sc_tempSendUpload.set (apc_object->getID(), apc_newValue, overrideSendLength);
 
   return queueOrReplace (sc_tempSendUpload, b_enableReplaceOfCmd);
 }
 
 bool
-VtClientServerCommunication_c::sendCommandChangeStringValue (IsoAgLib::iVtObjectString_c* rpc_objectString, bool b_enableReplaceOfCmd)
+VtClientServerCommunication_c::sendCommandChangeStringValue (IsoAgLib::iVtObjectString_c* apc_objectString, bool b_enableReplaceOfCmd)
 {
 #ifdef DEBUG
   INTERNAL_DEBUG_DEVICE << "Enqueued stringObject-mss: " << q_sendUpload.size() << " -> ";
 #endif
 
-  sc_tempSendUpload.set (rpc_objectString);
+  sc_tempSendUpload.set (apc_objectString);
 
   return queueOrReplace (sc_tempSendUpload, b_enableReplaceOfCmd);
 }
 
 bool
-VtClientServerCommunication_c::sendCommandChangeChildPosition (IsoAgLib::iVtObject_c* rpc_object, IsoAgLib::iVtObject_c* rpc_childObject, int16_t x, int16_t y, bool b_enableReplaceOfCmd)
+VtClientServerCommunication_c::sendCommandChangeChildPosition (IsoAgLib::iVtObject_c* apc_object, IsoAgLib::iVtObject_c* apc_childObject, int16_t x, int16_t y, bool b_enableReplaceOfCmd)
 {
   return sendCommand (180 /* Command: Command --- Parameter: Change Child Position */,
-                      rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
-                      rpc_childObject->getID() & 0xFF, rpc_childObject->getID() >> 8,
+                      apc_object->getID() & 0xFF, apc_object->getID() >> 8,
+                      apc_childObject->getID() & 0xFF, apc_childObject->getID() >> 8,
                       x & 0xFF, x >> 8,
                       y & 0xFF, y >> 8,
                       DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
@@ -1532,32 +1532,32 @@ VtClientServerCommunication_c::sendCommandChangeChildPosition (IsoAgLib::iVtObje
 
 //! should only be called with valid values ranging -127..0..128 (according to ISO!!!)
 bool
-VtClientServerCommunication_c::sendCommandChangeChildLocation (IsoAgLib::iVtObject_c* rpc_object, IsoAgLib::iVtObject_c* rpc_childObject, int16_t dx, int16_t dy, bool b_enableReplaceOfCmd)
+VtClientServerCommunication_c::sendCommandChangeChildLocation (IsoAgLib::iVtObject_c* apc_object, IsoAgLib::iVtObject_c* apc_childObject, int16_t dx, int16_t dy, bool b_enableReplaceOfCmd)
 {
   return sendCommand (165 /* Command: Command --- Parameter: Change Child Location */,
-                      rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
-                      rpc_childObject->getID() & 0xFF, rpc_childObject->getID() >> 8,
+                      apc_object->getID() & 0xFF, apc_object->getID() >> 8,
+                      apc_childObject->getID() & 0xFF, apc_childObject->getID() >> 8,
                       dx+127, dy+127, 0xFF,
                       DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
 }
 
 bool
-VtClientServerCommunication_c::sendCommandChangeBackgroundColour (IsoAgLib::iVtObject_c* rpc_object, uint8_t newColour, bool b_enableReplaceOfCmd)
+VtClientServerCommunication_c::sendCommandChangeBackgroundColour (IsoAgLib::iVtObject_c* apc_object, uint8_t newColour, bool b_enableReplaceOfCmd)
 {
   return sendCommand (167 /* Command: Command --- Parameter: Change Background Color */,
-                      rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
+                      apc_object->getID() & 0xFF, apc_object->getID() >> 8,
                       newColour, 0xFF, 0xFF, 0xFF, 0xFF,
                       DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
 }
 
 bool
-VtClientServerCommunication_c::sendCommandChangePriority (IsoAgLib::iVtObject_c* rpc_object, int8_t newPriority, bool b_enableReplaceOfCmd)
+VtClientServerCommunication_c::sendCommandChangePriority (IsoAgLib::iVtObject_c* apc_object, int8_t newPriority, bool b_enableReplaceOfCmd)
 {
   if(newPriority < 3)
   {
     // only bother to send if priority is a legal value
     return sendCommand (176 /* Command: Command --- Parameter: Change Priority */,
-                        rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
+                        apc_object->getID() & 0xFF, apc_object->getID() >> 8,
                         newPriority, 0xFF, 0xFF, 0xFF, 0xFF,
                         DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
   }
@@ -1566,10 +1566,10 @@ VtClientServerCommunication_c::sendCommandChangePriority (IsoAgLib::iVtObject_c*
 }
 
 bool
-VtClientServerCommunication_c::sendCommandChangeSize (IsoAgLib::iVtObject_c* rpc_object,uint16_t newWidth, uint16_t newHeight, bool b_enableReplaceOfCmd)
+VtClientServerCommunication_c::sendCommandChangeSize (IsoAgLib::iVtObject_c* apc_object,uint16_t newWidth, uint16_t newHeight, bool b_enableReplaceOfCmd)
 {
   return sendCommand (166 /* Command: Command --- Parameter: Change Size */,
-                      rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
+                      apc_object->getID() & 0xFF, apc_object->getID() >> 8,
                       newWidth & 0xFF, newWidth >> 8,
                       newHeight & 0xFF, newHeight >> 8,
                       0xFF,
@@ -1577,10 +1577,10 @@ VtClientServerCommunication_c::sendCommandChangeSize (IsoAgLib::iVtObject_c* rpc
 }
 
 bool
-VtClientServerCommunication_c::sendCommandChangeEndPoint (IsoAgLib::iVtObject_c* rpc_object,uint16_t newWidth, uint16_t newHeight, uint8_t newLineAttributes, bool b_enableReplaceOfCmd)
+VtClientServerCommunication_c::sendCommandChangeEndPoint (IsoAgLib::iVtObject_c* apc_object,uint16_t newWidth, uint16_t newHeight, uint8_t newLineAttributes, bool b_enableReplaceOfCmd)
 {
   return sendCommand (169 /* Command: Command --- Parameter: Change Size */,
-                      rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
+                      apc_object->getID() & 0xFF, apc_object->getID() >> 8,
                       newWidth & 0xFF, newWidth >> 8,
                       newHeight & 0xFF, newHeight >> 8,
                       newLineAttributes,
@@ -1588,10 +1588,10 @@ VtClientServerCommunication_c::sendCommandChangeEndPoint (IsoAgLib::iVtObject_c*
 }
 
 bool
-VtClientServerCommunication_c::sendCommandChangeFillAttributes (IsoAgLib::iVtObject_c* rpc_object, uint8_t newFillType, uint8_t newFillColour, IsoAgLib::iVtObjectPictureGraphic_c* newFillPatternObject, bool b_enableReplaceOfCmd)
+VtClientServerCommunication_c::sendCommandChangeFillAttributes (IsoAgLib::iVtObject_c* apc_object, uint8_t newFillType, uint8_t newFillColour, IsoAgLib::iVtObjectPictureGraphic_c* newFillPatternObject, bool b_enableReplaceOfCmd)
 {
   return sendCommand (172 /* Command: Command --- Parameter: Change FillAttributes */,
-                      rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
+                      apc_object->getID() & 0xFF, apc_object->getID() >> 8,
                       newFillType, newFillColour,
                       (newFillType == 3) ? newFillPatternObject->getID() & 0xFF : 0xFF,
                       (newFillType == 3) ? newFillPatternObject->getID() >> 8 : 0xFF,
@@ -1600,39 +1600,39 @@ VtClientServerCommunication_c::sendCommandChangeFillAttributes (IsoAgLib::iVtObj
 }
 
 bool
-VtClientServerCommunication_c::sendCommandChangeFontAttributes (IsoAgLib::iVtObject_c* rpc_object, uint8_t newFontColour, uint8_t newFontSize, uint8_t newFontType, uint8_t newFontStyle, bool b_enableReplaceOfCmd)
+VtClientServerCommunication_c::sendCommandChangeFontAttributes (IsoAgLib::iVtObject_c* apc_object, uint8_t newFontColour, uint8_t newFontSize, uint8_t newFontType, uint8_t newFontStyle, bool b_enableReplaceOfCmd)
 {
   return sendCommand (170 /* Command: Command --- Parameter: Change FontAttributes */,
-                      rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
+                      apc_object->getID() & 0xFF, apc_object->getID() >> 8,
                       newFontColour, newFontSize, newFontType, newFontStyle, 0xFF,
                       DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
 }
 
 bool
-VtClientServerCommunication_c::sendCommandChangeLineAttributes (IsoAgLib::iVtObject_c* rpc_object, uint8_t newLineColour, uint8_t newLineWidth, uint16_t newLineArt, bool b_enableReplaceOfCmd)
+VtClientServerCommunication_c::sendCommandChangeLineAttributes (IsoAgLib::iVtObject_c* apc_object, uint8_t newLineColour, uint8_t newLineWidth, uint16_t newLineArt, bool b_enableReplaceOfCmd)
 {
   return sendCommand (171 /* Command: Command --- Parameter: Change LineAttributes */,
-                      rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
+                      apc_object->getID() & 0xFF, apc_object->getID() >> 8,
                       newLineColour, newLineWidth, newLineArt & 0xFF, newLineArt >> 8, 0xFF,
                       DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
 }
 
 bool
-VtClientServerCommunication_c::sendCommandControlAudioDevice (uint8_t rui8_repetitions, uint16_t rui16_frequency, uint16_t rui16_onTime, uint16_t rui16_offTime)
+VtClientServerCommunication_c::sendCommandControlAudioDevice (uint8_t aui8_repetitions, uint16_t aui16_frequency, uint16_t aui16_onTime, uint16_t aui16_offTime)
 {
   return sendCommand (163 /* Command: Command --- Parameter: Control Audio Device */,
-                      rui8_repetitions,
-                      rui16_frequency & 0xFF, rui16_frequency >> 8,
-                      rui16_onTime & 0xFF, rui16_onTime >> 8,
-                      rui16_offTime & 0xFF, rui16_offTime >> 8,
+                      aui8_repetitions,
+                      aui16_frequency & 0xFF, aui16_frequency >> 8,
+                      aui16_onTime & 0xFF, aui16_onTime >> 8,
+                      aui16_offTime & 0xFF, aui16_offTime >> 8,
                       DEF_TimeOut_NormalCommand, false); // don't care for enable-same command stuff
 }
 
 bool
-VtClientServerCommunication_c::sendCommandSetAudioVolume (uint8_t rui8_volume)
+VtClientServerCommunication_c::sendCommandSetAudioVolume (uint8_t aui8_volume)
 {
   return sendCommand (164 /* Command: Command --- Parameter: Set Audio Volume */,
-                      rui8_volume, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, DEF_TimeOut_NormalCommand, false); // don't care for enableReplaceOfCommand parameter actually
+                      aui8_volume, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, DEF_TimeOut_NormalCommand, false); // don't care for enableReplaceOfCommand parameter actually
 }
 
 bool
@@ -1653,11 +1653,11 @@ VtClientServerCommunication_c::sendCommandUpdateLanguagePool()
 }
 
 bool
-VtClientServerCommunication_c::sendCommandUpdateObjectPool (IsoAgLib::iVtObject_c** rppc_vtObjects, uint16_t rui16_numObjects)
+VtClientServerCommunication_c::sendCommandUpdateObjectPool (IsoAgLib::iVtObject_c** rppc_vtObjects, uint16_t aui16_numObjects)
 {
   /// Enqueue a fake command which will trigger the language object pool update to be multi-sent out. using 0x11 here, as this is the command then and won't be used
   return sendCommand (0x11 /* Command: Object Pool Transfer --- Parameter: Object Pool Transfer */,
-                      0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, DEF_TimeOut_EndOfObjectPool, false, rppc_vtObjects, rui16_numObjects) // replaces COULD happen if user-triggered sequences are there.
+                      0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, DEF_TimeOut_EndOfObjectPool, false, rppc_vtObjects, aui16_numObjects) // replaces COULD happen if user-triggered sequences are there.
       && sendCommand (0x12 /* Command: Object Pool Transfer --- Parameter: Object Pool Ready */,
                       0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, DEF_TimeOut_EndOfObjectPool, false); // replaces COULD happen if user-triggered sequences are there.
 }
@@ -1665,52 +1665,52 @@ VtClientServerCommunication_c::sendCommandUpdateObjectPool (IsoAgLib::iVtObject_
 
 //////////////
 bool
-VtClientServerCommunication_c::sendCommandChangeNumericValue (uint16_t rui16_objectUid, uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, bool b_enableReplaceOfCmd)
+VtClientServerCommunication_c::sendCommandChangeNumericValue (uint16_t aui16_objectUid, uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, bool b_enableReplaceOfCmd)
 {
   return sendCommand (168 /* Command: Command --- Parameter: Change Numeric Value */,
-                      rui16_objectUid & 0xFF, rui16_objectUid >> 8,
+                      aui16_objectUid & 0xFF, aui16_objectUid >> 8,
                       0xFF, byte1, byte2, byte3, byte4,
                       DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
 }
 
 bool
-VtClientServerCommunication_c::sendCommandChangeAttribute (uint16_t rui16_objectUid, uint8_t attrId, uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, bool b_enableReplaceOfCmd)
+VtClientServerCommunication_c::sendCommandChangeAttribute (uint16_t aui16_objectUid, uint8_t attrId, uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, bool b_enableReplaceOfCmd)
 {
   return sendCommand (175 /* Command: Command --- Parameter: Change Attribute */,
-                      rui16_objectUid & 0xFF, rui16_objectUid >> 8,
+                      aui16_objectUid & 0xFF, aui16_objectUid >> 8,
                       attrId, byte1, byte2, byte3, byte4,
                       DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
 }
 
 bool
-VtClientServerCommunication_c::sendCommandChangeSoftKeyMask (uint16_t rui16_objectUid, uint8_t maskType, uint16_t newSoftKeyMask, bool b_enableReplaceOfCmd)
+VtClientServerCommunication_c::sendCommandChangeSoftKeyMask (uint16_t aui16_objectUid, uint8_t maskType, uint16_t newSoftKeyMask, bool b_enableReplaceOfCmd)
 {
   return sendCommand (174 /* Command: Command --- Parameter: Change Soft Key Mask */,
                       maskType,
-                      rui16_objectUid & 0xFF, rui16_objectUid >> 8,
+                      aui16_objectUid & 0xFF, aui16_objectUid >> 8,
                       newSoftKeyMask & 0xFF, newSoftKeyMask >> 8,
                       0xFF, 0xFF,
                       DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
 }
 
 bool
-VtClientServerCommunication_c::sendCommandChangeStringValue (uint16_t rui16_objectUid, const char* rpc_newValue, uint16_t overrideSendLength, bool b_enableReplaceOfCmd)
+VtClientServerCommunication_c::sendCommandChangeStringValue (uint16_t aui16_objectUid, const char* apc_newValue, uint16_t overrideSendLength, bool b_enableReplaceOfCmd)
 {
 #ifdef DEBUG
   INTERNAL_DEBUG_DEVICE << "Enqueued string-ref: " << q_sendUpload.size() << " -> ";
 #endif
 
-  sc_tempSendUpload.set (rui16_objectUid, rpc_newValue, overrideSendLength);
+  sc_tempSendUpload.set (aui16_objectUid, apc_newValue, overrideSendLength);
 
   return queueOrReplace (sc_tempSendUpload, b_enableReplaceOfCmd);
 }
 
 bool
-VtClientServerCommunication_c::sendCommandChangeChildPosition (uint16_t rui16_objectUid, uint16_t rui16_childObjectUid, int16_t x, int16_t y, bool b_enableReplaceOfCmd)
+VtClientServerCommunication_c::sendCommandChangeChildPosition (uint16_t aui16_objectUid, uint16_t aui16_childObjectUid, int16_t x, int16_t y, bool b_enableReplaceOfCmd)
 {
   return sendCommand (180 /* Command: Command --- Parameter: Change Child Position */,
-                      rui16_objectUid & 0xFF, rui16_objectUid >> 8,
-                      rui16_childObjectUid & 0xFF, rui16_childObjectUid >> 8,
+                      aui16_objectUid & 0xFF, aui16_objectUid >> 8,
+                      aui16_childObjectUid & 0xFF, aui16_childObjectUid >> 8,
                       x & 0xFF, x >> 8,
                       y & 0xFF, y >> 8,
                       DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
@@ -1718,29 +1718,29 @@ VtClientServerCommunication_c::sendCommandChangeChildPosition (uint16_t rui16_ob
 
 //! should only be called with valid values ranging -127..0..128 (according to ISO!!!)
 bool
-VtClientServerCommunication_c::sendCommandChangeChildLocation (uint16_t rui16_objectUid, uint16_t rui16_childObjectUid, int16_t dx, int16_t dy, bool b_enableReplaceOfCmd)
+VtClientServerCommunication_c::sendCommandChangeChildLocation (uint16_t aui16_objectUid, uint16_t aui16_childObjectUid, int16_t dx, int16_t dy, bool b_enableReplaceOfCmd)
 {
   return sendCommand (165 /* Command: Command --- Parameter: Change Child Location */,
-                      rui16_objectUid & 0xFF, rui16_objectUid >> 8,
-                      rui16_childObjectUid & 0xFF, rui16_childObjectUid >> 8,
+                      aui16_objectUid & 0xFF, aui16_objectUid >> 8,
+                      aui16_childObjectUid & 0xFF, aui16_childObjectUid >> 8,
                       dx+127, dy+127, 0xFF,
                       DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
 }
 
 bool
-VtClientServerCommunication_c::sendCommandChangeBackgroundColour (uint16_t rui16_objectUid, uint8_t newColour, bool b_enableReplaceOfCmd)
+VtClientServerCommunication_c::sendCommandChangeBackgroundColour (uint16_t aui16_objectUid, uint8_t newColour, bool b_enableReplaceOfCmd)
 {
   return sendCommand (167 /* Command: Command --- Parameter: Change Background Color */,
-                      rui16_objectUid & 0xFF, rui16_objectUid >> 8,
+                      aui16_objectUid & 0xFF, aui16_objectUid >> 8,
                       newColour, 0xFF, 0xFF, 0xFF, 0xFF,
                       DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
 }
 
 bool
-VtClientServerCommunication_c::sendCommandChangeSize (uint16_t rui16_objectUid,uint16_t newWidth, uint16_t newHeight, bool b_enableReplaceOfCmd)
+VtClientServerCommunication_c::sendCommandChangeSize (uint16_t aui16_objectUid,uint16_t newWidth, uint16_t newHeight, bool b_enableReplaceOfCmd)
 {
   return sendCommand (166 /* Command: Command --- Parameter: Change Size */,
-                      rui16_objectUid & 0xFF, rui16_objectUid >> 8,
+                      aui16_objectUid & 0xFF, aui16_objectUid >> 8,
                       newWidth & 0xFF, newWidth >> 8,
                       newHeight & 0xFF, newHeight >> 8,
                       0xFF,
@@ -1748,10 +1748,10 @@ VtClientServerCommunication_c::sendCommandChangeSize (uint16_t rui16_objectUid,u
 }
 
 bool
-VtClientServerCommunication_c::sendCommandChangeFillAttributes (uint16_t rui16_objectUid, uint8_t newFillType, uint8_t newFillColour, IsoAgLib::iVtObjectPictureGraphic_c* newFillPatternObject, bool b_enableReplaceOfCmd)
+VtClientServerCommunication_c::sendCommandChangeFillAttributes (uint16_t aui16_objectUid, uint8_t newFillType, uint8_t newFillColour, IsoAgLib::iVtObjectPictureGraphic_c* newFillPatternObject, bool b_enableReplaceOfCmd)
 {
   return sendCommand (172 /* Command: Command --- Parameter: Change FillAttributes */,
-                      rui16_objectUid & 0xFF, rui16_objectUid >> 8,
+                      aui16_objectUid & 0xFF, aui16_objectUid >> 8,
                       newFillType, newFillColour,
                       (newFillType == 3) ? newFillPatternObject->getID() & 0xFF : 0xFF,
                       (newFillType == 3) ? newFillPatternObject->getID() >> 8 : 0xFF,
@@ -1760,19 +1760,19 @@ VtClientServerCommunication_c::sendCommandChangeFillAttributes (uint16_t rui16_o
 }
 
 bool
-VtClientServerCommunication_c::sendCommandChangeFontAttributes (uint16_t rui16_objectUid, uint8_t newFontColour, uint8_t newFontSize, uint8_t newFontType, uint8_t newFontStyle, bool b_enableReplaceOfCmd)
+VtClientServerCommunication_c::sendCommandChangeFontAttributes (uint16_t aui16_objectUid, uint8_t newFontColour, uint8_t newFontSize, uint8_t newFontType, uint8_t newFontStyle, bool b_enableReplaceOfCmd)
 {
   return sendCommand (170 /* Command: Command --- Parameter: Change FontAttributes */,
-                      rui16_objectUid & 0xFF, rui16_objectUid >> 8,
+                      aui16_objectUid & 0xFF, aui16_objectUid >> 8,
                       newFontColour, newFontSize, newFontType, newFontStyle, 0xFF,
                       DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
 }
 
 bool
-VtClientServerCommunication_c::sendCommandChangeLineAttributes (uint16_t rui16_objectUid, uint8_t newLineColour, uint8_t newLineWidth, uint16_t newLineArt, bool b_enableReplaceOfCmd)
+VtClientServerCommunication_c::sendCommandChangeLineAttributes (uint16_t aui16_objectUid, uint8_t newLineColour, uint8_t newLineWidth, uint16_t newLineArt, bool b_enableReplaceOfCmd)
 {
   return sendCommand (171 /* Command: Command --- Parameter: Change LineAttributes */,
-                      rui16_objectUid & 0xFF, rui16_objectUid >> 8,
+                      aui16_objectUid & 0xFF, aui16_objectUid >> 8,
                       newLineColour, newLineWidth, newLineArt & 0xFF, newLineArt >> 8, 0xFF,
                       DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
 }
@@ -1782,12 +1782,12 @@ VtClientServerCommunication_c::sendCommandChangeLineAttributes (uint16_t rui16_o
 //! @return Flag if successful
 bool
 VtClientServerCommunication_c::sendCommandSetGraphicsCursor(
-  IsoAgLib::iVtObject_c* rpc_object, const IsoAgLib::iVtPoint_c& rc_point, bool b_enableReplaceOfCmd)
+  IsoAgLib::iVtObject_c* apc_object, const IsoAgLib::iVtPoint_c& ac_point, bool b_enableReplaceOfCmd)
 {
-  uint16_t x=convert_n::castUI( rc_point.getX() );
-  uint16_t y=convert_n::castUI( rc_point.getY() );
+  uint16_t x=convert_n::castUI( ac_point.getX() );
+  uint16_t y=convert_n::castUI( ac_point.getY() );
   return sendCommand (vtObjectGraphicsContext_c::e_commandID,
-                      rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
+                      apc_object->getID() & 0xFF, apc_object->getID() >> 8,
                       vtObjectGraphicsContext_c::e_setGraphicsCursorCmdID,
                       x & 0xFF, x >> 8, y & 0xFF, y >> 8,
                       DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd );
@@ -1795,10 +1795,10 @@ VtClientServerCommunication_c::sendCommandSetGraphicsCursor(
 
 bool
 VtClientServerCommunication_c::sendCommandSetForegroundColour(
-  IsoAgLib::iVtObject_c* rpc_object, uint8_t newValue, bool b_enableReplaceOfCmd)
+  IsoAgLib::iVtObject_c* apc_object, uint8_t newValue, bool b_enableReplaceOfCmd)
 {
   return sendCommand (vtObjectGraphicsContext_c::e_commandID,
-                      rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
+                      apc_object->getID() & 0xFF, apc_object->getID() >> 8,
                       vtObjectGraphicsContext_c::e_setForegroundColourCmdID,
                       newValue, 0xFF, 0xFF, 0xFF,
                       DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
@@ -1806,10 +1806,10 @@ VtClientServerCommunication_c::sendCommandSetForegroundColour(
 
 bool
 VtClientServerCommunication_c::sendCommandSetBackgroundColour(
-  IsoAgLib::iVtObject_c* rpc_object, uint8_t newValue, bool b_enableReplaceOfCmd)
+  IsoAgLib::iVtObject_c* apc_object, uint8_t newValue, bool b_enableReplaceOfCmd)
 {
   return sendCommand (vtObjectGraphicsContext_c::e_commandID,
-                      rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
+                      apc_object->getID() & 0xFF, apc_object->getID() >> 8,
                       vtObjectGraphicsContext_c::e_setBackgroundColourCmdID,
                       newValue, 0xFF, 0xFF, 0xFF,
                       DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
@@ -1817,10 +1817,10 @@ VtClientServerCommunication_c::sendCommandSetBackgroundColour(
 
 bool
 VtClientServerCommunication_c::sendCommandSetGCLineAttributes(
-  IsoAgLib::iVtObject_c* rpc_object, const IsoAgLib::iVtObjectLineAttributes_c* const newLineAttributes, bool b_enableReplaceOfCmd)
+  IsoAgLib::iVtObject_c* apc_object, const IsoAgLib::iVtObjectLineAttributes_c* const newLineAttributes, bool b_enableReplaceOfCmd)
 {
   return sendCommand (vtObjectGraphicsContext_c::e_commandID,
-                      rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
+                      apc_object->getID() & 0xFF, apc_object->getID() >> 8,
                       vtObjectGraphicsContext_c::e_setLineAttributeCmdID,
                       newLineAttributes->getID() & 0xFF, newLineAttributes->getID() >> 8, 0xFF, 0xFF,
                       DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
@@ -1828,10 +1828,10 @@ VtClientServerCommunication_c::sendCommandSetGCLineAttributes(
 
 bool
 VtClientServerCommunication_c::sendCommandSetGCFillAttributes(
-  IsoAgLib::iVtObject_c* rpc_object, const IsoAgLib::iVtObjectFillAttributes_c* const newFillAttributes, bool b_enableReplaceOfCmd)
+  IsoAgLib::iVtObject_c* apc_object, const IsoAgLib::iVtObjectFillAttributes_c* const newFillAttributes, bool b_enableReplaceOfCmd)
 {
   return sendCommand (vtObjectGraphicsContext_c::e_commandID,
-                      rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
+                      apc_object->getID() & 0xFF, apc_object->getID() >> 8,
                       vtObjectGraphicsContext_c::e_setFillAttributeCmdID,
                       newFillAttributes->getID() & 0xFF, newFillAttributes->getID() >> 8, 0xFF, 0xFF,
                       DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
@@ -1839,10 +1839,10 @@ VtClientServerCommunication_c::sendCommandSetGCFillAttributes(
 
 bool
 VtClientServerCommunication_c::sendCommandSetGCFontAttributes(
-  IsoAgLib::iVtObject_c* rpc_object, const IsoAgLib::iVtObjectFontAttributes_c* const newFontAttributes, bool b_enableReplaceOfCmd)
+  IsoAgLib::iVtObject_c* apc_object, const IsoAgLib::iVtObjectFontAttributes_c* const newFontAttributes, bool b_enableReplaceOfCmd)
 {
   return sendCommand (vtObjectGraphicsContext_c::e_commandID,
-                      rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
+                      apc_object->getID() & 0xFF, apc_object->getID() >> 8,
                       vtObjectGraphicsContext_c::e_setFontAttributeCmdID,
                       newFontAttributes->getID() & 0xFF, newFontAttributes->getID() >> 8, 0xFF, 0xFF,
                       DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
@@ -1850,12 +1850,12 @@ VtClientServerCommunication_c::sendCommandSetGCFontAttributes(
 
 bool
 VtClientServerCommunication_c::sendCommandEraseRectangle(
-  IsoAgLib::iVtObject_c* rpc_object, const IsoAgLib::iVtPoint_c& rc_point, bool b_enableReplaceOfCmd)
+  IsoAgLib::iVtObject_c* apc_object, const IsoAgLib::iVtPoint_c& ac_point, bool b_enableReplaceOfCmd)
 {
-  uint16_t x=convert_n::castUI( rc_point.getX() );
-  uint16_t y=convert_n::castUI( rc_point.getY() );
+  uint16_t x=convert_n::castUI( ac_point.getX() );
+  uint16_t y=convert_n::castUI( ac_point.getY() );
   return sendCommand (vtObjectGraphicsContext_c::e_commandID,
-                      rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
+                      apc_object->getID() & 0xFF, apc_object->getID() >> 8,
                       vtObjectGraphicsContext_c::e_eraseRectangleCmdID,
                       x & 0xFF, x >> 8, y & 0xFF, y >> 8,
                       DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
@@ -1863,10 +1863,10 @@ VtClientServerCommunication_c::sendCommandEraseRectangle(
 
 bool
 VtClientServerCommunication_c::sendCommandDrawPoint(
-  IsoAgLib::iVtObject_c* rpc_object, bool  b_enableReplaceOfCmd)
+  IsoAgLib::iVtObject_c* apc_object, bool  b_enableReplaceOfCmd)
 {
   return sendCommand (vtObjectGraphicsContext_c::e_commandID,
-                      rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
+                      apc_object->getID() & 0xFF, apc_object->getID() >> 8,
                       vtObjectGraphicsContext_c::e_drawPointCmdID,
                       0xFF, 0xFF, 0xFF, 0xFF,
                       DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
@@ -1874,12 +1874,12 @@ VtClientServerCommunication_c::sendCommandDrawPoint(
 
 bool
 VtClientServerCommunication_c::sendCommandDrawLine(
-  IsoAgLib::iVtObject_c* rpc_object, const IsoAgLib::iVtPoint_c& rc_point, bool b_enableReplaceOfCmd)
+  IsoAgLib::iVtObject_c* apc_object, const IsoAgLib::iVtPoint_c& ac_point, bool b_enableReplaceOfCmd)
 {
-  uint16_t x=convert_n::castUI( rc_point.getX() );
-  uint16_t y=convert_n::castUI( rc_point.getY() );
+  uint16_t x=convert_n::castUI( ac_point.getX() );
+  uint16_t y=convert_n::castUI( ac_point.getY() );
   return sendCommand (vtObjectGraphicsContext_c::e_commandID,
-                      rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
+                      apc_object->getID() & 0xFF, apc_object->getID() >> 8,
                       vtObjectGraphicsContext_c::e_drawLineCmdID,
                       x & 0xFF, x >> 8, y & 0xFF, y >> 8,
                       DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
@@ -1887,12 +1887,12 @@ VtClientServerCommunication_c::sendCommandDrawLine(
 
 bool
 VtClientServerCommunication_c::sendCommandDrawRectangle(
-  IsoAgLib::iVtObject_c* rpc_object, const IsoAgLib::iVtPoint_c& rc_point, bool b_enableReplaceOfCmd)
+  IsoAgLib::iVtObject_c* apc_object, const IsoAgLib::iVtPoint_c& ac_point, bool b_enableReplaceOfCmd)
 {
-  uint16_t x=convert_n::castUI( rc_point.getX() );
-  uint16_t y=convert_n::castUI( rc_point.getY() );
+  uint16_t x=convert_n::castUI( ac_point.getX() );
+  uint16_t y=convert_n::castUI( ac_point.getY() );
   return sendCommand (vtObjectGraphicsContext_c::e_commandID,
-                      rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
+                      apc_object->getID() & 0xFF, apc_object->getID() >> 8,
                       vtObjectGraphicsContext_c::e_drawRectangleCmdID,
                       x & 0xFF, x >> 8, y & 0xFF, y >> 8,
                       DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
@@ -1900,12 +1900,12 @@ VtClientServerCommunication_c::sendCommandDrawRectangle(
 
 bool
 VtClientServerCommunication_c::sendCommandDrawClosedEllipse(
-  IsoAgLib::iVtObject_c* rpc_object, const IsoAgLib::iVtPoint_c& rc_point, bool b_enableReplaceOfCmd)
+  IsoAgLib::iVtObject_c* apc_object, const IsoAgLib::iVtPoint_c& ac_point, bool b_enableReplaceOfCmd)
 {
-  uint16_t x=convert_n::castUI( rc_point.getX() );
-  uint16_t y=convert_n::castUI( rc_point.getY() );
+  uint16_t x=convert_n::castUI( ac_point.getX() );
+  uint16_t y=convert_n::castUI( ac_point.getY() );
   return sendCommand (vtObjectGraphicsContext_c::e_commandID,
-                      rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
+                      apc_object->getID() & 0xFF, apc_object->getID() >> 8,
                       vtObjectGraphicsContext_c::e_drawClosedEllipseCmdID,
                       x & 0xFF, x >> 8, y & 0xFF, y >> 8,
                       DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
@@ -1913,20 +1913,20 @@ VtClientServerCommunication_c::sendCommandDrawClosedEllipse(
 
 bool
 VtClientServerCommunication_c::sendCommandDrawPolygon(
-  IsoAgLib::iVtObject_c* rpc_object, uint16_t ui16_numOfPoints, const IsoAgLib::iVtPoint_c* const rpc_data, bool b_enableReplaceOfCmd)
+  IsoAgLib::iVtObject_c* apc_object, uint16_t ui16_numOfPoints, const IsoAgLib::iVtPoint_c* const apc_data, bool b_enableReplaceOfCmd)
 {
   // Prevent from derefernzing NULL pointer.
-  if (0 == rpc_data) { ui16_numOfPoints = 0; }
+  if (0 == apc_data) { ui16_numOfPoints = 0; }
 
   // Check if valid polgon (at least one point)
   if (0 == ui16_numOfPoints) { return false; }
 
   // Trivial case (like draw line) without TP.
   if (ui16_numOfPoints == 1) {
-    uint16_t x = convert_n::castUI( rpc_data->getX() );
-    uint16_t y = convert_n::castUI( rpc_data->getY() );
+    uint16_t x = convert_n::castUI( apc_data->getX() );
+    uint16_t y = convert_n::castUI( apc_data->getY() );
     return sendCommand( vtObjectGraphicsContext_c::e_commandID,
-                        rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
+                        apc_object->getID() & 0xFF, apc_object->getID() >> 8,
                         vtObjectGraphicsContext_c::e_drawPolygonCmdID,
                         x & 0xFF, x >> 8, y & 0xFF, y >> 8,
                         DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd );
@@ -1936,8 +1936,8 @@ VtClientServerCommunication_c::sendCommandDrawPolygon(
   uint16_t ui16_bufferSize = 4+(ui16_numOfPoints*4);
   uint8_t *pui8_buffer = new uint8_t[ ui16_bufferSize ];
   pui8_buffer[0] = vtObjectGraphicsContext_c::e_commandID;
-  pui8_buffer[1] = rpc_object->getID() & 0xFF;
-  pui8_buffer[2] = rpc_object->getID() >> 8;
+  pui8_buffer[1] = apc_object->getID() & 0xFF;
+  pui8_buffer[2] = apc_object->getID() >> 8;
   pui8_buffer[3] = vtObjectGraphicsContext_c::e_drawPolygonCmdID;
 
   // add all points from the list to the buffer
@@ -1946,10 +1946,10 @@ VtClientServerCommunication_c::sendCommandDrawPolygon(
         ui16_currentPoint < ui16_numOfPoints;
         ui16_currentPoint++ )
   {
-    uint16_t x = convert_n::castUI( rpc_data[ui16_currentPoint].getX() );
+    uint16_t x = convert_n::castUI( apc_data[ui16_currentPoint].getX() );
     pui8_buffer[ui16_index]   = x & 0xFF;
     pui8_buffer[ui16_index+1] = x >> 8;
-    uint16_t y = convert_n::castUI( rpc_data[ui16_currentPoint].getY() );
+    uint16_t y = convert_n::castUI( apc_data[ui16_currentPoint].getY() );
     pui8_buffer[ui16_index+2] = y & 0xFF;
     pui8_buffer[ui16_index+3] = y >> 8;
     ui16_index+=4;
@@ -1963,14 +1963,14 @@ VtClientServerCommunication_c::sendCommandDrawPolygon(
 
 bool
 VtClientServerCommunication_c::sendCommandDrawText(
-  IsoAgLib::iVtObject_c* rpc_object, uint8_t ui8_textType, uint8_t ui8_numOfCharacters, const char *rpc_newValue, bool b_enableReplaceOfCmd)
+  IsoAgLib::iVtObject_c* apc_object, uint8_t ui8_textType, uint8_t ui8_numOfCharacters, const char *apc_newValue, bool b_enableReplaceOfCmd)
 {
   // Non TP case
   if (ui8_numOfCharacters <= 2) {
-    uint8_t a = (ui8_numOfCharacters >= 1) ? rpc_newValue[0] : 0xFF;
-    uint8_t b = (ui8_numOfCharacters >= 2) ? rpc_newValue[1] : 0xFF;
+    uint8_t a = (ui8_numOfCharacters >= 1) ? apc_newValue[0] : 0xFF;
+    uint8_t b = (ui8_numOfCharacters >= 2) ? apc_newValue[1] : 0xFF;
     return sendCommand( vtObjectGraphicsContext_c::e_commandID,
-                        rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
+                        apc_object->getID() & 0xFF, apc_object->getID() >> 8,
                         vtObjectGraphicsContext_c::e_drawTextCmdID,
                         ui8_textType, ui8_numOfCharacters, a, b,
                         DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd );
@@ -1978,14 +1978,14 @@ VtClientServerCommunication_c::sendCommandDrawText(
 
   uint8_t *pui8_buffer = new uint8_t[6+ui8_numOfCharacters];
   pui8_buffer[0] = vtObjectGraphicsContext_c::e_commandID;
-  pui8_buffer[1] = rpc_object->getID() & 0xFF;
-  pui8_buffer[2] = rpc_object->getID() >> 8;
+  pui8_buffer[1] = apc_object->getID() & 0xFF;
+  pui8_buffer[2] = apc_object->getID() >> 8;
   pui8_buffer[3] = vtObjectGraphicsContext_c::e_drawTextCmdID;
   pui8_buffer[4] = ui8_textType;
   pui8_buffer[5] = ui8_numOfCharacters;
 
   for (uint8_t ui8_index = 0; ui8_index < ui8_numOfCharacters; ui8_index++)
-    pui8_buffer[6+ui8_index] = rpc_newValue [ui8_index];
+    pui8_buffer[6+ui8_index] = apc_newValue [ui8_index];
 
   sc_tempSendUpload.set (pui8_buffer, (6+ui8_numOfCharacters));
   delete[] pui8_buffer;
@@ -1995,12 +1995,12 @@ VtClientServerCommunication_c::sendCommandDrawText(
 
 bool
 VtClientServerCommunication_c::sendCommandPanViewport(
-  IsoAgLib::iVtObject_c* rpc_object, const IsoAgLib::iVtPoint_c& rc_point, bool b_enableReplaceOfCmd)
+  IsoAgLib::iVtObject_c* apc_object, const IsoAgLib::iVtPoint_c& ac_point, bool b_enableReplaceOfCmd)
 {
-  uint16_t x = convert_n::castUI( rc_point.getX() );
-  uint16_t y = convert_n::castUI( rc_point.getY() );
+  uint16_t x = convert_n::castUI( ac_point.getX() );
+  uint16_t y = convert_n::castUI( ac_point.getY() );
   return sendCommand (vtObjectGraphicsContext_c::e_commandID,
-                      rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
+                      apc_object->getID() & 0xFF, apc_object->getID() >> 8,
                       vtObjectGraphicsContext_c::e_panViewportCmdID,
                       x & 0xFF, x >> 8, y & 0xFF, y >> 8,
                       DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
@@ -2008,11 +2008,11 @@ VtClientServerCommunication_c::sendCommandPanViewport(
 
 bool
 VtClientServerCommunication_c::sendCommandZoomViewport(
-  IsoAgLib::iVtObject_c* rpc_object, int8_t newValue, bool b_enableReplaceOfCmd)
+  IsoAgLib::iVtObject_c* apc_object, int8_t newValue, bool b_enableReplaceOfCmd)
 {
   uint8_t zoom = convert_n::castUI( newValue );
   return sendCommand (vtObjectGraphicsContext_c::e_commandID,
-                      rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
+                      apc_object->getID() & 0xFF, apc_object->getID() >> 8,
                       vtObjectGraphicsContext_c::e_zoomViewportCmdID,
                       zoom, 0xFF, 0xFF, 0xFF,
                       DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
@@ -2020,15 +2020,15 @@ VtClientServerCommunication_c::sendCommandZoomViewport(
 
 bool
 VtClientServerCommunication_c::sendCommandPanAndZoomViewport(
-  IsoAgLib::iVtObject_c* rpc_object, const IsoAgLib::iVtPoint_c& rc_point, int8_t newValue, bool b_enableReplaceOfCmd)
+  IsoAgLib::iVtObject_c* apc_object, const IsoAgLib::iVtPoint_c& ac_point, int8_t newValue, bool b_enableReplaceOfCmd)
 {
-  uint16_t x = convert_n::castUI( rc_point.getX() );
-  uint16_t y = convert_n::castUI( rc_point.getY() );
+  uint16_t x = convert_n::castUI( ac_point.getX() );
+  uint16_t y = convert_n::castUI( ac_point.getY() );
   uint8_t zoom = convert_n::castUI( newValue );
   uint8_t pui8_buffer[9];
   pui8_buffer[0] = vtObjectGraphicsContext_c::e_commandID;
-  pui8_buffer[1] = rpc_object->getID() & 0xFF;
-  pui8_buffer[2] = rpc_object->getID() >> 8;
+  pui8_buffer[1] = apc_object->getID() & 0xFF;
+  pui8_buffer[2] = apc_object->getID() >> 8;
   pui8_buffer[3] = vtObjectGraphicsContext_c::e_panAndZoomViewportCmdID;
   pui8_buffer[4] = x & 0xFF;
   pui8_buffer[5] = x >> 8;
@@ -2043,10 +2043,10 @@ VtClientServerCommunication_c::sendCommandPanAndZoomViewport(
 
 bool
 VtClientServerCommunication_c::sendCommandChangeViewportSize(
-IsoAgLib::iVtObject_c* rpc_object, uint16_t newWidth, uint16_t newHeight, bool b_enableReplaceOfCmd)
+IsoAgLib::iVtObject_c* apc_object, uint16_t newWidth, uint16_t newHeight, bool b_enableReplaceOfCmd)
 {
   return sendCommand (vtObjectGraphicsContext_c::e_commandID,
-                      rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
+                      apc_object->getID() & 0xFF, apc_object->getID() >> 8,
                       vtObjectGraphicsContext_c::e_changeViewportSizeCmdID,
                       newWidth & 0xFF, newWidth >> 8, newHeight & 0xFF, newHeight >> 8,
                       DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
@@ -2054,10 +2054,10 @@ IsoAgLib::iVtObject_c* rpc_object, uint16_t newWidth, uint16_t newHeight, bool b
 
 bool
 VtClientServerCommunication_c::sendCommandDrawVtObject(
-  IsoAgLib::iVtObject_c* rpc_object, const IsoAgLib::iVtObject_c* const pc_VtObject, bool b_enableReplaceOfCmd)
+  IsoAgLib::iVtObject_c* apc_object, const IsoAgLib::iVtObject_c* const pc_VtObject, bool b_enableReplaceOfCmd)
 {
   return sendCommand (vtObjectGraphicsContext_c::e_commandID,
-                      rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
+                      apc_object->getID() & 0xFF, apc_object->getID() >> 8,
                       vtObjectGraphicsContext_c::e_drawVTObjectCmdID,
                       pc_VtObject->getID() & 0xFF, pc_VtObject->getID() >> 8, 0xFF, 0xFF,
                       DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
@@ -2065,10 +2065,10 @@ VtClientServerCommunication_c::sendCommandDrawVtObject(
 
 bool
 VtClientServerCommunication_c::sendCommandCopyCanvas2PictureGraphic(
-  IsoAgLib::iVtObject_c* rpc_object, const IsoAgLib::iVtObjectPictureGraphic_c* const pc_VtObject, bool b_enableReplaceOfCmd)
+  IsoAgLib::iVtObject_c* apc_object, const IsoAgLib::iVtObjectPictureGraphic_c* const pc_VtObject, bool b_enableReplaceOfCmd)
 {
   return sendCommand (vtObjectGraphicsContext_c::e_commandID,
-                      rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
+                      apc_object->getID() & 0xFF, apc_object->getID() >> 8,
                       vtObjectGraphicsContext_c::e_copyCanvasToPictureGraphicCmdID,
                       pc_VtObject->getID() & 0xFF, pc_VtObject->getID() >> 8, 0xFF, 0xFF,
                       DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
@@ -2076,10 +2076,10 @@ VtClientServerCommunication_c::sendCommandCopyCanvas2PictureGraphic(
 
 bool
 VtClientServerCommunication_c::sendCommandCopyViewport2PictureGraphic(
-  IsoAgLib::iVtObject_c* rpc_object, const IsoAgLib::iVtObjectPictureGraphic_c* const pc_VtObject, bool b_enableReplaceOfCmd)
+  IsoAgLib::iVtObject_c* apc_object, const IsoAgLib::iVtObjectPictureGraphic_c* const pc_VtObject, bool b_enableReplaceOfCmd)
 {
   return sendCommand (vtObjectGraphicsContext_c::e_commandID,
-                      rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
+                      apc_object->getID() & 0xFF, apc_object->getID() >> 8,
                       vtObjectGraphicsContext_c::e_copyViewportToPictureGraphicCmdID,
                       pc_VtObject->getID() & 0xFF, pc_VtObject->getID() >> 8, 0xFF, 0xFF,
                       DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
@@ -2087,17 +2087,17 @@ VtClientServerCommunication_c::sendCommandCopyViewport2PictureGraphic(
 // ########## END Graphics Context ##########
 
 bool
-VtClientServerCommunication_c::sendCommandGetAttributeValue( IsoAgLib::iVtObject_c* rpc_object, const uint8_t cui8_attrID, bool b_enableReplaceOfCmd)
+VtClientServerCommunication_c::sendCommandGetAttributeValue( IsoAgLib::iVtObject_c* apc_object, const uint8_t cui8_attrID, bool b_enableReplaceOfCmd)
 {
   return sendCommand (185 /* Command: Get Technical Data --- Parameter: Get Attribute Value */,
-                      rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
+                      apc_object->getID() & 0xFF, apc_object->getID() >> 8,
                       cui8_attrID,
                       0xFF, 0xFF, 0xFF, 0xFF,
                       DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
 }
 
 bool
-VtClientServerCommunication_c::sendCommandLockUnlockMask( IsoAgLib::iVtObject_c* rpc_object, bool b_lockMask, uint16_t ui16_lockTimeOut, bool b_enableReplaceOfCmd)
+VtClientServerCommunication_c::sendCommandLockUnlockMask( IsoAgLib::iVtObject_c* apc_object, bool b_lockMask, uint16_t ui16_lockTimeOut, bool b_enableReplaceOfCmd)
 {
 #ifdef DEBUG
   INTERNAL_DEBUG_DEVICE << "\n LOCK *** LOCK *** send lock(1)/unlock(0) message. With b_lockMask = " << b_lockMask << INTERNAL_DEBUG_DEVICE_ENDL;
@@ -2105,32 +2105,32 @@ VtClientServerCommunication_c::sendCommandLockUnlockMask( IsoAgLib::iVtObject_c*
 #endif
   return sendCommand (189 /* Command: Command --- Parameter: Lock/Undlock Mask */,
                       b_lockMask,
-                      rpc_object->getID() & 0xFF, rpc_object->getID() >> 8, /* object id of the data mask to lock */
+                      apc_object->getID() & 0xFF, apc_object->getID() >> 8, /* object id of the data mask to lock */
                       ui16_lockTimeOut & 0xFF, ui16_lockTimeOut >> 8, /* lock timeout on ms or zero for no timeout */
                       0xFF, 0xFF,
                       DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
 }
 
 bool
-VtClientServerCommunication_c::sendCommandHideShow( IsoAgLib::iVtObject_c* rpc_object, uint8_t b_hideOrShow, bool b_enableReplaceOfCmd)
+VtClientServerCommunication_c::sendCommandHideShow( IsoAgLib::iVtObject_c* apc_object, uint8_t b_hideOrShow, bool b_enableReplaceOfCmd)
 {
   return sendCommand (160 /* Command: Command --- Parameter: Hide/Show Object */,
-                      rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
+                      apc_object->getID() & 0xFF, apc_object->getID() >> 8,
                       b_hideOrShow,
                       0xFF, 0xFF, 0xFF, 0xFF, DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
 }
 
 bool
-VtClientServerCommunication_c::sendCommandHideShow (uint16_t rui16_objectUid, uint8_t b_hideOrShow, bool b_enableReplaceOfCmd)
+VtClientServerCommunication_c::sendCommandHideShow (uint16_t aui16_objectUid, uint8_t b_hideOrShow, bool b_enableReplaceOfCmd)
 {
   return sendCommand (160 /* Command: Command --- Parameter: Hide/Show Object */,
-                      rui16_objectUid & 0xFF, rui16_objectUid >> 8,
+                      aui16_objectUid & 0xFF, aui16_objectUid >> 8,
                       b_hideOrShow,
                       0xFF, 0xFF, 0xFF, 0xFF, DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
 }
 
 bool
-VtClientServerCommunication_c::queueOrReplace (SendUpload_c& rref_sendUpload, bool b_enableReplaceOfCmd)
+VtClientServerCommunication_c::queueOrReplace (SendUpload_c& ar_sendUpload, bool b_enableReplaceOfCmd)
 {
   if (en_objectPoolState != OPUploadedSuccessfully)
   {
@@ -2166,11 +2166,11 @@ VtClientServerCommunication_c::queueOrReplace (SendUpload_c& rref_sendUpload, bo
       3. mss is queued and could be replaced by buffer
       4. buffer is queued and could be replaced by mssObjectString
         */
-      if ((i_sendUpload->mssObjectString == NULL) && (rref_sendUpload.mssObjectString == NULL))
+      if ((i_sendUpload->mssObjectString == NULL) && (ar_sendUpload.mssObjectString == NULL))
       {
-        if (i_sendUpload->vec_uploadBuffer[0] == rref_sendUpload.vec_uploadBuffer[0])
+        if (i_sendUpload->vec_uploadBuffer[0] == ar_sendUpload.vec_uploadBuffer[0])
         {
-          uint8_t ui8_offset = (rref_sendUpload.vec_uploadBuffer[0]);
+          uint8_t ui8_offset = (ar_sendUpload.vec_uploadBuffer[0]);
           if ( (ui8_offset<scui8_cmdCompareTableMin) || (ui8_offset > scui8_cmdCompareTableMax))
           {
               // only 0x12 is possible, but no need to override, it shouldn't occur anyway!
@@ -2191,7 +2191,7 @@ VtClientServerCommunication_c::queueOrReplace (SendUpload_c& rref_sendUpload, bo
           { // go Check for overwrite...
             for (i=1;i<=7;i++)
             {
-              if (((ui8_bitmask & 1<<i) !=0) && !(i_sendUpload->vec_uploadBuffer[i] == rref_sendUpload.vec_uploadBuffer[i]))
+              if (((ui8_bitmask & 1<<i) !=0) && !(i_sendUpload->vec_uploadBuffer[i] == ar_sendUpload.vec_uploadBuffer[i]))
                 break;
             }
             if (!(i<=7))
@@ -2201,27 +2201,27 @@ VtClientServerCommunication_c::queueOrReplace (SendUpload_c& rref_sendUpload, bo
           }
         }
       }
-      if ((i_sendUpload->mssObjectString != NULL) && (rref_sendUpload.mssObjectString != NULL))
+      if ((i_sendUpload->mssObjectString != NULL) && (ar_sendUpload.mssObjectString != NULL))
       {
-        if ((*i_sendUpload).mssObjectString->getStreamer()->getFirstByte() == rref_sendUpload.mssObjectString->getStreamer()->getFirstByte())
+        if ((*i_sendUpload).mssObjectString->getStreamer()->getFirstByte() == ar_sendUpload.mssObjectString->getStreamer()->getFirstByte())
         {
-          if ((*i_sendUpload).mssObjectString->getStreamer()->getID() == rref_sendUpload.mssObjectString->getStreamer()->getID())
+          if ((*i_sendUpload).mssObjectString->getStreamer()->getID() == ar_sendUpload.mssObjectString->getStreamer()->getID())
             p_queue = &*i_sendUpload;
         }
       }
-      if ((i_sendUpload->mssObjectString != NULL) && (rref_sendUpload.mssObjectString == NULL))
+      if ((i_sendUpload->mssObjectString != NULL) && (ar_sendUpload.mssObjectString == NULL))
       {
-        if ((*i_sendUpload).mssObjectString->getStreamer()->getFirstByte() == rref_sendUpload.vec_uploadBuffer[0])
+        if ((*i_sendUpload).mssObjectString->getStreamer()->getFirstByte() == ar_sendUpload.vec_uploadBuffer[0])
         {
-          if ((*i_sendUpload).mssObjectString->getStreamer()->getID() == (rref_sendUpload.vec_uploadBuffer[1] | (rref_sendUpload.vec_uploadBuffer[2]<<8)))
+          if ((*i_sendUpload).mssObjectString->getStreamer()->getID() == (ar_sendUpload.vec_uploadBuffer[1] | (ar_sendUpload.vec_uploadBuffer[2]<<8)))
             p_queue = &*i_sendUpload;
         }
       }
-      if ((i_sendUpload->mssObjectString == NULL) && (rref_sendUpload.mssObjectString != NULL))
+      if ((i_sendUpload->mssObjectString == NULL) && (ar_sendUpload.mssObjectString != NULL))
       {
-        if ((*i_sendUpload).vec_uploadBuffer[0] == rref_sendUpload.mssObjectString->getStreamer()->getFirstByte())
+        if ((*i_sendUpload).vec_uploadBuffer[0] == ar_sendUpload.mssObjectString->getStreamer()->getFirstByte())
         {
-          if (((*i_sendUpload).vec_uploadBuffer[1] | (*i_sendUpload).vec_uploadBuffer[2]<<8) == rref_sendUpload.mssObjectString->getStreamer()->getID())
+          if (((*i_sendUpload).vec_uploadBuffer[1] | (*i_sendUpload).vec_uploadBuffer[2]<<8) == ar_sendUpload.mssObjectString->getStreamer()->getID())
             p_queue = &*i_sendUpload;
         }
       }
@@ -2232,13 +2232,13 @@ VtClientServerCommunication_c::queueOrReplace (SendUpload_c& rref_sendUpload, bo
   /* The SendUpload_c constructor only takes a reference, so don't change the string in the meantime!!! */
 #ifdef USE_LIST_FOR_FIFO
     // queueing with list: queue::push <-> list::push_back; queue::front<->list::front; queue::pop<->list::pop_front
-    q_sendUpload.push_back (rref_sendUpload);
+    q_sendUpload.push_back (ar_sendUpload);
 #else
-    q_sendUpload.push (rref_sendUpload);
+    q_sendUpload.push (ar_sendUpload);
 #endif
   }
   else
-    *p_queue = rref_sendUpload; // overloaded "operator="
+    *p_queue = ar_sendUpload; // overloaded "operator="
 #ifdef DEBUG_HEAP_USEAGE
   sui16_sendUploadQueueSize++;
   if (sui16_sendUploadQueueSize > sui16_maxSendUploadQueueSize)
@@ -2303,7 +2303,7 @@ void
 VtClientServerCommunication_c::doStart()
 {
   /// First, trigger sending of WS-Announce
-  i32_timeWsAnnounceKey = refc_wsMasterIdentItem.getIsoItem()->startWsAnnounce();
+  i32_timeWsAnnounceKey = rc_wsMasterIdentItem.getIsoItem()->startWsAnnounce();
 
   i32_nextWsMaintenanceMsg = 0; // send out ws maintenance message immediately after ws has been announced.
 
@@ -2339,14 +2339,14 @@ VtClientServerCommunication_c::doStop()
   /// if any upload is in progress, abort it
   if (pc_vtServerInstance) // no Vt Alives anymore but Vt still announced
   {
-    getMultiSendInstance4Comm().abortSend (refc_wsMasterIdentItem.isoName(), pc_vtServerInstance->getIsoName());
+    getMultiSendInstance4Comm().abortSend (rc_wsMasterIdentItem.isoName(), pc_vtServerInstance->getIsoName());
   }
   else
   {
     // vt's not announced
     // that case should be handles by the multisend itself
   }
-  c_streamer.refc_pool.eventEnterSafeState();
+  c_streamer.rc_pool.eventEnterSafeState();
 
   // set display state of the client to a defined state
   en_displayState = VtClientDisplayStateHidden;
@@ -2396,7 +2396,7 @@ VtClientServerCommunication_c::isVtActive()
 
 
 void
-VtClientServerCommunication_c::startObjectPoolUploading (uploadPoolType_t ren_uploadPoolType, IsoAgLib::iVtObject_c** rppc_listOfUserPoolUpdateObjects, uint16_t rui16_numOfUserPoolUpdateObjects)
+VtClientServerCommunication_c::startObjectPoolUploading (uploadPoolType_t ren_uploadPoolType, IsoAgLib::iVtObject_c** rppc_listOfUserPoolUpdateObjects, uint16_t aui16_numOfUserPoolUpdateObjects)
 {
   en_uploadPoolType = ren_uploadPoolType;
 
@@ -2410,7 +2410,7 @@ VtClientServerCommunication_c::startObjectPoolUploading (uploadPoolType_t ren_up
     // Activate User trigger Partial Pool Update
     c_streamer.pc_userPoolUpdateObjects = rppc_listOfUserPoolUpdateObjects;
 
-    for (uint32_t curObject=0; curObject < rui16_numOfUserPoolUpdateObjects; curObject++)
+    for (uint32_t curObject=0; curObject < aui16_numOfUserPoolUpdateObjects; curObject++)
       c_streamer.ui32_streamSizeLang += ((vtObject_c*)c_streamer.pc_userPoolUpdateObjects[curObject])->fitTerminal ();
   }
   else
@@ -2419,23 +2419,23 @@ VtClientServerCommunication_c::startObjectPoolUploading (uploadPoolType_t ren_up
     c_streamer.pc_userPoolUpdateObjects = NULL;
 
     // *CONDITIONALLY* Calculate GENERAL Part size (always init size to 0 above!)
-    if (ren_uploadPoolType == UploadPoolTypeCompleteInitially) // was "if (!rb_onlyLanguageStream)"
+    if (ren_uploadPoolType == UploadPoolTypeCompleteInitially) // was "if (!ab_onlyLanguageStream)"
     {
-      for (uint32_t curObject=0; curObject < c_streamer.refc_pool.getNumObjects(); curObject++)
-        c_streamer.ui32_streamSize += ((vtObject_c*)c_streamer.refc_pool.getIVtObjects()[0][curObject])->fitTerminal ();
+      for (uint32_t curObject=0; curObject < c_streamer.rc_pool.getNumObjects(); curObject++)
+        c_streamer.ui32_streamSize += ((vtObject_c*)c_streamer.rc_pool.getIVtObjects()[0][curObject])->fitTerminal ();
     }
 
     // *ALWAYS* Calculate LANGUAGE Part size (if objectpool has multilanguage!)
-    if (c_streamer.refc_pool.getWorkingSetObject().get_vtObjectWorkingSet_a().numberOfLanguagesToFollow > 0) // supporting multilanguage.
+    if (c_streamer.rc_pool.getWorkingSetObject().get_vtObjectWorkingSet_a().numberOfLanguagesToFollow > 0) // supporting multilanguage.
     { // only if the objectpool has 2 or more languages, it makes sense to add the language code to the version-name
       const int8_t ci8_realUploadingLanguage = (c_streamer.i8_objectPoolUploadingLanguage < 0) ? 0 : c_streamer.i8_objectPoolUploadingLanguage;
-      for (uint32_t curObject=0; curObject < c_streamer.refc_pool.getNumObjectsLang(); curObject++)
-        c_streamer.ui32_streamSizeLang += ((vtObject_c*)c_streamer.refc_pool.getIVtObjects()[ci8_realUploadingLanguage+1][curObject])->fitTerminal ();
+      for (uint32_t curObject=0; curObject < c_streamer.rc_pool.getNumObjectsLang(); curObject++)
+        c_streamer.ui32_streamSizeLang += ((vtObject_c*)c_streamer.rc_pool.getIVtObjects()[ci8_realUploadingLanguage+1][curObject])->fitTerminal ();
     } // else: no LANGUAGE SPECIFIC objectpool, so keep this at 0 to indicate this!
 
-    if (ren_uploadPoolType == UploadPoolTypeCompleteInitially) // was "if (!rb_onlyLanguageStream)"
+    if (ren_uploadPoolType == UploadPoolTypeCompleteInitially) // was "if (!ab_onlyLanguageStream)"
     { // Issue GetMemory-Command
-      c_data.setExtCanPkg8 (7, 0, ECU_TO_VT_PGN>>8, pc_vtServerInstance->getVtSourceAddress(), refc_wsMasterIdentItem.getIsoItem()->nr(),
+      c_data.setExtCanPkg8 (7, 0, ECU_TO_VT_PGN>>8, pc_vtServerInstance->getVtSourceAddress(), rc_wsMasterIdentItem.getIsoItem()->nr(),
                             192 /* 0xC0 */, 0xff, (c_streamer.ui32_streamSize+c_streamer.ui32_streamSizeLang) & 0xFF,
                             ((c_streamer.ui32_streamSize+c_streamer.ui32_streamSizeLang) >>  8) & 0xFF,
                             ((c_streamer.ui32_streamSize+c_streamer.ui32_streamSizeLang) >> 16) & 0xFF,
@@ -2460,7 +2460,7 @@ VtClientServerCommunication_c::startObjectPoolUploading (uploadPoolType_t ren_up
 
 /// finalizeUploading() is getting called after LoadVersion or UploadPool...
 void
-VtClientServerCommunication_c::finalizeUploading() //bool rb_wasLanguageUpdate)
+VtClientServerCommunication_c::finalizeUploading() //bool ab_wasLanguageUpdate)
 {
   if (en_uploadPoolType == UploadPoolTypeUserPoolUpdate)
   { /// Was user-pool-update
@@ -2489,10 +2489,10 @@ VtClientServerCommunication_c::finalizeUploading() //bool rb_wasLanguageUpdate)
       en_objectPoolState = OPUploadedSuccessfully;
       en_uploadType = UploadIdle;
     }
-    c_streamer.refc_pool.eventObjectPoolUploadedSuccessfully ((en_uploadPoolType == UploadPoolTypeLanguageUpdate), c_streamer.i8_objectPoolUploadedLanguage, c_streamer.ui16_objectPoolUploadedLanguageCode);
+    c_streamer.rc_pool.eventObjectPoolUploadedSuccessfully ((en_uploadPoolType == UploadPoolTypeLanguageUpdate), c_streamer.i8_objectPoolUploadedLanguage, c_streamer.ui16_objectPoolUploadedLanguageCode);
   }
   /// @todo for now we allow parallel uploads
-  ///refc_isoTerminal.resetFlagForPoolUpload (this);
+  ///rc_isoTerminal.resetFlagForPoolUpload (this);
 }
 
 
@@ -2501,7 +2501,7 @@ void
 VtClientServerCommunication_c::indicateObjectPoolCompletion()
 {
   // successfully sent, so now send out the "End of Object Pool Message" and wait for response!
-  c_data.setExtCanPkg8 (7, 0, ECU_TO_VT_PGN>>8, pc_vtServerInstance->getVtSourceAddress(), refc_wsMasterIdentItem.getIsoItem()->nr(),
+  c_data.setExtCanPkg8 (7, 0, ECU_TO_VT_PGN>>8, pc_vtServerInstance->getVtSourceAddress(), rc_wsMasterIdentItem.getIsoItem()->nr(),
                         18, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
   getCanInstance4Comm() << c_data;     // Command: Object Pool Transfer --- Parameter: Object Pool Ready
   en_uploadPoolState = UploadPoolWaitingForEOOResponse; // and wait for response to set en_uploadState back to UploadIdle;
@@ -2547,7 +2547,7 @@ VtClientServerCommunication_c::startUploadCommand()
       }
       if (c_streamer.ui32_streamSizeLang > 0)
       { // start LANGUAGE/USER part upload!
-        return getMultiSendInstance4Comm().sendIsoTarget (refc_wsMasterIdentItem.isoName(), pc_vtServerInstance->getIsoName(), &c_streamer, ECU_TO_VT_PGN, en_sendSuccess);
+        return getMultiSendInstance4Comm().sendIsoTarget (rc_wsMasterIdentItem.isoName(), pc_vtServerInstance->getIsoName(), &c_streamer, ECU_TO_VT_PGN, en_sendSuccess);
       }
       else
       { // shouldn't happen, but catch case anyway!
@@ -2559,7 +2559,7 @@ VtClientServerCommunication_c::startUploadCommand()
     else
     { /// normal 8 byte package
       // Shouldn't be less than 8, else we're messin around with vec_uploadBuffer!
-      c_data.setExtCanPkg8 (7, 0, ECU_TO_VT_PGN>>8, pc_vtServerInstance->getVtSourceAddress(), refc_wsMasterIdentItem.getIsoItem()->nr(),
+      c_data.setExtCanPkg8 (7, 0, ECU_TO_VT_PGN>>8, pc_vtServerInstance->getVtSourceAddress(), rc_wsMasterIdentItem.getIsoItem()->nr(),
                             actSend->vec_uploadBuffer [0], actSend->vec_uploadBuffer [1],
                             actSend->vec_uploadBuffer [2], actSend->vec_uploadBuffer [3],
                             actSend->vec_uploadBuffer [4], actSend->vec_uploadBuffer [5],
@@ -2576,7 +2576,7 @@ VtClientServerCommunication_c::startUploadCommand()
   { /// Fits into a single CAN-Pkg!
     uint8_t ui8_len = actSend->mssObjectString->getStreamer()->getStreamSize();
 
-    c_data.setExtCanPkg (7, 0, ECU_TO_VT_PGN>>8, pc_vtServerInstance->getVtSourceAddress(), refc_wsMasterIdentItem.getIsoItem()->nr(), 8); // ECU->VT PGN is ALWAYS 8 Bytes!
+    c_data.setExtCanPkg (7, 0, ECU_TO_VT_PGN>>8, pc_vtServerInstance->getVtSourceAddress(), rc_wsMasterIdentItem.getIsoItem()->nr(), 8); // ECU->VT PGN is ALWAYS 8 Bytes!
     actSend->mssObjectString->getStreamer()->set5ByteCommandHeader (c_data.getUint8DataPointer());
     int i=5;
     for (; i < ui8_len; i++) c_data.setUint8Data( i, actSend->mssObjectString->getStreamer()->getStringToStream() [i-5] );
@@ -2593,7 +2593,7 @@ VtClientServerCommunication_c::startUploadCommand()
     // Save first byte for Response-Checking!
     ui8_commandParameter = actSend->vec_uploadBuffer [0]; // Save first byte for Response-Checking!
 
-    return getMultiSendInstance4Comm().sendIsoTarget (refc_wsMasterIdentItem.isoName(),
+    return getMultiSendInstance4Comm().sendIsoTarget (rc_wsMasterIdentItem.isoName(),
                                                       pc_vtServerInstance->getIsoName(),
                                                       &actSend->vec_uploadBuffer.front(),
                                                       actSend->vec_uploadBuffer.size(),
@@ -2605,7 +2605,7 @@ VtClientServerCommunication_c::startUploadCommand()
     // Save first byte for Response-Checking!
     ui8_commandParameter = actSend->mssObjectString->getStreamer()->getFirstByte();
 
-    return getMultiSendInstance4Comm().sendIsoTarget (refc_wsMasterIdentItem.isoName(),
+    return getMultiSendInstance4Comm().sendIsoTarget (rc_wsMasterIdentItem.isoName(),
                                                       pc_vtServerInstance->getIsoName(),
                                                       (IsoAgLib::iMultiSendStreamer_c*)actSend->mssObjectString->getStreamer(),
                                                       ECU_TO_VT_PGN,
@@ -2663,7 +2663,7 @@ VtClientServerCommunication_c::vtOutOfMemory()
   en_uploadPoolState = UploadPoolFailed; // no timeout needed
   en_objectPoolState = OPCannotBeUploaded;
   /// @todo for now allow parallel uploads
-  ///refc_isoTerminal.resetFlagForPoolUpload (this);
+  ///rc_isoTerminal.resetFlagForPoolUpload (this);
 }
 
 /** set display state of vt client */
@@ -2710,7 +2710,7 @@ VtClientServerCommunication_c::setVtDisplayState (bool b_isVtStatusMsg, uint8_t 
   if (newDisplayState != getVtDisplayState())
   {
     en_displayState = newDisplayState;
-    c_streamer.refc_pool.eventDisplayActivation();
+    c_streamer.rc_pool.eventDisplayActivation();
   }
 }
 
@@ -2720,10 +2720,10 @@ VtClientServerCommunication_c::setObjectPoolUploadingLanguage()
 {
   c_streamer.i8_objectPoolUploadingLanguage = i8_vtLanguage;
   c_streamer.ui16_objectPoolUploadingLanguageCode = 0x0000;
-  if (c_streamer.refc_pool.getWorkingSetObject().get_vtObjectWorkingSet_a().numberOfLanguagesToFollow > 1) // supporting multilanguage.
+  if (c_streamer.rc_pool.getWorkingSetObject().get_vtObjectWorkingSet_a().numberOfLanguagesToFollow > 1) // supporting multilanguage.
   { // only if the objectpool has 2 or more languages, it makes sense to add the language code to the version-name
     const int8_t ci8_realUploadingLanguage = (c_streamer.i8_objectPoolUploadingLanguage < 0) ? 0 : c_streamer.i8_objectPoolUploadingLanguage;
-    const uint8_t* lang = c_streamer.refc_pool.getWorkingSetObject().get_vtObjectWorkingSet_a().languagesToFollow[ci8_realUploadingLanguage].language;
+    const uint8_t* lang = c_streamer.rc_pool.getWorkingSetObject().get_vtObjectWorkingSet_a().languagesToFollow[ci8_realUploadingLanguage].language;
     c_streamer.ui16_objectPoolUploadingLanguageCode = (lang [0] << 8) | lang[1];
   }
 }
@@ -2743,14 +2743,14 @@ IsoAgLib::iVtClientServerCommunication_c* VtClientServerCommunication_c::toInter
 uint16_t
 VtClientServerCommunication_c::getVtObjectPoolSoftKeyWidth()
 {
-  return c_streamer.refc_pool.getSkWidth();
+  return c_streamer.rc_pool.getSkWidth();
 }
 
 
 uint16_t
 VtClientServerCommunication_c::getVtObjectPoolDimension()
 {
-  return c_streamer.refc_pool.getDimension();
+  return c_streamer.rc_pool.getDimension();
 }
 
 VtServerInstance_c&
@@ -2762,7 +2762,7 @@ VtClientServerCommunication_c::getVtServerInst()
 uint16_t
 VtClientServerCommunication_c::getVtObjectPoolSoftKeyHeight()
 {
-  return c_streamer.refc_pool.getSkHeight();
+  return c_streamer.rc_pool.getSkHeight();
 }
 
 

@@ -107,37 +107,37 @@ private:
 public: 
   /**
     constructor which initialse both pointers if given
-    @param rpc_processData optional pointer to containing ProcessData instance
+    @param apc_processData optional pointer to containing ProcessData instance
   */
-  ProcessElementBase_c( ProcDataBase_c *const rpc_processData = NULL );
+  ProcessElementBase_c( ProcDataBase_c *const apc_processData = NULL );
   /**
     constructor which initialse both pointers if given
-    @param rrefc_processData optional reference to containing ProcessData instance
+    @param arc_processData optional reference to containing ProcessData instance
   */
-  ProcessElementBase_c( ProcDataBase_c &rrefc_processData );
+  ProcessElementBase_c( ProcDataBase_c &arc_processData );
   /**
     copy constructor
-    @param rrefc_src source ProcessElementBase_c instance
+    @param arc_src source ProcessElementBase_c instance
   */
-   ProcessElementBase_c(const ProcessElementBase_c& rrefc_src);
+   ProcessElementBase_c(const ProcessElementBase_c& arc_src);
   /**
     assignment operator for ProcessElementBase
-    @param rrefc_src source ProcessElementBase_c instance
+    @param arc_src source ProcessElementBase_c instance
   */
-  const ProcessElementBase_c& operator=(const ProcessElementBase_c& rrefc_src);
+  const ProcessElementBase_c& operator=(const ProcessElementBase_c& arc_src);
   /** default destructor which has nothing to do */
   ~ProcessElementBase_c();
   
   /**
     set the pointer to Scheduler_c and ProcessData by references to the object instances
-    @param rrefc_processData optional reference to containing ProcessData instance
+    @param arc_processData optional reference to containing ProcessData instance
   */
-  void set(ProcDataBase_c& refc_processData );
+  void set(ProcDataBase_c& rc_processData );
   /**
     set the pointer to Scheduler_c and ProcessData by pointer to the object instances
-    @param rpc_processData optional pointer to containing ProcessData instance
+    @param apc_processData optional pointer to containing ProcessData instance
   */
-  void set(ProcDataBase_c *const rpc_processData );
+  void set(ProcDataBase_c *const apc_processData );
   
   /**
     deliver a reference to the containing ProcessData item

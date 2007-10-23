@@ -79,17 +79,17 @@ namespace IsoAgLib {
   /**
       config the Base_c object after init -> set pointer to isoName and
       config send/receive of different base msg types
-      @param rpc_isoName pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
-      @param rt_identMode set mode to either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
+      @param apc_isoName pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
+      @param at_identMode set mode to either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       @return true -> configuration was successfull
     */
-  bool config (const iIsoName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode = IsoAgLib::IdentModeImplement, uint16_t rui16_suppressMask = 0)
-  { return TracMove_c::config_base(rpc_isoName, rt_identMode, rui16_suppressMask ); }
+  bool config (const iIsoName_c* apc_isoName, IsoAgLib::IdentMode_t at_identMode = IsoAgLib::IdentModeImplement, uint16_t aui16_suppressMask = 0)
+  { return TracMove_c::config_base(apc_isoName, at_identMode, aui16_suppressMask ); }
 
   /** update selected speed with actually best available speed
       @param t_speedSrc  from which source is the speed available
     */
-  void updateSpeed(IsoAgLib::SpeedSource_t rt_speedSource) {TracMove_c::updateSpeed(rt_speedSource);}
+  void updateSpeed(IsoAgLib::SpeedSource_t at_speedSource) {TracMove_c::updateSpeed(at_speedSource);}
 
   /** update distance and direction with the actually best available distance and direction
       @param t_distanceSrc  from which source is the distance and direction available
@@ -100,18 +100,18 @@ namespace IsoAgLib {
   /** \name Set Values for periodic send on BUS  */
   /*@{*/
   /** set the value of real speed (measured by radar)
-      @param ri16_val value to store as real radar measured speed
+      @param ai16_val value to store as real radar measured speed
     */
-  void setSpeedReal(const int32_t& ri32_val)
+  void setSpeedReal(const int32_t& ai32_val)
   {
-    TracMove_c::setSpeedReal(ri32_val);
+    TracMove_c::setSpeedReal(ai32_val);
   }
   /** set the value of theoretical speed (calculated from gear)
-      @param ri16_val value to store as theoretical gear calculated speed
+      @param ai16_val value to store as theoretical gear calculated speed
     */
-  void setSpeedTheor(const int32_t& ri32_val)
+  void setSpeedTheor(const int32_t& ai32_val)
   {
-    TracMove_c::setSpeedTheor(ri32_val);
+    TracMove_c::setSpeedTheor(ai32_val);
   }
   /** set the real (radar measured) driven distance with int32_t val
       @param rreflVal value to store as real radar measured distance
@@ -133,10 +133,10 @@ namespace IsoAgLib {
   void setDirectionReal(IsoAgLib::IsoDirectionFlag_t t_val) {TracMove_c::setDirectionReal(t_val);}
 
   /** set parameter which indicates whetcher the reported direction is reversed from the perspective of the operator
-      @param rt_val  indicates direction (IsoInactive = not reversed; IsoActive = reversed)
+      @param at_val  indicates direction (IsoInactive = not reversed; IsoActive = reversed)
     */
-  void setOperatorDirectionReversed(const IsoAgLib::IsoOperatorDirectionFlag_t rt_val)
-  { TracMove_c::setOperatorDirectionReversed( rt_val );}
+  void setOperatorDirectionReversed(const IsoAgLib::IsoOperatorDirectionFlag_t at_val)
+  { TracMove_c::setOperatorDirectionReversed( at_val );}
 
   /** set actual distance traveled by the machine based on the value of selected machine speed
       @param ui32_val  actual distance traveled
@@ -270,7 +270,7 @@ namespace IsoAgLib {
       otherwise __IsoAgLib::getTracMoveInstance() wouldn't be accepted by compiler
     */
     #if defined(PRT_INSTANCE_CNT) && (PRT_INSTANCE_CNT > 1)
-    friend iTracMove_c& getITracMoveInstance(uint8_t rui8_instance);
+    friend iTracMove_c& getITracMoveInstance(uint8_t aui8_instance);
     #else
     friend iTracMove_c& getITracMoveInstance(void);
     #endif
@@ -281,8 +281,8 @@ namespace IsoAgLib {
   /** C-style function, to get access to the unique TracMove_c singleton instance
     * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
     */
-  inline iTracMove_c& getITracMoveInstance(uint8_t rui8_instance = 0)
-  { return static_cast<iTracMove_c&>(__IsoAgLib::getTracMoveInstance(rui8_instance));}
+  inline iTracMove_c& getITracMoveInstance(uint8_t aui8_instance = 0)
+  { return static_cast<iTracMove_c&>(__IsoAgLib::getTracMoveInstance(aui8_instance));}
   #else
   /** C-style function, to get access to the unique TracMove_c singleton instance */
   inline iTracMove_c& getITracMoveInstance(void)

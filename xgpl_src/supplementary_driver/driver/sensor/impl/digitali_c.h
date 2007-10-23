@@ -100,10 +100,10 @@ namespace IsoAgLib {
 class iSensorEventHandler {
  public:
   /** function to handle a DigitalI_c event from HAL
-    * @param rui8_channel channel of the input object, which received the IRQ
+    * @param aui8_channel channel of the input object, which received the IRQ
     *        from HAL
     */
-  virtual void handleDigitalEvent( uint8_t rui8_channel );
+  virtual void handleDigitalEvent( uint8_t aui8_channel );
   virtual ~iSensorEventHandler() {};
 };
 
@@ -130,13 +130,13 @@ public:
         * iLibErr_c::Range wrong input number
     @see SensorI_c::createDigital
     @see Sensor_c::t_onoff
-    @param rb_channel default-argument for setting hardware channel for this input
+    @param ab_channel default-argument for setting hardware channel for this input
     @param ren_onoff default-argument for setting whether 1 should be returned on High(Default: Sensor_c::OnHigh) or Low signal
-    @param rb_static default-argument for setting if hardware input should be gathered static (default false with no static)
-    @param rpc_handler optional pointer to handler class, which can be called, if an HAL irq event occurs
+    @param ab_static default-argument for setting if hardware input should be gathered static (default false with no static)
+    @param apc_handler optional pointer to handler class, which can be called, if an HAL irq event occurs
   */
-  DigitalI_c(uint8_t rb_channel = 0xFF, Sensor_c::onoff_t ren_onoff = Sensor_c::OnHigh,
-              bool rb_static = false, IsoAgLib::iSensorEventHandler* rpc_handler = NULL );
+  DigitalI_c(uint8_t ab_channel = 0xFF, Sensor_c::onoff_t ren_onoff = Sensor_c::OnHigh,
+              bool ab_static = false, IsoAgLib::iSensorEventHandler* apc_handler = NULL );
   /**
     internal called constructor for a new digital input channel which performs configuration of hardware
     (uses BIOS function)
@@ -145,13 +145,13 @@ public:
         * iLibErr_c::Range wrong input number
     @see SensorI_c::createDigital
     @see Sensor_c::t_onoff
-    @param rb_channel default-argument for setting hardware channel for this input
+    @param ab_channel default-argument for setting hardware channel for this input
     @param ren_onoff default-argument for setting whether 1 should be returned on High(Default: Sensor_c::OnHigh) or Low signal
-    @param rb_static default-argument for setting if hardware input should be gathered static (default false with no static)
-    @param rpc_handler optional pointer to handler class, which can be called, if an HAL irq event occurs
+    @param ab_static default-argument for setting if hardware input should be gathered static (default false with no static)
+    @param apc_handler optional pointer to handler class, which can be called, if an HAL irq event occurs
   */
-  void init(uint8_t rb_channel, Sensor_c::onoff_t ren_onoff = Sensor_c::OnHigh,
-              bool rb_static = false, IsoAgLib::iSensorEventHandler* rpc_handler = NULL );
+  void init(uint8_t ab_channel, Sensor_c::onoff_t ren_onoff = Sensor_c::OnHigh,
+              bool ab_static = false, IsoAgLib::iSensorEventHandler* apc_handler = NULL );
 
   /** change detection mode of activity to OnHigh */
   void setOnHigh( void );
@@ -176,8 +176,8 @@ public:
   */
   bool active() const;
   /** handler function which is called from HAL */
-  static void handleHalIrqEvent( uint8_t rui8_channel );
-  bool operator==( uint8_t rui8_key ) const { return ( rui8_key == channelNr() )?true:false;};
+  static void handleHalIrqEvent( uint8_t aui8_channel );
+  bool operator==( uint8_t aui8_key ) const { return ( aui8_key == channelNr() )?true:false;};
 private:
 // Private attributes
   /**
@@ -186,17 +186,17 @@ private:
     ONLY copy pointers to the wanted instance!!!
     ==> the copy constructor is defined as private, so that compiler
         detects this fault, and shows you this WARNING!!
-    @param rrefc_src source
+    @param arc_src source
   */
-  DigitalI_c(const DigitalI_c& /*rrefc_src*/) : SensorBase_c(0) {};
+  DigitalI_c(const DigitalI_c& /*arc_src*/) : SensorBase_c(0) {};
   /**
     HIDDEN! assignment for DigitalI_c
     NEVER assign a DigitalI_c to another instance!!!!
     ==> the asignment is defined as private, so that compiler
         detects this fault, and shows you this WARNING!!
-    @param rrefc_src source
+    @param arc_src source
   */
-  DigitalI_c& operator=(const DigitalI_c& /*rrefc_src*/){return *this;};
+  DigitalI_c& operator=(const DigitalI_c& /*arc_src*/){return *this;};
   /** true if the digit input should be gathered static */
   bool b_static;
   /**

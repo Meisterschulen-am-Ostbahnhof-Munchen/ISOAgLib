@@ -109,56 +109,56 @@ private:
 public:
   /**
     default constructor which can set needed pointers to containing objects
-    @param rpc_processData pointer to containing ProcessData instance
+    @param apc_processData pointer to containing ProcessData instance
   */
   SetpointRemote_c(
-    ProcDataBase_c *const rpc_processData = NULL ) : SetpointBase_c(rpc_processData)
-    {init(rpc_processData);};
+    ProcDataBase_c *const apc_processData = NULL ) : SetpointBase_c(apc_processData)
+    {init(apc_processData);};
   /**
     initialise this SetpointRemote_c to a well defined starting condition
-    @param rpc_processData pointer to containing ProcessData instance
+    @param apc_processData pointer to containing ProcessData instance
   */
-  void init( ProcDataBase_c *const rpc_processData );
+  void init( ProcDataBase_c *const apc_processData );
   /**
     assginment from another object
-    @param rrefc_src source SetpointRemote_c instance
+    @param arc_src source SetpointRemote_c instance
     @return reference to source for cmd like "setp1 = setp2 = setp3;"
   */
-  const SetpointRemote_c& operator=(const SetpointRemote_c& rrefc_src);
+  const SetpointRemote_c& operator=(const SetpointRemote_c& arc_src);
   /**
     copy constructor for SetpointRemote
-    @param rrefc_src source SetpointRemote_c instance
+    @param arc_src source SetpointRemote_c instance
   */
-   SetpointRemote_c(const SetpointRemote_c& rrefc_src);
+   SetpointRemote_c(const SetpointRemote_c& arc_src);
   /** default destructor which has nothing to do */
   ~SetpointRemote_c();
   /**
     deliver the actual master setpoint
-    @param rb_sendRequest true -> send request for actual value
+    @param ab_sendRequest true -> send request for actual value
     @return setpoint value as long
   */
-  int32_t setpointMasterVal(bool rb_sendRequest = false) const
-    {if (rb_sendRequest) requestExact();
+  int32_t setpointMasterVal(bool ab_sendRequest = false) const
+    {if (ab_sendRequest) requestExact();
      return master().exact();};
   /**
     send a setpoint cmd with given exact setpoint
-    @param ri32_val commanded setpoint value as long
+    @param ai32_val commanded setpoint value as long
   */
-  void setSetpointMasterVal(int32_t ri32_val){setExact(ri32_val);};
+  void setSetpointMasterVal(int32_t ai32_val){setExact(ai32_val);};
   #ifdef USE_FLOAT_DATA_TYPE
   /**
     deliver the actual master setpoint
-    @param rb_sendRequest true -> send request for actual value
+    @param ab_sendRequest true -> send request for actual value
     @return setpoint value as float
   */
-  float setpointMasterValFloat(bool rb_sendRequest = false) const
-    {if (rb_sendRequest) requestExact();
+  float setpointMasterValFloat(bool ab_sendRequest = false) const
+    {if (ab_sendRequest) requestExact();
      return master().exactFloat();};
   /**
     send a setpoint cmd with given exact setpoint
-    @param rf_val commanded setpoint value as float
+    @param af_val commanded setpoint value as float
   */
-  void setSetpointMasterVal(float rf_val){ setExact(rf_val); };
+  void setSetpointMasterVal(float af_val){ setExact(af_val); };
   /**
     command a exact setpoint; store value as commanded and send command
 
@@ -167,7 +167,7 @@ public:
         * dependant error in CanIo_c on CAN send problems
     @return new exact setpoint to command
   */
-  void setExact(float rf_val);
+  void setExact(float af_val);
   #endif
 
   /**
@@ -178,7 +178,7 @@ public:
         * dependant error in CanIo_c on CAN send problems
     @return new exact setpoint to command
   */
-  void setExact(int32_t ri32_val);
+  void setExact(int32_t ai32_val);
   /**
     command a minimum setpoint; store value as commanded and send command
 
@@ -187,7 +187,7 @@ public:
         * dependant error in CanIo_c on CAN send problems
     @return new minimum setpoint to command
   */
-  void setMin(int32_t ri32_val);
+  void setMin(int32_t ai32_val);
   /**
     command a maximum setpoint; store value as commanded and send command
 
@@ -196,7 +196,7 @@ public:
         * dependant error in CanIo_c on CAN send problems
     @return new maximum setpoint to command
   */
-  void setMax(int32_t ri32_val);
+  void setMax(int32_t ai32_val);
   /**
     command a default setpoint; store value as commanded and send command
 
@@ -205,7 +205,7 @@ public:
         * dependant error in CanIo_c on CAN send problems
     @return new default setpoint to command
   */
-  void setDefault(int32_t ri32_val);
+  void setDefault(int32_t ai32_val);
   /**
     request remote master setpoint - exact
   */
@@ -284,7 +284,7 @@ public:
 
 private: // Private methods
   /** base function for assignment of element vars for copy constructor and operator= */
-  void assignFromSource( const SetpointRemote_c& rrefc_src );
+  void assignFromSource( const SetpointRemote_c& arc_src );
   /** process a setpoint request for remote process data */
   virtual void processRequest() const;
   /** process a setpoint set for remote process data */

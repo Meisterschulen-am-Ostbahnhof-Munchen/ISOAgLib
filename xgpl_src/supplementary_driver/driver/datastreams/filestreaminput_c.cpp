@@ -99,9 +99,9 @@
 
 //  Operation: open
 bool
-FileStreamInput_c::open (STL_NAMESPACE::string& filename, FileMode_t rt_mode)
+FileStreamInput_c::open (STL_NAMESPACE::string& filename, FileMode_t at_mode)
 {
-  bool b_result = c_targetHandle.open( filename, rt_mode );
+  bool b_result = c_targetHandle.open( filename, at_mode );
   if (b_result) str_openedFile = filename;
   return b_result;
 };
@@ -110,9 +110,9 @@ FileStreamInput_c::open (STL_NAMESPACE::string& filename, FileMode_t rt_mode)
 
 //  Operation: open
 bool
-FileStreamInput_c::open (const char* filename, FileMode_t rt_mode)
+FileStreamInput_c::open (const char* filename, FileMode_t at_mode)
 {
-  bool b_result = c_targetHandle.open( filename, rt_mode);
+  bool b_result = c_targetHandle.open( filename, at_mode);
   if (b_result) str_openedFile = filename;
   return b_result;
 };

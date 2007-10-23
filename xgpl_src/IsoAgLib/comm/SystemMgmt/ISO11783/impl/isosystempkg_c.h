@@ -116,10 +116,10 @@ public:
     @see __IsoAgLib::FilterBox_c::operator>>
     @see CanPkgExt_c::operator=
     @see CanPkgExt_c::getData
-    @param rrefc_right reference to the source CanPkg_c on the right
+    @param arc_right reference to the source CanPkg_c on the right
     @return reference to the source CanPkg_c to enable assign chains like
         "pkg1 = pkg2 = pkg3 = pkg4;"
-  virtual const CanPkg_c& operator=(const CanPkg_c& rrefc_right) { return CanPkg_c::operator=(rrefc_right);};
+  virtual const CanPkg_c& operator=(const CanPkg_c& arc_right) { return CanPkg_c::operator=(arc_right);};
   */
 
   /* ************************** */

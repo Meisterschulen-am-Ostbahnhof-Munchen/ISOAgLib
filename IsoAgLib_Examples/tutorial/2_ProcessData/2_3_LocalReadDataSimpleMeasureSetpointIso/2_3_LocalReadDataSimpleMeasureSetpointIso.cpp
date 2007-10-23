@@ -93,8 +93,8 @@
  * 	<ul>
  *	<li>Core class IsoAgLib::iScheduler_c for scheduling of all periodic activities
  *	<li>Method IsoAgLib::iScheduler_c::timeEvent() which can<ul>
- *		<li>Perform activities until defined rl_endTime is reached, which is important
- *			for scheduling purposes of whole system - call by IsoAgLib::iScheduler_c::timeEvent( rl_endTime )
+ *		<li>Perform activities until defined al_endTime is reached, which is important
+ *			for scheduling purposes of whole system - call by IsoAgLib::iScheduler_c::timeEvent( al_endTime )
  *		<li>Process all received CAN messages until all receive buffers are empty
  *			-> simple call, but can lead to deadlock on to high CAN load
  *		</ul>

@@ -66,14 +66,14 @@
 
 namespace __HAL {
 
-void send_command_ack(int32_t ri32_mtype, msqData_s* p_msqDataServer, int32_t ri32_dataContent, int32_t ri32_data)
+void send_command_ack(int32_t ai32_mtype, msqData_s* p_msqDataServer, int32_t ai32_dataContent, int32_t ai32_data)
 {
   msqCommand_s msqCommandBuf;
 
-  msqCommandBuf.i32_mtypePid = ri32_mtype;
+  msqCommandBuf.i32_mtypePid = ai32_mtype;
   msqCommandBuf.i16_command = COMMAND_ACKNOWLEDGE;
-  msqCommandBuf.s_acknowledge.i32_dataContent = ri32_dataContent;
-  msqCommandBuf.s_acknowledge.i32_data = ri32_data;
+  msqCommandBuf.s_acknowledge.i32_dataContent = ai32_dataContent;
+  msqCommandBuf.s_acknowledge.i32_data = ai32_data;
 
   msgsnd(p_msqDataServer->i32_cmdAckHandle, &msqCommandBuf, sizeof(msqCommand_s) - sizeof(int32_t), IPC_NOWAIT);
 }
@@ -152,9 +152,9 @@ uint16_t disassembleRead_client_id(int32_t i32_mtype)
 }
 
 /// Only used in CLIENT -> SERVER direction
-int32_t assembleWrite_mtype(bool rb_prio)
+int32_t assembleWrite_mtype(bool ab_prio)
 {
-  return (rb_prio) ? (MTYPE_WRITE_PRIO_HIGH) : (MTYPE_WRITE_PRIO_NORMAL);
+  return (ab_prio) ? (MTYPE_WRITE_PRIO_HIGH) : (MTYPE_WRITE_PRIO_NORMAL);
 }
 
 // NO MORE CLIENT ID IN <<WRITE>>'s MTYPE
@@ -171,11 +171,11 @@ void clearReadQueue(uint8_t bBusNumber, uint8_t bMsgObj, int32_t i32_msqHandle, 
 }
 
 /** we don't clear the write queue anymore now with the new MTYPE format, which only has the prio anymore
-void clearWriteQueue(bool rb_prio, int32_t i32_msqHandle, uint16_t ui16_pid)
+void clearWriteQueue(bool ab_prio, int32_t i32_msqHandle, uint16_t ui16_pid)
 {
   msqWrite_s msqWriteBuf;
 
-  while (msgrcv(i32_msqHandle, &msqWriteBuf, sizeof(msqWrite_s) - sizeof(int32_t), assembleWrite_mtype(ui16_pid, rb_prio), IPC_NOWAIT) > 0)
+  while (msgrcv(i32_msqHandle, &msqWriteBuf, sizeof(msqWrite_s) - sizeof(int32_t), assembleWrite_mtype(ui16_pid, ab_prio), IPC_NOWAIT) > 0)
     ;
 }
 */

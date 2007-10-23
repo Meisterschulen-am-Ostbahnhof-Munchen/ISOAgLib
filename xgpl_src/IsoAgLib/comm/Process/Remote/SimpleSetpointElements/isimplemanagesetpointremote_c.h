@@ -75,33 +75,33 @@ class iSimpleManageSetpointRemote_c : public __IsoAgLib::SimpleManageSetpointRem
  public:
   /**
     deliver the actual master setpoint
-    @param rb_sendRequest true -> send request for actual value
+    @param ab_sendRequest true -> send request for actual value
     @return setpoint value as long
   */
-  int32_t setpointMasterVal(bool rb_sendRequest = false)
-    { return SimpleManageSetpointRemote_c::setpointMasterVal( rb_sendRequest);};
+  int32_t setpointMasterVal(bool ab_sendRequest = false)
+    { return SimpleManageSetpointRemote_c::setpointMasterVal( ab_sendRequest);};
   /**
     send a setpoint cmd with given exact setpoint
-    @param ri32_val commanded setpoint value as long
-    @param rb_onlyStoreOnResponse true -> the given value is only stored if response arrives
+    @param ai32_val commanded setpoint value as long
+    @param ab_onlyStoreOnResponse true -> the given value is only stored if response arrives
   */
-  void setSetpointMasterVal(int32_t ri32_val, bool rb_onlyStoreOnResponse = true)
-    { SimpleManageSetpointRemote_c::setSetpointMasterVal( ri32_val, rb_onlyStoreOnResponse);};
+  void setSetpointMasterVal(int32_t ai32_val, bool ab_onlyStoreOnResponse = true)
+    { SimpleManageSetpointRemote_c::setSetpointMasterVal( ai32_val, ab_onlyStoreOnResponse);};
   #ifdef USE_FLOAT_DATA_TYPE
   /**
     deliver the actual master setpoint
-    @param rb_sendRequest true -> send request for actual value
+    @param ab_sendRequest true -> send request for actual value
     @return setpoint value as float
   */
-  float setpointMasterValFloat(bool rb_sendRequest = false)
-    { return SimpleManageSetpointRemote_c::setpointMasterValFloat( rb_sendRequest);};
+  float setpointMasterValFloat(bool ab_sendRequest = false)
+    { return SimpleManageSetpointRemote_c::setpointMasterValFloat( ab_sendRequest);};
   /**
     send a setpoint cmd with given exact setpoint
-    @param rf_val commanded setpoint value as float
-    @param rb_onlyStoreOnResponse true -> the given value is only stored if response arrives
+    @param af_val commanded setpoint value as float
+    @param ab_onlyStoreOnResponse true -> the given value is only stored if response arrives
   */
-  void setSetpointMasterVal(float rf_val, bool rb_onlyStoreOnResponse = true)
-    { SimpleManageSetpointRemote_c::setSetpointMasterVal( rf_val, rb_onlyStoreOnResponse);};
+  void setSetpointMasterVal(float af_val, bool ab_onlyStoreOnResponse = true)
+    { SimpleManageSetpointRemote_c::setSetpointMasterVal( af_val, ab_onlyStoreOnResponse);};
   #endif
  private:
   friend class iProcDataRemote_c;

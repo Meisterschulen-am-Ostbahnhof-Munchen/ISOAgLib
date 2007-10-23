@@ -94,26 +94,26 @@
 namespace __IsoAgLib {
 
 /** initialise this MeasureProgLocal_c instance to a well defined initial state
-    @param rpc_processData optional pointer to containing ProcDataLocal_c instance (def NULL)
+    @param apc_processData optional pointer to containing ProcDataLocal_c instance (def NULL)
     @param ren_progType optional program msg type (Proc_c::Base, Proc_c::Target; default Proc_c::UndefinedProg)
-    @param ri32_masterVal optional actual central local measured value used as masterVal (def 0)
-    @param ri32_initialVal optional initial value (e.g which was stored in EEPROM) (default 0)
-    @param rui8_callerISOName optional ISOName of remote member, which caused creation of this instance (default 0xFF == no member)
+    @param ai32_masterVal optional actual central local measured value used as masterVal (def 0)
+    @param ai32_initialVal optional initial value (e.g which was stored in EEPROM) (default 0)
+    @param aui8_callerISOName optional ISOName of remote member, which caused creation of this instance (default 0xFF == no member)
   */
 void MeasureProgLocal_c::init(
-  ProcDataBase_c *const rpc_processData,
+  ProcDataBase_c *const apc_processData,
   Proc_c::progType_t ren_progType,
-  int32_t ri32_masterVal,
-  int32_t ri32_initialVal,
-  const IsoName_c& rc_callerISOName)
+  int32_t ai32_masterVal,
+  int32_t ai32_initialVal,
+  const IsoName_c& ac_callerISOName)
 {
-  MeasureProgBase_c::init( rpc_processData, ren_progType, ri32_initialVal, rc_callerISOName  );
+  MeasureProgBase_c::init( apc_processData, ren_progType, ai32_initialVal, ac_callerISOName  );
 
-  i32_lastMasterVal = ri32_masterVal;
-  if (ri32_initialVal != 0)
+  i32_lastMasterVal = ai32_masterVal;
+  if (ai32_initialVal != 0)
   { // set medSum, medCnt to initial value read from EEPROM
     i32_medCnt = 1;
-    i32_medSum = ri32_initialVal;
+    i32_medSum = ai32_initialVal;
   }
   else
   {
@@ -125,25 +125,25 @@ void MeasureProgLocal_c::init(
 
 #ifdef USE_FLOAT_DATA_TYPE
 /** initialise this MeasureProgLocal_c instance to a well defined initial state
-    @param rpc_processData optional pointer to containing ProcDataLocal_c instance (def NULL)
+    @param apc_processData optional pointer to containing ProcDataLocal_c instance (def NULL)
 
     @param ren_progType optional program msg type (Proc_c::Base, Proc_c::Target; default Proc_c::UndefinedProg)
-    @param rf_masterVal actual central local measured value used as float masterVal
-    @param rf_eepromVal optional value stored in EEPROM (default 0.0)
-    @param rui8_callerISOName optional ISOName of remote member, which caused creation of this instance (default 0xFF == no member)
+    @param af_masterVal actual central local measured value used as float masterVal
+    @param af_eepromVal optional value stored in EEPROM (default 0.0)
+    @param aui8_callerISOName optional ISOName of remote member, which caused creation of this instance (default 0xFF == no member)
   */
 void MeasureProgLocal_c::init(
-  ProcDataBase_c *const rpc_processData,
-  Proc_c::progType_t ren_progType, float rf_masterVal,
-  float rf_eepromVal, const IsoName_c& rc_callerISOName)
+  ProcDataBase_c *const apc_processData,
+  Proc_c::progType_t ren_progType, float af_masterVal,
+  float af_eepromVal, const IsoName_c& ac_callerISOName)
 {
-  MeasureProgBase_c::init( rpc_processData, ren_progType, rf_eepromVal, rc_callerISOName  );
+  MeasureProgBase_c::init( apc_processData, ren_progType, af_eepromVal, ac_callerISOName  );
 
-  f_lastMasterVal = rf_masterVal;
-  if (rf_eepromVal != 0)
+  f_lastMasterVal = af_masterVal;
+  if (af_eepromVal != 0)
   { // set medSum, medCnt to initial value read from EEPROM
     i32_medCnt = 1;
-    f_medSum = rf_eepromVal;
+    f_medSum = af_eepromVal;
   }
   else
   {
@@ -155,35 +155,35 @@ void MeasureProgLocal_c::init(
 
 
 /** assignment of MeasureProgLocal_c objects
-    @param rrefc_src source MeasureProgLocal_c instance
+    @param arc_src source MeasureProgLocal_c instance
     @return reference to source instance for assignment like "prog1 = prog2 = prog3;"
   */
-const MeasureProgLocal_c& MeasureProgLocal_c::operator=(const MeasureProgLocal_c& rrefc_src){
+const MeasureProgLocal_c& MeasureProgLocal_c::operator=(const MeasureProgLocal_c& arc_src){
   // call base class operator
-  MeasureProgBase_c::operator=(rrefc_src);
+  MeasureProgBase_c::operator=(arc_src);
 
-  assignFromSource( rrefc_src );
+  assignFromSource( arc_src );
 
   // return reference to source
-  return rrefc_src;
+  return arc_src;
 }
 
 /** copy constructor for MeasureProgLocal
-    @param rrefc_src source MeasureProgLocal_c instance
+    @param arc_src source MeasureProgLocal_c instance
   */
-MeasureProgLocal_c::MeasureProgLocal_c(const MeasureProgLocal_c& rrefc_src)
-   : MeasureProgBase_c(rrefc_src){
-  assignFromSource( rrefc_src );
+MeasureProgLocal_c::MeasureProgLocal_c(const MeasureProgLocal_c& arc_src)
+   : MeasureProgBase_c(arc_src){
+  assignFromSource( arc_src );
 }
 
 
 /** base function for assignment of element vars for copy constructor and operator= */
-void MeasureProgLocal_c::assignFromSource( const MeasureProgLocal_c& rrefc_src )
+void MeasureProgLocal_c::assignFromSource( const MeasureProgLocal_c& arc_src )
 { // copy element vars
-  b_triggeredIncrement = rrefc_src.b_triggeredIncrement;
-  i32_lastMasterVal = rrefc_src.i32_lastMasterVal;
-  i32_medCnt = rrefc_src.i32_medCnt;
-  i32_medSum = rrefc_src.i32_medSum;
+  b_triggeredIncrement = arc_src.b_triggeredIncrement;
+  i32_lastMasterVal = arc_src.i32_lastMasterVal;
+  i32_medCnt = arc_src.i32_medCnt;
+  i32_medSum = arc_src.i32_medSum;
 }
 
 
@@ -199,14 +199,14 @@ MeasureProgLocal_c::~MeasureProgLocal_c(){
 
     @param ren_type used increment types: Proc_c::TimeProp, Proc_c::DistProp, Proc_c::ValIncr
     @param ren_doSend value types to send on trigger of subprog: Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...
-    @param ri32_masterVal actual master value to start with
+    @param ai32_masterVal actual master value to start with
     @return true -> starting values sent with success
   */
 bool MeasureProgLocal_c::start(Proc_c::type_t ren_type,
-                        Proc_c::doSend_t ren_doSend, int32_t ri32_masterVal){
+                        Proc_c::doSend_t ren_doSend, int32_t ai32_masterVal){
   // call start function of base class
   MeasureProgBase_c::start(ren_type, ren_doSend);
-  i32_lastMasterVal = ri32_masterVal;
+  i32_lastMasterVal = ai32_masterVal;
   bool b_sendVal = TRUE;
 
   // start the given subprog items
@@ -293,14 +293,14 @@ bool MeasureProgLocal_c::start(Proc_c::type_t ren_type,
 
     @param ren_type used increment types: Proc_c::TimeProp, Proc_c::DistProp, Proc_c::ValIncr
     @param ren_doSend value types to send on trigger of subprog: Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...
-    @param rf_masterVal actual master value to start with
+    @param af_masterVal actual master value to start with
     @return true -> starting values sent with success
   */
-bool MeasureProgLocal_c::start(Proc_c::type_t ren_type, Proc_c::doSend_t ren_doSend, float rf_masterVal)
+bool MeasureProgLocal_c::start(Proc_c::type_t ren_type, Proc_c::doSend_t ren_doSend, float af_masterVal)
 {
   // call start function of base class
   MeasureProgBase_c::start(ren_type, ren_doSend);
-  f_lastMasterVal = rf_masterVal;
+  f_lastMasterVal = af_masterVal;
 
   // start the given subprog items
   for (Vec_MeasureSubprogIterator pc_iter = vec_measureSubprog.begin(); pc_iter != vec_measureSubprog.end(); pc_iter++)
@@ -436,33 +436,33 @@ bool MeasureProgLocal_c::stop(bool /* b_deleteSubProgs */, Proc_c::type_t ren_ty
 
 /** send a sub-information (selected by en_valueGroup) to a specified target (selected by GPT)
     @param en_valueGroup value group to send
-    @param rc_targetISOName ISOName of target
+    @param ac_targetISOName ISOName of target
     @return true -> successful sent
   */
-bool MeasureProgLocal_c::sendValMod( GeneralCommand_c::ValueGroup_t en_valueGroup, const IsoName_c& rc_targetISOName) const {
+bool MeasureProgLocal_c::sendValMod( GeneralCommand_c::ValueGroup_t en_valueGroup, const IsoName_c& ac_targetISOName) const {
   // prepare general command in process pkg
   getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false, /* isRequest */
                                                               en_valueGroup, GeneralCommand_c::setValue);
 #ifdef USE_FLOAT_DATA_TYPE
   if (processDataConst().valType() != float_val)
-     return processDataConst().sendValISOName(rc_targetISOName, valMod(en_valueGroup));
-  else return processDataConst().sendValISOName(rc_targetISOName, valModFloat(en_valueGroup));
+     return processDataConst().sendValISOName(ac_targetISOName, valMod(en_valueGroup));
+  else return processDataConst().sendValISOName(ac_targetISOName, valModFloat(en_valueGroup));
 #else
-  return processDataConst().sendValISOName(rc_targetISOName, valMod(en_valueGroup));
+  return processDataConst().sendValISOName(ac_targetISOName, valMod(en_valueGroup));
 #endif
 }
 
 
 /** send a sub-information from the corresponding setpoint master to a specified target (selected by GPT)
     @param en_valueGroup value group to send
-    @param rc_targetISOName ISOName of target
+    @param ac_targetISOName ISOName of target
     @return true -> successful sent
   */
-bool MeasureProgLocal_c::sendSetpointValMod( GeneralCommand_c::ValueGroup_t en_valueGroup, const IsoName_c& rc_targetISOName) const {
+bool MeasureProgLocal_c::sendSetpointValMod( GeneralCommand_c::ValueGroup_t en_valueGroup, const IsoName_c& ac_targetISOName) const {
   // prepare general command in process pkg
   getProcessInstance4Comm().data().c_generalCommand.setValues(TRUE /* isSetpoint */, false, /* isRequest */
                                                               en_valueGroup, GeneralCommand_c::setValue);
-  return processDataConst().sendValISOName(rc_targetISOName, setpointValMod(en_valueGroup));
+  return processDataConst().sendValISOName(ac_targetISOName, setpointValMod(en_valueGroup));
 }
 
 /** deliver to en_valueGroup according setpoint from a master setpoint
@@ -521,7 +521,7 @@ bool MeasureProgLocal_c::processMsg(){
 
       if (Proc_c::defaultDataLoggingDDI == c_pkg.DDI())
       { // setValue command for default data logging DDI stops measurement (same as TC task status "suspended")
-        getProcessInstance4Comm().processTcStatusMsg(0, c_pkg.memberSend().isoName(), TRUE /* rb_skipLastTcStatus */);
+        getProcessInstance4Comm().processTcStatusMsg(0, c_pkg.memberSend().isoName(), TRUE /* ab_skipLastTcStatus */);
       }
 
       // resetted val is automatically sent
@@ -549,21 +549,21 @@ bool MeasureProgLocal_c::processMsg(){
 
 /**
   constructor which can optionally set most element vars of MeasureProgLocal
-  @param rpc_processData optional pointer to containing ProcDataLocal_c instance (def NULL)
+  @param apc_processData optional pointer to containing ProcDataLocal_c instance (def NULL)
   @param ren_progType optional program msg type (Proc_c::Base, Proc_c::Target; default Proc_c::UndefinedProg)
-  @param ri32_masterVal optional actual central local measured value used as masterVal (def 0)
-  @param ri32_initialVal optional initial value (e.g which was stored in EEPROM) (default 0)
-  @param rc_callerISOName optional ISOName of remote member, which caused creation of this instance (default 0xFF == no member)
+  @param ai32_masterVal optional actual central local measured value used as masterVal (def 0)
+  @param ai32_initialVal optional initial value (e.g which was stored in EEPROM) (default 0)
+  @param ac_callerISOName optional ISOName of remote member, which caused creation of this instance (default 0xFF == no member)
 */
 MeasureProgLocal_c::MeasureProgLocal_c(
-  ProcDataBase_c *const rpc_processData,
+  ProcDataBase_c *const apc_processData,
   Proc_c::progType_t ren_progType,
-  int32_t ri32_masterVal,
-  int32_t ri32_initialVal,
-  const IsoName_c& rc_callerISOName)
-: MeasureProgBase_c(rpc_processData, ren_progType, ri32_initialVal, rc_callerISOName )
+  int32_t ai32_masterVal,
+  int32_t ai32_initialVal,
+  const IsoName_c& ac_callerISOName)
+: MeasureProgBase_c(apc_processData, ren_progType, ai32_initialVal, ac_callerISOName )
 {
-  init( rpc_processData, ren_progType, ri32_masterVal, ri32_initialVal, rc_callerISOName );
+  init( apc_processData, ren_progType, ai32_masterVal, ai32_initialVal, ac_callerISOName );
 }
 
 
@@ -573,10 +573,10 @@ MeasureProgLocal_c::MeasureProgLocal_c(
 
         * dependant error in ProcDataLocal_c if EMPF or SEND not valid
         * dependant error in CanIo_c on send problems
-    @param ri32_val new measure value
+    @param ai32_val new measure value
   */
-void MeasureProgLocal_c::setVal(int32_t ri32_val){
-  int32_t i32_incr =  ri32_val - i32_lastMasterVal;
+void MeasureProgLocal_c::setVal(int32_t ai32_val){
+  int32_t i32_incr =  ai32_val - i32_lastMasterVal;
   int32_t i32_time =  System_c::getTime();
   int32_t i32_timeDelta = i32_time - i32_lastTime;
   int32_t i32_oldDelta = i32_delta;
@@ -585,9 +585,9 @@ void MeasureProgLocal_c::setVal(int32_t ri32_val){
   // update values:
   // for cumulative values -> update i32_val by increment
   // else take the actual given master value
-  i32_lastMasterVal = ri32_val;
+  i32_lastMasterVal = ai32_val;
   if (processData().b_cumulativeValue) i32_val += i32_incr;
-  else i32_val = ri32_val;
+  else i32_val = ai32_val;
 
   // update min max
   if (val() > max()) setMax(val());
@@ -681,10 +681,10 @@ void MeasureProgLocal_c::setVal(int32_t ri32_val){
     possible errors:
         * dependant error in ProcDataLocal_c if EMPF or SEND not valid
         * dependant error in CanIo_c on send problems
-    @param rf_val new measure value
+    @param af_val new measure value
   */
-void MeasureProgLocal_c::setVal(float rf_val){
-  float f_incr =  rf_val - f_lastMasterVal;
+void MeasureProgLocal_c::setVal(float af_val){
+  float f_incr =  af_val - f_lastMasterVal;
   int32_t i32_time =  System_c::getTime();
   int32_t i32_timeDelta = i32_time - i32_lastTime;
   float f_oldDelta = f_delta;
@@ -693,9 +693,9 @@ void MeasureProgLocal_c::setVal(float rf_val){
   // update values:
   // for cumulative values -> update f_val by increment
   // else take the actual given master value
-  f_lastMasterVal = rf_val;
+  f_lastMasterVal = af_val;
   if (processData().b_cumulativeValue) f_val += f_incr;
-  else f_val = rf_val;
+  else f_val = af_val;
 
   // update min max
   if (valFloat() > maxFloat()) setMax(valFloat());
@@ -824,26 +824,26 @@ bool MeasureProgLocal_c::sendRegisteredVals(Proc_c::doSend_t ren_doSend){
 
 
 /** init the element vals
-    @param ri32_val initial measure val
+    @param ai32_val initial measure val
   */
-void MeasureProgLocal_c::initVal(int32_t ri32_val){
+void MeasureProgLocal_c::initVal(int32_t ai32_val){
   // first call the base function
-  MeasureProgBase_c::initVal(ri32_val);
+  MeasureProgBase_c::initVal(ai32_val);
 
-  i32_medSum = ri32_val;
+  i32_medSum = ai32_val;
   i32_medCnt = 1;
 }
 
 
 #ifdef USE_FLOAT_DATA_TYPE
 /** init the element vals
-    @param rf_val initial measure val
+    @param af_val initial measure val
   */
-void MeasureProgLocal_c::initVal(float rf_val){
+void MeasureProgLocal_c::initVal(float af_val){
   // first call the base function
-  MeasureProgBase_c::initVal(rf_val);
+  MeasureProgBase_c::initVal(af_val);
 
-  f_medSum = rf_val;
+  f_medSum = af_val;
   i32_medCnt = 1;
 }
 #endif
@@ -854,10 +854,10 @@ void MeasureProgLocal_c::initVal(float rf_val){
     possible errors:
       * dependant error in ProcDataLocal_c if EMPF or SEND not valid
       * dependant error in CanIo_c on send problems
-    @param ri32_val reset measure value to this value (ISO only)
+    @param ai32_val reset measure value to this value (ISO only)
     @return true -> reseted measure val sent with success
   */
-bool MeasureProgLocal_c::resetVal(int32_t ri32_val){
+bool MeasureProgLocal_c::resetVal(int32_t ai32_val){
   // send resetted val
   bool b_sendSuccess;
 
@@ -870,7 +870,7 @@ bool MeasureProgLocal_c::resetVal(int32_t ri32_val){
 #endif
     // allow reset with value (ISO only)
     //i32_val = 0;
-    i32_val = ri32_val;
+    i32_val = ai32_val;
 
     b_sendSuccess = processData().sendValISOName(c_isoName, val());
 #ifdef USE_FLOAT_DATA_TYPE

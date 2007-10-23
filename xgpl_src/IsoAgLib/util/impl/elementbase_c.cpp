@@ -110,14 +110,14 @@ ElementBase_c::getTimeToNextTrigger(retriggerType_t t_retriggerType) const
 
 //!  This function is called by the schedulerEntry_C to update timestamps
 //!  The parameter tells the task the available time for execution.
-//! @param ri32_demandedExecEnd: available execution time. timeEvent() MUST be finished before the time, to avoid scheduling problems.
+//! @param ai32_demandedExecEnd: available execution time. timeEvent() MUST be finished before the time, to avoid scheduling problems.
 //!                              default value -1 == unrestricted time for execution.
 void
-ElementBase_c::timeEventPre(int32_t ri32_demandedExecEnd)
+ElementBase_c::timeEventPre(int32_t ai32_demandedExecEnd)
 {
   /// store the demanded exec end
 
-  i32_demandedExecEnd = ri32_demandedExecEnd;
+  i32_demandedExecEnd = ai32_demandedExecEnd;
   i32_retriggerTime = System_c::getTime();
   // derived classes should call base function at start
   // after update of i32_demandedExecEnd, the derived class specific
@@ -220,17 +220,17 @@ void ElementBase_c::startTaskTiming(int32_t rint32_StartTaskTime)
 //!  Each from ElementBase_c derived class must set at its init
 //!  the needed time period between calls of timeEvent.
 //! Parameter:
-//! @param rui16_timePeriod: needed time between calls of timeEvent in [msec]
+//! @param aui16_timePeriod: needed time between calls of timeEvent in [msec]
 void
 ElementBase_c::setTimePeriod
-(uint16_t rui16_timePeriod)
+(uint16_t aui16_timePeriod)
 {
-  ui16_timePeriod = rui16_timePeriod;
+  ui16_timePeriod = aui16_timePeriod;
   //call Function to calculate new intervals
   updateEarlierAndLatestInterval();
   #ifdef DEBUG_SCHEDULER
   INTERNAL_DEBUG_DEVICE
-      << "ElementBase_c::setTimePeriod( " << rui16_timePeriod << ") zu Task "
+      << "ElementBase_c::setTimePeriod( " << aui16_timePeriod << ") zu Task "
       << getTaskName() << INTERNAL_DEBUG_DEVICE_ENDL;
   #endif
 }

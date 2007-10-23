@@ -99,9 +99,9 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
   /** C-style function, to get access to the unique TracGeneral_c singleton instance
     * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
     */
-  TracGeneral_c& getTracGeneralInstance( uint8_t rui8_instance )
+  TracGeneral_c& getTracGeneralInstance( uint8_t aui8_instance )
   { // if > 1 singleton instance is used, no static reference can be used
-    return TracGeneral_c::instance( rui8_instance );
+    return TracGeneral_c::instance( aui8_instance );
   };
   #else
   /** C-style function, to get access to the unique TracGeneral_c singleton instance */
@@ -116,10 +116,10 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
       above all create the needed FilterBox_c instances
       possible errors:
         * dependant error in CANIO_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
-      @param rpc_isoName optional pointer to the ISOName variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
-      @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
+      @param apc_isoName optional pointer to the ISOName variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
+      @param at_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
     */
-  void TracGeneral_c::init_base (const ISOName_c* rpc_isoName, int , IsoAgLib::IdentMode_t rt_identMode)
+  void TracGeneral_c::init_base (const ISOName_c* apc_isoName, int , IsoAgLib::IdentMode_t at_identMode)
   {
     if ( checkAlreadyClosed() )
     {
@@ -131,27 +131,27 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     }
 
     //call init for handling which is base data independent
-    BaseCommon_c::init_base (rpc_isoName, rt_identMode);
+    BaseCommon_c::init_base (apc_isoName, at_identMode);
   };
 
   /** config the TracGeneral_c object after init -> set pointer to isoName and
       config send/receive of different general base msg types
-      @param rpc_isoName pointer to the ISOName variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
-      @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
+      @param apc_isoName pointer to the ISOName variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
+      @param at_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       @return true -> configuration was successfull
     */
-  bool TracGeneral_c::config_base (const ISOName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode, uint16_t rui16_suppressMask)
+  bool TracGeneral_c::config_base (const ISOName_c* apc_isoName, IsoAgLib::IdentMode_t at_identMode, uint16_t aui16_suppressMask)
   { // set configure values
     //store old mode to decide to register or unregister to request for pgn
     IsoAgLib::IdentMode_t t_oldMode = getMode();
 
     //call config for handling which is base data independent
     //if something went wrong leave function before something is configured
-    if ( !BaseCommon_c::config_base (rpc_isoName,rt_identMode,rui16_suppressMask) ) return false;
+    if ( !BaseCommon_c::config_base (apc_isoName,at_identMode,aui16_suppressMask) ) return false;
 
 
     ///Set time Period for Scheduler_c
-    if (rt_identMode == IsoAgLib::IdentModeTractor)
+    if (at_identMode == IsoAgLib::IdentModeTractor)
     { // SEND data with short period
       setTimePeriod( (uint16_t) 100);
     }
@@ -166,13 +166,13 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     i16_engine = NO_VAL_16S;
 
     // un-/register to PGN
-    if (t_oldMode == IsoAgLib::IdentModeImplement && rt_identMode == IsoAgLib::IdentModeTractor)
+    if (t_oldMode == IsoAgLib::IdentModeImplement && at_identMode == IsoAgLib::IdentModeTractor)
     { // a change from Implement mode to Tractor mode occured
       // create FilterBox_c for REQUEST_PGN_MSG_PGN, LANGUAGE_PGN
       getIsoRequestPgnInstance4Comm().registerPGN (*this, LANGUAGE_PGN); // request for language
     }
 
-    if (t_oldMode == IsoAgLib::IdentModeTractor && rt_identMode == IsoAgLib::IdentModeImplement)
+    if (t_oldMode == IsoAgLib::IdentModeTractor && at_identMode == IsoAgLib::IdentModeImplement)
     { // a change from Tractor mode to Implement mode occured
       // unregister from request for pgn, because in implement mode no request should be answered
       getIsoRequestPgnInstance4Comm().unregisterPGN (*this, LANGUAGE_PGN);
@@ -348,10 +348,10 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     return b_result;
   }
 
-  bool TracGeneral_c::processMsgRequestPGN (uint32_t rui32_pgn, ISOItem_c* rpc_isoItemSender, ISOItem_c* rpc_isoItemReceiver)
+  bool TracGeneral_c::processMsgRequestPGN (uint32_t aui32_pgn, ISOItem_c* apc_isoItemSender, ISOItem_c* apc_isoItemReceiver)
   {
     // check if we are allowed to send a request for pgn
-    if ( ! BaseCommon_c::check4ReqForPgn(rui32_pgn, rpc_isoItemSender, rpc_isoItemReceiver) ) return false;
+    if ( ! BaseCommon_c::check4ReqForPgn(aui32_pgn, apc_isoItemSender, apc_isoItemReceiver) ) return false;
 
     // call TracGeneral_c function to send language of Tractor-ECU
     // sendLanguage checks if this item (identified by ISOName)
@@ -512,11 +512,11 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
 
  /** force maintain power from tractor
      @see  CanIo_c::operator<<
-     @param rb_ecuPower true -> maintain ECU power
-     @param rb_actuatorPower true-> maintain actuator power
-     @param rt_implState in which state is the implement (transport, park, work)
+     @param ab_ecuPower true -> maintain ECU power
+     @param ab_actuatorPower true-> maintain actuator power
+     @param at_implState in which state is the implement (transport, park, work)
    */
-  void TracGeneral_c::forceMaintainPower( bool rb_ecuPower, bool rb_actuatorPower, IsoAgLib::IsoMaintainPower_t rt_implState)
+  void TracGeneral_c::forceMaintainPower( bool ab_ecuPower, bool ab_actuatorPower, IsoAgLib::IsoMaintainPower_t at_implState)
   {
     if ( (mui16_suppressMask & MAINTAIN_POWER_REQUEST_PGN_DISABLE_MASK) != 0) return;
     // as BaseCommon_c timeEvent() checks only for adr claimed state in TractorMode, we have to perform those checks here,
@@ -526,16 +526,16 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
 
      uint8_t val1 = IsoAgLib::IsoInactive,
             val2 = IsoAgLib::IsoInactive;
-    if (rb_ecuPower)
+    if (ab_ecuPower)
       val1 |= ( IsoAgLib::IsoActive   << 6);
     else
       val1 |= ( IsoAgLib::IsoInactive << 6);
-    if (rb_actuatorPower)
+    if (ab_actuatorPower)
       val1 |= ( IsoAgLib::IsoActive   << 4);
     else
       val1 |= ( IsoAgLib::IsoInactive << 4);
 
-    switch(rt_implState)
+    switch(at_implState)
     {
       case IsoAgLib::implInTransport:
         val2 |= ( implState.inTransport         << 6);

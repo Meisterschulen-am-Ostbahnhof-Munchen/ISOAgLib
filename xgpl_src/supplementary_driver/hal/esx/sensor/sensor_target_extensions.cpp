@@ -128,14 +128,14 @@ static uint16_t *_puiDiginTimebase[4];
 typedef void (*counterIrqFunction)();
 static uint16_t _wIrqTime;
 
-void counterIrqFlex(uint8_t rb_row, uint8_t rb_col)
+void counterIrqFlex(uint8_t ab_row, uint8_t ab_col)
 {
-  (_pulDiginCounter[rb_row][rb_col])++;
+  (_pulDiginCounter[ab_row][ab_col])++;
   // the config function of input must guarantee, that
   // vectors memory are allocated
-  if (_pt_diginTriggerTime[rb_row] != NULL)
+  if (_pt_diginTriggerTime[ab_row] != NULL)
   {
-    _put_temp = &(_pt_diginTriggerTime[rb_row][rb_col]);
+    _put_temp = &(_pt_diginTriggerTime[ab_row][ab_col]);
     _wIrqTime = (get_time() & 0xFFFF);
     if (_wIrqTime > _put_temp->uiAct) _put_temp->uiPeriod = _wIrqTime - _put_temp->uiAct;
     else if (_wIrqTime == _put_temp->uiAct) _put_temp->uiPeriod = 1;
@@ -183,36 +183,36 @@ uint16_t get_max_bios_timebase( void )
 /**
   init counter for trigger events on digital inoput;
   rising edges are counted;
-  @param rb_channel input channel to use [0..15]
-  @param rui16_timebase timebase to calculate periods, frequency
+  @param ab_channel input channel to use [0..15]
+  @param aui16_timebase timebase to calculate periods, frequency
                      should be at least longer than longest
                      awaited signal period [msec.]
-  @param rb_activHigh true -> counter input is configured fo ACTIV_HIGH; else ACTIV_LOW
-  @param rb_risingEdge true -> counter triggers on rising edge; else on falling edge
+  @param ab_activHigh true -> counter input is configured fo ACTIV_HIGH; else ACTIV_LOW
+  @param ab_risingEdge true -> counter triggers on rising edge; else on falling edge
   @return C_NO_ERR if no error occured
 */
-int16_t init_counter(uint8_t rb_channel, uint16_t rui16_timebase, bool rb_activHigh, bool rb_risingEdge)
+int16_t init_counter(uint8_t ab_channel, uint16_t aui16_timebase, bool ab_activHigh, bool ab_risingEdge)
 {
-  int32_t i32_prescale = rui16_timebase;
-  uint8_t b_codeActiv = (rb_activHigh)?HIGH_ACTIV:LOW_ACTIV;
-  uint8_t b_codeEdge = (rb_risingEdge)?RISING_EDGE:FALLING_EDGE;
+  int32_t i32_prescale = aui16_timebase;
+  uint8_t b_codeActiv = (ab_activHigh)?HIGH_ACTIV:LOW_ACTIV;
+  uint8_t b_codeEdge = (ab_risingEdge)?RISING_EDGE:FALLING_EDGE;
 
   uint8_t ui8_pow;
   int16_t i16_errorState = 0;
-  /* check if rb_channel is allowed and exit function with RANGE error if not correct */
-  if (rb_channel > 15) return C_RANGE;
+  /* check if ab_channel is allowed and exit function with RANGE error if not correct */
+  if (ab_channel > 15) return C_RANGE;
 
 
   /* store given timebase in according 4-group */
-  if (_puiDiginTimebase[(rb_channel / 4)] == NULL)
+  if (_puiDiginTimebase[(ab_channel / 4)] == NULL)
   {
-    _puiDiginTimebase[(rb_channel / 4)] = (uint16_t*)CNAMESPACE::malloc(4*sizeof(uint16_t));
+    _puiDiginTimebase[(ab_channel / 4)] = (uint16_t*)CNAMESPACE::malloc(4*sizeof(uint16_t));
     /* check if allocated properly and init */
-    if (_puiDiginTimebase[(rb_channel / 4)] == NULL) i16_errorState |= C_OVERFLOW;
+    if (_puiDiginTimebase[(ab_channel / 4)] == NULL) i16_errorState |= C_OVERFLOW;
     else
     {
-      CNAMESPACE::memset(_puiDiginTimebase[(rb_channel / 4)], 0, sizeof(uint16_t) * 4);
-      _puiDiginTimebase[(rb_channel / 4)][(rb_channel % 4)] = rui16_timebase;
+      CNAMESPACE::memset(_puiDiginTimebase[(ab_channel / 4)], 0, sizeof(uint16_t) * 4);
+      _puiDiginTimebase[(ab_channel / 4)][(ab_channel % 4)] = aui16_timebase;
     }
   }
 
@@ -220,8 +220,8 @@ int16_t init_counter(uint8_t rb_channel, uint16_t rui16_timebase, bool rb_activH
   i32_prescale /= 65534;
   if (i32_prescale <= 1024)
 	{ // use BIOS for period/freq detection
-		init_digin(rb_channel, b_codeEdge, b_codeActiv, NULL );
-		uint16_t ui16_tempPrescaleInd = (rb_channel < 5)?_b_prescale_1_4Index:_b_prescale_5_16Index;
+		init_digin(ab_channel, b_codeEdge, b_codeActiv, NULL );
+		uint16_t ui16_tempPrescaleInd = (ab_channel < 5)?_b_prescale_1_4Index:_b_prescale_5_16Index;
     for (ui8_pow = 9; ui8_pow > 1; ui8_pow--)
     { /* the prescaler must be configured by (2 << pow) values */
       if ((i32_prescale > (2 << ui8_pow)) || (ui8_pow == 2))
@@ -231,7 +231,7 @@ int16_t init_counter(uint8_t rb_channel, uint16_t rui16_timebase, bool rb_activH
       }
     }
 
-	  if (rb_channel < 5)
+	  if (ab_channel < 5)
 	  { /* set prescaler */
 			_b_prescale_1_4Index = ui16_tempPrescaleInd;
 	    i16_errorState = set_digin_prescaler(RPM_IN_1_4, _b_prescale_1_4Index);
@@ -246,25 +246,25 @@ int16_t init_counter(uint8_t rb_channel, uint16_t rui16_timebase, bool rb_activH
 	{ // the max time between impulses that shall be gathere for
 		// period detection is larger than supported by BIOS
 		// ==> use IsoAgLib IRQ based detection
-  	init_digin(rb_channel, b_codeEdge, b_codeActiv, irqFuncArr[rb_channel]);
+  	init_digin(ab_channel, b_codeEdge, b_codeActiv, irqFuncArr[ab_channel]);
 
 	  /* create var for counter value -> this vars are managed in 4-groups
 	   *  of int32_t -> avoid memory waste
 	   */
-	  if (_pulDiginCounter[(rb_channel / 4)] == NULL)
+	  if (_pulDiginCounter[(ab_channel / 4)] == NULL)
 	  { /* according 4-group of uint32_t isn't created -> allocate */
-	    _pulDiginCounter[(rb_channel / 4)] = (uint32_t*)CNAMESPACE::malloc(4*sizeof(uint32_t));
+	    _pulDiginCounter[(ab_channel / 4)] = (uint32_t*)CNAMESPACE::malloc(4*sizeof(uint32_t));
 	    /* check if allocated properly and init */
-	    if (_pulDiginCounter[(rb_channel / 4)] == NULL) i16_errorState |= C_OVERFLOW;
-	    else CNAMESPACE::memset(_pulDiginCounter[(rb_channel / 4)], 0, sizeof(uint32_t)*4);
+	    if (_pulDiginCounter[(ab_channel / 4)] == NULL) i16_errorState |= C_OVERFLOW;
+	    else CNAMESPACE::memset(_pulDiginCounter[(ab_channel / 4)], 0, sizeof(uint32_t)*4);
 	  }
 
     // create corresponding array elements for last trigger time
-		if (_pt_diginTriggerTime[(rb_channel / 4)] == NULL)
+		if (_pt_diginTriggerTime[(ab_channel / 4)] == NULL)
     {  /* according 4-group of t_triggerNode isn't created -> allocate */
-      _pt_diginTriggerTime[(rb_channel / 4)] = (t_triggerNode*)CNAMESPACE::malloc(4*sizeof(t_triggerNode));
-      if (_pt_diginTriggerTime[(rb_channel / 4)] == NULL) i16_errorState |= C_OVERFLOW;
-      else CNAMESPACE::memset(_pt_diginTriggerTime[(rb_channel / 4)], 0, sizeof(t_triggerNode) * 4);
+      _pt_diginTriggerTime[(ab_channel / 4)] = (t_triggerNode*)CNAMESPACE::malloc(4*sizeof(t_triggerNode));
+      if (_pt_diginTriggerTime[(ab_channel / 4)] == NULL) i16_errorState |= C_OVERFLOW;
+      else CNAMESPACE::memset(_pt_diginTriggerTime[(ab_channel / 4)], 0, sizeof(t_triggerNode) * 4);
     }
   }
 
@@ -272,13 +272,13 @@ int16_t init_counter(uint8_t rb_channel, uint16_t rui16_timebase, bool rb_activH
 }
 /**
   get counter value of an digital counter input
-  @param rb_channel channel of counter
+  @param ab_channel channel of counter
   @return counter events since init or last reset
 */
-uint32_t getCounter(uint8_t rb_channel)
-{	if ((rb_channel < 16) && (_pulDiginCounter[(rb_channel / 4)] != NULL))
-  { /* rb_channel is allowed and var array is allocated */
-    return _pulDiginCounter[(rb_channel / 4)][(rb_channel % 4)];
+uint32_t getCounter(uint8_t ab_channel)
+{	if ((ab_channel < 16) && (_pulDiginCounter[(ab_channel / 4)] != NULL))
+  { /* ab_channel is allowed and var array is allocated */
+    return _pulDiginCounter[(ab_channel / 4)][(ab_channel % 4)];
   }
   else
 	{ // this can happen if counter is not yet initialized
@@ -289,15 +289,15 @@ uint32_t getCounter(uint8_t rb_channel)
 }
 /**
   reset the given counter
-  @param rb_channel channel of counter
-  @return C_NO_ERR ; C_RANGE if counter for rb_channel isn't configured properly
+  @param ab_channel channel of counter
+  @return C_NO_ERR ; C_RANGE if counter for ab_channel isn't configured properly
 */
-int16_t resetCounter(uint8_t rb_channel)
+int16_t resetCounter(uint8_t ab_channel)
 {
-  /* check if rb_channel is allowed and var array is allocated */
-  if ((rb_channel < 16) && (_pulDiginCounter[(rb_channel / 4)] != NULL))
+  /* check if ab_channel is allowed and var array is allocated */
+  if ((ab_channel < 16) && (_pulDiginCounter[(ab_channel / 4)] != NULL))
   {
-    _pulDiginCounter[(rb_channel / 4)][(rb_channel % 4)] = 0;
+    _pulDiginCounter[(ab_channel / 4)][(ab_channel % 4)] = 0;
     return C_NO_ERR;
   }
   else
@@ -309,31 +309,31 @@ int16_t resetCounter(uint8_t rb_channel)
 }
 /**
   get period of counter channel
-  @param rb_channel channel of counter
+  @param ab_channel channel of counter
   @return time between last two signals or 0xFFFF if time is longer than initially
            given timebase [msec.]
 */
-uint16_t getCounterPeriod(uint8_t rb_channel)
+uint16_t getCounterPeriod(uint8_t ab_channel)
 {
 	#ifndef CALC_PERDIOD_FROM_FREQ
 	uint16_t ui16_counter;
 	#endif
   uint16_t ui16_timebase, ui16_result = 0xFFFF;
-  /* check if rb_channel is allowed and var array is allocated */
-  if (rb_channel > 15) return 0xFFFF;
-  if (_puiDiginTimebase[(rb_channel / 4)] != NULL)
+  /* check if ab_channel is allowed and var array is allocated */
+  if (ab_channel > 15) return 0xFFFF;
+  if (_puiDiginTimebase[(ab_channel / 4)] != NULL)
   {
-    ui16_timebase = _puiDiginTimebase[(rb_channel / 4)][(rb_channel % 4)];
+    ui16_timebase = _puiDiginTimebase[(ab_channel / 4)][(ab_channel % 4)];
     if (ui16_timebase == 0) ui16_result = 0xFFFF;
     else if ( ui16_timebase <= get_max_bios_timebase() )
     { /* use standard BIOS method because timebase is short enough */
 			#ifdef CALC_PERDIOD_FROM_FREQ
-			get_digin_freq(rb_channel, &ui16_result);
+			get_digin_freq(ab_channel, &ui16_result);
 			// result of get_digin_freq has scaling [100mHz] -> use 10000/result to get period [msec]
 			ui16_result = ( ( 1000 * 10 ) / ui16_result );
 			#else
-      get_digin_period(rb_channel, &ui16_result, &ui16_counter);
-			const uint16_t cui_usePrescaleInd = (rb_channel < 5)?_b_prescale_1_4Index:_b_prescale_5_16Index;
+      get_digin_period(ab_channel, &ui16_result, &ui16_counter);
+			const uint16_t cui_usePrescaleInd = (ab_channel < 5)?_b_prescale_1_4Index:_b_prescale_5_16Index;
 
 			// use util helper function to avoid overflow
       ui16_result
@@ -342,11 +342,11 @@ uint16_t getCounterPeriod(uint8_t rb_channel)
     }
     else
     { /* use extension method */
-      if (_pt_diginTriggerTime[(rb_channel / 4)] != NULL)
+      if (_pt_diginTriggerTime[(ab_channel / 4)] != NULL)
       { /* vars are accessible */
-        if (getCounterLastSignalAge(rb_channel) < ui16_timebase)
+        if (getCounterLastSignalAge(ab_channel) < ui16_timebase)
         { // handle overflow between uiLast and uiAct
-          ui16_result = _pt_diginTriggerTime[(rb_channel / 4)][(rb_channel % 4)].uiPeriod;
+          ui16_result = _pt_diginTriggerTime[(ab_channel / 4)][(ab_channel % 4)].uiPeriod;
           if (ui16_result == 0) ui16_result = 1;
         }
       }
@@ -356,32 +356,32 @@ uint16_t getCounterPeriod(uint8_t rb_channel)
 }
 /**
   get frequency of counter channel
-  @param rb_channel channel of counter
+  @param ab_channel channel of counter
   @return frequency calculated from time between last two signals
           or 0 if time is longer than initially given timebase [100mHz]
 */
-uint16_t getCounterFrequency(uint8_t rb_channel)
+uint16_t getCounterFrequency(uint8_t ab_channel)
 {
   uint16_t ui16_timebase, ui16_result = 0;
   uint16_t ui16_lastSignalAge = 0;
   uint16_t ui16_lastPeriod;
-  /* check if rb_channel is allowed and var array is allocated */
-  if ((rb_channel < 16) && (_puiDiginTimebase[(rb_channel / 4)] != NULL))
+  /* check if ab_channel is allowed and var array is allocated */
+  if ((ab_channel < 16) && (_puiDiginTimebase[(ab_channel / 4)] != NULL))
   {
-    ui16_timebase = _puiDiginTimebase[(rb_channel / 4)][(rb_channel % 4)];
+    ui16_timebase = _puiDiginTimebase[(ab_channel / 4)][(ab_channel % 4)];
     if (ui16_timebase == 0) ui16_result = 0;
     else if ( ui16_timebase <= get_max_bios_timebase() )
     { /* use standard BIOS method because timebase is short enough */
-      get_digin_freq(rb_channel, &ui16_result);
+      get_digin_freq(ab_channel, &ui16_result);
     }
     else
     { /* use extension method */
-      if (_pt_diginTriggerTime[(rb_channel / 4)] != NULL)
+      if (_pt_diginTriggerTime[(ab_channel / 4)] != NULL)
       { /* vars are accessible */
-        ui16_lastSignalAge = getCounterLastSignalAge(rb_channel);
+        ui16_lastSignalAge = getCounterLastSignalAge(ab_channel);
         if (ui16_lastSignalAge < ui16_timebase)
         { // handle overflow between uiLast and uiAct
-          ui16_lastPeriod = _pt_diginTriggerTime[(rb_channel / 4)][(rb_channel % 4)].uiPeriod;
+          ui16_lastPeriod = _pt_diginTriggerTime[(ab_channel / 4)][(ab_channel % 4)].uiPeriod;
           if (ui16_lastPeriod == 0) ui16_result = 0;
           else
           {
@@ -399,24 +399,24 @@ uint16_t getCounterFrequency(uint8_t rb_channel)
 /**
  get time since last signal and reset according trigger timers
  if timebase is exceeded -> avoid overflow problems if timer floated around 0xFFFF
- @param rb_channel channel of counter
+ @param ab_channel channel of counter
  @return time since last signal [msec.]
 */
-uint16_t getCounterLastSignalAge(uint8_t rb_channel)
+uint16_t getCounterLastSignalAge(uint8_t ab_channel)
 {
   uint16_t uiResult = 0xFFFF, uiTime = (get_time() & 0xFFFF);
   uint16_t ui16_period, ui16_actTime;
-  /* check if rb_channel is allowed and var array is allocated */
-  if ((rb_channel < 16) && (_pt_diginTriggerTime[(rb_channel / 4)] != NULL))
+  /* check if ab_channel is allowed and var array is allocated */
+  if ((ab_channel < 16) && (_pt_diginTriggerTime[(ab_channel / 4)] != NULL))
   {
-    ui16_period = _pt_diginTriggerTime[(rb_channel / 4)][(rb_channel % 4)].uiPeriod;
-    ui16_actTime = _pt_diginTriggerTime[(rb_channel / 4)][(rb_channel % 4)].uiAct;
+    ui16_period = _pt_diginTriggerTime[(ab_channel / 4)][(ab_channel % 4)].uiPeriod;
+    ui16_actTime = _pt_diginTriggerTime[(ab_channel / 4)][(ab_channel % 4)].uiAct;
     if (ui16_period <= 0xFFFE)
     { // both values are valid and not resetted
       uiResult = (uiTime >= ui16_actTime)?(uiTime - ui16_actTime): (uiTime + (0xFFFF - ui16_actTime));
       // if timebase is exceeded -> reset *puiAct and *puiLast
-      if (_puiDiginTimebase[(rb_channel / 4)][(rb_channel % 4)] < uiResult)
-        _pt_diginTriggerTime[(rb_channel / 4)][(rb_channel % 4)].uiPeriod = 0xFFFF; // if both are equal answers in future time age 0xFFFF
+      if (_puiDiginTimebase[(ab_channel / 4)][(ab_channel % 4)] < uiResult)
+        _pt_diginTriggerTime[(ab_channel / 4)][(ab_channel % 4)].uiPeriod = 0xFFFF; // if both are equal answers in future time age 0xFFFF
     }
   }
   return uiResult;

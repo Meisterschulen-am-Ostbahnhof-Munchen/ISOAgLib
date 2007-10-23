@@ -142,11 +142,11 @@ void ManageMeasureProgLocal_c::checkInitList( void )
 
 /**
   initialise this ManageMeasureProgLocal_c instance to a well defined initial state
-  @param rpc_processData optional pointer to containing ProcessData instance
+  @param apc_processData optional pointer to containing ProcessData instance
 */
-void ManageMeasureProgLocal_c::init( ProcDataBase_c *const rpc_processData )
+void ManageMeasureProgLocal_c::init( ProcDataBase_c *const apc_processData )
 { // set the pointer to the corresponging process data class
-  ProcessElementBase_c::set( rpc_processData );
+  ProcessElementBase_c::set( apc_processData );
   // as init() can be also called to re-init (bring this instance to well
   // defined starting condition, clearthe measure-prog array
   #ifdef DEBUG_HEAP_USEAGE
@@ -157,24 +157,24 @@ void ManageMeasureProgLocal_c::init( ProcDataBase_c *const rpc_processData )
   pc_progCache = vec_prog().begin();
 }
 /** copy constructor */
-ManageMeasureProgLocal_c::ManageMeasureProgLocal_c( const ManageMeasureProgLocal_c& rrefc_src )
-: ProcessElementBase_c( rrefc_src )
+ManageMeasureProgLocal_c::ManageMeasureProgLocal_c( const ManageMeasureProgLocal_c& arc_src )
+: ProcessElementBase_c( arc_src )
 {
-  assignFromSource( rrefc_src );
+  assignFromSource( arc_src );
 }
 /** assignment operator */
-const ManageMeasureProgLocal_c& ManageMeasureProgLocal_c::operator=( const ManageMeasureProgLocal_c& rrefc_src )
+const ManageMeasureProgLocal_c& ManageMeasureProgLocal_c::operator=( const ManageMeasureProgLocal_c& arc_src )
 {
-  ProcessElementBase_c::operator=( rrefc_src );
-  assignFromSource( rrefc_src );
+  ProcessElementBase_c::operator=( arc_src );
+  assignFromSource( arc_src );
   return *this;
 }
 /** base function for assignment of element vars for copy constructor and operator= */
-void ManageMeasureProgLocal_c::assignFromSource( const ManageMeasureProgLocal_c& rrefc_src )
+void ManageMeasureProgLocal_c::assignFromSource( const ManageMeasureProgLocal_c& arc_src )
 { // copy dynamic array
-  c_vec_prog = rrefc_src.c_vec_prog;
+  c_vec_prog = arc_src.c_vec_prog;
   // now initialise the elements
-  if (vec_prog().size() < rrefc_src.constVecProg().size())
+  if (vec_prog().size() < arc_src.constVecProg().size())
   { // not all items copied
     getILibErrInstance().registerError( iLibErr_c::BadAlloc, iLibErr_c::Process );
   }
@@ -212,10 +212,10 @@ void ManageMeasureProgLocal_c::assignFromSource( const ManageMeasureProgLocal_c&
   for (Vec_MeasureProgLocal::iterator pc_iter = vec_prog().begin();
       pc_iter != vec_prog().end(); pc_iter++)
   {
-    pc_iter->set( rrefc_src.processData() );
+    pc_iter->set( arc_src.processData() );
     // if the actual initialised item is the same as the cached item from
     // source set the cache of the copy (this instance)
-    if (*pc_iter == *rrefc_src.pc_progCache) pc_progCache = pc_iter;
+    if (*pc_iter == *arc_src.pc_progCache) pc_progCache = pc_iter;
   }
 }
 
@@ -414,18 +414,18 @@ void ManageMeasureProgLocal_c::processProg(){
 }
 
 /**
-  search for suiting measureprog, if not found AND if rb_doCreate == true
+  search for suiting measureprog, if not found AND if ab_doCreate == true
   create copy from first element at end of vector
 
   possible errors:
-      * Err_c::elNonexistent wanted measureprog doesn't exist and rb_doCreate == false
+      * Err_c::elNonexistent wanted measureprog doesn't exist and ab_doCreate == false
 
-  @param rc_isoName DEVCLASS code of searched measure program
-  @param rb_doCreated true -> create suitable measure program if not found
+  @param ac_isoName DEVCLASS code of searched measure program
+  @param ab_doCreated true -> create suitable measure program if not found
 */
-MeasureProgLocal_c& ManageMeasureProgLocal_c::prog(const IsoName_c& rc_isoName, bool rb_doCreate){
+MeasureProgLocal_c& ManageMeasureProgLocal_c::prog(const IsoName_c& ac_isoName, bool ab_doCreate){
   // update the prog cache
-  if (!updateProgCache(rc_isoName, rb_doCreate) && (!rb_doCreate))
+  if (!updateProgCache(ac_isoName, ab_doCreate) && (!ab_doCreate))
   { // not found and no creation wanted
     getILibErrInstance().registerError( iLibErr_c::ElNonexistent, iLibErr_c::Process );
   }
@@ -435,31 +435,31 @@ MeasureProgLocal_c& ManageMeasureProgLocal_c::prog(const IsoName_c& rc_isoName, 
 }
 
 /** initialise value for all registered Measure Progs */
-void ManageMeasureProgLocal_c::initGlobalVal( int32_t ri32_val )
+void ManageMeasureProgLocal_c::initGlobalVal( int32_t ai32_val )
 {
   for (Vec_MeasureProgLocal::iterator pc_iter = vec_prog().begin();
-      pc_iter != vec_prog().end(); pc_iter++)pc_iter->initVal(ri32_val);
+      pc_iter != vec_prog().end(); pc_iter++)pc_iter->initVal(ai32_val);
 }
 /** set value for all registered Measure Progs */
-void ManageMeasureProgLocal_c::setGlobalVal( int32_t ri32_val )
+void ManageMeasureProgLocal_c::setGlobalVal( int32_t ai32_val )
 {
   checkInitList();
   for (Vec_MeasureProgLocal::iterator pc_iter = vec_prog().begin();
-      pc_iter != vec_prog().end(); pc_iter++)pc_iter->setVal(ri32_val);
+      pc_iter != vec_prog().end(); pc_iter++)pc_iter->setVal(ai32_val);
 }
 #ifdef USE_FLOAT_DATA_TYPE
 /** initialise value for all registered Measure Progs */
-void ManageMeasureProgLocal_c::initGlobalVal( float rf_val )
+void ManageMeasureProgLocal_c::initGlobalVal( float af_val )
 {
   for (Vec_MeasureProgLocal::iterator pc_iter = vec_prog().begin();
-      pc_iter != vec_prog().end(); pc_iter++)pc_iter->initVal(rf_val);
+      pc_iter != vec_prog().end(); pc_iter++)pc_iter->initVal(af_val);
 }
 /** set value for all registered Measure Progs */
-void ManageMeasureProgLocal_c::setGlobalVal( float rf_val )
+void ManageMeasureProgLocal_c::setGlobalVal( float af_val )
 {
   checkInitList();
   for (Vec_MeasureProgLocal::iterator pc_iter = vec_prog().begin();
-      pc_iter != vec_prog().end(); pc_iter++)pc_iter->setVal(rf_val);
+      pc_iter != vec_prog().end(); pc_iter++)pc_iter->setVal(af_val);
 }
 #endif // USE_FLOAT_DATA_TYPE
 
@@ -472,9 +472,9 @@ void ManageMeasureProgLocal_c::setGlobalVal( float rf_val )
   possible errors:
       * Err_c::badAlloc not enough memory to insert new MeasureProgLocal
 
-  @param rc_isoName commanding ISOName
+  @param ac_isoName commanding ISOName
 */
-void ManageMeasureProgLocal_c::insertMeasureprog(const IsoName_c& rc_isoName){
+void ManageMeasureProgLocal_c::insertMeasureprog(const IsoName_c& ac_isoName){
 // only create new item if first isn't undefined
   const uint8_t b_oldSize = vec_prog().size();
 
@@ -548,7 +548,7 @@ void ManageMeasureProgLocal_c::insertMeasureprog(const IsoName_c& rc_isoName){
     pc_progCache = vec_prog().begin();
   }
   // set type and isoName for item
-  pc_progCache->setISOName(rc_isoName);
+  pc_progCache->setISOName(ac_isoName);
 
   /**TODO2 remove progType */
  pc_progCache->setProgType(2);
@@ -560,11 +560,11 @@ void ManageMeasureProgLocal_c::insertMeasureprog(const IsoName_c& rc_isoName){
   possible errors:
       * Err_c::badAlloc not enough memory to insert new MeasureProgLocal
 
-  @param rc_isoName commanding ISOName
-  @param rb_createIfNotFound true -> create new item if not found
+  @param ac_isoName commanding ISOName
+  @param ab_createIfNotFound true -> create new item if not found
   @return true -> instance found
 */
-bool ManageMeasureProgLocal_c::updateProgCache(const IsoName_c& rc_isoName, bool rb_createIfNotFound)
+bool ManageMeasureProgLocal_c::updateProgCache(const IsoName_c& ac_isoName, bool ab_createIfNotFound)
 {
   bool b_result = false;
   // insert first default element, if list is empty
@@ -573,7 +573,7 @@ bool ManageMeasureProgLocal_c::updateProgCache(const IsoName_c& rc_isoName, bool
   Vec_MeasureProgLocalIterator pc_iter = vec_prog().begin();
   // update only if old cache isn't valid
   if ( (!vec_prog().empty())
-    && (pc_progCache->isoName() == rc_isoName) )
+    && (pc_progCache->isoName() == ac_isoName) )
   { // old is valid -> return true
     b_result =  true;
   }
@@ -582,7 +582,7 @@ bool ManageMeasureProgLocal_c::updateProgCache(const IsoName_c& rc_isoName, bool
     // target process msg
     for (pc_iter = vec_prog().begin(); pc_iter != vec_prog().end(); pc_iter++)
     { // check if isoName and type fit
-      if ( pc_iter->isoName() == rc_isoName )
+      if ( pc_iter->isoName() == ac_isoName )
       {
         b_result = true;
         pc_progCache = pc_iter;
@@ -593,13 +593,13 @@ bool ManageMeasureProgLocal_c::updateProgCache(const IsoName_c& rc_isoName, bool
     // check if still no suitable item is found
     if (!b_result)
     {
-      if (!rb_createIfNotFound)
+      if (!ab_createIfNotFound)
       { // if still no suitable item was found and no item should be created point to first list item
         pc_progCache = vec_prog().begin();
       }
       else
       { // no suitable item was found -> create suitable one
-        insertMeasureprog(rc_isoName);
+        insertMeasureprog(ac_isoName);
       } // do create if not found
     }// no suitable found
   }
@@ -611,25 +611,25 @@ bool ManageMeasureProgLocal_c::updateProgCache(const IsoName_c& rc_isoName, bool
   (to react on a incoming "start" command for default data logging)
   @param ren_type measurement type: Proc_c::TimeProp, Proc_c::DistProp, ...
   @param ren_progType program type: Proc_c::Base, Proc_c::Target
-  @param ri32_increment
-  @param rpc_receiverDevice commanding ISOName
-  @return true -> rpc_receiverDevice is set
+  @param ai32_increment
+  @param apc_receiverDevice commanding ISOName
+  @return true -> apc_receiverDevice is set
 */
 bool ManageMeasureProgLocal_c::startDataLogging(Proc_c::type_t ren_type /* Proc_c::TimeProp, Proc_c::DistProp, ... */,
-                                                int32_t ri32_increment, const IsoName_c* rpc_receiverDevice )
+                                                int32_t ai32_increment, const IsoName_c* apc_receiverDevice )
 {
-  if ( !rpc_receiverDevice )
+  if ( !apc_receiverDevice )
     return FALSE;
 
   // create new item if none found
-  updateProgCache(/*ren_progType,*/ *rpc_receiverDevice, true);
+  updateProgCache(/*ren_progType,*/ *apc_receiverDevice, true);
 
-  pc_progCache->setISOName(*rpc_receiverDevice);
+  pc_progCache->setISOName(*apc_receiverDevice);
 
   if (Proc_c::TimeProp == ren_type)
-    pc_progCache->addSubprog(ren_type, CNAMESPACE::labs(ri32_increment));
+    pc_progCache->addSubprog(ren_type, CNAMESPACE::labs(ai32_increment));
   else
-    pc_progCache->addSubprog(ren_type, ri32_increment);
+    pc_progCache->addSubprog(ren_type, ai32_increment);
 
   pc_progCache->start(ren_type, Proc_c::DoVal);
 
@@ -638,14 +638,14 @@ bool ManageMeasureProgLocal_c::startDataLogging(Proc_c::type_t ren_type /* Proc_
 
 /**
   stop all measurement progs in all local process instances, started with given isoName
-  @param refc_isoName
+  @param rc_isoName
 */
-void ManageMeasureProgLocal_c::stopRunningMeasurement(const IsoName_c& refc_isoName)
+void ManageMeasureProgLocal_c::stopRunningMeasurement(const IsoName_c& rc_isoName)
 {
   Vec_MeasureProgLocalIterator pc_iter = vec_prog().begin();
   for (pc_iter = vec_prog().begin(); pc_iter != vec_prog().end(); pc_iter++)
   { // check if isoName and type fit
-    if ((pc_iter->isoName() == refc_isoName) && pc_iter->started())
+    if ((pc_iter->isoName() == rc_isoName) && pc_iter->started())
     {
       pc_iter->stop();
     }

@@ -73,13 +73,13 @@ namespace HAL
       irqX19_5,  irqX19_6,  irqX21_5.
       See "__HAL::init_counter() and "AMSBIOS::io_initIrqInputs()" for details.   
 
-      @param rb_channel number of the digital input channel
+      @param ab_channel number of the digital input channel
       @param bMode input mode {DIGIN, RISING_EDGE, FALLING_EDGE, BOTH_EDGE}
       @param bAktivhighlow {HIGH_ACTIV, LOW_ACTIV}
       @param pfFunctionName adress of function which is called on input events (NULL -> none)
       @return error state HAL_CONFIG_ERR
    */
-   inline int16_t init_digin(uint8_t rb_channel,uint8_t bMode,uint8_t bAktivhighlow,void (*pfFunctionName)(...))
+   inline int16_t init_digin(uint8_t ab_channel,uint8_t bMode,uint8_t bAktivhighlow,void (*pfFunctionName)(...))
    {
      return HAL_CONFIG_ERR;
    };
@@ -88,19 +88,19 @@ namespace HAL
       init counter inputs
 
       Use symbolic counter input channels form "config.h"!
-      For "event counter mode" set rui16_timebase to "0".
+      For "event counter mode" set aui16_timebase to "0".
 
-      @param rb_channel input channel to use 
-      @param rui16_timebase timebase to calculate periods, frequency
+      @param ab_channel input channel to use 
+      @param aui16_timebase timebase to calculate periods, frequency
                             should be at least longer than longest
                             awaited signal period [msec.]
-      @param rb_activHigh true -> counter input is configured fo ACTIV_HIGH; else ACTIV_LOW
-      @param rb_risingEdge true -> counter triggers on rising edge; else on falling edge
+      @param ab_activHigh true -> counter input is configured fo ACTIV_HIGH; else ACTIV_LOW
+      @param ab_risingEdge true -> counter triggers on rising edge; else on falling edge
       @return HAL_NO_ERR if no error occured
    */
-   inline int16_t init_counter(uint8_t rb_channel, uint16_t rui16_timebase, bool rb_activHigh, bool rb_risingEdge)
+   inline int16_t init_counter(uint8_t ab_channel, uint16_t aui16_timebase, bool ab_activHigh, bool ab_risingEdge)
    {
-      return __HAL::init_counter(rb_channel, rui16_timebase, rb_activHigh, rb_risingEdge);
+      return __HAL::init_counter(ab_channel, aui16_timebase, ab_activHigh, ab_risingEdge);
    };
 
    /**
@@ -108,12 +108,12 @@ namespace HAL
 
       Use symbolic counter input channels form "config.h"!
 
-      @param rb_channel channel of counter
+      @param ab_channel channel of counter
       @return counter events since init or last reset
    */
-   inline uint32_t getCounter(uint8_t rb_channel)
+   inline uint32_t getCounter(uint8_t ab_channel)
    {
-      return __HAL::getCounter(rb_channel);
+      return __HAL::getCounter(ab_channel);
    };
 
    /**
@@ -121,12 +121,12 @@ namespace HAL
 
       Use symbolic counter input channels form "config.h"!
 
-      @param rb_channel channel of counter
-      @return C_NO_ERR ; HAL_RANGE_ERR if counter for rb_channel isn´t configured properly
+      @param ab_channel channel of counter
+      @return C_NO_ERR ; HAL_RANGE_ERR if counter for ab_channel isn´t configured properly
    */
-   inline int16_t resetCounter(uint8_t rb_channel)
+   inline int16_t resetCounter(uint8_t ab_channel)
    {
-      return __HAL::resetCounter(rb_channel);
+      return __HAL::resetCounter(ab_channel);
    };
 
    /**
@@ -134,13 +134,13 @@ namespace HAL
 
       Use symbolic counter input channels form "config.h"!
 
-      @param rb_channel channel of counter
+      @param ab_channel channel of counter
       @return time between last two signals or 0xFFFF if time is longer than initially
               given timebase
    */
-   inline uint16_t getCounterPeriod(uint8_t rb_channel)
+   inline uint16_t getCounterPeriod(uint8_t ab_channel)
    {
-      return __HAL::getCounterPeriod(rb_channel);
+      return __HAL::getCounterPeriod(ab_channel);
    };
 
    /**
@@ -148,13 +148,13 @@ namespace HAL
 
       Use symbolic counter input channels form "config.h"!
 
-      @param rb_channel channel of counter
+      @param ab_channel channel of counter
       @return frequency calculated from time between last two signals
               or 0 if time is longer than initially given timebase
    */
-   inline uint16_t getCounterFrequency(uint8_t rb_channel)
+   inline uint16_t getCounterFrequency(uint8_t ab_channel)
    {
-      return __HAL::getCounterFrequency(rb_channel);
+      return __HAL::getCounterFrequency(ab_channel);
    };
 
    /**
@@ -165,12 +165,12 @@ namespace HAL
 
       Use symbolic counter input channels form "config.h"!
 
-      @param rb_channel channel of counter
+      @param ab_channel channel of counter
       @return time since last signal [msec.]
    */
-   inline uint32_t getCounterLastSignalAge(uint8_t rb_channel)
+   inline uint32_t getCounterLastSignalAge(uint8_t ab_channel)
    {
-      return __HAL::getCounterLastSignalAge(rb_channel);
+      return __HAL::getCounterLastSignalAge(ab_channel);
    };
 
    /**
@@ -194,12 +194,12 @@ namespace HAL
       0...1023 = 0...2500mV
       !!! remove jumper corresponding to channel !!!     
 
-      @param rb_channel measured channel
+      @param ab_channel measured channel
       @return voltage [0..2500] [mV] or HAL_RANGE_ERR on wrong input channel number
    */
-   inline int16_t getAdcVoltage(uint8_t rb_channel)
+   inline int16_t getAdcVoltage(uint8_t ab_channel)
    {
-      return __HAL::getAdcVoltage(rb_channel);
+      return __HAL::getAdcVoltage(ab_channel);
    };
 
    /**
@@ -208,12 +208,12 @@ namespace HAL
       0...1023 = 0...2500mV
       !!! remove jumper corresponding to channel !!!     
 
-      @param rb_channel measured channel
+      @param ab_channel measured channel
       @return voltage [0..2500] [mV] or HAL_RANGE_ERR on wrong input channel number
     */
-   inline int16_t getAdcMeanVoltage(uint8_t rb_channel)
+   inline int16_t getAdcMeanVoltage(uint8_t ab_channel)
    {
-      return __HAL::getAdcMeanVoltage(rb_channel);
+      return __HAL::getAdcMeanVoltage(ab_channel);
    };
 
    /**
@@ -222,12 +222,12 @@ namespace HAL
       0...957 = 0...20mA
       !!! set jumper corresponding to channel in position 2-3 !!!     
 
-      @param rb_channel measured channel
+      @param ab_channel measured channel
       @return current [0..20000] [uA] or HAL_RANGE_ERR on wrong input channel number
    */
-   inline int16_t getAdcCurrent(uint8_t rb_channel)
+   inline int16_t getAdcCurrent(uint8_t ab_channel)
    {
-      return __HAL::getAdcCurrent(rb_channel);
+      return __HAL::getAdcCurrent(ab_channel);
    };
 
    /**
@@ -236,12 +236,12 @@ namespace HAL
       0...957 = 0...20mA
       !!! set jumper corresponding to channel in position 2-3 !!!     
 
-      @param rb_channel measured channel
+      @param ab_channel measured channel
       @return current [0..20000] [uA] or HAL_RANGE_ERR on wrong input channel number
    */
-   inline int16_t  getAdcMeanCurrent(uint8_t rb_channel)
+   inline int16_t  getAdcMeanCurrent(uint8_t ab_channel)
    {
-      return __HAL::getAdcMeanCurrent(rb_channel);
+      return __HAL::getAdcMeanCurrent(ab_channel);
    };
 
    /**
@@ -249,10 +249,10 @@ namespace HAL
 
       dummy function - Not Supported
 
-      @param rb_channel channel number
+      @param ab_channel channel number
       @return HAL_CONFIG_ERR
    */
-   inline int16_t  getDiginDiagnoseAdc(uint8_t rb_channel)
+   inline int16_t  getDiginDiagnoseAdc(uint8_t ab_channel)
    {
       return HAL_CONFIG_ERR;
    };
@@ -328,12 +328,12 @@ namespace HAL
       !!! use symbolic input channels only !!!
       !!! analog input: set jumper corresponding to channel in position 1-2 !!!     
 
-      @param rb_channelNumber input channel number
+      @param ab_channelNumber input channel number
       @return ON, OFF or HAL_RANGE_ERR
    */
-   inline int16_t getDiginOnoff(uint8_t rb_channelNumber)
+   inline int16_t getDiginOnoff(uint8_t ab_channelNumber)
    {
-      return __HAL::get_digin_onoff(rb_channelNumber);
+      return __HAL::get_digin_onoff(ab_channelNumber);
    };
 
    /**
@@ -347,12 +347,12 @@ namespace HAL
       !!! use symbolic input channels only !!!
       !!! analog input: set jumper corresponding to channel in position 1-2 !!!     
 
-      @param rb_channelNumber input channel number
+      @param ab_channelNumber input channel number
       @return ON, OFF or HAL_RANGE_ERR
    */
-   inline int16_t getDiginOnoffStatic(uint8_t rb_channelNumber)
+   inline int16_t getDiginOnoffStatic(uint8_t ab_channelNumber)
    {
-      return __HAL::get_digin_onoff_static(rb_channelNumber);
+      return __HAL::get_digin_onoff_static(ab_channelNumber);
    };
 
    /**
@@ -360,11 +360,11 @@ namespace HAL
 
       dummy function - Not Supported
 
-      @param rb_channelNumber input channel number
+      @param ab_channelNumber input channel number
       @param b_useVirtual
       @return frequency of triggered events [mHz] or BIOS_WARN on too less impulses
    */
-   inline uint16_t getDiginFreq(uint8_t rb_channelNumber, bool b_useVirtual = false)
+   inline uint16_t getDiginFreq(uint8_t ab_channelNumber, bool b_useVirtual = false)
    {
       return 0;
    };

@@ -159,17 +159,17 @@ vtObjectButton_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateOb
 }
 
 bool
-vtObjectButton_c::moveChildLocation(IsoAgLib::iVtObject_c* rpc_childObject, int8_t dx, int8_t dy, bool b_updateObject, bool b_enableReplaceOfCmd)
+vtObjectButton_c::moveChildLocation(IsoAgLib::iVtObject_c* apc_childObject, int8_t dx, int8_t dy, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
   MACRO_localVars;
-  return genericChangeChildLocation (rpc_childObject, dx, dy, b_updateObject, vtObjectButton_a->numberOfObjectsToFollow, (IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s *) vtObjectButton_a->objectsToFollow, MACRO_getStructOffset(get_vtObjectButton_a(), objectsToFollow), sizeof(iVtObjectButton_s), b_enableReplaceOfCmd);
+  return genericChangeChildLocation (apc_childObject, dx, dy, b_updateObject, vtObjectButton_a->numberOfObjectsToFollow, (IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s *) vtObjectButton_a->objectsToFollow, MACRO_getStructOffset(get_vtObjectButton_a(), objectsToFollow), sizeof(iVtObjectButton_s), b_enableReplaceOfCmd);
 }
 
 bool
-vtObjectButton_c::setChildPosition(IsoAgLib::iVtObject_c* rpc_childObject, int16_t x, int16_t y, bool b_updateObject, bool b_enableReplaceOfCmd)
+vtObjectButton_c::setChildPosition(IsoAgLib::iVtObject_c* apc_childObject, int16_t x, int16_t y, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
   MACRO_localVars;
-  return genericChangeChildPosition (rpc_childObject, x, y, b_updateObject, vtObjectButton_a->numberOfObjectsToFollow, (IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s *) vtObjectButton_a->objectsToFollow, MACRO_getStructOffset(get_vtObjectButton_a(), objectsToFollow), sizeof(iVtObjectButton_s), b_enableReplaceOfCmd);
+  return genericChangeChildPosition (apc_childObject, x, y, b_updateObject, vtObjectButton_a->numberOfObjectsToFollow, (IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s *) vtObjectButton_a->objectsToFollow, MACRO_getStructOffset(get_vtObjectButton_a(), objectsToFollow), sizeof(iVtObjectButton_s), b_enableReplaceOfCmd);
 }
 
 void

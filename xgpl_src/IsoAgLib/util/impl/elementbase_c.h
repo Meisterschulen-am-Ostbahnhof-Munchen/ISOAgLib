@@ -260,7 +260,7 @@ class ElementBase_c : public SaClaimHandler_c {
   void delayNextTriggerTime( unsigned int ui_delay ) { i32_nextRetriggerTime += ui_delay;}
 
   //! delay the next retrigger time to the given timestamp
-  void delayNextTriggerTimeToTime( int32_t ri32_newNextRetrigger ) { i32_nextRetriggerTime = ri32_newNextRetrigger;}
+  void delayNextTriggerTimeToTime( int32_t ai32_newNextRetrigger ) { i32_nextRetriggerTime = ai32_newNextRetrigger;}
 
 
   //!  Virtual Destructor - just to avoid compiler warnings
@@ -279,8 +279,8 @@ protected:
   //!  or can use it to set other Time Period in timeEvent()
   //!  Do NOT call from outside (e.g. processMsg)
   //! Parameter:
-  //! @param rui16_timePeriod: needed time between calls of timeEvent in [msec]
-  void setTimePeriod(uint16_t rui16_timePeriod);
+  //! @param aui16_timePeriod: needed time between calls of timeEvent in [msec]
+  void setTimePeriod(uint16_t aui16_timePeriod);
 
   //! Deliver the max Jitter in ms that uses the
   //! Scheduler for earlier oder later call of a task
@@ -308,9 +308,9 @@ protected:
   //  Operation: timeEventPre
   //!  This function is called by the schedulerEntry_C to update timestamps
   //!  The parameter tells the task the available time for execution.
-  //! @param ri32_demandedExecEnd: available execution time. timeEvent() MUST be finished before the time, to avoid scheduling problems.
+  //! @param ai32_demandedExecEnd: available execution time. timeEvent() MUST be finished before the time, to avoid scheduling problems.
   //!                              default value -1 == unrestricted time for execution.
-  void timeEventPre(int32_t ri32_demandedExecEnd= -1) ;
+  void timeEventPre(int32_t ai32_demandedExecEnd= -1) ;
 
   //  Operation: timeEventPostUpdateStatistics
   //!  This function is called from the timeEvent function if all periodic activities were performed (-> don't call  if earlier return was forced).
@@ -320,8 +320,8 @@ protected:
   //  Operation: changeNextTriggerTime
   //!  change timestamp of next planned retrigger (timeEvent() call)
   //!  ONLY for use by Scheduler_c to move task in TaskQueue
-  //!  @param ri32_nextRetriggerTime new timeStamp for retrigger
-  inline void changeNextTriggerTime(int32_t ri32_nextRetriggerTime) ;
+  //!  @param ai32_nextRetriggerTime new timeStamp for retrigger
+  inline void changeNextTriggerTime(int32_t ai32_nextRetriggerTime) ;
 
   //  Attribute: b_alreadyClosed
   /** store already called close() after last call of init() */
@@ -525,11 +525,11 @@ ElementBase_c::getLatestInterval() const
 
 //!  change timestamp of next planned retrigger (timeEvent() call)
 //!  ONLY for use by Scheduler_c to move task in TaskQueue
-//!  @param ri32_nextRetriggerTime new timeStamp for retrigger
+//!  @param ai32_nextRetriggerTime new timeStamp for retrigger
 inline
 void
-ElementBase_c::changeNextTriggerTime(int32_t ri32_nextRetriggerTime){
-  i32_nextRetriggerTime = ri32_nextRetriggerTime;
+ElementBase_c::changeNextTriggerTime(int32_t ai32_nextRetriggerTime){
+  i32_nextRetriggerTime = ai32_nextRetriggerTime;
 }
 
 } // end namespace __IsoAgLib

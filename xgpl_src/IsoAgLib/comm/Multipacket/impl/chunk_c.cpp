@@ -96,10 +96,10 @@ namespace __IsoAgLib {
 
 
 // Copy constructor
-Chunk_c::Chunk_c( const Chunk_c& rrefc_src )
+Chunk_c::Chunk_c( const Chunk_c& arc_src )
 {
-  arr_data.reserve (rrefc_src.arr_data.capacity());
-  STL_NAMESPACE::copy(rrefc_src.arr_data.begin(), rrefc_src.arr_data.end(), arr_data.begin());
+  arr_data.reserve (arc_src.arr_data.capacity());
+  STL_NAMESPACE::copy(arc_src.arr_data.begin(), arc_src.arr_data.end(), arr_data.begin());
 }
 
 
@@ -119,13 +119,13 @@ Chunk_c::init()
 // //////////////////////////////// +X2C Operation : insert
 //! inserts (push-back) a byte into the vector
 //! Parameter:
-//! @param rui8_data: Byte to be inserted
+//! @param aui8_data: Byte to be inserted
 //! @return Number of inserted bytes
 uint8_t
-Chunk_c::insert(uint8_t rui8_data)
+Chunk_c::insert(uint8_t aui8_data)
 { // ~X2C
   if (full()) return 0;
-  arr_data.push_back( rui8_data );
+  arr_data.push_back( aui8_data );
   return 1;
 } // -X2C
 
@@ -134,7 +134,7 @@ Chunk_c::insert(uint8_t rui8_data)
 // //////////////////////////////// +X2C Operation : insert7Bytes
 //! inserts (push-back) 7 bytes into the vector if possible
 //! Parameter:
-//! @param rui8_data: Bytes to be inserted
+//! @param aui8_data: Bytes to be inserted
 //! @return Number of inserted bytes
 uint8_t
 Chunk_c::insert7Bytes(const uint8_t* pui8_data)
@@ -151,13 +151,13 @@ Chunk_c::insert7Bytes(const uint8_t* pui8_data)
 // //////////////////////////////// +X2C Operation : getData
 //! Returns the spezified byte-value
 //! Parameter:
-//! @param rui32_pos: position (0..x)
+//! @param aui32_pos: position (0..x)
 //! @return Byte-value or 0xffff (out of range)
 uint16_t
-Chunk_c::getData(uint32_t rui32_pos)
+Chunk_c::getData(uint32_t aui32_pos)
 { // ~X2C
-  if (rui32_pos >= arr_data.size()) return 0xffff;
-  return arr_data[rui32_pos];
+  if (aui32_pos >= arr_data.size()) return 0xffff;
+  return arr_data[aui32_pos];
 } // -X2C
 
 

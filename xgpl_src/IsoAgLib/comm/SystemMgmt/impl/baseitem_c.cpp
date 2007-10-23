@@ -90,20 +90,20 @@ namespace __IsoAgLib {
 /**
   constructor which takes optional the pointer to the containing Scheduler_c instance
   and the actual time as parameter to initialise all own values
-  @param ri32_time optional timestamp to store as last update
-  @param rb_status state of this ident (off, claimed address, ...) (default: off)
-  @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
+  @param ai32_time optional timestamp to store as last update
+  @param ab_status state of this ident (off, claimed address, ...) (default: off)
+  @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
-BaseItem_c::BaseItem_c( int32_t ri32_time, IState_c::itemState_t rb_status, int ri_singletonVecKey)
-  : IStateExt_c(rb_status, ri_singletonVecKey), i32_lastTime(ri32_time)
+BaseItem_c::BaseItem_c( int32_t ai32_time, IState_c::itemState_t ab_status, int ai_singletonVecKey)
+  : IStateExt_c(ab_status, ai_singletonVecKey), i32_lastTime(ai32_time)
 {}
 
 /**
   copy constructor which takes it initial values from another BaseItem_c instance
-  @param rrefc_baseItem reference to the source BaseItem_c instance
+  @param arc_baseItem reference to the source BaseItem_c instance
 */
-BaseItem_c::BaseItem_c(const BaseItem_c& rrefc_baseItem)
-: IStateExt_c(rrefc_baseItem), i32_lastTime(rrefc_baseItem.i32_lastTime)
+BaseItem_c::BaseItem_c(const BaseItem_c& arc_baseItem)
+: IStateExt_c(arc_baseItem), i32_lastTime(arc_baseItem.i32_lastTime)
 {}
 
 /** destructor which sets the update timestamp to 0 */
@@ -113,27 +113,27 @@ BaseItem_c::~BaseItem_c(){
 
 /**
   set pointer to containing Scheduler_c instance and update timestamp of object
-  @param ri32_time optional timestamp to set as update time
-  @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
+  @param ai32_time optional timestamp to set as update time
+  @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
-void BaseItem_c::set(int32_t ri32_time, int ri_singletonVecKey)
+void BaseItem_c::set(int32_t ai32_time, int ai_singletonVecKey)
 {
-  if (ri32_time >= 0) i32_lastTime = ri32_time;
+  if (ai32_time >= 0) i32_lastTime = ai32_time;
   /** @todo Put this check into ClientBase itself??? */
-  if (ri_singletonVecKey != -1) ClientBase::setSingletonKey(ri_singletonVecKey);
+  if (ai_singletonVecKey != -1) ClientBase::setSingletonKey(ai_singletonVecKey);
 }
 
 /**
   set pointer to containing Scheduler_c instance and update timestamp of object
-  @param ri32_time optional timestamp to set as update time
-  @param rb_status state of this ident (off, claimed address, ...) (default: off)
-  @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
+  @param ai32_time optional timestamp to set as update time
+  @param ab_status state of this ident (off, claimed address, ...) (default: off)
+  @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
-void BaseItem_c::set(int32_t ri32_time, IState_c::itemState_t rb_status, int ri_singletonVecKey)
+void BaseItem_c::set(int32_t ai32_time, IState_c::itemState_t ab_status, int ai_singletonVecKey)
 {
-  set(  ri32_time,ri_singletonVecKey);
+  set(  ai32_time,ai_singletonVecKey);
   // force clear of old item state
-  setItemState( rb_status, true );
+  setItemState( ab_status, true );
 }
 
 /** operator= which defines src as const to avoid
@@ -158,11 +158,11 @@ int32_t BaseItem_c::lastedTime( void ) const {
   INFO: Interval is only an uint16. That's because of SPEED reasons
         for 16-bit platforms and of the not existing need to check
         for more than a minute and 5 seconds (65535 msec)
-  @param rui16_timeInterval time intervall in msec
+  @param aui16_timeInterval time intervall in msec
   @return true -> time last timestamp older than intervall
 */
-bool BaseItem_c::checkTime(uint16_t rui16_timeInterval) const  {
-  return ( lastedTime() >= rui16_timeInterval )?true:false;
+bool BaseItem_c::checkTime(uint16_t aui16_timeInterval) const  {
+  return ( lastedTime() >= aui16_timeInterval )?true:false;
 }
 
 /**
@@ -171,20 +171,20 @@ bool BaseItem_c::checkTime(uint16_t rui16_timeInterval) const  {
   INFO: Interval is only an uint16. That's because of SPEED reasons
         for 16-bit platforms and of the not existing need to check
         for more than a minute and 5 seconds (65535 msec)
-  @param rui16_timeInterval time intervall in msec
+  @param aui16_timeInterval time intervall in msec
   @return true -> time last timestamp older than intervall
 */
-bool BaseItem_c::checkUpdateTime(uint16_t rui16_timeInterval) {
-  if ( checkTime( rui16_timeInterval ) ) {
+bool BaseItem_c::checkUpdateTime(uint16_t aui16_timeInterval) {
+  if ( checkTime( aui16_timeInterval ) ) {
     // enable constant time intervalls without growing time drift
-	// -> simply add rui16_timeIntervall, if current time
+	// -> simply add aui16_timeIntervall, if current time
 	//    has max 10% deviation from correct timing
-	const uint16_t cui16_maxDeviation = rui16_timeInterval / 10;
-	if ( ElementBase_c::getLastRetriggerTime() <= ( i32_lastTime + rui16_timeInterval + cui16_maxDeviation ) ) {
+	const uint16_t cui16_maxDeviation = aui16_timeInterval / 10;
+	if ( ElementBase_c::getLastRetriggerTime() <= ( i32_lastTime + aui16_timeInterval + cui16_maxDeviation ) ) {
 	  // time correctness is close enough to increment last timestamp by exact
-	  // rui16_timeIntervall -> avoid growing time drift if %e.g. each alive msg
+	  // aui16_timeIntervall -> avoid growing time drift if %e.g. each alive msg
 	  // is triggered 5 msec too late
-	  i32_lastTime += rui16_timeInterval;
+	  i32_lastTime += aui16_timeInterval;
 	}
 	else {
 	  // time difference is too big -> allow reset of timestamp

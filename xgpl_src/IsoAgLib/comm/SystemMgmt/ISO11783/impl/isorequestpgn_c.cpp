@@ -127,12 +127,12 @@ IsoRequestPgn_c::~IsoRequestPgn_c ()
 
 /** adds the PGN to the list */
 bool
-IsoRequestPgn_c::registerPGN (IsoRequestPgnHandler_c &ref_PGNHandler, const uint32_t cui32_pgnToRegister)
+IsoRequestPgn_c::registerPGN (IsoRequestPgnHandler_c &r_PGNHandler, const uint32_t cui32_pgnToRegister)
 {
-  if (checkIfAlreadyRegistered (ref_PGNHandler, cui32_pgnToRegister))
+  if (checkIfAlreadyRegistered (r_PGNHandler, cui32_pgnToRegister))
     return false; // false could also mean that the PGN - client pair is already inserted in list
 
-  PGN_s s_pgnToRegister = {cui32_pgnToRegister, &ref_PGNHandler};
+  PGN_s s_pgnToRegister = {cui32_pgnToRegister, &r_PGNHandler};
   registeredClientsWithPGN.push_back (s_pgnToRegister);
 
   return true; // PGN - client pair didn't exist, so it was added
@@ -141,14 +141,14 @@ IsoRequestPgn_c::registerPGN (IsoRequestPgnHandler_c &ref_PGNHandler, const uint
 
 /** adds n PGN for the client to the list */
 bool
-IsoRequestPgn_c::registerPGN (IsoRequestPgnHandler_c &ref_PGNHandler, const uint8_t cui8_pgnCount, const uint32_t *pcui32_pgnToRegister)
+IsoRequestPgn_c::registerPGN (IsoRequestPgnHandler_c &r_PGNHandler, const uint8_t cui8_pgnCount, const uint32_t *pcui32_pgnToRegister)
 {
   uint8_t ui8_index = 0;
   bool b_msgProcessed = false;
   for (;ui8_index < cui8_pgnCount; ui8_index++)
   {
-    if (!checkIfAlreadyRegistered (ref_PGNHandler, *pcui32_pgnToRegister))
-      b_msgProcessed |= registerPGN (ref_PGNHandler, *pcui32_pgnToRegister);
+    if (!checkIfAlreadyRegistered (r_PGNHandler, *pcui32_pgnToRegister))
+      b_msgProcessed |= registerPGN (r_PGNHandler, *pcui32_pgnToRegister);
     pcui32_pgnToRegister++;
   }
   return b_msgProcessed;
@@ -157,7 +157,7 @@ IsoRequestPgn_c::registerPGN (IsoRequestPgnHandler_c &ref_PGNHandler, const uint
 
 /** remove PGN from the list */
 void
-IsoRequestPgn_c::unregisterPGN (IsoRequestPgnHandler_c &ref_PGNHandler, const uint32_t cui32_pgnToRegister)
+IsoRequestPgn_c::unregisterPGN (IsoRequestPgnHandler_c &r_PGNHandler, const uint32_t cui32_pgnToRegister)
 {
   for (STL_NAMESPACE::vector<PGN_s>::iterator regPGN_it = registeredClientsWithPGN.begin();
        regPGN_it != registeredClientsWithPGN.end();
@@ -165,14 +165,14 @@ IsoRequestPgn_c::unregisterPGN (IsoRequestPgnHandler_c &ref_PGNHandler, const ui
   {
     if (cui32_pgnToRegister == 0)
     { // every registered PGN will be deleted
-      if (regPGN_it->p_handler == &ref_PGNHandler)
+      if (regPGN_it->p_handler == &r_PGNHandler)
         registeredClientsWithPGN.erase (regPGN_it); // after erase, the iterator points to the next (if available) vector item
       else
         regPGN_it++;
     }
     else
     { // only the cui32_pgnToRegister will be deleted
-      if ((regPGN_it->p_handler == &ref_PGNHandler) && (regPGN_it->ui32_pgn == cui32_pgnToRegister))
+      if ((regPGN_it->p_handler == &r_PGNHandler) && (regPGN_it->ui32_pgn == cui32_pgnToRegister))
       {
         registeredClientsWithPGN.erase (regPGN_it); // after erase, the iterator points to the next (if available) vector item
         break; // the PGN is unique for the RequestPGNHandler, so we can leave the loop
@@ -186,26 +186,26 @@ IsoRequestPgn_c::unregisterPGN (IsoRequestPgnHandler_c &ref_PGNHandler, const ui
 
 /** removes n PGN for the client from the list */
 void
-IsoRequestPgn_c::unregisterPGN (IsoRequestPgnHandler_c &ref_PGNHandler, const uint8_t cui8_pgnCount, const uint32_t *pcui32_pgnToUnregister)
+IsoRequestPgn_c::unregisterPGN (IsoRequestPgnHandler_c &r_PGNHandler, const uint8_t cui8_pgnCount, const uint32_t *pcui32_pgnToUnregister)
 {
   if (cui8_pgnCount == 0) return;
 
   uint8_t ui8_index = 0;
   for (; ui8_index < cui8_pgnCount; ui8_index++, pcui32_pgnToUnregister++)
-    unregisterPGN (ref_PGNHandler, *pcui32_pgnToUnregister);
+    unregisterPGN (r_PGNHandler, *pcui32_pgnToUnregister);
 };
 
 
 /** before adding any further PGN - RequestPGNHandler pair, check if not already existing */
 bool
-IsoRequestPgn_c::checkIfAlreadyRegistered (IsoRequestPgnHandler_c &ref_PGNHandler, const uint32_t cui32_pgn)
+IsoRequestPgn_c::checkIfAlreadyRegistered (IsoRequestPgnHandler_c &r_PGNHandler, const uint32_t cui32_pgn)
 {
   for (STL_NAMESPACE::vector<PGN_s>::iterator regPGN_it=registeredClientsWithPGN.begin();
        regPGN_it != registeredClientsWithPGN.end();
        regPGN_it++
       )
   {
-    if ((regPGN_it->p_handler == &ref_PGNHandler) && (regPGN_it->ui32_pgn == cui32_pgn))
+    if ((regPGN_it->p_handler == &r_PGNHandler) && (regPGN_it->ui32_pgn == cui32_pgn))
       return true;
   }
   // no match was found before
@@ -251,7 +251,7 @@ IsoRequestPgn_c::processMsg ()
 
 
 void
-IsoRequestPgn_c::sendAcknowledgePGN (IsoItem_c& rrefc_isoItemSender, uint8_t rui8_ackType)
+IsoRequestPgn_c::sendAcknowledgePGN (IsoItem_c& arc_isoItemSender, uint8_t aui8_ackType)
 {
   uint32_t ui32_purePgn = ui32_requestedPGN;
   if (((ui32_purePgn >> 8) & 0xFF) < 0xF0)
@@ -263,9 +263,9 @@ IsoRequestPgn_c::sendAcknowledgePGN (IsoItem_c& rrefc_isoItemSender, uint8_t rui
   data().setIsoDp(0);
   data().setIsoPf(ACKNOWLEDGEMENT_PGN >> 8);
   data().setMonitorItemForDA (pc_isoItemSA);
-  data().setMonitorItemForSA (&rrefc_isoItemSender);
+  data().setMonitorItemForSA (&arc_isoItemSender);
   // set the first four bytes as uint32_t value, where lowest byte equals to ControlByte
-  data().setUint32Data ((1-1), (0xFFFFFF00UL | uint32_t (rui8_ackType)));
+  data().setUint32Data ((1-1), (0xFFFFFF00UL | uint32_t (aui8_ackType)));
   // set at lowest byte of second uint32_t value the reserved 0xFF
   // and place at the higher bytes of this second uint32_t
   // the ui32_purePgn
@@ -280,22 +280,22 @@ IsoRequestPgn_c::sendAcknowledgePGN (IsoItem_c& rrefc_isoItemSender, uint8_t rui
     IsoName_c are received and handled.
     This function has to be called during initialisation of a local IsoItem_c / IdentItem_c
   */
-void IsoRequestPgn_c::registerLocalDevice( const __IsoAgLib::IsoName_c& refc_isoName )
+void IsoRequestPgn_c::registerLocalDevice( const __IsoAgLib::IsoName_c& rc_isoName )
 {
-  if ( getIsoMonitorInstance4Comm().existLocalIsoMemberISOName(refc_isoName) )
+  if ( getIsoMonitorInstance4Comm().existLocalIsoMemberISOName(rc_isoName) )
   { // local IsoItem_c has finished adr claim
-    getIsoFilterManagerInstance4Comm().insertIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL), (REQUEST_PGN_MSG_PGN << 8), &refc_isoName, (const IsoName_c*)NULL, int8_t(3)));
+    getIsoFilterManagerInstance4Comm().insertIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL), (REQUEST_PGN_MSG_PGN << 8), &rc_isoName, (const IsoName_c*)NULL, int8_t(3)));
   }
 }
 /** unregister an IsoName_c of a local device, so that IsoFilterManager_c stops receiving
     messages for the corresponding IsoName_c.
     This function has to be called during destruction of a local IsoItem_c / IdentItem_c
   */
-void IsoRequestPgn_c::unregisterLocalDevice( const __IsoAgLib::IsoName_c& refc_isoName )
+void IsoRequestPgn_c::unregisterLocalDevice( const __IsoAgLib::IsoName_c& rc_isoName )
 {
-  if ( getIsoMonitorInstance4Comm().existLocalIsoMemberISOName(refc_isoName) )
+  if ( getIsoMonitorInstance4Comm().existLocalIsoMemberISOName(rc_isoName) )
   { // local IsoItem_c has finished adr claim
-    getIsoFilterManagerInstance4Comm().removeIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL), (REQUEST_PGN_MSG_PGN << 8), &refc_isoName, NULL, 3));
+    getIsoFilterManagerInstance4Comm().removeIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL), (REQUEST_PGN_MSG_PGN << 8), &rc_isoName, NULL, 3));
   }
 }
 
@@ -330,9 +330,9 @@ IsoRequestPgn_c::getTaskName() const
 #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
 /** C-style function, to get access to the unique IsoRequestPgn_c singleton instance
  * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS */
-IsoRequestPgn_c& getIsoRequestPgnInstance (uint8_t rui8_instance)
+IsoRequestPgn_c& getIsoRequestPgnInstance (uint8_t aui8_instance)
 { // if > 1 singleton instance is used, no static reference can be used
-  return IsoRequestPgn_c::instance(rui8_instance);
+  return IsoRequestPgn_c::instance(aui8_instance);
 };
 #else
 /** C-style function, to get access to the unique IsoRequestPgn_c singleton instance */

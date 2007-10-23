@@ -94,17 +94,17 @@ namespace __IsoAgLib {
       * iLibErr_c::Precondition wrong input type
   @see SensorI_c::createAnalog
   @see Sensor_c::t_analogType
-  @param rb_channel default-argument for the hardware channel of the input
+  @param ab_channel default-argument for the hardware channel of the input
   @param ren_analogType default-argument for choosing Sensor_c::voltage(default) or Sensor_c::current as input type
-  @param rb_useMean default-argument for setting the calculation of mean value on true (false as default)
-  @param rb_fastAdc default-argument for setting fast ADC method (false as default)
-  @param rui16_minValid default min allowed value (min limit of range)
-  @param rui16_maxValid default max allowed value (max limit of range)
+  @param ab_useMean default-argument for setting the calculation of mean value on true (false as default)
+  @param ab_fastAdc default-argument for setting fast ADC method (false as default)
+  @param aui16_minValid default min allowed value (min limit of range)
+  @param aui16_maxValid default max allowed value (max limit of range)
 */
-AnalogIRangeCheck_c::AnalogIRangeCheck_c(uint8_t rb_channel, Sensor_c::analogType_t ren_analogType, bool rb_useMean, bool rb_fastAdc,
-  uint16_t rui16_minValid, uint16_t rui16_maxValid )
-  : AnalogI_c( rb_channel, ren_analogType, rb_useMean, rb_fastAdc ) {
-  setRange( rui16_minValid, rui16_maxValid );
+AnalogIRangeCheck_c::AnalogIRangeCheck_c(uint8_t ab_channel, Sensor_c::analogType_t ren_analogType, bool ab_useMean, bool ab_fastAdc,
+  uint16_t aui16_minValid, uint16_t aui16_maxValid )
+  : AnalogI_c( ab_channel, ren_analogType, ab_useMean, ab_fastAdc ) {
+  setRange( aui16_minValid, aui16_maxValid );
 }
 /**
   internal called constructor which creates a new input channel,initialize the hardware and configures conversion calculation
@@ -115,41 +115,41 @@ AnalogIRangeCheck_c::AnalogIRangeCheck_c(uint8_t rb_channel, Sensor_c::analogTyp
       * iLibErr_c::Precondition wrong input type
   @see SensorI_c::createAnalog
   @see Sensor_c::t_analogType
-  @param rb_channel default-argument for the hardware channel of the input
+  @param ab_channel default-argument for the hardware channel of the input
   @param ren_analogType default-argument for choosing Sensor_c::voltage(default) or Sensor_c::current as input type
-  @param rb_useMean default-argument for setting the calculation of mean value on true (false as default)
-  @param rb_fastAdc default-argument for setting fast ADC method (false as default)
-  @param rui16_minValid default min allowed value (min limit of range)
-  @param rui16_maxValid default max allowed value (max limit of range)
+  @param ab_useMean default-argument for setting the calculation of mean value on true (false as default)
+  @param ab_fastAdc default-argument for setting fast ADC method (false as default)
+  @param aui16_minValid default min allowed value (min limit of range)
+  @param aui16_maxValid default max allowed value (max limit of range)
 */
-void AnalogIRangeCheck_c::init(uint8_t rb_channel, Sensor_c::analogType_t ren_analogType, bool rb_useMean, bool rb_fastAdc,
-  uint16_t rui16_minValid, uint16_t rui16_maxValid )
+void AnalogIRangeCheck_c::init(uint8_t ab_channel, Sensor_c::analogType_t ren_analogType, bool ab_useMean, bool ab_fastAdc,
+  uint16_t aui16_minValid, uint16_t aui16_maxValid )
 {
-  AnalogI_c::init( rb_channel, ren_analogType, rb_useMean, rb_fastAdc );
-  setRange( rui16_minValid, rui16_maxValid );
+  AnalogI_c::init( ab_channel, ren_analogType, ab_useMean, ab_fastAdc );
+  setRange( aui16_minValid, aui16_maxValid );
 }
 /** destructor which can close the hardware input channel */
 AnalogIRangeCheck_c::~AnalogIRangeCheck_c(){
 }
 /* set range
-  @param rui16_minValid default min allowed value (min limit of range)
-  @param rui16_maxValid default max allowed value (max limit of range)
+  @param aui16_minValid default min allowed value (min limit of range)
+  @param aui16_maxValid default max allowed value (max limit of range)
 */
-void AnalogIRangeCheck_c::setRange( uint16_t rui16_minValid, uint16_t rui16_maxValid ) {
+void AnalogIRangeCheck_c::setRange( uint16_t aui16_minValid, uint16_t aui16_maxValid ) {
   // store given values
-  ui16_minValid = rui16_minValid;
-  ui16_maxValid = rui16_maxValid;
+  ui16_minValid = aui16_minValid;
+  ui16_maxValid = aui16_maxValid;
 }
 
 /** get validate val
-  @param refb_tooLow  reference to bool value which is set dependent on ( value < minLimit )
-  @param refb_tooHigh reference to bool value which is set dependent on ( value > maxLimit )
+  @param rb_tooLow  reference to bool value which is set dependent on ( value < minLimit )
+  @param rb_tooHigh reference to bool value which is set dependent on ( value > maxLimit )
   @return sensor value
 */
-int16_t AnalogIRangeCheck_c::validatedVal( bool &refb_tooLow, bool &refb_tooHigh ) const {
+int16_t AnalogIRangeCheck_c::validatedVal( bool &rb_tooLow, bool &rb_tooHigh ) const {
   const int16_t ci16_tempVal = val();
-  refb_tooLow  = ( ci16_tempVal < ui16_minValid )?true:false;
-  refb_tooHigh = ( ci16_tempVal > ui16_maxValid )?true:false;
+  rb_tooLow  = ( ci16_tempVal < ui16_minValid )?true:false;
+  rb_tooHigh = ( ci16_tempVal > ui16_maxValid )?true:false;
   return ci16_tempVal;
 }
 

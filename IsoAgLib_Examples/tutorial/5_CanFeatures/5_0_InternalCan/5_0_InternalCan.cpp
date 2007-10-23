@@ -60,8 +60,8 @@
  *  <ul>
  *  <li>Core class IsoAgLib::iScheduler_c for scheduling of all periodic activities
  *  <li>Method IsoAgLib::iScheduler_c::timeEvent() which can<ul>
- *    <li>Perform activities until defined rl_endTime is reached, which is important
- *      for scheduling purposes of whole system - call by IsoAgLib::iScheduler_c::timeEvent( rl_endTime )
+ *    <li>Perform activities until defined al_endTime is reached, which is important
+ *      for scheduling purposes of whole system - call by IsoAgLib::iScheduler_c::timeEvent( al_endTime )
  *    <li>Process all received CAN messages until all receive buffers are empty
  *      -> simple call, but can lead to deadlock on to high CAN load
  *    </ul>
@@ -209,12 +209,12 @@
 using namespace IsoAgLib;
 
 // Start address claim of the local identity/member
-iIdentItem_c c_myIdent (2,     // rui8_indGroup
-                        2,     // rui8_devClass
-                        0,     // rui8_devClassInst
-                        25,    // rb_func
-                        0x7FF, // rui16_manufCode
-                        27);   // rui32_serNo
+iIdentItem_c c_myIdent (2,     // aui8_indGroup
+                        2,     // aui8_devClass
+                        0,     // aui8_devClassInst
+                        25,    // ab_func
+                        0x7FF, // aui16_manufCode
+                        27);   // aui32_serNo
                         // further parameters use the default values as given in the constructor
 
 /**
@@ -251,7 +251,7 @@ class MyInternalPkg_c : public IsoAgLib::iCanPkgExt_c
   virtual void string2Flags();
 
   /** individual dummy function to set flag data */
-  void setMyDummyData( uint16_t rui16_flag1, uint16_t rui16_flag2, uint16_t rui16_flag3 );
+  void setMyDummyData( uint16_t aui16_flag1, uint16_t aui16_flag2, uint16_t aui16_flag3 );
 
   /** individual dummy function to get flag data */
   uint16_t getMyDummyData1( void ) const { return ui16_flag1;};
@@ -332,11 +332,11 @@ void MyInternalPkg_c::string2Flags()
 }
 
 /** individual dummy function to set flag data */
-void MyInternalPkg_c::setMyDummyData( uint16_t rui16_flag1, uint16_t rui16_flag2, uint16_t rui16_flag3 )
+void MyInternalPkg_c::setMyDummyData( uint16_t aui16_flag1, uint16_t aui16_flag2, uint16_t aui16_flag3 )
 {
-  ui16_flag1 = rui16_flag1;
-  ui16_flag2 = rui16_flag2;
-  ui16_flag3 = rui16_flag3;
+  ui16_flag1 = aui16_flag1;
+  ui16_flag2 = aui16_flag2;
+  ui16_flag3 = aui16_flag3;
 }
 
 /** define class which is derived from iCanCustomer_c which will handle the internal CAN data */
@@ -363,7 +363,7 @@ class MyInternalCanHandler_c : public IsoAgLib::iCanCustomer_c
   */
   virtual IsoAgLib::iCanPkgExt_c& iDataBase();
   /** perform dummy send */
-  void doSendTest( uint16_t rui16_flag1, uint16_t rui16_flag2, uint16_t rui16_flag3 );
+  void doSendTest( uint16_t aui16_flag1, uint16_t aui16_flag2, uint16_t aui16_flag3 );
   /** just make compiler happy */
   virtual ~MyInternalCanHandler_c();
  private:
@@ -424,9 +424,9 @@ IsoAgLib::iCanPkgExt_c& MyInternalCanHandler_c::iDataBase()
   return c_myData;
 }
 /** perform dummy send */
-void MyInternalCanHandler_c::doSendTest( uint16_t rui16_flag1, uint16_t rui16_flag2, uint16_t rui16_flag3 )
+void MyInternalCanHandler_c::doSendTest( uint16_t aui16_flag1, uint16_t aui16_flag2, uint16_t aui16_flag3 )
 { // place data in MyInternalPkg_c
-  c_myData.setMyDummyData( rui16_flag1, rui16_flag2, rui16_flag3 );
+  c_myData.setMyDummyData( aui16_flag1, aui16_flag2, aui16_flag3 );
   // call CanIo_c send function - it does automatically call flags2string to get the data string
   IsoAgLib::getIcanInstance( 1 ) << c_myData;
 }

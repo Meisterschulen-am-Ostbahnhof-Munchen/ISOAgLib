@@ -104,31 +104,31 @@ class SetpointBase_c : public ProcessElementBase_c {
 public: 
   /**
     default constructor which can set all member vars
-    @param rpc_processData optional pointer to containing ProcessData instance
+    @param apc_processData optional pointer to containing ProcessData instance
   */
-  SetpointBase_c( ProcDataBase_c *const rpc_processData = NULL );
+  SetpointBase_c( ProcDataBase_c *const apc_processData = NULL );
   /**
     default constructor which can set all member vars
-    @param rrefc_processData optional reference to containing ProcessData instance
+    @param arc_processData optional reference to containing ProcessData instance
   */
-  SetpointBase_c( ProcDataBase_c &rrefc_processData );
+  SetpointBase_c( ProcDataBase_c &arc_processData );
   /**
     assignement from another object
-    @param rrefc_src source SetpointBase_c instance
+    @param arc_src source SetpointBase_c instance
     @return reference to source for cmd like "setp1 = setp2 = setp3;"
   */
-  const SetpointBase_c& operator=( const SetpointBase_c& rrefc_src );
+  const SetpointBase_c& operator=( const SetpointBase_c& arc_src );
   /**
     copy constructor for SetpointBase
-    @param rrefc_src source SetpointBase_c instance
+    @param arc_src source SetpointBase_c instance
   */
-   SetpointBase_c( const SetpointBase_c& rrefc_src);
+   SetpointBase_c( const SetpointBase_c& arc_src);
   /** default destructor which has nothing to do */
   virtual ~SetpointBase_c();
   /**
     init this item after the containing object item 
     was inserted in a list completely
-    @param rpc_data pointer to containing ProcessData instance
+    @param apc_data pointer to containing ProcessData instance
   */
   void init( ProcDataBase_c* pc_data = 0 );
   /**
@@ -151,12 +151,12 @@ protected: // Protected methods
     possible errors:
         * dependant error in ProcDataBase_c commander of this setpoint isn't found in Monitor List
         * dependant error in CanIo_c on CAN send problems
-    @param rrefc_src reference to SetpointRegister_c with registered setpoints
-    @param rb_override true -> override registered setpoint with ri32_overrideVal
-    @param ri32_overrideVal value which can override registered setpoint on rb_override == true
+    @param arc_src reference to SetpointRegister_c with registered setpoints
+    @param ab_override true -> override registered setpoint with ai32_overrideVal
+    @param ai32_overrideVal value which can override registered setpoint on ab_override == true
   */
-  void sendSetpointVals( const SetpointRegister_c& rrefc_src,
-                          bool rb_override = false, int32_t ri32_overrideVal = 0)const;
+  void sendSetpointVals( const SetpointRegister_c& arc_src,
+                          bool ab_override = false, int32_t ai32_overrideVal = 0)const;
 };
 
 }

@@ -119,7 +119,7 @@ public:
 
 protected:
   /** @todo check for double initialization via flags & STRUCT_IN_RAM etc. */
-  void init (iVtObject_s* rps_vtObject_a SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) { vtObject_a = rps_vtObject_a; SINGLETON_VEC_KEY_INIT_CALL }
+  void init (iVtObject_s* aps_vtObject_a SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) { vtObject_a = aps_vtObject_a; SINGLETON_VEC_KEY_INIT_CALL }
 
   //  Operation: get_vtObject_a
   iVtObject_s& get_vtObject_a()
@@ -157,7 +157,7 @@ protected:
   void saveSignedValue32 (uint16_t ui16_structOffset, uint16_t ui16_structLen, int32_t i32_newValue);
   void saveValueFloat (uint16_t ui16_structOffset, uint16_t ui16_structLen, float f_newValue);
   void saveValueP     (uint16_t ui16_structOffset, uint16_t ui16_structLen, const IsoAgLib::iVtObject_c* const p_newValue);
-  void saveValueISOName (uint16_t ui16_structOffset, uint16_t ui16_structLen, const IsoAgLib::iIsoName_c& rref_newIsoName);
+  void saveValueISOName (uint16_t ui16_structOffset, uint16_t ui16_structLen, const IsoAgLib::iIsoName_c& ar_newIsoName);
   void saveValueBoolSetAttribute (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint8_t ui8_ind, uint8_t ui8_newValue, bool b_enableReplaceOfCmd);
   void saveValue8SetAttribute     (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint8_t ui8_ind, uint8_t ui8_newValue, uint8_t newValueSend, bool b_enableReplaceOfCmd);
   void saveValue16SetAttribute    (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint8_t ui8_ind, uint16_t ui16_newValue, bool b_enableReplaceOfCmd);
@@ -197,12 +197,12 @@ private:
   friend class SINGLETON( iVtObject_c );
   friend class SINGLETON( vtObject_c );
   friend class vtLayoutManager_c;
-  bool genericChangeChildLocationPosition (bool rb_isLocation, IsoAgLib::iVtObject_c* childObject, int16_t dx, int16_t dy, bool b_updateObject, uint8_t numObjectsToFollow, IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow, uint16_t ui16_structOffset, uint16_t ui16_structLen);
+  bool genericChangeChildLocationPosition (bool ab_isLocation, IsoAgLib::iVtObject_c* childObject, int16_t dx, int16_t dy, bool b_updateObject, uint8_t numObjectsToFollow, IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow, uint16_t ui16_structOffset, uint16_t ui16_structLen);
 
   //  Operation: updateEnable
   //! Parameter:
   //! @param b_enableOrDisable:
-  virtual void updateEnable(uint8_t /*rui8_enOrDis*/) {}
+  virtual void updateEnable(uint8_t /*aui8_enOrDis*/) {}
 
 }; // ~X2C
 

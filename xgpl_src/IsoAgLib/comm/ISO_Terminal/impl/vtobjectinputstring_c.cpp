@@ -184,9 +184,9 @@ vtObjectInputString_c::fitTerminal() const
 // Operation : updateEnable
 //! @param b_enableOrDisable:
 void
-vtObjectInputString_c::updateEnable(uint8_t rui8_enOrDis)
+vtObjectInputString_c::updateEnable(uint8_t aui8_enOrDis)
 {
-  saveValue8 (MACRO_getStructOffset(get_vtObjectInputString_a(), enabled), sizeof(iVtObjectInputString_s), rui8_enOrDis);
+  saveValue8 (MACRO_getStructOffset(get_vtObjectInputString_a(), enabled), sizeof(iVtObjectInputString_s), aui8_enOrDis);
 }
 
 

@@ -112,10 +112,10 @@ namespace HAL
 
   /**
     retrieve maximal PWM frequency -> setting to this value results in maximal output
-    @param rui8_channel channel number of output [0..11]
+    @param aui8_channel channel number of output [0..11]
     @return max possible PWM value
   */
-  inline uint16_t getMaxPwmDigout(uint8_t /* rui8_channel */ )
+  inline uint16_t getMaxPwmDigout(uint8_t /* aui8_channel */ )
   { return 0xFFFF; };
 
   /**
@@ -128,23 +128,23 @@ namespace HAL
     {return __HAL::setDigout(bOutputNo, wPWMValue);};
 
   /** deliver the actual current of the digital output
-    * @param rui8_channel channel to check
+    * @param aui8_channel channel to check
     * @return current in [mA] ( if specified channel doesn't support current measurement, -1 is returned )
     */
-  inline int16_t getDigoutCurrent( uint8_t rui8_channel )
+  inline int16_t getDigoutCurrent( uint8_t aui8_channel )
   {
-    if ( rui8_channel < 5 ) return 0;
+    if ( aui8_channel < 5 ) return 0;
     else return -1;
   };
 
   /** deliver the state of a digital output
-    * @param rui8_channel channel to check
-    * @param rui16_minCurrent minimal allowed current in [mA]
-    * @param rui16_maxCurrent maximum allowed current in [mA]
+    * @param aui8_channel channel to check
+    * @param aui16_minCurrent minimal allowed current in [mA]
+    * @param aui16_maxCurrent maximum allowed current in [mA]
     * @return HAL_NO_ERR, HAL_DIGOUT_OPEN, HAL_DIGOUT_SHORTCUT, HAL_DIGOUT_OVERTEMP,
               HAL_DIGOUT_UNDERVOLT, HAL_DIGOUT_OVERVOLT
     */
-  inline int16_t getDigoutDiagnose(uint8_t /* rui8_channel */, uint16_t /* rui16_minCurrent */, uint16_t /* rui16_maxCurrent */)
+  inline int16_t getDigoutDiagnose(uint8_t /* aui8_channel */, uint16_t /* aui16_minCurrent */, uint16_t /* aui16_maxCurrent */)
   {
     return HAL_NO_ERR;
   };
@@ -154,7 +154,7 @@ namespace HAL
 		getDigoutDiagnose function can go wrong.
 		@return voltage at PWM channel [mV]
 	*/
-	inline int16_t getDigoutAdc( uint8_t /* rui8_channel */ ) { return 1000;};
+	inline int16_t getDigoutAdc( uint8_t /* aui8_channel */ ) { return 1000;};
   /*@}*/
 }
 #endif

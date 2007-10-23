@@ -43,13 +43,13 @@
 /**
 	constructor which initialises all data and can call init to read
 	config data from EEPROM (if eeprom adress is given)
-	@param rpc_lbs pointer to LBS_Lib::nLBS::iLBS (optional)
-	@param rpc_system pointer to LBS_Lib::nHwSystem::iSystem (optional)
-	@param rui16_eepromAdr adress in EEPROM where config data is stored
+	@param apc_lbs pointer to LBS_Lib::nLBS::iLBS (optional)
+	@param apc_system pointer to LBS_Lib::nHwSystem::iSystem (optional)
+	@param aui16_eepromAdr adress in EEPROM where config data is stored
 */
-DefaultRecordConfig_c::DefaultRecordConfig_c(uint16_t rui16_eepromAdr)
+DefaultRecordConfig_c::DefaultRecordConfig_c(uint16_t aui16_eepromAdr)
 { // init vars
-	ui16_eepromAdr = rui16_eepromAdr;
+	ui16_eepromAdr = aui16_eepromAdr;
 
 	b_accumulatedTimeDist = false;
 	b_diagnoseData = false;
@@ -72,24 +72,24 @@ DefaultRecordConfig_c::DefaultRecordConfig_c(uint16_t rui16_eepromAdr)
 }
 /**
 	copy Constructor
-	@param rrefc_src reference to source instance
+	@param arc_src reference to source instance
 */
-DefaultRecordConfig_c::DefaultRecordConfig_c(const DefaultRecordConfig_c& rrefc_src)
+DefaultRecordConfig_c::DefaultRecordConfig_c(const DefaultRecordConfig_c& arc_src)
 {
-	ui16_eepromAdr = rrefc_src.ui16_eepromAdr;
+	ui16_eepromAdr = arc_src.ui16_eepromAdr;
 
-	b_accumulatedTimeDist = rrefc_src.b_accumulatedTimeDist;
-	b_diagnoseData = rrefc_src.b_diagnoseData;
-	ui16_recordingRate = rrefc_src.ui16_recordingRate;
-	ui8_timeWert = rrefc_src.ui8_timeWert;
-	ui8_workWertInst = rrefc_src.ui8_workWertInst;
-	ui8_applrateRecording = rrefc_src.ui8_applrateRecording;
-	b_transportDummyWidth = rrefc_src.b_transportDummyWidth;
-	b_transportWorkDist = rrefc_src.b_transportWorkDist;
-	ui8_useMeasureProgs = rrefc_src.ui8_useMeasureProgs;
-	b_fuelConsumption = rrefc_src.b_fuelConsumption;
-	ui8_draftForce = rrefc_src.ui8_draftForce;
-	ui8_deviceSpecificConfigCnt = rrefc_src.ui8_deviceSpecificConfigCnt;
+	b_accumulatedTimeDist = arc_src.b_accumulatedTimeDist;
+	b_diagnoseData = arc_src.b_diagnoseData;
+	ui16_recordingRate = arc_src.ui16_recordingRate;
+	ui8_timeWert = arc_src.ui8_timeWert;
+	ui8_workWertInst = arc_src.ui8_workWertInst;
+	ui8_applrateRecording = arc_src.ui8_applrateRecording;
+	b_transportDummyWidth = arc_src.b_transportDummyWidth;
+	b_transportWorkDist = arc_src.b_transportWorkDist;
+	ui8_useMeasureProgs = arc_src.ui8_useMeasureProgs;
+	b_fuelConsumption = arc_src.b_fuelConsumption;
+	ui8_draftForce = arc_src.ui8_draftForce;
+	ui8_deviceSpecificConfigCnt = arc_src.ui8_deviceSpecificConfigCnt;
 }
 /**
 	destructor
@@ -101,11 +101,11 @@ DefaultRecordConfig_c::~DefaultRecordConfig_c()
 
 /**
 	initialise with reading the config data from EEPROM in flags
-	@param rui16_eepromAdr adress in EEPROM where config data begins
+	@param aui16_eepromAdr adress in EEPROM where config data begins
 */
-void DefaultRecordConfig_c::init(uint16_t rui16_eepromAdr)
+void DefaultRecordConfig_c::init(uint16_t aui16_eepromAdr)
 { // set data
-	ui16_eepromAdr = rui16_eepromAdr;
+	ui16_eepromAdr = aui16_eepromAdr;
 	IsoAgLib::iSystem_c::triggerWd();
 	// exit if data not valid
 	if (ui16_eepromAdr == 0)

@@ -113,7 +113,7 @@ class CanCustomer_c;
 struct IsoFilter_s
 {
   // dlcForce == -1: don't check dlc. value of 0..8: force to be exactly this dlc!
-  IsoFilter_s (CanCustomer_c& rrefc_canCustomer, uint32_t rui32_mask, uint32_t rui32_filter, const IsoName_c* rpc_isoNameDa = NULL, const IsoName_c* rpc_isoNameSa = NULL, int8_t ri8_dlcForce=-1, Ident_c::identType_t rt_identType=Ident_c::ExtendedIdent);
+  IsoFilter_s (CanCustomer_c& arc_canCustomer, uint32_t aui32_mask, uint32_t aui32_filter, const IsoName_c* apc_isoNameDa = NULL, const IsoName_c* apc_isoNameSa = NULL, int8_t ai8_dlcForce=-1, Ident_c::identType_t at_identType=Ident_c::ExtendedIdent);
   ~IsoFilter_s();
 
   uint32_t         getMask()      const { return c_identMask.ident(); }
@@ -123,13 +123,13 @@ struct IsoFilter_s
 
   /** operator== does INTENTIONALLY NOT compare the dlcForce field as you can't have the same filter for
       the same customer just with another dlcForce! do NEVER do this! */
-  bool operator == (const IsoFilter_s& rrefc_isoFilter) const
-  { return equalMaskAndFilter (rrefc_isoFilter) && (pc_canCustomer == rrefc_isoFilter.pc_canCustomer) /*&& (i8_dlcForce == rrefc_isoFilter.i8_dlcForce) */;}
-  bool operator != (const IsoFilter_s& rrefc_isoFilter) const
-  { return !operator == (rrefc_isoFilter); }
+  bool operator == (const IsoFilter_s& arc_isoFilter) const
+  { return equalMaskAndFilter (arc_isoFilter) && (pc_canCustomer == arc_isoFilter.pc_canCustomer) /*&& (i8_dlcForce == arc_isoFilter.i8_dlcForce) */;}
+  bool operator != (const IsoFilter_s& arc_isoFilter) const
+  { return !operator == (arc_isoFilter); }
 
 private:
-  bool equalMaskAndFilter (const IsoFilter_s& rrefc_isoFilter) const;
+  bool equalMaskAndFilter (const IsoFilter_s& arc_isoFilter) const;
 
 private:
   Ident_c c_identMask;
@@ -158,7 +158,7 @@ public:
 
   struct ManagedIsoFilter_s
   {
-    ManagedIsoFilter_s (const IsoFilter_s& rrefs_isoFilter) : s_isoFilter (rrefs_isoFilter), pc_filterBox (NULL) {}
+    ManagedIsoFilter_s (const IsoFilter_s& ars_isoFilter) : s_isoFilter (ars_isoFilter), pc_filterBox (NULL) {}
 
     IsoFilter_s s_isoFilter;
     FilterBox_c* pc_filterBox;
@@ -174,9 +174,9 @@ public:
   IsoFilterBox_c (const IsoFilterBox_c&);
 
   /** initialization for one simple IsoFilterBox_c
-    @param rrefc_customer reference to the CanCustomer_c instance, which creates this IsoFilterBox_c instance
+    @param arc_customer reference to the CanCustomer_c instance, which creates this IsoFilterBox_c instance
    */
-//  void init (CanCustomer_c& rrefc_canCustomer);
+//  void init (CanCustomer_c& arc_canCustomer);
 
   /** add ISOFilter
     @return true on success
@@ -188,10 +188,10 @@ public:
 
   RemoveAnswer_en removeIsoFilter (const IsoFilter_s& rrefcs_isoFilter);
 
-  void updateOnAdd    (const IsoName_c& rpc_isoName);
-  void updateOnRemove (const IsoName_c& rpc_isoName);
+  void updateOnAdd    (const IsoName_c& apc_isoName);
+  void updateOnRemove (const IsoName_c& apc_isoName);
 
-  void syncFiltersToCan(const IsoName_c* rpc_isoName=NULL);
+  void syncFiltersToCan(const IsoName_c* apc_isoName=NULL);
 
   //! Here could come another constructor that takes a variable list of filters and
   //! keeps them all connected. Yet to be done, but not important right now...

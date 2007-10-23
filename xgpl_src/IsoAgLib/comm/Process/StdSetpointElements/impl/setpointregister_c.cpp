@@ -90,59 +90,59 @@
 namespace __IsoAgLib {
 /**
   initialise this SetpointRegister_c to a well defined starting condition
-  @param rc_isoName device key of commander of this setpoint register set
-  @param ri32_exact exact setpoint value
-  @param ri32_min minimum setpoint value
-  @param ri32_max maximum setpoint value
-  @param ri32_default default setpoint value
-  @param rb_handled true -> this setpoint register nistance was handled by main application
-  @param rb_master true -> this setpoint register instance represents the actual master setpoint
-  @param rb_valid true -> this setpoint register instance is accepted as valid
+  @param ac_isoName device key of commander of this setpoint register set
+  @param ai32_exact exact setpoint value
+  @param ai32_min minimum setpoint value
+  @param ai32_max maximum setpoint value
+  @param ai32_default default setpoint value
+  @param ab_handled true -> this setpoint register nistance was handled by main application
+  @param ab_master true -> this setpoint register instance represents the actual master setpoint
+  @param ab_valid true -> this setpoint register instance is accepted as valid
 */
-void SetpointRegister_c::init(const IsoName_c& rc_isoName, int32_t ri32_exact, int32_t ri32_min, int32_t ri32_max, int32_t ri32_default,
-        bool rb_handled, bool rb_master, bool rb_valid)
+void SetpointRegister_c::init(const IsoName_c& ac_isoName, int32_t ai32_exact, int32_t ai32_min, int32_t ai32_max, int32_t ai32_default,
+        bool ab_handled, bool ab_master, bool ab_valid)
 { // direct value set to avoid special functions of equivalent set functions
-  setExact(ri32_exact);
-  setMin(ri32_min);
-  setMax(ri32_max);
-  setDefault(ri32_default);
+  setExact(ai32_exact);
+  setMin(ai32_min);
+  setMax(ai32_max);
+  setDefault(ai32_default);
 
-  setISOName(rc_isoName);
-  setHandled(rb_handled, 0);
-  setMaster(rb_master);
-  setValid(rb_valid);
+  setISOName(ac_isoName);
+  setHandled(ab_handled, 0);
+  setMaster(ab_master);
+  setValid(ab_valid);
 }
 
 /**
   operator= for SetpointRegister_c class
-  @param rrefc_src source SetpointRegister_c instance
+  @param arc_src source SetpointRegister_c instance
   @return reference to source instance for cmd like "setp1 = setp2 = setp3;"
 */
-const SetpointRegister_c& SetpointRegister_c::operator=(const SetpointRegister_c& rrefc_src){
-  assignFromSource(rrefc_src);
+const SetpointRegister_c& SetpointRegister_c::operator=(const SetpointRegister_c& arc_src){
+  assignFromSource(arc_src);
   return *this;
 }
 
 /**
   copy constructor for SetpointRegister_c class
-  @param rrefc_src source SetpointRegister_c instance
+  @param arc_src source SetpointRegister_c instance
 */
-SetpointRegister_c::SetpointRegister_c(const SetpointRegister_c& rrefc_src){
-  assignFromSource(rrefc_src);
+SetpointRegister_c::SetpointRegister_c(const SetpointRegister_c& arc_src){
+  assignFromSource(arc_src);
 }
 /** base function for assignment of element vars for copy constructor and operator= */
-void SetpointRegister_c::assignFromSource( const SetpointRegister_c& rrefc_src )
+void SetpointRegister_c::assignFromSource( const SetpointRegister_c& arc_src )
 { // direct value set to avoid special functions of equivalent set functions
-  i32_exactOrMin = rrefc_src.i32_exactOrMin;
-  i32_max = rrefc_src.i32_max;
-  i32_default = rrefc_src.i32_default;
-  data.en_definedSetpoints = rrefc_src.data.en_definedSetpoints;
+  i32_exactOrMin = arc_src.i32_exactOrMin;
+  i32_max = arc_src.i32_max;
+  i32_default = arc_src.i32_default;
+  data.en_definedSetpoints = arc_src.data.en_definedSetpoints;
 
 
-  setISOName(rrefc_src.isoName());
-  setHandled(rrefc_src.handled(), rrefc_src.i32_lastHandledTime);
-  setMaster(rrefc_src.master());
-  setValid(rrefc_src.valid());
+  setISOName(arc_src.isoName());
+  setHandled(arc_src.handled(), arc_src.i32_lastHandledTime);
+  setMaster(arc_src.master());
+  setValid(arc_src.valid());
 }
 
 /** default destructor which has nothing to do */
@@ -151,15 +151,15 @@ SetpointRegister_c::~SetpointRegister_c(){
 
 /**
   compare two Setpoint Register items by value
-  @param rrefc_src compared instance
+  @param arc_src compared instance
   @return true -> both setpoint sets are equal
 */
-bool SetpointRegister_c::operator==(const SetpointRegister_c& rrefc_src)const{
-  return ((i32_exactOrMin == rrefc_src.i32_exactOrMin)
-        && (i32_max == rrefc_src.i32_max)
-        && (i32_default == rrefc_src.i32_default)
-        && (data.en_definedSetpoints == rrefc_src.data.en_definedSetpoints)
-        && (isoName() == rrefc_src.isoName()))
+bool SetpointRegister_c::operator==(const SetpointRegister_c& arc_src)const{
+  return ((i32_exactOrMin == arc_src.i32_exactOrMin)
+        && (i32_max == arc_src.i32_max)
+        && (i32_default == arc_src.i32_default)
+        && (data.en_definedSetpoints == arc_src.data.en_definedSetpoints)
+        && (isoName() == arc_src.isoName()))
         ? true:false;
 }
 
@@ -199,7 +199,7 @@ float SetpointRegister_c::valModFloat(GeneralCommand_c::ValueGroup_t en_valueGro
 }
 #endif
 /**
-  checks if setpoint with type rb_mod exists
+  checks if setpoint with type ab_mod exists
   @param en_valueGroup value group of tested setpoint type (exact 0, min 2, max 3, default)
   @return true -> a MOD type setpoint exist
 */
@@ -226,13 +226,13 @@ bool SetpointRegister_c::existValMod(GeneralCommand_c::ValueGroup_t en_valueGrou
 
 /**
   set the exact setpoint value
-  @param ri32_val new exact setpoint value
+  @param ai32_val new exact setpoint value
 */
-void SetpointRegister_c::setExact(int32_t ri32_val)
+void SetpointRegister_c::setExact(int32_t ai32_val)
 {
-  if (ri32_val != NO_VAL_32S)
+  if (ai32_val != NO_VAL_32S)
   {
-    i32_exactOrMin = ri32_val;
+    i32_exactOrMin = ai32_val;
     // clear min/max
     // set exactType
     // keep defaultType
@@ -250,13 +250,13 @@ void SetpointRegister_c::setExact(int32_t ri32_val)
 
 /**
   set the minimum setpoint value
-  @param ri32_val new minimum setpoint value
+  @param ai32_val new minimum setpoint value
 */
-void SetpointRegister_c::setMin(int32_t ri32_val)
+void SetpointRegister_c::setMin(int32_t ai32_val)
 {
-  if (ri32_val != NO_VAL_32S)
+  if (ai32_val != NO_VAL_32S)
   {
-    i32_exactOrMin = ri32_val;
+    i32_exactOrMin = ai32_val;
     // clear exactType
     // don't change maxType and defaultType
     // set minType
@@ -275,13 +275,13 @@ void SetpointRegister_c::setMin(int32_t ri32_val)
 
 /**
   set the maximum setpoint value
-  @param ri32_val new maximum setpoint value
+  @param ai32_val new maximum setpoint value
 */
-void SetpointRegister_c::setMax(int32_t ri32_val)
+void SetpointRegister_c::setMax(int32_t ai32_val)
 {
-  if (ri32_val != NO_VAL_32S)
+  if (ai32_val != NO_VAL_32S)
   {
-    i32_max = ri32_val;
+    i32_max = ai32_val;
     // set exact to empty
     // don't change minType and defaultType
     // set maxType
@@ -299,13 +299,13 @@ void SetpointRegister_c::setMax(int32_t ri32_val)
 
 /**
   set the default setpoint value
-  @param ri32_val new default setpoint value
+  @param ai32_val new default setpoint value
 */
-void SetpointRegister_c::setDefault(int32_t ri32_val)
+void SetpointRegister_c::setDefault(int32_t ai32_val)
 {
-  if (ri32_val != NO_VAL_32S)
+  if (ai32_val != NO_VAL_32S)
   {
-    i32_default = ri32_val;
+    i32_default = ai32_val;
     // set defaultType
     // don't change minType, maxType, exactType
     data.en_definedSetpoints
@@ -321,24 +321,24 @@ void SetpointRegister_c::setDefault(int32_t ri32_val)
 };
 
 /**
-  set a limit val for type given by rb_mod
-  @param ri32_val new setpoint value
+  set a limit val for type given by ab_mod
+  @param ai32_val new setpoint value
   @param en_valueGroup code of setpoint type to set (exact 0, min 2, max 3, default)
 */
-void SetpointRegister_c::setValMod(int32_t ri32_val, GeneralCommand_c::ValueGroup_t en_valueGroup){
+void SetpointRegister_c::setValMod(int32_t ai32_val, GeneralCommand_c::ValueGroup_t en_valueGroup){
   switch (en_valueGroup)
   {
     case GeneralCommand_c::exactValue:
-      setExact(ri32_val);
+      setExact(ai32_val);
       break;
     case GeneralCommand_c::minValue:
-      setMin(ri32_val);
+      setMin(ai32_val);
       break;
     case GeneralCommand_c::maxValue:
-      setMax(ri32_val);
+      setMax(ai32_val);
       break;
     case GeneralCommand_c::defaultValue:
-      setDefault(ri32_val);
+      setDefault(ai32_val);
       break;
     default: ;
   }
@@ -348,61 +348,61 @@ void SetpointRegister_c::setValMod(int32_t ri32_val, GeneralCommand_c::ValueGrou
 
 /**
   set the exact setpoint value
-  @param rf_val new exact setpoint value
+  @param af_val new exact setpoint value
 */
-void SetpointRegister_c::setExact(float rf_val)
+void SetpointRegister_c::setExact(float af_val)
 {
-  int32_t i32_temp = (*(int32_t*)(&rf_val));
+  int32_t i32_temp = (*(int32_t*)(&af_val));
   setExact(i32_temp);
 }
 /**
   set the minimum setpoint value
-  @param rf_val new minimum setpoint value
+  @param af_val new minimum setpoint value
 */
-void SetpointRegister_c::setMin(float rf_val)
+void SetpointRegister_c::setMin(float af_val)
 {
-  int32_t i32_temp = (*(int32_t*)(&rf_val));
+  int32_t i32_temp = (*(int32_t*)(&af_val));
   setMin(i32_temp);
 }
 /**
   set the maximum setpoint value
-  @param rf_val new maximum setpoint value
+  @param af_val new maximum setpoint value
 */
-void SetpointRegister_c::setMax(float rf_val)
+void SetpointRegister_c::setMax(float af_val)
 {
-  int32_t i32_temp = (*(int32_t*)(&rf_val));
+  int32_t i32_temp = (*(int32_t*)(&af_val));
   setMax(i32_temp);
 }
 /**
   set the default setpoint value
-  @param rf_val new default setpoint value
+  @param af_val new default setpoint value
 */
-void SetpointRegister_c::setDefault(float rf_val)
+void SetpointRegister_c::setDefault(float af_val)
 {
-  int32_t i32_temp = (*(int32_t*)(&rf_val));
+  int32_t i32_temp = (*(int32_t*)(&af_val));
   setDefault(i32_temp);
 }
 
 /**
-  set a limit val for type given by rb_mod
-  @param rf_val new setpoint value
+  set a limit val for type given by ab_mod
+  @param af_val new setpoint value
   @param en_valueGroup MOD code of setpoint type to set (exact 0, min 2, max 3)
 */
 
-void SetpointRegister_c::setValMod(float rf_val, GeneralCommand_c::ValueGroup_t en_valueGroup){
+void SetpointRegister_c::setValMod(float af_val, GeneralCommand_c::ValueGroup_t en_valueGroup){
   switch (en_valueGroup)
   {
     case GeneralCommand_c::exactValue:
-      setExact(rf_val);
+      setExact(af_val);
       break;
     case GeneralCommand_c::minValue:
-      setMin(rf_val);
+      setMin(af_val);
       break;
     case GeneralCommand_c::maxValue:
-      setMax(rf_val);
+      setMax(af_val);
       break;
     case GeneralCommand_c::defaultValue:
-      setDefault(rf_val);
+      setDefault(af_val);
       break;
     default: ;
   }
@@ -412,16 +412,16 @@ void SetpointRegister_c::setValMod(float rf_val, GeneralCommand_c::ValueGroup_t 
 
 /**
   set the handled state; return if state was changed
-  @param rb_state true -> mark this setpoint as handled
-  @param ri32_handledTime timestamp for detecting the last setHandle event
+  @param ab_state true -> mark this setpoint as handled
+  @param ai32_handledTime timestamp for detecting the last setHandle event
   @return true -> this call caused a state change for handled state
 */
-bool SetpointRegister_c::setHandled(bool rb_state, int32_t ri32_handledTime)
+bool SetpointRegister_c::setHandled(bool ab_state, int32_t ai32_handledTime)
 {
-  if (ri32_handledTime >= 0)i32_lastHandledTime = ri32_handledTime;
-  if (handled() != rb_state)
+  if (ai32_handledTime >= 0)i32_lastHandledTime = ai32_handledTime;
+  if (handled() != ab_state)
   { // state was changed
-    data.b_handled = rb_state;
+    data.b_handled = ab_state;
     return true;
   }
   else
@@ -431,14 +431,14 @@ bool SetpointRegister_c::setHandled(bool rb_state, int32_t ri32_handledTime)
 }
 /**
   set the master state; return if state was changed
-  @param rb_state true -> mark this setpoint as master
+  @param ab_state true -> mark this setpoint as master
   @return true -> this call caused a state change for master state
 */
-bool SetpointRegister_c::setMaster(bool rb_state)
+bool SetpointRegister_c::setMaster(bool ab_state)
 {
-  if (master() != rb_state)
+  if (master() != ab_state)
   { // state was changed
-    data.b_master = rb_state;
+    data.b_master = ab_state;
     return true;
   }
   else
@@ -448,14 +448,14 @@ bool SetpointRegister_c::setMaster(bool rb_state)
 }
 /**
   set the valid state; return if state was changed
-  @param rb_state true -> mark this setpoint as valid (accepted)
+  @param ab_state true -> mark this setpoint as valid (accepted)
   @return true -> this call caused a state change for valid state
 */
-bool SetpointRegister_c::setValid(bool rb_state)
+bool SetpointRegister_c::setValid(bool ab_state)
 {
-  if (valid() != rb_state)
+  if (valid() != ab_state)
   { // state was changed
-    data.b_valid = rb_state;
+    data.b_valid = ab_state;
     return true;
   }
   else

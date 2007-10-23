@@ -117,19 +117,19 @@ public:
 
 
   // Copy constructor
-  Chunk_c( const Chunk_c& rrefc_src );
+  Chunk_c( const Chunk_c& arc_src );
 
   //  Operation: init
   bool init();
 
   //  Operation: insert
-  uint8_t insert(uint8_t rui8_data);
+  uint8_t insert(uint8_t aui8_data);
 
   //  Operation: insert7bytes
   uint8_t insert7Bytes(const uint8_t* pui8_data);
 
   //  Operation: getData
-  uint16_t getData(uint32_t rui32_pos);
+  uint16_t getData(uint32_t aui32_pos);
 
   //  Operation: setFree
   void setFree();

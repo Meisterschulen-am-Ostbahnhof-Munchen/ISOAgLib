@@ -105,14 +105,14 @@ static uint16_t sui16_printedDeconstructMeasureProgBaseTotal = 0;
 namespace __IsoAgLib {
 
 /** initialise the measure prog instance, to set this instance to a well defined starting condition
-    @param rrefc_processData optional reference to containing ProcDataBase_c instance (default NULL)
+    @param arc_processData optional reference to containing ProcDataBase_c instance (default NULL)
     @param ren_progType optional program type: Proc_c::Base, Proc_c::Target (default Proc_c::UndefinedProg)
-    @param ri32_val optional individual measure val for this program instance (can differ from master measure value)
-    @param rc_isoName optional ISOName of partner member for this measure program
+    @param ai32_val optional individual measure val for this program instance (can differ from master measure value)
+    @param ac_isoName optional ISOName of partner member for this measure program
   */
-void MeasureProgBase_c::init( ProcDataBase_c *const rpc_processData,
-  Proc_c::progType_t ren_progType, int32_t ri32_val,
-  const IsoName_c& rc_isoName)
+void MeasureProgBase_c::init( ProcDataBase_c *const apc_processData,
+  Proc_c::progType_t ren_progType, int32_t ai32_val,
+  const IsoName_c& ac_isoName)
 { // set the dynamic list to a well defined cleared starting condition
   #ifdef DEBUG_HEAP_USEAGE
   static bool b_doPrint = true;
@@ -131,10 +131,10 @@ void MeasureProgBase_c::init( ProcDataBase_c *const rpc_processData,
 
   vec_measureSubprog.clear();
   // set the pointers in the baseClass ProcessElementBase
-  set(rpc_processData);
+  set(apc_processData);
   // store the parameter init vals
-  c_isoName = rc_isoName;
-  i32_val = ri32_val;
+  c_isoName = ac_isoName;
+  i32_val = ai32_val;
   en_progType = ren_progType;
 
   // set the rest of element vals to defined init
@@ -147,46 +147,46 @@ void MeasureProgBase_c::init( ProcDataBase_c *const rpc_processData,
 
 
 /** assignment of MeasureProgBase_c objects
-    @param rrefc_src source MeasureProgBase_c instance
+    @param arc_src source MeasureProgBase_c instance
     @return reference to source instance for cmd like "prog1 = prog2 = prog3;"
   */
-const MeasureProgBase_c& MeasureProgBase_c::operator=(const MeasureProgBase_c& rrefc_src){
+const MeasureProgBase_c& MeasureProgBase_c::operator=(const MeasureProgBase_c& arc_src){
   // call base class operator
-  ProcessElementBase_c::operator=(rrefc_src);
+  ProcessElementBase_c::operator=(arc_src);
 
-  assignFromSource( rrefc_src );
+  assignFromSource( arc_src );
 
   // return reference to source
-  return rrefc_src;
+  return arc_src;
 }
 
 
 /** copy constructor
-    @param rrefc_src source MeasureProgBase_c instance
+    @param arc_src source MeasureProgBase_c instance
   */
-MeasureProgBase_c::MeasureProgBase_c(const MeasureProgBase_c& rrefc_src)
- : ProcessElementBase_c(rrefc_src)  {
-  assignFromSource( rrefc_src );
+MeasureProgBase_c::MeasureProgBase_c(const MeasureProgBase_c& arc_src)
+ : ProcessElementBase_c(arc_src)  {
+  assignFromSource( arc_src );
 }
 
 
 /** base function for assignment of element vars for copy constructor and operator= */
-void MeasureProgBase_c::assignFromSource( const MeasureProgBase_c& rrefc_src )
+void MeasureProgBase_c::assignFromSource( const MeasureProgBase_c& arc_src )
 { // copy element vars
-  c_isoName = rrefc_src.c_isoName;
-  en_accumProp =  rrefc_src.en_accumProp;
-  en_doSend = rrefc_src.en_doSend;
-  en_progType = rrefc_src.en_progType;
-  i32_accel = rrefc_src.i32_accel;
-  i32_delta = rrefc_src.i32_delta;
-  i32_integ = rrefc_src.i32_integ;
-  i32_lastTime = rrefc_src.i32_lastTime;
-  i32_max = rrefc_src.i32_max;
-  i32_min = rrefc_src.i32_min;
-  i32_val = rrefc_src.i32_val;
-  vec_measureSubprog = rrefc_src.vec_measureSubprog;
+  c_isoName = arc_src.c_isoName;
+  en_accumProp =  arc_src.en_accumProp;
+  en_doSend = arc_src.en_doSend;
+  en_progType = arc_src.en_progType;
+  i32_accel = arc_src.i32_accel;
+  i32_delta = arc_src.i32_delta;
+  i32_integ = arc_src.i32_integ;
+  i32_lastTime = arc_src.i32_lastTime;
+  i32_max = arc_src.i32_max;
+  i32_min = arc_src.i32_min;
+  i32_val = arc_src.i32_val;
+  vec_measureSubprog = arc_src.vec_measureSubprog;
 
-  if (vec_measureSubprog.size() < rrefc_src.vec_measureSubprog.size())
+  if (vec_measureSubprog.size() < arc_src.vec_measureSubprog.size())
   { // not all items copied
     getILibErrInstance().registerError( iLibErr_c::BadAlloc, iLibErr_c::Process );
   }
@@ -225,11 +225,11 @@ MeasureProgBase_c::~MeasureProgBase_c(){
     possible errors:
         * Err_c::badAlloc not enough memory to add new subprog
     @param ren_type increment type: Proc_c::TimeProp, Proc_c::DistProp, Proc_c::ValIncr
-    @param ri32_increment increment value
+    @param ai32_increment increment value
     @param ren_doSend set process data subtype to send (Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...)
     @return true -> subprog was created successfully; fals -> out-of-memory error
   */
- bool MeasureProgBase_c::addSubprog(Proc_c::type_t ren_type, int32_t ri32_increment, Proc_c::doSend_t ren_doSend){
+ bool MeasureProgBase_c::addSubprog(Proc_c::type_t ren_type, int32_t ai32_increment, Proc_c::doSend_t ren_doSend){
   if (ren_type == Proc_c::TimeProp) en_accumProp = Proc_c::AccumTime;
   else if (ren_type == Proc_c::DistProp) en_accumProp = Proc_c::AccumDist;
 
@@ -243,12 +243,12 @@ MeasureProgBase_c::~MeasureProgBase_c(){
 
   if (pc_subprog != vec_measureSubprog.end())
   { // subprog with same type found -> update val
-    pc_subprog->setIncrement(ri32_increment);
+    pc_subprog->setIncrement(ai32_increment);
   }
   else
   { // no subprog with same type exist -> insert new one
     const uint8_t b_oldSize = vec_measureSubprog.size();
-    vec_measureSubprog.push_front(MeasureSubprog_c(ren_type, ren_doSend, ri32_increment));
+    vec_measureSubprog.push_front(MeasureSubprog_c(ren_type, ren_doSend, ai32_increment));
     if (b_oldSize >= vec_measureSubprog.size())
     { // array didn't grow
       getILibErrInstance().registerError( iLibErr_c::BadAlloc, iLibErr_c::Process );
@@ -343,13 +343,13 @@ bool MeasureProgBase_c::stop(bool /*b_deleteSubProgs*/, Proc_c::type_t /* ren_ty
 }
 
 /** deliver actual last received value
-    @param rb_sendRequest choose wether a request for value update should be
+    @param ab_sendRequest choose wether a request for value update should be
         sent (default false == send no request)
     @return measure val for this prog (can differ from master measure val)
   */
-int32_t MeasureProgBase_c::val(bool rb_sendRequest) const
+int32_t MeasureProgBase_c::val(bool ab_sendRequest) const
 {
-  if (rb_sendRequest) {
+  if (ab_sendRequest) {
     // prepare general command in process pkg
     getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */,
                                                                 GeneralCommand_c::exactValue,
@@ -362,13 +362,13 @@ int32_t MeasureProgBase_c::val(bool rb_sendRequest) const
 }
 
 /** deliver integ val
-    @param rb_sendRequest choose wether a request for value update should be
+    @param ab_sendRequest choose wether a request for value update should be
         sent (default false == send no request)
     @return integral val for this measure prog
   */
-int32_t MeasureProgBase_c::integ(bool rb_sendRequest) const
+int32_t MeasureProgBase_c::integ(bool ab_sendRequest) const
 {
-  if (rb_sendRequest) {
+  if (ab_sendRequest) {
     // prepare general command in process pkg
     getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */,
                                                                 GeneralCommand_c::integValue,
@@ -380,13 +380,13 @@ int32_t MeasureProgBase_c::integ(bool rb_sendRequest) const
 }
 
 /** deliver min val
-    @param rb_sendRequest choose wether a request for value update should be
+    @param ab_sendRequest choose wether a request for value update should be
         sent (default false == send no request)
     @return MIN val for this measure prog
   */
-int32_t MeasureProgBase_c::min(bool rb_sendRequest) const
+int32_t MeasureProgBase_c::min(bool ab_sendRequest) const
 {
-  if(rb_sendRequest) {
+  if(ab_sendRequest) {
     // prepare general command in process pkg
     getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */,
                                                                 GeneralCommand_c::minValue,
@@ -398,13 +398,13 @@ int32_t MeasureProgBase_c::min(bool rb_sendRequest) const
 }
 
 /** deliver max val
-    @param rb_sendRequest choose wether a request for value update should be
+    @param ab_sendRequest choose wether a request for value update should be
         sent (default false == send no request)
     @return MAX val for this measure prog
   */
-int32_t MeasureProgBase_c::max(bool rb_sendRequest) const
+int32_t MeasureProgBase_c::max(bool ab_sendRequest) const
 {
-  if (rb_sendRequest) {
+  if (ab_sendRequest) {
     // prepare general command in process pkg
     getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */,
                                                                 GeneralCommand_c::maxValue,
@@ -417,9 +417,9 @@ int32_t MeasureProgBase_c::max(bool rb_sendRequest) const
 
 
 /** init the element vars
-    @param ri32_val initial measure val
+    @param ai32_val initial measure val
   */
-void MeasureProgBase_c::initVal(int32_t ri32_val){
+void MeasureProgBase_c::initVal(int32_t ai32_val){
   #ifdef DEBUG_HEAP_USEAGE
   if ( ( sui16_MeasureProgBaseTotal != sui16_printedMeasureProgBaseTotal                     )
   || ( sui16_deconstructMeasureProgBaseTotal != sui16_printedDeconstructMeasureProgBaseTotal ) )
@@ -435,21 +435,21 @@ void MeasureProgBase_c::initVal(int32_t ri32_val){
       << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
   }
   #endif
-  i32_val = i32_min = i32_max = i32_integ = ri32_val;
+  i32_val = i32_min = i32_max = i32_integ = ai32_val;
 }
 
 #ifdef USE_FLOAT_DATA_TYPE
 /** initialise the measure prog instance, to set this instance to a well defined starting condition
-    @param rrefc_processData optional reference to containing ProcDataBase_c instance (default NULL)
+    @param arc_processData optional reference to containing ProcDataBase_c instance (default NULL)
     @param ren_progType optional program type: Proc_c::Base, Proc_c::Target (default Proc_c::UndefinedProg)
-    @param rf_val optional individual measure val for this program instance (can differ from master measure value)
-    @param rc_isoName optional ISOName of partner member for this measure program
+    @param af_val optional individual measure val for this program instance (can differ from master measure value)
+    @param ac_isoName optional ISOName of partner member for this measure program
   */
 void MeasureProgBase_c::init(
-  ProcDataBase_c *const rpc_processData,
+  ProcDataBase_c *const apc_processData,
   Proc_c::progType_t ren_progType,
-  float rf_val,
-  const IsoName_c& rc_isoName)
+  float af_val,
+  const IsoName_c& ac_isoName)
 { // set the dynamic list to a well defined cleared starting condition
   #ifdef DEBUG_HEAP_USEAGE
   static bool b_doPrint = true;
@@ -466,10 +466,10 @@ void MeasureProgBase_c::init(
 
   vec_measureSubprog.clear();
   // set the pointers in the baseClass ProcessElementBase
-  set(rpc_processData);
+  set(apc_processData);
   // store the parameter init vals
-  c_isoName = rc_isoName;
-  f_val = rf_val;
+  c_isoName = ac_isoName;
+  f_val = af_val;
   en_progType = ren_progType;
 
   // set the rest of element vals to defined init
@@ -481,13 +481,13 @@ void MeasureProgBase_c::init(
 }
 
 /** deliver actual last received value
-    @param rb_sendRequest choose wether a request for value update should be
+    @param ab_sendRequest choose wether a request for value update should be
         sent (default false == send no request)
     @return measure val for this prog (can differ from master measure val)
   */
-float MeasureProgBase_c::valFloat(bool rb_sendRequest) const
+float MeasureProgBase_c::valFloat(bool ab_sendRequest) const
 {
-  if (rb_sendRequest) {
+  if (ab_sendRequest) {
     // prepare general command in process pkg
     getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */,
                                                                 GeneralCommand_c::exactValue,
@@ -499,13 +499,13 @@ float MeasureProgBase_c::valFloat(bool rb_sendRequest) const
 }
 
 /** deliver integ val
-    @param rb_sendRequest choose wether a request for value update should be
+    @param ab_sendRequest choose wether a request for value update should be
         sent (default false == send no request)
     @return integral val for this measure prog
   */
-float MeasureProgBase_c::integFloat(bool rb_sendRequest) const
+float MeasureProgBase_c::integFloat(bool ab_sendRequest) const
 {
-  if (rb_sendRequest) {
+  if (ab_sendRequest) {
     // prepare general command in process pkg
     getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */,
                                                                 GeneralCommand_c::integValue,
@@ -518,13 +518,13 @@ float MeasureProgBase_c::integFloat(bool rb_sendRequest) const
 
 
 /** deliver min val
-    @param rb_sendRequest choose wether a request for value update should be
+    @param ab_sendRequest choose wether a request for value update should be
         sent (default false == send no request)
     @return MIN val for this measure prog
   */
-float MeasureProgBase_c::minFloat(bool rb_sendRequest) const
+float MeasureProgBase_c::minFloat(bool ab_sendRequest) const
 {
-  if (rb_sendRequest) {
+  if (ab_sendRequest) {
     // prepare general command in process pkg
     getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */,
                                                                 GeneralCommand_c::minValue,
@@ -537,13 +537,13 @@ float MeasureProgBase_c::minFloat(bool rb_sendRequest) const
 
 
 /** deliver max val
-    @param rb_sendRequest choose wether a request for value update should be
+    @param ab_sendRequest choose wether a request for value update should be
         sent (default false == send no request)
     @return MAX val for this measure prog
   */
-float MeasureProgBase_c::maxFloat(bool rb_sendRequest) const
+float MeasureProgBase_c::maxFloat(bool ab_sendRequest) const
 {
-  if (rb_sendRequest) {
+  if (ab_sendRequest) {
     // prepare general command in process pkg
     getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */,
                                                                 GeneralCommand_c::maxValue,
@@ -556,9 +556,9 @@ float MeasureProgBase_c::maxFloat(bool rb_sendRequest) const
 
 
 /** init the element vars
-    @param rf_val initial measure val
+    @param af_val initial measure val
   */
-void MeasureProgBase_c::initVal(float rf_val){
+void MeasureProgBase_c::initVal(float af_val){
   #ifdef DEBUG_HEAP_USEAGE
   if ( ( sui16_MeasureProgBaseTotal != sui16_printedMeasureProgBaseTotal                     )
   || ( sui16_deconstructMeasureProgBaseTotal != sui16_printedDeconstructMeasureProgBaseTotal ) )
@@ -574,7 +574,7 @@ void MeasureProgBase_c::initVal(float rf_val){
       << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
   }
   #endif
-  f_val = f_min = f_max = f_integ = rf_val;
+  f_val = f_min = f_max = f_integ = af_val;
 }
 #endif
 
@@ -837,16 +837,16 @@ float MeasureProgBase_c::valModFloat(GeneralCommand_c::ValueGroup_t en_valueGrou
 
 
 /** reset according to the process msg command the appropriate value type
-    @param rb_comm command from Scheduler_c reset message
+    @param ab_comm command from Scheduler_c reset message
   */
-void MeasureProgBase_c::reset(uint8_t rb_comm){
-  if ((rb_comm & 0x8) > 0)
+void MeasureProgBase_c::reset(uint8_t ab_comm){
+  if ((ab_comm & 0x8) > 0)
   {
-    if ((rb_comm & 0xF0) > 0)
+    if ((ab_comm & 0xF0) > 0)
     {
       for (uint8_t b_mask = 1; b_mask <= 4; b_mask *= 2)
       {
-        if (( (rb_comm & 0xF0) & (b_mask << 4) ) > 0)
+        if (( (ab_comm & 0xF0) & (b_mask << 4) ) > 0)
         { // bit of test b_mask set in reset cmd
           switch (b_mask)
           {
@@ -917,15 +917,15 @@ void MeasureProgBase_c::processIncrementMsg(Proc_c::doSend_t ren_doSend){
 
     possible errors:
         * Err_c:range MOD is not in allowed range [0..4]
-    @param rb_mod MOD of wanted subtype
-    @param ri32_val reset measure value to this value (ISO remote only)
+    @param ab_mod MOD of wanted subtype
+    @param ai32_val reset measure value to this value (ISO remote only)
   */
-void MeasureProgBase_c::resetValMod(GeneralCommand_c::ValueGroup_t en_valueGroup, int32_t ri32_val){
+void MeasureProgBase_c::resetValMod(GeneralCommand_c::ValueGroup_t en_valueGroup, int32_t ai32_val){
     switch (en_valueGroup)
     {
       case GeneralCommand_c::exactValue:
         // set val with function, to calc delta and accel
-        resetVal(ri32_val);
+        resetVal(ai32_val);
         break;
       case GeneralCommand_c::minValue:
         resetMin();

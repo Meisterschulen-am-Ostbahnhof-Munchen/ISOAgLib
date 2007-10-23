@@ -53,25 +53,25 @@ public:
 	/**
 		constructor which initialises all data and can call init to read
 		config data from EEPROM (if eeprom adress is given)
-		@param rpc_lbs pointer to LBS_Lib::nLBS::iLBS (optional)
-		@param rpc_system pointer to LBS_Lib::nHwSystem::iSystem (optional)
-		@param rui16_eepromAdr adress in EEPROM where config data is stored
+		@param apc_lbs pointer to LBS_Lib::nLBS::iLBS (optional)
+		@param apc_system pointer to LBS_Lib::nHwSystem::iSystem (optional)
+		@param aui16_eepromAdr adress in EEPROM where config data is stored
 	*/
-	DefaultRecordConfig_c( uint16_t rui16_eepromAdr = 0);
+	DefaultRecordConfig_c( uint16_t aui16_eepromAdr = 0);
 	/**
 		copy Constructor
-		@param rrefc_src reference to source instance
+		@param arc_src reference to source instance
 	*/
-	DefaultRecordConfig_c(const DefaultRecordConfig_c& rrefc_src);
+	DefaultRecordConfig_c(const DefaultRecordConfig_c& arc_src);
 	/**
 		destructor
 	*/
 	~DefaultRecordConfig_c();
 	/**
 		initialise with reading the config data from EEPROM in flags
-		@param rui16_eepromAdr adress in EEPROM where config data begins
+		@param aui16_eepromAdr adress in EEPROM where config data begins
 	*/
-  void init(uint16_t rui16_eepromAdr);
+  void init(uint16_t aui16_eepromAdr);
 
 	/**
 		deliver information whether accumulated data to time and distance should

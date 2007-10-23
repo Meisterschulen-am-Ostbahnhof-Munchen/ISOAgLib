@@ -96,7 +96,7 @@ namespace __IsoAgLib {
 /**
   process a message -> the specialized/derived version of this virtual
   function is called during processing of received CAN telegrams in CanIo_c::processMsg
-  @param rpc_box pointer to the FilterBox_c instances which received the telegram (i.e. which has the telegram in its puffer)
+  @param apc_box pointer to the FilterBox_c instances which received the telegram (i.e. which has the telegram in its puffer)
   @see __IsoAgLib::CanIo_c::processMsg
   @return true -> message was processed; else the received CAN message will be served to other matching CanCustomer_c
 */

@@ -93,7 +93,7 @@ int16_t initCan ( uint8_t bBusNumber,uint16_t wGlobMask,uint32_t dwGlobMask,uint
 
 #ifndef A2_SQUEEZE_CODE
 int16_t changeGlobalMask( uint8_t bBusNumber,uint16_t wGlobMask,uint32_t dwGlobMask,uint32_t dwGlobMaskLastmsg );
-int16_t lockCanObj( uint8_t rui8_busNr, uint8_t rui8_msgobjNr, bool rb_doLock );
+int16_t lockCanObj( uint8_t aui8_busNr, uint8_t aui8_msgobjNr, bool ab_doLock );
 #endif
 int16_t closeCan ( uint8_t bBusNumber );
 int16_t getCanBusStatus(uint8_t bBusNumber, tCanBusStatus* ptStatus);
@@ -101,7 +101,7 @@ int16_t getCanObjStatus(byte bBusNumber,byte bMsgObj,tCanObjStatus *ptStatus);
 int16_t clearCanObjBuf(uint8_t bBusNumber, uint8_t bMsgObj);
 int16_t configCanObj ( uint8_t bBusNumber, uint8_t bMsgObj, tCanObjConfig * ptConfig );
 int16_t closeCanObj ( uint8_t bBusNumber,uint8_t bMsgObj );
-bool waitUntilCanReceiveOrTimeout( uint16_t rui16_timeoutInterval );
+bool waitUntilCanReceiveOrTimeout( uint16_t aui16_timeoutInterval );
 int16_t sendCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tSend * ptSend );
 int16_t checkMsg();
 int16_t getCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tReceive * ptReceive );

@@ -102,8 +102,8 @@ namespace __IsoAgLib {
 bool CanPkgExt_c::b_runFlag2String = true;
 
 /** default constructor, which has nothing to do */
-CanPkgExt_c::CanPkgExt_c( int ri_singletonVecKey )
-  : CanPkg_c( ri_singletonVecKey )
+CanPkgExt_c::CanPkgExt_c( int ai_singletonVecKey )
+  : CanPkg_c( ai_singletonVecKey )
 {
   addrResolveResSA.p_isoName = new IsoName_c(IsoName_c::IsoNameUnspecified());
   addrResolveResDA.p_isoName = new IsoName_c(IsoName_c::IsoNameUnspecified());
@@ -129,12 +129,12 @@ CanPkgExt_c::~CanPkgExt_c()
   @see __IsoAgLib::FilterBox_c::operator>>
   @see CanPkgExt_c::operator=
   @see CanPkgExt_c::getData
-  @param rrefc_right reference to the source CanPkg_c on the right
+  @param arc_right reference to the source CanPkg_c on the right
   @return reference to the source CanPkg_c to enable assign chains like
       "pkg1 = pkg2 = pkg3 = pkg4;"
-const CanPkg_c& CanPkgExt_c::operator=(const CanPkg_c& rrefc_right)
+const CanPkg_c& CanPkgExt_c::operator=(const CanPkg_c& arc_right)
 {
-  return CanPkg_c::operator =( rrefc_right );
+  return CanPkg_c::operator =( arc_right );
 }
 */
 
@@ -166,13 +166,13 @@ void CanPkgExt_c::flags2String()
 
 /**
   put data into given reference to BIOS related data structure with data, len
-  @param reft_ident     reference where the ident is placed for send
-  @param refui8_identType reference to the ident type val: 0==std, 1==ext
-  @param refb_dlcTarget reference to the DLC field of the target
+  @param rt_ident     reference where the ident is placed for send
+  @param rui8_identType reference to the ident type val: 0==std, 1==ext
+  @param rb_dlcTarget reference to the DLC field of the target
   @param pb_dataTarget pointer to the data string of the target
 */
-void CanPkgExt_c::getData(uint32_t& reft_ident, uint8_t& refui8_identType,
-                     uint8_t& refb_dlcTarget, uint8_t* pb_dataTarget)
+void CanPkgExt_c::getData(uint32_t& rt_ident, uint8_t& rui8_identType,
+                     uint8_t& rb_dlcTarget, uint8_t* pb_dataTarget)
 {
   if ( ! b_runFlag2String )
   { // data is already setup -> don't call flags2String - but reset it again to true for the next message
@@ -182,7 +182,7 @@ void CanPkgExt_c::getData(uint32_t& reft_ident, uint8_t& refui8_identType,
   {
     flags2String();
   }
-  CanPkg_c::getData(reft_ident, refui8_identType, refb_dlcTarget, pb_dataTarget);
+  CanPkg_c::getData(rt_ident, rui8_identType, rb_dlcTarget, pb_dataTarget);
 }
 
 
@@ -191,11 +191,11 @@ void CanPkgExt_c::getData(uint32_t& reft_ident, uint8_t& refui8_identType,
   @todo optimize DP/PF setting in one operation
   @return parameter group number
 */
-void CanPkgExt_c::setIsoPgn(uint32_t rui32_val)
+void CanPkgExt_c::setIsoPgn(uint32_t aui32_val)
 {
-  const uint8_t cui8_dp = static_cast<uint8_t>((rui32_val >> 16) & 0x03); // now extended to 2 bits (added R/EDP)
-  const uint8_t cui8_pf = static_cast<uint8_t>(rui32_val >> 8);
-  const uint8_t cui8_ge = static_cast<uint8_t>(rui32_val);
+  const uint8_t cui8_dp = static_cast<uint8_t>((aui32_val >> 16) & 0x03); // now extended to 2 bits (added R/EDP)
+  const uint8_t cui8_pf = static_cast<uint8_t>(aui32_val >> 8);
+  const uint8_t cui8_ge = static_cast<uint8_t>(aui32_val);
 
   /// set PF
   setIsoPf (cui8_pf);
@@ -565,9 +565,9 @@ bool CanPkgExt_c::resolveSendingInformation()
 /** set the value of the ISO11783 ident field PS
     @return PDU Specific
   */
-void CanPkgExt_c::setIsoPs(uint8_t rui8_val)
+void CanPkgExt_c::setIsoPs(uint8_t aui8_val)
 {
-  *addrResolveResDA.pui8_address = rui8_val;
+  *addrResolveResDA.pui8_address = aui8_val;
   addrResolveResDA.p_isoName->setUnspecified();
   addrResolveResDA.pc_monitorItem = NULL;
 }
@@ -577,9 +577,9 @@ void CanPkgExt_c::setIsoPs(uint8_t rui8_val)
     set the value of the ISO11783 ident field SA
     @return source adress
   */
-void CanPkgExt_c::setIsoSa(uint8_t rui8_val)
+void CanPkgExt_c::setIsoSa(uint8_t aui8_val)
 {
-  *addrResolveResSA.pui8_address = rui8_val;
+  *addrResolveResSA.pui8_address = aui8_val;
   addrResolveResSA.p_isoName->setUnspecified();
   addrResolveResSA.pc_monitorItem = NULL;
 }

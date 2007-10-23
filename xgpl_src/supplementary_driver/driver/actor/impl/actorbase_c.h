@@ -106,21 +106,21 @@ class ActorBase_c {
 public:
   /**
     Basic constructor for an input channel object (only internal accessed)
-    @param rui8_channelNr hardware channel of this input object
+    @param aui8_channelNr hardware channel of this input object
   */
-  ActorBase_c(uint8_t rui8_channelNr);
+  ActorBase_c(uint8_t aui8_channelNr);
   /**
     Init the ActorBase object to a (new) channel
-    @param rui8_channelNr hardware channel of this input object
+    @param aui8_channelNr hardware channel of this input object
   */
-  void init(uint8_t rui8_channelNr) { ui8_channelNr = rui8_channelNr;};
+  void init(uint8_t aui8_channelNr) { ui8_channelNr = aui8_channelNr;};
   /** basic destructor of sensor input object with no function at the moment (only internal accessed) */
   virtual ~ActorBase_c();
   /**
     set the output PWM value
-    @param rui16_val value to set in ouput channel
+    @param aui16_val value to set in ouput channel
   */
-  virtual void set(uint16_t rui16_val);
+  virtual void set(uint16_t aui16_val);
   /**
     deliver the channel number of the output object
     @return number to use for BIOS access to this channel

@@ -156,28 +156,28 @@ private:
 public:
   /**
     default constructor which can set needed pointers to containing objects
-    @param rpc_processData pointer to containing ProcessData instance
+    @param apc_processData pointer to containing ProcessData instance
   */
   SetpointLocal_c(
-    ProcDataBase_c *const rpc_processData = NULL ) : SetpointBase_c( rpc_processData )
-    {init( rpc_processData );};
+    ProcDataBase_c *const apc_processData = NULL ) : SetpointBase_c( apc_processData )
+    {init( apc_processData );};
 
   /**
     initialise this SetpointLocal_c to a well defined starting condition
-    @param rpc_processData pointer to containing ProcessData instance
+    @param apc_processData pointer to containing ProcessData instance
   */
-  void init( ProcDataBase_c *const rpc_processData );
+  void init( ProcDataBase_c *const apc_processData );
   /**
     assginment from another object
-    @param rrefc_src source SetpointLocal_c instance
+    @param arc_src source SetpointLocal_c instance
     @return reference to source for cmd like "setp1 = setp2 = setp3;"
   */
-  const SetpointLocal_c& operator=( const SetpointLocal_c& rrefc_src );
+  const SetpointLocal_c& operator=( const SetpointLocal_c& arc_src );
   /**
     copy constructor for SetpointLocal
-    @param rrefc_src source SetpointLocal_c instance
+    @param arc_src source SetpointLocal_c instance
   */
-   SetpointLocal_c( const SetpointLocal_c& rrefc_src );
+   SetpointLocal_c( const SetpointLocal_c& arc_src );
   /** default destructor which has nothing to do */
   ~SetpointLocal_c();
 
@@ -188,11 +188,11 @@ public:
   int32_t setpointMasterVal() const {return pc_master->exact();};
   /**
     set the setpoint value
-    @param ri32_val new setpoint value
+    @param ai32_val new setpoint value
   */
-  void setSetpointMasterVal( int32_t ri32_val )
+  void setSetpointMasterVal( int32_t ai32_val )
     { if (!existMaster()) setStaticMaster();
-      setMasterMeasurementVal( ri32_val );
+      setMasterMeasurementVal( ai32_val );
     };
   #ifdef USE_FLOAT_DATA_TYPE
   /**
@@ -202,22 +202,22 @@ public:
   float setpointMasterValFloat() const {return pc_master->exactFloat();};
   /**
     set the setpoint value as float value
-    @param rf_val new setpoint value
+    @param af_val new setpoint value
   */
-  void setSetpointMasterVal( float rf_val )
+  void setSetpointMasterVal( float af_val )
     { if (!existMaster()) setStaticMaster();
-      setMasterMeasurementVal( rf_val );
+      setMasterMeasurementVal( af_val );
     };
   #endif
 
   /**
     set if master setpoint should be preserved even if caller
     isoName is no more active (default false )
-    @param rb_static choose if master setpoint should be preserved
+    @param ab_static choose if master setpoint should be preserved
           if caller isn't acitve
   */
-  void setStaticMaster( bool rb_static = true )
-    {b_staticMaster = rb_static;};
+  void setStaticMaster( bool ab_static = true )
+    {b_staticMaster = ab_static;};
   /**
     check if actual a master setpoint item is defined
     @see master
@@ -264,24 +264,24 @@ public:
         * Err_c::elNonexistent no master setpoint found
     @see existUnhandledMaster
     @see unhandledMaster
-    @param rb_accept true ( default ) -> new setpoint of master is accepted -> send positive notify
+    @param ab_accept true ( default ) -> new setpoint of master is accepted -> send positive notify
   */
-  void acceptNewMaster( bool rb_accept = true );
+  void acceptNewMaster( bool ab_accept = true );
   /**
     set the master setpoint manually
     (in some cases remote systems request informations
      through process data setpoints )
-    @param ri32_val wanted setpoint value
+    @param ai32_val wanted setpoint value
   */
-  void setMasterMeasurementVal( int32_t ri32_val );
+  void setMasterMeasurementVal( int32_t ai32_val );
 #ifdef USE_FLOAT_DATA_TYPE
   /**
     set the master setpoint manually
     (in some cases remote systems request informations
      through process data setpoints )
-    @param rf_val wanted setpoint value
+    @param af_val wanted setpoint value
   */
-  void setMasterMeasurementVal( float rf_val );
+  void setMasterMeasurementVal( float af_val );
 #endif
   /**
     deliver the count of unhandled setpoints
@@ -289,16 +289,16 @@ public:
   */
   uint8_t unhandledCnt()const;
   /**
-    deliver the rui8_ind of the unhandled setpoints
-    @param rui8_ind position of the wanted setpoint entry in list of unhandled setpoints
-      (first entry: rui8_ind == 0!!)
+    deliver the aui8_ind of the unhandled setpoints
+    @param aui8_ind position of the wanted setpoint entry in list of unhandled setpoints
+      (first entry: aui8_ind == 0!!)
 
     possible errors:
-        * Err_c::range there are less than rui8_ind unhandled setpoints found
+        * Err_c::range there are less than aui8_ind unhandled setpoints found
     @see unhandledCnt
     @return wanted unhandled setpoint
   */
-  SetpointRegister_c& unhandledInd( uint8_t rui8_ind );
+  SetpointRegister_c& unhandledInd( uint8_t aui8_ind );
   /**
     deliver the first unhandled entry
 
@@ -322,9 +322,9 @@ public:
   /**
     set the allowed percentual deviation between actual measurement and
     existing master setpoint
-    @param rb_percent allowed percantual deviation
+    @param ab_percent allowed percantual deviation
   */
-  void setAllowedDeltaPercent( uint8_t rb_percent){b_allowedDeltaPercent = rb_percent;};
+  void setAllowedDeltaPercent( uint8_t ab_percent){b_allowedDeltaPercent = ab_percent;};
   /**
     get the allowed percentual deviation between actual measurement and
     existing master setpoint
@@ -334,13 +334,13 @@ public:
   /**
     check if the given measuremet value is correct for the actual
     master setpoint;
-    @param ri32_val measured value
-    @param rb_sendIfError true -> if actual value exceeds setpoint limits
+    @param ai32_val measured value
+    @param ab_sendIfError true -> if actual value exceeds setpoint limits
            the actual value is sent as notification (default true )
     @return 0 -> correct; (n<0) -> measurement is delta n to low;
             (n>0) -> measurement is delta n to high
   */
-  int32_t checkMeasurement( int32_t ri32_val, bool rb_sendIfError = true );
+  int32_t checkMeasurement( int32_t ai32_val, bool ab_sendIfError = true );
   /**
     perform periodic actions
     (here: check if measure val is in limits; delete old handled not master setpoints and
@@ -353,26 +353,26 @@ public:
   /**
      send a sub-setpoint (selected by MOD) to a specified target (selected by GPT)
      @param GeneralCommand_c::ValueGroup_t min/max/exact/default code of the value type to send
-     @param rc_targetISOName ISOName of target
+     @param ac_targetISOName ISOName of target
      @param en_valueGroup: min/max/exact/default
      @param en_command
      @return true -> successful sent
   */
-  bool sendSetpointMod(const IsoName_c& rc_targetISOName,
+  bool sendSetpointMod(const IsoName_c& ac_targetISOName,
                        GeneralCommand_c::ValueGroup_t en_valueGroup = GeneralCommand_c::noValue,
                        GeneralCommand_c::CommandType_t en_command = GeneralCommand_c::noCommand) const;
 
   /**
     send a exact-setpoint to a specified target (selected by GPT)
-    @param rc_targetISOName ISOName of target
+    @param ac_targetISOName ISOName of target
     @return true -> successful sent
   */
-  bool sendMasterSetpointVal( const IsoName_c& rc_targetISOName) const
-   { return sendSetpointMod(rc_targetISOName, GeneralCommand_c::exactValue, GeneralCommand_c::setValue );};
+  bool sendMasterSetpointVal( const IsoName_c& ac_targetISOName) const
+   { return sendSetpointMod(ac_targetISOName, GeneralCommand_c::exactValue, GeneralCommand_c::setValue );};
 
 private: // Private methods
   /** base function for assignment of element vars for copy constructor and operator= */
-  void assignFromSource( const SetpointLocal_c& rrefc_src );
+  void assignFromSource( const SetpointLocal_c& arc_src );
   /**
     process a setpoint request for local process data
   */

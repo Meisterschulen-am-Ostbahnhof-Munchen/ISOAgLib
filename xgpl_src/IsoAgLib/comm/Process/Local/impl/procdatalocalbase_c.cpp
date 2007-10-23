@@ -135,10 +135,10 @@ namespace __IsoAgLib {
   @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDdi_s which contains DDI, element, isSetpoint and ValueGroup
                        (array is terminated by ElementDdi_s.ui16_element == 0xFFFF)
 
-  @param rc_isoName optional ISOName code of Process-Data
-  @param rc_ownerISOName optional ISOName of the owner
-  @param rpc_isoName pointer to updated ISOName variable of owner
-  @param rb_cumulativeValue
+  @param ac_isoName optional ISOName code of Process-Data
+  @param ac_ownerISOName optional ISOName of the owner
+  @param apc_isoName pointer to updated ISOName variable of owner
+  @param ab_cumulativeValue
           -# for process data like distance, time, area
               the value of the measure prog data sets is updated
               on master value update dependent on the value increment
@@ -154,26 +154,26 @@ namespace __IsoAgLib {
                 -> if this data is saved in EEPROM, the stored value is loaded
                   as initial master value, and is initially propagated to all
                   measure prog data sets
-  @param rui16_eepromAdr optional adress where value is stored in EEPROM
-  @param rpc_processDataChangeHandler optional pointer to handler class of application
-  @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
+  @param aui16_eepromAdr optional adress where value is stored in EEPROM
+  @param apc_processDataChangeHandler optional pointer to handler class of application
+  @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
-void ProcDataLocalBase_c::init(const IsoAgLib::ElementDdi_s* ps_elementDDI, uint16_t rui16_element,
-                               const IsoName_c& rc_isoName, const IsoName_c& rc_ownerISOName,
-                               const IsoName_c *rpc_isoName, bool rb_cumulativeValue,
+void ProcDataLocalBase_c::init(const IsoAgLib::ElementDdi_s* ps_elementDDI, uint16_t aui16_element,
+                               const IsoName_c& ac_isoName, const IsoName_c& ac_ownerISOName,
+                               const IsoName_c *apc_isoName, bool ab_cumulativeValue,
 #ifdef USE_EEPROM_IO
-                               uint16_t rui16_eepromAdr,
+                               uint16_t aui16_eepromAdr,
 #endif // USE_EEPROM_IO
-                               IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler,
-                               int ri_singletonVecKey
+                               IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler,
+                               int ai_singletonVecKey
                                )
 {
-  ProcDataBase_c::init( ps_elementDDI, rui16_element, rc_isoName, rc_ownerISOName, rpc_isoName,
-                        rpc_processDataChangeHandler, ri_singletonVecKey);
+  ProcDataBase_c::init( ps_elementDDI, aui16_element, ac_isoName, ac_ownerISOName, apc_isoName,
+                        apc_processDataChangeHandler, ai_singletonVecKey);
 
-  b_cumulativeValue = rb_cumulativeValue;
+  b_cumulativeValue = ab_cumulativeValue;
 #ifdef USE_EEPROM_IO
-  setEepromAdr(rui16_eepromAdr);
+  setEepromAdr(aui16_eepromAdr);
   i32_lastEepromStore = 0;
 #endif // USE_EEPROM_IO
   i32_masterVal = 0;
@@ -182,31 +182,31 @@ void ProcDataLocalBase_c::init(const IsoAgLib::ElementDdi_s* ps_elementDDI, uint
 }
 
 /** copy constructor */
-ProcDataLocalBase_c::ProcDataLocalBase_c( const ProcDataLocalBase_c& rrefc_src )
-  : ProcDataBase_c( rrefc_src )
+ProcDataLocalBase_c::ProcDataLocalBase_c( const ProcDataLocalBase_c& arc_src )
+  : ProcDataBase_c( arc_src )
 {
-  assignFromSource( rrefc_src );
+  assignFromSource( arc_src );
 
   // now register the pointer to this instance in Process_c
   getProcessInstance4Comm().registerLocalProcessData( this );
 }
 /** assignment operator */
-const ProcDataLocalBase_c& ProcDataLocalBase_c::operator=( const ProcDataLocalBase_c& rrefc_src )
+const ProcDataLocalBase_c& ProcDataLocalBase_c::operator=( const ProcDataLocalBase_c& arc_src )
 {
-  ProcDataBase_c::operator=( rrefc_src );
-  assignFromSource( rrefc_src );
+  ProcDataBase_c::operator=( arc_src );
+  assignFromSource( arc_src );
   return *this;
 }
 /** base function for assignment of element vars for copy constructor and operator= */
-void ProcDataLocalBase_c::assignFromSource( const ProcDataLocalBase_c& rrefc_src )
+void ProcDataLocalBase_c::assignFromSource( const ProcDataLocalBase_c& arc_src )
 {
-  i32_masterVal = rrefc_src.i32_masterVal;
+  i32_masterVal = arc_src.i32_masterVal;
 #ifdef USE_EEPROM_IO
-  i32_eepromVal = rrefc_src.i32_eepromVal;
-  i32_lastEepromStore = rrefc_src.i32_lastEepromStore;
-  ui16_eepromAdr = rrefc_src.ui16_eepromAdr;
+  i32_eepromVal = arc_src.i32_eepromVal;
+  i32_lastEepromStore = arc_src.i32_lastEepromStore;
+  ui16_eepromAdr = arc_src.ui16_eepromAdr;
 #endif // USE_EEPROM_IO
-  b_cumulativeValue = rrefc_src.b_cumulativeValue;
+  b_cumulativeValue = arc_src.b_cumulativeValue;
 }
 
 
@@ -221,18 +221,18 @@ ProcDataLocalBase_c::~ProcDataLocalBase_c(){
 
   possible errors:
       * dependent error in EepromIo_c on problems during read
-  @param rui16_eepromAdr new EEPROM adress
+  @param aui16_eepromAdr new EEPROM adress
 */
-void ProcDataLocalBase_c::setEepromAdr(uint16_t rui16_eepromAdr)
+void ProcDataLocalBase_c::setEepromAdr(uint16_t aui16_eepromAdr)
 {
-  ui16_eepromAdr = rui16_eepromAdr;
+  ui16_eepromAdr = aui16_eepromAdr;
   #ifdef USE_FLOAT_DATA_TYPE
   if (valType() == float_val)
   {
     if (ui16_eepromAdr < 0xFFFF)
     { // valid adress -> read in value
       // set read position
-      getEepromInstance().setg(rui16_eepromAdr);
+      getEepromInstance().setg(aui16_eepromAdr);
       // read data from eeprom
       float f_temp;
       getEepromInstance() >> f_temp;
@@ -256,7 +256,7 @@ void ProcDataLocalBase_c::setEepromAdr(uint16_t rui16_eepromAdr)
     if (ui16_eepromAdr < 0xFFFF)
     { // valid adress -> read in value
       // set read position
-      getEepromInstance().setg(rui16_eepromAdr);
+      getEepromInstance().setg(aui16_eepromAdr);
       // read data from eeprom
       int32_t i32_temp;
       getEepromInstance() >> i32_temp;
@@ -279,57 +279,57 @@ void ProcDataLocalBase_c::setEepromAdr(uint16_t rui16_eepromAdr)
 
 /**
   set the masterMeasurementVal from main application independent from any measure progs
-  @param ri32_val new measure value
+  @param ai32_val new measure value
 */
-void ProcDataLocalBase_c::setMasterMeasurementVal(int32_t ri32_val){
+void ProcDataLocalBase_c::setMasterMeasurementVal(int32_t ai32_val){
   // set the local values
   setValType(i32_val);
 #ifdef USE_EEPROM_IO
-  if (b_cumulativeValue) i32_eepromVal += (ri32_val - i32_masterVal);
-  else i32_eepromVal = ri32_val;
+  if (b_cumulativeValue) i32_eepromVal += (ai32_val - i32_masterVal);
+  else i32_eepromVal = ai32_val;
 #endif // USE_EEPROM_IO
-  i32_masterVal = ri32_val;
+  i32_masterVal = ai32_val;
 }
 
 /**
   increment the value -> update the local and the measuring programs values
-  @param ri32_val size of increment of master value
+  @param ai32_val size of increment of master value
 */
-void ProcDataLocalBase_c::incrMasterMeasurementVal(int32_t ri32_val){
+void ProcDataLocalBase_c::incrMasterMeasurementVal(int32_t ai32_val){
   // set the local values
   setValType(i32_val);
 #ifdef USE_EEPROM_IO
-  i32_eepromVal += ri32_val;
+  i32_eepromVal += ai32_val;
 #endif // USE_EEPROM_IO
-  i32_masterVal += ri32_val;
+  i32_masterVal += ai32_val;
 }
 
 #ifdef USE_FLOAT_DATA_TYPE
 /**
   set the masterMeasurementVal from main application independent from any measure progs
-  @param rf_val new measure value
+  @param af_val new measure value
 */
-void ProcDataLocalBase_c::setMasterMeasurementVal(float rf_val){
+void ProcDataLocalBase_c::setMasterMeasurementVal(float af_val){
   // set the local values
   setValType(float_val);
   #ifdef USE_EEPROM_IO
-  if (b_cumulativeValue) f_eepromVal += (rf_val - f_masterVal);
-  else f_eepromVal = rf_val;
+  if (b_cumulativeValue) f_eepromVal += (af_val - f_masterVal);
+  else f_eepromVal = af_val;
   #endif // USE_EEPROM_IO
-  f_masterVal = rf_val;
+  f_masterVal = af_val;
 }
 
 /**
   increment the value -> update the local and the measuring programs values
-  @param ri32_val size of increment of master value
+  @param ai32_val size of increment of master value
 */
-void ProcDataLocalBase_c::incrMasterMeasurementVal(float rf_val){
+void ProcDataLocalBase_c::incrMasterMeasurementVal(float af_val){
   // set the local values
   setValType(float_val);
   #ifdef USE_EEPROM_IO
-  f_eepromVal += rf_val;
+  f_eepromVal += af_val;
   #endif // USE_EEPROM_IO
-  f_masterVal += rf_val;
+  f_masterVal += af_val;
 }
 #endif // USE_FLOAT_DATA_TYPE
 
@@ -367,10 +367,10 @@ bool ProcDataLocalBase_c::timeEvent( uint16_t* /* pui16_nextTimePeriod */){
 
 /**
   send a main-information (selected by MOD) to a specified target (selected by ISOName)
-  @param rc_targetISOName ISOName of target
+  @param ac_targetISOName ISOName of target
   @return true -> successful sent
 */
-bool ProcDataLocalBase_c::sendMasterMeasurementVal( const IsoName_c& rc_targetISOName) const {
+bool ProcDataLocalBase_c::sendMasterMeasurementVal( const IsoName_c& ac_targetISOName) const {
 
     // prepare general command in process pkg
     getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false, /* isRequest */
@@ -378,15 +378,15 @@ bool ProcDataLocalBase_c::sendMasterMeasurementVal( const IsoName_c& rc_targetIS
                                                                 GeneralCommand_c::setValue);
 
     #if defined(USE_EEPROM_IO) && defined(USE_FLOAT_DATA_TYPE)
-    if (valType() == i32_val) return sendValISOName(rc_targetISOName, eepromVal());
-    else return sendValISOName(rc_targetISOName, eepromValFloat());
+    if (valType() == i32_val) return sendValISOName(ac_targetISOName, eepromVal());
+    else return sendValISOName(ac_targetISOName, eepromValFloat());
     #elif !defined(USE_EEPROM_IO) && defined(USE_FLOAT_DATA_TYPE)
-    if (valType() == i32_val) return sendValISOName(rc_targetISOName, masterMeasurementVal());
-    else return sendValISOName(rc_targetISOName, masterValFloat());
+    if (valType() == i32_val) return sendValISOName(ac_targetISOName, masterMeasurementVal());
+    else return sendValISOName(ac_targetISOName, masterValFloat());
     #elif defined(USE_EEPROM_IO) && !defined(USE_FLOAT_DATA_TYPE)
-    return sendValISOName(rc_targetISOName, eepromVal());
+    return sendValISOName(ac_targetISOName, eepromVal());
     #elif !defined(USE_EEPROM_IO) && !defined(USE_FLOAT_DATA_TYPE)
-    return sendValISOName(rc_targetISOName, masterMeasurementVal());
+    return sendValISOName(ac_targetISOName, masterMeasurementVal());
     #endif
 }
 
@@ -469,27 +469,27 @@ void ProcDataLocalBase_c::resetEeprom( void ){
 }
 #endif // USE_EEPROM_IO
 
-bool ProcDataLocalBase_c::sendValISOName(const IsoName_c& rc_varISOName, int32_t ri32_val) const
+bool ProcDataLocalBase_c::sendValISOName(const IsoName_c& ac_varISOName, int32_t ai32_val) const
 {
-  setLocalSendFlags (rc_varISOName);
+  setLocalSendFlags (ac_varISOName);
 
-  return ProcDataBase_c::sendValISOName (rc_varISOName, ri32_val);
+  return ProcDataBase_c::sendValISOName (ac_varISOName, ai32_val);
 }
 
 #ifdef USE_FLOAT_DATA_TYPE
-bool ProcDataLocalBase_c::sendValISOName(const IsoName_c& rc_varISOName, float rf_val) const
+bool ProcDataLocalBase_c::sendValISOName(const IsoName_c& ac_varISOName, float af_val) const
 {
-  setLocalSendFlags (rc_varISOName);
+  setLocalSendFlags (ac_varISOName);
 
-  return ProcDataBase_c::sendValISOName (rc_varISOName, rf_val);
+  return ProcDataBase_c::sendValISOName (ac_varISOName, af_val);
 }
 #endif
 
-void ProcDataLocalBase_c::setLocalSendFlags(const IsoName_c& rc_varISOName) const
+void ProcDataLocalBase_c::setLocalSendFlags(const IsoName_c& ac_varISOName) const
 {
   ProcessPkg_c& c_data = getProcessPkg();
 
-  c_data.setISONameForDA(rc_varISOName);
+  c_data.setISONameForDA(ac_varISOName);
   c_data.setISONameForSA(ownerISOName());
 }
 

@@ -84,8 +84,8 @@ int16_t  setDigout(uint8_t bOutputNo, uint16_t wPWMValue);          /* set pwm v
     @param channel number from interval [0..maxNo]
     @return according channel number for __HAL call
   */
-  inline uint8_t getPwmCurrentCheckNr(uint8_t rb_channel)
-    {return (42 - (2 * rb_channel));};
+  inline uint8_t getPwmCurrentCheckNr(uint8_t ab_channel)
+    {return (42 - (2 * ab_channel));};
 
   /**
     deliver channel number for checking/requesting of
@@ -95,11 +95,11 @@ int16_t  setDigout(uint8_t bOutputNo, uint16_t wPWMValue);          /* set pwm v
     @param channel number from interval [0..maxNo]
     @return according channel number for __HAL call
   */
-  inline uint8_t getPwmoutAdcCheckNr(uint8_t rb_channel)
-    {if (rb_channel < 4) return (43 - (rb_channel * 2));
-    if (rb_channel == 4) return 44;
-    if (rb_channel < 8) return (47 - rb_channel);
-    if (85 - rb_channel) return (85 - rb_channel);
+  inline uint8_t getPwmoutAdcCheckNr(uint8_t ab_channel)
+    {if (ab_channel < 4) return (43 - (ab_channel * 2));
+    if (ab_channel == 4) return 44;
+    if (ab_channel < 8) return (47 - ab_channel);
+    if (85 - ab_channel) return (85 - ab_channel);
     return 0;
     };
 

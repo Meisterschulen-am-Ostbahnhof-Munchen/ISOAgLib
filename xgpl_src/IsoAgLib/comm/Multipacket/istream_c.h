@@ -112,24 +112,24 @@ namespace IsoAgLib {
 */
 class ReceiveStreamIdentifier_c {
 public:
-  ReceiveStreamIdentifier_c (uint32_t rui32_pgn, uint8_t rui8_da, const iIsoName_c& rrefc_daIsoName,
-                                                 uint8_t rui8_sa, const iIsoName_c& rrefc_saIsoName)
-                          : ui32_pgn (rui32_pgn)
-                          , ui8_da (rui8_da)
-                          , ui8_sa (rui8_sa)
-                          , c_daIsoName (rrefc_daIsoName)
-                          , c_saIsoName (rrefc_saIsoName) {}
+  ReceiveStreamIdentifier_c (uint32_t aui32_pgn, uint8_t aui8_da, const iIsoName_c& arc_daIsoName,
+                                                 uint8_t aui8_sa, const iIsoName_c& arc_saIsoName)
+                          : ui32_pgn (aui32_pgn)
+                          , ui8_da (aui8_da)
+                          , ui8_sa (aui8_sa)
+                          , c_daIsoName (arc_daIsoName)
+                          , c_saIsoName (arc_saIsoName) {}
 
-  ReceiveStreamIdentifier_c (const ReceiveStreamIdentifier_c& rc_rsi)
-                          : ui32_pgn (rc_rsi.ui32_pgn)
-                          , ui8_da (rc_rsi.ui8_da)
-                          , ui8_sa (rc_rsi.ui8_sa)
-                          , c_daIsoName (rc_rsi.c_daIsoName)
-                          , c_saIsoName (rc_rsi.c_saIsoName) {}
+  ReceiveStreamIdentifier_c (const ReceiveStreamIdentifier_c& ac_rsi)
+                          : ui32_pgn (ac_rsi.ui32_pgn)
+                          , ui8_da (ac_rsi.ui8_da)
+                          , ui8_sa (ac_rsi.ui8_sa)
+                          , c_daIsoName (ac_rsi.c_daIsoName)
+                          , c_saIsoName (ac_rsi.c_saIsoName) {}
 
-  bool operator == (const ReceiveStreamIdentifier_c& rc_rsi) const
+  bool operator == (const ReceiveStreamIdentifier_c& ac_rsi) const
   {
-    return (rc_rsi.ui8_sa == ui8_sa) && (rc_rsi.ui8_da == ui8_da) && (rc_rsi.ui32_pgn == ui32_pgn);
+    return (ac_rsi.ui8_sa == ui8_sa) && (ac_rsi.ui8_da == ui8_da) && (ac_rsi.ui32_pgn == ui32_pgn);
   }
 
 
@@ -142,9 +142,9 @@ public:
   /** test if the client's da/pgn match this RCI, so the incoming stream is to be handled by this client.
       the client also HAS to handle Broadcasts, so in case of (da==0xFF) he's also responsible!
     */
-  bool matchDaPgnWithMask(uint8_t rui8_da, uint32_t rui32_pgn, uint32_t rui32_pgnMask) const
+  bool matchDaPgnWithMask(uint8_t aui8_da, uint32_t aui32_pgn, uint32_t aui32_pgnMask) const
   {
-    return ((rui8_da == 0xFF) || (rui8_da == ui8_da)) && ((rui32_pgn & rui32_pgnMask) == (ui32_pgn & rui32_pgnMask));
+    return ((aui8_da == 0xFF) || (aui8_da == ui8_da)) && ((aui32_pgn & aui32_pgnMask) == (ui32_pgn & aui32_pgnMask));
   }
 
 
@@ -163,8 +163,8 @@ public:
 // A) they're only updating the cached SA/DA and
 // B) only MultiReceive is friend and can do this!
 private:
-  void setDa (uint8_t rui8_da) const { ui8_da = rui8_da; }
-  void setSa (uint8_t rui8_sa) const { ui8_sa = rui8_sa; }
+  void setDa (uint8_t aui8_da) const { ui8_da = aui8_da; }
+  void setSa (uint8_t aui8_sa) const { ui8_sa = aui8_sa; }
 
   friend class __IsoAgLib::MultiReceive_c;
   friend class __IsoAgLib::Stream_c;

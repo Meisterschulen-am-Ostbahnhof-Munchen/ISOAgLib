@@ -69,8 +69,8 @@
  * 	<ul>
  *	<li>Core class IsoAgLib::iScheduler_c for scheduling of all periodic activities
  *	<li>Method IsoAgLib::iScheduler_c::timeEvent() which can<ul>
- *		<li>Perform activities until defined rl_endTime is reached, which is important
- *			for scheduling purposes of whole system - call by IsoAgLib::iScheduler_c::timeEvent( rl_endTime )
+ *		<li>Perform activities until defined al_endTime is reached, which is important
+ *			for scheduling purposes of whole system - call by IsoAgLib::iScheduler_c::timeEvent( al_endTime )
  *		<li>Process all received CAN messages until all receive buffers are empty
  *			-> simple call, but can lead to deadlock on to high CAN load
  *		</ul>
@@ -218,22 +218,22 @@ using namespace IsoAgLib;
 class MyDiginIrqHandle : public IsoAgLib::iSensorEventHandler
 {
 	/** function to handle a DigitalI_c event from HAL
-		* @param rui8_channel channel of the input object, which received the IRQ
+		* @param aui8_channel channel of the input object, which received the IRQ
 		*        from HAL
 		*/
-	void handleDigitalEvent( uint8_t rui8_channel );
+	void handleDigitalEvent( uint8_t aui8_channel );
 	/** simple counter - just to do more than simply logging */
 	int16_t i16_dummyCounter;
 };
 
 /** function to handle a DigitalI_c event from HAL
-	* @param rui8_channel channel of the input object, which received the IRQ
+	* @param aui8_channel channel of the input object, which received the IRQ
 	*        from HAL
 	*/
-void MyDiginIrqHandle::handleDigitalEvent( uint8_t rui8_channel )
+void MyDiginIrqHandle::handleDigitalEvent( uint8_t aui8_channel )
 {
 	IsoAgLib::getIrs232Instance()
-		<< "Detected DiginIRQ Event at channel: " << uint16_t(rui8_channel) << "\r\n";
+		<< "Detected DiginIRQ Event at channel: " << uint16_t(aui8_channel) << "\r\n";
 	i16_dummyCounter++;
 }
 
@@ -244,12 +244,12 @@ int main()
   getIcanInstance().init (0); // CAN-Bus 0 (with defaulting 250 kbit)
 
   // start address claim of the local identity/member
-  IsoAgLib::iIdentItem_c c_myIdent (2,    // rui8_indGroup
-                                    2,    // rui8_devClass
-                                    0,    // rui8_devClassInst
-                                    25,   // rb_func
-                                    0x7FF,// rui16_manufCode
-                                    27);  // rui32_serNo
+  IsoAgLib::iIdentItem_c c_myIdent (2,    // aui8_indGroup
+                                    2,    // aui8_devClass
+                                    0,    // aui8_devClassInst
+                                    25,   // ab_func
+                                    0x7FF,// aui16_manufCode
+                                    27);  // aui32_serNo
                                     // further parameters use the default
 
   // create some sensor instances

@@ -183,13 +183,13 @@ public:
 
 // the following define should be globally defined in the project settings...
 #ifdef FAKE_VT_PROPERTIES
-  void fakeVtProperties (uint16_t rui16_dimension, uint16_t rui16_skWidth, uint16_t rui16_skHeight, uint8_t rui16_colorDepth, uint16_t rui16_fontSizes)
+  void fakeVtProperties (uint16_t aui16_dimension, uint16_t aui16_skWidth, uint16_t aui16_skHeight, uint8_t aui16_colorDepth, uint16_t aui16_fontSizes)
   {
-    vtCapabilities_a.hwWidth = rui16_dimension;
-    vtCapabilities_a.skWidth = rui16_skWidth;
-    vtCapabilities_a.skHeight = rui16_skHeight;
-    vtCapabilities_a.hwGraphicType = rui16_colorDepth;
-    vtCapabilities_a.fontSizes = rui16_fontSizes;
+    vtCapabilities_a.hwWidth = aui16_dimension;
+    vtCapabilities_a.skWidth = aui16_skWidth;
+    vtCapabilities_a.skHeight = aui16_skHeight;
+    vtCapabilities_a.hwGraphicType = aui16_colorDepth;
+    vtCapabilities_a.fontSizes = aui16_fontSizes;
   }
 #endif
 
@@ -198,14 +198,14 @@ private:
   /** private constructor which prevents direct instantiation in user application
     * NEVER define instance of IsoTerminal_c within application
     */
-  VtServerInstance_c(const IsoItem_c& ref_newItem, IsoName_c c_newISOName, IsoTerminal_c& ref_isoTerminal);
+  VtServerInstance_c(const IsoItem_c& r_newItem, IsoName_c c_newISOName, IsoTerminal_c& r_isoTerminal);
 
 private: // attributes
   const IsoItem_c* pcc_isoItem;
 
   IsoName_c c_isoName;
 
-  IsoTerminal_c& refc_isoTerminal; // back ref.
+  IsoTerminal_c& rc_isoTerminal; // back ref.
 
   /** stores the last "VT Status Message" */
   IsoAgLib::vtState_s vtState_a;

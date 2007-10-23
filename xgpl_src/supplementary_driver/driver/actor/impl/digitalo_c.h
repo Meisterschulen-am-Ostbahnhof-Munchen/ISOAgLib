@@ -107,46 +107,46 @@ public:
     possible errors:
         * Err_c::range wrong output channel number
     @see ActorO_c::createDigital
-    @param rui8_channel default-argument for setting hardware channel for this input
+    @param aui8_channel default-argument for setting hardware channel for this input
   */
-  DigitalO_c(uint8_t rui8_channel = 0);
+  DigitalO_c(uint8_t aui8_channel = 0);
   /** init this instance
-    @param rui8_channel default-argument for setting hardware channel for this input
+    @param aui8_channel default-argument for setting hardware channel for this input
   */
-  void init(uint8_t rui8_channel);
+  void init(uint8_t aui8_channel);
   /**  destructor of the input object which can close explicit the hardware input */
   virtual ~DigitalO_c();
   /** compare this channel to an uint8_t value representing a dout channel
     * this function is used by the base Singleton to find a specific item
     */
-  bool operator==( uint8_t rui8_channel ) const { return ( rui8_channel == channelNr() )?true:false;};
+  bool operator==( uint8_t aui8_channel ) const { return ( aui8_channel == channelNr() )?true:false;};
   /**
     set the output PWM frequency
     (uses BIOS function)
 
     possible errors:
        * Err_c::range wrong output channel number or wrong frequency
-    @param rui32_val value to use as PWM frequency in [mHz]
+    @param aui32_val value to use as PWM frequency in [mHz]
   */
-  void setFreq(uint32_t rui32_val);
+  void setFreq(uint32_t aui32_val);
   /**
     set the output PWM value
     (uses BIOS function)
 
     possible errors:
         * Err_c::range wrong output channel number
-    @param rui16_val value to set for the output channel [0..0xffff]
+    @param aui16_val value to set for the output channel [0..0xffff]
   */
-  void set(uint16_t rui16_val);
+  void set(uint16_t aui16_val);
   /**
     switch PWM to total OFF or ON (simple switch function)
     (uses BIOS function)
 
     possible errors:
        * Err_c::range wrong output channel number
-    @param rb_state
+    @param ab_state
   */
-  void set(bool rb_state);
+  void set(bool ab_state);
   /**
     deliver actual set value
     @return last set value [0..0xffff]
@@ -154,11 +154,11 @@ public:
   uint16_t get()const{return ui16_value;};
   /**
     * set the allowed current limits for active state
-    * @param rui16_minActiveCurrent minimal allowed current in active state
-    * @param rui16_maxActiveCurrent maximum allowed current in active state
+    * @param aui16_minActiveCurrent minimal allowed current in active state
+    * @param aui16_maxActiveCurrent maximum allowed current in active state
     */
-  void setActiveCurrentLimits( uint16_t rui16_minActiveCurrent, uint16_t rui16_maxActiveCurrent )
-  {ui16_minAllowedCurrent = rui16_minActiveCurrent; ui16_maxAllowedCurrent = rui16_maxActiveCurrent;};
+  void setActiveCurrentLimits( uint16_t aui16_minActiveCurrent, uint16_t aui16_maxActiveCurrent )
+  {ui16_minAllowedCurrent = aui16_minActiveCurrent; ui16_maxAllowedCurrent = aui16_maxActiveCurrent;};
   /** deliver the actual current of the digital output
     * @return current in [mA] ( if this digital out instance doesn't support current measurement, -1 is returned )
     */
@@ -199,17 +199,17 @@ private:
     ONLY copy pointers to the wanted instance!!!
     ==> the copy constructor is defined as private, so that compiler
         detects this fault, and shows you this WARNING!!
-    @param rrefc_src source
+    @param arc_src source
   */
-  DigitalO_c(const DigitalO_c& rrefc_src) : ActorBase_c(rrefc_src) {};
+  DigitalO_c(const DigitalO_c& arc_src) : ActorBase_c(arc_src) {};
   /**
     HIDDEN! assignment for Digital_O
     NEVER assign a DigitalO_c to another instance!!!!
     ==> the asignment is defined as private, so that compiler
         detects this fault, and shows you this WARNING!!
-    @param rrefc_src source
+    @param arc_src source
   */
-  DigitalO_c& operator=(const DigitalO_c& /*rrefc_src*/){return *this;};
+  DigitalO_c& operator=(const DigitalO_c& /*arc_src*/){return *this;};
 
   uint16_t ui16_value;
   /** minimal allowed current in active state */

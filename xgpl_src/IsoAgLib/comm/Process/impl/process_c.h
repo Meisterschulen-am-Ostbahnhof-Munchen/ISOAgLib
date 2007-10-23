@@ -195,40 +195,40 @@ public:
     will increase with several reallocations, where each reallocation triggers
     increase of capacity by factor 2 ( capacity is the amount of elements,
     which can be stored before reallocation takes place ).
-    @param rui16_localProcCapacity
+    @param aui16_localProcCapacity
   */
-  void localProcDataReserveCnt( uint16_t rui16_localProcCapacity );
+  void localProcDataReserveCnt( uint16_t aui16_localProcCapacity );
   /**
     if the amount of created remote process data is known, then enough capacity for the
     vector with pointers to all of them can be reserved. Otherwise the vector
     will increase with several reallocations, where each reallocation triggers
     increase of capacity by factor 2 ( capacity is the amount of elements,
     which can be stored before reallocation takes place ).
-    @param rui16_remoteProcCapacity
+    @param aui16_remoteProcCapacity
   */
-  void remoteProcDataReserveCnt( uint16_t rui16_remoteProcCapacity );
+  void remoteProcDataReserveCnt( uint16_t aui16_remoteProcCapacity );
 
   /**
     checks if a suitable ProcDataLocalBase_c item exist
     ISO parameter
-    @param rui16_DDI
-    @param rui16_element
-    @param rrefc_isoNameReceiver isoName code of searched local Process Data instance
+    @param aui16_DDI
+    @param aui16_element
+    @param arc_isoNameReceiver isoName code of searched local Process Data instance
     @return true -> suitable instance found
   */
-  bool existProcDataLocal( uint16_t rui16_DDI, uint16_t rui16_element, const IsoName_c& rrefc_isoNameReceiver);
+  bool existProcDataLocal( uint16_t aui16_DDI, uint16_t aui16_element, const IsoName_c& arc_isoNameReceiver);
 
   /**
     checks if a suitable ProcDataRemoteBase_c item exist
     ISO parameter
-    @param rui16_DDI
-    @param rui16_element
-    @param rrefc_isoNameSender isoName of the sender (used for check against ownerISOName())
-    @param rrefc_isoNameReceiver isoName code of searched local Process Data instance
+    @param aui16_DDI
+    @param aui16_element
+    @param arc_isoNameSender isoName of the sender (used for check against ownerISOName())
+    @param arc_isoNameReceiver isoName code of searched local Process Data instance
     @return true -> suitable instance found
   */
-  bool existProcDataRemote( uint16_t rui16_DDI, uint16_t rui16_element,
-                            const IsoName_c& rrefc_isoNameSender, const IsoName_c& rrefc_isoNameReceiver);
+  bool existProcDataRemote( uint16_t aui16_DDI, uint16_t aui16_element,
+                            const IsoName_c& arc_isoNameSender, const IsoName_c& arc_isoNameReceiver);
 
   /**
     search for suitable ProcDataLocalBase_c item; create on if not found AND if wanted
@@ -236,14 +236,14 @@ public:
     possible errors:
         * Err_c::badAlloc not enough memory to add new ProcDataLocal_c
           (can cause badAlloc exception)
-        * Err_c::elNonexistent if element not found and rb_doCreate == false
+        * Err_c::elNonexistent if element not found and ab_doCreate == false
     ISO parameter
-    @param rui16_DDI
-    @param rui16_element
-    @param rrefc_isoNameReceiver isoName code of searched local Process Data instance
+    @param aui16_DDI
+    @param aui16_element
+    @param arc_isoNameReceiver isoName code of searched local Process Data instance
     @return reference to searched/created ProcDataLocalBase_c instance
   */
-  ProcDataLocalBase_c& procDataLocal( uint16_t rui16_DDI, uint16_t rui16_element, const IsoName_c& rrefc_isoNameReceiver);
+  ProcDataLocalBase_c& procDataLocal( uint16_t aui16_DDI, uint16_t aui16_element, const IsoName_c& arc_isoNameReceiver);
 
   /**
     search for suitable ProcDataRemoteBase_c item; create on if not found AND if wanted
@@ -251,42 +251,42 @@ public:
     possible errors:
         * Err_c::badAlloc not enough memory to add new ProcDataRemote_c
           (can cause badAlloc exception)
-        * Err_c::elNonexistent if element not found and rb_doCreate == false
+        * Err_c::elNonexistent if element not found and ab_doCreate == false
     ISO parameter
-    @param rui16_DDI
-    @param rui16_element
-    @param rrefc_isoNameSender isoName of the sender (used for check against ownerISOName())
-    @param rrefc_isoNameReceiver isoName code of searched local Process Data instance
+    @param aui16_DDI
+    @param aui16_element
+    @param arc_isoNameSender isoName of the sender (used for check against ownerISOName())
+    @param arc_isoNameReceiver isoName code of searched local Process Data instance
     @return reference to searched/created ProcDataRemoteBase_c instance
     @exception badAlloc
   */
- ProcDataRemoteBase_c& procDataRemote( uint16_t rui16_DDI, uint16_t rui16_element,
-                                       const IsoName_c& rrefc_isoNameSender, const IsoName_c& rrefc_isoNameReceiver);
+ ProcDataRemoteBase_c& procDataRemote( uint16_t aui16_DDI, uint16_t aui16_element,
+                                       const IsoName_c& arc_isoNameSender, const IsoName_c& arc_isoNameReceiver);
 
 
   /**
     delivers count of local process data entries with similar ident
     (which differs only in _instance_ of owner)
     ISO parameter
-    @param rui16_DDI
-    @param rui16_element
-    @param rrefc_isoName isoName code of searched local Process Data instance
+    @param aui16_DDI
+    @param aui16_element
+    @param arc_isoName isoName code of searched local Process Data instance
     @return count of similar local process data entries
   */
-  uint8_t procDataLocalCnt( uint16_t rui16_DDI, uint16_t rui16_element, const IsoName_c& rrefc_isoName);
+  uint8_t procDataLocalCnt( uint16_t aui16_DDI, uint16_t aui16_element, const IsoName_c& arc_isoName);
 
   /**
     delivers count of remote process data entries with similar ident
     (which differs only in _instance_ of owner)
     ISO parameter
-    @param rui16_DDI
-    @param rui16_element
-    @param rrefc_isoNameSender isoName of the sender (used for check against ownerISOName())
-    @param rrefc_isoName isoName code of searched remote Process Data instance
+    @param aui16_DDI
+    @param aui16_element
+    @param arc_isoNameSender isoName of the sender (used for check against ownerISOName())
+    @param arc_isoName isoName code of searched remote Process Data instance
     @return count of similar remote process data entries
   */
-  uint8_t procDataRemoteCnt( uint16_t rui16_DDI, uint16_t rui16_element,
-                             const IsoName_c& rrefc_isoNameSender, const IsoName_c& rrefc_isoName);
+  uint8_t procDataRemoteCnt( uint16_t aui16_DDI, uint16_t aui16_element,
+                             const IsoName_c& arc_isoNameSender, const IsoName_c& arc_isoName);
 
   /**
     performs periodically actions
@@ -325,39 +325,39 @@ public:
     */
   void unregisterRemoteProcessData( ProcDataRemoteBase_c* pc_remoteClient);
 
-  void registerWsmTaskMsgHandler(ProcessWsmTaskMsgHandler_c* rpc_processWsmTaskMsgHandler)
-  { pc_processWsmTaskMsgHandler = rpc_processWsmTaskMsgHandler; }
+  void registerWsmTaskMsgHandler(ProcessWsmTaskMsgHandler_c* apc_processWsmTaskMsgHandler)
+  { pc_processWsmTaskMsgHandler = apc_processWsmTaskMsgHandler; }
 
   /**
     delete FilterBox_c for receive from remote isoName if needed
     (important to delete old Filter Boxes after deletion of
     of remote device from monitor list or after re-adressclaim with different SA)
-    @param rc_ownerISOName ISOName code of remote owner who sent the message
+    @param ac_ownerISOName ISOName code of remote owner who sent the message
     @return true -> member exist and Filter Box deleted
   */
-  bool deleteRemoteFilter(const IsoName_c& rc_ownerISOName);
+  bool deleteRemoteFilter(const IsoName_c& ac_ownerISOName);
 
    /** this function is called by IsoMonitor_c when a new CLAIMED IsoItem_c is registered.
-   * @param refc_isoName const reference to the item which IsoItem_c state is changed
-   * @param rpc_newItem pointer to the currently corresponding IsoItem_c
+   * @param rc_isoName const reference to the item which IsoItem_c state is changed
+   * @param apc_newItem pointer to the currently corresponding IsoItem_c
     */
-  virtual void reactOnMonitorListAdd( const IsoName_c& refc_isoName, const IsoItem_c* rpc_newItem );
+  virtual void reactOnMonitorListAdd( const IsoName_c& rc_isoName, const IsoItem_c* apc_newItem );
 
    /** this function is called by IsoMonitor_c when a device looses its IsoItem_c.
-   * @param refc_isoName const reference to the item which IsoItem_c state is changed
-   * @param rui8_oldSa previously used SA which is NOW LOST -> clients which were connected to this item can react explicitly
+   * @param rc_isoName const reference to the item which IsoItem_c state is changed
+   * @param aui8_oldSa previously used SA which is NOW LOST -> clients which were connected to this item can react explicitly
     */
-  virtual void reactOnMonitorListRemove( const IsoName_c& refc_isoName, uint8_t rui8_oldSa );
+  virtual void reactOnMonitorListRemove( const IsoName_c& rc_isoName, uint8_t aui8_oldSa );
 
   /**
     process TC status messages:
     - task status suspended: stop running measurement (started by default data logging)
     @param ui8_tcStatus
-    @param refc_isoName         device key of TC
-    @param rb_skipLastTcStatus TRUE => don't check for changed TC status
+    @param rc_isoName         device key of TC
+    @param ab_skipLastTcStatus TRUE => don't check for changed TC status
     @return TRUE
   */
-  bool processTcStatusMsg(uint8_t ui8_tcStatus, const IsoName_c& refc_isoName, bool rb_skipLastTcStatus = FALSE);
+  bool processTcStatusMsg(uint8_t ui8_tcStatus, const IsoName_c& rc_isoName, bool ab_skipLastTcStatus = FALSE);
 
   /**
     @return isoName, saved from TC status messages
@@ -367,10 +367,10 @@ public:
   /**
     process working set task messages
     @param ui8_tcStatus
-    @param refc_isoName         device key of working set
+    @param rc_isoName         device key of working set
     @return TRUE
   */
-  bool processWorkingSetTaskMsg(uint8_t /* ui8_tcStatus */, const IsoName_c& /* refc_isoName */);
+  bool processWorkingSetTaskMsg(uint8_t /* ui8_tcStatus */, const IsoName_c& /* rc_isoName */);
 
 
   ///  Used for Debugging Tasks in Scheduler_c
@@ -378,10 +378,10 @@ public:
 
 
   /** set the pointer to the handler class (used for callback when TC status message is processed)
-    * @param rpc_processDataChangeHandler pointer to handler class of application
+    * @param apc_processDataChangeHandler pointer to handler class of application
     */
-  void setProcessDataChangeHandler( IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler )
-   { pc_processDataChangeHandler = rpc_processDataChangeHandler; }
+  void setProcessDataChangeHandler( IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler )
+   { pc_processDataChangeHandler = apc_processDataChangeHandler; }
 
 protected:
   //! Function set ui16_earlierInterval and
@@ -394,22 +394,22 @@ private: // Private methods
   /**
     update the cache with search for according ProcDataLocalBase_c item
     ISO parameter
-    @param rui16_DDI
-    @param rui16_element
-    @param rrefc_isoNameReceiver isoName code of created local Process Data instance
+    @param aui16_DDI
+    @param aui16_element
+    @param arc_isoNameReceiver isoName code of created local Process Data instance
   */
-  bool updateLocalCache( uint16_t rui16_DDI, uint16_t rui16_element, const IsoName_c& rrefc_isoNameReceiver);
+  bool updateLocalCache( uint16_t aui16_DDI, uint16_t aui16_element, const IsoName_c& arc_isoNameReceiver);
 
   /**
     update the cache with search for according ProcDataRemoteBase_c item
     ISO parameter
-    @param rui16_DDI
-    @param rui16_element
-    @param rrefc_isoNameSender isoName of the sender (used for check against ownerISOName())
-    @param rrefc_isoNameReceiver isoName code of searched local Process Data instance
+    @param aui16_DDI
+    @param aui16_element
+    @param arc_isoNameSender isoName of the sender (used for check against ownerISOName())
+    @param arc_isoNameReceiver isoName code of searched local Process Data instance
   */
-  bool updateRemoteCache(uint16_t rui16_DDI, uint16_t rui16_element,
-                         const IsoName_c& rrefc_isoNameSender, const IsoName_c& rrefc_isoNameReceiver);
+  bool updateRemoteCache(uint16_t aui16_DDI, uint16_t aui16_element,
+                         const IsoName_c& arc_isoNameSender, const IsoName_c& arc_isoNameReceiver);
 
   /**
    * check if any remote process data needs a new receive filter
@@ -419,28 +419,28 @@ private: // Private methods
 
   /**
     insert FilterBox_c for receive from remote isoName if needed
-    @param rc_ownerISOName ISOName code of remote owner who sent the message
+    @param ac_ownerISOName ISOName code of remote owner who sent the message
     @return true -> member exist and Filter Box created
   */
-  bool createRemoteFilter(const IsoName_c& rc_ownerISOName);
+  bool createRemoteFilter(const IsoName_c& ac_ownerISOName);
 
   /** checks if a DDI can be added to a group and return ptr to proc data if successfully */
-  ProcDataRemoteBase_c* addDDI2ExistingProcData(uint16_t rui16_DDI, uint16_t rui_deviceElement, const IsoName_c& rc_isoName, GeneralCommand_c::ValueGroup_t& ren_valueGroup, bool& refb_isSetpoint);
+  ProcDataRemoteBase_c* addDDI2ExistingProcData(uint16_t aui16_DDI, uint16_t aui_deviceElement, const IsoName_c& ac_isoName, GeneralCommand_c::ValueGroup_t& ren_valueGroup, bool& rb_isSetpoint);
 
   /** checks if a DDI can be added to a group and if yes then add it! */
-  bool checkAndAddMatchingDDI2Group(uint16_t rui16_DDI, uint16_t rui_deviceElement, const IsoName_c& rc_isoName);
+  bool checkAndAddMatchingDDI2Group(uint16_t aui16_DDI, uint16_t aui_deviceElement, const IsoName_c& ac_isoName);
 
   /** adds a proprietary DDI to a group */
-  bool addProprietaryDDI2Group(uint16_t rui16_DDI, uint16_t rui_deviceElement, bool b_isSetpoint, GeneralCommand_c::ValueGroup_t ddiType, const IsoName_c &rc_isoName);
+  bool addProprietaryDDI2Group(uint16_t aui16_DDI, uint16_t aui_deviceElement, bool b_isSetpoint, GeneralCommand_c::ValueGroup_t ddiType, const IsoName_c &ac_isoName);
 
   /** checks if several DDI's can be summed up in groups */
-  ProcDataRemoteBase_c* check4DDIGroupMatch(uint16_t rui16_DDI, uint16_t rui_deviceElement, const IsoName_c& rc_isoName);
+  ProcDataRemoteBase_c* check4DDIGroupMatch(uint16_t aui16_DDI, uint16_t aui_deviceElement, const IsoName_c& ac_isoName);
 
   /** checks this DDI already exists in one ProcDataRemoteBase_c instance */
-  bool check4DDIExisting(uint16_t rui16_DDI, uint16_t rui_deviceElement, const IsoName_c& rc_isoName);
+  bool check4DDIExisting(uint16_t aui16_DDI, uint16_t aui_deviceElement, const IsoName_c& ac_isoName);
 
   /** checks if proprietary DDI's can be summed up in groups */
-  ProcDataRemoteBase_c* check4ProprietaryDDIGroupMatch(uint16_t rui_deviceElement, const IsoName_c& rc_isoName);
+  ProcDataRemoteBase_c* check4ProprietaryDDIGroupMatch(uint16_t aui_deviceElement, const IsoName_c& ac_isoName);
 
 private: // Private attributes
   /**
@@ -494,7 +494,7 @@ private: // Private attributes
   /** C-style function, to get access to the unique Process_c singleton instance
     * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
     */
-  Process_c& getProcessInstance( uint8_t rui8_instance = 0 );
+  Process_c& getProcessInstance( uint8_t aui8_instance = 0 );
 #else
   /** C-style function, to get access to the unique Process_c singleton instance */
   Process_c& getProcessInstance( void );

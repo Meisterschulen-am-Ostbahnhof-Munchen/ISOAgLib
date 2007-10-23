@@ -39,7 +39,7 @@ uint16_t BigBufLen = 0;
 
 uint16_t RS232_over_can_CANID = 0x7F0;
 
-int16_t init_rs232(uint16_t wBaudrate,uint8_t bMode,uint8_t bStoppbits,bool bitSoftwarehandshake, uint8_t rui8_channel)
+int16_t init_rs232(uint16_t wBaudrate,uint8_t bMode,uint8_t bStoppbits,bool bitSoftwarehandshake, uint8_t aui8_channel)
 {
 	RS232_over_can_initialized = true;
 	return HAL_NO_ERR;
@@ -60,9 +60,9 @@ send single uint8_t on RS232
 @param bByte data uint8_t to send
 @return HAL_NO_ERR -> o.k. else send puffer overflow
 */
-int16_t put_rs232Char(uint8_t bByte, uint8_t rui8_channel)
+int16_t put_rs232Char(uint8_t bByte, uint8_t aui8_channel)
 {
-	return put_rs232NChar(&bByte, 1, rui8_channel);
+	return put_rs232NChar(&bByte, 1, aui8_channel);
 };
 /**
 send string of n uint8_t on RS232
@@ -70,7 +70,7 @@ send string of n uint8_t on RS232
 @param wNumber number of data uint8_t to send
 @return HAL_NO_ERR -> o.k. else send puffer overflow
 */
-int16_t put_rs232NChar(const uint8_t *bpWrite,uint16_t wNumber, uint8_t rui8_channel)
+int16_t put_rs232NChar(const uint8_t *bpWrite,uint16_t wNumber, uint8_t aui8_channel)
 {
 	uint16_t numLeft;
 
@@ -100,7 +100,7 @@ int16_t put_rs232NChar(const uint8_t *bpWrite,uint16_t wNumber, uint8_t rui8_cha
 			{
 			numLeft = BigBufLen;
 			BigBufLen = 0;
-			put_rs232NChar( BigBuf, numLeft, rui8_channel );
+			put_rs232NChar( BigBuf, numLeft, aui8_channel );
 			}
 
 		numLeft = wNumber;
@@ -114,7 +114,7 @@ int16_t put_rs232NChar(const uint8_t *bpWrite,uint16_t wNumber, uint8_t rui8_cha
 			const uint8_t cui8_len = (numLeft < 8 ? numLeft : 8);
 
 			IsoAgLib::iCanPkg_c c_sendData;
-			c_sendData.setIdent( RS232_over_can_CANID+rui8_channel, __IsoAgLib::Ident_c::StandardIdent );
+			c_sendData.setIdent( RS232_over_can_CANID+aui8_channel, __IsoAgLib::Ident_c::StandardIdent );
 			c_sendData.setDataFromString( &bpWrite[wNumber-numLeft], cui8_len );
 			c_can << c_sendData;
 
@@ -130,9 +130,9 @@ send '\0' terminated string on RS232
 @param pbString pointer to '\0' terminated (!) source data string
 @return HAL_NO_ERR -> o.k. else send puffer overflow
 */
-int16_t put_rs232String(const uint8_t *pbString, uint8_t rui8_channel)
+int16_t put_rs232String(const uint8_t *pbString, uint8_t aui8_channel)
 {
-	return put_rs232NChar((uint8_t*)pbString, CNAMESPACE::strlen( (char*)pbString ), rui8_channel);
+	return put_rs232NChar((uint8_t*)pbString, CNAMESPACE::strlen( (char*)pbString ), aui8_channel);
 };
 }
 #endif

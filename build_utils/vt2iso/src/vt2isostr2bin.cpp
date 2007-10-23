@@ -1180,7 +1180,7 @@ unsigned int getpicturegraphicrlefromstring (char *text_pictrle)
 // 	uint16_t startRange = 0xFFFF;
 // 	if ( !(objType < ObjectINVALID) ) 	return startRange;
 // 	startRange=getStartUidOfObjType ( objType );
-// // 	std::map<uint16_t, std::string>::const_reference ref_Uid = rmap_UsedObjID.begin();
+// // 	std::map<uint16_t, std::string>::const_reference r_Uid = rmap_UsedObjID.begin();
 // 	uint16_t endRange = getStartUidOfObjType ((ObjectType_t )(objType+1) );
 // 	if ( objType == ObjectObjectPointer )
 // 		endRange = getStartUidOfObjType ( ObjectMyScrollKey );

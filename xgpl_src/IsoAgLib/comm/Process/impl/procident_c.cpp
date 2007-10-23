@@ -124,33 +124,33 @@ namespace __IsoAgLib {
     @param ui16_element device element number
 
     common parameter
-    @param rc_isoName optional ISOName code of Process-Data
-    @param rc_ownerISOName optional ISOName code of owner of Process-Data
-           ( important if DEVCLASS and/or DEVCLASSINST differs from identity ISOName in rc_isoName; this is the case
+    @param ac_isoName optional ISOName code of Process-Data
+    @param ac_ownerISOName optional ISOName code of owner of Process-Data
+           ( important if DEVCLASS and/or DEVCLASSINST differs from identity ISOName in ac_isoName; this is the case
              for process data from base data dictionary table (DEVCLASS==0), which is managed/owned by device of
              type DEVCLASS != 0)
-    @param rpc_ownerISOName pointer to the optional ISOName var of the owner (for automatic update as soon
+    @param apc_ownerISOName pointer to the optional ISOName var of the owner (for automatic update as soon
             as corresponding device is registered as having claimed address in monitor table list)
   */
-  ProcIdent_c::ProcIdent_c( const IsoAgLib::ElementDdi_s* rps_elementDDI, uint16_t rui16_element,
-                            const IsoName_c& rc_isoName, const IsoName_c& rc_ownerISOName,
-                            const IsoName_c *rpc_ownerISOName, int ri_singletonVecKey)
-  : ClientBase( ri_singletonVecKey ),
+  ProcIdent_c::ProcIdent_c( const IsoAgLib::ElementDdi_s* aps_elementDDI, uint16_t aui16_element,
+                            const IsoName_c& ac_isoName, const IsoName_c& ac_ownerISOName,
+                            const IsoName_c *apc_ownerISOName, int ai_singletonVecKey)
+  : ClientBase( ai_singletonVecKey ),
     pc_ownerISOName(NULL),
     c_ownerISOName(IsoName_c::IsoNameUnspecified()),
 		c_isoName(IsoName_c::IsoNameUnspecified())
 {
-  init( rps_elementDDI, rui16_element, rc_isoName, rc_ownerISOName, rpc_ownerISOName);
+  init( aps_elementDDI, aui16_element, ac_isoName, ac_ownerISOName, apc_ownerISOName);
 }
 
 /** copy constructor */
-ProcIdent_c::ProcIdent_c( const ProcIdent_c& rrefc_src )
-  : ClientBase( rrefc_src ),
-	  pc_ownerISOName( rrefc_src.pc_ownerISOName ),
-		c_ownerISOName( rrefc_src.c_ownerISOName ),
-		c_isoName( rrefc_src.c_isoName )
+ProcIdent_c::ProcIdent_c( const ProcIdent_c& arc_src )
+  : ClientBase( arc_src ),
+	  pc_ownerISOName( arc_src.pc_ownerISOName ),
+		c_ownerISOName( arc_src.c_ownerISOName ),
+		c_isoName( arc_src.c_isoName )
 {
-  assignFromSource( rrefc_src );
+  assignFromSource( arc_src );
 }
 
 
@@ -162,31 +162,31 @@ ProcIdent_c::ProcIdent_c( const ProcIdent_c& rrefc_src )
     @param ui16_element device element number
 
     common parameter
-    @param rc_isoName ISOName code of Process-Data
-    @param rc_ownerISOName optional ISOName code of owner of Process-Data
-           ( important if DEVCLASS and/or DEVCLASSINST differs from identity ISOName in rc_isoName; this is the case
+    @param ac_isoName ISOName code of Process-Data
+    @param ac_ownerISOName optional ISOName code of owner of Process-Data
+           ( important if DEVCLASS and/or DEVCLASSINST differs from identity ISOName in ac_isoName; this is the case
              for process data from base data dictionary table (DEVCLASS==0), which is managed/owned by device of
              type DEVCLASS != 0)
-    @param rpc_ownerISOName pointer to the optional ISOName var of the owner (for automatic update as soon
+    @param apc_ownerISOName pointer to the optional ISOName var of the owner (for automatic update as soon
             as corresponding device is registered as having claimed address in monitor table list)
 */
-void ProcIdent_c::init( const IsoAgLib::ElementDdi_s* rps_elementDDI, uint16_t rui16_element,
-                        const IsoName_c& rc_isoName, const IsoName_c& rc_ownerISOName,
-                        const IsoName_c *rpc_ownerISOName)
+void ProcIdent_c::init( const IsoAgLib::ElementDdi_s* aps_elementDDI, uint16_t aui16_element,
+                        const IsoName_c& ac_isoName, const IsoName_c& ac_ownerISOName,
+                        const IsoName_c *apc_ownerISOName)
 {
-  setElementDDI(rps_elementDDI);
-  setElementNumber(rui16_element);
+  setElementDDI(aps_elementDDI);
+  setElementNumber(aui16_element);
 
-  c_isoName = rc_isoName;
+  c_isoName = ac_isoName;
 
-  pc_ownerISOName = rpc_ownerISOName;
+  pc_ownerISOName = apc_ownerISOName;
 
-  // the ISOName of ident is best defined by pointed value of rpc_ownerISOName
-  if ( rpc_ownerISOName != 0 ) c_ownerISOName = *rpc_ownerISOName;
-  // second choicer is explicit (not default) setting in rc_ownerISOName
-  else if ( rc_ownerISOName.isSpecified() ) c_ownerISOName = rc_ownerISOName;
+  // the ISOName of ident is best defined by pointed value of apc_ownerISOName
+  if ( apc_ownerISOName != 0 ) c_ownerISOName = *apc_ownerISOName;
+  // second choicer is explicit (not default) setting in ac_ownerISOName
+  else if ( ac_ownerISOName.isSpecified() ) c_ownerISOName = ac_ownerISOName;
   // last choice is definition of c_ownerISOName by process data identiy
-  else c_ownerISOName = rc_isoName;
+  else c_ownerISOName = ac_isoName;
 }
 
 /**
@@ -194,23 +194,23 @@ void ProcIdent_c::init( const IsoAgLib::ElementDdi_s* rps_elementDDI, uint16_t r
   @rrrefcSrc source ProcIdent_c instance
   @return reference to source for cmd like "proc1 = proc2 = proc3;"
 */
-ProcIdent_c& ProcIdent_c::operator=(const ProcIdent_c& rrefc_src){
+ProcIdent_c& ProcIdent_c::operator=(const ProcIdent_c& arc_src){
   // first assign base class
-  ClientBase::operator=(rrefc_src);
+  ClientBase::operator=(arc_src);
   // now assign flags of this class
-  assignFromSource( rrefc_src );
+  assignFromSource( arc_src );
 
   return *this;
 }
 
 /** internal base function for copy constructor and assignement */
-void ProcIdent_c::assignFromSource( const ProcIdent_c& rrefc_src )
+void ProcIdent_c::assignFromSource( const ProcIdent_c& arc_src )
 {
-  c_isoName = rrefc_src.c_isoName;
-  c_ownerISOName = rrefc_src.c_ownerISOName;
-  pc_ownerISOName = rrefc_src.pc_ownerISOName;
+  c_isoName = arc_src.c_isoName;
+  c_ownerISOName = arc_src.c_ownerISOName;
+  pc_ownerISOName = arc_src.pc_ownerISOName;
   // elementDDI() returns list reference, setElementDDI() expects pointer to list
-  setElementDDI(&(rrefc_src.elementDDI()));
+  setElementDDI(&(arc_src.elementDDI()));
 }
 
 /** default destructor which has nothing to do */
@@ -219,55 +219,55 @@ ProcIdent_c::~ProcIdent_c(){
 
 /**
   set DEVCLASS and _instance_ of owner by giving pointer to owner ISOName
-  @param rpc_val pointer to owner ISOName
+  @param apc_val pointer to owner ISOName
 */
-void ProcIdent_c::setOwnerISOName(const IsoName_c* rpc_val)
+void ProcIdent_c::setOwnerISOName(const IsoName_c* apc_val)
 {
-  pc_ownerISOName = rpc_val;
-  c_ownerISOName = *rpc_val;
+  pc_ownerISOName = apc_val;
+  c_ownerISOName = *apc_val;
 }
 
 /**
    check if this item has the same identity as defined by the parameters,
-   if rui8_devClassInst is 0xFF a lazy match disregarding pos is done
+   if aui8_devClassInst is 0xFF a lazy match disregarding pos is done
    (important for matching received process data msg);
    if INSTANCE is defined (!= 0xFF) then one of the following conditions must be true:<ul>
    <li>parameter INSTANCE == ident INSTANCE (devClassInst())
    <li>parameter INSTANCE == owner INSTANCE ( ownerISOName().devClassInst() )
-   <li>parameter rc_ownerISOName == ownerISOName()
+   <li>parameter ac_ownerISOName == ownerISOName()
    </ul>
 
    ISO parameter
-   @param rrefc_isoNameSender compare this parameter with owner isoName (only for remote, local calls: IsoNameUnspecified)
-   @param rrefc_isoNameReceiver compared isoName value
-   @param rui16_DDI compared DDI value
-   @param rui16_element compared element value
+   @param arc_isoNameSender compare this parameter with owner isoName (only for remote, local calls: IsoNameUnspecified)
+   @param arc_isoNameReceiver compared isoName value
+   @param aui16_DDI compared DDI value
+   @param aui16_element compared element value
 
    @return true -> this instance has same Process-Data identity
 */
-bool ProcIdent_c::matchISO( const IsoName_c& rrefc_isoNameSender,
-                            const IsoName_c& rrefc_isoNameReceiver,
-                            uint16_t rui16_DDI,
-                            uint16_t rui16_element
+bool ProcIdent_c::matchISO( const IsoName_c& arc_isoNameSender,
+                            const IsoName_c& arc_isoNameReceiver,
+                            uint16_t aui16_DDI,
+                            uint16_t aui16_element
                           ) const
 {
   // check wether current element/DDI combination matches one list element in process data element/DDI list
-  if (rui16_element != element()) return false;
+  if (aui16_element != element()) return false;
   STL_NAMESPACE::list<IsoAgLib::ElementDdi_s>::const_iterator iter;
   for (iter = l_elementDDI.begin(); iter != l_elementDDI.end(); iter++)
-    if ( iter->ui16_DDI == rui16_DDI )
+    if ( iter->ui16_DDI == aui16_DDI )
       break;
 
   if (iter == l_elementDDI.end())
     return false;
 
-  if (rrefc_isoNameSender.isSpecified())
+  if (arc_isoNameSender.isSpecified())
   { // check in remote case: check if devClass of ownerISOName in procident matches devClass of sender
-    if (ownerISOName() != rrefc_isoNameSender) return false;
+    if (ownerISOName() != arc_isoNameSender) return false;
   }
   else
   { // check in local case: check if procident devClass matches devClass of empf
-    if (ownerISOName() != rrefc_isoNameReceiver) return false;
+    if (ownerISOName() != arc_isoNameReceiver) return false;
   }
 
   if (!getProcessInstance4Comm().data().resolveCommandTypeForISO(*iter)) return false;
@@ -276,63 +276,63 @@ bool ProcIdent_c::matchISO( const IsoName_c& rrefc_isoNameSender,
 }
 
 /** check if this ProcIdent_c has the given DDI as element */
-bool ProcIdent_c::hasDDI( uint16_t rui16_checkDDI ) const
+bool ProcIdent_c::hasDDI( uint16_t aui16_checkDDI ) const
 {
   STL_NAMESPACE::list<IsoAgLib::ElementDdi_s>::const_iterator iter;
   for (iter = l_elementDDI.begin(); iter != l_elementDDI.end(); iter++)
-    if (iter->ui16_DDI == rui16_checkDDI)
+    if (iter->ui16_DDI == aui16_checkDDI)
       break;
 
   if (iter == l_elementDDI.end()) return false;
   else return true;
 }
 
-bool ProcIdent_c::hasType(bool rb_isSetpoint, GeneralCommand_c::ValueGroup_t t_ddiType) const
+bool ProcIdent_c::hasType(bool ab_isSetpoint, GeneralCommand_c::ValueGroup_t t_ddiType) const
 {
   STL_NAMESPACE::list<IsoAgLib::ElementDdi_s>::const_iterator iter;
   for (iter = l_elementDDI.begin(); iter != l_elementDDI.end(); iter++)
-    if ((iter->en_valueGroup == t_ddiType) && (iter->b_isSetpoint == rb_isSetpoint))
+    if ((iter->en_valueGroup == t_ddiType) && (iter->b_isSetpoint == ab_isSetpoint))
       break;
 
   if (iter == l_elementDDI.end()) return false;
   else return true;
 }
 
-bool ProcIdent_c::check4GroupMatch(uint16_t rui16_DDI, uint16_t rui16_element, const IsoName_c& rc_isoName)
+bool ProcIdent_c::check4GroupMatch(uint16_t aui16_DDI, uint16_t aui16_element, const IsoName_c& ac_isoName)
 {
   bool b_foundPair = false;
   // first check if ISOName matches
-  if (rc_isoName != c_isoName) return b_foundPair;
+  if (ac_isoName != c_isoName) return b_foundPair;
 
-  if (rui16_element != element()) return b_foundPair;
+  if (aui16_element != element()) return b_foundPair;
 
   for (STL_NAMESPACE::list<IsoAgLib::ElementDdi_s>::const_iterator iter = l_elementDDI.begin(); iter != l_elementDDI.end(); iter++)
   {
-    b_foundPair = isPair((*iter).ui16_DDI, rui16_DDI);
+    b_foundPair = isPair((*iter).ui16_DDI, aui16_DDI);
     if (b_foundPair) break;
   }
   return b_foundPair;
 }
 
-bool ProcIdent_c::check4GroupMatchExisting(uint16_t rui16_DDI, uint16_t rui16_element, const IsoName_c& rc_isoName)
+bool ProcIdent_c::check4GroupMatchExisting(uint16_t aui16_DDI, uint16_t aui16_element, const IsoName_c& ac_isoName)
 {
   bool b_foundPair = false;
   // first check if ISOName matches
-  if (rc_isoName != c_isoName) return b_foundPair;
+  if (ac_isoName != c_isoName) return b_foundPair;
 
-  if (rui16_element != element()) return b_foundPair;
+  if (aui16_element != element()) return b_foundPair;
 
-  return hasDDI(rui16_DDI);
+  return hasDDI(aui16_DDI);
 }
 
-bool ProcIdent_c::checkProprietary4GroupMatch(uint16_t rui16_element, const IsoName_c& rc_isoName)
+bool ProcIdent_c::checkProprietary4GroupMatch(uint16_t aui16_element, const IsoName_c& ac_isoName)
 {
   bool b_foundPair = false;
   // first check if DevClass is the same like ownerISOName's DevClass
-  if (rc_isoName.devClass() != pc_ownerISOName->devClass()) return b_foundPair;
+  if (ac_isoName.devClass() != pc_ownerISOName->devClass()) return b_foundPair;
 
   // if it is not the same device element continue
-  if (rui16_element != element()) return b_foundPair;
+  if (aui16_element != element()) return b_foundPair;
 
   STL_NAMESPACE::list<IsoAgLib::ElementDdi_s>::const_iterator iter = l_elementDDI.begin();
   if (iter != l_elementDDI.end())
@@ -344,18 +344,18 @@ bool ProcIdent_c::checkProprietary4GroupMatch(uint16_t rui16_element, const IsoN
 }
 
 
-bool ProcIdent_c::isPair(uint16_t rui16_ElementDDI, uint16_t rui16_DDI)
+bool ProcIdent_c::isPair(uint16_t aui16_ElementDDI, uint16_t aui16_DDI)
 {
-  if (rui16_ElementDDI == rui16_DDI) return false; // same DDI -> "new DDI should not be added"
+  if (aui16_ElementDDI == aui16_DDI) return false; // same DDI -> "new DDI should not be added"
   // check if given DDI is proprietary
-  if (rui16_ElementDDI > 0xDFFF) return false; // 0xDFFF is Request Default Process Data
+  if (aui16_ElementDDI > 0xDFFF) return false; // 0xDFFF is Request Default Process Data
   // calculate group membership of both DDIs
   // germane groups are from DDI 1 to 70 grouped to 5 and DDI 71 to 79 grouped to 3 and DDI 142/143
-  uint8_t ui8_groupElementDDI1 = (rui16_ElementDDI / 5);
-  uint8_t ui8_groupElementDDI2 = ((1 + rui16_ElementDDI) / 3);
+  uint8_t ui8_groupElementDDI1 = (aui16_ElementDDI / 5);
+  uint8_t ui8_groupElementDDI2 = ((1 + aui16_ElementDDI) / 3);
 
-  uint8_t ui8_groupDDI1 = (rui16_DDI / 5);
-  uint8_t ui8_groupDDI2 = ((1 + rui16_DDI) / 3);
+  uint8_t ui8_groupDDI1 = (aui16_DDI / 5);
+  uint8_t ui8_groupDDI2 = ((1 + aui16_DDI) / 3);
 
   // check if both are in same DDI group
   if ((ui8_groupElementDDI1 == ui8_groupDDI1) &&
@@ -363,28 +363,28 @@ bool ProcIdent_c::isPair(uint16_t rui16_ElementDDI, uint16_t rui16_DDI)
     return true;
   if ((ui8_groupElementDDI2 == ui8_groupDDI2) && ((ui8_groupElementDDI2 >= 24) && (ui8_groupElementDDI2 <= 26)))
     return true;
-  if (((rui16_ElementDDI == 0x8E) && (rui16_DDI == 0x8F)) || ((rui16_ElementDDI == 0x8F) && (rui16_DDI == 0x8E)))
+  if (((aui16_ElementDDI == 0x8E) && (aui16_DDI == 0x8F)) || ((aui16_ElementDDI == 0x8F) && (aui16_DDI == 0x8E)))
     return true;
   return false;
 }
 
 
-bool ProcIdent_c::add2Group(uint16_t rui16_DDI)
+bool ProcIdent_c::add2Group(uint16_t aui16_DDI)
 {
   bool b_foundPair = false;
 
   for (STL_NAMESPACE::list<IsoAgLib::ElementDdi_s>::const_iterator iter = l_elementDDI.begin(); iter != l_elementDDI.end(); iter++)
   {
-    b_foundPair = isPair(iter->ui16_DDI, rui16_DDI);
+    b_foundPair = isPair(iter->ui16_DDI, aui16_DDI);
 
     if (b_foundPair)
     {
       GeneralCommand_c::ValueGroup_t ddiType;
       bool b_isSetpoint;
-      getDDIType(rui16_DDI, ddiType, b_isSetpoint);
+      getDDIType(aui16_DDI, ddiType, b_isSetpoint);
       if (ddiType != GeneralCommand_c::noValue)
       {
-        IsoAgLib::ElementDdi_s s_DDIToAdd = {rui16_DDI, b_isSetpoint, ddiType};
+        IsoAgLib::ElementDdi_s s_DDIToAdd = {aui16_DDI, b_isSetpoint, ddiType};
         l_elementDDI.push_back(s_DDIToAdd);
       }
       break;
@@ -394,102 +394,102 @@ bool ProcIdent_c::add2Group(uint16_t rui16_DDI)
 }
 
 
-bool ProcIdent_c::addProprietary2Group(uint16_t rui16_DDI, bool b_isSetpoint, GeneralCommand_c::ValueGroup_t ddiType)
+bool ProcIdent_c::addProprietary2Group(uint16_t aui16_DDI, bool b_isSetpoint, GeneralCommand_c::ValueGroup_t ddiType)
 {
-  IsoAgLib::ElementDdi_s s_DDIToAdd = {rui16_DDI, b_isSetpoint, ddiType};
+  IsoAgLib::ElementDdi_s s_DDIToAdd = {aui16_DDI, b_isSetpoint, ddiType};
   l_elementDDI.push_back(s_DDIToAdd);
 
   return true;
 }
 
-void ProcIdent_c::getDDIType(uint16_t rui16_DDI, GeneralCommand_c::ValueGroup_t &ref_ddiType, bool &refb_isSetpoint)
+void ProcIdent_c::getDDIType(uint16_t aui16_DDI, GeneralCommand_c::ValueGroup_t &r_ddiType, bool &rb_isSetpoint)
 {
   // check if given DDI is proprietary
-  if (rui16_DDI > 0xDFFF)
+  if (aui16_DDI > 0xDFFF)
   { // 0xDFFF is Request Default Process Data
     // proprietary DDIs are exact per default
-    ref_ddiType = GeneralCommand_c::exactValue;
-    refb_isSetpoint = true;
+    r_ddiType = GeneralCommand_c::exactValue;
+    rb_isSetpoint = true;
     return;
   }
 
-  if ((rui16_DDI == 0x8E) || (rui16_DDI == 0x8D))
+  if ((aui16_DDI == 0x8E) || (aui16_DDI == 0x8D))
   {
-    ref_ddiType = GeneralCommand_c::exactValue;
-    refb_isSetpoint = true;
+    r_ddiType = GeneralCommand_c::exactValue;
+    rb_isSetpoint = true;
     return;
   }
-  if (rui16_DDI == 0x8F)
+  if (aui16_DDI == 0x8F)
   {
-    ref_ddiType = GeneralCommand_c::exactValue;
-    refb_isSetpoint = false;
+    r_ddiType = GeneralCommand_c::exactValue;
+    rb_isSetpoint = false;
     return;
   }
 
-  if (((rui16_DDI >=0x1) && (rui16_DDI <= 0x46)) || ((rui16_DDI >=0x65) && (rui16_DDI <= 0x73)))
+  if (((aui16_DDI >=0x1) && (aui16_DDI <= 0x46)) || ((aui16_DDI >=0x65) && (aui16_DDI <= 0x73)))
   {
-    uint8_t ui8_groupDDI1 = rui16_DDI % 5;
+    uint8_t ui8_groupDDI1 = aui16_DDI % 5;
 
     switch (ui8_groupDDI1)
     {
       case 0:
-        ref_ddiType = GeneralCommand_c::maxValue;
-        refb_isSetpoint = false;
+        r_ddiType = GeneralCommand_c::maxValue;
+        rb_isSetpoint = false;
         break;
       case 1:
-        ref_ddiType = GeneralCommand_c::exactValue;
-        refb_isSetpoint = true;
+        r_ddiType = GeneralCommand_c::exactValue;
+        rb_isSetpoint = true;
         break;
       case 2:
-        ref_ddiType = GeneralCommand_c::exactValue;
-        refb_isSetpoint = false;
+        r_ddiType = GeneralCommand_c::exactValue;
+        rb_isSetpoint = false;
         break;
       case 3:
-        ref_ddiType = GeneralCommand_c::defaultValue;
-        refb_isSetpoint = true;
+        r_ddiType = GeneralCommand_c::defaultValue;
+        rb_isSetpoint = true;
         break;
       case 4:
-        ref_ddiType = GeneralCommand_c::minValue;
-        refb_isSetpoint = false;
+        r_ddiType = GeneralCommand_c::minValue;
+        rb_isSetpoint = false;
         break;
     }
     return;
   }
 
-  if ((rui16_DDI >=0x47) && (rui16_DDI <= 0x4F))
+  if ((aui16_DDI >=0x47) && (aui16_DDI <= 0x4F))
   {
-    uint8_t ui8_groupDDI2 = (1 + rui16_DDI) % 3;
+    uint8_t ui8_groupDDI2 = (1 + aui16_DDI) % 3;
 
     switch (ui8_groupDDI2)
     {
       case 0:
-        ref_ddiType = GeneralCommand_c::exactValue;
-        refb_isSetpoint = true;
+        r_ddiType = GeneralCommand_c::exactValue;
+        rb_isSetpoint = true;
         break;
       case 1:
-        ref_ddiType = GeneralCommand_c::exactValue;
-        refb_isSetpoint = false;
+        r_ddiType = GeneralCommand_c::exactValue;
+        rb_isSetpoint = false;
         break;
       case 2:
-        ref_ddiType = GeneralCommand_c::maxValue;
-        refb_isSetpoint = false;
+        r_ddiType = GeneralCommand_c::maxValue;
+        rb_isSetpoint = false;
         break;
     }
     return;
   }
 
   // any other DDI
-  ref_ddiType = GeneralCommand_c::exactValue;
-  refb_isSetpoint = false;
+  r_ddiType = GeneralCommand_c::exactValue;
+  rb_isSetpoint = false;
 }
 
 
-bool ProcIdent_c::hasDDIType (uint16_t rui16_DDI, GeneralCommand_c::ValueGroup_t t_ddiType)
+bool ProcIdent_c::hasDDIType (uint16_t aui16_DDI, GeneralCommand_c::ValueGroup_t t_ddiType)
 {
   bool b_isSetPoint;
   GeneralCommand_c::ValueGroup_t t_retDDIType;
 
-  getDDIType (rui16_DDI, t_retDDIType, b_isSetPoint);
+  getDDIType (aui16_DDI, t_retDDIType, b_isSetPoint);
 
   return (t_retDDIType == t_ddiType);
 }

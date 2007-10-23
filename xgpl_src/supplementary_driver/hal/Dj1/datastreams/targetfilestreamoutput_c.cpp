@@ -124,13 +124,13 @@ TargetFileStreamOutput_c::~TargetFileStreamOutput_c()
 }
 
 
-bool TargetFileStreamOutput_c::open( CNAMESPACE::string& filename, FileMode_t rt_mode )
+bool TargetFileStreamOutput_c::open( CNAMESPACE::string& filename, FileMode_t at_mode )
 {
-	return open( filename.c_str() ,  rt_mode );
+	return open( filename.c_str() ,  at_mode );
 }
 
 //! open a output stream
-bool TargetFileStreamOutput_c::open( const char* filename, FileMode_t rt_mode )
+bool TargetFileStreamOutput_c::open( const char* filename, FileMode_t at_mode )
 {
 
 	#if defined(DEBUG) && DEBUG_FILESTREAMOUTPUT
@@ -138,7 +138,7 @@ bool TargetFileStreamOutput_c::open( const char* filename, FileMode_t rt_mode )
 		<< "Filestreamoutput: trying to open the file " <<  filename  
 		<< " in mode " 
 		//<< CNAMESPACE::hex 
-		<< rt_mode 
+		<< at_mode 
 		//<< CNAMESPACE::dec 
 		<< INTERNAL_DEBUG_DEVICE_ENDL;
 	#endif
@@ -154,7 +154,7 @@ bool TargetFileStreamOutput_c::open( const char* filename, FileMode_t rt_mode )
 
 	CNAMESPACE::string mode_string;
 
-	if (StreamOut & rt_mode) {
+	if (StreamOut & at_mode) {
 	mode_string.push_back('w');
 	}
 

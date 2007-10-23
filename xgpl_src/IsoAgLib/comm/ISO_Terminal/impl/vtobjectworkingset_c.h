@@ -114,9 +114,9 @@ public:
   uint32_t fitTerminal() const;
 
   //  Operation: changeActiveMask
-  //! @param rpc_vtObjectMask:
+  //! @param apc_vtObjectMask:
   //! @param b_updateObject:
-  void changeActiveMask(IsoAgLib::iVtObjectMask_c* rpc_vtObjectMask, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
+  void changeActiveMask(IsoAgLib::iVtObjectMask_c* apc_vtObjectMask, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
 
   void changeBackgroundColour(uint8_t newColour, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
 
@@ -124,13 +124,13 @@ public:
   //! @param b_SKM:
   void setOriginSKM(bool b_SKM);
 
-  bool moveChildLocation(IsoAgLib::iVtObject_c* rpc_childObject, int8_t dx, int8_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  bool moveChildLocation(IsoAgLib::iVtObject_c* apc_childObject, int8_t dx, int8_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
-  bool setChildPosition(IsoAgLib::iVtObject_c* rpc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  bool setChildPosition(IsoAgLib::iVtObject_c* apc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
-  bool controlAudioDevice (uint8_t rui8_repetitions, uint16_t rui16_frequency, uint16_t rui16_onTime, uint16_t rui16_offTime);
+  bool controlAudioDevice (uint8_t aui8_repetitions, uint16_t aui16_frequency, uint16_t aui16_onTime, uint16_t aui16_offTime);
 
-  bool setAudioVolume (uint8_t rui8_volume);
+  bool setAudioVolume (uint8_t aui8_volume);
 
   /** these attributes are in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const { return 0; }

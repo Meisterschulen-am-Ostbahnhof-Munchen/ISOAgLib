@@ -88,27 +88,27 @@ public:
 
   /**
     set the write position in EEPROM (in Byte); answer if possible
-    if rui16_adress exceeds EEPROM memory ignore setting and set Err_c::range
+    if aui16_adress exceeds EEPROM memory ignore setting and set Err_c::range
 
     possible errors:
-        * Err_c::range rui16_adress outer the limits of EEPROM memory
+        * Err_c::range aui16_adress outer the limits of EEPROM memory
 
-    @param rui16_adress position of write mark [uint8_t]
+    @param aui16_adress position of write mark [uint8_t]
     @return true -> setting of write mark without errors
   */
-  bool setp(uint16_t rui16_adress) {return EepromIo_c::setp(rui16_adress);};
+  bool setp(uint16_t aui16_adress) {return EepromIo_c::setp(aui16_adress);};
 
   /**
     set the read position in EEPROM (in Byte); answer if possible
-    if rui16_adress exceeds EEPROM memory ignore setting and set Err_c::range
+    if aui16_adress exceeds EEPROM memory ignore setting and set Err_c::range
 
     possible errors:
-        * Err_c::range rui16_adress outer the limits of EEPROM memory
+        * Err_c::range aui16_adress outer the limits of EEPROM memory
 
-    @param rui16_adress position of read mark [uint8_t]
+    @param aui16_adress position of read mark [uint8_t]
     @return true -> setting of read mark without errors
   */
-  bool setg(uint16_t rui16_adress) {return EepromIo_c::setg(rui16_adress);};
+  bool setg(uint16_t aui16_adress) {return EepromIo_c::setg(aui16_adress);};
 
   /**
     get the write position in EEPROM (in Byte)
@@ -128,13 +128,13 @@ public:
     -> false means that enough space is there for length bytes of data)
 
     possible errors:
-        * Err_c::range if rb_setState == true and actual write position is nearer to end of EEPROM than rui8_length byte
+        * Err_c::range if ab_setState == true and actual write position is nearer to end of EEPROM than aui8_length byte
 
-    @param rui8_length optional size of uint8_t, which must fit into EEPROM from actual position on (default 0 -> only write mark position tested)
-    @return false -> write marker is more than rui8_length uint8_t ahead end of EEPROM
+    @param aui8_length optional size of uint8_t, which must fit into EEPROM from actual position on (default 0 -> only write mark position tested)
+    @return false -> write marker is more than aui8_length uint8_t ahead end of EEPROM
   */
-  bool eofp(uint8_t rui8_length = 0, bool rb_setState = false)
-   {return EepromIo_c::eofp(rui8_length, rb_setState);};
+  bool eofp(uint8_t aui8_length = 0, bool ab_setState = false)
+   {return EepromIo_c::eofp(aui8_length, ab_setState);};
 
   /**
     check if read position is at end of EEPROM
@@ -142,13 +142,13 @@ public:
     -> false means that enough space is there for length bytes of data)
 
     possible errors:
-        * Err_c::range if rb_setState == true and actual read position is nearer to end of EEPROM than rui8_length byte
+        * Err_c::range if ab_setState == true and actual read position is nearer to end of EEPROM than aui8_length byte
 
-    @param rui8_length optional size of uint8_t, which must fit into EEPROM from actual position on (default 0 -> only read mark position tested)
-    @return false -> read marker is more than rui8_length uint8_t ahead end of EEPROM
+    @param aui8_length optional size of uint8_t, which must fit into EEPROM from actual position on (default 0 -> only read mark position tested)
+    @return false -> read marker is more than aui8_length uint8_t ahead end of EEPROM
   */
-  bool eofg(uint8_t rui8_length = 0, bool rb_setState = false)
-    {return EepromIo_c::eofg(rui8_length, rb_setState);};
+  bool eofg(uint8_t aui8_length = 0, bool ab_setState = false)
+    {return EepromIo_c::eofg(aui8_length, ab_setState);};
 
   /* *************************************** */
   /* *** EEPROM data operation functions *** */
@@ -166,11 +166,11 @@ public:
 
     @see iEepromIo_c::tellp
     @see iEepromIo_c::setp
-    @param rrefc_val string to write into EEPROM
+    @param arc_val string to write into EEPROM
     @return reference to this iEepromIo_c instance (for chains like "eeprom << val1 << val2 << ... << val_n;")
   */
-  iEepromIo_c& operator<<(STL_NAMESPACE::string& rrefc_val)
-    {return static_cast<iEepromIo_c&>(EepromIo_c::operator<<(rrefc_val));};
+  iEepromIo_c& operator<<(STL_NAMESPACE::string& arc_val)
+    {return static_cast<iEepromIo_c&>(EepromIo_c::operator<<(arc_val));};
 
   /**
     write a value to EEPROM from actual write position on (tellp() )
@@ -201,12 +201,12 @@ public:
 
     @see EepromIo_c::tellp
     @see EepromIo_c::setp
-    @param rpb_string string to write into EEPROM
-    @param rui16_number length of the string to write
+    @param apb_string string to write into EEPROM
+    @param aui16_number length of the string to write
     @return reference to this EepromIo_c instance (for chains like "eeprom << val1 << val2 << ... << val_n;")
   */
-  inline iEepromIo_c& writeString(const uint8_t *const rpb_string, uint16_t rui16_number)
-    {return static_cast<iEepromIo_c&>(EepromIo_c::writeString(rpb_string, rui16_number));};
+  inline iEepromIo_c& writeString(const uint8_t *const apb_string, uint16_t aui16_number)
+    {return static_cast<iEepromIo_c&>(EepromIo_c::writeString(apb_string, aui16_number));};
 
   /* *************************************** */
   /* *** EEPROM data operation functions *** */
@@ -241,27 +241,27 @@ public:
 
     @see iEepromIo_c::tellg
     @see iEepromIo_c::setg
-    @param rpb_string pointer to uint8_t string, which should be read from actual EEPROM read position on
-    @param rui16_number number of uint8_t to read into string
+    @param apb_string pointer to uint8_t string, which should be read from actual EEPROM read position on
+    @param aui16_number number of uint8_t to read into string
     @return true -> read with success
   */
-  bool readString(uint8_t *const rpb_string, uint16_t rui16_number)
-    {return EepromIo_c::readString(rpb_string, rui16_number);};
+  bool readString(uint8_t *const apb_string, uint16_t aui16_number)
+    {return EepromIo_c::readString(apb_string, aui16_number);};
 private:
   /** allow getIeepromInstance() access to shielded base class.
       otherwise __IsoAgLib::getEepromInstance() wouldn't be accepted by compiler
     */
   friend iEepromIo_c& getIeepromInstance( void );
-  friend iEepromIo_c& operator<<(iEepromIo_c& refc_stream, const iIsoName_c& refc_data );
-  friend iEepromIo_c& operator>>(iEepromIo_c& refc_stream, iIsoName_c& refc_data );
+  friend iEepromIo_c& operator<<(iEepromIo_c& rc_stream, const iIsoName_c& rc_data );
+  friend iEepromIo_c& operator>>(iEepromIo_c& rc_stream, iIsoName_c& rc_data );
 };
 
 /** C-style function, to get access to the unique EepromIo_c singleton instance */
 inline iEepromIo_c& getIeepromInstance( void ) { return static_cast<iEepromIo_c&>(__IsoAgLib::getEepromInstance());};
-inline iEepromIo_c& operator<<(iEepromIo_c& refc_stream, const iIsoName_c& refc_data )
-  { return static_cast<iEepromIo_c&>(operator<<(static_cast<__IsoAgLib::EepromIo_c&>(refc_stream), refc_data ) );};
-inline iEepromIo_c& operator>>(iEepromIo_c& refc_stream, iIsoName_c& refc_data )
-  { return static_cast<iEepromIo_c&>(operator>>(static_cast<__IsoAgLib::EepromIo_c&>(refc_stream), refc_data ) );};
+inline iEepromIo_c& operator<<(iEepromIo_c& rc_stream, const iIsoName_c& rc_data )
+  { return static_cast<iEepromIo_c&>(operator<<(static_cast<__IsoAgLib::EepromIo_c&>(rc_stream), rc_data ) );};
+inline iEepromIo_c& operator>>(iEepromIo_c& rc_stream, iIsoName_c& rc_data )
+  { return static_cast<iEepromIo_c&>(operator>>(static_cast<__IsoAgLib::EepromIo_c&>(rc_stream), rc_data ) );};
 
 
 /** this typedef is only for some time to provide backward compatibility at API level */

@@ -104,8 +104,8 @@ uint8_t CanPkg_c::ui8_len = 0;
   default constructor, which does nothing for the base class,
   but can do something in derived classes
 */
-CanPkg_c::CanPkg_c( int ri_singletonVecKey )
-  : ClientBase( ri_singletonVecKey )
+CanPkg_c::CanPkg_c( int ai_singletonVecKey )
+  : ClientBase( ai_singletonVecKey )
  {
 }
 
@@ -122,14 +122,14 @@ CanPkg_c::~CanPkg_c(){
   @see __IsoAgLib::FilterBox_c::operator>>
   @see CanPkgExt_c::operator=
   @see CanPkgExt_c::getData
-  @param rrefc_right reference to the source CanPkg_c on the right
+  @param arc_right reference to the source CanPkg_c on the right
   @return reference to the source CanPkg_c to enable assign chains like "pkg1 = pkg2 = pkg3 = pkg4;"
-const CanPkg_c& CanPkg_c::operator=(const CanPkg_c& rrefc_right)
+const CanPkg_c& CanPkg_c::operator=(const CanPkg_c& arc_right)
 {
-  c_ident = rrefc_right.c_ident;
-  ui8_len = rrefc_right.ui8_len;
-  c_data = rrefc_right.c_data;
-  i32_time = rrefc_right.i32_time;
+  c_ident = arc_right.c_ident;
+  ui8_len = arc_right.ui8_len;
+  c_data = arc_right.c_data;
+  i32_time = arc_right.i32_time;
 
   return *this;
 }
@@ -137,68 +137,68 @@ const CanPkg_c& CanPkg_c::operator=(const CanPkg_c& rrefc_right)
 
 /**
   put data into given reference to BIOS related data structure with data, len
-  @param reft_ident     reference where the ident is placed for send
-  @param refui8_identType reference to the ident type val: 0==std, 1==ext
-  @param refb_dlcTarget reference to the DLC field of the target
+  @param rt_ident     reference where the ident is placed for send
+  @param rui8_identType reference to the ident type val: 0==std, 1==ext
+  @param rb_dlcTarget reference to the DLC field of the target
   @param pb_dataTarget pointer to the data string of the target
 */
-void CanPkg_c::getData(uint32_t& reft_ident, uint8_t& refui8_identType,
-                     uint8_t& refb_dlcTarget, uint8_t* pb_dataTarget)
+void CanPkg_c::getData(uint32_t& rt_ident, uint8_t& rui8_identType,
+                     uint8_t& rb_dlcTarget, uint8_t* pb_dataTarget)
 {
-  reft_ident = ident();
-  refui8_identType = identType();
-  refb_dlcTarget = ui8_len;
+  rt_ident = ident();
+  rui8_identType = identType();
+  rb_dlcTarget = ui8_len;
   c_data.getDataToString( pb_dataTarget, ui8_len );
 }
 
 /**
   set complete CAN msg with one function call
-  (if rui8_len is greater than 8, than max 8 is used)
-  @param rt_ident ident of the CAN telegram
-  @param rpb_data pointer to the source data uint8_t string
-  @param rui8_len amount of bytes in the data string
-  @param ri32_time optional timestamp of CAN telegram in [msec.] since system start
+  (if aui8_len is greater than 8, than max 8 is used)
+  @param at_ident ident of the CAN telegram
+  @param apb_data pointer to the source data uint8_t string
+  @param aui8_len amount of bytes in the data string
+  @param ai32_time optional timestamp of CAN telegram in [msec.] since system start
 */
-void CanPkg_c::set(MASK_TYPE rt_ident, const uint8_t* rpb_data, uint8_t rui8_len, int32_t ri32_time, Ident_c::identType_t rt_type)
+void CanPkg_c::set(MASK_TYPE at_ident, const uint8_t* apb_data, uint8_t aui8_len, int32_t ai32_time, Ident_c::identType_t at_type)
 {
-  c_ident.set(rt_ident, rt_type);
-  ui8_len = (rui8_len<9)?rui8_len:8;
-  c_data.setDataFromString( rpb_data, ui8_len );
-  i32_time = ri32_time;
+  c_ident.set(at_ident, at_type);
+  ui8_len = (aui8_len<9)?aui8_len:8;
+  c_data.setDataFromString( apb_data, ui8_len );
+  i32_time = ai32_time;
 }
 
 /**
   set data with size bytes from source array;
-  if rui8_len is greater than 8 (max data length of CAN) than max 8 bytes are transfered
-  @param rb_data pointer to source data uint8_t array
-  @param rui8_len amount/len of the source data string
+  if aui8_len is greater than 8 (max data length of CAN) than max 8 bytes are transfered
+  @param ab_data pointer to source data uint8_t array
+  @param aui8_len amount/len of the source data string
 */
-void CanPkg_c::setDataFromString(const uint8_t* rpb_data, uint8_t rui8_len)
+void CanPkg_c::setDataFromString(const uint8_t* apb_data, uint8_t aui8_len)
 {
-  if ( rui8_len > 0 )
+  if ( aui8_len > 0 )
   { // there is something to set - this function might be called from some generic algorithms which rely
     // on the underlying functions to handle zero-lenght properly
-    ui8_len = (rui8_len<9)?rui8_len:8;
-    c_data.setDataFromString( rpb_data, ui8_len);
+    ui8_len = (aui8_len<9)?aui8_len:8;
+    c_data.setDataFromString( apb_data, ui8_len);
   }
 }
 
 /**
   set data with size bytes from source array;
-  if rui8_len is greater than 8 (max data length of CAN) than max 8 bytes are transfered.
+  if aui8_len is greater than 8 (max data length of CAN) than max 8 bytes are transfered.
   this variant of the setDataFromString allows to set the CAN data from specified offset position onwards.
-  @param rui8_targetPositionOffset
-  @param rb_data pointer to source data uint8_t array
-  @param rui8_len amount/len of the source data string
+  @param aui8_targetPositionOffset
+  @param ab_data pointer to source data uint8_t array
+  @param aui8_len amount/len of the source data string
 */
-void CanPkg_c::setDataFromString(uint8_t rui8_targetPositionOffset, const uint8_t* rpb_data, uint8_t rui8_len)
+void CanPkg_c::setDataFromString(uint8_t aui8_targetPositionOffset, const uint8_t* apb_data, uint8_t aui8_len)
 {
-  if ( rui8_len > 0 )
+  if ( aui8_len > 0 )
   { // there is something to set - this function might be called from some generic algorithms which rely
     // on the underlying functions to handle zero-lenght properly
-    const unsigned int cui_copyByteCnt = (rui8_len+rui8_targetPositionOffset <= 8)?rui8_len:(8-rui8_targetPositionOffset);
-    ui8_len = rui8_targetPositionOffset + cui_copyByteCnt;
-    c_data.setDataFromString( rui8_targetPositionOffset, rpb_data, cui_copyByteCnt);
+    const unsigned int cui_copyByteCnt = (aui8_len+aui8_targetPositionOffset <= 8)?aui8_len:(8-aui8_targetPositionOffset);
+    ui8_len = aui8_targetPositionOffset + cui_copyByteCnt;
+    c_data.setDataFromString( aui8_targetPositionOffset, apb_data, cui_copyByteCnt);
   }
 }
 
@@ -208,15 +208,15 @@ void CanPkg_c::setDataFromString(uint8_t rui8_targetPositionOffset, const uint8_
 
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   compare for equality with other CANPkg
-  @param rrefc_cmp reference to the to be compared CANPkg
+  @param arc_cmp reference to the to be compared CANPkg
   @return true -> both CanPkg_c have the same data
-bool CanPkg_c::operator==(const CanPkg_c& rrefc_cmp) const
+bool CanPkg_c::operator==(const CanPkg_c& arc_cmp) const
 {
   bool b_result = true;
-  if (c_data != rrefc_cmp.c_data) b_result = false;
-  if (c_ident != rrefc_cmp.c_ident) b_result = false;
-  if (ui8_len != rrefc_cmp.ui8_len) b_result = false;
-  if (i32_time != rrefc_cmp.i32_time) b_result = false;
+  if (c_data != arc_cmp.c_data) b_result = false;
+  if (c_ident != arc_cmp.c_ident) b_result = false;
+  if (ui8_len != arc_cmp.ui8_len) b_result = false;
+  if (i32_time != arc_cmp.i32_time) b_result = false;
   return b_result;
 }
 */
@@ -227,18 +227,18 @@ bool CanPkg_c::operator==(const CanPkg_c& rrefc_cmp) const
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   compare for difference to other CANPkg
-  @param rrefc_cmp reference to the to be compared CANPkg
+  @param arc_cmp reference to the to be compared CANPkg
   @return true -> both CanPkg_c have different data
-bool CanPkg_c::operator!=(const CanPkg_c& rrefc_cmp) const
+bool CanPkg_c::operator!=(const CanPkg_c& arc_cmp) const
 {
   ANYWAY I THINK THIS LOGIC IS WRONG!!!!!!!!!!!!!!!!!!!!!!!!
 
   bool b_result = true;
 
-  if (c_data == rrefc_cmp.c_data) b_result = false;
-  if (c_ident == rrefc_cmp.c_ident) b_result = false;
-  if (ui8_len == rrefc_cmp.ui8_len) b_result = false;
-  if (i32_time == rrefc_cmp.i32_time) b_result = false;
+  if (c_data == arc_cmp.c_data) b_result = false;
+  if (c_ident == arc_cmp.c_ident) b_result = false;
+  if (ui8_len == arc_cmp.ui8_len) b_result = false;
+  if (i32_time == arc_cmp.i32_time) b_result = false;
 
   return b_result;
   return false;

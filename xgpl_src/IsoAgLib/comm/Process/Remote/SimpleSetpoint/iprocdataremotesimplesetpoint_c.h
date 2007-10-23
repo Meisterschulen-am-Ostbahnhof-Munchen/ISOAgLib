@@ -126,22 +126,22 @@ public:
     @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDdi_s which contains DDI, element, isSetpoint and ValueGroup
                          (array is terminated by ElementDdi_s.ui16_element == 0xFFFF)
 
-    @param rc_isoName optional ISOName code of this instance
-    @param rc_ownerISOName optional ISOName of the owner
-    @param rpc_commanderISOName pointer to updated ISOName variable of commander
-    @param rpc_processDataChangeHandler optional pointer to handler class of application
-    @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
+    @param ac_isoName optional ISOName code of this instance
+    @param ac_ownerISOName optional ISOName of the owner
+    @param apc_commanderISOName pointer to updated ISOName variable of commander
+    @param apc_processDataChangeHandler optional pointer to handler class of application
+    @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
   iProcDataRemoteSimpleSetpoint_c(const IsoAgLib::ElementDdi_s* ps_elementDDI = NULL,
-                                  uint16_t rui16_element = 0xFFFF,
-                                  const iIsoName_c& rc_isoName = iIsoName_c::iIsoNameInitialProcessData(),
-                                  const iIsoName_c& rc_ownerISOName = iIsoName_c::iIsoNameUnspecified(),
-                                  const iIsoName_c* rpc_commanderISOName = NULL,
-                                  ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
-                                  int ri_singletonVecKey = 0)
-  : ProcDataRemoteSimpleSetpoint_c(ps_elementDDI, rui16_element,
-                                   rc_isoName, rc_ownerISOName, rpc_commanderISOName,
-                                   rpc_processDataChangeHandler, ri_singletonVecKey){}
+                                  uint16_t aui16_element = 0xFFFF,
+                                  const iIsoName_c& ac_isoName = iIsoName_c::iIsoNameInitialProcessData(),
+                                  const iIsoName_c& ac_ownerISOName = iIsoName_c::iIsoNameUnspecified(),
+                                  const iIsoName_c* apc_commanderISOName = NULL,
+                                  ProcessDataChangeHandler_c *apc_processDataChangeHandler = NULL,
+                                  int ai_singletonVecKey = 0)
+  : ProcDataRemoteSimpleSetpoint_c(ps_elementDDI, aui16_element,
+                                   ac_isoName, ac_ownerISOName, apc_commanderISOName,
+                                   apc_processDataChangeHandler, ai_singletonVecKey){}
 
   /**
     initialise this ProcDataRemoteSimpleSetpoint_c instance to a well defined initial state
@@ -149,29 +149,29 @@ public:
     @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDdi_s which contains DDI, element, isSetpoint and ValueGroup
                          (array is terminated by ElementDdi_s.ui16_element == 0xFFFF)
 
-    @param rc_isoName optional ISOName code of this instance
-    @param rc_ownerISOName optional ISOName of the owner
-    @param rpc_commanderISOName pointer to updated ISOName variable of commander
-    @param rpc_processDataChangeHandler optional pointer to handler class of application
-    @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
+    @param ac_isoName optional ISOName code of this instance
+    @param ac_ownerISOName optional ISOName of the owner
+    @param apc_commanderISOName pointer to updated ISOName variable of commander
+    @param apc_processDataChangeHandler optional pointer to handler class of application
+    @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
   void init(const IsoAgLib::ElementDdi_s* ps_elementDDI,
-            uint16_t rui16_element,
-            const iIsoName_c& rc_isoName = iIsoName_c::iIsoNameInitialProcessData(),
-            const iIsoName_c& rc_ownerISOName = iIsoName_c::iIsoNameUnspecified(),
-            const iIsoName_c* rpc_commanderISOName = NULL,
-            ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
-            int ri_singletonVecKey = 0)
-    {ProcDataRemoteSimpleSetpoint_c::init(ps_elementDDI, rui16_element,
-                                          rc_isoName, rc_ownerISOName, rpc_commanderISOName,
-                                          rpc_processDataChangeHandler, ri_singletonVecKey);
+            uint16_t aui16_element,
+            const iIsoName_c& ac_isoName = iIsoName_c::iIsoNameInitialProcessData(),
+            const iIsoName_c& ac_ownerISOName = iIsoName_c::iIsoNameUnspecified(),
+            const iIsoName_c* apc_commanderISOName = NULL,
+            ProcessDataChangeHandler_c *apc_processDataChangeHandler = NULL,
+            int ai_singletonVecKey = 0)
+    {ProcDataRemoteSimpleSetpoint_c::init(ps_elementDDI, aui16_element,
+                                          ac_isoName, ac_ownerISOName, apc_commanderISOName,
+                                          apc_processDataChangeHandler, ai_singletonVecKey);
     }
 
   /** set the poitner to the handler class
-    * @param rpc_processDataChangeHandler pointer to handler class of application
+    * @param apc_processDataChangeHandler pointer to handler class of application
     */
-  void setProcessDataChangeHandler( ProcessDataChangeHandler_c *rpc_processDataChangeHandler )
-   { ProcDataRemoteSimpleSetpoint_c::setProcessDataChangeHandler( rpc_processDataChangeHandler ); }
+  void setProcessDataChangeHandler( ProcessDataChangeHandler_c *apc_processDataChangeHandler )
+   { ProcDataRemoteSimpleSetpoint_c::setProcessDataChangeHandler( apc_processDataChangeHandler ); }
 
   /** deliver the poitner to the handler class
     * @return pointer to handler class of application (or NULL if not defined by application)
@@ -192,7 +192,7 @@ public:
   uint8_t devClassInst() const{return ProcDataRemoteSimpleSetpoint_c::devClassInst();}
 
   /** check if this ProcIdent_c has the given DDI as element */
-  bool hasDDI( uint16_t rui16_checkDDI ) const { return ProcIdent_c::hasDDI( rui16_checkDDI );}
+  bool hasDDI( uint16_t aui16_checkDDI ) const { return ProcIdent_c::hasDDI( aui16_checkDDI );}
 
 
   /**
@@ -226,42 +226,42 @@ public:
    * ******************************************** */
   /**
     deliver the actual master setpoint
-    @param rb_sendRequest true -> send request for actual value
+    @param ab_sendRequest true -> send request for actual value
     @return setpoint value as long
   */
-  int32_t setpointMasterVal(bool rb_sendRequest = false)
-    {return ProcDataRemoteSimpleSetpoint_c::setpointMasterVal(rb_sendRequest);}
+  int32_t setpointMasterVal(bool ab_sendRequest = false)
+    {return ProcDataRemoteSimpleSetpoint_c::setpointMasterVal(ab_sendRequest);}
 
   /**
     send a setpoint cmd with given exact setpoint
-    @param ri32_val commanded setpoint value as long
+    @param ai32_val commanded setpoint value as long
   */
-  void setSetpointMasterVal(int32_t ri32_val)
-    {ProcDataRemoteSimpleSetpoint_c::setSetpointMasterVal(ri32_val);}
+  void setSetpointMasterVal(int32_t ai32_val)
+    {ProcDataRemoteSimpleSetpoint_c::setSetpointMasterVal(ai32_val);}
 
   #ifdef USE_FLOAT_DATA_TYPE
   /**
     deliver the actual master setpoint
-    @param rb_sendRequest true -> send request for actual value
+    @param ab_sendRequest true -> send request for actual value
     @return setpoint value as float
   */
-  float setpointMasterValFloat(bool rb_sendRequest = false)
-    {return ProcDataRemoteSimpleSetpoint_c::setpointMasterValFloat(rb_sendRequest);}
+  float setpointMasterValFloat(bool ab_sendRequest = false)
+    {return ProcDataRemoteSimpleSetpoint_c::setpointMasterValFloat(ab_sendRequest);}
 
   /**
     send a setpoint cmd with given exact setpoint
-    @param rf_val commanded setpoint value as float
+    @param af_val commanded setpoint value as float
   */
-  void setSetpointMasterVal(float rf_val)
-    {ProcDataRemoteSimpleSetpoint_c::setSetpointMasterVal(rf_val);}
+  void setSetpointMasterVal(float af_val)
+    {ProcDataRemoteSimpleSetpoint_c::setSetpointMasterVal(af_val);}
   #endif
 
   /**
     deliver actual measurement value as long
-    @param rb_sendRequest true -> request for new value is sent (optional, default false)
+    @param ab_sendRequest true -> request for new value is sent (optional, default false)
   */
-  int32_t masterMeasurementVal(bool rb_sendRequest = false)
-    {return ProcDataRemoteSimpleSetpoint_c::masterMeasurementVal(rb_sendRequest);}
+  int32_t masterMeasurementVal(bool ab_sendRequest = false)
+    {return ProcDataRemoteSimpleSetpoint_c::masterMeasurementVal(ab_sendRequest);}
 
   /**
     send reset cmd for the measurement value
@@ -271,10 +271,10 @@ public:
   #ifdef USE_FLOAT_DATA_TYPE
   /**
     deliver actual measurement value as float
-    @param rb_sendRequest true -> request for new value is sent (optional, default false)
+    @param ab_sendRequest true -> request for new value is sent (optional, default false)
   */
-  float masterValFloat(bool rb_sendRequest = false)
-    {return ProcDataRemoteSimpleSetpoint_c::masterValFloat(rb_sendRequest);}
+  float masterValFloat(bool ab_sendRequest = false)
+    {return ProcDataRemoteSimpleSetpoint_c::masterValFloat(ab_sendRequest);}
   #endif
 
   /**
@@ -288,7 +288,7 @@ public:
     @param rpbisoName pointer to ISOName var of local member used for
                 sending commands to remote owner member
   */
-  void setCommanderISOName(const __IsoAgLib::IsoName_c* rpc_isoName){ProcDataRemoteSimpleSetpoint_c::setCommanderISOName(rpc_isoName);}
+  void setCommanderISOName(const __IsoAgLib::IsoName_c* apc_isoName){ProcDataRemoteSimpleSetpoint_c::setCommanderISOName(apc_isoName);}
 
   /**
     deliver the central data type of this process data

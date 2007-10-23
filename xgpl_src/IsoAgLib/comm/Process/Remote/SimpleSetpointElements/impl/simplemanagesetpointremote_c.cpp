@@ -100,31 +100,31 @@ namespace __IsoAgLib {
 
 /**
   initialise this SimpleManageSetpointRemote_c instance to a well defined initial state
-  @param rpc_processData optional pointer to containing ProcessData instance
+  @param apc_processData optional pointer to containing ProcessData instance
 */
-void SimpleManageSetpointRemote_c::init( ProcDataBase_c *const rpc_processData )
+void SimpleManageSetpointRemote_c::init( ProcDataBase_c *const apc_processData )
 {
-  ProcessElementBase_c::set( rpc_processData );
+  ProcessElementBase_c::set( apc_processData );
     i32_setpointMasterVal = 0;
 }
 /** copy constructor */
-SimpleManageSetpointRemote_c::SimpleManageSetpointRemote_c( const SimpleManageSetpointRemote_c& rrefc_src )
-: ProcessElementBase_c( rrefc_src )
+SimpleManageSetpointRemote_c::SimpleManageSetpointRemote_c( const SimpleManageSetpointRemote_c& arc_src )
+: ProcessElementBase_c( arc_src )
 {
-  assignFromSource( rrefc_src );
+  assignFromSource( arc_src );
 }
 /** assignment operator */
-const SimpleManageSetpointRemote_c& SimpleManageSetpointRemote_c::operator=( const SimpleManageSetpointRemote_c& rrefc_src )
+const SimpleManageSetpointRemote_c& SimpleManageSetpointRemote_c::operator=( const SimpleManageSetpointRemote_c& arc_src )
 {
-  ProcessElementBase_c::operator=( rrefc_src );
-  assignFromSource( rrefc_src );
+  ProcessElementBase_c::operator=( arc_src );
+  assignFromSource( arc_src );
   return *this;
 }
 
 /** base function for assignment of element vars for copy constructor and operator= */
-void SimpleManageSetpointRemote_c::assignFromSource( const SimpleManageSetpointRemote_c& rrefc_src )
+void SimpleManageSetpointRemote_c::assignFromSource( const SimpleManageSetpointRemote_c& arc_src )
 {
-  i32_setpointMasterVal = rrefc_src.i32_setpointMasterVal;
+  i32_setpointMasterVal = arc_src.i32_setpointMasterVal;
 }
 
 /** processing of a setpoint message */
@@ -175,14 +175,14 @@ void SimpleManageSetpointRemote_c::processSetpoint()
 
 /**
   deliver the actual master setpoint
-  @param rb_sendRequest true -> send request for actual value
+  @param ab_sendRequest true -> send request for actual value
   @return setpoint value as long
 */
-int32_t SimpleManageSetpointRemote_c::setpointMasterVal(bool rb_sendRequest)
+int32_t SimpleManageSetpointRemote_c::setpointMasterVal(bool ab_sendRequest)
 {
   setValType(i32_val);
   ProcDataRemoteBase_c& c_base = static_cast<ProcDataRemoteBase_c&>(processData());
-  if (rb_sendRequest) {
+  if (ab_sendRequest) {
     // prepare general command in process pkg
     getProcessInstance4Comm().data().c_generalCommand.setValues(true /* isSetpoint */, true /* isRequest */,
                                                                 GeneralCommand_c::exactValue,
@@ -195,10 +195,10 @@ int32_t SimpleManageSetpointRemote_c::setpointMasterVal(bool rb_sendRequest)
 
 /**
   send a setpoint cmd with given exact setpoint
-  @param ri32_val commanded setpoint value as long
-  @param rb_onlyStoreOnResponse true -> the given value is only stored if response arrives
+  @param ai32_val commanded setpoint value as long
+  @param ab_onlyStoreOnResponse true -> the given value is only stored if response arrives
 */
-void SimpleManageSetpointRemote_c::setSetpointMasterVal(int32_t ri32_val, bool rb_onlyStoreOnResponse)
+void SimpleManageSetpointRemote_c::setSetpointMasterVal(int32_t ai32_val, bool ab_onlyStoreOnResponse)
 {
   ProcDataRemoteBase_c& c_base = static_cast<ProcDataRemoteBase_c&>(processData());
   setValType(i32_val);
@@ -208,20 +208,20 @@ void SimpleManageSetpointRemote_c::setSetpointMasterVal(int32_t ri32_val, bool r
                                                               GeneralCommand_c::exactValue,
                                                               GeneralCommand_c::setValue);
 
-  c_base.sendValISOName(c_base.commanderISOName(), ri32_val);
-  if (!rb_onlyStoreOnResponse) i32_setpointMasterVal = ri32_val;
+  c_base.sendValISOName(c_base.commanderISOName(), ai32_val);
+  if (!ab_onlyStoreOnResponse) i32_setpointMasterVal = ai32_val;
 }
 #ifdef USE_FLOAT_DATA_TYPE
 /**
   deliver the actual master setpoint
-  @param rb_sendRequest true -> send request for actual value
+  @param ab_sendRequest true -> send request for actual value
   @return setpoint value as float
 */
-float SimpleManageSetpointRemote_c::setpointMasterValFloat(bool rb_sendRequest)
+float SimpleManageSetpointRemote_c::setpointMasterValFloat(bool ab_sendRequest)
 {
   ProcDataRemoteBase_c& c_base = static_cast<ProcDataRemoteBase_c&>(processData());
   setValType(float_val);
-  if (rb_sendRequest) {
+  if (ab_sendRequest) {
     // prepare general command in process pkg
     getProcessInstance4Comm().data().c_generalCommand.setValues(true /* isSetpoint */, true /* isRequest */,
                                                                 GeneralCommand_c::exactValue,
@@ -233,10 +233,10 @@ float SimpleManageSetpointRemote_c::setpointMasterValFloat(bool rb_sendRequest)
 }
 /**
   send a setpoint cmd with given exact setpoint
-  @param rf_val commanded setpoint value as float
-  @param rb_onlyStoreOnResponse true -> the given value is only stored if response arrives
+  @param af_val commanded setpoint value as float
+  @param ab_onlyStoreOnResponse true -> the given value is only stored if response arrives
 */
-void SimpleManageSetpointRemote_c::setSetpointMasterVal(float rf_val, bool rb_onlyStoreOnResponse)
+void SimpleManageSetpointRemote_c::setSetpointMasterVal(float af_val, bool ab_onlyStoreOnResponse)
 {
   ProcDataRemoteBase_c& c_base = static_cast<ProcDataRemoteBase_c&>(processData());
   setValType(float_val);
@@ -245,8 +245,8 @@ void SimpleManageSetpointRemote_c::setSetpointMasterVal(float rf_val, bool rb_on
                                                               GeneralCommand_c::exactValue,
                                                               GeneralCommand_c::setValue);
 
-  c_base.sendValISOName(c_base.commanderISOName(), rf_val);
-  if (!rb_onlyStoreOnResponse) f_setpointMasterVal = rf_val;
+  c_base.sendValISOName(c_base.commanderISOName(), af_val);
+  if (!ab_onlyStoreOnResponse) f_setpointMasterVal = af_val;
 }
 #endif
 

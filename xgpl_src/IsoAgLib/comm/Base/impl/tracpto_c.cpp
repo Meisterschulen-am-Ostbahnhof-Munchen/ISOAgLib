@@ -99,9 +99,9 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
   /** C-style function, to get access to the unique TracPTO_c singleton instance
     * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
     */
-  TracPTO_c& getTracPtoInstance(uint8_t rui8_instance)
+  TracPTO_c& getTracPtoInstance(uint8_t aui8_instance)
   { // if > 1 singleton instance is used, no static reference can be used
-    return TracPTO_c::instance(rui8_instance);
+    return TracPTO_c::instance(aui8_instance);
   };
   #else
   /** C-style function, to get access to the unique TracPTO_c singleton instance */
@@ -116,23 +116,23 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
       above all create the needed FilterBox_c instances
       possible errors:
         * dependant error in CanIo_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
-      @param rpc_isoName optional pointer to the ISOName variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
+      @param apc_isoName optional pointer to the ISOName variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
       @param ai_singletonVecKey singleton vector key in case PRT_INSTANCE_CNT > 1
-      @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
+      @param at_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
     */
-  void TracPTO_c::init_base (const IsoName_c* rpc_isoName, int /*ai_singletonVecKey*/, IsoAgLib::IdentMode_t rt_identMode)
+  void TracPTO_c::init_base (const IsoName_c* apc_isoName, int /*ai_singletonVecKey*/, IsoAgLib::IdentMode_t at_identMode)
   {
     //call init for handling which is base data independent
-    BaseCommon_c::init_base (rpc_isoName, getSingletonVecKey(), rt_identMode);
+    BaseCommon_c::init_base (apc_isoName, getSingletonVecKey(), at_identMode);
   };
 
   /** config the TracPTO_c object after init -> set pointer to isoName and
       config send/receive of different base msg types
-      @param rpc_isoName pointer to the ISOName variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
-      @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
+      @param apc_isoName pointer to the ISOName variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
+      @param at_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       @return true -> configuration was successfull
    */
-  bool TracPTO_c::config_base (const IsoName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode, uint16_t rui16_suppressMask)
+  bool TracPTO_c::config_base (const IsoName_c* apc_isoName, IsoAgLib::IdentMode_t at_identMode, uint16_t aui16_suppressMask)
   {
     //store old mode to decide to register or unregister from request for pgn
     //and set Periode for Scheduler_c
@@ -140,10 +140,10 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
 
     //call config for handling which is base data independent
     //if something went wrong leave function before something is configured
-    if ( !BaseCommon_c::config_base (rpc_isoName, rt_identMode, rui16_suppressMask) ) return false;
+    if ( !BaseCommon_c::config_base (apc_isoName, at_identMode, aui16_suppressMask) ) return false;
 
     ///Set time Period for Scheduler_c
-    if (rt_identMode == IsoAgLib::IdentModeTractor) setTimePeriod( (uint16_t) 100);
+    if (at_identMode == IsoAgLib::IdentModeTractor) setTimePeriod( (uint16_t) 100);
     else  setTimePeriod( (uint16_t) TIMEOUT_TRACTOR_DATA   );
 
     // set the member base msg value vars to NO_VAL codes
@@ -151,8 +151,8 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     // set the timestamps to 0
     t_ptoFront.i32_lastPto = t_ptoRear.i32_lastPto = 0;
 
-    if (   (t_oldMode == IsoAgLib::IdentModeImplement && rt_identMode == IsoAgLib::IdentModeTractor)
-        || (t_oldMode == IsoAgLib::IdentModeTractor && rt_identMode == IsoAgLib::IdentModeImplement)
+    if (   (t_oldMode == IsoAgLib::IdentModeImplement && at_identMode == IsoAgLib::IdentModeTractor)
+        || (t_oldMode == IsoAgLib::IdentModeTractor && at_identMode == IsoAgLib::IdentModeImplement)
        )
     { // a change from Implement to Tractor mode or a change from Tractor to Implement mode occured
       const uint8_t pgnCount = 2;
@@ -206,19 +206,19 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     }
   }
 
-  bool TracPTO_c::processMsgRequestPGN (uint32_t rui32_pgn, IsoItem_c* rpc_isoItemSender, IsoItem_c* rpc_isoItemReceiver)
+  bool TracPTO_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver)
   {
     // check if we are allowed to send a request for pgn
-    if ( ! BaseCommon_c::check4ReqForPgn(rui32_pgn, rpc_isoItemSender, rpc_isoItemReceiver) ) return false;
+    if ( ! BaseCommon_c::check4ReqForPgn(aui32_pgn, apc_isoItemSender, apc_isoItemReceiver) ) return false;
 
     // call TracPto_c function to send pto informtation
     // isoSendMessage checks if this item (identified by ISOName)
     // is configured to send pto information
-    if ( rui32_pgn == FRONT_PTO_STATE_PGN  && t_ptoFront.t_ptoEngaged != IsoAgLib::IsoActive)
+    if ( aui32_pgn == FRONT_PTO_STATE_PGN  && t_ptoFront.t_ptoEngaged != IsoAgLib::IsoActive)
     {
       sendMessage(sendFrontPto);
     }
-    if ( rui32_pgn == REAR_PTO_STATE_PGN && t_ptoRear.t_ptoEngaged != IsoAgLib::IsoActive)
+    if ( aui32_pgn == REAR_PTO_STATE_PGN && t_ptoRear.t_ptoEngaged != IsoAgLib::IsoActive)
     {
       sendMessage(sendRearPto);
     }

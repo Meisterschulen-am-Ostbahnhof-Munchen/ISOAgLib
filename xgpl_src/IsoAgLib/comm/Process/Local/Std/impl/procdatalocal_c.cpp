@@ -131,10 +131,10 @@ namespace __IsoAgLib {
   @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDdi_s which contains DDI, element, isSetpoint and ValueGroup
                        (array is terminated by ElementDdi_s.ui16_element == 0xFFFF)
 
-  @param rc_isoName optional ISOName code of Process-Data
-  @param rc_ownerISOName optional ISOName of the owner
-  @param rpc_isoName pointer to updated ISOName variable of owner
-  @param rb_cumulativeValue
+  @param ac_isoName optional ISOName code of Process-Data
+  @param ac_ownerISOName optional ISOName of the owner
+  @param apc_isoName pointer to updated ISOName variable of owner
+  @param ab_cumulativeValue
            -# for process data like distance, time, area
                the value of the measure prog data sets is updated
                on master value update dependent on the value increment
@@ -150,26 +150,26 @@ namespace __IsoAgLib {
                 -> if this data is saved in EEPROM, the stored value is loaded
                    as initial master value, and is initially propagated to all
                    measure prog data sets
-  @param rui16_eepromAdr optional adress where value is stored in EEPROM
-  @param rpc_processDataChangeHandler optional pointer to handler class of application
-  @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
+  @param aui16_eepromAdr optional adress where value is stored in EEPROM
+  @param apc_processDataChangeHandler optional pointer to handler class of application
+  @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
-ProcDataLocal_c::ProcDataLocal_c( const IsoAgLib::ElementDdi_s* ps_elementDDI, uint16_t rui16_element,
-                                  const IsoName_c& rc_isoName, const IsoName_c& rc_ownerISOName,
-                                  const IsoName_c *rpc_isoName, bool rb_cumulativeValue,
+ProcDataLocal_c::ProcDataLocal_c( const IsoAgLib::ElementDdi_s* ps_elementDDI, uint16_t aui16_element,
+                                  const IsoName_c& ac_isoName, const IsoName_c& ac_ownerISOName,
+                                  const IsoName_c *apc_isoName, bool ab_cumulativeValue,
 #ifdef USE_EEPROM_IO
-                  uint16_t rui16_eepromAdr,
+                  uint16_t aui16_eepromAdr,
 #endif
-                  IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler,
-                  int ri_singletonVecKey
+                  IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler,
+                  int ai_singletonVecKey
                   )
-    : ProcDataLocalBase_c( ps_elementDDI, rui16_element,
-                          rc_isoName, rc_ownerISOName, rpc_isoName, rb_cumulativeValue,
+    : ProcDataLocalBase_c( ps_elementDDI, aui16_element,
+                          ac_isoName, ac_ownerISOName, apc_isoName, ab_cumulativeValue,
 #ifdef USE_EEPROM_IO
-                          rui16_eepromAdr,
+                          aui16_eepromAdr,
 #endif
-                          rpc_processDataChangeHandler,
-                          ri_singletonVecKey)
+                          apc_processDataChangeHandler,
+                          ai_singletonVecKey)
     , c_measureprog( this )
     , c_setpoint( this )
 {
@@ -184,10 +184,10 @@ ProcDataLocal_c::ProcDataLocal_c( const IsoAgLib::ElementDdi_s* ps_elementDDI, u
   @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDdi_s which contains DDI, element, isSetpoint and ValueGroup
                        (array is terminated by ElementDdi_s.ui16_element == 0xFFFF)
 
-  @param rc_isoName optional ISOName code of Process-Data
-  @param rc_ownerISOName optional ISOName of the owner
-  @param rpc_isoName pointer to updated ISOName variable of owner
-  @param rb_cumulativeValue
+  @param ac_isoName optional ISOName code of Process-Data
+  @param ac_ownerISOName optional ISOName of the owner
+  @param apc_isoName pointer to updated ISOName variable of owner
+  @param ab_cumulativeValue
           -# for process data like distance, time, area
               the value of the measure prog data sets is updated
               on master value update dependent on the value increment
@@ -203,27 +203,27 @@ ProcDataLocal_c::ProcDataLocal_c( const IsoAgLib::ElementDdi_s* ps_elementDDI, u
                 -> if this data is saved in EEPROM, the stored value is loaded
                   as initial master value, and is initially propagated to all
                   measure prog data sets
-  @param rui16_eepromAdr optional adress where value is stored in EEPROM
-  @param rpc_processDataChangeHandler optional pointer to handler class of application
-  @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
+  @param aui16_eepromAdr optional adress where value is stored in EEPROM
+  @param apc_processDataChangeHandler optional pointer to handler class of application
+  @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
-void ProcDataLocal_c::init( const IsoAgLib::ElementDdi_s* ps_elementDDI, uint16_t rui16_element,
-                            const IsoName_c& rc_isoName, const IsoName_c& rc_ownerISOName,
-                            const IsoName_c *rpc_isoName, bool rb_cumulativeValue,
+void ProcDataLocal_c::init( const IsoAgLib::ElementDdi_s* ps_elementDDI, uint16_t aui16_element,
+                            const IsoName_c& ac_isoName, const IsoName_c& ac_ownerISOName,
+                            const IsoName_c *apc_isoName, bool ab_cumulativeValue,
 #ifdef USE_EEPROM_IO
-                           uint16_t rui16_eepromAdr,
+                           uint16_t aui16_eepromAdr,
 #endif
-                           IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler,
-                           int ri_singletonVecKey
+                           IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler,
+                           int ai_singletonVecKey
                            )
 {
-  ProcDataLocalBase_c::init( ps_elementDDI, rui16_element,
-                            rc_isoName, rc_ownerISOName, rpc_isoName, rb_cumulativeValue,
+  ProcDataLocalBase_c::init( ps_elementDDI, aui16_element,
+                            ac_isoName, ac_ownerISOName, apc_isoName, ab_cumulativeValue,
 #ifdef USE_EEPROM_IO
-                            rui16_eepromAdr,
+                            aui16_eepromAdr,
 #endif
-                            rpc_processDataChangeHandler,
-                            ri_singletonVecKey );
+                            apc_processDataChangeHandler,
+                            ai_singletonVecKey );
   c_setpoint.init( this );
   c_measureprog.init( this );
 }
@@ -241,11 +241,11 @@ ProcDataLocal_c::~ProcDataLocal_c(){
 
   possible errors:
       * dependent error in EepromIo_c on problems during read
-  @param rui16_eepromAdr new EEPROM adress
+  @param aui16_eepromAdr new EEPROM adress
 */
-void ProcDataLocal_c::setEepromAdr(uint16_t rui16_eepromAdr)
+void ProcDataLocal_c::setEepromAdr(uint16_t aui16_eepromAdr)
 {
-  ProcDataLocalBase_c::setEepromAdr( rui16_eepromAdr );
+  ProcDataLocalBase_c::setEepromAdr( aui16_eepromAdr );
   #ifdef USE_FLOAT_DATA_TYPE
   if (valType() == float_val)
   { // now init read val for all MeasureProg
@@ -260,36 +260,36 @@ void ProcDataLocal_c::setEepromAdr(uint16_t rui16_eepromAdr)
 #endif
 /**
   set the masterMeasurementVal from main application independent from any measure progs
-  @param ri32_val new measure value
+  @param ai32_val new measure value
 */
-void ProcDataLocal_c::setMasterMeasurementVal(int32_t ri32_val){
-  ProcDataLocalBase_c::setMasterMeasurementVal( ri32_val );
-  c_measureprog.setGlobalVal( ri32_val );
+void ProcDataLocal_c::setMasterMeasurementVal(int32_t ai32_val){
+  ProcDataLocalBase_c::setMasterMeasurementVal( ai32_val );
+  c_measureprog.setGlobalVal( ai32_val );
 }
 /**
   increment the value -> update the local and the measuring programs values
-  @param ri32_val size of increment of master value
+  @param ai32_val size of increment of master value
 */
-void ProcDataLocal_c::incrMasterMeasurementVal(int32_t ri32_val){
-  ProcDataLocalBase_c::incrMasterMeasurementVal( ri32_val );
+void ProcDataLocal_c::incrMasterMeasurementVal(int32_t ai32_val){
+  ProcDataLocalBase_c::incrMasterMeasurementVal( ai32_val );
   // ProcDataLocalBase_c::incrMasterMeasurementVal sets new ProcDataLocalBase_c::i32_masterVal
   c_measureprog.setGlobalVal( masterMeasurementVal() );
 }
 #ifdef USE_FLOAT_DATA_TYPE
 /**
   set the masterMeasurementVal from main application independent from any measure progs
-  @param rf_val new measure value
+  @param af_val new measure value
 */
-void ProcDataLocal_c::setMasterMeasurementVal(float rf_val){
-  ProcDataLocalBase_c::setMasterMeasurementVal( rf_val );
-  c_measureprog.setGlobalVal( rf_val );
+void ProcDataLocal_c::setMasterMeasurementVal(float af_val){
+  ProcDataLocalBase_c::setMasterMeasurementVal( af_val );
+  c_measureprog.setGlobalVal( af_val );
 }
 /**
   increment the value -> update the local and the measuring programs values
-  @param ri32_val size of increment of master value
+  @param ai32_val size of increment of master value
 */
-void ProcDataLocal_c::incrMasterMeasurementVal(float rf_val){
-  ProcDataLocalBase_c::incrMasterMeasurementVal( rf_val );
+void ProcDataLocal_c::incrMasterMeasurementVal(float af_val){
+  ProcDataLocalBase_c::incrMasterMeasurementVal( af_val );
   // ProcDataLocalBase_c::incrMasterMeasurementVal sets new ProcDataLocalBase_c::i32_masterVal
   c_measureprog.setGlobalVal( masterValFloat() );
 }
@@ -352,34 +352,34 @@ void ProcDataLocal_c::processProg(){
   allow local client to actively start a measurement program
   (to react on a incoming "start" command for default data logging)
   @param ren_type measurement type: Proc_c::TimeProp, Proc_c::DistProp, ...
-  @param ri32_increment
-  @param rpc_receiverDevice commanding ISOName
+  @param ai32_increment
+  @param apc_receiverDevice commanding ISOName
   @return true -> measurement started
 */
 bool ProcDataLocal_c::startDataLogging(Proc_c::type_t ren_type /* Proc_c::TimeProp, Proc_c::DistProp, ... */,
-                                       int32_t ri32_increment, const IsoName_c* rpc_receiverDevice )
+                                       int32_t ai32_increment, const IsoName_c* apc_receiverDevice )
 {
-  if ( !rpc_receiverDevice )
+  if ( !apc_receiverDevice )
     // get isoName of TC from last TC status message
-    rpc_receiverDevice = getProcessInstance4Comm().getTcISOName();
+    apc_receiverDevice = getProcessInstance4Comm().getTcISOName();
 
-  // if still no rpc_receiverDevice => get it from ISO monitor list
-  if ( !rpc_receiverDevice )
+  // if still no apc_receiverDevice => get it from ISO monitor list
+  if ( !apc_receiverDevice )
   {  // get TC dev key (device class 0)
-    const IsoItem_c& c_tcISOItem = getIsoMonitorInstance4Comm().isoMemberDevClassInd(0 /* rui8_devClass */, 0 /* rui8_ind */, TRUE /* rb_forceClaimedAddress */);
-    rpc_receiverDevice = &(c_tcISOItem.isoName());
+    const IsoItem_c& c_tcISOItem = getIsoMonitorInstance4Comm().isoMemberDevClassInd(0 /* aui8_devClass */, 0 /* aui8_ind */, TRUE /* ab_forceClaimedAddress */);
+    apc_receiverDevice = &(c_tcISOItem.isoName());
   }
 
-  return c_measureprog.startDataLogging(ren_type, ri32_increment, rpc_receiverDevice);
+  return c_measureprog.startDataLogging(ren_type, ai32_increment, apc_receiverDevice);
 }
 
 /**
   stop all measurement progs in all local process instances, started with given isoName
-  @param refc_isoName
+  @param rc_isoName
 */
-void ProcDataLocal_c::stopRunningMeasurement(const IsoName_c& refc_isoName)
+void ProcDataLocal_c::stopRunningMeasurement(const IsoName_c& rc_isoName)
 {
-  c_measureprog.stopRunningMeasurement(refc_isoName);
+  c_measureprog.stopRunningMeasurement(rc_isoName);
 }
 
 

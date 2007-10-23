@@ -97,20 +97,20 @@ public:
 
   //  Operation: moveChildLocation
   //! Parameter:
-  //! @param rpc_object:
-  //! @param rpc_childObject:
+  //! @param apc_object:
+  //! @param apc_childObject:
   //! @param dx:
   //! @param dy:
-  bool moveChildLocation(iVtObject_c* rpc_childObject, int8_t dx, int8_t dy, bool b_updateObject=false) {
-    return vtObjectDataMask_c::moveChildLocation (rpc_childObject, dx, dy, b_updateObject);
+  bool moveChildLocation(iVtObject_c* apc_childObject, int8_t dx, int8_t dy, bool b_updateObject=false) {
+    return vtObjectDataMask_c::moveChildLocation (apc_childObject, dx, dy, b_updateObject);
   }
 
   //  Operation: setChildPosition
-  //! @param rpc_childObject:
+  //! @param apc_childObject:
   //! @param dx:
   //! @param dy:
-  bool setChildPosition(IsoAgLib::iVtObject_c* rpc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    return vtObjectDataMask_c::setChildPosition(rpc_childObject, dx, dy, b_updateObject, b_enableReplaceOfCmd);
+  bool setChildPosition(IsoAgLib::iVtObject_c* apc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
+    return vtObjectDataMask_c::setChildPosition(apc_childObject, dx, dy, b_updateObject, b_enableReplaceOfCmd);
   }
 
   // ///////////////////////// getter for attributes

@@ -149,15 +149,15 @@ private: // Private methods
 
 
   /** this function is called by IsoMonitor_c when a new CLAIMED IsoItem_c is registered.
-   * @param refc_isoName const reference to the item which IsoItem_c state is changed
-   * @param rpc_newItem pointer to the currently corresponding IsoItem_c
+   * @param rc_isoName const reference to the item which IsoItem_c state is changed
+   * @param apc_newItem pointer to the currently corresponding IsoItem_c
    */
-  void reactOnMonitorListAdd (const IsoName_c& refc_isoName, const IsoItem_c* rpc_newItem);
+  void reactOnMonitorListAdd (const IsoName_c& rc_isoName, const IsoItem_c* apc_newItem);
    /** this function is called by IsoMonitor_c when a device looses its IsoItem_c.
-   * @param refc_isoName const reference to the item which IsoItem_c state is changed
-   * @param rui8_oldSa previously used SA which is NOW LOST -> clients which were connected to this item can react explicitly
+   * @param rc_isoName const reference to the item which IsoItem_c state is changed
+   * @param aui8_oldSa previously used SA which is NOW LOST -> clients which were connected to this item can react explicitly
     */
-  void reactOnMonitorListRemove (const IsoName_c& refc_isoName, uint8_t rui8_oldSa);
+  void reactOnMonitorListRemove (const IsoName_c& rc_isoName, uint8_t aui8_oldSa);
 
 private: // Private attributes
   /// holds all
@@ -172,7 +172,7 @@ private: // Private attributes
 #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
   /** C-style function, to get access to the unique IsoFilterManager_c singleton instance
       if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS */
-  IsoFilterManager_c& getIsoFilterManagerInstance (uint8_t rui8_instance = 0);
+  IsoFilterManager_c& getIsoFilterManagerInstance (uint8_t aui8_instance = 0);
 #else
   /** C-style function, to get access to the unique IsoFilterManager_c singleton instance */
   IsoFilterManager_c& getIsoFilterManagerInstance (void);

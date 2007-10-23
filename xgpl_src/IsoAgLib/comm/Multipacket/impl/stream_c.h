@@ -155,7 +155,7 @@ class Stream_c : public IsoAgLib::iStream_c //, public ClientBase --> for single
 
 public:
 
-  Stream_c (StreamType_t rt_streamType, const IsoAgLib::ReceiveStreamIdentifier_c& rc_rsi, uint32_t rui32_msgSize SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA , bool rb_skipCtsAwait=false);
+  Stream_c (StreamType_t at_streamType, const IsoAgLib::ReceiveStreamIdentifier_c& ac_rsi, uint32_t aui32_msgSize SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA , bool ab_skipCtsAwait=false);
 
   Stream_c& operator= (const Stream_c&);
 
@@ -167,7 +167,7 @@ public:
   // Sets the internal state to expect (DPO and afterwards) the calculated amount of DATA commands next
   uint8_t expectBurst(uint8_t wishingPkgs);
 
-  bool handleDataPacket (const Flexible8ByteString_c* rpc_data);
+  bool handleDataPacket (const Flexible8ByteString_c* apc_data);
 
 /// Begin Additional Abstract methods handled by StreamLinear_c/StreamChunk_c
   //  Operation: insert
@@ -200,8 +200,8 @@ public:
 
   //  Operation: setDataPageOffset
   //! Parameter:
-  //! @param rui32_dataPageOffset:
-  bool setDataPageOffset(uint32_t rui32_dataPageOffset);
+  //! @param aui32_dataPageOffset:
+  bool setDataPageOffset(uint32_t aui32_dataPageOffset);
 
   // simple getter function!
   const IsoAgLib::ReceiveStreamIdentifier_c& getIdent() { return c_ident; }
@@ -216,7 +216,7 @@ public:
   //! Provide first byte set by first call of processDataChunk... First byte containes command.
   uint8_t  getFirstByte()                 const { return ui8_streamFirstByte; };
   //! Store first byte of stream. First byte containes command.
-  void     setFirstByte(uint8_t rui8_firstByte) { ui8_streamFirstByte = rui8_firstByte; };
+  void     setFirstByte(uint8_t aui8_firstByte) { ui8_streamFirstByte = aui8_firstByte; };
 
   void setStreamFinishedJustKept() { awaitNextStep (AwaitNothing, sci32_timeNever); // no timeOut on own Send-Awaits
                                      t_streamState = StreamFinishedJustKept; }; // from now on NOTHING more should be done with this stream!
@@ -225,7 +225,7 @@ public:
 
 private:
 
-  void awaitNextStep (NextComing_t rt_awaitStep, int32_t ri32_timeOut);
+  void awaitNextStep (NextComing_t at_awaitStep, int32_t ai32_timeOut);
 
 
 protected:

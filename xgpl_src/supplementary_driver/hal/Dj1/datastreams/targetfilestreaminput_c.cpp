@@ -146,7 +146,7 @@ TargetFileStreamInput_c::~TargetFileStreamInput_c()
 }
 
 //! open an input stream
-bool TargetFileStreamInput_c::open( const char* filename, FileMode_t rt_mode )
+bool TargetFileStreamInput_c::open( const char* filename, FileMode_t at_mode )
 {
 
   #if defined(DEBUG) && DEBUG_FILESTREAMINPUT
@@ -154,7 +154,7 @@ bool TargetFileStreamInput_c::open( const char* filename, FileMode_t rt_mode )
 	<< "Filestreaminput: trying to open the file " <<  filename  
 	<< " in mode 0x" 
 	//<< CNAMESPACE::hex 
-	<< rt_mode 
+	<< at_mode 
 	//<< CNAMESPACE::dec 
 	<< INTERNAL_DEBUG_DEVICE_ENDL;
   #endif
@@ -169,7 +169,7 @@ bool TargetFileStreamInput_c::open( const char* filename, FileMode_t rt_mode )
 
   CNAMESPACE::string mode_string;
 
-  if (StreamIn & rt_mode) {
+  if (StreamIn & at_mode) {
     mode_string.push_back('r');
   }
   

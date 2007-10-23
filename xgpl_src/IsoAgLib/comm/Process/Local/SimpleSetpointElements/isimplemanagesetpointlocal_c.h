@@ -90,17 +90,17 @@ class iSimpleManageSetpointLocal_c : public __IsoAgLib::SimpleManageSetpointLoca
     #endif
   /**
     set the setpoint value
-    @param ri32_val new setpoint value
+    @param ai32_val new setpoint value
   */
-  void setSetpointMasterVal(int32_t ri32_val)
-    { SimpleManageSetpointLocal_c::setSetpointMasterVal( ri32_val );};
+  void setSetpointMasterVal(int32_t ai32_val)
+    { SimpleManageSetpointLocal_c::setSetpointMasterVal( ai32_val );};
   #ifdef USE_FLOAT_DATA_TYPE
   /**
     set the setpoint value as float value
-    @param rf_val new setpoint value
+    @param af_val new setpoint value
   */
-  void setSetpointMasterVal(float rf_val)
-    { SimpleManageSetpointLocal_c::setSetpointMasterVal( rf_val );};
+  void setSetpointMasterVal(float af_val)
+    { SimpleManageSetpointLocal_c::setSetpointMasterVal( af_val );};
   #endif
  private:
   friend class iProcDataLocal_c;

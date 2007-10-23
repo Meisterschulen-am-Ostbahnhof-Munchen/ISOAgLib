@@ -103,74 +103,74 @@ namespace __IsoAgLib {
 
 /** A) default constructor:  will not do anything, create a not-yet-initialized identity. use "init" afterwards!
   * B) EEPROM address given: will read WantedSA/ISOName from EEPROM and start address claim for this identity
-  * @param rui16_eepromAdr Address of EEPROM where the following 10 bytes have to be stored stored:
+  * @param aui16_eepromAdr Address of EEPROM where the following 10 bytes have to be stored stored:
                             8 byte ISO-Name stored in LITTLE ENDIAN
                             1 byte preferred/last-used SA (0xFE for no preference)
                             1 byte flags, set to 0x00 initially (so the ISO-Name has a chance to change some of its
                                   instance(s) to avoid ISO-Name-conflicts on the bus BEFORE doing its initial address-claim
-    @param ri_singletonVecKey optional key for selection of IsoAgLib instance, defaults to 0 at construction time!
+    @param ai_singletonVecKey optional key for selection of IsoAgLib instance, defaults to 0 at construction time!
   */
-IdentItem_c::IdentItem_c (uint16_t rui16_eepromAdr, int ri_singletonVecKey)
-  : BaseItem_c (System_c::getTime(), IState_c::IstateNull, ri_singletonVecKey)
+IdentItem_c::IdentItem_c (uint16_t aui16_eepromAdr, int ai_singletonVecKey)
+  : BaseItem_c (System_c::getTime(), IState_c::IstateNull, ai_singletonVecKey)
   , pc_isoItem (NULL)
-  , ui16_eepromAdr (rui16_eepromAdr)
+  , ui16_eepromAdr (aui16_eepromAdr)
 //  , ui8_lastUsedSa( 0xFF )
 {
-  init (NULL, 0xFF, rui16_eepromAdr,
+  init (NULL, 0xFF, aui16_eepromAdr,
 #ifdef USE_WORKING_SET
         -1, NULL, // -1 indicates we're no working-set!
 #endif
-        ri_singletonVecKey);
+        ai_singletonVecKey);
 }
 
 
 
 /** constructor for ISO identity, which starts address claim for this identity
-    @param rpc_isoName           pointer to the ISOName variable of this identity, which is resident somewhere else (f.e. main() task)
-    @param rb_selfConf          true -> this member as a self configurable source adress
-    @param rui8_indGroup        select the industry group, 2 == agriculture
-    @param rb_func              function code of the member (25 = network interconnect)
-    @param rui16_manufCode      11bit manufactor code
-    @param rui32_serNo          21bit serial number
-    @param rui8_preferredSa      preferred source adress (SA) of the ISO item (fixed SA or last time
+    @param apc_isoName           pointer to the ISOName variable of this identity, which is resident somewhere else (f.e. main() task)
+    @param ab_selfConf          true -> this member as a self configurable source adress
+    @param aui8_indGroup        select the industry group, 2 == agriculture
+    @param ab_func              function code of the member (25 = network interconnect)
+    @param aui16_manufCode      11bit manufactor code
+    @param aui32_serNo          21bit serial number
+    @param aui8_preferredSa      preferred source adress (SA) of the ISO item (fixed SA or last time
                                 SA for self conf ISO device) (default 254 for no special wish)
-    @param rui16_eepromAdr      EEPROM adress, where the used IsoName / SA / flags are stored
+    @param aui16_eepromAdr      EEPROM adress, where the used IsoName / SA / flags are stored
                                 (default 0xFFFF for NO EEPROM store)
-    @param rb_funcInst          function instance of this member (default 0)
-    @param rb_ecuInst           ECU instance of this member (default 0)
-    @param ri8_slaveCount       amount of attached slave devices; default -1 == no master state;
+    @param ab_funcInst          function instance of this member (default 0)
+    @param ab_ecuInst           ECU instance of this member (default 0)
+    @param ai8_slaveCount       amount of attached slave devices; default -1 == no master state;
                                 in case an address claim for the slave devices shall be sent by this ECU, they
-                                must get their own IdentItem_c instance ( then with default value -1 for ri8_slaveCount )
-    @param rpc_slaveIsoNameList pointer to list of IsoName_c values, where the slave devices are defined.
+                                must get their own IdentItem_c instance ( then with default value -1 for ai8_slaveCount )
+    @param apc_slaveIsoNameList pointer to list of IsoName_c values, where the slave devices are defined.
                                 IsoAgLib will then send the needed "master indicates its slaves" messages on BUS
-    @param ri_singletonVecKey   optional key for selection of IsoAgLib instance (default 0)
+    @param ai_singletonVecKey   optional key for selection of IsoAgLib instance (default 0)
   */
-IdentItem_c::IdentItem_c (uint8_t rui8_indGroup, uint8_t rui8_devClass, uint8_t rui8_devClassInst,
-  uint8_t rb_func, uint16_t rui16_manufCode, uint32_t rui32_serNo, uint8_t rui8_preferredSa, uint16_t rui16_eepromAdr,
-  uint8_t rb_funcInst, uint8_t rb_ecuInst, bool rb_selfConf,
+IdentItem_c::IdentItem_c (uint8_t aui8_indGroup, uint8_t aui8_devClass, uint8_t aui8_devClassInst,
+  uint8_t ab_func, uint16_t aui16_manufCode, uint32_t aui32_serNo, uint8_t aui8_preferredSa, uint16_t aui16_eepromAdr,
+  uint8_t ab_funcInst, uint8_t ab_ecuInst, bool ab_selfConf,
   #ifdef USE_WORKING_SET
-  int8_t ri8_slaveCount, const IsoName_c* rpc_slaveIsoNameList,
+  int8_t ai8_slaveCount, const IsoName_c* apc_slaveIsoNameList,
   #endif
-  int ri_singletonVecKey)
-  : BaseItem_c (System_c::getTime(), IState_c::IstateNull, ri_singletonVecKey) /// needs to be init'ed, so double "init()" can be detected!
+  int ai_singletonVecKey)
+  : BaseItem_c (System_c::getTime(), IState_c::IstateNull, ai_singletonVecKey) /// needs to be init'ed, so double "init()" can be detected!
   , pc_isoItem (NULL)
 //  , ui8_lastUsedSa( 0xFF )
 {
-  init (rui8_indGroup, rui8_devClass, rui8_devClassInst, rb_func, rui16_manufCode, rui32_serNo,
-        rui8_preferredSa, rui16_eepromAdr, rb_funcInst, rb_ecuInst, rb_selfConf,
+  init (aui8_indGroup, aui8_devClass, aui8_devClassInst, ab_func, aui16_manufCode, aui32_serNo,
+        aui8_preferredSa, aui16_eepromAdr, ab_funcInst, ab_ecuInst, ab_selfConf,
         #ifdef USE_WORKING_SET
-        ri8_slaveCount, rpc_slaveIsoNameList,
+        ai8_slaveCount, apc_slaveIsoNameList,
         #endif
-        ri_singletonVecKey);
+        ai_singletonVecKey);
 }
 
 
 // private
-void IdentItem_c::init (IsoName_c* rpc_isoNameParam, uint8_t rui8_preferredSa, uint16_t rui16_eepromAdr,
+void IdentItem_c::init (IsoName_c* apc_isoNameParam, uint8_t aui8_preferredSa, uint16_t aui16_eepromAdr,
   #ifdef USE_WORKING_SET
-  int8_t ri8_slaveCount, const IsoName_c* rpc_slaveIsoNameList,
+  int8_t ai8_slaveCount, const IsoName_c* apc_slaveIsoNameList,
   #endif
-  int ri_singletonVecKey)
+  int ai_singletonVecKey)
 {
   /// Check if Item was already ACTIVE (detect double init()-call!)
   if (itemState (IState_c::Active))
@@ -188,13 +188,13 @@ void IdentItem_c::init (IsoName_c* rpc_isoNameParam, uint8_t rui8_preferredSa, u
   getSchedulerInstance4Comm().startSystem();
 
   // set all other member variables depending on the EEPROM-Address parameter/member variable
-  ui16_eepromAdr = rui16_eepromAdr;
+  ui16_eepromAdr = aui16_eepromAdr;
 
   /// Default to SetActive=TRUE. This'll be just set FALSE when initialization is postponed by the user!
   bool b_setActive = true;
 
   bool b_useParameters;
-  if (rui16_eepromAdr == 0xFFFF)
+  if (aui16_eepromAdr == 0xFFFF)
   { // Not using EEPROM
     b_useParameters = true;
   }
@@ -202,17 +202,17 @@ void IdentItem_c::init (IsoName_c* rpc_isoNameParam, uint8_t rui8_preferredSa, u
   { // Using EEPROM
    #ifdef USE_EEPROM_IO
     /// FIRST, default to EEPROM values
-    EepromIo_c& refc_eeprom = getEepromInstance();
+    EepromIo_c& rc_eeprom = getEepromInstance();
     uint8_t p8ui8_isoNameEeprom [8];
-    refc_eeprom.setg (ui16_eepromAdr);
-    refc_eeprom >> ui8_globalRunState >> ui8_preferredSa;
-    refc_eeprom.readString (p8ui8_isoNameEeprom, 8);
+    rc_eeprom.setg (ui16_eepromAdr);
+    rc_eeprom >> ui8_globalRunState >> ui8_preferredSa;
+    rc_eeprom.readString (p8ui8_isoNameEeprom, 8);
     c_isoName = IsoName_c (p8ui8_isoNameEeprom);
 
     // use fallback to free definition, when the EEPROM has only invalid SA
     if ( ui8_preferredSa == 0xFF ) ui8_preferredSa = 0xFE;
 
-    if (rpc_isoNameParam == NULL)
+    if (apc_isoNameParam == NULL)
     { // no parameter given, so don't even try to figure out if we'd want to use them!
       b_useParameters = false;
     }
@@ -225,7 +225,7 @@ void IdentItem_c::init (IsoName_c* rpc_isoNameParam, uint8_t rui8_preferredSa, u
       else if (ui8_globalRunState == GlobalRunStateAlreadyClaimed)
       { // FURTHER ECU power-up, use claimed name stored in EEPROM
         // but only if not a new firmware was flashed with new ISO-Name and the EEPROM was NOT reset!
-        if (c_isoName.isEqualRegardingNonInstFields (*rpc_isoNameParam))
+        if (c_isoName.isEqualRegardingNonInstFields (*apc_isoNameParam))
         { // no firmware change, so go ahead!
           b_useParameters=false; // use EEPROM values - fine...
         }
@@ -254,30 +254,30 @@ void IdentItem_c::init (IsoName_c* rpc_isoNameParam, uint8_t rui8_preferredSa, u
   /// THIRD, use parameters if SECOND told us to do OR we were running without EEPROM anyway
   if (b_useParameters)
   {
-    if (rpc_isoNameParam == NULL)
+    if (apc_isoNameParam == NULL)
     { /// NO Parameter-IsoName is given AND NO EEPROM address given, so initialize this IdentItem empty to be initialized later with "init"
       c_isoName.setUnspecified();
       b_setActive = false; // only case where we don't start the address-claim procedure!
     }
     else
     { /// Parameter-IsoName is given and should be used: use it!
-      c_isoName = *rpc_isoNameParam;
+      c_isoName = *apc_isoNameParam;
     }
-    ui8_preferredSa = rui8_preferredSa; // 0xFF in case of "c_isoName = IsoName_c::IsoNameUnspecified;"
+    ui8_preferredSa = aui8_preferredSa; // 0xFF in case of "c_isoName = IsoName_c::IsoNameUnspecified;"
     ui8_globalRunState = GlobalRunStateNeverClaimed; // 0
   }
 
 #ifdef USE_WORKING_SET
   /// store SLAVE ISONAME pointer
-  i8_slaveCount = ri8_slaveCount;
-  pc_slaveIsoNameList = rpc_slaveIsoNameList;
+  i8_slaveCount = ai8_slaveCount;
+  pc_slaveIsoNameList = apc_slaveIsoNameList;
 #endif
 
   if (b_setActive)
   { /// Set Item to ACTIVE
     BaseItem_c::set (System_c::getTime(), (IState_c::itemState_t (IState_c::Active |
                                                                   IState_c::PreAddressClaim |
-                                                                  IState_c::Local)), ri_singletonVecKey);
+                                                                  IState_c::Local)), ai_singletonVecKey);
     getIsoMonitorInstance4Comm().registerClient (this);
     getIsoMonitorInstance4Comm().sendRequestForClaimedAddress();
   }
@@ -285,42 +285,42 @@ void IdentItem_c::init (IsoName_c* rpc_isoNameParam, uint8_t rui8_preferredSa, u
 
 
 /** init function for later start of address claim of an ISO identity (this can be only called once upon a default-constructed object)
-    @param rpc_isoName           pointer to the ISOName variable of this identity, which is resident somewhere else (f.e. main() task)
-    @param rb_selfConf          true -> this member as a self configurable source adress
-    @param rui8_indGroup        select the industry group, 2 == agriculture
-    @param rb_func              function code of the member (25 = network interconnect)
-    @param rui16_manufCode      11bit manufactor code
-    @param rui32_serNo          21bit serial number
-    @param rui8_preferredSa      preferred source adress (SA) of the ISO item (fixed SA or last time
+    @param apc_isoName           pointer to the ISOName variable of this identity, which is resident somewhere else (f.e. main() task)
+    @param ab_selfConf          true -> this member as a self configurable source adress
+    @param aui8_indGroup        select the industry group, 2 == agriculture
+    @param ab_func              function code of the member (25 = network interconnect)
+    @param aui16_manufCode      11bit manufactor code
+    @param aui32_serNo          21bit serial number
+    @param aui8_preferredSa      preferred source adress (SA) of the ISO item (fixed SA or last time
                                 SA for self conf ISO device) (default 254 for no special wish)
-    @param rui16_eepromAdr      EEPROM adress, where the used IsoName / SA / flags are stored
+    @param aui16_eepromAdr      EEPROM adress, where the used IsoName / SA / flags are stored
                                 (default 0xFFFF for NO EEPROM store)
-    @param rb_funcInst          function instance of this member (default 0)
-    @param rb_ecuInst           ECU instance of this member (default 0)
-    @param ri8_slaveCount       amount of attached slave devices; default -1 == no master state;
+    @param ab_funcInst          function instance of this member (default 0)
+    @param ab_ecuInst           ECU instance of this member (default 0)
+    @param ai8_slaveCount       amount of attached slave devices; default -1 == no master state;
                                 in case an address claim for the slave devices shall be sent by this ECU, they
-                                must get their own IdentItem_c instance ( then with default value -1 for ri8_slaveCount )
-    @param rpc_slaveIsoNameList pointer to list of IsoName_c values, where the slave devices are defined.
+                                must get their own IdentItem_c instance ( then with default value -1 for ai8_slaveCount )
+    @param apc_slaveIsoNameList pointer to list of IsoName_c values, where the slave devices are defined.
                                 IsoAgLib will then send the needed "master indicates its slaves" messages on BUS
-    @param ri_singletonVecKey   optional key for selection of IsoAgLib instance (DEFAULTS HERE TO -1 which will NOT modify the instance set construction time!!)
+    @param ai_singletonVecKey   optional key for selection of IsoAgLib instance (DEFAULTS HERE TO -1 which will NOT modify the instance set construction time!!)
   */
 void IdentItem_c::init(
-  uint8_t rui8_indGroup, uint8_t rui8_devClass, uint8_t rui8_devClassInst, uint8_t rb_func, uint16_t rui16_manufCode,
-  uint32_t rui32_serNo, uint8_t rui8_preferredSa, uint16_t rui16_eepromAdr, uint8_t rb_funcInst, uint8_t rb_ecuInst, bool rb_selfConf,
+  uint8_t aui8_indGroup, uint8_t aui8_devClass, uint8_t aui8_devClassInst, uint8_t ab_func, uint16_t aui16_manufCode,
+  uint32_t aui32_serNo, uint8_t aui8_preferredSa, uint16_t aui16_eepromAdr, uint8_t ab_funcInst, uint8_t ab_ecuInst, bool ab_selfConf,
   #ifdef USE_WORKING_SET
-  int8_t ri8_slaveCount, const IsoName_c* rpc_slaveIsoNameList,
+  int8_t ai8_slaveCount, const IsoName_c* apc_slaveIsoNameList,
   #endif
-  int ri_singletonVecKey)
+  int ai_singletonVecKey)
 {
   // temporary to assemble the single parameters to one IsoName so it gets better handled in the following function call
-  IsoName_c c_isoNameParam (rb_selfConf, rui8_indGroup, rui8_devClass, rui8_devClassInst,
-                            rb_func, rui16_manufCode, rui32_serNo, rb_funcInst, rb_ecuInst);
+  IsoName_c c_isoNameParam (ab_selfConf, aui8_indGroup, aui8_devClass, aui8_devClassInst,
+                            ab_func, aui16_manufCode, aui32_serNo, ab_funcInst, ab_ecuInst);
 
-  init (&c_isoNameParam, rui8_preferredSa, rui16_eepromAdr,
+  init (&c_isoNameParam, aui8_preferredSa, aui16_eepromAdr,
         #ifdef USE_WORKING_SET
-        ri8_slaveCount, rpc_slaveIsoNameList,
+        ai8_slaveCount, apc_slaveIsoNameList,
         #endif
-        ri_singletonVecKey);
+        ai_singletonVecKey);
 }
 
 
@@ -510,10 +510,10 @@ bool IdentItem_c::timeEventActive( void )
       {
         #ifdef USE_EEPROM_IO
         const uint8_t* pcui8_isoName = c_isoName.outputString();
-        EepromIo_c& refc_eeprom = getEepromInstance();
-        refc_eeprom.setp (ui16_eepromAdr);
-        refc_eeprom << ui8_globalRunState << ui8_preferredSa;
-        refc_eeprom.writeString (pcui8_isoName, 8);
+        EepromIo_c& rc_eeprom = getEepromInstance();
+        rc_eeprom.setp (ui16_eepromAdr);
+        rc_eeprom << ui8_globalRunState << ui8_preferredSa;
+        rc_eeprom.writeString (pcui8_isoName, 8);
         #else
         // ERROR: Using EEPROM Address in IdentItem_c()'s timeEventActive but IsoAgLib is NOT compiled with USE_EEPROM_IO !!!!" << INTERNAL_DEBUG_DEVICE_ENDL;
         getILibErrInstance().registerError( iLibErr_c::ElNonexistent, iLibErr_c::Eeprom );
@@ -529,12 +529,12 @@ bool IdentItem_c::timeEventActive( void )
   { // remote ISO item has overwritten local item
     // ->see if we can still live with our IsoName
     // ->if not, we'lost because we can't change our IsoName
-    IsoMonitor_c& refc_isoMonitor = getIsoMonitorInstance4Comm();
-    const bool cb_isoNameStillAvailable = !refc_isoMonitor.existIsoMemberISOName (c_isoName);
+    IsoMonitor_c& rc_isoMonitor = getIsoMonitorInstance4Comm();
+    const bool cb_isoNameStillAvailable = !rc_isoMonitor.existIsoMemberISOName (c_isoName);
 
     if (cb_isoNameStillAvailable)
     { // insert element in list
-      pc_isoItem =  refc_isoMonitor.insertIsoMember(isoName(), ui8_preferredSa,
+      pc_isoItem =  rc_isoMonitor.insertIsoMember(isoName(), ui8_preferredSa,
         IState_c::itemState_t(IState_c::Member | IState_c::Local | IState_c::PreAddressClaim));
       if ( NULL != pc_isoItem )
       { // set item as member and as own identity and overwrite old value
@@ -555,10 +555,10 @@ bool IdentItem_c::timeEventActive( void )
     else
     { /// IsoName now already used on the bus - we can't claim an address now anymore!
       getILibErrInstance().registerError( iLibErr_c::Busy, iLibErr_c::System ); /** @todo insert new error-location/type for thsoe cases! */
-      IsoItem_c& refc_foundIsoItemSameIsoName = refc_isoMonitor.isoMemberISOName (c_isoName);
-      if (refc_foundIsoItemSameIsoName.itemState (IState_c::Local))
+      IsoItem_c& rc_foundIsoItemSameIsoName = rc_isoMonitor.isoMemberISOName (c_isoName);
+      if (rc_foundIsoItemSameIsoName.itemState (IState_c::Local))
       { // now the ISOName is used by some other member on the BUS
-        pc_isoItem = &refc_foundIsoItemSameIsoName; // seems to be our IsoItem although it's a case that shouldn't occur!
+        pc_isoItem = &rc_foundIsoItemSameIsoName; // seems to be our IsoItem although it's a case that shouldn't occur!
         #if defined(SYSTEM_PC) && defined(DEBUG)
         INTERNAL_DEBUG_DEVICE << "ERROR: IsoName stolen by other local member, take this IsoItem then, although this shouldn't happen!" << INTERNAL_DEBUG_DEVICE_ENDL;
         abort();
@@ -584,28 +584,28 @@ bool IdentItem_c::timeEventActive( void )
 
 
 /** check if given number is equal to member number of this item
-    @param rui8_nr compared number
+    @param aui8_nr compared number
     @return true -> this item has same number
   */
-bool IdentItem_c::equalNr(uint8_t rui8_nr)
+bool IdentItem_c::equalNr(uint8_t aui8_nr)
 {
   bool b_result = false;
 
-  if (pc_isoItem != NULL) b_result = (pc_isoItem->nr() == rui8_nr)?true:false;
+  if (pc_isoItem != NULL) b_result = (pc_isoItem->nr() == aui8_nr)?true:false;
 
   return b_result;
 }
 
 
 #ifdef USE_WORKING_SET
-void IdentItem_c::setToMaster (int8_t ri8_slaveCount, const IsoName_c* rpc_slaveIsoNameList)
+void IdentItem_c::setToMaster (int8_t ai8_slaveCount, const IsoName_c* apc_slaveIsoNameList)
 {
   IsoItem_c* pc_slaveIsoItem;
 
   // if given, override list of slaves as given in constructor
-  if ((ri8_slaveCount != -1) && (rpc_slaveIsoNameList != NULL)) {
-    i8_slaveCount = (uint8_t) ri8_slaveCount;
-    pc_slaveIsoNameList = rpc_slaveIsoNameList;
+  if ((ai8_slaveCount != -1) && (apc_slaveIsoNameList != NULL)) {
+    i8_slaveCount = (uint8_t) ai8_slaveCount;
+    pc_slaveIsoNameList = apc_slaveIsoNameList;
   }
   else if ( i8_slaveCount < 0 )
   { // item wasn't created with explicit config for master item

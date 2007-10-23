@@ -119,7 +119,7 @@ namespace __IsoAgLib {
   /** C-style function, to get access to the unique MultiSend_c singleton instance
     * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
     */
-  MultiSend_c& getMultiSendInstance( uint8_t rui8_instance ) { return MultiSend_c::instance( rui8_instance );};
+  MultiSend_c& getMultiSendInstance( uint8_t aui8_instance ) { return MultiSend_c::instance( aui8_instance );};
 #else
   /** C-style function, to get access to the unique MultiSend_c singleton instance */
   MultiSend_c& getMultiSendInstance( void ) { return MultiSend_c::instance();};
@@ -134,16 +134,16 @@ namespace __IsoAgLib {
 #define DEF_Retries_NormalCommands 2
 
 /** This is mostly used for debugging now... */
-void SendUploadBase_c::set (uint8_t* rpui8_buffer, uint32_t rui32_bufferSize)
+void SendUploadBase_c::set (uint8_t* apui8_buffer, uint32_t aui32_bufferSize)
 {
   /// Use BUFFER - NOT MultiSendStreamer!
   vec_uploadBuffer.clear();
-  vec_uploadBuffer.reserve (rui32_bufferSize);
+  vec_uploadBuffer.reserve (aui32_bufferSize);
 
   uint32_t i=0;
-  for (; i < rui32_bufferSize; i++) {
-    vec_uploadBuffer.push_back (*rpui8_buffer);
-    rpui8_buffer++;
+  for (; i < aui32_bufferSize; i++) {
+    vec_uploadBuffer.push_back (*apui8_buffer);
+    apui8_buffer++;
   }
   for (; i < 8; i++) {
     vec_uploadBuffer.push_back (0xFF);
@@ -166,24 +166,24 @@ void SendUploadBase_c::set (uint8_t* rpui8_buffer, uint32_t rui32_bufferSize)
 /**
   >>StringUpload<< Constructors ( Copy and Reference! )
 */
-void SendUploadBase_c::set (uint16_t rui16_objId, const char* rpc_string, uint16_t overrideSendLength, uint8_t ui8_cmdByte)
+void SendUploadBase_c::set (uint16_t aui16_objId, const char* apc_string, uint16_t overrideSendLength, uint8_t ui8_cmdByte)
 {
   // if string is shorter than length, it's okay to send - if it's longer, we'll clip - as client will REJECT THE STRING (FINAL ISO 11783 SAYS: "String Too Long")
-  uint16_t strLen = (CNAMESPACE::strlen(rpc_string) < overrideSendLength) ? CNAMESPACE::strlen(rpc_string) : overrideSendLength;
+  uint16_t strLen = (CNAMESPACE::strlen(apc_string) < overrideSendLength) ? CNAMESPACE::strlen(apc_string) : overrideSendLength;
 
   /// Use BUFFER - NOT MultiSendStreamer!
   vec_uploadBuffer.clear();
   vec_uploadBuffer.reserve (((5+strLen) < 8) ? 8 : (5+strLen)); // DO NOT USED an UploadBuffer < 8 as ECU->VT ALWAYS has 8 BYTES!
 
   vec_uploadBuffer.push_back (ui8_cmdByte ); /* Default of ui8_cmdByte is: Command: Command --- Parameter: Change String Value (TP) */
-  vec_uploadBuffer.push_back (rui16_objId & 0xFF);
-  vec_uploadBuffer.push_back (rui16_objId >> 8);
+  vec_uploadBuffer.push_back (aui16_objId & 0xFF);
+  vec_uploadBuffer.push_back (aui16_objId >> 8);
   vec_uploadBuffer.push_back (strLen & 0xFF);
   vec_uploadBuffer.push_back (strLen >> 8);
   int i=0;
   for (; i < strLen; i++) {
-    vec_uploadBuffer.push_back (*rpc_string);
-    rpc_string++;
+    vec_uploadBuffer.push_back (*apc_string);
+    apc_string++;
   }
   for (; i < 3; i++) {
     // at least 3 bytes from the string have to be written, if not, fill with 0xFF, so the pkg-len is 8!
@@ -211,7 +211,7 @@ void SendUploadBase_c::set (uint16_t rui16_objId, const char* rpc_string, uint16
 /**
   Constructor used for "normal" 8-byte CAN-Pkgs!
 */
-void SendUploadBase_c::set (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint32_t rui32_timeout)
+void SendUploadBase_c::set (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint32_t aui32_timeout)
 {
   vec_uploadBuffer.clear();
   vec_uploadBuffer.reserve (8);
@@ -226,7 +226,7 @@ void SendUploadBase_c::set (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t
   vec_uploadBuffer.push_back (byte8);
 
   ui8_retryCount = DEF_Retries_NormalCommands;
-  ui32_uploadTimeout = rui32_timeout;
+  ui32_uploadTimeout = aui32_timeout;
 }
 
 
@@ -235,7 +235,7 @@ void SendUploadBase_c::set (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t
   -- Parameter "timeOut" only there as else the signature would be the same compared to 8byte+timeOut constructor!
   -- simply always pass "DEF_TimeOut_ChangeChildPosition"
 */
-void SendUploadBase_c::set (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint8_t byte9, uint32_t rui32_timeout)
+void SendUploadBase_c::set (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint8_t byte9, uint32_t aui32_timeout)
 {
   /// Use BUFFER - NOT MultiSendStreamer!
   vec_uploadBuffer.clear();
@@ -252,23 +252,23 @@ void SendUploadBase_c::set (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t
   vec_uploadBuffer.push_back (byte9);
 
   ui8_retryCount = DEF_Retries_TPCommands;
-  ui32_uploadTimeout = rui32_timeout;
+  ui32_uploadTimeout = aui32_timeout;
 }
 
 
-const SendUploadBase_c& SendUploadBase_c::operator= (const SendUploadBase_c& ref_source)
+const SendUploadBase_c& SendUploadBase_c::operator= (const SendUploadBase_c& r_source)
 {
-  vec_uploadBuffer = ref_source.vec_uploadBuffer;
-  ui8_retryCount = ref_source.ui8_retryCount;
-  ui32_uploadTimeout = ref_source.ui32_uploadTimeout;
-  return ref_source;
+  vec_uploadBuffer = r_source.vec_uploadBuffer;
+  ui8_retryCount = r_source.ui8_retryCount;
+  ui32_uploadTimeout = r_source.ui32_uploadTimeout;
+  return r_source;
 }
 
 
-SendUploadBase_c::SendUploadBase_c (const SendUploadBase_c& ref_source)
-  : vec_uploadBuffer (ref_source.vec_uploadBuffer)
-  , ui8_retryCount (ref_source.ui8_retryCount)
-  , ui32_uploadTimeout (ref_source.ui32_uploadTimeout)
+SendUploadBase_c::SendUploadBase_c (const SendUploadBase_c& r_source)
+  : vec_uploadBuffer (r_source.vec_uploadBuffer)
+  , ui8_retryCount (r_source.ui8_retryCount)
+  , ui32_uploadTimeout (r_source.ui32_uploadTimeout)
 {}
 
 
@@ -285,15 +285,15 @@ SendUploadBase_c::SendUploadBase_c (const SendUploadBase_c& ref_source)
   this init() function immediately sends out the first package (RTS or FpFirstFrame
   */
 void
-MultiSend_c::SendStream_c::init (const IsoName_c& rrefc_isoNameSender, const IsoName_c& rrefc_isoNameReceiver, const HUGE_MEM uint8_t* rhpb_data, uint32_t rui32_dataSize, sendSuccess_t& rrefen_sendSuccessNotify, uint32_t rui32_pgn, IsoAgLib::iMultiSendStreamer_c* rpc_mss, msgType_t ren_msgType)
+MultiSend_c::SendStream_c::init (const IsoName_c& arc_isoNameSender, const IsoName_c& arc_isoNameReceiver, const HUGE_MEM uint8_t* rhpb_data, uint32_t aui32_dataSize, sendSuccess_t& rrefen_sendSuccessNotify, uint32_t aui32_pgn, IsoAgLib::iMultiSendStreamer_c* apc_mss, msgType_t ren_msgType)
 {
-  ui32_pgn = rui32_pgn;
+  ui32_pgn = aui32_pgn;
   if ((ui32_pgn & 0x0FF00) < 0x0F000) ui32_pgn &= 0x3FF00;
-  c_isoNameSender = rrefc_isoNameSender;     // copy the 8byte IsoName
-  c_isoNameReceiver = rrefc_isoNameReceiver; // copy the 8byte IsoName
+  c_isoNameSender = arc_isoNameSender;     // copy the 8byte IsoName
+  c_isoNameReceiver = arc_isoNameReceiver; // copy the 8byte IsoName
   hpb_data = rhpb_data;
-  ui32_dataSize = rui32_dataSize;   // initialise data for begin
-  pc_mss = rpc_mss;
+  ui32_dataSize = aui32_dataSize;   // initialise data for begin
+  pc_mss = apc_mss;
   en_msgType = ren_msgType;
   pen_sendSuccessNotify = &rrefen_sendSuccessNotify;
 
@@ -302,21 +302,21 @@ MultiSend_c::SendStream_c::init (const IsoName_c& rrefc_isoNameSender, const Iso
   b_pkgSent = 0;
 
   /// Do send out the first packet right now, right here!
-  MultiSendPkg_c& refc_multiSendPkg = refc_multiSend.data();
+  MultiSendPkg_c& rc_multiSendPkg = rc_multiSend.data();
 
 #if defined (NMEA_2000_FAST_PACKET)
   if (en_msgType == NmeaFastPacket)
   { // send Fast Packet First Frame
-    ui8_FpSequenceCounter = refc_multiSend.allocFpSequenceCounter();
-    refc_multiSendPkg.setUint8Data(0, static_cast<uint8_t>((ui8_FpSequenceCounter << 5) & 0xE0));
-    refc_multiSendPkg.setUint8Data(1, static_cast<uint8_t>(getDataSize() & 0xFF));
+    ui8_FpSequenceCounter = rc_multiSend.allocFpSequenceCounter();
+    rc_multiSendPkg.setUint8Data(0, static_cast<uint8_t>((ui8_FpSequenceCounter << 5) & 0xE0));
+    rc_multiSendPkg.setUint8Data(1, static_cast<uint8_t>(getDataSize() & 0xFF));
 
     uint8_t ui8_nettoCnt = 6;
     if (ui8_nettoCnt > getDataSize()) ui8_nettoCnt = getDataSize();
     if (hpb_data != NULL) {
-      refc_multiSendPkg.setFastPacketDataPart(hpb_data, 0, ui8_nettoCnt, 2);
+      rc_multiSendPkg.setFastPacketDataPart(hpb_data, 0, ui8_nettoCnt, 2);
     } else {
-      pc_mss->setDataNextFastPacketStreamPart (&refc_multiSendPkg, ui8_nettoCnt, 2);
+      pc_mss->setDataNextFastPacketStreamPart (&rc_multiSendPkg, ui8_nettoCnt, 2);
     }
     ui32_dataBufferOffset = ui8_nettoCnt;
     switchToState (SendData, 2);
@@ -325,28 +325,28 @@ MultiSend_c::SendStream_c::init (const IsoName_c& rrefc_isoNameSender, const Iso
   else
 #endif
   { // NOT NmeaFastPacket ==> some ISO protocol
-    refc_multiSendPkg.setUint16Data(1, getDataSize() & 0xFFFF);                             // Byte 2+3
-    refc_multiSendPkg.setUint8Data (5, static_cast<uint8_t>(ui32_pgn & 0xFF));              // Byte 6
-    refc_multiSendPkg.setUint16Data(6, static_cast<uint16_t>((ui32_pgn >> 8) & 0xFFFFU));   // Byte 7+8
+    rc_multiSendPkg.setUint16Data(1, getDataSize() & 0xFFFF);                             // Byte 2+3
+    rc_multiSendPkg.setUint8Data (5, static_cast<uint8_t>(ui32_pgn & 0xFF));              // Byte 6
+    rc_multiSendPkg.setUint16Data(6, static_cast<uint16_t>((ui32_pgn >> 8) & 0xFFFFU));   // Byte 7+8
     if (en_msgType == IsoETP)
     {
-      refc_multiSendPkg.setUint8Data (0, static_cast<uint8_t>(scui8_eCM_RTS));              // Byte 1
-      refc_multiSendPkg.setUint16Data(3, getDataSize() >> 16);                              // Byte 4+5
+      rc_multiSendPkg.setUint8Data (0, static_cast<uint8_t>(scui8_eCM_RTS));              // Byte 1
+      rc_multiSendPkg.setUint16Data(3, getDataSize() >> 16);                              // Byte 4+5
       ui32_dataPacketOffset = 0;
       switchToState (AwaitCts, 1250);
     }
     else if (en_msgType == IsoTP)
     {
-      refc_multiSendPkg.setUint8Data (0, static_cast<uint8_t>(scui8_CM_RTS));               // Byte 1
-      refc_multiSendPkg.setUint8Data (3, static_cast<uint8_t>((ui32_dataSize + 6) / 7));    // Byte 4
-      refc_multiSendPkg.setUint8Data (4, static_cast<uint8_t>(0xFF));                       // Byte 5
+      rc_multiSendPkg.setUint8Data (0, static_cast<uint8_t>(scui8_CM_RTS));               // Byte 1
+      rc_multiSendPkg.setUint8Data (3, static_cast<uint8_t>((ui32_dataSize + 6) / 7));    // Byte 4
+      rc_multiSendPkg.setUint8Data (4, static_cast<uint8_t>(0xFF));                       // Byte 5
       switchToState (AwaitCts, 1250);
     }
     else if (en_msgType == IsoTPbroadcast)
     {
-      refc_multiSendPkg.setUint8Data (0, static_cast<uint8_t>(scui8_CM_BAM));               // Byte 1
-      refc_multiSendPkg.setUint8Data (3, static_cast<uint8_t>((ui32_dataSize + 6) / 7));    // Byte 4
-      refc_multiSendPkg.setUint8Data (4, static_cast<uint8_t>(0xFF));                       // Byte 5
+      rc_multiSendPkg.setUint8Data (0, static_cast<uint8_t>(scui8_CM_BAM));               // Byte 1
+      rc_multiSendPkg.setUint8Data (3, static_cast<uint8_t>((ui32_dataSize + 6) / 7));    // Byte 4
+      rc_multiSendPkg.setUint8Data (4, static_cast<uint8_t>(0xFF));                       // Byte 5
       ui8_burstPkgYetToSend = (ui32_dataSize + 6) / 7;
       switchToState (SendData, 50); // on broadcast, we'll have to interspace with 50ms (minimum!)
     }
@@ -423,11 +423,11 @@ void MultiSend_c::close()
   @return an "in-progress" stream or NULL if none active for this sa/da-key
 */
 MultiSend_c::SendStream_c*
-MultiSend_c::getSendStream(const IsoName_c& rrefc_isoNameSender, const IsoName_c& rrefc_isoNameReceiver)
+MultiSend_c::getSendStream(const IsoName_c& arc_isoNameSender, const IsoName_c& arc_isoNameReceiver)
 {
   for (STL_NAMESPACE::list<SendStream_c>::iterator pc_iter=list_sendStream.begin(); pc_iter != list_sendStream.end(); pc_iter++)
   {
-    if (pc_iter->matchSaDa(rrefc_isoNameSender, rrefc_isoNameReceiver))
+    if (pc_iter->matchSaDa(arc_isoNameSender, arc_isoNameReceiver))
       return &*pc_iter;
   }
   return NULL;
@@ -441,11 +441,11 @@ MultiSend_c::getSendStream(const IsoName_c& rrefc_isoNameSender, const IsoName_c
   @return reference to added SendStream ==> HAS TO BE INITIALIZED, because it may be a copy of the first (to avoid stack creation of new object)
 */
 MultiSend_c::SendStream_c*
-MultiSend_c::addSendStream(const IsoName_c& rrefc_isoNameSender, const IsoName_c& rrefc_isoNameReceiver)
+MultiSend_c::addSendStream(const IsoName_c& arc_isoNameSender, const IsoName_c& arc_isoNameReceiver)
 {
   /** @todo check if sender is unspecified!
             receiver may be - that indicated broadcast!?!?! */
-  SendStream_c* const pc_foundStream = getSendStream(rrefc_isoNameSender, rrefc_isoNameReceiver);
+  SendStream_c* const pc_foundStream = getSendStream(arc_isoNameSender, arc_isoNameReceiver);
   if (pc_foundStream)
   {
     if (!pc_foundStream->isFinished())
@@ -477,14 +477,14 @@ MultiSend_c::addSendStream(const IsoName_c& rrefc_isoNameSender, const IsoName_c
 
 /**
   internal function to send a ISO target multipacket message
-  @param rb_send dynamic member no of sender
-  @param rb_empf dynamic member no of receiver
+  @param ab_send dynamic member no of sender
+  @param ab_empf dynamic member no of receiver
   @param rhpb_data HUGE_MEM pointer to the data
-  @param ri32_dataSize size of the complete mask
-  @param ri32_pgn PGN to use for the upload
+  @param ai32_dataSize size of the complete mask
+  @param ai32_pgn PGN to use for the upload
   @param rrefen_sendSuccessNotify -> pointer to send state var, where the current state
           is written by MultiSend_c
-  @param rpc_mss allow active build of data stream parts for upload by deriving data source class
+  @param apc_mss allow active build of data stream parts for upload by deriving data source class
                  from IsoAgLib::iMultiSendStreamer_c, which defines virtual functions to control the
                  retrieve of data to send. This is especially important for ISO_Terminal,
                  which assembles the data pool dependent on the terminal capabilities during upload
@@ -492,11 +492,11 @@ MultiSend_c::addSendStream(const IsoName_c& rrefc_isoNameSender, const IsoName_c
   @return true -> MultiSend_c was ready -> mask is spooled to target
 */
 bool
-MultiSend_c::sendIntern (const IsoName_c& rrefc_isoNameSender, const IsoName_c& rrefc_isoNameReceiver, const HUGE_MEM uint8_t* rhpb_data, int32_t ri32_dataSize, sendSuccess_t& rrefen_sendSuccessNotify, int32_t ri32_pgn, IsoAgLib::iMultiSendStreamer_c* rpc_mss, msgType_t ren_msgType)
+MultiSend_c::sendIntern (const IsoName_c& arc_isoNameSender, const IsoName_c& arc_isoNameReceiver, const HUGE_MEM uint8_t* rhpb_data, int32_t ai32_dataSize, sendSuccess_t& rrefen_sendSuccessNotify, int32_t ai32_pgn, IsoAgLib::iMultiSendStreamer_c* apc_mss, msgType_t ren_msgType)
 {
   /// first check if new transfer can be started
   /// - is the sender correct?
-  if (!getIsoMonitorInstance4Comm().existIsoMemberISOName (rrefc_isoNameSender)) return false;
+  if (!getIsoMonitorInstance4Comm().existIsoMemberISOName (arc_isoNameSender)) return false;
 
   SendStream_c* pc_newSendStream;
   /// - is the receiver correct?
@@ -505,20 +505,20 @@ MultiSend_c::sendIntern (const IsoName_c& rrefc_isoNameSender, const IsoName_c& 
     // Force destination to be "IsoNameUnspecified"
     /// - check if there's already a SA/DA pair active (in this case NULL is returned!)
     /// - if not NULL is returned, it points to the newly generated stream.
-    pc_newSendStream = addSendStream (rrefc_isoNameSender, IsoName_c::IsoNameUnspecified());
+    pc_newSendStream = addSendStream (arc_isoNameSender, IsoName_c::IsoNameUnspecified());
   }
   else
   { // destination specific - so the receiver must be registered!
-    if (!getIsoMonitorInstance4Comm().existIsoMemberISOName (rrefc_isoNameReceiver))
+    if (!getIsoMonitorInstance4Comm().existIsoMemberISOName (arc_isoNameReceiver))
     return false;
     /// - check if there's already a SA/DA pair active (in this case NULL is returned!)
     /// - if not NULL is returned, it points to the newly generated stream.
-    pc_newSendStream = addSendStream (rrefc_isoNameSender, rrefc_isoNameReceiver);
+    pc_newSendStream = addSendStream (arc_isoNameSender, arc_isoNameReceiver);
   }
 
   if (pc_newSendStream)
   {
-    pc_newSendStream->init (rrefc_isoNameSender, rrefc_isoNameReceiver, rhpb_data, ri32_dataSize, rrefen_sendSuccessNotify, ri32_pgn, rpc_mss, ren_msgType);
+    pc_newSendStream->init (arc_isoNameSender, arc_isoNameReceiver, rhpb_data, ai32_dataSize, rrefen_sendSuccessNotify, ai32_pgn, apc_mss, ren_msgType);
     // let this SendStream get sorted in now...
     calcAndSetNextTriggerTime();
     return true;
@@ -536,9 +536,9 @@ MultiSend_c::sendIntern (const IsoName_c& rrefc_isoNameSender, const IsoName_c& 
   @return true: stream finished
 */
 bool
-MultiSend_c::SendStream_c::timeEvent (uint8_t rui8_pkgCnt)
+MultiSend_c::SendStream_c::timeEvent (uint8_t aui8_pkgCnt)
 {
-  MultiSendPkg_c& refc_multiSendPkg = refc_multiSend.data();
+  MultiSendPkg_c& rc_multiSendPkg = rc_multiSend.data();
   uint8_t ui8_nettoDataCnt;
   uint8_t ui8_pkgInd;
 
@@ -568,24 +568,24 @@ MultiSend_c::SendStream_c::timeEvent (uint8_t rui8_pkgCnt)
 
         // send only as much pkg as fits in send buffer (with spare of 2 for other use)
         if (ui8_freeCnt < 2)
-           rui8_pkgCnt = 0;
-        else if (rui8_pkgCnt > (ui8_freeCnt - 2))
-           rui8_pkgCnt = (ui8_freeCnt - 2);
+           aui8_pkgCnt = 0;
+        else if (aui8_pkgCnt > (ui8_freeCnt - 2))
+           aui8_pkgCnt = (ui8_freeCnt - 2);
 
-        if (rui8_pkgCnt == 0)        {
+        if (aui8_pkgCnt == 0)        {
             #if defined( DEBUG )
             INTERNAL_DEBUG_DEVICE << "MultiSend_c::timeEvent --- pkgCnt == 0;" << INTERNAL_DEBUG_DEVICE_ENDL;
             #endif
         }
-        for (ui8_pkgInd = 0; ui8_pkgInd < rui8_pkgCnt; ui8_pkgInd++)
+        for (ui8_pkgInd = 0; ui8_pkgInd < aui8_pkgCnt; ui8_pkgInd++)
         {
           prepareSendMsg(ui8_nettoDataCnt);
-          refc_multiSendPkg.setUint8Data(0, static_cast<uint8_t>(((ui8_FpSequenceCounter << 5) |(ui8_sequenceNr & 0x1F)) ) );
+          rc_multiSendPkg.setUint8Data(0, static_cast<uint8_t>(((ui8_FpSequenceCounter << 5) |(ui8_sequenceNr & 0x1F)) ) );
 
           if (hpb_data != NULL) {
-            refc_multiSendPkg.setFastPacketDataPart(hpb_data, ui32_dataBufferOffset, ui8_nettoDataCnt, 1);
+            rc_multiSendPkg.setFastPacketDataPart(hpb_data, ui32_dataBufferOffset, ui8_nettoDataCnt, 1);
           } else {
-            pc_mss->setDataNextFastPacketStreamPart (&refc_multiSendPkg, ui8_nettoDataCnt, 1);
+            pc_mss->setDataNextFastPacketStreamPart (&rc_multiSendPkg, ui8_nettoDataCnt, 1);
           }
           sendPacket();
           ui32_dataBufferOffset += ui8_nettoDataCnt;
@@ -605,27 +605,27 @@ MultiSend_c::SendStream_c::timeEvent (uint8_t rui8_pkgCnt)
       { // NOT NmeaFastPacket - some ISO protocol!
         if (en_msgType == IsoTPbroadcast)
         { // IsoTPbroadcast forces 50ms between all packets!!
-          rui8_pkgCnt = 1; // only send 1 packet at a time, then wait 50ms.
+          aui8_pkgCnt = 1; // only send 1 packet at a time, then wait 50ms.
         }
         else
         { // IsoTP || IsoETP
           const uint8_t cui8_freeCnt = getCanInstance4Comm().sendCanFreecnt(Ident_c::ExtendedIdent);
-          if (rui8_pkgCnt == 0) rui8_pkgCnt = 1;
+          if (aui8_pkgCnt == 0) aui8_pkgCnt = 1;
           // send only as much pkg as fits in send buffer (with spare of 2 for other use)
           if (cui8_freeCnt < 2)
-            rui8_pkgCnt = 0;
-          else if (rui8_pkgCnt > (cui8_freeCnt - 2))
-            rui8_pkgCnt = (cui8_freeCnt - 2);
+            aui8_pkgCnt = 0;
+          else if (aui8_pkgCnt > (cui8_freeCnt - 2))
+            aui8_pkgCnt = (cui8_freeCnt - 2);
         }
 
-        for (ui8_pkgInd = 0; ui8_pkgInd < rui8_pkgCnt; ui8_pkgInd++)
+        for (ui8_pkgInd = 0; ui8_pkgInd < aui8_pkgCnt; ui8_pkgInd++)
         {
           prepareSendMsg (ui8_nettoDataCnt);
-          refc_multiSendPkg.setUint8Data (0, ui8_sequenceNr);
+          rc_multiSendPkg.setUint8Data (0, ui8_sequenceNr);
           if (hpb_data != NULL) {
-            refc_multiSendPkg.setDataPart (hpb_data, ui32_dataBufferOffset, ui8_nettoDataCnt);
+            rc_multiSendPkg.setDataPart (hpb_data, ui32_dataBufferOffset, ui8_nettoDataCnt);
           } else {
-            pc_mss->setDataNextStreamPart (&refc_multiSendPkg, ui8_nettoDataCnt);
+            pc_mss->setDataNextStreamPart (&rc_multiSendPkg, ui8_nettoDataCnt);
           }
           sendPacket();
           ui32_dataBufferOffset += ui8_nettoDataCnt;
@@ -780,15 +780,15 @@ MultiSend_c::updateEarlierAndLatestInterval()
 bool
 MultiSend_c::SendStream_c::processMsg()
 {
-  /***/ MultiSendPkg_c&  refc_multiSendPkg = refc_multiSend.data();
-  const MultiSendPkg_c& refcc_multiSendPkg = refc_multiSend.constData();
+  /***/ MultiSendPkg_c&  rc_multiSendPkg = rc_multiSend.data();
+  const MultiSendPkg_c& refcc_multiSendPkg = rc_multiSend.constData();
 
   if (isFinished() || (en_msgType == NmeaFastPacket) || (en_msgType == IsoTPbroadcast))
   { // nothing to come in for us when we're broadcasting or already done (succeeded or aborted)
     return false; // anyway, return with false here for "safety"
   }
 
-  switch (refc_multiSendPkg.getUint8Data (0))
+  switch (rc_multiSendPkg.getUint8Data (0))
   {
     case scui8_eCM_CTS:
     case scui8_CM_CTS:
@@ -809,7 +809,7 @@ MultiSend_c::SendStream_c::processMsg()
           break;
         }
 
-        if ( refc_multiSendPkg.getUint8Data(1) == 0)
+        if ( rc_multiSendPkg.getUint8Data(1) == 0)
         { // send pause commanded from receiver
           switchToState (SendPauseTillCts, 1050);
         }
@@ -839,14 +839,14 @@ MultiSend_c::SendStream_c::processMsg()
             { // increase DPO in case of no re-request of the last burst
               ui32_dataPacketOffset += b_pkgSent;
             }
-            refc_multiSendPkg.setUint8Data (0, static_cast<uint8_t>(scui8_eCM_DPO));
-            refc_multiSendPkg.setUint8Data (1, static_cast<uint8_t>(ui8_burstPkgYetToSend));
-            refc_multiSendPkg.setUint16Data(2, static_cast<uint16_t>(ui32_dataPacketOffset & 0xFFFF));
-            refc_multiSendPkg.setUint8Data (4, static_cast<uint8_t>(ui32_dataPacketOffset >> 16));
+            rc_multiSendPkg.setUint8Data (0, static_cast<uint8_t>(scui8_eCM_DPO));
+            rc_multiSendPkg.setUint8Data (1, static_cast<uint8_t>(ui8_burstPkgYetToSend));
+            rc_multiSendPkg.setUint16Data(2, static_cast<uint16_t>(ui32_dataPacketOffset & 0xFFFF));
+            rc_multiSendPkg.setUint8Data (4, static_cast<uint8_t>(ui32_dataPacketOffset >> 16));
             // change order of setUint8Data(), setUint16Data() so that
             // setUint16Data() with equal position, so that a faster assignment is enabled
-            refc_multiSendPkg.setUint8Data (5, static_cast<uint8_t>(ui32_pgn & 0xFF));
-            refc_multiSendPkg.setUint16Data(6, static_cast<uint16_t>(ui32_pgn >> 8));
+            rc_multiSendPkg.setUint8Data (5, static_cast<uint8_t>(ui32_pgn & 0xFF));
+            rc_multiSendPkg.setUint16Data(6, static_cast<uint16_t>(ui32_pgn >> 8));
             ui8_sequenceNr = 0; // reset sequence number, as we're advancing with the DPO
             b_pkgSent = 0;
             sendPacket();
@@ -960,12 +960,12 @@ MultiSend_c::calcAndSetNextTriggerTime()
 void
 MultiSend_c::SendStream_c::abortSend()
 {
-  MultiSendPkg_c& refc_multiSendPkg = refc_multiSend.data();
+  MultiSendPkg_c& rc_multiSendPkg = rc_multiSend.data();
 
-  refc_multiSendPkg.setUint8Data (0, static_cast<uint8_t>(scui8_CM_ConnAbort));
-  refc_multiSendPkg.setUint32Data(1, uint32_t(0xFFFFFFFFUL));
-  refc_multiSendPkg.setUint8Data (5, static_cast<uint8_t>(ui32_pgn & 0xFF));
-  refc_multiSendPkg.setUint16Data(6, static_cast<uint16_t>(ui32_pgn >> 8));
+  rc_multiSendPkg.setUint8Data (0, static_cast<uint8_t>(scui8_CM_ConnAbort));
+  rc_multiSendPkg.setUint32Data(1, uint32_t(0xFFFFFFFFUL));
+  rc_multiSendPkg.setUint8Data (5, static_cast<uint8_t>(ui32_pgn & 0xFF));
+  rc_multiSendPkg.setUint16Data(6, static_cast<uint16_t>(ui32_pgn >> 8));
   switchToState (AwaitCts, 1000); /// Let the stream be removed in 100ms ... Attention!!! - Only setting "en_sendState" to anything other than "SendData" so CONNMANAGE PGN is used instead of DATATRANSFER.
   sendPacket();
   *pen_sendSuccessNotify = SendAborted;
@@ -973,27 +973,27 @@ MultiSend_c::SendStream_c::abortSend()
 
 
 /** this function is called by IsoMonitor_c when a new CLAIMED IsoItem_c is registered.
- * @param refc_isoName const reference to the item which IsoItem_c state is changed
- * @param rpc_newItem pointer to the currently corresponding IsoItem_c
+ * @param rc_isoName const reference to the item which IsoItem_c state is changed
+ * @param apc_newItem pointer to the currently corresponding IsoItem_c
  */
-void MultiSend_c::reactOnMonitorListAdd( const IsoName_c& refc_isoName, const IsoItem_c* /*rpc_newItem*/ )
+void MultiSend_c::reactOnMonitorListAdd( const IsoName_c& rc_isoName, const IsoItem_c* /*apc_newItem*/ )
 {
-  if ( getIsoMonitorInstance4Comm().existLocalIsoMemberISOName(refc_isoName) )
+  if ( getIsoMonitorInstance4Comm().existLocalIsoMemberISOName(rc_isoName) )
   { // local IsoItem_c has finished adr claim
     #ifdef DEBUG
     INTERNAL_DEBUG_DEVICE << "MultiSend_c added receive filter for LocalIsoMember as it's now active (=claimed)." << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
-    getIsoFilterManagerInstance().insertIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL),  (TP_CONN_MANAGE_PGN << 8), &refc_isoName, NULL, 8));
-    getIsoFilterManagerInstance().insertIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL), (ETP_CONN_MANAGE_PGN << 8), &refc_isoName, NULL, 8));
+    getIsoFilterManagerInstance().insertIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL),  (TP_CONN_MANAGE_PGN << 8), &rc_isoName, NULL, 8));
+    getIsoFilterManagerInstance().insertIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL), (ETP_CONN_MANAGE_PGN << 8), &rc_isoName, NULL, 8));
   }
 }
 
 
 /** this function is called by IsoMonitor_c when a device looses its IsoItem_c.
- * @param refc_isoName const reference to the item which IsoItem_c state is changed
- * @param rui8_oldSa previously used SA which is NOW LOST -> clients which were connected to this item can react explicitly
+ * @param rc_isoName const reference to the item which IsoItem_c state is changed
+ * @param aui8_oldSa previously used SA which is NOW LOST -> clients which were connected to this item can react explicitly
  */
-void MultiSend_c::reactOnMonitorListRemove( const IsoName_c& /*refc_isoName*/, uint8_t /*rui8_oldSa*/ )
+void MultiSend_c::reactOnMonitorListRemove( const IsoName_c& /*rc_isoName*/, uint8_t /*aui8_oldSa*/ )
 { // not needed anymore, as IsoFilterManager_c handles all this
 }
 
@@ -1005,33 +1005,33 @@ void MultiSend_c::reactOnMonitorListRemove( const IsoName_c& /*refc_isoName*/, u
 void
 MultiSend_c::SendStream_c::sendPacket()
 {
-  MultiSendPkg_c& refc_multiSendPkg = refc_multiSend.data();
+  MultiSendPkg_c& rc_multiSendPkg = rc_multiSend.data();
 
   // set identifier
-  refc_multiSendPkg.setIsoPri (6);
-  refc_multiSendPkg.setISONameForSA (c_isoNameSender);
-  refc_multiSendPkg.setIdentType (Ident_c::ExtendedIdent);
-  refc_multiSendPkg.setLen (8);
+  rc_multiSendPkg.setIsoPri (6);
+  rc_multiSendPkg.setISONameForSA (c_isoNameSender);
+  rc_multiSendPkg.setIdentType (Ident_c::ExtendedIdent);
+  rc_multiSendPkg.setLen (8);
 
   switch (en_msgType)
   {
     case NmeaFastPacket: // For fast packet, the PGN itself tells us that the message is a fast packet message.
                          // Since this is a non-destination specific PGN, we do NOT need to "setIsoPs(...)" !
                          #if defined (NMEA_2000_FAST_PACKET)
-                         refc_multiSendPkg.setIsoPgn (ui32_pgn);
+                         rc_multiSendPkg.setIsoPgn (ui32_pgn);
                          #endif
                          break;
-    case IsoTP:          refc_multiSendPkg.setIsoPgn ((en_sendState == SendData) ?  TP_DATA_TRANSFER_PGN :  TP_CONN_MANAGE_PGN);
-                         refc_multiSendPkg.setISONameForDA (c_isoNameReceiver);
+    case IsoTP:          rc_multiSendPkg.setIsoPgn ((en_sendState == SendData) ?  TP_DATA_TRANSFER_PGN :  TP_CONN_MANAGE_PGN);
+                         rc_multiSendPkg.setISONameForDA (c_isoNameReceiver);
                          break;
-    case IsoETP:         refc_multiSendPkg.setIsoPgn ((en_sendState == SendData) ? ETP_DATA_TRANSFER_PGN : ETP_CONN_MANAGE_PGN);
-                         refc_multiSendPkg.setISONameForDA (c_isoNameReceiver);
+    case IsoETP:         rc_multiSendPkg.setIsoPgn ((en_sendState == SendData) ? ETP_DATA_TRANSFER_PGN : ETP_CONN_MANAGE_PGN);
+                         rc_multiSendPkg.setISONameForDA (c_isoNameReceiver);
                          break;
-    case IsoTPbroadcast: refc_multiSendPkg.setIsoPgn ((en_sendState == SendData) ?  TP_DATA_TRANSFER_PGN :  TP_CONN_MANAGE_PGN);
-                         refc_multiSendPkg.setGlobalDA();
+    case IsoTPbroadcast: rc_multiSendPkg.setIsoPgn ((en_sendState == SendData) ?  TP_DATA_TRANSFER_PGN :  TP_CONN_MANAGE_PGN);
+                         rc_multiSendPkg.setGlobalDA();
                          break;
   } // switch
-  getCanInstance4Comm() << refc_multiSendPkg;
+  getCanInstance4Comm() << rc_multiSendPkg;
 }
 
 
@@ -1058,9 +1058,9 @@ MultiSend_c::SendStream_c::prepareSendMsg(uint8_t &ui8_nettoDataCnt)
 
 /** user function for explicit abort of any running matching stream. */
 void
-MultiSend_c::abortSend (const IsoName_c& rrefc_isoNameSender, const IsoName_c& rrefc_isoNameReceiver)
+MultiSend_c::abortSend (const IsoName_c& arc_isoNameSender, const IsoName_c& arc_isoNameReceiver)
 {
-  SendStream_c* pc_sendStream = getSendStream (rrefc_isoNameSender, rrefc_isoNameReceiver);
+  SendStream_c* pc_sendStream = getSendStream (arc_isoNameSender, arc_isoNameReceiver);
   if (pc_sendStream) pc_sendStream->abortSend();
   /// let timeEvent do the erasing from the list.
   /// reason: if someone starts a new send directly after aborting the current,

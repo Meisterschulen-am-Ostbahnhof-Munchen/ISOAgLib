@@ -107,21 +107,21 @@ class ProcDataRemoteBase_c : public ProcDataBase_c
     @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDdi_s which contains DDI, element, isSetpoint and ValueGroup
                          (array is terminated by ElementDdi_s.ui16_element == 0xFFFF)
     common parameter
-    @param rc_isoName optional ISOName code of this instance
-    @param rc_ownerISOName optional ISOName of the owner
-    @param rpc_commanderISOName pointer to updated ISOName variable of commander
-    @param rpc_processDataChangeHandler optional pointer to handler class of application
-    @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
+    @param ac_isoName optional ISOName code of this instance
+    @param ac_ownerISOName optional ISOName of the owner
+    @param apc_commanderISOName pointer to updated ISOName variable of commander
+    @param apc_processDataChangeHandler optional pointer to handler class of application
+    @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
-  ProcDataRemoteBase_c( const IsoAgLib::ElementDdi_s* ps_elementDDI = NULL, uint16_t rui16_element = 0xFFFF,
-                        const IsoName_c& rc_isoName = IsoName_c::IsoNameInitialProcessData(),
-                        const IsoName_c& rc_ownerISOName = IsoName_c::IsoNameUnspecified(),
-                        const IsoName_c* rpc_commanderISOName = NULL,
-                        IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
-                        int ri_singletonVecKey = 0)
+  ProcDataRemoteBase_c( const IsoAgLib::ElementDdi_s* ps_elementDDI = NULL, uint16_t aui16_element = 0xFFFF,
+                        const IsoName_c& ac_isoName = IsoName_c::IsoNameInitialProcessData(),
+                        const IsoName_c& ac_ownerISOName = IsoName_c::IsoNameUnspecified(),
+                        const IsoName_c* apc_commanderISOName = NULL,
+                        IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler = NULL,
+                        int ai_singletonVecKey = 0)
   {
-    init( ps_elementDDI, rui16_element, rc_isoName, rc_ownerISOName, rpc_commanderISOName,
-          rpc_processDataChangeHandler, ri_singletonVecKey);
+    init( ps_elementDDI, aui16_element, ac_isoName, ac_ownerISOName, apc_commanderISOName,
+          apc_processDataChangeHandler, ai_singletonVecKey);
   }
 
   /** initialise this ProcDataRemoteBase_c instance to a well defined initial state
@@ -129,29 +129,29 @@ class ProcDataRemoteBase_c : public ProcDataBase_c
       @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDdi_s which contains DDI, element, isSetpoint and ValueGroup
                           (array is terminated by ElementDdi_s.ui16_element == 0xFFFF)
       common parameter
-      @param rc_isoName optional ISOName code of this instance
-      @param rc_ownerISOName optional ISOName of the owner
-      @param rpc_commanderISOName pointer to updated ISOName variable of commander
-      @param rpc_processDataChangeHandler optional pointer to handler class of application
-      @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
+      @param ac_isoName optional ISOName code of this instance
+      @param ac_ownerISOName optional ISOName of the owner
+      @param apc_commanderISOName pointer to updated ISOName variable of commander
+      @param apc_processDataChangeHandler optional pointer to handler class of application
+      @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
     */
-  void init(  const IsoAgLib::ElementDdi_s* ps_elementDDI, uint16_t rui16_element,
-              const IsoName_c& rc_isoName = IsoName_c::IsoNameInitialProcessData(),
-              const IsoName_c& rc_ownerISOName = IsoName_c::IsoNameUnspecified(),
-              const IsoName_c* rpc_commanderISOName = NULL,
-              IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
-              int ri_singletonVecKey = 0);
+  void init(  const IsoAgLib::ElementDdi_s* ps_elementDDI, uint16_t aui16_element,
+              const IsoName_c& ac_isoName = IsoName_c::IsoNameInitialProcessData(),
+              const IsoName_c& ac_ownerISOName = IsoName_c::IsoNameUnspecified(),
+              const IsoName_c* apc_commanderISOName = NULL,
+              IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler = NULL,
+              int ai_singletonVecKey = 0);
 
   /** assignment operator for this object
-      @param rrefc_src source instance
+      @param arc_src source instance
       @return reference to source instance for cmd like "prog1 = prog2 = prog3;"
     */
-  const ProcDataRemoteBase_c& operator=(const ProcDataRemoteBase_c& rrefc_src);
+  const ProcDataRemoteBase_c& operator=(const ProcDataRemoteBase_c& arc_src);
 
   /** copy constructor for IsoAgLibProcDataRemote
-      @param rrefc_src source instance
+      @param arc_src source instance
     */
-   ProcDataRemoteBase_c(const ProcDataRemoteBase_c& rrefc_src);
+   ProcDataRemoteBase_c(const ProcDataRemoteBase_c& arc_src);
 
   /** default destructor which has nothing to do */
   ~ProcDataRemoteBase_c();
@@ -165,7 +165,7 @@ class ProcDataRemoteBase_c : public ProcDataBase_c
     @param rpbisoName pointer to ISOName var of local member used for
                 sending commands to remote owner member
   */
-  virtual void setCommanderISOName(const IsoName_c* rpc_isoName);
+  virtual void setCommanderISOName(const IsoName_c* apc_isoName);
 
   /** perform periodic actions
     ProcDataRemoteBase_c::timeEvent has nothing to do
@@ -176,7 +176,7 @@ class ProcDataRemoteBase_c : public ProcDataBase_c
   */
   virtual bool timeEvent( uint16_t *pui16_nextTimePeriod = NULL );
 
-    /** send the given int32_t value with variable ISOName rc_varISOName;
+    /** send the given int32_t value with variable ISOName ac_varISOName;
   set the int32_t value with conversion (according to central data type) in message
   string and set data format flags corresponding to central data type of this process data
   (other parameter fixed by ident of process data)
@@ -184,16 +184,16 @@ class ProcDataRemoteBase_c : public ProcDataBase_c
    * Err_c::elNonexistent one of resolved EMPF/SEND isn't registered with claimed address in Monitor
    * dependant error in CanIo_c on CAN send problems
 
-  @param rc_varISOName variable ISOName
-  @param ri32_val int32_t value to send
+  @param ac_varISOName variable ISOName
+  @param ai32_val int32_t value to send
   @param en_valueGroup: min/max/exact/default
   @param en_command
   @return true -> sendIntern set successful EMPF and SEND
      */
-  bool sendValISOName(const IsoName_c& rc_varISOName, int32_t ri32_val = 0) const;
+  bool sendValISOName(const IsoName_c& ac_varISOName, int32_t ai32_val = 0) const;
 
 #ifdef USE_FLOAT_DATA_TYPE
-  /** send the given float value with variable ISOName rc_varISOName;
+  /** send the given float value with variable ISOName ac_varISOName;
     set the float value with conversion (according to central data type) in message
     string and set data format flags corresponding to central data type of this process data
     (other parameter fixed by ident of process data)
@@ -201,17 +201,17 @@ class ProcDataRemoteBase_c : public ProcDataBase_c
  * Err_c::elNonexistent one of resolved EMPF/SEND isn't registered with claimed address in Monitor
  * dependant error in CanIo_c on CAN send problems
 
-      @param rc_varISOName variable ISOName
-      @param rb_pd PD code for the msg
-      @param rb_mod MOD code for the msg
-      @param ri32_val float value to send
+      @param ac_varISOName variable ISOName
+      @param ab_pd PD code for the msg
+      @param ab_mod MOD code for the msg
+      @param ai32_val float value to send
       @return true -> sendIntern set successful EMPF and SEND
    */
-  bool sendValISOName(const IsoName_c& rc_varISOName, float rf_val = 0.0F) const;
+  bool sendValISOName(const IsoName_c& ac_varISOName, float af_val = 0.0F) const;
 #endif
 
 private: // Private methods
-  void setRemoteSendFlags (const IsoName_c& rc_varISOName) const;
+  void setRemoteSendFlags (const IsoName_c& ac_varISOName) const;
 
 private: // Private attributes
   /** pointer to the isoName of the local ident, which acts as commanding member */

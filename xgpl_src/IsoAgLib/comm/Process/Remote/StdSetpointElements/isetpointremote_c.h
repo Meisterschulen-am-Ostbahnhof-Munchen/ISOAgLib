@@ -83,7 +83,7 @@ public:
         * dependant error in CanIo_c on CAN send problems
     @return new exact setpoint to command
   */
-  void setExact(int32_t ri32_val) {SetpointRemote_c::setExact(ri32_val);};
+  void setExact(int32_t ai32_val) {SetpointRemote_c::setExact(ai32_val);};
   /**
     command a minimum setpoint; store value as commanded and send command
 
@@ -92,7 +92,7 @@ public:
         * dependant error in CanIo_c on CAN send problems
     @return new minimum setpoint to command
   */
-  void setMin(int32_t ri32_val) {SetpointRemote_c::setMin(ri32_val);};
+  void setMin(int32_t ai32_val) {SetpointRemote_c::setMin(ai32_val);};
   /**
     command a maximum setpoint; store value as commanded and send command
 
@@ -101,7 +101,7 @@ public:
         * dependant error in CanIo_c on CAN send problems
     @return new maximum setpoint to command
   */
-  void setMax(int32_t ri32_val) {SetpointRemote_c::setMax(ri32_val);};
+  void setMax(int32_t ai32_val) {SetpointRemote_c::setMax(ai32_val);};
   /**
     command a default setpoint; store value as commanded and send command
 
@@ -110,7 +110,7 @@ public:
         * dependant error in CanIo_c on CAN send problems
     @return new default setpoint to command
   */
-  void setDefault(int32_t ri32_val) {SetpointRemote_c::setDefault(ri32_val);};
+  void setDefault(int32_t ai32_val) {SetpointRemote_c::setDefault(ai32_val);};
   /**
     request remote master setpoint - exact
   */

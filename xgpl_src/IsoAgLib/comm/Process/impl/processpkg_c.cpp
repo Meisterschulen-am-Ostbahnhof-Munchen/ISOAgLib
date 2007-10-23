@@ -125,7 +125,7 @@ namespace __IsoAgLib {
 
 
 /** default constructor which has nothing to do */
-ProcessPkg_c::ProcessPkg_c( int ri_singletonVecKey ) : CanPkgExt_c( ri_singletonVecKey ) {
+ProcessPkg_c::ProcessPkg_c( int ai_singletonVecKey ) : CanPkgExt_c( ai_singletonVecKey ) {
   c_specialTermISOName.setUnspecified();
   c_specialTermUseProcISOName.setUnspecified();
 }
@@ -272,12 +272,12 @@ float ProcessPkg_c::dataFloat()const{
   for cmd's like measurement program increment, meas prog start/stop,
   etc.
   (4 uint8_t signed integer defined by int32_t in masterHeader)
-  @param ri32_val new cmd value for message
+  @param ai32_val new cmd value for message
   @param ren_procValType data type for message string (default i32_val)
 */
-void ProcessPkg_c::setDataRawCmd(int32_t ri32_val, proc_valType_t ren_procValType)
+void ProcessPkg_c::setDataRawCmd(int32_t ai32_val, proc_valType_t ren_procValType)
 {
-  c_flex4Data.setInt32Data( ri32_val );
+  c_flex4Data.setInt32Data( ai32_val );
 
   bit_data.b_valType = ren_procValType;
 }
@@ -289,26 +289,26 @@ void ProcessPkg_c::setDataRawCmd(int32_t ri32_val, proc_valType_t ren_procValTyp
   (if parameter and send type are different,
    a conversion by assignment is performed; %e.g. int32_t val 3
    can be sent as float 3.0)
-  @param ri32_val new data value for message
+  @param ai32_val new data value for message
   @param ren_procValType data type for message string (default i32_val)
 */
-void ProcessPkg_c::setData(int32_t ri32_val, proc_valType_t ren_procValType)
+void ProcessPkg_c::setData(int32_t ai32_val, proc_valType_t ren_procValType)
 {
   switch (ren_procValType)
   {
     case i32_val:
-      c_flex4Data.setInt32Data( ri32_val );
+      c_flex4Data.setInt32Data( ai32_val );
       set_d(0);
       bit_data.b_valType = ren_procValType;
       break;
     case ui32_val:
-      c_flex4Data.setUint32Data( ri32_val );
+      c_flex4Data.setUint32Data( ai32_val );
       set_d(0);
       bit_data.b_valType = ren_procValType;
       break;
 #if defined(USE_FLOAT_DATA_TYPE)
     case float_val:
-      floatVar2LittleEndianStream( ((float *const)(&ri32_val)), c_flex4Data.uint8);
+      floatVar2LittleEndianStream( ((float *const)(&ai32_val)), c_flex4Data.uint8);
       set_d(1);
       bit_data.b_valType = ren_procValType;
       break;
@@ -324,24 +324,24 @@ void ProcessPkg_c::setData(int32_t ri32_val, proc_valType_t ren_procValType)
   (if parameter and send type are different,
    a conversion by assignment is performed; %e.g. int32_t val 3
    can be sent as float 3.0)
-  @param rui32_val new data value for message
+  @param aui32_val new data value for message
   @param ren_procValType data type for message string (default ui32_val)
 */
-void ProcessPkg_c::setData(uint32_t rui32_val, proc_valType_t ren_procValType)
+void ProcessPkg_c::setData(uint32_t aui32_val, proc_valType_t ren_procValType)
 {
   switch (ren_procValType)
   {
     case i32_val:
-      c_flex4Data.setInt32Data( rui32_val );
+      c_flex4Data.setInt32Data( aui32_val );
       set_d(0);
       break;
     case ui32_val:
-      c_flex4Data.setUint32Data( rui32_val );
+      c_flex4Data.setUint32Data( aui32_val );
       set_d(0);
       break;
 #if defined(USE_FLOAT_DATA_TYPE)
     case float_val:
-      floatVar2LittleEndianStream( ((float *const)(&rui32_val)), c_flex4Data.uint8);
+      floatVar2LittleEndianStream( ((float *const)(&aui32_val)), c_flex4Data.uint8);
       set_d(1);
       break;
 #endif
@@ -390,25 +390,25 @@ void ProcessPkg_c::setData(proc_specCmd_t ren_procSpecCmd, proc_valType_t ren_pr
   (if parameter and send type are different,
    a conversion by assignment is performed; %e.g. int32_t val 3
    can be sent as float 3.0)
-  @param ri32_val new data value for message
+  @param ai32_val new data value for message
   @param ren_procValType data type for message string (default float_val)
 */
-void ProcessPkg_c::setData(float rf_val, proc_valType_t ren_procValType)
+void ProcessPkg_c::setData(float af_val, proc_valType_t ren_procValType)
 {
   switch (ren_procValType)
   {
     case i32_val:
-      c_flex4Data.setInt32Data( int32_t(rf_val) );
+      c_flex4Data.setInt32Data( int32_t(af_val) );
       set_d(0);
       bit_data.b_valType = ren_procValType;
       break;
     case ui32_val:
-      c_flex4Data.setUint32Data( uint32_t(rf_val) );
+      c_flex4Data.setUint32Data( uint32_t(af_val) );
       set_d(0);
       bit_data.b_valType = ren_procValType;
       break;
     case float_val:
-      floatVar2LittleEndianStream(&rf_val, c_flex4Data.uint8);
+      floatVar2LittleEndianStream(&af_val, c_flex4Data.uint8);
       set_d(1);
       bit_data.b_valType = ren_procValType;
       break;
@@ -570,21 +570,21 @@ IsoItem_c& ProcessPkg_c::memberSend() const
 /**
   some LBS+ terminals wants process data interaction for syncronisation of
   terminal mask with ISOName of terminal even for local process data
-  @param rc_isoName ISOName of terminal, for which the ISOName of data is converted
-  @param rc_useProcISOName ISOName for process data (optional, default to terminal isoName)
+  @param ac_isoName ISOName of terminal, for which the ISOName of data is converted
+  @param ac_useProcISOName ISOName for process data (optional, default to terminal isoName)
 */
-void ProcessPkg_c::useTermISONameForLocalProc(const IsoName_c& rc_isoName, const IsoName_c& rc_useProcISOName)
+void ProcessPkg_c::useTermISONameForLocalProc(const IsoName_c& ac_isoName, const IsoName_c& ac_useProcISOName)
 {
-  c_specialTermISOName = rc_isoName;
-  if (rc_useProcISOName.isSpecified())c_specialTermUseProcISOName = rc_useProcISOName;
-  else c_specialTermUseProcISOName = rc_isoName;
+  c_specialTermISOName = ac_isoName;
+  if (ac_useProcISOName.isSpecified())c_specialTermUseProcISOName = ac_useProcISOName;
+  else c_specialTermUseProcISOName = ac_isoName;
 }
 
 /**
   extract data from ISO commands and save it to member class
-  @param refl_elementDDI
+  @param rl_elementDDI
 */
-bool ProcessPkg_c::resolveCommandTypeForISO(const IsoAgLib::ElementDdi_s& refl_elementDDI)
+bool ProcessPkg_c::resolveCommandTypeForISO(const IsoAgLib::ElementDdi_s& rl_elementDDI)
 {
   bool b_isSetpoint = false;
   bool b_isRequest = false;
@@ -634,10 +634,10 @@ bool ProcessPkg_c::resolveCommandTypeForISO(const IsoAgLib::ElementDdi_s& refl_e
     }
   }
 
-  if ( refl_elementDDI.ui16_DDI == DDI() )
+  if ( rl_elementDDI.ui16_DDI == DDI() )
   {
-    b_isSetpoint = refl_elementDDI.b_isSetpoint;
-    en_valueGroup = refl_elementDDI.en_valueGroup;
+    b_isSetpoint = rl_elementDDI.b_isSetpoint;
+    en_valueGroup = rl_elementDDI.en_valueGroup;
   }
 
   if (en_command != GeneralCommand_c::noCommand)

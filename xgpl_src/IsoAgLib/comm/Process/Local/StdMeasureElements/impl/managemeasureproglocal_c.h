@@ -126,24 +126,24 @@ private:
  public:
   /**
     constructor which initialse both pointers if given
-    @param rpc_processData optional pointer to containing ProcessData instance
+    @param apc_processData optional pointer to containing ProcessData instance
   */
-  ManageMeasureProgLocal_c( ProcDataBase_c *const rpc_processData = NULL )
-  : ProcessElementBase_c( rpc_processData )
-  { init( rpc_processData );};
+  ManageMeasureProgLocal_c( ProcDataBase_c *const apc_processData = NULL )
+  : ProcessElementBase_c( apc_processData )
+  { init( apc_processData );};
   virtual ~ManageMeasureProgLocal_c();
 
   /**
     initialise this ManageMeasureProgLocal_c instance to a well defined initial state
-    @param rpc_processData optional pointer to containing ProcessData instance
+    @param apc_processData optional pointer to containing ProcessData instance
   */
-  void init( ProcDataBase_c *const rpc_processData = NULL );
+  void init( ProcDataBase_c *const apc_processData = NULL );
 
   /** copy constructor */
-  ManageMeasureProgLocal_c( const ManageMeasureProgLocal_c& rrefc_src );
+  ManageMeasureProgLocal_c( const ManageMeasureProgLocal_c& arc_src );
 
   /** assignment operator */
-  const ManageMeasureProgLocal_c& operator=( const ManageMeasureProgLocal_c& rrefc_src );
+  const ManageMeasureProgLocal_c& operator=( const ManageMeasureProgLocal_c& arc_src );
 
   /**
     perform periodic actions
@@ -159,53 +159,53 @@ private:
 
   /**
     check if specific measureprog exist
-    @param rc_isoName DEVCLASS code of searched measure program
+    @param ac_isoName DEVCLASS code of searched measure program
     @return true -> found item
   */
-  bool existProg(const IsoName_c& rc_isoName)
-      {return updateProgCache(rc_isoName, false);}
+  bool existProg(const IsoName_c& ac_isoName)
+      {return updateProgCache(ac_isoName, false);}
 
   /**
-    search for suiting measureprog, if not found AND if rb_doCreate == true
+    search for suiting measureprog, if not found AND if ab_doCreate == true
     create copy from first element at end of vector
 
     possible errors:
-        * Err_c::elNonexistent wanted measureprog doesn't exist and rb_doCreate == false
+        * Err_c::elNonexistent wanted measureprog doesn't exist and ab_doCreate == false
 
-    @param rc_isoName DEVCLASS code of searched measure program
-    @param rb_doCreated true -> create suitable measure program if not found
+    @param ac_isoName DEVCLASS code of searched measure program
+    @param ab_doCreated true -> create suitable measure program if not found
   */
-  MeasureProgLocal_c& prog(const IsoName_c& rc_isoName, bool rb_doCreate);
+  MeasureProgLocal_c& prog(const IsoName_c& ac_isoName, bool ab_doCreate);
 
   /** initialise value for all registered Measure Progs */
-  void initGlobalVal( int32_t ri32_val );
+  void initGlobalVal( int32_t ai32_val );
 
   /** set value for all registered Measure Progs */
-  void setGlobalVal( int32_t ri32_val );
+  void setGlobalVal( int32_t ai32_val );
 
   #ifdef USE_FLOAT_DATA_TYPE
   /** initialise value for all registered Measure Progs */
-  void initGlobalVal( float rf_val );
+  void initGlobalVal( float af_val );
 
   /** set value for all registered Measure Progs */
-  void setGlobalVal( float rf_val );
+  void setGlobalVal( float af_val );
   #endif // USE_FLOAT_DATA_TYPE
 
   /**
     allow local client to actively start a measurement program
     (to react on a incoming "start" command for default data logging)
     @param ren_type measurement type: Proc_c::TimeProp, Proc_c::DistProp, ...
-    @param ri32_increment
-    @param rpc_receiverDevice commanding ISOName
-    @return true -> rpc_receiverDevice is set
+    @param ai32_increment
+    @param apc_receiverDevice commanding ISOName
+    @return true -> apc_receiverDevice is set
   */
   bool startDataLogging(Proc_c::type_t ren_type /* Proc_c::TimeProp, Proc_c::DistProp, ... */,
-                        int32_t ri32_increment, const IsoName_c* rpc_receiverDevice );
+                        int32_t ai32_increment, const IsoName_c* apc_receiverDevice );
   /**
     stop all measurement progs in all local process instances, started with given isoName
-    @param refc_isoName
+    @param rc_isoName
   */
-  void stopRunningMeasurement(const IsoName_c& refc_isoName);
+  void stopRunningMeasurement(const IsoName_c& rc_isoName);
 
 
  protected:
@@ -229,20 +229,20 @@ private:
     possible errors:
         * Err_c::badAlloc not enough memory to insert new MeasureProgLocal
 
-    @param rc_isoName commanding ISOName
+    @param ac_isoName commanding ISOName
   */
-  void insertMeasureprog(const IsoName_c& rc_isoName);
+  void insertMeasureprog(const IsoName_c& ac_isoName);
   /**
     update the programm cache, create an programm item, if wanted
 
     possible errors:
         * Err_c::badAlloc not enough memory to insert new MeasureProgLocal
 
-    @param rc_isoName commanding ISOName
-    @param rb_createIfNotFound true -> create new item if not found
+    @param ac_isoName commanding ISOName
+    @param ab_createIfNotFound true -> create new item if not found
     @return true -> instance found
   */
-  bool updateProgCache(const IsoName_c& rc_isoName, bool rb_createIfNotFound);
+  bool updateProgCache(const IsoName_c& ac_isoName, bool ab_createIfNotFound);
  protected:
   /** container of objects for managing jobs of local measure programs */
   Vec_MeasureProgLocal c_vec_prog;
@@ -250,7 +250,7 @@ private:
   Vec_MeasureProgLocalIterator pc_progCache;
  private:
   /** base function for assignment of element vars for copy constructor and operator= */
-  void assignFromSource( const ManageMeasureProgLocal_c& rrefc_src );
+  void assignFromSource( const ManageMeasureProgLocal_c& arc_src );
   /** create first default measure prog, if no measure prog in list */
   void checkInitList( void );
 

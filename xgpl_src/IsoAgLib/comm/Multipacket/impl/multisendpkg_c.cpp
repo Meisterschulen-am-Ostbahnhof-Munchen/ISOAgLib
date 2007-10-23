@@ -94,17 +94,17 @@ static const uint8_t paddingDataArr[] = {0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF
 
 /**
   set the 7 uint8_t data part of transfer message
-  @param rpb_source source data pointer
-  @param ri32_pos uint8_t position in data string to start
-  @param rb_partSize optional amount of bytes of data stream for actual pkg (default 7) {Anyway MAX 7 bytes!!}
+  @param apb_source source data pointer
+  @param ai32_pos uint8_t position in data string to start
+  @param ab_partSize optional amount of bytes of data stream for actual pkg (default 7) {Anyway MAX 7 bytes!!}
 */
-void MultiSendPkg_c::setDataPart(const HUGE_MEM uint8_t* rpb_source, int32_t ri32_pos, uint8_t rb_partSize)
+void MultiSendPkg_c::setDataPart(const HUGE_MEM uint8_t* apb_source, int32_t ai32_pos, uint8_t ab_partSize)
 {
   #ifdef USE_HUGE_MEM
-  const HUGE_MEM uint8_t* pb_source = rpb_source + ri32_pos;
+  const HUGE_MEM uint8_t* pb_source = apb_source + ai32_pos;
   // fist assign is performed with index:=1, so that last assign should be performed with
-  // ind == rb_partSize (e.g. rb_partSize:=7 ==> last written index:=7 == Byt8 of CanPkg_c)
-  for ( uint8_t ind = 1; ind <= rb_partSize; ind++ )
+  // ind == ab_partSize (e.g. ab_partSize:=7 ==> last written index:=7 == Byt8 of CanPkg_c)
+  for ( uint8_t ind = 1; ind <= ab_partSize; ind++ )
   { // the ind matches already to the appropriate CanPkg_c data string position,
     // while the pb_source pointer is also set to the start of the source data
     setUint8Data( ind, *pb_source );
@@ -112,11 +112,11 @@ void MultiSendPkg_c::setDataPart(const HUGE_MEM uint8_t* rpb_source, int32_t ri3
     pb_source++;
   }
   #else
-  setDataFromString (1, rpb_source + ri32_pos, rb_partSize);
+  setDataFromString (1, apb_source + ai32_pos, ab_partSize);
   #endif
-  if ( rb_partSize < 7 )
+  if ( ab_partSize < 7 )
   { // only pad when less than 7 data byte
-    setDataFromString( 1+rb_partSize, paddingDataArr, (7-rb_partSize) );
+    setDataFromString( 1+ab_partSize, paddingDataArr, (7-ab_partSize) );
   }
 }
 
@@ -124,25 +124,25 @@ void MultiSendPkg_c::setDataPart(const HUGE_MEM uint8_t* rpb_source, int32_t ri3
 
 /**
   set the 7 uint8_t data part of transfer message
-  @param rpb_source source data pointer
-  @param ri32_pos uint8_t position in data string to start
-  @param rb_partSize optional amount of bytes of data stream for actual pkg (default 7)
+  @param apb_source source data pointer
+  @param ai32_pos uint8_t position in data string to start
+  @param ab_partSize optional amount of bytes of data stream for actual pkg (default 7)
   */
-void MultiSendPkg_c::setDataPart(const STL_NAMESPACE::vector<uint8_t>& refc_vecSource, int32_t ri32_pos, uint8_t rb_partSize)
+void MultiSendPkg_c::setDataPart(const STL_NAMESPACE::vector<uint8_t>& rc_vecSource, int32_t ai32_pos, uint8_t ab_partSize)
 {
-  STL_NAMESPACE::vector<uint8_t>::const_iterator iter = refc_vecSource.begin()+ri32_pos;
+  STL_NAMESPACE::vector<uint8_t>::const_iterator iter = rc_vecSource.begin()+ai32_pos;
   // fist assign is performed with index:=1, so that last assign should be performed with
-  // ind == rb_partSize (e.g. rb_partSize:=7 ==> last written index:=7 == Byt8 of CanPkg_c)
-  for ( uint8_t ind = 1; ind <= rb_partSize; ind++ )
+  // ind == ab_partSize (e.g. ab_partSize:=7 ==> last written index:=7 == Byt8 of CanPkg_c)
+  for ( uint8_t ind = 1; ind <= ab_partSize; ind++ )
   { // the ind matches already to the appropriate CanPkg_c data string position,
     // while the iter iterator is also set to the start of the source data
     setUint8Data( ind, *iter );
     // now increment the iterator for next access
     iter++;
   }
-  if ( rb_partSize < 7 )
+  if ( ab_partSize < 7 )
   { // only pad when less than 7 data byte
-    setDataFromString( 1+rb_partSize, paddingDataArr, (7-rb_partSize) );
+    setDataFromString( 1+ab_partSize, paddingDataArr, (7-ab_partSize) );
   }
 }
 
@@ -151,20 +151,20 @@ void MultiSendPkg_c::setDataPart(const STL_NAMESPACE::vector<uint8_t>& refc_vecS
 #if defined(NMEA_2000_FAST_PACKET)
 /**
   set the 7 uint8_t data part of transfer message
-  @param rpb_source source data pointer
-  @param ri32_pos uint8_t position in data string to start
-  @param rb_partSize optional amount of bytes of data stream for actual pkg (default 7) {Anyway MAX 7 bytes!!}
+  @param apb_source source data pointer
+  @param ai32_pos uint8_t position in data string to start
+  @param ab_partSize optional amount of bytes of data stream for actual pkg (default 7) {Anyway MAX 7 bytes!!}
  */
-void MultiSendPkg_c::setFastPacketDataPart(const HUGE_MEM uint8_t* rpb_source, int32_t ri32_pos, uint8_t rb_partSize, uint8_t rui8_offset)
+void MultiSendPkg_c::setFastPacketDataPart(const HUGE_MEM uint8_t* apb_source, int32_t ai32_pos, uint8_t ab_partSize, uint8_t aui8_offset)
 {
 #ifdef USE_HUGE_MEM
-  const HUGE_MEM uint8_t* pb_source = rpb_source + ri32_pos;
+  const HUGE_MEM uint8_t* pb_source = apb_source + ai32_pos;
   // examples:
-  // rb_partSize:=7, rui8_offset:=1 ==> cui8_endCondition:=8
-  // ==> first assign should match target byte index rui8_offset:=1
+  // ab_partSize:=7, aui8_offset:=1 ==> cui8_endCondition:=8
+  // ==> first assign should match target byte index aui8_offset:=1
   //     and last index should be <8 -> i.e. index:=7
-  const uint8_t cui8_endCondition = rb_partSize + rui8_offset;
-  for ( uint8_t ind = rui8_offset; ind < cui8_endCondition; ind++ )
+  const uint8_t cui8_endCondition = ab_partSize + aui8_offset;
+  for ( uint8_t ind = aui8_offset; ind < cui8_endCondition; ind++ )
   { // the ind matches already to the appropriate CanPkg_c data string position,
     // while the pb_source pointer is also set to the start of the source data
     setUint8Data( ind, *pb_source );
@@ -172,35 +172,35 @@ void MultiSendPkg_c::setFastPacketDataPart(const HUGE_MEM uint8_t* rpb_source, i
     pb_source++;
   }
 #else
-  setDataFromString (rui8_offset, rpb_source + ri32_pos, rb_partSize);
+  setDataFromString (aui8_offset, apb_source + ai32_pos, ab_partSize);
 #endif
-  setDataFromString (rui8_offset+rb_partSize, paddingDataArr, (8-rui8_offset-rb_partSize));
+  setDataFromString (aui8_offset+ab_partSize, paddingDataArr, (8-aui8_offset-ab_partSize));
 }
 
 
 
 /**
   set the 7 uint8_t data part of transfer message
-  @param rpb_source source data pointer
-  @param ri32_pos uint8_t position in data string to start
-  @param rb_partSize optional amount of bytes of data stream for actual pkg (default 7)
+  @param apb_source source data pointer
+  @param ai32_pos uint8_t position in data string to start
+  @param ab_partSize optional amount of bytes of data stream for actual pkg (default 7)
   */
-void MultiSendPkg_c::setFastPacketDataPart(const STL_NAMESPACE::vector<uint8_t>& refc_vecSource, int32_t ri32_pos, uint8_t rb_partSize, uint8_t rui8_offset )
+void MultiSendPkg_c::setFastPacketDataPart(const STL_NAMESPACE::vector<uint8_t>& rc_vecSource, int32_t ai32_pos, uint8_t ab_partSize, uint8_t aui8_offset )
 {
-  STL_NAMESPACE::vector<uint8_t>::const_iterator iter = refc_vecSource.begin()+ri32_pos;
+  STL_NAMESPACE::vector<uint8_t>::const_iterator iter = rc_vecSource.begin()+ai32_pos;
   // examples:
-  // rb_partSize:=7, rui8_offset:=1 ==> cui8_endCondition:=8
-  // ==> first assign should match target byte index rui8_offset:=1
+  // ab_partSize:=7, aui8_offset:=1 ==> cui8_endCondition:=8
+  // ==> first assign should match target byte index aui8_offset:=1
   //     and last index should be <8 -> i.e. index:=7
-  const uint8_t cui8_endCondition = rb_partSize + rui8_offset;
-  for ( uint8_t ind = rui8_offset; ind < cui8_endCondition; ind++ )
+  const uint8_t cui8_endCondition = ab_partSize + aui8_offset;
+  for ( uint8_t ind = aui8_offset; ind < cui8_endCondition; ind++ )
   { // the ind matches already to the appropriate CanPkg_c data string position,
     // while the iter iterator is also set to the start of the source data
     setUint8Data( ind, *iter );
     // now increment the iterator for next access
     iter++;
   }
-  setDataFromString (rui8_offset+rb_partSize, paddingDataArr, (8-rui8_offset-rb_partSize));
+  setDataFromString (aui8_offset+ab_partSize, paddingDataArr, (8-aui8_offset-ab_partSize));
 }
 #endif
 

@@ -81,10 +81,10 @@ public:
 
   //  Operation: setValue
   //! Parameter:
-  //! @param rpc_newObject:
+  //! @param apc_newObject:
   //! @param b_updateObject:
-  void setValue(iVtObject_c* rpc_newObject, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
-    vtObjectObjectPointer_c::setValue (rpc_newObject, b_updateObject, b_enableReplaceOfCmd);
+  void setValue(iVtObject_c* apc_newObject, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
+    vtObjectObjectPointer_c::setValue (apc_newObject, b_updateObject, b_enableReplaceOfCmd);
   }
 
   /** these attributes are in parentheses in the spec, so commented out here

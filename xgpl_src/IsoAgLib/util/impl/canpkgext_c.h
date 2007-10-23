@@ -134,7 +134,7 @@ class CanPkgExt_c : public CanPkg_c
   CanPkgExt_c& operator=(const CanPkgExt_c&); //!< prevent copy operator use: do not code this method
  public:
   /** default constructor, which has nothing to do */
-  CanPkgExt_c( int ri_singletonVecKey = 0 );
+  CanPkgExt_c( int ai_singletonVecKey = 0 );
 
   /** virtual default destructor, which has nothing to do */
   virtual ~CanPkgExt_c();
@@ -146,117 +146,117 @@ class CanPkgExt_c : public CanPkg_c
     @see __IsoAgLib::FilterBox_c::operator>>
     @see CanPkgExt_c::operator=
     @see CanPkgExt_c::getData
-    @param rrefc_right reference to the source CanPkg_c on the right
+    @param arc_right reference to the source CanPkg_c on the right
     @return reference to the source CanPkg_c to enable assign chains like
         "pkg1 = pkg2 = pkg3 = pkg4;"
-  virtual const CanPkg_c& operator=(const CanPkg_c& rrefc_right);
+  virtual const CanPkg_c& operator=(const CanPkg_c& arc_right);
   */
 
   /**
     simply deliver a uint8_t from a specific position with operator[]
-    @param rb_pos position of dellivered uint8_t [0..7]
-    @return uint8_t balue in CAN data string at pos rb_pos
+    @param ab_pos position of dellivered uint8_t [0..7]
+    @return uint8_t balue in CAN data string at pos ab_pos
   */
-  uint8_t operator[](uint8_t rui8_pos) const {return c_data[rui8_pos];}
+  uint8_t operator[](uint8_t aui8_pos) const {return c_data[aui8_pos];}
 
   /**
     set an uint8_t value at specified position in string
-    @param rui8_pos position [0..7]
-    @param rui8_val uint8_t value to set
+    @param aui8_pos position [0..7]
+    @param aui8_val uint8_t value to set
   */
-  void setUint8Data( uint8_t rui8_pos, uint8_t rui8_val)
-    { c_data.setUint8Data(rui8_pos, rui8_val);}
+  void setUint8Data( uint8_t aui8_pos, uint8_t aui8_val)
+    { c_data.setUint8Data(aui8_pos, aui8_val);}
 
   /**
     set an uint16_t value at specified position in string
-    @param rui8_devClassInst position [0..6]
-    @param rui16_val uint16_t value to set
+    @param aui8_devClassInst position [0..6]
+    @param aui16_val uint16_t value to set
   */
-  void setUint16Data( uint8_t rui8_pos, uint16_t rui16_val)
-    { c_data.setUint16Data(rui8_pos, rui16_val);}
+  void setUint16Data( uint8_t aui8_pos, uint16_t aui16_val)
+    { c_data.setUint16Data(aui8_pos, aui16_val);}
 
   /**
     set an int16_t value at specified position in string
-    @param rui8_devClassInst position [0..6]
-    @param ri16_val int16_t value to set
+    @param aui8_devClassInst position [0..6]
+    @param ai16_val int16_t value to set
   */
-  void setInt16Data( uint8_t rui8_pos, int16_t ri16_val)
-    { c_data.setInt16Data(rui8_pos, ri16_val);}
+  void setInt16Data( uint8_t aui8_pos, int16_t ai16_val)
+    { c_data.setInt16Data(aui8_pos, ai16_val);}
 
   /**
     set an uint32_t value at specified position in string
-    @param rui8_devClassInst position [0..4]
-    @param rui32_val uint32_t value to set
+    @param aui8_devClassInst position [0..4]
+    @param aui32_val uint32_t value to set
   */
-  void setUint32Data( uint8_t rui8_pos, uint32_t rui32_val)
-    { c_data.setUint32Data(rui8_pos, rui32_val);}
+  void setUint32Data( uint8_t aui8_pos, uint32_t aui32_val)
+    { c_data.setUint32Data(aui8_pos, aui32_val);}
 
   /**
     set an int32_t value at specified position in string
-    @param rui8_devClassInst position [0..4]
-    @param ri32_val int32_t value to set
+    @param aui8_devClassInst position [0..4]
+    @param ai32_val int32_t value to set
   */
-  void setInt32Data( uint8_t rui8_pos, int32_t ri32_val)
-    { c_data.setInt32Data(rui8_pos, ri32_val);}
+  void setInt32Data( uint8_t aui8_pos, int32_t ai32_val)
+    { c_data.setInt32Data(aui8_pos, ai32_val);}
 
   /**
     set an float value at specified position in string
-    @param rui8_pos position [0..4]
-    @param rf_val float value to set
+    @param aui8_pos position [0..4]
+    @param af_val float value to set
    */
-  void setFloatData( uint8_t rui8_pos, float rf_val)
-  { c_data.setFloatData(rui8_pos, rf_val);}
+  void setFloatData( uint8_t aui8_pos, float af_val)
+  { c_data.setFloatData(aui8_pos, af_val);}
   /**
     simply deliver a uint8_t from a specific position with
-    @param rb_pos position of dellivered uint8_t [0..7]
-    @return uint8_t balue in CAN data string at pos rb_pos
+    @param ab_pos position of dellivered uint8_t [0..7]
+    @return uint8_t balue in CAN data string at pos ab_pos
   */
-  uint8_t getUint8Data(uint8_t rui8_pos) const {return c_data.getUint8Data(rui8_pos);}
+  uint8_t getUint8Data(uint8_t aui8_pos) const {return c_data.getUint8Data(aui8_pos);}
 
   /**
     simply deliver a uint16_t from a specific starting position with
-    @param rb_pos position of dellivered uint16_t [0..6]
-    @return uint16_t balue in CAN data string at pos (rb_pos, rb_pos+1) read Low/High order
+    @param ab_pos position of dellivered uint16_t [0..6]
+    @return uint16_t balue in CAN data string at pos (ab_pos, ab_pos+1) read Low/High order
   */
-  uint16_t getUint16Data(uint8_t rui8_pos) const {return c_data.getUint16Data(rui8_pos);}
+  uint16_t getUint16Data(uint8_t aui8_pos) const {return c_data.getUint16Data(aui8_pos);}
 
   /**
     simply deliver a int16_t from a specific starting position with
-    @param rb_pos position of dellivered int16_t [0..6]
-    @return int16_t balue in CAN data string at pos (rb_pos, rb_pos+1) read Low/High order
+    @param ab_pos position of dellivered int16_t [0..6]
+    @return int16_t balue in CAN data string at pos (ab_pos, ab_pos+1) read Low/High order
   */
-  int16_t getInt16Data(uint8_t rui8_pos) const {return c_data.getInt16Data(rui8_pos);}
+  int16_t getInt16Data(uint8_t aui8_pos) const {return c_data.getInt16Data(aui8_pos);}
 
   /**
     simply deliver a uint32_t from a specific starting position with
-    @param rb_pos position of dellivered uint32_t [0..4]
-    @return uint32_t balue in CAN data string at pos (rb_pos, rb_pos+1) read Low/High order
+    @param ab_pos position of dellivered uint32_t [0..4]
+    @return uint32_t balue in CAN data string at pos (ab_pos, ab_pos+1) read Low/High order
   */
-  uint32_t getUint32Data(uint8_t rui8_pos) const {return c_data.getUint32Data(rui8_pos);}
+  uint32_t getUint32Data(uint8_t aui8_pos) const {return c_data.getUint32Data(aui8_pos);}
 
   /**
     simply deliver a int32_t from a specific starting position with
-    @param rb_pos position of dellivered int32_t [0..4]
-    @return int32_t balue in CAN data string at pos (rb_pos, rb_pos+1) read Low/High order
+    @param ab_pos position of dellivered int32_t [0..4]
+    @return int32_t balue in CAN data string at pos (ab_pos, ab_pos+1) read Low/High order
   */
-  int32_t getInt32Data(uint8_t rui8_pos) const {return c_data.getInt32Data(rui8_pos);}
+  int32_t getInt32Data(uint8_t aui8_pos) const {return c_data.getInt32Data(aui8_pos);}
 
   /**
     simply deliver a float from a specific starting position with
-    @param rui8_pos position [0..4]
-    @return rf_val float to return
+    @param aui8_pos position [0..4]
+    @return af_val float to return
    */
-  float getFloatData( uint8_t rui8_pos) const { return c_data.getFloatData(rui8_pos);}
+  float getFloatData( uint8_t aui8_pos) const { return c_data.getFloatData(aui8_pos);}
 
   /**
     put data into given reference to BIOS related data structure with data, len
-    @param reft_ident     reference where the ident is placed for send
-    @param refui8_identType reference to the ident type val: 0==std, 1==ext
-    @param refb_dlcTarget reference to the DLC field of the target
+    @param rt_ident     reference where the ident is placed for send
+    @param rui8_identType reference to the ident type val: 0==std, 1==ext
+    @param rb_dlcTarget reference to the DLC field of the target
     @param pb_dataTarget pointer to the data string of the target
   */
-  virtual void getData(uint32_t& reft_ident, uint8_t& refui8_identType,
-                       uint8_t& refb_dlcTarget, uint8_t* pb_dataTarget);
+  virtual void getData(uint32_t& rt_ident, uint8_t& rui8_identType,
+                       uint8_t& rb_dlcTarget, uint8_t* pb_dataTarget);
 
   /** is the currently handled message a network management message
       @return  true -> message is a network management message
@@ -304,13 +304,13 @@ class CanPkgExt_c : public CanPkg_c
     set the value of the ISO11783 ident field SA
     @return source adress
   */
-  void setIsoSa(uint8_t rui8_val);
+  void setIsoSa(uint8_t aui8_val);
 
   /**
     set the value of the ISO11783 ident field PGN
     @return parameter group number
   */
-  void setIsoPgn(uint32_t rui32_val);
+  void setIsoPgn(uint32_t aui32_val);
 
   bool resolveAddress(AddressResolveResults& addressResolveResults);
 
@@ -318,25 +318,25 @@ class CanPkgExt_c : public CanPkg_c
     set the value of the ISO11783 ident field DP
     @return data page
   */
-  void setIsoDp(uint8_t rui8_val) {setIdent( ((ident(3)& 0x1C) | (rui8_val & 0x03)), 3, Ident_c::ExtendedIdent);}
+  void setIsoDp(uint8_t aui8_val) {setIdent( ((ident(3)& 0x1C) | (aui8_val & 0x03)), 3, Ident_c::ExtendedIdent);}
 
   /**
     set the value of the ISO11783 ident field PF
     @return PDU Format
   */
-  void setIsoPf(uint8_t rui8_val) {setIdent(rui8_val, 2, Ident_c::ExtendedIdent); }
+  void setIsoPf(uint8_t aui8_val) {setIdent(aui8_val, 2, Ident_c::ExtendedIdent); }
 
   /**
     set the value of the ISO11783 ident field PS
     @return PDU Specific
   */
-  void setIsoPs(uint8_t rui8_val);
+  void setIsoPs(uint8_t aui8_val);
 
   /**
     set the value of the ISO11783 ident field PRI
     @return priority
   */
-  void setIsoPri(uint8_t rui8_val){setIdent( ((ident(3)&1) | (rui8_val << 2)), 3, Ident_c::ExtendedIdent);}
+  void setIsoPri(uint8_t aui8_val){setIdent( ((ident(3)&1) | (aui8_val << 2)), 3, Ident_c::ExtendedIdent);}
 
   void setExtCanPkg(uint8_t pri, uint8_t dp, uint8_t pf, uint8_t ps, uint8_t sa, uint8_t len) {
     CanPkg_c::setIdentType(Ident_c::ExtendedIdent);

@@ -45,11 +45,11 @@
 /**
 	constructor which initialises all data and can call init to read
 	config data from EEPROM (if eeprom adress is given)
-	@param rui16_eepromAdr adress in EEPROM where config data is stored
+	@param aui16_eepromAdr adress in EEPROM where config data is stored
 */
-SpecificRecordConfig_c::SpecificRecordConfig_c(uint16_t rui16_eepromAdr, DefaultRecordConfig_c* rpc_defaultConfig, IsoAgLib::iDINItem_c* rpc_memberItem)
+SpecificRecordConfig_c::SpecificRecordConfig_c(uint16_t aui16_eepromAdr, DefaultRecordConfig_c* apc_defaultConfig, IsoAgLib::iDINItem_c* apc_memberItem)
 { // init vars
-	ui16_eepromAdr = rui16_eepromAdr;
+	ui16_eepromAdr = aui16_eepromAdr;
 
 	ui16_procEepromAdr = 0;
 	ui16_cachedProcEepromAdr = 0;
@@ -77,42 +77,42 @@ SpecificRecordConfig_c::SpecificRecordConfig_c(uint16_t rui16_eepromAdr, Default
 	ui8_procCnt = 0;
 
 	// check if pointers and eepromd are valid -> call init
-	if ((ui16_eepromAdr != 0) && (rpc_defaultConfig != NULL) && (rpc_memberItem != NULL))
+	if ((ui16_eepromAdr != 0) && (apc_defaultConfig != NULL) && (apc_memberItem != NULL))
 	{ // valid data -> call init
-		init(ui16_eepromAdr, rpc_defaultConfig, rpc_memberItem);
+		init(ui16_eepromAdr, apc_defaultConfig, apc_memberItem);
 	}
 }
 /**
 	copy Constructor
-	@param rrefc_src reference to source instance
+	@param arc_src reference to source instance
 */
-SpecificRecordConfig_c::SpecificRecordConfig_c(const SpecificRecordConfig_c& rrefc_src)
+SpecificRecordConfig_c::SpecificRecordConfig_c(const SpecificRecordConfig_c& arc_src)
 {
-	ui16_eepromAdr = rrefc_src.ui16_eepromAdr;
+	ui16_eepromAdr = arc_src.ui16_eepromAdr;
 
-	ui16_procEepromAdr = rrefc_src.ui16_procEepromAdr;
-	ui16_cachedProcEepromAdr = rrefc_src.ui16_cachedProcEepromAdr;
-	i16_cachedProcInd = rrefc_src.i16_cachedProcInd;
-	memmove(pui8_cachedTagName, rrefc_src.pui8_cachedTagName, TAG_NAME_LEN + 1);
-	memmove(pui8_cachedTagData, rrefc_src.pui8_cachedTagData, TAG_VALUE_LEN + 1);
+	ui16_procEepromAdr = arc_src.ui16_procEepromAdr;
+	ui16_cachedProcEepromAdr = arc_src.ui16_cachedProcEepromAdr;
+	i16_cachedProcInd = arc_src.i16_cachedProcInd;
+	memmove(pui8_cachedTagName, arc_src.pui8_cachedTagName, TAG_NAME_LEN + 1);
+	memmove(pui8_cachedTagData, arc_src.pui8_cachedTagData, TAG_VALUE_LEN + 1);
 
-	ui8_configDataCnt = rrefc_src.ui8_configDataCnt;
-	ui8_devClass = rrefc_src.ui8_devClass;
-	ui8_devClassInst = rrefc_src.ui8_devClassInst;
-	ui8_nameLen = rrefc_src.ui8_nameLen;
-	memmove(pui8_name, rrefc_src.pui8_name, 11);
+	ui8_configDataCnt = arc_src.ui8_configDataCnt;
+	ui8_devClass = arc_src.ui8_devClass;
+	ui8_devClassInst = arc_src.ui8_devClassInst;
+	ui8_nameLen = arc_src.ui8_nameLen;
+	memmove(pui8_name, arc_src.pui8_name, 11);
 
 	// optional data
-	ui8_timeWert = rrefc_src.ui8_timeWert;
-	ui8_workWertInst = rrefc_src.ui8_workWertInst;
-	ui8_applrateRecording = rrefc_src.ui8_applrateRecording;
-	b_transportDummyWidth = rrefc_src.b_transportDummyWidth;
-	b_transportWorkDist = rrefc_src.b_transportWorkDist;
-	b_fieldstarSend = rrefc_src.b_fieldstarSend;
-	ui8_useMeasureProgs = rrefc_src.ui8_useMeasureProgs;
-	c_recordAsISOName = rrefc_src.c_recordAsISOName;
-	ui8_procCnt = rrefc_src.ui8_procCnt;
-	ui8_timeDistDevClass = rrefc_src.ui8_timeDistDevClass;
+	ui8_timeWert = arc_src.ui8_timeWert;
+	ui8_workWertInst = arc_src.ui8_workWertInst;
+	ui8_applrateRecording = arc_src.ui8_applrateRecording;
+	b_transportDummyWidth = arc_src.b_transportDummyWidth;
+	b_transportWorkDist = arc_src.b_transportWorkDist;
+	b_fieldstarSend = arc_src.b_fieldstarSend;
+	ui8_useMeasureProgs = arc_src.ui8_useMeasureProgs;
+	c_recordAsISOName = arc_src.c_recordAsISOName;
+	ui8_procCnt = arc_src.ui8_procCnt;
+	ui8_timeDistDevClass = arc_src.ui8_timeDistDevClass;
 }
 /**
 	destructor
@@ -125,45 +125,45 @@ SpecificRecordConfig_c::~SpecificRecordConfig_c()
 /**
 	utility function to get a string with only lower letters
 	@param pui8_string string which is then transformed
-	@param rb_len length of string
+	@param ab_len length of string
 */
-void tolowerStr(uint8_t* pui8_string, uint8_t rui8_len)
+void tolowerStr(uint8_t* pui8_string, uint8_t aui8_len)
 {
-	for (uint8_t ui8_ind = 0; ui8_ind < rui8_len; ui8_ind++)
+	for (uint8_t ui8_ind = 0; ui8_ind < aui8_len; ui8_ind++)
 		pui8_string[ui8_ind] = tolower(pui8_string[ui8_ind]);
 }
 
 /**
 	initialise with reading the config data from EEPROM in flags
-	@param rui16_eepromAdr adress in EEPROM where config data begins
+	@param aui16_eepromAdr adress in EEPROM where config data begins
 	@return true-> parameters valid
 */
-bool SpecificRecordConfig_c::init(uint16_t rui16_eepromAdr, DefaultRecordConfig_c* rpc_defaultConfig, IsoAgLib::iDINItem_c* rpc_memberItem)
+bool SpecificRecordConfig_c::init(uint16_t aui16_eepromAdr, DefaultRecordConfig_c* apc_defaultConfig, IsoAgLib::iDINItem_c* apc_memberItem)
 { // set data
-	ui16_eepromAdr = rui16_eepromAdr;
+	ui16_eepromAdr = aui16_eepromAdr;
 	IsoAgLib::iSystem_c::triggerWd();
 
 	// exit if data not valid
-	if ( (ui16_eepromAdr == 0) || (rpc_defaultConfig == NULL) || (rpc_memberItem == NULL))
+	if ( (ui16_eepromAdr == 0) || (apc_defaultConfig == NULL) || (apc_memberItem == NULL))
 	{ // wrong data
 		return false;
 	}
 
 	// first read the default config data
-	ui8_timeWert = rpc_defaultConfig->timeWert();
-	ui8_workWertInst = rpc_defaultConfig->workWertInst();
-	ui8_applrateRecording = rpc_defaultConfig->applrateRecording();
-	b_transportDummyWidth = rpc_defaultConfig->transportDummyWidth();
-	b_transportWorkDist = rpc_defaultConfig->transportWorkDist();
+	ui8_timeWert = apc_defaultConfig->timeWert();
+	ui8_workWertInst = apc_defaultConfig->workWertInst();
+	ui8_applrateRecording = apc_defaultConfig->applrateRecording();
+	b_transportDummyWidth = apc_defaultConfig->transportDummyWidth();
+	b_transportWorkDist = apc_defaultConfig->transportWorkDist();
 
 	// decide if measure programs should be used
 	// a) if default config is 0 ==> no measure prog
 	// b) if default config is 1 ==> measure prog for IMI == DEVCLASS different from 4:seed, 5:fertilizer, 6:spreader
 	//                                or DEVCLASSINST 5:"Aufsattelposition" or 7:"Anhaengeposition2"
 	// c) if default config is 2 ==> measure prog
-	ui8_devClass = rpc_memberItem->devClass();
+	ui8_devClass = apc_memberItem->devClass();
 	ui8_timeDistDevClass = ui8_devClass;
-	ui8_devClassInst = rpc_memberItem->devClassInst();
+	ui8_devClassInst = apc_memberItem->devClassInst();
 
 	// clear config setting for application record of x/min for devClass4:seeder
 	// -> clear bit of value 2
@@ -175,7 +175,7 @@ bool SpecificRecordConfig_c::init(uint16_t rui16_eepromAdr, DefaultRecordConfig_
 	bool b_isImiDevice;
 	if ((ui8_devClass < 4) || (ui8_devClass > 10)
 	 || (ui8_devClassInst == 5) || (ui8_devClassInst == 7)
-	 || (memcmp(rpc_memberItem->name(), "IMI", 3) == 0)
+	 || (memcmp(apc_memberItem->name(), "IMI", 3) == 0)
 	   )
 	{
 		b_isImiDevice = true;
@@ -184,7 +184,7 @@ bool SpecificRecordConfig_c::init(uint16_t rui16_eepromAdr, DefaultRecordConfig_
 	}
 	else b_isImiDevice = false;
 
-	switch (rpc_defaultConfig->useMeasureProgs())
+	switch (apc_defaultConfig->useMeasureProgs())
 	{
 		case 0:
 			ui8_useMeasureProgs = 0;
@@ -197,7 +197,7 @@ bool SpecificRecordConfig_c::init(uint16_t rui16_eepromAdr, DefaultRecordConfig_
 			// use default setting from EEPROM
 			// if not overwritten by specific settings this decides
 			// between pure passive mode or sending of single measurement requests
-			else ui8_useMeasureProgs = rpc_defaultConfig->useMeasureProgs();
+			else ui8_useMeasureProgs = apc_defaultConfig->useMeasureProgs();
 			break;
 		case 3:
 			// use everytime measure_prog
@@ -205,11 +205,11 @@ bool SpecificRecordConfig_c::init(uint16_t rui16_eepromAdr, DefaultRecordConfig_
 			break;
 	}
 
-	c_recordAsISOName = rpc_memberItem->devKey();
+	c_recordAsISOName = apc_memberItem->devKey();
 	b_fieldstarSend = false;
 
 	// get the amount of device records
-	uint8_t b_stored_devices_cnt = rpc_defaultConfig->deviceSpecificConfigCnt();
+	uint8_t b_stored_devices_cnt = apc_defaultConfig->deviceSpecificConfigCnt();
 
 	// reset data
 	ui16_procEepromAdr = 0;
@@ -237,9 +237,9 @@ bool SpecificRecordConfig_c::init(uint16_t rui16_eepromAdr, DefaultRecordConfig_
 		// now compare read data set with pointed iMember_Item
 		b_device_found = true;
 
-		if ((ui8_devClass != 0xFF) && (ui8_devClass != rpc_memberItem->devClass())) b_device_found = false;
-		if ((ui8_devClassInst != 0xFF) && (ui8_devClassInst != rpc_memberItem->devClassInst())) b_device_found = false;
-		const uint8_t *pb_member_name = rpc_memberItem->name();
+		if ((ui8_devClass != 0xFF) && (ui8_devClass != apc_memberItem->devClass())) b_device_found = false;
+		if ((ui8_devClassInst != 0xFF) && (ui8_devClassInst != apc_memberItem->devClassInst())) b_device_found = false;
+		const uint8_t *pb_member_name = apc_memberItem->name();
 		if (memcmp(pui8_name, pb_member_name, ui8_nameLen) != 0) b_device_found = false;
 		if (!b_device_found)
 		{ // actual device doesn't match searched device -> jump ahead in EEPROM
@@ -449,17 +449,17 @@ void SpecificRecordConfig_c::readIdentData()
 	utility function to find data for a proc data info
 	-> if success is reported, the searched proc data is in the cached
 	tuple
-	@param rui8_ind index [0..n-1] of the wanted proc data definition
+	@param aui8_ind index [0..n-1] of the wanted proc data definition
 	@return true -> wanted proc data is now cached
 */
-bool SpecificRecordConfig_c::findProcInd(int ri_ind)
+bool SpecificRecordConfig_c::findProcInd(int ai_ind)
 {
 	bool b_result = false;
 	IsoAgLib::iEepromIo_c& c_eeprom = IsoAgLib::getIeepromInstance();
 	// check if wanted proc def can be found
-	if (ri_ind >= ui8_procCnt) return false;
+	if (ai_ind >= ui8_procCnt) return false;
 
-	if (ri_ind == i16_cachedProcInd)
+	if (ai_ind == i16_cachedProcInd)
 	{ // wanted proc data already cached
 		c_eeprom.setg(ui16_cachedProcEepromAdr);
 		b_result = true;
@@ -471,7 +471,7 @@ bool SpecificRecordConfig_c::findProcInd(int ri_ind)
 		// --> match first proc item with index 0 ( [0..(n-1)] )
 		int16_t i16_procInd = -1;
 
-		if (ri_ind > i16_cachedProcInd)
+		if (ai_ind > i16_cachedProcInd)
 		{ // searched proc is behind cached -> start with search from cached
 			c_eeprom.setg(ui16_cachedProcEepromAdr);
 			i16_procInd = i16_cachedProcInd - 1;
@@ -481,9 +481,9 @@ bool SpecificRecordConfig_c::findProcInd(int ri_ind)
 			c_eeprom.setg(ui16_procEepromAdr);
 		}
 
-		// search till "proc_wi" (the first tupel of each proc data def) was found ri_ind times
-		// first occurence of "proc_wi" means ri_ind == 0
-		while ((c_eeprom.tellg() < ui16_eepromSearchEnd) && (i16_procInd < ri_ind))
+		// search till "proc_wi" (the first tupel of each proc data def) was found ai_ind times
+		// first occurence of "proc_wi" means ai_ind == 0
+		while ((c_eeprom.tellg() < ui16_eepromSearchEnd) && (i16_procInd < ai_ind))
 		{ // not found, and limit of this device config in EEPROM not reached
 			c_eeprom.readString(pui8_cachedTagName, TAG_NAME_LEN);
 			c_eeprom.readString(pui8_cachedTagData, TAG_VALUE_LEN);
@@ -494,12 +494,12 @@ bool SpecificRecordConfig_c::findProcInd(int ri_ind)
 			}
 		}
 
-		if (i16_procInd == ri_ind)
+		if (i16_procInd == ai_ind)
 		{
 			b_result = true;
 			// first item has index 0; [0..(n-1)]; --> as i16_procInd := -1 at search start, search end condition is
-			// i16_procInd == ri_ind
-			i16_cachedProcInd = ri_ind;
+			// i16_procInd == ai_ind
+			i16_cachedProcInd = ai_ind;
 			// the "proc_wi" tuple of wanted proc data was read -> actual read pos is
 			// one tuple too far
 			ui16_cachedProcEepromAdr = c_eeprom.tellg() - TAG_TUPLE_LEN;
@@ -512,17 +512,17 @@ bool SpecificRecordConfig_c::findProcInd(int ri_ind)
 /**
 	utility function to get a tag value for a proc data info
 */
-bool SpecificRecordConfig_c::getProcIndString(uint8_t rui8_ind, const char* rpui8_tagName)
+bool SpecificRecordConfig_c::getProcIndString(uint8_t aui8_ind, const char* apui8_tagName)
 {
 	bool b_result = false;
 	IsoAgLib::iEepromIo_c& c_eeprom = IsoAgLib::getIeepromInstance();
-	if ((rui8_ind == i16_cachedProcInd) && (strstr((const char*)rpui8_tagName, (const char*)pui8_cachedTagName) != NULL))
+	if ((aui8_ind == i16_cachedProcInd) && (strstr((const char*)apui8_tagName, (const char*)pui8_cachedTagName) != NULL))
 	{ // wanted tag already cached
 		return true;
 	}
-	if (findProcInd(rui8_ind))
+	if (findProcInd(aui8_ind))
 	{ // find_proc_ind set the read position in EEPROM and w_cached_proc_eeprom_adr
-		// to first definition tuple of rui8_ind'th proc def of actual device
+		// to first definition tuple of aui8_ind'th proc def of actual device
 
 		// set the adress where to stop the search -> proc def are last config settings
 		// of a device -> stop if all data to this device are evaluated
@@ -532,7 +532,7 @@ bool SpecificRecordConfig_c::getProcIndString(uint8_t rui8_ind, const char* rpui
 			c_eeprom.readString(pui8_cachedTagName, TAG_NAME_LEN);
 			c_eeprom.readString(pui8_cachedTagData, TAG_VALUE_LEN);
 			tolowerStr(pui8_cachedTagName, TAG_NAME_LEN);
-			if (strstr((const char*)pui8_cachedTagName, (const char*)rpui8_tagName) != NULL)
+			if (strstr((const char*)pui8_cachedTagName, (const char*)apui8_tagName) != NULL)
 			{ // searched tag found
 				b_result = true;
 				pui8_cachedTagData[TAG_VALUE_LEN] = '\0';
@@ -551,14 +551,14 @@ bool SpecificRecordConfig_c::getProcIndString(uint8_t rui8_ind, const char* rpui
 }
 
 /**
-	deliver the wert_inst of the rui8_ind'th specific process data of
+	deliver the wert_inst of the aui8_ind'th specific process data of
 	this device
-	@param rui8_ind number of the wanted specific process data
+	@param aui8_ind number of the wanted specific process data
 	@return wert_inst or -1 if proc data wasn't found
 */
-int16_t SpecificRecordConfig_c::procDataIndWertinst(uint8_t rui8_ind)
+int16_t SpecificRecordConfig_c::procDataIndWertinst(uint8_t aui8_ind)
 {
-	if (getProcIndString(rui8_ind, "proc_wi"))
+	if (getProcIndString(aui8_ind, "proc_wi"))
 	{
 		int16_t i_tag_val;
 		sscanf((const char*)pui8_cachedTagData, "%i", &i_tag_val);
@@ -570,14 +570,14 @@ int16_t SpecificRecordConfig_c::procDataIndWertinst(uint8_t rui8_ind)
 	}
 }
 /**
-	deliver the header of the rui8_ind'th specific process data of
+	deliver the header of the aui8_ind'th specific process data of
 	this device
-	@param rui8_ind number of the wanted specific process data
+	@param aui8_ind number of the wanted specific process data
 	@return pointer to header or NULL if proc data wasn't found
 */
-const uint8_t* SpecificRecordConfig_c::procDataIndHeader(uint8_t rui8_ind)
+const uint8_t* SpecificRecordConfig_c::procDataIndHeader(uint8_t aui8_ind)
 {
-	if (getProcIndString(rui8_ind, "proc_nam"))
+	if (getProcIndString(aui8_ind, "proc_nam"))
 	{
 		return pui8_cachedTagData;
 	}
@@ -587,14 +587,14 @@ const uint8_t* SpecificRecordConfig_c::procDataIndHeader(uint8_t rui8_ind)
 	}
 }
 /**
-	deliver the LIS of the rui8_ind'th specific process data of
+	deliver the LIS of the aui8_ind'th specific process data of
 	this device (default is 0)
-	@param rui8_ind number of the wanted specific process data
+	@param aui8_ind number of the wanted specific process data
 	@return LIS or the default value 0 if proc data wasn't found
 */
-uint8_t SpecificRecordConfig_c::procDataIndLis(uint8_t rui8_ind)
+uint8_t SpecificRecordConfig_c::procDataIndLis(uint8_t aui8_ind)
 {
-	if (getProcIndString(rui8_ind, "proc_lis"))
+	if (getProcIndString(aui8_ind, "proc_lis"))
 	{
 		int16_t i_tag_val;
 		sscanf((const char*)pui8_cachedTagData, "%i", &i_tag_val);
@@ -606,14 +606,14 @@ uint8_t SpecificRecordConfig_c::procDataIndLis(uint8_t rui8_ind)
 	}
 }
 /**
-	deliver the PRI of the rui8_ind'th specific process data of
+	deliver the PRI of the aui8_ind'th specific process data of
 	this device (default is 2)
-	@param rui8_ind number of the wanted specific process data
+	@param aui8_ind number of the wanted specific process data
 	@return PRI or the default value 2 if proc data wasn't found
 */
-uint8_t SpecificRecordConfig_c::procDataIndPri(uint8_t rui8_ind)
+uint8_t SpecificRecordConfig_c::procDataIndPri(uint8_t aui8_ind)
 {
-	if (getProcIndString(rui8_ind, "proc_pri"))
+	if (getProcIndString(aui8_ind, "proc_pri"))
 	{
 		int16_t i_tag_val;
 		sscanf((const char*)pui8_cachedTagData, "%i", &i_tag_val);

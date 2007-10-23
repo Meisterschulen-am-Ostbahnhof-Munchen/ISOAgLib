@@ -136,10 +136,10 @@ public:
     @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDdi_s which contains DDI, element, isSetpoint and ValueGroup
                          (array is terminated by ElementDdi_s.ui16_element == 0xFFFF)
 
-    @param rc_isoName optional ISOName code of Process-Data
-    @param rc_ownerISOName optional ISOName of the owner
-    @param rpc_isoName pointer to updated ISOName variable of owner
-    @param rb_cumulativeValue
+    @param ac_isoName optional ISOName code of Process-Data
+    @param ac_ownerISOName optional ISOName of the owner
+    @param apc_isoName pointer to updated ISOName variable of owner
+    @param ab_cumulativeValue
              -# for process data like distance, time, area
                  the value of the measure prog data sets is updated
                  on master value update dependent on the value increment
@@ -155,27 +155,27 @@ public:
                   -> if this data is saved in EEPROM, the stored value is loaded
                      as initial master value, and is initially propagated to all
                      measure prog data sets
-    @param rui16_eepromAdr optional adress where value is stored in EEPROM
-    @param rpc_processDataChangeHandler optional pointer to handler class of application
-    @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
+    @param aui16_eepromAdr optional adress where value is stored in EEPROM
+    @param apc_processDataChangeHandler optional pointer to handler class of application
+    @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
   iProcDataLocalSimpleMeasure_c(const IsoAgLib::ElementDdi_s* ps_elementDDI = NULL,
-                                uint16_t rui16_element = 0xFFFF,
-                                const iIsoName_c& rc_isoName = iIsoName_c::iIsoNameInitialProcessData(),
-                                const iIsoName_c& rc_ownerISOName = iIsoName_c::iIsoNameUnspecified(),
-                                const iIsoName_c *rpc_isoName = NULL, bool rb_cumulativeValue = false,
+                                uint16_t aui16_element = 0xFFFF,
+                                const iIsoName_c& ac_isoName = iIsoName_c::iIsoNameInitialProcessData(),
+                                const iIsoName_c& ac_ownerISOName = iIsoName_c::iIsoNameUnspecified(),
+                                const iIsoName_c *apc_isoName = NULL, bool ab_cumulativeValue = false,
 #ifdef USE_EEPROM_IO
-                                uint16_t rui16_eepromAdr = 0xFFFF,
+                                uint16_t aui16_eepromAdr = 0xFFFF,
 #endif
-                                ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
-                                int ri_singletonVecKey = 0
-  ) : ProcDataLocalSimpleMeasure_c(ps_elementDDI, rui16_element,
-                                   rc_isoName, rc_ownerISOName, rpc_isoName, rb_cumulativeValue,
+                                ProcessDataChangeHandler_c *apc_processDataChangeHandler = NULL,
+                                int ai_singletonVecKey = 0
+  ) : ProcDataLocalSimpleMeasure_c(ps_elementDDI, aui16_element,
+                                   ac_isoName, ac_ownerISOName, apc_isoName, ab_cumulativeValue,
 #ifdef USE_EEPROM_IO
-                                   rui16_eepromAdr,
+                                   aui16_eepromAdr,
 #endif
-                                   rpc_processDataChangeHandler,
-                                   ri_singletonVecKey) {}
+                                   apc_processDataChangeHandler,
+                                   ai_singletonVecKey) {}
 
   /**
     initialise this ProcDataLocalSimpleMeasure_c
@@ -187,10 +187,10 @@ public:
     @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDdi_s which contains DDI, element, isSetpoint and ValueGroup
                          (array is terminated by ElementDdi_s.ui16_element == 0xFFFF)
 
-    @param rc_isoName optional ISOName code of Process-Data
-    @param rc_ownerISOName optional ISOName of the owner
-    @param rpc_isoName pointer to updated ISOName variable of owner
-    @param rb_cumulativeValue
+    @param ac_isoName optional ISOName code of Process-Data
+    @param ac_ownerISOName optional ISOName of the owner
+    @param apc_isoName pointer to updated ISOName variable of owner
+    @param ab_cumulativeValue
              -# for process data like distance, time, area
                  the value of the measure prog data sets is updated
                  on master value update dependent on the value increment
@@ -206,36 +206,36 @@ public:
                   -> if this data is saved in EEPROM, the stored value is loaded
                      as initial master value, and is initially propagated to all
                      measure prog data sets
-    @param rui16_eepromAdr optional adress where value is stored in EEPROM
-    @param rpc_processDataChangeHandler optional pointer to handler class of application
-    @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
+    @param aui16_eepromAdr optional adress where value is stored in EEPROM
+    @param apc_processDataChangeHandler optional pointer to handler class of application
+    @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
   void init(const IsoAgLib::ElementDdi_s* ps_elementDDI,
-            uint16_t rui16_element,
-            const iIsoName_c& rc_isoName = iIsoName_c::iIsoNameInitialProcessData(),
-            const iIsoName_c& rc_ownerISOName = iIsoName_c::iIsoNameUnspecified(),
-            const iIsoName_c *rpc_isoName = NULL,
-            bool rb_cumulativeValue = false,
+            uint16_t aui16_element,
+            const iIsoName_c& ac_isoName = iIsoName_c::iIsoNameInitialProcessData(),
+            const iIsoName_c& ac_ownerISOName = iIsoName_c::iIsoNameUnspecified(),
+            const iIsoName_c *apc_isoName = NULL,
+            bool ab_cumulativeValue = false,
 #ifdef USE_EEPROM_IO
-            uint16_t rui16_eepromAdr = 0xFFFF,
+            uint16_t aui16_eepromAdr = 0xFFFF,
 #endif
-            ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
-            int ri_singletonVecKey = 0
+            ProcessDataChangeHandler_c *apc_processDataChangeHandler = NULL,
+            int ai_singletonVecKey = 0
             )
-  {ProcDataLocalSimpleMeasure_c::init(ps_elementDDI, rui16_element,
-                                      rc_isoName, rc_ownerISOName, rpc_isoName, rb_cumulativeValue,
+  {ProcDataLocalSimpleMeasure_c::init(ps_elementDDI, aui16_element,
+                                      ac_isoName, ac_ownerISOName, apc_isoName, ab_cumulativeValue,
 #ifdef USE_EEPROM_IO
-                                      rui16_eepromAdr,
+                                      aui16_eepromAdr,
 #endif
-                                      rpc_processDataChangeHandler,
-                                      ri_singletonVecKey);
+                                      apc_processDataChangeHandler,
+                                      ai_singletonVecKey);
   }
 
   /** set the poitner to the handler class
-    * @param rpc_processDataChangeHandler pointer to handler class of application
+    * @param apc_processDataChangeHandler pointer to handler class of application
     */
-  void setProcessDataChangeHandler( ProcessDataChangeHandler_c *rpc_processDataChangeHandler )
-   { ProcDataLocalSimpleMeasure_c::setProcessDataChangeHandler( rpc_processDataChangeHandler ); }
+  void setProcessDataChangeHandler( ProcessDataChangeHandler_c *apc_processDataChangeHandler )
+   { ProcDataLocalSimpleMeasure_c::setProcessDataChangeHandler( apc_processDataChangeHandler ); }
 
   /** deliver the poitner to the handler class
     * @return pointer to handler class of application (or NULL if not defined by application)
@@ -263,7 +263,7 @@ public:
   uint8_t devClassInst() const{return ProcDataLocalSimpleMeasure_c::devClassInst();}
 
   /** check if this ProcIdent_c has the given DDI as element */
-  bool hasDDI( uint16_t rui16_checkDDI ) const { return ProcIdent_c::hasDDI( rui16_checkDDI );}
+  bool hasDDI( uint16_t aui16_checkDDI ) const { return ProcIdent_c::hasDDI( aui16_checkDDI );}
 
   /**
     deliver value DDI (only possible if only one elementDDI in list)
@@ -282,29 +282,29 @@ public:
   /**
     send the base value (the one that is updated via setMasterMeasurementVal() )
     to a specified target (selected by GPT)
-    @param rc_targetISOName ISOName of target
+    @param ac_targetISOName ISOName of target
     @return true -> successful sent
   */
-  bool sendMasterMeasurementVal( const iIsoName_c& rc_targetISOName ) const
-    { return ProcDataLocalSimpleMeasure_c::sendMasterMeasurementVal( rc_targetISOName );}
+  bool sendMasterMeasurementVal( const iIsoName_c& ac_targetISOName ) const
+    { return ProcDataLocalSimpleMeasure_c::sendMasterMeasurementVal( ac_targetISOName );}
 
   /**
     send a exact-setpoint to a specified target (selected by GPT)
-    @param rc_targetISOName ISOName of target
+    @param ac_targetISOName ISOName of target
     @return true -> successful sent
   */
-  bool sendMasterSetpointVal( const iIsoName_c& rc_targetISOName ) const
-   { return setpointConst().sendMasterSetpointVal( rc_targetISOName );}
+  bool sendMasterSetpointVal( const iIsoName_c& ac_targetISOName ) const
+   { return setpointConst().sendMasterSetpointVal( ac_targetISOName );}
 
   /**
     send a sub-setpoint (selected by MOD) to a specified target (selected by GPT)
-    @param rui8_mod select sub-type of setpoint
-    @param rc_targetISOName ISOName of target
+    @param aui8_mod select sub-type of setpoint
+    @param ac_targetISOName ISOName of target
     @return true -> successful sent
   */
-  bool sendSetpointMod( GeneralCommand_c::ValueGroup_t en_valueGroup, const iIsoName_c& rc_targetISOName ) const
+  bool sendSetpointMod( GeneralCommand_c::ValueGroup_t en_valueGroup, const iIsoName_c& ac_targetISOName ) const
   {
-   return setpointConst().sendSetpointMod( rc_targetISOName, en_valueGroup, __IsoAgLib::GeneralCommand_c::setValue );
+   return setpointConst().sendSetpointMod( ac_targetISOName, en_valueGroup, __IsoAgLib::GeneralCommand_c::setValue );
   }
 
   #ifdef USE_EEPROM_IO
@@ -319,10 +319,10 @@ public:
 
     possible errors:
         * dependent error in EepromIo_c on problems during read
-    @param rui16_eepromAdr new EEPROM adress
+    @param aui16_eepromAdr new EEPROM adress
   */
-  void setEepromAdr(uint16_t rui16_eepromAdr)
-    {ProcDataLocalSimpleMeasure_c::setEepromAdr(rui16_eepromAdr);}
+  void setEepromAdr(uint16_t aui16_eepromAdr)
+    {ProcDataLocalSimpleMeasure_c::setEepromAdr(aui16_eepromAdr);}
   #endif
 
   /**
@@ -335,31 +335,31 @@ public:
 
   /**
     set the masterMeasurementVal from main application independent from any measure progs
-    @param ri32_val new measure value
+    @param ai32_val new measure value
   */
-  void setMasterMeasurementVal(int32_t ri32_val)
-    {ProcDataLocalSimpleMeasure_c::setMasterMeasurementVal(ri32_val);}
+  void setMasterMeasurementVal(int32_t ai32_val)
+    {ProcDataLocalSimpleMeasure_c::setMasterMeasurementVal(ai32_val);}
 
   /**
     set the masterMeasurementVal from main application independent from any measure progs
-    @param ri32_val new measure value
+    @param ai32_val new measure value
   */
-  void setMasterMeasurementVal(int16_t ri16_val)
-    {ProcDataLocalSimpleMeasure_c::setMasterMeasurementVal((int32_t)ri16_val);}
+  void setMasterMeasurementVal(int16_t ai16_val)
+    {ProcDataLocalSimpleMeasure_c::setMasterMeasurementVal((int32_t)ai16_val);}
 
   /**
     set the masterMeasurementVal from main application independent from any measure progs
-    @param ri32_val new measure value
+    @param ai32_val new measure value
   */
-  void setMasterMeasurementVal(uint8_t rb_val)
-    {ProcDataLocalSimpleMeasure_c::setMasterMeasurementVal((int32_t)rb_val);}
+  void setMasterMeasurementVal(uint8_t ab_val)
+    {ProcDataLocalSimpleMeasure_c::setMasterMeasurementVal((int32_t)ab_val);}
 
   /**
     increment the value -> update the local and the measuring programs values
-    @param ri32_val size of increment of master value
+    @param ai32_val size of increment of master value
   */
-  void incrMasterMeasurementVal(int32_t ri32_val)
-    {ProcDataLocalSimpleMeasure_c::incrMasterMeasurementVal(ri32_val);}
+  void incrMasterMeasurementVal(int32_t ai32_val)
+    {ProcDataLocalSimpleMeasure_c::incrMasterMeasurementVal(ai32_val);}
 
 #ifdef USE_FLOAT_DATA_TYPE
   /**
@@ -373,17 +373,17 @@ public:
 
   /**
     set the masterMeasurementVal from main application independent from any measure progs
-    @param rf_val new measure value
+    @param af_val new measure value
   */
-  void setMasterMeasurementVal(float rf_val)
-    {ProcDataLocalSimpleMeasure_c::setMasterMeasurementVal(rf_val);}
+  void setMasterMeasurementVal(float af_val)
+    {ProcDataLocalSimpleMeasure_c::setMasterMeasurementVal(af_val);}
 
   /**
     increment the value -> update the local and the measuring programs values
-    @param rf_val size of increment of master value
+    @param af_val size of increment of master value
   */
-  void incrMasterMeasurementVal(float rf_val)
-    {ProcDataLocalSimpleMeasure_c::incrMasterMeasurementVal(rf_val);}
+  void incrMasterMeasurementVal(float af_val)
+    {ProcDataLocalSimpleMeasure_c::incrMasterMeasurementVal(af_val);}
 #endif
 
   /**
@@ -418,18 +418,18 @@ public:
 
   /**
     set the setpoint value
-    @param ri32_val new setpoint value
+    @param ai32_val new setpoint value
   */
-  void setSetpointMasterVal(int32_t ri32_val)
-    { ProcDataLocalSimpleMeasure_c::setpoint().setSetpointMasterVal(ri32_val);}
+  void setSetpointMasterVal(int32_t ai32_val)
+    { ProcDataLocalSimpleMeasure_c::setpoint().setSetpointMasterVal(ai32_val);}
 
   #ifdef USE_FLOAT_DATA_TYPE
   /**
     set the setpoint value as float value
-    @param rf_val new setpoint value
+    @param af_val new setpoint value
   */
-  void setSetpointMasterVal(float rf_val)
-    { ProcDataLocalSimpleMeasure_c::setpoint().setSetpointMasterVal(rf_val);}
+  void setSetpointMasterVal(float af_val)
+    { ProcDataLocalSimpleMeasure_c::setpoint().setSetpointMasterVal(af_val);}
   #endif
 
   /** deliver reference to setpoint */

@@ -82,10 +82,10 @@ public:
 
   //  Operation: changeActiveMask
   //! Parameter:
-  //! @param rpc_vtObjectMask:
+  //! @param apc_vtObjectMask:
   //! @param b_updateObject:
-  void changeActiveMask(iVtObjectMask_c* rpc_iVtObjectMask, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
-    vtObjectWorkingSet_c::changeActiveMask (rpc_iVtObjectMask, b_updateObject, b_enableReplaceOfCmd);
+  void changeActiveMask(iVtObjectMask_c* apc_iVtObjectMask, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
+    vtObjectWorkingSet_c::changeActiveMask (apc_iVtObjectMask, b_updateObject, b_enableReplaceOfCmd);
   }
 
   //  Operation: changeBackgroundColour
@@ -98,35 +98,35 @@ public:
 
   //  Operation: moveChildLocation
   //! Parameter:
-  //! @param rpc_childObject:
+  //! @param apc_childObject:
   //! @param dx:
   //! @param dy:
   //! @param b_updateObject:
-  bool moveChildLocation(IsoAgLib::iVtObject_c* rpc_childObject, int8_t dx, int8_t dy, bool b_updateObject=false) {
-    return vtObjectWorkingSet_c::moveChildLocation(rpc_childObject, dx, dy, b_updateObject);
+  bool moveChildLocation(IsoAgLib::iVtObject_c* apc_childObject, int8_t dx, int8_t dy, bool b_updateObject=false) {
+    return vtObjectWorkingSet_c::moveChildLocation(apc_childObject, dx, dy, b_updateObject);
   }
 
   //  Operation: setChildPosition
-  //! @param rpc_childObject:
+  //! @param apc_childObject:
   //! @param dx:
   //! @param dy:
-  bool setChildPosition(IsoAgLib::iVtObject_c* rpc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    return vtObjectWorkingSet_c::setChildPosition(rpc_childObject, dx, dy, b_updateObject, b_enableReplaceOfCmd);
+  bool setChildPosition(IsoAgLib::iVtObject_c* apc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
+    return vtObjectWorkingSet_c::setChildPosition(apc_childObject, dx, dy, b_updateObject, b_enableReplaceOfCmd);
   }
 
   //  Operation: controlAudioDevice
-  //! @param rui8_repetitions
-  //! @param rui16_frequency
-  //! @param rui16_onTime
-  //! @param rui16_offTime
-  bool controlAudioDevice (uint8_t rui8_repetitions, uint16_t rui16_frequency, uint16_t rui16_onTime, uint16_t rui16_offTime) {
-    return vtObjectWorkingSet_c::controlAudioDevice (rui8_repetitions, rui16_frequency, rui16_onTime, rui16_offTime);
+  //! @param aui8_repetitions
+  //! @param aui16_frequency
+  //! @param aui16_onTime
+  //! @param aui16_offTime
+  bool controlAudioDevice (uint8_t aui8_repetitions, uint16_t aui16_frequency, uint16_t aui16_onTime, uint16_t aui16_offTime) {
+    return vtObjectWorkingSet_c::controlAudioDevice (aui8_repetitions, aui16_frequency, aui16_onTime, aui16_offTime);
   }
 
   //  Operation: setAudioVolume
-  //! @param rui8_volume The Volume given in percent. Range 0..100
-  bool setAudioVolume (uint8_t rui8_volume) {
-    return vtObjectWorkingSet_c::setAudioVolume (rui8_volume);
+  //! @param aui8_volume The Volume given in percent. Range 0..100
+  bool setAudioVolume (uint8_t aui8_volume) {
+    return vtObjectWorkingSet_c::setAudioVolume (aui8_volume);
   }
 
   // ///////////////////////// getter for attributes

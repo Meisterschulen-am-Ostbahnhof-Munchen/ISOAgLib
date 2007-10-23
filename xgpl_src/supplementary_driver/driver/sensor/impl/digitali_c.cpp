@@ -91,10 +91,10 @@
 
 namespace IsoAgLib {
 /** function to handle a DigitalI_c event from HAL
-  * @param rui8_channel channel of the input object, which received the IRQ
+  * @param aui8_channel channel of the input object, which received the IRQ
   *        from HAL
   */
-void iSensorEventHandler::handleDigitalEvent( uint8_t /* rui8_channel is intentionally unused in this baseclass version */ ) {
+void iSensorEventHandler::handleDigitalEvent( uint8_t /* aui8_channel is intentionally unused in this baseclass version */ ) {
 }
 
 };
@@ -140,10 +140,10 @@ IsoAgLib::iSensorEventHandler* DigitalI_c::ppc_handler[16];
 #endif
 
 /** handler function which is called from HAL */
-void DigitalI_c::handleHalIrqEvent( uint8_t rui8_channel ) {
-  if ( ppc_handler[rui8_channel] != NULL )
+void DigitalI_c::handleHalIrqEvent( uint8_t aui8_channel ) {
+  if ( ppc_handler[aui8_channel] != NULL )
   {
-    ppc_handler[rui8_channel]->handleDigitalEvent( rui8_channel );
+    ppc_handler[aui8_channel]->handleDigitalEvent( aui8_channel );
   }
 }
 
@@ -156,14 +156,14 @@ void DigitalI_c::handleHalIrqEvent( uint8_t rui8_channel ) {
       * iLibErr_c::Range wrong input number
   @see SensorI_c::createDigital
   @see Sensor_c::t_onoff
-  @param rb_channel default-argument for setting hardware channel for this input
+  @param ab_channel default-argument for setting hardware channel for this input
   @param ren_onoff default-argument for setting whether 1 should be returned on High(Default: Sensor_c::OnHigh) or Low signal
-  @param rb_static default-argument for setting if hardware input should be gathered static (default false with no static)
-  @param rpc_handler optional pointer to handler class, which can be called, if an HAL irq event occurs
+  @param ab_static default-argument for setting if hardware input should be gathered static (default false with no static)
+  @param apc_handler optional pointer to handler class, which can be called, if an HAL irq event occurs
 */
-DigitalI_c::DigitalI_c(uint8_t rb_channel, Sensor_c::onoff_t ren_onoff, bool rb_static, IsoAgLib::iSensorEventHandler* rpc_handler)
-  : SensorBase_c(rb_channel, Sensor_c::digital), b_static(rb_static), en_onoff(ren_onoff) {
-  if ( rb_channel != 0xFF )init( rb_channel, ren_onoff, rb_static, rpc_handler );
+DigitalI_c::DigitalI_c(uint8_t ab_channel, Sensor_c::onoff_t ren_onoff, bool ab_static, IsoAgLib::iSensorEventHandler* apc_handler)
+  : SensorBase_c(ab_channel, Sensor_c::digital), b_static(ab_static), en_onoff(ren_onoff) {
+  if ( ab_channel != 0xFF )init( ab_channel, ren_onoff, ab_static, apc_handler );
 }
 /**
   internal called constructor for a new digital input channel which performs configuration of hardware
@@ -173,23 +173,23 @@ DigitalI_c::DigitalI_c(uint8_t rb_channel, Sensor_c::onoff_t ren_onoff, bool rb_
       * iLibErr_c::Range wrong input number
   @see SensorI_c::createDigital
   @see Sensor_c::t_onoff
-  @param rb_channel default-argument for setting hardware channel for this input
+  @param ab_channel default-argument for setting hardware channel for this input
   @param ren_onoff default-argument for setting whether 1 should be returned on High(Default: Sensor_c::OnHigh) or Low signal
-  @param rb_static default-argument for setting if hardware input should be gathered static (default false with no static)
-  @param rpc_handler optional pointer to handler class, which can be called, if an HAL irq event occurs
+  @param ab_static default-argument for setting if hardware input should be gathered static (default false with no static)
+  @param apc_handler optional pointer to handler class, which can be called, if an HAL irq event occurs
 */
-void DigitalI_c::init(uint8_t rb_channel, Sensor_c::onoff_t ren_onoff, bool rb_static, IsoAgLib::iSensorEventHandler* rpc_handler)
+void DigitalI_c::init(uint8_t ab_channel, Sensor_c::onoff_t ren_onoff, bool ab_static, IsoAgLib::iSensorEventHandler* apc_handler)
 { // now init the digital input
-  SensorBase_c::init(rb_channel, Sensor_c::digital);
+  SensorBase_c::init(ab_channel, Sensor_c::digital);
 
   int16_t i16_initResult;
-  if ( ( rpc_handler != NULL ) && ( rb_channel < 16 ) )
+  if ( ( apc_handler != NULL ) && ( ab_channel < 16 ) )
     // register pointer to IRQ handler
-    i16_initResult = HAL::init_digin(channelNr(), BOTH_EDGE, ren_onoff,digitalInputIrqFuncArr[rb_channel] );
+    i16_initResult = HAL::init_digin(channelNr(), BOTH_EDGE, ren_onoff,digitalInputIrqFuncArr[ab_channel] );
   else
     i16_initResult = HAL::init_digin(channelNr(), DIGIN, ren_onoff, NULL);
 
-  b_static = rb_static;
+  b_static = ab_static;
 
   if (i16_initResult)
   { // wrong input channel no
@@ -199,10 +199,10 @@ void DigitalI_c::init(uint8_t rb_channel, Sensor_c::onoff_t ren_onoff, bool rb_s
   { // correct input channel no - now register the valid new analog input into SensorI_c
     getSensorInstance().registerClient( this );
     // register optional pointer to handler
-    if ( rb_channel < 16 ) ppc_handler[rb_channel] = rpc_handler;
+    if ( ab_channel < 16 ) ppc_handler[ab_channel] = apc_handler;
     #ifdef DEBUG
-    if ( rpc_handler != NULL )
-     INTERNAL_DEBUG_DEVICE << "DigitalI_c::init() zu Channel: " << uint16_t(rb_channel) << " mit IRQ Handler" << INTERNAL_DEBUG_DEVICE_ENDL;
+    if ( apc_handler != NULL )
+     INTERNAL_DEBUG_DEVICE << "DigitalI_c::init() zu Channel: " << uint16_t(ab_channel) << " mit IRQ Handler" << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
   }
 }

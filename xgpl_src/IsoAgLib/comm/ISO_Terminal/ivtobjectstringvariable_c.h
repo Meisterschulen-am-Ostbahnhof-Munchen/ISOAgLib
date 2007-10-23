@@ -87,15 +87,15 @@ public:
   //  Operation: setValueCopyUTF8
   //! @param newValue:
   //! @param b_updateObject:
-  void setValueCopyUTF8(const char* newValue, uint8_t rui8_fontType, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectStringVariable_c::setValueCopyUTF8 (newValue, rui8_fontType, b_updateObject, b_enableReplaceOfCmd);
+  void setValueCopyUTF8(const char* newValue, uint8_t aui8_fontType, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
+    vtObjectStringVariable_c::setValueCopyUTF8 (newValue, aui8_fontType, b_updateObject, b_enableReplaceOfCmd);
   }
 
   //  Operation: setValueCopyUTF8
   //! @param newValue:
   //! @param b_updateObject:
-  void setValueCopyUTF8(const char* newValue, iVtObjectOutputString_c& rrefc_ops, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    const uint8_t cui8_fontType = rrefc_ops.get_vtObjectOutputString_a().fontAttributes->get_vtObjectFontAttributes_a().fontType;
+  void setValueCopyUTF8(const char* newValue, iVtObjectOutputString_c& arc_ops, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
+    const uint8_t cui8_fontType = arc_ops.get_vtObjectOutputString_a().fontAttributes->get_vtObjectFontAttributes_a().fontType;
     vtObjectStringVariable_c::setValueCopyUTF8 (newValue, cui8_fontType, b_updateObject, b_enableReplaceOfCmd);
   }
 #endif

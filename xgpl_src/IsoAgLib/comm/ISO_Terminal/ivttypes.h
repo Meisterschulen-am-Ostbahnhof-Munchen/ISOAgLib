@@ -192,7 +192,7 @@ typedef struct vtState_s {
 class iVtPoint_c {
   public:
     iVtPoint_c( void ) : x(0), y(0) {}
-    iVtPoint_c( int16_t ri16_x, int16_t ri16_y ) : x(ri16_x), y(ri16_y) {}
+    iVtPoint_c( int16_t ai16_x, int16_t ai16_y ) : x(ai16_x), y(ai16_y) {}
     int16_t getX( void ) const { return x; }
     int16_t getY( void ) const { return y; }
     void setX( int16_t i_x ) { x = i_x; }

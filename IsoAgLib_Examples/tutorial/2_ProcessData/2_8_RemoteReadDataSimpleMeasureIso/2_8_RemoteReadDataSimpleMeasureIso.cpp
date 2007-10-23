@@ -76,8 +76,8 @@
  *  <ul>
  *  <li>Core class IsoAgLib::iScheduler_c for scheduling of all periodic activities
  *  <li>Method IsoAgLib::iScheduler_c::timeEvent() which can<ul>
- *    <li>Perform activities until defined rl_endTime is reached, which is important
- *      for scheduling purposes of whole system - call by IsoAgLib::iScheduler_c::timeEvent( rl_endTime )
+ *    <li>Perform activities until defined al_endTime is reached, which is important
+ *      for scheduling purposes of whole system - call by IsoAgLib::iScheduler_c::timeEvent( al_endTime )
  *    <li>Process all received CAN messages until all receive buffers are empty
  *      -> simple call, but can lead to deadlock on to high CAN load
  *    </ul>
@@ -247,14 +247,14 @@ static const int32_t cui32_canChannel = 1;
 
 
 /** dummy function to use the information of the remote device work state */
-void handleRemoteWorkState( bool rb_isWorking )
+void handleRemoteWorkState( bool ab_isWorking )
 { // do something
-  LOG_INFO << "Received New Working State: " << rb_isWorking << "\r\n";
+  LOG_INFO << "Received New Working State: " << ab_isWorking << "\r\n";
 }
 /** dummy function to use the information of the remote device application rate */
-void handleRemoteApplicationRate( uint32_t rui32_applicationRate )
+void handleRemoteApplicationRate( uint32_t aui32_applicationRate )
 { // do something
-  LOG_INFO << "Received New Application Rate: " << rui32_applicationRate << "\r\n";
+  LOG_INFO << "Received New Application Rate: " << aui32_applicationRate << "\r\n";
 }
 
 #ifdef USE_PROC_HANDLER
@@ -269,30 +269,30 @@ class MyProcDataHandler_c : public IsoAgLib::ProcessDataChangeHandler_c
     /** react on new received measurement update for remote process data
       * (remote system which manages the process data sent new value on request or
       *  during active measurement programm)
-      * @param rc_src general event source class, which provides conversion functions to get needed event source class
-      * @param ri32_val new value, which caused the event (for immediate access)
-      * @param rc_callerISOName ISOName of calling device - i.e. which sent new setpoint
+      * @param ac_src general event source class, which provides conversion functions to get needed event source class
+      * @param ai32_val new value, which caused the event (for immediate access)
+      * @param ac_callerISOName ISOName of calling device - i.e. which sent new setpoint
       * @return true -> handler class reacted on change event
       */
-    virtual bool processMeasurementUpdate( EventSource_c rc_src, int32_t ri32_val, const IsoAgLib::iIsoName_c& rc_callerISOName, bool rb_change );
+    virtual bool processMeasurementUpdate( EventSource_c ac_src, int32_t ai32_val, const IsoAgLib::iIsoName_c& ac_callerISOName, bool ab_change );
 };
 
-bool MyProcDataHandler_c::processMeasurementUpdate( EventSource_c rc_src, int32_t ri32_val, const IsoAgLib::iIsoName_c& /* rc_callerISOName */, bool rb_change )
+bool MyProcDataHandler_c::processMeasurementUpdate( EventSource_c ac_src, int32_t ai32_val, const IsoAgLib::iIsoName_c& /* ac_callerISOName */, bool ab_change )
 {
-  if ( ! rb_change )
+  if ( ! ab_change )
   { // don't handle values which don't contain new value - maybe still relevant for other applications
     return false; // indicate that this information is not again handled - just ignored
   }
 
   // use helper function to get automatically casted pointer to used process data type
-  uint16_t ui16_index = rc_src.makeIProcDataRemoteSimpleMeasure() - arr_procData;
+  uint16_t ui16_index = ac_src.makeIProcDataRemoteSimpleMeasure() - arr_procData;
   switch ( ui16_index )
   {
     case cui8_indexWorkState:
-      handleRemoteWorkState( ri32_val );
+      handleRemoteWorkState( ai32_val );
       break;
     case cui8_indexApplicationRate:
-      handleRemoteApplicationRate( ri32_val );
+      handleRemoteApplicationRate( ai32_val );
       break;
   }
   // answer to IsoAgLib that this new setpoint is handled

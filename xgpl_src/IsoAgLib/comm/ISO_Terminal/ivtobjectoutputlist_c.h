@@ -97,10 +97,10 @@ public:
 
   //  Operation: setItem
   //! Parameter:
-  //! @param rui8_index:
-  //! @param rpc_object:
-  void setItem(uint8_t rui8_index, iVtObject_c* rpc_object, bool b_enableReplaceOfCmd=false) {
-    vtObjectOutputList_c::setItem (rui8_index, rpc_object, b_enableReplaceOfCmd);
+  //! @param aui8_index:
+  //! @param apc_object:
+  void setItem(uint8_t aui8_index, iVtObject_c* apc_object, bool b_enableReplaceOfCmd=false) {
+    vtObjectOutputList_c::setItem (aui8_index, apc_object, b_enableReplaceOfCmd);
   }
 
   //  Operation: setWidth

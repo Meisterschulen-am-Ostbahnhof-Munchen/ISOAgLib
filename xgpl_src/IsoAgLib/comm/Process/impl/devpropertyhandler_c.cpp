@@ -426,10 +426,10 @@ DevPropertyHandler_c::processMsg()
 /** initialise element which can't be done during construct
   */
 void
-DevPropertyHandler_c::init(ProcessPkg_c *rpc_data)
+DevPropertyHandler_c::init(ProcessPkg_c *apc_data)
 {
   static bool b_basicInit = false;
-  pc_data = rpc_data;
+  pc_data = apc_data;
 
   if (!b_basicInit)
   {
@@ -787,19 +787,19 @@ DevPropertyHandler_c::timeEvent( void )
     @return true => device description successfully stored
   */
 bool
-DevPropertyHandler_c::queuePoolInMap (const HUGE_MEM uint8_t* rpc_devicePoolByteArray, uint32_t rui32_bytestreamlength, bool rb_setToDefault)
+DevPropertyHandler_c::queuePoolInMap (const HUGE_MEM uint8_t* apc_devicePoolByteArray, uint32_t aui32_bytestreamlength, bool ab_setToDefault)
 {
   /** @todo should we test for minimum size of the pool??? (1 DeviceObject + 1 DeviceElementObject)*/
 
   LanguageLabel_c langLabel;
-  DevicePool_c devicePool (rpc_devicePoolByteArray, rui32_bytestreamlength);
+  DevicePool_c devicePool (apc_devicePoolByteArray, aui32_bytestreamlength);
 
-  langLabel = &(rpc_devicePoolByteArray[getLabelOffset(rpc_devicePoolByteArray)]);
+  langLabel = &(apc_devicePoolByteArray[getLabelOffset(apc_devicePoolByteArray)]);
   STL_NAMESPACE::map<LanguageLabel_c, DevicePool_c>::iterator c_iterNew = map_deviceDescription.insert(map_deviceDescription.begin(), STL_NAMESPACE::pair<LanguageLabel_c, DevicePool_c>(langLabel, devicePool));
 
   //set DeviceDescription to default
   //if nothing is default, take the first mapped pointer
-  if ((pc_devDefaultDeviceDescription == NULL) || (rb_setToDefault) )
+  if ((pc_devDefaultDeviceDescription == NULL) || (ab_setToDefault) )
   {
     pc_devDefaultDeviceDescription = &(c_iterNew->second);
     #if 0
@@ -813,22 +813,22 @@ DevPropertyHandler_c::queuePoolInMap (const HUGE_MEM uint8_t* rpc_devicePoolByte
 
 
 /** every possible device description is stored in a maps
-    @param rpc_wsMasterIdentItem (of type const IdentItem_c*) must be a WorkingSetMASTER!
+    @param apc_wsMasterIdentItem (of type const IdentItem_c*) must be a WorkingSetMASTER!
     @return true => if pool was successfully stored
   */
 bool
-DevPropertyHandler_c::registerDevicePool(const IdentItem_c* rpc_wsMasterIdentItem, const HUGE_MEM uint8_t* rpc_devicePoolByteArray, const uint32_t rui32_bytestreamlength, bool rb_setToDefault)
+DevPropertyHandler_c::registerDevicePool(const IdentItem_c* apc_wsMasterIdentItem, const HUGE_MEM uint8_t* apc_devicePoolByteArray, const uint32_t aui32_bytestreamlength, bool ab_setToDefault)
 {
-  if (rpc_wsMasterIdentItem == NULL) return false;
+  if (apc_wsMasterIdentItem == NULL) return false;
 
-  if (!rpc_wsMasterIdentItem->isMaster()) return false;
+  if (!apc_wsMasterIdentItem->isMaster()) return false;
 
   //no double registration for one device description
   if (en_poolState != OPNotRegistered) return false;
 
-  pc_wsMasterIdentItem = rpc_wsMasterIdentItem;
+  pc_wsMasterIdentItem = apc_wsMasterIdentItem;
 
-  if (!(queuePoolInMap(rpc_devicePoolByteArray, rui32_bytestreamlength, rb_setToDefault)))
+  if (!(queuePoolInMap(apc_devicePoolByteArray, aui32_bytestreamlength, ab_setToDefault)))
   {
     return false;
   }
@@ -1055,13 +1055,13 @@ DevPropertyHandler_c::outOfMemory()
     @return true, if command was queued
   */
 bool
-DevPropertyHandler_c::sendCommandChangeDesignator(uint16_t rui16_objectID, const char* rpc_newString, uint8_t stringLength)
+DevPropertyHandler_c::sendCommandChangeDesignator(uint16_t aui16_objectID, const char* apc_newString, uint8_t stringLength)
 {
   // if string is shorter than length, it's okay to send - if it's longer, we'll clip - as client will REJECT THE STRING
-  uint8_t strLen = (CNAMESPACE::strlen(rpc_newString) < stringLength) ? CNAMESPACE::strlen(rpc_newString) : stringLength;
-  if (CNAMESPACE::strlen(rpc_newString) <= 32)
+  uint8_t strLen = (CNAMESPACE::strlen(apc_newString) < stringLength) ? CNAMESPACE::strlen(apc_newString) : stringLength;
+  if (CNAMESPACE::strlen(apc_newString) <= 32)
   {
-    l_sendUpload.push_back(SendUploadBase_c (rui16_objectID, rpc_newString, strLen, procCmdPar_ChangeDesignatorMsg));
+    l_sendUpload.push_back(SendUploadBase_c (aui16_objectID, apc_newString, strLen, procCmdPar_ChangeDesignatorMsg));
     return true;
   }
   //DEBUG OUT

@@ -164,16 +164,16 @@ vtObjectString_c::vtObjectString_c()
 vtObjectString_c::~vtObjectString_c()
 {}
 
-void vtObjectString_c::setStringToStream( const char* rpc_stringToStream )
+void vtObjectString_c::setStringToStream( const char* apc_stringToStream )
 {
-  c_streamer.setStringToStream( rpc_stringToStream );
+  c_streamer.setStringToStream( apc_stringToStream );
   // additionally set the ID
   c_streamer.setID( getID() );
 }
 
-void vtObjectString_c::setStrLenToSend( uint16_t rui16_strLenToSend )
+void vtObjectString_c::setStrLenToSend( uint16_t aui16_strLenToSend )
 {
-  c_streamer.setStrLenToSend( rui16_strLenToSend );
+  c_streamer.setStrLenToSend( aui16_strLenToSend );
 }
 
 } // end namespace __IsoAgLib

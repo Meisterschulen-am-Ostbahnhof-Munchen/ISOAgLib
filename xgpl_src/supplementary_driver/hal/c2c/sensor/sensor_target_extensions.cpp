@@ -162,18 +162,18 @@ void counterIrq_0(){counterIrqFlex();}
 /**
   init counter for trigger events on digital input;
   rising edges are counted;
-  @param rui16_timebase timebase to calculate periods, frequency
+  @param aui16_timebase timebase to calculate periods, frequency
                      should be at least longer than longest
                      awaited signal period [msec.]
-  @param rb_risingEdge true -> counter triggers on rising edge; else on falling edge
+  @param ab_risingEdge true -> counter triggers on rising edge; else on falling edge
   @return C_NO_ERR if no error occured
 */
-int16_t init_counter(uint16_t rui16_timebase, bool rb_risingEdge)
+int16_t init_counter(uint16_t aui16_timebase, bool ab_risingEdge)
 {
-  int32_t i32_prescale = rui16_timebase;
-  uint8_t b_codeEdge = (rb_risingEdge)?RISING_EDGE:FALLING_EDGE;
+  int32_t i32_prescale = aui16_timebase;
+  uint8_t b_codeEdge = (ab_risingEdge)?RISING_EDGE:FALLING_EDGE;
 
-//  int32_t ui16_prescale = ((rui16_timebase * getCpuFreq() * 1000) / 65534);
+//  int32_t ui16_prescale = ((aui16_timebase * getCpuFreq() * 1000) / 65534);
   uint8_t ui8_pow;
   int16_t i16_errorState;
   i32_prescale *= (get_cpu_freq() * 1000);

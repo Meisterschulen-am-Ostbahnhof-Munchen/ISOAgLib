@@ -111,15 +111,15 @@ public:
     possible errors:
         * iLibErr_c::Range wrong input number
     @see SensorI_c::createCounter
-    @param rb_channel default-argument for setting hardware channel for this input
-    @param rui16_timebase default-argument for setting the timebase which should be
+    @param ab_channel default-argument for setting hardware channel for this input
+    @param aui16_timebase default-argument for setting the timebase which should be
             greater than max time distance between signals and should be small
             enough to avoid overflow of signals in one timebase
-    @param rb_activHigh true -> counter input is configured fo ACTIV_HIGH; else ACTIV_LOW
-    @param rb_risingEdge true -> counter triggers on rising edge; else on falling edge
+    @param ab_activHigh true -> counter input is configured fo ACTIV_HIGH; else ACTIV_LOW
+    @param ab_risingEdge true -> counter triggers on rising edge; else on falling edge
   */
-  CounterI_c(uint8_t rb_channel = 0xFF, uint16_t rui16_timebase = 0, bool rb_activHigh = true,
-              bool rb_risingEdge = true);
+  CounterI_c(uint8_t ab_channel = 0xFF, uint16_t aui16_timebase = 0, bool ab_activHigh = true,
+              bool ab_risingEdge = true);
   /**
     internal called constructor for a new digital input channel which performs configuration of hardware
     (uses BIOS function)
@@ -127,15 +127,15 @@ public:
     possible errors:
         * iLibErr_c::Range wrong input number
     @see SensorI_c::createCounter
-    @param rb_channel default-argument for setting hardware channel for this input
-    @param rui16_timebase default-argument for setting the timebase which should be
+    @param ab_channel default-argument for setting hardware channel for this input
+    @param aui16_timebase default-argument for setting the timebase which should be
             greater than max time distance between signals and should be small
             enough to avoid overflow of signals in one timebase
-    @param rb_activHigh true -> counter input is configured fo ACTIV_HIGH; else ACTIV_LOW
-    @param rb_risingEdge true -> counter triggers on rising edge; else on falling edge
+    @param ab_activHigh true -> counter input is configured fo ACTIV_HIGH; else ACTIV_LOW
+    @param ab_risingEdge true -> counter triggers on rising edge; else on falling edge
   */
-  void init(uint8_t rb_channel, uint16_t rui16_timebase = 0, bool rb_activHigh = true,
-              bool rb_risingEdge = true);
+  void init(uint8_t ab_channel, uint16_t aui16_timebase = 0, bool ab_activHigh = true,
+              bool ab_risingEdge = true);
   /**  destructor of the input object which can close explicit the hardware input */
   virtual ~CounterI_c();
   /**
@@ -177,7 +177,7 @@ public:
    @return time since last signal [msec.]
   */
   uint32_t lastSignalAge();
-  bool operator==( uint8_t rui8_key ) const { return ( rui8_key == channelNr() )?true:false;};
+  bool operator==( uint8_t aui8_key ) const { return ( aui8_key == channelNr() )?true:false;};
 private:
   /**
     HIDDEN! copy constructor for CounterI_c
@@ -185,17 +185,17 @@ private:
     ONLY copy pointers to the wanted instance!!!
     ==> the copy constructor is defined as private, so that compiler
         detects this fault, and shows you this WARNING!!
-    @param rrefc_src source
+    @param arc_src source
   */
-  CounterI_c(const CounterI_c& /*rrefc_src*/) : SensorBase_c(0) {};
+  CounterI_c(const CounterI_c& /*arc_src*/) : SensorBase_c(0) {};
   /**
     HIDDEN! assignment for CounterI_c
     NEVER assign a CounterI_c to another instance!!!!
     ==> the asignment is defined as private, so that compiler
         detects this fault, and shows you this WARNING!!
-    @param rrefc_src source
+    @param arc_src source
   */
-  CounterI_c& operator=(const CounterI_c& /*rrefc_src*/){ return *this;};
+  CounterI_c& operator=(const CounterI_c& /*arc_src*/){ return *this;};
 };
 }
 #endif

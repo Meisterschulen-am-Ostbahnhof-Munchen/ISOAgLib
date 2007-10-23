@@ -71,8 +71,8 @@
  *  <ul>
  *  <li>Core class IsoAgLib::iScheduler_c for scheduling of all periodic activities
  *  <li>Method IsoAgLib::iScheduler_c::timeEvent() which can<ul>
- *    <li>Perform activities until defined rl_endTime is reached, which is important
- *      for scheduling purposes of whole system - call by IsoAgLib::iScheduler_c::timeEvent( rl_endTime )
+ *    <li>Perform activities until defined al_endTime is reached, which is important
+ *      for scheduling purposes of whole system - call by IsoAgLib::iScheduler_c::timeEvent( al_endTime )
  *    <li>Process all received CAN messages until all receive buffers are empty
  *      -> simple call, but can lead to deadlock on to high CAN load
  *    </ul>
@@ -265,16 +265,16 @@ static iVtObjectStringVariable_c *colTable [9] =
 static uint8_t fgcolTable [9] = {0, 12, 2, 9, 14, 11, 13, 0, 1};
 
 // some small helper functions
-void updateMiles (uint32_t rui32_value) {
-  valMiles = rui32_value;
+void updateMiles (uint32_t aui32_value) {
+  valMiles = aui32_value;
   int16_t angle;
   angle = (180*valMiles)>>12;
   iVtObjectdEllipse.setEndAngle ((angle==0)?1:angle);
   iVtObjectValMiles.setValue (valMiles+10000);
 }
 
-void updateAccel(int32_t ri32_value) {
-  valAccel = ri32_value;
+void updateAccel(int32_t ai32_value) {
+  valAccel = ai32_value;
   iVtObjectValAccel.setValue (valAccel+10000);
   iVtObjectAccelArchedBarGraph.setValue (valAccel +10000);
 }
@@ -480,7 +480,7 @@ void iObjectPool_simpleVTIsoPool_c::eventKeyCode ( uint8_t keyActivationCode, ui
 }
 
 // has to be implemented - remember that if the VT drops out and comes again, the values have to be up2date!!!
-void iObjectPool_simpleVTIsoPool_c::eventObjectPoolUploadedSuccessfully (bool rb_wasLanguageUpdate, int8_t ri8_languageIndex, uint16_t rui16_languageCode)
+void iObjectPool_simpleVTIsoPool_c::eventObjectPoolUploadedSuccessfully (bool ab_wasLanguageUpdate, int8_t ai8_languageIndex, uint16_t aui16_languageCode)
 {
 
   //! The language-code/index given here indicates that the Objectpool Upload or Update has finished NOW with exactly THIS given language!
@@ -488,15 +488,15 @@ void iObjectPool_simpleVTIsoPool_c::eventObjectPoolUploadedSuccessfully (bool rb
   //! --> language in the VT setup - but it may take some time until the pool is updated and remember that you can probably select more
   //! --> languages than your working-set supports!
 
-  if (rb_wasLanguageUpdate)
+  if (ab_wasLanguageUpdate)
   {
     /// The update takes place very fast here, so we don't need to perform anything here. Normally one would switch back to normal operation mask
     /// when it was switched on update to some "Wait while updating language..:" screen!
     #ifdef DEBUG
-    EXTERNAL_DEBUG_DEVICE << "-->eventObjectPoolUploadedSuccessfully: LANGUAGE UPDATE TO Index "<<int(ri8_languageIndex)<<". User tried to select ["<<uint8_t(rui16_languageCode>>8)<<uint8_t(rui16_languageCode&0xFF)<<"] <--" << EXTERNAL_DEBUG_DEVICE_ENDL;
+    EXTERNAL_DEBUG_DEVICE << "-->eventObjectPoolUploadedSuccessfully: LANGUAGE UPDATE TO Index "<<int(ai8_languageIndex)<<". User tried to select ["<<uint8_t(aui16_languageCode>>8)<<uint8_t(aui16_languageCode&0xFF)<<"] <--" << EXTERNAL_DEBUG_DEVICE_ENDL;
     #else
-    rui16_languageCode = rui16_languageCode;  // Just prevent from warning
-    ri8_languageIndex = ri8_languageIndex;    // Just prevent from warning
+    aui16_languageCode = aui16_languageCode;  // Just prevent from warning
+    ai8_languageIndex = ai8_languageIndex;    // Just prevent from warning
     #endif
   }
   else
@@ -509,7 +509,7 @@ void iObjectPool_simpleVTIsoPool_c::eventObjectPoolUploadedSuccessfully (bool rb
     updateMiles (valMiles);
     iVtObjectValSpeed.setValue (valSpeed+10000);
     #ifdef DEBUG
-    EXTERNAL_DEBUG_DEVICE << "-->eventObjectPoolUploadedSuccessfully: INITIAL UPLOAD TO Index "<<int(ri8_languageIndex)<<". User tried to select ["<<uint8_t(rui16_languageCode>>8)<<uint8_t(rui16_languageCode&0xFF)<<"] <--" << EXTERNAL_DEBUG_DEVICE_ENDL;
+    EXTERNAL_DEBUG_DEVICE << "-->eventObjectPoolUploadedSuccessfully: INITIAL UPLOAD TO Index "<<int(ai8_languageIndex)<<". User tried to select ["<<uint8_t(aui16_languageCode>>8)<<uint8_t(aui16_languageCode&0xFF)<<"] <--" << EXTERNAL_DEBUG_DEVICE_ENDL;
     #endif
   }
 }
@@ -524,18 +524,18 @@ void iObjectPool_simpleVTIsoPool_c::eventEnterSafeState ()
   #endif
 }
 
-void iObjectPool_simpleVTIsoPool_c::eventStringValue (uint16_t rui16_objId, uint8_t rui8_length, StreamInput_c &refc_streaminput, uint8_t /*rui8_unparsedBytes*/, bool /*b_isFirst*/, bool b_isLast)
+void iObjectPool_simpleVTIsoPool_c::eventStringValue (uint16_t aui16_objId, uint8_t aui8_length, StreamInput_c &rc_streaminput, uint8_t /*aui8_unparsedBytes*/, bool /*b_isFirst*/, bool b_isLast)
 {
   if (b_isLast)
   {
     // buffer anlegen mit length + 1
     STL_NAMESPACE::string c_buffer;
-    for (uint8_t ind = 0;ind < rui8_length;ind++)
+    for (uint8_t ind = 0;ind < aui8_length;ind++)
     {
-      c_buffer.push_back( refc_streaminput.get() );
+      c_buffer.push_back( rc_streaminput.get() );
     }
 
-    switch (rui16_objId)
+    switch (aui16_objId)
     {
       case iVtObjectIDISdriver:
       {
@@ -549,15 +549,15 @@ void iObjectPool_simpleVTIsoPool_c::eventStringValue (uint16_t rui16_objId, uint
 }
 
 void
-iObjectPool_simpleVTIsoPool_c::eventLanguagePgn(const localSettings_s& rrefs_localSettings)
+iObjectPool_simpleVTIsoPool_c::eventLanguagePgn(const localSettings_s& ars_localSettings)
 {
   /// THIS FUNCTION SHOULD ONLY BE USED FOR CHANGE IN UNITS, ETC.
   /// FOR LANGUAGE CHANGE, REFER TO --> "eventObjectPoolUploadedSuccessfully" <--
   /// Remeber: If the language changed, it may take some time until your object-pool is updated in this language
   ///          You'll get a notification on an updated object-pool in "eventObjectPoolUploadedSuccessfully"!
   char languageCode[2+1]; languageCode[2+1-1] = 0x00;
-  languageCode[0] = rrefs_localSettings.languageCode >> 8;
-  languageCode[1] = rrefs_localSettings.languageCode & 0xFF;
+  languageCode[0] = ars_localSettings.languageCode >> 8;
+  languageCode[1] = ars_localSettings.languageCode & 0xFF;
   iVtObjectOSlanguage.setValueCopy (languageCode);
 }
 
@@ -568,17 +568,17 @@ int main()
   getIcanInstance().init (0); // CAN-Bus 0 (with defaulting 250 kbit)
 
   // start address claim of the local identity/member
-  IsoAgLib::iIdentItem_c c_myIdent (2,    // rui8_indGroup
-                                    7,    // rui8_devClass
-                                    0,    // rui8_devClassInst
-                                    25,   // rb_func
-                                    0x7FF,// rui16_manufCode
-                                    27,   // rui32_serNo
+  IsoAgLib::iIdentItem_c c_myIdent (2,    // aui8_indGroup
+                                    7,    // aui8_devClass
+                                    0,    // aui8_devClassInst
+                                    25,   // ab_func
+                                    0x7FF,// aui16_manufCode
+                                    27,   // aui32_serNo
                                     254,  // No preferred SA, auto-allocate in range 0x80 upwards...
                                     0x100,// EEPROM-Address to store the allocated SA for re-use after power-cycle
-                                    0,    // rb_funcInst
-                                    0,    // rb_ecuInst
-                                    true, // rb_selfConf
+                                    0,    // ab_funcInst
+                                    0,    // ab_ecuInst
+                                    true, // ab_selfConf
                                     0);   // 0 means: We're WS-Master and have 0 WS-Slaves
                                     // further parameters use the default: NULL /* so no list given either */, 0 /* singletonVecKey */
 

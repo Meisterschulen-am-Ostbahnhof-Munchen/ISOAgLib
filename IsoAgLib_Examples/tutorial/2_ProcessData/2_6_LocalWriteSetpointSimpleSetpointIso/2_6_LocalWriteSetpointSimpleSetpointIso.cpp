@@ -84,8 +84,8 @@
  *  <ul>
  *  <li>Core class IsoAgLib::iScheduler_c for scheduling of all periodic activities
  *  <li>Method IsoAgLib::iScheduler_c::timeEvent() which can<ul>
- *    <li>Perform activities until defined rl_endTime is reached, which is important
- *      for scheduling purposes of whole system - call by IsoAgLib::iScheduler_c::timeEvent( rl_endTime )
+ *    <li>Perform activities until defined al_endTime is reached, which is important
+ *      for scheduling purposes of whole system - call by IsoAgLib::iScheduler_c::timeEvent( al_endTime )
  *    <li>Process all received CAN messages until all receive buffers are empty
  *      -> simple call, but can lead to deadlock on to high CAN load
  *    </ul>
@@ -251,11 +251,11 @@ uint32_t ui32_localDummyApplicationRate;
 
 #ifdef USE_PROC_HANDLER
 /** dummy function to decide on acceptance of received setpoint */
-bool localIsAcceptableWorkState( const IsoAgLib::iIsoName_c& rc_deviceType, uint32_t rui32_setpointValue )
+bool localIsAcceptableWorkState( const IsoAgLib::iIsoName_c& ac_deviceType, uint32_t aui32_setpointValue )
 { // just for demo - accept from other than device type 1 only values smaller than 255
-  if ( rc_deviceType.devClass() < 2 )
+  if ( ac_deviceType.devClass() < 2 )
   {
-    ui8_localDummyWorkState = rui32_setpointValue;
+    ui8_localDummyWorkState = aui32_setpointValue;
     return true;
   }
   else
@@ -265,11 +265,11 @@ bool localIsAcceptableWorkState( const IsoAgLib::iIsoName_c& rc_deviceType, uint
 }
 #else
 /** dummy function to decide on acceptance of received setpoint */
-bool localIsAcceptableWorkState( uint32_t rui32_setpointValue )
+bool localIsAcceptableWorkState( uint32_t aui32_setpointValue )
 { // just for demo - accept from other than device type 1 only values smaller than 255
-  if ( ( rui32_setpointValue == 0 ) || ( rui32_setpointValue == 100 ) )
+  if ( ( aui32_setpointValue == 0 ) || ( aui32_setpointValue == 100 ) )
   {
-    ui8_localDummyWorkState = rui32_setpointValue;
+    ui8_localDummyWorkState = aui32_setpointValue;
     return true;
   }
   else
@@ -280,11 +280,11 @@ bool localIsAcceptableWorkState( uint32_t rui32_setpointValue )
 #endif
 
 #ifdef USE_PROC_HANDLER
-bool localIsAcceptableApplicationRate( const IsoAgLib::iIsoName_c& rc_deviceType, uint32_t rui32_setpointValue )
+bool localIsAcceptableApplicationRate( const IsoAgLib::iIsoName_c& ac_deviceType, uint32_t aui32_setpointValue )
 { // just for demo - accept from other than device type 1 only values smaller than 255
-  if ( ( rc_deviceType.devClass() == 1 ) || ( rui32_setpointValue < 255 ) )
+  if ( ( ac_deviceType.devClass() == 1 ) || ( aui32_setpointValue < 255 ) )
   {
-    ui32_localDummyApplicationRate = rui32_setpointValue;
+    ui32_localDummyApplicationRate = aui32_setpointValue;
     return true;
   }
   else
@@ -293,11 +293,11 @@ bool localIsAcceptableApplicationRate( const IsoAgLib::iIsoName_c& rc_deviceType
   }
 }
 #else
-bool localIsAcceptableApplicationRate( uint32_t rui32_setpointValue )
+bool localIsAcceptableApplicationRate( uint32_t aui32_setpointValue )
 { // just for demo - accept from other than device type 1 only values smaller than 255
-  if ( rui32_setpointValue < 255 )
+  if ( aui32_setpointValue < 255 )
   {
-    ui32_localDummyApplicationRate = rui32_setpointValue;
+    ui32_localDummyApplicationRate = aui32_setpointValue;
     return true;
   }
   else
@@ -326,29 +326,29 @@ class MyProcDataHandler_c : public IsoAgLib::ProcessDataChangeHandler_c
     //! Derive with the help of pointer to the triggered process data
     //! instance the corresponding variable and reacte then specific for this type.
     //! Parameter:
-    //! @param rc_src encapsulated pointer to triggered process data variable
-    //! @param ri32_val new received setpoint value ( raw from CAN msg; independent interpretation on Exact/Min/Max needed )
-    //! @param rc_setpointSender device type of setpoint sender
-    //! @param rb_change display if value change or if just new msg arrived, which could be important for handling
-    virtual bool processSetpointSet(IsoAgLib::EventSource_c rc_src,
-                                    int32_t ri32_val,
-                                    const IsoAgLib::iIsoName_c& rc_setpointSender,
-                                    bool rb_change);
+    //! @param ac_src encapsulated pointer to triggered process data variable
+    //! @param ai32_val new received setpoint value ( raw from CAN msg; independent interpretation on Exact/Min/Max needed )
+    //! @param ac_setpointSender device type of setpoint sender
+    //! @param ab_change display if value change or if just new msg arrived, which could be important for handling
+    virtual bool processSetpointSet(IsoAgLib::EventSource_c ac_src,
+                                    int32_t ai32_val,
+                                    const IsoAgLib::iIsoName_c& ac_setpointSender,
+                                    bool ab_change);
 };
 
-bool MyProcDataHandler_c::processSetpointSet(IsoAgLib::EventSource_c rc_src, int32_t ri32_val, const IsoAgLib::iIsoName_c& rc_setpointSender, bool rb_change)
+bool MyProcDataHandler_c::processSetpointSet(IsoAgLib::EventSource_c ac_src, int32_t ai32_val, const IsoAgLib::iIsoName_c& ac_setpointSender, bool ab_change)
 {
-  if ( ! rb_change )
+  if ( ! ab_change )
   { // don't handle succeeding setpoints which don't contain new value - maybe still relevant for other applications
     return false; // indicate that this information is not again handled - just ignored
   }
 
   // use helper function to get automatically casted pointer to used process data type
-  uint16_t ui16_index = rc_src.makeIProcDataLocalSimpleSetpoint() - arr_procData;
+  uint16_t ui16_index = ac_src.makeIProcDataLocalSimpleSetpoint() - arr_procData;
   switch ( ui16_index )
   {
     case cui8_indexWorkState:
-      if ( ! localIsAcceptableWorkState( rc_setpointSender, ri32_val ) )
+      if ( ! localIsAcceptableWorkState( ac_setpointSender, ai32_val ) )
       { // set the current measurement value as current used setpoint
         // ( this should be replaced by a more intelligent handling in a reall app )
         arr_procData[cui8_indexWorkState].setSetpointMasterVal( int32_t(getCurrentWorkState()) );
@@ -358,7 +358,7 @@ bool MyProcDataHandler_c::processSetpointSet(IsoAgLib::EventSource_c rc_src, int
       }
       break;
     case cui8_indexApplicationRate:
-      if ( ! localIsAcceptableApplicationRate( rc_setpointSender, ri32_val ) )
+      if ( ! localIsAcceptableApplicationRate( ac_setpointSender, ai32_val ) )
       { // set the current measurement value as current used setpoint
         // ( this should be replaced by a more intelligent handling in a reall app )
         arr_procData[cui8_indexApplicationRate].setSetpointMasterVal( int32_t(getCurrentApplicationRate()) );

@@ -116,17 +116,17 @@ namespace __IsoAgLib {
         above all create the needed FilterBox_c instances
         possible errors:
           * dependant error in CanIo_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
-        @param rpc_isoName optional pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
+        @param apc_isoName optional pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
         @param ai_singletonVecKey singleton vector key in case PRT_INSTANCE_CNT > 1
-        @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
+        @param at_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       */
-    virtual void init_base (const IsoName_c*, int ai_singletonVecKey, IsoAgLib::IdentMode_t rt_identMode = IsoAgLib::IdentModeImplement);
+    virtual void init_base (const IsoName_c*, int ai_singletonVecKey, IsoAgLib::IdentMode_t at_identMode = IsoAgLib::IdentModeImplement);
     /** config the TracMove_c object after init -> set pointer to isoName and
         config send/receive of a moving msg type
-        @param rpc_isoName pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
-        @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
+        @param apc_isoName pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
+        @param at_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       */
-    virtual bool config_base (const IsoName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode, uint16_t rui16_suppressMask = 0);
+    virtual bool config_base (const IsoName_c* apc_isoName, IsoAgLib::IdentMode_t at_identMode, uint16_t aui16_suppressMask = 0);
 
     /** update selected speed with actually best available speed
         @param t_speedSrc  from which source is the speed available
@@ -155,16 +155,16 @@ namespace __IsoAgLib {
     void setDistReal(const uint32_t& rreflVal) { ui32_distReal = rreflVal; }
 
     /** set the value of real speed (measured by radar)
-        @param ri16_val value to store as real radar measured speed
+        @param ai16_val value to store as real radar measured speed
       */
-    void setSpeedReal(const int32_t& ri32_val)
-			{i32_speedReal = ri32_val; if(t_selectedSpeedSource == IsoAgLib::IsoGroundBasedSpeed) i32_selectedSpeed = ri32_val;}
+    void setSpeedReal(const int32_t& ai32_val)
+			{i32_speedReal = ai32_val; if(t_selectedSpeedSource == IsoAgLib::IsoGroundBasedSpeed) i32_selectedSpeed = ai32_val;}
 
     /** set the value of theoretical speed (calculated from gear)
-        @param ri16_val value to store as theoretical gear calculated speed
+        @param ai16_val value to store as theoretical gear calculated speed
       */
-    void setSpeedTheor(const int32_t& ri32_val)
-			{i32_speedTheor = ri32_val; if(t_selectedSpeedSource == IsoAgLib::IsoWheelBasedSpeed) i32_selectedSpeed = ri32_val;}
+    void setSpeedTheor(const int32_t& ai32_val)
+			{i32_speedTheor = ai32_val; if(t_selectedSpeedSource == IsoAgLib::IsoWheelBasedSpeed) i32_selectedSpeed = ai32_val;}
 
     /** set measured signal indicating either forward or reverse as the real (radar measured) direction of travel
         @return  direction of travel
@@ -179,12 +179,12 @@ namespace __IsoAgLib {
 			{t_directionTheor = t_val; if(t_selectedSpeedSource == IsoAgLib::IsoWheelBasedSpeed) t_selectedDirection = t_val;}
 
     /** set parameter which indicates whetcher the reported direction is reversed from the perspective of the operator
-        @param rt_val  indicates direction (IsoInactive = not reversed; IsoActive = reversed)
+        @param at_val  indicates direction (IsoInactive = not reversed; IsoActive = reversed)
       */
-    void setOperatorDirectionReversed(const IsoAgLib::IsoOperatorDirectionFlag_t rt_val) { t_operatorDirectionReversed = rt_val;}
+    void setOperatorDirectionReversed(const IsoAgLib::IsoOperatorDirectionFlag_t at_val) { t_operatorDirectionReversed = at_val;}
 
     /** start/stop state BE AWARE THIS IS A DUMMY BECAUSE DESCRIPTION IS NOT TO FIND IN AMENDMENT 1*/
-    void setStartStopState(const IsoAgLib::IsoActiveFlag_t rt_val) {t_startStopState = rt_val;}
+    void setStartStopState(const IsoAgLib::IsoActiveFlag_t at_val) {t_startStopState = at_val;}
 
     /** set actual distance traveled by the machine based on the value of selected machine speed
         @param i32_val  actual distance
@@ -327,7 +327,7 @@ namespace __IsoAgLib {
 
   virtual const char* getTaskName() const;
   /** dummy implementation */
-  virtual bool processMsgRequestPGN (uint32_t rui32_pgn, IsoItem_c* rpc_isoItemSender, IsoItem_c* rpc_isoItemReceiver);
+  virtual bool processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver);
 
   private:
     // Private methods
@@ -441,7 +441,7 @@ namespace __IsoAgLib {
   /** C-style function, to get access to the unique Base_c singleton instance
     * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
     */
-  TracMove_c& getTracMoveInstance(uint8_t rui8_instance = 0);
+  TracMove_c& getTracMoveInstance(uint8_t aui8_instance = 0);
   #else
   /** C-style function, to get access to the unique Base_c singleton instance */
   TracMove_c& getTracMoveInstance(void);

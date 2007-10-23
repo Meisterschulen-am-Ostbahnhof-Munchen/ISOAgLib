@@ -71,13 +71,13 @@ public:
   };
 
   //! This command alters the graphics cursor X/Y attributes of the object (Sub-Command ID 0).
-  //! @param rc_point Position of cursor to be set
+  //! @param ac_point Position of cursor to be set
   //! @param b_updateObject Keep track of object changes (by use of RAM copy instead of static ROM image).
   //! @param b_enableReplaceOfCmd Allow command queue optimization by replacing allready queued commands
   //!   by currently received.
-  void setGraphicsCursor(const iVtPoint_c& rc_point,
+  void setGraphicsCursor(const iVtPoint_c& ac_point,
                          bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectGraphicsContext_c::setGraphicsCursor( rc_point, b_updateObject, b_enableReplaceOfCmd);
+    vtObjectGraphicsContext_c::setGraphicsCursor( ac_point, b_updateObject, b_enableReplaceOfCmd);
   }
 
   //! This command modifies the foreground colour attribute (Sub-Command ID 1).
@@ -141,12 +141,12 @@ public:
   //! For this command, the Fill Attributes Object is not used regardless of
   //! the state of Options bit 1.
   //! The graphics cursor is moved to the defined end pixel.
-  //! @param rc_point End pixel position
+  //! @param ac_point End pixel position
   //! @param b_updateObject
   //! @param b_enableReplaceOfCmd
-  void eraseRectangle(const iVtPoint_c& rc_point,
+  void eraseRectangle(const iVtPoint_c& ac_point,
                       bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectGraphicsContext_c::eraseRectangle( rc_point, b_updateObject, b_enableReplaceOfCmd);
+    vtObjectGraphicsContext_c::eraseRectangle( ac_point, b_updateObject, b_enableReplaceOfCmd);
   }
 
   //! Sets the pixel at the graphics cursor to the foreground colour (Sub-Command ID 7).
@@ -160,12 +160,12 @@ public:
   //! Draws a line from the graphics cursor to the defined end pixel using the foreground colour (Sub-Command ID 8).
   //! The Line Object drawing rules apply with respect to the end pixel location and line attributes.
   //! The graphics cursor is moved to the defined end pixel.
-  //! @param rc_point End pixel position
+  //! @param ac_point End pixel position
   //! @param b_updateObject
   //! @param b_enableReplaceOfCmd
-  void drawLine(const iVtPoint_c& rc_point,
+  void drawLine(const iVtPoint_c& ac_point,
                 bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectGraphicsContext_c::drawLine( rc_point, b_updateObject, b_enableReplaceOfCmd);
+    vtObjectGraphicsContext_c::drawLine( ac_point, b_updateObject, b_enableReplaceOfCmd);
   }
 
   //! Draws a rectangle from the graphics cursor to the defined end pixel (Sub-Command ID 9).
@@ -173,12 +173,12 @@ public:
   //! If a line attribute object is currently defined, the border is drawn.
   //! If a fill attribute object is currently defined, the rectangle is filled.
   //! The graphics cursor is moved to the defined end pixel.
-  //! @param rc_point End pixel position
+  //! @param ac_point End pixel position
   //! @param b_updateObject
   //! @param b_enableReplaceOfCmd
-  void drawRectangle(const iVtPoint_c& rc_point,
+  void drawRectangle(const iVtPoint_c& ac_point,
                      bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectGraphicsContext_c::drawRectangle( rc_point, b_updateObject, b_enableReplaceOfCmd);
+    vtObjectGraphicsContext_c::drawRectangle( ac_point, b_updateObject, b_enableReplaceOfCmd);
   }
 
   //! Draws a closed ellipse bounded by the rectangle defined by the current graphics cursor
@@ -187,12 +187,12 @@ public:
   //! If a line attribute object is currently defined, the border is drawn.
   //! If a fill attribute object is currently defined, the circle is filled.
   //! The graphics cursor is moved to the defined end pixel.
-  //! @param rc_point End pixel position
+  //! @param ac_point End pixel position
   //! @param b_updateObject
   //! @param b_enableReplaceOfCmd
-  void drawClosedEllipse(const iVtPoint_c& rc_point,
+  void drawClosedEllipse(const iVtPoint_c& ac_point,
                          bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectGraphicsContext_c::drawClosedEllipse( rc_point, b_updateObject, b_enableReplaceOfCmd);
+    vtObjectGraphicsContext_c::drawClosedEllipse( ac_point, b_updateObject, b_enableReplaceOfCmd);
   }
 
   //! Draws a polygon from the graphics cursor to the first point,
@@ -204,12 +204,12 @@ public:
   //! If a fill object is currently defined and the polygon is closed, the polygon is filled.
   //! The graphics cursor is moved to the last point in the list.
   //! @param cnt Number of additional points
-  //! @param rps_data Pointer to array of polygon points
+  //! @param aps_data Pointer to array of polygon points
   //! @param b_updateObject
   //! @param b_enableReplaceOfCmd
-  void drawPolygon(uint16_t cnt, const iVtPoint_c* const rpc_data,
+  void drawPolygon(uint16_t cnt, const iVtPoint_c* const apc_data,
                    bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectGraphicsContext_c::drawPolygon (cnt, rpc_data, b_updateObject, b_enableReplaceOfCmd);
+    vtObjectGraphicsContext_c::drawPolygon (cnt, apc_data, b_updateObject, b_enableReplaceOfCmd);
   }
 
   //! Draws the given text using the font attribute object (Sub-Command ID 12).
@@ -218,23 +218,23 @@ public:
   //! The graphics cursor is moved to the bottom right corner of the extent of the text.
   //! @param type Type of text background drawing (0 == opaque, 1 == transparent).
   //! @param cnt Number of characters to be drawn
-  //! @param rpc_string Pointer to character array to be drawn
+  //! @param apc_string Pointer to character array to be drawn
   //! @param b_updateObject
   //! @param b_enableReplaceOfCmd
-  void drawText(uint8_t type, uint8_t cnt, const char* rpc_string,
+  void drawText(uint8_t type, uint8_t cnt, const char* apc_string,
                 bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectGraphicsContext_c::drawText( type, cnt, rpc_string, b_updateObject, b_enableReplaceOfCmd);
+    vtObjectGraphicsContext_c::drawText( type, cnt, apc_string, b_updateObject, b_enableReplaceOfCmd);
   }
 
   //! This command modifies the viewport X and Y attributes and forces a redraw of the object (Sub-Command ID 13).
   //! This allows "panning" of the underlying object contents.
   //! The graphics cursor is not moved.
-  //! @param rc_point Viewport position
+  //! @param ac_point Viewport position
   //! @param b_updateObject
   //! @param b_enableReplaceOfCmd
-  void panViewport(const iVtPoint_c& rc_point,
+  void panViewport(const iVtPoint_c& ac_point,
                    bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectGraphicsContext_c::panViewport( rc_point, b_updateObject, b_enableReplaceOfCmd);
+    vtObjectGraphicsContext_c::panViewport( ac_point, b_updateObject, b_enableReplaceOfCmd);
   }
 
   //! This command allows magnification of the viewport contents (Sub-Command ID 14).
@@ -251,13 +251,13 @@ public:
   //! @todo Coordinates need to be signed.
   //! This command allows both panning and zooming at the same time
   //! by combining commands 13 and 14 (Sub-Command ID 15).
-  //! @param rc_point Viewport position
+  //! @param ac_point Viewport position
   //! @param newValue Zoom value
   //! @param b_updateObject
   //! @param b_enableReplaceOfCmd
-  void panAndZoomViewport(const iVtPoint_c& rc_point, int8_t newValue,
+  void panAndZoomViewport(const iVtPoint_c& ac_point, int8_t newValue,
                           bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectGraphicsContext_c::panAndZoomViewport( rc_point, newValue, b_updateObject, b_enableReplaceOfCmd);
+    vtObjectGraphicsContext_c::panAndZoomViewport( ac_point, newValue, b_updateObject, b_enableReplaceOfCmd);
   }
 
   //! This command changes the size of the viewport and can be compared to

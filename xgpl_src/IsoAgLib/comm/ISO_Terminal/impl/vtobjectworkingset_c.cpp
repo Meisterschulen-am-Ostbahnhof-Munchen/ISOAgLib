@@ -143,16 +143,16 @@ vtObjectWorkingSet_c::fitTerminal() const
 }
 
 // Operation : changeActiveMask
-//! @param rpc_vtObjectMask:
+//! @param apc_vtObjectMask:
 //! @param b_updateObject:
 void
-vtObjectWorkingSet_c::changeActiveMask(IsoAgLib::iVtObjectMask_c* rpc_vtObjectMask, bool b_updateObject, bool b_enableReplaceOfCmd)
+vtObjectWorkingSet_c::changeActiveMask(IsoAgLib::iVtObjectMask_c* apc_vtObjectMask, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
-  if (b_updateObject) saveValueP (MACRO_getStructOffset(get_vtObjectWorkingSet_a(), activeMask), sizeof(iVtObjectWorkingSet_s), rpc_vtObjectMask);
+  if (b_updateObject) saveValueP (MACRO_getStructOffset(get_vtObjectWorkingSet_a(), activeMask), sizeof(iVtObjectWorkingSet_s), apc_vtObjectMask);
 
   __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommand (173 /* Command: Command --- Parameter: Change Active Mask */,
                                                    vtObject_a->ID & 0xFF, vtObject_a->ID >> 8,
-                                                   rpc_vtObjectMask->getID() & 0xFF, rpc_vtObjectMask->getID() >> 8,
+                                                   apc_vtObjectMask->getID() & 0xFF, apc_vtObjectMask->getID() >> 8,
                                                    0xFF, 0xFF, 0xFF, DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
 }
 
@@ -165,29 +165,29 @@ vtObjectWorkingSet_c::changeBackgroundColour(uint8_t newValue, bool b_updateObje
 }
 
 bool
-vtObjectWorkingSet_c::moveChildLocation(IsoAgLib::iVtObject_c* rpc_childObject, int8_t dx, int8_t dy, bool b_updateObject, bool b_enableReplaceOfCmd)
+vtObjectWorkingSet_c::moveChildLocation(IsoAgLib::iVtObject_c* apc_childObject, int8_t dx, int8_t dy, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
   MACRO_localVars;
-  return genericChangeChildLocation (rpc_childObject, dx, dy, b_updateObject, vtObjectWorkingSet_a->numberOfObjectsToFollow, (IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s *) vtObjectWorkingSet_a->objectsToFollow, MACRO_getStructOffset(get_vtObjectWorkingSet_a(), objectsToFollow), sizeof(iVtObjectWorkingSet_s), b_enableReplaceOfCmd);
+  return genericChangeChildLocation (apc_childObject, dx, dy, b_updateObject, vtObjectWorkingSet_a->numberOfObjectsToFollow, (IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s *) vtObjectWorkingSet_a->objectsToFollow, MACRO_getStructOffset(get_vtObjectWorkingSet_a(), objectsToFollow), sizeof(iVtObjectWorkingSet_s), b_enableReplaceOfCmd);
 }
 
 bool
-vtObjectWorkingSet_c::setChildPosition(IsoAgLib::iVtObject_c* rpc_childObject, int16_t x, int16_t y, bool b_updateObject, bool b_enableReplaceOfCmd)
+vtObjectWorkingSet_c::setChildPosition(IsoAgLib::iVtObject_c* apc_childObject, int16_t x, int16_t y, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
   MACRO_localVars;
-  return genericChangeChildPosition (rpc_childObject, x, y, b_updateObject, vtObjectWorkingSet_a->numberOfObjectsToFollow, (IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s *) vtObjectWorkingSet_a->objectsToFollow, MACRO_getStructOffset(get_vtObjectWorkingSet_a(), objectsToFollow), sizeof(iVtObjectWorkingSet_s), b_enableReplaceOfCmd);
+  return genericChangeChildPosition (apc_childObject, x, y, b_updateObject, vtObjectWorkingSet_a->numberOfObjectsToFollow, (IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s *) vtObjectWorkingSet_a->objectsToFollow, MACRO_getStructOffset(get_vtObjectWorkingSet_a(), objectsToFollow), sizeof(iVtObjectWorkingSet_s), b_enableReplaceOfCmd);
 }
 
 bool
-vtObjectWorkingSet_c::controlAudioDevice (uint8_t rui8_repetitions, uint16_t rui16_frequency, uint16_t rui16_onTime, uint16_t rui16_offTime)
+vtObjectWorkingSet_c::controlAudioDevice (uint8_t aui8_repetitions, uint16_t aui16_frequency, uint16_t aui16_onTime, uint16_t aui16_offTime)
 {
-  return __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandControlAudioDevice (rui8_repetitions, rui16_frequency, rui16_onTime, rui16_offTime);
+  return __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandControlAudioDevice (aui8_repetitions, aui16_frequency, aui16_onTime, aui16_offTime);
 }
 
 bool
-vtObjectWorkingSet_c::setAudioVolume (uint8_t rui8_volume)
+vtObjectWorkingSet_c::setAudioVolume (uint8_t aui8_volume)
 {
-  return __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandSetAudioVolume (rui8_volume);
+  return __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandSetAudioVolume (aui8_volume);
 }
 
 

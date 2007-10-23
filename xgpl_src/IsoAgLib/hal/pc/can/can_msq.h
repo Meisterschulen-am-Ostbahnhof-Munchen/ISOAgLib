@@ -151,20 +151,20 @@ typedef struct {
 } msqWrite_s;
 
 
-void send_command_ack(int32_t ri32_mtype, msqData_s* p_msqDataServer, int32_t ri32_dataContent, int32_t ri32_data);
+void send_command_ack(int32_t ai32_mtype, msqData_s* p_msqDataServer, int32_t ai32_dataContent, int32_t ai32_data);
 
 int32_t send_command(msqCommand_s* p_msqCommandBuf, msqData_s* p_msqDataClient);
 
 int16_t ca_createMsqs(msqData_s& msqData);
 
 int32_t assembleRead_mtype (uint16_t ui16_pid, uint8_t bus, uint8_t obj);
-int32_t assembleWrite_mtype(bool rb_prio);
+int32_t assembleWrite_mtype(bool ab_prio);
 
 uint16_t disassembleRead_client_id (int32_t i32_mtype);
 uint16_t disassembleWrite_client_id(int32_t i32_mtype);
 
 void clearReadQueue (uint8_t bBusNumber, uint8_t bMsgObj, int32_t i32_msqHandle, uint16_t ui16_pID);
-void clearWriteQueue(bool rb_prio, int32_t i32_msqHandle, uint16_t ui16_pID);
+void clearWriteQueue(bool ab_prio, int32_t i32_msqHandle, uint16_t ui16_pID);
 
 } // end namespace
 

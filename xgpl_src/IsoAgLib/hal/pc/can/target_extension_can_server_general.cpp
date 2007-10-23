@@ -271,24 +271,24 @@ clock_t getStartUpTime()
 #endif
 
 
-void initClientTime( client_c& ref_receiveClient, clock_t rt_startupClock )
+void initClientTime( client_c& r_receiveClient, clock_t at_startupClock )
 {
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0))
-  ref_receiveClient.i32_msecStartDeltaClientMinusServer = (rt_startupClock - getStartUpTime())*msecPerClock;
+  r_receiveClient.i32_msecStartDeltaClientMinusServer = (at_startupClock - getStartUpTime())*msecPerClock;
 #else
-  ref_receiveClient.i32_msecStartDeltaClientMinusServer = (rt_startupClock - getStartUpTime()); // we get msec directly with Linux 2.6. upwards!
+  r_receiveClient.i32_msecStartDeltaClientMinusServer = (at_startupClock - getStartUpTime()); // we get msec directly with Linux 2.6. upwards!
 #endif
-  DEBUG_PRINT1 ("Initialized ref_receiveClient.i32_msecStartDeltaClientMinusServer to %d\n", ref_receiveClient.i32_msecStartDeltaClientMinusServer);
+  DEBUG_PRINT1 ("Initialized r_receiveClient.i32_msecStartDeltaClientMinusServer to %d\n", r_receiveClient.i32_msecStartDeltaClientMinusServer);
 }
 
-int32_t getClientTime( client_c& ref_receiveClient )
+int32_t getClientTime( client_c& r_receiveClient )
 {
-  return getTime() - ref_receiveClient.i32_msecStartDeltaClientMinusServer;
+  return getTime() - r_receiveClient.i32_msecStartDeltaClientMinusServer;
 }
 
-//int32_t getServerTimeFromClientTime( client_c& ref_receiveClient, int32_t ri32_clientTime )
+//int32_t getServerTimeFromClientTime( client_c& r_receiveClient, int32_t ai32_clientTime )
 //{
-//  return ri32_clientTime + ref_receiveClient.i32_msecStartDeltaClientMinusServer;
+//  return ai32_clientTime + r_receiveClient.i32_msecStartDeltaClientMinusServer;
 //}
 
 } // end namespace

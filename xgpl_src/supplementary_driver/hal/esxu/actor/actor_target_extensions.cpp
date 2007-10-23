@@ -79,18 +79,18 @@ static const int16_t cui16_openLow  = ( 170000L / 4000L ); // 1700mV * 100 / 40m
 		* if the PWM setting is >0 but has a very low value, so that even under normal
 		* conditions the voltage with connected consuming device is lower than to open
 		* connector state at low level.
-    * @param rui8_channel channel to check
-    * @param rui16_minCurrent minimal allowed current in [mA]
-    * @param rui16_maxCurrent maximum allowed current in [mA]
+    * @param aui8_channel channel to check
+    * @param aui16_minCurrent minimal allowed current in [mA]
+    * @param aui16_maxCurrent maximum allowed current in [mA]
     * @return HAL_NO_ERR, HAL_DIGOUT_OPEN, HAL_DIGOUT_SHORTCUT    */
-  int16_t getDigoutDiagnose(uint8_t rui8_channel, uint16_t rui16_minCurrent, uint16_t rui16_maxCurrent)
+  int16_t getDigoutDiagnose(uint8_t aui8_channel, uint16_t aui16_minCurrent, uint16_t aui16_maxCurrent)
   {
-		int16_t i16_adc = getDigoutCurrent(rui8_channel);
+		int16_t i16_adc = getDigoutCurrent(aui8_channel);
 
 		if( i16_adc < 0 )
 			return HAL_NO_ERR;	// Pin doesn't support current checking - should really do something else here!!!
 
-		bool b_hiSet = ( rui16_maxCurrent > 0 )?true:false;
+		bool b_hiSet = ( aui16_maxCurrent > 0 )?true:false;
 		uint16_t cui16_useLowCompare = cui16_openLow;
 
 		if ( b_hiSet )
@@ -112,17 +112,17 @@ static const int16_t cui16_openLow  = ( 170000L / 4000L ); // 1700mV * 100 / 40m
 		getDigoutDiagnose function can go wrong.
 		@return voltage at PWM channel [mV]
 	*/
-	int16_t getDigoutAdc( uint8_t rui8_channel )
+	int16_t getDigoutAdc( uint8_t aui8_channel )
 	{
-		if( rui8_channel > OUT4 )
+		if( aui8_channel > OUT4 )
 			return -1;
 
-		int16_t ci16_result = __HAL::get_adc(__HAL::getPwmoutAdcCheckNr(rui8_channel));
+		int16_t ci16_result = __HAL::get_adc(__HAL::getPwmoutAdcCheckNr(aui8_channel));
 
 #if defined( DEBUG_HAL )
 IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
 << "get_adc( "
-<< (uint16_t)__HAL::getPwmoutAdcCheckNr(rui8_channel)
+<< (uint16_t)__HAL::getPwmoutAdcCheckNr(aui8_channel)
 << " ) returns " << ci16_result << "\r";
 #endif
 

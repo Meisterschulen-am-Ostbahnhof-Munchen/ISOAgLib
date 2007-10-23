@@ -85,15 +85,15 @@ static const int16_t cui16_openLow  = 10;	// 800mV (40mV per bit)
 		* if the PWM setting is >0 but has a very low value, so that even under normal
 		* conditions the voltage with connected consuming device is lower than to open
 		* connector state at low level.
-    * @param rui8_channel channel to check
-    * @param rui16_minCurrent minimal allowed current in [mA]
-    * @param rui16_maxCurrent maximum allowed current in [mA]
+    * @param aui8_channel channel to check
+    * @param aui16_minCurrent minimal allowed current in [mA]
+    * @param aui16_maxCurrent maximum allowed current in [mA]
     * @return HAL_NO_ERR, HAL_DIGOUT_OPEN, HAL_DIGOUT_SHORTCUT    */
-  int16_t getDigoutDiagnose(uint8_t rui8_channel, uint16_t rui16_minCurrent, uint16_t rui16_maxCurrent)
+  int16_t getDigoutDiagnose(uint8_t aui8_channel, uint16_t aui16_minCurrent, uint16_t aui16_maxCurrent)
   {
-		const int16_t i16_adc = __HAL::get_adc(__HAL::getPwmoutAdcCheckNr(rui8_channel));
+		const int16_t i16_adc = __HAL::get_adc(__HAL::getPwmoutAdcCheckNr(aui8_channel));
 
-		const bool b_hiSet = ( rui16_maxCurrent > 0 )?true:false;
+		const bool b_hiSet = ( aui16_maxCurrent > 0 )?true:false;
 		const uint16_t cui16_useLowCompare = cui16_openLow;
 
 		if ( b_hiSet )
@@ -115,9 +115,9 @@ static const int16_t cui16_openLow  = 10;	// 800mV (40mV per bit)
 		getDigoutDiagnose function can go wrong.
 		@return voltage at PWM channel [mV]
 	*/
-	int16_t getDigoutAdc( uint8_t rui8_channel )
+	int16_t getDigoutAdc( uint8_t aui8_channel )
 	{
-		const int16_t ci16_result = __HAL::get_adc(__HAL::getPwmoutAdcCheckNr(rui8_channel));
+		const int16_t ci16_result = __HAL::get_adc(__HAL::getPwmoutAdcCheckNr(aui8_channel));
 		if ( ci16_result != HAL_NO_ERR ) return ci16_result;
 		return __IsoAgLib::mul1Div1Mul2Div2(ci16_result, 3743, 1, 100);
 	}

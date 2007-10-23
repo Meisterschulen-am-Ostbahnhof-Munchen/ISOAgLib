@@ -201,17 +201,17 @@ int main(int argc, char** argv)
   getIcanInstance().init (0); // CAN-Bus 0 with defaulting 250 kbit
 
   // Start address claim of the local identity/member
-  iIdentItem_c c_myIdent (2,     // rui8_indGroup
-                          1,     // rui8_devClass
-                          5,     // rui8_devClassInst
-                          25,    // rb_func
-                          0x7FF, // rui16_manufCode
-                          27);   // rui32_serNo
+  iIdentItem_c c_myIdent (2,     // aui8_indGroup
+                          1,     // aui8_devClass
+                          5,     // aui8_devClassInst
+                          25,    // ab_func
+                          0x7FF, // aui16_manufCode
+                          27);   // aui32_serNo
                           // further parameters use the default values as given in the constructor
 
   // configure BaseData_c to send nothing on BUS but receive data (=implement mode)
-  iTimePosGPS_c& refc_timePosGps = getITimePosGpsInstance();
-  refc_timePosGps.config (&c_myIdent.isoName(), IsoAgLib::IdentModeImplement);
+  iTimePosGPS_c& rc_timePosGps = getITimePosGpsInstance();
+  rc_timePosGps.config (&c_myIdent.isoName(), IsoAgLib::IdentModeImplement);
 
   /** IMPORTANT:
     - The following loop could be replaced of any repeating call of
@@ -252,7 +252,7 @@ int main(int argc, char** argv)
       i32_nextTimeToPrint += 1000;
       EXTERNAL_DEBUG_DEVICE << "GPS Status at time " << (i32_nextTimeToPrint/1000) << " (seconds): ";
 
-      if (refc_timePosGps.isPositionReceived())
+      if (rc_timePosGps.isPositionReceived())
       { // position received
         EXTERNAL_DEBUG_DEVICE << "Position received! ";
       }
@@ -261,7 +261,7 @@ int main(int argc, char** argv)
         EXTERNAL_DEBUG_DEVICE << "No GPS Position!   ";
       }
 
-      if (refc_timePosGps.isDirectionReceived())
+      if (rc_timePosGps.isDirectionReceived())
       { // direction received
         EXTERNAL_DEBUG_DEVICE << "Direction received!";
       }
@@ -270,17 +270,17 @@ int main(int argc, char** argv)
         EXTERNAL_DEBUG_DEVICE << "No GPS Direction!  ";
       }
 
-      if (refc_timePosGps.isPositionReceived())
+      if (rc_timePosGps.isPositionReceived())
       { // position received
-        EXTERNAL_DEBUG_DEVICE << "  Pos (" << refc_timePosGps.getGpsPositionUpdateAge() <<" msec old) "
-                              << "Lat="    << refc_timePosGps.getGpsLatitudeDegree10Minus7() << " "
-                              << "Lon="    << refc_timePosGps.getGpsLongitudeDegree10Minus7();
+        EXTERNAL_DEBUG_DEVICE << "  Pos (" << rc_timePosGps.getGpsPositionUpdateAge() <<" msec old) "
+                              << "Lat="    << rc_timePosGps.getGpsLatitudeDegree10Minus7() << " "
+                              << "Lon="    << rc_timePosGps.getGpsLongitudeDegree10Minus7();
       }
-      if (refc_timePosGps.isDirectionReceived())
+      if (rc_timePosGps.isDirectionReceived())
       { // direction received
-        EXTERNAL_DEBUG_DEVICE << "  Dir ("      << refc_timePosGps.getGpsDirectionUpdateAge() <<" msec old) "
-                              << "Speed(cm/s)=" << refc_timePosGps.getGpsSpeedCmSec() << "   "
-                              << "Course="   << (((double (refc_timePosGps.getGpsCourseRad10Minus4())/10000) *360)/(2*3.1415926535));
+        EXTERNAL_DEBUG_DEVICE << "  Dir ("      << rc_timePosGps.getGpsDirectionUpdateAge() <<" msec old) "
+                              << "Speed(cm/s)=" << rc_timePosGps.getGpsSpeedCmSec() << "   "
+                              << "Course="   << (((double (rc_timePosGps.getGpsCourseRad10Minus4())/10000) *360)/(2*3.1415926535));
       }
 
       EXTERNAL_DEBUG_DEVICE << EXTERNAL_DEBUG_DEVICE_ENDL;

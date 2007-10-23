@@ -80,12 +80,12 @@ public:
 
   /** deliver amount of ISO members in monitor list which optional (!!)
     match the condition of address claim state
-    @param rb_forceClaimedAddress true -> only members with claimed address are used
+    @param ab_forceClaimedAddress true -> only members with claimed address are used
           (optional, default false)
     @return amount of ISO members with claimed address
   */
-  uint8_t isoMemberCnt(bool rb_forceClaimedAddress = false)
-  { return IsoMonitor_c::isoMemberCnt(rb_forceClaimedAddress); }
+  uint8_t isoMemberCnt(bool ab_forceClaimedAddress = false)
+  { return IsoMonitor_c::isoMemberCnt(ab_forceClaimedAddress); }
 
   /** deliver the n'th ISO member in monitor list which optional (!!)
     match the condition of address claim state
@@ -93,26 +93,26 @@ public:
     in Monitor-List
     @see isoMemberCnt
     possible errors:
-      * Err_c::range there exist less than rui8_ind members with claimed address
-    @param rui8_ind position of the wanted member in the
-                 sublist of members (first item has rui8_ind == 0 !!)
+      * Err_c::range there exist less than aui8_ind members with claimed address
+    @param aui8_ind position of the wanted member in the
+                 sublist of members (first item has aui8_ind == 0 !!)
                  with the wanted property
-    @param rb_forceClaimedAddress true -> only members with claimed address are used
+    @param ab_forceClaimedAddress true -> only members with claimed address are used
           (optional, default false)
     @return reference to searched element
   */
-  iIsoItem_c& isoMemberInd(uint8_t rui8_ind, bool rb_forceClaimedAddress = false)
-  { return static_cast<iIsoItem_c&>(IsoMonitor_c::isoMemberInd( rui8_ind, rb_forceClaimedAddress )); }
+  iIsoItem_c& isoMemberInd(uint8_t aui8_ind, bool ab_forceClaimedAddress = false)
+  { return static_cast<iIsoItem_c&>(IsoMonitor_c::isoMemberInd( aui8_ind, ab_forceClaimedAddress )); }
 
   /** deliver the count of members in the Monitor-List with given DEVCLASS (variable POS)
     which optional (!!) match the condition of address claim state
-    @param rui8_devClass searched DEVCLASS code
-    @param rb_forceClaimedAddress true -> only members with claimed address are used
+    @param aui8_devClass searched DEVCLASS code
+    @param ab_forceClaimedAddress true -> only members with claimed address are used
           (optional, default false)
-    @return count of members in Monitor-List with DEVCLASS == rui8_devClass
+    @return count of members in Monitor-List with DEVCLASS == aui8_devClass
   */
-  uint8_t isoMemberDevClassCnt(uint8_t rui8_devClass, bool rb_forceClaimedAddress = false)
-  { return IsoMonitor_c::isoMemberDevClassCnt( rui8_devClass, rb_forceClaimedAddress );}
+  uint8_t isoMemberDevClassCnt(uint8_t aui8_devClass, bool ab_forceClaimedAddress = false)
+  { return IsoMonitor_c::isoMemberDevClassCnt( aui8_devClass, ab_forceClaimedAddress );}
 
   /** deliver one of the members with specific DEVCLASS
     which optional (!!) match the condition of address claim state
@@ -120,75 +120,75 @@ public:
     optional (!!) property are registered in Monitor-List
     @see isoMemberDevClassCnt
     possible errors:
-      * Err_c::range there exist less than rui8_ind members with DEVCLASS rui8_devClass
-   @param rui8_devClass searched DEVCLASS
-   @param rui8_ind position of the wanted member in the
-                 sublist of member with given DEVCLASS (first item has rui8_ind == 0 !!)
-   @param rb_forceClaimedAddress true -> only members with claimed address are used
+      * Err_c::range there exist less than aui8_ind members with DEVCLASS aui8_devClass
+   @param aui8_devClass searched DEVCLASS
+   @param aui8_ind position of the wanted member in the
+                 sublist of member with given DEVCLASS (first item has aui8_ind == 0 !!)
+   @param ab_forceClaimedAddress true -> only members with claimed address are used
          (optional, default false)
    @return reference to searched element
   */
-  iIsoItem_c& isoMemberDevClassInd(uint8_t rui8_devClass, uint8_t rui8_ind, bool rb_forceClaimedAddress = false)
-  { return static_cast<iIsoItem_c&>(IsoMonitor_c::isoMemberDevClassInd( rui8_devClass, rui8_ind, rb_forceClaimedAddress ));}
+  iIsoItem_c& isoMemberDevClassInd(uint8_t aui8_devClass, uint8_t aui8_ind, bool ab_forceClaimedAddress = false)
+  { return static_cast<iIsoItem_c&>(IsoMonitor_c::isoMemberDevClassInd( aui8_devClass, aui8_ind, ab_forceClaimedAddress ));}
 
   /** check if a memberItem with given ISOName exist
     which optional (!!) match the condition of address claim state
     and update local pc_isoMemberCache
-    @param rc_isoName searched ISOName
-    @param rb_forceClaimedAddress true -> only members with claimed address are used
+    @param ac_isoName searched ISOName
+    @param ab_forceClaimedAddress true -> only members with claimed address are used
           (optional, default false)
     @return true -> searched member exist
   */
-  bool existIsoMemberISOName(const iIsoName_c& rc_isoName, bool rb_forceClaimedAddress = false)
-  { return IsoMonitor_c::existIsoMemberISOName(rc_isoName, rb_forceClaimedAddress );}
+  bool existIsoMemberISOName(const iIsoName_c& ac_isoName, bool ab_forceClaimedAddress = false)
+  { return IsoMonitor_c::existIsoMemberISOName(ac_isoName, ab_forceClaimedAddress );}
 
   /** check if a member with given number exist
     which optional (!!) match the condition of address claim state
     and update local pc_isoMemberCache
-    @param rui8_nr searched member number
+    @param aui8_nr searched member number
     @return true -> item found
   */
-  bool existIsoMemberNr(uint8_t rui8_nr)
-  { return IsoMonitor_c::existIsoMemberNr( rui8_nr );}
+  bool existIsoMemberNr(uint8_t aui8_nr)
+  { return IsoMonitor_c::existIsoMemberNr( aui8_nr );}
 
   /** check if member is in member list with wanted ISOName,
     adapt instance if member with claimed address with other device class inst exist
-    @param refc_isoName ISOName to search (-> it's updated if member with claimed address with other dev class inst is found)
-    @return true -> member with claimed address with given DEVCLASS found (and refc_isoName has now its ISOName)
+    @param rc_isoName ISOName to search (-> it's updated if member with claimed address with other dev class inst is found)
+    @return true -> member with claimed address with given DEVCLASS found (and rc_isoName has now its ISOName)
   */
-  bool isoDevClass2ISONameClaimedAddress(iIsoName_c &refc_isoName)
-	{ return IsoMonitor_c::isoDevClass2ISONameClaimedAddress( refc_isoName);}
+  bool isoDevClass2ISONameClaimedAddress(iIsoName_c &rc_isoName)
+	{ return IsoMonitor_c::isoDevClass2ISONameClaimedAddress( rc_isoName);}
 
   /** deliver member item with given isoName
     (check with existIsoMemberISOName before access to not defined item)
     possible errors:
       * Err_c::elNonexistent on failed search
-    @param rc_isoName searched ISOName
+    @param ac_isoName searched ISOName
     @return reference to searched ISOItem
      @exception containerElementNonexistant
   */
-  iIsoItem_c& isoMemberISOName(const iIsoName_c& rc_isoName, bool rb_forceClaimedAddress = false)
-    { return static_cast<iIsoItem_c&>(IsoMonitor_c::isoMemberISOName( rc_isoName, rb_forceClaimedAddress));}
+  iIsoItem_c& isoMemberISOName(const iIsoName_c& ac_isoName, bool ab_forceClaimedAddress = false)
+    { return static_cast<iIsoItem_c&>(IsoMonitor_c::isoMemberISOName( ac_isoName, ab_forceClaimedAddress));}
 
   /** deliver member item with given nr
     (check with existIsoMemberNr before access to not defined item)
     possible errors:
       * Err_c::elNonexistent on failed search
-    @param rui8_nr searched number
+    @param aui8_nr searched number
     @return reference to searched ISOItem
      @exception containerElementNonexistant
   */
-  iIsoItem_c& isoMemberNr(uint8_t rui8_nr) { return static_cast<iIsoItem_c&>(IsoMonitor_c::isoMemberNr( rui8_nr));}
+  iIsoItem_c& isoMemberNr(uint8_t aui8_nr) { return static_cast<iIsoItem_c&>(IsoMonitor_c::isoMemberNr( aui8_nr));}
 
   /** deliver member item with given ISOName, set pointed bool var to true on success
     and set a Member Array Iterator to the result
-    @param rc_isoName searched ISOName
+    @param ac_isoName searched ISOName
     @param pb_success bool pointer to store the success (true on success)
     @param pbc_iter optional member array iterator which points to searched IsoItem_c on success
     @return reference to the searched item
   */
-  iIsoItem_c& isoMemberISOName(const iIsoName_c& rc_isoName, bool *const pb_success, bool rb_forceClaimedAddress = false )
-  { return static_cast<iIsoItem_c&>(IsoMonitor_c::isoMemberISOName( rc_isoName, pb_success, rb_forceClaimedAddress ));}
+  iIsoItem_c& isoMemberISOName(const iIsoName_c& ac_isoName, bool *const pb_success, bool ab_forceClaimedAddress = false )
+  { return static_cast<iIsoItem_c&>(IsoMonitor_c::isoMemberISOName( ac_isoName, pb_success, ab_forceClaimedAddress ));}
 
   /** check if one of the own local members is active with claimed address at ISO11783
     @return true -> at least one of the own identities is active with claimed address at ISO11783
@@ -210,15 +210,15 @@ public:
   /** command switching to and from special service / diagnostic mode.
       setting the flag c_serviceTool controls appropriate handling
     */
-  void setDiagnosticMode( const iIsoName_c& rrefc_serviceTool = iIsoName_c::iIsoNameUnspecified())
-  { IsoMonitor_c::setDiagnosticMode( rrefc_serviceTool );}
+  void setDiagnosticMode( const iIsoName_c& arc_serviceTool = iIsoName_c::iIsoNameUnspecified())
+  { IsoMonitor_c::setDiagnosticMode( arc_serviceTool );}
 
 private:
   /** allow getIisoMonitorInstance() access to shielded base class.
       otherwise __IsoAgLib::getIsoMonitorInstance() wouldn't be accepted by compiler
     */
   #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
-  friend iIsoMonitor_c& getIisoMonitorInstance( uint8_t rui8_instance );
+  friend iIsoMonitor_c& getIisoMonitorInstance( uint8_t aui8_instance );
   #else
   friend iIsoMonitor_c& getIisoMonitorInstance( void );
   #endif
@@ -234,8 +234,8 @@ private:
   /** C-style function, to get access to the unique IsoMonitor_c singleton instance
     * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
     */
-  inline iIsoMonitor_c& getIisoMonitorInstance( uint8_t rui8_instance = 0 )
-  { return static_cast<iIsoMonitor_c&>(__IsoAgLib::getIsoMonitorInstance(rui8_instance));}
+  inline iIsoMonitor_c& getIisoMonitorInstance( uint8_t aui8_instance = 0 )
+  { return static_cast<iIsoMonitor_c&>(__IsoAgLib::getIsoMonitorInstance(aui8_instance));}
 #else
   /** C-style function, to get access to the unique IsoMonitor_c singleton instance */
   inline iIsoMonitor_c& getIisoMonitorInstance( void )

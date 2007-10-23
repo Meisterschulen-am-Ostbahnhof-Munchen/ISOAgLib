@@ -97,22 +97,22 @@ SensorI_c& getSensorInstance( void ) { return SensorI_c::instance();};
 
   possible errors:
       * iLibErr_c::Range given limits are not possible
-  @param rb_digitalFirst smallest allowed digital input channel number (DIGITAL_INPUT_MIN)
-  @param rb_digitalLast greatest allowed digital input channel number (DIGITAL_INPUT_MAX)
-  @param rb_analogFirst smallest allowed analog input channel number (ANALOG_INPUT_MIN)
-  @param rb_analogLast greatest allowed analog input channel number (ANALOG_INPUT_MAX)
-  @param rb_counterFirst smallest allowed counter input channel number (COUNTER_INPUT_MIN)
-  @param rb_counterLast greatest allowed counter input channel number (COUNTER_INPUT_MAX)
+  @param ab_digitalFirst smallest allowed digital input channel number (DIGITAL_INPUT_MIN)
+  @param ab_digitalLast greatest allowed digital input channel number (DIGITAL_INPUT_MAX)
+  @param ab_analogFirst smallest allowed analog input channel number (ANALOG_INPUT_MIN)
+  @param ab_analogLast greatest allowed analog input channel number (ANALOG_INPUT_MAX)
+  @param ab_counterFirst smallest allowed counter input channel number (COUNTER_INPUT_MIN)
+  @param ab_counterLast greatest allowed counter input channel number (COUNTER_INPUT_MAX)
   @see isoaglib_config.h
 */
-void SensorI_c::init(uint8_t rb_digitalFirst, uint8_t rb_digitalLast, uint8_t rb_analogFirst, uint8_t rb_analogLast,
-           uint8_t rb_counterFirst, uint8_t rb_counterLast)
+void SensorI_c::init(uint8_t ab_digitalFirst, uint8_t ab_digitalLast, uint8_t ab_analogFirst, uint8_t ab_analogLast,
+           uint8_t ab_counterFirst, uint8_t ab_counterLast)
 { // store the channel limits for dig and analog
   // verify that System is int
   getSystemInstance().init();
-  setDigitalLimits(rb_digitalFirst, rb_digitalLast);
-  setAnalogLimits(rb_analogFirst, rb_analogLast);
-  setCounterLimits(rb_counterFirst, rb_counterLast);
+  setDigitalLimits(ab_digitalFirst, ab_digitalLast);
+  setAnalogLimits(ab_analogFirst, ab_analogLast);
+  setCounterLimits(ab_counterFirst, ab_counterLast);
 }
 
 /** destructor for the sensor input manager object */
@@ -123,22 +123,22 @@ SensorI_c::~SensorI_c(){
   set the limits for digital input channels (first setting can be done by constructor parameters)
   possible errors:
       * iLibErr_c::Range given limits are not possible
-  @param rb_digitalFirst number of the smallest allowed digital input channel
-  @param rb_digitalLast number of the greatest allowed digital input channel
+  @param ab_digitalFirst number of the smallest allowed digital input channel
+  @param ab_digitalLast number of the greatest allowed digital input channel
 */
-void SensorI_c::setDigitalLimits(uint8_t rb_digitalFirst, uint8_t rb_digitalLast){
+void SensorI_c::setDigitalLimits(uint8_t ab_digitalFirst, uint8_t ab_digitalLast){
   // check if input values are correct
   if (
-       (rb_digitalFirst <= DIGITAL_INPUT_MAX)
+       (ab_digitalFirst <= DIGITAL_INPUT_MAX)
 #ifdef DIGITAL_INPUT_MIN_GREATER_ZERO
-     &&(rb_digitalFirst >= DIGITAL_INPUT_MIN)
-     &&(rb_digitalLast >= DIGITAL_INPUT_MIN)
+     &&(ab_digitalFirst >= DIGITAL_INPUT_MIN)
+     &&(ab_digitalLast >= DIGITAL_INPUT_MIN)
 #endif
-     &&(rb_digitalLast <= DIGITAL_INPUT_MAX)
+     &&(ab_digitalLast <= DIGITAL_INPUT_MAX)
      )
   { // correct range
-    setDigitalFirst(rb_digitalFirst);
-    setDigitalLast(rb_digitalLast);
+    setDigitalFirst(ab_digitalFirst);
+    setDigitalLast(ab_digitalLast);
   }
   else
   { // wrong range
@@ -151,22 +151,22 @@ void SensorI_c::setDigitalLimits(uint8_t rb_digitalFirst, uint8_t rb_digitalLast
 
   possible errors:
       * iLibErr_c::Range given limits are not possible
-  @param rb_analogFirst number of the smallest allowed analog input channel
-  @param rb_analogLast number of the greatest allowed analog input channel
+  @param ab_analogFirst number of the smallest allowed analog input channel
+  @param ab_analogLast number of the greatest allowed analog input channel
 */
-void SensorI_c::setAnalogLimits(uint8_t rb_analogFirst, uint8_t rb_analogLast){
+void SensorI_c::setAnalogLimits(uint8_t ab_analogFirst, uint8_t ab_analogLast){
   // check if input values are correct
   if (
-       (rb_analogFirst <= ANALOG_INPUT_MAX)
+       (ab_analogFirst <= ANALOG_INPUT_MAX)
 #ifdef ANALOG_INPUT_MIN_GREATER_ZERO
-     &&(rb_analogFirst >= ANALOG_INPUT_MIN)
-     &&(rb_analogLast >= ANALOG_INPUT_MIN)
+     &&(ab_analogFirst >= ANALOG_INPUT_MIN)
+     &&(ab_analogLast >= ANALOG_INPUT_MIN)
 #endif
-     &&(rb_analogLast <= ANALOG_INPUT_MAX)
+     &&(ab_analogLast <= ANALOG_INPUT_MAX)
      )
   { // correct range
-    setAnalogFirst(rb_analogFirst);
-    setAnalogLast(rb_analogLast);
+    setAnalogFirst(ab_analogFirst);
+    setAnalogLast(ab_analogLast);
   }
   else
   { // wrong range
@@ -179,22 +179,22 @@ void SensorI_c::setAnalogLimits(uint8_t rb_analogFirst, uint8_t rb_analogLast){
 
   possible errors:
       * iLibErr_c::Range given limits are not possible
-  @param rb_counterFirst number of the smallest allowed counter input channel
-  @param rb_counterLast number of the greatest allowed counter input channel
+  @param ab_counterFirst number of the smallest allowed counter input channel
+  @param ab_counterLast number of the greatest allowed counter input channel
 */
-void SensorI_c::setCounterLimits(uint8_t rb_counterFirst, uint8_t rb_counterLast){
+void SensorI_c::setCounterLimits(uint8_t ab_counterFirst, uint8_t ab_counterLast){
   // check if input values are correct
   if (
-       (rb_counterFirst <= COUNTER_INPUT_MAX)
+       (ab_counterFirst <= COUNTER_INPUT_MAX)
 #ifdef COUNTER_INPUT_MIN_GREATER_ZERO
-     &&(rb_counterFirst >= COUNTER_INPUT_MIN)
-     &&(rb_counterLast >= COUNTER_INPUT_MIN)
+     &&(ab_counterFirst >= COUNTER_INPUT_MIN)
+     &&(ab_counterLast >= COUNTER_INPUT_MIN)
 #endif
-     &&(rb_counterLast <= COUNTER_INPUT_MAX)
+     &&(ab_counterLast <= COUNTER_INPUT_MAX)
      )
   { // correct range
-    setCounterFirst(rb_counterFirst);
-    setCounterLast(rb_counterLast);
+    setCounterFirst(ab_counterFirst);
+    setCounterLast(ab_counterLast);
   }
   else
   { // wrong range

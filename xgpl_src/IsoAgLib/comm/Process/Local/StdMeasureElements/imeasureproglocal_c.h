@@ -81,7 +81,7 @@ public:
     deliver med val
     @return actual medium value
   */
-  virtual int32_t med(bool rb_sendRequest = false) const {return MeasureProgLocal_c::med(rb_sendRequest);};
+  virtual int32_t med(bool ab_sendRequest = false) const {return MeasureProgLocal_c::med(ab_sendRequest);};
 
 
   /**
@@ -119,8 +119,8 @@ public:
     deliver med val
     @return actual medium value
   */
-  virtual float medFloat(bool rb_sendRequest = false) const
-    {return MeasureProgLocal_c::medFloat(rb_sendRequest);};
+  virtual float medFloat(bool ab_sendRequest = false) const
+    {return MeasureProgLocal_c::medFloat(ab_sendRequest);};
 
 
   /**

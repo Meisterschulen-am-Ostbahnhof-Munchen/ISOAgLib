@@ -107,16 +107,16 @@ namespace __HAL {
     @param channel number from interval [0..maxNo]
     @return according channel number for __HAL call
   */
-  inline uint8_t getPwmoutAdcCheckNr(uint8_t rb_channel)
-    { return GET_OUT_1-rb_channel; }
+  inline uint8_t getPwmoutAdcCheckNr(uint8_t ab_channel)
+    { return GET_OUT_1-ab_channel; }
   /**
     deliver channel number for checking/requesting of
     current output through given PWM output
     @param channel number from interval [0..maxNo]
     @return according channel number for __HAL call
   */
-  inline uint8_t getPwmCurrentCheckNr(uint8_t rb_channel)
-    {return GET_I_PWM_1-rb_channel;}
+  inline uint8_t getPwmCurrentCheckNr(uint8_t ab_channel)
+    {return GET_I_PWM_1-ab_channel;}
 }
 /**
    namespace with layer of inline (cost NO overhead -> compiler replaces
@@ -155,18 +155,18 @@ IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
 
   /**
     retrieve maximal PWM frequency -> setting to this value results in maximal output
-    @param rui8_channel channel number of output [OUT1..OUT2]
+    @param aui8_channel channel number of output [OUT1..OUT2]
     @return max possible PWM value
   */
-  inline uint16_t getMaxPwmDigout(uint8_t rui8_channel)
+  inline uint16_t getMaxPwmDigout(uint8_t aui8_channel)
   {
   __HAL::tOutput tOutputstatus;
-  int16_t retval = __HAL::get_digout_status(rui8_channel,&tOutputstatus);
+  int16_t retval = __HAL::get_digout_status(aui8_channel,&tOutputstatus);
 
 #if defined( DEBUG_HAL )
 IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
 << "get_digout_status( "
-<< (uint16_t)rui8_channel << ", "
+<< (uint16_t)aui8_channel << ", "
 << "&tOutputstatus"
 << " ) returns " << retval << "\r";
 #endif
@@ -176,18 +176,18 @@ IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
 
   /**
     set pwm value 0 ... 100 %
-    @param rui8_channel channel number of output [OUT1..OUT2]
+    @param aui8_channel channel number of output [OUT1..OUT2]
     @param wPWMValue Value to set; depends on configured PWM freq; [0..0xFFFF]
     @return error state (C_NO_ERR == o.k.; C_RANGE == wrong channel)
   */
-  inline int16_t setDigout(uint8_t rui8_channel, uint16_t wPWMValue)
+  inline int16_t setDigout(uint8_t aui8_channel, uint16_t wPWMValue)
     {
-    int16_t retval = __HAL::set_digout(rui8_channel, wPWMValue);
+    int16_t retval = __HAL::set_digout(aui8_channel, wPWMValue);
 
 #if defined( DEBUG_HAL )
 IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
 << "set_digout( "
-<< (uint16_t)rui8_channel << ", "
+<< (uint16_t)aui8_channel << ", "
 << (uint16_t)wPWMValue
 << " ) returns " << retval << "\r";
 #endif
@@ -220,20 +220,20 @@ IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
     };
 
   /** deliver the actual current of the digital output
-    * @param rui8_channel channel to check
+    * @param aui8_channel channel to check
     * @return current in [mA] ( if specified channel doesn't support current measurement, -1 is returned )
     */
-  inline int16_t getDigoutCurrent( uint8_t rui8_channel )
+  inline int16_t getDigoutCurrent( uint8_t aui8_channel )
   {
-//    return (rui8_channel <= OUT4) ? __HAL::get_adc( __HAL::getPwmCurrentCheckNr(rui8_channel) ) : -1;
-	if( rui8_channel <= OUT4 )
+//    return (aui8_channel <= OUT4) ? __HAL::get_adc( __HAL::getPwmCurrentCheckNr(aui8_channel) ) : -1;
+	if( aui8_channel <= OUT4 )
 		{
-		int16_t retval = __HAL::get_adc( __HAL::getPwmCurrentCheckNr(rui8_channel) );
+		int16_t retval = __HAL::get_adc( __HAL::getPwmCurrentCheckNr(aui8_channel) );
 
 #if defined( DEBUG_HAL )
 IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
 << "get_adc( "
-<< (uint16_t)__HAL::getPwmCurrentCheckNr(rui8_channel)
+<< (uint16_t)__HAL::getPwmCurrentCheckNr(aui8_channel)
 << " ) returns " << retval << "\r";
 #endif
 
@@ -249,20 +249,20 @@ IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
 	* if the PWM setting is >0 but has a very low value, so that even under normal
 	* conditions the voltage with connected consuming device is lower than to open
 	* connector state at low level.
-    * @param rui8_channel channel to check
-    * @param rui16_minCurrent minimal allowed current in [mA]
-    * @param rui16_maxCurrent maximum allowed current in [mA]
+    * @param aui8_channel channel to check
+    * @param aui16_minCurrent minimal allowed current in [mA]
+    * @param aui16_maxCurrent maximum allowed current in [mA]
     * @return HAL_NO_ERR, HAL_DIGOUT_OPEN, HAL_DIGOUT_SHORTCUT, HAL_DIGOUT_OVERTEMP,
               HAL_DIGOUT_UNDERVOLT, HAL_DIGOUT_OVERVOLT
     */
-  int16_t getDigoutDiagnose(uint8_t rui8_channel, uint16_t rui16_minCurrent, uint16_t rui16_maxCurrent);
+  int16_t getDigoutDiagnose(uint8_t aui8_channel, uint16_t aui16_minCurrent, uint16_t aui16_maxCurrent);
 
 	/** deliver the measure voltage at the PWM output.
 		Use this for application specific state evaluation for cases, where the standard
 		getDigoutDiagnose function can go wrong.
 		@return voltage at PWM channel [mV]
 	*/
-	int16_t getDigoutAdc( uint8_t rui8_channel );
+	int16_t getDigoutAdc( uint8_t aui8_channel );
 
   /*@}*/
 }

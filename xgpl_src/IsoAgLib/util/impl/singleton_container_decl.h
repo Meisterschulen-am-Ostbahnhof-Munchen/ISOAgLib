@@ -9,19 +9,19 @@
   void gluemacs( unregister, GET_CL_DECL() )( GET_CL_DECL()* pc_client );
   /** check if an instance is registered with the given Key
     * the instantiating class must have a operator==( K )
-    * @param rt_key key value to identify the searched entry
+    * @param at_key key value to identify the searched entry
     * @return true -> searched item exists
     */
-  bool gluemacs( exist, GET_CL_DECL() )( GET_K_DECL() rt_key );
+  bool gluemacs( exist, GET_CL_DECL() )( GET_K_DECL() at_key );
   /** deliver a reference to a stored client, for which
-    * operator==( rt_key ) result TRUE
+    * operator==( at_key ) result TRUE
     * IMPORTANT: the instantiating class MUST have a function
     * registerAccessFlt( void ), where an individual reaction on
     * undefined access is implemented
-    * @param rt_key key of the searched client instance
+    * @param at_key key of the searched client instance
     * @return instance of the searched client instance
     */
-  GET_CL_DECL()& gluemacs( get, GET_CL_DECL() ) ( GET_K_DECL() rt_key );
+  GET_CL_DECL()& gluemacs( get, GET_CL_DECL() ) ( GET_K_DECL() at_key );
 
   /** vector with pointers to registered client instances */
 	#ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
@@ -77,35 +77,35 @@ template<TEMPLATE_DECL> void CLASS_NAME()<TEMPLATE_QUAL>::gluemacs( unregister, 
 
 /** check if an instance is registered with the given Key
   * the instantiating class must have a operator==( K )
-  * @param rt_key key value to identify the searched entry
+  * @param at_key key value to identify the searched entry
   * @return true -> searched item exists
   */
-template<TEMPLATE_DECL> bool CLASS_NAME()<TEMPLATE_QUAL>::gluemacs( exist, GET_CL_DEF() )( GET_K_DEF() rt_key )
+template<TEMPLATE_DECL> bool CLASS_NAME()<TEMPLATE_QUAL>::gluemacs( exist, GET_CL_DEF() )( GET_K_DEF() at_key )
 { // first check if the actual search cache iterator points to the searched item
-  if ( ( gluemacs( pc_searchCache, GET_CL_DEF() ) != gluemacs( c_arrClient, GET_CL_DEF() ).end() ) && ( (*gluemacs( pc_searchCache, GET_CL_DEF() ))->operator==( rt_key ) ) )
+  if ( ( gluemacs( pc_searchCache, GET_CL_DEF() ) != gluemacs( c_arrClient, GET_CL_DEF() ).end() ) && ( (*gluemacs( pc_searchCache, GET_CL_DEF() ))->operator==( at_key ) ) )
     return true;
   // now search whole container
   for ( gluemacs( pc_searchCache, GET_CL_DEF() ) = gluemacs( c_arrClient, GET_CL_DEF() ).begin();
         gluemacs( pc_searchCache, GET_CL_DEF() ) != gluemacs( c_arrClient, GET_CL_DEF() ).end();
         gluemacs( pc_searchCache, GET_CL_DEF() )++)
-    if ( (*gluemacs( pc_searchCache, GET_CL_DEF() ))->operator==( rt_key ) ) return true;
+    if ( (*gluemacs( pc_searchCache, GET_CL_DEF() ))->operator==( at_key ) ) return true;
   // if execution reaches this point, the searched element is not found
   // set cache to array begin
   gluemacs( pc_searchCache, GET_CL_DEF() ) = gluemacs( c_arrClient, GET_CL_DEF() ).begin();
   return false;
 }
 /** deliver a reference to a stored client, for which
-  * operator==( rt_key ) result TRUE
+  * operator==( at_key ) result TRUE
   * IMPORTANT: the instantiating class MUST have a function
   * registerAccessFlt( void ), where an individual reaction on
   * undefined access is implemented
-  * @param rt_key key of the searched client instance
+  * @param at_key key of the searched client instance
   * @return instance of the searched client instance
   */
-template<TEMPLATE_DECL> GET_CL_DEF()& CLASS_NAME()<TEMPLATE_QUAL>::gluemacs( get, GET_CL_DEF() )( GET_K_DEF() rt_key )
+template<TEMPLATE_DECL> GET_CL_DEF()& CLASS_NAME()<TEMPLATE_QUAL>::gluemacs( get, GET_CL_DEF() )( GET_K_DEF() at_key )
 { // use gluemacs( exist, GET_CL_DEF() ) function to search for element -> this function sets cache
   // to searched element on success
-  if ( !gluemacs( exist, GET_CL_DEF() )( rt_key ) )
+  if ( !gluemacs( exist, GET_CL_DEF() )( at_key ) )
   { // if execution reaches this point, the searched element is NOT found
     CLASS_NAME()<TEMPLATE_QUAL>::autoInstance().registerAccessFlt();
     // gluemacs( exist, GET_CL_DEF() ) sets cache to begin of array if searched item not found -> return it

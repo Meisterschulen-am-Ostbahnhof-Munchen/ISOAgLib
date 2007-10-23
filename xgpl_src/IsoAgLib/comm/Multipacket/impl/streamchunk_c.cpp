@@ -99,12 +99,12 @@ namespace __IsoAgLib {
 //! Constructor: initializes the list and local variables
 //! create one <list> element including one Chunk,
 //! init pc_iterWriteChunk, pc_iterParsedChunk, ui32_writeCnt, ui32_parsedCnt
-StreamChunk_c::StreamChunk_c (StreamType_t rt_streamType,
-                              const IsoAgLib::ReceiveStreamIdentifier_c& rc_rsi,
-                              uint32_t rui32_msgSize
+StreamChunk_c::StreamChunk_c (StreamType_t at_streamType,
+                              const IsoAgLib::ReceiveStreamIdentifier_c& ac_rsi,
+                              uint32_t aui32_msgSize
                               SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA
-                             ,bool rb_skipCtsAwait)
-    : Stream_c (rt_streamType, rc_rsi, rui32_msgSize SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA , rb_skipCtsAwait)
+                             ,bool ab_skipCtsAwait)
+    : Stream_c (at_streamType, ac_rsi, aui32_msgSize SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA , ab_skipCtsAwait)
 {
   /// Do NOTHING more here
   /// User HAS TO call "immediateInitAfterConstruction" **immediately** AFTER Construction!
@@ -131,28 +131,28 @@ StreamChunk_c::immediateInitAfterConstruction()
 
 
 
-StreamChunk_c::StreamChunk_c( const StreamChunk_c& rrefc_src )
-  : Stream_c( rrefc_src ),
-    list_chunks( rrefc_src.list_chunks ),
-    ui32_writeCnt ( rrefc_src.ui32_writeCnt ),
-    ui32_parsedCnt( rrefc_src.ui32_parsedCnt )
+StreamChunk_c::StreamChunk_c( const StreamChunk_c& arc_src )
+  : Stream_c( arc_src ),
+    list_chunks( arc_src.list_chunks ),
+    ui32_writeCnt ( arc_src.ui32_writeCnt ),
+    ui32_parsedCnt( arc_src.ui32_parsedCnt )
 {
-  copyIterator (rrefc_src.list_chunks, rrefc_src.pc_iterWriteChunk,  list_chunks, pc_iterWriteChunk);
-  copyIterator (rrefc_src.list_chunks, rrefc_src.pc_iterParsedChunk, list_chunks, pc_iterParsedChunk);
+  copyIterator (arc_src.list_chunks, arc_src.pc_iterWriteChunk,  list_chunks, pc_iterWriteChunk);
+  copyIterator (arc_src.list_chunks, arc_src.pc_iterParsedChunk, list_chunks, pc_iterParsedChunk);
 }
 
 
 
-const StreamChunk_c& StreamChunk_c::operator=( const StreamChunk_c& rrefc_src )
+const StreamChunk_c& StreamChunk_c::operator=( const StreamChunk_c& arc_src )
 {
-  Stream_c::operator=( rrefc_src );
+  Stream_c::operator=( arc_src );
 
-  list_chunks = rrefc_src.list_chunks;
-  copyIterator (rrefc_src.list_chunks, rrefc_src.pc_iterWriteChunk,  list_chunks, pc_iterWriteChunk);
-  copyIterator (rrefc_src.list_chunks, rrefc_src.pc_iterParsedChunk, list_chunks, pc_iterParsedChunk);
-  ui32_writeCnt  = rrefc_src.ui32_writeCnt;
-  ui32_parsedCnt = rrefc_src.ui32_parsedCnt;
-  return rrefc_src;
+  list_chunks = arc_src.list_chunks;
+  copyIterator (arc_src.list_chunks, arc_src.pc_iterWriteChunk,  list_chunks, pc_iterWriteChunk);
+  copyIterator (arc_src.list_chunks, arc_src.pc_iterParsedChunk, list_chunks, pc_iterParsedChunk);
+  ui32_writeCnt  = arc_src.ui32_writeCnt;
+  ui32_parsedCnt = arc_src.ui32_parsedCnt;
+  return arc_src;
 }
 
 

@@ -116,13 +116,13 @@ class vtObjectStringStreamer_c : public IsoAgLib::iMultiSendStreamer_c
 
   void set5ByteCommandHeader(uint8_t* destinBuffer);
 
-  void setStringToStream( const char* rpc_stringToStream ) { pc_stringToStream = rpc_stringToStream;}
-  void setStrLenToSend( uint16_t rui16_strLenToSend ) { ui16_strLenToSend = rui16_strLenToSend;}
+  void setStringToStream( const char* apc_stringToStream ) { pc_stringToStream = apc_stringToStream;}
+  void setStrLenToSend( uint16_t aui16_strLenToSend ) { ui16_strLenToSend = aui16_strLenToSend;}
 
   //  Operation: getID
   uint16_t getID() { return vtObject_a_ID; }
   //  Operation: setID
-  void setID( uint16_t rui16_id ) { vtObject_a_ID = rui16_id; }
+  void setID( uint16_t aui16_id ) { vtObject_a_ID = aui16_id; }
 
 private:
   // ID from the connected __IsoAgLib::vtObject_c
@@ -150,8 +150,8 @@ class vtObjectString_c : public vtObject_c
  protected:
 
   // those both will be set before multisending is getting started.
-  void setStringToStream( const char* rpc_stringToStream );
-  void setStrLenToSend( uint16_t rui16_strLenToSend );
+  void setStringToStream( const char* apc_stringToStream );
+  void setStrLenToSend( uint16_t aui16_strLenToSend );
 
  private:
   // streaming helper class which is called by the sending class

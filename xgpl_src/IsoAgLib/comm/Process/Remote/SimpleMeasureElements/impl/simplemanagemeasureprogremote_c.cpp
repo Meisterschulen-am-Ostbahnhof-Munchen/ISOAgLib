@@ -99,36 +99,36 @@ namespace __IsoAgLib {
 
 /**
   initialise this SimpleManageMeasureProgRemote_c instance to a well defined initial state
-  @param rpc_processData optional pointer to containing ProcessData instance
+  @param apc_processData optional pointer to containing ProcessData instance
 */
-void SimpleManageMeasureProgRemote_c::init( ProcDataBase_c *const rpc_processData )
+void SimpleManageMeasureProgRemote_c::init( ProcDataBase_c *const apc_processData )
 {
-  ProcessElementBase_c::set( rpc_processData );
+  ProcessElementBase_c::set( apc_processData );
   i32_masterVal = 0;
 }
 /** copy constructor */
-SimpleManageMeasureProgRemote_c::SimpleManageMeasureProgRemote_c( const SimpleManageMeasureProgRemote_c& rrefc_src )
-: ProcessElementBase_c( rrefc_src ),
-  i32_masterVal( rrefc_src.i32_masterVal )
+SimpleManageMeasureProgRemote_c::SimpleManageMeasureProgRemote_c( const SimpleManageMeasureProgRemote_c& arc_src )
+: ProcessElementBase_c( arc_src ),
+  i32_masterVal( arc_src.i32_masterVal )
 {
 }
 /** assignment operator */
-const SimpleManageMeasureProgRemote_c& SimpleManageMeasureProgRemote_c::operator=( const SimpleManageMeasureProgRemote_c& rrefc_src )
+const SimpleManageMeasureProgRemote_c& SimpleManageMeasureProgRemote_c::operator=( const SimpleManageMeasureProgRemote_c& arc_src )
 {
-  ProcessElementBase_c::operator=( rrefc_src );
-  i32_masterVal = rrefc_src.i32_masterVal;
+  ProcessElementBase_c::operator=( arc_src );
+  i32_masterVal = arc_src.i32_masterVal;
   return *this;
 }
 
 /**
   deliver actual measurement value as long
-  @param rb_sendRequest true -> request for new value is sent (optional, default false)
+  @param ab_sendRequest true -> request for new value is sent (optional, default false)
 */
-int32_t SimpleManageMeasureProgRemote_c::masterMeasurementVal(bool rb_sendRequest)
+int32_t SimpleManageMeasureProgRemote_c::masterMeasurementVal(bool ab_sendRequest)
 {
   setValType(i32_val);
   ProcDataRemoteBase_c& c_base = static_cast<ProcDataRemoteBase_c&>(processData());
-  if (rb_sendRequest) {
+  if (ab_sendRequest) {
     // prepare general command in process pkg
     getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */,
                                                                 GeneralCommand_c::exactValue,
@@ -167,13 +167,13 @@ void SimpleManageMeasureProgRemote_c::resetMasterVal()
 #ifdef USE_FLOAT_DATA_TYPE
 /**
   deliver actual measurement value as float
-  @param rb_sendRequest true -> request for new value is sent (optional, default false)
+  @param ab_sendRequest true -> request for new value is sent (optional, default false)
 */
-float SimpleManageMeasureProgRemote_c::masterValFloat(bool rb_sendRequest)
+float SimpleManageMeasureProgRemote_c::masterValFloat(bool ab_sendRequest)
 {
   setValType(float_val);
   ProcDataRemoteBase_c& c_base = static_cast<ProcDataRemoteBase_c&>(processData());
-  if (rb_sendRequest) {
+  if (ab_sendRequest) {
     // prepare general command in process pkg
     getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */,
                                                                 GeneralCommand_c::exactValue,

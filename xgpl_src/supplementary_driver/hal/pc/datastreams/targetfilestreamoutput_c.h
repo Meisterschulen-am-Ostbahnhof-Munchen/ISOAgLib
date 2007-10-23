@@ -110,9 +110,9 @@ class TargetFileStreamOutput_c : public STL_NAMESPACE::ofstream
 
 public:
 	//! open a output stream
-	bool open( STL_NAMESPACE::string& filename, FileMode_t rt_mode ){ return open( filename.c_str(), rt_mode );};
+	bool open( STL_NAMESPACE::string& filename, FileMode_t at_mode ){ return open( filename.c_str(), at_mode );};
 	//! open a output stream
-	bool open( const char* filename, FileMode_t rt_mode );
+	bool open( const char* filename, FileMode_t at_mode );
 	//! close a output stream
   //! @param pathname if pathname != NULL => sync file and path
 	void close( const char* pathname = NULL);

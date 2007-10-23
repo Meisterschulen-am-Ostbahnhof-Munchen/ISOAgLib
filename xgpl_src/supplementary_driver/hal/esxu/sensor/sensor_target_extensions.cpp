@@ -122,12 +122,12 @@ static uint16_t _prevCounter[SENSOR_ARRAY_SIZE];
 	typedef void (*counterIrqFunction)();
 
 
-	void counterIrqFlex(uint8_t rb_channel)
+	void counterIrqFlex(uint8_t ab_channel)
 	{
-	  _pulDiginCounter[rb_channel]++;
+	  _pulDiginCounter[ab_channel]++;
 	  // the config function of input must guarantee, that
 	  // vectors memory are allocated
-	  t_triggerNode *_put_temp = &_pt_diginTriggerTime[rb_channel];
+	  t_triggerNode *_put_temp = &_pt_diginTriggerTime[ab_channel];
 	  uint16_t _wIrqTime = (get_time() & 0xFFFF);
 	  if (_wIrqTime > _put_temp->uiAct) _put_temp->uiPeriod = _wIrqTime - _put_temp->uiAct;
 	  else
@@ -167,28 +167,28 @@ static uint16_t _prevCounter[SENSOR_ARRAY_SIZE];
 /**
   init counter for trigger events on digital input;
   rising edges are counted;
-  @param rui16_timebase timebase to calculate periods, frequency
+  @param aui16_timebase timebase to calculate periods, frequency
                      should be at least longer than longest
                      awaited signal period [msec.]
-  @param rb_risingEdge true -> counter triggers on rising edge; else on falling edge
+  @param ab_risingEdge true -> counter triggers on rising edge; else on falling edge
   @return C_NO_ERR if no error occured
 */
-int16_t init_counter(uint8_t rb_channel, uint16_t rui16_timebase, bool rb_activHigh, bool rb_risingEdge)
+int16_t init_counter(uint8_t ab_channel, uint16_t aui16_timebase, bool ab_activHigh, bool ab_risingEdge)
 {
   int16_t i16_errorState;
 
-  uint8_t b_codeActiv = (rb_activHigh)?HIGH_ACTIVE:LOW_ACTIVE;
-  uint8_t b_codeEdge = (rb_risingEdge)?RISING_EDGE:FALLING_EDGE;
+  uint8_t b_codeActiv = (ab_activHigh)?HIGH_ACTIVE:LOW_ACTIVE;
+  uint8_t b_codeEdge = (ab_risingEdge)?RISING_EDGE:FALLING_EDGE;
 
-  uint32_t ui32_prescale = ( ((uint32_t)rui16_timebase) * get_cpu_freq() * 1000) / 65534;
+  uint32_t ui32_prescale = ( ((uint32_t)aui16_timebase) * get_cpu_freq() * 1000) / 65534;
   /* configure init channel */
-  int16_t ret = init_digin(rb_channel, b_codeEdge, b_codeActiv, NULL);
+  int16_t ret = init_digin(ab_channel, b_codeEdge, b_codeActiv, NULL);
 
 #if defined( DEBUG_HAL )
 uint8_t buf[128];
 CNAMESPACE::sprintf( (char*)buf, "%u ms - init_digin( %u, %u, %u, NULL ) returns %i\r"
 , (uint16_t) __HAL::get_time()
-, (uint16_t) rb_channel
+, (uint16_t) ab_channel
 , (uint16_t) b_codeEdge
 , (uint16_t) b_codeActiv
 , (int16_t) ret
@@ -196,18 +196,18 @@ CNAMESPACE::sprintf( (char*)buf, "%u ms - init_digin( %u, %u, %u, NULL ) returns
 HAL::put_rs232NChar( buf, CNAMESPACE::strlen( (char*)buf ), 0 /*HAL::RS232_over_can_busnum*/ );
 //{
 //IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - " << "init_digin( "
-//<< (uint16_t)rb_channel << ", "
+//<< (uint16_t)ab_channel << ", "
 //<< (uint16_t)b_codeEdge << ", "
 //<< (uint16_t)b_codeActiv << ", NULL ) returns "
 //<< ret << "\r";
-////<< "max pulse width = " << rui16_timebase << " ms\r"
+////<< "max pulse width = " << aui16_timebase << " ms\r"
 ////<< "get_cpu_freq() = " << get_cpu_freq() << " MHz\r";
 //////<< ", ui32_prescale = " << ui32_prescale << "\r";
 //}
 #endif
 
 // NOTE: On ESXu, The prescaler applies to both RPM inputs DIN9 and DIN10
-// So, try to find the best prescaler for both inputs based on the maximum time per pulse in ms given by rui16_timebase
+// So, try to find the best prescaler for both inputs based on the maximum time per pulse in ms given by aui16_timebase
 // The best (highest precision) prescaler is RPM_PRESCALER_MIN
   for( uint8_t ui8_pow = RPM_PRESCALER_MAX; ; ui8_pow-- )
   { /* the prescaler must be configured by (2 << pow) values */
@@ -237,30 +237,30 @@ HAL::put_rs232NChar( buf, CNAMESPACE::strlen( (char*)buf ), 0 /*HAL::RS232_over_
 
   /* clear counter value
    */
-  _pulDiginCounter[rb_channel] = 0;
+  _pulDiginCounter[ab_channel] = 0;
 
 #if 0
   /* clear given timebase */
-  _puiDiginTimebase[rb_channel] = 0;
+  _puiDiginTimebase[ab_channel] = 0;
 
   if (ui32_prescale > 1024)
   { /* standard BIOS frequency and period methods doesn´t fit for
      * the wanted timebase -> use extension functions -> allocate needed vars
      */
-    CNAMESPACE::memset(&_pt_diginTriggerTime[rb_channel], 0, sizeof(t_triggerNode));
+    CNAMESPACE::memset(&_pt_diginTriggerTime[ab_channel], 0, sizeof(t_triggerNode));
   }
 #endif
 
 // Really need to call this for each input when the prescaler changes
-uint16_t wTime = (uint32_t)rui16_timebase * 1000 * get_cpu_freq() >> (_b_prescale_1_Index+3);
+uint16_t wTime = (uint32_t)aui16_timebase * 1000 * get_cpu_freq() >> (_b_prescale_1_Index+3);
 uint16_t numPulsesToAvg = 1;
-int16_t configretval = config_digin_freq( rb_channel, wTime, numPulsesToAvg );
+int16_t configretval = config_digin_freq( ab_channel, wTime, numPulsesToAvg );
 
 #if defined( DEBUG_HAL )
 //uint8_t buf[128];
 CNAMESPACE::sprintf( (char*)buf, "%u ms - config_digin_freq( %u, %u, %u ) returns %i\r"
 , (uint16_t) __HAL::get_time()
-, (uint16_t) rb_channel
+, (uint16_t) ab_channel
 , (uint16_t) wTime
 , (uint16_t) numPulsesToAvg
 , (int16_t) configretval
@@ -269,7 +269,7 @@ HAL::put_rs232NChar( buf, CNAMESPACE::strlen( (char*)buf ), 0 /*HAL::RS232_over_
 
 //IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
 //	<< "config_digin_freq( "
-//	<< (uint16_t) rb_channel << ", "
+//	<< (uint16_t) ab_channel << ", "
 //	<< (uint16_t) wTime << ", "
 //	<< (uint16_t) numPulsesToAvg << " ) returns  "
 //	<< configretval << "\r";
@@ -281,17 +281,17 @@ HAL::put_rs232NChar( buf, CNAMESPACE::strlen( (char*)buf ), 0 /*HAL::RS232_over_
   get counter value of an digital counter input
   @return counter events since init or last reset
 */
-uint32_t getCounter(uint8_t rb_channel)
+uint32_t getCounter(uint8_t ab_channel)
 {
 	uint16_t ui16_result = 0xFFFF, ui16_counter;
 
-	int16_t retval = get_digin_period(rb_channel, &ui16_result, &ui16_counter);
+	int16_t retval = get_digin_period(ab_channel, &ui16_result, &ui16_counter);
 
 #if defined( DEBUG_HAL )
 uint8_t buf[128];
 CNAMESPACE::sprintf( (char*)buf, "%u ms - get_digin_period( %u, %u, %u ) returns %i\r"
 , (uint16_t) __HAL::get_time()
-, (uint16_t) rb_channel
+, (uint16_t) ab_channel
 , (uint16_t) ui16_result
 , (uint16_t) ui16_counter
 , (int16_t) retval
@@ -299,25 +299,25 @@ CNAMESPACE::sprintf( (char*)buf, "%u ms - get_digin_period( %u, %u, %u ) returns
 HAL::put_rs232NChar( buf, CNAMESPACE::strlen( (char*)buf ), 0 /*HAL::RS232_over_can_busnum*/ );
 #endif
 
-	_pulDiginCounter[rb_channel] += ( ui16_counter - _prevCounter[rb_channel] );
-	_prevCounter[rb_channel] = ui16_counter;
+	_pulDiginCounter[ab_channel] += ( ui16_counter - _prevCounter[ab_channel] );
+	_prevCounter[ab_channel] = ui16_counter;
 
-	return _pulDiginCounter[rb_channel];
+	return _pulDiginCounter[ab_channel];
 }
 /**
   reset the given counter
   @return C_NO_ERR ; C_RANGE if counter if it isn´t configured properly
 */
-int16_t resetCounter(uint8_t rb_channel)
+int16_t resetCounter(uint8_t ab_channel)
 {
 	uint16_t ui16_result = 0xFFFF, ui16_counter;
-	int16_t retval = get_digin_period(rb_channel, &ui16_result, &ui16_counter);
+	int16_t retval = get_digin_period(ab_channel, &ui16_result, &ui16_counter);
 
 #if defined( DEBUG_HAL )
 uint8_t buf[128];
 CNAMESPACE::sprintf( (char*)buf, "%u ms - get_digin_period( %u, %u, %u ) returns %i\r"
 , (uint16_t) __HAL::get_time()
-, (uint16_t) rb_channel
+, (uint16_t) ab_channel
 , (uint16_t) ui16_result
 , (uint16_t) ui16_counter
 , (int16_t) retval
@@ -325,8 +325,8 @@ CNAMESPACE::sprintf( (char*)buf, "%u ms - get_digin_period( %u, %u, %u ) returns
 HAL::put_rs232NChar( buf, CNAMESPACE::strlen( (char*)buf ), 0 /*HAL::RS232_over_can_busnum*/ );
 #endif
 
-	_pulDiginCounter[rb_channel] = 0;
-	_prevCounter[rb_channel] = ui16_counter;
+	_pulDiginCounter[ab_channel] = 0;
+	_prevCounter[ab_channel] = ui16_counter;
 
 	return C_NO_ERR;
 }
@@ -335,17 +335,17 @@ HAL::put_rs232NChar( buf, CNAMESPACE::strlen( (char*)buf ), 0 /*HAL::RS232_over_
   @return time between last two signals or 0xFFFF if time is longer than initially
            given timebase [msec.]
 */
-uint16_t getCounterPeriod(uint8_t rb_channel)
+uint16_t getCounterPeriod(uint8_t ab_channel)
 {
 	uint16_t ui16_result = 0xFFFF, ui16_counter;
 
-	int16_t retval = get_digin_period(rb_channel, &ui16_result, &ui16_counter);
+	int16_t retval = get_digin_period(ab_channel, &ui16_result, &ui16_counter);
 
 #if defined( DEBUG_HAL )
 uint8_t buf[128];
 CNAMESPACE::sprintf( (char*)buf, "%u ms - get_digin_period( %u, %u, %u ) returns %i\r"
 , (uint16_t) __HAL::get_time()
-, (uint16_t) rb_channel
+, (uint16_t) ab_channel
 , (uint16_t) ui16_result
 , (uint16_t) ui16_counter
 , (int16_t) retval
@@ -353,24 +353,24 @@ CNAMESPACE::sprintf( (char*)buf, "%u ms - get_digin_period( %u, %u, %u ) returns
 HAL::put_rs232NChar( buf, CNAMESPACE::strlen( (char*)buf ), 0 /*HAL::RS232_over_can_busnum*/ );
 #endif
 
-	_pulDiginCounter[rb_channel] += ( ui16_counter - _prevCounter[rb_channel] );
-	_prevCounter[rb_channel] = ui16_counter;
+	_pulDiginCounter[ab_channel] += ( ui16_counter - _prevCounter[ab_channel] );
+	_prevCounter[ab_channel] = ui16_counter;
     ui16_result = (((2 << (_b_prescale_1_Index + 2)) * ui16_result )/ (get_cpu_freq() * 1000));
 
 #if 0
-  uint16_t ui16_timebase = _puiDiginTimebase[rb_channel];
+  uint16_t ui16_timebase = _puiDiginTimebase[ab_channel];
   if (ui16_timebase == 0) ui16_result = 0xFFFF;
   else if (ui16_timebase < (1024 * 65534 / (get_cpu_freq() * 1000)))
   { /* use standard BIOS method because timebase is short enough */
-    //get_digin_period(rb_channel, &ui16_result, &ui16_counter);
+    //get_digin_period(ab_channel, &ui16_result, &ui16_counter);
     ui16_result = (((2 << (_b_prescale_1_Index + 2)) * ui16_result )/ (get_cpu_freq() * 1000));
   }
   else
   { /* use extension method */
     /* vars are accessible */
-    if (getCounterLastSignalAge(rb_channel) < ui16_timebase)
+    if (getCounterLastSignalAge(ab_channel) < ui16_timebase)
     { // handle overflow between uiLast and uiAct
-      ui16_result = _pt_diginTriggerTime[rb_channel].uiPeriod;
+      ui16_result = _pt_diginTriggerTime[ab_channel].uiPeriod;
       if (ui16_result == 0) ui16_result = 1;
     }
   }
@@ -383,35 +383,35 @@ HAL::put_rs232NChar( buf, CNAMESPACE::strlen( (char*)buf ), 0 /*HAL::RS232_over_
   @return frequency calculated from time between last two signals
           or 0 if time is longer than initially given timebase [100mHz]
 */
-uint16_t getCounterFrequency(uint8_t rb_channel)
+uint16_t getCounterFrequency(uint8_t ab_channel)
 {
 	word ui16_result = 0;
 
 #if 0
-  uint16_t ui16_timebase = _puiDiginTimebase[rb_channel];
+  uint16_t ui16_timebase = _puiDiginTimebase[ab_channel];
 #endif
 
-    int16_t retval = get_digin_freq((byte)rb_channel, &ui16_result);
+    int16_t retval = get_digin_freq((byte)ab_channel, &ui16_result);
 
 #if defined( DEBUG_HAL )
 uint8_t buf[128];
 CNAMESPACE::sprintf( (char*)buf, "%u ms - get_digin_freq( %u, %u ) returns %i\r"
 , (uint16_t) __HAL::get_time()
-, (uint16_t) rb_channel
+, (uint16_t) ab_channel
 , (uint16_t) ui16_result
 , (int16_t) retval
 );
 HAL::put_rs232NChar( buf, CNAMESPACE::strlen( (char*)buf ), 0 /*HAL::RS232_over_can_busnum*/ );
 
 //IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
-//<< "get_digin_freq( " << (uint16_t) rb_channel << ", " << (uint16_t)ui16_result << " ) returns " << retval << "\r";
+//<< "get_digin_freq( " << (uint16_t) ab_channel << ", " << (uint16_t)ui16_result << " ) returns " << retval << "\r";
 
 //uint16_t ui16_period = 0;
 //uint16_t ui16_pulses = 0;
-//retval = get_digin_period(rb_channel, &ui16_period, &ui16_pulses);
+//retval = get_digin_period(ab_channel, &ui16_period, &ui16_pulses);
 
 //IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
-//<< ", get_digin_period( " << (uint16_t) rb_channel << ", " << ui16_period << ", " << ui16_pulses << " ) returns " << retval << "\r";
+//<< ", get_digin_period( " << (uint16_t) ab_channel << ", " << ui16_period << ", " << ui16_pulses << " ) returns " << retval << "\r";
 
 //uint32_t period_us = (((uint32_t)ui16_period) << (_b_prescale_1_Index + 3)) / get_cpu_freq();
 //uint16_t freq_mHz = (1000000000UL + (period_us>>1)) / period_us;
@@ -423,15 +423,15 @@ HAL::put_rs232NChar( buf, CNAMESPACE::strlen( (char*)buf ), 0 /*HAL::RS232_over_
   if (ui16_timebase == 0) ui16_result = 0;
   else if (ui16_timebase < (1024 * 65534L / (get_cpu_freq() * 1000)))
   { /* use standard BIOS method because timebase is short enough */
-    get_digin_freq(rb_channel, &ui16_result);
+    get_digin_freq(ab_channel, &ui16_result);
   }
   else
   { /* use extension method */
     /* vars are accessible */
-    uint16_t ui16_lastSignalAge = getCounterLastSignalAge(rb_channel);
+    uint16_t ui16_lastSignalAge = getCounterLastSignalAge(ab_channel);
     if (ui16_lastSignalAge < ui16_timebase)
     { // handle overflow between uiLast and uiAct
-      uint16_t ui16_lastPeriod = _pt_diginTriggerTime[rb_channel].uiPeriod;
+      uint16_t ui16_lastPeriod = _pt_diginTriggerTime[ab_channel].uiPeriod;
       if (ui16_lastPeriod == 0)
         ui16_result = 0;
       else
@@ -450,19 +450,19 @@ HAL::put_rs232NChar( buf, CNAMESPACE::strlen( (char*)buf ), 0 /*HAL::RS232_over_
  if timebase is exceeded -> avoid overflow problems if timer floated around 0xFFFF
  @return time since last signal [msec.]
 */
-uint16_t getCounterLastSignalAge(uint8_t rb_channel)
+uint16_t getCounterLastSignalAge(uint8_t ab_channel)
 {
 #if 0
   uint16_t uiResult = 0xFFFF, uiTime = (get_time() & 0xFFFF);
   uint16_t ui16_period, ui16_actTime;
-  ui16_period = _pt_diginTriggerTime[rb_channel].uiPeriod;
-  ui16_actTime = _pt_diginTriggerTime[rb_channel].uiAct;
+  ui16_period = _pt_diginTriggerTime[ab_channel].uiPeriod;
+  ui16_actTime = _pt_diginTriggerTime[ab_channel].uiAct;
   if (ui16_period <= 0xFFFE)
   { // both values are valid and not resetted
     uiResult = (uiTime >= ui16_actTime)?(uiTime - ui16_actTime): (uiTime + (0xFFFF - ui16_actTime));
     // if timebase is exceeded -> reset *puiAct and *puiLast
-    if (_puiDiginTimebase[rb_channel] < uiResult)
-      _pt_diginTriggerTime[rb_channel].uiPeriod = 0xFFFF; // if both are equal answers in future time age 0xFFFF
+    if (_puiDiginTimebase[ab_channel] < uiResult)
+      _pt_diginTriggerTime[ab_channel].uiPeriod = 0xFFFF; // if both are equal answers in future time age 0xFFFF
   }
   return uiResult;
 #endif

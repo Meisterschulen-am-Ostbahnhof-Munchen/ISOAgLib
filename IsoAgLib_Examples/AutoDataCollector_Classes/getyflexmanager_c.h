@@ -47,23 +47,23 @@
 */
 class DevClassFlexManager_c : public ProcDataManager_c  {
 public:
-  DevClassFlexManager_c(DefaultRecordConfig_c* rpc_defaultRecordConfig = NULL, uint16_t rui16_eepromOffsetAdr = 0xFFFF);
-  DevClassFlexManager_c(const DevClassFlexManager_c& rrefc_src);
+  DevClassFlexManager_c(DefaultRecordConfig_c* apc_defaultRecordConfig = NULL, uint16_t aui16_eepromOffsetAdr = 0xFFFF);
+  DevClassFlexManager_c(const DevClassFlexManager_c& arc_src);
   virtual ~DevClassFlexManager_c();
-  void init(DefaultRecordConfig_c* rpc_defaultRecordConfig);
-  bool operator==(const DevClassFlexManager_c& rrefc_comp)const{return (c_remoteISOName == rrefc_comp.c_remoteISOName)?true:false;};
-  bool operator!=(const DevClassFlexManager_c& rrefc_comp)const{return (c_remoteISOName != rrefc_comp.c_remoteISOName)?true:false;};
-  bool operator<(const DevClassFlexManager_c& rrefc_comp)const{return (c_remoteISOName < rrefc_comp.c_remoteISOName)?true:false;};
+  void init(DefaultRecordConfig_c* apc_defaultRecordConfig);
+  bool operator==(const DevClassFlexManager_c& arc_comp)const{return (c_remoteISOName == arc_comp.c_remoteISOName)?true:false;};
+  bool operator!=(const DevClassFlexManager_c& arc_comp)const{return (c_remoteISOName != arc_comp.c_remoteISOName)?true:false;};
+  bool operator<(const DevClassFlexManager_c& arc_comp)const{return (c_remoteISOName < arc_comp.c_remoteISOName)?true:false;};
 
-  bool operator==(const IsoAgLib::iIsoName_c& rc_comp)const{return (c_remoteISOName == rc_comp)?true:false;};
-  bool operator!=(const IsoAgLib::iIsoName_c& rc_comp)const{return (c_remoteISOName != rc_comp)?true:false;};
-  bool operator<(const IsoAgLib::iIsoName_c& rc_comp)const{return (c_remoteISOName < rc_comp)?true:false;};
+  bool operator==(const IsoAgLib::iIsoName_c& ac_comp)const{return (c_remoteISOName == ac_comp)?true:false;};
+  bool operator!=(const IsoAgLib::iIsoName_c& ac_comp)const{return (c_remoteISOName != ac_comp)?true:false;};
+  bool operator<(const IsoAgLib::iIsoName_c& ac_comp)const{return (c_remoteISOName < ac_comp)?true:false;};
   /**
     activate with creating the needed ProcessData
-    @param rpc_monitor pointer to member_item of data delivering member
-    @param rpc_localISOName pointer to local member DEVKEY for sending of commands
+    @param apc_monitor pointer to member_item of data delivering member
+    @param apc_localISOName pointer to local member DEVKEY for sending of commands
   */
-  void activate(IsoAgLib::iDINItem_c* rpc_monitor, IsoAgLib::iIsoName_c* rpc_localISOName);
+  void activate(IsoAgLib::iDINItem_c* apc_monitor, IsoAgLib::iIsoName_c* apc_localISOName);
   /** deactivate with deleting the created ProcessDatas */
   void deactivate();
   /**
@@ -93,9 +93,9 @@ private:
   /** NEW: 14-10-2004
     check if a single measurement request should be sent on every local
     value access.
-    @param rb_procInd index of process data to check
+    @param ab_procInd index of process data to check
   */
-  bool sendRequest( uint8_t rb_procInd )const;
+  bool sendRequest( uint8_t ab_procInd )const;
   /**
     deliver the DEVCLASS for time, dist, area values
   */

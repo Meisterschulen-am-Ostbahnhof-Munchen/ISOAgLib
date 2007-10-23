@@ -166,7 +166,7 @@ bool Vt2IsoImageFreeImage_c::openBitmap( const char* filename )
 }
 
 // this function is only called for the 8bit case!
-int Vt2IsoImageFreeImage_c::getPaletteIndex (unsigned int rui_x, unsigned int rui_y)
+int Vt2IsoImageFreeImage_c::getPaletteIndex (unsigned int aui_x, unsigned int aui_y)
 {
   if (mb_palettized)
   {
@@ -188,7 +188,7 @@ int Vt2IsoImageFreeImage_c::getPaletteIndex (unsigned int rui_x, unsigned int ru
     }
 
     uint8_t idx;
-    FreeImage_GetPixelIndex (bitmap, rui_x, (ui_height - 1) - rui_y, &idx);
+    FreeImage_GetPixelIndex (bitmap, aui_x, (ui_height - 1) - aui_y, &idx);
     return idx;
   }
   else return -1;
@@ -203,27 +203,27 @@ void Vt2IsoImageFreeImage_c::close( void )
 
 
 /** check and adapt scanline */
-void Vt2IsoImageFreeImage_c::checkUpdateScanline( unsigned int rui_y )
+void Vt2IsoImageFreeImage_c::checkUpdateScanline( unsigned int aui_y )
 {
- if ( i_curScanLineY != int(rui_y) )
+ if ( i_curScanLineY != int(aui_y) )
  { // read scanline for given y
   // ( FreeImage library documentation states, that first scanline in memory is
   //   bottommost -> i.e. upsidedown in relation to other modellings
-  //    -> change direction back to usual with ( ui_height - rui_y ) )
-  scanline = FreeImage_GetScanLine(bitmap, ( (ui_height - 1) - rui_y ) );
-  i_curScanLineY = rui_y;
+  //    -> change direction back to usual with ( ui_height - aui_y ) )
+  scanline = FreeImage_GetScanLine(bitmap, ( (ui_height - 1) - aui_y ) );
+  i_curScanLineY = aui_y;
  }
 }
 
 /** deliver R-value of bitmap at given position */
-unsigned int Vt2IsoImageFreeImage_c::getR( unsigned int rui_x, unsigned int rui_y )
+unsigned int Vt2IsoImageFreeImage_c::getR( unsigned int aui_x, unsigned int aui_y )
 {
- if ( ( rui_x >= ui_width ) || ( rui_y >= ui_height ) ) return 0;
+ if ( ( aui_x >= ui_width ) || ( aui_y >= ui_height ) ) return 0;
 
  if (mb_palettized)
  { // we can't raw-access the bitmap buffer with RGB, we need to get the RGB via the palette-index's color
    uint8_t idx;
-   FreeImage_GetPixelIndex (bitmap, rui_x, (ui_height - 1) - rui_y, &idx);
+   FreeImage_GetPixelIndex (bitmap, aui_x, (ui_height - 1) - aui_y, &idx);
    return vtColorTable[idx].rgbRed;
  }
  else
@@ -232,64 +232,64 @@ unsigned int Vt2IsoImageFreeImage_c::getR( unsigned int rui_x, unsigned int rui_
   RGBQUAD temp_pixel;
   // ( FreeImage library documentation states, that first scanline in memory is
   //   bottommost -> i.e. upsidedown in relation to other modellings
-  //    -> change direction back to usual with ( ui_height - rui_y ) )
-  FreeImage_GetPixelColor(bitmap, rui_x, ( (ui_height - 1) - rui_y ), &temp_pixel);
+  //    -> change direction back to usual with ( ui_height - aui_y ) )
+  FreeImage_GetPixelColor(bitmap, aui_x, ( (ui_height - 1) - aui_y ), &temp_pixel);
   return temp_pixel.rgbRed;
   #else
-  checkUpdateScanline( rui_y );
-  return scanline[FI_RGBA_RED + ( bytespp * rui_x )];
+  checkUpdateScanline( aui_y );
+  return scanline[FI_RGBA_RED + ( bytespp * aui_x )];
   #endif
  }
 }
 
 /** deliver G-value of bitmap at given position */
-unsigned int Vt2IsoImageFreeImage_c::getG( unsigned int rui_x, unsigned int rui_y )
+unsigned int Vt2IsoImageFreeImage_c::getG( unsigned int aui_x, unsigned int aui_y )
 {
  if (mb_palettized)
  { // we can't raw-access the bitmap buffer with RGB, we need to get the RGB via the palette-index's color
    uint8_t idx;
-   FreeImage_GetPixelIndex (bitmap, rui_x, (ui_height - 1) - rui_y, &idx);
+   FreeImage_GetPixelIndex (bitmap, aui_x, (ui_height - 1) - aui_y, &idx);
    return vtColorTable[idx].rgbGreen;
  }
  else
  {
-  if ( ( rui_x >= ui_width ) || ( rui_y >= ui_height ) ) return 0;
+  if ( ( aui_x >= ui_width ) || ( aui_y >= ui_height ) ) return 0;
   #if defined( WIN32 )
   RGBQUAD temp_pixel;
   // ( FreeImage library documentation states, that first scanline in memory is
   //   bottommost -> i.e. upsidedown in relation to other modellings
-  //    -> change direction back to usual with ( ui_height - rui_y ) )
-  FreeImage_GetPixelColor(bitmap, rui_x, ( (ui_height - 1) - rui_y ), &temp_pixel);
+  //    -> change direction back to usual with ( ui_height - aui_y ) )
+  FreeImage_GetPixelColor(bitmap, aui_x, ( (ui_height - 1) - aui_y ), &temp_pixel);
   return temp_pixel.rgbGreen;
   #else
-  checkUpdateScanline( rui_y );
-  return scanline[FI_RGBA_GREEN + ( bytespp * rui_x )];
+  checkUpdateScanline( aui_y );
+  return scanline[FI_RGBA_GREEN + ( bytespp * aui_x )];
   #endif
  }
 }
 
 /** deliver B-value of bitmap at given position */
-unsigned int Vt2IsoImageFreeImage_c::getB( unsigned int rui_x, unsigned int rui_y )
+unsigned int Vt2IsoImageFreeImage_c::getB( unsigned int aui_x, unsigned int aui_y )
 {
  if (mb_palettized)
  { // we can't raw-access the bitmap buffer with RGB, we need to get the RGB via the palette-index's color
    uint8_t idx;
-   FreeImage_GetPixelIndex (bitmap, rui_x, (ui_height - 1) - rui_y, &idx);
+   FreeImage_GetPixelIndex (bitmap, aui_x, (ui_height - 1) - aui_y, &idx);
    return vtColorTable[idx].rgbBlue;
  }
  else
  {
-  if ( ( rui_x >= ui_width ) || ( rui_y >= ui_height ) ) return 0;
+  if ( ( aui_x >= ui_width ) || ( aui_y >= ui_height ) ) return 0;
   #if defined( WIN32 )
   RGBQUAD temp_pixel;
   // ( FreeImage library documentation states, that first scanline in memory is
   //   bottommost -> i.e. upsidedown in relation to other modellings
-  //    -> change direction back to usual with ( ui_height - rui_y ) )
-  FreeImage_GetPixelColor(bitmap, rui_x, ( (ui_height - 1) - rui_y ), &temp_pixel);
+  //    -> change direction back to usual with ( ui_height - aui_y ) )
+  FreeImage_GetPixelColor(bitmap, aui_x, ( (ui_height - 1) - aui_y ), &temp_pixel);
   return temp_pixel.rgbBlue;
   #else
-  checkUpdateScanline( rui_y );
-  return scanline[FI_RGBA_BLUE + ( bytespp * rui_x )];
+  checkUpdateScanline( aui_y );
+  return scanline[FI_RGBA_BLUE + ( bytespp * aui_x )];
   #endif
  }
 }

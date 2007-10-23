@@ -78,15 +78,15 @@ public:
         * Err_c::precondition wrong input type
     @see iSensorI_c::createAnalog
     @see iSensor_c::t_analogType
-    @param rb_channel default-argument for the hardware channel of the input
+    @param ab_channel default-argument for the hardware channel of the input
     @param ren_analogType default-argument for choosing iSensor_c::voltage(default) or iSensor_c::current as input type
-    @param rb_useMean default-argument for setting the calculation of mean value on true (false as default)
-    @param rb_fastAdc default-argument for setting fast ADC method (false as default)
-    @param ri32_scaleMin set the min return value where BIOS sensor value should be scaled (default no scale)
-    @param ri32_scaleMax set the max return value where BIOS sensor value should be scaled (default no scale)
+    @param ab_useMean default-argument for setting the calculation of mean value on true (false as default)
+    @param ab_fastAdc default-argument for setting fast ADC method (false as default)
+    @param ai32_scaleMin set the min return value where BIOS sensor value should be scaled (default no scale)
+    @param ai32_scaleMax set the max return value where BIOS sensor value should be scaled (default no scale)
   */
-  iAnalogI_c(uint8_t rb_channel = 0xFF, iSensor_c::analogType_t ren_analogType = iSensor_c::voltage, bool rb_useMean = false, bool rb_fastAdc = false )
-    : AnalogI_c(rb_channel, ren_analogType, rb_useMean, rb_fastAdc ) {};
+  iAnalogI_c(uint8_t ab_channel = 0xFF, iSensor_c::analogType_t ren_analogType = iSensor_c::voltage, bool ab_useMean = false, bool ab_fastAdc = false )
+    : AnalogI_c(ab_channel, ren_analogType, ab_useMean, ab_fastAdc ) {};
   /**
     internal called constructor which creates a new input channel,initialize the hardware and configures conversion calculation
 
@@ -95,15 +95,15 @@ public:
         * Err_c::precondition wrong input type
     @see iSensorI_c::createAnalog
     @see iSensor_c::t_analogType
-    @param rb_channel default-argument for the hardware channel of the input
+    @param ab_channel default-argument for the hardware channel of the input
     @param ren_analogType default-argument for choosing iSensor_c::voltage(default) or iSensor_c::current as input type
-    @param rb_useMean default-argument for setting the calculation of mean value on true (false as default)
-    @param rb_fastAdc default-argument for setting fast ADC method (false as default)
-    @param ri32_scaleMin set the min return value where BIOS sensor value should be scaled (default no scale)
-    @param ri32_scaleMax set the max return value where BIOS sensor value should be scaled (default no scale)
+    @param ab_useMean default-argument for setting the calculation of mean value on true (false as default)
+    @param ab_fastAdc default-argument for setting fast ADC method (false as default)
+    @param ai32_scaleMin set the min return value where BIOS sensor value should be scaled (default no scale)
+    @param ai32_scaleMax set the max return value where BIOS sensor value should be scaled (default no scale)
   */
-  void init(uint8_t rb_channel, iSensor_c::analogType_t ren_analogType = iSensor_c::voltage, bool rb_useMean = false, bool rb_fastAdc = false )
-    { AnalogI_c::init(rb_channel, ren_analogType, rb_useMean, rb_fastAdc );};
+  void init(uint8_t ab_channel, iSensor_c::analogType_t ren_analogType = iSensor_c::voltage, bool ab_useMean = false, bool ab_fastAdc = false )
+    { AnalogI_c::init(ab_channel, ren_analogType, ab_useMean, ab_fastAdc );};
   /** destructor which can close the hardware input channel */
   virtual ~iAnalogI_c() {};
   /**
@@ -123,9 +123,9 @@ public:
   bool active() const {return AnalogI_c::active();};
   /**
     configure fast ADC gathering
-    @param rb_useFast default-argument for setting fast ADC (true as default)
+    @param ab_useFast default-argument for setting fast ADC (true as default)
   */
-  void setFastAdc(bool rb_useFast=true){AnalogI_c::setFastAdc(rb_useFast);};
+  void setFastAdc(bool ab_useFast=true){AnalogI_c::setFastAdc(ab_useFast);};
   /**
     deliver the channel number of the output object
     @return number to use for BIOS access to this channel
@@ -138,17 +138,17 @@ private:
     ONLY copy pointers to the wanted instance!!!
     ==> the copy constructor is defined as private, so that compiler
         detects this fault, and shows you this WARNING!!
-    @param rrefc_src source
+    @param arc_src source
   */
-  iAnalogI_c(const iAnalogI_c& /*rrefc_src*/) : AnalogI_c() {};
+  iAnalogI_c(const iAnalogI_c& /*arc_src*/) : AnalogI_c() {};
   /**
     HIDDEN! assignment for AnalogI_c
     NEVER assign a AnalogI_c to another instance!!!!
     ==> the asignment is defined as private, so that compiler
         detects this fault, and shows you this WARNING!!
-    @param rrefc_src source
+    @param arc_src source
   */
-  iAnalogI_c& operator=(const iAnalogI_c& /*rrefc_src*/){ return *this;};
+  iAnalogI_c& operator=(const iAnalogI_c& /*arc_src*/){ return *this;};
 };
 }
 #endif

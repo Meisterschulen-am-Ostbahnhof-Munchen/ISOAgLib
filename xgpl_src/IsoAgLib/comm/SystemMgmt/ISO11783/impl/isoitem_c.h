@@ -116,14 +116,14 @@ public:
     a master ( i.e. the pc_masterItem pointer points to this )
     -> it doesn't simply copy the pointer, but sets its
     own pointer also to the this-pointer of the new instance
-    @param rrefc_src source IsoItem_c instance
+    @param arc_src source IsoItem_c instance
   */
-  IsoItem_c(const IsoItem_c& rrefc_src);
+  IsoItem_c(const IsoItem_c& arc_src);
 
   /** assign constructor for ISOItem
-    @param rrefc_src source IsoItem_c object
+    @param arc_src source IsoItem_c object
   */
-  IsoItem_c& operator=(const IsoItem_c& rrefc_src);
+  IsoItem_c& operator=(const IsoItem_c& arc_src);
 
   /** default destructor */
   virtual ~IsoItem_c();
@@ -179,71 +179,71 @@ public:
   uint32_t serNo() const {return c_isoName. serNo();}
 
   /** set the NAME data from 8 uint8_t string
-    @param rpb_src pointer to 8byte source string
+    @param apb_src pointer to 8byte source string
   */
-  void inputNameUnion(const Flexible8ByteString_c* rpu_src) {c_isoName.inputUnion(rpu_src);}
+  void inputNameUnion(const Flexible8ByteString_c* apu_src) {c_isoName.inputUnion(apu_src);}
 
   /** set self config mode
-    @param rb_selfConf true -> indicate sefl configuring ECU
+    @param ab_selfConf true -> indicate sefl configuring ECU
   */
-  void setSelfConf(bool rb_selfConf) {c_isoName.setSelfConf(rb_selfConf);}
+  void setSelfConf(bool ab_selfConf) {c_isoName.setSelfConf(ab_selfConf);}
 
   /** set industry group code
-    @param rui8_indGroup industry group of device (2 for agriculture)
+    @param aui8_indGroup industry group of device (2 for agriculture)
   */
-  void setIndGroup(uint8_t rui8_indGroup) {c_isoName.setIndGroup(rui8_indGroup);}
+  void setIndGroup(uint8_t aui8_indGroup) {c_isoName.setIndGroup(aui8_indGroup);}
 
   /** set device class instance number
-    @param rui8_devClassInst instance number of ECU with same devClass in the network */
-  void setDevClassInst(uint8_t rui8_devClassInst) {c_isoName.setDevClassInst(rui8_devClassInst);}
+    @param aui8_devClassInst instance number of ECU with same devClass in the network */
+  void setDevClassInst(uint8_t aui8_devClassInst) {c_isoName.setDevClassInst(aui8_devClassInst);}
 
   /** set device class code
-    @param rui8_devClass device class of ECU
+    @param aui8_devClass device class of ECU
   */
-  void setDevClass(uint8_t rui8_devClass) {c_isoName.setDevClass(rui8_devClass);}
+  void setDevClass(uint8_t aui8_devClass) {c_isoName.setDevClass(aui8_devClass);}
 
   /** set function code
-    @param rb_func function of the ECU (usual 25 for network interconnect)
+    @param ab_func function of the ECU (usual 25 for network interconnect)
   */
-  void setFunc(uint8_t rb_func) {c_isoName.setFunc(rb_func);}
+  void setFunc(uint8_t ab_func) {c_isoName.setFunc(ab_func);}
 
   /** set function instance code
-    @param rb_funcInst instance number of ECU with same function and device class
+    @param ab_funcInst instance number of ECU with same function and device class
         (default 0 - normally)
   */
-  void setFuncInst(uint8_t rb_funcInst) {c_isoName.setFuncInst(rb_funcInst);}
+  void setFuncInst(uint8_t ab_funcInst) {c_isoName.setFuncInst(ab_funcInst);}
 
   /** set ECU instance code
-    @param rb_funcInst instance number of ECU with same function, device class and function instance
+    @param ab_funcInst instance number of ECU with same function, device class and function instance
         (default 0 - normally)
   */
-  void setEcuInst(uint8_t rb_ecuInst) {c_isoName.setEcuInst(rb_ecuInst);}
+  void setEcuInst(uint8_t ab_ecuInst) {c_isoName.setEcuInst(ab_ecuInst);}
 
   /** set manufactor code
-    @param rui16_manufCode code of manufactor (11bit)
+    @param aui16_manufCode code of manufactor (11bit)
   */
-  void setManufCode(uint16_t rui16_manufCode) {c_isoName.setManufCode(rui16_manufCode);}
+  void setManufCode(uint16_t aui16_manufCode) {c_isoName.setManufCode(aui16_manufCode);}
 
   /** set serial number (Identity Number)
-    @param rui32_serNo serial no of specific device (21bit)
+    @param aui32_serNo serial no of specific device (21bit)
   */
-  void setSerNo(uint32_t rui32_serNo) {c_isoName.setSerNo(rui32_serNo);}
+  void setSerNo(uint32_t aui32_serNo) {c_isoName.setSerNo(aui32_serNo);}
 
   /** set all element data with one call
-    @param ri32_time creation time of this item instance
-    @param rc_isoName ISOName code of this item ((deviceClass << 3) | devClInst )
-    @param rui8_nr number of this item
-    @param rb_status state of this ident (off, claimed address, ...)
-    @param rui16_saEepromAdr EEPROM adress to store actual SA -> next boot with same adr
-    @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
+    @param ai32_time creation time of this item instance
+    @param ac_isoName ISOName code of this item ((deviceClass << 3) | devClInst )
+    @param aui8_nr number of this item
+    @param ab_status state of this ident (off, claimed address, ...)
+    @param aui16_saEepromAdr EEPROM adress to store actual SA -> next boot with same adr
+    @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
-  void set(int32_t ri32_time, const IsoName_c& rc_isoName, uint8_t rui8_nr,
+  void set(int32_t ai32_time, const IsoName_c& ac_isoName, uint8_t aui8_nr,
            itemState_t ren_status = IState_c::Active, int riSingletonKey = 0 );
 
   /** set ISOName code of this item
-    @param rc_isoName ISOName
+    @param ac_isoName ISOName
   */
-  void setISOName(const IsoName_c& rc_isoName) {c_isoName = rc_isoName;}
+  void setISOName(const IsoName_c& ac_isoName) {c_isoName = ac_isoName;}
 
   /** deliver ISOName code of this item
     @return ISOName
@@ -262,9 +262,9 @@ public:
 
   /** deliver name as pure ASCII string
     @param pc_name string where ASCII string is inserted
-    @param rui8_maxLen max length for name
+    @param aui8_maxLen max length for name
   */
-  virtual void getPureAsciiName(int8_t *pc_asciiName, uint8_t rui8_maxLen);
+  virtual void getPureAsciiName(int8_t *pc_asciiName, uint8_t aui8_maxLen);
 
   /** periodically time evented actions:
       * find free SA or check if last SA is available
@@ -299,22 +299,22 @@ public:
   IsoItem_c* getMaster () const;
 
   // attach to a master
-  void setMaster ( IsoItem_c* rpc_masterItem );
+  void setMaster ( IsoItem_c* apc_masterItem );
 
   // check if this item is a master (i.e. the master pointer points to itself)
   bool isMaster () const { return (this == pc_masterItem); }
 
   /// For checking if the WS-Announce is completed use the "announce key" returned from "startWsAnnounce()".
-  bool isWsAnnounced (int32_t ri32_timeAnnounceStarted);
+  bool isWsAnnounced (int32_t ai32_timeAnnounceStarted);
 
   bool isWsAnnouncing() { return (i8_slavesToClaimAddress != 0); }
 #endif
 
   /**
     set number of this item
-    @param rc_isoName number
+    @param ac_isoName number
   */
-  void setNr(uint8_t rui8_nr){ui8_nr = rui8_nr;}
+  void setNr(uint8_t aui8_nr){ui8_nr = aui8_nr;}
 
   /**
     deliver the number/adress of this item
@@ -324,49 +324,49 @@ public:
 
   /**
     lower comparison with another IsoItem_c on the rigth (compare the ISOName)
-    @param rrefc_right rigth parameter for lower compare
+    @param arc_right rigth parameter for lower compare
   */
-  bool operator<(const IsoItem_c& rrefc_right) const
-    {return (isoName() < rrefc_right.isoName())?true:false;}
+  bool operator<(const IsoItem_c& arc_right) const
+    {return (isoName() < arc_right.isoName())?true:false;}
 
   /**
     lower comparison with ISOName uint8_t on the rigth
-    @param rrefc_right rigth parameter for lower compare
+    @param arc_right rigth parameter for lower compare
   */
-  bool operator<(const IsoName_c& rc_isoName)const{return (isoName() < rc_isoName)?true:false;}
+  bool operator<(const IsoName_c& ac_isoName)const{return (isoName() < ac_isoName)?true:false;}
 
   /**
     lower comparison between left ISOName uint8_t and right MonitorItem
-    @param rb_left ISOName uint8_t left parameter
-    @param rrefc_right rigth ServiceItem_c parameter
+    @param ab_left ISOName uint8_t left parameter
+    @param arc_right rigth ServiceItem_c parameter
   */
-  friend bool operator<(const IsoName_c& rc_left, const IsoItem_c& rrefc_right);
+  friend bool operator<(const IsoName_c& ac_left, const IsoItem_c& arc_right);
 
   /**
     lower comparison between left IsoItem_c and right ISOName uint8_t
-    @param rrefc_left left ServiceItem_c parameter
-    @param rb_right ISOName uint8_t right parameter
+    @param arc_left left ServiceItem_c parameter
+    @param ab_right ISOName uint8_t right parameter
   */
-  friend bool lessThan(const IsoItem_c& rrefc_left, const IsoName_c& rc_right);
+  friend bool lessThan(const IsoItem_c& arc_left, const IsoName_c& ac_right);
 
   /**
     equality comparison with ISOName uint8_t on the rigth
-    @param rrefc_right rigth parameter for lower compare
+    @param arc_right rigth parameter for lower compare
   */
-  bool operator==(const IsoName_c& rc_right)const { return (isoName() == rc_right)?true:false;}
+  bool operator==(const IsoName_c& ac_right)const { return (isoName() == ac_right)?true:false;}
 
   /**
     difference comparison with ISOName uint8_t on the rigth
-    @param rrefc_right rigth parameter for lower compare
+    @param arc_right rigth parameter for lower compare
   */
-  bool operator!=(const IsoName_c& rc_right) const{ return (isoName() != rc_right)?true:false;}
+  bool operator!=(const IsoName_c& ac_right) const{ return (isoName() != ac_right)?true:false;}
 
   /**
     compare given number to nr of this item and return result
-    @param rui8_nr compared number
+    @param aui8_nr compared number
     @return true -> given number equal to nr of this item
   */
-  bool equalNr(const uint8_t rui8_nr)const{return (nr() == rui8_nr)?true:false;}
+  bool equalNr(const uint8_t aui8_nr)const{return (nr() == aui8_nr)?true:false;}
 
 
 protected: // methods
@@ -411,10 +411,10 @@ typedef IsoItem_c ISOItem_c;
 
 /**
   lower comparison between left IsoItem_c and right ISOName uint8_t
-  @param rrefc_left left ServiceItem_c parameter
-  @param rb_right ISOName uint8_t right parameter
+  @param arc_left left ServiceItem_c parameter
+  @param ab_right ISOName uint8_t right parameter
 */
-bool lessThan(const IsoItem_c& rrefc_left, const IsoName_c& rc_right);
+bool lessThan(const IsoItem_c& arc_left, const IsoName_c& ac_right);
 
 }
 #endif

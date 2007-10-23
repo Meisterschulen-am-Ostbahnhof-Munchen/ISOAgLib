@@ -110,35 +110,35 @@ namespace __IsoAgLib {
 
 
 
-Stream_c::Stream_c (StreamType_t rt_streamType, const IsoAgLib::ReceiveStreamIdentifier_c& rc_rsi, uint32_t rui32_msgSize SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA , bool rb_skipCtsAwait)
+Stream_c::Stream_c (StreamType_t at_streamType, const IsoAgLib::ReceiveStreamIdentifier_c& ac_rsi, uint32_t aui32_msgSize SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA , bool ab_skipCtsAwait)
   : iStream_c(),
     SINGLETON_MEMBER_CONSTRUCTOR
-    c_ident (rc_rsi)
+    c_ident (ac_rsi)
   , t_streamState (StreamRunning)
   , t_awaitStep (AwaitCtsSend) // so next timeEvent will send out the CTS!
   , i32_delayCtsUntil (sci32_timeNever) // means send out IMMEDIATELY (the initial CTS, afterwards delay some time!)
-  , ui32_byteTotalSize (rui32_msgSize)
+  , ui32_byteTotalSize (aui32_msgSize)
   , ui32_byteAlreadyReceived (0)
   , ui32_pkgNextToWrite (1)
-  , ui32_pkgTotalSize ((rui32_msgSize + 6) / 7)
+  , ui32_pkgTotalSize ((aui32_msgSize + 6) / 7)
   , ui32_burstCurrent (0) // so we know that it's the first burst when calling the processBurst from the client
   , ui8_streamFirstByte (0) // meaning: not yet identified!! (when you check it, it's already set!)
   , i32_timeoutLimit (sci32_timeNever)
-  , t_streamType (rt_streamType)
+  , t_streamType (at_streamType)
  // ui8_pkgRemainingInBurst     // will be set in "expectBurst(wishingPkgs)", don't care here as t_awaitStep == awaitCtsSend!!
 {
   #ifdef NMEA_2000_FAST_PACKET
-  if (rt_streamType == StreamFastPacket)
+  if (at_streamType == StreamFastPacket)
   { // other calculation for FastPacket, as the first package only has 6 netto data bytes AND first package begins with frame count 0
     ui32_pkgNextToWrite = 0;
-    ui32_pkgTotalSize = (rui32_msgSize + 7) / 7;
+    ui32_pkgTotalSize = (aui32_msgSize + 7) / 7;
   }
 
-  if ((rt_streamType == StreamFastPacket) ||
+  if ((at_streamType == StreamFastPacket) ||
   #else
   if (
   #endif
-   (rc_rsi.getDa() == 0xFF) || rb_skipCtsAwait)
+   (ac_rsi.getDa() == 0xFF) || ab_skipCtsAwait)
   { // if it's FastPacket or BAM, then directly expect data to be sent! --- or if we directly wanna expect data (for fake streams..)
     expectBurst (255); // We're expecting one big burst directly now without CTS/DPO stuff!
   }
@@ -177,14 +177,14 @@ Stream_c::operator= (const Stream_c& ref)
 
 
 void
-Stream_c::awaitNextStep (NextComing_t rt_awaitStep, int32_t ri32_timeOut)
+Stream_c::awaitNextStep (NextComing_t at_awaitStep, int32_t ai32_timeOut)
 {
-  t_awaitStep = rt_awaitStep;
-  if (rt_awaitStep == AwaitCtsSend) {
-    i32_delayCtsUntil = HAL::getTime() + ri32_timeOut; // use the timeOut parameter here for the delay!!!!
+  t_awaitStep = at_awaitStep;
+  if (at_awaitStep == AwaitCtsSend) {
+    i32_delayCtsUntil = HAL::getTime() + ai32_timeOut; // use the timeOut parameter here for the delay!!!!
     i32_timeoutLimit = sci32_timeNever; // no timeOut on own sending...
   } else {
-    i32_timeoutLimit = (ri32_timeOut==sci32_timeNever) ? (sci32_timeNever) : (HAL::getTime()+ri32_timeOut);
+    i32_timeoutLimit = (ai32_timeOut==sci32_timeNever) ? (sci32_timeNever) : (HAL::getTime()+ai32_timeOut);
   }
 }
 
@@ -232,7 +232,7 @@ Stream_c::expectBurst(uint8_t wishingPkgs)
 //! Parameter:
 //! @param pui8_offsetOfData: the offset given in the 8 byte data can pkg!
 bool
-Stream_c::handleDataPacket (const Flexible8ByteString_c* rpu_data)
+Stream_c::handleDataPacket (const Flexible8ByteString_c* apu_data)
 { // ~X2C
   // expecting data at all?
   if (t_awaitStep != AwaitData) {
@@ -246,11 +246,11 @@ Stream_c::handleDataPacket (const Flexible8ByteString_c* rpu_data)
   switch (t_streamType)
   {
     case StreamSpgnEcmdINVALID: // shouldn't occur, but catch that case anyway. (so break left out intentionally!)
-    case StreamEpgnEcmd:   if ((rpu_data->getUint8Data( 0 ) + ui32_dataPageOffset) != ui32_pkgNextToWrite) b_pkgNumberWrong=true; break;
+    case StreamEpgnEcmd:   if ((apu_data->getUint8Data( 0 ) + ui32_dataPageOffset) != ui32_pkgNextToWrite) b_pkgNumberWrong=true; break;
     case StreamSpgnScmd:
-    case StreamEpgnScmd:   if ((rpu_data->getUint8Data( 0 ) /* no DPO for TP!! */) != ui32_pkgNextToWrite) b_pkgNumberWrong=true; break;
+    case StreamEpgnScmd:   if ((apu_data->getUint8Data( 0 ) /* no DPO for TP!! */) != ui32_pkgNextToWrite) b_pkgNumberWrong=true; break;
     #ifdef NMEA_2000_FAST_PACKET
-    case StreamFastPacket: if ((rpu_data->getUint8Data( 0 ) & (0x1FU)) != ui32_pkgNextToWrite) b_pkgNumberWrong=true; break;
+    case StreamFastPacket: if ((apu_data->getUint8Data( 0 ) & (0x1FU)) != ui32_pkgNextToWrite) b_pkgNumberWrong=true; break;
     #endif
   }
 
@@ -264,13 +264,13 @@ Stream_c::handleDataPacket (const Flexible8ByteString_c* rpu_data)
   #ifdef NMEA_2000_FAST_PACKET
   if ((t_streamType == StreamFastPacket) && (ui32_pkgNextToWrite == 0))
   { // special FastPacket first-frame handling
-    insertFirst6Bytes (rpu_data->getUint8DataConstPointer(2));
+    insertFirst6Bytes (apu_data->getUint8DataConstPointer(2));
     ui32_byteAlreadyReceived += 6;
   }
   else
   #endif
   {
-    insert7Bytes (rpu_data->getUint8DataConstPointer(1));
+    insert7Bytes (apu_data->getUint8DataConstPointer(1));
     ui32_byteAlreadyReceived += 7;
   }
 
@@ -314,12 +314,12 @@ Stream_c::handleDataPacket (const Flexible8ByteString_c* rpu_data)
 
 // //////////////////////////////// +X2C Operation 2861 : setDataPageOffset
 //! Parameter:
-//! @param rui32_dataPageOffset:
+//! @param aui32_dataPageOffset:
 bool
-Stream_c::setDataPageOffset(uint32_t rui32_dataPageOffset)
+Stream_c::setDataPageOffset(uint32_t aui32_dataPageOffset)
 { // ~X2C
   if (t_awaitStep == AwaitDpo) {
-    ui32_dataPageOffset = rui32_dataPageOffset;
+    ui32_dataPageOffset = aui32_dataPageOffset;
     awaitNextStep (AwaitData, sci32_timeOutT5);
     #ifdef DEBUG
       INTERNAL_DEBUG_DEVICE << "DPO ";

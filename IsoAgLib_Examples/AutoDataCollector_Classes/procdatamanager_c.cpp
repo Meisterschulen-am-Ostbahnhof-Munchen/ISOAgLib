@@ -42,9 +42,9 @@
 #include <IsoAgLib/comm/Process/proc_c.h>
 #include <IsoAgLib/comm/Process/Remote/Std/iprocdataremote_c.h>
 
-ProcDataManager_c::ProcDataManager_c( uint8_t rui8_cnt)
+ProcDataManager_c::ProcDataManager_c( uint8_t aui8_cnt)
 {
-  ui8_cnt = rui8_cnt;
+  ui8_cnt = aui8_cnt;
   pc_data = NULL;
   b_activated = false;
 	c_remoteISOName.setUnspecified();
@@ -53,24 +53,24 @@ ProcDataManager_c::~ProcDataManager_c()
 {
 }
 
-ProcDataManager_c::ProcDataManager_c(const ProcDataManager_c& rrefc_src)
+ProcDataManager_c::ProcDataManager_c(const ProcDataManager_c& arc_src)
 {
-  pc_monitor = rrefc_src.pc_monitor;
-  pc_data = rrefc_src.pc_data;
-  ui8_cnt = rrefc_src.ui8_cnt;
-	c_remoteISOName = rrefc_src.c_remoteISOName;
+  pc_monitor = arc_src.pc_monitor;
+  pc_data = arc_src.pc_data;
+  ui8_cnt = arc_src.ui8_cnt;
+	c_remoteISOName = arc_src.c_remoteISOName;
 	// don't copy actation state - start with deactivated
   b_activated = false;
 }
 
 /**
   activate with creating the needed ProcessData
-  @param rpc_monitor pointer to member_item of data delivering member
+  @param apc_monitor pointer to member_item of data delivering member
 */
-void ProcDataManager_c::activate(IsoAgLib::iDINItem_c* rpc_monitor)
+void ProcDataManager_c::activate(IsoAgLib::iDINItem_c* apc_monitor)
 {
-  pc_monitor = rpc_monitor;
-	c_remoteISOName = rpc_monitor->devKey();
+  pc_monitor = apc_monitor;
+	c_remoteISOName = apc_monitor->devKey();
   setActivated(true);
 }
 
@@ -81,7 +81,7 @@ void ProcDataManager_c::deactivate()
 }
 
 /** perform periodic actions */
-void ProcDataManager_c::timeEvent(long /* rl_time */ )
+void ProcDataManager_c::timeEvent(long /* al_time */ )
 {return;}
 
 /** write informations of according member (DEV CLASS/INST, name)
@@ -102,11 +102,11 @@ void ProcDataManager_c::writeData()
   }
 }
 /** start all (default) or a specific remote process data */
-void ProcDataManager_c::start(int ri_ind){
-  if ((ri_ind >= 0) && ( !((pc_data[ri_ind]).prog().started()) ))
+void ProcDataManager_c::start(int ai_ind){
+  if ((ai_ind >= 0) && ( !((pc_data[ai_ind]).prog().started()) ))
   {
-		(pc_data[ri_ind]).prog().addSubprog(IsoAgLib::Proc_c::TimeProp, 1000);
-		(pc_data[ri_ind]).prog().start(IsoAgLib::Proc_c::Target, Proc_c::TimeProp, Proc_c::DoVal);
+		(pc_data[ai_ind]).prog().addSubprog(IsoAgLib::Proc_c::TimeProp, 1000);
+		(pc_data[ai_ind]).prog().start(IsoAgLib::Proc_c::Target, Proc_c::TimeProp, Proc_c::DoVal);
   }
   else
   {
@@ -122,10 +122,10 @@ void ProcDataManager_c::start(int ri_ind){
 }
 
 /** stop all (default) or a specific remote process data */
-void ProcDataManager_c::stop(int ri_ind){
-  if ((ri_ind >= 0) && ( (pc_data[ri_ind]).prog().started() ))
+void ProcDataManager_c::stop(int ai_ind){
+  if ((ai_ind >= 0) && ( (pc_data[ai_ind]).prog().started() ))
   {
-		(pc_data[ri_ind]).prog().stop();
+		(pc_data[ai_ind]).prog().stop();
   }
   else
   {
@@ -140,10 +140,10 @@ void ProcDataManager_c::stop(int ri_ind){
 }
 
 /** reset val of all (default) or a specific remote process data */
-void ProcDataManager_c::resetVal(int ri_ind){
-  if (ri_ind >= 0)
+void ProcDataManager_c::resetVal(int ai_ind){
+  if (ai_ind >= 0)
   {
-		(pc_data[ri_ind]).prog().resetVal();
+		(pc_data[ai_ind]).prog().resetVal();
   }
   else
   {

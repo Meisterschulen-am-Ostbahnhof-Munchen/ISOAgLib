@@ -92,9 +92,9 @@ namespace __IsoAgLib {
   /** C-style function, to get access to the unique IsoTerminal_c singleton instance
     * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
     */
-  IsoTerminal_c& getIsoTerminalInstance(uint8_t rui8_instance)
+  IsoTerminal_c& getIsoTerminalInstance(uint8_t aui8_instance)
   { // if > 1 singleton instance is used, no static reference can be used
-    return IsoTerminal_c::instance(rui8_instance);
+    return IsoTerminal_c::instance(aui8_instance);
   };
 #else
   /** C-style function, to get access to the unique IsoTerminal_c singleton instance */
@@ -207,7 +207,7 @@ IsoTerminal_c::close()
           or if you already registered an object-pool for this IdentItem
  */
 VtClientServerCommunication_c*
-IsoTerminal_c::initAndRegisterIsoObjectPool (IdentItem_c& refc_identItem, IsoAgLib::iIsoTerminalObjectPool_c& rrefc_pool, char* rpc_versionLabel)
+IsoTerminal_c::initAndRegisterIsoObjectPool (IdentItem_c& rc_identItem, IsoAgLib::iIsoTerminalObjectPool_c& arc_pool, char* apc_versionLabel)
 {
   uint8_t ui8_index = 0;
   // add new instance of VtClientServerCommunication
@@ -219,7 +219,7 @@ IsoTerminal_c::initAndRegisterIsoObjectPool (IdentItem_c& refc_identItem, IsoAgL
     }
     else
     {
-      if (vec_vtClientServerComm[ui8_index]->getIdentItem() == refc_identItem)
+      if (vec_vtClientServerComm[ui8_index]->getIdentItem() == rc_identItem)
       { // this IdentItem has already one pool registered - use multiple
         // IdentItems if you want to use multiple pools!
         return NULL;
@@ -227,7 +227,7 @@ IsoTerminal_c::initAndRegisterIsoObjectPool (IdentItem_c& refc_identItem, IsoAgL
     }
   }
   // create new instance
-  VtClientServerCommunication_c* pc_vtCSC = new VtClientServerCommunication_c (refc_identItem, *this, rrefc_pool, rpc_versionLabel, ui8_index SINGLETON_VEC_KEY_WITH_COMMA);
+  VtClientServerCommunication_c* pc_vtCSC = new VtClientServerCommunication_c (rc_identItem, *this, arc_pool, apc_versionLabel, ui8_index SINGLETON_VEC_KEY_WITH_COMMA);
   if (pc_vtCSC->en_objectPoolState == VtClientServerCommunication_c::OPCannotBeUploaded) // meaning here is: OPCannotBeInitialized (due to versionLabel problems)
   { // most likely due to wrong version label
     /// Error already registered in the VtClientServerCommunication_c(..) constructor!
@@ -255,7 +255,7 @@ IsoTerminal_c::initAndRegisterIsoObjectPool (IdentItem_c& refc_identItem, IsoAgL
 
 /** De-Register the registered object pool and versionLabel string (if one was copied) */
 bool
-IsoTerminal_c::deregisterIsoObjectPool (IdentItem_c& ref_identItem)
+IsoTerminal_c::deregisterIsoObjectPool (IdentItem_c& r_identItem)
 {
   /* what states the IdentItem could have we have to interrupt???
   * - IState_c::ClaimedAddress -> that item is Active and Member on ISOBUS
@@ -266,7 +266,7 @@ IsoTerminal_c::deregisterIsoObjectPool (IdentItem_c& ref_identItem)
   {
     if (vec_vtClientServerComm[ui8_index])
     {
-      if (&ref_identItem == &vec_vtClientServerComm[ui8_index]->getIdentItem())
+      if (&r_identItem == &vec_vtClientServerComm[ui8_index]->getIdentItem())
       {
         deregisterIsoObjectPoolInd (ui8_index);
         break;
@@ -282,10 +282,10 @@ IsoTerminal_c::deregisterIsoObjectPool (IdentItem_c& ref_identItem)
 
 
 void
-IsoTerminal_c::deregisterIsoObjectPoolInd (uint8_t rui8_index)
+IsoTerminal_c::deregisterIsoObjectPoolInd (uint8_t aui8_index)
 {
-  delete vec_vtClientServerComm[rui8_index];
-  vec_vtClientServerComm[rui8_index] = NULL;
+  delete vec_vtClientServerComm[aui8_index];
+  vec_vtClientServerComm[aui8_index] = NULL;
 }
 
 
@@ -392,12 +392,12 @@ IsoTerminal_c::processMsg()
 
 
 bool
-IsoTerminal_c::sendCommandForDEBUG(IsoAgLib::iIdentItem_c& refc_wsMasterIdentItem, uint8_t* rpui8_buffer, uint32_t ui32_size)
+IsoTerminal_c::sendCommandForDEBUG(IsoAgLib::iIdentItem_c& rc_wsMasterIdentItem, uint8_t* apui8_buffer, uint32_t ui32_size)
 {
   for (uint8_t ui8_index = 0; ui8_index < vec_vtClientServerComm.size(); ui8_index++)
   {
-    if (static_cast<__IsoAgLib::IdentItem_c&>(refc_wsMasterIdentItem) == vec_vtClientServerComm[ui8_index]->getIdentItem())
-      return vec_vtClientServerComm[ui8_index]->sendCommandForDEBUG(rpui8_buffer, ui32_size);
+    if (static_cast<__IsoAgLib::IdentItem_c&>(rc_wsMasterIdentItem) == vec_vtClientServerComm[ui8_index]->getIdentItem())
+      return vec_vtClientServerComm[ui8_index]->sendCommandForDEBUG(apui8_buffer, ui32_size);
   }
   return false;
 }
@@ -405,10 +405,10 @@ IsoTerminal_c::sendCommandForDEBUG(IsoAgLib::iIdentItem_c& refc_wsMasterIdentIte
 
 ///! Attention: This function is also called from "init()", not only from ISOMonitor!
 void
-IsoTerminal_c::reactOnMonitorListAdd (const IsoName_c& refc_isoName, const IsoItem_c* rpc_newItem)
+IsoTerminal_c::reactOnMonitorListAdd (const IsoName_c& rc_isoName, const IsoItem_c* apc_newItem)
 {
   // we only care for the VTs
-  if (refc_isoName.getEcuType() != IsoName_c::ecuTypeVirtualTerminal) return;
+  if (rc_isoName.getEcuType() != IsoName_c::ecuTypeVirtualTerminal) return;
 
   STL_NAMESPACE::list<VtServerInstance_c>::iterator lit_vtServerInst;
 
@@ -416,7 +416,7 @@ IsoTerminal_c::reactOnMonitorListAdd (const IsoName_c& refc_isoName, const IsoIt
   { // check if newly added VtServerInstance is already in our list
     if (lit_vtServerInst->getIsoItem())
     {
-      if (refc_isoName == lit_vtServerInst->getIsoItem()->isoName())
+      if (rc_isoName == lit_vtServerInst->getIsoItem()->isoName())
       { // the VtServerInstance is already known and in our list, so update the source address in case it has changed now
         return;
       }
@@ -424,23 +424,23 @@ IsoTerminal_c::reactOnMonitorListAdd (const IsoName_c& refc_isoName, const IsoIt
   }
 
   // VtServerInstance not yet in list, so add it ...
-  l_vtServerInst.push_back (VtServerInstance_c (*rpc_newItem, refc_isoName, *this));
-  VtServerInstance_c& ref_vtServerInst = l_vtServerInst.back();
+  l_vtServerInst.push_back (VtServerInstance_c (*apc_newItem, rc_isoName, *this));
+  VtServerInstance_c& r_vtServerInst = l_vtServerInst.back();
 
   // ... and notify all vtClientServerComm instances
   for (uint8_t ui8_index = 0; ui8_index < vec_vtClientServerComm.size(); ui8_index++)
   {
     if (vec_vtClientServerComm[ui8_index])
-      vec_vtClientServerComm[ui8_index]->notifyOnNewVtServerInstance (ref_vtServerInst);
+      vec_vtClientServerComm[ui8_index]->notifyOnNewVtServerInstance (r_vtServerInst);
   }
 }
 
 
 void
-IsoTerminal_c::reactOnMonitorListRemove (const IsoName_c& refc_isoName, uint8_t /*rui8_oldSa*/)
+IsoTerminal_c::reactOnMonitorListRemove (const IsoName_c& rc_isoName, uint8_t /*aui8_oldSa*/)
 {
   // we only care for the VTs
-  if (refc_isoName.getEcuType() != IsoName_c::ecuTypeVirtualTerminal) return;
+  if (rc_isoName.getEcuType() != IsoName_c::ecuTypeVirtualTerminal) return;
 
   // check if it is mine???
   STL_NAMESPACE::list<VtServerInstance_c>::iterator lit_vtServerInst;
@@ -449,7 +449,7 @@ IsoTerminal_c::reactOnMonitorListRemove (const IsoName_c& refc_isoName, uint8_t 
   { // check if lost VtServerInstance is in our list
     if (lit_vtServerInst->getIsoItem())
     {
-      if (refc_isoName == lit_vtServerInst->getIsoItem()->isoName())
+      if (rc_isoName == lit_vtServerInst->getIsoItem()->isoName())
       { // the VtServerInstance is already known and in our list, so it could be deleted
         // notify all clients on early loss of that VtServerInstance
         for (uint8_t ui8_index = 0; ui8_index < vec_vtClientServerComm.size(); ui8_index++)
@@ -506,19 +506,19 @@ void IsoTerminal_c::resetFlagForPoolUpload(const VtClientServerCommunication_c* 
 /// FAKE_VT_PROPERTIES IS ONLY NEEDED FOR ***IOP_GENERATOR**
 #ifdef FAKE_VT_PROPERTIES
 void
-IsoTerminal_c::fakeVtProperties (uint16_t rui16_dimension, uint16_t rui16_skWidth, uint16_t rui16_skHeight, uint8_t rui16_colorDepth, uint16_t rui16_fontSizes)
+IsoTerminal_c::fakeVtProperties (uint16_t aui16_dimension, uint16_t aui16_skWidth, uint16_t aui16_skHeight, uint8_t aui16_colorDepth, uint16_t aui16_fontSizes)
 {
   const IsoItem_c c_dummyIsoItem;
   // casting NULL to a reference is okay here, as the reference isn't used for any FAKE_VT case (iop_generator, etc.)
   l_vtServerInst.push_back (VtServerInstance_c (c_dummyIsoItem, IsoName_c::IsoNameUnspecified(), (*this)));
-  VtServerInstance_c& ref_vtServerInst = l_vtServerInst.back();
-  ref_vtServerInst.fakeVtProperties (rui16_dimension, rui16_skWidth, rui16_skHeight, rui16_colorDepth, rui16_fontSizes);
+  VtServerInstance_c& r_vtServerInst = l_vtServerInst.back();
+  r_vtServerInst.fakeVtProperties (aui16_dimension, aui16_skWidth, aui16_skHeight, aui16_colorDepth, aui16_fontSizes);
 
   // ... and notify all vtClientServerComm instances
   for (uint8_t ui8_index = 0; ui8_index < vec_vtClientServerComm.size(); ui8_index++)
   {
     if (vec_vtClientServerComm[ui8_index])
-      vec_vtClientServerComm[ui8_index]->notifyOnNewVtServerInstance(ref_vtServerInst);
+      vec_vtClientServerComm[ui8_index]->notifyOnNewVtServerInstance(r_vtServerInst);
   }
 }
 #endif

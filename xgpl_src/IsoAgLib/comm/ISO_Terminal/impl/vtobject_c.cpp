@@ -204,10 +204,10 @@ vtObject_c::saveValueP (uint16_t ui16_structOffset, uint16_t ui16_structLen, con
   * ((const IsoAgLib::iVtObject_c** const) (((uint8_t *)vtObject_a)+ui16_structOffset)) = p_newValue;
 }
 void
-vtObject_c::saveValueISOName (const uint16_t ui16_structOffset, const uint16_t ui16_structLen, const IsoAgLib::iIsoName_c& rref_newIsoName)
+vtObject_c::saveValueISOName (const uint16_t ui16_structOffset, const uint16_t ui16_structLen, const IsoAgLib::iIsoName_c& ar_newIsoName)
 {
   createRamStructIfNotYet (ui16_structLen);
-  *((IsoAgLib::iIsoName_c*) (((uint8_t *)vtObject_a)+ui16_structOffset)) = rref_newIsoName;
+  *((IsoAgLib::iIsoName_c*) (((uint8_t *)vtObject_a)+ui16_structOffset)) = ar_newIsoName;
 }
 
 void vtObject_c::saveValueBool (const uint16_t ui16_structOffset, const uint16_t ui16_structLen, bool b_newValue)
@@ -333,7 +333,7 @@ vtObject_c::getValueFloatGetAttribute (uint16_t ui16_structOffset, uint16_t ui16
 
 
 bool
-vtObject_c::genericChangeChildLocationPosition (bool rb_isLocation, IsoAgLib::iVtObject_c* childObject, int16_t dx, int16_t dy, bool b_updateObject, uint8_t numObjectsToFollow, IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow, uint16_t ui16_structOffset, uint16_t ui16_structLen)
+vtObject_c::genericChangeChildLocationPosition (bool ab_isLocation, IsoAgLib::iVtObject_c* childObject, int16_t dx, int16_t dy, bool b_updateObject, uint8_t numObjectsToFollow, IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow, uint16_t ui16_structOffset, uint16_t ui16_structLen)
 {
   // Find the child object in question
   for(int8_t i = 0; i < numObjectsToFollow; i++) {
@@ -350,7 +350,7 @@ vtObject_c::genericChangeChildLocationPosition (bool rb_isLocation, IsoAgLib::iV
           saveValueP(ui16_structOffset, ui16_structLen, (IsoAgLib::iVtObject_c *)objectsToFollow);
           s_properties.flags |= FLAG_OBJECTS2FOLLOW_IN_RAM;
         }
-        if (rb_isLocation) {
+        if (ab_isLocation) {
           objectsToFollow[i].x = objectsToFollow[i].x + dx;
           objectsToFollow[i].y = objectsToFollow[i].y + dy;
         } else {

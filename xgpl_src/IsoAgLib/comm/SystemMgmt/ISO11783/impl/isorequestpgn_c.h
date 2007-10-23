@@ -126,12 +126,12 @@ public:
       IsoName_c are received and handled.
       This function has to be called during initialisation of a local IsoItem_c / IdentItem_c
     */
-  void registerLocalDevice( const __IsoAgLib::IsoName_c& refc_isoName );
+  void registerLocalDevice( const __IsoAgLib::IsoName_c& rc_isoName );
   /** unregister an IsoName_c of a local device, so that IsoFilterManager_c stops receiving
       messages for the corresponding IsoName_c.
       This function has to be called during destruction of a local IsoItem_c / IdentItem_c
     */
-  void unregisterLocalDevice( const __IsoAgLib::IsoName_c& refc_isoName );
+  void unregisterLocalDevice( const __IsoAgLib::IsoName_c& rc_isoName );
 
   /** initialisation for IsoRequestPgn_c */
   void init (void);
@@ -152,44 +152,44 @@ public:
   virtual CanPkgExt_c& dataBase() {return c_data;}
 
   /** adds the PGN to the list
-      @param ref_PGNHandler: reference to a IsoRequestPgnHandler_c from IsoMonitor_c, IsoItem_c, TimePosGps_c, TracGeneral_c or IsoTerminalServer
-      @param cui32_pgnToRegister: PGN for which the ref_PGNHandler's processMsgRequestPGN should be called
-      @return true, if PGN for that ref_PGNHandler wasn't registered yet and is now added and registered successfully
-              false, if PGN for that ref_PGNHandler was already registered and needn't be added again */
-  bool registerPGN (IsoRequestPgnHandler_c &ref_PGNHandler, const uint32_t cui32_pgnToRegister);
+      @param r_PGNHandler: reference to a IsoRequestPgnHandler_c from IsoMonitor_c, IsoItem_c, TimePosGps_c, TracGeneral_c or IsoTerminalServer
+      @param cui32_pgnToRegister: PGN for which the r_PGNHandler's processMsgRequestPGN should be called
+      @return true, if PGN for that r_PGNHandler wasn't registered yet and is now added and registered successfully
+              false, if PGN for that r_PGNHandler was already registered and needn't be added again */
+  bool registerPGN (IsoRequestPgnHandler_c &r_PGNHandler, const uint32_t cui32_pgnToRegister);
 
   /** adds n PGN for the client to the list
-      @param ref_PGNHandler: reference to a IsoRequestPgnHandler_c from IsoMonitor_c, IsoItem_c, TimePosGps_c, TracGeneral_c or IsoTerminalServer
+      @param r_PGNHandler: reference to a IsoRequestPgnHandler_c from IsoMonitor_c, IsoItem_c, TimePosGps_c, TracGeneral_c or IsoTerminalServer
       @param cui8_pgnCount: number of PGNs to be added in the list
-      @param pcui32_pgnToRegister: array of PGNs for which the ref_PGNHandler's processMsgRequestPGN should be called
-      @return true, if at least one of the PGNs for that ref_PGNHandler wasn't registered yet and is now added and registered successfully
-              false, if all PGNs for that ref_PGNHandler were already registered and needn't be added again*/
-  bool registerPGN (IsoRequestPgnHandler_c &ref_PGNHandler, const uint8_t cui8_pgnCount, const uint32_t *pcui32_pgnToRegister);
+      @param pcui32_pgnToRegister: array of PGNs for which the r_PGNHandler's processMsgRequestPGN should be called
+      @return true, if at least one of the PGNs for that r_PGNHandler wasn't registered yet and is now added and registered successfully
+              false, if all PGNs for that r_PGNHandler were already registered and needn't be added again*/
+  bool registerPGN (IsoRequestPgnHandler_c &r_PGNHandler, const uint8_t cui8_pgnCount, const uint32_t *pcui32_pgnToRegister);
 
   /** removes a PGN from the list
-      @param ref_PGNHandler: reference to a IsoRequestPgnHandler_c from IsoMonitor_c, IsoItem_c, TimePosGps_c, TracGeneral_c or IsoTerminalServer
-      @param cui32_pgnToRegister if not given, all PGNs of the ref_PGNHandler will be removed
+      @param r_PGNHandler: reference to a IsoRequestPgnHandler_c from IsoMonitor_c, IsoItem_c, TimePosGps_c, TracGeneral_c or IsoTerminalServer
+      @param cui32_pgnToRegister if not given, all PGNs of the r_PGNHandler will be removed
                                  if given, only that single PGN will be removed */
-  void unregisterPGN (IsoRequestPgnHandler_c &ref_PGNHandler, const uint32_t cui32_pgnToRegister = 0);
+  void unregisterPGN (IsoRequestPgnHandler_c &r_PGNHandler, const uint32_t cui32_pgnToRegister = 0);
 
   /** removes n PGN for the client from the list
-      @param ref_PGNHandler: reference to a IsoRequestPgnHandler_c from IsoMonitor_c, IsoItem_c, TimePosGps_c, TracGeneral_c or IsoTerminalServer
+      @param r_PGNHandler: reference to a IsoRequestPgnHandler_c from IsoMonitor_c, IsoItem_c, TimePosGps_c, TracGeneral_c or IsoTerminalServer
       @param cui8_pgnCount: number of PGNs to be removed from the list
       @param pcui32_pgnToRegister: array of PGNs to be removed */
-  void unregisterPGN (IsoRequestPgnHandler_c &ref_PGNHandler, const uint8_t cui8_pgnCount, const uint32_t *pcui32_pgnToUnregister);
+  void unregisterPGN (IsoRequestPgnHandler_c &r_PGNHandler, const uint8_t cui8_pgnCount, const uint32_t *pcui32_pgnToUnregister);
 
   /** before adding any further PGN - RequestPGNHandler, check if not already existing
-      @param ref_PGNHandler: reference to a IsoRequestPgnHandler_c from IsoMonitor_c, IsoItem_c, TimePosGps_c, TracGeneral_c or IsoTerminalServer
+      @param r_PGNHandler: reference to a IsoRequestPgnHandler_c from IsoMonitor_c, IsoItem_c, TimePosGps_c, TracGeneral_c or IsoTerminalServer
       @param cui32_pgn: check that PGN, please!
-      @return true, if the ref_PGNHandler is already registered with that PGN */
-  bool checkIfAlreadyRegistered (IsoRequestPgnHandler_c &ref_PGNHandler, const uint32_t cui32_pgn);
+      @return true, if the r_PGNHandler is already registered with that PGN */
+  bool checkIfAlreadyRegistered (IsoRequestPgnHandler_c &r_PGNHandler, const uint32_t cui32_pgn);
 
   /// only interesting for processMsgRequestPGN implementations to get the exact can-pkg time!
   int32_t getTimeOfLastRequest() { return data().time(); }
 
   /** Only call sendCannotRespondNow(..) when you're about to respond to a requested PGN */
   void answerRequestPGNwithNACK()                       { if (pc_isoItemDA != NULL) sendAcknowledgePGN (*pc_isoItemDA, 0x01); } // Control Byte 1 = NOT Acknowledge
-  void answerRequestPGNwithCannotRespondNow(IsoItem_c& rrefc_isoItemSender) { sendAcknowledgePGN (rrefc_isoItemSender, 0x03); } // Control Byte 3 = Cannot Respond
+  void answerRequestPGNwithCannotRespondNow(IsoItem_c& arc_isoItemSender) { sendAcknowledgePGN (arc_isoItemSender, 0x03); } // Control Byte 3 = Cannot Respond
 
   ///  Operation:  Funktion for Debugging in Scheduler_c
   virtual const char* getTaskName() const;
@@ -209,7 +209,7 @@ private: // Private methods
       users please use init(...) instead. */
   void singletonInit ();
 
-  void sendAcknowledgePGN (IsoItem_c& rrefc_isoItemSender, uint8_t rui8_ackType);
+  void sendAcknowledgePGN (IsoItem_c& arc_isoItemSender, uint8_t aui8_ackType);
 
 
   /** clear b_alreadyClosed so that close() can be called one time */
@@ -244,7 +244,7 @@ private: // Private attributes
 #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
   /** C-style function, to get access to the unique IsoRequestPgn_c singleton instance
       if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS */
-  IsoRequestPgn_c& getIsoRequestPgnInstance (uint8_t rui8_instance = 0);
+  IsoRequestPgn_c& getIsoRequestPgnInstance (uint8_t aui8_instance = 0);
 #else
   /** C-style function, to get access to the unique IsoRequestPgn_c singleton instance */
   IsoRequestPgn_c& getIsoRequestPgnInstance (void);

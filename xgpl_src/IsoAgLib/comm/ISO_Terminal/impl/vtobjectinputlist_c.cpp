@@ -157,9 +157,9 @@ vtObjectInputList_c::fitTerminal() const
 // Operation : updateEnable
 //! @param b_enableOrDisable:
 void
-vtObjectInputList_c::updateEnable(uint8_t rui8_enOrDis)
+vtObjectInputList_c::updateEnable(uint8_t aui8_enOrDis)
 {
-  saveValue8 (MACRO_getStructOffset(get_vtObjectInputList_a(), enabled), sizeof(iVtObjectInputList_s), rui8_enOrDis);
+  saveValue8 (MACRO_getStructOffset(get_vtObjectInputList_a(), enabled), sizeof(iVtObjectInputList_s), aui8_enOrDis);
 }
 
 // Operation : setValue
@@ -176,23 +176,23 @@ vtObjectInputList_c::setValue(uint8_t newValue, bool b_updateObject, bool b_enab
 }
 
 // Operation : setItem
-//! @param rui8_index:
-//! @param rpc_object:
+//! @param aui8_index:
+//! @param apc_object:
 void
-vtObjectInputList_c::setItem(uint8_t rui8_index, IsoAgLib::iVtObject_c* rpc_object, bool b_enableReplaceOfCmd)
+vtObjectInputList_c::setItem(uint8_t aui8_index, IsoAgLib::iVtObject_c* apc_object, bool b_enableReplaceOfCmd)
 {
   uint8_t hi, lo;
-  if (rpc_object == NULL) {
+  if (apc_object == NULL) {
     lo = 0xFF;
     hi = 0xFF;
   } else {
-    lo = rpc_object->getID() & 0xFF;
-    hi = rpc_object->getID() >> 8;
+    lo = apc_object->getID() & 0xFF;
+    hi = apc_object->getID() >> 8;
   }
   __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommand (177 /* Command: Command --- Parameter: Change List Item */,
                                                    this->getID() & 0xFF,
                                                    this->getID() >> 8,
-                                                   rui8_index,
+                                                   aui8_index,
                                                    lo,
                                                    hi,
                                                    0xFF,

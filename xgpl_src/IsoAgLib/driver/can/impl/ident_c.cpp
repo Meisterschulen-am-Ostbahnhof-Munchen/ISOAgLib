@@ -87,23 +87,23 @@
 namespace __IsoAgLib
 {
   /** constructor which can set the values
-    @param rt_ident new ident setting
+    @param at_ident new ident setting
     @param ren_identType new ident type
         (Ident_c::S for 11bit ident or Ident_c::E for 29bit)
         (default: DEFAULT_IDENT_TYPE set in isoaglib_config)
   */
-  Ident_c::Ident_c(MASK_TYPE rt_ident, identType_t ren_identType)
+  Ident_c::Ident_c(MASK_TYPE at_ident, identType_t ren_identType)
   {
-    t_ident = (ren_identType == StandardIdent)?(rt_ident&0x7FF):rt_ident;
+    t_ident = (ren_identType == StandardIdent)?(at_ident&0x7FF):at_ident;
     data.type = ren_identType;
     data.empty = 0;
   }
 
   /** constructor which gets its values from other instance
-    @param rrefc_src source Ident_c instance
+    @param arc_src source Ident_c instance
   */
-  Ident_c::Ident_c(const Ident_c& rrefc_src)
-    {CNAMESPACE::memcpy(this, &rrefc_src, sizeof(Ident_c));}
+  Ident_c::Ident_c(const Ident_c& arc_src)
+    {CNAMESPACE::memcpy(this, &arc_src, sizeof(Ident_c));}
 
   /** destructor which has nothing to do */
   Ident_c::~Ident_c()
@@ -112,61 +112,61 @@ namespace __IsoAgLib
 
   /** compare this ident setting with another
     (use memory operation for max speed)
-    @param rrefc_src compared ident
+    @param arc_src compared ident
     @return true -> referenced ident has same setting and type
   */
-  bool Ident_c::operator==(const Ident_c& rrefc_src) const
+  bool Ident_c::operator==(const Ident_c& arc_src) const
   {
-    return ((ident()==rrefc_src.ident())
-            &&(identType()==rrefc_src.identType())
-            &&(empty()==rrefc_src.empty()))?true:false;
+    return ((ident()==arc_src.ident())
+            &&(identType()==arc_src.identType())
+            &&(empty()==arc_src.empty()))?true:false;
   }
 
   /** set this ident
-    @param rt_ident new ident setting
+    @param at_ident new ident setting
     @param ren_identType new ident type
         (Ident_c::S for 11bit ident or Ident_c::E for 29bit)
         (default defined in isoaglib_config.h)
   */
-  void Ident_c::set(MASK_TYPE rt_ident, identType_t ren_identType)
+  void Ident_c::set(MASK_TYPE at_ident, identType_t ren_identType)
   {
-    t_ident = (ren_identType == StandardIdent)?(rt_ident&0x7FF):rt_ident;
+    t_ident = (ren_identType == StandardIdent)?(at_ident&0x7FF):at_ident;
     data.type = ren_identType;
     data.empty = 0;
   }
 
   /** set this ident with access to single byte
-    @param rb_val new val for ident at wanted position
-    @param rb_pos position in ident, where ident should be placed in
+    @param ab_val new val for ident at wanted position
+    @param ab_pos position in ident, where ident should be placed in
     @param ren_identType new ident type
         (Ident_c::S for 11bit ident or Ident_c::E for 29bit)
         (default defined in isoaglib_config.h)
   */
-  void Ident_c::set(uint8_t rb_val, uint8_t rb_pos, identType_t ren_identType)
+  void Ident_c::set(uint8_t ab_val, uint8_t ab_pos, identType_t ren_identType)
   {
 #if defined( OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN )
-    pb_ident[rb_pos] = rb_val;
+    pb_ident[ab_pos] = ab_val;
 #elif defined(  OPTIMIZE_NUMBER_CONVERSIONS_FOR_BIG_ENDIAN )
-    pb_ident[sizeof(MASK_TYPE) - 1 - rb_pos] = rb_val;
+    pb_ident[sizeof(MASK_TYPE) - 1 - ab_pos] = ab_val;
 #else
-    const uint8_t bitCount = (rb_pos*8);
+    const uint8_t bitCount = (ab_pos*8);
     MASK_TYPE clearMask = ~(0xFF << bitCount);
     t_ident &= clearMask;
-    t_ident |= (MASK_TYPE(rb_val) << (rb_pos*8));
+    t_ident |= (MASK_TYPE(ab_val) << (ab_pos*8));
 #endif
     data.type = ren_identType;
     data.empty = 0;
   }
 
   /** deliver amount of different bits from own ident to compared ident
-    @param rrefc_ident reference to compared ident
+    @param arc_ident reference to compared ident
     @return amount of different bits
   */
-  uint8_t Ident_c::bit_diff(const Ident_c& rrefc_ident)const
+  uint8_t Ident_c::bit_diff(const Ident_c& arc_ident)const
   {
     uint8_t cnt = 0;
     // XOR delivers '1' where both values are different
-    MASK_TYPE ui32_comp = t_ident ^ rrefc_ident.t_ident;
+    MASK_TYPE ui32_comp = t_ident ^ arc_ident.t_ident;
       for(MASK_TYPE ui32_new = (ui32_comp & (ui32_comp-1)); ui32_new != ui32_comp;
         ui32_comp=ui32_new, ui32_new &= (ui32_new-1))cnt++;
       return cnt;
@@ -174,16 +174,16 @@ namespace __IsoAgLib
 
   /**
     deliver amount of different bits from own ident to compared ident
-    @param rrefc_ident reference to compared ident
-    @param rt_mask
+    @param arc_ident reference to compared ident
+    @param at_mask
     @return amount of different bits
   */
-  uint8_t Ident_c::bitDiffWithMask(const Ident_c& rrefc_ident, MASK_TYPE rt_mask, unsigned int& ui_lsbFromDiff ) const
+  uint8_t Ident_c::bitDiffWithMask(const Ident_c& arc_ident, MASK_TYPE at_mask, unsigned int& ui_lsbFromDiff ) const
   {
     unsigned int cnt = 0;
     ui_lsbFromDiff = 0;
     // XOR delivers '1' where both values are different
-    MASK_TYPE ui32_comp = (t_ident & rt_mask) ^ (rrefc_ident.t_ident & rt_mask);
+    MASK_TYPE ui32_comp = (t_ident & at_mask) ^ (arc_ident.t_ident & at_mask);
     for ( MASK_TYPE testMask = 1; testMask <= 0x10000000; testMask <<= 1 )
     {
       if ( ui32_comp & testMask )
@@ -204,15 +204,15 @@ namespace __IsoAgLib
 
   /**
     deliver amount of different bits from own ident to compared ident
-    @param rrefc_ident reference to compared ident
+    @param arc_ident reference to compared ident
     @return amount of different bits
   */
-  uint8_t Ident_c::bitDiff(const Ident_c& rrefc_ident, unsigned int& ui_lsbFromDiff) const
+  uint8_t Ident_c::bitDiff(const Ident_c& arc_ident, unsigned int& ui_lsbFromDiff) const
   {
     unsigned int cnt = 0;
     ui_lsbFromDiff = 0;
     // XOR delivers '1' where both values are different
-    MASK_TYPE ui32_comp = t_ident ^ rrefc_ident.t_ident;
+    MASK_TYPE ui32_comp = t_ident ^ arc_ident.t_ident;
     for ( MASK_TYPE testMask = 1; testMask <= 0x10000000; testMask <<= 1 )
     {
       if ( ui32_comp & testMask )

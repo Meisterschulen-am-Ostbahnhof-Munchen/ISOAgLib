@@ -99,18 +99,18 @@
 // is needed for the documentation generator
 using namespace IsoAgLib;
 
-iIsoName_c c_remoteECU (true, // rb_selfConf
-                        2,    // rui8_indGroup
-                        7,    // rui8_devClass
-                        0,    // rui8_devClassInst
-                        25,   // rb_func
-                        0x7FF,// rui16_manufCode
-                        27,   // rui32_serNo
-                        0,    // rb_funcInst
+iIsoName_c c_remoteECU (true, // ab_selfConf
+                        2,    // aui8_indGroup
+                        7,    // aui8_devClass
+                        0,    // aui8_devClassInst
+                        25,   // ab_func
+                        0x7FF,// aui16_manufCode
+                        27,   // aui32_serNo
+                        0,    // ab_funcInst
                         #ifdef PROP_CLIENT_B
-                        0     // rb_ecuInst second client "1"
+                        0     // ab_ecuInst second client "1"
                         #else
-                        1     // rb_ecuInst second client "0"
+                        1     // ab_ecuInst second client "0"
                         #endif
                         );
 
@@ -119,10 +119,10 @@ iIsoName_c c_remoteECU (true, // rb_selfConf
   {
     /** data evaluation part */
     /** takes the ident from the stored data */
-    uint32_t rc_ident = getDataReceive().getIdent();
+    uint32_t ac_ident = getDataReceive().getIdent();
 
     /** switch to handle Proprietary PGNs */
-    switch ( (rc_ident & 0x3FF0000) >> 8 )
+    switch ( (ac_ident & 0x3FF0000) >> 8 )
     {
       /** in this case the PGN is 0x0EF00 (Proprietary_A_PGN) */
       case PROPRIETARY_A_PGN:
@@ -159,7 +159,7 @@ iIsoName_c c_remoteECU (true, // rb_selfConf
       if (pc_identItem->isClaimedAddress())
       {
         /** data structure for sending */
-        IsoAgLib::iGenericData_c& refs_sendDataCan = getDataSend();
+        IsoAgLib::iGenericData_c& rs_sendDataCan = getDataSend();
 
         /// You have two possibilities here:
         /// A) Clear the sendData, fill it with the data and then send it! (use this if you send different messages all the time)
@@ -168,13 +168,13 @@ iIsoName_c c_remoteECU (true, // rb_selfConf
         // we're using a mixture of A) and B) right now below which is NOT optimal, but it works for demonstrating!
 
         /** data vector is cleared */
-        refs_sendDataCan.clearVector();
-        refs_sendDataCan.setDataUi32(0,0x11122233);
-        refs_sendDataCan.setDataUi32(4,0x34445556);
-        refs_sendDataCan.setDataUi32(8,0x66777888); // will need multi-packet
+        rs_sendDataCan.clearVector();
+        rs_sendDataCan.setDataUi32(0,0x11122233);
+        rs_sendDataCan.setDataUi32(4,0x34445556);
+        rs_sendDataCan.setDataUi32(8,0x66777888); // will need multi-packet
 
         /** test for proprietary A PGN */
-        refs_sendDataCan.setIdent (PROPRIETARY_A_PGN << 8);
+        rs_sendDataCan.setIdent (PROPRIETARY_A_PGN << 8);
 
         /** sends the data to the proprietary message handler */
         sendDataToHandler();
@@ -186,12 +186,12 @@ iIsoName_c c_remoteECU (true, // rb_selfConf
     if ( lastTimeSinceUpdate() >= 100 )
     {
       /** data structure for sending */
-      IsoAgLib::iGenericData_c& refs_sendDataCan = getDataSend();
+      IsoAgLib::iGenericData_c& rs_sendDataCan = getDataSend();
 
       /** Modify the send-data */
-      uint32_t ui32_data = refs_sendDataCan.getDataUi32(0);
+      uint32_t ui32_data = rs_sendDataCan.getDataUi32(0);
       ui32_data++;
-      refs_sendDataCan.setDataUi32(0,ui32_data);
+      rs_sendDataCan.setDataUi32(0,ui32_data);
 
       updateTime( iSystem_c::getTime() );
     }
@@ -200,26 +200,26 @@ iIsoName_c c_remoteECU (true, // rb_selfConf
 
 
   /** initialize proprietary Can client Application */
-  void ProprietaryCanClient_c::init( const IsoAgLib::iIdentItem_c& rrefc_item, const IsoAgLib::iIsoName_c& rrefc_rremoteECU SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA)
+  void ProprietaryCanClient_c::init( const IsoAgLib::iIdentItem_c& arc_item, const IsoAgLib::iIsoName_c& arc_rremoteECU SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA)
   {
     /** pc_identItem is used in main event */
-    pc_identItem = &rrefc_item;
+    pc_identItem = &arc_item;
     /** filter for proprietary A1 */
     uint32_t ui32_filter = PROPRIETARY_A_PGN << 8;
     /** Mask for Proprietary A1 */
     uint32_t ui32_mask   = 0x3FF0000;
     /** define receive filter. Note: ident only for proprietary A, A1 PGN, otherwise NULL */
-    defineReceiveFilter( ui32_mask,  ui32_filter, rrefc_rremoteECU, &rrefc_item SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA);
+    defineReceiveFilter( ui32_mask,  ui32_filter, arc_rremoteECU, &arc_item SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA);
 
     #ifndef PROP_CLIENT_B
     /** CLIENT A uses periodically sending! */
     /** data structure for sending */
-    IsoAgLib::iGenericData_c& refs_sendDataCan = getDataSend();
+    IsoAgLib::iGenericData_c& rs_sendDataCan = getDataSend();
     /** Initialize Telegram */
-    refs_sendDataCan.clearVector();
-    refs_sendDataCan.setDataUi32(0,0x12345678); // will fit into single-packet
+    rs_sendDataCan.clearVector();
+    rs_sendDataCan.setDataUi32(0,0x12345678); // will fit into single-packet
     /** set to proprietary A PGN */
-    refs_sendDataCan.setIdent (PROPRIETARY_A_PGN << 8);
+    rs_sendDataCan.setIdent (PROPRIETARY_A_PGN << 8);
     /** set periodic sending to 500 msec */
     setSendPeriodMsec(500 SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA);
     /** sends the data to the proprietary message handler NOW and also starts periodic activity! */
@@ -239,21 +239,21 @@ int main()
   getIcanInstance(SINGLETON_VEC_KEY_PARAMETER_USE).init( i_proprietaryCanBus, 250 );
 
   // start address claim of the local identity/member
-  iIdentItem_c c_myIdent (2,    // rui8_indGroup
-                          7,    // rui8_devClass
-                          0,    // rui8_devClassInst
-                          25,   // rb_func
-                          0x7FF,// rui16_manufCode
-                          27,   // rui32_serNo
+  iIdentItem_c c_myIdent (2,    // aui8_indGroup
+                          7,    // aui8_devClass
+                          0,    // aui8_devClassInst
+                          25,   // ab_func
+                          0x7FF,// aui16_manufCode
+                          27,   // aui32_serNo
                           254,  // No preferred SA, auto-allocate in range 0x80 upwards...
                           0x100,// EEPROM-Address to store the allocated SA for re-use after power-cycle
-                          0,    // rb_funcInst
+                          0,    // ab_funcInst
                           #ifdef PROP_CLIENT_B
-                          1,    // rb_ecuInst
+                          1,    // ab_ecuInst
                           #else
-                          0,    // rb_ecuInst
+                          0,    // ab_ecuInst
                           #endif
-                          true);// rb_selfConf
+                          true);// ab_selfConf
                           // further parameters use the default: -1 /* no workingset at all */, NULL /* so no list given either */, 0 /* singletonVecKey */
 
   /** create Application */

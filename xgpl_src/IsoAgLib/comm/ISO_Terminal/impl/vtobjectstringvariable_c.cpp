@@ -142,12 +142,12 @@ vtObjectStringVariable_c::fitTerminal() const
 //! @param newValue:
 //! @param b_updateObject:
 void
-vtObjectStringVariable_c::setValueCopyUTF8 (const char* newValue, uint8_t rui8_fontType, bool b_updateObject, bool b_enableReplaceOfCmd)
+vtObjectStringVariable_c::setValueCopyUTF8 (const char* newValue, uint8_t aui8_fontType, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
   const uint16_t cui16_strLen = (uint16_t)CNAMESPACE::strlen (newValue);
   char* pc_iso8859 = new char [cui16_strLen+1];
 
-  convertStringUnicodeTo8859 (newValue, cui16_strLen, pc_iso8859, rui8_fontType);
+  convertStringUnicodeTo8859 (newValue, cui16_strLen, pc_iso8859, aui8_fontType);
 
   setValueCopy (pc_iso8859, b_updateObject, b_enableReplaceOfCmd);
   delete[] pc_iso8859;

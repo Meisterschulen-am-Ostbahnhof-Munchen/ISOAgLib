@@ -113,7 +113,7 @@ MsgObj_c::MsgObj_c()
 }
 
 /** copy constructor for this class, which gets data from another MsgObj_c instance
-  @param rrefc_src source MsgObj_c instance which should be cloned by this instance
+  @param arc_src source MsgObj_c instance which should be cloned by this instance
 */
 MsgObj_c::MsgObj_c(const MsgObj_c& src)
 { // set all member variables to the corresponding value from the source instance
@@ -149,14 +149,14 @@ MsgObj_c::~MsgObj_c()
   }
 }
 
-/** merge two msgObj instances rrefc_left and rrefc_right and tell with rb_extendedType
+/** merge two msgObj instances arc_left and arc_right and tell with ab_extendedType
   if 11bit or 29 bit identifiers are used
   (uses BIOS function)
 
   possible errors:
   * range BUS or MsgObj numbers out of allowed limits
   * hwConfig BUS not initialized or ID can't be changed
-  @param rrefc_right reference to MsgObj_c which should be merged into this instance
+  @param arc_right reference to MsgObj_c which should be merged into this instance
   @return true -> successful merged; false -> too many FilterBorefs for one MsgObj
 */
 bool MsgObj_c::merge(MsgObj_c& right)
@@ -229,19 +229,19 @@ bool MsgObj_c::merge(MsgObj_c& right)
   #if defined(DEBUG_CAN_BUFFER_FILLING) || defined(DEBUG)
     #if CAN_INSTANCE_CNT == 1
     static uint16_t sui16_maxFilterPerMsgObjCnt = 0;
-    uint16_t &ref_maxCnt = sui16_maxFilterPerMsgObjCnt;
+    uint16_t &r_maxCnt = sui16_maxFilterPerMsgObjCnt;
     #elif CAN_INSTANCE_CNT == 2
     static uint16_t sui16_maxFilterPerMsgObjCnt[2] = {0, 0};
-    uint16_t &ref_maxCnt = sui16_maxFilterPerMsgObjCnt[busNumber()];
+    uint16_t &r_maxCnt = sui16_maxFilterPerMsgObjCnt[busNumber()];
     #else
     static uint16_t sui16_maxFilterPerMsgObjCnt[CAN_INSTANCE_CNT];
-    uint16_t &ref_maxCnt = sui16_maxFilterPerMsgObjCnt[busNumber()];
+    uint16_t &r_maxCnt = sui16_maxFilterPerMsgObjCnt[busNumber()];
     #endif
 
-    if ( (cnt_filterBox() + right.cnt_filterBox()) > ref_maxCnt )
+    if ( (cnt_filterBox() + right.cnt_filterBox()) > r_maxCnt )
     { // new max filter cnt per MsgObj found
-      ref_maxCnt = (cnt_filterBox() + right.cnt_filterBox());
-      INTERNAL_DEBUG_DEVICE << "New Max Amount " << ref_maxCnt
+      r_maxCnt = (cnt_filterBox() + right.cnt_filterBox());
+      INTERNAL_DEBUG_DEVICE << "New Max Amount " << r_maxCnt
         << " of FilterBox_c instances per MsgObj_c with ident "
         << int16_t( filter().ident() )
         << INTERNAL_DEBUG_DEVICE_ENDL;
@@ -273,10 +273,10 @@ void MsgObj_c::close()
 
   possible errors:
       * can_overflow to many references to FilterBox_c instances for this MsgObj
-  @param rrefc_box reference to FilterBox_c which should be inserted as possible processing instance of msg received by this instance
+  @param arc_box reference to FilterBox_c which should be inserted as possible processing instance of msg received by this instance
   @return true -> this reference could be stored in this MsgObj_c (limited amount)
 */
-bool MsgObj_c::insertFilterBox(FilterRef rrefc_box)
+bool MsgObj_c::insertFilterBox(FilterRef arc_box)
 {
   for ( int i = 0; i < cnt_filterBox(); i++ )
   {
@@ -297,7 +297,7 @@ bool MsgObj_c::insertFilterBox(FilterRef rrefc_box)
     #endif
 
     // check if given FilterRef is already registered
-    if ( &(*arrPfilterBox[i]) == &(*rrefc_box) )
+    if ( &(*arrPfilterBox[i]) == &(*arc_box) )
     {
       #if defined( DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION )
       INTERNAL_DEBUG_DEVICE << "Reject try to insert the same FilterBox a second time"
@@ -307,7 +307,7 @@ bool MsgObj_c::insertFilterBox(FilterRef rrefc_box)
     }
   }
   const unsigned int cui_oldSize = arrPfilterBox.size();
-  arrPfilterBox.push_back( rrefc_box );
+  arrPfilterBox.push_back( arc_box );
   if ( arrPfilterBox.size() > cui_oldSize )
   { // fine
     return true;
@@ -322,10 +322,10 @@ bool MsgObj_c::insertFilterBox(FilterRef rrefc_box)
 /** delete pointer to a Filter Box and move following pointers one position forward
   possible errors:
       * elNonexistent to be deleted FilterBox_c reference not registered for this MsgObj
-  @param rrefc_box reference to FilterBox_c which should be deleted from reference array
+  @param arc_box reference to FilterBox_c which should be deleted from reference array
   @return true -> given FilterBox_c was deleted from local reference array
 */
-bool MsgObj_c::deleteFilterBox(FilterRef rrefc_box)
+bool MsgObj_c::deleteFilterBox(FilterRef arc_box)
 {
   bool b_result = false;
   #if 0
@@ -333,7 +333,7 @@ bool MsgObj_c::deleteFilterBox(FilterRef rrefc_box)
   // search the a pointer to the given filter box
   for (; i < cnt_filterBox(); i++)
   {
-    if (arrPfilterBox[i] == rrefc_box)
+    if (arrPfilterBox[i] == arc_box)
     { // the pointer at position i points to the given FilterBox
       setCntFilterBox(cnt_filterBox() - 1); // decrement the FilterBox_c counter
       break;
@@ -355,7 +355,7 @@ bool MsgObj_c::deleteFilterBox(FilterRef rrefc_box)
   #else
   for ( STL_NAMESPACE::vector<FilterRef>::iterator iter = arrPfilterBox.begin() ; iter != arrPfilterBox.end(); iter++ )
   {
-    if ( *iter == rrefc_box )
+    if ( *iter == arc_box )
     { // to be deleted iterator is found
       arrPfilterBox.erase( iter );
       b_result = true;
@@ -382,60 +382,60 @@ bool MsgObj_c::deleteFilterBox(FilterRef rrefc_box)
       * can_overflow receive puffer overflow during receive
           (not likely because processing is called by receive IRQ)
       * dependant error if insertion in registered FilterBox_c causes error
-  @param rui8_busNumber BUS number to check for received msg
-  @param rb_forceProcessAll true -> process all CAN messages in HAL buffer, even if timeEvent would force stop
+  @param aui8_busNumber BUS number to check for received msg
+  @param ab_forceProcessAll true -> process all CAN messages in HAL buffer, even if timeEvent would force stop
                             ( this important to process all buffered messages before FilterBoxes are reconfigured )
   @return number of received messages
   */
-uint8_t MsgObj_c::processMsg(uint8_t rui8_busNumber, bool rb_forceProcessAll)
+uint8_t MsgObj_c::processMsg(uint8_t aui8_busNumber, bool ab_forceProcessAll)
 {
   uint8_t b_count = 0;
   int32_t i32_ident;
   bool b_processed = false,
     b_toProcess = true;
-  bool b_forceProcessAll = rb_forceProcessAll;
+  bool b_forceProcessAll = ab_forceProcessAll;
 
   #ifdef DEBUG_CAN_BUFFER_FILLING
   bool b_detectedOverflow = false;
     #if CAN_INSTANCE_CNT == 1
     static uint16_t sui16_maxBufferUseage = 0;
-    uint16_t &ref_maxCnt = sui16_maxBufferUseage;
+    uint16_t &r_maxCnt = sui16_maxBufferUseage;
 
     static uint16_t sui16_minBufferFree = 0xFFFF;
-    uint16_t &ref_minFree = sui16_minBufferFree;
+    uint16_t &r_minFree = sui16_minBufferFree;
     #elif CAN_INSTANCE_CNT == 2
     static uint16_t sui16_maxBufferUseage[2] = {0, 0};
-    uint16_t &ref_maxCnt = sui16_maxBufferUseage[rui8_busNumber];
+    uint16_t &r_maxCnt = sui16_maxBufferUseage[aui8_busNumber];
 
     static uint16_t sui16_minBufferFree[2] = {0xFFFF,0xFFFF};
-    uint16_t &ref_minFree = sui16_minBufferFree[rui8_busNumber];
+    uint16_t &r_minFree = sui16_minBufferFree[aui8_busNumber];
     #else
     static uint16_t sui16_maxBufferUseage[CAN_INSTANCE_CNT];
-    uint16_t &ref_maxCnt = sui16_maxBufferUseage[rui8_busNumber];
+    uint16_t &r_maxCnt = sui16_maxBufferUseage[aui8_busNumber];
 
     static uint16_t sui16_minBufferFree[CAN_INSTANCE_CNT];
-    uint16_t &ref_minFree = sui16_minBufferFree[rui8_busNumber];
+    uint16_t &r_minFree = sui16_minBufferFree[aui8_busNumber];
     if ( ( sui16_maxBufferUseage[0] == 0 ) && ( sui16_maxBufferUseage[1] == 0 ) )
     {
       for ( uint16_t ind = 0; ind < CAN_INSTANCE_CNT; ind++) sui16_minBufferFree[ind] = 0xFFFF;
     }
     #endif
-    if ( HAL::can_stateMsgobjBuffercnt(rui8_busNumber, msgObjNr()) > ref_maxCnt )
+    if ( HAL::can_stateMsgobjBuffercnt(aui8_busNumber, msgObjNr()) > r_maxCnt )
     { // new MAX detected -> update and print
-      ref_maxCnt = HAL::can_stateMsgobjBuffercnt(rui8_busNumber, msgObjNr());
-      INTERNAL_DEBUG_DEVICE << "\r\nNew Max buffer filling: " << ref_maxCnt
+      r_maxCnt = HAL::can_stateMsgobjBuffercnt(aui8_busNumber, msgObjNr());
+      INTERNAL_DEBUG_DEVICE << "\r\nNew Max buffer filling: " << r_maxCnt
         << " at MsgObj: " << uint16_t(msgObjNr())
         << " with Filter: " << c_filter.ident()
-        << " at BUS: " << uint16_t(rui8_busNumber)
+        << " at BUS: " << uint16_t(aui8_busNumber)
         << INTERNAL_DEBUG_DEVICE_ENDL;
     }
-    if ( HAL::can_stateMsgobjFreecnt(rui8_busNumber, msgObjNr()) < ref_minFree )
+    if ( HAL::can_stateMsgobjFreecnt(aui8_busNumber, msgObjNr()) < r_minFree )
     { // new MIN detected -> update and print
-      ref_minFree = HAL::can_stateMsgobjFreecnt(rui8_busNumber, msgObjNr());
-      INTERNAL_DEBUG_DEVICE << "\r\nNew Min buffer free: " << ref_minFree
+      r_minFree = HAL::can_stateMsgobjFreecnt(aui8_busNumber, msgObjNr());
+      INTERNAL_DEBUG_DEVICE << "\r\nNew Min buffer free: " << r_minFree
         << " at MsgObj: " << uint16_t(msgObjNr())
         << " with Filter: " << c_filter.ident()
-        << " at BUS: " << uint16_t(rui8_busNumber)
+        << " at BUS: " << uint16_t(aui8_busNumber)
         << INTERNAL_DEBUG_DEVICE_ENDL;
     }
   #endif
@@ -443,14 +443,14 @@ uint8_t MsgObj_c::processMsg(uint8_t rui8_busNumber, bool rb_forceProcessAll)
   // process all CAN msgs of this MsgObj_c as long as some time available for processing
   // ( the time check is needed to avoid blocking of other important tasks if
   //   to much CAN msgs are received )
-  while ( ( HAL::can_stateMsgobjBuffercnt(rui8_busNumber, msgObjNr()) > 0          )
+  while ( ( HAL::can_stateMsgobjBuffercnt(aui8_busNumber, msgObjNr()) > 0          )
        && ( ( Scheduler_c::getCentralSchedulerAvailableExecTime() != 0 ) || ( b_forceProcessAll ) || (b_count == 0) ) ) ///< force at least ONE processing
   { // increment counter
     b_count++;
     b_processed = false;
     b_toProcess = true;
     // get received data by BIOS call
-    switch (HAL::can_useMsgobjReceivedIdent(rui8_busNumber, msgObjNr(), i32_ident))
+    switch (HAL::can_useMsgobjReceivedIdent(aui8_busNumber, msgObjNr(), i32_ident))
     {
       case HAL_NO_ERR:
         break;
@@ -459,14 +459,14 @@ uint8_t MsgObj_c::processMsg(uint8_t rui8_busNumber, bool rb_forceProcessAll)
         #ifdef DEBUG
         INTERNAL_DEBUG_DEVICE << "CAN-Receive Range Err" << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
-        HAL::can_useMsgobjPopFront(rui8_busNumber, msgObjNr());
+        HAL::can_useMsgobjPopFront(aui8_busNumber, msgObjNr());
         return (b_count-1);
       case HAL_CONFIG_ERR:
         #if defined(DEBUG_CAN_BUFFER_FILLING) || defined(DEBUG)
-        INTERNAL_DEBUG_DEVICE << "\r\nBUS not initialized or wrong BUS nr: " << uint16_t(rui8_busNumber) << INTERNAL_DEBUG_DEVICE_ENDL;
+        INTERNAL_DEBUG_DEVICE << "\r\nBUS not initialized or wrong BUS nr: " << uint16_t(aui8_busNumber) << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
         getILibErrInstance().registerError( iLibErr_c::HwConfig, iLibErr_c::Can );
-        HAL::can_useMsgobjPopFront(rui8_busNumber, msgObjNr());
+        HAL::can_useMsgobjPopFront(aui8_busNumber, msgObjNr());
         return (b_count-1);
       case HAL_NOACT_ERR:
         #ifdef DEBUG
@@ -474,7 +474,7 @@ uint8_t MsgObj_c::processMsg(uint8_t rui8_busNumber, bool rb_forceProcessAll)
         #endif
         // wrong use of MsgObj (not likely) or CAN BUS OFF
         getILibErrInstance().registerError( iLibErr_c::CanOff, iLibErr_c::Can );
-        HAL::can_useMsgobjPopFront(rui8_busNumber, msgObjNr());
+        HAL::can_useMsgobjPopFront(aui8_busNumber, msgObjNr());
         return (b_count-1);
       case HAL_WARN_ERR:
         #ifdef DEBUG
@@ -487,14 +487,14 @@ uint8_t MsgObj_c::processMsg(uint8_t rui8_busNumber, bool rb_forceProcessAll)
         // messages in last msg obj, where ALL CAN messages are placed
         // during reconfiguration
         getILibErrInstance().registerError( iLibErr_c::CanOverflow, iLibErr_c::Can );
-        HAL::can_stateMsgobjOverflow(rui8_busNumber, msgObjNr() );
+        HAL::can_stateMsgobjOverflow(aui8_busNumber, msgObjNr() );
         #ifdef DEBUG_CAN_BUFFER_FILLING
         if ( ! b_detectedOverflow )
         {
           char temp[200];
           STL_NAMESPACE::sprintf( temp, "\r\nALARM!!!!!! CAN Buffer Overflow at MsgObj: %d at BUS: %d with Ident: 0x%lx, \r\nBufer-Filling: %d, Free: %d",
-            uint16_t(msgObjNr()), uint16_t(rui8_busNumber), c_filter.ident(), HAL::can_stateMsgobjBuffercnt(rui8_busNumber, msgObjNr() ),
-            HAL::can_stateMsgobjFreecnt(rui8_busNumber, msgObjNr() ) );
+            uint16_t(msgObjNr()), uint16_t(aui8_busNumber), c_filter.ident(), HAL::can_stateMsgobjBuffercnt(aui8_busNumber, msgObjNr() ),
+            HAL::can_stateMsgobjFreecnt(aui8_busNumber, msgObjNr() ) );
           INTERNAL_DEBUG_DEVICE << temp << INTERNAL_DEBUG_DEVICE_ENDL;
         }
         b_detectedOverflow = true;
@@ -525,7 +525,7 @@ uint8_t MsgObj_c::processMsg(uint8_t rui8_busNumber, bool rb_forceProcessAll)
         #if CAN_INSTANCE_CNT > 1
         for ( uint16_t ind = 0; ind < CAN_INSTANCE_CNT; ind++)
         {
-          if ( getCanInstance( ind ).getBusNumber() == rui8_busNumber )
+          if ( getCanInstance( ind ).getBusNumber() == aui8_busNumber )
           { // corresponding CanIo_c instance with same channel found
         #endif
             do {
@@ -548,7 +548,7 @@ uint8_t MsgObj_c::processMsg(uint8_t rui8_busNumber, bool rb_forceProcessAll)
       }
     }
     // now received message is either processed, or none of the registered CANCustomers is interested
-    HAL::can_useMsgobjPopFront(rui8_busNumber, msgObjNr());
+    HAL::can_useMsgobjPopFront(aui8_busNumber, msgObjNr());
   }   // end while
   return b_count;
 }
@@ -559,14 +559,14 @@ uint8_t MsgObj_c::processMsg(uint8_t rui8_busNumber, bool rb_forceProcessAll)
       * range given BUS or MsgObj number not in allowed area
       * hwBusy wanted MsgObj already in use
       * unspecified some other error
-  @param rui8_busNumber BUS number, where this instance should act
-  @param rui8_msgNr CAN hardware msg number for BIOS interaction
+  @param aui8_busNumber BUS number, where this instance should act
+  @param aui8_msgNr CAN hardware msg number for BIOS interaction
   @return true -> BIOS CAN object without errors configured
 */
-bool MsgObj_c::configCan(uint8_t rui8_busNumber, uint8_t rui8_msgNr)
+bool MsgObj_c::configCan(uint8_t aui8_busNumber, uint8_t aui8_msgNr)
 {
   bool b_result = false;
-  if (!verifyBusMsgobjNr(rui8_busNumber, rui8_msgNr))
+  if (!verifyBusMsgobjNr(aui8_busNumber, aui8_msgNr))
   { // the given values are not within allowed limits (defined in isoaglib_config.h)
     getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Can );
     return false;
@@ -574,17 +574,17 @@ bool MsgObj_c::configCan(uint8_t rui8_busNumber, uint8_t rui8_msgNr)
   else
   { // values are o.k.
     // store ui8_busNumber for later close of can
-    setBusNumber(rui8_busNumber);
-    setMsgObjNr(rui8_msgNr);
+    setBusNumber(aui8_busNumber);
+    setMsgObjNr(aui8_msgNr);
 
     //store busNumber and msgNr for each filterBox
     for(uint8_t i = 0; i < arrPfilterBox.size(); i++)
     {
-      arrPfilterBox[i]->configCan(rui8_busNumber, rui8_msgNr);
+      arrPfilterBox[i]->configCan(aui8_busNumber, aui8_msgNr);
     }
   }
   if (c_filter.identType() == Ident_c::BothIdent) c_filter.setIdentType(DEFAULT_IDENT_TYPE);
-  switch (HAL::can_configMsgobjInit(rui8_busNumber, rui8_msgNr, c_filter, 0))
+  switch (HAL::can_configMsgobjInit(aui8_busNumber, aui8_msgNr, c_filter, 0))
   {
     case HAL_NO_ERR:
       /* no error -> clear error state */
@@ -622,16 +622,16 @@ bool MsgObj_c::configCan(uint8_t rui8_busNumber, uint8_t rui8_msgNr)
   if called withoutparameter values (default -1) the actual configured are
   checked -> if these are incorrect range is set
   (mostly used by MsgObj_c to verify itself)
-  @param rc_busNr number of the BUS (default the actual stored number is checked)
-  @param rc_msgobjNr number of the MsgObj (default the actual stored number is checked)
+  @param ac_busNr number of the BUS (default the actual stored number is checked)
+  @param ac_msgobjNr number of the MsgObj (default the actual stored number is checked)
   @return true -> values are correct
 */
-bool MsgObj_c::verifyBusMsgobjNr(int8_t rc_busNr, int8_t rc_msgobjNr)
+bool MsgObj_c::verifyBusMsgobjNr(int8_t ac_busNr, int8_t ac_msgobjNr)
 {
   //store parameter values to temp val, to check actual configured
   // values on default parameter value
-  uint8_t b_testBus = (rc_busNr >= 0)?rc_busNr:busNumber();
-  uint8_t b_testMsgobj = (rc_msgobjNr >= 0)?rc_msgobjNr:msgObjNr();
+  uint8_t b_testBus = (ac_busNr >= 0)?ac_busNr:busNumber();
+  uint8_t b_testMsgobj = (ac_msgobjNr >= 0)?ac_msgobjNr:msgObjNr();
 
   //check if there is an error
   if (
@@ -640,7 +640,7 @@ bool MsgObj_c::verifyBusMsgobjNr(int8_t rc_busNr, int8_t rc_msgobjNr)
   || (b_testMsgobj > HAL_CAN_MAX_REC_OBJ)
      )
   { // set range-error status if called with default values for both parameters
-    if ((rc_busNr < 0) && (rc_msgobjNr < 0)) getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Can );
+    if ((ac_busNr < 0) && (ac_msgobjNr < 0)) getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Can );
     return false;
   }
   else
@@ -653,9 +653,9 @@ bool MsgObj_c::verifyBusMsgobjNr(int8_t rc_busNr, int8_t rc_msgobjNr)
   FilterBox instances
   @return common filter of all FilterBoxes in this MsgObj_c instance
 */
-void MsgObj_c::commonFilterAfterMerge( Ident_c& rrefc_globalMask )
+void MsgObj_c::commonFilterAfterMerge( Ident_c& arc_globalMask )
 { // clear any bits which are no more used in the current global mask
-  c_filter.ident_bitAnd( rrefc_globalMask );
+  c_filter.ident_bitAnd( arc_globalMask );
 }
 
 
@@ -696,9 +696,9 @@ void MsgObj_c::closeCan()
   Thus CanIo_c::reconfigureMsgObj() locks the lastMessageObject at the end, so that the buffer content is
   simply conserved until normal CanIo_c::processMsg() is called.
 */
-void MsgObj_c::lock( bool rb_lock )
+void MsgObj_c::lock( bool ab_lock )
 {
-  if ( ! rb_lock )
+  if ( ! ab_lock )
   {
     if ( ! isLocked() ) return; ///< object is not locked
     // activate normal configured ident

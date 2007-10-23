@@ -132,57 +132,57 @@ public:
 
   /**
     constructor which can optional set most element vars
-    @param rpc_processData optional pointer to containing ProcDataBase_c instance (default NULL)
+    @param apc_processData optional pointer to containing ProcDataBase_c instance (default NULL)
     @param ren_progType optional program type: Proc_c::Base, Proc_c::Target (default Proc_c::UndefinedProg)
-    @param ri32_val optional individual measure val for this program instance (can differ from master measure value)
-    @param rc_isoName optional ISOName of partner member for this measure program
+    @param ai32_val optional individual measure val for this program instance (can differ from master measure value)
+    @param ac_isoName optional ISOName of partner member for this measure program
   */
   MeasureProgBase_c(
-    ProcDataBase_c *const rpc_processData = NULL,
+    ProcDataBase_c *const apc_processData = NULL,
     Proc_c::progType_t ren_progType = Proc_c::UndefinedProg,
-    int32_t ri32_val = 0,
-    const IsoName_c& rc_isoName = IsoName_c::IsoNameUnspecified() ) : ProcessElementBase_c(rpc_processData),
-      vec_measureSubprog() {init(rpc_processData, ren_progType, ri32_val, rc_isoName);}
+    int32_t ai32_val = 0,
+    const IsoName_c& ac_isoName = IsoName_c::IsoNameUnspecified() ) : ProcessElementBase_c(apc_processData),
+      vec_measureSubprog() {init(apc_processData, ren_progType, ai32_val, ac_isoName);}
 
   /**
     constructor which can optional set most element vars
-    @param rrefc_processData optional reference to containing ProcDataBase_c instance (default NULL)
+    @param arc_processData optional reference to containing ProcDataBase_c instance (default NULL)
     @param ren_progType optional program type: Proc_c::Base, Proc_c::Target (default Proc_c::UndefinedProg)
-    @param ri32_val optional individual measure val for this program instance (can differ from master measure value)
-    @param rc_isoName optional ISOName of partner member for this measure program
+    @param ai32_val optional individual measure val for this program instance (can differ from master measure value)
+    @param ac_isoName optional ISOName of partner member for this measure program
   */
   MeasureProgBase_c(
-    ProcDataBase_c &rrefc_processData,
+    ProcDataBase_c &arc_processData,
     Proc_c::progType_t ren_progType = Proc_c::UndefinedProg,
-    int32_t ri32_val = 0,
-    const IsoName_c& rc_isoName = IsoName_c::IsoNameUnspecified()) : ProcessElementBase_c(rrefc_processData),
-      vec_measureSubprog() {init(&rrefc_processData, ren_progType, ri32_val, rc_isoName);}
+    int32_t ai32_val = 0,
+    const IsoName_c& ac_isoName = IsoName_c::IsoNameUnspecified()) : ProcessElementBase_c(arc_processData),
+      vec_measureSubprog() {init(&arc_processData, ren_progType, ai32_val, ac_isoName);}
 
   /**
     initialise the measure prog instance, to set this instance to a well defined starting condition
-    @param rrefc_processData optional reference to containing ProcDataBase_c instance (default NULL)
+    @param arc_processData optional reference to containing ProcDataBase_c instance (default NULL)
     @param ren_progType optional program type: Proc_c::Base, Proc_c::Target (default Proc_c::UndefinedProg)
-    @param ri32_val optional individual measure val for this program instance (can differ from master measure value)
-    @param rc_isoName optional ISOName of partner member for this measure program
+    @param ai32_val optional individual measure val for this program instance (can differ from master measure value)
+    @param ac_isoName optional ISOName of partner member for this measure program
   */
   void init(
-    ProcDataBase_c *const rpc_processData,
+    ProcDataBase_c *const apc_processData,
     Proc_c::progType_t ren_progType = Proc_c::UndefinedProg,
-    int32_t ri32_val = 0,
-    const IsoName_c& rc_isoName = IsoName_c::IsoNameUnspecified());
+    int32_t ai32_val = 0,
+    const IsoName_c& ac_isoName = IsoName_c::IsoNameUnspecified());
 
   /**
     assignment of MeasureProgBase_c objects
-    @param rrefc_src source MeasureProgBase_c instance
+    @param arc_src source MeasureProgBase_c instance
     @return reference to source instance for cmd like "prog1 = prog2 = prog3;"
   */
-  const MeasureProgBase_c& operator=(const MeasureProgBase_c& rrefc_src);
+  const MeasureProgBase_c& operator=(const MeasureProgBase_c& arc_src);
 
   /**
     copy constructor
-    @param rrefc_src source MeasureProgBase_c instance
+    @param arc_src source MeasureProgBase_c instance
   */
-   MeasureProgBase_c(const MeasureProgBase_c& rrefc_src);
+   MeasureProgBase_c(const MeasureProgBase_c& arc_src);
 
   /** default destructor which has nothing to do */
   virtual ~MeasureProgBase_c();
@@ -193,11 +193,11 @@ public:
     possible errors:
         * Err_c::badAlloc not enough memory to add new subprog
     @param ren_type increment type: Proc_c::TimeProp, Proc_c::DistProp, Proc_c::ValIncr
-    @param ri32_increment increment value
+    @param ai32_increment increment value
     @param ren_doSend set process data subtype to send (Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...)
     @return always true; only relevant for overoaded methods in derived classes
   */
-  bool addSubprog(Proc_c::type_t ren_type, int32_t ri32_increment, Proc_c::doSend_t ren_doSend = Proc_c::DoVal);
+  bool addSubprog(Proc_c::type_t ren_type, int32_t ai32_increment, Proc_c::doSend_t ren_doSend = Proc_c::DoVal);
 
   /**
     LBS+ uses positive values even for time proportional measure prog
@@ -233,42 +233,42 @@ public:
 
   /**
     deliver actual last received value
-    @param rb_sendRequest choose wether a request for value update should be
+    @param ab_sendRequest choose wether a request for value update should be
         sent (default false == send no request)
     @return measure val for this prog (can differ from master measure val)
   */
-  int32_t val(bool rb_sendRequest = false) const;
+  int32_t val(bool ab_sendRequest = false) const;
 
   /**
     deliver the medium value of a measure program (pure virtual function)
-    @param rb_sendRequest choose wether a request for value update should be
+    @param ab_sendRequest choose wether a request for value update should be
         sent (default false == send no request)
   */
-  virtual int32_t med(bool rb_sendRequest = false) const = 0;
+  virtual int32_t med(bool ab_sendRequest = false) const = 0;
 
   /**
     deliver integ val
-    @param rb_sendRequest choose wether a request for value update should be
+    @param ab_sendRequest choose wether a request for value update should be
         sent (default false == send no request)
     @return integral val for this measure prog
   */
-  int32_t integ(bool rb_sendRequest = false) const;
+  int32_t integ(bool ab_sendRequest = false) const;
 
   /**
     deliver min val
-    @param rb_sendRequest choose wether a request for value update should be
+    @param ab_sendRequest choose wether a request for value update should be
         sent (default false == send no request)
     @return MIN val for this measure prog
   */
-  int32_t min(bool rb_sendRequest = false) const;
+  int32_t min(bool ab_sendRequest = false) const;
 
   /**
     deliver max val
-    @param rb_sendRequest choose wether a request for value update should be
+    @param ab_sendRequest choose wether a request for value update should be
         sent (default false == send no request)
     @return MAX val for this measure prog
   */
-  int32_t max(bool rb_sendRequest = false) const;
+  int32_t max(bool ab_sendRequest = false) const;
 
   /**
     deliver the delta
@@ -285,55 +285,55 @@ public:
 #ifdef USE_FLOAT_DATA_TYPE
   /**
     initialise the measure prog instance, to set this instance to a well defined starting condition
-    @param rrefc_processData optional reference to containing ProcDataBase_c instance (default NULL)
+    @param arc_processData optional reference to containing ProcDataBase_c instance (default NULL)
     @param ren_progType optional program type: Proc_c::Base, Proc_c::Target (default Proc_c::UndefinedProg)
-    @param rf_val optional individual measure val for this program instance (can differ from master measure value)
-    @param rc_isoName optional ISOName of partner member for this measure program
+    @param af_val optional individual measure val for this program instance (can differ from master measure value)
+    @param ac_isoName optional ISOName of partner member for this measure program
   */
   void init(
-    ProcDataBase_c *const rpc_processData,
+    ProcDataBase_c *const apc_processData,
     Proc_c::progType_t ren_progType,
-    float rf_val,
-    const IsoName_c& rc_isoName = IsoName_c::IsoNameUnspecified());
+    float af_val,
+    const IsoName_c& ac_isoName = IsoName_c::IsoNameUnspecified());
 
   /**
     deliver actual last received value
-    @param rb_sendRequest choose wether a request for value update should be
+    @param ab_sendRequest choose wether a request for value update should be
         sent (default false == send no request)
     @return measure val for this prog (can differ from master measure val)
   */
-  float valFloat(bool rb_sendRequest = false) const;
+  float valFloat(bool ab_sendRequest = false) const;
 
   /**
     deliver the medium value of a measure program (pure virtual function)
-    @param rb_sendRequest choose wether a request for value update should be
+    @param ab_sendRequest choose wether a request for value update should be
         sent (default false == send no request)
   */
-  virtual float medFloat(bool rb_sendRequest = false) const = 0;
+  virtual float medFloat(bool ab_sendRequest = false) const = 0;
 
   /**
     deliver integ val
-    @param rb_sendRequest choose wether a request for value update should be
+    @param ab_sendRequest choose wether a request for value update should be
         sent (default false == send no request)
     @return integral val for this measure prog
   */
-  float integFloat(bool rb_sendRequest = false) const;
+  float integFloat(bool ab_sendRequest = false) const;
 
   /**
     deliver min val
-    @param rb_sendRequest choose wether a request for value update should be
+    @param ab_sendRequest choose wether a request for value update should be
         sent (default false == send no request)
     @return MIN val for this measure prog
   */
-  float minFloat(bool rb_sendRequest = false) const;
+  float minFloat(bool ab_sendRequest = false) const;
 
   /**
     deliver max val
-    @param rb_sendRequest choose wether a request for value update should be
+    @param ab_sendRequest choose wether a request for value update should be
         sent (default false == send no request)
     @return MAX val for this measure prog
   */
-  float maxFloat(bool rb_sendRequest = false) const;
+  float maxFloat(bool ab_sendRequest = false) const;
 
   /**
     deliver the delta
@@ -392,22 +392,22 @@ public:
 
   /**
     init the element vars
-    @param ri32_val initial measure val
+    @param ai32_val initial measure val
   */
-  virtual void initVal(int32_t ri32_val);
+  virtual void initVal(int32_t ai32_val);
 
   /**
     reset the value (pure virtual function)
-    @param ri32_val reset measure value to this value (ISO remote only)
+    @param ai32_val reset measure value to this value (ISO remote only)
   */
-  virtual bool resetVal(int32_t ri32_val = 0) = 0;
+  virtual bool resetVal(int32_t ai32_val = 0) = 0;
 
 #ifdef USE_FLOAT_DATA_TYPE
   /**
     init the element vars with float value
-    @param rf_val initial measure val
+    @param af_val initial measure val
   */
-  virtual void initVal(float rf_val);
+  virtual void initVal(float af_val);
 #endif
 
   /**
@@ -432,24 +432,24 @@ public:
 
   /**
     set a new value (pure virtual function)
-    @param ri32_val new measure value
+    @param ai32_val new measure value
   */
-  virtual void setVal(int32_t ri32_val) = 0;
+  virtual void setVal(int32_t ai32_val) = 0;
 
 #ifdef USE_FLOAT_DATA_TYPE
   /**
     set a new value (pure virtual function)
-    @param rf_val new measure value
+    @param af_val new measure value
   */
-  virtual void setVal(float rf_val) = 0;
+  virtual void setVal(float af_val) = 0;
 #endif
 
   /**
     set the programm type of the item
-    @param rb_type wanted ProgType: Proc_c::UndefinedProg, Proc_c::Base, Proc_c::Target
+    @param ab_type wanted ProgType: Proc_c::UndefinedProg, Proc_c::Base, Proc_c::Target
   */
-  void setProgType(uint8_t rb_type)
-    {en_progType = Proc_c::progType_t(rb_type);}
+  void setProgType(uint8_t ab_type)
+    {en_progType = Proc_c::progType_t(ab_type);}
 
   /**
     set the type of the active increment types
@@ -459,10 +459,10 @@ public:
 
   /**
     set the c_isoName code for this measureprog
-    @param rc_isoName ISOName for exact specification of partner system
+    @param ac_isoName ISOName for exact specification of partner system
   */
   // This has something to do with the init failing for the iProcDataRemote_c object. -bac
-  void setISOName(const IsoName_c& rc_isoName){c_isoName = rc_isoName;}
+  void setISOName(const IsoName_c& ac_isoName){c_isoName = ac_isoName;}
 
   /**
     process a message;
@@ -481,7 +481,7 @@ public:
 
   /**
     compare two items for PRI and ISOName
-    @param rrefc_right compared object
+    @param arc_right compared object
     @return true -> both instances are equal (ISOName and ProgType)
   */
   bool operator==(const MeasureProgBase_c& right) const
@@ -489,7 +489,7 @@ public:
 
   /**
     compare two MeasureProg with <
-    @param rrefc_right compared object
+    @param arc_right compared object
     @return true -> this instance is < than the other (ISOName and ProgType)
   */
   bool operator<(const MeasureProgBase_c& right) const
@@ -497,7 +497,7 @@ public:
 
   /**
     compare two MeasureProg with <=
-    @param rrefc_right compared object
+    @param arc_right compared object
     @return true -> this instance is <= than the other (ISOName and ProgType)
   */
   bool operator<=(const MeasureProgBase_c& right) const
@@ -505,7 +505,7 @@ public:
 
   /**
     compare two MeasureProg with >
-    @param rrefc_right compared object
+    @param arc_right compared object
     @return true -> this instance is > than the other (ISOName and ProgType)
   */
   bool operator>(const MeasureProgBase_c& right) const
@@ -513,7 +513,7 @@ public:
 
   /**
     compare two MeasureProg with >=
-    @param rrefc_right compared object
+    @param arc_right compared object
     @return true -> this instance is >= than the other (ISOName and ProgType)
   */
   bool operator>=(const MeasureProgBase_c& right) const
@@ -526,70 +526,70 @@ protected: // Protected methods
     possible errors:
         * Err_c:range MOD is not in allowed range [0..4]
     @param en_valueGroup MOD of wanted subtype
-    @param ri32_val reset measure value to this value (ISO remote only)
+    @param ai32_val reset measure value to this value (ISO remote only)
   */
-  void resetValMod(GeneralCommand_c::ValueGroup_t en_valueGroup, int32_t ri32_val = 0);
+  void resetValMod(GeneralCommand_c::ValueGroup_t en_valueGroup, int32_t ai32_val = 0);
 
   /**
     internal increment the value
-    @param ri32_val increment for internal measure val
+    @param ai32_val increment for internal measure val
   */
-  void incrVal(int32_t ri32_val){i32_val += ri32_val;}
+  void incrVal(int32_t ai32_val){i32_val += ai32_val;}
 
   /**
     increment the integer value
-    @param ri32_val increment for integral
+    @param ai32_val increment for integral
   */
-  void incrInteg(int32_t ri32_val){i32_integ += ri32_val;}
+  void incrInteg(int32_t ai32_val){i32_integ += ai32_val;}
 
   /**
     set min val
-    @param ri32_val new MIN value
+    @param ai32_val new MIN value
   */
-  void setMin(int32_t ri32_val){i32_min = ri32_val;}
+  void setMin(int32_t ai32_val){i32_min = ai32_val;}
 
   /**
     set max val
-    @param ri32_val new MAN value
+    @param ai32_val new MAN value
   */
-  void setMax(int32_t ri32_val){i32_max = ri32_val;}
+  void setMax(int32_t ai32_val){i32_max = ai32_val;}
 
   /**
     set integ val
-    @param ri32_val new integral value
+    @param ai32_val new integral value
   */
-  void setInteg(int32_t ri32_val){i32_integ = ri32_val;}
+  void setInteg(int32_t ai32_val){i32_integ = ai32_val;}
 
 #ifdef USE_FLOAT_DATA_TYPE
   /**
     internal increment the value
-    @param rf_val increment for internal measure val
+    @param af_val increment for internal measure val
   */
-  void incrVal(float rf_val){f_val += rf_val;}
+  void incrVal(float af_val){f_val += af_val;}
 
   /**
     increment the integer value
-    @param rf_val increment for integral
+    @param af_val increment for integral
   */
-  void incrInteg(float rf_val){f_integ += rf_val;}
+  void incrInteg(float af_val){f_integ += af_val;}
 
   /**
     set min val
-    @param rf_val new MIN value
+    @param af_val new MIN value
   */
-  void setMin(float rf_val){f_min = rf_val;}
+  void setMin(float af_val){f_min = af_val;}
 
   /**
     set max val
-    @param rf_val new MAN value
+    @param af_val new MAN value
   */
-  void setMax(float rf_val){f_max = rf_val;}
+  void setMax(float af_val){f_max = af_val;}
 
   /**
     set integ val
-    @param rf_val new integral value
+    @param af_val new integral value
   */
-  void setInteg(float rf_val){f_integ = rf_val;}
+  void setInteg(float af_val){f_integ = af_val;}
 #endif
 
 protected: // Protected attributes
@@ -645,7 +645,7 @@ protected: // Protected attributes
 
 private: // Private methods
   /** base function for assignment of element vars for copy constructor and operator= */
-  void assignFromSource( const MeasureProgBase_c& rrefc_src );
+  void assignFromSource( const MeasureProgBase_c& arc_src );
 
   /**
     calculates a single value from identifying values
@@ -655,7 +655,7 @@ private: // Private methods
   int32_t calcCompVal()const {return ( ( (c_isoName.devClass() << 4) | (c_isoName.devClassInst()) ) * en_progType);}
 
   /**
-    deliver to rb_mod according measure val type
+    deliver to ab_mod according measure val type
 
     possible errors:
         * Err_c:range MOD is not in allowed range [0..6]
@@ -666,7 +666,7 @@ private: // Private methods
 
 #ifdef USE_FLOAT_DATA_TYPE
   /**
-    deliver to rb_mod according measure val type
+    deliver to ab_mod according measure val type
     as float value
 
     possible errors:
@@ -679,9 +679,9 @@ private: // Private methods
 
   /**
     reset according to the process msg command the appropriate value type
-    @param rb_comm command from Scheduler_c reset message
+    @param ab_comm command from Scheduler_c reset message
   */
-  void reset(uint8_t rb_comm);
+  void reset(uint8_t ab_comm);
 
   /**
     process a message with an increment for a measuring program

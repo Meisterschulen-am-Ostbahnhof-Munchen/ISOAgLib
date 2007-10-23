@@ -104,7 +104,7 @@ public:
 };
 
 extern STL_NAMESPACE::list<int32_t> list_sendTimeStamps;
-void updatePendingMsgs(server_c* rpc_server, int8_t i8_bus);
+void updatePendingMsgs(server_c* apc_server, int8_t i8_bus);
 int32_t getTime();
 
 void usage();

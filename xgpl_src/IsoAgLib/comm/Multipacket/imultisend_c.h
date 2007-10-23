@@ -75,53 +75,53 @@ public:
 
   /**
     send an ISO target multipacket message with active retrieve of data-parts to send
-    @param rb_send dynamic member no of sender
-    @param rb_empf dynamic member no of receiver
-    @param rpc_mss allow active build of data stream parts for upload by deriving data source class
+    @param ab_send dynamic member no of sender
+    @param ab_empf dynamic member no of receiver
+    @param apc_mss allow active build of data stream parts for upload by deriving data source class
                   from IsoAgLib::iMultiSendStreamer_c, which defines virtual functions to control the
                   retrieve of data to send. This is especially important for ISO_Terminal,
                   which assembles the data pool dependent on the terminal capabilities during upload
                   ( e.g. bitmap variants )
-    @param ri32_pgn PGN to use for the upload
+    @param ai32_pgn PGN to use for the upload
     @param rrefen_sendSuccessNotify -> pointer to send state var, where the current state
             is written by MultiSend_c
     @return true -> MultiSend_c was ready -> mask is spooled to target
   */
-  bool sendIsoTarget (const iIsoName_c& rrefc_isoNameSender, const iIsoName_c& rrefc_isoNameReceiver, iMultiSendStreamer_c* rpc_mss, int32_t ri32_pgn, sendSuccess_t& rrefen_sendSuccessNotify)
-  { return MultiSend_c::sendIsoTarget (rrefc_isoNameSender, rrefc_isoNameReceiver, rpc_mss, ri32_pgn, rrefen_sendSuccessNotify);}
+  bool sendIsoTarget (const iIsoName_c& arc_isoNameSender, const iIsoName_c& arc_isoNameReceiver, iMultiSendStreamer_c* apc_mss, int32_t ai32_pgn, sendSuccess_t& rrefen_sendSuccessNotify)
+  { return MultiSend_c::sendIsoTarget (arc_isoNameSender, arc_isoNameReceiver, apc_mss, ai32_pgn, rrefen_sendSuccessNotify);}
 
   /**
     send a ISO target multipacket message
-    @param rb_send dynamic member no of sender
-    @param rb_empf dynamic member no of receiver
+    @param ab_send dynamic member no of sender
+    @param ab_empf dynamic member no of receiver
     @param rhpb_data HUGE_MEM pointer to the data
-    @param ri32_dataSize size of the complete mask
-    @param ri32_pgn PGN to use for the upload
+    @param ai32_dataSize size of the complete mask
+    @param ai32_pgn PGN to use for the upload
     @param rpen_sendSuccessNotify -> pointer to send state var, where the current state
             is written by MultiSend_c
     @return true -> MultiSend_c was ready -> mask is spooled to target
   */
-  bool sendIsoTarget (const iIsoName_c& rrefc_isoNameSender, const iIsoName_c& rrefc_isoNameReceiver, HUGE_MEM uint8_t* rhpb_data, int32_t ri32_dataSize, int32_t ri32_pgn, sendSuccess_t& rrefen_sendSuccessNotify)
-    { return MultiSend_c::sendIsoTarget (rrefc_isoNameSender, rrefc_isoNameReceiver, rhpb_data, ri32_dataSize, ri32_pgn, rrefen_sendSuccessNotify ); }
+  bool sendIsoTarget (const iIsoName_c& arc_isoNameSender, const iIsoName_c& arc_isoNameReceiver, HUGE_MEM uint8_t* rhpb_data, int32_t ai32_dataSize, int32_t ai32_pgn, sendSuccess_t& rrefen_sendSuccessNotify)
+    { return MultiSend_c::sendIsoTarget (arc_isoNameSender, arc_isoNameReceiver, rhpb_data, ai32_dataSize, ai32_pgn, rrefen_sendSuccessNotify ); }
 
   /**
     send a ISO broadcast multipacket message
-    @param rb_send dynamic member no of sender
-    @param rb_empf dynamic member no of receiver
+    @param ab_send dynamic member no of sender
+    @param ab_empf dynamic member no of receiver
     @param hpb_data HUGE_MEM pointer to the data
-    @param ri32_dataSize size of the complete mask
-    @param ri32_pgn PGN to use for the upload
+    @param ai32_dataSize size of the complete mask
+    @param ai32_pgn PGN to use for the upload
     @return true -> MultiSend_c was ready -> mask is spooled to target
   */
-  bool sendIsoBroadcast (const iIsoName_c& rrefc_isoNameSender, HUGE_MEM uint8_t* rhpb_data, int32_t ri32_dataSize, int32_t ri32_pgn, sendSuccess_t& rrefen_sendSuccessNotify)
-    { return MultiSend_c::sendIsoBroadcast (rrefc_isoNameSender, rhpb_data, ri32_dataSize, ri32_pgn, rrefen_sendSuccessNotify); }
+  bool sendIsoBroadcast (const iIsoName_c& arc_isoNameSender, HUGE_MEM uint8_t* rhpb_data, int32_t ai32_dataSize, int32_t ai32_pgn, sendSuccess_t& rrefen_sendSuccessNotify)
+    { return MultiSend_c::sendIsoBroadcast (arc_isoNameSender, rhpb_data, ai32_dataSize, ai32_pgn, rrefen_sendSuccessNotify); }
 
   /** check if at least one multisend stream is running */
   bool isMultiSendRunning() const { return MultiSend_c::isMultiSendRunning(); }
 
   /** user function for explicit abort of any running matching stream. */
-  void abortSend (const iIsoName_c& rrefc_isoNameSender, const iIsoName_c& rrefc_isoNameReceiver)
-    { MultiSend_c::abortSend (rrefc_isoNameSender, rrefc_isoNameReceiver); }
+  void abortSend (const iIsoName_c& arc_isoNameSender, const iIsoName_c& arc_isoNameReceiver)
+    { MultiSend_c::abortSend (arc_isoNameSender, arc_isoNameReceiver); }
 
 
 private:
@@ -129,7 +129,7 @@ private:
       otherwise __IsoAgLib::getMultiSendInstance() wouldn't be accepted by compiler
     */
   #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
-  friend iMultiSend_c& getIMultiSendInstance( uint8_t rui8_instance );
+  friend iMultiSend_c& getIMultiSendInstance( uint8_t aui8_instance );
   #else
   friend iMultiSend_c& getIMultiSendInstance( void );
   #endif
@@ -140,8 +140,8 @@ private:
   /** C-style function, to get access to the unique MultiSend_c singleton instance
     * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
     */
-  inline iMultiSend_c& getIMultiSendInstance( uint8_t rui8_instance = 0 )
-  { return static_cast<iMultiSend_c&>(__IsoAgLib::getMultiSendInstance(rui8_instance)); }
+  inline iMultiSend_c& getIMultiSendInstance( uint8_t aui8_instance = 0 )
+  { return static_cast<iMultiSend_c&>(__IsoAgLib::getMultiSendInstance(aui8_instance)); }
 #else
   /** C-style function, to get access to the unique MultiSend_c singleton instance */
   inline iMultiSend_c& getIMultiSendInstance( void )

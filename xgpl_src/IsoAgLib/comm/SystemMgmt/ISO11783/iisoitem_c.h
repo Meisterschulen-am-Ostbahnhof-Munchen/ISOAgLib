@@ -164,55 +164,55 @@ public:
   itemState_t setItemState(itemState_t ren_itemState) {return IsoItem_c::setItemState(ren_itemState, false);}
 
   /** set self config mode
-    @param rb_selfConf true -> indicate sefl configuring ECU
+    @param ab_selfConf true -> indicate sefl configuring ECU
   */
-  void setSelfConf(bool rb_selfConf) {IsoItem_c::setSelfConf(rb_selfConf);}
+  void setSelfConf(bool ab_selfConf) {IsoItem_c::setSelfConf(ab_selfConf);}
 
   /** set industry group code
-    @param rui8_indGroup industry group of device (2 for agriculture)
+    @param aui8_indGroup industry group of device (2 for agriculture)
   */
-  void setIndGroup(uint8_t rui8_indGroup) {IsoItem_c::setIndGroup(rui8_indGroup);}
+  void setIndGroup(uint8_t aui8_indGroup) {IsoItem_c::setIndGroup(aui8_indGroup);}
 
   /** set device class instance number
-    @param rui8_devClassInst instance number of ECU with same devClass in the network
+    @param aui8_devClassInst instance number of ECU with same devClass in the network
   */
-  void setDevClassInst(uint8_t rui8_devClassInst) {IsoItem_c::setDevClassInst(rui8_devClassInst);}
+  void setDevClassInst(uint8_t aui8_devClassInst) {IsoItem_c::setDevClassInst(aui8_devClassInst);}
 
   /** set device class code
-    @param rui8_devClass device class of ECU
+    @param aui8_devClass device class of ECU
   */
-  void setDevClass(uint8_t rui8_devClass) {IsoItem_c::setDevClass(rui8_devClass);}
+  void setDevClass(uint8_t aui8_devClass) {IsoItem_c::setDevClass(aui8_devClass);}
 
   /** set function code
-    @param rb_func function of the ECU (usual 25 for network interconnect)
+    @param ab_func function of the ECU (usual 25 for network interconnect)
   */
-  void setFunc(uint8_t rb_func) {IsoItem_c::setFunc(rb_func);}
+  void setFunc(uint8_t ab_func) {IsoItem_c::setFunc(ab_func);}
 
   /** set function instance code
-    @param rb_funcInst instance number of ECU with same function and device class
+    @param ab_funcInst instance number of ECU with same function and device class
         (default 0 - normally)
   */
-  void setFuncInst(uint8_t rb_funcInst) {IsoItem_c::setFuncInst(rb_funcInst);}
+  void setFuncInst(uint8_t ab_funcInst) {IsoItem_c::setFuncInst(ab_funcInst);}
 
   /** set ECU instance code
-    @param rb_funcInst instance number of ECU with same function, device class and function instance
+    @param ab_funcInst instance number of ECU with same function, device class and function instance
         (default 0 - normally)
   */
-  void setEcuInst(uint8_t rb_ecuInst) {IsoItem_c::setEcuInst(rb_ecuInst);}
+  void setEcuInst(uint8_t ab_ecuInst) {IsoItem_c::setEcuInst(ab_ecuInst);}
 
   /** set manufactor code
-    @param rui16_manufCode code of manufactor (11bit)
+    @param aui16_manufCode code of manufactor (11bit)
   */
-  void setManufCode(uint16_t rui16_manufCode) {IsoItem_c::setManufCode(rui16_manufCode);}
+  void setManufCode(uint16_t aui16_manufCode) {IsoItem_c::setManufCode(aui16_manufCode);}
 
   /** set serial number (Identity Number)
-    @param rui32_serNo serial no of specific device (21bit)
+    @param aui32_serNo serial no of specific device (21bit)
   */
-  void setSerNo(uint32_t rui32_serNo) {IsoItem_c::setSerNo(rui32_serNo);}
+  void setSerNo(uint32_t aui32_serNo) {IsoItem_c::setSerNo(aui32_serNo);}
 
 #ifdef USE_WORKING_SET
   /// For checking if the WS-Announce is completed use the
-  bool isWsAnnounced (int32_t ri32_timeAnnounceStarted) { return IsoItem_c::isWsAnnounced (ri32_timeAnnounceStarted); }
+  bool isWsAnnounced (int32_t ai32_timeAnnounceStarted) { return IsoItem_c::isWsAnnounced (ai32_timeAnnounceStarted); }
 #endif
 };
 

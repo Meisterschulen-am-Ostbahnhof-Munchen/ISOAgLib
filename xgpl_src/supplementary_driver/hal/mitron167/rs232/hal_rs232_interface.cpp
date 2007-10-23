@@ -105,9 +105,9 @@ uint16_t getRs232RingBufferMaxSize( void ) {
 }
 
 /** low level helper function to write can data */
-bool stackparm writeDataToRs232RingBuffer( uchar ruc_item, bool rb_force = false ) {
+bool stackparm writeDataToRs232RingBuffer( uchar ruc_item, bool ab_force = false ) {
   // first check if buffer is already full and no overwrite is forced
-  if ( ( isRs232RingBufferFull() ) && ( ! rb_force ) ) return false;
+  if ( ( isRs232RingBufferFull() ) && ( ! ab_force ) ) return false;
 
   // make some minimum validation checks
   if ( ( puc_rs232BufferWrite < puc_startPuffer ) || ( puc_rs232BufferWrite > puc_endPuffer ) )

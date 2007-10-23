@@ -89,17 +89,17 @@
 using namespace std;
 
 //! open a output stream
-bool TargetFileStreamOutput_c::open( const char* filename, FileMode_t rt_mode )
+bool TargetFileStreamOutput_c::open( const char* filename, FileMode_t at_mode )
 {
 #if __GNUC__ < 3
-	if ( ( rt_mode & StreamIn ) != 0 ) return false;
+	if ( ( at_mode & StreamIn ) != 0 ) return false;
 
 	ios::openmode mode = ios::out;
 
-	if ( ( rt_mode & StreamAte    ) != 0 ) mode = ios::openmode( mode | ios::ate    );
-	if ( ( rt_mode & StreamApp    ) != 0 ) mode = ios::openmode( mode | ios::app    );
-	if ( ( rt_mode & StreamTrunc  ) != 0 ) mode = ios::openmode( mode | ios::trunc  );
-	if ( ( rt_mode & StreamBinary ) != 0 ) mode = ios::openmode( mode | ios::binary );
+	if ( ( at_mode & StreamAte    ) != 0 ) mode = ios::openmode( mode | ios::ate    );
+	if ( ( at_mode & StreamApp    ) != 0 ) mode = ios::openmode( mode | ios::app    );
+	if ( ( at_mode & StreamTrunc  ) != 0 ) mode = ios::openmode( mode | ios::trunc  );
+	if ( ( at_mode & StreamBinary ) != 0 ) mode = ios::openmode( mode | ios::binary );
 
 	static_cast<ofstream*>(this)->open( filename, mode );
 
@@ -108,14 +108,14 @@ bool TargetFileStreamOutput_c::open( const char* filename, FileMode_t rt_mode )
 	else
 		return false;
 #else
-	if ( ( rt_mode & StreamIn ) != 0 ) return false;
+	if ( ( at_mode & StreamIn ) != 0 ) return false;
 
 	STL_NAMESPACE::ios_base::openmode mode = STL_NAMESPACE::ios_base::out;
 
-	if ( ( rt_mode & StreamAte    ) != 0 ) mode = STL_NAMESPACE::ios_base::openmode( mode | STL_NAMESPACE::ios_base::ate    );
-	if ( ( rt_mode & StreamApp    ) != 0 ) mode = STL_NAMESPACE::ios_base::openmode( mode | STL_NAMESPACE::ios_base::app    );
-	if ( ( rt_mode & StreamTrunc  ) != 0 ) mode = STL_NAMESPACE::ios_base::openmode( mode | STL_NAMESPACE::ios_base::trunc  );
-	if ( ( rt_mode & StreamBinary ) != 0 ) mode = STL_NAMESPACE::ios_base::openmode( mode | STL_NAMESPACE::ios_base::binary );
+	if ( ( at_mode & StreamAte    ) != 0 ) mode = STL_NAMESPACE::ios_base::openmode( mode | STL_NAMESPACE::ios_base::ate    );
+	if ( ( at_mode & StreamApp    ) != 0 ) mode = STL_NAMESPACE::ios_base::openmode( mode | STL_NAMESPACE::ios_base::app    );
+	if ( ( at_mode & StreamTrunc  ) != 0 ) mode = STL_NAMESPACE::ios_base::openmode( mode | STL_NAMESPACE::ios_base::trunc  );
+	if ( ( at_mode & StreamBinary ) != 0 ) mode = STL_NAMESPACE::ios_base::openmode( mode | STL_NAMESPACE::ios_base::binary );
 
 	static_cast<STL_NAMESPACE::ofstream*>(this)->open( filename, mode );
 

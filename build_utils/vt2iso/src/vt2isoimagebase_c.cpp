@@ -68,22 +68,22 @@ void Vt2IsoImageBase_c::resetLengths( void )
 /** deliver the b/w thresholded value at given bitmap position
   ( calculate the optimal bitmap threshold if not yet defined )
   */
-unsigned int Vt2IsoImageBase_c::get1BitPixel( unsigned int rui_x, unsigned int rui_y )
+unsigned int Vt2IsoImageBase_c::get1BitPixel( unsigned int aui_x, unsigned int aui_y )
 {
   if ( i_currentThreshold < 0 )  getOptimalBwThreshold();
-  return ( int( ( getR( rui_x, rui_y ) + getG( rui_x, rui_y ) + getB( rui_x, rui_y ) ) / 3 ) >= i_currentThreshold )?1U:0U;
+  return ( int( ( getR( aui_x, aui_y ) + getG( aui_x, aui_y ) + getB( aui_x, aui_y ) ) / 3 ) >= i_currentThreshold )?1U:0U;
 }
 
 /** get the ISO virtual table indexed bitmap value for 4Bit ( 16color ) target bitmap */
-unsigned int Vt2IsoImageBase_c::get4BitPixel( unsigned int rui_x, unsigned int rui_y )
+unsigned int Vt2IsoImageBase_c::get4BitPixel( unsigned int aui_x, unsigned int aui_y )
 {
-  return rgbtopalette16 ( getR( rui_x, rui_y ), getG( rui_x, rui_y ), getB( rui_x, rui_y ) );
+  return rgbtopalette16 ( getR( aui_x, aui_y ), getG( aui_x, aui_y ), getB( aui_x, aui_y ) );
 }
 
 /** get the ISO virtual table indexed bitmap value for 8Bit ( 256color ) target bitmap */
-unsigned int Vt2IsoImageBase_c::get8BitPixel( unsigned int rui_x, unsigned int rui_y )
+unsigned int Vt2IsoImageBase_c::get8BitPixel( unsigned int aui_x, unsigned int aui_y )
 {
-  int idx = getPaletteIndex (rui_x, rui_y);
+  int idx = getPaletteIndex (aui_x, aui_y);
   if (idx >= 0)
   { // we're palettized!
     // 0..255 possible - directly taken out of the bitmap!
@@ -91,9 +91,9 @@ unsigned int Vt2IsoImageBase_c::get8BitPixel( unsigned int rui_x, unsigned int r
   }
   else if (idx == -1)
   { // we're NOT palettized, calculate a palette index!
-    idx = 16 + ( componenttoindex6 ( getR( rui_x, rui_y ) )*36 )
-             + ( componenttoindex6 ( getG( rui_x, rui_y ) )*6  )
-             + ( componenttoindex6 ( getB( rui_x, rui_y ) )    );
+    idx = 16 + ( componenttoindex6 ( getR( aui_x, aui_y ) )*36 )
+             + ( componenttoindex6 ( getG( aui_x, aui_y ) )*6  )
+             + ( componenttoindex6 ( getB( aui_x, aui_y ) )    );
     // 16..231 possible - mapped to this area!
     switch (idx)
     { // now try to map down those colors that exactly match to the range 0..15!
@@ -125,7 +125,7 @@ unsigned int Vt2IsoImageBase_c::get8BitPixel( unsigned int rui_x, unsigned int r
 }
 
 /** write the Bitmap to the given buffer and return amount of written Bytes */
-unsigned int Vt2IsoImageBase_c::write1BitBitmap( unsigned char* pui_bitmap, unsigned int rui_maxSize )
+unsigned int Vt2IsoImageBase_c::write1BitBitmap( unsigned char* pui_bitmap, unsigned int aui_maxSize )
 {
   objRawBitmapBytes [0] = 0;
   if ( ( i_currentThreshold < 0 ) || ( i_currentThreshold == 128 ) ) getOptimalBwThreshold();
@@ -145,7 +145,7 @@ unsigned int Vt2IsoImageBase_c::write1BitBitmap( unsigned char* pui_bitmap, unsi
       unsigned int byte = (pixel1PaletteIndex << 7) + (pixel2PaletteIndex << 6) + (pixel3PaletteIndex << 5) + (pixel4PaletteIndex << 4)
                 + (pixel5PaletteIndex << 3) + (pixel6PaletteIndex << 2) + (pixel7PaletteIndex << 1) + pixel8PaletteIndex;
       // avoid overflow
-      if ( objRawBitmapBytes [0] > rui_maxSize ) return 0;
+      if ( objRawBitmapBytes [0] > aui_maxSize ) return 0;
 
       pui_bitmap [objRawBitmapBytes [0]] = byte;
       objRawBitmapBytes [0]++;
@@ -156,7 +156,7 @@ unsigned int Vt2IsoImageBase_c::write1BitBitmap( unsigned char* pui_bitmap, unsi
 
 
 /** write the Bitmap to the given buffer and return amount of written Bytes */
-unsigned int Vt2IsoImageBase_c::write4BitBitmap( unsigned char* pui_bitmap, unsigned int rui_maxSize )
+unsigned int Vt2IsoImageBase_c::write4BitBitmap( unsigned char* pui_bitmap, unsigned int aui_maxSize )
 {
   objRawBitmapBytes [1] = 0;
   unsigned int roundedWidth = ( ( getWidth() + 1U ) & ( 0xFFFFFFFFU - 1U ) );
@@ -167,7 +167,7 @@ unsigned int Vt2IsoImageBase_c::write4BitBitmap( unsigned char* pui_bitmap, unsi
       unsigned int pixel2PaletteIndex = get4BitPixel( ui_x+1, ui_y );
       unsigned int byte = (pixel1PaletteIndex << 4) + pixel2PaletteIndex;
       // avoid overflow
-      if ( objRawBitmapBytes [1] > rui_maxSize ) return 0;
+      if ( objRawBitmapBytes [1] > aui_maxSize ) return 0;
 
       pui_bitmap [objRawBitmapBytes [1]] = byte;
       objRawBitmapBytes [1]++;
@@ -177,14 +177,14 @@ unsigned int Vt2IsoImageBase_c::write4BitBitmap( unsigned char* pui_bitmap, unsi
 }
 
 /** write the Bitmap to the given buffer and return amount of written Bytes */
-unsigned int Vt2IsoImageBase_c::write8BitBitmap( unsigned char* pui_bitmap, unsigned int rui_maxSize )
+unsigned int Vt2IsoImageBase_c::write8BitBitmap( unsigned char* pui_bitmap, unsigned int aui_maxSize )
 {
   objRawBitmapBytes [2] = 0;
   for ( unsigned int ui_y=0; ui_y< getHeight(); ui_y++) {
     for ( unsigned int ui_x=0; ui_x < getWidth(); ui_x++) {
       unsigned int pixelPaletteIndex = get8BitPixel( ui_x, ui_y );
       // avoid overflow
-      if ( objRawBitmapBytes [2] > rui_maxSize ) return 0;
+      if ( objRawBitmapBytes [2] > aui_maxSize ) return 0;
 
       pui_bitmap [objRawBitmapBytes [2]] = pixelPaletteIndex;
       objRawBitmapBytes [2]++;

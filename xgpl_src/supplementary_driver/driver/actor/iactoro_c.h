@@ -81,12 +81,12 @@ public:
 
     possible errors:
         * Err_c::range given limits are not possible
-    @param rb_digitalFirst smallest allowed digital output channel number (DIGITAL_OUTPUT_MIN)
-    @param rb_digitalLast greatest allowed digital output channel number (DIGITAL_OUTPUT_MAX)
+    @param ab_digitalFirst smallest allowed digital output channel number (DIGITAL_OUTPUT_MIN)
+    @param ab_digitalLast greatest allowed digital output channel number (DIGITAL_OUTPUT_MAX)
     @see masterHeader
   */
-  void init(uint8_t rb_digitalFirst = DIGITAL_OUTPUT_MIN, uint8_t rb_digitalLast = DIGITAL_OUTPUT_MAX)
-  { init(rb_digitalFirst, rb_digitalLast);};
+  void init(uint8_t ab_digitalFirst = DIGITAL_OUTPUT_MIN, uint8_t ab_digitalLast = DIGITAL_OUTPUT_MAX)
+  { init(ab_digitalFirst, ab_digitalLast);};
   /** destructor for the actor output manager object */
   ~iActorO_c() {};
   /**
@@ -94,21 +94,21 @@ public:
 
     possible errors:
         * Err_c::range given limits are not possible
-    @param rb_digitalFirst number of the smallest allowed digital input channel
-    @param rb_digitalLast number of the greatest allowed digital input channel
+    @param ab_digitalFirst number of the smallest allowed digital input channel
+    @param ab_digitalLast number of the greatest allowed digital input channel
   */
-  void setDigitalLimits(uint8_t rb_digitalFirst, uint8_t rb_digitalLast)
-    {ActorO_c::setDigitalLimits(rb_digitalFirst, rb_digitalLast);};
+  void setDigitalLimits(uint8_t ab_digitalFirst, uint8_t ab_digitalLast)
+    {ActorO_c::setDigitalLimits(ab_digitalFirst, ab_digitalLast);};
 
   /**
-    check if digital output object to given rb_channel exist
+    check if digital output object to given ab_channel exist
     @see iActorO_c::createDigital
     @see iActorO_c::deleteDigital
-    @param rb_channel number of the tested input channel
+    @param ab_channel number of the tested input channel
     @return true -> searched input object exist
   */
-  bool existDigital(uint8_t rb_channel)
-    {return ActorO_c::existDigital(rb_channel);};
+  bool existDigital(uint8_t ab_channel)
+    {return ActorO_c::existDigital(ab_channel);};
 
   /**
     deliver reference to requested digital channel object to access this actor output;
@@ -121,12 +121,12 @@ public:
     @see iActorO_c::createDigital
     @see iActorO_c::existDigital
     @see iDigitalO_c::iDigital_O
-    @param rb_channel channel of the digital sensor input
+    @param ab_channel channel of the digital sensor input
     @return reference to the wanted digital actor output channel
     @exception containerElementNonexistant
   */
-  iDigitalO_c& digital(uint8_t rb_channel)
-    {return static_cast<iDigitalO_c&>(ActorO_c::digital(rb_channel));};
+  iDigitalO_c& digital(uint8_t ab_channel)
+    {return static_cast<iDigitalO_c&>(ActorO_c::digital(ab_channel));};
 private:
   /** allow getIactorInstance() access to shielded base class.
       otherwise __IsoAgLib::getActorInstance() wouldn't be accepted by compiler

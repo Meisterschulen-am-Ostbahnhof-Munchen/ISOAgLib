@@ -168,13 +168,13 @@ IsoFilterManager_c::insertIsoFilter (const IsoFilter_s& rrefcs_isoFilter)
     vec_isoFilterBox.push_back (IsoFilterBox_c (SINGLETON_VEC_KEY));
 
     // now get the inserted ISOFilterBox
-    IsoFilterBox_c& refc_isoFilterBox = vec_isoFilterBox.back();
+    IsoFilterBox_c& rc_isoFilterBox = vec_isoFilterBox.back();
 
     // add the filter(s)
-    refc_isoFilterBox.addIsoFilter (rrefcs_isoFilter);
+    rc_isoFilterBox.addIsoFilter (rrefcs_isoFilter);
 
     // retrigger update of real hardware filters
-    refc_isoFilterBox.syncFiltersToCan();
+    rc_isoFilterBox.syncFiltersToCan();
   }
 }
 
@@ -189,14 +189,14 @@ IsoFilterManager_c::insertIsoFilterConnected (const IsoFilter_s& rrefcs_isoFilte
     vec_isoFilterBox.push_back (IsoFilterBox_c (SINGLETON_VEC_KEY));
 
     // now get the inserted ISOFilterBox
-    IsoFilterBox_c& refc_isoFilterBox = vec_isoFilterBox.back();
+    IsoFilterBox_c& rc_isoFilterBox = vec_isoFilterBox.back();
 
     // add the filter(s)
-    refc_isoFilterBox.addIsoFilter (rrefcs_isoFilter);
-    refc_isoFilterBox.addIsoFilter (rrefcs_isoFilter2);
+    rc_isoFilterBox.addIsoFilter (rrefcs_isoFilter);
+    rc_isoFilterBox.addIsoFilter (rrefcs_isoFilter2);
 
     // retrigger update of real hardware filters
-    refc_isoFilterBox.syncFiltersToCan();
+    rc_isoFilterBox.syncFiltersToCan();
   }
 }
 
@@ -251,32 +251,32 @@ IsoFilterManager_c::removeIsoFilter (const IsoFilter_s& rrefcs_isoFilter)
 }
 
 /** this function is called by IsoMonitor_c when a new CLAIMED IsoItem_c is registered.
-  * @param refc_isoName const reference to the item which IsoItem_c state is changed
-  * @param rpc_newItem pointer to the currently corresponding IsoItem_c
+  * @param rc_isoName const reference to the item which IsoItem_c state is changed
+  * @param apc_newItem pointer to the currently corresponding IsoItem_c
   */
 void
-IsoFilterManager_c::reactOnMonitorListAdd (const IsoName_c& refc_isoName, const IsoItem_c* /*rpc_newItem*/)
+IsoFilterManager_c::reactOnMonitorListAdd (const IsoName_c& rc_isoName, const IsoItem_c* /*apc_newItem*/)
 {
   for (IsoFilterBox_it it_isoFilterBox = vec_isoFilterBox.begin();
        it_isoFilterBox != vec_isoFilterBox.end();
        it_isoFilterBox++)
   { // the ISOFilterBoxes will take care if they have to do anything at all or not...
-    it_isoFilterBox->updateOnAdd (refc_isoName);
+    it_isoFilterBox->updateOnAdd (rc_isoName);
   }
 }
 
 /** this function is called by IsoMonitor_c when a device looses its IsoItem_c.
-* @param refc_isoName const reference to the item which IsoItem_c state is changed
-* @param rui8_oldSa previously used SA which is NOW LOST -> clients which were connected to this item can react explicitly
+* @param rc_isoName const reference to the item which IsoItem_c state is changed
+* @param aui8_oldSa previously used SA which is NOW LOST -> clients which were connected to this item can react explicitly
 */
 void
-IsoFilterManager_c::reactOnMonitorListRemove (const IsoName_c& refc_isoName, uint8_t /*rui8_oldSa*/)
+IsoFilterManager_c::reactOnMonitorListRemove (const IsoName_c& rc_isoName, uint8_t /*aui8_oldSa*/)
 {
   for (IsoFilterBox_it it_isoFilterBox = vec_isoFilterBox.begin();
        it_isoFilterBox != vec_isoFilterBox.end();
        it_isoFilterBox++)
   { // the ISOFilterBoxes will take care if they have to do anything at all or not...
-    it_isoFilterBox->updateOnRemove (refc_isoName);
+    it_isoFilterBox->updateOnRemove (rc_isoName);
   }
 }
 
@@ -284,9 +284,9 @@ IsoFilterManager_c::reactOnMonitorListRemove (const IsoName_c& refc_isoName, uin
 #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
 /** C-style function, to get access to the unique IsoFilterManager_c singleton instance
  * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS */
-IsoFilterManager_c& getIsoFilterManagerInstance (uint8_t rui8_instance)
+IsoFilterManager_c& getIsoFilterManagerInstance (uint8_t aui8_instance)
 { // if > 1 singleton instance is used, no static reference can be used
-  return IsoFilterManager_c::instance(rui8_instance);
+  return IsoFilterManager_c::instance(aui8_instance);
 };
 #else
 /** C-style function, to get access to the unique IsoFilterManager_c singleton instance */

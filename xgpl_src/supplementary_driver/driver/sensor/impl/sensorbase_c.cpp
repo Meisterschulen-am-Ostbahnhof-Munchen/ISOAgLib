@@ -90,26 +90,26 @@ namespace __IsoAgLib {
 
 /**
   Basic constructor for a input channel object (only internal accessed)
-  @param rui8_channelNr hardware channel of this input object
+  @param aui8_channelNr hardware channel of this input object
   @param ren_inputType input type, which is needed because of the relation
          of config number and gathering number which vary dependent on input type
   @see Sensor_c::input_type
 */
-SensorBase_c::SensorBase_c(uint8_t rui8_channelNr, Sensor_c::inputType_t ren_inputType){
+SensorBase_c::SensorBase_c(uint8_t aui8_channelNr, Sensor_c::inputType_t ren_inputType){
   // store the channel number (software side
-  ui8_channelNr = rui8_channelNr;
+  ui8_channelNr = aui8_channelNr;
   en_inputType = ren_inputType;
 }
 /**
   Basic constructor for an input channel object (only internal accessed)
-  @param rui8_channelNr hardware channel of this input object
+  @param aui8_channelNr hardware channel of this input object
   @param ren_inputType input type, which is needed because of the relation
          of config number and gathering number which vary dependent on input type
   @see Sensor_c::input_type
 */
-void SensorBase_c::init(uint8_t rui8_channelNr, Sensor_c::inputType_t ren_inputType )
+void SensorBase_c::init(uint8_t aui8_channelNr, Sensor_c::inputType_t ren_inputType )
 { // store the channel number (software side
-  ui8_channelNr = rui8_channelNr;
+  ui8_channelNr = aui8_channelNr;
   en_inputType = ren_inputType;
 }
 /** basic destructor of sensor input object with no function at the moment (only internal accessed) */

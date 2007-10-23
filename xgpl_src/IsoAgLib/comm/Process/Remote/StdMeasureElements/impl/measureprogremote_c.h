@@ -107,34 +107,34 @@ public:
   /**
     constructor of MeasureProgRemote_c which can needed pointers to containing
     Scheduler_c and Process_c instances
-    @param rpc_processData optional pointer to Process_c
+    @param apc_processData optional pointer to Process_c
   */
-  MeasureProgRemote_c( ProcDataBase_c *const rpc_processData = NULL );
+  MeasureProgRemote_c( ProcDataBase_c *const apc_processData = NULL );
   /**
     initialise this MeasureProgRemote_c instance to well defined initial condition
     Scheduler_c and Process_c instances
-    @param rpc_processData optional pointer to Process_c
+    @param apc_processData optional pointer to Process_c
   */
-  void init( ProcDataBase_c *const rpc_processData );
+  void init( ProcDataBase_c *const apc_processData );
   /**
     assignment of MeasureProgRemote_c objects
-    @param rrefc_src source MeasureProgRemote_c instance
+    @param arc_src source MeasureProgRemote_c instance
     @return reference to the source instance for commands like "prog1 = prog2 = prog3 ...;
   */
-  const MeasureProgRemote_c& operator=(const MeasureProgRemote_c& rrefc_src);
+  const MeasureProgRemote_c& operator=(const MeasureProgRemote_c& arc_src);
   /**
     copy constructor for MeasureProgRemote
-    @param rrefc_src source MeasureProgRemote_c instance
+    @param arc_src source MeasureProgRemote_c instance
   */
-   MeasureProgRemote_c(const MeasureProgRemote_c& rrefc_src);
+   MeasureProgRemote_c(const MeasureProgRemote_c& arc_src);
   /** default destructor which has nothing to do */
   ~MeasureProgRemote_c();
 
   /**
     deliver actual measurement value as long
-    @param rb_sendRequest true -> request for new value is sent (optional, default false)
+    @param ab_sendRequest true -> request for new value is sent (optional, default false)
   */
-  int32_t masterMeasurementVal(bool rb_sendRequest = false) { return val( rb_sendRequest );};
+  int32_t masterMeasurementVal(bool ab_sendRequest = false) { return val( ab_sendRequest );};
 
   /**
     send reset cmd for the measurement value
@@ -143,9 +143,9 @@ public:
   #ifdef USE_FLOAT_DATA_TYPE
   /**
     deliver actual measurement value as float
-    @param rb_sendRequest true -> request for new value is sent (optional, default false)
+    @param ab_sendRequest true -> request for new value is sent (optional, default false)
   */
-  float masterValFloat(bool rb_sendRequest = false) { return valFloat( rb_sendRequest );};
+  float masterValFloat(bool ab_sendRequest = false) { return valFloat( ab_sendRequest );};
   #endif
 
   /**
@@ -191,19 +191,19 @@ public:
 
   /**
     deliver med val
-    @param rb_sendRequest choose wether a request for value update should be
+    @param ab_sendRequest choose wether a request for value update should be
         sent (default false == send no request)
     @return actual medium value
   */
-  int32_t med(bool rb_sendRequest = false) const;
+  int32_t med(bool ab_sendRequest = false) const;
 #ifdef USE_FLOAT_DATA_TYPE
   /**
     deliver med val as float
-    @param rb_sendRequest choose wether a request for value update should be
+    @param ab_sendRequest choose wether a request for value update should be
         sent (default false == send no request)
     @return actual medium value
   */
-  float medFloat(bool rb_sendRequest = false) const;
+  float medFloat(bool ab_sendRequest = false) const;
 #endif
   /**
     deliver time of last receive of new measurement value
@@ -221,9 +221,9 @@ public:
     set if this MeasureProgRemote_c instance should store
     target/partner process data messages not direct addressed
     to a local member (default store not)
-    @param rb_useForeign wanted mode (default true)
+    @param ab_useForeign wanted mode (default true)
   */
-  void receiveForeignMeasurement(bool rb_useForeign = true);
+  void receiveForeignMeasurement(bool ab_useForeign = true);
 
   /**
     set according to values of the package the accoring value
@@ -234,37 +234,37 @@ public:
 
   /**
     set a new measure val
-    @param ri32_val new val received from remote system
+    @param ai32_val new val received from remote system
   */
-  virtual void setVal(int32_t ri32_val);
+  virtual void setVal(int32_t ai32_val);
 
   /**
     init element values
-    @param ri32_val starting measuring value
+    @param ai32_val starting measuring value
   */
-  virtual void initVal(int32_t ri32_val);
+  virtual void initVal(int32_t ai32_val);
   /**
     send reset command for measure value
 
     possible errors:
         * Err_c::elNonexistent no remote member with claimed address with given DEVCLASS found
         * dependant error in CAN_IO
-    @param ri32_val reset measure value to this value (ISO only)
+    @param ai32_val reset measure value to this value (ISO only)
     @return true -> command successful sent
   */
-  virtual bool resetVal(int32_t ri32_val = 0);
+  virtual bool resetVal(int32_t ai32_val = 0);
 #ifdef USE_FLOAT_DATA_TYPE
   /**
     set a new measure val
-    @param rf_val new val received from remote system
+    @param af_val new val received from remote system
   */
-  virtual void setVal(float rf_val);
+  virtual void setVal(float af_val);
 
   /**
     init element values
-    @param rf_val starting measuring value
+    @param af_val starting measuring value
   */
-  virtual void initVal(float rf_val);
+  virtual void initVal(float af_val);
 #endif
   /**
     send reset command for medium value
@@ -323,15 +323,15 @@ private: // Private methods
 
   /**
     set medium val
-    @param ri32_val new medium value
+    @param ai32_val new medium value
   */
-  void setMed(int32_t ri32_val){i32_med = ri32_val;};
+  void setMed(int32_t ai32_val){i32_med = ai32_val;};
 #ifdef USE_FLOAT_DATA_TYPE
   /**
     set medium val
-    @param rf_val new medium value
+    @param af_val new medium value
   */
-  void setMed(float rf_val){f_med = rf_val;};
+  void setMed(float af_val){f_med = af_val;};
 #endif
   /**
     deliver a reference to ProcDataRemote_c

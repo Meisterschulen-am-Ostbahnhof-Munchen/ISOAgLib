@@ -121,7 +121,7 @@ class FilterBox_c {
 public:
   struct CustomerLen_s
   {
-    CustomerLen_s (CanCustomer_c* rpc_customer, int8_t ri8_dlcForce) : pc_customer(rpc_customer), i8_dlcForce (ri8_dlcForce) {}
+    CustomerLen_s (CanCustomer_c* apc_customer, int8_t ai8_dlcForce) : pc_customer(apc_customer), i8_dlcForce (ai8_dlcForce) {}
 
     CanCustomer_c* pc_customer;
     int8_t i8_dlcForce; // 0..8: DLC must exactly be 0..8.   < 0 (-1): DLC doesn't care! (default!)
@@ -138,34 +138,34 @@ public:
     setting pointer to the root CanIo_c and to the according CANCustomer
     instance; even define specific mask and filter setting
 
-    @param rpc_customer pointer to the CanCustomer_c instance, which creates this FilterBox_c instance
-    @param rt_mask mask for this Filer_Box (MASK_TYPE defined in isoaglib_config.h)
-    @param rt_filter filter for this Filer_Box (MASK_TYPE defined in isoaglib_config.h)
+    @param apc_customer pointer to the CanCustomer_c instance, which creates this FilterBox_c instance
+    @param at_mask mask for this Filer_Box (MASK_TYPE defined in isoaglib_config.h)
+    @param at_filter filter for this Filer_Box (MASK_TYPE defined in isoaglib_config.h)
     @param ren_identType select if FilterBox_c is used for standard 11bit or extended 29bit ident
-    @param rpc_filterBox optional parameter for getting to filterboxes connected together into the same MsgObj!
+    @param apc_filterBox optional parameter for getting to filterboxes connected together into the same MsgObj!
      @exception badAlloc
-  FilterBox_c(CanCustomer_c* rpc_customer,
-              MASK_TYPE rt_mask, MASK_TYPE rt_filter,
-              Ident_c::identType_t ren_identType = Ident_c::StandardIdent, FilterBox_c* rpc_filterBox = NULL);
+  FilterBox_c(CanCustomer_c* apc_customer,
+              MASK_TYPE at_mask, MASK_TYPE at_filter,
+              Ident_c::identType_t ren_identType = Ident_c::StandardIdent, FilterBox_c* apc_filterBox = NULL);
   */
 
   /** copy constructor which uses data of another FilterBox_c instance
-    @param rrefc_src reference to the source FilterBox_c instance for copying
+    @param arc_src reference to the source FilterBox_c instance for copying
      @exception badAlloc
   */
-  FilterBox_c(const FilterBox_c& rrefc_src);
+  FilterBox_c(const FilterBox_c& arc_src);
 
   /** destructor of this FilterBox_c instance */
   ~FilterBox_c();
 
-  /** copy values of rrefc_src FilterBox_c object to this instance
+  /** copy values of arc_src FilterBox_c object to this instance
     possible errors:
         * Err_c::badAlloc on not enough memory for copying puffed CAN msg from source
 
-    @param rrefc_src FilterBox_c instance with data to assign to this instance
+    @param arc_src FilterBox_c instance with data to assign to this instance
     @return reference to this instance for chains like "box_1 = box_2 = ... = box_n;"
   */
-  FilterBox_c& operator=(const FilterBox_c& rrefc_src);
+  FilterBox_c& operator=(const FilterBox_c& arc_src);
 
   /** clear the data of this instance */
   void clearData();
@@ -182,7 +182,7 @@ public:
   /** store new can customer with same filter and mask
       @param pc_cancustomer  new can customer
     */
-  void insertCustomer(CanCustomer_c* pc_cancustomer, int8_t ri8_len) {vec_customer.push_back(CustomerLen_s(pc_cancustomer, ri8_len));}
+  void insertCustomer(CanCustomer_c* pc_cancustomer, int8_t ai8_len) {vec_customer.push_back(CustomerLen_s(pc_cancustomer, ai8_len));}
 
   /** configures the CAN hardware of given FilterBox (uses BIOS function with EXTENDED_HAL)
 
@@ -191,55 +191,55 @@ public:
         * range given BUS or FilterBox number not in allowed area
         * hwBusy wanted FilterBox already in use
         * unspecified some other error
-    @param rui8_busNumber BUS number, where this instance should act
-    @param rui8_FilterBoxNr CAN hardware msg number for BIOS interaction
+    @param aui8_busNumber BUS number, where this instance should act
+    @param aui8_FilterBoxNr CAN hardware msg number for BIOS interaction
     @return true -> BIOS CAN object without errors configured
   */
-  bool configCan(uint8_t rui8_busNumber, uint8_t rui8_FilterBoxNr);
+  bool configCan(uint8_t aui8_busNumber, uint8_t aui8_FilterBoxNr);
 
   /* *************************************** */
   /* ******* filter/mask managing ********** */
   /* *************************************** */
 
   /** set the mask (t_mask) and filter (t_filter) of this FilterBox
-    @param rt_mask mask for this Filer_Box (MASK_TYPE defined in isoaglib_config.h)
-    @param rt_filter filter for this Filer_Box (MASK_TYPE defined in isoaglib_config.h)
-    @param rpc_customer pointer to the CanCustomer_c instance, which creates this FilterBox_c instance
-    @param ri8_dlcForce force the DLC to be exactly this long (0 to 8 bytes). use -1 for NO FORCING and accepting any length can-pkg
+    @param at_mask mask for this Filer_Box (MASK_TYPE defined in isoaglib_config.h)
+    @param at_filter filter for this Filer_Box (MASK_TYPE defined in isoaglib_config.h)
+    @param apc_customer pointer to the CanCustomer_c instance, which creates this FilterBox_c instance
+    @param ai8_dlcForce force the DLC to be exactly this long (0 to 8 bytes). use -1 for NO FORCING and accepting any length can-pkg
     @param ren_identType select if FilterBox_c is used for standard 11bit or extended 29bit ident
   */
-  void set (const Ident_c& rrefc_mask,
-            const Ident_c& rrefc_filter,
-            CanCustomer_c *rpc_customer = NULL,
-            int8_t ri8_dlcForce = -1,
-            FilterBox_c* rpc_filterBox = NULL);
+  void set (const Ident_c& arc_mask,
+            const Ident_c& arc_filter,
+            CanCustomer_c *apc_customer = NULL,
+            int8_t ai8_dlcForce = -1,
+            FilterBox_c* apc_filterBox = NULL);
 
   /** check if ID from a CAN msg matches this FilterBox
-    @param rt_ident CAN ident of received msg
+    @param at_ident CAN ident of received msg
     @return true -> CAN ident fits to local filter/mask definition
   */
-  inline bool matchMsgId(MASK_TYPE rt_ident, Ident_c::identType_t rt_type )
-  { return ( (c_mask.masked(rt_ident) == c_mask.masked(c_filter)) && (rt_type == identType()) );}
+  inline bool matchMsgId(MASK_TYPE at_ident, Ident_c::identType_t at_type )
+  { return ( (c_mask.masked(at_ident) == c_mask.masked(c_filter)) && (at_type == identType()) );}
 
-  /** checks, if FilterBox_c definition given by rc_mask and rc_filter is the same
-    @param rc_mask mask to use for comparison
-    @param rc_filter filter to use for comparison
+  /** checks, if FilterBox_c definition given by ac_mask and ac_filter is the same
+    @param ac_mask mask to use for comparison
+    @param ac_filter filter to use for comparison
     @return true -> given mask and filter are same as the local defs
   */
-  bool equalFilterMask(const Ident_c& rc_mask, const Ident_c& rc_filter) const
-    {return ((c_mask == rc_mask) && (c_filter == rc_filter));}
+  bool equalFilterMask(const Ident_c& ac_mask, const Ident_c& ac_filter) const
+    {return ((c_mask == ac_mask) && (c_filter == ac_filter));}
 
   /** checks, if Filter_Box_c has already stored given customer
-      @param rref_customer  customer to compare
+      @param ar_customer  customer to compare
       @return               true -> customer already stored
     */
-	bool equalCustomer( const __IsoAgLib::CanCustomer_c& rref_customer ) const;
+	bool equalCustomer( const __IsoAgLib::CanCustomer_c& ar_customer ) const;
 
   /** delete CanCustomer_c instance from array
-      @param  rref_customer  CANCustomer to delete
+      @param  ar_customer  CANCustomer to delete
       @return                true -> no more cancustomers exist, whole filterbox can be deleted
     */
-  bool deleteFilter(const __IsoAgLib::CanCustomer_c& rref_customer);
+  bool deleteFilter(const __IsoAgLib::CanCustomer_c& ar_customer);
 
   /** deliver the type of the FilterBox_c ident */
   Ident_c::identType_t identType() const {return c_filter.identType();}
@@ -261,7 +261,7 @@ public:
 
   #ifdef DEBUG_CAN_BUFFER_FILLING
   /** some debug messages */
-  void doDebug(uint8_t rui8_busNumber);
+  void doDebug(uint8_t aui8_busNumber);
   #endif
 
   /* ************************************************** */

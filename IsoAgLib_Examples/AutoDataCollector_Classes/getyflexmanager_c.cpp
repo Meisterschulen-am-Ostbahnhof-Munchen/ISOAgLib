@@ -42,11 +42,11 @@
 #include <IsoAgLib/driver/eeprom/ieepromio_c.h>
 #include "getyflexmanager_c.h"
 
-DevClassFlexManager_c::DevClassFlexManager_c(DefaultRecordConfig_c* rpc_defaultRecordConfig, uint16_t rui16_eepromOffsetAdr)
+DevClassFlexManager_c::DevClassFlexManager_c(DefaultRecordConfig_c* apc_defaultRecordConfig, uint16_t aui16_eepromOffsetAdr)
   : ProcDataManager_c(7), c_flexibleHeader()
 {
   pc_data = (IsoAgLib::iProcDataRemote_c*)_pc_proc;
-  pc_defaultRecordConfig = rpc_defaultRecordConfig;
+  pc_defaultRecordConfig = apc_defaultRecordConfig;
 
   configField.posApplrateX = 0;
   configField.requestSingleVals = 0;
@@ -69,33 +69,33 @@ DevClassFlexManager_c::DevClassFlexManager_c(DefaultRecordConfig_c* rpc_defaultR
   // set proc_cnt to 1 (working state) unless more info found
   set_proc_cnt(1);
 }
-DevClassFlexManager_c::DevClassFlexManager_c(const DevClassFlexManager_c& rrefc_src)
- : ProcDataManager_c(rrefc_src)
+DevClassFlexManager_c::DevClassFlexManager_c(const DevClassFlexManager_c& arc_src)
+ : ProcDataManager_c(arc_src)
 {
-    pc_defaultRecordConfig = rrefc_src.pc_defaultRecordConfig;
-    configField.posApplrateX = rrefc_src.configField.posApplrateX;
-    configField.requestSingleVals = rrefc_src.configField.requestSingleVals;
+    pc_defaultRecordConfig = arc_src.pc_defaultRecordConfig;
+    configField.posApplrateX = arc_src.configField.posApplrateX;
+    configField.requestSingleVals = arc_src.configField.requestSingleVals;
     // don't copy proc data pointer array - start with deactivated
     _pc_proc = NULL;
 
-    ui16_eepromOffsetAdr = rrefc_src.ui16_eepromOffsetAdr;
+    ui16_eepromOffsetAdr = arc_src.ui16_eepromOffsetAdr;
 
-    configField.timeWert = rrefc_src.configField.timeWert;
+    configField.timeWert = arc_src.configField.timeWert;
 
-    configField.applrateXHa = rrefc_src.configField.applrateXHa;
-    configField.applrateXMin = rrefc_src.configField.applrateXMin;
-    configField.applrateX = rrefc_src.configField.applrateX;
-    configField.applrateTankX = rrefc_src.configField.applrateTankX;
+    configField.applrateXHa = arc_src.configField.applrateXHa;
+    configField.applrateXMin = arc_src.configField.applrateXMin;
+    configField.applrateX = arc_src.configField.applrateX;
+    configField.applrateTankX = arc_src.configField.applrateTankX;
 
-    configField.transportDummyWidth = rrefc_src.configField.transportDummyWidth;
-    configField.recordWorkDist = rrefc_src.configField.recordWorkDist;
-    configField.fieldstarSend = rrefc_src.configField.fieldstarSend;
-    configField.recordAsDevClass = rrefc_src.configField.recordAsDevClass;
-    configField.workWertInst = rrefc_src.configField.workWertInst;
-    configField.useMeasureProgs = rrefc_src.configField.useMeasureProgs;
-    configField.timeDistDevClass = rrefc_src.configField.timeDistDevClass;
+    configField.transportDummyWidth = arc_src.configField.transportDummyWidth;
+    configField.recordWorkDist = arc_src.configField.recordWorkDist;
+    configField.fieldstarSend = arc_src.configField.fieldstarSend;
+    configField.recordAsDevClass = arc_src.configField.recordAsDevClass;
+    configField.workWertInst = arc_src.configField.workWertInst;
+    configField.useMeasureProgs = arc_src.configField.useMeasureProgs;
+    configField.timeDistDevClass = arc_src.configField.timeDistDevClass;
 
-    c_flexibleHeader = rrefc_src.c_flexibleHeader;
+    c_flexibleHeader = arc_src.c_flexibleHeader;
 }
 
 DevClassFlexManager_c::~DevClassFlexManager_c()
@@ -103,22 +103,22 @@ DevClassFlexManager_c::~DevClassFlexManager_c()
   if (activated()) deactivate();
 }
 
-void DevClassFlexManager_c::init(DefaultRecordConfig_c* rpc_defaultRecordConfig)
+void DevClassFlexManager_c::init(DefaultRecordConfig_c* apc_defaultRecordConfig)
 {
-  pc_defaultRecordConfig = rpc_defaultRecordConfig;
+  pc_defaultRecordConfig = apc_defaultRecordConfig;
 }
 
 /**
   activate with creating the needed ProcessData
-  @param rpc_monitor pointer to member_item of data delivering member
-  @param rpc_localISOName pointer to local member ISOName for sending of commands
+  @param apc_monitor pointer to member_item of data delivering member
+  @param apc_localISOName pointer to local member ISOName for sending of commands
 */
-void DevClassFlexManager_c::activate(IsoAgLib::iDINItem_c* rpc_monitor, IsoAgLib::iIsoName_c* rpc_localISOName)
+void DevClassFlexManager_c::activate(IsoAgLib::iDINItem_c* apc_monitor, IsoAgLib::iIsoName_c* apc_localISOName)
 {
-  ProcDataManager_c::activate(rpc_monitor);
+  ProcDataManager_c::activate(apc_monitor);
   // read specific device config from EEPROM
   SpecificRecordConfig_c c_specificRecordConfig(ADR_TASK_CONTROLLER_SPECIFIC_CONFIG,
-    pc_defaultRecordConfig, rpc_monitor);
+    pc_defaultRecordConfig, apc_monitor);
   // set local config settings
   configField.timeWert = c_specificRecordConfig.timeWert();
 
@@ -139,7 +139,7 @@ void DevClassFlexManager_c::activate(IsoAgLib::iDINItem_c* rpc_monitor, IsoAgLib
   uint8_t b_calc_proc_cnt = 1; // at least work state
 
   // don't start measuring prog for width for transport
-  if (rpc_monitor->devClass() != 11) b_calc_proc_cnt += 1;
+  if (apc_monitor->devClass() != 11) b_calc_proc_cnt += 1;
 
   if (configField.applrateXHa == 1) b_calc_proc_cnt += 1;
   if (configField.applrateXMin == 1) b_calc_proc_cnt += 1;
@@ -153,7 +153,7 @@ void DevClassFlexManager_c::activate(IsoAgLib::iDINItem_c* rpc_monitor, IsoAgLib
     b_calc_proc_cnt += 3;
     if (configField.recordWorkDist == 1) b_calc_proc_cnt += 1;
     // don't start measuring prog for work area for transport
-    if (rpc_monitor->devClass() != 11) b_calc_proc_cnt += 1; // work area
+    if (apc_monitor->devClass() != 11) b_calc_proc_cnt += 1; // work area
   }
 
   // reserve space for device specific proc data
@@ -167,8 +167,8 @@ void DevClassFlexManager_c::activate(IsoAgLib::iDINItem_c* rpc_monitor, IsoAgLib
   c_flexibleHeader = "";
 
 
-  IsoAgLib::iIsoName_c c_remoteWorkDataISOName = rpc_monitor->isoName(),
-                       c_remoteTimedistDataISOName = rpc_monitor->isoName();
+  IsoAgLib::iIsoName_c c_remoteWorkDataISOName = apc_monitor->isoName(),
+                       c_remoteTimedistDataISOName = apc_monitor->isoName();
   uint8_t ui8_remoteTimedistDataDevClass = c_specificRecordConfig.timeDistDevClass();
 
   if (c_specificRecordConfig.fieldstarSend())
@@ -182,9 +182,9 @@ void DevClassFlexManager_c::activate(IsoAgLib::iDINItem_c* rpc_monitor, IsoAgLib
   uint8_t b_proc_ind = 0;
   // 1. Activation PROC-Column: WIDTH ( Dummy or Measurement ) -> IND==0
   // don't start measuring prog for work width for transport
-  if (rpc_monitor->devClass() != 11)
+  if (apc_monitor->devClass() != 11)
   { // remote process data for "working width" [mm] (LIS=0, DEVCLASS=2, WERT=3, INST=1)
-    pc_data[b_proc_ind].init(0, c_remoteWorkDataISOName, 0x3, 0x1, 0xFF, 2, c_remoteWorkDataISOName, rpc_localISOName);
+    pc_data[b_proc_ind].init(0, c_remoteWorkDataISOName, 0x3, 0x1, 0xFF, 2, c_remoteWorkDataISOName, apc_localISOName);
     if (!configField.useMeasureProgs) pc_data[b_proc_ind].prog().receiveForeignMeasurement();
     b_proc_ind++;
   }
@@ -192,7 +192,7 @@ void DevClassFlexManager_c::activate(IsoAgLib::iDINItem_c* rpc_monitor, IsoAgLib
   // 2. Activation PROC-Column: STATE -> IND==1/0
   // remote process data for "on/off" dependent on configField.workWertInst [0/0x64] (LIS=0, DEVCLASS=2, WERT=1, INST=0)
   pc_data[b_proc_ind].init(0, c_remoteWorkDataISOName, (configField.workWertInst >> 4),
-        (configField.workWertInst & 0xF), 0xFF, 2, c_remoteWorkDataISOName, rpc_localISOName);
+        (configField.workWertInst & 0xF), 0xFF, 2, c_remoteWorkDataISOName, apc_localISOName);
   if (!configField.useMeasureProgs) pc_data[b_proc_ind].prog().receiveForeignMeasurement();
   b_proc_ind++;
 
@@ -204,36 +204,36 @@ void DevClassFlexManager_c::activate(IsoAgLib::iDINItem_c* rpc_monitor, IsoAgLib
     c_specRemoteTimeDistISOName.setDevClass( ui8_remoteTimedistDataDevClass );
 
     pc_data[b_proc_ind].init(0, c_specRemoteTimeDistISOName, configField.timeWert,
-          bTime_inst, 0xFF, 2, c_remoteTimedistDataISOName, rpc_localISOName);
+          bTime_inst, 0xFF, 2, c_remoteTimedistDataISOName, apc_localISOName);
     if (!configField.useMeasureProgs) pc_data[b_proc_ind].prog().receiveForeignMeasurement();
     b_proc_ind++;
 
     // remote process data for "whole distance" [m] (LIS=0, DEVCLASS=2, WERT=8, INST=1)
     pc_data[b_proc_ind].init(0, c_specRemoteTimeDistISOName, 0x8, 0x1, 0xFF,
-          2, c_remoteTimedistDataISOName, rpc_localISOName);
+          2, c_remoteTimedistDataISOName, apc_localISOName);
     if (!configField.useMeasureProgs) pc_data[b_proc_ind].prog().receiveForeignMeasurement();
     b_proc_ind++;
 
     // remote process data for "work time" [sec] (LIS=0, DEVCLASS=2, WERT=0xA, INST=7)
     bTime_inst = (configField.timeWert == 0xA)?7:5;
     pc_data[b_proc_ind].init(0, c_specRemoteTimeDistISOName, configField.timeWert,
-          bTime_inst, 0xFF, 2, c_remoteTimedistDataISOName, rpc_localISOName);
+          bTime_inst, 0xFF, 2, c_remoteTimedistDataISOName, apc_localISOName);
     if (!configField.useMeasureProgs) pc_data[b_proc_ind].prog().receiveForeignMeasurement();
     b_proc_ind++;
 
     if (configField.recordWorkDist == 1)
     { // remote process data for "working distance" [m] (LIS=0, DEVCLASS=2, WERT=8, INST=4)// remote process data for "working distance" [m] (LIS=0, DEVCLASS=2, WERT=8, INST=4)
       pc_data[b_proc_ind].init(0, c_specRemoteTimeDistISOName, 0x8, 0x4, 0xFF,
-            2, c_remoteTimedistDataISOName, rpc_localISOName);
+            2, c_remoteTimedistDataISOName, apc_localISOName);
       if (!configField.useMeasureProgs) pc_data[b_proc_ind].prog().receiveForeignMeasurement();
       b_proc_ind++;
     }
 
     // don't start measuring prog for work area for transport
-    if (rpc_monitor->devClass() != 11)
+    if (apc_monitor->devClass() != 11)
     { // remote process data for "working area" [m2] (LIS=0, DEVCLASS=2, WERT=8, INST=0)
       pc_data[b_proc_ind].init(0, c_specRemoteTimeDistISOName, 0x8, 0x0, 0xFF,
-            2, c_remoteWorkDataISOName, rpc_localISOName);
+            2, c_remoteWorkDataISOName, apc_localISOName);
       if (!configField.useMeasureProgs) pc_data[b_proc_ind].prog().receiveForeignMeasurement();
       b_proc_ind++;
     }
@@ -241,26 +241,26 @@ void DevClassFlexManager_c::activate(IsoAgLib::iDINItem_c* rpc_monitor, IsoAgLib
 
   if (configField.applrateXHa == 1)
   { // record x/ha -> "appl rate per ha" (LIS=0, DEVCLASS=2, WERT=5, INST=0)
-    pc_data[b_proc_ind].init(0, c_remoteWorkDataISOName, 0x5, 0x0, 0xFF, 2, c_remoteWorkDataISOName, rpc_localISOName);
+    pc_data[b_proc_ind].init(0, c_remoteWorkDataISOName, 0x5, 0x0, 0xFF, 2, c_remoteWorkDataISOName, apc_localISOName);
     if (!configField.useMeasureProgs) pc_data[b_proc_ind].prog().receiveForeignMeasurement();
     b_proc_ind++;
   }
   if (configField.applrateXMin == 1)
   { // record x/ha -> "appl rate per minute" (LIS=0, DEVCLASS=2, WERT=5, INST=1)
-    pc_data[b_proc_ind].init(0, c_remoteWorkDataISOName, 0x5, 0x1, 0xFF, 2, c_remoteWorkDataISOName, rpc_localISOName);
+    pc_data[b_proc_ind].init(0, c_remoteWorkDataISOName, 0x5, 0x1, 0xFF, 2, c_remoteWorkDataISOName, apc_localISOName);
     if (!configField.useMeasureProgs) pc_data[b_proc_ind].prog().receiveForeignMeasurement();
     b_proc_ind++;
   }
   if (configField.applrateX == 1)
   { // record x/ha -> "application total" (LIS=0, DEVCLASS=2, WERT=5, INST=2)
-    pc_data[b_proc_ind].init(0, c_remoteWorkDataISOName, 0x5, 0x2, 0xFF, 2, c_remoteWorkDataISOName, rpc_localISOName);
+    pc_data[b_proc_ind].init(0, c_remoteWorkDataISOName, 0x5, 0x2, 0xFF, 2, c_remoteWorkDataISOName, apc_localISOName);
     if (!configField.useMeasureProgs) pc_data[b_proc_ind].prog().receiveForeignMeasurement();
     configField.posApplrateX = b_proc_ind;
     b_proc_ind++;
   }
   if (configField.applrateTankX == 1)
   { // record x/ha -> "applicable volumen in tank" (LIS=0, DEVCLASS=2, WERT=5, INST=3)
-    pc_data[b_proc_ind].init(0, c_remoteWorkDataISOName, 0x5, 0x3, 0xFF, 2, c_remoteWorkDataISOName, rpc_localISOName);
+    pc_data[b_proc_ind].init(0, c_remoteWorkDataISOName, 0x5, 0x3, 0xFF, 2, c_remoteWorkDataISOName, apc_localISOName);
     if (!configField.useMeasureProgs) pc_data[b_proc_ind].prog().receiveForeignMeasurement();
     b_proc_ind++;
   }
@@ -277,7 +277,7 @@ void DevClassFlexManager_c::activate(IsoAgLib::iDINItem_c* rpc_monitor, IsoAgLib
     ui8_flexLis = c_specificRecordConfig.procDataIndLis(ui8_specProcInd);
 
     pc_data[b_proc_ind].init(ui8_flexLis, c_remoteWorkDataISOName, ui8_flexWert, ui8_flexInst, 0xFF,
-          2, c_remoteWorkDataISOName, rpc_localISOName);
+          2, c_remoteWorkDataISOName, apc_localISOName);
     if (!configField.useMeasureProgs) pc_data[b_proc_ind].prog().receiveForeignMeasurement();
     b_proc_ind++;
   }
@@ -388,13 +388,13 @@ void DevClassFlexManager_c::writeHeader()
 /** NEW: 14-10-2004
   check if a single measurement request should be sent on every local
   value access.
-  @param rb_procInd index of process data to check
+  @param ab_procInd index of process data to check
 */
-bool DevClassFlexManager_c::sendRequest( uint8_t rb_procInd )const
+bool DevClassFlexManager_c::sendRequest( uint8_t ab_procInd )const
 { // never send value request, if globally not wanted
   if ( ! sendRequest() ) return false;
 
-  uint16_t w_valueAge = ( IsoAgLib::iSystem_c::getTime() - ( (pc_data[rb_procInd]).prog().lastMeasurementReceive() ) );
+  uint16_t w_valueAge = ( IsoAgLib::iSystem_c::getTime() - ( (pc_data[ab_procInd]).prog().lastMeasurementReceive() ) );
   if (  w_valueAge < 1000 ) return false;
   else return true;
 }

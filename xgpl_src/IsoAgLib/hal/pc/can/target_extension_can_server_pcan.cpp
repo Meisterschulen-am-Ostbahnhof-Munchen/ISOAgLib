@@ -542,9 +542,9 @@ int ca_ReceiveCanCard_1(uint8_t ui8_bus, server_c* pc_serverData, CANmsg *ps_can
   return ret;
 }
 
-int32_t getServerTimeFromClientTime( client_c& ref_receiveClient, int32_t ri32_clientTime )
+int32_t getServerTimeFromClientTime( client_c& r_receiveClient, int32_t ai32_clientTime )
 {
-  return ri32_clientTime + ref_receiveClient.i32_msecStartDeltaClientMinusServer;
+  return ai32_clientTime + r_receiveClient.i32_msecStartDeltaClientMinusServer;
 }
 
 

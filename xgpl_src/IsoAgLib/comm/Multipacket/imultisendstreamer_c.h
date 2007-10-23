@@ -92,7 +92,7 @@ public:
       stream send package - MultiSend_c will send this
       buffer afterwards
    */
-  virtual void setDataNextFastPacketStreamPart (__IsoAgLib::MultiSendPkg_c* /*mspData*/, uint8_t /*bytes*/, uint8_t /*rui8_offset*/ = 0 ) {};
+  virtual void setDataNextFastPacketStreamPart (__IsoAgLib::MultiSendPkg_c* /*mspData*/, uint8_t /*bytes*/, uint8_t /*aui8_offset*/ = 0 ) {};
   #endif
 
   /** set cache for data source to stream start */

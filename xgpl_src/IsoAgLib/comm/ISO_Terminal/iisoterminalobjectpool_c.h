@@ -172,41 +172,41 @@ public:
     hook function that gets called after the ISO_Terminal_c instance
     receives a "Soft Key Activation" / "Button Activation" Message
     @param ui8_keyActivationCode 0, 1 or 2. In case of a Latchable Button use [BUTTON_HAS_BEEN_UNLATCHED, BUTTON_HAS_BEEN_LATCHED], for Unlatchable Buttons use [BUTTON_HAS_BEEN_PRESSED, BUTTON_IS_STILL_HELD] (notice there's NO BUTTON_HAS_BEEN_RELEASED !]. For keys use one of [KEY_HAS_BEEN_RELEASED, KEY_HAS_BEEN_PRESSED, KEY_IS_STILL_HELD]
-    @param rui16_objId ObjectID of the vtObjectButton / vtObjectSoftKey object
-    @param rui16_objIdMask ObjectID of the Mask that contains the vtObjectButton / vtObjectSoftKey object
-    @param rui8_keyCode KeyCode as defined in the vtObjectButton / vtObjectSoftKey object
-    @param rb_wasButton true if it was a button object, false if it was a soft key
+    @param aui16_objId ObjectID of the vtObjectButton / vtObjectSoftKey object
+    @param aui16_objIdMask ObjectID of the Mask that contains the vtObjectButton / vtObjectSoftKey object
+    @param aui8_keyCode KeyCode as defined in the vtObjectButton / vtObjectSoftKey object
+    @param ab_wasButton true if it was a button object, false if it was a soft key
   */
-  virtual void eventKeyCode (uint8_t rui8_keyActivationCode, uint16_t rui16_objId, uint16_t rui16_objIdMask, uint8_t rui8_keyCode, bool rb_wasButton)=0;
+  virtual void eventKeyCode (uint8_t aui8_keyActivationCode, uint16_t aui16_objId, uint16_t aui16_objIdMask, uint8_t aui8_keyCode, bool ab_wasButton)=0;
 
   /**
     hook function that gets called after the ISO_Terminal_c instance
     receives a "Pointing Event" Message
-    @param rui16_xPosition of where the user has clicked (besides buttons and input objects) or touched
-    @param rui16_yPosition of where the user has clicked (besides buttons and input objects) or touched
+    @param aui16_xPosition of where the user has clicked (besides buttons and input objects) or touched
+    @param aui16_yPosition of where the user has clicked (besides buttons and input objects) or touched
   */
-  virtual void eventPointingEvent (uint16_t /*rui16_xPosition*/, uint16_t /*rui16_yPosition*/) {}
+  virtual void eventPointingEvent (uint16_t /*aui16_xPosition*/, uint16_t /*aui16_yPosition*/) {}
 
   /**
     hook function that gets called after the ISO_Terminal_c instance
     receives a "VT Change Numeric Value" Message
-    @param rui16_objId of the object where the user changed the value
-    @param rui8_value the value in 8bit
-    @param rui32_value the (same) value in 32bit
+    @param aui16_objId of the object where the user changed the value
+    @param aui8_value the value in 8bit
+    @param aui32_value the (same) value in 32bit
   */
-  virtual void eventNumericValue (uint16_t rui16_objId, uint8_t rui8_value, uint32_t rui32_value)=0;
+  virtual void eventNumericValue (uint16_t aui16_objId, uint8_t aui8_value, uint32_t aui32_value)=0;
 
   /**
     hook function that gets called after the ISO_Terminal_c instance
     receives a "Input String Value" Message
-    @param rui16_objId of the object where the user changed the value
-    @param rui8_length the length in 8bit
-    @param refc_streaminput reference to streaminput
-    @param rui8_unparsedBytes
+    @param aui16_objId of the object where the user changed the value
+    @param aui8_length the length in 8bit
+    @param rc_streaminput reference to streaminput
+    @param aui8_unparsedBytes
     @param b_isFirst
     @param b_isLast
   */
-  virtual void eventStringValue (uint16_t rui16_objId, uint8_t rui8_length, StreamInput_c &refc_streaminput, uint8_t rui8_unparsedBytes, bool b_isFirst, bool b_isLast)=0;
+  virtual void eventStringValue (uint16_t aui16_objId, uint8_t aui8_length, StreamInput_c &rc_streaminput, uint8_t aui8_unparsedBytes, bool b_isFirst, bool b_isLast)=0;
 
   /**
     the abort function is implemented empty by default because
@@ -217,24 +217,24 @@ public:
   /**
     hook function that gets called immediately after the
     "End Of Object Pool Response" Message was received.
-    @param rb_wasLanguageUpdate TRUE if the object pool was updated while it was already active/being displayed.
+    @param ab_wasLanguageUpdate TRUE if the object pool was updated while it was already active/being displayed.
                                 FALSE if the object pool was initially uploaded
-    @param ri8_languageIndex -1 if a non-supported language was selected (and hence the default language (index 0) has been uploaded/updated)
+    @param ai8_languageIndex -1 if a non-supported language was selected (and hence the default language (index 0) has been uploaded/updated)
                              0..(n-1) for the index to the supported languages. 0 is the first (=default) language. 1 the second, etc.
-    @param rui16_languageCode the language code of the uploaded language (one of your supported languages!)
+    @param aui16_languageCode the language code of the uploaded language (one of your supported languages!)
   */
-  virtual void eventObjectPoolUploadedSuccessfully (bool rb_wasLanguageUpdate, int8_t ri8_languageIndex, uint16_t rui16_languageCode)=0;
+  virtual void eventObjectPoolUploadedSuccessfully (bool ab_wasLanguageUpdate, int8_t ai8_languageIndex, uint16_t aui16_languageCode)=0;
 
 
   /**
     This function is called right before a language update is being sent to the VT,
     so the application has a chance to e.g. switch to a "Wait while updating language..." datamask
     before the object pool is being updated...
-    @param ri8_languageIndex -1 if a non-supported language was selected (and hence the default language (index 0) will be uploaded/updated)
+    @param ai8_languageIndex -1 if a non-supported language was selected (and hence the default language (index 0) will be uploaded/updated)
                              0..(n-1) for the index to the supported languages. 0 is the first (=default) language. 1 the second, etc.
-    @param rui16_languageCode the language code of the afterwards being uploaded language (one of your supported languages!)
+    @param aui16_languageCode the language code of the afterwards being uploaded language (one of your supported languages!)
   */
-  virtual void eventPrepareForLanguageChange (int8_t /*ri8_languageIndex*/, uint16_t /*rui16_languageCode*/) {}
+  virtual void eventPrepareForLanguageChange (int8_t /*ai8_languageIndex*/, uint16_t /*aui16_languageCode*/) {}
 
   /**
     hook function that gets called immediately after recognizing
@@ -247,7 +247,7 @@ public:
     of a command-response message. please keep the implementation short as
     this is directly called from IsoTerminal_c's processMsg();
   */
-  virtual void eventCommandResponse(uint8_t /*rui8_responseCommandError*/, const uint8_t /*rpui8_responseDataBytes*/[8]) {}
+  virtual void eventCommandResponse(uint8_t /*aui8_responseCommandError*/, const uint8_t /*apui8_responseDataBytes*/[8]) {}
 
   /**
     hook function that gets called immediately after recognizing an incoming LANGUAGE_PGN.
@@ -256,7 +256,7 @@ public:
     for changing the LANGUAGE please refer to "eventObjectPoolUploadedSuccessfully".
     VERY IMPORTANT: THIS FUNCTION CALL MAY OCCUR PRIOR TO AN SUCCESSFULLY UPLOADED POOL !!!!!!!
   */
-  virtual void eventLanguagePgn(const localSettings_s& /*rrefs_localSettings*/) {}
+  virtual void eventLanguagePgn(const localSettings_s& /*ars_localSettings*/) {}
 
   /**
     hook function that gets called immediately after recognizing an incoming
@@ -296,17 +296,17 @@ public:
   */
   virtual void initAllObjectsOnce(SINGLETON_VEC_KEY_PARAMETER_DEF)=0;
 
-  iIsoTerminalObjectPool_c(iVtObject_c*HUGE_MEM** r_iVtObjects, uint16_t r_numObjects, uint16_t r_numObjectsLang, uint16_t r_dimension, uint16_t r_skWidth=60, uint16_t r_skHeight=32)
-    : iVtObjects (r_iVtObjects)
-    , numObjects (r_numObjects)
-    , numObjectsLang (r_numObjectsLang)
-    , dimension (r_dimension)
-    , skWidth (r_skWidth)
-    , skHeight (r_skHeight)
+  iIsoTerminalObjectPool_c(iVtObject_c*HUGE_MEM** a_iVtObjects, uint16_t a_numObjects, uint16_t a_numObjectsLang, uint16_t a_dimension, uint16_t a_skWidth=60, uint16_t a_skHeight=32)
+    : iVtObjects (a_iVtObjects)
+    , numObjects (a_numObjects)
+    , numObjectsLang (a_numObjectsLang)
+    , dimension (a_dimension)
+    , skWidth (a_skWidth)
+    , skHeight (a_skHeight)
     , b_initAllObjects (false)
   {
     numLang=0;
-    iVtObject_c*HUGE_MEM** iter = r_iVtObjects+1; // first entry should be the general object pool part!
+    iVtObject_c*HUGE_MEM** iter = a_iVtObjects+1; // first entry should be the general object pool part!
     while (*iter++ != NULL) numLang++;
   };
 

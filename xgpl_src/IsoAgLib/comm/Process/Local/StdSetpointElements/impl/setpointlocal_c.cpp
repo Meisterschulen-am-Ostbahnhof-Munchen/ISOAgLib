@@ -132,11 +132,11 @@ static uint16_t sui16_setpointLocalTotal = 0;
 namespace __IsoAgLib {
 /**
   initialise this SetpointLocal_c to a well defined starting condition
-  @param rpc_processData pointer to containing ProcessData instance
+  @param apc_processData pointer to containing ProcessData instance
 */
-void SetpointLocal_c::init( ProcDataBase_c *const rpc_processData )
+void SetpointLocal_c::init( ProcDataBase_c *const apc_processData )
 {
-  SetpointBase_c::init( rpc_processData );
+  SetpointBase_c::init( apc_processData );
   // set pc_registerCache to a well defined value
   pc_registerCache = vec_register.begin();
   #ifdef DEBUG_HEAP_USEAGE
@@ -158,14 +158,14 @@ void SetpointLocal_c::init( ProcDataBase_c *const rpc_processData )
 
 /**
   assginment from another object
-  @param rrefc_src source SetpointLocal_c instance
+  @param arc_src source SetpointLocal_c instance
   @return reference to source for cmd like "setp1 = setp2 = setp3;"
 */
-const SetpointLocal_c& SetpointLocal_c::operator=( const SetpointLocal_c& rrefc_src ){
+const SetpointLocal_c& SetpointLocal_c::operator=( const SetpointLocal_c& arc_src ){
   // first call base assignment operator
-  SetpointBase_c::operator=(rrefc_src);
+  SetpointBase_c::operator=(arc_src);
 
-  assignFromSource( rrefc_src );
+  assignFromSource( arc_src );
 
   // return reference
   return *this;
@@ -173,23 +173,23 @@ const SetpointLocal_c& SetpointLocal_c::operator=( const SetpointLocal_c& rrefc_
 
 /**
   copy constructor for SetpointLocal
-  @param rrefc_src source SetpointLocal_c instance
+  @param arc_src source SetpointLocal_c instance
 */
-SetpointLocal_c::SetpointLocal_c( const SetpointLocal_c& rrefc_src )
-  : SetpointBase_c( rrefc_src){
-  assignFromSource( rrefc_src );
+SetpointLocal_c::SetpointLocal_c( const SetpointLocal_c& arc_src )
+  : SetpointBase_c( arc_src){
+  assignFromSource( arc_src );
 }
 /** base function for assignment of element vars for copy constructor and operator= */
-void SetpointLocal_c::assignFromSource( const SetpointLocal_c& rrefc_src )
+void SetpointLocal_c::assignFromSource( const SetpointLocal_c& arc_src )
 {
   // now copy element vars
-  i32_setpointMaxAllowed = rrefc_src.i32_setpointMaxAllowed;
-  i32_setpointMinAllowed = rrefc_src.i32_setpointMinAllowed;
-  b_staticMaster = rrefc_src.b_staticMaster;
-  vec_register = rrefc_src.vec_register;
+  i32_setpointMaxAllowed = arc_src.i32_setpointMaxAllowed;
+  i32_setpointMinAllowed = arc_src.i32_setpointMinAllowed;
+  b_staticMaster = arc_src.b_staticMaster;
+  vec_register = arc_src.vec_register;
 
 
-  if (vec_register.size() < rrefc_src.vec_register.size())
+  if (vec_register.size() < arc_src.vec_register.size())
   { // not all items copied
     getILibErrInstance().registerError( iLibErr_c::BadAlloc, iLibErr_c::Process );
   }
@@ -206,9 +206,9 @@ void SetpointLocal_c::assignFromSource( const SetpointLocal_c& rrefc_src )
 
   // pc_registerCache is a pointer, which must be copied relative to vec_register.begin()
   // the distance operator needs a const_iterator
-  Vec_SetpointRegister::const_iterator pc_iter = rrefc_src.pc_registerCache;
+  Vec_SetpointRegister::const_iterator pc_iter = arc_src.pc_registerCache;
   pc_registerCache = vec_register.begin();
-  STL_NAMESPACE::advance( pc_registerCache, STL_NAMESPACE::distance( rrefc_src.vec_register.begin(), pc_iter));
+  STL_NAMESPACE::advance( pc_registerCache, STL_NAMESPACE::distance( arc_src.vec_register.begin(), pc_iter));
 
   // copy master element vars
   for (pc_master = vec_register.begin(); pc_master != vec_register.end();pc_master++)
@@ -216,7 +216,7 @@ void SetpointLocal_c::assignFromSource( const SetpointLocal_c& rrefc_src )
     if (pc_master->master()) break;
   }
 
-  b_allowedDeltaPercent = rrefc_src.b_allowedDeltaPercent;
+  b_allowedDeltaPercent = arc_src.b_allowedDeltaPercent;
 }
 
 /** default destructor which has nothing to do */
@@ -293,14 +293,14 @@ SetpointRegister_c& SetpointLocal_c::unhandledMaster(){
       * Err_c::elNonexistent no master setpoint found
   @see existUnhandledMaster
   @see unhandledMaster
-  @param rb_accept true -> new setpoint of master is accepted -> send positive notify
+  @param ab_accept true -> new setpoint of master is accepted -> send positive notify
 */
-void SetpointLocal_c::acceptNewMaster( bool rb_accept){
+void SetpointLocal_c::acceptNewMaster( bool ab_accept){
   if (existMaster())
   { // a master setpoint exist
     if (existUnhandledMaster())
     {
-      if (rb_accept)
+      if (ab_accept)
       { // accept
         // if handled: copy valid data (existMin(), existDefault() ...) from pc_registerCache (pointer to newly created SetpointRegister_c)
         // and release pc_registerCache and keep pc_master!
@@ -343,9 +343,9 @@ void SetpointLocal_c::acceptNewMaster( bool rb_accept){
   set the master setpoint manually
   (in some cases remote systems request informations
    through process data setpoints)
-  @param ri32_val wanted setpoint value
+  @param ai32_val wanted setpoint value
 */
-void SetpointLocal_c::setMasterMeasurementVal( int32_t ri32_val)
+void SetpointLocal_c::setMasterMeasurementVal( int32_t ai32_val)
 {
   if (!existMaster())
   { // create register entry for master value
@@ -367,7 +367,7 @@ void SetpointLocal_c::setMasterMeasurementVal( int32_t ri32_val)
     #endif
     pc_master = vec_register.begin();
   }
-  master().setExact( ri32_val);
+  master().setExact( ai32_val);
   master().setHandled( true);
   master().setValid( true);
   master().setISOName(IsoName_c::IsoNameUnspecified());
@@ -382,11 +382,11 @@ void SetpointLocal_c::setMasterMeasurementVal( int32_t ri32_val)
   set the master setpoint manually
   (in some cases remote systems request informations
    through process data setpoints)
-  @param rf_val wanted setpoint value
+  @param af_val wanted setpoint value
 */
-void SetpointLocal_c::setMasterMeasurementVal( float rf_val)
+void SetpointLocal_c::setMasterMeasurementVal( float af_val)
 {
-  int32_t i32_temp = (*(int32_t*)(&rf_val));
+  int32_t i32_temp = (*(int32_t*)(&af_val));
   setMasterMeasurementVal( i32_temp);
   setValType( float_val);
 }
@@ -412,16 +412,16 @@ uint8_t SetpointLocal_c::unhandledCnt()const{
 }
 
 /**
-  deliver the rui8_ind of the unhandled setpoints
-  @param rui8_ind position of the wanted setpoint entry in list of unhandled setpoints
-    (first entry: rui8_ind == 0!!)
+  deliver the aui8_ind of the unhandled setpoints
+  @param aui8_ind position of the wanted setpoint entry in list of unhandled setpoints
+    (first entry: aui8_ind == 0!!)
 
   possible errors:
-      * Err_c::range there are less than rui8_ind unhandled setpoints found
+      * Err_c::range there are less than aui8_ind unhandled setpoints found
   @see unhandledCnt
   @return wanted unhandled setpoint
 */
-SetpointRegister_c& SetpointLocal_c::unhandledInd( uint8_t rui8_ind){
+SetpointRegister_c& SetpointLocal_c::unhandledInd( uint8_t aui8_ind){
   uint8_t b_counter = 0;
   for (pc_registerCache = vec_register.begin();
        pc_registerCache != vec_register.end();
@@ -429,19 +429,19 @@ SetpointRegister_c& SetpointLocal_c::unhandledInd( uint8_t rui8_ind){
   {
     if (!(pc_registerCache->handled()))b_counter++;
 
-    // check if this was the rui8_ind item of the unhandled
-    if (b_counter == rui8_ind) break;
+    // check if this was the aui8_ind item of the unhandled
+    if (b_counter == aui8_ind) break;
   }
   // check if enough unhandled items found
-  if (b_counter != rui8_ind)
-  { // rui8_ind was too big
+  if (b_counter != aui8_ind)
+  { // aui8_ind was too big
     getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Process );
     pc_registerCache = vec_register.begin();
   }
 
   // now the pointer points to the wanted unhandled setpoint entry
   // (or to another valid entry if the amount of
-  //  unhandled setpoints is lower than rui8_ind)
+  //  unhandled setpoints is lower than aui8_ind)
   return *pc_registerCache;
 }
 
@@ -499,19 +499,19 @@ void SetpointLocal_c::respondAckNack(){
 /**
   check if the given measuremet value is correct for the actual
   master setpoint;
-  @param ri32_val measured value
-  @param rb_sendIfError true -> if actual value exceeds setpoint limits
+  @param ai32_val measured value
+  @param ab_sendIfError true -> if actual value exceeds setpoint limits
          the actual value is sent as notification (default true)
   @return 0 -> correct; (n<0) -> measurement is delta n to low;
           (n>0) -> measurement is delta n to high
 */
-int32_t SetpointLocal_c::checkMeasurement( int32_t ri32_val, bool rb_sendIfError) {
+int32_t SetpointLocal_c::checkMeasurement( int32_t ai32_val, bool ab_sendIfError) {
   int32_t i32_delta = 0;
 
   // store the actual valid state
   bool b_oldValid,
         b_actualValid = true;
-  if (rb_sendIfError) b_actualValid = rb_sendIfError;
+  if (ab_sendIfError) b_actualValid = ab_sendIfError;
   uint8_t b_deviationPercent;
 
   if (existMaster())
@@ -521,7 +521,7 @@ int32_t SetpointLocal_c::checkMeasurement( int32_t ri32_val, bool rb_sendIfError
     // now check if new measurement is valid
     if (masterConst().existExact())
     { // exact setpoint exist
-      i32_delta = (ri32_val - masterConst().exact());
+      i32_delta = (ai32_val - masterConst().exact());
       if (masterConst().exact() != 0)
         b_deviationPercent = ((CNAMESPACE::labs( i32_delta) * 100)/masterConst().exact());
       else b_deviationPercent = 100;
@@ -531,13 +531,13 @@ int32_t SetpointLocal_c::checkMeasurement( int32_t ri32_val, bool rb_sendIfError
     { // min or max
       if (masterConst().existMin())
       {
-        i32_delta = (ri32_val - masterConst().min());
+        i32_delta = (ai32_val - masterConst().min());
         b_deviationPercent = ((CNAMESPACE::labs( i32_delta) * 100)/masterConst().min());
         b_actualValid = ((i32_delta >= 0)||(b_deviationPercent < b_allowedDeltaPercent))?true:false;
       }
       if (b_actualValid && (masterConst().existMax()))
       { // the min test was if done successfull -> max limit exist -> check it
-        i32_delta = (ri32_val - masterConst().max());
+        i32_delta = (ai32_val - masterConst().max());
         b_deviationPercent = ((CNAMESPACE::labs( i32_delta) * 100)/masterConst().max());
         b_actualValid = ((i32_delta <= 0)||(b_deviationPercent < b_allowedDeltaPercent))?true:false;
       }
@@ -628,12 +628,12 @@ bool SetpointLocal_c::timeEvent( void ){
 /**
   send a sub-setpoint (selected by MOD) to a specified target (selected by GPT)
   @param GeneralCommand_c::ValueGroup_t min/max/exact/default code of the value type to send
-  @param rc_targetISOName ISOName of target
+  @param ac_targetISOName ISOName of target
   @param en_valueGroup: min/max/exact/default
   @param en_command
   @return true -> successful sent
 */
-bool SetpointLocal_c::sendSetpointMod(const IsoName_c& rc_targetISOName,
+bool SetpointLocal_c::sendSetpointMod(const IsoName_c& ac_targetISOName,
                                       GeneralCommand_c::ValueGroup_t en_valueGroup,
                                       GeneralCommand_c::CommandType_t en_command) const {
   // prepare general command in process pkg
@@ -642,11 +642,11 @@ bool SetpointLocal_c::sendSetpointMod(const IsoName_c& rc_targetISOName,
   #ifdef USE_FLOAT_DATA_TYPE
   if (valType() == i32_val) {
   #endif
-    return processDataConst().sendValISOName(rc_targetISOName, masterConst().valMod(en_valueGroup));
+    return processDataConst().sendValISOName(ac_targetISOName, masterConst().valMod(en_valueGroup));
   #ifdef USE_FLOAT_DATA_TYPE
   }
   else {
-    return processDataConst().sendValISOName(rc_targetISOName, masterConst().valModFloat(en_valueGroup));
+    return processDataConst().sendValISOName(ac_targetISOName, masterConst().valModFloat(en_valueGroup));
   }
   #endif
 }

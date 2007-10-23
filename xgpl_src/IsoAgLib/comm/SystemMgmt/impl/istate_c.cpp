@@ -92,8 +92,8 @@ using namespace __IsoAgLib;
   constructor of IState_c which can set the state to given initial value
   @param ren_itemState optional wanted state information (default <empty> value)
 */
-IState_c::IState_c(itemState_t ren_itemState, int ri_singletonVecKey)
-	: ClientBase( ri_singletonVecKey )
+IState_c::IState_c(itemState_t ren_itemState, int ai_singletonVecKey)
+	: ClientBase( ai_singletonVecKey )
 {
   en_itemState = ren_itemState;
 }
@@ -102,20 +102,20 @@ IState_c::IState_c(itemState_t ren_itemState, int ri_singletonVecKey)
   constructor of IState_c which can set the state to given initial value
   @param ren_itemState optional wanted state information (default <empty> value)
 */
-IState_c::IState_c(uint8_t rb_state, int ri_singletonVecKey )
-	: ClientBase( ri_singletonVecKey )
+IState_c::IState_c(uint8_t ab_state, int ai_singletonVecKey )
+	: ClientBase( ai_singletonVecKey )
 {
-  en_itemState = itemState_t(rb_state);
+  en_itemState = itemState_t(ab_state);
 }
 
 /**
   copy constructor for IState_c
-  @param rrefc_src source for this new instance
+  @param arc_src source for this new instance
 */
-IState_c::IState_c(const IState_c& rrefc_src)
-	: ClientBase( rrefc_src )
+IState_c::IState_c(const IState_c& arc_src)
+	: ClientBase( arc_src )
 {
-  en_itemState = rrefc_src.en_itemState;
+  en_itemState = arc_src.en_itemState;
 }
 
 
@@ -131,12 +131,12 @@ IState_c::IState_c(const IState_c& rrefc_src)
 
   set: Off, Standby, Active exclusive
   @param ren_itemState state information
-  @param rb_clearOld optional clear old value for complete new set (default no clear)
+  @param ab_clearOld optional clear old value for complete new set (default no clear)
   @return resulting state information
 */
-IState_c::itemState_t IState_c::setItemState(itemState_t ren_itemState, bool rb_clearOld)
+IState_c::itemState_t IState_c::setItemState(itemState_t ren_itemState, bool ab_clearOld)
 {
-  if (rb_clearOld) en_itemState = ren_itemState;
+  if (ab_clearOld) en_itemState = ren_itemState;
   // set state to Active, and reset Off andStandby on
   // Active, PreAddressClaim, AddressClaim, ClaimedAddress, FalseAlive
   if ((ren_itemState & (Active|PreAddressClaim|AddressClaim|ClaimedAddress|FalseAlive)) > 0)
@@ -175,7 +175,7 @@ IState_c::itemState_t IState_c::setItemState(itemState_t ren_itemState, bool rb_
   constructor of IStateExt_c which can set the state to given initial value
   @param ren_itemState optional wanted state information (default <empty> value)
 */
-IStateExt_c::IStateExt_c(itemState_t ren_itemState, int ri_singletonVecKey)  : IState_c(ren_itemState, ri_singletonVecKey)
+IStateExt_c::IStateExt_c(itemState_t ren_itemState, int ai_singletonVecKey)  : IState_c(ren_itemState, ai_singletonVecKey)
 {
   counter.b_addressClaimCnt = counter.b_falseAliveCnt = counter.b_causedConflictCnt = counter.b_affectedConflictCnt = 0;
   i16_lastCausedConflictTime = i16_lastAffectedConflictTime = 0;
@@ -185,7 +185,7 @@ IStateExt_c::IStateExt_c(itemState_t ren_itemState, int ri_singletonVecKey)  : I
   constructor of IState_c which can set the state to given initial value
   @param ren_itemState optional wanted state information (default <empty> value)
 */
-IStateExt_c::IStateExt_c(uint8_t rb_state, int ri_singletonVecKey) : IState_c(rb_state, ri_singletonVecKey)
+IStateExt_c::IStateExt_c(uint8_t ab_state, int ai_singletonVecKey) : IState_c(ab_state, ai_singletonVecKey)
 {
   counter.b_addressClaimCnt = counter.b_falseAliveCnt = counter.b_causedConflictCnt = counter.b_affectedConflictCnt = 0;
   i16_lastCausedConflictTime = i16_lastAffectedConflictTime = 0;
@@ -193,41 +193,41 @@ IStateExt_c::IStateExt_c(uint8_t rb_state, int ri_singletonVecKey) : IState_c(rb
 
 /**
   copy constructor for IState_c
-  @param rrefc_src source for this new instance
+  @param arc_src source for this new instance
 */
-IStateExt_c::IStateExt_c(const IStateExt_c& rrefc_src) : IState_c(rrefc_src)
+IStateExt_c::IStateExt_c(const IStateExt_c& arc_src) : IState_c(arc_src)
 {
-  counter.b_addressClaimCnt = rrefc_src.counter.b_addressClaimCnt;
-  counter.b_falseAliveCnt = rrefc_src.counter.b_falseAliveCnt;
-  counter.b_causedConflictCnt = rrefc_src.counter.b_causedConflictCnt;
-  counter.b_affectedConflictCnt = rrefc_src.counter.b_affectedConflictCnt;
-  i16_lastCausedConflictTime = rrefc_src.i16_lastCausedConflictTime;
-  i16_lastAffectedConflictTime = rrefc_src.i16_lastAffectedConflictTime;
+  counter.b_addressClaimCnt = arc_src.counter.b_addressClaimCnt;
+  counter.b_falseAliveCnt = arc_src.counter.b_falseAliveCnt;
+  counter.b_causedConflictCnt = arc_src.counter.b_causedConflictCnt;
+  counter.b_affectedConflictCnt = arc_src.counter.b_affectedConflictCnt;
+  i16_lastCausedConflictTime = arc_src.i16_lastCausedConflictTime;
+  i16_lastAffectedConflictTime = arc_src.i16_lastAffectedConflictTime;
 }
 
 /**
   set and/or retreive the AddressClaim counter
-  @param rc_cnt optional new AddressClaim counter  (default only Request)
+  @param ac_cnt optional new AddressClaim counter  (default only Request)
   @return actual or resulting AddressClaim cnt
 */
-uint8_t IStateExt_c::addressClaimCnt(int8_t rc_cnt)
+uint8_t IStateExt_c::addressClaimCnt(int8_t ac_cnt)
 {
-  if (rc_cnt > Request)
+  if (ac_cnt > Request)
   {
     setItemState(IState_c::AddressClaim);
-    counter.b_addressClaimCnt = rc_cnt;
+    counter.b_addressClaimCnt = ac_cnt;
   }
   return (itemState(IState_c::AddressClaim))?counter.b_addressClaimCnt:0;
 };
 
 /**
   set and/or retreive the counter of false alive msgs
-  @param rc_cnt optional new false alive counter  (default only Request)
+  @param ac_cnt optional new false alive counter  (default only Request)
   @return actual or resulting false alive cnt
 */
-uint8_t IStateExt_c::falseAliveCnt(int8_t rc_cnt)
+uint8_t IStateExt_c::falseAliveCnt(int8_t ac_cnt)
 {
-  switch (rc_cnt)
+  switch (ac_cnt)
   {
     case Incr: // -2 --> correct timed alive in FalseAlive state -> Increment
       if (counter.b_falseAliveCnt < 0xF) counter.b_falseAliveCnt++;
@@ -238,7 +238,7 @@ uint8_t IStateExt_c::falseAliveCnt(int8_t rc_cnt)
     case Request: // -1 --> only answer cnt
       break;
     default: // new dircet given value >= 0
-      if ((rc_cnt >= 0) && (rc_cnt < 0xF)) counter.b_falseAliveCnt = rc_cnt;
+      if ((ac_cnt >= 0) && (ac_cnt < 0xF)) counter.b_falseAliveCnt = ac_cnt;
       break;
   }
 
@@ -247,21 +247,21 @@ uint8_t IStateExt_c::falseAliveCnt(int8_t rc_cnt)
 
 /**
   set and/or retreive the counter of false alive msgs
-  @param rc_cnt optional new false alive counter  (default only Request)
+  @param ac_cnt optional new false alive counter  (default only Request)
   @return actual or resulting false alive cnt
 */
-uint8_t IStateExt_c::causedConflictCnt(int8_t rc_cnt, int32_t ri32_time)
+uint8_t IStateExt_c::causedConflictCnt(int8_t ac_cnt, int32_t ai32_time)
 {
-  switch (rc_cnt)
+  switch (ac_cnt)
   {
     case Incr: // -2 --> new conflict
-      i16_lastCausedConflictTime = (ri32_time / 1000);
+      i16_lastCausedConflictTime = (ai32_time / 1000);
       if (counter.b_causedConflictCnt < 0xF) counter.b_causedConflictCnt++;
       break;
     case Decr: // -3 --> timeEvent without conflict -> test if cnt can be reduced
        if (counter.b_causedConflictCnt > 0)
        {
-        if ( (ri32_time / 1000) != i16_lastCausedConflictTime)
+        if ( (ai32_time / 1000) != i16_lastCausedConflictTime)
         { // last conflict over 1 sec. away
           counter.b_causedConflictCnt--;
         }
@@ -270,9 +270,9 @@ uint8_t IStateExt_c::causedConflictCnt(int8_t rc_cnt, int32_t ri32_time)
     case Request: // -1 --> only answer cnt
       break;
     default: // new dircet given value >= 0
-      if (rc_cnt > 0) setItemState(IState_c::CausedConflict);
+      if (ac_cnt > 0) setItemState(IState_c::CausedConflict);
       else clearItemState(IState_c::CausedConflict);
-      if ((rc_cnt >= 0) && (rc_cnt < 0xF)) counter.b_causedConflictCnt = rc_cnt;
+      if ((ac_cnt >= 0) && (ac_cnt < 0xF)) counter.b_causedConflictCnt = ac_cnt;
       break;
   }
 
@@ -281,21 +281,21 @@ uint8_t IStateExt_c::causedConflictCnt(int8_t rc_cnt, int32_t ri32_time)
 
 /**
   set and/or retreive the counter of false alive msgs
-  @param rc_cnt optional new false alive counter  (default only Request)
+  @param ac_cnt optional new false alive counter  (default only Request)
   @return actual or resulting false alive cnt
 */
-uint8_t IStateExt_c::affectedConflictCnt(int8_t rc_cnt, int32_t ri32_time)
+uint8_t IStateExt_c::affectedConflictCnt(int8_t ac_cnt, int32_t ai32_time)
 {
-  switch (rc_cnt)
+  switch (ac_cnt)
   {
     case Incr: // -2 --> new conflict
-      i16_lastAffectedConflictTime = (ri32_time / 1000);
+      i16_lastAffectedConflictTime = (ai32_time / 1000);
       if (counter.b_affectedConflictCnt < 0xF) counter.b_affectedConflictCnt++;
       break;
     case Decr: // -3 --> timeEvent without conflict -> test if cnt can be reduced
        if (counter.b_affectedConflictCnt > 0)
        {
-        if ( (ri32_time / 1000) != i16_lastAffectedConflictTime)
+        if ( (ai32_time / 1000) != i16_lastAffectedConflictTime)
         { // last conflict over 1 sec. away
           counter.b_affectedConflictCnt--;
         }
@@ -304,9 +304,9 @@ uint8_t IStateExt_c::affectedConflictCnt(int8_t rc_cnt, int32_t ri32_time)
     case Request: // -1 --> only answer cnt
       break;
     default: // new dircet given value >= 0
-      if (rc_cnt > 0) setItemState(IState_c::AffectedConflict);
+      if (ac_cnt > 0) setItemState(IState_c::AffectedConflict);
       else clearItemState(IState_c::AffectedConflict);
-      if ((rc_cnt >= 0) && (rc_cnt < 0xF)) counter.b_affectedConflictCnt = rc_cnt;
+      if ((ac_cnt >= 0) && (ac_cnt < 0xF)) counter.b_affectedConflictCnt = ac_cnt;
       break;
   }
 

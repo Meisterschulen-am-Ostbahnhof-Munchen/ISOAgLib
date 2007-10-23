@@ -95,16 +95,16 @@ namespace __IsoAgLib {
   possible errors:
       * iLibErr_c::Range wrong input number
   @see SensorI_c::createCounter
-  @param rb_channel default-argument for setting hardware channel for this input
-  @param rui16_timebase default-argument for setting the timebase which should be
+  @param ab_channel default-argument for setting hardware channel for this input
+  @param aui16_timebase default-argument for setting the timebase which should be
           greater than max time distance between signals and should be small
           enough to avoid overflow of signals in one timebase
-  @param rb_activHigh true -> counter input is configured fo ACTIV_HIGH; else ACTIV_LOW
-  @param rb_risingEdge true -> counter triggers on rising edge; else on falling edge
+  @param ab_activHigh true -> counter input is configured fo ACTIV_HIGH; else ACTIV_LOW
+  @param ab_risingEdge true -> counter triggers on rising edge; else on falling edge
 */
-CounterI_c::CounterI_c(uint8_t rb_channel, uint16_t rui16_timebase, bool rb_activHigh, bool rb_risingEdge)
-  : SensorBase_c(rb_channel, Sensor_c::counter){
-  if ( rb_channel != 0xFF ) init(rb_channel, rui16_timebase, rb_activHigh, rb_risingEdge);
+CounterI_c::CounterI_c(uint8_t ab_channel, uint16_t aui16_timebase, bool ab_activHigh, bool ab_risingEdge)
+  : SensorBase_c(ab_channel, Sensor_c::counter){
+  if ( ab_channel != 0xFF ) init(ab_channel, aui16_timebase, ab_activHigh, ab_risingEdge);
 }
 /**
   internal called constructor for a new digital input channel which performs configuration of hardware
@@ -113,18 +113,18 @@ CounterI_c::CounterI_c(uint8_t rb_channel, uint16_t rui16_timebase, bool rb_acti
   possible errors:
       * iLibErr_c::Range wrong input number
   @see SensorI_c::createCounter
-  @param rb_channel default-argument for setting hardware channel for this input
-  @param rui16_timebase default-argument for setting the timebase which should be
+  @param ab_channel default-argument for setting hardware channel for this input
+  @param aui16_timebase default-argument for setting the timebase which should be
           greater than max time distance between signals and should be small
           enough to avoid overflow of signals in one timebase
-  @param rb_activHigh true -> counter input is configured fo ACTIV_HIGH; else ACTIV_LOW
-  @param rb_risingEdge true -> counter triggers on rising edge; else on falling edge
+  @param ab_activHigh true -> counter input is configured fo ACTIV_HIGH; else ACTIV_LOW
+  @param ab_risingEdge true -> counter triggers on rising edge; else on falling edge
 */
-void CounterI_c::init(uint8_t rb_channel, uint16_t rui16_timebase, bool rb_activHigh, bool rb_risingEdge )
+void CounterI_c::init(uint8_t ab_channel, uint16_t aui16_timebase, bool ab_activHigh, bool ab_risingEdge )
 {
-  SensorBase_c::init(rb_channel, Sensor_c::counter);
+  SensorBase_c::init(ab_channel, Sensor_c::counter);
   // now init the digital input
-  if (HAL::init_counter(channelNr(), rui16_timebase, rb_activHigh, rb_risingEdge) == HAL_RANGE_ERR)
+  if (HAL::init_counter(channelNr(), aui16_timebase, ab_activHigh, ab_risingEdge) == HAL_RANGE_ERR)
   { // wrong input channel no
     getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Sensor );
   }

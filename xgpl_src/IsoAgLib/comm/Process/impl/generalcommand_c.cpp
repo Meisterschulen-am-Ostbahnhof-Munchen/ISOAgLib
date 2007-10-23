@@ -100,11 +100,11 @@ GeneralCommand_c::GeneralCommand_c()
 {}
 
 /** set values, called in ProcessPkg_c::resolveCommand() */
-void GeneralCommand_c::setValues(bool rb_isSetpoint, bool rb_isRequest, ValueGroup_t ren_valueGroup,
+void GeneralCommand_c::setValues(bool ab_isSetpoint, bool ab_isRequest, ValueGroup_t ren_valueGroup,
                                  CommandType_t ren_command)
 {
-  this->b_isSetpoint = rb_isSetpoint;
-  this->b_isRequest = rb_isRequest;
+  this->b_isSetpoint = ab_isSetpoint;
+  this->b_isRequest = ab_isRequest;
   this->en_valueGroup = ren_valueGroup;
   this->en_command = ren_command;
 };

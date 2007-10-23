@@ -43,12 +43,12 @@ namespace HAL
       No AMS5-BIOS channel is a "PWM" channel!
       Use symbolic output channels form "config.h"!
  
-      @param rui8_channel channel number of output
+      @param aui8_channel channel number of output
       @return max possible value
    */
-   inline uint16_t getMaxPwmDigout(uint8_t rui8_channel)
+   inline uint16_t getMaxPwmDigout(uint8_t aui8_channel)
    {
-      return __HAL::getMaxDigout(rui8_channel);
+      return __HAL::getMaxDigout(aui8_channel);
    };
 
    /**
@@ -57,15 +57,15 @@ namespace HAL
       No AMS5-BIOS channel is a "PWM" channel!
       Use symbolic output channels form "config.h"!
 
-      @param  rui8_channel channel number of output
+      @param  aui8_channel channel number of output
       @param  wValue range depends on channel!
       @return HAL_NO_ERR
               HAL_RANGE_ERR  value is out of range
               HAL_CONFIG_ERR channel is not availabel 
    */
-   inline int16_t setDigout(uint8_t rui8_channel, uint16_t wPWMValue)
+   inline int16_t setDigout(uint8_t aui8_channel, uint16_t wPWMValue)
    {
-      return __HAL::setDigout(rui8_channel, wPWMValue);
+      return __HAL::setDigout(aui8_channel, wPWMValue);
    };
 
 
@@ -74,10 +74,10 @@ namespace HAL
 
       dummy function - Not Supported
 
-      @param rui8_channel channel to check
+      @param aui8_channel channel to check
       @return current in [mA] ( if specified channel doesn't support current measurement, -1 is returned )
    */
-   inline int16_t getDigoutCurrent(uint8_t rui8_channel)
+   inline int16_t getDigoutCurrent(uint8_t aui8_channel)
    {
       return -1;
    };
@@ -92,13 +92,13 @@ namespace HAL
       if the PWM setting is >0 but has a very low value, so that even under normal
       conditions the voltage with connected consuming device is lower than to open
       connector state at low level.
-      @param rui8_channel channel to check
-      @param rui16_minCurrent minimal allowed current in [mA]
-      @param rui16_maxCurrent maximum allowed current in [mA]
+      @param aui8_channel channel to check
+      @param aui16_minCurrent minimal allowed current in [mA]
+      @param aui16_maxCurrent maximum allowed current in [mA]
       @return HAL_NO_ERR, HAL_DIGOUT_OPEN, HAL_DIGOUT_SHORTCUT, HAL_DIGOUT_OVERTEMP,
               HAL_DIGOUT_UNDERVOLT, HAL_DIGOUT_OVERVOLT
    */
-   inline int16_t getDigoutDiagnose(uint8_t rui8_channel, uint16_t rui16_minCurrent, uint16_t rui16_maxCurrent)
+   inline int16_t getDigoutDiagnose(uint8_t aui8_channel, uint16_t aui16_minCurrent, uint16_t aui16_maxCurrent)
    {
       return HAL_NO_ERR;
    };
@@ -113,7 +113,7 @@ namespace HAL
       getDigoutDiagnose function can go wrong.
       @return voltage at PWM channel [mV]
    */
-   inline int16_t getDigoutAdc(uint8_t rui8_channel)
+   inline int16_t getDigoutAdc(uint8_t aui8_channel)
    {
       return HAL_NO_ERR;
    };

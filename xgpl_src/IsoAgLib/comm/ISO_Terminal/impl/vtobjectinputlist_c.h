@@ -127,9 +127,9 @@ public:
   void setValue(uint8_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true);
 
   //  Operation: setItem
-  //! @param rui8_index:
-  //! @param rpc_object:
-  void setItem(uint8_t rui8_index, IsoAgLib::iVtObject_c* rpc_object, bool b_enableReplaceOfCmd=false);
+  //! @param aui8_index:
+  //! @param apc_object:
+  void setItem(uint8_t aui8_index, IsoAgLib::iVtObject_c* apc_object, bool b_enableReplaceOfCmd=false);
 
   // //////////////////////////////////
   // All special Attribute-Set methods
@@ -169,7 +169,7 @@ public:
 private:
   //  Operation: updateEnable
   //! @param b_enableOrDisable:
-  void updateEnable(uint8_t rui8_enOrDis);
+  void updateEnable(uint8_t aui8_enOrDis);
 };
 
 } // end of namespace __IsoAgLib

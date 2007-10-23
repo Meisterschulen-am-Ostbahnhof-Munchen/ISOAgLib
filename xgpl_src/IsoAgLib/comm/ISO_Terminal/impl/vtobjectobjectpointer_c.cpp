@@ -127,14 +127,14 @@ vtObjectObjectPointer_c::fitTerminal() const
 }
 
 // Operation : setValue
-//! @param rpc_newObject:
+//! @param apc_newObject:
 //! @param b_updateObject:
 void
-vtObjectObjectPointer_c::setValue(IsoAgLib::iVtObject_c* rpc_newObject, bool b_updateObject, bool b_enableReplaceOfCmd)
+vtObjectObjectPointer_c::setValue(IsoAgLib::iVtObject_c* apc_newObject, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
-  if (b_updateObject) saveValueP (MACRO_getStructOffset(get_vtObjectObjectPointer_a(), value),  sizeof(iVtObjectObjectPointer_s), rpc_newObject);
+  if (b_updateObject) saveValueP (MACRO_getStructOffset(get_vtObjectObjectPointer_a(), value),  sizeof(iVtObjectObjectPointer_s), apc_newObject);
 
-  if (rpc_newObject != NULL) __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeNumericValue (this, rpc_newObject->getID() & 0xFF, (rpc_newObject->getID() >> 8) & 0xFF, 0x00, 0x00, b_enableReplaceOfCmd);
+  if (apc_newObject != NULL) __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeNumericValue (this, apc_newObject->getID() & 0xFF, (apc_newObject->getID() >> 8) & 0xFF, 0x00, 0x00, b_enableReplaceOfCmd);
   else                       __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeNumericValue (this, 0xFF, 0xFF, 0x00, 0x00, b_enableReplaceOfCmd);
 }
 

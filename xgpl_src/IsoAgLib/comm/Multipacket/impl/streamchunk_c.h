@@ -109,9 +109,9 @@ class StreamChunk_c : public Stream_c
 
 public:
 
-  StreamChunk_c (StreamType_t rt_streamType, const IsoAgLib::ReceiveStreamIdentifier_c& rc_rsi, uint32_t rui32_msgSize SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA , bool b_skipCtsAwait=false);
+  StreamChunk_c (StreamType_t at_streamType, const IsoAgLib::ReceiveStreamIdentifier_c& ac_rsi, uint32_t aui32_msgSize SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA , bool b_skipCtsAwait=false);
 
-  StreamChunk_c( const StreamChunk_c& rrefc_src );
+  StreamChunk_c( const StreamChunk_c& arc_src );
 
   //! Important!! Call this after Construction!
   void immediateInitAfterConstruction();
@@ -119,7 +119,7 @@ public:
   //! Destructor: deletes the list
   virtual ~StreamChunk_c();
 
-  const StreamChunk_c& operator=( const StreamChunk_c& rrefc_src );
+  const StreamChunk_c& operator=( const StreamChunk_c& arc_src );
 
 
   //  Operation: insert
@@ -144,7 +144,7 @@ public:
   bool eof() const;
 
 private: // function
-  inline void copyIterator (const STL_NAMESPACE::list<Chunk_c>& refc_listSource, const STL_NAMESPACE::list<Chunk_c>::iterator& refc_iterSource, STL_NAMESPACE::list<Chunk_c>& refc_listDestin, STL_NAMESPACE::list<Chunk_c>::iterator& refc_iterDestin);
+  inline void copyIterator (const STL_NAMESPACE::list<Chunk_c>& rc_listSource, const STL_NAMESPACE::list<Chunk_c>::iterator& rc_iterSource, STL_NAMESPACE::list<Chunk_c>& rc_listDestin, STL_NAMESPACE::list<Chunk_c>::iterator& rc_iterDestin);
 
 
 private:
@@ -168,18 +168,18 @@ private:
 
 
 inline void
-StreamChunk_c::copyIterator (const STL_NAMESPACE::list<Chunk_c>& refc_listSource, const STL_NAMESPACE::list<Chunk_c>::iterator& refc_iterSource, STL_NAMESPACE::list<Chunk_c>& refc_listDestin, STL_NAMESPACE::list<Chunk_c>::iterator& refc_iterDestin)
+StreamChunk_c::copyIterator (const STL_NAMESPACE::list<Chunk_c>& rc_listSource, const STL_NAMESPACE::list<Chunk_c>::iterator& rc_iterSource, STL_NAMESPACE::list<Chunk_c>& rc_listDestin, STL_NAMESPACE::list<Chunk_c>::iterator& rc_iterDestin)
 {
-  STL_NAMESPACE::list<Chunk_c>::const_iterator pc_iterSource = refc_listSource.begin();
-                                   refc_iterDestin = refc_listDestin.begin();
-  while (pc_iterSource != refc_listSource.end())
+  STL_NAMESPACE::list<Chunk_c>::const_iterator pc_iterSource = rc_listSource.begin();
+                                   rc_iterDestin = rc_listDestin.begin();
+  while (pc_iterSource != rc_listSource.end())
   {
-    if (&(*pc_iterSource) == &(*refc_iterSource))
+    if (&(*pc_iterSource) == &(*rc_iterSource))
     { // destinIter found.
       return;
     }
     pc_iterSource++;
-    refc_iterDestin++;
+    rc_iterDestin++;
   }
 }
 

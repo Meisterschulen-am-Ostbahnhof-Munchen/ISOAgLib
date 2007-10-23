@@ -96,7 +96,7 @@ public:
           idleTime == -1 One Client could not finish his Job
   */
 
-  int32_t timeEvent( int32_t ri32_demandedExecEndScheduler = -1) { return Scheduler_c::timeEvent( ri32_demandedExecEndScheduler );};
+  int32_t timeEvent( int32_t ai32_demandedExecEndScheduler = -1) { return Scheduler_c::timeEvent( ai32_demandedExecEndScheduler );};
   /**
     * deliver the average execution time for timeEvent calls -> allows scheduler to
     * refine time schedule within execution
@@ -118,7 +118,7 @@ public:
       otherwise __IsoAgLib::getSchedulerInstance() wouldn't be accepted by compiler
     */
   #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
-  friend iScheduler_c& getISchedulerInstance( uint8_t rui8_instance );
+  friend iScheduler_c& getISchedulerInstance( uint8_t aui8_instance );
   #else
   friend iScheduler_c& getISchedulerInstance( void );
   #endif
@@ -128,8 +128,8 @@ public:
   /** C-style function, to get access to the unique iScheduler_c singleton instance
     * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
     */
-  inline iScheduler_c& getISchedulerInstance( uint8_t rui8_instance = 0 )
-  { return static_cast<iScheduler_c&>(__IsoAgLib::getSchedulerInstance( rui8_instance ) );}
+  inline iScheduler_c& getISchedulerInstance( uint8_t aui8_instance = 0 )
+  { return static_cast<iScheduler_c&>(__IsoAgLib::getSchedulerInstance( aui8_instance ) );}
 #else
   /** C-style function, to get access to the unique iScheduler_c singleton instance */
   inline iScheduler_c& getISchedulerInstance( void ) { return static_cast<iScheduler_c&>(__IsoAgLib::getSchedulerInstance() );}

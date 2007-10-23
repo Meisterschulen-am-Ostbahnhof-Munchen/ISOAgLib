@@ -183,10 +183,10 @@ public:
   */
   bool init( void );
   /** register an error
-    * @param rt_errType type of occured error
-    * @param rt_errLocation location of error
+    * @param at_errType type of occured error
+    * @param at_errLocation location of error
     */
-  void registerError( iLibErrTypes_t rt_errType, iLibErrLocations_t rt_errLocation );
+  void registerError( iLibErrTypes_t at_errType, iLibErrLocations_t at_errLocation );
 
   /**
     clear all error information
@@ -195,66 +195,66 @@ public:
 
   /**
     clear specific error information of a special location
-    @param rt_errLocation select for which error locations the counter shall be reset
-    @param rt_errType select for which error types the counter shall be reset (default reset all counters)
+    @param at_errLocation select for which error locations the counter shall be reset
+    @param at_errType select for which error types the counter shall be reset (default reset all counters)
   */
-  void clear( iLibErrTypes_t rt_errType, iLibErrLocations_t rt_errLocation );
+  void clear( iLibErrTypes_t at_errType, iLibErrLocations_t at_errLocation );
 
   /**
     clear all error information of a special type
-    @param rt_errType select for which error types the counter shall be reset
+    @param at_errType select for which error types the counter shall be reset
   */
-  void clear( iLibErrTypes_t rt_errType );
+  void clear( iLibErrTypes_t at_errType );
 
   /**
     clear all error information of a special location
-    @param rt_errLocation select for which error locations the counter shall be reset
+    @param at_errLocation select for which error locations the counter shall be reset
   */
-  void clear( iLibErrLocations_t rt_errLocation );
+  void clear( iLibErrLocations_t at_errLocation );
 
   /**
     deliver the count of registered errors
-    @param rt_errType optional select the error-types to count (default all error types)
+    @param at_errType optional select the error-types to count (default all error types)
     @return count of registered error types
   */
-  uint16_t getErrCnt( iLibErrTypes_t rt_errType = AllErrTypes ) const;
+  uint16_t getErrCnt( iLibErrTypes_t at_errType = AllErrTypes ) const;
 
   /**
     deliver the count of registered errors with a special error location
-    @param rt_errLocation location to check for errors
+    @param at_errLocation location to check for errors
     @return count of registered error types
   */
-  uint16_t getErrCnt( iLibErrLocations_t rt_errLocation ) const;
+  uint16_t getErrCnt( iLibErrLocations_t at_errLocation ) const;
 
   /**
     deliver the type of the nth error
-    @param rui8_ind index of the requested error ( [0..(ErrCnt-1)] )
+    @param aui8_ind index of the requested error ( [0..(ErrCnt-1)] )
     @return iLibErrTypes_t
   */
-  iLibErrTypes_t getErrIndType( uint8_t rui8_ind ) const;
+  iLibErrTypes_t getErrIndType( uint8_t aui8_ind ) const;
 
   /**
     deliver the location of the nth error
-    @param rui8_ind index of the requested error ( [0..(ErrCnt-1)] )
+    @param aui8_ind index of the requested error ( [0..(ErrCnt-1)] )
     @return iLibErrTypes_t
   */
-  iLibErrLocations_t getErrIndLocation( uint8_t rui8_ind ) const;
+  iLibErrLocations_t getErrIndLocation( uint8_t aui8_ind ) const;
 
   /**
     check if the error value reports correct error free state
-    @param rt_errType optional select the error-types to count (default all error types)
+    @param at_errType optional select the error-types to count (default all error types)
     @return true -> the defined error locations report no error
   */
-  bool good( iLibErrTypes_t rt_errType = AllErrTypes ) const;
+  bool good( iLibErrTypes_t at_errType = AllErrTypes ) const;
 
   /**
     check if the error value reports correct error free state
-    @param rt_errLocation location to check for errors
+    @param at_errLocation location to check for errors
     @return true -> the defined error locations report no error
   */
-  bool good( iLibErrLocations_t rt_errLocation ) const;
+  bool good( iLibErrLocations_t at_errLocation ) const;
 
-  bool good( iLibErrTypes_t rt_errType, iLibErrLocations_t rt_errLocation ) const;
+  bool good( iLibErrTypes_t at_errType, iLibErrLocations_t at_errLocation ) const;
 
   /**
     check if the object has a local error
@@ -271,7 +271,7 @@ private:
   iLibErr_c();
 
   /** copy constructor which sets the error value to the err value of the source */
-  iLibErr_c(const iLibErr_c& rrefc_src);
+  iLibErr_c(const iLibErr_c& arc_src);
 
   /**
     initialize directly after the singleton instance is created.

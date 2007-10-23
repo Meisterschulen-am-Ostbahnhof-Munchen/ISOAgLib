@@ -133,7 +133,7 @@ int32_t can_lastReceiveTime()
 }
 
 /** there's no send-delay recognition in SIMULATING */
-int32_t getMaxSendDelay(uint8_t rui8_busNr) { return 0; }
+int32_t getMaxSendDelay(uint8_t aui8_busNr) { return 0; }
 
 int16_t getCanMsgBufCount(uint8_t bBusNumber,uint8_t bMsgObj)
 {
@@ -167,10 +167,10 @@ int16_t init_can ( uint8_t bBusNumber,uint16_t wGlobMask,uint32_t dwGlobMask,uin
   return HAL_NO_ERR;
 }
 
-bool waitUntilCanReceiveOrTimeout( uint16_t rui16_timeoutInterval )
+bool waitUntilCanReceiveOrTimeout( uint16_t aui16_timeoutInterval )
 {
-  const int32_t ci32_endWait = getTime() + rui16_timeoutInterval;
-  int32_t i32_waitSlice = rui16_timeoutInterval;
+  const int32_t ci32_endWait = getTime() + aui16_timeoutInterval;
+  int32_t i32_waitSlice = aui16_timeoutInterval;
 
   // if greater than 50msec -> divide so that about 10 slices are realized
   if ( i32_waitSlice > 50 ) i32_waitSlice /= 10;
@@ -207,18 +207,18 @@ int16_t changeGlobalMask ( uint8_t bBusNumber,uint16_t wGlobMask,uint32_t dwGlob
 
 /**
   check if MsgObj is currently locked
-  @param rui8_busNr number of the BUS to check
-  @param rui8_msgobjNr number of the MsgObj to check
+  @param aui8_busNr number of the BUS to check
+  @param aui8_msgobjNr number of the MsgObj to check
   @return true -> MsgObj is currently locked
 */
-bool getCanMsgObjLocked( uint8_t rui8_busNr, uint8_t rui8_msgobjNr )
+bool getCanMsgObjLocked( uint8_t aui8_busNr, uint8_t aui8_msgobjNr )
 {
 #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
-  if ( ( rui8_busNr > 1 ) || ( rui8_msgobjNr> 14 ) ) return true;
+  if ( ( aui8_busNr > 1 ) || ( aui8_msgobjNr> 14 ) ) return true;
 #else
-  if ( ( rui8_busNr > 1 ) || ( rui8_msgobjNr> arrMsgObj[rui8_busNr].size()-1 ) ) return true;
+  if ( ( aui8_busNr > 1 ) || ( aui8_msgobjNr> arrMsgObj[aui8_busNr].size()-1 ) ) return true;
 #endif
-  else if ( arrMsgObj[rui8_busNr][rui8_msgobjNr].b_canBufferLock ) return true;
+  else if ( arrMsgObj[aui8_busNr][aui8_msgobjNr].b_canBufferLock ) return true;
   else return false;
 }
 
@@ -421,17 +421,17 @@ int16_t chgCanObjId ( uint8_t bBusNumber, uint8_t bMsgObj, uint32_t dwId, uint8_
 }
 /**
   lock a MsgObj to avoid further placement of messages into buffer.
-  @param rui8_busNr number of the BUS to config
-  @param rui8_msgobjNr number of the MsgObj to config
-  @param rb_doLock true==lock(default); false==unlock
+  @param aui8_busNr number of the BUS to config
+  @param aui8_msgobjNr number of the MsgObj to config
+  @param ab_doLock true==lock(default); false==unlock
   @return HAL_NO_ERR == no error;
           HAL_CONFIG_ERR == BUS not initialised or ident can't be changed
           HAL_RANGE_ERR == wrong BUS or MsgObj number
   */
-int16_t lockCanObj( uint8_t rui8_busNr, uint8_t rui8_msgobjNr, bool rb_doLock )
+int16_t lockCanObj( uint8_t aui8_busNr, uint8_t aui8_msgobjNr, bool ab_doLock )
 { // first get waiting messages
   checkMsg();
-  arrMsgObj[rui8_busNr][rui8_msgobjNr].b_canBufferLock = rb_doLock;
+  arrMsgObj[aui8_busNr][aui8_msgobjNr].b_canBufferLock = ab_doLock;
   return HAL_NO_ERR;
 }
 

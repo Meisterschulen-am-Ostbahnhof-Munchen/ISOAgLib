@@ -94,53 +94,53 @@ namespace __IsoAgLib {
   /**
     constructor of MeasureProgRemote_c which can needed pointers to containing
     Scheduler_c and Process_c instances
-    @param rpc_processData optional pointer to Process_c
+    @param apc_processData optional pointer to Process_c
    */
   MeasureProgRemote_c::MeasureProgRemote_c(
-      ProcDataBase_c *const rpc_processData )
-  : MeasureProgBase_c(rpc_processData, Proc_c::UndefinedProg, 0, IsoName_c::IsoNameUnspecified() )
+      ProcDataBase_c *const apc_processData )
+  : MeasureProgBase_c(apc_processData, Proc_c::UndefinedProg, 0, IsoName_c::IsoNameUnspecified() )
   {
-    init( rpc_processData );
+    init( apc_processData );
   }
 
 /**
   initialise this MeasureProgRemote_c instance to well defined initial condition
   Scheduler_c and Process_c instances
-  @param rpc_processData optional pointer to Process_c
+  @param apc_processData optional pointer to Process_c
 */
-void MeasureProgRemote_c::init( ProcDataBase_c *const rpc_processData )
+void MeasureProgRemote_c::init( ProcDataBase_c *const apc_processData )
 {
-  MeasureProgBase_c::init( rpc_processData, Proc_c::UndefinedProg, int32_t(0), IsoName_c::IsoNameUnspecified() );
+  MeasureProgBase_c::init( apc_processData, Proc_c::UndefinedProg, int32_t(0), IsoName_c::IsoNameUnspecified() );
   b_receiveForeignMeasurement = false;
 }
 
 /**
   assignment of MeasureProgRemote_c objects
-  @param rrefc_src source MeasureProgRemote_c instance
+  @param arc_src source MeasureProgRemote_c instance
   @return reference to the source instance for commands like "prog1 = prog2 = prog3 ...;
 */
-const MeasureProgRemote_c& MeasureProgRemote_c::operator=(const MeasureProgRemote_c& rrefc_src){
+const MeasureProgRemote_c& MeasureProgRemote_c::operator=(const MeasureProgRemote_c& arc_src){
   // call base class operator
-  MeasureProgBase_c::operator=(rrefc_src);
+  MeasureProgBase_c::operator=(arc_src);
 
   // copy element vars
-  i32_med = rrefc_src.i32_med;
-  b_receiveForeignMeasurement = rrefc_src.b_receiveForeignMeasurement;
+  i32_med = arc_src.i32_med;
+  b_receiveForeignMeasurement = arc_src.b_receiveForeignMeasurement;
 
   // return reference to source
-  return rrefc_src;
+  return arc_src;
 }
 
 /**
   copy constructor for MeasureProgRemote
-  @param rrefc_src source MeasureProgRemote_c instance
+  @param arc_src source MeasureProgRemote_c instance
 */
-MeasureProgRemote_c::MeasureProgRemote_c(const MeasureProgRemote_c& rrefc_src)
-  : MeasureProgBase_c(rrefc_src){
+MeasureProgRemote_c::MeasureProgRemote_c(const MeasureProgRemote_c& arc_src)
+  : MeasureProgBase_c(arc_src){
 
   // copy element vars
-  i32_med = rrefc_src.i32_med;
-  b_receiveForeignMeasurement = rrefc_src.b_receiveForeignMeasurement;
+  i32_med = arc_src.i32_med;
+  b_receiveForeignMeasurement = arc_src.b_receiveForeignMeasurement;
 }
 
 /** default destructor which has nothing to do */
@@ -401,14 +401,14 @@ bool MeasureProgRemote_c::stop(bool b_deleteSubProgs, Proc_c::type_t ren_type, P
 
 /**
   deliver med val
-  @param rb_sendRequest choose wether a request for value update should be
+  @param ab_sendRequest choose wether a request for value update should be
       sent (default false == send no request)
   @return actual medium value
 */
 
-int32_t MeasureProgRemote_c::med(bool rb_sendRequest) const
+int32_t MeasureProgRemote_c::med(bool ab_sendRequest) const
 {
-  if (rb_sendRequest) {
+  if (ab_sendRequest) {
     // prepare general command in process pkg
     getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */,
                                                                 GeneralCommand_c::medValue,
@@ -420,13 +420,13 @@ int32_t MeasureProgRemote_c::med(bool rb_sendRequest) const
 #ifdef USE_FLOAT_DATA_TYPE
 /**
   deliver med val as float
-  @param rb_sendRequest choose wether a request for value update should be
+  @param ab_sendRequest choose wether a request for value update should be
       sent (default false == send no request)
   @return actual medium value
 */
-float MeasureProgRemote_c::medFloat(bool rb_sendRequest) const
+float MeasureProgRemote_c::medFloat(bool ab_sendRequest) const
 {
-  if (rb_sendRequest) {
+  if (ab_sendRequest) {
     // prepare general command in process pkg
     getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */,
                                                                 GeneralCommand_c::medValue,
@@ -557,14 +557,14 @@ void MeasureProgRemote_c::setValFromPkg(){
 
 /**
   set a new measure val
-  @param ri32_val new val received from remote system
+  @param ai32_val new val received from remote system
 */
-void MeasureProgRemote_c::setVal(int32_t ri32_val){
+void MeasureProgRemote_c::setVal(int32_t ai32_val){
   int32_t i32_time =  System_c::getTime();
   int32_t i32_timeDelta = i32_time - i32_lastTime;
   i32_lastTime = i32_time;
 
-  int32_t i32_incr =  ri32_val - val();
+  int32_t i32_incr =  ai32_val - val();
   int32_t i32_oldDelta = i32_delta;
   // claculate delta and accel in 1/s
   if (i32_timeDelta > 0)
@@ -582,19 +582,19 @@ void MeasureProgRemote_c::setVal(int32_t ri32_val){
   }
 
   // set the val
-  i32_val = ri32_val;
+  i32_val = ai32_val;
 }
 
 /**
   init element values
-  @param ri32_val starting measuring value
+  @param ai32_val starting measuring value
 */
-void MeasureProgRemote_c::initVal(int32_t ri32_val){
+void MeasureProgRemote_c::initVal(int32_t ai32_val){
   //first call base function
-  MeasureProgBase_c::initVal(ri32_val);
+  MeasureProgBase_c::initVal(ai32_val);
 
   // set medium initially to first given val
-  i32_med = ri32_val;
+  i32_med = ai32_val;
 }
 
 /**
@@ -603,10 +603,10 @@ void MeasureProgRemote_c::initVal(int32_t ri32_val){
   possible errors:
       * Err_c::elNonexistent no remote member with claimed address with given DEVCLASS found
       * dependant error in CAN_IO
-  @param ri32_val reset measure value to this value (ISO only)
+  @param ai32_val reset measure value to this value (ISO only)
   @return true -> command successful sent
 */
-bool MeasureProgRemote_c::resetVal(int32_t ri32_val){
+bool MeasureProgRemote_c::resetVal(int32_t ai32_val){
   // if stored remote isoName isn't valid exit this function
   // error state are set by the function
   if (!verifySetRemoteISOName())return false;
@@ -616,21 +616,21 @@ bool MeasureProgRemote_c::resetVal(int32_t ri32_val){
                                                               GeneralCommand_c::exactValue,
                                                               GeneralCommand_c::measurementReset);
 
-  return processData().sendValISOName(isoName(), ri32_val);
+  return processData().sendValISOName(isoName(), ai32_val);
 }
 
 #ifdef USE_FLOAT_DATA_TYPE
 
 /**
   set a new measure val
-  @param rf_val new val received from remote system
+  @param af_val new val received from remote system
 */
-void MeasureProgRemote_c::setVal(float rf_val){
+void MeasureProgRemote_c::setVal(float af_val){
   int32_t i32_time =  System_c::getTime();
   int32_t i32_timeDelta = i32_time - i32_lastTime;
   i32_lastTime = i32_time;
 
-  float f_incr =  rf_val - valFloat();
+  float f_incr =  af_val - valFloat();
   float f_oldDelta = f_delta;
   // claculate delta and accel in 1/s
   if (i32_timeDelta > 0)
@@ -640,19 +640,19 @@ void MeasureProgRemote_c::setVal(float rf_val){
   }
 
   // set the val
-  f_val = rf_val;
+  f_val = af_val;
 }
 
 /**
   init element values
-  @param rf_val starting measuring value
+  @param af_val starting measuring value
 */
-void MeasureProgRemote_c::initVal(float rf_val){
+void MeasureProgRemote_c::initVal(float af_val){
   //first call base function
-  MeasureProgBase_c::initVal(rf_val);
+  MeasureProgBase_c::initVal(af_val);
 
   // set medium initially to first given val
-  f_med = rf_val;
+  f_med = af_val;
 }
 #endif
 
@@ -761,11 +761,11 @@ bool MeasureProgRemote_c::timeEvent( uint16_t *pui16_nextTimePeriod )
   set if this MeasureProgRemote_c instance should store
   target/partner process data messages not direct addressed
   to a local member (default store not)
-  @param rb_useForeign wanted mode (default true)
+  @param ab_useForeign wanted mode (default true)
 */
-void MeasureProgRemote_c::receiveForeignMeasurement(bool rb_useForeign)
+void MeasureProgRemote_c::receiveForeignMeasurement(bool ab_useForeign)
 {
-  b_receiveForeignMeasurement = rb_useForeign;
+  b_receiveForeignMeasurement = ab_useForeign;
 };
 
 

@@ -91,47 +91,47 @@ namespace __IsoAgLib {
 
 /**
   constructor which initialse both pointers if given
-  @param rpc_processData optional pointer to containing ProcessData instance
+  @param apc_processData optional pointer to containing ProcessData instance
 */
 ProcessElementBase_c::ProcessElementBase_c(
-    ProcDataBase_c *const rpc_processData )
+    ProcDataBase_c *const apc_processData )
     : ClientBase(){
-  pc_processData = rpc_processData;
+  pc_processData = apc_processData;
   #if defined(PRT_INSTANCE_CNT) && (PRT_INSTANCE_CNT != 1 )
   // only set singletonKey in ClientBase, if more than one IsoAgLib instance
   // ismanaged by this IsoAgLib
-  if ( rpc_processData != NULL )
-    setSingletonKey( rpc_processData->getSingletonVecKey() );
+  if ( apc_processData != NULL )
+    setSingletonKey( apc_processData->getSingletonVecKey() );
   #endif
 }
 /**
   constructor which intit the pointers by references to the stored object instances
-  @param rrefc_processData optional reference to containing ProcessData instance
+  @param arc_processData optional reference to containing ProcessData instance
 */
 ProcessElementBase_c::ProcessElementBase_c(
-    ProcDataBase_c &rrefc_processData )
-    : ClientBase(rrefc_processData){
-  pc_processData = &rrefc_processData;
+    ProcDataBase_c &arc_processData )
+    : ClientBase(arc_processData){
+  pc_processData = &arc_processData;
 }
 /**
   copy constructor
-  @param rrefc_src source ProcessElementBase_c instance
+  @param arc_src source ProcessElementBase_c instance
 */
-ProcessElementBase_c::ProcessElementBase_c(const ProcessElementBase_c& rrefc_src)
-  : ClientBase(rrefc_src), pc_processData(rrefc_src.pc_processData)
+ProcessElementBase_c::ProcessElementBase_c(const ProcessElementBase_c& arc_src)
+  : ClientBase(arc_src), pc_processData(arc_src.pc_processData)
 {}
 
 /**
   assignment operator for ProcessElementBase
-  @param rrefc_src source ProcessElementBase_c instance
+  @param arc_src source ProcessElementBase_c instance
 */
-const ProcessElementBase_c& ProcessElementBase_c::operator=(const ProcessElementBase_c& rrefc_src){
-  setSingletonKey(rrefc_src.getSingletonVecKey());
+const ProcessElementBase_c& ProcessElementBase_c::operator=(const ProcessElementBase_c& arc_src){
+  setSingletonKey(arc_src.getSingletonVecKey());
   // copy element vars
-  pc_processData = rrefc_src.pc_processData;
+  pc_processData = arc_src.pc_processData;
 
   // return the source reference
-  return rrefc_src;
+  return arc_src;
 }
 
 /** default destructor which has nothing to do */
@@ -141,27 +141,27 @@ ProcessElementBase_c::~ProcessElementBase_c(){
 
 /**
   set the pointer to Scheduler_c and ProcessData by references to the object instances
-  @param rrefc_processData optional reference to containing ProcessData instance
+  @param arc_processData optional reference to containing ProcessData instance
 */
-void ProcessElementBase_c::set(ProcDataBase_c& refc_processData )
+void ProcessElementBase_c::set(ProcDataBase_c& rc_processData )
 {
   #if defined(PRT_INSTANCE_CNT) && (PRT_INSTANCE_CNT != 1 )
-  ClientBase::setSingletonKey(refc_processData.getSingletonVecKey());
+  ClientBase::setSingletonKey(rc_processData.getSingletonVecKey());
   #endif
-  pc_processData = &refc_processData;
+  pc_processData = &rc_processData;
 };
 
 /**
   deliver the pointer to the containing ProcessData item
-  @param rpc_processData optional pointer to containing ProcessData instance
+  @param apc_processData optional pointer to containing ProcessData instance
 */
-void ProcessElementBase_c::set(ProcDataBase_c *const rpc_processData)
+void ProcessElementBase_c::set(ProcDataBase_c *const apc_processData)
 {
   #if defined(PRT_INSTANCE_CNT) && (PRT_INSTANCE_CNT != 1 )
-  if ( rpc_processData != NULL )
-    ClientBase::setSingletonKey(rpc_processData->getSingletonVecKey());
+  if ( apc_processData != NULL )
+    ClientBase::setSingletonKey(apc_processData->getSingletonVecKey());
   #endif
-  pc_processData = rpc_processData;
+  pc_processData = apc_processData;
 };
 
 

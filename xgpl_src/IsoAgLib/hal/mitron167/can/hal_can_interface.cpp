@@ -231,98 +231,98 @@ static bool b_appLock[2][15] =
 static uint8_t ui8_currentBaudrate[2] = { 0, 0 };
 
 /** low level helper function to check if buffer is full */
-bool isCanRingBufferFull( uint8_t rui8_busNr, uint8_t rui8_msgObj ) {
-  if ( ( rui8_busNr > 1 ) || ( rui8_msgObj> 14 ) ) return true;
-  return ( ui16_canBufferSize[rui8_busNr][rui8_msgObj] < ui16_canBufferMaxSize[rui8_busNr][rui8_msgObj] )?false:true;
+bool isCanRingBufferFull( uint8_t aui8_busNr, uint8_t aui8_msgObj ) {
+  if ( ( aui8_busNr > 1 ) || ( aui8_msgObj> 14 ) ) return true;
+  return ( ui16_canBufferSize[aui8_busNr][aui8_msgObj] < ui16_canBufferMaxSize[aui8_busNr][aui8_msgObj] )?false:true;
 }
 /** low level helper function to check if buffer is empty */
-bool isCanRingBufferEmpty( uint8_t rui8_busNr, uint8_t rui8_msgObj ) {
-  if ( ( rui8_busNr > 1 ) || ( rui8_msgObj> 14 ) ) return true;
-  return ( ui16_canBufferSize[rui8_busNr][rui8_msgObj] == 0 )?true:false;
+bool isCanRingBufferEmpty( uint8_t aui8_busNr, uint8_t aui8_msgObj ) {
+  if ( ( aui8_busNr > 1 ) || ( aui8_msgObj> 14 ) ) return true;
+  return ( ui16_canBufferSize[aui8_busNr][aui8_msgObj] == 0 )?true:false;
 }
 /** low level helper function to get current count of elements in buffer */
-uint16_t getCanRingBufferSize( uint8_t rui8_busNr, uint8_t rui8_msgObj ) {
-  if ( ( rui8_busNr > 1 ) || ( rui8_msgObj> 14 ) ) return 0;
-  return ui16_canBufferSize[rui8_busNr][rui8_msgObj];
+uint16_t getCanRingBufferSize( uint8_t aui8_busNr, uint8_t aui8_msgObj ) {
+  if ( ( aui8_busNr > 1 ) || ( aui8_msgObj> 14 ) ) return 0;
+  return ui16_canBufferSize[aui8_busNr][aui8_msgObj];
 }
 /** low level helper function to get current count of elements in buffer */
-uint16_t getCanRingBufferMaxSize( uint8_t rui8_busNr, uint8_t rui8_msgObj ) {
-  if ( ( rui8_busNr > 1 ) || ( rui8_msgObj> 14 ) ) return 0;
-  return ui16_canBufferMaxSize[rui8_busNr][rui8_msgObj];
+uint16_t getCanRingBufferMaxSize( uint8_t aui8_busNr, uint8_t aui8_msgObj ) {
+  if ( ( aui8_busNr > 1 ) || ( aui8_msgObj> 14 ) ) return 0;
+  return ui16_canBufferMaxSize[aui8_busNr][aui8_msgObj];
 }
 /** low level helper function to reset internal state of buffer:
     - set read and write position to begin of buffer
     - set size to 0
  */
-uint16_t resetCanRingBuffer( uint8_t rui8_busNr, uint8_t rui8_msgObj ) {
-  if ( ( rui8_busNr > 1 ) || ( rui8_msgObj> 14 ) ) return 0;
+uint16_t resetCanRingBuffer( uint8_t aui8_busNr, uint8_t aui8_msgObj ) {
+  if ( ( aui8_busNr > 1 ) || ( aui8_msgObj> 14 ) ) return 0;
   _atomic( 4 );
   // set read and write pointer to first pointed CAN-Obj
-  // in selected buffer <rui8_busNr, rui8_msgObj>
-  pt_canBufferRead[rui8_busNr][rui8_msgObj]
-    = pt_canBufferWrite[rui8_busNr][rui8_msgObj]
-    = pt_canBufferBegin[rui8_busNr][rui8_msgObj]
-    = &(arr_canBuffer[rui8_busNr][rui8_msgObj][0]);
+  // in selected buffer <aui8_busNr, aui8_msgObj>
+  pt_canBufferRead[aui8_busNr][aui8_msgObj]
+    = pt_canBufferWrite[aui8_busNr][aui8_msgObj]
+    = pt_canBufferBegin[aui8_busNr][aui8_msgObj]
+    = &(arr_canBuffer[aui8_busNr][aui8_msgObj][0]);
 
   _atomic( 4 );
   const uint16_t cui16_lastItem
-    = (ui16_canBufferMaxSize[rui8_busNr][rui8_msgObj] - 1);
-  pt_canBufferEnd[rui8_busNr][rui8_msgObj]
-    = &(arr_canBuffer[rui8_busNr][rui8_msgObj][cui16_lastItem]);
+    = (ui16_canBufferMaxSize[aui8_busNr][aui8_msgObj] - 1);
+  pt_canBufferEnd[aui8_busNr][aui8_msgObj]
+    = &(arr_canBuffer[aui8_busNr][aui8_msgObj][cui16_lastItem]);
 
-  ui16_canBufferSize[rui8_busNr][rui8_msgObj] = 0;
+  ui16_canBufferSize[aui8_busNr][aui8_msgObj] = 0;
   return 1;
 }
 
 /** low level helper function to write can data */
-canBufferElement_t* writeDataToCanRingBuffer( uint8_t rui8_busNr, uint8_t rui8_msgObj, bool rb_force = false ) {
-  if ( ( rui8_busNr > 1 ) || ( rui8_msgObj> 14 ) ) return NULL;
+canBufferElement_t* writeDataToCanRingBuffer( uint8_t aui8_busNr, uint8_t aui8_msgObj, bool ab_force = false ) {
+  if ( ( aui8_busNr > 1 ) || ( aui8_msgObj> 14 ) ) return NULL;
   // first check if buffer is already full and no overwrite is forced
-  if ( ( isCanRingBufferFull( rui8_busNr, rui8_msgObj ) ) && ( ! rb_force ) ) return NULL;
+  if ( ( isCanRingBufferFull( aui8_busNr, aui8_msgObj ) ) && ( ! ab_force ) ) return NULL;
 
   // make first validate check
-  if ( ( pt_canBufferWrite[rui8_busNr][rui8_msgObj] < pt_canBufferBegin[rui8_busNr][rui8_msgObj] )
-    || ( pt_canBufferWrite[rui8_busNr][rui8_msgObj] > pt_canBufferEnd[rui8_busNr][rui8_msgObj]   ) )
+  if ( ( pt_canBufferWrite[aui8_busNr][aui8_msgObj] < pt_canBufferBegin[aui8_busNr][aui8_msgObj] )
+    || ( pt_canBufferWrite[aui8_busNr][aui8_msgObj] > pt_canBufferEnd[aui8_busNr][aui8_msgObj]   ) )
   { // integrity of write pointer is corrupted -> reset
-    resetCanRingBuffer( rui8_busNr, rui8_msgObj );
+    resetCanRingBuffer( aui8_busNr, aui8_msgObj );
   }
   // now either everything was already correct, or a freshly reseted buffer is available
   // it's granted that write pointer does point to CAN-Obj in buffer of selected MsgObj
 
   _atomic( 4 );
   // first increase size to avoid problems with combined access
-  ui16_canBufferSize[rui8_busNr][rui8_msgObj]++;
+  ui16_canBufferSize[aui8_busNr][aui8_msgObj]++;
   // now derive write pointer and increment pointer
-  canBufferElement_t* ps_tempWrite = pt_canBufferWrite[rui8_busNr][rui8_msgObj]++;
+  canBufferElement_t* ps_tempWrite = pt_canBufferWrite[aui8_busNr][aui8_msgObj]++;
 
   // update read pos if this write is forced durign buffer-full condition ( oldest not-yet read msg is overwritten by this call )
-  if ( isCanRingBufferFull( rui8_busNr, rui8_msgObj ) ) {
+  if ( isCanRingBufferFull( aui8_busNr, aui8_msgObj ) ) {
     // use operator++ to shorten time critical increasing access (IRQ)
     _atomic( 4 );
-    pt_canBufferRead[rui8_busNr][rui8_msgObj]++;
-    if ( pt_canBufferRead[rui8_busNr][rui8_msgObj] == pt_canBufferEnd[rui8_busNr][rui8_msgObj] )
-      pt_canBufferRead[rui8_busNr][rui8_msgObj] = pt_canBufferBegin[rui8_busNr][rui8_msgObj];
+    pt_canBufferRead[aui8_busNr][aui8_msgObj]++;
+    if ( pt_canBufferRead[aui8_busNr][aui8_msgObj] == pt_canBufferEnd[aui8_busNr][aui8_msgObj] )
+      pt_canBufferRead[aui8_busNr][aui8_msgObj] = pt_canBufferBegin[aui8_busNr][aui8_msgObj];
   }
   // now check if write position must be reset to Begin
   _atomic( 4 );
-  if ( pt_canBufferWrite[rui8_busNr][rui8_msgObj] == pt_canBufferEnd[rui8_busNr][rui8_msgObj] )
-    pt_canBufferWrite[rui8_busNr][rui8_msgObj] = pt_canBufferBegin[rui8_busNr][rui8_msgObj];
+  if ( pt_canBufferWrite[aui8_busNr][aui8_msgObj] == pt_canBufferEnd[aui8_busNr][aui8_msgObj] )
+    pt_canBufferWrite[aui8_busNr][aui8_msgObj] = pt_canBufferBegin[aui8_busNr][aui8_msgObj];
 
   // now return pointer to CAN buffer element, where new data can be stored
   return ps_tempWrite;
 }
 
 /** low level helper function to read can data */
-canBufferElement_t* readDataFromCanRingBuffer( uint8_t rui8_busNr, uint8_t rui8_msgObj ) {
-  if ( ( rui8_busNr > 1 ) || ( rui8_msgObj> 14 ) ) return NULL;
+canBufferElement_t* readDataFromCanRingBuffer( uint8_t aui8_busNr, uint8_t aui8_msgObj ) {
+  if ( ( aui8_busNr > 1 ) || ( aui8_msgObj> 14 ) ) return NULL;
   // first check if buffer is empty
-  if ( isCanRingBufferEmpty( rui8_busNr, rui8_msgObj ) ) return NULL;
+  if ( isCanRingBufferEmpty( aui8_busNr, aui8_msgObj ) ) return NULL;
 
   // make first validate check
-  if ( ( pt_canBufferRead[rui8_busNr][rui8_msgObj] < pt_canBufferBegin[rui8_busNr][rui8_msgObj] )
-    || ( pt_canBufferRead[rui8_busNr][rui8_msgObj] > pt_canBufferEnd[rui8_busNr][rui8_msgObj]   ) )
+  if ( ( pt_canBufferRead[aui8_busNr][aui8_msgObj] < pt_canBufferBegin[aui8_busNr][aui8_msgObj] )
+    || ( pt_canBufferRead[aui8_busNr][aui8_msgObj] > pt_canBufferEnd[aui8_busNr][aui8_msgObj]   ) )
   { // integrity of write pointer is corrupted -> reset
-    resetCanRingBuffer( rui8_busNr, rui8_msgObj );
+    resetCanRingBuffer( aui8_busNr, aui8_msgObj );
     // there's nothin to read from fresh reset buffer
     return NULL;
   }
@@ -330,20 +330,20 @@ canBufferElement_t* readDataFromCanRingBuffer( uint8_t rui8_busNr, uint8_t rui8_
   // it's granted that read pointer does point to CAN-Obj in buffer of selected MsgObj
 
   // now derive read pointer
-  return pt_canBufferRead[rui8_busNr][rui8_msgObj];
+  return pt_canBufferRead[aui8_busNr][aui8_msgObj];
 }
 
 /** low level helper function to read can data */
-canBufferElement_t* readPopDataFromCanRingBuffer( uint8_t rui8_busNr, uint8_t rui8_msgObj ) {
-  if ( ( rui8_busNr > 1 ) || ( rui8_msgObj> 14 ) ) return NULL;
+canBufferElement_t* readPopDataFromCanRingBuffer( uint8_t aui8_busNr, uint8_t aui8_msgObj ) {
+  if ( ( aui8_busNr > 1 ) || ( aui8_msgObj> 14 ) ) return NULL;
   // first check if buffer is empty
-  if ( isCanRingBufferEmpty( rui8_busNr, rui8_msgObj ) ) return NULL;
+  if ( isCanRingBufferEmpty( aui8_busNr, aui8_msgObj ) ) return NULL;
 
   // make first validate check
-  if ( ( pt_canBufferRead[rui8_busNr][rui8_msgObj] < pt_canBufferBegin[rui8_busNr][rui8_msgObj] )
-    || ( pt_canBufferRead[rui8_busNr][rui8_msgObj] > pt_canBufferEnd[rui8_busNr][rui8_msgObj]   ) )
+  if ( ( pt_canBufferRead[aui8_busNr][aui8_msgObj] < pt_canBufferBegin[aui8_busNr][aui8_msgObj] )
+    || ( pt_canBufferRead[aui8_busNr][aui8_msgObj] > pt_canBufferEnd[aui8_busNr][aui8_msgObj]   ) )
   { // integrity of write pointer is corrupted -> reset
-    resetCanRingBuffer( rui8_busNr, rui8_msgObj );
+    resetCanRingBuffer( aui8_busNr, aui8_msgObj );
     // there's nothin to read from fresh reset buffer
     return NULL;
   }
@@ -352,28 +352,28 @@ canBufferElement_t* readPopDataFromCanRingBuffer( uint8_t rui8_busNr, uint8_t ru
 
   _atomic( 4 );
   // first decrease size to avoid problems with combined access
-  ui16_canBufferSize[rui8_busNr][rui8_msgObj]--;
+  ui16_canBufferSize[aui8_busNr][aui8_msgObj]--;
   // now derive read pointer and increment pointer after read access
-  canBufferElement_t* ps_tempRead = pt_canBufferRead[rui8_busNr][rui8_msgObj]++;
+  canBufferElement_t* ps_tempRead = pt_canBufferRead[aui8_busNr][aui8_msgObj]++;
 
   // now check if read position must be reset to Begin
   _atomic( 4 );
-  if ( pt_canBufferRead[rui8_busNr][rui8_msgObj] == pt_canBufferEnd[rui8_busNr][rui8_msgObj] )
-    pt_canBufferRead[rui8_busNr][rui8_msgObj] = pt_canBufferBegin[rui8_busNr][rui8_msgObj];
+  if ( pt_canBufferRead[aui8_busNr][aui8_msgObj] == pt_canBufferEnd[aui8_busNr][aui8_msgObj] )
+    pt_canBufferRead[aui8_busNr][aui8_msgObj] = pt_canBufferBegin[aui8_busNr][aui8_msgObj];
   // now return pointer to CAN buffer element, where new data can be read
   return ps_tempRead;
 }
 
-void popDataFromCanRingBuffer( uint8_t rui8_busNr, uint8_t rui8_msgObj ) {
-  if ( ( rui8_busNr > 1 ) || ( rui8_msgObj> 14 ) ) return;
+void popDataFromCanRingBuffer( uint8_t aui8_busNr, uint8_t aui8_msgObj ) {
+  if ( ( aui8_busNr > 1 ) || ( aui8_msgObj> 14 ) ) return;
   // first check if buffer is empty
-  if ( isCanRingBufferEmpty( rui8_busNr, rui8_msgObj ) ) return;
+  if ( isCanRingBufferEmpty( aui8_busNr, aui8_msgObj ) ) return;
 
   // make first validate check
-  if ( ( pt_canBufferRead[rui8_busNr][rui8_msgObj] < pt_canBufferBegin[rui8_busNr][rui8_msgObj] )
-    || ( pt_canBufferRead[rui8_busNr][rui8_msgObj] > pt_canBufferEnd[rui8_busNr][rui8_msgObj]   ) )
+  if ( ( pt_canBufferRead[aui8_busNr][aui8_msgObj] < pt_canBufferBegin[aui8_busNr][aui8_msgObj] )
+    || ( pt_canBufferRead[aui8_busNr][aui8_msgObj] > pt_canBufferEnd[aui8_busNr][aui8_msgObj]   ) )
   { // integrity of write pointer is corrupted -> reset
-    resetCanRingBuffer( rui8_busNr, rui8_msgObj );
+    resetCanRingBuffer( aui8_busNr, aui8_msgObj );
     // there's nothin to read from fresh reset buffer
     return;
   }
@@ -382,14 +382,14 @@ void popDataFromCanRingBuffer( uint8_t rui8_busNr, uint8_t rui8_msgObj ) {
 
   _atomic( 4 );
   // first decrease size to avoid problems with combined access
-  ui16_canBufferSize[rui8_busNr][rui8_msgObj]--;
+  ui16_canBufferSize[aui8_busNr][aui8_msgObj]--;
   // now derive read pointer and increment pointer after read access
-  canBufferElement_t* ps_tempRead = pt_canBufferRead[rui8_busNr][rui8_msgObj]++;
+  canBufferElement_t* ps_tempRead = pt_canBufferRead[aui8_busNr][aui8_msgObj]++;
 
   // now check if read position must be reset to Begin
   _atomic( 4 );
-  if ( pt_canBufferRead[rui8_busNr][rui8_msgObj] == pt_canBufferEnd[rui8_busNr][rui8_msgObj] )
-    pt_canBufferRead[rui8_busNr][rui8_msgObj] = pt_canBufferBegin[rui8_busNr][rui8_msgObj];
+  if ( pt_canBufferRead[aui8_busNr][aui8_msgObj] == pt_canBufferEnd[aui8_busNr][aui8_msgObj] )
+    pt_canBufferRead[aui8_busNr][aui8_msgObj] = pt_canBufferBegin[aui8_busNr][aui8_msgObj];
 }
 
 } // end extern "C"
@@ -407,58 +407,58 @@ namespace __HAL {
 /**
   update the CAN BUS state parameters for
   WARN, OFF and Bit1Err
-  @param rui8_busNr number of bus to check
+  @param aui8_busNr number of bus to check
 */
-void updateCanStateTimestamps(uint8_t rui8_busNr)
+void updateCanStateTimestamps(uint8_t aui8_busNr)
 {
-  if ( rui8_busNr > 1 ) return;
-  const uint16_t ui16_canState = ui16_lastCanBusState[rui8_busNr];
+  if ( aui8_busNr > 1 ) return;
+  const uint16_t ui16_canState = ui16_lastCanBusState[aui8_busNr];
   // check if WARN bit is set in CAN control status register
   if ((ui16_canState & CanStateWarnOrOff) != 0)
   { // set error state time interval begin
-    if (i32_cinterfBeginBusWarnOff[rui8_busNr] < 0)
-      i32_cinterfBeginBusWarnOff[rui8_busNr] = HAL::getTime();
+    if (i32_cinterfBeginBusWarnOff[aui8_busNr] < 0)
+      i32_cinterfBeginBusWarnOff[aui8_busNr] = HAL::getTime();
   }
   else
   { // resets error time begin
-    i32_cinterfBeginBusWarnOff[rui8_busNr] = -1;
+    i32_cinterfBeginBusWarnOff[aui8_busNr] = -1;
   }
   // check if LEC state reports bit1error
   if ((ui16_canState & CanStateLecErrMask) == CanStateBit1Err)
   {  // set error state time interval begin
-    if (i32_cinterfBeginBit1err[rui8_busNr] < 0)
-      i32_cinterfBeginBit1err[rui8_busNr] = HAL::getTime();
+    if (i32_cinterfBeginBit1err[aui8_busNr] < 0)
+      i32_cinterfBeginBit1err[aui8_busNr] = HAL::getTime();
   }
   else
   {  // resets error time begin
-    i32_cinterfBeginBit1err[rui8_busNr] = -1;
+    i32_cinterfBeginBit1err[aui8_busNr] = -1;
   }
 }
 
 /**
   test if the CAN BUS is in WARN state
-  @param rui8_busNr number of the BUS to check (default 0)
+  @param aui8_busNr number of the BUS to check (default 0)
   @return true == CAN BUS is in WARN state, else normal operation
 */
-bool can_stateGlobalWarn(uint8_t rui8_busNr)
+bool can_stateGlobalWarn(uint8_t aui8_busNr)
 {
-  if ( rui8_busNr > 1 ) return true;
-  updateCanStateTimestamps(rui8_busNr);
+  if ( aui8_busNr > 1 ) return true;
+  updateCanStateTimestamps(aui8_busNr);
   // check if WARN bit is set in CAN control status register
-  return (ui16_lastCanBusState[rui8_busNr] & CanStateWarn)?true:false;
+  return (ui16_lastCanBusState[aui8_busNr] & CanStateWarn)?true:false;
 }
 
 /**
   test if the CAN BUS is in OFF state
-  @param rui8_busNr number of the BUS to check (default 0)
+  @param aui8_busNr number of the BUS to check (default 0)
   @return true == CAN BUS is in OFF state, else normal operation
 */
-bool can_stateGlobalOff(uint8_t rui8_busNr)
+bool can_stateGlobalOff(uint8_t aui8_busNr)
 {
-  if ( rui8_busNr > 1 ) return true;
-  updateCanStateTimestamps(rui8_busNr);
+  if ( aui8_busNr > 1 ) return true;
+  updateCanStateTimestamps(aui8_busNr);
   // check if OFF bit is set in CAN control status register
-  return (ui16_lastCanBusState[rui8_busNr] & CanStateOff)?true:false;
+  return (ui16_lastCanBusState[aui8_busNr] & CanStateOff)?true:false;
 }
 
 /**
@@ -470,37 +470,37 @@ bool can_stateGlobalOff(uint8_t rui8_busNr)
    can be defined with CONFIG_CAN_MAX_CAN_ERR_TIME_BEFORE_SLOWERING
    in the application specific config file isoaglib_config
    -> should not be to short to avoid false alarm)
-  @param rui8_busNr number of the BUS to check (default 0)
+  @param aui8_busNr number of the BUS to check (default 0)
   @return true == CAN BUS is in blocked state, else normal operation
 */
-bool can_stateGlobalBlocked(uint8_t rui8_busNr)
+bool can_stateGlobalBlocked(uint8_t aui8_busNr)
 {
-  if ( rui8_busNr > 1 ) return true;
+  if ( aui8_busNr > 1 ) return true;
   bool b_busBlocked = true;
   const int32_t i32_now = HAL::getTime();
   // sett b_busBlocked to false, if sign for
   // correct work was detected
-  if ((i32_now - i32_cinterfLastSuccSend[rui8_busNr])
+  if ((i32_now - i32_cinterfLastSuccSend[aui8_busNr])
       < CONFIG_CAN_MAX_SEND_WAIT_TIME)
     b_busBlocked = false;
   // check if successful receive was detected
-  if ((i32_now - i32_cinterfLastSuccReceive[rui8_busNr])
+  if ((i32_now - i32_cinterfLastSuccReceive[aui8_busNr])
       < CONFIG_CAN_MAX_SEND_WAIT_TIME)
     b_busBlocked = false;
 
   // check if WARN or ERR was detected
-  updateCanStateTimestamps(rui8_busNr);
+  updateCanStateTimestamps(aui8_busNr);
   if (
-      (i32_cinterfBeginBusWarnOff[rui8_busNr] < 0)
-    ||((i32_now - i32_cinterfBeginBusWarnOff[rui8_busNr])
+      (i32_cinterfBeginBusWarnOff[aui8_busNr] < 0)
+    ||((i32_now - i32_cinterfBeginBusWarnOff[aui8_busNr])
         < CONFIG_CAN_MAX_CAN_ERR_TIME_BEFORE_SLOWERING)
       )
   { // no WARN or OFF state is active for defined time
     b_busBlocked = false;
   }
   if (
-      (i32_cinterfBeginBit1err[rui8_busNr] < 0)
-    ||((i32_now - i32_cinterfBeginBit1err[rui8_busNr])
+      (i32_cinterfBeginBit1err[aui8_busNr] < 0)
+    ||((i32_now - i32_cinterfBeginBit1err[aui8_busNr])
         < CONFIG_CAN_MAX_CAN_ERR_TIME_BEFORE_SLOWERING)
       )
   { // no Bit1Error state is active for defined time
@@ -511,16 +511,16 @@ bool can_stateGlobalBlocked(uint8_t rui8_busNr)
 
 /**
   deliver the baudrate of the CAN BUS in [kbaud]
-  @param rui8_busNr number of the BUS to check (default 0)
+  @param aui8_busNr number of the BUS to check (default 0)
   @return BUS load of the last second [kbaud]
 */
-int32_t can_stateGlobalBusload(uint8_t rui8_busNr)
+int32_t can_stateGlobalBusload(uint8_t aui8_busNr)
 {
-  if ( rui8_busNr > 1 ) return 0;
+  if ( aui8_busNr > 1 ) return 0;
   int32_t i32_baudrate = 0;
   for (uint8_t ui8_ind = 0; ui8_ind < 10; ui8_ind++)
   {
-    i32_baudrate += (gwCinterfBusLoad[rui8_busNr][ui8_ind] * 8);
+    i32_baudrate += (gwCinterfBusLoad[aui8_busNr][ui8_ind] * 8);
   }
   return i32_baudrate;
 }
@@ -530,16 +530,16 @@ int32_t can_stateGlobalBusload(uint8_t rui8_busNr)
   (occurs if >1 controller try to send msg with same ident)
   ==> ISO 11783 forces stop of retries in this case for
       adress claim
-      @param rui8_busNr number of the BUS to check
+      @param aui8_busNr number of the BUS to check
       @return true -> Bit1Err occured
 */
-bool can_stateGlobalBit1err(uint8_t rui8_busNr)
+bool can_stateGlobalBit1err(uint8_t aui8_busNr)
 {
-  if ( rui8_busNr > 1 ) return true;
+  if ( aui8_busNr > 1 ) return true;
   // if bit1err timestamp is -1 no actual Bit1Err
   // check if WARN or ERR was detected
-  updateCanStateTimestamps(rui8_busNr);
-  return (i32_cinterfBeginBit1err[rui8_busNr] < 0)?false:true;
+  updateCanStateTimestamps(aui8_busNr);
+  return (i32_cinterfBeginBit1err[aui8_busNr] < 0)?false:true;
 }
 
 /* ***************************** */
@@ -548,31 +548,31 @@ bool can_stateGlobalBit1err(uint8_t rui8_busNr)
 
 /**
   deliver the timestamp of last successfull CAN send action
-  @param rui8_busNr number of the BUS to check  [0..1]
-  @param rui8_msgobjNr number of the MsgObj to check [0..13]
+  @param aui8_busNr number of the BUS to check  [0..1]
+  @param aui8_msgobjNr number of the MsgObj to check [0..13]
   @return timestamp of last successful send
-          OR -1 if rui8_msgObjNr corresponds to no valid send obj
+          OR -1 if aui8_msgObjNr corresponds to no valid send obj
 */
-int32_t can_stateMsgobjTxok(uint8_t rui8_busNr, uint8_t rui8_msgobjNr)
+int32_t can_stateMsgobjTxok(uint8_t aui8_busNr, uint8_t aui8_msgobjNr)
 {
-  if ( ( rui8_busNr > 1 ) || ( rui8_msgobjNr> 14 ) ) return 0;
-  return i32_cinterfLastSuccSend[rui8_busNr];
+  if ( ( aui8_busNr > 1 ) || ( aui8_msgobjNr> 14 ) ) return 0;
+  return i32_cinterfLastSuccSend[aui8_busNr];
 }
 
 /**
   check if a send MsgObj can't send msgs from buffer to the
   BUS (detecetd by comparing the inactive time with
   CONFIG_CAN_MAX_SEND_WAIT_TIME (defined in isoaglib_config)
-  @param rui8_busNr number of the BUS to check  [0..1]
-  @param rui8_msgobjNr number of the MsgObj to check [0..13]
+  @param aui8_busNr number of the BUS to check  [0..1]
+  @param aui8_msgobjNr number of the MsgObj to check [0..13]
   @return true -> longer than CONFIG_CAN_MAX_SEND_WAIT_TIME no msg sent on BUS
 */
-bool can_stateMsgobjSendproblem(uint8_t rui8_busNr, uint8_t rui8_msgobjNr)
+bool can_stateMsgobjSendproblem(uint8_t aui8_busNr, uint8_t aui8_msgobjNr)
 {
-  if ( ( rui8_busNr > 1 ) || ( rui8_msgobjNr> 14 ) ) return true;
+  if ( ( aui8_busNr > 1 ) || ( aui8_msgobjNr> 14 ) ) return true;
   const int32_t i32_now = HAL::getTime();
-  if (((i32_now - can_stateMsgobjTxok(rui8_busNr, rui8_msgobjNr)) > CONFIG_CAN_MAX_SEND_WAIT_TIME)
-    && ( can_stateMsgobjBuffercnt(rui8_busNr, rui8_msgobjNr) > 0 ))
+  if (((i32_now - can_stateMsgobjTxok(aui8_busNr, aui8_msgobjNr)) > CONFIG_CAN_MAX_SEND_WAIT_TIME)
+    && ( can_stateMsgobjBuffercnt(aui8_busNr, aui8_msgobjNr) > 0 ))
     return true;
   else return false;
 }
@@ -580,57 +580,57 @@ bool can_stateMsgobjSendproblem(uint8_t rui8_busNr, uint8_t rui8_msgobjNr)
 /**
   test if buffer of a MsgObj is full (e.g. no more
   msg can be put into buffer (important for TX objects))
-  @param rui8_busNr number of the BUS to check
-  @param rui8_msgobjNr number of the MsgObj to check [0..13]
+  @param aui8_busNr number of the BUS to check
+  @param aui8_msgobjNr number of the MsgObj to check [0..13]
   @return true -> buffer is full -> no further can_send allowed
 */
-bool can_stateMsgobjOverflow(uint8_t rui8_busNr, uint8_t rui8_msgobjNr)
+bool can_stateMsgobjOverflow(uint8_t aui8_busNr, uint8_t aui8_msgobjNr)
 {
-  if ( ( rui8_busNr > 1 ) || ( rui8_msgobjNr> 14 ) ) return true;
-  return ( can_stateMsgobjFreecnt( rui8_busNr, rui8_msgobjNr ) == 0 )?true:false;
+  if ( ( aui8_busNr > 1 ) || ( aui8_msgobjNr> 14 ) ) return true;
+  return ( can_stateMsgobjFreecnt( aui8_busNr, aui8_msgobjNr ) == 0 )?true:false;
 }
 /**
   check if MsgObj is currently locked
-  @param rui8_busNr number of the BUS to check
-  @param rui8_msgobjNr number of the MsgObj to check
+  @param aui8_busNr number of the BUS to check
+  @param aui8_msgobjNr number of the MsgObj to check
   @return true -> MsgObj is currently locked
 */
-bool can_stateMsgobjLocked( uint8_t rui8_busNr, uint8_t rui8_msgobjNr )
+bool can_stateMsgobjLocked( uint8_t aui8_busNr, uint8_t aui8_msgobjNr )
 {
-  if ( ( rui8_busNr > 1 ) || ( rui8_msgobjNr> 14 ) ) return true;
-  else if ( b_canBufferLock[rui8_busNr][rui8_msgobjNr] ) return true;
+  if ( ( aui8_busNr > 1 ) || ( aui8_msgobjNr> 14 ) ) return true;
+  else if ( b_canBufferLock[aui8_busNr][aui8_msgobjNr] ) return true;
   else return false;
 }
 
 /**
   deliver amount of messages in buffer
   (interesting for RX objects)
-  @param rui8_busNr number of the BUS to check
-  @param rui8_msgobjNr number of the MsgObj to check
+  @param aui8_busNr number of the BUS to check
+  @param aui8_msgobjNr number of the MsgObj to check
   @return number of messages in buffer or negative error code:
     HAL_CONFIG_ERR == BUS not initialised
     HAL_RANGE_ERR == wrong BUS or MsgObj number
 */
-int16_t can_stateMsgobjBuffercnt(uint8_t rui8_busNr, uint8_t rui8_msgobjNr)
+int16_t can_stateMsgobjBuffercnt(uint8_t aui8_busNr, uint8_t aui8_msgobjNr)
 {
-  if ( ( rui8_busNr > 1 ) || ( rui8_msgobjNr> 14 ) ) return 0;
-  return getCanRingBufferSize( rui8_busNr, rui8_msgobjNr );
+  if ( ( aui8_busNr > 1 ) || ( aui8_msgobjNr> 14 ) ) return 0;
+  return getCanRingBufferSize( aui8_busNr, aui8_msgobjNr );
 }
 
 /**
   deliver amount of messages which can be placed in buffer
   (interesting for TX objects)
-  @param rui8_busNr number of the BUS to check
-  @param rui8_msgobjNr number of the MsgObj to check
+  @param aui8_busNr number of the BUS to check
+  @param aui8_msgobjNr number of the MsgObj to check
   @return number of messages which can be placed in buffer or negative error code:
     HAL_CONFIG_ERR == BUS not initialised
     HAL_RANGE_ERR == wrong BUS or MsgObj number
 */
-int16_t can_stateMsgobjFreecnt(uint8_t rui8_busNr, uint8_t rui8_msgobjNr)
+int16_t can_stateMsgobjFreecnt(uint8_t aui8_busNr, uint8_t aui8_msgobjNr)
 {
-  if ( ( rui8_busNr > 1 ) || ( rui8_msgobjNr> 14 ) ) return 0;
-  if ( getCanRingBufferMaxSize( rui8_busNr, rui8_msgobjNr ) > getCanRingBufferSize( rui8_busNr, rui8_msgobjNr ) )
-    return ( getCanRingBufferMaxSize( rui8_busNr, rui8_msgobjNr ) - getCanRingBufferSize( rui8_busNr, rui8_msgobjNr ) );
+  if ( ( aui8_busNr > 1 ) || ( aui8_msgobjNr> 14 ) ) return 0;
+  if ( getCanRingBufferMaxSize( aui8_busNr, aui8_msgobjNr ) > getCanRingBufferSize( aui8_busNr, aui8_msgobjNr ) )
+    return ( getCanRingBufferMaxSize( aui8_busNr, aui8_msgobjNr ) - getCanRingBufferSize( aui8_busNr, aui8_msgobjNr ) );
   else return 0;
 }
 
@@ -645,20 +645,20 @@ int16_t can_stateMsgobjFreecnt(uint8_t rui8_busNr, uint8_t rui8_msgobjNr)
 /**
   init CAN BUS with given baudrate and masks
   (11bit, 29bit and last msg mask)
-  @param rui8_busNr number of the BUS to init (default 0)
-  @param rb_baudrate baudrate in [kbaud]
-  @param rui16_maskStd 11bit global mask
-  @param rui32_maskExt 29bit global mask
-  @param rui32_maskLastmsg mask of last CAN msg
+  @param aui8_busNr number of the BUS to init (default 0)
+  @param ab_baudrate baudrate in [kbaud]
+  @param aui16_maskStd 11bit global mask
+  @param aui32_maskExt 29bit global mask
+  @param aui32_maskLastmsg mask of last CAN msg
   @return HAL_NO_ERR == no error;
           HAL_RANGE_ERR == wrong BUS nr or wrong baudrate;
           HAL_WARN_ERR == BUS previously initialised - no problem if only masks had to be changed
 */
-int16_t can_configGlobalInit(uint8_t rui8_busNr, uint16_t rb_baudrate, uint16_t rui16_maskStd, uint32_t rui32_maskExt, uint32_t rui32_maskLastmsg)
+int16_t can_configGlobalInit(uint8_t aui8_busNr, uint16_t ab_baudrate, uint16_t aui16_maskStd, uint32_t aui32_maskExt, uint32_t aui32_maskLastmsg)
 {
-  if ( rui8_busNr > 1 ) {
+  if ( aui8_busNr > 1 ) {
     char tempString[80];
-    sprintf( tempString, "\n\rVerlasse can_configGlobalInit() wegen RangeErr durch BusNr %hd\n\r", rui8_busNr );
+    sprintf( tempString, "\n\rVerlasse can_configGlobalInit() wegen RangeErr durch BusNr %hd\n\r", aui8_busNr );
     put_rs232String( (const uint8_t *) tempString );
     int32_t i32_waitEnd = HAL::getTime() + 1000;
     while ( i32_waitEnd > HAL::getTime() ) _nop();
@@ -666,55 +666,55 @@ int16_t can_configGlobalInit(uint8_t rui8_busNr, uint16_t rb_baudrate, uint16_t 
   }
   // init variables
   const int32_t i32_now = HAL::getTime();
-  ui8_currentBaudrate[rui8_busNr] =  rb_baudrate;
-  i32_cinterfBeginBusWarnOff[rui8_busNr] = -1;
-  i32_cinterfBeginBit1err[rui8_busNr] = -1;
-  i32_cinterfLastSuccSend[rui8_busNr] = i32_now;
-  i32_cinterfLastSuccReceive[rui8_busNr] = i32_now;
+  ui8_currentBaudrate[aui8_busNr] =  ab_baudrate;
+  i32_cinterfBeginBusWarnOff[aui8_busNr] = -1;
+  i32_cinterfBeginBit1err[aui8_busNr] = -1;
+  i32_cinterfLastSuccSend[aui8_busNr] = i32_now;
+  i32_cinterfLastSuccReceive[aui8_busNr] = i32_now;
   for (uint8_t ui8_ind = 0; ui8_ind < 15; ui8_ind++) {
-    ui8_canBufferDirectionState[rui8_busNr][ui8_ind] = 0xFF;
-    ui8_canBufferXtd[rui8_busNr][ui8_ind] = 0;
-    ui8_canBufferDirectionState[rui8_busNr][ui8_ind] = 0xFF;
-    ui16_canBufferMaxSize[rui8_busNr][ui8_ind] = 0;
-    resetCanRingBuffer( rui8_busNr, ui8_ind);
-    b_appLock[rui8_busNr][ui8_ind] = false;
+    ui8_canBufferDirectionState[aui8_busNr][ui8_ind] = 0xFF;
+    ui8_canBufferXtd[aui8_busNr][ui8_ind] = 0;
+    ui8_canBufferDirectionState[aui8_busNr][ui8_ind] = 0xFF;
+    ui16_canBufferMaxSize[aui8_busNr][ui8_ind] = 0;
+    resetCanRingBuffer( aui8_busNr, ui8_ind);
+    b_appLock[aui8_busNr][ui8_ind] = false;
   }
 
-  gb_cinterfBusLoadSlice[rui8_busNr] = 0;
-  b_runningIrqSendProcess[rui8_busNr] = false;
-  CNAMESPACE::memset((gwCinterfBusLoad[rui8_busNr]),0,10);
+  gb_cinterfBusLoadSlice[aui8_busNr] = 0;
+  b_runningIrqSendProcess[aui8_busNr] = false;
+  CNAMESPACE::memset((gwCinterfBusLoad[aui8_busNr]),0,10);
 
   // now config BUS
-  if ( rui8_busNr == 0 ) {
+  if ( aui8_busNr == 0 ) {
     CAN1_Init( ui8_currentBaudrate[0], EIE_BIT, SIE_BIT, IE_BIT );
   }
   else
   {
     CAN2_Init( ui8_currentBaudrate[1], EIE_BIT, SIE_BIT, IE_BIT );
   }
-  return can_configGlobalMask(rui8_busNr, rui16_maskStd, rui32_maskExt, rui32_maskLastmsg);
+  return can_configGlobalMask(aui8_busNr, aui16_maskStd, aui32_maskExt, aui32_maskLastmsg);
 }
 
 /**
   set the global masks
   (11bit, 29bit and last msg mask)
-  @param rui8_busNr number of the BUS to config (default 0)
-  @param rui16_maskStd 11bit global mask
-  @param rui32_maskExt 29bit global mask
-  @param rui32_maskLastmsg mask of last CAN msg
+  @param aui8_busNr number of the BUS to config (default 0)
+  @param aui16_maskStd 11bit global mask
+  @param aui32_maskExt 29bit global mask
+  @param aui32_maskLastmsg mask of last CAN msg
   @return HAL_NO_ERR == no error;
           HAL_RANGE_ERR == wrong BUS nr
 */
-int16_t can_configGlobalMask(uint8_t rui8_busNr, uint16_t rui16_maskStd, uint32_t rui32_maskExt, uint32_t rui32_maskLastmsg)
+int16_t can_configGlobalMask(uint8_t aui8_busNr, uint16_t aui16_maskStd, uint32_t aui32_maskExt, uint32_t aui32_maskLastmsg)
 {
-  if ( rui8_busNr > 1 ) {
+  if ( aui8_busNr > 1 ) {
     put_rs232String( "Verlasse can_configGlobalMask mit RangeError\n\r" );
     return HAL_RANGE_ERR;
   }
 
   // avoid problems with to big values for masks
-  const uint16_t cui16_shortMask = ( rui16_maskStd & 0x7FF );
-  const uint32_t cui32_longMask = ( rui32_maskExt & 0x1FFFFFFF );
+  const uint16_t cui16_shortMask = ( aui16_maskStd & 0x7FF );
+  const uint32_t cui32_longMask = ( aui32_maskExt & 0x1FFFFFFF );
   uint16_t ui16_temp = 0;
   ui16_temp  = ( ( cui16_shortMask & 0x007 ) << 13 ); // ID 18..20
   ui16_temp += ( ( cui16_shortMask & 0x7F8 ) >>  3 ); // ID 21..28
@@ -729,7 +729,7 @@ int16_t can_configGlobalMask(uint8_t rui8_busNr, uint16_t rui16_maskStd, uint32_
   const uint16_t cui16_longMaskLower = ui16_temp;
   // deactivate all IRQ to inhibit distortion by RS232 or other IRQ
   IEN = 0;      // defined in reg167cs.h
-  if ( rui8_busNr == 0 ) {
+  if ( aui8_busNr == 0 ) {
     #if 0
     put_rs232String( "can_configGlobalMask on Bus 0\n\r" );
     #endif
@@ -757,7 +757,7 @@ int16_t can_configGlobalMask(uint8_t rui8_busNr, uint16_t rui16_maskStd, uint32_
     ///  - CAN1 interrupt group level (GLVL) = 3
     XP0IC = 0x0073;
   }
-  else if ( rui8_busNr == 1 ) {
+  else if ( aui8_busNr == 1 ) {
     #if 0
     put_rs232String( "can_configGlobalMask on Bus 1\n\r" );
     #endif
@@ -794,12 +794,12 @@ int16_t can_configGlobalMask(uint8_t rui8_busNr, uint16_t rui16_maskStd, uint32_
 /**
   close CAN BUS
   (important to close BUS before re-init with other baudrate)
-  @param rui8_busNr number of the BUS to close (default 0)
+  @param aui8_busNr number of the BUS to close (default 0)
   @return HAL_NO_ERR == no error;
           HAL_RANGE_ERR == wrong BUS nr;
           HAL_CONFIG_ERR == BUS previously not initialised
 */
-int16_t can_configGlobalClose(uint8_t rui8_busNr)
+int16_t can_configGlobalClose(uint8_t aui8_busNr)
 { // no function found in CAN driver
   // deactivate all IRQ to inhibit distortion by RS232 or other IRQ
   IEN = 0;      // defined in reg167cs.h
@@ -809,20 +809,20 @@ int16_t can_configGlobalClose(uint8_t rui8_busNr)
   put_rs232String( "GCl\n\r" );
   #endif
   for (uint8_t ui8_ind = 0; ui8_ind < 15; ui8_ind++) {
-    if ( ui8_canBufferDirectionState[rui8_busNr][ui8_ind] == 0xFF ) continue;
-    ui8_canBufferDirectionState[rui8_busNr][ui8_ind] = 0xFF;
-    b_appLock[rui8_busNr][ui8_ind] = false;
-    resetCanRingBuffer( rui8_busNr, ui8_ind );
+    if ( ui8_canBufferDirectionState[aui8_busNr][ui8_ind] == 0xFF ) continue;
+    ui8_canBufferDirectionState[aui8_busNr][ui8_ind] = 0xFF;
+    b_appLock[aui8_busNr][ui8_ind] = false;
+    resetCanRingBuffer( aui8_busNr, ui8_ind );
 
     // close MsgObjs
-    if ( rui8_busNr == 0 ) {
+    if ( aui8_busNr == 0 ) {
      while ( CAN1_DelMsgObj( ui8_ind ) == 0 ) __HAL::wdTriggern();
     }
     else {
      while ( CAN2_DelMsgObj( ui8_ind ) == 0 ) __HAL::wdTriggern();
     }
   }
-  b_runningIrqSendProcess[rui8_busNr] = false;
+  b_runningIrqSendProcess[aui8_busNr] = false;
   // activate all IRQ again
   IEN = 1;      // defined in reg167cs.h
   return HAL_NO_ERR;
@@ -832,10 +832,10 @@ int16_t can_configGlobalClose(uint8_t rui8_busNr)
 /** wait until specified timeout or until next CAN message receive
  *  @return true -> there are CAN messages waiting for process. else: return due to timeout
  */
-bool can_waitUntilCanReceiveOrTimeout( uint16_t rui16_timeoutInterval )
+bool can_waitUntilCanReceiveOrTimeout( uint16_t aui16_timeoutInterval )
 {
-  const int32_t ci32_endWait = HAL::getTime() + rui16_timeoutInterval;
-  int32_t i32_waitSlice rui16_timeoutInterval;
+  const int32_t ci32_endWait = HAL::getTime() + aui16_timeoutInterval;
+  int32_t i32_waitSlice aui16_timeoutInterval;
 
   // if greater than 50msec -> divide so that about 10 slices are realized
   if ( i32_waitSlice > 50 ) i32_waitSlice /= 10;
@@ -864,38 +864,38 @@ bool can_waitUntilCanReceiveOrTimeout( uint16_t rui16_timeoutInterval )
   (buffer size is defined locally in implementation of this interface;
   all received msgs should get a time stamp;
   class __IsoAgLib::Ident_c has ident and type 11/29bit)
-  @param rui8_busNr number of the BUS to config
-  @param rui8_msgobjNr number of the MsgObj to config
-  @param rrefc_ident filter ident of this MsgObj
-  @param rb_rxtx 0==RX receive; 1==TX transmit
+  @param aui8_busNr number of the BUS to config
+  @param aui8_msgobjNr number of the MsgObj to config
+  @param arc_ident filter ident of this MsgObj
+  @param ab_rxtx 0==RX receive; 1==TX transmit
   @return HAL_NO_ERR == no error;
           C_BUSY == this MsgObj is already used
           HAL_CONFIG_ERR == BUS not initialised or error during buffer allocation
           HAL_RANGE_ERR == wrong BUS or MsgObj number
 */
-int16_t can_configMsgobjInit(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib::Ident_c& rrefc_ident, uint8_t rb_rxtx)
+int16_t can_configMsgobjInit(uint8_t aui8_busNr, uint8_t aui8_msgobjNr, __IsoAgLib::Ident_c& arc_ident, uint8_t ab_rxtx)
 { // check for input vars
-  if ( ( rui8_busNr > 1 ) || ( rui8_msgobjNr> 14 ) ) {
+  if ( ( aui8_busNr > 1 ) || ( aui8_msgobjNr> 14 ) ) {
     char tempString[80];
-    sprintf( tempString, "\n\rVerlasse can_configMsgobjInit() wegen RangeErr durch BusNr %hd, MsgObjNr %hd\n\r", rui8_busNr, rui8_msgobjNr );
+    sprintf( tempString, "\n\rVerlasse can_configMsgobjInit() wegen RangeErr durch BusNr %hd, MsgObjNr %hd\n\r", aui8_busNr, aui8_msgobjNr );
     put_rs232String( (const uint8_t *) tempString );
   int32_t i32_waitEnd = HAL::getTime() + 1000;
   while ( i32_waitEnd > HAL::getTime() ) ;
     return HAL_RANGE_ERR;
   }
-  uint32_t ui32_ident = rrefc_ident.ident();
-  ui8_canBufferXtd[rui8_busNr][rui8_msgobjNr] = (rrefc_ident.identType() == __IsoAgLib::Ident_c::BothIdent)
+  uint32_t ui32_ident = arc_ident.ident();
+  ui8_canBufferXtd[aui8_busNr][aui8_msgobjNr] = (arc_ident.identType() == __IsoAgLib::Ident_c::BothIdent)
                     ?DEFAULT_IDENT_TYPE
-                    :rrefc_ident.identType();
+                    :arc_ident.identType();
 
   uint8_t ui8_bufferSize = CONFIG_CAN_STD_LOAD_REC_BUF_SIZE_MIN;
   // unlock - if previously locked
-  b_canBufferLock[rui8_busNr][rui8_msgobjNr] = false;
+  b_canBufferLock[aui8_busNr][aui8_msgobjNr] = false;
 
   // deactivate all IRQ to inhibit distortion by RS232 or other IRQ
   IEN = 0;      // defined in reg167cs.h
   // deactivate CAN BUS durign re-config
-  if ( rui8_busNr == 0 ) {
+  if ( aui8_busNr == 0 ) {
     CAN1TxReady = FALSE;
     XP0IC = 0x0000;
   }
@@ -905,20 +905,20 @@ int16_t can_configMsgobjInit(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgL
   }
 
   // check if MsgObj is already open, so that it must be closed first
-  if ( ui8_canBufferDirectionState[rui8_busNr][rui8_msgobjNr] != 0xFF ) {
+  if ( ui8_canBufferDirectionState[aui8_busNr][aui8_msgobjNr] != 0xFF ) {
     // it's at the moment open
-    if ( rui8_busNr == 0 ) {
-     while ( CAN1_DelMsgObj( rui8_msgobjNr ) == 0 ) __HAL::wdTriggern();
+    if ( aui8_busNr == 0 ) {
+     while ( CAN1_DelMsgObj( aui8_msgobjNr ) == 0 ) __HAL::wdTriggern();
     }
     else {
-     while ( CAN2_DelMsgObj( rui8_msgobjNr ) == 0 ) __HAL::wdTriggern();
+     while ( CAN2_DelMsgObj( aui8_msgobjNr ) == 0 ) __HAL::wdTriggern();
     }
   }
   // store wanted direction
-  ui8_canBufferDirectionState[rui8_busNr][rui8_msgobjNr] = rb_rxtx;
+  ui8_canBufferDirectionState[aui8_busNr][aui8_msgobjNr] = ab_rxtx;
 
 
-  if (rb_rxtx == 0)
+  if (ab_rxtx == 0)
   { // receive
     ui8_bufferSize = CONFIG_CAN_STD_LOAD_REC_BUF_SIZE_MIN;
     const uint32_t highLoadCheckList[] = CONFIG_CAN_HIGH_LOAD_IDENT_LIST ;
@@ -936,34 +936,34 @@ int16_t can_configMsgobjInit(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgL
     ui8_bufferSize = CONFIG_CAN_SEND_BUFFER_SIZE;
   }
   // if buffer is previously of different size - but yet allocated, delete
-  if ( ( arr_canBuffer[rui8_busNr][rui8_msgobjNr] != NULL               )
-    && ( ui16_canBufferMaxSize[rui8_busNr][rui8_msgobjNr] < ui8_bufferSize ) ) {
+  if ( ( arr_canBuffer[aui8_busNr][aui8_msgobjNr] != NULL               )
+    && ( ui16_canBufferMaxSize[aui8_busNr][aui8_msgobjNr] < ui8_bufferSize ) ) {
     // currently existing buffer is smaller than now wanted -> delete old too small
-    delete [] ( arr_canBuffer[rui8_busNr][rui8_msgobjNr] );
-    arr_canBuffer[rui8_busNr][rui8_msgobjNr] = NULL;
+    delete [] ( arr_canBuffer[aui8_busNr][aui8_msgobjNr] );
+    arr_canBuffer[aui8_busNr][aui8_msgobjNr] = NULL;
   }
-  if ( arr_canBuffer[rui8_busNr][rui8_msgobjNr] == NULL ) {
+  if ( arr_canBuffer[aui8_busNr][aui8_msgobjNr] == NULL ) {
     // create buffer
-    arr_canBuffer[rui8_busNr][rui8_msgobjNr] = new canBufferElement_t[ui8_bufferSize];
-    if ( arr_canBuffer[rui8_busNr][rui8_msgobjNr] == NULL ) return HAL_OVERFLOW_ERR;
-    ui16_canBufferMaxSize[rui8_busNr][rui8_msgobjNr] = ui8_bufferSize;
+    arr_canBuffer[aui8_busNr][aui8_msgobjNr] = new canBufferElement_t[ui8_bufferSize];
+    if ( arr_canBuffer[aui8_busNr][aui8_msgobjNr] == NULL ) return HAL_OVERFLOW_ERR;
+    ui16_canBufferMaxSize[aui8_busNr][aui8_msgobjNr] = ui8_bufferSize;
   }
   #if 0
   char tempString[80];
   sprintf( tempString, "MsgInit B%hd O%hd RxTx%hd X%hd Id0x%lx\n\r",
-           rui8_busNr, rui8_msgobjNr, rb_rxtx, ui8_canBufferXtd[rui8_busNr][rui8_msgobjNr],
+           aui8_busNr, aui8_msgobjNr, ab_rxtx, ui8_canBufferXtd[aui8_busNr][aui8_msgobjNr],
            ui32_ident );
   put_rs232String( (const uint8_t *) tempString );
   int32_t i32_waitEnd = HAL::getTime() + 500;
   while ( i32_waitEnd > HAL::getTime() ) tempString[0] = tempString[1] + 1;
   #endif
-  if ( rui8_busNr == 0 ) {
-    CAN1_DefineMsgObj(rui8_msgobjNr,  rb_rxtx, CAN_INT_ON, ui8_canBufferXtd[rui8_busNr][rui8_msgobjNr], ui32_ident, 8);
+  if ( aui8_busNr == 0 ) {
+    CAN1_DefineMsgObj(aui8_msgobjNr,  ab_rxtx, CAN_INT_ON, ui8_canBufferXtd[aui8_busNr][aui8_msgobjNr], ui32_ident, 8);
     CAN1TxReady = TRUE;
     XP0IC = 0x0073;
   }
   else {
-    CAN2_DefineMsgObj(rui8_msgobjNr,  rb_rxtx, CAN_INT_ON, ui8_canBufferXtd[rui8_busNr][rui8_msgobjNr], ui32_ident, 8);
+    CAN2_DefineMsgObj(aui8_msgobjNr,  ab_rxtx, CAN_INT_ON, ui8_canBufferXtd[aui8_busNr][aui8_msgobjNr], ui32_ident, 8);
     CAN2TxReady = TRUE;
     XP1IC = 0x0072;
   }
@@ -971,8 +971,8 @@ int16_t can_configMsgobjInit(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgL
   IEN = 1;      // defined in reg167cs.h
 
   // reset AppLock flag
-  b_appLock[rui8_busNr][rui8_msgobjNr] = false;
-  resetCanRingBuffer( rui8_busNr, rui8_msgobjNr );
+  b_appLock[aui8_busNr][aui8_msgobjNr] = false;
+  resetCanRingBuffer( aui8_busNr, aui8_msgobjNr );
 
   return HAL_NO_ERR;
 }
@@ -980,28 +980,28 @@ int16_t can_configMsgobjInit(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgL
 /**
   change the Ident_c of an already initialised MsgObj
   (class __IsoAgLib::Ident_c has ident and type 11/29bit)
-  @param rui8_busNr number of the BUS to config
-  @param rui8_msgobjNr number of the MsgObj to config
-  @param rrefc_ident filter ident of this MsgObj
+  @param aui8_busNr number of the BUS to config
+  @param aui8_msgobjNr number of the MsgObj to config
+  @param arc_ident filter ident of this MsgObj
   @return HAL_NO_ERR == no error;
           HAL_CONFIG_ERR == BUS not initialised or ident can't be changed
           HAL_RANGE_ERR == wrong BUS or MsgObj number
 */
-int16_t can_configMsgobjChgid(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib::Ident_c& rrefc_ident)
+int16_t can_configMsgobjChgid(uint8_t aui8_busNr, uint8_t aui8_msgobjNr, __IsoAgLib::Ident_c& arc_ident)
 {
   // check for input vars
-  if ( ( rui8_busNr > 1 ) || ( rui8_msgobjNr> 14 ) ) return HAL_RANGE_ERR;
-  if ( ui8_canBufferDirectionState[rui8_busNr][rui8_msgobjNr] == 0xFF ) return HAL_CONFIG_ERR;
-  ui8_canBufferXtd[rui8_busNr][rui8_msgobjNr] = (rrefc_ident.identType() == __IsoAgLib::Ident_c::BothIdent)
+  if ( ( aui8_busNr > 1 ) || ( aui8_msgobjNr> 14 ) ) return HAL_RANGE_ERR;
+  if ( ui8_canBufferDirectionState[aui8_busNr][aui8_msgobjNr] == 0xFF ) return HAL_CONFIG_ERR;
+  ui8_canBufferXtd[aui8_busNr][aui8_msgobjNr] = (arc_ident.identType() == __IsoAgLib::Ident_c::BothIdent)
                                                 ?DEFAULT_IDENT_TYPE
-                                                :rrefc_ident.identType();
+                                                :arc_ident.identType();
 
   // unlock - if previously locked
-  b_canBufferLock[rui8_busNr][rui8_msgobjNr] = false;
+  b_canBufferLock[aui8_busNr][aui8_msgobjNr] = false;
 
-  uint32_t id = rrefc_ident.ident();
-  uint16_t* preg_UAR = (rui8_busNr==0)?(C1UAR1+(rui8_msgobjNr*0x10)):(C2UAR1+(rui8_msgobjNr*0x10));
-  uint16_t* preg_LAR = (rui8_busNr==0)?(C1LAR1+(rui8_msgobjNr*0x10)):(C2LAR1+(rui8_msgobjNr*0x10));
+  uint32_t id = arc_ident.ident();
+  uint16_t* preg_UAR = (aui8_busNr==0)?(C1UAR1+(aui8_msgobjNr*0x10)):(C2UAR1+(aui8_msgobjNr*0x10));
+  uint16_t* preg_LAR = (aui8_busNr==0)?(C1LAR1+(aui8_msgobjNr*0x10)):(C2LAR1+(aui8_msgobjNr*0x10));
   uint16_t ui16_uarVal, ui16_larVal, tempVal;
 
 
@@ -1029,7 +1029,7 @@ int16_t can_configMsgobjChgid(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAg
 
   // deactivate all IRQ to inhibit distortion by RS232 or other IRQ
   IEN = 0;      // defined in reg167cs.h
-  if ( rui8_busNr == 0 ) {
+  if ( aui8_busNr == 0 ) {
     // deactivate ITQ and state
     XP0IC = 0x0000;
     // set control register to config mode
@@ -1051,7 +1051,7 @@ int16_t can_configMsgobjChgid(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAg
     ///  - CAN1 interrupt group level (GLVL) = 3
     XP0IC = 0x0073;
   }
-  else if ( rui8_busNr == 1 ) {
+  else if ( aui8_busNr == 1 ) {
     // deactivate ITQ and state
     XP1IC =  0x0000;
     // set control register to config mode
@@ -1077,58 +1077,58 @@ int16_t can_configMsgobjChgid(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAg
   IEN = 1;      // defined in reg167cs.h
 
   // reset AppLock flag
-  b_appLock[rui8_busNr][rui8_msgobjNr] = false;
+  b_appLock[aui8_busNr][aui8_msgobjNr] = false;
 
   return HAL_NO_ERR;
 }
 
 /**
   lock a MsgObj to avoid further placement of messages into buffer.
-  @param rui8_busNr number of the BUS to config
-  @param rui8_msgobjNr number of the MsgObj to config
-  @param rb_doLock true==lock(default); false==unlock
+  @param aui8_busNr number of the BUS to config
+  @param aui8_msgobjNr number of the MsgObj to config
+  @param ab_doLock true==lock(default); false==unlock
   @return HAL_NO_ERR == no error;
           HAL_CONFIG_ERR == BUS not initialised or ident can't be changed
           HAL_RANGE_ERR == wrong BUS or MsgObj number
   */
-int16_t can_configMsgobjLock( uint8_t rui8_busNr, uint8_t rui8_msgobjNr, bool rb_doLock )
+int16_t can_configMsgobjLock( uint8_t aui8_busNr, uint8_t aui8_msgobjNr, bool ab_doLock )
 {
-  b_canBufferLock[rui8_busNr][rui8_msgobjNr] = rb_doLock;
+  b_canBufferLock[aui8_busNr][aui8_msgobjNr] = ab_doLock;
 }
 
 /**
   change the the send rate for one MsgObj by setting the minimum
   pause time between two messages [msec.]
-  @param rui8_busNr number of the BUS to config
-  @param rui8_msgobjNr number of the MsgObj to config
-  @param rui16_minSendPause minimum send pause between two sent messages [msec.]
+  @param aui8_busNr number of the BUS to config
+  @param aui8_msgobjNr number of the MsgObj to config
+  @param aui16_minSendPause minimum send pause between two sent messages [msec.]
   @return HAL_NO_ERR == no error;
           HAL_CONFIG_ERR == BUS not initialised or ident can't be changed
           HAL_RANGE_ERR == wrong BUS or MsgObj number
 */
-int16_t can_configMsgobjSendpause(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, uint16_t rui16_minSend)
+int16_t can_configMsgobjSendpause(uint8_t aui8_busNr, uint8_t aui8_msgobjNr, uint16_t aui16_minSend)
 {
   return HAL_NO_ERR;
 }
 
 /**
   close a MsgObj
-  @param rui8_busNr number of the BUS to config
-  @param rui8_msgobjNr number of the MsgObj to config
+  @param aui8_busNr number of the BUS to config
+  @param aui8_msgobjNr number of the MsgObj to config
   @return HAL_NO_ERR == no error;
           HAL_CONFIG_ERR == BUS not initialised, MsgObj previously not used or buffer memory not freed
           HAL_RANGE_ERR == wrong BUS or MsgObj number
 */
-int16_t can_configMsgobjClose(uint8_t rui8_busNr, uint8_t rui8_msgobjNr)
+int16_t can_configMsgobjClose(uint8_t aui8_busNr, uint8_t aui8_msgobjNr)
 {
   // check for input vars
-  if ( ( rui8_busNr > 1 ) || ( rui8_msgobjNr> 14 ) ) return HAL_RANGE_ERR;
+  if ( ( aui8_busNr > 1 ) || ( aui8_msgobjNr> 14 ) ) return HAL_RANGE_ERR;
   // unlock - if previously locked
-  b_canBufferLock[rui8_busNr][rui8_msgobjNr] = false;
+  b_canBufferLock[aui8_busNr][aui8_msgobjNr] = false;
   #if 0
   char tempString[80];
   sprintf( tempString, "MsgClose B%hd M%hd\n\r",
-           rui8_busNr, rui8_msgobjNr );
+           aui8_busNr, aui8_msgobjNr );
   put_rs232String( (const uint8_t *) tempString );
   int32_t i32_waitEnd = HAL::getTime() + 500;
   while ( i32_waitEnd > HAL::getTime() ) tempString[0] = tempString[1] + 1;
@@ -1136,16 +1136,16 @@ int16_t can_configMsgobjClose(uint8_t rui8_busNr, uint8_t rui8_msgobjNr)
 
   // deactivate all IRQ to inhibit distortion by RS232 or other IRQ
   IEN = 0;      // defined in reg167cs.h
-  if ( rui8_busNr == 0 ) {
+  if ( aui8_busNr == 0 ) {
     CAN1TxReady = FALSE;
-    while ( CAN1_DelMsgObj( rui8_msgobjNr ) == 0 ) __HAL::wdTriggern();
+    while ( CAN1_DelMsgObj( aui8_msgobjNr ) == 0 ) __HAL::wdTriggern();
     XP0IC = 0x0000;
     CAN1TxReady = TRUE;
     XP0IC = 0x0073;
   }
   else {
     CAN2TxReady = FALSE;
-    while ( CAN2_DelMsgObj( rui8_msgobjNr ) == 0 ) __HAL::wdTriggern();
+    while ( CAN2_DelMsgObj( aui8_msgobjNr ) == 0 ) __HAL::wdTriggern();
     XP1IC = 0x0000;
     CAN2TxReady = TRUE;
     XP1IC = 0x0072;
@@ -1154,9 +1154,9 @@ int16_t can_configMsgobjClose(uint8_t rui8_busNr, uint8_t rui8_msgobjNr)
   IEN = 1;      // defined in reg167cs.h
 
   // reset AppLock flag
-  b_appLock[rui8_busNr][rui8_msgobjNr] = false;
-  ui8_canBufferDirectionState[rui8_busNr][rui8_msgobjNr] = 0xFF;
-  resetCanRingBuffer( rui8_busNr, rui8_msgobjNr );
+  b_appLock[aui8_busNr][aui8_msgobjNr] = false;
+  ui8_canBufferDirectionState[aui8_busNr][aui8_msgobjNr] = 0xFF;
+  resetCanRingBuffer( aui8_busNr, aui8_msgobjNr );
 
   return HAL_NO_ERR;
 }
@@ -1167,22 +1167,22 @@ int16_t can_configMsgobjClose(uint8_t rui8_busNr, uint8_t rui8_msgobjNr)
 
 /**
   update the CAN BUS load statistic
-  @param rui8_busNr BUS number to update
-  @param rb_dlc length ot the detected (send or receive) message
+  @param aui8_busNr BUS number to update
+  @param ab_dlc length ot the detected (send or receive) message
 */
-void updateCanBusLoad(uint8_t rui8_busNr, uint8_t rb_dlc)
+void updateCanBusLoad(uint8_t aui8_busNr, uint8_t ab_dlc)
 {
-  if ( rui8_busNr > 1 ) return;
+  if ( aui8_busNr > 1 ) return;
   int32_t i32_now = HAL::getTime();
   uint8_t b_newSlice = ((i32_now / 100)%10);
-  if (gb_cinterfBusLoadSlice[rui8_busNr] != b_newSlice)
+  if (gb_cinterfBusLoadSlice[aui8_busNr] != b_newSlice)
   {
-    gwCinterfBusLoad[rui8_busNr][b_newSlice] = rb_dlc;
-    gb_cinterfBusLoadSlice[rui8_busNr] = b_newSlice;
+    gwCinterfBusLoad[aui8_busNr][b_newSlice] = ab_dlc;
+    gb_cinterfBusLoadSlice[aui8_busNr] = b_newSlice;
   }
   else
   {
-    gwCinterfBusLoad[rui8_busNr][b_newSlice] += rb_dlc;
+    gwCinterfBusLoad[aui8_busNr][b_newSlice] += ab_dlc;
   }
 }
 
@@ -1192,53 +1192,53 @@ void updateCanBusLoad(uint8_t rui8_busNr, uint8_t rb_dlc)
   functions:
   * MASK_TYPE ident() -> deliver ident value
   * __IsoAgLib::Ident_c::identType_t identType() -> deliver type of ident
-  * void getData(MASK_TYPE& reft_ident, uint8_t& refui8_identType,
-                 uint8_t& refb_dlcTarget, uint8_t* pb_dataTarget)
-    -> put DLC in referenced ref_dlc and insert data in uint8_t string pb_data
-  @param rui8_busNr number of the BUS to config
-  @param rui8_msgobjNr number of the MsgObj to config
-  @param rpc_data pointer to CanPkg_c instance with data to send
+  * void getData(MASK_TYPE& rt_ident, uint8_t& rui8_identType,
+                 uint8_t& rb_dlcTarget, uint8_t* pb_dataTarget)
+    -> put DLC in referenced r_dlc and insert data in uint8_t string pb_data
+  @param aui8_busNr number of the BUS to config
+  @param aui8_msgobjNr number of the MsgObj to config
+  @param apc_data pointer to CanPkg_c instance with data to send
   @return HAL_NO_ERR == no error;
           HAL_CONFIG_ERR == BUS not initialised, MsgObj is no send object
           HAL_NOACT_ERR == BUS OFF
           HAL_OVERFLOW_ERR == send buffer overflowed
           HAL_RANGE_ERR == wrong BUS or MsgObj number
 */
-int16_t can_useMsgobjSend(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib::CanPkg_c* rpc_data)
+int16_t can_useMsgobjSend(uint8_t aui8_busNr, uint8_t aui8_msgobjNr, __IsoAgLib::CanPkg_c* apc_data)
 {
-  if ( ( rui8_busNr > 1 ) || ( rui8_msgobjNr> 14 ) ) return HAL_RANGE_ERR;
+  if ( ( aui8_busNr > 1 ) || ( aui8_msgobjNr> 14 ) ) return HAL_RANGE_ERR;
   // a receive MsgObj is registered with 0xFF in corresponding ui8_cinterfLastSendBufCnt
-  if ( ui8_canBufferDirectionState[rui8_busNr][rui8_msgobjNr] != 1 ) return HAL_CONFIG_ERR;
+  if ( ui8_canBufferDirectionState[aui8_busNr][aui8_msgobjNr] != 1 ) return HAL_CONFIG_ERR;
   CAN_buf_Seed_def* p_tempSend = NULL;
 
   // direct access driver HW if buffer is empty
-  if ( isCanRingBufferEmpty( rui8_busNr, rui8_msgobjNr ) ) {
-    if ( rui8_busNr == 0 ) {
+  if ( isCanRingBufferEmpty( aui8_busNr, aui8_msgobjNr ) ) {
+    if ( aui8_busNr == 0 ) {
       // try to lock HW for send - mark successful preperation by writing address of ss_tempSendObj into p_tempSend
-      if ( CAN1_RequestMsgObj( rui8_msgobjNr ) != 0 ) p_tempSend = &ss_tempSendObj;
+      if ( CAN1_RequestMsgObj( aui8_msgobjNr ) != 0 ) p_tempSend = &ss_tempSendObj;
     }
     else {
       // try to lock HW for send - mark successful preperation in b_doDirectSend
-      if ( CAN2_RequestMsgObj( rui8_msgobjNr ) != 0 ) p_tempSend = &ss_tempSendObj;
+      if ( CAN2_RequestMsgObj( aui8_msgobjNr ) != 0 ) p_tempSend = &ss_tempSendObj;
     }
   }
   if ( p_tempSend == NULL ) {
     #if 0
     char tempString[80];
     sprintf( tempString, "Buffer Send with Bus: %hd, MsgObj: %hd, MaxSize: %d, Size: %d, Read: %d, Write: %d, IRQ-Cnt: %lu, TX-IRQ: %lu, RX-IRQ: %lu, State: %x\n\r",
-    rui8_busNr, rui8_msgobjNr,
-    ui16_canBufferMaxSize[rui8_busNr][rui8_msgobjNr],
-    ui16_canBufferSize[rui8_busNr][rui8_msgobjNr],
-    ui16_canBufferRead[rui8_busNr][rui8_msgobjNr],
-    ui16_canBufferWrite[rui8_busNr][rui8_msgobjNr],
+    aui8_busNr, aui8_msgobjNr,
+    ui16_canBufferMaxSize[aui8_busNr][aui8_msgobjNr],
+    ui16_canBufferSize[aui8_busNr][aui8_msgobjNr],
+    ui16_canBufferRead[aui8_busNr][aui8_msgobjNr],
+    ui16_canBufferWrite[aui8_busNr][aui8_msgobjNr],
     sui32_irqCnt,
     sui32_txIrqCnt,
     sui32_rxIrqCnt,
-    ui16_lastCanBusState[rui8_busNr] );
+    ui16_lastCanBusState[aui8_busNr] );
     put_rs232String( (const uint8_t *) tempString );
   #endif
     // first if buffer is full
-    if ( isCanRingBufferFull( rui8_busNr, rui8_msgobjNr ) ) {
+    if ( isCanRingBufferFull( aui8_busNr, aui8_msgobjNr ) ) {
     #if 0
     put_rs232String( "Send Buffer Full\n\r" );
     #endif
@@ -1249,14 +1249,14 @@ int16_t can_useMsgobjSend(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib:
     // ( this could cause trouble, if the current to be written msg is the first msg in a
     //   previously empty buffer ) - if the buffer contains more elements, a parallel access
     //  causes no problems
-    b_appLock[rui8_busNr][rui8_msgobjNr] = true;
+    b_appLock[aui8_busNr][aui8_msgobjNr] = true;
 
     // retrieve pointer to buffer, where next data can be inserted ( don't force overwrite )
-    canBufferElement_t* ps_element = writeDataToCanRingBuffer( rui8_busNr, rui8_msgobjNr, false );
+    canBufferElement_t* ps_element = writeDataToCanRingBuffer( aui8_busNr, aui8_msgobjNr, false );
 
     if ( ps_element == NULL ) {
       // maybe meanwhile buffer is full -> exit
-      b_appLock[rui8_busNr][rui8_msgobjNr] = false;
+      b_appLock[aui8_busNr][aui8_msgobjNr] = false;
     #if 0
       put_rs232String( "Insert in buffer faulted\n\r" );
     #endif
@@ -1270,62 +1270,62 @@ int16_t can_useMsgobjSend(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib:
   // now insert to be sent data
   // CanPkgExt_c::getData transforms flag data to ident and 8byte string
   uint8_t ui8_type;
-  rpc_data->getData(p_tempSend->id, ui8_type, p_tempSend->bytes, p_tempSend->databytes);
-  // pt_send->dwId = rpc_data->ident();
-  // if (rpc_data->identType() == 1)
+  apc_data->getData(p_tempSend->id, ui8_type, p_tempSend->bytes, p_tempSend->databytes);
+  // pt_send->dwId = apc_data->ident();
+  // if (apc_data->identType() == 1)
   // CanPkg_c::ident() and CanPkg_c::identType() changed to static
   p_tempSend->id = __IsoAgLib::CanPkg_c::ident();
   if (ui8_type == 1)
   { // extended 29bit ident
-    updateCanBusLoad(rui8_busNr, (p_tempSend->bytes + 4));
+    updateCanBusLoad(aui8_busNr, (p_tempSend->bytes + 4));
   }
   else
   { // standard 11bit ident
-    updateCanBusLoad(rui8_busNr, (p_tempSend->bytes + 2));
+    updateCanBusLoad(aui8_busNr, (p_tempSend->bytes + 2));
   }
 
   // check if p_tempSend was written with address of ss_tempSendObj for direct write
   if ( p_tempSend != &ss_tempSendObj ) {
     // buffered write detected
     // buffer contains now ready data -> release lock
-    b_appLock[rui8_busNr][rui8_msgobjNr] = false;
+    b_appLock[aui8_busNr][aui8_msgobjNr] = false;
     // check if currently a send irq process is running which could be now restarted
-    if ( b_runningIrqSendProcess[rui8_busNr] == false ) {
+    if ( b_runningIrqSendProcess[aui8_busNr] == false ) {
       canBufferElement_t* ps_element = NULL;
       // only retry to start send, if corresponding MsgObj is ready to send
-      if ( rui8_busNr == 0 ) {
-        if ( CAN1_RequestMsgObj( rui8_msgobjNr ) != 0 )
-          ps_element = readPopDataFromCanRingBuffer( 0, rui8_msgobjNr );
+      if ( aui8_busNr == 0 ) {
+        if ( CAN1_RequestMsgObj( aui8_msgobjNr ) != 0 )
+          ps_element = readPopDataFromCanRingBuffer( 0, aui8_msgobjNr );
       }
       else {
-        if ( CAN2_RequestMsgObj( rui8_msgobjNr ) != 0 )
-          ps_element = readPopDataFromCanRingBuffer( 1, rui8_msgobjNr );
+        if ( CAN2_RequestMsgObj( aui8_msgobjNr ) != 0 )
+          ps_element = readPopDataFromCanRingBuffer( 1, aui8_msgobjNr );
       }
       if ( ps_element != NULL ) {
         // start send the first msg in buffer
-        b_runningIrqSendProcess[rui8_busNr] = true;
+        b_runningIrqSendProcess[aui8_busNr] = true;
         p_tempSend = &( ps_element->data );
-        if ( rui8_busNr == 0 ) {
-          CAN1_WriteMsgObjData( rui8_msgobjNr, p_tempSend );
-          CAN1_Transmit( rui8_msgobjNr );
+        if ( aui8_busNr == 0 ) {
+          CAN1_WriteMsgObjData( aui8_msgobjNr, p_tempSend );
+          CAN1_Transmit( aui8_msgobjNr );
     }
     else {
-          CAN2_WriteMsgObjData( rui8_msgobjNr, p_tempSend );
-          CAN2_Transmit( rui8_msgobjNr );
+          CAN2_WriteMsgObjData( aui8_msgobjNr, p_tempSend );
+          CAN2_Transmit( aui8_msgobjNr );
     }
       }
     }
   }
   else {
     // direct send detected
-    b_runningIrqSendProcess[rui8_busNr] = true;
-    if ( rui8_busNr == 0 ) {
-      CAN1_WriteMsgObjData( rui8_msgobjNr, p_tempSend );
-      CAN1_Transmit( rui8_msgobjNr );
+    b_runningIrqSendProcess[aui8_busNr] = true;
+    if ( aui8_busNr == 0 ) {
+      CAN1_WriteMsgObjData( aui8_msgobjNr, p_tempSend );
+      CAN1_Transmit( aui8_msgobjNr );
     }
     else {
-      CAN2_WriteMsgObjData( rui8_msgobjNr, p_tempSend );
-      CAN2_Transmit( rui8_msgobjNr );
+      CAN2_WriteMsgObjData( aui8_msgobjNr, p_tempSend );
+      CAN2_Transmit( aui8_msgobjNr );
     }
   }
 
@@ -1335,8 +1335,8 @@ int16_t can_useMsgobjSend(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib:
 /**
   get the ident of a received message to decide about the further
   processing before the whole data string is retreived
-  @param rui8_busNr number of the BUS to config
-  @param rui8_msgobjNr number of the MsgObj to config
+  @param aui8_busNr number of the BUS to config
+  @param aui8_msgobjNr number of the MsgObj to config
   @param reflIdent reference to the var, where the ident should be inserted
   @return error code
   HAL_NO_ERR == No problem
@@ -1346,20 +1346,20 @@ int16_t can_useMsgobjSend(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib:
   HAL_RANGE_ERR == wrong BUS or MsgObj number
   HAL_WARN_ERR == BUS WARN or no received message
 */
-int32_t can_useMsgobjReceivedIdent(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, int32_t &reflIdent)
+int32_t can_useMsgobjReceivedIdent(uint8_t aui8_busNr, uint8_t aui8_msgobjNr, int32_t &reflIdent)
 {
-  if ( ( rui8_busNr > 1 ) || ( rui8_msgobjNr> 14 ) ) return HAL_RANGE_ERR;
-  if ( isCanRingBufferEmpty( rui8_busNr, rui8_msgobjNr ) ) return HAL_WARN_ERR;
+  if ( ( aui8_busNr > 1 ) || ( aui8_msgobjNr> 14 ) ) return HAL_RANGE_ERR;
+  if ( isCanRingBufferEmpty( aui8_busNr, aui8_msgobjNr ) ) return HAL_WARN_ERR;
   // a receive MsgObj is registered with 0 in corresponding ui8_canBufferDirectionState
-  if ( ui8_canBufferDirectionState[rui8_busNr][rui8_msgobjNr] != 0 ) return HAL_CONFIG_ERR;
+  if ( ui8_canBufferDirectionState[aui8_busNr][aui8_msgobjNr] != 0 ) return HAL_CONFIG_ERR;
   // now write ident of MsgObj at position readPos
-  reflIdent = pt_canBufferRead[rui8_busNr][rui8_msgobjNr]->data.id;
+  reflIdent = pt_canBufferRead[aui8_busNr][aui8_msgobjNr]->data.id;
   #if 0
   char temp[50];
   if ( ( reflIdent & 0x700 ) == 0x200 ) {
     sprintf( temp, "Id0x%lx T%ld O%hd P%hd\n\r",
-           reflIdent, arr_canBuffer[rui8_busNr][rui8_msgobjNr][readPos].timestamp,
-       rui8_msgobjNr, readPos );
+           reflIdent, arr_canBuffer[aui8_busNr][aui8_msgobjNr][readPos].timestamp,
+       aui8_msgobjNr, readPos );
     put_rs232String( (const uint8_t *) temp );
   }
   #endif
@@ -1371,14 +1371,14 @@ int32_t can_useMsgobjReceivedIdent(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, in
   DON'T clear this item from buffer.
   @see can_useMsgobjPopFront for explicit clear of this front item
   functions:
-  * void setIdent(MASK_TYPE rt_ident, Ident_c::identType_t rt_type)
-    -> set ident rrefc_ident of received msg in CanPkg_c
-  * uint8_t setDataFromString(uint8_t* rpb_data, uint8_t rb_dlc)
-    -> set DLC in CanPkg_c from rb_dlc and insert data from uint8_t string rpb_data
-  * void setTime(int32_t ri32_time) -> set receive time
-  @param rui8_busNr number of the BUS to config
-  @param rui8_msgobjNr number of the MsgObj to config
-  @param rpc_data pointer to CanPkg_c instance with data to send
+  * void setIdent(MASK_TYPE at_ident, Ident_c::identType_t at_type)
+    -> set ident arc_ident of received msg in CanPkg_c
+  * uint8_t setDataFromString(uint8_t* apb_data, uint8_t ab_dlc)
+    -> set DLC in CanPkg_c from ab_dlc and insert data from uint8_t string apb_data
+  * void setTime(int32_t ai32_time) -> set receive time
+  @param aui8_busNr number of the BUS to config
+  @param aui8_msgobjNr number of the MsgObj to config
+  @param apc_data pointer to CanPkg_c instance with data to send
   @return HAL_NO_ERR == no error;
           HAL_CONFIG_ERR == BUS not initialised, MsgObj is no RX object
           HAL_NOACT_ERR == BUS OFF
@@ -1386,28 +1386,28 @@ int32_t can_useMsgobjReceivedIdent(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, in
           HAL_RANGE_ERR == wrong BUS or MsgObj number
           HAL_WARN_ERR == BUS WARN or no received message
 */
-int16_t can_useMsgobjGet(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib::CanPkg_c* rpc_data)
+int16_t can_useMsgobjGet(uint8_t aui8_busNr, uint8_t aui8_msgobjNr, __IsoAgLib::CanPkg_c* apc_data)
 {
-  if ( ( rui8_busNr > 1 ) || ( rui8_msgobjNr> 14 ) ) return HAL_RANGE_ERR;
-  if ( isCanRingBufferEmpty( rui8_busNr, rui8_msgobjNr ) ) return HAL_WARN_ERR;
+  if ( ( aui8_busNr > 1 ) || ( aui8_msgobjNr> 14 ) ) return HAL_RANGE_ERR;
+  if ( isCanRingBufferEmpty( aui8_busNr, aui8_msgobjNr ) ) return HAL_WARN_ERR;
   // a receive MsgObj is registered with 0 in corresponding ui8_canBufferDirectionState
-  if ( ui8_canBufferDirectionState[rui8_busNr][rui8_msgobjNr] != 0 ) return HAL_CONFIG_ERR;
+  if ( ui8_canBufferDirectionState[aui8_busNr][aui8_msgobjNr] != 0 ) return HAL_CONFIG_ERR;
 
   // repeat send tries till the AppLock isn't reset by IRQ function
   do {
-    b_appLock[rui8_busNr][rui8_msgobjNr] = true;
+    b_appLock[aui8_busNr][aui8_msgobjNr] = true;
     // TEST
     int32_t i32_test;
-    can_useMsgobjReceivedIdent( rui8_busNr, rui8_msgobjNr, i32_test );
+    can_useMsgobjReceivedIdent( aui8_busNr, aui8_msgobjNr, i32_test );
     // TEST
     // retrieve pointer with data to read
-    canBufferElement_t *pt_element = readDataFromCanRingBuffer( rui8_busNr, rui8_msgobjNr );
+    canBufferElement_t *pt_element = readDataFromCanRingBuffer( aui8_busNr, aui8_msgobjNr );
     // check if valid data was returned
     if ( pt_element == NULL ) return HAL_WARN_ERR;
     // now read data from pointed element of buffer
-    __IsoAgLib::CanPkg_c::setIdent(uint32_t( pt_element->data.id ), __IsoAgLib::Ident_c::identType_t(ui8_canBufferXtd[rui8_busNr][rui8_msgobjNr]));
-    rpc_data->setDataFromString(pt_element->data.databytes, pt_element->data.bytes);
-  rpc_data->setTime( pt_element->timestamp );
+    __IsoAgLib::CanPkg_c::setIdent(uint32_t( pt_element->data.id ), __IsoAgLib::Ident_c::identType_t(ui8_canBufferXtd[aui8_busNr][aui8_msgobjNr]));
+    apc_data->setDataFromString(pt_element->data.databytes, pt_element->data.bytes);
+  apc_data->setTime( pt_element->timestamp );
   #if 0
   char temp[50];
   if ( ( pt_element->data.id & 0x700 ) == 0x200 ) {
@@ -1438,9 +1438,9 @@ int16_t can_useMsgobjGet(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib::
       put_rs232String( (const uint8_t *) temp );
   }
   #endif
-  } while ( b_appLock[rui8_busNr][rui8_msgobjNr] == false );
+  } while ( b_appLock[aui8_busNr][aui8_msgobjNr] == false );
   // now flag can be cleared as data is complete read
-  b_appLock[rui8_busNr][rui8_msgobjNr] = false;
+  b_appLock[aui8_busNr][aui8_msgobjNr] = false;
 
   return HAL_NO_ERR;
 }
@@ -1451,31 +1451,31 @@ int16_t can_useMsgobjGet(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib::
   This explicit pop is needed, as one CAN message shall be served to
   several CanCustomer_c instances, as long as one of them indicates a
   succesfull process of the received message.
-  @param rui8_busNr number of the BUS to config
-  @param rui8_msgobjNr number of the MsgObj to config
+  @param aui8_busNr number of the BUS to config
+  @param aui8_msgobjNr number of the MsgObj to config
 */
-void can_useMsgobjPopFront(uint8_t rui8_busNr, uint8_t rui8_msgobjNr)
+void can_useMsgobjPopFront(uint8_t aui8_busNr, uint8_t aui8_msgobjNr)
 { // simply increment read position without further interpretation
-  if ( ( rui8_busNr > 1 ) || ( rui8_msgobjNr> 14 ) ) return;
-  popDataFromCanRingBuffer( rui8_busNr, rui8_msgobjNr );
+  if ( ( aui8_busNr > 1 ) || ( aui8_msgobjNr> 14 ) ) return;
+  popDataFromCanRingBuffer( aui8_busNr, aui8_msgobjNr );
 }
 
 
 /**
   clear th buffer of a MsgObj (e.g. to stop sending retries)
-  @param rui8_busNr number of the BUS to config
-  @param rui8_msgobjNr number of the MsgObj to config
+  @param aui8_busNr number of the BUS to config
+  @param aui8_msgobjNr number of the MsgObj to config
   @return HAL_NO_ERR == no error;
           HAL_CONFIG_ERR == BUS not initialised
           HAL_RANGE_ERR == wrong BUS or MsgObj number
 */
-int16_t can_useMsgobjClear(uint8_t rui8_busNr, uint8_t rui8_msgobjNr)
+int16_t can_useMsgobjClear(uint8_t aui8_busNr, uint8_t aui8_msgobjNr)
 {
-  if ( ( rui8_busNr > 1 ) || ( rui8_msgobjNr> 14 ) ) return HAL_RANGE_ERR;
+  if ( ( aui8_busNr > 1 ) || ( aui8_msgobjNr> 14 ) ) return HAL_RANGE_ERR;
   // a receive MsgObj is registered with 0 in corresponding ui8_canBufferDirectionState
-  if ( ui8_canBufferDirectionState[rui8_busNr][rui8_msgobjNr] != 1 ) return HAL_CONFIG_ERR;
+  if ( ui8_canBufferDirectionState[aui8_busNr][aui8_msgobjNr] != 1 ) return HAL_CONFIG_ERR;
   // reset buffer state
-  resetCanRingBuffer( rui8_busNr, rui8_msgobjNr );
+  resetCanRingBuffer( aui8_busNr, aui8_msgobjNr );
   // close - open MsgObj
   return HAL_NO_ERR;
 }

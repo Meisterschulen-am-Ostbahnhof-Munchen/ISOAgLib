@@ -91,13 +91,13 @@ void close_rs232()
   @param bitSoftwarehandshake true -> use xon/xoff software handshake
   @return HAL_NO_ERR -> o.k. else one of settings incorrect
  */
-int16_t init_rs232(uint16_t wBaudrate,uint8_t bMode,uint8_t bStoppbits,bool bitSoftwarehandshake, uint8_t rui8_channel)
+int16_t init_rs232(uint16_t wBaudrate,uint8_t bMode,uint8_t bStoppbits,bool bitSoftwarehandshake, uint8_t aui8_channel)
 {
-  if ( rui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
+  if ( aui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
 
 #ifdef SYSTEM_A1
 // Don't allow gps communication on com 1 of the A1 - it is used for
-if(rui8_channel == 0)
+if(aui8_channel == 0)
   return HAL_NO_ERR;
 #endif
   static char com[] = "/dev/ttySx";
@@ -106,7 +106,7 @@ if(rui8_channel == 0)
   uint32_t  baudflag;
 
   // first close if already configured
-  close_rs232(rui8_channel);
+  close_rs232(aui8_channel);
 
   b = t_baud;
   do {
@@ -114,18 +114,18 @@ if(rui8_channel == 0)
     if (b->rate >= wBaudrate) break;
   } while (++b < t_baud + sizeof t_baud/sizeof *t_baud);
 
-  com[9] = rui8_channel+'0';
-  if ((f_com[rui8_channel] = open(com, O_RDWR|O_NOCTTY|O_NDELAY)) < 0) return HAL_CONFIG_ERR;
-  if (tcgetattr(f_com[rui8_channel], &(t_com[rui8_channel]))) return HAL_CONFIG_ERR;
+  com[9] = aui8_channel+'0';
+  if ((f_com[aui8_channel] = open(com, O_RDWR|O_NOCTTY|O_NDELAY)) < 0) return HAL_CONFIG_ERR;
+  if (tcgetattr(f_com[aui8_channel], &(t_com[aui8_channel]))) return HAL_CONFIG_ERR;
 
-  arr_usedPort[rui8_channel] = true;
+  arr_usedPort[aui8_channel] = true;
   atexit(close_rs232);
 
   /* Configure port reading */
-  fcntl(f_com[rui8_channel], F_SETFL, FNDELAY);
+  fcntl(f_com[aui8_channel], F_SETFL, FNDELAY);
 
   /* Get the current options for the port */
-  tcgetattr(f_com[rui8_channel], &tty_options);
+  tcgetattr(f_com[aui8_channel], &tty_options);
   cfsetispeed(&tty_options, baudflag);
   cfsetospeed(&tty_options, baudflag);
 
@@ -195,13 +195,13 @@ if(rui8_channel == 0)
   tty_options.c_lflag &= ~(ICANON | ECHO | ISIG);
 
   /* Set the new options for the port */
-  tcsetattr(f_com[rui8_channel], TCSANOW, &tty_options);
+  tcsetattr(f_com[aui8_channel], TCSANOW, &tty_options);
 
   // wait some time to avoid buffer error
   usleep( 500000 ); // sleep for 500msec
 
   // reset read puffer
-  deq_readPuff[rui8_channel].clear();
+  deq_readPuff[aui8_channel].clear();
 
   return HAL_NO_ERR;
 }
@@ -211,15 +211,15 @@ if(rui8_channel == 0)
   @param wBaudrate wanted baudrate
   @return HAL_NO_ERR -> o.k. else baudrate setting incorrect
  */
-int16_t setRs232Baudrate(uint16_t wBaudrate, uint8_t rui8_channel)
+int16_t setRs232Baudrate(uint16_t wBaudrate, uint8_t aui8_channel)
 {
-  if ( rui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
+  if ( aui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
   struct termios tty_options;
   struct T_BAUD *b;
   uint32_t  baudflag;
 
   // first close if already configured
-  close_rs232(rui8_channel);
+  close_rs232(aui8_channel);
 
   b = t_baud;
   do {
@@ -227,12 +227,12 @@ int16_t setRs232Baudrate(uint16_t wBaudrate, uint8_t rui8_channel)
     if (b->rate >= wBaudrate) break;
   } while (++b < t_baud + sizeof t_baud/sizeof *t_baud);
 
-  if (tcgetattr(f_com[rui8_channel], &tty_options)) return 0;
+  if (tcgetattr(f_com[aui8_channel], &tty_options)) return 0;
   cfsetispeed(&tty_options, baudflag);
   cfsetospeed(&tty_options, baudflag);
 
   /* Set the new options for the port */
-  tcsetattr(f_com[rui8_channel], TCSANOW, &tty_options);
+  tcsetattr(f_com[aui8_channel], TCSANOW, &tty_options);
 
   // wait some time to avoid buffer error
   usleep( 500000 ); // sleep for 500msec
@@ -251,12 +251,12 @@ int16_t SioPutBuffer(uint32_t comport, const uint8_t *p, int16_t n)
   @param bByte data uint8_t to send
   @return HAL_NO_ERR -> o.k. else send puffer overflow
  */
-int16_t put_rs232Char(uint8_t bByte, uint8_t rui8_channel)
+int16_t put_rs232Char(uint8_t bByte, uint8_t aui8_channel)
 {
-  if ( rui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
+  if ( aui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
   // printf("RS232:\n %c\n", bByte);
   uint8_t b_data = bByte;
-  SioPutBuffer(rui8_channel, &b_data, 1);
+  SioPutBuffer(aui8_channel, &b_data, 1);
   return HAL_NO_ERR;
 }
 /**
@@ -265,10 +265,10 @@ int16_t put_rs232Char(uint8_t bByte, uint8_t rui8_channel)
   @param wNumber number of data uint8_t to send
   @return HAL_NO_ERR -> o.k. else send puffer overflow
  */
-int16_t put_rs232NChar(const uint8_t *bpWrite,uint16_t wNumber, uint8_t rui8_channel)
+int16_t put_rs232NChar(const uint8_t *bpWrite,uint16_t wNumber, uint8_t aui8_channel)
 {
-  if ( rui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
-  SioPutBuffer(rui8_channel, bpWrite, wNumber);
+  if ( aui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
+  SioPutBuffer(aui8_channel, bpWrite, wNumber);
   return HAL_NO_ERR;
 }
 /**
@@ -276,11 +276,11 @@ int16_t put_rs232NChar(const uint8_t *bpWrite,uint16_t wNumber, uint8_t rui8_cha
   @param pbString pointer to '\0' terminated (!) source data string
   @return HAL_NO_ERR -> o.k. else send puffer overflow
  */
-int16_t put_rs232String(const uint8_t *pbString, uint8_t rui8_channel)
+int16_t put_rs232String(const uint8_t *pbString, uint8_t aui8_channel)
 {
-  if ( rui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
+  if ( aui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
   // printf("RS232:: %s", pbString);
-  SioPutBuffer(rui8_channel, pbString, strlen((const char*)pbString));
+  SioPutBuffer(aui8_channel, pbString, strlen((const char*)pbString));
   return HAL_NO_ERR;
 }
 
@@ -288,15 +288,15 @@ int16_t put_rs232String(const uint8_t *pbString, uint8_t rui8_channel)
   get the amount of data [uint8_t] in receive puffer
   @return receive puffer data byte
  */
-int16_t getRs232RxBufCount(uint8_t rui8_channel)
+int16_t getRs232RxBufCount(uint8_t aui8_channel)
 {
-  if ( rui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
+  if ( aui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
   int8_t c_temp[300];
-  int16_t tempLen = read(f_com[rui8_channel], c_temp, (299));
+  int16_t tempLen = read(f_com[aui8_channel], c_temp, (299));
 
-  for ( uint16_t ind = 0; ind < tempLen; ind++ ) deq_readPuff[rui8_channel].push_back( c_temp[ind] );
+  for ( uint16_t ind = 0; ind < tempLen; ind++ ) deq_readPuff[aui8_channel].push_back( c_temp[ind] );
 
-  return deq_readPuff[rui8_channel].size();
+  return deq_readPuff[aui8_channel].size();
 }
 
 /**
@@ -304,14 +304,14 @@ int16_t getRs232RxBufCount(uint8_t rui8_channel)
   @param pbRead pointer to target data
   @return HAL_NO_ERR -> o.k. else puffer underflow
  */
-int16_t getRs232Char(uint8_t *pbRead, uint8_t rui8_channel)
+int16_t getRs232Char(uint8_t *pbRead, uint8_t aui8_channel)
 {
-  if ( rui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
-  getRs232RxBufCount(rui8_channel);
-  if (! deq_readPuff[rui8_channel].empty())
+  if ( aui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
+  getRs232RxBufCount(aui8_channel);
+  if (! deq_readPuff[aui8_channel].empty())
   {
-    pbRead[0] = deq_readPuff[rui8_channel].front();
-    deq_readPuff[rui8_channel].pop_front();
+    pbRead[0] = deq_readPuff[aui8_channel].front();
+    deq_readPuff[aui8_channel].pop_front();
     return HAL_NO_ERR;
   }
   else
@@ -326,24 +326,24 @@ int16_t getRs232Char(uint8_t *pbRead, uint8_t rui8_channel)
   @param bLastChar terminating char
   @return HAL_NO_ERR -> o.k. else puffer underflow
  */
-int16_t getRs232String(uint8_t *pbRead,uint8_t bLastChar, uint8_t rui8_channel)
+int16_t getRs232String(uint8_t *pbRead,uint8_t bLastChar, uint8_t aui8_channel)
 {
-  if ( rui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
-  getRs232RxBufCount(rui8_channel);
-  if (! deq_readPuff[rui8_channel].empty())
+  if ( aui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
+  getRs232RxBufCount(aui8_channel);
+  if (! deq_readPuff[aui8_channel].empty())
   {
-    for ( STL_NAMESPACE::deque<int8_t>::iterator iter = deq_readPuff[rui8_channel].begin(); iter != deq_readPuff[rui8_channel].end(); iter++ )
+    for ( STL_NAMESPACE::deque<int8_t>::iterator iter = deq_readPuff[aui8_channel].begin(); iter != deq_readPuff[aui8_channel].end(); iter++ )
     { // check if terminating char is found
       if ( *iter == bLastChar )
       { // found -> copy area from begin to iterator
         uint16_t ind = 0;
-        for ( ; ( deq_readPuff[rui8_channel].front() != bLastChar); ind++ )
+        for ( ; ( deq_readPuff[aui8_channel].front() != bLastChar); ind++ )
         {
-          pbRead[ind] = deq_readPuff[rui8_channel].front();
-          deq_readPuff[rui8_channel].pop_front();
+          pbRead[ind] = deq_readPuff[aui8_channel].front();
+          deq_readPuff[aui8_channel].pop_front();
         }
         // lastly pop the termination char and terminate the result string
-        deq_readPuff[rui8_channel].pop_front();
+        deq_readPuff[aui8_channel].pop_front();
         pbRead[ind] = '\0';
         return HAL_NO_ERR;
       }
@@ -370,9 +370,9 @@ int8_t *KeyGetString(char *buffer, int16_t len)
   get the amount of data [uint8_t] in send puffer
   @return send puffer data byte
  */
-int16_t getRs232TxBufCount(uint8_t rui8_channel)
+int16_t getRs232TxBufCount(uint8_t aui8_channel)
 {
-  if ( rui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
+  if ( aui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
   /** @todo decide if RS232 TX buffer from OS should be asked */
   return 0;
 }
@@ -381,9 +381,9 @@ int16_t getRs232TxBufCount(uint8_t rui8_channel)
   @param wBuffersize wanted puffer size
   @param pFunction pointer to irq function or NULL if not wanted
  */
-int16_t configRs232RxObj(uint16_t wBuffersize,void (*pFunction)(uint8_t *bByte), uint8_t rui8_channel)
+int16_t configRs232RxObj(uint16_t wBuffersize,void (*pFunction)(uint8_t *bByte), uint8_t aui8_channel)
 {
-  if ( rui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
+  if ( aui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
   /** @todo should this be implemented? */
   return HAL_NO_ERR;
 }
@@ -394,9 +394,9 @@ int16_t configRs232RxObj(uint16_t wBuffersize,void (*pFunction)(uint8_t *bByte),
   @param funktionBeforTransmit pointer to irq function or NULL if not wanted
  */
 int16_t configRs232TxObj(uint16_t wBuffersize,void (*funktionAfterTransmit)(uint8_t *bByte),
-                         void (*funktionBeforTransmit)(uint8_t *bByte), uint8_t rui8_channel)
+                         void (*funktionBeforTransmit)(uint8_t *bByte), uint8_t aui8_channel)
 {
-  if ( rui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
+  if ( aui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
   /** @todo should this be implemented? */
   return HAL_NO_ERR;
 }
@@ -404,9 +404,9 @@ int16_t configRs232TxObj(uint16_t wBuffersize,void (*funktionAfterTransmit)(uint
   get errr code of BIOS
   @return 0=parity, 1=stopbit framing error, 2=overflow
  */
-int16_t getRs232Error(uint8_t *Errorcode, uint8_t rui8_channel)
+int16_t getRs232Error(uint8_t *Errorcode, uint8_t aui8_channel)
 {
-  if ( rui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
+  if ( aui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
   /** @todo should this be implemented? */
   return HAL_NO_ERR;
 }
@@ -416,18 +416,18 @@ int16_t getRs232Error(uint8_t *Errorcode, uint8_t rui8_channel)
 /**
   clear receive puffer
  */
-void clearRs232RxBuffer(uint8_t rui8_channel)
+void clearRs232RxBuffer(uint8_t aui8_channel)
 {
-  if ( rui8_channel >= RS232_INSTANCE_CNT ) return;
+  if ( aui8_channel >= RS232_INSTANCE_CNT ) return;
   /** @todo should this be implemented? */
 };
 
 /**
   clear send puffer
  */
-void clearRs232TxBuffer(uint8_t rui8_channel)
+void clearRs232TxBuffer(uint8_t aui8_channel)
 {
-  if ( rui8_channel >= RS232_INSTANCE_CNT ) return;
+  if ( aui8_channel >= RS232_INSTANCE_CNT ) return;
   /** @todo should this be implemented? */
 }
 

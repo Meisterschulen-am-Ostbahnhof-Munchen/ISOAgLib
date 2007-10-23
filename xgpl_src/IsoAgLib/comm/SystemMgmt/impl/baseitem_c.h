@@ -108,17 +108,17 @@ public:
   /**
     constructor which takes optional the pointer to the containing Scheduler_c instance
     and the actual time as parameter to initialise all own values
-    @param ri32_time optional timestamp to store as last update
-    @param rb_status state of this ident (off, claimed address, ...) (default: off)
-    @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
+    @param ai32_time optional timestamp to store as last update
+    @param ab_status state of this ident (off, claimed address, ...) (default: off)
+    @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
-  BaseItem_c( int32_t ri32_time = 0, IState_c::itemState_t rb_status = IState_c::IstateNull, int ri_singletonVecKey = 0);
+  BaseItem_c( int32_t ai32_time = 0, IState_c::itemState_t ab_status = IState_c::IstateNull, int ai_singletonVecKey = 0);
 
   /**
     copy constructor which takes it initial values from another BaseItem_c instance
-    @param rrefc_baseItem reference to the source BaseItem_c instance
+    @param arc_baseItem reference to the source BaseItem_c instance
   */
-  BaseItem_c(const BaseItem_c& rrefc_baseItem);
+  BaseItem_c(const BaseItem_c& arc_baseItem);
 
   /** destructor which sets the update timestamp to 0 */
   ~BaseItem_c();
@@ -126,25 +126,25 @@ public:
   /**
     operator= which defines src as const to avoid
     compile warnings with the automatic generated version
-    @param rrefc_src reference to source BaseItem_c to copy values from
+    @param arc_src reference to source BaseItem_c to copy values from
     @return reference to the source BaseItem_c instance for assign chains like "base1 = base2 = base3;"
   */
   BaseItem_c& operator=(const BaseItem_c& src);
 
   /**
     set pointer to containing Scheduler_c instance and update timestamp of object
-    @param ri32_time optional timestamp to set as update time
-    @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
+    @param ai32_time optional timestamp to set as update time
+    @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
-  void set(int32_t ri32_time = -1, int ri_singletonVecKey = 0);
+  void set(int32_t ai32_time = -1, int ai_singletonVecKey = 0);
 
   /**
     set pointer to containing Scheduler_c instance and update timestamp of object
-    @param ri32_time optional timestamp to set as update time
-    @param rb_status state of this ident (off, claimed address, ...) (default: off)
-    @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
+    @param ai32_time optional timestamp to set as update time
+    @param ab_status state of this ident (off, claimed address, ...) (default: off)
+    @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
-  void set(int32_t ri32_time, IState_c::itemState_t rb_status, int ri_singletonVecKey = 0);
+  void set(int32_t ai32_time, IState_c::itemState_t ab_status, int ai_singletonVecKey = 0);
 
   /**
     calculates time between now and last set of i32_lastTime;
@@ -161,30 +161,30 @@ public:
   int32_t lastTime() const {return i32_lastTime;}
 
   /**
-    updates i32_lastTime to ri32_time or actual
+    updates i32_lastTime to ai32_time or actual
     system time if no time is given
-    @param ri32_time optional time to store as last update time (default retreive actual time from central SystemMgmt_c instance)
+    @param ai32_time optional time to store as last update time (default retreive actual time from central SystemMgmt_c instance)
   */
-  void updateTime( int32_t ri32_time = -1 )
-    {if ( ri32_time < 0 ) i32_lastTime = ElementBase_c::getLastRetriggerTime();
-     else i32_lastTime = ri32_time;
+  void updateTime( int32_t ai32_time = -1 )
+    {if ( ai32_time < 0 ) i32_lastTime = ElementBase_c::getLastRetriggerTime();
+     else i32_lastTime = ai32_time;
     }
 
   /**
     check if given time intervall is lasted
-    @param rui16_timeInterval time intervall in msec
-    @param ri32_time optional timestamp in [msec]
+    @param aui16_timeInterval time intervall in msec
+    @param ai32_time optional timestamp in [msec]
     @return true -> time last timestamp older than intervall
   */
-  bool checkTime(uint16_t rui16_timeInterval) const;
+  bool checkTime(uint16_t aui16_timeInterval) const;
 
   /**
     check if given time intervall is lasted;
     if time intervall is lasted - update time
-    @param rui16_timeInterval time intervall in msec
+    @param aui16_timeInterval time intervall in msec
     @return true -> time last timestamp older than intervall
   */
-  bool checkUpdateTime(uint16_t rui16_timeInterval);
+  bool checkUpdateTime(uint16_t aui16_timeInterval);
 
 protected:
 private:

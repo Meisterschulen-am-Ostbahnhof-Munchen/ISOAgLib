@@ -144,18 +144,18 @@ typedef struct
         above all create the needed FilterBox_c instances
         possible errors:
           * dependant error in CanIo_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
-        @param rpc_isoName optional pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
+        @param apc_isoName optional pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
         @param ai_singletonVecKey singleton vector key in case PRT_INSTANCE_CNT > 1
-        @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
+        @param at_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       */
-    virtual void init_base (const IsoName_c*, int ai_singletonVecKey, IsoAgLib::IdentMode_t rt_identMode = IsoAgLib::IdentModeImplement);
+    virtual void init_base (const IsoName_c*, int ai_singletonVecKey, IsoAgLib::IdentMode_t at_identMode = IsoAgLib::IdentModeImplement);
     /** config the TracPTO_c object after init -> set pointer to isoName and
         config send/receive of different base msg types
-        @param rpc_isoName pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
-        @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
+        @param apc_isoName pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
+        @param at_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
         @return true -> configuration was successfull
       */
-    virtual bool config_base (const IsoName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_IdentMode, uint16_t rui16_suppressMask = 0);
+    virtual bool config_base (const IsoName_c* apc_isoName, IsoAgLib::IdentMode_t at_IdentMode, uint16_t aui16_suppressMask = 0);
 
     /** destructor for Base_c which has nothing to do */
     virtual ~TracPTO_c() { BaseCommon_c::close();};
@@ -166,50 +166,50 @@ typedef struct
     /*@{*/
 
     /** set rear PTO
-      @param ri16_val value to store as the speed of the rear PTO [1RPM]
+      @param ai16_val value to store as the speed of the rear PTO [1RPM]
       */
-    void setPtoRear(const uint16_t rui16_val)
+    void setPtoRear(const uint16_t aui16_val)
     {
-      t_ptoRear.ui16_pto8DigitPerRpm = ( rui16_val * 8 );
+      t_ptoRear.ui16_pto8DigitPerRpm = ( aui16_val * 8 );
 
-      if ( rui16_val == 0 ) setPtoRearEngaged( IsoAgLib::IsoInactive );
+      if ( aui16_val == 0 ) setPtoRearEngaged( IsoAgLib::IsoInactive );
       else                  setPtoRearEngaged( IsoAgLib::IsoActive );
     }
 
     /** set front PTO
-        @param ri16_val value to store as the speed of the front PTO [1RPM]
+        @param ai16_val value to store as the speed of the front PTO [1RPM]
       */
-    void setPtoFront(const uint16_t rui16_val)
+    void setPtoFront(const uint16_t aui16_val)
     {
-      t_ptoFront.ui16_pto8DigitPerRpm = ( rui16_val * 8 );
+      t_ptoFront.ui16_pto8DigitPerRpm = ( aui16_val * 8 );
 
-      if ( rui16_val == 0 ) setPtoFrontEngaged( IsoAgLib::IsoInactive );
+      if ( aui16_val == 0 ) setPtoFrontEngaged( IsoAgLib::IsoInactive );
       else                  setPtoFrontEngaged( IsoAgLib::IsoActive );
     }
 
     /** set rear PTO with unit [1/8RPM] so that the full resolution of ISOBUS messages can be used with integer arithmetic
-    @param ri16_val8DigitPerRpm value to store as the speed of the rear PTO [1/8RPM]
+    @param ai16_val8DigitPerRpm value to store as the speed of the rear PTO [1/8RPM]
      */
-    void setPtoRear8DigitPerRpm(const uint16_t rui16_val8DigitPerRpm)
+    void setPtoRear8DigitPerRpm(const uint16_t aui16_val8DigitPerRpm)
     {
-      t_ptoRear.ui16_pto8DigitPerRpm = rui16_val8DigitPerRpm;
+      t_ptoRear.ui16_pto8DigitPerRpm = aui16_val8DigitPerRpm;
 
-      if ( rui16_val8DigitPerRpm == 0 ) setPtoRearEngaged( IsoAgLib::IsoInactive );
+      if ( aui16_val8DigitPerRpm == 0 ) setPtoRearEngaged( IsoAgLib::IsoInactive );
       else                              setPtoRearEngaged( IsoAgLib::IsoActive );
     }
 
     /** set front PTO with unit [1/8RPM] so that the full resolution of ISOBUS messages can be used with integer arithmetic
-    @param ri16_val8DigitPerRpm value to store as the speed of the front PTO [1/8RPM]
+    @param ai16_val8DigitPerRpm value to store as the speed of the front PTO [1/8RPM]
      */
-    void setPtoFront8DigitPerRpm(const uint16_t rui16_val8DigitPerRpm)
+    void setPtoFront8DigitPerRpm(const uint16_t aui16_val8DigitPerRpm)
     {
-      t_ptoFront.ui16_pto8DigitPerRpm = rui16_val8DigitPerRpm;
+      t_ptoFront.ui16_pto8DigitPerRpm = aui16_val8DigitPerRpm;
 
-      if ( rui16_val8DigitPerRpm == 0 ) setPtoFrontEngaged( IsoAgLib::IsoInactive );
+      if ( aui16_val8DigitPerRpm == 0 ) setPtoFrontEngaged( IsoAgLib::IsoInactive );
       else                              setPtoFrontEngaged( IsoAgLib::IsoActive );
     }
 
-    bool processMsgRequestPGN (uint32_t rui32_pgn, IsoItem_c* rpc_isoItemSender, IsoItem_c* rpc_isoItemReceiver);
+    bool processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver);
 
     /** force a request for pgn for front pto state */
     bool sendRequestUpdateFront();
@@ -225,96 +225,96 @@ typedef struct
     void sendMessage(SendPtoData_t t_sendptodata);
 
     /** set explicit information whether front PTO is engaged
-      * @param rt_val IsoActive -> PTO is engaged
+      * @param at_val IsoActive -> PTO is engaged
       */
-    void setPtoFrontEngaged(const IsoAgLib::IsoActiveFlag_t rt_val) { t_ptoFront.t_ptoEngaged = rt_val; }
+    void setPtoFrontEngaged(const IsoAgLib::IsoActiveFlag_t at_val) { t_ptoFront.t_ptoEngaged = at_val; }
 
     /** set explicit information whether rear PTO is engaged
-      * @param rt_val IsoActive -> PTO is engaged
+      * @param at_val IsoActive -> PTO is engaged
       */
-    void setPtoRearEngaged(const IsoAgLib::IsoActiveFlag_t rt_val) { t_ptoRear.t_ptoEngaged = rt_val;}
+    void setPtoRearEngaged(const IsoAgLib::IsoActiveFlag_t at_val) { t_ptoRear.t_ptoEngaged = at_val;}
 
     /** set std RPM of front PTO (1000 n/min; 540 n/min)
-      * @param rt_val IsoActive == 1000 n/min; false == 540 n/min
+      * @param at_val IsoActive == 1000 n/min; false == 540 n/min
       */
-    void setPtoFront1000(const IsoAgLib::IsoActiveFlag_t rt_val) { t_ptoFront.t_pto1000 = rt_val;}
+    void setPtoFront1000(const IsoAgLib::IsoActiveFlag_t at_val) { t_ptoFront.t_pto1000 = at_val;}
 
     /** set std RPM of rear PTO (1000 n/min; 540 n/min)
-      * @param rt_val IsoActive == 1000 n/min; false == 540 n/min
+      * @param at_val IsoActive == 1000 n/min; false == 540 n/min
       */
-    void setPtoRear1000(const IsoAgLib::IsoActiveFlag_t rt_val) { t_ptoRear.t_pto1000 = rt_val;}
+    void setPtoRear1000(const IsoAgLib::IsoActiveFlag_t at_val) { t_ptoRear.t_pto1000 = at_val;}
 
     /** set economy mode of front PTO
-      * @param rt_val IsoActive -> front PTO is in economy mode
+      * @param at_val IsoActive -> front PTO is in economy mode
       */
-    void setPtoFrontEconomy(const IsoAgLib::IsoActiveFlag_t rt_val) { t_ptoFront.t_ptoEconomy = rt_val;}
+    void setPtoFrontEconomy(const IsoAgLib::IsoActiveFlag_t at_val) { t_ptoFront.t_ptoEconomy = at_val;}
 
     /** set economy mode of rear PTO
-      * @param rt_val IsoActive -> rear PTO is in economy mode
+      * @param at_val IsoActive -> rear PTO is in economy mode
       */
-    void setPtoRearEconomy(const IsoAgLib::IsoActiveFlag_t rt_val) { t_ptoRear.t_ptoEconomy = rt_val;}
+    void setPtoRearEconomy(const IsoAgLib::IsoActiveFlag_t at_val) { t_ptoRear.t_ptoEconomy = at_val;}
 
     /** set measured value of the set point of the rotational speed of the front power take-off (PTO) output shaft
-        @param ri16_val requested RPM [1RPM]
+        @param ai16_val requested RPM [1RPM]
       */
-    void setFrontPtoSetPoint(const uint16_t ri16_val)  { t_ptoFront.ui16_ptoSetPoint8DigitPerRpm = ( ri16_val * 8 );}
+    void setFrontPtoSetPoint(const uint16_t ai16_val)  { t_ptoFront.ui16_ptoSetPoint8DigitPerRpm = ( ai16_val * 8 );}
 
     /** set measured value of the set point of the rotational speed of the rear power take-off (PTO) output shaft
-        @param ri16_val requested RPM [1RPM]
+        @param ai16_val requested RPM [1RPM]
       */
-    void setRearPtoSetPoint(const uint16_t ri16_val)  { t_ptoRear.ui16_ptoSetPoint8DigitPerRpm = ( ri16_val * 8 );}
+    void setRearPtoSetPoint(const uint16_t ai16_val)  { t_ptoRear.ui16_ptoSetPoint8DigitPerRpm = ( ai16_val * 8 );}
 
     /** set measured value of the set point of the rotational speed of the front power take-off (PTO) output shaft
-        @param ri16_val8DigitPerRpm requested RPM [1/8RPM]
+        @param ai16_val8DigitPerRpm requested RPM [1/8RPM]
      */
-    void setFrontPtoSetPoint8DigitPerRpm(const uint16_t ri16_val8DigitPerRpm)
-    { t_ptoFront.ui16_ptoSetPoint8DigitPerRpm = ri16_val8DigitPerRpm;}
+    void setFrontPtoSetPoint8DigitPerRpm(const uint16_t ai16_val8DigitPerRpm)
+    { t_ptoFront.ui16_ptoSetPoint8DigitPerRpm = ai16_val8DigitPerRpm;}
 
     /** set measured value of the set point of the rotational speed of the rear power take-off (PTO) output shaft
-        @param ri16_val8DigitPerRpm requested RPM [1/8RPM]
+        @param ai16_val8DigitPerRpm requested RPM [1/8RPM]
      */
-    void setRearPtoSetPoint8DigitPerRpm(const uint16_t ri16_val8DigitPerRpm)
-    { t_ptoRear.ui16_ptoSetPoint8DigitPerRpm = ri16_val8DigitPerRpm;}
+    void setRearPtoSetPoint8DigitPerRpm(const uint16_t ai16_val8DigitPerRpm)
+    { t_ptoRear.ui16_ptoSetPoint8DigitPerRpm = ai16_val8DigitPerRpm;}
 
     /** set reported tractor ECU's status of front engagement
-        @param rt_val  status to set
+        @param at_val  status to set
       */
-    void setFrontPtoEngagementReqStatus(IsoAgLib::IsoReqFlag_t rt_val) {t_ptoFront.t_ptoEngagementReqStatus = rt_val;}
+    void setFrontPtoEngagementReqStatus(IsoAgLib::IsoReqFlag_t at_val) {t_ptoFront.t_ptoEngagementReqStatus = at_val;}
 
     /** set reported tractor ECU's status of rear engagement
-        @param rt_val  status to set
+        @param at_val  status to set
       */
-    void setRearPtoEngagementReqStatus(IsoAgLib::IsoReqFlag_t rt_val) {t_ptoRear.t_ptoEngagementReqStatus = rt_val;}
+    void setRearPtoEngagementReqStatus(IsoAgLib::IsoReqFlag_t at_val) {t_ptoRear.t_ptoEngagementReqStatus = at_val;}
 
     /** set reported tractor ECU's status of front mode
-        @param rt_val  status to set
+        @param at_val  status to set
       */
-    void setFrontPtoModeReqStatus(IsoAgLib::IsoReqFlag_t rt_val) {t_ptoFront.t_ptoModeReqStatus = rt_val;}
+    void setFrontPtoModeReqStatus(IsoAgLib::IsoReqFlag_t at_val) {t_ptoFront.t_ptoModeReqStatus = at_val;}
 
     /** set reported tractor ECU's status of rear mode
-        @param rt_val  status to set
+        @param at_val  status to set
       */
-    void setRearPtoModeReqStatus(IsoAgLib::IsoReqFlag_t rt_val) {t_ptoRear.t_ptoModeReqStatus = rt_val;}
+    void setRearPtoModeReqStatus(IsoAgLib::IsoReqFlag_t at_val) {t_ptoRear.t_ptoModeReqStatus = at_val;}
 
     /** set reported tractor ECU's status of front economy mode
-        @param rt_val  status to set
+        @param at_val  status to set
       */
-    void setFrontPtoEconomyModeReqStatus(IsoAgLib::IsoReqFlag_t rt_val) {t_ptoFront.t_ptoEconomyModeReqStatus = rt_val;}
+    void setFrontPtoEconomyModeReqStatus(IsoAgLib::IsoReqFlag_t at_val) {t_ptoFront.t_ptoEconomyModeReqStatus = at_val;}
 
     /** set reported tractor ECU's status of rear economy mode
-        @param rt_val  status to set
+        @param at_val  status to set
       */
-    void setRearPtoEconomyModeReqStatus(IsoAgLib::IsoReqFlag_t rt_val) {t_ptoRear.t_ptoEconomyModeReqStatus = rt_val;}
+    void setRearPtoEconomyModeReqStatus(IsoAgLib::IsoReqFlag_t at_val) {t_ptoRear.t_ptoEconomyModeReqStatus = at_val;}
 
     /** set present limit status of front pto shaft speed
-        @param rt_val  status to set
+        @param at_val  status to set
       */
-    void setFrontPtoShaftSpeedLimitStatus(IsoAgLib::IsoLimitFlag_t rt_val) {t_ptoFront.t_ptoShaftSpeedLimitStatus = rt_val;}
+    void setFrontPtoShaftSpeedLimitStatus(IsoAgLib::IsoLimitFlag_t at_val) {t_ptoFront.t_ptoShaftSpeedLimitStatus = at_val;}
 
     /** set present limit status of rear pto shaft speed
-        @param rt_val  status to set
+        @param at_val  status to set
       */
-    void setRearPtoShaftSpeedLimitStatus(IsoAgLib::IsoLimitFlag_t rt_val) {t_ptoRear.t_ptoShaftSpeedLimitStatus = rt_val;}
+    void setRearPtoShaftSpeedLimitStatus(IsoAgLib::IsoLimitFlag_t at_val) {t_ptoRear.t_ptoShaftSpeedLimitStatus = at_val;}
     /*@}*/
 
     /* ****************************************************** */
@@ -484,7 +484,7 @@ typedef struct
   /** C-style function, to get access to the unique TracPTO_c singleton instance
     * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
     */
-  TracPTO_c& getTracPtoInstance(uint8_t rui8_instance = 0);
+  TracPTO_c& getTracPtoInstance(uint8_t aui8_instance = 0);
   #else
   /** C-style function, to get access to the unique TracPTO_c singleton instance */
   TracPTO_c& getTracPtoInstance(void);

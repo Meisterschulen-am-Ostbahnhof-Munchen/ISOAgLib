@@ -176,18 +176,18 @@ vtObjectContainer_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_updat
 }
 
 bool
-vtObjectContainer_c::moveChildLocation(IsoAgLib::iVtObject_c* rpc_childObject, int8_t dx, int8_t dy, bool b_updateObject, bool b_enableReplaceOfCmd)
+vtObjectContainer_c::moveChildLocation(IsoAgLib::iVtObject_c* apc_childObject, int8_t dx, int8_t dy, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
 
   MACRO_localVars;
-  return genericChangeChildLocation (rpc_childObject, dx, dy, b_updateObject, vtObjectContainer_a->numberOfObjectsToFollow, (IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s *) vtObjectContainer_a->objectsToFollow, MACRO_getStructOffset(get_vtObjectContainer_a(), objectsToFollow), sizeof(iVtObjectContainer_s), b_enableReplaceOfCmd);
+  return genericChangeChildLocation (apc_childObject, dx, dy, b_updateObject, vtObjectContainer_a->numberOfObjectsToFollow, (IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s *) vtObjectContainer_a->objectsToFollow, MACRO_getStructOffset(get_vtObjectContainer_a(), objectsToFollow), sizeof(iVtObjectContainer_s), b_enableReplaceOfCmd);
 }
 
 bool
-vtObjectContainer_c::setChildPosition(IsoAgLib::iVtObject_c* rpc_childObject, int16_t x, int16_t y, bool b_updateObject, bool b_enableReplaceOfCmd)
+vtObjectContainer_c::setChildPosition(IsoAgLib::iVtObject_c* apc_childObject, int16_t x, int16_t y, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
   MACRO_localVars;
-  return genericChangeChildPosition (rpc_childObject, x, y, b_updateObject, vtObjectContainer_a->numberOfObjectsToFollow, (IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s *) vtObjectContainer_a->objectsToFollow, MACRO_getStructOffset(get_vtObjectContainer_a(), objectsToFollow), sizeof(iVtObjectContainer_s), b_enableReplaceOfCmd);
+  return genericChangeChildPosition (apc_childObject, x, y, b_updateObject, vtObjectContainer_a->numberOfObjectsToFollow, (IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s *) vtObjectContainer_a->objectsToFollow, MACRO_getStructOffset(get_vtObjectContainer_a(), objectsToFollow), sizeof(iVtObjectContainer_s), b_enableReplaceOfCmd);
 }
 
 void

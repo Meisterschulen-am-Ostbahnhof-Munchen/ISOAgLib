@@ -178,7 +178,7 @@ int16_t setRs232Baudrate(uint16_t wBaudrate, uint8_t comport)
 
   return HAL_NO_ERR;
 }
-BOOL WriteABuffer(HANDLE &ref_hCom, const uint8_t * lpBuf, DWORD dwToWrite)
+BOOL WriteABuffer(HANDLE &r_hCom, const uint8_t * lpBuf, DWORD dwToWrite)
 {
      OVERLAPPED osWrite = {0};
      DWORD dwWritten;
@@ -189,7 +189,7 @@ BOOL WriteABuffer(HANDLE &ref_hCom, const uint8_t * lpBuf, DWORD dwToWrite)
      if (osWrite.hEvent == NULL) // error creating overlapped event handle
        return FALSE;
      // Issue write.
-     if (!WriteFile(ref_hCom, lpBuf, dwToWrite, &dwWritten, &osWrite))
+     if (!WriteFile(r_hCom, lpBuf, dwToWrite, &dwWritten, &osWrite))
      {
        if (GetLastError() != ERROR_IO_PENDING)
        { // WriteFile failed, but isn't delayed. Report error and abort.
@@ -199,7 +199,7 @@ BOOL WriteABuffer(HANDLE &ref_hCom, const uint8_t * lpBuf, DWORD dwToWrite)
          dwRes = WaitForSingleObject(osWrite.hEvent, INFINITE);
        switch(dwRes) { // OVERLAPPED structure's event has been signaled.
          case WAIT_OBJECT_0:
-           if (!GetOverlappedResult(ref_hCom, &osWrite, &dwWritten, FALSE)) fRes = FALSE;
+           if (!GetOverlappedResult(r_hCom, &osWrite, &dwWritten, FALSE)) fRes = FALSE;
            else // Write operation completed successfully.
              fRes = TRUE;
            break;
@@ -220,14 +220,14 @@ BOOL WriteABuffer(HANDLE &ref_hCom, const uint8_t * lpBuf, DWORD dwToWrite)
   @param bByte data uint8_t to send
   @return HAL_NO_ERR -> o.k. else send puffer overflow
  */
-int16_t put_rs232Char(uint8_t bByte, uint8_t rui8_channel)
+int16_t put_rs232Char(uint8_t bByte, uint8_t aui8_channel)
 {
-  if ( rui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
+  if ( aui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
   uint8_t b_data = bByte;
 
   DWORD x;
-  return WriteABuffer(hCom[rui8_channel], &b_data, 1)?HAL_NO_ERR:HAL_NOACT_ERR;
-  //(WriteFile(hCom[rui8_channel],&b_data,1,&x,NULL))?HAL_NO_ERR:HAL_NOACT_ERR;
+  return WriteABuffer(hCom[aui8_channel], &b_data, 1)?HAL_NO_ERR:HAL_NOACT_ERR;
+  //(WriteFile(hCom[aui8_channel],&b_data,1,&x,NULL))?HAL_NO_ERR:HAL_NOACT_ERR;
 }
 /**
   send string of n uint8_t on RS232
@@ -235,26 +235,26 @@ int16_t put_rs232Char(uint8_t bByte, uint8_t rui8_channel)
   @param wNumber number of data uint8_t to send
   @return HAL_NO_ERR -> o.k. else send puffer overflow
  */
-int16_t put_rs232NChar(const uint8_t *bpWrite,uint16_t wNumber, uint8_t rui8_channel)
+int16_t put_rs232NChar(const uint8_t *bpWrite,uint16_t wNumber, uint8_t aui8_channel)
 {
-  if ( rui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
+  if ( aui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
 
   DWORD x;
-  return WriteABuffer(hCom[rui8_channel], bpWrite, wNumber)?HAL_NO_ERR:HAL_NOACT_ERR;
-  //(WriteFile(hCom[rui8_channel],bpWrite,wNumber,&x,NULL))?HAL_NO_ERR:HAL_NOACT_ERR;
+  return WriteABuffer(hCom[aui8_channel], bpWrite, wNumber)?HAL_NO_ERR:HAL_NOACT_ERR;
+  //(WriteFile(hCom[aui8_channel],bpWrite,wNumber,&x,NULL))?HAL_NO_ERR:HAL_NOACT_ERR;
 }
 /**
   send '\0' terminated string on RS232
   @param pbString pointer to '\0' terminated (!) source data string
   @return HAL_NO_ERR -> o.k. else send puffer overflow
  */
-int16_t put_rs232String(const uint8_t *pbString, uint8_t rui8_channel)
+int16_t put_rs232String(const uint8_t *pbString, uint8_t aui8_channel)
 {
-  if ( rui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
+  if ( aui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
 
   DWORD x;
-  return WriteABuffer(hCom[rui8_channel], pbString, strlen((const char*)pbString))?HAL_NO_ERR:HAL_NOACT_ERR;
-  //(WriteFile(hCom[rui8_channel],pbString,strlen((const char*)pbString),&x,NULL))?HAL_NO_ERR:HAL_NOACT_ERR;
+  return WriteABuffer(hCom[aui8_channel], pbString, strlen((const char*)pbString))?HAL_NO_ERR:HAL_NOACT_ERR;
+  //(WriteFile(hCom[aui8_channel],pbString,strlen((const char*)pbString),&x,NULL))?HAL_NO_ERR:HAL_NOACT_ERR;
 }
 
 
@@ -313,14 +313,14 @@ int16_t getRs232String(uint8_t *pbRead,uint8_t ui8_terminateChar, uint8_t compor
   @param pbRead pointer to target data
   @return HAL_NO_ERR -> o.k. else puffer underflow
  */
-int16_t getRs232Char(uint8_t *pbRead, uint8_t rui8_channel)
+int16_t getRs232Char(uint8_t *pbRead, uint8_t aui8_channel)
 {
-  if ( rui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
-  getRs232RxBufCount(rui8_channel);
-  if (! deq_readPuff[rui8_channel].empty())
+  if ( aui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
+  getRs232RxBufCount(aui8_channel);
+  if (! deq_readPuff[aui8_channel].empty())
   {
-    pbRead[0] = deq_readPuff[rui8_channel].front();
-    deq_readPuff[rui8_channel].pop_front();
+    pbRead[0] = deq_readPuff[aui8_channel].front();
+    deq_readPuff[aui8_channel].pop_front();
     return HAL_NO_ERR;
   }
   else
@@ -340,9 +340,9 @@ int8_t *KeyGetString(int8_t *buffer, int16_t len)
   get the amount of data [uint8_t] in send puffer
   @return send puffer data byte
  */
-int16_t getRs232TxBufCount(uint8_t rui8_channel)
+int16_t getRs232TxBufCount(uint8_t aui8_channel)
 {
-  if ( rui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
+  if ( aui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
   /** @todo decide if RS232 TX buffer from OS should be asked */
   return 0;
 }
@@ -351,9 +351,9 @@ int16_t getRs232TxBufCount(uint8_t rui8_channel)
   @param wBuffersize wanted puffer size
   @param pFunction pointer to irq function or NULL if not wanted
  */
-int16_t configRs232RxObj(uint16_t wBuffersize,void (*pFunction)(uint8_t *bByte), uint8_t rui8_channel)
+int16_t configRs232RxObj(uint16_t wBuffersize,void (*pFunction)(uint8_t *bByte), uint8_t aui8_channel)
 {
-  if ( rui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
+  if ( aui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
   /** @todo should this be implemented? */
   return HAL_NO_ERR;
 }
@@ -364,9 +364,9 @@ int16_t configRs232RxObj(uint16_t wBuffersize,void (*pFunction)(uint8_t *bByte),
   @param funktionBeforTransmit pointer to irq function or NULL if not wanted
  */
 int16_t configRs232TxObj(uint16_t wBuffersize,void (*funktionAfterTransmit)(uint8_t *bByte),
-                         void (*funktionBeforTransmit)(uint8_t *bByte), uint8_t rui8_channel)
+                         void (*funktionBeforTransmit)(uint8_t *bByte), uint8_t aui8_channel)
 {
-  if ( rui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
+  if ( aui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
   /** @todo should this be implemented? */
   return HAL_NO_ERR;
 }
@@ -374,9 +374,9 @@ int16_t configRs232TxObj(uint16_t wBuffersize,void (*funktionAfterTransmit)(uint
   get errr code of BIOS
   @return 0=parity, 1=stopbit framing error, 2=overflow
  */
-int16_t getRs232Error(uint8_t *Errorcode, uint8_t rui8_channel)
+int16_t getRs232Error(uint8_t *Errorcode, uint8_t aui8_channel)
 {
-  if ( rui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
+  if ( aui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
   /** @todo should this be implemented? */
   return HAL_NO_ERR;
 }
@@ -385,18 +385,18 @@ int16_t getRs232Error(uint8_t *Errorcode, uint8_t rui8_channel)
 /**
   clear receive puffer
  */
-void clearRs232RxBuffer(uint8_t rui8_channel)
+void clearRs232RxBuffer(uint8_t aui8_channel)
 {
-  if ( rui8_channel >= RS232_INSTANCE_CNT ) return;
+  if ( aui8_channel >= RS232_INSTANCE_CNT ) return;
   /** @todo should this be implemented? */
 };
 
 /**
   clear send puffer
  */
-void clearRs232TxBuffer(uint8_t rui8_channel)
+void clearRs232TxBuffer(uint8_t aui8_channel)
 {
-  if ( rui8_channel >= RS232_INSTANCE_CNT ) return;
+  if ( aui8_channel >= RS232_INSTANCE_CNT ) return;
   /** @todo should this be implemented? */
 }
 
