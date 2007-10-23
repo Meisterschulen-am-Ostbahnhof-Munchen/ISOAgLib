@@ -14,7 +14,7 @@ APP_INC = -I../../../IsoAgLib_Examples/tutorial/2_ProcessData/2_5_LocalWriteSetp
 
 BIOS_LIB = /usr/local/lib/librte_client.a /usr/local/lib/libfevent.a
 BIOS_INC =
-PROJ_DEFINES = $(VERSION_DEFINES) -DSYSTEM_PC -DPRJ_USE_AUTOGEN_CONFIG=config_2_5_LocalWriteSetpointSimpleMeasureIso.h -DSYSTEM_WITH_ENHANCED_CAN_HAL
+PROJ_DEFINES = $(VERSION_DEFINES) -DSYSTEM_PC -DPRJ_USE_AUTOGEN_CONFIG=config_2_5_LocalWriteSetpointSimpleMeasureIso.h -DSYSTEM_WITH_ENHANCED_CAN_HAL -DUSE_WORKING_SET
 
 ####### Definition of compiler binary prefix corresponding to selected target
 COMPILER_BINARY_PRE = 
