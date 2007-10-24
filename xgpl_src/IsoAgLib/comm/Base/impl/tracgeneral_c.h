@@ -164,70 +164,70 @@ public: // Public methods
   @param ab_val uint8_t value to store as position of rear hitch [%]
    */
   void setHitchRear(uint8_t ab_val)
-  { ui8_hitchRear = ab_val;}
+  { mui8_hitchRear = ab_val;}
 
   /**
   set front hitch
   @param ab_val uint8_t value to store as position of front hitch [%]
    */
   void setHitchFront(uint8_t ab_val)
-  { ui8_hitchFront = ab_val;}
+  { mui8_hitchFront = ab_val;}
 
   /** set front hitch draft
     * @return front hitch draft [-320.000N;322.550N]; 1N/bit
     */
-  void setHitchFrontDraft(int32_t ai32_val) { ui16_frontDraft = ((ai32_val + 320000) / 10);}
+  void setHitchFrontDraft(int32_t ai32_val) { mui16_frontDraft = ((ai32_val + 320000) / 10);}
 
   /** set rear hitch draft
     * @return rear hitch draft [-320.000N;322.550N]; 1N/bit
     */
-  void setHitchRearDraft(int32_t ai32_val) { ui16_rearDraft = ((ai32_val + 320000) / 10);}
+  void setHitchRearDraft(int32_t ai32_val) { mui16_rearDraft = ((ai32_val + 320000) / 10);}
 
   /** set front hitch nominal link force
     * @return front nominal link force [-100%;100%]; 1 promille per bit
     */
-  void setHitchFrontLowerLinkForce(int16_t ai16_val) { ui8_frontLinkForce = ((ai16_val + 1000) / 8);}
+  void setHitchFrontLowerLinkForce(int16_t ai16_val) { mui8_frontLinkForce = ((ai16_val + 1000) / 8);}
 
   /** set rear hitch nominal link force
     * @return rear nominal link force [-100%;100%]; 1 promille per bit
     */
-  void setHitchRearLowerLinkForce(int16_t ai16_val) { ui8_rearLinkForce = ((ai16_val + 1000) / 8);}
+  void setHitchRearLowerLinkForce(int16_t ai16_val) { mui8_rearLinkForce = ((ai16_val + 1000) / 8);}
 
   /**
     * set the ISO key switch state of the tractor
     * @param at_val IsoActive -> key switch ON
     */
-  void setKeySwitch(IsoAgLib::IsoActiveFlag_t at_val) { t_keySwitch = at_val; }
+  void setKeySwitch(IsoAgLib::IsoActiveFlag_t at_val) { mt_keySwitch = at_val; }
 
   /** set the maximum power time of the tractor in [min]
     * @return maximum power time of the tractor in [min]
     */
-  void setMaxPowerTime(uint8_t aui8_val) { ui8_maxPowerTime = aui8_val;}
+  void setMaxPowerTime(uint8_t aui8_val) { mui8_maxPowerTime = aui8_val;}
 
   /** set state of implement in transport state
     * @param at_val state of implement in transport state
     */
-  void setMaintainPowerForImplInTransport(IsoAgLib::IsoImplTransportFlag_t at_val) { implState.inTransport = at_val; }
+  void setMaintainPowerForImplInTransport(IsoAgLib::IsoImplTransportFlag_t at_val) { mt_implState.inTransport = at_val; }
 
   /** set state of implement in park state
     * @param at_val state of implement in park state
     */
-  void setMaintainPowerForImplInPark(IsoAgLib::IsoImplParkFlag_t at_val) { implState.inPark = at_val;}
+  void setMaintainPowerForImplInPark(IsoAgLib::IsoImplParkFlag_t at_val) { mt_implState.inPark = at_val;}
 
   /** set state of implement in work
     * @param at_val state of implement in work state
     */
-  void setMaintainPowerForImplInWork(IsoAgLib::IsoImplWorkFlag_t at_val) { implState.inWork = at_val;}
+  void setMaintainPowerForImplInWork(IsoAgLib::IsoImplWorkFlag_t at_val) { mt_implState.inWork = at_val;}
 
   /** set present limit status of the front hitch position
       @param at_val  limit status of the front hitch position
     */
-  void setFrontHitchPosLimitStatus(const IsoAgLib::IsoLimitFlag_t at_val) {t_frontHitchPosLimitStatus = at_val;}
+  void setFrontHitchPosLimitStatus(const IsoAgLib::IsoLimitFlag_t at_val) {mt_frontHitchPosLimitStatus = at_val;}
 
   /** set present limit status of the rear hitch position
       @param at_val  limit status of the rear hitch position
     */
-  void setRearHitchPosLimitStatus(const IsoAgLib::IsoLimitFlag_t at_val) {t_rearHitchPosLimitStatus = at_val;}
+  void setRearHitchPosLimitStatus(const IsoAgLib::IsoLimitFlag_t at_val) {mt_rearHitchPosLimitStatus = at_val;}
   /*@}*/
 
   /* ****************************************************** */
@@ -236,81 +236,81 @@ public: // Public methods
   /** get rear hitch
       @return actual position of rear hitch [%]
     */
-  uint8_t hitchRear() const {return ui8_hitchRear;}
+  uint8_t hitchRear() const {return mui8_hitchRear;}
 
   /** get front hitch
       @return actual position of front hitch [%]
     */
-  uint8_t hitchFront() const {return ui8_hitchFront;}
+  uint8_t hitchFront() const {return mui8_hitchFront;}
 
   /** deliver front hitch draft
     * @return front hitch draft [-320.000N;322.550N]; 1N/bit
     */
-  int32_t hitchFrontDraft() const { return static_cast<int32_t>( (ui16_frontDraft * 10) - 320000 );}
+  int32_t hitchFrontDraft() const { return static_cast<int32_t>( (mui16_frontDraft * 10) - 320000 );}
 
   /** deliver rear hitch draft
     * @return rear hitch draft [-320.000N;322.550N]; 1N/bit
     */
-  int32_t hitchRearDraft() const { return static_cast<int32_t>( (ui16_rearDraft * 10) - 320000 );}
+  int32_t hitchRearDraft() const { return static_cast<int32_t>( (mui16_rearDraft * 10) - 320000 );}
 
   /** deliver front hitch nominal link force
     * @return front nominal link force [-100%;100%]; 1 promille per bit
     */
-  int16_t hitchFrontLowerLinkForce() const { return ((static_cast<int16_t>(ui8_frontLinkForce) * 8) - 1000);}
+  int16_t hitchFrontLowerLinkForce() const { return ((static_cast<int16_t>(mui8_frontLinkForce) * 8) - 1000);}
 
   /** deliver rear hitch nominal link force
     * @return rear nominal link force [-100%;100%]; 1 promille per bit
     */
-  int16_t hitchRearLowerLinkForce() const { return ((static_cast<int16_t>(ui8_rearLinkForce) * 8) - 1000);}
+  int16_t hitchRearLowerLinkForce() const { return ((static_cast<int16_t>(mui8_rearLinkForce) * 8) - 1000);}
 
   /** deliver the ISO key switch state of the tractor
     * @return IsoActive -> key switch ON
     */
-  IsoAgLib::IsoActiveFlag_t keySwitch() const { return t_keySwitch;}
+  IsoAgLib::IsoActiveFlag_t keySwitch() const { return mt_keySwitch;}
 
   /** deliver the maximum power time of the tractor in [min]
     * @return maximum power time of the tractor in [min]
     */
-  uint8_t maxPowerTime() const { return ui8_maxPowerTime;}
+  uint8_t maxPowerTime() const { return mui8_maxPowerTime;}
   /** deliver last receive time of maintain power request
     * @return time in [ms] since system start -> comparable to system time
     */
-  int32_t lastMaintainPowerRequest() const { return ui32_lastMaintainPowerRequest;}
+  int32_t lastMaintainPowerRequest() const { return mui32_lastMaintainPowerRequest;}
 
   /** get present limit status of the front hitch position
       @return  limit status of front hitch position
     */
-  IsoAgLib::IsoLimitFlag_t frontHitchPosLimitStatus()const {return t_frontHitchPosLimitStatus;}
+  IsoAgLib::IsoLimitFlag_t frontHitchPosLimitStatus()const {return mt_frontHitchPosLimitStatus;}
 
   /** get present limit status of the rear hitch position
       @return  limit status of rear hitch position
     */
-  IsoAgLib::IsoLimitFlag_t rearHitchPosLimitStatus()const {return t_rearHitchPosLimitStatus;}
+  IsoAgLib::IsoLimitFlag_t rearHitchPosLimitStatus()const {return mt_rearHitchPosLimitStatus;}
 
   /** check whether maintenance of ECU power was requested */
-  bool maintainEcuPower() const { return b_maintainEcuPower;}
+  bool maintainEcuPower() const { return mb_maintainEcuPower;}
 
   /** check whether maintenance of actuator power was requested */
-  bool maintainActuatorPower() const { return b_maintainActuatorPower;}
+  bool maintainActuatorPower() const { return mb_maintainActuatorPower;}
 
   /** check whether maintenance of power
     * for implement in transport state was requested */
   IsoAgLib::IsoImplTransportFlag_t maintainPowerForImplInTransport() const
-  { return IsoAgLib::IsoImplTransportFlag_t(implState.inTransport); }
+  { return IsoAgLib::IsoImplTransportFlag_t(mt_implState.inTransport); }
 
   /** check whether maintenance of power
     * for implement in park state was requested */
-  IsoAgLib::IsoImplParkFlag_t maintainPowerForImplInPark() const {return IsoAgLib::IsoImplParkFlag_t(implState.inPark);}
+  IsoAgLib::IsoImplParkFlag_t maintainPowerForImplInPark() const {return IsoAgLib::IsoImplParkFlag_t(mt_implState.inPark);}
 
   /** check whether maintenance of power
     * for implement in work state was requested */
-  IsoAgLib::IsoImplWorkFlag_t maintainPowerForImplInWork() const {return IsoAgLib::IsoImplWorkFlag_t(implState.inWork);}
+  IsoAgLib::IsoImplWorkFlag_t maintainPowerForImplInWork() const {return IsoAgLib::IsoImplWorkFlag_t(mt_implState.inWork);}
 
-  bool isVtLanguageReceived()   const { return b_languageVtReceived; }
-  bool isTecuLanguageReceived() const { return b_languageTecuReceived; }
+  bool isVtLanguageReceived()   const { return mb_languageVtReceived; }
+  bool isTecuLanguageReceived() const { return mb_languageTecuReceived; }
 
-  const uint8_t* getVtLanguage()   const { return p8ui8_languageVt; }
-  const uint8_t* getTecuLanguage() const { return p8ui8_languageTecu; }
+  const uint8_t* getVtLanguage()   const { return mp8ui8_languageVt; }
+  const uint8_t* getTecuLanguage() const { return mp8ui8_languageTecu; }
 
   /** send iso language data msg
       @see  TracGeneral_c::processMsgRequestPGN
@@ -369,67 +369,67 @@ private:
 private:
   // Private attributes
   /** engine speed */
-  int16_t i16_engine;
+  int16_t mi16_engine;
 
   /** front hitch data */
-  uint8_t ui8_hitchFront;
+  uint8_t mui8_hitchFront;
 
   /** rear hitch data */
-  uint8_t ui8_hitchRear;
+  uint8_t mui8_hitchRear;
 
 
   /** VT language information */
-  uint8_t p8ui8_languageVt[8];
+  uint8_t mp8ui8_languageVt[8];
 
   /** TECU language information */
-  uint8_t p8ui8_languageTecu[8];
+  uint8_t mp8ui8_languageTecu[8];
 
   /** VT language reception information */
-  bool b_languageVtReceived;
+  bool mb_languageVtReceived;
 
   /** TECU language reception information */
-  bool b_languageTecuReceived;
+  bool mb_languageTecuReceived;
 
 
   /// General
   /** last time of ISO GPS msg [msec] */
-  int32_t i32_lastIsoPositionSimple;
+  int32_t mi32_lastIsoPositionSimple;
 
   /** key switch state */
-  IsoAgLib::IsoActiveFlag_t t_keySwitch;
+  IsoAgLib::IsoActiveFlag_t mt_keySwitch;
 
   /** maximum time of tractor power in [min] */
-  uint8_t ui8_maxPowerTime;
+  uint8_t mui8_maxPowerTime;
 
   /** front hitch draft [-320.000;322.550N], res: 10N/bit, offset: -320.000N  */
-  uint16_t ui16_frontDraft;
+  uint16_t mui16_frontDraft;
 
   /** rear hitch draft [-320.000;322.550N], res: 10N/bit, offset: -320.000N  */
-  uint16_t ui16_rearDraft;
+  uint16_t mui16_rearDraft;
 
   /** front nominal lower link force [-100%;100%], res: 0.8%/bit, offset: -100% */
-  uint8_t ui8_frontLinkForce;
+  uint8_t mui8_frontLinkForce;
 
   /** rear nominal lower link force [-100%;100%], res: 0.8%/bit, offset: -100% */
-  uint8_t ui8_rearLinkForce;
+  uint8_t mui8_rearLinkForce;
 
   /** set reported the tractor ECU's present limit status of the front hitch position */
-  IsoAgLib::IsoLimitFlag_t t_frontHitchPosLimitStatus;
+  IsoAgLib::IsoLimitFlag_t mt_frontHitchPosLimitStatus;
 
   /** set reported the tractor ECU's present limit status of the rear hitch position */
-  IsoAgLib::IsoLimitFlag_t t_rearHitchPosLimitStatus;
+  IsoAgLib::IsoLimitFlag_t mt_rearHitchPosLimitStatus;
 
   /** last time of maintain power request [ms] */
-  uint32_t ui32_lastMaintainPowerRequest;
+  uint32_t mui32_lastMaintainPowerRequest;
 
   /** state whether maintenance of ECU power was requested */
-  bool b_maintainEcuPower;
+  bool mb_maintainEcuPower;
 
   /** state whether maintenance of actuator power was requested */
-  bool b_maintainActuatorPower;
+  bool mb_maintainActuatorPower;
 
   /** indicated state of an implement */
-  indicatedStateImpl_t implState;
+  indicatedStateImpl_t mt_implState;
 };
 
   #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )

@@ -213,7 +213,7 @@ class TimePosGPS_c : public SingletonTimePosGps_c
   bool configGps(const IsoName_c* apc_isoName, IsoAgLib::IdentMode_t at_identModeGps);
 
   /** return if you currently are in gps mode*/
-  bool checkModeGps(IsoAgLib::IdentMode_t at_identModeGps) const {return (t_identModeGps == at_identModeGps);}
+  bool checkModeGps(IsoAgLib::IdentMode_t at_identModeGps) const {return (mt_identModeGps == at_identModeGps);}
 
   /** send ISO11783 calendar PGN
     possible errors:
@@ -239,10 +239,10 @@ class TimePosGPS_c : public SingletonTimePosGps_c
 
 
   /** return a sender which sends commands as a tractor */
-  IsoName_c& getSenderISONameGps() {return c_sendGpsISOName;}
+  IsoName_c& getSenderISONameGps() {return mc_sendGpsISOName;}
 
   /** return a sender which sends commands as a tractor */
-  const IsoName_c& getSenderISONameGpsConst() const {return c_sendGpsISOName;}
+  const IsoName_c& getSenderISONameGpsConst() const {return mc_sendGpsISOName;}
 
   /* ********************************************* */
   /** \name MultiReceive functions for TimePosGPS_c  */
@@ -304,18 +304,18 @@ public:
   void setTimeUtc(uint8_t ab_hour, uint8_t ab_minute, uint8_t ab_second, uint16_t aui16_msec = 0, bool b_updateDate = FALSE);
 
   /** set the actual calendar year value */
-  void setYearUtc(uint16_t aui16_year){i32_lastCalendarSet = System_c::getTime();bit_calendar.year = aui16_year; t_cachedLocalSeconds1970AtLastSet = 0;};
+  void setYearUtc(uint16_t aui16_year){mi32_lastCalendarSet = System_c::getTime();bit_calendar.year = aui16_year; mt_cachedLocalSeconds1970AtLastSet = 0;};
 
   /** set raw GPS Latitude [degree] with scaling 10.0e-7 */
-  void setGpsLatitudeDegree10Minus7( int32_t ai32_newVal ) { i32_latitudeDegree10Minus7 = ai32_newVal; }
+  void setGpsLatitudeDegree10Minus7( int32_t ai32_newVal ) { mi32_latitudeDegree10Minus7 = ai32_newVal; }
 
   /** set raw GPS Longitude [degree] with scaling 10.0e-7 */
-  void setGpsLongitudeDegree10Minus7( int32_t ai32_newVal ) { i32_longitudeDegree10Minus7 = ai32_newVal; }
+  void setGpsLongitudeDegree10Minus7( int32_t ai32_newVal ) { mi32_longitudeDegree10Minus7 = ai32_newVal; }
 
   /** deliver GPS Speed Over Ground as [cm/s] */
-  void setGpsSpeedCmSec( uint16_t aui16_newVal ) { ui16_speedOverGroundCmSec = aui16_newVal; }
+  void setGpsSpeedCmSec( uint16_t aui16_newVal ) { mui16_speedOverGroundCmSec = aui16_newVal; }
   /** deliver GPS Course Over Ground [1x10E-4rad] */
-  void setGpsCourseRad10Minus4( uint16_t aui16_newVal ) { ui16_courseOverGroundRad10Minus4 = aui16_newVal; };
+  void setGpsCourseRad10Minus4( uint16_t aui16_newVal ) { mui16_courseOverGroundRad10Minus4 = aui16_newVal; };
 
   #if defined(ENABLE_NMEA_2000_MULTI_PACKET)
   /** set the GPS time in UTC timezone.
@@ -363,53 +363,53 @@ public:
   void setMillisecondUtcGps(uint16_t aui16_millisecond);
 
   /** set GPS altitude - [cm] */
-  void setGpsAltitudeCm( uint32_t aui32_newVal ) { ui32_altitudeCm = aui32_newVal; }
+  void setGpsAltitudeCm( uint32_t aui32_newVal ) { mui32_altitudeCm = aui32_newVal; }
 
   /** set GPS receive qualitiy */
   void setGnssMode( IsoAgLib::IsoGnssMethod_t at_newVal );
 
   /** set GNSS type ( e.g. GPS, GLONASS or SBAS ) */
-  void setGnssType( IsoAgLib::IsoGnssType_t at_newVal )   { if(at_newVal<=IsoAgLib::IsoGnssTypeMAX) t_gnssType = at_newVal;}
+  void setGnssType( IsoAgLib::IsoGnssType_t at_newVal )   { if(at_newVal<=IsoAgLib::IsoGnssTypeMAX) mt_gnssType = at_newVal;}
 
   /** set number of received satellites */
-  void setSatelliteCnt( uint8_t aui8_newVal ) { ui8_satelliteCnt = aui8_newVal;}
+  void setSatelliteCnt( uint8_t aui8_newVal ) { mui8_satelliteCnt = aui8_newVal;}
 
   /** set HDOP with scaling [1x10E-2] */
-  void setHdop10Minus2( uint16_t aui16_newVal ) { i16_hdop = aui16_newVal;}
+  void setHdop10Minus2( uint16_t aui16_newVal ) { mi16_hdop = aui16_newVal;}
 
   /** set PDOP with scaling [1x10E-2] */
-  void setPdop10Minus2( uint16_t aui16_newVal ) { i16_pdop = aui16_newVal;}
+  void setPdop10Minus2( uint16_t aui16_newVal ) { mi16_pdop = aui16_newVal;}
   #endif // END of ENABLE_NMEA_2000_MULTI_PACKET
 
   /** set the calendar month value
     @param ab_month actual calendar month value
     */
-  void setMonthUtc(uint8_t ab_month){i32_lastCalendarSet = System_c::getTime();bit_calendar.month = ab_month; t_cachedLocalSeconds1970AtLastSet = 0;}
+  void setMonthUtc(uint8_t ab_month){mi32_lastCalendarSet = System_c::getTime();bit_calendar.month = ab_month; mt_cachedLocalSeconds1970AtLastSet = 0;}
 
   /** set the calendar day value
     @param ab_day actual calendar day value
     */
-  void setDayUtc(uint8_t ab_day){i32_lastCalendarSet = System_c::getTime();bit_calendar.day = ab_day; t_cachedLocalSeconds1970AtLastSet = 0;}
+  void setDayUtc(uint8_t ab_day){mi32_lastCalendarSet = System_c::getTime();bit_calendar.day = ab_day; mt_cachedLocalSeconds1970AtLastSet = 0;}
 
   /** set the calendar hour value
     @param ab_hour actual calendar hour value
     */
-  void setHourUtc(uint8_t ab_hour){i32_lastCalendarSet = System_c::getTime();bit_calendar.hour = ab_hour; t_cachedLocalSeconds1970AtLastSet = 0;}
+  void setHourUtc(uint8_t ab_hour){mi32_lastCalendarSet = System_c::getTime();bit_calendar.hour = ab_hour; mt_cachedLocalSeconds1970AtLastSet = 0;}
 
   /** set the calendar minute value
     @param ab_minute actual calendar minute value
     */
-  void setMinuteUtc(uint8_t ab_minute){i32_lastCalendarSet = System_c::getTime();bit_calendar.minute = ab_minute; t_cachedLocalSeconds1970AtLastSet = 0;}
+  void setMinuteUtc(uint8_t ab_minute){mi32_lastCalendarSet = System_c::getTime();bit_calendar.minute = ab_minute; mt_cachedLocalSeconds1970AtLastSet = 0;}
 
   /** set the calendar second value
     @param ab_second actual calendar second value
     */
-  void setSecond(uint8_t ab_second){i32_lastCalendarSet = System_c::getTime();bit_calendar.second = ab_second; t_cachedLocalSeconds1970AtLastSet = 0;}
+  void setSecond(uint8_t ab_second){mi32_lastCalendarSet = System_c::getTime();bit_calendar.second = ab_second; mt_cachedLocalSeconds1970AtLastSet = 0;}
 
   /** set the calendar millisecond value
     @param ab_millisecond actual calendar second value
     */
-  void setMillisecond(uint16_t aui16_millisecond){i32_lastCalendarSet = System_c::getTime();bit_calendar.msec = aui16_millisecond; t_cachedLocalSeconds1970AtLastSet = 0;}
+  void setMillisecond(uint16_t aui16_millisecond){mi32_lastCalendarSet = System_c::getTime();bit_calendar.msec = aui16_millisecond; mt_cachedLocalSeconds1970AtLastSet = 0;}
 
   /** set the local time to UTC time offsets */
   void setLocalTimeOffsets( int16_t ai16_hourOffset, uint16_t aui16_minuteOffset )
@@ -496,31 +496,31 @@ public:
   /** *** Position ** **/
 
   /** deliver raw GPS Latitude [degree] with scaling 10.0e-7 */
-  int32_t getGpsLatitudeDegree10Minus7( void ) const { return i32_latitudeDegree10Minus7; }
+  int32_t getGpsLatitudeDegree10Minus7( void ) const { return mi32_latitudeDegree10Minus7; }
 
   /** deliver raw GPS Longitude [degree] with scaling 10.0e-7 */
-  int32_t getGpsLongitudeDegree10Minus7( void ) const { return i32_longitudeDegree10Minus7; }
+  int32_t getGpsLongitudeDegree10Minus7( void ) const { return mi32_longitudeDegree10Minus7; }
 
   /** check if an NMEA2000 position signal was received */
   bool isPositionReceived() const;
 
   /** check if we have valid Position data, so the information should be sent out in timeEventTracMode */
   bool isPositionSimpleToSend() const
-    { return ( (i32_latitudeDegree10Minus7  >= ( -90*10000000)) && (i32_latitudeDegree10Minus7  <= ( 90*10000000))
-            && (i32_longitudeDegree10Minus7 >= (-180*10000000)) && (i32_longitudeDegree10Minus7 <= (180*10000000))); }
+    { return ( (mi32_latitudeDegree10Minus7  >= ( -90*10000000)) && (mi32_latitudeDegree10Minus7  <= ( 90*10000000))
+            && (mi32_longitudeDegree10Minus7 >= (-180*10000000)) && (mi32_longitudeDegree10Minus7 <= (180*10000000))); }
 
 #if defined(USE_FLOAT_DATA_TYPE)
   /** deliver Minute GPS Latitude */
-  float getGpsLatitudeMinute( void ) const { return ( i32_latitudeDegree10Minus7 * 6.0e-4  ); }
+  float getGpsLatitudeMinute( void ) const { return ( mi32_latitudeDegree10Minus7 * 6.0e-4  ); }
 
   /** deliver Minute GPS Longitude */
-  float getGpsLongitudeMinute( void ) const { return ( i32_longitudeDegree10Minus7 * 6.0e-4 ); }
+  float getGpsLongitudeMinute( void ) const { return ( mi32_longitudeDegree10Minus7 * 6.0e-4 ); }
 
   /** deliver Degree GPS Latitude */
-  float getGpsLatitudeDegree( void ) const { return ( float(i32_latitudeDegree10Minus7) * 1.0e-7  ); }
+  float getGpsLatitudeDegree( void ) const { return ( float(mi32_latitudeDegree10Minus7) * 1.0e-7  ); }
 
   /** deliver Degree GPS Longitude */
-  float getGpsLongitudeDegree( void ) const { return ( float(i32_longitudeDegree10Minus7) * 1.0e-7 ); }
+  float getGpsLongitudeDegree( void ) const { return ( float(mi32_longitudeDegree10Minus7) * 1.0e-7 ); }
 #endif // END of USE_FLOAT_DATA_TYPE
 
 
@@ -528,20 +528,20 @@ public:
   /** *** Direction *** **/
 
   /** deliver GPS Speed Over Ground as [cm/s] */
-  uint16_t getGpsSpeedCmSec( void ) const { return ui16_speedOverGroundCmSec; }
+  uint16_t getGpsSpeedCmSec( void ) const { return mui16_speedOverGroundCmSec; }
   /** deliver GPS Course Over Ground [1x10E-4rad] */
-  uint16_t getGpsCourseRad10Minus4( void ) const { return ui16_courseOverGroundRad10Minus4; }
+  uint16_t getGpsCourseRad10Minus4( void ) const { return mui16_courseOverGroundRad10Minus4; }
 
   /** check if an NMEA2000 direction signal was received */
   bool isDirectionReceived() const;
 
   /** check if we have valid Direction data, so the information should be sent out in timeEventTracMode */
   bool isDirectionToSend() const
-    { return ( (ui16_courseOverGroundRad10Minus4 <= 62855) /// @todo check for the REAL max, 62855 is a little bigger than 62831 or alike that could be calculated. but anyway...
-            && (ui16_speedOverGroundCmSec <= 65532)); }
+    { return ( (mui16_courseOverGroundRad10Minus4 <= 62855) /// @todo check for the REAL max, 62855 is a little bigger than 62831 or alike that could be calculated. but anyway...
+            && (mui16_speedOverGroundCmSec <= 65532)); }
 
   /** deliver GPS receive qualitiy - also needed to see if we have valid GPS-positioning!!! */
-  IsoAgLib::IsoGnssMethod_t getGnssMode( void ) const { return t_gnssMethod; }
+  IsoAgLib::IsoGnssMethod_t getGnssMode( void ) const { return mt_gnssMethod; }
 
 
 
@@ -549,7 +549,7 @@ public:
 
   #ifdef ENABLE_NMEA_2000_MULTI_PACKET
   bool isPositionStreamToSend() const
-  { return isPositionSimpleToSend() && (ui32_altitudeCm != 0xFFFFFFFF); }
+  { return isPositionSimpleToSend() && (mui32_altitudeCm != 0xFFFFFFFF); }
 
   /** get the GPS UTC hour value
     @return actual GPS UTC hour value
@@ -572,37 +572,37 @@ public:
   uint16_t millisecondUtcGps() const {return bit_gpsTime.msec;}
 
   /** deliver GPS altitude - [cm] */
-  uint32_t getGpsAltitudeCm( void ) const { return ui32_altitudeCm; }
+  uint32_t getGpsAltitudeCm( void ) const { return mui32_altitudeCm; }
 
   /** simply check for some sort of Differential signal */
-  bool hasDifferentialPosition() const { return ( ( t_gnssMethod > IsoAgLib::IsoGnssFix ) && ( t_gnssMethod < IsoAgLib::IsoDrEstimated ) )?true:false;}
+  bool hasDifferentialPosition() const { return ( ( mt_gnssMethod > IsoAgLib::IsoGnssFix ) && ( mt_gnssMethod < IsoAgLib::IsoDrEstimated ) )?true:false;}
 
   /** deliver GNSS type ( e.g. GPS, GLONASS or SBAS ) */
-  IsoAgLib::IsoGnssType_t getGnssType(void) const { return t_gnssType; }
+  IsoAgLib::IsoGnssType_t getGnssType(void) const { return mt_gnssType; }
 
   /** deliver number of received satellites */
-  uint8_t satelliteCnt() const { return ui8_satelliteCnt; }
+  uint8_t satelliteCnt() const { return mui8_satelliteCnt; }
 
   /** deliver HDOP with scaling [1x10E-2] */
-  int16_t hdop10Minus2() const { return i16_hdop; }
+  int16_t hdop10Minus2() const { return mi16_hdop; }
 
   /** PDOP with scaling [1x10E-2] */
-  int16_t pdop10Minus2() const { return i16_pdop; }
+  int16_t pdop10Minus2() const { return mi16_pdop; }
 
   /** deliver age of last gps-position-update in milliseconds
       please use in conjunction with isPositionReceived() first,
       as else the uint16_t would wrap the result around into 0..x areas
       which would indicate you a not too old position you would use! */
   uint16_t getGpsPositionUpdateAge( void ) const
-  { if ( i32_lastIsoPositionStream > i32_lastIsoPositionSimple) return (System_c::getTime() - i32_lastIsoPositionStream);
-    else                                                        return (System_c::getTime() - i32_lastIsoPositionSimple);}
+  { if ( mi32_lastIsoPositionStream > mi32_lastIsoPositionSimple) return (System_c::getTime() - mi32_lastIsoPositionStream);
+    else                                                        return (System_c::getTime() - mi32_lastIsoPositionSimple);}
 #else
   /** deliver age of last gps-position-update in milliseconds
       please use in conjunction with isPositionReceived() first,
       as else the uint16_t would wrap the result around into 0..x areas
       which would indicate you a not too old position you would use! */
   uint16_t getGpsPositionUpdateAge( void ) const
-  { return (System_c::getTime() - i32_lastIsoPositionSimple); }
+  { return (System_c::getTime() - mi32_lastIsoPositionSimple); }
 #endif
 
   /** deliver age of last gps-direction-update in milliseconds
@@ -610,7 +610,7 @@ public:
       as else the uint16_t would wrap the result around into 0..x areas
       which would indicate you a not too old position you would use! */
   uint16_t getGpsDirectionUpdateAge( void ) const
-  { return (System_c::getTime() - i32_lastIsoDirection); }
+  { return (System_c::getTime() - mi32_lastIsoDirection); }
 
 
   ///  Used for Debugging Tasks in Scheduler_c
@@ -632,7 +632,7 @@ private:
   /** deliver time between now and last calendar set in [msec]
     @return msec since last calendar set
     */
-  int32_t calendarSetAge() const {return (System_c::getTime() - i32_lastCalendarSet);};
+  int32_t calendarSetAge() const {return (System_c::getTime() - mi32_lastCalendarSet);};
 
   const struct CNAMESPACE::tm* Utc2LocalTime();
 
@@ -671,14 +671,14 @@ private:
     /** last timestamp where calendar was set
     -> use this to calculate new time
     */
-  int32_t i32_lastCalendarSet;
+  int32_t mi32_lastCalendarSet;
 
       /** last timestamp where calendar was set
     -> use this to calculate new time
     */
-  CNAMESPACE::time_t t_cachedLocalSeconds1970AtLastSet;
+  CNAMESPACE::time_t mt_cachedLocalSeconds1970AtLastSet;
 
-  CNAMESPACE::time_t t_tzOffset;
+  CNAMESPACE::time_t mt_tzOffset;
 
   /** bit_calendar */
   struct {
@@ -694,30 +694,30 @@ private:
   } bit_calendar;
 
   /** raw GPS latitude [degree] ; Lat_Min < 0 --> South */
-  int32_t i32_latitudeDegree10Minus7;
+  int32_t mi32_latitudeDegree10Minus7;
 
   /** raw GPS longitude [degree]; Long_Min < 0 --> West */
-  int32_t i32_longitudeDegree10Minus7;
+  int32_t mi32_longitudeDegree10Minus7;
 
 
   /// General
   /** last time of ISO GPS msg [msec] Position */
-  int32_t i32_lastIsoPositionSimple;
+  int32_t mi32_lastIsoPositionSimple;
 
   /** last time of ISO GPS msg [msec] Direction */
-  int32_t i32_lastIsoDirection;
+  int32_t mi32_lastIsoDirection;
 
   /** course over ground reference */
-  uint8_t ui8_courseOverGroundReference;
+  uint8_t mui8_courseOverGroundReference;
 
   /** sequence ID of direction data */
-  uint8_t ui8_directionSequenceID;
+  uint8_t mui8_directionSequenceID;
 
   /** course over ground */
-  uint16_t ui16_courseOverGroundRad10Minus4;
+  uint16_t mui16_courseOverGroundRad10Minus4;
 
   /** speed over ground */
-  uint16_t ui16_speedOverGroundCmSec;
+  uint16_t mui16_speedOverGroundCmSec;
 
 /** not using anymore as we changed from PGN 130577 to 129026
   // data mode and Set/COG/Heading Ref. of Direction Data PGN 130577
@@ -738,7 +738,7 @@ private:
 
 
   /** GNSS Method and Quality - not only in ENABLE_NMEA_2000_MULTI_PACKET as we need to know if GPS inf. is valid! */
-  IsoAgLib::IsoGnssMethod_t t_gnssMethod;
+  IsoAgLib::IsoGnssMethod_t mt_gnssMethod;
 
 #ifdef ENABLE_NMEA_2000_MULTI_PACKET
   /** GPS time in UTC */
@@ -750,48 +750,48 @@ private:
   } bit_gpsTime;
 
   /** last time of ISO GPS msg [msec] */
-  int32_t i32_lastIsoPositionStream;
+  int32_t mi32_lastIsoPositionStream;
 
   /** GPS altitude - [cm] */
-  uint32_t ui32_altitudeCm;
+  uint32_t mui32_altitudeCm;
 
   /** GNSS Type */
-  IsoAgLib::IsoGnssType_t t_gnssType;
+  IsoAgLib::IsoGnssType_t mt_gnssType;
 
   /** number of received satellites */
-  uint8_t ui8_satelliteCnt;
+  uint8_t mui8_satelliteCnt;
 
   /** HDOP with scaling [1x10E-2] */
-  int16_t i16_hdop;
+  int16_t mi16_hdop;
 
   /** PDOP with scaling [1x10E-2] */
-  int16_t i16_pdop;
+  int16_t mi16_pdop;
 
   /** integrity of GPS signal */
-  uint8_t ui8_integrity;
+  uint8_t mui8_integrity;
 
   /** sequence ID of GPS string */
-  uint8_t ui8_positionSequenceID;
-  int32_t i32_geoidalSeparation;
-  uint8_t ui8_noRefStations;
-  STL_NAMESPACE::vector<uint16_t> vec_refStationTypeAndStation;
-  STL_NAMESPACE::vector<uint16_t> vec_refStationDifferentialAge10Msec;
+  uint8_t mui8_positionSequenceID;
+  int32_t mi32_geoidalSeparation;
+  uint8_t mui8_noRefStations;
+  STL_NAMESPACE::vector<uint16_t> mvec_refStationTypeAndStation;
+  STL_NAMESPACE::vector<uint16_t> mvec_refStationDifferentialAge10Msec;
 
   /** buffer class for sending data streams */
-  Nmea2000SendStreamer_c c_nmea2000Streamer;
+  Nmea2000SendStreamer_c mc_nmea2000Streamer;
 
   /** sending success state */
-  MultiSend_c::sendSuccess_t t_multiSendSuccessState;
+  MultiSend_c::sendSuccess_t mt_multiSendSuccessState;
 
   #endif // END of ENABLE_NMEA_2000_MULTI_PACKET
   /** ISOName of GPS data sender */
-  IsoName_c c_sendGpsISOName;
+  IsoName_c mc_sendGpsISOName;
 
   /** isoName which act as sender of a msg: either responses on behalf of implement or commands as tractor.
       This pointer is set in config function
     */
-  const IsoName_c* pc_isoNameGps;
-  IsoAgLib::IdentMode_t  t_identModeGps;
+  const IsoName_c* mpc_isoNameGps;
+  IsoAgLib::IdentMode_t  mt_identModeGps;
 };
 
 #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )

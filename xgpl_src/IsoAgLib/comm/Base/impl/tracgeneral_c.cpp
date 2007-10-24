@@ -125,8 +125,8 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     {
       // *************************************************************************************************
       // Added by Martin Wodok to accomodate LANGUAGE_PGN Messages:
-      b_languageVtReceived = false;
-      b_languageTecuReceived = false;
+      mb_languageVtReceived = false;
+      mb_languageTecuReceived = false;
       // *************************************************************************************************
     }
 
@@ -163,7 +163,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     // set the member base msg value vars to NO_VAL codes
     setHitchRear(NO_VAL_8);
     setHitchFront(NO_VAL_8);
-    i16_engine = NO_VAL_16S;
+    mi16_engine = NO_VAL_16S;
 
     // un-/register to PGN
     if (t_oldMode == IsoAgLib::IdentModeImplement && at_identMode == IsoAgLib::IdentModeTractor)
@@ -178,17 +178,17 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
       getIsoRequestPgnInstance4Comm().unregisterPGN (*this, LANGUAGE_PGN);
     }
 
-    i32_lastIsoPositionSimple = 0;
+    mi32_lastIsoPositionSimple = 0;
 
-    t_keySwitch = IsoAgLib::IsoNotAvailable; // mark as not available
-    ui8_maxPowerTime = ui8_frontLinkForce = ui8_rearLinkForce = NO_VAL_8;
-    ui16_frontDraft = ui16_rearDraft = NO_VAL_16;
-    ui32_lastMaintainPowerRequest = 0;
-    b_maintainEcuPower = b_maintainActuatorPower = false;
-    implState.inPark =      IsoAgLib::IsoNotAvailablePark;
-    implState.inTransport = IsoAgLib::IsoNotTransported;
-    implState.inWork =      IsoAgLib::IsoDisconnect;
-    t_frontHitchPosLimitStatus = t_rearHitchPosLimitStatus = IsoAgLib::IsoNotAvailableLimit;
+    mt_keySwitch = IsoAgLib::IsoNotAvailable; // mark as not available
+    mui8_maxPowerTime = mui8_frontLinkForce = mui8_rearLinkForce = NO_VAL_8;
+    mui16_frontDraft = mui16_rearDraft = NO_VAL_16;
+    mui32_lastMaintainPowerRequest = 0;
+    mb_maintainEcuPower = mb_maintainActuatorPower = false;
+    mt_implState.inPark =      IsoAgLib::IsoNotAvailablePark;
+    mt_implState.inTransport = IsoAgLib::IsoNotTransported;
+    mt_implState.inWork =      IsoAgLib::IsoDisconnect;
+    mt_frontHitchPosLimitStatus = mt_rearHitchPosLimitStatus = IsoAgLib::IsoNotAvailableLimit;
 
     return true;
   };
@@ -281,16 +281,16 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
           if (data().isoPgn() == FRONT_HITCH_STATE_PGN)
           { // front hitch
             setHitchFront(ui8_tempHitch);
-            ui8_frontLinkForce = data().getUint8Data( 2 );
-            ui16_frontDraft = static_cast<uint16_t>(data().getUint8Data( 3 ) ) + (static_cast<uint16_t>(data().getUint8Data( 4 ) ) << 8);
-            t_frontHitchPosLimitStatus = IsoAgLib::IsoLimitFlag_t( ( data().getUint8Data(1) >> 3 ) & 3 );
+            mui8_frontLinkForce = data().getUint8Data( 2 );
+            mui16_frontDraft = static_cast<uint16_t>(data().getUint8Data( 3 ) ) + (static_cast<uint16_t>(data().getUint8Data( 4 ) ) << 8);
+            mt_frontHitchPosLimitStatus = IsoAgLib::IsoLimitFlag_t( ( data().getUint8Data(1) >> 3 ) & 3 );
           }
           else
           { // back hitch
             setHitchRear(ui8_tempHitch);
-            ui8_rearLinkForce = data().getUint8Data( 2 );
-            ui16_rearDraft = static_cast<uint16_t>(data().getUint8Data( 3 ) ) + (static_cast<uint16_t>(data().getUint8Data( 4 )) << 8);
-            t_rearHitchPosLimitStatus = IsoAgLib::IsoLimitFlag_t( ( data().getUint8Data(1) >> 3 ) & 3 );
+            mui8_rearLinkForce = data().getUint8Data( 2 );
+            mui16_rearDraft = static_cast<uint16_t>(data().getUint8Data( 3 ) ) + (static_cast<uint16_t>(data().getUint8Data( 4 )) << 8);
+            mt_rearHitchPosLimitStatus = IsoAgLib::IsoLimitFlag_t( ( data().getUint8Data(1) >> 3 ) & 3 );
           }
           setSelectedDataSourceISOName(c_tempISOName);
           //set update time
@@ -304,19 +304,19 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
         break;
       case MAINTAIN_POWER_REQUEST_PGN: // maintain power request
         if ( ( (data().getUint8Data( 0 ) >> 6) & 3) == 1)
-          b_maintainEcuPower = true;
+          mb_maintainEcuPower = true;
         else
-          b_maintainEcuPower = false;
+          mb_maintainEcuPower = false;
         if ( ( (data().getUint8Data( 0 ) >> 4) & 3) == 1)
-          b_maintainActuatorPower = true;
+          mb_maintainActuatorPower = true;
         else
-          b_maintainActuatorPower = false;
+          mb_maintainActuatorPower = false;
 
-        implState.inTransport = ( (data().getUint8Data( 1 ) >> 6) & 3 );
-        implState.inPark =      ( (data().getUint8Data( 1 ) >> 4) & 3 );
-        implState.inWork =      ( (data().getUint8Data( 1 ) >> 2) & 3 );
+        mt_implState.inTransport = ( (data().getUint8Data( 1 ) >> 6) & 3 );
+        mt_implState.inPark =      ( (data().getUint8Data( 1 ) >> 4) & 3 );
+        mt_implState.inWork =      ( (data().getUint8Data( 1 ) >> 2) & 3 );
 
-        ui32_lastMaintainPowerRequest = data().time();
+        mui32_lastMaintainPowerRequest = data().time();
         b_result = true;
         break;
       // **********************************************************
@@ -325,17 +325,17 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
         switch (data().isoSa())
         {
           case 0x26:
-            b_languageVtReceived = true;
+            mb_languageVtReceived = true;
             for (int i=0; i<8; i++)
             {
-              p8ui8_languageVt[i] = data().getUint8Data(i);
+              mp8ui8_languageVt[i] = data().getUint8Data(i);
             }
             break;
           case 0xF0:
-            b_languageTecuReceived = true;
+            mb_languageTecuReceived = true;
             for (int i=0; i<8; i++)
             {
-              p8ui8_languageTecu[i] = data().getUint8Data(i);
+              mp8ui8_languageTecu[i] = data().getUint8Data(i);
             }
             break;
           default: // don't care for other language pgns...
@@ -383,7 +383,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     {
       data().setIsoPgn(FRONT_HITCH_STATE_PGN);
 
-      ui8_temp |= t_frontHitchPosLimitStatus << 3;
+      ui8_temp |= mt_frontHitchPosLimitStatus << 3;
       switch (hitchFront()) {
         case ERROR_VAL_8:
           data().setUint8Data(0, hitchFront());
@@ -409,9 +409,9 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
           }
           break;
       }
-      data().setUint8Data(2, ui8_frontLinkForce);
-      data().setUint8Data(3, ui16_frontDraft& 0xFF);
-      data().setUint8Data(4, (ui16_frontDraft >> 8) );
+      data().setUint8Data(2, mui8_frontLinkForce);
+      data().setUint8Data(3, mui16_frontDraft& 0xFF);
+      data().setUint8Data(4, (mui16_frontDraft >> 8) );
 
       /* Reserved Bytes */
       data().setUint8Data(5, 0xFF );
@@ -425,7 +425,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     {
       data().setIsoPgn(REAR_HITCH_STATE_PGN);
       ui8_temp = 0x7;  /* Pre-load the reserved bits */
-      ui8_temp = t_rearHitchPosLimitStatus << 3;
+      ui8_temp = mt_rearHitchPosLimitStatus << 3;
       switch (hitchRear()) {
         case ERROR_VAL_8:
           data().setUint8Data(0, hitchRear());
@@ -451,9 +451,9 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
           }
           break;
       }
-      data().setUint8Data(2, ui8_rearLinkForce);
-      data().setUint8Data(3, (ui16_rearDraft& 0xFF) );
-      data().setUint8Data(4, ui16_rearDraft >> 8);
+      data().setUint8Data(2, mui8_rearLinkForce);
+      data().setUint8Data(3, (mui16_rearDraft& 0xFF) );
+      data().setUint8Data(4, mui16_rearDraft >> 8);
 
       /* Reserved Bytes */
       data().setUint8Data(5, 0xFF );
@@ -476,7 +476,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
 
     if ( (mui16_suppressMask & LANGUAGE_PGN_DISABLE_MASK) != 0) return;
 
-    if (  !b_languageVtReceived
+    if (  !mb_languageVtReceived
        || ( getISOName()->isUnspecified()  )
        || !getIsoMonitorInstance4Comm().existIsoMemberISOName(*getISOName(), true)
        )
@@ -493,17 +493,17 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
       CanIo_c& c_can = getCanInstance4Comm();
       data().setIsoPgn(LANGUAGE_PGN);
       //Bytes 1,2: language command
-      data().setUint16Data(0, (p8ui8_languageVt[0] | (p8ui8_languageVt[1] << 8)) );
+      data().setUint16Data(0, (mp8ui8_languageVt[0] | (mp8ui8_languageVt[1] << 8)) );
       //Byte 3: number format; Bit 1-4: reserved, Bit 5,6: time format, Bit 7,8: decimal symbol
-      data().setUint8Data(2, p8ui8_languageVt[2]);
+      data().setUint8Data(2, mp8ui8_languageVt[2]);
       //Byte 4: date format
-      data().setUint8Data(3, p8ui8_languageVt[3]);
+      data().setUint8Data(3, mp8ui8_languageVt[3]);
       //Byte 5: units of measure; Bit 1,2: mass units, Bit 3,4: volume units, Bit 5,6: area units, Bit 7,8: distance units
-      data().setUint8Data(4, p8ui8_languageVt[4]);
+      data().setUint8Data(4, mp8ui8_languageVt[4]);
       //Byte 6: units of measure; Bit 1,2: units system; Bit 3,4; force units, Bit 5,6: pressure units, Bit 7,8: temperature units
-      data().setUint8Data(5, p8ui8_languageVt[5]);
+      data().setUint8Data(5, mp8ui8_languageVt[5]);
       //Bytes 7,8: reserved
-      data().setUint8Data(6, p8ui8_languageVt[6] | (p8ui8_languageVt[7] << 8));
+      data().setUint8Data(6, mp8ui8_languageVt[6] | (mp8ui8_languageVt[7] << 8));
       data().setUint8Data(7, 0xFF);
 
       c_can << data();
@@ -538,18 +538,18 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     switch(at_implState)
     {
       case IsoAgLib::implInTransport:
-        val2 |= ( implState.inTransport         << 6);
+        val2 |= ( mt_implState.inTransport         << 6);
         val2 |= ( IsoAgLib::IsoNotAvailablePark << 4);
         val2 |= ( IsoAgLib::IsoNotAvailableWork << 2);
         break;
       case IsoAgLib::implInPark:
         val2 |= ( IsoAgLib::IsoNotAvailableTransport << 6);
-        val2 |= ( implState.inPark                   << 4);
+        val2 |= ( mt_implState.inPark                   << 4);
         val2 |= ( IsoAgLib::IsoNotAvailableWork      << 2);
       case IsoAgLib::implInWork:
         val2 |= ( IsoAgLib::IsoNotAvailableTransport << 6);
         val2 |= ( IsoAgLib::IsoNotAvailablePark      << 4);
-        val2 |= ( implState.inWork                   << 2);
+        val2 |= ( mt_implState.inWork                   << 2);
     }
     data().setISONameForSA( *getISOName() );
     data().setIdentType(Ident_c::ExtendedIdent);

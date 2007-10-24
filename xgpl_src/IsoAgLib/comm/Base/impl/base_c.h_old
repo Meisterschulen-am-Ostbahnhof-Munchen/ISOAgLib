@@ -206,7 +206,7 @@ private:
   /** deliver reference to data pkg
       @return reference to the member BasePkg_c, which encapsulates the CAN send structure
     */
-  BasePkg_c& data(){return c_data;};
+  BasePkg_c& data(){return mc_data;};
   /** deliver reference to data pkg as reference to CANPkgExt_c
       to implement the base virtual function correct
     */
@@ -243,7 +243,7 @@ private:
 private:
   // Private attributes
   /** temp data where received data is put */
-  BasePkg_c c_data;
+  BasePkg_c mc_data;
 
   /** devKey which act as sender of base msg */
   const DevKey_c* pc_devKey;

@@ -147,9 +147,9 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     else  setTimePeriod( (uint16_t) TIMEOUT_TRACTOR_DATA   );
 
     // set the member base msg value vars to NO_VAL codes
-    t_ptoFront.ui16_pto8DigitPerRpm = t_ptoRear.ui16_pto8DigitPerRpm = NO_VAL_16;
+    mt_ptoFront.ui16_pto8DigitPerRpm = mt_ptoRear.ui16_pto8DigitPerRpm = NO_VAL_16;
     // set the timestamps to 0
-    t_ptoFront.i32_lastPto = t_ptoRear.i32_lastPto = 0;
+    mt_ptoFront.i32_lastPto = mt_ptoRear.i32_lastPto = 0;
 
     if (   (t_oldMode == IsoAgLib::IdentModeImplement && at_identMode == IsoAgLib::IdentModeTractor)
         || (t_oldMode == IsoAgLib::IdentModeTractor && at_identMode == IsoAgLib::IdentModeImplement)
@@ -170,15 +170,15 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
 
     }
 
-    t_ptoFront.t_ptoEngaged = t_ptoRear.t_ptoEngaged
-    = t_ptoFront.t_pto1000 = t_ptoRear.t_pto1000
-    = t_ptoFront.t_ptoEconomy = t_ptoRear.t_ptoEconomy = IsoAgLib::IsoNotAvailable; // mark as not available
-    t_ptoFront.ui16_ptoSetPoint8DigitPerRpm = 0;
-    t_ptoRear.ui16_ptoSetPoint8DigitPerRpm = 0;
-    t_ptoFront.t_ptoEngagementReqStatus = t_ptoRear.t_ptoEngagementReqStatus
-    = t_ptoFront.t_ptoModeReqStatus = t_ptoRear.t_ptoModeReqStatus
-    = t_ptoFront.t_ptoEconomyModeReqStatus = t_ptoRear.t_ptoEconomyModeReqStatus = IsoAgLib::IsoNotAvailableReq;
-    t_ptoFront.t_ptoShaftSpeedLimitStatus = t_ptoRear.t_ptoShaftSpeedLimitStatus = IsoAgLib::IsoNotAvailableLimit;
+    mt_ptoFront.t_ptoEngaged = mt_ptoRear.t_ptoEngaged
+    = mt_ptoFront.t_pto1000 = mt_ptoRear.t_pto1000
+    = mt_ptoFront.t_ptoEconomy = mt_ptoRear.t_ptoEconomy = IsoAgLib::IsoNotAvailable; // mark as not available
+    mt_ptoFront.ui16_ptoSetPoint8DigitPerRpm = 0;
+    mt_ptoRear.ui16_ptoSetPoint8DigitPerRpm = 0;
+    mt_ptoFront.t_ptoEngagementReqStatus = mt_ptoRear.t_ptoEngagementReqStatus
+    = mt_ptoFront.t_ptoModeReqStatus = mt_ptoRear.t_ptoModeReqStatus
+    = mt_ptoFront.t_ptoEconomyModeReqStatus = mt_ptoRear.t_ptoEconomyModeReqStatus = IsoAgLib::IsoNotAvailableReq;
+    mt_ptoFront.t_ptoShaftSpeedLimitStatus = mt_ptoRear.t_ptoShaftSpeedLimitStatus = IsoAgLib::IsoNotAvailableLimit;
 
     return true;
   };
@@ -214,11 +214,11 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     // call TracPto_c function to send pto informtation
     // isoSendMessage checks if this item (identified by ISOName)
     // is configured to send pto information
-    if ( aui32_pgn == FRONT_PTO_STATE_PGN  && t_ptoFront.t_ptoEngaged != IsoAgLib::IsoActive)
+    if ( aui32_pgn == FRONT_PTO_STATE_PGN  && mt_ptoFront.t_ptoEngaged != IsoAgLib::IsoActive)
     {
       sendMessage(sendFrontPto);
     }
-    if ( aui32_pgn == REAR_PTO_STATE_PGN && t_ptoRear.t_ptoEngaged != IsoAgLib::IsoActive)
+    if ( aui32_pgn == REAR_PTO_STATE_PGN && mt_ptoRear.t_ptoEngaged != IsoAgLib::IsoActive)
     {
       sendMessage(sendRearPto);
     }
@@ -245,11 +245,11 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
         PtoData_t* pt_ptoData = NULL;
         if (data().isoPgn() == FRONT_PTO_STATE_PGN)
         { // front PTO
-          pt_ptoData = &t_ptoFront;
+          pt_ptoData = &mt_ptoFront;
         }
         else
         { // rear PTO
-          pt_ptoData = &t_ptoRear;
+          pt_ptoData = &mt_ptoRear;
         }
 
         pt_ptoData->i32_lastPto = ci32_now;
@@ -291,7 +291,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
   bool TracPTO_c::timeEventTracMode( )
   {
      ///Timeperiod of 100ms is set in ::config
-    if ( t_ptoFront.t_ptoEngaged == IsoAgLib::IsoActive  )
+    if ( mt_ptoFront.t_ptoEngaged == IsoAgLib::IsoActive  )
     { // it's time to send tractor PTO information and the FRONT PTO is engaged
       sendMessage(sendFrontPto);
     }
@@ -299,7 +299,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     if ( getAvailableExecTime() == 0) return false;
 
     ///Timeperiod of 100ms is set in ::config
-    if ( t_ptoRear.t_ptoEngaged == IsoAgLib::IsoActive  )
+    if ( mt_ptoRear.t_ptoEngaged == IsoAgLib::IsoActive  )
     { // it's time to send tractor PTO information and the REAR PTO is engaged
       sendMessage(sendRearPto);
     }
@@ -313,25 +313,25 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     const int32_t ci32_now = getLastRetriggerTime();
     // check for different pto data types whether the previously
     // sending node stopped sending -> other nodes can now step in
-    if ( ( (ci32_now - t_ptoFront.i32_lastPto)  >= TIMEOUT_TRACTOR_DATA
+    if ( ( (ci32_now - mt_ptoFront.i32_lastPto)  >= TIMEOUT_TRACTOR_DATA
            || getSelectedDataSourceISOName().isUnspecified()
          )
-         && ( t_ptoFront.ui16_pto8DigitPerRpm != 0 && t_ptoFront.t_ptoEngaged != IsoAgLib::IsoInactive)
+         && ( mt_ptoFront.ui16_pto8DigitPerRpm != 0 && mt_ptoFront.t_ptoEngaged != IsoAgLib::IsoInactive)
        )
     { // TECU stoppped its PTO and doesn'T send PTO updates - as defined by ISO 11783
       // --> switch values to ZERO
-      t_ptoFront.ui16_pto8DigitPerRpm = 0;
-      t_ptoFront.t_ptoEngaged = IsoAgLib::IsoInactive;
+      mt_ptoFront.ui16_pto8DigitPerRpm = 0;
+      mt_ptoFront.t_ptoEngaged = IsoAgLib::IsoInactive;
     }
-    if ( ( ( ci32_now - t_ptoRear.i32_lastPto ) >= TIMEOUT_TRACTOR_DATA
+    if ( ( ( ci32_now - mt_ptoRear.i32_lastPto ) >= TIMEOUT_TRACTOR_DATA
            || (getSelectedDataSourceISOName().isUnspecified() )
          )
-         && ( t_ptoRear.ui16_pto8DigitPerRpm != 0 && t_ptoRear.t_ptoEngaged != IsoAgLib::IsoInactive )
+         && ( mt_ptoRear.ui16_pto8DigitPerRpm != 0 && mt_ptoRear.t_ptoEngaged != IsoAgLib::IsoInactive )
        )
     { // TECU stoppped its PTO and doesn'T send PTO updates - as defined by ISO 11783
       // --> switch values to ZERO
-      t_ptoRear.ui16_pto8DigitPerRpm = 0;
-      t_ptoRear.t_ptoEngaged = IsoAgLib::IsoInactive;
+      mt_ptoRear.ui16_pto8DigitPerRpm = 0;
+      mt_ptoRear.t_ptoEngaged = IsoAgLib::IsoInactive;
     }
     return true;
   }
@@ -359,12 +359,12 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     if (t_sendptodata == sendFrontPto)
     {
       data().setIsoPgn(FRONT_PTO_STATE_PGN);
-      pt_ptoData = &t_ptoFront;
+      pt_ptoData = &mt_ptoFront;
     }
     else
     { //sendRearPto
       data().setIsoPgn(REAR_PTO_STATE_PGN);
-      pt_ptoData = &t_ptoRear;
+      pt_ptoData = &mt_ptoRear;
     }
 
     uint8_t ui8_val;

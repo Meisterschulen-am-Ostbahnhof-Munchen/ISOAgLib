@@ -140,7 +140,7 @@ namespace __IsoAgLib {
   {
     // first register in Scheduler_c
     getSchedulerInstance4Comm().registerClient( this );
-    c_data.setSingletonKey( getSingletonVecKey() );
+    mc_data.setSingletonKey( getSingletonVecKey() );
 
     #ifdef USE_DIN_9684
     if ( checkAlreadyClosed() )
@@ -177,7 +177,7 @@ namespace __IsoAgLib {
     */
   __IsoAgLib::CANPkgExt_c& Base_c::dataBase()
   {
-    return c_data;
+    return mc_data;
   }
 
   /** config the Base_c object after init -> set pointer to devKey and
@@ -211,7 +211,7 @@ namespace __IsoAgLib {
     */
   bool Base_c::processMsg(){
     #if defined(USE_ISO_11783) && defined(USE_DIN_9684)
-    if (c_data.identType() == Ident_c::ExtendedIdent)
+    if (mc_data.identType() == Ident_c::ExtendedIdent)
     #endif // USE_DIN_9684 && USE_ISO_11783
     #ifdef USE_ISO_11783
     { // an ISO11783 base information msg received

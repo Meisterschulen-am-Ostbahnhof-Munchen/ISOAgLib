@@ -157,24 +157,24 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     }
 
     // set distance value to NO_VAL codes
-    ui32_distReal = ui32_distTheor = NO_VAL_32;
+    mui32_distReal = mui32_distTheor = NO_VAL_32;
 
     // set the member msg value vars to NO_VAL codes
-    i32_speedReal = i32_speedTheor = NO_VAL_32S;
+    mi32_speedReal = mi32_speedTheor = NO_VAL_32S;
 
-    t_operatorDirectionReversed = IsoAgLib::IsoNotAvailableReversed;
-    t_startStopState = IsoAgLib::IsoNotAvailable;
+    mt_operatorDirectionReversed = IsoAgLib::IsoNotAvailableReversed;
+    mt_startStopState = IsoAgLib::IsoNotAvailable;
 
-    ui32_selectedDistance = 0xFFFFFFFF;
-    i32_selectedSpeed = NO_VAL_32S;
-    t_selectedDirection = t_directionReal = t_directionTheor = IsoAgLib::IsoNotAvailableDirection;
-    t_selectedSpeedSource = IsoAgLib::IsoNotAvailableSpeed;
-    t_selectedSpeedLimitStatus = IsoAgLib::IsoNotAvailableLimit;
+    mui32_selectedDistance = 0xFFFFFFFF;
+    mi32_selectedSpeed = NO_VAL_32S;
+    mt_selectedDirection = mt_directionReal = mt_directionTheor = IsoAgLib::IsoNotAvailableDirection;
+    mt_selectedSpeedSource = IsoAgLib::IsoNotAvailableSpeed;
+    mt_selectedSpeedLimitStatus = IsoAgLib::IsoNotAvailableLimit;
 
-    t_speedSource = IsoAgLib::NoSpeed;
-    t_distDirecSource = IsoAgLib::NoDistDirec;
-    ui32_lastUpdateTimeSpeed = 3000;
-    ui32_lastUpdateTimeDistDirec = 3000;
+    mt_speedSource = IsoAgLib::NoSpeed;
+    mt_distDirecSource = IsoAgLib::NoDistDirec;
+    mui32_lastUpdateTimeSpeed = 3000;
+    mui32_lastUpdateTimeDistDirec = 3000;
 
     return true;
   };
@@ -299,21 +299,21 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
             i32_tempSpeed *= -1; //driving reverse;
 
 
-          const uint32_t testTimeOutdatedSpeed = (data().time() - ui32_lastUpdateTimeSpeed);
-          const uint32_t testTimeOutdatedDist  = (data().time() - ui32_lastUpdateTimeDistDirec);
+          const uint32_t testTimeOutdatedSpeed = (data().time() - mui32_lastUpdateTimeSpeed);
+          const uint32_t testTimeOutdatedDist  = (data().time() - mui32_lastUpdateTimeDistDirec);
           if (data().isoPgn() == GROUND_BASED_SPEED_DIST_PGN)
           { // real speed
             setSpeedReal(i32_tempSpeed);
             // real dist
             setDistReal( ui32_tempDist );
-            t_directionReal = IsoAgLib::IsoDirectionFlag_t(data().getUint8Data(7) & 0x3 );
+            mt_directionReal = IsoAgLib::IsoDirectionFlag_t(data().getUint8Data(7) & 0x3 );
             #ifdef USE_RS232_FOR_DEBUG
             INTERNAL_DEBUG_DEVICE << "PROCESS GROUND(65097): " <<  static_cast<const int>(c_tempISOName.devClass() ) << INTERNAL_DEBUG_DEVICE_ENDL;
             #endif
 
             //decide if ground based speed is actually the best available speed
             if ( ( b_usableSpeed ) &&
-                 ( ( t_speedSource <= IsoAgLib::GroundBasedSpeed )
+                 ( ( mt_speedSource <= IsoAgLib::GroundBasedSpeed )
                 || ( testTimeOutdatedSpeed >= TIMEOUT_SENDING_NODE && testTimeOutdatedSpeed < 4000 )
                  )
                )
@@ -322,8 +322,8 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
             }
 
             //if ground based dist and direction is actually the best available
-            if ( ( ui32_distReal <= 0xFAFFFFFF ) &&
-                 ( ( t_distDirecSource <= IsoAgLib::GroundBasedDistDirec )
+            if ( ( mui32_distReal <= 0xFAFFFFFF ) &&
+                 ( ( mt_distDirecSource <= IsoAgLib::GroundBasedDistDirec )
                 || ( testTimeOutdatedDist >= TIMEOUT_SENDING_NODE && testTimeOutdatedDist < 4000 )
                  )
                )
@@ -342,22 +342,22 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
             c_tracgeneral.setKeySwitch(IsoAgLib::IsoActiveFlag_t( ( data().getUint8Data( 7 ) >> 2 ) & 0x3 ));
             c_tracgeneral.setMaxPowerTime(data().getUint8Data( 6 ) );
             #endif
-            t_operatorDirectionReversed = IsoAgLib::IsoOperatorDirectionFlag_t( ( data().getUint8Data(7) >> 6) & 0x3);
-            t_startStopState = IsoAgLib::IsoActiveFlag_t( ( data().getUint8Data(7) >> 4) & 0x3);
-            t_directionTheor = IsoAgLib::IsoDirectionFlag_t(data().getUint8Data(7)       & 0x3 );
+            mt_operatorDirectionReversed = IsoAgLib::IsoOperatorDirectionFlag_t( ( data().getUint8Data(7) >> 6) & 0x3);
+            mt_startStopState = IsoAgLib::IsoActiveFlag_t( ( data().getUint8Data(7) >> 4) & 0x3);
+            mt_directionTheor = IsoAgLib::IsoDirectionFlag_t(data().getUint8Data(7)       & 0x3 );
             #ifdef USE_RS232_FOR_DEBUG
             INTERNAL_DEBUG_DEVICE << "PROCESS WHEEL(65096): " <<  static_cast<const int>(c_tempISOName.devClass() ) << INTERNAL_DEBUG_DEVICE_ENDL;
             #endif
             if ( ( b_usableSpeed ) &&
-                 ( ( t_speedSource <= IsoAgLib::WheelBasedSpeed )
+                 ( ( mt_speedSource <= IsoAgLib::WheelBasedSpeed )
                 || ( testTimeOutdatedSpeed >= TIMEOUT_SENDING_NODE && testTimeOutdatedSpeed < 4000 )
                  )
                )
             { // speed information is usable and the current selected speed is at least not better or outdated
               updateSpeed(IsoAgLib::WheelBasedSpeed);
             }
-            if ( ( ui32_distReal <= 0xFAFFFFFF ) &&
-                 ( ( t_distDirecSource <= IsoAgLib::WheelBasedDistDirec )
+            if ( ( mui32_distReal <= 0xFAFFFFFF ) &&
+                 ( ( mt_distDirecSource <= IsoAgLib::WheelBasedDistDirec )
                 || ( testTimeOutdatedDist >= TIMEOUT_SENDING_NODE && testTimeOutdatedDist < 4000 )
                  )
                )
@@ -383,31 +383,31 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
 
         if ( ( ( checkParseReceived( c_tempISOName ) ) ) && (t_testSpeedSource != IsoAgLib::IsoNotAvailableSpeed))
         {
-          t_selectedSpeedLimitStatus = IsoAgLib::IsoLimitFlag_t( ( (data().getUint8Data(7) >> 5) & 0x7) );
-          t_selectedDirection        = IsoAgLib::IsoDirectionFlag_t( data().getUint8Data(7) & 0x3);
+          mt_selectedSpeedLimitStatus = IsoAgLib::IsoLimitFlag_t( ( (data().getUint8Data(7) >> 5) & 0x7) );
+          mt_selectedDirection        = IsoAgLib::IsoDirectionFlag_t( data().getUint8Data(7) & 0x3);
 
           setSelectedDataSourceISOName(c_tempISOName);
           setUpdateTime( ci32_now );
 
           if (data().getUint16Data(0) <= 0xFAFF) //valid selected speed?
           {
-            i32_selectedSpeed = data().getUint16Data(0);
-            t_selectedSpeedSource =  t_testSpeedSource;
+            mi32_selectedSpeed = data().getUint16Data(0);
+            mt_selectedSpeedSource =  t_testSpeedSource;
             updateSpeed(IsoAgLib::SelectedSpeed);
-            if (t_selectedDirection == IsoAgLib::IsoReverse)
-              i32_selectedSpeed *= -1; //driving reverse
+            if (mt_selectedDirection == IsoAgLib::IsoReverse)
+              mi32_selectedSpeed *= -1; //driving reverse
           }
           else //fall back to ground based speed
-            t_speedSource = IsoAgLib::GroundBasedSpeed;
+            mt_speedSource = IsoAgLib::GroundBasedSpeed;
 
           if (data().getUint32Data(2) <= 0xFAFFFFFF) //valid selected distance?
           {
-            ui32_selectedDistance = data().getUint32Data(2);
-            t_distDirecSource = IsoAgLib::SelectedDistDirec;
-            t_selectedDirection = IsoAgLib::IsoDirectionFlag_t(   ( (data().getUint8Data(7) >> 0) & 0x3) );
+            mui32_selectedDistance = data().getUint32Data(2);
+            mt_distDirecSource = IsoAgLib::SelectedDistDirec;
+            mt_selectedDirection = IsoAgLib::IsoDirectionFlag_t(   ( (data().getUint8Data(7) >> 0) & 0x3) );
             updateDistanceDirection(IsoAgLib::SelectedDistDirec);
           } else //fall back to ground based direction and distance
-            t_distDirecSource = IsoAgLib::GroundBasedDistDirec;
+            mt_distDirecSource = IsoAgLib::GroundBasedDistDirec;
 
         } else
         { // there is a sender conflict
@@ -428,32 +428,32 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     switch(t_speedSrc)
     {
       case IsoAgLib::SelectedSpeed:
-        t_speedSource = IsoAgLib::SelectedSpeed; //nothing more to do because variables are already set
+        mt_speedSource = IsoAgLib::SelectedSpeed; //nothing more to do because variables are already set
         break;
       #if ( (defined USE_BASE || defined USE_TIME_GPS) && defined NMEA_2000_FAST_PACKET)
       case IsoAgLib::GpsBasedSpeed:
-        t_speedSource = IsoAgLib::GpsBasedSpeed;
-        t_selectedSpeedSource = IsoAgLib::IsoNavigationBasedSpeed;
-        i32_selectedSpeed = c_timeposgps.getGpsSpeedCmSec();
+        mt_speedSource = IsoAgLib::GpsBasedSpeed;
+        mt_selectedSpeedSource = IsoAgLib::IsoNavigationBasedSpeed;
+        mi32_selectedSpeed = c_timeposgps.getGpsSpeedCmSec();
         break;
       #endif
       case IsoAgLib::GroundBasedSpeed:
-        t_speedSource = IsoAgLib::GroundBasedSpeed;
-        t_selectedSpeedSource = IsoAgLib::IsoGroundBasedSpeed;
-        i32_selectedSpeed = i32_speedReal;
+        mt_speedSource = IsoAgLib::GroundBasedSpeed;
+        mt_selectedSpeedSource = IsoAgLib::IsoGroundBasedSpeed;
+        mi32_selectedSpeed = mi32_speedReal;
         break;
       case IsoAgLib::WheelBasedSpeed:
-        t_speedSource = IsoAgLib::WheelBasedSpeed;
-        t_selectedSpeedSource = IsoAgLib::IsoWheelBasedSpeed;
-        i32_selectedSpeed = i32_speedTheor;
+        mt_speedSource = IsoAgLib::WheelBasedSpeed;
+        mt_selectedSpeedSource = IsoAgLib::IsoWheelBasedSpeed;
+        mi32_selectedSpeed = mi32_speedTheor;
         break;
       default:
-        t_speedSource = IsoAgLib::NoSpeed;
-        t_selectedSpeedSource = IsoAgLib::IsoNotAvailableSpeed;
+        mt_speedSource = IsoAgLib::NoSpeed;
+        mt_selectedSpeedSource = IsoAgLib::IsoNotAvailableSpeed;
         break;
     }
     // update time
-    ui32_lastUpdateTimeSpeed = data().time();
+    mui32_lastUpdateTimeSpeed = data().time();
   }
 
   void TracMove_c::updateDistanceDirection(IsoAgLib::DistanceDirectionSource_t t_distanceSrc)
@@ -462,24 +462,24 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     switch(t_distanceSrc)
     {
       case IsoAgLib::SelectedDistDirec:
-        t_distDirecSource = IsoAgLib::SelectedDistDirec; //nothing more to do because variables are already set
+        mt_distDirecSource = IsoAgLib::SelectedDistDirec; //nothing more to do because variables are already set
         break;
       case IsoAgLib::GroundBasedDistDirec:
-        t_distDirecSource = IsoAgLib::GroundBasedDistDirec;
-        ui32_selectedDistance = ui32_distReal;
-        t_selectedDirection = t_directionReal;
+        mt_distDirecSource = IsoAgLib::GroundBasedDistDirec;
+        mui32_selectedDistance = mui32_distReal;
+        mt_selectedDirection = mt_directionReal;
         break;
       case IsoAgLib::WheelBasedDistDirec:
-        t_distDirecSource = IsoAgLib::WheelBasedDistDirec;
-        ui32_selectedDistance = ui32_distTheor;
-        t_selectedDirection = t_directionTheor;
+        mt_distDirecSource = IsoAgLib::WheelBasedDistDirec;
+        mui32_selectedDistance = mui32_distTheor;
+        mt_selectedDirection = mt_directionTheor;
         break;
       default:
-        t_distDirecSource = IsoAgLib::NoDistDirec;
+        mt_distDirecSource = IsoAgLib::NoDistDirec;
         break;
     }
     /// update time -> System Time caused by call of interface class
-    ui32_lastUpdateTimeDistDirec = System_c::getTime();
+    mui32_lastUpdateTimeDistDirec = System_c::getTime();
   }
 
   /** Detect stop of Speed update from tractor
@@ -489,26 +489,26 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
   {
     const int32_t ci32_now = getLastRetriggerTime();
     // checking for timeout of speed update
-    if ( ( (ci32_now - ui32_lastUpdateTimeSpeed)  >= TIMEOUT_SPEED_LOST || getSelectedDataSourceISONameConst().isUnspecified()  )
+    if ( ( (ci32_now - mui32_lastUpdateTimeSpeed)  >= TIMEOUT_SPEED_LOST || getSelectedDataSourceISONameConst().isUnspecified()  )
       && ( !isSelectedSpeedMissing() ) )
     { // TECU stoppped its Speed and doesn't send speed updates - as defined by ISO 11783
       // --> switch value of selected speed to ZERO
-      i32_selectedSpeed = NO_VAL_32S;
-      setSelectedSpeed( i32_selectedSpeed );
+      mi32_selectedSpeed = NO_VAL_32S;
+      setSelectedSpeed( mi32_selectedSpeed );
     }
-    if ( ( (ci32_now - ui32_lastUpdateTimeSpeed)  >= TIMEOUT_SPEED_LOST || getSelectedDataSourceISONameConst().isUnspecified()  )
+    if ( ( (ci32_now - mui32_lastUpdateTimeSpeed)  >= TIMEOUT_SPEED_LOST || getSelectedDataSourceISONameConst().isUnspecified()  )
       && ( !isRealSpeedMissing() ) )
     { // TECU stoppped its Speed and doesn't send speed updates - as defined by ISO 11783
       // --> switch value of selected speed to ZERO
-      i32_speedReal = NO_VAL_32S;
-      setSpeedReal( i32_speedReal );
+      mi32_speedReal = NO_VAL_32S;
+      setSpeedReal( mi32_speedReal );
     }
-    if ( ( (ci32_now - ui32_lastUpdateTimeSpeed)  >= TIMEOUT_SPEED_LOST || getSelectedDataSourceISONameConst().isUnspecified()  )
+    if ( ( (ci32_now - mui32_lastUpdateTimeSpeed)  >= TIMEOUT_SPEED_LOST || getSelectedDataSourceISONameConst().isUnspecified()  )
       && ( !isTheorSpeedMissing() ) )
     { // TECU stoppped its Speed and doesn't send speed updates - as defined by ISO 11783
       // --> switch value of selected speed to ZERO
-      i32_speedTheor = NO_VAL_32S;
-      setSpeedTheor( i32_speedTheor );
+      mi32_speedTheor = NO_VAL_32S;
+      setSpeedTheor( mi32_speedTheor );
     }
     return true;
   }
@@ -555,13 +555,13 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     {
       data().setIsoPgn(GROUND_BASED_SPEED_DIST_PGN);
       #ifdef SYSTEM_PC_VC
-      data().setUint16Data( 0, labs(i32_speedReal));
+      data().setUint16Data( 0, labs(mi32_speedReal));
       #else
-      data().setUint16Data(0, CNAMESPACE::labs(i32_speedReal));
+      data().setUint16Data(0, CNAMESPACE::labs(mi32_speedReal));
       #endif
-      data().setUint32Data(2, ui32_distReal);
+      data().setUint32Data(2, mui32_distReal);
 
-      b_val8 |= t_directionReal;
+      b_val8 |= mt_directionReal;
       data().setUint8Data(7, b_val8);
       //reserved fields
       data().setUint8Data(6, 0xFF);
@@ -574,11 +574,11 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     {
       data().setIsoPgn(WHEEL_BASED_SPEED_DIST_PGN);
       #ifdef SYSTEM_PC_VC
-      data().setUint16Data(0, labs(i32_speedTheor));
+      data().setUint16Data(0, labs(mi32_speedTheor));
       #else
-      data().setUint16Data(0, CNAMESPACE::labs(i32_speedTheor));
+      data().setUint16Data(0, CNAMESPACE::labs(mi32_speedTheor));
       #endif
-      data().setUint32Data(2, ui32_distTheor);
+      data().setUint32Data(2, mui32_distTheor);
 
       b_val8 = 0;
       //data().setUint8Data(7, b_val8);
@@ -587,9 +587,9 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
       data().setUint8Data(6, c_tracgeneral.maxPowerTime() );
       b_val8 |= (c_tracgeneral.keySwitch() << 2);
       #endif
-      b_val8 |= (t_operatorDirectionReversed << 6);
-      b_val8 |= (t_startStopState << 4);
-      b_val8 |= t_directionTheor;
+      b_val8 |= (mt_operatorDirectionReversed << 6);
+      b_val8 |= (mt_startStopState << 4);
+      b_val8 |= mt_directionTheor;
       data().setUint8Data(7, b_val8);
 
       // CanIo_c::operator<< retreives the information with the help of CanPkg_c::getData
@@ -602,14 +602,14 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
       uint8_t ui8_temp = 0;
 
       #ifdef SYSTEM_PC_VC
-      data().setUint16Data(0, labs(i32_selectedSpeed));
+      data().setUint16Data(0, labs(mi32_selectedSpeed));
       #else
-      data().setUint16Data(0, CNAMESPACE::labs(i32_selectedSpeed));
+      data().setUint16Data(0, CNAMESPACE::labs(mi32_selectedSpeed));
       #endif
-      data().setUint32Data(2, ui32_selectedDistance);
-      ui8_temp |= (t_selectedSpeedLimitStatus << 5);
-      ui8_temp |= (t_selectedSpeedSource      << 2);
-      ui8_temp |= (t_selectedDirection        << 0);
+      data().setUint32Data(2, mui32_selectedDistance);
+      ui8_temp |= (mt_selectedSpeedLimitStatus << 5);
+      ui8_temp |= (mt_selectedSpeedSource      << 2);
+      ui8_temp |= (mt_selectedDirection        << 0);
       data().setUint8Data(7, ui8_temp);
       //reserved fields
       data().setUint8Data(6, 0xFF);

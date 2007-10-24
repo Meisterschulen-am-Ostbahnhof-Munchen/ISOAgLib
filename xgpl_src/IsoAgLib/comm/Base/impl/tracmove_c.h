@@ -147,69 +147,69 @@ namespace __IsoAgLib {
     /** set the theoretical (gear calculated) driven distance
         @param rreflVal value to store as theoretical (gear calculated) driven distance
       */
-    void setDistTheor(const uint32_t& rreflVal) { ui32_distTheor = rreflVal; }
+    void setDistTheor(const uint32_t& rreflVal) { mui32_distTheor = rreflVal; }
 
     /** set the real (radar measured) driven distance
         @param rreflVal value to store as real radar measured distance
       */
-    void setDistReal(const uint32_t& rreflVal) { ui32_distReal = rreflVal; }
+    void setDistReal(const uint32_t& rreflVal) { mui32_distReal = rreflVal; }
 
     /** set the value of real speed (measured by radar)
         @param ai16_val value to store as real radar measured speed
       */
     void setSpeedReal(const int32_t& ai32_val)
-			{i32_speedReal = ai32_val; if(t_selectedSpeedSource == IsoAgLib::IsoGroundBasedSpeed) i32_selectedSpeed = ai32_val;}
+			{mi32_speedReal = ai32_val; if(mt_selectedSpeedSource == IsoAgLib::IsoGroundBasedSpeed) mi32_selectedSpeed = ai32_val;}
 
     /** set the value of theoretical speed (calculated from gear)
         @param ai16_val value to store as theoretical gear calculated speed
       */
     void setSpeedTheor(const int32_t& ai32_val)
-			{i32_speedTheor = ai32_val; if(t_selectedSpeedSource == IsoAgLib::IsoWheelBasedSpeed) i32_selectedSpeed = ai32_val;}
+			{mi32_speedTheor = ai32_val; if(mt_selectedSpeedSource == IsoAgLib::IsoWheelBasedSpeed) mi32_selectedSpeed = ai32_val;}
 
     /** set measured signal indicating either forward or reverse as the real (radar measured) direction of travel
         @return  direction of travel
       */
     void setDirectionReal(IsoAgLib::IsoDirectionFlag_t t_val)
-			{t_directionReal = t_val; if(t_selectedSpeedSource == IsoAgLib::IsoGroundBasedSpeed) t_selectedDirection = t_val;}
+			{mt_directionReal = t_val; if(mt_selectedSpeedSource == IsoAgLib::IsoGroundBasedSpeed) mt_selectedDirection = t_val;}
 
     /** set measured signal indicating either forward or reverse as the theoretical (gear calculated) direction of travel
         @return  direction of travel
       */
     void setDirectionTheor(IsoAgLib::IsoDirectionFlag_t t_val)
-			{t_directionTheor = t_val; if(t_selectedSpeedSource == IsoAgLib::IsoWheelBasedSpeed) t_selectedDirection = t_val;}
+			{mt_directionTheor = t_val; if(mt_selectedSpeedSource == IsoAgLib::IsoWheelBasedSpeed) mt_selectedDirection = t_val;}
 
     /** set parameter which indicates whetcher the reported direction is reversed from the perspective of the operator
         @param at_val  indicates direction (IsoInactive = not reversed; IsoActive = reversed)
       */
-    void setOperatorDirectionReversed(const IsoAgLib::IsoOperatorDirectionFlag_t at_val) { t_operatorDirectionReversed = at_val;}
+    void setOperatorDirectionReversed(const IsoAgLib::IsoOperatorDirectionFlag_t at_val) { mt_operatorDirectionReversed = at_val;}
 
     /** start/stop state BE AWARE THIS IS A DUMMY BECAUSE DESCRIPTION IS NOT TO FIND IN AMENDMENT 1*/
-    void setStartStopState(const IsoAgLib::IsoActiveFlag_t at_val) {t_startStopState = at_val;}
+    void setStartStopState(const IsoAgLib::IsoActiveFlag_t at_val) {mt_startStopState = at_val;}
 
     /** set actual distance traveled by the machine based on the value of selected machine speed
         @param i32_val  actual distance
       */
-    void setSelectedDistance(const uint32_t& i32_val) {ui32_selectedDistance = i32_val;}
+    void setSelectedDistance(const uint32_t& i32_val) {mui32_selectedDistance = i32_val;}
 
     /** set current direction of travel of the machine
         @param t_val  current direction of travel
       */
-    void setSelectedDirection(IsoAgLib::IsoDirectionFlag_t t_val) {t_selectedDirection = t_val;}
+    void setSelectedDirection(IsoAgLib::IsoDirectionFlag_t t_val) {mt_selectedDirection = t_val;}
 
     /** get current value of the speed as determined from a number of sources by the machine
         @param i32_val  current value of speed
       */
-    void setSelectedSpeed(const int32_t& i32_val)  {i32_selectedSpeed = i32_val;}
+    void setSelectedSpeed(const int32_t& i32_val)  {mi32_selectedSpeed = i32_val;}
 
     /** set speed source that is currently being reported in the machine speed parameter
         @param t_val  actual speed source
       */
-    void setSelectedSpeedSource(IsoAgLib::IsoSpeedSourceFlag_t t_val) {t_selectedSpeedSource = t_val;}
+    void setSelectedSpeedSource(IsoAgLib::IsoSpeedSourceFlag_t t_val) {mt_selectedSpeedSource = t_val;}
 
     /** present limit status of selected speed
         @param t_val  limit status
       */
-    void setSelectedSpeedLimitStatus(const IsoAgLib::IsoLimitFlag_t t_val) {t_selectedSpeedLimitStatus = t_val;}
+    void setSelectedSpeedLimitStatus(const IsoAgLib::IsoLimitFlag_t t_val) {mt_selectedSpeedLimitStatus = t_val;}
     /*@}*/
 
 
@@ -219,17 +219,17 @@ namespace __IsoAgLib {
     /** get the real driven distance with int16_t val
         @return actual radar measured driven distance value
       */
-    uint32_t distReal() const { return ui32_distReal;}
+    uint32_t distReal() const { return mui32_distReal;}
 
     /** get the real driven distance with int16_t val
         @return actual gear calculated driven distance value
       */
-    uint32_t distTheor() const { return ui32_distTheor;}
+    uint32_t distTheor() const { return mui32_distTheor;}
 
     /** get the value of real speed (measured by radar)
         @return actual radar measured speed value
       */
-    int32_t speedReal() const { return i32_speedReal;}
+    int32_t speedReal() const { return mi32_speedReal;}
 
     /** is looking for a valid speed value
         @return true if speed is valid otherwise false
@@ -239,17 +239,17 @@ namespace __IsoAgLib {
     /** is looking for a missing speed value
         @return true if speed is missing otherwise false
       */
-    bool isRealSpeedMissing() const { return (i32_speedReal == NO_VAL_32S)?true:false;}
+    bool isRealSpeedMissing() const { return (mi32_speedReal == NO_VAL_32S)?true:false;}
 
     /** is looking for a erroneous speed value
         @return true if speed is erroneous otherwise false
       */
-    bool isRealSpeedErroneous() const { return (i32_speedReal == ERROR_VAL_32S)?true:false;}
+    bool isRealSpeedErroneous() const { return (mi32_speedReal == ERROR_VAL_32S)?true:false;}
 
     /** get the value of theoretical speed (calculated from gear)
         @return theoretical gear calculated speed value
       */
-    int32_t speedTheor() const { return i32_speedTheor;}
+    int32_t speedTheor() const { return mi32_speedTheor;}
 
     /** is looking for a valid speed value
         @return true if speed is valid otherwise false
@@ -259,45 +259,45 @@ namespace __IsoAgLib {
     /** is looking for a missing speed value
         @return true if speed is missing otherwise false
       */
-    bool isTheorSpeedMissing() const { return (i32_speedTheor == NO_VAL_32S)?true:false;}
+    bool isTheorSpeedMissing() const { return (mi32_speedTheor == NO_VAL_32S)?true:false;}
 
     /** is looking for a erroneous speed value
         @return true if speed is erroneous otherwise false
       */
-    bool isTheorSpeedErroneous() const { return (i32_speedTheor == ERROR_VAL_32S)?true:false;}
+    bool isTheorSpeedErroneous() const { return (mi32_speedTheor == ERROR_VAL_32S)?true:false;}
 
     /** get measured signal indicating either forward or reverse as the theoretical (gear calculated) direction of travel
         @return  direction of travel
       */
-    IsoAgLib::IsoDirectionFlag_t directionTheor() {return t_directionTheor;}
+    IsoAgLib::IsoDirectionFlag_t directionTheor() {return mt_directionTheor;}
 
     /** get measured signal indicating either forward or reverse as the real (radar measured) direction of travel
         @return  direction of travel
       */
-    IsoAgLib::IsoDirectionFlag_t directionReal() {return t_directionReal;}
+    IsoAgLib::IsoDirectionFlag_t directionReal() {return mt_directionReal;}
 
     /** get parameter which indicates whetcher the reported direction is reversed from the perspective of the operator
         @return indicates direction (IsoInactive = not reversed; IsoActive = reversed)
       */
-    IsoAgLib::IsoOperatorDirectionFlag_t operatorDirectionReversed()const { return t_operatorDirectionReversed;}
+    IsoAgLib::IsoOperatorDirectionFlag_t operatorDirectionReversed()const { return mt_operatorDirectionReversed;}
 
     /** start/stop state BE AWARE THIS IS A DUMMY BECAUSE DESCRIPTION IS NOT TO FIND IN AMENDMENT 1*/
-    IsoAgLib::IsoActiveFlag_t startStopState() const {return t_startStopState;}
+    IsoAgLib::IsoActiveFlag_t startStopState() const {return mt_startStopState;}
 
     /** get actual distance traveled by the machine based on the value of selected machine speed
         @return  actual distance traveled
       */
-    uint32_t selectedDistance() const {return ui32_selectedDistance;}
+    uint32_t selectedDistance() const {return mui32_selectedDistance;}
 
     /** get current direction of travel of the machine
         @return  current direction of travel
       */
-    IsoAgLib::IsoDirectionFlag_t selectedDirection() const {return t_selectedDirection;}
+    IsoAgLib::IsoDirectionFlag_t selectedDirection() const {return mt_selectedDirection;}
 
     /** get current value of the speed as determined from a number of sources by the machine
         @return  current value of speed
       */
-    int32_t selectedSpeed() const {return i32_selectedSpeed;}
+    int32_t selectedSpeed() const {return mi32_selectedSpeed;}
 
     /** is looking for a valid speed value
         @return true if speed is valid otherwise false
@@ -307,22 +307,22 @@ namespace __IsoAgLib {
     /** is looking for a missing speed value
         @return true if speed is missing otherwise false
       */
-    bool isSelectedSpeedMissing() const { return (i32_selectedSpeed == NO_VAL_32S)?true:false; }
+    bool isSelectedSpeedMissing() const { return (mi32_selectedSpeed == NO_VAL_32S)?true:false; }
 
     /** is looking for a erroneous speed value
         @return true if speed is erroneous otherwise false
       */
-    bool isSelectedSpeedErroneous() const { return (i32_selectedSpeed == ERROR_VAL_32S)?true:false; }
+    bool isSelectedSpeedErroneous() const { return (mi32_selectedSpeed == ERROR_VAL_32S)?true:false; }
 
     /** present limit status of selected speed
         @return  limit status
       */
-    IsoAgLib::IsoLimitFlag_t selectedSpeedLimitStatus() const {return t_selectedSpeedLimitStatus;}
+    IsoAgLib::IsoLimitFlag_t selectedSpeedLimitStatus() const {return mt_selectedSpeedLimitStatus;}
 
     /** get speed source that is currently being reported in the machine speed parameter
         @return  speed source that is currently being reported
       */
-    IsoAgLib::IsoSpeedSourceFlag_t selectedSpeedSource() const {return t_selectedSpeedSource;}
+    IsoAgLib::IsoSpeedSourceFlag_t selectedSpeedSource() const {return mt_selectedSpeedSource;}
 
 
   virtual const char* getTaskName() const;
@@ -373,22 +373,22 @@ namespace __IsoAgLib {
   private:
     // Private attributes
     /** actually selected distance and direction source */
-    IsoAgLib::DistanceDirectionSource_t t_distDirecSource;
+    IsoAgLib::DistanceDirectionSource_t mt_distDirecSource;
 
     /** last time when selected speed data was processed */
-    uint32_t ui32_lastUpdateTimeSpeed;
+    uint32_t mui32_lastUpdateTimeSpeed;
 
     /** last time when direction and distance data was processed */
-    uint32_t ui32_lastUpdateTimeDistDirec;
+    uint32_t mui32_lastUpdateTimeDistDirec;
 
 
     /************ DISTANCE **************/
 
     /** real distance as int32_t value (cumulates 16bit overflows) */
-    uint32_t ui32_distReal;
+    uint32_t mui32_distReal;
 
     /** theoretical distance as int32_t value (cumulates 16bit overflows)*/
-    uint32_t ui32_distTheor;
+    uint32_t mui32_distTheor;
 
     /** last 16bit real distance to cope with 16bit overflows */
     //uint16_t ui32_lastDistReal;
@@ -397,44 +397,44 @@ namespace __IsoAgLib {
     //uint16_t ui32_lastDistTheor;
 
     /** actual distance traveled by the machine based on the value of selected machine speed */
-    uint32_t ui32_selectedDistance;
+    uint32_t mui32_selectedDistance;
 
     /** start/stop state BE AWARE THIS IS A DUMMY BECAUSE DESCRIPTION IS NOT TO FIND IN AMENDMENT 1*/
-    IsoAgLib::IsoActiveFlag_t t_startStopState;
+    IsoAgLib::IsoActiveFlag_t mt_startStopState;
 
 
     /************ DIRECTION *************/
     /** parameter indicates whetcher the reported direction is reversed from the perspective of the operator */
-    IsoAgLib::IsoOperatorDirectionFlag_t t_operatorDirectionReversed;
+    IsoAgLib::IsoOperatorDirectionFlag_t mt_operatorDirectionReversed;
 
     /** measured signal indicating either forward or reverse as the direction of travel */
-    IsoAgLib::IsoDirectionFlag_t t_directionTheor;
+    IsoAgLib::IsoDirectionFlag_t mt_directionTheor;
 
     /** measured signal indicating either forward or reverse as the direction of travel */
-    IsoAgLib::IsoDirectionFlag_t t_directionReal;
+    IsoAgLib::IsoDirectionFlag_t mt_directionReal;
 
     /** indicates the current direction of travel of the machine */
-    IsoAgLib::IsoDirectionFlag_t t_selectedDirection;
+    IsoAgLib::IsoDirectionFlag_t mt_selectedDirection;
 
 
     /************ SPEED ***************/
     /** actually selected speed source */
-    IsoAgLib::SpeedSource_t t_speedSource;
+    IsoAgLib::SpeedSource_t mt_speedSource;
 
     /** real speed */
-    int32_t i32_speedReal;
+    int32_t mi32_speedReal;
 
     /** theoretical speed */
-    int32_t i32_speedTheor;
+    int32_t mi32_speedTheor;
 
     /** current value of the speed as determined from a number of sources by the machine */
-    int32_t i32_selectedSpeed;
+    int32_t mi32_selectedSpeed;
 
     /** present limit status of selected speed */
-    IsoAgLib::IsoLimitFlag_t t_selectedSpeedLimitStatus;
+    IsoAgLib::IsoLimitFlag_t mt_selectedSpeedLimitStatus;
 
     /** indicates the speed source that is currently being reported in the machine speed parameter */
-    IsoAgLib::IsoSpeedSourceFlag_t t_selectedSpeedSource;
+    IsoAgLib::IsoSpeedSourceFlag_t mt_selectedSpeedSource;
   };
 
   #if defined(PRT_INSTANCE_CNT) && (PRT_INSTANCE_CNT > 1)

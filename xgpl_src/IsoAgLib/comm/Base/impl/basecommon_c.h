@@ -115,10 +115,10 @@ namespace __IsoAgLib
 
     /** constructor */
     BaseCommon_c() : mui16_suppressMask(0),
-		                 t_identMode(IsoAgLib::IdentModeImplement),
-                     i32_lastMsgReceived(0),
-                     pc_isoName(),
-                     c_selectedDataSourceISOName()
+		                 mt_identMode(IsoAgLib::IdentModeImplement),
+                     mi32_lastMsgReceived(0),
+                     mpc_isoName(),
+                     mc_selectedDataSourceISOName()
                    {}
     /** destructor */
     ~BaseCommon_c() {};
@@ -148,7 +148,7 @@ namespace __IsoAgLib
      /** deliver reference to data pkg
          @return reference to the member CanPkg, which encapsulates the CAN send structure
         */
-    CanPkgExt_c& data() {return c_data;};
+    CanPkgExt_c& data() {return mc_data;};
 
     /**
       virtual function which delivers a pointer to the CANCustomer
@@ -187,46 +187,46 @@ namespace __IsoAgLib
     virtual bool timeEventImplMode();
 
     /** Retrieve the last update time of the specified information type*/
-    int32_t lastedTimeSinceUpdate() const { return (System_c::getTime() - i32_lastMsgReceived);}
+    int32_t lastedTimeSinceUpdate() const { return (System_c::getTime() - mi32_lastMsgReceived);}
 
     /** Retrieve the time of last update */
-    int32_t lastUpdateTime() const {return i32_lastMsgReceived;}
+    int32_t lastUpdateTime() const {return mi32_lastMsgReceived;}
 
     /** set last time of data msg [msec]*/
-    void setUpdateTime(int32_t updateTime) {i32_lastMsgReceived = updateTime;}
+    void setUpdateTime(int32_t updateTime) {mi32_lastMsgReceived = updateTime;}
 
     /** check if a received message should be parsed */
     bool checkParseReceived(const IsoName_c& arc_currentSender) const;
 
     /** return if you currently are in implement mode or tractor mode*/
-    bool checkMode(IsoAgLib::IdentMode_t at_identMode) const {return (t_identMode == at_identMode);}
+    bool checkMode(IsoAgLib::IdentMode_t at_identMode) const {return (mt_identMode == at_identMode);}
 
     /** check if iso filters have alread been created*/
-    bool checkFilterCreated() const {return b_filterCreated;}
+    bool checkFilterCreated() const {return mb_filterCreated;}
 
-    /** set b_filterCreated*/
-    void setFilterCreated() {b_filterCreated = true;}
+    /** set mb_filterCreated*/
+    void setFilterCreated() {mb_filterCreated = true;}
 
-    /** clear b_filterCreated*/
-    void clearFilterCreated() {b_filterCreated = false;}
+    /** clear mb_filterCreated*/
+    void clearFilterCreated() {mb_filterCreated = false;}
 
     /** return sender of a msg*/
-    const IsoName_c* getISOName() const {return pc_isoName;}
+    const IsoName_c* getISOName() const {return mpc_isoName;}
 
     /** get evkey of data source (e.g. tractor, terminal) from which commands are send exclusively */
-    IsoName_c& getSelectedDataSourceISOName() {return c_selectedDataSourceISOName;}
+    IsoName_c& getSelectedDataSourceISOName() {return mc_selectedDataSourceISOName;}
 
     /** get Devkey of data source (e.g. tractor, terminal) from which commands are send exclusively */
-    const IsoName_c& getSelectedDataSourceISONameConst() const {return c_selectedDataSourceISOName;}
+    const IsoName_c& getSelectedDataSourceISONameConst() const {return mc_selectedDataSourceISOName;}
 
     /** get actual mode */
-    IsoAgLib::IdentMode_t getMode() const {return t_identMode;}
+    IsoAgLib::IdentMode_t getMode() const {return mt_identMode;}
 
     /** set mode to implement or tractor*/
-    void setMode(IsoAgLib::IdentMode_t at_identMode) {t_identMode = at_identMode;}
+    void setMode(IsoAgLib::IdentMode_t at_identMode) {mt_identMode = at_identMode;}
 
     /** set Devkey of data source (e.g. tractor, terminal) which sends commands exclusively */
-    void setSelectedDataSourceISOName(const IsoName_c& ac_dataSourceISOName){c_selectedDataSourceISOName = ac_dataSourceISOName;}
+    void setSelectedDataSourceISOName(const IsoName_c& ac_dataSourceISOName){mc_selectedDataSourceISOName = ac_dataSourceISOName;}
 
     /** if a message is not send after 3 seconds it is expected that the sending node stopped sending */
     static const uint16_t TIMEOUT_SENDING_NODE = 3000;
@@ -245,29 +245,29 @@ namespace __IsoAgLib
     virtual void checkCreateReceiveFilter() = 0;
 
     /** set sender of a msg*/
-    void setISOName(const IsoName_c* isoName) {pc_isoName = isoName;}
+    void setISOName(const IsoName_c* isoName) {mpc_isoName = isoName;}
 
 
     // private attributes
     /** can be implement mode or tractor mode*/
-    IsoAgLib::IdentMode_t t_identMode;
+    IsoAgLib::IdentMode_t mt_identMode;
 
     /** flag to detect, if receive filters for ISO are created */
-    bool b_filterCreated;
+    bool mb_filterCreated;
 
     /** last time of data msg [msec] */
-    int32_t i32_lastMsgReceived;
+    int32_t mi32_lastMsgReceived;
 
     /** isoName which act as sender of a msg: either responses on behalf of implement or commands as tractor.
         This pointer is set in config function
       */
-    const IsoName_c* pc_isoName;
+    const IsoName_c* mpc_isoName;
 
     /** Devkey of data source (e.g. tractor, terminal) from which commands are send exclusively */
-    IsoName_c c_selectedDataSourceISOName;
+    IsoName_c mc_selectedDataSourceISOName;
 
     /** temp data where received data is put */
-    CanPkgExt_c c_data;
+    CanPkgExt_c mc_data;
   };
 
 }// end namespace __IsoAgLib

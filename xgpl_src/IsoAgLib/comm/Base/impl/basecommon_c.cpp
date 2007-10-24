@@ -118,7 +118,7 @@ void BaseCommon_c::singletonInit()
 */
 CanPkgExt_c& BaseCommon_c::dataBase()
 {
-  return c_data;
+  return mc_data;
 }
 
 /** every subsystem of IsoAgLib has explicit function for controlled shutdown */
@@ -143,11 +143,11 @@ void BaseCommon_c::close( )
 void BaseCommon_c::init_base (const IsoName_c* apc_isoName, int ai_singletonVecKey, IsoAgLib::IdentMode_t at_identMode)
 {
   getSchedulerInstance4Comm().registerClient( this );
-  c_data.setSingletonKey( ai_singletonVecKey );
+  mc_data.setSingletonKey( ai_singletonVecKey );
 
   if (checkAlreadyClosed())
   {
-    b_filterCreated = false;
+    mb_filterCreated = false;
   }
 
   // set configure values with call for config
@@ -185,20 +185,20 @@ bool BaseCommon_c::config_base (const IsoName_c* apc_isoName, IsoAgLib::IdentMod
     return false;
   }
   // set configure values
-  pc_isoName = apc_isoName; // store the pointer in any case
+  mpc_isoName = apc_isoName; // store the pointer in any case
   setMode(at_identMode);
 
   // set the timestamps to 0
-  i32_lastMsgReceived = 0;
+  mi32_lastMsgReceived = 0;
 
   //setSelectedDataSourceISOName is only used in tractor mode
   if (at_identMode == IsoAgLib::IdentModeTractor)
   {
-    c_selectedDataSourceISOName = *apc_isoName;
+    mc_selectedDataSourceISOName = *apc_isoName;
   }
   else
   { //implement mode
-    c_selectedDataSourceISOName.setUnspecified();
+    mc_selectedDataSourceISOName.setUnspecified();
   }
   return true;
 }
@@ -208,8 +208,8 @@ bool BaseCommon_c::checkParseReceived(const IsoName_c& arc_currentSender) const
 {
   return ( checkMode(IsoAgLib::IdentModeImplement) // I'm not the sender
             && ( // one of the following conditions must be true
-                   (c_selectedDataSourceISOName == arc_currentSender  ) // actual sender equivalent to last
-                || (c_selectedDataSourceISOName.isUnspecified()         ) // last sender has not correctly claimed address member
+                   (mc_selectedDataSourceISOName == arc_currentSender  ) // actual sender equivalent to last
+                || (mc_selectedDataSourceISOName.isUnspecified()         ) // last sender has not correctly claimed address member
                )
           )?true:false;
 }
@@ -234,9 +234,9 @@ bool BaseCommon_c::timeEvent()
   // sending node stopped sending -> other nodes can now step in
   if (  checkMode(IsoAgLib::IdentModeImplement)
         &&(lastedTimeSinceUpdate() >= TIMEOUT_SENDING_NODE )
-        && (c_selectedDataSourceISOName.isSpecified())    )
+        && (mc_selectedDataSourceISOName.isSpecified())    )
   { // the previously sending node didn't send the information for 3 seconds -> give other items a chance
-    c_selectedDataSourceISOName.setUnspecified();
+    mc_selectedDataSourceISOName.setUnspecified();
   }
 
   if ( ( getISOName() != NULL )
