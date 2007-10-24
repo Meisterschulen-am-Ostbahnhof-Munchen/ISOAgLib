@@ -87,6 +87,7 @@
 #include <cstdlib>       // using abs()
 #include <algorithm>     // using min() max()
 
+
 #define BUTTON_HAS_BEEN_UNLATCHED 0
 #define BUTTON_HAS_BEEN_PRESSED 1
 #define BUTTON_HAS_BEEN_LATCHED 1
@@ -233,12 +234,16 @@ inline iVtPoint_c operator-( const iVtPoint_c& a, const iVtPoint_c& b ) {
 inline iVtPoint_c operator*( const iVtPoint_c& a, int b ) { iVtPoint_c r(a); return r *= b; }
 inline iVtPoint_c operator/( const iVtPoint_c& a, int b ) { iVtPoint_c r(a); return r /= b; }
 inline iVtPoint_c abs( const iVtPoint_c& a ) { return a.abs(); }
-inline iVtPoint_c min( const iVtPoint_c& a, const iVtPoint_c& b ) {
+/*
+inline iVtPoint_c 
+min_point( const iVtPoint_c& a, 
+	const iVtPoint_c& b ) {
   return iVtPoint_c( CNAMESPACE::min(a.getX(),b.getX()), CNAMESPACE::min(a.getY(),b.getY()) );
 }
-inline iVtPoint_c max( const iVtPoint_c& a, const iVtPoint_c& b ) {
+inline iVtPoint_c max_point( const iVtPoint_c& a, const iVtPoint_c& b ) {
   return iVtPoint_c( CNAMESPACE::max(a.getX(),b.getX()), CNAMESPACE::max(a.getY(),b.getY()) );
 }
+*/
 
 } // namespace IsoAgLib
 

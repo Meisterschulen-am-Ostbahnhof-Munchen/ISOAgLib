@@ -5,7 +5,10 @@
 #include <string>
 #include "can_msq.h"
 #include "can_typedef.h"
-#include <sys/time.h>
+#ifndef WIN32
+ #include <sys/time.h>
+#endif
+
 #include <time.h>
 
 #include <cstdlib>	// Include before vector or else CNAMESPACE stuff is screwed up for Tasking
