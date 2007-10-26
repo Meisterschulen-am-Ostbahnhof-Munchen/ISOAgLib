@@ -86,11 +86,12 @@
  ***************************************************************************/
 
 
+#include <generalhelpers.h>
+
 #include "targetfilestreamoutput_c.h"
 #include <djbiostypedefs.h>
 
 
-#include <generalhelpers.h>
  
 
 namespace __HAL
@@ -133,7 +134,7 @@ bool TargetFileStreamOutput_c::open( CNAMESPACE::string& filename, FileMode_t at
 bool TargetFileStreamOutput_c::open( const char* filename, FileMode_t at_mode )
 {
 
-	#if defined(DEBUG) && DEBUG_FILESTREAMOUTPUT
+	#if DEBUG_FILESTREAMOUTPUT
 		INTERNAL_DEBUG_DEVICE
 		<< "Filestreamoutput: trying to open the file " <<  filename  
 		<< " in mode " 
@@ -145,7 +146,7 @@ bool TargetFileStreamOutput_c::open( const char* filename, FileMode_t at_mode )
 
 	if (NULL != file_handle_) 
 	{
-		#if defined(DEBUG) && DEBUG_FILESTREAMOUTPUT
+		#if DEBUG_FILESTREAMOUTPUT
 			INTERNAL_DEBUG_DEVICE
 			<< "Filestreamoutput: Error : file_handle is already not NULL !!!!!!" << INTERNAL_DEBUG_DEVICE_ENDL;
 		#endif
@@ -163,7 +164,7 @@ bool TargetFileStreamOutput_c::open( const char* filename, FileMode_t at_mode )
 	}
 
 	file_handle_ = __HAL::DjBios_IOP_Open(filename, mode_string.c_str());
-	#if defined(DEBUG) && DEBUG_FILESTREAMOUTPUT
+	#if DEBUG_FILESTREAMOUTPUT
 		mui32_byteCount = 0;
 		if (NULL == file_handle_)
 		INTERNAL_DEBUG_DEVICE
@@ -187,7 +188,7 @@ TargetFileStreamOutput_c& TargetFileStreamOutput_c::operator<<(uint8_t ui8_data)
     is_failed_ = true;
   }
 
-	#if defined(DEBUG) && DEBUG_FILESTREAMINPUT
+	#if DEBUG_FILESTREAMINPUT
 //		debugData[mui32_byteCount % DEBUG_ARRAY_SIZE] = ui8_data;
 		mui32_byteCount++;
 		if (mui32_byteCount % DEBUG_ARRAY_SIZE == 0)
@@ -212,7 +213,7 @@ void TargetFileStreamOutput_c::close(const char* pathname)
   if (NULL != file_handle_) 
   {
     (void)__HAL::DjBios_IOP_Close(file_handle_);
-	#if defined(DEBUG) && DEBUG_FILESTREAMOUTPUT
+	#if DEBUG_FILESTREAMOUTPUT
 //		INTERNAL_DEBUG_DEVICE << mui32_byteCount << " bytes written " ;
 //			for (int i=0; i< mui32_byteCount % DEBUG_ARRAY_SIZE; i++)
 //			{

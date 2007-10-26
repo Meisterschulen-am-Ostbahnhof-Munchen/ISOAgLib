@@ -143,7 +143,7 @@ public:
 
   private:
 
-  #if defined(DEBUG) && DEBUG_FILESTREAMOUTPUT
+  #if DEBUG_FILESTREAMOUTPUT
   uint32_t mui32_byteCount;
   uint8_t debugData[DEBUG_ARRAY_SIZE];
   #endif
