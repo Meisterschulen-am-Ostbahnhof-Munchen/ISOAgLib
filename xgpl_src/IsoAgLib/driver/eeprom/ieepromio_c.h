@@ -189,7 +189,7 @@ public:
   */
   template<class T>
   iEepromIo_c& operator<<(const T& rTemplateVal)
-    {return static_cast<iEepromIo_c&>(EepromIo_c::operator<<(rTemplateVal));};
+    {return static_cast<iEepromIo_c&>(EepromIo_c::operator<<(rTemplateVal));}
 
   /**
     write a uint8_t string value to EEPROM from actual write position on (tellp() )
