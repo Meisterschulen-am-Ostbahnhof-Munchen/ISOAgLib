@@ -269,16 +269,18 @@ CanIo_c::singletonInit()
   }
   if ( aui8_busNumber == 0xFF )
   { // called with default value -> do nothing till called with normal parameter
-    #ifdef DEBUG
-    static bool firstDefaultInitCallEnd = true;
-    if ( ! firstDefaultInitCallEnd ) {
-      firstDefaultInitCallEnd = false;
-      INTERNAL_DEBUG_DEVICE
-          << "Ende CanIo_c::init() mit Default Werten bei spc_instance == "
-          << spc_instance
-          << INTERNAL_DEBUG_DEVICE_ENDL;
-    }
-    #endif
+	 #ifndef SYSTEM_DJ1
+	    #ifdef DEBUG
+	    static bool firstDefaultInitCallEnd = true;
+	    if ( ! firstDefaultInitCallEnd ) {
+	      firstDefaultInitCallEnd = false;
+	      INTERNAL_DEBUG_DEVICE
+	          << "Ende CanIo_c::init() mit Default Werten bei spc_instance == "
+	          << spc_instance
+	          << INTERNAL_DEBUG_DEVICE_ENDL;
+	    }
+	    #endif
+	#endif
     return false;
   }
   else
