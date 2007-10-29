@@ -62,7 +62,6 @@
 #include <cstdio>
 #include <cctype>
 
-
 #include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -90,19 +89,9 @@
 
 #include <sys/stat.h>
 #include <time.h>
-#include <signal.h>
 #include <errno.h>
 
-
-#include "can_server_sock.h"
-
-#ifdef DEBUG
-  //backtrace
-  #include <unistd.h>
-  #include <execinfo.h>
-
-  char*  reserve_memory_heap;
-#endif
+#include "can_server.h"
 
 using namespace __HAL;
 
@@ -431,19 +420,20 @@ int read_data(SOCKET_TYPE s,     /* connected socket */
   return(bcount);
 }
 
-void dumpCanMsg (socketBuf_s *ps_socketBuf, FILE* f_handle)
+void dumpCanMsg (transferBuf_s *ps_transferBuf, FILE* f_handle)
 {
 #if WIN32
-  clock_t t_sendTimestamp =timeGetTime();
+  clock_t t_sendTimestamp = timeGetTime();
 #else
   clock_t t_sendTimestamp = times(NULL);
 #endif
+
   if (f_handle) {
     fprintf(f_handle, "%05d %d %d %d %d %d %-8x  ",
-            t_sendTimestamp*10, ps_socketBuf->s_data.ui8_bus, ps_socketBuf->s_data.ui8_obj, ps_socketBuf->s_data.bXtd, ps_socketBuf->s_data.bDlc,
-            (ps_socketBuf->s_data.dwId >> 26) & 7 /* priority */, ps_socketBuf->s_data.dwId);
-    for (uint8_t ui8_i = 0; (ui8_i < ps_socketBuf->s_data.bDlc) && (ui8_i < 8); ui8_i++)
-      fprintf(f_handle, " %-3hx", ps_socketBuf->s_data.abData[ui8_i]);
+            t_sendTimestamp*10, ps_transferBuf->s_data.ui8_bus, ps_transferBuf->s_data.ui8_obj, ps_transferBuf->s_data.s_canMsg.i32_msgType, ps_transferBuf->s_data.s_canMsg.i32_len,
+            (ps_transferBuf->s_data.s_canMsg.ui32_id >> 26) & 7 /* priority */, ps_transferBuf->s_data.s_canMsg.ui32_id);
+    for (uint8_t ui8_i = 0; (ui8_i < ps_transferBuf->s_data.s_canMsg.i32_len) && (ui8_i < 8); ui8_i++)
+      fprintf(f_handle, " %-3hx", ps_transferBuf->s_data.s_canMsg.ui8_data[ui8_i]);
     fprintf(f_handle, "\n");
     fflush(f_handle);
   }
@@ -475,7 +465,7 @@ void releaseClient(server_c* pc_serverData, std::list<client_c>::iterator& iter_
 
 }
 
-static void enqueue_msg(socketBuf_s* p_sockBuf, SOCKET_TYPE i32_socketSender, server_c* pc_serverData)
+static void enqueue_msg(transferBuf_s* p_sockBuf, SOCKET_TYPE i32_socketSender, server_c* pc_serverData)
 {
   std::list<client_c>::iterator iter, iter_delete = pc_serverData->l_clients.end();
 
@@ -516,13 +506,13 @@ static void enqueue_msg(socketBuf_s* p_sockBuf, SOCKET_TYPE i32_socketSender, se
       // compare received msg with filter
       if (
           ( (iter->arrMsgObj[ui8_bus][i32_obj].ui8_bufXtd > 0)
-                && (p_sockBuf->s_data.bXtd > 0)
-                && ( (p_sockBuf->s_data.dwId & iter->arrMsgObj[ui8_bus][i32_obj].ui32_mask_xtd) == (iter->arrMsgObj[ui8_bus][i32_obj].ui32_filter & iter->arrMsgObj[ui8_bus][i32_obj].ui32_mask_xtd) )
+                && (p_sockBuf->s_data.s_canMsg.i32_msgType > 0)
+                && ( (p_sockBuf->s_data.s_canMsg.ui32_id & iter->arrMsgObj[ui8_bus][i32_obj].ui32_mask_xtd) == (iter->arrMsgObj[ui8_bus][i32_obj].ui32_filter & iter->arrMsgObj[ui8_bus][i32_obj].ui32_mask_xtd) )
               )
               ||
               ( (iter->arrMsgObj[ui8_bus][i32_obj].ui8_bufXtd == 0)
-                && (p_sockBuf->s_data.bXtd == 0)
-                && ( (p_sockBuf->s_data.dwId & iter->arrMsgObj[ui8_bus][i32_obj].ui16_mask_std) == (iter->arrMsgObj[ui8_bus][i32_obj].ui32_filter & iter->arrMsgObj[ui8_bus][i32_obj].ui16_mask_std) )
+                && (p_sockBuf->s_data.s_canMsg.i32_msgType == 0)
+                && ( (p_sockBuf->s_data.s_canMsg.ui32_id & iter->arrMsgObj[ui8_bus][i32_obj].ui16_mask_std) == (iter->arrMsgObj[ui8_bus][i32_obj].ui32_filter & iter->arrMsgObj[ui8_bus][i32_obj].ui16_mask_std) )
               )
         )
         { // received msg fits actual filter
@@ -533,7 +523,7 @@ static void enqueue_msg(socketBuf_s* p_sockBuf, SOCKET_TYPE i32_socketSender, se
           p_sockBuf->s_data.ui8_obj = i32_obj;
 
           // @todo: error handling?
-          if (send(iter->i32_dataSocket, (char*)p_sockBuf, sizeof(socketBuf_s),
+          if (send(iter->i32_dataSocket, (char*)p_sockBuf, sizeof(transferBuf_s),
 #ifdef WIN32
               0
 #else
@@ -559,14 +549,14 @@ std::list<int32_t> __HAL::list_sendTimeStamps;
 
 void send_command_ack(SOCKET_TYPE ri32_commandSocket, int32_t ri32_dataContent, int32_t ri32_data)
 {
-  socketBuf_s s_socketBuf;
+  transferBuf_s s_transferBuf;
 
-  s_socketBuf.ui16_command = COMMAND_ACKNOWLEDGE;
-  s_socketBuf.s_acknowledge.i32_dataContent = ri32_dataContent;
-  s_socketBuf.s_acknowledge.i32_data = ri32_data;
+  s_transferBuf.ui16_command = COMMAND_ACKNOWLEDGE;
+  s_transferBuf.s_acknowledge.i32_dataContent = ri32_dataContent;
+  s_transferBuf.s_acknowledge.i32_data = ri32_data;
 
   // @todo: error handling?
-  if (send(ri32_commandSocket, (char*)&s_socketBuf, sizeof(socketBuf_s),
+  if (send(ri32_commandSocket, (char*)&s_transferBuf, sizeof(transferBuf_s),
 #ifdef WIN32
            0
 #else
@@ -580,7 +570,7 @@ void send_command_ack(SOCKET_TYPE ri32_commandSocket, int32_t ri32_dataContent, 
 
 
 /////////////////////////////////////////////////////////////////////////
-void handleCommand(server_c* pc_serverData, std::list<client_c>::iterator& iter_client, socketBuf_s* p_writeBuf)
+void handleCommand(server_c* pc_serverData, std::list<client_c>::iterator& iter_client, transferBuf_s* p_writeBuf)
 {
   int32_t i32_error;
   int32_t i32_dataContent;
@@ -665,7 +655,9 @@ void handleCommand(server_c* pc_serverData, std::list<client_c>::iterator& iter_
                              pc_serverData))
           {
             printf("can't initialize CAN\n");
+            printf("CAN device not ready or wrong PRJ_CAN_DRIVER_DEVICE selected?\n");
             i32_error = HAL_CONFIG_ERR;
+            abort();
           }
         }
 
@@ -828,7 +820,7 @@ void handleCommand(server_c* pc_serverData, std::list<client_c>::iterator& iter_
 void readWrite(server_c* pc_serverData)
 {
   fd_set rfds;
-  socketBuf_s s_socketBuf;
+  transferBuf_s s_transferBuf;
   uint16_t ui16_bytesRead;
   int i_selectResult;
   struct timeval t_timeout;
@@ -887,10 +879,10 @@ void readWrite(server_c* pc_serverData)
       {
         if (pc_serverData->ui16_busRefCnt[ui32_cnt])
         {
-          if (readFromBus(ui32_cnt, &s_socketBuf, pc_serverData) > 0)
+          if (readFromBus(ui32_cnt, &(s_transferBuf.s_data.s_canMsg), pc_serverData) > 0)
           {
             pthread_mutex_lock( &(pc_serverData->m_protectClientList) );
-            enqueue_msg(&s_socketBuf, 0, pc_serverData);
+            enqueue_msg(&s_transferBuf, 0, pc_serverData);
             pthread_mutex_unlock( &(pc_serverData->m_protectClientList) );
           }
           break; // handle only first found bus
@@ -904,10 +896,10 @@ void readWrite(server_c* pc_serverData)
     {
       if (pc_serverData->can_device[ui32_cnt] && FD_ISSET(pc_serverData->can_device[ui32_cnt], &rfds))
       {
-        if (readFromBus(ui32_cnt, &s_socketBuf, pc_serverData) > 0)
+        if (readFromBus(ui32_cnt, &(s_transferBuf.s_data.s_canMsg), pc_serverData) > 0)
         {
           pthread_mutex_lock( &(pc_serverData->m_protectClientList) );
-          enqueue_msg(&s_socketBuf, 0, pc_serverData);
+          enqueue_msg(&s_transferBuf, 0, pc_serverData);
           pthread_mutex_unlock( &(pc_serverData->m_protectClientList) );
         }
         break; // handle only first found bus
@@ -923,7 +915,7 @@ void readWrite(server_c* pc_serverData)
       if (FD_ISSET(iter_client->i32_commandSocket, &rfds))
       {
         // socket still alive? (returns 0 (peer shutdown) or -1 (error))
-        int bytesRecv = recv(iter_client->i32_commandSocket, (char*)&s_socketBuf, sizeof(socketBuf_s), 
+        int bytesRecv = recv(iter_client->i32_commandSocket, (char*)&s_transferBuf, sizeof(transferBuf_s), 
 #ifdef WIN32
                              0
 #else
@@ -938,17 +930,17 @@ void readWrite(server_c* pc_serverData)
           break;
         }
 
-        ui16_bytesRead = read_data(iter_client->i32_commandSocket, (char*)&s_socketBuf, sizeof(s_socketBuf));
+        ui16_bytesRead = read_data(iter_client->i32_commandSocket, (char*)&s_transferBuf, sizeof(s_transferBuf));
 
-        if (s_socketBuf.ui16_command != COMMAND_DATA)
+        if (s_transferBuf.ui16_command != COMMAND_DATA)
         {
-          handleCommand(pc_serverData, iter_client, &s_socketBuf);
+          handleCommand(pc_serverData, iter_client, &s_transferBuf);
         }
       }
       if (FD_ISSET(iter_client->i32_dataSocket, &rfds))
       {
         // socket still alive? (returns 0 (peer shutdown) or -1 (error))
-        int bytesRecv = recv(iter_client->i32_dataSocket, (char*)&s_socketBuf, sizeof(socketBuf_s), 
+        int bytesRecv = recv(iter_client->i32_dataSocket, (char*)&s_transferBuf, sizeof(transferBuf_s), 
 #ifdef WIN32
                              0
 #else
@@ -963,18 +955,18 @@ void readWrite(server_c* pc_serverData)
           break;
         }
 
-        ui16_bytesRead = read_data(iter_client->i32_dataSocket, (char*)&s_socketBuf, sizeof(s_socketBuf));
+        ui16_bytesRead = read_data(iter_client->i32_dataSocket, (char*)&s_transferBuf, sizeof(s_transferBuf));
 
-        if (s_socketBuf.ui16_command == COMMAND_DATA)
+        if (s_transferBuf.ui16_command == COMMAND_DATA)
         {
           // process data message
-          enqueue_msg(&s_socketBuf, iter_client->i32_dataSocket, pc_serverData); // not done any more: disassemble_client_id(msqWriteBuf.i32_mtype)
+          enqueue_msg(&s_transferBuf, iter_client->i32_dataSocket, pc_serverData); // not done any more: disassemble_client_id(msqWriteBuf.i32_mtype)
 
-          sendToBus(s_socketBuf.s_data.ui8_bus, &s_socketBuf, pc_serverData);
+          sendToBus(s_transferBuf.s_data.ui8_bus, &(s_transferBuf.s_data.s_canMsg), pc_serverData);
 
           if (pc_serverData->b_logMode)
           { /** @todo shouldn't we only dump the message to the FILE if NO ERROR? Or at elast flag it like this in the can-log!! ? */
-            dumpCanMsg (&s_socketBuf, pc_serverData->f_canOutput[s_socketBuf.s_data.ui8_bus]);
+            dumpCanMsg (&s_transferBuf, pc_serverData->f_canOutput[s_transferBuf.s_data.ui8_bus]);
           }
         }
       }

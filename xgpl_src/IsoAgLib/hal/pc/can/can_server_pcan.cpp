@@ -58,6 +58,7 @@
 
 #ifdef WIN32
   #include <windows.h>
+  #include "Pcan_usb.h"
 #else
   #include <pcan.h>
   #include <sys/types.h>
@@ -66,9 +67,16 @@
   #include <sys/ioctl.h>
 #endif
 
-#include "can_server_sock.h"
+#include "can_server.h"
+
 using namespace __HAL;
 
+#ifndef WIN32
+  // device nodes minor base. Must be the same as defined in the driver (USB driver).
+  #ifndef PCAN_MSCAN_MINOR_BASE
+    #define PCAN_MSCAN_MINOR_BASE     32
+  #endif
+#endif
 
 static bool  canBusIsOpen[cui32_maxCanBusCnt];
 
@@ -92,16 +100,67 @@ bool resetCard(void)
   return true;
 }
 
-
+// PURPOSE: To initialize the specified CAN BUS to begin sending/receiving msgs
 bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
 {
   DEBUG_PRINT1("init can bus %d\n", ui8_bus);
 
-  canBusIsOpen[ui8_bus] = true;
-  return true;
+  if( !canBusIsOpen[ui8_bus] ) {
+    DEBUG_PRINT1("Opening CAN BUS channel=%d\n", ui8_bus);
+
+#if WIN32
+    DWORD rc;
+    rc = CAN_Init(CAN_BAUD_250K, 1);  // Baudrate
+    printf("Init can driver: %x\n", rc);
+    if (CAN_ERR_OK == rc)
+    {
+      canBusIsOpen[ui8_bus] = true;
+      return true;
+    }
+    else
+      return false;
+
+#else
+
+    char fname[32];
+    sprintf( fname, "/dev/pcan%u", PCAN_MSCAN_MINOR_BASE + ui8_bus );
+
+    pc_serverData->can_device[ui8_bus] = open(fname, O_RDWR | O_NONBLOCK);
+    if (pc_serverData->can_device[ui8_bus] == -1) {
+      DEBUG_PRINT1("Could not open CAN bus %d\n",ui8_bus);
+      return false;
+    }
+
+    TPBTR0BTR1 ratix;
+    TPCANInit init;
+
+    // init wBitrate
+    DEBUG_PRINT1("Init Bitrate with PCAN_BTR0BTR1 wBitrate =%d\n",wBitrate*1000);
+    ratix.dwBitRate = wBitrate * 1000;
+    ratix.wBTR0BTR1 = 0;
+    if ((ioctl(pc_serverData->can_device[ui8_bus], PCAN_BTR0BTR1, &ratix)) < 0)
+      return false;
+
+    // init CanMsgType (if extended Can Msg of not)
+    DEBUG_PRINT1("Init CAN Driver with PCAN_INIT wBitrate =%x\n",ratix.wBTR0BTR1);
+    //default value = extended
+    init.wBTR0BTR1    = ratix.wBTR0BTR1;
+    init.ucCANMsgType = MSGTYPE_EXTENDED;  // 11 or 29 bits
+    init.ucListenOnly = 0;            // listen only mode when != 0
+    if ((ioctl(pc_serverData->can_device[ui8_bus], PCAN_INIT, &init)) < 0)
+      return false;
+
+    canBusIsOpen[ui8_bus] = true;
+
+    return true;
+#endif
+  }
+  else
+    return true; // already initialized and files are already open
+
 }
 
-void closeBusOnCard(uint8_t ui8_bus, server_c* pc_serverData)
+void closeBusOnCard(uint8_t ui8_bus, server_c* /*pc_serverData*/)
 {
   DEBUG_PRINT1("close can bus %d\n", ui8_bus);
   //canBusIsOpen[ui8_bus] = false;
@@ -116,15 +175,101 @@ void __HAL::updatePendingMsgs(server_c* /* pc_serverData */, int8_t /* i8_bus */
 
 // PURPOSE: To send a msg on the specified CAN BUS
 // RETURNS: non-zero if msg was sent ok
-//      0 on error
-bool sendToBus(uint8_t ui8_bus, socketBuf_s* p_sockBuf, server_c* pc_serverData)
+//          0 on error
+int16_t sendToBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
 {
-  return true;
+#if WIN32
+  DWORD rc;
+  TPCANMsg msg;
+
+  msg.ID = ps_canMsg->ui32_id;
+  msg.MSGTYPE = (ps_canMsg->i32_msgType ? MSGTYPE_EXTENDED : MSGTYPE_STANDARD );
+  msg.LEN = ps_canMsg->i32_len;
+
+  for( int i=0; i<msg.LEN; i++ )
+    msg.DATA[i] = ps_canMsg->ui8_data[i];
+
+  if ((ui8_bus < HAL_CAN_MAX_BUS_NR) && canBusIsOpen[ui8_bus])
+  {
+    rc = CAN_Write(&msg);
+    // printf("CAN_write rc: %x, ID %x, len %d, data %x %x %x %x %x %x %x %x\n", rc, msg.ID, msg.LEN, msg.DATA[0], msg.DATA[1], msg.DATA[2], msg.DATA[3], msg.DATA[4], msg.DATA[5], msg.DATA[6], msg.DATA[7]);
+    if (CAN_ERR_OK == rc)
+      return 1;
+  }
+  return 0;
+
+#else
+
+  TPCANMsg msg;
+  msg.ID = ps_canMsg->ui32_id;
+  msg.MSGTYPE = ( ps_canMsg->i32_msgType ? MSGTYPE_EXTENDED : MSGTYPE_STANDARD );
+  msg.LEN = ps_canMsg->i32_len;
+
+  for( int i=0; i<msg.LEN; i++ )
+    msg.DATA[i] = ps_canMsg->ui8_data[i];
+
+  int ret = 0;
+
+  if ((ui8_bus < HAL_CAN_MAX_BUS_NR) && canBusIsOpen[ui8_bus]) {
+    ret = ioctl(pc_serverData->can_device[ui8_bus], PCAN_WRITE_MSG, &msg);
+    return 1;
+  }
+  return 0;
+
+#endif
 }
 
-uint32_t readFromBus(uint8_t ui8_bus, socketBuf_s* p_sockBuf, server_c* pc_serverData)
+uint32_t readFromBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
 {
+#if WIN32
+  DWORD rc;
+  TPCANMsg msg;
+
+  rc = CAN_Read(&msg);
+  if (CAN_ERR_OK == rc)
+  {
+    if (msg.MSGTYPE == MSGTYPE_EXTENDED) // MSGTYPE_EXTENDED == 2 !
+    {
+      //printf("CAN_receive ID %x, len %d, data %x %x %x %x %x %x %x %x\n", msg.ID, msg.LEN, msg.DATA[0], msg.DATA[1], msg.DATA[2], msg.DATA[3], msg.DATA[4], msg.DATA[5], msg.DATA[6], msg.DATA[7]);
+      ps_canMsg->ui32_id = msg.ID;
+
+      if (msg.MSGTYPE > 0)
+        ps_canMsg->i32_msgType = 1;
+      else
+        ps_canMsg->i32_msgType = 0;
+
+      ps_canMsg->i32_len = msg.LEN;
+
+      memcpy(ps_canMsg->ui8_data, msg.DATA, msg.LEN );
+
+      return msg.LEN;
+    }
+  }
+
+#else
+
+  TPCANRdMsg msg;
+  int ret = ioctl(pc_serverData->can_device[ui8_bus], PCAN_READ_MSG, &msg);
+
+  if (ret < 0)
+    return 0;
+
+  if (msg.Msg.ID == 0)
+    // invalid message
+    return 0;
+
+  ps_canMsg->ui32_id = msg.Msg.ID;
+  ps_canMsg->i32_msgType = (msg.Msg.MSGTYPE ? 1 : 0);
+  ps_canMsg->i32_len = msg.Msg.LEN;
+
+  memcpy( ps_canMsg->ui8_data, msg.Msg.DATA, msg.Msg.LEN );
+
+  return msg.Msg.LEN;
+
+#endif
+
   return 0;
+
 }
 
 void addSendTimeStampToList(client_c * /*ps_client*/, int32_t /*i32_sendTimeStamp*/)

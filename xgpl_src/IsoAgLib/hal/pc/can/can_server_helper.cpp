@@ -73,7 +73,6 @@
 
 #include "can_target_extensions.h"
 #include "can_server.h"
-#include "can_msq.h"
 
 namespace __HAL {
 
@@ -85,21 +84,22 @@ void usage() {
   printf("                             if >0: only clients with activated high-priority-send-mode can send messages if\n");
   printf("                                    can-controller has equal or more than <num_pending_writes> in its queue.\n");
   printf("  --reduced-load-iso-bus-no  avoid unnecessary CAN bus load due to\n");
-  printf("                             messages with local destination addresses\n\n");
+  printf("                             messages with local destination addresses\n");
+  printf("  --nice-can-read            set a nice value for can read thread to reduce slowing down effect on other applications\n");
+  printf("                             due to heavy OS task switches, 0 < value < 20 for reducing the priority\n\n");
 }
 
 
-void dumpCanMsg (uint8_t bBusNumber, uint8_t bMsgObj, tSend* ptSend, FILE* f_handle)
+void dumpCanMsg (uint8_t bBusNumber, uint8_t bMsgObj, canMsg_s* ps_canMsg, FILE* f_handle)
 {
-  uint8_t data[8] = {0,0,0,0,0,0,0,0};
   clock_t t_sendTimestamp = times(NULL);
-  memcpy(data, ptSend->abData, ptSend->bDlc);
 
   if (f_handle) {
     fprintf(f_handle, "%05d %d %d %d %d %d %-8x  ",
-            t_sendTimestamp*10, bBusNumber, bMsgObj, ptSend->bXtd, ptSend->bDlc, (ptSend->dwId >> 26) & 7 /* priority */, ptSend->dwId);
-    for (uint8_t ui8_i = 0; (ui8_i < ptSend->bDlc) && (ui8_i < 8); ui8_i++)
-      fprintf(f_handle, " %-3hx", data[ui8_i]);
+            t_sendTimestamp*10, bBusNumber, bMsgObj, ps_canMsg->i32_msgType, ps_canMsg->i32_len,
+            (ps_canMsg->ui32_id >> 26) & 7 /* priority */, ps_canMsg->ui32_id);
+    for (uint8_t ui8_i = 0; (ui8_i < ps_canMsg->i32_len) && (ui8_i < 8); ui8_i++)
+      fprintf(f_handle, " %-3hx", ps_canMsg->ui8_data[ui8_i]);
     fprintf(f_handle, "\n");
     fflush(f_handle);
   }
@@ -187,12 +187,12 @@ void releaseClient(server_c* pc_serverData, STL_NAMESPACE::list<client_c>::itera
   {
 #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
     for (uint8_t j=0; j<iter_delete->arrMsgObj[i].size(); j++) {
-      clearReadQueue (i, j, pc_serverData->msqDataServer.i32_rdHandle, iter_delete->ui16_pID);
-//      clearWriteQueue(i, j, pc_serverData->msqDataServer.i32_wrHandle, iter_delete->ui16_pID);
+      clearReadQueue (i, j, pc_serverData->msqDataServer.i32_rdHandle, iter_delete->ui16_pid);
+//      clearWriteQueue(i, j, pc_serverData->msqDataServer.i32_wrHandle, iter_delete->ui16_pid);
     }
 #else
-    clearReadQueue (i, COMMON_MSGOBJ_IN_QUEUE, pc_serverData->msqDataServer.i32_rdHandle,iter_delete->ui16_pID);
-//  clearWriteQueue(i, COMMON_MSGOBJ_IN_QUEUE, pc_serverData->msqDataServer.i32_wrHandle,iter_delete->ui16_pID);
+    clearReadQueue (i, COMMON_MSGOBJ_IN_QUEUE, pc_serverData->msqDataServer.i32_rdHandle,iter_delete->ui16_pid);
+//  clearWriteQueue(i, COMMON_MSGOBJ_IN_QUEUE, pc_serverData->msqDataServer.i32_wrHandle,iter_delete->ui16_pid);
 #endif
 
     if (iter_delete->b_initReceived[i] && (pc_serverData->ui16_busRefCnt[i] > 0))

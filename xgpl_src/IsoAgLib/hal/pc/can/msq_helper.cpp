@@ -68,35 +68,35 @@ namespace __HAL {
 
 void send_command_ack(int32_t ai32_mtype, msqData_s* p_msqDataServer, int32_t ai32_dataContent, int32_t ai32_data)
 {
-  msqCommand_s msqCommandBuf;
+  transferBuf_s s_transferBuf;
 
-  msqCommandBuf.i32_mtypePid = ai32_mtype;
-  msqCommandBuf.i16_command = COMMAND_ACKNOWLEDGE;
-  msqCommandBuf.s_acknowledge.i32_dataContent = ai32_dataContent;
-  msqCommandBuf.s_acknowledge.i32_data = ai32_data;
+  s_transferBuf.i32_mtypePid = ai32_mtype;
+  s_transferBuf.ui16_command = COMMAND_ACKNOWLEDGE;
+  s_transferBuf.s_acknowledge.i32_dataContent = ai32_dataContent;
+  s_transferBuf.s_acknowledge.i32_data = ai32_data;
 
-  msgsnd(p_msqDataServer->i32_cmdAckHandle, &msqCommandBuf, sizeof(msqCommand_s) - sizeof(int32_t), IPC_NOWAIT);
+  msgsnd(p_msqDataServer->i32_cmdAckHandle, &s_transferBuf, sizeof(transferBuf_s) - sizeof(int32_t), IPC_NOWAIT);
 }
 
 
-int32_t send_command(msqCommand_s* p_msqCommandBuf, msqData_s* p_msqDataClient)
+int32_t send_command(transferBuf_s* p_s_transferBuf, msqData_s* p_msqDataClient)
 {
   int16_t i16_rc;
 
-  if ((i16_rc = msgsnd(p_msqDataClient->i32_cmdHandle, p_msqCommandBuf, sizeof(msqCommand_s) - sizeof(int32_t), 0)) == -1)
+  if ((i16_rc = msgsnd(p_msqDataClient->i32_cmdHandle, p_s_transferBuf, sizeof(transferBuf_s) - sizeof(int32_t), 0)) == -1)
     return HAL_UNKNOWN_ERR;
 
   // wait for ACK
-  if((i16_rc = msgrcv(p_msqDataClient->i32_cmdAckHandle, p_msqCommandBuf, sizeof(msqCommand_s) - sizeof(int32_t), p_msqDataClient->i32_pid, 0)) == -1)
+  if((i16_rc = msgrcv(p_msqDataClient->i32_cmdAckHandle, p_s_transferBuf, sizeof(transferBuf_s) - sizeof(int32_t), p_msqDataClient->i32_pid, 0)) == -1)
     return HAL_UNKNOWN_ERR;
 
-  if (p_msqCommandBuf->i16_command == COMMAND_ACKNOWLEDGE)
+  if (p_s_transferBuf->ui16_command == COMMAND_ACKNOWLEDGE)
   {
-    if ( (p_msqCommandBuf->s_acknowledge.i32_dataContent == ACKNOWLEDGE_DATA_CONTENT_ERROR_VALUE)
-      && (p_msqCommandBuf->s_acknowledge.i32_data != 0) )
+    if ( (p_s_transferBuf->s_acknowledge.i32_dataContent == ACKNOWLEDGE_DATA_CONTENT_ERROR_VALUE)
+      && (p_s_transferBuf->s_acknowledge.i32_data != 0) )
     { // error!
       printf("nack received in send_command\n");
-      return p_msqCommandBuf->s_acknowledge.i32_data;
+      return p_s_transferBuf->s_acknowledge.i32_data;
     }
     else
     { // either ACK with NO error OR ACK with PIPE_ID, SEND_DELAY, etc.etc. which is okay!

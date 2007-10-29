@@ -56,39 +56,11 @@
  * the main author Achim Spangler by a.spangler@osb-ag:de                  *
  ***************************************************************************/
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <sys/ioctl.h>
-#include <linux/version.h>
-
-
-/* ioctl request codes */
-#define CAN_MAGIC_NUMBER        'z'
-#define MYSEQ_START             0x80
-
-#include "can_server_sock.h"
-
-struct CANmsg {
-        unsigned        id;
-        int             msg_type;
-        int             len;
-        unsigned char   data[8];
-        unsigned long   time;           /* timestamp in msec, at read only */
-};
-typedef struct CANmsg canmsg;
-
-using namespace __HAL;
-
-// kernel 2.6 needs type for third argument and not sizeof()
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)
-#define CAN_WRITE_MSG   _IOW(CAN_MAGIC_NUMBER, MYSEQ_START + 1, sizeof(canmsg))
-#define CAN_READ_MSG    _IOR(CAN_MAGIC_NUMBER, MYSEQ_START + 2, sizeof(canmsg))
-#else
-#define CAN_WRITE_MSG   _IOW(CAN_MAGIC_NUMBER, MYSEQ_START + 1, canmsg)
-#define CAN_READ_MSG    _IOR(CAN_MAGIC_NUMBER, MYSEQ_START + 2, canmsg)
+#ifdef WIN32
+  #include <windows.h>
 #endif
 
+#include "can_server.h"
 
 static bool  canBusIsOpen[cui32_maxCanBusCnt];
 
@@ -112,51 +84,14 @@ bool resetCard(void)
   return true;
 }
 
-// PURPOSE: To initialize the specified CAN BUS to begin sending/receiving msgs
+
 bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
 {
   DEBUG_PRINT1("init can bus %d\n", ui8_bus);
 
-  int btr0 = 0;
-  int btr1 = 1;
-
-  switch ( wBitrate ) {
-    case 100: { btr0 = 0xc3; btr1 = 0x3e;} break;
-    case 125: { btr0 = 0xc3; btr1 = 0x3a;} break;
-    case 250: { btr0 = 0xc1; btr1 = 0x3a;} break;
-    case 500: { btr0 = 0xc0; btr1 = 0x3a;} break;
-  }
-
-  if( !canBusIsOpen[ui8_bus] )
-  {
-    DEBUG_PRINT1("Opening CAN BUS ui8_bus=%d\n", ui8_bus);
-
-    char fname[32];
-    sprintf( fname, "/dev/wecan%u", ui8_bus );
-
-    DEBUG_PRINT1("open( \"%s\", O_RDRWR)\n", fname);
-
-    pc_serverData->can_device[ui8_bus] = open(fname, O_RDWR | O_NONBLOCK);
-
-    if (pc_serverData->can_device[ui8_bus] == -1) {
-      DEBUG_PRINT1("Could not open CAN bus%d\n",ui8_bus);
-      return 0;
-    }
-
-    // Set baud rate to 250 and turn on extended IDs
-    // For Opus A1, it is done by sending the following string to the can_device
-    char buf[16];
-    sprintf( buf, "i 0x%2x%2x e\n", btr0 & 0xFF, btr1 & 0xFF );     //, (extended?" e":" ") extended is not being passed in! Don't use it!
-
-    DEBUG_PRINT3("write( device-\"%s\"\n, \"%s\", %d)\n", fname, buf, strlen(buf));
-    write(pc_serverData->can_device[ui8_bus], buf, strlen(buf));
-
-    canBusIsOpen[ui8_bus] = true;
-  }
-
+  canBusIsOpen[ui8_bus] = true;
   return true;
 }
-
 
 void closeBusOnCard(uint8_t ui8_bus, server_c* pc_serverData)
 {
@@ -165,74 +100,21 @@ void closeBusOnCard(uint8_t ui8_bus, server_c* pc_serverData)
   // do not call close or CAN_CLOSE because COMMAND_CLOSE is received during initialization!
 }
 
+
 void __HAL::updatePendingMsgs(server_c* /* pc_serverData */, int8_t /* i8_bus */)
 {
 /// @todo not implemented for right now on A1!
 }
 
 // PURPOSE: To send a msg on the specified CAN BUS
-// RETURNS: non-zero if msg was sent ok
-//      0 on error
-bool sendToBus(uint8_t ui8_bus, socketBuf_s* p_sockBuf, server_c* pc_serverData)
+int16_t sendToBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
 {
-  CANmsg msg;
-  msg.id = p_sockBuf->s_data.dwId;
-  msg.msg_type = ( p_sockBuf->s_data.bXtd ? MSGTYPE_EXTENDED : MSGTYPE_STANDARD );
-  msg.len = p_sockBuf->s_data.bDlc;
-  msg.time = 0;
-
-  for( int i=0; i<msg.len; i++ )
-    msg.data[i] = p_sockBuf->s_data.abData[i];
-
-  int ret = 0;
-
-  if ((ui8_bus < HAL_CAN_MAX_BUS_NR) && canBusIsOpen[ui8_bus]) {
-    ret = ioctl(pc_serverData->can_device[ui8_bus], CAN_WRITE_MSG, &msg);
-
-#ifdef DEBUG_IOCTL
-    if (ret < 0) {
-      perror("ca_TransmitCanCard_1 ioctl");
-
-      // try to read
-      CANmsg msg;
-      ret = ioctl(pc_serverData->can_device[ui8_bus], CAN_READ_MSG, &msg);
-      printf("id 0x%x msg_type 0x%x len 0x%x data 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x time 0x%x\n", msg.id, msg.msg_type, msg.len, msg.data[0], msg.data[1], msg.data[2], msg.data[3], msg.data[4], msg.data[5], msg.data[6], msg.data[7], msg.time);
-
-      if (ret < 0) {
-        perror("ioctl read after write");
-      }
-    }
-#endif
-  }
-
-  if (ret < 0)
-    return false;
-  else
-    return true;
+  return 1; // success
 }
 
-uint32_t readFromBus(uint8_t ui8_bus, socketBuf_s* p_sockBuf, server_c* pc_serverData)
+uint32_t readFromBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
 {
-  CANmsg msg;
-
-  if (ioctl(pc_serverData->can_device[ui8_bus], CAN_READ_MSG, &msg) == 0)
-  {
-    p_sockBuf->s_data.dwId = msg.id;
-
-    if (msg.msg_type > 0)
-      p_sockBuf->s_data.bXtd = 1;
-    else
-      p_sockBuf->s_data.bXtd = 0;
-
-    p_sockBuf->s_data.bDlc = msg.len;
-
-    memcpy(p_sockBuf->s_data.abData, msg.data, msg.len );
-
-    return msg.len;
-  }
-
   return 0;
-
 }
 
 void addSendTimeStampToList(client_c * /*ps_client*/, int32_t /*i32_sendTimeStamp*/)

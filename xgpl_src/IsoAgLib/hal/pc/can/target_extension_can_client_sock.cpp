@@ -87,7 +87,7 @@
 
 #include <list>
 
-#include "can_server_sock.h"
+#include "can_server.h"
 
 namespace __HAL {
 
@@ -190,11 +190,11 @@ int read_data(SOCKET_TYPE s,     /* connected socket */
 }
 
 
-int32_t send_command(socketBuf_s* p_writeBuf, SOCKET_TYPE ri32_commandSocket)
+int32_t send_command(transferBuf_s* p_writeBuf, SOCKET_TYPE ri32_commandSocket)
 {
   int16_t i16_rc;
 
-  if ((i16_rc = send(ri32_commandSocket, (char*)p_writeBuf, sizeof(socketBuf_s), 
+  if ((i16_rc = send(ri32_commandSocket, (char*)p_writeBuf, sizeof(transferBuf_s), 
 #ifdef WIN32
                      0
 #else
@@ -207,7 +207,7 @@ int32_t send_command(socketBuf_s* p_writeBuf, SOCKET_TYPE ri32_commandSocket)
   }
 
   // wait for ACK
-  if ((i16_rc = read_data(ri32_commandSocket, (char*)p_writeBuf, sizeof(socketBuf_s))) == -1)
+  if ((i16_rc = read_data(ri32_commandSocket, (char*)p_writeBuf, sizeof(transferBuf_s))) == -1)
   {
     perror("read_data");
     return HAL_UNKNOWN_ERR;
@@ -254,7 +254,7 @@ int16_t can_startDriver()
   i32_commandSocket = call_socket(CAN_SERVER_HOST, COMMAND_TRANSFER_PORT);
 
   // client registration
-  socketBuf_s s_socketBuf;
+  transferBuf_s s_transferBuf;
   i32_dataSocket = call_socket(CAN_SERVER_HOST, DATA_TRANSFER_PORT);
 
 #ifdef WIN32
@@ -269,21 +269,21 @@ int16_t can_startDriver()
   ioctlsocket(i32_dataSocket, FIONBIO, (u_long FAR*) &iMode);
 #endif
 
-  s_socketBuf.ui16_command = COMMAND_REGISTER;
+  s_transferBuf.ui16_command = COMMAND_REGISTER;
   // call getTime just to be sure that start up time< is set
   getTime();
 
-  s_socketBuf.s_startTimeClock.t_clock = getStartUpTime();
+  s_transferBuf.s_startTimeClock.t_clock = getStartUpTime();
 
-  int32_t i32_rc = send_command(&s_socketBuf, i32_commandSocket);
+  int32_t i32_rc = send_command(&s_transferBuf, i32_commandSocket);
 
   if (i32_rc == HAL_NO_ERR) {
 
-    if (s_socketBuf.s_acknowledge.i32_dataContent != ACKNOWLEDGE_DATA_CONTENT_PIPE_ID)
+    if (s_transferBuf.s_acknowledge.i32_dataContent != ACKNOWLEDGE_DATA_CONTENT_PIPE_ID)
     {
-      if (s_socketBuf.s_acknowledge.i32_dataContent == ACKNOWLEDGE_DATA_CONTENT_ERROR_VALUE)
+      if (s_transferBuf.s_acknowledge.i32_dataContent == ACKNOWLEDGE_DATA_CONTENT_ERROR_VALUE)
       {
-        return s_socketBuf.s_acknowledge.i32_data; // this is the error-code!
+        return s_transferBuf.s_acknowledge.i32_data; // this is the error-code!
       }
       else
         return HAL_UNKNOWN_ERR;
@@ -295,67 +295,67 @@ int16_t can_startDriver()
 
 int16_t can_stopDriver()
 {
-  socketBuf_s s_socketBuf;
+  transferBuf_s s_transferBuf;
 
   DEBUG_PRINT("can_stopDriver called\n");
 
-  s_socketBuf.ui16_command = COMMAND_DEREGISTER;
+  s_transferBuf.ui16_command = COMMAND_DEREGISTER;
 
-  return send_command(&s_socketBuf, i32_commandSocket);
+  return send_command(&s_transferBuf, i32_commandSocket);
 
 }
 
 int16_t init_can ( uint8_t bBusNumber,uint16_t wGlobMask,uint32_t dwGlobMask,uint32_t dwGlobMaskLastmsg,uint16_t wBitrate )
 {
-  socketBuf_s s_socketBuf;
+  transferBuf_s s_transferBuf;
 
   DEBUG_PRINT2("init_can, bus %d, bitrate %d\n", bBusNumber, wBitrate);
 
   if ( bBusNumber > HAL_CAN_MAX_BUS_NR ) return HAL_RANGE_ERR;
 
-  s_socketBuf.ui16_command = COMMAND_INIT;
-  s_socketBuf.s_init.ui8_bus = bBusNumber;
-  s_socketBuf.s_init.ui16_wGlobMask = wGlobMask;
-  s_socketBuf.s_init.ui32_dwGlobMask = dwGlobMask;
-  s_socketBuf.s_init.ui32_dwGlobMaskLastmsg = dwGlobMaskLastmsg;
-  s_socketBuf.s_init.ui16_wBitrate = wBitrate;
+  s_transferBuf.ui16_command = COMMAND_INIT;
+  s_transferBuf.s_init.ui8_bus = bBusNumber;
+  s_transferBuf.s_init.ui16_wGlobMask = wGlobMask;
+  s_transferBuf.s_init.ui32_dwGlobMask = dwGlobMask;
+  s_transferBuf.s_init.ui32_dwGlobMaskLastmsg = dwGlobMaskLastmsg;
+  s_transferBuf.s_init.ui16_wBitrate = wBitrate;
 
-  return send_command(&s_socketBuf, i32_commandSocket);
+  return send_command(&s_transferBuf, i32_commandSocket);
 
 };
 
 
 int16_t changeGlobalMask( uint8_t bBusNumber,uint16_t wGlobMask,uint32_t dwGlobMask,uint32_t dwGlobMaskLastmsg )
 {
-  socketBuf_s s_socketBuf;
+  transferBuf_s s_transferBuf;
 
   DEBUG_PRINT1("changeGlobalMask, bus %d\n", bBusNumber);
 
   if ( bBusNumber > HAL_CAN_MAX_BUS_NR ) return HAL_RANGE_ERR;
 
-  s_socketBuf.ui16_command = COMMAND_CHG_GLOBAL_MASK;
-  s_socketBuf.s_init.ui8_bus = bBusNumber;
-  s_socketBuf.s_init.ui16_wGlobMask = wGlobMask;
-  s_socketBuf.s_init.ui32_dwGlobMask = dwGlobMask;
-  s_socketBuf.s_init.ui32_dwGlobMaskLastmsg = dwGlobMaskLastmsg;
+  s_transferBuf.ui16_command = COMMAND_CHG_GLOBAL_MASK;
+  s_transferBuf.s_init.ui8_bus = bBusNumber;
+  s_transferBuf.s_init.ui16_wGlobMask = wGlobMask;
+  s_transferBuf.s_init.ui32_dwGlobMask = dwGlobMask;
+  s_transferBuf.s_init.ui32_dwGlobMaskLastmsg = dwGlobMaskLastmsg;
 
-  return send_command(&s_socketBuf, i32_commandSocket);
+  return send_command(&s_transferBuf, i32_commandSocket);
 
 };
 
 int16_t closeCan ( uint8_t bBusNumber )
 {
-  socketBuf_s s_socketBuf;
+  transferBuf_s s_transferBuf;
 
   DEBUG_PRINT1("closeCan, bus %d\n", bBusNumber);
 
   if ( bBusNumber > HAL_CAN_MAX_BUS_NR ) return HAL_RANGE_ERR;
 
-  s_socketBuf.ui16_command = COMMAND_CLOSE;
-  s_socketBuf.s_init.ui8_bus = bBusNumber;
+  s_transferBuf.ui16_command = COMMAND_CLOSE;
+  s_transferBuf.s_init.ui8_bus = bBusNumber;
 
   // read/write queue is cleared by server!
-  return send_command(&s_socketBuf, i32_commandSocket);
+  return send_command(&s_transferBuf, i32_commandSocket);
 
 };
 
@@ -382,23 +382,23 @@ int16_t configCanObj ( uint8_t bBusNumber, uint8_t bMsgObj, tCanObjConfig* ptCon
 {
   DEBUG_PRINT2("configCanObj, bus %d, obj %d\n", bBusNumber, bMsgObj);
 
-  socketBuf_s s_socketBuf;
+  transferBuf_s s_transferBuf;
 
   if ( ( bBusNumber > HAL_CAN_MAX_BUS_NR ) ) return HAL_RANGE_ERR;
 
-  s_socketBuf.ui16_command = COMMAND_CONFIG;
-  s_socketBuf.s_config.ui8_bus = bBusNumber;
-  s_socketBuf.s_config.ui8_obj = bMsgObj;
-  s_socketBuf.s_config.ui8_bXtd = ptConfig->bXtd;
-  s_socketBuf.s_config.ui8_bMsgType = ptConfig->bMsgType;
-  s_socketBuf.s_config.ui32_dwId = ptConfig->dwId;
+  s_transferBuf.ui16_command = COMMAND_CONFIG;
+  s_transferBuf.s_config.ui8_bus = bBusNumber;
+  s_transferBuf.s_config.ui8_obj = bMsgObj;
+  s_transferBuf.s_config.ui8_bXtd = ptConfig->bXtd;
+  s_transferBuf.s_config.ui8_bMsgType = ptConfig->bMsgType;
+  s_transferBuf.s_config.ui32_dwId = ptConfig->dwId;
 
-  s_socketBuf.s_config.ui32_mask = ptConfig->mask;
+  s_transferBuf.s_config.ui32_mask = ptConfig->mask;
 
-  s_socketBuf.s_config.ui16_wNumberMsgs = ptConfig->wNumberMsgs;
+  s_transferBuf.s_config.ui16_wNumberMsgs = ptConfig->wNumberMsgs;
 
   // read/write queue is cleared by server!
-  return send_command(&s_socketBuf, i32_commandSocket);
+  return send_command(&s_transferBuf, i32_commandSocket);
 
 };
 
@@ -406,18 +406,18 @@ int16_t configCanObj ( uint8_t bBusNumber, uint8_t bMsgObj, tCanObjConfig* ptCon
 
 int16_t closeCanObj ( uint8_t bBusNumber,uint8_t bMsgObj )
 {
-  socketBuf_s s_socketBuf;
+  transferBuf_s s_transferBuf;
 
   DEBUG_PRINT2("closeCanObj, bus %d, obj %d\n", bBusNumber, bMsgObj);
 
   if ( ( bBusNumber > HAL_CAN_MAX_BUS_NR ) ) return HAL_RANGE_ERR;
 
-  s_socketBuf.ui16_command = COMMAND_CLOSEOBJ;
-  s_socketBuf.s_config.ui8_bus = bBusNumber;
-  s_socketBuf.s_config.ui8_obj = bMsgObj;
+  s_transferBuf.ui16_command = COMMAND_CLOSEOBJ;
+  s_transferBuf.s_config.ui8_bus = bBusNumber;
+  s_transferBuf.s_config.ui8_obj = bMsgObj;
 
   // read / write queue is cleared by server!
-  return send_command(&s_socketBuf, i32_commandSocket);
+  return send_command(&s_transferBuf, i32_commandSocket);
 
 };
 
@@ -427,17 +427,17 @@ int16_t chgCanObjId ( uint8_t bBusNumber, uint8_t bMsgObj, uint32_t dwId, uint32
   DEBUG_PRINT2("chgCanObjId, bus %d, obj %d\n", bBusNumber, bMsgObj);
   if ( ( bBusNumber > HAL_CAN_MAX_BUS_NR ) ) return HAL_RANGE_ERR;
 
-  socketBuf_s s_socketBuf;
+  transferBuf_s s_transferBuf;
 
-  s_socketBuf.ui16_command = COMMAND_CHG_CONFIG;
-  s_socketBuf.s_config.ui8_bus = bBusNumber;
-  s_socketBuf.s_config.ui8_obj = bMsgObj;
-  s_socketBuf.s_config.ui8_bXtd = bXtd;
-  s_socketBuf.s_config.ui32_dwId = dwId;
+  s_transferBuf.ui16_command = COMMAND_CHG_CONFIG;
+  s_transferBuf.s_config.ui8_bus = bBusNumber;
+  s_transferBuf.s_config.ui8_obj = bMsgObj;
+  s_transferBuf.s_config.ui8_bXtd = bXtd;
+  s_transferBuf.s_config.ui32_dwId = dwId;
 
-  s_socketBuf.s_config.ui32_mask = mask;
+  s_transferBuf.s_config.ui32_mask = mask;
 
-  return send_command(&s_socketBuf, i32_commandSocket);
+  return send_command(&s_transferBuf, i32_commandSocket);
 
 }
 /**
@@ -452,21 +452,21 @@ int16_t chgCanObjId ( uint8_t bBusNumber, uint8_t bMsgObj, uint32_t dwId, uint32
 int16_t lockCanObj( uint8_t rui8_busNr, uint8_t rui8_msgobjNr, bool rb_doLock )
 {
 
-  socketBuf_s s_socketBuf;
+  transferBuf_s s_transferBuf;
 
   DEBUG_PRINT3("lockCanObj, bus %d, obj %d, lock %d\n", rui8_busNr, rui8_msgobjNr, rb_doLock);
 
   if ( ( rui8_busNr > HAL_CAN_MAX_BUS_NR ) ) return HAL_RANGE_ERR;
 
   if (rb_doLock)
-    s_socketBuf.ui16_command = COMMAND_LOCK;
+    s_transferBuf.ui16_command = COMMAND_LOCK;
   else
-    s_socketBuf.ui16_command = COMMAND_UNLOCK;
+    s_transferBuf.ui16_command = COMMAND_UNLOCK;
 
-  s_socketBuf.s_config.ui8_bus = rui8_busNr;
-  s_socketBuf.s_config.ui8_obj = rui8_msgobjNr;
+  s_transferBuf.s_config.ui8_bus = rui8_busNr;
+  s_transferBuf.s_config.ui8_obj = rui8_msgobjNr;
 
-  return send_command(&s_socketBuf, i32_commandSocket);
+  return send_command(&s_transferBuf, i32_commandSocket);
 
 }
 
@@ -480,25 +480,25 @@ bool getCanMsgObjLocked( uint8_t rui8_busNr, uint8_t rui8_msgobjNr )
 {
 
   int16_t i16_rc;
-  socketBuf_s s_socketBuf;
+  transferBuf_s s_transferBuf;
 
   DEBUG_PRINT2("getCanMsgObjLocked, bus %d, obj %d\n", rui8_busNr, rui8_msgobjNr);
 
   if ( ( rui8_busNr > HAL_CAN_MAX_BUS_NR ) ) return true;
   else {
 
-    s_socketBuf.ui16_command = COMMAND_QUERYLOCK;
-    s_socketBuf.s_config.ui8_bus = rui8_busNr;
-    s_socketBuf.s_config.ui8_obj = rui8_msgobjNr;
+    s_transferBuf.ui16_command = COMMAND_QUERYLOCK;
+    s_transferBuf.s_config.ui8_bus = rui8_busNr;
+    s_transferBuf.s_config.ui8_obj = rui8_msgobjNr;
 
-    i16_rc = send_command(&s_socketBuf, i32_commandSocket);
+    i16_rc = send_command(&s_transferBuf, i32_commandSocket);
 
     if (!i16_rc)
     {
-      if (s_socketBuf.s_acknowledge.i32_dataContent != ACKNOWLEDGE_DATA_CONTENT_QUERY_LOCK)
+      if (s_transferBuf.s_acknowledge.i32_dataContent != ACKNOWLEDGE_DATA_CONTENT_QUERY_LOCK)
         return false;
       else
-        return s_socketBuf.s_acknowledge.i32_data;
+        return s_transferBuf.s_acknowledge.i32_data;
     }
     else
       return false;
@@ -532,10 +532,10 @@ int32_t can_lastReceiveTime()
 int16_t getCanMsgBufCount(uint8_t bBusNumber,uint8_t bMsgObj)
 {
   int32_t i32_rc;
-  socketBuf_s s_socketBuf;
+  transferBuf_s s_transferBuf;
 
-  memset(&s_socketBuf, 0, sizeof(socketBuf_s));
-  if ((i32_rc = recv(i32_dataSocket, (char*)&s_socketBuf, sizeof(socketBuf_s), 
+  memset(&s_transferBuf, 0, sizeof(transferBuf_s));
+  if ((i32_rc = recv(i32_dataSocket, (char*)&s_transferBuf, sizeof(transferBuf_s), 
 #ifdef WIN32
                      0
 #else
@@ -543,7 +543,7 @@ int16_t getCanMsgBufCount(uint8_t bBusNumber,uint8_t bMsgObj)
 #endif
                      | MSG_PEEK)) > 0)
   {
-    if (((bMsgObj == s_socketBuf.s_data.ui8_obj) || (bMsgObj == COMMON_MSGOBJ_IN_QUEUE)) && (bBusNumber == s_socketBuf.s_data.ui8_bus))
+    if (((bMsgObj == s_transferBuf.s_data.ui8_obj) || (bMsgObj == COMMON_MSGOBJ_IN_QUEUE)) && (bBusNumber == s_transferBuf.s_data.ui8_bus))
     {
       return 1;
     }
@@ -584,7 +584,7 @@ int16_t getCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tReceive * ptReceive )
 {
 
   int32_t i32_rc;
-  socketBuf_s s_socketBuf;
+  transferBuf_s s_transferBuf;
 
   //DEBUG_PRINT2("getCanMsg, bus %d, obj %d\n", bBusNumber, bMsgObj);
 
@@ -592,8 +592,8 @@ int16_t getCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tReceive * ptReceive )
 
   const uint8_t cui8_useMsgObj = bMsgObj;
 
-  memset(&s_socketBuf, 0, sizeof(socketBuf_s));
-  if ((i32_rc = recv(i32_dataSocket, (char*)&s_socketBuf, sizeof(socketBuf_s), 
+  memset(&s_transferBuf, 0, sizeof(transferBuf_s));
+  if ((i32_rc = recv(i32_dataSocket, (char*)&s_transferBuf, sizeof(transferBuf_s), 
 #ifdef WIN32
                      0
 #else
@@ -601,7 +601,7 @@ int16_t getCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tReceive * ptReceive )
 #endif
                      | MSG_PEEK)) > 0)
   {
-    if ( ((bMsgObj == s_socketBuf.s_data.ui8_obj) || (bMsgObj == COMMON_MSGOBJ_IN_QUEUE)) && (bBusNumber == s_socketBuf.s_data.ui8_bus))
+    if ( ((bMsgObj == s_transferBuf.s_data.ui8_obj) || (bMsgObj == COMMON_MSGOBJ_IN_QUEUE)) && (bBusNumber == s_transferBuf.s_data.ui8_bus))
     {
       ; // message fits
     }
@@ -612,7 +612,7 @@ int16_t getCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tReceive * ptReceive )
     return HAL_UNKNOWN_ERR;
 
   // we assemble the mtype with FALSE here, as we do NOT have sendPriorities in this direction!
-  if ((i32_rc = read_data(i32_dataSocket, (char*)&s_socketBuf, sizeof(socketBuf_s))) == -1)
+  if ((i32_rc = read_data(i32_dataSocket, (char*)&s_transferBuf, sizeof(transferBuf_s))) == -1)
   {
     // bus filter ????
     return HAL_UNKNOWN_ERR;
@@ -621,13 +621,13 @@ int16_t getCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tReceive * ptReceive )
   i32_lastReceiveTime = getTime();
 
   // copy data
-  ptReceive->dwId = s_socketBuf.s_data.dwId;
-  ptReceive->bMsgObj = s_socketBuf.s_data.ui8_obj;
-  ptReceive->bDlc = s_socketBuf.s_data.bDlc;
+  ptReceive->dwId = s_transferBuf.s_data.s_canMsg.ui32_id;
+  ptReceive->bMsgObj = s_transferBuf.s_data.ui8_obj;
+  ptReceive->bDlc = s_transferBuf.s_data.s_canMsg.i32_len;
   // prevent timestamp which is in the future! (because of 10ms clock jitter)
-  ptReceive->tReceiveTime.l1ms = (i32_lastReceiveTime > s_socketBuf.s_data.i32_sendTimeStamp) ? s_socketBuf.s_data.i32_sendTimeStamp : i32_lastReceiveTime;
-  ptReceive->bXtd = s_socketBuf.s_data.bXtd;
-  memcpy(ptReceive->abData, s_socketBuf.s_data.abData, s_socketBuf.s_data.bDlc);
+  ptReceive->tReceiveTime.l1ms = (i32_lastReceiveTime > s_transferBuf.s_data.i32_sendTimeStamp) ? s_transferBuf.s_data.i32_sendTimeStamp : i32_lastReceiveTime;
+  ptReceive->bXtd = s_transferBuf.s_data.s_canMsg.i32_msgType;
+  memcpy(ptReceive->abData, s_transferBuf.s_data.s_canMsg.ui8_data, s_transferBuf.s_data.s_canMsg.i32_len);
 
 #ifdef DEBUG_CAN
   printf("Empfang: %x  %hx %hx %hx %hx %hx %hx %hx %hx\n", ptReceive->dwId,
@@ -647,7 +647,7 @@ int16_t sendCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tSend* ptSend )
   int32_t i32_rc;
 
   DEBUG_PRINT2("sendCanMsg, bus %d, obj %d\n", bBusNumber, bMsgObj);
-  socketBuf_s s_socketBuf;
+  transferBuf_s s_transferBuf;
 
 #ifdef DEBUG_CAN
   printf("Senden: %x  %hx %hx %hx %hx %hx %hx %hx %hx\n", ptSend->dwId,
@@ -656,20 +656,20 @@ int16_t sendCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tSend* ptSend )
          ptSend->abData[6], ptSend->abData[7]);
 #endif
 
-  memset(&s_socketBuf, 0, sizeof(socketBuf_s));
+  memset(&s_transferBuf, 0, sizeof(transferBuf_s));
   // @todo:
-  //s_socketBuf.i32_mtypePrioAnd1 = assembleWrite_mtype(__IsoAgLib::CANIO_c::sb_sendPrioritized);
+  //s_transferBuf.i32_mtypePrioAnd1 = assembleWrite_mtype(__IsoAgLib::CANIO_c::sb_sendPrioritized);
 
-  s_socketBuf.ui16_command = COMMAND_DATA;
-  s_socketBuf.s_data.ui8_bus = bBusNumber;
-  s_socketBuf.s_data.ui8_obj = bMsgObj;
-  s_socketBuf.s_data.dwId = ptSend->dwId;
-  s_socketBuf.s_data.bDlc = ptSend->bDlc;
-  s_socketBuf.s_data.bXtd = ptSend->bXtd;
-  s_socketBuf.s_data.i32_sendTimeStamp = getTime();
-  memcpy(s_socketBuf.s_data.abData, ptSend->abData, 8);
+  s_transferBuf.ui16_command = COMMAND_DATA;
+  s_transferBuf.s_data.ui8_bus = bBusNumber;
+  s_transferBuf.s_data.ui8_obj = bMsgObj;
+  s_transferBuf.s_data.s_canMsg.ui32_id = ptSend->dwId;
+  s_transferBuf.s_data.s_canMsg.i32_len = ptSend->bDlc;
+  s_transferBuf.s_data.s_canMsg.i32_msgType = ptSend->bXtd;
+  s_transferBuf.s_data.i32_sendTimeStamp = getTime();
+  memcpy(s_transferBuf.s_data.s_canMsg.ui8_data, ptSend->abData, 8);
 
-  if ((i32_rc = send(i32_dataSocket, (char*)&s_socketBuf, sizeof(socketBuf_s), 
+  if ((i32_rc = send(i32_dataSocket, (char*)&s_transferBuf, sizeof(transferBuf_s), 
 #ifdef WIN32
         0
 #else
@@ -681,17 +681,17 @@ int16_t sendCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tSend* ptSend )
     return HAL_UNKNOWN_ERR;
   }
 
-  if (s_socketBuf.ui16_command == COMMAND_ACKNOWLEDGE )
+  if (s_transferBuf.ui16_command == COMMAND_ACKNOWLEDGE )
   {
-    if (s_socketBuf.s_acknowledge.i32_dataContent == ACKNOWLEDGE_DATA_CONTENT_ERROR_VALUE)
+    if (s_transferBuf.s_acknowledge.i32_dataContent == ACKNOWLEDGE_DATA_CONTENT_ERROR_VALUE)
     {
 #ifdef DEBUG
-      if ((s_socketBuf.s_acknowledge.i32_data != HAL_NO_ERR) && (s_socketBuf.s_acknowledge.i32_data != HAL_NEW_SEND_DELAY)) // == i32_error
+      if ((s_transferBuf.s_acknowledge.i32_data != HAL_NO_ERR) && (s_transferBuf.s_acknowledge.i32_data != HAL_NEW_SEND_DELAY)) // == i32_error
       {
         printf("acknowledge-error received in sendCanMsg\n");
       }
 #endif
-      return s_socketBuf.s_acknowledge.i32_data;
+      return s_transferBuf.s_acknowledge.i32_data;
     }
   }
   // other unexpected answer - shouldn't occur!
@@ -704,23 +704,23 @@ int16_t sendCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tSend* ptSend )
 int32_t getMaxSendDelay(uint8_t rui8_busNr)
 {
 #if 0
-  socketBuf_s s_socketBuf;
+  transferBuf_s s_transferBuf;
 
   DEBUG_PRINT1("getMaxSendDelay called, bus %d\n", rui8_busNr);
 
 /*  if ( bBusNumber > HAL_CAN_MAX_BUS_NR ) return HAL_RANGE_ERR; */
 
-  s_socketBuf.i32_mtypePid = msqDataClient.i32_pid;
-  s_socketBuf.ui16_command = COMMAND_SEND_DELAY;
-  s_socketBuf.s_config.ui8_bus = rui8_busNr;
+  s_transferBuf.i32_mtypePid = msqDataClient.i32_pid;
+  s_transferBuf.ui16_command = COMMAND_SEND_DELAY;
+  s_transferBuf.s_config.ui8_bus = rui8_busNr;
   // the other fields of the s_config struct are NOT of interest here!
 
-  int i16_rc = send_command(&s_socketBuf, i32_commandSocket);
+  int i16_rc = send_command(&s_transferBuf, i32_commandSocket);
   if (i16_rc == HAL_NO_ERR)
   { // we got an answer - see if it was ACKNOWLEDGE_DATA_CONTENT_SEND_DELAY
-    if (s_socketBuf.s_acknowledge.i32_dataContent == ACKNOWLEDGE_DATA_CONTENT_SEND_DELAY)
+    if (s_transferBuf.s_acknowledge.i32_dataContent == ACKNOWLEDGE_DATA_CONTENT_SEND_DELAY)
     { // yihaa, we got what we wanted!
-      return s_socketBuf.s_acknowledge.i32_data;
+      return s_transferBuf.s_acknowledge.i32_data;
     }
   }
 

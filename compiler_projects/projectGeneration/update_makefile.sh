@@ -98,7 +98,7 @@ GENERATE_FILES_ROOT_DIR=`pwd`
 # if one of the following variables isn't set
 # the corresponding default values are used
 # + USE_LITTLE_ENDIAN_CPU=1 --> most CPU types have little endian number variable representation -> number variable can be converted directly from int variable memory representation into CAN little endian string
-# + USE_CAN_DRIVER="simulating"|"sys"|"rte"|"linux_server_client"|"vector_canlib"|"vector_xl_drv_lib"|"sontheim" -> select wanted driver connection for CAN
+# + USE_CAN_DRIVER="simulating"|"sys"|"rte"|"msq_server"|"socket_server"|"vector_canlib"|"vector_xl_drv_lib"|"sontheim" -> select wanted driver connection for CAN
 # + USE_RS232_DRIVER="simulating"|"sys"|"rte" -> select wanted driver connection for RS232
 # + CAN_BUS_CNT ( specify amount of available CAN channels at ECU; default 1 )
 # + CAN_INSTANCE_CNT ( specify amount of CAN channels; default 1 )
@@ -622,8 +622,10 @@ create_filelist( )
 		fi
 	elif [ $USE_CAN_DRIVER = "rte" ] ; then
 		DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/can/target_extension_can_rte*'"
-	elif [ $USE_CAN_DRIVER = "linux_server_client" ] ; then
-		DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/can/target_extension_can_client*' -o -path '*/hal/"$HAL_PATH"/can/msq_helper*'"
+	elif [ $USE_CAN_DRIVER = "msq_server" ] ; then
+		DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/can/target_extension_can_client_msq*' -o -path '*/hal/"$HAL_PATH"/can/msq_helper*'"
+	elif [ $USE_CAN_DRIVER = "socket_server" ] ; then
+		DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/can/target_extension_can_client_sock*'"
 	elif [ $USE_CAN_DRIVER = "sys" ] ; then
 		if [ $PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL -gt 0 ] ; then
 			echo 'The selected CAN driver "simulating" does NOT provide the enhanced CAN processing.'
@@ -643,7 +645,7 @@ create_filelist( )
 	elif  [ $USE_CAN_DRIVER = "sontheim" ] ; then
 		DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/can/target_extension_can_w32_sontheim_canlpt*'"
 	else
-		echo 'ERROR! Please set the config variable "USE_CAN_DRIVER" to one of "simulating"|"sys"|"rte"|"linux_server_client"|"vector_canlib"|"vector_xl_drv_lib"|"sontheim"'
+		echo 'ERROR! Please set the config variable "USE_CAN_DRIVER" to one of "simulating"|"sys"|"rte"|"msq_server"|"socket_server"|"vector_canlib"|"vector_xl_drv_lib"|"sontheim"'
 		echo 'Current Setting is $USE_CAN_DRIVER'
 		exit 3
 	fi
@@ -762,6 +764,7 @@ create_filelist( )
     echo "find $LIB_ROOT -follow -name '*.h' -a \( $COMM_FEATURES \) -printf '%h/%f\n' >> $FILELIST_LIBRARY_HDR" >> .exec.tmp
   fi
 
+
   #find optional HW features
 	echo "find $LIB_ROOT -follow $SRC_EXT -a \( $DRIVER_FEATURES \) -printf '%h/%f\n' >> $FILELIST_LIBRARY_PURE" >> .exec.tmp
   echo "find $LIB_ROOT -follow -name '*.h' -a \(  $DRIVER_FEATURES \) -printf '%h/%f\n' >> $FILELIST_LIBRARY_HDR" >> .exec.tmp
@@ -849,6 +852,7 @@ create_filelist( )
 
 
   sh .exec.tmp
+
 	cat $FILELIST_LIBRARY_PURE $FILELIST_APP_PURE > $FILELIST_COMBINED_PURE
 	cat $FILELIST_LIBRARY_HDR $FILELIST_APP_HDR > $FILELIST_COMBINED_HDR
   rm -f .exec.tmp
@@ -1288,6 +1292,13 @@ create_makefile()
 		echo -n " -DSYSTEM_WITH_ENHANCED_CAN_HAL" >> $MakefileNameLong
 	fi
 
+	if [ $USE_CAN_DRIVER = "msq_server" ] ; then
+		echo -n " -DCAN_DRIVER_MESSAGE_QUEUE" >> $MakefileNameLong
+	fi
+	if [ $USE_CAN_DRIVER = "socket_server" ] ; then
+		echo -n " -DCAN_DRIVER_SOCKET" >> $MakefileNameLong
+	fi
+
 	echo -e "\n\n####### Definition of compiler binary prefix corresponding to selected target" >> $MakefileNameLong
 	if [ "A$PRJ_COMPILER_BINARY_PRE" != "A" ] ; then
 		echo "COMPILER_BINARY_PRE = \"$PRJ_COMPILER_BINARY_PRE\"" >> $MakefileNameLong
@@ -1453,16 +1464,15 @@ rm -f FileListInterfaceStart.txt FileListInterface.txt FileListInterface4Eval.tx
 
 
 	# build special target for CAN server
-	if [ $USE_CAN_DRIVER = "linux_server_client" ] ; then
+	if [ $USE_CAN_DRIVER = "msq_server" ] ; then
 		mkdir -p objects_server
 		echo -e "\n#Special Sources for CAN Server" >> $MakefileNameLong
-		echo "SOURCES_SERVER = ../$ISO_AG_LIB_PATH/xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_server_general.cpp \\" >> $MakefileNameLong
+		echo "SOURCES_SERVER = ../$ISO_AG_LIB_PATH/xgpl_src/IsoAgLib/hal/pc/can/can_server_msq.cpp \\" >> $MakefileNameLong
 
 		# now derive the source name of the specific CAN HAL module
-		echo -e "\t\t../$ISO_AG_LIB_PATH/xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_server_"$PRJ_CAN_DRIVER_SUFFIX".cpp \\" >> $MakefileNameLong
+		echo -e "\t\t../$ISO_AG_LIB_PATH/xgpl_src/IsoAgLib/hal/pc/can/can_server_"$PRJ_CAN_DRIVER_DEVICE".cpp \\" >> $MakefileNameLong
 
     echo -e "\t\t../$ISO_AG_LIB_PATH/xgpl_src/IsoAgLib/hal/pc/can/msq_helper.cpp \\" >> $MakefileNameLong
-		echo -e "\t\t../$ISO_AG_LIB_PATH/xgpl_src/IsoAgLib/hal/pc/can/can_server_helper.cpp" >> $MakefileNameLong
 		echo -e "\n#Special Rules for CAN Server" >> $MakefileNameLong
 
 		cat $DEV_PRJ_DIR/../$ISO_AG_LIB_PATH/compiler_projects/projectGeneration/MakefileCanServerPart.txt >> $MakefileNameLong
@@ -1472,13 +1482,27 @@ rm -f FileListInterfaceStart.txt FileListInterface.txt FileListInterface4Eval.tx
 
 	fi
 
+	# build special target for CAN server
+	if [ $USE_CAN_DRIVER = "socket_server" ] ; then
+		mkdir -p objects_server
+		echo -e "\n#Special Sources for CAN Server" >> $MakefileNameLong
+		echo "SOURCES_SERVER = ../$ISO_AG_LIB_PATH/xgpl_src/IsoAgLib/hal/pc/can/can_server_sock.cpp \\" >> $MakefileNameLong
+
+		# now derive the source name of the specific CAN HAL module
+		echo -e "\t\t../$ISO_AG_LIB_PATH/xgpl_src/IsoAgLib/hal/pc/can/can_server_"$PRJ_CAN_DEVICE_FOR_SERVER".cpp \\" >> $MakefileNameLong
+		echo -e "\n#Special Rules for CAN Server" >> $MakefileNameLong
+
+		cat $DEV_PRJ_DIR/../$ISO_AG_LIB_PATH/compiler_projects/projectGeneration/MakefileCanServerPart.txt >> $MakefileNameLong
+	fi
+
 	cat $MAKEFILE_SKELETON_FILE >> $MakefileNameLong
 
 	# add can_server creation to target "all"
-	if [ $USE_CAN_DRIVER = "linux_server_client" ] ; then
+	if [ $USE_CAN_DRIVER = "msq_server" -o $USE_CAN_DRIVER = "socket_server" ] ; then
 		sed -e 's#all:#all: can_server#g'  $MakefileNameLong > $MakefileNameLong.1
 		sed -e 's#LFLAGS   =#LFLAGS   = -pthread#g' $MakefileNameLong.1 > $MakefileNameLong
 	fi
+
 	rm -f $MakefileNameLong.1
 
 	# replace the install rules for version.h and the app config file
@@ -1569,7 +1593,7 @@ rm -f FileListInterfaceStart.txt FileListInterface.txt FileListInterface4Eval.tx
 	cat $MAKEFILE_APP_SKELETON_FILE >> $MakefileNameLong
 
 	# add can_server creation to target "all"
-	if [ $USE_CAN_DRIVER = "linux_server_client" ] ; then
+	if [ $USE_CAN_DRIVER = "msq_server" ] ; then
 		sed -e 's#all:#all: can_server#g'  $MakefileNameLong > $MakefileNameLong.1
 		sed -e 's#LFLAGS   =#LFLAGS   = -pthread#g' $MakefileNameLong.1 > $MakefileNameLong
 	fi
@@ -2153,7 +2177,7 @@ Create filelist, Makefile and configuration settings for a IsoAgLib project.
                                     target which is specified in the configuration file
                                     ( "pc_linux"|"pc_win32"|"esx"|"esxu"|"c2c"|"imi"|"pm167"|"Dj1"|"mitron167" ).
   --pc-can-driver=CAN_DRIVER        produce the project definition files for the selected CAN_DRIVER if the project shall run on PC
-                                    ( "simulating"|"sys"|"rte"|"linux_server_client"|"vector_canlib"|"vector_xl_drv_lib"|"sontheim" ).
+                                    ( "simulating"|"sys"|"rte"|"msq_server"|"socket_server"|"vector_canlib"|"vector_xl_drv_lib"|"sontheim" ).
   --pc-rs232-driver=RS232_DRIVER    produce the project definition files for the selected RS232_DRIVER if the project shall run on PC
                                     ( "simulating"|"sys"|"rte" ).
   --little-endian-cpu               select configuration for LITTLE ENDIAN CPU type
@@ -2282,11 +2306,11 @@ esac
 # check for corrext CAN driver - and automatically adapt to embedded targets
 if [ $PARAMETER_CAN_DRIVER != "UseConfigFile" ] ; then
 	USE_CAN_DRIVER=$PARAMETER_CAN_DRIVER
-	IS_CAN_SERVER=$(echo $PARAMETER_CAN_DRIVER | grep -c "linux_server_client_")
+	IS_CAN_SERVER=$(echo $PARAMETER_CAN_DRIVER | grep -c "msq_server")
 	if [ $IS_CAN_SERVER -gt 0 ] ; then
-		PRJ_CAN_DRIVER_SUFFIX=$(echo $PARAMETER_CAN_DRIVER | sed 's/linux_server_client_//g')
-		USE_CAN_DRIVER="linux_server_client"
-		PARAMETER_CAN_DRIVER="linux_server_client"
+		PRJ_CAN_DEVICE_FOR_SERVER=$(echo $PARAMETER_CAN_DRIVER | sed 's/msq_server_//g')
+		USE_CAN_DRIVER="msq_server"
+		PARAMETER_CAN_DRIVER="msq_server"
 	fi
 fi
 #default for not-can_server
@@ -2332,7 +2356,7 @@ case "$USE_CAN_DRIVER" in
 			;;
 		esac
 	;;
-	linux_server_client)
+	msq_server)
 		case "$USE_TARGET_SYSTEM" in
 			pc_linux)
 			;;
@@ -2347,21 +2371,31 @@ case "$USE_CAN_DRIVER" in
 				PARAMETER_CAN_DRIVER="sys"
 			;;
 		esac
-		# make sure, that PRJ_CAN_DRIVER_SUFFIX is automatically set, when not yet defined
-		if [ "A$PRJ_CAN_DRIVER_SUFFIX" = "A" ] ; then
+		# make sure, that PRJ_CAN_DEVICE_FOR_SERVER is automatically set, when not yet defined
+		if [ "A$PRJ_CAN_DEVICE_FOR_SERVER" = "A" ] ; then
 			case $PRJ_DEFINES in
 				*SYSTEM_A1*)
-					PRJ_CAN_DRIVER_SUFFIX="A1"
-					;;
-				*SYSTEM_MCC*)
-					PRJ_CAN_DRIVER_SUFFIX="pcan"
+					PRJ_CAN_DEVICE_FOR_SERVER="A1"
 					;;
 				*)
-					PRJ_CAN_DRIVER_SUFFIX="A1"
+					PRJ_CAN_DEVICE_FOR_SERVER="pc"
 					;;
 			esac
 		fi
-		CAN_SERVER_FILENAME=${USE_CAN_DRIVER}_${PRJ_CAN_DRIVER_SUFFIX}
+		CAN_SERVER_FILENAME=${USE_CAN_DRIVER}_${PRJ_CAN_DEVICE_FOR_SERVER}
+	;;
+	socket_server)
+		if [ "A$PRJ_CAN_DEVICE_FOR_SERVER" = "A" ] ; then
+			case $PRJ_DEFINES in
+				*SYSTEM_A1*)
+					PRJ_CAN_DEVICE_FOR_SERVER="A1"
+					;;
+				*)
+					PRJ_CAN_DEVICE_FOR_SERVER="pc"
+					;;
+			esac
+		fi
+		CAN_SERVER_FILENAME=can_server_sock_${PRJ_CAN_DEVICE_FOR_SERVER}
 	;;
 	vector_canlib)
 		case "$USE_TARGET_SYSTEM" in

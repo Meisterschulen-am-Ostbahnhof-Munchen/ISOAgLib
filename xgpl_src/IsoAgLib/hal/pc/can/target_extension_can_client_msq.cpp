@@ -75,7 +75,7 @@
 #include <sys/time.h>
 
 
-#include "can_msq.h"
+#include "can_server.h"
 
 namespace __HAL {
 
@@ -93,7 +93,7 @@ int32_t getPipeHandleForCanRcvEvent()
 int16_t can_startDriver()
 {
 
-  msqCommand_s msqCommandBuf;
+  transferBuf_s s_transferBuf;
 
   DEBUG_PRINT("can_startDriver called\n");
 #ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
@@ -111,27 +111,27 @@ int16_t can_startDriver()
   // client registration
 
   // use process id for own client id
-  msqCommandBuf.i32_mtypePid = msqDataClient.i32_pid;
-  msqCommandBuf.i16_command = COMMAND_REGISTER;
+  s_transferBuf.i32_mtypePid = msqDataClient.i32_pid;
+  s_transferBuf.ui16_command = COMMAND_REGISTER;
   // call getTime just to be sure that start up time is set
   getTime();
 
-  msqCommandBuf.s_startTimeClock.t_clock = getStartUpTime();
+  s_transferBuf.s_startTimeClock.t_clock = getStartUpTime();
 
-  i16_rc = send_command(&msqCommandBuf, &msqDataClient);
+  i16_rc = send_command(&s_transferBuf, &msqDataClient);
 
   if (i16_rc == HAL_NO_ERR) {
 
-    if (msqCommandBuf.s_acknowledge.i32_dataContent != ACKNOWLEDGE_DATA_CONTENT_PIPE_ID)
+    if (s_transferBuf.s_acknowledge.i32_dataContent != ACKNOWLEDGE_DATA_CONTENT_PIPE_ID)
     {
-      if (msqCommandBuf.s_acknowledge.i32_dataContent == ACKNOWLEDGE_DATA_CONTENT_ERROR_VALUE)
-        return msqCommandBuf.s_acknowledge.i32_data; // this is the error-code!
+      if (s_transferBuf.s_acknowledge.i32_dataContent == ACKNOWLEDGE_DATA_CONTENT_ERROR_VALUE)
+        return s_transferBuf.s_acknowledge.i32_data; // this is the error-code!
       else
         return HAL_UNKNOWN_ERR;
     }
     // else: PIPE_ID
     char pipe_name[255];
-    sprintf(pipe_name, "%s%d", PIPE_PATH, msqCommandBuf.s_acknowledge.i32_data); // == i32_pipeId
+    sprintf(pipe_name, "%s%d", PIPE_PATH, s_transferBuf.s_acknowledge.i32_data); // == i32_pipeId
 
     // pipe is already created by can server!
 
@@ -146,74 +146,74 @@ int16_t can_startDriver()
 
 int16_t can_stopDriver()
 {
-  msqCommand_s msqCommandBuf;
+  transferBuf_s s_transferBuf;
 
   DEBUG_PRINT("can_stopDriver called\n");
 
   if (msqDataClient.i32_pipeHandle)
     close(msqDataClient.i32_pipeHandle);
 
-  msqCommandBuf.i32_mtypePid = msqDataClient.i32_pid;
-  msqCommandBuf.i16_command = COMMAND_DEREGISTER;
+  s_transferBuf.i32_mtypePid = msqDataClient.i32_pid;
+  s_transferBuf.ui16_command = COMMAND_DEREGISTER;
 
-  return send_command(&msqCommandBuf, &msqDataClient);
+  return send_command(&s_transferBuf, &msqDataClient);
 
 }
 
 
 int16_t init_can ( uint8_t bBusNumber,uint16_t wGlobMask,uint32_t dwGlobMask,uint32_t dwGlobMaskLastmsg,uint16_t wBitrate )
 {
-  msqCommand_s msqCommandBuf;
+  transferBuf_s s_transferBuf;
 
   DEBUG_PRINT2("init_can, bus %d, bitrate %d\n", bBusNumber, wBitrate);
 
   if ( bBusNumber > HAL_CAN_MAX_BUS_NR ) return HAL_RANGE_ERR;
 
-  msqCommandBuf.i32_mtypePid = msqDataClient.i32_pid;
-  msqCommandBuf.i16_command = COMMAND_INIT;
-  msqCommandBuf.s_init.ui8_bus = bBusNumber;
-  msqCommandBuf.s_init.ui16_wGlobMask = wGlobMask;
-  msqCommandBuf.s_init.ui32_dwGlobMask = dwGlobMask;
-  msqCommandBuf.s_init.ui32_dwGlobMaskLastmsg = dwGlobMaskLastmsg;
-  msqCommandBuf.s_init.ui16_wBitrate = wBitrate;
+  s_transferBuf.i32_mtypePid = msqDataClient.i32_pid;
+  s_transferBuf.ui16_command = COMMAND_INIT;
+  s_transferBuf.s_init.ui8_bus = bBusNumber;
+  s_transferBuf.s_init.ui16_wGlobMask = wGlobMask;
+  s_transferBuf.s_init.ui32_dwGlobMask = dwGlobMask;
+  s_transferBuf.s_init.ui32_dwGlobMaskLastmsg = dwGlobMaskLastmsg;
+  s_transferBuf.s_init.ui16_wBitrate = wBitrate;
 
-  return send_command(&msqCommandBuf, &msqDataClient);
+  return send_command(&s_transferBuf, &msqDataClient);
 
 };
 
 int16_t changeGlobalMask( uint8_t bBusNumber,uint16_t wGlobMask,uint32_t dwGlobMask,uint32_t dwGlobMaskLastmsg )
 {
-  msqCommand_s msqCommandBuf;
+  transferBuf_s s_transferBuf;
 
   DEBUG_PRINT1("changeGlobalMask, bus %d\n", bBusNumber);
 
   if ( bBusNumber > HAL_CAN_MAX_BUS_NR ) return HAL_RANGE_ERR;
 
-  msqCommandBuf.i32_mtypePid = msqDataClient.i32_pid;
-  msqCommandBuf.i16_command = COMMAND_CHG_GLOBAL_MASK;
-  msqCommandBuf.s_init.ui8_bus = bBusNumber;
-  msqCommandBuf.s_init.ui16_wGlobMask = wGlobMask;
-  msqCommandBuf.s_init.ui32_dwGlobMask = dwGlobMask;
-  msqCommandBuf.s_init.ui32_dwGlobMaskLastmsg = dwGlobMaskLastmsg;
+  s_transferBuf.i32_mtypePid = msqDataClient.i32_pid;
+  s_transferBuf.ui16_command = COMMAND_CHG_GLOBAL_MASK;
+  s_transferBuf.s_init.ui8_bus = bBusNumber;
+  s_transferBuf.s_init.ui16_wGlobMask = wGlobMask;
+  s_transferBuf.s_init.ui32_dwGlobMask = dwGlobMask;
+  s_transferBuf.s_init.ui32_dwGlobMaskLastmsg = dwGlobMaskLastmsg;
 
-  return send_command(&msqCommandBuf, &msqDataClient);
+  return send_command(&s_transferBuf, &msqDataClient);
 
 };
 
 int16_t closeCan ( uint8_t bBusNumber )
 {
-  msqCommand_s msqCommandBuf;
+  transferBuf_s s_transferBuf;
 
   DEBUG_PRINT1("closeCan, bus %d\n", bBusNumber);
 
   if ( bBusNumber > HAL_CAN_MAX_BUS_NR ) return HAL_RANGE_ERR;
 
-  msqCommandBuf.i32_mtypePid = msqDataClient.i32_pid;
-  msqCommandBuf.i16_command = COMMAND_CLOSE;
-  msqCommandBuf.s_init.ui8_bus = bBusNumber;
+  s_transferBuf.i32_mtypePid = msqDataClient.i32_pid;
+  s_transferBuf.ui16_command = COMMAND_CLOSE;
+  s_transferBuf.s_init.ui8_bus = bBusNumber;
 
   // read/write queue is cleared by server!
-  return send_command(&msqCommandBuf, &msqDataClient);
+  return send_command(&s_transferBuf, &msqDataClient);
 
 };
 
@@ -241,7 +241,7 @@ int16_t configCanObj ( uint8_t bBusNumber, uint8_t bMsgObj, tCanObjConfig* ptCon
 {
   DEBUG_PRINT2("configCanObj, bus %d, obj %d\n", bBusNumber, bMsgObj);
 
-  msqCommand_s msqCommandBuf;
+  transferBuf_s s_transferBuf;
 
 #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
   if ( ( bBusNumber > HAL_CAN_MAX_BUS_NR ) || ( bMsgObj > cui8_maxCanObj-1 ) ) return HAL_RANGE_ERR;
@@ -249,22 +249,22 @@ int16_t configCanObj ( uint8_t bBusNumber, uint8_t bMsgObj, tCanObjConfig* ptCon
   if ( ( bBusNumber > HAL_CAN_MAX_BUS_NR ) ) return HAL_RANGE_ERR;
 #endif
 
-  msqCommandBuf.i32_mtypePid = msqDataClient.i32_pid;
-  msqCommandBuf.i16_command = COMMAND_CONFIG;
-  msqCommandBuf.s_config.ui8_bus = bBusNumber;
-  msqCommandBuf.s_config.ui8_obj = bMsgObj;
-  msqCommandBuf.s_config.ui8_bXtd = ptConfig->bXtd;
-  msqCommandBuf.s_config.ui8_bMsgType = ptConfig->bMsgType;
-  msqCommandBuf.s_config.ui32_dwId = ptConfig->dwId;
+  s_transferBuf.i32_mtypePid = msqDataClient.i32_pid;
+  s_transferBuf.ui16_command = COMMAND_CONFIG;
+  s_transferBuf.s_config.ui8_bus = bBusNumber;
+  s_transferBuf.s_config.ui8_obj = bMsgObj;
+  s_transferBuf.s_config.ui8_bXtd = ptConfig->bXtd;
+  s_transferBuf.s_config.ui8_bMsgType = ptConfig->bMsgType;
+  s_transferBuf.s_config.ui32_dwId = ptConfig->dwId;
 
 #ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
-  msqCommandBuf.s_config.ui32_mask = ptConfig->mask;
+  s_transferBuf.s_config.ui32_mask = ptConfig->mask;
 #endif
 
-  msqCommandBuf.s_config.ui16_wNumberMsgs = ptConfig->wNumberMsgs;
+  s_transferBuf.s_config.ui16_wNumberMsgs = ptConfig->wNumberMsgs;
 
   // read/write queue is cleared by server!
-  return send_command(&msqCommandBuf, &msqDataClient);
+  return send_command(&s_transferBuf, &msqDataClient);
 
 };
 
@@ -272,7 +272,7 @@ int16_t configCanObj ( uint8_t bBusNumber, uint8_t bMsgObj, tCanObjConfig* ptCon
 
 int16_t closeCanObj ( uint8_t bBusNumber,uint8_t bMsgObj )
 {
-  msqCommand_s msqCommandBuf;
+  transferBuf_s s_transferBuf;
 
   DEBUG_PRINT2("closeCanObj, bus %d, obj %d\n", bBusNumber, bMsgObj);
 
@@ -282,13 +282,13 @@ int16_t closeCanObj ( uint8_t bBusNumber,uint8_t bMsgObj )
   if ( ( bBusNumber > HAL_CAN_MAX_BUS_NR ) ) return HAL_RANGE_ERR;
 #endif
 
-  msqCommandBuf.i32_mtypePid = msqDataClient.i32_pid;
-  msqCommandBuf.i16_command = COMMAND_CLOSEOBJ;
-  msqCommandBuf.s_config.ui8_bus = bBusNumber;
-  msqCommandBuf.s_config.ui8_obj = bMsgObj;
+  s_transferBuf.i32_mtypePid = msqDataClient.i32_pid;
+  s_transferBuf.ui16_command = COMMAND_CLOSEOBJ;
+  s_transferBuf.s_config.ui8_bus = bBusNumber;
+  s_transferBuf.s_config.ui8_obj = bMsgObj;
 
   // read / write queue is cleared by server!
-  return send_command(&msqCommandBuf, &msqDataClient);
+  return send_command(&s_transferBuf, &msqDataClient);
 
 };
 
@@ -306,20 +306,20 @@ int16_t chgCanObjId ( uint8_t bBusNumber, uint8_t bMsgObj, uint32_t dwId, uint32
   if ( ( bBusNumber > HAL_CAN_MAX_BUS_NR ) ) return HAL_RANGE_ERR;
 #endif
 
-  msqCommand_s msqCommandBuf;
+  transferBuf_s s_transferBuf;
 
-  msqCommandBuf.i32_mtypePid = msqDataClient.i32_pid;
-  msqCommandBuf.i16_command = COMMAND_CHG_CONFIG;
-  msqCommandBuf.s_config.ui8_bus = bBusNumber;
-  msqCommandBuf.s_config.ui8_obj = bMsgObj;
-  msqCommandBuf.s_config.ui8_bXtd = bXtd;
-  msqCommandBuf.s_config.ui32_dwId = dwId;
+  s_transferBuf.i32_mtypePid = msqDataClient.i32_pid;
+  s_transferBuf.ui16_command = COMMAND_CHG_CONFIG;
+  s_transferBuf.s_config.ui8_bus = bBusNumber;
+  s_transferBuf.s_config.ui8_obj = bMsgObj;
+  s_transferBuf.s_config.ui8_bXtd = bXtd;
+  s_transferBuf.s_config.ui32_dwId = dwId;
 
 #ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
-  msqCommandBuf.s_config.ui32_mask = mask;
+  s_transferBuf.s_config.ui32_mask = mask;
 #endif
 
-  return send_command(&msqCommandBuf, &msqDataClient);
+  return send_command(&s_transferBuf, &msqDataClient);
 
 }
 /**
@@ -334,7 +334,7 @@ int16_t chgCanObjId ( uint8_t bBusNumber, uint8_t bMsgObj, uint32_t dwId, uint32
 int16_t lockCanObj( uint8_t aui8_busNr, uint8_t aui8_msgobjNr, bool ab_doLock )
 {
 
-  msqCommand_s msqCommandBuf;
+  transferBuf_s s_transferBuf;
 
   DEBUG_PRINT3("lockCanObj, bus %d, obj %d, lock %d\n", aui8_busNr, aui8_msgobjNr, ab_doLock);
 
@@ -344,17 +344,17 @@ int16_t lockCanObj( uint8_t aui8_busNr, uint8_t aui8_msgobjNr, bool ab_doLock )
   if ( ( aui8_busNr > HAL_CAN_MAX_BUS_NR ) ) return HAL_RANGE_ERR;
 #endif
 
-  msqCommandBuf.i32_mtypePid = msqDataClient.i32_pid;
+  s_transferBuf.i32_mtypePid = msqDataClient.i32_pid;
 
   if (ab_doLock)
-    msqCommandBuf.i16_command = COMMAND_LOCK;
+    s_transferBuf.ui16_command = COMMAND_LOCK;
   else
-    msqCommandBuf.i16_command = COMMAND_UNLOCK;
+    s_transferBuf.ui16_command = COMMAND_UNLOCK;
 
-  msqCommandBuf.s_config.ui8_bus = aui8_busNr;
-  msqCommandBuf.s_config.ui8_obj = aui8_msgobjNr;
+  s_transferBuf.s_config.ui8_bus = aui8_busNr;
+  s_transferBuf.s_config.ui8_obj = aui8_msgobjNr;
 
-  return send_command(&msqCommandBuf, &msqDataClient);
+  return send_command(&s_transferBuf, &msqDataClient);
 
 }
 
@@ -368,7 +368,7 @@ bool getCanMsgObjLocked( uint8_t aui8_busNr, uint8_t aui8_msgobjNr )
 {
 
   int16_t i16_rc;
-  msqCommand_s msqCommandBuf;
+  transferBuf_s s_transferBuf;
 
   DEBUG_PRINT2("getCanMsgObjLocked, bus %d, obj %d\n", aui8_busNr, aui8_msgobjNr);
 
@@ -379,19 +379,19 @@ bool getCanMsgObjLocked( uint8_t aui8_busNr, uint8_t aui8_msgobjNr )
 #endif
   else {
 
-    msqCommandBuf.i32_mtypePid = msqDataClient.i32_pid;
-    msqCommandBuf.i16_command = COMMAND_QUERYLOCK;
-    msqCommandBuf.s_config.ui8_bus = aui8_busNr;
-    msqCommandBuf.s_config.ui8_obj = aui8_msgobjNr;
+    s_transferBuf.i32_mtypePid = msqDataClient.i32_pid;
+    s_transferBuf.ui16_command = COMMAND_QUERYLOCK;
+    s_transferBuf.s_config.ui8_bus = aui8_busNr;
+    s_transferBuf.s_config.ui8_obj = aui8_msgobjNr;
 
-    i16_rc = send_command(&msqCommandBuf, &msqDataClient);
+    i16_rc = send_command(&s_transferBuf, &msqDataClient);
 
     if (!i16_rc)
     {
-      if (msqCommandBuf.s_acknowledge.i32_dataContent != ACKNOWLEDGE_DATA_CONTENT_QUERY_LOCK)
+      if (s_transferBuf.s_acknowledge.i32_dataContent != ACKNOWLEDGE_DATA_CONTENT_QUERY_LOCK)
         return false;
       else
-        return msqCommandBuf.s_acknowledge.i32_data;
+        return s_transferBuf.s_acknowledge.i32_data;
     }
     else
       return false;
@@ -543,7 +543,7 @@ int16_t sendCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tSend* ptSend )
 
   //DEBUG_PRINT2("sendCanMsg, bus %d, obj %d\n", bBusNumber, bMsgObj);
   msqWrite_s msqWriteBuf;
-  msqCommand_s msqCommandBuf;
+  transferBuf_s s_transferBuf;
 
 #ifdef DEBUG_CAN
   printf("Senden: %x  %hx %hx %hx %hx %hx %hx %hx %hx\n", ptSend->dwId,
@@ -553,11 +553,15 @@ int16_t sendCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tSend* ptSend )
 #endif
 
   memset(&msqWriteBuf, 0, sizeof(msqWrite_s));
+
   msqWriteBuf.i32_mtypePrioAnd1 = assembleWrite_mtype(__IsoAgLib::CanIo_c::sb_sendPrioritized);
   msqWriteBuf.ui16_pid = msqDataClient.i32_pid;
   msqWriteBuf.ui8_bus = bBusNumber;
   msqWriteBuf.ui8_obj = bMsgObj;
-  memcpy(&(msqWriteBuf.s_sendData), ptSend, sizeof(tSend));
+  msqWriteBuf.s_canMsg.ui32_id = ptSend->dwId;
+  msqWriteBuf.s_canMsg.i32_len = ptSend->bDlc;
+  msqWriteBuf.s_canMsg.i32_msgType = ptSend->bXtd;
+  memcpy(&(msqWriteBuf.s_canMsg.ui8_data), ptSend->abData, ptSend->bDlc);
   msqWriteBuf.i32_sendTimeStamp = getTime();
 
   if (msgsnd(msqDataClient.i32_wrHandle, &msqWriteBuf, sizeof(msqWrite_s) - sizeof(int32_t), 0) == -1) {
@@ -566,20 +570,20 @@ int16_t sendCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tSend* ptSend )
   }
 
   // wait for ACK
-  if((i16_rc = msgrcv(msqDataClient.i32_cmdAckHandle, &msqCommandBuf, sizeof(msqCommand_s) - sizeof(int32_t), msqDataClient.i32_pid, 0)) == -1)
+  if((i16_rc = msgrcv(msqDataClient.i32_cmdAckHandle, &s_transferBuf, sizeof(transferBuf_s) - sizeof(int32_t), msqDataClient.i32_pid, 0)) == -1)
     return HAL_UNKNOWN_ERR;
 
-  if (msqCommandBuf.i16_command == COMMAND_ACKNOWLEDGE )
+  if (s_transferBuf.ui16_command == COMMAND_ACKNOWLEDGE )
   {
-    if (msqCommandBuf.s_acknowledge.i32_dataContent == ACKNOWLEDGE_DATA_CONTENT_ERROR_VALUE)
+    if (s_transferBuf.s_acknowledge.i32_dataContent == ACKNOWLEDGE_DATA_CONTENT_ERROR_VALUE)
     {
 #ifdef DEBUG
-      if ((msqCommandBuf.s_acknowledge.i32_data != HAL_NO_ERR) && (msqCommandBuf.s_acknowledge.i32_data != HAL_NEW_SEND_DELAY)) // == i32_error
+      if ((s_transferBuf.s_acknowledge.i32_data != HAL_NO_ERR) && (s_transferBuf.s_acknowledge.i32_data != HAL_NEW_SEND_DELAY)) // == i32_error
       {
         printf("acknowledge-error received in sendCanMsg\n");
       }
 #endif
-      return msqCommandBuf.s_acknowledge.i32_data;
+      return s_transferBuf.s_acknowledge.i32_data;
     }
   }
   // other unexpected answer - shouldn't occur!
@@ -590,23 +594,23 @@ int16_t sendCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tSend* ptSend )
  * for now, simply no error code is generated! */
 int32_t getMaxSendDelay(uint8_t aui8_busNr)
 {
-  msqCommand_s msqCommandBuf;
+  transferBuf_s s_transferBuf;
 
   DEBUG_PRINT1("getMaxSendDelay called, bus %d\n", aui8_busNr);
 
 /*  if ( bBusNumber > HAL_CAN_MAX_BUS_NR ) return HAL_RANGE_ERR; */
 
-  msqCommandBuf.i32_mtypePid = msqDataClient.i32_pid;
-  msqCommandBuf.i16_command = COMMAND_SEND_DELAY;
-  msqCommandBuf.s_config.ui8_bus = aui8_busNr;
+  s_transferBuf.i32_mtypePid = msqDataClient.i32_pid;
+  s_transferBuf.ui16_command = COMMAND_SEND_DELAY;
+  s_transferBuf.s_config.ui8_bus = aui8_busNr;
   // the other fields of the s_config struct are NOT of interest here!
 
-  int i16_rc = send_command(&msqCommandBuf, &msqDataClient);
+  int i16_rc = send_command(&s_transferBuf, &msqDataClient);
   if (i16_rc == HAL_NO_ERR)
   { // we got an answer - see if it was ACKNOWLEDGE_DATA_CONTENT_SEND_DELAY
-    if (msqCommandBuf.s_acknowledge.i32_dataContent == ACKNOWLEDGE_DATA_CONTENT_SEND_DELAY)
+    if (s_transferBuf.s_acknowledge.i32_dataContent == ACKNOWLEDGE_DATA_CONTENT_SEND_DELAY)
     { // yihaa, we got what we wanted!
-      return msqCommandBuf.s_acknowledge.i32_data;
+      return s_transferBuf.s_acknowledge.i32_data;
     }
   }
 
