@@ -1470,7 +1470,7 @@ rm -f FileListInterfaceStart.txt FileListInterface.txt FileListInterface4Eval.tx
 		echo "SOURCES_SERVER = ../$ISO_AG_LIB_PATH/xgpl_src/IsoAgLib/hal/pc/can/can_server_msq.cpp \\" >> $MakefileNameLong
 
 		# now derive the source name of the specific CAN HAL module
-		echo -e "\t\t../$ISO_AG_LIB_PATH/xgpl_src/IsoAgLib/hal/pc/can/can_server_"$PRJ_CAN_DRIVER_DEVICE".cpp \\" >> $MakefileNameLong
+		echo -e "\t\t../$ISO_AG_LIB_PATH/xgpl_src/IsoAgLib/hal/pc/can/can_server_"$PRJ_CAN_DEVICE_FOR_SERVER".cpp \\" >> $MakefileNameLong
 
     echo -e "\t\t../$ISO_AG_LIB_PATH/xgpl_src/IsoAgLib/hal/pc/can/msq_helper.cpp \\" >> $MakefileNameLong
 		echo -e "\n#Special Rules for CAN Server" >> $MakefileNameLong
