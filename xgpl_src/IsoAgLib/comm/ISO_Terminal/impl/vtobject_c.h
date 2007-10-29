@@ -88,6 +88,11 @@
 #include  <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h>
 // ~X2C
 
+#ifdef DEBUG
+  #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
+#endif
+
+
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 //  +X2C Class 2 : vtObject_c

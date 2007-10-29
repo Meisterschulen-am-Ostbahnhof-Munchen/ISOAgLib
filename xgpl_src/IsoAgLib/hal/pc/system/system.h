@@ -75,6 +75,8 @@
 #include "system_target_extensions.h"
 
 #include <IsoAgLib/util/impl/util_funcs.h>
+#include <IsoAgLib/hal/pc/can/can_typedef.h>
+
 
 /** decide if HAL for PC shall use simulated sensor input for U_BAT and
     reference voltage monitoring - but in this case the sensor package
@@ -233,7 +235,6 @@ namespace HAL
   {__HAL::setRelais(bitState);};
 
 /*@}*/
-
 
 }
 #endif

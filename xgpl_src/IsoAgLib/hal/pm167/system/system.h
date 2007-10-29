@@ -72,7 +72,7 @@
 #include "../config.h"
 #include "../typedef.h"
 #include "../errcodes.h"
-#include "target_extensions.h"
+#include "system_target_extensions.h"
 
 #include <IsoAgLib/util/impl/util_funcs.h>
 
@@ -97,8 +97,8 @@ namespace HAL
 /*@{*/
   inline int16_t printf(...){return 1;};
   inline int16_t scanf(...) {return 1;};
-  using ::sprintf;
-  using ::sscanf;
+  using CNAMESPACE::sprintf;
+  using CNAMESPACE::sscanf;
   /**
     open the system with system specific function call
     @return error state (HAL_NO_ERR == o.k.)
@@ -145,14 +145,14 @@ namespace HAL
     @return [ms] since start of the system
   */
   inline int32_t getTime(void)
-    {return __HAL::getTime();};
+    {return __HAL::get_time();};
 
   inline int16_t getSnr(uint8_t *snrDat)
-    {return __HAL::getSnr(snrDat);};
+    {return __HAL::get_snr(snrDat);};
   inline int32_t getSerialNr(int16_t* pi16_errCode = NULL)
   {
     uint8_t uint8 [6];
-    int16_t errCode = __HAL::getSnr(uint8);
+    int16_t errCode = __HAL::get_snr(uint8);
     if (pi16_errCode) *pi16_errCode = errCode;
     // ESX Serial number is coded in BCD. As we only get 21 bits,
     // we can take only a part of the information transmitted here.
@@ -186,20 +186,20 @@ namespace HAL
     stop (f.e. store values) actions after loss of CAN_EN
   */
   inline void stayingAlive(void)
-    {__HAL::stayingAlive();};
+    {__HAL::staying_alive();};
 
   /**
     shut off the whole system (set power down)
   */
   inline void powerDown(void)
-    {__HAL::powerDown();};
+    {__HAL::power_down();};
 
   /**
     switch relais on or off
     @param bitState true -> Relais ON
   */
   inline void setRelais(bool bitState)
-  {__HAL::setRelais(bitState);};
+  {__HAL::set_relais(bitState);};
 /*@}*/
 
 

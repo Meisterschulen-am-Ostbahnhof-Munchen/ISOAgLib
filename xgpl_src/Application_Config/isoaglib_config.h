@@ -7,7 +7,6 @@
     email                : a.spangler@osb-ag:de
     type                 : Header
  ***************************************************************************/
-
 /***************************************************************************
  *                                                                         *
  * This file is part of the "IsoAgLib", an object oriented program library *
@@ -388,11 +387,6 @@
  * to fallback speed.
  */
 /*@{*/
-#ifndef CONFIG_CAN_USE_FALLBACK_ON_CAN_DEADLOCK
-  /// select if CAN should change baudrate to fallback, if BUS deadlock is detected
-  #define CONFIG_CAN_USE_FALLBACK_ON_CAN_DEADLOCK 0
-#endif
-
 #ifndef CONFIG_CAN_MAX_CAN_ERR_TIME_BEFORE_SLOWERING
   /// max time intervall of CAN err before switching back from 250 to 125 kbit/s in [msec.]
   #define CONFIG_CAN_MAX_CAN_ERR_TIME_BEFORE_SLOWERING 3000
@@ -727,13 +721,12 @@
   #endif
 #endif
 
-
 /// define default ident type
-#define DEFAULT_IDENT_TYPE __IsoAgLib::Ident_c::StandardIdent
+#define DEFAULT_IDENT_TYPE __IsoAgLib::Ident_c::ExtendedIdent
 
 #ifdef USE_ISO_11783
   /// config CanIo_c to handle both 11bit and 29bit ident types if ISO 11783 is active
-  #define DEFAULT_CONFIG_IDENT_TYPE __IsoAgLib::Ident_c::BothIdent
+  #define DEFAULT_CONFIG_IDENT_TYPE __IsoAgLib::Ident_c::ExtendedIdent
 #else
   /// config CanIo_c to only 11bit ident type if ISO 11783 is NOT active
   #define DEFAULT_CONFIG_IDENT_TYPE __IsoAgLib::Ident_c::StandardIdent
@@ -890,7 +883,7 @@
   #endif
 
   #ifndef SYSTEM_AMS5_YN
-    #define SYSTEM_AMS5_YN YES
+    #define SYSTEM_AMS5_YN NO
   #endif
   #if SYSTEM_AMS5_YN == YES && !defined(SYSTEM_AMS5)
     #define SYSTEM_AMS5
@@ -987,6 +980,7 @@
 /** define the debug device to use */
 #ifndef INTERNAL_DEBUG_DEVICE
   #ifdef SYSTEM_PC
+
     #include <iostream>
     #include <fstream>
     #include "stdio.h"
@@ -995,6 +989,7 @@
   	#define INTERNAL_DEBUG_DEVICE_NEWLINE "\r\n"
     #define INTERNAL_DEBUG_FLUSH fflush(0);
   #else
+
     #define INTERNAL_DEBUG_DEVICE __IsoAgLib::getRs232Instance()
   	#define INTERNAL_DEBUG_DEVICE_ENDL "\r\n"
   	#define INTERNAL_DEBUG_DEVICE_NEWLINE "\r\n"

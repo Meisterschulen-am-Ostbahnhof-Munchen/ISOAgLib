@@ -650,6 +650,11 @@ create_filelist( )
 		exit 3
 	fi
 
+	if [ $PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL -lt 1 ] ; then
+    #in NOT enhanced can hal -> we need to integrate the sources for the central CAN FIFO
+    DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/generic_utils/can/*'"
+	fi
+
   if [ $PRJ_EEPROM -gt 0 ] ; then
     DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/driver/eeprom/*' -o -path '*/hal/"$HAL_PATH"/eeprom/*' -o -path '*/hal/eeprom.h' -o -name 'eeprom_adr.h'"
   fi

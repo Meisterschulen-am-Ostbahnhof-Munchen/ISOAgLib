@@ -116,6 +116,8 @@ public:
     @return true -> D+ or. CAN_EN is active OR D+ should not be checked
   */
   static bool canEn() {return System_c::canEn();};
+
+#ifndef SYSTEM_PM167
   /**
     get the main power voltage
     @return voltage of power [mV]
@@ -127,6 +129,8 @@ public:
   */
   static int16_t  getExternalSensorPowerVoltage( void )
     { return System_c::getExternalSensorPowerVoltage();};
+
+#endif
 
   /**
     deliver the serial nr of the device into uint8_t[6] array

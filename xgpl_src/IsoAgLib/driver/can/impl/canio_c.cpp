@@ -102,6 +102,9 @@
   #include <IsoAgLib/util/impl/util_funcs.h>
 #endif
 
+
+#include <IsoAgLib/hal/generic_utils/can/icanfifo.h>
+
 #ifdef DEBUG_HEAP_USEAGE
 static uint16_t sui16_msgObjTotal = 0;
 static uint16_t sui16_filterBoxTotal = 0;
@@ -112,6 +115,7 @@ extern unsigned int AllocateHeapMalloc;
 extern unsigned int DeallocateHeapMalloc;
 #endif
 #endif
+
 
 namespace __IsoAgLib {
 #if defined( CAN_INSTANCE_CNT ) && ( CAN_INSTANCE_CNT > 1 )
@@ -150,6 +154,7 @@ CanIo_c::singletonInit()
   #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
   tm_MsgObjCnt = 0;
   #endif
+
 
   /// singletonInit stuff
   init(0xFF, DEFAULT_BITRATE, DEFAULT_CONFIG_IDENT_TYPE, CONFIG_CAN_DEFAULT_MIN_OBJ_NR, CONFIG_CAN_DEFAULT_MAX_OBJ_NR);
@@ -203,6 +208,9 @@ CanIo_c::singletonInit()
   // explicitly initialized, we must call reconfigureMsgObj NOW
   bool b_callReconfigureMsgObj = false;
 
+
+  initMinChangedFilterBox();
+
   #ifdef DEBUG
   static bool firstDefaultInitCallStart = true;
   if ( firstDefaultInitCallStart ) {
@@ -246,6 +254,8 @@ CanIo_c::singletonInit()
     ui16_bitrate = 0;
     i32_canErrStart = 0;
     i32_canErrEnd = 0;
+
+    mi32_endLastReconfigTime = 0;
     ui8_processedMsgCnt = 0;
     c_maskStd.set(~0, Ident_c::StandardIdent);
     c_maskExt.set(~0, Ident_c::ExtendedIdent);
@@ -269,18 +279,16 @@ CanIo_c::singletonInit()
   }
   if ( aui8_busNumber == 0xFF )
   { // called with default value -> do nothing till called with normal parameter
-	 #ifndef SYSTEM_DJ1
-	    #ifdef DEBUG
-	    static bool firstDefaultInitCallEnd = true;
-	    if ( ! firstDefaultInitCallEnd ) {
-	      firstDefaultInitCallEnd = false;
-	      INTERNAL_DEBUG_DEVICE
-	          << "Ende CanIo_c::init() mit Default Werten bei spc_instance == "
-	          << spc_instance
-	          << INTERNAL_DEBUG_DEVICE_ENDL;
-	    }
-	    #endif
-	#endif
+    #ifdef DEBUG
+    static bool firstDefaultInitCallEnd = true;
+    if ( ! firstDefaultInitCallEnd ) {
+      firstDefaultInitCallEnd = false;
+      INTERNAL_DEBUG_DEVICE
+          << "Ende CanIo_c::init() mit Default Werten bei spc_instance == "
+	  << DEF_GET_POINTER_ADR_DEBUG_OUTPUT( spc_instance )
+          << INTERNAL_DEBUG_DEVICE_ENDL;
+    }
+    #endif
     return false;
   }
   else
@@ -415,45 +423,11 @@ bool CanIo_c::timeEvent( void ){
   // if still not ready, CanIo_c is not yet initialised complete -> do nothing
   if ( (ui16_bitrate == 0) || ( ui8_busNumber > HAL_CAN_MAX_BUS_NR ) ) return false;
 
-  #if ( CONFIG_CAN_USE_FALLBACK_ON_CAN_DEADLOCK )
-  // check if CAN BUS is o.k.
-  int32_t i32_now = HAL::getTime();
-  int32_t i32_lastSend;
-  bool b_sendProblem = false;
-  uint8_t ui8_bufCnt;
-
-  i32_lastSend = HAL::can_stateMsgobjTxok(ui8_busNumber, minHALMsgObjNr());
-  ui8_bufCnt = HAL::can_stateMsgobjBuffercnt(ui8_busNumber, minHALMsgObjNr());
-
-  if ( ((i32_now - i32_lastSend) > 3000)
-     &&(ui8_bufCnt > 0)
-     )
-  {
-    b_sendProblem = true;
-  }
-  if (en_identType == Ident_c::BothIdent)
-  { // check for second obj if proprietary CAN and ISO are used
-    i32_lastSend = HAL::can_stateMsgobjTxok(ui8_busNumber, minHALMsgObjNr()+1 );
-    ui8_bufCnt = HAL::can_stateMsgobjBuffercnt(ui8_busNumber, minHALMsgObjNr()+1 );
-
-    if ( ((i32_now - i32_lastSend) > 3000)
-       &&(ui8_bufCnt > 0)
-       )
-    {
-      b_sendProblem = true;
-    }
-  }
-  if (HAL::can_stateGlobalBlocked()) b_sendProblem = true;
-  if (b_sendProblem)
-  { // a send problem occured -> close CAN and open again
-    setBitrate(CONFIG_CAN_FALLBACK_BITRATE);
-  }
-  #endif //CONFIG_CAN_USE_FALLBACK_ON_CAN_DEADLOCK
-
   // start process of all received msg
   return (processMsg() >= 0)?true:false;
 }
 
+#ifdef USE_CAN_MEASURE_BUSLOAD
 /** deliver actual BUS load in baud
   @return baudrate in [kbaud] on used CAN BUS
 */
@@ -461,6 +435,7 @@ uint16_t CanIo_c::getBusLoad() const
 {
   return HAL::can_stateGlobalBusload(ui8_busNumber);
 }
+#endif
 
 /** set the minimum delay in msec. between two sent CAN messages
   @param aui16_minDelay minimum time between two CAN messages [msec.]
@@ -470,11 +445,6 @@ void CanIo_c::setSendpause(uint16_t aui16_minDelay) const
   uint8_t ui8_sendObjNr = minHALMsgObjNr();
 
   HAL::can_configMsgobjSendpause(ui8_busNumber, ui8_sendObjNr, aui16_minDelay);
-  // if both standard and extended ident can be sent -> use second send obj if data uses extended ident
-  if (en_identType == Ident_c::BothIdent)
-  {
-    HAL::can_configMsgobjSendpause(ui8_busNumber, (ui8_sendObjNr + 1), aui16_minDelay);
-  }
 }
 
 /** deliver the numbers which can be placed at the moment in the send puffer
@@ -486,11 +456,6 @@ uint8_t CanIo_c::sendCanFreecnt(Ident_c::identType_t ren_identType)
 { // set send MsgObj ID
   uint8_t ui8_sendObjNr = minHALMsgObjNr();
 
-  // if both standard and extended ident can be sent -> use second send obj if data uses extended ident
-  if ((en_identType == Ident_c::BothIdent) && (ren_identType ==Ident_c::ExtendedIdent))
-  {
-    ui8_sendObjNr += 1;
-  }
   const int16_t i16_result = HAL::can_stateMsgobjFreecnt(ui8_busNumber, ui8_sendObjNr);
 
   if ( i16_result >= 0 )
@@ -508,11 +473,6 @@ void CanIo_c::sendCanClearbuf(Ident_c::identType_t ren_identType)
 {
   uint8_t ui8_sendObjNr = minHALMsgObjNr();
 
-  // if both standard and extended ident can be sent -> use second send obj if data uses extended ident
-  if ((en_identType == Ident_c::BothIdent) && (ren_identType ==Ident_c::ExtendedIdent))
-  {
-    ui8_sendObjNr += 1;
-  }
   #ifdef DEBUG
   INTERNAL_DEBUG_DEVICE
    << "CanIo_c::sendCanClearbuf for MsgObjNr: " << uint16_t(ui8_sendObjNr) << INTERNAL_DEBUG_DEVICE_ENDL;
@@ -534,6 +494,7 @@ void CanIo_c::sendCanClearbuf(Ident_c::identType_t ren_identType)
 bool CanIo_c::existFilter(const __IsoAgLib::CanCustomer_c& ar_customer,
                           uint16_t at_mask, uint16_t at_filter,
                           Ident_c::identType_t ren_identType, ArrFilterBox::iterator* apc_iter)
+
 {
   // check if filter/t_mask are already inserted
   // return false if this setting isnt unique
@@ -556,6 +517,7 @@ bool CanIo_c::existFilter(const __IsoAgLib::CanCustomer_c& ar_customer,
 bool CanIo_c::existFilter(const __IsoAgLib::CanCustomer_c& ar_customer,
                           uint32_t at_mask, uint32_t at_filter,
                           Ident_c::identType_t ren_identType, ArrFilterBox::iterator* apc_iter)
+
 {
   // check if filter/t_mask are already inserted
   // return false if this setting isnt unique
@@ -578,6 +540,7 @@ bool CanIo_c::existFilter(const __IsoAgLib::CanCustomer_c& ar_customer,
 bool CanIo_c::existFilter(const __IsoAgLib::CanCustomer_c& ar_customer,
                           const Ident_c& ac_compMask, const Ident_c& ac_compFilter,
                           ArrFilterBox::iterator* apc_iter)
+
 {
   // check if filter/t_mask are already inserted
   // return false if this setting isn't unique
@@ -623,12 +586,13 @@ bool CanIo_c::existFilter(const __IsoAgLib::CanCustomer_c& ar_customer,
   @param at_mask individual mask for this filter box
   @param at_filter individual filter
   @param ab_reconfigImmediate true -> all Filter objects are reconfigured to according
+
       CAN hardware MsgObj after creating this filter
   @param at_identType ident type of the created ident: standard 11bit (default) or extended 29bit
   @return != NULL -> if inserting and wanted reconfiguration are performed without errors, a reference to the created FilterBox is returned
   @exception badAlloc
 */
-FilterBox_c* CanIo_c::insertFilter(__IsoAgLib::CanCustomer_c& ar_customer,
+FilterBox_c* CanIo_c::insertFilter(__IsoAgLib::CanCustomer_c & ar_customer,
                                   uint32_t at_mask, uint32_t at_filter,
                                   #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
                                   bool ab_reconfigImmediate,
@@ -639,14 +603,22 @@ FilterBox_c* CanIo_c::insertFilter(__IsoAgLib::CanCustomer_c& ar_customer,
                                   const Ident_c::identType_t at_identType,
                                   int8_t ai8_dlcForce,
                                   FilterBox_c* apc_connectedFilterBox)
+
 {
   Ident_c c_newMask = Ident_c(at_mask, at_identType);
   Ident_c c_newFilter = Ident_c(at_filter, at_identType);
+
+#if defined( DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION)
+INTERNAL_DEBUG_DEVICE << "-----------------------------------start CanIo_c::insertFilter " << INTERNAL_DEBUG_DEVICE_ENDL;
+      printMyFilterBox();
+#endif
+
 
   if (existFilter(ar_customer, c_newMask, c_newFilter, NULL))
   { // filter,mask,cancustomer definition already inserted
     return NULL;
   }
+
   //look for existing mask/filter definition
   FilterBox_c* tempFilterBox_c = getFilterBox(c_newMask, c_newFilter);
 
@@ -655,7 +627,7 @@ FilterBox_c* CanIo_c::insertFilter(__IsoAgLib::CanCustomer_c& ar_customer,
     #ifdef DEBUG
     INTERNAL_DEBUG_DEVICE << "filterbox mask/filter already exist -> insert cancustomer" << INTERNAL_DEBUG_DEVICE_ENDL;
     #ifdef SYSTEM_PC
-    INTERNAL_DEBUG_DEVICE << "mask: " << STL_NAMESPACE::hex << c_newMask.ident() << " filter: " << c_newFilter.ident() << STL_NAMESPACE::dec << INTERNAL_DEBUG_DEVICE_ENDL;
+    INTERNAL_DEBUG_DEVICE << "mask: "<< STL_NAMESPACE::hex << c_newMask.ident() << " filter: " << c_newFilter.ident() << STL_NAMESPACE::dec << INTERNAL_DEBUG_DEVICE_ENDL;
     #else
     INTERNAL_DEBUG_DEVICE << "mask: " << c_newMask.ident() << " filter: " << c_newFilter.ident() << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
@@ -676,19 +648,8 @@ FilterBox_c* CanIo_c::insertFilter(__IsoAgLib::CanCustomer_c& ar_customer,
   // insert new FilterBox_c and exit function if no dyn array growth is reported
   const uint8_t b_oldSize = cntFilter();
 
-  #ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
-  if ( ui8_busNumber == 0xFF )
-  { //if insertFilter is called before canio_c init call, insertFilterBox without setting busnumber
-    //and msgobj number -> this will be done in init call
-    arrFilterBox.push_back(c_tempFilterBox);
-    setCntFilter( arrFilterBox.size() );
-    #ifdef DEBUG
-    INTERNAL_DEBUG_DEVICE << "---BEFORE CALL OF INIT---" << INTERNAL_DEBUG_DEVICE_ENDL;
-    INTERNAL_DEBUG_DEVICE << "insertFilterBox with bus number: " << static_cast<int>(ui8_busNumber)  << " and FilterBoxNr: " << static_cast<int>(b_oldSize) << INTERNAL_DEBUG_DEVICE_ENDL;
-    INTERNAL_DEBUG_DEVICE << "                     mask: " << STL_NAMESPACE::hex << c_newMask.ident() << " filter: " << c_newFilter.ident() << STL_NAMESPACE::dec << INTERNAL_DEBUG_DEVICE_ENDL;
-    #endif
-    return &arrFilterBox.back();
-  }
+
+
 
   // #############################################
   // from now on, the CAN BUS is already in valid useable state, so that the FilterBox_c instance
@@ -704,11 +665,34 @@ FilterBox_c* CanIo_c::insertFilter(__IsoAgLib::CanCustomer_c& ar_customer,
     if ( arrFilterBox[ui8_overwritenFilterBoxIndex].isIdle() )
     { //if idle filterbox found overwrite it with the new filterbox
       arrFilterBox[ui8_overwritenFilterBoxIndex].set(c_newMask, c_newFilter, &ar_customer, ai8_dlcForce, apc_connectedFilterBox);
+
+
+      arrFilterBox[ui8_overwritenFilterBoxIndex].setFbVecIdx(ui8_overwritenFilterBoxIndex);
+
+      /** when a idle FB is reused then the Full reconfiguration is necessary**/
+      /** set Full reconfiguration */
+      setFullReconfigNecessary();
+
+
+#ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
+  if ( ui8_busNumber != 0xFF ) /* when the add is made before the init CAN don't do the config, config is done at the init CAN */
+  {
       arrFilterBox[ui8_overwritenFilterBoxIndex].configCan(ui8_busNumber, ui8_overwritenFilterBoxIndex + minReceiveObjNr());
+  }
+#endif
+
       filterBoxOverwrite = true;
       #ifdef DEBUG
       INTERNAL_DEBUG_DEVICE << "overwrite FilterBox[" << int(ui8_overwritenFilterBoxIndex) << "] with busnumber: " << static_cast<int>(ui8_busNumber) << INTERNAL_DEBUG_DEVICE_ENDL;
-      INTERNAL_DEBUG_DEVICE << "                    mask: " << STL_NAMESPACE::hex << c_newMask.ident() << " filter: " << c_newFilter.ident() << STL_NAMESPACE::dec << INTERNAL_DEBUG_DEVICE_ENDL;
+      INTERNAL_DEBUG_DEVICE << "                    mask: "
+      #ifdef SYSTEM_PC
+      << STL_NAMESPACE::hex
+      #endif
+      << c_newMask.ident() << " filter: " << c_newFilter.ident()
+      #ifdef SYSTEM_PC
+      << STL_NAMESPACE::dec
+      #endif
+      << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
       break;
     }
@@ -718,49 +702,78 @@ FilterBox_c* CanIo_c::insertFilter(__IsoAgLib::CanCustomer_c& ar_customer,
   { //only insert filter box if bus number and msgobj number have the right range
     // no filterBox in the vector is idle -> push back
     // insert temp object in vector arrFilterBox -> can cause badAlloc exception
-    uint8_t tempMsgObjNr = minReceiveObjNr() + b_oldSize;
+
     #ifdef DEBUG
-    INTERNAL_DEBUG_DEVICE << "insertFilterBox with bus number: " << static_cast<int>(ui8_busNumber)  << " and FilterBoxNr: " << static_cast<int>(b_oldSize) << INTERNAL_DEBUG_DEVICE_ENDL;
-    INTERNAL_DEBUG_DEVICE << "                     mask: "  << STL_NAMESPACE::hex << c_newMask.ident() << " filter: " << c_newFilter.ident() << STL_NAMESPACE::dec << INTERNAL_DEBUG_DEVICE_ENDL;
+    INTERNAL_DEBUG_DEVICE << "insertFilterBox with bus number: " << static_cast<int>(ui8_busNumber)  << INTERNAL_DEBUG_DEVICE_ENDL;
+    INTERNAL_DEBUG_DEVICE << "                     mask: "
+    #ifdef SYSTEM_PC
+    << STL_NAMESPACE::hex
+    #endif
+    << c_newMask.ident() << " filter: " << c_newFilter.ident()
+    #ifdef SYSTEM_PC
+    << STL_NAMESPACE::dec
+    #endif
+    << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
     arrFilterBox.push_back(c_tempFilterBox);
     setCntFilter( arrFilterBox.size() );
+
+
+    arrFilterBox.back().setFbVecIdx(arrFilterBox.size() - 1);
+
+/** set the MinChangedFilterBox */
+    if(isFirstAddFilterBox())
+        setMinChangedFilterBox(arrFilterBox.size() - 1);
+
+
+#ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
+  if ( ui8_busNumber != 0xFF ) /* when the add is made before the init CAN don't do the config, config is done at the init CAN */
+  {
+    uint8_t tempMsgObjNr = minReceiveObjNr() + b_oldSize;
     arrFilterBox.back().configCan(ui8_busNumber, tempMsgObjNr);
   }
-  #else // SYSTEM_WITH_ENHANCED_CAN_HAL
-  // insert temp object in vector arrFilterBox -> can cause badAlloc exception
-  arrFilterBox.push_front(c_tempFilterBox);
-  setCntFilter( arrFilterBox.size() );
-  #endif // SYSTEM_WITH_ENHANCED_CAN_HAL
+#endif
 
-  if (b_oldSize >= cntFilter())
-  { // dynamic array didn't grow -> alloc error
-    getILibErrInstance().registerError( iLibErr_c::BadAlloc, iLibErr_c::Can );
-    return NULL; // exit the function
+
+    if (b_oldSize >= cntFilter())
+    { // dynamic array didn't grow -> alloc error
+      getILibErrInstance().registerError( iLibErr_c::BadAlloc, iLibErr_c::Can );
+      return NULL; // exit the function
+    }
+    #ifdef DEBUG_HEAP_USEAGE
+    else
+    {
+      sui16_filterBoxTotal++;
+    }
+    #endif
+
+
   }
-  #ifdef DEBUG_HEAP_USEAGE
-  else
-  {
-    sui16_filterBoxTotal++;
-  }
-  #endif
 
   #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
   // if wanted, configure everything, to set CAN hardware MsgObj_c as wanted
   // for sequence of arrFilterBox insertions only configure after the last insert
-  if ( ab_reconfigImmediate )
+  if ( ui8_busNumber != 0xFF )/* when the add is made before the init CAN don't do the config, config is done at the init CAN */
   {
-    reconfigureMsgObj();
-  } // if (ab_configImmediate)
+    if ( ab_reconfigImmediate )
+    {
+      reconfigureMsgObj();
+    } // if (ab_configImmediate)
+  }
+
+ #endif
+
+#if defined( DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION )
+INTERNAL_DEBUG_DEVICE << "end CanIo_c::insertFilter " << INTERNAL_DEBUG_DEVICE_ENDL;
+      printMyFilterBox();
+#endif
 
   // insertion of FilterBox_c was successfull
-  return &arrFilterBox.front();
-  #else // SYSTEM_WITH_ENHANCED_CAN_HAL
   if (filterBoxOverwrite == true)
     return &arrFilterBox[ui8_overwritenFilterBoxIndex];
   else //new filterBox inserted at the end
     return &arrFilterBox.back();
-  #endif
+
 }
 
 /** create a Filter Box with specified at_mask/at_filter
@@ -779,16 +792,18 @@ FilterBox_c* CanIo_c::insertFilter(__IsoAgLib::CanCustomer_c& ar_customer,
   possible errors:
       * Err_c::badAlloc on not enough memory for new FilterBox_c instance or for new configured MsgObj_c's
   @see __IsoAgLib::CANCustomer
-  @param ar_customer reference to __IsoAgLib::CanCustomer_c which needs filtered
+   @param ar_customer reference to __IsoAgLib::CanCustomer_c which needs filtered
       messages (-> on received msg call ar_customer.processMsg())
   @param at_mask individual mask for this filter box
   @param at_filter individual filter
   @param ab_reconfigImmediate true -> all Filter objects are reconfigured to according
+
       CAN hardware MsgObj after creating this filter
   @param at_identType ident type of the created ident: standard 11bit (default) or extended 29bit
   @return != NULL -> if inserting and wanted reconfiguration are performed without errors, a reference to the created FilterBox is returned
   @exception badAlloc
 */
+
 FilterBox_c* CanIo_c::insertFilter(__IsoAgLib::CanCustomer_c& ar_customer,
                                    uint32_t at_mask, uint32_t at_filter,
                                    bool ab_reconfigImmediate,
@@ -831,10 +846,33 @@ FilterBox_c* CanIo_c::insertFilter(__IsoAgLib::CanCustomer_c& ar_customer,
 bool CanIo_c::deleteFilter(const __IsoAgLib::CanCustomer_c& ar_customer,
                            MASK_TYPE at_mask, MASK_TYPE at_filter,
                            const Ident_c::identType_t at_identType)
+
 {
   bool b_result = false;
+
+
+/** at the deleteFilterBox the full reconfiguration is always necessary */
+  setFullReconfigNecessary();
+
+#ifdef DEBUG
+    INTERNAL_DEBUG_DEVICE << "------------------------CanIo_c::delete filter = 0x"
+    #ifdef SYSTEM_PC
+      << STL_NAMESPACE::hex
+    #endif
+      << at_filter
+      << " on Can bus = "
+    #ifdef SYSTEM_PC
+      << STL_NAMESPACE::dec
+    #endif
+      << int(getBusNumber())
+      << ", can instance = "
+      << getSingletonVecKey()
+      << INTERNAL_DEBUG_DEVICE_ENDL;
+#endif
+
   Ident_c c_deleteMask = Ident_c(at_mask, at_identType),
         c_deleteFilter = Ident_c(at_filter, at_identType);
+
   // iterator for quick access to all array elements
   ArrFilterBox::iterator pc_iter;
 
@@ -842,7 +880,8 @@ bool CanIo_c::deleteFilter(const __IsoAgLib::CanCustomer_c& ar_customer,
   { // filter found -> delete element where pc_iter points to
     if ( pc_iter->deleteFilter(ar_customer) )
     { //no more cancustomer exist for the filterbox -> delete
-      #ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
+
+
       // with SYSTEM_WITH_ENHANCED_CAN_HAL the FilterBox_c items are organized
       // in STL_NAMESPACE::vector<T>, so that removal of items in the middle should be avoided
       // ==> a FilterBox_c where the last Customer has been deleted switches to IDLE
@@ -854,9 +893,8 @@ bool CanIo_c::deleteFilter(const __IsoAgLib::CanCustomer_c& ar_customer,
       { //remove idle filterBox if at the end of vector
         arrFilterBox.pop_back();
       }
-      #else
-      arrFilterBox.erase(pc_iter);
-      #endif
+
+
       setCntFilter( arrFilterBox.size() );
     }
 
@@ -889,38 +927,23 @@ bool CanIo_c::deleteFilter(const __IsoAgLib::CanCustomer_c& ar_customer,
 
 
 
-
-bool CanIo_c::deleteAllFiltersForCustomer (const __IsoAgLib::CanCustomer_c& ar_customer)
+bool CanIo_c::deleteAllFiltersForCustomer (const __IsoAgLib::CanCustomer_c & ar_customer)
 {
   bool b_result = false;
+  setFullReconfigNecessary();
 
-  for (ArrFilterBox::iterator pc_iter = arrFilterBox.begin(); pc_iter != arrFilterBox.end();  )
+  for (ArrFilterBox::iterator pc_iter = arrFilterBox.begin(); pc_iter != arrFilterBox.end();
+  )
   {
-    if ( pc_iter->deleteFilter(ar_customer) )
-    { //no more cancustomer exist for the filterbox -> delete
-      b_result = true;
-      #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
-      // assign the iterator to the item after the erased item
-      pc_iter = arrFilterBox.erase(pc_iter);
-      #endif
-    }
-    #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
-    // forward the iterator in NOT-SYSTEM_WITH_ENHANCED_CAN_HAL
-    // only if no item has been deleted with erase() during this loop run
-    //
-    // in SYSTEM_WITH_ENHANCED_CAN_HAL the iterator shall be incremented ALWAYS
-    // as erase() is never called in this compilation mode
-    else
-    #endif
-    {
-      // in case of NOT - SYSTEM_WITH_ENHANCED_CAN_HAL the erase() call moves the iterator already to the item
-      // that has been after the deleted one -> so only forward iterator when nothing has been deleted
+      if(pc_iter->deleteFilter(ar_customer))
+      { //no more cancustomer exist for the filterbox -> delete
+        b_result = true;
+      }
+
       pc_iter++;
-    }
   }
 
-  #ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
-  // with SYSTEM_WITH_ENHANCED_CAN_HAL the FilterBox_c items are organized
+  // the FilterBox_c items are organized
   // in STL_NAMESPACE::vector<T>, so that removal of items in the middle should be avoided
   // ==> a FilterBox_c where the last Customer has been deleted switches to IDLE
   //     mode, so that it does nothing and can stay, until it is at the end of the
@@ -931,7 +954,6 @@ bool CanIo_c::deleteAllFiltersForCustomer (const __IsoAgLib::CanCustomer_c& ar_c
   { //remove idle filterBox if at the end of vector
     arrFilterBox.pop_back();
   }
-  #endif
 
   // update the cached FilterBox_c cnt
   setCntFilter( arrFilterBox.size() );
@@ -955,6 +977,7 @@ bool CanIo_c::deleteAllFiltersForCustomer (const __IsoAgLib::CanCustomer_c& ar_c
          ==0 --> no messages were received.
          >0  --> all messages are processed, number of messages
 */
+
 int16_t CanIo_c::processMsg(){
   // immediately leave this function, if this CAN_IO instance is marked as currently processing
   // --> detect and avoid CAN message processing loops
@@ -962,105 +985,215 @@ int16_t CanIo_c::processMsg(){
   b_runningCanProcess = true;
   ui8_processedMsgCnt = 0;
 
-  #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
-  // first check if last Message Object is open,
-  // and process these messages first
-  // - this happens, if this is first processMsg call after
-  //   reconfigureMsgObj
-  if ( c_lastMsgObj.isOpen() )
-  { // process all messages which where placed during the reconfig in the last message object
-    ui8_processedMsgCnt += c_lastMsgObj.processMsg( ui8_busNumber, true );
-    c_lastMsgObj.close();
-  }
 
-  for (ArrMsgObj::iterator pc_iter = arrMsgObj.begin(); pc_iter != arrMsgObj.end(); pc_iter++)
-  { // stop processing of message buffers, if not enough time
-    System_c::triggerWd();
-    ui8_processedMsgCnt += pc_iter->processMsg(ui8_busNumber);
-  }
-  #else //SYSTEM_WITH_ENHANCED_CAN_HAL
+  int32_t i32_fbIdx, i32_rcvTime;
+  uint32_t i32_ident;
+#ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
+uint32_t ui32_msgNbr;
+#endif
 
-  #ifdef DEBUG_CAN_BUFFER_FILLING
-  doDebug(ui8_busNumber);
-  #endif
-  // process all CAN msgs as long as some time available for processing
-  // and messages exist in queue
-  // ( the time check is needed to avoid blocking of other important tasks if
-  //   to much CAN msgs are received )
-  int32_t i32_ident, i32_nextMsgObjRetVal = 0;
-  bool b_toProcess = true;
-  bool b_forceProcessAll = false;
-  //look for messages in queue
-  for ( i32_nextMsgObjRetVal = HAL::can_useNextMsgobjNumber(ui8_busNumber, i32_ident);
-        i32_nextMsgObjRetVal != HAL_UNKNOWN_ERR; // exit the for loop, as soon as HAL indicates that no more CAN msg are available
-        i32_nextMsgObjRetVal = HAL::can_useNextMsgobjNumber(ui8_busNumber, i32_ident) )
+  Ident_c::identType_t identType;
+  int32_t i32_retVal = HAL_NO_ERR;
+  bool b_processed,to_be_processed,b_forceProcessAll= false;
+
+  while(i32_retVal != HAL_UNKNOWN_ERR )
   {
-    b_toProcess = true;
-    switch (i32_nextMsgObjRetVal)
-    {
-      case HAL_NO_ERR:
+      System_c::triggerWd();
+
+    #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
+      // read the FbIdx and the rcvTime (used for the reconfigure)
+      i32_retVal = HAL::iFifoReadFbIdx(ui8_busNumber,i32_fbIdx,i32_rcvTime,i32_ident,identType);
+
+    #else
+      uint8_t ui8_identType;
+      i32_retVal = HAL::can_useNextMsgobjNumber(ui8_busNumber, ui32_msgNbr, i32_ident, ui8_identType);
+      identType = static_cast<Ident_c::identType_t>(ui8_identType);
+      i32_fbIdx = ui32_msgNbr-minReceiveObjNr();
+
+    #endif
+
+      b_processed = false;
+      to_be_processed = false;
+
+      switch (i32_retVal)
+      {
+        case HAL_NO_ERR:
+          to_be_processed = true;
+          break;
+        case HAL_RANGE_ERR:
+          getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Can );
+          #ifdef DEBUG
+          INTERNAL_DEBUG_DEVICE << "CAN-Receive Range Err" << INTERNAL_DEBUG_DEVICE_ENDL;
+          #endif
+          break;
+        case HAL_CONFIG_ERR:
+          #if defined(DEBUG_CAN_BUFFER_FILLING) || defined(DEBUG)
+          INTERNAL_DEBUG_DEVICE << "\r\nBUS not initialized or wrong BUS nr: " << uint16_t(ui8_busNumber) << INTERNAL_DEBUG_DEVICE_ENDL;
+          #endif
+          getILibErrInstance().registerError( iLibErr_c::HwConfig, iLibErr_c::Can );
+          break;
+        case HAL_NOACT_ERR:
+          #ifdef DEBUG
+          INTERNAL_DEBUG_DEVICE << "CAN-Receive NoAct Err" << INTERNAL_DEBUG_DEVICE_ENDL;
+          #endif
+          // wrong use of MsgObj (not likely) or CAN BUS OFF
+          getILibErrInstance().registerError( iLibErr_c::CanOff, iLibErr_c::Can );
+          break;
+        case HAL_WARN_ERR:
+          to_be_processed = true;
+          getILibErrInstance().registerError( iLibErr_c::CanWarn, iLibErr_c::Can );
+          break;
+        case HAL_OVERFLOW_ERR:
+          to_be_processed = true;
+          getILibErrInstance().registerError( iLibErr_c::CanOverflow, iLibErr_c::Can );
+
+          #ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
+          HAL::can_stateMsgobjOverflow(ui8_busNumber, i32_ident );
+          #endif
+
+          #ifdef DEBUG_CAN_BUFFER_FILLING
+          if ( ! b_detectedOverflow )
+          {
+            INTERNAL_DEBUG_DEVICE << "\r\nALARM!!!!!! CAN Buffer Overflow at MsgObj: "
+              << uint16_t(i32_ident) << " at BUS: " << uint16_t(rui8_busNumber)
+              << " with Ident: " << c_filter.ident()
+              << INTERNAL_DEBUG_DEVICE_ENDL;
+          }
+          b_detectedOverflow = true;
+          #endif
+          b_forceProcessAll = true;
+          break;
+        case HAL_UNKNOWN_ERR:
+        //no message to read
         break;
-      case HAL_RANGE_ERR:
-        getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Can );
-        #ifdef DEBUG
-        INTERNAL_DEBUG_DEVICE << "CAN-Receive Range Err" << INTERNAL_DEBUG_DEVICE_ENDL;
-        #endif
-        HAL::can_useMsgobjPopFront(ui8_busNumber, i32_ident);
-        b_runningCanProcess = false;
-        return ui8_processedMsgCnt;
-      case HAL_CONFIG_ERR:
-        #if defined(DEBUG_CAN_BUFFER_FILLING) || defined(DEBUG)
-        INTERNAL_DEBUG_DEVICE << "\r\nBUS not initialized or wrong BUS nr: " << uint16_t(ui8_busNumber) << INTERNAL_DEBUG_DEVICE_ENDL;
-        #endif
-        getILibErrInstance().registerError( iLibErr_c::HwConfig, iLibErr_c::Can );
-        HAL::can_useMsgobjPopFront(ui8_busNumber, i32_ident);
-        b_runningCanProcess = false;
-        return ui8_processedMsgCnt;
-      case HAL_NOACT_ERR:
-        #ifdef DEBUG
-        INTERNAL_DEBUG_DEVICE << "CAN-Receive NoAct Err" << INTERNAL_DEBUG_DEVICE_ENDL;
-        #endif
-        // wrong use of MsgObj (not likely) or CAN BUS OFF
-        getILibErrInstance().registerError( iLibErr_c::CanOff, iLibErr_c::Can );
-        HAL::can_useMsgobjPopFront(ui8_busNumber, i32_ident);
-        b_runningCanProcess = false;
-        return ui8_processedMsgCnt;
-      case HAL_WARN_ERR:
-        getILibErrInstance().registerError( iLibErr_c::CanWarn, iLibErr_c::Can );
+        default:
+         to_be_processed = true;
+         getILibErrInstance().registerError( iLibErr_c::CanWarn, iLibErr_c::Can );
         break;
-      case HAL_OVERFLOW_ERR:
-        // CAN BUFFER Overflow can most probably happen on process of
-        // messages in last msg obj, where ALL CAN messages are placed
-        // during reconfiguration
-        getILibErrInstance().registerError( iLibErr_c::CanOverflow, iLibErr_c::Can );
-        HAL::can_stateMsgobjOverflow(ui8_busNumber, i32_ident );
-        #ifdef DEBUG_CAN_BUFFER_FILLING
-        if ( ! b_detectedOverflow )
+      }
+
+
+      if(to_be_processed) //found a message to be processed
+      {
+        /**
+        * Possible cases :
+        * - i32_retVal = HAL_UNKNOWN_ERR -> nothing to read
+        * - i32_fbIdx = -1 --> a reconfiguration was ongoing at the reception of the message, so the suitable FB should be found here
+        *                     among all created FB
+        * - i32_fbIdx > = arrFilterBox.size() --> the FilterBox that wanted the message has been canceled, so discard the message
+        * - i32_fbIdx has a valid range, but all the data of the FilterBox are cleared, because it has been canceled.
+        *     so the FilterBox is Idle
+        */
+#ifdef DEBUG
+  if(i32_rcvTime < mi32_endLastReconfigTime )
+  {
+  INTERNAL_DEBUG_DEVICE << " During reconfiguration, received msg : "
+                  #ifdef SYSTEM_PC
+                  << STL_NAMESPACE::hex
+                  #endif
+        << i32_ident << INTERNAL_DEBUG_DEVICE_ENDL;
+  }
+#endif
+
+#ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
+        if(i32_rcvTime > mi32_endLastReconfigTime ) // the message has not arrived before the last reconfiguration,check on all the FB
         {
-          INTERNAL_DEBUG_DEVICE << "\r\nALARM!!!!!! CAN Buffer Overflow at MsgObj: "
-            << uint16_t(i32_ident) << " at BUS: " << uint16_t(aui8_busNumber)
-            << " with Ident: " << c_filter.ident()
-            << INTERNAL_DEBUG_DEVICE_ENDL;
+#endif
+          if(i32_fbIdx >= 0 && i32_fbIdx < arrFilterBox.size())
+          {
+            if(!(arrFilterBox[i32_fbIdx].isIdle())  &&  arrFilterBox[i32_fbIdx].matchMsgId(i32_ident,identType))
+            {
+               // !! the interested FilterBox processes the message
+                #ifdef DEBUG
+                  INTERNAL_DEBUG_DEVICE << " CONSUMING FB IDX :"
+                  #ifdef SYSTEM_PC
+                  << STL_NAMESPACE::dec
+                  #endif
+                  << arrFilterBox[i32_fbIdx].getFbVecIdx();
+                  INTERNAL_DEBUG_DEVICE << ", FB IDX READ in the FIFO : "
+                  #ifdef SYSTEM_PC
+                  << STL_NAMESPACE::dec
+                  #endif
+                  << i32_fbIdx;
+                  INTERNAL_DEBUG_DEVICE << " interested in the MSG Id : 0x"
+                  #ifdef SYSTEM_PC
+                  << STL_NAMESPACE::hex
+                  #endif
+                  << i32_ident << INTERNAL_DEBUG_DEVICE_ENDL;
+               #endif
+                b_processed = arrFilterBox[i32_fbIdx].processMsg();
+                if(b_processed)
+                {
+                  ui8_processedMsgCnt++;
+                }
+            }
+          }
+#ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
         }
-        b_detectedOverflow = true;
+#endif
+
+// try to search all FilterBox_c instances
+        if ( ! b_processed)
+        {
+#ifdef DEBUG
+          INTERNAL_DEBUG_DEVICE << " CanIo_c::processMsg --- search among all the FilterBox " << INTERNAL_DEBUG_DEVICE_ENDL;
+#endif
+          CanIo_c::ArrFilterBox::iterator pc_iFilterBox;
+          bool b_foundOne=false;
+
+              do {
+                b_foundOne = canMsg2FilterBox( i32_ident, identType, pc_iFilterBox, !b_foundOne );
+
+                if ( b_foundOne )
+                { // matching instance found
+                  #ifdef DEBUG
+                  INTERNAL_DEBUG_DEVICE<< " Found Fb with index :"
+                  #ifdef SYSTEM_PC
+                  << STL_NAMESPACE::dec
+                  #endif
+                  << pc_iFilterBox->getFbVecIdx();
+                  INTERNAL_DEBUG_DEVICE << " interested in the MSG Id : 0x"
+                  #ifdef SYSTEM_PC
+                  << STL_NAMESPACE::hex
+                  #endif
+                  << i32_ident << INTERNAL_DEBUG_DEVICE_ENDL;
+                  #endif
+
+                  HAL::wdTriggern();
+                  b_processed = pc_iFilterBox->processMsg();
+                  if(b_processed)
+                  {
+                    ui8_processedMsgCnt++;
+                  }
+                }
+              } while (b_foundOne && !b_processed); // if one found, try if another one can be found!
+#ifdef DEBUG
+      if(!b_processed)
+        INTERNAL_DEBUG_DEVICE << " NO Customer interested in the MSG Id : 0x"
+		#ifdef SYSTEM_PC
+        << STL_NAMESPACE::hex
+		#endif
+        << i32_ident << INTERNAL_DEBUG_DEVICE_ENDL;
+#endif
+
+          }
+         /** consume the message in the FIFO : increment the index Ac +=2 only whether a message has been read (ret==true)*/
+        #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
+        HAL::iFifoPopMessage(ui8_busNumber);
         #endif
-        b_forceProcessAll = true;
-        break;
-    }
-    if ( b_toProcess )
-    {
-      if( arrFilterBox[i32_ident-minReceiveObjNr()].processMsg() )
-        ui8_processedMsgCnt++;
-    }
-    HAL::can_useMsgobjPopFront(ui8_busNumber, i32_ident );
+       }// ret== true
+
+    #ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
+    HAL::can_useMsgobjPopFront(ui8_busNumber, i32_ident);
+    #endif
+
     if (( Scheduler_c::getCentralSchedulerAvailableExecTime() == 0 ) && (!b_forceProcessAll))
     { // switch the flag back, so that further processings are enabled
       b_runningCanProcess = false;
       return -1;
     }
-    System_c::triggerWd();
-  }
-  #endif
+
+  }//while
 
   // switch the flag back, so that further processings are enabled
   b_runningCanProcess = false;
@@ -1133,15 +1266,6 @@ CanIo_c& CanIo_c::operator<<(CanPkg_c& rc_src)
   }
   #endif
 
-  // if both standard and extended ident can be sent -> use second send obj if data uses extended ident
-  if (en_identType == Ident_c::BothIdent)
-  {
-    if (rc_src.identType() == Ident_c::ExtendedIdent)
-    {
-      ui8_sendObjNr += 1;
-    }
-  }
-
   // wait till Msg can be placed in send buffer
   /** @todo check for better handling of full buffer - don't just loop 10 times */
   for ( uint16_t ind = 0;
@@ -1151,12 +1275,12 @@ CanIo_c& CanIo_c::operator<<(CanPkg_c& rc_src)
     for (int16_t i = 0; i < 200; i++) i16_result++;
     // it's time to trigger the watchdog
     HAL::wdTriggern();
-    // exit loop, if CAN BUS is blocked and exit function
-    if (HAL::can_stateGlobalBlocked(ui8_busNumber))
+    // exit loop, if CAN BUS is OFF and exit function
+    if (HAL::can_stateGlobalOff(ui8_busNumber))
     {  // clear MsgObj CAN queue
       #ifdef DEBUG
       INTERNAL_DEBUG_DEVICE
-       << "CanIo_c::operator<< Blocked BUS Nr: " << uint16_t(ui8_busNumber) << INTERNAL_DEBUG_DEVICE_ENDL;
+       << "CanIo_c::operator<< BUS OFF BUS Nr: " << uint16_t(ui8_busNumber) << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
 
       HAL::can_useMsgobjClear(ui8_busNumber,ui8_sendObjNr);
@@ -1190,7 +1314,7 @@ CanIo_c& CanIo_c::operator<<(CanPkg_c& rc_src)
       // on init of this object
       // (and is done if timeEvent notices that CAN wasn't configured by init)
       #if defined(DEBUG)
-      INTERNAL_DEBUG_DEVICE << "\r\nBUS " << uint16_t(ui8_busNumber) << " not initialized or MsgObj: " << uint16_t(ui8_sendObjNr) << " no send obj" << INTERNAL_DEBUG_DEVICE_ENDL;
+        INTERNAL_DEBUG_DEVICE << "\r\nBUS " << uint16_t(ui8_busNumber) << " not initialized or MsgObj: " << uint16_t(ui8_sendObjNr) << " no send obj" << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
       getILibErrInstance().registerError( iLibErr_c::HwConfig, iLibErr_c::Can );
       break;
@@ -1204,9 +1328,6 @@ CanIo_c& CanIo_c::operator<<(CanPkg_c& rc_src)
     case HAL_OVERFLOW_ERR:
       // overflow of send puffer
       getILibErrInstance().registerError( iLibErr_c::CanOverflow, iLibErr_c::Can );
-      #if defined(DEBUG)
-      INTERNAL_DEBUG_DEVICE << "\r\nBUS " << uint16_t(ui8_busNumber) << " overflown send-queue of MsgObj: " << uint16_t(ui8_sendObjNr) << INTERNAL_DEBUG_DEVICE_ENDL;
-      #endif
       break;
     case HAL_RANGE_ERR:
       // BUS nr or obj nr outer allowed limits (shouldn't be the case after successful init call)
@@ -1219,10 +1340,13 @@ CanIo_c& CanIo_c::operator<<(CanPkg_c& rc_src)
       #endif
       getILibErrInstance().registerError( iLibErr_c::CanWarn, iLibErr_c::Can );
       break;
+
+   #ifdef USE_CAN_SEND_DELAY_MEASUREMENT
     case HAL_NEW_SEND_DELAY:
       #if defined(DEBUG)
       INTERNAL_DEBUG_DEVICE << "BUS " << uint16_t(ui8_busNumber) << " encountered new Maximum Send Delay.. \n";
       #endif
+
       if (i32_maxSendDelay >= 0)
       { // we're in mode: Test-MaxSendDelay
         if (HAL::can_getMaxSendDelay(ui8_busNumber) > i32_maxSendDelay)
@@ -1239,6 +1363,8 @@ CanIo_c& CanIo_c::operator<<(CanPkg_c& rc_src)
       }
       #endif
       break;
+	#endif
+
   } //switch
 
   // return pointer to self for sequence of send operations
@@ -1263,13 +1389,16 @@ void CanIo_c::getCommonFilterMask()
        pc_iter++
       )
       {
-        if (pc_iter->identType() == Ident_c::StandardIdent) {
-          c_maskStd.ident_bitAnd(pc_iter->mask());
-          c_maskStd.ident_bitAnd(pc_iter->additionalMask());
-        }
-        else {
-          c_maskExt.ident_bitAnd(pc_iter->mask());
-          c_maskExt.ident_bitAnd(pc_iter->additionalMask());
+        if(!pc_iter->isIdle())
+        {
+          if (pc_iter->identType() == Ident_c::StandardIdent) {
+            c_maskStd.ident_bitAnd(pc_iter->mask());
+            c_maskStd.ident_bitAnd(pc_iter->additionalMask());
+          }
+          else {
+            c_maskExt.ident_bitAnd(pc_iter->mask());
+            c_maskExt.ident_bitAnd(pc_iter->additionalMask());
+          }
         }
       }
 }
@@ -1305,97 +1434,150 @@ int16_t CanIo_c::FilterBox2MsgObj()
 {
   int16_t i16_result = 0;
   Ident_c c_tempIdent;
-  ArrMsgObj::iterator pc_iterMsgObj, pc_searchEnd = arrMsgObj.begin();
+  ArrMsgObj::iterator pc_iterMsgObj, pc_search4MsgObjReuse = arrMsgObj.begin();
 
-  // clear the settings in all previously created MsgObj_c instances
-  for (pc_iterMsgObj = arrMsgObj.begin(); pc_iterMsgObj != arrMsgObj.end(); pc_iterMsgObj++)
-  { // first process all messages in the buffer IF OPEN, and then close
-    HAL::wdTriggern();
-    if ( pc_iterMsgObj->isOpen() )
-    { // process received messages
-      pc_iterMsgObj->lock( true );
-      pc_iterMsgObj->processMsg( ui8_busNumber, true );
+#ifdef DEBUG
+  INTERNAL_DEBUG_DEVICE << " CanIo_c::FilterBox2MsgObj "<< INTERNAL_DEBUG_DEVICE_ENDL;
+#endif
+
+
+ArrFilterBox::iterator pc_iterFilterBox = arrFilterBox.begin();
+
+#ifdef DEBUG
+  const uint16_t ui16_debugOldSize = cntMsgObj();
+#endif
+
+  if(isFullReconfigNecessary())
+  {
+  /** clear  the arrPfilterBox for each MsgObj */
+    for (pc_iterMsgObj = arrMsgObj.begin(); pc_iterMsgObj != arrMsgObj.end(); pc_iterMsgObj++)
+    {
+        HAL::wdTriggern();
+        pc_iterMsgObj->clearArrFbIdx();
     }
-    pc_iterMsgObj->close();
-    pc_iterMsgObj->lock( false );
+#ifdef DEBUG
+  INTERNAL_DEBUG_DEVICE << " CanIo_c::FilterBox2MsgObj  - FULL RECONFIGURATION on BUS number = "<< int(getBusNumber())
+    << ", can instance = " << getSingletonVecKey() << INTERNAL_DEBUG_DEVICE_ENDL;
+#endif
+
+  }
+  else //if the full reconfiguration is not necessary, the pc_iterFilterBox start from the last FilterBox added
+  {
+
+   pc_iterFilterBox = static_cast <ArrFilterBox::iterator> (&arrFilterBox[getMinChangedFilterBox()]);
+   pc_search4MsgObjReuse = arrMsgObj.end(); // indicate that NO existing MsgObj_c is available for reuse
+
   }
 
   HAL::wdTriggern();
+
+/** rebuild the arrPfilterBox for each MsgObj */
   // gather globalMask dependent filter bits of each arrFilterBox
   // and create suitable arrMsgObj if not already created
-  for (ArrFilterBox::iterator pc_iterFilterBox = arrFilterBox.begin();
+  for (;
        pc_iterFilterBox != arrFilterBox.end();
        pc_iterFilterBox++
       )
-  { // get filter Ident_c setting from actual FilterBox
-    c_tempIdent = pc_iterFilterBox->filter();
-    // mask the actual filter Ident_c with the bits of the global mask
-    if (c_tempIdent.identType() == Ident_c::StandardIdent)
-      c_tempIdent.ident_bitAnd(c_maskStd);
-    else c_tempIdent.ident_bitAnd(c_maskExt);
+  {
 
-    for (pc_iterMsgObj = arrMsgObj.begin(); pc_iterMsgObj != pc_searchEnd; pc_iterMsgObj++)
+    if(!pc_iterFilterBox->isIdle())
     {
-      if (pc_iterMsgObj->equalFilter(c_tempIdent)) break;
-    }
-    // if no item with this filter was found add new MsgObj
-    if (pc_iterMsgObj == pc_searchEnd)
-    {
-      // no equal item found in arrMsgObj -> create new MsgObj_c in arrMsgObj
-      if (pc_searchEnd != arrMsgObj.end())
-      {
-        // the arrMsgObj for this filter setting was
-        // already previous created, can now be reused
+        // get filter Ident_c setting from actual FilterBox
+        c_tempIdent = pc_iterFilterBox->filter();
+        // mask the actual filter Ident_c with the bits of the global mask
+        if (c_tempIdent.identType() == Ident_c::StandardIdent)
+          c_tempIdent.ident_bitAnd(c_maskStd);
+        else c_tempIdent.ident_bitAnd(c_maskExt);
 
-        // set filter in arrMsgObj
-        // new last element to be configured after actual last element
-        pc_searchEnd->setFilter(c_tempIdent);
-        pc_searchEnd->insertFilterBox(pc_iterFilterBox);
-        pc_searchEnd++;
-      }
-      else
-      {
-        // previous less arrMsgObj was created -> create new arrMsgObj
-        // clear temp obj (it is reused for each function call)
-        c_tempObj.close();
-        // set filter in new pc_lt_element
-        c_tempObj.setFilter(c_tempIdent);
-        c_tempObj.insertFilterBox(pc_iterFilterBox);
-        // check if insertion try result in growed dyn array
-        const uint16_t ui16_oldSize = cntMsgObj();
-        // insert obj in vector
-        arrMsgObj.push_front(c_tempObj);
-        setCntMsgObj( arrMsgObj.size() );
-        if (ui16_oldSize >= cntMsgObj())
-        { // dyn array didn't grow -> set badAlloc error state
-          getILibErrInstance().registerError( iLibErr_c::BadAlloc, iLibErr_c::Can );
+        for (pc_iterMsgObj = arrMsgObj.begin(); pc_iterMsgObj != pc_search4MsgObjReuse; pc_iterMsgObj++)
+        {
+          if (pc_iterMsgObj->equalFilter(c_tempIdent)) break;
         }
-        #ifdef DEBUG_HEAP_USEAGE
+        // if no item with this filter was found add new MsgObj
+        if (pc_iterMsgObj == pc_search4MsgObjReuse)
+        {
+          // no equal item found in arrMsgObj -> create new MsgObj_c in arrMsgObj
+          if (pc_search4MsgObjReuse != arrMsgObj.end())
+          {
+            // the arrMsgObj for this filter setting was
+            // already previous created, can now be reused
+
+            // set filter in arrMsgObj
+            // new last element to be configured after actual last element
+            pc_search4MsgObjReuse->setFilter(c_tempIdent);
+            #if defined( CAN_INSTANCE_CNT ) && ( CAN_INSTANCE_CNT > 1 )
+            pc_search4MsgObjReuse->setCanSingletonKey(getSingletonVecKey());
+            #endif
+            pc_search4MsgObjReuse->insertFilterBox(pc_iterFilterBox);
+            pc_search4MsgObjReuse++;
+          }
+          else
+          {
+            // previous less arrMsgObj was created -> create new arrMsgObj
+            // clear temp obj (it is reused for each function call)
+            c_tempObj.close();
+            // set filter in new pc_lt_element
+            c_tempObj.setFilter(c_tempIdent);
+            c_tempObj.insertFilterBox(pc_iterFilterBox);
+
+            #if defined( CAN_INSTANCE_CNT ) && ( CAN_INSTANCE_CNT > 1 )
+            c_tempObj.setCanSingletonKey(getSingletonVecKey());
+            #endif
+            c_tempObj.setBusNumber(ui8_busNumber);
+
+            #ifdef DEBUG
+            INTERNAL_DEBUG_DEVICE << "create a new object with bus Number " << int(getBusNumber())
+            << " , Filter = 0x"
+            #ifdef SYSTEM_PC
+            << STL_NAMESPACE::hex
+            #endif
+            << c_tempIdent.ident() << ", can Instance = "<< getSingletonVecKey()
+            << INTERNAL_DEBUG_DEVICE_ENDL;
+            #endif
+
+            // check if insertion try result in growed dyn array
+            const uint16_t ui16_oldSize = cntMsgObj();
+            // insert obj in vector
+            arrMsgObj.push_front(c_tempObj);
+            setCntMsgObj( arrMsgObj.size() );
+            if (ui16_oldSize >= cntMsgObj())
+            { // dyn array didn't grow -> set badAlloc error state
+
+            #ifdef DEBUG
+            INTERNAL_DEBUG_DEVICE << "CanIo_c::FilterBox2MsgObj : the vector doesn't grow " << INTERNAL_DEBUG_DEVICE_ENDL;
+            #endif
+              getILibErrInstance().registerError( iLibErr_c::BadAlloc, iLibErr_c::Can );
+            }
+            #ifdef DEBUG_HEAP_USEAGE
+            else
+            {
+              sui16_msgObjTotal++;
+            }
+            #endif
+            pc_search4MsgObjReuse = arrMsgObj.end();
+
+          }
+        }
         else
         {
-          sui16_msgObjTotal++;
+          // same filter definition at position q already inserted in msgOb vector
+          // insert new FilterBox_c reference
+          if ( pc_iterMsgObj->insertFilterBox(pc_iterFilterBox) == false)
+            i16_result = -1;
         }
-        #endif
-        pc_searchEnd = arrMsgObj.end();
-      }
-    }
-    else
-    {
-      // same filter definition at position q already inserted in msgOb vector
-      // insert new FilterBox_c reference
-      if ( pc_iterMsgObj->insertFilterBox(pc_iterFilterBox) == false)
-        i16_result = -1;
+
+
     }
   }
   // if less objects are created than already in vector, erase the unused
   // -> behind the last instance is NOT the list end
-  if (pc_searchEnd!= arrMsgObj.end())
+  if (pc_search4MsgObjReuse!= arrMsgObj.end())
   {
     #ifdef DEBUG_HEAP_USEAGE
     const uint16_t cui16_oldSize = cntMsgObj();
     #endif
     HAL::wdTriggern();
-    arrMsgObj.erase(pc_searchEnd, arrMsgObj.end());
+    arrMsgObj.erase(pc_search4MsgObjReuse, arrMsgObj.end());
     setCntMsgObj( arrMsgObj.size() );
     #ifdef DEBUG_HEAP_USEAGE
     sui16_msgObjTotal -= ( cui16_oldSize - cntMsgObj() );
@@ -1403,6 +1585,13 @@ int16_t CanIo_c::FilterBox2MsgObj()
     #endif
   }
 
+  #ifdef DEBUG
+  INTERNAL_DEBUG_DEVICE << "Old number MsgObj = "
+  #ifdef SYSTEM_PC
+  << STL_NAMESPACE::dec
+  #endif
+  << ui16_debugOldSize << ", New size = " << cntMsgObj() << INTERNAL_DEBUG_DEVICE_ENDL;
+  #endif
   if ( i16_result >= 0) i16_result = cntMsgObj();
   #ifdef DEBUG_HEAP_USEAGE
   INTERNAL_DEBUG_DEVICE
@@ -1438,6 +1627,11 @@ void CanIo_c::CheckSetCntMsgObj()
   if (cntMsgObj() <= ui8_allowedSize) return;
 
   // NOW WE HAVE TO MERGE AT LEAST TWO MsgObj_c together
+#if defined(DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION )
+INTERNAL_DEBUG_DEVICE << " CanIo_c::--------------------Before Merge " << INTERNAL_DEBUG_DEVICE_ENDL;
+  printMsgObjInfo();
+
+#endif
 
   ArrMsgObj::iterator pc_minLeft = arrMsgObj.begin(),
           pc_minRight = arrMsgObj.begin();
@@ -1534,6 +1728,8 @@ void CanIo_c::CheckSetCntMsgObj()
 
    HAL::wdTriggern();
 
+
+
 }
 
 /* *************************************** */
@@ -1560,6 +1756,7 @@ bool CanIo_c::registerChangedGlobalMasks(void)
     return true;
   }
 }
+#endif //end not defined SYSTEM_WITH_ENHANCED_CAN_HAL
 
 /** helper function to search all FilterBoxes for matching
   instance which maps to received CAN messages
@@ -1592,7 +1789,7 @@ bool CanIo_c::canMsg2FilterBox( uint32_t aui32_ident, Ident_c::identType_t at_ty
   // if execution reaches this point, no matching FilterBox_c found
   return false;
 }
-#endif //end not defined SYSTEM_WITH_ENHANCED_CAN_HAL
+
 
 /** search for a FilterBox with given mask and filter
     @param  at_mask    filterBox mask
@@ -1601,20 +1798,13 @@ bool CanIo_c::canMsg2FilterBox( uint32_t aui32_ident, Ident_c::identType_t at_ty
   */
 FilterBox_c* CanIo_c::getFilterBox(Ident_c& at_mask, Ident_c& at_filter) const
 {
-  #ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
+
   for(uint8_t i = 0; i < cntFilter(); i++)
   {
     if( arrFilterBox[i].equalFilterMask(at_mask, at_filter) )
       return const_cast<FilterBox_c*>(&arrFilterBox[i]);
   }
-  #else
-  ArrFilterBox::const_iterator c_iter = arrFilterBox.begin();
-  for(; c_iter != arrFilterBox.end(); c_iter++)
-  {
-    if( c_iter->equalFilterMask(at_mask, at_filter) )
-      return const_cast<FilterBox_c*>(&*c_iter);
-  }
-  #endif
+
   //filterbox with mask, filter not found
   return NULL;
 }
@@ -1641,6 +1831,7 @@ bool CanIo_c::verifyBusMsgobjNr(uint8_t aui8_busNr, uint8_t aui8_objNr)
   return true;
 }
 
+
 /** reconfigure the MsgObj after insert/delete of FilterBox */
 bool CanIo_c::reconfigureMsgObj()
 { // verify that this instance is yet initialised complete (CAN BUS is dedicated)
@@ -1653,6 +1844,8 @@ bool CanIo_c::reconfigureMsgObj()
     getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Can );
     return false;
   }
+
+
 
   #ifdef DEBUG_HEAP_USEAGE
   INTERNAL_DEBUG_DEVICE
@@ -1678,52 +1871,139 @@ bool CanIo_c::reconfigureMsgObj()
   // build suitable global t_mask
   getCommonFilterMask();
 
-  if ( c_lastMsgObj.isOpen() )
-  { // process all messages which where placed during the reconfig in the last message object
-    c_lastMsgObj.processMsg( ui8_busNumber, true );
-    // unlock it in any case
-    c_lastMsgObj.lock( false );
+
+ if ((oldMaskStd != c_maskStd) || (oldMaskExt != c_maskExt))
+  {
+      setFullReconfigNecessary();
   }
-  else
-  { // not yet open -> open it now
-    Ident_c tmp ( 0, Ident_c::ExtendedIdent );
-    // configure the last MsgObj_c
-    c_lastMsgObj.setFilter( tmp );
-    c_lastMsgObj.configCan(ui8_busNumber, HAL_CAN_LAST_MSG_OBJ_NR );
-  }
+
+  uint16_t ui32_oldMsgBoxArrsize = arrMsgObj.size();
+
+
+/** 1. extend / add MsgObj */
 
   // create according to new global t_mask all MsgObj_c with
   // unique filter settings -> merge all filter settings where
   // the the global t_mask delets all different bits
-  if ( FilterBox2MsgObj() == false) b_result = false;
 
-  // shrink number of MsgObj to fit the intervall of
+  if ( FilterBox2MsgObj() < 0) b_result = false;
+
+
+
+/** 2.eventually merge MsgObj */
+ // shrink number of MsgObj to fit the intervall of
   // [min_msgObjNr; maxMsgObjNr]
 
-  CheckSetCntMsgObj();
+    CheckSetCntMsgObj();
 
   // check and correct global masks after merge in CheckSetCntMsgObj()
   getCommonFilterMaskAfterMerge();
 
   if ((oldMaskStd != c_maskStd) || (oldMaskExt != c_maskExt))
   {
+#ifdef DEBUG
+      INTERNAL_DEBUG_DEVICE << "CAN BUS number ="
+    #ifdef SYSTEM_PC
+      << STL_NAMESPACE::dec
+    #endif
+      << int(ui8_busNumber) << INTERNAL_DEBUG_DEVICE_ENDL;
+      INTERNAL_DEBUG_DEVICE << "New Global  mask =0x"
+    #ifdef SYSTEM_PC
+      << STL_NAMESPACE::hex
+    #endif
+      << c_maskExt.ident() << INTERNAL_DEBUG_DEVICE_ENDL;
+      INTERNAL_DEBUG_DEVICE << "OLD Global  mask =0x"
+    #ifdef SYSTEM_PC
+      << STL_NAMESPACE::hex
+    #endif
+      << oldMaskExt.ident() << INTERNAL_DEBUG_DEVICE_ENDL;
+#endif
     // global t_mask setting has changed -> reinit CAN with new global masks
     registerChangedGlobalMasks();
   }
 
-  int16_t i = 0;
+ /** set the min num Received obj for a can instance */
+  HAL::setIrqMinReceiveObjNr(ui8_busNumber,minReceiveObjNr());
+
+/** 3. Free the IRQ table,  all the received CAN messages are written in the FIFO */
+  HAL::freeIrqTable(ui8_busNumber);
+
+
+/** 4. Configure the last CAN MsgOBj if not already open*/
+  if ( !c_lastMsgObj.isOpen() )
+  {
+    Ident_c tmp ( 0, Ident_c::ExtendedIdent );
+    // configure the last MsgObj_c
+    c_lastMsgObj.setFilter( tmp );
+    c_lastMsgObj.configCan(ui8_busNumber, HAL_CAN_LAST_MSG_OBJ_NR );
+  }
+
+/** 5. update IRQ table for each CAN MsgObj */
+
+  uint16_t i = 0;
+  bool b_retUpdTbl = false;
+
   // config the hardware -> config all MsgObj_c in CAN hardware
   for (ArrMsgObj::iterator pc_iterMsgObj = arrMsgObj.begin();
        pc_iterMsgObj != arrMsgObj.end();
        pc_iterMsgObj++
       )
-  { // call the configCan function for each MsgObj
+  {
+
+   /** reinitialize the each AN MSGOBJ : CLOSE and OPEN with the new mask*/
+    pc_iterMsgObj->setIsOpen(false);
+
+    if (HAL::can_configMsgobjClose(ui8_busNumber, i+minReceiveObjNr() ) == HAL_RANGE_ERR)
+    { // given BUS or MsgObj number is wrong
+        getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Can );
+    }
+
+    // call the configCan function for each MsgObj
     pc_iterMsgObj->configCan(ui8_busNumber, i+minReceiveObjNr());
+
+    b_retUpdTbl = pc_iterMsgObj->msgObjUpdateTable(ui8_busNumber,i);
+
+    if(false == b_retUpdTbl)
+    {
+      IsoAgLib::getILibErrInstance().registerError( IsoAgLib::iLibErr_c::Range, IsoAgLib::iLibErr_c::Process );
+    }
+
     i++;
   }
 
-  // lock the MsgObj_c to avoid receive of further messages
-  c_lastMsgObj.lock( true );
+/** 6. close the CAN obj not used anymore */
+/** the new arrMsgObj has less element then the old one, close the CAN MsgObj not anymore necessary */
+
+
+   for(;i < ui32_oldMsgBoxArrsize; i++)
+   {
+    if (HAL::can_configMsgobjClose(ui8_busNumber, i+minReceiveObjNr() ) == HAL_RANGE_ERR)
+    { // given BUS or MsgObj number is wrong
+        getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Can );
+    }
+    #ifdef DEBUG
+    INTERNAL_DEBUG_DEVICE << "Close can object num = "<< (i+minReceiveObjNr() )<< " on can bus number =" << int(ui8_busNumber) << INTERNAL_DEBUG_DEVICE_ENDL;
+    #endif
+   }
+
+/** 7. close the Last Msg Obj */
+    c_lastMsgObj.close();
+    c_lastMsgObj.closeCan();
+
+/** reinit the variable for the Full reconfiguration */
+    initMinChangedFilterBox();
+
+    setEndLastReconfigTime();
+
+#if defined( DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION )
+INTERNAL_DEBUG_DEVICE << " CanIo_c::reconfigureMsgObj" << INTERNAL_DEBUG_DEVICE_ENDL;
+  printMsgObjInfo();
+
+INTERNAL_DEBUG_DEVICE << "-------------------------------------IRQ TABLE " << INTERNAL_DEBUG_DEVICE_ENDL;
+
+  HAL::printIrqTable(ui8_busNumber);
+
+#endif
 
   // clear any CAN BUFFER OVERFLOW error that might occure
   // for last message object
@@ -1741,9 +2021,6 @@ bool CanIo_c::reconfigureMsgObj()
 uint8_t CanIo_c::updateMinReceiveObjNr()
 {
   ui8_minReceiveObjNr = 1 + minHALMsgObjNr();
-  //increase receive offset to 2 if both 11bit and 29bit ident CAN are used
-  if (en_identType == Ident_c::BothIdent)
-    ui8_minReceiveObjNr++;
   #ifdef USE_CAN_EEPROM_EDITOR
   // the MsgObj next to the sending MsgObj are used for the EEPROM Editor
   // --> increase the offset for the first receive MsgObj by furhter two items
@@ -1828,9 +2105,7 @@ bool CanIo_c::baseCanInit(uint16_t aui16_bitrate)
   #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
   bool b_lastMsgObjWasOpen = false;
   if ( c_lastMsgObj.isOpen() )
-  { // the last MsgObj_c is open -> so it may contain some unprocessed messages
-    // ==>> process all messages which where placed during the reconfig in the last message object
-    c_lastMsgObj.processMsg( ui8_busNumber, true );
+  {
     c_lastMsgObj.close();
     b_lastMsgObjWasOpen = true;
   }
@@ -1861,15 +2136,7 @@ bool CanIo_c::baseCanInit(uint16_t aui16_bitrate)
     /* if CAN init with success init CAN EEEditor */
     if ( ( i16_retvalInit == HAL_NO_ERR) && ( ui8_busNumber == CONFIG_EEPROM_USE_CAN_BUS ) )
     {
-      uint8_t b_eepromType;
-      if ((en_identType == Ident_c::BothIdent) || (en_identType == Ident_c::StandardIdent))
-      {
-        b_eepromType = Ident_c::StandardIdent;
-      }
-      else
-      {
-        b_eepromType = Ident_c::ExtendedIdent;
-      }
+      uint8_t b_eepromType = Ident_c::ExtendedIdent;
       HAL::InitEEEditor( CONFIG_EEPROM_USE_CAN_BUS, minReceiveObjNr() - 2,
           (minReceiveObjNr() - 1), CONFIG_EEPROM_USE_CAN_REC_IDENT, b_eepromType,
           CONFIG_EEPROM_USE_CAN_BUFFER_SIZE, CONFIG_CAN_SEND_BUFFER_SIZE);
@@ -1904,51 +2171,40 @@ bool CanIo_c::baseCanInit(uint16_t aui16_bitrate)
   bool b_configSuccess = true;
   Ident_c c_sendIdent;
 
+
   const uint8_t cui8_firstSendMsgObj = minHALMsgObjNr();
-  const uint8_t cui8_potentialXtdSendMsgObj = minHALMsgObjNr() + 1;
-
-  for (uint8_t ui8_msgObjNr = cui8_firstSendMsgObj; ui8_msgObjNr <= cui8_potentialXtdSendMsgObj; ui8_msgObjNr++)
+  switch (en_identType)
   {
-    switch (en_identType)
-    {
-      case Ident_c::StandardIdent:
-        c_sendIdent.setIdentType(Ident_c::StandardIdent);
-        break;
-      case Ident_c::ExtendedIdent:
-        c_sendIdent.setIdentType(Ident_c::ExtendedIdent);
-        break;
-      case Ident_c::BothIdent:
-        if (ui8_msgObjNr == cui8_firstSendMsgObj) c_sendIdent.setIdentType(Ident_c::StandardIdent);
-        else c_sendIdent.setIdentType(Ident_c::ExtendedIdent);
-        break;
-    }
-    #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
-    i16_retvalConfig = HAL::can_configMsgobjInit(ui8_busNumber,ui8_msgObjNr, c_sendIdent, true);
-    #else
-    i16_retvalConfig = HAL::can_configMsgobjInit(ui8_busNumber,ui8_msgObjNr, c_sendIdent, c_sendIdent, true);
-    #endif
-
-    // check for error state
-    switch (i16_retvalConfig)
-    {
-      case HAL_NO_ERR:
-        break;
-      case HAL_BUSY_ERR:
-        // send obj already in use
-        getILibErrInstance().registerError( iLibErr_c::Busy, iLibErr_c::Can );
-        break;
-      case HAL_CONFIG_ERR:
-        // because CAN was initialized direct above without error, msgObj limits was
-        // allowed and the SEND type is hardcoded to an allowed number,
-        // HAL_CONFIG_ERR error can only be caused by allocating problem
-        getILibErrInstance().registerError( iLibErr_c::BadAlloc, iLibErr_c::Can );
-        b_configSuccess = false;
-        break;
-    }
-    // only run second time if both ident types should be sent
-    if (en_identType != Ident_c::BothIdent)
+    case Ident_c::StandardIdent:
+      c_sendIdent.setIdentType(Ident_c::StandardIdent);
       break;
-  } // end for
+    case Ident_c::ExtendedIdent:
+      c_sendIdent.setIdentType(Ident_c::ExtendedIdent);
+      break;
+  }
+  #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
+  i16_retvalConfig = HAL::can_configMsgobjInit(ui8_busNumber,cui8_firstSendMsgObj, c_sendIdent, true);
+  #else
+  i16_retvalConfig = HAL::can_configMsgobjInit(ui8_busNumber,cui8_firstSendMsgObj, c_sendIdent, c_sendIdent, true);
+  #endif
+
+  // check for error state
+  switch (i16_retvalConfig)
+  {
+    case HAL_NO_ERR:
+      break;
+    case HAL_BUSY_ERR:
+      // send obj already in use
+      getILibErrInstance().registerError( iLibErr_c::Busy, iLibErr_c::Can );
+      break;
+    case HAL_CONFIG_ERR:
+      // because CAN was initialized direct above without error, msgObj limits was
+      // allowed and the SEND type is hardcoded to an allowed number,
+      // HAL_CONFIG_ERR error can only be caused by allocating problem
+      getILibErrInstance().registerError( iLibErr_c::BadAlloc, iLibErr_c::Can );
+      b_configSuccess = false;
+      break;
+  }
 
 
   #if ( ( CAN_INSTANCE_CNT > PRT_INSTANCE_CNT ) || defined(ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL) )
@@ -1971,9 +2227,7 @@ bool CanIo_c::stopSendRetryOnErr()
   bool b_bit1err = HAL::can_stateGlobalBit1err(ui8_busNumber);
   bool minObjNr = minHALMsgObjNr();
 
-  bool b_sendproblem = HAL::can_stateMsgobjSendproblem(ui8_busNumber, minObjNr);
-
-  if (b_bit1err && b_sendproblem)
+  if (b_bit1err )
   { // only send 1 has bit1 err -> clear msg obj
     #ifdef DEBUG
     INTERNAL_DEBUG_DEVICE
@@ -1983,22 +2237,6 @@ bool CanIo_c::stopSendRetryOnErr()
     #endif
     HAL::can_useMsgobjClear(ui8_busNumber, minObjNr);
     b_result = true;
-  }
-  else if ( en_identType == Ident_c::BothIdent )
-  {
-    b_sendproblem = HAL::can_stateMsgobjSendproblem(ui8_busNumber, (minObjNr+1) );
-
-    if (b_bit1err && b_sendproblem)
-    { // only send 1 has bit1 err -> clear msg obj
-      #ifdef DEBUG
-      INTERNAL_DEBUG_DEVICE
-       << "CanIo_c::stopSendRetryOnErr() Blocked BUS Nr: " << uint16_t(ui8_busNumber)
-       << ", ObjNr: " << (minObjNr+1) << INTERNAL_DEBUG_DEVICE_ENDL;
-      #endif
-
-      HAL::can_useMsgobjClear(ui8_busNumber, (minObjNr+1) );
-      b_result = true;
-    }
   }
   return b_result;
 }
@@ -2027,7 +2265,6 @@ void CanIo_c::doDebug(uint8_t ui8_busNr, uint8_t ui8_sendObjNr)
 {
   bool b_bit1err = HAL::can_stateGlobalBit1err(ui8_busNr);
   bool b_warnState = HAL::can_stateGlobalWarn(ui8_busNr);
-  bool b_sendproblem = HAL::can_stateMsgobjSendproblem(ui8_busNr, ui8_sendObjNr);
 
   if ( b_bit1err )
   {
@@ -2035,14 +2272,6 @@ void CanIo_c::doDebug(uint8_t ui8_busNr, uint8_t ui8_sendObjNr)
       << uint16_t(ui8_busNr) << ", sendObjNr: "
       << uint16_t(ui8_sendObjNr)
       << INTERNAL_DEBUG_DEVICE_ENDL;
-  }
-  if ( b_sendproblem )
-  {
-    INTERNAL_DEBUG_DEVICE << "SENDPROBLEM VOR HAL::can_useMsgobjSend BUS: "
-      << uint16_t(ui8_busNr) << ", sendObjNr: "
-      << uint16_t(ui8_sendObjNr)
-      << INTERNAL_DEBUG_DEVICE_ENDL;
-
   }
   if ( b_warnState )
   {

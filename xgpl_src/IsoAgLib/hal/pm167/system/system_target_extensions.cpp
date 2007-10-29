@@ -59,9 +59,9 @@
  * mapped from ECU standard BIOS to the needs of
  * IsoAgLib by mostly renaming and reordering of functions, parameters
  * and types in <i>\<target\>/\<device\>/\<device\>.h</i> .
-/* ********************************************************** */
+********************************************************** */
 
-#include "target_extensions.h"
+#include "system_target_extensions.h"
 #include "../config.h"
 
 
@@ -79,7 +79,7 @@ static tSystem t_biosextSysdata;
 */
 int16_t open_system()
 {
-  return kOpen_pm167(&t_biosextSysdata);
+  return k_open_pm167(&t_biosextSysdata);
 }
 /**
   close the system with system specific function call
@@ -88,20 +88,21 @@ int16_t open_system()
 int16_t closeSystem( void )
 { // if CAN_EN ist active -> shut peripherals off and stay in idle loop
   #if defined(NO_CAN_EN_CHECK)
-  if ( getOn_offSwitch() )
+  if ( get_on_off_switch() )
   #endif
   { // CanEn still active
-    setRelais( OFF );
-    powerDown();
+    set_relais( OFF );
+    power_down();
   }
   #if defined(NO_CAN_EN_CHECK)
   // trigger Watchdog, till CanEn is off
-  while ( getOn_offSwitch() ) wdTriggern();
+  while ( get_on_off_switch() ) wd_triggern();
   // close ESX as soon as
-  closeEsx();
+  close_esx();
   #else
-  while ( true ) wdTriggern();
+  while ( true ) wd_triggern();
   #endif
+  return C_NO_ERR;
 }
 
 /**
@@ -122,7 +123,7 @@ int16_t configWatchdog()
       CONFIG_RESET
   };
 
-  return configWd(&t_watchdogConf);
+  return config_wd(&t_watchdogConf);
 }
 
 } // end namespace __HAL

@@ -68,9 +68,9 @@
 #ifndef _HAL_PM167_RS232_H_
 #define _HAL_PM167_RS232_H_
 
-#include "../config.h"
-#include "../typedef.h"
-#include "../errcodes.h"
+#include <IsoAgLib/hal/pm167/config.h>
+#include <IsoAgLib/hal/pm167/typedef.h>
+#include <IsoAgLib/hal/pm167/errcodes.h>
 
 namespace __HAL {
   extern "C" {
@@ -112,26 +112,26 @@ namespace HAL
     @return HAL_NO_ERR -> o.k. else baudrate setting incorrect
   */
   inline int16_t setRs232Baudrate(uint16_t wBaudrate)
-    {return __HAL::setRs232Baudrate(wBaudrate) ;};
+    {return __HAL::set_rs232_baudrate(wBaudrate) ;};
   /**
     get the amount of data [uint8_t] in receive puffer
     @return receive puffer data byte
   */
   inline int16_t getRs232RxBufCount(void)
-    {return __HAL::getRs232RxBufCount();};
+    {return __HAL::get_rs232_rx_buf_count();};
   /**
     get the amount of data [uint8_t] in send puffer
     @return send puffer data byte
   */
   inline int16_t getRs232TxBufCount(void)
-    {return __HAL::getRs232TxBufCount();};
+    {return __HAL::get_rs232_tx_buf_count();};
   /**
     configure a receive puffer and set optional irq function pointer for receive
     @param wBuffersize wanted puffer size
     @param pFunction pointer to irq function or NULL if not wanted
   */
   inline int16_t configRs232RxObj(uint16_t wBuffersize,void (*pFunction)(uint8_t *bByte))
-    {return __HAL::configRs232RxObj(wBuffersize,pFunction) ;};
+    {return __HAL::config_rs232_rx_obj(wBuffersize,pFunction) ;};
   /**
     configure a send puffer and set optional irq function pointer for send
     @param wBuffersize wanted puffer size
@@ -140,13 +140,13 @@ namespace HAL
   */
   inline int16_t configRs232TxObj(uint16_t wBuffersize,void (*funktionAfterTransmit)(uint8_t *bByte),
                                   void (*funktionBeforTransmit)(uint8_t *bByte))
-    {return __HAL::configRs232TxObj(wBuffersize,funktionAfterTransmit,funktionBeforTransmit);};
+    {return __HAL::config_rs232_tx_obj(wBuffersize,funktionAfterTransmit,funktionBeforTransmit);};
   /**
     get errr code of BIOS
     @return 0=parity, 1=stopbit framing error, 2=overflow
   */
   inline int16_t getRs232Error(uint8_t *Errorcode)
-    {return __HAL::getRs232Error(Errorcode);};
+    {return __HAL::get_rs232_error(Errorcode);};
 
   /**
     read single int8_t from receive puffer
@@ -154,15 +154,15 @@ namespace HAL
     @return HAL_NO_ERR -> o.k. else puffer underflow
   */
   inline int16_t getRs232Char(uint8_t *pbRead)
-    {return __HAL::getRs232Char(pbRead);};
+    {return __HAL::get_rs232_char(pbRead);};
   /**
     read bLastChar terminated string from receive puffer
     @param pbRead pointer to target data
     @param bLastChar terminating char
     @return HAL_NO_ERR -> o.k. else puffer underflow
   */
-  inline int16_t getRs232String(uint8_t *pbRead,uint8_t bLastChar)
-    {return __HAL::getRs232String(pbRead,bLastChar);};
+  inline int16_t get_rs232_string(uint8_t *pbRead,uint8_t bLastChar)
+    {return __HAL::get_rs232_string(pbRead,bLastChar);};
 
   /**
     send single uint8_t on RS232
@@ -170,7 +170,7 @@ namespace HAL
     @return HAL_NO_ERR -> o.k. else send puffer overflow
   */
   inline int16_t put_rs232Char(uint8_t bByte)
-    {return __HAL::put_rs232Char(bByte);};
+    {return __HAL::put_rs232_char(bByte);};
   /**
     send string of n uint8_t on RS232
     @param bpWrite pointer to source data string
@@ -178,25 +178,25 @@ namespace HAL
     @return HAL_NO_ERR -> o.k. else send puffer overflow
   */
   inline int16_t put_rs232NChar(uint8_t *bpWrite,uint16_t wNumber)
-    {return __HAL::put_rs232NChar(bpWrite,wNumber);};
+    {return __HAL::put_rs232_n_char(bpWrite,wNumber);};
   /**
     send '\0' terminated string on RS232
     @param pbString pointer to '\0' terminated (!) source data string
     @return HAL_NO_ERR -> o.k. else send puffer overflow
   */
   inline int16_t put_rs232String(uint8_t *pbString)
-    {return __HAL::put_rs232String(pbString);};
+    {return __HAL::put_rs232_string(pbString);};
 
   /**
     clear receive puffer
   */
   inline void clearRs232RxBuffer(void)
-    {__HAL::clearRs232RxBuffer();};
+    {__HAL::clear_rs232_rx_buffer();};
   /**
     clear send puffer
   */
   inline void clearRs232TxBuffer(void)
-    {__HAL::clearRs232TxBuffer();};
+    {__HAL::clear_rs232_tx_buffer();};
   /*@}*/
 }
 #endif

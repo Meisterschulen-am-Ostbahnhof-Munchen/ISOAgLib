@@ -95,6 +95,9 @@
   #include <IsoAgLib/util/impl/util_funcs.h>
 #endif
 
+//#include <IsoAgLib/hal/generic_utils/can/canfifo_c.h>
+#include <IsoAgLib/hal/generic_utils/can/icanfifo.h>
+
 namespace __IsoAgLib {
 
 /**
@@ -103,13 +106,15 @@ namespace __IsoAgLib {
 
    @exception badAlloc
 */
+
 FilterBox_c::FilterBox_c()
   :
     c_filter(0, Ident_c::StandardIdent),
     c_mask(0, Ident_c::StandardIdent),
     c_additionalMask(~0, Ident_c::StandardIdent), // additional Mask set to "all-1s", so it defaults to "no additional mask".
     ui8_filterBoxNr(IdleState),
-    ui8_busNumber(IdleState)
+    ui8_busNumber(IdleState),
+    i32_fbVecIdx(-1)
 #if ((defined( USE_ISO_11783)) \
      && ((CAN_INSTANCE_CNT > PRT_INSTANCE_CNT) || defined(ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL)))
     , b_performIsobusResolve(true)
@@ -124,10 +129,12 @@ FilterBox_c::FilterBox_c()
   @param apc_customer  pointer to the CanCustomer_c instance, which creates this FilterBox_c instance
   @param at_mask       mask for this Filer_Box (MASK_TYPE defined in isoaglib_config.h)
   @param at_filter     filter for this Filer_Box (MASK_TYPE defined in isoaglib_config.h)
+
+
   @param ren_E         select if FilterBox_c is used for standard 11bit or extended 29bit ident
   @param apc_filterBox optional parameter for getting to filterboxes connected together into the same MsgObj!
   @exception badAlloc
-FilterBox_c::FilterBox_c(CanCustomer_c* rrpc_customer,
+FilterBox_c::FilterBox_c(CanCustomer_c * rrpc_customer,
                          MASK_TYPE at_mask, MASK_TYPE at_filter,
                          Ident_c::identType_t ren_identType, FilterBox_c* apc_filterBox)
   : c_filter(at_filter, ren_identType),
@@ -155,7 +162,8 @@ FilterBox_c::FilterBox_c(const FilterBox_c& arc_src)
     c_additionalMask(arc_src.c_additionalMask),
     vec_customer(arc_src.vec_customer),
     ui8_filterBoxNr(arc_src.ui8_filterBoxNr),
-    ui8_busNumber(arc_src.ui8_busNumber)
+    ui8_busNumber(arc_src.ui8_busNumber),
+    i32_fbVecIdx(arc_src.i32_fbVecIdx)
 #if ((defined( USE_ISO_11783)) \
 		    && ((CAN_INSTANCE_CNT > PRT_INSTANCE_CNT) || defined(ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL)))
     , b_performIsobusResolve(arc_src.b_performIsobusResolve)
@@ -179,6 +187,7 @@ FilterBox_c::~FilterBox_c()
   @param arc_src FilterBox_c instance with data to assign to this instance
   @return reference to this instance for chains like "box_1 = box_2 = ... = box_n;"
 */
+
 FilterBox_c& FilterBox_c::operator=(const FilterBox_c& arc_src){
   if ( this != &arc_src)
   {
@@ -190,9 +199,11 @@ FilterBox_c& FilterBox_c::operator=(const FilterBox_c& arc_src){
     c_additionalMask = arc_src.c_additionalMask;
     ui8_busNumber = arc_src.ui8_busNumber;
     ui8_filterBoxNr = arc_src.ui8_filterBoxNr;
+    i32_fbVecIdx = arc_src.i32_fbVecIdx;
   }
   return *this;
 }
+
 
 /** clear the data of this instance */
 void FilterBox_c::clearData()
@@ -205,6 +216,7 @@ void FilterBox_c::clearData()
   c_additionalMask.set(~0, DEFAULT_IDENT_TYPE);
   ui8_busNumber = IdleState;
   ui8_filterBoxNr = IdleState;
+  i32_fbVecIdx = InvalidIdx;
 }
 
 /**
@@ -249,11 +261,11 @@ bool FilterBox_c::configCan(uint8_t aui8_busNumber, uint8_t aui8_FilterBoxNr)
   for ( STL_NAMESPACE::vector<CustomerLen_s>::const_iterator iter = vec_customer.begin(); iter != vec_customer.end(); iter++ )
   {
     if ( (*iter).pc_customer->isProprietaryMessageOnStandardizedCan() )
-    { // at least one CanCustomer_c uses a proprietary protocol at a normal ISOBUS CanIo_c instance
+    { // at least one CanCustomer_c  uses a proprietary protocol at a normal ISOBUS CanIo_c instance
       b_performIsobusResolve = false;
     }
     else
-    { // this FilterBox_c has at least one CanCustomer_c which performs real ISOBUS
+    { // this FilterBox_c has at least one CanCustomer_c  which performs real ISOBUS
       // --> set b_performIsobusResolve to default TRUE
       b_performIsobusResolve = true;
       break;
@@ -264,7 +276,6 @@ bool FilterBox_c::configCan(uint8_t aui8_busNumber, uint8_t aui8_FilterBoxNr)
   #endif // end of #ifdef for usage of b_performIsobusResolve
 
   #ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
-  if (c_filter.identType() == Ident_c::BothIdent) c_filter.setIdentType(DEFAULT_IDENT_TYPE);
   if (c_filter.empty() || c_mask.empty() ) return false;
   switch (HAL::can_configMsgobjInit(aui8_busNumber, aui8_FilterBoxNr, c_filter, c_mask, 0))
   {
@@ -316,10 +327,12 @@ void FilterBox_c::closeHAL()
 
 /**
   set the mask (t_mask) and filter (t_filter) of this FilterBox
-  @param at_mask mask for this Filer_Box (MASK_TYPE defined in isoaglib_config.h)
+ @param at_mask mask for this Filer_Box (MASK_TYPE defined in isoaglib_config.h)
   @param at_filter filter for this Filer_Box (MASK_TYPE defined in isoaglib_config.h)
   @param apc_customer pointer to the CanCustomer_c instance, which creates this FilterBox_c instance
   @param ai8_dlcForce force the DLC to be exactly this long (0 to 8 bytes). use -1 for NO FORCING and accepting any length can-pkg
+
+
   @param ren_E select if FilterBox_c is used for standard 11bit or extended 29bit ident
 */
 void FilterBox_c::set (const Ident_c& arc_mask,
@@ -351,6 +364,7 @@ void FilterBox_c::set (const Ident_c& arc_mask,
 };
 
 bool FilterBox_c::equalCustomer( const __IsoAgLib::CanCustomer_c& ar_customer ) const
+
 {
   STL_NAMESPACE::vector<CustomerLen_s>::const_iterator pc_iter;
   for(pc_iter = vec_customer.begin(); pc_iter != vec_customer.end(); pc_iter++)
@@ -360,12 +374,13 @@ bool FilterBox_c::equalCustomer( const __IsoAgLib::CanCustomer_c& ar_customer ) 
   return false;
 }
 
-/** delete CanCustomer_c instance from array or set FilterBox_c to idle
-    if CanCustomer_c is the only customer for this FilterBox_c instance
+/** delete CanCustomer_c  instance from array or set FilterBox_c to idle
+    if CanCustomer_c  is the only customer for this FilterBox_c instance
     @param  ar_customer  CANCustomer to delete
     @return                true -> no more cancustomers exist, whole filterbox can be deleted
   */
 bool FilterBox_c::deleteFilter( const __IsoAgLib::CanCustomer_c& ar_customer)
+
 {
   for (STL_NAMESPACE::vector<CustomerLen_s>::iterator pc_iter = vec_customer.begin();
         pc_iter != vec_customer.end(); pc_iter++)
@@ -381,8 +396,10 @@ bool FilterBox_c::deleteFilter( const __IsoAgLib::CanCustomer_c& ar_customer)
     #ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
     closeHAL();
     //if the connection to the HAL is disconnected clear all data of the now idle filterbox
-    clearData();
     #endif
+
+    clearData();
+
     return true;
   }
   else
@@ -399,10 +416,10 @@ bool FilterBox_c::deleteFilter( const __IsoAgLib::CanCustomer_c& ar_customer)
   control the processing of a received message
   (MsgObj_c::processMsg inserted data directly in CANCustomer
    -> FilterBox_c::processMsg() initiates conversion of CAN string
-      to data flags and starts processing in CanCustomer_c)
+      to data flags and starts processing in CanCustomer_c )
 
   possible errors:
-      * precondition no valid CanCustomer_c (or derived) is registered
+      * precondition no valid CanCustomer_c  (or derived) is registered
   @return true -> FilterBox_c was able to inform registered CANCustomer
 */
 bool FilterBox_c::processMsg()
@@ -410,7 +427,7 @@ bool FilterBox_c::processMsg()
   for ( STL_NAMESPACE::vector<CustomerLen_s>::iterator c_customerIterator = vec_customer.begin(); c_customerIterator != vec_customer.end(); c_customerIterator++ )
   {
     if (c_customerIterator->pc_customer == NULL)
-    { // pointer to CanCustomer_c wasn't set
+    { // pointer to CanCustomer_c  wasn't set
       // -> don't know who wants to process the msg
       getILibErrInstance().registerError( iLibErr_c::Precondition, iLibErr_c::Can );
       return false;
@@ -423,7 +440,22 @@ bool FilterBox_c::processMsg()
     #if defined SYSTEM_WITH_ENHANCED_CAN_HAL
       HAL::can_useMsgobjGet(ui8_busNumber, 0xFF, pc_target);
     #else
-      HAL::can_useMsgobjGet(ui8_busNumber, ui8_filterBoxNr, pc_target);
+
+      bool b_fifoRet = HAL::fifo_useMsgObjGet(ui8_busNumber, pc_target);
+      if(b_fifoRet != HAL_NO_ERR)
+      {
+      #ifdef DEBUG
+         INTERNAL_DEBUG_DEVICE
+        << "Central Fifo - Reading problem on bus : " << int(ui8_busNumber) << INTERNAL_DEBUG_DEVICE_ENDL;
+      #endif
+        IsoAgLib::getILibErrInstance().registerError( IsoAgLib::iLibErr_c::CanWarn, IsoAgLib::iLibErr_c::Can );
+        return false;
+      }
+  #ifdef DEBUG
+         INTERNAL_DEBUG_DEVICE
+        << "FilterBox is consuming the message " << INTERNAL_DEBUG_DEVICE_ENDL;
+      #endif
+
     #endif
 
     const int8_t ci8_vecCurstomerDlcForce = c_customerIterator->i8_dlcForce;

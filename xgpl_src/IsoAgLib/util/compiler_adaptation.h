@@ -104,6 +104,13 @@
   #define CAN_Customer_c                               CCus_c
 #endif
 
+#if defined(__TSW_CPP__)
+  #define DEF_GET_POINTER_ADR_DEBUG_OUTPUT( pointer ) uint32_t( pointer )
+#else
+  #define DEF_GET_POINTER_ADR_DEBUG_OUTPUT( pointer ) pointer
+#endif
+
+
 #undef CNAMESPACE
 #if defined( __TSW_CPP_70__ )
  #define CNAMESPACE

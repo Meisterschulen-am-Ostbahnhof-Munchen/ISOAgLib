@@ -88,6 +88,7 @@
 #include <IsoAgLib/util/impl/singleton.h>
 #include <IsoAgLib/hal/can.h>
 
+
 #ifdef DO_USE_SLIST
   #if defined(SYSTEM_PC) && !defined(SYSTEM_PC_VC) && !defined(SYSTEM_A1) && __GNUC__ >= 3
     #include <ext/slist>
@@ -101,6 +102,11 @@
 
 #include "filterbox_c.h"
 #include "ident_c.h"
+
+
+
+
+#include <IsoAgLib/hal/generic_utils/can/icanfifo.h>
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
@@ -118,12 +124,15 @@ namespace __IsoAgLib {
 */
 class MsgObj_c {
 private:
-  // private typedef alias names
-	#ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
-  typedef STL_NAMESPACE::USABLE_SLIST<FilterBox_c,STL_NAMESPACE::__malloc_alloc_template<0> >::iterator FilterRef;
-	#else
-  typedef STL_NAMESPACE::USABLE_SLIST<FilterBox_c>::iterator FilterRef;
-	#endif
+
+
+  #ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
+  typedef STL_NAMESPACE::vector<FilterBox_c,STL_NAMESPACE::__malloc_alloc_template<0> >::iterator FilterRef;
+  #else
+  typedef STL_NAMESPACE::vector<FilterBox_c>::iterator FilterRef;
+  #endif
+
+
 public:
   /** default constructor for MsgObj_c which only init all member values defined start state */
   MsgObj_c();
@@ -135,6 +144,12 @@ public:
 
   /** destructor of MsgObj_c instance, which closes the hardware MsgObj_c */
   ~MsgObj_c();
+
+#if defined( DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION )
+
+  void printMyFilterBox();
+
+#endif
 
   //+++++++++++++++++++++++++++++++++++
   // help functions for work on MsgObj_c
@@ -182,7 +197,8 @@ public:
   /** set t_filter of this MsgObj_c
     @param arc_val filter to set for this MsgObj_c
   */
-  inline void setFilter(const Ident_c& arc_val){c_filter = arc_val;}
+ inline void setFilter(const Ident_c& arc_val){c_filter = arc_val;}
+
 
   /** get the t_filter of this MsgObj_c
     @return filter of this MsgObj_c instance
@@ -227,7 +243,11 @@ public:
     @param arc_box reference to FilterBox_c which should be inserted as possible processing instance of msg received by this instance
     @return true -> this reference could be stored in this MsgObj_c (limited amount)
   */
+
   bool insertFilterBox(FilterRef arc_box);
+
+
+
 
   /** delete pointer to a FilterBox_c and move following pointers one position forward
     possible errors:
@@ -237,6 +257,11 @@ public:
   */
   bool deleteFilterBox(FilterRef arc_box);
 
+
+
+  void clearArrFbIdx(){
+    arrFilterBoxIndex.clear(); };
+
   /** deliver count of contained FilterBox_c pointers
     @return count of references to FilterBox_c instances
   */
@@ -245,55 +270,42 @@ public:
     #if 0
     return bit_data.cnt_filterBox;
     #else
-    return arrPfilterBox.size();
+
+      return arrFilterBoxIndex.size();
     #endif
   }
 
-  /** start processing a received CAN msg
-    (called by interrupt function)  (uses BIOS function)
 
-      * Err_c::hwConfig MsgObj wans't configured properly
-      * Err_c::can_warn CAN is in WARN state
-      * Err_c::can_off CAN is in OFF state
-      * Err_c::range since config of this MsgObj some action changed the
-            BUS or MsgObj number to incorrect values
-      * Err_c::can_overflow receive puffer overflow during receive
-          (not likely because processing is called by receive IRQ)
-      * dependant error if insertion in registered FilterBox_c causes error
-    @param aui8_busNumber BUS number to check for received msg
-		@param ab_forceProcessAll true -> process all CAN messages in HAL buffer, even if timeEvent would force stop
-															( this important to process all buffered messages before FilterBoxes are reconfigured )
-    @return number of received messages
+  /** set if a CAN msg object is open for this instance
+    -> if the close function must be called in destructor
+    @param rb_state wanted state
   */
-  uint8_t processMsg(uint8_t aui8_busNumber, bool ab_forceProcessAll = false );
+  void setIsOpen(bool rb_state){bit_data.isOpen = (rb_state)?1:0;}
 
-	/** lock the corresponding hardware MsgObj to avoid receiving further CAN messages.
-		This important for handling of the LastMsgObj, as it should only receive messages
-		during process of CanIo_c::reconfigureMsgObj() - but as the messages shall be processed
-		within normal CanIo_c::processMsg(), nu furhter messages shall be placed in the receive queue
-		of the BIOS/OS. A immediate process wihtin execution of CanIo_c::reconfigureMsgObj() can cause
-		deadlocks when the reconfig is initiated as a result of:
-		-# Singleton_c::instance() -> Singleton_c::init()
-		-# -> partialClass_c::init()
-		-# -> CanIo_c::reconfigureMsgObj()
-		-# -> MsgObj_c::processMsg()
-		-# -> partialClass_c::processMsg()
-		-# -> trigger update/reaction by Singleton_c::update() !!! undefined result, as Singleton_c::instance()
-					has not yet finished, so that this type of circular access on the same Singleton_c::instance()
-					is blocked by returning the signal value 0x1
+  bool msgObjUpdateTable(uint8_t ui8_busNumber, uint8_t ui8_msgObjNr);
 
-		Thus CanIo_c::reconfigureMsgObj() locks the lastMessageObject at the end, so that the buffer content is
-		simply conserved until normal CanIo_c::processMsg() is called.
-	*/
-	void lock( bool ab_lock = true );
+  bool prepareIrqTable(uint8_t aui8_busNum,uint8_t aui8_objNr,int32_t* cp_elem, uint32_t aui32_numEl);
 
-	/** check if this given MsgObj_c is locked */
-	bool isLocked() const { return bit_data.isLocked;}
+  /** set Bus Number of this MsgObj_c
+    @param rb_val wanted bus number
+  */
+  void setBusNumber(uint8_t ab_val){bit_data.busNumber = (ab_val<8)?ab_val:0;}
+
+#if defined( CAN_INSTANCE_CNT ) && ( CAN_INSTANCE_CNT > 1 )
+  void setCanSingletonKey(int ai_val){mi_canSingletonVecKey = ai_val;}
+  int getCanSingletonKey(){return mi_canSingletonVecKey;}
+#endif
 
 private:
+
+/** return the FilterBox instance */
+inline FilterBox_c& getFilterBoxInstance(int32_t ai32_fbIdx );
+
   // Private attributes
-  /** array of pointer to appointed arrPfilterBox instances */
-  STL_NAMESPACE::vector<FilterRef> arrPfilterBox;
+ /** array of index of the CanIo_c::arrFilterBox VECTOR*/
+ STL_NAMESPACE::vector<int32_t> arrFilterBoxIndex;
+
+
 
   /** Ident_c filter for this msgObj */
   Ident_c c_filter;
@@ -308,6 +320,16 @@ private:
     uint16_t isOpen        : 1;
     uint16_t busNumber     : 3;
   } bit_data;
+
+
+
+ #if defined( CAN_INSTANCE_CNT ) && ( CAN_INSTANCE_CNT > 1 )
+/** define CAN singleton key based on amount of CAN_INSTANCE_CNT
+      - the define allows to resolve to NO variable, in case of CAN_INSTANCE_CNT == 1
+   */
+  int mi_canSingletonVecKey;
+  #endif
+
 private:
 // Private methods
   #if 0
@@ -317,21 +339,14 @@ private:
   void setCntFilterBox(uint8_t ab_val) { bit_data.cnt_filterBox = ab_val; }
   #endif
 
-  /** set if a CAN msg object is open for this instance
-    -> if the close function must be called in destructor
-    @param ab_state wanted state
-  */
-  void setIsOpen(bool ab_state){bit_data.isOpen = (ab_state)?1:0;}
+
 
   /** deliver Bus Number of this MsgObj_c
     @return bus number
   */
   uint8_t busNumber()const{return bit_data.busNumber;}
 
-  /** set Bus Number of this MsgObj_c
-    @param ab_val wanted bus number
-  */
-  void setBusNumber(uint8_t ab_val){bit_data.busNumber = (ab_val<8)?ab_val:0;}
+
 
   /** deliver msgObj number for BIOS interaction
     @return msgObj number

@@ -105,10 +105,13 @@ namespace __IsoAgLib {
 class System_c;
 class System_c : public Singleton<System_c> {
 public:
+  
+  
+  
   /**
     Initialize the system hardware.
     (uses BIOS function)
-
+	  
     possible errors:
         * Err_c::SystemOpen problem during start of system with BIOS call
         * Err_c::SystemWatchdog the System_c::init_wd call caused an error
@@ -152,6 +155,8 @@ public:
     @return running time in [msec.]
   */
   static inline int32_t getTime(){return HAL::getTime();};
+
+#ifndef SYSTEM_PM167
   /**
     get the main power voltage
     @return voltage of power [mV]
@@ -163,6 +168,8 @@ public:
     @return voltage at external reference [mV]
   */
   static int16_t  getExternalSensorPowerVoltage( void ) { return HAL::getAdc_u85();};
+
+#endif
   /** control the relay which is responsible for activation of the PWM output */
   static void setRelais( bool ab_activateRelaisForPwm );
 

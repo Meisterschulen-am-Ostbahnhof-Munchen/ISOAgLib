@@ -110,7 +110,8 @@ public:
   /** enum type for defining the CAN ident length to S (11Bit)
     or extended (29Bit)
   */
-  enum identType_t {StandardIdent = 0, ExtendedIdent = 1, BothIdent = 2};
+
+enum identType_t {StandardIdent = 0, ExtendedIdent = 1};
 
   /** constructor which can set the values
     @param at_ident new ident setting

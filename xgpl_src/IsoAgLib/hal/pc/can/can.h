@@ -74,9 +74,15 @@
 #include "../errcodes.h"
 #include "hal_can_interface.h"
 
+
+
+
+
 #include "../config.h"
 
 #include <cstdio>
+
+
 
 /**
    namespace with layer of inline (cost NO overhead -> compiler replaces
@@ -87,6 +93,10 @@
  */
 namespace HAL
 {
+
+
+
+
 
 /*@}*/
 
@@ -102,6 +112,7 @@ namespace HAL
   inline bool can_stateGlobalWarn(uint8_t aui8_busNr = 0)
     {return __HAL::can_stateGlobalWarn(aui8_busNr);};
 
+
   /**
     test if the CAN BUS is in OFF state
     @param aui8_busNr number of the BUS to check (default 0)
@@ -110,21 +121,8 @@ namespace HAL
   inline bool can_stateGlobalOff(uint8_t aui8_busNr = 0)
     {return __HAL::can_stateGlobalOff(aui8_busNr);};
 
-  /**
-    test if the CAN BUS is in Blocked state, which can be a sign
-    for CAN controllers which are configured with different baudrates;
-    this is the case if neither succesfull sent nor received msg
-    is detcted AND CAN controller is in WARN or OFF state
-    (the time since last succ. send/rec and the time of WARN/OFF
-     can be defined with CONFIG_CAN_MAX_CAN_ERR_TIME_BEFORE_SLOWERING
-     in the application specific config file isoaglib_config
-     -> should not be to short to avoid false alarm)
-    @param aui8_busNr number of the BUS to check (default 0)
-    @return true == CAN BUS is in blocked state, else normal operation
-  */
-  inline bool can_stateGlobalBlocked(uint8_t aui8_busNr = 0)
-    {return __HAL::can_stateGlobalBlocked(aui8_busNr);};
 
+#ifdef USE_CAN_MEASURE_BUSLOAD
   /**
     deliver the baudrate of the CAN BUS in [kbaud]
     @param aui8_busNr number of the BUS to check (default 0)
@@ -132,6 +130,8 @@ namespace HAL
   */
   inline int32_t can_stateGlobalBusload(uint8_t aui8_busNr = 0)
     {return __HAL::can_stateGlobalBusload(aui8_busNr);};
+
+#endif
 
   /**
     check if a send try on this BUS caused an Bit1Error
@@ -150,27 +150,8 @@ namespace HAL
   /** \name CAN BIOS functions for status checking of one specific MsgObj */
   /*@{*/
 
-  /**
-    deliver the timestamp of last successfull CAN send action
-    @param aui8_busNr number of the BUS to check
-    @param aui8_msgobjNr number of the MsgObj to check
-    @return timestamp of last successful send
-            OR -1 if aui8_msgObjNr corresponds to no valid send obj
-  */
-  inline int32_t can_stateMsgobjTxok(uint8_t aui8_busNr, uint8_t aui8_msgobjNr)
-    {return __HAL::can_stateMsgobjTxok(aui8_busNr, aui8_msgobjNr);};
 
-  /**
-    check if a send MsgObj can't send msgs from buffer to the
-    BUS (detecetd by comparing the inactive time with
-    CONFIG_CAN_MAX_SEND_WAIT_TIME (defined in isoaglib_config)
-    @param aui8_busNr number of the BUS to check
-    @param aui8_msgobjNr number of the MsgObj to check
-    @return true -> longer than CONFIG_CAN_MAX_SEND_WAIT_TIME no msg sent on BUS
-  */
-  inline bool can_stateMsgobjSendproblem(uint8_t aui8_busNr, uint8_t aui8_msgobjNr)
-    {return __HAL::can_stateMsgobjSendproblem(aui8_busNr, aui8_msgobjNr);};
-
+#ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
   /**
     test if buffer of a MsgObj is full (e.g. no more
     msg can be put into buffer (important for TX objects))
@@ -180,6 +161,7 @@ namespace HAL
   */
   inline bool can_stateMsgobjOverflow(uint8_t aui8_busNr, uint8_t aui8_msgobjNr)
     {return __HAL::can_stateMsgobjOverflow(aui8_busNr, aui8_msgobjNr);};
+#endif
 
   /**
     deliver amount of messages in buffer
@@ -206,14 +188,7 @@ namespace HAL
     {return __HAL::can_stateMsgobjFreecnt(aui8_busNr, aui8_msgobjNr);};
 
 
-  /**
-    check if MsgObj is currently locked
-    @param aui8_busNr number of the BUS to check
-    @param aui8_msgobjNr number of the MsgObj to check
-    @return true -> MsgObj is currently locked
-  */
-  inline bool can_stateMsgobjLocked( uint8_t aui8_busNr, uint8_t aui8_msgobjNr )
-    {return __HAL::can_stateMsgobjLocked( aui8_busNr, aui8_msgobjNr );};
+
   /*@}*/
 
   /* ************************************************************ */
@@ -287,43 +262,19 @@ namespace HAL
             C_CONFIG == BUS not initialised or error during buffer allocation
             C_RANGE == wrong BUS or MsgObj number
   */
+
 #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
   inline int16_t can_configMsgobjInit(uint8_t aui8_busNr, uint8_t aui8_msgobjNr, __IsoAgLib::Ident_c& arc_ident, uint8_t ab_rxtx)
     {return __HAL::can_configMsgobjInit(aui8_busNr, aui8_msgobjNr, arc_ident, ab_rxtx);};
+
 #else
+
   inline int16_t can_configMsgobjInit(uint8_t aui8_busNr, uint8_t aui8_msgobjNr, __IsoAgLib::Ident_c& arc_ident, __IsoAgLib::Ident_c& arc_mask, uint8_t ab_rxtx)
     {return __HAL::can_configMsgobjInit(aui8_busNr, aui8_msgobjNr, arc_ident, arc_mask, ab_rxtx);};
+
 #endif
 
-  /**
-    change the Ident_c of an already initialised MsgObj
-    (class __IsoAgLib::Ident_c has ident and type 11/29bit)
-    @param aui8_busNr number of the BUS to config
-    @param aui8_msgobjNr number of the MsgObj to config
-    @param arc_ident filter ident of this MsgObj
-    @return HAL_NO_ERR == no error;
-            C_CONFIG == BUS not initialised or ident can't be changed
-            C_RANGE == wrong BUS or MsgObj number
-  */
-#ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
-  inline int16_t can_configMsgobjChgid(uint8_t aui8_busNr, uint8_t aui8_msgobjNr, __IsoAgLib::Ident_c& arc_ident)
-    {return __HAL::can_configMsgobjChgid(aui8_busNr, aui8_msgobjNr, arc_ident);};
-#else
-  inline int16_t can_configMsgobjChgid(uint8_t aui8_busNr, uint8_t aui8_msgobjNr, __IsoAgLib::Ident_c& arc_ident, __IsoAgLib::Ident_c& arc_mask)
-    {return __HAL::can_configMsgobjChgid(aui8_busNr, aui8_msgobjNr, arc_ident, arc_mask);};
-#endif
 
-  /**
-    lock a MsgObj to avoid further placement of messages into buffer.
-    @param aui8_busNr number of the BUS to config
-    @param aui8_msgobjNr number of the MsgObj to config
-    @param ab_doLock true==lock(default); false==unlock
-    @return HAL_NO_ERR == no error;
-            HAL_CONFIG_ERR == BUS not initialised or ident can't be changed
-            HAL_RANGE_ERR == wrong BUS or MsgObj number
-    */
-  inline int16_t can_configMsgobjLock( uint8_t aui8_busNr, uint8_t aui8_msgobjNr, bool ab_doLock = true )
-    {return __HAL::can_configMsgobjLock( aui8_busNr, aui8_msgobjNr, ab_doLock);};
 
   /**
     change the the send rate for one MsgObj by setting the minimum
@@ -375,6 +326,8 @@ namespace HAL
   inline int16_t can_useMsgobjSend(uint8_t aui8_busNr, uint8_t aui8_msgobjNr, __IsoAgLib::CanPkg_c* apc_data)
     {return __HAL::can_useMsgobjSend(aui8_busNr, aui8_msgobjNr, apc_data);};
 
+
+#ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
   /**
     get the ident of a received message to decide about the further
     processing before the whole data string is retreived
@@ -389,12 +342,13 @@ namespace HAL
     C_RANGE == wrong BUS or MsgObj number
     C_WARN == BUS WARN or no received message
   */
-  inline int32_t can_useMsgobjReceivedIdent(uint8_t aui8_busNr, uint8_t aui8_msgobjNr, int32_t &reflIdent)
-    {return __HAL::can_useMsgobjReceivedIdent(aui8_busNr, aui8_msgobjNr, reflIdent);};
-#ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
-  inline int32_t can_useNextMsgobjNumber(uint8_t aui8_busNr, int32_t &reflIdent)
-    {return __HAL::can_useNextMsgobjNumber(aui8_busNr, reflIdent);};
-#endif
+
+
+
+  inline int32_t can_useNextMsgobjNumber(uint8_t aui8_busNr, uint32_t& reflIdent, uint32_t& refui32_msgId,uint8_t& refui8_msgtype)
+    {return __HAL::can_useNextMsgobjNumber(aui8_busNr, reflIdent,refui32_msgId, refui8_msgtype );};
+
+
 
   /**
     transfer front element in buffer into the pointed CanPkg_c;
@@ -422,7 +376,7 @@ namespace HAL
     Either register the currenct front item of buffer as not relevant,
     or just pop the front item, as it was processed.
     This explicit pop is needed, as one CAN message shall be served to
-    several CanCustomer_c instances, as long as one of them indicates a
+    several CanCustomer_c  instances, as long as one of them indicates a
     succesfull process of the received message.
     @param aui8_busNr number of the BUS to config
     @param aui8_msgobjNr number of the MsgObj to config
@@ -430,6 +384,7 @@ namespace HAL
   inline void can_useMsgobjPopFront(uint8_t aui8_busNr, uint8_t aui8_msgobjNr)
   {__HAL::can_useMsgobjPopFront(aui8_busNr, aui8_msgobjNr);};
 
+#endif
 
   /**
     clear th buffer of a MsgObj (e.g. to stop sending retries)
@@ -442,8 +397,10 @@ namespace HAL
   inline int16_t can_useMsgobjClear(uint8_t aui8_busNr, uint8_t aui8_msgobjNr)
     {return __HAL::can_useMsgobjClear(aui8_busNr, aui8_msgobjNr);};
 
+#ifdef USE_CAN_SEND_DELAY_MEASUREMENT
   inline int32_t can_getMaxSendDelay(uint8_t aui8_busNr)
   {return __HAL::can_getMaxSendDelay(aui8_busNr); }
+#endif
 
   /*@}*/
 }

@@ -51,6 +51,16 @@
 #ifndef TYPEDEF_IMI_H
 #define TYPEDEF_IMI_H
 
+// for Tasking 7.x EDE these includes have to be included FIRST
+// because they are included by the broken stl-headers into global namespace
+#if defined(__TSW_CPP__)
+ #include <cstdlib>
+ #include <cstddef>
+ #include <cstring>
+ typedef unsigned int size_t;
+#endif
+
+
 
 typedef unsigned char uint8_t;
 typedef char           int8_t;

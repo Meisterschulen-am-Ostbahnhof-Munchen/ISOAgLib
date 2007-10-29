@@ -70,6 +70,9 @@
 #include <cstdlib>
 
 
+//#include <IsoAgLib/hal/generic_utils/can/icanfifo.h>
+#include <IsoAgLib/hal/generic_utils/can/writeCentralFifo.h>
+
 namespace __HAL {
 /////////////////////////////////////////////////////////////////////////
 // Globals
@@ -468,10 +471,19 @@ int16_t closeCanObj ( uint8_t bBusNumber,uint8_t bMsgObj )
   return HAL_NO_ERR;
 };
 
-int16_t sendCanMsg ( uint8_t bBusNumber,uint8_t /* bMsgObj */, tSend * ptSend )
+int16_t sendCanMsg ( uint8_t bBusNumber,uint8_t msgObj/* bMsgObj */, tSend * ptSend )
 {
+
   int error;
 
+#ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
+#ifdef USE_CAN_SEND_DELAY_MEASUREMENT
+/** call the IRQ function*/
+
+  __HAL::tCanMsgReg tCanregister;
+  IRQ_TriggerSend(bBusNumber,msgObj,&tCanregister);
+#endif
+#endif
   // set RTE time offset
   // t_rteOffset = rte_approx_server_now() - ( rte_time_t( getTime() ) * RTE_ONE_MILLISECOND );
 
@@ -693,6 +705,28 @@ static int send(rtd_handler_para_t* para, rtd_can_type_t type, uint32_t id, uint
       pc_data->b_dlc = size;
       pc_data->b_xtd = (type == rtd_can_type_xtd_msg)?1:0;
       memcpy(pc_data->pb_data, data, pc_data->b_dlc);
+
+
+      #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
+       __HAL::tCanMsgReg* retValue;
+      __HAL::tCanMsgReg irqInValue;
+
+
+        irqInValue.tArbit.dw = pc_data->i32_ident; /** extended or standard **/
+        irqInValue.tMessageCtrl.w = pc_data->b_xtd;
+        irqInValue.tCfg_D0.b[0] = pc_data->b_dlc;
+        irqInValue.tCfg_D0.b[1] = pc_data->pb_data[0];
+        irqInValue.tD1_D4.b[0] = pc_data->pb_data[1];
+        irqInValue.tD1_D4.b[1] = pc_data->pb_data[2];
+        irqInValue.tD1_D4.b[2] = pc_data->pb_data[3];
+        irqInValue.tD5_D7.b[0] = pc_data->pb_data[4];
+        irqInValue.tD5_D7.b[1] = pc_data->pb_data[5];
+        irqInValue.tD5_D7.b[2] = pc_data->pb_data[6];
+        irqInValue.tD5_D7.b[3] = pc_data->pb_data[7];
+
+/** the input of the IwriteCentralCanfifo is the CAN bus number which start from 1, -> we have to +1 make **/
+      retValue =  IwriteCentralCanfifo(b_bus, i16_obj+1, &irqInValue);
+      #endif
       #if 0
       if (  ((id & 0x700) == 0x700)
           || ((id & 0x700) == 0x500)

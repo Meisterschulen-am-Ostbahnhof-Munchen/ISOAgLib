@@ -59,7 +59,7 @@
  * mapped from ECU standard BIOS to the needs of
  * IsoAgLib by mostly renaming and reordering of functions, parameters
  * and types in <i>\<target\>/\<device\>/\<device\>.h</i> .
-/* ********************************************************** */
+ * ********************************************************** */
 
 #ifndef _HAL_PM167_SYSTEM_TARGET_EXTENSIONS_H_
 #define _HAL_PM167_SYSTEM_TARGET_EXTENSIONS_H_

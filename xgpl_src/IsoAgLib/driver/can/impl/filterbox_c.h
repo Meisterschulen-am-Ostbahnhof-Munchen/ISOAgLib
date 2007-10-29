@@ -104,26 +104,30 @@ namespace __IsoAgLib {
 /** Virtual Msg Box where special Filter and Mask can be defined.
   CanIo_c handles free amount of instances of this class.
   Every MsgObj_c has 1 to m appointed instances of this class.
-  Each FilterBox_c has exact one CanCustomer_c, which is sored on creation
+  Each FilterBox_c has exact one CanCustomer_c , which is sored on creation
   of a FilterBox_c instance, who registered for processing of received msg.
   @short FilterBox_c can use individual filter and mask
     for selecting received CAN telegrams and controls their processing.
 
   @author Dipl.-Inform. Achim Spangler
 */
+
 typedef enum
 {
   IdleState = 0xff,
-  InactiveState = 0xfe
+  InactiveState = 0xfe,
+  InvalidIdx = -1
 } filterBoxState_t;
 
 class FilterBox_c {
 public:
   struct CustomerLen_s
   {
+
     CustomerLen_s (CanCustomer_c* apc_customer, int8_t ai8_dlcForce) : pc_customer(apc_customer), i8_dlcForce (ai8_dlcForce) {}
 
-    CanCustomer_c* pc_customer;
+
+    CanCustomer_c * pc_customer;
     int8_t i8_dlcForce; // 0..8: DLC must exactly be 0..8.   < 0 (-1): DLC doesn't care! (default!)
   };
 
@@ -138,16 +142,21 @@ public:
     setting pointer to the root CanIo_c and to the according CANCustomer
     instance; even define specific mask and filter setting
 
-    @param apc_customer pointer to the CanCustomer_c instance, which creates this FilterBox_c instance
+     @param apc_customer pointer to the CanCustomer_c instance, which creates this FilterBox_c instance
     @param at_mask mask for this Filer_Box (MASK_TYPE defined in isoaglib_config.h)
     @param at_filter filter for this Filer_Box (MASK_TYPE defined in isoaglib_config.h)
+
     @param ren_identType select if FilterBox_c is used for standard 11bit or extended 29bit ident
     @param apc_filterBox optional parameter for getting to filterboxes connected together into the same MsgObj!
      @exception badAlloc
-  FilterBox_c(CanCustomer_c* apc_customer,
+  */
+
+ FilterBox_c(CanCustomer_c* apc_customer,
               MASK_TYPE at_mask, MASK_TYPE at_filter,
               Ident_c::identType_t ren_identType = Ident_c::StandardIdent, FilterBox_c* apc_filterBox = NULL);
-  */
+
+
+
 
   /** copy constructor which uses data of another FilterBox_c instance
     @param arc_src reference to the source FilterBox_c instance for copying
@@ -170,19 +179,22 @@ public:
   /** clear the data of this instance */
   void clearData();
 
+
   #ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
   /** close the BIOS filterbox object of this instance and close hardware CAN filterbox object */
   void closeHAL();
-
+  #endif
   /** check if this filterBox_c instance is really in use
       @return true -> filterBox is not in use
   */
   bool isIdle() {return (ui8_busNumber == IdleState && ui8_filterBoxNr == IdleState && vec_customer.empty());}
-  #endif
+
   /** store new can customer with same filter and mask
       @param pc_cancustomer  new can customer
     */
-  void insertCustomer(CanCustomer_c* pc_cancustomer, int8_t ai8_len) {vec_customer.push_back(CustomerLen_s(pc_cancustomer, ai8_len));}
+
+   void insertCustomer(CanCustomer_c* pc_cancustomer, int8_t ai8_len) {vec_customer.push_back(CustomerLen_s(pc_cancustomer, ai8_len));}
+
 
   /** configures the CAN hardware of given FilterBox (uses BIOS function with EXTENDED_HAL)
 
@@ -205,14 +217,15 @@ public:
     @param at_mask mask for this Filer_Box (MASK_TYPE defined in isoaglib_config.h)
     @param at_filter filter for this Filer_Box (MASK_TYPE defined in isoaglib_config.h)
     @param apc_customer pointer to the CanCustomer_c instance, which creates this FilterBox_c instance
-    @param ai8_dlcForce force the DLC to be exactly this long (0 to 8 bytes). use -1 for NO FORCING and accepting any length can-pkg
+    @param ai8_dlcForce force the DLC to be exactly this long (0 to 8 bytes). use -1 for NO FORCING and accepting any length can-pkg>>>>>>> .r2856
     @param ren_identType select if FilterBox_c is used for standard 11bit or extended 29bit ident
   */
-  void set (const Ident_c& arc_mask,
+   void set (const Ident_c& arc_mask,
             const Ident_c& arc_filter,
             CanCustomer_c *apc_customer = NULL,
             int8_t ai8_dlcForce = -1,
             FilterBox_c* apc_filterBox = NULL);
+
 
   /** check if ID from a CAN msg matches this FilterBox
     @param at_ident CAN ident of received msg
@@ -233,13 +246,14 @@ public:
       @param ar_customer  customer to compare
       @return               true -> customer already stored
     */
-	bool equalCustomer( const __IsoAgLib::CanCustomer_c& ar_customer ) const;
+      bool equalCustomer( const __IsoAgLib::CanCustomer_c& ar_customer ) const;
 
-  /** delete CanCustomer_c instance from array
+
+  /** delete CanCustomer_c  instance from array
       @param  ar_customer  CANCustomer to delete
       @return                true -> no more cancustomers exist, whole filterbox can be deleted
     */
-  bool deleteFilter(const __IsoAgLib::CanCustomer_c& ar_customer);
+  bool deleteFilter(const __IsoAgLib::CanCustomer_c & ar_customer);
 
   /** deliver the type of the FilterBox_c ident */
   Ident_c::identType_t identType() const {return c_filter.identType();}
@@ -271,13 +285,17 @@ public:
   /** control the processing of a received message
     (MsgObj_c::processMsg inserted data directly in CANCustomer
      -> FilterBox_c::processMsg() initiates conversion of CAN string
-        to data flags and starts processing in CanCustomer_c)
+        to data flags and starts processing in CanCustomer_c )
 
     possible errors:
-        * Err_c::precondition no valid CanCustomer_c (or derived) is registered
+        * Err_c::precondition no valid CanCustomer_c  (or derived) is registered
     @return true -> FilterBox_c was able to inform registered CANCustomer
   */
   bool processMsg();
+
+
+  int32_t getFbVecIdx(){return i32_fbVecIdx;};
+  void setFbVecIdx(int32_t ri32_fbIdx){i32_fbVecIdx = ri32_fbIdx;};
 
 private:
 // Private attributes
@@ -290,7 +308,7 @@ private:
   /** c_additionalMask for this FilterBox_c insance (used for intentionally merging objects to one MsgObj! */
   Ident_c c_additionalMask;
 
-  /**vector of pointer to pc_customer CanCustomer_c which works with the received CAN data */
+  /**vector of pointer to pc_customer CanCustomer_c  which works with the received CAN data */
   STL_NAMESPACE::vector<CustomerLen_s> vec_customer;
 
   /** number of message object */
@@ -298,6 +316,9 @@ private:
 
   /** BUS Number for systems with more than one BUS */
   uint8_t ui8_busNumber;
+
+
+  int32_t i32_fbVecIdx;
 
 #if ((defined(USE_ISO_11783)) && ((CAN_INSTANCE_CNT > PRT_INSTANCE_CNT) || defined(ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL)))
   /** we have either compiled for ISO, OR there is at least one internal / proprietary CAN channel */

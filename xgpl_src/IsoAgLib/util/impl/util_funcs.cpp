@@ -92,7 +92,7 @@
 #endif
 
 
-//using namespace std;
+using namespace std;
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {

@@ -8,6 +8,7 @@
     email                : a.spangler@osb-ag:de
  ***************************************************************************/
 
+
 /***************************************************************************
  *                                                                         *
  * This file is part of the "IsoAgLib", an object oriented program library *
@@ -90,6 +91,12 @@
 #include <IsoAgLib/util/iliberr_c.h>
 #include <IsoAgLib/util/impl/singleton.h>
 #include <IsoAgLib/hal/can.h>
+#include <IsoAgLib/hal/system.h>
+
+
+#ifdef DEBUG
+  #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
+#endif
 
 // include base standard headers and define some constants
 // (f.e. for hardware dependent settings)
@@ -112,6 +119,8 @@
   #include <list>
 #endif
 
+
+
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
@@ -131,9 +140,9 @@ typedef CAN_SINGLETON(CanIo_c) SingletonCanIo_c;
   Encapsulation of CAN IO with MsgObj_c instances in dynamic array.
   Initialization of CAN hardware, with default setting of one send object.
 
-  An __IsoAgLib::CanCustomer_c can create a FilterBox_c object with its own Filter/Mask
+  An __IsoAgLib::CanCustomer_c  can create a FilterBox_c object with its own Filter/Mask
   combination, and with automatic direct processMsg() call on received CAN
-  telegram. Direct access via pointer to __IsoAgLib::CanCustomer_c instances on FilterBox
+  telegram. Direct access via pointer to __IsoAgLib::CanCustomer_c  instances on FilterBox
   insertion. Uses dynamic array of MsgObj_c, FilterBox_c and for receive
   notification dyn. array of pointer to FilterBox_c.
 
@@ -154,25 +163,26 @@ class CanIo_c : public SingletonCanIo_c {
     typedef STL_NAMESPACE::USABLE_SLIST<MsgObj_c> ArrMsgObj;
     #endif
     /** define dynamic array of FilterBox_c instances;
-      if a __IsoAgLib::CanCustomer_c creates one FilterBox_c definitions,
+      if a __IsoAgLib::CanCustomer_c  creates one FilterBox_c definitions,
       one object instance is inserted in array
     */
-    #ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
-    typedef STL_NAMESPACE::USABLE_SLIST<FilterBox_c,STL_NAMESPACE::__malloc_alloc_template<0> > ArrFilterBox;
-    #else
-    typedef STL_NAMESPACE::USABLE_SLIST<FilterBox_c> ArrFilterBox;
-    #endif
-  #else
-   typedef STL_NAMESPACE::vector<FilterBox_c> ArrFilterBox;
   #endif //SYSTEM_WITH_ENHANCED_CAN_HAL
 
+
+
+   typedef STL_NAMESPACE::vector<FilterBox_c> ArrFilterBox;
+
+
  public:
+
+
 
    /** states if this Application should be prioritized over other applications.
     * This is being set simply for this "can_server"-client.
     * NOTE: This feature only works for applications running utilizing the "can_server"
     */
    static bool sb_sendPrioritized;
+
 
 
   /** Initialize the CAN hardware, and instantiate one msg object for
@@ -214,6 +224,31 @@ class CanIo_c : public SingletonCanIo_c {
   /** check if this CanIo_c instance is configured so that it can be used to send */
   bool isReady2Send() const { return ( ui8_busNumber != 0xFF )?true:false;}
 
+
+/** is the fist add after a reconfiguration */
+ bool isFirstAddFilterBox() const
+{
+    if(i32_minChangedFilterBox == -1) return true; //it is the fist addFilterBox after the reconfiguration or the initCAN
+
+    return false;
+}
+
+/** fast or full reconfiguration */
+  bool isFullReconfigNecessary()const {return ((i32_minChangedFilterBox < 0 )?  true:  false);}
+
+/** set full reconfiguration */
+ void setFullReconfigNecessary(){i32_minChangedFilterBox = -2 ;}
+
+/** set value */
+ void setMinChangedFilterBox(int32_t ai32_value){i32_minChangedFilterBox = ai32_value;}
+
+/** get a filterbox index */
+  int32_t getMinChangedFilterBox() const { return (i32_minChangedFilterBox >= 0 )? i32_minChangedFilterBox : 0;}
+
+/** init value */
+  void initMinChangedFilterBox(){i32_minChangedFilterBox = -1 ;}
+
+
   /** every subsystem of IsoAgLib has explicit function for controlled shutdown */
   void close( void );
 
@@ -232,10 +267,12 @@ class CanIo_c : public SingletonCanIo_c {
   /** provide BUS number */
   uint8_t getBusNumber( void ) const { return ui8_busNumber;}
 
+  #ifdef USE_CAN_MEASURE_BUSLOAD
   /** deliver actual BUS load in baud
     @return baudrate in [kbaud] on used CAN BUS
   */
   uint16_t getBusLoad() const;
+  #endif
 
   /** wait until specified timeout or until next CAN message receive
    *  @return true -> there are CAN messages waiting for process. else: return due to timeout
@@ -299,9 +336,11 @@ class CanIo_c : public SingletonCanIo_c {
     @param apc_iter optional pointer Iterator to result FilterBox
     @return true -> same FilterBox_c already exist
   */
+
   bool existFilter(const __IsoAgLib::CanCustomer_c& ar_customer,
       const Ident_c& ac_compMask, const Ident_c& ac_compFilter,
       ArrFilterBox::iterator* apc_iter = NULL);
+
 
   /** create a Filter Box with specified aui32_mask/aui32_filter
     on ui8_busNr of object; reconfig HW CAN MsgObj_c only if
@@ -316,7 +355,7 @@ class CanIo_c : public SingletonCanIo_c {
         * Err_c::badAlloc on not enough memory for new FilterBox
         instance or for new configured MsgObj_c's
     @see __IsoAgLib::CANCustomer
-    @param ar_customer reference to __IsoAgLib::CanCustomer_c which needs
+    @param ar_customer reference to __IsoAgLib::CanCustomer_c  which needs
          filtered messages (-> on received msg call
        ar_customer.processMsg())
     @param aui32_mask individual mask for this filter box
@@ -329,13 +368,14 @@ class CanIo_c : public SingletonCanIo_c {
       a reference to the created FilterBox is returned
    @exception badAlloc
   */
+
   FilterBox_c* insertFilter(__IsoAgLib::CanCustomer_c& ar_customer, uint32_t aui32_mask,
                             uint32_t aui32_filter, bool ab_reconfigImmediate = true,
                             const Ident_c::identType_t at_identType = DEFAULT_IDENT_TYPE,
                             int8_t ai8_dlcForce = -1,
                             FilterBox_c* apc_connectedFilterBox = NULL);
 
-  FilterBox_c* insertFilter(__IsoAgLib::CanCustomer_c& ar_customer, uint32_t aui32_mask,
+   FilterBox_c* insertFilter(__IsoAgLib::CanCustomer_c& ar_customer, uint32_t aui32_mask,
                             uint32_t aui32_filter, bool ab_reconfigImmediate,
                             const Ident_c::identType_t at_identType,
                             uint32_t at_connectedMask, uint32_t at_connectedFilter, const Ident_c::identType_t at_connectedIdentType,
@@ -376,6 +416,7 @@ class CanIo_c : public SingletonCanIo_c {
       const Ident_c::identType_t at_identType = DEFAULT_IDENT_TYPE);
 
   bool deleteAllFiltersForCustomer (const __IsoAgLib::CanCustomer_c& ar_customer);
+
 
 /**
     initiate processing of all received msg
@@ -441,6 +482,27 @@ class CanIo_c : public SingletonCanIo_c {
    */
   void setSendPriority(bool ab_sendPrioritized);
 
+  FilterBox_c& getFilterBoxInstance(int32_t ai32_fbIdx) {return arrFilterBox[ai32_fbIdx];};
+
+
+#ifdef DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION
+#ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
+
+   void printMsgObjInfo()
+  {
+INTERNAL_DEBUG_DEVICE << " CanIo_c::CAN Number " << int(getBusNumber()) << INTERNAL_DEBUG_DEVICE_ENDL;
+
+      for (ArrMsgObj::iterator pc_iterMsgObj = arrMsgObj.begin();
+            pc_iterMsgObj != arrMsgObj.end();
+            pc_iterMsgObj++
+            )
+        {
+            pc_iterMsgObj->printMyFilterBox();
+        }
+   };
+#endif
+#endif
+
  protected: // Protected methods
 #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
   /** evaluate common bits of all defined filterBox
@@ -494,6 +556,11 @@ class CanIo_c : public SingletonCanIo_c {
     */
   uint8_t minHALMsgObjNr()const{return ui8_min_msgObjLimit;}
 
+  /** get offset for received messages
+      @return offset for received messages
+    */
+ uint8_t minReceiveObjNr() const {return ui8_minReceiveObjNr;}
+
   /** set min msg obj nr
       @param ab_limit wanted min msg obj nr
     */
@@ -533,10 +600,6 @@ class CanIo_c : public SingletonCanIo_c {
     */
   uint8_t updateMinReceiveObjNr();
 
-  /** get offset for received messages
-      @return offset for received messages
-    */
-  uint8_t minReceiveObjNr() const {return ui8_minReceiveObjNr;}
 
   /** switch CAN bitrate (possible during runtime
       with automatic reconfiguring of CAN MsgObj)
@@ -574,6 +637,9 @@ class CanIo_c : public SingletonCanIo_c {
   size_t tm_MsgObjCnt;
 #endif
 
+/** for the fast reconfiguration */
+    int32_t i32_minChangedFilterBox;
+
   /** dynamic array of FilterBox_c instances which
       represents the demanded filter boxes
       @see FilterBox
@@ -581,6 +647,42 @@ class CanIo_c : public SingletonCanIo_c {
   ArrFilterBox arrFilterBox;
   size_t tm_filterBoxCnt;
 
+/** return a reference of a FilterBox instance */
+
+
+ #if defined( DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION )
+
+ void printMyFilterBox(){
+
+    for ( uint32_t i = 0; i < arrFilterBox.size(); i++ )
+      {
+        INTERNAL_DEBUG_DEVICE << "CANIO::VECTOR FilterBox :Filter: 0x"
+          << arrFilterBox[i].filter().ident()
+          << ", Mask: 0x"
+		  #ifdef SYSTEM_PC
+          << std::hex
+		  #endif
+          << arrFilterBox[i].mask().ident()
+          << ", Additional Mask: 0x"
+		  #ifdef SYSTEM_PC
+          << std::hex
+		  #endif
+          << arrFilterBox[i].additionalMask().ident();
+        INTERNAL_DEBUG_DEVICE  << ", IdentType: "
+		 #ifdef SYSTEM_PC
+        << std::dec
+        #endif
+        << arrFilterBox[i].identType()
+         << ", FbVecId : "
+		 #ifdef SYSTEM_PC
+         << std::dec
+		 #endif
+         << arrFilterBox[i].getFbVecIdx();
+       INTERNAL_DEBUG_DEVICE  << INTERNAL_DEBUG_DEVICE_ENDL;
+
+      }
+    }
+#endif
   /** temp filer box to avoid new/delete for each insert of a filterBox
       @see FilterBox
     */
@@ -602,6 +704,9 @@ class CanIo_c : public SingletonCanIo_c {
   uint16_t ui16_bitrate;
 
 
+  int32_t mi32_endLastReconfigTime;
+
+  void setEndLastReconfigTime(){ mi32_endLastReconfigTime = HAL::getTime(); }
 
   /** global mask with standard 11bit type */
   Ident_c c_maskStd;
@@ -611,6 +716,7 @@ class CanIo_c : public SingletonCanIo_c {
 
   /** global last msg mask */
   Ident_c c_maskLastmsg;
+
 
 
   /** identifier type  CanIo_c::S, CanIo_c::extendendIdent
@@ -667,7 +773,6 @@ class CanIo_c : public SingletonCanIo_c {
   /** C-style function, to get access to the unique CanIo_c singleton instance */
   CanIo_c& getCanInstance( void );
 #endif
-
 
 /** this typedef is only for some time to provide backward compatibility at API level */
 typedef CanIo_c CANIO_c;

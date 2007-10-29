@@ -51,10 +51,16 @@
 #ifndef TYPEDEF_PM167_H
 #define TYPEDEF_PM167_H
 
+#if defined(__TSW_CPP__)
+ #include <cstddef>
+ #include <cstring>
+ typedef unsigned int size_t;
+#endif
 
-typedef byte uint8_t;
+
+typedef unsigned char uint8_t;
 typedef char int8_t;
-typedef word uint16_t;
+typedef unsigned int uint16_t;
 typedef int int16_t;
 typedef unsigned long uint32_t;
 typedef long int32_t;

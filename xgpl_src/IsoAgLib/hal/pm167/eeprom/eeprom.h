@@ -108,14 +108,14 @@ namespace HAL
    @return EEPROM size in byte
   */
   inline int16_t getEepromSize(void)
-    {return (1024 * __HAL::getEepromSize());};
+    {return (1024 * __HAL::get_eeprom_size());};
 
   /**
    deliver the EEPROM segment size in kbyte
    @return EEPROM segment size in kbyte
   */
   inline int16_t getEepromSegmentSize(void)
-    {return __HAL::getEepromSegmentSize();};
+    {return __HAL::get_eeprom_segment_size();};
 
   /**
     read amount of uint8_t in uint8_t string variable
@@ -125,7 +125,7 @@ namespace HAL
     @return error state (C_NO_ERR == o.k.)
   */
   inline int16_t eepromRead(uint16_t wAddress,uint16_t wNumber,uint8_t *pbByte)
-    {return __HAL::eepromRead(wAddress, wNumber, pbByte);};
+    {return __HAL::eeprom_read(wAddress, wNumber, pbByte);};
 
   /**
     write amount of uint8_t from string into EEPROM from given start adress
@@ -135,7 +135,7 @@ namespace HAL
     @return error state (C_NO_ERR == o.k.)
   */
   inline int16_t eepromWrite(uint16_t wAddress,uint16_t wNumber,uint8_t *pbData)
-    {return __HAL::eepromWrite(wAddress, wNumber, pbData);};
+    {return __HAL::eeprom_write(wAddress, wNumber, pbData);};
 
   /**
     set or unset set write protection of EEPROM, should be called before
@@ -144,14 +144,14 @@ namespace HAL
     @return error state (C_NO_ERR == o.k.)
   */
   inline int16_t eepromWp(bool bitMode)
-    {return __HAL::eepromWp(bitMode);};
+    {return __HAL::eeprom_wp(bitMode);};
 
   /**
     check if EEPROM is ready for actions
     @return EE_READY -> ready
   */
   inline int16_t eepromReady(void)
-    {return __HAL::eepromReady();};
+    {return __HAL::eeprom_ready();};
 
  /*@}*/
 

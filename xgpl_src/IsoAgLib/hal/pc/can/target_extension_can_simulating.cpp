@@ -60,8 +60,12 @@
        #include <windows.h>
 #endif
 
+
+
 #include <cstdlib>	// Include before vector or else CNAMESPACE stuff is screwed up for Tasking
 #include <vector>
+
+#include <IsoAgLib/hal/generic_utils/can/writeCentralFifo.h>
 
 namespace __HAL {
 
@@ -105,7 +109,7 @@ boolean pb_bXtd;
   //ArrMsgObj arrMsgObj[cui32_maxCanBusCnt];
   STL_NAMESPACE::vector<tMsgObj> arrMsgObj[cui32_maxCanBusCnt];
 #endif
- 
+
 ///////////////
 
 //static boolean pb_bXtd[cui32_maxCanBusCnt][15];
@@ -118,7 +122,7 @@ int16_t can_startDriver()
 int16_t can_stopDriver()
 {
 #ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
-	
+
   for( uint32_t i=0; i<cui32_maxCanBusCnt; i++ )
 	  arrMsgObj[i].clear();
 #endif
@@ -132,8 +136,10 @@ int32_t can_lastReceiveTime()
   return i32_lastReceiveTime;
 }
 
+#ifdef USE_CAN_SEND_DELAY_MEASUREMENT
 /** there's no send-delay recognition in SIMULATING */
 int32_t getMaxSendDelay(uint8_t aui8_busNr) { return 0; }
+#endif
 
 int16_t getCanMsgBufCount(uint8_t bBusNumber,uint8_t bMsgObj)
 {
@@ -154,7 +160,7 @@ int16_t init_can ( uint8_t bBusNumber,uint16_t wGlobMask,uint32_t dwGlobMask,uin
   static bool firstCall = true;
   if ( firstCall )
   {
-#ifndef SYSTEM_WITH_ENHANCED_CAN_HAL 
+#ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
     for (i=0; i < 15; i++)
     {
       arrMsgObj[bBusNumber][i].pOpen = arrMsgObj[bBusNumber][i].pSendOpen = arrMsgObj[bBusNumber][i].lastCloseTimeArr = 0;
@@ -205,22 +211,6 @@ int16_t changeGlobalMask ( uint8_t bBusNumber,uint16_t wGlobMask,uint32_t dwGlob
   return HAL_NO_ERR;
 }
 
-/**
-  check if MsgObj is currently locked
-  @param aui8_busNr number of the BUS to check
-  @param aui8_msgobjNr number of the MsgObj to check
-  @return true -> MsgObj is currently locked
-*/
-bool getCanMsgObjLocked( uint8_t aui8_busNr, uint8_t aui8_msgobjNr )
-{
-#ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
-  if ( ( aui8_busNr > 1 ) || ( aui8_msgobjNr> 14 ) ) return true;
-#else
-  if ( ( aui8_busNr > 1 ) || ( aui8_msgobjNr> arrMsgObj[aui8_busNr].size()-1 ) ) return true;
-#endif
-  else if ( arrMsgObj[aui8_busNr][aui8_msgobjNr].b_canBufferLock ) return true;
-  else return false;
-}
 
 int16_t closeCan ( uint8_t bBusNumber )
 {
@@ -289,6 +279,8 @@ void scanCanMsgLine( uint8_t bBusNumber,uint8_t bMsgObj )
       && ( iResult != EOF ) )
     {
       arrMsgObj[bBusNumber][bMsgObj].pRead.bDlc = iResult;
+
+
       //printf("vorabgelesene Zeile in BIOS Funktion:\n%s\n", zeile);
       break;
     }
@@ -312,12 +304,12 @@ int16_t configCanObj ( uint8_t bBusNumber, uint8_t bMsgObj, tCanObjConfig * ptCo
   // add a new element in the vector (simply resize with old size + 1)
   arrMsgObj[bBusNumber].resize(arrMsgObj[bBusNumber].size() + 1);
   bMsgObj = arrMsgObj[bBusNumber].size()-1;
-  
+
   arrMsgObj[bBusNumber][bMsgObj].pOpen = arrMsgObj[bBusNumber][bMsgObj].pSendOpen = arrMsgObj[bBusNumber][bMsgObj].lastCloseTimeArr = 0;
 #endif
 
   arrMsgObj[bBusNumber][bMsgObj].pb_bXtd = ptConfig->bXtd;
-  arrMsgObj[bBusNumber][bMsgObj].b_canBufferLock = false;
+
 
   /* test ob sendeobjekt configuriert wird */
   if (ptConfig->bMsgType == TX)
@@ -385,55 +377,6 @@ int16_t configCanObj ( uint8_t bBusNumber, uint8_t bMsgObj, tCanObjConfig * ptCo
   return HAL_NO_ERR;
 }
 
-int16_t chgCanObjId ( uint8_t bBusNumber, uint8_t bMsgObj, uint32_t dwId, uint8_t bXtd )
-{
-  char name[50];
-  char zeile[100];
-
-  arrMsgObj[bBusNumber][bMsgObj].b_canBufferLock = false;
-  if (arrMsgObj[bBusNumber][bMsgObj].pOpen != 1) return 0;
-
-  arrMsgObj[bBusNumber][bMsgObj].pb_bXtd = bXtd;
-#ifdef WIN32
-  sprintf(name, "..\\..\\..\\simulated_io\\can_%hx_%x_", bBusNumber, dwId);
-#else
-  sprintf(name, "../../../simulated_io/can_%hx_%x_", bBusNumber, dwId);
-#endif
-  if (bXtd) strcat(name, "ext");
-  else strcat(name, "std");
-
-  fclose(arrMsgObj[bBusNumber][bMsgObj].can_input);
-  arrMsgObj[bBusNumber][bMsgObj].can_input = fopen(name, "r");
-
-  // BEGIN: Added by M.Wodok 6.12.04
-  if (arrMsgObj[bBusNumber][bMsgObj].can_input == NULL) {
-    sprintf(name, "can_%hx_%x_", bBusNumber, dwId);
-    if (bXtd) strcat(name, "ext");
-    else strcat(name, "std");
-
-    arrMsgObj[bBusNumber][bMsgObj].can_input = fopen(name, "r");
-  }
-  // END: Added by M.Wodok 6.12.04
-
-  /* erste Zeile einlese */
-  scanCanMsgLine( bBusNumber, bMsgObj );
-  return HAL_NO_ERR;
-}
-/**
-  lock a MsgObj to avoid further placement of messages into buffer.
-  @param aui8_busNr number of the BUS to config
-  @param aui8_msgobjNr number of the MsgObj to config
-  @param ab_doLock true==lock(default); false==unlock
-  @return HAL_NO_ERR == no error;
-          HAL_CONFIG_ERR == BUS not initialised or ident can't be changed
-          HAL_RANGE_ERR == wrong BUS or MsgObj number
-  */
-int16_t lockCanObj( uint8_t aui8_busNr, uint8_t aui8_msgobjNr, bool ab_doLock )
-{ // first get waiting messages
-  checkMsg();
-  arrMsgObj[aui8_busNr][aui8_msgobjNr].b_canBufferLock = ab_doLock;
-  return HAL_NO_ERR;
-}
 
 int16_t chgCanObjPause ( uint8_t bBusNumber, uint8_t bMsgObj, uint16_t wPause)
 {
@@ -465,7 +408,7 @@ int16_t closeCanObj ( uint8_t bBusNumber,uint8_t bMsgObj )
 #ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
 	arrMsgObj[bBusNumber].erase(arrMsgObj[bBusNumber].begin()+bMsgObj);
 #endif
-  
+
   return HAL_NO_ERR;
 };
 
@@ -475,9 +418,21 @@ int16_t sendCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tSend * ptSend )
   int16_t i = 0;
   int32_t i32_sendTimestamp = getTime();
   memcpy(data, ptSend->abData, ptSend->bDlc);
+
   if (i32_lastSendTime + ui16_sendPause > i32_sendTimestamp)
     i32_sendTimestamp = i32_lastSendTime + ui16_sendPause;
   i32_lastSendTime = i32_sendTimestamp;
+
+#ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
+#ifdef USE_CAN_SEND_DELAY_MEASUREMENT
+  /** call the IRQ function */
+  __HAL::tCanMsgReg tCanregister;
+  __HAL::tCanMsgReg* retValue;
+
+  retValue = __HAL::IRQ_TriggerSend(bBusNumber,bMsgObj,&tCanregister);
+#endif
+#endif
+
   if (ptSend->bXtd)
   { // extended Ident_c mit Ident_c Laenge 5
     fprintf(can_output[bBusNumber][bMsgObj],
@@ -531,6 +486,26 @@ int16_t getCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tReceive * ptReceive )
     ptReceive->bXtd = arrMsgObj[bBusNumber][bMsgObj].pb_bXtd;
     arrMsgObj[bBusNumber][bMsgObj].lastCloseTimeArr = arrMsgObj[bBusNumber][bMsgObj].pRead.tReceiveTime.l1ms;
 
+    #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
+       __HAL::tCanMsgReg* retValue;
+      __HAL::tCanMsgReg irqInValue;
+
+        irqInValue.tArbit.dw = ptReceive->dwId; /** extended or standard **/
+        irqInValue.tMessageCtrl.w = arrMsgObj[bBusNumber][bMsgObj].pb_bXtd;
+        irqInValue.tCfg_D0.b[0] = ptReceive->bDlc;
+        irqInValue.tCfg_D0.b[1] = ptReceive->abData[0];
+        irqInValue.tD1_D4.b[0] = ptReceive->abData[1];
+        irqInValue.tD1_D4.b[1] = ptReceive->abData[2];
+        irqInValue.tD1_D4.b[2] = ptReceive->abData[3];
+        irqInValue.tD5_D7.b[0] = ptReceive->abData[4];
+        irqInValue.tD5_D7.b[1] = ptReceive->abData[5];
+        irqInValue.tD5_D7.b[2] = ptReceive->abData[6];
+        irqInValue.tD5_D7.b[3] = ptReceive->abData[7];
+
+/** the input of the IwriteCentralCanfifo is the CAN bus number which start from 1, -> we have to +1 make **/
+      retValue =  IwriteCentralCanfifo(bBusNumber, bMsgObj+1, &irqInValue);
+      #endif
+
     //printf("in getCanMsg len rec %d und dat %d\n",ptReceive->bDlc, arrMsgObj[bBusNumber][bMsgObj].pRead.bDlc);
 
     /* naechste Zeile einlesen */
@@ -544,7 +519,7 @@ int16_t checkMsg()
 {
 
 printf("checkMsg\n");
-	
+
   int16_t i = 0, j = 0;
   int16_t result = 0;
   int16_t empfangen = 0;

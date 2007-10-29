@@ -76,7 +76,7 @@ class iCanIo_c : private __IsoAgLib::CanIo_c {
  private:
   // private typedef alias names
   typedef STL_NAMESPACE::bad_alloc bad_alloc;
-  typedef __IsoAgLib::CanCustomer_c CanCustomer_c;
+  typedef __IsoAgLib::CanCustomer_c  CanCustomer_c ;
   typedef __IsoAgLib::CanPkg_c CanPkg_c;
   typedef __IsoAgLib::Ident_c Ident_c;
 
@@ -129,11 +129,14 @@ class iCanIo_c : private __IsoAgLib::CanIo_c {
            ==0 --> no messages were received.
            >0  --> all messages are processed, number of messages  */
   int16_t processMsg() { return CanIo_c::processMsg();};
+
+ #ifdef USE_CAN_MEASURE_BUSLOAD
   /**
     deliver actual BUS load in baud
     @return baudrate in [baud] on used CAN BUS
   */
   int16_t getBusLoad() const {return CanIo_c::getBusLoad();};
+ #endif
 
   /** wait until specified timeout or until next CAN message receive
    *  @return true -> there are CAN messages waiting for process. else: return due to timeout
@@ -188,7 +191,7 @@ class iCanIo_c : private __IsoAgLib::CanIo_c {
       (default DEFAULT_IDENT_TYPE set in isoaglib_config.h)
     @return true -> same FilterBox_c already exist
   */
-  bool existFilter(const __IsoAgLib::CanCustomer_c& ar_customer,
+  bool existFilter(const __IsoAgLib::CanCustomer_c & ar_customer,
     uint16_t aui32_mask, uint16_t aui32_filter,
     Ident_c::identType_t ren_identType = DEFAULT_IDENT_TYPE,
       ArrFilterBox::iterator* apc_iter = NULL)
@@ -204,7 +207,7 @@ class iCanIo_c : private __IsoAgLib::CanIo_c {
       (default DEFAULT_IDENT_TYPE set in isoaglib_config.h)
     @return true -> same FilterBox_c already exist
   */
-  bool existFilter(const __IsoAgLib::CanCustomer_c& ar_customer,
+  bool existFilter(const __IsoAgLib::CanCustomer_c & ar_customer,
       uint32_t aui32_mask, uint32_t aui32_filter,
       Ident_c::identType_t ren_identType = DEFAULT_IDENT_TYPE,
       ArrFilterBox::iterator* apc_iter = NULL)
@@ -236,7 +239,7 @@ class iCanIo_c : private __IsoAgLib::CanIo_c {
         * Err_c::badAlloc on not enough memory for new FilterBox
           instance or for new configured MsgObj_c's
     @see IsoAgLib::iCANCustomer
-    @param ar_customer reference to IsoAgLib::iCanCustomer_c which needs
+    @param ar_customer reference to IsoAgLib::iCanCustomer_c  which needs
            filtered messages (-> on received msg call
            ar_customer.processMsg())
     @param at_mask individual mask for this filter box
@@ -249,12 +252,13 @@ class iCanIo_c : private __IsoAgLib::CanIo_c {
           performed without errors
     @exception badAlloc
   */
-  inline bool insertFilter(IsoAgLib::iCanCustomer_c& ar_customer, MASK_TYPE at_mask,
+   inline bool insertFilter(IsoAgLib::iCanCustomer_c& ar_customer, MASK_TYPE at_mask,
        MASK_TYPE at_filter, bool ab_reconfigImmediate = true,
                      const Ident_c::identType_t at_identType = DEFAULT_IDENT_TYPE)
   {return CanIo_c::insertFilter
-      (static_cast<CanCustomer_c&>(ar_customer),
+    (static_cast<CanCustomer_c&>(ar_customer),
        at_mask, at_filter, ab_reconfigImmediate, at_identType) ? true : false;
+
   };
   /**
     reconfigure the MsgObj after insert/delete of FilterBox
@@ -270,13 +274,17 @@ class iCanIo_c : private __IsoAgLib::CanIo_c {
         (defualt DEFAULT_IDENT_TYPE defined in isoaglib_config.h)
     @return true -> FilterBox_c found and deleted
   */
-  bool deleteFilter(const __IsoAgLib::CanCustomer_c& ar_customer,
+
+
+   bool deleteFilter(const IsoAgLib::iCanCustomer_c& ar_customer,
       MASK_TYPE aui32_mask, MASK_TYPE aui32_filter,
       const Ident_c::identType_t at_identType = DEFAULT_IDENT_TYPE)
-  {return CanIo_c::deleteFilter(ar_customer, aui32_mask, aui32_filter, at_identType);};
+  {return CanIo_c::deleteFilter(static_cast<const CanCustomer_c &>(ar_customer), aui32_mask, aui32_filter, at_identType);};
+
 
   bool deleteAllFiltersForCustomer (const __IsoAgLib::CanCustomer_c& ar_customer)
   { return CanIo_c::deleteAllFiltersForCustomer (ar_customer); }
+
 
 
   /**
@@ -337,7 +345,6 @@ class iCanIo_c : private __IsoAgLib::CanIo_c {
   inline iCanIo_c& getIcanInstance( void )
   { return static_cast<iCanIo_c&>(__IsoAgLib::getCanInstance());};
 #endif
-
 
 /** this typedef is only for some time to provide backward compatibility at API level */
 typedef iCanIo_c iCANIO_c;
