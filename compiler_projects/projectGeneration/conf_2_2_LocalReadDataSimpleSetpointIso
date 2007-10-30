@@ -113,17 +113,16 @@ USE_TARGET_SYSTEM="pc_linux"
 # default: off
 PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
 
-# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"linux_server_client"|"vector_canlib"|"vector_xl_drv_lib"|"sontheim"
+# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"msq_server"|"socket_server"|"vector_canlib"|"vector_xl_drv_lib"|"sontheim"
 # targets other than pc_linux or pc_win32 can only use "sys"
-# only target "pc_win32" can use the driver "vector_canlib"|"vector_xl_drv_lib"|"sontheim"
-# only target "pc_linux" can us the driver "rte"|"linux_server_client"
-USE_CAN_DRIVER="linux_server_client"
+# only target "pc_win32" can use the driver "vector_canlib"|"vector_xl_drv_lib"|"sontheim"|"socket_server"
+# only target "pc_linux" can us the driver "rte"|"msq_server"|"socket_server"
+USE_CAN_DRIVER="msq_server"
 
-# especially the Linux linux_server_client driver type is available for different can cards,
+# the can server ("msq_server"|"socket_server") is available for different can cards,
 # where all of them use some common files and just one individual file.
-# the suffix of the individual CAN card has to be specified with
-# PRJ_CAN_DRIVER_SUFFIX=A1|pcan (default: A!)
-# PRJ_CAN_DRIVER_SUFFIX="A1"
+# PRJ_CAN_DRIVER_DEVICE=pc|pcan|A1 (default: pc)
+PRJ_CAN_DRIVER_DEVICE="pc"
 
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
 # targets other than pc_linux or pc_win32 can only use "sys"
