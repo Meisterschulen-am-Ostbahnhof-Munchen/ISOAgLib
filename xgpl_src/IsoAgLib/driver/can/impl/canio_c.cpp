@@ -2259,6 +2259,21 @@ void CanIo_c::setSendPriority(bool ab_sendPrioritized)
   sb_sendPrioritized = ab_sendPrioritized;
 }
 
+#if defined(DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION) && !defined(SYSTEM_WITH_ENHANCED_CAN_HAL)
+void CanIo_c::printMsgObjInfo()
+{
+  INTERNAL_DEBUG_DEVICE << " CanIo_c::CAN Number " << int(getBusNumber()) << INTERNAL_DEBUG_DEVICE_ENDL;
+
+  for (ArrMsgObj::iterator pc_iterMsgObj = arrMsgObj.begin();
+        pc_iterMsgObj != arrMsgObj.end();
+        pc_iterMsgObj++
+        )
+    {
+        pc_iterMsgObj->printMyFilterBox();
+    }
+};
+#endif
+
 
 #ifdef DEBUG
 void CanIo_c::doDebug(uint8_t ui8_busNr, uint8_t ui8_sendObjNr)
@@ -2282,4 +2297,37 @@ void CanIo_c::doDebug(uint8_t ui8_busNr, uint8_t ui8_sendObjNr)
   }
 }
 #endif
+
+#if defined( DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION )
+void CanIo_c::printMyFilterBox(){
+
+  for ( uint32_t i = 0; i < arrFilterBox.size(); i++ )
+  {
+    INTERNAL_DEBUG_DEVICE << "CANIO::VECTOR FilterBox :Filter: 0x"
+        << arrFilterBox[i].filter().ident()
+        << ", Mask: 0x"
+    #ifdef SYSTEM_PC
+        << std::hex
+    #endif
+        << arrFilterBox[i].mask().ident()
+        << ", Additional Mask: 0x"
+    #ifdef SYSTEM_PC
+        << std::hex
+    #endif
+        << arrFilterBox[i].additionalMask().ident();
+      INTERNAL_DEBUG_DEVICE  << ", IdentType: "
+    #ifdef SYSTEM_PC
+      << std::dec
+      #endif
+      << arrFilterBox[i].identType()
+        << ", FbVecId : "
+    #ifdef SYSTEM_PC
+        << std::dec
+    #endif
+        << arrFilterBox[i].getFbVecIdx();
+    INTERNAL_DEBUG_DEVICE  << INTERNAL_DEBUG_DEVICE_ENDL;
+  }
+}
+#endif
+
 } // end of namespace __IsoAgLib

@@ -94,9 +94,6 @@
 #include <IsoAgLib/hal/system.h>
 
 
-#ifdef DEBUG
-  #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
-#endif
 
 // include base standard headers and define some constants
 // (f.e. for hardware dependent settings)
@@ -485,23 +482,9 @@ class CanIo_c : public SingletonCanIo_c {
   FilterBox_c& getFilterBoxInstance(int32_t ai32_fbIdx) {return arrFilterBox[ai32_fbIdx];};
 
 
-#ifdef DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION
-#ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
-
-   void printMsgObjInfo()
-  {
-INTERNAL_DEBUG_DEVICE << " CanIo_c::CAN Number " << int(getBusNumber()) << INTERNAL_DEBUG_DEVICE_ENDL;
-
-      for (ArrMsgObj::iterator pc_iterMsgObj = arrMsgObj.begin();
-            pc_iterMsgObj != arrMsgObj.end();
-            pc_iterMsgObj++
-            )
-        {
-            pc_iterMsgObj->printMyFilterBox();
-        }
-   };
-#endif
-#endif
+  #if defined(DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION) && !defined(SYSTEM_WITH_ENHANCED_CAN_HAL)
+  void printMsgObjInfo();
+  #endif
 
  protected: // Protected methods
 #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
@@ -651,38 +634,8 @@ INTERNAL_DEBUG_DEVICE << " CanIo_c::CAN Number " << int(getBusNumber()) << INTER
 
 
  #if defined( DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION )
-
- void printMyFilterBox(){
-
-    for ( uint32_t i = 0; i < arrFilterBox.size(); i++ )
-      {
-        INTERNAL_DEBUG_DEVICE << "CANIO::VECTOR FilterBox :Filter: 0x"
-          << arrFilterBox[i].filter().ident()
-          << ", Mask: 0x"
-		  #ifdef SYSTEM_PC
-          << std::hex
-		  #endif
-          << arrFilterBox[i].mask().ident()
-          << ", Additional Mask: 0x"
-		  #ifdef SYSTEM_PC
-          << std::hex
-		  #endif
-          << arrFilterBox[i].additionalMask().ident();
-        INTERNAL_DEBUG_DEVICE  << ", IdentType: "
-		 #ifdef SYSTEM_PC
-        << std::dec
-        #endif
-        << arrFilterBox[i].identType()
-         << ", FbVecId : "
-		 #ifdef SYSTEM_PC
-         << std::dec
-		 #endif
-         << arrFilterBox[i].getFbVecIdx();
-       INTERNAL_DEBUG_DEVICE  << INTERNAL_DEBUG_DEVICE_ENDL;
-
-      }
-    }
-#endif
+ void printMyFilterBox();
+ #endif
   /** temp filer box to avoid new/delete for each insert of a filterBox
       @see FilterBox
     */
