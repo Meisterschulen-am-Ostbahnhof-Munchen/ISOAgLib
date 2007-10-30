@@ -2628,13 +2628,13 @@ xgpl_src/IsoAgLib/hal/pc/can/can_server_A1.cpp -text
 xgpl_src/IsoAgLib/hal/pc/can/can_server_helper.cpp -text
 xgpl_src/IsoAgLib/hal/pc/can/can_server_msq.cpp -text
 xgpl_src/IsoAgLib/hal/pc/can/can_server_pc.cpp -text
+xgpl_src/IsoAgLib/hal/pc/can/can_server_pcan.cpp -text
 xgpl_src/IsoAgLib/hal/pc/can/can_server_sock.cpp -text
 xgpl_src/IsoAgLib/hal/pc/can/msq_helper.cpp -text
 xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_A1_ASCII.cpp -text
 xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_A1_binary.cpp -text
 xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_client_msq.cpp -text
 xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_client_sock.cpp -text
-xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_server_pcan.cpp -text
 xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_w32_sontheim_canlpt.cpp -text
 xgpl_src/IsoAgLib/util/compiler_adaptation.h -text
 xgpl_src/IsoAgLib/util/config.h -text
