@@ -2624,7 +2624,6 @@ xgpl_src/IsoAgLib/hal/mitron167/system/time_clock.c -text
 xgpl_src/IsoAgLib/hal/mitron167/typedef.h -text
 xgpl_src/IsoAgLib/hal/pc/can/can_msq.h -text
 xgpl_src/IsoAgLib/hal/pc/can/can_server.h -text
-xgpl_src/IsoAgLib/hal/pc/can/can_server_A1.cpp -text
 xgpl_src/IsoAgLib/hal/pc/can/can_server_helper.cpp -text
 xgpl_src/IsoAgLib/hal/pc/can/can_server_msq.cpp -text
 xgpl_src/IsoAgLib/hal/pc/can/can_server_pc.cpp -text
