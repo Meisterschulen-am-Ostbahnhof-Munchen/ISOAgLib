@@ -1184,7 +1184,7 @@ uint32_t ui32_msgNbr;
        }// ret== true
 
     #ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
-    HAL::can_useMsgobjPopFront(ui8_busNumber, i32_ident);
+    HAL::can_useMsgobjPopFront(ui8_busNumber, ui32_msgNbr);
     #endif
 
     if (( Scheduler_c::getCentralSchedulerAvailableExecTime() == 0 ) && (!b_forceProcessAll))
