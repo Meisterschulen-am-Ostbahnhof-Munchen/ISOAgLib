@@ -124,20 +124,20 @@ namespace __IsoAgLib {
   Example:
   \code
   // define local device type
-  IsoAgLib::ISOName c_myISOName( 1, 0 );
+  IsoAgLib::iIsoName c_myIsoName( 1, 0 );
   // creation of process data instance
   iProcDataRemote_c c_workState;
   // init for LIS=0, remote device type/subtype=5/0, complete work width=0xFF,
   // target process data/PRI=2, pointer to my local device type ( to resolve dynamic SA at time of cmd send )
-  c_workState.init( 0, IsoAgLib::IsoName_c( 0x5, 0 ), 0x5, 0x0, 0xFF, 2, IsoAgLib::IsoName_c( 0x5, 0 ), &c_myISOName );
+  c_workState.init( 0, 0, IsoAgLib::iIsoName_c( 0x5, 0 ), IsoAgLib::iIsoName_c( 0x5, 0 ), &c_myIsoName );
 
   // request current measurement value ( real value, which can differ from commanded value ); triger update request
   int lastReceivedMeasureState = c_workState.masterMeasurementVal( true );
   // start a measuring program
   // a) trigger value update every 1000 msec.
-  c_workState.prog().addSubprog(Proc_c::TimeProp, 1000);
+  c_workState.prog().addSubprog( Proc_c::TimeProp, 1000 );
   // b) start measure program: trigger send of current measure value ( and not MIN/MAX/AVG/ etc. )
-  c_workState.prog().start(Proc_c::Target, Proc_c::TimeProp, Proc_c::DoVal);
+  c_workState.prog().start( Proc_c::TimeProp, Proc_c::DoVal );
 
   // request current setpoint value ( parameter true -> send request to remote ECU, false -> just deliver last received value )
   int lastReceivedState = c_workState.setpointMasterVal( false );
@@ -167,7 +167,7 @@ namespace __IsoAgLib {
   }
   // if I'm the master setpoint commander, I should release the setpoint explicitly if the
   // controlo is not needed any more
-  if ( c_workState.setpoint().master().isoName() == c_myISOName )
+  if ( c_workState.setpoint().master().isoName() == c_myIsoName )
   { // I'm the master -> release control
     c_workState.setpoint().releaseMaster();
   }

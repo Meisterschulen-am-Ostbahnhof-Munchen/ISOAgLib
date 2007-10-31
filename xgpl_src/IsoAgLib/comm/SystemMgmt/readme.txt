@@ -40,59 +40,57 @@
   * Thus you can change the default rules for your individual needs in this file.
   *
   * @section SystemMgmtAddressClaim Address Claim of Local Device
-  * All address claim variants have in common, that they require a pointer to a
-  * variable of type DevKey_c which defines the device type
-  * of the own device. This way the IsoAgLib can adapt the
-  * device instance number, if the initial device instance number
-  * is already used, so that an alternative free number has to be chosen.
-  * This change is written directly in the pointed variables, so that
-  * the application has always direct access to the active device type and -instance
-  * setting on the BUS.
+  * 
   *
   * @subsection SystemMgmtAnnIso Start ISO 11783 AddressClaim
-  * You can claim an address for a member with the following code lines:
-  * \code
-  * #include \<xgpl_src/IsoAgLib/comm/SystemMgmt/iidentitem_c.h\>
-  * // define device type := 2, device instance := 0
-  * IsoAgLib::DevKey_c c_myType( 2, 0 );
-  * // use 64bit NAME definition as 8-byte uint8_t array
-  * uint8_t isoName[8];
-  * // set the value of the array from EEPROM or somewhere else
-  * // ...
-  * // Direct address claim on construction ( i.e. definition of variable )
-  * IsoAgLib::iIdentItem_c c_isoOnlyNameItem( &c_myType, isoName, 254 );
-  * // you can let the IsoAgLib build the NAME string from the single value fields
+  * You can claim an address for a member with the following code lines.
+  * The necessary header is automatically included by xgpl_src/Application_Config/isoaglib_config.h 
+  * if the define PRJ_USE_AUTOGEN_CONFIG is set to config_0_0_AddressClaimIso 
+  * ( see also at List of configuration settings for 0_0_AddressClaimIso ).
+  * \code 
+  * #include \<xgpl/IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h\>
+  * #include \<xgpl/IsoAgLib/comm/SystemMgmt/iidentitem_c.h\>
+  * 
+  * using namespace IsoAgLib;
+  * 
   * bool     b_selfConf = true;
   * uint8_t  ui8_indGroup = 2,
   *          ui8_func = 25,
   *          ui8_wantedSa = 128,
   *          ui8_funcInst = 0,
   *          ui8_ecuInst = 0,
-  *          ui8_deviceClass = 0,
+  *          ui8_deviceClass = 2,
   *          ui8_deviceClassInst = 0;
   * uint16_t ui16_manufCode = 0x7FF;
+  * uint32_t ui32_serNo = 27;
+  *
   * // optionally define EEPROM adress, where SA is stored/reloaded
   * // ( if valid EEPROM adress is given, the value of ui8_wantedSe is ignored )
   * // this default adress is invalid -> don't use EEPROM fo SA
   * uint16_t ui16_eepromAdrSa = 0xFFFF;
-  * uint32_t ui32_serNo = 27;
-  * // maybe change the default values from EEPROM
-  * // ...
-  * IsoAgLib::iIdentItem_c c_isoOnlyFlagsItem(
-  *     &c_myType, b_selfConf, ui8_indGroup, ui8_func, ui16_manufCode,
-  *     ui32_serNo, ui8_wantedSa, ui16_eepromAdrSa, ui8_funcInst, ui8_ecuInst);
   *
+  * // Start address claim of the local identity/member
+  * IsoAgLib::iIdentItem_c c_myIdent (ui8_indGroup,
+  *                                   rui8_deviceClass,
+  *                                   ui8_deviceClassInst,
+  *                                   ui8_func,
+  *                                   ui16_manufCode,
+  *                                   ui32_serNo);
+  *                                   // further parameters use the default values as given in the constructor
+  * ...
+  * 
   * // You can alternatively start the address claim at a later time
+  * // Therefore the device has to be initialized with default parameters
   * IsoAgLib::iIdentItem_c c_isoItemLaterAddressClaim;
   * // some work inbetween ( e.g. read configuration from EEPROM )
   * // ...
   * // now start address claim
-  * c_isoItemLaterAddressClaim.start(
-  *     &c_myType, b_selfConf, ui8_indGroup, ui8_func, ui16_manufCode,
+  * c_isoItemLaterAddressClaim.init(
+  *     ui8_indGroup, ui8_deviceClass, ui8_deviceClassInst, ui8_func, ui16_manufCode, 
   *     ui32_serNo, ui8_wantedSa, ui16_eepromAdrSa, ui8_funcInst, ui8_ecuInst);
   *
   * // claim address for master device with list of slaves
-  * uint8_t ui8_slaveCnt = 2;
+  * uint8_t ui8_slaveCount = 2;
   * IsoAgLib::iIsoName_c c_slaveArray[2];
   * // read NAME settings for slaves
   * // ...
@@ -100,49 +98,16 @@
   * // ( IsoAgLib sends definition of master state and
   * //   the listing of all slaves after successful address claim )
   * IsoAgLib::iIdentItem_c c_isoOnlyFlagsMasterSlaveItem(
-  *     &c_myType, b_selfConf, ui8_indGroup, ui8_func, ui16_manufCode,
-  *     ui32_serNo, ui8_wantedSa, ui16_eepromAdrSa, ui8_funcInst, ui8_ecuInst,
-  *     ui8_slaveCnt, c_slaveArray );
+  *     ui8_indGroup, ui8_deviceClass, ui8_deviceClassInst, ui8_func, ui16_manufCode,
+  *     ui32_serNo, ui8_wantedSa, ui16_eepromAdrSa, ui8_funcInst, ui8_ecuInst, b_selfConf,
+  *     ui8_slaveCount, c_slaveArray);
   *
   * // do something inbetween
   * // ...
   * // now check if already claimed address
-  * if ( c_isoItemLaterAddressClaim.isClaimedAddress() ) {
+  * if ( c_isoItemLaterAddressClaim.isClaimedAddress() ) 
+  * {
   *   // I'm online ;-))
-  * }
-  * \endcode
-  *
-  * @subsection SystemMgmtLaterSelection Select Protocol on AddressClaim
-  * The IsoAgLib allows you to delay the decision on the protocol to use
-  * to the time of address claim. This can be useful if the implement shall
-  * start as ISO system dependent on state of digital input or at a special event.
-  * \code
-  * #include \<xgpl_src/IsoAgLib/comm/SystemMgmt/iidentitem_c.h\>
-  * // define device type := 2, device instance := 0
-  * IsoAgLib::DevKey_c c_myType( 2, 0 );
-  * // simply define instance of variable wihtout initialisation for specific value
-  * IsoAgLib::iIdentItem_c c_isoItemLaterDecide;
-  * bool b_start false;
-  * // perform other init and read arguments for protocol select
-  * // now address claim should be started
-  * b_start = true;
-  * if ( b_start )
-  * { // start ISO
-  *   bool     b_selfConf = true;
-  *   uint8_t  ui8_indGroup = 2,
-  *            ui8_func = 25,
-  *            ui8_wantedSa = 128,
-  *            ui8_funcInst = 0,
-  *            ui8_ecuInst = 0,
-  *            ui8_deviceClass = 0,
-  *            ui8_deviceClassInst = 0;
-  *   uint16_t ui16_manufCode = 0x7FF;
-  *   uint16_t ui16_eepromAdrSa = 0xFFFF;
-  *   uint32_t ui32_serNo = 27;
-  *   // now start ISO annouce
-  *   c_isoItemLaterAddressClaim.start(
-  *       &c_myType, b_selfConf, ui8_indGroup, ui8_func, ui16_manufCode,
-  *       ui32_serNo, ui8_wantedSa, ui16_eepromAdrSa, ui8_funcInst, ui8_ecuInst);
   * }
   * \endcode
   *
@@ -152,18 +117,19 @@
   * \code
   * #include \<xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h\>
   * // retrieve amount of ISO members with claimed address of specific device type
-  * const uint8_t cui8_myPrefferedDeviceType = 2;
-  * const uint8_t cui8_isoActiveMemberCnt = IsoAgLib::getIisoMonitorInstance().isoMemberCnt( cui8_searchDeviceType, true );
+  * const uint8_t cui8_searchDeviceType = 2;
+  * const uint8_t cui8_isoActiveMemberCnt = IsoAgLib::getIisoMonitorInstance().isoMemberDevClassCnt( cui8_searchDeviceType, true );
   * // check if some other device uses my device type
-  * bool b_myDeviceTypeFree = ( cui8_isoActiveGetyCnt == 0)?true:false;
+  * bool b_myDeviceTypeFree = ( cui8_isoActiveGetyCnt == 0 )? true : false;
   * uint8_t ui8_lowestFreeFuncInst = 0;
   * // retrieve lowest free function instance value for this ECU
   * // -> loop through active ISO members of my device type
-  * for ( uint8_t ui8_ind = 0; ui8_ind < cui8_isoActiveGetyCnt; ui8_ind++ ) {
+  * for ( uint8_t ui8_ind = 0; ui8_ind \< cui8_isoActiveGetyCnt; ui8_ind++ )
+  * {
   *   // access item with claimed address at position ui8_ind
-  *   if ( IsoAgLib::getIisoMonitorInstance().isoMemberInd( cui8_searchDeviceType, ui8_ind, true ).funcInst() >= ui8_lowestFreeFuncInst )
+  *   if ( IsoAgLib::getIisoMonitorInstance().isoMemberDevClassInd( cui8_searchDeviceType, ui8_ind, true ).funcInst() >= ui8_lowestFreeFuncInst )
   *   { // set my func inst to one greater
-  *     ui8_lowestFreeFuncInst = IsoAgLib::getIisoMonitorInstance().isoMemberInd( cui8_searchDeviceType, ui8_ind, true ).funcInst() + 1;
+  *     ui8_lowestFreeFuncInst = IsoAgLib::getIisoMonitorInstance().isoMemberDeviceTypeInd( cui8_searchDeviceType, ui8_ind, true ).funcInst() + 1;
   *   }
   * }
   * // now ui8_lowestFreeFuncInst has free function instance value

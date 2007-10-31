@@ -270,28 +270,31 @@
   * instance. \n
   * <b>Reason:</b> A Process Data type occupies a lot of RAM for the management of the different sub-data
   * and a copy ( this is also done for function call without pointer or references ) of complete
-  * Process Data instances are <b>very expensive</b> oepration regarding to RAM and time.
+  * Process Data instances are <b>very expensive</b> operation regarding to RAM and time.
+  * Proc2iso should be used for generation of process information needed by the code sample below (@see XMLProcSpec).
+  * However, the file DeviceDescription.xml-func.inc describes how to do this by hand.
   * @subsubsection ExampleForCorrectDistribution Example for Creation and Correct Distribution of Process Data Variable
   * \code
   * // declare extern example function ( dummy )
   * extern void doSomething( IsoAgLib::iProcDataLocal_c *pc_localProc );
   * // set device type of local ECU: fertilizer
-  * IsoAgLib::DevKey c_myDevKey( 5, 0 );
+  * IsoAgLib::iIsoNname c_myIsoName( 5, 0 );
   * // initialise variable upon construction/definition
   * // local process data for "on/off mechanical" [0/0x64] of fertilizer spreader
   * // creation of process data instance
-  * iProcDataLocal_c c_myWorkState ( 0, myDevKey, 0x1, 0x0, 0xFF, 3, c_myDevKey, &c_myDevKey, false, 0x1234 );
+  * IsoAgLib::iProcDataLocal_c c_myWorkState ( 0, 0, c_myIsoName, c_myIsoName, &c_myIsoName, false, 0x1234 );
   * // set measurement data to working == 0x64
-  * c_myWorkState.setMasterVal( 0x64 );
+  * c_myWorkState.setMasterMeasurementVal( 0x64 );
   *
   * // alternate: initialise process data variable after definition
   * // "working width" [mm] of fertilizer spreader, store/load data at EEPROM adress 0x1238
   * IsoAgLib::iProcDataLocal_c c_myWorkWidth;
-  * c_myWorkWidth.init( 0, c_myDevKey, 0x3, 0x1, 0xFF, 3, c_myDevKey, &c_myDevKey, false, 0x1238 );
+  * c_myWorkWidth.init( 0, 0, c_myIsoName, c_myIsoName, &c_myIsoName, false, 0x1238 ); 
   *
   * // call function doSomething -> give pointer to variable c_myWorkState -> transfer simple adress via stack
   * doSomething( &c_myWorkState );
   * \endcode
+  *
   * @subsubsection StartMeasureProgram Example for Starting a Measure Program
   * The IsoAgLib provides a capable support for measuring programs, where an ECU can
   * request the periodical send of a measurement value ( Process Data ) at a remote ECU.
@@ -304,13 +307,13 @@
   * ( %i.e. register measure programs and handle send of data, ... ).
   * \code
   * // define device type of remote ECU ( from which we want measurement data )
-  * IsoAgLib::DevKey_c remoteDevKey( 1, 0 );
+  * IsoAgLib::IsoName_c remoteIsoName( 1, 0 );
   * // define remote process data to gather information of remote work state
-   * IsoAgLib::iProcDataRemote_c c_remoteWorkState( 0, myDevKey, 0x1, 0x0, 0xFF, 3, remoteGtp, &myDevKey);
+   * IsoAgLib::iProcDataRemote_c c_remoteWorkState( 0, 0, myIsoName, myIsoName, &myIsoName, remoteGtp, 0);
   * // trigger value update every 1000 msec.
   * c_remoteWorkState.prog().addSubprog(Proc_c::TimeProp, 1000);
   * // start measure program: trigger send of current measure value ( and not MIN/MAX/AVG/ etc. )
-  * c_remoteWorkState.prog().start(Proc_c::Target, Proc_c::TimeProp, Proc_c::DoVal);
+  * c_remoteWorkState.prog().start(Proc_c::TimeProp, Proc_c::DoVal);
   * while( true ) {
   *   // use last received measurement value
   *   if ( c_remoteWorkState.prog().val() == 0x64 ) {
@@ -335,14 +338,14 @@
   *     // sent a new setpoint value)
   *     // rc_src general event source class, which provides conversion functions to get needed event source class
   *     // ri32_val new value, which caused the event (for immediate access)
-  *     // rc_callerDevKey IsoAgLib::DevKey of calling device - i.e. which sent new setpoint
+  *     // rc_callerIsoName IsoAgLib::iIsoName of calling device - i.e. which sent new setpoint
   *     // return true -> handler class reacted on change event
-  *     virtual bool processSetpointSet( EventSource_c rc_src, int32_t ri32_val, IsoAgLib::DevKey_c rc_callerDevKey, bool rb_changed );
+  *     virtual bool processSetpointSet( EventSource_c rc_src, int32_t ri32_val, const IsoAgLib::iIsoName_c& rc_callerIsoName, bool rb_changed );
   * };
   * // implement the handler function, which is called on each received setpoint
-  * bool MyProcessDataHandler_c::processSetpointSet( EventSource_c rc_src, int32_t ri32_val, IsoAgLib::DevKey_c rc_callerDevKey, bool rb_changed ) {
+  * bool MyProcessDataHandler_c::processSetpointSet( EventSource_c rc_src, int32_t ri32_val, const IsoAgLib::iIsoName_c& rc_callerIsoName, bool rb_changed ) {
   * { // %e.g. check for device type of commanding ECU
-  *   if ( rc_callerDevKey.getDevClass() == 0x1 ) {
+  *   if ( rc_callerIsoName.getDevClass() == 0x1 ) {
   *     // reaction on setpoints sent by device type 1
   *   }
   *   else if ( abs( ri32_val - currentVal ) < 10 )
@@ -355,6 +358,6 @@
   * // define local process data, which uses the handler
   * IsoAgLib::iProcDataLocalSimpleSetpoint_c c_myFertilizerAmount;
   * // init process data with pointer to handler, which shall be called upon setpoint receive
-  * c_myFertilizerAmount.init( 0, myDevKey, 5, 0, 0xFF, 3, myDevKey, &myDevKey, false, 0x123A, &c_setpointHandler );
+  * c_myFertilizerAmount.init( 0, 0, myIsoName, myIsoName, &myIsoName, false, 0x123A, &c_setpointHandler );
   * \endcode
   */

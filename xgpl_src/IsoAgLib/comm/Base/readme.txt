@@ -46,9 +46,9 @@
   * and is not forced to read and interprete when received.
   * \code
   * /// read real ( radar based ) speed of tractor
-  * int16_t i16_realSpeed = IsoAgLib::getITracMoveInstance().speedReal();
+  * int32_t i32_realSpeed = IsoAgLib::getITracMoveInstance().speedReal();
   * /// read driving distance which was measured based on gear/wheel
-  * int16_t i16_distTheor = IsoAgLib::getITracMoveInstance().distTheor();
+  * int32_t i32_distTheor = IsoAgLib::getITracMoveInstance().distTheor();
   * /// read front PTO ( power shaft ) RPM
   * int16_t i16_frontPto = IsoAgLib::getITracPtoInstance().ptoFront();
   * /// read the state of the rear hitch
@@ -74,13 +74,13 @@
   * /// check for key switch state to request suitable maintenance
   * if ( IsoAgLib::getITracGeneralInstance().keySwitch() == IsoInactive ) {
   *   /// force ECU power maintenance for implement in work state
-  *   IsoAgLib::getITracGeneralInstance().forceMaintainPower( true, false, IsoInactive, IsoInactive, IsoActive );
+  *   IsoAgLib::getITracGeneralInstance().forceMaintainPower( true, false, IsoAgLib::implInTransport );
   * }
   * /// later check for resulting maintenance mode state indiceted by tractor
   * uint8_t ui8_powerMaintenanceTimeMinute = IsoAgLib::getITracGeneralInstance().maxPowerTime();
   * bool b_maintainEcuPower = IsoAgLib::getITracGeneralInstance().maintainEcuPower();
   * /// release power request later
-  * IsoAgLib::getITracGeneralInstance().forceMaintainPower( false, false, IsoInactive, IsoInactive, IsoInactive );
+  * IsoAgLib::getITracGeneralInstance().forceMaintainPower( false, false, IsoAgLib::implInTransport );
   * \endcode
   *
   * @section BaseDataConfig Configure active send or read only mode
@@ -95,11 +95,11 @@
   *
   * \code
   * /// check for device type of calendar sender -> start sending if sender is a dummy calendar sender
-  * const DevKey_c cc_dummyCalendarSender( 1, 0 );
-  * if ( IsoAgLib::getITimePosGpsInstance().getSenderDevKeyGps() == cc_dummyCalendarSender ) {
+  * const IsoName_c cc_dummyCalendarSender( 1, 0 );
+  * if ( IsoAgLib::getITimePosGpsInstance().getSenderIsoNameGps() == cc_dummyCalendarSender ) {
   *   // start sending as this ECU has better calendar information source
   *   // but stay for Grp1 and Grp2 in receive-only mode
-  *   IsoAgLib::getITimePosGpsInstance().config( pc_myGtp, false, false, true );
+  *   IsoAgLib::getITimePosGpsInstance().config( pc_myGtp, IsoAgLib::IdentModeTractor );
   * }
   * \endcode
   *
@@ -113,7 +113,7 @@
   * \code
   * /// set real driving speed from variable which has to be updated from
   * /// sensor elsewhere
-  * IsoAgLib::getITracMoveInstance().setSpeedReal( i16_realSensorSpeed );
+  * IsoAgLib::getITracMoveInstance().setSpeedReal( i32_realSensorSpeed );
   * /// set the real driven distance
   * /// ( IsoAgLib is responsible to calculate the overflow correct )
   * IsoAgLib::getITracMoveInstance().setDistReal( i32_realDistanceMm );

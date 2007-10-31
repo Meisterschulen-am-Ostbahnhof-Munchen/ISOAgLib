@@ -87,9 +87,9 @@ namespace IsoAgLib {
   iProcDataRemoteSimpleMeasure_c c_workState;
   // init for LIS=0, remote device type/subtype=5/0, complete work width=0xFF,
   // target process data/PRI=2, pointer to my local device type ( to resolve dynamic SA at time of cmd send )
-  c_workState.init( 0, IsoAgLib::iIsoName_c( 0x5, 0 ), 0x5, 0x0, 0xFF, 2, IsoAgLib::iIsoName_c( 0x5, 0 ), &c_myISOName );
+  c_workState.init( 0, 0, IsoAgLib::iIsoName_c( 0x5, 0 ), IsoAgLib::iIsoName_c( 0x5, 0 ),  &c_myISOName );
   // request current measurement value ( real value, which can differ from commanded value ); triger update request
-  int lastReceivedMeasureState = c_workState.masterVal( true );
+  int lastReceivedMeasureState = c_workState.masterMeasurementVal( true );
   // as this class doesn't support measurement programs, this is all that can be done on measurement data
 
   // request current setpoint value ( parameter true -> send request to remote ECU, false -> just deliver last received value )

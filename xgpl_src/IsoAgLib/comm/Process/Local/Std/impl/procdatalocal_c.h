@@ -146,13 +146,13 @@ namespace __IsoAgLib {
   Example:
   \code
   // define local device type
-  IsoAgLib::ISOName c_myISOName( 1, 0 );
+  IsoAgLib::iIsoName c_myIsoName( 1, 0 );
   // creation of process data instance
   iProcDataLocal_c c_workState;
   // init for LIS=0, local device type/subtype=1/0, complete work width=0xFF,
   // target process data/PRI=2, pointer to my local device type ( to resolve dynamic SA at time of cmd send ),
   // load/store measurememnt data to/from EEPROM
-  c_workState.init( 0, myISOName, 0x1, 0x0, 0xFF, 2, c_myISOName, &c_myISOName, false, 0x1234 );
+  c_workState.init( 0, 0, myIsoName, c_myIsoName, &c_myIsoName, false, 0x1234 );
 
   // update current measurement value ( real value, which can differ from commanded value )
   c_workState.setMasterMeasurementVal( 100 );

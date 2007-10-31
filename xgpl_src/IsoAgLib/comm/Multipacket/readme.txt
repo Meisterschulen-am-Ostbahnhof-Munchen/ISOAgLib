@@ -35,23 +35,23 @@
   *
   * @section MultiMsgIsoSimpleExamle Example for start of simple ISO Send
   * \code
-  * uint8_t ui8_sendAdr             = 0x2;
-  * uint8_t ui8_receiveAdr          = 0x0;
+  * IsoAgLib::IsoName c_mySenderIsoName( 2, 0 );
+  * IsoAgLib::IsoName c_myReceiverIsoName( 0, 0 );
   * const uint8_t *rpui8_pool       = 0x1234;   ///< adress in ROM where pool is stored
   * const int32_t ri32_dataSize     = 300*1024; ///< example size of 300 kByte
-  * const int32_t ci32_pgn          = 0x00E700LU ///< PGN defined in isoaglib_config.h as ECU_TO_VT_PGN
+  * const int32_t ci32_pgn          = 0x00E700UL ///< PGN defined in isoaglib_config.h as ECU_TO_VT_PGN
   * sendSuccess_t t_sendState;                   ///< IsoAgLib will store current send state here
   *
   * bool b_isTargetWanted           = true;     ///< select target or broadcast
   *
   * if ( b_isTargetWanted ) {
-  *   if ( IsoAgLib::getIMultiSendInstance().sendIsoTarget(ui8_sendAdr, ui8_receiveAdr, rpui8_pool, ri32_dataSize, ci32_pgn, &t_sendState ) ) {
+  *   if ( IsoAgLib::getIMultiSendInstance().sendIsoTarget( c_mySenderIsoName, c_myReceiverIsoName, rpui8_pool, ri32_dataSize, ci32_pgn, &t_sendState ) ) {
   *     // fine - upload will start soon ;-))
   *   }
   * }
   * else {
   *   // broadcast protocol defines state independent send of complete data stream - without reaction on send problems - so no send success state is defined
-  *   if ( IsoAgLib::getIMultiSendInstance().sendIsoBroadcast(ui8_sendAdr, ui8_receiveAdr, rpui8_pool, ri32_dataSize, ci32_pgn ) ) {
+  *   if ( IsoAgLib::getIMultiSendInstance().sendIsoBroadcast( c_mySenderIsoName, c_myReceiverIsoName, rpui8_pool, ri32_dataSize, ci32_pgn ) ) {
   *     // fine - upload will start soon ;-))
   *   }
   * }
@@ -65,9 +65,9 @@
   * class MyDynamicDataSource_c : public IsoAgLib::MultiSendStreamer_c {
   *   /** place next data to send direct into send puffer of pointed
   *       stream send package - MultiSendStreamer_c will send this
-  *       puffer afterwards */
-  *       main method as long as no resend of older part is needed */
-  *   virtual void setDataNextStreamPart (MultiSendPkg_c* mspData, uint8_t bytes);
+  *       buffer afterwards */
+  *   /** main method as long as no resend of older part is needed */
+  *   virtual void setDataNextStreamPart ( MultiSendPkg_c* mspData, uint8_t bytes );
   *   /** set cache for data source to stream start */
   *   virtual void resetDataNextStreamPart();
   *   /** save current send position in data source - neeed for resend on send problem */
@@ -76,14 +76,16 @@
   *   virtual void restoreDataNextStreamPart ();
   *   /** calculate the size of the data source */
   *   virtual uint32_t getStreamSize ();
+  *   /** get the first byte, which is the COMMAND-byte and should be given back CONST! */
+  *   virtual uint8_t getFirstByte ();
   * }
   *
-  * uint8_t ui8_sendAdr             = 0x2;
-  * uint8_t ui8_receiveAdr          = 0x0;
+  * IsoAgLib::IsoName c_mySenderIsoName( 2, 0 );
+  * IsoAgLib::IsoName c_myReceiverIsoName( 0, 0 );
   * MyDynamicDataSource_c c_dataSrc;             ///< instance of app-specific data source class
-  * const int32_t ci32_pgn          = 0x00E700LU ///< PGN defined in isoaglib_config.h as ECU_TO_VT_PGN
+  * const int32_t ci32_pgn          = 0x00E700UL ///< PGN defined in isoaglib_config.h as ECU_TO_VT_PGN
   * sendSuccess_t t_sendState;                   ///< IsoAgLib will store current send state here
-  * if ( IsoAgLib::getIMultiSendInstance().sendIsoTarget(ui8_sendAdr, ui8_receiveAdr, &c_dataSrc, ci32_pgn, &t_sendState ) ) {
+  * if ( IsoAgLib::getIMultiSendInstance().sendIsoTarget( c_mySenderIsoName, c_myReceiverIsoName, &c_dataSrc, ci32_pgn, &t_sendState ) ) {
   *   // fine - upload will start soon ;-))
   * }
   * \endcode

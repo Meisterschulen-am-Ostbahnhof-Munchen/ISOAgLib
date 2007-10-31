@@ -107,12 +107,39 @@ namespace __IsoAgLib {
   This is also useful, if the corresponding protocol is selected during runtime.
   Example:
   \code
-  __IsoAgLib::IdentItem_c c_itemLaterAddressClaim;
-  __IsoAgLib::IsoName_c c_myType( 2, 0 );
+  bool     b_selfConf = true;
+  uint8_t  ui8_indGroup = 2,
+           ui8_func = 25,
+           ui8_wantedSa = 128,
+           ui8_funcInst = 0,
+           ui8_ecuInst = 0,
+           ui8_deviceClass = 2,
+           ui8_deviceClassInst = 0;
+  uint16_t ui16_manufCode = 0x7FF;
+  uint32_t ui32_serNo = 27;
+
+  IsoAgLib::iIdentItem_c c_isoItemLaterAddressClaim;
+  // Start address claim of the local identity/member
+  IsoAgLib::iIdentItem_c c_myIdent ( ui8_indGroup, 
+                                     rui8_deviceClass, 
+                                     ui8_deviceClassInst, 
+                                     ui8_func,
+                                     ui16_manufCode, 
+                                     ui32_serNo); // further parameters use the defaults
   // ...
-  // now start as DIN
-  c_itemLaterAddressClaim.start( &c_myType, "Hi-You" );
+  // now start address claim
+  c_isoItemLaterAddressClaim.init( ui8_indGroup, 
+                                   ui8_deviceClass, 
+                                   ui8_deviceClassInst, 
+                                   ui8_func, 
+                                   ui16_manufCode, 
+                                   ui32_serNo, 
+                                   ui8_wantedSa, 
+                                   ui16_eepromAdrSa, 
+                                   ui8_funcInst, 
+                                   ui8_ecuInst );
   \endcode
+
 
   The IsoAgLib backend is responsible for answering all requests like
   RequestForClaimedSourceAdress ( ISO 11783 ) or
