@@ -51,7 +51,7 @@
 
 /* *********************************************************************** */
 /** \example 1_4_WriteFlexibleIso.cpp
- * This tutorial shall provide the simples base program, which checks first
+ * This tutorial shall provide a simple base program, which checks first
  * if another ECU is sending the calendar information. If after some time
  * no ECU is sending calendar, then this ECU starts sending calendar.
  *

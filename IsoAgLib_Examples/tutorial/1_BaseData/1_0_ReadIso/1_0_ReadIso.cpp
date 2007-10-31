@@ -51,7 +51,7 @@
 
 /* *********************************************************************** */
 /** \example 1_0_ReadIso.cpp
- * This tutorial shall provide the simples base program, which reads some
+ * This tutorial shall provide a simple base program, which reads some
  * regularly sent base data ( especially tractor information ).
  * Demonstrate also the use of GPS data - which might be wrong decoded
  * at the moment, as only open accessible sources ( Google ) were used

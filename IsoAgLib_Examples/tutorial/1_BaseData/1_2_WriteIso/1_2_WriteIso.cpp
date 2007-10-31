@@ -51,7 +51,7 @@
 
 /* *********************************************************************** */
 /** \example 1_2_WriteIso.cpp
- * This tutorial shall provide the simples base program, which writes some
+ * This tutorial shall provide a simple base program, which writes some
  * regularly sent base data, as it acts as a tractor.
  *
  * <H1>What is demonstrated</H1>

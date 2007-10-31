@@ -56,9 +56,23 @@
  * the console. Later to be used in conjunction with a VT-client maybe.
  *
  * <H1>What is demonstrated</H1>
- * <ol>
- * <li> to be written...
+ * <li>Receive data (GPS position and direction) from the bus without sending any (=implement mode)
+ * <ul>
+ *  <li>Data storage class IsoAgLib::iTimePosGPS_c
+ *  <li>configure to receive with IsoAgLib::iTimePosGPS_c::config()
+ * </ul>
+ * <li>Trigger periodic activities of ISO<i><sub>AgLib</sub></i>
+ * <ul>
+ *   <li>Core class IsoAgLib::iScheduler_c for scheduling of all periodic activities
+ *   <li>Method IsoAgLib::iScheduler_c::timeEvent() which can
+ *   <ul>
+ *     <li>Perform activities until defined al_endTime is reached, which is important for scheduling purposes of whole system - call by IsoAgLib::iScheduler_c::timeEvent( al_endTime )
+ *     <li>Process all received CAN messages until all receive buffers are empty -> simple call, but can lead to deadlock on to high CAN load
+ *   </ul>
+ * </ul>
+ * <li>Create local identity, for which the ISO<i><sub>AgLib</sub></i> performs an address claim, so that the ECU can access the <b><i>ISO11783</i></b> BUS with IsoAgLib::iIdentItem_c and its constructor IsoAgLib::iIdentItem_c::iIdentItem_c
  * </ol>
+ *
  * <H1>Where to look for further information</H1>
  * <ol>
  * <li>Overview on accessing cached main information at \ref BaseDataPage
