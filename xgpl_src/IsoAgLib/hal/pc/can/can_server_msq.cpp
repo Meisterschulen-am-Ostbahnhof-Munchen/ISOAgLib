@@ -772,6 +772,7 @@ static void can_read(server_c* pc_serverData)
   can_recv_data receiveData;
   uint32_t DLC;
   bool b_moreToRead = TRUE;
+  bool b_processMsg = FALSE;
 
   static canMsg_s s_canMsg;
 
@@ -780,18 +781,18 @@ static void can_read(server_c* pc_serverData)
   uint32_t channel;
 
   uint32_t channel_with_change = 0;
+  uint8_t ui8_cntOpenDevice = 0;
 
   for (;;) {
 
-    DEBUG_PRINT(".");
-
-    bool b_processMsg = FALSE;
+    b_processMsg = FALSE;
 
     FD_ZERO(&rfds);
 
-    uint8_t ui8_cntOpenDevice = 0;
+    ui8_cntOpenDevice = 0;
 
-    for (channel=0; channel<cui32_maxCanBusCnt; channel++ ) {
+    for (channel=0; channel<cui32_maxCanBusCnt; channel++ )
+    {
       if (isBusOpen(channel) && (pc_serverData->can_device[channel] > 0))
       { // valid file handle => use it for select
         FD_SET(pc_serverData->can_device[channel], &rfds);
@@ -823,7 +824,11 @@ static void can_read(server_c* pc_serverData)
       }
     }
     else
-      usleep(500000); // no device => nothing to read
+    {
+      usleep(50000); // no device => nothing to read
+      // check devices which have no device handle (RTE)
+      b_processMsg = TRUE;
+    }
 
     if (b_processMsg) {
       // acquire mutex to prevent concurrent read/write to can driver

@@ -866,7 +866,9 @@ void readWrite(server_c* pc_serverData)
     t_timeout.tv_sec = 0;
     t_timeout.tv_usec = 50000;
 
-    // timeout to check for modified client list => new sockets to wait for
+    // timeout to check for
+    // 1. modified client list => new sockets to wait for
+    // new incoming can messages when can device has no file handle (WIN32 PEAK can card and RTE)
     i_selectResult = select(FD_SETSIZE, &rfds, NULL, NULL, &t_timeout);
 
     if (i_selectResult < 0)
@@ -875,6 +877,7 @@ void readWrite(server_c* pc_serverData)
 
     if ((i_selectResult == 0) && !b_deviceHandleFound)
     { // timeout => read from can card if we do not have a valid device handle
+      // (important for WIN32 PEAK can card and for RTE)
       for (uint32_t ui32_cnt = 0; ui32_cnt < cui32_maxCanBusCnt; ui32_cnt++)
       {
         if (pc_serverData->ui16_busRefCnt[ui32_cnt])
