@@ -51,7 +51,7 @@
 
 /* *********************************************************************** */
 /** \example 0_0_AddressClaimIso.cpp
- * This tutorial shall provide the simples base program, which claims address
+ * This tutorial shall provide a simple base program, which claims address
  * only an ISO11783 member with fixed identity.
  *
  * <H1>What is demonstrated</H1>
@@ -79,18 +79,18 @@
  *
  * <H1>Howto compile this example</H1>
  * <ol>
- * <li>Call the script update_makefile.sh with the spec file
+ * <li>Call the script update_makefile.sh with the spec file 
  *     conf_0_0_AddressClaimIso from the directory where the spec file
- *     and the script are located<br>
- *     <i>#> update_makefile.sh conf_0_0_AddressClaimIso</i>
+ *     and the script are located (default: IsoAgLib/compiler_projects/procejtGeneration/)<br>
+ *     <tt>#> ./update_makefile.sh conf_0_0_AddressClaimIso</tt>
  * <li><b>Only Linux:</b><ul>
- *     <li><i>#>cd 0_0_AddressClaimIso</i> to go to the subdirectory 0_0_AddressClaimIso
- *     <li><i>#> make</i><br>
+ *     <li>move to the 0_0_AddressClaimIso subdirectory of the kdevelop_qmake directory and run make
+ *     <li><tt>#> make</tt><br>
  *     <li>GNU make will then use the fresh created Makefile to create the executable 0_0_AddressClaimIso in this directory
  *     </ul>
  * <li><b>Other Development Environments:</b><ul>
  *     <li>import the file list in filelist-0_0_AddressClaimIso.txt into the IDE of your choice
- *     <li>set <i>-DPRJ_USE_AUTOGEN_CONFIG=config_0_0_AddressClaimIso</i> as global project parameter
+ *     <li>set <tt>-DPRJ_USE_AUTOGEN_CONFIG=config_0_0_AddressClaimIso</tt> as global project parameter
  *     <li>add target specific headers, sources or libraries to the project
  *     <li>let your IDE build the project
  *   </ul>
