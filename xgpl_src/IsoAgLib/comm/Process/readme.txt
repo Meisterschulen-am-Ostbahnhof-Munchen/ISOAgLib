@@ -271,7 +271,7 @@
   * <b>Reason:</b> A Process Data type occupies a lot of RAM for the management of the different sub-data
   * and a copy ( this is also done for function call without pointer or references ) of complete
   * Process Data instances are <b>very expensive</b> operation regarding to RAM and time.
-  * Proc2iso should be used for generation of process information needed by the code sample below (@see XMLProcSpec).
+  * Proc2iso should be used for generation of process information needed by the code sample below (see \ref XMLProcSpec).
   * However, the file DeviceDescription.xml-func.inc describes how to do this by hand.
   * @subsubsection ExampleForCorrectDistribution Example for Creation and Correct Distribution of Process Data Variable
   * \code
