@@ -1084,18 +1084,19 @@ uint32_t ui32_msgNbr;
         * - i32_fbIdx has a valid range, but all the data of the FilterBox are cleared, because it has been canceled.
         *     so the FilterBox is Idle
         */
-#ifdef DEBUG
-  if(i32_rcvTime < mi32_endLastReconfigTime )
-  {
-  INTERNAL_DEBUG_DEVICE << " During reconfiguration, received msg : "
+
+#ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
+  #ifdef DEBUG
+        if(i32_rcvTime < mi32_endLastReconfigTime )
+        {
+          INTERNAL_DEBUG_DEVICE << " During reconfiguration, received msg : "
                   #ifdef SYSTEM_PC
                   << STL_NAMESPACE::hex
                   #endif
-        << i32_ident << INTERNAL_DEBUG_DEVICE_ENDL;
-  }
-#endif
+            << i32_ident << INTERNAL_DEBUG_DEVICE_ENDL;
+        }
+  #endif
 
-#ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
         if(i32_rcvTime > mi32_endLastReconfigTime ) // the message has not arrived before the last reconfiguration,check on all the FB
         {
 #endif
