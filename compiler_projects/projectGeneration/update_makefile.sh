@@ -936,7 +936,7 @@ create_utest_filelist()
 	sh .exec.tmp
 
 	# determine modified software under test (MOD-SUT) files
-	cat $FILELIST_UTEST_PURE | perl -p -e 's!(.*)/utest/(.*)-test\.h!$1/$2_c.h!' >> $FILELIST_UTEST_MODSUT_PURE
+cat $FILELIST_UTEST_PURE | sed -e 's!\(.*\)/utest/\(.*\)-test\.h!\1/\2_c.h!' >> $FILELIST_UTEST_MODSUT_PURE
 
 	# find the testrunner (testrunner.cpp)
 	rm -f .exec.tmp
