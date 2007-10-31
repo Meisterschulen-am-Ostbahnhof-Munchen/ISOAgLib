@@ -598,7 +598,7 @@ int16_t can_useMsgobjSend(uint8_t aui8_busNr, uint8_t aui8_msgobjNr, __IsoAgLib:
 */
 
 #ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
-int32_t can_useNextMsgobjNumber(uint8_t aui8_busNr, uint32_t &refMsgobjNr, uint32_t& refui32_msgId,uint8_t& refb_msgtype)
+int32_t can_useNextMsgobjNumber(uint8_t aui8_busNr, uint32_t &refMsgobjNr, uint32_t& refui32_msgId,uint8_t& refb_msgtype, int32_t& i32_rcvTime)
 {
   tReceive* pt_receive = &t_cinterfMsgobjReceive;
   int16_t i16_retVal = HAL_NO_ERR;
@@ -623,7 +623,7 @@ int32_t can_useNextMsgobjNumber(uint8_t aui8_busNr, uint32_t &refMsgobjNr, uint3
 (pt_receive->bXtd == true )? (refb_msgtype = __IsoAgLib::Ident_c::ExtendedIdent) : (refb_msgtype = __IsoAgLib::Ident_c::StandardIdent);
 
 // __IsoAgLib::Ident_c::getCanIdenType(pt_receive->bXtd,refb_msgtype);
-
+    i32_rcvTime = i32_cinterfLastSuccReceive[aui8_busNr];
   }
   return i16_retVal;
 }

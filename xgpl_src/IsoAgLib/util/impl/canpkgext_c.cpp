@@ -365,7 +365,8 @@ MessageState_t CanPkgExt_c::address2IdentRemoteSa()
   { // only problem might be: when we receive a message with SA of a local ident
     if ( addrResolveResSA.pc_monitorItem->itemState(IState_c::Local) )
     {
-      /** @todo monitorItem is const, we cannot inform the item of the conflict, but it will be done anyway from identItem
+      /** @todo isoItem is not const anymore, so we could inform the item of the conflict.
+                However it seems that it will be done anyway from identItem?? <<-- To check!!!
                 addressResolveResults.pc_monitorItem->affectedConflictCnt( IStateExt_c::Incr, time() );
         */
       #ifdef DEBUG_CAN

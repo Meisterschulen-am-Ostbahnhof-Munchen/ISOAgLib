@@ -209,6 +209,17 @@ IsoTerminal_c::close()
 VtClientServerCommunication_c*
 IsoTerminal_c::initAndRegisterIsoObjectPool (IdentItem_c& rc_identItem, IsoAgLib::iIsoTerminalObjectPool_c& arc_pool, char* apc_versionLabel)
 {
+  if (!rc_identItem.isMaster())
+  {
+    /// IdentItem must be a Master 
+    #if defined (DEBUG)
+    INTERNAL_DEBUG_DEVICE << "IdentItem is not Master!" << INTERNAL_DEBUG_DEVICE_ENDL;
+    #if defined (SYSTEM_PC)
+    abort();
+    #endif
+    #endif
+    return NULL;
+  }
   uint8_t ui8_index = 0;
   // add new instance of VtClientServerCommunication
   for (; ui8_index < vec_vtClientServerComm.size(); ui8_index++)

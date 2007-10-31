@@ -139,8 +139,8 @@ static const uint8_t scui8_tpPriority=6;
 
 #if 1
 // to be OBSOLETEd !!! - can use ISOFilterBox later on...
-/** the mask is set to 1FFFF00, as we're accepting for EVERY _local_ destination address first. afterwards list_clients is getting search for matching destination address */
-#define MACRO_insertFilterIfNotYetExists_mask1FFFF00_setRef(mpPGN,LocalSa,reconf,ref,len) \
+/** the mask is set to 3FFFF00, as we're accepting for EVERY _local_ destination address first. afterwards list_clients is getting search for matching destination address */
+#define MACRO_insertFilterIfNotYetExists_mask3FFFF00_setRef(mpPGN,LocalSa,reconf,ref,len) \
   { \
     uint32_t ui32_filter = ((static_cast<MASK_TYPE>(mpPGN) | static_cast<MASK_TYPE>(LocalSa)) << 8); \
     ref = NULL; \
@@ -150,7 +150,7 @@ static const uint8_t scui8_tpPriority=6;
     } \
   }
 
-#define MACRO_insertFilterIfNotYetExists_mask1FFFF00_useRef(mpPGN,LocalSa,reconf,ref,len) \
+#define MACRO_insertFilterIfNotYetExists_mask3FFFF00_useRef(mpPGN,LocalSa,reconf,ref,len) \
   { \
     uint32_t ui32_filter = ((static_cast<MASK_TYPE>(mpPGN) | static_cast<MASK_TYPE>(LocalSa)) << 8); \
     if (!__IsoAgLib::getCanInstance4Comm().existFilter( *this, (0x3FFFF00UL), ui32_filter, __IsoAgLib::Ident_c::ExtendedIdent)) \
@@ -160,8 +160,8 @@ static const uint8_t scui8_tpPriority=6;
   }
 
 
-/** the mask is set to 1FFFF00, as we're accepting for EVERY _local_ destination address first. afterwards list_clients is getting search for matching destination address */
-#define MACRO_deleteFilterIfExists_mask1FFFF00(mpPGN,LocalSa) \
+/** the mask is set to 3FFFF00, as we're accepting for EVERY _local_ destination address first. afterwards list_clients is getting search for matching destination address */
+#define MACRO_deleteFilterIfExists_mask3FFFF00(mpPGN,LocalSa) \
   { \
     uint32_t ui32_filter = ((static_cast<MASK_TYPE>(mpPGN) | static_cast<MASK_TYPE>(LocalSa)) << 8); \
     if (__IsoAgLib::getCanInstance4Comm().existFilter( *this, (0x3FFFF00UL), ui32_filter, __IsoAgLib::Ident_c::ExtendedIdent)) \
@@ -1144,7 +1144,7 @@ MultiReceive_c::sendCurrentCts(DEF_Stream_c_IMPL* apc_stream)
   /** may also be 0, meaning HOLD CONNECTION OPEN, but we can handle multiple streams... ;-)
       and we don't want to hold connections open that are very short, so well........... */
 
-  // the following "> 0" check shouldn't be needed because if we reach here, we shouldn't 
+  // the following "> 0" check shouldn't be needed because if we reach here, we shouldn't
   uint32_t ui32_allowPackets = (getStreamCount() > 0) ? ((CONFIG_MULTI_RECEIVE_MAX_OVERALL_PACKETS_ADDED_FROM_ALL_BURSTS) / getStreamCount()) : 1;
   if (ui32_allowPackets == 0)
   { // Don't allow 0 packets here as this would mean HOLD-CONNECTION OPEN and
@@ -1273,10 +1273,10 @@ MultiReceive_c::init()
 
     // insert receive filter for broadcasted TP
     __IsoAgLib::FilterBox_c* refFB;
-    MACRO_insertFilterIfNotYetExists_mask1FFFF00_setRef(TP_CONN_MANAGE_PGN,0xFF,false,refFB,8)
-    MACRO_insertFilterIfNotYetExists_mask1FFFF00_useRef(TP_DATA_TRANSFER_PGN,0xFF,false,refFB,8)
-    MACRO_insertFilterIfNotYetExists_mask1FFFF00_setRef(ETP_CONN_MANAGE_PGN,0xFF,false,refFB,8)
-    MACRO_insertFilterIfNotYetExists_mask1FFFF00_useRef(ETP_DATA_TRANSFER_PGN,0xFF,true,refFB,8)
+    MACRO_insertFilterIfNotYetExists_mask3FFFF00_setRef(TP_CONN_MANAGE_PGN,0xFF,false,refFB,8)
+    MACRO_insertFilterIfNotYetExists_mask3FFFF00_useRef(TP_DATA_TRANSFER_PGN,0xFF,false,refFB,8)
+    MACRO_insertFilterIfNotYetExists_mask3FFFF00_setRef(ETP_CONN_MANAGE_PGN,0xFF,false,refFB,8)
+    MACRO_insertFilterIfNotYetExists_mask3FFFF00_useRef(ETP_DATA_TRANSFER_PGN,0xFF,true,refFB,8)
 
     setTimePeriod (5000); // nothing to do per default!
   }

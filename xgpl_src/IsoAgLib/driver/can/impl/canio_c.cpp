@@ -256,6 +256,7 @@ CanIo_c::singletonInit()
     i32_canErrEnd = 0;
 
     mi32_endLastReconfigTime = 0;
+    i32_lastProcessedCanPkgTime = 0;
     ui8_processedMsgCnt = 0;
     c_maskStd.set(~0, Ident_c::StandardIdent);
     c_maskExt.set(~0, Ident_c::ExtendedIdent);
@@ -986,7 +987,7 @@ int16_t CanIo_c::processMsg(){
   ui8_processedMsgCnt = 0;
 
 
-  int32_t i32_fbIdx, i32_rcvTime;
+  int32_t i32_fbIdx;
   uint32_t i32_ident;
 #ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
 uint32_t ui32_msgNbr;
@@ -1002,11 +1003,11 @@ uint32_t ui32_msgNbr;
 
     #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
       // read the FbIdx and the rcvTime (used for the reconfigure)
-      i32_retVal = HAL::iFifoReadFbIdx(ui8_busNumber,i32_fbIdx,i32_rcvTime,i32_ident,identType);
+      i32_retVal = HAL::iFifoReadFbIdx(ui8_busNumber, i32_fbIdx, i32_lastProcessedCanPkgTime, i32_ident,identType);
 
     #else
       uint8_t ui8_identType;
-      i32_retVal = HAL::can_useNextMsgobjNumber(ui8_busNumber, ui32_msgNbr, i32_ident, ui8_identType);
+      i32_retVal = HAL::can_useNextMsgobjNumber(ui8_busNumber, ui32_msgNbr, i32_ident, ui8_identType, i32_lastProcessedCanPkgTime);
       identType = static_cast<Ident_c::identType_t>(ui8_identType);
       i32_fbIdx = ui32_msgNbr-minReceiveObjNr();
 

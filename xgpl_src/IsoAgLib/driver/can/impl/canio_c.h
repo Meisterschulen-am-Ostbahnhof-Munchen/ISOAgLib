@@ -486,6 +486,11 @@ class CanIo_c : public SingletonCanIo_c {
   void printMsgObjInfo();
   #endif
 
+  /** for precise time checks e.g. within isVtActive() the last timestamp of the last processed can package is accessible.
+    @return time stamp of the last can package that has been received and processed successfully
+  */
+  int32_t getLastProcessedCanPkgTime() const { return i32_lastProcessedCanPkgTime; }
+
  protected: // Protected methods
 #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
   /** evaluate common bits of all defined filterBox
@@ -599,6 +604,8 @@ class CanIo_c : public SingletonCanIo_c {
   void doDebug(uint8_t ui8_busNr, uint8_t ui8_sendObjNr);
 #endif
 
+  void setEndLastReconfigTime(){ mi32_endLastReconfigTime = HAL::getTime(); }
+
 // Private attributes
 #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
   /** dynamic array of MsgObj_c which manages each one a
@@ -653,13 +660,14 @@ class CanIo_c : public SingletonCanIo_c {
   /**  timestamp of last CAN BUS integrity check  */
   int32_t i32_lastCanCheck;
 
+  /**  timestamp of last received and and processed CAN package  */
+  int32_t i32_lastProcessedCanPkgTime;
+
   /** CAN ui16_bitrate (in kBit/s) */
   uint16_t ui16_bitrate;
 
 
   int32_t mi32_endLastReconfigTime;
-
-  void setEndLastReconfigTime(){ mi32_endLastReconfigTime = HAL::getTime(); }
 
   /** global mask with standard 11bit type */
   Ident_c c_maskStd;

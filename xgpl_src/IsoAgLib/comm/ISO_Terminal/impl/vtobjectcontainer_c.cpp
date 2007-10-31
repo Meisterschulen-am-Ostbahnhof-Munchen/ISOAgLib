@@ -158,10 +158,7 @@ vtObjectContainer_c::hideShow(uint8_t b_hideOrShow, bool b_updateObject, bool b_
 {
   if (b_updateObject) saveValue8 (MACRO_getStructOffset(get_vtObjectContainer_a(), hidden), sizeof(iVtObjectContainer_s), (!b_hideOrShow)&0x01);
 
-  __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommand (160 /* Command: Command --- Parameter: Hide/Show Object */,
-                                                   vtObject_a->ID & 0xFF, vtObject_a->ID >> 8,
-                                                   b_hideOrShow,
-                                                   0xFF, 0xFF, 0xFF, 0xFF, DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
+   __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandHideShow (this, b_hideOrShow,b_enableReplaceOfCmd);
 }
 
 void

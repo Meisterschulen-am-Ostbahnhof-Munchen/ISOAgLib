@@ -75,7 +75,8 @@ class IsoRequestPgnHandler_c : public CanCustomer_c
 
 public:
   virtual ~IsoRequestPgnHandler_c() {};
-  virtual bool processMsgRequestPGN (uint32_t /*aui32_pgn*/, IsoItem_c* /*apc_isoItemSender*/, IsoItem_c* /*apc_isoItemReceiver*/){return false;};
+  // IsoItem_c is intentionally not const, because the internal IsoAgLib classes are allowed to e.g. use sendSaClaim().
+  virtual bool processMsgRequestPGN (uint32_t /*aui32_pgn*/, IsoItem_c* /*apc_isoItemSender*/, IsoItem_c* /*apc_isoItemReceiver*/) { return false; }
 };
 
 }

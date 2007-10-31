@@ -345,8 +345,8 @@ namespace HAL
 
 
 
-  inline int32_t can_useNextMsgobjNumber(uint8_t aui8_busNr, uint32_t& reflIdent, uint32_t& refui32_msgId,uint8_t& refui8_msgtype)
-    {return __HAL::can_useNextMsgobjNumber(aui8_busNr, reflIdent,refui32_msgId, refui8_msgtype );};
+  inline int32_t can_useNextMsgobjNumber(uint8_t aui8_busNr, uint32_t& reflIdent, uint32_t& refui32_msgId, uint8_t& refui8_msgtype, int32_t& i32_rcvTime)
+  {return __HAL::can_useNextMsgobjNumber(aui8_busNr, reflIdent, refui32_msgId, refui8_msgtype, i32_rcvTime );};
 
 
 

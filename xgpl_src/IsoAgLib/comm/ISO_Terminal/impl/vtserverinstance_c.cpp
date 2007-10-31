@@ -82,6 +82,7 @@
 #include "vtserverinstance_c.h"
 
 #include <IsoAgLib/hal/system.h>
+#include <IsoAgLib/driver/can/impl/canio_c.h>
 #include "isoterminal_c.h"
 
 #if defined(DEBUG) || defined(DEBUG_HEAP_USEAGE)
@@ -134,13 +135,13 @@ VtServerInstance_c::isVtActive ()
 {
   if (vtState_a.lastReceived)
   {
-    if (((int32_t)HAL::getTime() - (int32_t)vtState_a.lastReceived) <= 3000)
+    // Using the time when the last package has been received and processed makes sure that no packages are being ignored,
+    // that were sent at this moment but were not processed so far (will be soon).
+    // The disadvantage this way is, that an isAlive after 3.01s could be accepted without entering the safestate -
+    // this should not be a problem because a new alive has already been received, and a safestate is not urgently necessary
+    if (((int32_t)getCanInstance4Comm().getLastProcessedCanPkgTime() - (int32_t)vtState_a.lastReceived) <= 3000)
     { // comparing as int, so that in case "NOW-time > CAN-time" NO client-reload happens
       return true;
-    }
-    else
-    {
-      return false;
     }
   }
   return false;
@@ -152,12 +153,12 @@ VtServerInstance_c::isVtActive ()
 void
 VtServerInstance_c::setLatestVtStatusData()
 {
-  vtState_a.lastReceived = rc_isoTerminal.data().time();
+  vtState_a.lastReceived =               rc_isoTerminal.data().time();
   vtState_a.saOfActiveWorkingSetMaster = rc_isoTerminal.data().getUint8Data (1);
-  vtState_a.dataAlarmMask = rc_isoTerminal.data().getUint8Data (2) | (rc_isoTerminal.data().getUint8Data (3) << 8);
-  vtState_a.softKeyMask = rc_isoTerminal.data().getUint8Data (4) | (rc_isoTerminal.data().getUint8Data (5) << 8);
-  vtState_a.busyCodes = rc_isoTerminal.data().getUint8Data (6);
-  vtState_a.functionBusy = rc_isoTerminal.data().getUint8Data (7);
+  vtState_a.dataAlarmMask =              rc_isoTerminal.data().getUint8Data (2) | (rc_isoTerminal.data().getUint8Data (3) << 8);
+  vtState_a.softKeyMask =                rc_isoTerminal.data().getUint8Data (4) | (rc_isoTerminal.data().getUint8Data (5) << 8);
+  vtState_a.busyCodes =                  rc_isoTerminal.data().getUint8Data (6);
+  vtState_a.functionBusy =               rc_isoTerminal.data().getUint8Data (7);
 }
 
 /** process received language messages
@@ -185,37 +186,37 @@ VtServerInstance_c::setLocalSettings()
 void
 VtServerInstance_c::setVersion()
 {
-  vtCapabilities_a.lastReceivedVersion = HAL::getTime();
-  vtCapabilities_a.iso11783version = rc_isoTerminal.data().getUint8Data (1);
+  vtCapabilities_a.lastReceivedVersion =  rc_isoTerminal.data().time();
+  vtCapabilities_a.iso11783version =      rc_isoTerminal.data().getUint8Data (1);
 }
 
 void
 VtServerInstance_c::setSoftKeyData()
 {
-  vtCapabilities_a.lastReceivedSoftkeys = HAL::getTime();
-  vtCapabilities_a.skWidth = rc_isoTerminal.data().getUint8Data (4);
-  vtCapabilities_a.skHeight = rc_isoTerminal.data().getUint8Data (5);
-  vtCapabilities_a.skVirtual = rc_isoTerminal.data().getUint8Data (6);
-  vtCapabilities_a.skPhysical = rc_isoTerminal.data().getUint8Data (7);
+  vtCapabilities_a.lastReceivedSoftkeys = rc_isoTerminal.data().time();
+  vtCapabilities_a.skWidth =              rc_isoTerminal.data().getUint8Data (4);
+  vtCapabilities_a.skHeight =             rc_isoTerminal.data().getUint8Data (5);
+  vtCapabilities_a.skVirtual =            rc_isoTerminal.data().getUint8Data (6);
+  vtCapabilities_a.skPhysical =           rc_isoTerminal.data().getUint8Data (7);
 }
 
 void
 VtServerInstance_c::setTextFontData()
 {
-  vtCapabilities_a.lastReceivedFont = HAL::getTime();
-  vtCapabilities_a.fontSizes = (rc_isoTerminal.data().getUint8Data (5) << 1) | 0x01;
-  vtCapabilities_a.fontSizes += rc_isoTerminal.data().getUint8Data (6) << 8;
-  vtCapabilities_a.fontTypes = rc_isoTerminal.data().getUint8Data (7);
+  vtCapabilities_a.lastReceivedFont =     rc_isoTerminal.data().time();
+  vtCapabilities_a.fontSizes =           (rc_isoTerminal.data().getUint8Data (5) << 1) | 0x01;
+  vtCapabilities_a.fontSizes +=           rc_isoTerminal.data().getUint8Data (6) << 8;
+  vtCapabilities_a.fontTypes =            rc_isoTerminal.data().getUint8Data (7);
 }
 
 void
 VtServerInstance_c::setHardwareData()
 {
-  vtCapabilities_a.lastReceivedHardware = HAL::getTime();
-  vtCapabilities_a.hwGraphicType = rc_isoTerminal.data().getUint8Data (2);
-  vtCapabilities_a.hwHardware = rc_isoTerminal.data().getUint8Data (3);
-  vtCapabilities_a.hwWidth = rc_isoTerminal.data().getUint8Data (4) + (rc_isoTerminal.data().getUint8Data (5) << 8);
-  vtCapabilities_a.hwHeight = rc_isoTerminal.data().getUint8Data (6) + (rc_isoTerminal.data().getUint8Data (7) << 8);
+  vtCapabilities_a.lastReceivedHardware = rc_isoTerminal.data().time();
+  vtCapabilities_a.hwGraphicType =        rc_isoTerminal.data().getUint8Data (2);
+  vtCapabilities_a.hwHardware =           rc_isoTerminal.data().getUint8Data (3);
+  vtCapabilities_a.hwWidth =              rc_isoTerminal.data().getUint8Data (4) + (rc_isoTerminal.data().getUint8Data (5) << 8);
+  vtCapabilities_a.hwHeight =             rc_isoTerminal.data().getUint8Data (6) + (rc_isoTerminal.data().getUint8Data (7) << 8);
 }
 
 void
@@ -234,6 +235,5 @@ VtServerInstance_c::getVtFontSizes()
 {
   return vtCapabilities_a.fontSizes;
 }
-
 
 } // end namespace __IsoAgLib

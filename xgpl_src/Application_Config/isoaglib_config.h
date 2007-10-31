@@ -733,9 +733,11 @@
 #endif
 
 
-/// auto-define USE_WORKING_SET dependend on the parts that need it!
-#if defined (USE_ISO_TERMINAL) || defined (USE_ISO_TERMINAL_SERVER)
-  #define USE_WORKING_SET
+#ifndef USE_WORKING_SET
+  /// auto-define USE_WORKING_SET dependend on the parts that need it!
+  #if defined (USE_ISO_TERMINAL) || defined (USE_ISO_TERMINAL_SERVER) || defined (USE_PROC_DATA_DESCRIPTION_POOL)
+    #define USE_WORKING_SET
+  #endif
 #endif
 
 /** default values for global masks

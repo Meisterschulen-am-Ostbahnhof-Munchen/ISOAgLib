@@ -1467,47 +1467,6 @@ VtClientServerCommunication_c::sendCommandForDEBUG (uint8_t* apui8_buffer, uint3
 }
 
 bool
-VtClientServerCommunication_c::sendCommandChangeNumericValue (IsoAgLib::iVtObject_c* apc_object, uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, bool b_enableReplaceOfCmd)
-{
-  return sendCommand (168 /* Command: Command --- Parameter: Change Numeric Value */,
-                      apc_object->getID() & 0xFF, apc_object->getID() >> 8,
-                      0xFF, byte1, byte2, byte3, byte4,
-                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
-}
-
-bool
-VtClientServerCommunication_c::sendCommandChangeAttribute (IsoAgLib::iVtObject_c* apc_object, uint8_t attrId, uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, bool b_enableReplaceOfCmd)
-{
-  return sendCommand (175 /* Command: Command --- Parameter: Change Attribute */,
-                      apc_object->getID() & 0xFF, apc_object->getID() >> 8,
-                      attrId, byte1, byte2, byte3, byte4,
-                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
-}
-
-bool
-VtClientServerCommunication_c::sendCommandChangeSoftKeyMask (IsoAgLib::iVtObject_c* apc_object, uint8_t maskType, uint16_t newSoftKeyMask, bool b_enableReplaceOfCmd)
-{
-  return sendCommand (174 /* Command: Command --- Parameter: Change Soft Key Mask */,
-                      maskType,
-                      apc_object->getID() & 0xFF, apc_object->getID() >> 8,
-                      newSoftKeyMask & 0xFF, newSoftKeyMask >> 8,
-                      0xFF, 0xFF,
-                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
-}
-
-bool
-VtClientServerCommunication_c::sendCommandChangeStringValue (IsoAgLib::iVtObject_c* apc_object, const char* apc_newValue, uint16_t overrideSendLength, bool b_enableReplaceOfCmd)
-{
-#ifdef DEBUG
-  INTERNAL_DEBUG_DEVICE << "Enqueued string-ref: " << q_sendUpload.size() << " -> ";
-#endif
-
-  sc_tempSendUpload.set (apc_object->getID(), apc_newValue, overrideSendLength);
-
-  return queueOrReplace (sc_tempSendUpload, b_enableReplaceOfCmd);
-}
-
-bool
 VtClientServerCommunication_c::sendCommandChangeStringValue (IsoAgLib::iVtObjectString_c* apc_objectString, bool b_enableReplaceOfCmd)
 {
 #ifdef DEBUG
@@ -1517,37 +1476,6 @@ VtClientServerCommunication_c::sendCommandChangeStringValue (IsoAgLib::iVtObject
   sc_tempSendUpload.set (apc_objectString);
 
   return queueOrReplace (sc_tempSendUpload, b_enableReplaceOfCmd);
-}
-
-bool
-VtClientServerCommunication_c::sendCommandChangeChildPosition (IsoAgLib::iVtObject_c* apc_object, IsoAgLib::iVtObject_c* apc_childObject, int16_t x, int16_t y, bool b_enableReplaceOfCmd)
-{
-  return sendCommand (180 /* Command: Command --- Parameter: Change Child Position */,
-                      apc_object->getID() & 0xFF, apc_object->getID() >> 8,
-                      apc_childObject->getID() & 0xFF, apc_childObject->getID() >> 8,
-                      x & 0xFF, x >> 8,
-                      y & 0xFF, y >> 8,
-                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
-}
-
-//! should only be called with valid values ranging -127..0..128 (according to ISO!!!)
-bool
-VtClientServerCommunication_c::sendCommandChangeChildLocation (IsoAgLib::iVtObject_c* apc_object, IsoAgLib::iVtObject_c* apc_childObject, int16_t dx, int16_t dy, bool b_enableReplaceOfCmd)
-{
-  return sendCommand (165 /* Command: Command --- Parameter: Change Child Location */,
-                      apc_object->getID() & 0xFF, apc_object->getID() >> 8,
-                      apc_childObject->getID() & 0xFF, apc_childObject->getID() >> 8,
-                      dx+127, dy+127, 0xFF,
-                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
-}
-
-bool
-VtClientServerCommunication_c::sendCommandChangeBackgroundColour (IsoAgLib::iVtObject_c* apc_object, uint8_t newColour, bool b_enableReplaceOfCmd)
-{
-  return sendCommand (167 /* Command: Command --- Parameter: Change Background Color */,
-                      apc_object->getID() & 0xFF, apc_object->getID() >> 8,
-                      newColour, 0xFF, 0xFF, 0xFF, 0xFF,
-                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
 }
 
 bool
@@ -1566,17 +1494,6 @@ VtClientServerCommunication_c::sendCommandChangePriority (IsoAgLib::iVtObject_c*
 }
 
 bool
-VtClientServerCommunication_c::sendCommandChangeSize (IsoAgLib::iVtObject_c* apc_object,uint16_t newWidth, uint16_t newHeight, bool b_enableReplaceOfCmd)
-{
-  return sendCommand (166 /* Command: Command --- Parameter: Change Size */,
-                      apc_object->getID() & 0xFF, apc_object->getID() >> 8,
-                      newWidth & 0xFF, newWidth >> 8,
-                      newHeight & 0xFF, newHeight >> 8,
-                      0xFF,
-                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
-}
-
-bool
 VtClientServerCommunication_c::sendCommandChangeEndPoint (IsoAgLib::iVtObject_c* apc_object,uint16_t newWidth, uint16_t newHeight, uint8_t newLineAttributes, bool b_enableReplaceOfCmd)
 {
   return sendCommand (169 /* Command: Command --- Parameter: Change Size */,
@@ -1584,36 +1501,6 @@ VtClientServerCommunication_c::sendCommandChangeEndPoint (IsoAgLib::iVtObject_c*
                       newWidth & 0xFF, newWidth >> 8,
                       newHeight & 0xFF, newHeight >> 8,
                       newLineAttributes,
-                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
-}
-
-bool
-VtClientServerCommunication_c::sendCommandChangeFillAttributes (IsoAgLib::iVtObject_c* apc_object, uint8_t newFillType, uint8_t newFillColour, IsoAgLib::iVtObjectPictureGraphic_c* newFillPatternObject, bool b_enableReplaceOfCmd)
-{
-  return sendCommand (172 /* Command: Command --- Parameter: Change FillAttributes */,
-                      apc_object->getID() & 0xFF, apc_object->getID() >> 8,
-                      newFillType, newFillColour,
-                      (newFillType == 3) ? newFillPatternObject->getID() & 0xFF : 0xFF,
-                      (newFillType == 3) ? newFillPatternObject->getID() >> 8 : 0xFF,
-                      0xFF,
-                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
-}
-
-bool
-VtClientServerCommunication_c::sendCommandChangeFontAttributes (IsoAgLib::iVtObject_c* apc_object, uint8_t newFontColour, uint8_t newFontSize, uint8_t newFontType, uint8_t newFontStyle, bool b_enableReplaceOfCmd)
-{
-  return sendCommand (170 /* Command: Command --- Parameter: Change FontAttributes */,
-                      apc_object->getID() & 0xFF, apc_object->getID() >> 8,
-                      newFontColour, newFontSize, newFontType, newFontStyle, 0xFF,
-                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
-}
-
-bool
-VtClientServerCommunication_c::sendCommandChangeLineAttributes (IsoAgLib::iVtObject_c* apc_object, uint8_t newLineColour, uint8_t newLineWidth, uint16_t newLineArt, bool b_enableReplaceOfCmd)
-{
-  return sendCommand (171 /* Command: Command --- Parameter: Change LineAttributes */,
-                      apc_object->getID() & 0xFF, apc_object->getID() >> 8,
-                      newLineColour, newLineWidth, newLineArt & 0xFF, newLineArt >> 8, 0xFF,
                       DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
 }
 
@@ -2109,15 +1996,6 @@ VtClientServerCommunication_c::sendCommandLockUnlockMask( IsoAgLib::iVtObject_c*
                       ui16_lockTimeOut & 0xFF, ui16_lockTimeOut >> 8, /* lock timeout on ms or zero for no timeout */
                       0xFF, 0xFF,
                       DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
-}
-
-bool
-VtClientServerCommunication_c::sendCommandHideShow( IsoAgLib::iVtObject_c* apc_object, uint8_t b_hideOrShow, bool b_enableReplaceOfCmd)
-{
-  return sendCommand (160 /* Command: Command --- Parameter: Hide/Show Object */,
-                      apc_object->getID() & 0xFF, apc_object->getID() >> 8,
-                      b_hideOrShow,
-                      0xFF, 0xFF, 0xFF, 0xFF, DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
 }
 
 bool
