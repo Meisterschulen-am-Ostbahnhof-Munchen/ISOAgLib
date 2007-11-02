@@ -1957,29 +1957,37 @@ create_VCPrj()
 
 	PRJ_INCLUDE_PATH_WIN=`echo "$PRJ_INCLUDE_PATH" | sed -e 's#/#=_=_#g'`
 
-
-	if  [ $USE_CAN_DRIVER = "vector_canlib" ] ; then
-		USE_INCLUDE_PATHS='/I "'"$USE_STLPORT_HEADER_DIRECTORY"'" /I "'"$ISO_AG_LIB_PATH_WIN"'" /I "'"$ISO_AG_LIB_PATH_WIN=_=_xgpl_src"'" /I "'"$USE_WIN32_HEADER_DIRECTORY_WIN=_=_CANLIB=_=_dll"'"'
-		USE_DEFINES="$USE_DEFINES"' /D ''"'"$USE_WIN32_CAN_HW_TYPE"'"'
-		USE_d_DEFINES="$USE_d_DEFINES"' /d ''"'"$USE_WIN32_CAN_HW_TYPE"'"'
-		LIB_DIR_LINE="$USE_WIN32_LIB_DIRECTORY_WIN=_=_CANLIB=_=_dll"
-		echo "$USE_WIN32_LIB_DIRECTORY_WIN=_=_CANLIB=_=_dll=_=_vcandm32.lib" >> $DspPrjFilelist
-		echo "$USE_WIN32_LIB_DIRECTORY_WIN=_=_CANLIB=_=_dll=_=_VCanD.h" >> $DspPrjFilelist
-	elif  [ $USE_CAN_DRIVER = "vector_xl_drv_lib" ] ; then
-		USE_INCLUDE_PATHS='/I "'"$USE_STLPORT_HEADER_DIRECTORY"'" /I "'"$ISO_AG_LIB_PATH_WIN"'" /I "'"$ISO_AG_LIB_PATH_WIN=_=_xgpl_src"'" /I "'"$USE_WIN32_HEADER_DIRECTORY_WIN=_=_XL Driver Library=_=_bin"'"'
-		USE_DEFINES="$USE_DEFINES"' /D ''"'"XL_$USE_WIN32_CAN_HW_TYPE"'"'
-		USE_d_DEFINES="$USE_d_DEFINES"' /d ''"'"XL_$USE_WIN32_CAN_HW_TYPE"'"'
-		LIB_DIR_LINE="$USE_WIN32_LIB_DIRECTORY_WIN=_=_XL Driver Library=_=_bin"
-		echo "$USE_WIN32_LIB_DIRECTORY_WIN=_=_XL Driver Library=_=_bin=_=_vxlapi.lib" >> $DspPrjFilelist
-		echo "$USE_WIN32_LIB_DIRECTORY_WIN=_=_XL Driver Library=_=_bin=_=_vxlapi.h" >> $DspPrjFilelist
-	elif  [ $USE_CAN_DRIVER = "sontheim" ] ; then
-		USE_INCLUDE_PATHS='/I "'"$USE_STLPORT_HEADER_DIRECTORY"'" /I "'"$ISO_AG_LIB_PATH_WIN"'" /I "'"$ISO_AG_LIB_PATH_WIN=_=_xgpl_src"'" /I "'"$USE_WIN32_HEADER_DIRECTORY_WIN=_=_Sontheim"'" /I "'"$USE_WIN32_HEADER_DIRECTORY_WIN=_=_Sontheim=_=_Capitest"'"'
-		USE_DEFINES="$USE_DEFINES"' /D ''"'"XL_$USE_WIN32_CAN_HW_TYPE"'"'
-		USE_d_DEFINES="$USE_d_DEFINES"' /d ''"'"XL_$USE_WIN32_CAN_HW_TYPE"'"'
-		LIB_DIR_LINE=' /libpath:"'"$USE_WIN32_LIB_DIRECTORY_WIN=_=_Sontheim"'" /libpath:"'"$USE_WIN32_LIB_DIRECTORY_WIN=_=_Sontheim=_=_Capitest"'"'
-		echo "$USE_WIN32_LIB_DIRECTORY_WIN=_=_Sontheim=_=CANAPI.H" >> $DspPrjFilelist
-		echo "$USE_WIN32_LIB_DIRECTORY_WIN=_=_Sontheim=_=Capitest=_=CANAPI.H" >> $DspPrjFilelist
-	fi
+  case _"$USE_CAN_DRIVER" in
+      _vector_canlib)
+          USE_INCLUDE_PATHS='/I "'"$USE_STLPORT_HEADER_DIRECTORY"'" /I "'"$ISO_AG_LIB_PATH_WIN"'" /I "'"$ISO_AG_LIB_PATH_WIN=_=_xgpl_src"'" /I "'"$USE_WIN32_HEADER_DIRECTORY_WIN=_=_CANLIB=_=_dll"'"'
+          USE_DEFINES="$USE_DEFINES"' /D ''"'"$USE_WIN32_CAN_HW_TYPE"'"'
+          USE_d_DEFINES="$USE_d_DEFINES"' /d ''"'"$USE_WIN32_CAN_HW_TYPE"'"'
+          LIB_DIR_LINE="$USE_WIN32_LIB_DIRECTORY_WIN=_=_CANLIB=_=_dll"
+          echo "$USE_WIN32_LIB_DIRECTORY_WIN=_=_CANLIB=_=_dll=_=_vcandm32.lib" >> $DspPrjFilelist
+          echo "$USE_WIN32_LIB_DIRECTORY_WIN=_=_CANLIB=_=_dll=_=_VCanD.h" >> $DspPrjFilelist
+          ;;
+      _vector_xl_drv_lib)
+          USE_INCLUDE_PATHS='/I "'"$USE_STLPORT_HEADER_DIRECTORY"'" /I "'"$ISO_AG_LIB_PATH_WIN"'" /I "'"$ISO_AG_LIB_PATH_WIN=_=_xgpl_src"'" /I "'"$USE_WIN32_HEADER_DIRECTORY_WIN=_=_XL Driver Library=_=_bin"'"'
+          USE_DEFINES="$USE_DEFINES"' /D ''"'"XL_$USE_WIN32_CAN_HW_TYPE"'"'
+          USE_d_DEFINES="$USE_d_DEFINES"' /d ''"'"XL_$USE_WIN32_CAN_HW_TYPE"'"'
+          LIB_DIR_LINE="$USE_WIN32_LIB_DIRECTORY_WIN=_=_XL Driver Library=_=_bin"
+          echo "$USE_WIN32_LIB_DIRECTORY_WIN=_=_XL Driver Library=_=_bin=_=_vxlapi.lib" >> $DspPrjFilelist
+          echo "$USE_WIN32_LIB_DIRECTORY_WIN=_=_XL Driver Library=_=_bin=_=_vxlapi.h" >> $DspPrjFilelist
+          ;;
+      _sontheim)
+          USE_INCLUDE_PATHS='/I "'"$USE_STLPORT_HEADER_DIRECTORY"'" /I "'"$ISO_AG_LIB_PATH_WIN"'" /I "'"$ISO_AG_LIB_PATH_WIN=_=_xgpl_src"'" /I "'"$USE_WIN32_HEADER_DIRECTORY_WIN=_=_Sontheim"'" /I "'"$USE_WIN32_HEADER_DIRECTORY_WIN=_=_Sontheim=_=_Capitest"'"'
+          USE_DEFINES="$USE_DEFINES"' /D ''"'"XL_$USE_WIN32_CAN_HW_TYPE"'"'
+          USE_d_DEFINES="$USE_d_DEFINES"' /d ''"'"XL_$USE_WIN32_CAN_HW_TYPE"'"'
+          LIB_DIR_LINE=' /libpath:"'"$USE_WIN32_LIB_DIRECTORY_WIN=_=_Sontheim"'" /libpath:"'"$USE_WIN32_LIB_DIRECTORY_WIN=_=_Sontheim=_=_Capitest"'"'
+          echo "$USE_WIN32_LIB_DIRECTORY_WIN=_=_Sontheim=_=CANAPI.H" >> $DspPrjFilelist
+          echo "$USE_WIN32_LIB_DIRECTORY_WIN=_=_Sontheim=_=Capitest=_=CANAPI.H" >> $DspPrjFilelist
+          ;;
+      _socket_server)
+          USE_INCLUDE_PATHS='/I "'"$ISO_AG_LIB_PATH_WIN"'" /I "'"$ISO_AG_LIB_PATH_WIN=_=_xgpl_src"'"'
+          USE_DEFINES="$USE_DEFINES"' /D "'CAN_DRIVER_SOCKET'"'
+          USE_d_DEFINES="$USE_d_DEFINES"' /d "'CAN_DRIVER_SOCKET'"'
+          ;;
+  esac
 
 	for SingleInclPath in $PRJ_INCLUDE_PATH_WIN ; do
 		USE_INCLUDE_PATHS="$USE_INCLUDE_PATHS"' /I "'"$SingleInclPath"'"'
