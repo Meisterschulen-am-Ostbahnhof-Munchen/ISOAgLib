@@ -74,9 +74,9 @@ to develop applications using IsoAglib.
 </b>
 
 \section Acknowledgements Acknowledgements
-\subsection InitialFundingDfg Thanks to DFG funded research group "IKB Dürnast"
+\subsection InitialFundingDfg Thanks to DFG funded research group "IKB D&uuml;rnast"
 The initial creation of the ISO<i><sub>AgLib</sub></i> was enabled by the research project
-<b>"IKB Dürnast"</b> which is leaded by <b>Prof. Auernhammer</b> at the <a href="http://www.tec.wzw.tum.de/pflanztech/englisch/index.html">Department of Bio Resources and Land Use Technology
+<b>"IKB D&uuml;rnast"</b> which is leaded by <b>Prof. Auernhammer</b> at the <a href="http://www.tec.wzw.tum.de/pflanztech/englisch/index.html">Department of Bio Resources and Land Use Technology
 			- Crop Production Engineering</a> .
 
 \subsection InitialSupport Thanks to development by Sensortechnik Wiedemann (STW)
