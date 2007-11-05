@@ -58,7 +58,7 @@
 
 #ifdef WIN32
   #include <windows.h>
-  #include "Pcan_usb.h"
+  #include <Pcan_usb.h>
 #else
   #include <pcan.h>
   #include <sys/types.h>
