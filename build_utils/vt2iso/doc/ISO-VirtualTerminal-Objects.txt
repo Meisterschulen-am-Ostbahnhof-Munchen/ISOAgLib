@@ -216,7 +216,7 @@ If you put one object into the language specific part, then an object of the sam
 See the following example:
 \code
   <stringvariable name='StrNone' language="en" value='none selected!'       />
-  <stringvariable name='StrNone' language="de" value='nichts ausgewählt'    />
+  <stringvariable name='StrNone' language="de" value='nichts ausgew&auml;hlt'    />
   <stringvariable name='StrNone' language="it" value='niente selezionato!'  />
 \endcode
 You can also specify more languages at once or use the asterisk to make it available in all languages (this makes only sense when getting different values from the language-text-files, see further below).
