@@ -71,7 +71,7 @@ class iDevPropertyHandler_c : private __IsoAgLib::DevPropertyHandler_c  {
 public:
 
   /**
-  Pointer auf das Byte-Array entgegennehmen, LanguageLabel herzaubern, das alte in der Map ersetzen oder neu einfügen
+  Receive pointer to byte array, create LanguageLabel, replace old one in Map or create a new one
   */
   bool registerDevicePool (const IsoAgLib::iIdentItem_c* apc_wsMasterIdentItem, const HUGE_MEM uint8_t* apc_devicePoolByteArray, const uint32_t aui32_bytestreamLength, bool ab_setToDefault)
     { return DevPropertyHandler_c::registerDevicePool (static_cast<const __IsoAgLib::IdentItem_c*>(apc_wsMasterIdentItem), apc_devicePoolByteArray, aui32_bytestreamLength, ab_setToDefault); }
