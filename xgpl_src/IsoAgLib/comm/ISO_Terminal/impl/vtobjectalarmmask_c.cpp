@@ -158,14 +158,14 @@ bool
 vtObjectAlarmMask_c::moveChildLocation(IsoAgLib::iVtObject_c* apc_childObject, int8_t dx, int8_t dy, bool b_updateObject)
 {
   MACRO_localVars;
-  return genericChangeChildLocation (apc_childObject, dx, dy, b_updateObject, vtObjectAlarmMask_a->numberOfObjectsToFollow, (IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s *) vtObjectAlarmMask_a->objectsToFollow, MACRO_getStructOffset(get_vtObjectAlarmMask_a(), objectsToFollow), sizeof(iVtObjectAlarmMask_s), false);
+  return genericChangeChildLocation (apc_childObject, dx, dy, b_updateObject, vtObjectAlarmMask_a->numberOfObjectsToFollow, const_cast<IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s *> (vtObjectAlarmMask_a->objectsToFollow), MACRO_getStructOffset(get_vtObjectAlarmMask_a(), objectsToFollow), sizeof(iVtObjectAlarmMask_s), false);
 }
 
 bool
 vtObjectAlarmMask_c::setChildPosition(IsoAgLib::iVtObject_c* apc_childObject, int16_t x, int16_t y, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
   MACRO_localVars;
-  return genericChangeChildPosition (apc_childObject, x, y, b_updateObject, vtObjectAlarmMask_a->numberOfObjectsToFollow, (IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s *) vtObjectAlarmMask_a->objectsToFollow, MACRO_getStructOffset(get_vtObjectAlarmMask_a(), objectsToFollow), sizeof(iVtObjectAlarmMask_s), b_enableReplaceOfCmd);
+  return genericChangeChildPosition (apc_childObject, x, y, b_updateObject, vtObjectAlarmMask_a->numberOfObjectsToFollow, const_cast<IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s *> (vtObjectAlarmMask_a->objectsToFollow), MACRO_getStructOffset(get_vtObjectAlarmMask_a(), objectsToFollow), sizeof(iVtObjectAlarmMask_s), b_enableReplaceOfCmd);
 }
 
 uint8_t
