@@ -567,7 +567,7 @@ bool IdentItem_c::timeEventActive( void )
       else
       { // now the ISOName is used by some other member on the BUS
         // ==> conflict
-        setItemState (Off); // zurückzeiehn, für immer maul halten
+        setItemState (Off); // withdraw from action
         #if defined(SYSTEM_PC) && defined(DEBUG)
         INTERNAL_DEBUG_DEVICE << "WARNING: IsoName stolen by other member on the bus (remote), so we have to shut off forever!" << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
