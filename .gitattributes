@@ -2630,6 +2630,7 @@ xgpl_src/IsoAgLib/hal/pc/can/can_server_pc.cpp -text
 xgpl_src/IsoAgLib/hal/pc/can/can_server_pcan.cpp -text
 xgpl_src/IsoAgLib/hal/pc/can/can_server_rte.cpp -text
 xgpl_src/IsoAgLib/hal/pc/can/can_server_sock.cpp -text
+xgpl_src/IsoAgLib/hal/pc/can/can_server_sontheim.cpp -text
 xgpl_src/IsoAgLib/hal/pc/can/msq_helper.cpp -text
 xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_A1_ASCII.cpp -text
 xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_A1_binary.cpp -text
