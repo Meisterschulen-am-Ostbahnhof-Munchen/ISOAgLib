@@ -782,6 +782,7 @@ static void can_read(server_c* pc_serverData)
 
   uint32_t channel_with_change = 0;
   uint8_t ui8_cntOpenDevice = 0;
+  uint32_t ui32_sleepTime = 50000;
 
   for (;;) {
 
@@ -825,7 +826,7 @@ static void can_read(server_c* pc_serverData)
     }
     else
     {
-      usleep(50000); // no device => nothing to read
+      usleep(ui32_sleepTime); // no device => nothing to read
       // check devices which have no device handle (RTE)
       b_processMsg = TRUE;
     }
@@ -849,6 +850,11 @@ static void can_read(server_c* pc_serverData)
 
         continue;
       }
+
+      if (i16_rc > 0)
+        ui32_sleepTime = 5000; // CAN message received => reduce sleep time
+      else
+        ui32_sleepTime = 50000; // no CAN message received => increase sleep time
 
       if (i16_rc == 0)
       { // invalid message

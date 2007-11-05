@@ -825,6 +825,7 @@ void readWrite(server_c* pc_serverData)
   int i_selectResult;
   struct timeval t_timeout;
   bool b_deviceHandleFound;
+  uint32_t ui32_sleepTime = 50000;
 
   for (;;) {
 
@@ -864,7 +865,7 @@ void readWrite(server_c* pc_serverData)
     pthread_mutex_unlock( &(pc_serverData->m_protectClientList) );
 
     t_timeout.tv_sec = 0;
-    t_timeout.tv_usec = 50000;
+    t_timeout.tv_usec = ui32_sleepTime;
 
     // timeout to check for
     // 1. modified client list => new sockets to wait for
@@ -887,12 +888,15 @@ void readWrite(server_c* pc_serverData)
             pthread_mutex_lock( &(pc_serverData->m_protectClientList) );
             enqueue_msg(&s_transferBuf, 0, pc_serverData);
             pthread_mutex_unlock( &(pc_serverData->m_protectClientList) );
+            ui32_sleepTime = 5000;  // CAN message received => reduce sleep time
           }
           break; // handle only first found bus
         }
       }
       continue;
     }
+
+    ui32_sleepTime = 50000; // no CAN message received => increase sleep time
 
     // new message from can device ?
     for (uint32_t ui32_cnt = 0; ui32_cnt < cui32_maxCanBusCnt; ui32_cnt++ )
