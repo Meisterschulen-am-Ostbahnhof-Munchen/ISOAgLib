@@ -4,7 +4,7 @@ INCLUDE_mainHeaderWithNavbar.txt_INCLUDE
 
 \section InfGeneralInformation General Information
 The ISO<i><sub>AgLib</sub></i> was primarily developed for massive automatic process data recording within the research group
-<a href="http://www.tec.wzw.tum.de/pflanztech/englisch/forschung/forschung.html">IKB-Dürnast</a>
+<a href="http://www.tec.wzw.tum.de/pflanztech/englisch/forschung/forschung.html">IKB-D&uuml;rnast</a>
 . Since publication of this project it is used for:
 	- Implement Indicator (IMI) which detects working state dependent on configuration and tractor base
     data information (LBS-Base) and records process data:
@@ -54,9 +54,9 @@ In case the ISO<i><sub>AgLib</sub></i> would suffer some problems for other appl
 
 The targeted flexible network, where devices of different manufacturers,
 models and built years are providing and using general services can be seen
-as a network of partial autonomous agents. Kühnel establishes the following
+as a network of partial autonomous agents. K&uuml;hnel establishes the following
 criteria for the use of agents in the view of the whole system (book: "Agentenbasierte
-Softwareentwicklung", A.: Ralf Kühnel, V.: Addison-Wesley):
+Softwareentwicklung", A.: Ralf K&uuml;hnel, V.: Addison-Wesley):
 - inherent&nbsp;distribution of data, competence and leadership
 - existence&nbsp;of specific software for sub tasks which should be integrated
 - complexity of algorithms which could be subdivided in distributed parts
