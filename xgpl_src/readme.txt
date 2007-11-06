@@ -8,11 +8,11 @@
 	  will collect and incorporate all contributions. This process guarantees that each
 	  contributor will get more than he personally provided. \n
 	  The main contributors to this project are in order of the importance of their part:
-	  -# <a href="http://www.dfg.de">Deutsche Forschungsgesellschaft ( DFG )</a> by funding the research project <a href="http://ikb.weihenstephan.de">IKB-D&uuml;rnast</a>
-		-# <a href="http://www.tec.wzw.tum.de">Research Group of Professor Auernhammer</a> by running the research project <a href="http://ikb.weihenstephan.de">IKB-D&uuml;rnast</a>
+	  -# <a href="http://www.dfg.de">Deutsche Forschungsgesellschaft ( DFG )</a> by funding the research project <a href="http://ikb.weihenstephan.de">IKB-Dürnast</a>
+		-# <a href="http://www.tec.wzw.tum.de">Research Group of Professor Auernhammer</a> by running the research project <a href="http://ikb.weihenstephan.de">IKB-Dürnast</a>
 		-# <a href="http://www.fritzmeier.de">Fritzmeier</a> by contribution of the development of the ISO 11783 Virutal Terminal framework
 		   which was needed for the user interface of their product <a href="http://www.fritzmeier.com/engl/frameset_engl.htm?/engl/environment/environment_miniveg.htm">Chlorophyll Sensor <b>MiniVeg N</b></a>
-		-# <a href="http://www.sensor-technik.de">Sensortechnik Wiedemann (STW)</a> by support for the research of the main author within his research for IKB-D&uuml;rnast
+		-# <a href="http://www.sensor-technik.de">Sensortechnik Wiedemann (STW)</a> by support for the research of the main author within his research for IKB-Dürnast
 
 		\section LgplStructure Overview on Directory Structure of LGPL Licensed Parts of IsoAgLib
 		The structure of the source files of the ISO<i><sub>AgLib</sub></i> is described in the following imagemap diagram.
