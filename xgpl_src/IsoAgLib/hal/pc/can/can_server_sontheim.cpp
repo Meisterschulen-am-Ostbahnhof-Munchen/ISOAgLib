@@ -52,8 +52,10 @@
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
  * the main author Achim Spangler by a.spangler@osb-ag:de                  *
  ***************************************************************************/
+#if !defined(WIN32)
 typedef int HANDLE;
 typedef int HINSTANCE;
+#endif
 
 #define  STRICT
 
@@ -64,12 +66,12 @@ typedef int HINSTANCE;
 
 #define USE_THREAD
 
-#if WIN32
+#ifdef WIN32
 #include <windows.h>
 #endif
 
 #include <stdio.h>
-#if WIN32
+#ifdef WIN32
 #include <conio.h>
 #endif
 #include <time.h>
@@ -227,12 +229,13 @@ uint32_t initCardApi ()
   // select the Vector CAN card type to use
   gHwType = HWTYPE_AUTO;
   #endif
+//  gHwType = c_CANLpt; //noch zu machen: HWTYPE_AUTO;
 
   printf("load driver Dll\n");
   if ( loadDllFunctionAddresses() != HAL_NO_ERR) return HAL_CONFIG_ERR;
   printf("driver DLL loaded\n");
 
-  if ( gHwType = HWTYPE_AUTO )
+  if ( HWTYPE_AUTO == gHwType )
   {
     const int32_t ci_tryCardTypes[] = { c_CANLpt, c_PowerCANPCI, c_CANUSB_Std_Api, c_PowerCAN, c_CANAS, c_ICAN, c_EICAN, c_ECAN_PCI };
     const int32_t ci_cardTypeCnt = 7;
