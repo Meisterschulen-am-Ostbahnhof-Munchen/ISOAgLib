@@ -22,7 +22,7 @@ The ISO<i><sub>AgLib</sub></i> was developed with the help of the following Open
 - LINUX and all its standard development tools
 - ...
 
-Thanks to the DFG, which finances the partial project 2 of the research group "IKB-D&uuml;rnast".
+Thanks to the DFG, which finances the partial project 2 of the research group "IKB-Dürnast".
 Thanks to the research group of Prof. H. Auernhammer and to Martin Wodok (m.wodok@osb-ag:de), who
 developed LBS_Terminal.
 
@@ -40,8 +40,8 @@ with good search function <br>
 - Will C++ be faster than Fortran?
 <a href="http://www.acl.lanl.gov/iscope97/papers/veldhuizen.ps"> http://www.acl.lanl.gov/iscope97/papers/veldhuizen.ps</a>
 - IN THE TRENCHES - Twelve Rules For A Better Open Source Project <a href="http://www.linux-mag.com/2000-02/trench_01.html">http://www.linux-mag.com/2000-02/trench_01.html</a>
-- Information&nbsp;about the used GPL-compatible derivatied license, as defined by the <a href="http://ecos.sourceware.org/license-overview.html">eCos project</a>
-- Information&nbsp;about IKB-D&uuml;rnast and about partial project 2, which develops the ISO<i><sub>AgLib</sub></i>:<br>
+- Information about the used GPL-compatible derivatied license, as defined by the <a href="http://ecos.sourceware.org/license-overview.html">eCos project</a>
+- Information about IKB-Dürnast and about partial project 2, which develops the ISO<i><sub>AgLib</sub></i>:<br>
 <a href="http://ikb.weihenstephan.de/en/research/tp_2/actions.html">http://ikb.weihenstephan.de/en/research/tp_2/actions.html</a><br>
 <a href="http://ikb.weihenstephan.de/en/research/tp_2/overview.html">http://ikb.weihenstephan.de/en/research/tp_2/overview.html</a><br></td></tr>
 </table>
