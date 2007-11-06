@@ -4,7 +4,7 @@ INCLUDE_mainHeaderWithNavbar.txt_INCLUDE
 
 \section InfGeneralInformation General Information
 The ISO<i><sub>AgLib</sub></i> was primarily developed for massive automatic process data recording within the research group
-<a href="http://www.tec.wzw.tum.de/pflanztech/englisch/forschung/forschung.html">IKB-D&uuml;rnast</a>
+<a href="http://www.tec.wzw.tum.de/pflanztech/englisch/forschung/forschung.html">IKB-Dürnast</a>
 . Since publication of this project it is used for:
 	- Implement Indicator (IMI) which detects working state dependent on configuration and tractor base
     data information (LBS-Base) and records process data:
