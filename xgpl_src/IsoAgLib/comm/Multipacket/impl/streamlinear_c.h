@@ -145,10 +145,10 @@ protected:
 
 private:
 
-  STL_NAMESPACE::vector<uint8_t> vui8_buffer; // linearBuffer
+  STL_NAMESPACE::vector<uint8_t> mvecui8_buffer; // linearBuffer
 
-  //  Attribute: ui32_parsedCnt
-  uint32_t ui32_parsedCnt;
+  //  Attribute: mui32_parsedCnt
+  uint32_t mui32_parsedCnt;
 
 }; // ~X2C
 
@@ -159,7 +159,7 @@ private:
 inline uint8_t
 StreamLinear_c::getNextNotParsed()
 { // ~X2C
-  return vui8_buffer[ui32_parsedCnt++];
+  return mvecui8_buffer[mui32_parsedCnt++];
 } // -X2C
 
 
@@ -167,7 +167,7 @@ StreamLinear_c::getNextNotParsed()
 inline uint8_t*
 StreamLinear_c::getLinearBuffer()
 {
-  return &vui8_buffer.front();
+  return &mvecui8_buffer.front();
 }
 
 
@@ -175,13 +175,13 @@ StreamLinear_c::getLinearBuffer()
 inline uint32_t
 StreamLinear_c::getNotParsedSize()
 { // ~X2C
-  uint32_t ui32_bufSize = vui8_buffer.size();
+  uint32_t ui32_bufSize = mvecui8_buffer.size();
   // if the buffer is larger than our totalMsgSize, clip at totalMsgSize.
   // this occurs as we always insert 7 bytes, even if the last 7byte packet should NOT been taken completely
-  if (ui32_byteTotalSize < ui32_bufSize)
-    return (ui32_byteTotalSize - ui32_parsedCnt);
+  if (mui32_byteTotalSize < ui32_bufSize)
+    return (mui32_byteTotalSize - mui32_parsedCnt);
   else
-    return (ui32_bufSize - ui32_parsedCnt);
+    return (ui32_bufSize - mui32_parsedCnt);
 } // -X2C
 
 
@@ -191,7 +191,7 @@ StreamLinear_c::getNotParsedSize()
 inline uint8_t
 StreamLinear_c::getNotParsed (uint32_t ui32_notParsedRelativeOffset)
 {
-  return vui8_buffer[ui32_parsedCnt + ui32_notParsedRelativeOffset];
+  return mvecui8_buffer[mui32_parsedCnt + ui32_notParsedRelativeOffset];
 }
 
 
@@ -200,7 +200,7 @@ StreamLinear_c::getNotParsed (uint32_t ui32_notParsedRelativeOffset)
 inline bool
 StreamLinear_c::eof() const
 { // ~X2C
-  if (ui32_parsedCnt >= ui32_byteTotalSize)
+  if (mui32_parsedCnt >= mui32_byteTotalSize)
     return true;
   else
     return false;

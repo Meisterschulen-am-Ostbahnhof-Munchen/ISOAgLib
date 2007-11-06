@@ -103,8 +103,8 @@ namespace IsoAgLib {
 namespace __IsoAgLib {
 
 
-uint8_t vtObjectFontAttributes_c::font2PixelDimensionTableW [15] = {6,  8,  8, 12, 16, 16, 24, 32, 32, 48, 64, 64, 96,128,128};
-uint8_t vtObjectFontAttributes_c::font2PixelDimensionTableH [15] = {8,  8, 12, 16, 16, 24, 32, 32, 48, 64, 64, 96,128,128,192};
+uint8_t vtObjectFontAttributes_c::marr_font2PixelDimensionTableW [15] = {6,  8,  8, 12, 16, 16, 24, 32, 32, 48, 64, 64, 96,128,128};
+uint8_t vtObjectFontAttributes_c::marr_font2PixelDimensionTableH [15] = {8,  8, 12, 16, 16, 24, 32, 32, 48, 64, 64, 96,128,128,192};
 
 
 // //////////////////////////////// +X2C Operation 168 : stream
@@ -126,7 +126,7 @@ vtObjectFontAttributes_c::stream(uint8_t* destMemory,
     destMemory [1] = vtObject_a->ID >> 8;
     destMemory [2] = 23; // Object Type = Font Attributes
     destMemory [3] = __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).getUserClippedColor (vtObjectFontAttributes_a->fontColour, this, IsoAgLib::FontColour);
-    destMemory [4] = ui8_fontSizeScaled; // size() must have been called before to prepare!!!!
+    destMemory [4] = mui8_fontSizeScaled; // size() must have been called before to prepare!!!!
     destMemory [5] = vtObjectFontAttributes_a->fontType;
     destMemory [6] = vtObjectFontAttributes_a->fontStyle & __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).getVtServerInst().getVtCapabilities()->fontTypes;
     destMemory [7] = vtObjectFontAttributes_a->numberOfMacrosToFollow;
@@ -140,7 +140,7 @@ vtObjectFontAttributes_c::stream(uint8_t* destMemory,
 
 // Operation : vtObjectFontAttributes_c
 vtObjectFontAttributes_c::vtObjectFontAttributes_c()
-: ui8_fontSizeScaled( 0xFF ) // set ui8_fontSizeScaled to "not yet calculated"
+: mui8_fontSizeScaled( 0xFF ) // set mui8_fontSizeScaled to "not yet calculated"
 {}
 
 
@@ -154,8 +154,8 @@ vtObjectFontAttributes_c::fitTerminal() const
 {
   MACRO_localVars;
 
-  ui8_fontSizeScaled = 0xFF;
-  // Recalc ui8_fontSizeScaled (with 0xFF it will re-calc the font size)
+  mui8_fontSizeScaled = 0xFF;
+  // Recalc mui8_fontSizeScaled (with 0xFF it will re-calc the font size)
   calcScaledFontDimension();
 
   return 8+vtObjectFontAttributes_a->numberOfMacrosToFollow*2;
@@ -167,10 +167,10 @@ vtObjectFontAttributes_c::getScaledWidthHeight()
 {
   calcScaledFontDimension(); // idempotent! method doesn't calc more than once, so no problem to call...
 
-  if (ui8_fontSizeScaled >= 15)
+  if (mui8_fontSizeScaled >= 15)
     return ((0<<6) | (0));
   else
-    return ((font2PixelDimensionTableW [ui8_fontSizeScaled] << 8) | (font2PixelDimensionTableH [ui8_fontSizeScaled]));
+    return ((marr_font2PixelDimensionTableW [mui8_fontSizeScaled] << 8) | (marr_font2PixelDimensionTableH [mui8_fontSizeScaled]));
 }
 
 // Operation : calcScaledFontDimension
@@ -182,52 +182,52 @@ vtObjectFontAttributes_c::calcScaledFontDimension() const
   MACRO_scaleSKLocalVars;
 
   // you can call it idempotent!!
-  if (ui8_fontSizeScaled != 0xFF)
+  if (mui8_fontSizeScaled != 0xFF)
     return; // already calculated
 
-  ui8_fontSizeScaled = vtObjectFontAttributes_a->fontSize;
-  if (ui8_fontSizeScaled > (15-1)) ui8_fontSizeScaled = (15-1);
+  mui8_fontSizeScaled = vtObjectFontAttributes_a->fontSize;
+  if (mui8_fontSizeScaled > (15-1)) mui8_fontSizeScaled = (15-1);
 
   uint32_t width, height;
   uint8_t wIndex=0, hIndex=0;
   if ((s_properties.flags & FLAG_ORIGIN_SKM) || p_parentButtonObject) {
-    width = (((uint32_t) factorM * (font2PixelDimensionTableW [ui8_fontSizeScaled]) <<10)/factorD); // (8 bit shifted fixed floating)
-    height= (((uint32_t) factorM * (font2PixelDimensionTableH [ui8_fontSizeScaled]) <<10)/factorD); // (8 bit shifted fixed floating)
+    width = (((uint32_t) factorM * (marr_font2PixelDimensionTableW [mui8_fontSizeScaled]) <<10)/factorD); // (8 bit shifted fixed floating)
+    height= (((uint32_t) factorM * (marr_font2PixelDimensionTableH [mui8_fontSizeScaled]) <<10)/factorD); // (8 bit shifted fixed floating)
   } else {
-    width = (((uint32_t) vtDimension * (font2PixelDimensionTableW [ui8_fontSizeScaled]) <<10)/opDimension); // (8 bit shifted fixed floating)
-    height= (((uint32_t) vtDimension * (font2PixelDimensionTableH [ui8_fontSizeScaled]) <<10)/opDimension); // (8 bit shifted fixed floating)
+    width = (((uint32_t) vtDimension * (marr_font2PixelDimensionTableW [mui8_fontSizeScaled]) <<10)/opDimension); // (8 bit shifted fixed floating)
+    height= (((uint32_t) vtDimension * (marr_font2PixelDimensionTableH [mui8_fontSizeScaled]) <<10)/opDimension); // (8 bit shifted fixed floating)
   }
 
   /** @todo maybe keep aspect ratio?? */
   // now get the lower possible size...
   int i, j;
   for (i=14; i>=0; i--) {
-    if (((uint32_t (font2PixelDimensionTableW [i])) << 10) <= width) {
+    if (((uint32_t (marr_font2PixelDimensionTableW [i])) << 10) <= width) {
       wIndex = i;
       break;
     }
   }
   for (j=14; j>=0; j--) {
-    if (((uint32_t (font2PixelDimensionTableH [j])) << 10) <= height) {
+    if (((uint32_t (marr_font2PixelDimensionTableH [j])) << 10) <= height) {
       hIndex = j;
       break;
     }
   }
   if ((i < 0) || (j < 0))
   { // too small font, smaller than 6x8... ==> take 6x8
-    ui8_fontSizeScaled = 0;
+    mui8_fontSizeScaled = 0;
   }
   else
   { // match indices together... take the lowest one, that'll do!
     if (wIndex < hIndex)
-      ui8_fontSizeScaled = wIndex;
+      mui8_fontSizeScaled = wIndex;
     else
-      ui8_fontSizeScaled = hIndex;
+      mui8_fontSizeScaled = hIndex;
   }
 
   /// Always check if the font is available!
-  while (!(__IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).getVtServerInst().getVtFontSizes() & (1 << ui8_fontSizeScaled))) {
-    ui8_fontSizeScaled--; // try a smaller font, but "6x8" should be there in any way, 'cause we set it in processMsg!!
+  while (!(__IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).getVtServerInst().getVtFontSizes() & (1 << mui8_fontSizeScaled))) {
+    mui8_fontSizeScaled--; // try a smaller font, but "6x8" should be there in any way, 'cause we set it in processMsg!!
   }
 }
 

@@ -195,7 +195,7 @@ vtObjectStringVariable_c::setValueRef(const char* newValue, bool b_updateObject,
     saveValueP (MACRO_getStructOffset(get_vtObjectStringVariable_a(), value), sizeof(iVtObjectStringVariable_s), (IsoAgLib::iVtObject_c*) newValue);
   }
 
-  setStringToStream( newValue ); // use MultiSendStreamer with pc_stringToStream set!
+  setStringToStream( newValue ); // use MultiSendStreamer with mpc_stringToStream set!
   uint16_t ui16_tempLen = 0;
   if (newValue != NULL ) ui16_tempLen = (CNAMESPACE::strlen (newValue) <= get_vtObjectStringVariable_a()->length) ? CNAMESPACE::strlen (newValue) : get_vtObjectStringVariable_a()->length;
   setStrLenToSend( ui16_tempLen );

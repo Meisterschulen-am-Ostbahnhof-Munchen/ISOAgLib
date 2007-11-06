@@ -1083,7 +1083,7 @@ DevPropertyHandler_c::startUploadCommandChangeDesignator()
   SendUploadBase_c* actSend = &l_sendUpload.front();
 
   // Set time-out values
-  ui32_uploadTimeout = actSend->ui32_uploadTimeout;
+  ui32_uploadTimeout = actSend->getUploadTimeout();
   ui32_uploadTimestamp = HAL::getTime();
 
   if ((actSend->vec_uploadBuffer.size() < 9)) {

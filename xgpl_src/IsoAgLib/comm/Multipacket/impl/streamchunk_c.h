@@ -148,20 +148,20 @@ private: // function
 
 
 private:
-  //  Attribute: list_chunks
-  STL_NAMESPACE::list<Chunk_c> list_chunks;
+  //  Attribute: mlist_chunks
+  STL_NAMESPACE::list<Chunk_c> mlist_chunks;
 
-  //  Attribute: pc_iterWriteChunk
-  STL_NAMESPACE::list<Chunk_c>::iterator pc_iterWriteChunk;
+  //  Attribute: mpc_iterWriteChunk
+  STL_NAMESPACE::list<Chunk_c>::iterator mpc_iterWriteChunk;
 
-  //  Attribute: pc_iterParsedChunk
-  STL_NAMESPACE::list<Chunk_c>::iterator pc_iterParsedChunk;
+  //  Attribute: mpc_iterParsedChunk
+  STL_NAMESPACE::list<Chunk_c>::iterator mpc_iterParsedChunk;
 
-  //  Attribute: ui32_writeCnt
-  uint32_t ui32_writeCnt;
+  //  Attribute: mui32_writeCnt
+  uint32_t mui32_writeCnt;
 
-  //  Attribute: ui32_parsedCnt
-  uint32_t ui32_parsedCnt;
+  //  Attribute: mui32_parsedCnt
+  uint32_t mui32_parsedCnt;
 
 }; // ~X2C
 

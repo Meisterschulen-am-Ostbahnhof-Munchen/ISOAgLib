@@ -113,25 +113,25 @@ namespace __IsoAgLib {
 Stream_c::Stream_c (StreamType_t at_streamType, const IsoAgLib::ReceiveStreamIdentifier_c& ac_rsi, uint32_t aui32_msgSize SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA , bool ab_skipCtsAwait)
   : iStream_c(),
     SINGLETON_MEMBER_CONSTRUCTOR
-    c_ident (ac_rsi)
-  , t_streamState (StreamRunning)
-  , t_awaitStep (AwaitCtsSend) // so next timeEvent will send out the CTS!
-  , i32_delayCtsUntil (sci32_timeNever) // means send out IMMEDIATELY (the initial CTS, afterwards delay some time!)
-  , ui32_byteTotalSize (aui32_msgSize)
-  , ui32_byteAlreadyReceived (0)
-  , ui32_pkgNextToWrite (1)
-  , ui32_pkgTotalSize ((aui32_msgSize + 6) / 7)
-  , ui32_burstCurrent (0) // so we know that it's the first burst when calling the processBurst from the client
-  , ui8_streamFirstByte (0) // meaning: not yet identified!! (when you check it, it's already set!)
-  , i32_timeoutLimit (sci32_timeNever)
-  , t_streamType (at_streamType)
- // ui8_pkgRemainingInBurst     // will be set in "expectBurst(wishingPkgs)", don't care here as t_awaitStep == awaitCtsSend!!
+    mc_ident (ac_rsi)
+  , mt_streamState (StreamRunning)
+  , mt_awaitStep (AwaitCtsSend) // so next timeEvent will send out the CTS!
+  , mi32_delayCtsUntil (msci32_timeNever) // means send out IMMEDIATELY (the initial CTS, afterwards delay some time!)
+  , mui32_byteTotalSize (aui32_msgSize)
+  , mui32_byteAlreadyReceived (0)
+  , mui32_pkgNextToWrite (1)
+  , mui32_pkgTotalSize ((aui32_msgSize + 6) / 7)
+  , mui32_burstCurrent (0) // so we know that it's the first burst when calling the processBurst from the client
+  , mui8_streamFirstByte (0) // meaning: not yet identified!! (when you check it, it's already set!)
+  , mi32_timeoutLimit (msci32_timeNever)
+  , mt_streamType (at_streamType)
+ // mui8_pkgRemainingInBurst     // will be set in "expectBurst(wishingPkgs)", don't care here as mt_awaitStep == awaitCtsSend!!
 {
   #ifdef NMEA_2000_FAST_PACKET
   if (at_streamType == StreamFastPacket)
   { // other calculation for FastPacket, as the first package only has 6 netto data bytes AND first package begins with frame count 0
-    ui32_pkgNextToWrite = 0;
-    ui32_pkgTotalSize = (aui32_msgSize + 7) / 7;
+    mui32_pkgNextToWrite = 0;
+    mui32_pkgTotalSize = (aui32_msgSize + 7) / 7;
   }
 
   if ((at_streamType == StreamFastPacket) ||
@@ -155,22 +155,22 @@ Stream_c::operator= (const Stream_c& ref)
 {
   SINGLETON_MEMBER_ASSIGN(ref)
 
-  c_ident = ref.c_ident;
-  t_streamState = ref.t_streamState;
-  t_awaitStep = ref.t_awaitStep;
-  i32_delayCtsUntil = ref.i32_delayCtsUntil;
-  ui32_byteTotalSize = ref.ui32_byteTotalSize;
-  ui32_byteAlreadyReceived = ref.ui32_byteAlreadyReceived;
+  mc_ident = ref.mc_ident;
+  mt_streamState = ref.mt_streamState;
+  mt_awaitStep = ref.mt_awaitStep;
+  mi32_delayCtsUntil = ref.mi32_delayCtsUntil;
+  mui32_byteTotalSize = ref.mui32_byteTotalSize;
+  mui32_byteAlreadyReceived = ref.mui32_byteAlreadyReceived;
 
-  ui32_pkgNextToWrite = ref.ui32_pkgNextToWrite;
-  ui32_pkgTotalSize = ref.ui32_pkgTotalSize;
-  ui8_pkgRemainingInBurst = ref.ui8_pkgRemainingInBurst;
-  ui32_burstCurrent = ref.ui32_burstCurrent;
-  ui8_streamFirstByte = ref.ui8_streamFirstByte;
-  ui32_dataPageOffset = ref.ui32_dataPageOffset;
+  mui32_pkgNextToWrite = ref.mui32_pkgNextToWrite;
+  mui32_pkgTotalSize = ref.mui32_pkgTotalSize;
+  mui8_pkgRemainingInBurst = ref.mui8_pkgRemainingInBurst;
+  mui32_burstCurrent = ref.mui32_burstCurrent;
+  mui8_streamFirstByte = ref.mui8_streamFirstByte;
+  mui32_dataPageOffset = ref.mui32_dataPageOffset;
 
-  i32_timeoutLimit = ref.i32_timeoutLimit;
-  t_streamType = ref.t_streamType;
+  mi32_timeoutLimit = ref.mi32_timeoutLimit;
+  mt_streamType = ref.mt_streamType;
 
   return *this;
 }
@@ -179,12 +179,12 @@ Stream_c::operator= (const Stream_c& ref)
 void
 Stream_c::awaitNextStep (NextComing_t at_awaitStep, int32_t ai32_timeOut)
 {
-  t_awaitStep = at_awaitStep;
+  mt_awaitStep = at_awaitStep;
   if (at_awaitStep == AwaitCtsSend) {
-    i32_delayCtsUntil = HAL::getTime() + ai32_timeOut; // use the timeOut parameter here for the delay!!!!
-    i32_timeoutLimit = sci32_timeNever; // no timeOut on own sending...
+    mi32_delayCtsUntil = HAL::getTime() + ai32_timeOut; // use the timeOut parameter here for the delay!!!!
+    mi32_timeoutLimit = msci32_timeNever; // no timeOut on own sending...
   } else {
-    i32_timeoutLimit = (ai32_timeOut==sci32_timeNever) ? (sci32_timeNever) : (HAL::getTime()+ai32_timeOut);
+    mi32_timeoutLimit = (ai32_timeOut==msci32_timeNever) ? (msci32_timeNever) : (HAL::getTime()+ai32_timeOut);
   }
 }
 
@@ -192,7 +192,7 @@ Stream_c::awaitNextStep (NextComing_t at_awaitStep, int32_t ai32_timeOut)
 bool
 Stream_c::readyToSendCts()
 {
-  return (i32_delayCtsUntil == sci32_timeNever) || (HAL::getTime() >= i32_delayCtsUntil);
+  return (mi32_delayCtsUntil == msci32_timeNever) || (HAL::getTime() >= mi32_delayCtsUntil);
 }
 
 
@@ -205,25 +205,25 @@ uint8_t
 Stream_c::expectBurst(uint8_t wishingPkgs)
 {
   #ifdef NMEA_2000_FAST_PACKET
-  if (t_streamType == StreamFastPacket)
+  if (mt_streamType == StreamFastPacket)
   {
-    awaitNextStep (AwaitData, sci32_timeOutFP);
-    ui8_pkgRemainingInBurst = ui32_pkgTotalSize; // for Fast-Packet there's only one burst!
+    awaitNextStep (AwaitData, msci32_timeOutFP);
+    mui8_pkgRemainingInBurst = mui32_pkgTotalSize; // for Fast-Packet there's only one burst!
   }
   else
   #endif
-  { // Await after is CTS has timeout value of "sci32_timeOutT2=1250; // cts -> data(TP)/dpo(ETP)"
-    if (t_streamType & StreamEcmdMASK) awaitNextStep (AwaitDpo,  sci32_timeOutT2);
-    else /* ----------------------- */ awaitNextStep (AwaitData, (getIdent().getDa() == 0xFF) ? sci32_timeOutT1 /* BAM */
-                                                                                              : sci32_timeOutT2 /* dest-adr. */);
+  { // Await after is CTS has timeout value of "msci32_timeOutT2=1250; // cts -> data(TP)/dpo(ETP)"
+    if (mt_streamType & StreamEcmdMASK) awaitNextStep (AwaitDpo,  msci32_timeOutT2);
+    else /* ----------------------- */ awaitNextStep (AwaitData, (getIdent().getDa() == 0xFF) ? msci32_timeOutT1 /* BAM */
+                                                                                              : msci32_timeOutT2 /* dest-adr. */);
     // how many pkgs are missing at all? is it more than wished?
-    ui8_pkgRemainingInBurst = MACRO_minimum( (ui32_pkgTotalSize - (ui32_pkgNextToWrite - 1)), uint32_t(wishingPkgs) );
+    mui8_pkgRemainingInBurst = MACRO_minimum( (mui32_pkgTotalSize - (mui32_pkgNextToWrite - 1)), uint32_t(wishingPkgs) );
   }
 
-  // increase ui32_burstCurrent, the expected Burst is a next new one (of course)...
-  ui32_burstCurrent++;
+  // increase mui32_burstCurrent, the expected Burst is a next new one (of course)...
+  mui32_burstCurrent++;
 
-  return ui8_pkgRemainingInBurst;
+  return mui8_pkgRemainingInBurst;
 }
 
 
@@ -235,22 +235,22 @@ bool
 Stream_c::handleDataPacket (const Flexible8ByteString_c* apu_data)
 { // ~X2C
   // expecting data at all?
-  if (t_awaitStep != AwaitData) {
+  if (mt_awaitStep != AwaitData) {
     #ifdef DEBUG
-      INTERNAL_DEBUG_DEVICE << "t_awaitStep != AwaitData! --- t_awaitStep ==" << t_awaitStep << INTERNAL_DEBUG_DEVICE_ENDL;
+      INTERNAL_DEBUG_DEVICE << "mt_awaitStep != AwaitData! --- mt_awaitStep ==" << mt_awaitStep << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
     return false;
   }
 
   bool b_pkgNumberWrong=false;
-  switch (t_streamType)
+  switch (mt_streamType)
   {
     case StreamSpgnEcmdINVALID: // shouldn't occur, but catch that case anyway. (so break left out intentionally!)
-    case StreamEpgnEcmd:   if ((apu_data->getUint8Data( 0 ) + ui32_dataPageOffset) != ui32_pkgNextToWrite) b_pkgNumberWrong=true; break;
+    case StreamEpgnEcmd:   if ((apu_data->getUint8Data( 0 ) + mui32_dataPageOffset) != mui32_pkgNextToWrite) b_pkgNumberWrong=true; break;
     case StreamSpgnScmd:
-    case StreamEpgnScmd:   if ((apu_data->getUint8Data( 0 ) /* no DPO for TP!! */) != ui32_pkgNextToWrite) b_pkgNumberWrong=true; break;
+    case StreamEpgnScmd:   if ((apu_data->getUint8Data( 0 ) /* no DPO for TP!! */) != mui32_pkgNextToWrite) b_pkgNumberWrong=true; break;
     #ifdef NMEA_2000_FAST_PACKET
-    case StreamFastPacket: if ((apu_data->getUint8Data( 0 ) & (0x1FU)) != ui32_pkgNextToWrite) b_pkgNumberWrong=true; break;
+    case StreamFastPacket: if ((apu_data->getUint8Data( 0 ) & (0x1FU)) != mui32_pkgNextToWrite) b_pkgNumberWrong=true; break;
     #endif
   }
 
@@ -262,48 +262,48 @@ Stream_c::handleDataPacket (const Flexible8ByteString_c* apu_data)
   }
 
   #ifdef NMEA_2000_FAST_PACKET
-  if ((t_streamType == StreamFastPacket) && (ui32_pkgNextToWrite == 0))
+  if ((mt_streamType == StreamFastPacket) && (mui32_pkgNextToWrite == 0))
   { // special FastPacket first-frame handling
     insertFirst6Bytes (apu_data->getUint8DataConstPointer(2));
-    ui32_byteAlreadyReceived += 6;
+    mui32_byteAlreadyReceived += 6;
   }
   else
   #endif
   {
     insert7Bytes (apu_data->getUint8DataConstPointer(1));
-    ui32_byteAlreadyReceived += 7;
+    mui32_byteAlreadyReceived += 7;
   }
 
-  if (ui32_byteAlreadyReceived > ui32_byteTotalSize) ui32_byteAlreadyReceived = ui32_byteTotalSize; // cut any padded (0xFF) bytes...
+  if (mui32_byteAlreadyReceived > mui32_byteTotalSize) mui32_byteAlreadyReceived = mui32_byteTotalSize; // cut any padded (0xFF) bytes...
 
   #ifdef DEBUG
-    INTERNAL_DEBUG_DEVICE << "#" << ui32_pkgNextToWrite << " ";
+    INTERNAL_DEBUG_DEVICE << "#" << mui32_pkgNextToWrite << " ";
   #endif
 
 /// <<UPDATE_ALL>> Pkg counting stuff
-  ui32_pkgNextToWrite++;
-  ui8_pkgRemainingInBurst--;
+  mui32_pkgNextToWrite++;
+  mui8_pkgRemainingInBurst--;
 
-  if (ui8_pkgRemainingInBurst == 0) {
+  if (mui8_pkgRemainingInBurst == 0) {
     // End? or CTS for more?
     if (
         #ifdef NMEA_2000_FAST_PACKET
-        (t_streamType == StreamFastPacket) ||
+        (mt_streamType == StreamFastPacket) ||
         #endif
-        (ui32_pkgNextToWrite > ui32_pkgTotalSize))
+        (mui32_pkgNextToWrite > mui32_pkgTotalSize))
     {
       // ---END--- was last packet! So
-      awaitNextStep (AwaitNothing, sci32_timeNever); // no timeOut on own Send-Awaits
-      t_streamState = StreamFinished;
+      awaitNextStep (AwaitNothing, msci32_timeNever); // no timeOut on own Send-Awaits
+      mt_streamState = StreamFinished;
     } else {
       // ---CTS--- go for more!
       // Calculate the send delay
-      const int32_t ci32_ctsSendDelay = (__IsoAgLib::getMultiReceiveInstance4Comm().getStreamCount() == 1) ? sci32_ctsSendDelayOneStream : sci32_ctsSendDelayMoreStreams;
+      const int32_t ci32_ctsSendDelay = (__IsoAgLib::getMultiReceiveInstance4Comm().getStreamCount() == 1) ? msci32_ctsSendDelayOneStream : msci32_ctsSendDelayMoreStreams;
       awaitNextStep (AwaitCtsSend, ci32_ctsSendDelay); // no timeOut on own Send-Awaits (this is automatically done in awaitNextStep) - parameter is the send-delay!
     }
     // (A complete / The last) chunk is received, handling will be done after this function returns
   } else {
-    awaitNextStep (AwaitData, sci32_timeOutT1); // state "AwaitData" was already set until now, but it's about the timeOut!
+    awaitNextStep (AwaitData, msci32_timeOutT1); // state "AwaitData" was already set until now, but it's about the timeOut!
   }
 
   return true;
@@ -318,16 +318,16 @@ Stream_c::handleDataPacket (const Flexible8ByteString_c* apu_data)
 bool
 Stream_c::setDataPageOffset(uint32_t aui32_dataPageOffset)
 { // ~X2C
-  if (t_awaitStep == AwaitDpo) {
-    ui32_dataPageOffset = aui32_dataPageOffset;
-    awaitNextStep (AwaitData, sci32_timeOutT5);
+  if (mt_awaitStep == AwaitDpo) {
+    mui32_dataPageOffset = aui32_dataPageOffset;
+    awaitNextStep (AwaitData, msci32_timeOutT5);
     #ifdef DEBUG
       INTERNAL_DEBUG_DEVICE << "DPO ";
     #endif
     return true; // was awaited!
   } else {
     #ifdef DEBUG
-      INTERNAL_DEBUG_DEVICE << "\n\n DPO was not awaited at this state (" << (uint16_t) t_awaitStep << "), please handle as error! \n ";
+      INTERNAL_DEBUG_DEVICE << "\n\n DPO was not awaited at this state (" << (uint16_t) mt_awaitStep << "), please handle as error! \n ";
     #endif
     return false; // DPO was not awaited at this state, please handle as error!
   }
@@ -340,8 +340,8 @@ Stream_c::timedOut()
 {
   bool b_result=false;
 
-  if (i32_timeoutLimit != sci32_timeNever) {
-    if (HAL::getTime() > i32_timeoutLimit) b_result = true;
+  if (mi32_timeoutLimit != msci32_timeNever) {
+    if (HAL::getTime() > mi32_timeoutLimit) b_result = true;
   }
 
   return b_result;

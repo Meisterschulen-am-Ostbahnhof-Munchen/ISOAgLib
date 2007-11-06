@@ -145,15 +145,15 @@ class MultiReceiveClientWrapper_s : public ClientBase {
                               SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA
                              );
 
-  CanCustomer_c* pc_client;
-  IsoName_c c_isoName;
-  uint32_t ui32_pgn;
-  uint32_t ui32_pgnMask;
-  uint8_t ui8_cachedClientAddress; // kinda "cached" (normally clients register for receiving multi-packages to their own SA)
-  bool b_alsoBroadcast;
-  bool b_alsoGlobalErrors;
+  CanCustomer_c* mpc_client;
+  IsoName_c mc_isoName;
+  uint32_t mui32_pgn;
+  uint32_t mui32_pgnMask;
+  uint8_t mui8_cachedClientAddress; // kinda "cached" (normally clients register for receiving multi-packages to their own SA)
+  bool mb_alsoBroadcast;
+  bool mb_alsoGlobalErrors;
 #ifdef NMEA_2000_FAST_PACKET
-  bool b_isFastPacket;
+  bool mb_isFastPacket;
 #endif
 };
 
@@ -178,7 +178,7 @@ public:
   //  Operation: (de)registerClient
   void registerClient   (CanCustomer_c& arc_client, const IsoName_c& arc_isoName,
                          uint32_t aui32_pgn, uint32_t aui32_pgnMask=0x3FFFF,
-                         bool b_alsoBroadcast=false, bool ab_alsoGlobalErrors=false
+                         bool mb_alsoBroadcast=false, bool ab_alsoGlobalErrors=false
                          #ifdef NMEA_2000_FAST_PACKET
                          , bool ab_isFastPacket=false
                          #endif
@@ -234,7 +234,7 @@ public:
     deliver reference to data pkg
     @return reference to the member BasePkg_c, which encapsulates the CAN send structure
   */
-  CanPkgExt_c& data() { return c_data; };
+  CanPkgExt_c& data() { return mc_data; };
 
   /**
     deliver reference to data pkg as reference to CanPkgExt_c
@@ -246,7 +246,7 @@ public:
   //! return 0x100: first byte not yet known!
   //! return 0x101: not a valid index!
   uint16_t getStreamFirstByte (uint32_t ui32_index) const;
-  uint32_t getStreamCount() const { return list_streams.size(); };
+  uint32_t getStreamCount() const { return mlist_streams.size(); };
 
   uint32_t getStreamCompletion1000 (uint32_t ui32_index, bool b_checkFirstByte=false, uint8_t ui8_returnNullIfThisIsFirstByte=0x00 /*don't care if check=false*/) const;
   uint32_t getMaxStreamCompletion1000 (bool b_checkFirstByte=false, uint8_t ui8_returnNullIfThisIsFirstByte=0x00 /*don't care if check=false*/) const;
@@ -271,7 +271,7 @@ private:
   void singletonInit();
 
   /** temp data where received data is put */
-  CanPkgExt_c c_data;
+  CanPkgExt_c mc_data;
 
   //  Operation: getStream
   //! Parameter:
@@ -318,9 +318,9 @@ private:
 
 private: // attributes
 
-  STL_NAMESPACE::list<DEF_Stream_c_IMPL> list_streams;
+  STL_NAMESPACE::list<DEF_Stream_c_IMPL> mlist_streams;
 
-  STL_NAMESPACE::list<MultiReceiveClientWrapper_s> list_clients;
+  STL_NAMESPACE::list<MultiReceiveClientWrapper_s> mlist_clients;
 
 }; // ~X2C
 

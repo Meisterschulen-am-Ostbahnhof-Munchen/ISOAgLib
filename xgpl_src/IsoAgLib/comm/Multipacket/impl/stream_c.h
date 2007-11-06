@@ -102,15 +102,15 @@ namespace __IsoAgLib {
 
 // T1/T2 here are the same as in "multireceive_c.h"
 // T1/T2 here are the same as in "multireceive_c.h"
-static const int32_t sci32_ctsSendDelayOneStream   = CONFIG_MULTI_RECEIVE_CTS_DELAY_AT_SINGLE_STREAM; // data -> cts
-static const int32_t sci32_ctsSendDelayMoreStreams = CONFIG_MULTI_RECEIVE_CTS_DELAY_AT_MULTI_STREAMS; // data -> cts
-static const int32_t sci32_timeOutT1=1000;  // data -> data
-static const int32_t sci32_timeOutT2=1250; // cts -> data(TP)/dpo(ETP)
-static const int32_t sci32_timeOutT3=1250; // data/rts -> cts (not needed for checking here)
-static const int32_t sci32_timeOutT4=1100;  // cts(0)<->cts
-static const int32_t sci32_timeOutT5=1000;  // dpo -> data (ETP only, naming "T5" done by Martin)
-static const int32_t sci32_timeOutFP=1000;  // FPdata <-> FPdata
-static const int32_t sci32_timeNever=-1;
+static const int32_t msci32_ctsSendDelayOneStream   = CONFIG_MULTI_RECEIVE_CTS_DELAY_AT_SINGLE_STREAM; // data -> cts
+static const int32_t msci32_ctsSendDelayMoreStreams = CONFIG_MULTI_RECEIVE_CTS_DELAY_AT_MULTI_STREAMS; // data -> cts
+static const int32_t msci32_timeOutT1=1000;  // data -> data
+static const int32_t msci32_timeOutT2=1250; // cts -> data(TP)/dpo(ETP)
+static const int32_t msci32_timeOutT3=1250; // data/rts -> cts (not needed for checking here)
+static const int32_t msci32_timeOutT4=1100;  // cts(0)<->cts
+static const int32_t msci32_timeOutT5=1000;  // dpo -> data (ETP only, naming "T5" done by Martin)
+static const int32_t msci32_timeOutFP=1000;  // FPdata <-> FPdata
+static const int32_t msci32_timeNever=-1;
 /** @todo The above should be adapted to the new revision of Part 3 - Data Link Layer >
   * also limit number of retries to 2 (if retries are implemented, if not, do so ;-) */
 
@@ -204,22 +204,22 @@ public:
   bool setDataPageOffset(uint32_t aui32_dataPageOffset);
 
   // simple getter function!
-  const IsoAgLib::ReceiveStreamIdentifier_c& getIdent() { return c_ident; }
-  StreamType_t     getStreamType()              { return t_streamType; };
-  StreamingState_t getStreamingState ()         { return t_streamState; };
-  NextComing_t     getNextComing ()             { return t_awaitStep; };
-  uint32_t getPkgNextToWrite ()           const { return ui32_pkgNextToWrite; };
-  uint32_t getPkgTotalSize ()             const { return ui32_pkgTotalSize; };
-  uint32_t getByteTotalSize ()            const { return ui32_byteTotalSize; };
-  uint32_t getByteAlreadyReceived()       const { return ui32_byteAlreadyReceived; };
-  uint32_t getBurstNumber()               const { return ui32_burstCurrent; };
+  const IsoAgLib::ReceiveStreamIdentifier_c& getIdent() { return mc_ident; }
+  StreamType_t     getStreamType()              { return mt_streamType; };
+  StreamingState_t getStreamingState ()         { return mt_streamState; };
+  NextComing_t     getNextComing ()             { return mt_awaitStep; };
+  uint32_t getPkgNextToWrite ()           const { return mui32_pkgNextToWrite; };
+  uint32_t getPkgTotalSize ()             const { return mui32_pkgTotalSize; };
+  uint32_t getByteTotalSize ()            const { return mui32_byteTotalSize; };
+  uint32_t getByteAlreadyReceived()       const { return mui32_byteAlreadyReceived; };
+  uint32_t getBurstNumber()               const { return mui32_burstCurrent; };
   //! Provide first byte set by first call of processDataChunk... First byte containes command.
-  uint8_t  getFirstByte()                 const { return ui8_streamFirstByte; };
+  uint8_t  getFirstByte()                 const { return mui8_streamFirstByte; };
   //! Store first byte of stream. First byte containes command.
-  void     setFirstByte(uint8_t aui8_firstByte) { ui8_streamFirstByte = aui8_firstByte; };
+  void     setFirstByte(uint8_t aui8_firstByte) { mui8_streamFirstByte = aui8_firstByte; };
 
-  void setStreamFinishedJustKept() { awaitNextStep (AwaitNothing, sci32_timeNever); // no timeOut on own Send-Awaits
-                                     t_streamState = StreamFinishedJustKept; }; // from now on NOTHING more should be done with this stream!
+  void setStreamFinishedJustKept() { awaitNextStep (AwaitNothing, msci32_timeNever); // no timeOut on own Send-Awaits
+                                     mt_streamState = StreamFinishedJustKept; }; // from now on NOTHING more should be done with this stream!
 
   bool readyToSendCts();
 
@@ -234,40 +234,40 @@ protected:
 
 private:
 
-  //  Attribute: c_ident
-  IsoAgLib::ReceiveStreamIdentifier_c c_ident;
+  //  Attribute: mc_ident
+  IsoAgLib::ReceiveStreamIdentifier_c mc_ident;
 
-  //  Attribute: t_streamState
-  StreamingState_t t_streamState;
+  //  Attribute: mt_streamState
+  StreamingState_t mt_streamState;
 
-  //  Attribute: t_awaitStep
-  NextComing_t t_awaitStep;
+  //  Attribute: mt_awaitStep
+  NextComing_t mt_awaitStep;
 
-  // Attribute i32_delayCtsUntil
-  int32_t i32_delayCtsUntil;
+  // Attribute mi32_delayCtsUntil
+  int32_t mi32_delayCtsUntil;
 
 
 /// Byte counting stuff
 protected:
   //  Attribute: ui32_totalSize
-  uint32_t ui32_byteTotalSize; // will be set at construction!
+  uint32_t mui32_byteTotalSize; // will be set at construction!
 
 private:
-  uint32_t ui32_byteAlreadyReceived;
+  uint32_t mui32_byteAlreadyReceived;
 
 /// Pkg counting stuff
-  uint32_t ui32_pkgNextToWrite;      // should be initialized to 1
-  uint32_t ui32_pkgTotalSize;        // calculated amount of pkgs to arrive for the given byteTotalSize!
-  uint8_t   ui8_pkgRemainingInBurst; // the value requested by CTS
-  uint32_t ui32_burstCurrent;        // counting the bursts, so we know if it's the first or a following!
-  uint8_t   ui8_streamFirstByte;     // will be the command that it's containing. set at the first call to processDataChunk...
-  uint32_t ui32_dataPageOffset;      //  Attribute: ui32_dataPageOffset: gets set when a DPO arrives...
+  uint32_t mui32_pkgNextToWrite;      // should be initialized to 1
+  uint32_t mui32_pkgTotalSize;        // calculated amount of pkgs to arrive for the given byteTotalSize!
+  uint8_t   mui8_pkgRemainingInBurst; // the value requested by CTS
+  uint32_t mui32_burstCurrent;        // counting the bursts, so we know if it's the first or a following!
+  uint8_t   mui8_streamFirstByte;     // will be the command that it's containing. set at the first call to processDataChunk...
+  uint32_t mui32_dataPageOffset;      //  Attribute: mui32_dataPageOffset: gets set when a DPO arrives...
 
-  //  Attribute: i32_timeoutLimit
-  int32_t i32_timeoutLimit;
+  //  Attribute: mi32_timeoutLimit
+  int32_t mi32_timeoutLimit;
 
   //  Attribute: t:StreamType
-  StreamType_t t_streamType;
+  StreamType_t mt_streamType;
 
   /// Don't forget to enhance the assignment-operator when adding new member-variables!
 }; // ~X2C

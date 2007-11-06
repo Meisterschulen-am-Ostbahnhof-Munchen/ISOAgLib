@@ -172,24 +172,24 @@ public:
   void resetVtAlive();
 
   /** getter */
-  const IsoName_c&           getIsoName()            { return c_isoName; }
-  uint8_t                    getVtSourceAddress()     { return (pcc_isoItem != NULL)? pcc_isoItem->nr() : 0xfe; }
+  const IsoName_c&           getIsoName()            { return mc_isoName; }
+  uint8_t                    getVtSourceAddress()     { return (mcpc_isoItem != NULL)? mcpc_isoItem->nr() : 0xfe; }
   uint32_t                   getVtHardwareDimension();
   uint16_t                   getVtFontSizes();
-  vtCapabilities_s*          getVtCapabilities()      { return &vtCapabilities_a; }
-  const IsoAgLib::vtState_s* getVtState() const       { return &vtState_a; }
-  localSettings_s*           getLocalSettings()       { return &localSettings_a; }
-  const IsoItem_c*           getIsoItem()             { return pcc_isoItem; }
+  vtCapabilities_s*          getVtCapabilities()      { return &ms_vtCapabilitiesA; }
+  const IsoAgLib::vtState_s* getVtState() const       { return &ms_vtStateA; }
+  localSettings_s*           getLocalSettings()       { return &ms_localSettingsA; }
+  const IsoItem_c*           getIsoItem()             { return mcpc_isoItem; }
 
 // the following define should be globally defined in the project settings...
 #ifdef FAKE_VT_PROPERTIES
   void fakeVtProperties (uint16_t aui16_dimension, uint16_t aui16_skWidth, uint16_t aui16_skHeight, uint8_t aui16_colorDepth, uint16_t aui16_fontSizes)
   {
-    vtCapabilities_a.hwWidth = aui16_dimension;
-    vtCapabilities_a.skWidth = aui16_skWidth;
-    vtCapabilities_a.skHeight = aui16_skHeight;
-    vtCapabilities_a.hwGraphicType = aui16_colorDepth;
-    vtCapabilities_a.fontSizes = aui16_fontSizes;
+    ms_vtCapabilitiesA.hwWidth = aui16_dimension;
+    ms_vtCapabilitiesA.skWidth = aui16_skWidth;
+    ms_vtCapabilitiesA.skHeight = aui16_skHeight;
+    ms_vtCapabilitiesA.hwGraphicType = aui16_colorDepth;
+    ms_vtCapabilitiesA.fontSizes = aui16_fontSizes;
   }
 #endif
 
@@ -201,20 +201,20 @@ private:
   VtServerInstance_c(const IsoItem_c& r_newItem, IsoName_c c_newISOName, IsoTerminal_c& r_isoTerminal);
 
 private: // attributes
-  const IsoItem_c* pcc_isoItem;
+  const IsoItem_c* mcpc_isoItem;
 
-  IsoName_c c_isoName;
+  IsoName_c mc_isoName;
 
-  IsoTerminal_c& rc_isoTerminal; // back ref.
+  IsoTerminal_c& mrc_isoTerminal; // back ref.
 
   /** stores the last "VT Status Message" */
-  IsoAgLib::vtState_s vtState_a;
+  IsoAgLib::vtState_s ms_vtStateA;
 
   /** gets set as soon as the responses for the requests arrive */
-  vtCapabilities_s vtCapabilities_a;
+  vtCapabilities_s ms_vtCapabilitiesA;
 
   /** stores the Local Settings like Language, Units, Date Format */
-  localSettings_s localSettings_a;
+  localSettings_s ms_localSettingsA;
 };
 
 }

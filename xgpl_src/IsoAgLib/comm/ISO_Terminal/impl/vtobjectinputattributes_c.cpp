@@ -182,7 +182,7 @@ vtObjectInputAttributes_c::setValidationStringRef(const char* newValidationStrin
     saveValueP (MACRO_getStructOffset(get_vtObjectInputAttributes_a(), validationString), sizeof(iVtObjectInputAttributes_s), (IsoAgLib::iVtObject_c*) newValidationString);
   }
 
-  setStringToStream( newValidationString ); // use MultiSendStreamer with pc_stringToStream set!
+  setStringToStream( newValidationString ); // use MultiSendStreamer with mpc_stringToStream set!
   const uint16_t ui16_tempLen = (CNAMESPACE::strlen (newValidationString) <= get_vtObjectInputAttributes_a()->length) ? CNAMESPACE::strlen (newValidationString) : get_vtObjectInputAttributes_a()->length;
   setStrLenToSend( ui16_tempLen );
   __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeStringValue (this, b_enableReplaceOfCmd);

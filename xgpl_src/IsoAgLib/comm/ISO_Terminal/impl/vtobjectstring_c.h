@@ -112,33 +112,33 @@ class vtObjectStringStreamer_c : public IsoAgLib::iMultiSendStreamer_c
 
   uint8_t getFirstByte () { return 179; /* Command: "Command" --- Parameter: "Change String Value"; */ }
 
-  const char* getStringToStream() { return pc_stringToStream; }
+  const char* getStringToStream() { return mpc_stringToStream; }
 
   void set5ByteCommandHeader(uint8_t* destinBuffer);
 
-  void setStringToStream( const char* apc_stringToStream ) { pc_stringToStream = apc_stringToStream;}
-  void setStrLenToSend( uint16_t aui16_strLenToSend ) { ui16_strLenToSend = aui16_strLenToSend;}
+  void setStringToStream( const char* apc_stringToStream ) { mpc_stringToStream = apc_stringToStream;}
+  void setStrLenToSend( uint16_t aui16_strLenToSend ) { mui16_strLenToSend = aui16_strLenToSend;}
 
   //  Operation: getID
-  uint16_t getID() { return vtObject_a_ID; }
+  uint16_t getID() { return mui16_vtObjectAId; }
   //  Operation: setID
-  void setID( uint16_t aui16_id ) { vtObject_a_ID = aui16_id; }
+  void setID( uint16_t aui16_id ) { mui16_vtObjectAId = aui16_id; }
 
 private:
   // ID from the connected __IsoAgLib::vtObject_c
-  uint16_t vtObject_a_ID;
+  uint16_t mui16_vtObjectAId;
   // those both will be set before multisending is getting started.
-  const char* pc_stringToStream;
-  uint16_t ui16_strLenToSend;
+  const char* mpc_stringToStream;
+  uint16_t mui16_strLenToSend;
 
-  //  Attribute: streamPosition
-  uint32_t streamPosition;
+  //  Attribute: mui32_streamPosition
+  uint32_t mui32_streamPosition;
 
-  //  Attribute: uploadBuffer [7+1]
-  uint8_t uploadBuffer [7+1]; /* "+1" for safety only */
+  //  Attribute: marr_uploadBuffer [7+1]
+  uint8_t marr_uploadBuffer [7+1]; /* "+1" for safety only */
 
-  //  Attribute: streamPositionStored
-  uint32_t streamPositionStored;
+  //  Attribute: mui32_streamPositionStored
+  uint32_t mui32_streamPositionStored;
 };
 
 class vtObjectString_c : public vtObject_c
@@ -146,7 +146,7 @@ class vtObjectString_c : public vtObject_c
  public:
   vtObjectString_c();
   ~vtObjectString_c();
-  vtObjectStringStreamer_c* getStreamer( void ) { return &c_streamer;};
+  vtObjectStringStreamer_c* getStreamer( void ) { return &mc_streamer;};
  protected:
 
   // those both will be set before multisending is getting started.
@@ -155,7 +155,7 @@ class vtObjectString_c : public vtObject_c
 
  private:
   // streaming helper class which is called by the sending class
-  vtObjectStringStreamer_c c_streamer;
+  vtObjectStringStreamer_c mc_streamer;
 };
 
 } // end namespace __IsoAgLib

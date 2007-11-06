@@ -107,7 +107,7 @@ vtObjectGraphicsContext_c::stream(uint8_t* destMemory, uint16_t maxBytes, objRan
     // Check precondition
     // (Not allways because we have no exception handling for 16-bit systems implemented).
 #if defined(DEBUG) && defined(SYSTEM_PC)
-    if (maxBytes < i_totalSize) { abort(); }
+    if (maxBytes < mi_totalSize) { abort(); }
 #else
     maxBytes = maxBytes;  // Prevent from warning.
 #endif
@@ -156,10 +156,10 @@ vtObjectGraphicsContext_c::stream(uint8_t* destMemory, uint16_t maxBytes, objRan
     // Check postcondition
     // (Not allways because we have no exception handling for 16-bit systems implemented).
 #if defined(DEBUG) && defined(SYSTEM_PC)
-    if ((destMemory+i_totalSize) != p) { abort(); }
+    if ((destMemory+mi_totalSize) != p) { abort(); }
 #endif
 
-    return i_totalSize;
+    return mi_totalSize;
   }
   return 0;
 }

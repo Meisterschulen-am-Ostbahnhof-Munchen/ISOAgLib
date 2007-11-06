@@ -183,7 +183,7 @@ public:
 class VtClientServerCommStreamer_c : public IsoAgLib::iMultiSendStreamer_c
 {
 public:
-  VtClientServerCommStreamer_c(IsoAgLib::iIsoTerminalObjectPool_c& arc_pool) : rc_pool (arc_pool) {}
+  VtClientServerCommStreamer_c(IsoAgLib::iIsoTerminalObjectPool_c& arc_pool) : mrc_pool (arc_pool) {}
 
   virtual ~VtClientServerCommStreamer_c(){}
   /** place next data to send direct into send puffer of pointed
@@ -211,37 +211,37 @@ public:
   /** calculate the size of the data source
       - implementation of the abstract IsoAgLib::MultiSendStreamer_c function
     */
-  uint32_t getStreamSize() { return (ui32_streamSize != 0) ? ui32_streamSize : ui32_streamSizeLang; }
+  uint32_t getStreamSize() { return (mui32_streamSize != 0) ? mui32_streamSize : mui32_streamSizeLang; }
 
   uint8_t getFirstByte() { return 0x11; } // If ISOTerminal streams out, it's because of an Annex C. Object Pool Upload, so 0x11 can be returned ALWAYS!
 
-  uint32_t ui32_objectStreamPosition;
-  uint32_t ui32_objectStreamPositionStored;
-  uint32_t ui32_streamSize;
+  uint32_t mui32_objectStreamPosition;
+  uint32_t mui32_objectStreamPositionStored;
+  uint32_t mui32_streamSize;
   /// Following variable indicates if we're uploading TWO parts or not!
-  uint32_t ui32_streamSizeLang; // if 0, there's only one upload. if != 0 and the first upload finishes, this value is copied to "ui32_streamSize" and this value is set to 0!
+  uint32_t mui32_streamSizeLang; // if 0, there's only one upload. if != 0 and the first upload finishes, this value is copied to "mui32_streamSize" and this value is set to 0!
   /// Following variable indicated if we're uploading A USER-GIVEN SET OF OBJECTS (User triggered partial pool update)
-  IsoAgLib::iVtObject_c** pc_userPoolUpdateObjects;
+  IsoAgLib::iVtObject_c** mpc_userPoolUpdateObjects;
 
   /** pointers needed by MultiSendStreamer */
-  IsoAgLib::iVtObject_c*HUGE_MEM* pc_iterObjects;
-  IsoAgLib::iVtObject_c*HUGE_MEM* pc_iterObjectsStored;
+  IsoAgLib::iVtObject_c*HUGE_MEM* mpc_iterObjects;
+  IsoAgLib::iVtObject_c*HUGE_MEM* mpc_iterObjectsStored;
 
-  IsoAgLib::iIsoTerminalObjectPool_c& rc_pool;
+  IsoAgLib::iIsoTerminalObjectPool_c& mrc_pool;
 #define ISO_VT_UPLOAD_BUFFER_SIZE 128
-  uint8_t uploadBuffer [ISO_VT_UPLOAD_BUFFER_SIZE];
-  uint8_t uploadBufferFilled;
-  uint8_t uploadBufferPosition;
+  uint8_t marr_uploadBuffer [ISO_VT_UPLOAD_BUFFER_SIZE];
+  uint8_t m_uploadBufferFilled;
+  uint8_t m_uploadBufferPosition;
 
-  uint8_t uploadBufferStored [ISO_VT_UPLOAD_BUFFER_SIZE];
-  uint8_t uploadBufferFilledStored;
-  uint8_t uploadBufferPositionStored;
+  uint8_t marr_uploadBufferStored [ISO_VT_UPLOAD_BUFFER_SIZE];
+  uint8_t m_uploadBufferFilledStored;
+  uint8_t m_uploadBufferPositionStored;
 
-  int8_t i8_objectPoolUploadingLanguage; // only valid if "initially uploading" or "language updating"
-  int8_t i8_objectPoolUploadedLanguage;  // only valid if "ObjectPoolUploadedSuccessfully"
+  int8_t mi8_objectPoolUploadingLanguage; // only valid if "initially uploading" or "language updating"
+  int8_t mi8_objectPoolUploadedLanguage;  // only valid if "ObjectPoolUploadedSuccessfully"
 
-  uint16_t ui16_objectPoolUploadingLanguageCode;
-  uint16_t ui16_objectPoolUploadedLanguageCode;
+  uint16_t mui16_objectPoolUploadingLanguageCode;
+  uint16_t mui16_objectPoolUploadedLanguageCode;
 };
 
 // forward declaration
@@ -308,7 +308,7 @@ public:
 
   /** constructor of VtClientServerCommunication_c
    */
-  VtClientServerCommunication_c (IdentItem_c& rc_wsMasterIdentItem, IsoTerminal_c &r_isoTerminal, IsoAgLib::iIsoTerminalObjectPool_c& arc_pool, char* apc_versionLabel, uint8_t aui8_clientId SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA);
+  VtClientServerCommunication_c (IdentItem_c& mrc_wsMasterIdentItem, IsoTerminal_c &r_isoTerminal, IsoAgLib::iIsoTerminalObjectPool_c& arc_pool, char* apc_versionLabel, uint8_t aui8_clientId SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA);
 
 
   /** explicit conversion to reference of interface class type */
@@ -341,24 +341,24 @@ public:
   void notifyOnVtStatusMessage();
 
   /** function that handles incoming VT ESC */
-  void notifyOnVtESC() { c_streamer.rc_pool.eventVtESC(); }
+  void notifyOnVtESC() { mc_streamer.mrc_pool.eventVtESC(); }
 
   void notifyOnAuxInputStatus();
 
   virtual bool processMsg();
 
-  virtual CanPkgExt_c& dataBase() { return c_data; }
+  virtual CanPkgExt_c& dataBase() { return mc_data; }
 
   uint16_t getVtObjectPoolDimension();
   uint16_t getVtObjectPoolSoftKeyWidth();
   uint16_t getVtObjectPoolSoftKeyHeight();
   uint32_t getUploadBufferSize();
   uint8_t  getUserClippedColor (uint8_t colorValue, IsoAgLib::iVtObject_c* obj, IsoAgLib::e_vtColour whichColour);
-  uint8_t  getClientId() const { return ui8_clientId; }
+  uint8_t  getClientId() const { return mui8_clientId; }
 
-  IdentItem_c& getIdentItem()            { return rc_wsMasterIdentItem; }
+  IdentItem_c& getIdentItem()            { return mrc_wsMasterIdentItem; }
   VtServerInstance_c& getVtServerInst();
-  VtServerInstance_c* getVtServerInstPtr() { return pc_vtServerInstance; }
+  VtServerInstance_c* getVtServerInstPtr() { return mpc_vtServerInstance; }
 
   void notifyOnNewVtServerInstance  (VtServerInstance_c& r_newVtServerInst);
   void notifyOnVtServerInstanceLoss (VtServerInstance_c& r_oldVtServerInst);
@@ -473,12 +473,12 @@ public:
   bool queueOrReplace (SendUpload_c& ar_sendUpload, bool b_enableReplaceOfCmd=true);
   void dumpQueue();
 
-  void enableSameCommandCheck() { b_checkSameCommand = true; }
-  void disableSameCommandCheck() { b_checkSameCommand = false; }
+  void enableSameCommandCheck() { mb_checkSameCommand = true; }
+  void disableSameCommandCheck() { mb_checkSameCommand = false; }
 
   bool isVtActive();
 
-  vtClientDisplayState_t getVtDisplayState() { return en_displayState; }
+  vtClientDisplayState_t getVtDisplayState() { return men_displayState; }
 
 private:
   friend class IsoTerminal_c;
@@ -512,64 +512,64 @@ private:
     */
   void setVtDisplayState (bool b_isVtStatusMsg, uint8_t ui8_saOrDisplayState);
 
-  /// Using the singletonVecKey from c_data (-->IsoTerminalPkg_c)
+  /// Using the singletonVecKey from mc_data (-->IsoTerminalPkg_c)
   SINGLETON_C_DATA_DEF
 
 private: // attributes
   /** static instance to store temporarily before push_back into list */
-  static SendUpload_c sc_tempSendUpload;
-  bool b_vtAliveCurrent;
-  bool b_checkSameCommand;
+  static SendUpload_c msc_tempSendUpload;
+  bool mb_vtAliveCurrent;
+  bool mb_checkSameCommand;
 
   /** has to be set using registerIsoObjectPool (...) so that IsoTerminal
     can interact in the name of the wsMaster
   */
-  IdentItem_c& rc_wsMasterIdentItem;
+  IdentItem_c& mrc_wsMasterIdentItem;
 
-  IsoTerminal_c& rc_isoTerminal; // back ref.
+  IsoTerminal_c& mrc_isoTerminal; // back ref.
 
-  VtServerInstance_c* pc_vtServerInstance;  // back p.
+  VtServerInstance_c* mpc_vtServerInstance;  // back p.
 
-  bool b_usingVersionLabel; // if NOT using version label, "p7c_versionLabel" has random values!
-  char p7c_versionLabel [7];
+  bool mb_usingVersionLabel; // if NOT using version label, "marrp7c_versionLabel" has random values!
+  char marrp7c_versionLabel [7];
 
   /// General Object-Pool state (empty, loaded, etc.)
-  objectPoolState_t en_objectPoolState;
+  objectPoolState_t men_objectPoolState;
 
   /// the following languages are
   /// -1: not supported language (==> so using default language for upload, but important to differentiate for the application!)
   ///  0: default language (first in <workingset>-object)
   ///  1: second language
   ///  2: third language
-  int8_t i8_vtLanguage; // always valid, as we're waiting for a VT's language first before starting anything...
+  int8_t mi8_vtLanguage; // always valid, as we're waiting for a VT's language first before starting anything...
 
   /** Upload-State & Variables */
-  uploadType_t en_uploadType;
-  uploadCommandState_t en_uploadCommandState; // state only used if en_uploadType == "UploadCommand"
-  uploadPoolState_t en_uploadPoolState;       // state only used if en_uploadType == "UploadPool"
-  uploadPoolType_t en_uploadPoolType;
+  uploadType_t men_uploadType;
+  uploadCommandState_t men_uploadCommandState; // state only used if men_uploadType == "UploadCommand"
+  uploadPoolState_t men_uploadPoolState;       // state only used if men_uploadType == "UploadPool"
+  uploadPoolType_t men_uploadPoolType;
 
-  uint32_t ui32_uploadTimestamp;
-  uint32_t ui32_uploadTimeout;
+  uint32_t mui32_uploadTimestamp;
+  uint32_t mui32_uploadTimeout;
 
-  uint8_t ui8_commandParameter; // this is kinda used as a cache only, because it's a four-case if-else to get the first byte!
-  uint8_t ui8_uploadError;
-  uint8_t ui8_uploadRetry;
+  uint8_t mui8_commandParameter; // this is kinda used as a cache only, because it's a four-case if-else to get the first byte!
+  uint8_t mui8_uploadError;
+  uint8_t mui8_uploadRetry;
 
-  MultiSend_c::sendSuccess_t en_sendSuccess;
+  MultiSend_c::sendSuccess_t men_sendSuccess;
 
-  uint16_t ui16_inputStringId;
-  uint8_t ui8_inputStringLength;
-  int32_t i32_nextWsMaintenanceMsg;
+  uint16_t mui16_inputStringId;
+  uint8_t mui8_inputStringLength;
+  int32_t mi32_nextWsMaintenanceMsg;
 
   /** receive filters are already created */
-  bool b_receiveFilterCreated;
+  bool mb_receiveFilterCreated;
 
-  uint8_t ui8_clientId;
+  uint8_t mui8_clientId;
 
-  IsoTerminalPkg_c c_data;
+  IsoTerminalPkg_c mc_data;
 
-  vtClientDisplayState_t en_displayState;
+  vtClientDisplayState_t men_displayState;
 
   #ifdef USE_LIST_FOR_FIFO
   // queueing with list: queue::push <-> list::push_back; queue::front<->list::front; queue::pop<->list::pop_front
@@ -581,19 +581,19 @@ private: // attributes
   // ( single instance allocation can also cause time problems and could result in heavy
   //   memory fragmentation ==>> here CHUNK Alloc is the only choice )
   #ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
-  STL_NAMESPACE::list<SendUpload_c,STL_NAMESPACE::__malloc_alloc_template<0> >  q_sendUpload;
+  STL_NAMESPACE::list<SendUpload_c,STL_NAMESPACE::__malloc_alloc_template<0> >  mq_sendUpload;
   #else
-  STL_NAMESPACE::list<SendUpload_c>  q_sendUpload;
+  STL_NAMESPACE::list<SendUpload_c>  mq_sendUpload;
   #endif
   #else
-  STL_NAMESPACE::queue<SendUpload_c> q_sendUpload;
+  STL_NAMESPACE::queue<SendUpload_c> mq_sendUpload;
   #endif
 
   STL_NAMESPACE::list<AuxAssignment_s> mlist_auxAssignments;
 
-  VtClientServerCommStreamer_c c_streamer;
+  VtClientServerCommStreamer_c mc_streamer;
 
-  int32_t i32_timeWsAnnounceKey;
+  int32_t mi32_timeWsAnnounceKey;
 };
 
 }

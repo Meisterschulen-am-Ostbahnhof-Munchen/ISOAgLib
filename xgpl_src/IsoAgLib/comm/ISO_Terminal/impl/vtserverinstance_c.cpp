@@ -103,21 +103,21 @@ namespace __IsoAgLib {
   Scheduler_c object instance
 */
 VtServerInstance_c::VtServerInstance_c(const IsoItem_c& r_newItem, IsoName_c c_newISOName, IsoTerminal_c& r_isoTerminal)
-  : pcc_isoItem (&r_newItem)
-  , c_isoName (c_newISOName)
-  , rc_isoTerminal (r_isoTerminal)
+  : mcpc_isoItem (&r_newItem)
+  , mc_isoName (c_newISOName)
+  , mrc_isoTerminal (r_isoTerminal)
 {
   /// init all variables to an initial upload state (Upload will not start before ws-announcing is due
-  vtCapabilities_a.lastReceivedSoftkeys = 0; // not yet (queried and) got answer about vt's capabilities yet
-  vtCapabilities_a.lastRequestedSoftkeys = 0; // not yet requested vt's capabilities yet
-  vtCapabilities_a.lastReceivedHardware = 0; // not yet (queried and) got answer about vt's capabilities yet
-  vtCapabilities_a.lastRequestedHardware = 0; // not yet requested vt's capabilities yet
-  vtCapabilities_a.lastReceivedFont = 0; // not yet (queried and) got answer about vt's capabilities yet
-  vtCapabilities_a.lastRequestedFont = 0; // not yet requested vt's capabilities yet
-  vtCapabilities_a.lastReceivedVersion = 0; // interesting for NACK handling, that's why it's reset here!
-  localSettings_a.lastRequested = 0; // no language info requested yet
-  localSettings_a.lastReceived = 0; // no language info received yet
-  vtState_a.lastReceived = 0; // no vt_statusMessage received yet
+  ms_vtCapabilitiesA.lastReceivedSoftkeys = 0; // not yet (queried and) got answer about vt's capabilities yet
+  ms_vtCapabilitiesA.lastRequestedSoftkeys = 0; // not yet requested vt's capabilities yet
+  ms_vtCapabilitiesA.lastReceivedHardware = 0; // not yet (queried and) got answer about vt's capabilities yet
+  ms_vtCapabilitiesA.lastRequestedHardware = 0; // not yet requested vt's capabilities yet
+  ms_vtCapabilitiesA.lastReceivedFont = 0; // not yet (queried and) got answer about vt's capabilities yet
+  ms_vtCapabilitiesA.lastRequestedFont = 0; // not yet requested vt's capabilities yet
+  ms_vtCapabilitiesA.lastReceivedVersion = 0; // interesting for NACK handling, that's why it's reset here!
+  ms_localSettingsA.lastRequested = 0; // no language info requested yet
+  ms_localSettingsA.lastReceived = 0; // no language info received yet
+  ms_vtStateA.lastReceived = 0; // no vt_statusMessage received yet
 }
 
 /** default destructor, which initiate sending address release for all own identities
@@ -133,13 +133,13 @@ VtServerInstance_c::~VtServerInstance_c()
 bool
 VtServerInstance_c::isVtActive ()
 {
-  if (vtState_a.lastReceived)
+  if (ms_vtStateA.lastReceived)
   {
     // Using the time when the last package has been received and processed makes sure that no packages are being ignored,
     // that were sent at this moment but were not processed so far (will be soon).
     // The disadvantage this way is, that an isAlive after 3.01s could be accepted without entering the safestate -
     // this should not be a problem because a new alive has already been received, and a safestate is not urgently necessary
-    if (((int32_t)getCanInstance4Comm().getLastProcessedCanPkgTime() - (int32_t)vtState_a.lastReceived) <= 3000)
+    if (((int32_t)getCanInstance4Comm().getLastProcessedCanPkgTime() - (int32_t)ms_vtStateA.lastReceived) <= 3000)
     { // comparing as int, so that in case "NOW-time > CAN-time" NO client-reload happens
       return true;
     }
@@ -153,12 +153,12 @@ VtServerInstance_c::isVtActive ()
 void
 VtServerInstance_c::setLatestVtStatusData()
 {
-  vtState_a.lastReceived =               rc_isoTerminal.data().time();
-  vtState_a.saOfActiveWorkingSetMaster = rc_isoTerminal.data().getUint8Data (1);
-  vtState_a.dataAlarmMask =              rc_isoTerminal.data().getUint8Data (2) | (rc_isoTerminal.data().getUint8Data (3) << 8);
-  vtState_a.softKeyMask =                rc_isoTerminal.data().getUint8Data (4) | (rc_isoTerminal.data().getUint8Data (5) << 8);
-  vtState_a.busyCodes =                  rc_isoTerminal.data().getUint8Data (6);
-  vtState_a.functionBusy =               rc_isoTerminal.data().getUint8Data (7);
+  ms_vtStateA.lastReceived =               mrc_isoTerminal.data().time();
+  ms_vtStateA.saOfActiveWorkingSetMaster = mrc_isoTerminal.data().getUint8Data (1);
+  ms_vtStateA.dataAlarmMask =              mrc_isoTerminal.data().getUint8Data (2) | (mrc_isoTerminal.data().getUint8Data (3) << 8);
+  ms_vtStateA.softKeyMask =                mrc_isoTerminal.data().getUint8Data (4) | (mrc_isoTerminal.data().getUint8Data (5) << 8);
+  ms_vtStateA.busyCodes =                  mrc_isoTerminal.data().getUint8Data (6);
+  ms_vtStateA.functionBusy =               mrc_isoTerminal.data().getUint8Data (7);
 }
 
 /** process received language messages
@@ -167,73 +167,73 @@ VtServerInstance_c::setLatestVtStatusData()
 void
 VtServerInstance_c::setLocalSettings()
 {
-  localSettings_a.lastReceived =  rc_isoTerminal.data().time();
-  localSettings_a.languageCode = (rc_isoTerminal.data().getUint8Data (0) << 8) | rc_isoTerminal.data().getUint8Data (1);
-  localSettings_a.nDecimalPoint = rc_isoTerminal.data().getUint8Data (2) >> 6;
-  localSettings_a.nTimeFormat =  (rc_isoTerminal.data().getUint8Data (2) >> 4) & 0x03;
-  localSettings_a.dFormat =       rc_isoTerminal.data().getUint8Data (3);
-  localSettings_a.uDistance =     rc_isoTerminal.data().getUint8Data (4) >> 6;
-  localSettings_a.uArea =        (rc_isoTerminal.data().getUint8Data (4) >> 4) & 0x03;
-  localSettings_a.uVolume =      (rc_isoTerminal.data().getUint8Data (4) >> 2) & 0x03;
-  localSettings_a.uMass =         rc_isoTerminal.data().getUint8Data (4)       & 0x03;
-  localSettings_a.uTemperature =  rc_isoTerminal.data().getUint8Data (5) >> 6;
-  localSettings_a.uPressure =    (rc_isoTerminal.data().getUint8Data (5) >> 4) & 0x03;
-  localSettings_a.uForce =       (rc_isoTerminal.data().getUint8Data (5) >> 2) & 0x03;
-  localSettings_a.uUnitsSystem =  rc_isoTerminal.data().getUint8Data (5)       & 0x03;
+  ms_localSettingsA.lastReceived =  mrc_isoTerminal.data().time();
+  ms_localSettingsA.languageCode = (mrc_isoTerminal.data().getUint8Data (0) << 8) | mrc_isoTerminal.data().getUint8Data (1);
+  ms_localSettingsA.nDecimalPoint = mrc_isoTerminal.data().getUint8Data (2) >> 6;
+  ms_localSettingsA.nTimeFormat =  (mrc_isoTerminal.data().getUint8Data (2) >> 4) & 0x03;
+  ms_localSettingsA.dFormat =       mrc_isoTerminal.data().getUint8Data (3);
+  ms_localSettingsA.uDistance =     mrc_isoTerminal.data().getUint8Data (4) >> 6;
+  ms_localSettingsA.uArea =        (mrc_isoTerminal.data().getUint8Data (4) >> 4) & 0x03;
+  ms_localSettingsA.uVolume =      (mrc_isoTerminal.data().getUint8Data (4) >> 2) & 0x03;
+  ms_localSettingsA.uMass =         mrc_isoTerminal.data().getUint8Data (4)       & 0x03;
+  ms_localSettingsA.uTemperature =  mrc_isoTerminal.data().getUint8Data (5) >> 6;
+  ms_localSettingsA.uPressure =    (mrc_isoTerminal.data().getUint8Data (5) >> 4) & 0x03;
+  ms_localSettingsA.uForce =       (mrc_isoTerminal.data().getUint8Data (5) >> 2) & 0x03;
+  ms_localSettingsA.uUnitsSystem =  mrc_isoTerminal.data().getUint8Data (5)       & 0x03;
   // The other fields are reserved. (yet ;-)
 }
 
 void
 VtServerInstance_c::setVersion()
 {
-  vtCapabilities_a.lastReceivedVersion =  rc_isoTerminal.data().time();
-  vtCapabilities_a.iso11783version =      rc_isoTerminal.data().getUint8Data (1);
+  ms_vtCapabilitiesA.lastReceivedVersion =  mrc_isoTerminal.data().time();
+  ms_vtCapabilitiesA.iso11783version =      mrc_isoTerminal.data().getUint8Data (1);
 }
 
 void
 VtServerInstance_c::setSoftKeyData()
 {
-  vtCapabilities_a.lastReceivedSoftkeys = rc_isoTerminal.data().time();
-  vtCapabilities_a.skWidth =              rc_isoTerminal.data().getUint8Data (4);
-  vtCapabilities_a.skHeight =             rc_isoTerminal.data().getUint8Data (5);
-  vtCapabilities_a.skVirtual =            rc_isoTerminal.data().getUint8Data (6);
-  vtCapabilities_a.skPhysical =           rc_isoTerminal.data().getUint8Data (7);
+  ms_vtCapabilitiesA.lastReceivedSoftkeys = mrc_isoTerminal.data().time();
+  ms_vtCapabilitiesA.skWidth =              mrc_isoTerminal.data().getUint8Data (4);
+  ms_vtCapabilitiesA.skHeight =             mrc_isoTerminal.data().getUint8Data (5);
+  ms_vtCapabilitiesA.skVirtual =            mrc_isoTerminal.data().getUint8Data (6);
+  ms_vtCapabilitiesA.skPhysical =           mrc_isoTerminal.data().getUint8Data (7);
 }
 
 void
 VtServerInstance_c::setTextFontData()
 {
-  vtCapabilities_a.lastReceivedFont =     rc_isoTerminal.data().time();
-  vtCapabilities_a.fontSizes =           (rc_isoTerminal.data().getUint8Data (5) << 1) | 0x01;
-  vtCapabilities_a.fontSizes +=           rc_isoTerminal.data().getUint8Data (6) << 8;
-  vtCapabilities_a.fontTypes =            rc_isoTerminal.data().getUint8Data (7);
+  ms_vtCapabilitiesA.lastReceivedFont =     mrc_isoTerminal.data().time();
+  ms_vtCapabilitiesA.fontSizes =           (mrc_isoTerminal.data().getUint8Data (5) << 1) | 0x01;
+  ms_vtCapabilitiesA.fontSizes +=           mrc_isoTerminal.data().getUint8Data (6) << 8;
+  ms_vtCapabilitiesA.fontTypes =            mrc_isoTerminal.data().getUint8Data (7);
 }
 
 void
 VtServerInstance_c::setHardwareData()
 {
-  vtCapabilities_a.lastReceivedHardware = rc_isoTerminal.data().time();
-  vtCapabilities_a.hwGraphicType =        rc_isoTerminal.data().getUint8Data (2);
-  vtCapabilities_a.hwHardware =           rc_isoTerminal.data().getUint8Data (3);
-  vtCapabilities_a.hwWidth =              rc_isoTerminal.data().getUint8Data (4) + (rc_isoTerminal.data().getUint8Data (5) << 8);
-  vtCapabilities_a.hwHeight =             rc_isoTerminal.data().getUint8Data (6) + (rc_isoTerminal.data().getUint8Data (7) << 8);
+  ms_vtCapabilitiesA.lastReceivedHardware = mrc_isoTerminal.data().time();
+  ms_vtCapabilitiesA.hwGraphicType =        mrc_isoTerminal.data().getUint8Data (2);
+  ms_vtCapabilitiesA.hwHardware =           mrc_isoTerminal.data().getUint8Data (3);
+  ms_vtCapabilitiesA.hwWidth =              mrc_isoTerminal.data().getUint8Data (4) + (mrc_isoTerminal.data().getUint8Data (5) << 8);
+  ms_vtCapabilitiesA.hwHeight =             mrc_isoTerminal.data().getUint8Data (6) + (mrc_isoTerminal.data().getUint8Data (7) << 8);
 }
 
 void
 VtServerInstance_c::resetVtAlive()
 {
-  vtState_a.lastReceived = 0;
+  ms_vtStateA.lastReceived = 0;
 }
 
 uint32_t VtServerInstance_c::getVtHardwareDimension()
 {
-  return (uint32_t) (vtCapabilities_a.hwWidth);
+  return (uint32_t) (ms_vtCapabilitiesA.hwWidth);
 }
 
 uint16_t
 VtServerInstance_c::getVtFontSizes()
 {
-  return vtCapabilities_a.fontSizes;
+  return ms_vtCapabilitiesA.fontSizes;
 }
 
 } // end namespace __IsoAgLib

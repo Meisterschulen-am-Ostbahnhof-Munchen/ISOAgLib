@@ -113,7 +113,7 @@ public:
 
   //  Operation: ~Chunk_c
   //! Destructor: Clears the Vector.
-  ~Chunk_c() { arr_data.clear(); }
+  ~Chunk_c() { marr_data.clear(); }
 
 
   // Copy constructor
@@ -144,14 +144,14 @@ public:
   bool full();
 
   //  Attribute: sui16_chunkSize
-  static const uint16_t scui16_chunkSize = (CONFIG_MULTI_RECEIVE_CHUNK_SIZE_IN_PACKETS)*7;
+  static const uint16_t mscui16_chunkSize = (CONFIG_MULTI_RECEIVE_CHUNK_SIZE_IN_PACKETS)*7;
 
 protected:
 
 private:
 
-  //  Attribute: arr_data
-  STL_NAMESPACE::vector<uint8_t> arr_data;
+  //  Attribute: marr_data
+  STL_NAMESPACE::vector<uint8_t> marr_data;
 
 }; // ~X2C
 

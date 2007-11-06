@@ -128,14 +128,14 @@ public:
 
 private:
 
-  static uint8_t font2PixelDimensionTableW [15];
-  static uint8_t font2PixelDimensionTableH [15];
+  static uint8_t marr_font2PixelDimensionTableW [15];
+  static uint8_t marr_font2PixelDimensionTableH [15];
 
-  //! Calculate font size and cache in ui8_fontSizeScaled
+  //! Calculate font size and cache in mui8_fontSizeScaled
   void calcScaledFontDimension() const;
 
   //! Chached font size calculated by calcScaledFontDimension()
-  mutable uint8_t ui8_fontSizeScaled;
+  mutable uint8_t mui8_fontSizeScaled;
 
 };
 

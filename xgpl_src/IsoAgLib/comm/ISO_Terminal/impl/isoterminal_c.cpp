@@ -112,7 +112,7 @@ namespace __IsoAgLib {
  */
 CanPkgExt_c& IsoTerminal_c::dataBase()
 {
-  return c_data;
+  return mc_data;
 }
 
 
@@ -186,9 +186,9 @@ IsoTerminal_c::close()
     getCanInstance4Comm().deleteFilter(*this, (0x3FFFF00UL), (static_cast<MASK_TYPE>(VT_TO_GLOBAL_PGN) << 8),    Ident_c::ExtendedIdent);
     getCanInstance4Comm().deleteFilter(*this, (0x3FFFF00UL), (static_cast<MASK_TYPE>(LANGUAGE_PGN) << 8),        Ident_c::ExtendedIdent);
 
-    for (uint8_t ui8_index = 0; ui8_index < vec_vtClientServerComm.size(); ui8_index++)
+    for (uint8_t ui8_index = 0; ui8_index < mvec_vtClientServerComm.size(); ui8_index++)
     {
-      if (vec_vtClientServerComm[ui8_index])
+      if (mvec_vtClientServerComm[ui8_index])
       {
         deregisterIsoObjectPoolInd (ui8_index);
       }
@@ -222,15 +222,15 @@ IsoTerminal_c::initAndRegisterIsoObjectPool (IdentItem_c& rc_identItem, IsoAgLib
   }
   uint8_t ui8_index = 0;
   // add new instance of VtClientServerCommunication
-  for (; ui8_index < vec_vtClientServerComm.size(); ui8_index++)
+  for (; ui8_index < mvec_vtClientServerComm.size(); ui8_index++)
   {
-    if (vec_vtClientServerComm[ui8_index] == NULL)
+    if (mvec_vtClientServerComm[ui8_index] == NULL)
     { // found one emtpy entry
       break;
     }
     else
     {
-      if (vec_vtClientServerComm[ui8_index]->getIdentItem() == rc_identItem)
+      if (mvec_vtClientServerComm[ui8_index]->getIdentItem() == rc_identItem)
       { // this IdentItem has already one pool registered - use multiple
         // IdentItems if you want to use multiple pools!
         return NULL;
@@ -239,7 +239,7 @@ IsoTerminal_c::initAndRegisterIsoObjectPool (IdentItem_c& rc_identItem, IsoAgLib
   }
   // create new instance
   VtClientServerCommunication_c* pc_vtCSC = new VtClientServerCommunication_c (rc_identItem, *this, arc_pool, apc_versionLabel, ui8_index SINGLETON_VEC_KEY_WITH_COMMA);
-  if (pc_vtCSC->en_objectPoolState == VtClientServerCommunication_c::OPCannotBeUploaded) // meaning here is: OPCannotBeInitialized (due to versionLabel problems)
+  if (pc_vtCSC->men_objectPoolState == VtClientServerCommunication_c::OPCannotBeUploaded) // meaning here is: OPCannotBeInitialized (due to versionLabel problems)
   { // most likely due to wrong version label
     /// Error already registered in the VtClientServerCommunication_c(..) constructor!
     #if defined (DEBUG)
@@ -253,13 +253,13 @@ IsoTerminal_c::initAndRegisterIsoObjectPool (IdentItem_c& rc_identItem, IsoAgLib
   }
 
   // add new instance to vector
-  if (ui8_index < vec_vtClientServerComm.size())
-    vec_vtClientServerComm[ui8_index] = pc_vtCSC;
+  if (ui8_index < mvec_vtClientServerComm.size())
+    mvec_vtClientServerComm[ui8_index] = pc_vtCSC;
   else
-    vec_vtClientServerComm.push_back(pc_vtCSC);
+    mvec_vtClientServerComm.push_back(pc_vtCSC);
 
   // if at least one VtServerInstance is online, notify the new VtClientServerCommunication
-  if (!l_vtServerInst.empty()) pc_vtCSC->notifyOnNewVtServerInstance (l_vtServerInst.front());
+  if (!ml_vtServerInst.empty()) pc_vtCSC->notifyOnNewVtServerInstance (ml_vtServerInst.front());
   return pc_vtCSC;
 }
 
@@ -273,11 +273,11 @@ IsoTerminal_c::deregisterIsoObjectPool (IdentItem_c& r_identItem)
   * - !UploadType::UploadIdle -> interrupt any upload
   */
   uint8_t ui8_index = 0;
-  for (; ui8_index < vec_vtClientServerComm.size(); ui8_index++)
+  for (; ui8_index < mvec_vtClientServerComm.size(); ui8_index++)
   {
-    if (vec_vtClientServerComm[ui8_index])
+    if (mvec_vtClientServerComm[ui8_index])
     {
-      if (&r_identItem == &vec_vtClientServerComm[ui8_index]->getIdentItem())
+      if (&r_identItem == &mvec_vtClientServerComm[ui8_index]->getIdentItem())
       {
         deregisterIsoObjectPoolInd (ui8_index);
         break;
@@ -285,7 +285,7 @@ IsoTerminal_c::deregisterIsoObjectPool (IdentItem_c& r_identItem)
     }
   }
 
-  if (ui8_index == vec_vtClientServerComm.size())
+  if (ui8_index == mvec_vtClientServerComm.size())
     return false; // appropriate IdentItem could not be found, so nothing was deleted
   else
     return true; // IdentItem was found and deleted
@@ -295,8 +295,8 @@ IsoTerminal_c::deregisterIsoObjectPool (IdentItem_c& r_identItem)
 void
 IsoTerminal_c::deregisterIsoObjectPoolInd (uint8_t aui8_index)
 {
-  delete vec_vtClientServerComm[aui8_index];
-  vec_vtClientServerComm[aui8_index] = NULL;
+  delete mvec_vtClientServerComm[aui8_index];
+  mvec_vtClientServerComm[aui8_index] = NULL;
 }
 
 
@@ -312,10 +312,10 @@ IsoTerminal_c::timeEvent(void)
 
   bool b_allActivitiesPerformed = true;
 
-  for (uint8_t ui8_index = 0; ui8_index < vec_vtClientServerComm.size(); ui8_index++)
+  for (uint8_t ui8_index = 0; ui8_index < mvec_vtClientServerComm.size(); ui8_index++)
   {
-    if (vec_vtClientServerComm[ui8_index])
-      b_allActivitiesPerformed &= vec_vtClientServerComm[ui8_index]->timeEvent();
+    if (mvec_vtClientServerComm[ui8_index])
+      b_allActivitiesPerformed &= mvec_vtClientServerComm[ui8_index]->timeEvent();
   }
   /** @todo maybe store the one that was out of time if not all could perform their actions? */
 
@@ -342,20 +342,20 @@ IsoTerminal_c::processMsg()
     uint8_t const cui8_cmdByte = data().getUint8Data (1-1);
     if (cui8_cmdByte == 0xFE) // Command: "Status", Parameter: "VT Status Message"
     {
-      for (lit_vtServerInst = l_vtServerInst.begin(); lit_vtServerInst != l_vtServerInst.end(); lit_vtServerInst++)
+      for (lit_vtServerInst = ml_vtServerInst.begin(); lit_vtServerInst != ml_vtServerInst.end(); lit_vtServerInst++)
       {
         if (lit_vtServerInst->getVtSourceAddress() == data().isoSa()) // getVtSourceAddress gets the SA from the IsoItem, so it's the current one...
         {
           lit_vtServerInst->setLatestVtStatusData();
 
           // iterate through all registered VtClientServerCommunication and notify their pools with "eventVtStatusMsg"
-          for (ui8_index = 0; ui8_index < vec_vtClientServerComm.size(); ui8_index++)
+          for (ui8_index = 0; ui8_index < mvec_vtClientServerComm.size(); ui8_index++)
           {
-            if (vec_vtClientServerComm[ui8_index])
+            if (mvec_vtClientServerComm[ui8_index])
             {
-              if (vec_vtClientServerComm[ui8_index]->getVtServerInstPtr() == &(*lit_vtServerInst))
+              if (mvec_vtClientServerComm[ui8_index]->getVtServerInstPtr() == &(*lit_vtServerInst))
               { // this vtClientServerComm is connected to this VT, so notify the objectpool!!
-                vec_vtClientServerComm[ui8_index]->notifyOnVtStatusMessage();
+                mvec_vtClientServerComm[ui8_index]->notifyOnVtStatusMessage();
               }
             }
           }
@@ -365,11 +365,11 @@ IsoTerminal_c::processMsg()
     }
     else if (cui8_cmdByte == 0x21) // Command: "Auxiliary Control", Parameter: "Auxiliary Input Status"
     { // iterate through all registered VtClientServerCommunication and notify them, maybe they have functions that need that input status!
-      for (ui8_index = 0; ui8_index < vec_vtClientServerComm.size(); ui8_index++)
+      for (ui8_index = 0; ui8_index < mvec_vtClientServerComm.size(); ui8_index++)
       {
-        if (vec_vtClientServerComm[ui8_index])
+        if (mvec_vtClientServerComm[ui8_index])
         {
-          vec_vtClientServerComm[ui8_index]->notifyOnAuxInputStatus();
+          mvec_vtClientServerComm[ui8_index]->notifyOnAuxInputStatus();
         }
       }
     }
@@ -381,16 +381,16 @@ IsoTerminal_c::processMsg()
   if ((data().isoPgn() & 0x3FFFF) == LANGUAGE_PGN)
   {
       // first process LANGUAGE_PGN for all VtServerInstances BEFORE processing for the VtClientServerCommunications
-    for (lit_vtServerInst = l_vtServerInst.begin(); lit_vtServerInst != l_vtServerInst.end(); lit_vtServerInst++)
+    for (lit_vtServerInst = ml_vtServerInst.begin(); lit_vtServerInst != ml_vtServerInst.end(); lit_vtServerInst++)
     {
       if (lit_vtServerInst->getVtSourceAddress() == data().isoSa())
         lit_vtServerInst->setLocalSettings();
     }
 
-    for (ui8_index = 0; ui8_index < vec_vtClientServerComm.size(); ui8_index++)
+    for (ui8_index = 0; ui8_index < mvec_vtClientServerComm.size(); ui8_index++)
     {
-      if (vec_vtClientServerComm[ui8_index])
-        vec_vtClientServerComm[ui8_index]->notifyOnVtsLanguagePgn();
+      if (mvec_vtClientServerComm[ui8_index])
+        mvec_vtClientServerComm[ui8_index]->notifyOnVtsLanguagePgn();
     }
     /** @todo return FALSE so others can react on it? -> Base_c ?? */
     /** @todo Use Base_c for getting the VT's language????? */
@@ -403,12 +403,12 @@ IsoTerminal_c::processMsg()
 
 
 bool
-IsoTerminal_c::sendCommandForDEBUG(IsoAgLib::iIdentItem_c& rc_wsMasterIdentItem, uint8_t* apui8_buffer, uint32_t ui32_size)
+IsoTerminal_c::sendCommandForDEBUG(IsoAgLib::iIdentItem_c& mrc_wsMasterIdentItem, uint8_t* apui8_buffer, uint32_t ui32_size)
 {
-  for (uint8_t ui8_index = 0; ui8_index < vec_vtClientServerComm.size(); ui8_index++)
+  for (uint8_t ui8_index = 0; ui8_index < mvec_vtClientServerComm.size(); ui8_index++)
   {
-    if (static_cast<__IsoAgLib::IdentItem_c&>(rc_wsMasterIdentItem) == vec_vtClientServerComm[ui8_index]->getIdentItem())
-      return vec_vtClientServerComm[ui8_index]->sendCommandForDEBUG(apui8_buffer, ui32_size);
+    if (static_cast<__IsoAgLib::IdentItem_c&>(mrc_wsMasterIdentItem) == mvec_vtClientServerComm[ui8_index]->getIdentItem())
+      return mvec_vtClientServerComm[ui8_index]->sendCommandForDEBUG(apui8_buffer, ui32_size);
   }
   return false;
 }
@@ -423,7 +423,7 @@ IsoTerminal_c::reactOnMonitorListAdd (const IsoName_c& rc_isoName, const IsoItem
 
   STL_NAMESPACE::list<VtServerInstance_c>::iterator lit_vtServerInst;
 
-  for (lit_vtServerInst = l_vtServerInst.begin(); lit_vtServerInst != l_vtServerInst.end(); lit_vtServerInst++)
+  for (lit_vtServerInst = ml_vtServerInst.begin(); lit_vtServerInst != ml_vtServerInst.end(); lit_vtServerInst++)
   { // check if newly added VtServerInstance is already in our list
     if (lit_vtServerInst->getIsoItem())
     {
@@ -435,14 +435,14 @@ IsoTerminal_c::reactOnMonitorListAdd (const IsoName_c& rc_isoName, const IsoItem
   }
 
   // VtServerInstance not yet in list, so add it ...
-  l_vtServerInst.push_back (VtServerInstance_c (*apc_newItem, rc_isoName, *this));
-  VtServerInstance_c& r_vtServerInst = l_vtServerInst.back();
+  ml_vtServerInst.push_back (VtServerInstance_c (*apc_newItem, rc_isoName, *this));
+  VtServerInstance_c& r_vtServerInst = ml_vtServerInst.back();
 
   // ... and notify all vtClientServerComm instances
-  for (uint8_t ui8_index = 0; ui8_index < vec_vtClientServerComm.size(); ui8_index++)
+  for (uint8_t ui8_index = 0; ui8_index < mvec_vtClientServerComm.size(); ui8_index++)
   {
-    if (vec_vtClientServerComm[ui8_index])
-      vec_vtClientServerComm[ui8_index]->notifyOnNewVtServerInstance (r_vtServerInst);
+    if (mvec_vtClientServerComm[ui8_index])
+      mvec_vtClientServerComm[ui8_index]->notifyOnNewVtServerInstance (r_vtServerInst);
   }
 }
 
@@ -456,25 +456,25 @@ IsoTerminal_c::reactOnMonitorListRemove (const IsoName_c& rc_isoName, uint8_t /*
   // check if it is mine???
   STL_NAMESPACE::list<VtServerInstance_c>::iterator lit_vtServerInst;
 
-  for (lit_vtServerInst = l_vtServerInst.begin(); lit_vtServerInst != l_vtServerInst.end(); lit_vtServerInst++)
+  for (lit_vtServerInst = ml_vtServerInst.begin(); lit_vtServerInst != ml_vtServerInst.end(); lit_vtServerInst++)
   { // check if lost VtServerInstance is in our list
     if (lit_vtServerInst->getIsoItem())
     {
       if (rc_isoName == lit_vtServerInst->getIsoItem()->isoName())
       { // the VtServerInstance is already known and in our list, so it could be deleted
         // notify all clients on early loss of that VtServerInstance
-        for (uint8_t ui8_index = 0; ui8_index < vec_vtClientServerComm.size(); ui8_index++)
+        for (uint8_t ui8_index = 0; ui8_index < mvec_vtClientServerComm.size(); ui8_index++)
         {
-          if (vec_vtClientServerComm[ui8_index])
+          if (mvec_vtClientServerComm[ui8_index])
           {
-            vec_vtClientServerComm[ui8_index]->notifyOnVtServerInstanceLoss(*lit_vtServerInst);
+            mvec_vtClientServerComm[ui8_index]->notifyOnVtServerInstanceLoss(*lit_vtServerInst);
             /** for now allow multiple upload
-            resetFlagForPoolUpload (vec_vtClientServerComm[ui8_index]); // reset flag for next upload
+            resetFlagForPoolUpload (mvec_vtClientServerComm[ui8_index]); // reset flag for next upload
             */
           }
         }
 
-        l_vtServerInst.erase (lit_vtServerInst);
+        ml_vtServerInst.erase (lit_vtServerInst);
         break;
       }
     }
@@ -521,15 +521,15 @@ IsoTerminal_c::fakeVtProperties (uint16_t aui16_dimension, uint16_t aui16_skWidt
 {
   const IsoItem_c c_dummyIsoItem;
   // casting NULL to a reference is okay here, as the reference isn't used for any FAKE_VT case (iop_generator, etc.)
-  l_vtServerInst.push_back (VtServerInstance_c (c_dummyIsoItem, IsoName_c::IsoNameUnspecified(), (*this)));
-  VtServerInstance_c& r_vtServerInst = l_vtServerInst.back();
+  ml_vtServerInst.push_back (VtServerInstance_c (c_dummyIsoItem, IsoName_c::IsoNameUnspecified(), (*this)));
+  VtServerInstance_c& r_vtServerInst = ml_vtServerInst.back();
   r_vtServerInst.fakeVtProperties (aui16_dimension, aui16_skWidth, aui16_skHeight, aui16_colorDepth, aui16_fontSizes);
 
   // ... and notify all vtClientServerComm instances
-  for (uint8_t ui8_index = 0; ui8_index < vec_vtClientServerComm.size(); ui8_index++)
+  for (uint8_t ui8_index = 0; ui8_index < mvec_vtClientServerComm.size(); ui8_index++)
   {
-    if (vec_vtClientServerComm[ui8_index])
-      vec_vtClientServerComm[ui8_index]->notifyOnNewVtServerInstance(r_vtServerInst);
+    if (mvec_vtClientServerComm[ui8_index])
+      mvec_vtClientServerComm[ui8_index]->notifyOnNewVtServerInstance(r_vtServerInst);
   }
 }
 #endif

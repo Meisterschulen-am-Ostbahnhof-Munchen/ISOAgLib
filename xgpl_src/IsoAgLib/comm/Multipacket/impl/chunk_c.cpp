@@ -98,8 +98,8 @@ namespace __IsoAgLib {
 // Copy constructor
 Chunk_c::Chunk_c( const Chunk_c& arc_src )
 {
-  arr_data.reserve (arc_src.arr_data.capacity());
-  STL_NAMESPACE::copy(arc_src.arr_data.begin(), arc_src.arr_data.end(), arr_data.begin());
+  marr_data.reserve (arc_src.marr_data.capacity());
+  STL_NAMESPACE::copy(arc_src.marr_data.begin(), arc_src.marr_data.end(), marr_data.begin());
 }
 
 
@@ -110,8 +110,8 @@ Chunk_c::Chunk_c( const Chunk_c& arc_src )
 bool
 Chunk_c::init()
 { // ~X2C
-  arr_data.reserve( scui16_chunkSize );
-  return arr_data.capacity() == scui16_chunkSize;
+  marr_data.reserve( mscui16_chunkSize );
+  return marr_data.capacity() == mscui16_chunkSize;
 } // -X2C
 
 
@@ -125,7 +125,7 @@ uint8_t
 Chunk_c::insert(uint8_t aui8_data)
 { // ~X2C
   if (full()) return 0;
-  arr_data.push_back( aui8_data );
+  marr_data.push_back( aui8_data );
   return 1;
 } // -X2C
 
@@ -142,7 +142,7 @@ Chunk_c::insert7Bytes(const uint8_t* pui8_data)
   uint8_t  nbr=0;
 
   while (!full() && (nbr < 7))
-    arr_data.push_back(pui8_data[nbr++]);
+    marr_data.push_back(pui8_data[nbr++]);
   return nbr;
 } // -X2C
 
@@ -156,8 +156,8 @@ Chunk_c::insert7Bytes(const uint8_t* pui8_data)
 uint16_t
 Chunk_c::getData(uint32_t aui32_pos)
 { // ~X2C
-  if (aui32_pos >= arr_data.size()) return 0xffff;
-  return arr_data[aui32_pos];
+  if (aui32_pos >= marr_data.size()) return 0xffff;
+  return marr_data[aui32_pos];
 } // -X2C
 
 
@@ -167,7 +167,7 @@ Chunk_c::getData(uint32_t aui32_pos)
 void
 Chunk_c::setFree()
 { // ~X2C
-  arr_data.clear();
+  marr_data.clear();
 } // -X2C
 
 
@@ -178,7 +178,7 @@ Chunk_c::setFree()
 uint8_t
 Chunk_c::getFreeCnt() const
 { // ~X2C
-  return arr_data.capacity() - arr_data.size();
+  return marr_data.capacity() - marr_data.size();
 } // -X2C
 
 
@@ -189,7 +189,7 @@ Chunk_c::getFreeCnt() const
 bool
 Chunk_c::free()
 { // ~X2C
-  return arr_data.empty();
+  return marr_data.empty();
 } // -X2C
 
 
@@ -200,7 +200,7 @@ Chunk_c::free()
 bool
 Chunk_c::full()
 { // ~X2C
-  return arr_data.size() == arr_data.capacity();
+  return marr_data.size() == marr_data.capacity();
 } // -X2C
 
 } // end namespace __IsoAgLib

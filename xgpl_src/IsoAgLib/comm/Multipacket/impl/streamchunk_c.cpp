@@ -98,7 +98,7 @@ namespace __IsoAgLib {
 
 //! Constructor: initializes the list and local variables
 //! create one <list> element including one Chunk,
-//! init pc_iterWriteChunk, pc_iterParsedChunk, ui32_writeCnt, ui32_parsedCnt
+//! init mpc_iterWriteChunk, mpc_iterParsedChunk, mui32_writeCnt, mui32_parsedCnt
 StreamChunk_c::StreamChunk_c (StreamType_t at_streamType,
                               const IsoAgLib::ReceiveStreamIdentifier_c& ac_rsi,
                               uint32_t aui32_msgSize
@@ -113,32 +113,32 @@ StreamChunk_c::StreamChunk_c (StreamType_t at_streamType,
 
 StreamChunk_c::~StreamChunk_c()
 {
-  list_chunks.clear();
+  mlist_chunks.clear();
 }
 
 
 void
 StreamChunk_c::immediateInitAfterConstruction()
 {
-  list_chunks.push_back( Chunk_c() );
-  pc_iterWriteChunk  = list_chunks.begin();
-  pc_iterParsedChunk = list_chunks.begin();
-  ui32_writeCnt  = 0;
-  ui32_parsedCnt = 0;
+  mlist_chunks.push_back( Chunk_c() );
+  mpc_iterWriteChunk  = mlist_chunks.begin();
+  mpc_iterParsedChunk = mlist_chunks.begin();
+  mui32_writeCnt  = 0;
+  mui32_parsedCnt = 0;
 
-  pc_iterWriteChunk->init();
+  mpc_iterWriteChunk->init();
 }
 
 
 
 StreamChunk_c::StreamChunk_c( const StreamChunk_c& arc_src )
   : Stream_c( arc_src ),
-    list_chunks( arc_src.list_chunks ),
-    ui32_writeCnt ( arc_src.ui32_writeCnt ),
-    ui32_parsedCnt( arc_src.ui32_parsedCnt )
+    mlist_chunks( arc_src.mlist_chunks ),
+    mui32_writeCnt ( arc_src.mui32_writeCnt ),
+    mui32_parsedCnt( arc_src.mui32_parsedCnt )
 {
-  copyIterator (arc_src.list_chunks, arc_src.pc_iterWriteChunk,  list_chunks, pc_iterWriteChunk);
-  copyIterator (arc_src.list_chunks, arc_src.pc_iterParsedChunk, list_chunks, pc_iterParsedChunk);
+  copyIterator (arc_src.mlist_chunks, arc_src.mpc_iterWriteChunk,  mlist_chunks, mpc_iterWriteChunk);
+  copyIterator (arc_src.mlist_chunks, arc_src.mpc_iterParsedChunk, mlist_chunks, mpc_iterParsedChunk);
 }
 
 
@@ -147,11 +147,11 @@ const StreamChunk_c& StreamChunk_c::operator=( const StreamChunk_c& arc_src )
 {
   Stream_c::operator=( arc_src );
 
-  list_chunks = arc_src.list_chunks;
-  copyIterator (arc_src.list_chunks, arc_src.pc_iterWriteChunk,  list_chunks, pc_iterWriteChunk);
-  copyIterator (arc_src.list_chunks, arc_src.pc_iterParsedChunk, list_chunks, pc_iterParsedChunk);
-  ui32_writeCnt  = arc_src.ui32_writeCnt;
-  ui32_parsedCnt = arc_src.ui32_parsedCnt;
+  mlist_chunks = arc_src.mlist_chunks;
+  copyIterator (arc_src.mlist_chunks, arc_src.mpc_iterWriteChunk,  mlist_chunks, mpc_iterWriteChunk);
+  copyIterator (arc_src.mlist_chunks, arc_src.mpc_iterParsedChunk, mlist_chunks, mpc_iterParsedChunk);
+  mui32_writeCnt  = arc_src.mui32_writeCnt;
+  mui32_parsedCnt = arc_src.mui32_parsedCnt;
   return arc_src;
 }
 
@@ -165,8 +165,8 @@ StreamChunk_c::insertFirst6Bytes(const uint8_t* pui8_data)
   // write bytes into current chunk, assuming it's the first one so NO checks for full chunk are performed!!!!
   int nbr = 0;
   while (nbr < 6)
-    if (pc_iterWriteChunk->insert( pui8_data[nbr++] ))
-      ui32_writeCnt++;
+    if (mpc_iterWriteChunk->insert( pui8_data[nbr++] ))
+      mui32_writeCnt++;
 }
 #endif
 
@@ -180,37 +180,37 @@ void
 StreamChunk_c::insert7Bytes(const uint8_t* pui8_data)
 { // ~X2C
   uint16_t nbr;
-  STL_NAMESPACE::list<Chunk_c>::iterator pc_iterTmpChunk = pc_iterWriteChunk;
+  STL_NAMESPACE::list<Chunk_c>::iterator pc_iterTmpChunk = mpc_iterWriteChunk;
 
   // 1) write bytes into current writeChunk
-  nbr = pc_iterWriteChunk->insert7Bytes( pui8_data );
-  ui32_writeCnt += nbr;
+  nbr = mpc_iterWriteChunk->insert7Bytes( pui8_data );
+  mui32_writeCnt += nbr;
 
   // 2) if current writeChunk is full then check if the next one is free
   //    if the next is free then 'increment' the writeChunk
   //    otherwise insert a new Chunk after the current writeChunk
-  if (pc_iterWriteChunk->full())
+  if (mpc_iterWriteChunk->full())
   {
     pc_iterTmpChunk++;
-    if (pc_iterTmpChunk == list_chunks.end())
-      pc_iterTmpChunk = list_chunks.begin();
+    if (pc_iterTmpChunk == mlist_chunks.end())
+      pc_iterTmpChunk = mlist_chunks.begin();
 
     if (pc_iterTmpChunk->free())
     {
-      pc_iterWriteChunk = pc_iterTmpChunk;
+      mpc_iterWriteChunk = pc_iterTmpChunk;
     }
     else
     {
-      pc_iterWriteChunk++;
-      pc_iterWriteChunk = list_chunks.insert( pc_iterWriteChunk, Chunk_c() );
-      pc_iterWriteChunk->init();
+      mpc_iterWriteChunk++;
+      mpc_iterWriteChunk = mlist_chunks.insert( mpc_iterWriteChunk, Chunk_c() );
+      mpc_iterWriteChunk->init();
     }
   }
 
   // 3) write remaining bytes into the next writeChunk if necessary
   while (nbr < 7)
-    if (pc_iterWriteChunk->insert( pui8_data[nbr++] ))
-      ui32_writeCnt++;
+    if (mpc_iterWriteChunk->insert( pui8_data[nbr++] ))
+      mui32_writeCnt++;
 
 } // -X2C
 
@@ -225,10 +225,10 @@ StreamChunk_c::getNotParsedSize()
 { // ~X2C
   // if the buffer is larger than our totalMsgSize, clip at totalMsgSize.
   // this occurs as we always insert 7 bytes, even if the last 7byte packet should NOT been taken completely
-  if (ui32_byteTotalSize < ui32_writeCnt)
-    return (ui32_byteTotalSize - ui32_parsedCnt);
+  if (mui32_byteTotalSize < mui32_writeCnt)
+    return (mui32_byteTotalSize - mui32_parsedCnt);
   else
-    return (ui32_writeCnt - ui32_parsedCnt);
+    return (mui32_writeCnt - mui32_parsedCnt);
 } // -X2C
 
 
@@ -241,24 +241,24 @@ uint8_t
 //! @return next byte to be parsed or 0xff (parse-counter equals write-counter)
 StreamChunk_c::getNextNotParsed()
 { // ~X2C
-  const uint16_t chunkLen = Chunk_c::scui16_chunkSize;
-  uint16_t chunkCnt = ui32_parsedCnt % chunkLen;
+  const uint16_t chunkLen = Chunk_c::mscui16_chunkSize;
+  uint16_t chunkCnt = mui32_parsedCnt % chunkLen;
   uint8_t  chunkVal;
 
-  if (ui32_parsedCnt >= ui32_writeCnt) return 0xff;
+  if (mui32_parsedCnt >= mui32_writeCnt) return 0xff;
 
   // 1) get Chunk-Value
-  chunkVal = pc_iterParsedChunk->getData( chunkCnt++ );
-  ui32_parsedCnt++;
+  chunkVal = mpc_iterParsedChunk->getData( chunkCnt++ );
+  mui32_parsedCnt++;
 
   // 2) if current parsed-Chunk has been completely parsed
   //    then set free the current Chunk and 'increment' the parsed-Chunk
   if (chunkCnt >= chunkLen)
   {
-    pc_iterParsedChunk->setFree();
-    pc_iterParsedChunk++;;
-    if (pc_iterParsedChunk == list_chunks.end())
-      pc_iterParsedChunk = list_chunks.begin();
+    mpc_iterParsedChunk->setFree();
+    mpc_iterParsedChunk++;;
+    if (mpc_iterParsedChunk == mlist_chunks.end())
+      mpc_iterParsedChunk = mlist_chunks.begin();
   }
 
   return chunkVal;
@@ -276,12 +276,12 @@ StreamChunk_c::getNextNotParsed()
 uint8_t
 StreamChunk_c::getNotParsed (uint32_t ui32_notParsedRelativeOffset)
 {
-  STL_NAMESPACE::list<Chunk_c>::iterator pc_iterTmpChunk = pc_iterParsedChunk;
-  const uint16_t chunkLen = Chunk_c::scui16_chunkSize;
-  uint16_t chunkCnt = ui32_parsedCnt % chunkLen;
+  STL_NAMESPACE::list<Chunk_c>::iterator pc_iterTmpChunk = mpc_iterParsedChunk;
+  const uint16_t chunkLen = Chunk_c::mscui16_chunkSize;
+  uint16_t chunkCnt = mui32_parsedCnt % chunkLen;
   uint16_t chunkCntReq = chunkCnt + ui32_notParsedRelativeOffset;
 
-  if ((ui32_parsedCnt + ui32_notParsedRelativeOffset) >= ui32_writeCnt) return 0xff;
+  if ((mui32_parsedCnt + ui32_notParsedRelativeOffset) >= mui32_writeCnt) return 0xff;
 
   if (chunkCntReq >= chunkLen)
   {
@@ -289,8 +289,8 @@ StreamChunk_c::getNotParsed (uint32_t ui32_notParsedRelativeOffset)
     {
       chunkCntReq -= chunkLen;
       pc_iterTmpChunk++;
-      if (pc_iterTmpChunk == list_chunks.end())
-        pc_iterTmpChunk = list_chunks.begin();
+      if (pc_iterTmpChunk == mlist_chunks.end())
+        pc_iterTmpChunk = mlist_chunks.begin();
     } while (chunkCntReq >= chunkLen);
   }
 
@@ -305,7 +305,7 @@ StreamChunk_c::getNotParsed (uint32_t ui32_notParsedRelativeOffset)
 bool
 StreamChunk_c::eof() const
 { // ~X2C
-  if (ui32_parsedCnt >= ui32_byteTotalSize)
+  if (mui32_parsedCnt >= mui32_byteTotalSize)
     return true;
   else
     return false;
@@ -325,14 +325,14 @@ StreamChunk_c::testDisplay()
   STL_NAMESPACE::list<Chunk_c>::iterator pc_iterTmpChunk;
 
   printf( "-------------\n" );
-  printf( "Write-Cnt: %d \n", ui32_writeCnt );
-  printf( "Parse-Cnt: %d \n", ui32_parsedCnt );
-  for (pc_iterTmpChunk=list_chunks.begin(); pc_iterTmpChunk != list_chunks.end(); pc_iterTmpChunk++)
+  printf( "Write-Cnt: %d \n", mui32_writeCnt );
+  printf( "Parse-Cnt: %d \n", mui32_parsedCnt );
+  for (pc_iterTmpChunk=mlist_chunks.begin(); pc_iterTmpChunk != mlist_chunks.end(); pc_iterTmpChunk++)
   {
-    printf( "%c ", ((pc_iterTmpChunk==pc_iterWriteChunk)?'W':' '));
-    printf( "%c ", ((pc_iterTmpChunk==pc_iterParsedChunk)?'P':' '));
+    printf( "%c ", ((pc_iterTmpChunk==mpc_iterWriteChunk)?'W':' '));
+    printf( "%c ", ((pc_iterTmpChunk==mpc_iterParsedChunk)?'P':' '));
     printf( "Chunk %0.2d (%0.2d elements): ", iter++,
-              Chunk_c::scui16_chunkSize - pc_iterTmpChunk->getFreeCnt() );
+              Chunk_c::mscui16_chunkSize - pc_iterTmpChunk->getFreeCnt() );
     idx=0;
     while ((nbr=pc_iterTmpChunk->getData(idx++)) != 0xffff)
       printf( "%d, ", nbr );
@@ -344,8 +344,8 @@ StreamChunk_c::testDisplay()
 bool
 StreamChunk_c::testInsert(uint8_t ui8_data)
 {
-    if (pc_iterWriteChunk->insert( ui8_data ))
-      ui32_writeCnt++;
+    if (mpc_iterWriteChunk->insert( ui8_data ))
+      mui32_writeCnt++;
     return true;
 }
 

@@ -140,7 +140,7 @@ public:
   vtObjectGraphicsContext_c( void );
 
   //! Give total size of object including header and attributes.
-  uint32_t fitTerminal( void ) const { return i_totalSize; }
+  uint32_t fitTerminal( void ) const { return mi_totalSize; }
 
   // //////////////////////////////////
   // All special Attribute-Set methods
@@ -243,7 +243,7 @@ public:
 
 private:
   //! Total size of Graphics Context attributes.
-  static const unsigned i_attributesSize = (
+  static const unsigned mi_attributesSize = (
     sizeof(uint16_t) +
     sizeof(uint16_t) +
     sizeof(int16_t)*2 +
@@ -261,7 +261,7 @@ private:
     sizeof(uint8_t) );
 
   //! Total size of Graphics Context object including header
-  static const unsigned i_totalSize = 3+i_attributesSize;
+  static const unsigned mi_totalSize = 3+mi_attributesSize;
 };
 
 } // namespace __IsoAgLib

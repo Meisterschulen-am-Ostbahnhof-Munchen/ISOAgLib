@@ -100,20 +100,20 @@ void
 vtObjectStringStreamer_c::setDataNextStreamPart(__IsoAgLib::MultiSendPkg_c* mspData, uint8_t bytes)
 {
   uint8_t bytesDone=0;
-  if (streamPosition == 0) {
-    set5ByteCommandHeader(uploadBuffer);
+  if (mui32_streamPosition == 0) {
+    set5ByteCommandHeader(marr_uploadBuffer);
     bytesDone = 5;
 
-    streamPosition += 5;
+    mui32_streamPosition += 5;
   }
 
   while (bytesDone < bytes) {
-    uploadBuffer [bytesDone] = pc_stringToStream [streamPosition-5];
+    marr_uploadBuffer [bytesDone] = mpc_stringToStream [mui32_streamPosition-5];
     bytesDone++;
-    streamPosition++;
+    mui32_streamPosition++;
   }
 
-  mspData->setDataPart (uploadBuffer, 0, bytes);
+  mspData->setDataPart (marr_uploadBuffer, 0, bytes);
 }
 
 
@@ -123,15 +123,15 @@ vtObjectStringStreamer_c::set5ByteCommandHeader(uint8_t* destinBuffer)
   destinBuffer [0] = getFirstByte(); // 179 == Command: "Command" --- Parameter: "Change String Value"
   destinBuffer [1] = getID () & 0xFF;
   destinBuffer [2] = getID () >> 8;
-  destinBuffer [3] = ui16_strLenToSend & 0xFF;
-  destinBuffer [4] = ui16_strLenToSend >> 8;
+  destinBuffer [3] = mui16_strLenToSend & 0xFF;
+  destinBuffer [4] = mui16_strLenToSend >> 8;
 }
 
 // Operation : resetDataNextStreamPart
 void
 vtObjectStringStreamer_c::resetDataNextStreamPart()
 {
-  streamPosition = 0;
+  mui32_streamPosition = 0;
 }
 
 
@@ -139,7 +139,7 @@ vtObjectStringStreamer_c::resetDataNextStreamPart()
 void
 vtObjectStringStreamer_c::saveDataNextStreamPart()
 {
-  streamPositionStored = streamPosition;
+  mui32_streamPositionStored = mui32_streamPosition;
 }
 
 
@@ -147,14 +147,14 @@ vtObjectStringStreamer_c::saveDataNextStreamPart()
 void
 vtObjectStringStreamer_c::restoreDataNextStreamPart()
 {
-  streamPosition = streamPositionStored;
+  mui32_streamPosition = mui32_streamPositionStored;
 }
 
 // Operation : getStreamSize
 uint32_t
 vtObjectStringStreamer_c::getStreamSize()
 {
-  return 5+ui16_strLenToSend;
+  return 5+mui16_strLenToSend;
 }
 
 
@@ -166,14 +166,14 @@ vtObjectString_c::~vtObjectString_c()
 
 void vtObjectString_c::setStringToStream( const char* apc_stringToStream )
 {
-  c_streamer.setStringToStream( apc_stringToStream );
+  mc_streamer.setStringToStream( apc_stringToStream );
   // additionally set the ID
-  c_streamer.setID( getID() );
+  mc_streamer.setID( getID() );
 }
 
 void vtObjectString_c::setStrLenToSend( uint16_t aui16_strLenToSend )
 {
-  c_streamer.setStrLenToSend( aui16_strLenToSend );
+  mc_streamer.setStrLenToSend( aui16_strLenToSend );
 }
 
 } // end namespace __IsoAgLib

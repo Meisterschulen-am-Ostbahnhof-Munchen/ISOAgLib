@@ -124,7 +124,7 @@ public:
   /**
     StringUpload constructor that initializes all fields of this class (use only for Change String Value TP Commands)
   */
-  SendUploadBase_c () : ui8_retryCount(0), ui32_uploadTimeout(0) {};
+  SendUploadBase_c () : ui8_retryCount(0), mui32_uploadTimeout(0) {};
   SendUploadBase_c (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint8_t byte9, uint32_t aui32_timeout)
     {set(byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8, byte9, aui32_timeout);};
   SendUploadBase_c (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint32_t aui32_timeout)
@@ -136,6 +136,8 @@ public:
     {set(apui8_buffer, bufferSize);};
   const SendUploadBase_c& operator= (const SendUploadBase_c& r_source);
 
+  int32_t getUploadTimeout() const { return mui32_uploadTimeout;}
+  void setUploadTimeout( int32_t ai32_uploadTimeout ) { mui32_uploadTimeout = ai32_uploadTimeout;}
 
   void set (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint8_t byte9, uint32_t aui32_timeout);
   void set (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint32_t aui32_timeout);
@@ -149,9 +151,9 @@ public:
 
   /// Retry some times?
   uint8_t ui8_retryCount;
-
+ private:
   /// TimeOut value (relative to the time the Upload was started!
-  uint32_t ui32_uploadTimeout;
+  uint32_t mui32_uploadTimeout;
 };
 
 
@@ -176,7 +178,7 @@ public:
   {
   public:
 
-    SendStream_c (MultiSend_c& arc_multiSend SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA ) : SINGLETON_PARENT_CONSTRUCTOR rc_multiSend (arc_multiSend)
+    SendStream_c (MultiSend_c& arc_multiSend SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA ) : SINGLETON_PARENT_CONSTRUCTOR mrc_multiSend (arc_multiSend)
       {}; // does NOT initialize anything, use "init(...)" directly after construction!!!!
     /**
       call "init" directly after construction!
@@ -195,38 +197,38 @@ public:
     */
     bool processMsg();
 
-    int32_t getNextTriggerTime() const { return i32_timestampToWaitTo; }
+    int32_t getNextTriggerTime() const { return mi32_timestampToWaitTo; }
 
     /**
       check if time delay is reached
       @return true -> time delay is over
     */
-    bool timeHasCome() const {return (System_c::getTime() - i32_timestampToWaitTo) >= 0; }
+    bool timeHasCome() const {return (System_c::getTime() - mi32_timestampToWaitTo) >= 0; }
 
     /**
       check if current message is complete
     */
-    bool isCompleteBurst() const { return (ui8_burstPkgYetToSend == 0); }
+    bool isCompleteBurst() const { return (mui8_burstPkgYetToSend == 0); }
 
     /**
       check if send of all data is complete
     */
-    bool isCompleteData() const { return (ui32_dataBufferOffset >= ui32_dataSize); }
+    bool isCompleteData() const { return (mui32_dataBufferOffset >= mui32_dataSize); }
 
     /**
       deliver the data size in byte
       @return data size in uint32_t for RTS
     */
-    uint32_t getDataSize() const { return ui32_dataSize; }
+    uint32_t getDataSize() const { return mui32_dataSize; }
 
-    bool isFinished() const { return (*pen_sendSuccessNotify == SendAborted) || (*pen_sendSuccessNotify == SendSuccess); }
+    bool isFinished() const { return (*mpen_sendSuccessNotify == SendAborted) || (*mpen_sendSuccessNotify == SendSuccess); }
 
     /**
       abort the multipacket send stream
     */
     void abortSend ();
 
-    bool matchSaDa (const IsoName_c& arc_sa, const IsoName_c& arc_da) { return (arc_sa == c_isoNameSender) && (arc_da == c_isoNameReceiver); }
+    bool matchSaDa (const IsoName_c& arc_sa, const IsoName_c& arc_da) { return (arc_sa == mc_isoNameSender) && (arc_da == mc_isoNameReceiver); }
 
 //    bool matchSa (uint8_t aui8_sa) { return (aui8_sa == ui8_sender); }
 //    bool matchDa (uint8_t aui8_da) { return (aui8_da == ui8_receiver); }
@@ -244,64 +246,64 @@ public:
     */
     void prepareSendMsg (uint8_t &ui8_nettoDataCnt);
 
-    void retriggerIn (int32_t i32_timeDelta) { i32_timestampToWaitTo = System_c::getTime() + i32_timeDelta;}
+    void retriggerIn (int32_t i32_timeDelta) { mi32_timestampToWaitTo = System_c::getTime() + i32_timeDelta;}
 
-    void switchToState (sendState_t ren_sendState, int32_t i32_timeDelta) { en_sendState = ren_sendState; retriggerIn (i32_timeDelta); }
+    void switchToState (sendState_t ren_sendState, int32_t i32_timeDelta) { men_sendState = ren_sendState; retriggerIn (i32_timeDelta); }
 
   private: // attributes
   /// Initialized on init(...)
-    uint32_t ui32_pgn;
-    IsoName_c c_isoNameReceiver;
-    IsoName_c c_isoNameSender;
+    uint32_t mui32_pgn;
+    IsoName_c mc_isoNameReceiver;
+    IsoName_c mc_isoNameSender;
 
     #if defined (NMEA_2000_FAST_PACKET)
-    uint8_t ui8_FpSequenceCounter;
+    uint8_t mui8_FpSequenceCounter;
     #endif
 
     /** timestamp for time control */
-    int32_t i32_timestampToWaitTo;
+    int32_t mi32_timestampToWaitTo;
 
     /** data counter for data to send */
-    uint32_t ui32_dataBufferOffset;
+    uint32_t mui32_dataBufferOffset;
 
     /** size of the data complete */
-    uint32_t ui32_dataSize;
+    uint32_t mui32_dataSize;
 
     /** standard delay between two sent packets (between 50 and 200)
     uint16_t ui16_delay;
     \__-> now using maxDelay from MultiSend, because not everybody can have its own delay, we'll have to take the max. */
 
     /** pointer to the data */
-    const HUGE_MEM uint8_t* hpb_data;
+    const HUGE_MEM uint8_t* mhpbui8_data;
 
     /** actual send state during Running process */
-    sendState_t en_sendState;
+    sendState_t men_sendState;
 
     /** reference to variable that will be set upon state change */
-    sendSuccess_t* pen_sendSuccessNotify;
+    sendSuccess_t* mpen_sendSuccessNotify;
 
     /** are we broadcast, iso, extended, fast packet? */
-    msgType_t en_msgType;
+    msgType_t men_msgType;
 
     /** pointer to an IsoAgLib::MultiSendStreamer_c class which streams out parts of the stream step by step */
-    IsoAgLib::iMultiSendStreamer_c* pc_mss;
+    IsoAgLib::iMultiSendStreamer_c* mpc_mss;
 
   /// Initialized on Runtime
     /** sequence/offset number */
-    uint8_t ui8_sequenceNr;
-    uint32_t ui32_dataPacketOffset; // only for ETP
+    uint8_t mui8_sequenceNr;
+    uint32_t mui32_dataPacketOffset; // only for ETP
 
     /** save ... from last CTS so we can see if the CTS was resent... */
-    uint32_t ui32_lastNextPacketNumberToSend;
+    uint32_t mui32_lastNextPacketNumberToSend;
 
     /** cnt of pkg left to send in this burst */
-    uint8_t ui8_burstPkgYetToSend;
+    uint8_t mui8_burstPkgYetToSend;
 
     /** cnt of pkg sent since the last DPO */
-    uint8_t b_pkgSent;
+    uint8_t mb_pkgSent;
 
   /// Back reference to MultiSend_c for setting the MAX of all delays, this can only be managed here...
-    MultiSend_c& rc_multiSend;
+    MultiSend_c& mrc_multiSend;
   }; // end class SendStream_c
 
 
@@ -362,7 +364,7 @@ public: // methods
   /**
     send an ISO broadcast multipacket message
     @param ab_send dynamic member no of sender
-    @param hpb_data HUGE_MEM pointer to the data
+    @param mhpbui8_data HUGE_MEM pointer to the data
     @param aui16_dataSize size of the complete message, limited to TP (1785 bytes) only!
     @return true -> MultiSend_c was ready
   */
@@ -395,19 +397,19 @@ public: // methods
     deliver reference to data pkg
     @return reference to MultiSendPkg_c which handles CAN I/O of process data
   */
-  MultiSendPkg_c& data() { return c_data; }
+  MultiSendPkg_c& data() { return mc_data; }
 
   /**
     deliver reference to data pkg as reference to CanPkgExt_c
     to implement the base virtual function correct
   */
-  virtual CanPkgExt_c& dataBase() { return c_data; }
+  virtual CanPkgExt_c& dataBase() { return mc_data; }
 
   /**
     deliver reference to data pkg for const read access
     @return const reference to MultiSendPkg_c which handles CAN I/O of process data
   */
-  const MultiSendPkg_c& constData() const { return c_data; }
+  const MultiSendPkg_c& constData() const { return mc_data; }
 
   /**
     start processing of a process msg: delegate to specific SendStream_c instance
@@ -424,7 +426,7 @@ public: // methods
   void abortSend (const IsoName_c& arc_isoNameSender, const IsoName_c& arc_isoNameReceiver);
 
   /** check if at least one multisend stream is running */
-  bool isMultiSendRunning() const { return (!list_sendStream.empty()); }
+  bool isMultiSendRunning() const { return (!mlist_sendStream.empty()); }
 
   ///  Used for Debugging Tasks in Scheduler_c
   virtual const char* getTaskName() const;
@@ -485,20 +487,20 @@ private: // Private methods
   bool sendIntern (const IsoName_c& arc_isoNameSender, const IsoName_c& arc_isoNameReceiver, const HUGE_MEM uint8_t* rhpb_data, int32_t ai32_dataSize, sendSuccess_t& rpen_sendSuccessNotify, int32_t ai32_pgn, IsoAgLib::iMultiSendStreamer_c* apc_mss, msgType_t ren_msgType);
 
   #if defined(NMEA_2000_FAST_PACKET)
-  uint8_t allocFpSequenceCounter() { const uint8_t cui8_returnVal = ui8_nextFpSequenceCounter;
-                                     ui8_nextFpSequenceCounter = (ui8_nextFpSequenceCounter+1) & 0x7;
+  uint8_t allocFpSequenceCounter() { const uint8_t cui8_returnVal = mui8_nextFpSequenceCounter;
+                                     mui8_nextFpSequenceCounter = (mui8_nextFpSequenceCounter+1) & 0x7;
                                      return cui8_returnVal; }
   #endif
 
 private: // Private attributes
   #if defined(NMEA_2000_FAST_PACKET)
-  uint8_t ui8_nextFpSequenceCounter;
+  uint8_t mui8_nextFpSequenceCounter;
   #endif
 
   /** msg object for CAN I/O */
-  MultiSendPkg_c c_data;
+  MultiSendPkg_c mc_data;
 
-  STL_NAMESPACE::list<SendStream_c> list_sendStream;
+  STL_NAMESPACE::list<SendStream_c> mlist_sendStream;
 };
 
 

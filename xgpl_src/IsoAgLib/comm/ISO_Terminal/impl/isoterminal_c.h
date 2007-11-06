@@ -140,7 +140,7 @@ public:
   /** deliver reference to data pkg
     @return reference to the member IsoTerminalPkg_c, which encapsulates the CAN send structure
   */
-  CanPkgExt_c& data(){return c_data;};
+  CanPkgExt_c& data(){return mc_data;};
 
   /** deliver reference to data pkg as reference to CanPkgExt_c
     to implement the base virtual function correct
@@ -148,11 +148,11 @@ public:
   virtual CanPkgExt_c& dataBase();
 
 
-  VtClientServerCommunication_c& getClientByID (uint8_t ui8_clientIndex) { return *vec_vtClientServerComm[ui8_clientIndex]; }
+  VtClientServerCommunication_c& getClientByID (uint8_t ui8_clientIndex) { return *mvec_vtClientServerComm[ui8_clientIndex]; }
 
-  VtClientServerCommunication_c* getClientPtrByID (uint8_t ui8_clientIndex) { return (!vec_vtClientServerComm.empty()) ? vec_vtClientServerComm[ui8_clientIndex] : NULL; }
+  VtClientServerCommunication_c* getClientPtrByID (uint8_t ui8_clientIndex) { return (!mvec_vtClientServerComm.empty()) ? mvec_vtClientServerComm[ui8_clientIndex] : NULL; }
 
-  bool isAnyVtAvailable() { return !l_vtServerInst.empty(); }
+  bool isAnyVtAvailable() { return !ml_vtServerInst.empty(); }
 
 
   /** for now allow multiple uploads
@@ -207,11 +207,11 @@ protected:
 private: // attributes
 
   /** temp data where received data is put */
-  CanPkgExt_c c_data;
+  CanPkgExt_c mc_data;
 
-  STL_NAMESPACE::list<VtServerInstance_c> l_vtServerInst;
+  STL_NAMESPACE::list<VtServerInstance_c> ml_vtServerInst;
 
-  STL_NAMESPACE::vector<VtClientServerCommunication_c*> vec_vtClientServerComm;
+  STL_NAMESPACE::vector<VtClientServerCommunication_c*> mvec_vtClientServerComm;
 };
 
 #if defined(PRT_INSTANCE_CNT) && (PRT_INSTANCE_CNT > 1)

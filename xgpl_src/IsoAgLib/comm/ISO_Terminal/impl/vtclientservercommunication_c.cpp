@@ -195,7 +195,7 @@ void SendUpload_c::set (vtObjectString_c* apc_objectString)
   else
     ui8_retryCount = DEF_Retries_TPCommands;
 
-  ui32_uploadTimeout = DEF_TimeOut_ChangeStringValue;
+  setUploadTimeout( DEF_TimeOut_ChangeStringValue );
 }
 
 void SendUpload_c::set (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint8_t byte9, uint32_t aui32_timeout)
@@ -233,28 +233,28 @@ void SendUpload_c::set (uint8_t* apui8_buffer, uint32_t bufferSize)
 void
 VtClientServerCommStreamer_c::setDataNextStreamPart (MultiSendPkg_c* mspData, uint8_t bytes)
 {
-  while ((uploadBufferFilled-uploadBufferPosition) < bytes)
+  while ((m_uploadBufferFilled-m_uploadBufferPosition) < bytes)
   {
     // copy down the rest of the buffer (we have no ring buffer here!)
-    int j = uploadBufferFilled - uploadBufferPosition;
+    int j = m_uploadBufferFilled - m_uploadBufferPosition;
     for (int i=0; i<j; i++)
-      uploadBuffer [i] = uploadBuffer [i+uploadBufferPosition];
+      marr_uploadBuffer [i] = marr_uploadBuffer [i+m_uploadBufferPosition];
     // adjust pointers
-    uploadBufferPosition = 0;
-    uploadBufferFilled = j;
+    m_uploadBufferPosition = 0;
+    m_uploadBufferFilled = j;
 
     // stream some more bytes into internal ISO_VT_UPLOAD_BUFFER_SIZE byte buffer...
     uint16_t bytes2Buffer;
-    while ((bytes2Buffer = ((vtObject_c*)(*pc_iterObjects))->stream (uploadBuffer+uploadBufferFilled, ISO_VT_UPLOAD_BUFFER_SIZE-uploadBufferFilled, ui32_objectStreamPosition)) == 0)
+    while ((bytes2Buffer = ((vtObject_c*)(*mpc_iterObjects))->stream (marr_uploadBuffer+m_uploadBufferFilled, ISO_VT_UPLOAD_BUFFER_SIZE-m_uploadBufferFilled, mui32_objectStreamPosition)) == 0)
     {
-      pc_iterObjects++;
-      ui32_objectStreamPosition = 0;
+      mpc_iterObjects++;
+      mui32_objectStreamPosition = 0;
     }
-    uploadBufferFilled += bytes2Buffer;
-    ui32_objectStreamPosition += bytes2Buffer;
+    m_uploadBufferFilled += bytes2Buffer;
+    mui32_objectStreamPosition += bytes2Buffer;
   }
-  mspData->setDataPart (uploadBuffer, uploadBufferPosition, bytes);
-  uploadBufferPosition += bytes;
+  mspData->setDataPart (marr_uploadBuffer, m_uploadBufferPosition, bytes);
+  m_uploadBufferPosition += bytes;
 }
 
 
@@ -263,38 +263,38 @@ VtClientServerCommStreamer_c::setDataNextStreamPart (MultiSendPkg_c* mspData, ui
 void
 VtClientServerCommStreamer_c::resetDataNextStreamPart()
 {
-  if (pc_userPoolUpdateObjects)
+  if (mpc_userPoolUpdateObjects)
   { // user-given partial pool upload
-    pc_iterObjects = pc_userPoolUpdateObjects;
+    mpc_iterObjects = mpc_userPoolUpdateObjects;
   }
   else
   { // language pool update
     uint8_t ui8_streamOffset;
-    if (ui32_streamSize > 0)
+    if (mui32_streamSize > 0)
     { // stream GENERAL PART - that is **INDEX 0**
       ui8_streamOffset = 0;
     }
     else
     { // stream LANGUAGE PART - that is **INDEX 1..NrOfLang**
-      const int8_t ci8_realUploadingLanguage = (i8_objectPoolUploadingLanguage < 0) ? 0 : i8_objectPoolUploadingLanguage;
+      const int8_t ci8_realUploadingLanguage = (mi8_objectPoolUploadingLanguage < 0) ? 0 : mi8_objectPoolUploadingLanguage;
       ui8_streamOffset = ci8_realUploadingLanguage + 1; // skip general pool
     }
-    pc_iterObjects = rc_pool.getIVtObjects()[ui8_streamOffset];
+    mpc_iterObjects = mrc_pool.getIVtObjects()[ui8_streamOffset];
   }
-  ui32_objectStreamPosition = 0;
-  uploadBufferPosition = 0;
-  uploadBufferFilled = 1;
-  uploadBuffer [0] = 0x11; // Upload Object Pool!
+  mui32_objectStreamPosition = 0;
+  m_uploadBufferPosition = 0;
+  m_uploadBufferFilled = 1;
+  marr_uploadBuffer [0] = 0x11; // Upload Object Pool!
 
-  // ! ui32_streamSize is constant and is initialized in "StartObjectPoolUploading"
-  // ! rc_pool       is constant and is initialized in "StartObjectPoolUploading"
+  // ! mui32_streamSize is constant and is initialized in "StartObjectPoolUploading"
+  // ! mrc_pool       is constant and is initialized in "StartObjectPoolUploading"
 
   // following should not be needed to be reset, as this set by "saveDataNextStreamPart"
-  // ? ui32_objectStreamPositionStored
-  // ? pc_iterObjectsStored;
-  // ? uploadBufferStored [ISO_VT_UPLOAD_BUFFER_SIZE];
-  // ? uploadBufferFilledStored;
-  // ? uploadBufferPositionStored;
+  // ? mui32_objectStreamPositionStored
+  // ? mpc_iterObjectsStored;
+  // ? marr_uploadBufferStored [ISO_VT_UPLOAD_BUFFER_SIZE];
+  // ? m_uploadBufferFilledStored;
+  // ? m_uploadBufferPositionStored;
 }
 
 
@@ -303,12 +303,12 @@ VtClientServerCommStreamer_c::resetDataNextStreamPart()
 void
 VtClientServerCommStreamer_c::saveDataNextStreamPart()
 {
-  pc_iterObjectsStored = pc_iterObjects;
-  ui32_objectStreamPositionStored = ui32_objectStreamPosition;
-  uploadBufferPositionStored = uploadBufferPosition;
-  uploadBufferFilledStored = uploadBufferFilled;
+  mpc_iterObjectsStored = mpc_iterObjects;
+  mui32_objectStreamPositionStored = mui32_objectStreamPosition;
+  m_uploadBufferPositionStored = m_uploadBufferPosition;
+  m_uploadBufferFilledStored = m_uploadBufferFilled;
   for (int i=0; i<ISO_VT_UPLOAD_BUFFER_SIZE; i++)
-    uploadBufferStored [i] = uploadBuffer [i];
+    marr_uploadBufferStored [i] = marr_uploadBuffer [i];
 }
 
 
@@ -317,12 +317,12 @@ VtClientServerCommStreamer_c::saveDataNextStreamPart()
 void
 VtClientServerCommStreamer_c::restoreDataNextStreamPart()
 {
-  pc_iterObjects = pc_iterObjectsStored;
-  ui32_objectStreamPosition = ui32_objectStreamPositionStored;
-  uploadBufferPosition = uploadBufferPositionStored;
-  uploadBufferFilled = uploadBufferFilledStored;
+  mpc_iterObjects = mpc_iterObjectsStored;
+  mui32_objectStreamPosition = mui32_objectStreamPositionStored;
+  m_uploadBufferPosition = m_uploadBufferPositionStored;
+  m_uploadBufferFilled = m_uploadBufferFilledStored;
   for (int i=0; i<ISO_VT_UPLOAD_BUFFER_SIZE; i++)
-    uploadBuffer [i] = uploadBufferStored [i];
+    marr_uploadBuffer [i] = marr_uploadBufferStored [i];
 }
 
 /** *****************************************************/
@@ -330,13 +330,13 @@ VtClientServerCommStreamer_c::restoreDataNextStreamPart()
 /** *****************************************************/
 
 /** static instance to store temporarily before push_back into list */
-SendUpload_c VtClientServerCommunication_c::sc_tempSendUpload;
+SendUpload_c VtClientServerCommunication_c::msc_tempSendUpload;
 
 
 void
 VtClientServerCommunication_c::reactOnAbort (IsoAgLib::iStream_c& /*arc_stream*/)
 {
-  c_streamer.rc_pool.eventStringValueAbort();
+  mc_streamer.mrc_pool.eventStringValueAbort();
 }
 
 
@@ -345,7 +345,7 @@ bool
 VtClientServerCommunication_c::reactOnStreamStart (const IsoAgLib::ReceiveStreamIdentifier_c& ac_ident, uint32_t aui32_totalLen)
 {
   // if SA is not the address from the vt -> don't react on stream
-  if ((ac_ident.getSaIsoName()) != (pc_vtServerInstance->getIsoName().toConstIisoName_c())) return false;
+  if ((ac_ident.getSaIsoName()) != (mpc_vtServerInstance->getIsoName().toConstIisoName_c())) return false;
   //handling string value >= 9 Bytes
   if (aui32_totalLen > (4 /* H.18 byte 1-4 */ + 255 /* max string length */))
     return false; /** @todo Should we really ConnAbort such a stream in advance? */
@@ -363,17 +363,17 @@ VtClientServerCommunication_c::processPartStreamDataChunk (IsoAgLib::iStream_c& 
     case 0x8:
       if (ab_isFirstChunk)  // check for command input string value H.18
       {
-        ui16_inputStringId = arc_stream.getNextNotParsed() | (arc_stream.getNextNotParsed() << 8);
-        ui8_inputStringLength = arc_stream.getNextNotParsed();
+        mui16_inputStringId = arc_stream.getNextNotParsed() | (arc_stream.getNextNotParsed() << 8);
+        mui8_inputStringLength = arc_stream.getNextNotParsed();
 
         const uint16_t ui16_totalstreamsize = arc_stream.getByteTotalSize();
-        if (ui16_totalstreamsize != (ui8_inputStringLength + 4))
+        if (ui16_totalstreamsize != (mui8_inputStringLength + 4))
         {
           arc_stream.setStreamInvalid();
           return false;
         }
       }
-      c_streamer.rc_pool.eventStringValue (ui16_inputStringId, ui8_inputStringLength, arc_stream, arc_stream.getNotParsedSize(), ab_isFirstChunk, ab_isLastChunk);
+      mc_streamer.mrc_pool.eventStringValue (mui16_inputStringId, mui8_inputStringLength, arc_stream, arc_stream.getNotParsedSize(), ab_isFirstChunk, ab_isLastChunk);
       break;
 
     default:
@@ -388,57 +388,57 @@ VtClientServerCommunication_c::processPartStreamDataChunk (IsoAgLib::iStream_c& 
   Scheduler_c object instance
  */
 VtClientServerCommunication_c::VtClientServerCommunication_c (IdentItem_c& r_wsMasterIdentItem, IsoTerminal_c &r_isoTerminal, IsoAgLib::iIsoTerminalObjectPool_c& arc_pool, char* apc_versionLabel, uint8_t aui8_clientId SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA)
-  : b_vtAliveCurrent (false) // so we detect the rising edge when the VT gets connected!
-  , b_checkSameCommand (true)
-  , rc_wsMasterIdentItem (r_wsMasterIdentItem)
-  , rc_isoTerminal (r_isoTerminal)
-  , c_data (SINGLETON_VEC_KEY_PARAMETER_USE)
-  , en_displayState (VtClientDisplayStateHidden)
-  , c_streamer (arc_pool)
-  , i32_timeWsAnnounceKey (-1) // no announce tries started yet...
+  : mb_vtAliveCurrent (false) // so we detect the rising edge when the VT gets connected!
+  , mb_checkSameCommand (true)
+  , mrc_wsMasterIdentItem (r_wsMasterIdentItem)
+  , mrc_isoTerminal (r_isoTerminal)
+  , mc_data (SINGLETON_VEC_KEY_PARAMETER_USE)
+  , men_displayState (VtClientDisplayStateHidden)
+  , mc_streamer (arc_pool)
+  , mi32_timeWsAnnounceKey (-1) // no announce tries started yet...
 {
-  pc_vtServerInstance = NULL;
-  i8_vtLanguage = -1;
-  b_receiveFilterCreated = false;
-  ui8_clientId = aui8_clientId;
+  mpc_vtServerInstance = NULL;
+  mi8_vtLanguage = -1;
+  mb_receiveFilterCreated = false;
+  mui8_clientId = aui8_clientId;
 
   // the generated initAllObjectsOnce() has to ensure to be idempotent! (vt2iso-generated source does this!)
-  c_streamer.rc_pool.initAllObjectsOnce (SINGLETON_VEC_KEY);
+  mc_streamer.mrc_pool.initAllObjectsOnce (SINGLETON_VEC_KEY);
   // now let all clients know which client they belong to
-  if (ui8_clientId > 0) // the iVtObjects are initialised with 0 as default index
+  if (mui8_clientId > 0) // the iVtObjects are initialised with 0 as default index
   {
-    for (uint16_t ui16_objIndex = 0; ui16_objIndex < c_streamer.rc_pool.getNumObjects(); ui16_objIndex++)
-      c_streamer.rc_pool.getIVtObjects()[0][ui16_objIndex]->setClientID (ui8_clientId);
-    for (uint8_t ui8_objLangIndex = 0; ui8_objLangIndex < c_streamer.rc_pool.getNumLang(); ui8_objLangIndex++)
-      for (uint16_t ui16_objIndex = 0; ui16_objIndex < c_streamer.rc_pool.getNumObjectsLang(); ui16_objIndex++)
-        c_streamer.rc_pool.getIVtObjects()[ui8_objLangIndex+1][ui16_objIndex]->setClientID (ui8_clientId);
+    for (uint16_t ui16_objIndex = 0; ui16_objIndex < mc_streamer.mrc_pool.getNumObjects(); ui16_objIndex++)
+      mc_streamer.mrc_pool.getIVtObjects()[0][ui16_objIndex]->setClientID (mui8_clientId);
+    for (uint8_t ui8_objLangIndex = 0; ui8_objLangIndex < mc_streamer.mrc_pool.getNumLang(); ui8_objLangIndex++)
+      for (uint16_t ui16_objIndex = 0; ui16_objIndex < mc_streamer.mrc_pool.getNumObjectsLang(); ui16_objIndex++)
+        mc_streamer.mrc_pool.getIVtObjects()[ui8_objLangIndex+1][ui16_objIndex]->setClientID (mui8_clientId);
   }
 
   if (apc_versionLabel)
   {
     const uint32_t cui_len = CNAMESPACE::strlen (apc_versionLabel);
-    if ( ((c_streamer.rc_pool.getNumLang() == 0) && (cui_len > 7))
-      || ((c_streamer.rc_pool.getNumLang()  > 0) && (cui_len > 5))
+    if ( ((mc_streamer.mrc_pool.getNumLang() == 0) && (cui_len > 7))
+      || ((mc_streamer.mrc_pool.getNumLang()  > 0) && (cui_len > 5))
        )
     { // too long, fail!
       getILibErrInstance().registerError (iLibErr_c::Precondition, iLibErr_c::IsoTerminal);
-      en_objectPoolState = OPCannotBeUploaded; // has to be checked after calling this constructor!
+      men_objectPoolState = OPCannotBeUploaded; // has to be checked after calling this constructor!
       return;
     }
     unsigned int i=0;
-    for (; i<cui_len; i++) p7c_versionLabel [i] = apc_versionLabel [i];
-    for (; i<7;       i++) p7c_versionLabel [i] = ' '; // ASCII: Space
-    b_usingVersionLabel = true;
+    for (; i<cui_len; i++) marrp7c_versionLabel [i] = apc_versionLabel [i];
+    for (; i<7;       i++) marrp7c_versionLabel [i] = ' '; // ASCII: Space
+    mb_usingVersionLabel = true;
   }
   else
   {
-    b_usingVersionLabel = false;
+    mb_usingVersionLabel = false;
   }
 
-  en_objectPoolState = OPInitial;      // try to upload until state == UploadedSuccessfully || CannotBeUploaded
-  en_uploadType = UploadPool;          // Start Pool Uploading sequence!!
-  en_uploadPoolState = UploadPoolInit; // with "UploadInit
-//en_uploadPoolType = X;               // don't care as no pool is being uploaded! --> will be set in startObjectPoolUploading
+  men_objectPoolState = OPInitial;      // try to upload until state == UploadedSuccessfully || CannotBeUploaded
+  men_uploadType = UploadPool;          // Start Pool Uploading sequence!!
+  men_uploadPoolState = UploadPoolInit; // with "UploadInit
+//men_uploadPoolType = X;               // don't care as no pool is being uploaded! --> will be set in startObjectPoolUploading
 }
 
 
@@ -457,11 +457,11 @@ void
 VtClientServerCommunication_c::timeEventSendLanguagePGN()
 {
   // Get Local Settings (may not be reached, when terminal is switched on after ECU, as VT sends LNAGUAGE Info on startup!
-  c_data.setExtCanPkg3 (6, 0, REQUEST_PGN_MSG_PGN>>8,
-                        pc_vtServerInstance->getVtSourceAddress(), rc_wsMasterIdentItem.getIsoItem()->nr(),
+  mc_data.setExtCanPkg3 (6, 0, REQUEST_PGN_MSG_PGN>>8,
+                        mpc_vtServerInstance->getVtSourceAddress(), mrc_wsMasterIdentItem.getIsoItem()->nr(),
                         (LANGUAGE_PGN & 0xFF), ((LANGUAGE_PGN >> 8)& 0xFF), ((LANGUAGE_PGN >> 16)& 0xFF));
-  getCanInstance4Comm() << c_data;      // Command: REQUEST_PGN_MSG_PGN
-  pc_vtServerInstance->getLocalSettings()->lastRequested = HAL::getTime();
+  getCanInstance4Comm() << mc_data;      // Command: REQUEST_PGN_MSG_PGN
+  mpc_vtServerInstance->getLocalSettings()->lastRequested = HAL::getTime();
 }
 
 
@@ -469,24 +469,24 @@ void
 VtClientServerCommunication_c::timeEventUploadPoolTimeoutCheck()
 {
   /// Do TIME-OUT Checks ALWAYS!
-  if ((en_uploadPoolState == UploadPoolWaitingForLoadVersionResponse)
-       || (en_uploadPoolState == UploadPoolWaitingForMemoryResponse)
-       || (en_uploadPoolState == UploadPoolWaitingForEOOResponse))
+  if ((men_uploadPoolState == UploadPoolWaitingForLoadVersionResponse)
+       || (men_uploadPoolState == UploadPoolWaitingForMemoryResponse)
+       || (men_uploadPoolState == UploadPoolWaitingForEOOResponse))
   { // waiting for initial stuff was timed out
-    if (((uint32_t) HAL::getTime()) > (ui32_uploadTimeout + ui32_uploadTimestamp))
+    if (((uint32_t) HAL::getTime()) > (mui32_uploadTimeout + mui32_uploadTimestamp))
     {
-      en_uploadPoolState = UploadPoolFailed;
-      ui32_uploadTimestamp = HAL::getTime();
-      ui32_uploadTimeout = DEF_WaitFor_Reupload; // wait 5 secs for possible reuploading...
+      men_uploadPoolState = UploadPoolFailed;
+      mui32_uploadTimestamp = HAL::getTime();
+      mui32_uploadTimeout = DEF_WaitFor_Reupload; // wait 5 secs for possible reuploading...
     }
     /// @todo for now we allow parallel uploads
     /// in both cases (time out or success) we need to reset the upload pool flag to enable other clients to upload their pools
-    /// rc_isoTerminal.resetFlagForPoolUpload (this);
+    /// mrc_isoTerminal.resetFlagForPoolUpload (this);
   }
 
-  if (en_uploadPoolState == UploadPoolWaitingForStoreVersionResponse)
+  if (men_uploadPoolState == UploadPoolWaitingForStoreVersionResponse)
   { // store version was timed out
-    if (((uint32_t) HAL::getTime()) > (ui32_uploadTimeout + ui32_uploadTimestamp))
+    if (((uint32_t) HAL::getTime()) > (mui32_uploadTimeout + mui32_uploadTimestamp))
     { // we couldn't store for some reason, but don't care, finalize anyway...
 #ifdef DEBUG
       INTERNAL_DEBUG_DEVICE << "StoreVersion TimedOut!" << INTERNAL_DEBUG_DEVICE_ENDL;
@@ -495,9 +495,9 @@ VtClientServerCommunication_c::timeEventUploadPoolTimeoutCheck()
     }
   }
 
-  if (en_uploadPoolState == UploadPoolUploading)
+  if (men_uploadPoolState == UploadPoolUploading)
   { // Check if we expect an (OBJECTPOOL) UPLOAD to fail/finish?
-    switch (en_sendSuccess)
+    switch (men_sendSuccess)
     {
       case __IsoAgLib::MultiSend_c::Running:
       { // do nothing, still wait.
@@ -505,16 +505,16 @@ VtClientServerCommunication_c::timeEventUploadPoolTimeoutCheck()
       case __IsoAgLib::MultiSend_c::SendAborted:
       { // aborted sending
         /// re-send the current stream!
-        getMultiSendInstance4Comm().sendIsoTarget (rc_wsMasterIdentItem.isoName(), pc_vtServerInstance->getIsoName(), &c_streamer, ECU_TO_VT_PGN, en_sendSuccess);
+        getMultiSendInstance4Comm().sendIsoTarget (mrc_wsMasterIdentItem.isoName(), mpc_vtServerInstance->getIsoName(), &mc_streamer, ECU_TO_VT_PGN, men_sendSuccess);
       } break;
       case __IsoAgLib::MultiSend_c::SendSuccess:
       { // see what part we just finished
-        if (c_streamer.ui32_streamSize > 0)
+        if (mc_streamer.mui32_streamSize > 0)
         { // we just finished streaming the GENERAL part, so let's see if we have a LANGUAGE part to stream?
-          c_streamer.ui32_streamSize = 0; // indicate completion of GENERAL upload!
-          if (c_streamer.ui32_streamSizeLang > 0)
+          mc_streamer.mui32_streamSize = 0; // indicate completion of GENERAL upload!
+          if (mc_streamer.mui32_streamSizeLang > 0)
           { // start LANGUAGE part upload!
-            getMultiSendInstance4Comm().sendIsoTarget (rc_wsMasterIdentItem.isoName(), pc_vtServerInstance->getIsoName(), &c_streamer, ECU_TO_VT_PGN, en_sendSuccess);
+            getMultiSendInstance4Comm().sendIsoTarget (mrc_wsMasterIdentItem.isoName(), mpc_vtServerInstance->getIsoName(), &mc_streamer, ECU_TO_VT_PGN, men_sendSuccess);
             break; // we're uploading, do not indicate pool completion ;)
           }
         } // else we just finished streaming the LANGUAGE part, so upload is finished now!
@@ -529,45 +529,45 @@ void
 VtClientServerCommunication_c::timeEventPrePoolUpload()
 {
   /// first you have to get number of softkeys, text font data and hardware before you could upload
-  if (!pc_vtServerInstance->getVtCapabilities()->lastReceivedSoftkeys
-       && ((pc_vtServerInstance->getVtCapabilities()->lastRequestedSoftkeys == 0)
-       || ((HAL::getTime()-pc_vtServerInstance->getVtCapabilities()->lastRequestedSoftkeys) > 1000)))
+  if (!mpc_vtServerInstance->getVtCapabilities()->lastReceivedSoftkeys
+       && ((mpc_vtServerInstance->getVtCapabilities()->lastRequestedSoftkeys == 0)
+       || ((HAL::getTime()-mpc_vtServerInstance->getVtCapabilities()->lastRequestedSoftkeys) > 1000)))
   { // Get Number Of Soft Keys
-    c_data.setExtCanPkg8 (7, 0, ECU_TO_VT_PGN>>8,
-                          pc_vtServerInstance->getVtSourceAddress(), rc_wsMasterIdentItem.getIsoItem()->nr(),
+    mc_data.setExtCanPkg8 (7, 0, ECU_TO_VT_PGN>>8,
+                          mpc_vtServerInstance->getVtSourceAddress(), mrc_wsMasterIdentItem.getIsoItem()->nr(),
                           194, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
-    getCanInstance4Comm() << c_data;      // Command: Get Technical Data --- Parameter: Get Number Of Soft Keys
-    pc_vtServerInstance->getVtCapabilities()->lastRequestedSoftkeys = HAL::getTime();
+    getCanInstance4Comm() << mc_data;      // Command: Get Technical Data --- Parameter: Get Number Of Soft Keys
+    mpc_vtServerInstance->getVtCapabilities()->lastRequestedSoftkeys = HAL::getTime();
 #ifdef DEBUG
     INTERNAL_DEBUG_DEVICE << "Requested first property (C2)..." << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
   }
 
-  if (pc_vtServerInstance->getVtCapabilities()->lastReceivedSoftkeys
-      && (!pc_vtServerInstance->getVtCapabilities()->lastReceivedFont)
-      && ((pc_vtServerInstance->getVtCapabilities()->lastRequestedFont == 0) || ((HAL::getTime()-pc_vtServerInstance->getVtCapabilities()->lastRequestedFont) > 1000)))
+  if (mpc_vtServerInstance->getVtCapabilities()->lastReceivedSoftkeys
+      && (!mpc_vtServerInstance->getVtCapabilities()->lastReceivedFont)
+      && ((mpc_vtServerInstance->getVtCapabilities()->lastRequestedFont == 0) || ((HAL::getTime()-mpc_vtServerInstance->getVtCapabilities()->lastRequestedFont) > 1000)))
   { // Get Text Font Data
-    c_data.setExtCanPkg8 (7, 0, ECU_TO_VT_PGN>>8,
-                          pc_vtServerInstance->getVtSourceAddress(), rc_wsMasterIdentItem.getIsoItem()->nr(),
+    mc_data.setExtCanPkg8 (7, 0, ECU_TO_VT_PGN>>8,
+                          mpc_vtServerInstance->getVtSourceAddress(), mrc_wsMasterIdentItem.getIsoItem()->nr(),
                           195, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
-    getCanInstance4Comm() << c_data;      // Command: Get Technical Data --- Parameter: Get Text Font Data
-    pc_vtServerInstance->getVtCapabilities()->lastRequestedFont = HAL::getTime();
+    getCanInstance4Comm() << mc_data;      // Command: Get Technical Data --- Parameter: Get Text Font Data
+    mpc_vtServerInstance->getVtCapabilities()->lastRequestedFont = HAL::getTime();
 #ifdef DEBUG
     INTERNAL_DEBUG_DEVICE << "Requested fonts (C3)..." << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
   }
 
-  if (pc_vtServerInstance->getVtCapabilities()->lastReceivedSoftkeys
-      && pc_vtServerInstance->getVtCapabilities()->lastReceivedFont
-      && (!pc_vtServerInstance->getVtCapabilities()->lastReceivedHardware)
-      && ((pc_vtServerInstance->getVtCapabilities()->lastRequestedHardware == 0)
-      || ((HAL::getTime()-pc_vtServerInstance->getVtCapabilities()->lastRequestedHardware) > 1000)))
+  if (mpc_vtServerInstance->getVtCapabilities()->lastReceivedSoftkeys
+      && mpc_vtServerInstance->getVtCapabilities()->lastReceivedFont
+      && (!mpc_vtServerInstance->getVtCapabilities()->lastReceivedHardware)
+      && ((mpc_vtServerInstance->getVtCapabilities()->lastRequestedHardware == 0)
+      || ((HAL::getTime()-mpc_vtServerInstance->getVtCapabilities()->lastRequestedHardware) > 1000)))
   { // Get Hardware
-    c_data.setExtCanPkg8 (7, 0, ECU_TO_VT_PGN>>8,
-                          pc_vtServerInstance->getVtSourceAddress(), rc_wsMasterIdentItem.getIsoItem()->nr(),
+    mc_data.setExtCanPkg8 (7, 0, ECU_TO_VT_PGN>>8,
+                          mpc_vtServerInstance->getVtSourceAddress(), mrc_wsMasterIdentItem.getIsoItem()->nr(),
                           199, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
-    getCanInstance4Comm() << c_data;      // Command: Get Technical Data --- Parameter: Get Hardware
-    pc_vtServerInstance->getVtCapabilities()->lastRequestedHardware = HAL::getTime();
+    getCanInstance4Comm() << mc_data;      // Command: Get Technical Data --- Parameter: Get Hardware
+    mpc_vtServerInstance->getVtCapabilities()->lastRequestedHardware = HAL::getTime();
 #ifdef DEBUG
     INTERNAL_DEBUG_DEVICE << "Requested hardware (C7)..." << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
@@ -579,15 +579,15 @@ bool
 VtClientServerCommunication_c::timeEventPoolUpload()
 {
   // Do MAIN-Phase a) at INIT and b) <timeout> seconds after FAIL
-  if (((en_uploadPoolState == UploadPoolFailed) && (((uint32_t) HAL::getTime()) > (ui32_uploadTimeout + ui32_uploadTimestamp)))
-        || (en_uploadPoolState == UploadPoolInit))
+  if (((men_uploadPoolState == UploadPoolFailed) && (((uint32_t) HAL::getTime()) > (mui32_uploadTimeout + mui32_uploadTimestamp)))
+        || (men_uploadPoolState == UploadPoolInit))
   {
     /** @todo for now allow parallel uploads
-    if (!rc_isoTerminal.getFlagForPoolUpload (this))
+    if (!mrc_isoTerminal.getFlagForPoolUpload (this))
     { // any other client is already uploading its pool, so wait!
-      en_uploadPoolState = UploadPoolFailed;
-      ui32_uploadTimestamp = HAL::getTime();
-      ui32_uploadTimeout = DEF_WaitFor_FreeUpload; // wait 1 secs for possible free uploading...
+      men_uploadPoolState = UploadPoolFailed;
+      mui32_uploadTimestamp = HAL::getTime();
+      mui32_uploadTimeout = DEF_WaitFor_FreeUpload; // wait 1 secs for possible free uploading...
       return true;
     } */
     // Take the version that's been set up NOW and try to load/upload it.
@@ -596,17 +596,17 @@ VtClientServerCommunication_c::timeEventPoolUpload()
     // Added this preprocessor so loading of object pools can be prevented for development purposes
 #ifdef NO_LOAD_VERSION
 #else
-    if (b_usingVersionLabel)
+    if (mb_usingVersionLabel)
     {
 #ifdef GET_VERSIONS
       // this is for test purposes only!
       static int b_getVersionsSendTime = 0;
       if (b_getVersionsSendTime == 0)
       { // send out get versions first
-        c_data.setExtCanPkg8 (7, 0, ECU_TO_VT_PGN>>8,
-                              pc_vtServerInstance->getVtSourceAddress(), rc_wsMasterIdentItem.getIsoItem()->nr(),
+        mc_data.setExtCanPkg8 (7, 0, ECU_TO_VT_PGN>>8,
+                              mpc_vtServerInstance->getVtSourceAddress(), mrc_wsMasterIdentItem.getIsoItem()->nr(),
                               223, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF);
-        getCanInstance4Comm() << c_data;     // Command: Non Volatile Memory --- Parameter: Load Version
+        getCanInstance4Comm() << mc_data;     // Command: Non Volatile Memory --- Parameter: Load Version
         b_getVersionsSendTime = HAL::getTime();
       }
       if ((b_getVersionsSendTime+500) > HAL::getTime())
@@ -615,37 +615,37 @@ VtClientServerCommunication_c::timeEventPoolUpload()
       }
 #endif
       char lang1, lang2;
-      if (c_streamer.ui16_objectPoolUploadingLanguageCode != 0x0000)
+      if (mc_streamer.mui16_objectPoolUploadingLanguageCode != 0x0000)
       {
-        lang1 = c_streamer.ui16_objectPoolUploadingLanguageCode >> 8;
-        lang2 = c_streamer.ui16_objectPoolUploadingLanguageCode & 0xFF;
+        lang1 = mc_streamer.mui16_objectPoolUploadingLanguageCode >> 8;
+        lang2 = mc_streamer.mui16_objectPoolUploadingLanguageCode & 0xFF;
       }
       else
       {
-        lang1 = p7c_versionLabel [5];
-        lang2 = p7c_versionLabel [6];
+        lang1 = marrp7c_versionLabel [5];
+        lang2 = marrp7c_versionLabel [6];
       }
 
       // Try to "Non Volatile Memory - Load Version" first!
-      c_data.setExtCanPkg8 (7, 0, ECU_TO_VT_PGN>>8, pc_vtServerInstance->getVtSourceAddress(), rc_wsMasterIdentItem.getIsoItem()->nr(),
+      mc_data.setExtCanPkg8 (7, 0, ECU_TO_VT_PGN>>8, mpc_vtServerInstance->getVtSourceAddress(), mrc_wsMasterIdentItem.getIsoItem()->nr(),
 #ifdef LOESCHE_POOL
                             210,
 #else
                             209,
 #endif
-                            p7c_versionLabel [0], p7c_versionLabel [1], p7c_versionLabel [2], p7c_versionLabel [3], p7c_versionLabel [4], lang1, lang2);
-      getCanInstance4Comm() << c_data;     // Command: Non Volatile Memory --- Parameter: Load Version
+                            marrp7c_versionLabel [0], marrp7c_versionLabel [1], marrp7c_versionLabel [2], marrp7c_versionLabel [3], marrp7c_versionLabel [4], lang1, lang2);
+      getCanInstance4Comm() << mc_data;     // Command: Non Volatile Memory --- Parameter: Load Version
                                             //(Command: Non Volatile Memory --- Parameter: Delete Version - just a quick hack!)
 #ifdef LOESCHE_POOL
       startObjectPoolUploading (UploadPoolTypeCompleteInitially);
 #else
       // start uploading after reception of LoadVersion Response
-      en_uploadPoolState = UploadPoolWaitingForLoadVersionResponse;
-      en_uploadPoolType = UploadPoolTypeCompleteInitially; // need to set this, so that eventObjectPoolUploadedSucessfully is getting called (also after load, not only after upload)
-      ui32_uploadTimeout = DEF_TimeOut_LoadVersion;
-      ui32_uploadTimestamp = HAL::getTime();
+      men_uploadPoolState = UploadPoolWaitingForLoadVersionResponse;
+      men_uploadPoolType = UploadPoolTypeCompleteInitially; // need to set this, so that eventObjectPoolUploadedSucessfully is getting called (also after load, not only after upload)
+      mui32_uploadTimeout = DEF_TimeOut_LoadVersion;
+      mui32_uploadTimestamp = HAL::getTime();
 #ifdef DEBUG
-      INTERNAL_DEBUG_DEVICE << "Trying Load Version (D1) for Version ["<<p7c_versionLabel [0]<< p7c_versionLabel [1]<< p7c_versionLabel [2]<< p7c_versionLabel [3]<< p7c_versionLabel [4]<< lang1<< lang2<<"]..." << INTERNAL_DEBUG_DEVICE_ENDL;
+      INTERNAL_DEBUG_DEVICE << "Trying Load Version (D1) for Version ["<<marrp7c_versionLabel [0]<< marrp7c_versionLabel [1]<< marrp7c_versionLabel [2]<< marrp7c_versionLabel [3]<< marrp7c_versionLabel [4]<< lang1<< lang2<<"]..." << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
 #endif
     }
@@ -683,15 +683,15 @@ VtClientServerCommunication_c::timeEvent(void)
 #endif
 
   // do further activities only if registered ident is initialised as ISO and already successfully address-claimed...
-  if (!rc_wsMasterIdentItem.isClaimedAddress()) return true;
+  if (!mrc_wsMasterIdentItem.isClaimedAddress()) return true;
 
-  if (!b_receiveFilterCreated)
+  if (!mb_receiveFilterCreated)
   { /*** MultiReceive/IsoFilterManager Registration ***/
     getMultiReceiveInstance4Comm().registerClient (*this, getIdentItem().isoName(), VT_TO_ECU_PGN);
     getIsoFilterManagerInstance4Comm().insertIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL), (VT_TO_ECU_PGN << 8),       &getIdentItem().isoName(), NULL, 8));
     getIsoFilterManagerInstance4Comm().insertIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL), (ACKNOWLEDGEMENT_PGN << 8), &getIdentItem().isoName(), NULL, 8));
 
-    b_receiveFilterCreated = true;
+    mb_receiveFilterCreated = true;
   }
 
   /*** Regular start is here (the above preconditions should be satisfied if system is finally set up. ***/
@@ -707,30 +707,30 @@ VtClientServerCommunication_c::timeEvent(void)
   if (!isVtActive()) return true;
 
   // Check if the working-set is completely announced
-  if (!rc_wsMasterIdentItem.getIsoItem()->isWsAnnounced (i32_timeWsAnnounceKey)) return true;
+  if (!mrc_wsMasterIdentItem.getIsoItem()->isWsAnnounced (mi32_timeWsAnnounceKey)) return true;
 
   // Check if WS-Maintenance is needed
-  if ((i32_nextWsMaintenanceMsg <= 0) || (HAL::getTime() >= i32_nextWsMaintenanceMsg))
+  if ((mi32_nextWsMaintenanceMsg <= 0) || (HAL::getTime() >= mi32_nextWsMaintenanceMsg))
   { // Do periodically WS-Maintenance sending (every second)
-    c_data.setExtCanPkg8 (7, 0, ECU_TO_VT_PGN>>8, pc_vtServerInstance->getVtSourceAddress(), rc_wsMasterIdentItem.getIsoItem()->nr(),
+    mc_data.setExtCanPkg8 (7, 0, ECU_TO_VT_PGN>>8, mpc_vtServerInstance->getVtSourceAddress(), mrc_wsMasterIdentItem.getIsoItem()->nr(),
                           0xFF, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
-    getCanInstance4Comm() << c_data;     // G.2: Function: 255 / 0xFF Working Set Maintenance Message
+    getCanInstance4Comm() << mc_data;     // G.2: Function: 255 / 0xFF Working Set Maintenance Message
 
-    i32_nextWsMaintenanceMsg = HAL::getTime() + 1000;
+    mi32_nextWsMaintenanceMsg = HAL::getTime() + 1000;
   }
 
     // If our IsoItem has claimed address, immediately try to get the LANGUAGE_PGN from VT/anyone ;-) (regardless of pool-upload!)
-  if ((!pc_vtServerInstance->getLocalSettings()->lastReceived) && ((pc_vtServerInstance->getLocalSettings()->lastRequested == 0) || ((HAL::getTime()-pc_vtServerInstance->getLocalSettings()->lastRequested) > 2000)))
+  if ((!mpc_vtServerInstance->getLocalSettings()->lastReceived) && ((mpc_vtServerInstance->getLocalSettings()->lastRequested == 0) || ((HAL::getTime()-mpc_vtServerInstance->getLocalSettings()->lastRequested) > 2000)))
   { // Try every 2 seconds to get the LANGUAGE_PGN, be polite to not bombard the VT...
     /** @todo Give up somewhen?? Or retry really every 2 seconds? */
     timeEventSendLanguagePGN();
   }
 
   // lastReceived will be set if vtserverinstance processes the language pgn
-  if (!pc_vtServerInstance->getLocalSettings()->lastReceived)
+  if (!mpc_vtServerInstance->getLocalSettings()->lastReceived)
     return true; // do not proceed if LANGUAGE not yet received!
 
-  if (en_objectPoolState == OPCannotBeUploaded)
+  if (men_objectPoolState == OPCannotBeUploaded)
     return true; /** @todo is this correctly assumed? -> if it couldn't be uploaded, only disconnecting/connecting VT helps! */
 
   // from HERE ON potential longer command sequences might be started
@@ -743,7 +743,7 @@ VtClientServerCommunication_c::timeEvent(void)
 
   /// Now from here on the Pool's state is: "OPInitial" or "OPUploadedSuccessfully"
   /// UPLOADING --> OBJECT-POOL<--
-  if (en_uploadType == UploadPool)
+  if (men_uploadType == UploadPool)
   {
     timeEventUploadPoolTimeoutCheck();
 
@@ -752,7 +752,7 @@ VtClientServerCommunication_c::timeEvent(void)
     // if (UploadPoolInit)
 
     // Do we have to request (any) vt capabilities?
-    if (!(pc_vtServerInstance->getVtCapabilities()->lastReceivedFont && pc_vtServerInstance->getVtCapabilities()->lastReceivedHardware && pc_vtServerInstance->getVtCapabilities()->lastReceivedSoftkeys))
+    if (!(mpc_vtServerInstance->getVtCapabilities()->lastReceivedFont && mpc_vtServerInstance->getVtCapabilities()->lastReceivedHardware && mpc_vtServerInstance->getVtCapabilities()->lastReceivedSoftkeys))
     { /// Pool-Upload: PRE Phase (Get VT-Properties)
       timeEventPrePoolUpload();
     }
@@ -767,59 +767,59 @@ VtClientServerCommunication_c::timeEvent(void)
 
   /// UPLOADING --> COMMAND <-- ///
   // Can only be done if the objectpool is successfully uploaded!
-  if (en_objectPoolState != OPUploadedSuccessfully) return true;
+  if (men_objectPoolState != OPUploadedSuccessfully) return true;
 
   /// FROM HERE ON THE OBJECT-POOL >>IS<< UPLOADED SUCCESSFULLY
   /// HANDLE CASE A) AND B) FROM HERE NOW
   /// A) NOW HERE THE LANGUAGE CHANGE IS HANDLED
-  if ((c_streamer.i8_objectPoolUploadingLanguage == -2) // indicates no update running
-       && (i8_vtLanguage != c_streamer.i8_objectPoolUploadedLanguage))
+  if ((mc_streamer.mi8_objectPoolUploadingLanguage == -2) // indicates no update running
+       && (mi8_vtLanguage != mc_streamer.mi8_objectPoolUploadedLanguage))
   { // update languages on the fly
     setObjectPoolUploadingLanguage();
     /// NOTIFY THE APPLICATION so it can enqueue some commands that are processed BEFORE the update is done
     /// e.g. switch to a "Wait while changing language..." datamask.
-    c_streamer.rc_pool.eventPrepareForLanguageChange (c_streamer.i8_objectPoolUploadingLanguage, c_streamer.ui16_objectPoolUploadingLanguageCode);
+    mc_streamer.mrc_pool.eventPrepareForLanguageChange (mc_streamer.mi8_objectPoolUploadingLanguage, mc_streamer.mui16_objectPoolUploadingLanguageCode);
 
     sendCommandUpdateLanguagePool();
-    // we keep (c_streamer.i8_objectPoolUploadingLanguage != -2), so a change in between doesn't care and won't happen!!
+    // we keep (mc_streamer.mi8_objectPoolUploadingLanguage != -2), so a change in between doesn't care and won't happen!!
   }
 
   /// B) NOW HERE THE RUNTIME COMMANDS ARE BEING HANDLED
-  if (en_uploadType == UploadCommand)
+  if (men_uploadType == UploadCommand)
   { // NO Response/timeOut for (C.2.3 Object Pool Transfer Message) "UploadObjectPool" - Only for "UploadMultiPacketCommand"
-    switch (en_sendSuccess)
+    switch (men_sendSuccess)
     {
       case __IsoAgLib::MultiSend_c::SendAborted:
-        // If aborted, retry regardless of "ui8_uploadRetry", as it was a multisend problem, not a problem of the command itself!
+        // If aborted, retry regardless of "mui8_uploadRetry", as it was a multisend problem, not a problem of the command itself!
         startUploadCommand();
         break;
 
       case __IsoAgLib::MultiSend_c::Running:
         // increase sent time-stamp, so it matches best the time when the multisend has finished sending, so that the timeout counts from that time on!
-        ui32_uploadTimestamp = HAL::getTime();
+        mui32_uploadTimestamp = HAL::getTime();
         break;
 
       case __IsoAgLib::MultiSend_c::SendSuccess: // no break, handle along with default: wait for response!
       default:
       { // successfully sent...
-        if (en_uploadCommandState == UploadCommandWithoutResponse)
+        if (men_uploadCommandState == UploadCommandWithoutResponse)
         { // no response is awaited, so we finished sending
           finishUploadCommand();
           break; // and done!
         }
 
-        if (en_uploadCommandState == UploadCommandWaitingForCommandResponse) // won't reach here when "Running", as timestamp is getting get to now above!
+        if (men_uploadCommandState == UploadCommandWaitingForCommandResponse) // won't reach here when "Running", as timestamp is getting get to now above!
         { // Waiting for an answer - Did it time out?
-          if (((uint32_t) HAL::getTime()) > (ui32_uploadTimeout + ui32_uploadTimestamp))
-            en_uploadCommandState = UploadCommandTimedOut;
+          if (((uint32_t) HAL::getTime()) > (mui32_uploadTimeout + mui32_uploadTimestamp))
+            men_uploadCommandState = UploadCommandTimedOut;
         } // don't break, as "UploadCommandTimedOut" is handled right below!
 
         // Are we in "Upload Command"-State and the last Upload failed/timed out?
-        if ((en_uploadCommandState == UploadCommandTimedOut))
+        if ((men_uploadCommandState == UploadCommandTimedOut))
         {
-          if (ui8_uploadRetry > 0)
+          if (mui8_uploadRetry > 0)
           {
-            ui8_uploadRetry--;
+            mui8_uploadRetry--;
             startUploadCommand();
           }
           else
@@ -833,9 +833,9 @@ VtClientServerCommunication_c::timeEvent(void)
   } // UploadCommand
 
   // Is a) no Upload running and b) some Upload to do?
-  if ((en_uploadType == UploadIdle) && !q_sendUpload.empty())
+  if ((men_uploadType == UploadIdle) && !mq_sendUpload.empty())
   { // Set Retry & Start Uploading
-    ui8_uploadRetry = (*(q_sendUpload.begin())).ui8_retryCount;
+    mui8_uploadRetry = (*(mq_sendUpload.begin())).ui8_retryCount;
     startUploadCommand();
   }
   return true;
@@ -848,24 +848,24 @@ bool
 VtClientServerCommunication_c::processMsgAck()
 {
   // shouldn't be possible, but check anyway to get sure.
-  if (!pc_vtServerInstance) return false;
+  if (!mpc_vtServerInstance) return false;
 
   // don't react on NACKs from other VTs than the one we're communicating with!
-  if (pc_vtServerInstance->getVtSourceAddress() != c_data.isoSa()) return false;
+  if (mpc_vtServerInstance->getVtSourceAddress() != mc_data.isoSa()) return false;
 
-  if (c_data.getUint8Data (0) != 0x01) return true; // Only react if "NOT ACKNOWLEDGE"!
+  if (mc_data.getUint8Data (0) != 0x01) return true; // Only react if "NOT ACKNOWLEDGE"!
 
 #if !defined(IGNORE_VTSERVER_NACK)  // The NACK must be ignored for the Mueller VT Server
   // check if we have Agrocom/Mller with Version < 3, so we IGNORE this NACK BEFORE the pool is finally uploaded.
   bool b_ignoreNack = false; // normally DO NOT ignore NACK
-  if (getIsoMonitorInstance4Comm().existIsoMemberNr (c_data.isoSa()))
+  if (getIsoMonitorInstance4Comm().existIsoMemberNr (mc_data.isoSa()))
   { // sender exists in isomonitor, so query its Manufacturer Code
-    const uint16_t cui16_manufCode = getIsoMonitorInstance4Comm().isoMemberNr (c_data.isoSa()).isoName().manufCode();
+    const uint16_t cui16_manufCode = getIsoMonitorInstance4Comm().isoMemberNr (mc_data.isoSa()).isoName().manufCode();
     if (((cui16_manufCode == 98) /*Mller Elektronik*/ || (cui16_manufCode == 103) /*Agrocom*/) &&
-          ((pc_vtServerInstance->getVtCapabilities()->lastReceivedVersion == 0) ||
-          (pc_vtServerInstance->getVtCapabilities()->iso11783version < 3)))
+          ((mpc_vtServerInstance->getVtCapabilities()->lastReceivedVersion == 0) ||
+          (mpc_vtServerInstance->getVtCapabilities()->iso11783version < 3)))
     {
-      if (en_objectPoolState != OPUploadedSuccessfully)
+      if (men_objectPoolState != OPUploadedSuccessfully)
       { // mueller/agrocom hack - ignore upload while no objectpool is displayed
         b_ignoreNack = true;
       }
@@ -876,21 +876,21 @@ VtClientServerCommunication_c::processMsgAck()
   {
     // for now ignore source address which must be VT of course. (but in case a NACK comes in before the first VT Status Message
     // Check if a VT-related message was NACKed. Check embedded PGN for that
-    const uint32_t cui32_pgn =  uint32_t (c_data.getUint8Data (5)) |
-                               (uint32_t (c_data.getUint8Data (6)) << 8) |
-                               (uint32_t (c_data.getUint8Data (7)) << 16);
+    const uint32_t cui32_pgn =  uint32_t (mc_data.getUint8Data (5)) |
+                               (uint32_t (mc_data.getUint8Data (6)) << 8) |
+                               (uint32_t (mc_data.getUint8Data (7)) << 16);
     switch (cui32_pgn)
     {
       case ECU_TO_VT_PGN:
       case WORKING_SET_MEMBER_PGN:
       case WORKING_SET_MASTER_PGN:
         /// fake NOT-alive state of VT for now!
-        pc_vtServerInstance->resetVtAlive(); // set VTalive to FALSE, so the queue will be emptied down below on the state change check.
+        mpc_vtServerInstance->resetVtAlive(); // set VTalive to FALSE, so the queue will be emptied down below on the state change check.
 #ifdef DEBUG
         INTERNAL_DEBUG_DEVICE << "\n==========================================================================================="
                               << "\n=== VT NACKed "<<cui32_pgn<<", starting all over again -> faking VT loss in the following: ===";
 #endif
-        rc_wsMasterIdentItem.getIsoItem()->sendSaClaim(); // optional, but better do this: Repeat address claim!
+        mrc_wsMasterIdentItem.getIsoItem()->sendSaClaim(); // optional, but better do this: Repeat address claim!
         checkVtStateChange(); // will also notify application by "eventEnterSafeState"
         break;
     } // switch
@@ -907,28 +907,28 @@ VtClientServerCommunication_c::processMsgAck()
 void
 VtClientServerCommunication_c::notifyOnVtsLanguagePgn()
 {
-  i8_vtLanguage = -1; // indicate that VT's language is not supported by this WS, so the default language should be used
+  mi8_vtLanguage = -1; // indicate that VT's language is not supported by this WS, so the default language should be used
 
-  if (pc_vtServerInstance)
+  if (mpc_vtServerInstance)
   {
-    const uint8_t cui8_languages = c_streamer.rc_pool.getWorkingSetObject().get_vtObjectWorkingSet_a().numberOfLanguagesToFollow;
+    const uint8_t cui8_languages = mc_streamer.mrc_pool.getWorkingSetObject().get_vtObjectWorkingSet_a().numberOfLanguagesToFollow;
     for (int i=0; i<cui8_languages; i++)
     {
-      const uint8_t* lang = c_streamer.rc_pool.getWorkingSetObject().get_vtObjectWorkingSet_a().languagesToFollow[i].language;
-      if (pc_vtServerInstance->getLocalSettings()->languageCode == ((lang[0] << 8) | lang[1]))
+      const uint8_t* lang = mc_streamer.mrc_pool.getWorkingSetObject().get_vtObjectWorkingSet_a().languagesToFollow[i].language;
+      if (mpc_vtServerInstance->getLocalSettings()->languageCode == ((lang[0] << 8) | lang[1]))
       {
-        i8_vtLanguage = i; // yes, VT's language is directly supported by this workingset
+        mi8_vtLanguage = i; // yes, VT's language is directly supported by this workingset
         break;
       }
     }
-    c_streamer.rc_pool.eventLanguagePgn (*pc_vtServerInstance->getLocalSettings());
+    mc_streamer.mrc_pool.eventLanguagePgn (*mpc_vtServerInstance->getLocalSettings());
   }
 }
 
 void
 VtClientServerCommunication_c::notifyOnVtStatusMessage()
 {
-  c_streamer.rc_pool.eventVtStatusMsg();
+  mc_streamer.mrc_pool.eventVtStatusMsg();
 
   // set client display state appropriately
   setVtDisplayState (true, getVtServerInst().getVtState()->saOfActiveWorkingSetMaster);
@@ -938,8 +938,8 @@ VtClientServerCommunication_c::notifyOnVtStatusMessage()
 void
 VtClientServerCommunication_c::notifyOnAuxInputStatus()
 {
-  const IsoName_c& ac_inputIsoName = c_data.getISONameForSA();
-  uint8_t const cui8_inputNumber = c_data.getUint8Data(2-1);
+  const IsoName_c& ac_inputIsoName = mc_data.getISONameForSA();
+  uint8_t const cui8_inputNumber = mc_data.getUint8Data(2-1);
 
   // Look for all Functions that are controlled by this Input right now!
   for (STL_NAMESPACE::list<AuxAssignment_s>::iterator it = mlist_auxAssignments.begin(); it != mlist_auxAssignments.end(); )
@@ -947,10 +947,10 @@ VtClientServerCommunication_c::notifyOnAuxInputStatus()
     if ( (it->mui8_inputNumber == cui8_inputNumber)
       && (it->mc_inputIsoName == ac_inputIsoName) )
     { // notify application on this new Input Status!
-      uint16_t const cui16_inputValueAnalog = c_data.getUint16Data (3-1);
-      uint16_t const cui16_inputValueTransitions = c_data.getUint16Data (5-1);
-      uint8_t const cui8_inputValueDigital = c_data.getUint8Data (7-1);
-      c_streamer.rc_pool.eventAuxFunctionValue (it->mui16_functionUid, cui16_inputValueAnalog, cui16_inputValueTransitions, cui8_inputValueDigital);
+      uint16_t const cui16_inputValueAnalog = mc_data.getUint16Data (3-1);
+      uint16_t const cui16_inputValueTransitions = mc_data.getUint16Data (5-1);
+      uint8_t const cui8_inputValueDigital = mc_data.getUint8Data (7-1);
+      mc_streamer.mrc_pool.eventAuxFunctionValue (it->mui16_functionUid, cui16_inputValueAnalog, cui16_inputValueTransitions, cui8_inputValueDigital);
     }
   }
 }
@@ -959,9 +959,9 @@ VtClientServerCommunication_c::notifyOnAuxInputStatus()
 bool
 VtClientServerCommunication_c::storeAuxAssignment()
 {
-  uint8_t const cui8_inputSaNew = c_data.getUint8Data (2-1);
-  uint8_t const cui8_inputNrNew = c_data.getUint8Data (3-1); /// 0xFF means unassign!
-  uint16_t const cui16_functionUidNew = c_data.getUint16Data (4-1);
+  uint8_t const cui8_inputSaNew = mc_data.getUint8Data (2-1);
+  uint8_t const cui8_inputNrNew = mc_data.getUint8Data (3-1); /// 0xFF means unassign!
+  uint16_t const cui16_functionUidNew = mc_data.getUint16Data (4-1);
   if (!getIsoMonitorInstance4Comm().existIsoMemberNr (cui8_inputSaNew) && (cui8_inputNrNew != 0xFF))
     return false;
 
@@ -1008,12 +1008,12 @@ bool
 VtClientServerCommunication_c::processMsg()
 {
 //  #ifdef DEBUG
-//  INTERNAL_DEBUG_DEVICE << "Incoming Message: c_data.isoPgn=" << c_data.isoPgn() << " - HAL::getTime()=" << HAL::getTime() << " - data[0]=" << (uint16_t)c_data.getUint8Data (0) << "...  ";
+//  INTERNAL_DEBUG_DEVICE << "Incoming Message: mc_data.isoPgn=" << mc_data.isoPgn() << " - HAL::getTime()=" << HAL::getTime() << " - data[0]=" << (uint16_t)mc_data.getUint8Data (0) << "...  ";
 //  #endif
 
   /** @todo check for can-pkg-length==8???? */
 
-  if ((c_data.isoPgn() & 0x3FF00) == ACKNOWLEDGEMENT_PGN)
+  if ((mc_data.isoPgn() & 0x3FF00) == ACKNOWLEDGEMENT_PGN)
   { // Pass on to ACK-Processing!
     return processMsgAck();
   }
@@ -1028,86 +1028,86 @@ VtClientServerCommunication_c::processMsg()
   if (!isVtActive()) return true;
 
   // check below not needed any more with new isofilter!?!??!??! */
-  if ((c_data.isoPgn() & 0x3FFFF) != (VT_TO_ECU_PGN | getIdentItem().getIsoItem()->nr())) return false;
+  if ((mc_data.isoPgn() & 0x3FFFF) != (VT_TO_ECU_PGN | getIdentItem().getIsoItem()->nr())) return false;
 
   /// process all VT_TO_ECU addressed to us
-  switch (c_data.getUint8Data (0))
+  switch (mc_data.getUint8Data (0))
   {
     /*************************************/
     /*** ### VT Initiated Messages ### ***/
     case 0x00: // Command: "Control Element Function", parameter "Soft Key"
     case 0x01: // Command: "Control Element Function", parameter "Button"
-      c_streamer.rc_pool.eventKeyCode (c_data.getUint8Data (1) /* key activation code (pressed, released, held) */,
-                                         c_data.getUint8Data (2) | (c_data.getUint8Data (3) << 8) /* objID of key object */,
-                                         c_data.getUint8Data (4) | (c_data.getUint8Data (5) << 8) /* objID of visible mask */,
-                                         c_data.getUint8Data (6) /* key code */,
-                                         c_data.getUint8Data (0) /* 0 for sk, 1 for button -- matches wasButton? boolean */ );
+      mc_streamer.mrc_pool.eventKeyCode (mc_data.getUint8Data (1) /* key activation code (pressed, released, held) */,
+                                         mc_data.getUint8Data (2) | (mc_data.getUint8Data (3) << 8) /* objID of key object */,
+                                         mc_data.getUint8Data (4) | (mc_data.getUint8Data (5) << 8) /* objID of visible mask */,
+                                         mc_data.getUint8Data (6) /* key code */,
+                                         mc_data.getUint8Data (0) /* 0 for sk, 1 for button -- matches wasButton? boolean */ );
       break;
     case 0x02: // Command: "Control Element Function", parameter "Pointing Event"
-      c_streamer.rc_pool.eventPointingEvent (c_data.getUint8Data (1) | (c_data.getUint8Data (2) << 8) /* X position in pixels */,
-                                              c_data.getUint8Data (3) | (c_data.getUint8Data (4) << 8) /* Y position in pixels */);
+      mc_streamer.mrc_pool.eventPointingEvent (mc_data.getUint8Data (1) | (mc_data.getUint8Data (2) << 8) /* X position in pixels */,
+                                              mc_data.getUint8Data (3) | (mc_data.getUint8Data (4) << 8) /* Y position in pixels */);
       break;
     case 0x04: // Command: "Control Element Function", parameter "VT ESC"
         /// if no error occured, that ESC is for an opened input dialog!!! Do not handle here!!!
-        if (c_data.getUint8Data (3) != 0x0)
+        if (mc_data.getUint8Data (3) != 0x0)
         {
-          c_streamer.rc_pool.eventVtESC();
+          mc_streamer.mrc_pool.eventVtESC();
         }
         break;
     case 0x05: // Command: "Control Element Function", parameter "VT Change Numeric Value"
-      c_streamer.rc_pool.eventNumericValue (uint16_t(c_data.getUint8Data (1)) | (uint16_t(c_data.getUint8Data (2)) << 8) /* objID */,
-                                              c_data.getUint8Data (4) /* 1 byte value */,
-                                              uint32_t(c_data.getUint8Data (4)) | (uint32_t(c_data.getUint8Data (5)) << 8) | (uint32_t(c_data.getUint8Data (6)) << 16)| (uint32_t(c_data.getUint8Data (7)) << 24) /* 4 byte value */);
+      mc_streamer.mrc_pool.eventNumericValue (uint16_t(mc_data.getUint8Data (1)) | (uint16_t(mc_data.getUint8Data (2)) << 8) /* objID */,
+                                              mc_data.getUint8Data (4) /* 1 byte value */,
+                                              uint32_t(mc_data.getUint8Data (4)) | (uint32_t(mc_data.getUint8Data (5)) << 8) | (uint32_t(mc_data.getUint8Data (6)) << 16)| (uint32_t(mc_data.getUint8Data (7)) << 24) /* 4 byte value */);
       break;
     case 0x08:  // Command: "Control Element Function", parameter "VT Input String Value"
-      if (c_data.getUint8Data (3) <= 4) //within a 8 byte long cmd can be only a 4 char long string
+      if (mc_data.getUint8Data (3) <= 4) //within a 8 byte long cmd can be only a 4 char long string
       {
-        VolatileMemory_c c_vmString (c_data.getUint8DataConstPointer(4));
-        c_streamer.rc_pool.eventStringValue (uint16_t(c_data.getUint8Data (1)) | (uint16_t(c_data.getUint8Data (2)) << 8) /* objID */,
-                                               c_data.getUint8Data (3) /* total number of bytes */, c_vmString,
-                                               c_data.getUint8Data (3) /* total number of bytes */, true, true);
+        VolatileMemory_c c_vmString (mc_data.getUint8DataConstPointer(4));
+        mc_streamer.mrc_pool.eventStringValue (uint16_t(mc_data.getUint8Data (1)) | (uint16_t(mc_data.getUint8Data (2)) << 8) /* objID */,
+                                               mc_data.getUint8Data (3) /* total number of bytes */, c_vmString,
+                                               mc_data.getUint8Data (3) /* total number of bytes */, true, true);
       }
       break;
     case 0x09:  // Command: "Command", parameter "Display Activation"
-      setVtDisplayState (false, c_data.getUint8Data (1));
+      setVtDisplayState (false, mc_data.getUint8Data (1));
 
       // replace PGN, DA, SA and send back as answer
-      c_data.setIsoPgn (ECU_TO_VT_PGN);
-      c_data.setIsoSa (rc_wsMasterIdentItem.getIsoItem()->nr());
-      c_data.setIsoPs (pc_vtServerInstance->getVtSourceAddress());
-      getCanInstance4Comm() << c_data; // Command: "Command", parameter "Display Activation Response"
+      mc_data.setIsoPgn (ECU_TO_VT_PGN);
+      mc_data.setIsoSa (mrc_wsMasterIdentItem.getIsoItem()->nr());
+      mc_data.setIsoPs (mpc_vtServerInstance->getVtSourceAddress());
+      getCanInstance4Comm() << mc_data; // Command: "Command", parameter "Display Activation Response"
       break;
 
     /***************************************************/
     /*** ### ECU Initiated Messages (=Responses) ### ***/
     case 0x12: // Command: "End of Object Pool Transfer", parameter "Object Pool Ready Response"
-      if ((en_uploadType == UploadPool) && (en_uploadPoolState == UploadPoolWaitingForEOOResponse))
+      if ((men_uploadType == UploadPool) && (men_uploadPoolState == UploadPoolWaitingForEOOResponse))
       { /// *** INITIAL POOL UPLOAD ***
-        if (c_data.getUint8Data (1) == 0)
+        if (mc_data.getUint8Data (1) == 0)
         { /// NO Error with UPLOADING pool
 // Added this preprocessor so storing of object pools can be prevented for development purposes
 #ifndef NO_STORE_VERSION
-          if (b_usingVersionLabel)
+          if (mb_usingVersionLabel)
           { // Store Version and finalize after "Store Version Response"
             char lang1, lang2;
-            if (c_streamer.ui16_objectPoolUploadingLanguageCode != 0x0000)
+            if (mc_streamer.mui16_objectPoolUploadingLanguageCode != 0x0000)
             {
-              lang1 = c_streamer.ui16_objectPoolUploadingLanguageCode >> 8;
-              lang2 = c_streamer.ui16_objectPoolUploadingLanguageCode & 0xFF;
+              lang1 = mc_streamer.mui16_objectPoolUploadingLanguageCode >> 8;
+              lang2 = mc_streamer.mui16_objectPoolUploadingLanguageCode & 0xFF;
             }
             else
             {
-              lang1 = p7c_versionLabel [5];
-              lang2 = p7c_versionLabel [6];
+              lang1 = marrp7c_versionLabel [5];
+              lang2 = marrp7c_versionLabel [6];
             }
-            c_data.setExtCanPkg8 (7, 0, ECU_TO_VT_PGN>>8, pc_vtServerInstance->getVtSourceAddress(), rc_wsMasterIdentItem.getIsoItem()->nr(),
-                                  208 /* D0 */, p7c_versionLabel [0], p7c_versionLabel [1], p7c_versionLabel [2], p7c_versionLabel [3], p7c_versionLabel [4], lang1, lang2);
-            getCanInstance4Comm() << c_data;     // Command: Non Volatile Memory --- Parameter: Store Version
+            mc_data.setExtCanPkg8 (7, 0, ECU_TO_VT_PGN>>8, mpc_vtServerInstance->getVtSourceAddress(), mrc_wsMasterIdentItem.getIsoItem()->nr(),
+                                  208 /* D0 */, marrp7c_versionLabel [0], marrp7c_versionLabel [1], marrp7c_versionLabel [2], marrp7c_versionLabel [3], marrp7c_versionLabel [4], lang1, lang2);
+            getCanInstance4Comm() << mc_data;     // Command: Non Volatile Memory --- Parameter: Store Version
 
                       // Now wait for response
-            en_uploadPoolState = UploadPoolWaitingForStoreVersionResponse;
-            ui32_uploadTimeout = DEF_TimeOut_StoreVersion;
-            ui32_uploadTimestamp = HAL::getTime();
+            men_uploadPoolState = UploadPoolWaitingForStoreVersionResponse;
+            mui32_uploadTimeout = DEF_TimeOut_StoreVersion;
+            mui32_uploadTimestamp = HAL::getTime();
           }
           else
 #endif // NO_STORE_VERSION
@@ -1117,14 +1117,14 @@ VtClientServerCommunication_c::processMsg()
         }
         else
         {
-          en_uploadPoolState = UploadPoolFailed; // errorcode in ui8_uploadError;
-          en_objectPoolState = OPCannotBeUploaded;
-          ui8_uploadError = c_data.getUint8Data (2);
+          men_uploadPoolState = UploadPoolFailed; // errorcode in mui8_uploadError;
+          men_objectPoolState = OPCannotBeUploaded;
+          mui8_uploadError = mc_data.getUint8Data (2);
           /// @todo for now allow parallel uploads
-          ///rc_isoTerminal.resetFlagForPoolUpload (this);
+          ///mrc_isoTerminal.resetFlagForPoolUpload (this);
         }
       }
-      else if ((en_uploadType == UploadCommand) && (en_uploadCommandState == UploadCommandWaitingForCommandResponse))
+      else if ((men_uploadType == UploadCommand) && (men_uploadCommandState == UploadCommandWaitingForCommandResponse))
       { /// *** LANGUAGE POOL UPDATE ***
         MACRO_setStateDependantOnError(2)
         finalizeUploading(); // indicate that the language specific objects have been updated. also the user will get notified.
@@ -1141,10 +1141,10 @@ VtClientServerCommunication_c::processMsg()
 
       if (cb_assignmentOkay)
       { /// For now simply respond without doing anything else with this information. simply ack the assignment!
-        c_data.setIsoPgn (ECU_TO_VT_PGN);
-        c_data.setIsoSa (rc_wsMasterIdentItem.getIsoItem()->nr());
-        c_data.setIsoPs (pc_vtServerInstance->getVtSourceAddress());
-        getCanInstance4Comm() << c_data;
+        mc_data.setIsoPgn (ECU_TO_VT_PGN);
+        mc_data.setIsoSa (mrc_wsMasterIdentItem.getIsoItem()->nr());
+        mc_data.setIsoPs (mpc_vtServerInstance->getVtSourceAddress());
+        getCanInstance4Comm() << mc_data;
       }
     } break;
 
@@ -1196,14 +1196,14 @@ VtClientServerCommunication_c::processMsg()
     case 0xB9: // Command: "Get Technical Data", parameter "Get Attribute Value"
       MACRO_setStateDependantOnError (7)
       // client requested any attribute value for an object in the pool -> create ram struct if not yet existing
-      if ((c_data.getUint8Data (1) == 0xFF) && (c_data.getUint8Data (2) == 0xFF)) // object id is set to 0xFFFF to indicate error response
+      if ((mc_data.getUint8Data (1) == 0xFF) && (mc_data.getUint8Data (2) == 0xFF)) // object id is set to 0xFFFF to indicate error response
       {
         /// what to do if attribute value request returns error response???
       }
       else
       {
         // first store object ID for later use
-        uint16_t ui16_objID = c_data.getUint8Data(1) | (c_data.getUint8Data (2) << 8);
+        uint16_t ui16_objID = mc_data.getUint8Data(1) | (mc_data.getUint8Data (2) << 8);
 
         /// search for suitable iVtObject in all object lists of the client (pointer array to all fix and language dependent iVtObjects)
 
@@ -1211,14 +1211,14 @@ VtClientServerCommunication_c::processMsg()
         bool b_objectFound = false;
 
         // first check if first item is the requested one -> working is the first item list no matter what objectID it has
-        if (ui16_objID == c_streamer.rc_pool.getIVtObjects()[ui8_arrIndex][0]->getID())
-          c_streamer.rc_pool.eventAttributeValue(c_streamer.rc_pool.getIVtObjects()[ui8_arrIndex][0],
-                                                  c_data.getUint8Data(3),
-                                                  c_data.getUint8DataPointer()+4);
+        if (ui16_objID == mc_streamer.mrc_pool.getIVtObjects()[ui8_arrIndex][0]->getID())
+          mc_streamer.mrc_pool.eventAttributeValue(mc_streamer.mrc_pool.getIVtObjects()[ui8_arrIndex][0],
+                                                  mc_data.getUint8Data(3),
+                                                  mc_data.getUint8DataPointer()+4);
         else
         {
           // if last item of the list was reached or the requested object was found
-          while (c_streamer.rc_pool.getIVtObjects()[ui8_arrIndex] != NULL)
+          while (mc_streamer.mrc_pool.getIVtObjects()[ui8_arrIndex] != NULL)
           {
             uint16_t ui16_arrBegin = 1;
             uint16_t ui16_arrMiddle;
@@ -1226,13 +1226,13 @@ VtClientServerCommunication_c::processMsg()
 
             // first item in list contains all fix objects of the pool (when language changes, these object stay the same)
             if (ui8_arrIndex == 0)
-              ui16_arrEnd = c_streamer.rc_pool.getNumObjects() - 1;
+              ui16_arrEnd = mc_streamer.mrc_pool.getNumObjects() - 1;
             else
-              ui16_arrEnd = c_streamer.rc_pool.getNumObjectsLang() - 1;
+              ui16_arrEnd = mc_streamer.mrc_pool.getNumObjectsLang() - 1;
 
             // if object is among these we can leave the while-loop
-            if ((ui16_objID < c_streamer.rc_pool.getIVtObjects()[ui8_arrIndex][ui16_arrBegin]->getID())
-                || (ui16_objID > c_streamer.rc_pool.getIVtObjects()[ui8_arrIndex][ui16_arrEnd]->getID())) // range check
+            if ((ui16_objID < mc_streamer.mrc_pool.getIVtObjects()[ui8_arrIndex][ui16_arrBegin]->getID())
+                || (ui16_objID > mc_streamer.mrc_pool.getIVtObjects()[ui8_arrIndex][ui16_arrEnd]->getID())) // range check
             {
               ui8_arrIndex++;
               continue; // try next object list, the requested object could not be found in the current list
@@ -1242,17 +1242,17 @@ VtClientServerCommunication_c::processMsg()
             {
               ui16_arrMiddle = ui16_arrBegin + ((ui16_arrEnd - ui16_arrBegin) / 2);
 
-              if (c_streamer.rc_pool.getIVtObjects()[ui8_arrIndex][ui16_arrMiddle]->getID() == ui16_objID) // objID found?
+              if (mc_streamer.mrc_pool.getIVtObjects()[ui8_arrIndex][ui16_arrMiddle]->getID() == ui16_objID) // objID found?
               {
                 b_objectFound = true;
-                c_streamer.rc_pool.eventAttributeValue(c_streamer.rc_pool.getIVtObjects()[ui8_arrIndex][ui16_arrMiddle],
-                                                        c_data.getUint8Data(3),
-                                                        c_data.getUint8DataPointer()+4);
+                mc_streamer.mrc_pool.eventAttributeValue(mc_streamer.mrc_pool.getIVtObjects()[ui8_arrIndex][ui16_arrMiddle],
+                                                        mc_data.getUint8Data(3),
+                                                        mc_data.getUint8DataPointer()+4);
                 break;
               }
               else
               {
-                if (c_streamer.rc_pool.getIVtObjects()[ui8_arrIndex][ui16_arrMiddle]->getID() > ui16_objID)
+                if (mc_streamer.mrc_pool.getIVtObjects()[ui8_arrIndex][ui16_arrMiddle]->getID() > ui16_objID)
                   ui16_arrEnd = ui16_arrMiddle - 1;
                 else
                   ui16_arrBegin = ui16_arrMiddle + 1;
@@ -1271,31 +1271,31 @@ VtClientServerCommunication_c::processMsg()
       MACRO_setStateDependantOnError (3)
       break;
     case 0xC0: // Command: "Get Technical Data", parameter "Get Memory Size Response"
-      pc_vtServerInstance->setVersion();
-      if ((en_uploadType == UploadPool) && (en_uploadPoolState == UploadPoolWaitingForMemoryResponse))
+      mpc_vtServerInstance->setVersion();
+      if ((men_uploadType == UploadPool) && (men_uploadPoolState == UploadPoolWaitingForMemoryResponse))
       {
-        if (c_data.getUint8Data (2) == 0)
+        if (mc_data.getUint8Data (2) == 0)
         { // start uploading, there MAY BE enough memory
-          en_uploadPoolState = UploadPoolUploading;
-          getMultiSendInstance4Comm().sendIsoTarget (rc_wsMasterIdentItem.isoName(), pc_vtServerInstance->getIsoName(), &c_streamer, ECU_TO_VT_PGN, en_sendSuccess);
+          men_uploadPoolState = UploadPoolUploading;
+          getMultiSendInstance4Comm().sendIsoTarget (mrc_wsMasterIdentItem.isoName(), mpc_vtServerInstance->getIsoName(), &mc_streamer, ECU_TO_VT_PGN, men_sendSuccess);
         }
         else
           vtOutOfMemory();
       }
       break;
     case 0xC2: // Command: "Get Technical Data", parameter "Get Number Of Soft Keys Response"
-      pc_vtServerInstance->setSoftKeyData();
+      mpc_vtServerInstance->setSoftKeyData();
       break;
     case 0xC3: // Command: "Get Technical Data", parameter "Get Text Font Data Response"
-      pc_vtServerInstance->setTextFontData();
+      mpc_vtServerInstance->setTextFontData();
       break;
     case 0xC7: // Command: "Get Technical Data", parameter "Get Hardware Response"
-      pc_vtServerInstance->setHardwareData();
+      mpc_vtServerInstance->setHardwareData();
       break;
     case 0xD0: // Command: "Non Volatile Memory", parameter "Store Version Response"
-      if ((en_uploadType == UploadPool) && (en_uploadPoolState == UploadPoolWaitingForStoreVersionResponse))
+      if ((men_uploadType == UploadPool) && (men_uploadPoolState == UploadPoolWaitingForStoreVersionResponse))
       {
-        switch (c_data.getUint8Data (5) & 0x0F)
+        switch (mc_data.getUint8Data (5) & 0x0F)
         {
           case 0: // Successfully stored
           case 1: // Not used
@@ -1311,9 +1311,9 @@ VtClientServerCommunication_c::processMsg()
       }
       break;
     case 0xD1: // Command: "Non Volatile Memory", parameter "Load Version Response"
-      if ((en_uploadType == UploadPool) && (en_uploadPoolState == UploadPoolWaitingForLoadVersionResponse))
+      if ((men_uploadType == UploadPool) && (men_uploadPoolState == UploadPoolWaitingForLoadVersionResponse))
       {
-        if ((c_data.getUint8Data (5) & 0x0F) == 0)
+        if ((mc_data.getUint8Data (5) & 0x0F) == 0)
         { // Successfully loaded
           finalizeUploading ();
 #ifdef DEBUG
@@ -1322,7 +1322,7 @@ VtClientServerCommunication_c::processMsg()
         }
         else
         {
-          if (c_data.getUint8Data (5) & (1<<2))
+          if (mc_data.getUint8Data (5) & (1<<2))
           { // Bit 2: // Insufficient memory available
 #ifdef DEBUG
             INTERNAL_DEBUG_DEVICE << "Received Load Version Response (D1) with error OutOfMem..." << INTERNAL_DEBUG_DEVICE_ENDL;
@@ -1344,11 +1344,11 @@ VtClientServerCommunication_c::processMsg()
 
     default:
       // handle proprietary messages from an AGCO VT
-      if (    c_data.getUint8Data (0) >= 0x60
-           && c_data.getUint8Data (0) <= 0x7F
+      if (    mc_data.getUint8Data (0) >= 0x60
+           && mc_data.getUint8Data (0) <= 0x7F
          )
       {
-        MACRO_setStateDependantOnError( c_streamer.rc_pool.eventProprietaryCommand( pc_vtServerInstance->getIsoName().toConstIisoName_c() ) )
+        MACRO_setStateDependantOnError( mc_streamer.mrc_pool.eventProprietaryCommand( mpc_vtServerInstance->getIsoName().toConstIisoName_c() ) )
       }
       break;
 
@@ -1357,23 +1357,23 @@ VtClientServerCommunication_c::processMsg()
   // Was it some command that requires queue-deletion & error processing?
   if (ui8_errByte != 0)
   {
-    if (en_uploadType == UploadCommand)
+    if (men_uploadType == UploadCommand)
     { /* if Waiting or Timedout (or Failed <shouldn't happen>) */
-      if (en_sendSuccess == __IsoAgLib::MultiSend_c::SendSuccess)
+      if (men_sendSuccess == __IsoAgLib::MultiSend_c::SendSuccess)
       { /// Our command was successfully sent & responded to, so remove it from the queue
-        if (ui8_commandParameter == c_data.getUint8Data (0))
+        if (mui8_commandParameter == mc_data.getUint8Data (0))
         { /* okay, right response for our current command! */
           // special treatment for Get Attribute Value command -> error byte is also being used as value byte for successful response
-          if ((ui8_commandParameter == 0xB9) && (c_data.getUint16Data (2-1) != 0xFFFF))
+          if ((mui8_commandParameter == 0xB9) && (mc_data.getUint16Data (2-1) != 0xFFFF))
             ui8_uploadCommandError = 0;
           else
-            ui8_uploadCommandError = c_data.getUint8Data (ui8_errByte-1);
+            ui8_uploadCommandError = mc_data.getUint8Data (ui8_errByte-1);
           /// Inform user on success/error of this command
-          c_streamer.rc_pool.eventCommandResponse (ui8_uploadCommandError, c_data.getUint8DataConstPointer()); // pass "ui8_uploadCommandError" in case it's only important if it's an error or not. get Cmd and all databytes from "c_data.name()"
+          mc_streamer.mrc_pool.eventCommandResponse (ui8_uploadCommandError, mc_data.getUint8DataConstPointer()); // pass "ui8_uploadCommandError" in case it's only important if it's an error or not. get Cmd and all databytes from "mc_data.name()"
 #ifdef DEBUG
           if (ui8_uploadCommandError != 0)
           { /* error */
-            INTERNAL_DEBUG_DEVICE << ">>> Command " << (uint32_t) ui8_commandParameter<< " failed with error " << (uint32_t) ui8_uploadCommandError << "!" << INTERNAL_DEBUG_DEVICE_ENDL;
+            INTERNAL_DEBUG_DEVICE << ">>> Command " << (uint32_t) mui8_commandParameter<< " failed with error " << (uint32_t) ui8_uploadCommandError << "!" << INTERNAL_DEBUG_DEVICE_ENDL;
           }
 #endif
           finishUploadCommand(); // finish command no matter if "okay" or "error"...
@@ -1392,18 +1392,18 @@ VtClientServerCommunication_c::processMsg()
 uint32_t
 VtClientServerCommunication_c::getUploadBufferSize()
 {
-  return q_sendUpload.size();
+  return mq_sendUpload.size();
 }
 
 
 uint8_t
 VtClientServerCommunication_c::getUserClippedColor (uint8_t colorValue, IsoAgLib::iVtObject_c* obj, IsoAgLib::e_vtColour whichColour)
 {
-  if (pc_vtServerInstance)
+  if (mpc_vtServerInstance)
   {
-    uint8_t colorDepth = pc_vtServerInstance->getVtCapabilities()->hwGraphicType;
+    uint8_t colorDepth = mpc_vtServerInstance->getVtCapabilities()->hwGraphicType;
     if (((colorDepth == 0) && (colorValue > 1)) || ((colorDepth == 1) && (colorValue > 16)))
-      return c_streamer.rc_pool.convertColour (colorValue, colorDepth, obj, whichColour);
+      return mc_streamer.mrc_pool.convertColour (colorValue, colorDepth, obj, whichColour);
   }
   return colorValue;
 }
@@ -1412,17 +1412,17 @@ VtClientServerCommunication_c::getUserClippedColor (uint8_t colorValue, IsoAgLib
 void
 VtClientServerCommunication_c::notifyOnNewVtServerInstance (VtServerInstance_c& r_newVtServerInst)
 {
-  if (pc_vtServerInstance) return;
+  if (mpc_vtServerInstance) return;
 
-  pc_vtServerInstance = &r_newVtServerInst;
+  mpc_vtServerInstance = &r_newVtServerInst;
 }
 
 
 void
 VtClientServerCommunication_c::notifyOnVtServerInstanceLoss (VtServerInstance_c& r_oldVtServerInst)
 {
-  if (&r_oldVtServerInst == pc_vtServerInstance)
-    pc_vtServerInstance = NULL;
+  if (&r_oldVtServerInst == mpc_vtServerInstance)
+    mpc_vtServerInstance = NULL;
 }
 
 
@@ -1433,12 +1433,12 @@ bool
 VtClientServerCommunication_c::sendCommand (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint8_t byte9, uint32_t ui32_timeout, bool b_enableReplaceOfCmd)
 {
 #ifdef DEBUG
-  INTERNAL_DEBUG_DEVICE << "Enqueued 9-bytes: " << q_sendUpload.size() << " -> ";
+  INTERNAL_DEBUG_DEVICE << "Enqueued 9-bytes: " << mq_sendUpload.size() << " -> ";
 #endif
 
-  sc_tempSendUpload.set (byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8, byte9, ui32_timeout);
+  msc_tempSendUpload.set (byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8, byte9, ui32_timeout);
 
-  return queueOrReplace (sc_tempSendUpload, b_enableReplaceOfCmd);
+  return queueOrReplace (msc_tempSendUpload, b_enableReplaceOfCmd);
 }
 
 /** @returns true if there was place in the SendUpload-Buffer (should always be the case now) */
@@ -1446,36 +1446,36 @@ bool
 VtClientServerCommunication_c::sendCommand (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint32_t ui32_timeout, bool b_enableReplaceOfCmd, IsoAgLib::iVtObject_c** rppc_vtObjects, uint16_t aui16_numObjects)
 {
 #ifdef DEBUG
-  INTERNAL_DEBUG_DEVICE << "Enqueued 8-bytes: " << q_sendUpload.size() << " -> " << INTERNAL_DEBUG_DEVICE_ENDL;
+  INTERNAL_DEBUG_DEVICE << "Enqueued 8-bytes: " << mq_sendUpload.size() << " -> " << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
 
-  sc_tempSendUpload.set (byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8, ui32_timeout, rppc_vtObjects, aui16_numObjects);
+  msc_tempSendUpload.set (byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8, ui32_timeout, rppc_vtObjects, aui16_numObjects);
 
-  return queueOrReplace (sc_tempSendUpload, b_enableReplaceOfCmd);
+  return queueOrReplace (msc_tempSendUpload, b_enableReplaceOfCmd);
 }
 
 bool
 VtClientServerCommunication_c::sendCommandForDEBUG (uint8_t* apui8_buffer, uint32_t ui32_size)
 {
 #ifdef DEBUG
-  INTERNAL_DEBUG_DEVICE << "Enqueued Debug-TP-bytes: " << q_sendUpload.size() << " -> ";
+  INTERNAL_DEBUG_DEVICE << "Enqueued Debug-TP-bytes: " << mq_sendUpload.size() << " -> ";
 #endif
 
-  sc_tempSendUpload.set (apui8_buffer, ui32_size);
+  msc_tempSendUpload.set (apui8_buffer, ui32_size);
 
-  return queueOrReplace (sc_tempSendUpload, false);
+  return queueOrReplace (msc_tempSendUpload, false);
 }
 
 bool
 VtClientServerCommunication_c::sendCommandChangeStringValue (IsoAgLib::iVtObjectString_c* apc_objectString, bool b_enableReplaceOfCmd)
 {
 #ifdef DEBUG
-  INTERNAL_DEBUG_DEVICE << "Enqueued stringObject-mss: " << q_sendUpload.size() << " -> ";
+  INTERNAL_DEBUG_DEVICE << "Enqueued stringObject-mss: " << mq_sendUpload.size() << " -> ";
 #endif
 
-  sc_tempSendUpload.set (apc_objectString);
+  msc_tempSendUpload.set (apc_objectString);
 
-  return queueOrReplace (sc_tempSendUpload, b_enableReplaceOfCmd);
+  return queueOrReplace (msc_tempSendUpload, b_enableReplaceOfCmd);
 }
 
 bool
@@ -1584,12 +1584,12 @@ bool
 VtClientServerCommunication_c::sendCommandChangeStringValue (uint16_t aui16_objectUid, const char* apc_newValue, uint16_t overrideSendLength, bool b_enableReplaceOfCmd)
 {
 #ifdef DEBUG
-  INTERNAL_DEBUG_DEVICE << "Enqueued string-ref: " << q_sendUpload.size() << " -> ";
+  INTERNAL_DEBUG_DEVICE << "Enqueued string-ref: " << mq_sendUpload.size() << " -> ";
 #endif
 
-  sc_tempSendUpload.set (aui16_objectUid, apc_newValue, overrideSendLength);
+  msc_tempSendUpload.set (aui16_objectUid, apc_newValue, overrideSendLength);
 
-  return queueOrReplace (sc_tempSendUpload, b_enableReplaceOfCmd);
+  return queueOrReplace (msc_tempSendUpload, b_enableReplaceOfCmd);
 }
 
 bool
@@ -1843,9 +1843,9 @@ VtClientServerCommunication_c::sendCommandDrawPolygon(
   }
 
   // Send buffer as ISOBUS command.
-  sc_tempSendUpload.set (pui8_buffer, ui16_bufferSize );
+  msc_tempSendUpload.set (pui8_buffer, ui16_bufferSize );
   delete[] pui8_buffer;
-  return queueOrReplace (sc_tempSendUpload, b_enableReplaceOfCmd);
+  return queueOrReplace (msc_tempSendUpload, b_enableReplaceOfCmd);
 }
 
 bool
@@ -1874,10 +1874,10 @@ VtClientServerCommunication_c::sendCommandDrawText(
   for (uint8_t ui8_index = 0; ui8_index < ui8_numOfCharacters; ui8_index++)
     pui8_buffer[6+ui8_index] = apc_newValue [ui8_index];
 
-  sc_tempSendUpload.set (pui8_buffer, (6+ui8_numOfCharacters));
+  msc_tempSendUpload.set (pui8_buffer, (6+ui8_numOfCharacters));
   delete[] pui8_buffer;
 
-  return queueOrReplace (sc_tempSendUpload, b_enableReplaceOfCmd);
+  return queueOrReplace (msc_tempSendUpload, b_enableReplaceOfCmd);
 }
 
 bool
@@ -1924,8 +1924,8 @@ VtClientServerCommunication_c::sendCommandPanAndZoomViewport(
   pui8_buffer[8] = zoom;
 
   // Send buffer as ISOBUS command.
-  sc_tempSendUpload.set( pui8_buffer, sizeof(pui8_buffer)/sizeof(*pui8_buffer) );
-  return queueOrReplace (sc_tempSendUpload, b_enableReplaceOfCmd);
+  msc_tempSendUpload.set( pui8_buffer, sizeof(pui8_buffer)/sizeof(*pui8_buffer) );
+  return queueOrReplace (msc_tempSendUpload, b_enableReplaceOfCmd);
 }
 
 bool
@@ -2010,7 +2010,7 @@ VtClientServerCommunication_c::sendCommandHideShow (uint16_t aui16_objectUid, ui
 bool
 VtClientServerCommunication_c::queueOrReplace (SendUpload_c& ar_sendUpload, bool b_enableReplaceOfCmd)
 {
-  if (en_objectPoolState != OPUploadedSuccessfully)
+  if (men_objectPoolState != OPUploadedSuccessfully)
   {
 #ifdef DEBUG
     INTERNAL_DEBUG_DEVICE << "--NOT ENQUEUED - POOL NO YET COMPLETELY UPLOADED!--" << INTERNAL_DEBUG_DEVICE_ENDL;
@@ -2028,15 +2028,15 @@ VtClientServerCommunication_c::queueOrReplace (SendUpload_c& ar_sendUpload, bool
 #else
   STL_NAMESPACE::queue<SendUpload_c>::iterator i_sendUpload;
 #endif
-  if (b_checkSameCommand && b_enableReplaceOfCmd && !q_sendUpload.empty())
+  if (mb_checkSameCommand && b_enableReplaceOfCmd && !mq_sendUpload.empty())
   { //get first equal command in queue
-    i_sendUpload = q_sendUpload.begin();
-    if ( en_uploadType == UploadCommand )
+    i_sendUpload = mq_sendUpload.begin();
+    if ( men_uploadType == UploadCommand )
     { // the first item in the queue is currently in upload process - so do NOT use this for replacement, as the next action
       // after receive of the awaited ACK is simple erase of the first command
       i_sendUpload++;
     }
-    for (; (p_queue == NULL) && (i_sendUpload != q_sendUpload.end()); i_sendUpload++)
+    for (; (p_queue == NULL) && (i_sendUpload != mq_sendUpload.end()); i_sendUpload++)
     { //first check if multisendstreamer is used!
       /* four cases:
       1. both use buffer
@@ -2110,9 +2110,9 @@ VtClientServerCommunication_c::queueOrReplace (SendUpload_c& ar_sendUpload, bool
   /* The SendUpload_c constructor only takes a reference, so don't change the string in the meantime!!! */
 #ifdef USE_LIST_FOR_FIFO
     // queueing with list: queue::push <-> list::push_back; queue::front<->list::front; queue::pop<->list::pop_front
-    q_sendUpload.push_back (ar_sendUpload);
+    mq_sendUpload.push_back (ar_sendUpload);
 #else
-    q_sendUpload.push (ar_sendUpload);
+    mq_sendUpload.push (ar_sendUpload);
 #endif
   }
   else
@@ -2124,7 +2124,7 @@ VtClientServerCommunication_c::queueOrReplace (SendUpload_c& ar_sendUpload, bool
 #endif
 
 #ifdef DEBUG
-  INTERNAL_DEBUG_DEVICE << q_sendUpload.size() << "." << INTERNAL_DEBUG_DEVICE_ENDL;
+  INTERNAL_DEBUG_DEVICE << mq_sendUpload.size() << "." << INTERNAL_DEBUG_DEVICE_ENDL;
   //dumpQueue(); /* to see all enqueued cmds after every enqueued cmd */
 #endif
   /** push(...) has no return value */
@@ -2145,7 +2145,7 @@ VtClientServerCommunication_c::dumpQueue()
   STL_NAMESPACE::queue<SendUpload_c>::iterator i_sendUpload;
 #endif
 
-  for (i_sendUpload = q_sendUpload.begin(); i_sendUpload != q_sendUpload.end(); i_sendUpload++)
+  for (i_sendUpload = mq_sendUpload.begin(); i_sendUpload != mq_sendUpload.end(); i_sendUpload++)
   {
     if (i_sendUpload->mssObjectString == NULL)
     {
@@ -2181,19 +2181,19 @@ void
 VtClientServerCommunication_c::doStart()
 {
   /// First, trigger sending of WS-Announce
-  i32_timeWsAnnounceKey = rc_wsMasterIdentItem.getIsoItem()->startWsAnnounce();
+  mi32_timeWsAnnounceKey = mrc_wsMasterIdentItem.getIsoItem()->startWsAnnounce();
 
-  i32_nextWsMaintenanceMsg = 0; // send out ws maintenance message immediately after ws has been announced.
+  mi32_nextWsMaintenanceMsg = 0; // send out ws maintenance message immediately after ws has been announced.
 
-  if (en_objectPoolState == OPInitial)
+  if (men_objectPoolState == OPInitial)
   { // no object pool
-    en_uploadType = UploadPool;
+    men_uploadType = UploadPool;
   }
   else
   { // "OP<was>UploadedSuccessfully" || "OPCannotBeUploaded" (on the previous VT: try probably other VT now)
-    en_objectPoolState = OPInitial; // try (re-)uploading, not caring if it was successfully or not on the last vt!
-    en_uploadType = UploadPool;          // Start Pool Uploading sequence!!
-    en_uploadPoolState = UploadPoolInit; // with "UploadInit
+    men_objectPoolState = OPInitial; // try (re-)uploading, not caring if it was successfully or not on the last vt!
+    men_uploadType = UploadPool;          // Start Pool Uploading sequence!!
+    men_uploadPoolState = UploadPoolInit; // with "UploadInit
   }
 }
 
@@ -2202,42 +2202,42 @@ void
 VtClientServerCommunication_c::doStop()
 {
   // actually not needed to be reset here, because if VT not active it's not checked and if VT gets active we restart the sending.
-  i32_timeWsAnnounceKey = -1;
+  mi32_timeWsAnnounceKey = -1;
 
   // VT has left the system - clear all queues now, don't wait until next re-entering (for memory reasons)
 #ifdef DEBUG_HEAP_USEAGE
-  sui16_sendUploadQueueSize -= q_sendUpload.size();
+  sui16_sendUploadQueueSize -= mq_sendUpload.size();
 #endif
 #ifdef USE_LIST_FOR_FIFO
   // queueing with list: queue::push <-> list::push_back; queue::front<->list::front; queue::pop<->list::pop_front
-  q_sendUpload.clear();
+  mq_sendUpload.clear();
 #else
-  while (!q_sendUpload.empty()) q_sendUpload.pop();
+  while (!mq_sendUpload.empty()) mq_sendUpload.pop();
 #endif
   /// if any upload is in progress, abort it
-  if (pc_vtServerInstance) // no Vt Alives anymore but Vt still announced
+  if (mpc_vtServerInstance) // no Vt Alives anymore but Vt still announced
   {
-    getMultiSendInstance4Comm().abortSend (rc_wsMasterIdentItem.isoName(), pc_vtServerInstance->getIsoName());
+    getMultiSendInstance4Comm().abortSend (mrc_wsMasterIdentItem.isoName(), mpc_vtServerInstance->getIsoName());
   }
   else
   {
     // vt's not announced
     // that case should be handles by the multisend itself
   }
-  c_streamer.rc_pool.eventEnterSafeState();
+  mc_streamer.mrc_pool.eventEnterSafeState();
 
   // set display state of the client to a defined state
-  en_displayState = VtClientDisplayStateHidden;
+  men_displayState = VtClientDisplayStateHidden;
 }
 
 
 void
 VtClientServerCommunication_c::checkVtStateChange()
 {
-  bool b_vtAliveOld = b_vtAliveCurrent;
-  b_vtAliveCurrent = isVtActive();
+  bool b_vtAliveOld = mb_vtAliveCurrent;
+  mb_vtAliveCurrent = isVtActive();
 
-  if (!b_vtAliveOld && b_vtAliveCurrent)
+  if (!b_vtAliveOld && mb_vtAliveCurrent)
   { /// OFF --> ON  ***  VT has (re-)entered the system
 #ifdef DEBUG
     INTERNAL_DEBUG_DEVICE
@@ -2250,7 +2250,7 @@ VtClientServerCommunication_c::checkVtStateChange()
 #endif
     doStart();
   }
-  else if (b_vtAliveOld && !b_vtAliveCurrent)
+  else if (b_vtAliveOld && !mb_vtAliveCurrent)
   { /// ON -> OFF  ***  Connection to VT lost
 #ifdef DEBUG
     INTERNAL_DEBUG_DEVICE
@@ -2268,70 +2268,70 @@ VtClientServerCommunication_c::checkVtStateChange()
 bool
 VtClientServerCommunication_c::isVtActive()
 {
-  if (!pc_vtServerInstance) return false;
-  return pc_vtServerInstance->isVtActive();
+  if (!mpc_vtServerInstance) return false;
+  return mpc_vtServerInstance->isVtActive();
 }
 
 
 void
 VtClientServerCommunication_c::startObjectPoolUploading (uploadPoolType_t ren_uploadPoolType, IsoAgLib::iVtObject_c** rppc_listOfUserPoolUpdateObjects, uint16_t aui16_numOfUserPoolUpdateObjects)
 {
-  en_uploadPoolType = ren_uploadPoolType;
+  men_uploadPoolType = ren_uploadPoolType;
 
   // calculate mask_stream size NOW (added 1 byte for "Object Pool Upload Start" Command Byte)
   // because we can't do before we get the color-depth information (0xC7)
-  c_streamer.ui32_streamSize = 0;
-  c_streamer.ui32_streamSizeLang = 0;  /// Note that SizeLang is also used for UserPartialUpdates!!!!
+  mc_streamer.mui32_streamSize = 0;
+  mc_streamer.mui32_streamSizeLang = 0;  /// Note that SizeLang is also used for UserPartialUpdates!!!!
 
   if (ren_uploadPoolType == UploadPoolTypeUserPoolUpdate)
   {
     // Activate User trigger Partial Pool Update
-    c_streamer.pc_userPoolUpdateObjects = rppc_listOfUserPoolUpdateObjects;
+    mc_streamer.mpc_userPoolUpdateObjects = rppc_listOfUserPoolUpdateObjects;
 
     for (uint32_t curObject=0; curObject < aui16_numOfUserPoolUpdateObjects; curObject++)
-      c_streamer.ui32_streamSizeLang += ((vtObject_c*)c_streamer.pc_userPoolUpdateObjects[curObject])->fitTerminal ();
+      mc_streamer.mui32_streamSizeLang += ((vtObject_c*)mc_streamer.mpc_userPoolUpdateObjects[curObject])->fitTerminal ();
   }
   else
   {
     // Activate Initial/LangUpdate UPLOAD
-    c_streamer.pc_userPoolUpdateObjects = NULL;
+    mc_streamer.mpc_userPoolUpdateObjects = NULL;
 
     // *CONDITIONALLY* Calculate GENERAL Part size (always init size to 0 above!)
     if (ren_uploadPoolType == UploadPoolTypeCompleteInitially) // was "if (!ab_onlyLanguageStream)"
     {
-      for (uint32_t curObject=0; curObject < c_streamer.rc_pool.getNumObjects(); curObject++)
-        c_streamer.ui32_streamSize += ((vtObject_c*)c_streamer.rc_pool.getIVtObjects()[0][curObject])->fitTerminal ();
+      for (uint32_t curObject=0; curObject < mc_streamer.mrc_pool.getNumObjects(); curObject++)
+        mc_streamer.mui32_streamSize += ((vtObject_c*)mc_streamer.mrc_pool.getIVtObjects()[0][curObject])->fitTerminal ();
     }
 
     // *ALWAYS* Calculate LANGUAGE Part size (if objectpool has multilanguage!)
-    if (c_streamer.rc_pool.getWorkingSetObject().get_vtObjectWorkingSet_a().numberOfLanguagesToFollow > 0) // supporting multilanguage.
+    if (mc_streamer.mrc_pool.getWorkingSetObject().get_vtObjectWorkingSet_a().numberOfLanguagesToFollow > 0) // supporting multilanguage.
     { // only if the objectpool has 2 or more languages, it makes sense to add the language code to the version-name
-      const int8_t ci8_realUploadingLanguage = (c_streamer.i8_objectPoolUploadingLanguage < 0) ? 0 : c_streamer.i8_objectPoolUploadingLanguage;
-      for (uint32_t curObject=0; curObject < c_streamer.rc_pool.getNumObjectsLang(); curObject++)
-        c_streamer.ui32_streamSizeLang += ((vtObject_c*)c_streamer.rc_pool.getIVtObjects()[ci8_realUploadingLanguage+1][curObject])->fitTerminal ();
+      const int8_t ci8_realUploadingLanguage = (mc_streamer.mi8_objectPoolUploadingLanguage < 0) ? 0 : mc_streamer.mi8_objectPoolUploadingLanguage;
+      for (uint32_t curObject=0; curObject < mc_streamer.mrc_pool.getNumObjectsLang(); curObject++)
+        mc_streamer.mui32_streamSizeLang += ((vtObject_c*)mc_streamer.mrc_pool.getIVtObjects()[ci8_realUploadingLanguage+1][curObject])->fitTerminal ();
     } // else: no LANGUAGE SPECIFIC objectpool, so keep this at 0 to indicate this!
 
     if (ren_uploadPoolType == UploadPoolTypeCompleteInitially) // was "if (!ab_onlyLanguageStream)"
     { // Issue GetMemory-Command
-      c_data.setExtCanPkg8 (7, 0, ECU_TO_VT_PGN>>8, pc_vtServerInstance->getVtSourceAddress(), rc_wsMasterIdentItem.getIsoItem()->nr(),
-                            192 /* 0xC0 */, 0xff, (c_streamer.ui32_streamSize+c_streamer.ui32_streamSizeLang) & 0xFF,
-                            ((c_streamer.ui32_streamSize+c_streamer.ui32_streamSizeLang) >>  8) & 0xFF,
-                            ((c_streamer.ui32_streamSize+c_streamer.ui32_streamSizeLang) >> 16) & 0xFF,
-                            (c_streamer.ui32_streamSize+c_streamer.ui32_streamSizeLang) >> 24, 0xff, 0xff);
-      getCanInstance4Comm() << c_data;     // Command: Get Technical Data --- Parameter: Get Memory Size
+      mc_data.setExtCanPkg8 (7, 0, ECU_TO_VT_PGN>>8, mpc_vtServerInstance->getVtSourceAddress(), mrc_wsMasterIdentItem.getIsoItem()->nr(),
+                            192 /* 0xC0 */, 0xff, (mc_streamer.mui32_streamSize+mc_streamer.mui32_streamSizeLang) & 0xFF,
+                            ((mc_streamer.mui32_streamSize+mc_streamer.mui32_streamSizeLang) >>  8) & 0xFF,
+                            ((mc_streamer.mui32_streamSize+mc_streamer.mui32_streamSizeLang) >> 16) & 0xFF,
+                            (mc_streamer.mui32_streamSize+mc_streamer.mui32_streamSizeLang) >> 24, 0xff, 0xff);
+      getCanInstance4Comm() << mc_data;     // Command: Get Technical Data --- Parameter: Get Memory Size
 
-      c_streamer.ui32_streamSize++; // add the 0x11 byte!
+      mc_streamer.mui32_streamSize++; // add the 0x11 byte!
 
       // Now proceed to uploading
-      en_uploadPoolState = UploadPoolWaitingForMemoryResponse;
-      ui32_uploadTimeout = DEF_TimeOut_NormalCommand;
-      ui32_uploadTimestamp = HAL::getTime();
+      men_uploadPoolState = UploadPoolWaitingForMemoryResponse;
+      mui32_uploadTimeout = DEF_TimeOut_NormalCommand;
+      mui32_uploadTimestamp = HAL::getTime();
     }
   }
 
-  if (c_streamer.ui32_streamSizeLang > 0)
+  if (mc_streamer.mui32_streamSizeLang > 0)
   { // only if there's at least one object being streamed up as LANGUAGE specific objectpool add the CMD byte for size calculation...
-    c_streamer.ui32_streamSizeLang++; // add the 0x11 byte!
+    mc_streamer.mui32_streamSizeLang++; // add the 0x11 byte!
   }
 }
 
@@ -2340,37 +2340,37 @@ VtClientServerCommunication_c::startObjectPoolUploading (uploadPoolType_t ren_up
 void
 VtClientServerCommunication_c::finalizeUploading() //bool ab_wasLanguageUpdate)
 {
-  if (en_uploadPoolType == UploadPoolTypeUserPoolUpdate)
+  if (men_uploadPoolType == UploadPoolTypeUserPoolUpdate)
   { /// Was user-pool-update
   }
   else
   { /// Was complete initial pool or language pool update.
     /// in both cases we uploaded in one specific language!! so do the following:
-    c_streamer.i8_objectPoolUploadedLanguage = c_streamer.i8_objectPoolUploadingLanguage;
-    c_streamer.ui16_objectPoolUploadedLanguageCode = c_streamer.ui16_objectPoolUploadingLanguageCode;
-    c_streamer.i8_objectPoolUploadingLanguage = -2; // -2 indicated that the language-update while pool is up IS IDLE!
-    c_streamer.ui16_objectPoolUploadingLanguageCode = 0x0000;
+    mc_streamer.mi8_objectPoolUploadedLanguage = mc_streamer.mi8_objectPoolUploadingLanguage;
+    mc_streamer.mui16_objectPoolUploadedLanguageCode = mc_streamer.mui16_objectPoolUploadingLanguageCode;
+    mc_streamer.mi8_objectPoolUploadingLanguage = -2; // -2 indicated that the language-update while pool is up IS IDLE!
+    mc_streamer.mui16_objectPoolUploadingLanguageCode = 0x0000;
   #ifdef DEBUG
-    INTERNAL_DEBUG_DEVICE << "===> finalizeUploading () with language: "<<(int)c_streamer.i8_objectPoolUploadedLanguage;
-    if (c_streamer.i8_objectPoolUploadedLanguage >= 0) INTERNAL_DEBUG_DEVICE <<" ["<<uint8_t(c_streamer.ui16_objectPoolUploadedLanguageCode>>8) <<uint8_t(c_streamer.ui16_objectPoolUploadedLanguageCode&0xFF)<<"]";
+    INTERNAL_DEBUG_DEVICE << "===> finalizeUploading () with language: "<<(int)mc_streamer.mi8_objectPoolUploadedLanguage;
+    if (mc_streamer.mi8_objectPoolUploadedLanguage >= 0) INTERNAL_DEBUG_DEVICE <<" ["<<uint8_t(mc_streamer.mui16_objectPoolUploadedLanguageCode>>8) <<uint8_t(mc_streamer.mui16_objectPoolUploadedLanguageCode&0xFF)<<"]";
     INTERNAL_DEBUG_DEVICE << INTERNAL_DEBUG_DEVICE_ENDL;
   #endif
-    if (en_uploadPoolType == UploadPoolTypeLanguageUpdate)
+    if (men_uploadPoolType == UploadPoolTypeLanguageUpdate)
     {
-      // no need to set "en_objectPoolState" and "en_uploadType", this is done in "finishUploadCommand()"
+      // no need to set "men_objectPoolState" and "men_uploadType", this is done in "finishUploadCommand()"
     }
     else
     {
   #ifdef DEBUG
-      INTERNAL_DEBUG_DEVICE << "Now en_objectPoolState = OPUploadedSuccessfully;" << INTERNAL_DEBUG_DEVICE_ENDL;
+      INTERNAL_DEBUG_DEVICE << "Now men_objectPoolState = OPUploadedSuccessfully;" << INTERNAL_DEBUG_DEVICE_ENDL;
   #endif
-      en_objectPoolState = OPUploadedSuccessfully;
-      en_uploadType = UploadIdle;
+      men_objectPoolState = OPUploadedSuccessfully;
+      men_uploadType = UploadIdle;
     }
-    c_streamer.rc_pool.eventObjectPoolUploadedSuccessfully ((en_uploadPoolType == UploadPoolTypeLanguageUpdate), c_streamer.i8_objectPoolUploadedLanguage, c_streamer.ui16_objectPoolUploadedLanguageCode);
+    mc_streamer.mrc_pool.eventObjectPoolUploadedSuccessfully ((men_uploadPoolType == UploadPoolTypeLanguageUpdate), mc_streamer.mi8_objectPoolUploadedLanguage, mc_streamer.mui16_objectPoolUploadedLanguageCode);
   }
   /// @todo for now we allow parallel uploads
-  ///rc_isoTerminal.resetFlagForPoolUpload (this);
+  ///mrc_isoTerminal.resetFlagForPoolUpload (this);
 }
 
 
@@ -2379,31 +2379,31 @@ void
 VtClientServerCommunication_c::indicateObjectPoolCompletion()
 {
   // successfully sent, so now send out the "End of Object Pool Message" and wait for response!
-  c_data.setExtCanPkg8 (7, 0, ECU_TO_VT_PGN>>8, pc_vtServerInstance->getVtSourceAddress(), rc_wsMasterIdentItem.getIsoItem()->nr(),
+  mc_data.setExtCanPkg8 (7, 0, ECU_TO_VT_PGN>>8, mpc_vtServerInstance->getVtSourceAddress(), mrc_wsMasterIdentItem.getIsoItem()->nr(),
                         18, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
-  getCanInstance4Comm() << c_data;     // Command: Object Pool Transfer --- Parameter: Object Pool Ready
-  en_uploadPoolState = UploadPoolWaitingForEOOResponse; // and wait for response to set en_uploadState back to UploadIdle;
-  ui32_uploadTimeout = DEF_TimeOut_EndOfObjectPool; // wait 10 seconds for terminal to initialize pool!
-  ui32_uploadTimestamp = HAL::getTime();
+  getCanInstance4Comm() << mc_data;     // Command: Object Pool Transfer --- Parameter: Object Pool Ready
+  men_uploadPoolState = UploadPoolWaitingForEOOResponse; // and wait for response to set en_uploadState back to UploadIdle;
+  mui32_uploadTimeout = DEF_TimeOut_EndOfObjectPool; // wait 10 seconds for terminal to initialize pool!
+  mui32_uploadTimestamp = HAL::getTime();
 }
 
 
-// only being called if there IS a q_sendUpload.front()
+// only being called if there IS a mq_sendUpload.front()
 bool
 VtClientServerCommunication_c::startUploadCommand()
 {
   /** @todo Up to now, none cares for the return code. implement error handling in case multisend couldn't be started? */
   // Set new state
-  en_uploadType = UploadCommand;
-  // along with UploadCommand ALWAYS set "en_sendSuccess", not only for Multipacket!
-  en_uploadCommandState = UploadCommandWaitingForCommandResponse;
+  men_uploadType = UploadCommand;
+  // along with UploadCommand ALWAYS set "men_sendSuccess", not only for Multipacket!
+  men_uploadCommandState = UploadCommandWaitingForCommandResponse;
 
   // Get first element from queue
-  SendUpload_c* actSend = &q_sendUpload.front();
+  SendUpload_c* actSend = &mq_sendUpload.front();
 
   // Set time-out values
-  ui32_uploadTimeout = actSend->ui32_uploadTimeout;
-  ui32_uploadTimestamp = HAL::getTime();
+  mui32_uploadTimeout = actSend->getUploadTimeout();
+  mui32_uploadTimestamp = HAL::getTime();
 
    /// Use Multi or Single CAN-Pkgs?
   //////////////////////////////////
@@ -2413,7 +2413,7 @@ VtClientServerCommunication_c::startUploadCommand()
     if (actSend->vec_uploadBuffer[0] == 0x11)
     { /// Handle special case of LanguageUpdate / UserPoolUpdate
       // There's NO response for command 0x11!
-      en_uploadCommandState = UploadCommandWithoutResponse;
+      men_uploadCommandState = UploadCommandWithoutResponse;
       if (actSend->ppc_vtObjects)
       { /// User triggered Partial Pool Update
         startObjectPoolUploading (UploadPoolTypeUserPoolUpdate, actSend->ppc_vtObjects, actSend->ui16_numObjects);
@@ -2423,30 +2423,30 @@ VtClientServerCommunication_c::startUploadCommand()
         // Special send object pool!
         startObjectPoolUploading (UploadPoolTypeLanguageUpdate);
       }
-      if (c_streamer.ui32_streamSizeLang > 0)
+      if (mc_streamer.mui32_streamSizeLang > 0)
       { // start LANGUAGE/USER part upload!
-        return getMultiSendInstance4Comm().sendIsoTarget (rc_wsMasterIdentItem.isoName(), pc_vtServerInstance->getIsoName(), &c_streamer, ECU_TO_VT_PGN, en_sendSuccess);
+        return getMultiSendInstance4Comm().sendIsoTarget (mrc_wsMasterIdentItem.isoName(), mpc_vtServerInstance->getIsoName(), &mc_streamer, ECU_TO_VT_PGN, men_sendSuccess);
       }
       else
       { // shouldn't happen, but catch case anyway!
         // nothing was sent out, so set to success so it gets removed simply...
-        en_sendSuccess = __IsoAgLib::MultiSend_c::SendSuccess; // as it has been sent out right now.
+        men_sendSuccess = __IsoAgLib::MultiSend_c::SendSuccess; // as it has been sent out right now.
         return true;
       }
     }
     else
     { /// normal 8 byte package
       // Shouldn't be less than 8, else we're messin around with vec_uploadBuffer!
-      c_data.setExtCanPkg8 (7, 0, ECU_TO_VT_PGN>>8, pc_vtServerInstance->getVtSourceAddress(), rc_wsMasterIdentItem.getIsoItem()->nr(),
+      mc_data.setExtCanPkg8 (7, 0, ECU_TO_VT_PGN>>8, mpc_vtServerInstance->getVtSourceAddress(), mrc_wsMasterIdentItem.getIsoItem()->nr(),
                             actSend->vec_uploadBuffer [0], actSend->vec_uploadBuffer [1],
                             actSend->vec_uploadBuffer [2], actSend->vec_uploadBuffer [3],
                             actSend->vec_uploadBuffer [4], actSend->vec_uploadBuffer [5],
                             actSend->vec_uploadBuffer [6], actSend->vec_uploadBuffer [7]);
-      getCanInstance4Comm() << c_data;
+      getCanInstance4Comm() << mc_data;
       // Save first byte for Response-Checking!
-      ui8_commandParameter = actSend->vec_uploadBuffer [0];
+      mui8_commandParameter = actSend->vec_uploadBuffer [0];
 
-      en_sendSuccess = __IsoAgLib::MultiSend_c::SendSuccess; // as it has been sent out right now.
+      men_sendSuccess = __IsoAgLib::MultiSend_c::SendSuccess; // as it has been sent out right now.
       return true;
     }
   }
@@ -2454,40 +2454,40 @@ VtClientServerCommunication_c::startUploadCommand()
   { /// Fits into a single CAN-Pkg!
     uint8_t ui8_len = actSend->mssObjectString->getStreamer()->getStreamSize();
 
-    c_data.setExtCanPkg (7, 0, ECU_TO_VT_PGN>>8, pc_vtServerInstance->getVtSourceAddress(), rc_wsMasterIdentItem.getIsoItem()->nr(), 8); // ECU->VT PGN is ALWAYS 8 Bytes!
-    actSend->mssObjectString->getStreamer()->set5ByteCommandHeader (c_data.getUint8DataPointer());
+    mc_data.setExtCanPkg (7, 0, ECU_TO_VT_PGN>>8, mpc_vtServerInstance->getVtSourceAddress(), mrc_wsMasterIdentItem.getIsoItem()->nr(), 8); // ECU->VT PGN is ALWAYS 8 Bytes!
+    actSend->mssObjectString->getStreamer()->set5ByteCommandHeader (mc_data.getUint8DataPointer());
     int i=5;
-    for (; i < ui8_len; i++) c_data.setUint8Data( i, actSend->mssObjectString->getStreamer()->getStringToStream() [i-5] );
-    for (; i < 8;       i++) c_data.setUint8Data( i, 0xFF); // pad unused bytes with "0xFF", so CAN-Pkg is of size 8!
-    getCanInstance4Comm() << c_data;
+    for (; i < ui8_len; i++) mc_data.setUint8Data( i, actSend->mssObjectString->getStreamer()->getStringToStream() [i-5] );
+    for (; i < 8;       i++) mc_data.setUint8Data( i, 0xFF); // pad unused bytes with "0xFF", so CAN-Pkg is of size 8!
+    getCanInstance4Comm() << mc_data;
     // Save first byte for Response-Checking!
-    ui8_commandParameter = actSend->mssObjectString->getStreamer()->getFirstByte();
+    mui8_commandParameter = actSend->mssObjectString->getStreamer()->getFirstByte();
 
-    en_sendSuccess = __IsoAgLib::MultiSend_c::SendSuccess; // as it has been sent out right now.
+    men_sendSuccess = __IsoAgLib::MultiSend_c::SendSuccess; // as it has been sent out right now.
     return true;
   }
   else if (actSend->mssObjectString == NULL)
   { /// Use multi CAN-Pkgs [(E)TP], doesn't fit into a single CAN-Pkg!
     // Save first byte for Response-Checking!
-    ui8_commandParameter = actSend->vec_uploadBuffer [0]; // Save first byte for Response-Checking!
+    mui8_commandParameter = actSend->vec_uploadBuffer [0]; // Save first byte for Response-Checking!
 
-    return getMultiSendInstance4Comm().sendIsoTarget (rc_wsMasterIdentItem.isoName(),
-                                                      pc_vtServerInstance->getIsoName(),
+    return getMultiSendInstance4Comm().sendIsoTarget (mrc_wsMasterIdentItem.isoName(),
+                                                      mpc_vtServerInstance->getIsoName(),
                                                       &actSend->vec_uploadBuffer.front(),
                                                       actSend->vec_uploadBuffer.size(),
                                                       ECU_TO_VT_PGN,
-                                                      en_sendSuccess);
+                                                      men_sendSuccess);
   }
   else
   {
     // Save first byte for Response-Checking!
-    ui8_commandParameter = actSend->mssObjectString->getStreamer()->getFirstByte();
+    mui8_commandParameter = actSend->mssObjectString->getStreamer()->getFirstByte();
 
-    return getMultiSendInstance4Comm().sendIsoTarget (rc_wsMasterIdentItem.isoName(),
-                                                      pc_vtServerInstance->getIsoName(),
+    return getMultiSendInstance4Comm().sendIsoTarget (mrc_wsMasterIdentItem.isoName(),
+                                                      mpc_vtServerInstance->getIsoName(),
                                                       (IsoAgLib::iMultiSendStreamer_c*)actSend->mssObjectString->getStreamer(),
                                                       ECU_TO_VT_PGN,
-                                                      en_sendSuccess);
+                                                      men_sendSuccess);
   }
 }
 
@@ -2495,28 +2495,28 @@ VtClientServerCommunication_c::startUploadCommand()
 void
 VtClientServerCommunication_c::finishUploadCommand()
 {
-  en_uploadType = UploadIdle;
+  men_uploadType = UploadIdle;
 
-  if ( !q_sendUpload.empty() )
+  if ( !mq_sendUpload.empty() )
   {
 
     //dumpQueue(); /* to see all left queued cmds after every dequeued cmd */
     #ifdef DEBUG
-    INTERNAL_DEBUG_DEVICE << "Dequeued (after success, timeout, whatever..): " << q_sendUpload.size() <<" -> ";
+    INTERNAL_DEBUG_DEVICE << "Dequeued (after success, timeout, whatever..): " << mq_sendUpload.size() <<" -> ";
     #endif
 
     #ifdef USE_LIST_FOR_FIFO
     // queueing with list: queue::push <-> list::push_back; queue::front<->list::front; queue::pop<->list::pop_front
-    q_sendUpload.pop_front();
+    mq_sendUpload.pop_front();
     #else
-    q_sendUpload.pop();
+    mq_sendUpload.pop();
     #endif
     #ifdef DEBUG_HEAP_USEAGE
     sui16_sendUploadQueueSize--;
     #endif
 
     #ifdef DEBUG
-    INTERNAL_DEBUG_DEVICE << q_sendUpload.size() << "." << INTERNAL_DEBUG_DEVICE_ENDL;
+    INTERNAL_DEBUG_DEVICE << mq_sendUpload.size() << "." << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
 
     // trigger fast reschedule if more messages are waiting
@@ -2538,18 +2538,18 @@ void
 VtClientServerCommunication_c::vtOutOfMemory()
 {  // can't (up)load the pool.
   getILibErrInstance().registerError (iLibErr_c::RemoteServiceOutOfMemory, iLibErr_c::IsoTerminal);
-  en_uploadPoolState = UploadPoolFailed; // no timeout needed
-  en_objectPoolState = OPCannotBeUploaded;
+  men_uploadPoolState = UploadPoolFailed; // no timeout needed
+  men_objectPoolState = OPCannotBeUploaded;
   /// @todo for now allow parallel uploads
-  ///rc_isoTerminal.resetFlagForPoolUpload (this);
+  ///mrc_isoTerminal.resetFlagForPoolUpload (this);
 }
 
 /** set display state of vt client */
 void
 VtClientServerCommunication_c::setVtDisplayState (bool b_isVtStatusMsg, uint8_t ui8_saOrDisplayState)
 {
-  if (en_objectPoolState != OPUploadedSuccessfully) return;
-  // as we don't properly seem to reset "en_objectPoolState" at doStop(), we'll for now add the extra
+  if (men_objectPoolState != OPUploadedSuccessfully) return;
+  // as we don't properly seem to reset "men_objectPoolState" at doStop(), we'll for now add the extra
   // isAddress-Claimed-check here for safety:
   if (!getIdentItem().isClaimedAddress()) return;
 
@@ -2587,8 +2587,8 @@ VtClientServerCommunication_c::setVtDisplayState (bool b_isVtStatusMsg, uint8_t 
 
   if (newDisplayState != getVtDisplayState())
   {
-    en_displayState = newDisplayState;
-    c_streamer.rc_pool.eventDisplayActivation();
+    men_displayState = newDisplayState;
+    mc_streamer.mrc_pool.eventDisplayActivation();
   }
 }
 
@@ -2596,13 +2596,13 @@ VtClientServerCommunication_c::setVtDisplayState (bool b_isVtStatusMsg, uint8_t 
 void
 VtClientServerCommunication_c::setObjectPoolUploadingLanguage()
 {
-  c_streamer.i8_objectPoolUploadingLanguage = i8_vtLanguage;
-  c_streamer.ui16_objectPoolUploadingLanguageCode = 0x0000;
-  if (c_streamer.rc_pool.getWorkingSetObject().get_vtObjectWorkingSet_a().numberOfLanguagesToFollow > 1) // supporting multilanguage.
+  mc_streamer.mi8_objectPoolUploadingLanguage = mi8_vtLanguage;
+  mc_streamer.mui16_objectPoolUploadingLanguageCode = 0x0000;
+  if (mc_streamer.mrc_pool.getWorkingSetObject().get_vtObjectWorkingSet_a().numberOfLanguagesToFollow > 1) // supporting multilanguage.
   { // only if the objectpool has 2 or more languages, it makes sense to add the language code to the version-name
-    const int8_t ci8_realUploadingLanguage = (c_streamer.i8_objectPoolUploadingLanguage < 0) ? 0 : c_streamer.i8_objectPoolUploadingLanguage;
-    const uint8_t* lang = c_streamer.rc_pool.getWorkingSetObject().get_vtObjectWorkingSet_a().languagesToFollow[ci8_realUploadingLanguage].language;
-    c_streamer.ui16_objectPoolUploadingLanguageCode = (lang [0] << 8) | lang[1];
+    const int8_t ci8_realUploadingLanguage = (mc_streamer.mi8_objectPoolUploadingLanguage < 0) ? 0 : mc_streamer.mi8_objectPoolUploadingLanguage;
+    const uint8_t* lang = mc_streamer.mrc_pool.getWorkingSetObject().get_vtObjectWorkingSet_a().languagesToFollow[ci8_realUploadingLanguage].language;
+    mc_streamer.mui16_objectPoolUploadingLanguageCode = (lang [0] << 8) | lang[1];
   }
 }
 
@@ -2621,26 +2621,26 @@ IsoAgLib::iVtClientServerCommunication_c* VtClientServerCommunication_c::toInter
 uint16_t
 VtClientServerCommunication_c::getVtObjectPoolSoftKeyWidth()
 {
-  return c_streamer.rc_pool.getSkWidth();
+  return mc_streamer.mrc_pool.getSkWidth();
 }
 
 
 uint16_t
 VtClientServerCommunication_c::getVtObjectPoolDimension()
 {
-  return c_streamer.rc_pool.getDimension();
+  return mc_streamer.mrc_pool.getDimension();
 }
 
 VtServerInstance_c&
 VtClientServerCommunication_c::getVtServerInst()
 { // @todo Does this make sense? pc_ may be NULL!
-  return *pc_vtServerInstance;
+  return *mpc_vtServerInstance;
 }
 
 uint16_t
 VtClientServerCommunication_c::getVtObjectPoolSoftKeyHeight()
 {
-  return c_streamer.rc_pool.getSkHeight();
+  return mc_streamer.mrc_pool.getSkHeight();
 }
 
 
