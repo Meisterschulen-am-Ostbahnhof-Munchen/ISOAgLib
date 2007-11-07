@@ -4372,6 +4372,10 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
   // Add all Child-Elements recursively
   uint64_t omcType = omcTypeTable [objType];
   if (objType == otContainer) omcType = ombType; // Object May Contain what the Object Is - Simple rule. more simple than the graphic in the spec. ;)
+  else if ( pc_specialParsingPropTag && (objType >= maxObjectTypes) )
+  {
+    omcType = *pc_specialParsingPropTag->setOmcType(&omcType, &ombType);
+  }
 
   for (child = n->getFirstChild(); child != 0; child=child->getNextSibling())
   {
