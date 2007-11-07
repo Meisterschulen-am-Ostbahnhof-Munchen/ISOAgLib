@@ -568,8 +568,6 @@ bool waitUntilCanReceiveOrTimeout( uint16_t rui16_timeoutInterval )
 
   i16_rc = select(FD_SETSIZE, &rfds, NULL, NULL, &s_timeout);
 
-  if (i16_rc>0)
-    printf("data\n");
   // return true, when the timeout was NOT the trigger for coming back from select
   return ( i16_rc > 0 )?true:false;
 };

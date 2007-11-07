@@ -923,7 +923,7 @@ static void* command_thread_func(void* ptr)
   int16_t i16_rc;
   int32_t i32_error;
   int32_t i32_dataContent;
-  int32_t i32_data;
+  int32_t i32_data = 0;
   transferBuf_s s_transferBuf;
 
   server_c* pc_serverData = static_cast<server_c*>(ptr);
@@ -1074,7 +1074,9 @@ static void* command_thread_func(void* ptr)
 
             if (!i16_init_rc) {
               printf("can't initialize CAN\n");
+              printf("CAN device not ready or wrong PRJ_CAN_DRIVER_DEVICE selected?\n");
               i32_error = HAL_CONFIG_ERR;
+              abort();
             }
           }
 

@@ -826,6 +826,7 @@ void readWrite(server_c* pc_serverData)
   struct timeval t_timeout;
   bool b_deviceHandleFound;
   uint32_t ui32_sleepTime = 50000;
+  uint32_t ui32_loopCnt = 0;
 
   for (;;) {
 
@@ -876,27 +877,33 @@ void readWrite(server_c* pc_serverData)
       // error
       continue;
 
-    if ((i_selectResult == 0) && !b_deviceHandleFound)
-    { // timeout => read from can card if we do not have a valid device handle
-      // (important for WIN32 PEAK can card and for RTE)
-      for (uint32_t ui32_cnt = 0; ui32_cnt < cui32_maxCanBusCnt; ui32_cnt++)
-      {
-        if (pc_serverData->ui16_busRefCnt[ui32_cnt])
-        {
-          if (readFromBus(ui32_cnt, &(s_transferBuf.s_data.s_canMsg), pc_serverData) > 0)
-          {
-            pthread_mutex_lock( &(pc_serverData->m_protectClientList) );
-            enqueue_msg(&s_transferBuf, 0, pc_serverData);
-            pthread_mutex_unlock( &(pc_serverData->m_protectClientList) );
-            ui32_sleepTime = 5000;  // CAN message received => reduce sleep time
-          }
-          break; // handle only first found bus
-        }
-      }
-      continue;
-    }
+    ui32_sleepTime = 50000;
 
-    ui32_sleepTime = 50000; // no CAN message received => increase sleep time
+    ui32_loopCnt++;
+
+    if (!b_deviceHandleFound)
+    { // if there is high CAN load between the clients, the timeout may not be reached 
+      // => check for new messages from the CAN device each 10 msgs
+      if ((i_selectResult == 0) || (ui32_loopCnt % 10 == 0))
+      { // timeout or loopCount condition reached => read from can card if we do not have a valid device handle
+        // (important for WIN32 PEAK can card and for RTE)
+        for (uint32_t ui32_cnt = 0; ui32_cnt < cui32_maxCanBusCnt; ui32_cnt++)
+        {
+          if (pc_serverData->ui16_busRefCnt[ui32_cnt])
+          {
+            if (readFromBus(ui32_cnt, &(s_transferBuf.s_data.s_canMsg), pc_serverData) > 0)
+            {
+              pthread_mutex_lock( &(pc_serverData->m_protectClientList) );
+              enqueue_msg(&s_transferBuf, 0, pc_serverData);
+              pthread_mutex_unlock( &(pc_serverData->m_protectClientList) );
+              ui32_sleepTime = 5000;  // CAN message received => reduce sleep time
+            }
+            break; // handle only first found bus
+          }
+        }
+        continue;
+      }
+    }
 
     // new message from can device ?
     for (uint32_t ui32_cnt = 0; ui32_cnt < cui32_maxCanBusCnt; ui32_cnt++ )
