@@ -142,35 +142,35 @@ public:
     deliver subprog type
     @return type of this measure subprogram increment
   */
-  Proc_c::type_t type(){return en_type;};
+  Proc_c::type_t type(){return men_type;};
 
   /**
     set subprog type
     @param ren_type wanted increment type of this subprogram
   */
-  void setType(Proc_c::type_t ren_type){en_type = ren_type;};
+  void setType(Proc_c::type_t ren_type){men_type = ren_type;};
   
   /**
     deliver subprog data send type
     @return data send type of this measure subprogram increment
   */
-  Proc_c::doSend_t doSend(){return en_doSend;};
+  Proc_c::doSend_t doSend(){return men_doSend;};
   /**
     set subprog data send type
     @param ren_doSend wanted data send type of this measure subprogram
   */
-  void setDoSend_t(Proc_c::doSend_t ren_doSend){en_doSend = ren_doSend;};
+  void setDoSend_t(Proc_c::doSend_t ren_doSend){men_doSend = ren_doSend;};
   
   /**
     deliver the increment value of this subprog
     @return increment value
   */
-  int32_t increment() const {return i32_increment;};
+  int32_t increment() const {return mi32_increment;};
   /**
     set increment value
     @param ai32_val wanted increment value
   */
-  void setIncrement(int32_t ai32_val){i32_increment = ai32_val;};
+  void setIncrement(int32_t ai32_val){mi32_increment = ai32_val;};
 
   /**
     start a measuring subprogramm, potentially with increment and lastVal definition
@@ -213,7 +213,7 @@ public:
   bool updateTrigger(float af_val);
 #endif
   /** stop a measuring subprogram  */
-  void stop(){b_started = false;};
+  void stop(){mb_started = false;};
 
   /**
     compare two Subprogs with ==
@@ -294,27 +294,27 @@ private: // Private attributes
 #ifdef USE_FLOAT_DATA_TYPE
   /** last value for the increment test of this instance */
   union {
-  int32_t i32_lastVal;
+  int32_t mi32_lastVal;
   float f_lastVal;
   };
   /** increment of this subprog item */
   union {
-  int32_t i32_increment;
+  int32_t mi32_increment;
   float f_increment;
   };
 #else
   /** last value for the increment test of this instance */
-  int32_t i32_lastVal;
+  int32_t mi32_lastVal;
   /** increment of this subprog item */
-  int32_t i32_increment;
+  int32_t mi32_increment;
 #endif
   /** states if this subprog is started */
-  bool b_started;
+  bool mb_started;
   /** type of this subprog instance 
     (the managed increment type)
   */
-  Proc_c::type_t en_type;
-  Proc_c::doSend_t en_doSend;
+  Proc_c::type_t men_type;
+  Proc_c::doSend_t men_doSend;
 private: // Private methods
   /**
     calculate a single identifying value for easier compare of Subprogs

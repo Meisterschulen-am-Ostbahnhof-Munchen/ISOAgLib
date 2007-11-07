@@ -134,7 +134,7 @@ void SimpleManageSetpointLocal_c::init( ProcDataBase_c *const apc_processData )
 {
   ProcessElementBase_c::set( apc_processData );
   #if !defined(HANDLE_SETPOINT_MEASURE_EQUIVALENT)
-    i32_setpointMasterVal = 0;
+    mi32_setpointMasterVal = 0;
   #endif
 }
 /** copy constructor */
@@ -142,7 +142,7 @@ SimpleManageSetpointLocal_c::SimpleManageSetpointLocal_c( const SimpleManageSetp
 : ProcessElementBase_c( arc_src )
 {
   #if !defined(HANDLE_SETPOINT_MEASURE_EQUIVALENT)
-    i32_setpointMasterVal = arc_src.i32_setpointMasterVal;
+    mi32_setpointMasterVal = arc_src.mi32_setpointMasterVal;
   #endif
 }
 /** assignment operator */
@@ -150,7 +150,7 @@ const SimpleManageSetpointLocal_c& SimpleManageSetpointLocal_c::operator=( const
 {
   ProcessElementBase_c::operator=( arc_src );
   #if !defined(HANDLE_SETPOINT_MEASURE_EQUIVALENT)
-    i32_setpointMasterVal = arc_src.i32_setpointMasterVal;
+    mi32_setpointMasterVal = arc_src.mi32_setpointMasterVal;
   #endif
 
   return *this;
@@ -161,10 +161,10 @@ void SimpleManageSetpointLocal_c::processSetpoint(){
   ProcessPkg_c& c_pkg = getProcessInstance4Comm().data();
   const IsoName_c& cc_senderISOName = c_pkg.memberSend().isoName();
 
-  if (c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::setValue)
+  if (c_pkg.mc_generalCommand.getCommand() == GeneralCommand_c::setValue)
   { // setpoint set
     bool b_change = false;
-    switch (c_pkg.c_generalCommand.getValueGroup())
+    switch (c_pkg.mc_generalCommand.getValueGroup())
     {
       case GeneralCommand_c::exactValue: // set actual setpoint
       case GeneralCommand_c::minValue: // min -> simply set exact
@@ -199,7 +199,7 @@ void SimpleManageSetpointLocal_c::processSetpoint(){
   else
   #endif
   {
-    sendSetpointMod(cc_senderISOName, c_pkg.c_generalCommand.getValueGroup(), GeneralCommand_c::setValue );
+    sendSetpointMod(cc_senderISOName, c_pkg.mc_generalCommand.getValueGroup(), GeneralCommand_c::setValue );
   }
 
 }
@@ -217,7 +217,7 @@ bool SimpleManageSetpointLocal_c::sendSetpointMod(const IsoName_c& ac_targetISON
                                                   GeneralCommand_c::ValueGroup_t en_valueGroup,
                                                   GeneralCommand_c::CommandType_t en_command ) const {
   // prepare general command in process pkg
-  getProcessInstance4Comm().data().c_generalCommand.setValues(true /* isSetpoint */, false, /* isRequest */
+  getProcessInstance4Comm().data().mc_generalCommand.setValues(true /* isSetpoint */, false, /* isRequest */
                                                               en_valueGroup, en_command);
   //if ( aui8_mod != 1 ) {
     // not percent
@@ -238,11 +238,11 @@ bool SimpleManageSetpointLocal_c::sendSetpointMod(const IsoName_c& ac_targetISON
 int32_t SimpleManageSetpointLocal_c::setpointMasterVal() const
 {
 #ifndef HANDLE_SETPOINT_MEASURE_EQUIVALENT
-return i32_setpointMasterVal;
+return mi32_setpointMasterVal;
 #else // HANDLE_SETPOINT_MEASURE_EQUIVALENT
 ProcDataLocalBase_c& c_localProcBase = static_cast<ProcDataLocalBase_c&>(processData());
 uint32_t ui32_masterVal = c_localProcBase.masterMeasurementVal();
-return i32_masterVal;
+return mi32_masterVal;
 #endif // HANDLE_SETPOINT_MEASURE_EQUIVALENT
 }
   #ifdef USE_FLOAT_DATA_TYPE
@@ -270,7 +270,7 @@ void SimpleManageSetpointLocal_c::setSetpointMasterVal(int32_t ai32_val)
 {
 #ifndef HANDLE_SETPOINT_MEASURE_EQUIVALENT
 processData().setValType(i32_val);
-i32_setpointMasterVal = ai32_val;
+mi32_setpointMasterVal = ai32_val;
 #else // HANDLE_SETPOINT_MEASURE_EQUIVALENT
 ProcDataLocalBase_c& c_localProcBase = static_cast<ProcDataLocalBase_c&>(processData());
 c_localProcBase.setMasterMeasurementVal( ai32_val );

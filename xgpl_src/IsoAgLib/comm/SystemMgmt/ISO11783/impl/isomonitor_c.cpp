@@ -134,7 +134,7 @@ namespace __IsoAgLib {
   @param apc_lb optional pointer to central Scheduler_c instance (default NULL -> the later set is needed)
 */
 IsoMonitor_c::IsoMonitor_c()
-  : SingletonIsoMonitor_c(), vec_isoMember(), c_serviceTool( IsoName_c::IsoNameUnspecified() )
+  : SingletonIsoMonitor_c(), mvec_isoMember(), mc_serviceTool( IsoName_c::IsoNameUnspecified() )
 {
   // functionality moved OUT of the constructor, as the constructor is NOT called in embedded systems for static class instances.
 }
@@ -156,19 +156,19 @@ void IsoMonitor_c::init( void )
   // only init if closed (constructor "closes" it so it gets init'ed initially!
   if (checkAlreadyClosed())
   {
-    c_data.setSingletonKey( getSingletonVecKey() );
+    mc_data.setSingletonKey( getSingletonVecKey() );
     #ifdef DEBUG_HEAP_USEAGE
-    sui16_isoItemTotal -= vec_isoMember.size();
+    sui16_isoItemTotal -= mvec_isoMember.size();
     #endif
-    vec_isoMember.clear();
-    pc_isoMemberCache = vec_isoMember.end();
-    i32_lastSaRequest = -1; // not yet requested. Do NOT use 0, as the first "setLastRequest()" could (and does randomly) occur at time0 as it's called at init() time.
-    c_tempIsoMemberItem.set( 0, IsoName_c::IsoNameUnspecified(), 0xFE, IState_c::Active, getSingletonVecKey() );
+    mvec_isoMember.clear();
+    mpc_isoMemberCache = mvec_isoMember.end();
+    mi32_lastSaRequest = -1; // not yet requested. Do NOT use 0, as the first "setLastRequest()" could (and does randomly) occur at time0 as it's called at init() time.
+    mc_tempIsoMemberItem.set( 0, IsoName_c::IsoNameUnspecified(), 0xFE, IState_c::Active, getSingletonVecKey() );
 
     // register no-service mode
-    c_serviceTool.setUnspecified();
+    mc_serviceTool.setUnspecified();
 
-    // clear state of b_alreadyClosed, so that close() is called one time AND no more init()s are performed!
+    // clear state of mb_alreadyClosed, so that close() is called one time AND no more init()s are performed!
     clearAlreadyClosed();
 
     /// Set Period for Scheduler_c Start Period is 125
@@ -177,7 +177,7 @@ void IsoMonitor_c::init( void )
     // register in Scheduler_c to be triggered fopr timeEvent
     getSchedulerInstance4Comm().registerClient( this );
 
-    pc_activeLocalMember = NULL;
+    mpc_activeLocalMember = NULL;
 
     bool b_configure = false;
 
@@ -228,8 +228,8 @@ void IsoMonitor_c::close( void )
     // Explicitly clear the saClaimHandler-list BEFORE clearing the ISOItems.
     // else the ISOItems would notify the saClaimHandlers on their loss
     // which is of course not needed here (and crashed :-()
-    vec_saClaimHandler.clear();
-    vec_isoMember.clear();
+    mvec_saClaimHandler.clear();
+    mvec_isoMember.clear();
 
     getIsoRequestPgnInstance4Comm().unregisterPGN (*this, ADRESS_CLAIM_PGN);
 #ifdef USE_WORKING_SET
@@ -250,7 +250,7 @@ void IsoMonitor_c::close( void )
 */
 CanPkgExt_c& IsoMonitor_c::dataBase()
 {
-  return c_data;
+  return mc_data;
 }
 
 /** performs periodically actions,
@@ -335,7 +335,7 @@ bool IsoMonitor_c::timeEvent( void )
   if ( ci32_timeSinceLastAdrClaimRequest > CONFIG_ISO_ITEM_MAX_AGE )
   { // the last request is more than CONFIG_ISO_ITEM_MAX_AGE ago
     // --> each client MUST have answered until now if it's still alive
-    for(Vec_ISOIterator pc_iter = vec_isoMember.begin(); pc_iter != vec_isoMember.end();)
+    for(Vec_ISOIterator pc_iter = mvec_isoMember.begin(); pc_iter != mvec_isoMember.end();)
     { // delete item, if it didn't answer longer than CONFIG_ISO_ITEM_MAX_AGE since last adress claim request
       if ( ( (pc_iter->lastTime()+CONFIG_ISO_ITEM_MAX_AGE) < lastIsoSaRequest() )
         && ( !(pc_iter->itemState(IState_c::Local))   ) )
@@ -360,7 +360,7 @@ bool IsoMonitor_c::timeEvent( void )
             << sizeSlistTWithChunk( sizeof(IsoItem_c), sui16_isoItemTotal )
             << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
           #endif
-          pc_iter = vec_isoMember.erase(pc_iterDelete); // erase returns iterator to next element after the erased one
+          pc_iter = mvec_isoMember.erase(pc_iterDelete); // erase returns iterator to next element after the erased one
         }
         else
         { // give it another chance
@@ -391,13 +391,13 @@ bool IsoMonitor_c::timeEvent( void )
 uint8_t IsoMonitor_c::isoMemberEcuTypeCnt (IsoName_c::ecuType_t a_ecuType, bool ab_forceClaimedAddress)
 {
   uint8_t b_result = 0;
-  for (Vec_ISOIterator pc_iter = vec_isoMember.begin() ; pc_iter != vec_isoMember.end(); pc_iter++)
+  for (Vec_ISOIterator pc_iter = mvec_isoMember.begin() ; pc_iter != mvec_isoMember.end(); pc_iter++)
   {
     if ( ((pc_iter->isoName(). getEcuType() == a_ecuType))
       && (!ab_forceClaimedAddress || pc_iter->itemState(IState_c::ClaimedAddress)) )
     {
       b_result++;
-      pc_isoMemberCache = pc_iter; // set member cache to member  with searched devClass
+      mpc_isoMemberCache = pc_iter; // set member cache to member  with searched devClass
     }
   }
   return b_result;
@@ -420,7 +420,7 @@ uint8_t IsoMonitor_c::isoMemberEcuTypeCnt (IsoName_c::ecuType_t a_ecuType, bool 
 IsoItem_c& IsoMonitor_c::isoMemberEcuTypeInd (IsoName_c::ecuType_t a_ecuType, uint8_t aui8_ind, bool ab_forceClaimedAddress)
 {
   int8_t c_cnt = -1;
-  for (Vec_ISOIterator pc_iter  = vec_isoMember.begin() ; pc_iter != vec_isoMember.end(); pc_iter++)
+  for (Vec_ISOIterator pc_iter  = mvec_isoMember.begin() ; pc_iter != mvec_isoMember.end(); pc_iter++)
   {
     if ( ((pc_iter->isoName(). getEcuType()) == a_ecuType)
       && (!ab_forceClaimedAddress || pc_iter->itemState(IState_c::ClaimedAddress)) )
@@ -428,7 +428,7 @@ IsoItem_c& IsoMonitor_c::isoMemberEcuTypeInd (IsoName_c::ecuType_t a_ecuType, ui
       c_cnt++;
       if (c_cnt == aui8_ind)
       {
-        pc_isoMemberCache = pc_iter; // set member cache to member  with searched devClass
+        mpc_isoMemberCache = pc_iter; // set member cache to member  with searched devClass
         break; //searched Item found (first element has 0)break; //searched Item found (first element has 0)
       }
     }
@@ -438,7 +438,7 @@ IsoItem_c& IsoMonitor_c::isoMemberEcuTypeInd (IsoName_c::ecuType_t a_ecuType, ui
   { // wrong range of aui8_ind
     getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::System );
   }
-  return *pc_isoMemberCache;
+  return *mpc_isoMemberCache;
 }
 
 /** deliver the count of members in the Monitor-List with given DEVCLASS (variable POS)
@@ -451,14 +451,14 @@ IsoItem_c& IsoMonitor_c::isoMemberEcuTypeInd (IsoName_c::ecuType_t a_ecuType, ui
 uint8_t IsoMonitor_c::isoMemberDevClassCnt(uint8_t aui8_devClass, bool ab_forceClaimedAddress)
 {
   uint8_t b_result = 0;
-  for (Vec_ISOIterator pc_iter = vec_isoMember.begin() ; pc_iter != vec_isoMember.end(); pc_iter++)
+  for (Vec_ISOIterator pc_iter = mvec_isoMember.begin() ; pc_iter != mvec_isoMember.end(); pc_iter++)
   {
 //    cerr << "Tested Member DevClass: " << int( pc_iter->isoName().devClass() ) << endl;
     if ( ( ((pc_iter->isoName().devClass()) == aui8_devClass) || (aui8_devClass == 0xFF))
       && (!ab_forceClaimedAddress || pc_iter->itemState(IState_c::ClaimedAddress)) )
     {
       b_result++;
-      pc_isoMemberCache = pc_iter; // set member cache to member  with searched devClass
+      mpc_isoMemberCache = pc_iter; // set member cache to member  with searched devClass
     }
   }
   return b_result;
@@ -481,7 +481,7 @@ uint8_t IsoMonitor_c::isoMemberDevClassCnt(uint8_t aui8_devClass, bool ab_forceC
 IsoItem_c& IsoMonitor_c::isoMemberDevClassInd(uint8_t aui8_devClass, uint8_t aui8_ind, bool ab_forceClaimedAddress)
 {
   int8_t c_cnt = -1;
-  for (Vec_ISOIterator pc_iter  = vec_isoMember.begin() ; pc_iter != vec_isoMember.end(); pc_iter++)
+  for (Vec_ISOIterator pc_iter  = mvec_isoMember.begin() ; pc_iter != mvec_isoMember.end(); pc_iter++)
   {
     if ( ( ((pc_iter->isoName().devClass()) == aui8_devClass) || (aui8_devClass == 0xFF))
       && (!ab_forceClaimedAddress || pc_iter->itemState(IState_c::ClaimedAddress)) )
@@ -489,7 +489,7 @@ IsoItem_c& IsoMonitor_c::isoMemberDevClassInd(uint8_t aui8_devClass, uint8_t aui
       c_cnt++;
       if (c_cnt == aui8_ind)
       {
-        pc_isoMemberCache = pc_iter; // set member cache to member  with searched devClass
+        mpc_isoMemberCache = pc_iter; // set member cache to member  with searched devClass
         break; //searched Item found (first element has 0)break; //searched Item found (first element has 0)
       }
     }
@@ -499,12 +499,12 @@ IsoItem_c& IsoMonitor_c::isoMemberDevClassInd(uint8_t aui8_devClass, uint8_t aui
   { // wrong range of aui8_ind
     getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::System );
   }
-  return *pc_isoMemberCache;
+  return *mpc_isoMemberCache;
 }
 
 /** check if a memberItem with given ISOName exist
   which optional (!!) match the condition of address claim state
-  and update local pc_isoMemberCache
+  and update local mpc_isoMemberCache
   @param ac_isoName searched ISOName
   @param ab_forceClaimedAddress true -> only members with claimed address are used
         (optional, default false)
@@ -512,18 +512,18 @@ IsoItem_c& IsoMonitor_c::isoMemberDevClassInd(uint8_t aui8_devClass, uint8_t aui
 */
 bool IsoMonitor_c::existIsoMemberISOName(const IsoName_c& ac_isoName, bool ab_forceClaimedAddress)
 {
-  if (!vec_isoMember.empty() && (pc_isoMemberCache != vec_isoMember.end()))
+  if (!mvec_isoMember.empty() && (mpc_isoMemberCache != mvec_isoMember.end()))
   {
-    if ( (pc_isoMemberCache->isoName() == ac_isoName )
-      && (!ab_forceClaimedAddress || pc_isoMemberCache->itemState(IState_c::ClaimedAddress))
+    if ( (mpc_isoMemberCache->isoName() == ac_isoName )
+      && (!ab_forceClaimedAddress || mpc_isoMemberCache->itemState(IState_c::ClaimedAddress))
         )  return true;
   }
-  for (pc_isoMemberCache = vec_isoMember.begin();
-       pc_isoMemberCache != vec_isoMember.end();
-       pc_isoMemberCache++)
+  for (mpc_isoMemberCache = mvec_isoMember.begin();
+       mpc_isoMemberCache != mvec_isoMember.end();
+       mpc_isoMemberCache++)
   {
-    if ( (pc_isoMemberCache->isoName() == ac_isoName )
-      && (!ab_forceClaimedAddress || pc_isoMemberCache->itemState(IState_c::ClaimedAddress))
+    if ( (mpc_isoMemberCache->isoName() == ac_isoName )
+      && (!ab_forceClaimedAddress || mpc_isoMemberCache->itemState(IState_c::ClaimedAddress))
         )  return true;
   }
   // if reaching here -> nothing found
@@ -532,21 +532,21 @@ bool IsoMonitor_c::existIsoMemberISOName(const IsoName_c& ac_isoName, bool ab_fo
 
 /** check if a member with given number exist
   which optional (!!) match the condition of address claim state
-  and update local pc_isoMemberCache
+  and update local mpc_isoMemberCache
   @param aui8_nr searched member number
   @return true -> item found
 */
 bool IsoMonitor_c::existIsoMemberNr(uint8_t aui8_nr)
 {
-  if (!vec_isoMember.empty() && (pc_isoMemberCache != vec_isoMember.end()))
+  if (!mvec_isoMember.empty() && (mpc_isoMemberCache != mvec_isoMember.end()))
   {
-    if ( pc_isoMemberCache->nr() == aui8_nr ) return true;
+    if ( mpc_isoMemberCache->nr() == aui8_nr ) return true;
   }
-  for (pc_isoMemberCache = vec_isoMember.begin();
-       pc_isoMemberCache != vec_isoMember.end();
-       pc_isoMemberCache++)
+  for (mpc_isoMemberCache = mvec_isoMember.begin();
+       mpc_isoMemberCache != mvec_isoMember.end();
+       mpc_isoMemberCache++)
   {
-    if (pc_isoMemberCache->equalNr(aui8_nr)) return true;
+    if (mpc_isoMemberCache->equalNr(aui8_nr)) return true;
   }
   return false;
 }
@@ -607,20 +607,20 @@ IsoItem_c* IsoMonitor_c::insertIsoMember(const IsoName_c& ac_isoName,
 
   // FROM NOW ON WE DECIDE TO (TRY TO) CREATE A NEW IsoItem_c
   // prepare temp item with wanted data
-  c_tempIsoMemberItem.set (System_c::getTime(), // Actually this value/time can be anything. The time is NOT used in PreAddressClaim and when entering AddressClaim it is being set correctly!
+  mc_tempIsoMemberItem.set (System_c::getTime(), // Actually this value/time can be anything. The time is NOT used in PreAddressClaim and when entering AddressClaim it is being set correctly!
     ac_isoName, aui8_nr, IState_c::itemState_t(ren_state | IState_c::Member | IState_c::Active), getSingletonVecKey() );
 
   // now insert element
-  const uint8_t b_oldSize = vec_isoMember.size();
-  vec_isoMember.push_front(c_tempIsoMemberItem);
-  pc_isoMemberCache = vec_isoMember.begin();
-  if (vec_isoMember.size() <= b_oldSize)
+  const uint8_t b_oldSize = mvec_isoMember.size();
+  mvec_isoMember.push_front(mc_tempIsoMemberItem);
+  mpc_isoMemberCache = mvec_isoMember.begin();
+  if (mvec_isoMember.size() <= b_oldSize)
   { // array didn't grow
     getILibErrInstance().registerError( iLibErr_c::BadAlloc, iLibErr_c::System );
   }
   else
   { // item was inserted
-    pc_result = &(*pc_isoMemberCache);
+    pc_result = &(*mpc_isoMemberCache);
     #ifdef DEBUG_HEAP_USEAGE
     sui16_isoItemTotal++;
 
@@ -633,7 +633,7 @@ IsoItem_c* IsoMonitor_c::insertIsoMember(const IsoName_c& ac_isoName,
       << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
   }
-  vec_isoMember.sort(); // resort the list
+  mvec_isoMember.sort(); // resort the list
 
   return pc_result;
 }
@@ -693,8 +693,8 @@ bool IsoMonitor_c::existActiveLocalIsoMember()
   bool b_result = false; // set default to no success
 
   // check if actual cache pointer points to active ident
-  if ((pc_activeLocalMember == NULL)
-       || (!pc_activeLocalMember->itemState(IState_c::ClaimedAddress)))
+  if ((mpc_activeLocalMember == NULL)
+       || (!mpc_activeLocalMember->itemState(IState_c::ClaimedAddress)))
   { // the actual cache pointer isn't correct -> search new one
     const IsoName_c *pc_useISOName = NULL;
     IsoItem_c* pc_monitorItem = NULL;
@@ -717,11 +717,11 @@ bool IsoMonitor_c::existActiveLocalIsoMember()
     if (pc_useISOName != NULL)
     { // active own identity found
       b_result = true;
-      pc_activeLocalMember = pc_monitorItem;
+      mpc_activeLocalMember = pc_monitorItem;
     }
     else
     { // no active ident found -> set cache to NULL
-      pc_activeLocalMember = NULL;
+      mpc_activeLocalMember = NULL;
     }
   }
   else
@@ -746,7 +746,7 @@ IsoItem_c& IsoMonitor_c::getActiveLocalIsoMember()
 {
   if  (existActiveLocalIsoMember() )
   { // return reference to the pointed ident element
-    return *pc_activeLocalMember;
+    return *mpc_activeLocalMember;
   }
   else
   { // no active own identity found -> set error state
@@ -830,43 +830,43 @@ bool IsoMonitor_c::restartAddressClaim( const IsoName_c& arc_isoName )
 /** register a SaClaimHandler_c */
 bool IsoMonitor_c::registerSaClaimHandler( SaClaimHandler_c* apc_client )
 {
-  for ( SaClaimHandlerVectorConstIterator_t iter = vec_saClaimHandler.begin(); iter != vec_saClaimHandler.end(); iter++ )
+  for ( SaClaimHandlerVectorConstIterator_t iter = mvec_saClaimHandler.begin(); iter != mvec_saClaimHandler.end(); iter++ )
   { // check if it points to the same client
     if ( *iter == apc_client ) return true; // already in multimap -> don't insert again
   }
-  const unsigned int oldSize = vec_saClaimHandler.size();
+  const unsigned int oldSize = mvec_saClaimHandler.size();
   // if this position is reached, a new item must be inserted
-  vec_saClaimHandler.push_back( apc_client );
+  mvec_saClaimHandler.push_back( apc_client );
 
   // now: trigger suitable SaClaimHandler_c calls for all already known IsoNames in the list
-  for ( Vec_ISOIteratorConst iter = vec_isoMember.begin(); iter != vec_isoMember.end(); iter++)
+  for ( Vec_ISOIteratorConst iter = mvec_isoMember.begin(); iter != mvec_isoMember.end(); iter++)
   { // inform this SaClaimHandler_c on existance of the ISONAME node at iter
     apc_client->reactOnMonitorListAdd( iter->isoName(), &(*iter) );
   }
 
-  return ( vec_saClaimHandler.size() > oldSize )?true:false;
+  return ( mvec_saClaimHandler.size() > oldSize )?true:false;
 }
 
 /** deregister a SaClaimHandler */
 bool
 IsoMonitor_c::deregisterSaClaimHandler (SaClaimHandler_c* apc_client)
 {
-  const unsigned int oldSize = vec_saClaimHandler.size();
-  for ( SaClaimHandlerVectorIterator_t iter = vec_saClaimHandler.begin(); iter != vec_saClaimHandler.end(); iter++ )
+  const unsigned int oldSize = mvec_saClaimHandler.size();
+  for ( SaClaimHandlerVectorIterator_t iter = mvec_saClaimHandler.begin(); iter != mvec_saClaimHandler.end(); iter++ )
   { // check if it points to the same client
     if ( *iter == apc_client )
     {
-      vec_saClaimHandler.erase (iter); // in multimap -> so delete it
+      mvec_saClaimHandler.erase (iter); // in multimap -> so delete it
       break;
     }
   }
-  return (vec_saClaimHandler.size() > oldSize)?true:false;
+  return (mvec_saClaimHandler.size() > oldSize)?true:false;
 }
 
 /** this function is used to broadcast a ISO monitor list change to all registered clients */
 void IsoMonitor_c::broadcastSaAdd2Clients( const IsoName_c& ac_isoName, const IsoItem_c* apc_isoItem ) const
 {
-  for ( SaClaimHandlerVectorConstIterator_t iter = vec_saClaimHandler.begin(); iter != vec_saClaimHandler.end(); iter++ )
+  for ( SaClaimHandlerVectorConstIterator_t iter = mvec_saClaimHandler.begin(); iter != mvec_saClaimHandler.end(); iter++ )
   { // call the handler function of the client
     (*iter)->reactOnMonitorListAdd( ac_isoName, apc_isoItem );
   }
@@ -875,7 +875,7 @@ void IsoMonitor_c::broadcastSaAdd2Clients( const IsoName_c& ac_isoName, const Is
 /** this function is used to broadcast a ISO monitor list change to all registered clients */
 void IsoMonitor_c::broadcastSaRemove2Clients( const IsoName_c& ac_isoName, uint8_t aui8_oldSa ) const
 {
-  for ( SaClaimHandlerVectorConstIterator_t iter = vec_saClaimHandler.begin(); iter != vec_saClaimHandler.end(); iter++ )
+  for ( SaClaimHandlerVectorConstIterator_t iter = mvec_saClaimHandler.begin(); iter != mvec_saClaimHandler.end(); iter++ )
   { // call the handler function of the client
     (*iter)->reactOnMonitorListRemove( ac_isoName, aui8_oldSa );
   }
@@ -894,7 +894,7 @@ IsoItem_c& IsoMonitor_c::isoMemberISOName(const IsoName_c& ac_isoName, bool ab_f
 {
   if (existIsoMemberISOName(ac_isoName, ab_forceClaimedAddress))
   { // no error
-    return static_cast<IsoItem_c&>(*pc_isoMemberCache);
+    return static_cast<IsoItem_c&>(*mpc_isoMemberCache);
   }
   else
   { // wanted element not found
@@ -904,7 +904,7 @@ IsoItem_c& IsoMonitor_c::isoMemberISOName(const IsoName_c& ac_isoName, bool ab_f
     THROW_CONT_EL_NONEXIST
 
     //return reference to first element as fallback
-    return vec_isoMember.front();
+    return mvec_isoMember.front();
   }
 }
 
@@ -920,7 +920,7 @@ IsoItem_c& IsoMonitor_c::isoMemberNr(uint8_t aui8_nr)
 {
   if (existIsoMemberNr(aui8_nr))
   { // no error
-    return static_cast<IsoItem_c&>(*pc_isoMemberCache);
+    return static_cast<IsoItem_c&>(*mpc_isoMemberCache);
   }
   else
   { // wanted element not found
@@ -930,7 +930,7 @@ IsoItem_c& IsoMonitor_c::isoMemberNr(uint8_t aui8_nr)
     THROW_CONT_EL_NONEXIST
 
     //return reference to first element as fallback
-    return vec_isoMember.front();
+    return mvec_isoMember.front();
   }
 }
 
@@ -947,9 +947,9 @@ IsoItem_c& IsoMonitor_c::isoMemberISOName(const IsoName_c& ac_isoName, bool *con
 
   if (pbc_iter != NULL)
   {
-    *pbc_iter = pc_isoMemberCache;
+    *pbc_iter = mpc_isoMemberCache;
   }
-  return static_cast<IsoItem_c&>(*pc_isoMemberCache);
+  return static_cast<IsoItem_c&>(*mpc_isoMemberCache);
 }
 
 /**
@@ -965,14 +965,14 @@ bool IsoMonitor_c::deleteIsoMemberISOName(const IsoName_c& ac_isoName)
 
     #ifdef USE_WORKING_SET
     // Are we deleting a WorkingSetMaster?
-    if (pc_isoMemberCache->isMaster())
+    if (mpc_isoMemberCache->isMaster())
     { // yes, so notify all slaves that they're now standalone!
-      notifyOnWsMasterLoss (*pc_isoMemberCache);
+      notifyOnWsMasterLoss (*mpc_isoMemberCache);
     }
     #endif
 
-    // erase it from list (existIsoMemberISOName sets pc_isoMemberCache to the wanted item)
-    vec_isoMember.erase(pc_isoMemberCache);
+    // erase it from list (existIsoMemberISOName sets mpc_isoMemberCache to the wanted item)
+    mvec_isoMember.erase(mpc_isoMemberCache);
     #ifdef DEBUG_HEAP_USEAGE
     sui16_isoItemTotal--;
 
@@ -984,7 +984,7 @@ bool IsoMonitor_c::deleteIsoMemberISOName(const IsoName_c& ac_isoName)
       << sizeSlistTWithChunk( sizeof(IsoItem_c), sui16_isoItemTotal )
       << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
-    pc_isoMemberCache = vec_isoMember.begin();
+    mpc_isoMemberCache = mvec_isoMember.begin();
     return true;
   }
   else
@@ -1003,7 +1003,7 @@ bool IsoMonitor_c::deleteIsoMemberNr(uint8_t aui8_nr)
 {
   if (existIsoMemberNr(aui8_nr))
   { // use deleteIsoMemberISOName
-    return deleteIsoMemberISOName(pc_isoMemberCache->isoName());
+    return deleteIsoMemberISOName(mpc_isoMemberCache->isoName());
   }
   else
   { // to be deleted member number does not exist
@@ -1089,8 +1089,8 @@ uint8_t IsoMonitor_c::unifyIsoSa(const IsoItem_c* apc_isoItem)
   while (ui8_wishSa < 254)
   { // try the current ui8_wishSa
     bool b_free = true;
-    for (Vec_ISOIterator pc_iterItem = vec_isoMember.begin();
-          pc_iterItem != vec_isoMember.end(); pc_iterItem++)
+    for (Vec_ISOIterator pc_iterItem = mvec_isoMember.begin();
+          pc_iterItem != mvec_isoMember.end(); pc_iterItem++)
     {
       if ((pc_iterItem->nr() == ui8_wishSa)
            && (&(*pc_iterItem) != apc_isoItem)
@@ -1193,13 +1193,13 @@ bool IsoMonitor_c::processMsg()
 
 
   // decide whether the message should be processed
-  if ( c_serviceTool.isSpecified() )
+  if ( mc_serviceTool.isSpecified() )
   { // we are in diagnostic mode --> check if the message sender is the diagnostic tool
     if (  existIsoMemberNr(data().isoSa()) )
     {
-      if ( isoMemberNr(data().isoSa()).isoName() != c_serviceTool ) return false;
+      if ( isoMemberNr(data().isoSa()).isoName() != mc_serviceTool ) return false;
     }
-    else if ( data().isoName() != c_serviceTool ) return false;
+    else if ( data().isoName() != mc_serviceTool ) return false;
     // if we reach here, the received message has to be processed, as the sender is the
     // diagnostic tool
   }
@@ -1371,8 +1371,8 @@ IsoMonitor_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* /*apc_isoItem
       if (apc_isoItemReceiver == NULL)
       { // No specific destination so it's broadcast: Let all local item answer!
         bool b_processedRequestPGN = false;
-        for (Vec_ISOIterator pc_iterItem = vec_isoMember.begin();
-              pc_iterItem != vec_isoMember.end(); pc_iterItem++)
+        for (Vec_ISOIterator pc_iterItem = mvec_isoMember.begin();
+              pc_iterItem != mvec_isoMember.end(); pc_iterItem++)
         { // let all local pc_iterItem process this request
           if (pc_iterItem->itemState (IState_c::Local))
             b_processedRequestPGN |= pc_iterItem->sendSaClaim();
@@ -1389,8 +1389,8 @@ IsoMonitor_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* /*apc_isoItem
     case WORKING_SET_MEMBER_PGN:
       if (apc_isoItemReceiver == NULL)
       { // No specific destination so it's broadcast: Let all local item answer!
-        for (Vec_ISOIterator pc_iterItem = vec_isoMember.begin();
-              pc_iterItem != vec_isoMember.end(); pc_iterItem++)
+        for (Vec_ISOIterator pc_iterItem = mvec_isoMember.begin();
+              pc_iterItem != mvec_isoMember.end(); pc_iterItem++)
         { // let all local pc_iterItem process process this request
           if (pc_iterItem->itemState (IState_c::Local))
           {
@@ -1460,7 +1460,7 @@ uint8_t IsoMonitor_c::getSlaveCount (IsoItem_c* apc_masterItem)
   // iterate through all items and check if it has the master set to us
   // and is not the master itself!
   slaveCount = 0;
-  for(Vec_ISOIterator pc_iter = vec_isoMember.begin(); pc_iter != vec_isoMember.end(); pc_iter++)
+  for(Vec_ISOIterator pc_iter = mvec_isoMember.begin(); pc_iter != mvec_isoMember.end(); pc_iter++)
   {
     pc_iterMaster = pc_iter->getMaster ();
     if ((& (*pc_iter) != apc_masterItem) && (pc_iterMaster == apc_masterItem)) {
@@ -1477,7 +1477,7 @@ IsoItem_c* IsoMonitor_c::getSlave (uint8_t index, IsoItem_c* apc_masterItem)
   // iterate through all items and check if it the (desired) Xth item
   // if so, break and return it, else return NULL
   slaveCount = 0;
-  for(Vec_ISOIterator pc_iter = vec_isoMember.begin(); pc_iter != vec_isoMember.end(); pc_iter++)
+  for(Vec_ISOIterator pc_iter = mvec_isoMember.begin(); pc_iter != mvec_isoMember.end(); pc_iter++)
   {
     pc_iterMaster = pc_iter->getMaster ();
     if ((& (*pc_iter) != apc_masterItem) && (pc_iterMaster == apc_masterItem)) {
@@ -1492,7 +1492,7 @@ void
 IsoMonitor_c::notifyOnWsMasterLoss (IsoItem_c& arc_masterItem)
 {
   // iterate through all items and check if they are slaves to the given master
-  for(Vec_ISOIterator pc_iter = vec_isoMember.begin(); pc_iter != vec_isoMember.end(); pc_iter++)
+  for(Vec_ISOIterator pc_iter = mvec_isoMember.begin(); pc_iter != mvec_isoMember.end(); pc_iter++)
   { // ALSO notify the master, as this function is NOT ONLY called from ~IsoItem_c(), but also
     // intentionally from vtDocument_c to get the document NACKed!
     if (pc_iter->getMaster() == (&arc_masterItem))
@@ -1506,21 +1506,21 @@ IsoMonitor_c::notifyOnWsMasterLoss (IsoItem_c& arc_masterItem)
 
 
 /** command switching to and from special service / diagnostic mode.
-    setting the flag c_serviceTool controls appropriate handling
+    setting the flag mc_serviceTool controls appropriate handling
   */
 void IsoMonitor_c::setDiagnosticMode( const IsoName_c& arc_serviceTool)
 {
-  c_serviceTool = arc_serviceTool;
-  if ( c_serviceTool.isUnspecified() )
+  mc_serviceTool = arc_serviceTool;
+  if ( mc_serviceTool.isUnspecified() )
   { // back to normal operation --> trigger send of Req4SaClaim
     sendRequestForClaimedAddress( true );
   }
   else
   { // switch from normal operation to diagnostic mode
-    Vec_ISOIterator pc_iter = vec_isoMember.begin();
-    while ( pc_iter != vec_isoMember.end() )
+    Vec_ISOIterator pc_iter = mvec_isoMember.begin();
+    while ( pc_iter != mvec_isoMember.end() )
     {
-      if ( ( pc_iter->isoName() == c_serviceTool ) || ( pc_iter->itemState(IState_c::Local) ) )
+      if ( ( pc_iter->isoName() == mc_serviceTool ) || ( pc_iter->itemState(IState_c::Local) ) )
       { // current item is service tool or is local
         // --> increment iterator to next item
         pc_iter++;
@@ -1530,9 +1530,9 @@ void IsoMonitor_c::setDiagnosticMode( const IsoName_c& arc_serviceTool)
         // first inform SA-Claim handlers on SA-Loss
         broadcastSaRemove2Clients( pc_iter->isoName(), pc_iter->nr() );
         // then remove item
-        vec_isoMember.erase( pc_iter );
+        mvec_isoMember.erase( pc_iter );
         // reset iterator to begin
-        pc_iter = vec_isoMember.begin();
+        pc_iter = mvec_isoMember.begin();
       }
     }
   }

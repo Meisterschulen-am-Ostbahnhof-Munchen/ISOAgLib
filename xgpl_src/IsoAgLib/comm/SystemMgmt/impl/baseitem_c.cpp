@@ -95,7 +95,7 @@ namespace __IsoAgLib {
   @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
 BaseItem_c::BaseItem_c( int32_t ai32_time, IState_c::itemState_t ab_status, int ai_singletonVecKey)
-  : IStateExt_c(ab_status, ai_singletonVecKey), i32_lastTime(ai32_time)
+  : IStateExt_c(ab_status, ai_singletonVecKey), mi32_lastTime(ai32_time)
 {}
 
 /**
@@ -103,12 +103,12 @@ BaseItem_c::BaseItem_c( int32_t ai32_time, IState_c::itemState_t ab_status, int 
   @param arc_baseItem reference to the source BaseItem_c instance
 */
 BaseItem_c::BaseItem_c(const BaseItem_c& arc_baseItem)
-: IStateExt_c(arc_baseItem), i32_lastTime(arc_baseItem.i32_lastTime)
+: IStateExt_c(arc_baseItem), mi32_lastTime(arc_baseItem.mi32_lastTime)
 {}
 
 /** destructor which sets the update timestamp to 0 */
 BaseItem_c::~BaseItem_c(){
-  i32_lastTime = 0;
+  mi32_lastTime = 0;
 }
 
 /**
@@ -118,7 +118,7 @@ BaseItem_c::~BaseItem_c(){
 */
 void BaseItem_c::set(int32_t ai32_time, int ai_singletonVecKey)
 {
-  if (ai32_time >= 0) i32_lastTime = ai32_time;
+  if (ai32_time >= 0) mi32_lastTime = ai32_time;
   /** @todo Put this check into ClientBase itself??? */
   if (ai_singletonVecKey != -1) ClientBase::setSingletonKey(ai_singletonVecKey);
 }
@@ -139,18 +139,18 @@ void BaseItem_c::set(int32_t ai32_time, IState_c::itemState_t ab_status, int ai_
 /** operator= which defines src as const to avoid
 compile warnings with the automatic generated version */
 BaseItem_c& BaseItem_c::operator=(const BaseItem_c& src){
-  i32_lastTime = src.i32_lastTime;
+  mi32_lastTime = src.mi32_lastTime;
   return *this;
 }
 
 /**
-  calculates time between now and last set of i32_lastTime;
+  calculates time between now and last set of mi32_lastTime;
   if called with time parameter, the difference to this is calculated,
   otherwise the system time is retreived and used
   @return lasted time between last update and the compare time [msec.]
 */
 int32_t BaseItem_c::lastedTime( void ) const {
-  return ( ElementBase_c::getLastRetriggerTime() - i32_lastTime );
+  return ( ElementBase_c::getLastRetriggerTime() - mi32_lastTime );
 }
 
 /**
@@ -180,15 +180,15 @@ bool BaseItem_c::checkUpdateTime(uint16_t aui16_timeInterval) {
 	// -> simply add aui16_timeIntervall, if current time
 	//    has max 10% deviation from correct timing
 	const uint16_t cui16_maxDeviation = aui16_timeInterval / 10;
-	if ( ElementBase_c::getLastRetriggerTime() <= ( i32_lastTime + aui16_timeInterval + cui16_maxDeviation ) ) {
+	if ( ElementBase_c::getLastRetriggerTime() <= ( mi32_lastTime + aui16_timeInterval + cui16_maxDeviation ) ) {
 	  // time correctness is close enough to increment last timestamp by exact
 	  // aui16_timeIntervall -> avoid growing time drift if %e.g. each alive msg
 	  // is triggered 5 msec too late
-	  i32_lastTime += aui16_timeInterval;
+	  mi32_lastTime += aui16_timeInterval;
 	}
 	else {
 	  // time difference is too big -> allow reset of timestamp
-      i32_lastTime = ElementBase_c::getLastRetriggerTime();
+      mi32_lastTime = ElementBase_c::getLastRetriggerTime();
 	}
 	return true;
 

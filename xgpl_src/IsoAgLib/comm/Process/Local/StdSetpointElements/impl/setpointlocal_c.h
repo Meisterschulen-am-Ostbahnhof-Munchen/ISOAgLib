@@ -185,7 +185,7 @@ public:
     retreive simple master setpoint
     @return actual received setpoint value (calculated with setpoint )
   */
-  int32_t setpointMasterVal() const {return pc_master->exact();};
+  int32_t setpointMasterVal() const {return mpc_master->exact();};
   /**
     set the setpoint value
     @param ai32_val new setpoint value
@@ -199,7 +199,7 @@ public:
     retreive simple master setpoint
     @return actual received setpoint value (calculated with setpoint )
   */
-  float setpointMasterValFloat() const {return pc_master->exactFloat();};
+  float setpointMasterValFloat() const {return mpc_master->exactFloat();};
   /**
     set the setpoint value as float value
     @param af_val new setpoint value
@@ -217,25 +217,25 @@ public:
           if caller isn't acitve
   */
   void setStaticMaster( bool ab_static = true )
-    {b_staticMaster = ab_static;};
+    {mb_staticMaster = ab_static;};
   /**
     check if actual a master setpoint item is defined
     @see master
     @return true -> an active master setpoint exist
   */
-  bool existMaster() const {return pc_master != vec_register.end();};
+  bool existMaster() const {return mpc_master != mvec_register.end();};
   /**
     deliver the actual master entry
     @see existMaster
     @return actual valid master setpoint
   */
-  SetpointRegister_c& master(){return *pc_master;};
+  SetpointRegister_c& master(){return *mpc_master;};
   /**
     deliver the actual master entry
     @see existMaster
     @return actual valid master setpoint
   */
-  const SetpointRegister_c& masterConst() const {return *pc_master;};
+  const SetpointRegister_c& masterConst() const {return *mpc_master;};
   /**
     check if unhandled new setpoint from actual master was received
     -> check the actual master first before answering the other unhandled
@@ -324,13 +324,13 @@ public:
     existing master setpoint
     @param ab_percent allowed percantual deviation
   */
-  void setAllowedDeltaPercent( uint8_t ab_percent){b_allowedDeltaPercent = ab_percent;};
+  void setAllowedDeltaPercent( uint8_t ab_percent){mb_allowedDeltaPercent = ab_percent;};
   /**
     get the allowed percentual deviation between actual measurement and
     existing master setpoint
     @return allowed percantual deviation
   */
-  uint8_t allowedDeltaPercent()const{return b_allowedDeltaPercent;};
+  uint8_t allowedDeltaPercent()const{return mb_allowedDeltaPercent;};
   /**
     check if the given measuremet value is correct for the actual
     master setpoint;
@@ -412,28 +412,28 @@ private: // Private methods
 
 private: // Private attributes
   /** container of registered setpoint values */
-  Vec_SetpointRegister vec_register;
+  Vec_SetpointRegister mvec_register;
   /** iterator cache to actual master setpoint */
-  mutable Vec_SetpointRegisterIterator pc_registerCache;
+  mutable Vec_SetpointRegisterIterator mpc_registerCache;
   /** SetpointRegister_c entry, which represents the actual used setpoint value */
-  Vec_SetpointRegisterIterator pc_master;
+  Vec_SetpointRegisterIterator mpc_master;
   /**
     maximal allowed setpoint (updated according to system state by main application )
     --> incoming setpoints can be handled automatic
   */
-  int32_t i32_setpointMaxAllowed;
+  int32_t mi32_setpointMaxAllowed;
   /**
     minimum allowed setpoint (updated according to system state by main application )
     --> incoming setpoints can be handled automatic
   */
-  int32_t i32_setpointMinAllowed;
+  int32_t mi32_setpointMinAllowed;
   /* allowed variation between setpoint and measurement */
-  uint8_t b_allowedDeltaPercent;
+  uint8_t mb_allowedDeltaPercent;
   /**
     set if master setpoint should be preserved even if caller
     isoName is no more active (default false )
   */
-  bool b_staticMaster;
+  bool mb_staticMaster;
 
 };
 

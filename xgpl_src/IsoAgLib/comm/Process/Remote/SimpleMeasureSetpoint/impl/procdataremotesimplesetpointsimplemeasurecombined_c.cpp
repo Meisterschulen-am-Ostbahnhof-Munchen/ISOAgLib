@@ -121,7 +121,7 @@ ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::ProcDataRemoteSimpleSetpoin
                          ac_isoName, aui8_pri, ac_ownerISOName, apc_commanderISOName,
                          apc_processDataChangeHandler, ai_singletonVecKey)
 {
-  i32_masterVal = 0;
+  mi32_masterVal = 0;
 }
 
 /**
@@ -147,7 +147,7 @@ void ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::init(const IsoAgLib::E
   ProcDataRemoteBase_c::init(ps_elementDDI,
                              ac_isoName, aui8_pri, ac_ownerISOName, apc_commanderISOName,
                              apc_processDataChangeHandler, ai_singletonVecKey);
-  i32_masterVal = 0;
+  mi32_masterVal = 0;
 }
 
 /**
@@ -178,7 +178,7 @@ ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::ProcDataRemoteSimpleSetpoin
 void ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::assignFromSource(
   const ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c& arc_src )
 {
-  i32_masterVal = arc_src.i32_masterVal;
+  mi32_masterVal = arc_src.mi32_masterVal;
 }
 
 /** default destructor which has nothing to do */
@@ -202,7 +202,7 @@ int32_t ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::setpointMasterVal(b
 
     sendValISOName(pri(), commanderISOName(), 0);
   }
-  return i32_masterVal;
+  return mi32_masterVal;
 }
 
 /**
@@ -218,7 +218,7 @@ void ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::setSetpointMasterVal(i
                                                               GeneralCommand_c::exactValue,
                                                               GeneralCommand_c::setValue);
   sendValISOName(pri(), commanderISOName(), ai32_val);
-  if (!ab_onlyStoreOnResponse) i32_masterVal = ai32_val;
+  if (!ab_onlyStoreOnResponse) mi32_masterVal = ai32_val;
 }
 #ifdef USE_FLOAT_DATA_TYPE
 /**
@@ -272,7 +272,7 @@ int32_t ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::masterVal(bool ab_s
 
     sendValISOName(pri(), commanderISOName(), 0);
   }
-  return i32_masterVal;
+  return mi32_masterVal;
 }
 /**
   send reset cmd for the measurement value
@@ -342,8 +342,8 @@ void ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::processSetpoint(){
         else
         #endif
         {
-          if ( i32_masterVal != c_pkg.dataLong() ){
-            i32_masterVal = c_pkg.dataLong();
+          if ( mi32_masterVal != c_pkg.dataLong() ){
+            mi32_masterVal = c_pkg.dataLong();
             b_change = true;
           }
           setValType(i32_val);
@@ -368,12 +368,12 @@ void ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::processProg(){
       f_masterVal = c_pkg.dataFloat();
       b_change = true;
     }
-    else if ( i32_masterVal != c_pkg.dataLong() )
+    else if ( mi32_masterVal != c_pkg.dataLong() )
   #else
-    if ( i32_masterVal != c_pkg.dataLong() )
+    if ( mi32_masterVal != c_pkg.dataLong() )
   #endif
     {
-      i32_masterVal = c_pkg.dataLong();
+      mi32_masterVal = c_pkg.dataLong();
       b_change = true;
     }
     // call handler function if handler class is registered

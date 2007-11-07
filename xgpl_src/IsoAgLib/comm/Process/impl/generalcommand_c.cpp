@@ -94,19 +94,19 @@ namespace __IsoAgLib {
   constructor
 */
 GeneralCommand_c::GeneralCommand_c()
-  : b_isSetpoint(false), b_isRequest(false),
-    en_valueGroup(noValue),
-    en_command(noCommand)
+  : mb_isSetpoint(false), mb_isRequest(false),
+    men_valueGroup(noValue),
+    men_command(noCommand)
 {}
 
 /** set values, called in ProcessPkg_c::resolveCommand() */
 void GeneralCommand_c::setValues(bool ab_isSetpoint, bool ab_isRequest, ValueGroup_t ren_valueGroup,
                                  CommandType_t ren_command)
 {
-  this->b_isSetpoint = ab_isSetpoint;
-  this->b_isRequest = ab_isRequest;
-  this->en_valueGroup = ren_valueGroup;
-  this->en_command = ren_command;
+  this->mb_isSetpoint = ab_isSetpoint;
+  this->mb_isRequest = ab_isRequest;
+  this->men_valueGroup = ren_valueGroup;
+  this->men_command = ren_command;
 };
 
 

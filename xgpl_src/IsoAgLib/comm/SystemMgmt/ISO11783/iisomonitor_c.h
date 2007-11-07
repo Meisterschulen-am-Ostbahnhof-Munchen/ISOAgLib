@@ -133,7 +133,7 @@ public:
 
   /** check if a memberItem with given ISOName exist
     which optional (!!) match the condition of address claim state
-    and update local pc_isoMemberCache
+    and update local mpc_isoMemberCache
     @param ac_isoName searched ISOName
     @param ab_forceClaimedAddress true -> only members with claimed address are used
           (optional, default false)
@@ -144,7 +144,7 @@ public:
 
   /** check if a member with given number exist
     which optional (!!) match the condition of address claim state
-    and update local pc_isoMemberCache
+    and update local mpc_isoMemberCache
     @param aui8_nr searched member number
     @return true -> item found
   */
@@ -208,7 +208,7 @@ public:
   {return static_cast<iIsoItem_c&>(IsoMonitor_c::getActiveLocalIsoMember());}
 
   /** command switching to and from special service / diagnostic mode.
-      setting the flag c_serviceTool controls appropriate handling
+      setting the flag mc_serviceTool controls appropriate handling
     */
   void setDiagnosticMode( const iIsoName_c& arc_serviceTool = iIsoName_c::iIsoNameUnspecified())
   { IsoMonitor_c::setDiagnosticMode( arc_serviceTool );}

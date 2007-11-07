@@ -175,7 +175,7 @@ ProcDataLocalSimpleMeasure_c::ProcDataLocalSimpleMeasure_c(const IsoAgLib::Eleme
 #endif
                         apc_processDataChangeHandler,
                         ai_singletonVecKey)
-  , c_setpoint( this )
+  , mc_setpoint( this )
 {
 }
 
@@ -231,7 +231,7 @@ void ProcDataLocalSimpleMeasure_c::init(const IsoAgLib::ElementDdi_s* ps_element
 #endif
                             apc_processDataChangeHandler,
                             ai_singletonVecKey );
-  c_setpoint.init( this );
+  mc_setpoint.init( this );
 }
 
 /** default destructor which has nothing to do */
@@ -249,13 +249,13 @@ bool ProcDataLocalSimpleMeasure_c::timeEvent( uint16_t* /* pui16_nextTimePeriod 
   if ( ElementBase_c::getAvailableExecTime() == 0 ) return false;
   // perform time event activities for base class
   if ( ! ProcDataLocalBase_c::timeEvent() ) return false;
-  if ( ! c_setpoint.timeEvent() ) return false;
+  if ( ! mc_setpoint.timeEvent() ) return false;
   return true;
 }
 
 /** process a setpoint message */
 void ProcDataLocalSimpleMeasure_c::processSetpoint(){
-  c_setpoint.processMsg();
+  mc_setpoint.processMsg();
   // call base class processMsg to detect if this is a setpoint cmd
   // to reset the measurement value
   ProcDataLocalBase_c::processSetpoint();

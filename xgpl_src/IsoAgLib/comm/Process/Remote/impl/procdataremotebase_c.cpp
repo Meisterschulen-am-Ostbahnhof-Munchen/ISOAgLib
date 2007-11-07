@@ -125,7 +125,7 @@ void ProcDataRemoteBase_c::init(  const IsoAgLib::ElementDdi_s* ps_elementDDI, u
 const ProcDataRemoteBase_c& ProcDataRemoteBase_c::operator=(const ProcDataRemoteBase_c& arc_src){
   // call the assignment operator for the base class
   ProcDataBase_c::operator=(arc_src);
-  pc_isoName = arc_src.pc_isoName;
+  mpc_isoName = arc_src.mpc_isoName;
   // return reference to source
   return *this;
 }
@@ -136,7 +136,7 @@ const ProcDataRemoteBase_c& ProcDataRemoteBase_c::operator=(const ProcDataRemote
 ProcDataRemoteBase_c::ProcDataRemoteBase_c(const ProcDataRemoteBase_c& arc_src)
   : ProcDataBase_c(arc_src)
 { // now copy the element var
-  pc_isoName = arc_src.pc_isoName;
+  mpc_isoName = arc_src.mpc_isoName;
 
   // now register the pointer to this instance in Process_c
   getProcessInstance4Comm().registerRemoteProcessData( this );
@@ -153,7 +153,7 @@ ProcDataRemoteBase_c::~ProcDataRemoteBase_c(){
 */
 void ProcDataRemoteBase_c::setCommanderISOName(const IsoName_c* apc_isoName)
 {
-    pc_isoName = apc_isoName;
+    mpc_isoName = apc_isoName;
 }
 
 /** perform periodic actions

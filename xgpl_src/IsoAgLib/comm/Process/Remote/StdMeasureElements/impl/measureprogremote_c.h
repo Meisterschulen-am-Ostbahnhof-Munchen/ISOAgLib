@@ -210,7 +210,7 @@ public:
     (val, min, max, integ or med)
     @return timestamp of last receive [msec.]
   */
-  int32_t lastMeasurementReceive() const {return i32_lastMeasureReceive;};
+  int32_t lastMeasurementReceive() const {return mi32_lastMeasureReceive;};
 
   /**
     process msg;
@@ -325,7 +325,7 @@ private: // Private methods
     set medium val
     @param ai32_val new medium value
   */
-  void setMed(int32_t ai32_val){i32_med = ai32_val;};
+  void setMed(int32_t ai32_val){mi32_med = ai32_val;};
 #ifdef USE_FLOAT_DATA_TYPE
   /**
     set medium val
@@ -356,21 +356,21 @@ private: // Private attributes
 #ifdef USE_FLOAT_DATA_TYPE
   union {
     /** medium value of the remote process data */
-    int32_t i32_med;
+    int32_t mi32_med;
     /** medium value of the remote process data */
     float f_med;
   };
 #else
   /** medium value of the remote process data */
-  int32_t i32_med;
+  int32_t mi32_med;
 #endif
   /** time of last receive of measurement value update */
-  int32_t i32_lastMeasureReceive;
+  int32_t mi32_lastMeasureReceive;
   /**
     control if measurement values addressed to other than a local
     member should be stored (default not)
   */
-  bool b_receiveForeignMeasurement;
+  bool mb_receiveForeignMeasurement;
 };
 
 }

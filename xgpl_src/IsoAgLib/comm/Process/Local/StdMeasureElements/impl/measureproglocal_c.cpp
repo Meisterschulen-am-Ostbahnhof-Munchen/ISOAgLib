@@ -109,18 +109,18 @@ void MeasureProgLocal_c::init(
 {
   MeasureProgBase_c::init( apc_processData, ren_progType, ai32_initialVal, ac_callerISOName  );
 
-  i32_lastMasterVal = ai32_masterVal;
+  mi32_lastMasterVal = ai32_masterVal;
   if (ai32_initialVal != 0)
   { // set medSum, medCnt to initial value read from EEPROM
-    i32_medCnt = 1;
-    i32_medSum = ai32_initialVal;
+    mi32_medCnt = 1;
+    mi32_medSum = ai32_initialVal;
   }
   else
   {
-    i32_medCnt = i32_medSum = 0;
+    mi32_medCnt = mi32_medSum = 0;
   }
 
-  l_thresholdInfo.clear();
+  mlist_thresholdInfo.clear();
 }
 
 #ifdef USE_FLOAT_DATA_TYPE
@@ -142,12 +142,12 @@ void MeasureProgLocal_c::init(
   f_lastMasterVal = af_masterVal;
   if (af_eepromVal != 0)
   { // set medSum, medCnt to initial value read from EEPROM
-    i32_medCnt = 1;
+    mi32_medCnt = 1;
     f_medSum = af_eepromVal;
   }
   else
   {
-    i32_medCnt = 0;
+    mi32_medCnt = 0;
     f_medSum = 0.0F;
   }
 }
@@ -180,10 +180,10 @@ MeasureProgLocal_c::MeasureProgLocal_c(const MeasureProgLocal_c& arc_src)
 /** base function for assignment of element vars for copy constructor and operator= */
 void MeasureProgLocal_c::assignFromSource( const MeasureProgLocal_c& arc_src )
 { // copy element vars
-  b_triggeredIncrement = arc_src.b_triggeredIncrement;
-  i32_lastMasterVal = arc_src.i32_lastMasterVal;
-  i32_medCnt = arc_src.i32_medCnt;
-  i32_medSum = arc_src.i32_medSum;
+  mb_triggeredIncrement = arc_src.mb_triggeredIncrement;
+  mi32_lastMasterVal = arc_src.mi32_lastMasterVal;
+  mi32_medCnt = arc_src.mi32_medCnt;
+  mi32_medSum = arc_src.mi32_medSum;
 }
 
 
@@ -206,11 +206,11 @@ bool MeasureProgLocal_c::start(Proc_c::type_t ren_type,
                         Proc_c::doSend_t ren_doSend, int32_t ai32_masterVal){
   // call start function of base class
   MeasureProgBase_c::start(ren_type, ren_doSend);
-  i32_lastMasterVal = ai32_masterVal;
+  mi32_lastMasterVal = ai32_masterVal;
   bool b_sendVal = TRUE;
 
   // start the given subprog items
-  for (Vec_MeasureSubprogIterator pc_iter = vec_measureSubprog.begin(); pc_iter != vec_measureSubprog.end(); pc_iter++)
+  for (Vec_MeasureSubprogIterator pc_iter = mvec_measureSubprog.begin(); pc_iter != mvec_measureSubprog.end(); pc_iter++)
   {
     if (pc_iter->doSend() != ren_doSend)
       //MeasureSubprog_c not matching!
@@ -220,22 +220,22 @@ bool MeasureProgLocal_c::start(Proc_c::type_t ren_type,
     {
       case Proc_c::TimeProp:
         pc_iter->start(System_c::getTime());
-        en_accumProp = Proc_c::AccumTime;
+        men_accumProp = Proc_c::AccumTime;
         break;
       #if defined(USE_BASE) || defined(USE_TRACTOR_MOVE)
       case Proc_c::DistProp:
         pc_iter->start(int32_t(getTracMoveInstance4Comm().distTheor()));
-        en_accumProp = Proc_c::AccumDist;
+        men_accumProp = Proc_c::AccumDist;
         break;
       #endif
       case Proc_c::ValIncr:
         pc_iter->start(val());
         break;
       case Proc_c::DeltaIncr:
-        pc_iter->start(i32_delta);
+        pc_iter->start(mi32_delta);
         break;
       case Proc_c::AccelIncr:
-        pc_iter->start(i32_accel);
+        pc_iter->start(mi32_accel);
         break;
       case Proc_c::MedIncr:
         pc_iter->start(med());//getTracMoveInstance4Comm
@@ -254,7 +254,7 @@ bool MeasureProgLocal_c::start(Proc_c::type_t ren_type,
         pc_iter->start();
         b_sendVal = FALSE; // do not send value when a threshold is set
         const ThresholdInfo_s s_thresholdInfo = {ren_type, ren_doSend, pc_iter->increment(), TRUE};
-        l_thresholdInfo.push_front(s_thresholdInfo);
+        mlist_thresholdInfo.push_front(s_thresholdInfo);
         break;
       }
       case Proc_c::MinimumThreshold:
@@ -262,7 +262,7 @@ bool MeasureProgLocal_c::start(Proc_c::type_t ren_type,
         pc_iter->start();
         b_sendVal = FALSE;  // do not send value when a threshold is set
         const ThresholdInfo_s s_thresholdInfo = {ren_type, ren_doSend, pc_iter->increment(), FALSE};
-        l_thresholdInfo.push_front(s_thresholdInfo);
+        mlist_thresholdInfo.push_front(s_thresholdInfo);
         break;
       }
       case Proc_c::OnChange:
@@ -274,13 +274,13 @@ bool MeasureProgLocal_c::start(Proc_c::type_t ren_type,
 
   // send first values: if now without success mark for later resend with true
   if (b_sendVal)
-    b_triggeredIncrement = (sendRegisteredVals(ren_doSend))? false:true;
+    mb_triggeredIncrement = (sendRegisteredVals(ren_doSend))? false:true;
 
   // set the timer period for process_c to a low value (maybe the new programm triggers soon)
   getProcessInstance4Comm().resetTimerPeriod();
 
   // return if successful sent starting values
-  return b_triggeredIncrement;
+  return mb_triggeredIncrement;
 }
 
 
@@ -303,7 +303,7 @@ bool MeasureProgLocal_c::start(Proc_c::type_t ren_type, Proc_c::doSend_t ren_doS
   f_lastMasterVal = af_masterVal;
 
   // start the given subprog items
-  for (Vec_MeasureSubprogIterator pc_iter = vec_measureSubprog.begin(); pc_iter != vec_measureSubprog.end(); pc_iter++)
+  for (Vec_MeasureSubprogIterator pc_iter = mvec_measureSubprog.begin(); pc_iter != mvec_measureSubprog.end(); pc_iter++)
   {
     if (pc_iter->doSend() != ren_doSend)
       //MeasureSubprog_c not matching!
@@ -313,12 +313,12 @@ bool MeasureProgLocal_c::start(Proc_c::type_t ren_type, Proc_c::doSend_t ren_doS
     {
       case Proc_c::TimeProp:
         pc_iter->start(System_c::getTime());
-        en_accumProp = Proc_c::AccumTime;
+        men_accumProp = Proc_c::AccumTime;
         break;
       #if defined(USE_BASE) || defined(USE_TRACTOR_MOVE)
       case Proc_c::DistProp:
         pc_iter->start(int32_t(getTracMoveInstance4Comm().distTheor()));
-        en_accumProp = Proc_c::AccumDist;
+        men_accumProp = Proc_c::AccumDist;
         break;
       #endif
       case Proc_c::ValIncr:
@@ -356,10 +356,10 @@ bool MeasureProgLocal_c::start(Proc_c::type_t ren_type, Proc_c::doSend_t ren_doS
   } // for
 
   // send first values: if now without success mark for later resend with true
-  b_triggeredIncrement = (sendRegisteredVals(ren_doSend))? false:true;
+  mb_triggeredIncrement = (sendRegisteredVals(ren_doSend))? false:true;
 
   // return if successful sent starting values
-  return b_triggeredIncrement;
+  return mb_triggeredIncrement;
 }
 #endif
 
@@ -377,10 +377,10 @@ bool MeasureProgLocal_c::start(Proc_c::type_t ren_type, Proc_c::doSend_t ren_doS
 bool MeasureProgLocal_c::start(Proc_c::type_t ren_type,
                         Proc_c::doSend_t ren_doSend){
 #ifdef USE_FLOAT_DATA_TYPE
-  if (processData().valType() != float_val) return start(ren_type, ren_doSend, i32_lastMasterVal);
+  if (processData().valType() != float_val) return start(ren_type, ren_doSend, mi32_lastMasterVal);
   else return start(ren_type, ren_doSend, f_lastMasterVal);
 #else
-  return start(ren_type, ren_doSend, i32_lastMasterVal);
+  return start(ren_type, ren_doSend, mi32_lastMasterVal);
 #endif
 }
 
@@ -408,11 +408,11 @@ bool MeasureProgLocal_c::stop(bool /* b_deleteSubProgs */, Proc_c::type_t ren_ty
     MeasureProgBase_c::stop();
   else
   { // ISO: clear only the appropriate MeasureSubprog from the sub prog list
-    for (Vec_MeasureSubprogIterator pc_iter = vec_measureSubprog.begin(); pc_iter != vec_measureSubprog.end();)
+    for (Vec_MeasureSubprogIterator pc_iter = mvec_measureSubprog.begin(); pc_iter != mvec_measureSubprog.end();)
     {
       if ((pc_iter->type() == ren_type) && (pc_iter->doSend() == ren_doSend))
       {
-        pc_iter = vec_measureSubprog.erase(pc_iter);
+        pc_iter = mvec_measureSubprog.erase(pc_iter);
       }
       else
         pc_iter++;
@@ -422,10 +422,10 @@ bool MeasureProgLocal_c::stop(bool /* b_deleteSubProgs */, Proc_c::type_t ren_ty
   // cleanup corresponding threshold info
   if ((Proc_c::MaximumThreshold & ren_type) || (Proc_c::MinimumThreshold & ren_type))
   { // search corresponding threshold info
-    for (List_ThresholdInfoIterator ps_iterThreshold = l_thresholdInfo.begin(); ps_iterThreshold != l_thresholdInfo.end();)
+    for (List_ThresholdInfoIterator ps_iterThreshold = mlist_thresholdInfo.begin(); ps_iterThreshold != mlist_thresholdInfo.end();)
     {
       if ((ps_iterThreshold->en_type == ren_type) && (ps_iterThreshold->en_doSend == ren_doSend))
-        ps_iterThreshold = l_thresholdInfo.erase(ps_iterThreshold);
+        ps_iterThreshold = mlist_thresholdInfo.erase(ps_iterThreshold);
       else
         ps_iterThreshold++;
     }
@@ -441,7 +441,7 @@ bool MeasureProgLocal_c::stop(bool /* b_deleteSubProgs */, Proc_c::type_t ren_ty
   */
 bool MeasureProgLocal_c::sendValMod( GeneralCommand_c::ValueGroup_t en_valueGroup, const IsoName_c& ac_targetISOName) const {
   // prepare general command in process pkg
-  getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false, /* isRequest */
+  getProcessInstance4Comm().data().mc_generalCommand.setValues(false /* isSetpoint */, false, /* isRequest */
                                                               en_valueGroup, GeneralCommand_c::setValue);
 #ifdef USE_FLOAT_DATA_TYPE
   if (processDataConst().valType() != float_val)
@@ -460,7 +460,7 @@ bool MeasureProgLocal_c::sendValMod( GeneralCommand_c::ValueGroup_t en_valueGrou
   */
 bool MeasureProgLocal_c::sendSetpointValMod( GeneralCommand_c::ValueGroup_t en_valueGroup, const IsoName_c& ac_targetISOName) const {
   // prepare general command in process pkg
-  getProcessInstance4Comm().data().c_generalCommand.setValues(TRUE /* isSetpoint */, false, /* isRequest */
+  getProcessInstance4Comm().data().mc_generalCommand.setValues(TRUE /* isSetpoint */, false, /* isRequest */
                                                               en_valueGroup, GeneralCommand_c::setValue);
   return processDataConst().sendValISOName(ac_targetISOName, setpointValMod(en_valueGroup));
 }
@@ -513,11 +513,11 @@ bool MeasureProgLocal_c::processMsg(){
     ProcessPkg_c& c_pkg = getProcessInstance4Comm().data();
 
     // the message was a value message -> evaluate it here
-    if ( c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::setValue)
+    if ( c_pkg.mc_generalCommand.getCommand() == GeneralCommand_c::setValue)
     { // write - accept only write actions to local data only if this is reset try
       // ISO: value in message contains reset value
       const int32_t ci32_val = c_pkg.dataRawCmdLong();
-      resetValMod(c_pkg.c_generalCommand.getValueGroup(), ci32_val);
+      resetValMod(c_pkg.mc_generalCommand.getValueGroup(), ci32_val);
 
       if (Proc_c::defaultDataLoggingDDI == c_pkg.DDI())
       { // setValue command for default data logging DDI stops measurement (same as TC task status "suspended")
@@ -532,7 +532,7 @@ bool MeasureProgLocal_c::processMsg(){
     } // write
     else
     { // read -> answer wanted value
-      sendValMod( c_pkg.c_generalCommand.getValueGroup(), c_pkg.memberSend().isoName() );
+      sendValMod( c_pkg.mc_generalCommand.getValueGroup(), c_pkg.memberSend().isoName() );
 
       if ((Proc_c::defaultDataLoggingDDI == c_pkg.DDI()) &&
           (processDataConst().getProcessDataChangeHandler() != NULL ))
@@ -576,18 +576,18 @@ MeasureProgLocal_c::MeasureProgLocal_c(
     @param ai32_val new measure value
   */
 void MeasureProgLocal_c::setVal(int32_t ai32_val){
-  int32_t i32_incr =  ai32_val - i32_lastMasterVal;
+  int32_t i32_incr =  ai32_val - mi32_lastMasterVal;
   int32_t i32_time =  System_c::getTime();
-  int32_t i32_timeDelta = i32_time - i32_lastTime;
-  int32_t i32_oldDelta = i32_delta;
-  i32_lastTime = i32_time;
+  int32_t i32_timeDelta = i32_time - mi32_lastTime;
+  int32_t i32_oldDelta = mi32_delta;
+  mi32_lastTime = i32_time;
 
   // update values:
-  // for cumulative values -> update i32_val by increment
+  // for cumulative values -> update mi32_val by increment
   // else take the actual given master value
-  i32_lastMasterVal = ai32_val;
-  if (processData().b_cumulativeValue) i32_val += i32_incr;
-  else i32_val = ai32_val;
+  mi32_lastMasterVal = ai32_val;
+  if (processData().mb_cumulativeValue) mi32_val += i32_incr;
+  else mi32_val = ai32_val;
 
   // update min max
   if (val() > max()) setMax(val());
@@ -596,80 +596,80 @@ void MeasureProgLocal_c::setVal(int32_t ai32_val){
   // claculate delta and accel in 1/s
   if (i32_timeDelta > 0)
   { // if two calls to this function follow immediate
-    i32_delta = (i32_incr * 1000) / i32_timeDelta;
-    i32_accel = ((i32_delta - i32_oldDelta) * 1000) / i32_timeDelta;
+    mi32_delta = (i32_incr * 1000) / i32_timeDelta;
+    mi32_accel = ((mi32_delta - i32_oldDelta) * 1000) / i32_timeDelta;
 
   }
 
   // now check if one subprog triggers
   bool b_singleTest = false;
-  for (Vec_MeasureSubprogIterator pc_iter = vec_measureSubprog.begin();
-       pc_iter != vec_measureSubprog.end(); pc_iter++)
+  for (Vec_MeasureSubprogIterator pc_iter = mvec_measureSubprog.begin();
+       pc_iter != mvec_measureSubprog.end(); pc_iter++)
   {
-    b_triggeredIncrement = false;
+    mb_triggeredIncrement = false;
     switch (pc_iter->type())
     {
       case Proc_c::TimeProp:
         b_singleTest = pc_iter->updateTrigger(i32_time);
-        b_triggeredIncrement = (b_singleTest)? true : b_triggeredIncrement;
+        mb_triggeredIncrement = (b_singleTest)? true : mb_triggeredIncrement;
         // update med/integ
-        if ((b_singleTest)&&(en_accumProp == Proc_c::AccumTime))updatePropDepVals();
+        if ((b_singleTest)&&(men_accumProp == Proc_c::AccumTime))updatePropDepVals();
         break;
       case Proc_c::DistProp:
         #if defined(USE_BASE) || defined(USE_TRACTOR_MOVE)
         b_singleTest = pc_iter->updateTrigger(int32_t(getTracMoveInstance4Comm().distTheor()));
         #endif
-        b_triggeredIncrement = (b_singleTest)? true : b_triggeredIncrement;
+        mb_triggeredIncrement = (b_singleTest)? true : mb_triggeredIncrement;
         // update med/integ
-        if ((b_singleTest)&&(en_accumProp == Proc_c::AccumDist))updatePropDepVals();
+        if ((b_singleTest)&&(men_accumProp == Proc_c::AccumDist))updatePropDepVals();
         break;
       case Proc_c::OnChange:
         b_singleTest = pc_iter->updateTrigger(val());
-        b_triggeredIncrement = (b_singleTest)? true : b_triggeredIncrement;
+        mb_triggeredIncrement = (b_singleTest)? true : mb_triggeredIncrement;
         break;
       case Proc_c::ValIncr:
         b_singleTest = pc_iter->updateTrigger(val());
-        b_triggeredIncrement = (b_singleTest)? true : b_triggeredIncrement;
+        mb_triggeredIncrement = (b_singleTest)? true : mb_triggeredIncrement;
         break;
       case Proc_c::DeltaIncr:
-        b_singleTest = pc_iter->updateTrigger(i32_delta);
-        b_triggeredIncrement = (b_singleTest)? true : b_triggeredIncrement;
+        b_singleTest = pc_iter->updateTrigger(mi32_delta);
+        mb_triggeredIncrement = (b_singleTest)? true : mb_triggeredIncrement;
         break;
       case Proc_c::AccelIncr:
-        b_singleTest = pc_iter->updateTrigger(i32_accel);
-        b_triggeredIncrement = (b_singleTest)? true : b_triggeredIncrement;
+        b_singleTest = pc_iter->updateTrigger(mi32_accel);
+        mb_triggeredIncrement = (b_singleTest)? true : mb_triggeredIncrement;
         break;
       case Proc_c::MedIncr:
         b_singleTest = pc_iter->updateTrigger(med());
-        b_triggeredIncrement = (b_singleTest)? true : b_triggeredIncrement;
+        mb_triggeredIncrement = (b_singleTest)? true : mb_triggeredIncrement;
         break;
       case Proc_c::MinIncr:
         b_singleTest = pc_iter->updateTrigger(min());
-        b_triggeredIncrement = (b_singleTest)? true : b_triggeredIncrement;
+        mb_triggeredIncrement = (b_singleTest)? true : mb_triggeredIncrement;
         break;
       case Proc_c::MaxIncr:
         b_singleTest = pc_iter->updateTrigger(max());
-        b_triggeredIncrement = (b_singleTest)? true : b_triggeredIncrement;
+        mb_triggeredIncrement = (b_singleTest)? true : mb_triggeredIncrement;
         break;
       case Proc_c::IntegIncr:
         b_singleTest = pc_iter->updateTrigger(integ());
-        b_triggeredIncrement = (b_singleTest)? true : b_triggeredIncrement;
+        mb_triggeredIncrement = (b_singleTest)? true : mb_triggeredIncrement;
         break;
       case Proc_c::NullType: break; // just to make compiler happy
       default: ;
     } // switch
 
-    // if b_triggeredIncrement == true the registered values should be sent
-    if (b_triggeredIncrement)
+    // if mb_triggeredIncrement == true the registered values should be sent
+    if (mb_triggeredIncrement)
     { // send the registered values
       if (!minMaxLimitsPassed(pc_iter->doSend()))
       {
         // omit this value send
-        b_triggeredIncrement = false;
+        mb_triggeredIncrement = false;
         continue;
       }
-      // if at least one send try had success reset b_triggeredIncrement
-      if (sendRegisteredVals()) b_triggeredIncrement = false;
+      // if at least one send try had success reset mb_triggeredIncrement
+      if (sendRegisteredVals()) mb_triggeredIncrement = false;
     }
   } // for
 }
@@ -686,15 +686,15 @@ void MeasureProgLocal_c::setVal(int32_t ai32_val){
 void MeasureProgLocal_c::setVal(float af_val){
   float f_incr =  af_val - f_lastMasterVal;
   int32_t i32_time =  System_c::getTime();
-  int32_t i32_timeDelta = i32_time - i32_lastTime;
+  int32_t i32_timeDelta = i32_time - mi32_lastTime;
   float f_oldDelta = f_delta;
-  i32_lastTime = i32_time;
+  mi32_lastTime = i32_time;
 
   // update values:
   // for cumulative values -> update f_val by increment
   // else take the actual given master value
   f_lastMasterVal = af_val;
-  if (processData().b_cumulativeValue) f_val += f_incr;
+  if (processData().mb_cumulativeValue) f_val += f_incr;
   else f_val = af_val;
 
   // update min max
@@ -710,75 +710,75 @@ void MeasureProgLocal_c::setVal(float af_val){
 
   // now check if one subprog triggers
   bool b_singleTest = false;
-  for (Vec_MeasureSubprogIterator pc_iter = vec_measureSubprog.begin();
-       pc_iter != vec_measureSubprog.end(); pc_iter++)
+  for (Vec_MeasureSubprogIterator pc_iter = mvec_measureSubprog.begin();
+       pc_iter != mvec_measureSubprog.end(); pc_iter++)
   {
-    b_triggeredIncrement = false;
+    mb_triggeredIncrement = false;
     switch (pc_iter->type())
     {
       case Proc_c::TimeProp:
         b_singleTest = pc_iter->updateTrigger(i32_time);
-        b_triggeredIncrement = (b_singleTest)? true : b_triggeredIncrement;
+        mb_triggeredIncrement = (b_singleTest)? true : mb_triggeredIncrement;
         // update med/integ
-        if ((b_singleTest)&&(en_accumProp == Proc_c::AccumTime))updatePropDepVals();
+        if ((b_singleTest)&&(men_accumProp == Proc_c::AccumTime))updatePropDepVals();
         break;
       case Proc_c::DistProp:
         #if defined(USE_BASE) || defined(USE_TRACTOR_MOVE)
         b_singleTest = pc_iter->updateTrigger(int32_t(getTracMoveInstance4Comm().distTheor()));
         #endif
-        b_triggeredIncrement = (b_singleTest)? true : b_triggeredIncrement;
+        mb_triggeredIncrement = (b_singleTest)? true : mb_triggeredIncrement;
         // update med/integ
-        if ((b_singleTest)&&(en_accumProp == Proc_c::AccumDist))updatePropDepVals();
+        if ((b_singleTest)&&(men_accumProp == Proc_c::AccumDist))updatePropDepVals();
         break;
 
       case Proc_c::OnChange:
         b_singleTest = pc_iter->updateTrigger(valFloat());
-        b_triggeredIncrement = (b_singleTest)? true : b_triggeredIncrement;
+        mb_triggeredIncrement = (b_singleTest)? true : mb_triggeredIncrement;
         break;
       case Proc_c::ValIncr:
         b_singleTest = pc_iter->updateTrigger(valFloat());
-        b_triggeredIncrement = (b_singleTest)? true : b_triggeredIncrement;
+        mb_triggeredIncrement = (b_singleTest)? true : mb_triggeredIncrement;
         break;
       case Proc_c::DeltaIncr:
         b_singleTest = pc_iter->updateTrigger(f_delta);
-        b_triggeredIncrement = (b_singleTest)? true : b_triggeredIncrement;
+        mb_triggeredIncrement = (b_singleTest)? true : mb_triggeredIncrement;
         break;
       case Proc_c::AccelIncr:
         b_singleTest = pc_iter->updateTrigger(f_accel);
-        b_triggeredIncrement = (b_singleTest)? true : b_triggeredIncrement;
+        mb_triggeredIncrement = (b_singleTest)? true : mb_triggeredIncrement;
         break;
       case Proc_c::MedIncr:
         b_singleTest = pc_iter->updateTrigger(medFloat());
-        b_triggeredIncrement = (b_singleTest)? true : b_triggeredIncrement;
+        mb_triggeredIncrement = (b_singleTest)? true : mb_triggeredIncrement;
         break;
       case Proc_c::MinIncr:
         b_singleTest = pc_iter->updateTrigger(minFloat());
-        b_triggeredIncrement = (b_singleTest)? true : b_triggeredIncrement;
+        mb_triggeredIncrement = (b_singleTest)? true : mb_triggeredIncrement;
         break;
       case Proc_c::MaxIncr:
         b_singleTest = pc_iter->updateTrigger(maxFloat());
-        b_triggeredIncrement = (b_singleTest)? true : b_triggeredIncrement;
+        mb_triggeredIncrement = (b_singleTest)? true : mb_triggeredIncrement;
         break;
       case Proc_c::IntegIncr:
         b_singleTest = pc_iter->updateTrigger(integFloat());
-        b_triggeredIncrement = (b_singleTest)? true : b_triggeredIncrement;
+        mb_triggeredIncrement = (b_singleTest)? true : mb_triggeredIncrement;
         break;
       case Proc_c::NullType: break; // just to make compiler happy
       default: ;
     } // switch
 
-    // if b_triggeredIncrement == true the registered values should be sent
-    if (b_triggeredIncrement)
+    // if mb_triggeredIncrement == true the registered values should be sent
+    if (mb_triggeredIncrement)
     { // send the registered values
       if (!minMaxLimitsPassed(pc_iter->doSend()))
       {
         // omit this value send
-        b_triggeredIncrement = false;
+        mb_triggeredIncrement = false;
         return;
       }
 
-      // if at least one send try had success reset b_triggeredIncrement
-      if (sendRegisteredVals()) b_triggeredIncrement = false;
+      // if at least one send try had success reset mb_triggeredIncrement
+      if (sendRegisteredVals()) mb_triggeredIncrement = false;
     }
   } // for
 }
@@ -830,8 +830,8 @@ void MeasureProgLocal_c::initVal(int32_t ai32_val){
   // first call the base function
   MeasureProgBase_c::initVal(ai32_val);
 
-  i32_medSum = ai32_val;
-  i32_medCnt = 1;
+  mi32_medSum = ai32_val;
+  mi32_medCnt = 1;
 }
 
 
@@ -844,7 +844,7 @@ void MeasureProgLocal_c::initVal(float af_val){
   MeasureProgBase_c::initVal(af_val);
 
   f_medSum = af_val;
-  i32_medCnt = 1;
+  mi32_medCnt = 1;
 }
 #endif
 
@@ -862,23 +862,23 @@ bool MeasureProgLocal_c::resetVal(int32_t ai32_val){
   bool b_sendSuccess;
 
   // prepare general command in process pkg
-  getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false, /* isRequest */
+  getProcessInstance4Comm().data().mc_generalCommand.setValues(false /* isSetpoint */, false, /* isRequest */
                                                               GeneralCommand_c::exactValue, GeneralCommand_c::setValue);
 #ifdef USE_FLOAT_DATA_TYPE
   if (processData().valType() != float_val)
   {
 #endif
     // allow reset with value (ISO only)
-    //i32_val = 0;
-    i32_val = ai32_val;
+    //mi32_val = 0;
+    mi32_val = ai32_val;
 
-    b_sendSuccess = processData().sendValISOName(c_isoName, val());
+    b_sendSuccess = processData().sendValISOName(mc_isoName, val());
 #ifdef USE_FLOAT_DATA_TYPE
   }
   else
   {
     f_val = 0;
-    b_sendSuccess = processData().sendValISOName(c_isoName, valFloat());
+    b_sendSuccess = processData().sendValISOName(mc_isoName, valFloat());
   }
 #endif
   #ifdef USE_EEPROM_IO
@@ -901,21 +901,21 @@ bool MeasureProgLocal_c::resetVal(int32_t ai32_val){
   */
 bool MeasureProgLocal_c::resetInteg(){
   // prepare general command in process pkg
-  getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false, /* isRequest */
+  getProcessInstance4Comm().data().mc_generalCommand.setValues(false /* isSetpoint */, false, /* isRequest */
                                                               GeneralCommand_c::integValue, GeneralCommand_c::setValue);
 
 #ifdef USE_FLOAT_DATA_TYPE
   if (processData().valType() != float_val)
   {
 #endif
-  i32_integ = 0;
-  return processData().sendValISOName(c_isoName, integ());
+  mi32_integ = 0;
+  return processData().sendValISOName(mc_isoName, integ());
 #ifdef USE_FLOAT_DATA_TYPE
   }
   else
   {
     f_integ = 0;
-    return processData().sendValISOName(c_isoName, integFloat());
+    return processData().sendValISOName(mc_isoName, integFloat());
   }
 #endif
 }
@@ -929,23 +929,23 @@ bool MeasureProgLocal_c::resetInteg(){
     @return true -> reseted medium val sent with success
   */
 bool MeasureProgLocal_c::resetMed(){
-  i32_medCnt = 0;
+  mi32_medCnt = 0;
 
   // prepare general command in process pkg
-  getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false, /* isRequest */
+  getProcessInstance4Comm().data().mc_generalCommand.setValues(false /* isSetpoint */, false, /* isRequest */
                                                               GeneralCommand_c::medValue, GeneralCommand_c::setValue);
 #ifdef USE_FLOAT_DATA_TYPE
   if (processData().valType() != float_val)
   {
 #endif
-  i32_medSum = 0;
-  return processData().sendValISOName(c_isoName, med());
+  mi32_medSum = 0;
+  return processData().sendValISOName(mc_isoName, med());
 #ifdef USE_FLOAT_DATA_TYPE
   }
   else
   {
     f_medSum = 0;
-    return processData().sendValISOName(c_isoName, medFloat());
+    return processData().sendValISOName(mc_isoName, medFloat());
   }
 #endif
 }
@@ -961,21 +961,21 @@ bool MeasureProgLocal_c::resetMed(){
 bool MeasureProgLocal_c::resetMin(){
 
   // prepare general command in process pkg
-  getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false, /* isRequest */
+  getProcessInstance4Comm().data().mc_generalCommand.setValues(false /* isSetpoint */, false, /* isRequest */
                                                               GeneralCommand_c::minValue, GeneralCommand_c::setValue);
 
 #ifdef USE_FLOAT_DATA_TYPE
   if (processData().valType() != float_val)
   {
 #endif
-  i32_min = 0;
-  return processData().sendValISOName(c_isoName, min());
+  mi32_min = 0;
+  return processData().sendValISOName(mc_isoName, min());
 #ifdef USE_FLOAT_DATA_TYPE
   }
   else
   {
     f_min = 0;
-    return processData().sendValISOName(c_isoName, minFloat());
+    return processData().sendValISOName(mc_isoName, minFloat());
   }
 #endif
 }
@@ -991,21 +991,21 @@ bool MeasureProgLocal_c::resetMin(){
 bool MeasureProgLocal_c::resetMax(){
 
   // prepare general command in process pkg
-  getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false, /* isRequest */
+  getProcessInstance4Comm().data().mc_generalCommand.setValues(false /* isSetpoint */, false, /* isRequest */
                                                               GeneralCommand_c::maxValue, GeneralCommand_c::setValue);
 
 #ifdef USE_FLOAT_DATA_TYPE
   if (processData().valType() != float_val)
   {
 #endif
-  i32_max = 0;
-  return processData().sendValISOName(c_isoName, max());
+  mi32_max = 0;
+  return processData().sendValISOName(mc_isoName, max());
 #ifdef USE_FLOAT_DATA_TYPE
   }
   else
   {
     f_max = 0;
-    return processData().sendValISOName(c_isoName, maxFloat());
+    return processData().sendValISOName(mc_isoName, maxFloat());
   }
 #endif
 }
@@ -1029,20 +1029,20 @@ bool MeasureProgLocal_c::timeEvent( uint16_t *pui16_nextTimePeriod )
   int32_t i32_nextTimePeriod;
   int32_t i32_distTheor;
 
-  for (Vec_MeasureSubprogIterator pc_iter = vec_measureSubprog.begin(); pc_iter != vec_measureSubprog.end(); pc_iter++)
+  for (Vec_MeasureSubprogIterator pc_iter = mvec_measureSubprog.begin(); pc_iter != mvec_measureSubprog.end(); pc_iter++)
   {
-    b_triggeredIncrement = false;
+    mb_triggeredIncrement = false;
     b_singleTest = false;
     i32_nextTimePeriod = 0;
     switch (pc_iter->type())
     {
       case Proc_c::TimeProp:
         b_singleTest = pc_iter->updateTrigger(i32_time);
-        // if b_singleTest is true set b_triggeredIncrement to true,
+        // if b_singleTest is true set mb_triggeredIncrement to true,
         // otherwise let it unchanged
-        b_triggeredIncrement = (b_singleTest)? true : b_triggeredIncrement;
+        mb_triggeredIncrement = (b_singleTest)? true : mb_triggeredIncrement;
         // update med/integ
-        if ((b_singleTest)&&(en_accumProp == Proc_c::AccumTime))updatePropDepVals();
+        if ((b_singleTest)&&(men_accumProp == Proc_c::AccumTime))updatePropDepVals();
 
         // calculate next timer period
         i32_nextTimePeriod = pc_iter->nextTriggerTime(i32_time);
@@ -1055,9 +1055,9 @@ bool MeasureProgLocal_c::timeEvent( uint16_t *pui16_nextTimePeriod )
         #else
         i32_distTheor = 0;
         #endif
-        b_triggeredIncrement = (b_singleTest)? true : b_triggeredIncrement;
+        mb_triggeredIncrement = (b_singleTest)? true : mb_triggeredIncrement;
         // update med/integ
-        if ((b_singleTest)&&(en_accumProp == Proc_c::AccumTime))updatePropDepVals();
+        if ((b_singleTest)&&(men_accumProp == Proc_c::AccumTime))updatePropDepVals();
 
         // calculate next timer period
         i32_nextTimePeriod = pc_iter->nextTriggerTime(i32_distTheor);
@@ -1065,7 +1065,7 @@ bool MeasureProgLocal_c::timeEvent( uint16_t *pui16_nextTimePeriod )
         break;
       case Proc_c::OnChange:
         b_singleTest = pc_iter->updateTrigger(val());
-        b_triggeredIncrement = (b_singleTest)? true : b_triggeredIncrement;
+        mb_triggeredIncrement = (b_singleTest)? true : mb_triggeredIncrement;
         break;
       default:
         break;
@@ -1073,28 +1073,28 @@ bool MeasureProgLocal_c::timeEvent( uint16_t *pui16_nextTimePeriod )
 
     if (i32_nextTimePeriod && pui16_nextTimePeriod)
     {
-      if ( (i32_nextTimePeriod > 0) // something valid to set 
+      if ( (i32_nextTimePeriod > 0) // something valid to set
             // *pui16_nextTimePeriod not yet set or i32_nextTimePeriod smaller => set
-            && ((0 == *pui16_nextTimePeriod) || (i32_nextTimePeriod < *pui16_nextTimePeriod)) 
+            && ((0 == *pui16_nextTimePeriod) || (i32_nextTimePeriod < *pui16_nextTimePeriod))
           )
       {
         *pui16_nextTimePeriod = i32_nextTimePeriod;
       }
     }
 
-    // if b_triggeredIncrement == true the registered values should be sent
+    // if mb_triggeredIncrement == true the registered values should be sent
     // if needed an old unsuccessfull send try is redone (deactivated!)
-    if (b_triggeredIncrement)
+    if (mb_triggeredIncrement)
     {
       if (!minMaxLimitsPassed(pc_iter->doSend()))
       {
         // omit this value send
-        b_triggeredIncrement = false;
+        mb_triggeredIncrement = false;
         continue;
       }
       // send the registered values
-      // if at least one send try had success reset b_triggeredIncrement
-      if (sendRegisteredVals(pc_iter->doSend())) b_triggeredIncrement = false;
+      // if at least one send try had success reset mb_triggeredIncrement
+      if (sendRegisteredVals(pc_iter->doSend())) mb_triggeredIncrement = false;
     }
   }
 
@@ -1109,7 +1109,7 @@ bool MeasureProgLocal_c::minMaxLimitsPassed(Proc_c::doSend_t ren_doSend) const
   int32_t i32_maxVal = 0;
   int32_t i32_minVal = 0;
 
-  for (List_ThresholdInfoConstIterator ps_iterThreshold = l_thresholdInfo.begin(); ps_iterThreshold != l_thresholdInfo.end(); ps_iterThreshold++)
+  for (List_ThresholdInfoConstIterator ps_iterThreshold = mlist_thresholdInfo.begin(); ps_iterThreshold != mlist_thresholdInfo.end(); ps_iterThreshold++)
   {
     if (ps_iterThreshold->en_doSend == ren_doSend)
     {

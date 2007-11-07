@@ -134,8 +134,8 @@ public:
   /** constructor which can set all element vars
     ISO parameters:
     @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDdi_s which contains DDI, element, isSetpoint and ValueGroup
-                         (array is terminated by ElementDdi_s.ui16_element == 0xFFFF)
-    @param ui16_element  device element number
+                         (array is terminated by ElementDdi_s.mui16_element == 0xFFFF)
+    @param mui16_element  device element number
     common parameters:
     @param ac_isoName optional ISOName code of Process-Data
     @param ac_ownerISOName optional ISOName of the owner
@@ -159,8 +159,8 @@ public:
   /** initialise this ProcDataBase_c instance to a well defined initial state
     ISO parameters:
     @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDdi_s which contains DDI, element, isSetpoint and ValueGroup
-                         (array is terminated by ElementDdi_s.ui16_element == 0xFFFF)
-    @param ui16_element  device element number
+                         (array is terminated by ElementDdi_s.mui16_element == 0xFFFF)
+    @param mui16_element  device element number
     common parameters:
     @param ac_isoName optional ISOName code of Process-Data
     @param ac_ownerISOName optional ISOName of the owner
@@ -192,22 +192,22 @@ public:
     * @param apc_processDataChangeHandler pointer to handler class of application
     */
   void setProcessDataChangeHandler( IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler )
-   { pc_processDataChangeHandler = apc_processDataChangeHandler; }
+   { mpc_processDataChangeHandler = apc_processDataChangeHandler; }
 
   /** deliver the poitner to the handler class
     * @return pointer to handler class of application (or NULL if not defined by application)
     */
-  IsoAgLib::ProcessDataChangeHandler_c* getProcessDataChangeHandler( void ) const { return pc_processDataChangeHandler; }
+  IsoAgLib::ProcessDataChangeHandler_c* getProcessDataChangeHandler( void ) const { return mpc_processDataChangeHandler; }
 
   /** deliver the central data type of this process data
     @return proc_valType_t: i32_val, ui32_val, float_val, cmdVal
   */
-  const proc_valType_t valType()const{return en_procValType;}
+  const proc_valType_t valType()const{return men_procValType;}
 
   /** set the central data type of this process data
     @return proc_valType_t: i32_val, ui32_val, float_val, cmdVal
   */
-  void setValType(proc_valType_t ren_procValType){en_procValType = ren_procValType;}
+  void setValType(proc_valType_t ren_procValType){men_procValType = ren_procValType;}
 
   /** deliver the pkg data value as int32_t;
     if pd/mod are one of the to be converted one, return converted;
@@ -277,8 +277,8 @@ protected: // Protected methods
 
     @param ac_varISOName variable ISOName
     @param ai32_val int32_t value to send
-    @param en_valueGroup: min/max/exact/default
-    @param en_command
+    @param men_valueGroup: min/max/exact/default
+    @param men_command
     @return true -> sendIntern set successful EMPF and SEND
   */
   virtual bool sendValISOName(const IsoName_c& ac_varISOName, int32_t ai32_val = 0) const;
@@ -325,14 +325,14 @@ private: // Private attributes
   friend class IsoAgLib::EventSource_c;
 
   /** central data type to use for messages: i32_val, ui32_val, float_val */
-  proc_valType_t en_procValType;
+  proc_valType_t men_procValType;
 
   /** pointer to applications handler class, with handler functions
       which shall be called on correltating change events.
       (e.g. new received setpoint for local process data
        or new received measurement value for remote process data)
     */
-  IsoAgLib::ProcessDataChangeHandler_c* pc_processDataChangeHandler;
+  IsoAgLib::ProcessDataChangeHandler_c* mpc_processDataChangeHandler;
 };
 
 /** deliver the pkg data value as int32_t;

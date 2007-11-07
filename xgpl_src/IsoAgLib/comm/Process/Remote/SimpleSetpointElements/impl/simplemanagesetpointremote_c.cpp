@@ -105,7 +105,7 @@ namespace __IsoAgLib {
 void SimpleManageSetpointRemote_c::init( ProcDataBase_c *const apc_processData )
 {
   ProcessElementBase_c::set( apc_processData );
-    i32_setpointMasterVal = 0;
+    mi32_setpointMasterVal = 0;
 }
 /** copy constructor */
 SimpleManageSetpointRemote_c::SimpleManageSetpointRemote_c( const SimpleManageSetpointRemote_c& arc_src )
@@ -124,7 +124,7 @@ const SimpleManageSetpointRemote_c& SimpleManageSetpointRemote_c::operator=( con
 /** base function for assignment of element vars for copy constructor and operator= */
 void SimpleManageSetpointRemote_c::assignFromSource( const SimpleManageSetpointRemote_c& arc_src )
 {
-  i32_setpointMasterVal = arc_src.i32_setpointMasterVal;
+  mi32_setpointMasterVal = arc_src.mi32_setpointMasterVal;
 }
 
 /** processing of a setpoint message */
@@ -133,10 +133,10 @@ void SimpleManageSetpointRemote_c::processSetpoint()
   // for simple setpoint the message is process here
   ProcessPkg_c& c_pkg = getProcessInstance4Comm().data();
   // pd = 0
-  if (!c_pkg.c_generalCommand.checkIsRequest())
+  if (!c_pkg.mc_generalCommand.checkIsRequest())
   {
     bool b_change = false;
-    switch (c_pkg.c_generalCommand.getValueGroup())
+    switch (c_pkg.mc_generalCommand.getValueGroup())
     {
       case GeneralCommand_c::exactValue: // exact setpoint
         #ifdef USE_FLOAT_DATA_TYPE
@@ -152,8 +152,8 @@ void SimpleManageSetpointRemote_c::processSetpoint()
         else
         #endif
         {
-          if ( i32_setpointMasterVal != c_pkg.dataLong() ) {
-            i32_setpointMasterVal = c_pkg.dataLong();
+          if ( mi32_setpointMasterVal != c_pkg.dataLong() ) {
+            mi32_setpointMasterVal = c_pkg.dataLong();
             b_change = true;
           }
           // check for Fendt Reset Cmd
@@ -184,13 +184,13 @@ int32_t SimpleManageSetpointRemote_c::setpointMasterVal(bool ab_sendRequest)
   ProcDataRemoteBase_c& c_base = static_cast<ProcDataRemoteBase_c&>(processData());
   if (ab_sendRequest) {
     // prepare general command in process pkg
-    getProcessInstance4Comm().data().c_generalCommand.setValues(true /* isSetpoint */, true /* isRequest */,
+    getProcessInstance4Comm().data().mc_generalCommand.setValues(true /* isSetpoint */, true /* isRequest */,
                                                                 GeneralCommand_c::exactValue,
                                                                 GeneralCommand_c::requestValue);
 
     c_base.sendValISOName(c_base.commanderISOName(), int32_t(0));
   }
-  return i32_setpointMasterVal;
+  return mi32_setpointMasterVal;
 }
 
 /**
@@ -204,12 +204,12 @@ void SimpleManageSetpointRemote_c::setSetpointMasterVal(int32_t ai32_val, bool a
   setValType(i32_val);
 
   // prepare general command in process pkg
-  getProcessInstance4Comm().data().c_generalCommand.setValues(true /* isSetpoint */, false /* isRequest */,
+  getProcessInstance4Comm().data().mc_generalCommand.setValues(true /* isSetpoint */, false /* isRequest */,
                                                               GeneralCommand_c::exactValue,
                                                               GeneralCommand_c::setValue);
 
   c_base.sendValISOName(c_base.commanderISOName(), ai32_val);
-  if (!ab_onlyStoreOnResponse) i32_setpointMasterVal = ai32_val;
+  if (!ab_onlyStoreOnResponse) mi32_setpointMasterVal = ai32_val;
 }
 #ifdef USE_FLOAT_DATA_TYPE
 /**
@@ -223,7 +223,7 @@ float SimpleManageSetpointRemote_c::setpointMasterValFloat(bool ab_sendRequest)
   setValType(float_val);
   if (ab_sendRequest) {
     // prepare general command in process pkg
-    getProcessInstance4Comm().data().c_generalCommand.setValues(true /* isSetpoint */, true /* isRequest */,
+    getProcessInstance4Comm().data().mc_generalCommand.setValues(true /* isSetpoint */, true /* isRequest */,
                                                                 GeneralCommand_c::exactValue,
                                                                 GeneralCommand_c::requestValue);
 
@@ -241,7 +241,7 @@ void SimpleManageSetpointRemote_c::setSetpointMasterVal(float af_val, bool ab_on
   ProcDataRemoteBase_c& c_base = static_cast<ProcDataRemoteBase_c&>(processData());
   setValType(float_val);
   // prepare general command in process pkg
-  getProcessInstance4Comm().data().c_generalCommand.setValues(true /* isSetpoint */, false /* isRequest */,
+  getProcessInstance4Comm().data().mc_generalCommand.setValues(true /* isSetpoint */, false /* isRequest */,
                                                               GeneralCommand_c::exactValue,
                                                               GeneralCommand_c::setValue);
 

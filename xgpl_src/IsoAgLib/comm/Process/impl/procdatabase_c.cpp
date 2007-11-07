@@ -127,8 +127,8 @@ namespace __IsoAgLib {
    initialise this ProcDataBase_c instance to a well defined initial state
    ISO parameters:
    @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDdi_s which contains DDI, element, isSetpoint and ValueGroup
-                        (array is terminated by ElementDdi_s.ui16_element == 0xFFFF)
-   @param ui16_element  device element number
+                        (array is terminated by ElementDdi_s.mui16_element == 0xFFFF)
+   @param mui16_element  device element number
 
    common parameters:
    @param ac_isoName optional ISOName code of Process-Data
@@ -146,8 +146,8 @@ namespace __IsoAgLib {
     ProcIdent_c::init( ps_elementDDI, aui16_element, ac_isoName, ac_ownerISOName, apc_isoName);
 
     setSingletonKey(ai_singletonVecKey);
-    en_procValType = i32_val;
-    pc_processDataChangeHandler = apc_processDataChangeHandler;
+    men_procValType = i32_val;
+    mpc_processDataChangeHandler = apc_processDataChangeHandler;
   }
 
 
@@ -181,8 +181,8 @@ ProcDataBase_c::ProcDataBase_c(const ProcDataBase_c& arc_src)
 /** base function for assignment of element vars for copy constructor and operator= */
 void ProcDataBase_c::assignFromSource( const ProcDataBase_c& arc_src )
 { // copy element vars
-  en_procValType = arc_src.en_procValType;
-  pc_processDataChangeHandler = arc_src.pc_processDataChangeHandler;
+  men_procValType = arc_src.men_procValType;
+  mpc_processDataChangeHandler = arc_src.mpc_processDataChangeHandler;
 }
 
 
@@ -201,8 +201,8 @@ ProcessPkg_c& ProcDataBase_c::getProcessPkg( void ) const
   // different CAN BUS'es)
   return getProcessInstance4Comm().data();
 #else
-  static ProcessPkg_c& c_data = getProcessInstance4Comm().data();
-  return c_data;
+  static ProcessPkg_c& mc_data = getProcessInstance4Comm().data();
+  return mc_data;
 #endif
 }
 
@@ -217,14 +217,14 @@ ProcessPkg_c& ProcDataBase_c::getProcessPkg( void ) const
 */
 void ProcDataBase_c::processMsg()
 {
-  if (getProcessInstance4Comm().data().c_generalCommand.checkIsSetpoint())
+  if (getProcessInstance4Comm().data().mc_generalCommand.checkIsSetpoint())
     processSetpoint();
   else
     processProg();
 }
 
 
-/** perform periodic acoins 
+/** perform periodic acoins
   @param pui16_nextTimePeriod calculated new time period, based on current measure progs (only for local proc data)
 */
 bool ProcDataBase_c::timeEvent( uint16_t* /* pui16_nextTimePeriod */ )
@@ -252,7 +252,7 @@ bool ProcDataBase_c::sendValISOName( const IsoName_c& /*ac_varISOName*/, int32_t
 {
   setBasicSendFlags();
 
-  getProcessPkg().setData( ai32_val, en_procValType);
+  getProcessPkg().setData( ai32_val, men_procValType);
 
   // send the msg
   getCanInstance4Comm() << getProcessPkg();
@@ -286,7 +286,7 @@ bool ProcDataBase_c::sendValISOName(const IsoName_c& /*ac_varISOName*/, float af
 {
   setBasicSendFlags();
 
-  getProcessPkg().setData( af_val, en_procValType);
+  getProcessPkg().setData( af_val, men_procValType);
 
   // send the msg
   getCanInstance4Comm() << getProcessPkg();
@@ -303,20 +303,20 @@ bool ProcDataBase_c::sendValISOName(const IsoName_c& /*ac_varISOName*/, float af
 
 void ProcDataBase_c::setBasicSendFlags() const
 {
-  ProcessPkg_c& c_data = getProcessPkg();
+  ProcessPkg_c& mc_data = getProcessPkg();
 
   // the communicating devices are represented on ISO11783
-  c_data.setIsoPri(3);
-  c_data.setIsoPgn(PROCESS_DATA_PGN);
+  mc_data.setIsoPri(3);
+  mc_data.setIsoPgn(PROCESS_DATA_PGN);
 
   // general command is already set, use these values:
   // set command in ProcessPkg::flags2string
-  const GeneralCommand_c::ValueGroup_t en_valueGroup = getProcessInstance4Comm().data().c_generalCommand.getValueGroup();
-  const bool b_isSetpoint = getProcessInstance4Comm().data().c_generalCommand.checkIsSetpoint();
+  const GeneralCommand_c::ValueGroup_t men_valueGroup = getProcessInstance4Comm().data().mc_generalCommand.getValueGroup();
+  const bool mb_isSetpoint = getProcessInstance4Comm().data().mc_generalCommand.checkIsSetpoint();
 
   // @todo: in case no element/DDI fits send default values
-  c_data.set_Element(0xFFFF);
-  c_data.set_DDI(0);
+  mc_data.set_Element(0xFFFF);
+  mc_data.set_DDI(0);
 
   STL_NAMESPACE::list<IsoAgLib::ElementDdi_s>::const_iterator iter_elementDDI;
 
@@ -324,11 +324,11 @@ void ProcDataBase_c::setBasicSendFlags() const
   {
     // we have only one DDI/element pair
     // interface process data init was possibly called with parameter DDI and element and not with ElementDdi_s
-    // => we don't have reliable infos about en_valueGroup and b_isSetpoint
-    // => don't check for en_valueGroup and b_isSetpoint but use this single entry in list
+    // => we don't have reliable infos about men_valueGroup and mb_isSetpoint
+    // => don't check for men_valueGroup and mb_isSetpoint but use this single entry in list
     iter_elementDDI = elementDDI().begin();
-    c_data.set_Element(element());
-    c_data.set_DDI(iter_elementDDI->ui16_DDI);
+    mc_data.set_Element(element());
+    mc_data.set_DDI(iter_elementDDI->ui16_DDI);
   }
   else
   {
@@ -336,10 +336,10 @@ void ProcDataBase_c::setBasicSendFlags() const
     for (iter_elementDDI = elementDDI().begin();
          iter_elementDDI != elementDDI().end(); iter_elementDDI++)
     {
-      if ( (iter_elementDDI->en_valueGroup == en_valueGroup) && (iter_elementDDI->b_isSetpoint == b_isSetpoint) )
+      if ( (iter_elementDDI->en_valueGroup == men_valueGroup) && (iter_elementDDI->b_isSetpoint == mb_isSetpoint) )
       {
-        c_data.set_Element(element());
-        c_data.set_DDI(iter_elementDDI->ui16_DDI);
+        mc_data.set_Element(element());
+        mc_data.set_DDI(iter_elementDDI->ui16_DDI);
         break;
       }
     }

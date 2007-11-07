@@ -139,10 +139,10 @@ class DevPropertyHandler_c : public IsoAgLib::iMultiSendStreamer_c
 
     bool timeEvent( void );
 
-    bool registerDevicePool (const IdentItem_c* apc_wsMasterIdentItem, const HUGE_MEM uint8_t* apc_devicePoolByteArray, const uint32_t aui32_bytestreamLength, bool b_setToDefault);
+    bool registerDevicePool (const IdentItem_c* apc_wsMasterIdentItem, const HUGE_MEM uint8_t* apc_devicePoolByteArray, const uint32_t aui32_bytestreamLength, bool mb_setToDefault);
     bool sendCommandChangeDesignator(uint16_t apui16_objectID, const char* apc_newString, uint8_t stringLength);
 
-    ProcessPkg_c& data(){return *pc_data;};
+    ProcessPkg_c& data(){return *mpc_data;};
 
     /** place next data to send direct into send buffer of pointed
       stream send package - MultiSend_c will send this
@@ -166,8 +166,8 @@ class DevPropertyHandler_c : public IsoAgLib::iMultiSendStreamer_c
 
     void reset() { ui16_currentSendPosition = ui16_storedSendPosition = 0; };
 
-    void updateTcStateReceived(uint8_t aui8_lastTcState) { ui8_lastTcState = aui8_lastTcState; i32_tcStateLastReceived = HAL::getTime();};
-    void setTcSourceAddress(uint8_t rtcSourceAddress) { tcSourceAddress = rtcSourceAddress;};
+    void updateTcStateReceived(uint8_t aui8_lastTcState) { mui8_lastTcState = aui8_lastTcState; mi32_tcStateLastReceived = HAL::getTime();};
+    void setTcSourceAddress(uint8_t rtcSourceAddress) { mui8_tcSourceAddress = rtcSourceAddress;};
 
   private:
     uint16_t ui16_currentSendPosition;
@@ -225,9 +225,9 @@ class DevPropertyHandler_c : public IsoAgLib::iMultiSendStreamer_c
      */
     void checkInitState();
 
-    uint8_t getTcSourceAddress () { return tcSourceAddress; };
+    uint8_t getTcSourceAddress () { return mui8_tcSourceAddress; };
 
-    bool queuePoolInMap(const HUGE_MEM uint8_t* apc_devicePoolByteArray, uint32_t aui32_bytestreamlength, bool b_setToDefault);
+    bool queuePoolInMap(const HUGE_MEM uint8_t* apc_devicePoolByteArray, uint32_t aui32_bytestreamlength, bool mb_setToDefault);
 
     void initUploading();
     void getPoolForUpload();
@@ -237,53 +237,53 @@ class DevPropertyHandler_c : public IsoAgLib::iMultiSendStreamer_c
     void startUploadCommandChangeDesignator();
     void finishUploadCommandChangeDesignator();
 
-    int32_t i32_tcStateLastReceived;
-    uint8_t ui8_lastTcState;
-    int32_t i32_timeStartWaitAfterAddrClaim;
-    bool b_initDone;
-    int32_t i32_timeWsTaskMsgSent;
+    int32_t mi32_tcStateLastReceived;
+    uint8_t mui8_lastTcState;
+    int32_t mi32_timeStartWaitAfterAddrClaim;
+    bool mb_initDone;
+    int32_t mi32_timeWsTaskMsgSent;
 
-    bool b_setToDefault;
-    bool tcAliveNew;
+    bool mb_setToDefault;
+    bool mb_tcAliveNew;
 
-    bool b_receivedStructureLabel;
-    bool b_receivedLocalizationLabel;
+    bool mb_receivedStructureLabel;
+    bool mb_receivedLocalizationLabel;
 
-    ProcessPkg_c* pc_data;
+    ProcessPkg_c* mpc_data;
 
-    STL_NAMESPACE::map<LanguageLabel_c, DevicePool_c> map_deviceDescription; //map with language label and related bytestream
+    STL_NAMESPACE::map<LanguageLabel_c, DevicePool_c> mmap_deviceDescription; //map with language label and related bytestream
 
-    uint8_t tcSourceAddress;
+    uint8_t mui8_tcSourceAddress;
 
-    uint8_t ui8_versionLabel;
-    char pch_structureLabel[7];
-    char pch_localizationLabel[7];
+    uint8_t mui8_versionLabel;
+    char marrpch_structureLabel[7];
+    char marrpch_localizationLabel[7];
 
-    DevicePool_c* pc_devDefaultDeviceDescription;
+    DevicePool_c* mpc_devDefaultDeviceDescription;
 
-    DevicePool_c* pc_devPoolForUpload;
+    DevicePool_c* mpc_devPoolForUpload;
 
     /** has to be set using registerDevicePool (...) so that DevPropertyHandler_c
         can interact in the name of the wsMaster */
-    const IdentItem_c* pc_wsMasterIdentItem;
+    const IdentItem_c* mpc_wsMasterIdentItem;
 
     /** Upload-State & Variables */
-    PoolState_t en_poolState;
-    UploadState_t en_uploadState;
-    UploadSteps_t en_uploadStep;
-    UploadCommandState_t en_uploadCommand;
+    PoolState_t men_poolState;
+    UploadState_t men_uploadState;
+    UploadSteps_t men_uploadStep;
+    UploadCommandState_t men_uploadCommand;
 
-    uint32_t ui32_uploadTimestamp;
-    uint32_t ui32_uploadTimeout;
+    uint32_t mui32_uploadTimestamp;
+    uint32_t mui32_uploadTimeout;
 
-    uint8_t ui8_uploadRetry;
-    uint8_t ui8_commandParameter;
+    uint8_t mui8_uploadRetry;
+    uint8_t mui8_commandParameter;
 
-    STL_NAMESPACE::list<SendUploadBase_c>  l_sendUpload;
+    STL_NAMESPACE::list<SendUploadBase_c>  ml_sendUpload;
 
-    MultiSend_c::sendSuccess_t en_sendSuccess;
+    MultiSend_c::sendSuccess_t men_sendSuccess;
 
-    int32_t i32_timeWsAnnounceKey;
+    int32_t mi32_timeWsAnnounceKey;
 };
 
 }

@@ -120,8 +120,8 @@ ProcDataRemoteSimpleSetpointSimpleMeasure_c::ProcDataRemoteSimpleSetpointSimpleM
   : ProcDataRemoteBase_c(ps_elementDDI,
                          ac_isoName, aui8_pri, ac_ownerISOName, apc_commanderISOName,
                          apc_processDataChangeHandler, ai_singletonVecKey)
-  , c_measure( this )
-  , c_setpoint( this )
+  , mc_measure( this )
+  , mc_setpoint( this )
 { }
 
 /**
@@ -148,8 +148,8 @@ void ProcDataRemoteSimpleSetpointSimpleMeasure_c::init(const IsoAgLib::ElementDd
   ProcDataRemoteBase_c::init(ps_elementDDI,
                              ac_isoName, aui8_pri, ac_ownerISOName, apc_commanderISOName,
                              apc_processDataChangeHandler, ai_singletonVecKey);
-  c_measure.init( this );
-  c_setpoint.init( this );
+  mc_measure.init( this );
+  mc_setpoint.init( this );
 }
 
 /**
@@ -162,8 +162,8 @@ const ProcDataRemoteSimpleSetpointSimpleMeasure_c&
     const ProcDataRemoteSimpleSetpointSimpleMeasure_c& arc_src)
 {
   ProcDataRemoteBase_c::operator=( arc_src );
-  c_measure = arc_src.c_measure;
-  c_setpoint = arc_src.c_setpoint;
+  mc_measure = arc_src.mc_measure;
+  mc_setpoint = arc_src.mc_setpoint;
   return *this;
 }
 
@@ -174,8 +174,8 @@ const ProcDataRemoteSimpleSetpointSimpleMeasure_c&
 ProcDataRemoteSimpleSetpointSimpleMeasure_c::ProcDataRemoteSimpleSetpointSimpleMeasure_c(
   const ProcDataRemoteSimpleSetpointSimpleMeasure_c& arc_src)
   : ProcDataRemoteBase_c( arc_src ),
-    c_measure( arc_src.c_measure ),
-    c_setpoint( arc_src.c_setpoint )
+    mc_measure( arc_src.mc_measure ),
+    mc_setpoint( arc_src.mc_setpoint )
 {
 }
 
@@ -187,13 +187,13 @@ ProcDataRemoteSimpleSetpointSimpleMeasure_c::~ProcDataRemoteSimpleSetpointSimple
 /** process a setpoint message */
 void ProcDataRemoteSimpleSetpointSimpleMeasure_c::processSetpoint()
 {
-  c_setpoint.processSetpoint();
+  mc_setpoint.processSetpoint();
 }
 
 /** process a measure prog message for remote process data */
 void ProcDataRemoteSimpleSetpointSimpleMeasure_c::processProg()
 {
-  c_measure.processProg();
+  mc_measure.processProg();
 }
 
 

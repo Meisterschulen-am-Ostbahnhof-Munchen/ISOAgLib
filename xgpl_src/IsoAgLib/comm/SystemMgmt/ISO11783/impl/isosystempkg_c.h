@@ -131,7 +131,7 @@ public:
   */
   const IsoName_c& isoName() const
   { // read on extended ident ISO msg the ISOName from NAME setting
-    return c_isoISOName;
+    return mc_isoISOName;
   };
   /* *********************** */
   /* ***setting of values*** */
@@ -158,7 +158,7 @@ protected: // protected methods
   */
   virtual void flags2String();
   private:
-    IsoName_c c_isoISOName;
+    IsoName_c mc_isoISOName;
 };
 
 /** this typedef is only for some time to provide backward compatibility at API level */

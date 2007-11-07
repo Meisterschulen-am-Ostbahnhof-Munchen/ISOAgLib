@@ -126,8 +126,8 @@ namespace __IsoAgLib {
 
 /** default constructor which has nothing to do */
 ProcessPkg_c::ProcessPkg_c( int ai_singletonVecKey ) : CanPkgExt_c( ai_singletonVecKey ) {
-  c_specialTermISOName.setUnspecified();
-  c_specialTermUseProcISOName.setUnspecified();
+  mc_specialTermISOName.setUnspecified();
+  mc_specialTermUseProcISOName.setUnspecified();
 }
 /** default constructor which has nothing to do */
 ProcessPkg_c::~ProcessPkg_c(){
@@ -145,10 +145,10 @@ bool ProcessPkg_c::isSpecCmd(proc_specCmd_t ren_checkCmd)const
   bool b_result = false;
 
 
-  const int32_t ci32_test = c_flex4Data.getInt32Data();
+  const int32_t ci32_test = mc_flex4Data.getInt32Data();
 
-  if (c_generalCommand.getCommand() == GeneralCommand_c::setValue &&
-      c_generalCommand.checkIsSetpoint())
+  if (mc_generalCommand.getCommand() == GeneralCommand_c::setValue &&
+      mc_generalCommand.checkIsSetpoint())
   { // setpoint value -> special commands are possible for exact, min, max, default setpopints
       if ((ren_checkCmd & setpointReleaseCmd != 0)
        &&(ci32_test == static_cast<int32_t>(SETPOINT_RELEASE_COMMAND)))
@@ -162,8 +162,8 @@ bool ProcessPkg_c::isSpecCmd(proc_specCmd_t ren_checkCmd)const
       }
   }
 
-  if (c_generalCommand.getCommand() == GeneralCommand_c::setValue &&
-      !c_generalCommand.checkIsSetpoint())
+  if (mc_generalCommand.getCommand() == GeneralCommand_c::setValue &&
+      !mc_generalCommand.checkIsSetpoint())
   { // measure value: conversion if: actual, min, max, integ, med
     // check for command values
     if ((ren_checkCmd & noVal_32s != 0)
@@ -196,14 +196,14 @@ int32_t ProcessPkg_c::dataLong()const{
   {
     case i32_val:
     case cmdVal:
-      i32_result = c_flex4Data.getInt32Data();
+      i32_result = mc_flex4Data.getInt32Data();
       break;
     case ui32_val:
-      i32_result = c_flex4Data.getUint32Data();
+      i32_result = mc_flex4Data.getUint32Data();
       break;
 #if defined(USE_FLOAT_DATA_TYPE)
     case float_val:
-      littleEndianStream2FloatVar(c_flex4Data.uint8, ((float*)(&i32_result)));
+      littleEndianStream2FloatVar(mc_flex4Data.uint8, ((float*)(&i32_result)));
       break;
 #endif
   }
@@ -224,14 +224,14 @@ uint32_t ProcessPkg_c::dataUlong()const{
   {
     case i32_val:
     case cmdVal:
-      ulResult = c_flex4Data.getInt32Data();
+      ulResult = mc_flex4Data.getInt32Data();
       break;
     case ui32_val:
-      ulResult = c_flex4Data.getUint32Data();
+      ulResult = mc_flex4Data.getUint32Data();
       break;
 #if defined(USE_FLOAT_DATA_TYPE)
     case float_val:
-      littleEndianStream2FloatVar(c_flex4Data.uint8, ((float*)(&ulResult)));
+      littleEndianStream2FloatVar(mc_flex4Data.uint8, ((float*)(&ulResult)));
       break;
 #endif
   }
@@ -251,16 +251,16 @@ float ProcessPkg_c::dataFloat()const{
   switch (valType())
   {
     case i32_val:
-      f_result = c_flex4Data.getInt32Data();
+      f_result = mc_flex4Data.getInt32Data();
       break;
     case ui32_val:
-      f_result = c_flex4Data.getUint32Data();
+      f_result = mc_flex4Data.getUint32Data();
       break;
     case float_val:
-      littleEndianStream2FloatVar(c_flex4Data.uint8, &f_result);
+      littleEndianStream2FloatVar(mc_flex4Data.uint8, &f_result);
       break;
     case cmdVal:
-      f_result = c_flex4Data.getInt32Data();
+      f_result = mc_flex4Data.getInt32Data();
       break;
   }
   return f_result;
@@ -277,7 +277,7 @@ float ProcessPkg_c::dataFloat()const{
 */
 void ProcessPkg_c::setDataRawCmd(int32_t ai32_val, proc_valType_t ren_procValType)
 {
-  c_flex4Data.setInt32Data( ai32_val );
+  mc_flex4Data.setInt32Data( ai32_val );
 
   bit_data.b_valType = ren_procValType;
 }
@@ -297,18 +297,18 @@ void ProcessPkg_c::setData(int32_t ai32_val, proc_valType_t ren_procValType)
   switch (ren_procValType)
   {
     case i32_val:
-      c_flex4Data.setInt32Data( ai32_val );
+      mc_flex4Data.setInt32Data( ai32_val );
       set_d(0);
       bit_data.b_valType = ren_procValType;
       break;
     case ui32_val:
-      c_flex4Data.setUint32Data( ai32_val );
+      mc_flex4Data.setUint32Data( ai32_val );
       set_d(0);
       bit_data.b_valType = ren_procValType;
       break;
 #if defined(USE_FLOAT_DATA_TYPE)
     case float_val:
-      floatVar2LittleEndianStream( ((float *const)(&ai32_val)), c_flex4Data.uint8);
+      floatVar2LittleEndianStream( ((float *const)(&ai32_val)), mc_flex4Data.uint8);
       set_d(1);
       bit_data.b_valType = ren_procValType;
       break;
@@ -332,16 +332,16 @@ void ProcessPkg_c::setData(uint32_t aui32_val, proc_valType_t ren_procValType)
   switch (ren_procValType)
   {
     case i32_val:
-      c_flex4Data.setInt32Data( aui32_val );
+      mc_flex4Data.setInt32Data( aui32_val );
       set_d(0);
       break;
     case ui32_val:
-      c_flex4Data.setUint32Data( aui32_val );
+      mc_flex4Data.setUint32Data( aui32_val );
       set_d(0);
       break;
 #if defined(USE_FLOAT_DATA_TYPE)
     case float_val:
-      floatVar2LittleEndianStream( ((float *const)(&aui32_val)), c_flex4Data.uint8);
+      floatVar2LittleEndianStream( ((float *const)(&aui32_val)), mc_flex4Data.uint8);
       set_d(1);
       break;
 #endif
@@ -362,16 +362,16 @@ void ProcessPkg_c::setData(proc_specCmd_t ren_procSpecCmd, proc_valType_t ren_pr
   switch (ren_procSpecCmd)
   {
     case setpointReleaseCmd:
-      c_flex4Data.setInt32Data( SETPOINT_RELEASE_COMMAND );
+      mc_flex4Data.setInt32Data( SETPOINT_RELEASE_COMMAND );
       break;
     case setpointErrCmd:
-      c_flex4Data.setInt32Data( SETPOINT_ERROR_COMMAND );
+      mc_flex4Data.setInt32Data( SETPOINT_ERROR_COMMAND );
       break;
     case noVal_32s:
-      c_flex4Data.setInt32Data( NO_VAL_32S );
+      mc_flex4Data.setInt32Data( NO_VAL_32S );
       break;
     case errVal_32s:
-      c_flex4Data.setInt32Data( ERROR_VAL_32S );
+      mc_flex4Data.setInt32Data( ERROR_VAL_32S );
       break;
   }
 #if defined(USE_FLOAT_DATA_TYPE)
@@ -398,17 +398,17 @@ void ProcessPkg_c::setData(float af_val, proc_valType_t ren_procValType)
   switch (ren_procValType)
   {
     case i32_val:
-      c_flex4Data.setInt32Data( int32_t(af_val) );
+      mc_flex4Data.setInt32Data( int32_t(af_val) );
       set_d(0);
       bit_data.b_valType = ren_procValType;
       break;
     case ui32_val:
-      c_flex4Data.setUint32Data( uint32_t(af_val) );
+      mc_flex4Data.setUint32Data( uint32_t(af_val) );
       set_d(0);
       bit_data.b_valType = ren_procValType;
       break;
     case float_val:
-      floatVar2LittleEndianStream(&af_val, c_flex4Data.uint8);
+      floatVar2LittleEndianStream(&af_val, mc_flex4Data.uint8);
       set_d(1);
       bit_data.b_valType = ren_procValType;
       break;
@@ -452,29 +452,29 @@ void ProcessPkg_c::string2Flags()
   // isoName in ProcessPkg_c is no longer used in ISO
   //setISOName(c_isoMonitor.isoMemberNr(send()).isoName());  // Get the devClass and pos (Device Class, Device Class Instance -bac
 
-  // now set pc_monitorSend and pc_monitorEmpf
+  // now set mpc_monitorSend and mpc_monitorEmpf
   if (c_isoMonitor.existIsoMemberNr(empf()))
   { // ISO targeted process msg with empf as defined ISO member
-    pc_monitorEmpf = static_cast<IsoItem_c*>(&(c_isoMonitor.isoMemberNr(empf())));
+    mpc_monitorEmpf = static_cast<IsoItem_c*>(&(c_isoMonitor.isoMemberNr(empf())));
   }
   else
   { // either no target process msg or empf no defined member
-    pc_monitorEmpf = NULL;
+    mpc_monitorEmpf = NULL;
   }
   if (c_isoMonitor.existIsoMemberNr(send()))
   { // sender SEND registered as
-    pc_monitorSend = static_cast<IsoItem_c*>(&(c_isoMonitor.isoMemberNr(send())));
+    mpc_monitorSend = static_cast<IsoItem_c*>(&(c_isoMonitor.isoMemberNr(send())));
   }
   else
   { // send is no defined member
-    pc_monitorSend = NULL;
+    mpc_monitorSend = NULL;
   }
 
   set_Cmd(CanPkg_c::c_data[0] & 0xf);
-  uint16_t ui16_element = 0;
-  ui16_element = uint16_t(CanPkg_c::c_data[1]) << 4;
-  ui16_element |= ((CanPkg_c::c_data[0] & 0xF0)>>4);
-  set_Element(ui16_element);
+  uint16_t mui16_element = 0;
+  mui16_element = uint16_t(CanPkg_c::c_data[1]) << 4;
+  mui16_element |= ((CanPkg_c::c_data[0] & 0xF0)>>4);
+  set_Element(mui16_element);
 
   uint16_t newDDI = 0;
   newDDI |= CanPkg_c::c_data[3];
@@ -482,7 +482,7 @@ void ProcessPkg_c::string2Flags()
   newDDI |= CanPkg_c::c_data[2];
   set_DDI(newDDI);
 
-  c_flex4Data.setFlexible4DataValueInd( 1, CanPkg_c::c_data );
+  mc_flex4Data.setFlexible4DataValueInd( 1, CanPkg_c::c_data );
 };
 
 /**
@@ -496,7 +496,7 @@ void ProcessPkg_c::string2Flags()
 void ProcessPkg_c::flags2String()
 {
   uint8_t ui8_cmd;
-  switch (c_generalCommand.getCommand()) {
+  switch (mc_generalCommand.getCommand()) {
     case GeneralCommand_c::requestConfiguration:                  ui8_cmd = 0; break;
     case GeneralCommand_c::configurationResponse:                 ui8_cmd = 1; break;
     case GeneralCommand_c::requestValue:                          ui8_cmd = 2; break;
@@ -520,7 +520,7 @@ void ProcessPkg_c::flags2String()
   CanPkg_c::c_data.setUint8Data(3, (DDI()& 0xFF00) >> 8 );
   // for ISO the ident is directly read and written
 
-  CanPkg_c::c_data.setFlexible4DataValueInd( 1, c_flex4Data );
+  CanPkg_c::c_data.setFlexible4DataValueInd( 1, mc_flex4Data );
 
   setLen(8);
 };
@@ -533,8 +533,8 @@ void ProcessPkg_c::flags2String()
   @exception containerElementNonexistant
 */
 IsoItem_c& ProcessPkg_c::memberEmpf() const
-{ // check if pc_monitorEmpf is set
-  if (pc_monitorEmpf == NULL)
+{ // check if mpc_monitorEmpf is set
+  if (mpc_monitorEmpf == NULL)
   { // throw exception by constant -> if no exception configured no command is created
     THROW_CONT_EL_NONEXIST
 
@@ -543,7 +543,7 @@ IsoItem_c& ProcessPkg_c::memberEmpf() const
   }
   else
   { // o.k. -> return item
-    return *pc_monitorEmpf;
+    return *mpc_monitorEmpf;
   }
 }
 /**
@@ -554,8 +554,8 @@ IsoItem_c& ProcessPkg_c::memberEmpf() const
   @exception containerElementNonexistant
 */
 IsoItem_c& ProcessPkg_c::memberSend() const
-{ // check if pc_monitorSend is set
-  if (pc_monitorSend == NULL)
+{ // check if mpc_monitorSend is set
+  if (mpc_monitorSend == NULL)
   { // throw exception by constant -> if no exception configured no command is created
     THROW_CONT_EL_NONEXIST
 
@@ -564,7 +564,7 @@ IsoItem_c& ProcessPkg_c::memberSend() const
   }
   else
   { // o.k. -> return item
-    return *pc_monitorSend;
+    return *mpc_monitorSend;
   }
 }
 /**
@@ -575,9 +575,9 @@ IsoItem_c& ProcessPkg_c::memberSend() const
 */
 void ProcessPkg_c::useTermISONameForLocalProc(const IsoName_c& ac_isoName, const IsoName_c& ac_useProcISOName)
 {
-  c_specialTermISOName = ac_isoName;
-  if (ac_useProcISOName.isSpecified())c_specialTermUseProcISOName = ac_useProcISOName;
-  else c_specialTermUseProcISOName = ac_isoName;
+  mc_specialTermISOName = ac_isoName;
+  if (ac_useProcISOName.isSpecified())mc_specialTermUseProcISOName = ac_useProcISOName;
+  else mc_specialTermUseProcISOName = ac_isoName;
 }
 
 /**
@@ -586,63 +586,63 @@ void ProcessPkg_c::useTermISONameForLocalProc(const IsoName_c& ac_isoName, const
 */
 bool ProcessPkg_c::resolveCommandTypeForISO(const IsoAgLib::ElementDdi_s& rl_elementDDI)
 {
-  bool b_isSetpoint = false;
-  bool b_isRequest = false;
-  GeneralCommand_c::ValueGroup_t en_valueGroup = GeneralCommand_c::noValue;
-  GeneralCommand_c::CommandType_t en_command = GeneralCommand_c::noCommand;
+  bool mb_isSetpoint = false;
+  bool mb_isRequest = false;
+  GeneralCommand_c::ValueGroup_t men_valueGroup = GeneralCommand_c::noValue;
+  GeneralCommand_c::CommandType_t men_command = GeneralCommand_c::noCommand;
 
   if ( identType() != Ident_c::StandardIdent) {
     // ISO command
     switch (cmd()) {
       case 0x00:
-        en_command = GeneralCommand_c::requestConfiguration;
+        men_command = GeneralCommand_c::requestConfiguration;
         break;
       case 0x01:
-        en_command = GeneralCommand_c::configurationResponse;
+        men_command = GeneralCommand_c::configurationResponse;
         break;
       case 0x02:
-        en_command = GeneralCommand_c::requestValue;
-        b_isRequest = true;
+        men_command = GeneralCommand_c::requestValue;
+        mb_isRequest = true;
         break;
       case 0x03:
-        en_command = GeneralCommand_c::setValue;
+        men_command = GeneralCommand_c::setValue;
         break;
       case 0x04:
-        en_command = GeneralCommand_c::measurementTimeValueStart;
+        men_command = GeneralCommand_c::measurementTimeValueStart;
         break;
       case 0x05:
-        en_command = GeneralCommand_c::measurementDistanceValueStart;
+        men_command = GeneralCommand_c::measurementDistanceValueStart;
         break;
       case 0x06:
-        en_command = GeneralCommand_c::measurementMinimumThresholdValueStart;
+        men_command = GeneralCommand_c::measurementMinimumThresholdValueStart;
         break;
       case 0x07:
-        en_command = GeneralCommand_c::measurementMaximumThresholdValueStart;
+        men_command = GeneralCommand_c::measurementMaximumThresholdValueStart;
         break;
       case 0x08:
-        en_command = GeneralCommand_c::measurementChangeThresholdValueStart;
+        men_command = GeneralCommand_c::measurementChangeThresholdValueStart;
         break;
       case 0x0d:
-        en_command = GeneralCommand_c::nack;
+        men_command = GeneralCommand_c::nack;
         break;
       case 0x0e:
-        en_command = GeneralCommand_c::taskControllerStatus;
+        men_command = GeneralCommand_c::taskControllerStatus;
         break;
       case 0x0f:
-        en_command = GeneralCommand_c::workingsetMasterMaintenance;
+        men_command = GeneralCommand_c::workingsetMasterMaintenance;
         break;
     }
   }
 
   if ( rl_elementDDI.ui16_DDI == DDI() )
   {
-    b_isSetpoint = rl_elementDDI.b_isSetpoint;
-    en_valueGroup = rl_elementDDI.en_valueGroup;
+    mb_isSetpoint = rl_elementDDI.b_isSetpoint;
+    men_valueGroup = rl_elementDDI.en_valueGroup;
   }
 
-  if (en_command != GeneralCommand_c::noCommand)
+  if (men_command != GeneralCommand_c::noCommand)
   {
-    c_generalCommand.setValues(b_isSetpoint, b_isRequest, en_valueGroup, en_command);
+    mc_generalCommand.setValues(mb_isSetpoint, mb_isRequest, men_valueGroup, men_command);
     return true;
   }
   else return false;

@@ -202,12 +202,12 @@ class SimpleManageSetpointLocal_c : public ProcessElementBase_c
     #ifdef USE_FLOAT_DATA_TYPE
     /** define simple setpoint master value */
     union {
-      int32_t i32_setpointMasterVal;
+      int32_t mi32_setpointMasterVal;
       float f_setpointMasterVal;
     };
     #else // USE_FLOAT_DATA_TYPE
     /** define simple setpoint master value */
-    int32_t i32_setpointMasterVal;
+    int32_t mi32_setpointMasterVal;
     #endif // USE_FLOAT_DATA_TYPE
   #endif // !defined(HANDLE_SETPOINT_MEASURE_EQUIVALENT)
 

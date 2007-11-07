@@ -142,7 +142,7 @@ public:
     Proc_c::progType_t ren_progType = Proc_c::UndefinedProg,
     int32_t ai32_val = 0,
     const IsoName_c& ac_isoName = IsoName_c::IsoNameUnspecified() ) : ProcessElementBase_c(apc_processData),
-      vec_measureSubprog() {init(apc_processData, ren_progType, ai32_val, ac_isoName);}
+      mvec_measureSubprog() {init(apc_processData, ren_progType, ai32_val, ac_isoName);}
 
   /**
     constructor which can optional set most element vars
@@ -156,7 +156,7 @@ public:
     Proc_c::progType_t ren_progType = Proc_c::UndefinedProg,
     int32_t ai32_val = 0,
     const IsoName_c& ac_isoName = IsoName_c::IsoNameUnspecified()) : ProcessElementBase_c(arc_processData),
-      vec_measureSubprog() {init(&arc_processData, ren_progType, ai32_val, ac_isoName);}
+      mvec_measureSubprog() {init(&arc_processData, ren_progType, ai32_val, ac_isoName);}
 
   /**
     initialise the measure prog instance, to set this instance to a well defined starting condition
@@ -229,7 +229,7 @@ public:
     @return true -> program is running
   */
   bool started()
-    {return (en_doSend == Proc_c::DoNone)?false:true;};
+    {return (men_doSend == Proc_c::DoNone)?false:true;};
 
   /**
     deliver actual last received value
@@ -274,13 +274,13 @@ public:
     deliver the delta
     @return:delta between the last two measure vals [1/sec]
   */
-  int32_t delta() const {return i32_delta;}
+  int32_t delta() const {return mi32_delta;}
 
   /**
     deliver the acceleration
     @return acceleration calculated from the last delta values [1/(sec*sec)]
   */
-  int32_t accel() const {return i32_accel;}
+  int32_t accel() const {return mi32_accel;}
 
 #ifdef USE_FLOAT_DATA_TYPE
   /**
@@ -349,16 +349,16 @@ public:
 #endif
 
   /**
-    return the c_isoName code for this measureprog
+    return the mc_isoName code for this measureprog
     @return ISOName of this measureprog
   */
-  const IsoName_c& isoName() const{return c_isoName;}
+  const IsoName_c& isoName() const{return mc_isoName;}
 
   /**
     deliver the type of the active increment types
     @return actual Bit-OR combined increment types
   */
-  Proc_c::type_t type() const {return en_type;}
+  Proc_c::type_t type() const {return men_type;}
 
   /**
     check if the given increment type is active
@@ -366,13 +366,13 @@ public:
     @return true -> given increment type is set
   */
   bool checkType(Proc_c::type_t ren_type) const
-    {return ((en_type & ren_type) > 0)?true:false;}
+    {return ((men_type & ren_type) > 0)?true:false;}
 
   /**
     return the program type of the item
     @return ProgType: Proc_c::UndefinedProg, Proc_c::Base, Proc_c::Target
   */
-  uint8_t progType() const{return static_cast<uint8_t>(en_progType);};
+  uint8_t progType() const{return static_cast<uint8_t>(men_progType);};
 
   /**
     check if given progType (base, target) is active
@@ -380,7 +380,7 @@ public:
     @return true -> given Prog-Type is set
   */
   bool checkProgType(Proc_c::progType_t ren_progType) const
-    {return ((en_progType & ren_progType) > 0)?true:false;}
+    {return ((men_progType & ren_progType) > 0)?true:false;}
 
   /**
     check if given send type is activated
@@ -388,7 +388,7 @@ public:
     @return true -> given value is sent on trigger
   */
   bool checkDoSend(Proc_c::doSend_t ren_doSend) const
-    {return ((en_doSend & ren_doSend) > 0)?true:false;}
+    {return ((men_doSend & ren_doSend) > 0)?true:false;}
 
   /**
     init the element vars
@@ -449,20 +449,20 @@ public:
     @param ab_type wanted ProgType: Proc_c::UndefinedProg, Proc_c::Base, Proc_c::Target
   */
   void setProgType(uint8_t ab_type)
-    {en_progType = Proc_c::progType_t(ab_type);}
+    {men_progType = Proc_c::progType_t(ab_type);}
 
   /**
     set the type of the active increment types
     @param ren_type Bit-OR combined increment type(s)
   */
-  void setType(Proc_c::type_t ren_type){en_type = ren_type;}
+  void setType(Proc_c::type_t ren_type){men_type = ren_type;}
 
   /**
-    set the c_isoName code for this measureprog
+    set the mc_isoName code for this measureprog
     @param ac_isoName ISOName for exact specification of partner system
   */
   // This has something to do with the init failing for the iProcDataRemote_c object. -bac
-  void setISOName(const IsoName_c& ac_isoName){c_isoName = ac_isoName;}
+  void setISOName(const IsoName_c& ac_isoName){mc_isoName = ac_isoName;}
 
   /**
     process a message;
@@ -534,31 +534,31 @@ protected: // Protected methods
     internal increment the value
     @param ai32_val increment for internal measure val
   */
-  void incrVal(int32_t ai32_val){i32_val += ai32_val;}
+  void incrVal(int32_t ai32_val){mi32_val += ai32_val;}
 
   /**
     increment the integer value
     @param ai32_val increment for integral
   */
-  void incrInteg(int32_t ai32_val){i32_integ += ai32_val;}
+  void incrInteg(int32_t ai32_val){mi32_integ += ai32_val;}
 
   /**
     set min val
     @param ai32_val new MIN value
   */
-  void setMin(int32_t ai32_val){i32_min = ai32_val;}
+  void setMin(int32_t ai32_val){mi32_min = ai32_val;}
 
   /**
     set max val
     @param ai32_val new MAN value
   */
-  void setMax(int32_t ai32_val){i32_max = ai32_val;}
+  void setMax(int32_t ai32_val){mi32_max = ai32_val;}
 
   /**
     set integ val
     @param ai32_val new integral value
   */
-  void setInteg(int32_t ai32_val){i32_integ = ai32_val;}
+  void setInteg(int32_t ai32_val){mi32_integ = ai32_val;}
 
 #ifdef USE_FLOAT_DATA_TYPE
   /**
@@ -594,14 +594,14 @@ protected: // Protected methods
 
 protected: // Protected attributes
   /**  last time were value was set */
-  int32_t i32_lastTime;
+  int32_t mi32_lastTime;
 #ifdef USE_FLOAT_DATA_TYPE
   union {
     /** actual value
         (can differ from masterVal if f.e. value of this program
         was resetted by caller)
     */
-    int32_t i32_val;
+    int32_t mi32_val;
     /** actual value as float representation
         (can differ from masterVal if f.e. value of this program
         was resetted by caller)
@@ -611,7 +611,7 @@ protected: // Protected attributes
 
   union {
     /** calculated delta value between actual and last val */
-    int32_t i32_delta;
+    int32_t mi32_delta;
     /** calculated delta value between actual and last val */
     float f_delta;
   };
@@ -620,7 +620,7 @@ protected: // Protected attributes
     /** acceleration between values
         (= delta between last i32_deltaVal and actual i32_deltaVal)
     */
-    int32_t i32_accel;
+    int32_t mi32_accel;
     /** acceleration between values
         (= delta between last f_deltaVal and actual f_deltaVal)
     */
@@ -632,15 +632,15 @@ protected: // Protected attributes
       (can differ from masterVal if f.e. value of this program
       was resetted by caller)
   */
-  int32_t i32_val;
+  int32_t mi32_val;
 
   /** calculated delta value between actual and last val */
-  int32_t i32_delta;
+  int32_t mi32_delta;
 
   /** acceleration between values
       (= delta between last i32_deltaVal and actual i32_deltaVal)
   */
-  int32_t i32_accel;
+  int32_t mi32_accel;
 #endif
 
 private: // Private methods
@@ -652,7 +652,7 @@ private: // Private methods
     (for easy <,>,...)
     @return single comparison value (depends on ISOName and Prog-Type)
   */
-  int32_t calcCompVal()const {return ( ( (c_isoName.devClass() << 4) | (c_isoName.devClassInst()) ) * en_progType);}
+  int32_t calcCompVal()const {return ( ( (mc_isoName.devClass() << 4) | (mc_isoName.devClassInst()) ) * men_progType);}
 
   /**
     deliver to ab_mod according measure val type
@@ -698,7 +698,7 @@ private: // Private attributes
     /**
       minimum value (only defined if one proportional prog is active)
     */
-    int32_t i32_min;
+    int32_t mi32_min;
     /**
       minimum value (only defined if one proportional prog is active)
     */
@@ -709,7 +709,7 @@ private: // Private attributes
     /**
       maximum value (only defined if one proportional prog is active)
     */
-    int32_t i32_max;
+    int32_t mi32_max;
     /**
       maximum value (only defined if one proportional prog is active)
     */
@@ -720,7 +720,7 @@ private: // Private attributes
     /**
       integral value (only defined if one proportional prog is active)
     */
-    int32_t i32_integ;
+    int32_t mi32_integ;
     /**
       integral value (only defined if one proportional prog is active)
     */
@@ -731,42 +731,42 @@ private: // Private attributes
   /**
     minimum value (only defined if one proportional prog is active)
   */
-  int32_t i32_min;
+  int32_t mi32_min;
 
   /**
     maximum value (only defined if one proportional prog is active)
   */
-  int32_t i32_max;
+  int32_t mi32_max;
 
   /**
     integral value (only defined if one proportional prog is active)
   */
-  int32_t i32_integ;
+  int32_t mi32_integ;
 #endif
 
   /** dynamic array for subprogs */
-  Vec_MeasureSubprog vec_measureSubprog;
+  Vec_MeasureSubprog mvec_measureSubprog;
   /** specifies which value types should be sent if one subprog triggers */
-  Proc_c::doSend_t en_doSend;
+  Proc_c::doSend_t men_doSend;
 
   /**
     stores if programm is started with baseProcess msg
     or with targetProcess msg -> this type is used for sending of values
   */
-  Proc_c::progType_t en_progType;
+  Proc_c::progType_t men_progType;
 
   /**
     active increment types: some of {TimeProp, DistProp, ValIncr, DeltaIncr,
                   AccelIncr, MedIncr, MinIncr, MaxIncr, IntegIncr}
   */
-  Proc_c::type_t en_type;
+  Proc_c::type_t men_type;
 
   /**
     used proportional type for calculating accumulated values (min, max, med, insteg)
   */
-  Proc_c::accumProp_t en_accumProp;
+  Proc_c::accumProp_t men_accumProp;
   /** isoName value of caller of program */
-  IsoName_c c_isoName;
+  IsoName_c mc_isoName;
 };
 
 }

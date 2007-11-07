@@ -207,13 +207,13 @@ public:
     deliver a reference to the setpoint object
     @return reference to member object with setpoint informations
   */
-  SimpleManageSetpointRemote_c& setpoint() { return c_setpoint;};
+  SimpleManageSetpointRemote_c& setpoint() { return mc_setpoint;};
 
   /**
     deliver a reference to the measure prog object
     @return reference to member object with measure prog informations
   */
-  MeasureProgRemote_c& prog() { return c_measure;};
+  MeasureProgRemote_c& prog() { return mc_measure;};
 
 
   /**
@@ -222,12 +222,12 @@ public:
     @return setpoint value as long
   */
   int32_t setpointMasterVal(bool ab_sendRequest = false)
-    { return c_setpoint.setpointMasterVal( ab_sendRequest ); };
+    { return mc_setpoint.setpointMasterVal( ab_sendRequest ); };
   /**
     send a setpoint cmd with given exact setpoint
     @param ai32_val commanded setpoint value as long
   */
-  void setSetpointMasterVal(int32_t ai32_val){ c_setpoint.setSetpointMasterVal(ai32_val);};
+  void setSetpointMasterVal(int32_t ai32_val){ mc_setpoint.setSetpointMasterVal(ai32_val);};
   #ifdef USE_FLOAT_DATA_TYPE
   /**
     deliver the actual master setpoint
@@ -235,30 +235,30 @@ public:
     @return setpoint value as float
   */
   float setpointMasterValFloat(bool ab_sendRequest = false)
-    { return c_setpoint.setpointMasterValFloat( ab_sendRequest ); };
+    { return mc_setpoint.setpointMasterValFloat( ab_sendRequest ); };
   /**
     send a setpoint cmd with given exact setpoint
     @param af_val commanded setpoint value as float
   */
-  void setSetpointMasterVal(float af_val){ c_setpoint.setSetpointMasterVal(af_val);};
+  void setSetpointMasterVal(float af_val){ mc_setpoint.setSetpointMasterVal(af_val);};
   #endif
   /**
     deliver actual measurement value as long
     @param ab_sendRequest true -> request for new value is sent (optional, default false)
   */
   int32_t masterMeasurementVal(bool ab_sendRequest = false)
-    { return c_measure.masterMeasurementVal( ab_sendRequest );};
+    { return mc_measure.masterMeasurementVal( ab_sendRequest );};
   /**
     send reset cmd for the measurement value
   */
-  void resetMasterVal() { c_measure.resetMasterVal();};
+  void resetMasterVal() { mc_measure.resetMasterVal();};
   #ifdef USE_FLOAT_DATA_TYPE
   /**
     deliver actual measurement value as float
     @param ab_sendRequest true -> request for new value is sent (optional, default false)
   */
   float masterValFloat(bool ab_sendRequest = false)
-    { return c_measure.masterValFloat( ab_sendRequest );};
+    { return mc_measure.masterValFloat( ab_sendRequest );};
   #endif
 
   /**
@@ -276,10 +276,10 @@ private: // Private methods
 
 private: // Private attributes
   /** object for managing jobs of remote setpoints */
-  SimpleManageSetpointRemote_c c_setpoint;
+  SimpleManageSetpointRemote_c mc_setpoint;
 
   /** object for managing jobs of remote measure programs */
-  MeasureProgRemote_c c_measure;
+  MeasureProgRemote_c mc_measure;
 };
 
 

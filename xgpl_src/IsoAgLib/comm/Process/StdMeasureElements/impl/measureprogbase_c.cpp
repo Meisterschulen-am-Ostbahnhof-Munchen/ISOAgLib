@@ -125,24 +125,24 @@ void MeasureProgBase_c::init( ProcDataBase_c *const apc_processData,
   }
   if ( sui16_MeasureProgBaseTotal > 0 )
   {
-    sui16_MeasureProgBaseTotal -= ( vec_measureSubprog.size() * ( sizeof(MeasureSubprog_c) + 2 * sizeof(MeasureSubprog_c*) ) );
+    sui16_MeasureProgBaseTotal -= ( mvec_measureSubprog.size() * ( sizeof(MeasureSubprog_c) + 2 * sizeof(MeasureSubprog_c*) ) );
   }
   #endif
 
-  vec_measureSubprog.clear();
+  mvec_measureSubprog.clear();
   // set the pointers in the baseClass ProcessElementBase
   set(apc_processData);
   // store the parameter init vals
-  c_isoName = ac_isoName;
-  i32_val = ai32_val;
-  en_progType = ren_progType;
+  mc_isoName = ac_isoName;
+  mi32_val = ai32_val;
+  men_progType = ren_progType;
 
   // set the rest of element vals to defined init
-  en_accumProp = Proc_c::AccumNone;
-  en_doSend = Proc_c::DoNone;
-  en_type = Proc_c::DistProp;
+  men_accumProp = Proc_c::AccumNone;
+  men_doSend = Proc_c::DoNone;
+  men_type = Proc_c::DistProp;
 
-  i32_accel = i32_delta = i32_integ = i32_lastTime = i32_max = i32_min = 0;
+  mi32_accel = mi32_delta = mi32_integ = mi32_lastTime = mi32_max = mi32_min = 0;
 }
 
 
@@ -173,29 +173,29 @@ MeasureProgBase_c::MeasureProgBase_c(const MeasureProgBase_c& arc_src)
 /** base function for assignment of element vars for copy constructor and operator= */
 void MeasureProgBase_c::assignFromSource( const MeasureProgBase_c& arc_src )
 { // copy element vars
-  c_isoName = arc_src.c_isoName;
-  en_accumProp =  arc_src.en_accumProp;
-  en_doSend = arc_src.en_doSend;
-  en_progType = arc_src.en_progType;
-  i32_accel = arc_src.i32_accel;
-  i32_delta = arc_src.i32_delta;
-  i32_integ = arc_src.i32_integ;
-  i32_lastTime = arc_src.i32_lastTime;
-  i32_max = arc_src.i32_max;
-  i32_min = arc_src.i32_min;
-  i32_val = arc_src.i32_val;
-  vec_measureSubprog = arc_src.vec_measureSubprog;
+  mc_isoName = arc_src.mc_isoName;
+  men_accumProp =  arc_src.men_accumProp;
+  men_doSend = arc_src.men_doSend;
+  men_progType = arc_src.men_progType;
+  mi32_accel = arc_src.mi32_accel;
+  mi32_delta = arc_src.mi32_delta;
+  mi32_integ = arc_src.mi32_integ;
+  mi32_lastTime = arc_src.mi32_lastTime;
+  mi32_max = arc_src.mi32_max;
+  mi32_min = arc_src.mi32_min;
+  mi32_val = arc_src.mi32_val;
+  mvec_measureSubprog = arc_src.mvec_measureSubprog;
 
-  if (vec_measureSubprog.size() < arc_src.vec_measureSubprog.size())
+  if (mvec_measureSubprog.size() < arc_src.mvec_measureSubprog.size())
   { // not all items copied
     getILibErrInstance().registerError( iLibErr_c::BadAlloc, iLibErr_c::Process );
   }
   #ifdef DEBUG_HEAP_USEAGE
   else
   {
-    sui16_MeasureProgBaseTotal += vec_measureSubprog.size();
+    sui16_MeasureProgBaseTotal += mvec_measureSubprog.size();
 
-    if ( vec_measureSubprog.size() > 0 )
+    if ( mvec_measureSubprog.size() > 0 )
     {
       getRs232Instance()
         << sui16_MeasureProgBaseTotal << " x MeasureSubprog_c: Mal-Alloc: "
@@ -212,10 +212,10 @@ void MeasureProgBase_c::assignFromSource( const MeasureProgBase_c& arc_src )
 /** default destructor which has nothing to do */
 MeasureProgBase_c::~MeasureProgBase_c(){
   #ifdef DEBUG_HEAP_USEAGE
-  if ( vec_measureSubprog.size() > 0 )
+  if ( mvec_measureSubprog.size() > 0 )
   {
     sui16_deconstructMeasureProgBaseTotal++;
-    sui16_MeasureProgBaseTotal -= vec_measureSubprog.size();
+    sui16_MeasureProgBaseTotal -= mvec_measureSubprog.size();
   }
   #endif
 }
@@ -230,26 +230,26 @@ MeasureProgBase_c::~MeasureProgBase_c(){
     @return true -> subprog was created successfully; fals -> out-of-memory error
   */
  bool MeasureProgBase_c::addSubprog(Proc_c::type_t ren_type, int32_t ai32_increment, Proc_c::doSend_t ren_doSend){
-  if (ren_type == Proc_c::TimeProp) en_accumProp = Proc_c::AccumTime;
-  else if (ren_type == Proc_c::DistProp) en_accumProp = Proc_c::AccumDist;
+  if (ren_type == Proc_c::TimeProp) men_accumProp = Proc_c::AccumTime;
+  else if (ren_type == Proc_c::DistProp) men_accumProp = Proc_c::AccumDist;
 
   // if subprog with this type exist, update only value
-  Vec_MeasureSubprog::iterator pc_subprog = vec_measureSubprog.end();
-  for (pc_subprog = vec_measureSubprog.begin();
-       pc_subprog != vec_measureSubprog.end(); pc_subprog++)
+  Vec_MeasureSubprog::iterator pc_subprog = mvec_measureSubprog.end();
+  for (pc_subprog = mvec_measureSubprog.begin();
+       pc_subprog != mvec_measureSubprog.end(); pc_subprog++)
   {
      if ((pc_subprog->type() == ren_type) && (pc_subprog->doSend() == ren_doSend)) break;
   }
 
-  if (pc_subprog != vec_measureSubprog.end())
+  if (pc_subprog != mvec_measureSubprog.end())
   { // subprog with same type found -> update val
     pc_subprog->setIncrement(ai32_increment);
   }
   else
   { // no subprog with same type exist -> insert new one
-    const uint8_t b_oldSize = vec_measureSubprog.size();
-    vec_measureSubprog.push_front(MeasureSubprog_c(ren_type, ren_doSend, ai32_increment));
-    if (b_oldSize >= vec_measureSubprog.size())
+    const uint8_t b_oldSize = mvec_measureSubprog.size();
+    mvec_measureSubprog.push_front(MeasureSubprog_c(ren_type, ren_doSend, ai32_increment));
+    if (b_oldSize >= mvec_measureSubprog.size())
     { // array didn't grow
       getILibErrInstance().registerError( iLibErr_c::BadAlloc, iLibErr_c::Process );
       return false;
@@ -287,13 +287,13 @@ MeasureProgBase_c::~MeasureProgBase_c(){
 void MeasureProgBase_c::forceSubprogType(Proc_c::type_t ren_type)
 {
   Vec_MeasureSubprog::iterator pc_subprog;
-  for (pc_subprog = vec_measureSubprog.begin(); pc_subprog != vec_measureSubprog.end(); pc_subprog++)
+  for (pc_subprog = mvec_measureSubprog.begin(); pc_subprog != mvec_measureSubprog.end(); pc_subprog++)
   {
     if (pc_subprog->type() == ren_type) break;
   }
-  if ((pc_subprog == vec_measureSubprog.end()) && (!vec_measureSubprog.empty()))
+  if ((pc_subprog == mvec_measureSubprog.end()) && (!mvec_measureSubprog.empty()))
   { // set increment type of first item
-    vec_measureSubprog.begin()->setType(ren_type);
+    mvec_measureSubprog.begin()->setType(ren_type);
   }
 }
 
@@ -305,10 +305,10 @@ void MeasureProgBase_c::forceSubprogType(Proc_c::type_t ren_type)
   */
 bool MeasureProgBase_c::start(Proc_c::type_t ren_type, Proc_c::doSend_t ren_doSend){
   // register values
-  en_doSend = (ren_doSend != Proc_c::DoNone)?ren_doSend : en_doSend;
-  if (en_doSend == Proc_c::DoNone) en_doSend = Proc_c::DoVal;
+  men_doSend = (ren_doSend != Proc_c::DoNone)?ren_doSend : men_doSend;
+  if (men_doSend == Proc_c::DoNone) men_doSend = Proc_c::DoVal;
   forceSubprogType(ren_type);
-  en_type = ren_type;
+  men_type = ren_type;
   return true;
 }
 
@@ -321,7 +321,7 @@ bool MeasureProgBase_c::start(Proc_c::type_t ren_type, Proc_c::doSend_t ren_doSe
 bool MeasureProgBase_c::stop(bool /*b_deleteSubProgs*/, Proc_c::type_t /* ren_type */, Proc_c::doSend_t /* ren_doSend */){
   // clear the array with all subprogs -> no trigger test is done on value set
   #ifdef DEBUG_HEAP_USEAGE
-  sui16_MeasureProgBaseTotal -= vec_measureSubprog.size();
+  sui16_MeasureProgBaseTotal -= mvec_measureSubprog.size();
 
   if ( ( sui16_MeasureProgBaseTotal != sui16_printedMeasureProgBaseTotal                     )
   || ( sui16_deconstructMeasureProgBaseTotal != sui16_printedDeconstructMeasureProgBaseTotal ) )
@@ -337,8 +337,8 @@ bool MeasureProgBase_c::stop(bool /*b_deleteSubProgs*/, Proc_c::type_t /* ren_ty
       << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
   }
   #endif
-  vec_measureSubprog.clear();
-  en_doSend = Proc_c::DoNone;
+  mvec_measureSubprog.clear();
+  men_doSend = Proc_c::DoNone;
   return true;
 }
 
@@ -351,14 +351,14 @@ int32_t MeasureProgBase_c::val(bool ab_sendRequest) const
 {
   if (ab_sendRequest) {
     // prepare general command in process pkg
-    getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */,
+    getProcessInstance4Comm().data().mc_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */,
                                                                 GeneralCommand_c::exactValue,
                                                                 GeneralCommand_c::requestValue);
 
     processData().sendValISOName(isoName(), int32_t(0));
   }
 
-  return i32_val;
+  return mi32_val;
 }
 
 /** deliver integ val
@@ -370,13 +370,13 @@ int32_t MeasureProgBase_c::integ(bool ab_sendRequest) const
 {
   if (ab_sendRequest) {
     // prepare general command in process pkg
-    getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */,
+    getProcessInstance4Comm().data().mc_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */,
                                                                 GeneralCommand_c::integValue,
                                                                 GeneralCommand_c::requestValue);
 
     processData().sendValISOName(isoName(), int32_t(0));
   }
-  return i32_integ;
+  return mi32_integ;
 }
 
 /** deliver min val
@@ -388,13 +388,13 @@ int32_t MeasureProgBase_c::min(bool ab_sendRequest) const
 {
   if(ab_sendRequest) {
     // prepare general command in process pkg
-    getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */,
+    getProcessInstance4Comm().data().mc_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */,
                                                                 GeneralCommand_c::minValue,
                                                                 GeneralCommand_c::requestValue);
 
     processData().sendValISOName(isoName(), int32_t(0));
   }
-  return i32_min;
+  return mi32_min;
 }
 
 /** deliver max val
@@ -406,13 +406,13 @@ int32_t MeasureProgBase_c::max(bool ab_sendRequest) const
 {
   if (ab_sendRequest) {
     // prepare general command in process pkg
-    getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */,
+    getProcessInstance4Comm().data().mc_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */,
                                                                 GeneralCommand_c::maxValue,
                                                                 GeneralCommand_c::requestValue);
 
     processData().sendValISOName(isoName(), int32_t(0));
   }
-  return i32_max;
+  return mi32_max;
 }
 
 
@@ -435,7 +435,7 @@ void MeasureProgBase_c::initVal(int32_t ai32_val){
       << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
   }
   #endif
-  i32_val = i32_min = i32_max = i32_integ = ai32_val;
+  mi32_val = mi32_min = mi32_max = mi32_integ = ai32_val;
 }
 
 #ifdef USE_FLOAT_DATA_TYPE
@@ -461,23 +461,23 @@ void MeasureProgBase_c::init(
       << " Bytes" << INTERNAL_DEBUG_DEVICE_ENDL;
   }
 
-  sui16_MeasureProgBaseTotal -= ( vec_measureSubprog.size() * ( sizeof(MeasureSubprog_c) + 2 * sizeof(MeasureSubprog_c*) ) );
+  sui16_MeasureProgBaseTotal -= ( mvec_measureSubprog.size() * ( sizeof(MeasureSubprog_c) + 2 * sizeof(MeasureSubprog_c*) ) );
   #endif
 
-  vec_measureSubprog.clear();
+  mvec_measureSubprog.clear();
   // set the pointers in the baseClass ProcessElementBase
   set(apc_processData);
   // store the parameter init vals
-  c_isoName = ac_isoName;
+  mc_isoName = ac_isoName;
   f_val = af_val;
-  en_progType = ren_progType;
+  men_progType = ren_progType;
 
   // set the rest of element vals to defined init
-  en_accumProp = Proc_c::AccumNone;
-  en_doSend = Proc_c::DoNone;
-  en_type = Proc_c::DistProp;
+  men_accumProp = Proc_c::AccumNone;
+  men_doSend = Proc_c::DoNone;
+  men_type = Proc_c::DistProp;
 
-  i32_accel = i32_delta = i32_integ = i32_lastTime = i32_max = i32_min = 0;
+  mi32_accel = mi32_delta = mi32_integ = mi32_lastTime = mi32_max = mi32_min = 0;
 }
 
 /** deliver actual last received value
@@ -489,7 +489,7 @@ float MeasureProgBase_c::valFloat(bool ab_sendRequest) const
 {
   if (ab_sendRequest) {
     // prepare general command in process pkg
-    getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */,
+    getProcessInstance4Comm().data().mc_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */,
                                                                 GeneralCommand_c::exactValue,
                                                                 GeneralCommand_c::requestValue);
 
@@ -507,7 +507,7 @@ float MeasureProgBase_c::integFloat(bool ab_sendRequest) const
 {
   if (ab_sendRequest) {
     // prepare general command in process pkg
-    getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */,
+    getProcessInstance4Comm().data().mc_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */,
                                                                 GeneralCommand_c::integValue,
                                                                 GeneralCommand_c::requestValue);
 
@@ -526,7 +526,7 @@ float MeasureProgBase_c::minFloat(bool ab_sendRequest) const
 {
   if (ab_sendRequest) {
     // prepare general command in process pkg
-    getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */,
+    getProcessInstance4Comm().data().mc_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */,
                                                                 GeneralCommand_c::minValue,
                                                                 GeneralCommand_c::requestValue);
 
@@ -545,7 +545,7 @@ float MeasureProgBase_c::maxFloat(bool ab_sendRequest) const
 {
   if (ab_sendRequest) {
     // prepare general command in process pkg
-    getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */,
+    getProcessInstance4Comm().data().mc_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */,
                                                                 GeneralCommand_c::maxValue,
                                                                 GeneralCommand_c::requestValue);
 
@@ -586,7 +586,7 @@ void MeasureProgBase_c::initVal(float af_val){
   */
 bool MeasureProgBase_c::processMsg(){
   ProcessPkg_c& c_pkg = getProcessInstance4Comm().data();
-  GeneralCommand_c::CommandType_t en_command = c_pkg.c_generalCommand.getCommand();
+  GeneralCommand_c::CommandType_t en_command = c_pkg.mc_generalCommand.getCommand();
 
   #ifdef DEBUG_HEAP_USEAGE
   if ( ( sui16_MeasureProgBaseTotal != sui16_printedMeasureProgBaseTotal                     )
@@ -614,27 +614,27 @@ bool MeasureProgBase_c::processMsg(){
 
   // Not sure why this has problems, but it does. So, don't run it with ISO_TASK_CONTROLLER! -bac
   // check if PD==0 -> SET increment message
-  if (!c_pkg.c_generalCommand.checkIsRequest())
+  if (!c_pkg.mc_generalCommand.checkIsRequest())
   { // mark that msg already edited
     b_edited = true;
 
     // set en_doSendPkg (for ISO)
-    GeneralCommand_c::ValueGroup_t en_valueGroup = c_pkg.c_generalCommand.getValueGroup();
+    GeneralCommand_c::ValueGroup_t en_valueGroup = c_pkg.mc_generalCommand.getValueGroup();
 
     Proc_c::doSend_t en_doSendPkg = Proc_c::DoVal;  //default send data mode
-    if (c_pkg.c_generalCommand.checkIsSetpoint())
+    if (c_pkg.mc_generalCommand.checkIsSetpoint())
       en_doSendPkg = Proc_c::DoValForExactSetpoint; // measurement for exact value setpoint
 
     switch (en_valueGroup)
     {
       case GeneralCommand_c::minValue:
         en_doSendPkg = Proc_c::DoValForMinSetpoint; // measurement for min value setpoint
-        if (!c_pkg.c_generalCommand.checkIsSetpoint())
+        if (!c_pkg.mc_generalCommand.checkIsSetpoint())
           en_doSendPkg = Proc_c::DoValForMinMeasurement; // measurement for min value measurement
         break;
       case GeneralCommand_c::maxValue:
         en_doSendPkg = Proc_c::DoValForMaxSetpoint; // measurement for max value setpoint
-        if (!c_pkg.c_generalCommand.checkIsSetpoint())
+        if (!c_pkg.mc_generalCommand.checkIsSetpoint())
           en_doSendPkg = Proc_c::DoValForMaxMeasurement; // measurement for max value measurement
         break;
       case GeneralCommand_c::defaultValue:
@@ -884,30 +884,30 @@ void MeasureProgBase_c::reset(uint8_t ab_comm){
 void MeasureProgBase_c::processIncrementMsg(Proc_c::doSend_t ren_doSend){
   ProcessPkg_c& c_pkg = getProcessInstance4Comm().data();
 
-  // set c_isoName to caller of prog
-  c_isoName = c_pkg.memberSend().isoName();
+  // set mc_isoName to caller of prog
+  mc_isoName = c_pkg.memberSend().isoName();
 
   // get the int32_t data val without conversion
   const int32_t ci32_val = c_pkg.dataRawCmdLong();
 
-  if ( c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::measurementTimeValueStart)
+  if ( c_pkg.mc_generalCommand.getCommand() == GeneralCommand_c::measurementTimeValueStart)
     // time proportional
     addSubprog(Proc_c::TimeProp, CNAMESPACE::labs(ci32_val), ren_doSend);
 
-  if ( c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::measurementDistanceValueStart)
+  if ( c_pkg.mc_generalCommand.getCommand() == GeneralCommand_c::measurementDistanceValueStart)
     // distance proportional
     addSubprog(Proc_c::DistProp, ci32_val, ren_doSend);
 
-  if (c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::measurementChangeThresholdValueStart)
+  if (c_pkg.mc_generalCommand.getCommand() == GeneralCommand_c::measurementChangeThresholdValueStart)
     // change threshold proportional
     // @todo: was DistProp ?
     addSubprog(Proc_c::OnChange, ci32_val, ren_doSend);
 
-  if (c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::measurementMaximumThresholdValueStart)
+  if (c_pkg.mc_generalCommand.getCommand() == GeneralCommand_c::measurementMaximumThresholdValueStart)
     // change threshold proportional
     addSubprog(Proc_c::MaximumThreshold, ci32_val, ren_doSend);
 
-  if (c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::measurementMinimumThresholdValueStart)
+  if (c_pkg.mc_generalCommand.getCommand() == GeneralCommand_c::measurementMinimumThresholdValueStart)
     // change threshold proportional
     addSubprog(Proc_c::MinimumThreshold, ci32_val, ren_doSend);
 }

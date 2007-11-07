@@ -117,8 +117,8 @@ ProcDataRemoteSimpleSetpoint_c::ProcDataRemoteSimpleSetpoint_c(const IsoAgLib::E
   : ProcDataRemoteBase_c(ps_elementDDI, aui16_element,
                          ac_isoName, ac_ownerISOName, apc_commanderISOName,
                          apc_processDataChangeHandler, ai_singletonVecKey)
-  , c_setpoint(this)
-  , c_measure(this)
+  , mc_setpoint(this)
+  , mc_measure(this)
 {
 }
 
@@ -144,8 +144,8 @@ void ProcDataRemoteSimpleSetpoint_c::init(const IsoAgLib::ElementDdi_s* ps_eleme
   ProcDataRemoteBase_c::init(ps_elementDDI, aui16_element,
                              ac_isoName, ac_ownerISOName, apc_commanderISOName,
                              apc_processDataChangeHandler, ai_singletonVecKey);
-  c_setpoint.init( this );
-  c_measure.init( this );
+  mc_setpoint.init( this );
+  mc_measure.init( this );
 }
 /**
   assignment operator for this object
@@ -156,8 +156,8 @@ const ProcDataRemoteSimpleSetpoint_c& ProcDataRemoteSimpleSetpoint_c::operator=(
   // call the assignment operator for the base class
   ProcDataRemoteBase_c::operator=(arc_src);
   // now copy the element var
-  c_setpoint = arc_src.c_setpoint;
-  c_measure = arc_src.c_measure;
+  mc_setpoint = arc_src.mc_setpoint;
+  mc_measure = arc_src.mc_measure;
   // return reference to source
   return arc_src;
 }
@@ -168,8 +168,8 @@ const ProcDataRemoteSimpleSetpoint_c& ProcDataRemoteSimpleSetpoint_c::operator=(
 */
 ProcDataRemoteSimpleSetpoint_c::ProcDataRemoteSimpleSetpoint_c(const ProcDataRemoteSimpleSetpoint_c& arc_src)
   : ProcDataRemoteBase_c(arc_src),
-    c_setpoint(arc_src.c_setpoint),
-    c_measure(arc_src.c_measure)
+    mc_setpoint(arc_src.mc_setpoint),
+    mc_measure(arc_src.mc_measure)
 {
 }
 

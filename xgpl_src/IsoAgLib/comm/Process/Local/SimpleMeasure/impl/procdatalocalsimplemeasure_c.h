@@ -247,9 +247,9 @@ public:
   /** default destructor which has nothing to do */
   ~ProcDataLocalSimpleMeasure_c();
   /** deliver a reference to the setpoint management class */
-  SetpointLocal_c& setpoint( void ) { return c_setpoint; };
+  SetpointLocal_c& setpoint( void ) { return mc_setpoint; };
   /** deliver a reference to the setpoint management class */
-  const SetpointLocal_c& setpointConst( void ) const { return c_setpoint; };
+  const SetpointLocal_c& setpointConst( void ) const { return mc_setpoint; };
 
   /**
     perform periodic actions
@@ -265,7 +265,7 @@ private: // Private methods
   virtual void processSetpoint();
  private:
   /** flexible management of setpoint */
-  SetpointLocal_c c_setpoint;
+  SetpointLocal_c mc_setpoint;
 };
 
 

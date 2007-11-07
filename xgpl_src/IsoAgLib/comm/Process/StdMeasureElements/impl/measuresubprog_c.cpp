@@ -105,11 +105,11 @@ namespace __IsoAgLib {
   @param ai32_lastVal optional value of last trigger event (default 0)
 */
 MeasureSubprog_c::MeasureSubprog_c(Proc_c::type_t ren_type, Proc_c::doSend_t ren_doSend, int32_t ai32_increment, bool ab_started, int32_t ai32_lastVal){
-  en_type = ren_type;
-  en_doSend = ren_doSend;
-  i32_increment = ai32_increment;
-  b_started = ab_started;
-  i32_lastVal = ai32_lastVal;
+  men_type = ren_type;
+  men_doSend = ren_doSend;
+  mi32_increment = ai32_increment;
+  mb_started = ab_started;
+  mi32_lastVal = ai32_lastVal;
 }
 #ifdef USE_FLOAT_DATA_TYPE
 /**
@@ -121,10 +121,10 @@ MeasureSubprog_c::MeasureSubprog_c(Proc_c::type_t ren_type, Proc_c::doSend_t ren
   @param af_lastVal optional value of last trigger event (default 0)
 */
 MeasureSubprog_c::MeasureSubprog_c(Proc_c::type_t ren_type, Proc_c::doSend_t ren_doSend, float af_increment, bool ab_started, float af_lastVal){
-  en_type = ren_type;
-  en_doSend = ren_doSend;
+  men_type = ren_type;
+  men_doSend = ren_doSend;
   f_increment = af_increment;
-  b_started = ab_started;
+  mb_started = ab_started;
   f_lastVal = af_lastVal;
 }
 #endif
@@ -134,11 +134,11 @@ MeasureSubprog_c::MeasureSubprog_c(Proc_c::type_t ren_type, Proc_c::doSend_t ren
   @return reference to source instance for commands like "subp1 = subp2 = subp3;"
 */
 const MeasureSubprog_c& MeasureSubprog_c::operator=(const MeasureSubprog_c& arc_src){
-  b_started = arc_src.b_started;
-  en_type = arc_src.en_type;
-  en_doSend = arc_src.en_doSend;
-  i32_increment = arc_src.i32_increment;
-  i32_lastVal = arc_src.i32_lastVal;
+  mb_started = arc_src.mb_started;
+  men_type = arc_src.men_type;
+  men_doSend = arc_src.men_doSend;
+  mi32_increment = arc_src.mi32_increment;
+  mi32_lastVal = arc_src.mi32_lastVal;
   return arc_src;
 }
 
@@ -147,11 +147,11 @@ const MeasureSubprog_c& MeasureSubprog_c::operator=(const MeasureSubprog_c& arc_
   @param arc_src source instance
 */
 MeasureSubprog_c::MeasureSubprog_c(const MeasureSubprog_c& arc_src){
-  b_started = arc_src.b_started;
-  en_type = arc_src.en_type;
-  en_doSend = arc_src.en_doSend;
-  i32_increment = arc_src.i32_increment;
-  i32_lastVal = arc_src.i32_lastVal;
+  mb_started = arc_src.mb_started;
+  men_type = arc_src.men_type;
+  men_doSend = arc_src.men_doSend;
+  mi32_increment = arc_src.mi32_increment;
+  mi32_lastVal = arc_src.mi32_lastVal;
 }
 
 /** default destructor which has nothing to do */
@@ -165,11 +165,11 @@ MeasureSubprog_c::~MeasureSubprog_c(){
 */
 void MeasureSubprog_c::start(int32_t ai32_lastVal, int32_t ai32_increment){
   // if wanted store given values (in both cases 0 is interpreted as not wanted)
-  if (ai32_increment != 0) i32_increment = ai32_increment;
-  if (ai32_lastVal != 0) i32_lastVal = ai32_lastVal;
+  if (ai32_increment != 0) mi32_increment = ai32_increment;
+  if (ai32_lastVal != 0) mi32_lastVal = ai32_lastVal;
 
   // register as started
-  b_started = true;
+  mb_started = true;
 }
 
  /**
@@ -178,13 +178,13 @@ void MeasureSubprog_c::start(int32_t ai32_lastVal, int32_t ai32_increment){
    @return true -> this subprog triggers (e.g. send actual value)
  */
 bool MeasureSubprog_c::updateTrigger(int32_t ai32_val){
-  if ( ( type() == Proc_c::OnChange ) && ( i32_increment == 0 ) )
+  if ( ( type() == Proc_c::OnChange ) && ( mi32_increment == 0 ) )
   { // special case: OnChange with value 0 means: SEND NO value; 1 meanse: send any change; ...
     return false;
   }
-  else if (CNAMESPACE::labs(ai32_val - i32_lastVal) >= i32_increment)
+  else if (CNAMESPACE::labs(ai32_val - mi32_lastVal) >= mi32_increment)
   {
-    i32_lastVal = ai32_val;
+    mi32_lastVal = ai32_val;
     return true;
   }
   else
@@ -198,11 +198,11 @@ int32_t MeasureSubprog_c::nextTriggerTime(int32_t ai32_val)
   switch (type())
   {
     case Proc_c::TimeProp:
-      return (i32_lastVal + i32_increment - ai32_val);
+      return (mi32_lastVal + mi32_increment - ai32_val);
     case Proc_c::DistProp:
     {
 #if defined(USE_BASE) || defined(USE_TRACTOR_MOVE)
-      const int32_t ci32_restDistance = i32_lastVal + i32_increment - ai32_val;
+      const int32_t ci32_restDistance = mi32_lastVal + mi32_increment - ai32_val;
       const int32_t ci32_speed = CNAMESPACE::labs(getTracMoveInstance4Comm().selectedSpeed());  // speed can be negative
 
       if (0 == ci32_speed)
@@ -248,7 +248,7 @@ void MeasureSubprog_c::start(float af_increment, float af_lastVal)
   if (af_lastVal != 0) f_lastVal = af_lastVal;
 
   // register as started
-  b_started = true;
+  mb_started = true;
 }
 /**
   delivers if given value forces trigger of send of registered informations
@@ -276,7 +276,7 @@ bool MeasureSubprog_c::updateTrigger(float af_val)
 */
 int32_t MeasureSubprog_c::calcCompVal()const{
   // for Subprog two items are considered equiv if type is identical
-  return (en_type);
+  return (men_type);
 }
 
 /**
@@ -336,7 +336,7 @@ bool MeasureSubprog_c::operator>=(const MeasureSubprog_c& arc_right)const{
   @return true -> this instance is equal to the compared increment type
 */
 bool MeasureSubprog_c::operator==(Proc_c::type_t ren_type)const{
-  return (en_type == ren_type);
+  return (men_type == ren_type);
 }
 
 /**
@@ -345,7 +345,7 @@ bool MeasureSubprog_c::operator==(Proc_c::type_t ren_type)const{
   @return true -> this instance is different to the compared increment type
 */
 bool MeasureSubprog_c::operator!=(Proc_c::type_t ren_type)const{
-  return (en_type != ren_type);
+  return (men_type != ren_type);
 }
 
 /**
@@ -354,7 +354,7 @@ bool MeasureSubprog_c::operator!=(Proc_c::type_t ren_type)const{
   @return true -> this instance is < than the compared increment type
 */
 bool MeasureSubprog_c::operator<(Proc_c::type_t ren_type)const{
-  return (en_type < ren_type);
+  return (men_type < ren_type);
 }
 /**
   compare two Subprogs with <=
@@ -362,7 +362,7 @@ bool MeasureSubprog_c::operator<(Proc_c::type_t ren_type)const{
   @return true -> this instance is <= than the compared increment type
 */
 bool MeasureSubprog_c::operator<=(Proc_c::type_t ren_type)const{
-  return (en_type <= ren_type);
+  return (men_type <= ren_type);
 }
 /**
   compare two Subprogs with >
@@ -370,7 +370,7 @@ bool MeasureSubprog_c::operator<=(Proc_c::type_t ren_type)const{
   @return true -> this instance is > than the compared increment type
 */
 bool MeasureSubprog_c::operator>(Proc_c::type_t ren_type)const{
-  return (en_type > ren_type);
+  return (men_type > ren_type);
 }
 /**
   compare two Subprogs with >=
@@ -378,7 +378,7 @@ bool MeasureSubprog_c::operator>(Proc_c::type_t ren_type)const{
   @return true -> this instance is >= than the compared increment type
 */
 bool MeasureSubprog_c::operator>=(Proc_c::type_t ren_type)const{
-  return (en_type >= ren_type);
+  return (men_type >= ren_type);
 }
 
 } // end of namespace __IsoAgLib

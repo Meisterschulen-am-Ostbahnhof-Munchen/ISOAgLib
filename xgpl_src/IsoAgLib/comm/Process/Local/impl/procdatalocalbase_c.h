@@ -243,7 +243,7 @@ class ProcDataLocalBase_c : public ProcDataBase_c
   /** deliver the eeprom adr for the value
     @return configured EEPROM adress
   */
-  uint16_t eepromAdr() const {return ui16_eepromAdr;}
+  uint16_t eepromAdr() const {return mui16_eepromAdr;}
 
   /** set the eeprom adr for the value, read in value from EEPROM
     possible errors:
@@ -258,7 +258,7 @@ class ProcDataLocalBase_c : public ProcDataBase_c
     independent)
     @return actual master value
   */
-  const int32_t& masterMeasurementVal() const {return i32_masterVal;}
+  const int32_t& masterMeasurementVal() const {return mi32_masterVal;}
 
   /** set the masterMeasurementVal from main application independent from any measure progs
     @param ai32_val new measure value
@@ -395,7 +395,7 @@ private:
   /** deliver the eeprom value
     @return actual EEPROM value
   */
-  const int32_t& eepromVal() const {return i32_eepromVal;}
+  const int32_t& eepromVal() const {return mi32_eepromVal;}
 
   #ifdef USE_FLOAT_DATA_TYPE
   /** deliver the eeprom value
@@ -407,7 +407,7 @@ private:
   /** set the eeprom value
     @param ai32_val new EEPROM value
   */
-  void setEepromVal (int32_t ai32_val) {i32_eepromVal = ai32_val;}
+  void setEepromVal (int32_t ai32_val) {mi32_eepromVal = ai32_val;}
 
   /** called from MeasureProg item -> if this item is first in list
     reset eeprom val
@@ -430,46 +430,46 @@ private:
       presentation
   */
   union {
-    int32_t i32_masterVal;
+    int32_t mi32_masterVal;
     float f_masterVal;
   };
 
   #ifdef USE_EEPROM_IO
     /** the eeprom value can differ from main programm value
       (if value from eeprom has been restored, if value has been
-      resetted); i32_masterVal starts with 0, and can be
+      resetted); mi32_masterVal starts with 0, and can be
       set disregarding any reset commands from remote;
       stored in anonymous union for dircet access to float or long
       presentation
       */
     union {
-      int32_t i32_eepromVal;
+      int32_t mi32_eepromVal;
       float f_eepromVal;
     };
   #endif
 #else
   /** store the master value of the main programm */
-  int32_t i32_masterVal;
+  int32_t mi32_masterVal;
 
   #ifdef USE_EEPROM_IO
     /** the eeprom value can differ from main programm value
       (if value from eeprom has been restored, if value has been
-      resetted); i32_masterVal starts with 0, and can be
+      resetted); mi32_masterVal starts with 0, and can be
       set disregarding any reset commands from remote */
-    int32_t i32_eepromVal;
+    int32_t mi32_eepromVal;
   #endif
 #endif
 
 #ifdef USE_EEPROM_IO
   /** last time, where automatic value store was performed */
-  int32_t i32_lastEepromStore;
+  int32_t mi32_lastEepromStore;
   /** eeprom adress of the value, if this process data
     information should be stored permanent */
-  uint16_t ui16_eepromAdr;
+  uint16_t mui16_eepromAdr;
 #endif
 
   /** register if this data is a cumulative type like distance, time, area */
-  bool b_cumulativeValue;
+  bool mb_cumulativeValue;
 };
 
 }

@@ -207,12 +207,12 @@ public:
   /** deliver the data NAME string as pointer to 8byte string
     @return const pointer to 8 uint8_t string with NAME
   */
-  const uint8_t* outputString() const{return u_data.getUint8DataConstPointer();}
+  const uint8_t* outputString() const{return mu_data.getUint8DataConstPointer();}
 
   /** deliver the data NAME string as pointer to 8byte string
     @return const pointer to 8 uint8_t string with NAME
   */
-  const Flexible8ByteString_c* outputUnion() const{return &u_data;}
+  const Flexible8ByteString_c* outputUnion() const{return &mu_data;}
 
   /** get self config mode
     @return self configuration adress state
@@ -352,7 +352,7 @@ public:
 
 private:
   /** ISO 8-uint8_t NAME field */
-  Flexible8ByteString_c u_data;
+  Flexible8ByteString_c mu_data;
 };
 
 /** this typedef is only for some time to provide backward compatibility at API level */

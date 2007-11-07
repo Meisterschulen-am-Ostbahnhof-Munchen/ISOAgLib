@@ -170,7 +170,7 @@ public:
     deliver reference to data pkg
     @return reference to ProcessPkg_c which handles CAN I/O of process data
   */
-  ProcessPkg_c& data(){return c_data;};
+  ProcessPkg_c& data(){return mc_data;};
   /**
     deliver reference to data pkg as reference to CanPkgExt_c
     to implement the base virtual function correct
@@ -326,7 +326,7 @@ public:
   void unregisterRemoteProcessData( ProcDataRemoteBase_c* pc_remoteClient);
 
   void registerWsmTaskMsgHandler(ProcessWsmTaskMsgHandler_c* apc_processWsmTaskMsgHandler)
-  { pc_processWsmTaskMsgHandler = apc_processWsmTaskMsgHandler; }
+  { mpc_processWsmTaskMsgHandler = apc_processWsmTaskMsgHandler; }
 
   /**
     delete FilterBox_c for receive from remote isoName if needed
@@ -362,7 +362,7 @@ public:
   /**
     @return isoName, saved from TC status messages
   */
-  const IsoName_c* getTcISOName() { return pc_tcISOName; };
+  const IsoName_c* getTcISOName() { return mpc_tcISOName; };
 
   /**
     process working set task messages
@@ -381,7 +381,7 @@ public:
     * @param apc_processDataChangeHandler pointer to handler class of application
     */
   void setProcessDataChangeHandler( IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler )
-   { pc_processDataChangeHandler = apc_processDataChangeHandler; }
+   { mpc_processDataChangeHandler = apc_processDataChangeHandler; }
 
 protected:
   //! Function set ui16_earlierInterval and
@@ -431,7 +431,7 @@ private: // Private methods
   bool checkAndAddMatchingDDI2Group(uint16_t aui16_DDI, uint16_t aui_deviceElement, const IsoName_c& ac_isoName);
 
   /** adds a proprietary DDI to a group */
-  bool addProprietaryDDI2Group(uint16_t aui16_DDI, uint16_t aui_deviceElement, bool b_isSetpoint, GeneralCommand_c::ValueGroup_t ddiType, const IsoName_c &ac_isoName);
+  bool addProprietaryDDI2Group(uint16_t aui16_DDI, uint16_t aui_deviceElement, bool mb_isSetpoint, GeneralCommand_c::ValueGroup_t ddiType, const IsoName_c &ac_isoName);
 
   /** checks if several DDI's can be summed up in groups */
   ProcDataRemoteBase_c* check4DDIGroupMatch(uint16_t aui16_DDI, uint16_t aui_deviceElement, const IsoName_c& ac_isoName);
@@ -461,30 +461,30 @@ private: // Private attributes
   Process_c() {};
 
   /** msg object for CAN I/O */
-  ProcessPkg_c c_data;
+  ProcessPkg_c mc_data;
 
 #if defined(USE_PROC_DATA_DESCRIPTION_POOL)
   /**
     deliver reference to process pkg as reference to DevPropertyHandler_c which
     handles sending and processing of messages from can
   */
-  DevPropertyHandler_c c_devPropertyHandler;
+  DevPropertyHandler_c mc_devPropertyHandler;
 #endif
 
   /** last timestamp with FilterBox_c check */
-  int32_t i32_lastFilterBoxTime;
+  int32_t mi32_lastFilterBoxTime;
 
-  STL_NAMESPACE::USABLE_SLIST<uint32_t> l_filtersToDeleteISO;
-  bool b_needCallOfCheckCreateRemoteReceiveFilter;
-  const IsoName_c* pc_tcISOName;
-  uint8_t ui8_lastTcStatus;
+  STL_NAMESPACE::USABLE_SLIST<uint32_t> ml_filtersToDeleteISO;
+  bool mb_needCallOfCheckCreateRemoteReceiveFilter;
+  const IsoName_c* mpc_tcISOName;
+  uint8_t mui8_lastTcStatus;
 
-  ProcessWsmTaskMsgHandler_c* pc_processWsmTaskMsgHandler;
+  ProcessWsmTaskMsgHandler_c* mpc_processWsmTaskMsgHandler;
 
   /** pointer to applications handler class, with handler functions
       which shall be called when a TC status message arrives
   */
-  IsoAgLib::ProcessDataChangeHandler_c* pc_processDataChangeHandler;
+  IsoAgLib::ProcessDataChangeHandler_c* mpc_processDataChangeHandler;
 
 };
 

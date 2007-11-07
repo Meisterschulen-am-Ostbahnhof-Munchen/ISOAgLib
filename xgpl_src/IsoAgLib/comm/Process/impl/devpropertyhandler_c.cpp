@@ -198,12 +198,12 @@ const DevicePool_c& DevicePool_c::operator=(const DevicePool_c& c_devicePool)
 
 
 DevPropertyHandler_c::DevPropertyHandler_c()
-   : ui16_currentSendPosition(0), ui16_storedSendPosition(0), i32_tcStateLastReceived(0), ui8_lastTcState(0), i32_timeStartWaitAfterAddrClaim(0), b_initDone(0), i32_timeWsTaskMsgSent(0),
-     b_setToDefault(false), tcAliveNew(false), b_receivedStructureLabel(false), b_receivedLocalizationLabel(false),
-     pc_data(NULL), tcSourceAddress(0), ui8_versionLabel(0), pc_devDefaultDeviceDescription(NULL), pc_devPoolForUpload(NULL),
-     pc_wsMasterIdentItem(NULL), en_poolState(OPNotRegistered), en_uploadState(StateIdle), en_uploadStep(UploadStart),
-     en_uploadCommand(UploadCommandWaitingForCommandResponse), ui32_uploadTimestamp(0), ui32_uploadTimeout(0), ui8_uploadRetry(0),
-     ui8_commandParameter(0), en_sendSuccess(__IsoAgLib::MultiSend_c::SendSuccess), i32_timeWsAnnounceKey(-1)
+   : ui16_currentSendPosition(0), ui16_storedSendPosition(0), mi32_tcStateLastReceived(0), mui8_lastTcState(0), mi32_timeStartWaitAfterAddrClaim(0), mb_initDone(0), mi32_timeWsTaskMsgSent(0),
+     mb_setToDefault(false), mb_tcAliveNew(false), mb_receivedStructureLabel(false), mb_receivedLocalizationLabel(false),
+     mpc_data(NULL), mui8_tcSourceAddress(0), mui8_versionLabel(0), mpc_devDefaultDeviceDescription(NULL), mpc_devPoolForUpload(NULL),
+     mpc_wsMasterIdentItem(NULL), men_poolState(OPNotRegistered), men_uploadState(StateIdle), men_uploadStep(UploadStart),
+     men_uploadCommand(UploadCommandWaitingForCommandResponse), mui32_uploadTimestamp(0), mui32_uploadTimeout(0), mui8_uploadRetry(0),
+     mui8_commandParameter(0), men_sendSuccess(__IsoAgLib::MultiSend_c::SendSuccess), mi32_timeWsAnnounceKey(-1)
 {}
 
 
@@ -231,20 +231,20 @@ DevPropertyHandler_c::processMsg()
     switch ((data().getUint8Data(0) >> 4) & 0xF)
     {
       case 0x0: //NACK Request StructureLabel
-        if (en_uploadState == StatePresettings && en_uploadStep == UploadWaitForStructureLabelResponse)
+        if (men_uploadState == StatePresettings && men_uploadStep == UploadWaitForStructureLabelResponse)
         {
-          en_uploadStep = UploadWaitForUploadInit;
-          b_receivedStructureLabel = false;
+          men_uploadStep = UploadWaitForUploadInit;
+          mb_receivedStructureLabel = false;
           #ifdef DEBUG
           INTERNAL_DEBUG_DEVICE << "Received NACK for structure label..." << INTERNAL_DEBUG_DEVICE_ENDL;
           #endif
         }
         break;
       case 0x2: //NACK Request LocalizationLabel
-        if (en_uploadState == StatePresettings && en_uploadStep == UploadWaitForLocalizationLabelResponse)
+        if (men_uploadState == StatePresettings && men_uploadStep == UploadWaitForLocalizationLabelResponse)
         {
-          en_uploadStep = UploadWaitForUploadInit;
-          b_receivedLocalizationLabel = false;
+          men_uploadStep = UploadWaitForUploadInit;
+          mb_receivedLocalizationLabel = false;
           #ifdef DEBUG
             INTERNAL_DEBUG_DEVICE << "Received NACK for localization label..." << INTERNAL_DEBUG_DEVICE_ENDL;
           #endif
@@ -259,9 +259,9 @@ DevPropertyHandler_c::processMsg()
   switch (data().getUint8Data (0))
   {
     case procCmdPar_VersionMsg:
-      if (en_uploadState == StateUploadInit && en_uploadStep == UploadWaitForVersionResponse)
+      if (men_uploadState == StateUploadInit && men_uploadStep == UploadWaitForVersionResponse)
       {
-        ui8_versionLabel = data().getUint8Data(1);
+        mui8_versionLabel = data().getUint8Data(1);
         #ifdef DEBUG
           INTERNAL_DEBUG_DEVICE << "Received version response..." << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
@@ -269,19 +269,19 @@ DevPropertyHandler_c::processMsg()
       }
       break;
     case procCmdPar_StructureLabelMsg:
-      if (en_uploadState == StatePresettings && en_uploadStep == UploadWaitForStructureLabelResponse)
+      if (men_uploadState == StatePresettings && men_uploadStep == UploadWaitForStructureLabelResponse)
       {
         //store structureLabel for later compare in StateUploadInit
-        for (i=1; i<8; i++) pch_structureLabel[i-1] = char(data().getUint8Data(i));
-        b_receivedStructureLabel = true;
+        for (i=1; i<8; i++) marrpch_structureLabel[i-1] = char(data().getUint8Data(i));
+        mb_receivedStructureLabel = true;
 
         // send Request Localization Label message
-        pc_data->setExtCanPkg8 (3, 0, 203, tcSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(),
+        mpc_data->setExtCanPkg8 (3, 0, 203, mui8_tcSourceAddress, mpc_wsMasterIdentItem->getIsoItem()->nr(),
                           procCmdPar_RequestLocalizationLabelMsg, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
-        getCanInstance4Comm() << *pc_data;
-        ui32_uploadTimestamp = HAL::getTime();
-        ui32_uploadTimeout = DEF_TimeOut_NormalCommand;
-        en_uploadStep = UploadWaitForLocalizationLabelResponse;
+        getCanInstance4Comm() << *mpc_data;
+        mui32_uploadTimestamp = HAL::getTime();
+        mui32_uploadTimeout = DEF_TimeOut_NormalCommand;
+        men_uploadStep = UploadWaitForLocalizationLabelResponse;
         #ifdef DEBUG
           INTERNAL_DEBUG_DEVICE << "Received structure label response..." << INTERNAL_DEBUG_DEVICE_ENDL;
           INTERNAL_DEBUG_DEVICE << "Wait for localization label (in processMsg)..." << INTERNAL_DEBUG_DEVICE_ENDL;
@@ -289,30 +289,30 @@ DevPropertyHandler_c::processMsg()
       }
       break;
     case procCmdPar_LocalizationLabelMsg:
-      if (en_uploadState == StatePresettings && en_uploadStep == UploadWaitForLocalizationLabelResponse)
+      if (men_uploadState == StatePresettings && men_uploadStep == UploadWaitForLocalizationLabelResponse)
       {
         //store localizationLabel for later compare in StateUploadInit
-        for (i=1; i<8; i++) pch_localizationLabel[i-1] = char(data().getUint8Data(i));
-        b_receivedLocalizationLabel = true;
-        en_uploadStep = UploadWaitForUploadInit;
+        for (i=1; i<8; i++) marrpch_localizationLabel[i-1] = char(data().getUint8Data(i));
+        mb_receivedLocalizationLabel = true;
+        men_uploadStep = UploadWaitForUploadInit;
         #ifdef DEBUG
           INTERNAL_DEBUG_DEVICE << "Received localization response..." << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
       }
       break;
     case procCmdPar_RequestOPTransferRespMsg:
-      if (en_uploadState == StateUploadPool && en_uploadStep == UploadWaitForRequestOPTransferResponse)
+      if (men_uploadState == StateUploadPool && men_uploadStep == UploadWaitForRequestOPTransferResponse)
       {
         if (data().getUint8Data(1) == 0)
         {
-          en_uploadStep = UploadUploading;
-          getMultiSendInstance().sendIsoTarget(pc_wsMasterIdentItem->isoName(),
-            getIsoMonitorInstance4Comm().isoMemberNr(tcSourceAddress).isoName(),
-            this, PROCESS_DATA_PGN, en_sendSuccess);
+          men_uploadStep = UploadUploading;
+          getMultiSendInstance().sendIsoTarget(mpc_wsMasterIdentItem->isoName(),
+            getIsoMonitorInstance4Comm().isoMemberNr(mui8_tcSourceAddress).isoName(),
+            this, PROCESS_DATA_PGN, men_sendSuccess);
         }
         else
         {
-          ui8_commandParameter = procCmdPar_RequestOPTransferRespMsg;
+          mui8_commandParameter = procCmdPar_RequestOPTransferRespMsg;
           outOfMemory();
         }
         #ifdef DEBUG
@@ -322,17 +322,17 @@ DevPropertyHandler_c::processMsg()
       break;
     case procCmdPar_OPTransferRespMsg:
       // if timeEvent not yet called => set uploadStep right here
-      en_uploadStep = UploadWaitForOPTransferResponse;
-      if (en_uploadState == StateUploadPool)
+      men_uploadStep = UploadWaitForOPTransferResponse;
+      if (men_uploadState == StateUploadPool)
       {
         if (data().getUint8Data(1) == 0)
         {
-          en_uploadStep = UploadWaitForOPActivateResponse;
-          pc_data->setExtCanPkg8 (3, 0, 203, tcSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(),
+          men_uploadStep = UploadWaitForOPActivateResponse;
+          mpc_data->setExtCanPkg8 (3, 0, 203, mui8_tcSourceAddress, mpc_wsMasterIdentItem->getIsoItem()->nr(),
                           procCmdPar_OPActivateMsg, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
-          getCanInstance4Comm() << *pc_data;
-          ui32_uploadTimestamp = HAL::getTime();
-          ui32_uploadTimeout = DEF_TimeOut_NormalCommand;
+          getCanInstance4Comm() << *mpc_data;
+          mui32_uploadTimestamp = HAL::getTime();
+          mui32_uploadTimeout = DEF_TimeOut_NormalCommand;
           #ifdef DEBUG
             INTERNAL_DEBUG_DEVICE << "Received positive response for OP transfer..." << INTERNAL_DEBUG_DEVICE_ENDL;
             INTERNAL_DEBUG_DEVICE << "OPActivateMsg..." << INTERNAL_DEBUG_DEVICE_ENDL;
@@ -340,7 +340,7 @@ DevPropertyHandler_c::processMsg()
         }
         else
         {
-          ui8_commandParameter = procCmdPar_OPTransferRespMsg;
+          mui8_commandParameter = procCmdPar_OPTransferRespMsg;
           outOfMemory();
           #ifdef DEBUG
           INTERNAL_DEBUG_DEVICE << "Received negative response for OP transfer..." << INTERNAL_DEBUG_DEVICE_ENDL;
@@ -352,20 +352,20 @@ DevPropertyHandler_c::processMsg()
       #ifdef DEBUG
       INTERNAL_DEBUG_DEVICE << "Received activate response..." << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
-      if (en_uploadState == StateUploadPool && en_uploadStep == UploadWaitForOPActivateResponse)
+      if (men_uploadState == StateUploadPool && men_uploadStep == UploadWaitForOPActivateResponse)
       {
         if (data().getUint8Data(1) == 0)
         {
-          en_uploadState = StateIdle;
-          en_uploadStep = UploadNone;
-          en_poolState = OPSuccessfullyUploaded;
+          men_uploadState = StateIdle;
+          men_uploadStep = UploadNone;
+          men_poolState = OPSuccessfullyUploaded;
         }
         else
         {
           /** @todo further output for user to locate the error which caused the upload fail*/
-          en_uploadStep = UploadFailed;
-          en_poolState = OPCannotBeUploaded;
-          ui8_commandParameter = procCmdPar_OPActivateRespMsg;
+          men_uploadStep = UploadFailed;
+          men_poolState = OPCannotBeUploaded;
+          mui8_commandParameter = procCmdPar_OPActivateRespMsg;
           #if defined(DEBUG) && defined(SYSTEM_PC)
           INTERNAL_DEBUG_DEVICE << (uint16_t) data().getUint8Data(1) << INTERNAL_DEBUG_DEVICE_ENDL;
           INTERNAL_DEBUG_DEVICE << "upload failed, activate with error..." << INTERNAL_DEBUG_DEVICE_ENDL;
@@ -374,26 +374,26 @@ DevPropertyHandler_c::processMsg()
       }
       break;
     case procCmdPar_OPDeleteRespMsg:
-      if (en_uploadState == StateUploadInit && en_uploadStep == UploadWaitForDeleteResponse)
+      if (men_uploadState == StateUploadInit && men_uploadStep == UploadWaitForDeleteResponse)
       {
         if (data().getUint8Data(1) == 0)
         {
-          pc_data->setExtCanPkg8 (3, 0, 203, tcSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(),
+          mpc_data->setExtCanPkg8 (3, 0, 203, mui8_tcSourceAddress, mpc_wsMasterIdentItem->getIsoItem()->nr(),
                             procCmdPar_RequestVersionMsg, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
-          getCanInstance4Comm() << *pc_data;
-          ui32_uploadTimestamp = HAL::getTime();
-          ui32_uploadTimeout = DEF_TimeOut_NormalCommand;
-          en_uploadStep = UploadWaitForVersionResponse;
+          getCanInstance4Comm() << *mpc_data;
+          mui32_uploadTimestamp = HAL::getTime();
+          mui32_uploadTimeout = DEF_TimeOut_NormalCommand;
+          men_uploadStep = UploadWaitForVersionResponse;
         }
         else
         {
           /** @todo if the pool couldn't be deleted: fail upload or just ignore it??? */
-          pc_data->setExtCanPkg8 (3, 0, 203, tcSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(),
+          mpc_data->setExtCanPkg8 (3, 0, 203, mui8_tcSourceAddress, mpc_wsMasterIdentItem->getIsoItem()->nr(),
                             procCmdPar_RequestVersionMsg, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
-          getCanInstance4Comm() << *pc_data;
-          ui32_uploadTimestamp = HAL::getTime();
-          ui32_uploadTimeout = DEF_TimeOut_NormalCommand;
-          en_uploadStep = UploadWaitForVersionResponse;
+          getCanInstance4Comm() << *mpc_data;
+          mui32_uploadTimestamp = HAL::getTime();
+          mui32_uploadTimeout = DEF_TimeOut_NormalCommand;
+          men_uploadStep = UploadWaitForVersionResponse;
         }
         #ifdef DEBUG
         INTERNAL_DEBUG_DEVICE << "Received delete response..." << INTERNAL_DEBUG_DEVICE_ENDL;
@@ -405,8 +405,8 @@ DevPropertyHandler_c::processMsg()
      * are states for the same cmd but different ways of sending (via CAN pkg and via mss)
      */
     case procCmdPar_ChangeDesignatorRespMsg:
-      if (en_uploadState == StateUploadCommand &&
-         ((en_uploadCommand == UploadCommandWaitingForCommandResponse) || (en_uploadCommand == UploadMultiSendCommandWaitingForCommandResponse)))
+      if (men_uploadState == StateUploadCommand &&
+         ((men_uploadCommand == UploadCommandWaitingForCommandResponse) || (men_uploadCommand == UploadMultiSendCommandWaitingForCommandResponse)))
       {
         //no matter if successful or faulty, finish upload command
         finishUploadCommandChangeDesignator();
@@ -429,19 +429,19 @@ void
 DevPropertyHandler_c::init(ProcessPkg_c *apc_data)
 {
   static bool b_basicInit = false;
-  pc_data = apc_data;
+  mpc_data = apc_data;
 
   if (!b_basicInit)
   {
-    i32_tcStateLastReceived = i32_timeStartWaitAfterAddrClaim = i32_timeWsTaskMsgSent = i32_timeWsAnnounceKey = -1;
-    ui8_lastTcState = 0;
-    b_initDone = FALSE;
-    tcSourceAddress = 0x7F;
+    mi32_tcStateLastReceived = mi32_timeStartWaitAfterAddrClaim = mi32_timeWsTaskMsgSent = mi32_timeWsAnnounceKey = -1;
+    mui8_lastTcState = 0;
+    mb_initDone = FALSE;
+    mui8_tcSourceAddress = 0x7F;
 
-    en_poolState = OPNotRegistered;
-    en_uploadState = StateIdle;
-    en_uploadStep = UploadStart;
-    pc_devPoolForUpload = NULL;
+    men_poolState = OPNotRegistered;
+    men_uploadState = StateIdle;
+    men_uploadStep = UploadStart;
+    mpc_devPoolForUpload = NULL;
   }
 
   b_basicInit = true;
@@ -453,76 +453,76 @@ DevPropertyHandler_c::init(ProcessPkg_c *apc_data)
 bool
 DevPropertyHandler_c::timeEvent( void )
 {
-  if (!b_initDone)
+  if (!mb_initDone)
   { /// Handling 6.4.2.b) here: Wait 6s after successful Address-Claimed
     checkInitState();
     return TRUE;
   }
 
   // Just getting sure that we really do always have a valid pointer
-  if (pc_wsMasterIdentItem == NULL) return true;
+  if (mpc_wsMasterIdentItem == NULL) return true;
 
   /// Address is initially claimed successfully. Check now if we're still "online"
   /// This could be a problem is someone stole our SA and we're currently not having one...
-  if (!pc_wsMasterIdentItem->isClaimedAddress()) return true;
+  if (!mpc_wsMasterIdentItem->isClaimedAddress()) return true;
 
   const int32_t i32_currentTime = HAL::getTime();
 
   // get new TC alive state
-  bool tcAliveOld = tcAliveNew;
-  tcAliveNew = isTcAlive(i32_currentTime);
+  bool tcAliveOld = mb_tcAliveNew;
+  mb_tcAliveNew = isTcAlive(i32_currentTime);
 
-  if ((tcAliveOld == true) && (tcAliveNew == false))
+  if ((tcAliveOld == true) && (mb_tcAliveNew == false))
   { // TC going offline
-    // no need to set the i32_timeWsAnnounceKey to -1 on "true->false".
+    // no need to set the mi32_timeWsAnnounceKey to -1 on "true->false".
     // -> if false, TC is not active, so it's gettinged "return"ed.
-    // -> if true again, the rising edge (false->true) was detected above and i32_timeWsAnnounceKey was set using "startWsAnnounce".
+    // -> if true again, the rising edge (false->true) was detected above and mi32_timeWsAnnounceKey was set using "startWsAnnounce".
     // actually not needed to be reset here, because if TC not active it's not checked and if TC gets active we restart the sending.
-    i32_timeWsAnnounceKey = -1;
+    mi32_timeWsAnnounceKey = -1;
   }
 
   /// Handling 6.4.2.c) here: Wait until TC transmits the TC Status Message
-  if (!tcAliveNew) return true;
+  if (!mb_tcAliveNew) return true;
 
-  if ((tcAliveOld == false) && (tcAliveNew == true))
+  if ((tcAliveOld == false) && (mb_tcAliveNew == true))
   { // TC coming online
-    if (en_poolState != OPNotRegistered) {
-      en_poolState = OPRegistered;
+    if (men_poolState != OPNotRegistered) {
+      men_poolState = OPRegistered;
     }
-    en_uploadState = StatePresettings;
-    en_uploadStep = UploadStart;
+    men_uploadState = StatePresettings;
+    men_uploadStep = UploadStart;
     /// Handling 6.4.2.d) here: Identify itself and its members
     #ifndef USE_WORKING_SET
     #error "Need to define USE_WORKING_SET when utilizing a TaskController-Client."
     #endif
-    i32_timeWsAnnounceKey = pc_wsMasterIdentItem->getIsoItem()->startWsAnnounce();
+    mi32_timeWsAnnounceKey = mpc_wsMasterIdentItem->getIsoItem()->startWsAnnounce();
   }
 
   /// Wait until 6.4.2.d) has finished (WS is completely announced)
-  if (!pc_wsMasterIdentItem->getIsoItem()->isWsAnnounced (i32_timeWsAnnounceKey)) return true;
+  if (!mpc_wsMasterIdentItem->getIsoItem()->isWsAnnounced (mi32_timeWsAnnounceKey)) return true;
 
   /// Handling 6.4.2.e) here: Begin transmission of the working-set task message
   sendWorkingSetTaskMsg(i32_currentTime);
 
-  if ((en_poolState == OPNotRegistered) || (en_poolState == OPCannotBeUploaded)) return true;
+  if ((men_poolState == OPNotRegistered) || (men_poolState == OPCannotBeUploaded)) return true;
 
   //now TC is active, so send your msgs to TC
-  switch(en_uploadStep)
+  switch(men_uploadStep)
   {
     case UploadStart:
       //first of all: get the structure label (if available)
-      pc_data->setExtCanPkg8 (3, 0, 203, tcSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(),
+      mpc_data->setExtCanPkg8 (3, 0, 203, mui8_tcSourceAddress, mpc_wsMasterIdentItem->getIsoItem()->nr(),
                             procCmdPar_RequestStructureLabelMsg, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
-      getCanInstance4Comm() << *pc_data;
-      ui32_uploadTimestamp = HAL::getTime();
-      ui32_uploadTimeout = DEF_TimeOut_NormalCommand;
-      en_uploadStep = UploadWaitForStructureLabelResponse;
+      getCanInstance4Comm() << *mpc_data;
+      mui32_uploadTimestamp = HAL::getTime();
+      mui32_uploadTimeout = DEF_TimeOut_NormalCommand;
+      men_uploadStep = UploadWaitForStructureLabelResponse;
       #ifdef DEBUG
       INTERNAL_DEBUG_DEVICE << "Wait for structure label..." << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
       break;
     case UploadWaitForVersionResponse:
-      if (((uint32_t) HAL::getTime()) > (ui32_uploadTimeout + ui32_uploadTimestamp))
+      if (((uint32_t) HAL::getTime()) > (mui32_uploadTimeout + mui32_uploadTimestamp))
       {
         /** @todo set versionLabel to a default??? */
         #ifdef DEBUG
@@ -534,10 +534,10 @@ DevPropertyHandler_c::timeEvent( void )
       break;
     case UploadWaitForStructureLabelResponse:
       //Timed out???
-      if (((uint32_t) HAL::getTime()) > (ui32_uploadTimeout + ui32_uploadTimestamp))
+      if (((uint32_t) HAL::getTime()) > (mui32_uploadTimeout + mui32_uploadTimestamp))
       {
-        b_receivedStructureLabel = false;
-        en_uploadStep = UploadWaitForUploadInit;
+        mb_receivedStructureLabel = false;
+        men_uploadStep = UploadWaitForUploadInit;
         #ifdef DEBUG
         INTERNAL_DEBUG_DEVICE << "Wait for structure label timed out, go to wait for upload init..." << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
@@ -545,21 +545,21 @@ DevPropertyHandler_c::timeEvent( void )
       break;
     case UploadWaitForLocalizationLabelResponse:
       //Timed out???
-      if (((uint32_t) HAL::getTime()) > (ui32_uploadTimeout + ui32_uploadTimestamp))
+      if (((uint32_t) HAL::getTime()) > (mui32_uploadTimeout + mui32_uploadTimestamp))
       {
-        b_receivedLocalizationLabel = false;
-        en_uploadStep = UploadWaitForUploadInit;
+        mb_receivedLocalizationLabel = false;
+        men_uploadStep = UploadWaitForUploadInit;
         #ifdef DEBUG
         INTERNAL_DEBUG_DEVICE << "Wait for localization label timed out, go to wait for upload init..." << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
       }
       break;
     case UploadWaitForUploadInit:
-      if (pc_devDefaultDeviceDescription == NULL) {/*wait*/}
-      if (pc_devDefaultDeviceDescription != NULL)
+      if (mpc_devDefaultDeviceDescription == NULL) {/*wait*/}
+      if (mpc_devDefaultDeviceDescription != NULL)
       {
-        en_uploadState = StateUploadInit;
-        if (!b_receivedStructureLabel)
+        men_uploadState = StateUploadInit;
+        if (!mb_receivedStructureLabel)
         {
           #ifdef DEBUG
           INTERNAL_DEBUG_DEVICE << "get pool from taskcontroller or via default..." << INTERNAL_DEBUG_DEVICE_ENDL;
@@ -575,28 +575,28 @@ DevPropertyHandler_c::timeEvent( void )
         }
 
         // we received structure and localization label, checks were successful, so no pool uploading necessary
-        if (en_uploadState == StateIdle) break;
+        if (men_uploadState == StateIdle) break;
 
-        if (b_receivedStructureLabel)
+        if (mb_receivedStructureLabel)
         {
-          pc_data->setExtCanPkg8 (3, 0, 203, tcSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(),
+          mpc_data->setExtCanPkg8 (3, 0, 203, mui8_tcSourceAddress, mpc_wsMasterIdentItem->getIsoItem()->nr(),
                                   procCmdPar_OPDeleteMsg, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
-          getCanInstance4Comm() << *pc_data;
-          ui32_uploadTimestamp = HAL::getTime();
-          ui32_uploadTimeout = DEF_TimeOut_NormalCommand;
-          en_uploadStep = UploadWaitForDeleteResponse;
+          getCanInstance4Comm() << *mpc_data;
+          mui32_uploadTimestamp = HAL::getTime();
+          mui32_uploadTimeout = DEF_TimeOut_NormalCommand;
+          men_uploadStep = UploadWaitForDeleteResponse;
           #ifdef DEBUG
           INTERNAL_DEBUG_DEVICE << "Wait for delete response..." << INTERNAL_DEBUG_DEVICE_ENDL;
           #endif
         }
         else
         {
-          pc_data->setExtCanPkg8 (3, 0, 203, tcSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(),
+          mpc_data->setExtCanPkg8 (3, 0, 203, mui8_tcSourceAddress, mpc_wsMasterIdentItem->getIsoItem()->nr(),
                                 procCmdPar_RequestVersionMsg, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
-          getCanInstance4Comm() << *pc_data;
-          ui32_uploadTimestamp = HAL::getTime();
-          ui32_uploadTimeout = DEF_TimeOut_NormalCommand;
-          en_uploadStep = UploadWaitForVersionResponse;
+          getCanInstance4Comm() << *mpc_data;
+          mui32_uploadTimestamp = HAL::getTime();
+          mui32_uploadTimeout = DEF_TimeOut_NormalCommand;
+          men_uploadStep = UploadWaitForVersionResponse;
           #ifdef DEBUG
           INTERNAL_DEBUG_DEVICE << "Wait for version response..." << INTERNAL_DEBUG_DEVICE_ENDL;
           #endif
@@ -604,26 +604,26 @@ DevPropertyHandler_c::timeEvent( void )
       }
       break;
     case UploadWaitForDeleteResponse:
-      if (((uint32_t) HAL::getTime()) > (ui32_uploadTimeout + ui32_uploadTimestamp))
+      if (((uint32_t) HAL::getTime()) > (mui32_uploadTimeout + mui32_uploadTimestamp))
       {
-        en_uploadState = StateIdle;
-        en_uploadStep = UploadFailed;
-        ui8_commandParameter = procCmdPar_OPDeleteRespMsg;
-        ui32_uploadTimestamp = HAL::getTime();
-        ui32_uploadTimeout = DEF_WaitFor_Reupload;
+        men_uploadState = StateIdle;
+        men_uploadStep = UploadFailed;
+        mui8_commandParameter = procCmdPar_OPDeleteRespMsg;
+        mui32_uploadTimestamp = HAL::getTime();
+        mui32_uploadTimeout = DEF_WaitFor_Reupload;
         #ifdef DEBUG
         INTERNAL_DEBUG_DEVICE << "Upload timed out when deleting old pool, wait for re-upload..." << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
       }
       break;
     case UploadWaitForRequestOPTransferResponse:
-      if (((uint32_t) HAL::getTime()) > (ui32_uploadTimeout + ui32_uploadTimestamp))
+      if (((uint32_t) HAL::getTime()) > (mui32_uploadTimeout + mui32_uploadTimestamp))
       {
-        en_uploadState = StateIdle;
-        en_uploadStep = UploadFailed;
-        ui8_commandParameter = procCmdPar_RequestOPTransferRespMsg;
-        ui32_uploadTimestamp = HAL::getTime();
-        ui32_uploadTimeout = DEF_WaitFor_Reupload;
+        men_uploadState = StateIdle;
+        men_uploadStep = UploadFailed;
+        mui8_commandParameter = procCmdPar_RequestOPTransferRespMsg;
+        mui32_uploadTimestamp = HAL::getTime();
+        mui32_uploadTimeout = DEF_WaitFor_Reupload;
         #ifdef DEBUG
         INTERNAL_DEBUG_DEVICE << "Upload timed out, wait for re-upload..." << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
@@ -636,25 +636,25 @@ DevPropertyHandler_c::timeEvent( void )
         #endif
       break;
     case UploadUploading:
-      switch (en_sendSuccess) {
+      switch (men_sendSuccess) {
         case __IsoAgLib::MultiSend_c::Running: {
           // wait
         } break;
         case __IsoAgLib::MultiSend_c::SendAborted: {
           // aborted sending
-          en_uploadState = StateIdle;
-          en_uploadStep = UploadFailed;
-          ui8_commandParameter = procCmdPar_OPTransferMsg;
-          ui32_uploadTimestamp = HAL::getTime();
-          ui32_uploadTimeout = DEF_WaitFor_Reupload;
+          men_uploadState = StateIdle;
+          men_uploadStep = UploadFailed;
+          mui8_commandParameter = procCmdPar_OPTransferMsg;
+          mui32_uploadTimestamp = HAL::getTime();
+          mui32_uploadTimeout = DEF_WaitFor_Reupload;
           #ifdef DEBUG
           INTERNAL_DEBUG_DEVICE << "Upload failed, send aborted..." << INTERNAL_DEBUG_DEVICE_ENDL;
           #endif
         } break;
         case __IsoAgLib::MultiSend_c::SendSuccess: {
-          en_uploadStep = UploadWaitForOPTransferResponse;
-          ui32_uploadTimestamp = HAL::getTime();
-          ui32_uploadTimeout = DEF_TimeOut_EndOfDevicePool;
+          men_uploadStep = UploadWaitForOPTransferResponse;
+          mui32_uploadTimestamp = HAL::getTime();
+          mui32_uploadTimeout = DEF_TimeOut_EndOfDevicePool;
           #ifdef DEBUG
           INTERNAL_DEBUG_DEVICE << "Upload successful, wait for transfer response..." << INTERNAL_DEBUG_DEVICE_ENDL;
           #endif
@@ -662,38 +662,38 @@ DevPropertyHandler_c::timeEvent( void )
       }
       break;
     case UploadWaitForOPTransferResponse:
-      if (((uint32_t) HAL::getTime()) > (ui32_uploadTimeout + ui32_uploadTimestamp))
+      if (((uint32_t) HAL::getTime()) > (mui32_uploadTimeout + mui32_uploadTimestamp))
       {
-        en_uploadState = StateIdle;
-        en_uploadStep = UploadFailed;
-        ui8_commandParameter = procCmdPar_OPTransferRespMsg;
-        ui32_uploadTimestamp = HAL::getTime();
-        ui32_uploadTimeout = DEF_WaitFor_Reupload;
+        men_uploadState = StateIdle;
+        men_uploadStep = UploadFailed;
+        mui8_commandParameter = procCmdPar_OPTransferRespMsg;
+        mui32_uploadTimestamp = HAL::getTime();
+        mui32_uploadTimeout = DEF_WaitFor_Reupload;
         #ifdef DEBUG
         INTERNAL_DEBUG_DEVICE << "Upload failed, timeout when waiting for transfer response,wait for re-upload..." << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
       }
       break;
     case UploadWaitForOPActivateResponse:
-      if (((uint32_t) HAL::getTime()) > (ui32_uploadTimeout + ui32_uploadTimestamp))
+      if (((uint32_t) HAL::getTime()) > (mui32_uploadTimeout + mui32_uploadTimestamp))
       {
-        en_uploadState = StateIdle;
-        en_uploadStep = UploadFailed;
-        ui8_commandParameter = procCmdPar_OPActivateMsg;
-        ui32_uploadTimestamp = HAL::getTime();
-        ui32_uploadTimeout = DEF_WaitFor_Reupload;
+        men_uploadState = StateIdle;
+        men_uploadStep = UploadFailed;
+        mui8_commandParameter = procCmdPar_OPActivateMsg;
+        mui32_uploadTimestamp = HAL::getTime();
+        mui32_uploadTimeout = DEF_WaitFor_Reupload;
         #ifdef DEBUG
         INTERNAL_DEBUG_DEVICE << "Upload failed when waiting for activating pool, wait for re-upload..." << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
       }
       break;
     case UploadFailed:
-      if (((uint32_t) HAL::getTime()) > (ui32_uploadTimeout + ui32_uploadTimestamp))
+      if (((uint32_t) HAL::getTime()) > (mui32_uploadTimeout + mui32_uploadTimestamp))
       {
         #ifdef DEBUG
         INTERNAL_DEBUG_DEVICE << "Upload failed..." << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
-        switch (ui8_commandParameter)
+        switch (mui8_commandParameter)
         {
           case procCmdPar_OPActivateRespMsg:
           case procCmdPar_OPActivateMsg:
@@ -701,20 +701,20 @@ DevPropertyHandler_c::timeEvent( void )
           case procCmdPar_OPTransferRespMsg:
           case procCmdPar_RequestOPTransferRespMsg:
           case procCmdPar_RequestOPTransferMsg:
-            en_uploadState = StateUploadPool;
-            en_uploadStep = UploadRetryUpload;
+            men_uploadState = StateUploadPool;
+            men_uploadStep = UploadRetryUpload;
             break;
           case procCmdPar_OPDeleteRespMsg:
-            pc_data->setExtCanPkg8 (3, 0, 203, tcSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(),
+            mpc_data->setExtCanPkg8 (3, 0, 203, mui8_tcSourceAddress, mpc_wsMasterIdentItem->getIsoItem()->nr(),
                                   procCmdPar_OPDeleteMsg, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
-            getCanInstance4Comm() << *pc_data;
-            ui32_uploadTimestamp = HAL::getTime();
-            ui32_uploadTimeout = DEF_TimeOut_NormalCommand;
-            en_uploadStep = UploadWaitForDeleteResponse;
+            getCanInstance4Comm() << *mpc_data;
+            mui32_uploadTimestamp = HAL::getTime();
+            mui32_uploadTimeout = DEF_TimeOut_NormalCommand;
+            men_uploadStep = UploadWaitForDeleteResponse;
             break;
           default:
-            en_uploadState = StatePresettings;
-            en_uploadStep = UploadStart;
+            men_uploadState = StatePresettings;
+            men_uploadStep = UploadStart;
             break;
         }
       }
@@ -727,43 +727,43 @@ DevPropertyHandler_c::timeEvent( void )
   /////////////////////////////
   /// UPLOADING --> COMMAND <--
   // Can only be done if the Object-Pool is successfully uploaded!
-  if (en_poolState != OPSuccessfullyUploaded) return true;
+  if (men_poolState != OPSuccessfullyUploaded) return true;
 
   /// FROM HERE THE OBJECT-POOL >>IS<< UPLOADED SUCCESSFULLY
   /// NOW HERE THE RUNTIME COMMANDS ARE BEING HANDLED
 
-  if (en_uploadState == StateUploadCommand)
+  if (men_uploadState == StateUploadCommand)
   {
-    if (en_uploadCommand == UploadCommandWaitingForCommandResponse)
+    if (men_uploadCommand == UploadCommandWaitingForCommandResponse)
     {
       // Waiting for an answer - Did it time out?
-      if (((uint32_t) HAL::getTime()) > (ui32_uploadTimeout + ui32_uploadTimestamp)) {
-        en_uploadCommand = UploadCommandTimedOut;
+      if (((uint32_t) HAL::getTime()) > (mui32_uploadTimeout + mui32_uploadTimestamp)) {
+        men_uploadCommand = UploadCommandTimedOut;
       }
     }
-    else if (en_uploadCommand == UploadMultiSendCommandWaitingForCommandResponse){
-      if (((uint32_t) HAL::getTime()) < (ui32_uploadTimeout + ui32_uploadTimestamp))
+    else if (men_uploadCommand == UploadMultiSendCommandWaitingForCommandResponse){
+      if (((uint32_t) HAL::getTime()) < (mui32_uploadTimeout + mui32_uploadTimestamp))
       {
-        switch (en_sendSuccess) {
+        switch (men_sendSuccess) {
         case __IsoAgLib::MultiSend_c::Running: {
           // wait
           } break;
         case __IsoAgLib::MultiSend_c::SendAborted: {
           // aborted sending
-          en_uploadState = StateIdle;
-          en_uploadCommand = UploadCommandTimedOut;
+          men_uploadState = StateIdle;
+          men_uploadCommand = UploadCommandTimedOut;
           } break;
         case __IsoAgLib::MultiSend_c::SendSuccess: {
-          en_uploadState = StateIdle;
+          men_uploadState = StateIdle;
           }
         }
       }
     }
     // last Upload failed?
-    if (en_uploadCommand == UploadCommandTimedOut)
+    if (men_uploadCommand == UploadCommandTimedOut)
     {
-      if (ui8_uploadRetry > 0) {
-        ui8_uploadRetry--;
+      if (mui8_uploadRetry > 0) {
+        mui8_uploadRetry--;
         startUploadCommandChangeDesignator();
       } else {
         // No more retries, simply finish this job and go Idle!
@@ -773,9 +773,9 @@ DevPropertyHandler_c::timeEvent( void )
   } // UploadCommand
 
   // ### Is a) no Upload running and b) some Upload to do?
-  if ((en_uploadState == StateIdle) && !l_sendUpload.empty()) {
+  if ((men_uploadState == StateIdle) && !ml_sendUpload.empty()) {
     // Set Retry & Start Uploading
-    ui8_uploadRetry = (*(l_sendUpload.begin())).ui8_retryCount;
+    mui8_uploadRetry = (*(ml_sendUpload.begin())).ui8_retryCount;
     startUploadCommandChangeDesignator ();
   }
 
@@ -795,17 +795,17 @@ DevPropertyHandler_c::queuePoolInMap (const HUGE_MEM uint8_t* apc_devicePoolByte
   DevicePool_c devicePool (apc_devicePoolByteArray, aui32_bytestreamlength);
 
   langLabel = &(apc_devicePoolByteArray[getLabelOffset(apc_devicePoolByteArray)]);
-  STL_NAMESPACE::map<LanguageLabel_c, DevicePool_c>::iterator c_iterNew = map_deviceDescription.insert(map_deviceDescription.begin(), STL_NAMESPACE::pair<LanguageLabel_c, DevicePool_c>(langLabel, devicePool));
+  STL_NAMESPACE::map<LanguageLabel_c, DevicePool_c>::iterator c_iterNew = mmap_deviceDescription.insert(mmap_deviceDescription.begin(), STL_NAMESPACE::pair<LanguageLabel_c, DevicePool_c>(langLabel, devicePool));
 
   //set DeviceDescription to default
   //if nothing is default, take the first mapped pointer
-  if ((pc_devDefaultDeviceDescription == NULL) || (ab_setToDefault) )
+  if ((mpc_devDefaultDeviceDescription == NULL) || (ab_setToDefault) )
   {
-    pc_devDefaultDeviceDescription = &(c_iterNew->second);
+    mpc_devDefaultDeviceDescription = &(c_iterNew->second);
     #if 0
     STL_NAMESPACE::map<LanguageLabel_c, DevicePool_c>::iterator it_default;
-    it_default = map_deviceDescription.begin();
-    pc_devDefaultDeviceDescription = &it_default->second;
+    it_default = mmap_deviceDescription.begin();
+    mpc_devDefaultDeviceDescription = &it_default->second;
     #endif
   }
   return true;
@@ -824,16 +824,16 @@ DevPropertyHandler_c::registerDevicePool(const IdentItem_c* apc_wsMasterIdentIte
   if (!apc_wsMasterIdentItem->isMaster()) return false;
 
   //no double registration for one device description
-  if (en_poolState != OPNotRegistered) return false;
+  if (men_poolState != OPNotRegistered) return false;
 
-  pc_wsMasterIdentItem = apc_wsMasterIdentItem;
+  mpc_wsMasterIdentItem = apc_wsMasterIdentItem;
 
   if (!(queuePoolInMap(apc_devicePoolByteArray, aui32_bytestreamlength, ab_setToDefault)))
   {
     return false;
   }
 
-  en_poolState = OPRegistered;      // try to upload until state == UploadedSuccessfully || CannotBeUploaded
+  men_poolState = OPRegistered;      // try to upload until state == UploadedSuccessfully || CannotBeUploaded
   return true;
 }
 
@@ -845,7 +845,7 @@ DevPropertyHandler_c::registerDevicePool(const IdentItem_c* apc_wsMasterIdentIte
 bool
 DevPropertyHandler_c::isTcAlive (int32_t i32_currentTime)
 {
-  if ((-1 != i32_tcStateLastReceived) && ( i32_currentTime - i32_tcStateLastReceived <= 6000))
+  if ((-1 != mi32_tcStateLastReceived) && ( i32_currentTime - mi32_tcStateLastReceived <= 6000))
     return true;
   else
     return false;
@@ -854,16 +854,16 @@ DevPropertyHandler_c::isTcAlive (int32_t i32_currentTime)
 void
 DevPropertyHandler_c::sendWorkingSetTaskMsg(int32_t i32_currentTime)
 {
-  if (pc_wsMasterIdentItem == 0 || !pc_wsMasterIdentItem->isClaimedAddress())
+  if (mpc_wsMasterIdentItem == 0 || !mpc_wsMasterIdentItem->isClaimedAddress())
     return;
 
-  if (i32_currentTime - i32_timeWsTaskMsgSent >= 2000)
+  if (i32_currentTime - mi32_timeWsTaskMsgSent >= 2000)
   {
-    i32_timeWsTaskMsgSent = i32_currentTime;
-    pc_data->setExtCanPkg8 (3, 0, 203, tcSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(),
-                            0x0F, 0x00, 0x00, 0x00, ui8_lastTcState, 0x00, 0x00, 0x00);
+    mi32_timeWsTaskMsgSent = i32_currentTime;
+    mpc_data->setExtCanPkg8 (3, 0, 203, mui8_tcSourceAddress, mpc_wsMasterIdentItem->getIsoItem()->nr(),
+                            0x0F, 0x00, 0x00, 0x00, mui8_lastTcState, 0x00, 0x00, 0x00);
 
-    getCanInstance4Comm() << *pc_data;
+    getCanInstance4Comm() << *mpc_data;
   }
 }
 
@@ -875,18 +875,18 @@ DevPropertyHandler_c::sendWorkingSetTaskMsg(int32_t i32_currentTime)
 void
 DevPropertyHandler_c::checkInitState()
 {
-  if (pc_wsMasterIdentItem == 0)
+  if (mpc_wsMasterIdentItem == 0)
     return;
 
-  if ( (NULL != pc_wsMasterIdentItem) && pc_wsMasterIdentItem->isClaimedAddress()
-       && (-1 == i32_timeStartWaitAfterAddrClaim))
+  if ( (NULL != mpc_wsMasterIdentItem) && mpc_wsMasterIdentItem->isClaimedAddress()
+       && (-1 == mi32_timeStartWaitAfterAddrClaim))
   {
-    i32_timeStartWaitAfterAddrClaim = HAL::getTime();
+    mi32_timeStartWaitAfterAddrClaim = HAL::getTime();
   }
 
-  if ( (i32_timeStartWaitAfterAddrClaim >= 0) && (HAL::getTime() - i32_timeStartWaitAfterAddrClaim >= 6000) && (-1 != i32_tcStateLastReceived))
+  if ( (mi32_timeStartWaitAfterAddrClaim >= 0) && (HAL::getTime() - mi32_timeStartWaitAfterAddrClaim >= 6000) && (-1 != mi32_tcStateLastReceived))
   { // init is finished when more then 6sec after addr claim and at least one TC status message was received
-    b_initDone = TRUE;
+    mb_initDone = TRUE;
   }
 }
 
@@ -897,14 +897,14 @@ void
 DevPropertyHandler_c::initUploading()
 {
   //compare received structurelabel
-  uint8_t ui8_offset = getLabelOffset(pc_devDefaultDeviceDescription->p_DevicePool);
-  if (CNAMESPACE::strncmp(pch_structureLabel, (const char*)&pc_devDefaultDeviceDescription->p_DevicePool[ui8_offset], 7) != 0)
+  uint8_t ui8_offset = getLabelOffset(mpc_devDefaultDeviceDescription->p_DevicePool);
+  if (CNAMESPACE::strncmp(marrpch_structureLabel, (const char*)&mpc_devDefaultDeviceDescription->p_DevicePool[ui8_offset], 7) != 0)
   {
     getPoolForUpload();
   }
   else
   {
-    if (b_receivedLocalizationLabel)
+    if (mb_receivedLocalizationLabel)
     {
       char ch_temp[2] = { 'e', 'n' };
       #ifdef USE_ISO_TERMINAL
@@ -917,11 +917,11 @@ DevPropertyHandler_c::initUploading()
         ch_temp[1] = (__IsoAgLib::getIsoTerminalInstance4Comm().getClientByID(0).getVtServerInst().getLocalSettings()->languageCode) & 0xFF;
       }
       #endif
-      if (CNAMESPACE::strncmp(pch_localizationLabel, ch_temp, 2) == 0)
+      if (CNAMESPACE::strncmp(marrpch_localizationLabel, ch_temp, 2) == 0)
       {
-        en_uploadState = StateIdle;
-        en_poolState = OPSuccessfullyUploaded;
-        en_uploadStep = UploadNone;
+        men_uploadState = StateIdle;
+        men_poolState = OPSuccessfullyUploaded;
+        men_uploadStep = UploadNone;
         #ifdef DEBUG
         INTERNAL_DEBUG_DEVICE << "Stop Uploading - Pool already here..." << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
@@ -952,62 +952,62 @@ DevPropertyHandler_c::getPoolForUpload()
     pc_langCode[1] = (__IsoAgLib::getIsoTerminalInstance4Comm().getClientByID(0).getVtServerInst().getLocalSettings()->languageCode) & 0xFF;
     //compare with all stored pools -> take the first found pool
     STL_NAMESPACE::map<LanguageLabel_c, DevicePool_c>::iterator it_maps;
-    for (it_maps = map_deviceDescription.begin();it_maps !=map_deviceDescription.end(); it_maps++)
+    for (it_maps = mmap_deviceDescription.begin();it_maps !=mmap_deviceDescription.end(); it_maps++)
     {
       if (CNAMESPACE::strncmp(it_maps->first.get(), pc_langCode, 2) == 0)
       {
-        pc_devPoolForUpload = &it_maps->second;
+        mpc_devPoolForUpload = &it_maps->second;
         return;
       }
     }
     //if no match (priority-list):
     //compare units
-    for (it_maps = map_deviceDescription.begin();it_maps !=map_deviceDescription.end(); it_maps++)
+    for (it_maps = mmap_deviceDescription.begin();it_maps !=mmap_deviceDescription.end(); it_maps++)
     {
       //get all units from localization label
       if (__IsoAgLib::getIsoTerminalInstance4Comm().getClientByID(0).getVtServerInst().getLocalSettings()->uDistance == (uint8_t)((it_maps->second.p_DevicePool[getLabelOffset(it_maps->second.p_DevicePool)+4] >> 6) & 0x3))
       {
-        pc_devPoolForUpload = &it_maps->second;
+        mpc_devPoolForUpload = &it_maps->second;
         return;
       }
       if (__IsoAgLib::getIsoTerminalInstance4Comm().getClientByID(0).getVtServerInst().getLocalSettings()->uArea == (uint8_t)((it_maps->second.p_DevicePool[getLabelOffset(it_maps->second.p_DevicePool)+4] >> 4) & 0x3))
       {
-        pc_devPoolForUpload = &it_maps->second;
+        mpc_devPoolForUpload = &it_maps->second;
         return;
       }
       if (__IsoAgLib::getIsoTerminalInstance4Comm().getClientByID(0).getVtServerInst().getLocalSettings()->uVolume == (uint8_t)((it_maps->second.p_DevicePool[getLabelOffset(it_maps->second.p_DevicePool)+4] >> 2) & 0x3))
       {
-        pc_devPoolForUpload = &it_maps->second;
+        mpc_devPoolForUpload = &it_maps->second;
         return;
       }
       if (__IsoAgLib::getIsoTerminalInstance4Comm().getClientByID(0).getVtServerInst().getLocalSettings()->uMass == (uint8_t)((it_maps->second.p_DevicePool[getLabelOffset(it_maps->second.p_DevicePool)+4] >> 2) & 0x3))
       {
-        pc_devPoolForUpload = &it_maps->second;
+        mpc_devPoolForUpload = &it_maps->second;
         return;
       }
     }
     //compare date format
-    for (it_maps = map_deviceDescription.begin();it_maps !=map_deviceDescription.end(); it_maps++)
+    for (it_maps = mmap_deviceDescription.begin();it_maps !=mmap_deviceDescription.end(); it_maps++)
     {
       if (__IsoAgLib::getIsoTerminalInstance4Comm().getClientByID(0).getVtServerInst().getLocalSettings()->dFormat == (uint8_t)(it_maps->second.p_DevicePool[getLabelOffset(it_maps->second.p_DevicePool)+3] & 0xFF))
       {
-        pc_devPoolForUpload = &it_maps->second;
+        mpc_devPoolForUpload = &it_maps->second;
         return;
       }
     }
     //compare time format
-    for (it_maps = map_deviceDescription.begin();it_maps !=map_deviceDescription.end(); it_maps++)
+    for (it_maps = mmap_deviceDescription.begin();it_maps !=mmap_deviceDescription.end(); it_maps++)
     {
       if (__IsoAgLib::getIsoTerminalInstance4Comm().getClientByID(0).getVtServerInst().getLocalSettings()->nTimeFormat == (uint8_t)((it_maps->second.p_DevicePool[getLabelOffset(it_maps->second.p_DevicePool)+2] >> 4) & 0x3))
       {
-        pc_devPoolForUpload = &it_maps->second;
+        mpc_devPoolForUpload = &it_maps->second;
         return;
       }
     }
   }
   #endif
   //if no matching pool was found just take the default pool
-  if (pc_devPoolForUpload == NULL) pc_devPoolForUpload = pc_devDefaultDeviceDescription;
+  if (mpc_devPoolForUpload == NULL) mpc_devPoolForUpload = mpc_devDefaultDeviceDescription;
 }
 
 
@@ -1017,20 +1017,20 @@ void
 DevPropertyHandler_c::startUpload()
 {
   //estimate size of bytestream
-  uint32_t ui32_byteStreamLength = pc_devPoolForUpload->devicePoolLength;
-  pc_data->setExtCanPkg8 (3, 0, 203, tcSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(),
+  uint32_t ui32_byteStreamLength = mpc_devPoolForUpload->devicePoolLength;
+  mpc_data->setExtCanPkg8 (3, 0, 203, mui8_tcSourceAddress, mpc_wsMasterIdentItem->getIsoItem()->nr(),
                           procCmdPar_RequestOPTransferMsg,
                           (ui32_byteStreamLength & 0xff),
                           (ui32_byteStreamLength >> 8) & 0xff,
                           (ui32_byteStreamLength >> 16) & 0xff,
                           (ui32_byteStreamLength >> 24) & 0xff,
                           0xff, 0xff, 0xff);
-  getCanInstance4Comm() << *pc_data;
-  ui32_uploadTimestamp = HAL::getTime();
-  ui32_uploadTimeout = DEF_TimeOut_OPTransfer;
+  getCanInstance4Comm() << *mpc_data;
+  mui32_uploadTimestamp = HAL::getTime();
+  mui32_uploadTimeout = DEF_TimeOut_OPTransfer;
 
-  en_uploadState = StateUploadPool;
-  en_uploadStep = UploadWaitForRequestOPTransferResponse;
+  men_uploadState = StateUploadPool;
+  men_uploadStep = UploadWaitForRequestOPTransferResponse;
   #ifdef DEBUG
   INTERNAL_DEBUG_DEVICE << "Wait for response for request OP transfer..." << INTERNAL_DEBUG_DEVICE_ENDL;
   #endif
@@ -1043,8 +1043,8 @@ void
 DevPropertyHandler_c::outOfMemory()
 { // can't (up)load the pool.
   getILibErrInstance().registerError( iLibErr_c::RemoteServiceOutOfMemory, iLibErr_c::TaskController );
-  en_uploadStep = UploadFailed; // no timeout needed
-  en_poolState = OPCannotBeUploaded;
+  men_uploadStep = UploadFailed; // no timeout needed
+  men_poolState = OPCannotBeUploaded;
   #ifdef DEBUG
   INTERNAL_DEBUG_DEVICE << "upload failed, no retry" << INTERNAL_DEBUG_DEVICE_ENDL;
   #endif
@@ -1061,7 +1061,7 @@ DevPropertyHandler_c::sendCommandChangeDesignator(uint16_t aui16_objectID, const
   uint8_t strLen = (CNAMESPACE::strlen(apc_newString) < stringLength) ? CNAMESPACE::strlen(apc_newString) : stringLength;
   if (CNAMESPACE::strlen(apc_newString) <= 32)
   {
-    l_sendUpload.push_back(SendUploadBase_c (aui16_objectID, apc_newString, strLen, procCmdPar_ChangeDesignatorMsg));
+    ml_sendUpload.push_back(SendUploadBase_c (aui16_objectID, apc_newString, strLen, procCmdPar_ChangeDesignatorMsg));
     return true;
   }
   //DEBUG OUT
@@ -1077,32 +1077,32 @@ void
 DevPropertyHandler_c::startUploadCommandChangeDesignator()
 {
   // Set new state
-  en_uploadState = StateUploadCommand;
+  men_uploadState = StateUploadCommand;
 
   // Get first element from queue
-  SendUploadBase_c* actSend = &l_sendUpload.front();
+  SendUploadBase_c* actSend = &ml_sendUpload.front();
 
   // Set time-out values
-  ui32_uploadTimeout = actSend->getUploadTimeout();
-  ui32_uploadTimestamp = HAL::getTime();
+  mui32_uploadTimeout = actSend->getUploadTimeout();
+  mui32_uploadTimestamp = HAL::getTime();
 
   if ((actSend->vec_uploadBuffer.size() < 9)) {
     /// Fits into a single CAN-Pkg!
-    pc_data->setExtCanPkg8 (3, 0, 203, tcSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(),
+    mpc_data->setExtCanPkg8 (3, 0, 203, mui8_tcSourceAddress, mpc_wsMasterIdentItem->getIsoItem()->nr(),
                           actSend->vec_uploadBuffer [0], actSend->vec_uploadBuffer [1],
                           actSend->vec_uploadBuffer [2], actSend->vec_uploadBuffer [3],
                           actSend->vec_uploadBuffer [4], actSend->vec_uploadBuffer [5],
                           actSend->vec_uploadBuffer [6], actSend->vec_uploadBuffer [7]);
-    getCanInstance4Comm() << *pc_data;
-    en_uploadCommand = UploadCommandWaitingForCommandResponse;
+    getCanInstance4Comm() << *mpc_data;
+    men_uploadCommand = UploadCommandWaitingForCommandResponse;
   }
   else
   {
     /// Use multi CAN-Pkgs [(E)TP], doesn't fit into a single CAN-Pkg!
-    getMultiSendInstance().sendIsoTarget(pc_wsMasterIdentItem->isoName(),
-      getIsoMonitorInstance4Comm().isoMemberNr(tcSourceAddress).isoName(),
-      &actSend->vec_uploadBuffer.front(), actSend->vec_uploadBuffer.size(), PROCESS_DATA_PGN, en_sendSuccess);
-    en_uploadCommand = UploadMultiSendCommandWaitingForCommandResponse;
+    getMultiSendInstance().sendIsoTarget(mpc_wsMasterIdentItem->isoName(),
+      getIsoMonitorInstance4Comm().isoMemberNr(mui8_tcSourceAddress).isoName(),
+      &actSend->vec_uploadBuffer.front(), actSend->vec_uploadBuffer.size(), PROCESS_DATA_PGN, men_sendSuccess);
+    men_uploadCommand = UploadMultiSendCommandWaitingForCommandResponse;
   }
 }
 
@@ -1112,11 +1112,11 @@ DevPropertyHandler_c::startUploadCommandChangeDesignator()
 void
 DevPropertyHandler_c::finishUploadCommandChangeDesignator()
 {
-  en_uploadState = StateIdle;
-  en_uploadStep = UploadNone;
+  men_uploadState = StateIdle;
+  men_uploadStep = UploadNone;
 
   //delete first processed cmd of the queue
-  if (! l_sendUpload.empty() ) l_sendUpload.pop_front();
+  if (! ml_sendUpload.empty() ) ml_sendUpload.pop_front();
 }
 
 
@@ -1125,9 +1125,9 @@ DevPropertyHandler_c::setDataNextStreamPart (MultiSendPkg_c* mspData, uint8_t by
 {
   uint16_t ui16_isoNameOffset= DEF_Transfer_Code /* uploadcommand */ + DEF_TableID /* type of element (3 byte) */
                                + DEF_ObjectID /*Object ID (2 byte)*/ + DEF_Designator_Length /* designatorlength */
-                               + pc_devPoolForUpload->p_DevicePool[DEF_Transfer_Code+DEF_TableID+DEF_ObjectID] /* designator */
+                               + mpc_devPoolForUpload->p_DevicePool[DEF_Transfer_Code+DEF_TableID+DEF_ObjectID] /* designator */
                                + DEF_Software_Version_Length /* length of sw version */
-                               + pc_devPoolForUpload->p_DevicePool[DEF_Transfer_Code+DEF_TableID+DEF_ObjectID+DEF_Designator_Length+pc_devPoolForUpload->p_DevicePool[DEF_Transfer_Code+DEF_TableID+DEF_ObjectID]];
+                               + mpc_devPoolForUpload->p_DevicePool[DEF_Transfer_Code+DEF_TableID+DEF_ObjectID+DEF_Designator_Length+mpc_devPoolForUpload->p_DevicePool[DEF_Transfer_Code+DEF_TableID+DEF_ObjectID]];
   const bool cb_left = (ui16_isoNameOffset / 7) == (ui16_currentSendPosition / 7);
   const bool cb_right = ((ui16_isoNameOffset+7) / 7) == (ui16_currentSendPosition / 7);
   if (cb_left || cb_right)
@@ -1135,17 +1135,17 @@ DevPropertyHandler_c::setDataNextStreamPart (MultiSendPkg_c* mspData, uint8_t by
     uint8_t p14ui8_overlayBuffer[14];
     int index = 0;
     for (int arr_index=((ui16_isoNameOffset/7)*7); arr_index < (((ui16_isoNameOffset/7)*7)+14); index++, arr_index++)
-      p14ui8_overlayBuffer[index] = pc_devPoolForUpload->p_DevicePool[arr_index];
+      p14ui8_overlayBuffer[index] = mpc_devPoolForUpload->p_DevicePool[arr_index];
     // overwrite isoName
     const uint16_t ui16_tmpOffset = ui16_isoNameOffset%7;
-    static_cast<const IdentItem_c*>(pc_wsMasterIdentItem)->getIsoItem()->outputNameUnion()->getDataToString(
+    static_cast<const IdentItem_c*>(mpc_wsMasterIdentItem)->getIsoItem()->outputNameUnion()->getDataToString(
       p14ui8_overlayBuffer+ui16_tmpOffset );
     // send from overlayed buffer
     mspData->setDataPart (p14ui8_overlayBuffer, cb_left ? 0 : 7, bytes);
   }
   else
   { // normal sending
-    mspData->setDataPart (pc_devPoolForUpload->p_DevicePool, ui16_currentSendPosition, bytes);
+    mspData->setDataPart (mpc_devPoolForUpload->p_DevicePool, ui16_currentSendPosition, bytes);
   }
   ui16_currentSendPosition += bytes;
 }
@@ -1175,14 +1175,14 @@ DevPropertyHandler_c::restoreDataNextStreamPart ()
 uint32_t
 DevPropertyHandler_c::getStreamSize ()
 {
-  return pc_devPoolForUpload->devicePoolLength;
+  return mpc_devPoolForUpload->devicePoolLength;
 }
 
 
 uint8_t
 DevPropertyHandler_c::getFirstByte ()
 {
-  return pc_devPoolForUpload->p_DevicePool[0];
+  return mpc_devPoolForUpload->p_DevicePool[0];
 }
 
 };

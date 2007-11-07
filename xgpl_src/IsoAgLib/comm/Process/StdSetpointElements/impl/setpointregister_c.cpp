@@ -133,14 +133,14 @@ SetpointRegister_c::SetpointRegister_c(const SetpointRegister_c& arc_src){
 /** base function for assignment of element vars for copy constructor and operator= */
 void SetpointRegister_c::assignFromSource( const SetpointRegister_c& arc_src )
 { // direct value set to avoid special functions of equivalent set functions
-  i32_exactOrMin = arc_src.i32_exactOrMin;
-  i32_max = arc_src.i32_max;
-  i32_default = arc_src.i32_default;
+  mi32_exactOrMin = arc_src.mi32_exactOrMin;
+  mi32_max = arc_src.mi32_max;
+  mi32_default = arc_src.mi32_default;
   data.en_definedSetpoints = arc_src.data.en_definedSetpoints;
 
 
   setISOName(arc_src.isoName());
-  setHandled(arc_src.handled(), arc_src.i32_lastHandledTime);
+  setHandled(arc_src.handled(), arc_src.mi32_lastHandledTime);
   setMaster(arc_src.master());
   setValid(arc_src.valid());
 }
@@ -155,9 +155,9 @@ SetpointRegister_c::~SetpointRegister_c(){
   @return true -> both setpoint sets are equal
 */
 bool SetpointRegister_c::operator==(const SetpointRegister_c& arc_src)const{
-  return ((i32_exactOrMin == arc_src.i32_exactOrMin)
-        && (i32_max == arc_src.i32_max)
-        && (i32_default == arc_src.i32_default)
+  return ((mi32_exactOrMin == arc_src.mi32_exactOrMin)
+        && (mi32_max == arc_src.mi32_max)
+        && (mi32_default == arc_src.mi32_default)
         && (data.en_definedSetpoints == arc_src.data.en_definedSetpoints)
         && (isoName() == arc_src.isoName()))
         ? true:false;
@@ -232,7 +232,7 @@ void SetpointRegister_c::setExact(int32_t ai32_val)
 {
   if (ai32_val != NO_VAL_32S)
   {
-    i32_exactOrMin = ai32_val;
+    mi32_exactOrMin = ai32_val;
     // clear min/max
     // set exactType
     // keep defaultType
@@ -256,7 +256,7 @@ void SetpointRegister_c::setMin(int32_t ai32_val)
 {
   if (ai32_val != NO_VAL_32S)
   {
-    i32_exactOrMin = ai32_val;
+    mi32_exactOrMin = ai32_val;
     // clear exactType
     // don't change maxType and defaultType
     // set minType
@@ -281,7 +281,7 @@ void SetpointRegister_c::setMax(int32_t ai32_val)
 {
   if (ai32_val != NO_VAL_32S)
   {
-    i32_max = ai32_val;
+    mi32_max = ai32_val;
     // set exact to empty
     // don't change minType and defaultType
     // set maxType
@@ -305,7 +305,7 @@ void SetpointRegister_c::setDefault(int32_t ai32_val)
 {
   if (ai32_val != NO_VAL_32S)
   {
-    i32_default = ai32_val;
+    mi32_default = ai32_val;
     // set defaultType
     // don't change minType, maxType, exactType
     data.en_definedSetpoints
@@ -418,7 +418,7 @@ void SetpointRegister_c::setValMod(float af_val, GeneralCommand_c::ValueGroup_t 
 */
 bool SetpointRegister_c::setHandled(bool ab_state, int32_t ai32_handledTime)
 {
-  if (ai32_handledTime >= 0)i32_lastHandledTime = ai32_handledTime;
+  if (ai32_handledTime >= 0)mi32_lastHandledTime = ai32_handledTime;
   if (handled() != ab_state)
   { // state was changed
     data.b_handled = ab_state;

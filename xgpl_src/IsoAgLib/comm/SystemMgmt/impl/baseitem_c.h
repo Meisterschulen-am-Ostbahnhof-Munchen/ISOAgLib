@@ -147,7 +147,7 @@ public:
   void set(int32_t ai32_time, IState_c::itemState_t ab_status, int ai_singletonVecKey = 0);
 
   /**
-    calculates time between now and last set of i32_lastTime;
+    calculates time between now and last set of mi32_lastTime;
     if called with time parameter, the difference to this is calculated,
     otherwise the system time is retreived and used
     @return lasted time between last update and the compare time [msec.]
@@ -158,16 +158,16 @@ public:
     deliver the timestamp of the last update as int32_t [msec]
     @return last update [msec]
   */
-  int32_t lastTime() const {return i32_lastTime;}
+  int32_t lastTime() const {return mi32_lastTime;}
 
   /**
-    updates i32_lastTime to ai32_time or actual
+    updates mi32_lastTime to ai32_time or actual
     system time if no time is given
     @param ai32_time optional time to store as last update time (default retreive actual time from central SystemMgmt_c instance)
   */
   void updateTime( int32_t ai32_time = -1 )
-    {if ( ai32_time < 0 ) i32_lastTime = ElementBase_c::getLastRetriggerTime();
-     else i32_lastTime = ai32_time;
+    {if ( ai32_time < 0 ) mi32_lastTime = ElementBase_c::getLastRetriggerTime();
+     else mi32_lastTime = ai32_time;
     }
 
   /**
@@ -192,7 +192,7 @@ private:
 
 // Private attributes
   /** last system time of access or alive or received message in [250ms]*/
-  int32_t i32_lastTime;
+  int32_t mi32_lastTime;
 };
 
 

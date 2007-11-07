@@ -137,16 +137,16 @@ namespace __IsoAgLib {
 void SetpointLocal_c::init( ProcDataBase_c *const apc_processData )
 {
   SetpointBase_c::init( apc_processData );
-  // set pc_registerCache to a well defined value
-  pc_registerCache = vec_register.begin();
+  // set mpc_registerCache to a well defined value
+  mpc_registerCache = mvec_register.begin();
   #ifdef DEBUG_HEAP_USEAGE
-  sui16_setpointLocalTotal -= ( vec_register.size() * ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) );
+  sui16_setpointLocalTotal -= ( mvec_register.size() * ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) );
   #endif
-  vec_register.clear();
-  pc_master = vec_register.end();
+  mvec_register.clear();
+  mpc_master = mvec_register.end();
 
-  b_allowedDeltaPercent = 0;
-  b_staticMaster = false;
+  mb_allowedDeltaPercent = 0;
+  mb_staticMaster = false;
 
   #ifdef DEBUG_HEAP_USEAGE
   getRs232Instance()
@@ -183,13 +183,13 @@ SetpointLocal_c::SetpointLocal_c( const SetpointLocal_c& arc_src )
 void SetpointLocal_c::assignFromSource( const SetpointLocal_c& arc_src )
 {
   // now copy element vars
-  i32_setpointMaxAllowed = arc_src.i32_setpointMaxAllowed;
-  i32_setpointMinAllowed = arc_src.i32_setpointMinAllowed;
-  b_staticMaster = arc_src.b_staticMaster;
-  vec_register = arc_src.vec_register;
+  mi32_setpointMaxAllowed = arc_src.mi32_setpointMaxAllowed;
+  mi32_setpointMinAllowed = arc_src.mi32_setpointMinAllowed;
+  mb_staticMaster = arc_src.mb_staticMaster;
+  mvec_register = arc_src.mvec_register;
 
 
-  if (vec_register.size() < arc_src.vec_register.size())
+  if (mvec_register.size() < arc_src.mvec_register.size())
   { // not all items copied
     getILibErrInstance().registerError( iLibErr_c::BadAlloc, iLibErr_c::Process );
   }
@@ -204,25 +204,25 @@ void SetpointLocal_c::assignFromSource( const SetpointLocal_c& arc_src )
   #endif
 
 
-  // pc_registerCache is a pointer, which must be copied relative to vec_register.begin()
+  // mpc_registerCache is a pointer, which must be copied relative to mvec_register.begin()
   // the distance operator needs a const_iterator
-  Vec_SetpointRegister::const_iterator pc_iter = arc_src.pc_registerCache;
-  pc_registerCache = vec_register.begin();
-  STL_NAMESPACE::advance( pc_registerCache, STL_NAMESPACE::distance( arc_src.vec_register.begin(), pc_iter));
+  Vec_SetpointRegister::const_iterator pc_iter = arc_src.mpc_registerCache;
+  mpc_registerCache = mvec_register.begin();
+  STL_NAMESPACE::advance( mpc_registerCache, STL_NAMESPACE::distance( arc_src.mvec_register.begin(), pc_iter));
 
   // copy master element vars
-  for (pc_master = vec_register.begin(); pc_master != vec_register.end();pc_master++)
+  for (mpc_master = mvec_register.begin(); mpc_master != mvec_register.end();mpc_master++)
   {
-    if (pc_master->master()) break;
+    if (mpc_master->master()) break;
   }
 
-  b_allowedDeltaPercent = arc_src.b_allowedDeltaPercent;
+  mb_allowedDeltaPercent = arc_src.mb_allowedDeltaPercent;
 }
 
 /** default destructor which has nothing to do */
 SetpointLocal_c::~SetpointLocal_c(){
   #ifdef DEBUG_HEAP_USEAGE
-  sui16_setpointLocalTotal -= ( vec_register.size() * ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) );
+  sui16_setpointLocalTotal -= ( mvec_register.size() * ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) );
 
   getRs232Instance()
   << "SetLReg T: " << sui16_setpointLocalTotal << ", Node: " << ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) << INTERNAL_DEBUG_DEVICE_ENDL;
@@ -239,16 +239,16 @@ SetpointLocal_c::~SetpointLocal_c(){
 bool SetpointLocal_c::existUnhandledMaster() {
   int8_t i8_result = -1;
 
-  if (pc_registerCache == vec_register.end())
-    pc_registerCache = vec_register.begin();
+  if (mpc_registerCache == mvec_register.end())
+    mpc_registerCache = mvec_register.begin();
 
-  while (pc_registerCache != vec_register.end())
+  while (mpc_registerCache != mvec_register.end())
   {
-    if ( ( ((existMaster()) && (pc_registerCache->isoName() == masterConst().isoName()))
+    if ( ( ((existMaster()) && (mpc_registerCache->isoName() == masterConst().isoName()))
         || ((existMaster()) && (masterConst().isoName().isUnspecified()) )
-        || ((pc_registerCache->master()) )
+        || ((mpc_registerCache->master()) )
          )
-      && (!pc_registerCache->handled())
+      && (!mpc_registerCache->handled())
        )
     {
       i8_result = 1;
@@ -258,9 +258,9 @@ bool SetpointLocal_c::existUnhandledMaster() {
     if (i8_result < 0)
     { // first run with check for old cache
       i8_result = 0;
-      pc_registerCache = vec_register.begin();
+      mpc_registerCache = mvec_register.begin();
     } else
-      pc_registerCache++;
+      mpc_registerCache++;
 
   } // for
   return ( i8_result > 0 )?true:false;
@@ -281,7 +281,7 @@ SetpointRegister_c& SetpointLocal_c::unhandledMaster(){
   { // no unhandled master found
     getILibErrInstance().registerError( iLibErr_c::ElNonexistent, iLibErr_c::Process );
   }
-  return *pc_registerCache;
+  return *mpc_registerCache;
 }
 
 /**
@@ -302,23 +302,23 @@ void SetpointLocal_c::acceptNewMaster( bool ab_accept){
     {
       if (ab_accept)
       { // accept
-        // if handled: copy valid data (existMin(), existDefault() ...) from pc_registerCache (pointer to newly created SetpointRegister_c)
-        // and release pc_registerCache and keep pc_master!
+        // if handled: copy valid data (existMin(), existDefault() ...) from mpc_registerCache (pointer to newly created SetpointRegister_c)
+        // and release mpc_registerCache and keep mpc_master!
         // (e.g. different from new received unhandled one)
-        if (pc_master->handled())
+        if (mpc_master->handled())
         {
-          if (pc_registerCache->existExact())
-            pc_master->setExact(pc_registerCache->exact());
-          if (pc_registerCache->existMin())
-            pc_master->setMin(pc_registerCache->min());
-          if (pc_registerCache->existMax())
-            pc_master->setMax(pc_registerCache->max());
-          if (pc_registerCache->existDefault())
-            pc_master->setDefault(pc_registerCache->getDefault());
+          if (mpc_registerCache->existExact())
+            mpc_master->setExact(mpc_registerCache->exact());
+          if (mpc_registerCache->existMin())
+            mpc_master->setMin(mpc_registerCache->min());
+          if (mpc_registerCache->existMax())
+            mpc_master->setMax(mpc_registerCache->max());
+          if (mpc_registerCache->existDefault())
+            mpc_master->setDefault(mpc_registerCache->getDefault());
 
-          vec_register.erase( pc_registerCache );
-          // set pc_registerCache to valid value
-          pc_registerCache = pc_master;
+          mvec_register.erase( mpc_registerCache );
+          // set mpc_registerCache to valid value
+          mpc_registerCache = mpc_master;
           #ifdef DEBUG_HEAP_USEAGE
           sui16_setpointLocalTotal -= ( 1 * ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) );
 
@@ -329,7 +329,7 @@ void SetpointLocal_c::acceptNewMaster( bool ab_accept){
       }
       else
       { // don't accept
-        pc_registerCache->setValid( false);
+        mpc_registerCache->setValid( false);
       }
     }
   }
@@ -349,9 +349,9 @@ void SetpointLocal_c::setMasterMeasurementVal( int32_t ai32_val)
 {
   if (!existMaster())
   { // create register entry for master value
-    const uint16_t cui16_oldSize = vec_register.size();
-    vec_register.push_front();
-    if ( cui16_oldSize >= vec_register.size() )
+    const uint16_t cui16_oldSize = mvec_register.size();
+    mvec_register.push_front();
+    if ( cui16_oldSize >= mvec_register.size() )
     { // out-of-memory
       getILibErrInstance().registerError( iLibErr_c::BadAlloc, iLibErr_c::Process );
       return;
@@ -365,7 +365,7 @@ void SetpointLocal_c::setMasterMeasurementVal( int32_t ai32_val)
         << "SetLReg T: " << sui16_setpointLocalTotal << ", Node: " << ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) << INTERNAL_DEBUG_DEVICE_ENDL;
     }
     #endif
-    pc_master = vec_register.begin();
+    mpc_master = mvec_register.begin();
   }
   master().setExact( ai32_val);
   master().setHandled( true);
@@ -399,8 +399,8 @@ void SetpointLocal_c::setMasterMeasurementVal( float af_val)
 */
 uint8_t SetpointLocal_c::unhandledCnt()const{
   uint8_t b_result = 0;
-  for (Vec_SetpointRegisterConstIterator pc_iter = vec_register.begin();
-       pc_iter != vec_register.end();
+  for (Vec_SetpointRegisterConstIterator pc_iter = mvec_register.begin();
+       pc_iter != mvec_register.end();
        pc_iter++)
   {
     if (!(pc_iter->handled()))
@@ -423,11 +423,11 @@ uint8_t SetpointLocal_c::unhandledCnt()const{
 */
 SetpointRegister_c& SetpointLocal_c::unhandledInd( uint8_t aui8_ind){
   uint8_t b_counter = 0;
-  for (pc_registerCache = vec_register.begin();
-       pc_registerCache != vec_register.end();
-       pc_registerCache++)
+  for (mpc_registerCache = mvec_register.begin();
+       mpc_registerCache != mvec_register.end();
+       mpc_registerCache++)
   {
-    if (!(pc_registerCache->handled()))b_counter++;
+    if (!(mpc_registerCache->handled()))b_counter++;
 
     // check if this was the aui8_ind item of the unhandled
     if (b_counter == aui8_ind) break;
@@ -436,13 +436,13 @@ SetpointRegister_c& SetpointLocal_c::unhandledInd( uint8_t aui8_ind){
   if (b_counter != aui8_ind)
   { // aui8_ind was too big
     getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Process );
-    pc_registerCache = vec_register.begin();
+    mpc_registerCache = mvec_register.begin();
   }
 
   // now the pointer points to the wanted unhandled setpoint entry
   // (or to another valid entry if the amount of
   //  unhandled setpoints is lower than aui8_ind)
-  return *pc_registerCache;
+  return *mpc_registerCache;
 }
 
 /**
@@ -470,8 +470,8 @@ SetpointRegister_c& SetpointLocal_c::unhandledFirst(){
 */
 void SetpointLocal_c::respondAckNack(){
   // now send NO_VAL_32S for all other unhandled setpoints
-  for (Vec_SetpointRegisterIterator pc_iter = vec_register.begin();
-       pc_iter != vec_register.end();
+  for (Vec_SetpointRegisterIterator pc_iter = mvec_register.begin();
+       pc_iter != mvec_register.end();
        pc_iter++)
   { // send NO_VAL_32S to all unhandled not master setpoint entries
     if (!(pc_iter->handled()))
@@ -488,7 +488,7 @@ void SetpointLocal_c::respondAckNack(){
       else
       { // actual item is newly accepted master
         // set iterator for actual master to actual list item
-        if (pc_iter->master()) pc_master = pc_iter;
+        if (pc_iter->master()) mpc_master = pc_iter;
         // send the newly accepted values as positive response
         sendSetpointVals( master());
       } // else item is master
@@ -525,7 +525,7 @@ int32_t SetpointLocal_c::checkMeasurement( int32_t ai32_val, bool ab_sendIfError
       if (masterConst().exact() != 0)
         b_deviationPercent = ((CNAMESPACE::labs( i32_delta) * 100)/masterConst().exact());
       else b_deviationPercent = 100;
-      b_actualValid = (b_deviationPercent < b_allowedDeltaPercent)?true:false;
+      b_actualValid = (b_deviationPercent < mb_allowedDeltaPercent)?true:false;
     }
     else
     { // min or max
@@ -533,13 +533,13 @@ int32_t SetpointLocal_c::checkMeasurement( int32_t ai32_val, bool ab_sendIfError
       {
         i32_delta = (ai32_val - masterConst().min());
         b_deviationPercent = ((CNAMESPACE::labs( i32_delta) * 100)/masterConst().min());
-        b_actualValid = ((i32_delta >= 0)||(b_deviationPercent < b_allowedDeltaPercent))?true:false;
+        b_actualValid = ((i32_delta >= 0)||(b_deviationPercent < mb_allowedDeltaPercent))?true:false;
       }
       if (b_actualValid && (masterConst().existMax()))
       { // the min test was if done successfull -> max limit exist -> check it
         i32_delta = (ai32_val - masterConst().max());
         b_deviationPercent = ((CNAMESPACE::labs( i32_delta) * 100)/masterConst().max());
-        b_actualValid = ((i32_delta <= 0)||(b_deviationPercent < b_allowedDeltaPercent))?true:false;
+        b_actualValid = ((i32_delta <= 0)||(b_deviationPercent < mb_allowedDeltaPercent))?true:false;
       }
       // check for (only) percent can`t be done dependent on measurement
     }
@@ -576,10 +576,10 @@ bool SetpointLocal_c::timeEvent( void ){
   // delete all NOT-master entries handled >3sec ago, or
   // delete master entries where isoName of caller is inactive >3sec
   bool b_repeat=true;
-  while (b_repeat && (!vec_register.empty()) ) {
+  while (b_repeat && (!mvec_register.empty()) ) {
     b_repeat = false;
-    for (Vec_SetpointRegister::iterator pc_iter = vec_register.begin();
-        pc_iter != vec_register.end(); pc_iter++)
+    for (Vec_SetpointRegister::iterator pc_iter = mvec_register.begin();
+        pc_iter != mvec_register.end(); pc_iter++)
     { // check handled time
       if (!pc_iter->master())
       {
@@ -588,7 +588,7 @@ bool SetpointLocal_c::timeEvent( void ){
           )
         { // pc_iter points to old handled (>3sec) item which is NOT the master -> delete it
           // and it was already handled (default time 0 after creation)
-          vec_register.erase( pc_iter);
+          mvec_register.erase( pc_iter);
           #ifdef DEBUG_HEAP_USEAGE
           sui16_setpointLocalTotal -= ( 1 * ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) );
 
@@ -599,13 +599,13 @@ bool SetpointLocal_c::timeEvent( void ){
           break; // old was: delete max one item per timeEvent, cause of reordering of list
         }
       }
-      else if (!b_staticMaster)
+      else if (!mb_staticMaster)
       { // pc_iter is master -> check if isoName is valid
         const IsoName_c& c_testISOName = pc_iter->isoName();
         if ( ( !getIsoMonitorInstance4Comm().existIsoMemberISOName( c_testISOName, true) ) )
         { // isoName of caller not in Monitor-List or inactive since >3sec -> delete entry
-          vec_register.erase( pc_iter);
-          pc_master = vec_register.end(); // register that no acive master defined
+          mvec_register.erase( pc_iter);
+          mpc_master = mvec_register.end(); // register that no acive master defined
           #ifdef DEBUG_HEAP_USEAGE
           sui16_setpointLocalTotal -= ( 1 * ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) );
 
@@ -637,7 +637,7 @@ bool SetpointLocal_c::sendSetpointMod(const IsoName_c& ac_targetISOName,
                                       GeneralCommand_c::ValueGroup_t en_valueGroup,
                                       GeneralCommand_c::CommandType_t en_command) const {
   // prepare general command in process pkg
-  getProcessInstance4Comm().data().c_generalCommand.setValues(true /* isSetpoint */, false, /* isRequest */
+  getProcessInstance4Comm().data().mc_generalCommand.setValues(true /* isSetpoint */, false, /* isRequest */
                                                               en_valueGroup, en_command);
   #ifdef USE_FLOAT_DATA_TYPE
   if (valType() == i32_val) {
@@ -664,7 +664,7 @@ void SetpointLocal_c::processRequest() const {
   if (b_existMaster)
   {
     // use the values in general command which are already set
-    sendSetpointMod(c_pkg.memberSend().isoName(), c_pkg.c_generalCommand.getValueGroup(), GeneralCommand_c::setValue );
+    sendSetpointMod(c_pkg.memberSend().isoName(), c_pkg.mc_generalCommand.getValueGroup(), GeneralCommand_c::setValue );
   }
 }
 
@@ -673,13 +673,13 @@ void SetpointLocal_c::processRequest() const {
 */
 void SetpointLocal_c::processSet(){
   ProcessPkg_c& c_pkg = getProcessInstance4Comm().data();
-  Vec_SetpointRegisterIterator pc_callerIter = vec_register.begin();
+  Vec_SetpointRegisterIterator pc_callerIter = mvec_register.begin();
 
   // detect if something was changed
   bool b_change = false;
 
   const IsoName_c& c_callerISOName = c_pkg.memberSend().isoName();
-  for (pc_callerIter = vec_register.begin(); pc_callerIter != vec_register.end(); pc_callerIter++)
+  for (pc_callerIter = mvec_register.begin(); pc_callerIter != mvec_register.end(); pc_callerIter++)
   { // check if c_callerISOName already set the item at ui8_callerIndex
     // ignore item of actual acepted master, as this should be handled as new
     // item
@@ -689,13 +689,13 @@ void SetpointLocal_c::processSet(){
          break;
   }
   // check if caller was found
-  if (pc_callerIter == vec_register.end())
+  if (pc_callerIter == mvec_register.end())
   { // caller didn't set setpoint previous to this -> create item
     if (c_pkg.isSpecCmd( static_cast<proc_specCmd_t>(setpointReleaseCmd|setpointErrCmd)) == false)
     {
-      const uint16_t cui16_oldSize = vec_register.size();
-      vec_register.push_front( SetpointRegister_c( c_callerISOName));
-      if ( cui16_oldSize >= vec_register.size() )
+      const uint16_t cui16_oldSize = mvec_register.size();
+      mvec_register.push_front( SetpointRegister_c( c_callerISOName));
+      if ( cui16_oldSize >= mvec_register.size() )
       { // out-of-memory
         getILibErrInstance().registerError( iLibErr_c::BadAlloc, iLibErr_c::Process );
         return;
@@ -709,7 +709,7 @@ void SetpointLocal_c::processSet(){
           << "SetLReg T: " << sui16_setpointLocalTotal << ", Node: " << ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) << INTERNAL_DEBUG_DEVICE_ENDL;
       }
       #endif
-      pc_callerIter = vec_register.begin();
+      pc_callerIter = mvec_register.begin();
       b_change = true;
     }
     else
@@ -726,11 +726,11 @@ void SetpointLocal_c::processSet(){
   { // check if the to be deleted item is the actual master
     if ((existMaster()) && (master().isoName() == c_callerISOName))
     { // if this item was master setpoint, set pc_masterCache to end()
-      pc_master = vec_register.end();
+      mpc_master = mvec_register.end();
       b_change = true;
     }
     // delete the SetpointRegister_c item
-    vec_register.erase( pc_callerIter);
+    mvec_register.erase( pc_callerIter);
     #ifdef DEBUG_HEAP_USEAGE
     sui16_setpointLocalTotal -= ( 1 * ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) );
 
@@ -739,7 +739,7 @@ void SetpointLocal_c::processSet(){
     #endif
 
     // prepare general command in process pkg
-    getProcessInstance4Comm().data().c_generalCommand.setValues(true /* isSetpoint */, false, /* isRequest */
+    getProcessInstance4Comm().data().mc_generalCommand.setValues(true /* isSetpoint */, false, /* isRequest */
                                                                 GeneralCommand_c::exactValue,
                                                                 GeneralCommand_c::setValue);
     // notify the caller
@@ -755,8 +755,8 @@ void SetpointLocal_c::processSet(){
       int32_t i32_val = processData().pkgDataLong();
       // now set according to mod the suitable setpoint type  value
       // simply set the new setpoint vlue
-      if ( pc_callerIter->valMod( c_pkg.c_generalCommand.getValueGroup() ) != i32_val ) b_change = true;
-      pc_callerIter->setValMod( i32_val, c_pkg.c_generalCommand.getValueGroup());
+      if ( pc_callerIter->valMod( c_pkg.mc_generalCommand.getValueGroup() ) != i32_val ) b_change = true;
+      pc_callerIter->setValMod( i32_val, c_pkg.mc_generalCommand.getValueGroup());
     #ifdef USE_FLOAT_DATA_TYPE
     }
     else
@@ -765,8 +765,8 @@ void SetpointLocal_c::processSet(){
       float f_val = processData().pkgDataFloat();
       // now set according to mod the suitable setpoint type  value
       // simply set the new setpoint vlue
-      if ( pc_callerIter->valModFloat( c_pkg.c_generalCommand.getValueGroup() ) != f_val ) b_change = true;
-      pc_callerIter->setValMod( f_val, c_pkg.c_generalCommand.getValueGroup() );
+      if ( pc_callerIter->valModFloat( c_pkg.mc_generalCommand.getValueGroup() ) != f_val ) b_change = true;
+      pc_callerIter->setValMod( f_val, c_pkg.mc_generalCommand.getValueGroup() );
     }
     #endif
   }

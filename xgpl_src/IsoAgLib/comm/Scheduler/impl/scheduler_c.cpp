@@ -167,13 +167,13 @@ namespace __IsoAgLib {
 #endif
 
 /** timestamp where last timeEvent was called -> can be used to synchronise distributed timeEvent activities */
-int32_t Scheduler_c::i32_lastTimeEventTime = 0;
+int32_t Scheduler_c::mi32_lastTimeEventTime = 0;
 
 /** commanded timestamp, where Scheduler_c::timeEvent MUST return action to caller */
-int32_t Scheduler_c::i32_demandedExecEndScheduler = 0;
+int32_t Scheduler_c::mi32_demandedExecEndScheduler = 0;
 
 /** flag to detect, if other interrupting task forced immediated stop of Scheduler_c::timeEvent() */
-bool Scheduler_c::b_execStopForced = false;
+bool Scheduler_c::mb_execStopForced = false;
 
 /**
   initialize directly after the singleton instance is created.
@@ -182,9 +182,9 @@ bool Scheduler_c::b_execStopForced = false;
 */
 void Scheduler_c::singletonInit()
 { // static variables:
-  i32_lastTimeEventTime = 0;
-  i32_demandedExecEndScheduler = 0;
-  b_execStopForced = false;
+  mi32_lastTimeEventTime = 0;
+  mi32_demandedExecEndScheduler = 0;
+  mb_execStopForced = false;
 
   init();
 };
@@ -192,15 +192,15 @@ void Scheduler_c::singletonInit()
 /** initialisation for the central IsoAgLib object */
 void Scheduler_c::init( void )
 { // set attributes to valid initial state
-  b_execStopForced = false;
-  i16_canExecTime = 0;
-  i32_averageExecTime = 0;
-  i32_demandedExecEndScheduler = 0;
-  i32_lastTimeEventTime = 0;
+  mb_execStopForced = false;
+  mi16_canExecTime = 0;
+  mi32_averageExecTime = 0;
+  mi32_demandedExecEndScheduler = 0;
+  mi32_lastTimeEventTime = 0;
 
 
   // clear the scheduler queues
-  while ( !c_taskQueue.empty() ) c_taskQueue.pop_front();
+  while ( !mc_taskQueue.empty() ) mc_taskQueue.pop_front();
   setCntClient( 0 );
 }
 
@@ -214,10 +214,10 @@ void Scheduler_c::closeCommunication( void ) {
     getCanInstance( ind ).close();
   }
   #endif
-  for ( STL_NAMESPACE::list<SchedulerEntry_c>::iterator iter = c_taskQueue.begin(); ! c_taskQueue.empty(); iter = c_taskQueue.begin())
+  for ( STL_NAMESPACE::list<SchedulerEntry_c>::iterator iter = mc_taskQueue.begin(); ! mc_taskQueue.empty(); iter = mc_taskQueue.begin())
   { // call close for each registered client
     iter->close();
-    c_taskQueue.erase(iter);
+    mc_taskQueue.erase(iter);
   }
   setCntClient( 0 );
 }
@@ -243,9 +243,9 @@ void Scheduler_c::close( void )
 
 void Scheduler_c::startSystem()
 {
-  if (!b_systemStarted)
+  if (!mb_systemStarted)
   {
-    b_systemStarted = true;
+    mb_systemStarted = true;
     // NOW INIT ONCE the core singleton classes that correspond to the compile time
     // configured features of the IsoAgLib
     getILibErrInstance().init();
@@ -299,7 +299,7 @@ void Scheduler_c::registerAccessFlt( void )
 bool Scheduler_c::registerClient( ElementBase_c* pc_client)
 {
   // first check whether this client is already registered
-  for ( STL_NAMESPACE::list<SchedulerEntry_c>::const_iterator iter = c_taskQueue.begin(); iter != c_taskQueue.end(); iter++ )
+  for ( STL_NAMESPACE::list<SchedulerEntry_c>::const_iterator iter = mc_taskQueue.begin(); iter != mc_taskQueue.end(); iter++ )
   {
     if (iter->isTask( pc_client ) ) return false;
   }
@@ -309,7 +309,7 @@ bool Scheduler_c::registerClient( ElementBase_c* pc_client)
   if ( si32_taskStartTime == 0 ) si32_taskStartTime = System_c::getTime() + 50;
   else
   {
-    if ( ! c_taskQueue.empty() ) si32_taskStartTime -= pc_client->getForcedMinExecTime();
+    if ( ! mc_taskQueue.empty() ) si32_taskStartTime -= pc_client->getForcedMinExecTime();
     else si32_taskStartTime -= 2;
   }
   //For Client that registers at later timepoint
@@ -323,9 +323,9 @@ bool Scheduler_c::registerClient( ElementBase_c* pc_client)
   pc_client->startTaskTiming(si32_taskStartTime);
   /// put client in taskQueue
   const uint16_t ui16_oldSize = cntClient();
-  c_taskQueue.push_front( SchedulerEntry_c( pc_client ) );
+  mc_taskQueue.push_front( SchedulerEntry_c( pc_client ) );
   // check whether the task list grew as awaited
-  setCntClient(c_taskQueue.size() );
+  setCntClient(mc_taskQueue.size() );
   if ( cntClient() <= ui16_oldSize ) return false;
   #ifdef DEBUG_HEAP_USEAGE
   sui16_clientPointerTotal++;
@@ -334,7 +334,7 @@ bool Scheduler_c::registerClient( ElementBase_c* pc_client)
     << sui16_clientPointerTotal
     << "(" << c_arrClientC1.capacity()
     << ") x Scheduler_c Clients: Mal-Alloc: "
-    << sizeVectorTWithMalloc( sizeof(void*), c_taskQueue.capacity() )
+    << sizeVectorTWithMalloc( sizeof(void*), mc_taskQueue.capacity() )
     << "/" << sizeof(void*)
     << ", Chunk-Alloc: "
     << sizeVectorTWithChunk( sizeof(void*), c_arrClientC1.capacity() )
@@ -359,17 +359,17 @@ bool Scheduler_c::registerClient( ElementBase_c* pc_client)
 void Scheduler_c::unregisterClient( ElementBase_c* pc_client)
 {
   // delete from Queue if not empty
-  if(!c_taskQueue.empty()){
+  if(!mc_taskQueue.empty()){
     STL_NAMESPACE::list<SchedulerEntry_c>::iterator itc_task;
-    for(itc_task = c_taskQueue.begin(); itc_task != c_taskQueue.end();){
+    for(itc_task = mc_taskQueue.begin(); itc_task != mc_taskQueue.end();){
 
       if(itc_task->isTask(pc_client)){
         #ifdef DEBUG_SCHEDULER
         INTERNAL_DEBUG_DEVICE << "Scheduler_cunregisterClient() Delete from TaskList:"
         << itc_task->getTaskName() << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
-        itc_task = c_taskQueue.erase(itc_task);
-        setCntClient(c_taskQueue.size() );
+        itc_task = mc_taskQueue.erase(itc_task);
+        setCntClient(mc_taskQueue.size() );
       }
       else
       {
@@ -380,7 +380,7 @@ void Scheduler_c::unregisterClient( ElementBase_c* pc_client)
 
 
   // output client array in sync
-  if ( ! c_taskQueue.empty() )
+  if ( ! mc_taskQueue.empty() )
   { // delete last element
     #ifdef DEBUG_HEAP_USEAGE
     sui16_clientPointerTotal--;
@@ -389,10 +389,10 @@ void Scheduler_c::unregisterClient( ElementBase_c* pc_client)
       << sui16_clientPointerTotal
       << "(" << c_arrClientC1.capacity()
       << ") x Scheduler_c Clients: Mal-Alloc: "
-      << sizeVectorTWithMalloc( sizeof(void*), c_taskQueue.capacity() )
+      << sizeVectorTWithMalloc( sizeof(void*), mc_taskQueue.capacity() )
       << "/" << sizeof(void*)
       << ", Chunk-Alloc: "
-      << sizeVectorTWithChunk( sizeof(void*), c_taskQueue.capacity() )
+      << sizeVectorTWithChunk( sizeof(void*), mc_taskQueue.capacity() )
       << INTERNAL_DEBUG_DEVICE_ENDL
       #ifdef MASSERT
       << "\r\n__mall tot:" << AllocateHeapMalloc
@@ -412,14 +412,14 @@ void Scheduler_c::unregisterClient( ElementBase_c* pc_client)
            ==> answer of this function tells, if planned step will fit into time frame
   */
 int16_t Scheduler_c::getAvailableExecTime( int16_t ai16_awaitedExecTime )
-{ // check if b_execStopForced is set
-  //if ( b_execStopForced ) return 0;
-  if ( b_execStopForced ) return 0 ;
-  /// values < 0 for i32_demandedExecEndScheduler means unrestricted execution time
-  if ( i32_demandedExecEndScheduler >= 0 )
+{ // check if mb_execStopForced is set
+  //if ( mb_execStopForced ) return 0;
+  if ( mb_execStopForced ) return 0 ;
+  /// values < 0 for mi32_demandedExecEndScheduler means unrestricted execution time
+  if ( mi32_demandedExecEndScheduler >= 0 )
   {
     const int32_t ci32_now = System_c::getTime();
-    const int32_t ci32_result = i32_demandedExecEndScheduler - ci32_now;
+    const int32_t ci32_result = mi32_demandedExecEndScheduler - ci32_now;
     if ( ci32_result < 0 ) return 0; ///< we are too late
     else if ( ci32_result < ai16_awaitedExecTime ) return 0; ///< indicate that awaited time for next step is too long
     else if ( ci32_result > 0x7FFF ) return 0x7FFF; ///< limit to the biggest int16_t time
@@ -431,13 +431,13 @@ int16_t Scheduler_c::getAvailableExecTime( int16_t ai16_awaitedExecTime )
 int16_t
 Scheduler_c::getCentralSchedulerAvailableExecTime()
 {
-  if ( i32_demandedExecEndScheduler == 0 ) return 0;
-  if ( i32_demandedExecEndScheduler == -1 ) return -1;
+  if ( mi32_demandedExecEndScheduler == 0 ) return 0;
+  if ( mi32_demandedExecEndScheduler == -1 ) return -1;
 
   const int32_t i32_now = System_c::getTime();
 
-  if ( i32_now >= i32_demandedExecEndScheduler ) return 0;
-  else return ( i32_demandedExecEndScheduler - i32_now );
+  if ( i32_now >= mi32_demandedExecEndScheduler ) return 0;
+  else return ( mi32_demandedExecEndScheduler - i32_now );
 }
 
 
@@ -463,14 +463,14 @@ int32_t Scheduler_c::timeEvent( int32_t ai32_demandedExecEndScheduler )
   si32_cpuTimeStart = (STL_NAMESPACE::clock() / ( CLOCKS_PER_SEC / 1000 ));
   #endif
 
-  int32_t i32_stepStartTime = i32_lastTimeEventTime = System_c::getTime();
+  int32_t i32_stepStartTime = mi32_lastTimeEventTime = System_c::getTime();
 
-  i32_demandedExecEndScheduler = ai32_demandedExecEndScheduler;
+  mi32_demandedExecEndScheduler = ai32_demandedExecEndScheduler;
   #ifdef CONFIG_DEFAULT_MAX_SCHEDULER_TIME_EVENT_TIME
   if ( ai32_demandedExecEndScheduler < 0 )
   { // limit execution time, even if no limit was defined by caller - avoid deadlock due to overload
-    i32_demandedExecEndScheduler = i32_stepStartTime + CONFIG_DEFAULT_MAX_SCHEDULER_TIME_EVENT_TIME;
-    //i32_demandedExecEndScheduler = i32_stepStartTime + 250;
+    mi32_demandedExecEndScheduler = i32_stepStartTime + CONFIG_DEFAULT_MAX_SCHEDULER_TIME_EVENT_TIME;
+    //mi32_demandedExecEndScheduler = i32_stepStartTime + 250;
 
   }
   #endif
@@ -480,7 +480,7 @@ int32_t Scheduler_c::timeEvent( int32_t ai32_demandedExecEndScheduler )
   // process CAN messages
   if ( getCanInstance4Comm().timeEvent() )
   { // all CAN_IO activities ready -> update statistic for CAN_IO
-    i16_canExecTime = System_c::getTime() - i32_stepStartTime;
+    mi16_canExecTime = System_c::getTime() - i32_stepStartTime;
   }
   System_c::triggerWd();
 
@@ -506,7 +506,7 @@ int32_t Scheduler_c::timeEvent( int32_t ai32_demandedExecEndScheduler )
   /// (i32_idleTime > 0)-> ends loop -> triggers still proccessmsg()
   int32_t  i32_idleTime;
   for ( i32_idleTime = selectCallTaskAndUpdateQueue();
-        ((i32_idleTime  == 0) && (System_c::getTime() < i32_demandedExecEndScheduler));
+        ((i32_idleTime  == 0) && (System_c::getTime() < mi32_demandedExecEndScheduler));
         i32_idleTime = selectCallTaskAndUpdateQueue() )
   {
             System_c::triggerWd();
@@ -534,11 +534,11 @@ int32_t Scheduler_c::timeEvent( int32_t ai32_demandedExecEndScheduler )
 
     // timeEvent of all registered clients called -> update overall
     // time statistic
-    if ( i32_averageExecTime != 0 )
+    if ( mi32_averageExecTime != 0 )
       // use pseudo average time: take middle value between last and actual value
-      i32_averageExecTime = ( i32_averageExecTime + ( System_c::getTime() - i32_lastTimeEventTime ) ) / 2;
+      mi32_averageExecTime = ( mi32_averageExecTime + ( System_c::getTime() - mi32_lastTimeEventTime ) ) / 2;
     else
-      i32_averageExecTime = ( System_c::getTime() - i32_lastTimeEventTime );
+      mi32_averageExecTime = ( System_c::getTime() - mi32_lastTimeEventTime );
 
   }
    // trigger the watchdog
@@ -579,12 +579,12 @@ Scheduler_c::resortTaskList(const SchedulerEntry_c* apc_sort)
 {
   if(cntClient() <= 1) return ; //nothing to sort
 
-  STL_NAMESPACE::list<SchedulerEntry_c>::iterator iterExecuted = c_taskQueue.begin();
-  for ( ; iterExecuted != c_taskQueue.end(); iterExecuted++ )
+  STL_NAMESPACE::list<SchedulerEntry_c>::iterator iterExecuted = mc_taskQueue.begin();
+  for ( ; iterExecuted != mc_taskQueue.end(); iterExecuted++ )
   {
     if (apc_sort == &(*iterExecuted) ) break;
   }
-  if ( iterExecuted == c_taskQueue.end() ) return;
+  if ( iterExecuted == mc_taskQueue.end() ) return;
 
   STL_NAMESPACE::list<SchedulerEntry_c>::iterator iterCompare = iterExecuted;
 
@@ -598,23 +598,23 @@ Scheduler_c::resortTaskList(const SchedulerEntry_c* apc_sort)
   // now in any case the current item
   // (i.e. the one that has previously been executed and should now be re-entered
   //  in right place) has to be removed
-  // move current item from c_taskQueue to the spare list - without any deletion and
+  // move current item from mc_taskQueue to the spare list - without any deletion and
   // re-allocation of a task-node -> should be faster
-  c_spareQueue.splice( c_spareQueue.end(), c_taskQueue, iterExecuted );
-  for ( iterCompare = c_taskQueue.begin();
-        iterCompare != c_taskQueue.end();
+  mc_spareQueue.splice( mc_spareQueue.end(), mc_taskQueue, iterExecuted );
+  for ( iterCompare = mc_taskQueue.begin();
+        iterCompare != mc_taskQueue.end();
         ++iterCompare )
   {
-    if ( c_spareQueue.front() <= *iterCompare )
+    if ( mc_spareQueue.front() <= *iterCompare )
     { // move first/single item from spare list in front of iterator iterCompare
-      c_taskQueue.splice( iterCompare, c_spareQueue, c_spareQueue.begin() );
+      mc_taskQueue.splice( iterCompare, mc_spareQueue, mc_spareQueue.begin() );
       break;
     }
   }
-  if ( iterCompare == c_taskQueue.end() )
+  if ( iterCompare == mc_taskQueue.end() )
   { // no other item in queue had later next retrigger time -> place c_resortedFrontItem at end
     // move first item from spare list in front of end() --> add it as last item to list
-    c_taskQueue.splice( c_taskQueue.end(), c_spareQueue, c_spareQueue.begin() );
+    mc_taskQueue.splice( mc_taskQueue.end(), mc_spareQueue, mc_spareQueue.begin() );
   }
 
 
@@ -653,13 +653,13 @@ Scheduler_c::selectCallTaskAndUpdateQueue()
   // declare local timestamp vars as static to avoid repeating allocation
   static int32_t i32_idleTime, i32_endTime;
 
-  i32_idleTime = c_taskQueue.front().getTimeToNextTrigger( retriggerType_t(EarliestRetrigger|StandardRetrigger) );
+  i32_idleTime = mc_taskQueue.front().getTimeToNextTrigger( retriggerType_t(EarliestRetrigger|StandardRetrigger) );
   i32_endTime = System_c::getTime();
 
 
   if ( i32_idleTime <= 0 )
   { // first task in queue can be executed
-    STL_NAMESPACE::list<SchedulerEntry_c>::iterator pc_execIter = c_taskQueue.begin();
+    STL_NAMESPACE::list<SchedulerEntry_c>::iterator pc_execIter = mc_taskQueue.begin();
     #ifdef DEBUG_SCHEDULER
     setDebugTimeAccuracy( *pc_execIter );
     #endif
@@ -670,7 +670,7 @@ Scheduler_c::selectCallTaskAndUpdateQueue()
 
     ///get Last Execution Time of next in Queue and ADD to actualTime
     int32_t i32_nextTaskTriggerTimeSpread = CONFIG_DEFAULT_MAX_SCHEDULER_TIME_EVENT_TIME;
-    if ( pc_nextCallIter != c_taskQueue.end() )
+    if ( pc_nextCallIter != mc_taskQueue.end() )
       i32_nextTaskTriggerTimeSpread = pc_nextCallIter->getTimeToNextTrigger( LatestRetrigger );
     if(  i32_nextTaskTriggerTimeSpread   <  pc_execIter->getForcedMinExecTime() ){
     #ifdef DEBUG_SCHEDULER
@@ -701,7 +701,7 @@ Scheduler_c::selectCallTaskAndUpdateQueue()
     /// because last Client could not finish in available TimeSpan
     SchedulerEntry_c* pc_execute = &(*pc_execIter);
     const bool b_result = pc_execIter->timeEventExec( i32_endTime );
-    if ( !b_result && (pc_nextCallIter != c_taskQueue.end() ) )
+    if ( !b_result && (pc_nextCallIter != mc_taskQueue.end() ) )
     { // time was not enough and more than one client is managed - check whether the next item
       // needs also to be executed
       if ( pc_nextCallIter->getTimeToNextTrigger( LatestRetrigger ) <= 0 )
@@ -728,7 +728,7 @@ Scheduler_c::selectCallTaskAndUpdateQueue()
 
     if(!b_result) return -1 ;
     // update idle time: first item is probably changed by sort
-    i32_idleTime = c_taskQueue.begin()->getTimeToNextTrigger( retriggerType_t(EarliestRetrigger|StandardRetrigger) );
+    i32_idleTime = mc_taskQueue.begin()->getTimeToNextTrigger( retriggerType_t(EarliestRetrigger|StandardRetrigger) );
   }
 
 
@@ -773,8 +773,8 @@ Scheduler_c::setDebugTimeAccuracy(SchedulerEntry_c& rc_selectedTask)
       << " for Task: " << rc_selectedTask.getTaskName() /// todo implente  Taskschilds
       << ",\tMax earlier execution: " << si16_maxDeviation
       << ",\tMin earlier execution: " << si16_minDeviation << ",\tCorrect Time Management: "
-    << "idle time of FRONT: " << c_taskQueue.front().getNextTriggerTime()
-//    << "idle time of BACK: " << SystemManagement_c::instance().c_taskQueue.back().getNextTriggerTime()
+    << "idle time of FRONT: " << mc_taskQueue.front().getNextTriggerTime()
+//    << "idle time of BACK: " << SystemManagement_c::instance().mc_taskQueue.back().getNextTriggerTime()
       << b_correctTimeManagement << INTERNAL_DEBUG_DEVICE_ENDL;
     if ( i16_timeDeviation >= 0 )
     { // everything is good
@@ -841,17 +841,17 @@ void Scheduler_c::setDebugIdleInformation(uint16_t aui16_idleTime){
       << "Actual time: " << i32_now << ",\tMax IDLE time: " << sui16_maxIdle
       << ",\tMin IDLE time: " << sui16_minIdle
       << ",\tactual IDLE time: " << aui16_idleTime
-      << "idle time of FRONT: " << c_taskQueue.front().getNextTriggerTime()
-      //<< "idle time of BACK: " << c_taskQueue.back().getNextTriggerTime()
+      << "idle time of FRONT: " << mc_taskQueue.front().getNextTriggerTime()
+      //<< "idle time of BACK: " << mc_taskQueue.back().getNextTriggerTime()
       << INTERNAL_DEBUG_DEVICE_ENDL;
   }
   /// send debug msg if idle time is higher than allowed (longer than shortest period)
   if ( aui16_idleTime > 1001 )
   { // problem with scheduling
     INTERNAL_DEBUG_DEVICE << "setDebugIdleInformation() with too long idle of " << aui16_idleTime
-      << ", TOP Task: " << c_taskQueue.front().getTaskName()
+      << ", TOP Task: " << mc_taskQueue.front().getTaskName()
       << ", Now: " << System_c::getTime()
-      << ", Retrigger Time: " << c_taskQueue.front().getNextTriggerTime()
+      << ", Retrigger Time: " << mc_taskQueue.front().getNextTriggerTime()
       << INTERNAL_DEBUG_DEVICE_ENDL;
 
   }
@@ -861,11 +861,11 @@ void Scheduler_c::setDebugIdleInformation(uint16_t aui16_idleTime){
 void Scheduler_c::printTaskList()
 {
   INTERNAL_DEBUG_DEVICE << "\n=========================\nPrintTaskList: ";
-  for ( STL_NAMESPACE::list<SchedulerEntry_c>::iterator pc_test = c_taskQueue.begin();
-        pc_test != c_taskQueue.end();
+  for ( STL_NAMESPACE::list<SchedulerEntry_c>::iterator pc_test = mc_taskQueue.begin();
+        pc_test != mc_taskQueue.end();
         pc_test++ )
   {
-    if ( pc_test != c_taskQueue.begin() ) INTERNAL_DEBUG_DEVICE << ", ";
+    if ( pc_test != mc_taskQueue.begin() ) INTERNAL_DEBUG_DEVICE << ", ";
     INTERNAL_DEBUG_DEVICE << pc_test->getTimeToNextTrigger(  retriggerType_t(StandardRetrigger) ) << " name:"
       << pc_test->getTaskName() ;
   } //end for
@@ -906,12 +906,12 @@ bool Scheduler_c::changeTimePeriodAndResortTask(ElementBase_c * pc_client  , uin
 //! @param  ai16_newTimePeriod otpional -> New Period will set for the Client by Scheduler_c
 bool  Scheduler_c::changeRetriggerTimeAndResort(SchedulerEntry_c ac_client  , int32_t i32_newRetriggerTime, int16_t ai16_newTimePeriod)
 {
-  if ( c_taskQueue.empty() ) return false;
+  if ( mc_taskQueue.empty() ) return false;
   else if (cntClient() == 1) return true;
   else
   { // search iterator for the client of change
     STL_NAMESPACE::list<SchedulerEntry_c>::iterator itc_task;
-    for(itc_task = c_taskQueue.begin(); itc_task != c_taskQueue.end(); itc_task++)
+    for(itc_task = mc_taskQueue.begin(); itc_task != mc_taskQueue.end(); itc_task++)
     {
       if (*itc_task == ac_client)
         return changeRetriggerTimeAndResort(itc_task, i32_newRetriggerTime, ai16_newTimePeriod);
@@ -930,12 +930,12 @@ bool  Scheduler_c::changeRetriggerTimeAndResort(SchedulerEntry_c ac_client  , in
 //! @param  ai16_newTimePeriod optional -> New Period will set for the Client by Scheduler_c
 bool  Scheduler_c::changeRetriggerTimeAndResort(ElementBase_c * pc_client  , int32_t i32_newRetriggerTime, int16_t ai16_newTimePeriod)
 {
-  if ( c_taskQueue.empty() ) return false;
+  if ( mc_taskQueue.empty() ) return false;
   else if (cntClient() == 1) return true;
   else
   { // search iterator for the client of change
     STL_NAMESPACE::list<SchedulerEntry_c>::iterator itc_task;
-    for(itc_task = c_taskQueue.begin(); itc_task != c_taskQueue.end(); itc_task++)
+    for(itc_task = mc_taskQueue.begin(); itc_task != mc_taskQueue.end(); itc_task++)
     {
       if(itc_task->isTask(pc_client))
         return changeRetriggerTimeAndResort(itc_task, i32_newRetriggerTime, ai16_newTimePeriod);
@@ -979,7 +979,7 @@ bool  Scheduler_c::changeRetriggerTimeAndResort(STL_NAMESPACE::list<SchedulerEnt
     //remove to LATER Position
     STL_NAMESPACE::list<SchedulerEntry_c>::iterator itc_greater = itc_task;
     ++itc_greater;
-    if ( itc_greater == c_taskQueue.end() )
+    if ( itc_greater == mc_taskQueue.end() )
     {
       #ifdef DEBUG_SCHEDULER
       printTaskList();
@@ -994,16 +994,16 @@ bool  Scheduler_c::changeRetriggerTimeAndResort(STL_NAMESPACE::list<SchedulerEnt
       return true;
     }
     // from here on: the list has to be resorted
-    for ( ++itc_greater; itc_greater != c_taskQueue.end(); ++itc_greater )
+    for ( ++itc_greater; itc_greater != mc_taskQueue.end(); ++itc_greater )
     {
       if ( *itc_task <= *itc_greater )
       { // the item at itc_greater has late enough retrigger time, so that
         // itc_task can be inserted before
 
-        // move itc_task from c_taskQueue to the c_spareQueue
-        c_spareQueue.splice( c_spareQueue.end(), c_taskQueue, itc_task );
-        // and move itc_task back from c_spareQueue in front of itc_greater in c_taskQueue
-        c_taskQueue.splice( itc_greater, c_spareQueue, c_spareQueue.begin() );
+        // move itc_task from mc_taskQueue to the mc_spareQueue
+        mc_spareQueue.splice( mc_spareQueue.end(), mc_taskQueue, itc_task );
+        // and move itc_task back from mc_spareQueue in front of itc_greater in mc_taskQueue
+        mc_taskQueue.splice( itc_greater, mc_spareQueue, mc_spareQueue.begin() );
         #ifdef DEBUG_SCHEDULER
         printTaskList();
         #endif
@@ -1013,10 +1013,10 @@ bool  Scheduler_c::changeRetriggerTimeAndResort(STL_NAMESPACE::list<SchedulerEnt
     // we reach only here, when no other task in queue afterwards has later retrigger time
     // --> place it at end
 
-    // move itc_task from c_taskQueue to the c_spareQueue
-    c_spareQueue.splice( c_spareQueue.end(), c_taskQueue, itc_task );
-    // and move itc_task back from c_spareQueue in front of c_taskQueue.end() - i.e. at the end of the list
-    c_taskQueue.splice( c_taskQueue.end(), c_spareQueue, c_spareQueue.begin() );
+    // move itc_task from mc_taskQueue to the mc_spareQueue
+    mc_spareQueue.splice( mc_spareQueue.end(), mc_taskQueue, itc_task );
+    // and move itc_task back from mc_spareQueue in front of mc_taskQueue.end() - i.e. at the end of the list
+    mc_taskQueue.splice( mc_taskQueue.end(), mc_spareQueue, mc_spareQueue.begin() );
     #ifdef DEBUG_SCHEDULER
     printTaskList();
     #endif
@@ -1032,7 +1032,7 @@ bool  Scheduler_c::changeRetriggerTimeAndResort(STL_NAMESPACE::list<SchedulerEnt
     ///set new NextTriggerTime
     itc_task->changeNextTriggerTime( i32_newRetriggerTime );
     //remove to EARLIER Position
-    if ( itc_task == c_taskQueue.begin() )
+    if ( itc_task == mc_taskQueue.begin() )
     {
       #ifdef DEBUG_SCHEDULER
       printTaskList();
@@ -1049,31 +1049,31 @@ bool  Scheduler_c::changeRetriggerTimeAndResort(STL_NAMESPACE::list<SchedulerEnt
       return true; ///< the changed task is still later scheduled than the item before it
     }
     // now we really have to resort
-    for ( ; itc_smaller != c_taskQueue.begin(); --itc_smaller )
+    for ( ; itc_smaller != mc_taskQueue.begin(); --itc_smaller )
     {
       if ( *itc_smaller <= *itc_task )
       { // the item at itc_smaller has early enough retrigger time, so that
         // itc_task can be inserted afterwards
         ++itc_smaller; ///< the insertion can only take place _before_ an iterator
 
-        // move itc_task from c_taskQueue to the c_spareQueue
-        c_spareQueue.splice( c_spareQueue.end(), c_taskQueue, itc_task );
-        // and move itc_task back from c_spareQueue in front of itc_smaller
-        c_taskQueue.splice( itc_smaller, c_spareQueue, c_spareQueue.begin() );
+        // move itc_task from mc_taskQueue to the mc_spareQueue
+        mc_spareQueue.splice( mc_spareQueue.end(), mc_taskQueue, itc_task );
+        // and move itc_task back from mc_spareQueue in front of itc_smaller
+        mc_taskQueue.splice( itc_smaller, mc_spareQueue, mc_spareQueue.begin() );
         #ifdef DEBUG_SCHEDULER
         printTaskList();
         #endif
         return true;
       }
     }
-    if ( ( itc_smaller == c_taskQueue.begin() ) && (*itc_smaller <= *itc_task))
+    if ( ( itc_smaller == mc_taskQueue.begin() ) && (*itc_smaller <= *itc_task))
     { // the first item in list has earlier trigger
       ++itc_smaller; ///< the insertion can only take place _before_ an iterator
 
-      // move itc_task from c_taskQueue to the c_spareQueue
-      c_spareQueue.splice( c_spareQueue.end(), c_taskQueue, itc_task );
-      // and move itc_task back from c_spareQueue in front of itc_smaller
-      c_taskQueue.splice( itc_smaller, c_spareQueue, c_spareQueue.begin() );
+      // move itc_task from mc_taskQueue to the mc_spareQueue
+      mc_spareQueue.splice( mc_spareQueue.end(), mc_taskQueue, itc_task );
+      // and move itc_task back from mc_spareQueue in front of itc_smaller
+      mc_taskQueue.splice( itc_smaller, mc_spareQueue, mc_spareQueue.begin() );
       #ifdef DEBUG_SCHEDULER
       printTaskList();
       #endif
@@ -1082,10 +1082,10 @@ bool  Scheduler_c::changeRetriggerTimeAndResort(STL_NAMESPACE::list<SchedulerEnt
     // we reach only here, when no other item before changed task has earlier retrigger time
     // -> place it at front of list
 
-    // move itc_task from c_taskQueue to the c_spareQueue
-    c_spareQueue.splice( c_spareQueue.end(), c_taskQueue, itc_task );
-    // and move itc_task back from c_spareQueue in front (c_taskQueue.begin())++ - i.e. at begin of list
-    c_taskQueue.splice( c_taskQueue.begin(), c_spareQueue, c_spareQueue.begin() );
+    // move itc_task from mc_taskQueue to the mc_spareQueue
+    mc_spareQueue.splice( mc_spareQueue.end(), mc_taskQueue, itc_task );
+    // and move itc_task back from mc_spareQueue in front (mc_taskQueue.begin())++ - i.e. at begin of list
+    mc_taskQueue.splice( mc_taskQueue.begin(), mc_spareQueue, mc_spareQueue.begin() );
   } // end if shift forward
   #ifdef DEBUG_SCHEDULER
   printTaskList();

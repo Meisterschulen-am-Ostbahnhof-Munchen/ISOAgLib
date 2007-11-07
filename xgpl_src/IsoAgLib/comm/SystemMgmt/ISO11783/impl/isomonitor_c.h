@@ -168,10 +168,10 @@ public:
   virtual ~IsoMonitor_c();
 
   /** deliver reference to data pkg
-    @return reference to the CAN communication member object c_data (IsoSystemPkg_c)
+    @return reference to the CAN communication member object mc_data (IsoSystemPkg_c)
     @see CANPkgExt
   */
-  IsoSystemPkg_c& data() {return c_data;}
+  IsoSystemPkg_c& data() {return mc_data;}
 
   /** deliver reference to data pkg as reference to CanPkgExt_c
     to implement the base virtual function correct
@@ -256,7 +256,7 @@ public:
 
   /** check if a memberItem with given ISOName exist
     which optional (!!) match the condition of address claim state
-    and update local pc_isoMemberCache
+    and update local mpc_isoMemberCache
     @param ac_isoName searched ISOName
     @param ab_forceClaimedAddress true -> only members with claimed address are used
           (optional, default false)
@@ -266,7 +266,7 @@ public:
 
   /** check if a member with given number exist
     which optional (!!) match the condition of address claim state
-    and update local pc_isoMemberCache
+    and update local mpc_isoMemberCache
     @param aui8_nr searched member number
     @return true -> item found
   */
@@ -431,7 +431,7 @@ public:
   /** deliver timestamp of last ISO request for SA claim msg
     @return time of last Request PG for Adress Claim on BUS
   */
-  int32_t lastIsoSaRequest() const {return i32_lastSaRequest;}
+  int32_t lastIsoSaRequest() const {return mi32_lastSaRequest;}
 
   /** set timestamp of last ISO request for SA claim msg
     @param ai32_time set timestamp to ai32_time or use actual time on default
@@ -441,7 +441,7 @@ public:
     ADDRESS_CLAIM, so it's NOT chronologically. So CAN-Pkg-Times
     should be used here instead!!
   */
-  void setLastIsoSaRequest (int32_t ai32_time/* = -1*/) {i32_lastSaRequest = /*(ai32_time != -1)?*/ai32_time/*:System_c::getTime()*/;}
+  void setLastIsoSaRequest (int32_t ai32_time/* = -1*/) {mi32_lastSaRequest = /*(ai32_time != -1)?*/ai32_time/*:System_c::getTime()*/;}
 
   /** trigger a request for claimed addreses
     @param ab_force false -> send request only if no request was detected until now
@@ -480,7 +480,7 @@ public:
 
 
   /** command switching to and from special service / diagnostic mode.
-      setting the flag c_serviceTool controls appropriate handling
+      setting the flag mc_serviceTool controls appropriate handling
     */
   void setDiagnosticMode( const IsoName_c& arc_serviceTool = IsoName_c::IsoNameUnspecified());
 protected: // Protected methods
@@ -512,7 +512,7 @@ private:
   /** register pointer to a new client
    * this function is called within construction of new client instance
      */
-  void unregisterClient( IdentItem_c* pc_client) { pc_activeLocalMember = NULL; unregisterC1 ( pc_client ); }
+  void unregisterClient( IdentItem_c* pc_client) { mpc_activeLocalMember = NULL; unregisterC1 ( pc_client ); }
 
   /** handler function for access to undefined client.
     * the base Singleton calls this function, if it detects an error
@@ -536,31 +536,31 @@ private: // Private attributes
   /** Cache pointer to speedup access to first active
     MonitorItem_c local member after check for existance
      */
-  IsoItem_c* pc_activeLocalMember;
+  IsoItem_c* mpc_activeLocalMember;
 
   /** temp data where received and to be sent data is put */
-  IsoSystemPkg_c c_data;
+  IsoSystemPkg_c mc_data;
 
   /** dynamic array of memberItems for handling
       of single member informations
   */
-  Vec_ISO vec_isoMember;
+  Vec_ISO mvec_isoMember;
 
   /** last time of request for adress claim */
-  int32_t i32_lastSaRequest;
+  int32_t mi32_lastSaRequest;
 
   /** temporary memberItem instance for better inserting of new elements */
-  IsoItem_c c_tempIsoMemberItem;
+  IsoItem_c mc_tempIsoMemberItem;
 
   /** cache pointer to speed serial of access to the same ISOItem */
-  Vec_ISOIterator pc_isoMemberCache;
+  Vec_ISOIterator mpc_isoMemberCache;
   /** map of SaClaimHandler_c clients that want to be informed on monitor list changes */
 
-  SaClaimHandlerVector_t vec_saClaimHandler;
+  SaClaimHandlerVector_t mvec_saClaimHandler;
 
   /** flag to indicate service / diagnostic mode, where only connections to a dedicated ECU
      should be maintained */
-  IsoName_c c_serviceTool;
+  IsoName_c mc_serviceTool;
 };
 
 #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )

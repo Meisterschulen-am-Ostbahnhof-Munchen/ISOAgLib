@@ -265,11 +265,11 @@ class ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c : public ProcDataRemot
       presentation
   */
   union {
-    int32_t i32_masterVal;
+    int32_t mi32_masterVal;
     float f_masterVal;
   };
   #else
-  int32_t i32_masterVal;
+  int32_t mi32_masterVal;
   #endif
 };
 

@@ -111,7 +111,7 @@ namespace __IsoAgLib {
 void MeasureProgRemote_c::init( ProcDataBase_c *const apc_processData )
 {
   MeasureProgBase_c::init( apc_processData, Proc_c::UndefinedProg, int32_t(0), IsoName_c::IsoNameUnspecified() );
-  b_receiveForeignMeasurement = false;
+  mb_receiveForeignMeasurement = false;
 }
 
 /**
@@ -124,8 +124,8 @@ const MeasureProgRemote_c& MeasureProgRemote_c::operator=(const MeasureProgRemot
   MeasureProgBase_c::operator=(arc_src);
 
   // copy element vars
-  i32_med = arc_src.i32_med;
-  b_receiveForeignMeasurement = arc_src.b_receiveForeignMeasurement;
+  mi32_med = arc_src.mi32_med;
+  mb_receiveForeignMeasurement = arc_src.mb_receiveForeignMeasurement;
 
   // return reference to source
   return arc_src;
@@ -139,8 +139,8 @@ MeasureProgRemote_c::MeasureProgRemote_c(const MeasureProgRemote_c& arc_src)
   : MeasureProgBase_c(arc_src){
 
   // copy element vars
-  i32_med = arc_src.i32_med;
-  b_receiveForeignMeasurement = arc_src.b_receiveForeignMeasurement;
+  mi32_med = arc_src.mi32_med;
+  mb_receiveForeignMeasurement = arc_src.mb_receiveForeignMeasurement;
 }
 
 /** default destructor which has nothing to do */
@@ -162,8 +162,8 @@ bool MeasureProgRemote_c::start(Proc_c::doSend_t ren_doSend){
   // retrieve the ren_type from the matching registered subprog
   Proc_c::type_t en_typeLocal = Proc_c::NullType;
 
-  for (Vec_MeasureSubprog::iterator pc_subprog = vec_measureSubprog.begin();
-       pc_subprog != vec_measureSubprog.end(); pc_subprog++)
+  for (Vec_MeasureSubprog::iterator pc_subprog = mvec_measureSubprog.begin();
+       pc_subprog != mvec_measureSubprog.end(); pc_subprog++)
   {
     // take type of measurement prog only from that subprog with the same en_doSend! (no combination!)
     if (pc_subprog->doSend() == ren_doSend)
@@ -196,8 +196,8 @@ bool MeasureProgRemote_c::start(Proc_c::type_t ren_type, Proc_c::doSend_t ren_do
 
 
   // send all registered increments to remote ECU
-  for (Vec_MeasureSubprog::iterator pc_subprog = vec_measureSubprog.begin();
-       pc_subprog != vec_measureSubprog.end(); pc_subprog++)
+  for (Vec_MeasureSubprog::iterator pc_subprog = mvec_measureSubprog.begin();
+       pc_subprog != mvec_measureSubprog.end(); pc_subprog++)
   { // send the suitable increment creating message to the remote system
 
     if (pc_subprog->doSend() != ren_doSend)
@@ -267,7 +267,7 @@ bool MeasureProgRemote_c::start(Proc_c::type_t ren_type, Proc_c::doSend_t ren_do
       }
 
       // prepare general command in process pkg
-      getProcessInstance4Comm().data().c_generalCommand.setValues(b_isSetpoint, false /* isRequest */,
+      getProcessInstance4Comm().data().mc_generalCommand.setValues(b_isSetpoint, false /* isRequest */,
                                                                   en_valueGroup, en_command);
       if (!processData().sendValISOName(isoName(), i32_tmpValue))
          b_sendResult = false;
@@ -279,7 +279,7 @@ bool MeasureProgRemote_c::start(Proc_c::type_t ren_type, Proc_c::doSend_t ren_do
 
   // store actual time as last receive measure time to
   // avoid misinterpretation of to int32_t not receive data
-  i32_lastMeasureReceive = System_c::getTime();
+  mi32_lastMeasureReceive = System_c::getTime();
 
   return b_sendResult;
 }
@@ -305,8 +305,8 @@ bool MeasureProgRemote_c::stop(bool b_deleteSubProgs, Proc_c::type_t ren_type, P
   // at the moment only TimeProp and DistProp are well -> only send them
 
   // send stop command for each program
-  for (Vec_MeasureSubprog::iterator pc_subprog = vec_measureSubprog.begin();
-        pc_subprog != vec_measureSubprog.end();)
+  for (Vec_MeasureSubprog::iterator pc_subprog = mvec_measureSubprog.begin();
+        pc_subprog != mvec_measureSubprog.end();)
   {
     if (Proc_c::NullType != ren_type)
     { // when a specific type is given (e.g. TimeProp...) => do a selective stop (match subprog type and doSend)
@@ -383,13 +383,13 @@ bool MeasureProgRemote_c::stop(bool b_deleteSubProgs, Proc_c::type_t ren_type, P
       }
 
       // prepare general command in process pkg
-      getProcessInstance4Comm().data().c_generalCommand.setValues(b_isSetpoint, false /* isRequest */,
+      getProcessInstance4Comm().data().mc_generalCommand.setValues(b_isSetpoint, false /* isRequest */,
                                                                   en_valueGroup, en_command);
       b_result = processData().sendValISOName(isoName(), i32_stopVal);
     }
 
     if (b_deleteSubProgs)
-      pc_subprog = vec_measureSubprog.erase(pc_subprog);
+      pc_subprog = mvec_measureSubprog.erase(pc_subprog);
     else
       pc_subprog++;
   }
@@ -410,12 +410,12 @@ int32_t MeasureProgRemote_c::med(bool ab_sendRequest) const
 {
   if (ab_sendRequest) {
     // prepare general command in process pkg
-    getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */,
+    getProcessInstance4Comm().data().mc_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */,
                                                                 GeneralCommand_c::medValue,
                                                                 GeneralCommand_c::requestValue);
     processDataConst().sendValISOName(isoName(), int32_t(0));
   }
-  return i32_med;
+  return mi32_med;
 }
 #ifdef USE_FLOAT_DATA_TYPE
 /**
@@ -428,7 +428,7 @@ float MeasureProgRemote_c::medFloat(bool ab_sendRequest) const
 {
   if (ab_sendRequest) {
     // prepare general command in process pkg
-    getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */,
+    getProcessInstance4Comm().data().mc_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */,
                                                                 GeneralCommand_c::medValue,
                                                                 GeneralCommand_c::requestValue);
     processDataConst().sendValISOName(isoName(), int32_t(0));
@@ -451,10 +451,10 @@ bool MeasureProgRemote_c::processMsg(){
     ProcessPkg_c& c_pkg = getProcessInstance4Comm().data();
 
     // ISO: cmd() == 3;
-    if (    c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::setValue
+    if (    c_pkg.mc_generalCommand.getCommand() == GeneralCommand_c::setValue
          &&
             (     c_pkg.memberEmpf().itemState(IState_c::Local)
-              ||( b_receiveForeignMeasurement)
+              ||( mb_receiveForeignMeasurement)
             )
        )
     { // write -> data from remote process data
@@ -473,7 +473,7 @@ void MeasureProgRemote_c::setValFromPkg(){
   // convert the value if wanted
   // set timestamp of last measurement receive
   ProcessPkg_c& c_pkg = getProcessInstance4Comm().data();
-  i32_lastMeasureReceive = c_pkg.time();
+  mi32_lastMeasureReceive = c_pkg.time();
   // get MOD code of msg
   bool b_change = false;
 
@@ -485,7 +485,7 @@ void MeasureProgRemote_c::setValFromPkg(){
     // get the int32_t data val; let it convert, if needed
     const int32_t i32_new_val = c_pkg.dataLong();
 
-    switch (c_pkg.c_generalCommand.getValueGroup())
+    switch (c_pkg.mc_generalCommand.getValueGroup())
     {
       case GeneralCommand_c::exactValue: // msg contains measured val
         // set val with function, to calc delta and accel
@@ -521,7 +521,7 @@ void MeasureProgRemote_c::setValFromPkg(){
   {
     // get the int32_t data val; let it convert, if needed
     float f_new_val = processData().pkgDataFloat();
-    switch (c_pkg.c_generalCommand.getValueGroup())
+    switch (c_pkg.mc_generalCommand.getValueGroup())
     {
       case GeneralCommand_c::exactValue: // msg contains measured val
         // set val with function, to calc delta and accel
@@ -561,28 +561,28 @@ void MeasureProgRemote_c::setValFromPkg(){
 */
 void MeasureProgRemote_c::setVal(int32_t ai32_val){
   int32_t i32_time =  System_c::getTime();
-  int32_t i32_timeDelta = i32_time - i32_lastTime;
-  i32_lastTime = i32_time;
+  int32_t i32_timeDelta = i32_time - mi32_lastTime;
+  mi32_lastTime = i32_time;
 
   int32_t i32_incr =  ai32_val - val();
-  int32_t i32_oldDelta = i32_delta;
+  int32_t i32_oldDelta = mi32_delta;
   // claculate delta and accel in 1/s
   if (i32_timeDelta > 0)
   {
     if (CNAMESPACE::labs(i32_incr) > 100000)
     { // i32_incr very big -> first divide than mult
-      i32_delta = (i32_incr / i32_timeDelta) * 1000;
-      i32_accel = ((i32_delta - i32_oldDelta) / i32_timeDelta) * 1000;
+      mi32_delta = (i32_incr / i32_timeDelta) * 1000;
+      mi32_accel = ((mi32_delta - i32_oldDelta) / i32_timeDelta) * 1000;
     }
     else
     {
-      i32_delta = (i32_incr * 1000) / i32_timeDelta;
-      i32_accel = ((i32_delta - i32_oldDelta) * 1000) / i32_timeDelta;
+      mi32_delta = (i32_incr * 1000) / i32_timeDelta;
+      mi32_accel = ((mi32_delta - i32_oldDelta) * 1000) / i32_timeDelta;
     }
   }
 
   // set the val
-  i32_val = ai32_val;
+  mi32_val = ai32_val;
 }
 
 /**
@@ -594,7 +594,7 @@ void MeasureProgRemote_c::initVal(int32_t ai32_val){
   MeasureProgBase_c::initVal(ai32_val);
 
   // set medium initially to first given val
-  i32_med = ai32_val;
+  mi32_med = ai32_val;
 }
 
 /**
@@ -612,7 +612,7 @@ bool MeasureProgRemote_c::resetVal(int32_t ai32_val){
   if (!verifySetRemoteISOName())return false;
 
   // prepare general command in process pkg
-  getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false /* isRequest */,
+  getProcessInstance4Comm().data().mc_generalCommand.setValues(false /* isSetpoint */, false /* isRequest */,
                                                               GeneralCommand_c::exactValue,
                                                               GeneralCommand_c::measurementReset);
 
@@ -627,8 +627,8 @@ bool MeasureProgRemote_c::resetVal(int32_t ai32_val){
 */
 void MeasureProgRemote_c::setVal(float af_val){
   int32_t i32_time =  System_c::getTime();
-  int32_t i32_timeDelta = i32_time - i32_lastTime;
-  i32_lastTime = i32_time;
+  int32_t i32_timeDelta = i32_time - mi32_lastTime;
+  mi32_lastTime = i32_time;
 
   float f_incr =  af_val - valFloat();
   float f_oldDelta = f_delta;
@@ -672,7 +672,7 @@ bool MeasureProgRemote_c::resetMed(){
   // error state are set by the function
   if (!verifySetRemoteISOName())return false;
 
-  getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false /* isRequest */,
+  getProcessInstance4Comm().data().mc_generalCommand.setValues(false /* isSetpoint */, false /* isRequest */,
                                                               GeneralCommand_c::medValue,
                                                               GeneralCommand_c::measurementReset);
   return processData().sendValISOName(isoName(), int32_t(0x28));
@@ -692,7 +692,7 @@ bool MeasureProgRemote_c::resetInteg(){
   // error state are set by the function
   if (!verifySetRemoteISOName())return false;
 
-  getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false /* isRequest */,
+  getProcessInstance4Comm().data().mc_generalCommand.setValues(false /* isSetpoint */, false /* isRequest */,
                                                               GeneralCommand_c::integValue,
                                                               GeneralCommand_c::measurementReset);
 
@@ -713,7 +713,7 @@ bool MeasureProgRemote_c::resetMin(){
   // error state are set by the function
   if (!verifySetRemoteISOName())return false;
 
-  getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false /* isRequest */,
+  getProcessInstance4Comm().data().mc_generalCommand.setValues(false /* isSetpoint */, false /* isRequest */,
                                                               GeneralCommand_c::minValue,
                                                               GeneralCommand_c::measurementReset);
 
@@ -734,7 +734,7 @@ bool MeasureProgRemote_c::resetMax(){
   // error state are set by the function
   if (!verifySetRemoteISOName())return false;
 
-  getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false /* isRequest */,
+  getProcessInstance4Comm().data().mc_generalCommand.setValues(false /* isSetpoint */, false /* isRequest */,
                                                               GeneralCommand_c::maxValue,
                                                               GeneralCommand_c::measurementReset);
 
@@ -765,7 +765,7 @@ bool MeasureProgRemote_c::timeEvent( uint16_t *pui16_nextTimePeriod )
 */
 void MeasureProgRemote_c::receiveForeignMeasurement(bool ab_useForeign)
 {
-  b_receiveForeignMeasurement = ab_useForeign;
+  mb_receiveForeignMeasurement = ab_useForeign;
 };
 
 

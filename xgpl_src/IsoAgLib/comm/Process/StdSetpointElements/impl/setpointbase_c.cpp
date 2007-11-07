@@ -156,7 +156,7 @@ bool SetpointBase_c::timeEvent( void ){
 /** process a setpoint message */
 void SetpointBase_c::processMsg(){
   // check if its a request for actual setpoint
-  if (getProcessInstance4Comm().data().c_generalCommand.checkIsRequest())
+  if (getProcessInstance4Comm().data().mc_generalCommand.checkIsRequest())
   {
     processRequest();
   }
@@ -212,7 +212,7 @@ void SetpointBase_c::sendSetpointVals( const SetpointRegister_c& arc_src,
   if (en_valueGroup != GeneralCommand_c::noValue)
   {
      // prepare general command in process pkg
-     getProcessInstance4Comm().data().c_generalCommand.setValues(true /* isSetpoint */, false /* isRequest */,
+     getProcessInstance4Comm().data().mc_generalCommand.setValues(true /* isSetpoint */, false /* isRequest */,
                                                                  en_valueGroup, GeneralCommand_c::setValue);
 
      pprocessData()->sendValISOName( arc_src.isoName(), i32_value);

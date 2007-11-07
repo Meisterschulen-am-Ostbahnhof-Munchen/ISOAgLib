@@ -96,7 +96,7 @@ namespace __IsoAgLib {
 ProcessElementBase_c::ProcessElementBase_c(
     ProcDataBase_c *const apc_processData )
     : ClientBase(){
-  pc_processData = apc_processData;
+  mpc_processData = apc_processData;
   #if defined(PRT_INSTANCE_CNT) && (PRT_INSTANCE_CNT != 1 )
   // only set singletonKey in ClientBase, if more than one IsoAgLib instance
   // ismanaged by this IsoAgLib
@@ -111,14 +111,14 @@ ProcessElementBase_c::ProcessElementBase_c(
 ProcessElementBase_c::ProcessElementBase_c(
     ProcDataBase_c &arc_processData )
     : ClientBase(arc_processData){
-  pc_processData = &arc_processData;
+  mpc_processData = &arc_processData;
 }
 /**
   copy constructor
   @param arc_src source ProcessElementBase_c instance
 */
 ProcessElementBase_c::ProcessElementBase_c(const ProcessElementBase_c& arc_src)
-  : ClientBase(arc_src), pc_processData(arc_src.pc_processData)
+  : ClientBase(arc_src), mpc_processData(arc_src.mpc_processData)
 {}
 
 /**
@@ -128,7 +128,7 @@ ProcessElementBase_c::ProcessElementBase_c(const ProcessElementBase_c& arc_src)
 const ProcessElementBase_c& ProcessElementBase_c::operator=(const ProcessElementBase_c& arc_src){
   setSingletonKey(arc_src.getSingletonVecKey());
   // copy element vars
-  pc_processData = arc_src.pc_processData;
+  mpc_processData = arc_src.mpc_processData;
 
   // return the source reference
   return arc_src;
@@ -136,7 +136,7 @@ const ProcessElementBase_c& ProcessElementBase_c::operator=(const ProcessElement
 
 /** default destructor which has nothing to do */
 ProcessElementBase_c::~ProcessElementBase_c(){
-  pc_processData = NULL;
+  mpc_processData = NULL;
 }
 
 /**
@@ -148,7 +148,7 @@ void ProcessElementBase_c::set(ProcDataBase_c& rc_processData )
   #if defined(PRT_INSTANCE_CNT) && (PRT_INSTANCE_CNT != 1 )
   ClientBase::setSingletonKey(rc_processData.getSingletonVecKey());
   #endif
-  pc_processData = &rc_processData;
+  mpc_processData = &rc_processData;
 };
 
 /**
@@ -161,7 +161,7 @@ void ProcessElementBase_c::set(ProcDataBase_c *const apc_processData)
   if ( apc_processData != NULL )
     ClientBase::setSingletonKey(apc_processData->getSingletonVecKey());
   #endif
-  pc_processData = apc_processData;
+  mpc_processData = apc_processData;
 };
 
 

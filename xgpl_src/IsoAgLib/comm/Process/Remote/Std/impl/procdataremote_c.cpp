@@ -117,8 +117,8 @@ ProcDataRemote_c::ProcDataRemote_c( const IsoAgLib::ElementDdi_s* ps_elementDDI,
   : ProcDataRemoteBase_c( ps_elementDDI, aui16_element,
                           ac_isoName, ac_ownerISOName, apc_commanderISOName,
                           apc_processDataChangeHandler, ai_singletonVecKey)
-  , c_setpoint(this)
-  , c_measure(this)
+  , mc_setpoint(this)
+  , mc_measure(this)
 {}
 
   /**
@@ -143,8 +143,8 @@ void ProcDataRemote_c::init(const IsoAgLib::ElementDdi_s* ps_elementDDI, uint16_
   ProcDataRemoteBase_c::init( ps_elementDDI, aui16_element,
                               ac_isoName, ac_ownerISOName, apc_commanderISOName,
                               apc_processDataChangeHandler, ai_singletonVecKey);
-  c_setpoint.init( this );
-  c_measure.init( this );
+  mc_setpoint.init( this );
+  mc_measure.init( this );
 }
 /**
   assignment operator for this object
@@ -156,8 +156,8 @@ const ProcDataRemote_c& ProcDataRemote_c::operator=(const ProcDataRemote_c& arc_
   ProcDataRemoteBase_c::operator=(arc_src);
 
   // now copy the element var
-  c_setpoint = arc_src.c_setpoint;
-  c_measure = arc_src.c_measure;
+  mc_setpoint = arc_src.mc_setpoint;
+  mc_measure = arc_src.mc_measure;
   // return reference to source
   return arc_src;
 }
@@ -168,8 +168,8 @@ const ProcDataRemote_c& ProcDataRemote_c::operator=(const ProcDataRemote_c& arc_
 */
 ProcDataRemote_c::ProcDataRemote_c(const ProcDataRemote_c& arc_src)
   : ProcDataRemoteBase_c(arc_src),
-    c_setpoint(arc_src.c_setpoint),
-    c_measure(arc_src.c_measure)
+    mc_setpoint(arc_src.mc_setpoint),
+    mc_measure(arc_src.mc_measure)
 {
 }
 
@@ -216,11 +216,11 @@ void ProcDataRemote_c::processProg(){
 int32_t ProcDataRemote_c::masterMeasurementVal(bool ab_sendRequest)
 {
   if (hasType(FALSE /* b_isSetpoint */, GeneralCommand_c::exactValue))
-    return c_measure.masterMeasurementVal( ab_sendRequest );
+    return mc_measure.masterMeasurementVal( ab_sendRequest );
   if (hasType(FALSE /* b_isSetpoint */, GeneralCommand_c::maxValue))
-    return c_measure.max( ab_sendRequest );
+    return mc_measure.max( ab_sendRequest );
   if (hasType(FALSE /* b_isSetpoint */, GeneralCommand_c::minValue))
-    return c_measure.max( ab_sendRequest );
+    return mc_measure.max( ab_sendRequest );
 
   return 0;
 

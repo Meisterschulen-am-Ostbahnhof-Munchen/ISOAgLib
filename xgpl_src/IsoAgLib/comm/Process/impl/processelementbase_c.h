@@ -143,38 +143,38 @@ public:
     deliver a reference to the containing ProcessData item
     @return reference to containing ProcessData
   */
-  ProcDataBase_c& processData()const{return *pc_processData;};
+  ProcDataBase_c& processData()const{return *mpc_processData;};
   /**
     deliver the pointer to the containing ProcessData item
     @return pointer to containing ProcessData
   */
-  ProcDataBase_c *const pprocessData()const{return pc_processData;};
+  ProcDataBase_c *const pprocessData()const{return mpc_processData;};
   /**
     deliver a reference to the containing ProcessData item
     @return reference to containing ProcessData
   */
-  const ProcDataBase_c& processDataConst()const {return *pc_processData;};
+  const ProcDataBase_c& processDataConst()const {return *mpc_processData;};
   /**
     deliver the pointer to the containing ProcessData item
     @return pointer to containing ProcessData
   */
-  const ProcDataBase_c *const pprocessDataConst()const{return pc_processData;};
+  const ProcDataBase_c *const pprocessDataConst()const{return mpc_processData;};
   /**
     deliver the central data type of this process data
     @return proc_valType_t: i32_val, ui32_val, float_val, cmdVal
   */
   const proc_valType_t valType()const
-  {return pc_processData->valType();};
+  {return mpc_processData->valType();};
   /**
     set the central data type of this process data
     @return proc_valType_t: i32_val, ui32_val, float_val, cmdVal
   */
   void setValType(proc_valType_t ren_procValType)
-    {pc_processData->setValType(ren_procValType);};
+    {mpc_processData->setValType(ren_procValType);};
   
 private: // Private attributes
   /** pointer to the containing ProcessData item */
-  ProcDataBase_c* pc_processData;
+  ProcDataBase_c* mpc_processData;
 };
 
 }

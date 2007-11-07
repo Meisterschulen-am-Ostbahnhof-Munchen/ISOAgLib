@@ -112,8 +112,8 @@ namespace __IsoAgLib {
   */
 IdentItem_c::IdentItem_c (uint16_t aui16_eepromAdr, int ai_singletonVecKey)
   : BaseItem_c (System_c::getTime(), IState_c::IstateNull, ai_singletonVecKey)
-  , pc_isoItem (NULL)
-  , ui16_eepromAdr (aui16_eepromAdr)
+  , mpc_isoItem (NULL)
+  , mui16_eepromAdr (aui16_eepromAdr)
 //  , ui8_lastUsedSa( 0xFF )
 {
   init (NULL, 0xFF, aui16_eepromAdr,
@@ -153,7 +153,7 @@ IdentItem_c::IdentItem_c (uint8_t aui8_indGroup, uint8_t aui8_devClass, uint8_t 
   #endif
   int ai_singletonVecKey)
   : BaseItem_c (System_c::getTime(), IState_c::IstateNull, ai_singletonVecKey) /// needs to be init'ed, so double "init()" can be detected!
-  , pc_isoItem (NULL)
+  , mpc_isoItem (NULL)
 //  , ui8_lastUsedSa( 0xFF )
 {
   init (aui8_indGroup, aui8_devClass, aui8_devClassInst, ab_func, aui16_manufCode, aui32_serNo,
@@ -188,7 +188,7 @@ void IdentItem_c::init (IsoName_c* apc_isoNameParam, uint8_t aui8_preferredSa, u
   getSchedulerInstance4Comm().startSystem();
 
   // set all other member variables depending on the EEPROM-Address parameter/member variable
-  ui16_eepromAdr = aui16_eepromAdr;
+  mui16_eepromAdr = aui16_eepromAdr;
 
   /// Default to SetActive=TRUE. This'll be just set FALSE when initialization is postponed by the user!
   bool b_setActive = true;
@@ -204,13 +204,13 @@ void IdentItem_c::init (IsoName_c* apc_isoNameParam, uint8_t aui8_preferredSa, u
     /// FIRST, default to EEPROM values
     EepromIo_c& rc_eeprom = getEepromInstance();
     uint8_t p8ui8_isoNameEeprom [8];
-    rc_eeprom.setg (ui16_eepromAdr);
-    rc_eeprom >> ui8_globalRunState >> ui8_preferredSa;
+    rc_eeprom.setg (mui16_eepromAdr);
+    rc_eeprom >> mui8_globalRunState >> mui8_preferredSa;
     rc_eeprom.readString (p8ui8_isoNameEeprom, 8);
-    c_isoName = IsoName_c (p8ui8_isoNameEeprom);
+    mc_isoName = IsoName_c (p8ui8_isoNameEeprom);
 
     // use fallback to free definition, when the EEPROM has only invalid SA
-    if ( ui8_preferredSa == 0xFF ) ui8_preferredSa = 0xFE;
+    if ( mui8_preferredSa == 0xFF ) mui8_preferredSa = 0xFE;
 
     if (apc_isoNameParam == NULL)
     { // no parameter given, so don't even try to figure out if we'd want to use them!
@@ -218,14 +218,14 @@ void IdentItem_c::init (IsoName_c* apc_isoNameParam, uint8_t aui8_preferredSa, u
     }
     else
     { /// SECOND, decide on the GlobalRunState and validity of the EEPROM values
-      if (ui8_globalRunState == GlobalRunStateNeverClaimed)
+      if (mui8_globalRunState == GlobalRunStateNeverClaimed)
       { // FIRST ECU power-up, try with given program parameters (eeprom is only for storage of claimed iso-name!)
         b_useParameters = true;
       }
-      else if (ui8_globalRunState == GlobalRunStateAlreadyClaimed)
+      else if (mui8_globalRunState == GlobalRunStateAlreadyClaimed)
       { // FURTHER ECU power-up, use claimed name stored in EEPROM
         // but only if not a new firmware was flashed with new ISO-Name and the EEPROM was NOT reset!
-        if (c_isoName.isEqualRegardingNonInstFields (*apc_isoNameParam))
+        if (mc_isoName.isEqualRegardingNonInstFields (*apc_isoNameParam))
         { // no firmware change, so go ahead!
           b_useParameters=false; // use EEPROM values - fine...
         }
@@ -256,21 +256,21 @@ void IdentItem_c::init (IsoName_c* apc_isoNameParam, uint8_t aui8_preferredSa, u
   {
     if (apc_isoNameParam == NULL)
     { /// NO Parameter-IsoName is given AND NO EEPROM address given, so initialize this IdentItem empty to be initialized later with "init"
-      c_isoName.setUnspecified();
+      mc_isoName.setUnspecified();
       b_setActive = false; // only case where we don't start the address-claim procedure!
     }
     else
     { /// Parameter-IsoName is given and should be used: use it!
-      c_isoName = *apc_isoNameParam;
+      mc_isoName = *apc_isoNameParam;
     }
-    ui8_preferredSa = aui8_preferredSa; // 0xFF in case of "c_isoName = IsoName_c::IsoNameUnspecified;"
-    ui8_globalRunState = GlobalRunStateNeverClaimed; // 0
+    mui8_preferredSa = aui8_preferredSa; // 0xFF in case of "mc_isoName = IsoName_c::IsoNameUnspecified;"
+    mui8_globalRunState = GlobalRunStateNeverClaimed; // 0
   }
 
 #ifdef USE_WORKING_SET
   /// store SLAVE ISONAME pointer
-  i8_slaveCount = ai8_slaveCount;
-  pc_slaveIsoNameList = apc_slaveIsoNameList;
+  mi8_slaveCount = ai8_slaveCount;
+  mpc_slaveIsoNameList = apc_slaveIsoNameList;
 #endif
 
   if (b_setActive)
@@ -334,15 +334,15 @@ void IdentItem_c::restartAddressClaim()
 {
   bool b_configure = false;
 
-  if ( (pc_isoItem != NULL)
-    && (pc_isoItem->isoName() == isoName())
-    && (pc_isoItem->itemState( IState_c::Local ))
+  if ( (mpc_isoItem != NULL)
+    && (mpc_isoItem->isoName() == isoName())
+    && (mpc_isoItem->itemState( IState_c::Local ))
      )
   { // item has claimed address -> send unregister cmd
     // delete item from memberList
     getIsoRequestPgnInstance4Comm().unregisterLocalDevice( isoName() );
     getIsoMonitorInstance4Comm().deleteIsoMemberISOName (isoName());
-    pc_isoItem = NULL;
+    mpc_isoItem = NULL;
   }
   clearItemState( IState_c::ClaimedAddress );
   setItemState( IState_c::PreAddressClaim );
@@ -416,18 +416,18 @@ bool IdentItem_c::timeEventPreAddressClaim( void )
   // check if isoName is unique and change if needed (to avoid adress conflict on Scheduler_c BUS) and allowed!
 
   // fixIsoName=true: no unifying possible, calling "unifyIsoISOName" only to see if the isoname exists in the monitor yet or not...
-  const bool cb_fixIsoName = (ui8_globalRunState == GlobalRunStateAlreadyClaimed); // If already claimed with this IsoName, we can't change away!
-  b_isoNameSuccessfulUnified = getIsoMonitorInstance4Comm().unifyIsoISOName (c_isoName, cb_fixIsoName);
+  const bool cb_fixIsoName = (mui8_globalRunState == GlobalRunStateAlreadyClaimed); // If already claimed with this IsoName, we can't change away!
+  b_isoNameSuccessfulUnified = getIsoMonitorInstance4Comm().unifyIsoISOName (mc_isoName, cb_fixIsoName);
 
   if (b_isoNameSuccessfulUnified)
   {
     // insert element in list
-    pc_isoItem = getIsoMonitorInstance4Comm().insertIsoMember (isoName(), ui8_preferredSa,
+    mpc_isoItem = getIsoMonitorInstance4Comm().insertIsoMember (isoName(), mui8_preferredSa,
       IState_c::itemState_t(IState_c::Member | IState_c::Local | IState_c::PreAddressClaim));
 
-    if (pc_isoItem != NULL)
+    if (mpc_isoItem != NULL)
     { // set item as member and as own identity and overwrite old value
-      pc_isoItem->setItemState
+      mpc_isoItem->setItemState
         (IState_c::itemState_t(IState_c::Member | IState_c::Local | IState_c::PreAddressClaim));
 
       // register the new item for ISORequestPGN
@@ -438,7 +438,7 @@ bool IdentItem_c::timeEventPreAddressClaim( void )
       setToMaster ();
       #endif
 
-      pc_isoItem->timeEvent();
+      mpc_isoItem->timeEvent();
     }
   }
 
@@ -484,35 +484,35 @@ bool IdentItem_c::timeEventActive( void )
 
   bool b_configure = false;
 
-  /// If we're in Activetimeevent, we always do have a valid pc_isoItem!
-  if (pc_isoItem->itemState(IState_c::Local))
+  /// If we're in Activetimeevent, we always do have a valid mpc_isoItem!
+  if (mpc_isoItem->itemState(IState_c::Local))
   {
-    bool b_oldAddressClaimState = pc_isoItem->itemState(IState_c::ClaimedAddress);
+    bool b_oldAddressClaimState = mpc_isoItem->itemState(IState_c::ClaimedAddress);
     #ifdef USE_WORKING_SET
     // check always for correct master state
     // ( some conflicts with other remote BUS nodes could cause an overwrite
     //    of the master node or of one of the slave node -> this function
     //     resets everything to a well defined master->slave state )
     /** @todo revise that (maybe) */
-    if ( i8_slaveCount >= 0 ) setToMaster();
+    if ( mi8_slaveCount >= 0 ) setToMaster();
     #endif
-    pc_isoItem->timeEvent();
+    mpc_isoItem->timeEvent();
     // check if IsoItem_c reports now to have finished address claim and store it in Ident_Item
-    if ( (pc_isoItem->itemState(IState_c::ClaimedAddress))
+    if ( (mpc_isoItem->itemState(IState_c::ClaimedAddress))
       && (!b_oldAddressClaimState) )
     { // item changed from address claim to claimed address state
       // -> create local filter for processs data
       setItemState(IState_c::ClaimedAddress);
 
-//      ui8_lastUsedSa = pc_isoItem->nr(); // save SA for later filter removal
+//      ui8_lastUsedSa = mpc_isoItem->nr(); // save SA for later filter removal
 
-      if (ui16_eepromAdr != 0xFFFF)
+      if (mui16_eepromAdr != 0xFFFF)
       {
         #ifdef USE_EEPROM_IO
-        const uint8_t* pcui8_isoName = c_isoName.outputString();
+        const uint8_t* pcui8_isoName = mc_isoName.outputString();
         EepromIo_c& rc_eeprom = getEepromInstance();
-        rc_eeprom.setp (ui16_eepromAdr);
-        rc_eeprom << ui8_globalRunState << ui8_preferredSa;
+        rc_eeprom.setp (mui16_eepromAdr);
+        rc_eeprom << mui8_globalRunState << mui8_preferredSa;
         rc_eeprom.writeString (pcui8_isoName, 8);
         #else
         // ERROR: Using EEPROM Address in IdentItem_c()'s timeEventActive but IsoAgLib is NOT compiled with USE_EEPROM_IO !!!!" << INTERNAL_DEBUG_DEVICE_ENDL;
@@ -530,15 +530,15 @@ bool IdentItem_c::timeEventActive( void )
     // ->see if we can still live with our IsoName
     // ->if not, we'lost because we can't change our IsoName
     IsoMonitor_c& rc_isoMonitor = getIsoMonitorInstance4Comm();
-    const bool cb_isoNameStillAvailable = !rc_isoMonitor.existIsoMemberISOName (c_isoName);
+    const bool cb_isoNameStillAvailable = !rc_isoMonitor.existIsoMemberISOName (mc_isoName);
 
     if (cb_isoNameStillAvailable)
     { // insert element in list
-      pc_isoItem =  rc_isoMonitor.insertIsoMember(isoName(), ui8_preferredSa,
+      mpc_isoItem =  rc_isoMonitor.insertIsoMember(isoName(), mui8_preferredSa,
         IState_c::itemState_t(IState_c::Member | IState_c::Local | IState_c::PreAddressClaim));
-      if ( NULL != pc_isoItem )
+      if ( NULL != mpc_isoItem )
       { // set item as member and as own identity and overwrite old value
-        pc_isoItem->setItemState
+        mpc_isoItem->setItemState
           (IState_c::itemState_t(IState_c::Member | IState_c::Local | IState_c::PreAddressClaim));
 
         // register the new item for ISORequestPGN
@@ -549,16 +549,16 @@ bool IdentItem_c::timeEventActive( void )
         setToMaster ();
         #endif
 
-        pc_isoItem->timeEvent();
+        mpc_isoItem->timeEvent();
       }
     }
     else
     { /// IsoName now already used on the bus - we can't claim an address now anymore!
       getILibErrInstance().registerError( iLibErr_c::Busy, iLibErr_c::System ); /** @todo insert new error-location/type for thsoe cases! */
-      IsoItem_c& rc_foundIsoItemSameIsoName = rc_isoMonitor.isoMemberISOName (c_isoName);
+      IsoItem_c& rc_foundIsoItemSameIsoName = rc_isoMonitor.isoMemberISOName (mc_isoName);
       if (rc_foundIsoItemSameIsoName.itemState (IState_c::Local))
       { // now the ISOName is used by some other member on the BUS
-        pc_isoItem = &rc_foundIsoItemSameIsoName; // seems to be our IsoItem although it's a case that shouldn't occur!
+        mpc_isoItem = &rc_foundIsoItemSameIsoName; // seems to be our IsoItem although it's a case that shouldn't occur!
         #if defined(SYSTEM_PC) && defined(DEBUG)
         INTERNAL_DEBUG_DEVICE << "ERROR: IsoName stolen by other local member, take this IsoItem then, although this shouldn't happen!" << INTERNAL_DEBUG_DEVICE_ENDL;
         abort();
@@ -591,7 +591,7 @@ bool IdentItem_c::equalNr(uint8_t aui8_nr)
 {
   bool b_result = false;
 
-  if (pc_isoItem != NULL) b_result = (pc_isoItem->nr() == aui8_nr)?true:false;
+  if (mpc_isoItem != NULL) b_result = (mpc_isoItem->nr() == aui8_nr)?true:false;
 
   return b_result;
 }
@@ -604,28 +604,28 @@ void IdentItem_c::setToMaster (int8_t ai8_slaveCount, const IsoName_c* apc_slave
 
   // if given, override list of slaves as given in constructor
   if ((ai8_slaveCount != -1) && (apc_slaveIsoNameList != NULL)) {
-    i8_slaveCount = (uint8_t) ai8_slaveCount;
-    pc_slaveIsoNameList = apc_slaveIsoNameList;
+    mi8_slaveCount = (uint8_t) ai8_slaveCount;
+    mpc_slaveIsoNameList = apc_slaveIsoNameList;
   }
-  else if ( i8_slaveCount < 0 )
+  else if ( mi8_slaveCount < 0 )
   { // item wasn't created with explicit config for master item
     return;
   }
 
   /// @todo What if the IsoItem is currently set to NULL?
   // set our own ISOItem
-  pc_isoItem->setMaster (pc_isoItem);
+  mpc_isoItem->setMaster (mpc_isoItem);
 
   // If Master/Slave situation....
-  if ( (i8_slaveCount != 0) && (pc_slaveIsoNameList != NULL) ) {
+  if ( (mi8_slaveCount != 0) && (mpc_slaveIsoNameList != NULL) ) {
     // loop over all slaves
-    for (uint8_t i=0; i<i8_slaveCount; i++) {
+    for (uint8_t i=0; i<mi8_slaveCount; i++) {
       // insert element in list
-      if ( getIsoMonitorInstance4Comm().existIsoMemberISOName(pc_slaveIsoNameList[i]) ) {
-        pc_slaveIsoItem = &(getIsoMonitorInstance4Comm().isoMemberISOName(pc_slaveIsoNameList[i]));
+      if ( getIsoMonitorInstance4Comm().existIsoMemberISOName(mpc_slaveIsoNameList[i]) ) {
+        pc_slaveIsoItem = &(getIsoMonitorInstance4Comm().isoMemberISOName(mpc_slaveIsoNameList[i]));
       } else
       {
-        pc_slaveIsoItem = getIsoMonitorInstance4Comm().insertIsoMember(pc_slaveIsoNameList[i], 0xFE,
+        pc_slaveIsoItem = getIsoMonitorInstance4Comm().insertIsoMember(mpc_slaveIsoNameList[i], 0xFE,
                   IState_c::itemState_t(IState_c::Member | IState_c::PreAddressClaim));
 
         if ( NULL != pc_slaveIsoItem) {
@@ -634,7 +634,7 @@ void IdentItem_c::setToMaster (int8_t ai8_slaveCount, const IsoName_c* apc_slave
           (IState_c::itemState_t(IState_c::Member | IState_c::PreAddressClaim));
 
           // register the new item for ISORequestPGN
-          getIsoRequestPgnInstance4Comm().registerLocalDevice( pc_slaveIsoNameList[i] );
+          getIsoRequestPgnInstance4Comm().registerLocalDevice( mpc_slaveIsoNameList[i] );
 
         } else {
           // there is neither a corresponding IsoItem_c in monitor list, nor is there the possibility to
@@ -644,7 +644,7 @@ void IdentItem_c::setToMaster (int8_t ai8_slaveCount, const IsoName_c* apc_slave
         }
       }
       // set the isoItem's master....
-      pc_slaveIsoItem->setMaster (pc_isoItem);
+      pc_slaveIsoItem->setMaster (mpc_isoItem);
     }
   }
 }

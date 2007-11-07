@@ -109,7 +109,7 @@ namespace __IsoAgLib {
 /** create first default measure prog, if no measure prog in list */
 void ManageMeasureProgLocal_c::checkInitList( void )
 {
-  if ( c_vec_prog.size() > 0 ) return;
+  if ( mvecc_prog.size() > 0 ) return;
   // insert default entry
   if ( pprocessData() != NULL )
   {
@@ -137,7 +137,7 @@ void ManageMeasureProgLocal_c::checkInitList( void )
   }
   #endif
   // point cache initially to default first element
-  pc_progCache = c_vec_prog.begin();
+  mpc_progCache = mvecc_prog.begin();
 }
 
 /**
@@ -150,11 +150,11 @@ void ManageMeasureProgLocal_c::init( ProcDataBase_c *const apc_processData )
   // as init() can be also called to re-init (bring this instance to well
   // defined starting condition, clearthe measure-prog array
   #ifdef DEBUG_HEAP_USEAGE
-  sui16_MeasureProgLocalTotal -= c_vec_prog.size();
-  sui16_deconstructMeasureProgLocalTotal += c_vec_prog.size();
+  sui16_MeasureProgLocalTotal -= mvecc_prog.size();
+  sui16_deconstructMeasureProgLocalTotal += mvecc_prog.size();
   #endif
-  c_vec_prog.clear();
-  pc_progCache = vec_prog().begin();
+  mvecc_prog.clear();
+  mpc_progCache = vec_prog().begin();
 }
 /** copy constructor */
 ManageMeasureProgLocal_c::ManageMeasureProgLocal_c( const ManageMeasureProgLocal_c& arc_src )
@@ -172,7 +172,7 @@ const ManageMeasureProgLocal_c& ManageMeasureProgLocal_c::operator=( const Manag
 /** base function for assignment of element vars for copy constructor and operator= */
 void ManageMeasureProgLocal_c::assignFromSource( const ManageMeasureProgLocal_c& arc_src )
 { // copy dynamic array
-  c_vec_prog = arc_src.c_vec_prog;
+  mvecc_prog = arc_src.mvecc_prog;
   // now initialise the elements
   if (vec_prog().size() < arc_src.constVecProg().size())
   { // not all items copied
@@ -205,8 +205,8 @@ void ManageMeasureProgLocal_c::assignFromSource( const ManageMeasureProgLocal_c&
     }
   }
   #endif
-  // the pc_progCache is a pointer, which must be assignet relative to the start of c_vec_prog
-  pc_progCache = vec_prog().begin();
+  // the mpc_progCache is a pointer, which must be assignet relative to the start of mvecc_prog
+  mpc_progCache = vec_prog().begin();
 
   // now init all measure progs with the correct pointer to this ProcessData item
   for (Vec_MeasureProgLocal::iterator pc_iter = vec_prog().begin();
@@ -215,7 +215,7 @@ void ManageMeasureProgLocal_c::assignFromSource( const ManageMeasureProgLocal_c&
     pc_iter->set( arc_src.processData() );
     // if the actual initialised item is the same as the cached item from
     // source set the cache of the copy (this instance)
-    if (*pc_iter == *arc_src.pc_progCache) pc_progCache = pc_iter;
+    if (*pc_iter == *arc_src.mpc_progCache) mpc_progCache = pc_iter;
   }
 }
 
@@ -223,7 +223,7 @@ ManageMeasureProgLocal_c::~ManageMeasureProgLocal_c()
 {
   #ifdef DEBUG_HEAP_USEAGE
   sui16_MeasureProgLocalTotal -= vec_prog().size();
-  sui16_deconstructMeasureProgLocalTotal += c_vec_prog.size();
+  sui16_deconstructMeasureProgLocalTotal += mvecc_prog.size();
 
   if ( ( ( vec_prog().size() > 0 ) && ( sui16_lastPrintedMeasureProgLocalTotal != sui16_MeasureProgLocalTotal ) )
     || ( sui16_lastPrintedMeasureProgLocalTotal != sui16_MeasureProgLocalTotal                                  ) )
@@ -367,7 +367,7 @@ bool ManageMeasureProgLocal_c::timeEvent( uint16_t *pui16_nextTimePeriod ){
 void ManageMeasureProgLocal_c::processProg(){
   ProcessPkg_c& c_pkg = getProcessInstance4Comm().data();
   const IsoName_c& c_callerISOName =  c_pkg.memberSend().isoName();
-  GeneralCommand_c::CommandType_t en_command = c_pkg.c_generalCommand.getCommand();
+  GeneralCommand_c::CommandType_t en_command = c_pkg.mc_generalCommand.getCommand();
 
   // call updateProgCache with createIfNeeded if this is a writing action, otherwise don't create if none found
   // if ( ((c_pkg.pd() & 0x1) == 0)  => pd == 0, 2
@@ -380,8 +380,8 @@ void ManageMeasureProgLocal_c::processProg(){
   }
   else
     // if ( (c_pkg.pd() != 3) || (c_pkg.mod() != 0) )  => pd == 1 || (pd == 3 && mod != 0)
-    if ( !c_pkg.c_generalCommand.checkIsRequest() ||
-         c_pkg.c_generalCommand.getValueGroup() != GeneralCommand_c::exactValue )
+    if ( !c_pkg.mc_generalCommand.checkIsRequest() ||
+         c_pkg.mc_generalCommand.getValueGroup() != GeneralCommand_c::exactValue )
     { // use normal mechanism -> exist function if no entry found
       if (!updateProgCache(c_callerISOName, false))return;
     }
@@ -410,7 +410,7 @@ void ManageMeasureProgLocal_c::processProg(){
   }
   #endif
   // now call process msg for cached item
-  pc_progCache->processMsg();
+  mpc_progCache->processMsg();
 }
 
 /**
@@ -431,7 +431,7 @@ MeasureProgLocal_c& ManageMeasureProgLocal_c::prog(const IsoName_c& ac_isoName, 
   }
 
   // now return the cache pointed prog
-  return *pc_progCache;
+  return *mpc_progCache;
 }
 
 /** initialise value for all registered Measure Progs */
@@ -529,29 +529,29 @@ void ManageMeasureProgLocal_c::insertMeasureprog(const IsoName_c& ac_isoName){
     #endif
 
     // set cache to new item which is inserted
-    pc_progCache = vec_prog().begin();
-    if (b_oldSize > 0) pc_progCache++;
+    mpc_progCache = vec_prog().begin();
+    if (b_oldSize > 0) mpc_progCache++;
     #ifdef USE_EEPROM_IO
     // set initial value of new item to eeprom value
     ProcDataLocalBase_c* pc_procdata =
       static_cast<ProcDataLocalBase_c*>(pprocessData());
       #ifdef USE_FLOAT_DATA_TYPE
     if (valType() != i32_val)
-      pc_progCache->initVal(pc_procdata->eepromValFloat());
+      mpc_progCache->initVal(pc_procdata->eepromValFloat());
     else
       #endif
-      pc_progCache->initVal((int32_t)pc_procdata->eepromVal());
+      mpc_progCache->initVal((int32_t)pc_procdata->eepromVal());
     #endif
   } // if first item is already used
   else
   { // set cache to first undefined item
-    pc_progCache = vec_prog().begin();
+    mpc_progCache = vec_prog().begin();
   }
   // set type and isoName for item
-  pc_progCache->setISOName(ac_isoName);
+  mpc_progCache->setISOName(ac_isoName);
 
   /**TODO2 remove progType */
- pc_progCache->setProgType(2);
+ mpc_progCache->setProgType(2);
 }
 
 /**
@@ -573,7 +573,7 @@ bool ManageMeasureProgLocal_c::updateProgCache(const IsoName_c& ac_isoName, bool
   Vec_MeasureProgLocalIterator pc_iter = vec_prog().begin();
   // update only if old cache isn't valid
   if ( (!vec_prog().empty())
-    && (pc_progCache->isoName() == ac_isoName) )
+    && (mpc_progCache->isoName() == ac_isoName) )
   { // old is valid -> return true
     b_result =  true;
   }
@@ -585,7 +585,7 @@ bool ManageMeasureProgLocal_c::updateProgCache(const IsoName_c& ac_isoName, bool
       if ( pc_iter->isoName() == ac_isoName )
       {
         b_result = true;
-        pc_progCache = pc_iter;
+        mpc_progCache = pc_iter;
         break;
       } // fit
     }// for
@@ -595,7 +595,7 @@ bool ManageMeasureProgLocal_c::updateProgCache(const IsoName_c& ac_isoName, bool
     {
       if (!ab_createIfNotFound)
       { // if still no suitable item was found and no item should be created point to first list item
-        pc_progCache = vec_prog().begin();
+        mpc_progCache = vec_prog().begin();
       }
       else
       { // no suitable item was found -> create suitable one
@@ -624,14 +624,14 @@ bool ManageMeasureProgLocal_c::startDataLogging(Proc_c::type_t ren_type /* Proc_
   // create new item if none found
   updateProgCache(/*ren_progType,*/ *apc_receiverDevice, true);
 
-  pc_progCache->setISOName(*apc_receiverDevice);
+  mpc_progCache->setISOName(*apc_receiverDevice);
 
   if (Proc_c::TimeProp == ren_type)
-    pc_progCache->addSubprog(ren_type, CNAMESPACE::labs(ai32_increment));
+    mpc_progCache->addSubprog(ren_type, CNAMESPACE::labs(ai32_increment));
   else
-    pc_progCache->addSubprog(ren_type, ai32_increment);
+    mpc_progCache->addSubprog(ren_type, ai32_increment);
 
-  pc_progCache->start(ren_type, Proc_c::DoVal);
+  mpc_progCache->start(ren_type, Proc_c::DoVal);
 
   return TRUE;
 }

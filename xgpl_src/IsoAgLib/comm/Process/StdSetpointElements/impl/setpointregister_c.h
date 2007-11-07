@@ -172,12 +172,12 @@ public:
     deliver isoName of commanding member
     @return ISOName of setpoint commander
   */
-  const IsoName_c& isoName()const{return c_requestISOName;}
+  const IsoName_c& isoName()const{return mc_requestISOName;}
   /**
     deliver the exact setpoint
     @return exact setpoint value
   */
-  int32_t exact()const{return i32_exactOrMin;}
+  int32_t exact()const{return mi32_exactOrMin;}
 #ifdef USE_FLOAT_DATA_TYPE
   /**
     deliver the exact setpoint
@@ -186,21 +186,21 @@ public:
   float exactFloat()const{return f_exactOrMin;}
 #endif
   /**
-    deliver the minimum limit; if no min is given (~0) return i32_exactOrMin
+    deliver the minimum limit; if no min is given (~0) return mi32_exactOrMin
     @return minimum setpoint value
   */
-  int32_t min()const{return i32_exactOrMin;}
+  int32_t min()const{return mi32_exactOrMin;}
   /**
-    deliver the maximum limit ; if no max is given (~0) return i32_exactOrMin
+    deliver the maximum limit ; if no max is given (~0) return mi32_exactOrMin
     @return maximum setpoint value
   */
-  int32_t max()const{return (existMax())?(i32_max):(i32_exactOrMin);}
+  int32_t max()const{return (existMax())?(mi32_max):(mi32_exactOrMin);}
   /**
-    deliver the default limit ; if no default is given (~0) return i32_exactOrMin
+    deliver the default limit ; if no default is given (~0) return mi32_exactOrMin
     name: getDefault() because default() doesn't compile
     @return default setpoint value
   */
-  int32_t getDefault()const{return (existDefault())?(i32_default):(i32_exactOrMin);}
+  int32_t getDefault()const{return (existDefault())?(mi32_default):(mi32_exactOrMin);}
   /**
     deliver the setpoint according to the mod type
     @param en_valueGroup code of wanted setpoint (exact 0, min 2, max 3, default)
@@ -239,7 +239,7 @@ public:
     deliver the timestamp of the last setHandled event
     @return last setHandled timestamp
   */
-  int32_t lastHandledTime()const{return i32_lastHandledTime;}
+  int32_t lastHandledTime()const{return mi32_lastHandledTime;}
   /**
     check if setpoint is used as master control
     @return true -> the application set this setpoint as master before
@@ -286,12 +286,12 @@ public:
     set isoName of cammanding member
     @param ac_isoName ISOName of commanding member
   */
-  void setISOName(const IsoName_c& ac_val){c_requestISOName = ac_val;}
+  void setISOName(const IsoName_c& ac_val){mc_requestISOName = ac_val;}
   /**
     set isoName of cammanding member
     @param ac_isoName ISOName of commanding member
   */
-  void setISOName(uint8_t aui8_devClass, uint8_t aui8_devClassInst){c_requestISOName.set( aui8_devClass, aui8_devClassInst );}
+  void setISOName(uint8_t aui8_devClass, uint8_t aui8_devClassInst){mc_requestISOName.set( aui8_devClass, aui8_devClassInst );}
   /**
     set the exact setpoint value
     @param ai32_val new exact setpoint value
@@ -373,31 +373,31 @@ private: // Private attributes
 #ifdef USE_FLOAT_DATA_TYPE
   union {
     /** minimum limit setpoint */
-    int32_t i32_exactOrMin;
+    int32_t mi32_exactOrMin;
     float f_exactOrMin;
   };
   union {
     /** maximum limit setpoint */
-    int32_t i32_max;
+    int32_t mi32_max;
     float f_max;
   };
   union {
     /** default setpoint */
-    int32_t i32_default;
+    int32_t mi32_default;
     float f_default;
   };
 #else
   /** minimum limit setpoint */
-  int32_t i32_exactOrMin;
+  int32_t mi32_exactOrMin;
   /** maximum limit setpoint */
-  int32_t i32_max;
+  int32_t mi32_max;
   /** default setpoint */
-  int32_t i32_default;
+  int32_t mi32_default;
 #endif
   /** tiemstamp of last setXx operation */
-  int32_t i32_lastHandledTime;
+  int32_t mi32_lastHandledTime;
   /** isoName code of requester */
-  IsoName_c c_requestISOName;
+  IsoName_c mc_requestISOName;
   struct {
     /** master state == the setpoint requester can change the value if needed */
     bool b_master : 1;

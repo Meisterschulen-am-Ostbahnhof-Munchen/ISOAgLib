@@ -162,11 +162,11 @@ private: // Private methods
 private: // Private attributes
   /// holds all
 
-  IsoFilterBox_vec vec_isoFilterBox;
+  IsoFilterBox_vec mvec_isoFilterBox;
 
   friend class SINGLETON_DERIVED (IsoFilterManager_c,ElementBase_c);
 
-  bool b_alreadyInitialized;
+  bool mb_alreadyInitialized;
 };
 
 #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )

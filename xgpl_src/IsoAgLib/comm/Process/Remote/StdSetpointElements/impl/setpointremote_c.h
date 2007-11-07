@@ -234,7 +234,7 @@ public:
     @return true -> an answer to the last command was received
   */
   bool answered() const
-    {return (i32_answeredTime > i32_commandedTime)?true:false;};
+    {return (mi32_answeredTime > mi32_commandedTime)?true:false;};
   /**
     check if an active master setpoint exist
     @return true -> a master setpoint commander exist
@@ -244,7 +244,7 @@ public:
     deliver master setpoint entry
     @return reference to master setpoint
   */
-  const SetpointRegister_c& master() const {return c_answeredMaster;};
+  const SetpointRegister_c& master() const {return mc_answeredMaster;};
   /**
     mark the master setpoint as released
     (send a suitable reset command)
@@ -267,7 +267,7 @@ public:
     (e.g. the controlling ECU can control as commanded by setpoint)
     @return true -> the remote system controls the process data value as commanded
   */
-  bool masterValid() const {return c_answeredMaster.valid();};
+  bool masterValid() const {return mc_answeredMaster.valid();};
 
 
   /**
@@ -325,15 +325,15 @@ private: // Private methods
 
 private: // Private attributes
   /** commanded setpoint for the remote process data */
-  SetpointRegister_c c_commanded;
+  SetpointRegister_c mc_commanded;
   /** directly adressed answered value */
-  SetpointRegister_c c_answeredMe;
+  SetpointRegister_c mc_answeredMe;
   /** answered value -> mostly answer of master setpoint*/
-  SetpointRegister_c c_answeredMaster;
+  SetpointRegister_c mc_answeredMaster;
   /** time of last sending of setpoint command */
-  int32_t i32_commandedTime;
+  int32_t mi32_commandedTime;
   /** time of last direct answered setpoint information */
-  int32_t i32_answeredTime;
+  int32_t mi32_answeredTime;
 };
 
 }

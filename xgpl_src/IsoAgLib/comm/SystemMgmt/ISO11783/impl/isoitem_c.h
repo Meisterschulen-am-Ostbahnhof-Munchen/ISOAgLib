@@ -113,7 +113,7 @@ public:
 
   /** copy constructor for ISOItem.
     The copy constructor checks if the source item is
-    a master ( i.e. the pc_masterItem pointer points to this )
+    a master ( i.e. the mpc_masterItem pointer points to this )
     -> it doesn't simply copy the pointer, but sets its
     own pointer also to the this-pointer of the new instance
     @param arc_src source IsoItem_c instance
@@ -131,103 +131,103 @@ public:
   /** deliver the data NAME string as pointer to 8byte string
     @return const pointer to Flexible8ByteString_c union with NAME
   */
-  const Flexible8ByteString_c* outputNameUnion() const {return c_isoName.outputUnion();}
+  const Flexible8ByteString_c* outputNameUnion() const {return mc_isoName.outputUnion();}
 
   /** get self config mode
     @return self configuration adress state
   */
-  uint8_t selfConf() const {return c_isoName. selfConf();}
+  uint8_t selfConf() const {return mc_isoName. selfConf();}
 
   /** get industry group code
     @return industry group of device
   */
-  uint8_t indGroup() const {return c_isoName. indGroup();}
+  uint8_t indGroup() const {return mc_isoName. indGroup();}
 
   /** get device class instance number
     @return:device class instance number
   */
-  uint8_t devClassInst() const {return c_isoName. devClassInst();}
+  uint8_t devClassInst() const {return mc_isoName. devClassInst();}
 
   /** get device class code
     @return:device class
   */
-  uint8_t devClass() const {return c_isoName. devClass();}
+  uint8_t devClass() const {return mc_isoName. devClass();}
 
   /** get function code
     @return function code
   */
-  uint8_t func() const {return c_isoName. func();}
+  uint8_t func() const {return mc_isoName. func();}
 
   /** get function instance code
     @return function instance code
   */
-  uint8_t funcInst() const {return c_isoName. funcInst();}
+  uint8_t funcInst() const {return mc_isoName. funcInst();}
 
   /** get ECU instance code
     @return ECU instance code
   */
-  uint8_t ecuInst() const {return c_isoName. ecuInst();}
+  uint8_t ecuInst() const {return mc_isoName. ecuInst();}
 
   /** get manufactor code
     @return manufactor code
   */
-  uint16_t manufCode() const {return c_isoName. manufCode();}
+  uint16_t manufCode() const {return mc_isoName. manufCode();}
 
   /** get serial number
     @return serial number
   */
-  uint32_t serNo() const {return c_isoName. serNo();}
+  uint32_t serNo() const {return mc_isoName. serNo();}
 
   /** set the NAME data from 8 uint8_t string
     @param apb_src pointer to 8byte source string
   */
-  void inputNameUnion(const Flexible8ByteString_c* apu_src) {c_isoName.inputUnion(apu_src);}
+  void inputNameUnion(const Flexible8ByteString_c* apu_src) {mc_isoName.inputUnion(apu_src);}
 
   /** set self config mode
     @param ab_selfConf true -> indicate sefl configuring ECU
   */
-  void setSelfConf(bool ab_selfConf) {c_isoName.setSelfConf(ab_selfConf);}
+  void setSelfConf(bool ab_selfConf) {mc_isoName.setSelfConf(ab_selfConf);}
 
   /** set industry group code
     @param aui8_indGroup industry group of device (2 for agriculture)
   */
-  void setIndGroup(uint8_t aui8_indGroup) {c_isoName.setIndGroup(aui8_indGroup);}
+  void setIndGroup(uint8_t aui8_indGroup) {mc_isoName.setIndGroup(aui8_indGroup);}
 
   /** set device class instance number
     @param aui8_devClassInst instance number of ECU with same devClass in the network */
-  void setDevClassInst(uint8_t aui8_devClassInst) {c_isoName.setDevClassInst(aui8_devClassInst);}
+  void setDevClassInst(uint8_t aui8_devClassInst) {mc_isoName.setDevClassInst(aui8_devClassInst);}
 
   /** set device class code
     @param aui8_devClass device class of ECU
   */
-  void setDevClass(uint8_t aui8_devClass) {c_isoName.setDevClass(aui8_devClass);}
+  void setDevClass(uint8_t aui8_devClass) {mc_isoName.setDevClass(aui8_devClass);}
 
   /** set function code
     @param ab_func function of the ECU (usual 25 for network interconnect)
   */
-  void setFunc(uint8_t ab_func) {c_isoName.setFunc(ab_func);}
+  void setFunc(uint8_t ab_func) {mc_isoName.setFunc(ab_func);}
 
   /** set function instance code
     @param ab_funcInst instance number of ECU with same function and device class
         (default 0 - normally)
   */
-  void setFuncInst(uint8_t ab_funcInst) {c_isoName.setFuncInst(ab_funcInst);}
+  void setFuncInst(uint8_t ab_funcInst) {mc_isoName.setFuncInst(ab_funcInst);}
 
   /** set ECU instance code
     @param ab_funcInst instance number of ECU with same function, device class and function instance
         (default 0 - normally)
   */
-  void setEcuInst(uint8_t ab_ecuInst) {c_isoName.setEcuInst(ab_ecuInst);}
+  void setEcuInst(uint8_t ab_ecuInst) {mc_isoName.setEcuInst(ab_ecuInst);}
 
   /** set manufactor code
     @param aui16_manufCode code of manufactor (11bit)
   */
-  void setManufCode(uint16_t aui16_manufCode) {c_isoName.setManufCode(aui16_manufCode);}
+  void setManufCode(uint16_t aui16_manufCode) {mc_isoName.setManufCode(aui16_manufCode);}
 
   /** set serial number (Identity Number)
     @param aui32_serNo serial no of specific device (21bit)
   */
-  void setSerNo(uint32_t aui32_serNo) {c_isoName.setSerNo(aui32_serNo);}
+  void setSerNo(uint32_t aui32_serNo) {mc_isoName.setSerNo(aui32_serNo);}
 
   /** set all element data with one call
     @param ai32_time creation time of this item instance
@@ -243,12 +243,12 @@ public:
   /** set ISOName code of this item
     @param ac_isoName ISOName
   */
-  void setISOName(const IsoName_c& ac_isoName) {c_isoName = ac_isoName;}
+  void setISOName(const IsoName_c& ac_isoName) {mc_isoName = ac_isoName;}
 
   /** deliver ISOName code of this item
     @return ISOName
   */
-  const IsoName_c& isoName() const {return c_isoName;}
+  const IsoName_c& isoName() const {return mc_isoName;}
 
   /** deliver name
     @return pointer to the name uint8_t string (7byte)
@@ -302,25 +302,25 @@ public:
   void setMaster ( IsoItem_c* apc_masterItem );
 
   // check if this item is a master (i.e. the master pointer points to itself)
-  bool isMaster () const { return (this == pc_masterItem); }
+  bool isMaster () const { return (this == mpc_masterItem); }
 
   /// For checking if the WS-Announce is completed use the "announce key" returned from "startWsAnnounce()".
   bool isWsAnnounced (int32_t ai32_timeAnnounceStarted);
 
-  bool isWsAnnouncing() { return (i8_slavesToClaimAddress != 0); }
+  bool isWsAnnouncing() { return (mi8_slavesToClaimAddress != 0); }
 #endif
 
   /**
     set number of this item
     @param ac_isoName number
   */
-  void setNr(uint8_t aui8_nr){ui8_nr = aui8_nr;}
+  void setNr(uint8_t aui8_nr){mui8_nr = aui8_nr;}
 
   /**
     deliver the number/adress of this item
     @return number
   */
-  uint8_t nr()const{return ui8_nr;}
+  uint8_t nr()const{return mui8_nr;}
 
   /**
     lower comparison with another IsoItem_c on the rigth (compare the ISOName)
@@ -382,28 +382,28 @@ private: // members
   /** pointer to the master IsoItem_c (if == this, then i'm master myself)
     NULL if not part of a master/slave setup
   */
-  IsoItem_c* pc_masterItem;
+  IsoItem_c* mpc_masterItem;
 
-  /** i8_slavesToClaimAddress
+  /** mi8_slavesToClaimAddress
     * == -1  waiting to announce WS-master message
     *  >  0  still so many slaves to announce..
     * ==  0  idle / announcing complete
     */
-  int8_t i8_slavesToClaimAddress;
+  int8_t mi8_slavesToClaimAddress;
 
-  int32_t i32_timeLastCompletedAnnounceStarted;
-  int32_t i32_timeCurrentAnnounceStarted;
+  int32_t mi32_timeLastCompletedAnnounceStarted;
+  int32_t mi32_timeCurrentAnnounceStarted;
 
-  bool b_repeatAnnounce;
+  bool mb_repeatAnnounce;
 #endif
 
   /** number of element */
-  uint8_t ui8_nr : 8;
+  uint8_t mui8_nr : 8;
 
-  bool b_repeatClaim;
+  bool mb_repeatClaim;
 
   /** ISOName of element */
-  IsoName_c c_isoName;
+  IsoName_c mc_isoName;
 };
 
 /** this typedef is only for some time to provide backward compatibility at API level */

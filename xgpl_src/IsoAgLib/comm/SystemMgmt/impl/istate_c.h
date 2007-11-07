@@ -280,9 +280,9 @@ public:
 
 private:
   /** last timestamp (in seconds) of caused conflict */
-  int16_t i16_lastCausedConflictTime;
+  int16_t mi16_lastCausedConflictTime;
   /** last timestamp (in seconds) of Affected conflict */
-  int16_t i16_lastAffectedConflictTime;
+  int16_t mi16_lastAffectedConflictTime;
   struct {
     uint16_t b_causedConflictCnt : 4;
     uint16_t b_affectedConflictCnt : 4;

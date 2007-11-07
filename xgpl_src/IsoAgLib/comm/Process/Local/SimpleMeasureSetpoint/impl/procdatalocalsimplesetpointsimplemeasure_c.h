@@ -236,16 +236,16 @@ public:
   ~ProcDataLocalSimpleSetpointSimpleMeasure_c();
 
   /** deliver reference to setpoint */
-  SimpleManageSetpointLocal_c& setpoint( void ) { return c_setpoint;};
+  SimpleManageSetpointLocal_c& setpoint( void ) { return mc_setpoint;};
   /** deliver reference to setpoint */
-  const SimpleManageSetpointLocal_c& setpointConst( void ) const { return c_setpoint;};
+  const SimpleManageSetpointLocal_c& setpointConst( void ) const { return mc_setpoint;};
 
 private: // Private methods
   /** processing of a setpoint message */
   virtual void processSetpoint();
 
 private: // Private attributes
-  SimpleManageSetpointLocal_c c_setpoint;
+  SimpleManageSetpointLocal_c mc_setpoint;
 };
 
 }

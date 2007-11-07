@@ -159,7 +159,7 @@ class ProcDataRemoteBase_c : public ProcDataBase_c
   /** deliver the commanderISOName (ISOName of local member)
     @return ISOName used for sending commands to remote owner member
   */
-  virtual const IsoName_c& commanderISOName() const { return (pc_isoName != NULL) ? (*pc_isoName):(IsoName_c::IsoNameUnspecified()); }
+  virtual const IsoName_c& commanderISOName() const { return (mpc_isoName != NULL) ? (*mpc_isoName):(IsoName_c::IsoNameUnspecified()); }
 
   /** set the pointer to the commander ident isoName
     @param rpbisoName pointer to ISOName var of local member used for
@@ -215,7 +215,7 @@ private: // Private methods
 
 private: // Private attributes
   /** pointer to the isoName of the local ident, which acts as commanding member */
-  const IsoName_c* pc_isoName;
+  const IsoName_c* mpc_isoName;
 };
 
 }

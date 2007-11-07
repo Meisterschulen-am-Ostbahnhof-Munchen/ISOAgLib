@@ -132,31 +132,31 @@ public:
   GeneralCommand_c();
 
   /** read access for isSetpoint */
-  bool checkIsSetpoint() const { return b_isSetpoint; };
+  bool checkIsSetpoint() const { return mb_isSetpoint; };
 
   /** read access for isRequest */
-  bool checkIsRequest() const { return b_isRequest; };
+  bool checkIsRequest() const { return mb_isRequest; };
 
-  /** read access for en_valueGroup */
-  ValueGroup_t getValueGroup() const { return en_valueGroup; };
+  /** read access for men_valueGroup */
+  ValueGroup_t getValueGroup() const { return men_valueGroup; };
 
-  /** read access for en_command */
-  CommandType_t getCommand() const { return en_command; };
+  /** read access for men_command */
+  CommandType_t getCommand() const { return men_command; };
 
   /** set values, called in ProcessPkg_c::resolveCommand() */
-  void setValues(bool b_isSetpoint, bool b_isRequest, ValueGroup_t en_valueGroup,
-                 CommandType_t en_command);
+  void setValues(bool mb_isSetpoint, bool mb_isRequest, ValueGroup_t men_valueGroup,
+                 CommandType_t men_command);
 
 private:
 
-  bool b_isSetpoint;
-  bool b_isRequest;
+  bool mb_isSetpoint;
+  bool mb_isRequest;
 
   /** command affects min, max, exact or default value */
-  ValueGroup_t en_valueGroup;
+  ValueGroup_t men_valueGroup;
 
   /** current command */
-  CommandType_t en_command;
+  CommandType_t men_command;
 
 };
 

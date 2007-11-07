@@ -135,7 +135,7 @@ namespace __IsoAgLib {
 #if defined(USE_PROC_DATA_DESCRIPTION_POOL)
   DevPropertyHandler_c& Process_c::getDevPropertyHandlerInstance( void )
   {
-    return c_devPropertyHandler;
+    return mc_devPropertyHandler;
   };
 #endif
 
@@ -145,19 +145,19 @@ void Process_c::init()
   clearAlreadyClosed();
   // first register in Scheduler_c
   getSchedulerInstance4Comm().registerClient( this );
-  i32_lastFilterBoxTime = 0;
-  b_needCallOfCheckCreateRemoteReceiveFilter = false;
+  mi32_lastFilterBoxTime = 0;
+  mb_needCallOfCheckCreateRemoteReceiveFilter = false;
   __IsoAgLib::getIsoMonitorInstance4Comm().registerSaClaimHandler( this );
     #ifdef USE_PROC_DATA_DESCRIPTION_POOL
-    c_devPropertyHandler.init(&c_data);
+    mc_devPropertyHandler.init(&mc_data);
     #endif
-  pc_tcISOName = NULL;
-  ui8_lastTcStatus = 0;
-  pc_processWsmTaskMsgHandler = NULL;
+  mpc_tcISOName = NULL;
+  mui8_lastTcStatus = 0;
+  mpc_processWsmTaskMsgHandler = NULL;
 
-  pc_processDataChangeHandler = NULL;
+  mpc_processDataChangeHandler = NULL;
 
-  c_data.setSingletonKey( getSingletonVecKey() );
+  mc_data.setSingletonKey( getSingletonVecKey() );
 
   // receive PROCESS_DATA_PGN messages which are addressed to GLOBAL
   uint32_t ui32_filter = ((static_cast<MASK_TYPE>(PROCESS_DATA_PGN) | static_cast<MASK_TYPE>(0xFF)) << 8);
@@ -234,7 +234,7 @@ void Process_c::remoteProcDataReserveCnt( uint16_t aui16_remoteProcCapacity )
 */
 CanPkgExt_c& Process_c::dataBase()
 {
-  return c_data;
+  return mc_data;
 }
 
 /**
@@ -250,27 +250,27 @@ bool Process_c::timeEvent( void ){
   bool b_result = true;
   int32_t i32_time = ElementBase_c::getLastRetriggerTime();
 
-  if ( l_filtersToDeleteISO.size() > 0)
+  if ( ml_filtersToDeleteISO.size() > 0)
   {
-    for (STL_NAMESPACE::USABLE_SLIST<uint32_t>::const_iterator iter = l_filtersToDeleteISO.begin();
-         iter != l_filtersToDeleteISO.end();
+    for (STL_NAMESPACE::USABLE_SLIST<uint32_t>::const_iterator iter = ml_filtersToDeleteISO.begin();
+         iter != ml_filtersToDeleteISO.end();
          iter++)
     {
       if (getCanInstance4Comm().existFilter( *this, 0x3FF00FF, *iter, Ident_c::ExtendedIdent))
         // corresponding FilterBox_c exist -> delete it
         getCanInstance4Comm().deleteFilter( *this, 0x3FF00FF, *iter, Ident_c::ExtendedIdent);
     }
-    l_filtersToDeleteISO.clear();
+    ml_filtersToDeleteISO.clear();
   }
-  if ( b_needCallOfCheckCreateRemoteReceiveFilter )
+  if ( mb_needCallOfCheckCreateRemoteReceiveFilter )
   {
-    b_needCallOfCheckCreateRemoteReceiveFilter = false;
+    mb_needCallOfCheckCreateRemoteReceiveFilter = false;
     checkCreateRemoteReceiveFilter();
   }
 
 #if defined(USE_PROC_DATA_DESCRIPTION_POOL)
   //call DevPropertyHandler_c timeEvent
-  c_devPropertyHandler.timeEvent();
+  mc_devPropertyHandler.timeEvent();
 #endif
 
   #ifdef DEBUG_HEAP_USEAGE
@@ -334,8 +334,8 @@ bool Process_c::timeEvent( void ){
   }
   // if local active member exist - check every second if
   // filters for targeted or partner process data should be created
-  if ((i32_time - i32_lastFilterBoxTime) > 1000)  {
-    i32_lastFilterBoxTime = i32_time;
+  if ((i32_time - mi32_lastFilterBoxTime) > 1000)  {
+    mi32_lastFilterBoxTime = i32_time;
   }
   // the other list elements doesn't need periodic actions
   return b_result;
@@ -361,31 +361,31 @@ bool Process_c::processMsg(){
 
 #if defined(USE_PROC_DATA_DESCRIPTION_POOL)
 // first check if this is a device property message -> then DevPropertyHandler_c should process this msg
-if ( ( c_data.identType() == Ident_c::ExtendedIdent ) && (
-     ( ( c_data[0] & 0xF ) < 2 ) || ( c_data[0] == 0xD ) || ( c_data[0] > 0xF ) ) )
+if ( ( mc_data.identType() == Ident_c::ExtendedIdent ) && (
+     ( ( mc_data[0] & 0xF ) < 2 ) || ( mc_data[0] == 0xD ) || ( mc_data[0] > 0xF ) ) )
 {
-  if (c_devPropertyHandler.processMsg()) return true;
+  if (mc_devPropertyHandler.processMsg()) return true;
 }
 #endif
 
   // process TC status message (for local instances)
-  if ( ( c_data.identType() == Ident_c::ExtendedIdent ) && (c_data[0] == 0xE))
+  if ( ( mc_data.identType() == Ident_c::ExtendedIdent ) && (mc_data[0] == 0xE))
   {
     // update isoName of TC
-    pc_tcISOName = &(data().memberSend().isoName());
-    processTcStatusMsg(c_data.dataRawCmdLong(), data().memberSend().isoName());
+    mpc_tcISOName = &(data().memberSend().isoName());
+    processTcStatusMsg(mc_data.dataRawCmdLong(), data().memberSend().isoName());
 
 #ifdef USE_PROC_DATA_DESCRIPTION_POOL
-    c_devPropertyHandler.updateTcStateReceived(c_data[4]);
-    c_devPropertyHandler.setTcSourceAddress(data().isoSa());
+    mc_devPropertyHandler.updateTcStateReceived(mc_data[4]);
+    mc_devPropertyHandler.setTcSourceAddress(data().isoSa());
 #endif
     return TRUE;
   }
 
   // process working set taks messag (for remote instances (e.g. TC))
-  if ( ( c_data.identType() == Ident_c::ExtendedIdent ) && (c_data[0] == 0xF))
+  if ( ( mc_data.identType() == Ident_c::ExtendedIdent ) && (mc_data[0] == 0xF))
   {
-    processWorkingSetTaskMsg(c_data.dataRawCmdLong(), data().memberSend().isoName());
+    processWorkingSetTaskMsg(mc_data.dataRawCmdLong(), data().memberSend().isoName());
     return TRUE;
   }
 
@@ -644,13 +644,13 @@ ProcDataRemoteBase_c* Process_c::addDDI2ExistingProcData(uint16_t aui16_DDI, uin
   pc_remoteProcessData = check4DDIGroupMatch(aui16_DDI, aui_deviceElement, ac_isoName);
   if (pc_remoteProcessData)
   {
-    bool b_isSetpoint;
-    GeneralCommand_c::ValueGroup_t en_valueGroup;
-    pc_remoteProcessData->getDDIType(aui16_DDI, en_valueGroup, b_isSetpoint);
+    bool mb_isSetpoint;
+    GeneralCommand_c::ValueGroup_t men_valueGroup;
+    pc_remoteProcessData->getDDIType(aui16_DDI, men_valueGroup, mb_isSetpoint);
     if (pc_remoteProcessData->add2Group(aui16_DDI))
     {
-      refen_valueGroup = en_valueGroup;
-      rb_isSetpoint = b_isSetpoint;
+      refen_valueGroup = men_valueGroup;
+      rb_isSetpoint = mb_isSetpoint;
       return pc_remoteProcessData;
     }
   }
@@ -667,13 +667,13 @@ bool Process_c::checkAndAddMatchingDDI2Group(uint16_t aui16_DDI, uint16_t aui_de
 }
 
 
-bool Process_c::addProprietaryDDI2Group(uint16_t aui16_DDI, uint16_t aui_deviceElement, bool b_isSetpoint, GeneralCommand_c::ValueGroup_t ddiType, const IsoName_c &ac_isoName)
+bool Process_c::addProprietaryDDI2Group(uint16_t aui16_DDI, uint16_t aui_deviceElement, bool mb_isSetpoint, GeneralCommand_c::ValueGroup_t ddiType, const IsoName_c &ac_isoName)
 {
   ProcDataRemoteBase_c* pc_remoteProcessData = check4ProprietaryDDIGroupMatch(aui_deviceElement, ac_isoName);
 
   if (NULL == pc_remoteProcessData) return false;
 
-  return pc_remoteProcessData->addProprietary2Group(aui16_DDI, b_isSetpoint, ddiType);
+  return pc_remoteProcessData->addProprietary2Group(aui16_DDI, mb_isSetpoint, ddiType);
 }
 
 
@@ -836,7 +836,7 @@ void Process_c::reactOnMonitorListAdd( const IsoName_c& rc_isoName, const IsoIte
   }
   else
   { // remote IsoItem_c has finished adr claim
-    b_needCallOfCheckCreateRemoteReceiveFilter = true;
+    mb_needCallOfCheckCreateRemoteReceiveFilter = true;
   }
 }
 
@@ -870,7 +870,7 @@ void Process_c::reactOnMonitorListRemove( const IsoName_c& rc_isoName, uint8_t a
 bool Process_c::registerRemoteProcessData( ProcDataRemoteBase_c* pc_remoteClient)
 {
   const bool cb_result = registerC2( pc_remoteClient );
-  b_needCallOfCheckCreateRemoteReceiveFilter = true;
+  mb_needCallOfCheckCreateRemoteReceiveFilter = true;
 
   return cb_result;
 }
@@ -906,7 +906,7 @@ void Process_c::unregisterRemoteProcessData( ProcDataRemoteBase_c* pc_remoteClie
       uint8_t ui8_recNr = getIsoMonitorInstance4Comm().isoMemberISOName(c_toBeDeletedOwnerisoName, true).nr();
       ui32_filter = (PROCESS_DATA_PGN << 8) | ui8_recNr;
       // delete corresponding FilterBox_c in timeEvent() to avoid problems when called in procdata cestructor
-      l_filtersToDeleteISO.push_front(ui32_filter);
+      ml_filtersToDeleteISO.push_front(ui32_filter);
     } // owner exist with claimed address in isoMonitor
   }
 
@@ -921,7 +921,7 @@ void Process_c::unregisterRemoteProcessData( ProcDataRemoteBase_c* pc_remoteClie
 */
 bool Process_c::processTcStatusMsg(uint8_t ui8_tcStatus, const IsoName_c& rc_isoName, bool ab_skipLastTcStatus)
 {
-  if ((ui8_tcStatus != ui8_lastTcStatus) || ab_skipLastTcStatus)
+  if ((ui8_tcStatus != mui8_lastTcStatus) || ab_skipLastTcStatus)
   { // process status message only when TC status change happens
     // or ab_skipLastTcStatus is set (when set value command with value 0 for DDI 0xDFFF is received)
     if (0 == ui8_tcStatus)
@@ -933,11 +933,11 @@ bool Process_c::processTcStatusMsg(uint8_t ui8_tcStatus, const IsoName_c& rc_iso
     }
   }
   if (!ab_skipLastTcStatus)
-    ui8_lastTcStatus = ui8_tcStatus;
+    mui8_lastTcStatus = ui8_tcStatus;
 
-  if (pc_processDataChangeHandler)
+  if (mpc_processDataChangeHandler)
   { // call handler function if handler class is registered
-    pc_processDataChangeHandler->processTcStatusMessage((1 == ui8_tcStatus) /* 1: task running */, rc_isoName.toConstIisoName_c());
+    mpc_processDataChangeHandler->processTcStatusMessage((1 == ui8_tcStatus) /* 1: task running */, rc_isoName.toConstIisoName_c());
   }
 
   return TRUE;
@@ -946,8 +946,8 @@ bool Process_c::processTcStatusMsg(uint8_t ui8_tcStatus, const IsoName_c& rc_iso
 
 bool Process_c::processWorkingSetTaskMsg(uint8_t ui8_tcStatus, const IsoName_c& rc_isoName)
 {
-  if (pc_processWsmTaskMsgHandler)
-    pc_processWsmTaskMsgHandler->processWsmTaskMessage(ui8_tcStatus, rc_isoName);
+  if (mpc_processWsmTaskMsgHandler)
+    mpc_processWsmTaskMsgHandler->processWsmTaskMessage(ui8_tcStatus, rc_isoName);
   return TRUE;
 }
 

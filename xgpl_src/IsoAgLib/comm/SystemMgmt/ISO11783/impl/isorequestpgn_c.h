@@ -142,14 +142,14 @@ public:
   virtual ~IsoRequestPgn_c ();
 
   /** deliver reference to data pkg
-      @return reference to the CAN communication member object c_data (CanPkgExt_c)
+      @return reference to the CAN communication member object mc_data (CanPkgExt_c)
       @see CANPkgExt */
-  CanPkgExt_c& data() {return c_data;};
+  CanPkgExt_c& data() {return mc_data;};
 
   //  Operation: dataBase
   //!  deliver reference to data pkg as reference to CanPkgExt_c
   //!  to implement the base virtual function correct
-  virtual CanPkgExt_c& dataBase() {return c_data;}
+  virtual CanPkgExt_c& dataBase() {return mc_data;}
 
   /** adds the PGN to the list
       @param r_PGNHandler: reference to a IsoRequestPgnHandler_c from IsoMonitor_c, IsoItem_c, TimePosGps_c, TracGeneral_c or IsoTerminalServer
@@ -188,7 +188,7 @@ public:
   int32_t getTimeOfLastRequest() { return data().time(); }
 
   /** Only call sendCannotRespondNow(..) when you're about to respond to a requested PGN */
-  void answerRequestPGNwithNACK()                       { if (pc_isoItemDA != NULL) sendAcknowledgePGN (*pc_isoItemDA, 0x01); } // Control Byte 1 = NOT Acknowledge
+  void answerRequestPGNwithNACK()                       { if (mpc_isoItemDA != NULL) sendAcknowledgePGN (*mpc_isoItemDA, 0x01); } // Control Byte 1 = NOT Acknowledge
   void answerRequestPGNwithCannotRespondNow(IsoItem_c& arc_isoItemSender) { sendAcknowledgePGN (arc_isoItemSender, 0x03); } // Control Byte 3 = Cannot Respond
 
   ///  Operation:  Funktion for Debugging in Scheduler_c
@@ -212,33 +212,33 @@ private: // Private methods
   void sendAcknowledgePGN (IsoItem_c& arc_isoItemSender, uint8_t aui8_ackType);
 
 
-  /** clear b_alreadyClosed so that close() can be called one time */
-  void clearAlreadyClosed( void ) { b_alreadyClosed = false; }
+  /** clear mb_alreadyClosed so that close() can be called one time */
+  void clearAlreadyClosed( void ) { mb_alreadyClosed = false; }
 
-  /** set b_alreadyClosed so that close() can't be called another time */
-  void setAlreadyClosed( void ) { b_alreadyClosed = true; }
+  /** set mb_alreadyClosed so that close() can't be called another time */
+  void setAlreadyClosed( void ) { mb_alreadyClosed = true; }
 
-  /** check b_alreadyClosed to decide if close() can be called */
-  bool checkAlreadyClosed( void ) const { return b_alreadyClosed; }
+  /** check mb_alreadyClosed to decide if close() can be called */
+  bool checkAlreadyClosed( void ) const { return mb_alreadyClosed; }
 
 
 private: // Private attributes
   /// holds all registered clients with PGN(s)
-  STL_NAMESPACE::vector<PGN_s> registeredClientsWithPGN;
+  STL_NAMESPACE::vector<PGN_s> m_registeredClientsWithPGN;
 
   friend class SINGLETON_DERIVED (IsoRequestPgn_c,CanCustomer_c);
 
   /** temp data where received and to be sent data is put */
-  CanPkgExt_c c_data;
+  CanPkgExt_c mc_data;
 
   /// The following variables are just kept here as cache in case the user
   /// calls "sendAcknowledgePGN" out and the CAN-Pkg was changed in between
   /// by another ReqPGNHandler...
-  IsoItem_c* pc_isoItemSA;
-  IsoItem_c* pc_isoItemDA;
-  uint32_t ui32_requestedPGN;
+  IsoItem_c* mpc_isoItemSA;
+  IsoItem_c* mpc_isoItemDA;
+  uint32_t mui32_requestedPGN;
 
-  bool b_alreadyClosed;
+  bool mb_alreadyClosed;
 };
 
 #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )

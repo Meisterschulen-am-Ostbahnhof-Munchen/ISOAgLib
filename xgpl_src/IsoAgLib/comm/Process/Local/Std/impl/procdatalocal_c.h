@@ -280,9 +280,9 @@ public:
   ~ProcDataLocal_c();
 
   /** deliver a reference to the setpoint management class */
-  SetpointLocal_c& setpoint( void ) { return c_setpoint; }
+  SetpointLocal_c& setpoint( void ) { return mc_setpoint; }
 
-  const SetpointLocal_c& setpointConst( void ) const { return c_setpoint; }
+  const SetpointLocal_c& setpointConst( void ) const { return mc_setpoint; }
 
   /**
     check if specific measureprog exist
@@ -291,7 +291,7 @@ public:
     @return true -> found item
   */
   bool existProg(const IsoName_c& ac_isoName)
-      {return c_measureprog.existProg(ac_isoName);};
+      {return mc_measureprog.existProg(ac_isoName);};
 
   /**
     search for suiting measureprog, if not found AND if ab_doCreate == true
@@ -304,7 +304,7 @@ public:
     @param ab_doCreated true -> create suitable measure program if not found
   */
   MeasureProgLocal_c& prog(const IsoName_c& ac_isoName, bool ab_doCreate)
-    { return c_measureprog.prog(ac_isoName, ab_doCreate);};
+    { return mc_measureprog.prog(ac_isoName, ab_doCreate);};
 
 
   #ifdef USE_EEPROM_IO
@@ -421,15 +421,15 @@ private: // Private methods
   virtual void processProg();
 
   /** deliver reference to ManageMeasureProgLocal_c */
-  ManageMeasureProgLocal_c& getManageProg( void ) { return c_measureprog;}
+  ManageMeasureProgLocal_c& getManageProg( void ) { return mc_measureprog;}
 
  private:
 
   /** flaxible management of measure progs */
-  ManageMeasureProgLocal_c c_measureprog;
+  ManageMeasureProgLocal_c mc_measureprog;
 
   /** flaxible management of setpoint */
-  SetpointLocal_c c_setpoint;
+  SetpointLocal_c mc_setpoint;
 };
 
 

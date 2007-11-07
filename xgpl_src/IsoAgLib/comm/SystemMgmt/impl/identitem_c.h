@@ -234,22 +234,22 @@ public: // methods
     */
   void setToMaster (int8_t ai8_slaveCount=-1, const IsoName_c* apc_slaveIsoNameList=NULL);
 
-  bool isMaster() const { return (i8_slaveCount >= 0); }
+  bool isMaster() const { return (mi8_slaveCount >= 0); }
 #endif
 
   /** deliver pointer to IsoItem_c in IsoMonitor_c
       @return NULL -> either no ISO item or not yet registered in IsoMonitor_c
     */
-  IsoItem_c* getIsoItem( void ) const { return pc_isoItem; }
+  IsoItem_c* getIsoItem( void ) const { return mpc_isoItem; }
 
   /** deliver const reference to contained IsoName_c of this IdentItem_c */
-  const IsoName_c& isoName() const { return c_isoName; }
+  const IsoName_c& isoName() const { return mc_isoName; }
 
   /** deliver reference to contained IsoName_c of this IdentItem_c
     * ATTENTION: Use wisely!
     *            Only modify an IdentItem's ISOName if an address is NOT yet claimed!!!!!
     */
-  IsoName_c& modifyableIsoName() { return c_isoName; }
+  IsoName_c& modifyableIsoName() { return mc_isoName; }
 
   /** reset the Addres Claim state by:
     * + reset IdentItem::IStat_c to IState_c::PreAddressClaim
@@ -281,37 +281,37 @@ public: // methods
       @param arc_src compared IdentItem_c element
       @return true -> other item has same ISOName
     */
-  bool operator==(IdentItem_c& arc_src) const {return (c_isoName == arc_src.c_isoName); }
+  bool operator==(IdentItem_c& arc_src) const {return (mc_isoName == arc_src.mc_isoName); }
 
   /** check for equality with given ISOName
       @param ac_isoName compared ISOName
       @return true -> item has same ISOName
     */
-  bool operator==(const IsoName_c& ac_isoName) const {return (c_isoName == ac_isoName); }
+  bool operator==(const IsoName_c& ac_isoName) const {return (mc_isoName == ac_isoName); }
 
   /** check for difference to another item
       @param arc_src compared IdentItem_c element
       @return true -> other item has different ISOName
     */
-  bool operator!=(IdentItem_c& arc_src) const {return (c_isoName != arc_src.c_isoName); }
+  bool operator!=(IdentItem_c& arc_src) const {return (mc_isoName != arc_src.mc_isoName); }
 
   /** check for difference to given ISOName
       @param ac_isoName compared ISOName
       @return true -> other item has different ISOName
     */
-  bool operator!=(const IsoName_c& ac_isoName) const {return (c_isoName != ac_isoName); }
+  bool operator!=(const IsoName_c& ac_isoName) const {return (mc_isoName != ac_isoName); }
 
   /** check if this item has lower ISOName than another one
       @param arc_src compared IdentItem_c element
       @return true -> this item has lower ISOName than compared one
     */
-  bool operator<(IdentItem_c& arc_src) const {return (c_isoName < arc_src.c_isoName); }
+  bool operator<(IdentItem_c& arc_src) const {return (mc_isoName < arc_src.mc_isoName); }
 
   /** check if this item has lower ISOName than given ISOName
       @param ac_isoName compared ISOName
       @return true -> this item has lower ISOName than compared one
     */
-  bool operator<(const IsoName_c& ac_isoName) const {return (c_isoName < ac_isoName); }
+  bool operator<(const IsoName_c& ac_isoName) const {return (mc_isoName < ac_isoName); }
 
   /** check if given number is equal to member number of this item
       @param aui8_nr compared number
@@ -391,21 +391,21 @@ private: // attributes
                            GlobalRunStateAlreadyClaimed = 1 };
 
   /** pointer to associated IsoItem */
-  IsoItem_c* pc_isoItem;
+  IsoItem_c* mpc_isoItem;
 
   /** "pointer" to EEPROM where the following block of data (10 bytes) are stored/retrieved */
-  uint16_t ui16_eepromAdr;
+  uint16_t mui16_eepromAdr;
 
   /** Global Run State of this identity */
-  uint8_t ui8_globalRunState; // use globalRunState_en, but as it's ui8 we cannot directly use this type!
+  uint8_t mui8_globalRunState; // use globalRunState_en, but as it's ui8 we cannot directly use this type!
   /** Preferred-SA of this identity */
-  uint8_t ui8_preferredSa;
+  uint8_t mui8_preferredSa;
   /** IsoName code of this identity */
-  IsoName_c c_isoName;
+  IsoName_c mc_isoName;
 
   #ifdef USE_WORKING_SET
-  const IsoName_c* pc_slaveIsoNameList;
-  int8_t i8_slaveCount;
+  const IsoName_c* mpc_slaveIsoNameList;
+  int8_t mi8_slaveCount;
   #endif
 
 //  uint8_t ui8_lastUsedSa;

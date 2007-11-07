@@ -142,8 +142,8 @@ ProcDataLocalSimpleSetpoint_c::ProcDataLocalSimpleSetpoint_c(const IsoAgLib::Ele
 #endif
                           apc_processDataChangeHandler,
                           ai_singletonVecKey)
-    , c_measureprog( this )
-    , c_setpoint( this )
+    , mc_measureprog( this )
+    , mc_setpoint( this )
 {
 }
 
@@ -197,13 +197,13 @@ void ProcDataLocalSimpleSetpoint_c::init(const IsoAgLib::ElementDdi_s* ps_elemen
 #endif
                             apc_processDataChangeHandler,
                             ai_singletonVecKey );
-  c_measureprog.init( this );
-  c_setpoint.init( this );
+  mc_measureprog.init( this );
+  mc_setpoint.init( this );
 }
 
 /** copy constructor */
 ProcDataLocalSimpleSetpoint_c::ProcDataLocalSimpleSetpoint_c( const ProcDataLocalSimpleSetpoint_c& arc_src )
-: ProcDataLocalBase_c( arc_src ), c_measureprog( arc_src.c_measureprog ), c_setpoint( arc_src.c_setpoint )
+: ProcDataLocalBase_c( arc_src ), mc_measureprog( arc_src.mc_measureprog ), mc_setpoint( arc_src.mc_setpoint )
 {
 }
 
@@ -211,8 +211,8 @@ ProcDataLocalSimpleSetpoint_c::ProcDataLocalSimpleSetpoint_c( const ProcDataLoca
 const ProcDataLocalSimpleSetpoint_c& ProcDataLocalSimpleSetpoint_c::operator=( const ProcDataLocalSimpleSetpoint_c& arc_src )
 {
   ProcDataLocalBase_c::operator=(arc_src);
-  c_measureprog = arc_src.c_measureprog;
-  c_setpoint = arc_src.c_setpoint;
+  mc_measureprog = arc_src.mc_measureprog;
+  mc_setpoint = arc_src.mc_setpoint;
   return *this;
 }
 
@@ -234,12 +234,12 @@ void ProcDataLocalSimpleSetpoint_c::setEepromAdr(uint16_t aui16_eepromAdr)
   #ifdef USE_FLOAT_DATA_TYPE
   if (valType() == float_val)
   { // now init read val for all MeasureProg
-    c_measureprog.initGlobalVal( eepromValFloat() );
+    mc_measureprog.initGlobalVal( eepromValFloat() );
   }
   else
   #endif
   { // now init read val for all MeasureProg
-    c_measureprog.initGlobalVal( eepromVal() );
+    mc_measureprog.initGlobalVal( eepromVal() );
   }
 }
 #endif
@@ -249,7 +249,7 @@ void ProcDataLocalSimpleSetpoint_c::setEepromAdr(uint16_t aui16_eepromAdr)
 */
 void ProcDataLocalSimpleSetpoint_c::setMasterMeasurementVal(int32_t ai32_val){
   ProcDataLocalBase_c::setMasterMeasurementVal( ai32_val );
-  c_measureprog.setGlobalVal( ai32_val );
+  mc_measureprog.setGlobalVal( ai32_val );
 }
 /**
   increment the value -> update the local and the measuring programs values
@@ -257,8 +257,8 @@ void ProcDataLocalSimpleSetpoint_c::setMasterMeasurementVal(int32_t ai32_val){
 */
 void ProcDataLocalSimpleSetpoint_c::incrMasterMeasurementVal(int32_t ai32_val){
   ProcDataLocalBase_c::incrMasterMeasurementVal( ai32_val );
-  // ProcDataLocalBase_c::incrMasterMeasurementVal sets new ProcDataLocalBase_c::i32_masterVal
-  c_measureprog.setGlobalVal( masterMeasurementVal() );
+  // ProcDataLocalBase_c::incrMasterMeasurementVal sets new ProcDataLocalBase_c::mi32_masterVal
+  mc_measureprog.setGlobalVal( masterMeasurementVal() );
 }
 #ifdef USE_FLOAT_DATA_TYPE
 /**
@@ -267,7 +267,7 @@ void ProcDataLocalSimpleSetpoint_c::incrMasterMeasurementVal(int32_t ai32_val){
 */
 void ProcDataLocalSimpleSetpoint_c::setMasterMeasurementVal(float af_val){
   ProcDataLocalBase_c::setMasterMeasurementVal( af_val );
-  c_measureprog.setGlobalVal( af_val );
+  mc_measureprog.setGlobalVal( af_val );
 }
 /**
   increment the value -> update the local and the measuring programs values
@@ -275,8 +275,8 @@ void ProcDataLocalSimpleSetpoint_c::setMasterMeasurementVal(float af_val){
 */
 void ProcDataLocalSimpleSetpoint_c::incrMasterMeasurementVal(float af_val){
   ProcDataLocalBase_c::incrMasterMeasurementVal( af_val );
-  // ProcDataLocalBase_c::incrMasterMeasurementVal sets new ProcDataLocalBase_c::i32_masterVal
-  c_measureprog.setGlobalVal( masterValFloat() );
+  // ProcDataLocalBase_c::incrMasterMeasurementVal sets new ProcDataLocalBase_c::mi32_masterVal
+  mc_measureprog.setGlobalVal( masterValFloat() );
 }
 #endif
 
@@ -291,7 +291,7 @@ bool ProcDataLocalSimpleSetpoint_c::timeEvent( uint16_t* /* pui16_nextTimePeriod
   if ( ElementBase_c::getAvailableExecTime() == 0 ) return false;
   // perform time event activities for base class
   if ( ! ProcDataLocalBase_c::timeEvent() ) return false;
-  if ( ! c_measureprog.timeEvent() ) return false;
+  if ( ! mc_measureprog.timeEvent() ) return false;
   return true;
 }
 
@@ -306,7 +306,7 @@ bool ProcDataLocalSimpleSetpoint_c::timeEvent( uint16_t* /* pui16_nextTimePeriod
 */
 void ProcDataLocalSimpleSetpoint_c::resetEeprom( MeasureProgLocal_c* pc_progItem )
 { // only reset if pointer is begin
-  if (&(*c_measureprog.vec_prog().begin()) == pc_progItem)
+  if (&(*mc_measureprog.vec_prog().begin()) == pc_progItem)
     ProcDataLocalBase_c::resetEeprom();
 }
 #endif
@@ -314,23 +314,23 @@ void ProcDataLocalSimpleSetpoint_c::resetEeprom( MeasureProgLocal_c* pc_progItem
 /** process a measure prog message for local process data */
 void ProcDataLocalSimpleSetpoint_c::processProg()
 {
-  c_measureprog.processProg();
+  mc_measureprog.processProg();
 }
 
 /** process a setpoint message */
 void ProcDataLocalSimpleSetpoint_c::processSetpoint()
 {
-  switch (getProcessInstance4Comm().data().c_generalCommand.getCommand())
+  switch (getProcessInstance4Comm().data().mc_generalCommand.getCommand())
   {
     case GeneralCommand_c::setValue:
 
     case GeneralCommand_c::requestValue:
-      c_setpoint.processSetpoint();
+      mc_setpoint.processSetpoint();
       break;
 
     default:
       // process measurement commands even if this DDI is defined as a setpoint
-      c_measureprog.processProg();
+      mc_measureprog.processProg();
   }
 }
 

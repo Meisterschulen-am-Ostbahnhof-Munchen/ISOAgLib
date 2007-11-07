@@ -145,7 +145,7 @@ ProcDataLocalSimpleSetpointSimpleMeasure_c::ProcDataLocalSimpleSetpointSimpleMea
 #endif
                         apc_processDataChangeHandler,
                         ai_singletonVecKey )
-  , c_setpoint( this )
+  , mc_setpoint( this )
 {
 }
 /**
@@ -200,18 +200,18 @@ void ProcDataLocalSimpleSetpointSimpleMeasure_c::init(const IsoAgLib::ElementDdi
 #endif
                             apc_processDataChangeHandler,
                             ai_singletonVecKey );
-  c_setpoint.init( this );
+  mc_setpoint.init( this );
 }
 /** copy constructor */
 ProcDataLocalSimpleSetpointSimpleMeasure_c::ProcDataLocalSimpleSetpointSimpleMeasure_c( const ProcDataLocalSimpleSetpointSimpleMeasure_c& arc_src )
-: ProcDataLocalBase_c( arc_src ), c_setpoint( arc_src.c_setpoint )
+: ProcDataLocalBase_c( arc_src ), mc_setpoint( arc_src.mc_setpoint )
 {
 }
 /** assignment operator */
 const ProcDataLocalSimpleSetpointSimpleMeasure_c& ProcDataLocalSimpleSetpointSimpleMeasure_c::operator=( const ProcDataLocalSimpleSetpointSimpleMeasure_c& arc_src )
 {
   ProcDataLocalBase_c::operator=(arc_src);
-  c_setpoint = arc_src.c_setpoint;
+  mc_setpoint = arc_src.mc_setpoint;
   return *this;
 }
 
@@ -222,7 +222,7 @@ ProcDataLocalSimpleSetpointSimpleMeasure_c::~ProcDataLocalSimpleSetpointSimpleMe
 
 /** process a setpoint message */
 void ProcDataLocalSimpleSetpointSimpleMeasure_c::processSetpoint(){
-  c_setpoint.processSetpoint();
+  mc_setpoint.processSetpoint();
   // call base function to perform some processing steps for all kinds of
   // local process data
   ProcDataLocalBase_c::processSetpoint();

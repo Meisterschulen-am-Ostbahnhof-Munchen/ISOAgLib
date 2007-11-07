@@ -122,7 +122,7 @@ IsoName_c::IsoNameInitialProcessData()
   @param apb_src 64bit input data string
 */
 IsoName_c::IsoName_c(const uint8_t* apb_src)
-: u_data(apb_src)
+: mu_data(apb_src)
 { // simply copy 8byte string
 }
 
@@ -130,7 +130,7 @@ IsoName_c::IsoName_c(const uint8_t* apb_src)
   @param apu_src  64bit input data string
 */
 IsoName_c::IsoName_c(const Flexible8ByteString_c* apu_src)
-: u_data(*apu_src)
+: mu_data(*apu_src)
 {}
 
 /** constructor which format data string from series of input flags
@@ -157,7 +157,7 @@ IsoName_c::IsoName_c(bool ab_selfConf, uint8_t aui8_indGroup, uint8_t aui8_devCl
   @param arc_src source IsoName_c instance
 */
 IsoName_c::IsoName_c(const IsoName_c& arc_src)
-: u_data( arc_src.u_data )
+: mu_data( arc_src.mu_data )
 { // simply copy data string
 }
 
@@ -166,7 +166,7 @@ IsoName_c::IsoName_c(const IsoName_c& arc_src)
 */
 const IsoName_c& IsoName_c::operator=(const IsoName_c& arc_src)
 { // simply copy data string
-  u_data = arc_src.u_data;
+  mu_data = arc_src.mu_data;
   return arc_src;
 }
 
@@ -237,7 +237,7 @@ IsoName_c::ecuType_t IsoName_c::getEcuType() const
 */
 uint8_t IsoName_c::selfConf() const
 {
-  return ( u_data[7] >> 7);
+  return ( mu_data[7] >> 7);
 }
 
 /** get industry group code
@@ -245,7 +245,7 @@ uint8_t IsoName_c::selfConf() const
 */
 uint8_t IsoName_c::indGroup() const
 {
-  return ((u_data[7] >> 4) & 0x7) ;
+  return ((mu_data[7] >> 4) & 0x7) ;
 }
 
 /** get device class instance number
@@ -253,7 +253,7 @@ uint8_t IsoName_c::indGroup() const
 */
 uint8_t IsoName_c::devClassInst() const
 {
-  return (u_data[7] & 0xF);
+  return (mu_data[7] & 0xF);
 }
 
 /** get device class code
@@ -261,7 +261,7 @@ uint8_t IsoName_c::devClassInst() const
 */
 uint8_t IsoName_c::devClass() const
 {
-  return (u_data[6] >> 1);
+  return (mu_data[6] >> 1);
 }
 
 /** get function code
@@ -269,7 +269,7 @@ uint8_t IsoName_c::devClass() const
 */
 uint8_t IsoName_c::func() const
 {
-  return u_data[5];
+  return mu_data[5];
 }
 
 /** get function instance code
@@ -277,7 +277,7 @@ uint8_t IsoName_c::func() const
 */
 uint8_t IsoName_c::funcInst() const
 {
-  return (u_data[4] >> 3);
+  return (mu_data[4] >> 3);
 }
 
 /** get ECU instance code
@@ -285,7 +285,7 @@ uint8_t IsoName_c::funcInst() const
 */
 uint8_t IsoName_c::ecuInst() const
 {
-  return (u_data[4] & 0x7);
+  return (mu_data[4] & 0x7);
 }
 
 /** get manufactor code
@@ -293,7 +293,7 @@ uint8_t IsoName_c::ecuInst() const
 */
 uint16_t IsoName_c::manufCode() const
 {
-  return ((u_data[3] << 3) | (u_data[2] >> 5));
+  return ((mu_data[3] << 3) | (mu_data[2] >> 5));
 }
 
 /** get serial number
@@ -301,7 +301,7 @@ uint16_t IsoName_c::manufCode() const
 */
 uint32_t IsoName_c::serNo() const
 {
-  return ((static_cast<uint32_t>(u_data[2] & 0x1F) << 16) | (static_cast<uint32_t>(u_data[1]) << 8) | u_data[0]);
+  return ((static_cast<uint32_t>(mu_data[2] & 0x1F) << 16) | (static_cast<uint32_t>(mu_data[1]) << 8) | mu_data[0]);
 }
 
 /** set the NAME data from 8 uint8_t string
@@ -309,7 +309,7 @@ uint32_t IsoName_c::serNo() const
 */
 void IsoName_c::inputString(const uint8_t* apb_src)
 {
-  if (NULL != apb_src) u_data.setDataFromString( apb_src );
+  if (NULL != apb_src) mu_data.setDataFromString( apb_src );
 }
 
 /** set the NAME data from 8 uint8_t string
@@ -319,7 +319,7 @@ void IsoName_c::inputUnion(const Flexible8ByteString_c* apu_src)
 {
   if (apu_src == NULL) return;
   // when we reach here, the source pointer is valid
-  u_data = *apu_src;
+  mu_data = *apu_src;
 }
 
 /** set self config mode
@@ -327,7 +327,7 @@ void IsoName_c::inputUnion(const Flexible8ByteString_c* apu_src)
 */
 void IsoName_c::setSelfConf(bool ab_selfConf)
 {
-  u_data.setUint8Data( 7, ((u_data[7] & 0x7F) | (ab_selfConf << 7)) );
+  mu_data.setUint8Data( 7, ((mu_data[7] & 0x7F) | (ab_selfConf << 7)) );
 }
 
 /** set industry group code
@@ -335,7 +335,7 @@ void IsoName_c::setSelfConf(bool ab_selfConf)
 */
 void IsoName_c::setIndGroup(uint8_t aui8_indGroup)
 {
-  u_data.setUint8Data( 7, ((u_data[7] & 0x8F) | ((aui8_indGroup & 0x7) << 4)) );
+  mu_data.setUint8Data( 7, ((mu_data[7] & 0x8F) | ((aui8_indGroup & 0x7) << 4)) );
 }
 
 /** set device class instance number
@@ -343,7 +343,7 @@ void IsoName_c::setIndGroup(uint8_t aui8_indGroup)
 */
 void IsoName_c::setDevClassInst(uint8_t aui8_devClassInst)
 {
-  u_data.setUint8Data( 7, ((u_data[7] & 0xF0) | (aui8_devClassInst)) );
+  mu_data.setUint8Data( 7, ((mu_data[7] & 0xF0) | (aui8_devClassInst)) );
 }
 
 /** set device class code
@@ -351,7 +351,7 @@ void IsoName_c::setDevClassInst(uint8_t aui8_devClassInst)
 */
 void IsoName_c::setDevClass(uint8_t aui8_devClass)
 {
-  u_data.setUint8Data( 6, ((0 /* reserved bit set to zero!*/) | (aui8_devClass << 1)) );
+  mu_data.setUint8Data( 6, ((0 /* reserved bit set to zero!*/) | (aui8_devClass << 1)) );
 /* old version, which would be right if the reserved bit would have been set somewhere else.
   pb_data[6] = ((pb_data[6] & 0x1) | (aui8_devClass << 1));
 */
@@ -362,7 +362,7 @@ void IsoName_c::setDevClass(uint8_t aui8_devClass)
 */
 void IsoName_c::setFunc(uint8_t ab_func)
 {
-  u_data.setUint8Data( 5, ab_func );
+  mu_data.setUint8Data( 5, ab_func );
 }
 
 /** set function instance code
@@ -371,7 +371,7 @@ void IsoName_c::setFunc(uint8_t ab_func)
 */
 void IsoName_c::setFuncInst(uint8_t ab_funcInst)
 {
-  u_data.setUint8Data( 4, ((u_data[4] & 0x7) | (ab_funcInst << 3)) );
+  mu_data.setUint8Data( 4, ((mu_data[4] & 0x7) | (ab_funcInst << 3)) );
 }
 
 /** set ECU instance code
@@ -380,7 +380,7 @@ void IsoName_c::setFuncInst(uint8_t ab_funcInst)
 */
 void IsoName_c::setEcuInst(uint8_t ab_ecuInst)
 {
-  u_data.setUint8Data( 4, ((u_data[4] & 0xF8) | (ab_ecuInst & 0x7)) );
+  mu_data.setUint8Data( 4, ((mu_data[4] & 0xF8) | (ab_ecuInst & 0x7)) );
 }
 
 /** set manufactor code
@@ -388,8 +388,8 @@ void IsoName_c::setEcuInst(uint8_t ab_ecuInst)
 */
 void IsoName_c::setManufCode(uint16_t aui16_manufCode)
 {
-  u_data.setUint8Data( 3, (aui16_manufCode >> 3) );
-  u_data.setUint8Data( 2, ((u_data[2] & 0x1F) | ((aui16_manufCode & 0x7) << 5)) );
+  mu_data.setUint8Data( 3, (aui16_manufCode >> 3) );
+  mu_data.setUint8Data( 2, ((mu_data[2] & 0x1F) | ((aui16_manufCode & 0x7) << 5)) );
 }
 
 /** set serial number (Identity Number)
@@ -397,8 +397,8 @@ void IsoName_c::setManufCode(uint16_t aui16_manufCode)
 */
 void IsoName_c::setSerNo(uint32_t aui32_serNo)
 {
-  u_data.setUint16Data( 0, uint16_t(aui32_serNo & 0xFFFFU) );
-  u_data.setUint8Data( 2, ( (u_data[2] & 0xE0) | ((aui32_serNo >> 16) & 0x1F) ) );
+  mu_data.setUint16Data( 0, uint16_t(aui32_serNo & 0xFFFFU) );
+  mu_data.setUint8Data( 2, ( (mu_data[2] & 0xE0) | ((aui32_serNo >> 16) & 0x1F) ) );
 }
 
 /** check if this NAME has higher prio
@@ -430,32 +430,32 @@ int8_t IsoName_c::higherPriThanPar(const Flexible8ByteString_c* apu_compare) con
   // device class, -instance and industry group
   #if defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN) && SIZEOF_INT >= 4
   static const uint64_t cui64_lazyEvaluationIndicator = 0x000000FFFFFFFFFFULL;
-  if ( ( (       u_data.uint64[0] & cui64_lazyEvaluationIndicator ) == cui64_lazyEvaluationIndicator )
+  if ( ( (       mu_data.uint64[0] & cui64_lazyEvaluationIndicator ) == cui64_lazyEvaluationIndicator )
     || ( ( apu_compare->uint64[0] & cui64_lazyEvaluationIndicator ) == cui64_lazyEvaluationIndicator ) )
   #else
   static const uint8_t lazyEvaluationIndicator[] = { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF };
-  if ( ( CNAMESPACE::memcmp( u_data.uint8, lazyEvaluationIndicator, 5 ) == 0 ) || ( CNAMESPACE::memcmp( apu_compare->uint8, lazyEvaluationIndicator, 5 ) == 0 ) )
+  if ( ( CNAMESPACE::memcmp( mu_data.uint8, lazyEvaluationIndicator, 5 ) == 0 ) || ( CNAMESPACE::memcmp( apu_compare->uint8, lazyEvaluationIndicator, 5 ) == 0 ) )
   #endif
   { // perform only lazy evaluation
     // compare device class instance and industry group
-    if ( (u_data.uint8[7] & 0x7F) > (apu_compare->uint8[7] & 0x7F) ) return -1;
-    else if ( (u_data.uint8[7] & 0x7F) < (apu_compare->uint8[7] & 0x7F) ) return +1;
+    if ( (mu_data.uint8[7] & 0x7F) > (apu_compare->uint8[7] & 0x7F) ) return -1;
+    else if ( (mu_data.uint8[7] & 0x7F) < (apu_compare->uint8[7] & 0x7F) ) return +1;
     // compare device class
-    if ( (u_data.uint8[6] >> 1) > (apu_compare->uint8[6] >> 1) ) return -1;
-    else if ( (u_data.uint8[6] >> 1) < (apu_compare->uint8[6] >> 1) ) return +1;
+    if ( (mu_data.uint8[6] >> 1) > (apu_compare->uint8[6] >> 1) ) return -1;
+    else if ( (mu_data.uint8[6] >> 1) < (apu_compare->uint8[6] >> 1) ) return +1;
     // check if one part has a NOT spefified FUNCTION ( == 0xFF as default value ), as then
     // both sides should be regarded as equal for lazy evaluation
-    if ( ( u_data.uint8[5] == 0xFF ) || ( apu_compare->uint8[5] == 0xFF ) ) return 0;
+    if ( ( mu_data.uint8[5] == 0xFF ) || ( apu_compare->uint8[5] == 0xFF ) ) return 0;
     // compare Function as both have a non-default value
-    if ( (u_data.uint8[5]) > (apu_compare->uint8[5]) ) return -1;
-    else if ( (u_data.uint8[5]) < (apu_compare->uint8[5]) ) return +1;
+    if ( (mu_data.uint8[5]) > (apu_compare->uint8[5]) ) return -1;
+    else if ( (mu_data.uint8[5]) < (apu_compare->uint8[5]) ) return +1;
     // if still here -> both should be regarded as equal for this compare level
     return 0;
   }
   // we reach here only, when the full ISONAME has to be compared
-  // -> Flexible8ByteString_c::compare returns +1 when VALUE of u_data is LARGER
+  // -> Flexible8ByteString_c::compare returns +1 when VALUE of mu_data is LARGER
   // ==> priority is HIGHER when VALUE IS LOWER --> multiply by -1
-  return (-1 * u_data.compare( *apu_compare ));
+  return (-1 * mu_data.compare( *apu_compare ));
 }
 
 

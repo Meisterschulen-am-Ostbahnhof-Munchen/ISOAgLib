@@ -188,7 +188,7 @@ public:
     (4 uint8_t signed integer defined by int32_t in masterHeader)
     @return data value of message
   */
-  int32_t dataRawCmdLong()const {return c_flex4Data.getInt32Data();}
+  int32_t dataRawCmdLong()const {return mc_flex4Data.getInt32Data();}
 
   /**
     deliver data value as int32_t; the 4byte data of the message are
@@ -228,21 +228,21 @@ public:
     deliver data value as single uint8_t from position ab_pos
     @return uint8_t of wanted data position of message
   */
-  uint8_t data(uint8_t ab_pos)const{return c_flex4Data.getUint8Data(ab_pos);}
+  uint8_t data(uint8_t ab_pos)const{return mc_flex4Data.getUint8Data(ab_pos);}
 
   /**
     check if SEND member number is valid (e.g. there has claimed address member in
     monitor list registered)
     @return true -> there has claimed address member with number SEND
   */
-  bool existMemberSend() const {return (pc_monitorSend != NULL)?true:false;}
+  bool existMemberSend() const {return (mpc_monitorSend != NULL)?true:false;}
 
   /**
     check if EMPF member number is valid (e.g. there has claimed address member in
     monitor list registered)
     @return true -> there has claimed address member with number EMPF
   */
-  bool existMemberEmpf() const {return (pc_monitorEmpf != NULL)?true:false;}
+  bool existMemberEmpf() const {return (mpc_monitorEmpf != NULL)?true:false;}
 
   /**
     deliver reference to IsoItem_c of EMPF member (IsoItem_c is base class for IsoItem_c)
@@ -379,7 +379,7 @@ public:
     @param ab_pos position of written uint8_t in data string
     @param ab_val uint8_t data value
   */
-  void setData(uint8_t ab_pos, uint8_t ab_val){c_flex4Data.setUint8Data(ab_pos, ab_val);}
+  void setData(uint8_t ab_pos, uint8_t ab_val){mc_flex4Data.setUint8Data(ab_pos, ab_val);}
 
   /**
     extract data from ISO commands and save it to member class
@@ -404,7 +404,7 @@ public:
   void useTermISONameForLocalProc(const IsoName_c& ac_isoName, const IsoName_c& ac_useProcISOName = IsoName_c::IsoNameUnspecified());
 
   /** stores the command in generalized form */
-  GeneralCommand_c c_generalCommand;
+  GeneralCommand_c mc_generalCommand;
 
 private: // Private methods
 
@@ -419,7 +419,7 @@ private: // Private methods
   virtual void flags2String();
 
 private: // Private attributes
-  Flexible4ByteString_c c_flex4Data;
+  Flexible4ByteString_c mc_flex4Data;
 
   struct _bit_data {
     /** EMPF forheader */
@@ -444,21 +444,21 @@ private: // Private attributes
   } bit_data;
 
   /** pointer to monitor list item of sender "SEND" (NULL if not claimed address) */
-  IsoItem_c* pc_monitorSend;
+  IsoItem_c* mpc_monitorSend;
 
   /** pointer to monitor list item of receiver "EMPF" (NULL if not claimed address) */
-  IsoItem_c* pc_monitorEmpf;
+  IsoItem_c* mpc_monitorEmpf;
   /**
     some terminal wants to use ISOName of terminal even for local process
     data for communication on CAN BUS (default 0xFF for off)
   */
-  IsoName_c c_specialTermISOName;
+  IsoName_c mc_specialTermISOName;
 
   /**
     some terminal wants to use ISOName of terminal even for local process
     data for communication on CAN BUS (default 0xFF for off)
   */
-  IsoName_c c_specialTermUseProcISOName;
+  IsoName_c mc_specialTermUseProcISOName;
 
 };
 

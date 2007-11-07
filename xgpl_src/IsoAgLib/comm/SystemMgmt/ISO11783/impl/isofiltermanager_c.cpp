@@ -107,7 +107,7 @@ IsoFilterManager_c::IsoFilterManager_c ()
 void
 IsoFilterManager_c::singletonInit ()
 {
-  b_alreadyInitialized = false; // so init() will init!
+  mb_alreadyInitialized = false; // so init() will init!
   // set very long execution period as this singleton has no periodic jobs
   setTimePeriod( 10000 );
 }
@@ -133,9 +133,9 @@ const char* IsoFilterManager_c::getTaskName() const
 void
 IsoFilterManager_c::init()
 {
-  if (!b_alreadyInitialized)
+  if (!mb_alreadyInitialized)
   { // avoid double initialization. for now now close needed, only init once! ==> see Scheduler_c::startupSystem()
-    b_alreadyInitialized = true;
+    mb_alreadyInitialized = true;
     // register to get ISO monitor list changes
     __IsoAgLib::getIsoMonitorInstance4Comm().registerSaClaimHandler( this );
   }
@@ -146,8 +146,8 @@ IsoFilterManager_c::init()
 bool
 IsoFilterManager_c::existIsoFilter (const IsoFilter_s& rrefcs_isoFilter)
 {
-  for (IsoFilterBox_it it_isoFilterBox = vec_isoFilterBox.begin();
-       it_isoFilterBox != vec_isoFilterBox.end();
+  for (IsoFilterBox_it it_isoFilterBox = mvec_isoFilterBox.begin();
+       it_isoFilterBox != mvec_isoFilterBox.end();
        it_isoFilterBox++)
   { // Search for existing ISOFilterBox
     if (it_isoFilterBox->hasIsoFilterWithCustomer (rrefcs_isoFilter))
@@ -165,10 +165,10 @@ IsoFilterManager_c::insertIsoFilter (const IsoFilter_s& rrefcs_isoFilter)
   // Check if ISOFilter does yet exist in some ISOFilterBox
   if (!existIsoFilter (rrefcs_isoFilter))
   { // insert an empty ISOFilterBox. initialized then in list right after
-    vec_isoFilterBox.push_back (IsoFilterBox_c (SINGLETON_VEC_KEY));
+    mvec_isoFilterBox.push_back (IsoFilterBox_c (SINGLETON_VEC_KEY));
 
     // now get the inserted ISOFilterBox
-    IsoFilterBox_c& rc_isoFilterBox = vec_isoFilterBox.back();
+    IsoFilterBox_c& rc_isoFilterBox = mvec_isoFilterBox.back();
 
     // add the filter(s)
     rc_isoFilterBox.addIsoFilter (rrefcs_isoFilter);
@@ -186,10 +186,10 @@ IsoFilterManager_c::insertIsoFilterConnected (const IsoFilter_s& rrefcs_isoFilte
   // Check if ISOFilter does yet exist in some ISOFilterBox
   if ( (!existIsoFilter (rrefcs_isoFilter)) && (!existIsoFilter (rrefcs_isoFilter2)) )
   { // insert an empty ISOFilterBox. initialized then in list right after
-    vec_isoFilterBox.push_back (IsoFilterBox_c (SINGLETON_VEC_KEY));
+    mvec_isoFilterBox.push_back (IsoFilterBox_c (SINGLETON_VEC_KEY));
 
     // now get the inserted ISOFilterBox
-    IsoFilterBox_c& rc_isoFilterBox = vec_isoFilterBox.back();
+    IsoFilterBox_c& rc_isoFilterBox = mvec_isoFilterBox.back();
 
     // add the filter(s)
     rc_isoFilterBox.addIsoFilter (rrefcs_isoFilter);
@@ -204,8 +204,8 @@ IsoFilterManager_c::insertIsoFilterConnected (const IsoFilter_s& rrefcs_isoFilte
 bool
 IsoFilterManager_c::addToIsoFilter (const IsoFilter_s& rrefcs_isoFilterExisting, const IsoFilter_s& rrefcs_isoFilterToAdd)
 {
-  for (IsoFilterBox_it it_isoFilterBox = vec_isoFilterBox.begin();
-       it_isoFilterBox != vec_isoFilterBox.end();
+  for (IsoFilterBox_it it_isoFilterBox = mvec_isoFilterBox.begin();
+       it_isoFilterBox != mvec_isoFilterBox.end();
        it_isoFilterBox++)
   { // Search for existing ISOFilterBox
     if (it_isoFilterBox->hasIsoFilterWithoutCustomer (rrefcs_isoFilterExisting))
@@ -231,15 +231,15 @@ IsoFilterManager_c::addToIsoFilter (const IsoFilter_s& rrefcs_isoFilterExisting,
 bool
 IsoFilterManager_c::removeIsoFilter (const IsoFilter_s& rrefcs_isoFilter)
 {
-  for (IsoFilterBox_it it_isoFilterBox = vec_isoFilterBox.begin();
-       it_isoFilterBox != vec_isoFilterBox.end();
+  for (IsoFilterBox_it it_isoFilterBox = mvec_isoFilterBox.begin();
+       it_isoFilterBox != mvec_isoFilterBox.end();
        it_isoFilterBox++)
   { // Search for existing ISOFilterBox
     switch (it_isoFilterBox->removeIsoFilter (rrefcs_isoFilter))
     {
       case IsoFilterBox_c::RemoveAnswerFailureNonExistent: break;
       case IsoFilterBox_c::RemoveAnswerSuccessBoxEmpty:
-        it_isoFilterBox = vec_isoFilterBox.erase(it_isoFilterBox);
+        it_isoFilterBox = mvec_isoFilterBox.erase(it_isoFilterBox);
         // break; left out intentionally
       case IsoFilterBox_c::RemoveAnswerSuccessBoxNotEmpty:
         return true;
@@ -257,8 +257,8 @@ IsoFilterManager_c::removeIsoFilter (const IsoFilter_s& rrefcs_isoFilter)
 void
 IsoFilterManager_c::reactOnMonitorListAdd (const IsoName_c& rc_isoName, const IsoItem_c* /*apc_newItem*/)
 {
-  for (IsoFilterBox_it it_isoFilterBox = vec_isoFilterBox.begin();
-       it_isoFilterBox != vec_isoFilterBox.end();
+  for (IsoFilterBox_it it_isoFilterBox = mvec_isoFilterBox.begin();
+       it_isoFilterBox != mvec_isoFilterBox.end();
        it_isoFilterBox++)
   { // the ISOFilterBoxes will take care if they have to do anything at all or not...
     it_isoFilterBox->updateOnAdd (rc_isoName);
@@ -272,8 +272,8 @@ IsoFilterManager_c::reactOnMonitorListAdd (const IsoName_c& rc_isoName, const Is
 void
 IsoFilterManager_c::reactOnMonitorListRemove (const IsoName_c& rc_isoName, uint8_t /*aui8_oldSa*/)
 {
-  for (IsoFilterBox_it it_isoFilterBox = vec_isoFilterBox.begin();
-       it_isoFilterBox != vec_isoFilterBox.end();
+  for (IsoFilterBox_it it_isoFilterBox = mvec_isoFilterBox.begin();
+       it_isoFilterBox != mvec_isoFilterBox.end();
        it_isoFilterBox++)
   { // the ISOFilterBoxes will take care if they have to do anything at all or not...
     it_isoFilterBox->updateOnRemove (rc_isoName);

@@ -98,7 +98,7 @@ IsoRequestPgn_c::init (void)
   // only init if closed (constructor "closes" it so it gets init'ed initially!
   if (checkAlreadyClosed ())
   {
-    // clear state of b_alreadyClosed, so that close() is called one time AND no more init()s are performed!
+    // clear state of mb_alreadyClosed, so that close() is called one time AND no more init()s are performed!
     clearAlreadyClosed();
 
     getCanInstance4Comm().insertFilter( *this, 0x3FFFF00UL, MASK_TYPE(static_cast<MASK_TYPE>(REQUEST_PGN_MSG_PGN | 0xFF) << 8), true, Ident_c::ExtendedIdent);
@@ -133,7 +133,7 @@ IsoRequestPgn_c::registerPGN (IsoRequestPgnHandler_c &r_PGNHandler, const uint32
     return false; // false could also mean that the PGN - client pair is already inserted in list
 
   PGN_s s_pgnToRegister = {cui32_pgnToRegister, &r_PGNHandler};
-  registeredClientsWithPGN.push_back (s_pgnToRegister);
+  m_registeredClientsWithPGN.push_back (s_pgnToRegister);
 
   return true; // PGN - client pair didn't exist, so it was added
 };
@@ -159,14 +159,14 @@ IsoRequestPgn_c::registerPGN (IsoRequestPgnHandler_c &r_PGNHandler, const uint8_
 void
 IsoRequestPgn_c::unregisterPGN (IsoRequestPgnHandler_c &r_PGNHandler, const uint32_t cui32_pgnToRegister)
 {
-  for (STL_NAMESPACE::vector<PGN_s>::iterator regPGN_it = registeredClientsWithPGN.begin();
-       regPGN_it != registeredClientsWithPGN.end();
+  for (STL_NAMESPACE::vector<PGN_s>::iterator regPGN_it = m_registeredClientsWithPGN.begin();
+       regPGN_it != m_registeredClientsWithPGN.end();
       )
   {
     if (cui32_pgnToRegister == 0)
     { // every registered PGN will be deleted
       if (regPGN_it->p_handler == &r_PGNHandler)
-        registeredClientsWithPGN.erase (regPGN_it); // after erase, the iterator points to the next (if available) vector item
+        m_registeredClientsWithPGN.erase (regPGN_it); // after erase, the iterator points to the next (if available) vector item
       else
         regPGN_it++;
     }
@@ -174,7 +174,7 @@ IsoRequestPgn_c::unregisterPGN (IsoRequestPgnHandler_c &r_PGNHandler, const uint
     { // only the cui32_pgnToRegister will be deleted
       if ((regPGN_it->p_handler == &r_PGNHandler) && (regPGN_it->ui32_pgn == cui32_pgnToRegister))
       {
-        registeredClientsWithPGN.erase (regPGN_it); // after erase, the iterator points to the next (if available) vector item
+        m_registeredClientsWithPGN.erase (regPGN_it); // after erase, the iterator points to the next (if available) vector item
         break; // the PGN is unique for the RequestPGNHandler, so we can leave the loop
       }
       else
@@ -200,8 +200,8 @@ IsoRequestPgn_c::unregisterPGN (IsoRequestPgnHandler_c &r_PGNHandler, const uint
 bool
 IsoRequestPgn_c::checkIfAlreadyRegistered (IsoRequestPgnHandler_c &r_PGNHandler, const uint32_t cui32_pgn)
 {
-  for (STL_NAMESPACE::vector<PGN_s>::iterator regPGN_it=registeredClientsWithPGN.begin();
-       regPGN_it != registeredClientsWithPGN.end();
+  for (STL_NAMESPACE::vector<PGN_s>::iterator regPGN_it=m_registeredClientsWithPGN.begin();
+       regPGN_it != m_registeredClientsWithPGN.end();
        regPGN_it++
       )
   {
@@ -221,9 +221,9 @@ bool
 IsoRequestPgn_c::processMsg ()
 {
   /// Store incoming information for possible later user-triggered "sendAcknowledgePGN()"
-  pc_isoItemSA = data().getMonitorItemForSA();
-  pc_isoItemDA = data().getMonitorItemForDA();
-  ui32_requestedPGN = ( (static_cast<uint32_t>(data().operator[](0)))
+  mpc_isoItemSA = data().getMonitorItemForSA();
+  mpc_isoItemDA = data().getMonitorItemForDA();
+  mui32_requestedPGN = ( (static_cast<uint32_t>(data().operator[](0)))
                       | (static_cast<uint32_t>(data().operator[](1)) << 8)
                       | (static_cast<uint32_t>(data().operator[](2)) << 16) );
 
@@ -231,11 +231,11 @@ IsoRequestPgn_c::processMsg ()
   /// it can still request ANY PGNs according to Mike - so no special check done here!
   /// 1. Distribute to all clients
   bool b_processedByAnyClient = false;
-  for (STL_NAMESPACE::vector<PGN_s>::iterator regPGN_it = registeredClientsWithPGN.begin();
-        regPGN_it != registeredClientsWithPGN.end(); regPGN_it++)
+  for (STL_NAMESPACE::vector<PGN_s>::iterator regPGN_it = m_registeredClientsWithPGN.begin();
+        regPGN_it != m_registeredClientsWithPGN.end(); regPGN_it++)
   { // let all local regPGN_it process this request
-    if (regPGN_it->ui32_pgn == ui32_requestedPGN)
-      b_processedByAnyClient |= regPGN_it->p_handler->processMsgRequestPGN (ui32_requestedPGN, pc_isoItemSA, pc_isoItemDA);
+    if (regPGN_it->ui32_pgn == mui32_requestedPGN)
+      b_processedByAnyClient |= regPGN_it->p_handler->processMsgRequestPGN (mui32_requestedPGN, mpc_isoItemSA, mpc_isoItemDA);
   }
 
   /// 2. Check if we have to send a NACK as nobody could answer it
@@ -253,7 +253,7 @@ IsoRequestPgn_c::processMsg ()
 void
 IsoRequestPgn_c::sendAcknowledgePGN (IsoItem_c& arc_isoItemSender, uint8_t aui8_ackType)
 {
-  uint32_t ui32_purePgn = ui32_requestedPGN;
+  uint32_t ui32_purePgn = mui32_requestedPGN;
   if (((ui32_purePgn >> 8) & 0xFF) < 0xF0)
   { // destination specific, so clear the destSA field as we want the PURE PGN!
     ui32_purePgn &= 0x3FF00;
@@ -262,7 +262,7 @@ IsoRequestPgn_c::sendAcknowledgePGN (IsoItem_c& arc_isoItemSender, uint8_t aui8_
   data().setIsoPri(6);
   data().setIsoDp(0);
   data().setIsoPf(ACKNOWLEDGEMENT_PGN >> 8);
-  data().setMonitorItemForDA (pc_isoItemSA);
+  data().setMonitorItemForDA (mpc_isoItemSA);
   data().setMonitorItemForSA (&arc_isoItemSender);
   // set the first four bytes as uint32_t value, where lowest byte equals to ControlByte
   data().setUint32Data ((1-1), (0xFFFFFF00UL | uint32_t (aui8_ackType)));
@@ -272,7 +272,7 @@ IsoRequestPgn_c::sendAcknowledgePGN (IsoItem_c& arc_isoItemSender, uint8_t aui8_
   data().setUint32Data ((5-1), ((ui32_purePgn << 8)|0xFFUL) );
   data().setLen (8);
 
-  __IsoAgLib::getCanInstance4Comm() << c_data;
+  __IsoAgLib::getCanInstance4Comm() << mc_data;
 }
 
 
@@ -303,7 +303,7 @@ void IsoRequestPgn_c::unregisterLocalDevice( const __IsoAgLib::IsoName_c& rc_iso
 /** constructor for IsoRequestPgn_c */
 IsoRequestPgn_c::IsoRequestPgn_c ()
   : SingletonIsoRequestPgn_c ()
-  , registeredClientsWithPGN ()
+  , m_registeredClientsWithPGN ()
 {
 // functionality moved OUT of the constructor, as the constructor is NOT called in embedded systems for static class instances.
 }

@@ -215,12 +215,12 @@ private:
     deliver a reference to the list of measure prog objects
     @return reference to list of measure prog entries
   */
-  Vec_MeasureProgLocal& vec_prog() { return c_vec_prog;};
+  Vec_MeasureProgLocal& vec_prog() { return mvecc_prog;};
   /**
     deliver a reference to the list of measure prog objects
     @return reference to list of measure prog entries
   */
-  const Vec_MeasureProgLocal& constVecProg() const { return c_vec_prog;};
+  const Vec_MeasureProgLocal& constVecProg() const { return mvecc_prog;};
   /**
     create a new measure prog item;
     if there is still the default initial item undefined define it
@@ -245,9 +245,9 @@ private:
   bool updateProgCache(const IsoName_c& ac_isoName, bool ab_createIfNotFound);
  protected:
   /** container of objects for managing jobs of local measure programs */
-  Vec_MeasureProgLocal c_vec_prog;
+  Vec_MeasureProgLocal mvecc_prog;
   /** cache iterator to measure prog */
-  Vec_MeasureProgLocalIterator pc_progCache;
+  Vec_MeasureProgLocalIterator mpc_progCache;
  private:
   /** base function for assignment of element vars for copy constructor and operator= */
   void assignFromSource( const ManageMeasureProgLocal_c& arc_src );

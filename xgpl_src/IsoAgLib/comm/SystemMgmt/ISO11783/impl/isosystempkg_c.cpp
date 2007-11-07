@@ -87,7 +87,7 @@
 namespace __IsoAgLib {
 
 /** default constructor */
-IsoSystemPkg_c::IsoSystemPkg_c() : c_isoISOName( getDataUnionConst() ) {
+IsoSystemPkg_c::IsoSystemPkg_c() : mc_isoISOName( getDataUnionConst() ) {
 }
 /** default destructor */
 IsoSystemPkg_c::~IsoSystemPkg_c(){
@@ -102,7 +102,7 @@ IsoSystemPkg_c::~IsoSystemPkg_c(){
 void IsoSystemPkg_c::string2Flags()
 {
   // for ISO use direct read access with isoPgn, indGroup, etc
-  c_isoISOName.inputUnion( getDataUnionConst() );
+  mc_isoISOName.inputUnion( getDataUnionConst() );
 };
 
 /**

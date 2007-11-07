@@ -116,15 +116,15 @@ struct IsoFilter_s
   IsoFilter_s (CanCustomer_c& arc_canCustomer, uint32_t aui32_mask, uint32_t aui32_filter, const IsoName_c* apc_isoNameDa = NULL, const IsoName_c* apc_isoNameSa = NULL, int8_t ai8_dlcForce=-1, Ident_c::identType_t at_identType=Ident_c::ExtendedIdent);
   ~IsoFilter_s();
 
-  uint32_t         getMask()      const { return c_identMask.ident(); }
-  uint32_t         getFilter()    const { return c_identFilter.ident(); }
-  const IsoName_c& getIsoNameDa() const { return c_isoNameDa; }
-  const IsoName_c& getIsoNameSa() const { return c_isoNameSa; }
+  uint32_t         getMask()      const { return mc_identMask.ident(); }
+  uint32_t         getFilter()    const { return mc_identFilter.ident(); }
+  const IsoName_c& getIsoNameDa() const { return mc_isoNameDa; }
+  const IsoName_c& getIsoNameSa() const { return mc_isoNameSa; }
 
   /** operator== does INTENTIONALLY NOT compare the dlcForce field as you can't have the same filter for
       the same customer just with another dlcForce! do NEVER do this! */
   bool operator == (const IsoFilter_s& arc_isoFilter) const
-  { return equalMaskAndFilter (arc_isoFilter) && (pc_canCustomer == arc_isoFilter.pc_canCustomer) /*&& (i8_dlcForce == arc_isoFilter.i8_dlcForce) */;}
+  { return equalMaskAndFilter (arc_isoFilter) && (mpc_canCustomer == arc_isoFilter.mpc_canCustomer) /*&& (mi8_dlcForce == arc_isoFilter.mi8_dlcForce) */;}
   bool operator != (const IsoFilter_s& arc_isoFilter) const
   { return !operator == (arc_isoFilter); }
 
@@ -132,15 +132,15 @@ private:
   bool equalMaskAndFilter (const IsoFilter_s& arc_isoFilter) const;
 
 private:
-  Ident_c c_identMask;
-  Ident_c c_identFilter;
-  IsoName_c c_isoNameDa;
-  IsoName_c c_isoNameSa;
+  Ident_c mc_identMask;
+  Ident_c mc_identFilter;
+  IsoName_c mc_isoNameDa;
+  IsoName_c mc_isoNameSa;
 
   /** Pointer to a CanCustomer_c instance. Assume this like a reference to be always valid! */
-  CanCustomer_c* pc_canCustomer;
+  CanCustomer_c* mpc_canCustomer;
 
-  int8_t i8_dlcForce; // 0..8 to force the DLC, -1 to X (don't care)
+  int8_t mi8_dlcForce; // 0..8 to force the DLC, -1 to X (don't care)
 
   friend class IsoFilterBox_c;
 };
@@ -197,10 +197,10 @@ public:
   //! keeps them all connected. Yet to be done, but not important right now...
 
 private:
-  ManagedIsoFilter_slist slist_managedISOFilter;
+  ManagedIsoFilter_slist mslist_managedISOFilter;
 
   // management information about the state of this instance
-  uint8_t ui8_filtersSetUp;
+  uint8_t mui8_filtersSetUp;
 };
 
 /** this typedef is only for some time to provide backward compatibility at API level */

@@ -256,13 +256,13 @@ public:
     deliver med val
     @return actual medium value
   */
-  int32_t med(bool ab_sendRequest = false) const {return ( (i32_medCnt > 0) && (ab_sendRequest || !ab_sendRequest))?(i32_medSum/i32_medCnt):(0);};
+  int32_t med(bool ab_sendRequest = false) const {return ( (mi32_medCnt > 0) && (ab_sendRequest || !ab_sendRequest))?(mi32_medSum/mi32_medCnt):(0);};
 #ifdef USE_FLOAT_DATA_TYPE
   /**
     deliver med val as float
     @return actual medium value
   */
-  float medFloat(bool ab_sendRequest = false) const {return ((i32_medCnt > 0) && (ab_sendRequest || !ab_sendRequest))?(f_medSum/(float)i32_medCnt):(0.0F);};
+  float medFloat(bool ab_sendRequest = false) const {return ((mi32_medCnt > 0) && (ab_sendRequest || !ab_sendRequest))?(f_medSum/(float)mi32_medCnt):(0.0F);};
 #endif
   /**
     send a sub-information (selected by en_valueGroup) to a specified target (selected by GPT)
@@ -406,22 +406,22 @@ private: // Private methods
     set medium val
     @param ai32_val initial medium value
   */
-  void setMed(int32_t ai32_val){i32_medSum = ai32_val; i32_medCnt = 1;};
+  void setMed(int32_t ai32_val){mi32_medSum = ai32_val; mi32_medCnt = 1;};
   /**
     increment medCnt
   */
-  void incrMedCnt(){i32_medCnt++;};
+  void incrMedCnt(){mi32_medCnt++;};
   /**
     increment the mediumSum
     @param ai32_val new measure val to use for calculating the medium value
   */
-  void incrMedSum(int32_t ai32_val){i32_medSum += ai32_val;};
+  void incrMedSum(int32_t ai32_val){mi32_medSum += ai32_val;};
 #ifdef USE_FLOAT_DATA_TYPE
   /**
     set medium val
     @param af_val initial medium value
   */
-  void setMed(float af_val){f_medSum = af_val; i32_medCnt = 1;};
+  void setMed(float af_val){f_medSum = af_val; mi32_medCnt = 1;};
   /**
     increment the mediumSum
     @param af_val new measure val to use for calculating the medium value
@@ -457,7 +457,7 @@ private: // Private attributes
 #ifdef USE_FLOAT_DATA_TYPE
   union {
     /** last master (eg. main prog or sensor) val  */
-    int32_t i32_lastMasterVal;
+    int32_t mi32_lastMasterVal;
     /** last master (eg. main prog or sensor) val  */
     float f_lastMasterVal;
   };
@@ -466,7 +466,7 @@ private: // Private attributes
       sum of values which are used to calculate the medium
       (only defined if one proportional prog is active)
     */
-    int32_t i32_medSum;
+    int32_t mi32_medSum;
     /**
       sum of values which are used to calculate the medium
       (only defined if one proportional prog is active)
@@ -475,25 +475,25 @@ private: // Private attributes
   };
 #else
   /** last master (eg. main prog or sensor) val  */
-  int32_t i32_lastMasterVal;
+  int32_t mi32_lastMasterVal;
   /**
     sum of values which are used to calculate the medium
     (only defined if one proportional prog is active)
   */
-  int32_t i32_medSum;
+  int32_t mi32_medSum;
 #endif
   /** count of used songle values to calculate medium val  */
-  int32_t i32_medCnt;
+  int32_t mi32_medCnt;
 
   /**
     stores if one subprog triggered,
     if sent wasn't possible within one call, this could be retried
     in later calls; a true val is only reseted to false, if sending was possible
   */
-  bool b_triggeredIncrement;
+  bool mb_triggeredIncrement;
 
   /** gathered information about currently running threshold sub progs */
-  List_ThresholdInfo l_thresholdInfo;
+  List_ThresholdInfo mlist_thresholdInfo;
 };
 
 }

@@ -103,21 +103,21 @@ namespace __IsoAgLib {
 IsoItem_c::IsoItem_c()
   : BaseItem_c(0, IState_c::IstateNull, 0)
   #ifdef USE_WORKING_SET
-  , pc_masterItem (NULL)
-  , i8_slavesToClaimAddress (0) // idle around
-  , i32_timeLastCompletedAnnounceStarted (-1)
-  , i32_timeCurrentAnnounceStarted (-1)
-  , b_repeatAnnounce (false)
+  , mpc_masterItem (NULL)
+  , mi8_slavesToClaimAddress (0) // idle around
+  , mi32_timeLastCompletedAnnounceStarted (-1)
+  , mi32_timeCurrentAnnounceStarted (-1)
+  , mb_repeatAnnounce (false)
   #endif
-  , ui8_nr(0xFE)
-  , b_repeatClaim (false) // wouldn't be needed to be set here as it's set when entering AddressClaim
-  , c_isoName (IsoName_c::IsoNameUnspecified())
+  , mui8_nr(0xFE)
+  , mb_repeatClaim (false) // wouldn't be needed to be set here as it's set when entering AddressClaim
+  , mc_isoName (IsoName_c::IsoNameUnspecified())
 {
 }
 
 /** copy constructor for ISOItem
   The copy constructor checks if the source item is
-  a master ( i.e. the pc_masterItem pointer points to this )
+  a master ( i.e. the mpc_masterItem pointer points to this )
   -> it doesn't simply copy the pointer, but sets its
   own pointer also to the this-pointer of the new instance
   @param arc_src source IsoItem_c instance
@@ -125,22 +125,22 @@ IsoItem_c::IsoItem_c()
 IsoItem_c::IsoItem_c(const IsoItem_c& arc_src)
   : BaseItem_c (arc_src)
 #ifdef USE_WORKING_SET
-  //, pc_masterItem (NULL) // handled in code below!
-  , i8_slavesToClaimAddress (arc_src.i8_slavesToClaimAddress)
-  , i32_timeLastCompletedAnnounceStarted (arc_src.i32_timeLastCompletedAnnounceStarted)
-  , i32_timeCurrentAnnounceStarted (arc_src.i32_timeCurrentAnnounceStarted)
-  , b_repeatAnnounce (arc_src.b_repeatAnnounce)
+  //, mpc_masterItem (NULL) // handled in code below!
+  , mi8_slavesToClaimAddress (arc_src.mi8_slavesToClaimAddress)
+  , mi32_timeLastCompletedAnnounceStarted (arc_src.mi32_timeLastCompletedAnnounceStarted)
+  , mi32_timeCurrentAnnounceStarted (arc_src.mi32_timeCurrentAnnounceStarted)
+  , mb_repeatAnnounce (arc_src.mb_repeatAnnounce)
 #endif
-  , ui8_nr (arc_src.ui8_nr)
-  , b_repeatClaim (arc_src.b_repeatClaim)
-  , c_isoName (arc_src.c_isoName)
+  , mui8_nr (arc_src.mui8_nr)
+  , mb_repeatClaim (arc_src.mb_repeatClaim)
+  , mc_isoName (arc_src.mc_isoName)
 
 {
   // mark this item as prepare address claim if local
   setItemState (IState_c::Member);
 
   #ifdef USE_WORKING_SET
-  // no need of setting "i8_slavesToClaimAddress", as it will be set when setting state to CleaimedAddress!
+  // no need of setting "mi8_slavesToClaimAddress", as it will be set when setting state to CleaimedAddress!
   /// @todo Check if this constructor is really needed and what it should do!
   /// @todo Check if we need to copy the new 3 member variables, too. Also for the below constructors!!!
   // check if the master item pointer of the source item
@@ -148,12 +148,12 @@ IsoItem_c::IsoItem_c(const IsoItem_c& arc_src)
   // not copy the pointer, but set the pointer to itself, as this
   // indicates the Master State
   if ( arc_src.isMaster() )
-  { // set our pc_masterItem also to this, to indicate master state
-    pc_masterItem = this;
+  { // set our mpc_masterItem also to this, to indicate master state
+    mpc_masterItem = this;
   }
   else
   { // just copy the master pointer from source
-    pc_masterItem = arc_src.getMaster ();
+    mpc_masterItem = arc_src.getMaster ();
   }
   #endif
 
@@ -177,12 +177,12 @@ IsoItem_c& IsoItem_c::operator=(const IsoItem_c& arc_src)
 
   setItemState (IState_c::Member);
   #ifdef USE_WORKING_SET
-  // no need of setting "i8_slavesToClaimAddress" here as it will be set when setting state to ClaimedAddress
-  /** @todo What to do with the pc_masterItem? */
-  i8_slavesToClaimAddress = arc_src.i8_slavesToClaimAddress;
-  i32_timeLastCompletedAnnounceStarted = arc_src.i32_timeLastCompletedAnnounceStarted;
-  i32_timeCurrentAnnounceStarted = arc_src.i32_timeCurrentAnnounceStarted;
-  b_repeatAnnounce = arc_src.b_repeatAnnounce;
+  // no need of setting "mi8_slavesToClaimAddress" here as it will be set when setting state to ClaimedAddress
+  /** @todo What to do with the mpc_masterItem? */
+  mi8_slavesToClaimAddress = arc_src.mi8_slavesToClaimAddress;
+  mi32_timeLastCompletedAnnounceStarted = arc_src.mi32_timeLastCompletedAnnounceStarted;
+  mi32_timeCurrentAnnounceStarted = arc_src.mi32_timeCurrentAnnounceStarted;
+  mb_repeatAnnounce = arc_src.mb_repeatAnnounce;
   #endif
   updateTime (/*get current time due to default parameter*/);
   // mark this item as prepare address claim if local
@@ -314,7 +314,7 @@ bool IsoItem_c::timeEvent( void )
         else
         { // success -> start address claim mode
           setItemState(IState_c::AddressClaim);
-          b_repeatClaim = false;
+          mb_repeatClaim = false;
         }
 
         // now nr() has now suitable value
@@ -358,10 +358,10 @@ bool IsoItem_c::timeEvent( void )
         // no conflict since sent of adress claim since 250ms
         setItemState(IState_c::ClaimedAddress);
         // if there has been a REQUEST_PGN:ADDRESS_CLAIMED_PGN while being in the 250ms-AddressClaim-phase, answer it NOW
-        if (b_repeatClaim)
+        if (mb_repeatClaim)
         { // note: this HAS to be done AFTER setting to ClaimedAddress!
           sendSaClaim();
-          b_repeatClaim = false;
+          mb_repeatClaim = false;
         }
         // now inform the ISO monitor list change clients on NEW client use
         getIsoMonitorInstance4Comm().broadcastSaAdd2Clients( isoName(), this );
@@ -373,30 +373,30 @@ bool IsoItem_c::timeEvent( void )
   { // do stuff if completely announced only
     if (isMaster())
     { // We're master, so check if something has to be done..
-      if ( i8_slavesToClaimAddress == 0 )
+      if ( mi8_slavesToClaimAddress == 0 )
       { // 0 means successfully sent out the ws-announce.
         // So Wait. Nothing to be done here...
       }
       else
       { // <0 or >0
         bool b_sendOutWsMessage=true;
-        if ( i8_slavesToClaimAddress < 0 ) // should be -1, but simply catch all <0 for ws-master sending
+        if ( mi8_slavesToClaimAddress < 0 ) // should be -1, but simply catch all <0 for ws-master sending
         { // Announce WS-Master
-          i8_slavesToClaimAddress = getIsoMonitorInstance4Comm().getSlaveCount (this); // slavesToClaimAddress will be 0..numberOfSlaves hopefully
+          mi8_slavesToClaimAddress = getIsoMonitorInstance4Comm().getSlaveCount (this); // slavesToClaimAddress will be 0..numberOfSlaves hopefully
 
           c_pkg.setIsoPgn (WORKING_SET_MASTER_PGN);
-          c_pkg.setUint8Data (0, (i8_slavesToClaimAddress+1));
+          c_pkg.setUint8Data (0, (mi8_slavesToClaimAddress+1));
           c_pkg.setLen8FillUpWithReserved (1);
         }
-        else // it must be > 0 here now, so omit: if (i8_slavesToClaimAddress > 0)
+        else // it must be > 0 here now, so omit: if (mi8_slavesToClaimAddress > 0)
         { // Slave announcing needs 100ms interspace!
           if (!checkTime(100))
             b_sendOutWsMessage = false;
           else
           { // Announce WS-Slave(s)
             c_pkg.setIsoPgn (WORKING_SET_MEMBER_PGN);
-            c_pkg.setDataUnion (getIsoMonitorInstance4Comm().getSlave (getIsoMonitorInstance4Comm().getSlaveCount(this)-i8_slavesToClaimAddress, this)->outputNameUnion());
-            i8_slavesToClaimAddress--; // claimed address for one...
+            c_pkg.setDataUnion (getIsoMonitorInstance4Comm().getSlave (getIsoMonitorInstance4Comm().getSlaveCount(this)-mi8_slavesToClaimAddress, this)->outputNameUnion());
+            mi8_slavesToClaimAddress--; // claimed address for one...
           }
         }
         if (b_sendOutWsMessage)
@@ -407,14 +407,14 @@ bool IsoItem_c::timeEvent( void )
           updateTime();
 
           // did we send the last message of the announce sequence?
-          if (i8_slavesToClaimAddress == 0)
+          if (mi8_slavesToClaimAddress == 0)
           { // yes, announcing finished!
-            i32_timeLastCompletedAnnounceStarted = i32_timeCurrentAnnounceStarted;
-            i32_timeCurrentAnnounceStarted = -1; // no announce running right now.
+            mi32_timeLastCompletedAnnounceStarted = mi32_timeCurrentAnnounceStarted;
+            mi32_timeCurrentAnnounceStarted = -1; // no announce running right now.
             // now see if we have to repeat the sequence because it was requested while it was sent...
-            if (b_repeatAnnounce)
+            if (mb_repeatAnnounce)
             { // repeat the announce-sequence
-              b_repeatAnnounce = false;
+              mb_repeatAnnounce = false;
               (void) startWsAnnounce();
             }
           }
@@ -493,7 +493,7 @@ bool IsoItem_c::processMsg()
 bool IsoItem_c::sendSaClaim()
 {
   // If we're still in AddressClaim, delay the saSending until we're ClaimedAddress
-  if (   itemState(IState_c::AddressClaim) ) { b_repeatClaim = true; return false; }
+  if (   itemState(IState_c::AddressClaim) ) { mb_repeatClaim = true; return false; }
   if ( ! itemState(IState_c::ClaimedAddress) ) return false; ///< send no answer, if not yet ready claimed
   if ( ! itemState(IState_c::Local) ) return false;
   // now this ISOItem should/can send a SA claim
@@ -550,14 +550,14 @@ int32_t IsoItem_c::startWsAnnounce()
 {
   int32_t const ci32_timeNow = HAL::getTime();
 
-  if (i32_timeCurrentAnnounceStarted < 0)
+  if (mi32_timeCurrentAnnounceStarted < 0)
   { // no announce currently running, so start it!
-    i32_timeCurrentAnnounceStarted = ci32_timeNow;
-    i8_slavesToClaimAddress = -1; // start with announcing the master!
+    mi32_timeCurrentAnnounceStarted = ci32_timeNow;
+    mi8_slavesToClaimAddress = -1; // start with announcing the master!
   }
   else
   { // we're right in announcing, so delay a second one till after this one ran through
-    b_repeatAnnounce = true;
+    mb_repeatAnnounce = true;
   }
 
   // return the Announce-Key
@@ -568,7 +568,7 @@ int32_t IsoItem_c::startWsAnnounce()
 /** returns a pointer to the referenced master ISOItem */
 IsoItem_c* IsoItem_c::getMaster() const
 {
-  return pc_masterItem;
+  return mpc_masterItem;
 }
 
 
@@ -578,7 +578,7 @@ IsoItem_c* IsoItem_c::getMaster() const
 void
 IsoItem_c::setMaster (IsoItem_c* apc_masterItem)
 {
-  pc_masterItem = apc_masterItem;
+  mpc_masterItem = apc_masterItem;
 }
 
 
@@ -591,7 +591,7 @@ IsoItem_c::isWsAnnounced (int32_t ai32_timeAnnounceStarted)
   if (ai32_timeAnnounceStarted < 0)
     return false;
   else
-    return (i32_timeLastCompletedAnnounceStarted >= ai32_timeAnnounceStarted);
+    return (mi32_timeLastCompletedAnnounceStarted >= ai32_timeAnnounceStarted);
 }
 #endif
 

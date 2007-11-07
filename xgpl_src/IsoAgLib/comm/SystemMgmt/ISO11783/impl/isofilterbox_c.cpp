@@ -93,13 +93,13 @@ namespace __IsoAgLib {
 /** empty constructor - everything has to be "constructed" with the "init"-function! */
 IsoFilterBox_c::IsoFilterBox_c (SINGLETON_VEC_KEY_PARAMETER_DEF)
 : SINGLETON_PARENT_CONSTRUCTOR
-  ui8_filtersSetUp (0)
+  mui8_filtersSetUp (0)
 {}
 
 IsoFilterBox_c::IsoFilterBox_c(const IsoFilterBox_c& rrefcc_refFB)
 : ClientBase (rrefcc_refFB)
-, slist_managedISOFilter (rrefcc_refFB.slist_managedISOFilter)
-, ui8_filtersSetUp (rrefcc_refFB.ui8_filtersSetUp)
+, mslist_managedISOFilter (rrefcc_refFB.mslist_managedISOFilter)
+, mui8_filtersSetUp (rrefcc_refFB.mui8_filtersSetUp)
 {}
 
 
@@ -111,15 +111,15 @@ IsoFilterBox_c::IsoFilterBox_c(const IsoFilterBox_c& rrefcc_refFB)
 
 // dlcForce == -1: don't check dlc. value of 0..8: force to be exactly this dlc!
 IsoFilter_s::IsoFilter_s (CanCustomer_c& arc_canCustomer, uint32_t aui32_mask, uint32_t aui32_filter, const IsoName_c* apc_isoNameDa, const IsoName_c* apc_isoNameSa, int8_t ai8_dlcForce, Ident_c::identType_t at_identType)
-  : c_identMask (aui32_mask, at_identType)
-  , c_identFilter (aui32_filter, at_identType)
-  , pc_canCustomer (&arc_canCustomer)
-  , i8_dlcForce (ai8_dlcForce)
+  : mc_identMask (aui32_mask, at_identType)
+  , mc_identFilter (aui32_filter, at_identType)
+  , mpc_canCustomer (&arc_canCustomer)
+  , mi8_dlcForce (ai8_dlcForce)
 {
-  if (apc_isoNameDa) c_isoNameDa = *apc_isoNameDa;                  // operator =
-  else /* no name */ c_isoNameDa.setUnspecified();
-  if (apc_isoNameSa) c_isoNameSa = *apc_isoNameSa;                  // operator =
-  else /* no name */ c_isoNameSa.setUnspecified();
+  if (apc_isoNameDa) mc_isoNameDa = *apc_isoNameDa;                  // operator =
+  else /* no name */ mc_isoNameDa.setUnspecified();
+  if (apc_isoNameSa) mc_isoNameSa = *apc_isoNameSa;                  // operator =
+  else /* no name */ mc_isoNameSa.setUnspecified();
 }
 
 IsoFilter_s::~IsoFilter_s() {}
@@ -128,10 +128,10 @@ IsoFilter_s::~IsoFilter_s() {}
 bool
 IsoFilter_s::equalMaskAndFilter (const IsoFilter_s& arc_isoFilter) const
 {
-  return ((c_identMask   == arc_isoFilter.c_identMask)
-       && (c_identFilter == arc_isoFilter.c_identFilter)
-       && (c_isoNameSa   == arc_isoFilter.c_isoNameSa)
-       && (c_isoNameDa   == arc_isoFilter.c_isoNameDa));
+  return ((mc_identMask   == arc_isoFilter.mc_identMask)
+       && (mc_identFilter == arc_isoFilter.mc_identFilter)
+       && (mc_isoNameSa   == arc_isoFilter.mc_isoNameSa)
+       && (mc_isoNameDa   == arc_isoFilter.mc_isoNameDa));
 }
 
 
@@ -139,7 +139,7 @@ IsoFilter_s::equalMaskAndFilter (const IsoFilter_s& arc_isoFilter) const
 bool
 IsoFilterBox_c::addIsoFilter (const IsoFilter_s& rrefcs_isoFilter)
 {
-  slist_managedISOFilter.push_front (rrefcs_isoFilter); // operator = (not overwritten, but mem-copy is okay!)
+  mslist_managedISOFilter.push_front (rrefcs_isoFilter); // operator = (not overwritten, but mem-copy is okay!)
 
   return true; /** @todo Check if filter could be pushed to front.. well, will almost always do.. */
 }
@@ -148,8 +148,8 @@ IsoFilterBox_c::addIsoFilter (const IsoFilter_s& rrefcs_isoFilter)
 IsoFilterBox_c::RemoveAnswer_en
 IsoFilterBox_c::removeIsoFilter (const IsoFilter_s& rrefcs_isoFilter)
 {
-  for (ManagedISOFilter_it it_managedIsoFilter = slist_managedISOFilter.begin();
-       it_managedIsoFilter != slist_managedISOFilter.end();
+  for (ManagedISOFilter_it it_managedIsoFilter = mslist_managedISOFilter.begin();
+       it_managedIsoFilter != mslist_managedISOFilter.end();
        it_managedIsoFilter++)
   {
     if (it_managedIsoFilter->s_isoFilter == rrefcs_isoFilter) // yes, compare all - including canCustomer (but NOT dlcForce!!!)
@@ -157,14 +157,14 @@ IsoFilterBox_c::removeIsoFilter (const IsoFilter_s& rrefcs_isoFilter)
       if (it_managedIsoFilter->pc_filterBox)
       { // filter was created in CanIo_c - remove filter
         /** @todo Optimize with a (to be implemented) "deleteFilter (FilterBox_c*);" function */
-        getCanInstance4Comm().deleteFilter (*it_managedIsoFilter->s_isoFilter.pc_canCustomer,
-                                            it_managedIsoFilter->s_isoFilter.c_identMask.ident(),
-                                            it_managedIsoFilter->s_isoFilter.c_identFilter.ident(),
-                                            it_managedIsoFilter->s_isoFilter.c_identMask.identType());
-        ui8_filtersSetUp--;
+        getCanInstance4Comm().deleteFilter (*it_managedIsoFilter->s_isoFilter.mpc_canCustomer,
+                                            it_managedIsoFilter->s_isoFilter.mc_identMask.ident(),
+                                            it_managedIsoFilter->s_isoFilter.mc_identFilter.ident(),
+                                            it_managedIsoFilter->s_isoFilter.mc_identMask.identType());
+        mui8_filtersSetUp--;
       }
-      it_managedIsoFilter = slist_managedISOFilter.erase (it_managedIsoFilter);
-      if (ui8_filtersSetUp == 0) return RemoveAnswerSuccessBoxEmpty;
+      it_managedIsoFilter = mslist_managedISOFilter.erase (it_managedIsoFilter);
+      if (mui8_filtersSetUp == 0) return RemoveAnswerSuccessBoxEmpty;
       else /* ----------- > 0 */ return RemoveAnswerSuccessBoxNotEmpty;
     }
   }
@@ -176,8 +176,8 @@ IsoFilterBox_c::removeIsoFilter (const IsoFilter_s& rrefcs_isoFilter)
 bool
 IsoFilterBox_c::hasIsoFilterWithCustomer (const IsoFilter_s& rrefcs_isoFilter)
 {
-  for (ManagedISOFilter_it it_managedIsoFilter = slist_managedISOFilter.begin();
-       it_managedIsoFilter != slist_managedISOFilter.end();
+  for (ManagedISOFilter_it it_managedIsoFilter = mslist_managedISOFilter.begin();
+       it_managedIsoFilter != mslist_managedISOFilter.end();
        it_managedIsoFilter++)
   {
     if (it_managedIsoFilter->s_isoFilter == rrefcs_isoFilter) // overloaded operator==.
@@ -190,8 +190,8 @@ IsoFilterBox_c::hasIsoFilterWithCustomer (const IsoFilter_s& rrefcs_isoFilter)
 bool
 IsoFilterBox_c::hasIsoFilterWithoutCustomer (const IsoFilter_s& rrefcs_isoFilter)
 {
-  for (ManagedISOFilter_it it_managedIsoFilter = slist_managedISOFilter.begin();
-       it_managedIsoFilter != slist_managedISOFilter.end();
+  for (ManagedISOFilter_it it_managedIsoFilter = mslist_managedISOFilter.begin();
+       it_managedIsoFilter != mslist_managedISOFilter.end();
        it_managedIsoFilter++)
   {
     if (it_managedIsoFilter->s_isoFilter.equalMaskAndFilter (rrefcs_isoFilter))
@@ -209,29 +209,29 @@ IsoFilterBox_c::hasIsoFilterWithoutCustomer (const IsoFilter_s& rrefcs_isoFilter
 void
 IsoFilterBox_c::updateOnAdd (const IsoName_c* apc_isoName)
 {
-  if (ui8_filtersSetUp == slist_managedISOFilter.size())
+  if (mui8_filtersSetUp == mslist_managedISOFilter.size())
   { // all filters set up, nothing more to do until "updateOnRemove" comes to play..
     return;
   }
 
   bool b_reconfig = false;
   FilterBox_c* pc_firstFilter = NULL;
-  for (ManagedISOFilter_it it_managedIsoFilter = slist_managedISOFilter.begin();
-       it_managedIsoFilter != slist_managedISOFilter.end();
+  for (ManagedISOFilter_it it_managedIsoFilter = mslist_managedISOFilter.begin();
+       it_managedIsoFilter != mslist_managedISOFilter.end();
        it_managedIsoFilter++)
   {
     if (it_managedIsoFilter->pc_filterBox == NULL)
     { // There's no filter for this IsoFilter yet, let's try if we can create it!
-      Ident_c c_mask   = it_managedIsoFilter->s_isoFilter.c_identMask;
-      Ident_c c_filter = it_managedIsoFilter->s_isoFilter.c_identFilter;
+      Ident_c c_mask   = it_managedIsoFilter->s_isoFilter.mc_identMask;
+      Ident_c c_filter = it_managedIsoFilter->s_isoFilter.mc_identFilter;
       bool b_canCreateFilter = true;
 
-      if (it_managedIsoFilter->s_isoFilter.c_isoNameSa.isSpecified())
+      if (it_managedIsoFilter->s_isoFilter.mc_isoNameSa.isSpecified())
       { // see if it's in the monitorlist!
-        if ( (apc_isoName && (*apc_isoName == it_managedIsoFilter->s_isoFilter.c_isoNameSa))
-           || getIsoMonitorInstance4Comm().existIsoMemberISOName (it_managedIsoFilter->s_isoFilter.c_isoNameSa, true)) //true: Member needs to have claimed an address
+        if ( (apc_isoName && (*apc_isoName == it_managedIsoFilter->s_isoFilter.mc_isoNameSa))
+           || getIsoMonitorInstance4Comm().existIsoMemberISOName (it_managedIsoFilter->s_isoFilter.mc_isoNameSa, true)) //true: Member needs to have claimed an address
         { // retrieve current Address
-          const uint8_t cui8_adr = getIsoMonitorInstance4Comm().isoMemberISOName (it_managedIsoFilter->s_isoFilter.c_isoNameSa).nr(); //true: Member needs to have claimed an address
+          const uint8_t cui8_adr = getIsoMonitorInstance4Comm().isoMemberISOName (it_managedIsoFilter->s_isoFilter.mc_isoNameSa).nr(); //true: Member needs to have claimed an address
           c_mask.set   (cui8_adr, 0, Ident_c::ExtendedIdent);
           c_filter.set (0xFF,     0, Ident_c::ExtendedIdent); // open filter for Address-Byte
         }
@@ -241,12 +241,12 @@ IsoFilterBox_c::updateOnAdd (const IsoName_c* apc_isoName)
         }
       }
       /** @todo Yeah, copy & paste does suck... */
-      if (it_managedIsoFilter->s_isoFilter.c_isoNameDa.isSpecified())
+      if (it_managedIsoFilter->s_isoFilter.mc_isoNameDa.isSpecified())
       { // see if it's in the monitorlist!
-        if ( (apc_isoName && (*apc_isoName == it_managedIsoFilter->s_isoFilter.c_isoNameDa))
-           || getIsoMonitorInstance4Comm().existIsoMemberISOName (it_managedIsoFilter->s_isoFilter.c_isoNameDa, true)) //true: Member needs to have claimed an address
+        if ( (apc_isoName && (*apc_isoName == it_managedIsoFilter->s_isoFilter.mc_isoNameDa))
+           || getIsoMonitorInstance4Comm().existIsoMemberISOName (it_managedIsoFilter->s_isoFilter.mc_isoNameDa, true)) //true: Member needs to have claimed an address
         { // retrieve current Address
-          const uint8_t cui8_adr = getIsoMonitorInstance4Comm().isoMemberISOName (it_managedIsoFilter->s_isoFilter.c_isoNameDa).nr(); //true: Member needs to have claimed an address
+          const uint8_t cui8_adr = getIsoMonitorInstance4Comm().isoMemberISOName (it_managedIsoFilter->s_isoFilter.mc_isoNameDa).nr(); //true: Member needs to have claimed an address
           c_mask.set   (cui8_adr, 1, Ident_c::ExtendedIdent);
           c_filter.set (0xFF,     1, Ident_c::ExtendedIdent); // open filter for Address-Byte
         }
@@ -262,7 +262,7 @@ IsoFilterBox_c::updateOnAdd (const IsoName_c* apc_isoName)
         if (pc_firstFilter == NULL)
         { // see if we can connect to one...
           for (ManagedISOFilter_it it_managedIsoFilterSearch = it_managedIsoFilter;
-              it_managedIsoFilterSearch != slist_managedISOFilter.end();
+              it_managedIsoFilterSearch != mslist_managedISOFilter.end();
               it_managedIsoFilterSearch++)
           {
             if (it_managedIsoFilterSearch->pc_filterBox)
@@ -273,10 +273,10 @@ IsoFilterBox_c::updateOnAdd (const IsoName_c* apc_isoName)
           }
         }
         FilterBox_c* const cpc_insertedFilter =
-          getCanInstance4Comm().insertFilter (*it_managedIsoFilter->s_isoFilter.pc_canCustomer,
+          getCanInstance4Comm().insertFilter (*it_managedIsoFilter->s_isoFilter.mpc_canCustomer,
                                               c_mask.ident(), c_filter.ident(),
                                               false, c_filter.identType(), pc_firstFilter);
-        ui8_filtersSetUp++;
+        mui8_filtersSetUp++;
         it_managedIsoFilter->pc_filterBox = cpc_insertedFilter;
         b_reconfig = true;
       }
@@ -301,29 +301,29 @@ IsoFilterBox_c::updateOnAdd (const IsoName_c* apc_isoName)
 void
 IsoFilterBox_c::updateOnRemove (const IsoName_c* apc_isoName)
 {
-  if (ui8_filtersSetUp == 0)
+  if (mui8_filtersSetUp == 0)
   { // no filters set up, nothing more to do until "updateOnAdd" comes to play..
     return;
   }
 
   bool b_reconfig = false;
-  for (ManagedISOFilter_it it_managedIsoFilter = slist_managedISOFilter.begin();
-       it_managedIsoFilter != slist_managedISOFilter.end();
+  for (ManagedISOFilter_it it_managedIsoFilter = mslist_managedISOFilter.begin();
+       it_managedIsoFilter != mslist_managedISOFilter.end();
        it_managedIsoFilter++)
   {
     if (it_managedIsoFilter->pc_filterBox)
     { // let's see what we have merged into this filter
       if ( (apc_isoName == NULL) // if NULL is given as parameter, remove ALL the filters
-        || (it_managedIsoFilter->s_isoFilter.c_isoNameSa == *apc_isoName)
-        || (it_managedIsoFilter->s_isoFilter.c_isoNameDa == *apc_isoName)
+        || (it_managedIsoFilter->s_isoFilter.mc_isoNameSa == *apc_isoName)
+        || (it_managedIsoFilter->s_isoFilter.mc_isoNameDa == *apc_isoName)
          )
       {
         /** @todo Optimize with a (to be implemented) "deleteFilter (FilterBox_c*);" function */
-        getCanInstance4Comm().deleteFilter (*it_managedIsoFilter->s_isoFilter.pc_canCustomer,
-                                            it_managedIsoFilter->s_isoFilter.c_identMask.ident(),
-                                            it_managedIsoFilter->s_isoFilter.c_identFilter.ident(),
-                                            it_managedIsoFilter->s_isoFilter.c_identMask.identType());
-        ui8_filtersSetUp--;
+        getCanInstance4Comm().deleteFilter (*it_managedIsoFilter->s_isoFilter.mpc_canCustomer,
+                                            it_managedIsoFilter->s_isoFilter.mc_identMask.ident(),
+                                            it_managedIsoFilter->s_isoFilter.mc_identFilter.ident(),
+                                            it_managedIsoFilter->s_isoFilter.mc_identMask.identType());
+        mui8_filtersSetUp--;
         it_managedIsoFilter->pc_filterBox = NULL;
       }
     }
@@ -346,41 +346,41 @@ IsoFilterBox_c::syncFiltersToCan(const IsoName_c* apc_isoName)
   bool b_reconfigFilter=false;
 
   /// 1st) Remove all that were created!
-  for (ManagedISOFilter_it it_managedIsoFilter = slist_managedISOFilter.begin();
-       it_managedIsoFilter != slist_managedISOFilter.end();
+  for (ManagedISOFilter_it it_managedIsoFilter = mslist_managedISOFilter.begin();
+       it_managedIsoFilter != mslist_managedISOFilter.end();
        it_managedIsoFilter++)
   {
     if (it_managedIsoFilter->pc_filterBox)
     {
-      getCanInstance4Comm().deleteFilter (*it_managedIsoFilter->s_isoFilter.pc_canCustomer,
-                                          it_managedIsoFilter->s_isoFilter.c_identMask.ident(),
-                                          it_managedIsoFilter->s_isoFilter.c_identFilter.ident(),
-                                          it_managedIsoFilter->s_isoFilter.c_identMask.identType());
+      getCanInstance4Comm().deleteFilter (*it_managedIsoFilter->s_isoFilter.mpc_canCustomer,
+                                          it_managedIsoFilter->s_isoFilter.mc_identMask.ident(),
+                                          it_managedIsoFilter->s_isoFilter.mc_identFilter.ident(),
+                                          it_managedIsoFilter->s_isoFilter.mc_identMask.identType());
       it_managedIsoFilter->pc_filterBox = NULL;
       b_reconfigFilter = true;
     }
   }
-  ui8_filtersSetUp=0;
+  mui8_filtersSetUp=0;
 
   /// 2nd) Insert all filters possible and use the first one as connected filterbox!
   FilterBox_c* pc_firstFilter = NULL;
-  for (ManagedISOFilter_it it_managedIsoFilter = slist_managedISOFilter.begin();
-       it_managedIsoFilter != slist_managedISOFilter.end();
+  for (ManagedISOFilter_it it_managedIsoFilter = mslist_managedISOFilter.begin();
+       it_managedIsoFilter != mslist_managedISOFilter.end();
        it_managedIsoFilter++)
   {
     // should always be, we erased them all above!
     // if (it_managedIsoFilter->pc_filterBox == NULL)
     {
-      Ident_c c_mask   = it_managedIsoFilter->s_isoFilter.c_identMask;
-      Ident_c c_filter = it_managedIsoFilter->s_isoFilter.c_identFilter;
+      Ident_c c_mask   = it_managedIsoFilter->s_isoFilter.mc_identMask;
+      Ident_c c_filter = it_managedIsoFilter->s_isoFilter.mc_identFilter;
       bool b_canCreateFilter = true;
 
-      if (it_managedIsoFilter->s_isoFilter.c_isoNameSa.isSpecified())
+      if (it_managedIsoFilter->s_isoFilter.mc_isoNameSa.isSpecified())
       { // see if it's in the monitorlist!
-        if ( (!(apc_isoName && *apc_isoName == it_managedIsoFilter->s_isoFilter.c_isoNameSa)) && 
-             (getIsoMonitorInstance4Comm().existIsoMemberISOName (it_managedIsoFilter->s_isoFilter.c_isoNameSa, true)) )
+        if ( (!(apc_isoName && *apc_isoName == it_managedIsoFilter->s_isoFilter.mc_isoNameSa)) && 
+             (getIsoMonitorInstance4Comm().existIsoMemberISOName (it_managedIsoFilter->s_isoFilter.mc_isoNameSa, true)) )
         { // retrieve current address
-          const uint8_t cui8_adr = getIsoMonitorInstance4Comm().isoMemberISOName (it_managedIsoFilter->s_isoFilter.c_isoNameSa).nr();
+          const uint8_t cui8_adr = getIsoMonitorInstance4Comm().isoMemberISOName (it_managedIsoFilter->s_isoFilter.mc_isoNameSa).nr();
           c_filter.set (cui8_adr, 0, Ident_c::ExtendedIdent);
           c_mask.set   (0xFF,     0, Ident_c::ExtendedIdent); // open filter for address-byte
         }
@@ -389,12 +389,12 @@ IsoFilterBox_c::syncFiltersToCan(const IsoName_c* apc_isoName)
           b_canCreateFilter = false;
         }
       }
-      if (it_managedIsoFilter->s_isoFilter.c_isoNameDa.isSpecified())
+      if (it_managedIsoFilter->s_isoFilter.mc_isoNameDa.isSpecified())
       { // see if it's in the monitorlist!
-        if ( (!(apc_isoName && *apc_isoName == it_managedIsoFilter->s_isoFilter.c_isoNameDa)) &&
-             (getIsoMonitorInstance4Comm().existIsoMemberISOName (it_managedIsoFilter->s_isoFilter.c_isoNameDa, true)) )
+        if ( (!(apc_isoName && *apc_isoName == it_managedIsoFilter->s_isoFilter.mc_isoNameDa)) &&
+             (getIsoMonitorInstance4Comm().existIsoMemberISOName (it_managedIsoFilter->s_isoFilter.mc_isoNameDa, true)) )
         { // retrieve current address
-          const uint8_t cui8_adr = getIsoMonitorInstance4Comm().isoMemberISOName (it_managedIsoFilter->s_isoFilter.c_isoNameDa).nr();
+          const uint8_t cui8_adr = getIsoMonitorInstance4Comm().isoMemberISOName (it_managedIsoFilter->s_isoFilter.mc_isoNameDa).nr();
           c_filter.set (cui8_adr, 1, Ident_c::ExtendedIdent);
           c_mask.set   (0xFF,     1, Ident_c::ExtendedIdent); // open filter for address-byte
         }
@@ -407,15 +407,15 @@ IsoFilterBox_c::syncFiltersToCan(const IsoName_c* apc_isoName)
       if (b_canCreateFilter)
       {
         FilterBox_c* const cpc_insertedFilter =
-          getCanInstance4Comm().insertFilter (*it_managedIsoFilter->s_isoFilter.pc_canCustomer,
+          getCanInstance4Comm().insertFilter (*it_managedIsoFilter->s_isoFilter.mpc_canCustomer,
                                               c_mask.ident(), c_filter.ident(),
                                               false, c_filter.identType(),
-                                              it_managedIsoFilter->s_isoFilter.i8_dlcForce, pc_firstFilter);
-        ui8_filtersSetUp++;
+                                              it_managedIsoFilter->s_isoFilter.mi8_dlcForce, pc_firstFilter);
+        mui8_filtersSetUp++;
         b_reconfigFilter = true;
         it_managedIsoFilter->pc_filterBox = cpc_insertedFilter;
-        it_managedIsoFilter->s_isoFilter.c_identMask = c_mask;
-        it_managedIsoFilter->s_isoFilter.c_identFilter = c_filter;
+        it_managedIsoFilter->s_isoFilter.mc_identMask = c_mask;
+        it_managedIsoFilter->s_isoFilter.mc_identFilter = c_filter;
       	
         if (pc_firstFilter == NULL) pc_firstFilter = cpc_insertedFilter;
       }
@@ -432,36 +432,36 @@ IsoFilterBox_c::syncFiltersToCan(const IsoName_c* apc_isoName)
 void
 IsoFilterBox_c::updateOnAdd (const IsoName_c& arc_isoName)
 {
-  if (ui8_filtersSetUp == slist_managedISOFilter.size())
+  if (mui8_filtersSetUp == mslist_managedISOFilter.size())
   { // all filters set up, nothing more to do until "updateOnRemove" comes to play..
     return;
   }
 
-  for (ManagedISOFilter_it it_managedIsoFilter = slist_managedISOFilter.begin();
-       it_managedIsoFilter != slist_managedISOFilter.end();
+  for (ManagedISOFilter_it it_managedIsoFilter = mslist_managedISOFilter.begin();
+       it_managedIsoFilter != mslist_managedISOFilter.end();
        it_managedIsoFilter++)
   {
     if (it_managedIsoFilter->pc_filterBox == NULL)
     { // There's no filter for this IsoFilter yet, let's see if we could create it!
       bool b_canCreateFilter = true;
 
-      if (it_managedIsoFilter->s_isoFilter.c_isoNameSa.isSpecified())
+      if (it_managedIsoFilter->s_isoFilter.mc_isoNameSa.isSpecified())
       { // see if it's in the monitorlist!
         if ( !(
-               (it_managedIsoFilter->s_isoFilter.c_isoNameSa == arc_isoName)
+               (it_managedIsoFilter->s_isoFilter.mc_isoNameSa == arc_isoName)
                 ||
-               (getIsoMonitorInstance4Comm().existIsoMemberISOName (it_managedIsoFilter->s_isoFilter.c_isoNameSa, true))
+               (getIsoMonitorInstance4Comm().existIsoMemberISOName (it_managedIsoFilter->s_isoFilter.mc_isoNameSa, true))
               ))
         { // can't create the filter - ISOName not claimed on the bus!
           b_canCreateFilter = false;
         }
       }
-      if (it_managedIsoFilter->s_isoFilter.c_isoNameDa.isSpecified())
+      if (it_managedIsoFilter->s_isoFilter.mc_isoNameDa.isSpecified())
       { // see if it's in the monitorlist!
         if ( !(
-               (it_managedIsoFilter->s_isoFilter.c_isoNameDa == arc_isoName)
+               (it_managedIsoFilter->s_isoFilter.mc_isoNameDa == arc_isoName)
                 ||
-               (getIsoMonitorInstance4Comm().existIsoMemberISOName (it_managedIsoFilter->s_isoFilter.c_isoNameDa, true))
+               (getIsoMonitorInstance4Comm().existIsoMemberISOName (it_managedIsoFilter->s_isoFilter.mc_isoNameDa, true))
               ))
         { // can't create the filter - ISOName not claimed on the bus!
           b_canCreateFilter = false;
@@ -481,20 +481,20 @@ IsoFilterBox_c::updateOnAdd (const IsoName_c& arc_isoName)
 void
 IsoFilterBox_c::updateOnRemove (const IsoName_c& arc_isoName)
 {
-  if (ui8_filtersSetUp == 0)
+  if (mui8_filtersSetUp == 0)
   { // no filters set up, nothing more to do until "updateOnAdd" comes to play..
     return;
   }
 
-  for (ManagedISOFilter_it it_managedIsoFilter = slist_managedISOFilter.begin();
-       it_managedIsoFilter != slist_managedISOFilter.end();
+  for (ManagedISOFilter_it it_managedIsoFilter = mslist_managedISOFilter.begin();
+       it_managedIsoFilter != mslist_managedISOFilter.end();
        it_managedIsoFilter++)
   {
     if (it_managedIsoFilter->pc_filterBox)
     { // let's see what we have merged into this filter
-      if ( (it_managedIsoFilter->s_isoFilter.c_isoNameSa == arc_isoName)
+      if ( (it_managedIsoFilter->s_isoFilter.mc_isoNameSa == arc_isoName)
             ||
-           (it_managedIsoFilter->s_isoFilter.c_isoNameDa == arc_isoName) )
+           (it_managedIsoFilter->s_isoFilter.mc_isoNameDa == arc_isoName) )
       {
         syncFiltersToCan(&arc_isoName);
       }

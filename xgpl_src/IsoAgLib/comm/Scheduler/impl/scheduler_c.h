@@ -150,7 +150,7 @@ public:
       This is different from the individual end time, which has to be regarded by each
       individual task!
     */
-  static int32_t getCentralSchedulerExecEndTime() { return i32_demandedExecEndScheduler;}
+  static int32_t getCentralSchedulerExecEndTime() { return mi32_demandedExecEndScheduler;}
   static int16_t getCentralSchedulerAvailableExecTime();
 
 
@@ -159,7 +159,7 @@ public:
     * refine time schedule within execution
     * @return average execution time in [msec] (off complete performed runs)
     */
-  uint16_t getExecTime( void ) const { return i32_averageExecTime;}
+  uint16_t getExecTime( void ) const { return mi32_averageExecTime;}
 
   /**
     * if a very imprtant IRQ event forces stop of Scheduler_c::timeEvent AS SOON AS POSSIBLE
@@ -168,17 +168,17 @@ public:
     * is WITHIN execution in the main task. This way, the IsoAgLib is leaved by Scheduler_c::timeEvent()
     * in a guaranteed WELL DEFINED and VALID state.
     */
-  static void forceExecStop( void ) {b_execStopForced = true;i32_demandedExecEndScheduler = 0;}
+  static void forceExecStop( void ) {mb_execStopForced = true;mi32_demandedExecEndScheduler = 0;}
 
   /**
     * informative function for all IsoAgLib subsystems which are triggered by Scheduler_c::timeEvent to
     * detect, if another task forced immediated stop of timeEvent
     * @return true -> immediate stop is forced
     */
-  static bool isExecStopForced( void ) { return b_execStopForced;}
+  static bool isExecStopForced( void ) { return mb_execStopForced;}
 
   /** get last timestamp of Scheduler_c::timeEvent trigger */
-  static int32_t getLastTimeEventTrigger( void ) { return i32_lastTimeEventTime;}
+  static int32_t getLastTimeEventTrigger( void ) { return mi32_lastTimeEventTime;}
 
   /** handler function for access to undefined client.
     * the base Singleton calls this function, if it detects an error
@@ -224,7 +224,7 @@ public:
 private: //Private methods
   friend class SINGLETON( Scheduler_c );
   /** constructor for the central IsoAgLib object */
-  Scheduler_c() : b_systemStarted (false) {};
+  Scheduler_c() : mb_systemStarted (false) {};
 
   /**
     initialize directly after the singleton instance is created.
@@ -296,28 +296,28 @@ private: //Private methods
 private: // Private attributes
 
   /** timestamp where last timeEvent was called -> can be used to synchronise distributed timeEvent activities */
-  static int32_t i32_lastTimeEventTime;
+  static int32_t mi32_lastTimeEventTime;
 
   /** commanded timestamp, where Scheduler_c::timeEvent MUST return action to caller */
-  static int32_t i32_demandedExecEndScheduler;
+  static int32_t mi32_demandedExecEndScheduler;
 
   /** average execution time for Scheduler_c::timeEvent */
-  int32_t i32_averageExecTime;
+  int32_t mi32_averageExecTime;
 
   /** execution time of last call of CanIo_c::timeEvent() */
-  int16_t i16_canExecTime;
+  int16_t mi16_canExecTime;
 
   /** was system started already? */
-  bool b_systemStarted;
+  bool mb_systemStarted;
 
   /** flag to detect, if other interrupting task forced immediated stop of Scheduler_c::timeEvent() */
-  static bool b_execStopForced;
+  static bool mb_execStopForced;
 
-  //  Attribute: c_taskQueue
+  //  Attribute: mc_taskQueue
   //!  central priority queue for all tasks
-  STL_NAMESPACE::list<SchedulerEntry_c> c_taskQueue;
+  STL_NAMESPACE::list<SchedulerEntry_c> mc_taskQueue;
   size_t mt_clientCnt;
-  STL_NAMESPACE::list<SchedulerEntry_c> c_spareQueue;
+  STL_NAMESPACE::list<SchedulerEntry_c> mc_spareQueue;
 };
 
 #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )

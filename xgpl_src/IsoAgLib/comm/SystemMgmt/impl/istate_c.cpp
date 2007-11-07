@@ -178,7 +178,7 @@ IState_c::itemState_t IState_c::setItemState(itemState_t ren_itemState, bool ab_
 IStateExt_c::IStateExt_c(itemState_t ren_itemState, int ai_singletonVecKey)  : IState_c(ren_itemState, ai_singletonVecKey)
 {
   counter.b_addressClaimCnt = counter.b_falseAliveCnt = counter.b_causedConflictCnt = counter.b_affectedConflictCnt = 0;
-  i16_lastCausedConflictTime = i16_lastAffectedConflictTime = 0;
+  mi16_lastCausedConflictTime = mi16_lastAffectedConflictTime = 0;
 };
 
 /**
@@ -188,7 +188,7 @@ IStateExt_c::IStateExt_c(itemState_t ren_itemState, int ai_singletonVecKey)  : I
 IStateExt_c::IStateExt_c(uint8_t ab_state, int ai_singletonVecKey) : IState_c(ab_state, ai_singletonVecKey)
 {
   counter.b_addressClaimCnt = counter.b_falseAliveCnt = counter.b_causedConflictCnt = counter.b_affectedConflictCnt = 0;
-  i16_lastCausedConflictTime = i16_lastAffectedConflictTime = 0;
+  mi16_lastCausedConflictTime = mi16_lastAffectedConflictTime = 0;
 }
 
 /**
@@ -201,8 +201,8 @@ IStateExt_c::IStateExt_c(const IStateExt_c& arc_src) : IState_c(arc_src)
   counter.b_falseAliveCnt = arc_src.counter.b_falseAliveCnt;
   counter.b_causedConflictCnt = arc_src.counter.b_causedConflictCnt;
   counter.b_affectedConflictCnt = arc_src.counter.b_affectedConflictCnt;
-  i16_lastCausedConflictTime = arc_src.i16_lastCausedConflictTime;
-  i16_lastAffectedConflictTime = arc_src.i16_lastAffectedConflictTime;
+  mi16_lastCausedConflictTime = arc_src.mi16_lastCausedConflictTime;
+  mi16_lastAffectedConflictTime = arc_src.mi16_lastAffectedConflictTime;
 }
 
 /**
@@ -255,13 +255,13 @@ uint8_t IStateExt_c::causedConflictCnt(int8_t ac_cnt, int32_t ai32_time)
   switch (ac_cnt)
   {
     case Incr: // -2 --> new conflict
-      i16_lastCausedConflictTime = (ai32_time / 1000);
+      mi16_lastCausedConflictTime = (ai32_time / 1000);
       if (counter.b_causedConflictCnt < 0xF) counter.b_causedConflictCnt++;
       break;
     case Decr: // -3 --> timeEvent without conflict -> test if cnt can be reduced
        if (counter.b_causedConflictCnt > 0)
        {
-        if ( (ai32_time / 1000) != i16_lastCausedConflictTime)
+        if ( (ai32_time / 1000) != mi16_lastCausedConflictTime)
         { // last conflict over 1 sec. away
           counter.b_causedConflictCnt--;
         }
@@ -289,13 +289,13 @@ uint8_t IStateExt_c::affectedConflictCnt(int8_t ac_cnt, int32_t ai32_time)
   switch (ac_cnt)
   {
     case Incr: // -2 --> new conflict
-      i16_lastAffectedConflictTime = (ai32_time / 1000);
+      mi16_lastAffectedConflictTime = (ai32_time / 1000);
       if (counter.b_affectedConflictCnt < 0xF) counter.b_affectedConflictCnt++;
       break;
     case Decr: // -3 --> timeEvent without conflict -> test if cnt can be reduced
        if (counter.b_affectedConflictCnt > 0)
        {
-        if ( (ai32_time / 1000) != i16_lastAffectedConflictTime)
+        if ( (ai32_time / 1000) != mi16_lastAffectedConflictTime)
         { // last conflict over 1 sec. away
           counter.b_affectedConflictCnt--;
         }
