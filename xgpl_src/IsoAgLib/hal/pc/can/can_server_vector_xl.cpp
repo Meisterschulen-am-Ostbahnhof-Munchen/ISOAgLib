@@ -182,17 +182,18 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
 {
   DEBUG_PRINT1("init can bus %d\n", ui8_bus);
 
+  XLstatus xlStatus;
+
   if( !canBusIsOpen[ui8_bus] ) {
     DEBUG_PRINT1("Opening CAN BUS channel=%d\n", ui8_bus);
 
     int32_t i32_busInd = -1, i32_virtualBusInd = -1;
-    XLstatus xlStatus;
     XLaccess virtualChannelMask = 0;
 
     // select the wanted channels
     g_xlChannelMask[ui8_bus] = g_xlInitMask[ui8_bus] = 0;
     i32_busInd = -1;
-    for (int32_t i=0; i<g_xlDrvConfig.channelCount; i++)
+    for (uint32_t i=0; i<g_xlDrvConfig.channelCount; i++)
     {
       if ( ( g_xlDrvConfig.channel[i].hwType==gHwType                                           )
         || ( ( gHwType == XL_HWTYPE_AUTO ) && ( g_xlDrvConfig.channel[i].hwType > XL_HWTYPE_VIRTUAL ) ) )
@@ -265,8 +266,11 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
     canBusIsOpen[ui8_bus] = true;
 
     return true;
+  }
+  else
+    return true; // already initialized and files are already open
 
-    error:
+  error:
       printf("ERROR: %s!\n", xlGetErrorString(xlStatus));
 
       if (g_xlPortHandle[ui8_bus] != XL_INVALID_PORTHANDLE) {
@@ -306,7 +310,7 @@ int16_t sendToBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
 
   xlEvent.tagData.msg.dlc     = ps_canMsg->i32_len;
   xlEvent.tagData.msg.flags   = 0;
-  memmcpy(xlEvent.tagData.msg.data, ps_canMsg->ui8_data, ps_canMsg->i32_len);
+  memcpy(xlEvent.tagData.msg.data, ps_canMsg->ui8_data, ps_canMsg->i32_len);
 
   xlStatus = xlCanTransmit(g_xlPortHandle[ui8_bus], g_xlChannelMask[ui8_bus], &messageCount, &xlEvent);
 
@@ -331,13 +335,13 @@ uint32_t readFromBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverDa
   // ACK for SENT messages is also returned!!!
   if( ( gpEvent->tag != XL_RECEIVE_MSG ) || ( gpEvent->tagData.msg.flags != 0 ) )
   { // don't further process this message as it is NO received message
-    return 0
+    return 0;
   }
 
   ps_canMsg->ui32_id = (gpEvent->tagData.msg.id & 0x1FFFFFFF);
   if (ps_canMsg->ui32_id >= 0x7FFFFFFF)
   {
-    printf("!!Received of malformed message with undefined CAN ident: %x\n", ui32_id);
+    printf("!!Received of malformed message with undefined CAN ident: %x\n", ps_canMsg->ui32_id);
     return 0;
   }
 

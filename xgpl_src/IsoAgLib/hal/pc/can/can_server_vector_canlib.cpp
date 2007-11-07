@@ -175,11 +175,12 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
 {
   DEBUG_PRINT1("init can bus %d\n", ui8_bus);
 
+  Vstatus vErr;
+
   if( !canBusIsOpen[ui8_bus] ) {
     DEBUG_PRINT1("Opening CAN BUS channel=%d\n", ui8_bus);
 
     int32_t i32_busInd = -1, i32_virtualBusInd = -1;
-    Vstatus vErr;
     Vaccess virtualChannelMask = 0;
 
     // select the wanted channels
@@ -333,7 +334,7 @@ uint32_t readFromBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverDa
   ps_canMsg->ui32_id = (gpEvent->tagData.msg.id & 0x1FFFFFFF);
   if (ps_canMsg->ui32_id >= 0x7FFFFFFF)
   {
-    printf("!!Received of malformed message with undefined CAN ident: %x\n", ui32_id);
+    printf("!!Received of malformed message with undefined CAN ident: %x\n", ps_canMsg->ui32_id);
     return 0;
   }
 
