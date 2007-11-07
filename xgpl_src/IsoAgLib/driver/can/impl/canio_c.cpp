@@ -1189,6 +1189,13 @@ uint32_t ui32_msgNbr;
     HAL::can_useMsgobjPopFront(ui8_busNumber, ui32_msgNbr);
     #endif
 
+    if((i32_retVal == HAL_RANGE_ERR) || (i32_retVal == HAL_CONFIG_ERR) || (i32_retVal == HAL_NOACT_ERR))
+    {
+      b_runningCanProcess = false;
+      return ui8_processedMsgCnt;
+    }
+
+
     if (( Scheduler_c::getCentralSchedulerAvailableExecTime() == 0 ) && (!b_forceProcessAll))
     { // switch the flag back, so that further processings are enabled
       b_runningCanProcess = false;
