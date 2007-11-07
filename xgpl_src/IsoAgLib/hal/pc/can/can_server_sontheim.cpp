@@ -1,8 +1,7 @@
 /***************************************************************************
-                          target_extension_can_w32_sontheim_canlpt.cpp - source for the PSEUDO BIOS for
-                                       development and test on a Win32 PC
-                                       with CAN communication through Vector-Informatik
-                                       CANcardX
+              can_server_pcan.cpp -
+                    interface for SONTHEIM can card
+
                              -------------------
     begin                : Tue Oct 2 2001
     copyright            : (C) 1999 - 2004 Dipl.-Inform. Achim Spangler
@@ -53,7 +52,6 @@
  * the main author Achim Spangler by a.spangler@osb-ag:de                  *
  ***************************************************************************/
 #if !defined(WIN32)
-typedef int HANDLE;
 typedef int HINSTANCE;
 #endif
 
@@ -95,7 +93,6 @@ using namespace __HAL;
 
 /////////////////////////////////////////////////////////////////////////
 // Globals
-HANDLE       gEventHandle    = 0;
 HINSTANCE hCAPIDLL;
 
 
@@ -512,8 +509,8 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
     }
     else
     {
-        printf ("can't initialize CAN");
-        return HAL_CONFIG_ERR;
+      printf ("can't initialize CAN");
+      return false;
     }
 
     canBusIsOpen[ui8_bus] = true;

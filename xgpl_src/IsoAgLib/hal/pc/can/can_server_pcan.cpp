@@ -1,10 +1,6 @@
 /***************************************************************************
-              target_extension_can_server_A1_binary.cpp -
-                    can server communicates with clients through message queues
-                    read/write operation for /dev/wecan<bus_no>
-                    message forwarding to other clients
-                    #define SIMULATE_BUS_MODE for operation without can device (operation based on message forwarding)
-                    use "can_server_a1 --help" for input parameters (log, replay mode)
+              can_server_pcan.cpp -
+                    interface for PEAK can card
 
                              -------------------
     begin                : Tue Oct 2 2001
