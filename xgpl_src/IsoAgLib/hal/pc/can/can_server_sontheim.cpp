@@ -355,7 +355,7 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
     DEBUG_PRINT1("Opening CAN BUS channel=%d\n", ui8_bus);
 
     if( !DLL_loaded )
-      return HAL_CONFIG_ERR;
+      return false;
 
     int fdata[16];
     int channel = 0;
@@ -368,7 +368,7 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
       if ( ui8_bus > 0 )
       {
         printf( "ERROR - the selected CAN card has only ONE channel, so that Bus-Nr: %hd is not defined\r\n", ui8_bus );
-        return HAL_CONFIG_ERR;
+        return false;
       }
     }
     else
@@ -488,7 +488,7 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
       else
       {
         printf ("can't initialize CANLPT");
-        return HAL_CONFIG_ERR;
+        return false;
       }
       errcode = ca_InitCanCard_1(
                 channel,  // 0 for CANLPT/ICAN, else 1 for first BUS
@@ -514,6 +514,7 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
     }
 
     canBusIsOpen[ui8_bus] = true;
+	return true;
   }
   else
     return true; // already initialized and files are already open
