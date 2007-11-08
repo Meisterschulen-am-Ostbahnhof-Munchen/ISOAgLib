@@ -91,7 +91,7 @@ uint32_t initCardApi ()
     canBusIsOpen[i] = false;
   }
 
-  return true;
+  return 1;
 }
 
 bool resetCard(void)

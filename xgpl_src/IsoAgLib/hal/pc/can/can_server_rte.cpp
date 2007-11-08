@@ -137,7 +137,7 @@ uint32_t initCardApi ()
     rteCan_c [i] = new can_c ();
   }
 
-  return true;
+  return 1;
 }
 
 bool resetCard(void)

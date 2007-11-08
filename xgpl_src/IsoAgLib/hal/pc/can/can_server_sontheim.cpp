@@ -229,7 +229,7 @@ uint32_t initCardApi ()
 //  gHwType = c_CANLpt; //noch zu machen: HWTYPE_AUTO;
 
   printf("load driver Dll\n");
-  if ( loadDllFunctionAddresses() != HAL_NO_ERR) return HAL_CONFIG_ERR;
+  if ( loadDllFunctionAddresses() != HAL_NO_ERR) return 0;
   printf("driver DLL loaded\n");
 
   if ( HWTYPE_AUTO == gHwType )
@@ -273,7 +273,7 @@ uint32_t initCardApi ()
     if ( apiversion == 0 )
     { // failure - nothing found
       printf( "FAILURE - No CAN card was found with automatic search with IO address %04X for manually configured cards\r\n", LptIsaIoAdr );
-      return HAL_CONFIG_ERR;
+      return 0;
     }
   }
   else
@@ -289,7 +289,7 @@ uint32_t initCardApi ()
     if ( apiversion == 0 )
     { // failure - nothing found
       printf( "FAILURE - No CAN card was found with automatic search with IO address %04X for manually configured cards\r\n", LptIsaIoAdr );
-      return HAL_CONFIG_ERR;
+      return 0;
     }
   }
   printf("InitApi done\n");
@@ -338,7 +338,7 @@ uint32_t initCardApi ()
   Sleep(100);
 #endif
 
-  return true;
+  return 1;
 }
 
 bool resetCard(void)

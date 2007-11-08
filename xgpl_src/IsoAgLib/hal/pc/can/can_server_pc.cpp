@@ -72,7 +72,7 @@ uint32_t initCardApi ()
     canBusIsOpen[i] = false;
   }
 
-  return true;
+  return 1;
 }
 
 bool resetCard(void)
@@ -81,7 +81,7 @@ bool resetCard(void)
 }
 
 
-bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
+bool openBusOnCard(uint8_t ui8_bus, uint32_t /* wBitrate */, server_c* /* pc_serverData */)
 {
   DEBUG_PRINT1("init can bus %d\n", ui8_bus);
 
@@ -89,7 +89,7 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
   return true;
 }
 
-void closeBusOnCard(uint8_t ui8_bus, server_c* pc_serverData)
+void closeBusOnCard(uint8_t ui8_bus, server_c* /* pc_serverData */)
 {
   DEBUG_PRINT1("close can bus %d\n", ui8_bus);
   //canBusIsOpen[ui8_bus] = false;
@@ -103,12 +103,12 @@ void __HAL::updatePendingMsgs(server_c* /* pc_serverData */, int8_t /* i8_bus */
 }
 
 // PURPOSE: To send a msg on the specified CAN BUS
-int16_t sendToBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
+int16_t sendToBus(uint8_t /* ui8_bus */, canMsg_s* /* ps_canMsg */, server_c* /* pc_serverData */)
 {
   return 1; // success
 }
 
-uint32_t readFromBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
+uint32_t readFromBus(uint8_t /* ui8_bus */, canMsg_s* /* ps_canMsg */, server_c* /* pc_serverData */)
 {
   return 0;
 }

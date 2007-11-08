@@ -121,9 +121,6 @@ using namespace __HAL;
 // CAN Globals
 static int apiversion;
 
-// IO address for LPT and ISA ( PCI and PCMCIA use automatic adr )
-const int32_t LptIsaIoAdr = 0x378;
-
 #define USE_CAN_CARD_TYPE c_CANA1BINARY
 
 server_c::server_c()
@@ -1343,17 +1340,15 @@ int main(int argc, char *argv[])
 
   apiversion = initCardApi();
   if ( apiversion == 0 ) { // failure - nothing found
-    DEBUG_PRINT1("FAILURE - No CAN card was found with automatic search with IO address %04X for manually configured cards\r\n", LptIsaIoAdr );
+    DEBUG_PRINT("FAILURE - No CAN card was found with automatic search\n");
     exit(1);
   }
 
 
   // do the reset
   int i = resetCard();
-  if (i) {
-    DEBUG_PRINT("Reset CANLPT ok\n");
-  } else   {
-    DEBUG_PRINT("Reset CANLPT not ok\n");
+  if (!i) {
+    DEBUG_PRINT("Reset not ok\n");
     exit(1);
   }
 

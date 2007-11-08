@@ -159,16 +159,16 @@ uint32_t initCardApi ()
 
   printf("xlDriverConfig()\n");
   xlStatus = xlGetDriverConfig(&g_xlDrvConfig);
-  if (xlStatus) return false;
+  if (xlStatus) return 0;
 
   printf(" %u channels found\n",g_xlDrvConfig.channelCount);
   printDriverConfig();
 
-  return true;
+  return 1;
 
   error:
     printf("ERROR: %s!\n", xlGetErrorString(xlStatus));
-    return false;
+    return 0;
 }
 
 bool resetCard(void)

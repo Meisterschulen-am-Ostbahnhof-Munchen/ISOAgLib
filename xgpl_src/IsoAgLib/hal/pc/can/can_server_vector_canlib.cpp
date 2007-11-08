@@ -149,18 +149,18 @@ uint32_t initCardApi ()
 
   printf(" %u channels found\n",AllCanChannelCount);
   gDriverConfig = (VDriverConfig*)malloc(AllCanChannelCount*sizeof(VDriverConfig));
-  if (!gDriverConfig) return false;
+  if (!gDriverConfig) return 0;
 
   vErr = ncdGetDriverConfig(&AllCanChannelCount, gDriverConfig); // get information about all channels
   if (vErr) goto error;
 
   printDriverConfig();
 
-  return true;
+  return 1;
 
   error:
     printf("ERROR: %s!\n", ncdGetErrorString(vErr));
-    return false;
+    return 0;
 
 }
 
