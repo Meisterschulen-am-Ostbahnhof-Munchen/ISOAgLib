@@ -1946,10 +1946,6 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
     }
 
     bool objHasArrayObject = false;
-    if (pc_specialParsingPropTag && (objType >= maxObjectTypes))
-    {
-      objHasArrayObject = pc_specialParsingPropTag->objHasArrayObject (objType);
-    }
     switch (objType)
     {
       case otSoftkeymask:
