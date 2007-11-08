@@ -1821,7 +1821,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
     if ( objType < maxObjectTypes && ( ( (uint64_t(1)<<objType) & ombType) == 0 ) )
     {
       // ERROR: Unallowed <TAG> here?!
-      std::cout << "\n\nENCOUNTERED WRONG TAG AT THIS POSITION!\nENCOUNTERED: <" << node_name << "> '" << getAttributeValue (n, "name") << "'objType: "
+      std::cout << "\n\nENCOUNTERED WRONG TAG AT THIS POSITION!\nENCOUNTERED: <" << node_name << "> '" << getAttributeValue (n, "name") << " 'objType: "
                 << objType << " ombType: " << ombType << "\nPOSSIBLE TAGS HERE WOULD BE: ";
       for (int j=0; j<maxObjectTypesToCompare; j++) {
         if ((uint64_t(1)<<j) & ombType) {
@@ -1928,6 +1928,10 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
     // we got objName, objID, objType here now! - print out standard definitions in A, B and C right after the array definition lines
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     bool objHasArrayEventMacro = false;
+    if (pc_specialParsingPropTag && (objType >= maxObjectTypes))
+    {
+      objHasArrayEventMacro = pc_specialParsingPropTag->objHasArrayEventMacro (objType);
+    }
     switch (objType)
     {
       case otWorkingset:     case otDatamask:       case otAlarmmask:       case otContainer:  case otSoftkeymask:  case otKey:  case otButton:
@@ -1942,6 +1946,10 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
     }
 
     bool objHasArrayObject = false;
+    if (pc_specialParsingPropTag && (objType >= maxObjectTypes))
+    {
+      objHasArrayObject = pc_specialParsingPropTag->objHasArrayObject (objType);
+    }
     switch (objType)
     {
       case otSoftkeymask:
@@ -1952,6 +1960,10 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
     }
 
     bool objHasArrayObjectXY = false;
+    if (pc_specialParsingPropTag && (objType >= maxObjectTypes))
+    {
+      objHasArrayObjectXY = pc_specialParsingPropTag->objHasArrayObjectXY (objType);
+    }
     switch (objType)
     {
       case otKey:
@@ -4374,7 +4386,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
   if (objType == otContainer) omcType = ombType; // Object May Contain what the Object Is - Simple rule. more simple than the graphic in the spec. ;)
   else if ( pc_specialParsingPropTag && (objType >= maxObjectTypes) )
   {
-    omcType = *pc_specialParsingPropTag->setOmcType(&omcType, &ombType);
+    pc_specialParsingPropTag->setOmcType(omcType, &ombType, objType);
   }
 
   for (child = n->getFirstChild(); child != 0; child=child->getNextSibling())
