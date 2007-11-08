@@ -1002,7 +1002,7 @@ uint32_t ui32_msgNbr;
       System_c::triggerWd();
 
     #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
-      // read the FbIdx and the rcvTime (used for the reconfigure)
+      // read the FbIdx and the i32_lastProcessedCanPkgTime (used for the reconfigure)
       i32_retVal = HAL::iFifoReadFbIdx(ui8_busNumber, i32_fbIdx, i32_lastProcessedCanPkgTime, i32_ident,identType);
 
     #else
@@ -1088,7 +1088,7 @@ uint32_t ui32_msgNbr;
 
 #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
   #ifdef DEBUG
-        if(i32_rcvTime < mi32_endLastReconfigTime )
+        if(i32_lastProcessedCanPkgTime < mi32_endLastReconfigTime )
         {
           INTERNAL_DEBUG_DEVICE << " During reconfiguration, received msg : "
                   #ifdef SYSTEM_PC
@@ -1098,7 +1098,7 @@ uint32_t ui32_msgNbr;
         }
   #endif
 
-        if(i32_rcvTime > mi32_endLastReconfigTime ) // the message has not arrived before the last reconfiguration,check on all the FB
+        if(i32_lastProcessedCanPkgTime > mi32_endLastReconfigTime ) // the message has not arrived before the last reconfiguration,check on all the FB
         {
 #endif
           if(i32_fbIdx >= 0 && i32_fbIdx < arrFilterBox.size())
