@@ -10,4 +10,12 @@ src/vt2isoimagepaintlib_c.cpp
 src/vt2isoimagepaintlib_c.h
 doc/ISO-VirtualTerminal-Objects.txt
 src/specialparsingbase_c.h
-src/specialparsingbase_c.cpp
+Makefile
+src
+src/FreeImage.h
+src/specialparsingbaseproptag_c.h
+src/vt2iso-defines.cpp
+src/vt2iso-globals.cpp
+src/vt2iso-globals.hpp
+src/vt2isostr2bin.cpp
+src/vt2isostr2bin.h

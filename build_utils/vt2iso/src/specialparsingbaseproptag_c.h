@@ -106,6 +106,12 @@ class SpecialParsingBasePropTag_c
   /// returns if the current parsing module contains proprietary object types which can be handled like basic object types
   virtual bool checkForProprietaryOrBasicObjTypes() = 0;
 
+  virtual void setOmcType (uint64_t& apui64_omcType, const uint64_t* apui64_ombType, uint16_t aui16_objType)=0;
+
+  virtual bool objHasArrayEventMacro (uint16_t objType) const =0;
+
+  virtual bool objHasArrayObjectXY (uint16_t objType) const =0;
+
   virtual ~SpecialParsingBasePropTag_c() {}
 
   SpecialParsingBasePropTag_c(): ui8_objType(0xFF) {}
