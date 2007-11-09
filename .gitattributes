@@ -2618,6 +2618,8 @@ xgpl_src/IsoAgLib/hal/generic_utils/can/canfifo_c.h -text
 xgpl_src/IsoAgLib/hal/generic_utils/can/icanfifo.h -text
 xgpl_src/IsoAgLib/hal/generic_utils/can/writeCentralFifo.cpp -text
 xgpl_src/IsoAgLib/hal/generic_utils/can/writeCentralFifo.h -text
+xgpl_src/IsoAgLib/hal/generic_utils/system/mutex_emulated.h -text
+xgpl_src/IsoAgLib/hal/generic_utils/system/mutex_pthread.h -text
 xgpl_src/IsoAgLib/hal/mitron167/can/hal_can_interface.h -text
 xgpl_src/IsoAgLib/hal/mitron167/errcodes.h -text
 xgpl_src/IsoAgLib/hal/mitron167/system/time_clock.c -text
