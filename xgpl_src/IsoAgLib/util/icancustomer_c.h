@@ -92,6 +92,7 @@ private:
 
   friend class iCanIo_c;
   friend class iIsoFilter_s;
+  friend class iMultiReceive_c;
   friend class __IsoAgLib::ProprietaryMessageHandler_c;
 };
 

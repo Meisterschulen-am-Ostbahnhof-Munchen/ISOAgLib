@@ -82,22 +82,21 @@ public:
     { MultiReceive_c::close(); }
 
   //  Operation: (de)registerClient
-  /** @todo switch here to iCanCustomer_c? do we need an interface for multireceive anyway? */
-  void registerClient   (__IsoAgLib::CanCustomer_c& arc_client, const iIsoName_c& arc_isoName,
+  void registerClient   (IsoAgLib::iCanCustomer_c& arc_client, const iIsoName_c& arc_isoName,
                          uint32_t aui32_pgn, uint32_t aui32_pgnMask=0x3FFFF,
-                         bool b_alsoBroadcast=false, bool ab_alsoGlobalErrors=false
+                         bool ab_alsoBroadcast=false, bool ab_alsoGlobalErrors=false
                          #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
                          , bool ab_isFastPacket=false
                          #endif
                          )
-    { MultiReceive_c::registerClient (arc_client, arc_isoName, aui32_pgn, aui32_pgnMask, b_alsoBroadcast, ab_alsoGlobalErrors
+    { MultiReceive_c::registerClient (arc_client, arc_isoName, aui32_pgn, aui32_pgnMask, ab_alsoBroadcast, ab_alsoGlobalErrors
                          #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
                          , ab_isFastPacket
                          #endif
                          ); }
 
-  void deregisterClient (__IsoAgLib::CanCustomer_c* apc_client)
-    { MultiReceive_c::deregisterClient (*apc_client); }
+  void deregisterClient (IsoAgLib::iCanCustomer_c* apc_client)
+    { MultiReceive_c::deregisterClient (*static_cast<__IsoAgLib::CanCustomer_c*>(apc_client)); }
 
   /// Use to remove a "kept"-stream after it is gotten by "getFinishedJustKeptStream" and processed.
   void removeKeptStream (IsoAgLib::iStream_c* apc_keptStream)
