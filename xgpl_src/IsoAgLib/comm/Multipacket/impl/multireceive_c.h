@@ -139,7 +139,7 @@ class MultiReceiveClientWrapper_s : public ClientBase {
                                uint32_t aui32_pgnMask,
                                bool ab_alsoBroadcast,
                                bool ab_alsoGlobalErrors
-                              #ifdef NMEA_2000_FAST_PACKET
+                              #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
                               ,bool ab_isFastPacket
                               #endif
                               SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA
@@ -152,7 +152,7 @@ class MultiReceiveClientWrapper_s : public ClientBase {
   uint8_t mui8_cachedClientAddress; // kinda "cached" (normally clients register for receiving multi-packages to their own SA)
   bool mb_alsoBroadcast;
   bool mb_alsoGlobalErrors;
-#ifdef NMEA_2000_FAST_PACKET
+#ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
   bool mb_isFastPacket;
 #endif
 };
@@ -179,7 +179,7 @@ public:
   void registerClient   (CanCustomer_c& arc_client, const IsoName_c& arc_isoName,
                          uint32_t aui32_pgn, uint32_t aui32_pgnMask=0x3FFFF,
                          bool mb_alsoBroadcast=false, bool ab_alsoGlobalErrors=false
-                         #ifdef NMEA_2000_FAST_PACKET
+                         #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
                          , bool ab_isFastPacket=false
                          #endif
                          );
@@ -196,7 +196,7 @@ public:
   //! Parameter:
   //! @param ac_streamIdent:
   Stream_c* getStream(IsoAgLib::ReceiveStreamIdentifier_c ac_streamIdent
-  #ifdef NMEA_2000_FAST_PACKET
+  #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
   , bool ab_fastPacket=false
   #endif
   );
@@ -278,7 +278,7 @@ private:
   //! @param ac_streamIdent:
   //! @return NULL for "doesn't exist", otherwise valid "Stream_c*"
   Stream_c* getStream(uint8_t sa, uint8_t da
-  #ifdef NMEA_2000_FAST_PACKET
+  #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
   , bool ab_fastPacket
   #endif
   );

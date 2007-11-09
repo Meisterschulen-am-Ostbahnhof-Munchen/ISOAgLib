@@ -236,5 +236,10 @@ namespace HAL
 
 /*@}*/
 
-}
+} //end HAL
+
+#ifdef USE_MUTUAL_EXCLUSION
+#include <IsoAgLib/hal/generic_utils/system/mutex_pthread.h>
+#endif
+
 #endif

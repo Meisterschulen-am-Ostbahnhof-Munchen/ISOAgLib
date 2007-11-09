@@ -156,7 +156,7 @@ const StreamChunk_c& StreamChunk_c::operator=( const StreamChunk_c& arc_src )
 }
 
 
-#ifdef NMEA_2000_FAST_PACKET
+#ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
 //! use this function only for the first 6 bytes. this exception is for fast-packet protocol's FirstFrame
 //! *** ATTENTION *** THIS FUNCTION ASSUMES TO BE CALLED ON A FRESH STREAM, SO NO OVERFLOW CHECKS ARE DONE!
 void

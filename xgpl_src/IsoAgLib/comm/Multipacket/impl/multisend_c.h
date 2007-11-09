@@ -256,7 +256,7 @@ public:
     IsoName_c mc_isoNameReceiver;
     IsoName_c mc_isoNameSender;
 
-    #if defined (NMEA_2000_FAST_PACKET)
+    #if defined (ENABLE_MULTIPACKET_VARIANT_FAST_PACKET)
     uint8_t mui8_FpSequenceCounter;
     #endif
 
@@ -373,7 +373,7 @@ public: // methods
   bool sendIsoBroadcast(const IsoName_c& arc_isoNameSender, IsoAgLib::iMultiSendStreamer_c* apc_mss, int32_t ai32_pgn, sendSuccess_t& rrefen_sendSuccessNotify)
     { return sendIntern(arc_isoNameSender, IsoName_c::IsoNameUnspecified(), NULL, apc_mss->getStreamSize(), rrefen_sendSuccessNotify, ai32_pgn, apc_mss, IsoTPbroadcast);}
 
-  #if defined(NMEA_2000_FAST_PACKET)
+  #if defined(ENABLE_MULTIPACKET_VARIANT_FAST_PACKET)
   bool sendIsoFastPacket (const IsoName_c& arc_isoNameSender, const IsoName_c& arc_isoNameReceiver, HUGE_MEM uint8_t* rhpb_data, uint16_t aui16_dataSize, int32_t ai32_pgn, sendSuccess_t& rrefen_sendSuccessNotify)
     { return sendIntern (arc_isoNameSender, arc_isoNameReceiver, rhpb_data, aui16_dataSize, rrefen_sendSuccessNotify, ai32_pgn, NULL, NmeaFastPacket); }
 
@@ -486,14 +486,14 @@ private: // Private methods
   */
   bool sendIntern (const IsoName_c& arc_isoNameSender, const IsoName_c& arc_isoNameReceiver, const HUGE_MEM uint8_t* rhpb_data, int32_t ai32_dataSize, sendSuccess_t& rpen_sendSuccessNotify, int32_t ai32_pgn, IsoAgLib::iMultiSendStreamer_c* apc_mss, msgType_t ren_msgType);
 
-  #if defined(NMEA_2000_FAST_PACKET)
+  #if defined(ENABLE_MULTIPACKET_VARIANT_FAST_PACKET)
   uint8_t allocFpSequenceCounter() { const uint8_t cui8_returnVal = mui8_nextFpSequenceCounter;
                                      mui8_nextFpSequenceCounter = (mui8_nextFpSequenceCounter+1) & 0x7;
                                      return cui8_returnVal; }
   #endif
 
 private: // Private attributes
-  #if defined(NMEA_2000_FAST_PACKET)
+  #if defined(ENABLE_MULTIPACKET_VARIANT_FAST_PACKET)
   uint8_t mui8_nextFpSequenceCounter;
   #endif
 

@@ -127,7 +127,7 @@ Stream_c::Stream_c (StreamType_t at_streamType, const IsoAgLib::ReceiveStreamIde
   , mt_streamType (at_streamType)
  // mui8_pkgRemainingInBurst     // will be set in "expectBurst(wishingPkgs)", don't care here as mt_awaitStep == awaitCtsSend!!
 {
-  #ifdef NMEA_2000_FAST_PACKET
+  #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
   if (at_streamType == StreamFastPacket)
   { // other calculation for FastPacket, as the first package only has 6 netto data bytes AND first package begins with frame count 0
     mui32_pkgNextToWrite = 0;
@@ -204,7 +204,7 @@ Stream_c::readyToSendCts()
 uint8_t
 Stream_c::expectBurst(uint8_t wishingPkgs)
 {
-  #ifdef NMEA_2000_FAST_PACKET
+  #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
   if (mt_streamType == StreamFastPacket)
   {
     awaitNextStep (AwaitData, msci32_timeOutFP);
@@ -249,7 +249,7 @@ Stream_c::handleDataPacket (const Flexible8ByteString_c* apu_data)
     case StreamEpgnEcmd:   if ((apu_data->getUint8Data( 0 ) + mui32_dataPageOffset) != mui32_pkgNextToWrite) b_pkgNumberWrong=true; break;
     case StreamSpgnScmd:
     case StreamEpgnScmd:   if ((apu_data->getUint8Data( 0 ) /* no DPO for TP!! */) != mui32_pkgNextToWrite) b_pkgNumberWrong=true; break;
-    #ifdef NMEA_2000_FAST_PACKET
+    #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
     case StreamFastPacket: if ((apu_data->getUint8Data( 0 ) & (0x1FU)) != mui32_pkgNextToWrite) b_pkgNumberWrong=true; break;
     #endif
   }
@@ -261,7 +261,7 @@ Stream_c::handleDataPacket (const Flexible8ByteString_c* apu_data)
     return false;
   }
 
-  #ifdef NMEA_2000_FAST_PACKET
+  #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
   if ((mt_streamType == StreamFastPacket) && (mui32_pkgNextToWrite == 0))
   { // special FastPacket first-frame handling
     insertFirst6Bytes (apu_data->getUint8DataConstPointer(2));
@@ -287,7 +287,7 @@ Stream_c::handleDataPacket (const Flexible8ByteString_c* apu_data)
   if (mui8_pkgRemainingInBurst == 0) {
     // End? or CTS for more?
     if (
-        #ifdef NMEA_2000_FAST_PACKET
+        #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
         (mt_streamType == StreamFastPacket) ||
         #endif
         (mui32_pkgNextToWrite > mui32_pkgTotalSize))

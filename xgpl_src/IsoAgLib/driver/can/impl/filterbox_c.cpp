@@ -468,6 +468,12 @@ bool FilterBox_c::processMsg()
     }
     else
     { // dlc-check was requested but failed
+
+      #ifdef DEBUG
+         INTERNAL_DEBUG_DEVICE
+        << "DLC_ERROR on identifier : " << pc_target->ident() << INTERNAL_DEBUG_DEVICE_ENDL;
+      #endif
+
       pc_target->t_msgState = (ci8_targetLen < ci8_vecCurstomerDlcForce) ? DlcInvalidTooShort : DlcInvalidTooLong;
     }
 

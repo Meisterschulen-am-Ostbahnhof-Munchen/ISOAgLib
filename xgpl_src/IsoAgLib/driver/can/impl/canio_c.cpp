@@ -566,6 +566,56 @@ bool CanIo_c::existFilter(const __IsoAgLib::CanCustomer_c& ar_customer,
   return b_identDefFound;
 }
 
+/**
+  Create a Standard Iso Filter Box.
+  @see __IsoAgLib::CANCustomer
+  @see __IsoAgLib::CanIo_c::insertFilter
+  @param ar_customer reference to __IsoAgLib::CanCustomer_c which needs filtered
+      messages (-> on received msg call ar_customer.processMsg())
+  @param aui32_pgn PGN
+  @param ab_reconfigImmediate true -> all Filter objects are reconfigured to according
+  @return != NULL -> if inserting and wanted reconfiguration are performed without errors, a reference to the created FilterBox is returned
+  @exception badAlloc
+**/
+FilterBox_c*  CanIo_c::insertStandardIsoFilter(__IsoAgLib::CanCustomer_c& ar_customer, uint32_t aui32_pgn,bool ab_reconfigImmediate)
+{
+
+  uint8_t ui8_dataLen = 0;
+
+
+
+    switch(aui32_pgn)
+    {
+
+      case REQUEST_PGN_MSG_PGN:
+      case (REQUEST_PGN_MSG_PGN | 0xFF): //xxeaffxx
+        ui8_dataLen = 3;
+        break;
+
+
+      case ACKNOWLEDGEMENT_PGN: /**variable data len : see ISO/CD ISO-11783-12 */
+      case CLIENT_TO_FS_PGN:    /** variable data len : see ISO-11783 -13 */
+      case FS_TO_CLIENT_PGN:    /** variable data len : see ISO-11783 -13 */
+      case PROPRIETARY_A_PGN: /** multipacket supported, data len 0..1785 bytes*/
+      case PROPRIETARY_A2_PGN: /** multipacket supported, data len 0..1785 bytes*/
+      case SOFTWARE_IDENTIFICATION_PGN: /** variable data len: see ISO/CD ISO-11783-12 */
+      case PROPRIETARY_B_PGN: /** variable data len: see SAE J1939 71 */
+
+        ui8_dataLen = -1;
+        break;
+
+
+      default:ui8_dataLen= 8;
+
+      break;
+
+    }
+
+
+    return insertFilter(ar_customer,(0x3FFFF00UL),MASK_TYPE(static_cast<MASK_TYPE>(aui32_pgn) << 8),ab_reconfigImmediate,Ident_c::ExtendedIdent,ui8_dataLen);
+
+}
+
 /** create a Filter Box with specified at_mask/at_filter
   on ui8_busNr of object; reconfig HW CAN MsgObj_c only if
   ab_reconfigImmediate == true -> useful for
@@ -997,8 +1047,9 @@ uint32_t ui32_msgNbr;
   int32_t i32_retVal = HAL_NO_ERR;
   bool b_processed,to_be_processed,b_forceProcessAll= false;
 
-  while(i32_retVal != HAL_UNKNOWN_ERR )
+  while(i32_retVal != HAL_UNKNOWN_ERR ) // something has been received from CAN
   {
+
       System_c::triggerWd();
 
     #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
@@ -1097,7 +1148,6 @@ uint32_t ui32_msgNbr;
             << i32_ident << INTERNAL_DEBUG_DEVICE_ENDL;
         }
   #endif
-
         if(i32_lastProcessedCanPkgTime > mi32_endLastReconfigTime ) // the message has not arrived before the last reconfiguration,check on all the FB
         {
 #endif
@@ -1112,7 +1162,7 @@ uint32_t ui32_msgNbr;
                   << STL_NAMESPACE::dec
                   #endif
                   << arrFilterBox[i32_fbIdx].getFbVecIdx();
-                  INTERNAL_DEBUG_DEVICE << ", FB IDX READ in the FIFO : "
+                  INTERNAL_DEBUG_DEVICE << ", FB IDX READ from CAN : "
                   #ifdef SYSTEM_PC
                   << STL_NAMESPACE::dec
                   #endif

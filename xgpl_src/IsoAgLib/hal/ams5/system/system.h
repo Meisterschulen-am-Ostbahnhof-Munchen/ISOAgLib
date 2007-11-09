@@ -166,7 +166,7 @@ namespace HAL
    };
 
    /**
-      enable/disable all outputs 
+      enable/disable all outputs
 
       @param bitState true  -> outputs enable
                       false -> outputs disable
@@ -177,5 +177,10 @@ namespace HAL
       return __HAL::setOutputMask(bitState);
    };
    /*@}*/
+
+#ifdef USE_MUTUAL_EXCLUSION
+#include <IsoAgLib/hal/generic_utils/system/mutex_emulated.h>
+#endif
+
 }
 #endif

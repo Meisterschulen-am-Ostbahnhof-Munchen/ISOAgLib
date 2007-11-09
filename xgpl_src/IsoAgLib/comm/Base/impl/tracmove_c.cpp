@@ -91,7 +91,7 @@
 #endif
 #include "tracmove_c.h"
 
-#if ( (defined USE_BASE || defined USE_TIME_GPS) && defined NMEA_2000_FAST_PACKET)
+#if ( (defined USE_BASE || defined USE_TIME_GPS) && defined ENABLE_MULTIPACKET_VARIANT_FAST_PACKET)
   #include <IsoAgLib/comm/Base/impl/timeposgps_c.h>
 #endif
 
@@ -223,16 +223,16 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
       setFilterCreated();
       // create FilterBox_c for PGN GROUND_BASED_SPEED_DIST_PGN, PF 254 - mask for DP, PF and PS
       // mask: (0x3FFFF << 8) filter: (GROUND_BASED_SPEED_DIST_PGN << 8)
-      c_can.insertFilter(*this, 0x3FFFF00UL,
-                        (static_cast<MASK_TYPE>(GROUND_BASED_SPEED_DIST_PGN) << 8), false, Ident_c::ExtendedIdent);
+      c_can.insertStandardIsoFilter(*this,GROUND_BASED_SPEED_DIST_PGN,false);
+
       // create FilterBox_c for PGN WHEEL_BASED_SPEED_DIST_PGN, PF 254 - mask for DP, PF and PS
       // mask: (0x3FFFF << 8) filter: (WHEEL_BASED_SPEED_DIST_PGN << 8)
-      c_can.insertFilter(*this, 0x3FFFF00UL,
-                        (static_cast<MASK_TYPE>(WHEEL_BASED_SPEED_DIST_PGN) << 8), false, Ident_c::ExtendedIdent);
+      c_can.insertStandardIsoFilter(*this,WHEEL_BASED_SPEED_DIST_PGN,false);
+
       // create FilterBox_c for PGN SELECTED_SPEED_MESSAGE, PF 254 - mask for DP, PF and PS
       // mask: (0x3FFFF << 8) filter: (SELECTED_SPEED_MESSAGE << 8)
-      c_can.insertFilter(*this, 0x3FFFF00UL,
-                        (static_cast<MASK_TYPE>(SELECTED_SPEED_MESSAGE) << 8), true, Ident_c::ExtendedIdent);
+      c_can.insertStandardIsoFilter(*this,SELECTED_SPEED_MESSAGE,true);
+
     }
   }
 
@@ -422,7 +422,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
 
   void TracMove_c::updateSpeed(IsoAgLib::SpeedSource_t t_speedSrc)
   {
-    #if ( (defined USE_BASE || defined USE_TIME_GPS) && defined NMEA_2000_FAST_PACKET)
+    #if ( (defined USE_BASE || defined USE_TIME_GPS) && defined ENABLE_MULTIPACKET_VARIANT_FAST_PACKET)
     TimePosGPS_c& c_timeposgps = getTimePosGpsInstance4Comm();
     #endif
     switch(t_speedSrc)
@@ -430,7 +430,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
       case IsoAgLib::SelectedSpeed:
         mt_speedSource = IsoAgLib::SelectedSpeed; //nothing more to do because variables are already set
         break;
-      #if ( (defined USE_BASE || defined USE_TIME_GPS) && defined NMEA_2000_FAST_PACKET)
+      #if ( (defined USE_BASE || defined USE_TIME_GPS) && defined ENABLE_MULTIPACKET_VARIANT_FAST_PACKET)
       case IsoAgLib::GpsBasedSpeed:
         mt_speedSource = IsoAgLib::GpsBasedSpeed;
         mt_selectedSpeedSource = IsoAgLib::IsoNavigationBasedSpeed;

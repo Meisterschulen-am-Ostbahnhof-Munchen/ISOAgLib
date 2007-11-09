@@ -100,7 +100,7 @@ namespace HAL
   inline int16_t scanf(...) {return 1;};
 
   //BW, 4/13/06, compilation error ,will clean up later
-  #if defined( DEBUG ) &&  defined(SYSTEM_A2) 
+  #if defined( DEBUG ) &&  defined(SYSTEM_A2)
   using CNAMESPACE::sprintf;
   using CNAMESPACE::sscanf;
   #endif
@@ -220,6 +220,10 @@ namespace HAL
   {__HAL::set_relais(bitState);};
 /*@}*/
 
+
+#ifdef USE_MUTUAL_EXCLUSION
+#include <IsoAgLib/hal/generic_utils/system/mutex_emulated.h>
+#endif
 
 }
 #endif

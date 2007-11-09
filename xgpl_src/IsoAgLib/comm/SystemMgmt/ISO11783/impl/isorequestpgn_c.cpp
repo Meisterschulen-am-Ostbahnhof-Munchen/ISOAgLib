@@ -101,7 +101,7 @@ IsoRequestPgn_c::init (void)
     // clear state of mb_alreadyClosed, so that close() is called one time AND no more init()s are performed!
     clearAlreadyClosed();
 
-    getCanInstance4Comm().insertFilter( *this, 0x3FFFF00UL, MASK_TYPE(static_cast<MASK_TYPE>(REQUEST_PGN_MSG_PGN | 0xFF) << 8), true, Ident_c::ExtendedIdent);
+    getCanInstance4Comm().insertStandardIsoFilter(*this,(REQUEST_PGN_MSG_PGN | 0xFF),true);
   }
 }
 

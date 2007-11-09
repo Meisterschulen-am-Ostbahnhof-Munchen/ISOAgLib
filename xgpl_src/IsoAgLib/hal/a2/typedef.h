@@ -81,6 +81,23 @@ typedef int int16_t;
 typedef unsigned long uint32_t;
 typedef long int32_t;
 
+
+#ifdef HANDLE_FAST_DATATYPE_AS_STRICT
+/**  SIZEOF_INT = 2 */
+/* Signed.  */
+typedef signed char     int_fast8_t;
+typedef int             int_fast16_t;
+typedef long            int_fast32_t;
+//typedef long long int   int_fast64_t;
+
+/* Unsigned.  */
+typedef unsigned char           uint_fast8_t;
+typedef unsigned int            uint_fast16_t;
+typedef unsigned long           uint_fast32_t;
+//typedef unsigned long long int  uint_fast64_t;
+
+#endif //  end HANDLE_FAST_DATATYPE_AS_STRICT
+
 //typedef unsigned long long int uint64_t;
 //typedef long long int int64_t;
 
@@ -88,7 +105,7 @@ typedef long int32_t;
 
 //BW, 4/18/06, copy from ESX bios header file "xos20esx.h"
 /*--------------------------------------------------------------------------.DA*
-  Name:         def00typ.h       
+  Name:         def00typ.h
   Description:  common defines and type definitions
   Version:      06.12.2001 /Se                            Copyrights (c) STW
   --------------------------------------------------------------------------.DE*/
@@ -152,7 +169,7 @@ typedef long int32_t;
    /* --- PROTOTYPES --- */
 
 /*--------------------------------------------------------------------------.DA*
-  Name:           xx2_0sys.h                   
+  Name:           xx2_0sys.h
   Description:    Systemfunctions for ESX
   Version: 19.01.99 /BA /Se                               Copyrights (c) STW
   --------------------------------------------------------------------------.DE*/
@@ -161,7 +178,7 @@ typedef long int32_t;
    #define DATA_CHANGED            1      /* Returnvalue from config_wd */
 
    /* --- GLOBAL TYPDEFINITIONS --- */
-   typedef struct  
+   typedef struct
    {
       byte bHardware;
       byte bCPUType;
@@ -179,7 +196,7 @@ typedef long int32_t;
       byte bReset;
    } tSystem;
 
-   typedef struct  
+   typedef struct
    {
       byte bWDmaxTime;
       byte bWDminTime;
@@ -196,7 +213,7 @@ typedef long int32_t;
 //BW, copy from ESX bios header file "xos20err.h"
 
 /*--------------------------------------------------------------------------.DA*
-  Name:         err00167.h                  
+  Name:         err00167.h
   Description:  Defines for errorhandler
   Version: 15.02.99 /BA /Se /Fi                           Copyrights (c) STW
   --------------------------------------------------------------------------.DE*/

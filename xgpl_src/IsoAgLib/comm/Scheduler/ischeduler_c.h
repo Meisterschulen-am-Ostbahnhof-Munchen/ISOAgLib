@@ -84,6 +84,7 @@ public:
 
   void startSystem() { Scheduler_c::startSystem(); }
 
+
   /**
     call the timeEvent for CanIo_c and all communication classes (derived from ElementBase_c) which
     registered within iScheduler_c for periodic timeEvent.
@@ -94,10 +95,47 @@ public:
            guaranteed (default -1 -> no execution stop defined)
   @return idleTime for main application (> 0 wait for next call; == 0 call function again)
           idleTime == -1 One Client could not finish his Job
+          idleTime == -100 only in case of USE_MUTUAL_EXCLUSION, it means that the Mutex was already locked and the resource cannot
+          be acquired.
   */
 
-  int32_t timeEvent( int32_t ai32_demandedExecEndScheduler = -1) { return Scheduler_c::timeEvent( ai32_demandedExecEndScheduler );};
-  /**
+  int32_t timeEvent( int32_t ai32_demandedExecEndScheduler = -1) {
+            #ifdef USE_MUTUAL_EXCLUSION
+            /** Try to acquire the Resource */
+              int i_ret =  Scheduler_c::tryAcquireResource();
+              if ( i_ret != 0 ) return -100; //! the resource is already locked, return.
+
+              int32_t i32_idleTimeSpread = Scheduler_c::timeEvent( ai32_demandedExecEndScheduler );
+              Scheduler_c::releaseResource();
+              return i32_idleTimeSpread;
+            #else
+              return Scheduler_c::timeEvent( ai32_demandedExecEndScheduler );
+            #endif
+              };
+
+
+#ifdef USE_MUTUAL_EXCLUSION
+/**
+    Lock the resource TimeEvent and call it for CanIo_c
+    @param i32_demandedExecEndScheduler optional timestamp, where timeEvent shall return execution to calling function
+           -> allow tight integration of IsoAgLib into application specific scheduler, as In-Time execution is
+           guaranteed (default -1 -> no execution stop defined)
+  @return idleTime for main application (> 0 wait for next call; == 0 call function again)
+          idleTime == -1 One Client could not finish his Job
+  */
+  int32_t timeEventWithWaitMutex(int32_t ai32_demandedExecEndScheduler = -1)
+      {
+        Scheduler_c::waitAcquireResource();
+        int32_t i32_idleTimeSpread = Scheduler_c::timeEvent(ai32_demandedExecEndScheduler);
+        Scheduler_c::releaseResource();
+        return i32_idleTimeSpread;
+      }
+
+#endif
+
+
+
+/**
     * deliver the average execution time for timeEvent calls -> allows scheduler to
     * refine time schedule within execution
     * @return average execution time in [msec] (off complete performed runs)

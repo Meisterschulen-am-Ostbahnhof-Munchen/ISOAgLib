@@ -87,7 +87,7 @@ public:
     */
   virtual void setDataNextStreamPart (__IsoAgLib::MultiSendPkg_c* mspData, uint8_t bytes)=0;
 
-  #if defined(NMEA_2000_FAST_PACKET)
+  #if defined(ENABLE_MULTIPACKET_VARIANT_FAST_PACKET)
   /** place next data to send direct into send buffer of pointed
       stream send package - MultiSend_c will send this
       buffer afterwards

@@ -113,11 +113,14 @@ class Nmea2000SendStreamer_c : public IsoAgLib::iMultiSendStreamer_c
       buffer afterwards
     */
     virtual void setDataNextStreamPart (MultiSendPkg_c* mspData, uint8_t bytes);
+
+#ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
     /** place next data to send direct into send buffer of pointed
       stream send package - MultiSend_c will send this
       buffer afterwards
    */
     virtual void setDataNextFastPacketStreamPart (MultiSendPkg_c* mspData, uint8_t bytes, uint8_t aui8_offset = 0 );
+#endif
 
     /** set cache for data source to stream start */
     virtual void resetDataNextStreamPart();
@@ -363,7 +366,7 @@ public:
   void setMillisecondUtcGps(uint16_t aui16_millisecond);
 
   /** set GPS altitude - [cm] */
-  void setGpsAltitudeCm( uint32_t aui32_newVal ) { mui32_altitudeCm = aui32_newVal; }
+  void setGpsAltitudeCm( int32_t ai32_newVal ) { mi32_altitudeCm = ai32_newVal; }
 
   /** set GPS receive qualitiy */
   void setGnssMode( IsoAgLib::IsoGnssMethod_t at_newVal );
@@ -549,7 +552,7 @@ public:
 
   #ifdef ENABLE_NMEA_2000_MULTI_PACKET
   bool isPositionStreamToSend() const
-  { return isPositionSimpleToSend() && (mui32_altitudeCm != 0xFFFFFFFF); }
+  { return isPositionSimpleToSend() && (mi32_altitudeCm != 0x7FFFFFFF); }
 
   /** get the GPS UTC hour value
     @return actual GPS UTC hour value
@@ -572,7 +575,7 @@ public:
   uint16_t millisecondUtcGps() const {return bit_gpsTime.msec;}
 
   /** deliver GPS altitude - [cm] */
-  uint32_t getGpsAltitudeCm( void ) const { return mui32_altitudeCm; }
+  int32_t getGpsAltitudeCm( void ) const { return mi32_altitudeCm; }
 
   /** simply check for some sort of Differential signal */
   bool hasDifferentialPosition() const { return ( ( mt_gnssMethod > IsoAgLib::IsoGnssFix ) && ( mt_gnssMethod < IsoAgLib::IsoDrEstimated ) )?true:false;}
@@ -753,7 +756,7 @@ private:
   int32_t mi32_lastIsoPositionStream;
 
   /** GPS altitude - [cm] */
-  uint32_t mui32_altitudeCm;
+  int32_t mi32_altitudeCm;
 
   /** GNSS Type */
   IsoAgLib::IsoGnssType_t mt_gnssType;

@@ -1069,14 +1069,27 @@ VtClientServerCommunication_c::processMsg()
       }
       break;
     case 0x09:  // Command: "Command", parameter "Display Activation"
+
+    {
+      uint8_t arrui8_canData[8];
+      uint8_t ui8_dataLen = mc_data.getLen();
+
+      // cache the Data Bytes HERE
+      mc_data.getDataToString(arrui8_canData);
+
+
       setVtDisplayState (false, mc_data.getUint8Data (1));
 
-      // replace PGN, DA, SA and send back as answer
+
+      // replace PGN, DA, SA , Data and send back as answer
+      mc_data.setDataFromString(arrui8_canData,ui8_dataLen);
+
       mc_data.setIsoPgn (ECU_TO_VT_PGN);
       mc_data.setIsoSa (mrc_wsMasterIdentItem.getIsoItem()->nr());
       mc_data.setIsoPs (mpc_vtServerInstance->getVtSourceAddress());
       getCanInstance4Comm() << mc_data; // Command: "Command", parameter "Display Activation Response"
-      break;
+    }
+    break;
 
     /***************************************************/
     /*** ### ECU Initiated Messages (=Responses) ### ***/

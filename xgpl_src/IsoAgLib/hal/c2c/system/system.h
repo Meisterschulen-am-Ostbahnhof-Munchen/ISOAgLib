@@ -323,6 +323,9 @@ HAL::put_rs232NChar( buf, CNAMESPACE::strlen( (char*)buf ), 0 /*HAL::RS232_over_
   inline void setRelais(bool bitState) {};
 /*@}*/
 
+#ifdef USE_MUTUAL_EXCLUSION
+#include <IsoAgLib/hal/generic_utils/system/mutex_emulated.h>
+#endif
 
 }
 #endif

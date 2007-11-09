@@ -95,6 +95,7 @@
 
 #include <list>
 
+
 /** uncomment the following define for specific debugging of the new Scheduler_c */
 //#define DEBUG_SCHEDULER
 
@@ -170,6 +171,30 @@ public:
     */
   static void forceExecStop( void ) {mb_execStopForced = true;mi32_demandedExecEndScheduler = 0;}
 
+#ifdef USE_MUTUAL_EXCLUSION
+
+  int releaseResource() {
+                          #ifdef DEBUG
+                          INTERNAL_DEBUG_DEVICE << "Released " << INTERNAL_DEBUG_DEVICE_ENDL;
+                          #endif
+                          return mc_protectAccess.releaseAccess();}
+
+  int tryAcquireResource() {
+                #ifdef DEBUG
+                INTERNAL_DEBUG_DEVICE << "TRY to acquire timeEvent "  << INTERNAL_DEBUG_DEVICE_ENDL;
+                #endif
+                return mc_protectAccess.tryAcquireAccess();}
+
+ //! Lock the resource to prevent other threads to use it. If the resource is already locked,
+  //! the calling threads is in blocking state until the unlock.
+  int waitAcquireResource(){
+                             forceExecStop();
+                             #ifdef DEBUG
+                              INTERNAL_DEBUG_DEVICE << "Wait Lock timeEvent  " << INTERNAL_DEBUG_DEVICE_ENDL;
+                             #endif
+                             return mc_protectAccess.waitAcquireAccess();}
+#endif
+
   /**
     * informative function for all IsoAgLib subsystems which are triggered by Scheduler_c::timeEvent to
     * detect, if another task forced immediated stop of timeEvent
@@ -221,10 +246,12 @@ public:
   //! @param  ai16_newTimePeriod otpional -> New Period will set for the Client by Scheduler_c
   bool  changeRetriggerTimeAndResort(SchedulerEntry_c ac_client  , int32_t i32_nextRetriggerTime, int16_t ai16_newTimePeriod = -1);
 
+
 private: //Private methods
   friend class SINGLETON( Scheduler_c );
   /** constructor for the central IsoAgLib object */
   Scheduler_c() : mb_systemStarted (false) {};
+
 
   /**
     initialize directly after the singleton instance is created.
@@ -293,7 +320,14 @@ private: //Private methods
 #endif
 
 
+
 private: // Private attributes
+
+#ifdef USE_MUTUAL_EXCLUSION
+  /** Attribute for the exclusive access of the IsoAgLib for threads */
+  HAL::ExclusiveAccess_c mc_protectAccess;
+#endif
+
 
   /** timestamp where last timeEvent was called -> can be used to synchronise distributed timeEvent activities */
   static int32_t mi32_lastTimeEventTime;

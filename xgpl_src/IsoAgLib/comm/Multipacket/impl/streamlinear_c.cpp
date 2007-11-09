@@ -107,7 +107,7 @@ StreamLinear_c::~StreamLinear_c()
 }
 
 
-#ifdef NMEA_2000_FAST_PACKET
+#ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
 // //////////////////////////////// +X2C Operation : insert6Bytes
 //! Parameter:
 //! @param pui8_data: pointer to 6 bytes of data!

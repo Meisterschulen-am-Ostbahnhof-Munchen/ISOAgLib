@@ -155,7 +155,7 @@ static const uint8_t scui8_tpPriority=6;
     uint32_t ui32_filter = ((static_cast<MASK_TYPE>(mpPGN) | static_cast<MASK_TYPE>(LocalSa)) << 8); \
     if (!__IsoAgLib::getCanInstance4Comm().existFilter( *this, (0x3FFFF00UL), ui32_filter, __IsoAgLib::Ident_c::ExtendedIdent)) \
     { /* create FilterBox */ \
-      __IsoAgLib::getCanInstance4Comm().insertFilter( *this, (0x3FFFF00UL), ui32_filter, reconf, __IsoAgLib::Ident_c::ExtendedIdent, len, ref); \
+      __IsoAgLib::getCanInstance4Comm().insertFilter( *this, (0x3FFFF00UL), ui32_filter, reconf, __IsoAgLib::Ident_c::ExtendedIdent, len); \
     } \
   }
 
@@ -178,7 +178,7 @@ MultiReceiveClientWrapper_s::MultiReceiveClientWrapper_s( CanCustomer_c& arc_cli
                                                           uint32_t aui32_pgnMask,
                                                           bool ab_alsoBroadcast,
                                                           bool ab_alsoGlobalErrors
-                                                          #ifdef NMEA_2000_FAST_PACKET
+                                                          #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
                                                           ,bool ab_isFastPacket
                                                           #endif
                                                           SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA
@@ -189,7 +189,7 @@ MultiReceiveClientWrapper_s::MultiReceiveClientWrapper_s( CanCustomer_c& arc_cli
   , mui32_pgnMask(aui32_pgnMask)
   , mb_alsoBroadcast (ab_alsoBroadcast)
   , mb_alsoGlobalErrors (ab_alsoGlobalErrors)
-  #ifdef NMEA_2000_FAST_PACKET
+  #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
   , mb_isFastPacket (ab_isFastPacket) // means the PGN has to be "insertFilter"/"removeFilter"ed
   #endif
 {
@@ -311,7 +311,7 @@ MultiReceive_c::processMsg()
 
               // RTS from an SA that has already a Stream running? // regardless of PGN
               Stream_c* pc_streamFound = getStream (cui8_sa, cui8_da
-              #ifdef NMEA_2000_FAST_PACKET
+              #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
               , /* Fast-Packet:*/ false
               #endif
               );
@@ -388,7 +388,7 @@ MultiReceive_c::processMsg()
 
             { // to allow local variables!
               Stream_c* pc_streamFound = getStream (c_tmpRSI
-              #ifdef NMEA_2000_FAST_PACKET
+              #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
               , /* Fast-Packet: */ false
               #endif
               );
@@ -451,7 +451,7 @@ MultiReceive_c::processMsg()
 
               // BAM from an SA that has already a Stream running?
               Stream_c* pc_streamFound = getStream (data().isoSa(), 255 /* 0xFF, BAM is always to GLOBAL */
-              #ifdef NMEA_2000_FAST_PACKET
+              #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
               , false
               #endif
               );
@@ -497,7 +497,7 @@ MultiReceive_c::processMsg()
             { // to allow local variables!
               // also allow a BAM to be aborted by the sender himself...
               Stream_c* pc_streamFound = getStream (c_tmpRSI
-              #ifdef NMEA_2000_FAST_PACKET
+              #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
               , false
               #endif
               );
@@ -551,7 +551,7 @@ MultiReceive_c::processMsg()
         { // to allow local variables!
           // Check if there's already a Stream active from this SA->DA pair (it should ;-)
           Stream_c* pc_streamFound = getStream (cui8_sa, cui8_da
-          #ifdef NMEA_2000_FAST_PACKET
+          #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
           , false
           #endif
           );
@@ -591,14 +591,14 @@ MultiReceive_c::processMsg()
         return true; // if code execution comes to here, then the right SA/DA Pair was there so it WAS for MultiReceive, so we can return true safely!
 
       default:
-        #ifdef NMEA_2000_FAST_PACKET
+        #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
         break; // let's see if it's a fast-packet registered pgn
         #else
         return false; // PGN not managed here, so return false so that other CAN-Customers will "processMsg" them!
         #endif
     }
   } // end if directed to known dest (this check works NOT for fast packet!!!)
-  #ifndef NMEA_2000_FAST_PACKET
+  #ifndef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
   // This point should NOT be reached anyway! all "case" statements
   getILibErrInstance().registerError( iLibErr_c::Inconsistency, iLibErr_c::System );
   return false;
@@ -662,7 +662,7 @@ void
 MultiReceive_c::registerClient(CanCustomer_c& arc_client, const IsoName_c& arc_isoName,
                                uint32_t aui32_pgn, uint32_t aui32_pgnMask,
                                bool ab_alsoBroadcast, bool ab_alsoGlobalErrors
-                               #ifdef NMEA_2000_FAST_PACKET
+                               #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
                                , bool ab_isFastPacket
                                #endif
                               )
@@ -672,7 +672,7 @@ MultiReceive_c::registerClient(CanCustomer_c& arc_client, const IsoName_c& arc_i
   while (list_clients_i != mlist_clients.end()) {
     MultiReceiveClientWrapper_s iterMRCW = *list_clients_i;
     if ((iterMRCW.mpc_client == (&arc_client)) && (iterMRCW.mc_isoName == arc_isoName) && (iterMRCW.mui32_pgn == aui32_pgn)
-    #ifdef NMEA_2000_FAST_PACKET
+    #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
       && (iterMRCW.mb_isFastPacket == ab_isFastPacket)
     #endif
     )
@@ -681,14 +681,14 @@ MultiReceive_c::registerClient(CanCustomer_c& arc_client, const IsoName_c& arc_i
   }
   // Not already in list, so insert!
   mlist_clients.push_back (MultiReceiveClientWrapper_s (arc_client, arc_isoName, aui32_pgn, aui32_pgnMask, ab_alsoBroadcast, ab_alsoGlobalErrors
-                                                       #ifdef NMEA_2000_FAST_PACKET
+                                                       #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
                                                        , ab_isFastPacket
                                                        #endif
                                                        SINGLETON_VEC_KEY_WITH_COMMA
                                                       )
                          );
 
-  #ifdef NMEA_2000_FAST_PACKET
+  #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
   /// Fast-Packet additions
   if (ab_isFastPacket)
   {
@@ -697,7 +697,7 @@ MultiReceive_c::registerClient(CanCustomer_c& arc_client, const IsoName_c& arc_i
     /** @todo determine when to set the PS field of the pgn to "aui8_cachedClientAddress" */
     if (!__IsoAgLib::getCanInstance4Comm().existFilter(*this, ui32_mask, ui32_filter, __IsoAgLib::Ident_c::ExtendedIdent))
     { /* create FilterBox */
-      __IsoAgLib::getCanInstance4Comm().insertFilter(*this, ui32_mask, ui32_filter, true, __IsoAgLib::Ident_c::ExtendedIdent);
+      __IsoAgLib::getCanInstance4Comm().insertStandardIsoFilter(*this,(aui32_pgn),true);
     }
   }
   #endif
@@ -729,7 +729,7 @@ MultiReceive_c::deregisterClient (CanCustomer_c& arc_client)
   {
     if (pc_iter->mpc_client == &arc_client)
     { // remove MultiReceiveClientWrapper_s
-      #ifdef NMEA_2000_FAST_PACKET
+      #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
       /// Fast-Packet additions
       if (pc_iter->mb_isFastPacket) {
         const uint32_t cui32_mask = (0x3FFFF00UL);
@@ -787,7 +787,7 @@ MultiReceive_c::deregisterClient(CanCustomer_c& arc_client, const IsoName_c& arc
       && (pc_iter->mui32_pgnMask == aui32_pgnMask)
        )
     { // remove MultiReceiveClientWrapper_s
-      #ifdef NMEA_2000_FAST_PACKET
+      #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
       /// Fast-Packet additions
       if (pc_iter->mb_isFastPacket) {
         const uint32_t cui32_mask = (0x3FFFF00UL);
@@ -840,7 +840,7 @@ MultiReceive_c::createStream(StreamType_t at_streamType, IsoAgLib::ReceiveStream
 //! @param ac_streamIdent:
 Stream_c*
 MultiReceive_c::getStream(IsoAgLib::ReceiveStreamIdentifier_c ac_streamIdent
-                          #ifdef NMEA_2000_FAST_PACKET
+                          #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
                           , bool ab_fastPacket
                           #endif
                           )
@@ -849,7 +849,7 @@ MultiReceive_c::getStream(IsoAgLib::ReceiveStreamIdentifier_c ac_streamIdent
   while (i_list_streams != mlist_streams.end())
   {
     DEF_Stream_c_IMPL& curStream = *i_list_streams;
-    #ifdef NMEA_2000_FAST_PACKET
+    #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
     if ((curStream.getIdent() == ac_streamIdent) && (ab_fastPacket == (curStream.getStreamType() == StreamFastPacket))) // .matchRSI (ac_streamIdent) and either "ab_fastPacket == false and Stream not FP" or "ab_fastPacket == true and Stream is FP"!
     #else
     if (curStream.getIdent() == ac_streamIdent) // .matchRSI (ac_streamIdent)
@@ -871,7 +871,7 @@ MultiReceive_c::getStream(IsoAgLib::ReceiveStreamIdentifier_c ac_streamIdent
 //! @param ac_streamIdent:
 //! @return NULL for "doesn't exist", otherwise valid "DEF_Stream_c_IMPL*"
 Stream_c* MultiReceive_c::getStream(uint8_t sa, uint8_t da
-                                    #ifdef NMEA_2000_FAST_PACKET
+                                    #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
                                     , bool ab_fastPacket
                                     #endif
                                     )
@@ -879,7 +879,7 @@ Stream_c* MultiReceive_c::getStream(uint8_t sa, uint8_t da
   STL_NAMESPACE::list<DEF_Stream_c_IMPL>::iterator i_list_streams = mlist_streams.begin();
   while (i_list_streams != mlist_streams.end()) {
     DEF_Stream_c_IMPL& curStream = *i_list_streams;
-    #ifdef NMEA_2000_FAST_PACKET
+    #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
     if ((curStream.getIdent().matchSaDa (sa, da)) && (ab_fastPacket == (curStream.getStreamType() == StreamFastPacket)))
     #else
     if (curStream.getIdent().matchSaDa (sa, da))
@@ -954,7 +954,7 @@ bool
 MultiReceive_c::finishStream (DEF_Stream_c_IMPL& arc_stream)
 {
   bool b_keepStream = false;
-  #ifdef NMEA_2000_FAST_PACKET
+  #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
   const bool cb_isFastPacketStream = (arc_stream.getStreamType() == StreamFastPacket)?true:false;
   if (cb_isFastPacketStream || (arc_stream.getIdent().getDa() == 0xFF))
   { // FastPacket or BAM
@@ -968,7 +968,7 @@ MultiReceive_c::finishStream (DEF_Stream_c_IMPL& arc_stream)
       if (curClientWrapper.mui32_pgn == arc_stream.getIdent().getPgn())
       {
         if (
-            #ifdef NMEA_2000_FAST_PACKET
+            #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
             (curClientWrapper.mb_isFastPacket == cb_isFastPacketStream)
          && ( curClientWrapper.mb_alsoBroadcast )
             #else
@@ -1052,7 +1052,7 @@ MultiReceive_c::timeEvent( void )
     if (rc_stream.timedOut())
     {
       #ifdef DEBUG
-        #ifdef NMEA_2000_FAST_PACKET
+        #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
         if (rc_stream.getStreamType() == StreamFastPacket)
           INTERNAL_DEBUG_DEVICE << INTERNAL_DEBUG_DEVICE_NEWLINE << "*** Fast-Packet-";
         else

@@ -188,14 +188,14 @@ void IsoMonitor_c::init( void )
     getIsoRequestPgnInstance4Comm().registerPGN (*this, WORKING_SET_MEMBER_PGN);
 #endif
 
-    if (getCanInstance4Comm().insertFilter( *this, (0x3FFFF00UL), MASK_TYPE(static_cast<MASK_TYPE>((ADRESS_CLAIM_PGN)+0xFF) << 8), false, Ident_c::ExtendedIdent))
+  if( getCanInstance4Comm().insertStandardIsoFilter(*this,((ADRESS_CLAIM_PGN)+0xFF),false))
       b_configure = true;
 #ifdef USE_WORKING_SET
-    FilterBox_c* pc_filterBoxWsMaster
-      = getCanInstance4Comm().insertFilter( *this, (0x3FFFF00UL), MASK_TYPE(static_cast<MASK_TYPE>(WORKING_SET_MASTER_PGN) << 8), false, Ident_c::ExtendedIdent);
+    FilterBox_c* pc_filterBoxWsMaster = getCanInstance4Comm().insertStandardIsoFilter(*this,(WORKING_SET_MASTER_PGN),false);
     if (pc_filterBoxWsMaster)
       b_configure = true;
-    if (getCanInstance4Comm().insertFilter( *this, (0x3FFFF00UL), MASK_TYPE(static_cast<MASK_TYPE>(WORKING_SET_MEMBER_PGN) << 8), false, Ident_c::ExtendedIdent), pc_filterBoxWsMaster)
+
+    if (getCanInstance4Comm().insertStandardIsoFilter( *this, (WORKING_SET_MEMBER_PGN), false))
       b_configure = true;
 #endif
 

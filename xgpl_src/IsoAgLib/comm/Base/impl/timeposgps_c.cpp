@@ -134,7 +134,7 @@ void getDegree10Minus7FromStream( IsoAgLib::iStream_c& rc_stream, int32_t& ri32_
   #endif
 }
 
-void getAltitude10Minus2FromStream( IsoAgLib::iStream_c& rc_stream, uint32_t& rui32_result )
+void getAltitude10Minus2FromStream( IsoAgLib::iStream_c& rc_stream, int32_t& ri32_result )
 {
   #if SIZEOF_INT == 4
   // use 64 bit variable
@@ -142,7 +142,7 @@ void getAltitude10Minus2FromStream( IsoAgLib::iStream_c& rc_stream, uint32_t& ru
   IsoAgLib::convertIstream( rc_stream, i64_temp );
   double d_temp = double(i64_temp);
   // NMEA sends with 1.0e-6, while normally 1.0e-2 is enough -> mult with 1.0e-4
-  rui32_result = int32_t( d_temp * 1.0e-4 );
+  ri32_result = int32_t( d_temp * 1.0e-4 );
   #else
   // only take higher 4 bytes
   int32_t i32_temp;
@@ -153,7 +153,7 @@ void getAltitude10Minus2FromStream( IsoAgLib::iStream_c& rc_stream, uint32_t& ru
   IsoAgLib::convertIstream( rc_stream, i32_temp );
   // NMEA sends with 1.0e-6, while normally 1.0e-2 is enough -> mult with 1.0e-4
   double d_temp = ( double(i32_temp) * 4294967296.0 * 1.0e-4 );
-  rui32_result = int32_t( d_temp );
+  ri32_result = int32_t( d_temp );
   #endif
 }
 #endif // END of ENABLE_NMEA_2000_MULTI_PACKET
@@ -171,6 +171,7 @@ namespace __IsoAgLib {
     ui16_currentSendPosition += bytes;
   }
 
+#ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
   /** place next data to send direct into send buffer of pointed
       stream send package - MultiSend_c will send this
       buffer afterwards
@@ -180,6 +181,7 @@ namespace __IsoAgLib {
     mspData->setFastPacketDataPart (vec_data, ui16_currentSendPosition, bytes, aui8_offset );
     ui16_currentSendPosition += bytes;
   }
+#endif
 
   /** set cache for data source to stream start */
   void Nmea2000SendStreamer_c::resetDataNextStreamPart()
@@ -282,7 +284,7 @@ namespace __IsoAgLib {
         #ifdef ENABLE_NMEA_2000_MULTI_PACKET
         mt_gnssType = IsoAgLib::IsoGnssGps;
         mui8_satelliteCnt = 0;
-        mui32_altitudeCm = 0;
+        mi32_altitudeCm = 0;
         #endif
         b_noPosition = true;
       }
@@ -323,9 +325,10 @@ namespace __IsoAgLib {
     { // check if needed receive filters for ISO are active
       setFilterCreated();
 
-      c_can.insertFilter(*this, 0x3FFFF00UL, (static_cast<MASK_TYPE>(TIME_DATE_PGN) << 8),                      false, Ident_c::ExtendedIdent);
-      c_can.insertFilter(*this, 0x3FFFF00UL, (static_cast<MASK_TYPE>(NMEA_GPS_POSITION_RAPID_UPDATE_PGN) << 8), false, Ident_c::ExtendedIdent);
-      c_can.insertFilter(*this, 0x3FFFF00UL, (static_cast<MASK_TYPE>(NMEA_GPS_COG_SOG_RAPID_UPDATE_PGN) << 8),  true,  Ident_c::ExtendedIdent);
+      c_can.insertStandardIsoFilter(*this,TIME_DATE_PGN,false);
+      c_can.insertStandardIsoFilter(*this,NMEA_GPS_POSITION_RAPID_UPDATE_PGN,false);
+      c_can.insertStandardIsoFilter(*this,NMEA_GPS_COG_SOG_RAPID_UPDATE_PGN,true);
+
     }
   }
 
@@ -455,7 +458,7 @@ namespace __IsoAgLib {
 #ifdef ENABLE_NMEA_2000_MULTI_PACKET
     mi32_lastIsoPositionStream = 0;
     mt_multiSendSuccessState = MultiSend_c::SendSuccess;
-    mui32_altitudeCm = 0xFFFFFFFF;
+    mi32_altitudeCm = 0x7FFFFFFF;
 
     mui8_satelliteCnt = 0;
 #endif // END of ENABLE_NMEA_2000_MULTI_PACKET
@@ -483,10 +486,21 @@ namespace __IsoAgLib {
       // register Broadcast-TP/FP receive of NMEA 2000 data
       // make sure that the needed multi receive are registered
       #ifdef ENABLE_NMEA_2000_MULTI_PACKET
-      getMultiReceiveInstance4Comm().registerClient(*this, __IsoAgLib::IsoName_c::IsoNameUnspecified(), NMEA_GPS_POSITION_DATA_PGN,  0x3FFFF00, true, false, false);
-      getMultiReceiveInstance4Comm().registerClient(*this, __IsoAgLib::IsoName_c::IsoNameUnspecified(), NMEA_GPS_DIRECTION_DATA_PGN, 0x3FFFF00, true, false, false);
+      getMultiReceiveInstance4Comm().registerClient(*this, __IsoAgLib::IsoName_c::IsoNameUnspecified(), NMEA_GPS_POSITION_DATA_PGN,  0x3FFFF00, true, false
+        #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
+          , false
+        #endif
+            );
+      getMultiReceiveInstance4Comm().registerClient(*this, __IsoAgLib::IsoName_c::IsoNameUnspecified(), NMEA_GPS_DIRECTION_DATA_PGN, 0x3FFFF00, true, false
+        #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
+        , false
+        #endif
+        );
+
+      #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
       getMultiReceiveInstance4Comm().registerClient(*this, __IsoAgLib::IsoName_c::IsoNameUnspecified(), NMEA_GPS_POSITION_DATA_PGN,  0x3FFFF00, true, false, true);
       getMultiReceiveInstance4Comm().registerClient(*this, __IsoAgLib::IsoName_c::IsoNameUnspecified(), NMEA_GPS_DIRECTION_DATA_PGN, 0x3FFFF00, true, false, true);
+      #endif
       mc_nmea2000Streamer.vec_data.reserve(51); // GNSS Position Data with TWO reference stations
       #endif // END of ENABLE_NMEA_2000_MULTI_PACKET
     }
@@ -920,7 +934,7 @@ namespace __IsoAgLib {
         // now read Longitude --> convert into double [degree]
         getDegree10Minus7FromStream( rc_stream, mi32_longitudeDegree10Minus7 );
         // now read Altitude --> convert into double [meter]
-        getAltitude10Minus2FromStream( rc_stream, mui32_altitudeCm );
+        getAltitude10Minus2FromStream( rc_stream, mi32_altitudeCm );
         // now fetch Quality - gps-mode
         rc_stream >> ui8_tempValue;
         if ( ( ui8_tempValue >> 4  ) <= IsoAgLib::IsoGnssMethodMAX ) mt_gnssMethod = IsoAgLib::IsoGnssMethod_t(ui8_tempValue >> 4 );
@@ -948,7 +962,7 @@ namespace __IsoAgLib {
         }
         #ifdef DEBUG
         INTERNAL_DEBUG_DEVICE << "process NMEA_GPS_POSITON_DATA_PGN Lat: " << mi32_latitudeDegree10Minus7
-          << ", Lon: " << mi32_longitudeDegree10Minus7 << ", Alt: " << mui32_altitudeCm
+          << ", Lon: " << mi32_longitudeDegree10Minus7 << ", Alt: " << mi32_altitudeCm
           << ", TotalSize: " << rc_stream.getByteTotalSize() << ", resceived: " << rc_stream.getByteAlreadyReceived()
           << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
@@ -1128,12 +1142,12 @@ void TimePosGPS_c::isoSendDirection( void )
     #endif
   }
 
-  void setAltitude10Minus2ToStream( const uint32_t& rui32_result, STL_NAMESPACE::vector<uint8_t>& writeRef )
+  void setAltitude10Minus2ToStream( const int32_t& ri32_result, STL_NAMESPACE::vector<uint8_t>& writeRef )
   {
     #if SIZEOF_INT == 4
     // use 64 bit variable
     // NMEA sends with 1.0e-6, while normally 1.0e-2 is enough -> mult with 1.0e-4
-    const double d_temp = double(rui32_result) * 1.0e+4;
+    const double d_temp = double(ri32_result) * 1.0e+4;
     const int64_t i64_temp = int64_t(d_temp);
     number2LittleEndianString( i64_temp, writeRef );
     #else
@@ -1141,7 +1155,7 @@ void TimePosGPS_c::isoSendDirection( void )
     int32_t i32_temp = 0;
     number2LittleEndianString( i32_temp, writeRef );
     // NMEA sends with 1.0e-6, while normally 1.0e-2 is enough -> mult with 1.0e-4
-    i32_temp = int32_t(double(rui32_result) * 1.0e+4 / 4294967296.0);
+    i32_temp = int32_t(double(ri32_result) * 1.0e+4 / 4294967296.0);
     number2LittleEndianString( i32_temp, writeRef );
     #endif
   }
@@ -1185,7 +1199,7 @@ void TimePosGPS_c::isoSendDirection( void )
     // write Longitude as uint64_t value
     setDegree10Minus7ToStream( mi32_longitudeDegree10Minus7, writeRef );
     // write Altitude as uint64_t value
-    setAltitude10Minus2ToStream( mui32_altitudeCm, writeRef );
+    setAltitude10Minus2ToStream( mi32_altitudeCm, writeRef );
 
     // write type and method
     const uint8_t cu8_tempTypeMethod = ( mt_gnssType | ( mt_gnssMethod << 4 ) );

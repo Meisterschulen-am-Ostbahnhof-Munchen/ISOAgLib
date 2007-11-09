@@ -142,7 +142,7 @@ typedef enum {
   StreamSpgnEcmdINVALID = 1, // invalid, not allowed!
   StreamEpgnScmd        = 2, // Extended TP with Standard CommandSet
   StreamEpgnEcmd        = 3
-  #ifdef NMEA_2000_FAST_PACKET
+  #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
  ,StreamFastPacket      = 4 /// Fast-Packet addition: Check stream for Fast-Packet before proceeding anything!
   #endif
 } StreamType_t;
@@ -172,7 +172,7 @@ public:
 /// Begin Additional Abstract methods handled by StreamLinear_c/StreamChunk_c
   //  Operation: insert
   virtual void insert7Bytes(const uint8_t* pui8_data)=0;
-#ifdef NMEA_2000_FAST_PACKET
+#ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
   virtual void insertFirst6Bytes(const uint8_t* pui8_data)=0;
 #endif
 

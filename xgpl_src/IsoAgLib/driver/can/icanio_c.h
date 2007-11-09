@@ -260,6 +260,29 @@ class iCanIo_c : private __IsoAgLib::CanIo_c {
        at_mask, at_filter, ab_reconfigImmediate, at_identType) ? true : false;
 
   };
+
+/**
+    Create a Standard Iso Filter Box.It calls internally the CanIo_c::insertFilter.
+    @see IsoAgLib::iCANCustomer
+    @param ar_customer reference to IsoAgLib::iCanCustomer_c  which needs
+           filtered messages (-> on received msg call
+           ar_customer.processMsg())
+    @param aui32_pgn PGN
+    @param ab_reconfigImmediate true -> all Filter objects are reconfigured
+           to according CAN hardware MsgObj after creating this filter
+    @return true -> inserting and if wanted reconfiguration are
+          performed without errors
+    @exception badAlloc
+*/
+
+  bool insertStandardIsoFilter(IsoAgLib::iCanCustomer_c& ar_customer, uint32_t aui32_pgn,bool ab_reconfigImmediate)
+  {
+     if( CanIo_c::insertStandardIsoFilter(static_cast<CanCustomer_c&>(ar_customer),aui32_pgn,ab_reconfigImmediate) != NULL)
+       return true;
+      else
+     return false;
+  };
+
   /**
     reconfigure the MsgObj after insert/delete of FilterBox
   */

@@ -378,6 +378,26 @@ class CanIo_c : public SingletonCanIo_c {
                             uint32_t at_connectedMask, uint32_t at_connectedFilter, const Ident_c::identType_t at_connectedIdentType,
                             int8_t ai8_dlcForce = -1);
 
+
+ /** create a Standard Iso Filter Box
+
+    possible errors:
+        * Err_c::badAlloc on not enough memory for new FilterBox
+        instance or for new configured MsgObj_c's
+    @see __IsoAgLib::CANCustomer
+    @param ar_customer reference to __IsoAgLib::CanCustomer_c  which needs
+         filtered messages (-> on received msg call
+       ar_customer.processMsg())
+    @param aui32_pgn PGN
+    @param ab_reconfigImmediate true -> all Filter objects are reconfigured
+         to according CAN hardware MsgObj after creating this filter
+    @return != true -> if inserting and wanted reconfiguration are performed without errors,
+      a reference to the created FilterBox is returned
+   @exception badAlloc
+  */
+
+  FilterBox_c* insertStandardIsoFilter(__IsoAgLib::CanCustomer_c& ar_customer, uint32_t aui32_pgn,bool ab_reconfigImmediate);
+
   /** reconfigure the MsgObj after insert/delete of FilterBox */
   bool reconfigureMsgObj();
 

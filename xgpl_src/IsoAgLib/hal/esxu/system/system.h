@@ -432,6 +432,9 @@ CNAMESPACE::sprintf( (char*)buf, "%u ms - set_relais( %u )\r"
   };
 /*@}*/
 
+#ifdef USE_MUTUAL_EXCLUSION
+#include <IsoAgLib/hal/generic_utils/system/mutex_emulated.h>
+#endif
 
 }
 #endif

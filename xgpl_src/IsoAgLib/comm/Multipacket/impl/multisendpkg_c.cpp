@@ -148,7 +148,7 @@ void MultiSendPkg_c::setDataPart(const STL_NAMESPACE::vector<uint8_t>& rc_vecSou
 
 
 
-#if defined(NMEA_2000_FAST_PACKET)
+#if defined(ENABLE_MULTIPACKET_VARIANT_FAST_PACKET)
 /**
   set the 7 uint8_t data part of transfer message
   @param apb_source source data pointer

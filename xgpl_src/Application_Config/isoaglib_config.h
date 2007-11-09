@@ -81,6 +81,13 @@
 /** allow configuration by parameter value "NO" */
 #define NO 0
 
+
+/**************************************************************/
+/**
+ * \name Handle fast data type
+ */
+#define HANDLE_FAST_DATATYPE_AS_STRICT NO
+
 /* ******************************************************** */
 /**
  * \name Decide if the project uses a auto generated configuration
@@ -863,6 +870,8 @@
 // NMEA_GPS_DIRECTION_DATA_PGN        0x01FE11LU   == 130577   IsoAgLib RECEIVES           this MULTI- packet PGN PGN (send with NMEA_GPS_COG_SOG_RAPID_UPDATE_PGN)
 
 /*@}*/
+
+
 
 
 /* ******************************************************** */

@@ -86,12 +86,12 @@ public:
   void registerClient   (__IsoAgLib::CanCustomer_c& arc_client, const iIsoName_c& arc_isoName,
                          uint32_t aui32_pgn, uint32_t aui32_pgnMask=0x3FFFF,
                          bool b_alsoBroadcast=false, bool ab_alsoGlobalErrors=false
-                         #ifdef NMEA_2000_FAST_PACKET
+                         #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
                          , bool ab_isFastPacket=false
                          #endif
                          )
     { MultiReceive_c::registerClient (arc_client, arc_isoName, aui32_pgn, aui32_pgnMask, b_alsoBroadcast, ab_alsoGlobalErrors
-                         #ifdef NMEA_2000_FAST_PACKET
+                         #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
                          , ab_isFastPacket
                          #endif
                          ); }

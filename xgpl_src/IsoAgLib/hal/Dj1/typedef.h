@@ -66,8 +66,8 @@ namespace std
 {
  typedef unsigned int size_t;
 //  class cout : stream {}
-  
-  
+
+
   } // end namespace
 */
 #define ON                1
@@ -85,6 +85,23 @@ typedef unsigned int uint16_t;
 typedef int int16_t;
 typedef unsigned long uint32_t;
 typedef long int32_t;
+
+#ifdef HANDLE_FAST_DATATYPE_AS_STRICT
+/**  SIZEOF_INT = 2 */
+/* Signed.  */
+typedef signed char     int_fast8_t;
+typedef int             int_fast16_t;
+typedef long            int_fast32_t;
+//typedef long long int   int_fast64_t;
+
+/* Unsigned.  */
+typedef unsigned char           uint_fast8_t;
+typedef unsigned int            uint_fast16_t;
+typedef unsigned long           uint_fast32_t;
+//typedef unsigned long long int  uint_fast64_t;
+
+#endif //end HANDLE_FAST_DATATYPE_AS_STRICT
+
 
 // NOTE: The Tasking can NOT compile this because it does NOT understand what a long long is.
 //       At least this was the case with Tasking version 7.5 r 6.

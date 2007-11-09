@@ -304,7 +304,7 @@ MultiSend_c::SendStream_c::init (const IsoName_c& arc_isoNameSender, const IsoNa
   /// Do send out the first packet right now, right here!
   MultiSendPkg_c& rc_multiSendPkg = mrc_multiSend.data();
 
-#if defined (NMEA_2000_FAST_PACKET)
+#if defined (ENABLE_MULTIPACKET_VARIANT_FAST_PACKET)
   if (men_msgType == NmeaFastPacket)
   { // send Fast Packet First Frame
     mui8_FpSequenceCounter = mrc_multiSend.allocFpSequenceCounter();
@@ -390,7 +390,7 @@ MultiSend_c::init(void)
     // register to get ISO monitor list changes
     __IsoAgLib::getIsoMonitorInstance4Comm().registerSaClaimHandler( this );
 
-    #if defined(NMEA_2000_FAST_PACKET)
+    #if defined(ENABLE_MULTIPACKET_VARIANT_FAST_PACKET)
     mui8_nextFpSequenceCounter = 0;
     #endif
 
@@ -561,7 +561,7 @@ MultiSend_c::SendStream_c::timeEvent (uint8_t aui8_pkgCnt)
 
     case SendData:
     {
-#if defined (NMEA_2000_FAST_PACKET)
+#if defined (ENABLE_MULTIPACKET_VARIANT_FAST_PACKET)
       if (men_msgType == NmeaFastPacket)
       {
         uint8_t ui8_freeCnt = getCanInstance4Comm().sendCanFreecnt(Ident_c::ExtendedIdent);
@@ -1017,7 +1017,7 @@ MultiSend_c::SendStream_c::sendPacket()
   {
     case NmeaFastPacket: // For fast packet, the PGN itself tells us that the message is a fast packet message.
                          // Since this is a non-destination specific PGN, we do NOT need to "setIsoPs(...)" !
-                         #if defined (NMEA_2000_FAST_PACKET)
+                         #if defined (ENABLE_MULTIPACKET_VARIANT_FAST_PACKET)
                          rc_multiSendPkg.setIsoPgn (mui32_pgn);
                          #endif
                          break;

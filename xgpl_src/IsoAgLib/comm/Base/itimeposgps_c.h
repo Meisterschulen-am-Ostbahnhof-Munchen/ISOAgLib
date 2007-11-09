@@ -231,7 +231,7 @@ public:
   uint16_t millisecondUtcGps() const {return TimePosGPS_c::millisecondUtcGps();}
 
   /** deliver GPS altitude - [cm] */
-  uint32_t getGpsAltitudeCm(void) const { return TimePosGPS_c::getGpsAltitudeCm();}
+  int32_t getGpsAltitudeCm(void) const { return TimePosGPS_c::getGpsAltitudeCm();}
 
   /** deliver GPS receive qualitiy */
   IsoAgLib::IsoGnssMethod_t getGnssMode(void) const { return TimePosGPS_c::getGnssMode();}
@@ -250,7 +250,7 @@ public:
 
   /** PDOP with scaling [1x10E-2] */
   int16_t pdop10Minus2() const { return TimePosGPS_c::pdop10Minus2();}
-  #endif // END NMEA_2000_FAST_PACKET
+  #endif // END ENABLE_NMEA_2000_MULTI_PACKET
 
   /** deliver age of last gps-position-update in milliseconds */
   uint16_t getGpsPositionUpdateAge(void) const { return TimePosGPS_c::getGpsPositionUpdateAge(); }
@@ -375,7 +375,7 @@ public:
   /** PDOP with scaling [1x10E-2] */
   void setPdop10Minus2(uint16_t aui16_newVal)
   { return TimePosGPS_c::setPdop10Minus2(aui16_newVal);}
-  #endif // END of NMEA_2000_FAST_PACKET
+  #endif // END of ENABLE_NMEA_2000_MULTI_PACKET
 
   /** set the calendar month value */
   void setMonthUtc(uint8_t ab_month)

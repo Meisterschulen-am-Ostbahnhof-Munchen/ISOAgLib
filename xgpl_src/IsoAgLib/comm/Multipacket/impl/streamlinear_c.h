@@ -121,7 +121,7 @@ public:
   //! @param pui8_data:
   void insert7Bytes(const uint8_t* pui8_data);
 
-  #ifdef NMEA_2000_FAST_PACKET
+  #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
   void insertFirst6Bytes(const uint8_t* pui8_data);
   #endif
 

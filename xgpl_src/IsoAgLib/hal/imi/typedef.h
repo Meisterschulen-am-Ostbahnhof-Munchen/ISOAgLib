@@ -68,4 +68,22 @@ typedef unsigned int  uint16_t;
 typedef int            int16_t;
 typedef unsigned long uint32_t;
 typedef long           int32_t;
+
+
+#ifdef HANDLE_FAST_DATATYPE_AS_STRICT
+/**  SIZEOF_INT = 2 */
+/* Signed.  */
+typedef signed char     int_fast8_t;
+typedef int             int_fast16_t;
+typedef long            int_fast32_t;
+//typedef long long int   int_fast64_t;
+
+/* Unsigned.  */
+typedef unsigned char           uint_fast8_t;
+typedef unsigned int            uint_fast16_t;
+typedef unsigned long           uint_fast32_t;
+//typedef unsigned long long int  uint_fast64_t;
+
+#endif // end HANDLE_FAST_DATATYPE_AS_STRICT
+
 #endif
