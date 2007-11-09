@@ -397,17 +397,16 @@ if ( ( mc_data.identType() == Ident_c::ExtendedIdent ) && (
   // ISO only message: check for sender isoName (only in remote)
   const IsoName_c& c_isoNameSender = data().memberSend().isoName();
 
-  // check first for local Process Data
-  if ( existProcDataLocal( data().DDI(), data().element(), c_isoNameReceiver) )
-  { // there exists an appropriate process data item -> let the item process the msg
-    procDataLocal( data().DDI(), data().element(), c_isoNameReceiver).processMsg();
-    b_result = true;
-  }
-
-  // now check for remote Process Data
+  // check first for remote Process Data
   if ( existProcDataRemote( data().DDI(), data().element(), c_isoNameSender, c_isoNameReceiver) )
   { // there exists an appropriate process data item -> let the item process the msg
     procDataRemote( data().DDI(), data().element(), c_isoNameSender, c_isoNameReceiver).processMsg();
+    b_result = true;
+  }
+  // if not found => now check for remote Process Data
+  else if ( existProcDataLocal( data().DDI(), data().element(), c_isoNameReceiver) )
+  { // there exists an appropriate process data item -> let the item process the msg
+    procDataLocal( data().DDI(), data().element(), c_isoNameReceiver).processMsg();
     b_result = true;
   }
 
