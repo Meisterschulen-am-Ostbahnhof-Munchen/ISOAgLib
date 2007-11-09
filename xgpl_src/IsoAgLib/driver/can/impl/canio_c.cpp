@@ -453,7 +453,7 @@ void CanIo_c::setSendpause(uint16_t aui16_minDelay) const
     (default DEFAULT_IDENT_TYPE set in isoaglib_config.h)
   @return number of msgs which fit into send buffer
 */
-uint8_t CanIo_c::sendCanFreecnt(Ident_c::identType_t ren_identType)
+uint8_t CanIo_c::sendCanFreecnt(Ident_c::identType_t /*ren_identType*/)
 { // set send MsgObj ID
   uint8_t ui8_sendObjNr = minHALMsgObjNr();
 
@@ -470,7 +470,7 @@ uint8_t CanIo_c::sendCanFreecnt(Ident_c::identType_t ren_identType)
   @param ren_identType type of searched ident: standard 11bit or extended 29bit
     (default DEFAULT_IDENT_TYPE set in isoaglib_config.h)
 */
-void CanIo_c::sendCanClearbuf(Ident_c::identType_t ren_identType)
+void CanIo_c::sendCanClearbuf(Ident_c::identType_t /*ren_identType*/)
 {
   uint8_t ui8_sendObjNr = minHALMsgObjNr();
 
@@ -1151,7 +1151,7 @@ uint32_t ui32_msgNbr;
         if(i32_lastProcessedCanPkgTime > mi32_endLastReconfigTime ) // the message has not arrived before the last reconfiguration,check on all the FB
         {
 #endif
-          if(i32_fbIdx >= 0 && i32_fbIdx < arrFilterBox.size())
+          if(i32_fbIdx >= 0 && i32_fbIdx < static_cast<int32_t>(arrFilterBox.size()))
           {
             if(!(arrFilterBox[i32_fbIdx].isIdle())  &&  arrFilterBox[i32_fbIdx].matchMsgId(i32_ident,identType))
             {
