@@ -174,15 +174,15 @@ PRJ_ISO11783=1
 # PRJ_BASE=0
 
 # only incorporate parts from BASE that provide tractor hitch and DIN9684-engine RPM information
-# PRJ_TRACTOR_GENERAL=0
+PRJ_TRACTOR_GENERAL=1
 
 # only incorporate parts from BASE that provide tractor moving (distance, speed, direction, ...) information
-# PRJ_TRACTOR_MOVE=0
+PRJ_TRACTOR_MOVE=1
 
 # only incorporate parts from BASE that provide tractor PTO information
 # this part includes tractor pto set point data which is not available in the
 # free ISOAgLib edition. If you are interested in this feature please contact OSB AG
-# PRJ_TRACTOR_PTO=0
+PRJ_TRACTOR_PTO=1
 
 # only incorporate parts from BASE that provide tractor lighting information
 # this part is only defined for ISO 11783
