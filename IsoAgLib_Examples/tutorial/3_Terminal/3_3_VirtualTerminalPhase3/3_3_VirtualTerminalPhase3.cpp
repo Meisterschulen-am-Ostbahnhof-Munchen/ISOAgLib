@@ -331,7 +331,7 @@ void iObjectPool_simpleVTIsoPool_c::eventNumericValue ( uint16_t objId, uint8_t 
 
     case iVtObjectIDInputListTypFakeMiles:
       /* +++ Showing what can be done in one statement: */
-      updateMiles (((iVtObjectOutputNumber_c *)iVtObjectInputListTypFakeMiles.getListItem (ui8_value))->get_vtObjectOutputNumber_a()->value);
+      updateMiles (((iVtObjectOutputNumber_c *)iVtObjectInputListTypFakeMiles.getListItem (ui8_value))->get_vtObjectOutputNumber_a().value);
 
       /* +++ Showing the same in four lines, it may be easier to read/understand this way
       // get the selected object from the input list
@@ -501,7 +501,7 @@ void iObjectPool_simpleVTIsoPool_c::eventKeyCode ( uint8_t keyActivationCode, ui
 
       // Use b_updateObject here to save and access the hidden state directly via the object!
       case vtKeyCodeKeyLogo:
-        if (!(iVtObjectcontainerInAllMasks.get_vtObjectContainer_a()->hidden)) iVtObjectcontainerInAllMasks.hide (true);
+        if (!(iVtObjectcontainerInAllMasks.get_vtObjectContainer_a().hidden)) iVtObjectcontainerInAllMasks.hide (true);
         else iVtObjectcontainerInAllMasks.show (true);
         break;
 
@@ -545,7 +545,7 @@ void iObjectPool_simpleVTIsoPool_c::eventObjectPoolUploadedSuccessfully (bool ab
     iVtObjectColLabel.setValueRef ("Color:"); // this is done so the initial state is up again if VT lost and reconnected!
     iVtObjectColOS.setVariableReference (colTable [color], true);
     iVtObjectFontAttributesNormal6x8.setFontColour (fgcolTable [color], true);
-    if (iVtObjectcontainerInAllMasks.get_vtObjectContainer_a()->hidden) iVtObjectcontainerInAllMasks.hide ();
+    if (iVtObjectcontainerInAllMasks.get_vtObjectContainer_a().hidden) iVtObjectcontainerInAllMasks.hide ();
       updateAccel (valAccel);
       updateMiles(valMiles);
     iVtObjectValSpeed.setValue (valSpeed+10000);
@@ -612,13 +612,6 @@ int main()
 
   getIcanInstance().init( 0, 250 );
 
-  // variable for ISOName
-  // default with primary cultivation mounted back
-  IsoAgLib::iIsoName_c myISOName( 7, 0 );
-
-  // start address claim of the local member "IMI"
-  // if ISOName conflicts forces change of device class instance, the
-  // IsoAgLib can cahnge the myISOName val through the pointer to myISOName
   bool b_selfConf = true;
   uint8_t ui8_indGroup = 2,
       b_func = 25,
@@ -630,24 +623,12 @@ int main()
 
   // start address claim of the local member "IMI"
   // if ISOName conflicts forces change of device class instance, the
-  // IsoAgLib can change the myISOName val through the pointer to myISOName
-  #if 1
-  IsoAgLib::iIdentItem_c c_myIdent( &myISOName,
-      b_selfConf, ui8_indGroup, b_func, ui16_manufCode,
-      ui32_serNo, b_wantedSa, 256 /*0xFFFF*/, b_funcInst, b_ecuInst, 0, NULL );
+  IsoAgLib::iIdentItem_c c_myIdent( ui8_indGroup, 7, 0, b_func, ui16_manufCode, ui32_serNo, b_wantedSa,
+      0x100, b_funcInst, b_ecuInst, b_selfConf, 0);
 
-  #else
-  uint64_t ui64_isoName = 0xa00e840000000000ULL;
-                        //0x0000000000840ea0;
-
-  IsoAgLib::iIdentItem_c c_myIdent(&myISOName, (const uint8_t*)&ui64_isoName, b_wantedSa, 0xFFFF, 0, NULL );
-  #endif
-
-  /* Explicit call to init iIsoTerminal instance - not really needed though */
-  getIisoTerminalInstance().init();
 
   /* Call to init iIsoTerminal instance and initialize object pool! */
-  getIisoTerminalInstance().registerIsoObjectPool(c_myIdent, Tutorial_3_0_Pool_c, "Tut-3_0");
+  getIisoTerminalInstance().initAndRegisterIsoObjectPool(c_myIdent, Tutorial_3_0_Pool_c, "Tut-3_0");
 
   /** IMPORTANT:
     - The following loop could be replaced of any repeating call of
