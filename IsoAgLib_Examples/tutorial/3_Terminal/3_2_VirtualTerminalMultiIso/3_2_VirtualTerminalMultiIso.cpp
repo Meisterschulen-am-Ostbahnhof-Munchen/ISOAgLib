@@ -246,7 +246,10 @@ using namespace IsoAgLib;
   @param whichColour Type of colour: BackgroundColour, LineColour, NeedleColour, etc. (See IsoAgLib::e_vtColour)
 */
 uint8_t
-iObjectPool_simpleVTIsoPool_c::convertColour (uint8_t colorValue, uint8_t colorDepth, IsoAgLib::iVtObject_c* /*obj*/, IsoAgLib::e_vtColour whichColour)
+iObjectPool_simpleVTIsoPool_c::convertColour( uint8_t colorValue, 
+                                              uint8_t colorDepth, 
+                                              IsoAgLib::iVtObject_c* /*obj*/, 
+                                              IsoAgLib::e_vtColour whichColour )
 {
   if (colorDepth == 0 /* 2colored b/w */)
   {
@@ -258,8 +261,10 @@ iObjectPool_simpleVTIsoPool_c::convertColour (uint8_t colorValue, uint8_t colorD
   else
   {
     // colorDepth == 1, as there's no color-violation in the case of colorDepth==2 !
-    // this is just for the example. convert the colors that can be converted by 100% from 16..231 to color 0..15.
-    // one also could convert using a best-match algorithm to colors 0..15 - this is just to show the principle.
+    // this is just for the example. convert the colors that can be converted by
+    // 100% from 16..231 to color 0..15.
+    // one also could convert using a best-match algorithm to colors 0..15
+    // - this is just to show the principle.
     switch (colorValue)
     {
       case 16  /* 00,00,00 */: return 0;
@@ -279,9 +284,10 @@ iObjectPool_simpleVTIsoPool_c::convertColour (uint8_t colorValue, uint8_t colorD
       case 226 /* FF,FF,00 */: return 14;
       case 19  /* 00,00,99 */: return 15;
       /* todo: best match the rest also to 0..15 !*/
-      default: if ((whichColour == BackgroundColour) || (whichColour == TransparencyColour))
+      default: if ((whichColour == BackgroundColour) || 
+                   (whichColour == TransparencyColour))
                  return 1; /* white - std. background/transparency colour */
-               else
+               else 
                  return 0; /* black - std. drawing colour */
     }
   }
@@ -292,11 +298,19 @@ iObjectPool_simpleVTIsoPool_c::convertColour (uint8_t colorValue, uint8_t colorD
 static int16_t valSpeed=0, valMiles=0, valAccel=10, color=0, like=0;
 
 // for changeAttribute when pressing on "Change Colour" button
-static iVtObjectStringVariable_c *colTable [9] = {&iVtObjectStrNone, &iVtObjectStrRed, &iVtObjectStrGreen, &iVtObjectStrBlue, &iVtObjectStrYellow, &iVtObjectStrCyan, &iVtObjectStrMagenta, &iVtObjectStrBlack, &iVtObjectStrWhite};
+static iVtObjectStringVariable_c *colTable [9] = { &iVtObjectStrNone, 
+                                                   &iVtObjectStrRed, 
+                                                   &iVtObjectStrGreen, 
+                                                   &iVtObjectStrBlue, 
+                                                   &iVtObjectStrYellow,
+                                                   &iVtObjectStrCyan, 
+                                                   &iVtObjectStrMagenta, 
+                                                   &iVtObjectStrBlack, 
+                                                   &iVtObjectStrWhite };
 static uint8_t fgcolTable [9] = {0, 12, 2, 9, 14, 11, 13, 0, 1};
 
 void
-updateMiles(uint32_t aui32_value)
+updateMiles( uint32_t aui32_value )
 {
   valMiles = aui32_value;
   int16_t angle;
@@ -306,26 +320,28 @@ updateMiles(uint32_t aui32_value)
 }
 
 void
-updateAccel(int32_t ai32_value)
+updateAccel( int32_t ai32_value )
 {
   valAccel = ai32_value;
-  iVtObjectValAccel.setValue (valAccel+10000);
-  iVtObjectAccelArchedBarGraph.setValue (valAccel +10000);
+  iVtObjectValAccel.setValue( valAccel+10000 );
+  iVtObjectAccelArchedBarGraph.setValue( valAccel +10000 );
 }
 
 // handle incoming number-inputs from vt
 void
-iObjectPool_simpleVTIsoPool_c::eventNumericValue (uint16_t objId, uint8_t ui8_value, uint32_t ui32_value)
+iObjectPool_simpleVTIsoPool_c::eventNumericValue( uint16_t objId, 
+                                                  uint8_t ui8_value, 
+                                                  uint32_t ui32_value )
 {
   switch (objId) {
     case iVtObjectIDInputMiles:
-      updateMiles (ui32_value);
+      updateMiles( ui32_value );
       break;
 
     case iVtObjectIDInputLikeage:
       like = ui8_value;
-      if (like == 1) iVtObjectLikeageOP.setValue (&iVtObjectLikeIt);
-                else iVtObjectLikeageOP.setValue (&iVtObjectLikeItNot);
+      if (like == 1) iVtObjectLikeageOP.setValue( &iVtObjectLikeIt );
+                else iVtObjectLikeageOP.setValue( &iVtObjectLikeItNot );
       break;
 
     case iVtObjectIDInputListTypFakeMiles:
@@ -351,7 +367,11 @@ static int xy=0;
 
 // incoming key-events
 void
-iObjectPool_simpleVTIsoPool_c::eventKeyCode (uint8_t keyActivationCode, uint16_t /*objId*/, uint16_t /*objIdMask*/, uint8_t keyCode, bool /*wasButton*/)
+iObjectPool_simpleVTIsoPool_c::eventKeyCode( uint8_t keyActivationCode, 
+                                             uint16_t /*objId*/, 
+                                             uint16_t /*objIdMask*/, 
+                                             uint8_t keyCode, 
+                                             bool /*wasButton*/ )
 {
 /* just for your information! - defines are to be found in the "ivttypes.h" include!
   #define BUTTON_HAS_BEEN_UNLATCHED 0
@@ -376,35 +396,37 @@ iObjectPool_simpleVTIsoPool_c::eventKeyCode (uint8_t keyActivationCode, uint16_t
         updateMiles (0);
         iVtObjectValSpeed.setValue (valSpeed+10000);
         xy = 0;
-        iVtObjectcontainerInAllMasks.setChildPosition (&iVtObjectBigLogo, xy, xy);
+        iVtObjectcontainerInAllMasks.setChildPosition( &iVtObjectBigLogo, xy, xy );
         break;
 
       case vtKeyCodeKeyChangeFill:
-        iVtObjectdPolygon.setFillAttributes(&iVtObjectFillAttributes);
+        iVtObjectdPolygon.setFillAttributes( &iVtObjectFillAttributes );
         break;
 
       case vtKeyCodeKeyMove:
         valSpeed += valAccel;
         updateMiles(valMiles + valSpeed);
-        iVtObjectValSpeed.setValue (valSpeed+10000);
+        iVtObjectValSpeed.setValue( valSpeed+10000 );
         break;
 
       case vtKeyCodeKeyMoreAccel:
         updateAccel (valAccel + 1);
         xy += 5;
-        iVtObjectcontainerInAllMasks.setChildPosition (&iVtObjectBigLogo, xy, xy);
+        iVtObjectcontainerInAllMasks.setChildPosition( &iVtObjectBigLogo, xy, xy );
         break;
 
       case vtKeyCodeKeyLessAccel:
         updateAccel (valAccel - 1);
         xy -= 5;
-        iVtObjectcontainerInAllMasks.setChildPosition (&iVtObjectBigLogo, xy, xy);
+        iVtObjectcontainerInAllMasks.setChildPosition( &iVtObjectBigLogo, xy, xy );
         break;
 
       // Use b_updateObject here to save and access the hidden state directly via the object!
       case vtKeyCodeKeyLogo:
-        if (!(iVtObjectcontainerInAllMasks.get_vtObjectContainer_a().hidden)) iVtObjectcontainerInAllMasks.hide (true);
-        else iVtObjectcontainerInAllMasks.show (true);
+        if (!(iVtObjectcontainerInAllMasks.get_vtObjectContainer_a().hidden)) 
+            iVtObjectcontainerInAllMasks.hide( true );
+        else 
+            iVtObjectcontainerInAllMasks.show( true );
         break;
 
       case vtKeyCodeKeyChangeCol:
@@ -430,11 +452,15 @@ iObjectPool_simpleVTIsoPool_c::eventKeyCode (uint8_t keyActivationCode, uint16_t
 
 // has to be implemented - remember that if the VT drops out and comes again, the values have to be up2date!!!
 void
-iObjectPool_simpleVTIsoPool_c::eventObjectPoolUploadedSuccessfully (bool ab_wasLanguageUpdate, int8_t /*ai8_languageIndex*/, uint16_t /*aui16_languageCode*/)
+iObjectPool_simpleVTIsoPool_c::eventObjectPoolUploadedSuccessfully( 
+  bool ab_wasLanguageUpdate, 
+  int8_t /*ai8_languageIndex*/, 
+  uint16_t /*aui16_languageCode*/ )
 {
   if (ab_wasLanguageUpdate)
   {
-    /// The update takes place very fast here, so we don't need to perform anything here. Normally one would switch back to normal operation mask
+    /// The update takes place very fast here, so we don't need to perform anything here. 
+    /// Normally one would switch back to normal operation mask
     /// when it was switched on update to some "Wait while updating language..:" screen!
     #ifdef DEBUG
     EXTERNAL_DEBUG_DEVICE << "-->eventObjectPoolUploadedSuccessfully: LANGUAGE UPDATE TO Index "<<int(ai8_languageIndex)<<". User tried to select ["<<uint8_t(aui16_languageCode>>8)<<uint8_t(aui16_languageCode&0xFF)<<"] <--" << EXTERNAL_DEBUG_DEVICE_ENDL;
@@ -467,7 +493,13 @@ iObjectPool_simpleVTIsoPool_c::eventEnterSafeState()
 }
 
 void
-iObjectPool_simpleVTIsoPool_c::eventStringValue (uint16_t /*aui16_objId*/, uint8_t aui8_length, StreamInput_c &rc_streaminput, uint8_t /*aui8_unparsedBytes*/, bool /*b_isFirst*/, bool b_isLast)
+iObjectPool_simpleVTIsoPool_c::eventStringValue(
+                                                 uint16_t /*aui16_objId*/, 
+                                                 uint8_t aui8_length, 
+                                                 StreamInput_c &rc_streaminput, 
+                                                 uint8_t /*aui8_unparsedBytes*/, 
+                                                 bool /*b_isFirst*/, 
+                                                 bool b_isLast )
 {
   if (b_isLast)
   {
@@ -486,7 +518,7 @@ iObjectPool_simpleVTIsoPool_c::eventStringValue (uint16_t /*aui16_objId*/, uint8
 }
 
 void
-iObjectPool_simpleVTIsoPool_c::eventLanguagePgn (const localSettings_s& ars_localSettings)
+iObjectPool_simpleVTIsoPool_c::eventLanguagePgn( const localSettings_s& ars_localSettings )
 {
   /// THIS FUNCTION SHOULD ONLY BE USED FOR CHANGE IN UNITS, ETC.
   /// FOR LANGUAGE CHANGE, REFER TO --> "eventObjectPoolUploadedSuccessfully" <--
@@ -495,7 +527,7 @@ iObjectPool_simpleVTIsoPool_c::eventLanguagePgn (const localSettings_s& ars_loca
   languageCode[1] = ars_localSettings.languageCode & 0xFF;
   #ifdef DEBUG
   EXTERNAL_DEBUG_DEVICE << "-->eventLanguagePgn("<<languageCode<<")<--" << EXTERNAL_DEBUG_DEVICE_ENDL;
-  #endif
+  #endifindent
   iVtObjectOSlanguage.setValueCopy (languageCode);
 }
 
@@ -505,22 +537,34 @@ static iObjectPool_simpleVTIsoPool_c Tutorial_3_2_Pool_1_c;
 /* Example Code For Second Pool */
 /********************************/
 uint8_t
-iObjectPool_simpleVTIsoPool2_c::convertColour(uint8_t colorValue, uint8_t colorDepth, IsoAgLib::iVtObject_c* obj, IsoAgLib::e_vtColour whichColour)
+iObjectPool_simpleVTIsoPool2_c::convertColour( uint8_t colorValue, 
+                                               uint8_t colorDepth, 
+                                               IsoAgLib::iVtObject_c* obj, 
+                                               IsoAgLib::e_vtColour whichColour )
 {
   /* the conver colour algorithm is the same like in Pool no. 1, so we only need to its function */
-  return Tutorial_3_2_Pool_1_c.convertColour (colorValue, colorDepth, obj, whichColour);
+  return Tutorial_3_2_Pool_1_c.convertColour( colorValue, 
+                                              colorDepth, 
+                                              obj, 
+                                              whichColour );
 }
 
 // handle incoming number-inputs from vt
 void
-iObjectPool_simpleVTIsoPool2_c::eventNumericValue (uint16_t /*objId*/, uint8_t /*ui8_value*/, uint32_t /*ui32_value*/)
+iObjectPool_simpleVTIsoPool2_c::eventNumericValue( uint16_t /*objId*/, 
+                                                   uint8_t /*ui8_value*/, 
+                                                   uint32_t /*ui32_value*/ )
 {
 //   switch (objId) {}
 }
 
 // incoming key-events
 void
-iObjectPool_simpleVTIsoPool2_c::eventKeyCode (uint8_t keyActivationCode, uint16_t /*objId*/, uint16_t /*objIdMask*/, uint8_t keyCode, bool /*wasButton*/)
+iObjectPool_simpleVTIsoPool2_c::eventKeyCode( uint8_t keyActivationCode, 
+                                              uint16_t /*objId*/, 
+                                              uint16_t /*objIdMask*/, 
+                                              uint8_t keyCode, 
+                                              bool /*wasButton*/ )
 {
 /* just for your information! - defines are to be found in the "ivttypes.h" include!
   #define BUTTON_HAS_BEEN_UNLATCHED 0
@@ -567,7 +611,8 @@ iObjectPool_simpleVTIsoPool2_c::eventKeyCode (uint8_t keyActivationCode, uint16_
 
         // Use b_updateObject here to save and access the hidden state directly via the object!
       case vtKeyCodeKeyLogo_2:
-        if (!(iVtObjectcontainerInAllMasks_2.get_vtObjectContainer_a().hidden)) iVtObjectcontainerInAllMasks_2.hide (true);
+        if (!(iVtObjectcontainerInAllMasks_2.get_vtObjectContainer_a().hidden)) 
+          iVtObjectcontainerInAllMasks_2.hide (true);
         else iVtObjectcontainerInAllMasks_2.show (true);
         break;
     }
@@ -576,7 +621,10 @@ iObjectPool_simpleVTIsoPool2_c::eventKeyCode (uint8_t keyActivationCode, uint16_
 
 // has to be implemented - remember that if the VT drops out and comes again, the values have to be up2date!!!
 void
-iObjectPool_simpleVTIsoPool2_c::eventObjectPoolUploadedSuccessfully (bool ab_wasLanguageUpdate, int8_t /*ai8_languageIndex*/, uint16_t /*aui16_languageCode*/)
+iObjectPool_simpleVTIsoPool2_c::eventObjectPoolUploadedSuccessfully(
+  bool ab_wasLanguageUpdate, 
+  int8_t /*ai8_languageIndex*/, 
+  uint16_t /*aui16_languageCode*/ )
 {
   if (ab_wasLanguageUpdate)
   {
@@ -605,13 +653,19 @@ void iObjectPool_simpleVTIsoPool2_c::eventEnterSafeState()
 }
 
 void
-iObjectPool_simpleVTIsoPool2_c::eventStringValue (uint16_t /*aui16_objId*/, uint8_t /*aui8_length*/, StreamInput_c &/*rc_streaminput*/, uint8_t /*aui8_unparsedBytes*/, bool /*b_isFirst*/, bool /*b_isLast*/)
+iObjectPool_simpleVTIsoPool2_c::eventStringValue( uint16_t /*aui16_objId*/, 
+                                                  uint8_t /*aui8_length*/, 
+                                                  StreamInput_c &/*rc_streaminput*/, 
+                                                  uint8_t /*aui8_unparsedBytes*/, 
+                                                  bool /*b_isFirst*/, 
+                                                  bool /*b_isLast*/)
 {
 //   if (b_isLast) {}
 }
 
 void
-iObjectPool_simpleVTIsoPool2_c::eventLanguagePgn (const localSettings_s& ars_localSettings)
+iObjectPool_simpleVTIsoPool2_c::eventLanguagePgn (
+  const localSettings_s& ars_localSettings  )
 {
   /// THIS FUNCTION SHOULD ONLY BE USED FOR CHANGE IN UNITS, ETC.
   /// FOR LANGUAGE CHANGE, REFER TO --> "eventObjectPoolUploadedSuccessfully" <--
@@ -635,7 +689,7 @@ main()
   getIcanInstance().init (0); // CAN-Bus 0 (with defaulting 250 kbit)
 
   // start address claim of the local identity/member
-  IsoAgLib::iIdentItem_c c_myIdent1 (2,    // aui8_indGroup
+  IsoAgLib::iIdentItem_c c_myIdent1( 2,    // aui8_indGroup
                                      7,    // aui8_devClass
                                      0,    // aui8_devClassInst
                                      25,   // ab_func
@@ -646,10 +700,10 @@ main()
                                      1,    // ab_funcInst (to differentiate between Tutorial3_0)
                                      0,    // ab_ecuInst
                                      true, // ab_selfConf
-                                     0);   // 0 means: We're WS-Master and have 0 WS-Slaves
+                                     0 );  // 0 means: We're WS-Master and have 0 WS-Slaves
                                      // further parameters use the default: NULL /* so no list given either */, 0 /* singletonVecKey */
 
-  IsoAgLib::iIdentItem_c c_myIdent2 (2,    // aui8_indGroup
+  IsoAgLib::iIdentItem_c c_myIdent2( 2,    // aui8_indGroup
                                      7,    // aui8_devClass
                                      0,    // aui8_devClassInst
                                      25,   // ab_func
@@ -660,12 +714,16 @@ main()
                                      1,    // ab_funcInst (to differentiate between Tutorial3_0)
                                      1,    // ab_ecuInst (to differentiate between the myIdent1
                                      true, // ab_selfConf
-                                     0);   // 0 means: We're WS-Master and have 0 WS-Slaves
+                                     0 );  // 0 means: We're WS-Master and have 0 WS-Slaves
                                      // further parameters use the default: NULL /* so no list given either */, 0 /* singletonVecKey */
 
   /*  Call registerIsoObjectPool to initialize both object pools! */
-  getIisoTerminalInstance().initAndRegisterIsoObjectPool (c_myIdent1, Tutorial_3_2_Pool_1_c, "T3211");
-  getIisoTerminalInstance().initAndRegisterIsoObjectPool (c_myIdent2, Tutorial_3_2_Pool_2_c, "T3221");
+  getIisoTerminalInstance().initAndRegisterIsoObjectPool( c_myIdent1, 
+                                                          Tutorial_3_2_Pool_1_c, 
+                                                          "T3211" );
+  getIisoTerminalInstance().initAndRegisterIsoObjectPool( c_myIdent2, 
+                                                          Tutorial_3_2_Pool_2_c, 
+                                                          "T3221" );
 
   /** IMPORTANT:
     - The following loop could be replaced of any repeating call of
@@ -700,9 +758,10 @@ main()
     i32_idleTimeSpread = IsoAgLib::getISchedulerInstance().timeEvent();
     #ifdef SYSTEM_PC
      #ifdef WIN32
-     if ( i32_idleTimeSpread > 0 ) Sleep(i32_idleTimeSpread);
+     if ( i32_idleTimeSpread > 0 ) Sleep( i32_idleTimeSpread );
      #else
-     if ( i32_idleTimeSpread > 0 ) IsoAgLib::iCanIo_c::waitUntilCanReceiveOrTimeout( i32_idleTimeSpread );
+     if ( i32_idleTimeSpread > 0 ) 
+       IsoAgLib::iCanIo_c::waitUntilCanReceiveOrTimeout( i32_idleTimeSpread );
      #endif
     #endif
   }
