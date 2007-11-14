@@ -101,6 +101,12 @@ namespace __IsoAgLib {
 
 bool CanPkgExt_c::b_runFlag2String = true;
 
+/** variable which holds the results for a resolved source address */
+AddressResolveResults CanPkgExt_c::addrResolveResSA;
+
+/** variable which holds the results for a resolved destination address */
+AddressResolveResults CanPkgExt_c::addrResolveResDA;
+
 /** default constructor, which has nothing to do */
 CanPkgExt_c::CanPkgExt_c( int ai_singletonVecKey )
   : CanPkg_c( ai_singletonVecKey )

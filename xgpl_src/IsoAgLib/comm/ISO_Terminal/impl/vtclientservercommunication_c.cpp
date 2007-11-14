@@ -942,7 +942,7 @@ VtClientServerCommunication_c::notifyOnAuxInputStatus()
   uint8_t const cui8_inputNumber = mc_data.getUint8Data(2-1);
 
   // Look for all Functions that are controlled by this Input right now!
-  for (STL_NAMESPACE::list<AuxAssignment_s>::iterator it = mlist_auxAssignments.begin(); it != mlist_auxAssignments.end(); )
+  for (STL_NAMESPACE::list<AuxAssignment_s>::iterator it = mlist_auxAssignments.begin(); it != mlist_auxAssignments.end(); it++)
   {
     if ( (it->mui8_inputNumber == cui8_inputNumber)
       && (it->mc_inputIsoName == ac_inputIsoName) )

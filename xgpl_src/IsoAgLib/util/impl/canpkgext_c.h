@@ -516,10 +516,10 @@ private:
   static bool b_runFlag2String;
 
   /** variable which holds the results for a resolved source address */
-  AddressResolveResults addrResolveResSA;
+  static AddressResolveResults addrResolveResSA;
 
   /** variable which holds the results for a resolved destination address */
-  AddressResolveResults addrResolveResDA;
+  static AddressResolveResults addrResolveResDA;
 };
 
 /** this typedef is only for some time to provide backward compatibility at API level */
