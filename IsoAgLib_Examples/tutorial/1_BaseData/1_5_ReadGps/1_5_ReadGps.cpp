@@ -56,6 +56,7 @@
  * the console. Later to be used in conjunction with a VT-client maybe.
  *
  * <H1>What is demonstrated</H1>
+ * <ol>
  * <li>Receive data (GPS position and direction) from the bus without sending any (=implement mode)
  * <ul>
  *  <li>Data storage class IsoAgLib::iTimePosGPS_c
