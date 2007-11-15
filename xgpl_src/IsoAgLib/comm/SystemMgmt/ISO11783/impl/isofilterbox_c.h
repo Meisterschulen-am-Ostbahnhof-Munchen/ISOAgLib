@@ -2,7 +2,7 @@
                               isofilterbox_c.h
                              -------------------
     begin                : Mon Oct 09 2006
-    copyright            : (C) 2000 - 2006 by Dipl.-Inf, Martin Wodok
+    copyright            : (C) 2000 - 2007 by Dipl.-Inf. Martin Wodok
     email                : m.wodok@osb-ag:de
     type                 : Header
     $LastChangedDate:  $
@@ -92,16 +92,6 @@
 #include <IsoAgLib/driver/can/impl/ident_c.h>
 #include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h>
 
-#ifdef DO_USE_SLIST
-  #if defined(SYSTEM_PC) && !defined(SYSTEM_PC_VC) && !defined(SYSTEM_A1) && __GNUC__ >= 3
-    #include <ext/slist>
-    namespace std { using __gnu_cxx::slist;}
-  #else
-    #include <slist>
-  #endif
-#else
-  #include <list>
-#endif
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
@@ -149,58 +139,21 @@ private:
 class IsoFilterBox_c : public ClientBase
 {
 public:
-  enum RemoveAnswer_en
-  {
-    RemoveAnswerFailureNonExistent,
-    RemoveAnswerSuccessBoxEmpty,
-    RemoveAnswerSuccessBoxNotEmpty
-  };
+  IsoFilterBox_c (const IsoFilter_s& rrefcs_isoFilter SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA);
 
-  struct ManagedIsoFilter_s
-  {
-    ManagedIsoFilter_s (const IsoFilter_s& ars_isoFilter) : s_isoFilter (ars_isoFilter), pc_filterBox (NULL) {}
+  bool hasIsoFilter (const IsoFilter_s& arcs_isoFilter) { return (ms_isoFilter == arcs_isoFilter); }
 
-    IsoFilter_s s_isoFilter;
-    FilterBox_c* pc_filterBox;
-  };
-
-  typedef STL_NAMESPACE::USABLE_SLIST<ManagedIsoFilter_s> ManagedIsoFilter_slist;
-  typedef STL_NAMESPACE::USABLE_SLIST<ManagedIsoFilter_s>::iterator ManagedISOFilter_it;
-
-  /** empty constructor - everything has to be "constructed" with the "init"-function! */
-  IsoFilterBox_c (SINGLETON_VEC_KEY_PARAMETER_DEF);
-
-  /** copy constructor, as implicit one was too large to be inlined! */
-  IsoFilterBox_c (const IsoFilterBox_c&);
-
-  /** initialization for one simple IsoFilterBox_c
-    @param arc_customer reference to the CanCustomer_c instance, which creates this IsoFilterBox_c instance
-   */
-//  void init (CanCustomer_c& arc_canCustomer);
-
-  /** add ISOFilter
-    @return true on success
-   */
-  bool addIsoFilter (const IsoFilter_s& rrefcs_isoFilter);
-
-  bool hasIsoFilterWithoutCustomer (const IsoFilter_s& rrefcs_isoFilter);
-  bool hasIsoFilterWithCustomer    (const IsoFilter_s& rrefcs_isoFilter);
-
-  RemoveAnswer_en removeIsoFilter (const IsoFilter_s& rrefcs_isoFilter);
-
-  void updateOnAdd    (const IsoName_c& apc_isoName);
-  void updateOnRemove (const IsoName_c& apc_isoName);
-
-  void syncFiltersToCan(const IsoName_c* apc_isoName=NULL);
+  bool updateOnAdd    ();
+  void updateOnRemove (const IsoName_c* arc_isoName);
 
   //! Here could come another constructor that takes a variable list of filters and
   //! keeps them all connected. Yet to be done, but not important right now...
 
 private:
-  ManagedIsoFilter_slist mslist_managedISOFilter;
-
-  // management information about the state of this instance
-  uint8_t mui8_filtersSetUp;
+  IsoFilter_s ms_isoFilter;
+  FilterBox_c* mpc_filterBox;
+  Ident_c mc_adaptedIdentMask;
+  Ident_c mc_adaptedIdentFilter;
 };
 
 /** this typedef is only for some time to provide backward compatibility at API level */

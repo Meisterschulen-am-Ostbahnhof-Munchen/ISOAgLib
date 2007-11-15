@@ -82,6 +82,8 @@
  ***************************************************************************/
 #include "isofiltermanager_c.h"
 
+#include <IsoAgLib/driver/can/impl/canio_c.h>
+
 
 namespace __IsoAgLib {
 
@@ -95,7 +97,7 @@ IsoFilterManager_c::~IsoFilterManager_c ()
 
 /** constructor for IsoRequestPgn_c */
 IsoFilterManager_c::IsoFilterManager_c ()
-  : SingletonIsoFilterManager_c ()
+: SingletonIsoFilterManager_c ()
 {
 // functionality moved OUT of the constructor, as the constructor is NOT called in embedded systems for static class instances.
 }
@@ -119,10 +121,12 @@ bool IsoFilterManager_c::timeEvent( void )
   return true;
 }
 
+
 /** just a dummy implementation of virtual abstract functions in ElementBase_c */
 void IsoFilterManager_c::close( void )
 {
 }
+
 
 /** just a dummy implementation of virtual abstract functions in ElementBase_c */
 const char* IsoFilterManager_c::getTaskName() const
@@ -130,28 +134,28 @@ const char* IsoFilterManager_c::getTaskName() const
   return "IsoFilterManager_c";
 }
 
+
 void
 IsoFilterManager_c::init()
 {
   if (!mb_alreadyInitialized)
   { // avoid double initialization. for now now close needed, only init once! ==> see Scheduler_c::startupSystem()
     mb_alreadyInitialized = true;
-    // register to get ISO monitor list changes
+    // register to get IsoMonitor list changes
     __IsoAgLib::getIsoMonitorInstance4Comm().registerSaClaimHandler( this );
   }
 }
 
 
-//! Checks WITH CANCustomer!
 bool
-IsoFilterManager_c::existIsoFilter (const IsoFilter_s& rrefcs_isoFilter)
+IsoFilterManager_c::existIsoFilter (const IsoFilter_s& arcs_isoFilter)
 {
   for (IsoFilterBox_it it_isoFilterBox = mvec_isoFilterBox.begin();
        it_isoFilterBox != mvec_isoFilterBox.end();
        it_isoFilterBox++)
-  { // Search for existing ISOFilterBox
-    if (it_isoFilterBox->hasIsoFilterWithCustomer (rrefcs_isoFilter))
-    { // This ISOFilterBox already has such a filter
+  { // Search for existing IsoFilterBox
+    if (it_isoFilterBox->hasIsoFilter (arcs_isoFilter))
+    { // This IsoFilterBox already has such a filter
       return true;
     }
   }
@@ -160,95 +164,43 @@ IsoFilterManager_c::existIsoFilter (const IsoFilter_s& rrefcs_isoFilter)
 
 
 void
-IsoFilterManager_c::insertIsoFilter (const IsoFilter_s& rrefcs_isoFilter)
+IsoFilterManager_c::insertIsoFilter (const IsoFilter_s& arcs_isoFilter, bool ab_immReconfigure)
 {
-  // Check if ISOFilter does yet exist in some ISOFilterBox
-  if (!existIsoFilter (rrefcs_isoFilter))
-  { // insert an empty ISOFilterBox. initialized then in list right after
-    mvec_isoFilterBox.push_back (IsoFilterBox_c (SINGLETON_VEC_KEY));
+  // Check if IsoFilter does yet exist in some IsoFilterBox
+  if (!existIsoFilter (arcs_isoFilter))
+  { // insert an empty IsoFilterBox. initialized then in list right after
+    mvec_isoFilterBox.push_back (IsoFilterBox_c (arcs_isoFilter SINGLETON_VEC_KEY_WITH_COMMA));
 
-    // now get the inserted ISOFilterBox
-    IsoFilterBox_c& rc_isoFilterBox = mvec_isoFilterBox.back();
-
-    // add the filter(s)
-    rc_isoFilterBox.addIsoFilter (rrefcs_isoFilter);
-
-    // retrigger update of real hardware filters
-    rc_isoFilterBox.syncFiltersToCan();
-  }
-}
-
-
-/** @todo use vararg list somewhen! */
-void
-IsoFilterManager_c::insertIsoFilterConnected (const IsoFilter_s& rrefcs_isoFilter, const IsoFilter_s& rrefcs_isoFilter2)
-{
-  // Check if ISOFilter does yet exist in some ISOFilterBox
-  if ( (!existIsoFilter (rrefcs_isoFilter)) && (!existIsoFilter (rrefcs_isoFilter2)) )
-  { // insert an empty ISOFilterBox. initialized then in list right after
-    mvec_isoFilterBox.push_back (IsoFilterBox_c (SINGLETON_VEC_KEY));
-
-    // now get the inserted ISOFilterBox
-    IsoFilterBox_c& rc_isoFilterBox = mvec_isoFilterBox.back();
-
-    // add the filter(s)
-    rc_isoFilterBox.addIsoFilter (rrefcs_isoFilter);
-    rc_isoFilterBox.addIsoFilter (rrefcs_isoFilter2);
-
-    // retrigger update of real hardware filters
-    rc_isoFilterBox.syncFiltersToCan();
-  }
-}
-
-
-bool
-IsoFilterManager_c::addToIsoFilter (const IsoFilter_s& rrefcs_isoFilterExisting, const IsoFilter_s& rrefcs_isoFilterToAdd)
-{
-  for (IsoFilterBox_it it_isoFilterBox = mvec_isoFilterBox.begin();
-       it_isoFilterBox != mvec_isoFilterBox.end();
-       it_isoFilterBox++)
-  { // Search for existing ISOFilterBox
-    if (it_isoFilterBox->hasIsoFilterWithoutCustomer (rrefcs_isoFilterExisting))
-    { // Add ISOFilter to existing ISOFilterBox
-
-      // if filter not yet there
-      if (!(it_isoFilterBox->hasIsoFilterWithCustomer (rrefcs_isoFilterToAdd)))
-      { // add the filter
-        it_isoFilterBox->addIsoFilter (rrefcs_isoFilterToAdd);
-      }
-      // maybe add some more... use variable argument list like printf?
-
-      it_isoFilterBox->syncFiltersToCan();
-      return true;
-    }
-  }
-
-  // Existing ISOFilterBox not found, can't add ISOFilter
-  return false;
-}
-
-
-bool
-IsoFilterManager_c::removeIsoFilter (const IsoFilter_s& rrefcs_isoFilter)
-{
-  for (IsoFilterBox_it it_isoFilterBox = mvec_isoFilterBox.begin();
-       it_isoFilterBox != mvec_isoFilterBox.end();
-       it_isoFilterBox++)
-  { // Search for existing ISOFilterBox
-    switch (it_isoFilterBox->removeIsoFilter (rrefcs_isoFilter))
+    // now get the inserted IsoFilterBox and retrigger update of real hardware filters
+    if (mvec_isoFilterBox.back().updateOnAdd())
     {
-      case IsoFilterBox_c::RemoveAnswerFailureNonExistent: break;
-      case IsoFilterBox_c::RemoveAnswerSuccessBoxEmpty:
-        it_isoFilterBox = mvec_isoFilterBox.erase(it_isoFilterBox);
-        // break; left out intentionally
-      case IsoFilterBox_c::RemoveAnswerSuccessBoxNotEmpty:
-        return true;
+      if (ab_immReconfigure)
+        getCanInstance4Comm().reconfigureMsgObj();
+    }
+  }
+}
+
+
+bool
+IsoFilterManager_c::removeIsoFilter (const IsoFilter_s& arcs_isoFilter)
+{
+  for (IsoFilterBox_it it_isoFilterBox = mvec_isoFilterBox.begin();
+       it_isoFilterBox != mvec_isoFilterBox.end();
+       it_isoFilterBox++)
+  { // Search for existing IsoFilterBox
+    if (it_isoFilterBox->hasIsoFilter (arcs_isoFilter))
+    {
+      it_isoFilterBox->updateOnRemove (NULL);
+      mvec_isoFilterBox.erase (it_isoFilterBox);
+      return true;
     }
   }
 
-  // ISOFilterBox not existing, can't remove!
+  // IsoFilterBox not existing, can't remove!
   return false;
 }
+
+
 
 /** this function is called by IsoMonitor_c when a new CLAIMED IsoItem_c is registered.
   * @param rc_isoName const reference to the item which IsoItem_c state is changed
@@ -257,13 +209,18 @@ IsoFilterManager_c::removeIsoFilter (const IsoFilter_s& rrefcs_isoFilter)
 void
 IsoFilterManager_c::reactOnMonitorListAdd (const IsoName_c& rc_isoName, const IsoItem_c* /*apc_newItem*/)
 {
+  bool b_reconfig = false;
   for (IsoFilterBox_it it_isoFilterBox = mvec_isoFilterBox.begin();
        it_isoFilterBox != mvec_isoFilterBox.end();
        it_isoFilterBox++)
   { // the ISOFilterBoxes will take care if they have to do anything at all or not...
-    it_isoFilterBox->updateOnAdd (rc_isoName);
+    b_reconfig |= it_isoFilterBox->updateOnAdd();
   }
+
+  if (b_reconfig)
+    getCanInstance4Comm().reconfigureMsgObj();
 }
+
 
 /** this function is called by IsoMonitor_c when a device looses its IsoItem_c.
 * @param rc_isoName const reference to the item which IsoItem_c state is changed
@@ -276,7 +233,7 @@ IsoFilterManager_c::reactOnMonitorListRemove (const IsoName_c& rc_isoName, uint8
        it_isoFilterBox != mvec_isoFilterBox.end();
        it_isoFilterBox++)
   { // the ISOFilterBoxes will take care if they have to do anything at all or not...
-    it_isoFilterBox->updateOnRemove (rc_isoName);
+    it_isoFilterBox->updateOnRemove (&rc_isoName);
   }
 }
 

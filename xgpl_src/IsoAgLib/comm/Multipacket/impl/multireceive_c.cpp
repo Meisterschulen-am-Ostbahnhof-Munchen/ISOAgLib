@@ -1448,12 +1448,12 @@ MultiReceive_c::reactOnMonitorListAdd( const __IsoAgLib::IsoName_c& rc_isoName, 
       << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
   if ( getIsoMonitorInstance4Comm().existLocalIsoMemberISOName(rc_isoName) )
-  { // lcoal IsoItem_c has finished adr claim
-    // put CONN/DATA in ONE CONNECTED FILTERBOX!
-    getIsoFilterManagerInstance().insertIsoFilterConnected (IsoFilter_s (*this, (0x3FFFF00UL), (TP_CONN_MANAGE_PGN << 8),   &rc_isoName, NULL, 8),
-                                                            IsoFilter_s (*this, (0x3FFFF00UL), (TP_DATA_TRANSFER_PGN << 8), &rc_isoName, NULL, 8));
-    getIsoFilterManagerInstance().insertIsoFilterConnected (IsoFilter_s (*this, (0x3FFFF00UL), (ETP_CONN_MANAGE_PGN << 8),  &rc_isoName, NULL, 8),
-                                                            IsoFilter_s (*this, (0x3FFFF00UL), (ETP_DATA_TRANSFER_PGN << 8),&rc_isoName, NULL, 8));
+  { // local IsoItem_c has finished adr claim
+    getIsoFilterManagerInstance().insertIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL), (TP_CONN_MANAGE_PGN << 8),   &rc_isoName, NULL, 8), false);
+    getIsoFilterManagerInstance().insertIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL), (TP_DATA_TRANSFER_PGN << 8), &rc_isoName, NULL, 8), false);
+    getIsoFilterManagerInstance().insertIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL), (ETP_CONN_MANAGE_PGN << 8),  &rc_isoName, NULL, 8), false);
+    getIsoFilterManagerInstance().insertIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL), (ETP_DATA_TRANSFER_PGN << 8),&rc_isoName, NULL, 8), false);
+    getCanInstance4Comm().reconfigureMsgObj();
   }
 
   // apc_newItem is always != NULL

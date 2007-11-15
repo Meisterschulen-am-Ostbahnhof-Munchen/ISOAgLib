@@ -125,10 +125,7 @@ public:
 
   bool existIsoFilter (const IsoFilter_s& rrefcs_isoFilter);
 
-  void insertIsoFilter (const IsoFilter_s& rrefcs_isoFilter);
-  void insertIsoFilterConnected (const IsoFilter_s& rrefcs_isoFilter, const IsoFilter_s& rrefcs_isoFilter2);
-
-  bool addToIsoFilter (const IsoFilter_s& rrefcs_isoFilterExisting, const IsoFilter_s& rrefcs_isoFilterToAdd);
+  void insertIsoFilter (const IsoFilter_s& rrefcs_isoFilter, bool ab_immReconfigure=true);
 
   bool removeIsoFilter (const IsoFilter_s& rrefcs_isoFilter);
 
