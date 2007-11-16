@@ -1652,7 +1652,7 @@ int main(int argC, char* argV[])
         if (c_directoryCompareItem.substr(c_directoryCompareItem.length()-4) == c_unwantedType) continue;
         if (c_directoryCompareItem.substr(c_directoryCompareItem.length()-2) == c_unwantedType2) continue;
 
-        if (c_directoryCompareItem.find(c_project) != std::string::npos)
+        if (c_directoryCompareItem.find(str_project) != std::string::npos)
         {
           c_directoryCompareItem.insert(0, "\\");
           c_directoryCompareItem.insert(0, c_directory);
