@@ -527,7 +527,7 @@ iObjectPool_simpleVTIsoPool_c::eventLanguagePgn( const localSettings_s& ars_loca
   languageCode[1] = ars_localSettings.languageCode & 0xFF;
   #ifdef DEBUG
   EXTERNAL_DEBUG_DEVICE << "-->eventLanguagePgn("<<languageCode<<")<--" << EXTERNAL_DEBUG_DEVICE_ENDL;
-  #endifindent
+  #endif
   iVtObjectOSlanguage.setValueCopy (languageCode);
 }
 
