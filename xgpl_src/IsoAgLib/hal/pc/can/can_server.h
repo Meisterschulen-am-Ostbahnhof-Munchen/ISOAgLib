@@ -148,12 +148,12 @@ struct can_recv_data {
 };
 
 typedef struct {
-  int32_t i32_mtypePidBusObj;
+  long   i32_mtypePidBusObj;
   struct can_data s_canData;
 } msqRead_s;
 
 typedef struct {
-  int32_t  i32_mtypePrioAnd1; // has now priority and Pid (PID is needed for clearing the queue :-()
+  long     i32_mtypePrioAnd1; // has now priority and Pid (PID is needed for clearing the queue :-()
   int16_t  ui16_pid;
   uint8_t  ui8_bus;
   uint8_t  ui8_obj;
@@ -164,7 +164,7 @@ typedef struct {
 
 // message queues / process id
 typedef struct {
-  int32_t i32_cmdHandle;
+  long    i32_cmdHandle;
   int32_t i32_cmdAckHandle;
   // client read queue
   int32_t i32_rdHandle;

@@ -430,8 +430,9 @@ int32_t can_lastReceiveTime()
 int16_t getCanMsgBufCount(uint8_t bBusNumber,uint8_t bMsgObj)
 {
   int16_t i16_rc;
+  msqRead_s s_msqReadBuf;
   // in this direction (server->client), the sendPrio-flag is NEVER set, so we need only to check for FALSE assembled mtypes!
-  if ((i16_rc = msgrcv(msqDataClient.i32_rdHandle, NULL, 0, assembleRead_mtype(msqDataClient.i32_pid, bBusNumber, bMsgObj), IPC_NOWAIT)) == -1)
+  if ((i16_rc = msgrcv(msqDataClient.i32_rdHandle, &s_msqReadBuf, 0, assembleRead_mtype(msqDataClient.i32_pid, bBusNumber, bMsgObj), IPC_NOWAIT)) == -1)
     if (errno == E2BIG) {
       //DEBUG_PRINT("messages 1\n");
       return 1;
@@ -506,7 +507,7 @@ int16_t getCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tReceive * ptReceive )
   const uint8_t cui8_useMsgObj = bMsgObj;
 
   // we assemble the mtype with FALSE here, as we do NOT have sendPriorities in this direction!
-  if ((i16_rc = msgrcv(msqDataClient.i32_rdHandle, &msqReadBuf, sizeof(msqRead_s) - sizeof(int32_t), assembleRead_mtype(msqDataClient.i32_pid, bBusNumber, cui8_useMsgObj), IPC_NOWAIT)) == -1)
+  if ((i16_rc = msgrcv(msqDataClient.i32_rdHandle, &msqReadBuf, sizeof(msqRead_s) - sizeof(long), assembleRead_mtype(msqDataClient.i32_pid, bBusNumber, cui8_useMsgObj), IPC_NOWAIT)) == -1)
     return HAL_UNKNOWN_ERR;
   i32_lastReceiveTime = getTime();
 
@@ -564,13 +565,13 @@ int16_t sendCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tSend* ptSend )
   memcpy(&(msqWriteBuf.s_canMsg.ui8_data), ptSend->abData, ptSend->bDlc);
   msqWriteBuf.i32_sendTimeStamp = getTime();
 
-  if (msgsnd(msqDataClient.i32_wrHandle, &msqWriteBuf, sizeof(msqWrite_s) - sizeof(int32_t), 0) == -1) {
+  if (msgsnd(msqDataClient.i32_wrHandle, &msqWriteBuf, sizeof(msqWrite_s) - sizeof(long), 0) == -1) {
     perror("msgsnd");
     return HAL_UNKNOWN_ERR;
   }
 
   // wait for ACK
-  if((i16_rc = msgrcv(msqDataClient.i32_cmdAckHandle, &s_transferBuf, sizeof(transferBuf_s) - sizeof(int32_t), msqDataClient.i32_pid, 0)) == -1)
+  if((i16_rc = msgrcv(msqDataClient.i32_cmdAckHandle, &s_transferBuf, sizeof(transferBuf_s) - sizeof(long), msqDataClient.i32_pid, 0)) == -1)
     return HAL_UNKNOWN_ERR;
 
   if (s_transferBuf.ui16_command == COMMAND_ACKNOWLEDGE )

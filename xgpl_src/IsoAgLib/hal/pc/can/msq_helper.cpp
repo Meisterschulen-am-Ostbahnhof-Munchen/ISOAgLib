@@ -75,7 +75,7 @@ void send_command_ack(int32_t ai32_mtype, msqData_s* p_msqDataServer, int32_t ai
   s_transferBuf.s_acknowledge.i32_dataContent = ai32_dataContent;
   s_transferBuf.s_acknowledge.i32_data = ai32_data;
 
-  msgsnd(p_msqDataServer->i32_cmdAckHandle, &s_transferBuf, sizeof(transferBuf_s) - sizeof(int32_t), IPC_NOWAIT);
+  msgsnd(p_msqDataServer->i32_cmdAckHandle, &s_transferBuf, sizeof(transferBuf_s) - sizeof(long), IPC_NOWAIT);
 }
 
 
@@ -83,11 +83,11 @@ int32_t send_command(transferBuf_s* p_s_transferBuf, msqData_s* p_msqDataClient)
 {
   int16_t i16_rc;
 
-  if ((i16_rc = msgsnd(p_msqDataClient->i32_cmdHandle, p_s_transferBuf, sizeof(transferBuf_s) - sizeof(int32_t), 0)) == -1)
+  if ((i16_rc = msgsnd(p_msqDataClient->i32_cmdHandle, p_s_transferBuf, sizeof(transferBuf_s) - sizeof(long), 0)) == -1)
     return HAL_UNKNOWN_ERR;
 
   // wait for ACK
-  if((i16_rc = msgrcv(p_msqDataClient->i32_cmdAckHandle, p_s_transferBuf, sizeof(transferBuf_s) - sizeof(int32_t), p_msqDataClient->i32_pid, 0)) == -1)
+  if((i16_rc = msgrcv(p_msqDataClient->i32_cmdAckHandle, p_s_transferBuf, sizeof(transferBuf_s) - sizeof(long), p_msqDataClient->i32_pid, 0)) == -1)
     return HAL_UNKNOWN_ERR;
 
   if (p_s_transferBuf->ui16_command == COMMAND_ACKNOWLEDGE)
@@ -166,7 +166,7 @@ void clearReadQueue(uint8_t bBusNumber, uint8_t bMsgObj, int32_t i32_msqHandle, 
 {
   msqRead_s msqReadBuf;
 
-  while (msgrcv(i32_msqHandle, &msqReadBuf, sizeof(msqRead_s) - sizeof(int32_t), assembleRead_mtype(ui16_pid, bBusNumber, bMsgObj), IPC_NOWAIT) > 0)
+  while (msgrcv(i32_msqHandle, &msqReadBuf, sizeof(msqRead_s) - sizeof(long), assembleRead_mtype(ui16_pid, bBusNumber, bMsgObj), IPC_NOWAIT) > 0)
     ;
 }
 
@@ -175,7 +175,7 @@ void clearWriteQueue(bool ab_prio, int32_t i32_msqHandle, uint16_t ui16_pid)
 {
   msqWrite_s msqWriteBuf;
 
-  while (msgrcv(i32_msqHandle, &msqWriteBuf, sizeof(msqWrite_s) - sizeof(int32_t), assembleWrite_mtype(ui16_pid, ab_prio), IPC_NOWAIT) > 0)
+  while (msgrcv(i32_msqHandle, &msqWriteBuf, sizeof(msqWrite_s) - sizeof(long), assembleWrite_mtype(ui16_pid, ab_prio), IPC_NOWAIT) > 0)
     ;
 }
 */

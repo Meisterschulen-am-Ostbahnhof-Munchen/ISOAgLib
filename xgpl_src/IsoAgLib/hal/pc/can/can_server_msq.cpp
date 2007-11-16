@@ -544,7 +544,7 @@ static void enqueue_msg(uint32_t DLC, uint32_t ui32_id, uint32_t b_bus, uint8_t 
           msqReadBuf.s_canData.bMsgObj = i32_obj;
 #endif
 
-          int i_rcSnd=msgsnd(pc_serverData->msqDataServer.i32_rdHandle, &msqReadBuf, sizeof(msqRead_s) - sizeof(int32_t), IPC_NOWAIT);
+          int i_rcSnd=msgsnd(pc_serverData->msqDataServer.i32_rdHandle, &msqReadBuf, sizeof(msqRead_s) - sizeof(long), IPC_NOWAIT);
           if (i_rcSnd == -1)
           {
             int error = errno;
@@ -569,14 +569,14 @@ static void enqueue_msg(uint32_t DLC, uint32_t ui32_id, uint32_t b_bus, uint8_t 
                 << " for MsgObj NR: " << i32_obj
                 << " is full => try to remove oldest msg and send again!!" << INTERNAL_DEBUG_DEVICE_ENDL;
               #endif
-              int i_rcRcv = msgrcv(pc_serverData->msqDataServer.i32_rdHandle, &msqWriteBuf, sizeof(msqWrite_s) - sizeof(int32_t), 0,IPC_NOWAIT);
+              int i_rcRcv = msgrcv(pc_serverData->msqDataServer.i32_rdHandle, &msqWriteBuf, sizeof(msqWrite_s) - sizeof(long), 0,IPC_NOWAIT);
               if ( i_rcRcv > 0 )
               { // number of received bytes > 0 => msgrcv successfull => try again
                 DEBUG_PRINT("oldest msg from queue removed!!\n");
                 #ifdef CAN_SERVER_LOG_PATH
                 logging << "oldest msg from queue removed!!" << INTERNAL_DEBUG_DEVICE_ENDL;
                 #endif
-                i_rcSnd=msgsnd(pc_serverData->msqDataServer.i32_rdHandle, &msqReadBuf, sizeof(msqRead_s) - sizeof(int32_t), IPC_NOWAIT);
+                i_rcSnd=msgsnd(pc_serverData->msqDataServer.i32_rdHandle, &msqReadBuf, sizeof(msqRead_s) - sizeof(long), IPC_NOWAIT);
                 if (i_rcSnd == 0)
                 {
                   DEBUG_PRINT("message sent again after queue full!!\n");
@@ -656,7 +656,7 @@ static void* can_write_thread_func(void* ptr)
     if (b_highPrioMode)
     { // at least 5 messages are pending - so check for the prioritized clients first now!
       // receive for max 10 msec only prioritized messages (listen for prioritized MTYPE msgs only)
-      if (msgrcv(pc_serverData->msqDataServer.i32_wrHandle, &msqWriteBuf, sizeof(msqWrite_s) - sizeof(int32_t), MTYPE_WRITE_PRIO_HIGH, IPC_NOWAIT) == -1)
+      if (msgrcv(pc_serverData->msqDataServer.i32_wrHandle, &msqWriteBuf, sizeof(msqWrite_s) - sizeof(long), MTYPE_WRITE_PRIO_HIGH, IPC_NOWAIT) == -1)
       { // no hi-prio msgs waiting in the queue...
         usleep(3000); // will probably actually wait for 10ms anyway :-(
         continue;
@@ -664,7 +664,7 @@ static void* can_write_thread_func(void* ptr)
     }
     else
     {
-      if (msgrcv(pc_serverData->msqDataServer.i32_wrHandle, &msqWriteBuf, sizeof(msqWrite_s) - sizeof(int32_t), MTYPE_ANY, 0) == -1)
+      if (msgrcv(pc_serverData->msqDataServer.i32_wrHandle, &msqWriteBuf, sizeof(msqWrite_s) - sizeof(long), MTYPE_ANY, 0) == -1)
       {
         perror("msgrcv-all");
         usleep(1000);
@@ -929,7 +929,7 @@ static void* command_thread_func(void* ptr)
 
     // check command queue
     /* The length is essentially the size of the structure minus sizeof(mtype) */
-    if((i16_rc = msgrcv(pc_serverData->msqDataServer.i32_cmdHandle, &s_transferBuf, sizeof(transferBuf_s) - sizeof(int32_t), 0, 0)) == -1) {
+    if((i16_rc = msgrcv(pc_serverData->msqDataServer.i32_cmdHandle, &s_transferBuf, sizeof(transferBuf_s) - sizeof(long), 0, 0)) == -1) {
       perror("msgrcv");
       usleep(1000);
       continue;
