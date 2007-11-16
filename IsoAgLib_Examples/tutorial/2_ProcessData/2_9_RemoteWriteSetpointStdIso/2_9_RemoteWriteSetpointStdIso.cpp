@@ -380,7 +380,7 @@ int main()
   arr_procData[cui8_indexWorkState].init(
                                          s_WorkStateElementDDI,
                                          0,
-                                         c_remoteDeviceType, c_remoteDeviceType, &c_myISOName,
+                                         c_remoteDeviceType, &c_myISOName,
   #ifdef USE_EEPROM_IO
                                          0xFFFF,
   #endif
@@ -390,7 +390,7 @@ int main()
   arr_procData[cui8_indexApplicationRate].init(
                                                s_ApplicationRateElementDDI,
                                                0,
-                                               c_remoteDeviceType, c_remoteDeviceType, &c_myISOName,
+                                               c_remoteDeviceType, &c_myISOName,
   #ifdef USE_EEPROM_IO
                                                0xFFFF,
   #endif
@@ -401,7 +401,7 @@ int main()
   IsoAgLib::iProcDataRemote_c c_workState(
                                          s_WorkStateElementDDI,
                                          0,
-                                         c_remoteDeviceType, c_remoteDeviceType, &c_myISOName
+                                         c_remoteDeviceType, &c_myISOName
   #ifdef USE_EEPROM_IO
                                          ,0xFFFF
   #endif
@@ -411,7 +411,7 @@ int main()
   IsoAgLib::iProcDataRemote_c c_applicationRate(
                                                 s_ApplicationRateElementDDI,
                                                 0,
-                                                c_remoteDeviceType, c_remoteDeviceType, &c_myISOName
+                                                c_remoteDeviceType, &c_myISOName
   #ifdef USE_EEPROM_IO
                                                 ,0xFFFF
   #endif

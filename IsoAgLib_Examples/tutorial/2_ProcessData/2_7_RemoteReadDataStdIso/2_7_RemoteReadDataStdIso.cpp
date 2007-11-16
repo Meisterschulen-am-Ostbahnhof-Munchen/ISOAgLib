@@ -355,7 +355,7 @@ int main()
       b_funcInst = 0,
       b_ecuInst = 0;
   uint16_t ui16_manufCode = 0x7FF;
-  uint32_t ui32_serNo = 27;
+  uint32_t ui32_serNo = 27+1;
 
   // start address claim of the local member "IMI"
   // if ISOName conflicts forces change of device class instance, the
@@ -395,7 +395,7 @@ int main()
   arr_procData[cui8_indexWorkState].init(
                                          s_workStateElementDDI,
                                          0, // device element number
-                                         c_remoteDeviceType, c_remoteDeviceType, &c_myISOName,
+                                         c_remoteDeviceType, &c_myISOName,
   #ifdef USE_EEPROM_IO
                                          0xFFFF,
   #endif
@@ -405,7 +405,7 @@ int main()
   arr_procData[cui8_indexApplicationRate].init(
                                                s_applicationRateElementDDI,
                                                0, // device element number
-                                               c_remoteDeviceType, c_remoteDeviceType, &c_myISOName,
+                                               c_remoteDeviceType, &c_myISOName,
   #ifdef USE_EEPROM_IO
                                                0xFFFF,
   #endif
@@ -416,7 +416,7 @@ int main()
   IsoAgLib::iProcDataRemote_c c_workState(
                                          s_workStateElementDDI,
                                          0,
-                                         c_remoteDeviceType, c_remoteDeviceType, &c_myISOName
+                                         c_remoteDeviceType, &c_myISOName
   #ifdef USE_EEPROM_IO
                                          ,0xFFFF
   #endif
@@ -426,7 +426,7 @@ int main()
   IsoAgLib::iProcDataRemote_c c_applicationRate(
                                                 s_applicationRateElementDDI,
                                                 0,
-                                                c_remoteDeviceType, c_remoteDeviceType, &c_myISOName
+                                                c_remoteDeviceType, &c_myISOName
   #ifdef USE_EEPROM_IO
                                                 ,0xFFFF
   #endif

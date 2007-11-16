@@ -10,6 +10,14 @@
 
 // include an external file for definition of pool and firmware versions
 #include "version.h"
+
+
+#ifndef SYSTEM_PC
+#define SYSTEM_PC
+#endif // SYSTEM_PC
+#define PRJ_USE_AUTOGEN_CONFIG config_2_0_LocalReadDataStdIso.h
+
+
 #define CAN_BUS_CNT 1 
 
 #define CAN_BUS_USED 0 
@@ -31,6 +39,12 @@
 // #define USE_PCAN_LIB
 
 // #define CONFIG_DO_NOT_START_RELAIS_ON_STARTUP
+
+#ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
+
+  #define SYSTEM_WITH_ENHANCED_CAN_HAL
+
+#endif // SYSTEM_WITH_ENHANCED_CAN_HAL
 
 #ifndef USE_PROC_DATA_DESCRIPTION_POOL 
 	#define USE_PROC_DATA_DESCRIPTION_POOL 
@@ -167,9 +181,6 @@
 
 /// define default max number for CAN Msg-Obj used for IsoAgLib
 // #define CONFIG_CAN_DEFAULT_MAX_OBJ_NR 13
-
-/// select if CAN should change baudrate to fallback, if BUS deadlock is detected
-// #define CONFIG_CAN_USE_FALLBACK_ON_CAN_DEADLOCK 0
 
 /// max time intervall of CAN err before switching back from 250 to 125 kbit/s in [msec.]
 // #define CONFIG_CAN_MAX_CAN_ERR_TIME_BEFORE_SLOWERING 3000
