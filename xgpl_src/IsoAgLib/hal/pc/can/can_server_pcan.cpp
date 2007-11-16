@@ -69,7 +69,7 @@ using namespace __HAL;
 #ifndef WIN32
   #ifdef USE_PCAN_LIB
     #include <libpcan.h>
-    HANDLE driverHandle;
+    HANDLE driverHandle[cui32_maxCanBusCnt];
   #else
     #include <pcan.h>
   #endif
@@ -133,9 +133,9 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
     sprintf( fname, "/dev/pcan%u", PCAN_MSCAN_MINOR_BASE + ui8_bus );
 
 #ifdef USE_PCAN_LIB
-    driverHandle = LINUX_CAN_Open(fname, O_RDWR | O_NONBLOCK);
-    pc_serverData->can_device[ui8_bus] = LINUX_CAN_FileHandle(driverHandle);
-    if ( driverHandle == NULL ) {
+    driverHandle[ui8_bus] = LINUX_CAN_Open(fname, O_RDWR | O_NONBLOCK);
+    pc_serverData->can_device[ui8_bus] = LINUX_CAN_FileHandle(driverHandle[ui8_bus]);
+    if ( driverHandle[ui8_bus] == NULL ) {
       std::cerr << "Open CAN Fault" << std::endl;
       return false;
     }
@@ -148,8 +148,8 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
 #endif
 
 #ifdef USE_PCAN_LIB
-    WORD useBtr = LINUX_CAN_BTR0BTR1(driverHandle, wBitrate*1000);
-    if (CAN_Init(driverHandle, useBtr, 2) < 0) {
+    WORD useBtr = LINUX_CAN_BTR0BTR1(driverHandle[ui8_bus], wBitrate*1000);
+    if (CAN_Init(driverHandle[ui8_bus], useBtr, 2) < 0) {
       std::cerr << "Init Problem" << std::endl;
       return false;
     }
@@ -202,7 +202,7 @@ void __HAL::updatePendingMsgs(server_c* pc_serverData, int8_t i8_bus)
       if (pc_serverData->i_pendingMsgs[ui8_bus] >= 5)
       { // we only need to update those who could change from >= 5 to < 5...
 #if 0 //def USE_PCAN_LIB
-        if (LINUX_CAN_Extended_Status(driverHandle, &(extstat.nPendingReads), &(extstat.nPendingWrites))) continue;
+        if (LINUX_CAN_Extended_Status(driverHandle[ui8_bus], &(extstat.nPendingReads), &(extstat.nPendingWrites))) continue;
 #else
         if ((ioctl(pc_serverData->can_device[ui8_bus], PCAN_GET_EXT_STATUS, &extstat)) < 0) continue;
 #endif
@@ -214,7 +214,7 @@ void __HAL::updatePendingMsgs(server_c* pc_serverData, int8_t i8_bus)
   else
   { // update just the given bus!
 #if 0 //def USE_PCAN_LIB
-    if (LINUX_CAN_Extended_Status(driverHandle, &(extstat.nPendingReads), &(extstat.nPendingWrites))) return;
+    if (LINUX_CAN_Extended_Status(driverHandle[ui8_bus], &(extstat.nPendingReads), &(extstat.nPendingWrites))) return;
 #else
     if ((ioctl(pc_serverData->can_device[i8_bus], PCAN_GET_EXT_STATUS, &extstat)) < 0) return;
 #endif
@@ -262,7 +262,7 @@ int16_t sendToBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
 
   if ((ui8_bus < HAL_CAN_MAX_BUS_NR) && canBusIsOpen[ui8_bus]) {
 #if 0 //def USE_PCAN_LIB
-    ret = CAN_Write(driverHandle, &msg);
+    ret = CAN_Write(driverHandle[ui8_bus], &msg);
 #else
     ret = ioctl(pc_serverData->can_device[ui8_bus], PCAN_WRITE_MSG, &msg);
 #endif
@@ -338,7 +338,7 @@ uint32_t readFromBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverDa
 
   TPCANRdMsg msg;
 #ifdef USE_PCAN_LIB
-  int ret = LINUX_CAN_Read(driverHandle, &msg);
+  int ret = LINUX_CAN_Read(driverHandle[ui8_bus], &msg);
 #else
   int ret = ioctl(pc_serverData->can_device[ui8_bus], PCAN_READ_MSG, &msg);
 #endif

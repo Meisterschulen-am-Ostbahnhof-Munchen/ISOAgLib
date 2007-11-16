@@ -134,7 +134,7 @@ server_c::server_c()
 
 }
 
-client_c::client_c() 
+client_c::client_c()
   : ui16_pid(0), i32_msecStartDeltaClientMinusServer(0)
 {
   memset(b_busUsed, 0, sizeof(b_busUsed));
@@ -310,7 +310,7 @@ SOCKET_TYPE establish(unsigned short portnum)
   SOCKET_TYPE listenSocket;
 
 #ifdef WIN32
-  // Create a SOCKET for listening for 
+  // Create a SOCKET for listening for
   // incoming connection requests
   listenSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
   if (listenSocket == INVALID_SOCKET) {
@@ -364,7 +364,7 @@ SOCKET_TYPE establish(unsigned short portnum)
   if ((listenSocket= socket(SOCKET_TYPE_INET_OR_UNIX, SOCK_STREAM, 0)) < 0) /* create socket */
   {
     perror("socket");
-    return(-1); 
+    return(-1);
   }
 
   if (bind(listenSocket, (struct sockaddr *)&sa, ui32_len) < 0) {
@@ -388,7 +388,7 @@ SOCKET_TYPE get_connection(SOCKET_TYPE listenSocket) {
 #ifdef WIN32
   if ((newSocket = accept(listenSocket,NULL,NULL)) == INVALID_SOCKET)  /* accept connection if there is one */
 #else
-  if ((newSocket = accept(listenSocket,NULL,NULL)) < 0)  /* accept connection if there is one */ 
+  if ((newSocket = accept(listenSocket,NULL,NULL)) < 0)  /* accept connection if there is one */
 #endif
     return(-1);
 
@@ -879,7 +879,7 @@ void readWrite(server_c* pc_serverData)
     ui32_loopCnt++;
 
     if (!b_deviceHandleFound)
-    { // if there is high CAN load between the clients, the timeout may not be reached 
+    { // if there is high CAN load between the clients, the timeout may not be reached
       // => check for new messages from the CAN device each 10 msgs
       if ((i_selectResult == 0) || (ui32_loopCnt % 10 == 0))
       { // timeout or loopCount condition reached => read from can card if we do not have a valid device handle
@@ -895,6 +895,10 @@ void readWrite(server_c* pc_serverData)
               enqueue_msg(&s_transferBuf, 0, pc_serverData);
               pthread_mutex_unlock( &(pc_serverData->m_protectClientList) );
               ui32_sleepTime = 5000;  // CAN message received => reduce sleep time
+              if (pc_serverData->b_logMode)
+              {
+                dumpCanMsg (&s_transferBuf, pc_serverData->f_canOutput[s_transferBuf.s_data.ui8_bus]);
+              }
             }
             break; // handle only first found bus
           }
@@ -914,6 +918,10 @@ void readWrite(server_c* pc_serverData)
           s_transferBuf.s_data.ui8_bus = ui32_cnt;
           enqueue_msg(&s_transferBuf, 0, pc_serverData);
           pthread_mutex_unlock( &(pc_serverData->m_protectClientList) );
+          if (pc_serverData->b_logMode)
+          {
+            dumpCanMsg (&s_transferBuf, pc_serverData->f_canOutput[s_transferBuf.s_data.ui8_bus]);
+          }
         }
         break; // handle only first found bus
       }
@@ -928,7 +936,7 @@ void readWrite(server_c* pc_serverData)
       if (FD_ISSET(iter_client->i32_commandSocket, &rfds))
       {
         // socket still alive? (returns 0 (peer shutdown) or -1 (error))
-        int bytesRecv = recv(iter_client->i32_commandSocket, (char*)&s_transferBuf, sizeof(transferBuf_s), 
+        int bytesRecv = recv(iter_client->i32_commandSocket, (char*)&s_transferBuf, sizeof(transferBuf_s),
 #ifdef WIN32
                              0
 #else
@@ -953,7 +961,7 @@ void readWrite(server_c* pc_serverData)
       if (FD_ISSET(iter_client->i32_dataSocket, &rfds))
       {
         // socket still alive? (returns 0 (peer shutdown) or -1 (error))
-        int bytesRecv = recv(iter_client->i32_dataSocket, (char*)&s_transferBuf, sizeof(transferBuf_s), 
+        int bytesRecv = recv(iter_client->i32_dataSocket, (char*)&s_transferBuf, sizeof(transferBuf_s),
 #ifdef WIN32
                              0
 #else
@@ -978,7 +986,7 @@ void readWrite(server_c* pc_serverData)
           sendToBus(s_transferBuf.s_data.ui8_bus, &(s_transferBuf.s_data.s_canMsg), pc_serverData);
 
           if (pc_serverData->b_logMode)
-          { /** @todo shouldn't we only dump the message to the FILE if NO ERROR? Or at elast flag it like this in the can-log!! ? */
+          {
             dumpCanMsg (&s_transferBuf, pc_serverData->f_canOutput[s_transferBuf.s_data.ui8_bus]);
           }
         }
