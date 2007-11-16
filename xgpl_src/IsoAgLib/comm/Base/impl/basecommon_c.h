@@ -213,10 +213,10 @@ namespace __IsoAgLib
     /** return sender of a msg*/
     const IsoName_c* getISOName() const {return mpc_isoName;}
 
-    /** get evkey of data source (e.g. tractor, terminal) from which commands are send exclusively */
+    /** get IsoName of data source (e.g. tractor, terminal) from which commands are send exclusively */
     IsoName_c& getSelectedDataSourceISOName() {return mc_selectedDataSourceISOName;}
 
-    /** get Devkey of data source (e.g. tractor, terminal) from which commands are send exclusively */
+    /** get const IsoName of data source (e.g. tractor, terminal) from which commands are send exclusively */
     const IsoName_c& getSelectedDataSourceISONameConst() const {return mc_selectedDataSourceISOName;}
 
     /** get actual mode */
@@ -225,7 +225,7 @@ namespace __IsoAgLib
     /** set mode to implement or tractor*/
     void setMode(IsoAgLib::IdentMode_t at_identMode) {mt_identMode = at_identMode;}
 
-    /** set Devkey of data source (e.g. tractor, terminal) which sends commands exclusively */
+    /** set IsoName of data source (e.g. tractor, terminal) which sends commands exclusively */
     void setSelectedDataSourceISOName(const IsoName_c& ac_dataSourceISOName){mc_selectedDataSourceISOName = ac_dataSourceISOName;}
 
     /** if a message is not send after 3 seconds it is expected that the sending node stopped sending */
@@ -244,12 +244,12 @@ namespace __IsoAgLib
     */
     virtual void checkCreateReceiveFilter() = 0;
 
-    /** set sender of a msg*/
+    /** set sender of a msg */
     void setISOName(const IsoName_c* isoName) {mpc_isoName = isoName;}
 
 
     // private attributes
-    /** can be implement mode or tractor mode*/
+    /** can be implement mode or tractor mode */
     IsoAgLib::IdentMode_t mt_identMode;
 
     /** flag to detect, if receive filters for ISO are created */
@@ -263,7 +263,7 @@ namespace __IsoAgLib
       */
     const IsoName_c* mpc_isoName;
 
-    /** Devkey of data source (e.g. tractor, terminal) from which commands are send exclusively */
+    /** IsoName of data source (e.g. tractor, terminal) from which commands are send exclusively */
     IsoName_c mc_selectedDataSourceISOName;
 
     /** temp data where received data is put */

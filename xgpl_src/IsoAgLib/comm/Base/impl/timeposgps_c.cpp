@@ -580,7 +580,7 @@ namespace __IsoAgLib {
   {
     // there is no need to check if sender exist in the monitor list because this is already done
     // in CanPkgExt_c -> resolveSendingInformation
-    IsoName_c c_tempISOName( data().getISONameForSA() );
+    IsoName_c const& rcc_tempISOName = data().getISONameForSA();
 
     const int32_t ci32_now = data().time();
 
@@ -590,7 +590,7 @@ namespace __IsoAgLib {
         // time - date
         // only take values, if i am not the regular sender
         // and if actual sender isn't in conflict to previous sender
-        if ( checkParseReceived( c_tempISOName ) )
+        if ( checkParseReceived( rcc_tempISOName ) )
         { // sender is allowed to send
           // store new calendar setting
           if ( mc_sendGpsISOName.isUnspecified()  )
@@ -608,7 +608,7 @@ namespace __IsoAgLib {
           bit_calendar.timezoneHourOffsetMinus24 = data().getUint8Data(7);
           // set last time
           setUpdateTime(ci32_now);
-          setSelectedDataSourceISOName( c_tempISOName);
+          setSelectedDataSourceISOName (rcc_tempISOName);
           return true;
         }
         else
@@ -619,12 +619,12 @@ namespace __IsoAgLib {
         break;
 
       case NMEA_GPS_POSITION_RAPID_UPDATE_PGN:
-        if ( checkParseReceived( c_tempISOName ) )
+        if ( checkParseReceived( rcc_tempISOName ) )
         { // sender is allowed to send
           mi32_latitudeDegree10Minus7  = data().getInt32Data( 0 );
           mi32_longitudeDegree10Minus7 = data().getInt32Data( 4 );
           mi32_lastIsoPositionSimple = ci32_now;
-          mc_sendGpsISOName = c_tempISOName;
+          mc_sendGpsISOName = rcc_tempISOName;
           if (getGnssMode() == IsoAgLib::IsoNoGps)
           { /// @todo Allow Rapid Update without Complete Position TP/FP before? Is is just an update or can it be standalone?
               /// for now, allow it as standalone and set GpsMethod simply to IsoGnssNull as we don't have reception info...
@@ -637,7 +637,7 @@ namespace __IsoAgLib {
         return true;
 
       case NMEA_GPS_COG_SOG_RAPID_UPDATE_PGN:
-        if ( checkParseReceived( c_tempISOName ) )
+        if ( checkParseReceived( rcc_tempISOName ) )
         { // sender is allowed to send
           mui8_directionSequenceID          = data().getUint8Data ( 0 );
           mui8_courseOverGroundReference    = data().getUint8Data ( 1 ) & 0x03;
@@ -647,7 +647,7 @@ namespace __IsoAgLib {
 
           // set last time (also always, because if the sender's sending it's sending so we can't send!!
           mi32_lastIsoDirection = ci32_now;
-          mc_sendGpsISOName = c_tempISOName;
+          mc_sendGpsISOName = rcc_tempISOName;
 
           if ( (mui16_courseOverGroundRad10Minus4 <= (62855)) /// @todo check for the REAL max, 62855 is a little bigger than 62831 or alike that could be calculated. but anyway...
             && (mui16_speedOverGroundCmSec        <= (65532))
@@ -876,22 +876,24 @@ namespace __IsoAgLib {
   bool TimePosGPS_c::reactOnLastChunk (const IsoAgLib::ReceiveStreamIdentifier_c& ac_ident,
                                        IsoAgLib::iStream_c& rc_stream)
   { // see if it's a pool upload, string upload or whatsoever! (First byte is already read by MultiReceive!)
-    IsoName_c c_tempISOName( rc_stream.getIdent().getSaIsoName() );
+    IsoName_c const& rcc_tempISOName = rc_stream.getIdent().getSaIsoName();
 
     // check if we want to process the information
     if (
         ( checkModeGps(IsoAgLib::IdentModeTractor) ) // I'm the sender
-        || ( // one of the following conditions must be true
-          (mc_sendGpsISOName != c_tempISOName) // actual sender different to last
-        && (mc_sendGpsISOName.isSpecified() ) // last sender has correctly claimed address member
-          )
-      )
+        ||
+        ( // one of the following conditions must be true
+         (mc_sendGpsISOName != rcc_tempISOName) // actual sender different to last
+          &&
+         (mc_sendGpsISOName.isSpecified() ) // last sender has correctly claimed address member
+        )
+       )
     { // DO NOT take this message, as this might be a falsly double source
       return false;
     }
 
     // set last time and ISOName information
-    mc_sendGpsISOName = c_tempISOName;
+    mc_sendGpsISOName = rcc_tempISOName;
     uint8_t ui8_tempValue;
 
     switch ( ac_ident.getPgn() )

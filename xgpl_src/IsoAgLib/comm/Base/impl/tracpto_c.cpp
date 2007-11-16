@@ -233,14 +233,14 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
   {
     // there is no need to check if sender exist in the monitor list because this is already done
     // in CanPkgExt_c -> resolveSendingInformation
-    IsoName_c c_tempISOName( data().getISONameForSA() );
+    IsoName_c const& rcc_tempISOName = data().getISONameForSA();
 
     if (((data().isoPgn() /*& 0x3FFFF*/) == FRONT_PTO_STATE_PGN) || ((data().isoPgn() /*& 0x3FFFF*/) == REAR_PTO_STATE_PGN))
     {
       const int32_t ci32_now = data().time();
       // only take values, if i am not the regular sender
       // and if actual sender isn't in conflict to previous sender
-      if ( checkParseReceived( c_tempISOName ) )
+      if ( checkParseReceived( rcc_tempISOName ) )
       { // sender is allowed to send
         PtoData_t* pt_ptoData = NULL;
         if (data().isoPgn() == FRONT_PTO_STATE_PGN)
@@ -264,7 +264,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
         pt_ptoData->t_ptoShaftSpeedLimitStatus = IsoAgLib::IsoLimitFlag_t( (data().getUint8Data(5) >> 1) & 0x7 );
 
         // set last time
-        setSelectedDataSourceISOName(c_tempISOName);
+        setSelectedDataSourceISOName (rcc_tempISOName);
         // update time
         pt_ptoData->i32_lastPto = data().time();
         // must be set because this is needed in basecommon_c

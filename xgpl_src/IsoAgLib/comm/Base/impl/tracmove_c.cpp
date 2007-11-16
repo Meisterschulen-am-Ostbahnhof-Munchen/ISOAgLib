@@ -244,7 +244,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
   {
     // there is no need to check if sender exist in the monitor list because this is already done
     // in CanPkgExt_c -> resolveSendingInformation
-    IsoName_c c_tempISOName( data().getISONameForSA() );
+    IsoName_c const& rcc_tempISOName = data().getISONameForSA();
 
     #if defined(USE_BASE) || defined(USE_TRACTOR_GENERAL)
     TracGeneral_c& c_tracgeneral = getTracGeneralInstance4Comm();
@@ -253,7 +253,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     const int32_t ci32_now = data().time();
 
     #ifdef USE_RS232_FOR_DEBUG
-    INTERNAL_DEBUG_DEVICE << "c_tempISOName: " <<  static_cast<const int>(c_tempISOName.devClass() ) << INTERNAL_DEBUG_DEVICE_ENDL;
+    INTERNAL_DEBUG_DEVICE << "c_tempISOName: " <<  static_cast<const int>(rcc_tempISOName.devClass() ) << INTERNAL_DEBUG_DEVICE_ENDL;
     INTERNAL_DEBUG_DEVICE << "senderISOName: " <<  static_cast<const int>(getSelectedDataSourceISOName().devClass() ) << INTERNAL_DEBUG_DEVICE_ENDL;
     INTERNAL_DEBUG_DEVICE << "PGN:          " << (data().isoPgn() /*& 0x1FFFF*/) << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
@@ -264,7 +264,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
       case WHEEL_BASED_SPEED_DIST_PGN:
         // only take values, if i am not the regular sender
         // and if actual sender isn't in conflict to previous sender
-        if ( ( checkParseReceived( c_tempISOName ) ) )/*|| noch keine normale geschw empfangen */
+        if ( ( checkParseReceived( rcc_tempISOName ) ) )/*|| noch keine normale geschw empfangen */
         { // sender is allowed to send
           int32_t i32_tempSpeed = data().getUint16Data(0);
           bool b_usableSpeed = true;
@@ -308,7 +308,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
             setDistReal( ui32_tempDist );
             mt_directionReal = IsoAgLib::IsoDirectionFlag_t(data().getUint8Data(7) & 0x3 );
             #ifdef USE_RS232_FOR_DEBUG
-            INTERNAL_DEBUG_DEVICE << "PROCESS GROUND(65097): " <<  static_cast<const int>(c_tempISOName.devClass() ) << INTERNAL_DEBUG_DEVICE_ENDL;
+            INTERNAL_DEBUG_DEVICE << "PROCESS GROUND(65097): " <<  static_cast<const int>(rcc_tempISOName.devClass() ) << INTERNAL_DEBUG_DEVICE_ENDL;
             #endif
 
             //decide if ground based speed is actually the best available speed
@@ -346,7 +346,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
             mt_startStopState = IsoAgLib::IsoActiveFlag_t( ( data().getUint8Data(7) >> 4) & 0x3);
             mt_directionTheor = IsoAgLib::IsoDirectionFlag_t(data().getUint8Data(7)       & 0x3 );
             #ifdef USE_RS232_FOR_DEBUG
-            INTERNAL_DEBUG_DEVICE << "PROCESS WHEEL(65096): " <<  static_cast<const int>(c_tempISOName.devClass() ) << INTERNAL_DEBUG_DEVICE_ENDL;
+            INTERNAL_DEBUG_DEVICE << "PROCESS WHEEL(65096): " <<  static_cast<const int>(rcc_tempISOName.devClass() ) << INTERNAL_DEBUG_DEVICE_ENDL;
             #endif
             if ( ( b_usableSpeed ) &&
                  ( ( mt_speedSource <= IsoAgLib::WheelBasedSpeed )
@@ -381,12 +381,12 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
         // if speedSource == IsoNotAvailableSpeed
         const IsoAgLib::IsoSpeedSourceFlag_t t_testSpeedSource = IsoAgLib::IsoSpeedSourceFlag_t( ( (data().getUint8Data(7) >> 2) & 0x7) );
 
-        if ( ( ( checkParseReceived( c_tempISOName ) ) ) && (t_testSpeedSource != IsoAgLib::IsoNotAvailableSpeed))
+        if ( ( ( checkParseReceived( rcc_tempISOName ) ) ) && (t_testSpeedSource != IsoAgLib::IsoNotAvailableSpeed))
         {
           mt_selectedSpeedLimitStatus = IsoAgLib::IsoLimitFlag_t( ( (data().getUint8Data(7) >> 5) & 0x7) );
           mt_selectedDirection        = IsoAgLib::IsoDirectionFlag_t( data().getUint8Data(7) & 0x3);
 
-          setSelectedDataSourceISOName(c_tempISOName);
+          setSelectedDataSourceISOName(rcc_tempISOName);
           setUpdateTime( ci32_now );
 
           if (data().getUint16Data(0) <= 0xFAFF) //valid selected speed?

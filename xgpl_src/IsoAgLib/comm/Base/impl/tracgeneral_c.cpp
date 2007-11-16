@@ -250,7 +250,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     bool b_result = false;
     // there is no need to check if sender exist in the monitor list because this is already done
     // in CANPkgExt_c -> resolveSendingInformation
-    ISOName_c c_tempISOName( data().getISONameForSA() );
+    ISOName_c const& rcc_tempISOName = data().getISONameForSA();
 
     switch (data().isoPgn() /* & 0x3FFFF */) // don't need to &0x3FFFF, as this is the whole PGN...
     {
@@ -258,7 +258,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
       case REAR_HITCH_STATE_PGN:
         // only take values, if i am not the regular sender
         // and if actual sender isn't in conflict to previous sender
-        if ( checkParseReceived( c_tempISOName ) )
+        if ( checkParseReceived( rcc_tempISOName ) )
         { // sender is allowed to send
           uint8_t ui8_tempHitch = (( data().getUint8Data( 0 ) * 4) / 10 );
           if ( (ui8_tempHitch != ERROR_VAL_8)
@@ -291,7 +291,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
             mui16_rearDraft = static_cast<uint16_t>(data().getUint8Data( 3 ) ) + (static_cast<uint16_t>(data().getUint8Data( 4 )) << 8);
             mt_rearHitchPosLimitStatus = IsoAgLib::IsoLimitFlag_t( ( data().getUint8Data(1) >> 3 ) & 3 );
           }
-          setSelectedDataSourceISOName(c_tempISOName);
+          setSelectedDataSourceISOName (rcc_tempISOName);
           //set update time
           setUpdateTime( data().time() );
         }
