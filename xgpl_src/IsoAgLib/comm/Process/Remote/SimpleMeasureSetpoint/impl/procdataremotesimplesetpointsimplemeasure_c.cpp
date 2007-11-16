@@ -104,7 +104,6 @@ namespace __IsoAgLib {
 
   @param ac_isoName optional ISOName code of this instance
   @param aui8_pri PRI code of messages with this process data instance (default 2)
-  @param ac_ownerISOName optional ISOName of the owner
   @param apc_commanderISOName pointer to updated ISOName variable of commander
   @param apc_processDataChangeHandler optional pointer to handler class of application
   @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
@@ -113,12 +112,11 @@ ProcDataRemoteSimpleSetpointSimpleMeasure_c::ProcDataRemoteSimpleSetpointSimpleM
               const IsoAgLib::ElementDdi_s* ps_elementDDI,
               const IsoName_c& ac_isoName,
               uint8_t aui8_pri,
-              const IsoName_c& ac_ownerISOName,
               const IsoName_c* apc_commanderISOName,
               IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler,
               int ai_singletonVecKey)
   : ProcDataRemoteBase_c(ps_elementDDI,
-                         ac_isoName, aui8_pri, ac_ownerISOName, apc_commanderISOName,
+                         ac_isoName, aui8_pri, apc_commanderISOName,
                          apc_processDataChangeHandler, ai_singletonVecKey)
   , mc_measure( this )
   , mc_setpoint( this )
@@ -132,7 +130,6 @@ ProcDataRemoteSimpleSetpointSimpleMeasure_c::ProcDataRemoteSimpleSetpointSimpleM
 
   @param ac_isoName optional ISOName code of this instance
   @param aui8_pri PRI code of messages with this process data instance (default 2)
-  @param ac_ownerISOName optional ISOName of the owner
   @param apc_commanderISOName pointer to updated ISOName variable of commander
   @param apc_processDataChangeHandler optional pointer to handler class of application
   @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
@@ -140,13 +137,12 @@ ProcDataRemoteSimpleSetpointSimpleMeasure_c::ProcDataRemoteSimpleSetpointSimpleM
 void ProcDataRemoteSimpleSetpointSimpleMeasure_c::init(const IsoAgLib::ElementDdi_s* ps_elementDDI,
                                                        const IsoName_c& ac_isoName,
                                                        uint8_t aui8_pri,
-                                                       const IsoName_c& ac_ownerISOName,
                                                        const IsoName_c* apc_commanderISOName,
                                                        IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler,
                                                        int ai_singletonVecKey)
 {
   ProcDataRemoteBase_c::init(ps_elementDDI,
-                             ac_isoName, aui8_pri, ac_ownerISOName, apc_commanderISOName,
+                             ac_isoName, aui8_pri, apc_commanderISOName,
                              apc_processDataChangeHandler, ai_singletonVecKey);
   mc_measure.init( this );
   mc_setpoint.init( this );

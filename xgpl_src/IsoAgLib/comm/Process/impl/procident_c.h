@@ -117,19 +117,14 @@ public:
 
     common parameter
     @param ac_isoName optional ISOName code of Process-Data
-    @param ac_ownerISOName optional ISOName code of owner of Process-Data
-           ( important if DEVCLASS and/or DEVCLASSINST differs from identity ISOName in ac_isoName; this is the case
-             for process data from base data dictionary table (DEVCLASS==0), which is managed/owned by device of
-             type DEVCLASS != 0)
-    @param apc_ownerISOName pointer to the optional ISOName var of the owner (for automatic update as soon
+    @param apc_externalOverridingIsoName pointer to the optional ISOName var (for automatic update as soon
             as corresponding device is registered as having claimed address in monitor table list)
   */
   ProcIdent_c(
               const IsoAgLib::ElementDdi_s* ps_elementDDI = NULL,
               uint16_t mui16_element = 0xFFFF,
               const IsoName_c& ac_isoName = IsoName_c::IsoNameInitialProcessData(),
-              const IsoName_c& ac_ownerISOName = IsoName_c::IsoNameUnspecified(),
-              const IsoName_c *apc_ownerISOName = NULL,
+              const IsoName_c *apc_externalOverridingIsoName = NULL,
               int ai_singletonVecKey = 0);
 
   /** copy constructor */
@@ -144,19 +139,14 @@ public:
 
     common parameter
     @param ac_isoName ISOName code of Process-Data
-    @param ac_ownerISOName optional ISOName code of owner of Process-Data
-           ( important if DEVCLASS and/or DEVCLASSINST differs from identity ISOName in ac_isoName; this is the case
-             for process data from base data dictionary table (DEVCLASS==0), which is managed/owned by device of
-             type DEVCLASS != 0)
-    @param apc_ownerISOName pointer to the optional ISOName var of the owner (for automatic update as soon
+    @param apc_externalOverridingIsoName pointer to the optional ISOName var (for automatic update as soon
             as corresponding device is registered as having claimed address in monitor table list)
   */
   void init(
             const IsoAgLib::ElementDdi_s* ps_elementDDI,
             uint16_t mui16_element,
             const IsoName_c& ac_isoName,
-            const IsoName_c& ac_ownerISOName = IsoName_c::IsoNameUnspecified(),
-            const IsoName_c *apc_ownerISOName = NULL);
+            const IsoName_c *apc_externalOverridingIsoName = NULL);
 
   /**
     copy constructor for class instance
@@ -235,28 +225,19 @@ public:
   uint8_t devClass() const{return mc_isoName.devClass();}
 
   /**
-    deliver value ISOName (machine type specific table of process data types)
-    use everytime the _device_class_ from the ident part, and take the _instance_ from the owner.
-    Special Case: if ISOName is set to 0,0 -> don't use any logac logic and return
-    stored value
-    @return ISOName
-  */
-  const IsoName_c& isoName() const {return ownerISOName();}
-
-  /**
     deliver value _instance_ (important if more than one machine with equal _device_class_ are active)
     deliver the device class instance of the owner, as this _instance_ is sometimes updated after the creation of this
     process data instance.
     @return POS
   */
-  uint8_t devClassInst() const{return ownerISOName().devClassInst();}
+  uint8_t devClassInst() const{return isoName().devClassInst();}
 
   /**
-    deliver the owner isoName (retrieved from pointed isoName value, if valid pointer)
-    @return actual ISOName of owner
+    deliver the isoName (retrieved from pointed isoName value, if valid pointer)
+    @return actual ISOName
   */
-  const IsoName_c& ownerISOName() const
-    { return ((mpc_ownerISOName != 0)?(*mpc_ownerISOName):(mc_ownerISOName));}
+  const IsoName_c& isoName() const
+    { return ((mpc_externalOverridingIsoName != 0)?(*mpc_externalOverridingIsoName):(mc_isoName));}
 
   /**
     set DDI, value group and setpoint/measure type of process msg
@@ -291,25 +272,13 @@ public:
     set also the _instance_ of the owner as the owner _instance_ shall be always the most actual value
     @param aui8_val new device class inst val
   */
-  void setDevClassInst(uint8_t aui8_val){mc_isoName.setDevClassInst(aui8_val); mc_ownerISOName.setDevClassInst(aui8_val);}
+  void setDevClassInst(uint8_t aui8_val){mc_isoName.setDevClassInst(aui8_val);}
 
   /**
-    set the owner isoName
-    @param ac_val new ISOName of owner
+    set pointer to external isoName instances (used by isoName())
+    @param apc_val pointer to ISOName
   */
-  void setOwnerISOName(const IsoName_c& ac_val){mc_ownerISOName = ac_val;}
-
-  /**
-    set the DEVCLASS of the owner
-    @param aui8_val new DEVCLASS of owner
-  */
-  void setOwnerDevClass(uint8_t aui8_val){mc_ownerISOName.setDevClass(aui8_val);}
-
-  /**
-    set DEVCLASS and _instance_ of owner by giving pointer to owner ISOName
-    @param apc_val pointer to owner ISOName
-  */
-  void setOwnerISOName(const IsoName_c* apc_val);
+  void setExternalOverridingIsoName(const IsoName_c* apc_val);
 
   /**
     check if this item has the same identity as defined by the parameters,
@@ -317,8 +286,7 @@ public:
     (important for matching received process data msg);
     if INSTANCE is defined (!= 0xFF) then one of the following conditions must be true:<ul>
     <li>parameter INSTANCE == ident INSTANCE (devClassInst())
-    <li>parameter INSTANCE == owner INSTANCE ( ownerISOName().devClassInst() )
-    <li>parameter ac_ownerISOName == ownerISOName()
+    <li>parameter arc_isoName == isoName()
     </ul>
 
     ISO parameter
@@ -356,13 +324,8 @@ private: // Private attributes
   void assignFromSource( const ProcIdent_c& arc_src );
 
   /** DEVCLASS code of process data identity */
-  const IsoName_c* mpc_ownerISOName; // only defined for own local data, otherwise NULL
-  /**
-    in most cases equivalent with ((devClass << 3) | pos);
-    for data with ident devClass==0 this is mostly NOT the same as the devClass of the owner,
-    because then this value is of the general base data table
-  */
-  IsoName_c mc_ownerISOName;
+  const IsoName_c* mpc_externalOverridingIsoName; // only defined for own local data, otherwise NULL
+
   /** IsoName_c information for this instance
       ( the _instance_ part is important if more ECU of same _device_class_ are
       parallel active on the BUS)

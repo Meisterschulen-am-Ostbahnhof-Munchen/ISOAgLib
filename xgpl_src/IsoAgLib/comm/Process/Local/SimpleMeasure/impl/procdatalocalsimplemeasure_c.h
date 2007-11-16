@@ -165,8 +165,7 @@ public:
                          (array is terminated by ElementDdi_s.ui16_element == 0xFFFF)
 
     @param ac_isoName optional ISOName code of Process-Data
-    @param ac_ownerISOName optional ISOName of the owner
-    @param apc_isoName pointer to updated ISOName variable of owner
+    @param apc_externalOverridingIsoName pointer to updated ISOName variable
     @param ab_cumulativeValue
              -# for process data like distance, time, area
                  the value of the measure prog data sets is updated
@@ -190,8 +189,7 @@ public:
   ProcDataLocalSimpleMeasure_c(const IsoAgLib::ElementDdi_s* ps_elementDDI = NULL,
                                uint16_t aui16_element = 0xFFFF,
                                const IsoName_c& ac_isoName = IsoName_c::IsoNameInitialProcessData(),
-                               const IsoName_c& ac_ownerISOName = IsoName_c::IsoNameUnspecified(),
-                               const IsoName_c *apc_isoName = NULL,
+                               const IsoName_c *apc_externalOverridingIsoName = NULL,
                                bool ab_cumulativeValue = false,
 #ifdef USE_EEPROM_IO
                                uint16_t aui16_eepromAdr = 0xFFFF,
@@ -210,8 +208,7 @@ public:
                          (array is terminated by ElementDdi_s.ui16_element == 0xFFFF)
 
     @param ac_isoName optional ISOName code of Process-Data
-    @param ac_ownerISOName optional ISOName of the owner
-    @param apc_isoName pointer to updated ISOName variable of owner
+    @param apc_externalOverridingIsoName pointer to updated ISOName variable
     @param ab_cumulativeValue
              -# for process data like distance, time, area
                  the value of the measure prog data sets is updated
@@ -234,8 +231,7 @@ public:
   */
   void init(const IsoAgLib::ElementDdi_s* ps_elementDDI, uint16_t aui16_element,
             const IsoName_c& ac_isoName = IsoName_c::IsoNameInitialProcessData(),
-            const IsoName_c& ac_ownerISOName = IsoName_c::IsoNameUnspecified(),
-            const IsoName_c *apc_isoName = NULL, bool ab_cumulativeValue = false,
+            const IsoName_c *apc_externalOverridingIsoName = NULL, bool ab_cumulativeValue = false,
 #ifdef USE_EEPROM_IO
             uint16_t aui16_eepromAdr = 0xFFFF,
 #endif

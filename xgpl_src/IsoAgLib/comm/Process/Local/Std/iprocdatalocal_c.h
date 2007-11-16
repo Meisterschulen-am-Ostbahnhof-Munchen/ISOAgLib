@@ -140,8 +140,7 @@ public:
                          (array is terminated by ElementDdi_s.ui16_element == 0xFFFF)
 
     @param ac_isoName optional ISOName code of Process-Data
-    @param ac_ownerISOName optional ISOName of the owner
-    @param apc_isoName pointer to updated ISOName variable of owner
+    @param apc_externalOverridingIsoName pointer to updated ISOName variable
     @param ab_cumulativeValue
              -# for process data like distance, time, area
                  the value of the measure prog data sets is updated
@@ -165,8 +164,7 @@ public:
   iProcDataLocal_c( const ElementDdi_s* ps_elementDDI = NULL,
                     uint16_t aui16_element = 0xFFFF,
                     const iIsoName_c& ac_isoName = iIsoName_c::iIsoNameInitialProcessData(),
-                    const iIsoName_c& ac_ownerISOName = iIsoName_c::iIsoNameUnspecified(),
-                    const iIsoName_c *apc_isoName = NULL,
+                    const iIsoName_c *apc_externalOverridingIsoName = NULL,
                     bool ab_cumulativeValue = false,
 #ifdef USE_EEPROM_IO
                   uint16_t aui16_eepromAdr = 0xFFFF,
@@ -174,7 +172,7 @@ public:
                   ProcessDataChangeHandler_c *apc_processDataChangeHandler = NULL,
                   int ai_singletonVecKey = 0)
     : ProcDataLocal_c( ps_elementDDI, aui16_element,
-                       ac_isoName, ac_ownerISOName, apc_isoName, ab_cumulativeValue,
+                       ac_isoName, apc_externalOverridingIsoName, ab_cumulativeValue,
 #ifdef USE_EEPROM_IO
                        aui16_eepromAdr,
 #endif
@@ -191,15 +189,14 @@ public:
   */
   iProcDataLocal_c( uint16_t aui16_DDI, uint16_t aui16_element,
                     const iIsoName_c& ac_isoName = iIsoName_c::iIsoNameInitialProcessData(),
-                    const iIsoName_c& ac_ownerISOName = iIsoName_c::iIsoNameUnspecified(),
-                    const iIsoName_c *apc_isoName = NULL,
+                    const iIsoName_c *apc_externalOverridingIsoName = NULL,
                     bool ab_cumulativeValue = false,
 #ifdef USE_EEPROM_IO
                    uint16_t aui16_eepromAdr = 0xFFFF,
 #endif
                    ProcessDataChangeHandler_c *apc_processDataChangeHandler = NULL,
                    int ai_singletonVecKey = 0)
-    : ProcDataLocal_c( NULL, aui16_element, ac_isoName, ac_ownerISOName, apc_isoName, ab_cumulativeValue,
+    : ProcDataLocal_c( NULL, aui16_element, ac_isoName, apc_externalOverridingIsoName, ab_cumulativeValue,
 #ifdef USE_EEPROM_IO
                       aui16_eepromAdr,
 #endif
@@ -215,7 +212,7 @@ public:
     };
 
     ProcDataLocal_c::init( s_tmpElementDDI, aui16_element,
-                      ac_isoName, ac_ownerISOName, apc_isoName, ab_cumulativeValue,
+                      ac_isoName, apc_externalOverridingIsoName, ab_cumulativeValue,
 #ifdef USE_EEPROM_IO
                       aui16_eepromAdr,
 #endif
@@ -235,8 +232,7 @@ public:
                          (array is terminated by ElementDdi_s.ui16_element == 0xFFFF)
 
     @param ac_isoName optional ISOName code of Process-Data
-    @param ac_ownerISOName optional ISOName of the owner
-    @param apc_isoName pointer to updated ISOName variable of owner
+    @param apc_externalOverridingIsoName pointer to updated ISOName variable
     @param ab_cumulativeValue
              -# for process data like distance, time, area
                  the value of the measure prog data sets is updated
@@ -260,8 +256,7 @@ public:
   void init( const ElementDdi_s* ps_elementDDI = NULL,
              uint16_t aui16_element = 0xFFFF,
              const iIsoName_c& ac_isoName = iIsoName_c::iIsoNameInitialProcessData(),
-             const iIsoName_c& ac_ownerISOName = iIsoName_c::iIsoNameUnspecified(),
-             const iIsoName_c *apc_isoName = NULL, bool ab_cumulativeValue = false,
+             const iIsoName_c *apc_externalOverridingIsoName = NULL, bool ab_cumulativeValue = false,
 #ifdef USE_EEPROM_IO
             uint16_t aui16_eepromAdr = 0xFFFF,
 #endif
@@ -269,7 +264,7 @@ public:
             int ai_singletonVecKey = 0
             )
   {ProcDataLocal_c::init( ps_elementDDI, aui16_element,
-                         ac_isoName, ac_ownerISOName, apc_isoName, ab_cumulativeValue,
+                         ac_isoName, apc_externalOverridingIsoName, ab_cumulativeValue,
 #ifdef USE_EEPROM_IO
                          aui16_eepromAdr,
 #endif
@@ -288,8 +283,7 @@ public:
     @param aui16_element
 
     @param ac_isoName optional ISOName code of Process-Data
-    @param ac_ownerISOName optional ISOName of the owner
-    @param apc_isoName pointer to updated ISOName variable of owner
+    @param apc_externalOverridingIsoName pointer to updated ISOName variable
     @param ab_cumulativeValue
              -# for process data like distance, time, area
                  the value of the measure prog data sets is updated
@@ -312,8 +306,7 @@ public:
   */
   void init( uint16_t aui16_DDI, uint16_t aui16_element,
              const iIsoName_c& ac_isoName = iIsoName_c::iIsoNameInitialProcessData(),
-             const iIsoName_c& ac_ownerISOName = iIsoName_c::iIsoNameUnspecified(),
-             const iIsoName_c *apc_isoName = NULL, bool ab_cumulativeValue = false,
+             const iIsoName_c *apc_externalOverridingIsoName = NULL, bool ab_cumulativeValue = false,
 #ifdef USE_EEPROM_IO
             uint16_t aui16_eepromAdr = 0xFFFF,
 #endif
@@ -329,7 +322,7 @@ public:
      };
 
      ProcDataLocal_c::init( s_tmpElementDDI, aui16_element,
-                            ac_isoName, ac_ownerISOName, apc_isoName, ab_cumulativeValue,
+                            ac_isoName, apc_externalOverridingIsoName, ab_cumulativeValue,
 #ifdef USE_EEPROM_IO
                             aui16_eepromAdr,
 #endif

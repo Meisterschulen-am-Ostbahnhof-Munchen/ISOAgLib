@@ -445,7 +445,7 @@ void SetpointRemote_c::processSet(){
   const IsoName_c& c_empfISOName = c_pkg.memberEmpf().isoName();
   const IsoName_c& c_sendISOName = c_pkg.memberSend().isoName();
 
-  if (c_sendISOName == processData().ownerISOName())
+  if (c_sendISOName == processData().isoName())
   { // the owner sent the value
     if (c_pkg.isSpecCmd( static_cast<proc_specCmd_t>(setpointReleaseCmd|setpointErrCmd)) == false)
     { // was a normal value
@@ -480,7 +480,7 @@ void SetpointRemote_c::processSet(){
   }
   // check if it was a master release command
   if (((c_empfISOName == mc_answeredMaster.isoName())
-      ||(c_sendISOName == processData().ownerISOName()))
+      ||(c_sendISOName == processData().isoName()))
     &&(c_pkg.isSpecCmd( setpointReleaseCmd)) )
   { // the actual master setpoint is released
     releaseMasterIntern();
@@ -496,7 +496,7 @@ void SetpointRemote_c::processSet(){
 
   // check if this is an answer to my last command
   if ((c_empfISOName == processData().commanderISOName())
-    && (c_sendISOName == processData().ownerISOName()))
+    && (c_sendISOName == processData().isoName()))
   { // the owner of the process data sent me an answer
     if (c_pkg.isSpecCmd( static_cast<proc_specCmd_t>(setpointReleaseCmd|setpointErrCmd)) == false)
     { // normal value
@@ -551,8 +551,8 @@ void SetpointRemote_c::releaseMasterIntern(){
 bool SetpointRemote_c::timeEvent( void )
 {
   if ( ElementBase_c::getAvailableExecTime() == 0 ) return false;
-  const IsoName_c& c_ownerISOName = processData().ownerISOName();
-  if ( !getIsoMonitorInstance4Comm().existIsoMemberISOName( c_ownerISOName, true) )
+  const IsoName_c& c_isoName = processData().isoName();
+  if ( !getIsoMonitorInstance4Comm().existIsoMemberISOName( c_isoName, true) )
   { // remote owner of this process data isn't active any more
     // -> reset all entries
     mi32_answeredTime = mi32_commandedTime = 0;

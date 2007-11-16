@@ -122,7 +122,6 @@ public:
 
     @param ac_isoName optional ISOName code of this instance
     @param aui8_pri PRI code of messages with this process data instance (default 2)
-    @param ac_ownerISOName optional ISOName of the owner
     @param apc_commanderISOName pointer to updated ISOName variable of commander
     @param apc_processDataChangeHandler optional pointer to handler class of application
     @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
@@ -130,12 +129,11 @@ public:
   iProcDataRemoteSimpleSetpointSimpleMeasureCombined_c( const IsoAgLib::ElementDdi_s* ps_elementDDI = NULL,
                                                         const iIsoName_c& ac_isoName = iIsoName_c::iIsoNameInitialProcessData(),
                                                         uint8_t aui8_pri = 2,
-                                                        const iIsoName_c& ac_ownerISOName = iIsoName_c::iIsoNameUnspecified(),
                                                         const iIsoName_c* apc_commanderISOName = NULL,
                                                         ProcessDataChangeHandler_c *apc_processDataChangeHandler = NULL,
                                                         int ai_singletonVecKey = 0)
   :ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c( ps_elementDDI,
-                                                        ac_isoName, aui8_pri, ac_ownerISOName, apc_commanderISOName,
+                                                        ac_isoName, aui8_pri, apc_commanderISOName,
                                                         apc_processDataChangeHandler, ai_singletonVecKey){}
 
   /**
@@ -146,7 +144,6 @@ public:
 
     @param ac_isoName optional ISOName code of this instance
     @param aui8_pri PRI code of messages with this process data instance (default 2)
-    @param ac_ownerISOName optional ISOName of the owner
     @param apc_commanderISOName pointer to updated ISOName variable of commander
     @param apc_processDataChangeHandler optional pointer to handler class of application
     @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
@@ -154,12 +151,11 @@ public:
   void init(const IsoAgLib::ElementDdi_s* ps_elementDDI,
             const iIsoName_c& ac_isoName = iIsoName_c::iIsoNameInitialProcessData(),
             uint8_t aui8_pri = 2,
-            const iIsoName_c& ac_ownerISOName = iIsoName_c::iIsoNameUnspecified(),
             const iIsoName_c* apc_commanderISOName = NULL,
             ProcessDataChangeHandler_c *apc_processDataChangeHandler = NULL,
             int ai_singletonVecKey = 0)
     {ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::init(ps_elementDDI,
-                                                               ac_isoName, aui8_pri, ac_ownerISOName, apc_commanderISOName,
+                                                               ac_isoName, aui8_pri, apc_commanderISOName,
                                                                apc_processDataChangeHandler, ai_singletonVecKey);
     }
 
@@ -275,11 +271,11 @@ public:
 
   /**
     set the pointer to the commander ident isoName
-    @param rpbisoName pointer to ISOName var of local member used for
+    @param apc_externalOverridingIsoName pointer to ISOName var of local member used for
                 sending commands to remote owner member
   */
-  void setCommanderISOName(const __IsoAgLib::IsoName_c* apc_isoName)
-    {ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::setCommanderISOName(apc_isoName);}
+  void setCommanderISOName(const __IsoAgLib::IsoName_c* apc_externalOverridingIsoName)
+    {ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::setCommanderISOName(apc_externalOverridingIsoName);}
 
   /**
     deliver the central data type of this process data

@@ -779,28 +779,23 @@ void MeasureProgRemote_c::receiveForeignMeasurement(bool ab_useForeign)
   @return true -> everything o.k.
 */
 bool MeasureProgRemote_c::verifySetRemoteISOName()
-{ // if ownerISOName is specified, check if it's still valid
-  IsoMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
-  if ( processData().ownerISOName().isSpecified()
-    && (c_isoMonitor.existIsoMemberISOName(processData().ownerISOName(), true)))
-    return true; // change nothing and return success
-
+{
   // check if proc data identity is valid and corresponding member has claimed address in monitor list
+  IsoMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
   if ( processData().isoName().isSpecified()
     && (c_isoMonitor.existIsoMemberISOName(processData().isoName(), true)))
     return true; // change nothing and return success
 
-  // if both tests were false look for member with claimed address with DEVCLASS of this process
+  // if test was false look for member with claimed address with DEVCLASS of this process
   // data to update dev class inst of this instance
-  IsoName_c c_tempISOName = processData().ownerISOName();
-  uint8_t b_tempPos;
-  for (b_tempPos = 0; b_tempPos < 8; b_tempPos++)
+  IsoName_c c_tempISOName = processData().isoName();
+  uint8_t ui8_tmpDevClassInst;
+  for (ui8_tmpDevClassInst = 0; ui8_tmpDevClassInst <= 0xF; ui8_tmpDevClassInst++)
   {
-    c_tempISOName.setDevClassInst( b_tempPos );
+    c_tempISOName.setDevClassInst( ui8_tmpDevClassInst );
     if (getIsoMonitorInstance4Comm().existIsoMemberISOName(c_tempISOName))
     {
-      processData().setOwnerISOName(c_tempISOName); // set actual ISOName, because member is found in list
-      processData().setDevClassInst(c_tempISOName.devClassInst());
+      processData().setDevClassInst(ui8_tmpDevClassInst);
       // stop further search if this item has already claimed address
       if (getIsoMonitorInstance4Comm().isoMemberISOName(c_tempISOName).itemState(IState_c::ClaimedAddress))
       { // this item has claimed address -> use it and stop search

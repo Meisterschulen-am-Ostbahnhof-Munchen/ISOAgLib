@@ -431,7 +431,7 @@ bool Process_c::existProcDataLocal( uint16_t aui16_DDI, uint16_t aui16_element, 
   ISO parameter
   @param aui16_DDI
   @param aui16_element
-  @param arc_isoNameSender isoName of the sender (used for check against ownerisoName())
+  @param arc_isoNameSender isoName of the sender (used for check against isoName())
   @param arc_isoNameReceiver isoName code of searched local Process Data instance
   @return true -> suitable instance found
 */
@@ -474,7 +474,7 @@ ProcDataLocalBase_c& Process_c::procDataLocal( uint16_t aui16_DDI, uint16_t aui1
   ISO parameter
   @param aui16_DDI
   @param aui16_element
-  @param arc_isoNameSender isoName of the sender (used for check against ownerisoName())
+  @param arc_isoNameSender isoName of the sender (used for check against isoName())
   @param arc_isoNameReceiver isoName code of searched local Process Data instance
   @return reference to searched/created ProcDataRemoteBase_c instance
   @exception badAlloc
@@ -590,7 +590,7 @@ bool Process_c::updateLocalCache( uint16_t aui16_DDI, uint16_t aui16_element, co
   ISO parameter
   @param aui16_DDI
   @param aui16_element
-  @param arc_isoNameSender isoName of the sender (used for check against ownerisoName())
+  @param arc_isoNameSender isoName of the sender (used for check against isoName())
   @param arc_isoNameReceiver isoName code of searched local Process Data instance
 */
 bool Process_c::updateRemoteCache( uint16_t aui16_DDI, uint16_t aui16_element,
@@ -719,10 +719,10 @@ ProcDataRemoteBase_c* Process_c::check4ProprietaryDDIGroupMatch(uint16_t aui_dev
   delete FilterBox_c for receive from remote isoName if needed
   (important to delete old Filter Boxes after deletion of
   of remote device from monitor list or after re-adressclaim with different SA)
-  @param ac_ownerisoName isoName code of remote owner who sent the message
+  @param ac_isoName isoName code of remote owner who sent the message
   @return true -> member exist and Filter Box deleted
 */
-bool Process_c::deleteRemoteFilter(const IsoName_c& ac_ownerisoName)
+bool Process_c::deleteRemoteFilter(const IsoName_c& ac_isoName)
 {
   bool b_result = false,
        b_found = false;
@@ -732,14 +732,14 @@ bool Process_c::deleteRemoteFilter(const IsoName_c& ac_ownerisoName)
         ( pc_iter != c_arrClientC2.end() );
         pc_iter++ )
   {
-    if ((*pc_iter)->ownerISOName() == ac_ownerisoName) b_found = true;
+    if ((*pc_iter)->isoName() == ac_isoName) b_found = true;
   }
   if (b_found)
   { // remote proc data has given onwerisoName
     // -> delete according FilterBox
-    if (getIsoMonitorInstance4Comm().existIsoMemberISOName(ac_ownerisoName, true))
+    if (getIsoMonitorInstance4Comm().existIsoMemberISOName(ac_isoName, true))
     { // remote owner exist and has claimed address -> check if corresponding FilterBox_c exist
-      uint8_t ui8_recNr = getIsoMonitorInstance4Comm().isoMemberISOName(ac_ownerisoName, true).nr();
+      uint8_t ui8_recNr = getIsoMonitorInstance4Comm().isoMemberISOName(ac_isoName, true).nr();
       ui32_filter = (PROCESS_DATA_PGN << 8) | ui8_recNr;
       if (getCanInstance4Comm().existFilter( *this, 0x3FF00FF, ui32_filter, Ident_c::ExtendedIdent))
       { // corresponding FilterBox_c exist -> delete it
@@ -759,18 +759,18 @@ bool Process_c::deleteRemoteFilter(const IsoName_c& ac_ownerisoName)
 
 /**
   insert FilterBox_c for receive from remote isoName if needed
-  @param ac_ownerisoName isoName code of remote owner who sent the message
+  @param ac_isoName isoName code of remote owner who sent the message
   @return true -> member exist and Filter Box created
  */
-bool Process_c::createRemoteFilter(const IsoName_c& ac_ownerisoName)
+bool Process_c::createRemoteFilter(const IsoName_c& ac_isoName)
 {
   bool b_result = false;
   MASK_TYPE t_filter;
 
-  if (getIsoMonitorInstance4Comm().existIsoMemberISOName(ac_ownerisoName, true))
+  if (getIsoMonitorInstance4Comm().existIsoMemberISOName(ac_isoName, true))
   { // remote owner exist and has claimed address -> check if suitable FilterBox_c exist
-    const uint8_t ui8_recNr = getIsoMonitorInstance4Comm().isoMemberISOName(ac_ownerisoName, true).nr();
-    // only receive msg from ui8_recNr / ac_ownerisoName to all other devices
+    const uint8_t ui8_recNr = getIsoMonitorInstance4Comm().isoMemberISOName(ac_isoName, true).nr();
+    // only receive msg from ui8_recNr / ac_isoName to all other devices
     t_filter = (PROCESS_DATA_PGN << 8) | ui8_recNr;
     if (!getCanInstance4Comm().existFilter( *this, 0x3FF00FFUL, t_filter, Ident_c::ExtendedIdent))
     { // no suitable FilterBox_c exist -> create it
@@ -802,7 +802,7 @@ bool Process_c::checkCreateRemoteReceiveFilter()
         ( pc_iter != c_arrClientC2.end() );
         pc_iter++ )
   {
-    pc_actisoName = &((*pc_iter)->ownerISOName());
+    pc_actisoName = &((*pc_iter)->isoName());
 
     if ( (*pc_actisoName).isSpecified()
       && ( ( NULL == pc_lastFilterisoName ) || (*pc_actisoName != *pc_lastFilterisoName) )
@@ -881,7 +881,7 @@ bool Process_c::registerRemoteProcessData( ProcDataRemoteBase_c* pc_remoteClient
 void Process_c::unregisterRemoteProcessData( ProcDataRemoteBase_c* pc_remoteClient)
 {
   // check if the remote owner isoName is used for any other remote proc
-  const IsoName_c& c_toBeDeletedOwnerisoName = pc_remoteClient->ownerISOName();
+  const IsoName_c& c_toBeDeletedOwnerisoName = pc_remoteClient->isoName();
   bool b_otherRemoteWithSameOwner = false;
   MASK_TYPE ui32_filter;
 
@@ -890,7 +890,7 @@ void Process_c::unregisterRemoteProcessData( ProcDataRemoteBase_c* pc_remoteClie
         pc_iter++ )
   {
     if ( (*pc_iter) == pc_remoteClient ) continue;
-    if ((*pc_iter)->ownerISOName() == c_toBeDeletedOwnerisoName) b_otherRemoteWithSameOwner = true;
+    if ((*pc_iter)->isoName() == c_toBeDeletedOwnerisoName) b_otherRemoteWithSameOwner = true;
   }
 
   unregisterC2( pc_remoteClient );

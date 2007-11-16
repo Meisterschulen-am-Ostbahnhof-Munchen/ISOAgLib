@@ -103,8 +103,7 @@ namespace __IsoAgLib {
                        (array is terminated by ElementDdi_s.ui16_element == 0xFFFF)
 
   @param ac_isoName optional ISOName code of this instance
-  @param ac_ownerISOName optional ISOName of the owner
-  @param apc_isoName pointer to updated ISOName variable of owner
+  @param apc_externalOverridingIsoName pointer to updated ISOName variable
   @param ab_cumulativeValue
            -# for process data like distance, time, area
                the value of the measure prog data sets is updated
@@ -129,8 +128,7 @@ ProcDataLocalSimpleSetpointSimpleMeasure_c::ProcDataLocalSimpleSetpointSimpleMea
      const IsoAgLib::ElementDdi_s* ps_elementDDI,
      uint16_t aui16_element,
      const IsoName_c& ac_isoName,
-     const IsoName_c& ac_ownerISOName,
-     const IsoName_c *apc_isoName,
+     const IsoName_c *apc_externalOverridingIsoName,
      bool ab_cumulativeValue,
 #ifdef USE_EEPROM_IO
      uint16_t aui16_eepromAdr,
@@ -139,7 +137,7 @@ ProcDataLocalSimpleSetpointSimpleMeasure_c::ProcDataLocalSimpleSetpointSimpleMea
      int ai_singletonVecKey
      )
   : ProcDataLocalBase_c(ps_elementDDI, aui16_element,
-                        ac_isoName, ac_ownerISOName, apc_isoName, ab_cumulativeValue,
+                        ac_isoName, apc_externalOverridingIsoName, ab_cumulativeValue,
 #ifdef USE_EEPROM_IO
                         aui16_eepromAdr,
 #endif
@@ -159,8 +157,7 @@ ProcDataLocalSimpleSetpointSimpleMeasure_c::ProcDataLocalSimpleSetpointSimpleMea
                        (array is terminated by ElementDdi_s.ui16_element == 0xFFFF)
 
   @param ac_isoName optional ISOName code of this instance
-  @param ac_ownerISOName optional ISOName of the owner
-  @param apc_isoName pointer to updated ISOName variable of owner
+  @param apc_externalOverridingIsoName pointer to updated ISOName variable
   @param ab_cumulativeValue
           -# for process data like distance, time, area
               the value of the measure prog data sets is updated
@@ -183,8 +180,7 @@ ProcDataLocalSimpleSetpointSimpleMeasure_c::ProcDataLocalSimpleSetpointSimpleMea
 */
 void ProcDataLocalSimpleSetpointSimpleMeasure_c::init(const IsoAgLib::ElementDdi_s* ps_elementDDI, uint16_t aui16_element,
                                                       const IsoName_c& ac_isoName,
-                                                      const IsoName_c& ac_ownerISOName,
-                                                      const IsoName_c *apc_isoName,
+                                                      const IsoName_c *apc_externalOverridingIsoName,
                                                       bool ab_cumulativeValue,
 #ifdef USE_EEPROM_IO
                                                       uint16_t aui16_eepromAdr,
@@ -194,7 +190,7 @@ void ProcDataLocalSimpleSetpointSimpleMeasure_c::init(const IsoAgLib::ElementDdi
       )
 {
   ProcDataLocalBase_c::init(ps_elementDDI, aui16_element,
-                            ac_isoName, ac_ownerISOName, apc_isoName, ab_cumulativeValue,
+                            ac_isoName, apc_externalOverridingIsoName, ab_cumulativeValue,
 #ifdef USE_EEPROM_IO
                             aui16_eepromAdr,
 #endif

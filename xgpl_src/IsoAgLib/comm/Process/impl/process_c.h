@@ -255,7 +255,7 @@ public:
     ISO parameter
     @param aui16_DDI
     @param aui16_element
-    @param arc_isoNameSender isoName of the sender (used for check against ownerISOName())
+    @param arc_isoNameSender isoName of the sender (used for check against isoName())
     @param arc_isoNameReceiver isoName code of searched local Process Data instance
     @return reference to searched/created ProcDataRemoteBase_c instance
     @exception badAlloc
@@ -281,7 +281,7 @@ public:
     ISO parameter
     @param aui16_DDI
     @param aui16_element
-    @param arc_isoNameSender isoName of the sender (used for check against ownerISOName())
+    @param arc_isoNameSender isoName of the sender (used for check against isoName())
     @param arc_isoName isoName code of searched remote Process Data instance
     @return count of similar remote process data entries
   */
@@ -332,10 +332,10 @@ public:
     delete FilterBox_c for receive from remote isoName if needed
     (important to delete old Filter Boxes after deletion of
     of remote device from monitor list or after re-adressclaim with different SA)
-    @param ac_ownerISOName ISOName code of remote owner who sent the message
+    @param ac_isoName ISOName code of remote owner who sent the message
     @return true -> member exist and Filter Box deleted
   */
-  bool deleteRemoteFilter(const IsoName_c& ac_ownerISOName);
+  bool deleteRemoteFilter(const IsoName_c& ac_isoName);
 
    /** this function is called by IsoMonitor_c when a new CLAIMED IsoItem_c is registered.
    * @param rc_isoName const reference to the item which IsoItem_c state is changed
@@ -405,7 +405,7 @@ private: // Private methods
     ISO parameter
     @param aui16_DDI
     @param aui16_element
-    @param arc_isoNameSender isoName of the sender (used for check against ownerISOName())
+    @param arc_isoNameSender isoName of the sender (used for check against isoName())
     @param arc_isoNameReceiver isoName code of searched local Process Data instance
   */
   bool updateRemoteCache(uint16_t aui16_DDI, uint16_t aui16_element,
@@ -419,10 +419,10 @@ private: // Private methods
 
   /**
     insert FilterBox_c for receive from remote isoName if needed
-    @param ac_ownerISOName ISOName code of remote owner who sent the message
+    @param ac_isoName ISOName code of remote owner who sent the message
     @return true -> member exist and Filter Box created
   */
-  bool createRemoteFilter(const IsoName_c& ac_ownerISOName);
+  bool createRemoteFilter(const IsoName_c& ac_isoName);
 
   /** checks if a DDI can be added to a group and return ptr to proc data if successfully */
   ProcDataRemoteBase_c* addDDI2ExistingProcData(uint16_t aui16_DDI, uint16_t aui_deviceElement, const IsoName_c& ac_isoName, GeneralCommand_c::ValueGroup_t& ren_valueGroup, bool& rb_isSetpoint);

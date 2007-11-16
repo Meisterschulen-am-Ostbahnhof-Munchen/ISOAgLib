@@ -138,20 +138,19 @@ public:
     @param mui16_element  device element number
     common parameters:
     @param ac_isoName optional ISOName code of Process-Data
-    @param ac_ownerISOName optional ISOName of the owner
-    @param apc_isoName pointer to updated ISOName variable of owner
+    @param apc_externalOverridingIsoName pointer to updated ISOName variable
     @param apc_processDataChangeHandler optional pointer to handler class of application
     @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
   ProcDataBase_c( const IsoAgLib::ElementDdi_s* aps_elementDDI = NULL, uint16_t aui16_element = 0xFFFF,
                  const IsoName_c& ac_isoName = IsoName_c::IsoNameInitialProcessData(),
-                 const IsoName_c& ac_ownerISOName = IsoName_c::IsoNameUnspecified(), const IsoName_c *apc_isoName = NULL,
+                 const IsoName_c *apc_externalOverridingIsoName = NULL,
                  IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler = NULL,
                  int ai_singletonVecKey = 0)
 
-    : ProcIdent_c( aps_elementDDI, aui16_element, ac_isoName, ac_ownerISOName, apc_isoName, ai_singletonVecKey)
+    : ProcIdent_c( aps_elementDDI, aui16_element, ac_isoName, apc_externalOverridingIsoName, ai_singletonVecKey)
     {
-      init( aps_elementDDI, aui16_element, ac_isoName, ac_ownerISOName, apc_isoName,
+      init( aps_elementDDI, aui16_element, ac_isoName, apc_externalOverridingIsoName,
             apc_processDataChangeHandler, ai_singletonVecKey );
     }
 
@@ -163,14 +162,13 @@ public:
     @param mui16_element  device element number
     common parameters:
     @param ac_isoName optional ISOName code of Process-Data
-    @param ac_ownerISOName optional ISOName of the owner
-    @param apc_isoName pointer to updated ISOName variable of owner
+    @param apc_externalOverridingIsoName pointer to updated ISOName variable
     @param apc_processDataChangeHandler optional pointer to handler class of application
     @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
     */
   void init( const IsoAgLib::ElementDdi_s* ps_elementDDI, uint16_t aui16_element,
             const IsoName_c& ac_isoName = IsoName_c::IsoNameInitialProcessData(),
-            const IsoName_c& ac_ownerISOName = IsoName_c::IsoNameUnspecified(), const IsoName_c *apc_isoName = NULL,
+            const IsoName_c *apc_externalOverridingIsoName = NULL,
             IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler = NULL,
             int ai_singletonVecKey = 0);
 

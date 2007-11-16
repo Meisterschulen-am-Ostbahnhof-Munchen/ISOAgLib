@@ -125,29 +125,22 @@ namespace __IsoAgLib {
 
     common parameter
     @param ac_isoName optional ISOName code of Process-Data
-    @param ac_ownerISOName optional ISOName code of owner of Process-Data
-           ( important if DEVCLASS and/or DEVCLASSINST differs from identity ISOName in ac_isoName; this is the case
-             for process data from base data dictionary table (DEVCLASS==0), which is managed/owned by device of
-             type DEVCLASS != 0)
-    @param apc_ownerISOName pointer to the optional ISOName var of the owner (for automatic update as soon
+    @param apc_externalOverridingIsoName pointer to the optional ISOName var (for automatic update as soon
             as corresponding device is registered as having claimed address in monitor table list)
   */
   ProcIdent_c::ProcIdent_c( const IsoAgLib::ElementDdi_s* aps_elementDDI, uint16_t aui16_element,
-                            const IsoName_c& ac_isoName, const IsoName_c& ac_ownerISOName,
-                            const IsoName_c *apc_ownerISOName, int ai_singletonVecKey)
+                            const IsoName_c& ac_isoName, const IsoName_c *apc_externalOverridingIsoName, int ai_singletonVecKey)
   : ClientBase( ai_singletonVecKey ),
-    mpc_ownerISOName(NULL),
-    mc_ownerISOName(IsoName_c::IsoNameUnspecified()),
+    mpc_externalOverridingIsoName(NULL),
 		mc_isoName(IsoName_c::IsoNameUnspecified())
 {
-  init( aps_elementDDI, aui16_element, ac_isoName, ac_ownerISOName, apc_ownerISOName);
+  init( aps_elementDDI, aui16_element, ac_isoName, apc_externalOverridingIsoName);
 }
 
 /** copy constructor */
 ProcIdent_c::ProcIdent_c( const ProcIdent_c& arc_src )
   : ClientBase( arc_src ),
-	  mpc_ownerISOName( arc_src.mpc_ownerISOName ),
-		mc_ownerISOName( arc_src.mc_ownerISOName ),
+	  mpc_externalOverridingIsoName( arc_src.mpc_externalOverridingIsoName ),
 		mc_isoName( arc_src.mc_isoName )
 {
   assignFromSource( arc_src );
@@ -163,30 +156,21 @@ ProcIdent_c::ProcIdent_c( const ProcIdent_c& arc_src )
 
     common parameter
     @param ac_isoName ISOName code of Process-Data
-    @param ac_ownerISOName optional ISOName code of owner of Process-Data
-           ( important if DEVCLASS and/or DEVCLASSINST differs from identity ISOName in ac_isoName; this is the case
-             for process data from base data dictionary table (DEVCLASS==0), which is managed/owned by device of
-             type DEVCLASS != 0)
-    @param apc_ownerISOName pointer to the optional ISOName var of the owner (for automatic update as soon
+    @param apc_externalOverridingIsoName pointer to the optional ISOName var (for automatic update as soon
             as corresponding device is registered as having claimed address in monitor table list)
 */
 void ProcIdent_c::init( const IsoAgLib::ElementDdi_s* aps_elementDDI, uint16_t aui16_element,
-                        const IsoName_c& ac_isoName, const IsoName_c& ac_ownerISOName,
-                        const IsoName_c *apc_ownerISOName)
+                        const IsoName_c& ac_isoName, const IsoName_c *apc_externalOverridingIsoName)
 {
   setElementDDI(aps_elementDDI);
   setElementNumber(aui16_element);
 
-  mc_isoName = ac_isoName;
+  mpc_externalOverridingIsoName = apc_externalOverridingIsoName;
 
-  mpc_ownerISOName = apc_ownerISOName;
-
-  // the ISOName of ident is best defined by pointed value of apc_ownerISOName
-  if ( apc_ownerISOName != 0 ) mc_ownerISOName = *apc_ownerISOName;
-  // second choicer is explicit (not default) setting in ac_ownerISOName
-  else if ( ac_ownerISOName.isSpecified() ) mc_ownerISOName = ac_ownerISOName;
-  // last choice is definition of mc_ownerISOName by process data identiy
-  else mc_ownerISOName = ac_isoName;
+  // the ISOName of ident is best defined by pointed value of apc_externalOverridingIsoName
+  if ( apc_externalOverridingIsoName != 0 ) mc_isoName = *apc_externalOverridingIsoName;
+  // last choice is definition of mc_isoName by process data identiy
+  else mc_isoName = ac_isoName;
 }
 
 /**
@@ -207,8 +191,7 @@ ProcIdent_c& ProcIdent_c::operator=(const ProcIdent_c& arc_src){
 void ProcIdent_c::assignFromSource( const ProcIdent_c& arc_src )
 {
   mc_isoName = arc_src.mc_isoName;
-  mc_ownerISOName = arc_src.mc_ownerISOName;
-  mpc_ownerISOName = arc_src.mpc_ownerISOName;
+  mpc_externalOverridingIsoName = arc_src.mpc_externalOverridingIsoName;
   // elementDDI() returns list reference, setElementDDI() expects pointer to list
   setElementDDI(&(arc_src.elementDDI()));
 }
@@ -218,13 +201,13 @@ ProcIdent_c::~ProcIdent_c(){
 }
 
 /**
-  set DEVCLASS and _instance_ of owner by giving pointer to owner ISOName
-  @param apc_val pointer to owner ISOName
+  set pointer to external isoName instances (used by isoName())
+  @param apc_val pointer to ISOName
 */
-void ProcIdent_c::setOwnerISOName(const IsoName_c* apc_val)
+void ProcIdent_c::setExternalOverridingIsoName(const IsoName_c* apc_val)
 {
-  mpc_ownerISOName = apc_val;
-  mc_ownerISOName = *apc_val;
+  mpc_externalOverridingIsoName = apc_val;
+  mc_isoName = *apc_val;
 }
 
 /**
@@ -233,8 +216,7 @@ void ProcIdent_c::setOwnerISOName(const IsoName_c* apc_val)
    (important for matching received process data msg);
    if INSTANCE is defined (!= 0xFF) then one of the following conditions must be true:<ul>
    <li>parameter INSTANCE == ident INSTANCE (devClassInst())
-   <li>parameter INSTANCE == owner INSTANCE ( ownerISOName().devClassInst() )
-   <li>parameter ac_ownerISOName == ownerISOName()
+   <li>parameter arc_isoName == isoName()
    </ul>
 
    ISO parameter
@@ -263,11 +245,11 @@ bool ProcIdent_c::matchISO( const IsoName_c& arc_isoNameSender,
 
   if (arc_isoNameSender.isSpecified())
   { // check in remote case: check if devClass of ownerISOName in procident matches devClass of sender
-    if (ownerISOName() != arc_isoNameSender) return false;
+    if (isoName() != arc_isoNameSender) return false;
   }
   else
   { // check in local case: check if procident devClass matches devClass of empf
-    if (ownerISOName() != arc_isoNameReceiver) return false;
+    if (isoName() != arc_isoNameReceiver) return false;
   }
 
   if (!getProcessInstance4Comm().data().resolveCommandTypeForISO(*iter)) return false;
@@ -328,8 +310,8 @@ bool ProcIdent_c::check4GroupMatchExisting(uint16_t aui16_DDI, uint16_t aui16_el
 bool ProcIdent_c::checkProprietary4GroupMatch(uint16_t aui16_element, const IsoName_c& ac_isoName)
 {
   bool b_foundPair = false;
-  // first check if DevClass is the same like ownerISOName's DevClass
-  if (ac_isoName.devClass() != mpc_ownerISOName->devClass()) return b_foundPair;
+  // first check if DevClass is the same like Name's DevClass
+  if ( mpc_externalOverridingIsoName && (ac_isoName.devClass() != mpc_externalOverridingIsoName->devClass()) ) return b_foundPair;
 
   // if it is not the same device element continue
   if (aui16_element != element()) return b_foundPair;

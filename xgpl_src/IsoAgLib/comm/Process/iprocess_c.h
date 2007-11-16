@@ -161,7 +161,7 @@ public:
     ISO parameter
     @param aui16_DDI
     @param aui16_element
-    @param arc_isoNameSender isoName of the sender (used for check against ownerISOName())
+    @param arc_isoNameSender isoName of the sender (used for check against isoName())
     @param arc_isoNameReceiver isoName code of searched local Process Data instance
     @return true -> suitable instance found
   */
@@ -187,7 +187,7 @@ public:
     ISO parameter
     @param aui16_DDI
     @param aui16_element
-    @param arc_isoNameSender isoName of the sender (used for check against ownerISOName())
+    @param arc_isoNameSender isoName of the sender (used for check against isoName())
     @param arc_isoName isoName code of searched remote Process Data instance
     @return count of similar remote process data entries
   */

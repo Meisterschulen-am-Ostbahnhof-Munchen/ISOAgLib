@@ -132,18 +132,17 @@ namespace __IsoAgLib {
 
    common parameters:
    @param ac_isoName optional ISOName code of Process-Data
-   @param ac_ownerISOName optional ISOName of the owner
-   @param apc_isoName pointer to updated ISOName variable of owner
+   @param apc_externalOverridingIsoName pointer to updated ISOName variable
    @param apc_processDataChangeHandler optional pointer to handler class of application
    @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
   void ProcDataBase_c::init( const IsoAgLib::ElementDdi_s* ps_elementDDI, uint16_t aui16_element,
                              const IsoName_c& ac_isoName,
-                             const IsoName_c& ac_ownerISOName, const IsoName_c *apc_isoName,
+                             const IsoName_c *apc_externalOverridingIsoName,
                              IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler,
                              int ai_singletonVecKey)
   {
-    ProcIdent_c::init( ps_elementDDI, aui16_element, ac_isoName, ac_ownerISOName, apc_isoName);
+    ProcIdent_c::init( ps_elementDDI, aui16_element, ac_isoName, apc_externalOverridingIsoName);
 
     setSingletonKey(ai_singletonVecKey);
     men_procValType = i32_val;

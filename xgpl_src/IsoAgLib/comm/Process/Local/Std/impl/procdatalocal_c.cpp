@@ -132,8 +132,7 @@ namespace __IsoAgLib {
                        (array is terminated by ElementDdi_s.ui16_element == 0xFFFF)
 
   @param ac_isoName optional ISOName code of Process-Data
-  @param ac_ownerISOName optional ISOName of the owner
-  @param apc_isoName pointer to updated ISOName variable of owner
+  @param apc_externalOverridingIsoName pointer to updated ISOName variable
   @param ab_cumulativeValue
            -# for process data like distance, time, area
                the value of the measure prog data sets is updated
@@ -155,8 +154,8 @@ namespace __IsoAgLib {
   @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
 ProcDataLocal_c::ProcDataLocal_c( const IsoAgLib::ElementDdi_s* ps_elementDDI, uint16_t aui16_element,
-                                  const IsoName_c& ac_isoName, const IsoName_c& ac_ownerISOName,
-                                  const IsoName_c *apc_isoName, bool ab_cumulativeValue,
+                                  const IsoName_c& ac_isoName, const IsoName_c *apc_externalOverridingIsoName,
+                                  bool ab_cumulativeValue,
 #ifdef USE_EEPROM_IO
                   uint16_t aui16_eepromAdr,
 #endif
@@ -164,7 +163,7 @@ ProcDataLocal_c::ProcDataLocal_c( const IsoAgLib::ElementDdi_s* ps_elementDDI, u
                   int ai_singletonVecKey
                   )
     : ProcDataLocalBase_c( ps_elementDDI, aui16_element,
-                          ac_isoName, ac_ownerISOName, apc_isoName, ab_cumulativeValue,
+                          ac_isoName, apc_externalOverridingIsoName, ab_cumulativeValue,
 #ifdef USE_EEPROM_IO
                           aui16_eepromAdr,
 #endif
@@ -185,8 +184,7 @@ ProcDataLocal_c::ProcDataLocal_c( const IsoAgLib::ElementDdi_s* ps_elementDDI, u
                        (array is terminated by ElementDdi_s.ui16_element == 0xFFFF)
 
   @param ac_isoName optional ISOName code of Process-Data
-  @param ac_ownerISOName optional ISOName of the owner
-  @param apc_isoName pointer to updated ISOName variable of owner
+  @param apc_externalOverridingIsoName pointer to updated ISOName variable
   @param ab_cumulativeValue
           -# for process data like distance, time, area
               the value of the measure prog data sets is updated
@@ -208,8 +206,8 @@ ProcDataLocal_c::ProcDataLocal_c( const IsoAgLib::ElementDdi_s* ps_elementDDI, u
   @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
 void ProcDataLocal_c::init( const IsoAgLib::ElementDdi_s* ps_elementDDI, uint16_t aui16_element,
-                            const IsoName_c& ac_isoName, const IsoName_c& ac_ownerISOName,
-                            const IsoName_c *apc_isoName, bool ab_cumulativeValue,
+                            const IsoName_c& ac_isoName, const IsoName_c *apc_externalOverridingIsoName,
+                            bool ab_cumulativeValue,
 #ifdef USE_EEPROM_IO
                            uint16_t aui16_eepromAdr,
 #endif
@@ -218,7 +216,7 @@ void ProcDataLocal_c::init( const IsoAgLib::ElementDdi_s* ps_elementDDI, uint16_
                            )
 {
   ProcDataLocalBase_c::init( ps_elementDDI, aui16_element,
-                            ac_isoName, ac_ownerISOName, apc_isoName, ab_cumulativeValue,
+                            ac_isoName, apc_externalOverridingIsoName, ab_cumulativeValue,
 #ifdef USE_EEPROM_IO
                             aui16_eepromAdr,
 #endif

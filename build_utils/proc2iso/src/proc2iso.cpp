@@ -1367,7 +1367,7 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* ac_work
 
         b_dpdCombination = FALSE;
 
-        fprintf(partFileB, "c_myIdent.isoName(), c_myIdent.isoName(), &c_myIdent.isoName(), %s",
+        fprintf(partFileB, "c_myIdent.isoName(), &c_myIdent.isoName(), %s",
                 vecstr_constructor[4].c_str());
         fprintf(partFileB, "\n#ifdef USE_EEPROM_IO\n");
         fprintf(partFileB, ", 0x%x", stringtonumber(vecstr_attrString[attrStore_SA_at_EEPROM_address].c_str(), 0, -1));

@@ -98,19 +98,17 @@ namespace __IsoAgLib {
                          (array is terminated by ElementDdi_s.ui16_element == 0xFFFF)
     common parameter
     @param ac_isoName optional ISOName code of this instance
-    @param ac_ownerISOName optional ISOName of the owner
     @param apc_commanderISOName pointer to updated ISOName variable of commander
     @param apc_processDataChangeHandler optional pointer to handler class of application
     @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
 void ProcDataRemoteBase_c::init(  const IsoAgLib::ElementDdi_s* ps_elementDDI, uint16_t aui16_element,
-                                  const IsoName_c& ac_isoName, const IsoName_c& ac_ownerISOName,
-                                  const IsoName_c* apc_commanderISOName,
+                                  const IsoName_c& ac_isoName, const IsoName_c* apc_commanderISOName,
                                   IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler,
                                   int ai_singletonVecKey)
 {
   ProcDataBase_c::init( ps_elementDDI, aui16_element,
-                        ac_isoName, ac_ownerISOName, NULL, apc_processDataChangeHandler);
+                        ac_isoName, NULL, apc_processDataChangeHandler);
 
   setSingletonKey( ai_singletonVecKey );
   setCommanderISOName(apc_commanderISOName);
@@ -125,7 +123,7 @@ void ProcDataRemoteBase_c::init(  const IsoAgLib::ElementDdi_s* ps_elementDDI, u
 const ProcDataRemoteBase_c& ProcDataRemoteBase_c::operator=(const ProcDataRemoteBase_c& arc_src){
   // call the assignment operator for the base class
   ProcDataBase_c::operator=(arc_src);
-  mpc_isoName = arc_src.mpc_isoName;
+  mpc_externalOverridingIsoName = arc_src.mpc_externalOverridingIsoName;
   // return reference to source
   return *this;
 }
@@ -136,7 +134,7 @@ const ProcDataRemoteBase_c& ProcDataRemoteBase_c::operator=(const ProcDataRemote
 ProcDataRemoteBase_c::ProcDataRemoteBase_c(const ProcDataRemoteBase_c& arc_src)
   : ProcDataBase_c(arc_src)
 { // now copy the element var
-  mpc_isoName = arc_src.mpc_isoName;
+  mpc_externalOverridingIsoName = arc_src.mpc_externalOverridingIsoName;
 
   // now register the pointer to this instance in Process_c
   getProcessInstance4Comm().registerRemoteProcessData( this );
@@ -148,17 +146,17 @@ ProcDataRemoteBase_c::~ProcDataRemoteBase_c(){
 }
 
 /** set the pointer to the commander ident isoName
-  @param rpbisoName pointer to ISOName var of local member used for
+  @param apc_externalOverridingIsoName pointer to ISOName var of local member used for
               sending commands to remote owner member
 */
-void ProcDataRemoteBase_c::setCommanderISOName(const IsoName_c* apc_isoName)
+void ProcDataRemoteBase_c::setCommanderISOName(const IsoName_c* apc_externalOverridingIsoName)
 {
-    mpc_isoName = apc_isoName;
+    mpc_externalOverridingIsoName = apc_externalOverridingIsoName;
 }
 
 /** perform periodic actions
   ProcDataRemoteBase_c::timeEvent
-  -> adapt here the ownerISOName to an existing item, when DevClass/-Instance are matching, but the other fields are
+  -> adapt here the isoName to an existing item, when DevClass/-Instance are matching, but the other fields are
      differen ( don't change anything, if there is an item with identic ISOName setting
   @param pui16_nextTimePeriod calculated new time period, based on current measure progs (only for local proc data)
   @return true -> all planned executions performed
@@ -188,7 +186,7 @@ void ProcDataRemoteBase_c::setRemoteSendFlags(const IsoName_c& ac_varISOName) co
 {
   ProcessPkg_c& c_data = getProcessPkg();
 
-  c_data.setISONameForDA(ownerISOName());
+  c_data.setISONameForDA(isoName());
   c_data.setISONameForSA(ac_varISOName);
 }
 

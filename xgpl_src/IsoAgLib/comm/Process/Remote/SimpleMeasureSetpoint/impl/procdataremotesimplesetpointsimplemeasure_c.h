@@ -153,7 +153,6 @@ class ProcDataRemoteSimpleSetpointSimpleMeasure_c : public ProcDataRemoteBase_c 
 
     @param ac_isoName optional ISOName code of this instance
     @param aui8_pri PRI code of messages with this process data instance (default 2)
-    @param ac_ownerISOName optional ISOName of the owner
     @param apc_commanderISOName pointer to updated ISOName variable of commander
     @param apc_processDataChangeHandler optional pointer to handler class of application
     @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
@@ -161,7 +160,6 @@ class ProcDataRemoteSimpleSetpointSimpleMeasure_c : public ProcDataRemoteBase_c 
   ProcDataRemoteSimpleSetpointSimpleMeasure_c(const IsoAgLib::ElementDdi_s* ps_elementDDI = NULL,
                                               const IsoName_c& ac_isoName = IsoName_c::IsoNameInitialProcessData(),
                                               uint8_t aui8_pri = 2,
-                                              const IsoName_c& ac_ownerISOName = IsoName_c::IsoNameUnspecified(),
                                               const IsoName_c* apc_commanderISOName = NULL,
                                               IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler = NULL,
                                               int ai_singletonVecKey = 0);
@@ -174,7 +172,6 @@ class ProcDataRemoteSimpleSetpointSimpleMeasure_c : public ProcDataRemoteBase_c 
 
     @param ac_isoName optional ISOName code of this instance
     @param aui8_pri PRI code of messages with this process data instance (default 2)
-    @param ac_ownerISOName optional ISOName of the owner
     @param apc_commanderISOName pointer to updated ISOName variable of commander
     @param apc_processDataChangeHandler optional pointer to handler class of application
     @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
@@ -182,7 +179,6 @@ class ProcDataRemoteSimpleSetpointSimpleMeasure_c : public ProcDataRemoteBase_c 
   void init(const IsoAgLib::ElementDdi_s* ps_elementDDI,
             const IsoName_c& ac_isoName = IsoName_c::IsoNameInitialProcessData(),
             uint8_t aui8_pri = 2,
-            const IsoName_c& ac_ownerISOName = IsoName_c::IsoNameUnspecified(),
             const IsoName_c* apc_commanderISOName = NULL,
             IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler = NULL,
             int ai_singletonVecKey = 0);
