@@ -294,9 +294,7 @@ bool ManageMeasureProgLocal_c::timeEvent( uint16_t *pui16_nextTimePeriod ){
   { // only one measure prog -> set it to undefined prog type if isoName inactive
     pc_callerISOName = &(vec_prog().begin()->isoName());
     if ( ( !vec_prog().begin()->checkProgType(Proc_c::UndefinedProg))
-        && (   ( !c_isoMonitor.existIsoMemberISOName(*pc_callerISOName, true))
-            || ( c_isoMonitor.isoMemberISOName(*pc_callerISOName, true).lastedTime() > 3000 )
-           )
+        && ( !c_isoMonitor.existIsoMemberISOName(*pc_callerISOName, true) )
        )
     { // progType of first and only element is not default undefined
       // --> isoName should be an active member, but is inactie > 3sec
@@ -313,9 +311,7 @@ bool ManageMeasureProgLocal_c::timeEvent( uint16_t *pui16_nextTimePeriod ){
       for (Vec_MeasureProgLocal::iterator pc_iter = vec_prog().begin();
           pc_iter != vec_prog().end(); pc_iter++)
       { // check if this item has inactive isoName
-        if (  ( !c_isoMonitor.existIsoMemberISOName(pc_iter->isoName(), true) )
-            ||( c_isoMonitor.isoMemberISOName(pc_iter->isoName(), true).lastedTime() > 3000 )
-           )
+        if ( !c_isoMonitor.existIsoMemberISOName(pc_iter->isoName(), true) )
         { // item isn't active any more -> stop entries and erase it
           pc_iter->stop();
           // erase only if array size > 1
@@ -355,6 +351,7 @@ bool ManageMeasureProgLocal_c::timeEvent( uint16_t *pui16_nextTimePeriod ){
       }
     }
   }
+
   // call the time event for all measure programs
   for (Vec_MeasureProgLocal::iterator pc_iter = vec_prog().begin();
        pc_iter != vec_prog().end(); pc_iter++)
