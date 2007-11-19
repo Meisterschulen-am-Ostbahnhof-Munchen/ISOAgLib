@@ -1,12 +1,21 @@
 /*! \mainpage Overview on Documentation of IsoAgLib
 
 INCLUDE_mainHeaderWithNavbar.txt_INCLUDE
-
-<h4>Most often needed lookup-links:</h4>
-\ref XMLspec<br>
-\ref XMLProcSpec<br>
-&nbsp;<br>
-&nbsp;<br>
+\htmlonly
+<table style="border-width:1px; border-color:#66CC66; border-style:dashed; padding:5px;">
+<th>Most often needed lookup-links:</th>
+<tr><td>
+\endhtmlonly
+\ref XMLspec
+\htmlonly
+</td></tr>
+<tr><td>
+\endhtmlonly
+\ref XMLProcSpec
+\htmlonly
+</td></tr>
+</table>
+\endhtmlonly
 
 \section Home Welcome to IsoAgLib.org!
 

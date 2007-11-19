@@ -1,11 +1,6 @@
 <center>
-<h2>Copyright &copy; 1999 - 2007 Achim Spangler, Martin Wodok</h2>
-<h2>Licensed with Exceptions under the General Public License (GPL) of the Free Software Foundation</h2>
+<i>Copyright &copy; 1999 - 2007 Achim Spangler, Martin Wodok<br/>
+Licensed with Exceptions under the General Public License (GPL) of the Free Software Foundation</i>
 </center>
-
-<div id="menu">
+<hr>
 INCLUDE_menu-list.txt_INCLUDE
-&nbsp;<br>
-Last Update: <br>07 January 2007 by<br>
-<a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a><br>
-</div>
