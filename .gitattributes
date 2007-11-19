@@ -200,6 +200,7 @@ IsoAgLib_Examples/tutorial/5_CanFeatures/5_1_ProprietaryPgn/5_1_ProprietaryPgn.h
 IsoAgLib_Examples/tutorial/5_CanFeatures/5_1_ProprietaryPgn/TutPrjDesc5_1_ProprietaryPgn.txt -text
 IsoAgLib_Examples/tutorial/5_CanFeatures/5_1_ProprietaryPgn/config_5_1_ProprietaryPgn.h -text
 IsoAgLib_Examples/tutorial/5_CanFeatures/5_1_ProprietaryPgn/version.h -text
+IsoAgLib_Examples/tutorial/6_ParallelMutex/6_0_VtThreads/6_0_VtThreads.cpp -text
 IsoAgLib_Examples/version.h -text
 admin/testscripts/compileTutorials.sh -text
 build_utils/proc2iso/AUTHORS -text
