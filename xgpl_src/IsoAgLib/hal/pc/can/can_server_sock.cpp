@@ -582,7 +582,6 @@ void handleCommand(server_c* pc_serverData, std::list<client_c>::iterator& iter_
       case COMMAND_DEREGISTER: {
         DEBUG_PRINT("COMMAND_DEREGISTER\n");
 
-        // @todo: is queue clearing necessary?
         for (uint8_t j=0; j<cui32_maxCanBusCnt; j++)
         {
           iter_client->arrMsgObj[j].clear();

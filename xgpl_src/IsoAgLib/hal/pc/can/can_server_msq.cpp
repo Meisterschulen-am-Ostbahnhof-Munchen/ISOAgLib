@@ -716,7 +716,7 @@ static void* can_write_thread_func(void* ptr)
       }
 
       if (pc_serverData->b_logMode)
-      { /** @todo shouldn't we only dump the message to the FILE if NO ERROR? Or at elast flag it like this in the can-log!! ? */
+      {
         dumpCanMsg (msqWriteBuf.ui8_bus, msqWriteBuf.ui8_obj, &(msqWriteBuf.s_canMsg), pc_serverData->f_canOutput[msqWriteBuf.ui8_bus]);
       }
 
@@ -890,7 +890,7 @@ static void can_read(server_c* pc_serverData)
       }
 
       if (pc_serverData->b_logMode)
-      { /** @todo shouldn't we only dump the message to the FILE if NO ERROR? Or at elast flag it like this in the can-log!! ? */
+      {
         dumpCanMsg (channel_with_change, 0/* we don't have no msgobj when receiving .. msqWriteBuf.ui8_obj*/, &s_canMsg, pc_serverData->f_canOutput[channel_with_change]);
       }
       enqueue_msg(DLC, s_canMsg.ui32_id, channel_with_change, b_xtd, &s_canMsg.ui8_data[0], 0, pc_serverData);
@@ -1021,7 +1021,6 @@ static void* command_thread_func(void* ptr)
         case COMMAND_DEREGISTER: {
           DEBUG_PRINT("command stop driver\n");
 
-          // @todo: is queue clearing necessary?
           for (uint8_t j=0; j<cui32_maxCanBusCnt; j++)
           {
             iter_client->arrMsgObj[j].clear();

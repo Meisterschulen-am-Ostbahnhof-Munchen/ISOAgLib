@@ -512,7 +512,6 @@ int16_t clearCanObjBuf(uint8_t bBusNumber, uint8_t bMsgObj)
 
   if ( ( bBusNumber > HAL_CAN_MAX_BUS_NR ) ) return HAL_RANGE_ERR;
 
-  // @todo: clear socket messages
   //  clearReadQueue(bBusNumber, bMsgObj, msqDataClient.i32_rdHandle, msqDataClient.i32_pid);
   //clearWriteQueue(bBusNumber, bMsgObj, msqDataClient.i32_wrHandle, msqDataClient.i32_pid);
 
@@ -653,8 +652,6 @@ int16_t sendCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tSend* ptSend )
 #endif
 
   memset(&s_transferBuf, 0, sizeof(transferBuf_s));
-  // @todo:
-  //s_transferBuf.i32_mtypePrioAnd1 = assembleWrite_mtype(__IsoAgLib::CANIO_c::sb_sendPrioritized);
 
   s_transferBuf.ui16_command = COMMAND_DATA;
   s_transferBuf.s_data.ui8_bus = bBusNumber;
