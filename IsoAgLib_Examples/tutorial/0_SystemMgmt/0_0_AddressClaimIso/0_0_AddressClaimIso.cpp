@@ -79,7 +79,7 @@
  *
  * <H1>Howto compile this example</H1>
  * <ol>
- * <li>Call the script update_makefile.sh with the spec file 
+ * <li>Call the script update_makefile.sh with the spec file
  *     conf_0_0_AddressClaimIso from the directory where the spec file
  *     and the script are located (default: IsoAgLib/compiler_projects/procejtGeneration/)<br>
  *     <tt>#> ./update_makefile.sh conf_0_0_AddressClaimIso</tt>
@@ -194,6 +194,10 @@
    of the "IsoAgLib" */
 #include <IsoAgLib/comm/Scheduler/ischeduler_c.h>
 #include <IsoAgLib/comm/SystemMgmt/iidentitem_c.h>
+
+#ifdef WIN32
+#include <windows.h>
+#endif
 
 // the interface objects of the IsoAgLib are placed in the IsoAgLibAll namespace
 // -> include all elements of this area for easy access
