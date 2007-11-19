@@ -369,6 +369,8 @@ SOCKET_TYPE establish(unsigned short portnum)
 
   if (bind(listenSocket, (struct sockaddr *)&sa, ui32_len) < 0) {
     perror("bind");
+    printf("\nmaybe socket is in TIME_WAIT state, check this with the netstat command\n");
+    printf("=> please wait one minute (or stop all clients before stopping the can_server)\n\n");
     close(listenSocket);
     return(-1);                                  /* bind address to socket */
   }
