@@ -1,5 +1,5 @@
 /***************************************************************************
-              can_server_pcan.cpp -
+              can_server_sontheim.cpp -
                     interface for SONTHEIM can card
 
                              -------------------

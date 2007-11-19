@@ -1,6 +1,6 @@
 /***************************************************************************
-              can_server_vector_canlib.cpp -
-                    interface for Vector-Informatik can card (canlib)
+              can_server_vector_xl.cpp -
+                    interface for Vector-Informatik can card (xl)
 
                              -------------------
     begin                : Tue Oct 2 2001

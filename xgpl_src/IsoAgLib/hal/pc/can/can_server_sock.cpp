@@ -1,10 +1,7 @@
 /***************************************************************************
-              target_extension_can_server_A1_binary.cpp -
-                    can server communicates with clients through message queues
-                    read/write operation for /dev/wecan<bus_no>
+              can_server_sock.cpp -
+                    can server communicates with clients through sockets
                     message forwarding to other clients
-                    #define SIMULATE_BUS_MODE for operation without can device (operation based on message forwarding)
-                    use "can_server_a1 --help" for input parameters (log, replay mode)
 
                              -------------------
     begin                : Tue Oct 2 2001
@@ -56,8 +53,6 @@
  * the main author Achim Spangler by a.spangler@osb-ag:de                  *
  ***************************************************************************/
 
-#define CAN_SERVER_HOST "127.0.0.1"
-
 #include <cstring>
 #include <cstdio>
 #include <cctype>
@@ -95,25 +90,6 @@
 
 using namespace __HAL;
 
-
-/////////////////////////////////////////////////////////////////////////
-// Globals
-/** if the following define is active, the can_server writes important logging info to the given path.
- *  comment this define out to eliminate this */
-#ifdef WIN32
-  #define CAN_SERVER_LOG_PATH ".\\can_server.log"
-#elif defined( SYSTEM_A1 )
-  #define CAN_SERVER_LOG_PATH "/sd0/settings/can_server.log"
-#else
-  #define CAN_SERVER_LOG_PATH "./can_server.log"
-#endif
-
-
-
-// CAN Globals
-static int apiversion;
-
-#define USE_CAN_CARD_TYPE c_CANA1BINARY
 
 server_c::server_c()
   : b_logMode(FALSE), b_inputFileMode(FALSE), i16_reducedLoadOnIsoBus(-1)
@@ -295,14 +271,12 @@ int32_t getClientTime( client_c& ref_receiveClient )
 
 
 void usage() {
-  printf("usage: can_server_A1 [--log <log_file_name_base>] [--file-input <log_file_name>] [--high-prio-minimum <num_pending_writes>] [--reduced-load-iso-bus-no <bus_number>\n\n");
+  printf("usage: can_server [--log <log_file_name_base>] [--file-input <log_file_name>] [--high-prio-minimum <num_pending_writes>]n\n");
   printf("  --log                      log can traffic into <log_file_name_base>_<bus_id>\n");
   printf("  --file-input               read can data from file <log_file_name>\n");
   printf("  --high-prio-minimum        if 0: start normally without priority-handling (default - used if param not given!).\n");
   printf("                             if >0: only clients with activated high-priority-send-mode can send messages if\n");
   printf("                                    can-controller has equal or more than <num_pending_writes> in its queue.\n");
-  printf("  --reduced-load-iso-bus-no  avoid unnecessary CAN bus load due to\n");
-  printf("                             messages with local destination addresses\n\n");
 }
 
 SOCKET_TYPE establish(unsigned short portnum)
@@ -521,7 +495,6 @@ static void enqueue_msg(transferBuf_s* p_sockBuf, SOCKET_TYPE i32_socketSender, 
 
           p_sockBuf->s_data.ui8_obj = i32_obj;
 
-          // @todo: error handling?
           if (send(iter->i32_dataSocket, (char*)p_sockBuf, sizeof(transferBuf_s),
 #ifdef WIN32
               0
@@ -554,7 +527,6 @@ void send_command_ack(SOCKET_TYPE ri32_commandSocket, int32_t ri32_dataContent, 
   s_transferBuf.s_acknowledge.i32_dataContent = ri32_dataContent;
   s_transferBuf.s_acknowledge.i32_data = ri32_data;
 
-  // @todo: error handling?
   if (send(ri32_commandSocket, (char*)&s_transferBuf, sizeof(transferBuf_s),
 #ifdef WIN32
            0
@@ -597,7 +569,7 @@ void handleCommand(server_c* pc_serverData, std::list<client_c>::iterator& iter_
         DEBUG_PRINT1 ("Client registering with startTimeClock_t from his REGISTER message as %d\n", p_writeBuf->s_startTimeClock.t_clock);
         initClientTime(*iter_client, p_writeBuf->s_startTimeClock.t_clock );
 
-        //DEBUG_PRINT1("client start up time (absolute value in clocks): %d\n", s_tmpClient.t_startTimeClock);
+        DEBUG_PRINT1("client start up time (absolute value in clocks): %d\n", s_tmpClient.t_startTimeClock);
 
         if (!i32_error)
         { // no error
@@ -1096,7 +1068,7 @@ int main(int argc, char *argv[])
 
   getTime();
 
-  apiversion = initCardApi();
+  const uint32_t apiversion = initCardApi();
   if ( apiversion == 0 ) { // failure - nothing found
     DEBUG_PRINT("FAILURE - No CAN card was found with automatic search\n");
     exit(1);

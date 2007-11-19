@@ -55,8 +55,6 @@
  * the main author Achim Spangler by a.spangler@osb-ag:de                  *
  ***************************************************************************/
 
-#define CAN_SERVER_HOST "127.0.0.1"
-
 #include "can_target_extensions.h"
 #include <IsoAgLib/hal/pc/system/system.h>
 #include <IsoAgLib/hal/pc/system/system_target_extensions.h>

@@ -1,10 +1,7 @@
 /***************************************************************************
-              target_extension_can_server_A1_binary.cpp -
+              can_server_msq.cpp -
                     can server communicates with clients through message queues
-                    read/write operation for /dev/wecan<bus_no>
                     message forwarding to other clients
-                    #define SIMULATE_BUS_MODE for operation without can device (operation based on message forwarding)
-                    use "can_server_a1 --help" for input parameters (log, replay mode)
 
                              -------------------
     begin                : Tue Oct 2 2001
@@ -55,7 +52,6 @@
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
  * the main author Achim Spangler by a.spangler@osb-ag:de                  *
  ***************************************************************************/
-
 
 #include "can_target_extensions.h"
 #include <cstring>
@@ -117,11 +113,6 @@ using namespace __HAL;
 #define PRIORITY_CAN_WRITE    0
 #define PRIORITY_CAN_COMMAND  0
 
-
-// CAN Globals
-static int apiversion;
-
-#define USE_CAN_CARD_TYPE c_CANA1BINARY
 
 server_c::server_c()
   : b_logMode(FALSE), b_inputFileMode(FALSE), i32_lastPipeId(0), i16_reducedLoadOnIsoBus(-1)
@@ -1338,7 +1329,7 @@ int main(int argc, char *argv[])
 
   getTime();
 
-  apiversion = initCardApi();
+  const uint32_t apiversion = initCardApi();
   if ( apiversion == 0 ) { // failure - nothing found
     DEBUG_PRINT("FAILURE - No CAN card was found with automatic search\n");
     exit(1);

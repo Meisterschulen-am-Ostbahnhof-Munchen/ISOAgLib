@@ -91,6 +91,11 @@
   #define SOCKET_TYPE_INET_OR_UNIX AF_INET
 #endif
 
+#ifdef CAN_DRIVER_SOCKET
+  #define CAN_SERVER_HOST "127.0.0.1"
+#endif
+
+
 #ifdef WIN32
   typedef SOCKET SOCKET_TYPE;
 #else
