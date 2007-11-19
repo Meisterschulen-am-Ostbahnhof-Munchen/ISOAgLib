@@ -320,7 +320,7 @@ void send_command_ack(int32_t ai32_mtype, msqData_s* p_msqDataServer, int32_t ai
 
 int32_t send_command(transferBuf_s* ps_transferBuf, msqData_s* p_msqDataClient);
 
-int16_t ca_createMsqs(msqData_s& msqData);
+int16_t createMsqs(msqData_s& msqData);
 
 int32_t assembleRead_mtype (uint16_t ui16_pid, uint8_t bus, uint8_t obj);
 int32_t assembleWrite_mtype(bool ab_prio);

@@ -111,11 +111,11 @@ int32_t send_command(transferBuf_s* p_s_transferBuf, msqData_s* p_msqDataClient)
 
 
 /////////////////////////////////////////////////////////////////////////
-int16_t ca_createMsqs(msqData_s& msqData)
+int16_t createMsqs(msqData_s& msqData)
 {
   key_t  msgkey;
 
-  DEBUG_PRINT("ca_createMsqs called\n");
+  DEBUG_PRINT("createMsqs called\n");
   msqData.i32_pid = getpid();
 
   /* Generate our IPC key value */

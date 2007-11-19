@@ -102,7 +102,7 @@ int16_t can_startDriver()
   printf("SYSTEM_WITH_ENHANCED_CAN_HAL is NOT defined !\n");
 #endif
 
-  int16_t i16_rc = ca_createMsqs(msqDataClient);
+  int16_t i16_rc = createMsqs(msqDataClient);
 
   if (i16_rc)
     // queue connect/creation failed

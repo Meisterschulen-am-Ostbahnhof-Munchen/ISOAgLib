@@ -1345,7 +1345,7 @@ int main(int argc, char *argv[])
   // wait to be shure that CAN card is clean reset
   //  usleep(100);
 
-  int16_t i16_rc = ca_createMsqs(c_serverData.msqDataServer);
+  int16_t i16_rc = createMsqs(c_serverData.msqDataServer);
 
   if (i16_rc) {
     printf("error creating queues\n");
