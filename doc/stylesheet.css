@@ -392,6 +392,7 @@ HR { height: 1px;
   DYNAMIC CSS MENU
 -------------------
 */
+body {behavior:url("csshover.htc");}
 ul#menu {
   display:block;
   margin:2px 15px 2px 2px;
@@ -428,6 +429,8 @@ ul#menu {
 }
 
 ul#menu>li { background:#eee; }
+* html ul#menu li { background:#eee; } /* IE */
+* html ul#menu li ul li { background:#fff; } /* IE */
 
 #menu li.folder>ul { 
   left:170px;  /* others */
@@ -441,13 +444,14 @@ ul#menu>li { background:#eee; }
 
 #menu a {
   display:block;
-  margin: -2px 0px -2px -2px;
+  margin: -2px -5px -2px -2px;
   padding:2px;
   color:#000;
   text-decoration:none;
   font-weight:bold;
   width:100%; /* IE */
 }
+* html #menu a { margin:0; } /* IE */
 
 #menu li>a { width:auto; } /* others */
 
@@ -479,4 +483,3 @@ body ul>li {
   margin-left:1.5em; 
 }
 /* workaround end */
-
