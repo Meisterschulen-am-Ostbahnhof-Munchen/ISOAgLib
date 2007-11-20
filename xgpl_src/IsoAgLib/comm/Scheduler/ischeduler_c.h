@@ -86,7 +86,7 @@ public:
 
 
 /** Return values of the timeEvent function */
-  typedef enum {
+  typedef enum TimeEventRetValue_en {
       resourceLocked = -100,
       jobNotFinished = -1
     } TimeEventRetValue_t;

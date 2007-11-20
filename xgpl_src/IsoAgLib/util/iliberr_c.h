@@ -125,7 +125,7 @@ namespace IsoAgLib {
 class iLibErr_c : public SingletonILibErr_c {
 public:
   /** enum to identify the different error types */
-  typedef enum {
+  typedef enum iLibErrTypes_en {
     Precondition=0,
     BadAlloc=1,
     ElNonexistent=2,
@@ -158,7 +158,7 @@ public:
   } iLibErrTypes_t;
 
   /** enum to identify the different error locations */
-  typedef enum {
+  typedef enum iLibErrLocations_en {
     Base=0,
     System=1,
     Process=2,

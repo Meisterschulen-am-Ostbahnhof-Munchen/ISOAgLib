@@ -112,7 +112,7 @@ namespace __IsoAgLib {
   @author Dipl.-Inform. Achim Spangler
 */
 
-typedef enum
+typedef enum filterBoxState_en
 {
   IdleState = 0xff,
   InactiveState = 0xfe,

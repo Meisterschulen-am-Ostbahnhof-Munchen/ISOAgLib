@@ -92,7 +92,7 @@
 namespace __IsoAgLib {
 
 /** values which indicate the state of the received can-message */
-typedef enum { MessageValid        = 0,
+typedef enum MessageState_en { MessageValid        = 0,
 
                AdrResolveMask      = (0x3<<0), // AdrResolve wraps SA and DA into one!
                AdrValid            = (0x0<<0),

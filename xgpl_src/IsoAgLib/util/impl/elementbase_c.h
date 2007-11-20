@@ -110,7 +110,7 @@ namespace __IsoAgLib {
   */
 
   ///retriggerType_t for scheduling ElementBase_c Objects in Scheduler_c
-  typedef enum { StandardRetrigger = 1, EarliestRetrigger = 2, LatestRetrigger = 4 } retriggerType_t;
+  typedef enum retriggerType_en { StandardRetrigger = 1, EarliestRetrigger = 2, LatestRetrigger = 4 } retriggerType_t;
 
 
 class ElementBase_c : public SaClaimHandler_c {

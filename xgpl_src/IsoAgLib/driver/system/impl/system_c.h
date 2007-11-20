@@ -88,7 +88,7 @@
 #include <IsoAgLib/hal/system.h>
 
 namespace IsoAgLib {
-typedef enum { PowerdownByExplcitCall, PowerdownOnCanEnLoss } SystemPowerdownStrategy_t;
+typedef enum SystemPowerdownStrategy_en { PowerdownByExplcitCall, PowerdownOnCanEnLoss } SystemPowerdownStrategy_t;
  class iSystem_c;
 };
 
@@ -105,13 +105,13 @@ namespace __IsoAgLib {
 class System_c;
 class System_c : public Singleton<System_c> {
 public:
-  
-  
-  
+
+
+
   /**
     Initialize the system hardware.
     (uses BIOS function)
-	  
+
     possible errors:
         * Err_c::SystemOpen problem during start of system with BIOS call
         * Err_c::SystemWatchdog the System_c::init_wd call caused an error

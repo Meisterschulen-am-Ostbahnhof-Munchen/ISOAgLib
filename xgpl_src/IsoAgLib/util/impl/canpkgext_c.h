@@ -115,7 +115,7 @@ typedef struct
 
 
 
-typedef enum
+typedef enum Scope_en
 {
   local  = 0,
   remote = 1

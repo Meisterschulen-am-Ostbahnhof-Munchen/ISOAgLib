@@ -70,7 +70,7 @@
 /** CAN state labels for C167
 		( and comparable ) CAN controllers
 	*/
-typedef enum
+typedef enum C16xCtrlStatusReg_en
 {
 	CanStateNoErr = 0x0000,
 	CanStateWarn = 0x4000,
