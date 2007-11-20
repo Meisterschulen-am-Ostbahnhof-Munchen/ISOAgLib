@@ -97,6 +97,7 @@ uint32_t initCardApi ()
   for( uint32_t i=0; i<cui32_maxCanBusCnt; i++ )
   {
     canBusIsOpen[i] = false;
+    driverHandle[i] = NULL;
   }
 
   return 1;
