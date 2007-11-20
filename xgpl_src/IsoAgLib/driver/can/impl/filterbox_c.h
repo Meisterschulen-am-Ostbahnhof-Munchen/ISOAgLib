@@ -223,8 +223,7 @@ public:
    void set (const Ident_c& arc_mask,
             const Ident_c& arc_filter,
             CanCustomer_c *apc_customer = NULL,
-            int8_t ai8_dlcForce = -1,
-            FilterBox_c* apc_filterBox = NULL);
+            int8_t ai8_dlcForce = -1);
 
 
   /** check if ID from a CAN msg matches this FilterBox

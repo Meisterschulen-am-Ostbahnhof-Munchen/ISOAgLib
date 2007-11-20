@@ -369,13 +369,6 @@ class CanIo_c : public SingletonCanIo_c {
   FilterBox_c* insertFilter(__IsoAgLib::CanCustomer_c& ar_customer, uint32_t aui32_mask,
                             uint32_t aui32_filter, bool ab_reconfigImmediate = true,
                             const Ident_c::identType_t at_identType = DEFAULT_IDENT_TYPE,
-                            int8_t ai8_dlcForce = -1,
-                            FilterBox_c* apc_connectedFilterBox = NULL);
-
-   FilterBox_c* insertFilter(__IsoAgLib::CanCustomer_c& ar_customer, uint32_t aui32_mask,
-                            uint32_t aui32_filter, bool ab_reconfigImmediate,
-                            const Ident_c::identType_t at_identType,
-                            uint32_t at_connectedMask, uint32_t at_connectedFilter, const Ident_c::identType_t at_connectedIdentType,
                             int8_t ai8_dlcForce = -1);
 
 

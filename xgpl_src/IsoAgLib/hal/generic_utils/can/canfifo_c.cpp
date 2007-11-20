@@ -186,6 +186,30 @@ static bool isAnythingToReadWaiting(uint8_t aui8_busNum,unsigned int aui_tmpUc, 
 }
 
 #endif // READ_WAITING
+
+/** Check whether there is a message available : return value = true if a message is available**/
+
+bool iFifoIsMsgAvailable(uint8_t aui8_busNum)
+{
+
+  if(aui8_busNum > HAL_CAN_MAX_BUS_NR )
+  {
+      #ifdef DEBUG
+      INTERNAL_DEBUG_DEVICE << "iFifoIsMsgAvailable: input parameter error "  << INTERNAL_DEBUG_DEVICE_ENDL;
+      #endif
+      return false;
+  }
+
+  const unsigned int ui_tmpUc = s_canFifoInstance[aui8_busNum].ui_UpdCount;
+
+  #ifdef READ_WAITING
+  return isAnythingToReadWaiting(aui8_busNum, ui_tmpUc,s_canFifoInstance[aui8_busNum].ui_AckCount);
+  #else
+  return isAnythingToRead(ui_tmpUc,s_canFifoInstance[aui8_busNum].ui_AckCount);
+  #endif
+
+}
+
 /** read the FbIndex, rcvTime,refui32_msgId */
 
 int32_t iFifoReadFbIdx(uint8_t aui8_busNum,int32_t& ri32_fbIdx, int32_t& rui32_rcvTime,uint32_t& rui32_msgId,__IsoAgLib::Ident_c::identType_t& r_msgtype)

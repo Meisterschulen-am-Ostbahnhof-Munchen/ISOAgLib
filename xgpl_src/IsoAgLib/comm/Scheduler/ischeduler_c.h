@@ -85,6 +85,12 @@ public:
   void startSystem() { Scheduler_c::startSystem(); }
 
 
+/** Return values of the timeEvent function */
+  typedef enum {
+      resourceLocked = -100,
+      jobNotFinished = -1
+    } TimeEventRetValue_t;
+
   /**
     call the timeEvent for CanIo_c and all communication classes (derived from ElementBase_c) which
     registered within iScheduler_c for periodic timeEvent.
@@ -99,11 +105,12 @@ public:
           be acquired.
   */
 
+
   int32_t timeEvent( int32_t ai32_demandedExecEndScheduler = -1) {
             #ifdef USE_MUTUAL_EXCLUSION
             /** Try to acquire the Resource */
               int i_ret =  Scheduler_c::tryAcquireResource();
-              if ( i_ret != 0 ) return -100; //! the resource is already locked, return.
+              if ( i_ret != 0 ) return resourceLocked; //! the resource is already locked, return.
 
               int32_t i32_idleTimeSpread = Scheduler_c::timeEvent( ai32_demandedExecEndScheduler );
               Scheduler_c::releaseResource();
@@ -130,6 +137,15 @@ public:
         Scheduler_c::releaseResource();
         return i32_idleTimeSpread;
       }
+
+
+
+
+  int releaseResource() { return Scheduler_c::releaseResource();}
+
+  int tryAcquireResource() {return Scheduler_c::tryAcquireResource();}
+
+  int waitAcquireResource(){return Scheduler_c::waitAcquireResource(); }
 
 #endif
 

@@ -172,12 +172,11 @@ int32_t iFifoRead(uint8_t aui8_busNum,fifoData_s& ar_readData);
 @return false whether the buffer is full and productor should wait.
 */
 bool iFifoWrite(uint8_t aui8_busNum,int32_t ai32_fbIdx,int32_t ai32_msgId, void* irqData);
-//bool iFifoWrite(uint8_t ui8_busNum,const fifoData_s& acref_writeData);
 
-//void iFifoPopMessage(uint8_t ui8_busNumber);
+
 void iFifoDiscardOldMessage(uint8_t aui8_busNum);
 bool isConsumerReading(uint8_t aui8_busNum);
-//int32_t fifo_useMsgObjGet(uint8_t rui8_busNumber,__IsoAgLib::CanPkg_c* rpc_data);
+bool iFifoIsMsgAvailable(uint8_t aui8_busNum);
 
 } // __HAL
 

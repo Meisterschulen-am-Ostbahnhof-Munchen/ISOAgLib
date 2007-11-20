@@ -446,33 +446,36 @@ int16_t can_configGlobalClose(uint8_t aui8_busNr)
   return close_can(aui8_busNr);
 }
 
+#define MAX_SLEEP_SLICE 5
 /** wait until specified timeout or until next CAN message receive
  *  @return true -> there are CAN messages waiting for process. else: return due to timeout
  */
 bool can_waitUntilCanReceiveOrTimeout( uint16_t aui16_timeoutInterval )
 {
-  const int32_t ci32_endWait = get_time() + aui16_timeoutInterval;
+  const int32_t ci32_endWait = __IsoAgLib::System_c::getTime() + aui16_timeoutInterval;
   int32_t i32_waitSlice = aui16_timeoutInterval;
 
-  // if greater than 50msec -> divide so that about 10 slices are realized
-  if ( i32_waitSlice > 50 ) i32_waitSlice /= 10;
-  // if still more than 50msec slice limit to 50
-  if ( i32_waitSlice > 50 ) i32_waitSlice = 50;
+  // if greater than MAX_SLEEP_SLICE msec -> divide so that about 10 slices are realized
+  if ( i32_waitSlice > MAX_SLEEP_SLICE ) i32_waitSlice /= 10;
+  // if still more than 10msec slice limit to MAX_SLEEP_SLICE
+  if ( i32_waitSlice > MAX_SLEEP_SLICE ) i32_waitSlice = MAX_SLEEP_SLICE;
+
 
   while (true)
   {
+    // check whether any message is waiting for processing in central FIFO
+  // return true, as soon as at least one message is available
     for ( unsigned int busInd = 0; busInd < cui32_maxCanBusCnt; busInd++)
     {
-      for ( unsigned int msgInd = 0; msgInd < 15; msgInd++ )
-      {
-        if ( get_can_msg_buf_count(busInd, (msgInd+1)) > 0 ) return true;
-      }
-    }
+
+        /** a message is available */
+        if (HAL::iFifoIsMsgAvailable(busInd)) return true;
+     }
+
     delay_us( i32_waitSlice * 1000 );
-    if ( get_time() >= ci32_endWait ) return false;
+    if ( __IsoAgLib::System_c::getTime() >= ci32_endWait ) return false;
   }
 }
-
 
 /* ***************************** */
 /* ***Specific for one MsgObj*** */

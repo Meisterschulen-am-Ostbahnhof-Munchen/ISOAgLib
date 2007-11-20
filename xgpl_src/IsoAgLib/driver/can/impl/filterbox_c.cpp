@@ -338,8 +338,7 @@ void FilterBox_c::closeHAL()
 void FilterBox_c::set (const Ident_c& arc_mask,
                        const Ident_c& arc_filter,
                        CanCustomer_c* apc_customer,
-                       int8_t ai8_dlcForce,
-                       FilterBox_c* apc_filterBox)
+                       int8_t ai8_dlcForce)
 {
   c_filter = arc_filter;
   c_mask = arc_mask;
@@ -358,9 +357,7 @@ void FilterBox_c::set (const Ident_c& arc_mask,
     vec_customer.push_back (CustomerLen_s (apc_customer, ai8_dlcForce));
   }
 
-  if (apc_filterBox == NULL)
-       c_additionalMask.set (~0, c_mask.identType());
-  else c_additionalMask.set (~(apc_filterBox->c_filter.ident() ^ c_filter.ident()), c_mask.identType());
+  c_additionalMask.set (~0, c_mask.identType());
 };
 
 bool FilterBox_c::equalCustomer( const __IsoAgLib::CanCustomer_c& ar_customer ) const

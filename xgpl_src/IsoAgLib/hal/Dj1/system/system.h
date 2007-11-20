@@ -422,10 +422,11 @@ namespace HAL
 
 
 /*@}*/
+}
 
 #ifdef USE_MUTUAL_EXCLUSION
 #include <IsoAgLib/hal/generic_utils/system/mutex_emulated.h>
 #endif
 
-}
+
 #endif

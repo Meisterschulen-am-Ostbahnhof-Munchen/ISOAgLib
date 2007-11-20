@@ -580,7 +580,7 @@ bool CanIo_c::existFilter(const __IsoAgLib::CanCustomer_c& ar_customer,
 FilterBox_c*  CanIo_c::insertStandardIsoFilter(__IsoAgLib::CanCustomer_c& ar_customer, uint32_t aui32_pgn,bool ab_reconfigImmediate)
 {
 
-  uint8_t ui8_dataLen = 0;
+  int8_t i8_dataLen = 0;
 
 
 
@@ -589,7 +589,7 @@ FilterBox_c*  CanIo_c::insertStandardIsoFilter(__IsoAgLib::CanCustomer_c& ar_cus
 
       case REQUEST_PGN_MSG_PGN:
       case (REQUEST_PGN_MSG_PGN | 0xFF): //xxeaffxx
-        ui8_dataLen = 3;
+        i8_dataLen = 3;
         break;
 
 
@@ -601,18 +601,18 @@ FilterBox_c*  CanIo_c::insertStandardIsoFilter(__IsoAgLib::CanCustomer_c& ar_cus
       case SOFTWARE_IDENTIFICATION_PGN: /** variable data len: see ISO/CD ISO-11783-12 */
       case PROPRIETARY_B_PGN: /** variable data len: see SAE J1939 71 */
 
-        ui8_dataLen = -1;
+        i8_dataLen = -1;
         break;
 
 
-      default:ui8_dataLen= 8;
+      default:i8_dataLen= 8;
 
       break;
 
     }
 
 
-    return insertFilter(ar_customer,(0x3FFFF00UL),MASK_TYPE(static_cast<MASK_TYPE>(aui32_pgn) << 8),ab_reconfigImmediate,Ident_c::ExtendedIdent,ui8_dataLen);
+    return insertFilter(ar_customer,(0x3FFFF00UL),MASK_TYPE(static_cast<MASK_TYPE>(aui32_pgn) << 8),ab_reconfigImmediate,Ident_c::ExtendedIdent,i8_dataLen);
 
 }
 
@@ -652,8 +652,7 @@ FilterBox_c* CanIo_c::insertFilter(__IsoAgLib::CanCustomer_c & ar_customer,
                                   bool /*ab_reconfigImmediate*/,
                                   #endif
                                   const Ident_c::identType_t at_identType,
-                                  int8_t ai8_dlcForce,
-                                  FilterBox_c* apc_connectedFilterBox)
+                                  int8_t ai8_dlcForce)
 
 {
   Ident_c c_newMask = Ident_c(at_mask, at_identType);
@@ -694,7 +693,7 @@ INTERNAL_DEBUG_DEVICE << "-----------------------------------start CanIo_c::inse
   c_tempFilterBox.clearData();
 
   // define temp FilterBox_c with new values
-  c_tempFilterBox.set(c_newMask, c_newFilter, &ar_customer, ai8_dlcForce, apc_connectedFilterBox);
+  c_tempFilterBox.set(c_newMask, c_newFilter, &ar_customer, ai8_dlcForce);
 
   // insert new FilterBox_c and exit function if no dyn array growth is reported
   const uint8_t b_oldSize = cntFilter();
@@ -715,7 +714,7 @@ INTERNAL_DEBUG_DEVICE << "-----------------------------------start CanIo_c::inse
   {
     if ( arrFilterBox[ui8_overwritenFilterBoxIndex].isIdle() )
     { //if idle filterbox found overwrite it with the new filterbox
-      arrFilterBox[ui8_overwritenFilterBoxIndex].set(c_newMask, c_newFilter, &ar_customer, ai8_dlcForce, apc_connectedFilterBox);
+      arrFilterBox[ui8_overwritenFilterBoxIndex].set(c_newMask, c_newFilter, &ar_customer, ai8_dlcForce);
 
 
       arrFilterBox[ui8_overwritenFilterBoxIndex].setFbVecIdx(ui8_overwritenFilterBoxIndex);
@@ -827,63 +826,6 @@ INTERNAL_DEBUG_DEVICE << "end CanIo_c::insertFilter " << INTERNAL_DEBUG_DEVICE_E
 
 }
 
-/** create a Filter Box with specified at_mask/at_filter
-  on ui8_busNr of object; reconfig HW CAN MsgObj_c only if
-  ab_reconfigImmediate == true -> useful for
-  avoiding unneeded reconfiguration during
-  sequence of FilterBox_c insertions;
-  by ar_customer CanIo_c (FilterBox_c) can start direct processing
-  of received data in dedicated customer object (no search);
-  uses BIOS functions
-
-  This specialized function allows the user to use the same message
-  object as the filter box that exists with the given extra at_mask/at_filter pair!
-  Use this feature if messages from two or more filterboxes have to be processed chronologically
-
-  possible errors:
-      * Err_c::badAlloc on not enough memory for new FilterBox_c instance or for new configured MsgObj_c's
-  @see __IsoAgLib::CANCustomer
-   @param ar_customer reference to __IsoAgLib::CanCustomer_c which needs filtered
-      messages (-> on received msg call ar_customer.processMsg())
-  @param at_mask individual mask for this filter box
-  @param at_filter individual filter
-  @param ab_reconfigImmediate true -> all Filter objects are reconfigured to according
-
-      CAN hardware MsgObj after creating this filter
-  @param at_identType ident type of the created ident: standard 11bit (default) or extended 29bit
-  @return != NULL -> if inserting and wanted reconfiguration are performed without errors, a reference to the created FilterBox is returned
-  @exception badAlloc
-*/
-
-FilterBox_c* CanIo_c::insertFilter(__IsoAgLib::CanCustomer_c& ar_customer,
-                                   uint32_t at_mask, uint32_t at_filter,
-                                   bool ab_reconfigImmediate,
-                                   const Ident_c::identType_t at_identType, uint32_t at_connectedMask,
-                                   uint32_t at_connectedFilter, const Ident_c::identType_t at_connectedIdentType,
-                                   int8_t ai8_dlcForce
-                                  )
-{
-  Ident_c c_connectedMask = Ident_c(at_connectedMask, at_connectedIdentType);
-  Ident_c c_connectedFilter = Ident_c(at_connectedFilter, at_connectedIdentType);
-
-  bool b_connectedFilterFound = false;
-
-  // check if given FilterBox_c definition is in array
-  ArrFilterBox::iterator pc_iter = arrFilterBox.begin();
-  for (; pc_iter != arrFilterBox.end(); pc_iter++)
-  {
-    if ( pc_iter->equalFilterMask(c_connectedMask, c_connectedFilter ) )
-    { // FilterBox_c with equal def (mask, filter, NOT customer) found
-      b_connectedFilterFound = true;
-      break; // don't search rest of array
-    }
-  }
-
-  if (!b_connectedFilterFound) // "existFilter()" not used as it also compares the customer!
-    return NULL;
-
-  return insertFilter(ar_customer, at_mask, at_filter, ab_reconfigImmediate, at_identType, ai8_dlcForce, &(*pc_iter));
-}
 
 /** delete a FilterBox definition
   @param ar_customer reference to the processing class ( the same filter setting can be registered by different consuming classes )
@@ -1704,6 +1646,11 @@ INTERNAL_DEBUG_DEVICE << " CanIo_c::--------------------Before Merge " << INTERN
     // min+1 and max is smaller than size -> shrink array
     if (cntMsgObj() <= ui8_allowedSize) b_continueMerging = false;
 
+    #ifdef HIGH_LOAD_FIFO_CAN
+		//process the message arrived during the reconfiguration
+  	processMsg();
+    #endif
+
     // start a comparison(left_ind, right_ind) loop for all elements
     for (ArrMsgObj::iterator pc_leftInd = arrMsgObj.begin(); pc_leftInd != arrMsgObj.end(); pc_leftInd++)
     {
@@ -1905,7 +1852,6 @@ bool CanIo_c::reconfigureMsgObj()
   }
 
 
-
   #ifdef DEBUG_HEAP_USEAGE
   INTERNAL_DEBUG_DEVICE
     << sui16_filterBoxTotal << " x FilterBox_c: Mal-Alloc: "
@@ -1920,6 +1866,11 @@ bool CanIo_c::reconfigureMsgObj()
   #else
     << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
   #endif
+  #endif
+
+  #ifdef HIGH_LOAD_FIFO_CAN
+  //process the message arrived during the reconfiguration
+	processMsg();
   #endif
 
   bool b_result = true;
@@ -1954,6 +1905,11 @@ bool CanIo_c::reconfigureMsgObj()
   // [min_msgObjNr; maxMsgObjNr]
 
     CheckSetCntMsgObj();
+
+    #ifdef HIGH_LOAD_FIFO_CAN
+    //process the message arrived during the reconfiguration
+    processMsg();
+    #endif
 
   // check and correct global masks after merge in CheckSetCntMsgObj()
   getCommonFilterMaskAfterMerge();

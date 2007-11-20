@@ -98,7 +98,7 @@ public:
                              return 1; //was locked
 }
 
-  int releaseAccess(){ mi_exclusiveAccess = 0;}
+  int releaseAccess(){ mi_exclusiveAccess = 0; return 0;}
 
 
 private:

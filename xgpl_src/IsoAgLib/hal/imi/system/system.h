@@ -209,6 +209,12 @@ namespace HAL
   inline void powerDown(void)
     {__HAL::power_down();};
 
+/** delay_us */
+
+   inline void delay_us(unsigned int i_tm)
+   {__HAL::delay_us(i_tm);}
+
+
   /**
     switch relais on or off
     @param bitState true -> Relais ON
@@ -217,9 +223,11 @@ namespace HAL
     {};
 /*@}*/
 
+}
+
 #ifdef USE_MUTUAL_EXCLUSION
 #include <IsoAgLib/hal/generic_utils/system/mutex_emulated.h>
 #endif
 
-}
+
 #endif

@@ -397,6 +397,8 @@ CNAMESPACE::sprintf( (char*)buf, "%u ms - staying_alive()\r"
   inline void powerDown(void)
     {__HAL::power_down();
 
+ 
+
 #if defined( DEBUG_HAL )
 //IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
 //<< "power_down()\r";
@@ -432,9 +434,12 @@ CNAMESPACE::sprintf( (char*)buf, "%u ms - set_relais( %u )\r"
   };
 /*@}*/
 
+   inline void delay_us(unsigned int i_tm)
+   {__HAL::delay_us(i_tm);}
+}
+
 #ifdef USE_MUTUAL_EXCLUSION
 #include <IsoAgLib/hal/generic_utils/system/mutex_emulated.h>
 #endif
 
-}
 #endif
