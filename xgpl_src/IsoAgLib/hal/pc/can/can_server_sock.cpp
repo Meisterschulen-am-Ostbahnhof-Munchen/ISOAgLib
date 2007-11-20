@@ -92,21 +92,21 @@ using namespace __HAL;
 
 
 server_c::server_c()
-  : b_logMode(FALSE), b_inputFileMode(FALSE), i16_reducedLoadOnIsoBus(-1)
+  : mb_logMode(FALSE), mb_inputFileMode(FALSE), mi16_reducedLoadOnIsoBus(-1)
 {
-  memset(f_canOutput, 0, sizeof(f_canOutput));
-  memset(ui16_globalMask, 0, sizeof(ui16_globalMask));
-  memset(arrb_remoteDestinationAddressInUse, 0, sizeof(arrb_remoteDestinationAddressInUse));
-  memset(ui16_busRefCnt, 0, sizeof(ui16_busRefCnt));
+  memset(mf_canOutput, 0, sizeof(mf_canOutput));
+  memset(marrui16_globalMask, 0, sizeof(marrui16_globalMask));
+  memset(marrb_remoteDestinationAddressInUse, 0, sizeof(marrb_remoteDestinationAddressInUse));
+  memset(marrui16_busRefCnt, 0, sizeof(marrui16_busRefCnt));
 
   for (uint32_t i=0; i<cui32_maxCanBusCnt; i++)
   {
-    i32_sendDelay[i] = 0;
-    i_pendingMsgs[i] = 0;
-    can_device[i] = 0;
+    marri32_sendDelay[i] = 0;
+    marri_pendingMsgs[i] = 0;
+    marri16_can_device[i] = 0;
   }
 
-  pthread_mutex_init(&m_protectClientList, NULL);
+  pthread_mutex_init(&mt_protectClientList, NULL);
 
 }
 
@@ -114,10 +114,10 @@ client_c::client_c()
   : ui16_pid(0), i32_msecStartDeltaClientMinusServer(0)
 {
   memset(b_busUsed, 0, sizeof(b_busUsed));
-  memset(ui16_globalMask, 0, sizeof(ui16_globalMask));
+  memset(marrui16_globalMask, 0, sizeof(marrui16_globalMask));
   memset(ui32_globalMask, 0, sizeof(ui32_globalMask));
   memset(ui32_lastMask, 0, sizeof(ui32_lastMask));
-  memset(i32_sendDelay, 0, sizeof(i32_sendDelay));
+  memset(marri32_sendDelay, 0, sizeof(marri32_sendDelay));
   memset(b_initReceived, 0, sizeof(b_initReceived));
 }
 
@@ -420,10 +420,10 @@ void releaseClient(server_c* pc_serverData, std::list<client_c>::iterator& iter_
 
   for (uint8_t ui8_cnt=0; ui8_cnt<cui32_maxCanBusCnt; ui8_cnt++)
   {
-    if (iter_delete->b_initReceived[ui8_cnt] && (pc_serverData->ui16_busRefCnt[ui8_cnt] > 0))
+    if (iter_delete->b_initReceived[ui8_cnt] && (pc_serverData->marrui16_busRefCnt[ui8_cnt] > 0))
     {
-      pc_serverData->ui16_busRefCnt[ui8_cnt]--; // decrement bus ref count when client dropped off
-      if (!pc_serverData->ui16_busRefCnt[ui8_cnt])
+      pc_serverData->marrui16_busRefCnt[ui8_cnt]--; // decrement bus ref count when client dropped off
+      if (!pc_serverData->marrui16_busRefCnt[ui8_cnt])
         closeBusOnCard(ui8_cnt, pc_serverData);
     }
   }
@@ -434,19 +434,19 @@ void releaseClient(server_c* pc_serverData, std::list<client_c>::iterator& iter_
 #endif
 
   // erase sets iterator to next client
-  iter_delete = pc_serverData->l_clients.erase(iter_delete);
+  iter_delete = pc_serverData->mlist_clients.erase(iter_delete);
 
 }
 
 static void enqueue_msg(transferBuf_s* p_sockBuf, SOCKET_TYPE i32_socketSender, server_c* pc_serverData)
 {
-  std::list<client_c>::iterator iter, iter_delete = pc_serverData->l_clients.end();
+  std::list<client_c>::iterator iter, iter_delete = pc_serverData->mlist_clients.end();
 
   const uint8_t ui8_bus = p_sockBuf->s_data.ui8_bus;
 
   // mutex to prevent client list modification already got in calling function
 
-  for (iter = pc_serverData->l_clients.begin(); iter != pc_serverData->l_clients.end(); iter++) {
+  for (iter = pc_serverData->mlist_clients.begin(); iter != pc_serverData->mlist_clients.end(); iter++) {
 
     if (!iter->b_busUsed[ui8_bus])
       continue;
@@ -564,7 +564,7 @@ void handleCommand(server_c* pc_serverData, std::list<client_c>::iterator& iter_
         DEBUG_PRINT("COMMAND_REGISTER\n");
 
         // no need to set to 0, as everything got set to zero before!
-        // s_tmpClient.i32_sendDelay[all-buses] = 0;
+        // s_tmpClient.marri32_sendDelay[all-buses] = 0;
 
         DEBUG_PRINT1 ("Client registering with startTimeClock_t from his REGISTER message as %d\n", p_writeBuf->s_startTimeClock.t_clock);
         initClientTime(*iter_client, p_writeBuf->s_startTimeClock.t_clock );
@@ -585,8 +585,8 @@ void handleCommand(server_c* pc_serverData, std::list<client_c>::iterator& iter_
         for (uint8_t j=0; j<cui32_maxCanBusCnt; j++)
         {
           iter_client->arrMsgObj[j].clear();
-          if (iter_client->b_initReceived[j] && (pc_serverData->ui16_busRefCnt[j] > 0))
-            pc_serverData->ui16_busRefCnt[j]--; // decrement ref count only when we received the INIT command before
+          if (iter_client->b_initReceived[j] && (pc_serverData->marrui16_busRefCnt[j] > 0))
+            pc_serverData->marrui16_busRefCnt[j]--; // decrement ref count only when we received the INIT command before
         }
 
         releaseClient(pc_serverData, iter_client);
@@ -598,10 +598,10 @@ void handleCommand(server_c* pc_serverData, std::list<client_c>::iterator& iter_
 
         if (p_writeBuf->s_config.ui8_bus > HAL_CAN_MAX_BUS_NR)
           i32_error = HAL_RANGE_ERR;
-        else if (!pc_serverData->ui16_busRefCnt[p_writeBuf->s_init.ui8_bus])
+        else if (!pc_serverData->marrui16_busRefCnt[p_writeBuf->s_init.ui8_bus])
         { // first init command for current bus
           // open log file only once per bus
-          if (pc_serverData->b_logMode) {
+          if (pc_serverData->mb_logMode) {
             char file_name[255];
 
 #ifdef WIN32
@@ -609,16 +609,16 @@ void handleCommand(server_c* pc_serverData, std::list<client_c>::iterator& iter_
 #else
             snprintf
 #endif
-            (file_name, 255, "%s_%hx", pc_serverData->logFileBase.c_str(), p_writeBuf->s_init.ui8_bus);
+            (file_name, 255, "%s_%hx", pc_serverData->mstr_logFileBase.c_str(), p_writeBuf->s_init.ui8_bus);
 
-            if ((pc_serverData->f_canOutput[p_writeBuf->s_init.ui8_bus] = fopen(file_name, "a+")) == NULL ) {
+            if ((pc_serverData->mf_canOutput[p_writeBuf->s_init.ui8_bus] = fopen(file_name, "a+")) == NULL ) {
               perror("fopen");
               exit(1);
             }
           }
 
           // just to get sure that we reset the number of pending write-messages
-          pc_serverData->i_pendingMsgs[p_writeBuf->s_init.ui8_bus] = 0;
+          pc_serverData->marri_pendingMsgs[p_writeBuf->s_init.ui8_bus] = 0;
 
           if (!openBusOnCard(p_writeBuf->s_init.ui8_bus,  // 0 for CANLPT/ICAN, else 1 for first BUS
                              p_writeBuf->s_init.ui16_wBitrate,  // BTR0BTR1
@@ -632,7 +632,7 @@ void handleCommand(server_c* pc_serverData, std::list<client_c>::iterator& iter_
         }
 
         if (!i32_error) {
-          pc_serverData->ui16_busRefCnt[p_writeBuf->s_init.ui8_bus]++;
+          pc_serverData->marrui16_busRefCnt[p_writeBuf->s_init.ui8_bus]++;
           iter_client->b_initReceived[p_writeBuf->s_init.ui8_bus] = true; // when the CLOSE command is received => allow decrement of ref count
           iter_client->b_busUsed[p_writeBuf->s_init.ui8_bus] = true; // when the CLOSE command is received => allow decrement of ref count
         }
@@ -640,7 +640,7 @@ void handleCommand(server_c* pc_serverData, std::list<client_c>::iterator& iter_
 
       case COMMAND_CHG_GLOBAL_MASK:
         if (!i32_error) {
-          iter_client->ui16_globalMask[p_writeBuf->s_init.ui8_bus] = p_writeBuf->s_init.ui16_wGlobMask;
+          iter_client->marrui16_globalMask[p_writeBuf->s_init.ui8_bus] = p_writeBuf->s_init.ui16_wGlobMask;
           iter_client->ui32_globalMask[p_writeBuf->s_init.ui8_bus] = p_writeBuf->s_init.ui32_dwGlobMask;
           iter_client->ui32_lastMask[p_writeBuf->s_init.ui8_bus] = p_writeBuf->s_init.ui32_dwGlobMaskLastmsg;
         }
@@ -653,23 +653,23 @@ void handleCommand(server_c* pc_serverData, std::list<client_c>::iterator& iter_
           i32_error = HAL_RANGE_ERR;
         else
         {
-          if (iter_client->b_initReceived[p_writeBuf->s_init.ui8_bus] && (pc_serverData->ui16_busRefCnt[p_writeBuf->s_init.ui8_bus] > 0))
+          if (iter_client->b_initReceived[p_writeBuf->s_init.ui8_bus] && (pc_serverData->marrui16_busRefCnt[p_writeBuf->s_init.ui8_bus] > 0))
           {
-            pc_serverData->ui16_busRefCnt[p_writeBuf->s_init.ui8_bus]--; // decrement ref count only when we received the INIT command before
+            pc_serverData->marrui16_busRefCnt[p_writeBuf->s_init.ui8_bus]--; // decrement ref count only when we received the INIT command before
           }
 
           iter_client->b_initReceived[p_writeBuf->s_init.ui8_bus] = false; // reset flag
 
-          if (pc_serverData->ui16_busRefCnt[p_writeBuf->s_init.ui8_bus] == 0)
+          if (pc_serverData->marrui16_busRefCnt[p_writeBuf->s_init.ui8_bus] == 0)
           { // last connection on bus closed, so reset pending msgs...
-            pc_serverData->i_pendingMsgs[p_writeBuf->s_init.ui8_bus] = 0;
+            pc_serverData->marri_pendingMsgs[p_writeBuf->s_init.ui8_bus] = 0;
             // close can device
             closeBusOnCard(p_writeBuf->s_init.ui8_bus, pc_serverData);
           }
 
-          if (!pc_serverData->ui16_busRefCnt[p_writeBuf->s_init.ui8_bus] && pc_serverData->b_logMode && pc_serverData->f_canOutput[p_writeBuf->s_init.ui8_bus]) {
-            fclose(pc_serverData->f_canOutput[p_writeBuf->s_init.ui8_bus]);
-            pc_serverData->f_canOutput[p_writeBuf->s_init.ui8_bus] = 0;
+          if (!pc_serverData->marrui16_busRefCnt[p_writeBuf->s_init.ui8_bus] && pc_serverData->mb_logMode && pc_serverData->mf_canOutput[p_writeBuf->s_init.ui8_bus]) {
+            fclose(pc_serverData->mf_canOutput[p_writeBuf->s_init.ui8_bus]);
+            pc_serverData->mf_canOutput[p_writeBuf->s_init.ui8_bus] = 0;
           }
 
           iter_client->arrMsgObj[p_writeBuf->s_config.ui8_bus].clear();
@@ -705,8 +705,8 @@ void handleCommand(server_c* pc_serverData, std::list<client_c>::iterator& iter_
               iter_client->arrMsgObj[p_writeBuf->s_config.ui8_bus][p_writeBuf->s_config.ui8_obj].ui16_mask_std = p_writeBuf->s_config.ui32_mask;
 
           if (p_writeBuf->ui16_command == COMMAND_CONFIG) {
-//              clearReadQueue (p_writeBuf->s_config.ui8_bus, p_writeBuf->s_config.ui8_obj, pc_serverData->msqDataServer.i32_rdHandle, iter_client->ui16_pid);
-//            clearWriteQueue(p_writeBuf->s_config.ui8_bus, p_writeBuf->s_config.ui8_obj, pc_serverData->msqDataServer.i32_wrHandle, iter_client->ui16_pid);
+//              clearReadQueue (p_writeBuf->s_config.ui8_bus, p_writeBuf->s_config.ui8_obj, pc_serverData->ms_msqDataServer.i32_rdHandle, iter_client->ui16_pid);
+//            clearWriteQueue(p_writeBuf->s_config.ui8_bus, p_writeBuf->s_config.ui8_obj, pc_serverData->ms_msqDataServer.i32_wrHandle, iter_client->ui16_pid);
 
             iter_client->arrMsgObj[p_writeBuf->s_config.ui8_bus][p_writeBuf->s_config.ui8_obj].ui8_bMsgType = p_writeBuf->s_config.ui8_bMsgType;
             iter_client->arrMsgObj[p_writeBuf->s_config.ui8_bus][p_writeBuf->s_config.ui8_obj].ui16_size = p_writeBuf->s_config.ui16_wNumberMsgs;
@@ -753,8 +753,8 @@ void handleCommand(server_c* pc_serverData, std::list<client_c>::iterator& iter_
 
           iter_client->arrMsgObj[p_writeBuf->s_config.ui8_bus][p_writeBuf->s_config.ui8_obj].b_canBufferLock = FALSE;
           iter_client->arrMsgObj[p_writeBuf->s_config.ui8_bus][p_writeBuf->s_config.ui8_obj].ui16_size = 0;
- //           clearReadQueue (p_writeBuf->s_config.ui8_bus, p_writeBuf->s_config.ui8_obj, pc_serverData->msqDataServer.i32_rdHandle, iter_client->ui16_pid);
-//          clearWriteQueue(p_writeBuf->s_config.ui8_bus, p_writeBuf->s_config.ui8_obj, pc_serverData->msqDataServer.i32_wrHandle, iter_client->ui16_pid);
+ //           clearReadQueue (p_writeBuf->s_config.ui8_bus, p_writeBuf->s_config.ui8_obj, pc_serverData->ms_msqDataServer.i32_rdHandle, iter_client->ui16_pid);
+//          clearWriteQueue(p_writeBuf->s_config.ui8_bus, p_writeBuf->s_config.ui8_obj, pc_serverData->ms_msqDataServer.i32_wrHandle, iter_client->ui16_pid);
 
           // erase element if it is the last in the vector, otherwise it can stay there
           while (iter_client->arrMsgObj[p_writeBuf->s_config.ui8_bus].back().b_canObjConfigured == FALSE)
@@ -769,9 +769,9 @@ void handleCommand(server_c* pc_serverData, std::list<client_c>::iterator& iter_
           i32_error = HAL_RANGE_ERR;
         } else {
           i32_dataContent = ACKNOWLEDGE_DATA_CONTENT_SEND_DELAY;
-          i32_data = iter_client->i32_sendDelay [p_writeBuf->s_config.ui8_bus];
+          i32_data = iter_client->marri32_sendDelay [p_writeBuf->s_config.ui8_bus];
           if (i32_data < 0) i32_data = -i32_data; // so we always return a positive send delay!
-          else iter_client->i32_sendDelay [p_writeBuf->s_config.ui8_bus] = -i32_data; // stamp a positive stored delay as READ by negating it!
+          else iter_client->marri32_sendDelay [p_writeBuf->s_config.ui8_bus] = -i32_data; // stamp a positive stored delay as READ by negating it!
         }
         break;
 
@@ -800,7 +800,7 @@ void readWrite(server_c* pc_serverData)
 
   for (;;) {
 
-    if (!pc_serverData->l_clients.size())
+    if (!pc_serverData->mlist_clients.size())
     {
 #ifdef WIN32
       Sleep( 50 );
@@ -814,9 +814,9 @@ void readWrite(server_c* pc_serverData)
 
     std::list<client_c>::iterator iter_client;
 
-    pthread_mutex_lock( &(pc_serverData->m_protectClientList) );
+    pthread_mutex_lock( &(pc_serverData->mt_protectClientList) );
 
-    for (iter_client = pc_serverData->l_clients.begin(); iter_client != pc_serverData->l_clients.end(); iter_client++)
+    for (iter_client = pc_serverData->mlist_clients.begin(); iter_client != pc_serverData->mlist_clients.end(); iter_client++)
     {
       FD_SET(iter_client->i32_commandSocket, &rfds);
       FD_SET(iter_client->i32_dataSocket, &rfds);
@@ -826,14 +826,14 @@ void readWrite(server_c* pc_serverData)
 
     for (uint32_t ui32=0; ui32<cui32_maxCanBusCnt; ui32++ )
     {
-      if (pc_serverData->can_device[ui32])
+      if (pc_serverData->marri16_can_device[ui32])
       {
-        FD_SET(pc_serverData->can_device[ui32], &rfds);
+        FD_SET(pc_serverData->marri16_can_device[ui32], &rfds);
         b_deviceHandleFound=true;
       }
     }
 
-    pthread_mutex_unlock( &(pc_serverData->m_protectClientList) );
+    pthread_mutex_unlock( &(pc_serverData->mt_protectClientList) );
 
     t_timeout.tv_sec = 0;
     t_timeout.tv_usec = ui32_sleepTime;
@@ -859,14 +859,14 @@ void readWrite(server_c* pc_serverData)
         // (important for WIN32 PEAK can card and for RTE)
         for (uint32_t ui32_cnt = 0; ui32_cnt < cui32_maxCanBusCnt; ui32_cnt++)
         {
-          if (pc_serverData->ui16_busRefCnt[ui32_cnt])
+          if (pc_serverData->marrui16_busRefCnt[ui32_cnt])
           {
             if (readFromBus(ui32_cnt, &(s_transferBuf.s_data.s_canMsg), pc_serverData) > 0)
             {
-              pthread_mutex_lock( &(pc_serverData->m_protectClientList) );
+              pthread_mutex_lock( &(pc_serverData->mt_protectClientList) );
               s_transferBuf.s_data.ui8_bus = ui32_cnt;
               enqueue_msg(&s_transferBuf, 0, pc_serverData);
-              pthread_mutex_unlock( &(pc_serverData->m_protectClientList) );
+              pthread_mutex_unlock( &(pc_serverData->mt_protectClientList) );
               ui32_sleepTime = 5000;  // CAN message received => reduce sleep time
               if (pc_serverData->b_logMode)
               {
@@ -883,14 +883,14 @@ void readWrite(server_c* pc_serverData)
     // new message from can device ?
     for (uint32_t ui32_cnt = 0; ui32_cnt < cui32_maxCanBusCnt; ui32_cnt++ )
     {
-      if (pc_serverData->can_device[ui32_cnt] && FD_ISSET(pc_serverData->can_device[ui32_cnt], &rfds))
+      if (pc_serverData->marri16_can_device[ui32_cnt] && FD_ISSET(pc_serverData->marri16_can_device[ui32_cnt], &rfds))
       {
         if (readFromBus(ui32_cnt, &(s_transferBuf.s_data.s_canMsg), pc_serverData) > 0)
         {
-          pthread_mutex_lock( &(pc_serverData->m_protectClientList) );
+          pthread_mutex_lock( &(pc_serverData->mt_protectClientList) );
           s_transferBuf.s_data.ui8_bus = ui32_cnt;
           enqueue_msg(&s_transferBuf, 0, pc_serverData);
-          pthread_mutex_unlock( &(pc_serverData->m_protectClientList) );
+          pthread_mutex_unlock( &(pc_serverData->mt_protectClientList) );
           if (pc_serverData->b_logMode)
           {
             dumpCanMsg (&s_transferBuf, pc_serverData->f_canOutput[s_transferBuf.s_data.ui8_bus]);
@@ -901,10 +901,10 @@ void readWrite(server_c* pc_serverData)
       continue;
     }
 
-    pthread_mutex_lock( &(pc_serverData->m_protectClientList) );
+    pthread_mutex_lock( &(pc_serverData->mt_protectClientList) );
 
     // new message from socket ?
-    for (iter_client = pc_serverData->l_clients.begin(); iter_client != pc_serverData->l_clients.end(); iter_client++)
+    for (iter_client = pc_serverData->mlist_clients.begin(); iter_client != pc_serverData->mlist_clients.end(); iter_client++)
     {
       if (FD_ISSET(iter_client->i32_commandSocket, &rfds))
       {
@@ -958,15 +958,15 @@ void readWrite(server_c* pc_serverData)
 
           sendToBus(s_transferBuf.s_data.ui8_bus, &(s_transferBuf.s_data.s_canMsg), pc_serverData);
 
-          if (pc_serverData->b_logMode)
+          if (pc_serverData->mb_logMode)
           {
-            dumpCanMsg (&s_transferBuf, pc_serverData->f_canOutput[s_transferBuf.s_data.ui8_bus]);
+            dumpCanMsg (&s_transferBuf, pc_serverData->mf_canOutput[s_transferBuf.s_data.ui8_bus]);
           }
         }
       }
     }
 
-    pthread_mutex_unlock( &(pc_serverData->m_protectClientList) );
+    pthread_mutex_unlock( &(pc_serverData->mt_protectClientList) );
 
   }
 }
@@ -1025,11 +1025,11 @@ static void* collectClient(void* ptr) {
 
     s_tmpClient.i32_dataSocket = new_socket;
 
-    pthread_mutex_lock( &(pc_serverData->m_protectClientList) );
+    pthread_mutex_lock( &(pc_serverData->mt_protectClientList) );
 
-    pc_serverData->l_clients.push_back(s_tmpClient);
+    pc_serverData->mlist_clients.push_back(s_tmpClient);
 
-    pthread_mutex_unlock( &(pc_serverData->m_protectClientList) );
+    pthread_mutex_unlock( &(pc_serverData->mt_protectClientList) );
 
     printf("command and data socket connected\n");
   }
@@ -1053,15 +1053,15 @@ int main(int argc, char *argv[])
       exit(1);
     }
     if (strcmp(argv[i], "--log") == 0) {
-      c_serverData.logFileBase = argv[i+1];
-      c_serverData.b_logMode=true;
+      c_serverData.mstr_logFileBase = argv[i+1];
+      c_serverData.mb_logMode=true;
     }
     if (strcmp(argv[i], "--high-prio-minimum") == 0) {
       si_highPrioModeIfMin = atoi (argv[i+1]); // 0 for no prio mode!
     }
     if (strcmp(argv[i], "--reduced-load-iso-bus-no") == 0) {
-      c_serverData.i16_reducedLoadOnIsoBus = atoi (argv[i+1]);
-      printf("reduced bus load on ISO bus no. %d\n", c_serverData.i16_reducedLoadOnIsoBus); fflush(0);
+      c_serverData.mi16_reducedLoadOnIsoBus = atoi (argv[i+1]);
+      printf("reduced bus load on ISO bus no. %d\n", c_serverData.mi16_reducedLoadOnIsoBus); fflush(0);
     }
   }
 

@@ -109,15 +109,15 @@ namespace __IsoAgLib {
 
 FilterBox_c::FilterBox_c()
   :
-    c_filter(0, Ident_c::StandardIdent),
-    c_mask(0, Ident_c::StandardIdent),
-    c_additionalMask(~0, Ident_c::StandardIdent), // additional Mask set to "all-1s", so it defaults to "no additional mask".
-    ui8_filterBoxNr(IdleState),
-    ui8_busNumber(IdleState),
-    i32_fbVecIdx(-1)
+    mc_filter(0, Ident_c::StandardIdent),
+    mc_mask(0, Ident_c::StandardIdent),
+    mc_additionalMask(~0, Ident_c::StandardIdent), // additional Mask set to "all-1s", so it defaults to "no additional mask".
+    mui8_filterBoxNr(IdleState),
+    mui8_busNumber(IdleState),
+    mi32_fbVecIdx(-1)
 #if ((defined( USE_ISO_11783)) \
      && ((CAN_INSTANCE_CNT > PRT_INSTANCE_CNT) || defined(ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL)))
-    , b_performIsobusResolve(true)
+    , mb_performIsobusResolve(true)
   #endif
 {}
 
@@ -137,15 +137,15 @@ FilterBox_c::FilterBox_c()
 FilterBox_c::FilterBox_c(CanCustomer_c * rrpc_customer,
                          MASK_TYPE at_mask, MASK_TYPE at_filter,
                          Ident_c::identType_t ren_identType, FilterBox_c* apc_filterBox)
-  : c_filter(at_filter, ren_identType),
-    c_mask(at_mask, ren_identType),
-    c_additionalMask( (apc_filterBox == NULL) ? (~0) : (~(apc_filterBox->c_filter.ident() ^ at_filter)), ren_identType),
-    vec_customer(1,rrpc_customer),
-    ui8_filterBoxNr( (apc_filterBox == NULL) ? (IdleState) : (apc_filterBox->ui8_filterBoxNr) ),
-    ui8_busNumber( (apc_filterBox == NULL) ? (IdleState) : (apc_filterBox->ui8_busNumber) )
+  : mc_filter(at_filter, ren_identType),
+    mc_mask(at_mask, ren_identType),
+    mc_additionalMask( (apc_filterBox == NULL) ? (~0) : (~(apc_filterBox->mc_filter.ident() ^ at_filter)), ren_identType),
+    mvec_customer(1,rrpc_customer),
+    mui8_filterBoxNr( (apc_filterBox == NULL) ? (IdleState) : (apc_filterBox->mui8_filterBoxNr) ),
+    mui8_busNumber( (apc_filterBox == NULL) ? (IdleState) : (apc_filterBox->mui8_busNumber) )
 #if ((defined( USE_ISO_11783)) \
      && ((CAN_INSTANCE_CNT > PRT_INSTANCE_CNT) || defined(ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL)))
-    , b_performIsobusResolve(apc_filterBox->b_performIsobusResolve)
+    , mb_performIsobusResolve(apc_filterBox->mb_performIsobusResolve)
   #endif
 {}
 */
@@ -157,16 +157,16 @@ FilterBox_c::FilterBox_c(CanCustomer_c * rrpc_customer,
    @exception badAlloc
 */
 FilterBox_c::FilterBox_c(const FilterBox_c& arc_src)
-  : c_filter(arc_src.c_filter),
-    c_mask(arc_src.c_mask),
-    c_additionalMask(arc_src.c_additionalMask),
-    vec_customer(arc_src.vec_customer),
-    ui8_filterBoxNr(arc_src.ui8_filterBoxNr),
-    ui8_busNumber(arc_src.ui8_busNumber),
-    i32_fbVecIdx(arc_src.i32_fbVecIdx)
+  : mc_filter(arc_src.mc_filter),
+    mc_mask(arc_src.mc_mask),
+    mc_additionalMask(arc_src.mc_additionalMask),
+    mvec_customer(arc_src.mvec_customer),
+    mui8_filterBoxNr(arc_src.mui8_filterBoxNr),
+    mui8_busNumber(arc_src.mui8_busNumber),
+    mi32_fbVecIdx(arc_src.mi32_fbVecIdx)
 #if ((defined( USE_ISO_11783)) \
 		    && ((CAN_INSTANCE_CNT > PRT_INSTANCE_CNT) || defined(ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL)))
-    , b_performIsobusResolve(arc_src.b_performIsobusResolve)
+    , mb_performIsobusResolve(arc_src.mb_performIsobusResolve)
   #endif
 {}
 
@@ -192,14 +192,14 @@ FilterBox_c& FilterBox_c::operator=(const FilterBox_c& arc_src){
   if ( this != &arc_src)
   {
     // arc_src and self are different object instances
-    vec_customer = arc_src.vec_customer;
+    mvec_customer = arc_src.mvec_customer;
 
-    c_filter = arc_src.c_filter;
-    c_mask = arc_src.c_mask;
-    c_additionalMask = arc_src.c_additionalMask;
-    ui8_busNumber = arc_src.ui8_busNumber;
-    ui8_filterBoxNr = arc_src.ui8_filterBoxNr;
-    i32_fbVecIdx = arc_src.i32_fbVecIdx;
+    mc_filter = arc_src.mc_filter;
+    mc_mask = arc_src.mc_mask;
+    mc_additionalMask = arc_src.mc_additionalMask;
+    mui8_busNumber = arc_src.mui8_busNumber;
+    mui8_filterBoxNr = arc_src.mui8_filterBoxNr;
+    mi32_fbVecIdx = arc_src.mi32_fbVecIdx;
   }
   return *this;
 }
@@ -208,15 +208,15 @@ FilterBox_c& FilterBox_c::operator=(const FilterBox_c& arc_src){
 /** clear the data of this instance */
 void FilterBox_c::clearData()
 {
-  vec_customer.clear();
-  c_mask.set(0, DEFAULT_IDENT_TYPE);
-  c_filter.set(0, DEFAULT_IDENT_TYPE);
-  c_filter.setEmpty(true);
-  c_mask.setEmpty(true);
-  c_additionalMask.set(~0, DEFAULT_IDENT_TYPE);
-  ui8_busNumber = IdleState;
-  ui8_filterBoxNr = IdleState;
-  i32_fbVecIdx = InvalidIdx;
+  mvec_customer.clear();
+  mc_mask.set(0, DEFAULT_IDENT_TYPE);
+  mc_filter.set(0, DEFAULT_IDENT_TYPE);
+  mc_filter.setEmpty(true);
+  mc_mask.setEmpty(true);
+  mc_additionalMask.set(~0, DEFAULT_IDENT_TYPE);
+  mui8_busNumber = IdleState;
+  mui8_filterBoxNr = IdleState;
+  mi32_fbVecIdx = InvalidIdx;
 }
 
 /**
@@ -233,51 +233,51 @@ void FilterBox_c::clearData()
  */
 bool FilterBox_c::configCan(uint8_t aui8_busNumber, uint8_t aui8_FilterBoxNr)
 {
-  // store ui8_busNumber for later close of can
-  ui8_busNumber = aui8_busNumber;
-  ui8_filterBoxNr = aui8_FilterBoxNr;
+  // store mui8_busNumber for later close of can
+  mui8_busNumber = aui8_busNumber;
+  mui8_filterBoxNr = aui8_FilterBoxNr;
 
 #if ((defined(USE_ISO_11783)) \
      && ((CAN_INSTANCE_CNT > PRT_INSTANCE_CNT) || defined(ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL)))
   // we have either compiled forISO, OR there is at least one internal / proprietary CAN channel
 
   // when we are communicating on the standardized CAN channel, and ISO is used, the default shall be true
-  b_performIsobusResolve = true;
+  mb_performIsobusResolve = true;
 
   #if CAN_INSTANCE_CNT > PRT_INSTANCE_CNT
   // we have at least one internal/proprietary CAN channel --> check whether this FilterBox_c
   // was created for this internal (i.e. non ISOBUS) communication
   for ( unsigned int ind = PRT_INSTANCE_CNT; ind < CAN_INSTANCE_CNT; ind++ )
   {
-    if ( getCanInstance( ind ).getBusNumber() == ui8_busNumber )
+    if ( getCanInstance( ind ).getBusNumber() == mui8_busNumber )
     { // this FilterBox_c has been created for processing of internal/proprietary messages
-      b_performIsobusResolve = false;
+      mb_performIsobusResolve = false;
       break;
     }
   }
   #endif // when amount of standardized prt instances is same as amount of CAN instances, no special check is needed
 
   #ifdef ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL
-  for ( STL_NAMESPACE::vector<CustomerLen_s>::const_iterator iter = vec_customer.begin(); iter != vec_customer.end(); iter++ )
+  for ( STL_NAMESPACE::vector<CustomerLen_s>::const_iterator iter = mvec_customer.begin(); iter != mvec_customer.end(); iter++ )
   {
     if ( (*iter).pc_customer->isProprietaryMessageOnStandardizedCan() )
     { // at least one CanCustomer_c  uses a proprietary protocol at a normal ISOBUS CanIo_c instance
-      b_performIsobusResolve = false;
+      mb_performIsobusResolve = false;
     }
     else
     { // this FilterBox_c has at least one CanCustomer_c  which performs real ISOBUS
-      // --> set b_performIsobusResolve to default TRUE
-      b_performIsobusResolve = true;
+      // --> set mb_performIsobusResolve to default TRUE
+      mb_performIsobusResolve = true;
       break;
     }
   }
   #endif
 
-  #endif // end of #ifdef for usage of b_performIsobusResolve
+  #endif // end of #ifdef for usage of mb_performIsobusResolve
 
   #ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
-  if (c_filter.empty() || c_mask.empty() ) return false;
-  switch (HAL::can_configMsgobjInit(aui8_busNumber, aui8_FilterBoxNr, c_filter, c_mask, 0))
+  if (mc_filter.empty() || mc_mask.empty() ) return false;
+  switch (HAL::can_configMsgobjInit(aui8_busNumber, aui8_FilterBoxNr, mc_filter, mc_mask, 0))
   {
     case HAL_NO_ERR:
       return true;
@@ -310,13 +310,13 @@ bool FilterBox_c::configCan(uint8_t aui8_busNumber, uint8_t aui8_FilterBoxNr)
 /**   close the BIOS filterbox object of this instance and close hardware CAN filterbox object */
 void FilterBox_c::closeHAL()
 {
-  if ( ui8_busNumber != IdleState && ui8_filterBoxNr != IdleState )
+  if ( mui8_busNumber != IdleState && mui8_filterBoxNr != IdleState )
   {
-    if (HAL::can_configMsgobjClose(ui8_busNumber, ui8_filterBoxNr ) == HAL_RANGE_ERR)
+    if (HAL::can_configMsgobjClose(mui8_busNumber, mui8_filterBoxNr ) == HAL_RANGE_ERR)
     { // given BUS or filterBox number is wrong
       getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Can );
     }
-    ui8_busNumber = ui8_filterBoxNr = IdleState;
+    mui8_busNumber = mui8_filterBoxNr = IdleState;
   }
 }
 #endif
@@ -340,11 +340,11 @@ void FilterBox_c::set (const Ident_c& arc_mask,
                        CanCustomer_c* apc_customer,
                        int8_t ai8_dlcForce)
 {
-  c_filter = arc_filter;
-  c_mask = arc_mask;
+  mc_filter = arc_filter;
+  mc_mask = arc_mask;
 
-  STL_NAMESPACE::vector<CustomerLen_s>::iterator pc_iter = vec_customer.begin();
-  for (; pc_iter != vec_customer.end(); pc_iter++)
+  STL_NAMESPACE::vector<CustomerLen_s>::iterator pc_iter = mvec_customer.begin();
+  for (; pc_iter != mvec_customer.end(); pc_iter++)
   {
     if (apc_customer == pc_iter->pc_customer)
     { // overwrite the DLC of the one found!
@@ -352,19 +352,19 @@ void FilterBox_c::set (const Ident_c& arc_mask,
       break;
     }
   }
-  if (pc_iter == vec_customer.end())
+  if (pc_iter == mvec_customer.end())
   { // push back new
-    vec_customer.push_back (CustomerLen_s (apc_customer, ai8_dlcForce));
+    mvec_customer.push_back (CustomerLen_s (apc_customer, ai8_dlcForce));
   }
 
-  c_additionalMask.set (~0, c_mask.identType());
+  mc_additionalMask.set (~0, mc_mask.identType());
 };
 
 bool FilterBox_c::equalCustomer( const __IsoAgLib::CanCustomer_c& ar_customer ) const
 
 {
   STL_NAMESPACE::vector<CustomerLen_s>::const_iterator pc_iter;
-  for(pc_iter = vec_customer.begin(); pc_iter != vec_customer.end(); pc_iter++)
+  for(pc_iter = mvec_customer.begin(); pc_iter != mvec_customer.end(); pc_iter++)
     if( &ar_customer == pc_iter->pc_customer)
       return true;
 
@@ -379,16 +379,16 @@ bool FilterBox_c::equalCustomer( const __IsoAgLib::CanCustomer_c& ar_customer ) 
 bool FilterBox_c::deleteFilter( const __IsoAgLib::CanCustomer_c& ar_customer)
 
 {
-  for (STL_NAMESPACE::vector<CustomerLen_s>::iterator pc_iter = vec_customer.begin();
-        pc_iter != vec_customer.end(); pc_iter++)
+  for (STL_NAMESPACE::vector<CustomerLen_s>::iterator pc_iter = mvec_customer.begin();
+        pc_iter != mvec_customer.end(); pc_iter++)
   {
     if (&ar_customer == pc_iter->pc_customer)
     { // the to-be-deleted customer is found and now pointed by pc_iter
-      vec_customer.erase(pc_iter);
+      mvec_customer.erase(pc_iter);
       break;
     }
   }
-  if ( vec_customer.empty() )
+  if ( mvec_customer.empty() )
   { // the last customer has been removed
     #ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
     closeHAL();
@@ -421,7 +421,7 @@ bool FilterBox_c::deleteFilter( const __IsoAgLib::CanCustomer_c& ar_customer)
 */
 bool FilterBox_c::processMsg()
 {
-  for ( STL_NAMESPACE::vector<CustomerLen_s>::iterator c_customerIterator = vec_customer.begin(); c_customerIterator != vec_customer.end(); c_customerIterator++ )
+  for ( STL_NAMESPACE::vector<CustomerLen_s>::iterator c_customerIterator = mvec_customer.begin(); c_customerIterator != mvec_customer.end(); c_customerIterator++ )
   {
     if (c_customerIterator->pc_customer == NULL)
     { // pointer to CanCustomer_c  wasn't set
@@ -435,15 +435,15 @@ bool FilterBox_c::processMsg()
 
     CanPkgExt_c* pc_target = &(c_customerIterator->pc_customer->dataBase());
     #if defined SYSTEM_WITH_ENHANCED_CAN_HAL
-      HAL::can_useMsgobjGet(ui8_busNumber, 0xFF, pc_target);
+      HAL::can_useMsgobjGet(mui8_busNumber, 0xFF, pc_target);
     #else
 
-      bool b_fifoRet = HAL::fifo_useMsgObjGet(ui8_busNumber, pc_target);
+      bool b_fifoRet = HAL::fifo_useMsgObjGet(mui8_busNumber, pc_target);
       if(b_fifoRet != HAL_NO_ERR)
       {
       #ifdef DEBUG
          INTERNAL_DEBUG_DEVICE
-        << "Central Fifo - Reading problem on bus : " << int(ui8_busNumber) << INTERNAL_DEBUG_DEVICE_ENDL;
+        << "Central Fifo - Reading problem on bus : " << int(mui8_busNumber) << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
         IsoAgLib::getILibErrInstance().registerError( IsoAgLib::iLibErr_c::CanWarn, IsoAgLib::iLibErr_c::Can );
         return false;
@@ -461,7 +461,7 @@ bool FilterBox_c::processMsg()
     /// Check DataLengthCode (DLC) if required
     if ((ci8_vecCurstomerDlcForce < 0) || (ci8_vecCurstomerDlcForce == ci8_targetLen))
     { // either no dlc-check requested or dlc matches the check!
-      pc_target->t_msgState = DlcValid;
+      pc_target->mst_msgState = DlcValid;
     }
     else
     { // dlc-check was requested but failed
@@ -471,7 +471,7 @@ bool FilterBox_c::processMsg()
         << "DLC_ERROR on identifier : " << pc_target->ident() << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
 
-      pc_target->t_msgState = (ci8_targetLen < ci8_vecCurstomerDlcForce) ? DlcInvalidTooShort : DlcInvalidTooLong;
+      pc_target->mst_msgState = (ci8_targetLen < ci8_vecCurstomerDlcForce) ? DlcInvalidTooShort : DlcInvalidTooLong;
     }
 
     #ifdef USE_ISO_11783
@@ -481,22 +481,22 @@ bool FilterBox_c::processMsg()
       // have to be handled at the ISO 11783 BUS (e.g. some bootloader messages are sent on ISOBUS)
         #ifdef ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL
         // we have to decide based on the individual CANCustomer, whether it is a real ISOBUS message
-    if ( ( b_performIsobusResolve ) && ( !c_customerIterator->pc_customer->isProprietaryMessageOnStandardizedCan() ) )
+    if ( ( mb_performIsobusResolve ) && ( !c_customerIterator->pc_customer->isProprietaryMessageOnStandardizedCan() ) )
         #else
         // the decision whether a FilterBox_c has to perform SA resolve is derived for _all_ messages which are routed through this FilterBox_c object
-    if ( b_performIsobusResolve )
+    if ( mb_performIsobusResolve )
         #endif // end ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL
       #endif // end combination check of whether the flag based decision on resolving has to be performed
     { // this block is only used for ISOBUS messages
       // add address-resolving result to dlc-check result!
-      pc_target->t_msgState = static_cast<MessageState_t>(pc_target->t_msgState | pc_target->resolveReceivingInformation());
+      pc_target->mst_msgState = static_cast<MessageState_t>(pc_target->mst_msgState | pc_target->resolveReceivingInformation());
 
       // call customer's processMsg function, to let it
       // process the received CAN msg
       pc_target->string2Flags();
 
-      if ( ((pc_target->t_msgState & AdrResolveMask) == AdrInvalid)
-        || ((pc_target->t_msgState & DlcValidationMask) != DlcValid)
+      if ( ((pc_target->mst_msgState & AdrResolveMask) == AdrInvalid)
+        || ((pc_target->mst_msgState & DlcValidationMask) != DlcValid)
          )
       {
         #ifdef PROCESS_INVALID_PACKETS
@@ -507,7 +507,7 @@ bool FilterBox_c::processMsg()
         }
         #endif
       }
-      else if ( ((pc_target->t_msgState & AdrResolveMask) == AdrValid) || (c_customerIterator->pc_customer->isNetworkMgmt()) )
+      else if ( ((pc_target->mst_msgState & AdrResolveMask) == AdrValid) || (c_customerIterator->pc_customer->isNetworkMgmt()) )
       { // is either valid or OnlyNetworkMgmt with a CANCustomer which is of type NetworkMgmt
         if ( c_customerIterator->pc_customer->processMsg() )
         { // customer indicated, that it processed the content of the received message
@@ -532,7 +532,7 @@ bool FilterBox_c::processMsg()
       // process the received CAN msg
       pc_target->string2Flags();
 
-      if ((pc_target->t_msgState & DlcValidationMask) != DlcValid)
+      if ((pc_target->mst_msgState & DlcValidationMask) != DlcValid)
       {
         #ifdef PROCESS_INVALID_PACKETS
         if (c_customerIterator->pc_customer->processInvalidMsg() )
@@ -584,21 +584,21 @@ void FilterBox_c::doDebug(uint8_t aui8_busNumber)
     for ( uint16_t ind = 0; ind < CAN_INSTANCE_CNT; ind++) sui16_minBufferFree[ind] = 0xFFFF;
   }
   #endif
-  if ( HAL::can_stateMsgobjBuffercnt(aui8_busNumber, ui8_filterBoxNr) > r_maxCnt )
+  if ( HAL::can_stateMsgobjBuffercnt(aui8_busNumber, mui8_filterBoxNr) > r_maxCnt )
   { // new MAX detected -> update and print
-    r_maxCnt = HAL::can_stateMsgobjBuffercnt(aui8_busNumber, ui8_filterBoxNr);
+    r_maxCnt = HAL::can_stateMsgobjBuffercnt(aui8_busNumber, mui8_filterBoxNr);
     INTERNAL_DEBUG_DEVICE << "\r\nNew Max buffer filling: " << r_maxCnt
-      << " at Filterbox Nr: " << uint16_t(ui8_filterBoxNr)
-      << " with Filter: " << c_filter.ident()
+      << " at Filterbox Nr: " << uint16_t(mui8_filterBoxNr)
+      << " with Filter: " << mc_filter.ident()
       << " at BUS: " << uint16_t(aui8_busNumber)
       << INTERNAL_DEBUG_DEVICE_ENDL;
   }
-  if ( HAL::can_stateMsgobjFreecnt(aui8_busNumber, ui8_filterBoxNr) < r_minFree )
+  if ( HAL::can_stateMsgobjFreecnt(aui8_busNumber, mui8_filterBoxNr) < r_minFree )
   { // new MIN detected -> update and print
-    r_minFree = HAL::can_stateMsgobjFreecnt(aui8_busNumber, ui8_filterBoxNr);
+    r_minFree = HAL::can_stateMsgobjFreecnt(aui8_busNumber, mui8_filterBoxNr);
     INTERNAL_DEBUG_DEVICE << "\r\nNew Min buffer free: " << r_minFree
-      << " at Filterbox Nr: " << uint16_t(ui8_filterBoxNr)
-      << " with Filter: " << c_filter.ident()
+      << " at Filterbox Nr: " << uint16_t(mui8_filterBoxNr)
+      << " with Filter: " << mc_filter.ident()
       << " at BUS: " << uint16_t(aui8_busNumber)
       << INTERNAL_DEBUG_DEVICE_ENDL;
   }

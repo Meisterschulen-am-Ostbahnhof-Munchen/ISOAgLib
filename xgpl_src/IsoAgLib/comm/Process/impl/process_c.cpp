@@ -962,8 +962,8 @@ Process_c::getTaskName() const
 //! can be overloaded by Childclass for special condition
 void
 Process_c::updateEarlierAndLatestInterval(){
-  ui16_earlierInterval = 0; //( ( getTimePeriod() * 3) / 4);
-  ui16_latestInterval   =  ( getTimePeriod() / 2) ;
+  mui16_earlierInterval = 0; //( ( getTimePeriod() * 3) / 4);
+  mui16_latestInterval   =  ( getTimePeriod() / 2) ;
 }
 
 } // end of namespace __IsoAgLib

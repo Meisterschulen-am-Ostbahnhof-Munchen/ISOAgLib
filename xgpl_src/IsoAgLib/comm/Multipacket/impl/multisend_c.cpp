@@ -763,15 +763,15 @@ MultiSend_c::updateEarlierAndLatestInterval()
 { /** @todo improve with a flag for HARD/SOFT timing, but it's okay for right now... */
   if (getTimePeriod() <= 1250)
   { // use HARD-Timing
-    ui16_earlierInterval = 0;
-    ui16_latestInterval  = getTimePeriod()/2; //50; // be polite and let other tasks do their job, we can wait a little bit
+    mui16_earlierInterval = 0;
+    mui16_latestInterval  = getTimePeriod()/2; //50; // be polite and let other tasks do their job, we can wait a little bit
     // ==> this is better than always interrupting important big tasks as WE can wait and slicing is NOT nice to handle for the big task.
-    if (ui16_latestInterval > 100) ui16_latestInterval = 100;
+    if (mui16_latestInterval > 100) mui16_latestInterval = 100;
   }
   else
   { // use SOFT-Timing (using jitter for earlier/after)
-    ui16_earlierInterval = ( (getTimePeriod() * 1) / 4);
-    ui16_latestInterval =     getTimePeriod();
+    mui16_earlierInterval = ( (getTimePeriod() * 1) / 4);
+    mui16_latestInterval =     getTimePeriod();
   }
 }
 

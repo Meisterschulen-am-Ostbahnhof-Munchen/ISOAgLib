@@ -165,13 +165,13 @@ public:
     get the write position in EEPROM (in Byte)
     @return position of write mark [uint8_t]
   */
-  inline uint16_t tellp(){return ui16_wPosition;};
+  inline uint16_t tellp(){return mui16_wPosition;};
 
   /**
     get the read position in EEPROM (in Byte)
     @return position of read mark [uint8_t]
   */
-  inline uint16_t tellg(){return ui16_rPosition;};
+  inline uint16_t tellg(){return mui16_rPosition;};
 
   /**
     check if write position is at end of EEPROM
@@ -402,11 +402,11 @@ private:
   /**
     segment size of EEPROM which can't be exceedecd by write actions
   */
-  uint16_t ui16_segmentSize;
+  uint16_t mui16_segmentSize;
   /** actual read position in EEPROM */
-  uint16_t ui16_rPosition;
+  uint16_t mui16_rPosition;
   /** actual write position in EEPROM */
-  uint16_t ui16_wPosition;
+  uint16_t mui16_wPosition;
 };
 
 
@@ -434,9 +434,9 @@ inline EepromIo_c& EepromIo_c::operator<<(const cc_string& arc_val)
   // second parameter true -> set range if end is reached
   if (!eofp(arc_val.size() * sizeof(int8_t), true))
   { // use private write function to read in correct number of bytes into data string
-   write (ui16_wPosition, arc_val.size() * sizeof(int8_t),
+   write (mui16_wPosition, arc_val.size() * sizeof(int8_t),
             static_cast<const uint8_t*>(static_cast<const void*>(arc_val.c_str())));
-    ui16_wPosition += (arc_val.size() * sizeof(int8_t)); //inkrement position
+    mui16_wPosition += (arc_val.size() * sizeof(int8_t)); //inkrement position
   }
   return *this;
 };

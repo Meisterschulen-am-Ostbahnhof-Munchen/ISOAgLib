@@ -178,7 +178,7 @@ class CanIo_c : public SingletonCanIo_c {
     * This is being set simply for this "can_server"-client.
     * NOTE: This feature only works for applications running utilizing the "can_server"
     */
-   static bool sb_sendPrioritized;
+   static bool msb_sendPrioritized;
 
 
 
@@ -219,31 +219,31 @@ class CanIo_c : public SingletonCanIo_c {
   bool init(uint8_t aui8_busNumber, uint16_t aui16_bitrate, Ident_c::identType_t ren_identType, uint8_t aui8_minObjNr, uint8_t aui8_maxObjNr);
 
   /** check if this CanIo_c instance is configured so that it can be used to send */
-  bool isReady2Send() const { return ( ui8_busNumber != 0xFF )?true:false;}
+  bool isReady2Send() const { return ( mui8_busNumber != 0xFF )?true:false;}
 
 
 /** is the fist add after a reconfiguration */
  bool isFirstAddFilterBox() const
 {
-    if(i32_minChangedFilterBox == -1) return true; //it is the fist addFilterBox after the reconfiguration or the initCAN
+    if(mi32_minChangedFilterBox == -1) return true; //it is the fist addFilterBox after the reconfiguration or the initCAN
 
     return false;
 }
 
 /** fast or full reconfiguration */
-  bool isFullReconfigNecessary()const {return ((i32_minChangedFilterBox < 0 )?  true:  false);}
+  bool isFullReconfigNecessary()const {return ((mi32_minChangedFilterBox < 0 )?  true:  false);}
 
 /** set full reconfiguration */
- void setFullReconfigNecessary(){i32_minChangedFilterBox = -2 ;}
+ void setFullReconfigNecessary(){mi32_minChangedFilterBox = -2 ;}
 
 /** set value */
- void setMinChangedFilterBox(int32_t ai32_value){i32_minChangedFilterBox = ai32_value;}
+ void setMinChangedFilterBox(int32_t ai32_value){mi32_minChangedFilterBox = ai32_value;}
 
 /** get a filterbox index */
-  int32_t getMinChangedFilterBox() const { return (i32_minChangedFilterBox >= 0 )? i32_minChangedFilterBox : 0;}
+  int32_t getMinChangedFilterBox() const { return (mi32_minChangedFilterBox >= 0 )? mi32_minChangedFilterBox : 0;}
 
 /** init value */
-  void initMinChangedFilterBox(){i32_minChangedFilterBox = -1 ;}
+  void initMinChangedFilterBox(){mi32_minChangedFilterBox = -1 ;}
 
 
   /** every subsystem of IsoAgLib has explicit function for controlled shutdown */
@@ -262,7 +262,7 @@ class CanIo_c : public SingletonCanIo_c {
   bool timeEvent( void );
 
   /** provide BUS number */
-  uint8_t getBusNumber( void ) const { return ui8_busNumber;}
+  uint8_t getBusNumber( void ) const { return mui8_busNumber;}
 
   #ifdef USE_CAN_MEASURE_BUSLOAD
   /** deliver actual BUS load in baud
@@ -442,7 +442,7 @@ class CanIo_c : public SingletonCanIo_c {
     * this helps Scheduler_c to decide about needed double retrigger of CanIo_c::processMsg()
     * at high CAN BUS load (important to avoid overflow of CAN buffers in HAL
     */
-  uint8_t getProcessedMsgCnt( void ) const { return ui8_processedMsgCnt;}
+  uint8_t getProcessedMsgCnt( void ) const { return mui8_processedMsgCnt;}
 
   /** function for sending data out of CanPkg_c (uses BIOS function)
       if send puffer is full a local loop waits till puffer has enough space
@@ -492,7 +492,7 @@ class CanIo_c : public SingletonCanIo_c {
    */
   void setSendPriority(bool ab_sendPrioritized);
 
-  FilterBox_c& getFilterBoxInstance(int32_t ai32_fbIdx) {return arrFilterBox[ai32_fbIdx];};
+  FilterBox_c& getFilterBoxInstance(int32_t ai32_fbIdx) {return m_arrFilterBox[ai32_fbIdx];};
 
 
   #if defined(DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION) && !defined(SYSTEM_WITH_ENHANCED_CAN_HAL)
@@ -502,7 +502,7 @@ class CanIo_c : public SingletonCanIo_c {
   /** for precise time checks e.g. within isVtActive() the last timestamp of the last processed can package is accessible.
     @return time stamp of the last can package that has been received and processed successfully
   */
-  int32_t getLastProcessedCanPkgTime() const { return i32_lastProcessedCanPkgTime; }
+  int32_t getLastProcessedCanPkgTime() const { return mi32_lastProcessedCanPkgTime; }
 
  protected: // Protected methods
 #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
@@ -542,7 +542,7 @@ class CanIo_c : public SingletonCanIo_c {
   friend class CAN_SINGLETON( CanIo_c );
   /** private constructor which prevents direct instantiation in user application
     * NEVER define instance of CanIo_c within application
-    * (set ui8_busNumber to 0xFF so that init() detects first call after constructor)
+    * (set mui8_busNumber to 0xFF so that init() detects first call after constructor)
     */
   CanIo_c( void );
 
@@ -555,17 +555,17 @@ class CanIo_c : public SingletonCanIo_c {
   /** deliver min msg obj nr
       @return min msg obj nr
     */
-  uint8_t minHALMsgObjNr()const{return ui8_min_msgObjLimit;}
+  uint8_t minHALMsgObjNr()const{return mui8_minmsgObjLimit;}
 
   /** get offset for received messages
       @return offset for received messages
     */
- uint8_t minReceiveObjNr() const {return ui8_minReceiveObjNr;}
+ uint8_t minReceiveObjNr() const {return mui8_minReceiveObjNr;}
 
   /** set min msg obj nr
       @param ab_limit wanted min msg obj nr
     */
-  void setMinHALMsgObjNr(uint8_t ab_limit){ui8_min_msgObjLimit = ab_limit;}
+  void setMinHALMsgObjNr(uint8_t ab_limit){mui8_minmsgObjLimit = ab_limit;}
 
   /** search for a FilterBox with given mask and filter
       @param  at_mask    filterBox mask
@@ -574,21 +574,21 @@ class CanIo_c : public SingletonCanIo_c {
     */
   FilterBox_c* getFilterBox(Ident_c& at_mask, Ident_c& at_filter) const;
 
-  void setCntFilter(size_t at_newSize ) { tm_filterBoxCnt = at_newSize;}
-  size_t cntFilter() const { return tm_filterBoxCnt;}
+  void setCntFilter(size_t at_newSize ) { mt_filterBoxCnt = at_newSize;}
+  size_t cntFilter() const { return mt_filterBoxCnt;}
 
 #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
-  void setCntMsgObj(size_t at_newSize ) { tm_MsgObjCnt = at_newSize;}
-  size_t cntMsgObj() const { return tm_MsgObjCnt;}
+  void setCntMsgObj(size_t at_newSize ) { mt_msgObjCnt = at_newSize;}
+  size_t cntMsgObj() const { return mt_msgObjCnt;}
   /** deliver max msg obj nr
       @return max msg obj nr
     */
-  uint8_t maxHALMsgObjNr()const{return ui8_maxMsgObjLimit;}
+  uint8_t maxHALMsgObjNr()const{return mui8_maxMsgObjLimit;}
 
   /** set max msg obj nr
       @param ab_limit wanted max msg obj nr
     */
-  void setMaxHALMsgObjNr(uint8_t ab_limit){ui8_maxMsgObjLimit = ab_limit;}
+  void setMaxHALMsgObjNr(uint8_t ab_limit){mui8_maxMsgObjLimit = ab_limit;}
 
   /** call the needed HAL function for setting the new global masks,
       without invalidating already open send and last msg obj.
@@ -625,30 +625,30 @@ class CanIo_c : public SingletonCanIo_c {
       hardware CAN object
       @see MsgObj
     */
-  ArrMsgObj arrMsgObj;
+  ArrMsgObj marr_msgObj;
 
   /** temp MsgObj_c for inserting of new msgObj instances
       @see MsgObj
     */
-  MsgObj_c c_tempObj;
+  MsgObj_c mc_tempObj;
 
   /** MsgObj_c for last hardware CAN message object where all CAN messages are
       stored which don't match t one of the active CAN MsgObj_c ( typical number 15 )
       @see MsgObj
     */
-  MsgObj_c c_lastMsgObj;
-  size_t tm_MsgObjCnt;
+  MsgObj_c mc_lastMsgObj;
+  size_t mt_msgObjCnt;
 #endif
 
 /** for the fast reconfiguration */
-    int32_t i32_minChangedFilterBox;
+    int32_t mi32_minChangedFilterBox;
 
   /** dynamic array of FilterBox_c instances which
       represents the demanded filter boxes
       @see FilterBox
     */
-  ArrFilterBox arrFilterBox;
-  size_t tm_filterBoxCnt;
+  ArrFilterBox m_arrFilterBox;
+  size_t mt_filterBoxCnt;
 
 /** return a reference of a FilterBox instance */
 
@@ -659,37 +659,37 @@ class CanIo_c : public SingletonCanIo_c {
   /** temp filer box to avoid new/delete for each insert of a filterBox
       @see FilterBox
     */
-  FilterBox_c c_tempFilterBox;
+  FilterBox_c mc_tempFilterBox;
 
   /** maximum send delay - value of < 0 indicates that no send-delay check is requested*/
-  int32_t i32_maxSendDelay;
+  int32_t mi32_maxSendDelay;
 
   /** begin of an CAN error period */
-  int32_t i32_canErrStart;
+  int32_t mi32_canErrStart;
 
   /** time of last detected CAN error */
-  int32_t i32_canErrEnd;
+  int32_t mi32_canErrEnd;
 
   /**  timestamp of last CAN BUS integrity check  */
-  int32_t i32_lastCanCheck;
+  int32_t mi32_lastCanCheck;
 
   /**  timestamp of last received and and processed CAN package  */
-  int32_t i32_lastProcessedCanPkgTime;
+  int32_t mi32_lastProcessedCanPkgTime;
 
-  /** CAN ui16_bitrate (in kBit/s) */
-  uint16_t ui16_bitrate;
+  /** CAN mui16_bitrate (in kBit/s) */
+  uint16_t mui16_bitrate;
 
 
   int32_t mi32_endLastReconfigTime;
 
   /** global mask with standard 11bit type */
-  Ident_c c_maskStd;
+  Ident_c mc_maskStd;
 
   /** global mask with extended 29bit type */
-  Ident_c c_maskExt;
+  Ident_c mc_maskExt;
 
   /** global last msg mask */
-  Ident_c c_maskLastmsg;
+  Ident_c mc_maskLastmsg;
 
 
 
@@ -697,44 +697,44 @@ class CanIo_c : public SingletonCanIo_c {
       or CanIo_c::B (CanIo_c should send both standard and extended ident msg
       --> two send obj are created)
     */
-  Ident_c::identType_t en_identType;
+  Ident_c::identType_t men_identType;
 
   /** BUS Number for systems with more than one BUS
       (for each BUS one  CanIo_c instance)
     */
-  uint8_t ui8_busNumber;
+  uint8_t mui8_busNumber;
 
   /** min limit of allowed msgObj numbers for this CanIo_c instance
       (important for multithreading environments where different
       Processes must share one BUS)
     */
-  uint8_t ui8_min_msgObjLimit;
+  uint8_t mui8_minmsgObjLimit;
 
   /** minimal obj nr that can be used for a receive msg obj which is dependent of identType_t */
-  uint8_t ui8_minReceiveObjNr;
+  uint8_t mui8_minReceiveObjNr;
 
 #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
   /** max limit of allowed msgObj numbers for this CanIo_c instance
       (important for multithreading environments where different
       Processes must share one BUS)
     */
-  uint8_t ui8_maxMsgObjLimit;
+  uint8_t mui8_maxMsgObjLimit;
 #endif
 
   /** count of CAN messages which were processed during last timeEvent() / processMsg() call
     * this helps Scheduler_c to decide about needed double retrigger of CanIo_c::processMsg()
     * at high CAN BUS load (important to avoid overflow of CAN buffers in HAL
     */
-  uint8_t ui8_processedMsgCnt;
+  uint8_t mui8_processedMsgCnt;
 
   /** flag to avoid loop of CAN message processing, when timeEvent() is called during previous
    *  timeEvent triggered CAN processing -> when this flag is TRUE, no further processing is performed
    */
-  bool b_runningCanProcess;
+  bool mb_runningCanProcess;
 
 #if ((defined( USE_ISO_11783)) && ((CAN_INSTANCE_CNT > PRT_INSTANCE_CNT) || defined (ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL)))
   /** we have either compiled for ISO, OR there is at least one internal / proprietary CAN channel */
-  bool b_canChannelCouldSendIso;
+  bool mb_canChannelCouldSendIso;
   #endif
 };
 

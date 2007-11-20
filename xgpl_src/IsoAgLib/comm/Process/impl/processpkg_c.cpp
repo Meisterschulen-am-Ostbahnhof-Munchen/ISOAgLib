@@ -434,7 +434,7 @@ void ProcessPkg_c::string2Flags()
   setSend(isoSa());
   setIdentType(Ident_c::ExtendedIdent);
 
-  // bit_data.b_valType = static_cast<proc_valType_t>((CanPkg_c::c_data[0] >> 5) & 0x3);
+  // bit_data.b_valType = static_cast<proc_valType_t>((CanPkg_c::msc_data[0] >> 5) & 0x3);
 
   // Not sure if this is needed at this point. May need the GPS portion but not the Float Data Type stuff since this is not really used in Part 10 now. -bac
   #if defined(USE_FLOAT_DATA_TYPE)
@@ -445,7 +445,7 @@ void ProcessPkg_c::string2Flags()
 
   //Need to replace this call with the getpos from the monitor item. ISOName no longer encapsulated in the message data itself
   //See new line added below that uses c_isoMonitor. -bac
-  //setISOName( IsoName_c(((CanPkg_c::c_data[2] >> 4) & 0xF), (CanPkg_c::c_data[2] & 0xF) ) );
+  //setISOName( IsoName_c(((CanPkg_c::msc_data[2] >> 4) & 0xF), (CanPkg_c::msc_data[2] & 0xF) ) );
 
   IsoMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
 
@@ -470,19 +470,19 @@ void ProcessPkg_c::string2Flags()
     mpc_monitorSend = NULL;
   }
 
-  set_Cmd(CanPkg_c::c_data[0] & 0xf);
+  set_Cmd(CanPkg_c::msc_data[0] & 0xf);
   uint16_t mui16_element = 0;
-  mui16_element = uint16_t(CanPkg_c::c_data[1]) << 4;
-  mui16_element |= ((CanPkg_c::c_data[0] & 0xF0)>>4);
+  mui16_element = uint16_t(CanPkg_c::msc_data[1]) << 4;
+  mui16_element |= ((CanPkg_c::msc_data[0] & 0xF0)>>4);
   set_Element(mui16_element);
 
   uint16_t newDDI = 0;
-  newDDI |= CanPkg_c::c_data[3];
+  newDDI |= CanPkg_c::msc_data[3];
   newDDI = newDDI << 8;
-  newDDI |= CanPkg_c::c_data[2];
+  newDDI |= CanPkg_c::msc_data[2];
   set_DDI(newDDI);
 
-  mc_flex4Data.setFlexible4DataValueInd( 1, CanPkg_c::c_data );
+  mc_flex4Data.setFlexible4DataValueInd( 1, CanPkg_c::msc_data );
 };
 
 /**
@@ -514,13 +514,13 @@ void ProcessPkg_c::flags2String()
     default: ui8_cmd = 0xFF;
   }
 
-  CanPkg_c::c_data.setUint8Data(0, (ui8_cmd & 0xf) | ( (element() & 0xf) << 4) );
-  CanPkg_c::c_data.setUint8Data(1, element() >> 4 );
-  CanPkg_c::c_data.setUint8Data(2, DDI() & 0x00FF );
-  CanPkg_c::c_data.setUint8Data(3, (DDI()& 0xFF00) >> 8 );
+  CanPkg_c::msc_data.setUint8Data(0, (ui8_cmd & 0xf) | ( (element() & 0xf) << 4) );
+  CanPkg_c::msc_data.setUint8Data(1, element() >> 4 );
+  CanPkg_c::msc_data.setUint8Data(2, DDI() & 0x00FF );
+  CanPkg_c::msc_data.setUint8Data(3, (DDI()& 0xFF00) >> 8 );
   // for ISO the ident is directly read and written
 
-  CanPkg_c::c_data.setFlexible4DataValueInd( 1, mc_flex4Data );
+  CanPkg_c::msc_data.setFlexible4DataValueInd( 1, mc_flex4Data );
 
   setLen(8);
 };

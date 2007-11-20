@@ -138,14 +138,14 @@ class ElementBase_c : public SaClaimHandler_c {
     */
   virtual void close( void ) = 0;
 
-  /** clear b_alreadyClosed so that close() can be called one time */
-  void clearAlreadyClosed( void ) { b_alreadyClosed = false; }
+  /** clear mb_alreadyClosed so that close() can be called one time */
+  void clearAlreadyClosed( void ) { mb_alreadyClosed = false; }
 
-  /** set b_alreadyClosed so that close() can't be called another time */
-  void setAlreadyClosed( void ) { b_alreadyClosed = true; }
+  /** set mb_alreadyClosed so that close() can't be called another time */
+  void setAlreadyClosed( void ) { mb_alreadyClosed = true; }
 
-  /** check b_alreadyClosed to decide if close() can be called */
-  bool checkAlreadyClosed( void ) const { return b_alreadyClosed; }
+  /** check mb_alreadyClosed to decide if close() can be called */
+  bool checkAlreadyClosed( void ) const { return mb_alreadyClosed; }
 
 
   /** Start Integrate Implementation for Timescheduling */
@@ -154,7 +154,7 @@ class ElementBase_c : public SaClaimHandler_c {
   //  Operation: forceExecStop
   //!  This static function can be called by the central Task-Scheduler or by RegisterInterrupts_c to force rapid stop of activities,
   //!  so that a very important other task can be started.
-  //!  This function sets the i32_demandedExecEnd to 0 which commands the derived class timeEvent function to return activity as soon as possible
+  //!  This function sets the msi32_demandedExecEnd to 0 which commands the derived class timeEvent function to return activity as soon as possible
   //!  (without comprising the well defined internal state of the Sub-System).
   //!  By static accessibility the caller doesn't need to know, which derived ElementBase instance is working at the moment,
   //!  as all derived classes shares the same
@@ -192,7 +192,7 @@ class ElementBase_c : public SaClaimHandler_c {
   virtual const char* getTaskName() const = 0;
 
   //  Operation: getAvgExecTime
-  //!  this function is used for debug tests to get the AVG of exec time. This function uses the debug vars ui32_sumTime, ui32_callCnt
+  //!  this function is used for debug tests to get the AVG of exec time. This function uses the debug vars mui32_sumTime, mui32_callCnt
   //!  @return AVG of exec time
   inline uint16_t getAvgExecTime() const;
 
@@ -204,11 +204,11 @@ class ElementBase_c : public SaClaimHandler_c {
 
 #ifdef DEBUG_SCHEDULER
   //  Operation: getMaxExecTime
-  //!  deliver the max exec time of this task (used only for debug based on ui16_maxTime)
+  //!  deliver the max exec time of this task (used only for debug based on mui16_maxTime)
   inline uint16_t getMaxExecTime() const;
 
   //  Operation: getMinExecTime
-  //!  deliver the min exec time of this task (used only for debug based on ui16_minTime)
+  //!  deliver the min exec time of this task (used only for debug based on mui16_minTime)
   inline uint16_t getMinExecTime() const;
 
   //  Operation: getAvgTimingAccuracy
@@ -257,10 +257,10 @@ class ElementBase_c : public SaClaimHandler_c {
   static inline int32_t getLastRetriggerTime();
 
   //! delay the next execution time by given period
-  void delayNextTriggerTime( unsigned int ui_delay ) { i32_nextRetriggerTime += ui_delay;}
+  void delayNextTriggerTime( unsigned int ui_delay ) { mi32_nextRetriggerTime += ui_delay;}
 
   //! delay the next retrigger time to the given timestamp
-  void delayNextTriggerTimeToTime( int32_t ai32_newNextRetrigger ) { i32_nextRetriggerTime = ai32_newNextRetrigger;}
+  void delayNextTriggerTimeToTime( int32_t ai32_newNextRetrigger ) { mi32_nextRetriggerTime = ai32_newNextRetrigger;}
 
 
   //!  Virtual Destructor - just to avoid compiler warnings
@@ -286,17 +286,17 @@ protected:
   //! Scheduler for earlier oder later call of a task
   inline uint16_t getMaxRetriggerJitter() const;
 
-  //! Function set ui16_earlierInterval and
+  //! Function set mui16_earlierInterval and
   //! ui16_laterInterval that will be used by
   //! getTimeToNextTrigger(retriggerType_t)
   //! can be overloaded by Childclass for special condition
   virtual void updateEarlierAndLatestInterval();
 
   //! contains timeSpread for that a Task can be called EARLIER
-  uint16_t ui16_earlierInterval;
+  uint16_t mui16_earlierInterval;
 
   //! contains timeSpread for that a Task can be called LATER
-  uint16_t ui16_latestInterval;
+  uint16_t mui16_latestInterval;
 
   /** End Integrate Protected Implementation for Timescheduling */
 
@@ -314,7 +314,7 @@ protected:
 
   //  Operation: timeEventPostUpdateStatistics
   //!  This function is called from the timeEvent function if all periodic activities were performed (-> don't call  if earlier return was forced).
-  //!  Update the average execution time ui16_approxExecTime
+  //!  Update the average execution time mui16_approxExecTime
   void timeEventPostUpdateStatistics();
 
   //  Operation: changeNextTriggerTime
@@ -323,64 +323,64 @@ protected:
   //!  @param ai32_nextRetriggerTime new timeStamp for retrigger
   inline void changeNextTriggerTime(int32_t ai32_nextRetriggerTime) ;
 
-  //  Attribute: b_alreadyClosed
+  //  Attribute: mb_alreadyClosed
   /** store already called close() after last call of init() */
-  bool b_alreadyClosed;
+  bool mb_alreadyClosed;
 
   /** Start Integrate private Implementation for Timescheduling */
   //! counter to detect amount of timeEvent() calls, where the next task in the Scheduler_c
   //! queue had a too early/tight latest retrigger time
-  int i_executionTimeHealth;
+  int mi_executionTimeHealth;
 
   //!  at the end of timeEvent() the function timeEventPostUpdateStatistics() stores the next retrigger timestamp
-  int32_t i32_nextRetriggerTime;
+  int32_t mi32_nextRetriggerTime;
 
-  //  Attribute: i32_demandedExecEnd
-  static int32_t i32_demandedExecEnd;
+  //  Attribute: msi32_demandedExecEnd
+  static int32_t msi32_demandedExecEnd;
 
-  //  Attribute: i32_retriggerTime
-  static int32_t i32_retriggerTime;
+  //  Attribute: msi32_retriggerTime
+  static int32_t msi32_retriggerTime;
 
-  //  Attribute: ui32_callCnt
+  //  Attribute: mui32_callCnt
   //!  amount of task executions (only needed for debug tests to build AVG of execution time)
-  uint32_t ui32_callCnt;
+  uint32_t mui32_callCnt;
 
-  //  Attribute: ui32_sumTime
-  uint32_t ui32_sumTime;
+  //  Attribute: mui32_sumTime
+  uint32_t mui32_sumTime;
 #ifdef DEBUG_SCHEDULER
-  //  Attribute: i32_sumTimingAccuracy
+  //  Attribute: mi32_sumTimingAccuracy
   //!  SUM of time between actual and next planned execution (to calc AVG)
   //!  (> 0 -> better than planned, < 0 -> worse than planned)
   //!  (only needed for debug tests)
-  int32_t i32_sumTimingAccuracy;
+  int32_t mi32_sumTimingAccuracy;
 
-  //  Attribute: i16_minTimingAccuracy
+  //  Attribute: mi16_minTimingAccuracy
   //!  min time between actual and next planned execution
   //!  (> 0 -> better than planned, < 0 -> worse than planned)
   //!  (only needed for debug tests)
-  int16_t i16_minTimingAccuracy;
+  int16_t mi16_minTimingAccuracy;
 
-  //  Attribute: i16_maxTimingAccuracy
+  //  Attribute: mi16_maxTimingAccuracy
   //!  max time between actual and next planned execution
   //!  (> 0 -> better than planned, < 0 -> worse than planned)
   //!  (only needed for debug tests)
-  int16_t i16_maxTimingAccuracy;
+  int16_t mi16_maxTimingAccuracy;
 
-  //  Attribute: ui16_minTime
+  //  Attribute: mui16_minTime
   //!  minimum execution time (only needed for debug tests)
-  uint16_t ui16_minTime;
+  uint16_t mui16_minTime;
 
-  //  Attribute: ui16_maxTime
+  //  Attribute: mui16_maxTime
   //!  maximum execution time (only needed for debug tests)
-  uint16_t ui16_maxTime;
+  uint16_t mui16_maxTime;
 #endif
-  //  Attribute: ui16_approxExecTime
+  //  Attribute: mui16_approxExecTime
   //!  approximate runtim of the timeEvent() function
-  uint16_t ui16_approxExecTime;
+  uint16_t mui16_approxExecTime;
 
-  //  Attribute: ui16_timePeriod
+  //  Attribute: mui16_timePeriod
   //!  standard period in [msec] when timeEvent() should be called
-  uint16_t ui16_timePeriod;
+  uint16_t mui16_timePeriod;
 
   /** End Integrate private Implementation for Timescheduling */
 
@@ -394,7 +394,7 @@ inline
 uint16_t
 ElementBase_c::getExecTime() const
 {
-  return ui16_approxExecTime;
+  return mui16_approxExecTime;
 }
 
 
@@ -403,39 +403,39 @@ inline
 uint16_t
 ElementBase_c::getTimePeriod() const
 {
-  return ui16_timePeriod;
+  return mui16_timePeriod;
 }
 
 
-//!  this function is used for debug tests to get the AVG of exec time. This function uses the debug vars ui32_sumTime, ui32_callCnt
+//!  this function is used for debug tests to get the AVG of exec time. This function uses the debug vars mui32_sumTime, mui32_callCnt
 //!  @return AVG of exec time
 inline
 uint16_t
 ElementBase_c::getAvgExecTime() const
 {
-  return ( ui32_callCnt != 0 )?( ui32_sumTime / ui32_callCnt ):0;
+  return ( mui32_callCnt != 0 )?( mui32_sumTime / mui32_callCnt ):0;
 }
 #ifdef DEBUG_SCHEDULER
-//!  deliver the max exec time of this task (used only for debug based on ui16_maxTime)
+//!  deliver the max exec time of this task (used only for debug based on mui16_maxTime)
 inline
 uint16_t
 ElementBase_c::getMaxExecTime() const
 {
-  return ui16_maxTime;
+  return mui16_maxTime;
 }
 
-//!  deliver the min exec time of this task (used only for debug based on ui16_minTime)
+//!  deliver the min exec time of this task (used only for debug based on mui16_minTime)
 inline
 uint16_t
 ElementBase_c::getMinExecTime() const
 {
-  return ui16_minTime;
+  return mui16_minTime;
 }
 inline
 int16_t
 ElementBase_c::getAvgTimingAccuracy() const
 {
-  return ( ui32_callCnt != 0 )?( i32_sumTimingAccuracy / ui32_callCnt ):0;
+  return ( mui32_callCnt != 0 )?( mi32_sumTimingAccuracy / mui32_callCnt ):0;
 }
 
 //!  deliver MIN time between actual and next planned execution
@@ -445,7 +445,7 @@ inline
 int16_t
 ElementBase_c::getMinTimingAccuracy() const
 {
-  return i16_minTimingAccuracy;
+  return mi16_minTimingAccuracy;
 }
 
 //!  deliver MAX time between actual and next planned execution
@@ -455,12 +455,12 @@ inline
 int16_t
 ElementBase_c::getMaxTimingAccuracy() const
 {
-  return i16_maxTimingAccuracy;
+  return mi16_maxTimingAccuracy;
 }
 #endif
 //!  This static function can be called by the central Task-Scheduler or by RegisterInterrupts_c to force rapid stop of activities,
 //!  so that a very important other task can be started.
-//!  This function sets the i32_demandedExecEnd to 0 which commands the derived class timeEvent function to return activity as soon as possible
+//!  This function sets the msi32_demandedExecEnd to 0 which commands the derived class timeEvent function to return activity as soon as possible
 //!  (without comprising the well defined internal state of the Sub-System).
 //!  By static accessibility the caller doesn't need to know, which derived ElementBase instance is working at the moment,
 //!  as all derived classes shares the same
@@ -470,14 +470,14 @@ void
 ElementBase_c::forceExecStop()
 {
   // the value 0 is telling timeEvent() and all called functions that an immediated stop is needed
-  i32_demandedExecEnd = 0;
+  msi32_demandedExecEnd = 0;
 }
 
 inline
 int32_t
 ElementBase_c::getLastRetriggerTime()
 {
-  return i32_retriggerTime;
+  return msi32_retriggerTime;
 }
 
 //!  Deliver the registered exec end timestamp.
@@ -485,7 +485,7 @@ inline
 int32_t
 ElementBase_c::getDemandedExecEnd()
 {
-  return i32_demandedExecEnd;
+  return msi32_demandedExecEnd;
 }
 
 //! Deliver the max Jitter in ms that uses the
@@ -494,7 +494,7 @@ inline
 uint16_t
 ElementBase_c::getMaxRetriggerJitter() const
 {
-  return (ui16_earlierInterval + ui16_latestInterval) ;
+  return (mui16_earlierInterval + mui16_latestInterval) ;
 }
 
 
@@ -504,7 +504,7 @@ inline
 int32_t
 ElementBase_c::getNextTriggerTime() const
 {
-  return i32_nextRetriggerTime;
+  return mi32_nextRetriggerTime;
 }
 
 //! get Interval for earliest call of Task
@@ -512,7 +512,7 @@ inline
 uint16_t
 ElementBase_c::getEarlierInterval() const
 {
- return ui16_earlierInterval;
+ return mui16_earlierInterval;
 }
 
 //! get Interval for latest call of Task
@@ -520,7 +520,7 @@ inline
 uint16_t
 ElementBase_c::getLatestInterval() const
 {
- return ui16_latestInterval;
+ return mui16_latestInterval;
 }
 
 //!  change timestamp of next planned retrigger (timeEvent() call)
@@ -529,7 +529,7 @@ ElementBase_c::getLatestInterval() const
 inline
 void
 ElementBase_c::changeNextTriggerTime(int32_t ai32_nextRetriggerTime){
-  i32_nextRetriggerTime = ai32_nextRetriggerTime;
+  mi32_nextRetriggerTime = ai32_nextRetriggerTime;
 }
 
 } // end namespace __IsoAgLib

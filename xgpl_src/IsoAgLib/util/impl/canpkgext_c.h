@@ -157,7 +157,7 @@ class CanPkgExt_c : public CanPkg_c
     @param ab_pos position of dellivered uint8_t [0..7]
     @return uint8_t balue in CAN data string at pos ab_pos
   */
-  uint8_t operator[](uint8_t aui8_pos) const {return c_data[aui8_pos];}
+  uint8_t operator[](uint8_t aui8_pos) const {return msc_data[aui8_pos];}
 
   /**
     set an uint8_t value at specified position in string
@@ -165,7 +165,7 @@ class CanPkgExt_c : public CanPkg_c
     @param aui8_val uint8_t value to set
   */
   void setUint8Data( uint8_t aui8_pos, uint8_t aui8_val)
-    { c_data.setUint8Data(aui8_pos, aui8_val);}
+    { msc_data.setUint8Data(aui8_pos, aui8_val);}
 
   /**
     set an uint16_t value at specified position in string
@@ -173,7 +173,7 @@ class CanPkgExt_c : public CanPkg_c
     @param aui16_val uint16_t value to set
   */
   void setUint16Data( uint8_t aui8_pos, uint16_t aui16_val)
-    { c_data.setUint16Data(aui8_pos, aui16_val);}
+    { msc_data.setUint16Data(aui8_pos, aui16_val);}
 
   /**
     set an int16_t value at specified position in string
@@ -181,7 +181,7 @@ class CanPkgExt_c : public CanPkg_c
     @param ai16_val int16_t value to set
   */
   void setInt16Data( uint8_t aui8_pos, int16_t ai16_val)
-    { c_data.setInt16Data(aui8_pos, ai16_val);}
+    { msc_data.setInt16Data(aui8_pos, ai16_val);}
 
   /**
     set an uint32_t value at specified position in string
@@ -189,7 +189,7 @@ class CanPkgExt_c : public CanPkg_c
     @param aui32_val uint32_t value to set
   */
   void setUint32Data( uint8_t aui8_pos, uint32_t aui32_val)
-    { c_data.setUint32Data(aui8_pos, aui32_val);}
+    { msc_data.setUint32Data(aui8_pos, aui32_val);}
 
   /**
     set an int32_t value at specified position in string
@@ -197,7 +197,7 @@ class CanPkgExt_c : public CanPkg_c
     @param ai32_val int32_t value to set
   */
   void setInt32Data( uint8_t aui8_pos, int32_t ai32_val)
-    { c_data.setInt32Data(aui8_pos, ai32_val);}
+    { msc_data.setInt32Data(aui8_pos, ai32_val);}
 
   /**
     set an float value at specified position in string
@@ -205,48 +205,48 @@ class CanPkgExt_c : public CanPkg_c
     @param af_val float value to set
    */
   void setFloatData( uint8_t aui8_pos, float af_val)
-  { c_data.setFloatData(aui8_pos, af_val);}
+  { msc_data.setFloatData(aui8_pos, af_val);}
   /**
     simply deliver a uint8_t from a specific position with
     @param ab_pos position of dellivered uint8_t [0..7]
     @return uint8_t balue in CAN data string at pos ab_pos
   */
-  uint8_t getUint8Data(uint8_t aui8_pos) const {return c_data.getUint8Data(aui8_pos);}
+  uint8_t getUint8Data(uint8_t aui8_pos) const {return msc_data.getUint8Data(aui8_pos);}
 
   /**
     simply deliver a uint16_t from a specific starting position with
     @param ab_pos position of dellivered uint16_t [0..6]
     @return uint16_t balue in CAN data string at pos (ab_pos, ab_pos+1) read Low/High order
   */
-  uint16_t getUint16Data(uint8_t aui8_pos) const {return c_data.getUint16Data(aui8_pos);}
+  uint16_t getUint16Data(uint8_t aui8_pos) const {return msc_data.getUint16Data(aui8_pos);}
 
   /**
     simply deliver a int16_t from a specific starting position with
     @param ab_pos position of dellivered int16_t [0..6]
     @return int16_t balue in CAN data string at pos (ab_pos, ab_pos+1) read Low/High order
   */
-  int16_t getInt16Data(uint8_t aui8_pos) const {return c_data.getInt16Data(aui8_pos);}
+  int16_t getInt16Data(uint8_t aui8_pos) const {return msc_data.getInt16Data(aui8_pos);}
 
   /**
     simply deliver a uint32_t from a specific starting position with
     @param ab_pos position of dellivered uint32_t [0..4]
     @return uint32_t balue in CAN data string at pos (ab_pos, ab_pos+1) read Low/High order
   */
-  uint32_t getUint32Data(uint8_t aui8_pos) const {return c_data.getUint32Data(aui8_pos);}
+  uint32_t getUint32Data(uint8_t aui8_pos) const {return msc_data.getUint32Data(aui8_pos);}
 
   /**
     simply deliver a int32_t from a specific starting position with
     @param ab_pos position of dellivered int32_t [0..4]
     @return int32_t balue in CAN data string at pos (ab_pos, ab_pos+1) read Low/High order
   */
-  int32_t getInt32Data(uint8_t aui8_pos) const {return c_data.getInt32Data(aui8_pos);}
+  int32_t getInt32Data(uint8_t aui8_pos) const {return msc_data.getInt32Data(aui8_pos);}
 
   /**
     simply deliver a float from a specific starting position with
     @param aui8_pos position [0..4]
     @return af_val float to return
    */
-  float getFloatData( uint8_t aui8_pos) const { return c_data.getFloatData(aui8_pos);}
+  float getFloatData( uint8_t aui8_pos) const { return msc_data.getFloatData(aui8_pos);}
 
   /**
     put data into given reference to BIOS related data structure with data, len
@@ -346,7 +346,7 @@ class CanPkgExt_c : public CanPkg_c
     setIsoPs(ps);
     setIsoSa(sa);
     setLen (len);
-    b_runFlag2String = false;
+    msb_runFlag2String = false;
   }
 
   void setExtCanPkg3(uint8_t pri, uint8_t dp, uint8_t pf, uint8_t ps, uint8_t sa, uint8_t d0, uint8_t d1, uint8_t d2) {
@@ -360,7 +360,7 @@ class CanPkgExt_c : public CanPkg_c
     setUint8Data (1, d1);
     setUint8Data (2, d2);
     setLen (3);
-    b_runFlag2String = false;
+    msb_runFlag2String = false;
   }
 
   // This function sets the DLC to 8 and fills up
@@ -390,7 +390,7 @@ class CanPkgExt_c : public CanPkg_c
     setUint8Data (6, d6);
     setUint8Data (7, d7);
     setLen (8);
-    b_runFlag2String = false;
+    msb_runFlag2String = false;
   }
 
   /** check if source and destination address are valid
@@ -439,19 +439,19 @@ class CanPkgExt_c : public CanPkg_c
 
   /** get the monitoritem for resolved SA
     */
-  IsoItem_c* getMonitorItemForSA() { return addrResolveResSA.pc_monitorItem; }
+  IsoItem_c* getMonitorItemForSA() { return ms_addrResolveResSA.pc_monitorItem; }
 
   /** get the isoName for resolved SA
     */
-  const IsoName_c& getISONameForSA() { return *addrResolveResSA.p_isoName; }
+  const IsoName_c& getISONameForSA() { return *ms_addrResolveResSA.p_isoName; }
 
   /** set the monitoritem for resolved SA
     */
-  IsoItem_c* getMonitorItemForDA() { return addrResolveResDA.pc_monitorItem; }
+  IsoItem_c* getMonitorItemForDA() { return ms_addrResolveResDA.pc_monitorItem; }
 
   /** set the isoName for resolved DA
     */
-  const IsoName_c& getISONameForDA() { return *addrResolveResDA.p_isoName; }
+  const IsoName_c& getISONameForDA() { return *ms_addrResolveResDA.p_isoName; }
 
 
   #ifdef ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL
@@ -513,13 +513,13 @@ private:
   /** flag to decide if flags2String has to be executed during send.
       Normally this is needed, but after each call of setExtCanPkg?? all bytes of the stream are already setup.
     */
-  static bool b_runFlag2String;
+  static bool msb_runFlag2String;
 
   /** variable which holds the results for a resolved source address */
-  static AddressResolveResults addrResolveResSA;
+  static AddressResolveResults ms_addrResolveResSA;
 
   /** variable which holds the results for a resolved destination address */
-  static AddressResolveResults addrResolveResDA;
+  static AddressResolveResults ms_addrResolveResDA;
 };
 
 /** this typedef is only for some time to provide backward compatibility at API level */

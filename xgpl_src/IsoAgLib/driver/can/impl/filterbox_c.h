@@ -187,13 +187,13 @@ public:
   /** check if this filterBox_c instance is really in use
       @return true -> filterBox is not in use
   */
-  bool isIdle() {return (ui8_busNumber == IdleState && ui8_filterBoxNr == IdleState && vec_customer.empty());}
+  bool isIdle() {return (mui8_busNumber == IdleState && mui8_filterBoxNr == IdleState && mvec_customer.empty());}
 
   /** store new can customer with same filter and mask
       @param pc_cancustomer  new can customer
     */
 
-   void insertCustomer(CanCustomer_c* pc_cancustomer, int8_t ai8_len) {vec_customer.push_back(CustomerLen_s(pc_cancustomer, ai8_len));}
+   void insertCustomer(CanCustomer_c* pc_cancustomer, int8_t ai8_len) {mvec_customer.push_back(CustomerLen_s(pc_cancustomer, ai8_len));}
 
 
   /** configures the CAN hardware of given FilterBox (uses BIOS function with EXTENDED_HAL)
@@ -231,7 +231,7 @@ public:
     @return true -> CAN ident fits to local filter/mask definition
   */
   inline bool matchMsgId(MASK_TYPE at_ident, Ident_c::identType_t at_type )
-  { return ( (c_mask.masked(at_ident) == c_mask.masked(c_filter)) && (at_type == identType()) );}
+  { return ( (mc_mask.masked(at_ident) == mc_mask.masked(mc_filter)) && (at_type == identType()) );}
 
   /** checks, if FilterBox_c definition given by ac_mask and ac_filter is the same
     @param ac_mask mask to use for comparison
@@ -239,7 +239,7 @@ public:
     @return true -> given mask and filter are same as the local defs
   */
   bool equalFilterMask(const Ident_c& ac_mask, const Ident_c& ac_filter) const
-    {return ((c_mask == ac_mask) && (c_filter == ac_filter));}
+    {return ((mc_mask == ac_mask) && (mc_filter == ac_filter));}
 
   /** checks, if Filter_Box_c has already stored given customer
       @param ar_customer  customer to compare
@@ -255,22 +255,22 @@ public:
   bool deleteFilter(const __IsoAgLib::CanCustomer_c & ar_customer);
 
   /** deliver the type of the FilterBox_c ident */
-  Ident_c::identType_t identType() const {return c_filter.identType();}
+  Ident_c::identType_t identType() const {return mc_filter.identType();}
 
   /** deliver const reference to mask Ident
     @return const reference to mask Ident_c instance
   */
-  const Ident_c& mask() const {return c_mask;}
+  const Ident_c& mask() const {return mc_mask;}
 
   /** deliver const reference to additionalMask Ident
     @return const reference to additionalMask Ident_c instance
   */
-  const Ident_c& additionalMask() const {return c_additionalMask;}
+  const Ident_c& additionalMask() const {return mc_additionalMask;}
 
   /** deliver const reference to filter Ident
     @return const reference to filter Ident_c instance
   */
-  const Ident_c& filter() const {return c_filter;}
+  const Ident_c& filter() const {return mc_filter;}
 
   #ifdef DEBUG_CAN_BUFFER_FILLING
   /** some debug messages */
@@ -293,35 +293,35 @@ public:
   bool processMsg();
 
 
-  int32_t getFbVecIdx(){return i32_fbVecIdx;};
-  void setFbVecIdx(int32_t ri32_fbIdx){i32_fbVecIdx = ri32_fbIdx;};
+  int32_t getFbVecIdx(){return mi32_fbVecIdx;};
+  void setFbVecIdx(int32_t ri32_fbIdx){mi32_fbVecIdx = ri32_fbIdx;};
 
 private:
 // Private attributes
-  /** c_filter for this FilterBox_c insance */
-  Ident_c c_filter;
+  /** mc_filter for this FilterBox_c insance */
+  Ident_c mc_filter;
 
-  /** c_mask for this FilterBox_c instance */
-  Ident_c c_mask;
+  /** mc_mask for this FilterBox_c instance */
+  Ident_c mc_mask;
 
-  /** c_additionalMask for this FilterBox_c insance (used for intentionally merging objects to one MsgObj! */
-  Ident_c c_additionalMask;
+  /** mc_additionalMask for this FilterBox_c insance (used for intentionally merging objects to one MsgObj! */
+  Ident_c mc_additionalMask;
 
   /**vector of pointer to pc_customer CanCustomer_c  which works with the received CAN data */
-  STL_NAMESPACE::vector<CustomerLen_s> vec_customer;
+  STL_NAMESPACE::vector<CustomerLen_s> mvec_customer;
 
   /** number of message object */
-  uint8_t ui8_filterBoxNr; //use like ui8_msgObjNr from msgobj_c class
+  uint8_t mui8_filterBoxNr; //use like ui8_msgObjNr from msgobj_c class
 
   /** BUS Number for systems with more than one BUS */
-  uint8_t ui8_busNumber;
+  uint8_t mui8_busNumber;
 
 
-  int32_t i32_fbVecIdx;
+  int32_t mi32_fbVecIdx;
 
 #if ((defined(USE_ISO_11783)) && ((CAN_INSTANCE_CNT > PRT_INSTANCE_CNT) || defined(ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL)))
   /** we have either compiled for ISO, OR there is at least one internal / proprietary CAN channel */
-  bool b_performIsobusResolve;
+  bool mb_performIsobusResolve;
   #endif
 };
 }

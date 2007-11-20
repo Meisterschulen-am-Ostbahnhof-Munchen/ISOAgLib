@@ -97,9 +97,9 @@ EepromIo_c& getEepromInstance( void ) { return EepromIo_c::instance();};
 /** default initialisation */
 void EepromIo_c::init()
 { // set the segment size
-  ui16_segmentSize = HAL::getEepromSegmentSize();
+  mui16_segmentSize = HAL::getEepromSegmentSize();
   // set read/write positions to beginning
-  ui16_rPosition = ui16_wPosition = 0;
+  mui16_rPosition = mui16_wPosition = 0;
 }
 
 /** destructor has nothing to destruct */
@@ -138,7 +138,7 @@ bool EepromIo_c::setp(uint16_t aui16_adress)
 {
   if (eepromSize() > aui16_adress)
   { // wanted position is in EEPROM range
-    ui16_wPosition = aui16_adress;
+    mui16_wPosition = aui16_adress;
     return true;
   }
   else
@@ -162,7 +162,7 @@ bool EepromIo_c::setg(uint16_t aui16_adress)
 {
   if (eepromSize() > aui16_adress)
   { // wanted position is in EEPROM range
-    ui16_rPosition = aui16_adress;
+    mui16_rPosition = aui16_adress;
     return true;
   }
   else
@@ -185,7 +185,7 @@ bool EepromIo_c::setg(uint16_t aui16_adress)
 */
 bool EepromIo_c::eofp(uint8_t aui8_length, bool ab_setState)
 { // compare (write position + length of wanted data) with size of EEPROM memory
-  if ((ui16_wPosition + aui8_length) >= eepromSize())
+  if ((mui16_wPosition + aui8_length) >= eepromSize())
   { // actual or end position of write access exceeds EEPROM memory
     if (ab_setState) getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Eeprom );
     return true;  // means: End of EEPROM memory is reached
@@ -209,7 +209,7 @@ bool EepromIo_c::eofp(uint8_t aui8_length, bool ab_setState)
 */
 bool EepromIo_c::eofg(uint8_t aui8_length, bool ab_setState)
 { // compare (read position + length of wanted data) with size of EEPROM memory
-  if ((ui16_rPosition + aui8_length) >= eepromSize())
+  if ((mui16_rPosition + aui8_length) >= eepromSize())
   { // actual or end position of read access exceeds EEPROM memory
     if (ab_setState) getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Eeprom );
     return true; // means: End of EEPROM memory is reached
@@ -245,8 +245,8 @@ EepromIo_c& EepromIo_c::writeString(const uint8_t *const apb_string, uint16_t au
   // second parameter true -> set Err_c::range if end is reached
   if (!eofp(aui16_number, true))
   { // use private write function to read in correct number of bytes into data string
-    write (ui16_wPosition, aui16_number, apb_string);
-    ui16_wPosition += (aui16_number); //inkrement position
+    write (mui16_wPosition, aui16_number, apb_string);
+    mui16_wPosition += (aui16_number); //inkrement position
   }
   return *this;
 };
@@ -268,12 +268,12 @@ bool EepromIo_c::readString(uint8_t *const apb_string, uint16_t aui16_number)
     setState4BiosReturn(wait_eepromReady());
     // use eepromRead BIOS function to read in correct number of bytes into data string
     // don't update read position
-    int16_t i16_retVal = HAL::eepromRead(ui16_rPosition, aui16_number, apb_string);
+    int16_t i16_retVal = HAL::eepromRead(mui16_rPosition, aui16_number, apb_string);
     setState4BiosReturn(i16_retVal); // update state dependent on return of BIOS function
     // increment position on success
     if (i16_retVal == HAL_NO_ERR)
     {
-      ui16_rPosition += aui16_number;
+      mui16_rPosition += aui16_number;
       return true;
     }
     else return false;
@@ -426,7 +426,7 @@ int16_t EepromIo_c::wait_eepromReady( void )
   @return amount of bytes between write position and end of EEPROM
 */
 uint16_t EepromIo_c::maxSize(uint16_t aui16_adress){
-  uint16_t ui16_segmentEnd = ((aui16_adress/ui16_segmentSize + 1)*ui16_segmentSize) -1;
+  uint16_t ui16_segmentEnd = ((aui16_adress/mui16_segmentSize + 1)*mui16_segmentSize) -1;
   return ((ui16_segmentEnd - aui16_adress)+1);
 }
 
@@ -474,8 +474,8 @@ EepromIo_c& EepromIo_c::writeIntern(const uint8_t* apb_data, uint8_t aui8_len)
   // second parameter true -> set Err_c::range if end is reached
   if (!eofp(aui8_len, true))
   { // use private write function to read in correct number of bytes into data string
-    write (ui16_wPosition, aui8_len, apb_data);
-    ui16_wPosition += aui8_len; //inkrement position
+    write (mui16_wPosition, aui8_len, apb_data);
+    mui16_wPosition += aui8_len; //inkrement position
   }
   return *this;
 }
@@ -499,8 +499,8 @@ EepromIo_c& EepromIo_c::readIntern(uint8_t* apb_data, uint8_t aui8_len) {
   { // use private eepromRead function to read in correct number of bytes into data string
     // call BIOS function to check that EEPROM is ready
     setState4BiosReturn(wait_eepromReady());
-    HAL::eepromRead(ui16_rPosition, aui8_len, apb_data);
-    ui16_rPosition += aui8_len; //inkrement position
+    HAL::eepromRead(mui16_rPosition, aui8_len, apb_data);
+    mui16_rPosition += aui8_len; //inkrement position
   }
   return *this;
 }

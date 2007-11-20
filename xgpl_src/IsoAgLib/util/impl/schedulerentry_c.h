@@ -171,7 +171,7 @@ public:
   inline uint16_t getTimePeriod() const;
 
   //  Operation: getAvgExecTime
-  //!  this function is used for debug tests to get the AVG of exec time. This function uses the debug vars ui32_sumTime, ui32_callCnt
+  //!  this function is used for debug tests to get the AVG of exec time. This function uses the debug vars mui32_sumTime, mui32_callCnt
   //!  @return AVG of exec time
   inline uint16_t getAvgExecTime() const;
 
@@ -186,7 +186,7 @@ public:
   inline int16_t getAvgTimingAccuracy() const;
 
   //  Operation: getMaxExecTime
-  //!  deliver the max exec time of this task (used only for debug based on ui16_maxTime)
+  //!  deliver the max exec time of this task (used only for debug based on mui16_maxTime)
   inline uint16_t getMaxExecTime() const;
 
   //  Operation: getMaxTimingAccuracy
@@ -196,7 +196,7 @@ public:
   inline int16_t getMaxTimingAccuracy() const;
 
   //  Operation: getMinExecTime
-  //!  deliver the min exec time of this task (used only for debug based on ui16_minTime)
+  //!  deliver the min exec time of this task (used only for debug based on mui16_minTime)
   inline uint16_t getMinExecTime() const;
 
   //  Operation: getMinTimingAccuracy
@@ -219,14 +219,14 @@ public:
 //!  Allows Scheduler_c to change next retriggerTime
 inline bool changeNextTriggerTime(int32_t ai32_nextRetriggerTime);
 
-  void close() { if (NULL != pc_taskInstance) pc_taskInstance->close();}
+  void close() { if (NULL != mpc_taskInstance) mpc_taskInstance->close();}
 
 protected:
 
 private:
 
-  //  Attribute: pc_taskInstance
-  ElementBase_c* pc_taskInstance;
+  //  Attribute: mpc_taskInstance
+  ElementBase_c* mpc_taskInstance;
 
 };
 
@@ -237,7 +237,7 @@ private:
 inline
 
 SchedulerEntry_c::SchedulerEntry_c(ElementBase_c* apc_entry)
-: pc_taskInstance( apc_entry )
+: mpc_taskInstance( apc_entry )
 {
 }
 
@@ -249,7 +249,7 @@ inline
 bool
 SchedulerEntry_c::operator<=(const SchedulerEntry_c& arc_rightSide) const
 {
-  return ( pc_taskInstance->getNextTriggerTime() <= arc_rightSide.pc_taskInstance->getNextTriggerTime() )?true:false;
+  return ( mpc_taskInstance->getNextTriggerTime() <= arc_rightSide.mpc_taskInstance->getNextTriggerTime() )?true:false;
 }
 
 //! Parameter:
@@ -258,7 +258,7 @@ inline
 bool
 SchedulerEntry_c::operator==(const SchedulerEntry_c& arc_rightSide) const
 {
-  return ( pc_taskInstance->getNextTriggerTime() == arc_rightSide.pc_taskInstance->getNextTriggerTime() )?true:false;
+  return ( mpc_taskInstance->getNextTriggerTime() == arc_rightSide.mpc_taskInstance->getNextTriggerTime() )?true:false;
 }
 
 
@@ -271,7 +271,7 @@ inline
 bool
 SchedulerEntry_c::isTask(const ElementBase_c* apc_cmpTask) const
 {
-  return ( pc_taskInstance == apc_cmpTask )?true:false;
+  return ( mpc_taskInstance == apc_cmpTask )?true:false;
 }
 
 //!  deliver the time [msec] to the next awaited retrigger of this task. The central scheduler can use the parameter to deduce the possible time
@@ -282,8 +282,8 @@ inline
 int32_t
 SchedulerEntry_c::getTimeToNextTrigger(retriggerType_t t_retriggerType) const
 {
-  if ( pc_taskInstance == NULL ) return 0xFFFF;
-  else return pc_taskInstance->getTimeToNextTrigger( t_retriggerType );
+  if ( mpc_taskInstance == NULL ) return 0xFFFF;
+  else return mpc_taskInstance->getTimeToNextTrigger( t_retriggerType );
 }
 
 //!  deliver the average execution time for timeEvent calls -> allows scheduler to refine time schedule within execution
@@ -292,8 +292,8 @@ inline
 uint16_t
 SchedulerEntry_c::getExecTime() const
 {
-  if ( pc_taskInstance == NULL ) return 0xFFFF;
-  else return pc_taskInstance->getExecTime();
+  if ( mpc_taskInstance == NULL ) return 0xFFFF;
+  else return mpc_taskInstance->getExecTime();
 }
 
 //!  Assign pointer to task from source item to this item.
@@ -303,7 +303,7 @@ inline
 SchedulerEntry_c&
 SchedulerEntry_c::operator=(const SchedulerEntry_c& arc_rightSide)
 {
-  pc_taskInstance = arc_rightSide.pc_taskInstance;
+  mpc_taskInstance = arc_rightSide.mpc_taskInstance;
   return *this;
 }
 
@@ -315,7 +315,7 @@ inline
 bool
 SchedulerEntry_c::operator<(const SchedulerEntry_c& arc_rightSide) const
 {
-  return ( pc_taskInstance->getNextTriggerTime() < arc_rightSide.pc_taskInstance->getNextTriggerTime() )?true:false;
+  return ( mpc_taskInstance->getNextTriggerTime() < arc_rightSide.mpc_taskInstance->getNextTriggerTime() )?true:false;
 }
 
 //!  Return ClassName for Scheduler_c
@@ -324,8 +324,8 @@ inline
 const char*
 SchedulerEntry_c::getTaskName() const
 {
-  if ( pc_taskInstance == NULL ) return "NULL";
-  else return pc_taskInstance->getTaskName();
+  if ( mpc_taskInstance == NULL ) return "NULL";
+  else return mpc_taskInstance->getTaskName();
 }
 
 
@@ -334,18 +334,18 @@ inline
 uint16_t
 SchedulerEntry_c::getTimePeriod() const
 {
-  if ( pc_taskInstance == NULL ) return 0xFFFF;
-  else return pc_taskInstance->getTimePeriod();
+  if ( mpc_taskInstance == NULL ) return 0xFFFF;
+  else return mpc_taskInstance->getTimePeriod();
 }
 
-//!  this function is used for debug tests to get the AVG of exec time. This function uses the debug vars ui32_sumTime, ui32_callCnt
+//!  this function is used for debug tests to get the AVG of exec time. This function uses the debug vars mui32_sumTime, mui32_callCnt
 //!  @return AVG of exec time
 inline
 uint16_t
 SchedulerEntry_c::getAvgExecTime() const
 {
-  if ( pc_taskInstance == NULL ) return 0;
-  else return pc_taskInstance->getAvgExecTime();
+  if ( mpc_taskInstance == NULL ) return 0;
+  else return mpc_taskInstance->getAvgExecTime();
 }
 
 //! virtual function which allows a scheduler client to define
@@ -354,8 +354,8 @@ SchedulerEntry_c::getAvgExecTime() const
 //! work in the default min exec time of 5msec
 inline uint16_t SchedulerEntry_c::getForcedMinExecTime() const
 {
-  if ( pc_taskInstance == NULL ) return 0;
-  else return pc_taskInstance->getForcedMinExecTime();
+  if ( mpc_taskInstance == NULL ) return 0;
+  else return mpc_taskInstance->getForcedMinExecTime();
 }
 
 #ifdef DEBUG_SCHEDULER
@@ -363,17 +363,17 @@ inline
 int16_t
 SchedulerEntry_c::getAvgTimingAccuracy() const
 {
-  if ( pc_taskInstance == NULL ) return 0;
-  else return pc_taskInstance->getAvgTimingAccuracy();
+  if ( mpc_taskInstance == NULL ) return 0;
+  else return mpc_taskInstance->getAvgTimingAccuracy();
 }
 
-//!  deliver the max exec time of this task (used only for debug based on ui16_maxTime)
+//!  deliver the max exec time of this task (used only for debug based on mui16_maxTime)
 inline
 uint16_t
 SchedulerEntry_c::getMaxExecTime() const
 {
-  if ( pc_taskInstance == NULL ) return 0;
-  else return pc_taskInstance->getMaxExecTime();
+  if ( mpc_taskInstance == NULL ) return 0;
+  else return mpc_taskInstance->getMaxExecTime();
 }
 
 // //////////////////////////////// +X2C Operation 4145 : getMaxTimingAccuracy
@@ -384,18 +384,18 @@ inline
 int16_t
 SchedulerEntry_c::getMaxTimingAccuracy() const
 {
-  if ( pc_taskInstance == NULL ) return 0;
-  else return pc_taskInstance->getMaxTimingAccuracy();
+  if ( mpc_taskInstance == NULL ) return 0;
+  else return mpc_taskInstance->getMaxTimingAccuracy();
 }
 
 // //////////////////////////////// +X2C Operation 4146 : getMinExecTime
-//!  deliver the min exec time of this task (used only for debug based on ui16_minTime)
+//!  deliver the min exec time of this task (used only for debug based on mui16_minTime)
 inline
 uint16_t
 SchedulerEntry_c::getMinExecTime() const
 {
-  if ( pc_taskInstance == NULL ) return 0;
-  else return pc_taskInstance->getMinExecTime();
+  if ( mpc_taskInstance == NULL ) return 0;
+  else return mpc_taskInstance->getMinExecTime();
 }
 
 // //////////////////////////////// +X2C Operation 4147 : getMinTimingAccuracy
@@ -406,8 +406,8 @@ inline
 int16_t
 SchedulerEntry_c::getMinTimingAccuracy() const
 {
-  if ( pc_taskInstance == NULL ) return 0;
-  else return pc_taskInstance->getMinTimingAccuracy();
+  if ( mpc_taskInstance == NULL ) return 0;
+  else return mpc_taskInstance->getMinTimingAccuracy();
 }
 #endif
 // //////////////////////////////// +X2C Operation 4184 : getStdTimeToNextTrigger
@@ -416,8 +416,8 @@ inline
 int32_t
 SchedulerEntry_c::getStdTimeToNextTrigger() const
 {
-  if ( pc_taskInstance == NULL ) return 0;
-  else return pc_taskInstance->getStdTimeToNextTrigger();
+  if ( mpc_taskInstance == NULL ) return 0;
+  else return mpc_taskInstance->getStdTimeToNextTrigger();
 }
 
 //!  deliver timestamp of next planned retrigger (timeEvent() call)
@@ -425,8 +425,8 @@ inline
 int32_t
 SchedulerEntry_c::getNextTriggerTime() const
 {
-  if ( pc_taskInstance == NULL ) return 0;
-  else return pc_taskInstance->getNextTriggerTime();
+  if ( mpc_taskInstance == NULL ) return 0;
+  else return mpc_taskInstance->getNextTriggerTime();
 }
 
 //!  Allows Scheduler_c to set new TimePeriod
@@ -435,8 +435,8 @@ inline
 bool
 SchedulerEntry_c::setTimePeriod(uint16_t aui16_timePeriod) const
 {
-  if ( pc_taskInstance == NULL ) return false;
-  pc_taskInstance->setTimePeriod(aui16_timePeriod);
+  if ( mpc_taskInstance == NULL ) return false;
+  mpc_taskInstance->setTimePeriod(aui16_timePeriod);
   return true;
 }
 
@@ -447,8 +447,8 @@ inline
 bool
 SchedulerEntry_c::changeNextTriggerTime(int32_t ai32_nextRetriggerTime)
 {
-  if ( pc_taskInstance == NULL ) return false;
-  pc_taskInstance->changeNextTriggerTime(ai32_nextRetriggerTime);
+  if ( mpc_taskInstance == NULL ) return false;
+  mpc_taskInstance->changeNextTriggerTime(ai32_nextRetriggerTime);
   return true;
 }
 

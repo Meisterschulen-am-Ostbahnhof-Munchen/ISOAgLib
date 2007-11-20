@@ -130,20 +130,20 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
 
     DEBUG_PRINT1("open( \"%s\", O_RDRWR)\n", fname);
 
-    pc_serverData->can_device[ui8_bus] = open(fname, O_RDWR | O_NONBLOCK);
+    pc_serverData->marri16_can_device[ui8_bus] = open(fname, O_RDWR | O_NONBLOCK);
 
-    if (pc_serverData->can_device[ui8_bus] == -1) {
+    if (pc_serverData->marri16_can_device[ui8_bus] == -1) {
       DEBUG_PRINT1("Could not open CAN bus%d\n",ui8_bus);
       return 0;
     }
 
     // Set baud rate to 250 and turn on extended IDs
-    // For Opus A1, it is done by sending the following string to the can_device
+    // For Opus A1, it is done by sending the following string to the marri16_can_device
     char buf[16];
     sprintf( buf, "i 0x%2x%2x e\n", btr0 & 0xFF, btr1 & 0xFF );     //, (extended?" e":" ") extended is not being passed in! Don't use it!
 
     DEBUG_PRINT3("write( device-\"%s\"\n, \"%s\", %d)\n", fname, buf, strlen(buf));
-    write(pc_serverData->can_device[ui8_bus], buf, strlen(buf));
+    write(pc_serverData->marri16_can_device[ui8_bus], buf, strlen(buf));
 
     canBusIsOpen[ui8_bus] = true;
   }
@@ -181,7 +181,7 @@ int16_t sendToBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
   int ret = 0;
 
   if ((ui8_bus < HAL_CAN_MAX_BUS_NR) && canBusIsOpen[ui8_bus]) {
-    ret = ioctl(pc_serverData->can_device[ui8_bus], CAN_WRITE_MSG, &msg);
+    ret = ioctl(pc_serverData->marri16_can_device[ui8_bus], CAN_WRITE_MSG, &msg);
 
 #ifdef DEBUG_IOCTL
     if (ret < 0) {
@@ -189,7 +189,7 @@ int16_t sendToBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
 
       // try to read
       canMsgA1_s msg;
-      ret = ioctl(pc_serverData->can_device[ui8_bus], CAN_READ_MSG, &msg);
+      ret = ioctl(pc_serverData->marri16_can_device[ui8_bus], CAN_READ_MSG, &msg);
       printf("id 0x%x msg_type 0x%x len 0x%x data 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x time 0x%x\n", msg.id, msg.msg_type, msg.len, msg.data[0], msg.data[1], msg.data[2], msg.data[3], msg.data[4], msg.data[5], msg.data[6], msg.data[7], msg.time);
 
       if (ret < 0) {
@@ -209,7 +209,7 @@ uint32_t readFromBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverDa
 {
   canMsgA1_s msg;
 
-  if (ioctl(pc_serverData->can_device[ui8_bus], CAN_READ_MSG, &msg) == 0)
+  if (ioctl(pc_serverData->marri16_can_device[ui8_bus], CAN_READ_MSG, &msg) == 0)
   {
     ps_canMsg->ui32_id = msg.id;
 

@@ -107,25 +107,25 @@ bool
 SchedulerEntry_c::timeEventExec(int32_t ai32_demandedExecEnd)
 {
   #ifdef DEBUG
-  if  ( pc_taskInstance == NULL )
+  if  ( mpc_taskInstance == NULL )
   {
     #ifdef SYSTEM_PC
-    EXTERNAL_DEBUG_DEVICE << "SchedulerEntry_c::timeEvent() had no pc_taskInstance."
+    EXTERNAL_DEBUG_DEVICE << "SchedulerEntry_c::timeEvent() had no mpc_taskInstance."
     << EXTERNAL_DEBUG_DEVICE_ENDL;
     #endif
     return true;
   }
   #endif
-  pc_taskInstance->timeEventPre(ai32_demandedExecEnd);
-  const bool cb_result = pc_taskInstance->timeEvent();
+  mpc_taskInstance->timeEventPre(ai32_demandedExecEnd);
+  const bool cb_result = mpc_taskInstance->timeEvent();
   /// call only if client returns true caused by  nextRetriggerTime
   /// should NOT be Updated in  timeEventPostUpdateStatistics()
   /// so Client keep old nextRetriggerTime and stay as FIRST in TaskQueue
-  if( cb_result )pc_taskInstance->timeEventPostUpdateStatistics();
+  if( cb_result )mpc_taskInstance->timeEventPostUpdateStatistics();
 
   #if defined (DEBUG) && defined( DEBUG_SCHEDULER)
     if(!cb_result)  {
-        INTERNAL_DEBUG_DEVICE << pc_taskInstance->getTaskName() << ".timeEvent() returned false."
+        INTERNAL_DEBUG_DEVICE << mpc_taskInstance->getTaskName() << ".timeEvent() returned false."
         << INTERNAL_DEBUG_DEVICE_ENDL;
     }
   #endif

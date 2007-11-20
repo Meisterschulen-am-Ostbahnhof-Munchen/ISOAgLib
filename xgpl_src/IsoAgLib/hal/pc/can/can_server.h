@@ -257,10 +257,10 @@ public:
 
   bool     b_busUsed[cui32_maxCanBusCnt];
 
-  uint16_t ui16_globalMask[cui32_maxCanBusCnt];
+  uint16_t marrui16_globalMask[cui32_maxCanBusCnt];
   uint32_t ui32_globalMask[cui32_maxCanBusCnt];
   uint32_t ui32_lastMask[cui32_maxCanBusCnt];
-  int32_t  i32_sendDelay[cui32_maxCanBusCnt];
+  int32_t  marri32_sendDelay[cui32_maxCanBusCnt];
 
   bool     b_initReceived[cui32_maxCanBusCnt];
 
@@ -277,35 +277,35 @@ public:
   server_c();
 
 #ifdef CAN_DRIVER_MESSAGE_QUEUE
-  msqData_s msqDataServer;
+  msqData_s ms_msqDataServer;
 #endif
 
-  std::list<client_c> l_clients;
-  std::string logFileBase;
-  std::string inputFile;
-  uint16_t ui16_globalMask[cui32_maxCanBusCnt];
+  std::list<client_c> mlist_clients;
+  std::string mstr_logFileBase;
+  std::string mstr_inputFile;
+  uint16_t marrui16_globalMask[cui32_maxCanBusCnt];
   // logging
-  bool     b_logMode;
-  FILE*    f_canOutput[cui32_maxCanBusCnt];
+  bool     mb_logMode;
+  FILE*    mf_canOutput[cui32_maxCanBusCnt];
   // replay
-  bool     b_inputFileMode;
-  FILE*    f_canInput;
+  bool     mb_inputFileMode;
+  FILE*    mf_canInput;
 
-  bool     arrb_remoteDestinationAddressInUse[0x100];
+  bool     marrb_remoteDestinationAddressInUse[0x100];
 
 #ifdef CAN_DRIVER_MESSAGE_QUEUE
-  int32_t  i32_lastPipeId;
+  int32_t  mi32_lastPipeId;
 #endif
   // if >0 => do not send messages with local destination address on the bus
-  int16_t  i16_reducedLoadOnIsoBus;
+  int16_t  mi16_reducedLoadOnIsoBus;
 
-  int16_t  can_device[cui32_maxCanBusCnt];
-  int32_t  i32_sendDelay[cui32_maxCanBusCnt];
-  int      i_pendingMsgs[cui32_maxCanBusCnt];
+  int16_t  marri16_can_device[cui32_maxCanBusCnt];
+  int32_t  marri32_sendDelay[cui32_maxCanBusCnt];
+  int      marri_pendingMsgs[cui32_maxCanBusCnt];
 
-  uint16_t ui16_busRefCnt[cui32_maxCanBusCnt];
+  uint16_t marrui16_busRefCnt[cui32_maxCanBusCnt];
 
-  pthread_mutex_t m_protectClientList;
+  pthread_mutex_t mt_protectClientList;
 
 };
 

@@ -86,19 +86,19 @@
 namespace __IsoAgLib {
 
 /** max 8 data bytes defined as union */
-Flexible8ByteString_c CanPkg_c::c_data;
+Flexible8ByteString_c CanPkg_c::msc_data;
 
 /** receive time of CAN message */
-int32_t CanPkg_c::i32_time = 0;
+int32_t CanPkg_c::msi32_time = 0;
 
 /** identifier of CAN msg */
-__IsoAgLib::Ident_c CanPkg_c::c_ident;
+__IsoAgLib::Ident_c CanPkg_c::msc_ident;
 
 /** state of the received can-message */
-MessageState_t CanPkg_c::t_msgState = MessageValid; // no default value is needed, but anyway..
+MessageState_t CanPkg_c::mst_msgState = MessageValid; // no default value is needed, but anyway..
 
 /** size of data */
-uint8_t CanPkg_c::ui8_len = 0;
+uint8_t CanPkg_c::msui8_len = 0;
 
 /**
   default constructor, which does nothing for the base class,
@@ -126,10 +126,10 @@ CanPkg_c::~CanPkg_c(){
   @return reference to the source CanPkg_c to enable assign chains like "pkg1 = pkg2 = pkg3 = pkg4;"
 const CanPkg_c& CanPkg_c::operator=(const CanPkg_c& arc_right)
 {
-  c_ident = arc_right.c_ident;
-  ui8_len = arc_right.ui8_len;
-  c_data = arc_right.c_data;
-  i32_time = arc_right.i32_time;
+  msc_ident = arc_right.msc_ident;
+  msui8_len = arc_right.msui8_len;
+  msc_data = arc_right.msc_data;
+  msi32_time = arc_right.msi32_time;
 
   return *this;
 }
@@ -147,8 +147,8 @@ void CanPkg_c::getData(uint32_t& rt_ident, uint8_t& rui8_identType,
 {
   rt_ident = ident();
   rui8_identType = identType();
-  rb_dlcTarget = ui8_len;
-  c_data.getDataToString( pb_dataTarget, ui8_len );
+  rb_dlcTarget = msui8_len;
+  msc_data.getDataToString( pb_dataTarget, msui8_len );
 }
 
 /**
@@ -161,10 +161,10 @@ void CanPkg_c::getData(uint32_t& rt_ident, uint8_t& rui8_identType,
 */
 void CanPkg_c::set(MASK_TYPE at_ident, const uint8_t* apb_data, uint8_t aui8_len, int32_t ai32_time, Ident_c::identType_t at_type)
 {
-  c_ident.set(at_ident, at_type);
-  ui8_len = (aui8_len<9)?aui8_len:8;
-  c_data.setDataFromString( apb_data, ui8_len );
-  i32_time = ai32_time;
+  msc_ident.set(at_ident, at_type);
+  msui8_len = (aui8_len<9)?aui8_len:8;
+  msc_data.setDataFromString( apb_data, msui8_len );
+  msi32_time = ai32_time;
 }
 
 /**
@@ -178,8 +178,8 @@ void CanPkg_c::setDataFromString(const uint8_t* apb_data, uint8_t aui8_len)
   if ( aui8_len > 0 )
   { // there is something to set - this function might be called from some generic algorithms which rely
     // on the underlying functions to handle zero-lenght properly
-    ui8_len = (aui8_len<9)?aui8_len:8;
-    c_data.setDataFromString( apb_data, ui8_len);
+    msui8_len = (aui8_len<9)?aui8_len:8;
+    msc_data.setDataFromString( apb_data, msui8_len);
   }
 }
 
@@ -197,8 +197,8 @@ void CanPkg_c::setDataFromString(uint8_t aui8_targetPositionOffset, const uint8_
   { // there is something to set - this function might be called from some generic algorithms which rely
     // on the underlying functions to handle zero-lenght properly
     const unsigned int cui_copyByteCnt = (aui8_len+aui8_targetPositionOffset <= 8)?aui8_len:(8-aui8_targetPositionOffset);
-    ui8_len = aui8_targetPositionOffset + cui_copyByteCnt;
-    c_data.setDataFromString( aui8_targetPositionOffset, apb_data, cui_copyByteCnt);
+    msui8_len = aui8_targetPositionOffset + cui_copyByteCnt;
+    msc_data.setDataFromString( aui8_targetPositionOffset, apb_data, cui_copyByteCnt);
   }
 }
 
@@ -213,10 +213,10 @@ void CanPkg_c::setDataFromString(uint8_t aui8_targetPositionOffset, const uint8_
 bool CanPkg_c::operator==(const CanPkg_c& arc_cmp) const
 {
   bool b_result = true;
-  if (c_data != arc_cmp.c_data) b_result = false;
-  if (c_ident != arc_cmp.c_ident) b_result = false;
-  if (ui8_len != arc_cmp.ui8_len) b_result = false;
-  if (i32_time != arc_cmp.i32_time) b_result = false;
+  if (msc_data != arc_cmp.msc_data) b_result = false;
+  if (msc_ident != arc_cmp.msc_ident) b_result = false;
+  if (msui8_len != arc_cmp.msui8_len) b_result = false;
+  if (msi32_time != arc_cmp.msi32_time) b_result = false;
   return b_result;
 }
 */
@@ -235,10 +235,10 @@ bool CanPkg_c::operator!=(const CanPkg_c& arc_cmp) const
 
   bool b_result = true;
 
-  if (c_data == arc_cmp.c_data) b_result = false;
-  if (c_ident == arc_cmp.c_ident) b_result = false;
-  if (ui8_len == arc_cmp.ui8_len) b_result = false;
-  if (i32_time == arc_cmp.i32_time) b_result = false;
+  if (msc_data == arc_cmp.msc_data) b_result = false;
+  if (msc_ident == arc_cmp.msc_ident) b_result = false;
+  if (msui8_len == arc_cmp.msui8_len) b_result = false;
+  if (msi32_time == arc_cmp.msi32_time) b_result = false;
 
   return b_result;
   return false;

@@ -103,10 +103,10 @@ namespace __IsoAgLib {
 
 /** default constructor for MsgObj_c which only init all member values defined start state */
 MsgObj_c::MsgObj_c()
-  : arrFilterBoxIndex()
+  : marr_filterBoxIndex()
 {
   // set all member variables to initial values
-  c_filter.setEmpty(true);
+  mc_filter.setEmpty(true);
   setBusNumber(0);
   setMsgObjNr(0);
   setIsOpen(false);
@@ -120,7 +120,7 @@ MsgObj_c::MsgObj_c()
 */
 MsgObj_c::MsgObj_c(const MsgObj_c& src)
 { // set all member variables to the corresponding value from the source instance
-  c_filter = src.c_filter;
+  mc_filter = src.mc_filter;
   setMsgObjNr(src.msgObjNr());
 
 #if defined( CAN_INSTANCE_CNT ) && ( CAN_INSTANCE_CNT > 1 )
@@ -140,7 +140,7 @@ MsgObj_c::MsgObj_c(const MsgObj_c& src)
   for (int16_t i = 0; i < cnt_filterBox(); i++) arrPfilterBox[i] = src.arrPfilterBox[i];
   #else
   clearArrFbIdx();
-  arrFilterBoxIndex = src.arrFilterBoxIndex;
+  marr_filterBoxIndex = src.marr_filterBoxIndex;
   #endif
 }
 
@@ -148,7 +148,7 @@ MsgObj_c::MsgObj_c(const MsgObj_c& src)
 MsgObj_c::~MsgObj_c()
 {
   // check if this instances manges really a running BIOS Msg object
-  if ((cnt_filterBox() != 0) || (c_filter.ident() != 0)||(busNumber() != 0)||(msgObjNr() != 0))
+  if ((cnt_filterBox() != 0) || (mc_filter.ident() != 0)||(busNumber() != 0)||(msgObjNr() != 0))
   { // one of the values is different from the default setting
     if ((busNumber() < 2) && (msgObjNr() > 0) && (msgObjNr() < 16))
     { // CAN BUS number and the Msg Obj number are allowed
@@ -178,11 +178,11 @@ bool MsgObj_c::merge(MsgObj_c& right)
   << STL_NAMESPACE::hex
   #endif
   << right.filter().ident() << INTERNAL_DEBUG_DEVICE_ENDL;
-  INTERNAL_DEBUG_DEVICE << "MERGE : current OBJ filter = 0x" << c_filter.ident() << INTERNAL_DEBUG_DEVICE_ENDL;
+  INTERNAL_DEBUG_DEVICE << "MERGE : current OBJ filter = 0x" << mc_filter.ident() << INTERNAL_DEBUG_DEVICE_ENDL;
 
 #endif
   // use only common bits for t_filter
-  c_filter.ident_bitAnd(right.filter());
+  mc_filter.ident_bitAnd(right.filter());
 
 
   #if defined( DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION )
@@ -192,10 +192,10 @@ bool MsgObj_c::merge(MsgObj_c& right)
 
 
   // collect FilterBox_c references
-  while ( !right.arrFilterBoxIndex.empty() )
+  while ( !right.marr_filterBoxIndex.empty() )
   {
-    arrFilterBoxIndex.push_back( right.arrFilterBoxIndex.back() );
-    right.arrFilterBoxIndex.pop_back();
+    marr_filterBoxIndex.push_back( right.marr_filterBoxIndex.back() );
+    right.marr_filterBoxIndex.pop_back();
   }
 
   //exit function with success indication
@@ -208,7 +208,7 @@ bool MsgObj_c::merge(MsgObj_c& right)
 */
 void MsgObj_c::close()
 {
-  c_filter.setEmpty(true);
+  mc_filter.setEmpty(true);
 
   // the member function closeCan checks isOpen() and closes the BIOS object
   // if needed
@@ -235,7 +235,7 @@ bool MsgObj_c::insertFilterBox(FilterRef arc_box)
   {
 
     // check if given FilterRef is already registered
-   if ( arrFilterBoxIndex[i] == (*arc_box).getFbVecIdx() )
+   if ( marr_filterBoxIndex[i] == (*arc_box).getFbVecIdx() )
 
 
     {
@@ -246,13 +246,13 @@ bool MsgObj_c::insertFilterBox(FilterRef arc_box)
       return true;
     }
   }
-  const unsigned int cui_oldSize = arrFilterBoxIndex.size();
-  arrFilterBoxIndex.push_back( (*arc_box).getFbVecIdx() );
+  const unsigned int cui_oldSize = marr_filterBoxIndex.size();
+  marr_filterBoxIndex.push_back( (*arc_box).getFbVecIdx() );
  #ifdef DEBUG
   INTERNAL_DEBUG_DEVICE << "Inserted the index"
         << (*arc_box).getFbVecIdx() << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
-  if ( arrFilterBoxIndex.size() > cui_oldSize )
+  if ( marr_filterBoxIndex.size() > cui_oldSize )
   { // fine
 
 
@@ -279,11 +279,11 @@ bool MsgObj_c::deleteFilterBox(FilterRef arc_box)
 {
   bool b_result = false;
 
-  for ( STL_NAMESPACE::vector<int32_t>::iterator iter = arrFilterBoxIndex.begin() ; iter != arrFilterBoxIndex.end(); iter++ )
+  for ( STL_NAMESPACE::vector<int32_t>::iterator iter = marr_filterBoxIndex.begin() ; iter != marr_filterBoxIndex.end(); iter++ )
   {
     if ( *iter == (*arc_box).getFbVecIdx() )
     { // to be deleted iterator is found
-      arrFilterBoxIndex.erase( iter );
+      marr_filterBoxIndex.erase( iter );
       b_result = true;
       break;
     }
@@ -318,21 +318,21 @@ bool MsgObj_c::configCan(uint8_t aui8_busNumber, uint8_t aui8_msgNr)
   }
   else
   { // values are o.k.
-    // store ui8_busNumber for later close of can
+    // store mui8_busNumber for later close of can
     setBusNumber(aui8_busNumber);
     setMsgObjNr(aui8_msgNr);
 
     //store busNumber and msgNr for each filterBox
     for(uint8_t i = 0; i < cnt_filterBox(); i++)
     {
-      getFilterBoxInstance(arrFilterBoxIndex[i]).configCan(aui8_busNumber, aui8_msgNr);
+      getFilterBoxInstance(marr_filterBoxIndex[i]).configCan(aui8_busNumber, aui8_msgNr);
     }
 
 
   }
 
 
-  switch (HAL::can_configMsgobjInit(aui8_busNumber, aui8_msgNr, c_filter, 0))
+  switch (HAL::can_configMsgobjInit(aui8_busNumber, aui8_msgNr, mc_filter, 0))
   {
     case HAL_NO_ERR:
       /* no error -> clear error state */
@@ -403,7 +403,7 @@ bool MsgObj_c::verifyBusMsgobjNr(int8_t ac_busNr, int8_t ac_msgobjNr)
 */
 void MsgObj_c::commonFilterAfterMerge( Ident_c& arc_globalMask )
 { // clear any bits which are no more used in the current global mask
-  c_filter.ident_bitAnd( arc_globalMask );
+  mc_filter.ident_bitAnd( arc_globalMask );
 }
 
 
@@ -495,7 +495,7 @@ bool MsgObj_c::prepareIrqTable(uint8_t aui8_busNum,uint8_t aui8_objNr,int32_t* c
 
   }
 
-    bool b_ret = HAL::updateTable(aui8_busNum,aui8_objNr,arrFilterBoxIndex.size(),p_newTable);
+    bool b_ret = HAL::updateTable(aui8_busNum,aui8_objNr,marr_filterBoxIndex.size(),p_newTable);
     if(b_ret == false)
       return false;
 
@@ -505,7 +505,7 @@ bool MsgObj_c::prepareIrqTable(uint8_t aui8_busNum,uint8_t aui8_objNr,int32_t* c
 bool MsgObj_c::msgObjUpdateTable(uint8_t aui8_busNumber, uint8_t aui8_msgObjNr)
 {
 
-    bool b_ret = prepareIrqTable(aui8_busNumber,aui8_msgObjNr,&arrFilterBoxIndex[0],arrFilterBoxIndex.size());
+    bool b_ret = prepareIrqTable(aui8_busNumber,aui8_msgObjNr,&marr_filterBoxIndex[0],marr_filterBoxIndex.size());
 
     if(b_ret == false)
       return false;
@@ -526,39 +526,39 @@ INTERNAL_DEBUG_DEVICE << "MY FILTER = "
 #ifdef SYSTEM_PC
 << STL_NAMESPACE::hex
 #endif
-<< c_filter.ident() << INTERNAL_DEBUG_DEVICE_ENDL;
+<< mc_filter.ident() << INTERNAL_DEBUG_DEVICE_ENDL;
 
 
 for ( int i = 0; i < cnt_filterBox(); i++ )
   {
 
 
-    INTERNAL_DEBUG_DEVICE << "    MSGOBJ::arrFilterBoxIndex : FilterBox nr: " << i;
+    INTERNAL_DEBUG_DEVICE << "    MSGOBJ::marr_filterBoxIndex : FilterBox nr: " << i;
     INTERNAL_DEBUG_DEVICE  <<  "FilterBox: 0x"
 	#ifdef SYSTEM_PC
     << STL_NAMESPACE::hex
 	#endif
-    << getFilterBoxInstance(arrFilterBoxIndex[i]).filter().ident()
+    << getFilterBoxInstance(marr_filterBoxIndex[i]).filter().ident()
       << ", Mask: 0x"
 	  #ifdef SYSTEM_PC
       << STL_NAMESPACE::hex
 	  #endif
-      << getFilterBoxInstance(arrFilterBoxIndex[i]).mask().ident()
+      << getFilterBoxInstance(marr_filterBoxIndex[i]).mask().ident()
       << ", Additional Mask: 0x"
 	  #ifdef SYSTEM_PC
       << STL_NAMESPACE::hex
 	  #endif
-      << getFilterBoxInstance(arrFilterBoxIndex[i]).additionalMask().ident();
+      << getFilterBoxInstance(marr_filterBoxIndex[i]).additionalMask().ident();
    INTERNAL_DEBUG_DEVICE  << ", IdentType: "
    #ifdef SYSTEM_PC
    << STL_NAMESPACE::dec
    #endif
-   << getFilterBoxInstance(arrFilterBoxIndex[i]).identType()
+   << getFilterBoxInstance(marr_filterBoxIndex[i]).identType()
     << ", FilterBox index : "
 	#ifdef SYSTEM_PC
     << STL_NAMESPACE::dec
     #endif
-    << getFilterBoxInstance(arrFilterBoxIndex[i]).getFbVecIdx();
+    << getFilterBoxInstance(marr_filterBoxIndex[i]).getFbVecIdx();
    INTERNAL_DEBUG_DEVICE <<  INTERNAL_DEBUG_DEVICE_ENDL;
 
   }

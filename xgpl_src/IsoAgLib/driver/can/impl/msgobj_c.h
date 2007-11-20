@@ -192,23 +192,23 @@ public:
     @return true -> other MsgObj_c has same filter
   */
   inline bool operator==(const MsgObj_c& arc_other)const
-    {return (arc_other.filter() == c_filter);}
+    {return (arc_other.filter() == mc_filter);}
 
   /** set t_filter of this MsgObj_c
     @param arc_val filter to set for this MsgObj_c
   */
- inline void setFilter(const Ident_c& arc_val){c_filter = arc_val;}
+ inline void setFilter(const Ident_c& arc_val){mc_filter = arc_val;}
 
 
   /** get the t_filter of this MsgObj_c
     @return filter of this MsgObj_c instance
   */
-  inline const Ident_c& filter() const {return c_filter;}
+  inline const Ident_c& filter() const {return mc_filter;}
   /** update the ident value with the given mask --> clear any bit in ident, which are not set in given mask.
       Update the mask only, when the ident type of the referenced mask is the same.
     */
   void updateFilterWithMask( const Ident_c& arc_mask )
-    { c_filter.updateWithMask( arc_mask );}
+    { mc_filter.updateWithMask( arc_mask );}
 
   /** get the common filter part of all merged FilterBox instances
     @return common filter of all FilterBoxes in this MsgObj_c instance
@@ -219,7 +219,7 @@ public:
     @param arc_filter compared filter setting
   */
   bool equalFilter(const Ident_c& arc_filter) const
-    {return (arc_filter == c_filter)?true:false;}
+    {return (arc_filter == mc_filter)?true:false;}
 
   /** configures the CAN hardware of given Msg Object (uses BIOS function)
     possible errors:
@@ -260,7 +260,7 @@ public:
 
 
   void clearArrFbIdx(){
-    arrFilterBoxIndex.clear(); };
+    marr_filterBoxIndex.clear(); };
 
   /** deliver count of contained FilterBox_c pointers
     @return count of references to FilterBox_c instances
@@ -271,7 +271,7 @@ public:
     return bit_data.cnt_filterBox;
     #else
 
-      return arrFilterBoxIndex.size();
+      return marr_filterBoxIndex.size();
     #endif
   }
 
@@ -282,7 +282,7 @@ public:
   */
   void setIsOpen(bool rb_state){bit_data.isOpen = (rb_state)?1:0;}
 
-  bool msgObjUpdateTable(uint8_t ui8_busNumber, uint8_t ui8_msgObjNr);
+  bool msgObjUpdateTable(uint8_t aui8_busNumber, uint8_t aui8_msgObjNr);
 
   bool prepareIrqTable(uint8_t aui8_busNum,uint8_t aui8_objNr,int32_t* cp_elem, uint32_t aui32_numEl);
 
@@ -302,13 +302,13 @@ private:
 inline FilterBox_c& getFilterBoxInstance(int32_t ai32_fbIdx );
 
   // Private attributes
- /** array of index of the CanIo_c::arrFilterBox VECTOR*/
- STL_NAMESPACE::vector<int32_t> arrFilterBoxIndex;
+ /** array of index of the CanIo_c::m_arrFilterBox VECTOR*/
+ STL_NAMESPACE::vector<int32_t> marr_filterBoxIndex;
 
 
 
   /** Ident_c filter for this msgObj */
-  Ident_c c_filter;
+  Ident_c mc_filter;
 
   /** msgObjNr */
   struct {

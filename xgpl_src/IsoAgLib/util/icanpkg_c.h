@@ -245,7 +245,7 @@ public:
 
   /** copy the data bytes from the CanPkg_c to the given uint8_t* pointer.
       the pointed array must be at least 8 byte in size.
-      This function copies as many byte as are defined by ui8_len.
+      This function copies as many byte as are defined by msui8_len.
     */
   static void getDataToString( uint8_t* pui8_targetData )
     { CanPkg_c::getDataToString (pui8_targetData); }

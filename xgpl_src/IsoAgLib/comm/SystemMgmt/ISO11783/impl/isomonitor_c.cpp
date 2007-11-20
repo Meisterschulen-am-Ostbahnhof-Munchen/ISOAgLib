@@ -1441,13 +1441,13 @@ IsoMonitor_c::updateEarlierAndLatestInterval()
 {
   if (getTimePeriod() <= 250)
   { // use HARD-Timing
-    ui16_earlierInterval = 0;
-    ui16_latestInterval  = (getTimePeriod() / 2);
+    mui16_earlierInterval = 0;
+    mui16_latestInterval  = (getTimePeriod() / 2);
   }
   else
   { // use SOFT-Timing (using jitter for earlier/after
-    ui16_earlierInterval = ( (getTimePeriod() * 3) / 4);
-    ui16_latestInterval  =    getTimePeriod();
+    mui16_earlierInterval = ( (getTimePeriod() * 3) / 4);
+    mui16_latestInterval  =    getTimePeriod();
   }
 }
 

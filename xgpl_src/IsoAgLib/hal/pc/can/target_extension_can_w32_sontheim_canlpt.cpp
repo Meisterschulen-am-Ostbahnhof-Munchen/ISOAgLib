@@ -201,7 +201,7 @@ int16_t loadDllFunctionAddresses(void)
 {
   DLL_loaded = false;
 
-  // if ((int) (hCAPIDLL = LoadLibrary ("C:\\Hör\\AKTUELL\\Canapi_CanLPT\\Software\\PC\\api\\Release\\CANAPI.DLL")) <=  HINSTANCE_ERROR) {
+  // if ((int) (hCAPIDLL = LoadLibrary ("C:\\Hï¿½r\\AKTUELL\\Canapi_CanLPT\\Software\\PC\\api\\Release\\CANAPI.DLL")) <=  HINSTANCE_ERROR) {
   if ((int) (hCAPIDLL = LoadLibrary ("CANAPI.DLL")) <=  HINSTANCE_ERROR) {
        printf ("ERROR - CAN Library could NOT be opened!!!\n");
     return HAL_CONFIG_ERR;
