@@ -1089,7 +1089,7 @@ namespace __IsoAgLib {
     number2LittleEndianString( ui16_driftSpeedCmSec, writeRef );              /// not init'ed  /// NOT there in the RAPID UPDATE one
 
     //now trigger sending
-    #ifdef SEND_NMEA2000_FAST_PACKET
+    #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
     if ( getMultiSendInstance4Comm().sendIsoFastPacket(mc_sendGpsISOName, &mc_nmea2000Streamer, NMEA_GPS_DIRECTION_DATA_PGN, mt_multiSendSuccessState) )
     #else
     if ( getMultiSendInstance4Comm().sendIsoBroadcast(mc_sendGpsISOName, &mc_nmea2000Streamer, NMEA_GPS_DIRECTION_DATA_PGN, mt_multiSendSuccessState) )
@@ -1231,7 +1231,7 @@ void TimePosGPS_c::isoSendDirection( void )
     }
 
     //now trigger sending
-    #ifdef SEND_NMEA2000_FAST_PACKET
+    #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
     if ( getMultiSendInstance4Comm().sendIsoFastPacketBroadcast(mc_sendGpsISOName, &mc_nmea2000Streamer, NMEA_GPS_POSITION_DATA_PGN, mt_multiSendSuccessState) )
     #else
     if ( getMultiSendInstance4Comm().sendIsoBroadcast(mc_sendGpsISOName, &mc_nmea2000Streamer, NMEA_GPS_POSITION_DATA_PGN, mt_multiSendSuccessState) )
