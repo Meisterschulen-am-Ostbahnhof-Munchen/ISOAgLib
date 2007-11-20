@@ -218,6 +218,12 @@
    all generated ISO Terminal Object Pool Definitions */
 #include "MaskDefinition/simpleVTIsoPool_direct.h"
 
+#ifdef SYSTEM_PC
+  #ifdef WIN32
+    #include <windows.h>
+  #endif
+#endif
+
 
 // the interface objects of the IsoAgLib are placed in the IsoAgLib namespace
 // -> include all elements of this area for easy access

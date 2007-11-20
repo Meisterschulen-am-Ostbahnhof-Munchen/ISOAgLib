@@ -230,6 +230,13 @@
   #define LOG_INFO getIrs232Instance()
 #endif
 
+#ifdef SYSTEM_PC
+  #ifdef WIN32
+    #include <windows.h>
+  #endif
+#endif
+
+
 // the interface objects of the IsoAgLib are placed in the IsoAgLibAll namespace
 // -> include all elements of this area for easy access
 // with this command the text part "IsoAgLib::" can be avoided, which

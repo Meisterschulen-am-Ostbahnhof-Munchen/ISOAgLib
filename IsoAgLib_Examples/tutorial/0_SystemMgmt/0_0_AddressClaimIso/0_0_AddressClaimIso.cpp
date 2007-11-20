@@ -195,8 +195,10 @@
 #include <IsoAgLib/comm/Scheduler/ischeduler_c.h>
 #include <IsoAgLib/comm/SystemMgmt/iidentitem_c.h>
 
-#ifdef WIN32
-#include <windows.h>
+#ifdef SYSTEM_PC
+  #ifdef WIN32
+    #include <windows.h>
+  #endif
 #endif
 
 // the interface objects of the IsoAgLib are placed in the IsoAgLibAll namespace

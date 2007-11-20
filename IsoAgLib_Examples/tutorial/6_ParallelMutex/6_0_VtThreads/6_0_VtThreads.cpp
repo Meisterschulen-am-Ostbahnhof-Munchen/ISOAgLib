@@ -238,6 +238,11 @@ const int ci_taskTimeTask2 = 1500;         // interval task 2 = 5 * 10 ms = 50 m
 
 #endif
 
+#ifdef SYSTEM_PC
+  #ifdef WIN32
+    #include <windows.h>
+  #endif
+#endif
 
 
 // the interface objects of the IsoAgLib are placed in the IsoAgLib namespace

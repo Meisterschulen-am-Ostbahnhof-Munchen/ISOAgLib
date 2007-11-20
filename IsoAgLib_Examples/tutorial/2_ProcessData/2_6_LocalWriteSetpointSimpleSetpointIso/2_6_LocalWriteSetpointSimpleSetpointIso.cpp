@@ -236,6 +236,11 @@
   #include <IsoAgLib/comm/Process/processdatachangehandler_c.h>
 #endif
 
+#ifdef SYSTEM_PC
+  #ifdef WIN32
+    #include <windows.h>
+  #endif
+#endif
 
 
 // the interface objects of the IsoAgLib are placed in the IsoAgLibAll namespace

@@ -88,6 +88,13 @@
 #include "IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h"
 
 
+#ifdef SYSTEM_PC
+  #ifdef WIN32
+    #include <windows.h>
+  #endif
+#endif
+
+
 /** for a second client (look at c_remoteECU and c_myIdent)
     compile with the following define set: */
 //#define PROP_CLIENT_B

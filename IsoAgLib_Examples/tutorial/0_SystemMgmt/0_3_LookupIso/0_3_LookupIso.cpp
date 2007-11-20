@@ -217,8 +217,10 @@
 #include <IsoAgLib/comm/SystemMgmt/iidentitem_c.h>
 #include <IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h>
 
-#ifdef WIN32
-#include <windows.h>
+#ifdef SYSTEM_PC
+  #ifdef WIN32
+    #include <windows.h>
+  #endif
 #endif
 
 // the interface objects of the IsoAgLib are placed in the IsoAgLibAll namespace
