@@ -977,6 +977,10 @@ int16_t CanIo_c::processMsg(){
   if ( mb_runningCanProcess ) return -1;
   mb_runningCanProcess = true;
   mui8_processedMsgCnt = 0;
+ 
+#ifdef DEBUG_CAN_BUFFER_FILLING
+  bool b_detectedOverflow = false;
+#endif
 
 
   int32_t i32_fbIdx;
@@ -1043,17 +1047,17 @@ uint32_t ui32_msgNbr;
 
           #ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
           HAL::can_stateMsgobjOverflow(mui8_busNumber, i32_ident );
-          #endif
 
           #ifdef DEBUG_CAN_BUFFER_FILLING
           if ( ! b_detectedOverflow )
           {
             INTERNAL_DEBUG_DEVICE << "\r\nALARM!!!!!! CAN Buffer Overflow at MsgObj: "
-              << uint16_t(i32_ident) << " at BUS: " << uint16_t(rui8_busNumber)
-              << " with Ident: " << mc_filter.ident()
+              << uint16_t(ui32_msgNbr) << " at BUS: " << uint16_t(mui8_busNumber)
+              << " with Ident: " << i32_ident 
               << INTERNAL_DEBUG_DEVICE_ENDL;
           }
           b_detectedOverflow = true;
+	  #endif
           #endif
           b_forceProcessAll = true;
           break;
