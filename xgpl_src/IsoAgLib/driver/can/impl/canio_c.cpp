@@ -286,7 +286,6 @@ CanIo_c::singletonInit()
       firstDefaultInitCallEnd = false;
       INTERNAL_DEBUG_DEVICE
           << "Ende CanIo_c::init() mit Default Werten bei spc_instance == "
-	  << DEF_GET_POINTER_ADR_DEBUG_OUTPUT( spc_instance )
           << INTERNAL_DEBUG_DEVICE_ENDL;
     }
     #endif
@@ -977,7 +976,7 @@ int16_t CanIo_c::processMsg(){
   if ( mb_runningCanProcess ) return -1;
   mb_runningCanProcess = true;
   mui8_processedMsgCnt = 0;
- 
+
 #ifdef DEBUG_CAN_BUFFER_FILLING
   bool b_detectedOverflow = false;
 #endif
@@ -1053,7 +1052,7 @@ uint32_t ui32_msgNbr;
           {
             INTERNAL_DEBUG_DEVICE << "\r\nALARM!!!!!! CAN Buffer Overflow at MsgObj: "
               << uint16_t(ui32_msgNbr) << " at BUS: " << uint16_t(mui8_busNumber)
-              << " with Ident: " << i32_ident 
+              << " with Ident: " << i32_ident
               << INTERNAL_DEBUG_DEVICE_ENDL;
           }
           b_detectedOverflow = true;
@@ -2329,12 +2328,7 @@ void CanIo_c::printMyFilterBox(){
         << std::hex
     #endif
         << m_arrFilterBox[i].mask().ident()
-        << ", Additional Mask: 0x"
-    #ifdef SYSTEM_PC
-        << std::hex
-    #endif
-        << m_arrFilterBox[i].additionalMask().ident();
-      INTERNAL_DEBUG_DEVICE  << ", IdentType: "
+        << ", IdentType: "
     #ifdef SYSTEM_PC
       << std::dec
       #endif

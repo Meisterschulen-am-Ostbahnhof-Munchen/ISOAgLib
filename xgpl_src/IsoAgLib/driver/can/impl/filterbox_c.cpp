@@ -111,7 +111,6 @@ FilterBox_c::FilterBox_c()
   :
     mc_filter(0, Ident_c::StandardIdent),
     mc_mask(0, Ident_c::StandardIdent),
-    mc_additionalMask(~0, Ident_c::StandardIdent), // additional Mask set to "all-1s", so it defaults to "no additional mask".
     mui8_filterBoxNr(IdleState),
     mui8_busNumber(IdleState),
     mi32_fbVecIdx(-1)
@@ -122,35 +121,6 @@ FilterBox_c::FilterBox_c()
 {}
 
 /**
-  constructor with parameter values setting specific start state with
-  setting pointer to the root CanIo_c and to the according CANCustomer
-  instance; even define specific mask and filter setting
-
-  @param apc_customer  pointer to the CanCustomer_c instance, which creates this FilterBox_c instance
-  @param at_mask       mask for this Filer_Box (MASK_TYPE defined in isoaglib_config.h)
-  @param at_filter     filter for this Filer_Box (MASK_TYPE defined in isoaglib_config.h)
-
-
-  @param ren_E         select if FilterBox_c is used for standard 11bit or extended 29bit ident
-  @param apc_filterBox optional parameter for getting to filterboxes connected together into the same MsgObj!
-  @exception badAlloc
-FilterBox_c::FilterBox_c(CanCustomer_c * rrpc_customer,
-                         MASK_TYPE at_mask, MASK_TYPE at_filter,
-                         Ident_c::identType_t ren_identType, FilterBox_c* apc_filterBox)
-  : mc_filter(at_filter, ren_identType),
-    mc_mask(at_mask, ren_identType),
-    mc_additionalMask( (apc_filterBox == NULL) ? (~0) : (~(apc_filterBox->mc_filter.ident() ^ at_filter)), ren_identType),
-    mvec_customer(1,rrpc_customer),
-    mui8_filterBoxNr( (apc_filterBox == NULL) ? (IdleState) : (apc_filterBox->mui8_filterBoxNr) ),
-    mui8_busNumber( (apc_filterBox == NULL) ? (IdleState) : (apc_filterBox->mui8_busNumber) )
-#if ((defined( USE_ISO_11783)) \
-     && ((CAN_INSTANCE_CNT > PRT_INSTANCE_CNT) || defined(ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL)))
-    , mb_performIsobusResolve(apc_filterBox->mb_performIsobusResolve)
-  #endif
-{}
-*/
-
-/**
   copy constructor which uses data of another FilterBox_c instance
 
   @param arc_src reference to the source FilterBox_c instance for copying
@@ -159,7 +129,6 @@ FilterBox_c::FilterBox_c(CanCustomer_c * rrpc_customer,
 FilterBox_c::FilterBox_c(const FilterBox_c& arc_src)
   : mc_filter(arc_src.mc_filter),
     mc_mask(arc_src.mc_mask),
-    mc_additionalMask(arc_src.mc_additionalMask),
     mvec_customer(arc_src.mvec_customer),
     mui8_filterBoxNr(arc_src.mui8_filterBoxNr),
     mui8_busNumber(arc_src.mui8_busNumber),
@@ -196,7 +165,6 @@ FilterBox_c& FilterBox_c::operator=(const FilterBox_c& arc_src){
 
     mc_filter = arc_src.mc_filter;
     mc_mask = arc_src.mc_mask;
-    mc_additionalMask = arc_src.mc_additionalMask;
     mui8_busNumber = arc_src.mui8_busNumber;
     mui8_filterBoxNr = arc_src.mui8_filterBoxNr;
     mi32_fbVecIdx = arc_src.mi32_fbVecIdx;
@@ -213,7 +181,6 @@ void FilterBox_c::clearData()
   mc_filter.set(0, DEFAULT_IDENT_TYPE);
   mc_filter.setEmpty(true);
   mc_mask.setEmpty(true);
-  mc_additionalMask.set(~0, DEFAULT_IDENT_TYPE);
   mui8_busNumber = IdleState;
   mui8_filterBoxNr = IdleState;
   mi32_fbVecIdx = InvalidIdx;
@@ -356,8 +323,6 @@ void FilterBox_c::set (const Ident_c& arc_mask,
   { // push back new
     mvec_customer.push_back (CustomerLen_s (apc_customer, ai8_dlcForce));
   }
-
-  mc_additionalMask.set (~0, mc_mask.identType());
 };
 
 bool FilterBox_c::equalCustomer( const __IsoAgLib::CanCustomer_c& ar_customer ) const

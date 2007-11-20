@@ -138,26 +138,6 @@ public:
   */
   FilterBox_c();
 
-  /** constructor with parameter values setting specific start state with
-    setting pointer to the root CanIo_c and to the according CANCustomer
-    instance; even define specific mask and filter setting
-
-     @param apc_customer pointer to the CanCustomer_c instance, which creates this FilterBox_c instance
-    @param at_mask mask for this Filer_Box (MASK_TYPE defined in isoaglib_config.h)
-    @param at_filter filter for this Filer_Box (MASK_TYPE defined in isoaglib_config.h)
-
-    @param ren_identType select if FilterBox_c is used for standard 11bit or extended 29bit ident
-    @param apc_filterBox optional parameter for getting to filterboxes connected together into the same MsgObj!
-     @exception badAlloc
-  */
-
- FilterBox_c(CanCustomer_c* apc_customer,
-              MASK_TYPE at_mask, MASK_TYPE at_filter,
-              Ident_c::identType_t ren_identType = Ident_c::StandardIdent, FilterBox_c* apc_filterBox = NULL);
-
-
-
-
   /** copy constructor which uses data of another FilterBox_c instance
     @param arc_src reference to the source FilterBox_c instance for copying
      @exception badAlloc
@@ -262,11 +242,6 @@ public:
   */
   const Ident_c& mask() const {return mc_mask;}
 
-  /** deliver const reference to additionalMask Ident
-    @return const reference to additionalMask Ident_c instance
-  */
-  const Ident_c& additionalMask() const {return mc_additionalMask;}
-
   /** deliver const reference to filter Ident
     @return const reference to filter Ident_c instance
   */
@@ -303,9 +278,6 @@ private:
 
   /** mc_mask for this FilterBox_c instance */
   Ident_c mc_mask;
-
-  /** mc_additionalMask for this FilterBox_c insance (used for intentionally merging objects to one MsgObj! */
-  Ident_c mc_additionalMask;
 
   /**vector of pointer to pc_customer CanCustomer_c  which works with the received CAN data */
   STL_NAMESPACE::vector<CustomerLen_s> mvec_customer;
