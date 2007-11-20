@@ -11,7 +11,7 @@ PROJECT=tractorconsole
 
 # define the project author
 # - used for IDE project file types, where the author is stored in the project file
-PROJECT_AUTHOR=MyName
+PROJECT_AUTHOR="My Name"
 PROJECT_AUTHOR_EMAIL=MyEmail@Location
 
 # ###############################################################
@@ -160,6 +160,11 @@ PRJ_ISO11783=1
 # PRJ_ISO_TERMINAL=0
 # PRJ_DIN9684=0
 # PRJ_DIN_TERMINAL=0
+
+# if you Transport Protocol (TP/ETP) or FastPacket, active PRJ_MULTIPACKET=1
+# note: this is done automatically if other features
+# require it (e.g. PRJ_ISO_TERMINAL=1 will implicitly set PRJ_MULTIPACKET=1)
+# PRJ_MULTIPACKET=1
 
 # select stream receive strategy:
 # chunk (default): use list of chunks where each receive burst is stored in one chunk -> usefull when on-the-fly parsing is used
