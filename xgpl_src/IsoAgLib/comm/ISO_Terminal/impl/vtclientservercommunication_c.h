@@ -513,7 +513,7 @@ private:
   void setVtDisplayState (bool b_isVtStatusMsg, uint8_t ui8_saOrDisplayState);
 
   /// Using the singletonVecKey from mc_data (-->IsoTerminalPkg_c)
-  SINGLETON_MC_DATA_DEF
+  SINGLETON_PAR_DOT_DEF(mc_data)
 
 private: // attributes
   /** static instance to store temporarily before push_back into list */
@@ -581,7 +581,7 @@ private: // attributes
   // ( single instance allocation can also cause time problems and could result in heavy
   //   memory fragmentation ==>> here CHUNK Alloc is the only choice )
   #ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
-  STL_NAMESPACE::list<SendUpload_c,STL_NAMESPACE::__malloc_alloc_template<0> >  mq_sendUpload;
+  STL_NAMESPACE::list<SendUpload_c,MALLOC_TEMPLATE(SendUpload_c) >  mq_sendUpload;
   #else
   STL_NAMESPACE::list<SendUpload_c>  mq_sendUpload;
   #endif

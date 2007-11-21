@@ -5,6 +5,10 @@
 
 #include "../compiler_adaptation.h"
 
+#if defined(OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED) && defined( __GNUC__ ) && __GNUC__ >= 4
+  #include <ext/malloc_allocator.h>
+#endif
+
 #if defined(PRT_INSTANCE_CNT) && (PRT_INSTANCE_CNT != 1 )
   /** the macro SINGLETON allows to define classes independent from the value
     * of PRT_INSTANCE_CNT, so that the compiler selects the appropriate base class during
@@ -98,11 +102,14 @@
   #define SINGLETON_VEC_KEY_PARAMETER_DEF               int ai_singletonVecKey
   #define SINGLETON_VEC_KEY_PARAMETER_DEFAULT_NULL_DEF  int ai_singletonVecKey = 0
   #define SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA  , int ai_singletonVecKey
+  #define SINGLETON_VEC_KEY_PARAMETER_DEFAULT_NULL_DEF_WITH_COMMA , int ai_singletonVecKey = 0
   #define SINGLETON_VEC_KEY_PARAMETER_USE               ai_singletonVecKey
   #define SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA  , ai_singletonVecKey
 
-  #define SINGLETON_MC_DATA_DEF                     int getSingletonVecKey() const { return mc_data.getSingletonVecKey(); }
-  #define SINGLETON_MC_DATA_DEF_INTERFACE(PAR)       int getSingletonVecKey() const { return PAR::getSingletonVecKey(); }
+  #define SINGLETON_PAR_DOT_DEF(PAR)                     int getSingletonVecKey() const { return PAR.getSingletonVecKey(); }
+  #define SINGLETON_PAR_ARR_DEF(PAR)                     int getSingletonVecKey() const { return PAR->getSingletonVecKey(); }
+  #define SINGLETON_PAR_BASE_DEF(PAR)       int getSingletonVecKey() const { return PAR::getSingletonVecKey(); }
+  #define SINGLETON_MC_DATA_ASSIGN                   mc_data.setSingletonKey( ai_singletonVecKey );
   #define SINGLETON_MEMBER_DEF               ClientBase c_clientBase; \
                                                     int getSingletonVecKey() const { return c_clientBase.getSingletonVecKey(); }
   #define SINGLETON_MEMBER_ASSIGN(PAR)     c_clientBase.setSingletonKey (PAR.c_clientBase.getSingletonVecKey());
@@ -131,6 +138,7 @@
   #define getMaskHandlerInstance4Comm()     getMaskHandlerInstance(getSingletonVecKey())
   #define getIsoFilterManagerInstance4Comm() getIsoFilterManagerInstance(getSingletonVecKey())
   #define getMasterGuiInstance4Comm()       getMasterGuiInstance(getSingletonVecKey())
+  #define getProprietaryMessageHandlerInstance4Comm() getProprietaryMessageHandlerInstance(getSingletonVecKey())
 
 /** the class ClientBase delivers the base information, to concat client class instances
     * with the corresponding server class instance. This is realized by the single
@@ -238,9 +246,11 @@
   #define SINGLETON_VEC_KEY_PARAMETER_USE
   #define SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA
 
-  #define SINGLETON_MC_DATA_DEF
-  #define SINGLETON_MC_DATA_DEF_INTERFACE(PAR)
+  #define SINGLETON_PAR_DOT_DEF(PAR)
+  #define SINGLETON_PAR_ARR_DEF(PAR)
+  #define SINGLETON_PAR_BASE_DEF(PAR)
 
+  #define SINGLETON_MC_DATA_ASSIGN
   #define SINGLETON_MEMBER_DEF
   #define SINGLETON_MEMBER_ASSIGN(PAR)
   #define SINGLETON_MEMBER_CONSTRUCTOR
@@ -267,6 +277,7 @@
   #define getMaskHandlerInstance4Comm()   getMaskHandlerInstance()
   #define getIsoFilterManagerInstance4Comm() getIsoFilterManagerInstance()
   #define getMasterGuiInstance4Comm()     getMasterGuiInstance()
+  #define getProprietaryMessageHandlerInstance4Comm() getProprietaryMessageHandlerInstance()
 
   /** the class ClientBase delivers the base information, to concat client class instances
     * with the corresponding server class instance. This is realized by the single

@@ -165,6 +165,13 @@ class TimePosGPS_c : public SingletonTimePosGps_c
   /* ********************************************* */
   /** \name Management Functions for class TimePosGPS_c  */
   /*@{*/
+
+  /** initialize directly after the singleton instance is created.
+      this is called from singleton.h and should NOT be called from the user again.
+      users please use init(...) instead.
+    */
+    void singletonInit();
+
   /** functions with actions, which must be performed periodically
       -> called periodically by Scheduler_c
       ==> sends base msg if configured in the needed rates

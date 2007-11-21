@@ -104,12 +104,14 @@ namespace __IsoAgLib {
   @param ab_started optional running state (default off)
   @param ai32_lastVal optional value of last trigger event (default 0)
 */
-MeasureSubprog_c::MeasureSubprog_c(Proc_c::type_t ren_type, Proc_c::doSend_t ren_doSend, int32_t ai32_increment, bool ab_started, int32_t ai32_lastVal){
-  men_type = ren_type;
-  men_doSend = ren_doSend;
-  mi32_increment = ai32_increment;
-  mb_started = ab_started;
-  mi32_lastVal = ai32_lastVal;
+MeasureSubprog_c::MeasureSubprog_c(Proc_c::type_t ren_type, Proc_c::doSend_t ren_doSend, int32_t ai32_increment SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA)
+: ClientBase( SINGLETON_VEC_KEY_PARAMETER_USE ),
+  men_type( ren_type ),
+  men_doSend( ren_doSend ),
+  mi32_increment( ai32_increment ),
+  mb_started( false ),
+  mi32_lastVal( 0 )
+{
 }
 #ifdef USE_FLOAT_DATA_TYPE
 /**
@@ -120,12 +122,14 @@ MeasureSubprog_c::MeasureSubprog_c(Proc_c::type_t ren_type, Proc_c::doSend_t ren
   @param ab_started optional running state (default off)
   @param af_lastVal optional value of last trigger event (default 0)
 */
-MeasureSubprog_c::MeasureSubprog_c(Proc_c::type_t ren_type, Proc_c::doSend_t ren_doSend, float af_increment, bool ab_started, float af_lastVal){
-  men_type = ren_type;
-  men_doSend = ren_doSend;
-  f_increment = af_increment;
-  mb_started = ab_started;
-  f_lastVal = af_lastVal;
+MeasureSubprog_c::MeasureSubprog_c(Proc_c::type_t ren_type, Proc_c::doSend_t ren_doSend, float af_increment SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA)
+: ClientBase( SINGLETON_VEC_KEY_PARAMETER_USE ),
+  men_type( ren_type ),
+  men_doSend( ren_doSend ),
+  f_increment( af_increment ),
+  mb_started( false ),
+  f_lastVal( 0.0 )
+{
 }
 #endif
 /**

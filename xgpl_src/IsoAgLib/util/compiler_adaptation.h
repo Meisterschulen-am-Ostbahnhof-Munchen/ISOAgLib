@@ -144,3 +144,9 @@
 #else
   #define USABLE_SLIST list
 #endif
+
+#if defined( __GNUC__ ) || __GNUC__ >= 4
+  #define MALLOC_TEMPLATE(PAR) __gnu_cxx::malloc_allocator<PAR>
+#else
+  #define MALLOC_TEMPLATE(PAR) STL_NAMESPACE::__malloc_alloc_template<0>
+#endif

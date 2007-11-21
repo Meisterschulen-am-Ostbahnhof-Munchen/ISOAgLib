@@ -248,7 +248,7 @@ MeasureProgBase_c::~MeasureProgBase_c(){
   else
   { // no subprog with same type exist -> insert new one
     const uint8_t b_oldSize = mvec_measureSubprog.size();
-    mvec_measureSubprog.push_front(MeasureSubprog_c(ren_type, ren_doSend, ai32_increment));
+    mvec_measureSubprog.push_front(MeasureSubprog_c(ren_type, ren_doSend, ai32_increment SINGLETON_VEC_KEY_WITH_COMMA));
     if (b_oldSize >= mvec_measureSubprog.size())
     { // array didn't grow
       getILibErrInstance().registerError( iLibErr_c::BadAlloc, iLibErr_c::Process );

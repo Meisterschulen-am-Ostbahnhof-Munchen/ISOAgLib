@@ -112,6 +112,16 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
   };
   #endif
 
+ /** initialize directly after the singleton instance is created.
+    this is called from singleton.h and should NOT be called from the user again.
+    users please use init(...) instead.
+  */
+  void TracGeneral_c::singletonInit()
+  { // singletonInit is called, AFTER the initializing instance() function has assigned a suitable
+    // singleton vec key - this key value is NOT available at construction time!!!
+    BaseCommon_c::singletonInitBase(SINGLETON_VEC_KEY);
+  }
+
   /** initialise element which can't be done during construct;
       above all create the needed FilterBox_c instances
       possible errors:

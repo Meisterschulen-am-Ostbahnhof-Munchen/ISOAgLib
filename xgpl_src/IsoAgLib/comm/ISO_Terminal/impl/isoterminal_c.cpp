@@ -207,7 +207,7 @@ IsoTerminal_c::initAndRegisterIsoObjectPool (IdentItem_c& rc_identItem, IsoAgLib
 {
   if (!rc_identItem.isMaster())
   {
-    /// IdentItem must be a Master 
+    /// IdentItem must be a Master
     #if defined (DEBUG)
     INTERNAL_DEBUG_DEVICE << "IdentItem is not Master!" << INTERNAL_DEBUG_DEVICE_ENDL;
     #if defined (SYSTEM_PC)
@@ -429,7 +429,7 @@ IsoTerminal_c::reactOnMonitorListAdd (const IsoName_c& rc_isoName, const IsoItem
   }
 
   // VtServerInstance not yet in list, so add it ...
-  ml_vtServerInst.push_back (VtServerInstance_c (*apc_newItem, rc_isoName, *this));
+  ml_vtServerInst.push_back (VtServerInstance_c (*apc_newItem, rc_isoName, *this SINGLETON_VEC_KEY_WITH_COMMA));
   VtServerInstance_c& r_vtServerInst = ml_vtServerInst.back();
 
   // ... and notify all vtClientServerComm instances
@@ -484,7 +484,7 @@ IsoTerminal_c::fakeVtProperties (uint16_t aui16_dimension, uint16_t aui16_skWidt
 {
   const IsoItem_c c_dummyIsoItem;
   // casting NULL to a reference is okay here, as the reference isn't used for any FAKE_VT case (iop_generator, etc.)
-  ml_vtServerInst.push_back (VtServerInstance_c (c_dummyIsoItem, IsoName_c::IsoNameUnspecified(), (*this)));
+  ml_vtServerInst.push_back (VtServerInstance_c (c_dummyIsoItem, IsoName_c::IsoNameUnspecified(), (*this) SINGLETON_VEC_KEY_WITH_COMMA));
   VtServerInstance_c& r_vtServerInst = ml_vtServerInst.back();
   r_vtServerInst.fakeVtProperties (aui16_dimension, aui16_skWidth, aui16_skHeight, aui16_colorDepth, aui16_fontSizes);
 

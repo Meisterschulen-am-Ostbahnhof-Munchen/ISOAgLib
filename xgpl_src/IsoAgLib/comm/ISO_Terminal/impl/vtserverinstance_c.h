@@ -121,7 +121,7 @@ class IsoTerminal_c;
 class VtClientServerCommunication_c;
 
 /** class for wrapping one vtserver instance */
-class VtServerInstance_c
+class VtServerInstance_c : public ClientBase
 {
 public:
   /** struct that stores the "Get Number Of Soft Keys Response",
@@ -198,7 +198,7 @@ private:
   /** private constructor which prevents direct instantiation in user application
     * NEVER define instance of IsoTerminal_c within application
     */
-  VtServerInstance_c(const IsoItem_c& r_newItem, IsoName_c c_newISOName, IsoTerminal_c& r_isoTerminal);
+  VtServerInstance_c(const IsoItem_c& r_newItem, IsoName_c c_newISOName, IsoTerminal_c& r_isoTerminal SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA);
 
 private: // attributes
   const IsoItem_c* mcpc_isoItem;

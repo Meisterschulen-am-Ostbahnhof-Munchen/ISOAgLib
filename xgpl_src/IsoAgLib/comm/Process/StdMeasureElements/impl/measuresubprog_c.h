@@ -1,5 +1,5 @@
 /***************************************************************************
-                          measuresubprog_c.h - Every increment type of a 
+                          measuresubprog_c.h - Every increment type of a
                                               measure prog is managed by a
                                               MeasureSubprog_c instance
                              -------------------
@@ -51,37 +51,37 @@
  * this file might be covered by the GNU General Public License.           *
  *                                                                         *
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
- * the main author Achim Spangler by a.spangler@osb-ag:de                  * 
- ***************************************************************************/ 
+ * the main author Achim Spangler by a.spangler@osb-ag:de                  *
+ ***************************************************************************/
 
  /**************************************************************************
- *                                                                         * 
- *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   * 
- * Each software module, which accesses directly elements of this file,    * 
- * is considered to be an extension of IsoAgLib and is thus covered by the * 
- * GPL license. Applications must use only the interface definition out-   * 
- * side :impl: subdirectories. Never access direct elements of __IsoAgLib  * 
- * and __HAL namespaces from applications which shouldnt be affected by    * 
- * the license. Only access their interface counterparts in the IsoAgLib   * 
- * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- * 
- * ion really needs access to a part of an internal namespace, so that the * 
- * interface might be extended if your request is accepted.                * 
- *                                                                         * 
- * Definition of direct access:                                            * 
- * - Instantiation of a variable with a datatype from internal namespace   * 
- * - Call of a (member-) function                                          * 
- * Allowed is:                                                             * 
- * - Instatiation of a variable with a datatype from interface namespace,  * 
- *   even if this is derived from a base class inside an internal namespace* 
- * - Call of member functions which are defined in the interface class     * 
- *   definition ( header )                                                 * 
- *                                                                         * 
- * Pairing of internal and interface classes:                              * 
- * - Internal implementation in an :impl: subdirectory                     * 
- * - Interface in the parent directory of the corresponding internal class * 
- * - Interface class name IsoAgLib::iFoo_c maps to the internal class      * 
- *   __IsoAgLib::Foo_c                                                     * 
- *                                                                         * 
+ *                                                                         *
+ *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   *
+ * Each software module, which accesses directly elements of this file,    *
+ * is considered to be an extension of IsoAgLib and is thus covered by the *
+ * GPL license. Applications must use only the interface definition out-   *
+ * side :impl: subdirectories. Never access direct elements of __IsoAgLib  *
+ * and __HAL namespaces from applications which shouldnt be affected by    *
+ * the license. Only access their interface counterparts in the IsoAgLib   *
+ * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- *
+ * ion really needs access to a part of an internal namespace, so that the *
+ * interface might be extended if your request is accepted.                *
+ *                                                                         *
+ * Definition of direct access:                                            *
+ * - Instantiation of a variable with a datatype from internal namespace   *
+ * - Call of a (member-) function                                          *
+ * Allowed is:                                                             *
+ * - Instatiation of a variable with a datatype from interface namespace,  *
+ *   even if this is derived from a base class inside an internal namespace*
+ * - Call of member functions which are defined in the interface class     *
+ *   definition ( header )                                                 *
+ *                                                                         *
+ * Pairing of internal and interface classes:                              *
+ * - Internal implementation in an :impl: subdirectory                     *
+ * - Interface in the parent directory of the corresponding internal class *
+ * - Interface class name IsoAgLib::iFoo_c maps to the internal class      *
+ *   __IsoAgLib::Foo_c                                                     *
+ *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 #ifndef MEASURE_SUBPROG_H
@@ -92,6 +92,7 @@
 /* *************************************** */
 #include <IsoAgLib/typedef.h>
 #include "../../impl/proc_c.h"
+#include <IsoAgLib/util/impl/singleton.h>
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
@@ -101,7 +102,7 @@ namespace __IsoAgLib {
   managed by a MeasureSubprog_c instance.
   @author Dipl.-Inform. Achim Spangler
 */
-class MeasureSubprog_c {
+class MeasureSubprog_c : public ClientBase {
 public:
   /**
     default constructor which can optionally set increment type, increment and running state
@@ -111,7 +112,7 @@ public:
     @param ab_started optional running state (default off)
     @param ai32_lastVal optional value of last trigger event (default 0)
   */
-  MeasureSubprog_c(Proc_c::type_t ren_type = Proc_c::TimeProp, Proc_c::doSend_t ren_doSend = Proc_c::DoVal, int32_t ai32_increment = 0, bool ab_started = false, int32_t ai32_lastVal = 0);
+  MeasureSubprog_c(Proc_c::type_t ren_type = Proc_c::TimeProp, Proc_c::doSend_t ren_doSend = Proc_c::DoVal, int32_t ai32_increment = 0  SINGLETON_VEC_KEY_PARAMETER_DEFAULT_NULL_DEF_WITH_COMMA);
 #ifdef USE_FLOAT_DATA_TYPE
   /**
     default constructor which can optionally set increment type, increment and running state
@@ -121,7 +122,7 @@ public:
     @param ab_started optional running state (default off)
     @param af_lastVal optional value of last trigger event (default 0)
   */
-  MeasureSubprog_c(Proc_c::type_t ren_type, Proc_c::doSend_t ren_doSend, float af_increment, bool ab_started = false, float af_lastVal = 0.0);
+  MeasureSubprog_c(Proc_c::type_t ren_type, Proc_c::doSend_t ren_doSend, float af_increment  SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA);
 #endif
   /**
     operator= for Subprogs
@@ -134,11 +135,11 @@ public:
     @param arc_src source instance
   */
    MeasureSubprog_c(const MeasureSubprog_c& arc_src);
-  
+
   /** default destructor which has nothing to do */
   ~MeasureSubprog_c();
 
-  /** 
+  /**
     deliver subprog type
     @return type of this measure subprogram increment
   */
@@ -149,7 +150,7 @@ public:
     @param ren_type wanted increment type of this subprogram
   */
   void setType(Proc_c::type_t ren_type){men_type = ren_type;};
-  
+
   /**
     deliver subprog data send type
     @return data send type of this measure subprogram increment
@@ -160,7 +161,7 @@ public:
     @param ren_doSend wanted data send type of this measure subprogram
   */
   void setDoSend_t(Proc_c::doSend_t ren_doSend){men_doSend = ren_doSend;};
-  
+
   /**
     deliver the increment value of this subprog
     @return increment value
@@ -310,7 +311,7 @@ private: // Private attributes
 #endif
   /** states if this subprog is started */
   bool mb_started;
-  /** type of this subprog instance 
+  /** type of this subprog instance
     (the managed increment type)
   */
   Proc_c::type_t men_type;

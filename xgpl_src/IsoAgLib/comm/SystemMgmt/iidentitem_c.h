@@ -97,23 +97,23 @@ class iIsoTerminal_c;
 
   IsoAgLib::iIdentItem_c c_isoItemLaterAddressClaim;
   // Start address claim of the local identity/member
-  IsoAgLib::iIdentItem_c c_myIdent ( ui8_indGroup, 
-                                     rui8_deviceClass, 
-                                     ui8_deviceClassInst, 
+  IsoAgLib::iIdentItem_c c_myIdent ( ui8_indGroup,
+                                     rui8_deviceClass,
+                                     ui8_deviceClassInst,
                                      ui8_func,
-                                     ui16_manufCode, 
+                                     ui16_manufCode,
                                      ui32_serNo); // further parameters use the defaults
   // ...
   // now start address claim
-  c_isoItemLaterAddressClaim.init( ui8_indGroup, 
-                                   ui8_deviceClass, 
-                                   ui8_deviceClassInst, 
-                                   ui8_func, 
-                                   ui16_manufCode, 
-                                   ui32_serNo, 
-                                   ui8_wantedSa, 
-                                   ui16_eepromAdrSa, 
-                                   ui8_funcInst, 
+  c_isoItemLaterAddressClaim.init( ui8_indGroup,
+                                   ui8_deviceClass,
+                                   ui8_deviceClassInst,
+                                   ui8_func,
+                                   ui16_manufCode,
+                                   ui32_serNo,
+                                   ui8_wantedSa,
+                                   ui16_eepromAdrSa,
+                                   ui8_funcInst,
                                    ui8_ecuInst );
   \endcode
 
@@ -251,7 +251,7 @@ public:
                                                         else return NULL; }
 
   /// Using the singletonVecKey from internal class
-  SINGLETON_MC_DATA_DEF_INTERFACE(IdentItem_c)
+  SINGLETON_PAR_BASE_DEF(IdentItem_c)
 
 private:
   friend class iIsoTerminal_c;

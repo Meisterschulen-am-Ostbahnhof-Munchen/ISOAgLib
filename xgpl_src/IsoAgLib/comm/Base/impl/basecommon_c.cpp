@@ -106,10 +106,12 @@ namespace __IsoAgLib {
     this is called from singleton.h and should NOT be called from the user again.
     users please use init(...) instead.
   */
-void BaseCommon_c::singletonInit()
+void BaseCommon_c::singletonInitBase(SINGLETON_VEC_KEY_PARAMETER_DEF)
 {
   setAlreadyClosed();
   init_base (NULL, 0);
+  // assign singletonVecKey to mc_data - if PRT_INSTANCE_CNT > 1
+  SINGLETON_MC_DATA_ASSIGN
 }
 
 /**

@@ -105,7 +105,7 @@ namespace __IsoAgLib
         this is called from singleton.h and should NOT be called from the user again.
         users please use init(...) instead.
       */
-    void singletonInit();
+    void singletonInitBase(SINGLETON_VEC_KEY_PARAMETER_DEF);
 
     /// General init() so that EVERY subsystem of IsoAgLib has its init() call.
     /// nothing done so far, but can be overwritten in the derived classes if needed
@@ -232,8 +232,8 @@ namespace __IsoAgLib
     /** if a message is not send after 3 seconds it is expected that the sending node stopped sending */
     static const uint16_t TIMEOUT_SENDING_NODE = 3000;
 
-    /// Using the singletonVecKey from mc_data (-->IsoTerminalPkg_c)
-    SINGLETON_MC_DATA_DEF
+    /// Using the singletonVecKey from mc_data (-->CanPkgExt_c)
+    SINGLETON_PAR_DOT_DEF(mc_data)
 
   protected:
     /** flags that disable PGNs individually */
