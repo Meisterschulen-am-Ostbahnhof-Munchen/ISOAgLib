@@ -1404,11 +1404,9 @@ void CanIo_c::getCommonFilterMask()
         {
           if (pc_iter->identType() == Ident_c::StandardIdent) {
             mc_maskStd.ident_bitAnd(pc_iter->mask());
-            mc_maskStd.ident_bitAnd(pc_iter->additionalMask());
           }
           else {
             mc_maskExt.ident_bitAnd(pc_iter->mask());
-            mc_maskExt.ident_bitAnd(pc_iter->additionalMask());
           }
         }
       }

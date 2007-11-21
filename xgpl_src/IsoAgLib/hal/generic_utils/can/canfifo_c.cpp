@@ -165,7 +165,7 @@ static bool isAnythingToReadWaiting(uint8_t aui8_busNum,unsigned int aui_tmpUc, 
 
   while(aui_tmpUc - aui_tmpAc == 1)
   {
-    rui_tmpUc = s_canFifoInstance[aui8_busNum].ui_UpdCount;
+    aui_tmpUc = s_canFifoInstance[aui8_busNum].ui_UpdCount;
 
     HAL::wdTriggern();
 

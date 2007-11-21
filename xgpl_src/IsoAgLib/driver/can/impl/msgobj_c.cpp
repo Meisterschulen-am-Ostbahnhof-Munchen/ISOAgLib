@@ -536,29 +536,24 @@ for ( int i = 0; i < cnt_filterBox(); i++ )
     INTERNAL_DEBUG_DEVICE << "    MSGOBJ::marr_filterBoxIndex : FilterBox nr: " << i;
     INTERNAL_DEBUG_DEVICE  <<  "FilterBox: 0x"
 	#ifdef SYSTEM_PC
-    << STL_NAMESPACE::hex
+     << STL_NAMESPACE::hex
 	#endif
-    << getFilterBoxInstance(marr_filterBoxIndex[i]).filter().ident()
+     << getFilterBoxInstance(marr_filterBoxIndex[i]).filter().ident()
       << ", Mask: 0x"
 	  #ifdef SYSTEM_PC
       << STL_NAMESPACE::hex
 	  #endif
       << getFilterBoxInstance(marr_filterBoxIndex[i]).mask().ident()
-      << ", Additional Mask: 0x"
-	  #ifdef SYSTEM_PC
-      << STL_NAMESPACE::hex
-	  #endif
-      << getFilterBoxInstance(marr_filterBoxIndex[i]).additionalMask().ident();
-   INTERNAL_DEBUG_DEVICE  << ", IdentType: "
-   #ifdef SYSTEM_PC
-   << STL_NAMESPACE::dec
-   #endif
-   << getFilterBoxInstance(marr_filterBoxIndex[i]).identType()
-    << ", FilterBox index : "
+      << ", IdentType: "
+     #ifdef SYSTEM_PC
+     << STL_NAMESPACE::dec
+     #endif
+     << getFilterBoxInstance(marr_filterBoxIndex[i]).identType()
+     << ", FilterBox index : "
 	#ifdef SYSTEM_PC
-    << STL_NAMESPACE::dec
-    #endif
-    << getFilterBoxInstance(marr_filterBoxIndex[i]).getFbVecIdx();
+     << STL_NAMESPACE::dec
+     #endif
+     << getFilterBoxInstance(marr_filterBoxIndex[i]).getFbVecIdx();
    INTERNAL_DEBUG_DEVICE <<  INTERNAL_DEBUG_DEVICE_ENDL;
 
   }
