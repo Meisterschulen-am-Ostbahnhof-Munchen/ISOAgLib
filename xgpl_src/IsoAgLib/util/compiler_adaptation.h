@@ -137,7 +137,7 @@
 #endif
 
 /** define whether to use SLIST or LIST */
-#if defined (__GNUC__) || defined(__TSW_CPP__) || defined(_MSC_VER)
+#if defined (__GNUC__) || defined(__TSW_CPP__)
   /** both the GCC and Tasking Compiler support slist */
   #define USABLE_SLIST slist
   #define DO_USE_SLIST
