@@ -62,7 +62,7 @@
 #include "../SimpleSetpointElements/isimplemanagesetpointlocal_c.h"
 #include "../../proc_c.h"
 #include <IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h>
-#include "../../generalcommand_c.h"
+#include "../../igeneralcommand_c.h"
 
 // Begin Namespace IsoAgLib
 namespace IsoAgLib {

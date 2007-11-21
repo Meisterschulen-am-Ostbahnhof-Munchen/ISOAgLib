@@ -2550,7 +2550,7 @@ xgpl_src/IsoAgLib/comm/Multipacket/imultireceive_c.h -text
 xgpl_src/IsoAgLib/comm/Multipacket/istream_c.h -text
 xgpl_src/IsoAgLib/comm/Process/Remote/SimpleMeasureSetpoint/impl/procdataremotesimplesetpointsimplemeasurecombined_c.h -text
 xgpl_src/IsoAgLib/comm/Process/elementddi_s.h -text
-xgpl_src/IsoAgLib/comm/Process/generalcommand_c.h -text
+xgpl_src/IsoAgLib/comm/Process/igeneralcommand_c.h -text
 xgpl_src/IsoAgLib/comm/Process/impl/generalcommand_c.cpp -text
 xgpl_src/IsoAgLib/comm/Process/impl/generalcommand_c.h -text
 xgpl_src/IsoAgLib/comm/Process/impl/processwsmtaskmsghandler_c.h -text

@@ -417,7 +417,7 @@ create_filelist( )
     if [ -n "$COMM_PROC_FEATURES" ] ; then
       COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o "
     fi
-    COMM_PROC_FEATURES="$COMM_PROC_FEATURES -name 'processdatachangehandler_c.*' -o -name 'iprocess_c.*' -o -name 'elementddi_s.h' -o -name 'proc_c.h' -o -path '*/Process/impl/proc*' -o -path '*/Process*/generalcommand*' -o -path '*/Process/*procdata*base_c.h'"
+    COMM_PROC_FEATURES="$COMM_PROC_FEATURES -name 'processdatachangehandler_c.*' -o -name 'iprocess_c.*' -o -name 'elementddi_s.h' -o -name 'proc_c.h' -o -path '*/Process/impl/proc*' -o -path '*/Process*/igeneralcommand*' -o -path '*/Process*/impl/generalcommand*' -o -path '*/Process/*procdata*base_c.h'"
 
 		if [ $PRJ_ISO11783 -gt 0 -a $PROC_LOCAL -gt 0 ] ; then
 			# allow DevPropertyHandler

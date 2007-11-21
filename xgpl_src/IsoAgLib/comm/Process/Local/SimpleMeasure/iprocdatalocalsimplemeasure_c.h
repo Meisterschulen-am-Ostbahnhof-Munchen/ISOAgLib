@@ -60,7 +60,7 @@
 /* *************************************** */
 #include "impl/procdatalocalsimplemeasure_c.h"
 #include "../StdSetpointElements/isetpointlocal_c.h"
-#include "../../generalcommand_c.h"
+#include "../../igeneralcommand_c.h"
 
 // Begin Namespace IsoAgLib
 namespace IsoAgLib {
