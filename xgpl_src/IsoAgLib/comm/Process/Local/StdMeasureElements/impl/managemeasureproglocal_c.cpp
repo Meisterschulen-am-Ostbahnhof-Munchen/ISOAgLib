@@ -478,6 +478,7 @@ void ManageMeasureProgLocal_c::insertMeasureprog(const IsoName_c& ac_isoName){
   if ((b_oldSize == 0)||(vec_prog().begin()->progType() != Proc_c::UndefinedProg))
   { // creation is forced
     Vec_MeasureProgLocalIterator pc_iter = vec_prog().begin();
+    Vec_MeasureProgLocalIterator pc_iterInsertLokation = vec_prog().begin();
     // search for base item to make copy of it
     for (; pc_iter != vec_prog().end(); pc_iter++)
     { // check if its base
@@ -485,11 +486,21 @@ void ManageMeasureProgLocal_c::insertMeasureprog(const IsoName_c& ac_isoName){
     }
     if (pc_iter != vec_prog().end())
     { // insert copy from base prog item at end
+#ifndef DO_USE_SLIST
+      pc_iterInsertLokation++;
+      vec_prog().insert(pc_iterInsertLokation, *pc_iter);
+#else
       vec_prog().insert_after(vec_prog().begin(), *pc_iter);
+#endif
     }
     else if (b_oldSize > 0)
     { // create copy from first list item at end
+#ifndef DO_USE_SLIST
+      pc_iterInsertLokation++;
+      vec_prog().insert(pc_iterInsertLokation, *(vec_prog().begin()));
+#else
       vec_prog().insert_after(vec_prog().begin(), *(vec_prog().begin()));
+#endif
     }
     else
     { // empty list --> insert new item at front of list

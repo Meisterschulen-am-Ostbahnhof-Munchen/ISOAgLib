@@ -350,7 +350,7 @@ void SetpointLocal_c::setMasterMeasurementVal( int32_t ai32_val)
   if (!existMaster())
   { // create register entry for master value
     const uint16_t cui16_oldSize = mvec_register.size();
-    mvec_register.push_front();
+    mvec_register.push_front(SetpointRegister_c());
     if ( cui16_oldSize >= mvec_register.size() )
     { // out-of-memory
       getILibErrInstance().registerError( iLibErr_c::BadAlloc, iLibErr_c::Process );
