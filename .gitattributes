@@ -1152,6 +1152,7 @@ compiler_projects/VC6/CanServerMessenger/CanServerMessenger__vector_canlib__simu
 compiler_projects/VC6/CanServerMessenger/CanServerMessenger__vector_canlib__sys.dsp -text
 compiler_projects/VC6/CanServerMessenger/CanServerMessenger__vector_xl_drv_lib__simulating.dsp -text
 compiler_projects/VC6/CanServerMessenger/CanServerMessenger__vector_xl_drv_lib__sys.dsp -text
+compiler_projects/VC6/canserver/canserver__can_server_sock_pc__simulating.vcproj -text
 compiler_projects/VC6/imi_iso/imi_iso__simulating__simulating.dsp eol=crlf
 compiler_projects/VC6/imi_iso/imi_iso__simulating__sys.dsp eol=crlf
 compiler_projects/VC6/imi_iso/imi_iso__sontheim__simulating.dsp eol=crlf
