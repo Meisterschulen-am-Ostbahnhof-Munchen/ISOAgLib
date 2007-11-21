@@ -77,6 +77,10 @@ namespace IsoAgLib {
 
 class iCanPkgExt_c : private __IsoAgLib::CanPkgExt_c {
 public:
+
+  iCanPkgExt_c(SINGLETON_VEC_KEY_PARAMETER_DEFAULT_NULL_DEF)
+    : CanPkgExt_c(SINGLETON_VEC_KEY_PARAMETER_USE) { }
+
   /**
     deliver the ident
     @return ident setting as MASK_TYPE

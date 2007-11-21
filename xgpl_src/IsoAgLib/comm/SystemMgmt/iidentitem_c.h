@@ -250,6 +250,9 @@ public:
   iIsoName_c* modifyableIsoNameBeforeAddressClaimed() { if (!isClaimedAddress()) return &modifyableIsoName().toIisoName_c();
                                                         else return NULL; }
 
+  /// Using the singletonVecKey from internal class
+  SINGLETON_C_DATA_DEF_INTERFACE(IdentItem_c)
+
 private:
   friend class iIsoTerminal_c;
   friend class iVtClientServerCommunication_c;

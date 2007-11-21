@@ -96,11 +96,13 @@
   #define autoInstance()                    instance( ClientBase::getSingletonVecKey() )
 
   #define SINGLETON_VEC_KEY_PARAMETER_DEF               int ai_singletonVecKey
+  #define SINGLETON_VEC_KEY_PARAMETER_DEFAULT_NULL_DEF  int ai_singletonVecKey = 0
   #define SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA  , int ai_singletonVecKey
   #define SINGLETON_VEC_KEY_PARAMETER_USE               ai_singletonVecKey
   #define SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA  , ai_singletonVecKey
 
   #define SINGLETON_C_DATA_DEF                      int getSingletonVecKey() const { return msc_data.getSingletonVecKey(); }
+  #define SINGLETON_C_DATA_DEF_INTERFACE(PAR)       int getSingletonVecKey() const { return PAR::getSingletonVecKey(); }
   #define SINGLETON_MEMBER_DEF               ClientBase c_clientBase; \
                                                     int getSingletonVecKey() const { return c_clientBase.getSingletonVecKey(); }
   #define SINGLETON_MEMBER_ASSIGN(PAR)     c_clientBase.setSingletonKey (PAR.c_clientBase.getSingletonVecKey());
@@ -110,6 +112,7 @@
 
   #define SINGLETON_VEC_KEY                             getSingletonVecKey()
   #define SINGLETON_VEC_KEY_WITH_COMMA                , getSingletonVecKey()
+
 
   #define getCanInstance4Comm()             getCanInstance( getSingletonVecKey() )
   #define getSchedulerInstance4Comm()       getSchedulerInstance( getSingletonVecKey() )
@@ -230,11 +233,13 @@
   #define autoInstance()                  instance()
 
   #define SINGLETON_VEC_KEY_PARAMETER_DEF
+  #define SINGLETON_VEC_KEY_PARAMETER_DEFAULT_NULL_DEF
   #define SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA
   #define SINGLETON_VEC_KEY_PARAMETER_USE
   #define SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA
 
   #define SINGLETON_C_DATA_DEF
+  #define SINGLETON_C_DATA_DEF_INTERFACE(PAR)
   #define SINGLETON_MEMBER_DEF
   #define SINGLETON_MEMBER_ASSIGN(PAR)
   #define SINGLETON_MEMBER_CONSTRUCTOR

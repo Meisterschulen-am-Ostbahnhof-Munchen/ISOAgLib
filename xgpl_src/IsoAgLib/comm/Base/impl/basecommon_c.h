@@ -231,6 +231,9 @@ namespace __IsoAgLib
     /** if a message is not send after 3 seconds it is expected that the sending node stopped sending */
     static const uint16_t TIMEOUT_SENDING_NODE = 3000;
 
+    /// Using the singletonVecKey from mc_data (-->IsoTerminalPkg_c)
+    SINGLETON_C_DATA_DEF
+
   protected:
     /** flags that disable PGNs individually */
     uint16_t mui16_suppressMask;

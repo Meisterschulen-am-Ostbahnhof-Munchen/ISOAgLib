@@ -528,8 +528,22 @@ uint8_t IsoItem_c::calc_randomWait()
   ui16_result %= (outputNameUnion()->getUint8Data(4) + 1);
   ui16_result -= outputNameUnion()->getUint8Data(5);
   ui16_result *= ((outputNameUnion()->getUint8Data(6) + 1) / (outputNameUnion()->getUint8Data(7) + 1));
+
   // divide by last uint8_t of name till offset in limit
-  for (;ui16_result > 153; ui16_result /= (outputNameUnion()->getUint8Data(7) + 1));
+  uint8_t ui8_divisor = outputNameUnion()->getUint8Data(7) + 1;
+
+  for (; ui16_result > 153; ui16_result /= ui8_divisor)
+  {
+    // Get around potential div0 errors
+    ui8_divisor = outputNameUnion()->getUint8Data(7) + 1;
+
+    // Get around potential div1 eternal loop
+    if (ui8_divisor == 1)
+    {
+      ui8_divisor++;
+    }
+  }
+
   return uint8_t(ui16_result & 0xFF );
 }
 
