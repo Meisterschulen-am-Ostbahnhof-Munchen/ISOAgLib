@@ -148,16 +148,17 @@ public:
   /** copy constructor for ISOName
     @param arc_src source IsoName_c instance
   */
-    iIsoName_c(const iIsoName_c& arc_src) : IsoName_c( arc_src ) {}
+  iIsoName_c(const iIsoName_c& arc_src) : IsoName_c( arc_src ) {}
 
   /** assign constructor for ISOName
     @param arc_src source IsoName_c object
   */
-  const iIsoName_c& operator=(const iIsoName_c& arc_src) { return IsoName_c::operator=( arc_src ).toConstIisoName_c();}
+  const iIsoName_c& operator=(const iIsoName_c& arc_src)
+    { return IsoName_c::operator=( arc_src ).toConstIisoName_c();}
 
   /** compare two iIsoName_c values with operator< */
   bool operator<( const iIsoName_c& rc_right ) const
-  { return IsoName_c::operator < (rc_right);}
+    { return IsoName_c::operator < (rc_right);}
 
   /** compare two IsoName_c values with operator== */
   bool operator==( const iIsoName_c& rc_right ) const

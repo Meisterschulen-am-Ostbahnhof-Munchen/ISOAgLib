@@ -474,7 +474,7 @@ private: // Private attributes
   /** last timestamp with FilterBox_c check */
   int32_t mi32_lastFilterBoxTime;
 
-  STL_NAMESPACE::USABLE_SLIST<uint32_t> ml_filtersToDeleteISO;
+  STL_NAMESPACE::USABLE_SLIST<IsoName_c> ml_filtersToDeleteISO;
   bool mb_needCallOfCheckCreateRemoteReceiveFilter;
   const IsoName_c* mpc_tcISOName;
   uint8_t mui8_lastTcStatus;

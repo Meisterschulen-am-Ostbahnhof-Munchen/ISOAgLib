@@ -154,11 +154,6 @@ public:
 
   bool isAnyVtAvailable() { return !ml_vtServerInst.empty(); }
 
-
-  /** for now allow multiple uploads
-  bool getFlagForPoolUpload(const VtClientServerCommunication_c* pc_vtCSC);
-  void resetFlagForPoolUpload(const VtClientServerCommunication_c* pc_vtCSC);
-  */
   ////////////////////////
   // INTERFACE FUNTIONS //
   ////////////////////////
@@ -199,10 +194,6 @@ private:
   void deregisterIsoObjectPoolInd (uint8_t aui8_index);
 
 protected:
-  /** for now allow parallel uploads
-  bool sb_poolUploadInProgress;
-  const VtClientServerCommunication_c* spc_vtcscForUpload;
-  */
 
 private: // attributes
 

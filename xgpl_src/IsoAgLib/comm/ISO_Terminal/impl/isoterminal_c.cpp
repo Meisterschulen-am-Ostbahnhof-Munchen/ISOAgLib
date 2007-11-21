@@ -162,11 +162,6 @@ IsoTerminal_c::init()
     b_atLeastOneFilterAdded |= (getCanInstance4Comm().insertStandardIsoFilter(*this,(LANGUAGE_PGN),false)!= NULL);
 
     if (b_atLeastOneFilterAdded) getCanInstance4Comm().reconfigureMsgObj();
-
-    /** for now allow parallel uploads
-    sb_poolUploadInProgress = false;
-    spc_vtcscForUpload = NULL;
-     */
   }
 }
 
@@ -309,8 +304,6 @@ IsoTerminal_c::deregisterIsoObjectPoolInd (uint8_t aui8_index)
 bool
 IsoTerminal_c::timeEvent(void)
 {
-  System_c::triggerWd(); /** @todo what to do with those calls? */
-
   bool b_allActivitiesPerformed = true;
 
   for (uint8_t ui8_index = 0; ui8_index < mvec_vtClientServerComm.size(); ui8_index++)
@@ -469,9 +462,6 @@ IsoTerminal_c::reactOnMonitorListRemove (const IsoName_c& rc_isoName, uint8_t /*
           if (mvec_vtClientServerComm[ui8_index])
           {
             mvec_vtClientServerComm[ui8_index]->notifyOnVtServerInstanceLoss(*lit_vtServerInst);
-            /** for now allow multiple upload
-            resetFlagForPoolUpload (mvec_vtClientServerComm[ui8_index]); // reset flag for next upload
-            */
           }
         }
 
@@ -483,34 +473,6 @@ IsoTerminal_c::reactOnMonitorListRemove (const IsoName_c& rc_isoName, uint8_t /*
 
 }
 
-
-/** @todo do we really need these functions??? -> for now allow multiple upload
-
-bool IsoTerminal_c::sb_poolUploadInProgress;
-const VtClientServerCommunication_c* IsoTerminal_c::spc_vtcscForUpload;
-
-bool IsoTerminal_c::getFlagForPoolUpload(const VtClientServerCommunication_c* pc_vtCSC)
-{
-  if (sb_poolUploadInProgress) // someone else is uploading its pool -> wait
-    return false;
-  else
-  { // nobody is uploading, so we catch the flag for us
-    sb_poolUploadInProgress = true;
-    spc_vtcscForUpload = pc_vtCSC;
-    return true;
-  }
-}
-
-
-void IsoTerminal_c::resetFlagForPoolUpload(const VtClientServerCommunication_c* pc_vtCSC)
-{
-  if (sb_poolUploadInProgress && (pc_vtCSC == spc_vtcscForUpload))
-  { // only the VtClientServerCommunication_c which has set the uploadFlag could only reset the flag
-    sb_poolUploadInProgress = false;
-    spc_vtcscForUpload = NULL;
-  }
-}
-*/
 
 
 /// INTERFACE FUNTIONS ///

@@ -284,7 +284,7 @@ void IsoRequestPgn_c::registerLocalDevice( const __IsoAgLib::IsoName_c& rc_isoNa
 {
   if ( getIsoMonitorInstance4Comm().existLocalIsoMemberISOName(rc_isoName) )
   { // local IsoItem_c has finished adr claim
-    getIsoFilterManagerInstance4Comm().insertIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL), (REQUEST_PGN_MSG_PGN << 8), &rc_isoName, (const IsoName_c*)NULL, int8_t(3)));
+    getIsoFilterManagerInstance4Comm().insertIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL), (REQUEST_PGN_MSG_PGN << 8), &rc_isoName, NULL, 3));
   }
 }
 /** unregister an IsoName_c of a local device, so that IsoFilterManager_c stops receiving

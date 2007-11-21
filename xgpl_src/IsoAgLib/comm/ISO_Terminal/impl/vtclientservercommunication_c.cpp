@@ -479,9 +479,6 @@ VtClientServerCommunication_c::timeEventUploadPoolTimeoutCheck()
       mui32_uploadTimestamp = HAL::getTime();
       mui32_uploadTimeout = DEF_WaitFor_Reupload; // wait 5 secs for possible reuploading...
     }
-    /// @todo for now we allow parallel uploads
-    /// in both cases (time out or success) we need to reset the upload pool flag to enable other clients to upload their pools
-    /// mrc_isoTerminal.resetFlagForPoolUpload (this);
   }
 
   if (men_uploadPoolState == UploadPoolWaitingForStoreVersionResponse)
@@ -582,14 +579,6 @@ VtClientServerCommunication_c::timeEventPoolUpload()
   if (((men_uploadPoolState == UploadPoolFailed) && (((uint32_t) HAL::getTime()) > (mui32_uploadTimeout + mui32_uploadTimestamp)))
         || (men_uploadPoolState == UploadPoolInit))
   {
-    /** @todo for now allow parallel uploads
-    if (!mrc_isoTerminal.getFlagForPoolUpload (this))
-    { // any other client is already uploading its pool, so wait!
-      men_uploadPoolState = UploadPoolFailed;
-      mui32_uploadTimestamp = HAL::getTime();
-      mui32_uploadTimeout = DEF_WaitFor_FreeUpload; // wait 1 secs for possible free uploading...
-      return true;
-    } */
     // Take the version that's been set up NOW and try to load/upload it.
     setObjectPoolUploadingLanguage();
     // Do we want to try to "Load Version" or go directly to uploading?
@@ -1011,12 +1000,13 @@ VtClientServerCommunication_c::processMsg()
 //  INTERNAL_DEBUG_DEVICE << "Incoming Message: mc_data.isoPgn=" << mc_data.isoPgn() << " - HAL::getTime()=" << HAL::getTime() << " - data[0]=" << (uint16_t)mc_data.getUint8Data (0) << "...  ";
 //  #endif
 
-  /** @todo check for can-pkg-length==8???? */
-
   if ((mc_data.isoPgn() & 0x3FF00) == ACKNOWLEDGEMENT_PGN)
   { // Pass on to ACK-Processing!
     return processMsgAck();
   }
+
+  // for right now, if it's NOT an ACKNOWLEDGE_PGN,
+  // it must be VT_TO_ECU addressed to us as defined by the IsoFilter
 
   uint8_t ui8_uploadCommandError; // who is interested in the errorCode anyway?
   uint8_t ui8_errByte=0; // from 1-8, or 0 for NO errorHandling, as NO user command (was intern command like C0/C2/C3/C7/etc.)
@@ -1026,9 +1016,6 @@ VtClientServerCommunication_c::processMsg()
 
   // If VT is not active, don't react on PKGs addressed to us, as VT's not active ;)
   if (!isVtActive()) return true;
-
-  // check below not needed any more with new isofilter!?!??!??! */
-  if ((mc_data.isoPgn() & 0x3FFFF) != (VT_TO_ECU_PGN | getIdentItem().getIsoItem()->nr())) return false;
 
   /// process all VT_TO_ECU addressed to us
   switch (mc_data.getUint8Data (0))
@@ -1117,7 +1104,7 @@ VtClientServerCommunication_c::processMsg()
                                   208 /* D0 */, marrp7c_versionLabel [0], marrp7c_versionLabel [1], marrp7c_versionLabel [2], marrp7c_versionLabel [3], marrp7c_versionLabel [4], lang1, lang2);
             getCanInstance4Comm() << mc_data;     // Command: Non Volatile Memory --- Parameter: Store Version
 
-                      // Now wait for response
+            // Now wait for response
             men_uploadPoolState = UploadPoolWaitingForStoreVersionResponse;
             mui32_uploadTimeout = DEF_TimeOut_StoreVersion;
             mui32_uploadTimestamp = HAL::getTime();
@@ -1133,8 +1120,6 @@ VtClientServerCommunication_c::processMsg()
           men_uploadPoolState = UploadPoolFailed; // errorcode in mui8_uploadError;
           men_objectPoolState = OPCannotBeUploaded;
           mui8_uploadError = mc_data.getUint8Data (2);
-          /// @todo for now allow parallel uploads
-          ///mrc_isoTerminal.resetFlagForPoolUpload (this);
         }
       }
       else if ((men_uploadType == UploadCommand) && (men_uploadCommandState == UploadCommandWaitingForCommandResponse))
@@ -2382,8 +2367,6 @@ VtClientServerCommunication_c::finalizeUploading() //bool ab_wasLanguageUpdate)
     }
     mc_streamer.mrc_pool.eventObjectPoolUploadedSuccessfully ((men_uploadPoolType == UploadPoolTypeLanguageUpdate), mc_streamer.mi8_objectPoolUploadedLanguage, mc_streamer.mui16_objectPoolUploadedLanguageCode);
   }
-  /// @todo for now we allow parallel uploads
-  ///mrc_isoTerminal.resetFlagForPoolUpload (this);
 }
 
 
@@ -2553,8 +2536,6 @@ VtClientServerCommunication_c::vtOutOfMemory()
   getILibErrInstance().registerError (iLibErr_c::RemoteServiceOutOfMemory, iLibErr_c::IsoTerminal);
   men_uploadPoolState = UploadPoolFailed; // no timeout needed
   men_objectPoolState = OPCannotBeUploaded;
-  /// @todo for now allow parallel uploads
-  ///mrc_isoTerminal.resetFlagForPoolUpload (this);
 }
 
 /** set display state of vt client */

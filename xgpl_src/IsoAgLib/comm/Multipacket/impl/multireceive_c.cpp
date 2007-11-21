@@ -137,41 +137,6 @@ static const uint8_t scui8_tpPriority=6;
 
 
 
-#if 1
-// to be OBSOLETEd !!! - can use ISOFilterBox later on...
-/** the mask is set to 3FFFF00, as we're accepting for EVERY _local_ destination address first. afterwards mlist_clients is getting search for matching destination address */
-#define MACRO_insertFilterIfNotYetExists_mask3FFFF00_setRef(mpPGN,LocalSa,reconf,ref,len) \
-  { \
-    uint32_t ui32_filter = ((static_cast<MASK_TYPE>(mpPGN) | static_cast<MASK_TYPE>(LocalSa)) << 8); \
-    ref = NULL; \
-    if (!__IsoAgLib::getCanInstance4Comm().existFilter( *this, (0x3FFFF00UL), ui32_filter, __IsoAgLib::Ident_c::ExtendedIdent)) \
-    { /* create FilterBox */ \
-      ref = __IsoAgLib::getCanInstance4Comm().insertFilter(*this, (0x3FFFF00UL), ui32_filter, reconf, __IsoAgLib::Ident_c::ExtendedIdent, len); \
-    } \
-  }
-
-#define MACRO_insertFilterIfNotYetExists_mask3FFFF00_useRef(mpPGN,LocalSa,reconf,ref,len) \
-  { \
-    uint32_t ui32_filter = ((static_cast<MASK_TYPE>(mpPGN) | static_cast<MASK_TYPE>(LocalSa)) << 8); \
-    if (!__IsoAgLib::getCanInstance4Comm().existFilter( *this, (0x3FFFF00UL), ui32_filter, __IsoAgLib::Ident_c::ExtendedIdent)) \
-    { /* create FilterBox */ \
-      __IsoAgLib::getCanInstance4Comm().insertFilter( *this, (0x3FFFF00UL), ui32_filter, reconf, __IsoAgLib::Ident_c::ExtendedIdent, len); \
-    } \
-  }
-
-
-/** the mask is set to 3FFFF00, as we're accepting for EVERY _local_ destination address first. afterwards mlist_clients is getting search for matching destination address */
-#define MACRO_deleteFilterIfExists_mask3FFFF00(mpPGN,LocalSa) \
-  { \
-    uint32_t ui32_filter = ((static_cast<MASK_TYPE>(mpPGN) | static_cast<MASK_TYPE>(LocalSa)) << 8); \
-    if (__IsoAgLib::getCanInstance4Comm().existFilter( *this, (0x3FFFF00UL), ui32_filter, __IsoAgLib::Ident_c::ExtendedIdent)) \
-    { /* delete FilterBox */ \
-      __IsoAgLib::getCanInstance4Comm().deleteFilter( *this, (0x3FFFF00UL), ui32_filter, __IsoAgLib::Ident_c::ExtendedIdent); \
-    } \
-  }
-#endif
-
-
 MultiReceiveClientWrapper_s::MultiReceiveClientWrapper_s( CanCustomer_c& arc_client,
                                                           const IsoName_c& arc_isoNameClient,
                                                           uint32_t aui32_pgn,
@@ -263,9 +228,6 @@ MultiReceive_c::processMsg()
       sendConnAbort (mt_streamType, c_tmpRSI); \
       return true; /* no other CAN-Customer should be interested in that one */\
     }
-
-  if (data().getLen() != 8)
-    return true; // All corrupt (E)TP-Packages are NOT of interest for any other CAN-Customer - who would want corrupted packages?
 
   bool b_ePgn=false;
   bool b_eCmd=false;
@@ -1267,16 +1229,16 @@ MultiReceive_c::init()
     // clear state of b_alreadyClosed, so that close() is called one time
     clearAlreadyClosed();
     // register in Scheduler_c to get timeEvents
-    __IsoAgLib::getSchedulerInstance4Comm().registerClient( this );
+    getSchedulerInstance4Comm().registerClient( this );
     // register to get ISO monitor list changes
-    __IsoAgLib::getIsoMonitorInstance4Comm().registerSaClaimHandler( this );
+    getIsoMonitorInstance4Comm().registerSaClaimHandler( this );
 
-    // insert receive filter for broadcasted TP
-    __IsoAgLib::FilterBox_c* refFB;
-    MACRO_insertFilterIfNotYetExists_mask3FFFF00_setRef(TP_CONN_MANAGE_PGN,0xFF,false,refFB,8)
-    MACRO_insertFilterIfNotYetExists_mask3FFFF00_useRef(TP_DATA_TRANSFER_PGN,0xFF,false,refFB,8)
-    MACRO_insertFilterIfNotYetExists_mask3FFFF00_setRef(ETP_CONN_MANAGE_PGN,0xFF,false,refFB,8)
-    MACRO_insertFilterIfNotYetExists_mask3FFFF00_useRef(ETP_DATA_TRANSFER_PGN,0xFF,true,refFB,8)
+    // insert receive filters for broadcasted TP
+    getCanInstance4Comm().insertFilter (*this, (0x3FFFF00UL), ( TP_CONN_MANAGE_PGN  |0xFF)<<8, false, __IsoAgLib::Ident_c::ExtendedIdent, 8);
+    getCanInstance4Comm().insertFilter (*this, (0x3FFFF00UL), ( TP_DATA_TRANSFER_PGN|0xFF)<<8, false, __IsoAgLib::Ident_c::ExtendedIdent, 8);
+    getCanInstance4Comm().insertFilter (*this, (0x3FFFF00UL), (ETP_CONN_MANAGE_PGN  |0xFF)<<8, false, __IsoAgLib::Ident_c::ExtendedIdent, 8);
+    getCanInstance4Comm().insertFilter (*this, (0x3FFFF00UL), (ETP_DATA_TRANSFER_PGN|0xFF)<<8, false, __IsoAgLib::Ident_c::ExtendedIdent, 8);
+    getCanInstance4Comm().reconfigureMsgObj();
 
     setTimePeriod (5000); // nothing to do per default!
   }
@@ -1292,7 +1254,16 @@ MultiReceive_c::close( void )
   if ( ! checkAlreadyClosed() ) {
     // avoid another call
     setAlreadyClosed();
-    __IsoAgLib::getSchedulerInstance4Comm().unregisterClient( this );
+    // deregister in Scheduler_c to get no more timeEvents
+    getSchedulerInstance4Comm().unregisterClient( this );
+    // deregister to get no more IsoMonitorList changes
+    getIsoMonitorInstance4Comm().deregisterSaClaimHandler( this );
+
+    // remove receive filters for broadcasted TP
+    getCanInstance4Comm().deleteFilter (*this, (0x3FFFF00UL), ( TP_CONN_MANAGE_PGN  |0xFF)<<8, __IsoAgLib::Ident_c::ExtendedIdent);
+    getCanInstance4Comm().deleteFilter (*this, (0x3FFFF00UL), ( TP_DATA_TRANSFER_PGN|0xFF)<<8, __IsoAgLib::Ident_c::ExtendedIdent);
+    getCanInstance4Comm().deleteFilter (*this, (0x3FFFF00UL), (ETP_CONN_MANAGE_PGN  |0xFF)<<8, __IsoAgLib::Ident_c::ExtendedIdent);
+    getCanInstance4Comm().deleteFilter (*this, (0x3FFFF00UL), (ETP_DATA_TRANSFER_PGN|0xFF)<<8, __IsoAgLib::Ident_c::ExtendedIdent);
 
     mlist_streams.clear();
     mlist_clients.clear();
@@ -1449,10 +1420,10 @@ MultiReceive_c::reactOnMonitorListAdd( const __IsoAgLib::IsoName_c& rc_isoName, 
 #endif
   if ( getIsoMonitorInstance4Comm().existLocalIsoMemberISOName(rc_isoName) )
   { // local IsoItem_c has finished adr claim
-    getIsoFilterManagerInstance().insertIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL), (TP_CONN_MANAGE_PGN << 8),   &rc_isoName, NULL, 8), false);
-    getIsoFilterManagerInstance().insertIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL), (TP_DATA_TRANSFER_PGN << 8), &rc_isoName, NULL, 8), false);
-    getIsoFilterManagerInstance().insertIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL), (ETP_CONN_MANAGE_PGN << 8),  &rc_isoName, NULL, 8), false);
-    getIsoFilterManagerInstance().insertIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL), (ETP_DATA_TRANSFER_PGN << 8),&rc_isoName, NULL, 8), false);
+    getIsoFilterManagerInstance().insertIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL), ( TP_CONN_MANAGE_PGN   << 8), &rc_isoName, NULL, 8), false);
+    getIsoFilterManagerInstance().insertIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL), ( TP_DATA_TRANSFER_PGN << 8), &rc_isoName, NULL, 8), false);
+    getIsoFilterManagerInstance().insertIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL), (ETP_CONN_MANAGE_PGN   << 8), &rc_isoName, NULL, 8), false);
+    getIsoFilterManagerInstance().insertIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL), (ETP_DATA_TRANSFER_PGN << 8), &rc_isoName, NULL, 8), false);
     getCanInstance4Comm().reconfigureMsgObj();
   }
 
@@ -1504,7 +1475,7 @@ rc_isoName
   for (STL_NAMESPACE::list<MultiReceiveClientWrapper_s>::iterator i_list_clients = mlist_clients.begin();
        i_list_clients != mlist_clients.end();
        i_list_clients++)
-  { // @todo can we assume this is safe/consistent? or should we check our ISOName instead to be 100% sure */
+  { /** @todo can we assume this is safe/consistent? or should we check our ISOName instead to be 100% sure */
     if (aui8_oldSa == i_list_clients->mui8_cachedClientAddress) {
       i_list_clients->mui8_cachedClientAddress = 0xFE; // as FE won't be valid as sender (FF would be broadcast) - so we don't get such packets in "processMsg()"
     }

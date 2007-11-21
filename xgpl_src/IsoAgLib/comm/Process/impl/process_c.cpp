@@ -89,14 +89,12 @@
 #include "process_c.h"
 #include <IsoAgLib/driver/can/impl/canio_c.h>
 #include <IsoAgLib/util/impl/singleton.h>
-//#include <IsoAgLib/driver/can/impl/ident_c.h>
-
+#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofiltermanager_c.h>
 #include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.h>
 
 #ifdef DEBUG
   #include <supplementary_driver/driver/rs232/irs232io_c.h>
 #endif
-
 
 #if defined(DEBUG) || defined(DEBUG_HEAP_USEAGE)
   #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
@@ -160,10 +158,10 @@ void Process_c::init()
   mc_data.setSingletonKey( getSingletonVecKey() );
 
   // receive PROCESS_DATA_PGN messages which are addressed to GLOBAL
-  uint32_t ui32_filter = ((static_cast<MASK_TYPE>(PROCESS_DATA_PGN) | static_cast<MASK_TYPE>(0xFF)) << 8);
-  if (!getCanInstance4Comm().existFilter( *this, (0x3FFFF00UL), ui32_filter, Ident_c::ExtendedIdent))
+  const uint32_t cui32_filter = (((PROCESS_DATA_PGN) | 0xFF) << 8);
+  if (!getCanInstance4Comm().existFilter( *this, (0x3FFFF00UL), cui32_filter, Ident_c::ExtendedIdent))
   { // create FilterBox
-    getCanInstance4Comm().insertFilter( *this, (0x3FFFF00UL), ui32_filter, true, Ident_c::ExtendedIdent);
+    getCanInstance4Comm().insertFilter( *this, (0x3FFFF00UL), cui32_filter, true, Ident_c::ExtendedIdent);
   }
 
   //  start with 200 msec timer period
@@ -252,13 +250,14 @@ bool Process_c::timeEvent( void ){
 
   if ( ml_filtersToDeleteISO.size() > 0)
   {
-    for (STL_NAMESPACE::USABLE_SLIST<uint32_t>::const_iterator iter = ml_filtersToDeleteISO.begin();
+    for (STL_NAMESPACE::USABLE_SLIST<IsoName_c>::const_iterator iter = ml_filtersToDeleteISO.begin();
          iter != ml_filtersToDeleteISO.end();
          iter++)
     {
-      if (getCanInstance4Comm().existFilter( *this, 0x3FF00FF, *iter, Ident_c::ExtendedIdent))
-        // corresponding FilterBox_c exist -> delete it
-        getCanInstance4Comm().deleteFilter( *this, 0x3FF00FF, *iter, Ident_c::ExtendedIdent);
+      if (getIsoFilterManagerInstance4Comm().existIsoFilter( IsoFilter_s (*this, 0x3FF00FF, (PROCESS_DATA_PGN << 8), NULL, &(*iter), 8, Ident_c::ExtendedIdent)))
+      { // corresponding FilterBox_c exist -> delete it
+        getIsoFilterManagerInstance4Comm().removeIsoFilter(  IsoFilter_s (*this, 0x3FF00FF, (PROCESS_DATA_PGN << 8), NULL, &(*iter), 8, Ident_c::ExtendedIdent));
+      }
     }
     ml_filtersToDeleteISO.clear();
   }
@@ -716,45 +715,31 @@ ProcDataRemoteBase_c* Process_c::check4ProprietaryDDIGroupMatch(uint16_t aui_dev
 }
 
 /**
-  delete FilterBox_c for receive from remote isoName if needed
+  delete IsoFilterBox_c for receive from remote isoName if needed
   (important to delete old Filter Boxes after deletion of
-  of remote device from monitor list or after re-adressclaim with different SA)
+  remote device from monitor list)
   @param ac_isoName isoName code of remote owner who sent the message
-  @return true -> member exist and Filter Box deleted
+  @return true -> member exists and IsoFilterBox deleted
 */
-bool Process_c::deleteRemoteFilter(const IsoName_c& ac_isoName)
+bool Process_c::deleteRemoteFilter(IsoName_c const& arcc_isoName)
 {
-  bool b_result = false,
-       b_found = false;
-  MASK_TYPE ui32_filter;
-
   for ( cacheTypeC2_t pc_iter = c_arrClientC2.begin();
         ( pc_iter != c_arrClientC2.end() );
         pc_iter++ )
   {
-    if ((*pc_iter)->isoName() == ac_isoName) b_found = true;
-  }
-  if (b_found)
-  { // remote proc data has given onwerisoName
-    // -> delete according FilterBox
-    if (getIsoMonitorInstance4Comm().existIsoMemberISOName(ac_isoName, true))
-    { // remote owner exist and has claimed address -> check if corresponding FilterBox_c exist
-      uint8_t ui8_recNr = getIsoMonitorInstance4Comm().isoMemberISOName(ac_isoName, true).nr();
-      ui32_filter = (PROCESS_DATA_PGN << 8) | ui8_recNr;
-      if (getCanInstance4Comm().existFilter( *this, 0x3FF00FF, ui32_filter, Ident_c::ExtendedIdent))
+    if ((*pc_iter)->ownerISOName() == arcc_isoName)
+    { // remote proc data has given onwerisoName
+      // -> delete according FilterBox (after check if corresponding FilterBox_c exists)
+      if (getIsoFilterManagerInstance4Comm().existIsoFilter( IsoFilter_s (*this, 0x3FF00FF, (PROCESS_DATA_PGN << 8), NULL, &arcc_isoName, 8, Ident_c::ExtendedIdent)))
       { // corresponding FilterBox_c exist -> delete it
-        getCanInstance4Comm().deleteFilter( *this, 0x3FF00FF, ui32_filter, Ident_c::ExtendedIdent);
-        b_result = true;
-      }
-    } // owner exist with claimed address in isoMonitor
-  } // not other remote proc data with ownerisoName found
-  // only reconfigure if new FilterBox_c created -> signalled by b_result == true
-
-  if (b_result)
-  {
-    getCanInstance4Comm().reconfigureMsgObj();
+        getIsoFilterManagerInstance4Comm().removeIsoFilter(  IsoFilter_s (*this, 0x3FF00FF, (PROCESS_DATA_PGN << 8), NULL, &arcc_isoName, 8, Ident_c::ExtendedIdent));
+        // and let the caller know of the positive deletion!
+        return true;
+      } else
+        return false; // there was a problem!
+    }
   }
-  return b_result;
+  return false;
 }
 
 /**
@@ -762,29 +747,15 @@ bool Process_c::deleteRemoteFilter(const IsoName_c& ac_isoName)
   @param ac_isoName isoName code of remote owner who sent the message
   @return true -> member exist and Filter Box created
  */
-bool Process_c::createRemoteFilter(const IsoName_c& ac_isoName)
+bool Process_c::createRemoteFilter(IsoName_c const& arcc_isoName)
 {
-  bool b_result = false;
-  MASK_TYPE t_filter;
-
-  if (getIsoMonitorInstance4Comm().existIsoMemberISOName(ac_isoName, true))
-  { // remote owner exist and has claimed address -> check if suitable FilterBox_c exist
-    const uint8_t ui8_recNr = getIsoMonitorInstance4Comm().isoMemberISOName(ac_isoName, true).nr();
-    // only receive msg from ui8_recNr / ac_isoName to all other devices
-    t_filter = (PROCESS_DATA_PGN << 8) | ui8_recNr;
-    if (!getCanInstance4Comm().existFilter( *this, 0x3FF00FFUL, t_filter, Ident_c::ExtendedIdent))
-    { // no suitable FilterBox_c exist -> create it
-      getCanInstance4Comm().insertFilter( *this, 0x3FF00FFUL, t_filter, false, Ident_c::ExtendedIdent);
-      b_result = true;
-    }
-  }
-  // only reconfigure if new FilterBox_c created -> signalled by b_result == true
-  if (b_result)
-  {
-    getCanInstance4Comm().reconfigureMsgObj();
+  if (!getIsoFilterManagerInstance4Comm().existIsoFilter( IsoFilter_s (*this, 0x3FF00FFUL, (PROCESS_DATA_PGN << 8), NULL, &arcc_isoName, 8, Ident_c::ExtendedIdent)))
+  { // no suitable FilterBox_c exist -> create it
+    getIsoFilterManagerInstance4Comm().insertIsoFilter(   IsoFilter_s (*this, 0x3FF00FFUL, (PROCESS_DATA_PGN << 8), NULL, &arcc_isoName, 8, Ident_c::ExtendedIdent), true);
+    return true;
   }
 
-  return b_result;
+  return false;
 }
 
 
@@ -821,16 +792,13 @@ bool Process_c::checkCreateRemoteReceiveFilter()
   * @param rc_isoName const reference to the item which IsoItem_c state is changed
   * @param apc_newItem pointer to the currently corresponding IsoItem_c
   */
-void Process_c::reactOnMonitorListAdd( const IsoName_c& rc_isoName, const IsoItem_c* apc_newItem )
+void Process_c::reactOnMonitorListAdd( const IsoName_c& arcc_isoName, const IsoItem_c* /*apc_newItem*/ )
 { // create FilterBoxes for remote ProcessData if needed
-  if ( getIsoMonitorInstance4Comm().existLocalIsoMemberISOName(rc_isoName) )
-  { // lcoal IsoItem_c has finished adr claim
-    uint32_t ui32_nr = apc_newItem->nr();
-          // only ISO msgs with own SA in PS (destination)
-    uint32_t ui32_filter = ((static_cast<MASK_TYPE>(PROCESS_DATA_PGN) | static_cast<MASK_TYPE>(ui32_nr)) << 8);
-    if (!getCanInstance4Comm().existFilter( *this, (0x3FFFF00UL), ui32_filter, Ident_c::ExtendedIdent))
-    { // create FilterBox
-      getCanInstance4Comm().insertFilter( *this, (0x3FFFF00UL), ui32_filter, true, Ident_c::ExtendedIdent);
+  if ( getIsoMonitorInstance4Comm().existLocalIsoMemberISOName(arcc_isoName) )
+  { // local IsoItem_c has finished adr claim
+    if (!getIsoFilterManagerInstance4Comm().existIsoFilter( IsoFilter_s (*this, (0x3FFFF00UL), ((PROCESS_DATA_PGN) << 8), &arcc_isoName, NULL, 8, Ident_c::ExtendedIdent)))
+    { // create IsoFilterBox
+      getIsoFilterManagerInstance4Comm().insertIsoFilter(   IsoFilter_s (*this, (0x3FFFF00UL), ((PROCESS_DATA_PGN) << 8), &arcc_isoName, NULL, 8, Ident_c::ExtendedIdent), true);
     }
   }
   else
@@ -844,21 +812,19 @@ void Process_c::reactOnMonitorListAdd( const IsoName_c& rc_isoName, const IsoIte
   * @param rc_isoName const reference to the item which IsoItem_c state is changed
   * @param aui8_oldSa previously used SA which is NOW LOST -> clients which were connected to this item can react explicitly
   */
-void Process_c::reactOnMonitorListRemove( const IsoName_c& rc_isoName, uint8_t aui8_oldSa )
+void Process_c::reactOnMonitorListRemove( const IsoName_c& arcc_isoName, uint8_t /*aui8_oldSa*/ )
 {
-  if ( getIsoMonitorInstance4Comm().existLocalIsoMemberISOName(rc_isoName) )
-  { // lcoal IsoItem_c has lost SA
-    uint32_t ui32_nr = aui8_oldSa;
-          // only ISO msgs with own SA in PS (destination)
-    uint32_t ui32_filter = ((static_cast<MASK_TYPE>(PROCESS_DATA_PGN) | static_cast<MASK_TYPE>(ui32_nr)) << 8);
-    if (getCanInstance4Comm().existFilter( *this, (0x3FFFF00UL), ui32_filter, Ident_c::ExtendedIdent))
-    { // create FilterBox
-      getCanInstance4Comm().deleteFilter( *this, (0x3FFFF00UL), ui32_filter, Ident_c::ExtendedIdent);
+  if ( getIsoMonitorInstance4Comm().existLocalIsoMemberISOName(arcc_isoName) )
+  { // local IsoItem_c has lost SA
+    if (getIsoFilterManagerInstance4Comm().existIsoFilter( IsoFilter_s (*this, (0x3FFFF00UL), ((PROCESS_DATA_PGN) << 8), &arcc_isoName, NULL, 8, Ident_c::ExtendedIdent)))
+    { // remove IsoFilterBox
+      getIsoFilterManagerInstance4Comm().removeIsoFilter(  IsoFilter_s (*this, (0x3FFFF00UL), ((PROCESS_DATA_PGN) << 8), &arcc_isoName, NULL, 8, Ident_c::ExtendedIdent));
     }
   }
   else
   { // remote IsoItem_c
-    deleteRemoteFilter(rc_isoName);
+    /** @todo remove filter? this may by called on change of SA, so we wouldn't need to remove the filter here! */
+    deleteRemoteFilter(arcc_isoName);
   }
 }
 
@@ -883,7 +849,6 @@ void Process_c::unregisterRemoteProcessData( ProcDataRemoteBase_c* pc_remoteClie
   // check if the remote owner isoName is used for any other remote proc
   const IsoName_c& c_toBeDeletedOwnerisoName = pc_remoteClient->isoName();
   bool b_otherRemoteWithSameOwner = false;
-  MASK_TYPE ui32_filter;
 
   for ( cacheTypeC2_t pc_iter = c_arrClientC2.begin();
         ( pc_iter != c_arrClientC2.end() );
@@ -900,15 +865,9 @@ void Process_c::unregisterRemoteProcessData( ProcDataRemoteBase_c* pc_remoteClie
 
   if ( !b_otherRemoteWithSameOwner )
   { // delete the remote filter that was created to receive messages from that owner
-    if (getIsoMonitorInstance4Comm().existIsoMemberISOName(c_toBeDeletedOwnerisoName, true))
-    { // remote owner exist and has claimed address -> check if corresponding FilterBox_c exist
-      uint8_t ui8_recNr = getIsoMonitorInstance4Comm().isoMemberISOName(c_toBeDeletedOwnerisoName, true).nr();
-      ui32_filter = (PROCESS_DATA_PGN << 8) | ui8_recNr;
-      // delete corresponding FilterBox_c in timeEvent() to avoid problems when called in procdata cestructor
-      ml_filtersToDeleteISO.push_front(ui32_filter);
-    } // owner exist with claimed address in isoMonitor
+    // delete corresponding FilterBox_c in timeEvent() to avoid problems when called in procdata cestructor
+    ml_filtersToDeleteISO.push_front(c_toBeDeletedOwnerisoName);
   }
-
 }
 
 /**

@@ -73,15 +73,16 @@ class iIsoFilterManager_c : private __IsoAgLib::IsoFilterManager_c
 {
 public:
 
-  /** @return true on success */
-  bool insertIsoFilter (const iIsoFilter_s& rrefcs_isoFilter)
-  { IsoFilterManager_c::insertIsoFilter (rrefcs_isoFilter); return true; }
+  /** @return true on success @todo SOON make the intern function return a bool, too. */
+  bool insertIsoFilter (iIsoFilter_s const& arcs_isoFilter, bool ab_immReconfigure=true)
+  { IsoFilterManager_c::insertIsoFilter (arcs_isoFilter, ab_immReconfigure); return true; }
 
-  bool addToIsoFilter (const iIsoFilter_s& rrefcs_isoFilterExisting, const iIsoFilter_s& rrefcs_isoFilterToAdd)
-  { return IsoFilterManager_c::addToIsoFilter (rrefcs_isoFilterExisting, rrefcs_isoFilterToAdd); }
+  void removeIsoFilter (iIsoFilter_s const& arcs_isoFilter)
+  { IsoFilterManager_c::removeIsoFilter (arcs_isoFilter); }
 
-   void removeIsoFilter (const iIsoFilter_s& rrefcs_isoFilter)
-   { IsoFilterManager_c::removeIsoFilter (rrefcs_isoFilter); }
+  bool existIsoFilter (iIsoFilter_s const& arcs_isoFilter)
+  { return IsoFilterManager_c::existIsoFilter (arcs_isoFilter); }
+
 
 private: // Private methods/attributes
   /** HIDDEN constructor for an iIsoFilterManager_c object instance

@@ -148,7 +148,7 @@ class ProcessDataChangeHandler_c {
    * @param ac_callerISOName ISOName of calling device - i.e. which sent new setpoint
    * @return true -> handler class reacted on change event
    */
- virtual bool processMeasurementUpdate( IsoAgLib::EventSource_c ac_src, int32_t ai32_val, const IsoAgLib::iIsoName_c& ac_callerISOName, bool ab_change );
+ virtual bool processMeasurementUpdate( IsoAgLib::EventSource_c ac_src, int32_t ai32_val, const iIsoName_c& ac_callerISOName, bool ab_change );
 
 #ifdef USE_FLOAT_DATA_TYPE
  /** react on new received measurement update for remote process data
