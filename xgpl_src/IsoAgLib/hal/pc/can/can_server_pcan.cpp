@@ -194,6 +194,7 @@ void closeBusOnCard(uint8_t ui8_bus, server_c* /*pc_serverData*/)
 
 void __HAL::updatePendingMsgs(server_c* pc_serverData, int8_t i8_bus)
 {
+#ifndef WIN32
   // get amount of waiting-to-be-sent-out can-msgs in can-controller
   static TPEXTENDEDSTATUS extstat;
   if (i8_bus < 0)
@@ -222,6 +223,7 @@ void __HAL::updatePendingMsgs(server_c* pc_serverData, int8_t i8_bus)
     pc_serverData->marri_pendingMsgs[i8_bus] = extstat.nPendingWrites;
     DEBUG_PRINT1 ("peak-can's number of pending msgs is %d\n", pc_serverData->marri_pendingMsgs[i8_bus]);
   }
+#endif
 }
 
 // PURPOSE: To send a msg on the specified CAN BUS
