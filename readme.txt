@@ -1,21 +1,26 @@
 /*! \mainpage Overview on Documentation of IsoAgLib
 
 INCLUDE_mainHeaderWithNavbar.txt_INCLUDE
-\htmlonly
-<table style="border-width:1px; border-color:#66CC66; border-style:dashed; padding:5px;">
-<th>Most often needed lookup-links:</th>
+<table class="infoboxLinks" border="0">
+<tr><th>Most often needed lookup-links</th></tr>
 <tr><td>
-\endhtmlonly
 \ref XMLspec
-\htmlonly
 </td></tr>
 <tr><td>
-\endhtmlonly
 \ref XMLProcSpec
-\htmlonly
 </td></tr>
 </table>
-\endhtmlonly
+
+<table class="infobox" border="0">
+<tr><th>Overview</th></tr>
+<tr><td>The following parts are described in this section:
+<ul><li>\ref Home
+</li><li>\ref LatestNews
+</li><li>\ref Acknowledgements
+</li><li>\ref Authors
+</li></ul>
+</td></tr>
+</table>
 
 \section Home Welcome to IsoAgLib.org!
 
@@ -66,7 +71,7 @@ to develop applications using IsoAglib.
 
 \subsection NewNews News for the 1.2.0 release
 	- <b>during 2005:</b> Virtual Terminal Client<br>
-		- <b>ISO<i><sub>AgLib</sub></i></b> has now its own internet domains: http://www.isoaglib.org , http://www.isoaglib.de and http://www.isoaglib.com</b>
+		- <b>ISO<i><sub>AgLib</sub></i></b> has now its own internet domains: http://www.isoaglib.org , http://www.isoaglib.de and http://www.isoaglib.com
 		- Added support for IsoLatin-9 fonts: Now for every font-attribute the "font_type" attribute has to be specified. (Please adapt your existing XML files.)<br>
 		- Support for font-downscaling (in case a pool is designed for >200x200 pixel VTs)<br>
 		- Cleanup on Tutorial3_0 example objectpool
@@ -83,9 +88,9 @@ to develop applications using IsoAglib.
 </b>
 
 \section Acknowledgements Acknowledgements
-\subsection InitialFundingDfg Thanks to DFG funded research group "IKB Dürnast"
+\subsection InitialFundingDfg Thanks to DFG funded research group IKB Düuernast
 The initial creation of the ISO<i><sub>AgLib</sub></i> was enabled by the research project
-<b>"IKB Dürnast"</b> which is leaded by <b>Prof. Auernhammer</b> at the <a href="http://www.tec.wzw.tum.de/pflanztech/englisch/index.html">Department of Bio Resources and Land Use Technology
+<b>&quot;IKB D&uuml;rnast&quot;</b> which is leaded by <b>Prof. Auernhammer</b> at the <a href="http://www.tec.wzw.tum.de/pflanztech/englisch/index.html">Department of Bio Resources and Land Use Technology
 			- Crop Production Engineering</a> .
 
 \subsection InitialSupport Thanks to development by Sensortechnik Wiedemann (STW)
@@ -121,7 +126,3 @@ first users like <b>Brad Cox</b> started to try ISO<i><sub>AgLib</sub></i> in co
 			Some other extensions from him are moveChildLocation and setOriginSKM functions for VT Objects, where appropriate.
 			Last but not least, he started with us to integrate multi language support.
 */
-
-
-
-

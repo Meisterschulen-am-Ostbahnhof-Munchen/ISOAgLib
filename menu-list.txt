@@ -1,55 +1,61 @@
-<ul id="menu">
+<ul>
     <li class="folder"> \ref Home "About IsoAgLib"
         <ul>
-        <li> \ref LatestNews
-        <li> \ref MainFeatures        
-        <li> \ref StructuralOverview
-        <li> \ref Maintainers
-        <li> \ref Support "Support Information"
-        <li> \ref UsingProjects "Known Applications"        
-        <li> \ref Acknowledgements
-        <li> \ref LicenseConditions
+        <li> \ref LatestNews </li>
+        <li> \ref MainFeatures </li>
+        <li> \ref StructuralOverview </li>
+        <li> \ref Maintainers "Maintainers" </li>
+        <li> \ref Support "Support Information" </li>
+        <li> \ref UsingProjects "Known Applications" </li>
+        <li> \ref Acknowledgements </li>
         </ul>
-    <li class="folder"> <b style="text-weight:bold;background:#EEEEEE;display:block">Development Information</b>
+    </li>
+    <li> \ref LicenseConditions </li>
+    <li class="folder"><b> Developer Information </b>
         <ul>
-        <li> \ref WhereToStart "Learning IsoAgLib"
-        <li> \ref Changes
-        <li> \ref Todo "ToDo"
-        <li> \ref MemoryUsage "Memory Resource Requirements"
+        <li> \ref WhereToStart "Learning IsoAgLib" </li>
+        <li> \ref Changes </li>
+        <li> \ref Todo "ToDo" </li>
+        <li> \ref MemoryUsage "Memory Resource Requirements" </li>
         </ul>
-    <li class="folder"> \ref HowtoDownloadPage "Download Information"
+    </li>
+    <li class="folder"> \ref HowtoDownloadPage "Download and Installation"
         <ul>
-        <li> \ref HowtoDownload "Identifying needed Archives"
-        <li> \ref HowtoAccessRepository "Accessing Repository"
-        <li> \ref HowtoContribute "Contributing"
-        <li> \ref HowtoGetHelp "Acquiring Help"
-        <li> \ref HowtoCreateDoc "Creating Documentation"
+        <li> \ref HowtoDownload "Choosing Archives" </li>
+        <li> \ref HowtoAccessRepository "Accessing the Repository" </li>
+        <li> \ref HowtoContribute "Contributing to IsoAgLib" </li>
+        <li> \ref HowtoGetHelp "Getting Help" </li>
         </ul>
+    </li>
     <li class="folder"> \ref GettingInstalled "Getting Started"
         <ul>
-        <li> \ref HowtoLearnIsoAgLib "Learning IsoAgLib"
-        <li> \ref HowtoSetupCompilerTools "Preparing Compiler and IDE"
-        <li> \ref InstallIsoToolVt2Iso "Installing vt2iso"
-        <li> \ref HowtoCreateProjectFiles "Project File Creation"
+        <li> \ref HowtoLearnIsoAgLib "Learning IsoAgLib" </li>
+        <li> \ref HowtoSetupCompilerTools "Preparing Compiler and IDE" </li>
+        <li> \ref InstallIsoToolVt2Iso "Installing vt2iso" </li>
+        <li> \ref HowtoCreateProjectFiles "Project File Creation" </li>
         </ul>
+    </li>
     <li class="folder"> \ref information
         <ul>
-        <li> \ref InfGeneralInformation
-        <li> \ref InfAgentNetwork
-        <li> \ref InfServiceNetwork
-        <li> \ref InfRequirements
+        <li> \ref InfGeneralInformation </li>
+        <li> \ref InfAgentNetwork </li>
+        <li> \ref InfServiceNetwork </li>
+        <li> \ref InfRequirements </li>
         </ul>
+    </li>
     <li class="folder"> \ref outlook
         <ul>
-        <li> \ref FurtherDevelopment
-        <li> \ref FurtherExamples
+        <li> \ref FurtherDevelopment </li>
+        <li> \ref FurtherExamples </li>
         </ul>
+    </li>
     <li class="folder"> \ref disc_further
         <ul>
-        <li> \ref QuestionsAnswers
-        <li> \ref FurtherReading
+        <li> \ref QuestionsAnswers </li>
+        <li> \ref FurtherReading </li>
         </ul>
-    <li> \ref Sitemap
+    </li>
+    <li> \ref Sitemap </li>
 </ul>
 
 
