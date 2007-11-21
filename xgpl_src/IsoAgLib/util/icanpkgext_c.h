@@ -270,24 +270,24 @@ public:
 
 
   /** set the monitoritem for resolve SA
-      @param pc_monitorItem  needed monitoritem
+      @param apc_monitorItem  needed monitoritem
     */
-  void setMonitorItemForSA (iIsoItem_c* pc_monitorItem) { CanPkgExt_c::setMonitorItemForSA (pc_monitorItem); }
+  void setMonitorItemForSA (iIsoItem_c* apc_monitorItem) { CanPkgExt_c::setMonitorItemForSA (apc_monitorItem); }
 
   /** set the isoName for resolve SA
-      @param p_isoName        needed isoName
+      @param arc_isoName        needed isoName
     */
-  void setISONameForSA (const iIsoName_c& rc_isoName) { CanPkgExt_c::setISONameForSA (rc_isoName); }
+  void setISONameForSA (const iIsoName_c& arc_isoName) { CanPkgExt_c::setISONameForSA (arc_isoName); }
 
   /** set the monitoritem for resolve SA
-      @param pc_monitorItem  needed monitoritem
+      @param apc_monitorItem  needed monitoritem
     */
-  void setMonitorItemForDA (iIsoItem_c* pc_monitorItem) { CanPkgExt_c::setMonitorItemForDA (pc_monitorItem); }
+  void setMonitorItemForDA (iIsoItem_c* apc_monitorItem) { CanPkgExt_c::setMonitorItemForDA (apc_monitorItem); }
 
   /** set the isoName for resolve SA
-      @param p_isoName        needed isoName
+      @param arc_isoName        needed isoName
     */
-  void setISONameForDA (const iIsoName_c& rc_isoName) { CanPkgExt_c::setISONameForDA (rc_isoName); }
+  void setISONameForDA (const iIsoName_c& arc_isoName) { CanPkgExt_c::setISONameForDA (arc_isoName); }
 
   /** short inline function for setting the Destination address (PS) to global (0xFF)
     */

@@ -99,20 +99,25 @@ class IsoItem_c;
 
 
 /** structure which will be filled when an address is resolved */
-typedef struct
-{ // IMPORTANT:
-  // the IsoName_c instance should be handled as if it would be a fixed
-  // _part_ of the struct --> the constructor allocates an instance, the destructur frees it
-  //                          and all other operations just operate on the allocated instance.
-  IsoName_c* p_isoName;
-  // IMPORTANT:
-  // in contrast to IsoName_c, the MonitorItem_c _POINTER_ is always set to NULL or to an instance, that
-  // is located somewhere else (thus do NEVER NEVER NEVER call new or delete for this entry!!!!!!!!)
-  IsoItem_c* pc_monitorItem;
-  //can be source or destination address
-  uint8_t* pui8_address;
-} AddressResolveResults;
+class AddressResolveResults_c
+{
+  public:
+    AddressResolveResults_c();
+    void init( uint8_t* aui8_address );
+    ~AddressResolveResults_c();
 
+    // IMPORTANT:
+    // the IsoName_c instance should be handled as if it would be a fixed
+    // _part_ of the struct --> the constructor allocates an instance, the destructur frees it
+    //                          and all other operations just operate on the allocated instance.
+    IsoName_c* mpc_isoName;
+    // IMPORTANT:
+    // in contrast to IsoName_c, the MonitorItem_c _POINTER_ is always set to NULL or to an instance, that
+    // is located somewhere else (thus do NEVER NEVER NEVER call new or delete for this entry!!!!!!!!)
+    IsoItem_c* mpc_monitorItem;
+    //can be source or destination address
+    uint8_t* mpui8_address;
+} ;
 
 
 typedef enum Scope_en
@@ -312,7 +317,7 @@ class CanPkgExt_c : public CanPkg_c
   */
   void setIsoPgn(uint32_t aui32_val);
 
-  bool resolveAddress(AddressResolveResults& addressResolveResults);
+  bool resolveAddress(AddressResolveResults_c& arc_addressResolveResults);
 
   /**
     set the value of the ISO11783 ident field DP
@@ -412,26 +417,26 @@ class CanPkgExt_c : public CanPkg_c
   bool resolveSendingInformation();
 
   /** set the monitoritem for resolve SA
-      @param pc_monitorItem  needed monitoritem
+      @param apc_monitorItem  needed monitoritem
     */
-  void setMonitorItemForSA( IsoItem_c* pc_monitorItem );
+  void setMonitorItemForSA( IsoItem_c* apc_monitorItem );
 
   /** set the isoName for resolve SA
-      @param p_isoName        needed isoName
+      @param arc_isoName        needed isoName
     */
-  void setISONameForSA( const IsoName_c& p_isoName );
+  void setISONameForSA( const IsoName_c& arc_isoName );
 
   /** set the monitoritem for resolve SA
-      @param pc_monitorItem  needed monitoritem
+      @param apc_monitorItem  needed monitoritem
     */
-  void setMonitorItemForDA( IsoItem_c* pc_monitorItem );
+  void setMonitorItemForDA( IsoItem_c* apc_monitorItem );
 
   /** set the isoName for resolve SA
-      @param p_isoName        needed isoName
+      @param arc_isoName        needed isoName
     */
-  void setISONameForDA( const IsoName_c& p_isoName );
+  void setISONameForDA( const IsoName_c& arc_isoName );
 
-  uint8_t checkMonitorItemISOName( const AddressResolveResults& addressResolveResults ) const;
+  uint8_t checkMonitorItemISOName( const AddressResolveResults_c& arc_addressResolveResults ) const;
 
   /** short inline function for setting the Destination address (PS) to global (0xFF)
     */
@@ -439,19 +444,19 @@ class CanPkgExt_c : public CanPkg_c
 
   /** get the monitoritem for resolved SA
     */
-  IsoItem_c* getMonitorItemForSA() { return ms_addrResolveResSA.pc_monitorItem; }
+  IsoItem_c* getMonitorItemForSA() { return mc_addrResolveResSA.mpc_monitorItem; }
 
   /** get the isoName for resolved SA
     */
-  const IsoName_c& getISONameForSA() { return *ms_addrResolveResSA.p_isoName; }
+  const IsoName_c& getISONameForSA() { return *mc_addrResolveResSA.mpc_isoName; }
 
   /** set the monitoritem for resolved SA
     */
-  IsoItem_c* getMonitorItemForDA() { return ms_addrResolveResDA.pc_monitorItem; }
+  IsoItem_c* getMonitorItemForDA() { return mc_addrResolveResDA.mpc_monitorItem; }
 
   /** set the isoName for resolved DA
     */
-  const IsoName_c& getISONameForDA() { return *ms_addrResolveResDA.p_isoName; }
+  const IsoName_c& getISONameForDA() { return *mc_addrResolveResDA.mpc_isoName; }
 
 
   #ifdef ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL
@@ -489,14 +494,14 @@ private:
       @param  scope                  local or remote
       @return  true -> monitoritem_c, isoName_c is a valid combination
     */
-  MessageState_t setAddress(AddressResolveResults& addressResolveResults, Scope scope);
+  MessageState_t setAddress(AddressResolveResults_c& arc_addressResolveResults, Scope scope);
 
   /** resolve a given monitoritem and get address if possible
       @param  addressResolveResults  address to resolve
       @return true -> monitoritem could be resolved
               false -> nothing more to be done
     */
-  bool resolveMonitorItem( AddressResolveResults& addressResolveResults );
+  bool resolveMonitorItem( AddressResolveResults_c& arc_addressResolveResults );
 
   /**
     abstract transform flag values to data string
@@ -516,10 +521,10 @@ private:
   static bool msb_runFlag2String;
 
   /** variable which holds the results for a resolved source address */
-  static AddressResolveResults ms_addrResolveResSA;
+  static AddressResolveResults_c mc_addrResolveResSA;
 
   /** variable which holds the results for a resolved destination address */
-  static AddressResolveResults ms_addrResolveResDA;
+  static AddressResolveResults_c mc_addrResolveResDA;
 };
 
 /** this typedef is only for some time to provide backward compatibility at API level */

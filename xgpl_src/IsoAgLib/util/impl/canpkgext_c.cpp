@@ -101,29 +101,56 @@ namespace __IsoAgLib {
 
 bool CanPkgExt_c::msb_runFlag2String = true;
 
+
+/** caveat: in embedded systems, a static object may not get a clean constructure call,
+    so do NOT RELY ON CLEAN INIT BY CONSTRUCTOR
+  */
+AddressResolveResults_c::AddressResolveResults_c()
+  : mpc_isoName( NULL ), mpc_monitorItem( NULL ), mpui8_address( NULL )
+{
+}
+
+void AddressResolveResults_c::init( uint8_t* aui8_address )
+{
+  mpc_isoName = new IsoName_c(IsoName_c::IsoNameUnspecified());
+  mpc_monitorItem = NULL;
+  mpui8_address = aui8_address;
+}
+
+AddressResolveResults_c::~AddressResolveResults_c()
+{
+  delete mpc_isoName;
+  mpc_isoName = NULL;
+  mpc_monitorItem = NULL;
+  mpui8_address = NULL;
+}
+
+
 /** variable which holds the results for a resolved source address */
-AddressResolveResults CanPkgExt_c::ms_addrResolveResSA;
+AddressResolveResults_c CanPkgExt_c::mc_addrResolveResSA;
 
 /** variable which holds the results for a resolved destination address */
-AddressResolveResults CanPkgExt_c::ms_addrResolveResDA;
+AddressResolveResults_c CanPkgExt_c::mc_addrResolveResDA;
+
+
+
 
 /** default constructor, which has nothing to do */
 CanPkgExt_c::CanPkgExt_c( int ai_singletonVecKey )
   : CanPkg_c( ai_singletonVecKey )
 {
-  ms_addrResolveResSA.p_isoName = new IsoName_c(IsoName_c::IsoNameUnspecified());
-  ms_addrResolveResDA.p_isoName = new IsoName_c(IsoName_c::IsoNameUnspecified());
-  ms_addrResolveResSA.pc_monitorItem = NULL;
-  ms_addrResolveResDA.pc_monitorItem = NULL;
-  ms_addrResolveResSA.pui8_address = &identRef(0);
-  ms_addrResolveResDA.pui8_address = &identRef(1);
+  static bool sb_addrResolveInitialized = false;
+  if ( ! sb_addrResolveInitialized )
+  { // addrResolveResSA and addrResolveResDA has to be initialized
+    mc_addrResolveResSA.init( &identRef(0) );
+    mc_addrResolveResDA.init( &identRef(1) );
+    sb_addrResolveInitialized = true;
+  }
 }
 
 /** virtual default destructor, which has nothing to do */
 CanPkgExt_c::~CanPkgExt_c()
 {
-  delete ms_addrResolveResSA.p_isoName;
-  delete ms_addrResolveResDA.p_isoName;
 }
 
 /**
@@ -220,20 +247,20 @@ void CanPkgExt_c::setIsoPgn(uint32_t aui32_val)
 
 
 /** resolve a given address and set isoName and monitoritem if possible
-    @param  addressResolveResults  address to resolve
+    @param  arc_addressResolveResults  address to resolve
     @return true -> address could be resolved
   */
-bool CanPkgExt_c::resolveAddress( AddressResolveResults& addressResolveResults )
+bool CanPkgExt_c::resolveAddress( AddressResolveResults_c& arc_addressResolveResults )
 {
-  if (   ( *addressResolveResults.pui8_address <= 0xFD )
-      && ( getIsoMonitorInstance4Comm().existIsoMemberNr( *addressResolveResults.pui8_address ) )
+  if (   ( *arc_addressResolveResults.mpui8_address <= 0xFD )
+      && ( getIsoMonitorInstance4Comm().existIsoMemberNr( *arc_addressResolveResults.mpui8_address ) )
      )
   { // there exists an item with the given address
-    addressResolveResults.pc_monitorItem = &(getIsoMonitorInstance4Comm().isoMemberNr( *addressResolveResults.pui8_address ));
+    arc_addressResolveResults.mpc_monitorItem = &(getIsoMonitorInstance4Comm().isoMemberNr( *arc_addressResolveResults.mpui8_address ));
 
-    if ( addressResolveResults.pc_monitorItem->itemState( IState_c::ClaimedAddress ) )
+    if ( arc_addressResolveResults.mpc_monitorItem->itemState( IState_c::ClaimedAddress ) )
     { // the existing item has already claimed its address - is fully functional on the BUS
-      *addressResolveResults.p_isoName = addressResolveResults.pc_monitorItem->isoName();
+      *arc_addressResolveResults.mpc_isoName = arc_addressResolveResults.mpc_monitorItem->isoName();
 
       #ifdef DEBUG_CAN
         INTERNAL_DEBUG_DEVICE << "Member is known with given address." << INTERNAL_DEBUG_DEVICE_ENDL;
@@ -242,8 +269,8 @@ bool CanPkgExt_c::resolveAddress( AddressResolveResults& addressResolveResults )
     }
   }
   // when we reach this position, the address could not resolve to an already claimed item
-  addressResolveResults.pc_monitorItem = NULL;
-  addressResolveResults.p_isoName->setUnspecified();
+  arc_addressResolveResults.mpc_monitorItem = NULL;
+  arc_addressResolveResults.mpc_isoName->setUnspecified();
   #ifdef DEBUG_CAN
     INTERNAL_DEBUG_DEVICE << "Member is not known with given address. Set monitorItem and isoName to NULL/unspecified." << INTERNAL_DEBUG_DEVICE_ENDL;
   #endif
@@ -276,8 +303,8 @@ MessageState_t CanPkgExt_c::resolveReceivingInformation()
     #ifdef DEBUG_CAN
       INTERNAL_DEBUG_DEVICE << "We have PDU2 format -> no destination address." << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
-    ms_addrResolveResDA.p_isoName->setUnspecified();
-    ms_addrResolveResDA.pc_monitorItem = NULL;
+    mc_addrResolveResDA.mpc_isoName->setUnspecified();
+    mc_addrResolveResDA.mpc_monitorItem = NULL;
 
     messageStateDA = DaValid;
   }
@@ -304,19 +331,19 @@ MessageState_t CanPkgExt_c::address2IdentLocalDa()
 {
   //we are shure that we have PDU1 format and therefore we have a destination address
   #ifdef DEBUG_CAN
-    INTERNAL_DEBUG_DEVICE << "Scope local(DA) with ps-field = " << int(*ms_addrResolveResDA.pui8_address ) << INTERNAL_DEBUG_DEVICE_ENDL;
+    INTERNAL_DEBUG_DEVICE << "Scope local(DA) with ps-field = " << int(*mc_addrResolveResDA.mpui8_address ) << INTERNAL_DEBUG_DEVICE_ENDL;
   #endif
 
   // now try to resolve the address
-  const bool cb_addressBelongsToKnownItem = resolveAddress( ms_addrResolveResDA );
+  const bool cb_addressBelongsToKnownItem = resolveAddress( mc_addrResolveResDA );
 
   if ( cb_addressBelongsToKnownItem )
   { // only problem might be: when we receive a message sent to a remote node
-    if ( ms_addrResolveResDA.pc_monitorItem->itemState(IState_c::Local) )
+    if ( mc_addrResolveResDA.mpc_monitorItem->itemState(IState_c::Local) )
     { // everything is fine
       #ifdef DEBUG_CAN
         INTERNAL_DEBUG_DEVICE << "We reached a VALID state. Either the target is known." << INTERNAL_DEBUG_DEVICE_ENDL;
-        INTERNAL_DEBUG_DEVICE << "address =  " << int( *ms_addrResolveResDA.pui8_address ) << INTERNAL_DEBUG_DEVICE_ENDL;
+        INTERNAL_DEBUG_DEVICE << "address =  " << int( *mc_addrResolveResDA.mpui8_address ) << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
       return DaValid;
     }
@@ -325,12 +352,12 @@ MessageState_t CanPkgExt_c::address2IdentLocalDa()
       // of Working-Set-Slaves which have to snoop messages to their Working-Set-Master
       #ifdef DEBUG_CAN
         INTERNAL_DEBUG_DEVICE << "We reached an ONLYNETWORKMGTM state. Destination is a remote node." << INTERNAL_DEBUG_DEVICE_ENDL;
-        INTERNAL_DEBUG_DEVICE << "address =  " << int( *ms_addrResolveResDA.pui8_address ) << INTERNAL_DEBUG_DEVICE_ENDL;
+        INTERNAL_DEBUG_DEVICE << "address =  " << int( *mc_addrResolveResDA.mpui8_address ) << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
       return static_cast<MessageState_t>(DaInvalidRemote | AdrOnlyNetworkMgmt);
     }
   }
-  else if ( *ms_addrResolveResDA.pui8_address == 0xFF )
+  else if ( *mc_addrResolveResDA.mpui8_address == 0xFF )
   { // we received a broadcasted message
     #ifdef DEBUG_CAN
       INTERNAL_DEBUG_DEVICE << "We reached a VALID state. Target address is 0xFF (broadcast)." << INTERNAL_DEBUG_DEVICE_ENDL;
@@ -340,14 +367,14 @@ MessageState_t CanPkgExt_c::address2IdentLocalDa()
   else
   { // the receiver is not known OR is 0xFE (which is not a valid receiver address) -> don't process this message
     getILibErrInstance().registerError( iLibErr_c::Precondition, iLibErr_c::Can );
-    if ( *ms_addrResolveResDA.pui8_address == 0xFE ) {
+    if ( *mc_addrResolveResDA.mpui8_address == 0xFE ) {
       #ifdef DEBUG_CAN
       INTERNAL_DEBUG_DEVICE << "We reached an INVALID state. Receiver is 0xFE which is NOT possible." << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
       return static_cast<MessageState_t>(DaInvalidAnonymous | AdrInvalid);
     } else {
       #ifdef DEBUG_CAN
-      INTERNAL_DEBUG_DEVICE << "We reached an INVALID state. Receiver is " << int( *ms_addrResolveResDA.pui8_address ) << " which is NOT known." << INTERNAL_DEBUG_DEVICE_ENDL;
+      INTERNAL_DEBUG_DEVICE << "We reached an INVALID state. Receiver is " << int( *mc_addrResolveResDA.mpui8_address ) << " which is NOT known." << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
       return static_cast<MessageState_t>(DaInvalidUnknown | AdrInvalid);
     }
@@ -361,19 +388,19 @@ MessageState_t CanPkgExt_c::address2IdentLocalDa()
 MessageState_t CanPkgExt_c::address2IdentRemoteSa()
 {
   #ifdef DEBUG_CAN
-    INTERNAL_DEBUG_DEVICE << "Scope remote(SA) with sa-field = " << int( *ms_addrResolveResSA.pui8_address ) << INTERNAL_DEBUG_DEVICE_ENDL;
+    INTERNAL_DEBUG_DEVICE << "Scope remote(SA) with sa-field = " << int( *mc_addrResolveResSA.mpui8_address ) << INTERNAL_DEBUG_DEVICE_ENDL;
   #endif
 
   // now try to resolve the address
-  const bool cb_addressBelongsToKnownItem = resolveAddress( ms_addrResolveResSA );
+  const bool cb_addressBelongsToKnownItem = resolveAddress( mc_addrResolveResSA );
 
   if ( cb_addressBelongsToKnownItem )
   { // only problem might be: when we receive a message with SA of a local ident
-    if ( ms_addrResolveResSA.pc_monitorItem->itemState(IState_c::Local) )
+    if ( mc_addrResolveResSA.mpc_monitorItem->itemState(IState_c::Local) )
     {
       /** @todo isoItem is not const anymore, so we could inform the item of the conflict.
                 However it seems that it will be done anyway from identItem?? <<-- To check!!!
-                addressResolveResults.pc_monitorItem->affectedConflictCnt( IStateExt_c::Incr, time() );
+                arc_addressResolveResults.mpc_monitorItem->affectedConflictCnt( IStateExt_c::Incr, time() );
         */
       #ifdef DEBUG_CAN
         INTERNAL_DEBUG_DEVICE << "Someone sends with one of our SA's." << INTERNAL_DEBUG_DEVICE_ENDL;
@@ -388,7 +415,7 @@ MessageState_t CanPkgExt_c::address2IdentRemoteSa()
       return SaValid;
     }
   }
-  else if ( *ms_addrResolveResSA.pui8_address == 0xFF )
+  else if ( *mc_addrResolveResSA.mpui8_address == 0xFF )
   { // a SA with 0xFF is never allowed
     #ifdef DEBUG_CAN
       INTERNAL_DEBUG_DEVICE << "We reached an INVALID state with address = 0xFF." << INTERNAL_DEBUG_DEVICE_ENDL;
@@ -397,7 +424,7 @@ MessageState_t CanPkgExt_c::address2IdentRemoteSa()
     getILibErrInstance().registerError( iLibErr_c::Precondition, iLibErr_c::Can );
     return static_cast<MessageState_t>(SaInvalidGlobal | AdrInvalid); // mark as invalid
   }
-  else if ( *ms_addrResolveResSA.pui8_address == 0xFE )
+  else if ( *mc_addrResolveResSA.mpui8_address == 0xFE )
   { // each RequestForXY message (not only ReqForAdrClaim) is allowed to be sent with SA == 0xFE
     #ifdef DEBUG_CAN
       INTERNAL_DEBUG_DEVICE << "We reached a VALID state with address = OxFE." << INTERNAL_DEBUG_DEVICE_ENDL;
@@ -415,16 +442,16 @@ MessageState_t CanPkgExt_c::address2IdentRemoteSa()
 
 
 /** resolve a given monitoritem and get address if possible
-    @param  addressResolveResults  address to resolve
+    @param  arc_addressResolveResults  address to resolve
     @return true -> monitoritem could be resolved
             false -> nothing more to be done
   */
-bool CanPkgExt_c::resolveMonitorItem( AddressResolveResults& addressResolveResults )
+bool CanPkgExt_c::resolveMonitorItem( AddressResolveResults_c& arc_addressResolveResults )
 {
   //check if monitoritem exist
-  if ( addressResolveResults.pc_monitorItem == NULL )
+  if ( arc_addressResolveResults.mpc_monitorItem == NULL )
   {
-    if( addressResolveResults.p_isoName->isUnspecified() )
+    if( arc_addressResolveResults.mpc_isoName->isUnspecified() )
     { // leave CAN-Identifier as is
       // nothing more to be done
       #ifdef DEBUG_CAN
@@ -433,9 +460,9 @@ bool CanPkgExt_c::resolveMonitorItem( AddressResolveResults& addressResolveResul
       #endif
       return true;
     }
-    else // ( p_isoName.isSpecified() )
-    { // get pc_monitorItem if exist in systemmgmt_c
-      if ( !getIsoMonitorInstance4Comm().existIsoMemberISOName( *addressResolveResults.p_isoName, false ) )
+    else // ( mpc_isoName.isSpecified() )
+    { // get mpc_monitorItem if exist in systemmgmt_c
+      if ( !getIsoMonitorInstance4Comm().existIsoMemberISOName( *arc_addressResolveResults.mpc_isoName, false ) )
       {
         #ifdef DEBUG_CAN
           INTERNAL_DEBUG_DEVICE << "ISOName specified and item does NOT exists in systemmgmt." << INTERNAL_DEBUG_DEVICE_ENDL;
@@ -446,24 +473,24 @@ bool CanPkgExt_c::resolveMonitorItem( AddressResolveResults& addressResolveResul
         INTERNAL_DEBUG_DEVICE << "ISOName specified and item exists in systemmgmt. Get monitoritem." << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
 
-      addressResolveResults.pc_monitorItem = &getIsoMonitorInstance4Comm().isoMemberISOName( *addressResolveResults.p_isoName, false );
+      arc_addressResolveResults.mpc_monitorItem = &getIsoMonitorInstance4Comm().isoMemberISOName( *arc_addressResolveResults.mpc_isoName, false );
     }
   }
   #ifdef DEBUG_CAN
     INTERNAL_DEBUG_DEVICE << "We have a Monitoritem." << INTERNAL_DEBUG_DEVICE_ENDL;
   #endif
   // now: verify if the retrieved item is already claimed or if we are preparing a network mgmt message send
-  if (   addressResolveResults.pc_monitorItem->itemState(IState_c::ClaimedAddress)
+  if (   arc_addressResolveResults.mpc_monitorItem->itemState(IState_c::ClaimedAddress)
       || ( isNetworkMgmt() )
      )
   { // if claimed address, sending is allowed under all conditions
     // if address claim and isNetworkMgmt(), sending in AddressClaim state is allowed for network mgmt
-    *addressResolveResults.pui8_address = addressResolveResults.pc_monitorItem->nr();
+    *arc_addressResolveResults.mpui8_address = arc_addressResolveResults.mpc_monitorItem->nr();
     #ifdef DEBUG_CAN
-      INTERNAL_DEBUG_DEVICE << "ClaimedAddress state: " << addressResolveResults.pc_monitorItem->itemState(IState_c::ClaimedAddress) << INTERNAL_DEBUG_DEVICE_ENDL;
-      INTERNAL_DEBUG_DEVICE << "AddressClaim state:   " << addressResolveResults.pc_monitorItem->itemState(IState_c::AddressClaim) << INTERNAL_DEBUG_DEVICE_ENDL;
+      INTERNAL_DEBUG_DEVICE << "ClaimedAddress state: " << arc_addressResolveResults.mpc_monitorItem->itemState(IState_c::ClaimedAddress) << INTERNAL_DEBUG_DEVICE_ENDL;
+      INTERNAL_DEBUG_DEVICE << "AddressClaim state:   " << arc_addressResolveResults.mpc_monitorItem->itemState(IState_c::AddressClaim) << INTERNAL_DEBUG_DEVICE_ENDL;
       INTERNAL_DEBUG_DEVICE << "isNetworkMgmt() =     " << isNetworkMgmt() << INTERNAL_DEBUG_DEVICE_ENDL;
-      INTERNAL_DEBUG_DEVICE << "address =             " << int( *addressResolveResults.pui8_address ) << INTERNAL_DEBUG_DEVICE_ENDL;
+      INTERNAL_DEBUG_DEVICE << "address =             " << int( *arc_addressResolveResults.mpui8_address ) << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
     return true;
   }
@@ -489,7 +516,7 @@ bool CanPkgExt_c::resolveSendingInformation()
   INTERNAL_DEBUG_DEVICE << "*-*-*-* SEND MESSAGE *-*-*-*" << INTERNAL_DEBUG_DEVICE_ENDL;
   #endif
   // handle SA
-  if ( !resolveMonitorItem(ms_addrResolveResSA) )
+  if ( !resolveMonitorItem(mc_addrResolveResSA) )
   { // stop any further interpretation, as sending is not valid
     #ifdef DEBUG_CAN
       INTERNAL_DEBUG_DEVICE << "We reached an INVALID state. SA could not be resolved." << INTERNAL_DEBUG_DEVICE_ENDL;
@@ -497,12 +524,12 @@ bool CanPkgExt_c::resolveSendingInformation()
     getILibErrInstance().registerError( iLibErr_c::Precondition, iLibErr_c::Can );
     return false;
   }
-  else if ( ms_addrResolveResSA.pc_monitorItem != NULL )
+  else if ( mc_addrResolveResSA.mpc_monitorItem != NULL )
   { // resolving was performed
     #ifdef DEBUG_CAN
       INTERNAL_DEBUG_DEVICE << "SA could be resolved and monitorItem != NULL." << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
-    if ( !ms_addrResolveResSA.pc_monitorItem->itemState(IState_c::Local ) )
+    if ( !mc_addrResolveResSA.mpc_monitorItem->itemState(IState_c::Local ) )
     { // resolved MonitorItem is no local item -> no valid send possible
       #ifdef DEBUG_CAN
         INTERNAL_DEBUG_DEVICE << "Sending is not possible because item is not known local." << INTERNAL_DEBUG_DEVICE_ENDL;
@@ -513,13 +540,13 @@ bool CanPkgExt_c::resolveSendingInformation()
   }
   #ifdef DEBUG_CAN
     INTERNAL_DEBUG_DEVICE << "Sending is possible. Item is known local." << INTERNAL_DEBUG_DEVICE_ENDL;
-    INTERNAL_DEBUG_DEVICE << "SA = " << int( *ms_addrResolveResSA.pui8_address ) << INTERNAL_DEBUG_DEVICE_ENDL;
+    INTERNAL_DEBUG_DEVICE << "SA = " << int( *mc_addrResolveResSA.mpui8_address ) << INTERNAL_DEBUG_DEVICE_ENDL;
   #endif
   // set the SA in the IDENT
   // - when the SA has been directly set by call to setIsoSa(), the requested SA is already
-  //   stored in ms_addrResolveResSA.address
-  // ==> we can set least significant byte of the CAN ident in all cases from ms_addrResolveResSA.address
-//  setIdent(*ms_addrResolveResSA.pui8_address,0, Ident_c::ExtendedIdent);
+  //   stored in mc_addrResolveResSA.address
+  // ==> we can set least significant byte of the CAN ident in all cases from mc_addrResolveResSA.address
+//  setIdent(*mc_addrResolveResSA.mpui8_address,0, Ident_c::ExtendedIdent);
 
   // handle DA for PF -> PDU1
   if ( isoPf() < 0xF0 )
@@ -527,7 +554,7 @@ bool CanPkgExt_c::resolveSendingInformation()
     #ifdef DEBUG_CAN
       INTERNAL_DEBUG_DEVICE << "PDU1 format -> existing DA." << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
-    if ( !resolveMonitorItem(ms_addrResolveResDA) )
+    if ( !resolveMonitorItem(mc_addrResolveResDA) )
     { // stop any further interpretation, as sending is not valid
       #ifdef DEBUG_CAN
         INTERNAL_DEBUG_DEVICE << "Sending not valid. DA could not be resolved." << INTERNAL_DEBUG_DEVICE_ENDL;
@@ -535,12 +562,12 @@ bool CanPkgExt_c::resolveSendingInformation()
       getILibErrInstance().registerError( iLibErr_c::Precondition, iLibErr_c::Can );
       return false;
     }
-    else if ( ms_addrResolveResDA.pc_monitorItem != NULL )
+    else if ( mc_addrResolveResDA.mpc_monitorItem != NULL )
     { // resolving was performed
       #ifdef DEBUG_CAN
         INTERNAL_DEBUG_DEVICE << "Sending valid. DA could be resolved. MonitorItem != NULL." << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
-      if ( ms_addrResolveResDA.pc_monitorItem->itemState(IState_c::Local ) )
+      if ( mc_addrResolveResDA.mpc_monitorItem->itemState(IState_c::Local ) )
       { // resolved MonitorItem is no remote item -> no valid send possible
         #ifdef DEBUG_CAN
           INTERNAL_DEBUG_DEVICE << "Sending is not possible because item is known local." << INTERNAL_DEBUG_DEVICE_ENDL;
@@ -551,14 +578,14 @@ bool CanPkgExt_c::resolveSendingInformation()
     }
     #ifdef DEBUG_CAN
       INTERNAL_DEBUG_DEVICE << "Sending is possible. Item is known remote." << INTERNAL_DEBUG_DEVICE_ENDL;
-      INTERNAL_DEBUG_DEVICE << "DA = " << int( *ms_addrResolveResDA.pui8_address ) << INTERNAL_DEBUG_DEVICE_ENDL;
+      INTERNAL_DEBUG_DEVICE << "DA = " << int( *mc_addrResolveResDA.mpui8_address ) << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
   }
   // set the PS in the IDENT
   // - when the PS has been directly set by call to setIsoPs()/setIsoPgn(), the requested PS is already
-  //   stored in ms_addrResolveResDA.address
-  // ==> we can set second least significant byte of the CAN ident in all cases from ms_addrResolveResDA.address
-//  setIdent(*ms_addrResolveResDA.pui8_address, 1, Ident_c::ExtendedIdent);
+  //   stored in mc_addrResolveResDA.address
+  // ==> we can set second least significant byte of the CAN ident in all cases from mc_addrResolveResDA.address
+//  setIdent(*mc_addrResolveResDA.mpui8_address, 1, Ident_c::ExtendedIdent);
   #ifdef DEBUG_CAN
   else
   {
@@ -574,9 +601,9 @@ bool CanPkgExt_c::resolveSendingInformation()
   */
 void CanPkgExt_c::setIsoPs(uint8_t aui8_val)
 {
-  *ms_addrResolveResDA.pui8_address = aui8_val;
-  ms_addrResolveResDA.p_isoName->setUnspecified();
-  ms_addrResolveResDA.pc_monitorItem = NULL;
+  *mc_addrResolveResDA.mpui8_address = aui8_val;
+  mc_addrResolveResDA.mpc_isoName->setUnspecified();
+  mc_addrResolveResDA.mpc_monitorItem = NULL;
 }
 
 
@@ -586,78 +613,78 @@ void CanPkgExt_c::setIsoPs(uint8_t aui8_val)
   */
 void CanPkgExt_c::setIsoSa(uint8_t aui8_val)
 {
-  *ms_addrResolveResSA.pui8_address = aui8_val;
-  ms_addrResolveResSA.p_isoName->setUnspecified();
-  ms_addrResolveResSA.pc_monitorItem = NULL;
+  *mc_addrResolveResSA.mpui8_address = aui8_val;
+  mc_addrResolveResSA.mpc_isoName->setUnspecified();
+  mc_addrResolveResSA.mpc_monitorItem = NULL;
 }
 
 
 /** set the structure for resolve results DA
-    @param pc_monitorItem  needed monitoritem
+    @param apc_monitorItem  needed monitoritem
   */
-void CanPkgExt_c::setMonitorItemForSA( IsoItem_c* pc_monitorItem )
+void CanPkgExt_c::setMonitorItemForSA( IsoItem_c* apc_monitorItem )
 {
-  ms_addrResolveResSA.pc_monitorItem = pc_monitorItem;
-  // p_isoName will not be needed -> set to unspecified
-  ms_addrResolveResSA.p_isoName->setUnspecified();
-  *ms_addrResolveResSA.pui8_address = 0xFF;
+  mc_addrResolveResSA.mpc_monitorItem = apc_monitorItem;
+  // mpc_isoName will not be needed -> set to unspecified
+  mc_addrResolveResSA.mpc_isoName->setUnspecified();
+  *mc_addrResolveResSA.mpui8_address = 0xFF;
 }
 
 
 /** set the isoName for resolve SA
-    @param p_isoName  needed isoName
+    @param arc_isoName  needed isoName
   */
-void CanPkgExt_c::setISONameForSA( const IsoName_c& p_isoName )
+void CanPkgExt_c::setISONameForSA( const IsoName_c& arc_isoName )
 {
-  *ms_addrResolveResSA.p_isoName = p_isoName;
-  // pc_monitorItem will be set over p_isoName -> reset pc_monitorItem
-  ms_addrResolveResSA.pc_monitorItem = NULL;
-  *ms_addrResolveResSA.pui8_address = 0xFF;
+  *mc_addrResolveResSA.mpc_isoName = arc_isoName;
+  // mpc_monitorItem will be set over mpc_isoName -> reset mpc_monitorItem
+  mc_addrResolveResSA.mpc_monitorItem = NULL;
+  *mc_addrResolveResSA.mpui8_address = 0xFF;
 }
 
 
 /** set the structure for resolve results DA
-    @param pc_monitorItem  needed monitoritem
+    @param apc_monitorItem  needed monitoritem
   */
-void CanPkgExt_c::setMonitorItemForDA( IsoItem_c* pc_monitorItem )
+void CanPkgExt_c::setMonitorItemForDA( IsoItem_c* apc_monitorItem )
 {
-  ms_addrResolveResDA.pc_monitorItem = pc_monitorItem;
-  // p_isoName will not be needed -> set to unspecified
-  ms_addrResolveResDA.p_isoName->setUnspecified();
-  *ms_addrResolveResDA.pui8_address = 0xFF;
+  mc_addrResolveResDA.mpc_monitorItem = apc_monitorItem;
+  // mpc_isoName will not be needed -> set to unspecified
+  mc_addrResolveResDA.mpc_isoName->setUnspecified();
+  *mc_addrResolveResDA.mpui8_address = 0xFF;
 }
 
 
 /** set the isoName for resolve DA
-    @param p_isoName  needed isoName
+    @param arc_isoName  needed isoName
   */
-void CanPkgExt_c::setISONameForDA( const IsoName_c& p_isoName )
+void CanPkgExt_c::setISONameForDA( const IsoName_c& arc_isoName )
 {
-  *ms_addrResolveResDA.p_isoName = p_isoName;
-  // pc_monitorItem will be set over p_isoName -> reset pc_monitorItem
-  ms_addrResolveResDA.pc_monitorItem = NULL;
-  *ms_addrResolveResDA.pui8_address = 0xFF;
+  *mc_addrResolveResDA.mpc_isoName = arc_isoName;
+  // mpc_monitorItem will be set over mpc_isoName -> reset mpc_monitorItem
+  mc_addrResolveResDA.mpc_monitorItem = NULL;
+  *mc_addrResolveResDA.mpui8_address = 0xFF;
 }
 
 
 /** check if an adddress could be resolved with monitorItem and isoName
-    @param  addressResolveResults  address to resolve
+    @param  arc_addressResolveResults  address to resolve
 */
-uint8_t CanPkgExt_c::checkMonitorItemISOName( const AddressResolveResults& addressResolveResults ) const
+uint8_t CanPkgExt_c::checkMonitorItemISOName( const AddressResolveResults_c& arc_addressResolveResults ) const
 {
   // check if monitoritem exist and if not resolve it with isoName
-  if ( addressResolveResults.pc_monitorItem == NULL )
-  { // get pc_monitorItem if exist in systemmgmt_c
-    if (     addressResolveResults.p_isoName->isUnspecified()
-        || !getIsoMonitorInstance4Comm().existIsoMemberISOName( *addressResolveResults.p_isoName, false )
+  if ( arc_addressResolveResults.mpc_monitorItem == NULL )
+  { // get mpc_monitorItem if exist in systemmgmt_c
+    if (     arc_addressResolveResults.mpc_isoName->isUnspecified()
+        || !getIsoMonitorInstance4Comm().existIsoMemberISOName( *arc_addressResolveResults.mpc_isoName, false )
        )
     { // there exist no iso member with given isoName
-      return *addressResolveResults.pui8_address;
+      return *arc_addressResolveResults.mpui8_address;
     }
-    return getIsoMonitorInstance4Comm().isoMemberISOName( *addressResolveResults.p_isoName, false ).nr();
+    return getIsoMonitorInstance4Comm().isoMemberISOName( *arc_addressResolveResults.mpc_isoName, false ).nr();
   }
   // know we can be shure that an monitorItem exists
-  return addressResolveResults.pc_monitorItem->nr();
+  return arc_addressResolveResults.mpc_monitorItem->nr();
 }
 
 
@@ -668,10 +695,10 @@ uint8_t CanPkgExt_c::checkMonitorItemISOName( const AddressResolveResults& addre
 uint8_t CanPkgExt_c::isoPs() const
 {
   // destination address is already valid
-  if (*ms_addrResolveResDA.pui8_address != 0xFF ) return *ms_addrResolveResDA.pui8_address;
+  if (*mc_addrResolveResDA.mpui8_address != 0xFF ) return *mc_addrResolveResDA.mpui8_address;
 
   // check if destination address is willingly 0xFF or if it can be resolved
-  return checkMonitorItemISOName( ms_addrResolveResDA );
+  return checkMonitorItemISOName( mc_addrResolveResDA );
 }
 
 
@@ -682,10 +709,10 @@ uint8_t CanPkgExt_c::isoPs() const
 uint8_t CanPkgExt_c::isoSa() const
 {
   // source address is already valid
-  if (*ms_addrResolveResSA.pui8_address != 0xFF ) return *ms_addrResolveResSA.pui8_address;
+  if (*mc_addrResolveResSA.mpui8_address != 0xFF ) return *mc_addrResolveResSA.mpui8_address;
 
   // check if source address is willingly 0xFF or if it can be resolved
-  return checkMonitorItemISOName( ms_addrResolveResSA );
+  return checkMonitorItemISOName( mc_addrResolveResSA );
 }
 
 } // end of namespace __IsoAgLib
