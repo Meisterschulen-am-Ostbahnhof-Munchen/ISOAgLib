@@ -352,7 +352,7 @@ bool IsoMonitor_c::timeEvent( void )
           #ifdef DEBUG_HEAP_USEAGE
           sui16_isoItemTotal--;
 
-          getRs232Instance()
+          INTERNAL_DEBUG_DEVICE
             << sui16_isoItemTotal << " x IsoItem_c: Mal-Alloc: "
             <<  sizeSlistTWithMalloc( sizeof(IsoItem_c), sui16_isoItemTotal )
             << "/" << sizeSlistTWithMalloc( sizeof(IsoItem_c), 1 )

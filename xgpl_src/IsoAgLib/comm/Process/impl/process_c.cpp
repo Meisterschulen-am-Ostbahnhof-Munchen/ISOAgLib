@@ -727,7 +727,7 @@ bool Process_c::deleteRemoteFilter(IsoName_c const& arcc_isoName)
         ( pc_iter != c_arrClientC2.end() );
         pc_iter++ )
   {
-    if ((*pc_iter)->ownerISOName() == arcc_isoName)
+    if ((*pc_iter)->isoName() == arcc_isoName)
     { // remote proc data has given onwerisoName
       // -> delete according FilterBox (after check if corresponding FilterBox_c exists)
       if (getIsoFilterManagerInstance4Comm().existIsoFilter( IsoFilter_s (*this, 0x3FF00FF, (PROCESS_DATA_PGN << 8), NULL, &arcc_isoName, 8, Ident_c::ExtendedIdent)))
