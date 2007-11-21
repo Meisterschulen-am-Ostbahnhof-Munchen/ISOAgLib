@@ -222,6 +222,7 @@ class CanIo_c : public SingletonCanIo_c {
   bool isReady2Send() const { return ( mui8_busNumber != 0xFF )?true:false;}
 
 
+#ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
 /** is the fist add after a reconfiguration */
  bool isFirstAddFilterBox() const
 {
@@ -244,7 +245,7 @@ class CanIo_c : public SingletonCanIo_c {
 
 /** init value */
   void initMinChangedFilterBox(){mi32_minChangedFilterBox = -1 ;}
-
+#endif
 
   /** every subsystem of IsoAgLib has explicit function for controlled shutdown */
   void close( void );
@@ -638,10 +639,11 @@ class CanIo_c : public SingletonCanIo_c {
     */
   MsgObj_c mc_lastMsgObj;
   size_t mt_msgObjCnt;
+
+  /** for the fast reconfiguration */
+  int32_t mi32_minChangedFilterBox;
 #endif
 
-/** for the fast reconfiguration */
-    int32_t mi32_minChangedFilterBox;
 
   /** dynamic array of FilterBox_c instances which
       represents the demanded filter boxes

@@ -111,6 +111,7 @@ FilterBox_c::FilterBox_c()
   :
     mc_filter(0, Ident_c::StandardIdent),
     mc_mask(0, Ident_c::StandardIdent),
+    mvec_customer(),
     mui8_filterBoxNr(IdleState),
     mui8_busNumber(IdleState),
     mi32_fbVecIdx(-1)
@@ -160,11 +161,12 @@ FilterBox_c::~FilterBox_c()
 FilterBox_c& FilterBox_c::operator=(const FilterBox_c& arc_src){
   if ( this != &arc_src)
   {
+    mc_filter = arc_src.mc_filter;
+    mc_mask = arc_src.mc_mask;
+
     // arc_src and self are different object instances
     mvec_customer = arc_src.mvec_customer;
 
-    mc_filter = arc_src.mc_filter;
-    mc_mask = arc_src.mc_mask;
     mui8_busNumber = arc_src.mui8_busNumber;
     mui8_filterBoxNr = arc_src.mui8_filterBoxNr;
     mi32_fbVecIdx = arc_src.mi32_fbVecIdx;

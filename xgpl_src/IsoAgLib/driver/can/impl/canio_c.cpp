@@ -208,8 +208,9 @@ CanIo_c::singletonInit()
   // explicitly initialized, we must call reconfigureMsgObj NOW
   bool b_callReconfigureMsgObj = false;
 
-
+  #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
   initMinChangedFilterBox();
+  #endif
 
   #ifdef DEBUG
   static bool firstDefaultInitCallStart = true;
@@ -718,10 +719,11 @@ INTERNAL_DEBUG_DEVICE << "-----------------------------------start CanIo_c::inse
 
       m_arrFilterBox[ui8_overwritenFilterBoxIndex].setFbVecIdx(ui8_overwritenFilterBoxIndex);
 
+      #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
       /** when a idle FB is reused then the Full reconfiguration is necessary**/
       /** set Full reconfiguration */
       setFullReconfigNecessary();
-
+      #endif
 
 #ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
   if ( mui8_busNumber != 0xFF ) /* when the add is made before the init CAN don't do the config, config is done at the init CAN */
@@ -770,10 +772,11 @@ INTERNAL_DEBUG_DEVICE << "-----------------------------------start CanIo_c::inse
 
     m_arrFilterBox.back().setFbVecIdx(m_arrFilterBox.size() - 1);
 
-/** set the MinChangedFilterBox */
+    #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
+    /** set the MinChangedFilterBox */
     if(isFirstAddFilterBox())
         setMinChangedFilterBox(m_arrFilterBox.size() - 1);
-
+    #endif
 
 #ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
   if ( mui8_busNumber != 0xFF ) /* when the add is made before the init CAN don't do the config, config is done at the init CAN */
@@ -843,8 +846,10 @@ bool CanIo_c::deleteFilter(const __IsoAgLib::CanCustomer_c& ar_customer,
   bool b_result = false;
 
 
-/** at the deleteFilterBox the full reconfiguration is always necessary */
+  #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
+  /** at the deleteFilterBox the full reconfiguration is always necessary */
   setFullReconfigNecessary();
+  #endif
 
 #ifdef DEBUG
     INTERNAL_DEBUG_DEVICE << "------------------------CanIo_c::delete filter = 0x"
@@ -922,7 +927,9 @@ bool CanIo_c::deleteFilter(const __IsoAgLib::CanCustomer_c& ar_customer,
 bool CanIo_c::deleteAllFiltersForCustomer (const __IsoAgLib::CanCustomer_c & ar_customer)
 {
   bool b_result = false;
+  #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
   setFullReconfigNecessary();
+  #endif
 
   for (ArrFilterBox::iterator pc_iter = m_arrFilterBox.begin(); pc_iter != m_arrFilterBox.end();
   )
