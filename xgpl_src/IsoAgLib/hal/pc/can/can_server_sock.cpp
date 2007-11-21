@@ -868,9 +868,9 @@ void readWrite(server_c* pc_serverData)
               enqueue_msg(&s_transferBuf, 0, pc_serverData);
               pthread_mutex_unlock( &(pc_serverData->mt_protectClientList) );
               ui32_sleepTime = 5000;  // CAN message received => reduce sleep time
-              if (pc_serverData->b_logMode)
+              if (pc_serverData->mb_logMode)
               {
-                dumpCanMsg (&s_transferBuf, pc_serverData->f_canOutput[s_transferBuf.s_data.ui8_bus]);
+                dumpCanMsg (&s_transferBuf, pc_serverData->mf_canOutput[s_transferBuf.s_data.ui8_bus]);
               }
             }
             break; // handle only first found bus
@@ -891,9 +891,9 @@ void readWrite(server_c* pc_serverData)
           s_transferBuf.s_data.ui8_bus = ui32_cnt;
           enqueue_msg(&s_transferBuf, 0, pc_serverData);
           pthread_mutex_unlock( &(pc_serverData->mt_protectClientList) );
-          if (pc_serverData->b_logMode)
+          if (pc_serverData->mb_logMode)
           {
-            dumpCanMsg (&s_transferBuf, pc_serverData->f_canOutput[s_transferBuf.s_data.ui8_bus]);
+            dumpCanMsg (&s_transferBuf, pc_serverData->mf_canOutput[s_transferBuf.s_data.ui8_bus]);
           }
         }
         break; // handle only first found bus

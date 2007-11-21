@@ -97,7 +97,9 @@ uint32_t initCardApi ()
   for( uint32_t i=0; i<cui32_maxCanBusCnt; i++ )
   {
     canBusIsOpen[i] = false;
+#ifdef USE_PCAN_LIB
     driverHandle[i] = NULL;
+#endif
   }
 
   return 1;
@@ -277,7 +279,7 @@ int16_t sendToBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
     }
 
     updatePendingMsgs(pc_serverData, ui8_bus);
-    int i_pendingMsgs = pc_serverData->i_pendingMsgs[ui8_bus];
+    int i_pendingMsgs = pc_serverData->marri_pendingMsgs[ui8_bus];
     if ((i_pendingMsgs > 0) && (list_sendTimeStamps.size() >= (i_pendingMsgs)))
     { // something pending!
       STL_NAMESPACE::list<int32_t>::iterator pc_iter = list_sendTimeStamps.begin();
