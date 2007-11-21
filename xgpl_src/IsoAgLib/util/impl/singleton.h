@@ -101,7 +101,7 @@
   #define SINGLETON_VEC_KEY_PARAMETER_USE               ai_singletonVecKey
   #define SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA  , ai_singletonVecKey
 
-  #define SINGLETON_C_DATA_DEF                      int getSingletonVecKey() const { return msc_data.getSingletonVecKey(); }
+  #define SINGLETON_MC_DATA_DEF                     int getSingletonVecKey() const { return mc_data.getSingletonVecKey(); }
   #define SINGLETON_C_DATA_DEF_INTERFACE(PAR)       int getSingletonVecKey() const { return PAR::getSingletonVecKey(); }
   #define SINGLETON_MEMBER_DEF               ClientBase c_clientBase; \
                                                     int getSingletonVecKey() const { return c_clientBase.getSingletonVecKey(); }
@@ -238,7 +238,7 @@
   #define SINGLETON_VEC_KEY_PARAMETER_USE
   #define SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA
 
-  #define SINGLETON_C_DATA_DEF
+  #define SINGLETON_MC_DATA_DEF
   #define SINGLETON_C_DATA_DEF_INTERFACE(PAR)
   #define SINGLETON_MEMBER_DEF
   #define SINGLETON_MEMBER_ASSIGN(PAR)

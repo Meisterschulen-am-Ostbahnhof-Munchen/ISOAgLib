@@ -513,7 +513,7 @@ private:
   void setVtDisplayState (bool b_isVtStatusMsg, uint8_t ui8_saOrDisplayState);
 
   /// Using the singletonVecKey from mc_data (-->IsoTerminalPkg_c)
-  SINGLETON_C_DATA_DEF
+  SINGLETON_MC_DATA_DEF
 
 private: // attributes
   /** static instance to store temporarily before push_back into list */
