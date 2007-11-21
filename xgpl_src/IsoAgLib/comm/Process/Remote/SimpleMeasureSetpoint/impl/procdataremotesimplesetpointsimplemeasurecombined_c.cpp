@@ -110,7 +110,7 @@ namespace __IsoAgLib {
   @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
 ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c(
-            const IsoAgLib::ElementDdi_s* ps_elementDDI = NULL,
+            const IsoAgLib::ElementDdi_s* ps_elementDDI,
             const IsoName_c& ac_isoName,
             uint8_t aui8_pri,
             const IsoName_c* apc_commanderISOName,
