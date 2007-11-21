@@ -1,3 +1,4 @@
+#define SINGLETON_C_DATA_DEF [+8]
 /***************************************************************************
                           basecommon_c.h  - base class for basa data types
                              -------------------
@@ -232,7 +233,7 @@ namespace __IsoAgLib
     static const uint16_t TIMEOUT_SENDING_NODE = 3000;
 
     /// Using the singletonVecKey from mc_data (-->IsoTerminalPkg_c)
-    SINGLETON_C_DATA_DEF
+    SINGLETON_MC_DATA_DEF
 
   protected:
     /** flags that disable PGNs individually */

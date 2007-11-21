@@ -251,7 +251,7 @@ public:
                                                         else return NULL; }
 
   /// Using the singletonVecKey from internal class
-  SINGLETON_C_DATA_DEF_INTERFACE(IdentItem_c)
+  SINGLETON_MC_DATA_DEF_INTERFACE(IdentItem_c)
 
 private:
   friend class iIsoTerminal_c;
