@@ -167,7 +167,7 @@ namespace __IsoAgLib
     @param at_type type of Ident_c: 11bit Ident_c::S or 29bit Ident_c::E
       default defined in isoaglib_config.h
   */
-  void Ident_c::setWord(uint16_t aui16_val, uint8_t aui8_pos, __IsoAgLib::Ident_c::identType_t at_type = DEFAULT_IDENT_TYPE)
+  void Ident_c::setWord(uint16_t aui16_val, uint8_t aui8_pos, __IsoAgLib::Ident_c::identType_t at_type)
   {
    /** @todo TEST: test with all possible number formats */
 #if defined( OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN )
@@ -179,7 +179,7 @@ namespace __IsoAgLib
     t_ident &= ~(0xFFFFUL << bitCount);
     t_ident |= (MASK_TYPE(aui16_val) << (aui8_pos*16));
 #endif
-    data.type = ren_identType;
+    data.type = at_type;
     data.empty = 0;
   }
 
