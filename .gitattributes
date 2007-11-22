@@ -260,9 +260,6 @@ build_utils/vt2iso/vt2iso.kdevelop -text
 build_utils/vt2iso/vt2iso.kdevelop.filelist -text
 build_utils/vt2iso/vt2iso.vcproj -text
 build_utils/vt2iso/xerces-c_2_5_0.dll -text
-commercial_BIOS.dummy/bios_esx/README -text
-commercial_BIOS.dummy/bios_pm167/README -text
-commercial_BIOS.dummy/bios_pm167/mios1s.lib -text
 commercial_BIOS/bios_pc.testserver/include -text
 commercial_BIOS/bios_pc.testserver/lib -text
 commercial_BIOS/bios_pc.testserver/rte_client_lib -text
@@ -2377,7 +2374,6 @@ doc/stylesheet.css -text
 /gpl-with-exception.txt -text
 /howto-download.txt -text
 /information.txt -text
-/isoaglib_examples.lsm -text
 /license-conditions.txt -text
 /main-features.txt -text
 /maintainers.txt -text
@@ -2503,9 +2499,6 @@ simulated_io/rs232_send_0 -text
 /topic-template.txt -text
 /using-projects.txt -text
 /where-to-start.txt -text
-xgpl_src/IsoAgLib/comm/Base/ibase_c.h_old -text
-xgpl_src/IsoAgLib/comm/Base/impl/base_c.cpp_old -text
-xgpl_src/IsoAgLib/comm/Base/impl/base_c.h_old -text
 xgpl_src/IsoAgLib/comm/Base/impl/basecommon_c.cpp -text
 xgpl_src/IsoAgLib/comm/Base/impl/basecommon_c.h -text
 xgpl_src/IsoAgLib/comm/Base/impl/timeposgps_c.cpp -text

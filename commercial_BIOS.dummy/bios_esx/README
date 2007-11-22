@@ -1,9 +1,0 @@
-If you buy an ESX jobcontroller from "Sensor Technik Wiedemann" (http://www.sensor-technik.de/) (STW),
-you get a BIOS from them for free. Place the BIOS files of the ESX in this directory.
-
-IMPORTANT:
-As the LBS-Lib makes intensive use of the HEAP, you should set the HEAPSIZE in Xos20s.ilo to
-"HEAPSIZE ( 06000h )" (maybe less is enough - try it).
-If you plan to use RS232 for extensive in/out, you should set DEFAULT_SND_PUF_SIZE and DEFAULT_REC_PUF_SIZE
-in xgpl_src/Application_Config/lbs_lib_config.h to suitable size. Don't forget to raise  BUFFER_SIZE
-in Xos20go.as to suitable size.
