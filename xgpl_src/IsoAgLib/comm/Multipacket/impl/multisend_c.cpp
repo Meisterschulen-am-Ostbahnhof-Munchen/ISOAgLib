@@ -99,6 +99,9 @@
   #endif
 #endif
 
+#ifdef DEBUG_HEAP_USEAGE
+  static uint16_t sui16_lastPrintedBufferCapacity = 0;
+#endif
 
 static const uint8_t scui8_CM_RTS = 16;
 static const uint8_t scui8_CM_CTS = 17;
@@ -157,7 +160,7 @@ void SendUploadBase_c::set (uint8_t* apui8_buffer, uint32_t aui32_bufferSize)
   if ( vec_uploadBuffer.capacity() != sui16_lastPrintedBufferCapacity )
   {
     sui16_lastPrintedBufferCapacity = vec_uploadBuffer.capacity();
-    getRs232Instance() << "IsoTerminal_c Buffer-Capa: " << sui16_lastPrintedBufferCapacity << INTERNAL_DEBUG_DEVICE_ENDL;
+    INTERNAL_DEBUG_DEVICE << "IsoTerminal_c Buffer-Capa: " << sui16_lastPrintedBufferCapacity << INTERNAL_DEBUG_DEVICE_ENDL;
   }
   #endif
 }
@@ -201,7 +204,7 @@ void SendUploadBase_c::set (uint16_t aui16_objId, const char* apc_string, uint16
   if ( vec_uploadBuffer.capacity() != sui16_lastPrintedBufferCapacity )
   {
     sui16_lastPrintedBufferCapacity = vec_uploadBuffer.capacity();
-    getRs232Instance() << "IsoTerminal_c Buffer-Capa: " << sui16_lastPrintedBufferCapacity << INTERNAL_DEBUG_DEVICE_ENDL;
+    INTERNAL_DEBUG_DEVICE << "IsoTerminal_c Buffer-Capa: " << sui16_lastPrintedBufferCapacity << INTERNAL_DEBUG_DEVICE_ENDL;
   }
   #endif
 }

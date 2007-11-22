@@ -188,7 +188,7 @@ void ManageMeasureProgLocal_c::assignFromSource( const ManageMeasureProgLocal_c&
     {
       sui16_lastPrintedMeasureProgLocalTotal = sui16_MeasureProgLocalTotal;
       sui16_printedDeconstructMeasureProgLocalTotal = sui16_deconstructMeasureProgLocalTotal;
-      getRs232Instance()
+      INTERNAL_DEBUG_DEVICE
         << sui16_MeasureProgLocalTotal << " x MeasureProgLocal_c: Mal-Alloc: "
         <<  sizeSlistTWithMalloc( sizeof(MeasureProgLocal_c), sui16_MeasureProgLocalTotal )
         << "/" << sizeSlistTWithMalloc( sizeof(MeasureProgLocal_c), 1 )
@@ -230,7 +230,7 @@ ManageMeasureProgLocal_c::~ManageMeasureProgLocal_c()
   {
     sui16_lastPrintedMeasureProgLocalTotal = sui16_MeasureProgLocalTotal;
     sui16_printedDeconstructMeasureProgLocalTotal = sui16_deconstructMeasureProgLocalTotal;
-    getRs232Instance()
+    INTERNAL_DEBUG_DEVICE
       << sui16_MeasureProgLocalTotal << " x MeasureProgLocal_c: Mal-Alloc: "
       <<  sizeSlistTWithMalloc( sizeof(MeasureProgLocal_c), sui16_MeasureProgLocalTotal )
       << "/" << sizeSlistTWithMalloc( sizeof(MeasureProgLocal_c), 1 )
@@ -267,7 +267,7 @@ bool ManageMeasureProgLocal_c::timeEvent( uint16_t *pui16_nextTimePeriod ){
   {
     sui16_lastPrintedMeasureProgLocalTotal = sui16_MeasureProgLocalTotal;
     sui16_printedDeconstructMeasureProgLocalTotal = sui16_deconstructMeasureProgLocalTotal;
-    getRs232Instance()
+    INTERNAL_DEBUG_DEVICE
       << sui16_MeasureProgLocalTotal << " x MeasureProgLocal_c: Mal-Alloc: "
       <<  sizeSlistTWithMalloc( sizeof(MeasureProgLocal_c), sui16_MeasureProgLocalTotal )
       << "/" << sizeSlistTWithMalloc( sizeof(MeasureProgLocal_c), 1 )
@@ -327,7 +327,7 @@ bool ManageMeasureProgLocal_c::timeEvent( uint16_t *pui16_nextTimePeriod ){
             {
               sui16_lastPrintedMeasureProgLocalTotal = sui16_MeasureProgLocalTotal;
               sui16_printedDeconstructMeasureProgLocalTotal = sui16_deconstructMeasureProgLocalTotal;
-              getRs232Instance()
+              INTERNAL_DEBUG_DEVICE
                 << sui16_MeasureProgLocalTotal << " x MeasureProgLocal_c: Mal-Alloc: "
                 <<  sizeSlistTWithMalloc( sizeof(MeasureProgLocal_c), sui16_MeasureProgLocalTotal )
                 << "/" << sizeSlistTWithMalloc( sizeof(MeasureProgLocal_c), 1 )
@@ -390,7 +390,7 @@ void ManageMeasureProgLocal_c::processProg(){
   if ( sui16_lastPrintedMeasureProgLocalTotal != sui16_MeasureProgLocalTotal )
   {
     sui16_lastPrintedMeasureProgLocalTotal = sui16_MeasureProgLocalTotal;
-    getRs232Instance()
+    INTERNAL_DEBUG_DEVICE
       << sui16_MeasureProgLocalTotal << " x MeasureProgLocal_c: Mal-Alloc: "
       <<  sizeSlistTWithMalloc( sizeof(MeasureProgLocal_c), sui16_MeasureProgLocalTotal )
       << "/" << sizeSlistTWithMalloc( sizeof(MeasureProgLocal_c), 1 )
@@ -519,7 +519,7 @@ void ManageMeasureProgLocal_c::insertMeasureprog(const IsoName_c& ac_isoName){
     {
       sui16_lastPrintedMeasureProgLocalTotal = sui16_MeasureProgLocalTotal;
       sui16_printedDeconstructMeasureProgLocalTotal = sui16_deconstructMeasureProgLocalTotal;
-      getRs232Instance()
+      INTERNAL_DEBUG_DEVICE
         << sui16_MeasureProgLocalTotal << " x MeasureProgLocal_c: Mal-Alloc: "
         <<  sizeSlistTWithMalloc( sizeof(MeasureProgLocal_c), sui16_MeasureProgLocalTotal )
         << "/" << sizeSlistTWithMalloc( sizeof(MeasureProgLocal_c), 1 )

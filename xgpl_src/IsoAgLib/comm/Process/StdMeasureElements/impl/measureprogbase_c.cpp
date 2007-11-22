@@ -119,7 +119,7 @@ void MeasureProgBase_c::init( ProcDataBase_c *const apc_processData,
   if ( b_doPrint )
   {
     b_doPrint = false;
-    getRs232Instance()
+    INTERNAL_DEBUG_DEVICE
       << "sizeof(MeasureSubprog_c) ==  " << sizeof(MeasureSubprog_c)
       << " Bytes" << INTERNAL_DEBUG_DEVICE_ENDL;
   }
@@ -197,7 +197,7 @@ void MeasureProgBase_c::assignFromSource( const MeasureProgBase_c& arc_src )
 
     if ( mvec_measureSubprog.size() > 0 )
     {
-      getRs232Instance()
+      INTERNAL_DEBUG_DEVICE
         << sui16_MeasureProgBaseTotal << " x MeasureSubprog_c: Mal-Alloc: "
         <<  sizeSlistTWithMalloc( sizeof(MeasureSubprog_c), sui16_MeasureProgBaseTotal )
         << "/" << sizeSlistTWithMalloc( sizeof(MeasureSubprog_c), 1 )
@@ -259,7 +259,7 @@ MeasureProgBase_c::~MeasureProgBase_c(){
     {
       sui16_MeasureProgBaseTotal++;
 
-      getRs232Instance()
+      INTERNAL_DEBUG_DEVICE
         << sui16_MeasureProgBaseTotal << " x MeasureSubprog_c: Mal-Alloc: "
         <<  sizeSlistTWithMalloc( sizeof(MeasureSubprog_c), sui16_MeasureProgBaseTotal )
         << "/" << sizeSlistTWithMalloc( sizeof(MeasureSubprog_c), 1 )
@@ -328,7 +328,7 @@ bool MeasureProgBase_c::stop(bool /*b_deleteSubProgs*/, Proc_c::type_t /* ren_ty
   {
     sui16_printedMeasureProgBaseTotal = sui16_MeasureProgBaseTotal;
     sui16_printedDeconstructMeasureProgBaseTotal = sui16_deconstructMeasureProgBaseTotal;
-    getRs232Instance()
+    INTERNAL_DEBUG_DEVICE
       << sui16_MeasureProgBaseTotal << " x MeasureSubprog_c: Mal-Alloc: "
       <<  sizeSlistTWithMalloc( sizeof(MeasureSubprog_c), sui16_MeasureProgBaseTotal )
       << "/" << sizeSlistTWithMalloc( sizeof(MeasureSubprog_c), 1 )
@@ -426,7 +426,7 @@ void MeasureProgBase_c::initVal(int32_t ai32_val){
   {
     sui16_printedMeasureProgBaseTotal = sui16_MeasureProgBaseTotal;
     sui16_printedDeconstructMeasureProgBaseTotal = sui16_deconstructMeasureProgBaseTotal;
-    getRs232Instance()
+    INTERNAL_DEBUG_DEVICE
       << sui16_MeasureProgBaseTotal << " x MeasureSubprog_c: Mal-Alloc: "
       <<  sizeSlistTWithMalloc( sizeof(MeasureSubprog_c), sui16_MeasureProgBaseTotal )
       << "/" << sizeSlistTWithMalloc( sizeof(MeasureSubprog_c), 1 )
@@ -456,7 +456,7 @@ void MeasureProgBase_c::init(
   if ( b_doPrint )
   {
     b_doPrint = false;
-    getRs232Instance()
+    INTERNAL_DEBUG_DEVICE
       << "sizeof(MeasureSubprog_c) ==  " << sizeof(MeasureSubprog_c)
       << " Bytes" << INTERNAL_DEBUG_DEVICE_ENDL;
   }
@@ -565,7 +565,7 @@ void MeasureProgBase_c::initVal(float af_val){
   {
     sui16_printedMeasureProgBaseTotal = sui16_MeasureProgBaseTotal;
     sui16_printedDeconstructMeasureProgBaseTotal = sui16_deconstructMeasureProgBaseTotal;
-    getRs232Instance()
+    INTERNAL_DEBUG_DEVICE
       << sui16_MeasureProgBaseTotal << " x MeasureSubprog_c: Mal-Alloc: "
       <<  sizeSlistTWithMalloc( sizeof(MeasureSubprog_c), sui16_MeasureProgBaseTotal )
       << "/" << sizeSlistTWithMalloc( sizeof(MeasureSubprog_c), 1 )
@@ -594,7 +594,7 @@ bool MeasureProgBase_c::processMsg(){
   {
     sui16_printedMeasureProgBaseTotal = sui16_MeasureProgBaseTotal;
     sui16_printedDeconstructMeasureProgBaseTotal = sui16_deconstructMeasureProgBaseTotal;
-    getRs232Instance()
+    INTERNAL_DEBUG_DEVICE
       << sui16_MeasureProgBaseTotal << " x MeasureSubprog_c: Mal-Alloc: "
       <<  sizeSlistTWithMalloc( sizeof(MeasureSubprog_c), sui16_MeasureProgBaseTotal )
       << "/" << sizeSlistTWithMalloc( sizeof(MeasureSubprog_c), 1 )

@@ -661,7 +661,7 @@ VtClientServerCommunication_c::timeEvent(void)
   { // MAX amount of sui16_sendUploadQueueSize or sui16_maxSendUploadQueueSize
     sui16_lastPrintedSendUploadQueueSize = sui16_sendUploadQueueSize;
     sui16_lastPrintedMaxSendUploadQueueSize = sui16_maxSendUploadQueueSize;
-    getRs232Instance4Comm() << "Max: " << sui16_sendUploadQueueSize << " Items in FIFO, "
+    INTERNAL_DEBUG_DEVICE << "Max: " << sui16_sendUploadQueueSize << " Items in FIFO, "
                             << sui16_sendUploadQueueSize << " x SendUpload_c: Mal-Alloc: "
                             << sizeSlistTWithMalloc (sizeof (SendUpload_c), sui16_sendUploadQueueSize)
                             << "/" << sizeSlistTWithMalloc (sizeof (SendUpload_c), 1)
@@ -2019,7 +2019,7 @@ VtClientServerCommunication_c::queueOrReplace (SendUpload_c& ar_sendUpload, bool
   uint8_t i = 0;
 #ifdef USE_LIST_FOR_FIFO
 #ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
-  STL_NAMESPACE::list<SendUpload_c,STL_NAMESPACE::__malloc_alloc_template<0> >::iterator i_sendUpload;
+  STL_NAMESPACE::list<SendUpload_c,MALLOC_TEMPLATE(SendUpload_c) >::iterator i_sendUpload;
 #else
   STL_NAMESPACE::list<SendUpload_c>::iterator i_sendUpload;
 #endif
@@ -2135,7 +2135,7 @@ VtClientServerCommunication_c::dumpQueue()
 {
 #ifdef USE_LIST_FOR_FIFO
 #ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
-  STL_NAMESPACE::list<SendUpload_c,STL_NAMESPACE::__malloc_alloc_template<0> >::iterator i_sendUpload;
+  STL_NAMESPACE::list<SendUpload_c,MALLOC_TEMPLATE(SendUpload_c) >::iterator i_sendUpload;
 #else
   STL_NAMESPACE::list<SendUpload_c>::iterator i_sendUpload;
 #endif

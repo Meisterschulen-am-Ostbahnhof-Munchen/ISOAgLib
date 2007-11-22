@@ -330,23 +330,6 @@ bool Scheduler_c::registerClient( ElementBase_c* pc_client)
   #ifdef DEBUG_HEAP_USEAGE
   sui16_clientPointerTotal++;
 
-  getRs232Instance()
-    << sui16_clientPointerTotal
-    << "(" << c_arrClientC1.capacity()
-    << ") x Scheduler_c Clients: Mal-Alloc: "
-    << sizeVectorTWithMalloc( sizeof(void*), mc_taskQueue.capacity() )
-    << "/" << sizeof(void*)
-    << ", Chunk-Alloc: "
-    << sizeVectorTWithChunk( sizeof(void*), c_arrClientC1.capacity() )
-    << INTERNAL_DEBUG_DEVICE_ENDL
-    << sui16_clientTimeTotal
-    #ifdef MASSERT
-    << "\r\n__mall tot:" << AllocateHeapMalloc
-    << ", _mall deal tot: " << DeallocateHeapMalloc
-    << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
-    #else
-    << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
-    #endif
   #endif
 
   return true;
@@ -385,22 +368,6 @@ void Scheduler_c::unregisterClient( ElementBase_c* pc_client)
     #ifdef DEBUG_HEAP_USEAGE
     sui16_clientPointerTotal--;
 
-    getRs232Instance()
-      << sui16_clientPointerTotal
-      << "(" << c_arrClientC1.capacity()
-      << ") x Scheduler_c Clients: Mal-Alloc: "
-      << sizeVectorTWithMalloc( sizeof(void*), mc_taskQueue.capacity() )
-      << "/" << sizeof(void*)
-      << ", Chunk-Alloc: "
-      << sizeVectorTWithChunk( sizeof(void*), mc_taskQueue.capacity() )
-      << INTERNAL_DEBUG_DEVICE_ENDL
-      #ifdef MASSERT
-      << "\r\n__mall tot:" << AllocateHeapMalloc
-      << ", _mall deal tot: " << DeallocateHeapMalloc
-      << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
-      #else
-      << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
-      #endif
     #endif
 
   }

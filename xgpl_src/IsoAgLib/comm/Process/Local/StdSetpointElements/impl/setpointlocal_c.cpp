@@ -149,7 +149,7 @@ void SetpointLocal_c::init( ProcDataBase_c *const apc_processData )
   mb_staticMaster = false;
 
   #ifdef DEBUG_HEAP_USEAGE
-  getRs232Instance()
+  INTERNAL_DEBUG_DEVICE
     << "sizeof(SetpointRegister_c) = " << sizeof(SetpointRegister_c)
     << " Bytes" << INTERNAL_DEBUG_DEVICE_ENDL;
   #endif
@@ -196,9 +196,9 @@ void SetpointLocal_c::assignFromSource( const SetpointLocal_c& arc_src )
   #ifdef DEBUG_HEAP_USEAGE
   else
   {
-    sui16_setpointLocalTotal += ( vec_prog().size() * ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) );
+    sui16_setpointLocalTotal += ( mvec_register.size() * ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) );
 
-    getRs232Instance()
+    INTERNAL_DEBUG_DEVICE
       << "SetLReg T: " << sui16_setpointLocalTotal << ", Node: " << ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) << INTERNAL_DEBUG_DEVICE_ENDL;
   }
   #endif
@@ -224,7 +224,7 @@ SetpointLocal_c::~SetpointLocal_c(){
   #ifdef DEBUG_HEAP_USEAGE
   sui16_setpointLocalTotal -= ( mvec_register.size() * ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) );
 
-  getRs232Instance()
+  INTERNAL_DEBUG_DEVICE
   << "SetLReg T: " << sui16_setpointLocalTotal << ", Node: " << ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) << INTERNAL_DEBUG_DEVICE_ENDL;
   #endif
 }
@@ -322,7 +322,7 @@ void SetpointLocal_c::acceptNewMaster( bool ab_accept){
           #ifdef DEBUG_HEAP_USEAGE
           sui16_setpointLocalTotal -= ( 1 * ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) );
 
-          getRs232Instance()
+          INTERNAL_DEBUG_DEVICE
             << "SetLReg T: " << sui16_setpointLocalTotal << ", Node: " << ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) << INTERNAL_DEBUG_DEVICE_ENDL;
           #endif
         }
@@ -361,7 +361,7 @@ void SetpointLocal_c::setMasterMeasurementVal( int32_t ai32_val)
     {
       sui16_setpointLocalTotal += ( 1 * ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) );
 
-      getRs232Instance()
+      INTERNAL_DEBUG_DEVICE
         << "SetLReg T: " << sui16_setpointLocalTotal << ", Node: " << ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) << INTERNAL_DEBUG_DEVICE_ENDL;
     }
     #endif
@@ -592,7 +592,7 @@ bool SetpointLocal_c::timeEvent( void ){
           #ifdef DEBUG_HEAP_USEAGE
           sui16_setpointLocalTotal -= ( 1 * ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) );
 
-          getRs232Instance()
+          INTERNAL_DEBUG_DEVICE
             << "SetLReg T: " << sui16_setpointLocalTotal << ", Node: " << ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) << INTERNAL_DEBUG_DEVICE_ENDL;
           #endif
           b_repeat = true;
@@ -609,7 +609,7 @@ bool SetpointLocal_c::timeEvent( void ){
           #ifdef DEBUG_HEAP_USEAGE
           sui16_setpointLocalTotal -= ( 1 * ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) );
 
-          getRs232Instance()
+          INTERNAL_DEBUG_DEVICE
             << "SetLReg T: " << sui16_setpointLocalTotal << ", Node: " << ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) << INTERNAL_DEBUG_DEVICE_ENDL;
           #endif
           b_repeat = true;
@@ -705,7 +705,7 @@ void SetpointLocal_c::processSet(){
       {
         sui16_setpointLocalTotal += ( 1 * ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) );
 
-        getRs232Instance()
+        INTERNAL_DEBUG_DEVICE
           << "SetLReg T: " << sui16_setpointLocalTotal << ", Node: " << ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) << INTERNAL_DEBUG_DEVICE_ENDL;
       }
       #endif
@@ -734,7 +734,7 @@ void SetpointLocal_c::processSet(){
     #ifdef DEBUG_HEAP_USEAGE
     sui16_setpointLocalTotal -= ( 1 * ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) );
 
-    getRs232Instance()
+    INTERNAL_DEBUG_DEVICE
       << "SetLReg T: " << sui16_setpointLocalTotal << ", Node: " << ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
 

@@ -261,7 +261,11 @@ CanPkgExt_c& IsoMonitor_c::dataBase()
 bool IsoMonitor_c::timeEvent( void )
 {
   int32_t i32_checkPeriod = 3000;
+  #ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
+  for ( STL_NAMESPACE::vector<__IsoAgLib::IdentItem_c*,MALLOC_TEMPLATE(__IsoAgLib::IdentItem_c*)>::iterator pc_iter = c_arrClientC1.begin(); ( pc_iter != c_arrClientC1.end() ); pc_iter++ )
+  #else
   for ( STL_NAMESPACE::vector<__IsoAgLib::IdentItem_c*>::iterator pc_iter = c_arrClientC1.begin(); ( pc_iter != c_arrClientC1.end() ); pc_iter++ )
+  #endif
   { // call timeEvent for each registered client -> if timeEvent of item returns false
     // it had to return BEFORE its planned activities were performed (because of the registered end time)
     if ( !(*pc_iter)->timeEvent() ) return false;
@@ -624,7 +628,7 @@ IsoItem_c* IsoMonitor_c::insertIsoMember(const IsoName_c& ac_isoName,
     #ifdef DEBUG_HEAP_USEAGE
     sui16_isoItemTotal++;
 
-    getRs232Instance()
+    INTERNAL_DEBUG_DEVICE
       << sui16_isoItemTotal << " x IsoItem_c: Mal-Alloc: "
       <<  sizeSlistTWithMalloc( sizeof(IsoItem_c), sui16_isoItemTotal )
       << "/" << sizeSlistTWithMalloc( sizeof(IsoItem_c), 1 )
@@ -976,7 +980,7 @@ bool IsoMonitor_c::deleteIsoMemberISOName(const IsoName_c& ac_isoName)
     #ifdef DEBUG_HEAP_USEAGE
     sui16_isoItemTotal--;
 
-    getRs232Instance()
+    INTERNAL_DEBUG_DEVICE
       << sui16_isoItemTotal << " x IsoItem_c: Mal-Alloc: "
       <<  sizeSlistTWithMalloc( sizeof(IsoItem_c), sui16_isoItemTotal )
       << "/" << sizeSlistTWithMalloc( sizeof(IsoItem_c), 1 )

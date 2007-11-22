@@ -117,8 +117,8 @@ namespace __IsoAgLib {
 class MeasureProgBase_c : public ProcessElementBase_c {
 private:
   #ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
-  typedef STL_NAMESPACE::USABLE_SLIST<MeasureSubprog_c,STL_NAMESPACE::__malloc_alloc_template<0> > Vec_MeasureSubprog;
-  typedef STL_NAMESPACE::USABLE_SLIST<MeasureSubprog_c,STL_NAMESPACE::__malloc_alloc_template<0> >::iterator Vec_MeasureSubprogIterator;
+  typedef STL_NAMESPACE::USABLE_SLIST<MeasureSubprog_c,MALLOC_TEMPLATE(MeasureSubprog_c) > Vec_MeasureSubprog;
+  typedef STL_NAMESPACE::USABLE_SLIST<MeasureSubprog_c,MALLOC_TEMPLATE(MeasureSubprog_c)>::iterator Vec_MeasureSubprogIterator;
   #else
   typedef STL_NAMESPACE::USABLE_SLIST<MeasureSubprog_c> Vec_MeasureSubprog;
   typedef STL_NAMESPACE::USABLE_SLIST<MeasureSubprog_c>::iterator Vec_MeasureSubprogIterator;

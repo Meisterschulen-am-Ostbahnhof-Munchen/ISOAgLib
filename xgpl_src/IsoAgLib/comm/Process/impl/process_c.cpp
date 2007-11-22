@@ -279,7 +279,7 @@ bool Process_c::timeEvent( void ){
     sui16_localProcPointerTotal = c_arrClientC1.capacity();
     sui16_remoteProcPointerTotal = c_arrClientC2.capacity();
 
-    getRs232Instance()
+    INTERNAL_DEBUG_DEVICE
       << c_arrClientC1.size()
       << "(" << c_arrClientC1.capacity()
       << ") x LocalProcData Pointer: Mal-Alloc: "
