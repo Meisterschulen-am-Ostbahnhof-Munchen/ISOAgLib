@@ -1199,6 +1199,10 @@ examples/src/Tutorials/6_ParallelMutex/6_0_VtThreads/6_0_VtThreads.cpp -text
 /getting-installed.txt -text
 /howto-download.txt -text
 library/LICENSE -text
+library/commercial_BIOS/bios_pc.testserver/include -text
+library/commercial_BIOS/bios_pc.testserver/lib -text
+library/commercial_BIOS/bios_pc.testserver/rte_client_lib -text
+library/commercial_BIOS/bios_pc.testserver/sw -text
 library/simulated_io/analogInput_0 -text
 library/simulated_io/analogInput_1 -text
 library/simulated_io/analogInput_10 -text
