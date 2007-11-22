@@ -119,7 +119,7 @@ BaseItem_c::~BaseItem_c(){
 void BaseItem_c::set(int32_t ai32_time, int ai_singletonVecKey)
 {
   if (ai32_time >= 0) mi32_lastTime = ai32_time;
-  /** @todo Put this check into ClientBase itself??? */
+  /** ai_singletonVecKey==-1 is special value to indicate, that the ai_singletonVecKey should not be changed */
   if (ai_singletonVecKey != -1) ClientBase::setSingletonKey(ai_singletonVecKey);
 }
 

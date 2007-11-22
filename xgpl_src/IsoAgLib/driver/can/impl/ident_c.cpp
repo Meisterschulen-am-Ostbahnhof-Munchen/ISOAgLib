@@ -158,6 +158,31 @@ namespace __IsoAgLib
     data.empty = 0;
   }
 
+  /**
+    set specific uint16_t of this ident
+    (position 0 is least significant position -> nearest to DLC field of
+    CAN frame)
+    @param aui16_val value for ident at wanted position for the telegram
+    @param aui8_pos position [0..1] for wanted value for ident for the telegram (pos0==byte0, pos1==byte2)
+    @param at_type type of Ident_c: 11bit Ident_c::S or 29bit Ident_c::E
+      default defined in isoaglib_config.h
+  */
+  void Ident_c::setWord(uint16_t aui16_val, uint8_t aui8_pos, __IsoAgLib::Ident_c::identType_t at_type = DEFAULT_IDENT_TYPE)
+  {
+   /** @todo TEST: test with all possible number formats */
+#if defined( OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN )
+    ((uint16_t*)pb_ident)[aui8_pos] = aui16_val;
+#elif defined(  OPTIMIZE_NUMBER_CONVERSIONS_FOR_BIG_ENDIAN )
+    ((uint16_t*)pb_ident)[sizeof(MASK_TYPE)/2 - 1 - aui8_pos] = aui16_val;
+#else
+    const uint8_t bitCount = (aui8_pos*16);
+    t_ident &= ~(0xFFFFUL << bitCount);
+    t_ident |= (MASK_TYPE(aui16_val) << (aui8_pos*16));
+#endif
+    data.type = ren_identType;
+    data.empty = 0;
+  }
+
   /** deliver amount of different bits from own ident to compared ident
     @param arc_ident reference to compared ident
     @return amount of different bits

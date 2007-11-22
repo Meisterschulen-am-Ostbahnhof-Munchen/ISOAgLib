@@ -331,6 +331,11 @@ class CanPkgExt_c : public CanPkg_c
   */
   void setIsoPf(uint8_t aui8_val) {setIdent(aui8_val, 2, Ident_c::ExtendedIdent); }
 
+  /** combined setting of DP and PF field in identifier as 10Bit part of a 16-Bit parameter
+      @param aui16_dpPf DP and PF for the PGN
+    */
+  void setIsoDpPf( uint16_t aui16_dpPf ) { setIdentWord( (((ident(3)& 0x1C)<<8) | (aui16_dpPf & 0x03FF)), 1, Ident_c::ExtendedIdent);}
+
   /**
     set the value of the ISO11783 ident field PS
     @return PDU Specific

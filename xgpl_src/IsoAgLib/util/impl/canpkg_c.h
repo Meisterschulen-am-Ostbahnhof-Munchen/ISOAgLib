@@ -160,6 +160,18 @@ public:
     {msc_ident.set(ab_val, ab_pos, at_type);}
 
   /**
+    set specific uint16_t of ident for the telegram
+    (position 0 is least significant position -> nearest to DLC field of
+    CAN frame)
+    @param aui16_val value for ident at wanted position for the telegram
+    @param aui8_pos position [0..1] for wanted value for ident for the telegram (pos0==byte0, pos1==byte2)
+    @param at_type type of Ident_c: 11bit Ident_c::S or 29bit Ident_c::E
+      default defined in isoaglib_config.h
+  */
+  static void setIdentWord(uint16_t aui16_val, uint8_t aui8_pos, __IsoAgLib::Ident_c::identType_t at_type = DEFAULT_IDENT_TYPE)
+    {c_ident.setWord(aui16_val, aui8_pos, at_type);}
+
+  /**
     set type of ident
     @param at_type type of Ident_c: 11bit Ident_c::S or 29bit Ident_c::E
   */

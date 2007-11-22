@@ -265,6 +265,17 @@ enum identType_t {StandardIdent = 0, ExtendedIdent = 1};
   */
   void set(uint8_t ab_val = 0, uint8_t ab_pos = 0, identType_t ren_identType = DEFAULT_IDENT_TYPE);
 
+  /**
+    set specific uint16_t of this ident
+    (position 0 is least significant position -> nearest to DLC field of
+    CAN frame)
+    @param aui16_val value for ident at wanted position for the telegram
+    @param aui8_pos position [0..1] for wanted value for ident for the telegram (pos0==byte0, pos1==byte2)
+    @param at_type type of Ident_c: 11bit Ident_c::S or 29bit Ident_c::E
+      default defined in isoaglib_config.h
+  */
+  void setWord(uint16_t aui16_val, uint8_t aui8_pos, __IsoAgLib::Ident_c::identType_t at_type = DEFAULT_IDENT_TYPE);
+
   /** set type of ident
     @param at_type type of Ident_c: 11bit Ident_c::S or 29bit Ident_c::E
   */

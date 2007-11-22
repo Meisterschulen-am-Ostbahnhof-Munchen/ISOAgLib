@@ -221,28 +221,23 @@ void CanPkgExt_c::getData(uint32_t& rt_ident, uint8_t& rui8_identType,
 
 /**
   set the value of the ISO11783 ident field PGN
-  @todo optimize DP/PF setting in one operation
   @return parameter group number
 */
 void CanPkgExt_c::setIsoPgn(uint32_t aui32_val)
 {
-  const uint8_t cui8_dp = static_cast<uint8_t>((aui32_val >> 16) & 0x03); // now extended to 2 bits (added R/EDP)
-  const uint8_t cui8_pf = static_cast<uint8_t>(aui32_val >> 8);
+  const uint16_t cui16_dpPf = static_cast<uint16_t>((aui32_val >> 8) & 0x03FF); // now extended to 2 bits (added R/EDP)
   const uint8_t cui8_ge = static_cast<uint8_t>(aui32_val);
 
-  /// set PF
-  setIsoPf (cui8_pf);
+  /// set DP+PF
+  setIsoDpPf (cui16_dpPf);
 
   /// set PS (if GE)
   // the PGN parameter contains PF at the second lowest byte ==> PF >= 0xF0 correlates to PGN >= 0xF000
-  if ( cui8_pf >= 0xF0 )
+  if ( (cui16_dpPf&0xFF) >= 0xF0 )
   { // broadcasted message --> set Byte2 (index 1) from the PGN
     setIsoPs (cui8_ge); // --> PS is used as GroupExtension (GE)
   }
   /// don't set PS (if DA) - has to be done by application itself!
-
-  /// set DP (along with R/EDP)
-  setIsoDp (cui8_dp);
 }
 
 
@@ -398,9 +393,9 @@ MessageState_t CanPkgExt_c::address2IdentRemoteSa()
   { // only problem might be: when we receive a message with SA of a local ident
     if ( mc_addrResolveResSA.mpc_monitorItem->itemState(IState_c::Local) )
     {
-      /** @todo isoItem is not const anymore, so we could inform the item of the conflict.
-                However it seems that it will be done anyway from identItem?? <<-- To check!!!
-                arc_addressResolveResults.mpc_monitorItem->affectedConflictCnt( IStateExt_c::Incr, time() );
+      /** @todo SOON: isoItem is not const anymore, so we could inform the item of the conflict.
+                      Call for this problem case a function of IsoItem_c to inform it about a remote ECU which sends with our SA;
+                      arc_addressResolveResults.mpc_monitorItem->affectedConflictCnt( IStateExt_c::Incr, time() );
         */
       #ifdef DEBUG_CAN
         INTERNAL_DEBUG_DEVICE << "Someone sends with one of our SA's." << INTERNAL_DEBUG_DEVICE_ENDL;

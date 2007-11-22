@@ -59,7 +59,7 @@
 namespace IsoAgLib {
 
 
-/** @todo Interface class for FlexibleByteString stuff... */
+/** @todo SOON: Add Interface class for FlexibleByteString stuff in iutil_funcs.h, so that this iCanPkg_c gets consistent ... */
 
 /**
   Storing the informations of one CAN

@@ -836,7 +836,7 @@ INTERNAL_DEBUG_DEVICE << "end CanIo_c::insertFilter " << INTERNAL_DEBUG_DEVICE_E
   @param at_identType ident type of the deleted ident: standard 11bit or extended 29bit
         (defualt DEFAULT_IDENT_TYPE defined in isoaglib_config.h)
   @return true -> FilterBox_c found and deleted
-  // @todo: additional boolean parameter for skipping reconfigureMsgObj
+  @todo SOON: incorporate additional parameter "bool ab_reconfigImmediate = true" from insertFilter before at_identType - AND update all callers
 */
 bool CanIo_c::deleteFilter(const __IsoAgLib::CanCustomer_c& ar_customer,
                            MASK_TYPE at_mask, MASK_TYPE at_filter,
@@ -1278,17 +1278,14 @@ CanIo_c& CanIo_c::operator<<(CanPkg_c& rc_src)
   #endif
 
   // wait till Msg can be placed in send buffer
-  /** @todo check for better handling of full buffer - don't just loop 10 times */
-  for ( uint16_t ind = 0;
-        ( ( HAL::can_stateMsgobjFreecnt( mui8_busNumber, ui8_sendObjNr ) < 1 ) && ( ind < 10 ) ); ind++ )
+  while ( HAL::can_stateMsgobjFreecnt( mui8_busNumber, ui8_sendObjNr ) < 1 )
   {  // perform wait loop
-    int16_t i16_result = 0;
-    for (int16_t i = 0; i < 200; i++) i16_result++;
-    // it's time to trigger the watchdog
+    // trigger the watchdog
     HAL::wdTriggern();
     // exit loop, if CAN BUS is OFF and exit function
     if (HAL::can_stateGlobalOff(mui8_busNumber))
-    {  // clear MsgObj CAN queue
+    { /** @todo SOON: check whether HAL::can_stateGlobalOff() detects all possible reasons that can block the send queue from emptying by sending of queued messages on CAN BUS */
+      // clear MsgObj CAN queue
       #ifdef DEBUG
       INTERNAL_DEBUG_DEVICE
        << "CanIo_c::operator<< BUS OFF BUS Nr: " << uint16_t(mui8_busNumber) << INTERNAL_DEBUG_DEVICE_ENDL;

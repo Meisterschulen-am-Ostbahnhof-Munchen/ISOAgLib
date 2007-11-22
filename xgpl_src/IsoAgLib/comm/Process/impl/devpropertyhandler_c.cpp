@@ -362,11 +362,11 @@ DevPropertyHandler_c::processMsg()
         }
         else
         {
-          /** @todo further output for user to locate the error which caused the upload fail*/
+          /** @todo SOON: further output for user to locate the error which caused the upload fail -> interprete TC-Response to get more detailed debug output*/
           men_uploadStep = UploadFailed;
           men_poolState = OPCannotBeUploaded;
           mui8_commandParameter = procCmdPar_OPActivateRespMsg;
-          #if defined(DEBUG) && defined(SYSTEM_PC)
+          #if defined(DEBUG)
           INTERNAL_DEBUG_DEVICE << (uint16_t) data().getUint8Data(1) << INTERNAL_DEBUG_DEVICE_ENDL;
           INTERNAL_DEBUG_DEVICE << "upload failed, activate with error..." << INTERNAL_DEBUG_DEVICE_ENDL;
           #endif
@@ -387,7 +387,7 @@ DevPropertyHandler_c::processMsg()
         }
         else
         {
-          /** @todo if the pool couldn't be deleted: fail upload or just ignore it??? */
+          /** @todo SOON: if the pool couldn't be deleted: fail upload or just ignore it??? */
           mpc_data->setExtCanPkg8 (3, 0, 203, mui8_tcSourceAddress, mpc_wsMasterIdentItem->getIsoItem()->nr(),
                             procCmdPar_RequestVersionMsg, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
           getCanInstance4Comm() << *mpc_data;
@@ -524,7 +524,7 @@ DevPropertyHandler_c::timeEvent( void )
     case UploadWaitForVersionResponse:
       if (((uint32_t) HAL::getTime()) > (mui32_uploadTimeout + mui32_uploadTimestamp))
       {
-        /** @todo set versionLabel to a default??? */
+        /** @todo SOON: check when the responses could not be received, and whether simple sending of new pool could cause harm */
         #ifdef DEBUG
         INTERNAL_DEBUG_DEVICE << "No version available..." << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
@@ -789,7 +789,7 @@ DevPropertyHandler_c::timeEvent( void )
 bool
 DevPropertyHandler_c::queuePoolInMap (const HUGE_MEM uint8_t* apc_devicePoolByteArray, uint32_t aui32_bytestreamlength, bool ab_setToDefault)
 {
-  /** @todo should we test for minimum size of the pool??? (1 DeviceObject + 1 DeviceElementObject)*/
+  /** @todo SOON: add test for minimum size of the pool (1 DeviceObject + 1 DeviceElementObject)*/
 
   LanguageLabel_c langLabel;
   DevicePool_c devicePool (apc_devicePoolByteArray, aui32_bytestreamlength);
