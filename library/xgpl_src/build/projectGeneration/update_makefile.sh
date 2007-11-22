@@ -429,12 +429,12 @@ create_filelist( )
     fi
     COMM_PROC_FEATURES="$COMM_PROC_FEATURES -name 'processdatachangehandler_c.*' -o -name 'iprocess_c.*' -o -name 'elementddi_s.h' -o -name 'proc_c.h' -o -path '*/Part7_ProcessData/impl/proc*' -o -path '*/Part7_ProcessData/igeneralcommand*' -o -path '*/Part7_ProcessData/impl/generalcommand*' -o -path '*/Part7_ProcessData/*procdata*base_c.h'"
 
-		if [ $PRJ_ISO11783 -gt 0 -a $PROC_LOCAL -gt 0 ] ; then
-			# allow DevPropertyHandler
-			COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*/Part7_ProcessData/i*devproperty*'"
-		else
-			COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o \( -path '*/Part7_ProcessData/i*devproperty*' -a -not -name 'devproperty*' \)"
-		fi
+    if [ $PRJ_ISO11783 -gt 0 -a $PROC_LOCAL -gt 0 ] ; then
+	# allow DevPropertyHandler
+	COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*/Part10_TaskController_Client/i*devproperty*'"
+    else
+	COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o \( -path '*/Part10_TaskController_Client/i*devproperty*' -a -not -name 'devproperty*' \)"
+    fi
 
     if [ $PROC_LOCAL -gt 0 ] ; then
       COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*/Part7_ProcessData/Local/impl/*'"
@@ -765,7 +765,7 @@ create_filelist( )
   fi
   rm -f .exec.tmp
 
-  FIND_TEMP_PATH="-path '*/Scheduler/*' -o -path '*/Part5_NetworkManagement/*' -o -path '*/util/*' -o -path '*/Part3_DataLink/impl/can*' -o -path '*/Part10_TaskController_Client/*'"
+  FIND_TEMP_PATH="-path '*/Scheduler/*' -o -path '*/Part5_NetworkManagement/*' -o -path '*/util/*' -o -path '*/Part3_DataLink/impl/can*' "
   # find wanted process data communication features
   if [ "$COMM_PROC_FEATURES" != "" ] ; then
     FIND_TEMP_PATH="$FIND_TEMP_PATH -o $COMM_PROC_FEATURES"
