@@ -40,10 +40,6 @@ doc/txt/structural-overview.txt -text
 doc/txt/todo.txt -text
 doc/txt/topic-template.txt -text
 doc/txt/using-projects.txt -text
-examples/CanServerMessenger/CanServerMessenger.cpp -text
-examples/CanServerMessenger/TutPrjDescCanServerMessenger.txt -text
-examples/CanServerMessenger/config_CanServerMessenger.h -text
-examples/CanServerMessenger/version.h -text
 examples/compiler_projects/Dev-C++/0_0_AddressClaimIso/0_0_AddressClaimIso__simulating__simulating.dev -text
 examples/compiler_projects/Dev-C++/0_0_AddressClaimIso/0_0_AddressClaimIso__simulating__sys.dev -text
 examples/compiler_projects/Dev-C++/0_0_AddressClaimIso/0_0_AddressClaimIso__sontheim__simulating.dev -text
@@ -1002,6 +998,10 @@ examples/compiler_projects/update_makefile.sh -text
 examples/src/AutoDataCollector/TutPrjDescAutoDataCollector.txt -text
 examples/src/AutoDataCollector/config_AutoDataCollector.h -text
 examples/src/AutoDataCollector/version.h -text
+examples/src/CanServerMessenger/CanServerMessenger.cpp -text
+examples/src/CanServerMessenger/TutPrjDescCanServerMessenger.txt -text
+examples/src/CanServerMessenger/config_CanServerMessenger.h -text
+examples/src/CanServerMessenger/version.h -text
 examples/src/Imi/TutPrjDescimi_iso.txt -text
 examples/src/Imi/config_imi_iso.h -text
 examples/src/Imi/version.h -text
