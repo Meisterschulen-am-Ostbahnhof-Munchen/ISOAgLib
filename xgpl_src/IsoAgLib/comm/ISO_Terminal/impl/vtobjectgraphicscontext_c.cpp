@@ -97,7 +97,7 @@ namespace __IsoAgLib {
 //! @param:destMemory:
 //! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
 //! @param sourceOffset:
-//! @todo GC: Not data mask scaling (done by client) supported for graphics context.
+//! @todo REQUEST Not data mask scaling (done by client) supported for graphics context.
 int16_t
 vtObjectGraphicsContext_c::stream(uint8_t* destMemory, uint16_t maxBytes, objRange_t sourceOffset)
 {
@@ -423,7 +423,7 @@ vtObjectGraphicsContext_c::drawVtObject( const iVtObject_c* const newVtObject,
                                          bool b_updateObject, bool b_enableReplaceOfCmd)
 {
   if (b_updateObject) {
-    //! @todo The object size is not know and thus the cursor is not moved for b_updateObject case.
+    //! @todo REQUEST The object size is not know and thus the cursor is not moved for b_updateObject case.
     uint16_t ui16_totalHeight = 1;
     uint16_t ui16_totalWidth = 1;
 

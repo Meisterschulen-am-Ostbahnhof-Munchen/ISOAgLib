@@ -248,7 +248,7 @@ public:
     vtObjectGraphicsContext_c::zoomViewport( newValue, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  //! @todo Coordinates need to be signed.
+  //! @todo REQUEST (to be done when GCO gets used..) Coordinates need to be signed.
   //! This command allows both panning and zooming at the same time
   //! by combining commands 13 and 14 (Sub-Command ID 15).
   //! @param ac_point Viewport position
@@ -287,7 +287,7 @@ public:
   //! corner of the object that was drawn.  Normal VT Object transparency rules apply
   //! when drawing the VT Object onto the canvas.
   //! Any colours outside of the colours allowed by this Graphics Context Object shall be treated as transparent.
-  //! @todo The object size is not know and thus the cursor is not moved for b_updateObject case.
+  //! @todo REQUEST (to be done when Graphics Context Object gets used) The object size is not know and thus the cursor is not moved for b_updateObject case.
   //! @param iVtObject Pointer to the VT Object to be drawn
   //! @param b_updateObject
   //! @param b_enableReplaceOfCmd

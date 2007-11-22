@@ -554,7 +554,7 @@ bool IdentItem_c::timeEventActive( void )
     }
     else
     { /// IsoName now already used on the bus - we can't claim an address now anymore!
-      getILibErrInstance().registerError( iLibErr_c::Busy, iLibErr_c::System ); /** @todo insert new error-location/type for thsoe cases! */
+      getILibErrInstance().registerError( iLibErr_c::Busy, iLibErr_c::System ); /** @todo SOON insert new error-location/type for those cases! */
       IsoItem_c& rc_foundIsoItemSameIsoName = rc_isoMonitor.isoMemberISOName (mc_isoName);
       if (rc_foundIsoItemSameIsoName.itemState (IState_c::Local))
       { // now the ISOName is used by some other member on the BUS

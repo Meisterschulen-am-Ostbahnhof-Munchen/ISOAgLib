@@ -155,7 +155,7 @@ struct repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s {
 
 struct repeat_event_iVtObjectMacro_s {
   uint8_t event;
-  iVtObject_c* vtObjectMacro; //@todo specialize to ObjectMacro !!
+  iVtObject_c* vtObjectMacro; /** @todo SOON specialize to ObjectMacro and test with 3_0 tutorial !! */
 };
 
 struct repeat_x_y_s {

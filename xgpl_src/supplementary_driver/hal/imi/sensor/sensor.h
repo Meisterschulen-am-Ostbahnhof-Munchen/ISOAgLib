@@ -102,11 +102,11 @@
 #define MAX_ANALOG_MA_DIGIT 833
 
 /** define the scale factor to get [mV] from the return value of get_analogin_mean */
-/** @todo verify this with STW, as there are differing informations on this */
+/** @todo SOON verify this with STW, as there are differing informations on this */
 #define ADC2MILLIVOLT 16
 
 /** define the scale factor to get [mA] from the return value of get_analogin_mean */
-/** @todo verify this with STW, as there are differing informations on this */
+/** @todo SOON verify this with STW, as there are differing informations on this */
 #define ADC2MILLIAMPERE 20
 /*@}*/
 

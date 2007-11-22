@@ -113,7 +113,7 @@ static const uint8_t scui8_eCM_DPO = 22;
 static const uint8_t scui8_eCM_EndofMsgACK = 23;
 static const uint8_t scui8_CM_ConnAbort = 255;
 
-static const uint8_t scui8_isoCanPkgDelay = 4; /** @todo figure that one out... new ISO says we can put out head2head messages! */
+static const uint8_t scui8_isoCanPkgDelay = 4; /** @todo SOON figure that one out... new ISO says we can put out head2head messages! */
 
 
 
@@ -130,7 +130,7 @@ namespace __IsoAgLib {
 
 
 
-/** @todo set the wanted sensemaking retries/timeout values here!!! */
+/** @todo SOON remove any IsoTerminal dependant stuff from MultiSend!!! */
 #define DEF_TimeOut_ChangeStringValue 1500   /* 1,5 seconds are stated in F.1 (page 96) */
 #define DEF_TimeOut_ChangeChildPosition 1500 /* 1,5 seconds are stated in F.1 (page 96) */
 #define DEF_Retries_TPCommands 2
@@ -323,7 +323,8 @@ MultiSend_c::SendStream_c::init (const IsoName_c& arc_isoNameSender, const IsoNa
     }
     mui32_dataBufferOffset = ui8_nettoCnt;
     switchToState (SendData, 2);
-    /** @todo maybe send out more packets right now if it's just about some - why wait? */
+    /** @todo SOON maybe send out more packets right now if it's just about some.
+              Why wait? If we wait, it's probably not a "FAST Packet" anymore...*/
   }
   else
 #endif
@@ -446,8 +447,6 @@ MultiSend_c::getSendStream(const IsoName_c& arc_isoNameSender, const IsoName_c& 
 MultiSend_c::SendStream_c*
 MultiSend_c::addSendStream(const IsoName_c& arc_isoNameSender, const IsoName_c& arc_isoNameReceiver)
 {
-  /** @todo check if sender is unspecified!
-            receiver may be - that indicated broadcast!?!?! */
   SendStream_c* const pc_foundStream = getSendStream(arc_isoNameSender, arc_isoNameReceiver);
   if (pc_foundStream)
   {
@@ -466,7 +465,7 @@ MultiSend_c::addSendStream(const IsoName_c& arc_isoNameSender, const IsoName_c& 
 
   if (mlist_sendStream.empty()) {
     mlist_sendStream.push_back (SendStream_c(*this SINGLETON_VEC_KEY_WITH_COMMA ));
-    getCanInstance4Comm().setSendpause (scui8_isoCanPkgDelay + 1); /** @todo remove if there's no minimum between data-packets! */
+    getCanInstance4Comm().setSendpause (scui8_isoCanPkgDelay + 1); /** @todo SOON remove if there's no minimum between data-packets! */
   } else {
     mlist_sendStream.insert (mlist_sendStream.end(), mlist_sendStream.back()); // insert a copy of the first element (for performance reasons)
   }
@@ -512,8 +511,7 @@ MultiSend_c::sendIntern (const IsoName_c& arc_isoNameSender, const IsoName_c& ar
   }
   else
   { // destination specific - so the receiver must be registered!
-    if (!getIsoMonitorInstance4Comm().existIsoMemberISOName (arc_isoNameReceiver))
-    return false;
+    if (!getIsoMonitorInstance4Comm().existIsoMemberISOName (arc_isoNameReceiver)) return false;
     /// - check if there's already a SA/DA pair active (in this case NULL is returned!)
     /// - if not NULL is returned, it points to the newly generated stream.
     pc_newSendStream = addSendStream (arc_isoNameSender, arc_isoNameReceiver);
@@ -600,7 +598,7 @@ MultiSend_c::SendStream_c::timeEvent (uint8_t aui8_pkgCnt)
             return true; // FINISHED SendStream, remove it from list please!
           }
         } // for
-        /** @todo how fast must fast-packet be? send all right now? set retriggerIn to (0) or (1) ?? */
+        /** @todo SOON how fast must fast-packet be? send all right now? set retriggerIn to (0) or (1) ?? */
         retriggerIn (2); // if we couldn't finish now, retrigger right soon! we're FAST-PACKET!
       }
       else
@@ -698,7 +696,7 @@ MultiSend_c::timeEvent()
     return true;
   }
 
-  /** @todo Check how we want to calculate the max nr. of packets to send
+  /** @todo SOON Check how we want to calculate the max nr. of packets to send
             ==> Best would be to know when the next comes.
             clip that value as we may expect incoming can-pkgs, too - so be a little polite!
   */
@@ -739,7 +737,7 @@ MultiSend_c::timeEvent()
 
   if (mlist_sendStream.empty())
   { // (re-)set the CAN send pause to 0, because not a single SendStream is active anymore.
-    getCanInstance4Comm().setSendpause (0); /** @todo remove if there's no minimum between data-packets! */
+    getCanInstance4Comm().setSendpause (0); /** @todo SOON remove if there's no minimum between data-packets! */
   }
 
   // ALWAYS calculate when we want to be triggered again!
@@ -763,7 +761,7 @@ MultiSend_c::timeEvent()
 //! can be overloaded by Childclass for special condition
 void
 MultiSend_c::updateEarlierAndLatestInterval()
-{ /** @todo improve with a flag for HARD/SOFT timing, but it's okay for right now... */
+{ /** @todo OPTIMIZE improve with a flag for HARD/SOFT timing, but it's okay for right now... */
   if (getTimePeriod() <= 1250)
   { // use HARD-Timing
     mui16_earlierInterval = 0;
@@ -877,9 +875,12 @@ MultiSend_c::SendStream_c::processMsg()
         *mpen_sendSuccessNotify = SendSuccess; // will be kicked out after next timeEvent!
         // so trigger timeEvent so it gets actually deleted - but needn't be too soon
         retriggerIn (1500);
+        /** @todo SOON Should we remove the finished send-stream here now immediately
+            even though we're NOT iterating through the list now? */
+
       }
 #if 0
-/// Disabled as long as getILibErrInstance().registerError() makes problems on the ESX
+/// @todo SOON reactivate as it should work now with the new iLibeErr. Please test on ESX as it made problems there.
       else
       {  // not awaiting end of message ack, no action taken for this error-case in normal operation.
         getILibErrInstance().registerError( iLibErr_c::MultiSendWarn, iLibErr_c::MultiSend );
@@ -913,9 +914,6 @@ MultiSend_c::SendStream_c::processMsg()
 bool
 MultiSend_c::processMsg()
 {
-  if (data().getLen() != 8)
-    return true; // All corrupted (E)TP-Packages should NOT be of interest for anybody...
-
   SendStream_c* pc_sendStreamFound = getSendStream (data().getISONameForDA(), data().getISONameForSA()); // sa/da swapped, of course ;-) !
   if (pc_sendStreamFound)
   { // found a matching SendStream, so call its processMsg()
@@ -930,14 +928,15 @@ MultiSend_c::processMsg()
   }
 }
 
+/** this function should NOT be called from INSIDE of timeEvent !
+    ==> Only call it from OUTSIDE functions like init(), processMsg(), addSendStream, etc.
+  */
 void
 MultiSend_c::calcAndSetNextTriggerTime()
 {
   int32_t i32_nextRetriggerNeeded = -1;
   for (STL_NAMESPACE::list<SendStream_c>::iterator pc_iter=mlist_sendStream.begin(); pc_iter != mlist_sendStream.end();)
   {
-    /** @todo We could remove any finished send-streams here now
-              as we're iterating through now because of the next trigger time... */
     const int32_t ci32_nextTriggerTime = pc_iter->getNextTriggerTime();
 
     if ((i32_nextRetriggerNeeded == -1) || (ci32_nextTriggerTime < i32_nextRetriggerNeeded))

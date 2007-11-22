@@ -246,6 +246,7 @@ MultiReceive_c::processMsg()
   IsoAgLib::ReceiveStreamIdentifier_c c_tmpRSI (mui32_pgn, cui8_da, data().getISONameForDA().toConstIisoName_c(),
                                                           cui8_sa, data().getISONameForSA().toConstIisoName_c());
 
+  /** @todo SOON Do we need to check this anyway? What do we need to check here and what not? Well, it works for the good-case so far... */
   if (anyMultiReceiveClientRegisteredForThisDa (cui8_da))
   { // we ONLY care for this can-pkg at all, as it's NOT directed to any of the registered clients!
 
@@ -287,7 +288,7 @@ MultiReceive_c::processMsg()
                 #endif
                 return true; // all RTSes are not of interest for MultiSend or other CAN-Customers!
               }
-              /** @todo Maybe close old stream and open a new one nevertheless right here, right now? */
+              /** @todo SOON Maybe close old stream and open a new one nevertheless right here, right now? */
 
               // otherwise it is a new stream, but before check from the client if he can take it (size is okay)
 
@@ -568,7 +569,7 @@ MultiReceive_c::processMsg()
   // Check if it's registered for fast-packet receive
   for (STL_NAMESPACE::list<MultiReceiveClientWrapper_s>::iterator pc_iter = mlist_clients.begin(); pc_iter != mlist_clients.end(); pc_iter++)
   { // is it fast-packet, and is it this pgn?
-    /** @todo determine when to set the PS field of the pgn to "aui8_cachedClientAddress" */
+    /** @todo SOON determine when to set the PS field of the pgn to "aui8_cachedClientAddress" */
     if ((pc_iter->mb_isFastPacket) && (pc_iter->mui32_pgn == data().isoPgn()))
     {
       uint8_t ui8_counterFrame = data().getUint8Data (0) & 0x1F;
@@ -576,14 +577,14 @@ MultiReceive_c::processMsg()
       //uint8_t ui8_counterSequence = (data().getUint8Data (0) >> 5) & 0x7;
       //#endif
 
-      /** @todo determine if Fast-Packet is always addressed to GLOBAL 255, 0xFF */
+      /** @todo SOON determine if Fast-Packet is always addressed to GLOBAL 255, 0xFF. Note on 11/2007: FP can also be destination specific! */
       Stream_c* pc_streamFound = getStream(data().isoSa(), 0xFF, /* Fast-Packet: */ true);
       if (!pc_streamFound)
       { // stream not there. create a new one if it's the first frame
         if (ui8_counterFrame == 0)
         { // First Frame => okay, create new Stream!
-          /** @todo check for range of 0..223 */
-          /** @todo determine when to set the PS field of the pgn to "aui8_cachedClientAddress" */
+          /** @todo SOON check for range of 0..223 */
+          /** @todo SOON determine when to set the PS field of the pgn to "aui8_cachedClientAddress" */
           IsoAgLib::ReceiveStreamIdentifier_c c_fpRSI (data().isoPgn(), 0xFF /* Ps is destin adr in the (E)TP-PGNs*/, IsoAgLib::iIsoName_c::iIsoNameUnspecified(),
                                                                         data().isoSa(),                               data().getISONameForSA().toConstIisoName_c());
           pc_streamFound = createStream (StreamFastPacket, c_fpRSI, data().getUint8Data (1));
@@ -656,7 +657,7 @@ MultiReceive_c::registerClient(CanCustomer_c& arc_client, const IsoName_c& arc_i
   {
     const uint32_t ui32_mask = (0x3FFFF00UL);
     const uint32_t ui32_filter = (static_cast<MASK_TYPE>(aui32_pgn << 8));
-    /** @todo determine when to set the PS field of the pgn to "aui8_cachedClientAddress" */
+    /** @todo SOON determine when to set the PS field of the pgn to "aui8_cachedClientAddress" */
     if (!__IsoAgLib::getCanInstance4Comm().existFilter(*this, ui32_mask, ui32_filter, __IsoAgLib::Ident_c::ExtendedIdent))
     { /* create FilterBox */
       __IsoAgLib::getCanInstance4Comm().insertStandardIsoFilter(*this,(aui32_pgn),true);
@@ -696,7 +697,7 @@ MultiReceive_c::deregisterClient (CanCustomer_c& arc_client)
       if (pc_iter->mb_isFastPacket) {
         const uint32_t cui32_mask = (0x3FFFF00UL);
         const uint32_t cui32_filter = (static_cast<MASK_TYPE>(pc_iter->mui32_pgn << 8));
-        /** @todo determine when to set the PS field of the pgn to "aui8_cachedClientAddress" */
+        /** @todo SOON determine when to set the PS field of the pgn to "aui8_cachedClientAddress" */
         __IsoAgLib::getCanInstance4Comm().deleteFilter( *this, cui32_mask, cui32_filter, __IsoAgLib::Ident_c::ExtendedIdent);
       }
       #endif
@@ -754,7 +755,7 @@ MultiReceive_c::deregisterClient(CanCustomer_c& arc_client, const IsoName_c& arc
       if (pc_iter->mb_isFastPacket) {
         const uint32_t cui32_mask = (0x3FFFF00UL);
         const uint32_t cui32_filter = (static_cast<MASK_TYPE>(pc_iter->mui32_pgn << 8));
-        /** @todo determine when to set the PS field of the pgn to "aui8_cachedClientAddress" */
+        /** @todo SOON determine when to set the PS field of the pgn to "aui8_cachedClientAddress" */
         __IsoAgLib::getCanInstance4Comm().deleteFilter( *this, cui32_mask, cui32_filter, __IsoAgLib::Ident_c::ExtendedIdent);
       }
       #endif
@@ -1295,8 +1296,6 @@ bool
 MultiReceive_c::anyMultiReceiveClientRegisteredForThisDa (uint8_t ui8_da)
 {
   if (ui8_da == 0xFF) return true;
-  /** @todo extend this function, so it checks if any of the clients want BAMs!
-            -- do we need this check anyway????? costs us more than just processing the message I guess... */
   for (STL_NAMESPACE::list<MultiReceiveClientWrapper_s>::iterator i_list_clients = mlist_clients.begin();
        i_list_clients != mlist_clients.end();
        i_list_clients++)
@@ -1475,7 +1474,7 @@ rc_isoName
   for (STL_NAMESPACE::list<MultiReceiveClientWrapper_s>::iterator i_list_clients = mlist_clients.begin();
        i_list_clients != mlist_clients.end();
        i_list_clients++)
-  { /** @todo can we assume this is safe/consistent? or should we check our ISOName instead to be 100% sure */
+  { /** @todo SOON can we assume this is safe/consistent? or should we check our ISOName instead to be 100% sure */
     if (aui8_oldSa == i_list_clients->mui8_cachedClientAddress) {
       i_list_clients->mui8_cachedClientAddress = 0xFE; // as FE won't be valid as sender (FF would be broadcast) - so we don't get such packets in "processMsg()"
     }

@@ -198,7 +198,7 @@ vtObjectFontAttributes_c::calcScaledFontDimension() const
     height= (((uint32_t) vtDimension * (marr_font2PixelDimensionTableH [mui8_fontSizeScaled]) <<10)/opDimension); // (8 bit shifted fixed floating)
   }
 
-  /** @todo maybe keep aspect ratio?? */
+  /** @todo DISCUSSION maybe keep aspect ratio?? Make it a user-flag on registerIsoObjectPool? Or put it into the objects itself?? */
   // now get the lower possible size...
   int i, j;
   for (i=14; i>=0; i--) {

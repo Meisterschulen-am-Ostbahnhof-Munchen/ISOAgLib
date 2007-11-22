@@ -161,7 +161,7 @@ static const uint8_t scpui8_cmdCompareTable[(scui8_cmdCompareTableMax-scui8_cmdC
 /* 0xAA */ (1<<1) | (1<<2) ,
 /* 0xAB */ (1<<1) | (1<<2) ,
 /* 0xAC */ (1<<1) | (1<<2) ,
-/* 0xAD */ (1<<1) | (1<<2) , /** @todo Maybe change to delete in between and push_back new?! */ // (Change Active Mask)
+/* 0xAD */ (1<<1) | (1<<2) , /** @todo NOW Think about what happens now if you enqueue: MaskA, MaskB, MaskA!!! (Maybe change to delete in between and push_back new?!) */ // (Change Active Mask)
 /* 0xAE */ (1<<1) | (1<<2) | (1<<3) ,
 /* 0xAF */ (1<<1) | (1<<2) | (1<<3) ,
 /* 0xB0 */ (1<<1) | (1<<2) ,
@@ -348,7 +348,7 @@ VtClientServerCommunication_c::reactOnStreamStart (const IsoAgLib::ReceiveStream
   if ((ac_ident.getSaIsoName()) != (mpc_vtServerInstance->getIsoName().toConstIisoName_c())) return false;
   //handling string value >= 9 Bytes
   if (aui32_totalLen > (4 /* H.18 byte 1-4 */ + 255 /* max string length */))
-    return false; /** @todo Should we really ConnAbort such a stream in advance? */
+    return false; /** @todo SOON Should we really ConnAbort such a stream in advance? For now don't care too much, as it shouldn't happen! */
   return true;
 }
 
@@ -711,7 +711,7 @@ VtClientServerCommunication_c::timeEvent(void)
     // If our IsoItem has claimed address, immediately try to get the LANGUAGE_PGN from VT/anyone ;-) (regardless of pool-upload!)
   if ((!mpc_vtServerInstance->getLocalSettings()->lastReceived) && ((mpc_vtServerInstance->getLocalSettings()->lastRequested == 0) || ((HAL::getTime()-mpc_vtServerInstance->getLocalSettings()->lastRequested) > 2000)))
   { // Try every 2 seconds to get the LANGUAGE_PGN, be polite to not bombard the VT...
-    /** @todo Give up somewhen?? Or retry really every 2 seconds? */
+    /** @todo SOON Give up somewhen?? Or retry really every 2 seconds? Don't care too much for now, shouldn't happen in real systems... */
     timeEventSendLanguagePGN();
   }
 
@@ -720,7 +720,7 @@ VtClientServerCommunication_c::timeEvent(void)
     return true; // do not proceed if LANGUAGE not yet received!
 
   if (men_objectPoolState == OPCannotBeUploaded)
-    return true; /** @todo is this correctly assumed? -> if it couldn't be uploaded, only disconnecting/connecting VT helps! */
+    return true; /** @todo SOON is this correctly assumed? -> if it couldn't be uploaded, only disconnecting/connecting VT helps! Should be able to be uploaded anyway... */
 
   // from HERE ON potential longer command sequences might be started
   // which include sending or starting of TP sessions and the like
@@ -1133,8 +1133,9 @@ VtClientServerCommunication_c::processMsg()
     /*** ### AUX Assignment Messages ### ***/
     case 0x20:
     { // Command: "Auxiliary Control", parameter "Auxiliary Assignment"
-      /** @todo If we can't assign because WE don't know this SA, should we anyway answer the assignment?
-       * for now we don't answer if we can't take the assignment - VTs have to handle this anyway... */
+      /** @todo SOON If we can't assign because WE don't know this SA, should we anyway answer the assignment?
+       * for now we don't answer if we can't take the assignment - VTs have to handle this anyway...
+       * Update on 22.11.2007: Should be okay so far, as written, VT has to handle, and we can't NACK the assignment! */
       bool const cb_assignmentOkay = storeAuxAssignment();
 
       if (cb_assignmentOkay)
@@ -2388,7 +2389,7 @@ VtClientServerCommunication_c::indicateObjectPoolCompletion()
 bool
 VtClientServerCommunication_c::startUploadCommand()
 {
-  /** @todo Up to now, none cares for the return code. implement error handling in case multisend couldn't be started? */
+  /** @todo SOON Up to now, none cares for the return code. implement error handling in case multisend couldn't be started? */
   // Set new state
   men_uploadType = UploadCommand;
   // along with UploadCommand ALWAYS set "men_sendSuccess", not only for Multipacket!
@@ -2625,9 +2626,10 @@ VtClientServerCommunication_c::getVtObjectPoolDimension()
   return mc_streamer.mrc_pool.getDimension();
 }
 
+/** ATTENTION: Please assure "getVtServerInstPtr() != NULL" before getting this reference */
 VtServerInstance_c&
 VtClientServerCommunication_c::getVtServerInst()
-{ // @todo Does this make sense? pc_ may be NULL!
+{
   return *mpc_vtServerInstance;
 }
 

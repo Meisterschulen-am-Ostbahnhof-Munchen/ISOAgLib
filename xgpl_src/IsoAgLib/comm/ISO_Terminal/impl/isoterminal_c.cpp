@@ -388,7 +388,7 @@ IsoTerminal_c::processMsg()
     }
     /** @todo return FALSE so others can react on it? -> Base_c ?? */
     /** @todo Use Base_c for getting the VT's language????? */
-    /** @todo later on only distribute LANGUAGE to those clients that listen to this VT???!?!?!?? */
+    /** @todo SOON Multiple VT support! (later on only distribute LANGUAGE to those clients that listen to this VT???!?!?!??) */
     return false;
   }
 
